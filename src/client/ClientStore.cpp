@@ -313,9 +313,14 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	} else if (is_port) {
 		if (data_type != PortType::UNKNOWN) {
 			PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
-			SharedPtr<PortModel> p(new PortModel(path, 0, data_type, pdir));
-			p->set_properties(properties);
-			add_object(p);
+			const Resource::Properties::const_iterator i = properties.find("lv2:index");
+			if (i != properties.end() && i->second.type() == Atom::INT) {
+				SharedPtr<PortModel> p(new PortModel(path, i->second.get_int32(), data_type, pdir));
+				p->set_properties(properties);
+				add_object(p);
+			} else {
+				LOG(error) << "Port " << path << " has no index" << endl;
+			}
 		} else {
 			LOG(warn) << "Port " << path << " has no type" << endl;
 		}

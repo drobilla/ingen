@@ -37,9 +37,9 @@ namespace Ingen {
 using namespace Shared;
 
 
-PatchImpl::PatchImpl(Engine& engine, const string& path, uint32_t poly, PatchImpl* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly)
+PatchImpl::PatchImpl(Engine& engine, const Raul::Symbol& symbol, uint32_t poly, PatchImpl* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly)
 	: NodeBase(new PatchPlugin("http://example.org/FIXME", "patch", "Ingen Patch"),
-		path, poly, parent, srate, buffer_size)
+		symbol, poly, parent, srate, buffer_size)
 	, _engine(engine)
 	, _internal_poly(internal_poly)
 	, _compiled_patch(NULL)
@@ -281,7 +281,7 @@ PatchImpl::add_node(List<NodeImpl*>::Node* ln)
  * Preprocessing thread only.
  */
 PatchImpl::Nodes::Node*
-PatchImpl::remove_node(const string& symbol)
+PatchImpl::remove_node(const Raul::Symbol& symbol)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)

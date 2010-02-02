@@ -17,6 +17,7 @@
 
 #include <gtkmm.h>
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/ObjectModel.hpp"
 #include "App.hpp"
 #include "ObjectMenu.hpp"
@@ -93,16 +94,18 @@ void
 ObjectMenu::on_menu_polyphonic()
 {
 	if (_enable_signal)
-		App::instance().engine()->set_property(
-				_object->path(), "ingen:polyphonic", bool(_polyphonic_menuitem->get_active()));
+		App::instance().engine()->set_property(_object->path(),
+				App::instance().uris().ingen_polyphonic,
+				bool(_polyphonic_menuitem->get_active()));
 }
 
 
 void
 ObjectMenu::property_changed(const URI& predicate, const Atom& value)
 {
+	const LV2URIMap& uris = App::instance().uris();
 	_enable_signal = false;
-	if (predicate.str() == "ingen:polyphonic" && value.type() == Atom::BOOL)
+	if (predicate == uris.ingen_polyphonic && value.type() == Atom::BOOL)
 		_polyphonic_menuitem->set_active(value.get_bool());
 	_enable_signal = true;
 }

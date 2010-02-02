@@ -16,6 +16,7 @@
  */
 
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PortModel.hpp"
 #include "client/PluginModel.hpp"
@@ -185,7 +186,9 @@ ControlPanel::value_changed_atom(SharedPtr<PortModel> port, const Raul::Atom& va
 {
 	if (_callback_enabled) {
 		if (_all_voices_radio->get_active()) {
-			App::instance().engine()->set_property(port->path(), "ingen:value", val);
+			App::instance().engine()->set_property(port->path(),
+				   App::instance().uris().ingen_value,
+				   val);
 			port->value(val);
 		} else {
 			int voice = _voice_spinbutton->get_value_as_int();
@@ -213,7 +216,7 @@ ControlPanel::specific_voice_selected()
 void
 ControlPanel::parent_property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
-	if (predicate.str() == "ingen:polyphony" && value.type() == Atom::INT)
+	if (predicate == App::instance().uris().ingen_polyphony && value.type() == Atom::INT)
 		_voice_spinbutton->set_range(0, value.get_int32() - 1);
 }
 
@@ -221,7 +224,7 @@ ControlPanel::parent_property_changed(const Raul::URI& predicate, const Raul::At
 void
 ControlPanel::variable_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
-	if (predicate.str() == "ingen:polyphonic" && value.type() == Atom::BOOL) {
+	if (predicate == App::instance().uris().ingen_polyphony && value.type() == Atom::BOOL) {
 		if (value.get_bool())
 			_voice_control_box->show();
 		else

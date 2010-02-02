@@ -18,6 +18,7 @@
 #include "interface/ClientInterface.hpp"
 #include "events/RequestMetadata.hpp"
 #include "shared/LV2Object.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
@@ -73,7 +74,7 @@ RequestMetadata::pre_process()
 
 	GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_resource);
 	if (obj) {
-		if (_key.str() == "ingen:value")
+		if (_key == _engine.world()->uris->ingen_value)
 			_special_type = PORT_VALUE;
 		else if (_is_meta)
 			_value = obj->meta().get_property(_key);
@@ -113,7 +114,8 @@ RequestMetadata::post_process()
 		if (_special_type == PORT_VALUE) {
 			if (_resource) {
 				_responder->respond_ok();
-				_responder->client()->set_property(_uri.str(), "ingen:value", _value);
+				_responder->client()->set_property(_uri.str(),
+						_engine.world()->uris->ingen_value, _value);
 			} else {
 				const string msg = "Get value for non-port " + _uri.str();
 				_responder->respond_error(msg);

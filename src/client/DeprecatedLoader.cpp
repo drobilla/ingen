@@ -174,7 +174,7 @@ DeprecatedLoader::add_variable(GraphObject::Properties& data, string old_key, st
 			if (endptr != c_val && *endptr == '\0')
 				data.insert(make_pair(key, Atom(fval)));
 			else
-				data.insert(make_pair(key, Atom(Atom::STRING, value)));
+				data.insert(make_pair(key, value));
 
 			free(c_val);
 		}
@@ -210,7 +210,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
                              bool                    merge,
                              boost::optional<Path>   parent_path,
                              boost::optional<Symbol> name,
-                             GraphObject::Properties  initial_data,
+                             GraphObject::Properties initial_data,
                              bool                    existing)
 {
 	LOG(info) << "Loading patch " << filename << " under "
@@ -220,7 +220,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 	if (parent_path)
 		path = *parent_path;
 	if (name)
-		path = path.base() + *name;
+		path = path.child(*name);
 
 	size_t poly = 0;
 

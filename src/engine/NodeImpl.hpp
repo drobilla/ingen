@@ -53,8 +53,8 @@ class ProcessContext;
 class NodeImpl : public GraphObjectImpl, virtual public Ingen::Shared::Node
 {
 public:
-	NodeImpl(GraphObjectImpl* parent, const std::string& name, bool poly)
-		: GraphObjectImpl(parent, name, poly)
+	NodeImpl(GraphObjectImpl* parent, const Raul::Symbol& symbol, bool poly)
+		: GraphObjectImpl(parent, symbol, poly)
 	{}
 
 	/** Activate this Node.

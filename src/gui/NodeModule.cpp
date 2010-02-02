@@ -20,6 +20,7 @@
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PluginModel.hpp"
@@ -45,7 +46,7 @@ namespace GUI {
 
 
 NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
-	: FlowCanvas::Module(canvas, node->path().name(), 0, 0, true, canvas->show_port_names())
+	: FlowCanvas::Module(canvas, node->path().symbol(), 0, 0, true, canvas->show_port_names())
 	, _node(node)
 	, _gui_widget(NULL)
 	, _gui_window(NULL)
@@ -128,17 +129,17 @@ NodeModule::show_human_names(bool b)
 	}
 
 	if (!b)
-		set_name(node()->symbol());
+		set_name(node()->symbol().c_str());
 
 	uint32_t index = 0;
 	for (PortVector::const_iterator i = ports().begin(); i != ports().end(); ++i) {
-		string name = node()->port(index)->symbol();
+		Glib::ustring label(node()->port(index)->symbol().c_str());
 		if (b) {
-			string hn = ((PluginModel*)node()->plugin())->port_human_name(index);
+			Glib::ustring hn = ((PluginModel*)node()->plugin())->port_human_name(index);
 			if (hn != "")
-				name = hn;
+				label = hn;
 		}
-		(*i)->set_name(name);
+		(*i)->set_name(label);
 		++index;
 	}
 
@@ -243,28 +244,21 @@ NodeModule::embed_gui(bool embed)
 void
 NodeModule::rename()
 {
-	set_name(_node->path().name());
-	resize();
+	if (App::instance().configuration()->name_style() == Configuration::PATH) {
+		set_name(_node->path().symbol());
+		resize();
+	}
 }
 
 
 void
 NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 {
-	uint32_t index = _ports.size(); // FIXME: kludge, engine needs to tell us this
-
-	string name = port->path().name();
-	if (App::instance().configuration()->name_style() == Configuration::HUMAN && node()->plugin()) {
-		string hn = ((PluginModel*)node()->plugin())->port_human_name(index);
-		if (hn != "")
-			name = hn;
-	}
-
-	Module::add_port(boost::shared_ptr<Port>(
-			new Port(PtrCast<NodeModule>(shared_from_this()), port, name)));
+	Module::add_port(Port::create(PtrCast<NodeModule>(shared_from_this()), port,
+			App::instance().configuration()->name_style() == Configuration::HUMAN));
 
 	port->signal_value_changed.connect(sigc::bind<0>(
-			sigc::mem_fun(this, &NodeModule::value_changed), index));
+			sigc::mem_fun(this, &NodeModule::value_changed), port->index()));
 
 	if (resize_to_fit)
 		resize();
@@ -379,14 +373,16 @@ NodeModule::store_location()
 	const float x = static_cast<float>(property_x());
 	const float y = static_cast<float>(property_y());
 
-	const Atom& existing_x = _node->get_property("ingenui:canvas-x");
-	const Atom& existing_y = _node->get_property("ingenui:canvas-y");
+	const LV2URIMap& uris = App::instance().uris();
+
+	const Atom& existing_x = _node->get_property(uris.ingenui_canvas_x);
+	const Atom& existing_y = _node->get_property(uris.ingenui_canvas_y);
 
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
 		Shared::Resource::Properties props;
-		props.insert(make_pair("ingenui:canvas-x", Atom(x)));
-		props.insert(make_pair("ingenui:canvas-y", Atom(y)));
+		props.insert(make_pair(uris.ingenui_canvas_x, Atom(x)));
+		props.insert(make_pair(uris.ingenui_canvas_y, Atom(y)));
 		App::instance().engine()->put(_node->path(), props);
 	}
 }
@@ -395,18 +391,19 @@ NodeModule::store_location()
 void
 NodeModule::set_property(const URI& key, const Atom& value)
 {
+	const Shared::LV2URIMap& uris = App::instance().uris();
 	switch (value.type()) {
 	case Atom::FLOAT:
-		if (key.str() == "ingenui:canvas-x") {
+		if (key == uris.ingenui_canvas_x) {
 			move_to(value.get_float(), property_y());
-		} else if (key.str() == "ingenui:canvas-y") {
+		} else if (key == uris.ingenui_canvas_y) {
 			move_to(property_x(), value.get_float());
 		}
 		break;
 	case Atom::BOOL:
-		if (key.str() == "ingen:polyphonic") {
+		if (key == uris.ingen_polyphonic) {
 			set_stacked_border(value.get_bool());
-		} else if (key.str() == "ingen:selected") {
+		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != selected()) {
 				if (value.get_bool())
 					_canvas.lock()->select_item(shared_from_this());
@@ -422,10 +419,11 @@ NodeModule::set_property(const URI& key, const Atom& value)
 void
 NodeModule::set_selected(bool b)
 {
+	const LV2URIMap& uris = App::instance().uris();
 	if (b != selected()) {
 		Module::set_selected(b);
 		if (App::instance().signal())
-			App::instance().engine()->set_property(_node->path(), "ingen:selected", b);
+			App::instance().engine()->set_property(_node->path(), uris.ingen_selected, b);
 	}
 }
 

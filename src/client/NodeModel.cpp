@@ -119,7 +119,7 @@ NodeModel::add_child(SharedPtr<ObjectModel> c)
 bool
 NodeModel::remove_child(SharedPtr<ObjectModel> c)
 {
-	assert(c->path().is_child_of(_path));
+	assert(c->path().is_child_of(path()));
 	assert(c->parent().get() == this);
 
 	//bool ret = ObjectModel::remove_child(c);
@@ -137,7 +137,7 @@ void
 NodeModel::add_port(SharedPtr<PortModel> pm)
 {
 	assert(pm);
-	assert(pm->path().is_child_of(_path));
+	assert(pm->path().is_child_of(path()));
 	assert(pm->parent().get() == this);
 
 	Ports::iterator existing = find(_ports.begin(), _ports.end(), pm);
@@ -151,11 +151,10 @@ NodeModel::add_port(SharedPtr<PortModel> pm)
 
 
 SharedPtr<PortModel>
-NodeModel::get_port(const string& port_name) const
+NodeModel::get_port(const Raul::Symbol& symbol) const
 {
-	assert(port_name.find("/") == string::npos);
 	for (Ports::const_iterator i = _ports.begin(); i != _ports.end(); ++i)
-		if ((*i)->path().name() == port_name)
+		if ((*i)->symbol() == symbol)
 			return (*i);
 	return SharedPtr<PortModel>();
 }

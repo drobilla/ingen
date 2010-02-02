@@ -16,10 +16,12 @@
  */
 
 #include "redlandmm/World.hpp"
+#include "uri-map.lv2/uri-map.h"
+#include "ingen-config.h"
 #include "shared/LV2Features.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "ingen_module.hpp"
 #include "World.hpp"
-#include "ingen-config.h"
 #ifdef HAVE_SLV2
 #include "slv2/slv2.h"
 #endif
@@ -39,7 +41,12 @@ ingen_get_world()
 #ifdef HAVE_SLV2
 		world->slv2_world = slv2_world_new_using_rdf_world(world->rdf_world->world());
 		world->lv2_features = new Ingen::Shared::LV2Features();
+		world->uris = PtrCast<Ingen::Shared::LV2URIMap>(
+				world->lv2_features->feature(LV2_URI_MAP_URI));
 		slv2_world_load_all(world->slv2_world);
+#else
+		world->uris = SharedPtr<Ingen::Shared::LV2URIMap>(
+				new Ingen::Shared::LV2URIMap());
 #endif
 		world->engine.reset();
 		world->local_engine.reset();

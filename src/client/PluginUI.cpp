@@ -55,8 +55,7 @@ lv2_ui_write(LV2UI_Controller controller,
 
 	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
 
-	SharedPtr<Shared::LV2URIMap> map = PtrCast<Shared::LV2URIMap>(
-			ui->world()->lv2_features->feature(LV2_URI_MAP_URI));
+	SharedPtr<Shared::LV2URIMap> map = ui->world()->uris;
 
 	// float (special case, always 0)
 	if (format == 0) {
@@ -64,18 +63,18 @@ lv2_ui_write(LV2UI_Controller controller,
 		if (*(float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
 
-		ui->world()->engine->set_property(port->path(), "ingen:value", Atom(*(float*)buffer));
+		ui->world()->engine->set_property(port->path(), map->ingen_value, Atom(*(float*)buffer));
 
-	} else if (format == map->ui_format_events) {
+	} else if (format == map->ui_format_events.id) {
 		LV2_Event_Buffer*  buf = (LV2_Event_Buffer*)buffer;
 		LV2_Event_Iterator iter;
 		uint8_t*           data;
 		lv2_event_begin(&iter, buf);
 		while (lv2_event_is_valid(&iter)) {
 			LV2_Event* const ev = lv2_event_get(&iter, &data);
-			if (ev->type == map->midi_event) {
+			if (ev->type == map->midi_event.id) {
 				// FIXME: bundle multiple events by writing an entire buffer here
-				ui->world()->engine->set_property(port->path(), "ingen:value",
+				ui->world()->engine->set_property(port->path(), map->ingen_value,
 					Atom("lv2midi:MidiEvent", ev->size, data));
 			} else {
 				warn << "Unable to send event type " << ev->type <<
@@ -85,11 +84,11 @@ lv2_ui_write(LV2UI_Controller controller,
 			lv2_event_increment(&iter);
 		}
 
-	} else if (format == map->object_transfer) {
+	} else if (format == map->object_transfer.id) {
 		LV2_Object* buf = (LV2_Object*)buffer;
 		Raul::Atom val;
 		Shared::LV2Object::to_atom(ui->world(), buf, val);
-		ui->world()->engine->set_property(port->path(), "ingen:value", val);
+		ui->world()->engine->set_property(port->path(), map->ingen_value, val);
 
 	} else {
 		warn << "Unknown value format " << format

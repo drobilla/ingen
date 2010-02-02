@@ -55,7 +55,7 @@ void
 RenameWindow::set_object(SharedPtr<ObjectModel> object)
 {
 	_object = object;
-	_symbol_entry->set_text(object->path().name());
+	_symbol_entry->set_text(object->path().symbol());
 	const Atom& name_atom = object->get_property("lv2:name");
 	_label_entry->set_text(
 		(name_atom.type() == Atom::STRING) ? name_atom.get_string() : "");
@@ -125,19 +125,22 @@ RenameWindow::cancel_clicked()
 void
 RenameWindow::ok_clicked()
 {
-	const string& symbol    = _symbol_entry->get_text();
-	const string& label     = _label_entry->get_text();
-	Path          path      = _object->path();
-	const Atom&   name_atom = _object->get_property("lv2:name");
+	const string& symbol_str = _symbol_entry->get_text();
+	const string& label      = _label_entry->get_text();
+	Path          path       = _object->path();
+	const Atom&   name_atom  = _object->get_property("lv2:name");
 
-	if (Path::is_valid_name(symbol) && symbol != _object->path().name()) {
-		path = _object->path().parent().base() + symbol;
-		App::instance().engine()->move(_object->path(), path);
+	if (Symbol::is_valid(symbol_str)) {
+		const Symbol& symbol(symbol_str);
+		if (symbol != _object->symbol()) {
+			path = _object->path().parent().child(symbol);
+			App::instance().engine()->move(_object->path(), path);
+		}
 	}
 
 	if (label != "" && (!name_atom.is_valid() || label != name_atom.get_string())) {
 		App::instance().engine()->set_property(path,
-				"lv2:name", Atom(Atom::STRING, label));
+				"lv2:name", Atom(label));
 	}
 
 	hide();

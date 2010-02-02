@@ -19,6 +19,7 @@
 #include <algorithm>
 #include "raul/log.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/PluginModel.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PortModel.hpp"
@@ -136,7 +137,7 @@ SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_name_label);
 	assert(_slider);
 
-	set_name(pm->path().name());
+	set_name(pm->path().symbol());
 
 	_slider->set_draw_value(false);
 
@@ -221,9 +222,10 @@ SliderControl::port_property_change(const URI& key, const Atom& value)
 {
 	_enable_signal = false;
 
-	if (key.str() == "lv2:minimum" && value.type() == Atom::FLOAT)
+	const Shared::LV2URIMap& uris = App::instance().uris();
+	if (key == uris.lv2_minimum && value.type() == Atom::FLOAT)
 		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
-	else if (key.str() == "lv2:maximum" && value.type() == Atom::FLOAT)
+	else if (key == uris.lv2_maximum && value.type() == Atom::FLOAT)
 		set_range(_slider->get_adjustment()->get_lower(), value.get_float());
 
 	_enable_signal = true;
@@ -318,7 +320,7 @@ ToggleControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_name_label);
 	assert(_checkbutton);
 
-	set_name(pm->path().name());
+	set_name(pm->path().symbol());
 
 	_checkbutton->signal_toggled().connect(sigc::mem_fun(*this, &ToggleControl::toggled));
 	set_value(pm->value());
@@ -383,7 +385,7 @@ StringControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_name_label);
 	assert(_entry);
 
-	set_name(pm->path().name());
+	set_name(pm->path().symbol());
 
 	_entry->signal_activate().connect(sigc::mem_fun(*this, &StringControl::activated));
 	set_value(pm->value());

@@ -181,7 +181,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 		return;
 	}
 
-	if (path == Path::root_uri) {
+	if (path == Path::root.str()) {
 		me->_target->response_ok(0);
 
 	} else if (path == "/plugins") {

@@ -107,7 +107,7 @@ ControlBindings::process(ProcessContext& context, EventBuffer* buffer)
 	if (_learn_port) {
 		buffer->rewind();
 		while (buffer->get_event(&frames, &subframes, &type, &size, &buf)) {
-			if (type == _map->midi_event && (buf[0] & 0xF0) == MIDI_CMD_CONTROL) {
+			if (type == _map->midi_event.id && (buf[0] & 0xF0) == MIDI_CMD_CONTROL) {
 				const int8_t controller = static_cast<const int8_t>(buf[1]);
 				bind(context, controller);
 				break;
@@ -119,7 +119,7 @@ ControlBindings::process(ProcessContext& context, EventBuffer* buffer)
 	if (!bindings->empty()) {
 		buffer->rewind();
 		while (buffer->get_event(&frames, &subframes, &type, &size, &buf)) {
-			if (type == _map->midi_event && (buf[0] & 0xF0) == MIDI_CMD_CONTROL) {
+			if (type == _map->midi_event.id && (buf[0] & 0xF0) == MIDI_CMD_CONTROL) {
 				const int8_t controller = static_cast<const int8_t>(buf[1]);
 				const int8_t value      = static_cast<const int8_t>(buf[2]);
 				Bindings::const_iterator i = bindings->find(controller);

@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
 #include "App.hpp"
 #include "NodeControlWindow.hpp"
@@ -111,7 +112,8 @@ NodeControlWindow::on_show()
 	for (NodeModel::Ports::const_iterator i = _node->ports().begin();
 			i != _node->ports().end(); ++i)
 		if ((*i)->type().is_control() && (*i)->is_input())
-			App::instance().engine()->request_property((*i)->path(), "ingen:value");
+			App::instance().engine()->request_property((*i)->path(),
+					App::instance().uris().ingen_value);
 
 	if (_position_stored)
 		move(_x, _y);

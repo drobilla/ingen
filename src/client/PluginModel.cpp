@@ -18,9 +18,11 @@
 #include <sstream>
 #include <ctype.h>
 #include <boost/optional.hpp>
-#include "ingen-config.h"
 #include "raul/Path.hpp"
 #include "raul/Atom.hpp"
+#include "ingen-config.h"
+#include "module/ingen_module.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "PluginModel.hpp"
 #include "PatchModel.hpp"
 #include "PluginUI.hpp"
@@ -54,7 +56,7 @@ PluginModel::PluginModel(const URI& uri, const URI& type_uri, const Resource::Pr
 	slv2_value_free(plugin_uri);
 #endif
 	if (_type == Internal)
-		set_property("doap:name", Atom(uri.substr(uri.find_last_of("#") + 1).c_str()));
+		set_property("doap:name", Atom(uri.substr(uri.find_last_of('#') + 1).c_str()));
 }
 
 
@@ -67,13 +69,13 @@ PluginModel::get_property(const URI& key) const
 		return val;
 
 	// No lv2:symbol from data or engine, invent one
-	if (key.str() == "lv2:symbol") {
+	if (key == ingen_get_world()->uris->lv2_symbol) {
 		const URI& uri = this->uri();
-		size_t last_slash = uri.find_last_of("/");
-		size_t last_hash  = uri.find_last_of("#");
+		size_t last_slash = uri.find_last_of('/');
+		size_t last_hash  = uri.find_last_of('#');
 		string symbol;
 		if (last_slash == string::npos && last_hash == string::npos) {
-			size_t last_colon = uri.find_last_of(":");
+			size_t last_colon = uri.find_last_of(':');
 			if (last_colon != string::npos)
 				symbol = uri.substr(last_colon + 1);
 			else
@@ -90,7 +92,7 @@ PluginModel::get_property(const URI& key) const
 			else
 				symbol = uri.str().substr(first_delim + 1, last_delim - first_delim - 1);
 		}
-		set_property("lv2:symbol", Atom(Atom::STRING, symbol));
+		set_property("lv2:symbol", symbol);
 		return get_property(key);
 	}
 
@@ -107,7 +109,7 @@ PluginModel::get_property(const URI& key) const
 				ret = set_property(key, Atom(Atom::URI, slv2_value_as_uri(val)));
 				break;
 			} else if (slv2_value_is_string(val)) {
-				ret = set_property(key, Atom(Atom::STRING, slv2_value_as_string(val)));
+				ret = set_property(key, slv2_value_as_string(val));
 				break;
 			} else if (slv2_value_is_float(val)) {
 				ret = set_property(key, Atom(slv2_value_as_float(val)));
@@ -163,10 +165,10 @@ string
 PluginModel::human_name()
 {
 	const Atom& name_atom = get_property("doap:name");
-	if (name_atom.is_valid() && name_atom.type() == Atom::STRING)
+	if (name_atom.type() == Atom::STRING)
 		return name_atom.get_string();
 	else
-		return default_node_symbol();
+		return default_node_symbol().c_str();
 }
 
 

@@ -17,6 +17,8 @@
 
 #include <cassert>
 #include "raul/log.hpp"
+#include "module/ingen_module.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "PatchModel.hpp"
 #include "NodeModel.hpp"
 #include "ConnectionModel.hpp"
@@ -49,7 +51,7 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 bool
 PatchModel::remove_child(SharedPtr<ObjectModel> o)
 {
-	assert(o->path().is_child_of(_path));
+	assert(o->path().is_child_of(path()));
 	assert(o->parent().get() == this);
 
 	// Remove any connections which referred to this object,
@@ -163,7 +165,7 @@ PatchModel::remove_connection(const Path& src_port_path, const Path& dst_port_pa
 bool
 PatchModel::enabled() const
 {
-	const Raul::Atom& enabled = get_property("ingen:enabled");
+	const Raul::Atom& enabled = get_property(ingen_get_world()->uris->ingen_enabled);
 	return (enabled.is_valid() && enabled.get_bool());
 }
 
@@ -171,7 +173,7 @@ PatchModel::enabled() const
 Raul::Atom&
 PatchModel::set_meta_property(const Raul::URI& key, const Atom& value)
 {
-	if (key.str() == "ingen:polyphony")
+	if (key == ingen_get_world()->uris->ingen_polyphony)
 		_poly = value.get_int32();
 
 	return NodeModel::set_meta_property(key, value);

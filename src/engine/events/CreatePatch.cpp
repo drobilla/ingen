@@ -17,6 +17,7 @@
 
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "events/CreatePatch.hpp"
 #include "Responder.hpp"
 #include "PatchImpl.hpp"
@@ -83,11 +84,13 @@ CreatePatch::pre_process()
 	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_polyphony()))
 		poly = _poly;
 
-	_patch = new PatchImpl(_engine, path.name(), poly, _parent,
+	const LV2URIMap& uris = *_engine.world()->uris.get();
+
+	_patch = new PatchImpl(_engine, path.symbol(), poly, _parent,
 			_engine.driver()->sample_rate(), _engine.driver()->buffer_size(), _poly);
 	_patch->meta().properties().insert(_properties.begin(), _properties.end());
-	_patch->meta().set_property("rdf:type", Atom(Atom::URI, "ingen:Patch"));
-	_patch->set_property("rdf:type", Atom(Atom::URI, "ingen:Node"));
+	_patch->meta().set_property(uris.rdf_type, uris.ingen_Patch);
+	_patch->set_property(uris.rdf_type, uris.ingen_Node);
 
 	if (_parent != NULL) {
 		_parent->add_node(new PatchImpl::Nodes::Node(_patch));

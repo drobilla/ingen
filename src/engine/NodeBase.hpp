@@ -48,12 +48,12 @@ namespace Shared { class ClientInterface; }
 class NodeBase : public NodeImpl
 {
 public:
-	NodeBase(PluginImpl*        plugin,
-	         const std::string& name,
-	         bool               poly,
-	         PatchImpl*         parent,
-	         SampleRate         rate,
-	         size_t             buffer_size);
+	NodeBase(PluginImpl*         plugin,
+	         const Raul::Symbol& symbol,
+	         bool                poly,
+	         PatchImpl*          parent,
+	         SampleRate          rate,
+	         size_t              buffer_size);
 
 	virtual ~NodeBase();
 

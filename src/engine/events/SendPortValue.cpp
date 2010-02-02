@@ -17,6 +17,7 @@
 
 #include <sstream>
 #include "events/SendPortValue.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
@@ -31,7 +32,8 @@ void
 SendPortValue::post_process()
 {
 	if (_omni) {
-		_engine.broadcaster()->set_property(_port->path(), "ingen:value", _value);
+		_engine.broadcaster()->set_property(_port->path(),
+				_engine.world()->uris->ingen_value, _value);
 	} else {
 		_engine.broadcaster()->set_voice_value(_port->path(), _voice_num, _value);
 	}

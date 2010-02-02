@@ -33,7 +33,7 @@ public:
 	virtual ~Resource() {}
 	typedef std::multimap<Raul::URI, Raul::Atom> Properties;
 
-	virtual const Raul::URI   uri()        const = 0;
+	virtual const Raul::URI&  uri()        const = 0;
 	virtual const Properties& properties() const = 0;
 	virtual Properties&       properties()       = 0;
 

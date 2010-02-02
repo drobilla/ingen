@@ -65,10 +65,8 @@ Engine::Engine(Ingen::Shared::World* world)
 	, _broadcaster(new ClientBroadcaster())
 	, _node_factory(new NodeFactory(world))
 	, _message_context(new MessageContext(*this))
-	, _buffer_factory(new BufferFactory(*this, PtrCast<LV2URIMap>(
-			world->lv2_features->feature(LV2_URI_MAP_URI))))
-	, _control_bindings(new ControlBindings(*this, PtrCast<LV2URIMap>(
-			world->lv2_features->feature(LV2_URI_MAP_URI))))
+	, _buffer_factory(new BufferFactory(*this, world->uris))
+	, _control_bindings(new ControlBindings(*this, world->uris))
 	, _quit_flag(false)
 	, _activated(false)
 {
@@ -165,14 +163,16 @@ Engine::activate()
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->activate_source();
 
+	const LV2URIMap& uris = *world()->uris;
+
 	// Create root patch
 	PatchImpl* root_patch = _driver->root_patch();
 	if (!root_patch) {
-		root_patch = new PatchImpl(*this, "", 1, NULL,
+		root_patch = new PatchImpl(*this, "root", 1, NULL,
 				_driver->sample_rate(), _driver->buffer_size(), 1);
-		root_patch->meta().set_property("rdf:type", Raul::Atom(Raul::Atom::URI, "ingen:Patch"));
-		root_patch->meta().set_property("ingen:polyphony", Raul::Atom(int32_t(1)));
-		root_patch->set_property("rdf:type", Raul::Atom(Raul::Atom::URI, "ingen:Node"));
+		root_patch->meta().set_property(uris.rdf_type, Raul::Atom(Raul::Atom::URI, "ingen:Patch"));
+		root_patch->meta().set_property(uris.ingen_polyphony, Raul::Atom(int32_t(1)));
+		root_patch->set_property(uris.rdf_type, Raul::Atom(Raul::Atom::URI, "ingen:Node"));
 		root_patch->activate();
 		_world->store->add(root_patch);
 		root_patch->compiled_patch(root_patch->compile());
@@ -180,7 +180,7 @@ Engine::activate()
 
 		// Add control port
 		Shared::Resource::Properties properties;
-		properties.insert(make_pair("lv2:name", "Control"));
+		properties.insert(make_pair(uris.lv2_name, "Control"));
 		Events::CreatePort* ev = new Events::CreatePort(*this, SharedPtr<Responder>(), 0,
 				"/ingen_control", "lv2ev:EventPort", false, NULL, properties);
 		ev->pre_process();

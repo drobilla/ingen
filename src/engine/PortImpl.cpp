@@ -17,6 +17,8 @@
 
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
+#include "module/ingen_module.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "contexts.lv2/contexts.h"
 #include "interface/PortType.hpp"
 #include "events/SendPortValue.hpp"
@@ -75,7 +77,8 @@ PortImpl::PortImpl(BufferFactory&  bufs,
 	else
 		_polyphonic = true;
 
-	add_property("rdf:type",    Atom(Atom::URI, type.uri()));
+	add_property("rdf:type",  Atom(Atom::URI, type.uri()));
+	set_property("lv2:index", Atom((int32_t)index));
 	set_context(_context);
 
 	if (type == PortType::EVENTS)
@@ -197,23 +200,23 @@ PortImpl::broadcast_value(Context& context, bool force)
 
 	if (val.type() == Atom::FLOAT && (force || val != _last_broadcasted_value)) {
 		_last_broadcasted_value = val;
-		const Events::SendPortValue ev(context.engine(), context.start(), this, false, 0, val);
+		const Events::SendPortValue ev(context.engine(), context.start(), this, true, 0, val);
 		context.event_sink().write(sizeof(ev), &ev);
 	}
-
 }
 
 
 void
 PortImpl::set_context(Context::ID c)
 {
+	const LV2URIMap& uris = *ingen_get_world()->uris.get();
 	_context = c;
 	switch (c) {
 	case Context::AUDIO:
-		set_property("ctx:context", Atom(Atom::URI, "ctx:AudioContext"));
+		set_property(uris.ctx_context, uris.ctx_AudioContext);
 		break;
 	case Context::MESSAGE:
-		set_property("ctx:context", Atom(Atom::URI, "ctx:MessageContext"));
+		set_property(uris.ctx_context, uris.ctx_MessageContext);
 		break;
 	}
 }

@@ -17,6 +17,9 @@
 
 #include "raul/TableImpl.hpp"
 #include "interface/GraphObject.hpp"
+#include "module/ingen_module.hpp"
+#include "module/World.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "ObjectModel.hpp"
 
 using namespace std;
@@ -30,6 +33,7 @@ ObjectModel::ObjectModel(const Path& path)
 	: ResourceImpl(path)
 	, _meta(ResourceImpl::meta_uri(path))
 	, _path(path)
+	, _symbol((path == Path::root) ? "root" : path.symbol())
 {
 }
 
@@ -74,7 +78,7 @@ ObjectModel::get_property(const Raul::URI& key) const
 bool
 ObjectModel::polyphonic() const
 {
-	const Raul::Atom& polyphonic = get_property("ingen:polyphonic");
+	const Raul::Atom& polyphonic = get_property(ingen_get_world()->uris->ingen_polyphonic);
 	return (polyphonic.is_valid() && polyphonic.get_bool());
 }
 
@@ -106,7 +110,8 @@ void
 ObjectModel::set_path(const Raul::Path& p)
 {
 	_path = p;
-	_meta.set_uri(ResourceImpl::meta_uri(_path));
+	_symbol = p.symbol();
+	_meta.set_uri(ResourceImpl::meta_uri(0));
 	signal_moved.emit();
 }
 
@@ -114,7 +119,7 @@ ObjectModel::set_path(const Raul::Path& p)
 void
 ObjectModel::set_parent(SharedPtr<ObjectModel> p)
 {
-	assert(p);
+	assert(_path.is_child_of(p->path()));
 	_parent = p;
 }
 

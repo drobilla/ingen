@@ -18,16 +18,12 @@
 #ifndef INGEN_SHARED_LV2FEATURES_HPP
 #define INGEN_SHARED_LV2FEATURES_HPP
 
-#include "ingen-config.h"
-#ifndef HAVE_SLV2
-#error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."
-#endif
-
 #include <map>
 #include <string>
 #include <vector>
-#include "slv2/slv2.h"
+#include "lv2.h"
 #include "raul/SharedPtr.hpp"
+#include "ingen-config.h"
 
 namespace Ingen {
 namespace Shared {

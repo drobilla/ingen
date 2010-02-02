@@ -19,6 +19,7 @@
 #include <fstream>
 #include "raul/log.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
 #include "PatchView.hpp"
@@ -187,7 +188,8 @@ PatchView::process_toggled()
 	if (!_enable_signal)
 		return;
 
-	App::instance().engine()->set_property(_patch->path(), "ingen:enabled",
+	App::instance().engine()->set_property(_patch->path(),
+			App::instance().uris().ingen_enabled,
 			(bool)_process_but->get_active());
 }
 
@@ -195,7 +197,8 @@ PatchView::process_toggled()
 void
 PatchView::poly_changed()
 {
-	App::instance().engine()->set_property(_patch->meta().uri(), "ingen:polyphony",
+	App::instance().engine()->set_property(_patch->meta().uri(),
+			App::instance().uris().ingen_polyphony,
 			_poly_spin->get_value_as_int());
 }
 
@@ -211,7 +214,7 @@ void
 PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
 	_enable_signal = false;
-	if (predicate.str() == "ingen:enabled") {
+	if (predicate == App::instance().uris().ingen_enabled) {
 	   if (value.type() == Atom::BOOL)
 		   _process_but->set_active(value.get_bool());
 	   else

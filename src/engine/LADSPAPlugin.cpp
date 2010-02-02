@@ -18,6 +18,8 @@
 #include <cassert>
 #include <ladspa.h>
 #include <raul/Symbol.hpp>
+#include "module/ingen_module.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "LADSPAPlugin.hpp"
 #include "LADSPANode.hpp"
 #include "Engine.hpp"
@@ -38,18 +40,19 @@ LADSPAPlugin::LADSPAPlugin(
 	: PluginImpl(Plugin::LADSPA, uri, library_path)
 	, _id(id)
 	, _label(label)
-	, _name(Raul::Atom::STRING, name)
+	, _name(name)
 {
-	set_property("rdf:type",   Atom(Atom::URI,    "ingen:LADSPAPlugin"));
-	set_property("lv2:symbol", Atom(Atom::STRING, Symbol::symbolify(label)));
-	set_property("doap:name",  Atom(Atom::STRING, name));
+	const LV2URIMap& uris = *ingen_get_world()->uris;
+	set_property(uris.rdf_type,   uris.ingen_LADSPAPlugin);
+	set_property(uris.lv2_symbol, Symbol::symbolify(label));
+	set_property(uris.doap_name,  name);
 }
 
 
 const Raul::Atom&
 LADSPAPlugin::get_property(const Raul::URI& uri) const
 {
-	if (uri.str() == "doap:name")
+	if (uri == ingen_get_world()->uris->doap_name)
 		return _name;
 	else
 		return ResourceImpl::get_property(uri);

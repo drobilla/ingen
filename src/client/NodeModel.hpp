@@ -50,15 +50,16 @@ public:
 
 	typedef std::vector< SharedPtr<PortModel> > Ports;
 
-	SharedPtr<PortModel> get_port(const std::string& port_name) const;
+	SharedPtr<PortModel> get_port(const Raul::Symbol& symbol) const;
 
 	Shared::Port* port(uint32_t index) const;
 
-	const Raul::URI&      plugin_uri() const { return _plugin_uri; }
-	const Shared::Plugin* plugin()     const { return _plugin.get(); }
-	Shared::Plugin*       plugin()           { return _plugin.get(); }
-	uint32_t              num_ports()  const { return _ports.size(); }
-	const Ports&          ports()      const { return _ports; }
+	const Raul::URI&       plugin_uri()   const { return _plugin_uri; }
+	const Shared::Plugin*  plugin()       const { return _plugin.get(); }
+	Shared::Plugin*        plugin()             { return _plugin.get(); }
+	SharedPtr<PluginModel> plugin_model() const { return _plugin; }
+	uint32_t               num_ports()    const { return _ports.size(); }
+	const Ports&           ports()        const { return _ports; }
 
 	void default_port_value_range(SharedPtr<PortModel> port, float& min, float& max) const;
 	void port_value_range(SharedPtr<PortModel> port, float& min, float& max) const;

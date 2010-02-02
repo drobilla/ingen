@@ -18,6 +18,8 @@
 #include <cassert>
 #include <glibmm.h>
 #include "redlandmm/World.hpp"
+#include "module/ingen_module.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "LV2Plugin.hpp"
 #include "LV2Node.hpp"
 #include "NodeImpl.hpp"
@@ -35,8 +37,10 @@ LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
 	, _slv2_plugin(NULL)
 	, _lv2_info(lv2_info)
 {
-	set_property("rdf:type", Atom(Atom::URI, "lv2:Plugin"));
+	const LV2URIMap& uris = *ingen_get_world()->uris.get();
+	set_property(uris.rdf_type, uris.lv2_Plugin);
 }
+
 
 const string
 LV2Plugin::symbol() const

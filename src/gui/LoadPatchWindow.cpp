@@ -18,12 +18,13 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
-#include "LoadPatchWindow.hpp"
 #include "interface/EngineInterface.hpp"
-#include "client/PatchModel.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "shared/runtime_paths.hpp"
+#include "client/PatchModel.hpp"
 #include "App.hpp"
 #include "Configuration.hpp"
+#include "LoadPatchWindow.hpp"
 #include "ThreadedLoader.hpp"
 
 using namespace Ingen::Serialisation;
@@ -136,7 +137,9 @@ LoadPatchWindow::ok_clicked()
 	optional<Symbol> symbol;
 
 	if (_poly_from_user_radio->get_active())
-		_initial_data.insert(make_pair("ingen:polyphony", _poly_spinbutton->get_value_as_int()));
+		_initial_data.insert(make_pair(
+				App::instance().uris().ingen_polyphony,
+				_poly_spinbutton->get_value_as_int()));
 
 	if (!_patch->path().is_root()) {
 		parent = _patch->path().parent();

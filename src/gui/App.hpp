@@ -113,7 +113,8 @@ public:
 	static void init(Ingen::Shared::World* world);
 	static void run();
 
-	Ingen::Shared::World* world() { return _world; }
+	inline Ingen::Shared::World*     world() { return _world; }
+	inline Ingen::Shared::LV2URIMap& uris()  { return *_world->uris; }
 
 protected:
 

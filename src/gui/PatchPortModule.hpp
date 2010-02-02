@@ -41,7 +41,7 @@ class Port;
 class PortMenu;
 
 
-/** A "module" to represent a patch's port on it's own canvas.
+/** A "module" to represent a patch's port on its own canvas.
  *
  * Translation: This is the nameless single port pseudo module thingy.
  *

@@ -32,8 +32,8 @@ class ResourceImpl : virtual public Resource
 public:
 	ResourceImpl(const Raul::URI& uri) : _uri(uri) {}
 
-	virtual void            set_uri(const Raul::URI& uri) { _uri = uri; }
-	virtual const Raul::URI uri()  const { return _uri.str(); }
+	virtual void             set_uri(const Raul::URI& uri) { _uri = uri; }
+	virtual const Raul::URI& uri()  const { return _uri; }
 
 	const Properties& properties() const { return _properties; }
 	Properties&       properties()       { return _properties; }

@@ -30,16 +30,49 @@ namespace Ingen {
 namespace Shared {
 
 
+LV2URIMap::Quark::Quark(const char* c_str)
+	: Raul::URI(c_str)
+	, id(g_quark_from_string(c_str))
+{
+}
+
+
 LV2URIMap::LV2URIMap()
-	: object_class_bool(uri_to_id(NULL, LV2_OBJECT_URI "#Bool"))
-	, object_class_string(uri_to_id(NULL, LV2_OBJECT_URI "#String"))
-	, object_class_int32(uri_to_id(NULL, LV2_OBJECT_URI "#Int32"))
-	, object_class_float32(uri_to_id(NULL, LV2_OBJECT_URI "#Float32"))
-	, object_class_vector(uri_to_id(NULL, LV2_OBJECT_URI "#Vector"))
-	, ui_format_events(uri_to_id(NULL, "http://lv2plug.in/ns/extensions/ui#Events"))
-	, midi_event(uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent"))
-	, string_transfer(uri_to_id(NULL, "http://lv2plug.in/ns/dev/string-port#StringTransfer"))
-	, object_transfer(uri_to_id(NULL, LV2_OBJECT_URI "#ObjectTransfer"))
+	: ctx_context("ctx:context")
+	, ctx_AudioContext("ctx:AudioContext")
+	, ctx_MessageContext("ctx:MessageContext")
+	, doap_name("doap:name")
+	, ingen_LADSPAPlugin("ingen:LADSPAPlugin")
+	, ingen_Internal("ingen:Internal")
+	, ingen_Node("ingen:Node")
+	, ingen_Patch("ingen:Patch")
+	, ingen_Port("ingen:Port")
+	, ingen_broadcast("ingen:broadcast")
+	, ingen_enabled("ingen:enabled")
+	, ingen_polyphonic("ingen:polyphonic")
+	, ingen_polyphony("ingen:polyphony")
+	, ingen_selected("ingen:selected")
+	, ingen_value("ingen:value")
+	, ingenui_canvas_x("ingenui:canvas-x")
+	, ingenui_canvas_y("ingenui:canvas-y")
+	, lv2_Plugin("lv2:Plugin")
+	, lv2_index("lv2:index")
+	, lv2_maximum("lv2:maximum")
+	, lv2_minimum("lv2:minimum")
+	, lv2_name("lv2:name")
+	, lv2_symbol("lv2:symbol")
+	, lv2_toggled("lv2:toggled")
+	, midi_event("http://lv2plug.in/ns/ext/midi#MidiEvent")
+	, object_class_bool(LV2_OBJECT_URI "#Bool")
+	, object_class_float32(LV2_OBJECT_URI "#Float32")
+	, object_class_int32(LV2_OBJECT_URI "#Int32")
+	, object_class_string(LV2_OBJECT_URI "#String")
+	, object_class_vector(LV2_OBJECT_URI "#Vector")
+	, object_transfer(LV2_OBJECT_URI "#ObjectTransfer")
+	, rdf_instanceOf("rdf:instanceOf")
+	, rdf_type("rdf:type")
+	, string_transfer("http://lv2plug.in/ns/dev/string-port#StringTransfer")
+	, ui_format_events("http://lv2plug.in/ns/extensions/ui#Events")
 {
 	uri_map_feature_data.uri_to_id = &LV2URIMap::uri_map_uri_to_id;
 	uri_map_feature_data.callback_data = this;

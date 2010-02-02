@@ -80,7 +80,7 @@ Delete::pre_process()
 
 	if (_node && !_path.is_root()) {
 		assert(_node->parent_patch());
-		_patch_node_listnode = _node->parent_patch()->remove_node(_path.name());
+		_patch_node_listnode = _node->parent_patch()->remove_node(_path.symbol());
 		if (_patch_node_listnode) {
 			assert(_patch_node_listnode->elem() == _node.get());
 
@@ -101,7 +101,7 @@ Delete::pre_process()
 		}
 	} else if (_port) {
 		assert(_port->parent_patch());
-		_patch_port_listnode = _port->parent_patch()->remove_port(_path.name());
+		_patch_port_listnode = _port->parent_patch()->remove_port(_path.symbol());
 		if (_patch_port_listnode) {
 			assert(_patch_port_listnode->elem() == _port.get());
 

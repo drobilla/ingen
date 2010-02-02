@@ -45,6 +45,7 @@
 #include "interface/Port.hpp"
 #include "interface/Connection.hpp"
 #include "shared/ResourceImpl.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "Serialiser.hpp"
 
 #define LOG(s) s << "[Serialiser] "
@@ -65,7 +66,7 @@ namespace Serialisation {
 Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
 	: _root_path("/")
 	, _store(store)
-	, _world(*world.rdf_world)
+	, _world(world)
 {
 }
 
@@ -176,7 +177,7 @@ Serialiser::start_to_filename(const string& filename)
 		_base_uri = "file://" + filename;
 	else
 		_base_uri = filename;
-	_model = new Redland::Model(_world);
+	_model = new Redland::Model(*_world.rdf_world);
     _model->set_base_uri(_base_uri);
 	_mode = TO_FILE;
 }
@@ -199,7 +200,7 @@ Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 
 	_root_path = root;
 	_base_uri = base_uri;
-	_model = new Redland::Model(_world);
+	_model = new Redland::Model(*_world.rdf_world);
     _model->set_base_uri(base_uri);
 	_mode = TO_STRING;
 }
@@ -314,7 +315,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 	// Otherwise take the one from our path (if possible)
 	} else if (!patch->path().is_root()) {
 		_model->add_statement(patch_id, "lv2:symbol",
-				Redland::Literal(_model->world(), patch->path().name()));
+				Redland::Literal(_model->world(), patch->path().symbol()));
 	} else {
 		LOG(warn) << "Patch has no lv2:symbol" << endl;
 	}
@@ -354,7 +355,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 
 		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
 		if (p->properties().find("lv2:name") == p->properties().end())
-			p->set_property("lv2:name", Atom(Atom::STRING, p->symbol()));
+			p->set_property("lv2:name", Atom(p->symbol().c_str()));
 
 		_model->add_statement(patch_id, "lv2:port", port_id);
 		serialise_port_meta(p, port_id);
@@ -390,7 +391,7 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node,
 	_model->add_statement(node_id, "rdf:instanceOf",
 			class_id);
 	_model->add_statement(node_id, "lv2:symbol",
-			Redland::Literal(_model->world(), node->path().name()));
+			Redland::Literal(_model->world(), node->path().symbol()));
 
 	serialise_properties(node_id, &node->meta(), node->properties());
 
@@ -476,7 +477,7 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 		? instance_rdf_node(connection->dst_port_path())
 		: class_rdf_node(connection->dst_port_path());
 
-	const Redland::Node connection_node = _world.blank_id();
+	const Redland::Node connection_node = _world.rdf_world->blank_id();
 	_model->add_statement(connection_node, "ingen:source", src_node);
 	_model->add_statement(connection_node, "ingen:destination", dst_node);
 	if (parent) {

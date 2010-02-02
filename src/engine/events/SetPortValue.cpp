@@ -126,7 +126,7 @@ SetPortValue::pre_process()
 
 	if (_port) {
 		_port->set_value(_value);
-		_port->set_property("ingen:value", _value);
+		_port->set_property(_engine.world()->uris->ingen_value, _value);
 	}
 
 	QueuedEvent::pre_process();
@@ -181,8 +181,7 @@ SetPortValue::apply(Context& context)
 			return;
 		}
 
-		SharedPtr<LV2URIMap> map = PtrCast<LV2URIMap>(
-				_engine.world()->lv2_features->feature(LV2_URI_MAP_URI));
+		SharedPtr<LV2URIMap> uris = _engine.world()->uris;
 
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
 		if (ebuf) {
@@ -190,14 +189,14 @@ SetPortValue::apply(Context& context)
 
 			// Size 0 event, pass it along to the plugin as a typed but empty event
 			if (_value.data_size() == 0) {
-				const uint32_t type_id = map->uri_to_id(NULL, _value.get_blob_type());
+				const uint32_t type_id = uris->uri_to_id(NULL, _value.get_blob_type());
 				ebuf->append(frames, 0, type_id, 0, NULL);
 				_port->raise_set_by_user_flag();
 				return;
 
 			} else if (!strcmp(_value.get_blob_type(), "lv2midi:MidiEvent")) {
 				ebuf->prepare_write(context);
-				ebuf->append(frames, 0, map->midi_event, _value.data_size(),
+				ebuf->append(frames, 0, uris->midi_event.id, _value.data_size(),
 						(const uint8_t*)_value.get_blob());
 				_port->raise_set_by_user_flag();
 				return;
@@ -231,7 +230,8 @@ SetPortValue::post_process()
 		assert(_port != NULL);
 		_responder->respond_ok();
 		if (_omni)
-			_engine.broadcaster()->set_property(_port_path, "ingen:value", _value);
+			_engine.broadcaster()->set_property(_port_path,
+					_engine.world()->uris->ingen_value, _value);
 		else
 			_engine.broadcaster()->set_voice_value(_port_path, _voice_num, _value);
 		break;

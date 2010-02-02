@@ -90,7 +90,7 @@ CreateNode::pre_process()
 
 	if (_patch && _plugin) {
 
-		_node = _plugin->instantiate(*_engine.buffer_factory(), _path.name(), _polyphonic, _patch, _engine);
+		_node = _plugin->instantiate(*_engine.buffer_factory(), _path.symbol(), _polyphonic, _patch, _engine);
 
 		if (_node != NULL) {
 			_node->properties().insert(_properties.begin(), _properties.end());

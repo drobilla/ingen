@@ -26,6 +26,7 @@
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "Parser.hpp"
 
 #define LOG(s) s << "[Parser] "
@@ -208,7 +209,7 @@ Parser::parse_update(
 		const string obj_path = (*i)["path"].to_string();
 		const Redland::Node& val_node = (*i)["value"];
 		const Atom a(AtomRDF::node_to_atom(val_node));
-		target->set_property(obj_path, "ingen:value", a);
+		target->set_property(obj_path, world->uris->ingen_value, a);
 	}
 
 	return parse(world, target, model, base_uri, data_path, parent, symbol, data);
@@ -279,8 +280,8 @@ Parser::parse(
 			}
 
 			string path = (parent && symbol)
-					? parent->base() + *symbol
-					: (parent ? parent->base() : "/") + path_str.substr(path_str.find("/")+1);
+				? parent->child(*symbol).str()
+				: (parent ? *parent : Path("/")).child(path_str.substr(path_str.find("/")+1)).str();
 
 			if (!Path::is_valid(path)) {
 				LOG(warn) << "Invalid path '" << path << "' transformed to /" << endl;
@@ -307,7 +308,7 @@ Parser::parse(
 			string subject_str = subject.to_string();
 			if (URI::is_valid(subject_str)) {
 				if (subject == document_uri)
-					subject_str = Path::root_uri;
+					subject_str = Path::root.str();
 				parse_properties(world, target, model, subject, subject_str);
 			}
 		}
@@ -364,7 +365,7 @@ Parser::parse_patch(
 
 	string symbol;
 	if (a_symbol) {
-		symbol = *a_symbol;
+		symbol = a_symbol->c_str();
 	} else { // Guess symbol from base URI (filename) if we need to
 		symbol = base_uri.substr(base_uri.find_last_of("/") + 1);
 		symbol = symbol.substr(0, symbol.find("."));
@@ -470,7 +471,7 @@ Parser::parse_patch(
 		Resources::iterator res_i = resources.find(type_i->second);
 		if (res_i == resources.end())
 			continue;
-		parse_patch(world, target, model, res_i->second, patch_path, Symbol(node_path.name()));
+		parse_patch(world, target, model, res_i->second, patch_path, Symbol(node_path.symbol()));
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		target->put(node_path, i->second);
 	}
@@ -513,7 +514,7 @@ Parser::parse_patch(
 
 		const Path   node_path(relative_uri(base_uri, node_uri, true));
 		const Symbol port_sym  = port_uri.substr(node_uri.length() + 1);
-		const Path   port_path = node_path.base() + port_sym;
+		const Path   port_path = node_path.child(port_sym);
 		const string key       = world->rdf_world->qualify((*i)["key"].to_string());
 		p->second.insert(make_pair(key, AtomRDF::node_to_atom((*i)["val"])));
 	}

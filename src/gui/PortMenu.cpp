@@ -18,6 +18,7 @@
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PortModel.hpp"
 #include "App.hpp"
@@ -98,27 +99,29 @@ PortMenu::on_menu_disconnect()
 void
 PortMenu::on_menu_set_min()
 {
+	const LV2URIMap&     uris  = App::instance().uris();
 	SharedPtr<PortModel> model = PtrCast<PortModel>(_object);
-	const Raul::Atom&    value = model->get_property("ingen:value");
-	std::cout << model->path() << " SET MIN " << value << std::endl;
+	const Raul::Atom&    value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		App::instance().engine()->set_property(_object->path(), "lv2:minimum", value);
+		App::instance().engine()->set_property(_object->path(), uris.lv2_minimum, value);
 }
 
 
 void
 PortMenu::on_menu_set_max()
 {
+	const LV2URIMap&     uris  = App::instance().uris();
 	SharedPtr<PortModel> model = PtrCast<PortModel>(_object);
-	const Raul::Atom&    value = model->get_property("ingen:value");
+	const Raul::Atom&    value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		App::instance().engine()->set_property(_object->path(), "lv2:maximum", value);
+		App::instance().engine()->set_property(_object->path(), uris.lv2_maximum, value);
 }
 
 
 void
 PortMenu::on_menu_reset_range()
 {
+	const LV2URIMap&     uris   = App::instance().uris();
 	SharedPtr<PortModel> model  = PtrCast<PortModel>(_object);
 	SharedPtr<NodeModel> parent = PtrCast<NodeModel>(_object->parent());
 
@@ -126,10 +129,10 @@ PortMenu::on_menu_reset_range()
 	parent->default_port_value_range(model, min, max);
 
 	if (!isnan(min))
-		App::instance().engine()->set_property(_object->path(), "lv2:minimum", min);
+		App::instance().engine()->set_property(_object->path(), uris.lv2_minimum, min);
 
 	if (!isnan(max))
-		App::instance().engine()->set_property(_object->path(), "lv2:maximum", max);
+		App::instance().engine()->set_property(_object->path(), uris.lv2_maximum, max);
 }
 
 

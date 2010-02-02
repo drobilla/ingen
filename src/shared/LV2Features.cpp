@@ -27,10 +27,7 @@ namespace Shared {
 
 
 LV2Features::LV2Features()
-//	: _lv2_features((LV2_Feature**)malloc(sizeof(LV2_Feature*)))
 {
-//	_lv2_features[0] = NULL;
-
 	add_feature(LV2_URI_MAP_URI, SharedPtr<Feature>(new LV2URIMap()));
 }
 

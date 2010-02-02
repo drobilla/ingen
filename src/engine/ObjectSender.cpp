@@ -17,6 +17,8 @@
 
 #include "ObjectSender.hpp"
 #include "interface/ClientInterface.hpp"
+#include "module/ingen_module.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
@@ -135,16 +137,18 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	if (graph_parent)
 		client->put(port->meta_uri(), port->meta().properties());
 
+	const Shared::LV2URIMap& map = *ingen_get_world()->uris.get();
+
 	client->put(port->path(), port->properties());
 
 	if (graph_parent && graph_parent->internal_polyphony() > 1)
-		client->set_property(port->meta_uri(), "ingen:polyphonic", bool(port->polyphonic()));
+		client->set_property(port->meta_uri(), map.ingen_polyphonic, bool(port->polyphonic()));
 
 	// Send control value
 	if (port->type() == PortType::CONTROL) {
 		//const Sample& value = PtrCast<const AudioBuffer>(port->buffer(0))->value_at(0);
 		const Sample& value = ((const AudioBuffer*)port->buffer(0).get())->value_at(0);
-		client->set_property(port->path(), "ingen:value", value);
+		client->set_property(port->path(), map.ingen_value, value);
 	}
 
 	if (bundle)

@@ -88,16 +88,13 @@ CreatePort::pre_process()
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());
 
-		size_t buffer_size = 1;
-		if (_type.str() != "ingen:Float")
-			buffer_size = _engine.driver()->buffer_size();
+		size_t buffer_size = _engine.driver()->buffer_size();
 
 		const uint32_t old_num_ports = _patch->num_ports();
 
-		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.name(), _data_type, buffer_size, _is_output);
+		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(), _data_type, buffer_size, _is_output);
 		if (_patch->parent())
-			_patch_port->set_property("rdf:instanceOf",
-					Atom(Atom::URI, _patch_port->meta_uri().str()));
+			_patch_port->set_property("rdf:instanceOf", _patch_port->meta_uri());
 
 		_patch_port->meta().properties().insert(_properties.begin(), _properties.end());
 

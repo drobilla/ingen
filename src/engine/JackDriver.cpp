@@ -194,9 +194,8 @@ JackDriver::JackDriver(Engine& engine)
 	, _process_context(engine)
 	, _root_patch(NULL)
 {
-	SharedPtr<Shared::LV2URIMap> map = PtrCast<Shared::LV2URIMap>(
-			_engine.world()->lv2_features->feature(LV2_URI_MAP_URI));
-	_midi_event_type = map->uri_to_id(NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
+	_midi_event_type = _engine.world()->uris->uri_to_id(
+			NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 }
 
 

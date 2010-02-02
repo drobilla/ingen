@@ -41,10 +41,11 @@ namespace GUI {
 class Port : public FlowCanvas::Port
 {
 public:
-	Port(boost::shared_ptr<FlowCanvas::Module> module,
-	     SharedPtr<PortModel>                  pm,
-	     const std::string&                    name,
-	     bool                                  flip=false);
+	static SharedPtr<Port> create(
+			boost::shared_ptr<FlowCanvas::Module> module,
+			SharedPtr<PortModel>                  pm,
+			bool                                  human_name,
+			bool                                  flip=false);
 
 	~Port();
 
@@ -60,6 +61,11 @@ public:
 	ArtVpathDash* dash();
 
 private:
+	Port(boost::shared_ptr<FlowCanvas::Module> module,
+	     SharedPtr<PortModel>                  pm,
+	     const std::string&                    name,
+	     bool                                  flip=false);
+
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 
 	bool on_event(GdkEvent* ev);

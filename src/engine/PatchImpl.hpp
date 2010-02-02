@@ -48,13 +48,13 @@ class ProcessContext;
 class PatchImpl : public NodeBase, public Ingen::Shared::Patch
 {
 public:
-	PatchImpl(Engine&            engine,
-	          const std::string& name,
-	          uint32_t           poly,
-	          PatchImpl*         parent,
-	          SampleRate         srate,
-	          size_t             buffer_size,
-	          uint32_t           local_poly);
+	PatchImpl(Engine&             engine,
+	          const Raul::Symbol& symbol,
+	          uint32_t            poly,
+	          PatchImpl*          parent,
+	          SampleRate          srate,
+	          size_t              buffer_size,
+	          uint32_t            local_poly);
 
 	virtual ~PatchImpl();
 
@@ -86,7 +86,7 @@ public:
 	typedef Raul::List<NodeImpl*> Nodes;
 
 	void         add_node(Nodes::Node* tn);
-	Nodes::Node* remove_node(const std::string& name);
+	Nodes::Node* remove_node(const Raul::Symbol& symbol);
 
 	Nodes&       nodes()       { return _nodes; }
 	Connections& connections() { return _connections; }

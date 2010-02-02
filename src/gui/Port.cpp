@@ -17,8 +17,9 @@
 
 #include <cassert>
 #include "raul/log.hpp"
-#include "interface/EngineInterface.hpp"
 #include "flowcanvas/Module.hpp"
+#include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PortModel.hpp"
 #include "App.hpp"
@@ -38,6 +39,29 @@ using namespace Shared;
 namespace GUI {
 
 ArtVpathDash* Port::_dash;
+
+
+SharedPtr<Port>
+Port::create(
+		boost::shared_ptr<FlowCanvas::Module> module,
+		SharedPtr<PortModel>                  pm,
+		bool                                  human_name,
+		bool                                  flip)
+{
+	Glib::ustring label(human_name ? "" : pm->path().symbol());
+	if (human_name) {
+		const Raul::Atom& name = pm->get_property("lv2:name");
+		if (name.type() == Raul::Atom::STRING) {
+			label = name.get_string();
+		} else {
+			const SharedPtr<const NodeModel> parent(PtrCast<const NodeModel>(pm->parent()));
+			if (parent && parent->plugin_model())
+				label = parent->plugin_model()->port_human_name(pm->index());
+		}
+	}
+	return SharedPtr<Port>(new Port(module, pm, label, flip));
+}
+
 
 /** @a flip Make an input port appear as an output port, and vice versa.
  */
@@ -117,7 +141,8 @@ Port::create_menu()
 void
 Port::moved()
 {
-	set_name(model()->path().name());
+	if (App::instance().configuration()->name_style() == Configuration::PATH)
+		set_name(model()->symbol().c_str());
 	module().lock()->resize();
 }
 
@@ -164,18 +189,22 @@ void
 Port::set_control(float value, bool signal)
 {
 	if (signal) {
+		App&                        app   = App::instance();
+		Ingen::Shared::World* const world = app.world();
 		if (model()->type() == PortType::CONTROL) {
-			App::instance().engine()->set_property(model()->path(), "ingen:value", Atom(value));
-			PatchWindow* pw = App::instance().window_factory()->patch_window(
+			app.engine()->set_property(model()->path(),
+					world->uris->ingen_value, Atom(value));
+			PatchWindow* pw = app.window_factory()->patch_window(
 					PtrCast<PatchModel>(model()->parent()));
 			if (!pw)
-				pw = App::instance().window_factory()->patch_window(
+				pw = app.window_factory()->patch_window(
 						PtrCast<PatchModel>(model()->parent()->parent()));
 			if (pw)
 				pw->show_port_status(model().get(), value);
 
 		} else if (model()->type() == PortType::EVENTS) {
-			App::instance().engine()->set_property(model()->path(), "ingen:value",
+			app.engine()->set_property(model()->path(),
+					world->uris->ingen_value,
 					Atom("<http://example.org/ev#BangEvent>", 0, NULL));
 		}
 	}
@@ -187,15 +216,16 @@ Port::set_control(float value, bool signal)
 void
 Port::property_changed(const URI& key, const Atom& value)
 {
+	const LV2URIMap& uris = App::instance().uris();
 	if (value.type() == Atom::FLOAT) {
-		if (key.str() == "ingen:value")
+		if (key == uris.ingen_value && !_pressed)
 			set_control(value.get_float(), false);
-		else if (key.str() == "lv2:minimum")
+		else if (key == uris.lv2_minimum)
 			set_control_min(value.get_float());
-		else if (key.str() == "lv2:maximum")
+		else if (key == uris.lv2_maximum)
 			set_control_max(value.get_float());
 	} else if (value.type() == Atom::BOOL) {
-		if ((key.str() == "lv2:toggled"))
+		if ((key == uris.lv2_toggled))
 			set_toggled(value.get_bool());
 	} else if (value.type() == Atom::URI) {
 		ArtVpathDash* dash = this->dash();

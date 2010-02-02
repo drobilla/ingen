@@ -22,6 +22,7 @@
 #include "flowcanvas/Canvas.hpp"
 #include "flowcanvas/Ellipse.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "shared/Builder.hpp"
 #include "shared/ClashAvoider.hpp"
 #include "serialisation/Serialiser.hpp"
@@ -651,12 +652,14 @@ PatchCanvas::paste()
 	ClientStore clipboard;
 	clipboard.set_plugins(App::instance().store()->plugins());
 
+	const LV2URIMap& uris = App::instance().uris();
+
 	// mkdir -p
 	string to_create = _patch->path().chop_scheme().substr(1);
 	string created = "/";
 	Resource::Properties props;
-	props.insert(make_pair("rdf:type",        Raul::Atom(Raul::Atom::URI, "ingen:Patch")));
-	props.insert(make_pair("ingen:polyphony", Raul::Atom(int32_t(_patch->poly()))));
+	props.insert(make_pair(uris.rdf_type,        uris.ingen_Patch));
+	props.insert(make_pair(uris.ingen_polyphony, Raul::Atom(int32_t(_patch->poly()))));
 	clipboard.put(Path(), props);
 	size_t first_slash;
 	while (to_create != "/" && to_create != ""
@@ -685,18 +688,18 @@ PatchCanvas::paste()
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
 		if (_patch->path().is_root() && i->first.is_root())
 			continue;
-		GraphObject::Properties::iterator x = i->second->properties().find("ingenui:canvas-x");
+		GraphObject::Properties::iterator x = i->second->properties().find(uris.ingenui_canvas_x);
 		if (x != i->second->properties().end())
 			x->second = x->second.get_float() + (20.0f * _paste_count);
-		GraphObject::Properties::iterator y = i->second->properties().find("ingenui:canvas-y");
+		GraphObject::Properties::iterator y = i->second->properties().find(uris.ingenui_canvas_y);
 		if (y != i->second->properties().end())
 			y->second = y->second.get_float() + (20.0f * _paste_count);
 		if (i->first.parent().is_root()) {
-			GraphObject::Properties::iterator s = i->second->properties().find("ingen:selected");
+			GraphObject::Properties::iterator s = i->second->properties().find(uris.ingen_selected);
 			if (s != i->second->properties().end())
 				s->second = true;
 			else
-				i->second->properties().insert(make_pair("ingen:selected", true));
+				i->second->properties().insert(make_pair(uris.ingen_selected, true));
 		}
 		builder.build(i->second);
 	}
@@ -737,18 +740,20 @@ PatchCanvas::generate_port_name(
 
 void
 PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
-		const string& type, bool is_output)
+		const Raul::URI& type, bool is_output)
 {
 	string sym, name;
 	generate_port_name(sym_base, sym, name_base, name);
 	const Path& path = _patch->path().base() + sym;
 
+	const LV2URIMap& uris = App::instance().uris();
+
 	Resource::Properties props = get_initial_data();
-	props.insert(make_pair("rdf:type", Atom(Atom::URI, type)));
-	props.insert(make_pair("rdf:type",
+	props.insert(make_pair(uris.rdf_type, type));
+	props.insert(make_pair(uris.rdf_type,
 			Atom(Atom::URI, is_output ? "lv2:OutputPort" : "lv2:InputPort")));
-	props.insert(make_pair("lv2:index", Atom(int32_t(_patch->num_ports()))));
-	props.insert(make_pair("lv2:name", Atom(name.c_str())));
+	props.insert(make_pair(uris.lv2_index, Atom(int32_t(_patch->num_ports()))));
+	props.insert(make_pair(uris.lv2_name, Atom(name.c_str())));
 	App::instance().engine()->put(path, props);
 }
 
@@ -760,19 +765,21 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	if (!plugin)
 		return;
 
-	string name = plugin->default_node_symbol();
-	unsigned offset = App::instance().store()->child_name_offset(_patch->path(), name);
+	Raul::Symbol symbol = plugin->default_node_symbol();
+	unsigned offset = App::instance().store()->child_name_offset(_patch->path(), symbol);
 	if (offset != 0) {
 		std::stringstream ss;
-		ss << name << "_" << offset;
-		name = ss.str();
+		ss << symbol << "_" << offset;
+		symbol = ss.str();
 	}
 
-	const Path path = _patch->path().base() + name;
+	const LV2URIMap& uris = App::instance().uris();
+
+	const Path path = _patch->path().child(symbol);
 	// FIXME: polyphony?
 	GraphObject::Properties props = get_initial_data();
-	props.insert(make_pair("rdf:type", Raul::Atom(Raul::Atom::URI, "ingen:Node")));
-	props.insert(make_pair("rdf:instanceOf", Raul::Atom(Raul::Atom::URI, plugin->uri().str())));
+	props.insert(make_pair(uris.rdf_type, uris.ingen_Node));
+	props.insert(make_pair(uris.rdf_instanceOf, plugin->uri()));
 	App::instance().engine()->put(path, props);
 }
 

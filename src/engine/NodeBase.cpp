@@ -33,8 +33,8 @@ using namespace std;
 namespace Ingen {
 
 
-NodeBase::NodeBase(PluginImpl* plugin, const string& name, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-	: NodeImpl(parent, name, polyphonic)
+NodeBase::NodeBase(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
+	: NodeImpl(parent, symbol, polyphonic)
 	, _plugin(plugin)
 	, _polyphony((polyphonic && parent) ? parent->internal_polyphony() : 1)
 	, _srate(srate)

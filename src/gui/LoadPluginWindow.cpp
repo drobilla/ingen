@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <ctype.h>
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
 #include "App.hpp"
@@ -324,6 +325,7 @@ LoadPluginWindow::generate_module_name(SharedPtr<PluginModel> plugin, int offset
 void
 LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 {
+	const LV2URIMap&       uris       = App::instance().uris();
 	Gtk::TreeModel::Row    row        = *iter;
 	SharedPtr<PluginModel> plugin     = row.get_value(_plugins_columns._col_plugin);
 	bool                   polyphonic = _polyphonic_checkbutton->get_active();
@@ -341,18 +343,18 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	} else {
 		Path path = _patch->path().base() + Path::nameify(name);
 		Resource::Properties props = _initial_data;
-		props.insert(make_pair("rdf:type",         Atom(Atom::URI, "ingen:Node")));
-		props.insert(make_pair("rdf:instanceOf",   Atom(Atom::URI, plugin->uri().str())));
-		props.insert(make_pair("ingen:polyphonic", polyphonic));
+		props.insert(make_pair(uris.rdf_type,         uris.ingen_Node));
+		props.insert(make_pair(uris.rdf_instanceOf,   plugin->uri()));
+		props.insert(make_pair(uris.ingen_polyphonic, polyphonic));
 		App::instance().engine()->put(path, props);
 
 		if (_selection->get_selected_rows().size() == 1)
 			_node_name_entry->set_text(generate_module_name(plugin, _plugin_name_offset + 1));
 
 		// Cascade next node
-		Atom& x = _initial_data.find("ingenui:canvas-x")->second;
+		Atom& x = _initial_data.find(uris.ingenui_canvas_x)->second;
 		x = Atom(x.get_float() + 20.0f);
-		Atom& y = _initial_data.find("ingenui:canvas-y")->second;
+		Atom& y = _initial_data.find(uris.ingenui_canvas_y)->second;
 		y = Atom(y.get_float() + 20.0f);
 	}
 }
@@ -445,7 +447,8 @@ LoadPluginWindow::plugin_property_changed(const URI&  plugin,
 	                                      const URI&  predicate,
 	                                      const Atom& value)
 {
-	if (predicate.str() == "doap:name") {
+	const LV2URIMap& uris = App::instance().uris();
+	if (predicate == uris.doap_name) {
 		Rows::const_iterator i = _rows.find(plugin);
 		if (i != _rows.end() && value.type() == Atom::STRING)
 			(*i->second)[_plugins_columns._col_name] = value.get_string();

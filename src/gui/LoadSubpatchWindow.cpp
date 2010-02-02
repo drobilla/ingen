@@ -20,6 +20,7 @@
 #include <cassert>
 #include <boost/optional.hpp>
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"
 #include "shared/runtime_paths.hpp"
@@ -158,18 +159,20 @@ LoadSubpatchWindow::ok_clicked()
 		symbol = Symbol::symbolify(name_str);
 	}
 
+	const LV2URIMap& uris = App::instance().uris();
+
 	if (_poly_from_user_radio->get_active()) {
-		_initial_data.insert(make_pair("ingen:polyphony", (int)_poly_spinbutton->get_value_as_int()));
+		_initial_data.insert(make_pair(uris.ingen_polyphony, (int)_poly_spinbutton->get_value_as_int()));
 	} else if (_poly_from_parent_radio->get_active()) {
-		_initial_data.insert(make_pair("ingen:polyphony", (int)_patch->poly()));
+		_initial_data.insert(make_pair(uris.ingen_polyphony, (int)_patch->poly()));
 	}
 
-	std::list<Glib::ustring> uris = get_uris();
-	for (std::list<Glib::ustring>::iterator i = uris.begin(); i != uris.end(); ++i) {
+	std::list<Glib::ustring> uri_list = get_uris();
+	for (std::list<Glib::ustring>::iterator i = uri_list.begin(); i != uri_list.end(); ++i) {
 		// Cascade
-		Atom& x = _initial_data.find("ingenui:canvas-x")->second;
+		Atom& x = _initial_data.find(uris.ingenui_canvas_x)->second;
 		x = Atom(x.get_float() + 20.0f);
-		Atom& y = _initial_data.find("ingenui:canvas-y")->second;
+		Atom& y = _initial_data.find(uris.ingenui_canvas_y)->second;
 		y = Atom(y.get_float() + 20.0f);
 
 		App::instance().loader()->load_patch(false, *i, Path("/"),

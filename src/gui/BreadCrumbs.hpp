@@ -80,7 +80,7 @@ private:
 
 		void set_path(const Raul::Path& path) {
 			remove();
-			const std::string text = (path.is_root()) ? "/" : path.name().c_str();
+			const char* text = (path.is_root()) ? "/" : path.symbol();
 			Gtk::Label* lab = manage(new Gtk::Label(text));
 			lab->set_padding(0, 0);
 			lab->show();

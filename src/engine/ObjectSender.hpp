@@ -18,8 +18,6 @@
 #ifndef INGEN_ENGINE_OBJECTSENDER_HPP
 #define INGEN_ENGINE_OBJECTSENDER_HPP
 
-#include <list>
-
 namespace Ingen {
 
 namespace Shared { class ClientInterface; }

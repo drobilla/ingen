@@ -17,6 +17,7 @@
 
 #include "App.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
 #include "NewSubpatchWindow.hpp"
@@ -91,17 +92,18 @@ NewSubpatchWindow::name_changed()
 void
 NewSubpatchWindow::ok_clicked()
 {
+	App&           app  = App::instance();
 	const Path     path = _patch->path().base() + Path::nameify(_name_entry->get_text());
 	const uint32_t poly = _poly_spinbutton->get_value_as_int();
 
 	Resource::Properties props;
-	props.insert(make_pair("rdf:type",        Atom(Atom::URI, "ingen:Patch")));
-	props.insert(make_pair("ingen:polyphony", Atom(int32_t(poly))));
-	App::instance().engine()->put(ResourceImpl::meta_uri(path), props);
+	props.insert(make_pair(app.uris().rdf_type,        app.uris().ingen_Patch));
+	props.insert(make_pair(app.uris().ingen_polyphony, Atom(int32_t(poly))));
+	app.engine()->put(ResourceImpl::meta_uri(path), props);
 
 	props = _initial_data;
-	props.insert(make_pair("ingen:enabled", bool(true)));
-	App::instance().engine()->put(path, props);
+	props.insert(make_pair(app.uris().ingen_enabled, bool(true)));
+	app.engine()->put(path, props);
 
 	hide();
 }

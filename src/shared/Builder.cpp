@@ -16,13 +16,16 @@
  */
 
 #include "raul/Atom.hpp"
-#include "Builder.hpp"
 #include "common/interface/CommonInterface.hpp"
 #include "common/interface/Patch.hpp"
 #include "common/interface/Node.hpp"
 #include "common/interface/Port.hpp"
 #include "common/interface/Connection.hpp"
 #include "common/interface/Plugin.hpp"
+#include "module/ingen_module.hpp"
+#include "module/World.hpp"
+#include "shared/LV2URIMap.hpp"
+#include "Builder.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -40,12 +43,13 @@ Builder::Builder(CommonInterface& interface)
 void
 Builder::build(SharedPtr<const GraphObject> object)
 {
+	const LV2URIMap& uris = *ingen_get_world()->uris.get();
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (!object->path().is_root()) {
 			Resource::Properties props;
-			props.insert(make_pair("rdf:type",        Atom(Atom::URI, "ingen:Patch")));
-			props.insert(make_pair("ingen:polyphony", Atom(int32_t(patch->internal_polyphony()))));
+			props.insert(make_pair(uris.rdf_type,        uris.ingen_Patch));
+			props.insert(make_pair(uris.ingen_polyphony, Atom(int32_t(patch->internal_polyphony()))));
 			_interface.put(object->path(), props);
 		}
 
@@ -60,8 +64,8 @@ Builder::build(SharedPtr<const GraphObject> object)
 	SharedPtr<const Node> node = PtrCast<const Node>(object);
 	if (node) {
 		Resource::Properties props;
-		props.insert(make_pair("rdf:type",       Atom(Atom::URI, "ingen:Node")));
-		props.insert(make_pair("rdf:instanceOf", Atom(Atom::URI, node->plugin()->uri().str())));
+		props.insert(make_pair(uris.rdf_type,       uris.ingen_Node));
+		props.insert(make_pair(uris.rdf_instanceOf, node->plugin()->uri()));
 		_interface.put(node->path(), props);
 		build_object(object);
 		return;

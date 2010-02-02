@@ -40,6 +40,7 @@ namespace Shared {
 class EngineInterface;
 class Store;
 class LV2Features;
+class LV2URIMap;
 
 
 /** The "world" all Ingen modules may share.
@@ -72,6 +73,8 @@ struct World {
 	Redland::World*      rdf_world;
     SLV2World            slv2_world;
 	LV2Features*         lv2_features;
+
+	boost::shared_ptr<LV2URIMap> uris;
 
     boost::shared_ptr<EngineInterface>           engine;
     boost::shared_ptr<Engine>                    local_engine;

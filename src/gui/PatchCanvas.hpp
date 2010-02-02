@@ -93,7 +93,7 @@ private:
 
 	void menu_add_port(
 			const string& sym_base, const string& name_base,
-			const string& type, bool is_output);
+			const Raul::URI& type, bool is_output);
 
 	void menu_load_plugin();
 	void menu_new_patch();

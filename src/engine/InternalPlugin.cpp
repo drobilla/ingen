@@ -16,12 +16,14 @@
  */
 
 #include <cassert>
-#include "InternalPlugin.hpp"
+#include "module/ingen_module.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
 #include "internals/Controller.hpp"
-#include "Engine.hpp"
 #include "Driver.hpp"
+#include "Engine.hpp"
+#include "InternalPlugin.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -34,7 +36,8 @@ InternalPlugin::InternalPlugin(const std::string& uri, const std::string& symbol
 	: PluginImpl(Plugin::Internal, uri)
 	, _symbol(symbol)
 {
-	set_property("rdf:type", Atom(Atom::URI, "ingen:Internal"));
+	const LV2URIMap& uris = *ingen_get_world()->uris.get();
+	set_property(uris.rdf_type, uris.ingen_Internal);
 }
 
 

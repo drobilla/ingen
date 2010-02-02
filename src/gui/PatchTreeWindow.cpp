@@ -18,6 +18,7 @@
 #include "raul/log.hpp"
 #include "raul/Path.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
@@ -93,7 +94,7 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		if (pm->path().is_root()) {
 			row[_patch_tree_columns.name_col] = App::instance().engine()->uri().str();
 		} else {
-			row[_patch_tree_columns.name_col] = pm->path().name();
+			row[_patch_tree_columns.name_col] = pm->symbol().c_str();
 		}
 		row[_patch_tree_columns.enabled_col] = pm->enabled();
 		row[_patch_tree_columns.patch_model_col] = pm;
@@ -105,7 +106,7 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		if (c != children.end()) {
 			Gtk::TreeModel::iterator iter = _patch_treestore->append(c->children());
 			Gtk::TreeModel::Row row = *iter;
-			row[_patch_tree_columns.name_col] = pm->path().name();
+			row[_patch_tree_columns.name_col] = pm->symbol().c_str();
 			row[_patch_tree_columns.enabled_col] = pm->enabled();
 			row[_patch_tree_columns.patch_model_col] = pm;
 			_patches_treeview->expand_row(_patch_treestore->get_path(iter), true);
@@ -191,7 +192,8 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	assert(pm);
 
 	if (_enable_signal)
-		App::instance().engine()->set_property(pm->path(), "ingen:enabled", (bool)!pm->enabled());
+		App::instance().engine()->set_property(pm->path(),
+				App::instance().uris().ingen_enabled, (bool)!pm->enabled());
 }
 
 
@@ -199,8 +201,9 @@ void
 PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
 		SharedPtr<PatchModel> patch)
 {
+	const LV2URIMap& uris = App::instance().uris();
 	_enable_signal = false;
-	if (key.str() == "ingen:enabled" && value.type() == Atom::BOOL) {
+	if (key == uris.ingen_enabled && value.type() == Atom::BOOL) {
 		Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), patch);
 		if (i != _patch_treestore->children().end()) {
 			Gtk::TreeModel::Row row = *i;
@@ -223,7 +226,7 @@ PatchTreeWindow::patch_moved(SharedPtr<PatchModel> patch)
 
 	if (i != _patch_treestore->children().end()) {
 		Gtk::TreeModel::Row row = *i;
-		row[_patch_tree_columns.name_col] = patch->path().name();
+		row[_patch_tree_columns.name_col] = patch->symbol().c_str();
 	} else {
 		LOG(error) << "Unable to find patch " << patch->path() << endl;
 	}

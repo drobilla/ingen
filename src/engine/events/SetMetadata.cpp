@@ -19,6 +19,7 @@
 #include <boost/format.hpp>
 #include "raul/log.hpp"
 #include "interface/PortType.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "ClientBroadcaster.hpp"
 #include "CreateNode.hpp"
 #include "CreatePatch.hpp"
@@ -92,6 +93,8 @@ SetMetadata::pre_process()
 		return;
 	}
 
+	const LV2URIMap& uris = *_engine.world()->uris.get();
+
 	if (is_graph_object && !_object) {
 		Path path(_subject.str());
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
@@ -99,13 +102,13 @@ SetMetadata::pre_process()
 		ResourceImpl::type(_properties, is_patch, is_node, is_port, is_output, data_type);
 		if (is_patch) {
 			uint32_t poly = 1;
-			iterator p = _properties.find("ingen:polyphony");
+			iterator p = _properties.find(uris.ingen_polyphony);
 			if (p != _properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
 				poly = p->second.get_int32();
 			_create_event = new CreatePatch(_engine, _responder, _time,
 					path, poly, _properties);
 		} else if (is_node) {
-			const iterator p = _properties.find("rdf:instanceOf");
+			const iterator p = _properties.find(uris.rdf_instanceOf);
 			_create_event = new CreateNode(_engine, _responder, _time,
 					path, p->second.get_uri(), true, _properties);
 		} else if (is_port) {
@@ -143,10 +146,13 @@ SetMetadata::pre_process()
 
 			_patch = dynamic_cast<PatchImpl*>(_object);
 
-			if (key.str() == "ingen:broadcast") {
-				op = ENABLE_BROADCAST;
+			if (key == uris.ingen_broadcast) {
+				if (value.type() == Atom::BOOL)
+					op = ENABLE_BROADCAST;
+				else
+					_error = BAD_VALUE_TYPE;
 			} else if (_patch) {
-				if (key.str() == "ingen:enabled") {
+				if (key == uris.ingen_enabled) {
 					if (value.type() == Atom::BOOL) {
 						op = ENABLE;
 						if (value.get_bool() && !_patch->compiled_patch())
@@ -154,13 +160,13 @@ SetMetadata::pre_process()
 					} else {
 						_error = BAD_VALUE_TYPE;
 					}
-				} else if (key.str() == "ingen:polyphonic") {
+				} else if (key == uris.ingen_polyphonic) {
 					if (value.type() == Atom::BOOL) {
 						op = POLYPHONIC;
 					} else {
 						_error = BAD_VALUE_TYPE;
 					}
-				} else if (key.str() == "ingen:polyphony") {
+				} else if (key == uris.ingen_polyphony) {
 					if (value.type() == Atom::INT) {
 						op = POLYPHONY;
 						_patch->prepare_internal_poly(*_engine.buffer_factory(), value.get_int32());
@@ -168,7 +174,7 @@ SetMetadata::pre_process()
 						_error = BAD_VALUE_TYPE;
 					}
 				}
-			} else if (key.str() == "ingen:value") {
+			} else if (key == uris.ingen_value) {
 				PortImpl* port = dynamic_cast<PortImpl*>(_object);
 				if (port) {
 					SetPortValue* ev = new SetPortValue(_engine, _responder, _time, port, value);
@@ -263,17 +269,17 @@ SetMetadata::post_process()
 		break;
 	case NOT_FOUND:
 		_responder->respond_error((boost::format(
-				"Unable to find object '%1%'") % _subject).str());
+				"Unable to find object `%1%'") % _subject).str());
 	case INTERNAL:
 		_responder->respond_error("Internal error");
 		break;
 	case BAD_OBJECT_TYPE:
 		_responder->respond_error((boost::format(
-				"Bad type for object '%1%'") % _subject).str());
+				"Bad type for object `%1%'") % _subject).str());
 		break;
 	case BAD_VALUE_TYPE:
 		_responder->respond_error((boost::format(
-				"Bad metadata value type for subject '%1%' predicate '%2%")
+				"Bad metadata value type for subject `%1%' predicate `%2%'")
 					% _subject % _error_predicate).str());
 		break;
 	}

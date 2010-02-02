@@ -18,16 +18,10 @@
 #ifndef INGEN_SHARED_LV2URIMAP_HPP
 #define INGEN_SHARED_LV2URIMAP_HPP
 
-#include "ingen-config.h"
-#ifndef HAVE_SLV2
-#error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."
-#endif
-
-#include <map>
-#include <string>
 #include <boost/utility.hpp>
-#include "slv2/slv2.h"
+#include <raul/URI.hpp>
 #include "uri-map.lv2/uri-map.h"
+#include "ingen-config.h"
 #include "LV2Features.hpp"
 
 namespace Ingen {
@@ -55,15 +49,46 @@ private:
 	LV2_URI_Map_Feature uri_map_feature_data;
 
 public:
-	const uint32_t object_class_bool;
-	const uint32_t object_class_string;
-	const uint32_t object_class_int32;
-	const uint32_t object_class_float32;
-	const uint32_t object_class_vector;
-	const uint32_t ui_format_events;
-	const uint32_t midi_event;
-	const uint32_t string_transfer;
-	const uint32_t object_transfer;
+	struct Quark : public Raul::URI {
+		Quark(const char* str);
+		uint32_t id;
+	};
+
+	const Quark ctx_context;
+	const Quark ctx_AudioContext;
+	const Quark ctx_MessageContext;
+	const Quark doap_name;
+	const Quark ingen_LADSPAPlugin;
+	const Quark ingen_Internal;
+	const Quark ingen_Node;
+	const Quark ingen_Patch;
+	const Quark ingen_Port;
+	const Quark ingen_broadcast;
+	const Quark ingen_enabled;
+	const Quark ingen_polyphonic;
+	const Quark ingen_polyphony;
+	const Quark ingen_selected;
+	const Quark ingen_value;
+	const Quark ingenui_canvas_x;
+	const Quark ingenui_canvas_y;
+	const Quark lv2_Plugin;
+	const Quark lv2_index;
+	const Quark lv2_maximum;
+	const Quark lv2_minimum;
+	const Quark lv2_name;
+	const Quark lv2_symbol;
+	const Quark lv2_toggled;
+	const Quark midi_event;
+	const Quark object_class_bool;
+	const Quark object_class_float32;
+	const Quark object_class_int32;
+	const Quark object_class_string;
+	const Quark object_class_vector;
+	const Quark object_transfer;
+	const Quark rdf_instanceOf;
+	const Quark rdf_type;
+	const Quark string_transfer;
+	const Quark ui_format_events;
 };
 
 

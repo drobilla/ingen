@@ -193,7 +193,7 @@ main(int argc, char** argv)
 				const Path p(path_option.get_string());
 				if (!p.is_root()) {
 					parent = p.parent();
-					symbol = p.name();
+					symbol = p.symbol();
 				}
 			} else {
 				cerr << "Invalid path given: '" << path_option << endl;

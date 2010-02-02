@@ -18,6 +18,7 @@
 #include <cassert>
 #include <string>
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PluginModel.hpp"
 #include "App.hpp"
@@ -94,12 +95,13 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 void
 PortPropertiesWindow::property_change(const URI& key, const Atom& value)
 {
+	const Shared::LV2URIMap& uris = App::instance().uris();
 	//_enable_signal = false;
 
 	if (value.type() == Atom::FLOAT) {
-		if (key.str() == "lv2:minimum")
+		if (key == uris.lv2_minimum)
 			_min_spinner->set_value(value.get_float());
-		else if (key.str() == "lv2:maximum")
+		else if (key == uris.lv2_maximum)
 			_max_spinner->set_value(value.get_float());
 	}
 
@@ -155,9 +157,10 @@ PortPropertiesWindow::cancel()
 void
 PortPropertiesWindow::ok()
 {
+	const Shared::LV2URIMap& uris = App::instance().uris();
 	Shared::Resource::Properties props;
-	props.insert(make_pair("lv2:minimum", float(_min_spinner->get_value())));
-	props.insert(make_pair("lv2:maximum", float(_max_spinner->get_value())));
+	props.insert(make_pair(uris.lv2_minimum, float(_min_spinner->get_value())));
+	props.insert(make_pair(uris.lv2_maximum, float(_max_spinner->get_value())));
 	App::instance().engine()->put(_port_model->meta().uri(), props);
 	hide();
 }

@@ -112,7 +112,7 @@ private:
 	SharedPtr<Shared::Store> _store;
 	Mode                     _mode;
 	std::string              _base_uri;
-	Redland::World&          _world;
+	Shared::World&           _world;
 	Redland::Model*          _model;
 
 #ifdef USE_BLANK_NODES

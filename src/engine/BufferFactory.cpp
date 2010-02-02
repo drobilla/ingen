@@ -88,15 +88,15 @@ BufferFactory::create(Shared::PortType type, size_t size)
 		if (size == 0)
 			size = sizeof(LV2_Object) + sizeof(float);
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
-		ret->object()->type = _map->object_class_vector;
-		((LV2_Vector_Body*)ret->object()->body)->elem_type = _map->object_class_float32;
+		ret->object()->type = _map->object_class_vector.id;
+		((LV2_Vector_Body*)ret->object()->body)->elem_type = _map->object_class_float32.id;
 		buffer = ret;
 	} else if (type.is_audio()) {
 		if (size == 0)
 			size = sizeof(LV2_Object) + sizeof(LV2_Vector_Body)
 				+ _engine.driver()->buffer_size() * sizeof(float);
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
-		ret->object()->type = _map->object_class_float32;
+		ret->object()->type = _map->object_class_float32.id;
 		buffer = ret;
 	} else if (type.is_events()) {
 		if (size == 0)
