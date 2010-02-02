@@ -339,7 +339,8 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 				list<ControlModel>::const_iterator i = pm->controls().begin();
 				for ( ; i != pm->controls().end(); ++i) {
 					const float value = i->value();
-					_engine->set_port_value(translate_load_path(i->port_path().str()), Atom(value));
+					_engine->set_property(translate_load_path(i->port_path().str()),
+							"ingen:value", Atom(value));
 				}
 			} else {
 				LOG(warn) << "Unknown preset `" << pm->name() << "'" << endl;

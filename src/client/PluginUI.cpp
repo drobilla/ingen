@@ -64,7 +64,7 @@ lv2_ui_write(LV2UI_Controller controller,
 		if (*(float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
 
-		ui->world()->engine->set_port_value(port->path(), Atom(*(float*)buffer));
+		ui->world()->engine->set_property(port->path(), "ingen:value", Atom(*(float*)buffer));
 
 	} else if (format == map->ui_format_events) {
 		LV2_Event_Buffer*  buf = (LV2_Event_Buffer*)buffer;
@@ -75,7 +75,7 @@ lv2_ui_write(LV2UI_Controller controller,
 			LV2_Event* const ev = lv2_event_get(&iter, &data);
 			if (ev->type == map->midi_event) {
 				// FIXME: bundle multiple events by writing an entire buffer here
-				ui->world()->engine->set_port_value(port->path(),
+				ui->world()->engine->set_property(port->path(), "ingen:value",
 					Atom("lv2midi:MidiEvent", ev->size, data));
 			} else {
 				warn << "Unable to send event type " << ev->type <<
@@ -89,7 +89,7 @@ lv2_ui_write(LV2UI_Controller controller,
 		LV2_Object* buf = (LV2_Object*)buffer;
 		Raul::Atom val;
 		Shared::LV2Object::to_atom(ui->world(), buf, val);
-		ui->world()->engine->set_port_value(port->path(), val);
+		ui->world()->engine->set_property(port->path(), "ingen:value", val);
 
 	} else {
 		warn << "Unknown value format " << format

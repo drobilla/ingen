@@ -185,7 +185,7 @@ ControlPanel::value_changed_atom(SharedPtr<PortModel> port, const Raul::Atom& va
 {
 	if (_callback_enabled) {
 		if (_all_voices_radio->get_active()) {
-			App::instance().engine()->set_port_value(port->path(), val);
+			App::instance().engine()->set_property(port->path(), "ingen:value", val);
 			port->value(val);
 		} else {
 			int voice = _voice_spinbutton->get_value_as_int();

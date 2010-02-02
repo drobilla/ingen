@@ -113,7 +113,7 @@ RequestMetadata::post_process()
 		if (_special_type == PORT_VALUE) {
 			if (_resource) {
 				_responder->respond_ok();
-				_responder->client()->set_port_value(_uri.str(), _value);
+				_responder->client()->set_property(_uri.str(), "ingen:value", _value);
 			} else {
 				const string msg = "Get value for non-port " + _uri.str();
 				_responder->respond_error(msg);

@@ -96,7 +96,6 @@ private:
 	LO_HANDLER(connect);
 	LO_HANDLER(disconnect);
 	LO_HANDLER(disconnect_all);
-	LO_HANDLER(set_port_value);
 	LO_HANDLER(note_on);
 	LO_HANDLER(note_off);
 	LO_HANDLER(all_notes_off);

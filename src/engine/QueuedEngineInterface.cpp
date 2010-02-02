@@ -211,14 +211,6 @@ QueuedEngineInterface::disconnect_all(const Path& patch_path,
 
 
 void
-QueuedEngineInterface::set_port_value(const Path&       port_path,
-                                      const Raul::Atom& value)
-{
-	push_queued(new Events::SetPortValue(_engine, _responder, true, now(), port_path, value));
-}
-
-
-void
 QueuedEngineInterface::set_voice_value(const Path&       port_path,
                                        uint32_t          voice,
                                        const Raul::Atom& value)

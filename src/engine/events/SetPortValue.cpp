@@ -231,7 +231,7 @@ SetPortValue::post_process()
 		assert(_port != NULL);
 		_responder->respond_ok();
 		if (_omni)
-			_engine.broadcaster()->set_port_value(_port_path, _value);
+			_engine.broadcaster()->set_property(_port_path, "ingen:value", _value);
 		else
 			_engine.broadcaster()->set_voice_value(_port_path, _voice_num, _value);
 		break;
@@ -246,7 +246,7 @@ SetPortValue::post_process()
 		break;
 	case PORT_NOT_FOUND:
 		msg = "Unable to find port ";
-		msg.append(_port_path.str()).append(" for set_port_value");
+		msg.append(_port_path.str()).append(" to set value");
 		_responder->respond_error(msg);
 		break;
 	case NO_SPACE:

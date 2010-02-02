@@ -103,9 +103,6 @@ public:
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(property_change_slot, subject, key, value)); }
 
-	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
-		{ push_sig(sigc::bind(port_value_slot, port_path, value)); }
-
 	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
 		{ push_sig(sigc::bind(voice_value_slot, port_path, voice, value)); }
 

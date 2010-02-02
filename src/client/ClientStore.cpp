@@ -51,7 +51,6 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connect));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnect));
 	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::set_property));
-	emitter->signal_port_value.connect(sigc::mem_fun(this, &ClientStore::set_port_value));
 	emitter->signal_voice_value.connect(sigc::mem_fun(this, &ClientStore::set_voice_value));
 	emitter->signal_activity.connect(sigc::mem_fun(this, &ClientStore::activity));
 	emitter->signal_binding.connect(sigc::mem_fun(this, &ClientStore::binding));
@@ -349,17 +348,6 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 		else
 			LOG(warn) << "Property '" << predicate << "' for unknown object " << subject_uri << endl;
 	}
-}
-
-
-void
-ClientStore::set_port_value(const Path& port_path, const Atom& value)
-{
-	SharedPtr<PortModel> port = PtrCast<PortModel>(object(port_path));
-	if (port)
-		port->value(value);
-	else
-		LOG(error) << "Control change for non-existent port " << port_path << endl;
 }
 
 

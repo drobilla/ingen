@@ -59,6 +59,14 @@ public:
 
 	inline bool operator==(const PortModel& pm) const { return (_path == pm._path); }
 
+	Raul::Atom& set_property(const Raul::URI&  uri,
+	                         const Raul::Atom& value) {
+		Raul::Atom& ret = ObjectModel::set_property(uri, value);
+		if (uri.str() == "ingen:value")
+			this->value(value);
+		return ret;
+	}
+
 	inline void value(const Raul::Atom& val) {
 		if (val != _current_val) {
 			_current_val = val;

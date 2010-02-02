@@ -150,7 +150,6 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/new_port", "sisi", new_port_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_property", NULL, set_property_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/set_port_value", "sf", set_port_value_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/set_voice_value", "sif", set_voice_value_cb, this);
 	lo_server_thread_add_method(_st, "/ingen/activity", "s", activity_cb, this);
 }
@@ -232,18 +231,6 @@ OSCClientReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
 
 	_target->set_property(obj_uri, key, value);
-
-	return 0;
-}
-
-
-int
-OSCClientReceiver::_set_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* const port_path  = &argv[0]->s;
-	const float       value      =  argv[1]->f;
-
-	_target->set_port_value(port_path, value);
 
 	return 0;
 }

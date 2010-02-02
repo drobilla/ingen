@@ -145,7 +145,7 @@ NodeMenu::on_menu_randomize()
 			float min = 0.0f, max = 1.0f;
 			nm->port_value_range(*i, min, max);
 			const float val = ((rand() / (float)RAND_MAX) * (max - min) + min);
-			App::instance().engine()->set_port_value((*i)->path(), val);
+			App::instance().engine()->set_property((*i)->path(), "ingen:value", val);
 		}
 	}
 
@@ -176,8 +176,9 @@ NodeMenu::on_preset_activated(const std::string uri)
 	for (; !slv2_results_finished(values); slv2_results_next(values)) {
 		SLV2Value sym  = slv2_results_get_binding_value(values, 0);
 		SLV2Value val = slv2_results_get_binding_value(values, 1);
-		App::instance().engine()->set_port_value(
+		App::instance().engine()->set_property(
 				node->path().base() + slv2_value_as_string(sym),
+				"ingen:value",
 				slv2_value_as_float(val));
 	}
 	App::instance().engine()->bundle_end();

@@ -100,7 +100,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/ingen/connect", "iss", connect_cb, this);
 	lo_server_add_method(_server, "/ingen/disconnect", "iss", disconnect_cb, this);
 	lo_server_add_method(_server, "/ingen/disconnect_all", "iss", disconnect_all_cb, this);
-	lo_server_add_method(_server, "/ingen/set_port_value", NULL, set_port_value_cb, this);
 	lo_server_add_method(_server, "/ingen/note_on", "isii", note_on_cb, this);
 	lo_server_add_method(_server, "/ingen/note_off", "isi", note_off_cb, this);
 	lo_server_add_method(_server, "/ingen/all_notes_off", "isi", all_notes_off_cb, this);
@@ -496,56 +495,6 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 	const char* object_path = &argv[2]->s;
 
 	disconnect_all(patch_path, object_path);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
- * <h2>/ingen/set_port_value</h2>
- * \arg \b response-id (integer)
- * \arg \b port-path (string) - Name of port
- * \arg \b value (float) - Value to set port to.
- *
- * Set the value of a port for all voices.
- */
-int
-OSCEngineReceiver::_set_port_value_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	if (argc < 3 || argc > 5 || strncmp(types, "is", 2))
-		return 1;
-
-	const char* port_path = &argv[1]->s;
-
-	using Raul::Atom;
-
-	if (!strcmp(types, "isf")) { // float, all voices
-		const float value = argv[2]->f;
-		set_port_value(port_path, Atom(value));
-	} else if (!strcmp(types, "isif")) { // float, specific voice
-		const float value = argv[3]->f;
-		set_voice_value(port_path, argv[2]->i, Atom(value));
-	} else if (!strcmp(types, "issb")) { // blob (event), all voices
-		const char* type = &argv[2]->s;
-		lo_blob b = argv[3];
-		size_t data_size = lo_blob_datasize(b);
-		void* data = lo_blob_dataptr(b);
-		set_port_value(port_path, Atom(type, data_size, data));
-	} else if (!strcmp(types, "isisb")) { // blob (event), specific voice
-		const char* type = &argv[3]->s;
-		lo_blob b = argv[4];
-		size_t data_size = lo_blob_datasize(b);
-		void* data = lo_blob_dataptr(b);
-		set_voice_value(port_path, argv[2]->i, Atom(type, data_size, data));
-	} else if (!strcmp(types, "issN")) { // empty event (type only), all voices
-		const char* type = &argv[2]->s;
-		set_port_value(port_path, Atom(type, 0, NULL));
-	} else if (!strcmp(types, "isisN")) { // empty event (type only), specific voice
-		const char* type = &argv[3]->s;
-		set_voice_value(port_path, argv[2]->i, Atom(type, 0, NULL));
-	} else {
-		return 1;
-	}
-
 	return 0;
 }
 

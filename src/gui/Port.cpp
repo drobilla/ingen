@@ -165,7 +165,7 @@ Port::set_control(float value, bool signal)
 {
 	if (signal) {
 		if (model()->type() == PortType::CONTROL) {
-			App::instance().engine()->set_port_value(model()->path(), Atom(value));
+			App::instance().engine()->set_property(model()->path(), "ingen:value", Atom(value));
 			PatchWindow* pw = App::instance().window_factory()->patch_window(
 					PtrCast<PatchModel>(model()->parent()));
 			if (!pw)
@@ -175,7 +175,7 @@ Port::set_control(float value, bool signal)
 				pw->show_port_status(model().get(), value);
 
 		} else if (model()->type() == PortType::EVENTS) {
-			App::instance().engine()->set_port_value(model()->path(),
+			App::instance().engine()->set_property(model()->path(), "ingen:value",
 					Atom("<http://example.org/ev#BangEvent>", 0, NULL));
 		}
 	}

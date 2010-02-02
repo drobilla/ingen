@@ -115,17 +115,6 @@ HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& v
 
 
 void
-HTTPClientSender::set_port_value(const Path& port_path, const Atom& value)
-{
-	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
-	const string msg = string(
-			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
-			port_path.str()).append("> ingen:value ").append(node.to_string()).append(" .\n");
-	send_chunk(msg);
-}
-
-
-void
 HTTPClientSender::set_voice_value(const Path& port_path, uint32_t voice, const Atom& value)
 {
 	warn << "TODO: HTTP set voice value" << endl;

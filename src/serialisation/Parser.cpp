@@ -208,7 +208,7 @@ Parser::parse_update(
 		const string obj_path = (*i)["path"].to_string();
 		const Redland::Node& val_node = (*i)["value"];
 		const Atom a(AtomRDF::node_to_atom(val_node));
-		target->set_port_value(obj_path, a);
+		target->set_property(obj_path, "ingen:value", a);
 	}
 
 	return parse(world, target, model, base_uri, data_path, parent, symbol, data);

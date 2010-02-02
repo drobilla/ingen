@@ -107,9 +107,6 @@ protected:
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ EMIT(property_change, subject, key, value); }
 
-	void set_port_value(const Raul::Path& port_path, const Raul::Atom& value)
-		{ EMIT(port_value, port_path, value); }
-
 	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
 		{ EMIT(voice_value, port_path, voice, value); }
 

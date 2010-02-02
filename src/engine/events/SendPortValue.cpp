@@ -31,7 +31,7 @@ void
 SendPortValue::post_process()
 {
 	if (_omni) {
-		_engine.broadcaster()->set_port_value(_port->path(), _value);
+		_engine.broadcaster()->set_property(_port->path(), "ingen:value", _value);
 	} else {
 		_engine.broadcaster()->set_voice_value(_port->path(), _voice_num, _value);
 	}
