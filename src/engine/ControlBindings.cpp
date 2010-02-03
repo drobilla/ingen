@@ -109,16 +109,24 @@ ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type ty
 }
 
 
-void
+bool
 ControlBindings::bind(ProcessContext& context, Type type, int16_t num)
 {
+	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
 	assert(_learn_port);
+	if (type == MIDI_NOTE) {
+		bool toggled = _learn_port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
+		if (!toggled)
+			return false;
+	}
+
 	_bindings->insert(make_pair(Key(type, num), _learn_port));
 
 	const Events::SendBinding ev(context.engine(), context.start(), _learn_port, type, num);
 	context.event_sink().write(sizeof(ev), &ev);
 
 	_learn_port = NULL;
+	return true;
 }
 
 

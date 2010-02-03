@@ -76,7 +76,7 @@ private:
 	PortImpl*                    _learn_port;
 
 	void set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value);
-	void bind(ProcessContext& context, Type type, int16_t num=0);
+	bool bind(ProcessContext& context, Type type, int16_t num=0);
 
 	SharedPtr<Bindings> _bindings;
 };
