@@ -174,15 +174,12 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 	HTTPClientReceiver* me = (HTTPClientReceiver*)ptr;
 	const string path = soup_message_get_uri(msg)->path;
 
-	/*LOG(debug) << path << endl
-			<< msg->response_body->data << endl;*/
-
 	if (msg->response_body->data == NULL) {
 		LOG(error) << "Empty client message" << endl;
 		return;
 	}
 
-	if (path == Path::root.str()) {
+	if (path == "/") {
 		me->_target->response_ok(0);
 
 	} else if (path == "/plugins") {
