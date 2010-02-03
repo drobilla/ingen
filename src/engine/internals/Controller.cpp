@@ -61,7 +61,7 @@ ControllerNode::ControllerNode(BufferFactory& bufs,
 	_ports->at(1) = _param_port;
 
 	_log_port = new InputPort(bufs, this, "logarithmic", 2, 1, PortType::CONTROL, 0.0f, sizeof(Sample));
-	_log_port->set_property(uris.lv2_toggled, true);
+	_log_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_ports->at(2) = _log_port;
 
 	_min_port = new InputPort(bufs, this, "minimum", 3, 1, PortType::CONTROL, 0.0f, sizeof(Sample));

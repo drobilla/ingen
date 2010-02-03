@@ -69,8 +69,10 @@ void
 ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value)
 {
 	// TODO: cache these to avoid the lookup
-	float min = port->get_property(Shared::LV2URIMap::instance().lv2_minimum).get_float();
-	float max = port->get_property(Shared::LV2URIMap::instance().lv2_maximum).get_float();
+	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
+	float min = port->get_property(uris.lv2_minimum).get_float();
+	float max = port->get_property(uris.lv2_maximum).get_float();
+	bool toggled = port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
 
 	float normal;
 	switch (type) {
@@ -84,7 +86,11 @@ ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type ty
 		break;
 	}
 
-	Raul::Atom atom(static_cast<float>(normal * (max - min) + min));
+	float scaled_value = normal * (max - min) + min;
+	if (toggled)
+		scaled_value = (scaled_value < 0.5) ? 0.0 : 1.0;
+
+	Raul::Atom atom(scaled_value);
 	port->set_value(atom);
 
 	const Events::SendPortValue ev(context.engine(), context.start(), port, true, 0,

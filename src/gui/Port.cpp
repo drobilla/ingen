@@ -224,9 +224,9 @@ Port::property_changed(const URI& key, const Atom& value)
 			set_control_min(value.get_float());
 		else if (key == uris.lv2_maximum)
 			set_control_max(value.get_float());
-	} else if (value.type() == Atom::BOOL) {
-		if ((key == uris.lv2_toggled))
-			set_toggled(value.get_bool());
+	} else if (key == uris.lv2_portProperty) {
+		if (value == uris.lv2_toggled)
+			set_toggled(true);
 	} else if (value.type() == Atom::URI) {
 		ArtVpathDash* dash = this->dash();
 		_rect->property_dash() = dash;

@@ -88,6 +88,7 @@ public:
 	const Quark lv2_maximum;
 	const Quark lv2_minimum;
 	const Quark lv2_name;
+	const Quark lv2_portProperty;
 	const Quark lv2_symbol;
 	const Quark lv2_toggled;
 	const Quark lv2ev_EventPort;

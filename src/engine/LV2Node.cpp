@@ -198,6 +198,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 	SLV2Value min_size_pred = slv2_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/dev/resize-port#minimumSize");
 
+	SLV2Value port_property_pred = slv2_value_new_uri(info->lv2_world(),
+			"http://lv2plug.in/ns/lv2core#portProperty");
+
 	//SLV2Value as_large_as_pred = slv2_value_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/dev/resize-port#asLargeAs");
 
@@ -288,6 +291,16 @@ LV2Node::instantiate(BufferFactory& bufs)
 			if (!isnan(max_values[j])) {
 				port->meta().set_property(uris.lv2_maximum, max_values[j]);
 				port->set_property(uris.lv2_maximum, max_values[j]);
+			}
+		}
+
+		// Set lv2:portProperty properties
+		SLV2Values properties = slv2_port_get_value(plug, id, port_property_pred);
+		for (uint32_t i = 0; i < slv2_values_size(properties); ++i) {
+			SLV2Value p = slv2_values_get_at(properties, i);
+			if (slv2_value_is_uri(p)) {
+				Raul::info << "SET PORT PROPERTY " << slv2_value_as_uri(p) << endl;
+				port->set_property(uris.lv2_portProperty, Raul::URI(slv2_value_as_uri(p)));
 			}
 		}
 

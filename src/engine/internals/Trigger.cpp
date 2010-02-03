@@ -58,11 +58,11 @@ TriggerNode::TriggerNode(BufferFactory& bufs, const string& path, bool polyphoni
 	_ports->at(1) = _note_port;
 
 	_gate_port = new OutputPort(bufs, this, "gate", 2, 1, PortType::AUDIO, 0.0f, _buffer_size);
-	_gate_port->set_property(uris.lv2_toggled, true);
+	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_ports->at(2) = _gate_port;
 
 	_trig_port = new OutputPort(bufs, this, "trigger", 3, 1, PortType::AUDIO, 0.0f, _buffer_size);
-	_trig_port->set_property(uris.lv2_toggled, true);
+	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_ports->at(3) = _trig_port;
 
 	_vel_port = new OutputPort(bufs, this, "velocity", 4, 1, PortType::AUDIO, 0.0f, _buffer_size);

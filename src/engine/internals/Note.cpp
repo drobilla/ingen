@@ -66,11 +66,11 @@ NoteNode::NoteNode(BufferFactory& bufs, const string& path, bool polyphonic, Pat
 	_ports->at(2) = _vel_port;
 
 	_gate_port = new OutputPort(bufs, this, "gate", 3, _polyphony, PortType::AUDIO, 0.0f, _buffer_size);
-	_gate_port->set_property(uris.lv2_toggled, true);
+	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_ports->at(3) = _gate_port;
 
 	_trig_port = new OutputPort(bufs, this, "trigger", 4, _polyphony, PortType::AUDIO, 0.0f, _buffer_size);
-	_trig_port->set_property(uris.lv2_toggled, true);
+	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_ports->at(4) = _trig_port;
 }
 
