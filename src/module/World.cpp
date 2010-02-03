@@ -100,7 +100,7 @@ World::load(const char* name)
 		modules.insert(make_pair(string(name), module));
 		return true;
 	} else {
-		LOG(error) << "Failed to load module " << name << endl;
+		LOG(error) << "Failed to load module `" << name << "'" << endl;
 		return false;
 	}
 }
@@ -123,7 +123,7 @@ World::interface(const std::string& url)
 	const string scheme = url.substr(0, url.find(":"));
 	const InterfaceFactories::const_iterator i = interface_factories.find(scheme);
 	if (i == interface_factories.end()) {
-		warn << "Unknown URI scheme `'" << scheme << "'" << endl;
+		warn << "Unknown URI scheme `" << scheme << "'" << endl;
 		return SharedPtr<Ingen::Shared::EngineInterface>();
 	}
 
@@ -137,7 +137,7 @@ World::run(const std::string& mime_type, const std::string& filename)
 {
 	const ScriptRunners::const_iterator i = script_runners.find(mime_type);
 	if (i == script_runners.end()) {
-		warn << "Unknown script MIME type `'" << mime_type << "'" << endl;
+		warn << "Unknown script MIME type `" << mime_type << "'" << endl;
 		return false;
 	}
 
