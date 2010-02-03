@@ -48,11 +48,11 @@ public:
 	inline bool              is_input()  const { return (_direction == INPUT); }
 	inline bool              is_output() const { return (_direction == OUTPUT); }
 
-	bool has_hint(const std::string& qname) const;
+	bool port_property(const std::string& uri) const;
 
-	bool is_logarithmic() const { return has_hint("http://drobilla.net/ns/ingen#logarithmic"); }
-	bool is_integer()     const { return has_hint("http://lv2plug.in/ns/lv2core#integer"); }
-	bool is_toggle()      const { return has_hint("http://lv2plug.in/ns/lv2core#toggled"); }
+	bool is_logarithmic() const { return port_property("http://drobilla.net/ns/ingen#logarithmic"); }
+	bool is_integer()     const { return port_property("http://lv2plug.in/ns/lv2core#integer"); }
+	bool is_toggle()      const { return port_property("http://lv2plug.in/ns/lv2core#toggled"); }
 
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 

@@ -35,9 +35,9 @@ PortModel::set_property(const Raul::URI&  uri,
 
 
 bool
-PortModel::has_hint(const std::string& qname) const
+PortModel::port_property(const std::string& uri) const
 {
-	return has_property(Shared::LV2URIMap::instance().lv2_portProperty, qname);
+	return has_property(Shared::LV2URIMap::instance().lv2_portProperty, Raul::URI(uri));
 }
 
 
