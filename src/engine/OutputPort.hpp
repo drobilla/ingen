@@ -39,14 +39,14 @@ namespace Ingen {
 class OutputPort : virtual public PortImpl
 {
 public:
-	OutputPort(BufferFactory&     bufs,
-	           NodeImpl*          parent,
-	           const std::string& name,
-	           uint32_t           index,
-	           uint32_t           poly,
-	           Shared::PortType   type,
-	           const Raul::Atom&  value,
-	           size_t             buffer_size);
+	OutputPort(BufferFactory&      bufs,
+	           NodeImpl*           parent,
+	           const Raul::Symbol& symbol,
+	           uint32_t            index,
+	           uint32_t            poly,
+	           Shared::PortType    type,
+	           const Raul::Atom&   value,
+	           size_t              buffer_size);
 
 	void pre_process(Context& context);
 	void post_process(Context& context);

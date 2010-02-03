@@ -123,24 +123,29 @@ NodeModule::show_human_names(bool b)
 {
 	if (b && node()->plugin()) {
 		Glib::Mutex::Lock lock(App::instance().world()->rdf_world->mutex());
-		set_name(((PluginModel*)node()->plugin())->human_name());
+		set_name(node()->plugin_model()->human_name());
 	} else {
 		b = false;
+		set_name(node()->symbol().c_str());
 	}
 
-	if (!b)
-		set_name(node()->symbol().c_str());
+	const LV2URIMap& uris = App::instance().uris();
 
-	uint32_t index = 0;
 	for (PortVector::const_iterator i = ports().begin(); i != ports().end(); ++i) {
-		Glib::ustring label(node()->port(index)->symbol().c_str());
+		SharedPtr<Ingen::GUI::Port> port = PtrCast<Ingen::GUI::Port>(*i);
+		Glib::ustring label(port->model()->symbol().c_str());
 		if (b) {
-			Glib::ustring hn = ((PluginModel*)node()->plugin())->port_human_name(index);
-			if (hn != "")
-				label = hn;
+			const Raul::Atom& name_property = port->model()->get_property(uris.lv2_name);
+			if (name_property.type() == Atom::STRING) {
+				label = name_property.get_string();
+			} else {
+				Glib::ustring hn = node()->plugin_model()->port_human_name(
+						port->model()->index());
+				if (hn != "")
+					label = hn;
+			}
 		}
 		(*i)->set_name(label);
-		++index;
 	}
 
 	resize();

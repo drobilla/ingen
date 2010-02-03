@@ -40,14 +40,14 @@ namespace Ingen {
 using namespace Shared;
 
 
-PortImpl::PortImpl(BufferFactory&  bufs,
-                   NodeImpl* const node,
-                   const string&   name,
-                   uint32_t        index,
-                   uint32_t        poly,
-                   PortType        type,
-                   const Atom&     value,
-                   size_t          buffer_size)
+PortImpl::PortImpl(BufferFactory&      bufs,
+                   NodeImpl* const     node,
+                   const Raul::Symbol& name,
+                   uint32_t            index,
+                   uint32_t            poly,
+                   PortType            type,
+                   const Atom&         value,
+                   size_t              buffer_size)
 	: GraphObjectImpl(node, name, (type == PortType::AUDIO || type == PortType::CONTROL))
 	, _bufs(bufs)
 	, _index(index)

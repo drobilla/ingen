@@ -46,14 +46,14 @@ class NodeImpl;
 class InputPort : virtual public PortImpl
 {
 public:
-	InputPort(BufferFactory&     bufs,
-	          NodeImpl*          parent,
-	          const std::string& name,
-	          uint32_t           index,
-	          uint32_t           poly,
-	          Shared::PortType   type,
-	          const Raul::Atom&  value,
-	          size_t             buffer_size);
+	InputPort(BufferFactory&      bufs,
+	          NodeImpl*           parent,
+	          const Raul::Symbol& symbol,
+	          uint32_t            index,
+	          uint32_t            poly,
+	          Shared::PortType    type,
+	          const Raul::Atom&   value,
+	          size_t              buffer_size);
 
 	virtual ~InputPort() {}
 

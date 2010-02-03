@@ -111,14 +111,14 @@ public:
 	void        set_context(Context::ID c);
 
 protected:
-	PortImpl(BufferFactory&     bufs,
-	         NodeImpl*          node,
-	         const std::string& name,
-	         uint32_t           index,
-	         uint32_t           poly,
-	         Shared::PortType   type,
-	         const Raul::Atom&  value,
-	         size_t             buffer_size);
+	PortImpl(BufferFactory&      bufs,
+	         NodeImpl*           node,
+	         const Raul::Symbol& name,
+	         uint32_t            index,
+	         uint32_t            poly,
+	         Shared::PortType    type,
+	         const Raul::Atom&   value,
+	         size_t              buffer_size);
 
 	BufferFactory&   _bufs;
 	uint32_t         _index;

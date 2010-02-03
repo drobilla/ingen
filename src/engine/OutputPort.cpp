@@ -29,15 +29,15 @@ namespace Ingen {
 namespace Shared { class Patch; }
 using namespace Shared;
 
-OutputPort::OutputPort(BufferFactory&    bufs,
-                       NodeImpl*         parent,
-                       const string&     name,
-                       uint32_t          index,
-                       uint32_t          poly,
-                       PortType          type,
-                       const Raul::Atom& value,
-                       size_t            buffer_size)
-	: PortImpl(bufs, parent, name, index, poly, type, value, buffer_size)
+OutputPort::OutputPort(BufferFactory&      bufs,
+                       NodeImpl*           parent,
+                       const Raul::Symbol& symbol,
+                       uint32_t            index,
+                       uint32_t            poly,
+                       PortType            type,
+                       const Raul::Atom&   value,
+                       size_t              buffer_size)
+	: PortImpl(bufs, parent, symbol, index, poly, type, value, buffer_size)
 {
 	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 

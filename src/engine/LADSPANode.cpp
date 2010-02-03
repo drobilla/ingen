@@ -121,19 +121,6 @@ LADSPANode::apply_poly(Raul::Maid& maid, uint32_t poly)
 }
 
 
-static string
-nameify_if_invalid(const string& name)
-{
-	if (Path::is_valid_name(name)) {
-		return name;
-	} else {
-		const string new_name = Path::nameify(name);
-		assert(Path::is_valid_name(new_name));
-		return new_name;
-	}
-}
-
-
 /** Instantiate self from LADSPA plugin descriptor.
  *
  * Implemented as a seperate function (rather than in the constructor) to
@@ -162,37 +149,37 @@ LADSPANode::instantiate(BufferFactory& bufs)
 	}
 
 	PortImpl* port = NULL;
-	std::map<std::string, uint32_t> names;
+	std::map<Symbol, uint32_t> symbols;
 
 	for (uint32_t j=0; j < _descriptor->PortCount; ++j) {
-		string port_name = nameify_if_invalid(_descriptor->PortNames[j]);
+		// Convert name into valid symbol
+		Symbol symbol = Symbol::symbolify(_descriptor->PortNames[j]);
 
-		string name = port_name;
-		std::map<std::string, uint32_t>::iterator existing = names.find(port_name);
+		// Ensure symbol is unique
+		std::map<Symbol, uint32_t>::iterator existing = symbols.find(symbol);
 		uint32_t offset = 2;
 		bool type_clash = false;
-		while (existing != names.end()) {
+		while (existing != symbols.end()) {
 			const uint32_t e = existing->second;
 			if (!type_clash && LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[j])
 					&& LADSPA_IS_PORT_AUDIO(_descriptor->PortDescriptors[e])) {
-				name = port_name + "_CR";
+				symbol = string(symbol.c_str()) + "_CR";
 				type_clash = true;
 			} else if (!type_clash && LADSPA_IS_PORT_AUDIO(_descriptor->PortDescriptors[j])
 					&& LADSPA_IS_PORT_CONTROL(_descriptor->PortDescriptors[e])) {
-				name = port_name + "_AR";
+				symbol = string(symbol.c_str()) + "_AR";
 				type_clash = true;
 			} else {
 				std::ostringstream ss;
-				ss << port_name << "_" << offset;
-				name = ss.str();
+				ss << symbol << "_" << offset;
+				symbol = ss.str();
 			}
-			existing = names.find(name);
+			existing = symbols.find(symbol);
 		}
 
-		port_name = name;
-		names.insert(make_pair(port_name, j));
+		symbols.insert(make_pair(symbol, j));
 
-		Path port_path(path().child(port_name));
+		Path port_path(path().child(symbol));
 
 		PortType type = PortType::AUDIO;
 		port_buffer_size = _buffer_size * sizeof(Sample);
@@ -212,12 +199,14 @@ LADSPANode::instantiate(BufferFactory& bufs)
 		const float value = default_val ? default_val.get() : 0.0f;
 
 		if (LADSPA_IS_PORT_INPUT(_descriptor->PortDescriptors[j])) {
-			port = new InputPort(bufs, this, port_name, j, _polyphony, type, value, port_buffer_size);
+			port = new InputPort(bufs, this, symbol, j, _polyphony, type, value, port_buffer_size);
 			_ports->at(j) = port;
 		} else if (LADSPA_IS_PORT_OUTPUT(_descriptor->PortDescriptors[j])) {
-			port = new OutputPort(bufs, this, port_name, j, _polyphony, type, value, port_buffer_size);
+			port = new OutputPort(bufs, this, symbol, j, _polyphony, type, value, port_buffer_size);
 			_ports->at(j) = port;
 		}
+
+		port->set_property(uris.lv2_name, _descriptor->PortNames[j]);
 
 		assert(port);
 		assert(_ports->at(j) == port);
