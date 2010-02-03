@@ -19,6 +19,7 @@
 #include <jack/midiport.h>
 #include "raul/log.hpp"
 #include "raul/List.hpp"
+#include "module/World.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"

@@ -170,9 +170,9 @@ Engine::activate()
 	if (!root_patch) {
 		root_patch = new PatchImpl(*this, "root", 1, NULL,
 				_driver->sample_rate(), _driver->buffer_size(), 1);
-		root_patch->meta().set_property(uris.rdf_type, Raul::Atom(Raul::Atom::URI, "ingen:Patch"));
+		root_patch->meta().set_property(uris.rdf_type, uris.ingen_Patch);
 		root_patch->meta().set_property(uris.ingen_polyphony, Raul::Atom(int32_t(1)));
-		root_patch->set_property(uris.rdf_type, Raul::Atom(Raul::Atom::URI, "ingen:Node"));
+		root_patch->set_property(uris.rdf_type, uris.ingen_Node);
 		root_patch->activate();
 		_world->store->add(root_patch);
 		root_patch->compiled_patch(root_patch->compile());
@@ -181,8 +181,10 @@ Engine::activate()
 		// Add control port
 		Shared::Resource::Properties properties;
 		properties.insert(make_pair(uris.lv2_name, "Control"));
+		properties.insert(make_pair(uris.rdf_type, uris.lv2ev_EventPort));
+		properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
 		Events::CreatePort* ev = new Events::CreatePort(*this, SharedPtr<Responder>(), 0,
-				"/ingen_control", "lv2ev:EventPort", false, NULL, properties);
+				"/ingen_control", uris.lv2ev_EventPort, false, NULL, properties);
 		ev->pre_process();
 		ProcessContext context(*this);
 		ev->execute(context);

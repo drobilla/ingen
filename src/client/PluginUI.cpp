@@ -75,7 +75,7 @@ lv2_ui_write(LV2UI_Controller controller,
 			if (ev->type == map->midi_event.id) {
 				// FIXME: bundle multiple events by writing an entire buffer here
 				ui->world()->engine->set_property(port->path(), map->ingen_value,
-					Atom("lv2midi:MidiEvent", ev->size, data));
+					Atom("http://lv2plug.in/ns/ext/midi#MidiEvent", ev->size, data));
 			} else {
 				warn << "Unable to send event type " << ev->type <<
 					" over OSC, ignoring event" << endl;

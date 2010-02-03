@@ -15,7 +15,9 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "raul/log.hpp"
 #include "raul/Atom.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "ResourceImpl.hpp"
 
 using namespace std;
@@ -99,46 +101,45 @@ ResourceImpl::type(
 		bool& port, bool& is_output, PortType& data_type)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	const std::pair<iterator,iterator> types_range = properties.equal_range("rdf:type");
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const std::pair<iterator,iterator> types_range = properties.equal_range(uris.rdf_type);
 
 	patch = node = port = is_output = false;
 	data_type = PortType::UNKNOWN;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Atom& atom = i->second;
-		if (atom.type() == Atom::URI) {
-			if (!strncmp(atom.get_uri(), "ingen:", 6)) {
-				const char* suffix = atom.get_uri() + 6;
-				if (!strcmp(suffix, "Patch")) {
-					patch = true;
-				} else if (!strcmp(suffix, "Node")) {
-					node = true;
-				}
-			} else if (!strncmp(atom.get_uri(), "lv2:", 4)) {
-				const char* suffix = atom.get_uri() + 4;
-				port = true;
-				if (!strcmp(suffix, "InputPort")) {
-					is_output = false;
-					port = true;
-				} else if (!strcmp(suffix, "OutputPort")) {
-					is_output = true;
-					port = true;
-				} else if (!strcmp(suffix, "AudioPort")) {
-					data_type = PortType::AUDIO;
-					port = true;
-				} else if (!strcmp(suffix, "ControlPort")) {
-					data_type = PortType::CONTROL;
-					port = true;
-				}
-			} else if (!strcmp(atom.get_uri(), "lv2ev:EventPort")) {
-				data_type = PortType::EVENTS;
-				port = true;
-			} else if (!strcmp(atom.get_uri(), "obj:ValuePort")) {
-				data_type = PortType::VALUE;
-				port = true;
-			} else if (!strcmp(atom.get_uri(), "obj:MessagePort")) {
-				data_type = PortType::MESSAGE;
-				port = true;
-			}
+		if (atom.type() != Atom::URI) {
+			warn << "[ResourceImpl] Non-URI type " << atom << endl;
+			continue;
+		}
+
+		if (atom == uris.ingen_Patch) {
+			patch = true;
+		} else if (atom == uris.ingen_Node) {
+			node = true;
+		} else if (atom == uris.lv2_InputPort) {
+			port = true;
+			is_output = false;
+		} else if (atom == uris.lv2_OutputPort) {
+			port = true;
+			is_output = true;
+		} else if (atom == uris.lv2_AudioPort) {
+			port = true;
+			data_type = PortType::AUDIO;
+		} else if (atom == uris.lv2_ControlPort) {
+			port = true;
+			data_type = PortType::CONTROL;
+		} else if (atom == uris.lv2ev_EventPort) {
+			data_type = PortType::EVENTS;
+			port = true;
+		} else if (atom == uris.obj_ValuePort) {
+			data_type = PortType::VALUE;
+			port = true;
+		} else if (atom == uris.obj_MessagePort) {
+			data_type = PortType::MESSAGE;
+			port = true;
+		} else {
+			warn << "[ResourceImpl] Unrecognized type " << atom << endl;
 		}
 	}
 

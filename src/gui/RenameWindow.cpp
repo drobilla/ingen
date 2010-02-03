@@ -18,6 +18,7 @@
 #include <cassert>
 #include <string>
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/ObjectModel.hpp"
 #include "client/ClientStore.hpp"
 #include "App.hpp"
@@ -56,7 +57,7 @@ RenameWindow::set_object(SharedPtr<ObjectModel> object)
 {
 	_object = object;
 	_symbol_entry->set_text(object->path().symbol());
-	const Atom& name_atom = object->get_property("lv2:name");
+	const Atom& name_atom = object->get_property("http://lv2plug.in/ns/lv2core#name");
 	_label_entry->set_text(
 		(name_atom.type() == Atom::STRING) ? name_atom.get_string() : "");
 }
@@ -125,10 +126,12 @@ RenameWindow::cancel_clicked()
 void
 RenameWindow::ok_clicked()
 {
+	const Shared::LV2URIMap& uris = App::instance().uris();
+
 	const string& symbol_str = _symbol_entry->get_text();
 	const string& label      = _label_entry->get_text();
 	Path          path       = _object->path();
-	const Atom&   name_atom  = _object->get_property("lv2:name");
+	const Atom&   name_atom  = _object->get_property(uris.lv2_name);
 
 	if (Symbol::is_valid(symbol_str)) {
 		const Symbol& symbol(symbol_str);
@@ -139,8 +142,7 @@ RenameWindow::ok_clicked()
 	}
 
 	if (label != "" && (!name_atom.is_valid() || label != name_atom.get_string())) {
-		App::instance().engine()->set_property(path,
-				"lv2:name", Atom(label));
+		App::instance().engine()->set_property(path, uris.lv2_name, Atom(label));
 	}
 
 	hide();

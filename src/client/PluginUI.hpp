@@ -20,11 +20,10 @@
 
 #include "slv2/slv2.h"
 #include "raul/SharedPtr.hpp"
-#include "module/World.hpp"
 #include "LV2Features.hpp"
 
 namespace Ingen {
-namespace Shared { class EngineInterface; }
+namespace Shared { class EngineInterface; class World; }
 namespace Client {
 
 class NodeModel;

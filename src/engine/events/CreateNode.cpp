@@ -19,7 +19,6 @@
 #include "raul/Path.hpp"
 #include "raul/Path.hpp"
 #include "redlandmm/World.hpp"
-#include "module/World.hpp"
 #include "CreateNode.hpp"
 #include "Responder.hpp"
 #include "PatchImpl.hpp"

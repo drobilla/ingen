@@ -37,22 +37,22 @@ public:
 		AUDIO   = 1,
 		CONTROL = 2,
 		EVENTS  = 3,
-		VALUE   = 7,
-		MESSAGE = 8,
+		VALUE   = 4,
+		MESSAGE = 5,
 	};
 
 	PortType(const Raul::URI& uri)
 		: _symbol(UNKNOWN)
 	{
-		if (uri.str() == type_uri(AUDIO)) {
+		if (uri == type_uri(AUDIO)) {
 			_symbol = AUDIO;
-		} else if (uri.str() == type_uri(CONTROL)) {
+		} else if (uri == type_uri(CONTROL)) {
 			_symbol = CONTROL;
-		} else if (uri.str() == type_uri(EVENTS)) {
+		} else if (uri == type_uri(EVENTS)) {
 			_symbol = EVENTS;
-		} else if (uri.str() == type_uri(VALUE)) {
+		} else if (uri == type_uri(VALUE)) {
 			_symbol = VALUE;
-		} else if (uri.str() == type_uri(MESSAGE)) {
+		} else if (uri == type_uri(MESSAGE)) {
 			_symbol = MESSAGE;
 		}
 	}
@@ -61,8 +61,8 @@ public:
 		: _symbol(symbol)
 	{}
 
-	inline const char* uri()    const { return type_uri(_symbol); }
-	inline Symbol      symbol() const { return _symbol; }
+	inline const Raul::URI& uri()    const { return type_uri(_symbol); }
+	inline Symbol           symbol() const { return _symbol; }
 
 	inline bool operator==(const Symbol& symbol) const { return (_symbol == symbol); }
 	inline bool operator!=(const Symbol& symbol) const { return (_symbol != symbol); }
@@ -76,16 +76,17 @@ public:
 	inline bool is_message() { return _symbol == MESSAGE; }
 
 private:
-
-	static inline const char* type_uri(unsigned symbol_num)  {
-		switch (symbol_num) {
-		case 1:  return "lv2:AudioPort";
-		case 2:  return "lv2:ControlPort";
-		case 3:  return "lv2ev:EventPort";
-		case 7:  return "obj:ValuePort";
-		case 8:  return "obj:MessagePort";
-		default: return "";
-		}
+	static inline const Raul::URI& type_uri(unsigned symbol_num) {
+		assert(symbol_num <= MESSAGE);
+		static const Raul::URI uris[] = {
+			"http://drobilla.net/ns/ingen#nil",
+			"http://lv2plug.in/ns/lv2core#AudioPort",
+			"http://lv2plug.in/ns/lv2core#ControlPort",
+			"http://lv2plug.in/ns/ext/event#EventPort",
+			"http://lv2plug.in/ns/dev/objects#ValuePort",
+			"http://lv2plug.in/ns/dev/objects#MessagePort"
+		};
+		return uris[symbol_num];
 	}
 
 	Symbol _symbol;

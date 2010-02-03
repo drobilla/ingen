@@ -17,7 +17,6 @@
 
 #include "ObjectSender.hpp"
 #include "interface/ClientInterface.hpp"
-#include "module/ingen_module.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
@@ -137,7 +136,7 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	if (graph_parent)
 		client->put(port->meta_uri(), port->meta().properties());
 
-	const Shared::LV2URIMap& map = *ingen_get_world()->uris.get();
+	const Shared::LV2URIMap& map = Shared::LV2URIMap::instance();
 
 	client->put(port->path(), port->properties());
 

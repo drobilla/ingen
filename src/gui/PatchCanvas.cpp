@@ -89,22 +89,22 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	// Add port menu items
 	_menu_add_audio_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"audio_in", "Audio In", "lv2:AudioPort", false));
+			"audio_in", "Audio In", "http://lv2plug.in/ns/lv2core#AudioPort", false));
 	_menu_add_audio_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"audio_out", "Audio Out", "lv2:AudioPort", true));
+			"audio_out", "Audio Out", "http://lv2plug.in/ns/lv2core#AudioPort", true));
 	_menu_add_control_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"control_in", "Control In", "lv2:ControlPort", false));
+			"control_in", "Control In", "http://lv2plug.in/ns/lv2core#ControlPort", false));
 	_menu_add_control_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"control_out", "Control Out", "lv2:ControlPort", true));
+			"control_out", "Control Out", "http://lv2plug.in/ns/lv2core#ControlPort", true));
 	_menu_add_event_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"event_in", "Event In", "lv2ev:EventPort", false));
+			"event_in", "Event In", "http://lv2plug.in/ns/ext/event#EventPort", false));
 	_menu_add_event_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-			"event_out", "Event Out", "lv2ev:EventPort", true));
+			"event_out", "Event Out", "http://lv2plug.in/ns/ext/event#EventPort", true));
 
 	// Connect to model signals to track state
 	_patch->signal_new_node.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
@@ -750,8 +750,7 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 
 	Resource::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type, type));
-	props.insert(make_pair(uris.rdf_type,
-			Atom(Atom::URI, is_output ? "lv2:OutputPort" : "lv2:InputPort")));
+	props.insert(make_pair(uris.rdf_type, is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
 	props.insert(make_pair(uris.lv2_index, Atom(int32_t(_patch->num_ports()))));
 	props.insert(make_pair(uris.lv2_name, Atom(name.c_str())));
 	App::instance().engine()->put(path, props);
@@ -801,8 +800,9 @@ GraphObject::Properties
 PatchCanvas::get_initial_data()
 {
 	GraphObject::Properties result;
-	result.insert(make_pair("ingenui:canvas-x", Atom((float)_last_click_x)));
-	result.insert(make_pair("ingenui:canvas-y", Atom((float)_last_click_y)));
+	const LV2URIMap& uris = App::instance().uris();
+	result.insert(make_pair(uris.ingenui_canvas_x, Atom((float)_last_click_x)));
+	result.insert(make_pair(uris.ingenui_canvas_y, Atom((float)_last_click_y)));
 	return result;
 }
 

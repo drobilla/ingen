@@ -41,7 +41,7 @@ class SigClientInterface : public Ingen::Shared::ClientInterface, public sigc::t
 public:
 	SigClientInterface() {}
 
-	Raul::URI uri() const { return "ingen:internal"; }
+	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
 	sigc::signal<void, int32_t>                                     signal_response_ok;
 	sigc::signal<void, int32_t, std::string>                        signal_response_error;
@@ -60,7 +60,6 @@ public:
 	sigc::signal<void, Raul::Path, Raul::Atom>                      signal_port_value;
 	sigc::signal<void, Raul::Path, uint32_t, Raul::Atom>            signal_voice_value;
 	sigc::signal<void, Raul::Path>                                  signal_activity;
-	sigc::signal<void, Raul::Path, Shared::MessageType>             signal_binding;
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
@@ -112,9 +111,6 @@ protected:
 
 	void activity(const Raul::Path& port_path)
 		{ EMIT(activity, port_path); }
-
-	void binding(const Raul::Path& path, const Shared::MessageType& type)
-		{ EMIT(binding, path, type); }
 };
 
 

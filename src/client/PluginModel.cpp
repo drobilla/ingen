@@ -21,7 +21,6 @@
 #include "raul/Path.hpp"
 #include "raul/Atom.hpp"
 #include "ingen-config.h"
-#include "module/ingen_module.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "PluginModel.hpp"
 #include "PatchModel.hpp"
@@ -49,14 +48,15 @@ PluginModel::PluginModel(const URI& uri, const URI& type_uri, const Resource::Pr
 
 	Glib::Mutex::Lock lock(_rdf_world->mutex());
 	assert(_rdf_world);
-	add_property("rdf:type", Atom(Atom::URI, this->type_uri()));
+	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", this->type_uri());
 #ifdef HAVE_SLV2
 	SLV2Value plugin_uri = slv2_value_new_uri(_slv2_world, uri.c_str());
 	_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);
 	slv2_value_free(plugin_uri);
 #endif
 	if (_type == Internal)
-		set_property("doap:name", Atom(uri.substr(uri.find_last_of('#') + 1).c_str()));
+		set_property("http://usefulinc.com/ns/doap#name",
+				Atom(uri.substr(uri.find_last_of('#') + 1).c_str()));
 }
 
 
@@ -69,7 +69,7 @@ PluginModel::get_property(const URI& key) const
 		return val;
 
 	// No lv2:symbol from data or engine, invent one
-	if (key == ingen_get_world()->uris->lv2_symbol) {
+	if (key == Shared::LV2URIMap::instance().lv2_symbol) {
 		const URI& uri = this->uri();
 		size_t last_slash = uri.find_last_of('/');
 		size_t last_hash  = uri.find_last_of('#');
@@ -92,7 +92,7 @@ PluginModel::get_property(const URI& key) const
 			else
 				symbol = uri.str().substr(first_delim + 1, last_delim - first_delim - 1);
 		}
-		set_property("lv2:symbol", symbol);
+		set_property("http://lv2plug.in/ns/lv2core#symbol", symbol);
 		return get_property(key);
 	}
 
@@ -153,7 +153,7 @@ PluginModel::set(SharedPtr<PluginModel> p)
 Symbol
 PluginModel::default_node_symbol()
 {
-	const Atom& name_atom = get_property("lv2:symbol");
+	const Atom& name_atom = get_property("http://lv2plug.in/ns/lv2core#symbol");
 	if (name_atom.is_valid() && name_atom.type() == Atom::STRING)
 		return Symbol::symbolify(name_atom.get_string());
 	else
@@ -164,7 +164,7 @@ PluginModel::default_node_symbol()
 string
 PluginModel::human_name()
 {
-	const Atom& name_atom = get_property("doap:name");
+	const Atom& name_atom = get_property("http://usefulinc.com/ns/doap#name");
 	if (name_atom.type() == Atom::STRING)
 		return name_atom.get_string();
 	else

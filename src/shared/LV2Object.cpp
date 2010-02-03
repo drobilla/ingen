@@ -17,7 +17,6 @@
 
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
-#include "module/World.hpp"
 #include "uri-map.lv2/uri-map.h"
 #include "object.lv2/object.h"
 #include "LV2Features.hpp"
@@ -33,20 +32,20 @@ namespace LV2Object {
 
 
 bool
-to_atom(World* world, const LV2_Object* object, Raul::Atom& atom)
+to_atom(const LV2_Object* object, Raul::Atom& atom)
 {
-	SharedPtr<LV2URIMap> uris = world->uris;
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 
-	if (object->type == uris->object_class_string.id) {
+	if (object->type == uris.object_class_string.id) {
 		atom = Raul::Atom((char*)(object + 1));
 		return true;
-	} else if (object->type == uris->object_class_bool.id) {
+	} else if (object->type == uris.object_class_bool.id) {
 		atom = Raul::Atom((bool)(int32_t*)(object + 1));
 		return true;
-	} else if (object->type == uris->object_class_int32.id) {
+	} else if (object->type == uris.object_class_int32.id) {
 		atom = Raul::Atom((int32_t*)(object + 1));
 		return true;
-	} else if (object->type == uris->object_class_float32.id) {
+	} else if (object->type == uris.object_class_float32.id) {
 		atom = Raul::Atom((float*)(object + 1));
 		return true;
 	}
@@ -58,24 +57,24 @@ to_atom(World* world, const LV2_Object* object, Raul::Atom& atom)
  * object->size should be the capacity of the object (not including header)
  */
 bool
-from_atom(World* world, const Raul::Atom& atom, LV2_Object* object)
+from_atom(const Raul::Atom& atom, LV2_Object* object)
 {
-	SharedPtr<LV2URIMap> uris = world->uris;
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 
 	char* str;
 	switch (atom.type()) {
 	case Raul::Atom::FLOAT:
-		object->type = uris->object_class_float32.id;
+		object->type = uris.object_class_float32.id;
 		object->size = sizeof(float);
 		*(float*)(object + 1) = atom.get_float();
 		break;
 	case Raul::Atom::INT:
-		object->type = uris->object_class_int32.id;
+		object->type = uris.object_class_int32.id;
 		object->size = sizeof(int32_t);
 		*(int32_t*)(object + 1) = atom.get_int32();
 		break;
 	case Raul::Atom::STRING:
-		object->type = uris->object_class_string.id;
+		object->type = uris.object_class_string.id;
 		object->size = std::min((uint16_t)object->size, (uint16_t)(strlen(atom.get_string()) + 1));
 		str = ((char*)(object + 1));
 		str[object->size - 1] = '\0';
@@ -83,8 +82,8 @@ from_atom(World* world, const Raul::Atom& atom, LV2_Object* object)
 		break;
 	case Raul::Atom::BLOB:
 		error << "TODO: Blob support" << endl;
-		/*object->type = uris->object_class_string;
-		*(uint16_t*)(object + 1) = uris->uri_to_id(NULL, atom.get_blob_type());
+		/*object->type = uris.object_class_string;
+		*(uint16_t*)(object + 1) = uris.uri_to_id(NULL, atom.get_blob_type());
 		memcpy(((char*)(object + 1) + sizeof(uint32_t)), atom.get_blob(),
 				std::min(atom.data_size(), (size_t)object->size));*/
 	default:

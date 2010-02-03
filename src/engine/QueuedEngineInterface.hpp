@@ -51,7 +51,7 @@ public:
 	QueuedEngineInterface(Engine& engine, size_t queue_size);
 	virtual ~QueuedEngineInterface() {}
 
-	Raul::URI uri() const { return "ingen:internal"; }
+	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
 	void set_next_response_id(int32_t id);
 

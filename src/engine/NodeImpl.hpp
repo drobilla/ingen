@@ -31,7 +31,6 @@ namespace Shared { class Plugin; class Node; class Port; }
 
 class Buffer;
 class BufferFactory;
-class Engine;
 class MessageContext;
 class PatchImpl;
 class PluginImpl;

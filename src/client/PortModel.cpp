@@ -15,8 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "module/ingen_module.hpp"
-#include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "PortModel.hpp"
 #include "NodeModel.hpp"
@@ -30,7 +28,7 @@ PortModel::set_property(const Raul::URI&  uri,
                         const Raul::Atom& value)
 {
 	Raul::Atom& ret = ObjectModel::set_property(uri, value);
-	if (uri == ingen_get_world()->uris->ingen_value)
+	if (uri == Shared::LV2URIMap::instance().ingen_value)
 		this->value(value);
 	return ret;
 }

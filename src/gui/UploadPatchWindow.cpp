@@ -23,6 +23,7 @@
 #include <curl/curl.h>
 #include "redlandmm/Query.hpp"
 #include "module/World.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/ClientStore.hpp"
 #include "interface/EngineInterface.hpp"
 #include "serialisation/Serialiser.hpp"
@@ -72,13 +73,14 @@ UploadPatchWindow::present(SharedPtr<PatchModel> patch)
 void
 UploadPatchWindow::on_show()
 {
+	const Shared::LV2URIMap& uris = App::instance().uris();
 	Gtk::Dialog::on_show();
 
-	Raul::Atom atom = _patch->get_property("lv2:symbol");
+	Raul::Atom atom = _patch->get_property(uris.lv2_symbol);
 	if (atom.is_valid())
 		_symbol_entry->set_text(atom.get_string());
 
-	atom = _patch->get_property("doap:name");
+	atom = _patch->get_property(uris.doap_name);
 	if (atom.is_valid())
 		_short_name_entry->set_text(atom.get_string());
 }
@@ -234,12 +236,14 @@ UploadPatchWindow::upload_clicked()
 {
 	assert(!_thread);
 
+	const Shared::LV2URIMap& uris = App::instance().uris();
+
 	Glib::ustring symbol = _symbol_entry->get_text();
 	Glib::ustring short_name = _short_name_entry->get_text();
 
 	GraphObject::Properties extra_rdf;
-	extra_rdf.insert(make_pair("lv2:symbol", symbol));
-	extra_rdf.insert(make_pair("doap:name", short_name));
+	extra_rdf.insert(make_pair(uris.lv2_symbol, symbol));
+	extra_rdf.insert(make_pair(uris.doap_name, short_name));
 
 	_response = 0;
 	_progress_pct = 0;

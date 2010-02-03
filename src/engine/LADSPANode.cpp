@@ -20,6 +20,7 @@
 #include <map>
 #include <stdint.h>
 #include <boost/optional.hpp>
+#include "shared/LV2URIMap.hpp"
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "LADSPANode.hpp"
@@ -144,6 +145,7 @@ nameify_if_invalid(const string& name)
 bool
 LADSPANode::instantiate(BufferFactory& bufs)
 {
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	if (!_ports)
 		_ports = new Raul::Array<PortImpl*>(_descriptor->PortCount);
 
@@ -241,11 +243,11 @@ LADSPANode::instantiate(BufferFactory& bufs)
 
 		if (port->is_input() && port->buffer_size() == 1) {
 			if (min)
-				port->set_meta_property("lv2:minimum", min.get());
+				port->set_meta_property(uris.lv2_minimum, min.get());
 			if (max)
-				port->set_meta_property("lv2:maximum", max.get());
+				port->set_meta_property(uris.lv2_maximum, max.get());
 			if (default_val)
-				port->set_meta_property("lv2:default", default_val.get());
+				port->set_meta_property(uris.lv2_default, default_val.get());
 		}
 	}
 

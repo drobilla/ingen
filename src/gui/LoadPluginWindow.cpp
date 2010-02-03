@@ -229,16 +229,17 @@ LoadPluginWindow::new_plugin(SharedPtr<PluginModel> pm)
 void
 LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 {
+	const LV2URIMap& uris = App::instance().uris();
 	Gtk::TreeModel::iterator iter = _plugins_liststore->append();
 	Gtk::TreeModel::Row row = *iter;
 	_rows.insert(make_pair(plugin->uri(), iter));
 
-	const Atom& name = plugin->get_property("doap:name");
+	const Atom& name = plugin->get_property(uris.doap_name);
 	if (name.is_valid()) {
 		if (name.type() == Atom::STRING)
 			row[_plugins_columns._col_name] = name.get_string();
 	} else if (plugin->type() == Plugin::LADSPA) {
-		App::instance().engine()->request_property(plugin->uri(), "doap:name");
+		App::instance().engine()->request_property(plugin->uri(), uris.doap_name);
 	}
 
 	switch (plugin->type()) {
@@ -388,12 +389,13 @@ LoadPluginWindow::filter_changed()
 	Gtk::TreeModel::Row      model_row;
 	Gtk::TreeModel::iterator model_iter;
 	size_t                   num_visible = 0;
+	const LV2URIMap&         uris = App::instance().uris();
 
 	for (ClientStore::Plugins::const_iterator i = App::instance().store()->plugins()->begin();
 			i != App::instance().store()->plugins()->end(); ++i) {
 
 		const SharedPtr<PluginModel> plugin = (*i).second;
-		const Atom& name = plugin->get_property("doap:name");
+		const Atom& name = plugin->get_property(uris.doap_name);
 
 		switch (criteria) {
 		case CriteriaColumns::NAME:
@@ -401,7 +403,7 @@ LoadPluginWindow::filter_changed()
 				field = name.get_string();
 			break;
 		case CriteriaColumns::TYPE:
-			field = plugin->type_uri(); break;
+			field = plugin->type_uri().str(); break;
 		case CriteriaColumns::URI:
 			field = plugin->uri().str(); break;
 		default:
@@ -415,7 +417,7 @@ LoadPluginWindow::filter_changed()
 			model_row = *model_iter;
 
 			model_row[_plugins_columns._col_name]   = name.is_valid() ? name.get_string() : "";
-			model_row[_plugins_columns._col_type]   = plugin->type_uri();
+			model_row[_plugins_columns._col_type]   = plugin->type_uri().str();
 			model_row[_plugins_columns._col_uri]    = plugin->uri().str();
 			model_row[_plugins_columns._col_plugin] = plugin;
 

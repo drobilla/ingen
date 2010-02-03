@@ -77,7 +77,7 @@ def cloneNode(om, node, patch):
     # copy port values
     for port in node.getPorts():
         path = '%s/%s/%s' % (patch.getPath(), name, port.getName())
-		om.synth.set_property_slow.async(path, "ingen:value", port.value)
+		om.synth.set_property_slow.async(path, "http://drobilla.net/ns/ingen#value", port.value)
         om.metadata.set.async(path, 'user-min', '%f' % port.minvalue)
         om.metadata.set.async(path, 'user-max', '%f' % port.maxvalue)
     return name
@@ -124,7 +124,7 @@ def flatten(om, patch):
                         conns = port4.getConnections().keys()
                         if len(conns) == 0:
                             portValue = port4.value
-							om.synth.set_property_slow.async(dst, "ingen:value", portValue)
+							om.synth.set_property_slow.async(dst, "http://drobilla.net/ns/ingen#value", portValue)
                         else:
                             for port3 in port4.getConnections().keys():
                                 src = port3.getPath()

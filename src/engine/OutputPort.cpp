@@ -16,6 +16,7 @@
  */
 
 #include "interface/Patch.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "Buffer.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
@@ -38,8 +39,10 @@ OutputPort::OutputPort(BufferFactory&    bufs,
                        size_t            buffer_size)
 	: PortImpl(bufs, parent, name, index, poly, type, value, buffer_size)
 {
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+
 	if (!dynamic_cast<Patch*>(parent))
-		add_property("rdf:type", Raul::Atom(Raul::Atom::URI, "lv2:OutputPort"));
+		add_property(uris.rdf_type, uris.lv2_OutputPort);
 
 	if (type == PortType::CONTROL)
 		_broadcast = true;

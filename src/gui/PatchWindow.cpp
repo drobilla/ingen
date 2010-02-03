@@ -22,6 +22,7 @@
 #include <boost/format.hpp>
 #include "raul/AtomRDF.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
 #include "App.hpp"
@@ -93,7 +94,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 
 	_menu_view_control_window->property_sensitive() = false;
 	string engine_name = App::instance().engine()->uri().str();
-	if (engine_name == "ingen:internal")
+	if (engine_name == "http://drobilla.net/ns/ingen#internal")
 		engine_name = "internal engine";
 	_status_bar->push(string("Connected to ") + engine_name, STATUS_CONTEXT_ENGINE);
 
@@ -405,7 +406,7 @@ PatchWindow::event_import_location()
 void
 PatchWindow::event_save()
 {
-	const Raul::Atom& document = _patch->get_property("ingen:document");
+	const Raul::Atom& document = _patch->get_property(App::instance().uris().ingen_document);
 	if (!document.is_valid() || document.type() != Raul::Atom::URI) {
 		event_save_as();
 	} else {
@@ -420,6 +421,7 @@ PatchWindow::event_save()
 void
 PatchWindow::event_save_as()
 {
+	const Shared::LV2URIMap& uris = App::instance().uris();
 	while (true) {
 		Gtk::FileChooserDialog dialog(*this, "Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
 
@@ -435,7 +437,7 @@ PatchWindow::event_save_as()
 		dialog.set_filter(filt);
 
 		// Set current folder to most sensible default
-		const Raul::Atom& document = _patch->get_property("ingen:document");
+		const Raul::Atom& document = _patch->get_property(uris.ingen_document);
 		if (document.type() == Raul::Atom::URI)
 			dialog.set_uri(document.get_uri());
 		else if (App::instance().configuration()->patch_folder().length() > 0)
@@ -468,7 +470,7 @@ PatchWindow::event_save_as()
 		if (!is_bundle && !is_patch)
 			filename += ".ingen.ttl";
 
-		_patch->set_property("lv2:symbol", Atom(base.c_str()));
+		_patch->set_property(uris.lv2_symbol, Atom(base.c_str()));
 
 		bool confirm = true;
 		std::fstream fin;
@@ -485,7 +487,7 @@ PatchWindow::event_save_as()
 		if (confirm) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			App::instance().loader()->save_patch(_patch, uri);
-			_patch->set_property("ingen:document", Atom(Atom::URI, uri.c_str()));
+			_patch->set_property(uris.ingen_document, Atom(Atom::URI, uri.c_str()));
 			_status_bar->push(
 					(boost::format("Wrote %1% to %2%") % _patch->path() % uri).str(),
 					STATUS_CONTEXT_PATCH);

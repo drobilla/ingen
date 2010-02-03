@@ -24,6 +24,7 @@
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "module/Module.hpp"
+#include "module/World.hpp"
 #include "HTTPClientReceiver.hpp"
 
 #define LOG(s) s << "[HTTPClientReceiver] "

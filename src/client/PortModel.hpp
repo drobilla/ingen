@@ -50,9 +50,9 @@ public:
 
 	bool has_hint(const std::string& qname) const;
 
-	bool is_logarithmic() const { return has_hint("ingen:logarithmic"); }
-	bool is_integer()     const { return has_hint("lv2:integer"); }
-	bool is_toggle()      const { return has_hint("lv2:toggled"); }
+	bool is_logarithmic() const { return has_hint("http://drobilla.net/ns/ingen#logarithmic"); }
+	bool is_integer()     const { return has_hint("http://lv2plug.in/ns/lv2core#integer"); }
+	bool is_toggle()      const { return has_hint("http://lv2plug.in/ns/lv2core#toggled"); }
 
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 

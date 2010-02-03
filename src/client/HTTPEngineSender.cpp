@@ -124,7 +124,7 @@ HTTPEngineSender::put(const URI&                  uri,
 		model.add_statement(
 				Redland::Resource(_world, path),
 				i->first.str(),
-				AtomRDF::atom_to_node(_world, i->second));
+				AtomRDF::atom_to_node(model, i->second));
 
 	const string str = model.serialise_to_string();
 	SoupMessage* msg = soup_message_new(SOUP_METHOD_PUT, full_uri.c_str());

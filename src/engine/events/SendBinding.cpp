@@ -17,6 +17,7 @@
 
 #include <sstream>
 #include "events/SendBinding.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
 #include "ClientBroadcaster.hpp"
@@ -30,7 +31,19 @@ namespace Events {
 void
 SendBinding::post_process()
 {
-	_engine.broadcaster()->binding(_port->path(), _type);
+	const LV2URIMap& uris = *_engine.world()->uris.get();
+	Raul::Atom::DictValue dict;
+	if (_type == ControlBindings::MIDI_CC) {
+		dict[uris.rdf_type] = uris.midi_Controller;
+		dict[uris.midi_controllerNumber] = _num;
+	} else if (_type == ControlBindings::MIDI_BENDER) {
+		dict[uris.rdf_type] = uris.midi_Bender;
+	} else if (_type == ControlBindings::MIDI_CHANNEL_PRESSURE) {
+		dict[uris.rdf_type] = uris.midi_ChannelPressure;
+	}
+	// TODO: other event types
+	_port->set_property(uris.ingen_controlBinding, dict); // FIXME: thread unsafe
+	_engine.broadcaster()->set_property(_port->path(), uris.ingen_controlBinding, dict);
 }
 
 

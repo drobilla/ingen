@@ -17,7 +17,6 @@
 
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
-#include "module/ingen_module.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "contexts.lv2/contexts.h"
 #include "interface/PortType.hpp"
@@ -77,8 +76,8 @@ PortImpl::PortImpl(BufferFactory&  bufs,
 	else
 		_polyphonic = true;
 
-	add_property("rdf:type",  Atom(Atom::URI, type.uri()));
-	set_property("lv2:index", Atom((int32_t)index));
+	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type",  type.uri());
+	set_property("http://lv2plug.in/ns/lv2core#index", Atom((int32_t)index));
 	set_context(_context);
 
 	if (type == PortType::EVENTS)
@@ -209,7 +208,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 void
 PortImpl::set_context(Context::ID c)
 {
-	const LV2URIMap& uris = *ingen_get_world()->uris.get();
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	_context = c;
 	switch (c) {
 	case Context::AUDIO:

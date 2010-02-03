@@ -19,6 +19,8 @@
 #include <cmath>
 #include "ingen-config.h"
 #include "interface/Port.hpp"
+#include "module/World.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "NodeModel.hpp"
 
 using namespace std;
@@ -204,13 +206,14 @@ NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float
 void
 NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
 {
+	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
 	assert(port->parent().get() == this);
 
 	default_port_value_range(port, min, max);
 
 	// Possibly overriden
-	const Atom& min_atom = port->get_property("lv2:minimum");
-	const Atom& max_atom = port->get_property("lv2:maximum");
+	const Atom& min_atom = port->get_property(uris.lv2_minimum);
+	const Atom& max_atom = port->get_property(uris.lv2_maximum);
 	if (min_atom.type() == Atom::FLOAT)
 		min = min_atom.get_float();
 	if (max_atom.type() == Atom::FLOAT)

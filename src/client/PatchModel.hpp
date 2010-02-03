@@ -75,7 +75,7 @@ private:
 	friend class ClientStore;
 
 	PatchModel(const Raul::Path& patch_path, size_t internal_poly)
-		: NodeModel("ingen:Patch", patch_path)
+		: NodeModel("http://drobilla.net/ns/ingen#Patch", patch_path)
 		, _connections(new Connections())
 		, _poly(internal_poly)
 		, _editable(true)

@@ -17,7 +17,7 @@
 
 #include "raul/log.hpp"
 #include "raul/PathTable.hpp"
-#include "interface/MessageType.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "ClientStore.hpp"
 #include "ObjectModel.hpp"
 #include "PatchModel.hpp"
@@ -53,7 +53,6 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::set_property));
 	emitter->signal_voice_value.connect(sigc::mem_fun(this, &ClientStore::set_voice_value));
 	emitter->signal_activity.connect(sigc::mem_fun(this, &ClientStore::activity));
-	emitter->signal_binding.connect(sigc::mem_fun(this, &ClientStore::binding));
 }
 
 
@@ -258,12 +257,19 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	bool is_path = Path::is_valid(uri.str());
 	bool is_meta = ResourceImpl::is_meta_uri(uri);
 
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+
 	if (!(is_path || is_meta)) {
-		const URI& type_uri = properties.find("rdf:type")->second.get_uri();
-		if (Plugin::type_from_uri(type_uri.str()) != Plugin::NIL) {
-			SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, properties));
-			add_plugin(p);
-			return;
+		const Atom& type = properties.find(uris.rdf_type)->second;
+		if (type.type() == Atom::URI) {
+			const URI& type_uri = type.get_uri();
+			if (Plugin::type_from_uri(type_uri) != Plugin::NIL) {
+				SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, properties));
+				add_plugin(p);
+				return;
+			}
+		} else {
+			LOG(error) << "Non-URI type " << type << endl;
 		}
 	}
 
@@ -287,20 +293,20 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 
 	if (is_patch) {
 		uint32_t poly = 1;
-		iterator p = properties.find("ingen:polyphony");
+		iterator p = properties.find(uris.ingen_polyphony);
 		if (p != properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
 			poly = p->second.get_int32();
 		SharedPtr<PatchModel> model(new PatchModel(path, poly));
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_node) {
-		const Resource::Properties::const_iterator p = properties.find("rdf:instanceOf");
+		const Resource::Properties::const_iterator p = properties.find(uris.rdf_instanceOf);
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == Atom::URI) {
 			if (!(plug = plugin(p->second.get_uri()))) {
 				LOG(warn) << "Unable to find plugin " << p->second.get_uri() << endl;
 				plug = SharedPtr<PluginModel>(
-						new PluginModel(p->second.get_uri(), "ingen:nil", Resource::Properties()));
+						new PluginModel(p->second.get_uri(), uris.ingen_nil, Resource::Properties()));
 				add_plugin(plug);
 			}
 
@@ -313,7 +319,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	} else if (is_port) {
 		if (data_type != PortType::UNKNOWN) {
 			PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
-			const Resource::Properties::const_iterator i = properties.find("lv2:index");
+			const Resource::Properties::const_iterator i = properties.find(uris.lv2_index);
 			if (i != properties.end() && i->second.type() == Atom::INT) {
 				SharedPtr<PortModel> p(new PortModel(path, i->second.get_int32(), data_type, pdir));
 				p->set_properties(properties);
@@ -375,13 +381,6 @@ ClientStore::activity(const Path& path)
 		port->signal_activity.emit();
 	else
 		LOG(error) << "Activity for non-existent port " << path << endl;
-}
-
-
-void
-ClientStore::binding(const Path& path, const Shared::MessageType& type)
-{
-	LOG(info) << "Bind " << path << " : " << type << endl;
 }
 
 

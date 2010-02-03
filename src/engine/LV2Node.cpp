@@ -142,6 +142,7 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 bool
 LV2Node::instantiate(BufferFactory& bufs)
 {
+	const LV2URIMap&   uris = Shared::LV2URIMap::instance();
 	SharedPtr<LV2Info> info = _lv2_plugin->lv2_info();
 	SLV2Plugin         plug = _lv2_plugin->slv2_plugin();
 
@@ -281,12 +282,12 @@ LV2Node::instantiate(BufferFactory& bufs)
 		if (direction == INPUT && data_type == PortType::CONTROL) {
 			((AudioBuffer*)port->buffer(0).get())->set_value(val.get_float(), 0, 0);
 			if (!isnan(min_values[j])) {
-				port->meta().set_property("lv2:minimum", min_values[j]);
-				port->set_property("lv2:minimum", min_values[j]);
+				port->meta().set_property(uris.lv2_minimum, min_values[j]);
+				port->set_property(uris.lv2_minimum, min_values[j]);
 			}
 			if (!isnan(max_values[j])) {
-				port->meta().set_property("lv2:maximum", max_values[j]);
-				port->set_property("lv2:maximum", max_values[j]);
+				port->meta().set_property(uris.lv2_maximum, max_values[j]);
+				port->set_property(uris.lv2_maximum, max_values[j]);
 			}
 		}
 

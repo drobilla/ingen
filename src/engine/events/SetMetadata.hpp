@@ -94,7 +94,8 @@ private:
 		ENABLE,
 		ENABLE_BROADCAST,
 		POLYPHONY,
-		POLYPHONIC
+		POLYPHONIC,
+		CONTROL_BINDING
 	};
 
 	typedef std::vector<SetPortValue*> SetEvents;

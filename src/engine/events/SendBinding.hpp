@@ -19,8 +19,8 @@
 #define INGEN_EVENTS_SENDBINDING_HPP
 
 #include "raul/Atom.hpp"
-#include "interface/MessageType.hpp"
 #include "engine/Event.hpp"
+#include "engine/ControlBindings.hpp"
 #include "engine/types.hpp"
 
 namespace Ingen {
@@ -43,22 +43,40 @@ public:
 			Engine&                    engine,
 			SampleCount                timestamp,
 			PortImpl*                  port,
-			const Shared::MessageType& type)
+			ControlBindings::Type      type,
+			int16_t                    num)
 		: Event(engine, SharedPtr<Responder>(), timestamp)
 		, _port(port)
 		, _type(type)
-	{}
+		, _num(num)
+	{
+		assert(_port);
+		switch (type) {
+		case ControlBindings::MIDI_CC:
+			assert(num >= 0 && num < 128);
+			break;
+		case ControlBindings::MIDI_RPN:
+			assert(num >= 0 && num < 16384);
+			break;
+		case ControlBindings::MIDI_NRPN:
+			assert(num >= 0 && num < 16384);
+		default:
+			break;
+		}
+	}
 
 	inline void operator=(const SendBinding& ev) {
 		_port = ev._port;
 		_type = ev._type;
+		_num  = ev._num;
 	}
 
 	void post_process();
 
 private:
-	PortImpl*           _port;
-	Shared::MessageType _type;
+	PortImpl*             _port;
+	ControlBindings::Type _type;
+	int16_t               _num;
 };
 
 

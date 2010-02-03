@@ -18,7 +18,6 @@
 #include <cassert>
 #include <ladspa.h>
 #include <raul/Symbol.hpp>
-#include "module/ingen_module.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "LADSPAPlugin.hpp"
 #include "LADSPANode.hpp"
@@ -42,7 +41,7 @@ LADSPAPlugin::LADSPAPlugin(
 	, _label(label)
 	, _name(name)
 {
-	const LV2URIMap& uris = *ingen_get_world()->uris;
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	set_property(uris.rdf_type,   uris.ingen_LADSPAPlugin);
 	set_property(uris.lv2_symbol, Symbol::symbolify(label));
 	set_property(uris.doap_name,  name);
@@ -52,7 +51,7 @@ LADSPAPlugin::LADSPAPlugin(
 const Raul::Atom&
 LADSPAPlugin::get_property(const Raul::URI& uri) const
 {
-	if (uri == ingen_get_world()->uris->doap_name)
+	if (uri == Shared::LV2URIMap::instance().doap_name)
 		return _name;
 	else
 		return ResourceImpl::get_property(uri);

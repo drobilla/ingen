@@ -64,7 +64,7 @@ HTTPClientSender::put(const URI&                  uri,
 		model.add_statement(
 				Redland::Resource(*_engine.world()->rdf_world, path),
 				i->first.str(),
-				AtomRDF::atom_to_node(*_engine.world()->rdf_world, i->second));
+				AtomRDF::atom_to_node(model, i->second));
 
 	const string str = model.serialise_to_string();
 	send_chunk(str);
@@ -102,6 +102,7 @@ HTTPClientSender::disconnect(const Path& src_path, const Path& dst_path)
 void
 HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& value)
 {
+#if 0
 	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
 	const string msg = string(
 			"@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
@@ -111,6 +112,7 @@ HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& v
 			"rdf:predicate ").append(key.str()).append(" ;\n"
 			"rdf:value     ").append(node.to_string()).append("\n] .\n");
 	send_chunk(msg);
+#endif
 }
 
 
@@ -128,13 +130,6 @@ HTTPClientSender::activity(const Path& path)
 			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
 			path.str()).append("> ingen:activity true .\n");
 	send_chunk(msg);
-}
-
-
-void
-HTTPClientSender::binding(const Path& path, const MessageType& type)
-{
-	warn << "TODO: HTTP binding" << endl;
 }
 
 

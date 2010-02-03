@@ -23,7 +23,6 @@
 #include <set>
 #include <boost/utility.hpp>
 #include "raul/SharedPtr.hpp"
-#include "module/World.hpp"
 #include "interface/PortType.hpp"
 #include "interface/EventType.hpp"
 
@@ -32,6 +31,8 @@ template<typename T> class Queue;
 namespace Raul { class Maid; }
 
 namespace Ingen {
+
+namespace Shared { class World; }
 
 class BufferFactory;
 class ClientBroadcaster;

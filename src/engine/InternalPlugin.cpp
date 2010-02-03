@@ -16,7 +16,6 @@
  */
 
 #include <cassert>
-#include "module/ingen_module.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
@@ -36,7 +35,7 @@ InternalPlugin::InternalPlugin(const std::string& uri, const std::string& symbol
 	: PluginImpl(Plugin::Internal, uri)
 	, _symbol(symbol)
 {
-	const LV2URIMap& uris = *ingen_get_world()->uris.get();
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	set_property(uris.rdf_type, uris.ingen_Internal);
 }
 

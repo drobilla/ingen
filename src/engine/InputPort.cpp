@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <cassert>
 #include "interface/Patch.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"
@@ -47,13 +48,15 @@ InputPort::InputPort(BufferFactory&    bufs,
                      size_t            buffer_size)
 	: PortImpl(bufs, parent, name, index, poly, type, value, buffer_size)
 {
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+
 	if (!dynamic_cast<Patch*>(parent))
-		add_property("rdf:type", Raul::Atom(Raul::Atom::URI, "lv2:InputPort"));
+		add_property(uris.rdf_type, uris.lv2_InputPort);
 
 	// Set default control range
 	if (type == PortType::CONTROL) {
-		set_property("lv2:minimum", 0.0f);
-		set_property("lv2:maximum", 1.0f);
+		set_property(uris.lv2_minimum, 0.0f);
+		set_property(uris.lv2_maximum, 1.0f);
 	}
 }
 

@@ -587,7 +587,7 @@ OSCEngineReceiver::_learn_cb(const char* path, const char* types, lo_arg** argv,
  * <h2>/ingen/set_property</h2>
  * \arg \b response-id (integer)
  * \arg \b object-path (string) - Full path of object to associate property with
- * \arg \b key (string) - URI/QName for predicate of this property (e.g. "ingen:enabled")
+ * \arg \b key (string) - URI for predicate of this property (e.g. "http://drobilla.net/ns/ingen#enabled")
  * \arg \b value (string) - Value of property
  *
  * Set a property on a graph object.

@@ -22,13 +22,15 @@
 #include <glibmm/ustring.h>
 #include <boost/optional.hpp>
 #include "interface/GraphObject.hpp"
-#include "module/World.hpp"
 
 namespace Raul { class Path; }
 namespace Redland { class World; class Model; class Node; }
 namespace Ingen { namespace Shared { class CommonInterface; } }
 
 namespace Ingen {
+
+namespace Shared { class World; }
+
 namespace Serialisation {
 
 

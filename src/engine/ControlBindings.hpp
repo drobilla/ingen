@@ -33,7 +33,24 @@ class PortImpl;
 
 class ControlBindings {
 public:
-	typedef std::map<int8_t, PortImpl*> Bindings;
+	enum Type {
+		MIDI_BENDER,
+		MIDI_CC,
+		MIDI_RPN,
+		MIDI_NRPN,
+		MIDI_CHANNEL_PRESSURE
+	};
+
+	struct Key {
+		Key(Type t, int16_t n=0) : type(t), num(n) {}
+		inline bool operator<(const Key& other) const {
+			return (type == other.type) ? (num < other.num) : (type < other.type);
+		}
+		Type    type;
+		int16_t num;
+	};
+
+	typedef std::map<Key, PortImpl*> Bindings;
 
 	ControlBindings(Engine& engine, SharedPtr<Shared::LV2URIMap> map)
 		: _engine(engine)
@@ -43,6 +60,7 @@ public:
 	{}
 
 	void learn(PortImpl* port);
+	void update_port(ProcessContext& context, PortImpl* port);
 	void process(ProcessContext& context, EventBuffer* buffer);
 
 	/** Remove all bindings for @a path or children of @a path.
@@ -56,8 +74,8 @@ private:
 	SharedPtr<Shared::LV2URIMap> _map;
 	PortImpl*                    _learn_port;
 
-	void set_port_value(ProcessContext& context, PortImpl* port, int8_t cc_value);
-	void bind(ProcessContext& context, int8_t cc_num);
+	void set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value);
+	void bind(ProcessContext& context, Type type, int16_t num=0);
 
 	SharedPtr<Bindings> _bindings;
 };

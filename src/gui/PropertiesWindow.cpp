@@ -18,6 +18,8 @@
 #include <cassert>
 #include <string>
 #include "raul/log.hpp"
+#include "module/ingen_module.hpp"
+#include "module/World.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PluginModel.hpp"
 #include "App.hpp"
@@ -77,6 +79,8 @@ PropertiesWindow::set_object(SharedPtr<ObjectModel> model)
 
 	set_title(model->path().chop_scheme() + " Properties - Ingen");
 
+	Shared::World* world = ingen_get_world();
+
 	ostringstream ss;
 	unsigned n_rows = 0;
 	for (ObjectModel::Properties::const_iterator i = model->properties().begin();
@@ -86,7 +90,7 @@ PropertiesWindow::set_object(SharedPtr<ObjectModel> model)
 		const Raul::Atom& value = i->second;
 
 		// Column 0: Property
-		Gtk::Label* lab = manage(new Gtk::Label(i->first.str(), 0.0, 0.5));
+		Gtk::Label* lab = manage(new Gtk::Label(world->rdf_world->qualify(i->first.str()), 0.0, 0.5));
 		_table->attach(*lab, 0, 1, n_rows, n_rows + 1, Gtk::FILL|Gtk::SHRINK, Gtk::SHRINK);
 
 		// Column 1: Type
@@ -102,7 +106,8 @@ PropertiesWindow::set_object(SharedPtr<ObjectModel> model)
 		// Column 2: Value
 		align = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
 		Gtk::Widget* value_widget = create_value_widget(i->first, value);
-		align->add(*value_widget);
+		if (value_widget)
+			align->add(*value_widget);
 		_table->attach(*align, 2, 3, n_rows, n_rows + 1, Gtk::FILL|Gtk::EXPAND, Gtk::SHRINK);
 		_records.insert(make_pair(i->first, Record(value, combo, align, n_rows)));
 	}
@@ -161,6 +166,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 		return widget;
 	}
 
+	LOG(error) << "Unable to create widget for value " << value << endl;
 	return NULL;
 }
 
@@ -206,9 +212,11 @@ PropertiesWindow::property_changed(const Raul::URI& predicate, const Raul::Atom&
 	Gtk::Widget* value_widget = create_value_widget(predicate, value);
 
 	record.value_widget->remove();
-	record.value_widget->add(*value_widget);
+	if (value_widget) {
+		record.value_widget->add(*value_widget);
+		value_widget->show();
+	}
 	record.value = value;
-	value_widget->show();
 }
 
 

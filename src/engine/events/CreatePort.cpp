@@ -20,18 +20,20 @@
 #include "raul/List.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "Responder.hpp"
-#include "CreatePort.hpp"
-#include "PatchImpl.hpp"
-#include "PluginImpl.hpp"
-#include "Engine.hpp"
-#include "PatchImpl.hpp"
-#include "EventSource.hpp"
-#include "EngineStore.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "ClientBroadcaster.hpp"
-#include "PortImpl.hpp"
+#include "ControlBindings.hpp"
+#include "CreatePort.hpp"
 #include "Driver.hpp"
 #include "DuplexPort.hpp"
+#include "Engine.hpp"
+#include "EngineStore.hpp"
+#include "EventSource.hpp"
+#include "PatchImpl.hpp"
+#include "PatchImpl.hpp"
+#include "PluginImpl.hpp"
+#include "PortImpl.hpp"
+#include "Responder.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -85,6 +87,8 @@ CreatePort::pre_process()
 
 	_patch = _engine.engine_store()->find_patch(_path.parent());
 
+	const LV2URIMap& uris = *_engine.world()->uris.get();
+
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());
 
@@ -94,7 +98,7 @@ CreatePort::pre_process()
 
 		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(), _data_type, buffer_size, _is_output);
 		if (_patch->parent())
-			_patch_port->set_property("rdf:instanceOf", _patch_port->meta_uri());
+			_patch_port->set_property(uris.rdf_instanceOf, _patch_port->meta_uri());
 
 		_patch_port->meta().properties().insert(_properties.begin(), _properties.end());
 
@@ -135,6 +139,7 @@ CreatePort::execute(ProcessContext& context)
 	if (_patch_port) {
 		_engine.maid()->push(_patch->external_ports());
 		_patch->external_ports(_ports_array);
+		_engine.control_bindings()->update_port(context, _patch_port);
 	}
 
 	if (_driver_port) {

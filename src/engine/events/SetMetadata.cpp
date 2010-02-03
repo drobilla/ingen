@@ -21,16 +21,17 @@
 #include "interface/PortType.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "ClientBroadcaster.hpp"
+#include "ControlBindings.hpp"
 #include "CreateNode.hpp"
 #include "CreatePatch.hpp"
 #include "CreatePort.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
+#include "EventSource.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "EventSource.hpp"
 #include "Responder.hpp"
 #include "SetMetadata.hpp"
 #include "SetPortValue.hpp"
@@ -183,6 +184,17 @@ SetMetadata::pre_process()
 				} else {
 					warn << "Set value for non-port " << _object->uri() << endl;
 				}
+			} else if (key == uris.ingen_controlBinding) {
+				PortImpl* port = dynamic_cast<PortImpl*>(_object);
+				if (port) {
+					if (value.type() == Atom::DICT) {
+						op = CONTROL_BINDING;
+					} else {
+						_error = BAD_VALUE_TYPE;
+					}
+				} else {
+					warn << "Set binding for non-port " << _object->uri() << endl;
+				}
 			}
 		}
 
@@ -245,6 +257,9 @@ SetMetadata::execute(ProcessContext& context)
 			if (!_patch->apply_internal_poly(*_engine.maid(), value.get_int32()))
 				_error = INTERNAL;
 			break;
+		case CONTROL_BINDING:
+			if ((port = dynamic_cast<PortImpl*>(_object)))
+				_engine.control_bindings()->update_port(context, port);
 		default:
 			_success = true;
 		}

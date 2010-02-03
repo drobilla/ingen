@@ -16,6 +16,7 @@
  */
 
 #include "module/Module.hpp"
+#include "module/World.hpp"
 #include "Engine.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "util.hpp"

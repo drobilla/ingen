@@ -26,12 +26,7 @@ e.activate()
 
 c.subscribe(e)
 
-e.create_port("/I", "ingen:midi", False)
-e.create_port("/made", "ingen:audio", False)
-e.create_port("/these", "ingen:audio", False)
-e.create_port("/in", "ingen:midi", True)
-e.create_port("/a", "ingen:audio", True)
-e.create_port("/script", "ingen:audio", True)
+e.create_port("/dynamic_port", "http://lv2plug.in/ns/ext/event#EventPort", False)
 
 while True:
     world.iteration()

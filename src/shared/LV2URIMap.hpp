@@ -40,6 +40,8 @@ public:
 
 	uint32_t uri_to_id(const char* map, const char* uri);
 
+	static const LV2URIMap& instance();
+
 private:
 	static uint32_t uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 	                                  const char*               map,
@@ -54,31 +56,48 @@ public:
 		uint32_t id;
 	};
 
-	const Quark ctx_context;
 	const Quark ctx_AudioContext;
 	const Quark ctx_MessageContext;
+	const Quark ctx_context;
 	const Quark doap_name;
-	const Quark ingen_LADSPAPlugin;
 	const Quark ingen_Internal;
+	const Quark ingen_LADSPAPlugin;
 	const Quark ingen_Node;
 	const Quark ingen_Patch;
 	const Quark ingen_Port;
 	const Quark ingen_broadcast;
+	const Quark ingen_controlBinding;
+	const Quark ingen_document;
 	const Quark ingen_enabled;
+	const Quark ingen_nil;
+	const Quark ingen_node;
 	const Quark ingen_polyphonic;
 	const Quark ingen_polyphony;
 	const Quark ingen_selected;
 	const Quark ingen_value;
 	const Quark ingenui_canvas_x;
 	const Quark ingenui_canvas_y;
+	const Quark lv2_AudioPort;
+	const Quark lv2_ControlPort;
+	const Quark lv2_InputPort;
+	const Quark lv2_OutputPort;
 	const Quark lv2_Plugin;
+	const Quark lv2_default;
 	const Quark lv2_index;
+	const Quark lv2_integer;
 	const Quark lv2_maximum;
 	const Quark lv2_minimum;
 	const Quark lv2_name;
 	const Quark lv2_symbol;
 	const Quark lv2_toggled;
+	const Quark lv2ev_EventPort;
+	const Quark midi_Bender;
+	const Quark midi_ChannelPressure;
+	const Quark midi_Controller;
+	const Quark midi_controllerNumber;
 	const Quark midi_event;
+	const Quark obj_MessagePort;
+	const Quark obj_ValuePort;
 	const Quark object_class_bool;
 	const Quark object_class_float32;
 	const Quark object_class_int32;
@@ -87,6 +106,7 @@ public:
 	const Quark object_transfer;
 	const Quark rdf_instanceOf;
 	const Quark rdf_type;
+	const Quark rdfs_seeAlso;
 	const Quark string_transfer;
 	const Quark ui_format_events;
 };

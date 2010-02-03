@@ -22,8 +22,6 @@
 #include "common/interface/Port.hpp"
 #include "common/interface/Connection.hpp"
 #include "common/interface/Plugin.hpp"
-#include "module/ingen_module.hpp"
-#include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "Builder.hpp"
 
@@ -43,7 +41,7 @@ Builder::Builder(CommonInterface& interface)
 void
 Builder::build(SharedPtr<const GraphObject> object)
 {
-	const LV2URIMap& uris = *ingen_get_world()->uris.get();
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (!object->path().is_root()) {

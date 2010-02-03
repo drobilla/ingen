@@ -17,8 +17,6 @@
 
 #include "raul/TableImpl.hpp"
 #include "interface/GraphObject.hpp"
-#include "module/ingen_module.hpp"
-#include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "ObjectModel.hpp"
 
@@ -78,7 +76,7 @@ ObjectModel::get_property(const Raul::URI& key) const
 bool
 ObjectModel::polyphonic() const
 {
-	const Raul::Atom& polyphonic = get_property(ingen_get_world()->uris->ingen_polyphonic);
+	const Raul::Atom& polyphonic = get_property(Shared::LV2URIMap::instance().ingen_polyphonic);
 	return (polyphonic.is_valid() && polyphonic.get_bool());
 }
 

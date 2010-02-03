@@ -18,6 +18,8 @@
 #ifndef INGEN_INTERFACE_EVENTTYPE_HPP
 #define INGEN_INTERFACE_EVENTTYPE_HPP
 
+#include "raul/URI.hpp"
+
 namespace Ingen {
 namespace Shared {
 
@@ -33,7 +35,7 @@ public:
 		OSC     = 2
 	};
 
-	EventType(const std::string& uri)
+	EventType(const Raul::URI& uri)
 		: _symbol(UNKNOWN)
 	{
 		if (uri == type_uri(MIDI)) {
@@ -47,7 +49,7 @@ public:
 		: _symbol(symbol)
 	{}
 
-	inline const char* uri() const { return type_uri(_symbol); }
+	inline const Raul::URI& uri() const { return type_uri(_symbol); }
 
 	inline bool operator==(const Symbol& symbol) const { return (_symbol == symbol); }
 	inline bool operator!=(const Symbol& symbol) const { return (_symbol != symbol); }
@@ -58,13 +60,14 @@ public:
 	inline bool is_osc()  { return _symbol == OSC; }
 
 private:
-
-	static inline const char* type_uri(unsigned symbol_num)  {
-		switch (symbol_num) {
-		case 1:  return "ingen:MidiEvent";
-		case 2:  return "ingen:OSCEvent";
-		default: return "";
-		}
+	static inline const Raul::URI& type_uri(unsigned symbol_num) {
+		assert(symbol_num <= OSC);
+		static const Raul::URI uris[] = {
+			"http://drobilla.net/ns/ingen#nil",
+			"http://drobilla.net/ns/ingen#MidiEvent",
+			"http://drobilla.net/ns/ingen#OSCEvent"
+		};
+		return uris[symbol_num];
 	}
 
 	Symbol _symbol;

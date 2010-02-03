@@ -185,6 +185,7 @@ NodeModule::plugin_changed()
 void
 NodeModule::embed_gui(bool embed)
 {
+	const LV2URIMap& uris = App::instance().uris();
 	if (embed) {
 
 		if (_gui_window) {
@@ -217,7 +218,7 @@ NodeModule::embed_gui(bool embed)
 			for (NodeModel::Ports::const_iterator p = _node->ports().begin();
 					p != _node->ports().end(); ++p)
 				if ((*p)->type().is_control() && (*p)->is_output())
-					App::instance().engine()->set_property((*p)->path(), "ingen:broadcast", true);
+					App::instance().engine()->set_property((*p)->path(), uris.ingen_broadcast, true);
 		}
 
 	} else { // un-embed
@@ -227,7 +228,7 @@ NodeModule::embed_gui(bool embed)
 
 		for (NodeModel::Ports::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
 			if ((*p)->type().is_control() && (*p)->is_output())
-				App::instance().engine()->set_property((*p)->path(), "ingen:broadcast", false);
+				App::instance().engine()->set_property((*p)->path(), uris.ingen_broadcast, false);
 	}
 
 	if (embed && _embed_item) {

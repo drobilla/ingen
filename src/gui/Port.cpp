@@ -50,7 +50,7 @@ Port::create(
 {
 	Glib::ustring label(human_name ? "" : pm->path().symbol());
 	if (human_name) {
-		const Raul::Atom& name = pm->get_property("lv2:name");
+		const Raul::Atom& name = pm->get_property(App::instance().uris().lv2_name);
 		if (name.type() == Raul::Atom::STRING) {
 			label = name.get_string();
 		} else {
@@ -205,7 +205,7 @@ Port::set_control(float value, bool signal)
 		} else if (model()->type() == PortType::EVENTS) {
 			app.engine()->set_property(model()->path(),
 					world->uris->ingen_value,
-					Atom("<http://example.org/ev#BangEvent>", 0, NULL));
+					Atom("http://example.org/ev#BangEvent", 0, NULL));
 		}
 	}
 
@@ -238,13 +238,13 @@ Port::property_changed(const URI& key, const Atom& value)
 ArtVpathDash*
 Port::dash()
 {
+	const LV2URIMap& uris = App::instance().uris();
 	SharedPtr<PortModel> pm = _port_model.lock();
 	if (!pm)
 		return NULL;
 
-	const Raul::Atom& context = pm->get_property("ctx:context");
-	if (!context.is_valid() || context.type() != Atom::URI
-			|| !strcmp(context.get_uri(), "ctx:AudioContext"))
+	const Raul::Atom& context = pm->get_property(uris.ctx_context);
+	if (!context.is_valid() || context.type() != Atom::URI || context == uris.ctx_AudioContext)
 		return NULL;
 
 	if (!_dash) {

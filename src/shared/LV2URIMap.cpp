@@ -22,6 +22,8 @@
 #include "raul/log.hpp"
 #include "object.lv2/object.h"
 #include "LV2URIMap.hpp"
+#include "module/ingen_module.hpp"
+#include "module/World.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -36,41 +38,67 @@ LV2URIMap::Quark::Quark(const char* c_str)
 {
 }
 
+#define NS_CTX     "http://lv2plug.in/ns/dev/contexts#"
+#define NS_INGEN   "http://drobilla.net/ns/ingen#"
+#define NS_INGENUI "http://drobilla.net/ns/ingenuity#"
+#define NS_LV2     "http://lv2plug.in/ns/lv2core#"
+#define NS_MIDI    "http://drobilla.net/ns/dev/midi#"
+#define NS_MIDI    "http://drobilla.net/ns/dev/midi#"
+#define NS_RDF     "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#define NS_RDFS    "http://www.w3.org/2000/01/rdf-schema#"
 
 LV2URIMap::LV2URIMap()
-	: ctx_context("ctx:context")
-	, ctx_AudioContext("ctx:AudioContext")
-	, ctx_MessageContext("ctx:MessageContext")
-	, doap_name("doap:name")
-	, ingen_LADSPAPlugin("ingen:LADSPAPlugin")
-	, ingen_Internal("ingen:Internal")
-	, ingen_Node("ingen:Node")
-	, ingen_Patch("ingen:Patch")
-	, ingen_Port("ingen:Port")
-	, ingen_broadcast("ingen:broadcast")
-	, ingen_enabled("ingen:enabled")
-	, ingen_polyphonic("ingen:polyphonic")
-	, ingen_polyphony("ingen:polyphony")
-	, ingen_selected("ingen:selected")
-	, ingen_value("ingen:value")
-	, ingenui_canvas_x("ingenui:canvas-x")
-	, ingenui_canvas_y("ingenui:canvas-y")
-	, lv2_Plugin("lv2:Plugin")
-	, lv2_index("lv2:index")
-	, lv2_maximum("lv2:maximum")
-	, lv2_minimum("lv2:minimum")
-	, lv2_name("lv2:name")
-	, lv2_symbol("lv2:symbol")
-	, lv2_toggled("lv2:toggled")
+	: ctx_AudioContext(NS_CTX "AudioContext")
+	, ctx_MessageContext(NS_CTX "MessageContext")
+	, ctx_context(NS_CTX "context")
+	, doap_name("http://usefulinc.com/ns/doap#name")
+	, ingen_Internal(NS_INGEN "Internal")
+	, ingen_LADSPAPlugin(NS_INGEN "LADSPAPlugin")
+	, ingen_Node(NS_INGEN "Node")
+	, ingen_Patch(NS_INGEN "Patch")
+	, ingen_Port(NS_INGEN "Port")
+	, ingen_broadcast(NS_INGEN "broadcast")
+	, ingen_controlBinding(NS_INGEN "controlBinding")
+	, ingen_document(NS_INGEN "document")
+	, ingen_enabled(NS_INGEN "enabled")
+	, ingen_nil(NS_INGEN "nil")
+	, ingen_node(NS_INGEN "node")
+	, ingen_polyphonic(NS_INGEN "polyphonic")
+	, ingen_polyphony(NS_INGEN "polyphony")
+	, ingen_selected(NS_INGEN "selected")
+	, ingen_value(NS_INGEN "value")
+	, ingenui_canvas_x(NS_INGENUI "canvas-x")
+	, ingenui_canvas_y(NS_INGENUI "canvas-y")
+	, lv2_AudioPort(NS_LV2 "AudioPort")
+	, lv2_ControlPort(NS_LV2 "ControlPort")
+	, lv2_InputPort(NS_LV2 "InputPort")
+	, lv2_OutputPort(NS_LV2 "OutputPort")
+	, lv2_Plugin(NS_LV2 "Plugin")
+	, lv2_default(NS_LV2 "default")
+	, lv2_index(NS_LV2 "index")
+	, lv2_integer(NS_LV2 "integer")
+	, lv2_maximum(NS_LV2 "maximum")
+	, lv2_minimum(NS_LV2 "minimum")
+	, lv2_name(NS_LV2 "name")
+	, lv2_symbol(NS_LV2 "symbol")
+	, lv2_toggled(NS_LV2 "toggled")
+	, lv2ev_EventPort("http://lv2plug.in/ns/ext/event#EventPort")
+	, midi_Bender(NS_MIDI "Bender")
+	, midi_ChannelPressure(NS_MIDI "ChannelPressure")
+	, midi_Controller(NS_MIDI "Controller")
+	, midi_controllerNumber(NS_MIDI "controllerNumber")
 	, midi_event("http://lv2plug.in/ns/ext/midi#MidiEvent")
+	, obj_MessagePort("http://lv2plug.in/ns/dev/objects#MessagePort")
+	, obj_ValuePort("http://lv2plug.in/ns/dev/objects#ValuePort")
 	, object_class_bool(LV2_OBJECT_URI "#Bool")
 	, object_class_float32(LV2_OBJECT_URI "#Float32")
 	, object_class_int32(LV2_OBJECT_URI "#Int32")
 	, object_class_string(LV2_OBJECT_URI "#String")
 	, object_class_vector(LV2_OBJECT_URI "#Vector")
 	, object_transfer(LV2_OBJECT_URI "#ObjectTransfer")
-	, rdf_instanceOf("rdf:instanceOf")
-	, rdf_type("rdf:type")
+	, rdf_instanceOf(NS_RDF "instanceOf")
+	, rdf_type(NS_RDF "type")
+	, rdfs_seeAlso(NS_RDFS "seeAlso")
 	, string_transfer("http://lv2plug.in/ns/dev/string-port#StringTransfer")
 	, ui_format_events("http://lv2plug.in/ns/extensions/ui#Events")
 {
@@ -78,6 +106,13 @@ LV2URIMap::LV2URIMap()
 	uri_map_feature_data.callback_data = this;
 	uri_map_feature.URI = LV2_URI_MAP_URI;
 	uri_map_feature.data = &uri_map_feature_data;
+}
+
+
+const LV2URIMap&
+LV2URIMap::instance()
+{
+	return *ingen_get_world()->uris;
 }
 
 

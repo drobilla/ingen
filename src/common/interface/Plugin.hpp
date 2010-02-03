@@ -19,6 +19,7 @@
 #define INGEN_INTERFACE_PLUGIN_HPP
 
 #include <string>
+#include "raul/URI.hpp"
 #include "interface/Resource.hpp"
 
 namespace Ingen {
@@ -32,26 +33,31 @@ public:
 
 	virtual Type type() const = 0;
 
-	inline const char* type_uri() const {
-		switch (type()) {
-		case LV2:      return "lv2:Plugin";
-		case LADSPA:   return "ingen:LADSPAPlugin";
-		case Internal: return "ingen:Internal";
-		case Patch:    return "ingen:Patch";
-		default:       return "";
-		}
+	static inline const Raul::URI& type_uri(Type type) {
+		static const Raul::URI uris[] = {
+			"http://drobilla.net/ns/ingen#nil",
+			"http://lv2plug.in/ns/lv2core#Plugin",
+			"http://drobilla.net/ns/ingen#LADSPAPlugin",
+			"http://drobilla.net/ns/ingen#Internal",
+			"http://drobilla.net/ns/ingen#Patch"
+		};
+
+		return uris[type];
 	}
 
-	static inline Type type_from_uri(const std::string& uri) {
-		if (uri == "lv2:Plugin")
+	inline const Raul::URI& type_uri() const { return type_uri(type()); }
+
+	static inline Type type_from_uri(const Raul::URI& uri) {
+		if (uri == type_uri(LV2))
 			return LV2;
-		else if (uri == "ingen:LADSPAPlugin")
+		else if (uri == type_uri(LADSPA))
 			return LADSPA;
-		else if (uri == "ingen:Internal")
+		else if (uri == type_uri(Internal))
 			return Internal;
-		else if (uri == "ingen:Patch")
+		else if (uri == type_uri(Patch))
 			return Patch;
-		return NIL;
+		else
+			return NIL;
 	}
 };
 

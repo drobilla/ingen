@@ -20,7 +20,6 @@
 #include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
 #include "interface/ClientInterface.hpp"
-#include "interface/MessageType.hpp"
 #include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "OSCClientSender.hpp"
@@ -227,25 +226,6 @@ OSCClientSender::activity(const Path& path)
 		return;
 
 	lo_send(_address, "/ingen/activity", "s", path.c_str(), LO_ARGS_END);
-}
-
-
-/** \page client_osc_namespace
- * <h2>/ingen/binding</h2>
- * \arg \b path (string) - Path of object
- * \arg \b type (string) - Type of message (URI)
- * \arg \b id (int) - Controller number (if applicable)
- *
- * Notification of "activity" (e.g. port message blinkenlights).
- */
-void
-OSCClientSender::binding(const Path& path, const MessageType& type)
-{
-	if (!_enabled)
-		return;
-
-	lo_send(_address, "/ingen/binding", "ssi",
-			path.c_str(), type.type_uri(), type.num(), LO_ARGS_END);
 }
 
 
