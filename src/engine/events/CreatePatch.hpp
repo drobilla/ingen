@@ -38,7 +38,7 @@ class CreatePatch : public QueuedEvent
 public:
 	CreatePatch(
 			Engine&                             engine,
-			SharedPtr<Responder>                responder,
+			SharedPtr<Request>                  request,
 			SampleCount                         timestamp,
 			const Raul::Path&                   path,
 			int                                 poly,

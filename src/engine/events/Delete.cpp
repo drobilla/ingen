@@ -24,12 +24,11 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "EventSource.hpp"
 #include "NodeBase.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 
 using namespace std;
 
@@ -39,8 +38,8 @@ namespace Events {
 using namespace Shared;
 
 
-Delete::Delete(Engine& engine, SharedPtr<Responder> responder, FrameTime time, EventSource* source, const Raul::Path& path)
-	: QueuedEvent(engine, responder, time, true, source)
+Delete::Delete(Engine& engine, SharedPtr<Request> request, FrameTime time, const Raul::Path& path)
+	: QueuedEvent(engine, request, time, true)
 	, _path(path)
 	, _store_iterator(engine.engine_store()->end())
 	, _driver_port(NULL)
@@ -50,7 +49,8 @@ Delete::Delete(Engine& engine, SharedPtr<Responder> responder, FrameTime time, E
 	, _compiled_patch(NULL)
 	, _disconnect_event(NULL)
 {
-	assert(_source);
+	assert(request);
+	assert(request->source());
 }
 
 
@@ -159,8 +159,7 @@ Delete::execute(ProcessContext& context)
 		}
 	}
 
-	if (_source)
-		_source->unblock();
+	_request->unblock();
 }
 
 
@@ -171,17 +170,17 @@ Delete::post_process()
 
 	if (!_node && !_port) {
 		if (_path.is_root()) {
-			_responder->respond_error("You can not destroy the root patch (/)");
+			_request->respond_error("You can not destroy the root patch (/)");
 		} else {
 			string msg = string("Could not find object ") + _path.str() + " to destroy";
-			_responder->respond_error(msg);
+			_request->respond_error(msg);
 		}
 	}
 
 	if (_patch_node_listnode) {
 		assert(_node);
 		_node->deactivate();
-		_responder->respond_ok();
+		_request->respond_ok();
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
@@ -190,7 +189,7 @@ Delete::post_process()
 		_engine.maid()->push(_patch_node_listnode);
 	} else if (_patch_port_listnode) {
 		assert(_port);
-		_responder->respond_ok();
+		_request->respond_ok();
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
@@ -198,7 +197,7 @@ Delete::post_process()
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_port_listnode);
 	} else {
-		_responder->respond_error("Unable to destroy object");
+		_request->respond_error("Unable to destroy object");
 	}
 
 	if (_driver_port) {

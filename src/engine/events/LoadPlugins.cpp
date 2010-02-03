@@ -16,18 +16,17 @@
  */
 
 #include "LoadPlugins.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "Engine.hpp"
 #include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
-#include "EventSource.hpp"
 
 namespace Ingen {
 namespace Events {
 
 
-LoadPlugins::LoadPlugins(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, EventSource* source)
-	: QueuedEvent(engine, responder, timestamp, true, source)
+LoadPlugins::LoadPlugins(Engine& engine, SharedPtr<Request> request, SampleCount timestamp)
+	: QueuedEvent(engine, request, timestamp, true)
 {
 }
 
@@ -42,10 +41,10 @@ LoadPlugins::pre_process()
 void
 LoadPlugins::post_process()
 {
-	if (_source)
-		_source->unblock();
+	if (_request)
+		_request->unblock();
 
-	_responder->respond_ok();
+	_request->respond_ok();
 }
 
 

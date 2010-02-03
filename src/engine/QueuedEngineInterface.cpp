@@ -34,7 +34,7 @@ using namespace Shared;
 
 QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queue_size)
 	: EventSource(queue_size)
-	, _responder(new Responder(NULL, 0))
+	, _request(new Request(this, NULL, 0))
 	, _engine(engine)
 	, _in_bundle(false)
 {
@@ -56,16 +56,16 @@ QueuedEngineInterface::now() const
 void
 QueuedEngineInterface::set_next_response_id(int32_t id)
 {
-	if (_responder)
-		_responder->set_id(id);
+	if (_request)
+		_request->set_id(id);
 }
 
 
 void
 QueuedEngineInterface::disable_responses()
 {
-	_responder->set_client(NULL);
-	_responder->set_id(0);
+	_request->set_client(NULL);
+	_request->set_id(0);
 }
 
 
@@ -75,12 +75,12 @@ QueuedEngineInterface::disable_responses()
 void
 QueuedEngineInterface::register_client(ClientInterface* client)
 {
-	push_queued(new Events::RegisterClient(_engine, _responder, now(), client->uri(), client));
-	if (!_responder) {
-		_responder = SharedPtr<Responder>(new Responder(client, 1));
+	push_queued(new Events::RegisterClient(_engine, _request, now(), client->uri(), client));
+	if (!_request) {
+		_request = SharedPtr<Request>(new Request(this, client, 1));
 	} else {
-		_responder->set_id(1);
-		_responder->set_client(client);
+		_request->set_id(1);
+		_request->set_client(client);
 	}
 }
 
@@ -88,10 +88,10 @@ QueuedEngineInterface::register_client(ClientInterface* client)
 void
 QueuedEngineInterface::unregister_client(const URI& uri)
 {
-	push_queued(new Events::UnregisterClient(_engine, _responder, now(), uri));
-	if (_responder && _responder->client() && _responder->client()->uri() == uri) {
-		_responder->set_id(0);
-		_responder->set_client(NULL);
+	push_queued(new Events::UnregisterClient(_engine, _request, now(), uri));
+	if (_request && _request->client() && _request->client()->uri() == uri) {
+		_request->set_id(0);
+		_request->set_client(NULL);
 	}
 }
 
@@ -101,7 +101,7 @@ QueuedEngineInterface::unregister_client(const URI& uri)
 void
 QueuedEngineInterface::load_plugins()
 {
-	push_queued(new Events::LoadPlugins(_engine, _responder, now(), this));
+	push_queued(new Events::LoadPlugins(_engine, _request, now()));
 }
 
 
@@ -114,7 +114,7 @@ QueuedEngineInterface::activate()
 		_engine.activate();
 	}
 	EventSource::activate_source();
-	push_queued(new Events::Ping(_engine, _responder, now()));
+	push_queued(new Events::Ping(_engine, _request, now()));
 	in_activate = false;
 }
 
@@ -122,14 +122,14 @@ QueuedEngineInterface::activate()
 void
 QueuedEngineInterface::deactivate()
 {
-	push_queued(new Events::Deactivate(_engine, _responder, now()));
+	push_queued(new Events::Deactivate(_engine, _request, now()));
 }
 
 
 void
 QueuedEngineInterface::quit()
 {
-	_responder->respond_ok();
+	_request->respond_ok();
 	_engine.quit();
 }
 
@@ -166,7 +166,7 @@ QueuedEngineInterface::put(const URI&                  uri,
 		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 	LOG(debug) << "}" << endl;
 
-	push_queued(new Events::SetMetadata(_engine, _responder, now(), this, true, meta, subject, properties));
+	push_queued(new Events::SetMetadata(_engine, _request, now(), true, meta, subject, properties));
 }
 
 
@@ -174,14 +174,14 @@ void
 QueuedEngineInterface::move(const Path& old_path,
                             const Path& new_path)
 {
-	push_queued(new Events::Move(_engine, _responder, now(), old_path, new_path));
+	push_queued(new Events::Move(_engine, _request, now(), old_path, new_path));
 }
 
 
 void
 QueuedEngineInterface::del(const Path& path)
 {
-	push_queued(new Events::Delete(_engine, _responder, now(), this, path));
+	push_queued(new Events::Delete(_engine, _request, now(), path));
 }
 
 
@@ -189,7 +189,7 @@ void
 QueuedEngineInterface::connect(const Path& src_port_path,
                                const Path& dst_port_path)
 {
-	push_queued(new Events::Connect(_engine, _responder, now(), src_port_path, dst_port_path));
+	push_queued(new Events::Connect(_engine, _request, now(), src_port_path, dst_port_path));
 
 }
 
@@ -198,7 +198,7 @@ void
 QueuedEngineInterface::disconnect(const Path& src_port_path,
                                   const Path& dst_port_path)
 {
-	push_queued(new Events::Disconnect(_engine, _responder, now(), src_port_path, dst_port_path));
+	push_queued(new Events::Disconnect(_engine, _request, now(), src_port_path, dst_port_path));
 }
 
 
@@ -206,7 +206,7 @@ void
 QueuedEngineInterface::disconnect_all(const Path& patch_path,
                                       const Path& path)
 {
-	push_queued(new Events::DisconnectAll(_engine, _responder, now(), patch_path, path));
+	push_queued(new Events::DisconnectAll(_engine, _request, now(), patch_path, path));
 }
 
 
@@ -215,14 +215,14 @@ QueuedEngineInterface::set_voice_value(const Path&       port_path,
                                        uint32_t          voice,
                                        const Raul::Atom& value)
 {
-	push_queued(new Events::SetPortValue(_engine, _responder, true, now(), voice, port_path, value));
+	push_queued(new Events::SetPortValue(_engine, _request, true, now(), voice, port_path, value));
 }
 
 
 void
 QueuedEngineInterface::learn(const Path& path)
 {
-	push_queued(new Events::Learn(_engine, _responder, now(), path));
+	push_queued(new Events::Learn(_engine, _request, now(), path));
 }
 
 
@@ -236,7 +236,7 @@ QueuedEngineInterface::set_property(const URI&  uri,
 	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
 	Resource::Properties properties;
 	properties.insert(make_pair(predicate, value));
-	push_queued(new Events::SetMetadata(_engine, _responder, now(), this, true, meta, path, properties));
+	push_queued(new Events::SetMetadata(_engine, _request, now(), true, meta, path, properties));
 }
 
 // Requests //
@@ -245,9 +245,9 @@ void
 QueuedEngineInterface::ping()
 {
 	if (_engine.activated()) {
-		push_queued(new Events::Ping(_engine, _responder, now()));
-	} else if (_responder) {
-		_responder->respond_ok();
+		push_queued(new Events::Ping(_engine, _request, now()));
+	} else if (_request) {
+		_request->respond_ok();
 	}
 }
 
@@ -255,7 +255,7 @@ QueuedEngineInterface::ping()
 void
 QueuedEngineInterface::get(const URI& uri)
 {
-	push_queued(new Events::Get(_engine, _responder, now(), uri));
+	push_queued(new Events::Get(_engine, _request, now(), uri));
 }
 
 
@@ -266,23 +266,23 @@ QueuedEngineInterface::request_property(const URI& uri, const URI& key)
 	bool   meta = (hash != string::npos);
 	const string path_str = string("/") + uri.chop_start("/");
 	if (meta && Path::is_valid(path_str))
-		push_queued(new Events::RequestMetadata(_engine, _responder, now(), meta, path_str, key));
+		push_queued(new Events::RequestMetadata(_engine, _request, now(), meta, path_str, key));
 	else
-		push_queued(new Events::RequestMetadata(_engine, _responder, now(), meta, uri, key));
+		push_queued(new Events::RequestMetadata(_engine, _request, now(), meta, uri, key));
 }
 
 
 void
 QueuedEngineInterface::request_plugins()
 {
-	push_queued(new Events::RequestPlugins(_engine, _responder, now()));
+	push_queued(new Events::RequestPlugins(_engine, _request, now()));
 }
 
 
 void
 QueuedEngineInterface::request_all_objects()
 {
-	push_queued(new Events::RequestAllObjects(_engine, _responder, now()));
+	push_queued(new Events::RequestAllObjects(_engine, _request, now()));
 }
 
 

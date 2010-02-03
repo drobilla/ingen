@@ -31,10 +31,9 @@ namespace Events {
 class LoadPlugins : public QueuedEvent
 {
 public:
-	LoadPlugins(Engine&              engine,
-	            SharedPtr<Responder> responder,
-	            SampleCount          timestamp,
-	            EventSource*         source);
+	LoadPlugins(Engine&            engine,
+	            SharedPtr<Request> request,
+	            SampleCount        timestamp);
 
 	void pre_process();
 	void post_process();

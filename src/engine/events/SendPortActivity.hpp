@@ -46,7 +46,7 @@ public:
 	inline SendPortActivity(Engine&     engine,
 	                        SampleCount timestamp,
 	                        PortImpl*   port)
-		: Event(engine, SharedPtr<Responder>(), timestamp)
+		: Event(engine, SharedPtr<Request>(), timestamp)
 		, _port(port)
 	{
 	}

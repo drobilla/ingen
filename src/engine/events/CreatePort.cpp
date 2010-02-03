@@ -28,12 +28,11 @@
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "EventSource.hpp"
 #include "PatchImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -46,14 +45,13 @@ using namespace Shared;
 
 CreatePort::CreatePort(
 		Engine&                     engine,
-		SharedPtr<Responder>        responder,
+		SharedPtr<Request>          request,
 		SampleCount                 timestamp,
 		const Raul::Path&           path,
 		const Raul::URI&            type,
 		bool                        is_output,
-		EventSource*                source,
 		const Resource::Properties& properties)
-	: QueuedEvent(engine, responder, timestamp, true, source)
+	: QueuedEvent(engine, request, timestamp, true)
 	, _error(NO_ERROR)
 	, _path(path)
 	, _type(type)
@@ -146,30 +144,30 @@ CreatePort::execute(ProcessContext& context)
 		_engine.driver()->add_port(_driver_port);
 	}
 
-	if (_source)
-		_source->unblock();
+	if (_request)
+		_request->unblock();
 }
 
 
 void
 CreatePort::post_process()
 {
-	if (!_responder)
+	if (!_request)
 		return;
 
 	string msg;
 	switch (_error) {
 	case NO_ERROR:
-		_responder->respond_ok();
+		_request->respond_ok();
 		_engine.broadcaster()->send_object(_patch_port, true);
 		break;
 	case UNKNOWN_TYPE:
 		msg = string("Could not create port ") + _path.str() + " (Unknown type)";
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 		break;
 	case CREATION_FAILED:
 		msg = string("Could not create port ") + _path.str() + " (Creation failed)";
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 		break;
 	}
 }

@@ -32,12 +32,12 @@ namespace Events {
 class Deactivate : public QueuedEvent
 {
 public:
-	Deactivate(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
-		: QueuedEvent(engine, responder, timestamp)
+	Deactivate(Engine& engine, SharedPtr<Request> request, SampleCount timestamp)
+		: QueuedEvent(engine, request, timestamp)
 	{}
 
 	void post_process() {
-		_responder->respond_ok();
+		_request->respond_ok();
 		_engine.deactivate();
 	}
 };

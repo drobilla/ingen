@@ -21,7 +21,7 @@
 #include <stdint.h>
 #include <lo/lo.h>
 #include "QueuedEngineInterface.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 
 namespace Ingen {
 

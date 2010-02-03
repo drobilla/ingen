@@ -24,7 +24,7 @@
 #include "Note.hpp"
 #include "PluginImpl.hpp"
 #include "ProcessContext.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 
 using namespace Raul;
 
@@ -39,8 +39,8 @@ namespace Events {
  *
  * Used to be triggered by MIDI.  Not used anymore.
  */
-Note::Note(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, NodeImpl* node, bool on, uint8_t note_num, uint8_t velocity)
-: Event(engine, responder, timestamp),
+Note::Note(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, NodeImpl* node, bool on, uint8_t note_num, uint8_t velocity)
+: Event(engine, request, timestamp),
   _node(node),
   _on(on),
   _note_num(note_num),
@@ -53,8 +53,8 @@ Note::Note(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp
  *
  * Triggered by OSC.
  */
-Note::Note(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& node_path, bool on, uint8_t note_num, uint8_t velocity)
-: Event(engine, responder, timestamp),
+Note::Note(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& node_path, bool on, uint8_t note_num, uint8_t velocity)
+: Event(engine, request, timestamp),
   _node(NULL),
   _node_path(node_path),
   _on(on),
@@ -95,11 +95,11 @@ Note::execute(ProcessContext& context)
 void
 Note::post_process()
 {
-	if (_responder) {
+	if (_request) {
 		if (_node)
-			_responder->respond_ok();
+			_request->respond_ok();
 		else
-			_responder->respond_error("Did not find node for note on event");
+			_request->respond_error("Did not find node for note on event");
 	}
 }
 

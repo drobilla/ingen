@@ -31,7 +31,7 @@
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "util.hpp"
 
 using namespace std;
@@ -41,8 +41,8 @@ namespace Ingen {
 namespace Events {
 
 
-DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& parent_path, const Path& node_path)
-	: QueuedEvent(engine, responder, timestamp)
+DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& parent_path, const Path& node_path)
+	: QueuedEvent(engine, request, timestamp)
 	, _parent_path(parent_path)
 	, _path(node_path)
 	, _parent(NULL)
@@ -116,7 +116,7 @@ DisconnectAll::pre_process()
 			if ((c->src_port()->parent_node() == _node || c->dst_port()->parent_node() == _node)
 					&& !c->pending_disconnection()) {
 				Disconnect* ev = new Disconnect(_engine,
-						SharedPtr<Responder>(new Responder()), _time, c->src_port(), c->dst_port());
+						SharedPtr<Request>(), _time, c->src_port(), c->dst_port());
 				ev->pre_process();
 				_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
 				c->pending_disconnection(true);
@@ -128,7 +128,7 @@ DisconnectAll::pre_process()
 			ConnectionImpl* c = (ConnectionImpl*)i->get();
 			if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {
 				Disconnect* ev = new Disconnect(_engine,
-						SharedPtr<Responder>(new Responder()), _time, c->src_port(), c->dst_port());
+						SharedPtr<Request>(), _time, c->src_port(), c->dst_port());
 				ev->pre_process();
 				_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
 				c->pending_disconnection(true);
@@ -156,13 +156,13 @@ void
 DisconnectAll::post_process()
 {
 	if (_error == NO_ERROR) {
-		if (_responder)
-			_responder->respond_ok();
+		if (_request)
+			_request->respond_ok();
 		for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin();
 				i != _disconnect_events.end(); ++i)
 			(*i)->post_process();
 	} else {
-		if (_responder) {
+		if (_request) {
 			boost::format fmt("Unable to disconnect %1% (%2%)");
 			fmt % _path;
 			switch (_error) {
@@ -177,7 +177,7 @@ DisconnectAll::post_process()
 				default:
 					break;
 			}
-			_responder->respond_error(fmt.str());
+			_request->respond_error(fmt.str());
 		}
 	}
 }

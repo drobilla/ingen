@@ -28,7 +28,7 @@
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "types.hpp"
 
 using namespace std;
@@ -40,8 +40,8 @@ namespace Events {
 using namespace Shared;
 
 
-Connect::Connect(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& src_port_path, const Path& dst_port_path)
-	: QueuedEvent(engine, responder, timestamp)
+Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& src_port_path, const Path& dst_port_path)
+	: QueuedEvent(engine, request, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
 	, _patch(NULL)
@@ -185,7 +185,7 @@ Connect::post_process()
 {
 	std::ostringstream ss;
 	if (_error == NO_ERROR) {
-		_responder->respond_ok();
+		_request->respond_ok();
 		_engine.broadcaster()->connect(_src_port_path, _dst_port_path);
 		return;
 	}
@@ -209,7 +209,7 @@ Connect::post_process()
 		ss << "Unknown error";
 	}
 	ss << ")";
-	_responder->respond_error(ss.str());
+	_request->respond_error(ss.str());
 }
 
 

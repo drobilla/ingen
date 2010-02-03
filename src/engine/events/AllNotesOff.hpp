@@ -34,8 +34,8 @@ namespace Events {
 class AllNotesOff : public Event
 {
 public:
-	AllNotesOff(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PatchImpl* patch);
-	AllNotesOff(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& patch_path);
+	AllNotesOff(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, PatchImpl* patch);
+	AllNotesOff(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Raul::Path& patch_path);
 
 	void execute(ProcessContext& context);
 	void post_process();

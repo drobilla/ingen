@@ -46,11 +46,11 @@ class Move : public QueuedEvent
 {
 public:
 	Move(
-			Engine&              engine,
-			SharedPtr<Responder> responder,
-			SampleCount          timestamp,
-			const Raul::Path&    old_path,
-			const Raul::Path&    new_path);
+			Engine&            engine,
+			SharedPtr<Request> request,
+			SampleCount        timestamp,
+			const Raul::Path&  old_path,
+			const Raul::Path&  new_path);
 	~Move();
 
 	void pre_process();

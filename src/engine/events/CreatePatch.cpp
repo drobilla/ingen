@@ -19,7 +19,7 @@
 #include "raul/Path.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "events/CreatePatch.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
@@ -39,12 +39,12 @@ using namespace Shared;
 
 CreatePatch::CreatePatch(
 		Engine&                     engine,
-		SharedPtr<Responder>        responder,
+		SharedPtr<Request>          request,
 		SampleCount                 timestamp,
 		const Raul::Path&           path,
 		int                         poly,
 		const Resource::Properties& properties)
-	: QueuedEvent(engine, responder, timestamp)
+	: QueuedEvent(engine, request, timestamp)
 	, _path(path)
 	, _patch(NULL)
 	, _parent(NULL)
@@ -134,32 +134,32 @@ void
 CreatePatch::post_process()
 {
 	string msg;
-	if (_responder) {
+	if (_request) {
 		switch (_error) {
 		case NO_ERROR:
-			_responder->respond_ok();
+			_request->respond_ok();
 			// Don't send ports/nodes that have been added since prepare()
 			// (otherwise they would be sent twice)
 			_engine.broadcaster()->send_object(_patch, false);
 			break;
 		case OBJECT_EXISTS:
-			_responder->respond_ok();
+			_request->respond_ok();
 			/*string msg = "Unable to create patch: ";
 			msg.append(_path).append(" already exists.");
-			_responder->respond_error(msg);*/
+			_request->respond_error(msg);*/
 			break;
 		case PARENT_NOT_FOUND:
 			msg = "Unable to create patch: Parent ";
 			msg.append(Path(_path).parent().str()).append(" not found.");
-			_responder->respond_error(msg);
+			_request->respond_error(msg);
 			break;
 		case INVALID_POLY:
 			msg = "Unable to create patch ";
-			msg.append(_path.str()).append(": ").append("Invalid polyphony respondered.");
-			_responder->respond_error(msg);
+			msg.append(_path.str()).append(": ").append("Invalid polyphony requested.");
+			_request->respond_error(msg);
 			break;
 		default:
-			_responder->respond_error("Unable to load patch.");
+			_request->respond_error("Unable to load patch.");
 		}
 	}
 }

@@ -27,12 +27,11 @@
 #include "CreatePort.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "EventSource.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "SetMetadata.hpp"
 #include "SetPortValue.hpp"
 
@@ -47,15 +46,14 @@ typedef Shared::Resource::Properties Properties;
 
 
 SetMetadata::SetMetadata(
-		Engine&               engine,
-		SharedPtr<Responder>  responder,
-		SampleCount           timestamp,
-		EventSource*          source,
-		bool                  replace,
-		bool                  meta,
-		const URI&            subject,
-		const Properties&     properties)
-	: QueuedEvent(engine, responder, timestamp, false, source)
+		Engine&             engine,
+		SharedPtr<Request>  request,
+		SampleCount         timestamp,
+		bool                replace,
+		bool                meta,
+		const URI&          subject,
+		const Properties&   properties)
+	: QueuedEvent(engine, request, timestamp, false)
 	, _error(NO_ERROR)
 	, _create_event(NULL)
 	, _subject(subject)
@@ -106,16 +104,16 @@ SetMetadata::pre_process()
 			iterator p = _properties.find(uris.ingen_polyphony);
 			if (p != _properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
 				poly = p->second.get_int32();
-			_create_event = new CreatePatch(_engine, _responder, _time,
+			_create_event = new CreatePatch(_engine, _request, _time,
 					path, poly, _properties);
 		} else if (is_node) {
 			const iterator p = _properties.find(uris.rdf_instanceOf);
-			_create_event = new CreateNode(_engine, _responder, _time,
+			_create_event = new CreateNode(_engine, _request, _time,
 					path, p->second.get_uri(), true, _properties);
 		} else if (is_port) {
 			_blocking = true;
-			_create_event = new CreatePort(_engine, _responder, _time,
-					path, data_type.uri(), is_output, _source, _properties);
+			_create_event = new CreatePort(_engine, _request, _time,
+					path, data_type.uri(), is_output, _properties);
 		}
 		if (_create_event)
 			_create_event->pre_process();
@@ -178,7 +176,7 @@ SetMetadata::pre_process()
 			} else if (key == uris.ingen_value) {
 				PortImpl* port = dynamic_cast<PortImpl*>(_object);
 				if (port) {
-					SetPortValue* ev = new SetPortValue(_engine, _responder, _time, port, value);
+					SetPortValue* ev = new SetPortValue(_engine, _request, _time, port, value);
 					ev->pre_process();
 					_set_events.push_back(ev);
 				} else {
@@ -221,8 +219,8 @@ SetMetadata::execute(ProcessContext& context)
 	if (_create_event) {
 		QueuedEvent::execute(context);
 		_create_event->execute(context);
-		if (_blocking && _source)
-			_source->unblock();
+		if (_blocking && _request)
+			_request->unblock();
 		return;
 	}
 
@@ -277,23 +275,23 @@ SetMetadata::post_process()
 
 	switch (_error) {
 	case NO_ERROR:
-		_responder->respond_ok();
+		_request->respond_ok();
 		_engine.broadcaster()->put(_subject, _properties);
 		if (_create_event)
 			_create_event->post_process();
 		break;
 	case NOT_FOUND:
-		_responder->respond_error((boost::format(
+		_request->respond_error((boost::format(
 				"Unable to find object `%1%'") % _subject).str());
 	case INTERNAL:
-		_responder->respond_error("Internal error");
+		_request->respond_error("Internal error");
 		break;
 	case BAD_OBJECT_TYPE:
-		_responder->respond_error((boost::format(
+		_request->respond_error((boost::format(
 				"Bad type for object `%1%'") % _subject).str());
 		break;
 	case BAD_VALUE_TYPE:
-		_responder->respond_error((boost::format(
+		_request->respond_error((boost::format(
 				"Bad metadata value type for subject `%1%' predicate `%2%'")
 					% _subject % _error_predicate).str());
 		break;

@@ -32,10 +32,10 @@ namespace Events {
 class UnregisterClient : public QueuedEvent
 {
 public:
-	UnregisterClient(Engine&              engine,
-	                      SharedPtr<Responder> responder,
-	                      SampleCount          timestamp,
-	                      const Raul::URI&     uri);
+	UnregisterClient(Engine&            engine,
+	                 SharedPtr<Request> request,
+	                 SampleCount        timestamp,
+	                 const Raul::URI&   uri);
 
 	void post_process();
 

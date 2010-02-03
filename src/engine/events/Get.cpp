@@ -17,7 +17,7 @@
 
 #include "Get.hpp"
 #include "interface/ClientInterface.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "ClientBroadcaster.hpp"
@@ -35,10 +35,10 @@ namespace Events {
 
 Get::Get(
 		Engine&              engine,
-		SharedPtr<Responder> responder,
+		SharedPtr<Request>   request,
 		SampleCount          timestamp,
 		const URI&           uri)
-	: QueuedEvent(engine, responder, timestamp)
+	: QueuedEvent(engine, request, timestamp)
 	, _uri(uri)
 	, _object(NULL)
 	, _plugin(NULL)
@@ -70,15 +70,15 @@ void
 Get::post_process()
 {
 	if (!_object && !_plugin) {
-		_responder->respond_error("Unable to find object requested.");
-	} else if (_responder->client()) {
-		_responder->respond_ok();
+		_request->respond_error("Unable to find object requested.");
+	} else if (_request->client()) {
+		_request->respond_ok();
 		if (_object)
-			_responder->client()->put(_uri, _object->properties());
+			_request->client()->put(_uri, _object->properties());
 		else if (_plugin)
-			_responder->client()->put(_uri, _plugin->properties());
+			_request->client()->put(_uri, _plugin->properties());
 	} else {
-		_responder->respond_error("Unable to find client to send object.");
+		_request->respond_error("Unable to find client to send object.");
 	}
 }
 

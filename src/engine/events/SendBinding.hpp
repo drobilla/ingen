@@ -45,7 +45,7 @@ public:
 			PortImpl*                  port,
 			ControlBindings::Type      type,
 			int16_t                    num)
-		: Event(engine, SharedPtr<Responder>(), timestamp)
+		: Event(engine, SharedPtr<Request>(), timestamp)
 		, _port(port)
 		, _type(type)
 		, _num(num)

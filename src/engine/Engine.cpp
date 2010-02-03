@@ -183,8 +183,8 @@ Engine::activate()
 		properties.insert(make_pair(uris.lv2_name, "Control"));
 		properties.insert(make_pair(uris.rdf_type, uris.lv2ev_EventPort));
 		properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
-		Events::CreatePort* ev = new Events::CreatePort(*this, SharedPtr<Responder>(), 0,
-				"/ingen_control", uris.lv2ev_EventPort, false, NULL, properties);
+		Events::CreatePort* ev = new Events::CreatePort(*this, SharedPtr<Request>(), 0,
+				"/ingen_control", uris.lv2ev_EventPort, false, properties);
 		ev->pre_process();
 		ProcessContext context(*this);
 		ev->execute(context);

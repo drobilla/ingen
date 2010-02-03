@@ -23,7 +23,7 @@
 
 namespace Ingen {
 
-class Responder;
+class Request;
 
 namespace Events {
 
@@ -35,7 +35,7 @@ namespace Events {
 class RequestPlugins : public QueuedEvent
 {
 public:
-	RequestPlugins(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
+	RequestPlugins(Engine& engine, SharedPtr<Request> request, SampleCount timestamp);
 
 	void pre_process();
 	void post_process();

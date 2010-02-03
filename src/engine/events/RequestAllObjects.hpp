@@ -31,7 +31,7 @@ namespace Events {
 class RequestAllObjects : public QueuedEvent
 {
 public:
-	RequestAllObjects(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp);
+	RequestAllObjects(Engine& engine, SharedPtr<Request> request, SampleCount timestamp);
 
 	void pre_process();
 	void post_process();

@@ -22,7 +22,7 @@
 #include "NodeImpl.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "Driver.hpp"
 
 using namespace std;
@@ -34,8 +34,8 @@ namespace Events {
 using namespace Shared;
 
 
-Move::Move(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& path, const Path& new_path)
-	: QueuedEvent(engine, responder, timestamp)
+Move::Move(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& path, const Path& new_path)
+	: QueuedEvent(engine, request, timestamp)
 	, _old_path(path)
 	, _new_path(new_path)
 	, _parent_patch(NULL)
@@ -116,7 +116,7 @@ Move::post_process()
 	string msg = "Unable to rename object - ";
 
 	if (_error == NO_ERROR) {
-		_responder->respond_ok();
+		_request->respond_ok();
 		_engine.broadcaster()->move(_old_path, _new_path);
 	} else {
 		if (_error == OBJECT_EXISTS)
@@ -128,7 +128,7 @@ Move::post_process()
 		else if (_error == PARENT_DIFFERS)
 			msg.append(_new_path.str()).append(" is a child of a different patch");
 
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 	}
 }
 

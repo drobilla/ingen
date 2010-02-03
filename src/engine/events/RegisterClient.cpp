@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "events/RegisterClient.hpp"
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
@@ -27,11 +27,11 @@ namespace Events {
 
 
 RegisterClient::RegisterClient(Engine&                  engine,
-                                         SharedPtr<Responder>     responder,
-                                         SampleCount              timestamp,
-                                         const URI&               uri,
-                                         Shared::ClientInterface* client)
-	: QueuedEvent(engine, responder, timestamp)
+                               SharedPtr<Request>       request,
+                               SampleCount              timestamp,
+                               const URI&               uri,
+                               Shared::ClientInterface* client)
+	: QueuedEvent(engine, request, timestamp)
 	, _uri(uri)
 	, _client(client)
 {
@@ -50,7 +50,7 @@ RegisterClient::pre_process()
 void
 RegisterClient::post_process()
 {
-	_responder->respond_ok();
+	_request->respond_ok();
 }
 
 

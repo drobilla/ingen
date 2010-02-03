@@ -28,7 +28,7 @@
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -39,13 +39,13 @@ namespace Events {
 using namespace Shared;
 
 
-RequestMetadata::RequestMetadata(Engine&              engine,
-                                 SharedPtr<Responder> responder,
-                                 SampleCount          timestamp,
-                                 bool                 is_meta,
-                                 const URI&           subject,
-                                 const URI&           key)
-	: QueuedEvent(engine, responder, timestamp)
+RequestMetadata::RequestMetadata(Engine&            engine,
+                                 SharedPtr<Request> request,
+                                 SampleCount        timestamp,
+                                 bool               is_meta,
+                                 const URI&         subject,
+                                 const URI&         key)
+	: QueuedEvent(engine, request, timestamp)
 	, _error(NO_ERROR)
 	, _special_type(NONE)
 	, _uri(subject)
@@ -60,7 +60,7 @@ void
 RequestMetadata::pre_process()
 {
 	const bool is_object = (_uri.scheme() == Path::scheme && Path::is_valid(_uri.str()));
-	if (_responder->client()) {
+	if (_request->client()) {
 		if (is_object)
 			_resource = _engine.engine_store()->find_object(Path(_uri.str()));
 		else
@@ -110,25 +110,25 @@ RequestMetadata::execute(ProcessContext& context)
 void
 RequestMetadata::post_process()
 {
-	if (_responder->client()) {
+	if (_request->client()) {
 		if (_special_type == PORT_VALUE) {
 			if (_resource) {
-				_responder->respond_ok();
-				_responder->client()->set_property(_uri.str(),
+				_request->respond_ok();
+				_request->client()->set_property(_uri.str(),
 						_engine.world()->uris->ingen_value, _value);
 			} else {
 				const string msg = "Get value for non-port " + _uri.str();
-				_responder->respond_error(msg);
+				_request->respond_error(msg);
 			}
 		} else if (!_resource) {
 			const string msg = "Unable to find subject " + _uri.str();
-			_responder->respond_error(msg);
+			_request->respond_error(msg);
 		} else {
-			_responder->respond_ok();
-			_responder->client()->set_property(_uri, _key, _value);
+			_request->respond_ok();
+			_request->client()->set_property(_uri, _key, _value);
 		}
 	} else {
-		_responder->respond_error("Unknown client");
+		_request->respond_error("Unknown client");
 	}
 }
 

@@ -41,7 +41,7 @@ class CreateNode : public QueuedEvent
 public:
 	CreateNode(
 			Engine&                             engine,
-			SharedPtr<Responder>                responder,
+			SharedPtr<Request>                  request,
 			SampleCount                         timestamp,
 			const Raul::Path&                   node_path,
 			const Raul::URI&                    plugin_uri,

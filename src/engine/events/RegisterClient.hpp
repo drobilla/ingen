@@ -34,10 +34,10 @@ class RegisterClient : public QueuedEvent
 {
 public:
 	RegisterClient(Engine&                  engine,
-	                    SharedPtr<Responder>     responder,
-	                    SampleCount              timestamp,
-	                    const Raul::URI&         uri,
-	                    Shared::ClientInterface* client);
+	               SharedPtr<Request>       request,
+	               SampleCount              timestamp,
+	               const Raul::URI&         uri,
+	               Shared::ClientInterface* client);
 
 	void pre_process();
 	void post_process();

@@ -59,11 +59,10 @@ class Delete : public QueuedEvent
 {
 public:
 	Delete(
-			Engine&              engine,
-			SharedPtr<Responder> responder,
-			FrameTime            timestamp,
-			EventSource*         source,
-			const Raul::Path&    path);
+			Engine&            engine,
+			SharedPtr<Request> request,
+			FrameTime          timestamp,
+			const Raul::Path&  path);
 
 	~Delete();
 

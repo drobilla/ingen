@@ -179,16 +179,16 @@ OSCEngineReceiver::ReceiveThread::_run()
 }
 
 
-/** Create a new responder for this message, if necessary.
+/** Create a new request for this message, if necessary.
  *
- * This is based on the fact that the current responder is stored in a ref
+ * This is based on the fact that the current request is stored in a ref
  * counted pointer, and events just take a reference to that.  Thus, events
- * may delete their responder if we've since switched to a new one, or the
+ * may delete their request if we've since switched to a new one, or the
  * same one can stay around and serve a series of events.
  * Hooray for reference counting.
  *
  * If this message came from the same source as the last message, no allocation
- * of responders or lo_addresses or any of it needs to be done.  Unfortunately
+ * of requests or lo_addresses or any of it needs to be done.  Unfortunately
  * the only way to check is by comparing URLs, because liblo addresses suck.
  * Lack of a fast liblo address comparison really sucks here, in any case.
  */
@@ -205,15 +205,15 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	const lo_address addr = lo_message_get_source(msg);
 	char* const      url  = lo_address_get_url(addr);
 
-	const SharedPtr<Responder> r = me->_responder;
+	const SharedPtr<Request> r = me->_request;
 
 	/* Different address than last time, have to do a lookup */
 	if (!r || !r->client() || strcmp(url, r->client()->uri().c_str())) {
 		Shared::ClientInterface* client = me->_engine.broadcaster()->client(url);
 		if (client)
-			me->_responder = SharedPtr<Responder>(new Responder(client, id));
+			me->_request = SharedPtr<Request>(new Request(me, client, id));
 		else
-			me->_responder = SharedPtr<Responder>(new Responder());
+			me->_request = SharedPtr<Request>(new Request(me));
 	}
 
 	if (id != -1) {

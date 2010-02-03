@@ -42,14 +42,14 @@ class SetPortValue : public QueuedEvent
 {
 public:
 	SetPortValue(Engine&              engine,
-	             SharedPtr<Responder> responder,
+	             SharedPtr<Request>   request,
 	             bool                 queued,
 	             SampleCount          timestamp,
 	             const Raul::Path&    port_path,
 	             const Raul::Atom&    value);
 
 	SetPortValue(Engine&              engine,
-	             SharedPtr<Responder> responder,
+	             SharedPtr<Request>   request,
 	             bool                 queued,
 	             SampleCount          timestamp,
 	             uint32_t             voice_num,
@@ -57,7 +57,7 @@ public:
 	             const Raul::Atom&    value);
 
 	SetPortValue(Engine&              engine,
-	             SharedPtr<Responder> responder,
+	             SharedPtr<Request>   request,
 	             SampleCount          timestamp,
 	             PortImpl*            port,
 	             const Raul::Atom&    value);

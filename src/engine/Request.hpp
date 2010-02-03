@@ -15,38 +15,46 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_ENGINE_RESPONDER_HPP
-#define INGEN_ENGINE_RESPONDER_HPP
+#ifndef INGEN_ENGINE_REQUEST_HPP
+#define INGEN_ENGINE_REQUEST_HPP
 
 #include <inttypes.h>
 #include <string>
 #include "interface/ClientInterface.hpp"
+#include "EventSource.hpp"
 
 namespace Ingen {
 
 
-/** Class to handle responding to clients.
+/** Record of a request (used to respond to clients).
  *
  * This is a glorified std::pair<ClientInterface*, int32_t> for replying
  * to numbered messages from a client.
  *
- * For responses that involve more messages, the response will come first
+ * For responses that involve several messages, the response will come first
  * followed by the messages (eg object notifications, values, errors, etc.)
  * in a bundle (or "transfer" if too large).
  */
-class Responder
+class Request
 {
 public:
-	Responder(Shared::ClientInterface* client=0, int32_t id=1)
-		: _client(client)
+	Request(EventSource* source=0, Shared::ClientInterface* client=0, int32_t id=1)
+		: _source(source)
+        , _client(client)
 		, _id(id)
 	{}
 
-	int32_t id() const { return _id; }
-	void    set_id(int32_t id) { _id = id; }
+	EventSource* source()           { return _source; }
+	int32_t      id() const         { return _id; }
+	void         set_id(int32_t id) { _id = id; }
 
 	Shared::ClientInterface* client() const { return _client; }
 	void set_client(Shared::ClientInterface* client) { _client = client; }
+
+    void unblock() {
+        if (_source)
+            _source->unblock();
+    }
 
 	void respond_ok() {
 		if (_client)
@@ -59,6 +67,7 @@ public:
 	}
 
 private:
+    EventSource*             _source;
 	Shared::ClientInterface* _client;
 	int32_t                  _id;
 };
@@ -66,5 +75,5 @@ private:
 
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_RESPONDER_HPP
+#endif // INGEN_ENGINE_REQUEST_HPP
 

@@ -44,12 +44,12 @@ namespace Events {
 class RequestMetadata : public QueuedEvent
 {
 public:
-	RequestMetadata(Engine&              engine,
-	                SharedPtr<Responder> responder,
-	                SampleCount          timestamp,
-	                bool                 meta,
-	                const Raul::URI&     subject,
-	                const Raul::URI&     key);
+	RequestMetadata(Engine&            engine,
+	                SharedPtr<Request> request,
+	                SampleCount        timestamp,
+	                bool               meta,
+	                const Raul::URI&   subject,
+	                const Raul::URI&   key);
 
 	void pre_process();
 	void execute(ProcessContext& context);

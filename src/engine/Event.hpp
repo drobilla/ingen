@@ -27,7 +27,7 @@
 namespace Ingen {
 
 class Engine;
-class Responder;
+class Request;
 class ProcessContext;
 
 
@@ -57,17 +57,17 @@ public:
 	inline SampleCount time() const { return _time; }
 
 protected:
-	Event(Engine& engine, SharedPtr<Responder> responder, FrameTime time)
+	Event(Engine& engine, SharedPtr<Request> request, FrameTime time)
 		: _engine(engine)
-		, _responder(responder)
+		, _request(request)
 		, _time(time)
 		, _executed(false)
 	{}
 
-	Engine&              _engine;
-	SharedPtr<Responder> _responder;
-	FrameTime            _time;
-	bool                 _executed;
+	Engine&            _engine;
+	SharedPtr<Request> _request;
+	FrameTime          _time;
+	bool               _executed;
 };
 
 

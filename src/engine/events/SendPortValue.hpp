@@ -50,7 +50,7 @@ public:
 			bool              omni,
 			uint32_t          voice_num,
 			const Raul::Atom& value)
-		: Event(engine, SharedPtr<Responder>(), timestamp)
+		: Event(engine, SharedPtr<Request>(), timestamp)
 		, _port(port)
 		, _omni(omni)
 		, _voice_num(voice_num)

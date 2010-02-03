@@ -49,18 +49,18 @@ class Disconnect : public QueuedEvent
 {
 public:
 	Disconnect(
-			Engine&              engine,
-			SharedPtr<Responder> responder,
-			SampleCount          timestamp,
-			const Raul::Path&    src_port_path,
-			const Raul::Path&    dst_port_path);
+			Engine&            engine,
+			SharedPtr<Request> request,
+			SampleCount        timestamp,
+			const Raul::Path&  src_port_path,
+			const Raul::Path&  dst_port_path);
 
 	Disconnect(
-			Engine&              engine,
-			SharedPtr<Responder> responder,
-			SampleCount          timestamp,
-			PortImpl* const      src_port,
-			PortImpl* const      dst_port);
+			Engine&            engine,
+			SharedPtr<Request> request,
+			SampleCount        timestamp,
+			PortImpl* const    src_port,
+			PortImpl* const    dst_port);
 
 	void pre_process();
 	void execute(ProcessContext& context);

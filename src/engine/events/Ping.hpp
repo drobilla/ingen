@@ -20,7 +20,7 @@
 
 #include "QueuedEvent.hpp"
 #include "types.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 
 namespace Ingen {
 
@@ -37,11 +37,11 @@ namespace Events {
 class Ping : public QueuedEvent
 {
 public:
-	Ping(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp)
-		: QueuedEvent(engine, responder, timestamp)
+	Ping(Engine& engine, SharedPtr<Request> request, SampleCount timestamp)
+		: QueuedEvent(engine, request, timestamp)
 	{}
 
-	void post_process() { _responder->respond_ok(); }
+	void post_process() { _request->respond_ok(); }
 };
 
 

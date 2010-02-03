@@ -20,7 +20,7 @@
 #include "raul/Path.hpp"
 #include "redlandmm/World.hpp"
 #include "CreateNode.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
@@ -42,13 +42,13 @@ using namespace Shared;
 
 CreateNode::CreateNode(
 		Engine&                      engine,
-		SharedPtr<Responder>         responder,
+		SharedPtr<Request>           request,
 		SampleCount                  timestamp,
 		const Path&                  path,
 		const URI&                   plugin_uri,
 		bool                         polyphonic,
 		const Resource::Properties&  properties)
-	: QueuedEvent(engine, responder, timestamp)
+	: QueuedEvent(engine, request, timestamp)
 	, _path(path)
 	, _plugin_uri(plugin_uri)
 	, _polyphonic(polyphonic)
@@ -127,25 +127,25 @@ CreateNode::execute(ProcessContext& context)
 void
 CreateNode::post_process()
 {
-	if (!_responder)
+	if (!_request)
 		return;
 
 	string msg;
 	if (_node_already_exists) {
 		msg = string("Could not create node - ").append(_path.str());// + " already exists.";
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 	} else if (_patch == NULL) {
 		msg = "Could not find patch '" + _path.parent().str() +"' to add node.";
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 	} else if (_plugin == NULL) {
 		msg = "Unable to load node ";
 		msg += _path.str() + " (you're missing the plugin " + _plugin_uri.str() + ")";
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 	} else if (_node == NULL) {
 		msg = "Failed to instantiate plugin " + _plugin_uri.str();
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 	} else {
-		_responder->respond_ok();
+		_request->respond_ok();
 		_engine.broadcaster()->send_object(_node, true); // yes, send ports
 	}
 }

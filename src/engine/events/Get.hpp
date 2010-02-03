@@ -37,10 +37,10 @@ class Get : public QueuedEvent
 {
 public:
 	Get(
-		Engine&              engine,
-		SharedPtr<Responder> responder,
-		SampleCount          timestamp,
-		const Raul::URI&     uri);
+		Engine&            engine,
+		SharedPtr<Request> request,
+		SampleCount        timestamp,
+		const Raul::URI&   uri);
 
 	void pre_process();
 	void execute(ProcessContext& context);

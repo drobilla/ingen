@@ -36,7 +36,7 @@ namespace Events {
 class Learn : public QueuedEvent
 {
 public:
-	Learn(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path);
+	Learn(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Raul::Path& path);
 
 	void pre_process();
 	void execute(ProcessContext& context);

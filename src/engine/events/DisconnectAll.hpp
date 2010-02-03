@@ -44,11 +44,11 @@ class DisconnectAll : public QueuedEvent
 {
 public:
 	DisconnectAll(
-			Engine&              engine,
-			SharedPtr<Responder> responder,
-			SampleCount          timestamp,
-			const Raul::Path&    parent_path,
-			const Raul::Path&    node_path);
+			Engine&            engine,
+			SharedPtr<Request> request,
+			SampleCount        timestamp,
+			const Raul::Path&  parent_path,
+			const Raul::Path&  node_path);
 
 	DisconnectAll(
 			Engine&          engine,

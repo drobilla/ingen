@@ -16,7 +16,7 @@
  */
 
 #include "AllNotesOff.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "shared/Store.hpp"
@@ -29,8 +29,8 @@ namespace Events {
 
 /** Note off with patch explicitly passed - triggered by MIDI.
  */
-AllNotesOff::AllNotesOff(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, PatchImpl* patch)
-: Event(engine, responder, timestamp),
+AllNotesOff::AllNotesOff(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, PatchImpl* patch)
+: Event(engine, request, timestamp),
   _patch(patch)
 {
 }
@@ -38,8 +38,8 @@ AllNotesOff::AllNotesOff(Engine& engine, SharedPtr<Responder> responder, SampleC
 
 /** Note off event with lookup - triggered by OSC.
  */
-AllNotesOff::AllNotesOff(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Path& patch_path)
-: Event(engine, responder, timestamp),
+AllNotesOff::AllNotesOff(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& patch_path)
+: Event(engine, request, timestamp),
   _patch_path(patch_path),
   _patch(NULL)
 {
@@ -64,7 +64,7 @@ void
 AllNotesOff::post_process()
 {
 	if (_patch != NULL)
-		_responder->respond_ok();
+		_request->respond_ok();
 }
 
 

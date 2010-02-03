@@ -33,7 +33,7 @@
 #include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "SetPortValue.hpp"
 
 using namespace std;
@@ -46,13 +46,13 @@ using namespace Shared;
 
 
 /** Omni (all voices) control setting */
-SetPortValue::SetPortValue(Engine&              engine,
-                           SharedPtr<Responder> responder,
-                           bool                 queued,
-                           SampleCount          timestamp,
-                           const Raul::Path&    port_path,
-                           const Raul::Atom&    value)
-	: QueuedEvent(engine, responder, timestamp)
+SetPortValue::SetPortValue(Engine&            engine,
+                           SharedPtr<Request> request,
+                           bool               queued,
+                           SampleCount        timestamp,
+                           const Raul::Path&  port_path,
+                           const Raul::Atom&  value)
+	: QueuedEvent(engine, request, timestamp)
 	, _queued(queued)
 	, _omni(true)
 	, _voice_num(0)
@@ -65,14 +65,14 @@ SetPortValue::SetPortValue(Engine&              engine,
 
 
 /** Voice-specific control setting */
-SetPortValue::SetPortValue(Engine&              engine,
-                           SharedPtr<Responder> responder,
-                           bool                 queued,
-                           SampleCount          timestamp,
-                           uint32_t             voice_num,
-                           const Raul::Path&    port_path,
-                           const Raul::Atom&    value)
-	: QueuedEvent(engine, responder, timestamp)
+SetPortValue::SetPortValue(Engine&            engine,
+                           SharedPtr<Request> request,
+                           bool               queued,
+                           SampleCount        timestamp,
+                           uint32_t           voice_num,
+                           const Raul::Path&  port_path,
+                           const Raul::Atom&  value)
+	: QueuedEvent(engine, request, timestamp)
 	, _queued(queued)
 	, _omni(false)
 	, _voice_num(voice_num)
@@ -84,12 +84,12 @@ SetPortValue::SetPortValue(Engine&              engine,
 }
 
 /** Internal */
-SetPortValue::SetPortValue(Engine&              engine,
-                           SharedPtr<Responder> responder,
-                           SampleCount          timestamp,
-                           PortImpl*            port,
-                           const Raul::Atom&    value)
-	: QueuedEvent(engine, responder, timestamp)
+SetPortValue::SetPortValue(Engine&            engine,
+                           SharedPtr<Request> request,
+                           SampleCount        timestamp,
+                           PortImpl*          port,
+                           const Raul::Atom&  value)
+	: QueuedEvent(engine, request, timestamp)
 	, _queued(false)
 	, _omni(true)
 	, _voice_num(0)
@@ -228,7 +228,7 @@ SetPortValue::post_process()
 	switch (_error) {
 	case NO_ERROR:
 		assert(_port != NULL);
-		_responder->respond_ok();
+		_request->respond_ok();
 		if (_omni)
 			_engine.broadcaster()->set_property(_port_path,
 					_engine.world()->uris->ingen_value, _value);
@@ -238,22 +238,22 @@ SetPortValue::post_process()
 	case TYPE_MISMATCH:
 		ss << "Illegal value type " << _value.type()
 			<< " for port " << _port_path << endl;
-		_responder->respond_error(ss.str());
+		_request->respond_error(ss.str());
 		break;
 	case ILLEGAL_VOICE:
 		ss << "Illegal voice number " << _voice_num;
-		_responder->respond_error(ss.str());
+		_request->respond_error(ss.str());
 		break;
 	case PORT_NOT_FOUND:
 		msg = "Unable to find port ";
 		msg.append(_port_path.str()).append(" to set value");
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 		break;
 	case NO_SPACE:
 		ss << "Attempt to write " << _value.data_size() << " bytes to "
 			<< _port_path.str() << ", with capacity "
 			<< _port->buffer_size() << endl;
-		_responder->respond_error(ss.str());
+		_request->respond_error(ss.str());
 		break;
 	}
 }

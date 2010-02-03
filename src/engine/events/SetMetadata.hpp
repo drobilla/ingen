@@ -67,9 +67,8 @@ class SetMetadata : public QueuedEvent
 public:
 	SetMetadata(
 			Engine&                             engine,
-			SharedPtr<Responder>                responder,
+			SharedPtr<Request>                  request,
 			SampleCount                         timestamp,
-			EventSource*                        source,
 			bool                                replace,
 			bool                                meta,
 			const Raul::URI&                    subject,

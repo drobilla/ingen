@@ -35,21 +35,21 @@ namespace Events {
 class Note : public Event
 {
 public:
-	Note(Engine&              engine,
-	          SharedPtr<Responder> responder,
-	          SampleCount          timestamp,
-	          NodeImpl*            node,
-			  bool                 on,
-	          uint8_t              note_num,
-	          uint8_t              velocity);
+	Note(Engine&            engine,
+	     SharedPtr<Request> request,
+	     SampleCount        timestamp,
+	     NodeImpl*          node,
+		 bool               on,
+	     uint8_t            note_num,
+	     uint8_t            velocity);
 
-	Note(Engine&              engine,
-	          SharedPtr<Responder> responder,
-	          SampleCount          timestamp,
-	          const Raul::Path&    node_path,
-			  bool                 on,
-	          uint8_t              note_num,
-	          uint8_t              velocity);
+	Note(Engine&            engine,
+	     SharedPtr<Request> request,
+	     SampleCount        timestamp,
+	     const Raul::Path&  node_path,
+		 bool               on,
+	     uint8_t            note_num,
+	     uint8_t            velocity);
 
 	void execute(ProcessContext& context);
 	void post_process();

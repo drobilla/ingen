@@ -42,12 +42,11 @@ class CreatePort : public QueuedEvent
 public:
 	CreatePort(
 			Engine&                             engine,
-			SharedPtr<Responder>                responder,
+			SharedPtr<Request>                  request,
 			SampleCount                         timestamp,
 			const Raul::Path&                   path,
 			const Raul::URI&                    type,
 			bool                                is_output,
-			EventSource*                        source,
 			const Shared::Resource::Properties& properties);
 
 	void pre_process();

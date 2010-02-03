@@ -16,7 +16,7 @@
  */
 
 #include "interface/ClientInterface.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "UnregisterClient.hpp"
 #include "Engine.hpp"
 #include "ClientBroadcaster.hpp"
@@ -27,8 +27,8 @@ namespace Ingen {
 namespace Events {
 
 
-UnregisterClient::UnregisterClient(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const URI& uri)
-	: QueuedEvent(engine, responder, timestamp)
+UnregisterClient::UnregisterClient(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const URI& uri)
+	: QueuedEvent(engine, request, timestamp)
 	, _uri(uri)
 {
 }
@@ -38,9 +38,9 @@ void
 UnregisterClient::post_process()
 {
 	if (_engine.broadcaster()->unregister_client(_uri))
-		_responder->respond_ok();
+		_request->respond_ok();
 	else
-		_responder->respond_error("Unable to unregister client");
+		_request->respond_error("Unable to unregister client");
 }
 
 

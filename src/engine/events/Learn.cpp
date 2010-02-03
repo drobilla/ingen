@@ -23,7 +23,7 @@
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "internals/Controller.hpp"
 
 using namespace std;
@@ -32,8 +32,8 @@ namespace Ingen {
 namespace Events {
 
 
-Learn::Learn(Engine& engine, SharedPtr<Responder> responder, SampleCount timestamp, const Raul::Path& path)
-	: QueuedEvent(engine, responder, timestamp)
+Learn::Learn(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Raul::Path& path)
+	: QueuedEvent(engine, request, timestamp)
 	, _error(NO_ERROR)
 	, _path(path)
 	, _object(NULL)
@@ -81,14 +81,14 @@ void
 Learn::post_process()
 {
 	if (_error == NO_ERROR) {
-		_responder->respond_ok();
+		_request->respond_ok();
 	} else if (_object == NULL) {
 		string msg = "Did not find node '";
 		msg.append(_path.str()).append("' for learn.");
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 	} else {
 		const string msg = string("Object '") + _path.str() + "' is not capable of learning.";
-		_responder->respond_error(msg);
+		_request->respond_error(msg);
 	}
 }
 

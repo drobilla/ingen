@@ -26,7 +26,7 @@
 #include "interface/EngineInterface.hpp"
 #include "interface/Resource.hpp"
 #include "EventSource.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "tuning.hpp"
 #include "types.hpp"
 
@@ -42,7 +42,7 @@ class Engine;
  *
  * Responses occur through the event mechanism (which notified clients in
  * event post_process methods) and are related to an event by an integer ID.
- * If you do not register a responder, you have no way of knowing if your calls
+ * If you do not register a request, you have no way of knowing if your calls
  * are successful.
  */
 class QueuedEngineInterface : public EventSource, public Shared::EngineInterface
@@ -110,9 +110,9 @@ public:
 protected:
 	virtual void disable_responses();
 
-	SharedPtr<Responder> _responder; ///< NULL if responding disabled
-	Engine&              _engine;
-	bool                 _in_bundle; ///< True iff a bundle is currently being received
+	SharedPtr<Request> _request; ///< NULL if responding disabled
+	Engine&            _engine;
+	bool               _in_bundle; ///< True iff a bundle is currently being received
 
 private:
 	SampleCount now() const;

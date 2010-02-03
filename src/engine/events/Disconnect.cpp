@@ -19,7 +19,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "events/Disconnect.hpp"
-#include "Responder.hpp"
+#include "Request.hpp"
 #include "Engine.hpp"
 #include "ConnectionImpl.hpp"
 #include "InputPort.hpp"
@@ -37,12 +37,12 @@ namespace Events {
 
 
 Disconnect::Disconnect(
-		Engine&              engine,
-		SharedPtr<Responder> responder,
-		SampleCount          timestamp,
-		const Raul::Path&    src_port_path,
-		const Raul::Path&    dst_port_path)
-	: QueuedEvent(engine, responder, timestamp)
+		Engine&            engine,
+		SharedPtr<Request> request,
+		SampleCount        timestamp,
+		const Raul::Path&  src_port_path,
+		const Raul::Path&  dst_port_path)
+	: QueuedEvent(engine, request, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
 	, _patch(NULL)
@@ -58,19 +58,19 @@ Disconnect::Disconnect(
 
 Disconnect::Disconnect(
 		Engine&              engine,
-		SharedPtr<Responder> responder,
+		SharedPtr<Request>   request,
 		SampleCount          timestamp,
 		PortImpl* const      src_port,
 		PortImpl* const      dst_port)
-: QueuedEvent(engine, responder, timestamp),
-  _src_port_path(src_port->path()),
-  _dst_port_path(dst_port->path()),
-  _patch(src_port->parent_node()->parent_patch()),
-  _src_port(src_port),
-  _dst_port(dst_port),
-  _lookup(false),
-  _compiled_patch(NULL),
-  _error(NO_ERROR)
+	: QueuedEvent(engine, request, timestamp)
+	, _src_port_path(src_port->path())
+	, _dst_port_path(dst_port->path())
+	, _patch(src_port->parent_node()->parent_patch())
+	, _src_port(src_port)
+	, _dst_port(dst_port)
+	, _lookup(false)
+	, _compiled_patch(NULL)
+	, _error(NO_ERROR)
 {
 	// FIXME: These break for patch ports.. is that ok?
 	/*assert(src_port->is_output());
@@ -205,14 +205,16 @@ Disconnect::execute(ProcessContext& context)
 void
 Disconnect::post_process()
 {
-	if (_error == NO_ERROR) {
-		_responder->respond_ok();
-		_engine.broadcaster()->disconnect(_src_port->path(), _dst_port->path());
-	} else {
-		string msg = "Unable to disconnect ";
-		msg.append(_src_port_path.str() + " -> " + _dst_port_path.str());
-		_responder->respond_error(msg);
-	}
+    if (_error == NO_ERROR) {
+        if (_request)
+            _request->respond_ok();
+        _engine.broadcaster()->disconnect(_src_port->path(), _dst_port->path());
+    } else {
+        string msg = "Unable to disconnect ";
+        msg.append(_src_port_path.str() + " -> " + _dst_port_path.str());
+        if (_request)
+            _request->respond_error(msg);
+    }
 }
 
 

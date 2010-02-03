@@ -22,8 +22,6 @@
 
 namespace Ingen {
 
-class EventSource;
-
 
 /** An Event with a not-time-critical preprocessing stage.
  *
@@ -53,28 +51,24 @@ public:
 	bool is_prepared() { return _pre_processed; }
 
 protected:
-	QueuedEvent(Engine&              engine,
-	            SharedPtr<Responder> responder,
-	            FrameTime            time,
-	            bool                 blocking = false,
-	            EventSource*         source = NULL)
-		: Event(engine, responder, time)
-		, _source(source)
+	QueuedEvent(Engine&            engine,
+	            SharedPtr<Request> request,
+	            FrameTime          time,
+	            bool               blocking=false)
+		: Event(engine, request, time)
 		, _pre_processed(false)
 		, _blocking(blocking)
 	{}
 
 	// NULL event base (for internal events only!)
 	QueuedEvent(Engine& engine)
-		: Event(engine, SharedPtr<Responder>(), 0)
-		, _source(NULL)
+		: Event(engine, SharedPtr<Request>(), 0)
 		, _pre_processed(false)
 		, _blocking(false)
 	{}
 
-	EventSource* _source;
-	bool         _pre_processed;
-	bool         _blocking;
+	bool _pre_processed;
+	bool _blocking;
 };
 
 

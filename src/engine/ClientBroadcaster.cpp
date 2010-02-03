@@ -70,11 +70,8 @@ ClientBroadcaster::unregister_client(const URI& uri)
 
 
 
-/** Looks up the client with the given @a source address (which is used as the
+/** Looks up the client with the given source @a uri (which is used as the
  * unique identifier for registered clients).
- *
- * (A responder is passed to remove the dependency on liblo addresses in request
- * events, in anticipation of libom and multiple ways of responding to clients).
  */
 ClientInterface*
 ClientBroadcaster::client(const URI& uri)
