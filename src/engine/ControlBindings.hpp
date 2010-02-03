@@ -38,7 +38,8 @@ public:
 		MIDI_CC,
 		MIDI_RPN,
 		MIDI_NRPN,
-		MIDI_CHANNEL_PRESSURE
+		MIDI_CHANNEL_PRESSURE,
+		MIDI_NOTE
 	};
 
 	struct Key {

@@ -95,8 +95,10 @@ public:
 	const Quark midi_Bender;
 	const Quark midi_ChannelPressure;
 	const Quark midi_Controller;
+	const Quark midi_Note;
 	const Quark midi_controllerNumber;
 	const Quark midi_event;
+	const Quark midi_noteNumber;
 	const Quark obj_MessagePort;
 	const Quark obj_ValuePort;
 	const Quark object_class_bool;

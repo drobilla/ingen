@@ -40,6 +40,9 @@ SendBinding::post_process()
 		dict[uris.rdf_type] = uris.midi_Bender;
 	} else if (_type == ControlBindings::MIDI_CHANNEL_PRESSURE) {
 		dict[uris.rdf_type] = uris.midi_ChannelPressure;
+	} else if (_type == ControlBindings::MIDI_NOTE) {
+		dict[uris.rdf_type] = uris.midi_Note;
+		dict[uris.midi_noteNumber] = _num;
 	}
 	// TODO: other event types
 	_port->set_property(uris.ingen_controlBinding, dict); // FIXME: thread unsafe
