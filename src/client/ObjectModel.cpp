@@ -109,7 +109,7 @@ ObjectModel::set_path(const Raul::Path& p)
 {
 	_path = p;
 	_symbol = p.symbol();
-	_meta.set_uri(ResourceImpl::meta_uri(0));
+	_meta.set_uri(ResourceImpl::meta_uri(p));
 	signal_moved.emit();
 }
 
