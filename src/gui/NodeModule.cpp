@@ -121,15 +121,19 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 void
 NodeModule::show_human_names(bool b)
 {
+	const LV2URIMap& uris = App::instance().uris();
+
 	if (b && node()->plugin()) {
 		Glib::Mutex::Lock lock(App::instance().world()->rdf_world->mutex());
-		set_name(node()->plugin_model()->human_name());
+		const Raul::Atom& name_property = node()->get_property(uris.lv2_name);
+		if (name_property.type() == Atom::STRING)
+			set_name(name_property.get_string());
+		else
+			set_name(node()->plugin_model()->human_name());
 	} else {
 		b = false;
 		set_name(node()->symbol().c_str());
 	}
-
-	const LV2URIMap& uris = App::instance().uris();
 
 	for (PortVector::const_iterator i = ports().begin(); i != ports().end(); ++i) {
 		SharedPtr<Ingen::GUI::Port> port = PtrCast<Ingen::GUI::Port>(*i);
@@ -416,6 +420,12 @@ NodeModule::set_property(const URI& key, const Atom& value)
 				else
 					_canvas.lock()->unselect_item(shared_from_this());
 			}
+		}
+		break;
+	case Atom::STRING:
+		if (key == uris.lv2_name
+				&& App::instance().configuration()->name_style() == Configuration::HUMAN) {
+			set_name(value.get_string());
 		}
 	default: break;
 	}
