@@ -354,10 +354,10 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 			: class_rdf_node(p->path());
 
 		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
-		if (p->properties().find("lv2:name") == p->properties().end())
-			p->set_property("lv2:name", Atom(p->symbol().c_str()));
+		if (p->properties().find("http://lv2plug.in/ns/lv2core#name") == p->properties().end())
+			p->set_property("http://lv2plug.in/ns/lv2core#name", Atom(p->symbol().c_str()));
 
-		_model->add_statement(patch_id, "lv2:port", port_id);
+		_model->add_statement(patch_id, "http://lv2plug.in/ns/lv2core#port", port_id);
 		serialise_port_meta(p, port_id);
 		if (root)
 			serialise_properties(port_id, &p->meta(), p->properties());
@@ -447,7 +447,7 @@ Serialiser::serialise_port_meta(const Port* port, const Redland::Node& port_id)
 	_model->add_statement(port_id, "lv2:index",
 			AtomRDF::atom_to_node(*_model, Atom((int)port->index())));
 
-	if (!port->get_property("lv2:default").is_valid()) {
+	if (!port->get_property("http://lv2plug.in/ns/lv2core#default").is_valid()) {
 		if (port->is_input()) {
 			if (port->value().is_valid()) {
 				_model->add_statement(port_id, "lv2:default",
