@@ -71,7 +71,7 @@ OSCSender::transfer_end()
 {
 	assert(_transfer);
 	lo_send_bundle(_address, _transfer);
-	lo_bundle_free(_transfer);
+	lo_bundle_free_messages(_transfer);
 	_transfer = NULL;
 	_send_state = Immediate;
 }
@@ -95,6 +95,8 @@ OSCSender::send(const char *path, const char *types, ...)
 
 	if (!ret)
 		send_message(path, msg);
+	else
+		lo_message_free(msg);
 
 	va_end(args);
 
@@ -109,14 +111,17 @@ OSCSender::send_message(const char* path, lo_message msg)
 	// Don't want to exceed max UDP packet size (good default value?)
 	static const size_t MAX_BUNDLE_SIZE = 1024;
 
-	if (!_enabled)
+	if (!_enabled) {
+		lo_message_free(msg);
 		return;
+	}
 
 	if (_transfer) {
 		if (lo_bundle_length(_transfer) + lo_message_length(msg, path) > MAX_BUNDLE_SIZE) {
 			if (_send_state == SendingBundle)
 				warn << "Maximum bundle size reached, bundle split" << endl;
 			lo_send_bundle(_address, _transfer);
+			lo_bundle_free_messages(_transfer);
 			lo_timetag t;
 			lo_timetag_now(&t);
 			_transfer = lo_bundle_new(t);
@@ -125,6 +130,7 @@ OSCSender::send_message(const char* path, lo_message msg)
 
 	} else {
 		lo_send_message(_address, path, msg);
+		lo_message_free(msg);
 	}
 }
 

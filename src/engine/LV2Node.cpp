@@ -183,6 +183,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	Path   port_path;
 
 	PortImpl* port = NULL;
+	bool      ret  = true;
 
 	float* min_values = new float[num_ports];
 	float* max_values = new float[num_ports];
@@ -271,7 +272,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 			_ports = NULL;
 			delete _instances;
 			_instances = NULL;
-			return false;
+			ret = false;
+			goto done;
 		}
 
 		if (val.type() == Atom::NIL)
@@ -325,9 +327,16 @@ LV2Node::instantiate(BufferFactory& bufs)
 		_ports->at(j) = port;
 	}
 
+done:
+	delete[] min_values;
+	delete[] max_values;
 	delete[] def_values;
+	slv2_value_free(context_pred);
+	slv2_value_free(default_pred);
+	slv2_value_free(min_size_pred);
+	slv2_value_free(port_property_pred);
 
-	return true;
+	return ret;
 }
 
 

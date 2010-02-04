@@ -26,6 +26,7 @@ namespace Ingen {
 
 class InputPort;
 class OutputPort;
+class InternalPlugin;
 
 namespace Internals {
 
@@ -53,6 +54,8 @@ public:
 
 	void sustain_on(ProcessContext& context, FrameTime time);
 	void sustain_off(ProcessContext& context, FrameTime time);
+
+	static InternalPlugin& internal_plugin();
 
 private:
 	/** Key, one for each key on the keyboard */

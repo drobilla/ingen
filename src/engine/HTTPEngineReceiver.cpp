@@ -69,7 +69,7 @@ HTTPEngineReceiver::~HTTPEngineReceiver()
 	_receive_thread->stop();
 	delete _receive_thread;
 
-	if (_server != NULL)  {
+	if (_server)  {
 		soup_server_quit(_server);
 		_server = NULL;
 	}

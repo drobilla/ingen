@@ -25,6 +25,7 @@ namespace Ingen {
 
 class InputPort;
 class OutputPort;
+class InternalPlugin;
 
 namespace Internals {
 
@@ -50,6 +51,8 @@ public:
 	void note_off(ProcessContext& context, uint8_t note_num, FrameTime time);
 
 	void learn() { _learning = true; }
+
+	static InternalPlugin& internal_plugin();
 
 private:
 	bool _learning;

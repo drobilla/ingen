@@ -57,7 +57,7 @@ public:
 	void transfer_begin() { OSCSender::transfer_begin(); }
 	void transfer_end()   { OSCSender::transfer_end(); }
 
-	Raul::URI uri() const { return lo_address_get_url(_address); }
+	Raul::URI uri() const { return _url; }
 
 	/* *** ClientInterface Implementation Below *** */
 

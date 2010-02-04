@@ -222,6 +222,8 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 		me->disable_responses();
 	}
 
+	free(url);
+
 	// If this returns 0 no OSC commands will work
 	return 1;
 }
@@ -686,6 +688,7 @@ OSCEngineReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 	error_msg.append(path).append(" ").append(types);
 
 	OSCClientSender(url).error(error_msg);
+	free(url);
 
 	return 0;
 }

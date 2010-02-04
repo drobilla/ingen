@@ -41,6 +41,8 @@ using namespace Shared;
 
 static InternalPlugin trigger_plugin(NS_INTERNALS "Trigger", "trigger");
 
+InternalPlugin& TriggerNode::internal_plugin() { return trigger_plugin; }
+
 TriggerNode::TriggerNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(&trigger_plugin, path, false, parent, srate, buffer_size)
 	, _learning(false)

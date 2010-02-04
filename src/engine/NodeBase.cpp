@@ -62,6 +62,7 @@ NodeBase::~NodeBase()
 
 	delete _providers;
 	delete _dependants;
+	delete _ports;
 
 	free(_valid_ports);
 }

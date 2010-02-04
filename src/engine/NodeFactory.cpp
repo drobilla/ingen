@@ -137,26 +137,14 @@ NodeFactory::load_plugins()
 void
 NodeFactory::load_internal_plugins()
 {
-	// FIXME: This is a touch gross...
+	InternalPlugin& note_plug = NoteNode::internal_plugin();
+	_plugins.insert(make_pair(note_plug.uri(), &note_plug));
 
-	const SampleRate r = 48000;
-	const size_t     s = sizeof(Sample);
+	InternalPlugin& trigger_plug = TriggerNode::internal_plugin();
+	_plugins.insert(make_pair(trigger_plug.uri(), &trigger_plug));
 
-	Engine& engine = *_world->local_engine;
-	PatchImpl* parent = new PatchImpl(engine, "dummy", 1, NULL, r, s, 1);
-
-	NodeImpl* n = NULL;
-	n = new NoteNode(*engine.buffer_factory(), "foo", 1, parent, r, s);
-	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
-	delete n;
-	n = new TriggerNode(*engine.buffer_factory(), "foo", 1, parent, r, s);
-	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
-	delete n;
-	n = new ControllerNode(*engine.buffer_factory(), "foo", 1, parent, r, s);
-	_plugins.insert(make_pair(n->plugin_impl()->uri(), n->plugin_impl()));
-	delete n;
-
-	delete parent;
+	InternalPlugin& controller_plug = ControllerNode::internal_plugin();
+	_plugins.insert(make_pair(controller_plug.uri(), &controller_plug));
 }
 
 
@@ -238,8 +226,13 @@ NodeFactory::load_ladspa_plugins()
 				continue;
 
 			Glib::Module* plugin_library = new Glib::Module(lib_path, Glib::MODULE_BIND_LOCAL);
-			if (!plugin_library || !(*plugin_library))
+			if (!plugin_library)
 				continue;
+
+			if (!(*plugin_library)) {
+				delete plugin_library;
+				continue;
+			}
 
 			bool found = plugin_library->get_symbol("ladspa_descriptor", df.dp);
 			if (!found || !df.dp) {

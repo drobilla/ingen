@@ -50,6 +50,8 @@ class BufferFactory;
 class PortImpl : public GraphObjectImpl, public Ingen::Shared::Port
 {
 public:
+	~PortImpl();
+
 	/** A port's parent is always a node, so static cast should be safe */
 	NodeImpl* parent_node() const { return (NodeImpl*)_parent; }
 
@@ -135,9 +137,6 @@ protected:
 
 	// Dynamic polyphony
 	Raul::Array<BufferFactory::Ref>* _prepared_buffers;
-
-	friend class Engine;
-	virtual ~PortImpl();
 };
 
 

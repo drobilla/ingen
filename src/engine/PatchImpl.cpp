@@ -54,6 +54,7 @@ PatchImpl::~PatchImpl()
 	assert(!_activated);
 
 	delete _compiled_patch;
+	delete _plugin;
 }
 
 

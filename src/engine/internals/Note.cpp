@@ -45,6 +45,8 @@ using namespace Shared;
 
 static InternalPlugin note_plugin(NS_INTERNALS "Note", "note");
 
+InternalPlugin& NoteNode::internal_plugin() { return note_plugin; }
+
 NoteNode::NoteNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
 	: NodeBase(&note_plugin, path, polyphonic, parent, srate, buffer_size)
 	, _voices(new Raul::Array<Voice>(_polyphony))

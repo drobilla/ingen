@@ -72,6 +72,8 @@ SetMetadata::~SetMetadata()
 {
 	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
 		delete *i;
+
+	delete _create_event;
 }
 
 

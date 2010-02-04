@@ -39,6 +39,8 @@ using namespace Shared;
 
 static InternalPlugin controller_plugin(NS_INTERNALS "Controller", "controller");
 
+InternalPlugin& ControllerNode::internal_plugin() { return controller_plugin; }
+
 ControllerNode::ControllerNode(BufferFactory& bufs,
                                const string&  path,
                                bool           polyphonic,
