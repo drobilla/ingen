@@ -76,7 +76,7 @@ private:
 	void all_voices_selected();
 	void specific_voice_selected();
 
-	void variable_changed(const Raul::URI& predicate, const Raul::Atom& value);
+	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 	void parent_property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
 	bool _callback_enabled;

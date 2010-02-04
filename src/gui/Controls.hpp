@@ -85,7 +85,7 @@ private:
 	void set_value(const Raul::Atom& value);
 	void set_range(float min, float max);
 
-	void port_property_change(const Raul::URI& key, const Raul::Atom& value);
+	void port_property_changed(const Raul::URI& key, const Raul::Atom& value);
 
 	void update_range();
 	void update_value_from_slider();

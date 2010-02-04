@@ -77,7 +77,7 @@ protected:
 	void set_selected(bool b);
 
 	void rename();
-	void set_property(const Raul::URI& predicate, const Raul::Atom& value);
+	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
 	void add_port(SharedPtr<PortModel> port, bool resize=true);
 

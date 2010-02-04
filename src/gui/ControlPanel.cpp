@@ -77,7 +77,7 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	}
 
 	node->signal_property.connect(
-			sigc::mem_fun(this, &ControlPanel::variable_changed));
+			sigc::mem_fun(this, &ControlPanel::property_changed));
 
 	if (node->parent())
 		node->signal_property.connect(
@@ -222,7 +222,7 @@ ControlPanel::parent_property_changed(const Raul::URI& predicate, const Raul::At
 
 
 void
-ControlPanel::variable_changed(const Raul::URI& predicate, const Raul::Atom& value)
+ControlPanel::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
 	if (predicate == App::instance().uris().ingen_polyphony && value.type() == Atom::BOOL) {
 		if (value.get_bool())

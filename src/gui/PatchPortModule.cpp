@@ -50,7 +50,7 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 
 	set_stacked_border(model->polyphonic());
 
-	model->signal_property.connect(sigc::mem_fun(this, &PatchPortModule::set_property));
+	model->signal_property.connect(sigc::mem_fun(this, &PatchPortModule::property_changed));
 }
 
 
@@ -66,11 +66,11 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 
 	for (GraphObject::Properties::const_iterator m = model->meta().properties().begin();
 			m != model->meta().properties().end(); ++m)
-		ret->set_property(m->first, m->second);
+		ret->property_changed(m->first, m->second);
 
 	for (GraphObject::Properties::const_iterator m = model->properties().begin();
 			m != model->properties().end(); ++m)
-		ret->set_property(m->first, m->second);
+		ret->property_changed(m->first, m->second);
 
 	ret->resize();
 	return ret;
@@ -132,7 +132,7 @@ PatchPortModule::set_name(const std::string& n)
 
 
 void
-PatchPortModule::set_property(const URI& key, const Atom& value)
+PatchPortModule::property_changed(const URI& key, const Atom& value)
 {
 	const LV2URIMap& uris = App::instance().uris();
 	switch (value.type()) {

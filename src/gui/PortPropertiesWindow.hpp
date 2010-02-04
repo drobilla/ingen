@@ -42,7 +42,7 @@ public:
 	void present(SharedPtr<Client::PortModel> port_model);
 
 private:
-	void property_change(const Raul::URI& key, const Raul::Atom& value);
+	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 	void min_changed();
 	void max_changed();
 

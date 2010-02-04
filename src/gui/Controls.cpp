@@ -166,7 +166,7 @@ SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 		_slider->set_increments(0, 0);
 	}
 
-	pm->signal_property.connect(sigc::mem_fun(this, &SliderControl::port_property_change));
+	pm->signal_property.connect(sigc::mem_fun(this, &SliderControl::port_property_changed));
 
 	_slider->set_range(std::min(min, pm->value().get_float()), std::max(max, pm->value().get_float()));
 
@@ -218,7 +218,7 @@ SliderControl::set_value(const Atom& atom)
 
 
 void
-SliderControl::port_property_change(const URI& key, const Atom& value)
+SliderControl::port_property_changed(const URI& key, const Atom& value)
 {
 	_enable_signal = false;
 

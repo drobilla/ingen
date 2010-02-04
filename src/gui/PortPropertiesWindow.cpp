@@ -84,7 +84,7 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 				sigc::mem_fun(*this, &PortPropertiesWindow::max_changed)));
 
 	_connections.push_back(pm->signal_property.connect(
-			sigc::mem_fun(this, &PortPropertiesWindow::property_change)));
+			sigc::mem_fun(this, &PortPropertiesWindow::property_changed)));
 
 	//_enable_signal = true;
 
@@ -93,7 +93,7 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 
 
 void
-PortPropertiesWindow::property_change(const URI& key, const Atom& value)
+PortPropertiesWindow::property_changed(const URI& key, const Atom& value)
 {
 	const Shared::LV2URIMap& uris = App::instance().uris();
 	//_enable_signal = false;
