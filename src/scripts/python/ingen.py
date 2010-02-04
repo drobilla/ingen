@@ -312,7 +312,7 @@ class Environment:
 		elements = path.split("/")
 		currentPatch = None
 		for element in elements:
-			if element.empty():
+			if element == "":
 				currentPatch = self.omPatch
 			else:
 				currentPatch = currentPatch.getPatch(element,mustexist)
