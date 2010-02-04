@@ -23,13 +23,14 @@
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
 #include "App.hpp"
-#include "PatchCanvas.hpp"
-#include "Port.hpp"
+#include "Configuration.hpp"
 #include "GladeFactory.hpp"
-#include "RenameWindow.hpp"
+#include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"
-#include "WindowFactory.hpp"
+#include "Port.hpp"
 #include "PortMenu.hpp"
+#include "RenameWindow.hpp"
+#include "WindowFactory.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -41,7 +42,6 @@ namespace GUI {
 PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> model)
 	: FlowCanvas::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
-	, _human_name_visible(false)
 {
 	assert(canvas);
 	assert(model);
@@ -113,8 +113,6 @@ void
 PatchPortModule::show_human_names(bool b)
 {
 	const LV2URIMap& uris = App::instance().uris();
-	using namespace std;
-	_human_name_visible = b;
 	const Atom& name = _model->get_property(uris.lv2_name);
 	if (b && name.type() == Atom::STRING)
 		set_name(name.get_string());
@@ -146,11 +144,14 @@ PatchPortModule::set_property(const URI& key, const Atom& value)
 		}
 		break;
 	case Atom::STRING:
-		if (key == uris.lv2_name && _human_name_visible) {
+		if (key == uris.lv2_name
+				&& App::instance().configuration()->name_style() == Configuration::HUMAN) {
 			set_name(value.get_string());
-		} else if (key == uris.lv2_symbol && !_human_name_visible) {
+		} else if (key == uris.lv2_symbol
+				&& App::instance().configuration()->name_style() == Configuration::PATH) {
 			set_name(value.get_string());
 		}
+		break;
 	case Atom::BOOL:
 		if (key == uris.ingen_polyphonic) {
 			set_stacked_border(value.get_bool());

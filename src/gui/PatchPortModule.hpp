@@ -74,7 +74,6 @@ protected:
 	SharedPtr<PortModel> _model;
 	SharedPtr<Port>      _port;
 	PortMenu*            _menu;
-	bool                 _human_name_visible;
 };
 
 

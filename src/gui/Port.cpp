@@ -227,10 +227,15 @@ Port::property_changed(const URI& key, const Atom& value)
 	} else if (key == uris.lv2_portProperty) {
 		if (value == uris.lv2_toggled)
 			set_toggled(true);
-	} else if (value.type() == Atom::URI) {
+	} else if (key == uris.ctx_context) {
 		ArtVpathDash* dash = this->dash();
 		_rect->property_dash() = dash;
 		set_border_width(dash ? 2.0 : 0.0);
+	} else if (key == uris.lv2_name) {
+		if (value.type() == Atom::STRING
+				&& App::instance().configuration()->name_style() == Configuration::HUMAN) {
+			set_name(value.get_string());
+		}
 	}
 }
 
