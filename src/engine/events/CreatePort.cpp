@@ -137,7 +137,7 @@ CreatePort::execute(ProcessContext& context)
 	if (_patch_port) {
 		_engine.maid()->push(_patch->external_ports());
 		_patch->external_ports(_ports_array);
-		_engine.control_bindings()->update_port(context, _patch_port);
+		_engine.control_bindings()->port_binding_changed(context, _patch_port);
 	}
 
 	if (_driver_port) {

@@ -151,6 +151,16 @@ Engine::add_event_source(SharedPtr<EventSource> source)
 }
 
 
+static void
+execute_and_delete_event(ProcessContext& context, QueuedEvent* ev)
+{
+	ev->pre_process();
+	ev->execute(context);
+	ev->post_process();
+	delete ev;
+}
+
+
 bool
 Engine::activate()
 {
@@ -178,18 +188,26 @@ Engine::activate()
 		root_patch->compiled_patch(root_patch->compile());
 		_driver->set_root_patch(root_patch);
 
-		// Add control port
-		Shared::Resource::Properties properties;
-		properties.insert(make_pair(uris.lv2_name, "Control"));
-		properties.insert(make_pair(uris.rdf_type, uris.lv2ev_EventPort));
-		properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
-		Events::CreatePort* ev = new Events::CreatePort(*this, SharedPtr<Request>(), 0,
-				"/ingen_control", uris.lv2ev_EventPort, false, properties);
-		ev->pre_process();
 		ProcessContext context(*this);
-		ev->execute(context);
-		ev->post_process();
-		delete ev;
+
+		Shared::Resource::Properties control_properties;
+		control_properties.insert(make_pair(uris.lv2_name, "Control"));
+		control_properties.insert(make_pair(uris.rdf_type, uris.lv2ev_EventPort));
+
+		// Add control input
+		Shared::Resource::Properties in_properties(control_properties);
+		in_properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
+
+		execute_and_delete_event(context, new Events::CreatePort(
+				*this, SharedPtr<Request>(), 0,
+				"/control_in", uris.lv2ev_EventPort, false, in_properties));
+
+		// Add control out
+		Shared::Resource::Properties out_properties(control_properties);
+		out_properties.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
+		execute_and_delete_event(context, new Events::CreatePort(
+				*this, SharedPtr<Request>(), 0,
+				"/control_out", uris.lv2ev_EventPort, true, out_properties));
 	}
 
 	_driver->activate();

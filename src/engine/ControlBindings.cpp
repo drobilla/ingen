@@ -15,8 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <math.h>
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
+#include "raul/IntrusivePtr.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendBinding.hpp"
 #include "ControlBindings.hpp"
@@ -34,31 +36,121 @@ using namespace Raul;
 namespace Ingen {
 
 
-void
-ControlBindings::update_port(ProcessContext& context, PortImpl* port)
+ControlBindings::ControlBindings(Engine& engine, SharedPtr<Shared::LV2URIMap> map)
+	: _engine(engine)
+	, _map(map)
+	, _learn_port(NULL)
+	, _bindings(new Bindings())
+	, _feedback(new EventBuffer(*_engine.buffer_factory(), 1024)) // FIXME: size
 {
-	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
-	const Raul::Atom& binding = port->get_property(uris.ingen_controlBinding);
+}
+
+
+ControlBindings::~ControlBindings()
+{
+	delete _feedback;
+}
+
+
+ControlBindings::Key
+ControlBindings::port_binding(PortImpl* port)
+{
+	const Shared::LV2URIMap& uris    = Shared::LV2URIMap::instance();
+	const Raul::Atom&        binding = port->get_property(uris.ingen_controlBinding);
+	Key key;
 	if (binding.type() == Atom::DICT) {
-		Atom::DictValue::const_iterator t = binding.get_dict().find(uris.rdf_type);
+		const Atom::DictValue&          dict = binding.get_dict();
+		Atom::DictValue::const_iterator t    = dict.find(uris.rdf_type);
 		Atom::DictValue::const_iterator n;
-		if (t != binding.get_dict().end()) {
-			if (t->second == uris.midi_Bender) {
-				_bindings->insert(make_pair(Key(MIDI_BENDER), port));
-			} else if (t->second == uris.midi_Bender) {
-				_bindings->insert(make_pair(Key(MIDI_BENDER), port));
-			} else if (t->second == uris.midi_ChannelPressure) {
-				_bindings->insert(make_pair(Key(MIDI_CHANNEL_PRESSURE), port));
-			} else if (t->second == uris.midi_Controller) {
-				n = binding.get_dict().find(uris.midi_controllerNumber);
-				if (n != binding.get_dict().end())
-					_bindings->insert(make_pair(Key(MIDI_CC, n->second.get_int32()), port));
-			} else if (t->second == uris.midi_Note) {
-				n = binding.get_dict().find(uris.midi_noteNumber);
-				if (n != binding.get_dict().end())
-					_bindings->insert(make_pair(Key(MIDI_NOTE, n->second.get_int32()), port));
-			}
+		if (t == dict.end()) {
+			return key;
+		} else if (t->second == uris.midi_Bender) {
+			key = Key(MIDI_BENDER);
+		} else if (t->second == uris.midi_ChannelPressure) {
+			key = Key(MIDI_CHANNEL_PRESSURE);
+		} else if (t->second == uris.midi_Controller) {
+			if ((n = dict.find(uris.midi_controllerNumber)) != dict.end())
+				key = Key(MIDI_CC, n->second.get_int32());
+		} else if (t->second == uris.midi_Note) {
+			if ((n = dict.find(uris.midi_noteNumber)) != dict.end())
+				key = Key(MIDI_NOTE, n->second.get_int32());
 		}
+	}
+	return key;
+}
+
+
+ControlBindings::Key
+ControlBindings::midi_event_key(uint16_t size, uint8_t* buf, uint16_t& value)
+{
+	switch (buf[0] & 0xF0) {
+	case MIDI_CMD_CONTROL:
+		value = static_cast<const int8_t>(buf[2]);
+		return Key(MIDI_CC, static_cast<const int8_t>(buf[1]));
+	case MIDI_CMD_BENDER:
+		value = (static_cast<int8_t>(buf[2]) << 7) + static_cast<int8_t>(buf[1]);
+		return Key(MIDI_BENDER);
+	case MIDI_CMD_CHANNEL_PRESSURE:
+		value = static_cast<const int8_t>(buf[1]);
+		return Key(MIDI_CHANNEL_PRESSURE);
+	case MIDI_CMD_NOTE_ON:
+		value = 1.0f;
+		return Key(MIDI_NOTE, static_cast<const int8_t>(buf[1]));
+	default:
+		return Key();
+	}
+}
+
+
+void
+ControlBindings::port_binding_changed(ProcessContext& context, PortImpl* port)
+{
+	Key key = port_binding(port);
+	if (key)
+		_bindings->insert(make_pair(key, port));
+}
+
+
+void
+ControlBindings::port_value_changed(ProcessContext& context, PortImpl* port)
+{
+	Key key = port_binding(port);
+	if (key) {
+		int16_t  value = port_value_to_control(port, key.type);
+		uint16_t size  = 0;
+		uint8_t  buf[4];
+		switch (key.type) {
+		case MIDI_CC:
+			size = 3;
+			buf[0] = MIDI_CMD_CONTROL;
+			buf[1] = key.num;
+			buf[2] = static_cast<int8_t>(value);
+			break;
+		case MIDI_CHANNEL_PRESSURE:
+			size = 2;
+			buf[0] = MIDI_CMD_CHANNEL_PRESSURE;
+			buf[1] = static_cast<int8_t>(value);
+			break;
+		case MIDI_BENDER:
+			size = 3;
+			buf[0] = MIDI_CMD_BENDER;
+			buf[1] = (value & 0x007F);
+			buf[2] = (value & 0x7F00) >> 7;
+			break;
+		case MIDI_NOTE:
+			size = 3;
+			if (value == 1)
+				buf[0] = MIDI_CMD_NOTE_ON;
+			else if (value == 0)
+				buf[0] = MIDI_CMD_NOTE_OFF;
+			buf[1] = key.num;
+			buf[2] = 0x64; // MIDI spec default
+			break;
+		default:
+			break;
+		}
+		if (size > 0)
+			_feedback->append(0, 0, _map->midi_event.id, size, buf);
 	}
 }
 
@@ -71,14 +163,15 @@ ControlBindings::learn(PortImpl* port)
 }
 
 
-void
-ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value)
+Raul::Atom
+ControlBindings::control_to_port_value(PortImpl* port, Type type, int16_t value)
 {
-	// TODO: cache these to avoid the lookup
 	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
-	float min = port->get_property(uris.lv2_minimum).get_float();
-	float max = port->get_property(uris.lv2_maximum).get_float();
-	bool toggled = port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
+
+	// TODO: cache these to avoid the lookup
+	float min     = port->get_property(uris.lv2_minimum).get_float();
+	float max     = port->get_property(uris.lv2_maximum).get_float();
+	bool  toggled = port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
 
 	float normal;
 	switch (type) {
@@ -100,29 +193,63 @@ ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type ty
 	if (toggled)
 		scaled_value = (scaled_value < 0.5) ? 0.0 : 1.0;
 
-	Raul::Atom atom(scaled_value);
-	port->set_value(atom);
+	return Raul::Atom(scaled_value);
+}
 
+
+int16_t
+ControlBindings::port_value_to_control(PortImpl* port, Type type)
+{
+	if (port->value().type() != Atom::FLOAT)
+		return 0;
+
+	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
+
+	// TODO: cache these to avoid the lookup
+	float min     = port->get_property(uris.lv2_minimum).get_float();
+	float max     = port->get_property(uris.lv2_maximum).get_float();
+	//bool  toggled = port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
+	float value   = port->value().get_float();
+	float normal  = (value - min) / (max - min);
+
+	assert(normal >= 0.0f && normal <= 1.0f);
+	switch (type) {
+	case MIDI_CC:
+	case MIDI_CHANNEL_PRESSURE:
+		return lrintf(normal * 127.0f);
+	case MIDI_BENDER:
+		return lrintf(normal * 16383.0f);
+	case MIDI_NOTE:
+		return (value > 0.0f) ? 1 : 0;
+	default:
+		return 0;
+	}
+}
+
+
+void
+ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value)
+{
 	const Events::SendPortValue ev(context.engine(), context.start(), port, true, 0,
-			atom.get_float());
+			control_to_port_value(port, type, value));
 	context.event_sink().write(sizeof(ev), &ev);
 }
 
 
 bool
-ControlBindings::bind(ProcessContext& context, Type type, int16_t num)
+ControlBindings::bind(ProcessContext& context, Key key)
 {
 	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
 	assert(_learn_port);
-	if (type == MIDI_NOTE) {
+	if (key.type == MIDI_NOTE) {
 		bool toggled = _learn_port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
 		if (!toggled)
 			return false;
 	}
 
-	_bindings->insert(make_pair(Key(type, num), _learn_port));
+	_bindings->insert(make_pair(key, _learn_port));
 
-	const Events::SendBinding ev(context.engine(), context.start(), _learn_port, type, num);
+	const Events::SendBinding ev(context.engine(), context.start(), _learn_port, key.type, key.num);
 	context.event_sink().write(sizeof(ev), &ev);
 
 	_learn_port = NULL;
@@ -154,88 +281,65 @@ ControlBindings::remove(const Raul::Path& path)
 
 
 void
-ControlBindings::process(ProcessContext& context, EventBuffer* buffer)
+ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 {
 	uint32_t frames    = 0;
 	uint32_t subframes = 0;
 	uint16_t type      = 0;
 	uint16_t size      = 0;
 	uint8_t* buf       = NULL;
+	uint16_t value     = 0;
 
 	SharedPtr<Bindings> bindings = _bindings;
+	_feedback->clear();
 
+	// Learn from input if necessary
 	if (_learn_port) {
-		buffer->rewind();
-		int16_t num;
-		while (buffer->get_event(&frames, &subframes, &type, &size, &buf)) {
-			if (type == _map->midi_event.id) {
-				switch (buf[0] & 0xF0) {
-				case MIDI_CMD_CONTROL:
-					num = static_cast<const int8_t>(buf[1]);
-					bind(context, MIDI_CC, num);
-					break;
-				case MIDI_CMD_BENDER:
-					bind(context, MIDI_BENDER);
-					break;
-				case MIDI_CMD_CHANNEL_PRESSURE:
-					bind(context, MIDI_CHANNEL_PRESSURE);
-					break;
-				case MIDI_CMD_NOTE_ON:
-					num = static_cast<const int8_t>(buf[1]);
-					bind(context, MIDI_NOTE, num);
-					break;
-				default:
-					break;
-				}
-			}
-			if (!_learn_port)
+		for (buffer->rewind();
+				buffer->get_event(&frames, &subframes, &type, &size, &buf);
+				buffer->increment()) {
+			if (type != _map->midi_event.id)
+				continue;
+
+			const Key key = midi_event_key(size, buf, value);
+			if (key && bind(context, key))
 				break;
-			buffer->increment();
 		}
 	}
 
-	if (!bindings->empty()) {
-		buffer->rewind();
-		while (buffer->get_event(&frames, &subframes, &type, &size, &buf)) {
-			if (type == _map->midi_event.id) {
-				if ((buf[0] & 0xF0) == MIDI_CMD_CONTROL) {
-					const int8_t controller = static_cast<const int8_t>(buf[1]);
-					Bindings::const_iterator i = bindings->find(Key(MIDI_CC, controller));
-					if (i != bindings->end()) {
-						const int8_t value = static_cast<const int8_t>(buf[2]);
-						set_port_value(context, i->second, MIDI_CC, value);
-					}
-				} else if ((buf[0] & 0xF0) == MIDI_CMD_BENDER) {
-					Bindings::const_iterator i = bindings->find(Key(MIDI_BENDER));
-					if (i != bindings->end()) {
-						const int8_t lsb    = static_cast<const int8_t>(buf[1]);
-						const int8_t msb    = static_cast<const int8_t>(buf[2]);
-						const int16_t value = (msb << 7) + lsb;
-						set_port_value(context, i->second, MIDI_BENDER, value);
-					}
-				} else if ((buf[0] & 0xF0) == MIDI_CMD_CHANNEL_PRESSURE) {
-					Bindings::const_iterator i = bindings->find(Key(MIDI_CHANNEL_PRESSURE));
-					if (i != bindings->end()) {
-						const int8_t value = static_cast<const int8_t>(buf[1]);
-						set_port_value(context, i->second, MIDI_CHANNEL_PRESSURE, value);
-					}
-				} else if ((buf[0] & 0xF0) == MIDI_CMD_NOTE_ON) {
-					const int8_t num = static_cast<const int8_t>(buf[1]);
-					Bindings::const_iterator i = bindings->find(Key(MIDI_NOTE, num));
-					if (i != bindings->end()) {
-						set_port_value(context, i->second, MIDI_NOTE, 1.0f);
-					}
-				} else if ((buf[0] & 0xF0) == MIDI_CMD_NOTE_OFF) {
-					const int8_t num = static_cast<const int8_t>(buf[1]);
-					Bindings::const_iterator i = bindings->find(Key(MIDI_NOTE, num));
-					if (i != bindings->end()) {
-						set_port_value(context, i->second, MIDI_NOTE, 0.0f);
-					}
-				}
-			}
-			buffer->increment();
-		}
+	// If bindings are empty, no sense reading input
+	if (bindings->empty())
+		return;
+
+	// Read input and apply control values
+	for (buffer->rewind();
+			buffer->get_event(&frames, &subframes, &type, &size, &buf);
+			buffer->increment()) {
+		if (type != _map->midi_event.id)
+			continue;
+
+		const Key key = midi_event_key(size, buf, value);
+		if (!key)
+			continue;
+
+		Bindings::const_iterator i = bindings->find(key);
+		if (i == bindings->end())
+			continue;
+
+		set_port_value(context, i->second, key.type, value);
 	}
 }
 
+
+void
+ControlBindings::post_process(ProcessContext& context, EventBuffer* buffer)
+{
+	if (_feedback->event_count() > 0) {
+		// TODO: merge buffer's existing contents (anything send to it in the patch)
+		_feedback->rewind();
+		buffer->copy(context, _feedback);
+	}
 }
+
+
+} // namespace Ingen

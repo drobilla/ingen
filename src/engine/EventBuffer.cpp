@@ -94,11 +94,11 @@ EventBuffer::copy(Context& context, const Buffer* src_buf)
 	if (src->_data == _data)
 		return;
 
-	assert(capacity() >= src->capacity());
+	assert(src->_data->header_size == _data->header_size);
+	assert(capacity() >= _data->header_size + src->_data->size);
 
 	rewind();
 
-	assert(src->_data->header_size == _data->header_size);
 	memcpy(_data, src->_data, _data->header_size + src->_data->size);
 
 	_iter = src->_iter;

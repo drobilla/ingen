@@ -23,6 +23,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
 #include "shared/LV2URIMap.hpp"
+#include "BufferFactory.hpp"
 
 namespace Ingen {
 
@@ -34,6 +35,7 @@ class PortImpl;
 class ControlBindings {
 public:
 	enum Type {
+		NULL_CONTROL,
 		MIDI_BENDER,
 		MIDI_CC,
 		MIDI_RPN,
@@ -43,26 +45,26 @@ public:
 	};
 
 	struct Key {
-		Key(Type t, int16_t n=0) : type(t), num(n) {}
+		Key(Type t=NULL_CONTROL, int16_t n=0) : type(t), num(n) {}
 		inline bool operator<(const Key& other) const {
 			return (type == other.type) ? (num < other.num) : (type < other.type);
 		}
+		inline operator bool() const { return type != NULL_CONTROL; }
 		Type    type;
 		int16_t num;
 	};
 
 	typedef std::map<Key, PortImpl*> Bindings;
 
-	ControlBindings(Engine& engine, SharedPtr<Shared::LV2URIMap> map)
-		: _engine(engine)
-		, _map(map)
-		, _learn_port(NULL)
-		, _bindings(new Bindings())
-	{}
+	ControlBindings(Engine& engine, SharedPtr<Shared::LV2URIMap> map);
+	~ControlBindings();
 
 	void learn(PortImpl* port);
-	void update_port(ProcessContext& context, PortImpl* port);
-	void process(ProcessContext& context, EventBuffer* buffer);
+
+	void port_binding_changed(ProcessContext& context, PortImpl* port);
+	void port_value_changed(ProcessContext& context, PortImpl* port);
+	void pre_process(ProcessContext& context, EventBuffer* control_in);
+	void post_process(ProcessContext& context, EventBuffer* control_out);
 
 	/** Remove all bindings for @a path or children of @a path.
 	 * The caller must safely drop the returned reference in the
@@ -71,14 +73,21 @@ public:
 	SharedPtr<Bindings> remove(const Raul::Path& path);
 
 private:
+	Key port_binding(PortImpl* port);
+	Key midi_event_key(uint16_t size, uint8_t* buf, uint16_t& value);
+
+	void set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value);
+	bool bind(ProcessContext& context, Key key);
+
+	Raul::Atom control_to_port_value(PortImpl* port, Type type, int16_t value);
+	int16_t    port_value_to_control(PortImpl* port, Type type);
+
 	Engine&                      _engine;
 	SharedPtr<Shared::LV2URIMap> _map;
 	PortImpl*                    _learn_port;
 
-	void set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value);
-	bool bind(ProcessContext& context, Type type, int16_t num=0);
-
 	SharedPtr<Bindings> _bindings;
+	EventBuffer*        _feedback;
 };
 
 } // namespace Ingen

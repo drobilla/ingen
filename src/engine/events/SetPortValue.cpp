@@ -23,8 +23,9 @@
 #include "shared/LV2Object.hpp"
 #include "module/World.hpp"
 #include "AudioBuffer.hpp"
-#include "Driver.hpp"
 #include "ClientBroadcaster.hpp"
+#include "ControlBindings.hpp"
+#include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "EventBuffer.hpp"
@@ -32,6 +33,7 @@
 #include "NodeImpl.hpp"
 #include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
+#include "ProcessContext.hpp"
 #include "ProcessContext.hpp"
 #include "Request.hpp"
 #include "SetPortValue.hpp"
@@ -143,6 +145,7 @@ SetPortValue::execute(ProcessContext& context)
 		return;
 
 	apply(context);
+	_engine.control_bindings()->port_value_changed(context, _port);
 }
 
 

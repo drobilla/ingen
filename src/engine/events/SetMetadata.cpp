@@ -257,7 +257,7 @@ SetMetadata::execute(ProcessContext& context)
 			break;
 		case CONTROL_BINDING:
 			if ((port = dynamic_cast<PortImpl*>(_object)))
-				_engine.control_bindings()->update_port(context, port);
+				_engine.control_bindings()->port_binding_changed(context, port);
 		default:
 			_success = true;
 		}

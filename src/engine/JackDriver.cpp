@@ -427,21 +427,25 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 		(*i)->context().set_time_slice(nframes, start_of_current_cycle, end_of_current_cycle);
 	}
 
-	// Process events that came in during the last cycle
-	// (Aiming for jitter-free 1 block event latency, ideally)
-	_engine.process_events(_process_context);
-
 	// Read input
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->pre_process(_process_context);
 
-	// Process control bindings
-	_engine.control_bindings()->process(_process_context,
+	// Apply control bindings to input
+	_engine.control_bindings()->pre_process(_process_context,
 			PtrCast<EventBuffer>(_root_patch->port_impl(0)->buffer(0)).get());
+
+	// Process events that came in during the last cycle
+	// (Aiming for jitter-free 1 block event latency, ideally)
+	_engine.process_events(_process_context);
 
 	// Run root patch
 	if (_root_patch)
 		_root_patch->process(_process_context);
+
+	// Emit control binding feedback
+	_engine.control_bindings()->post_process(_process_context,
+			PtrCast<EventBuffer>(_root_patch->port_impl(1)->buffer(0)).get());
 
 	// Signal message context to run if necessary
 	if (_engine.message_context()->has_requests())
