@@ -219,13 +219,13 @@ JackDriver::supports(Shared::PortType port_type, Shared::EventType event_type)
 
 bool
 JackDriver::attach(const std::string& server_name,
-                        const std::string& client_name,
-                        void*              jack_client)
+                   const std::string& client_name,
+                   void*              jack_client)
 {
 	assert(!_client);
 	if (!jack_client) {
 		// Try supplied server name
-		if (server_name != "") {
+		if (!server_name.empty()) {
 			_client = jack_client_open(client_name.c_str(),
 					JackServerName, NULL, server_name.c_str());
 			if (_client)

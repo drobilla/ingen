@@ -98,6 +98,7 @@ CreatePort::pre_process()
 		if (_patch->parent())
 			_patch_port->set_property(uris.rdf_instanceOf, _patch_port->meta_uri());
 
+		_patch_port->properties().insert(_properties.begin(), _properties.end());
 		_patch_port->meta().properties().insert(_properties.begin(), _properties.end());
 
 		if (_patch_port) {

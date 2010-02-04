@@ -223,7 +223,7 @@ PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const
 const string&
 PluginModel::icon_path() const
 {
-	if (_icon_path == "" && _type == LV2) {
+	if (_icon_path.empty() && _type == LV2) {
 		Glib::Mutex::Lock lock(_rdf_world->mutex());
 		_icon_path = get_lv2_icon_path(_slv2_plugin);
 	}

@@ -142,15 +142,15 @@ HTTPClientReceiver::Listener::_run()
 	char   in    = '\0';
 	char   last  = '\0';
 	char   llast = '\0';
-	string recv  = "";
+	string recv;
 
 	while (true) {
 		while (read(_sock, &in, 1) > 0 ) {
 			recv += in;
 			if (in == '\n' && last == '\n' && llast == '\n') {
-				if (recv != "") {
+				if (!recv.empty()) {
 					_receiver->update(recv);
-					recv = "";
+					recv.clear();
 					last = '\0';
 					llast = '\0';
 				}

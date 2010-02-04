@@ -66,9 +66,9 @@ relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 	else
 		ret = uri;
 
-	if (leading_slash && (ret == "" || ret[0] != '/'))
+	if (leading_slash && (ret.empty() || ret[0] != '/'))
 		ret = "/" + ret;
-	else if (!leading_slash && ret != "" && ret[0] == '/')
+	else if (!leading_slash && !ret.empty() && ret[0] == '/')
 		ret = ret.substr(1);
 
 	return ret;
@@ -137,7 +137,7 @@ Parser::parse_string(
 	Redland::Model model(*world->rdf_world, str.c_str(), str.length(), base_uri);
 
 	LOG(info) << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
-	if (base_uri != "")
+	if (!base_uri.empty())
 		LOG(info) << " (base " << base_uri << ")";
 	LOG(info) << endl;
 
@@ -189,7 +189,7 @@ Parser::parse_update(
 		if (obj_uri.find(":") == string::npos)
 			obj_uri = Path(obj_uri).str();
 		obj_uri = relative_uri(base_uri, obj_uri, true);
-		if (key != "")
+		if (!key.empty())
 			target->set_property(string("path:") + obj_uri, key, a);
 	}
 
@@ -276,7 +276,7 @@ Parser::parse(
 		const Glib::ustring subject_uri_tok = Glib::ustring("<").append(subject).append(">");
 
 		if (is_object) {
-			if (path_str == "" || path_str[0] != '/')
+			if (path_str.empty() || path_str[0] != '/')
 				path_str = "/" + path_str;
 
 			if (!Path::is_valid(path_str)) {
@@ -375,7 +375,7 @@ Parser::parse_patch(
 	} else { // Guess symbol from base URI (filename) if we need to
 		symbol = base_uri.substr(base_uri.find_last_of("/") + 1);
 		symbol = symbol.substr(0, symbol.find("."));
-		if (symbol != "")
+		if (!symbol.empty())
 			symbol = Path::nameify(symbol);
 	}
 
@@ -726,7 +726,7 @@ Parser::parse_properties(
 		const Redland::Node& val = (*i)["val"];
 		if (skip_property((*i)["key"]))
 			continue;
-		if (key != "" && val.type() != Redland::Node::BLANK)
+		if (!key.empty() && val.type() != Redland::Node::BLANK)
 			properties.insert(make_pair(key, AtomRDF::node_to_atom(model, val)));
 	}
 

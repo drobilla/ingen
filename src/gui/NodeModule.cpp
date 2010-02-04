@@ -141,7 +141,7 @@ NodeModule::show_human_names(bool b)
 			} else {
 				Glib::ustring hn = node()->plugin_model()->port_human_name(
 						port->model()->index());
-				if (hn != "")
+				if (!hn.empty())
 					label = hn;
 			}
 		}

@@ -99,7 +99,7 @@ void
 RenameWindow::label_changed()
 {
 	const string& label = _label_entry->get_text();
-	if (label == "") {
+	if (label.empty()) {
 		_message_label->set_text("Label must be at least 1 character");
 		_ok_button->property_sensitive() = false;
 	} else {
@@ -141,7 +141,7 @@ RenameWindow::ok_clicked()
 		}
 	}
 
-	if (label != "" && (!name_atom.is_valid() || label != name_atom.get_string())) {
+	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.get_string())) {
 		App::instance().engine()->set_property(path, uris.lv2_name, Atom(label));
 	}
 

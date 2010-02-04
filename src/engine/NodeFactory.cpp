@@ -86,7 +86,7 @@ NodeFactory::plugin(const Raul::URI& uri)
 PluginImpl*
 NodeFactory::plugin(const string& type, const string& lib, const string& label)
 {
-	if (type != "LADSPA" || lib == "" || label == "")
+	if (type != "LADSPA" || lib.empty() || label.empty())
 		return NULL;
 
 #ifdef HAVE_LADSPA_H
@@ -206,12 +206,12 @@ NodeFactory::load_ladspa_plugins()
 	}
 
 	// Yep, this should use an sstream alright..
-	while (ladspa_path != "") {
+	while (!ladspa_path.empty()) {
 		const string dir = ladspa_path.substr(0, ladspa_path.find(':'));
 		if (ladspa_path.find(':') != string::npos)
 			ladspa_path = ladspa_path.substr(ladspa_path.find(':')+1);
 		else
-			ladspa_path = "";
+			ladspa_path.clear();
 
 		DIR* pdir = opendir(dir.c_str());
 		if (pdir == NULL)

@@ -372,7 +372,7 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 	} else {
 		module = NodeModule::create(shared_this, nm, _human_names);
 		const PluginModel* plugm = dynamic_cast<const PluginModel*>(nm->plugin());
-		if (plugm && plugm->icon_path() != "")
+		if (plugm && !plugm->icon_path().empty())
 			module->set_icon(App::instance().icon_from_path(plugm->icon_path(), 100));
 	}
 
@@ -662,7 +662,7 @@ PatchCanvas::paste()
 	props.insert(make_pair(uris.ingen_polyphony, Raul::Atom(int32_t(_patch->poly()))));
 	clipboard.put(Path(), props);
 	size_t first_slash;
-	while (to_create != "/" && to_create != ""
+	while (to_create != "/" && !to_create.empty()
 			&& (first_slash = to_create.find("/")) != string::npos) {
 		created += to_create.substr(0, first_slash);
 		assert(Path::is_valid(created));

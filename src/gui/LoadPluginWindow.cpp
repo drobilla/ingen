@@ -332,10 +332,10 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	bool                   polyphonic = _polyphonic_checkbutton->get_active();
 	string                 name       = _node_name_entry->get_text();
 
-	if (name == "" || name == NAME_ENTRY_MULTI_STRING)
+	if (name.empty() || name == NAME_ENTRY_MULTI_STRING)
 		name = generate_module_name(plugin, _plugin_name_offset);
 
-	if (name == "" || !Symbol::is_valid(name)) {
+	if (name.empty() || !Symbol::is_valid(name)) {
 		Gtk::MessageDialog dialog(*this,
 				"Unable to chose a default name for this node.  Please enter a name.",
 				false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);

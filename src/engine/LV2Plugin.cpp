@@ -97,7 +97,7 @@ const std::string&
 LV2Plugin::library_path() const
 {
 	static const std::string empty_string;
-	if (_library_path == "") {
+	if (_library_path.empty()) {
 		SLV2Value v = slv2_plugin_get_library_uri(_slv2_plugin);
 		if (v) {
 			_library_path = slv2_uri_to_path(slv2_value_as_uri(v));

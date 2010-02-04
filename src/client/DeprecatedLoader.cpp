@@ -85,7 +85,7 @@ public:
 		if (port_name == "note_number") // FIXME: filthy kludge
 			port_name = "note";
 
-		if (node_name != "")
+		if (!node_name.empty())
 			_controls.push_back(ControlModel(_base_path + node_name +"/"+ port_name, value));
 		else
 			_controls.push_back(ControlModel(_base_path + port_name, value));
@@ -151,13 +151,13 @@ DeprecatedLoader::translate_load_path(const string& path)
 void
 DeprecatedLoader::add_variable(GraphObject::Properties& data, string old_key, string value)
 {
-	string key = "";
+	string key;
 	if (old_key == "module-x")
 		key = "ingenui:canvas-x";
 	else if (old_key == "module-y")
 		key = "ingenui:canvas-y";
 
-	if (key != "") {
+	if (!key.empty()) {
 		// FIXME: should this overwrite existing values?
 		if (data.find(key) == data.end()) {
 			// Hack to make module-x and module-y set as floats
@@ -448,7 +448,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		cur = cur->next;
 	}
 
-	if (path == "") {
+	if (path.empty()) {
 		LOG(error) << "Malformed patch file (node tag has empty children)" << endl;
 		LOG(error) << "Node ignored." << endl;
 		return false;
@@ -457,7 +457,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 
 	// Compatibility hacks for old patches that represent patch ports as nodes
-	if (plugin_uri == "") {
+	if (plugin_uri.empty()) {
 		bool is_port = false;
 
 		Resource::Properties props;
@@ -529,7 +529,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				plugin_uri = NS_INTERNALS "Trigger";
 			}
 
-			if (plugin_uri == "")
+			if (plugin_uri.empty())
 				plugin_uri = "om:" + plugin_type + ":" + library_name + ":" + plugin_label;
 
 			Resource::Properties props;
@@ -631,7 +631,7 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 		cur = cur->next;
 	}
 
-	if (source_node == "" || source_port == "" || dest_node == "" || dest_port == "") {
+	if (source_node.empty() || source_port.empty() || dest_node.empty() || dest_port.empty()) {
 		LOG(error) << "Malformed patch file (connection tag has empty children)" << endl;
 		LOG(error) << "Connection ignored." << endl;
 		return false;
@@ -691,11 +691,11 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 			}
 
 			// Compatibility fixes for old patch files
-			if (node_name != "")
+			if (!node_name.empty())
 				node_name = nameify_if_invalid(node_name);
 			port_name = nameify_if_invalid(port_name);
 
-			if (port_name == "") {
+			if (port_name.empty()) {
 				string msg = "Unable to parse control in patch file ( node = ";
 				msg.append(node_name).append(", port = ").append(port_name).append(")");
 				LOG(error) << msg << endl;
@@ -713,7 +713,7 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 		key = NULL;
 		cur = cur->next;
 	}
-	if (pm->name() == "") {
+	if (pm->name().empty()) {
 		LOG(error) << "Preset in patch file has no name." << endl;
 		//m_client_hooks->error("Preset in patch file has no name.");
 		pm->name("Unnamed");

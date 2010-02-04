@@ -324,7 +324,7 @@ PatchWindow::show_port_status(PortModel* port, const Raul::Atom& value)
 		const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
 		if (plugin) {
 			const string& human_name = plugin->port_human_name(port->index());
-			if (human_name != "")
+			if (!human_name.empty())
 				msg << " (" << human_name << ")";
 		}
 	}

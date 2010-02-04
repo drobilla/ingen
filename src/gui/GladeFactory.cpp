@@ -54,11 +54,11 @@ GladeFactory::find_glade_file()
 Glib::RefPtr<Gnome::Glade::Xml>
 GladeFactory::new_glade_reference(const string& toplevel_widget)
 {
-	if (glade_filename == "")
+	if (glade_filename.empty())
 		find_glade_file();
 
 	try {
-		if (toplevel_widget == "")
+		if (toplevel_widget.empty())
 			return Gnome::Glade::Xml::create(glade_filename);
 		else
 			return Gnome::Glade::Xml::create(glade_filename, toplevel_widget.c_str());

@@ -41,8 +41,6 @@ namespace Shared { class ClientInterface; }
 
 /** Common implementation stuff for Node.
  *
- * Pretty much just attributes and getters/setters are here.
- *
  * \ingroup engine
  */
 class NodeBase : public NodeImpl
