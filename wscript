@@ -20,6 +20,8 @@ def set_options(opt):
 			help="Ingen data install directory [Default: PREFIX/share/ingen]")
 	opt.add_option('--module-dir', type='string', dest='moduledir',
 			help="Ingen module install directory [Default: PREFIX/lib/ingen]")
+	opt.add_option('--no-ladspa', action='store_true', default=False, dest='no_ladspa',
+			help="Do not build LADSPA support, even if ladspa.h is found")
 	opt.add_option('--no-osc', action='store_true', default=False, dest='no_osc',
 			help="Do not build OSC via liblo support, even if liblo exists")
 	opt.add_option('--no-http', action='store_true', default=False, dest='no_http',
@@ -43,7 +45,8 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM', atleast_version='2.6.0', mandatory=False)
 	if not Options.options.no_http:
 		autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP', atleast_version='2.4.0', mandatory=False)
-	autowaf.check_header(conf, 'ladspa.h', 'HAVE_LADSPA_H', mandatory=False)
+	if not Options.options.no_ladspa:
+		autowaf.check_header(conf, 'ladspa.h', 'HAVE_LADSPA_H', mandatory=False)
 	if not Options.options.no_osc:
 		autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO', atleast_version='0.25', mandatory=False)
 	autowaf.check_pkg(conf, 'redlandmm', uselib_store='REDLANDMM', atleast_version='0.0.0', mandatory=False)
