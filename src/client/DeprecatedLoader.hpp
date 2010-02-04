@@ -35,9 +35,6 @@ namespace Raul { class Path; }
 namespace Ingen {
 namespace Client {
 
-class PatchModel;
-class NodeModel;
-class ConnectionModel;
 class PresetModel; // defined in DeprecatedLoader.cpp
 
 

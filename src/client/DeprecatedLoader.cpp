@@ -153,9 +153,9 @@ DeprecatedLoader::add_variable(GraphObject::Properties& data, string old_key, st
 {
 	string key;
 	if (old_key == "module-x")
-		key = "ingenui:canvas-x";
+		key = "http://drobilla.net/ns/ingenuity#canvas-x";
 	else if (old_key == "module-y")
-		key = "ingenui:canvas-y";
+		key = "http://drobilla.net/ns/ingenuity#canvas-y";
 
 	if (!key.empty()) {
 		// FIXME: should this overwrite existing values?
@@ -368,8 +368,6 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 }
 
 
-/** Build a NodeModel given a pointer to a Node in a patch file.
- */
 bool
 DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
@@ -516,7 +514,7 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 			for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_property(path, i->first, i->second);
 
-			return SharedPtr<NodeModel>();
+			return false;
 
 		} else {
 			if (plugin_label == "note_in") {
@@ -602,8 +600,6 @@ DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent,
 }
 
 
-/** Build a ConnectionModel given a pointer to a connection in a patch file.
- */
 bool
 DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
@@ -651,8 +647,7 @@ DeprecatedLoader::load_connection(const Path& parent, xmlDocPtr doc, const xmlNo
 }
 
 
-/** Build a PresetModel given a pointer to a preset in a patch file.
- */
+/** Build a PresetModel given a pointer to a preset in a patch file. */
 SharedPtr<PresetModel>
 DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePtr node)
 {
@@ -715,7 +710,6 @@ DeprecatedLoader::load_preset(const Path& parent, xmlDocPtr doc, const xmlNodePt
 	}
 	if (pm->name().empty()) {
 		LOG(error) << "Preset in patch file has no name." << endl;
-		//m_client_hooks->error("Preset in patch file has no name.");
 		pm->name("Unnamed");
 	}
 
