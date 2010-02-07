@@ -101,6 +101,7 @@ private:
 	void name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event);
 #endif
 
+	void set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugin);
 	void new_plugin(SharedPtr<PluginModel> plugin);
 
 	void plugin_property_changed(const Raul::URI&  plugin,

@@ -227,20 +227,14 @@ LoadPluginWindow::new_plugin(SharedPtr<PluginModel> pm)
 
 
 void
-LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
+LoadPluginWindow::set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugin)
 {
 	const LV2URIMap& uris = App::instance().uris();
-	Gtk::TreeModel::iterator iter = _plugins_liststore->append();
-	Gtk::TreeModel::Row row = *iter;
-	_rows.insert(make_pair(plugin->uri(), iter));
-
 	const Atom& name = plugin->get_property(uris.doap_name);
-	if (name.is_valid()) {
-		if (name.type() == Atom::STRING)
+	if (name.is_valid() && name.type() == Atom::STRING)
 			row[_plugins_columns._col_name] = name.get_string();
-	} else if (plugin->type() == Plugin::LADSPA) {
+	else if (plugin->type() == Plugin::LADSPA)
 		App::instance().engine()->request_property(plugin->uri(), uris.doap_name);
-	}
 
 	switch (plugin->type()) {
 	case Plugin::LV2:
@@ -262,6 +256,17 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 
 	row[_plugins_columns._col_uri] = plugin->uri().str();
 	row[_plugins_columns._col_plugin] = plugin;
+}
+
+
+void
+LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
+{
+	Gtk::TreeModel::iterator iter = _plugins_liststore->append();
+	Gtk::TreeModel::Row row = *iter;
+	_rows.insert(make_pair(plugin->uri(), iter));
+
+	set_row(row, plugin);
 
 	plugin->signal_property.connect(sigc::bind<0>(
 			sigc::mem_fun(this, &LoadPluginWindow::plugin_property_changed),
@@ -415,12 +420,7 @@ LoadPluginWindow::filter_changed()
 		if (field.find(search) != string::npos) {
 			model_iter = _plugins_liststore->append();
 			model_row = *model_iter;
-
-			model_row[_plugins_columns._col_name]   = name.is_valid() ? name.get_string() : "";
-			model_row[_plugins_columns._col_type]   = plugin->type_uri().str();
-			model_row[_plugins_columns._col_uri]    = plugin->uri().str();
-			model_row[_plugins_columns._col_plugin] = plugin;
-
+			set_row(model_row, plugin);
 			++num_visible;
 		}
 	}
