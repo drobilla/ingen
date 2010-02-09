@@ -57,7 +57,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _value(value)
 	, _broadcast(false)
 	, _set_by_user(false)
-	, _last_broadcasted_value(_value.type() == Atom::FLOAT ? _value.get_float() : 0.0f) // default?
+	, _last_broadcasted_value(value)
 	, _context(Context::AUDIO)
 	, _buffers(new Array<BufferFactory::Ref>(poly))
 	, _prepared_buffers(NULL)
@@ -197,7 +197,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	}
 
-	if (val.type() == Atom::FLOAT && (force || val != _last_broadcasted_value)) {
+	if (val.is_valid() && (force || val != _last_broadcasted_value)) {
 		_last_broadcasted_value = val;
 		const Events::SendPortValue ev(context.engine(), context.start(), this, true, 0, val);
 		context.event_sink().write(sizeof(ev), &ev);

@@ -41,7 +41,7 @@ using namespace Shared;
 ObjectBuffer::ObjectBuffer(BufferFactory& factory, size_t capacity)
 	: Buffer(factory, PortType(PortType::VALUE), capacity)
 {
-	assert(capacity >= sizeof(LV2_Object));
+	capacity += sizeof(LV2_Object);
 
 #ifdef HAVE_POSIX_MEMALIGN
 	const int ret = posix_memalign((void**)&_buf, 16, capacity);
@@ -88,7 +88,7 @@ ObjectBuffer::resize(size_t size)
 	const uint32_t contents_size = sizeof(LV2_Object) + _buf->size;
 
 	_buf  = (LV2_Object*)realloc(_buf, sizeof(LV2_Object) + size);
-	_size = size;
+	_size = size + sizeof(LV2_Object);
 
 	// If we shrunk and chopped the current contents, clear corrupt data
 	if (size < contents_size)
