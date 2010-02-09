@@ -213,7 +213,18 @@ ControlBindings::port_value_to_control(PortImpl* port, Type type)
 	float value   = port->value().get_float();
 	float normal  = (value - min) / (max - min);
 
-	assert(normal >= 0.0f && normal <= 1.0f);
+	if (normal < 0.0f) {
+		warn << "Value " << value << " (normal " << normal << ") for "
+			<< port->path() << " out of range" << endl;
+		normal = 0.0f;
+	}
+
+	if (normal > 1.0f) {
+		warn << "Value " << value << " (normal " << normal << ") for "
+			<< port->path() << " out of range" << endl;
+		normal = 1.0f;
+	}
+
 	switch (type) {
 	case MIDI_CC:
 	case MIDI_CHANNEL_PRESSURE:
