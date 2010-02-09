@@ -162,7 +162,7 @@ SetPortValue::apply(Context& context)
 	/*} else if (_port->buffer(0)->capacity() < _data_size) {
 		_error = NO_SPACE;*/
 	} else {
-		Buffer* const buf = _port->buffer(0).get();
+		Buffer* const      buf  = _port->buffer(0).get();
 		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 		if (abuf) {
 			if (_value.type() != Atom::FLOAT) {

@@ -21,6 +21,7 @@
 #include "raul/IntrusivePtr.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendBinding.hpp"
+#include "AudioBuffer.hpp"
 #include "ControlBindings.hpp"
 #include "Engine.hpp"
 #include "EventBuffer.hpp"
@@ -230,8 +231,17 @@ ControlBindings::port_value_to_control(PortImpl* port, Type type)
 void
 ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value)
 {
-	const Events::SendPortValue ev(context.engine(), context.start(), port, true, 0,
-			control_to_port_value(port, type, value));
+	const Raul::Atom port_value(control_to_port_value(port, type, value));
+	port->set_value(port_value);
+
+	assert(port_value.type() == Atom::FLOAT);
+	assert(dynamic_cast<AudioBuffer*>(port->buffer(0).get()));
+
+	for (uint32_t v = 0; v < port->poly(); ++v)
+		reinterpret_cast<AudioBuffer*>(port->buffer(v).get())->set_value(
+				port_value.get_float(), context.start(), context.start());
+
+	const Events::SendPortValue ev(context.engine(), context.start(), port, true, 0, port_value);
 	context.event_sink().write(sizeof(ev), &ev);
 }
 
