@@ -51,7 +51,7 @@ CreatePort::CreatePort(
 		const Raul::URI&            type,
 		bool                        is_output,
 		const Resource::Properties& properties)
-	: QueuedEvent(engine, request, timestamp, true)
+	: QueuedEvent(engine, request, timestamp, bool(request))
 	, _error(NO_ERROR)
 	, _path(path)
 	, _type(type)
@@ -92,7 +92,9 @@ CreatePort::pre_process()
 
 		size_t buffer_size = _engine.driver()->buffer_size();
 
-		const uint32_t old_num_ports = _patch->num_ports();
+		const uint32_t old_num_ports = (_patch->external_ports())
+			? _patch->external_ports()->size()
+			: 0;
 
 		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(), _data_type, buffer_size, _is_output);
 		if (_patch->parent())
@@ -113,7 +115,7 @@ CreatePort::pre_process()
 			else
 				_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, NULL);
 
-			_ports_array->at(_patch->num_ports()-1) = _patch_port;
+			_ports_array->at(old_num_ports) = _patch_port;
 			_engine.engine_store()->add(_patch_port);
 
 			if (!_patch->parent())

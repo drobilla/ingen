@@ -101,20 +101,24 @@ SetMetadata::pre_process()
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
 		PortType data_type(PortType::UNKNOWN);
 		ResourceImpl::type(_properties, is_patch, is_node, is_port, is_output, data_type);
+
+		// Create a separate request without a source so EventSource isn't unblocked twice
+		SharedPtr<Request> sub_request(new Request(NULL, _request->client(), _request->id()));
+
 		if (is_patch) {
 			uint32_t poly = 1;
 			iterator p = _properties.find(uris.ingen_polyphony);
 			if (p != _properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
 				poly = p->second.get_int32();
-			_create_event = new CreatePatch(_engine, _request, _time,
+			_create_event = new CreatePatch(_engine, sub_request, _time,
 					path, poly, _properties);
 		} else if (is_node) {
 			const iterator p = _properties.find(uris.rdf_instanceOf);
-			_create_event = new CreateNode(_engine, _request, _time,
+			_create_event = new CreateNode(_engine, sub_request, _time,
 					path, p->second.get_uri(), true, _properties);
 		} else if (is_port) {
-			_blocking = true;
-			_create_event = new CreatePort(_engine, _request, _time,
+			_blocking = bool(_request);
+			_create_event = new CreatePort(_engine, sub_request, _time,
 					path, data_type.uri(), is_output, _properties);
 		}
 		if (_create_event)
@@ -221,7 +225,7 @@ SetMetadata::execute(ProcessContext& context)
 	if (_create_event) {
 		QueuedEvent::execute(context);
 		_create_event->execute(context);
-		if (_blocking && _request)
+		if (_blocking)
 			_request->unblock();
 		return;
 	}

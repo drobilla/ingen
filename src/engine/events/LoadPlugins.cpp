@@ -26,7 +26,7 @@ namespace Events {
 
 
 LoadPlugins::LoadPlugins(Engine& engine, SharedPtr<Request> request, SampleCount timestamp)
-	: QueuedEvent(engine, request, timestamp, true)
+	: QueuedEvent(engine, request, timestamp, bool(request))
 {
 }
 
