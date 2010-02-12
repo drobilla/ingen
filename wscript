@@ -116,6 +116,6 @@ def build(bld):
 	icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
 	for s in icon_sizes:
 		bld.install_as(
-			os.path.join(bld.env['DATADIR'], 'icons', 'hicolor', 'apps', 'ingen.png'),
+			os.path.join(bld.env['DATADIR'], 'icons', 'hicolor', s, 'apps', 'ingen.png'),
 			'icons/' + s + '/ingen.png')
 
