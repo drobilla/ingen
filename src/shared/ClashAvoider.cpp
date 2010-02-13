@@ -152,6 +152,15 @@ ClashAvoider::put(const Raul::URI&                    path,
 
 
 void
+ClashAvoider::delta(const Raul::URI&                    path,
+                    const Shared::Resource::Properties& remove,
+                    const Shared::Resource::Properties& add)
+{
+	_target.delta(map_uri(path), remove, add);
+}
+
+
+void
 ClashAvoider::move(const Raul::Path& old_path,
                    const Raul::Path& new_path)
 {

@@ -48,6 +48,7 @@ ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientI
 	emitter->signal_object_deleted.connect(sigc::mem_fun(this, &ClientStore::del));
 	emitter->signal_object_moved.connect(sigc::mem_fun(this, &ClientStore::move));
 	emitter->signal_put.connect(sigc::mem_fun(this, &ClientStore::put));
+	emitter->signal_delta.connect(sigc::mem_fun(this, &ClientStore::delta));
 	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connect));
 	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnect));
 	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::set_property));
@@ -333,6 +334,28 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	} else {
 		LOG(warn) << "Ignoring object " << path << " with unknown type "
 			<< is_patch << " " << is_node << " " << is_port << endl;
+	}
+}
+
+
+void
+ClientStore::delta(const URI& uri, const Resource::Properties& remove, const Resource::Properties& add)
+{
+	bool is_meta = ResourceImpl::is_meta_uri(uri);
+	string path_str = is_meta ? (string("/") + uri.chop_start("#")) : uri.str();
+	if (!Path::is_valid(path_str)) {
+		LOG(error) << "Bad path: " << uri.str() << " - " << path_str << endl;
+		return;
+	}
+
+	Path path(is_meta ? (string("/") + uri.chop_start("#")) : uri.str());
+
+	SharedPtr<ObjectModel> obj = object(path);
+	if (obj) {
+		obj->remove_properties(remove);
+		obj->add_properties(add);
+	} else {
+		LOG(warn) << "Failed to find object `" << path << "'" << endl;
 	}
 }
 

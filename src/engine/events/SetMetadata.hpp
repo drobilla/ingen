@@ -69,10 +69,11 @@ public:
 			Engine&                             engine,
 			SharedPtr<Request>                  request,
 			SampleCount                         timestamp,
-			bool                                replace,
+			bool                                create,
 			bool                                meta,
 			const Raul::URI&                    subject,
-			const Shared::Resource::Properties& properties);
+			const Shared::Resource::Properties& properties,
+			const Shared::Resource::Properties& remove=Shared::Resource::Properties());
 
 	~SetMetadata();
 
@@ -102,15 +103,19 @@ private:
 	QueuedEvent*                 _create_event;
 	SetEvents                    _set_events;
 	std::vector<SpecialType>     _types;
+	std::vector<SpecialType>     _remove_types;
 	Raul::URI                    _subject;
 	Shared::Resource::Properties _properties;
+	Shared::Resource::Properties _remove;
 	Shared::ResourceImpl*        _object;
 	PatchImpl*                   _patch;
 	CompiledPatch*               _compiled_patch;
 	std::string                  _error_predicate;
-	bool                         _replace;
+	bool                         _create;
 	bool                         _is_meta;
 	bool                         _success;
+
+	SharedPtr<ControlBindings::Bindings> _old_bindings;
 };
 
 

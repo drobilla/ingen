@@ -301,7 +301,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 		for (uint32_t i = 0; i < slv2_values_size(properties); ++i) {
 			SLV2Value p = slv2_values_get_at(properties, i);
 			if (slv2_value_is_uri(p)) {
-				Raul::info << "SET PORT PROPERTY " << slv2_value_as_uri(p) << endl;
 				port->set_property(uris.lv2_portProperty, Raul::URI(slv2_value_as_uri(p)));
 			}
 		}

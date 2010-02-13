@@ -66,6 +66,7 @@ PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
 
 	if (port->type() == PortType::CONTROL) {
 		_learn_menuitem->show();
+		_unlearn_menuitem->show();
 
 		items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 

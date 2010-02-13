@@ -85,32 +85,31 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, NULL, NULL, set_response_address_cb, this);
 
 	// Commands
-	lo_server_add_method(_server, "/ingen/ping", "i", ping_cb, this);
-	lo_server_add_method(_server, "/ingen/ping_queued", "i", ping_slow_cb, this);
-	lo_server_add_method(_server, "/ingen/quit", "i", quit_cb, this);
-	//lo_server_add_method(_server, "/ingen/register_client", "is", register_client_cb, this);
-	lo_server_add_method(_server, "/ingen/register_client", "i", register_client_cb, this);
-	lo_server_add_method(_server, "/ingen/unregister_client", "i", unregister_client_cb, this);
-	lo_server_add_method(_server, "/ingen/load_plugins", "i", load_plugins_cb, this);
-	lo_server_add_method(_server, "/ingen/activate", "i", engine_activate_cb, this);
-	lo_server_add_method(_server, "/ingen/deactivate", "i", engine_deactivate_cb, this);
-	lo_server_add_method(_server, "/ingen/put", NULL, put_cb, this);
-	lo_server_add_method(_server, "/ingen/move", "iss", move_cb, this);
-	lo_server_add_method(_server, "/ingen/delete", "is", del_cb, this);
-	lo_server_add_method(_server, "/ingen/connect", "iss", connect_cb, this);
-	lo_server_add_method(_server, "/ingen/disconnect", "iss", disconnect_cb, this);
-	lo_server_add_method(_server, "/ingen/disconnect_all", "iss", disconnect_all_cb, this);
-	lo_server_add_method(_server, "/ingen/note_on", "isii", note_on_cb, this);
-	lo_server_add_method(_server, "/ingen/note_off", "isi", note_off_cb, this);
-	lo_server_add_method(_server, "/ingen/all_notes_off", "isi", all_notes_off_cb, this);
-	lo_server_add_method(_server, "/ingen/learn", "is", learn_cb, this);
-	lo_server_add_method(_server, "/ingen/set_property", NULL, set_property_cb, this);
+	lo_server_add_method(_server, "/ping", "i", ping_cb, this);
+	lo_server_add_method(_server, "/ping_queued", "i", ping_slow_cb, this);
+	lo_server_add_method(_server, "/quit", "i", quit_cb, this);
+	lo_server_add_method(_server, "/register_client", "i", register_client_cb, this);
+	lo_server_add_method(_server, "/unregister_client", "i", unregister_client_cb, this);
+	lo_server_add_method(_server, "/load_plugins", "i", load_plugins_cb, this);
+	lo_server_add_method(_server, "/activate", "i", engine_activate_cb, this);
+	lo_server_add_method(_server, "/deactivate", "i", engine_deactivate_cb, this);
+	lo_server_add_method(_server, "/put", NULL, put_cb, this);
+	lo_server_add_method(_server, "/move", "iss", move_cb, this);
+	lo_server_add_method(_server, "/delete", "is", del_cb, this);
+	lo_server_add_method(_server, "/connect", "iss", connect_cb, this);
+	lo_server_add_method(_server, "/disconnect", "iss", disconnect_cb, this);
+	lo_server_add_method(_server, "/disconnect_all", "iss", disconnect_all_cb, this);
+	lo_server_add_method(_server, "/note_on", "isii", note_on_cb, this);
+	lo_server_add_method(_server, "/note_off", "isi", note_off_cb, this);
+	lo_server_add_method(_server, "/all_notes_off", "isi", all_notes_off_cb, this);
+	lo_server_add_method(_server, "/learn", "is", learn_cb, this);
+	lo_server_add_method(_server, "/set_property", NULL, set_property_cb, this);
 
 	// Queries
-	lo_server_add_method(_server, "/ingen/request_property", "iss", request_property_cb, this);
-	lo_server_add_method(_server, "/ingen/get", "is", get_cb, this);
-	lo_server_add_method(_server, "/ingen/request_plugins", "i", request_plugins_cb, this);
-	lo_server_add_method(_server, "/ingen/request_all_objects", "i", request_all_objects_cb, this);
+	lo_server_add_method(_server, "/request_property", "iss", request_property_cb, this);
+	lo_server_add_method(_server, "/get", "is", get_cb, this);
+	lo_server_add_method(_server, "/request_plugins", "i", request_plugins_cb, this);
+	lo_server_add_method(_server, "/request_all_objects", "i", request_all_objects_cb, this);
 
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 
@@ -237,7 +236,7 @@ OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/ping</h2>
+ * <h2>/ping</h2>
  * \arg \b response-id (integer)
  *
  * Reply to sender immediately with a successful response.
@@ -246,14 +245,14 @@ int
 OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const lo_address addr = lo_message_get_source(msg);
-	if (lo_send(addr, "/ingen/ok", "i", argv[0]->i) < 0)
+	if (lo_send(addr, "/ok", "i", argv[0]->i) < 0)
 		warn << "Unable to send response (" << lo_address_errstr(addr) << ")" << endl;
 	return 0;
 }
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/ping_queued</h2>
+ * <h2>/ping_queued</h2>
  * \arg \b response-id (integer)
  *
  * Reply to sender with a successful response after going through the event queue.
@@ -270,7 +269,7 @@ OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** a
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/quit</h2>
+ * <h2>/quit</h2>
  * \arg \b response-id (integer)
  *
  * Terminate the engine.
@@ -287,7 +286,7 @@ OSCEngineReceiver::_quit_cb(const char* path, const char* types, lo_arg** argv, 
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/register_client</h2>
+ * <h2>/register_client</h2>
  * \arg \b response-id (integer)
  *
  * Register a new client with the engine.
@@ -309,7 +308,7 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/unregister_client</h2>
+ * <h2>/unregister_client</h2>
  * \arg \b response-id (integer)
  *
  * Unregister a client.
@@ -328,7 +327,7 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/load_plugins</h2>
+ * <h2>/load_plugins</h2>
  * \arg \b response-id (integer)
  *
  * Locate all available plugins, making them available for use.
@@ -342,7 +341,7 @@ OSCEngineReceiver::_load_plugins_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/activate</h2>
+ * <h2>/activate</h2>
  * \arg \b response-id (integer)
  *
  * Activate the engine (event processing and all drivers, e.g. audio and MIDI).
@@ -358,7 +357,7 @@ OSCEngineReceiver::_engine_activate_cb(const char* path, const char* types, lo_a
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/deactivate</h2>
+ * <h2>/deactivate</h2>
  * \arg \b response-id (integer)
  *
  * Deactivate the engine.
@@ -372,7 +371,7 @@ OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/get</h2>
+ * <h2>/get</h2>
  * \arg \b response-id (integer)
  * \arg \b uri (string) - URI of object (patch, port, node, plugin) to send
  *
@@ -387,7 +386,7 @@ OSCEngineReceiver::_get_cb(const char* path, const char* types, lo_arg** argv, i
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/put</h2>
+ * <h2>/put</h2>
  * \arg \b response-id (integer)
  * \arg \b path (string) - Path of object
  * \arg \b predicate
@@ -409,7 +408,7 @@ OSCEngineReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, i
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/move</h2>
+ * <h2>/move</h2>
  * \arg \b response-id (integer)
  * \arg \b old-path - Object's path
  * \arg \b new-path - Object's new path
@@ -428,7 +427,7 @@ OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, 
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/del</h2>
+ * <h2>/del</h2>
  * \arg \b response-id (integer)
  * \arg \b path (string) - Full path of the object
  *
@@ -445,7 +444,7 @@ OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, i
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/connect</h2>
+ * <h2>/connect</h2>
  * \arg \b response-id (integer)
  * \arg \b src-port-path (string) - Full path of source port
  * \arg \b dst-port-path (string) - Full path of destination port
@@ -464,7 +463,7 @@ OSCEngineReceiver::_connect_cb(const char* path, const char* types, lo_arg** arg
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/disconnect</h2>
+ * <h2>/disconnect</h2>
  * \arg \b response-id (integer)
  * \arg \b src-port-path (string) - Full path of source port
  * \arg \b dst-port-path (string) - Full path of destination port
@@ -483,7 +482,7 @@ OSCEngineReceiver::_disconnect_cb(const char* path, const char* types, lo_arg** 
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/disconnect_all</h2>
+ * <h2>/disconnect_all</h2>
  * \arg \b response-id (integer)
  * \arg \b patch-path (string) - The (parent) patch in which to disconnect object.
  * \arg \b object-path (string) - Full path of object.
@@ -502,7 +501,7 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/note_on</h2>
+ * <h2>/note_on</h2>
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Patch of Node to trigger (must be a trigger or note node)
  * \arg \b note-num (int) - MIDI style note number (0-127)
@@ -525,7 +524,7 @@ OSCEngineReceiver::_note_on_cb(const char* path, const char* types, lo_arg** arg
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/note_off</h2>
+ * <h2>/note_off</h2>
  * \arg \b response-id (integer)
  * \arg \b node-path (string) - Patch of Node to trigger (must be a trigger or note node)
  * \arg \b note-num (int) - MIDI style note number (0-127)
@@ -546,7 +545,7 @@ OSCEngineReceiver::_note_off_cb(const char* path, const char* types, lo_arg** ar
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/all_notes_off</h2>
+ * <h2>/all_notes_off</h2>
  * \arg \b response-id (integer)
  * \arg \b patch-path (string) - Patch of patch to send event to
  *
@@ -566,27 +565,7 @@ OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/learn</h2>
- * \arg \b response-id (integer)
- * \arg \b node-path (string) - Path of control node.
- *
- * Initiate MIDI learn for a given control node.
- * The node will learn the next MIDI control event it receives and set
- * its outputs accordingly.
- * This command does nothing for objects that are not a control internal.
- */
-int
-OSCEngineReceiver::_learn_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* object_path = &argv[1]->s;
-
-	learn(object_path);
-	return 0;
-}
-
-
-/** \page engine_osc_namespace
- * <h2>/ingen/set_property</h2>
+ * <h2>/set_property</h2>
  * \arg \b response-id (integer)
  * \arg \b object-path (string) - Full path of object to associate property with
  * \arg \b key (string) - URI for predicate of this property (e.g. "http://drobilla.net/ns/ingen#enabled")
@@ -603,6 +582,9 @@ OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	const char* object_path = &argv[1]->s;
 	const char* key         = &argv[2]->s;
 
+	cout << "SET PROPERTY " << object_path << " : " << key << " PENDING: " <<
+		lo_server_events_pending(_server) << endl;
+
 	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
 
 	set_property(object_path, key, value);
@@ -611,7 +593,7 @@ OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/request_property</h2>
+ * <h2>/request_property</h2>
  * \arg \b response-id (integer)
  * \arg \b uri (string) - Subject
  * \arg \b key (string) - Predicate
@@ -630,7 +612,7 @@ OSCEngineReceiver::_request_property_cb(const char* path, const char* types, lo_
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/request_plugins</h2>
+ * <h2>/request_plugins</h2>
  * \arg \b response-id (integer)
  *
  * Request the engine send a list of all known plugins.
@@ -644,7 +626,7 @@ OSCEngineReceiver::_request_plugins_cb(const char* path, const char* types, lo_a
 
 
 /** \page engine_osc_namespace
- * <h2>/ingen/request_all_objects</h2>
+ * <h2>/request_all_objects</h2>
  * \arg \b response-id (integer)
  *
  * Requests all information about all known objects.

@@ -72,6 +72,14 @@ HTTPClientSender::put(const URI&                  uri,
 
 
 void
+HTTPClientSender::delta(const URI&                  uri,
+                        const Resource::Properties& remove,
+                        const Resource::Properties& add)
+{
+}
+
+
+void
 HTTPClientSender::del(const Path& path)
 {
 	assert(!path.is_root());

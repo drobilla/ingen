@@ -112,6 +112,7 @@ public:
 	const Quark rdfs_seeAlso;
 	const Quark string_transfer;
 	const Quark ui_format_events;
+	const Quark wildcard;
 };
 
 

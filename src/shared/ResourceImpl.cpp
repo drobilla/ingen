@@ -64,6 +64,24 @@ ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value)
 }
 
 
+void
+ResourceImpl::remove_property(const Raul::URI& uri, const Raul::Atom& value)
+{
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	if (value == uris.wildcard) {
+		_properties.erase(uri);
+	} else {
+		Properties::iterator i = _properties.find(uri);
+		for (; (i != _properties.end()) && (i->first == uri); ++i) {
+			if (i->second == value) {
+				_properties.erase(i);
+				return;
+			}
+		}
+	}
+}
+
+
 bool
 ResourceImpl::has_property(const Raul::URI& uri, const Raul::Atom& value) const
 {
@@ -174,6 +192,40 @@ ResourceImpl::add_properties(const Properties& p)
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = p.begin(); i != p.end(); ++i)
 		add_property(i->first, i->second);
+}
+
+
+void
+ResourceImpl::remove_properties(const Properties& p)
+{
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	typedef Resource::Properties::const_iterator iterator;
+	for (iterator i = p.begin(); i != p.end(); ++i) {
+		if (i->second == uris.wildcard) {
+			_properties.erase(i->first);
+		} else {
+			for (Properties::iterator j = _properties.find(i->first);
+					(j != _properties.end()) && (j->first == i->first); ++j) {
+				if (j->second == i->second) {
+					_properties.erase(j);
+					break;
+				}
+			}
+		}
+	}
+}
+
+
+void
+
+ResourceImpl::dump(std::ostream& os) const
+{
+	typedef Resource::Properties::const_iterator iterator;
+	os << _uri << " [" << endl;
+	for (iterator i = _properties.begin(); i != _properties.end(); ++i) {
+		os << "\t" << i->first << " " << i->second << " ;" << endl;
+	}
+	os << "]" << endl;
 }
 
 

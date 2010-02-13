@@ -104,6 +104,7 @@ LV2URIMap::LV2URIMap()
 	, rdfs_seeAlso(NS_RDFS "seeAlso")
 	, string_transfer("http://lv2plug.in/ns/dev/string-port#StringTransfer")
 	, ui_format_events("http://lv2plug.in/ns/extensions/ui#Events")
+	, wildcard(NS_INGEN "wildcard")
 {
 	uri_map_feature_data.uri_to_id = &LV2URIMap::uri_map_uri_to_id;
 	uri_map_feature_data.callback_data = this;

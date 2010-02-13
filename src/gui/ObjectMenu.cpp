@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <utility>
 #include <gtkmm.h>
 #include "interface/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
@@ -39,6 +40,7 @@ ObjectMenu::ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade:
 	, _properties_menuitem(NULL)
 {
 	xml->get_widget("object_learn_menuitem", _learn_menuitem);
+	xml->get_widget("object_unlearn_menuitem", _unlearn_menuitem);
 	xml->get_widget("object_polyphonic_menuitem", _polyphonic_menuitem);
 	xml->get_widget("object_disconnect_menuitem", _disconnect_menuitem);
 	xml->get_widget("object_rename_menuitem", _rename_menuitem);
@@ -62,6 +64,9 @@ ObjectMenu::init(SharedPtr<ObjectModel> object)
 	_learn_menuitem->signal_activate().connect(
 			sigc::mem_fun(this, &ObjectMenu::on_menu_learn));
 
+	_unlearn_menuitem->signal_activate().connect(
+			sigc::mem_fun(this, &ObjectMenu::on_menu_unlearn));
+
 	_disconnect_menuitem->signal_activate().connect(
 			sigc::mem_fun(this, &ObjectMenu::on_menu_disconnect));
 
@@ -78,6 +83,7 @@ ObjectMenu::init(SharedPtr<ObjectModel> object)
 	object->signal_property.connect(sigc::mem_fun(this, &ObjectMenu::property_changed));
 
 	_learn_menuitem->hide();
+	_unlearn_menuitem->hide();
 
 	_enable_signal = true;
 }
@@ -86,7 +92,20 @@ ObjectMenu::init(SharedPtr<ObjectModel> object)
 void
 ObjectMenu::on_menu_learn()
 {
-	App::instance().engine()->learn(_object->path());
+	App::instance().engine()->set_property(_object->path(),
+			App::instance().uris().ingen_controlBinding,
+			App::instance().uris().wildcard);
+}
+
+
+void
+ObjectMenu::on_menu_unlearn()
+{
+	Resource::Properties remove;
+	remove.insert(std::make_pair(
+			App::instance().uris().ingen_controlBinding,
+			App::instance().uris().wildcard));
+	App::instance().engine()->delta(_object->path(), remove, Resource::Properties());
 }
 
 

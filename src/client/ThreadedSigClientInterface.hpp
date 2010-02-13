@@ -86,6 +86,10 @@ public:
 	void put(const Raul::URI& path, const Shared::Resource::Properties& properties)
 		{ push_sig(sigc::bind(put_slot, path, properties)); }
 
+	void delta(const Raul::URI& path,
+			const Shared::Resource::Properties& remove, const Shared::Resource::Properties& add)
+		{ push_sig(sigc::bind(delta_slot, path, remove, add)); }
+
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ push_sig(sigc::bind(connection_slot, src_port_path, dst_port_path)); }
 
@@ -127,6 +131,8 @@ private:
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>          new_plugin_slot;
 	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool>       new_port_slot;
 	sigc::slot<void, Raul::URI, Shared::Resource::Properties>     put_slot;
+	sigc::slot<void, Raul::URI, Shared::Resource::Properties,
+	                            Shared::Resource::Properties>     delta_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      connection_slot;
 	sigc::slot<void, Raul::Path>                                  object_deleted_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      object_moved_slot;

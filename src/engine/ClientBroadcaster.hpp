@@ -74,6 +74,12 @@ public:
 		BROADCAST(put, uri, properties);
 	}
 
+	void delta(const Raul::URI&                    uri,
+	           const Shared::Resource::Properties& remove,
+	           const Shared::Resource::Properties& add) {
+		BROADCAST(delta, uri, remove, add);
+	}
+
 	void move(const Raul::Path& old_path,
 	          const Raul::Path& new_path) {
 		BROADCAST(move, old_path, new_path);

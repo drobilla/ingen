@@ -42,7 +42,7 @@ namespace Ingen {
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/ok</h2>
+ * <h2>/ok</h2>
  * \arg \b response-id (int) - Request ID this is a response to
  *
  * Successful response to some command.
@@ -53,7 +53,7 @@ OSCClientSender::response_ok(int32_t id)
 	if (!_enabled)
 		return;
 
-	if (lo_send(_address, "/ingen/ok", "i", id) < 0) {
+	if (lo_send(_address, "/ok", "i", id) < 0) {
 		Raul::error << "Unable to send OK " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
@@ -61,7 +61,7 @@ OSCClientSender::response_ok(int32_t id)
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/error</h2>
+ * <h2>/error</h2>
  * \arg \b response-id (int) - Request ID this is a response to
  * \arg \b message (string) - Error message (natural language text)
  *
@@ -73,7 +73,7 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 	if (!_enabled)
 		return;
 
-	if (lo_send(_address, "/ingen/error", "is", id, msg.c_str()) < 0) {
+	if (lo_send(_address, "/error", "is", id, msg.c_str()) < 0) {
 		Raul::error << "Unable to send error " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
@@ -81,7 +81,7 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/error</h2>
+ * <h2>/error</h2>
  * \arg \b message (string) - Error message (natural language text)
  *
  * Notification that an error has occurred.
@@ -91,12 +91,12 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 void
 OSCClientSender::error(const std::string& msg)
 {
-	send("/ingen/error", "s", msg.c_str(), LO_ARGS_END);
+	send("/error", "s", msg.c_str(), LO_ARGS_END);
 }
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/put</h2>
+ * <h2>/put</h2>
  * \arg \b path (string) - Path of object
  * \arg \b predicate
  * \arg \b value
@@ -115,12 +115,21 @@ OSCClientSender::put(const Raul::URI&                    path,
 		lo_message_add_string(m, i->first.c_str());
 		Raul::AtomLiblo::lo_message_add_atom(m, i->second);
 	}
-	send_message("/ingen/put", m);
+	send_message("/put", m);
+}
+
+
+void
+OSCClientSender::delta(const Raul::URI&                    path,
+                       const Shared::Resource::Properties& remove,
+                       const Shared::Resource::Properties& add)
+{
+	warn << "FIXME: OSC DELTA" << endl;
 }
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/move</h2>
+ * <h2>/move</h2>
  * \arg \b old-path (string) - Old path of object
  * \arg \b new-path (string) - New path of object
  *
@@ -130,13 +139,13 @@ OSCClientSender::put(const Raul::URI&                    path,
 void
 OSCClientSender::move(const Path& old_path, const Path& new_path)
 {
-	send("/ingen/move", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
+	send("/move", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
 }
 
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/delete</h2>
+ * <h2>/delete</h2>
  * \arg \b path (string) - Path of object (which no longer exists)
  *
  * DELETE an object (see \ref methods).
@@ -144,12 +153,12 @@ OSCClientSender::move(const Path& old_path, const Path& new_path)
 void
 OSCClientSender::del(const Path& path)
 {
-	send("/ingen/delete", "s", path.c_str(), LO_ARGS_END);
+	send("/delete", "s", path.c_str(), LO_ARGS_END);
 }
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/new_connection</h2>
+ * <h2>/connect</h2>
  * \arg \b src-path (string) - Path of the source port
  * \arg \b dst-path (string) - Path of the destination port
  *
@@ -158,12 +167,12 @@ OSCClientSender::del(const Path& path)
 void
 OSCClientSender::connect(const Path& src_port_path, const Path& dst_port_path)
 {
-	send("/ingen/new_connection", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
+	send("/connect", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/disconnection</h2>
+ * <h2>/disconnect</h2>
  * \arg \b src-path (string) - Path of the source port
  * \arg \b dst-path (string) - Path of the destination port
  *
@@ -172,12 +181,12 @@ OSCClientSender::connect(const Path& src_port_path, const Path& dst_port_path)
 void
 OSCClientSender::disconnect(const Path& src_port_path, const Path& dst_port_path)
 {
-	send("/ingen/disconnection", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
+	send("/disconnect", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/set_property</h2>
+ * <h2>/set_property</h2>
  * \arg \b path (string) - Path of the object associated with property (node, patch, or port)
  * \arg \b key (string)
  * \arg \b value (string)
@@ -191,12 +200,12 @@ OSCClientSender::set_property(const URI& path, const URI& key, const Atom& value
 	lo_message_add_string(m, path.c_str());
 	lo_message_add_string(m, key.c_str());
 	AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_property", m);
+	send_message("/set_property", m);
 }
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/set_port_value</h2>
+ * <h2>/set_port_value</h2>
  * \arg \b path (string) - Path of port
  * \arg \b voice (int) - Voice which is set to this value
  * \arg \b value (any) - New value of port
@@ -209,12 +218,12 @@ OSCClientSender::set_voice_value(const Path& port_path, uint32_t voice, const At
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, port_path.c_str());
 	AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_port_value", m);
+	send_message("/set_port_value", m);
 }
 
 
 /** \page client_osc_namespace
- * <h2>/ingen/activity</h2>
+ * <h2>/activity</h2>
  * \arg \b path (string) - Path of object
  *
  * Notification of "activity" (e.g. port message blinkenlights).
@@ -225,7 +234,7 @@ OSCClientSender::activity(const Path& path)
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/ingen/activity", "s", path.c_str(), LO_ARGS_END);
+	lo_send(_address, "/activity", "s", path.c_str(), LO_ARGS_END);
 }
 
 

@@ -140,18 +140,17 @@ OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 void
 OSCClientReceiver::setup_callbacks()
 {
-	lo_server_thread_add_method(_st, "/ingen/ok", "i", response_ok_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/error", "is", response_error_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/plugin", "sss", plugin_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/put", NULL, put_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/move", "ss", move_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/delete", "s", del_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/new_connection", "ss", connection_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/disconnection", "ss", disconnection_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/new_port", "sisi", new_port_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/set_property", NULL, set_property_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/set_voice_value", "sif", set_voice_value_cb, this);
-	lo_server_thread_add_method(_st, "/ingen/activity", "s", activity_cb, this);
+	lo_server_thread_add_method(_st, "/ok", "i", response_ok_cb, this);
+	lo_server_thread_add_method(_st, "/error", "is", response_error_cb, this);
+	lo_server_thread_add_method(_st, "/plugin", "sss", plugin_cb, this);
+	lo_server_thread_add_method(_st, "/put", NULL, put_cb, this);
+	lo_server_thread_add_method(_st, "/move", "ss", move_cb, this);
+	lo_server_thread_add_method(_st, "/delete", "s", del_cb, this);
+	lo_server_thread_add_method(_st, "/connect", "ss", connection_cb, this);
+	lo_server_thread_add_method(_st, "/disconnect", "ss", disconnection_cb, this);
+	lo_server_thread_add_method(_st, "/set_property", NULL, set_property_cb, this);
+	lo_server_thread_add_method(_st, "/set_voice_value", "sif", set_voice_value_cb, this);
+	lo_server_thread_add_method(_st, "/activity", "s", activity_cb, this);
 }
 
 

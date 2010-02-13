@@ -138,8 +138,8 @@ Parser::parse_string(
 
 	LOG(info) << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
 	if (!base_uri.empty())
-		LOG(info) << " (base " << base_uri << ")";
-	LOG(info) << endl;
+		info << " (base " << base_uri << ")";
+	info << endl;
 
 	bool ret = parse(world, target, model, base_uri, data_path, parent, symbol, data);
 	Redland::Resource subject(*world->rdf_world, base_uri);
@@ -161,6 +161,8 @@ Parser::parse_update(
 		boost::optional<GraphObject::Properties> data)
 {
 	Redland::Model model(*world->rdf_world, str.c_str(), str.length(), base_uri);
+
+	std::cout << "PARSE UPDATE " << str << endl;
 
 	// Delete anything explicitly declared to not exist
 	Glib::ustring query_str = Glib::ustring("SELECT DISTINCT ?o WHERE { ?o a owl:Nothing }");

@@ -80,6 +80,10 @@ public:
 	virtual void put(const Raul::URI&                    path,
 	                 const Shared::Resource::Properties& properties);
 
+	virtual void delta(const Raul::URI&                    path,
+	                   const Shared::Resource::Properties& remove,
+	                   const Shared::Resource::Properties& add);
+
 	virtual void del(const Raul::Path& path);
 
 	virtual void move(const Raul::Path& old_path,
@@ -101,9 +105,6 @@ public:
 	virtual void set_voice_value(const Raul::Path& port_path,
 	                             uint32_t          voice,
 	                             const Raul::Atom& value);
-
-	virtual void learn(const Raul::Path& path);
-
 
 	// Requests //
 	void ping();

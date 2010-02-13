@@ -35,6 +35,8 @@
 #include "SetMetadata.hpp"
 #include "SetPortValue.hpp"
 
+#define LOG(s) s << "[SetMetadata] "
+
 using namespace std;
 using namespace Raul;
 
@@ -49,22 +51,34 @@ SetMetadata::SetMetadata(
 		Engine&             engine,
 		SharedPtr<Request>  request,
 		SampleCount         timestamp,
-		bool                replace,
+		bool                create,
 		bool                meta,
 		const URI&          subject,
-		const Properties&   properties)
+		const Properties&   properties,
+		const Properties&   remove)
 	: QueuedEvent(engine, request, timestamp, false)
 	, _error(NO_ERROR)
 	, _create_event(NULL)
 	, _subject(subject)
 	, _properties(properties)
+	, _remove(remove)
 	, _object(NULL)
 	, _patch(NULL)
 	, _compiled_patch(NULL)
-	, _replace(replace)
+	, _create(create)
 	, _is_meta(meta)
-	, _success(false)
 {
+	LOG(debug) << "Set " << subject << " {" << endl;
+	typedef Resource::Properties::const_iterator iterator;
+	for (iterator i = properties.begin(); i != properties.end(); ++i)
+		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	LOG(debug) << "}" << endl;
+
+	LOG(debug) << "Unset " << subject << " {" << endl;
+	typedef Resource::Properties::const_iterator iterator;
+	for (iterator i = remove.begin(); i != remove.end(); ++i)
+		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	LOG(debug) << "}" << endl;
 }
 
 
@@ -88,7 +102,7 @@ SetMetadata::pre_process()
 			? _engine.engine_store()->find_object(Path(_subject.str()))
 			: _object = _engine.node_factory()->plugin(_subject);
 
-	if (!_object && !is_graph_object) {
+	if (!_object && (!is_graph_object || !_create)) {
 		_error = NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
@@ -133,6 +147,7 @@ SetMetadata::pre_process()
 
 	GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_object);
 
+#if 0
 	// If we're replacing (i.e. this is a PUT, not a POST), first remove all properties
 	// with keys we will later set.  This must be done first so a PUT with several properties
 	// of the same predicate (e.g. rdf:type) retains the multiple values.  Only previously
@@ -140,6 +155,7 @@ SetMetadata::pre_process()
 	if (_replace)
 		for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p)
 			obj->properties().erase(p->first);
+#endif
 
 	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p) {
 		const Raul::URI&  key   = p->first;
@@ -149,14 +165,38 @@ SetMetadata::pre_process()
 			Resource& resource = _is_meta ? obj->meta() : *obj;
 			resource.add_property(key, value);
 
-			_patch = dynamic_cast<PatchImpl*>(_object);
-
-			if (key == uris.ingen_broadcast) {
-				if (value.type() == Atom::BOOL)
-					op = ENABLE_BROADCAST;
-				else
-					_error = BAD_VALUE_TYPE;
-			} else if (_patch) {
+			PortImpl* port = dynamic_cast<PortImpl*>(_object);
+			if (port) {
+				if (key == uris.ingen_broadcast) {
+					if (value.type() == Atom::BOOL) {
+						op = ENABLE_BROADCAST;
+					} else {
+						_error = BAD_VALUE_TYPE;
+					}
+				} else if (key == uris.ingen_value) {
+					PortImpl* port = dynamic_cast<PortImpl*>(_object);
+					if (port) {
+						SetPortValue* ev = new SetPortValue(_engine, _request, _time, port, value);
+						ev->pre_process();
+						_set_events.push_back(ev);
+					} else {
+						_error = BAD_OBJECT_TYPE;
+					}
+				} else if (key == uris.ingen_controlBinding) {
+					PortImpl* port = dynamic_cast<PortImpl*>(_object);
+					if (port && port->type() == Shared::PortType::CONTROL) {
+						if (value == uris.wildcard) {
+							_engine.control_bindings()->learn(port);
+						} else if (value.type() == Atom::DICT) {
+							op = CONTROL_BINDING;
+						} else {
+							_error = BAD_VALUE_TYPE;
+						}
+					} else {
+						_error = BAD_OBJECT_TYPE;
+					}
+				}
+			} else if ((_patch = dynamic_cast<PatchImpl*>(_object))) {
 				if (key == uris.ingen_enabled) {
 					if (value.type() == Atom::BOOL) {
 						op = ENABLE;
@@ -179,26 +219,6 @@ SetMetadata::pre_process()
 						_error = BAD_VALUE_TYPE;
 					}
 				}
-			} else if (key == uris.ingen_value) {
-				PortImpl* port = dynamic_cast<PortImpl*>(_object);
-				if (port) {
-					SetPortValue* ev = new SetPortValue(_engine, _request, _time, port, value);
-					ev->pre_process();
-					_set_events.push_back(ev);
-				} else {
-					warn << "Set value for non-port " << _object->uri() << endl;
-				}
-			} else if (key == uris.ingen_controlBinding) {
-				PortImpl* port = dynamic_cast<PortImpl*>(_object);
-				if (port) {
-					if (value.type() == Atom::DICT) {
-						op = CONTROL_BINDING;
-					} else {
-						_error = BAD_VALUE_TYPE;
-					}
-				} else {
-					warn << "Set binding for non-port " << _object->uri() << endl;
-				}
 			}
 		}
 
@@ -208,6 +228,17 @@ SetMetadata::pre_process()
 		}
 
 		_types.push_back(op);
+	}
+
+	for (Properties::iterator p = _remove.begin(); p != _remove.end(); ++p) {
+		const Raul::URI&  key   = p->first;
+		const Raul::Atom& value = p->second;
+		if (key == uris.ingen_controlBinding && value == uris.wildcard) {
+			PortImpl* port = dynamic_cast<PortImpl*>(_object);
+			if (port)
+				_old_bindings = _engine.control_bindings()->remove(port);
+		}
+		_object->remove_property(key, value);
 	}
 
 	QueuedEvent::pre_process();
@@ -233,14 +264,16 @@ SetMetadata::execute(ProcessContext& context)
 	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
 		(*i)->execute(context);
 
+	GraphObjectImpl* const object = dynamic_cast<GraphObjectImpl*>(_object);
+	NodeBase* const        node   = dynamic_cast<NodeBase*>(_object);
+	PortImpl* const        port   = dynamic_cast<PortImpl*>(_object);
+
 	std::vector<SpecialType>::const_iterator t = _types.begin();
-	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p, ++t) {
-		const Raul::Atom& value  = p->second;
-		PortImpl*         port   = 0;
-		GraphObjectImpl*  object = 0;
+	for (Properties::const_iterator p = _properties.begin(); p != _properties.end(); ++p, ++t) {
+		const Raul::Atom& value = p->second;
 		switch (*t) {
 		case ENABLE_BROADCAST:
-			if ((port = dynamic_cast<PortImpl*>(_object)))
+			if (port)
 				port->broadcast(value.get_bool());
 			break;
 		case ENABLE:
@@ -253,7 +286,7 @@ SetMetadata::execute(ProcessContext& context)
 			}
 			break;
 		case POLYPHONIC:
-			if ((object = dynamic_cast<GraphObjectImpl*>(_object)))
+			if (object)
 				if (!object->set_polyphonic(*_engine.maid(), value.get_bool()))
 					_error = INTERNAL;
 			break;
@@ -262,12 +295,21 @@ SetMetadata::execute(ProcessContext& context)
 				_error = INTERNAL;
 			break;
 		case CONTROL_BINDING:
-			if ((port = dynamic_cast<PortImpl*>(_object)))
+			if (port) {
 				_engine.control_bindings()->port_binding_changed(context, port);
-		default:
-			_success = true;
+			} else if (node) {
+				if (node->plugin_impl()->type() == Shared::Plugin::Internal) {
+					node->learn();
+				}
+			}
+			break;
+		case NONE:
+			break;
 		}
 	}
+
+	for (Properties::const_iterator p = _remove.begin(); p != _remove.end(); ++p, ++t)
+		_object->remove_property(p->first, p->second);
 
 	QueuedEvent::execute(context);
 }
@@ -282,7 +324,10 @@ SetMetadata::post_process()
 	switch (_error) {
 	case NO_ERROR:
 		_request->respond_ok();
-		_engine.broadcaster()->put(_subject, _properties);
+		if (_create)
+			_engine.broadcaster()->put(_subject, _properties);
+		else
+			_engine.broadcaster()->delta(_subject, _remove, _properties);
 		if (_create_event)
 			_create_event->post_process();
 		break;

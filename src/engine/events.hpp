@@ -30,7 +30,6 @@
 #include "events/Disconnect.hpp"
 #include "events/DisconnectAll.hpp"
 #include "events/Get.hpp"
-#include "events/Learn.hpp"
 #include "events/LoadPlugins.hpp"
 #include "events/Move.hpp"
 #include "events/Note.hpp"

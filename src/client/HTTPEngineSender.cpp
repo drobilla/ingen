@@ -135,6 +135,15 @@ HTTPEngineSender::put(const URI&                  uri,
 
 
 void
+HTTPEngineSender::delta(const Raul::URI&                    path,
+	                    const Shared::Resource::Properties& remove,
+	                    const Shared::Resource::Properties& add)
+{
+	warn << "FIXME: HTTP DELTA" << endl;
+}
+
+
+void
 HTTPEngineSender::move(const Path& old_path,
                        const Path& new_path)
 {
@@ -181,12 +190,6 @@ void
 HTTPEngineSender::set_voice_value(const Path& port_path,
                                   uint32_t    voice,
                                   const Atom& value)
-{
-}
-
-
-void
-HTTPEngineSender::learn(const Path& path)
 {
 }
 

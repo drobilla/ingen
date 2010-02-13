@@ -301,6 +301,29 @@ ControlBindings::remove(const Raul::Path& path)
 }
 
 
+SharedPtr<ControlBindings::Bindings>
+ControlBindings::remove(PortImpl* port)
+{
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+
+	SharedPtr<Bindings> old_bindings(_bindings);
+	SharedPtr<Bindings> copy(new Bindings(*_bindings.get()));
+
+	for (Bindings::iterator i = copy->begin(); i != copy->end();) {
+		Bindings::iterator next = i;
+		++next;
+
+		if (i->second == port)
+			copy->erase(i);
+
+		i = next;
+	}
+
+	_bindings = copy;
+	return old_bindings;
+}
+
+
 void
 ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 {

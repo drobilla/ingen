@@ -74,6 +74,10 @@ public:
 	virtual void put(const Raul::URI&                    path,
 	                 const Shared::Resource::Properties& properties);
 
+	virtual void delta(const Raul::URI&                    path,
+	                   const Shared::Resource::Properties& remove,
+	                   const Shared::Resource::Properties& add);
+
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path);
 
@@ -97,8 +101,6 @@ public:
 
 	virtual void disconnect_all(const Raul::Path& parent_patch_path,
 	                            const Raul::Path& path);
-
-	virtual void learn(const Raul::Path& path);
 
 	// Requests
 	virtual void ping();

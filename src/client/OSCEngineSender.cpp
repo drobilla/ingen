@@ -89,14 +89,14 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 void
 OSCEngineSender::register_client(Shared::ClientInterface* client)
 {
-	send("/ingen/register_client", "i", next_id(), LO_ARGS_END, LO_ARGS_END);
+	send("/register_client", "i", next_id(), LO_ARGS_END, LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::unregister_client(const URI& uri)
 {
-	send("/ingen/unregister_client", "i", next_id(), LO_ARGS_END);
+	send("/unregister_client", "i", next_id(), LO_ARGS_END);
 }
 
 
@@ -104,28 +104,28 @@ OSCEngineSender::unregister_client(const URI& uri)
 void
 OSCEngineSender::load_plugins()
 {
-	send("/ingen/load_plugins", "i", next_id(), LO_ARGS_END);
+	send("/load_plugins", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::activate()
 {
-	send("/ingen/activate", "i", next_id(), LO_ARGS_END);
+	send("/activate", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::deactivate()
 {
-	send("/ingen/deactivate", "i", next_id(), LO_ARGS_END);
+	send("/deactivate", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::quit()
 {
-	send("/ingen/quit", "i", next_id(), LO_ARGS_END);
+	send("/quit", "i", next_id(), LO_ARGS_END);
 }
 
 
@@ -145,7 +145,16 @@ OSCEngineSender::put(const Raul::URI&                    path,
 		lo_message_add_string(m, i->first.c_str());
 		Raul::AtomLiblo::lo_message_add_atom(m, i->second);
 	}
-	send_message("/ingen/put", m);
+	send_message("/put", m);
+}
+
+
+void
+OSCEngineSender::delta(const Raul::URI&                    path,
+                       const Shared::Resource::Properties& remove,
+                       const Shared::Resource::Properties& add)
+{
+	warn << "FIXME: OSC DELTA" << endl;
 }
 
 
@@ -153,7 +162,7 @@ void
 OSCEngineSender::move(const Path& old_path,
                       const Path& new_path)
 {
-	send("/ingen/move", "iss",
+	send("/move", "iss",
 		next_id(),
 		old_path.c_str(),
 		new_path.c_str(),
@@ -164,7 +173,7 @@ OSCEngineSender::move(const Path& old_path,
 void
 OSCEngineSender::del(const Path& path)
 {
-	send("/ingen/delete", "is",
+	send("/delete", "is",
 		next_id(),
 		path.c_str(),
 		LO_ARGS_END);
@@ -175,7 +184,7 @@ void
 OSCEngineSender::connect(const Path& src_port_path,
                          const Path& dst_port_path)
 {
-	send("/ingen/connect", "iss",
+	send("/connect", "iss",
 		next_id(),
 		src_port_path.c_str(),
 		dst_port_path.c_str(),
@@ -187,7 +196,7 @@ void
 OSCEngineSender::disconnect(const Path& src_port_path,
                             const Path& dst_port_path)
 {
-	send("/ingen/disconnect", "iss",
+	send("/disconnect", "iss",
 		next_id(),
 		src_port_path.c_str(),
 		dst_port_path.c_str(),
@@ -199,7 +208,7 @@ void
 OSCEngineSender::disconnect_all(const Path& parent_patch_path,
                                 const Path& path)
 {
-	send("/ingen/disconnect_all", "iss",
+	send("/disconnect_all", "iss",
 		next_id(),
 		parent_patch_path.c_str(),
 		path.c_str(),
@@ -219,17 +228,7 @@ OSCEngineSender::set_voice_value(const Path& port_path,
 	if (value.type() == Atom::BLOB)
 		lo_message_add_string(m, value.get_blob_type());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_port_value", m);
-}
-
-
-void
-OSCEngineSender::learn(const Path& path)
-{
-	send("/ingen/learn", "is",
-		next_id(),
-		path.c_str(),
-		LO_ARGS_END);
+	send_message("/set_port_value", m);
 }
 
 
@@ -243,7 +242,7 @@ OSCEngineSender::set_property(const URI&  subject,
 	lo_message_add_string(m, subject.c_str());
 	lo_message_add_string(m, predicate.c_str());
 	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/ingen/set_property", m);
+	send_message("/set_property", m);
 }
 
 
@@ -253,14 +252,14 @@ OSCEngineSender::set_property(const URI&  subject,
 void
 OSCEngineSender::ping()
 {
-	send("/ingen/ping", "i", next_id(), LO_ARGS_END);
+	send("/ping", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::get(const URI& uri)
 {
-	send("/ingen/get", "is",
+	send("/get", "is",
 		next_id(),
 		uri.c_str(),
 		LO_ARGS_END);
@@ -270,7 +269,7 @@ OSCEngineSender::get(const URI& uri)
 void
 OSCEngineSender::request_property(const URI& object_path, const URI& key)
 {
-	send("/ingen/request_property", "iss",
+	send("/request_property", "iss",
 		next_id(),
 		object_path.c_str(),
 		key.c_str(),
@@ -281,14 +280,14 @@ OSCEngineSender::request_property(const URI& object_path, const URI& key)
 void
 OSCEngineSender::request_plugins()
 {
-	send("/ingen/request_plugins", "i", next_id(), LO_ARGS_END);
+	send("/request_plugins", "i", next_id(), LO_ARGS_END);
 }
 
 
 void
 OSCEngineSender::request_all_objects()
 {
-	send("/ingen/request_all_objects", "i", next_id(), LO_ARGS_END);
+	send("/request_all_objects", "i", next_id(), LO_ARGS_END);
 }
 
 

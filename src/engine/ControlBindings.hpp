@@ -72,6 +72,12 @@ public:
 	 */
 	SharedPtr<Bindings> remove(const Raul::Path& path);
 
+	/** Remove binding for a particular port.
+	 * The caller must safely drop the returned reference in the
+	 * post-processing thread after at least one process thread has run.
+	 */
+	SharedPtr<Bindings> remove(PortImpl* port);
+
 private:
 	Key port_binding(PortImpl* port);
 	Key midi_event_key(uint16_t size, uint8_t* buf, uint16_t& value);

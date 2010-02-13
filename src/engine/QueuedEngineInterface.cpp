@@ -160,13 +160,19 @@ QueuedEngineInterface::put(const URI&                  uri,
 	bool meta = ResourceImpl::is_meta_uri(uri);
 	URI  subject(meta ? (string("path:/") + uri.substr(6)) : uri.str());
 
-	LOG(debug) << "PUT " << subject << " {" << endl;
-	typedef Resource::Properties::const_iterator iterator;
-	for (iterator i = properties.begin(); i != properties.end(); ++i)
-		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	LOG(debug) << "}" << endl;
-
 	push_queued(new Events::SetMetadata(_engine, _request, now(), true, meta, subject, properties));
+}
+
+
+void
+QueuedEngineInterface::delta(const URI&                          uri,
+                             const Shared::Resource::Properties& remove,
+                             const Shared::Resource::Properties& add)
+{
+	bool meta = ResourceImpl::is_meta_uri(uri);
+	URI  subject(meta ? (string("path:/") + uri.substr(6)) : uri.str());
+
+	push_queued(new Events::SetMetadata(_engine, _request, now(), false, meta, subject, add, remove));
 }
 
 
@@ -220,13 +226,6 @@ QueuedEngineInterface::set_voice_value(const Path&       port_path,
 
 
 void
-QueuedEngineInterface::learn(const Path& path)
-{
-	push_queued(new Events::Learn(_engine, _request, now(), path));
-}
-
-
-void
 QueuedEngineInterface::set_property(const URI&  uri,
                                     const URI&  predicate,
                                     const Atom& value)
@@ -234,9 +233,11 @@ QueuedEngineInterface::set_property(const URI&  uri,
 	size_t hash = uri.find("#");
 	bool   meta = (hash != string::npos);
 	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
-	Resource::Properties properties;
-	properties.insert(make_pair(predicate, value));
-	push_queued(new Events::SetMetadata(_engine, _request, now(), true, meta, path, properties));
+	Resource::Properties remove;
+	remove.insert(make_pair(predicate, Shared::LV2URIMap::instance().wildcard));
+	Resource::Properties add;
+	add.insert(make_pair(predicate, value));
+	push_queued(new Events::SetMetadata(_engine, _request, now(), false, meta, path, add, remove));
 }
 
 // Requests //

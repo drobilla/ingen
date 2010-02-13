@@ -48,6 +48,10 @@ public:
 	virtual void put(const Raul::URI&            uri,
 	                 const Resource::Properties& properties) = 0;
 
+	virtual void delta(const Raul::URI&            uri,
+	                   const Resource::Properties& remove,
+	                   const Resource::Properties& add) = 0;
+
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path) = 0;
 

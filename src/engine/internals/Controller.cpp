@@ -20,7 +20,6 @@
 #include "shared/LV2URIMap.hpp"
 #include "internals/Controller.hpp"
 #include "PostProcessor.hpp"
-#include "events/Learn.hpp"
 #include "events/SendPortValue.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"

@@ -225,7 +225,9 @@ Serialiser::finish()
 		}
 	}
 
+	delete _model;
 	_base_uri = "";
+
 	return ret;
 }
 

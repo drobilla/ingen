@@ -69,6 +69,8 @@ public:
 	// CommonInterface
 	bool new_object(const Shared::GraphObject* object);
 	void put(const Raul::URI& path, const Shared::Resource::Properties& properties);
+	void delta(const Raul::URI& path, const Shared::Resource::Properties& remove,
+			const Shared::Resource::Properties& add);
 	void move(const Raul::Path& old_path, const Raul::Path& new_path);
 	void set_property(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
 	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value);

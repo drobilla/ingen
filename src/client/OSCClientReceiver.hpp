@@ -89,7 +89,6 @@ private:
 	LO_HANDLER(move);
 	LO_HANDLER(connection);
 	LO_HANDLER(disconnection);
-	LO_HANDLER(new_port);
 	LO_HANDLER(put);
 	LO_HANDLER(set_property);
 	LO_HANDLER(set_voice_value);
