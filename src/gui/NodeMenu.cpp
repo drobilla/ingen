@@ -16,6 +16,7 @@
  */
 
 #include <gtkmm.h>
+#include "ingen-config.h"
 #include "interface/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
@@ -92,22 +93,28 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 				"PREFIX dc:   <http://dublincore.org/documents/dcmi-namespace/>\n"
 				"SELECT ?p ?name WHERE { <> pset:hasPreset ?p . ?p dc:title ?name }\n");
 		if (!slv2_results_finished(presets)) {
+			_presets_menu = Gtk::manage(new Gtk::Menu());
+			for (; !slv2_results_finished(presets); slv2_results_next(presets)) {
+				SLV2Value uri  = slv2_results_get_binding_value(presets, 0);
+				SLV2Value name = slv2_results_get_binding_value(presets, 1);
+				_presets_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(
+							slv2_value_as_string(name),
+							sigc::bind(
+								sigc::mem_fun(this, &NodeMenu::on_preset_activated),
+								string(slv2_value_as_string(uri)))));
+
+				// I have no idea why this is necessary, signal_activated doesn't work
+				// in this menu (and only this menu)
+				Gtk::MenuItem* item = &(_presets_menu->items().back());
+				item->signal_button_release_event().connect(
+						sigc::bind<0>(sigc::mem_fun(this, &NodeMenu::on_preset_clicked),
+								string(slv2_value_as_string(uri))));
+			}
 			items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 			items().push_front(Gtk::Menu_Helpers::ImageMenuElem("_Presets",
 					*(manage(new Gtk::Image(Gtk::Stock::INDEX, Gtk::ICON_SIZE_MENU)))));
 			Gtk::MenuItem* presets_menu_item = &(items().front());
-			_presets_menu = Gtk::manage(new Gtk::Menu());
 			presets_menu_item->set_submenu(*_presets_menu);
-			for (; !slv2_results_finished(presets); slv2_results_next(presets)) {
-				SLV2Value uri  = slv2_results_get_binding_value(presets, 0);
-				SLV2Value name = slv2_results_get_binding_value(presets, 1);
-				Gtk::MenuItem* item = Gtk::manage(new Gtk::MenuItem(slv2_value_as_string(name)));
-				_presets_menu->items().push_back(*item);
-				item->show();
-				item->signal_activate().connect(
-						sigc::bind(sigc::mem_fun(this, &NodeMenu::on_preset_activated),
-								string(slv2_value_as_string(uri))), false);
-			}
 		}
 		slv2_results_free(presets);
 	}
@@ -186,6 +193,14 @@ NodeMenu::on_preset_activated(const std::string uri)
 	App::instance().engine()->bundle_end();
 	slv2_results_free(values);
 #endif
+}
+
+
+bool
+NodeMenu::on_preset_clicked(const std::string uri, GdkEventButton* ev)
+{
+	on_preset_activated(uri);
+	return false;
 }
 
 
