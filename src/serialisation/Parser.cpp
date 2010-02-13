@@ -300,7 +300,7 @@ Parser::parse(
 			} else if (rdf_class == node_class) {
 				ret = parse_node(world, target, model, subject, path, data);
 			} else if (rdf_class == in_port_class || rdf_class == out_port_class) {
-				parse_properties(world, target, model, subject, string("path:") + path, data);
+				parse_properties(world, target, model, subject, path, data);
 			}
 
 			if (!ret) {
