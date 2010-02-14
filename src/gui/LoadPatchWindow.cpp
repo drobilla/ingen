@@ -117,7 +117,6 @@ LoadPatchWindow::present(SharedPtr<PatchModel> patch, bool import, GraphObject::
 void
 LoadPatchWindow::set_patch(SharedPtr<PatchModel> patch)
 {
-	std::cout << "SET PATCH: " << patch->path() << endl;
 	_patch = patch;
 	_symbol_entry->set_text("");
 	_symbol_entry->set_sensitive(!_import);
@@ -171,8 +170,6 @@ LoadPatchWindow::ok_clicked()
 			parent = _patch->path().parent();
 			symbol = _patch->symbol();
 		}
-
-		cout << "MERGE PORTS: " << _merge_ports << endl;
 
 		App::instance().loader()->load_patch(true, get_uri(), Path("/"),
 				parent, symbol, _initial_data);
