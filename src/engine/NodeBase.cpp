@@ -94,7 +94,7 @@ NodeBase::activate()
 void
 NodeBase::deactivate()
 {
-	// FIXME: Not true witn monolithic GUI/engine
+	// FIXME: Not true with monolithic GUI/engine
 	//ThreadManager::assert_thread(THREAD_POST_PROCESS);
 	assert(_activated);
 	_activated = false;
