@@ -181,7 +181,7 @@ LoadSubpatchWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
 
 	if (offset != 0) {
 		std::stringstream ss;
-		ss << symbol << "_" << offset + 1;
+		ss << symbol << "_" << offset;
 		return ss.str();
 	} else {
 		return symbol;

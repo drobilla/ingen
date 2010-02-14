@@ -28,8 +28,6 @@
 #include "PatchView.hpp"
 #include "PatchCanvas.hpp"
 
-#define NAME_ENTRY_MULTI_STRING "(multiple values)"
-
 using namespace std;
 using namespace Raul;
 
@@ -127,16 +125,12 @@ LoadPluginWindow::name_changed()
 	if (_selection->get_selected_rows().size() == 1) {
 		string name = _node_name_entry->get_text();
 		if (!Path::is_valid_name(name)) {
-			//m_message_label->set_text("Name contains invalid characters.");
 			_add_button->property_sensitive() = false;
 		} else if (App::instance().store()->find_child(_patch, name)) {
-			//m_message_label->set_text("An object already exists with that name.");
 			_add_button->property_sensitive() = false;
 		} else if (name.length() == 0) {
-			//m_message_label->set_text("");
 			_add_button->property_sensitive() = false;
 		} else {
-			//m_message_label->set_text("");
 			_add_button->property_sensitive() = true;
 		}
 	}
@@ -327,7 +321,7 @@ LoadPluginWindow::generate_module_name(SharedPtr<PluginModel> plugin, int offset
 	std::stringstream ss;
 	ss << plugin->default_node_symbol();
 	if (offset != 0)
-		ss << "_" << offset + 1;
+		ss << "_" << offset;
 	return ss.str();
 }
 
@@ -341,7 +335,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	bool                   polyphonic = _polyphonic_checkbutton->get_active();
 	string                 name       = _node_name_entry->get_text();
 
-	if (name.empty() || name == NAME_ENTRY_MULTI_STRING)
+	if (name.empty())
 		name = generate_module_name(plugin, _name_offset);
 
 	if (name.empty() || !Symbol::is_valid(name)) {
@@ -358,8 +352,10 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		props.insert(make_pair(uris.ingen_polyphonic, polyphonic));
 		App::instance().engine()->put(path, props);
 
-		if (_selection->get_selected_rows().size() == 1)
-			_node_name_entry->set_text(generate_module_name(plugin, _name_offset + 1));
+		if (_selection->get_selected_rows().size() == 1) {
+			_name_offset = (_name_offset == 0) ? 2 : _name_offset + 1;
+			_node_name_entry->set_text(generate_module_name(plugin, _name_offset));
+		}
 
 		// Cascade next node
 		Atom& x = _initial_data.find(uris.ingenui_canvas_x)->second;
@@ -375,8 +371,6 @@ LoadPluginWindow::add_clicked()
 {
 	_selection->selected_foreach_iter(
 			sigc::mem_fun(*this, &LoadPluginWindow::load_plugin));
-
-	++_name_offset;
 }
 
 
