@@ -41,7 +41,6 @@ namespace GUI {
 class LoadPluginWindow;
 class LoadPatchWindow;
 class NewSubpatchWindow;
-class LoadSubpatchWindow;
 class NewSubpatchWindow;
 class NodeControlWindow;
 class PatchDescriptionWindow;

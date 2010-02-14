@@ -26,7 +26,6 @@
 #include "PatchCanvas.hpp"
 #include "LoadPluginWindow.hpp"
 #include "NewSubpatchWindow.hpp"
-#include "LoadSubpatchWindow.hpp"
 #include "NodeControlWindow.hpp"
 #include "PatchTreeWindow.hpp"
 #include "GladeFactory.hpp"

@@ -17,19 +17,22 @@
 
 #include <sys/types.h>
 #include <dirent.h>
-#include <boost/optional/optional.hpp>
+#include <cassert>
+#include <boost/optional.hpp>
+#include <glibmm/miscutils.h>
 #include "interface/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "shared/runtime_paths.hpp"
+#include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"
+#include "client/ClientStore.hpp"
+#include "shared/runtime_paths.hpp"
 #include "App.hpp"
-#include "Configuration.hpp"
 #include "LoadPatchWindow.hpp"
+#include "PatchView.hpp"
+#include "Configuration.hpp"
 #include "ThreadedLoader.hpp"
 
-using namespace Ingen::Serialisation;
 using boost::optional;
-using namespace std;
 using namespace std;
 using namespace Raul;
 
@@ -39,39 +42,44 @@ namespace GUI {
 
 LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::FileChooserDialog(cobject)
-	, _merge_ports(true)
+	, _merge_ports(false)
 {
+	xml->get_widget("load_patch_symbol_label", _symbol_label);
+	xml->get_widget("load_patch_symbol_entry", _symbol_entry);
+	xml->get_widget("load_patch_ports_label", _ports_label);
+	xml->get_widget("load_patch_merge_ports_radio", _merge_ports_radio);
+	xml->get_widget("load_patch_insert_ports_radio", _insert_ports_radio);
 	xml->get_widget("load_patch_poly_voices_radio", _poly_voices_radio);
 	xml->get_widget("load_patch_poly_from_file_radio", _poly_from_file_radio);
 	xml->get_widget("load_patch_poly_spinbutton", _poly_spinbutton);
-	xml->get_widget("load_patch_merge_ports_radio", _merge_ports_radio);
-	xml->get_widget("load_patch_insert_ports_radio", _insert_ports_radio);
 	xml->get_widget("load_patch_ok_button", _ok_button);
 	xml->get_widget("load_patch_cancel_button", _cancel_button);
 
-	_poly_from_file_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
 	_poly_voices_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::poly_voices_selected));
+			sigc::mem_fun(this, &LoadPatchWindow::enable_poly_spinner));
+	_cancel_button->signal_clicked().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
+	_ok_button->signal_clicked().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::ok_clicked));
 	_merge_ports_radio->signal_toggled().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::merge_ports_selected));
 	_insert_ports_radio->signal_toggled().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::insert_ports_selected));
-	_ok_button->signal_clicked().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::ok_clicked));
-	_cancel_button->signal_clicked().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
 
-	_poly_voices_radio->set_active(true);
+	signal_selection_changed().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::selection_changed));
 
 	Gtk::FileFilter filt;
-	filt.add_pattern("*.om");
-	filt.set_name("Om patch files (XML, DEPRECATED) (*.om)");
-	filt.add_pattern("*.ingen.lv2");
-	filt.set_name("Ingen bundles (*.ingen.lv2)");
 	filt.add_pattern("*.ingen.ttl");
 	filt.set_name("Ingen patch files (*.ingen.ttl)");
+	filt.add_pattern("*.ingen.lv2");
+	filt.set_name("Ingen bundles (*.ingen.lv2)");
+	filt.add_pattern("*.om");
+	filt.set_name("Om patch files (*.om)");
+
 	set_filter(filt);
+
+	property_select_multiple() = true;
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
 	const string examples_dir = Shared::data_file_path("patches");
@@ -84,9 +92,15 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 
 
 void
-LoadPatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+LoadPatchWindow::present(SharedPtr<PatchModel> patch, bool import, GraphObject::Properties data)
 {
+	_import = import;
 	set_patch(patch);
+	_symbol_label->set_visible(!import);
+	_symbol_entry->set_visible(!import);
+	_ports_label->set_visible(_import);
+	_merge_ports_radio->set_visible(_import);
+	_insert_ports_radio->set_visible(_import);
 	_initial_data = data;
 	Gtk::Window::present();
 }
@@ -99,7 +113,10 @@ LoadPatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties da
 void
 LoadPatchWindow::set_patch(SharedPtr<PatchModel> patch)
 {
+	std::cout << "SET PATCH: " << patch->path() << endl;
 	_patch = patch;
+	_symbol_entry->set_text("");
+	_symbol_entry->set_sensitive(!_import);
 	_poly_spinbutton->set_value(patch->poly());
 }
 
@@ -117,17 +134,18 @@ LoadPatchWindow::on_show()
 
 
 void
-LoadPatchWindow::poly_from_file_selected()
+LoadPatchWindow::disable_poly_spinner()
 {
 	_poly_spinbutton->property_sensitive() = false;
 }
 
 
 void
-LoadPatchWindow::poly_voices_selected()
+LoadPatchWindow::enable_poly_spinner()
 {
 	_poly_spinbutton->property_sensitive() = true;
 }
+
 
 void
 LoadPatchWindow::merge_ports_selected()
@@ -146,37 +164,104 @@ LoadPatchWindow::insert_ports_selected()
 void
 LoadPatchWindow::ok_clicked()
 {
-	if (!_patch)
+	if (!_patch) {
+		hide();
 		return;
+	}
 
-	// If unset load_patch will load value
-	optional<Path>   parent;
-	optional<Symbol> symbol;
+	const LV2URIMap& uris = App::instance().uris();
 
 	if (_poly_voices_radio->get_active())
 		_initial_data.insert(make_pair(
-				App::instance().uris().ingen_polyphony,
-				_poly_spinbutton->get_value_as_int()));
+					uris.ingen_polyphony,
+					_poly_spinbutton->get_value_as_int()));
 
-	if (!_patch->path().is_root()) {
-		parent = _patch->path().parent();
-		symbol = _patch->symbol();
+	if (_import) {
+		// If unset load_patch will load value
+		optional<Path>   parent;
+		optional<Symbol> symbol;
+		if (!_patch->path().is_root()) {
+			parent = _patch->path().parent();
+			symbol = _patch->symbol();
+		}
+
+		cout << "MERGE PORTS: " << _merge_ports << endl;
+
+		App::instance().loader()->load_patch(true, get_uri(), Path("/"),
+				parent, symbol, _initial_data);
+
+	} else {
+		std::list<Glib::ustring> uri_list = get_uris();
+		for (std::list<Glib::ustring>::iterator i = uri_list.begin(); i != uri_list.end(); ++i) {
+			// Cascade
+			Atom& x = _initial_data.find(uris.ingenui_canvas_x)->second;
+			x = Atom(x.get_float() + 20.0f);
+			Atom& y = _initial_data.find(uris.ingenui_canvas_y)->second;
+			y = Atom(y.get_float() + 20.0f);
+
+			Raul::Symbol symbol(symbol_from_filename(*i));
+			if (uri_list.size() == 1 && _symbol_entry->get_text() != "")
+				symbol = Symbol::symbolify(_symbol_entry->get_text());
+
+			symbol = avoid_symbol_clash(symbol);
+
+			App::instance().loader()->load_patch(false, *i, Path("/"),
+					_patch->path(), symbol, _initial_data);
+		}
 	}
-
-	cout << "MERGE PORTS: " << _merge_ports << endl;
 
 	_patch.reset();
 	hide();
-
-	App::instance().loader()->load_patch(true, get_uri(), Path("/"),
-			parent, symbol, _initial_data);
 }
 
 
 void
 LoadPatchWindow::cancel_clicked()
 {
+	_patch.reset();
 	hide();
+}
+
+
+Raul::Symbol
+LoadPatchWindow::symbol_from_filename(const Glib::ustring& filename)
+{
+	std::string symbol_str = Glib::path_get_basename(get_filename());
+	symbol_str = symbol_str.substr(0, symbol_str.find('.'));
+	return Raul::Symbol::symbolify(symbol_str);
+}
+
+
+Raul::Symbol
+LoadPatchWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
+{
+	unsigned offset = App::instance().store()->child_name_offset(
+			_patch->path(), symbol);
+
+	if (offset != 0) {
+		std::stringstream ss;
+		ss << symbol << "_" << offset;
+		return ss.str();
+	} else {
+		return symbol;
+	}
+}
+
+
+void
+LoadPatchWindow::selection_changed()
+{
+	if (_import)
+		return;
+
+	if (get_filenames().size() != 1) {
+		_symbol_entry->set_text("");
+		_symbol_entry->set_sensitive(false);
+	} else {
+		_symbol_entry->set_text(avoid_symbol_clash(
+				symbol_from_filename(get_filename()).c_str()).c_str());
+		_symbol_entry->set_sensitive(true);
+	}
 }
 
 

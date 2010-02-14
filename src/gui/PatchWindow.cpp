@@ -30,7 +30,6 @@
 #include "LoadPluginWindow.hpp"
 #include "NewSubpatchWindow.hpp"
 #include "LoadPatchWindow.hpp"
-#include "LoadSubpatchWindow.hpp"
 #include "NodeControlWindow.hpp"
 #include "Configuration.hpp"
 #include "MessagesWindow.hpp"

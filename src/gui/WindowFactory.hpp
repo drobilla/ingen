@@ -39,7 +39,6 @@ namespace GUI {
 class LoadPatchWindow;
 class LoadPluginWindow;
 class LoadRemotePatchWindow;
-class LoadSubpatchWindow;
 class NewSubpatchWindow;
 class NodeControlWindow;
 class PropertiesWindow;
@@ -75,10 +74,10 @@ public:
 
 	void present_load_plugin(SharedPtr<PatchModel> patch, Properties data=Properties());
 	void present_load_patch(SharedPtr<PatchModel> patch, Properties data=Properties());
+	void present_load_subpatch(SharedPtr<PatchModel> patch, Properties data=Properties());
 	void present_load_remote_patch(SharedPtr<PatchModel> patch, Properties data=Properties());
 	void present_upload_patch(SharedPtr<PatchModel> patch);
 	void present_new_subpatch(SharedPtr<PatchModel> patch, Properties data=Properties());
-	void present_load_subpatch(SharedPtr<PatchModel> patch, Properties data=Properties());
 	void present_rename(SharedPtr<ObjectModel> object);
 	void present_properties(SharedPtr<ObjectModel> object);
 
@@ -104,7 +103,6 @@ private:
 	LoadRemotePatchWindow* _load_remote_patch_win;
 	UploadPatchWindow*     _upload_patch_win;
 	NewSubpatchWindow*     _new_subpatch_win;
-	LoadSubpatchWindow*    _load_subpatch_win;
 	PropertiesWindow*      _properties_win;
 	RenameWindow*          _rename_win;
 };

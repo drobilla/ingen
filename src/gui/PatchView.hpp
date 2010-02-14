@@ -43,7 +43,6 @@ namespace GUI {
 class PatchCanvas;
 class LoadPluginWindow;
 class NewSubpatchWindow;
-class LoadSubpatchWindow;
 class NewSubpatchWindow;
 class NodeControlWindow;
 class PatchDescriptionWindow;

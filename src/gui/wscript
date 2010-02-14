@@ -18,7 +18,6 @@ def build(bld):
 		LoadPatchWindow.cpp
 		LoadPluginWindow.cpp
 		LoadRemotePatchWindow.cpp
-		LoadSubpatchWindow.cpp
 		MessagesWindow.cpp
 		NewSubpatchWindow.cpp
 		NodeControlWindow.cpp

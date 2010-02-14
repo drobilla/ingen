@@ -23,7 +23,6 @@
 #include "LoadPatchWindow.hpp"
 #include "LoadPluginWindow.hpp"
 #include "LoadRemotePatchWindow.hpp"
-#include "LoadSubpatchWindow.hpp"
 #include "NewSubpatchWindow.hpp"
 #include "NodeControlWindow.hpp"
 #include "PropertiesWindow.hpp"
@@ -47,7 +46,6 @@ WindowFactory::WindowFactory()
 	, _load_remote_patch_win(NULL)
 	, _upload_patch_win(NULL)
 	, _new_subpatch_win(NULL)
-	, _load_subpatch_win(NULL)
 	, _properties_win(NULL)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
@@ -56,7 +54,6 @@ WindowFactory::WindowFactory()
 	xml->get_widget_derived("load_patch_win", _load_patch_win);
 	xml->get_widget_derived("load_remote_patch_win", _load_remote_patch_win);
 	xml->get_widget_derived("new_subpatch_win", _new_subpatch_win);
-	xml->get_widget_derived("load_subpatch_win", _load_subpatch_win);
 	xml->get_widget_derived("properties_win", _properties_win);
 	xml->get_widget_derived("rename_win", _rename_win);
 
@@ -269,7 +266,19 @@ WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Prop
 	if (w != _patch_windows.end())
 		_load_patch_win->set_transient_for(*w->second);
 
-	_load_patch_win->present(patch, data);
+	_load_patch_win->present(patch, true, data);
+}
+
+
+void
+WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+{
+	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
+
+	if (w != _patch_windows.end())
+		_load_patch_win->set_transient_for(*w->second);
+
+	_load_patch_win->present(patch, false, data);
 }
 
 
@@ -307,18 +316,6 @@ WindowFactory::present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::Pr
 		_new_subpatch_win->set_transient_for(*w->second);
 
 	_new_subpatch_win->present(patch, data);
-}
-
-
-void
-WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
-{
-	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
-
-	if (w != _patch_windows.end())
-		_load_subpatch_win->set_transient_for(*w->second);
-
-	_load_subpatch_win->present(patch, data);
 }
 
 

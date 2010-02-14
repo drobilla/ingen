@@ -15,33 +15,26 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_GUI_LOADPATCHWINDOW_HPP
-#define INGEN_GUI_LOADPATCHWINDOW_HPP
+#ifndef INGEN_GUI_LOADSUBPATCHWINDOW_HPP
+#define INGEN_GUI_LOADSUBPATCHWINDOW_HPP
 
 #include <libglademm/xml.h>
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/GraphObject.hpp"
-#include "Window.hpp"
-
 using namespace Ingen::Shared;
 
 namespace Ingen {
 
-namespace Client { class PatchModel; class PluginModel; }
-using Ingen::Client::PluginModel;
+namespace Client { class PatchModel; }
 using Ingen::Client::PatchModel;
 
 namespace GUI {
 
 
-/** 'Load Patch' window.
+/** 'Add Subpatch' window.
  *
- * Loaded by glade as a derived object.  Used for both "Import" and "Load"
- * (e.g. Replace, clear-then-import) operations (the radio button state
- * should be changed with the provided methods before presenting).
- *
- * This is not for loading subpatches.  See @a LoadSubpatchWindow for that.
+ * Loaded by glade as a derived object.
  *
  * \ingroup GUI
  */
@@ -52,35 +45,45 @@ public:
 
 	void set_patch(SharedPtr<PatchModel> patch);
 
-	void present(SharedPtr<PatchModel> patch, GraphObject::Properties data);
+	void present(SharedPtr<PatchModel> patch, bool import, GraphObject::Properties data);
 
 protected:
 	void on_show();
 
 private:
-	void poly_voices_selected();
-	void poly_from_file_selected();
+	void disable_poly_spinner();
+	void enable_poly_spinner();
 	void merge_ports_selected();
 	void insert_ports_selected();
-	void ok_clicked();
+
+	void selection_changed();
 	void cancel_clicked();
+	void ok_clicked();
+
+	Raul::Symbol symbol_from_filename(const Glib::ustring& filename);
+	Raul::Symbol avoid_symbol_clash(const Raul::Symbol& symbol);
 
 	GraphObject::Properties _initial_data;
 
 	SharedPtr<PatchModel> _patch;
-	bool                  _merge_ports;
 
+	Gtk::Label*       _symbol_label;
+	Gtk::Entry*       _symbol_entry;
+	Gtk::Label*       _ports_label;
+	Gtk::RadioButton* _merge_ports_radio;
+	Gtk::RadioButton* _insert_ports_radio;
 	Gtk::RadioButton* _poly_voices_radio;
 	Gtk::RadioButton* _poly_from_file_radio;
 	Gtk::SpinButton*  _poly_spinbutton;
-	Gtk::RadioButton* _merge_ports_radio;
-	Gtk::RadioButton* _insert_ports_radio;
 	Gtk::Button*      _ok_button;
 	Gtk::Button*      _cancel_button;
+
+	bool _import;
+	bool _merge_ports;
 };
 
 
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_LOADPATCHWINDOW_HPP
+#endif // INGEN_GUI_LOADSUBPATCHWINDOW_HPP

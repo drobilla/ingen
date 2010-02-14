@@ -36,7 +36,6 @@
 #include "PatchWindow.hpp"
 #include "PatchPortModule.hpp"
 #include "LoadPluginWindow.hpp"
-#include "LoadSubpatchWindow.hpp"
 #include "NewSubpatchWindow.hpp"
 #include "Port.hpp"
 #include "Connection.hpp"
