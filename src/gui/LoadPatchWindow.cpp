@@ -55,8 +55,6 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 	xml->get_widget("load_patch_ok_button", _ok_button);
 	xml->get_widget("load_patch_cancel_button", _cancel_button);
 
-	_poly_voices_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::enable_poly_spinner));
 	_cancel_button->signal_clicked().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
 	_ok_button->signal_clicked().connect(
@@ -65,6 +63,12 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 			sigc::mem_fun(this, &LoadPatchWindow::merge_ports_selected));
 	_insert_ports_radio->signal_toggled().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::insert_ports_selected));
+	_poly_from_file_radio->signal_toggled().connect(sigc::bind(
+			sigc::mem_fun(_poly_spinbutton, &Gtk::SpinButton::set_sensitive),
+			false));
+	_poly_voices_radio->signal_toggled().connect(sigc::bind(
+			sigc::mem_fun(_poly_spinbutton, &Gtk::SpinButton::set_sensitive),
+			true));
 
 	signal_selection_changed().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::selection_changed));
@@ -127,23 +131,6 @@ LoadPatchWindow::on_show()
 	if (App::instance().configuration()->patch_folder().length() > 0)
 		set_current_folder(App::instance().configuration()->patch_folder());
 	Gtk::FileChooserDialog::on_show();
-}
-
-
-///// Event Handlers //////
-
-
-void
-LoadPatchWindow::disable_poly_spinner()
-{
-	_poly_spinbutton->property_sensitive() = false;
-}
-
-
-void
-LoadPatchWindow::enable_poly_spinner()
-{
-	_poly_spinbutton->property_sensitive() = true;
 }
 
 

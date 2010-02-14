@@ -51,8 +51,6 @@ protected:
 	void on_show();
 
 private:
-	void disable_poly_spinner();
-	void enable_poly_spinner();
 	void merge_ports_selected();
 	void insert_ports_selected();
 
