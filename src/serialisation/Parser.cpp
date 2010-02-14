@@ -707,7 +707,6 @@ Parser::parse_connections(
 
 	const Glib::ustring& base_uri = model.base_uri().to_string();
 
-	std::cout << "PARSE CONNECTIONS " << subject << " : " << parent << endl;
 	Redland::Query::Results results = query.run(*world->rdf_world, model);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
