@@ -205,24 +205,6 @@ OSCClientSender::set_property(const URI& path, const URI& key, const Atom& value
 
 
 /** \page client_osc_namespace
- * <h2>/set_port_value</h2>
- * \arg \b path (string) - Path of port
- * \arg \b voice (int) - Voice which is set to this value
- * \arg \b value (any) - New value of port
- *
- * Notification the value of a port has changed.
- */
-void
-OSCClientSender::set_voice_value(const Path& port_path, uint32_t voice, const Atom& value)
-{
-	lo_message m = lo_message_new();
-	lo_message_add_string(m, port_path.c_str());
-	AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/set_port_value", m);
-}
-
-
-/** \page client_osc_namespace
  * <h2>/activity</h2>
  * \arg \b path (string) - Path of object
  *

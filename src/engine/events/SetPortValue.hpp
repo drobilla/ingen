@@ -50,14 +50,6 @@ public:
 
 	SetPortValue(Engine&              engine,
 	             SharedPtr<Request>   request,
-	             bool                 queued,
-	             SampleCount          timestamp,
-	             uint32_t             voice_num,
-	             const Raul::Path&    port_path,
-	             const Raul::Atom&    value);
-
-	SetPortValue(Engine&              engine,
-	             SharedPtr<Request>   request,
 	             SampleCount          timestamp,
 	             PortImpl*            port,
 	             const Raul::Atom&    value);
@@ -73,15 +65,12 @@ private:
 		NO_ERROR,
 		PORT_NOT_FOUND,
 		NO_SPACE,
-		ILLEGAL_VOICE,
 		TYPE_MISMATCH
 	};
 
 	void apply(Context& context);
 
 	bool             _queued;
-	bool             _omni;
-	uint32_t         _voice_num;
 	const Raul::Path _port_path;
 	const Raul::Atom _value;
 	PortImpl*        _port;

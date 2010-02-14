@@ -73,22 +73,12 @@ public:
 	}
 
 private:
-	void all_voices_selected();
-	void specific_voice_selected();
-
-	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
-	void parent_property_changed(const Raul::URI& predicate, const Raul::Atom& value);
-
 	bool _callback_enabled;
 
 	std::pair<int,int> _ideal_size;
 
 	std::vector<Control*> _controls;
 	Gtk::VBox*            _control_box;
-	Gtk::Box*             _voice_control_box;
-	Gtk::RadioButton*     _all_voices_radio;
-	Gtk::RadioButton*     _specific_voice_radio;
-	Gtk::SpinButton*      _voice_spinbutton;
 };
 
 

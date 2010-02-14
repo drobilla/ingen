@@ -194,15 +194,6 @@ ClashAvoider::set_property(const Raul::URI&  subject,
 
 
 void
-ClashAvoider::set_voice_value(const Raul::Path& port_path,
-                              uint32_t          voice,
-                              const Raul::Atom& value)
-{
-	_target.set_voice_value(map_path(port_path), voice, value);
-}
-
-
-void
 ClashAvoider::del(const Raul::Path& path)
 {
 	_target.del(map_path(path));

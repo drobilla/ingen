@@ -60,7 +60,6 @@ public:
 	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_variable_change;
 	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_property_change;
 	sigc::signal<void, Raul::Path, Raul::Atom>                      signal_port_value;
-	sigc::signal<void, Raul::Path, uint32_t, Raul::Atom>            signal_voice_value;
 	sigc::signal<void, Raul::Path>                                  signal_activity;
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
@@ -111,9 +110,6 @@ protected:
 
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ EMIT(property_change, subject, key, value); }
-
-	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
-		{ EMIT(voice_value, port_path, voice, value); }
 
 	void activity(const Raul::Path& port_path)
 		{ EMIT(activity, port_path); }

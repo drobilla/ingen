@@ -125,13 +125,6 @@ HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& v
 
 
 void
-HTTPClientSender::set_voice_value(const Path& port_path, uint32_t voice, const Atom& value)
-{
-	warn << "TODO: HTTP set voice value" << endl;
-}
-
-
-void
 HTTPClientSender::activity(const Path& path)
 {
 	const string msg = string(

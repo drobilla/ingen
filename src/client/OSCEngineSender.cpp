@@ -217,22 +217,6 @@ OSCEngineSender::disconnect_all(const Path& parent_patch_path,
 
 
 void
-OSCEngineSender::set_voice_value(const Path& port_path,
-                                 uint32_t    voice,
-                                 const Atom& value)
-{
-	lo_message m = lo_message_new();
-	lo_message_add_int32(m, next_id());
-	lo_message_add_string(m, port_path.c_str());
-	lo_message_add_int32(m, voice);
-	if (value.type() == Atom::BLOB)
-		lo_message_add_string(m, value.get_blob_type());
-	Raul::AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/set_port_value", m);
-}
-
-
-void
 OSCEngineSender::set_property(const URI&  subject,
                               const URI&  predicate,
                               const Atom& value)

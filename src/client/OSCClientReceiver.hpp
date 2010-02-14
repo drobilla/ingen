@@ -91,7 +91,6 @@ private:
 	LO_HANDLER(disconnection);
 	LO_HANDLER(put);
 	LO_HANDLER(set_property);
-	LO_HANDLER(set_voice_value);
 	LO_HANDLER(activity);
 };
 

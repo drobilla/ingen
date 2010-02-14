@@ -73,7 +73,6 @@ public:
 			const Shared::Resource::Properties& add);
 	void move(const Raul::Path& old_path, const Raul::Path& new_path);
 	void set_property(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
-	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value);
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 	void del(const Raul::Path& path);

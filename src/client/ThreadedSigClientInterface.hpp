@@ -105,9 +105,6 @@ public:
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(property_change_slot, subject, key, value)); }
 
-	void set_voice_value(const Raul::Path& port_path, uint32_t voice, const Raul::Atom& value)
-		{ push_sig(sigc::bind(voice_value_slot, port_path, voice, value)); }
-
 	void activity(const Raul::Path& port_path)
 		{ push_sig(sigc::bind(activity_slot, port_path)); }
 
@@ -140,7 +137,6 @@ private:
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            variable_change_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            property_change_slot;
 	sigc::slot<void, Raul::Path, Raul::Atom>                      port_value_slot;
-	sigc::slot<void, Raul::Path, uint32_t, Raul::Atom>            voice_value_slot;
 	sigc::slot<void, Raul::Path>                                  activity_slot;
 };
 

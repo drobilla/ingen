@@ -37,16 +37,6 @@ ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 	, _callback_enabled(true)
 {
 	xml->get_widget("control_panel_controls_box", _control_box);
-	xml->get_widget("control_panel_voice_controls_box", _voice_control_box);
-	xml->get_widget("control_panel_all_voices_radio", _all_voices_radio);
-	xml->get_widget("control_panel_specific_voice_radio", _specific_voice_radio);
-	xml->get_widget("control_panel_voice_spinbutton", _voice_spinbutton);
-
-	_all_voices_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &ControlPanel::all_voices_selected));
-
-	_specific_voice_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &ControlPanel::specific_voice_selected));
 
 	show_all();
 }
@@ -65,23 +55,9 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	assert(node != NULL);
 	assert(poly > 0);
 
-	if (node->polyphonic()) {
-		_voice_spinbutton->set_range(0, poly - 1);
-		_voice_control_box->show();
-	} else {
-		_voice_control_box->hide();
-	}
-
 	for (NodeModel::Ports::const_iterator i = node->ports().begin(); i != node->ports().end(); ++i) {
 		add_port(*i);
 	}
-
-	node->signal_property.connect(
-			sigc::mem_fun(this, &ControlPanel::property_changed));
-
-	if (node->parent())
-		node->signal_property.connect(
-			sigc::mem_fun(this, &ControlPanel::parent_property_changed));
 
 	_callback_enabled = true;
 }
@@ -153,11 +129,6 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	_control_box->size_request(controls_size);
 	_ideal_size.first = controls_size.width;
 	_ideal_size.second = controls_size.height;
-
-	Gtk::Requisition voice_size;
-	_voice_control_box->size_request(voice_size);
-	_ideal_size.first += voice_size.width;
-	_ideal_size.second += voice_size.height;
 }
 
 
@@ -185,50 +156,10 @@ void
 ControlPanel::value_changed_atom(SharedPtr<PortModel> port, const Raul::Atom& val)
 {
 	if (_callback_enabled) {
-		if (_all_voices_radio->get_active()) {
-			App::instance().engine()->set_property(port->path(),
-				   App::instance().uris().ingen_value,
-				   val);
-			port->value(val);
-		} else {
-			int voice = _voice_spinbutton->get_value_as_int();
-			App::instance().engine()->set_voice_value(port->path(), voice, val);
-			port->value(val);
-		}
-	}
-}
-
-
-void
-ControlPanel::all_voices_selected()
-{
-	_voice_spinbutton->property_sensitive() = false;
-}
-
-
-void
-ControlPanel::specific_voice_selected()
-{
-	_voice_spinbutton->property_sensitive() = true;
-}
-
-
-void
-ControlPanel::parent_property_changed(const Raul::URI& predicate, const Raul::Atom& value)
-{
-	if (predicate == App::instance().uris().ingen_polyphony && value.type() == Atom::INT)
-		_voice_spinbutton->set_range(0, value.get_int32() - 1);
-}
-
-
-void
-ControlPanel::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
-{
-	if (predicate == App::instance().uris().ingen_polyphony && value.type() == Atom::BOOL) {
-		if (value.get_bool())
-			_voice_control_box->show();
-		else
-			_voice_control_box->hide();
+		App::instance().engine()->set_property(port->path(),
+				App::instance().uris().ingen_value,
+				val);
+		port->value(val);
 	}
 }
 

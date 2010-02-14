@@ -47,7 +47,6 @@ namespace Events {
 using namespace Shared;
 
 
-/** Omni (all voices) control setting */
 SetPortValue::SetPortValue(Engine&            engine,
                            SharedPtr<Request> request,
                            bool               queued,
@@ -56,8 +55,6 @@ SetPortValue::SetPortValue(Engine&            engine,
                            const Raul::Atom&  value)
 	: QueuedEvent(engine, request, timestamp)
 	, _queued(queued)
-	, _omni(true)
-	, _voice_num(0)
 	, _port_path(port_path)
 	, _value(value)
 	, _port(NULL)
@@ -65,25 +62,6 @@ SetPortValue::SetPortValue(Engine&            engine,
 {
 }
 
-
-/** Voice-specific control setting */
-SetPortValue::SetPortValue(Engine&            engine,
-                           SharedPtr<Request> request,
-                           bool               queued,
-                           SampleCount        timestamp,
-                           uint32_t           voice_num,
-                           const Raul::Path&  port_path,
-                           const Raul::Atom&  value)
-	: QueuedEvent(engine, request, timestamp)
-	, _queued(queued)
-	, _omni(false)
-	, _voice_num(voice_num)
-	, _port_path(port_path)
-	, _value(value)
-	, _port(NULL)
-	, _error(NO_ERROR)
-{
-}
 
 /** Internal */
 SetPortValue::SetPortValue(Engine&            engine,
@@ -93,8 +71,6 @@ SetPortValue::SetPortValue(Engine&            engine,
                            const Raul::Atom&  value)
 	: QueuedEvent(engine, request, timestamp)
 	, _queued(false)
-	, _omni(true)
-	, _voice_num(0)
 	, _port_path(port->path())
 	, _value(value)
 	, _port(port)
@@ -170,16 +146,9 @@ SetPortValue::apply(Context& context)
 				return;
 			}
 
-			if (_omni) {
-				for (uint32_t v = 0; v < _port->poly(); ++v)
-					((AudioBuffer*)_port->buffer(v).get())->set_value(
-							_value.get_float(), start, _time);
-			} else {
-				if (_voice_num < _port->poly())
-					((AudioBuffer*)_port->buffer(_voice_num).get())->set_value(
-							_value.get_float(), start, _time);
-				else
-					_error = ILLEGAL_VOICE;
+			for (uint32_t v = 0; v < _port->poly(); ++v) {
+				((AudioBuffer*)_port->buffer(v).get())->set_value(
+						_value.get_float(), start, _time);
 			}
 			return;
 		}
@@ -232,19 +201,12 @@ SetPortValue::post_process()
 	case NO_ERROR:
 		assert(_port != NULL);
 		_request->respond_ok();
-		if (_omni)
-			_engine.broadcaster()->set_property(_port_path,
-					_engine.world()->uris->ingen_value, _value);
-		else
-			_engine.broadcaster()->set_voice_value(_port_path, _voice_num, _value);
+		_engine.broadcaster()->set_property(_port_path,
+				_engine.world()->uris->ingen_value, _value);
 		break;
 	case TYPE_MISMATCH:
 		ss << "Illegal value type " << _value.type()
 			<< " for port " << _port_path << endl;
-		_request->respond_error(ss.str());
-		break;
-	case ILLEGAL_VOICE:
-		ss << "Illegal voice number " << _voice_num;
 		_request->respond_error(ss.str());
 		break;
 	case PORT_NOT_FOUND:

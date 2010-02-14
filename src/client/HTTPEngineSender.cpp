@@ -187,14 +187,6 @@ HTTPEngineSender::disconnect_all(const Path& parent_patch_path,
 
 
 void
-HTTPEngineSender::set_voice_value(const Path& port_path,
-                                  uint32_t    voice,
-                                  const Atom& value)
-{
-}
-
-
-void
 HTTPEngineSender::set_property(const URI&  subject,
                                const URI&  predicate,
                                const Atom& value)

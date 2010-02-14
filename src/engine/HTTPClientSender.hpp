@@ -88,10 +88,6 @@ public:
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value);
 
-	virtual void set_voice_value(const Raul::Path& port_path,
-	                             uint32_t          voice,
-	                             const Raul::Atom& value);
-
 	virtual void activity(const Raul::Path& path);
 
 private:

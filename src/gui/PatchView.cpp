@@ -197,7 +197,7 @@ PatchView::process_toggled()
 void
 PatchView::poly_changed()
 {
-	App::instance().engine()->set_property(_patch->meta().uri(),
+	App::instance().engine()->set_property(_patch->path(),
 			App::instance().uris().ingen_polyphony,
 			_poly_spin->get_value_as_int());
 }

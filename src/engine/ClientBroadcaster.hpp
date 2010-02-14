@@ -105,13 +105,6 @@ public:
 		BROADCAST(set_property, subject, predicate, value);
 	}
 
-	void set_voice_value(const Raul::Path& port_path,
-	                     uint32_t          voice,
-	                     const Raul::Atom& value) {
-		BROADCAST(set_voice_value, port_path, voice, value);
-	}
-
-
 	// ClientInterface
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#broadcaster"; } ///< N/A
