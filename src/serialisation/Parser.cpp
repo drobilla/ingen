@@ -569,7 +569,42 @@ Parser::parse_patch(
 		ports_i->second.insert(make_pair(key, AtomRDF::node_to_atom(model, (*i)["val"])));
 	}
 
+	std::vector<Objects::iterator> ports_by_index(patch_ports.size(), patch_ports.end());
 	for (Objects::iterator i = patch_ports.begin(); i != patch_ports.end(); ++i) {
+		Properties::const_iterator index_i = i->second.lower_bound(uris.lv2_index);
+		if (index_i == i->second.end()) {
+			error << "Patch port has no index" << endl;
+			return boost::optional<Raul::Path>();
+		}
+
+		if (index_i->second.type() != Atom::INT) {
+			error << "Patch port index has non-integer type" << endl;
+			return boost::optional<Raul::Path>();
+		}
+
+		const int32_t index = index_i->second.get_int32();
+
+		++index_i;
+		if (index_i != i->second.end() && index_i->first == uris.lv2_index) {
+			error << "Patch port has multiple indices" << endl;
+			return boost::optional<Raul::Path>();
+		}
+
+		if (index < 0 || static_cast<size_t>(index) >= patch_ports.size()) {
+			error << "Patch port index out of range" << endl;
+			return boost::optional<Raul::Path>();
+		}
+
+		if (ports_by_index[index] != patch_ports.end()) {
+			error << "Patch has several ports with index " << index << endl;
+			return boost::optional<Raul::Path>();
+		}
+
+		ports_by_index[index] = i;
+	}
+
+	for (uint32_t index = 0; index < patch_ports.size(); ++index) {
+		Objects::iterator i = ports_by_index[index];
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		const Path port_path(relative_uri(base_uri, i->first, true));
 		std::pair<Properties::iterator,Properties::iterator> types_range

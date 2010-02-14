@@ -197,6 +197,7 @@ Engine::activate()
 		// Add control input
 		Shared::Resource::Properties in_properties(control_properties);
 		in_properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
+		in_properties.insert(make_pair(uris.lv2_index, 0));
 
 		execute_and_delete_event(context, new Events::CreatePort(
 				*this, SharedPtr<Request>(), 0,
@@ -205,6 +206,8 @@ Engine::activate()
 		// Add control out
 		Shared::Resource::Properties out_properties(control_properties);
 		out_properties.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
+		out_properties.insert(make_pair(uris.lv2_index, 1));
+
 		execute_and_delete_event(context, new Events::CreatePort(
 				*this, SharedPtr<Request>(), 0,
 				"/control_out", uris.lv2ev_EventPort, true, out_properties));

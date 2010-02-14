@@ -96,12 +96,22 @@ CreatePort::pre_process()
 			? _patch->external_ports()->size()
 			: 0;
 
+		Shared::Resource::Properties::const_iterator index_i = _properties.find(uris.lv2_index);
+		if (index_i->second.type() != Atom::INT
+				|| index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
+			QueuedEvent::pre_process();
+			_error = BAD_INDEX;
+			return;
+		}
+
 		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(), _data_type, buffer_size, _is_output);
 		if (_patch->parent())
 			_patch_port->set_property(uris.rdf_instanceOf, _patch_port->meta_uri());
 
 		_patch_port->properties().insert(_properties.begin(), _properties.end());
 		_patch_port->meta().properties().insert(_properties.begin(), _properties.end());
+
+		assert(index_i->second == Atom((int)_patch_port->index()));
 
 		if (_patch_port) {
 
@@ -163,6 +173,10 @@ CreatePort::post_process()
 	case NO_ERROR:
 		_request->respond_ok();
 		_engine.broadcaster()->send_object(_patch_port, true);
+		break;
+	case BAD_INDEX:
+		msg = string("Could not create port ") + _path.str() + " (Illegal index given)";
+		_request->respond_error(msg);
 		break;
 	case UNKNOWN_TYPE:
 		msg = string("Could not create port ") + _path.str() + " (Unknown type)";
