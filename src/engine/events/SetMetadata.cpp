@@ -68,6 +68,7 @@ SetMetadata::SetMetadata(
 	, _create(create)
 	, _is_meta(meta)
 {
+#if 0
 	LOG(debug) << "Set " << subject << " {" << endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
@@ -79,6 +80,7 @@ SetMetadata::SetMetadata(
 	for (iterator i = remove.begin(); i != remove.end(); ++i)
 		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 	LOG(debug) << "}" << endl;
+#endif
 }
 
 

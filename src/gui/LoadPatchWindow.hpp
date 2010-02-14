@@ -52,29 +52,29 @@ public:
 
 	void set_patch(SharedPtr<PatchModel> patch);
 
-	void set_replace() { _replace = true; }
-	void set_merge()   { _replace = false; }
-
 	void present(SharedPtr<PatchModel> patch, GraphObject::Properties data);
 
 protected:
 	void on_show();
 
 private:
+	void poly_voices_selected();
 	void poly_from_file_selected();
-	void poly_from_user_selected();
+	void merge_ports_selected();
+	void insert_ports_selected();
 	void ok_clicked();
 	void cancel_clicked();
 
 	GraphObject::Properties _initial_data;
 
 	SharedPtr<PatchModel> _patch;
-	bool                  _replace;
+	bool                  _merge_ports;
 
-	Gtk::RadioButton* _poly_from_current_radio;
+	Gtk::RadioButton* _poly_voices_radio;
 	Gtk::RadioButton* _poly_from_file_radio;
-	Gtk::RadioButton* _poly_from_user_radio;
 	Gtk::SpinButton*  _poly_spinbutton;
+	Gtk::RadioButton* _merge_ports_radio;
+	Gtk::RadioButton* _insert_ports_radio;
 	Gtk::Button*      _ok_button;
 	Gtk::Button*      _cancel_button;
 };

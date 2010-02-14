@@ -18,6 +18,7 @@
 #include <set>
 #include <locale.h>
 #include <glibmm/ustring.h>
+#include <glibmm/miscutils.h>
 #include "raul/log.hpp"
 #include "redlandmm/Model.hpp"
 #include "redlandmm/Node.hpp"
@@ -43,33 +44,16 @@ namespace Serialisation {
 static Glib::ustring
 relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 {
-	Glib::ustring ret;
-	if (uri.substr(0, base.length()) == base) {
-		ret = (leading_slash ? "/" : "") + uri.substr(base.length());
-		while (ret[0] == '#' || ret[0] == '/')
-			ret = ret.substr(1);
-		if (leading_slash && ret[0] != '/')
-			ret = string("/") + ret;
-		return ret;
-	}
+	raptor_uri* base_uri = raptor_new_uri((const unsigned char*)base.c_str());
+	raptor_uri* full_uri = raptor_new_uri((const unsigned char*)uri.c_str());
 
-	size_t last_slash = base.find_last_of("/");
-	if (last_slash != string::npos)
-		base = base.substr(0, last_slash + 1);
+	Glib::ustring ret((const char*)raptor_uri_to_relative_uri_string(base_uri, full_uri));
 
-	size_t last_hash = base.find_last_of("#");
-	if (last_hash != string::npos)
-		base = base.substr(0, last_hash + 1);
+	raptor_free_uri(base_uri);
+	raptor_free_uri(full_uri);
 
-	if (uri.length() >= base.length() && uri.substr(0, base.length()) == base)
-		ret = uri.substr(base.length());
-	else
-		ret = uri;
-
-	if (leading_slash && (ret.empty() || ret[0] != '/'))
-		ret = "/" + ret;
-	else if (!leading_slash && !ret.empty() && ret[0] == '/')
-		ret = ret.substr(1);
+	if (leading_slash && ret[0] != '/')
+		ret = Glib::ustring("/") + ret;
 
 	return ret;
 }
@@ -371,17 +355,18 @@ Parser::parse_patch(
 
 	const Glib::ustring base_uri = model.base_uri().to_string();
 
-	string symbol;
+	Raul::Symbol symbol = "_";
 	if (a_symbol) {
-		symbol = a_symbol->c_str();
-	} else { // Guess symbol from base URI (filename) if we need to
-		symbol = base_uri.substr(base_uri.find_last_of("/") + 1);
-		symbol = symbol.substr(0, symbol.find("."));
-		if (!symbol.empty())
-			symbol = Path::nameify(symbol);
+		symbol = *a_symbol;
+	} else {
+		const std::string basename = Glib::path_get_basename(base_uri);
+		symbol = Raul::Symbol::symbolify(basename.substr(0, basename.find('.')));
 	}
 
 	string patch_path_str = relative_uri(base_uri, subject_node.to_string(), true);
+	if (parent && a_symbol)
+		patch_path_str = parent->child(*a_symbol).str();
+
 	if (!Path::is_valid(patch_path_str)) {
 		LOG(error) << "Patch has invalid path: " << patch_path_str << endl;
 		return boost::optional<Raul::Path>();
@@ -472,7 +457,7 @@ Parser::parse_patch(
 
 	/* Create patch nodes */
 	for (Objects::iterator i = patch_nodes.begin(); i != patch_nodes.end(); ++i) {
-		const Path      node_path = Path(relative_uri(base_uri, i->first, true));
+		const Path      node_path = patch_path.child(relative_uri(base_uri, i->first, false));
 		Types::iterator type_i    = types.find(i->first);
 		if (type_i == types.end())
 			continue;
@@ -489,7 +474,7 @@ Parser::parse_patch(
 		Types::iterator type_i = types.find(i->first);
 		if (type_i == types.end())
 			continue;
-		const Path node_path(relative_uri(base_uri, i->first, true));
+		const Path node_path = patch_path.child(relative_uri(base_uri, i->first, false));
 		Resource::Properties props;
 		props.insert(make_pair(uris.rdf_type,       Raul::URI(uris.ingen_Node)));
 		props.insert(make_pair(uris.rdf_instanceOf, Raul::URI(type_i->second)));
@@ -520,7 +505,7 @@ Parser::parse_patch(
 		if (p == node_ports.end())
 			p = node_ports.insert(make_pair(port_uri, Properties())).first;
 
-		const Path   node_path(relative_uri(base_uri, node_uri, true));
+		const Path   node_path = patch_path.child(relative_uri(base_uri, node_uri, false));
 		const Symbol port_sym  = port_uri.substr(node_uri.length() + 1);
 		const Path   port_path = node_path.child(port_sym);
 		const string key       = (*i)["key"].to_string();
@@ -528,7 +513,7 @@ Parser::parse_patch(
 	}
 
 	for (Objects::iterator i = node_ports.begin(); i != node_ports.end(); ++i) {
-		target->put(Raul::Path(relative_uri(base_uri, i->first, true)), i->second);
+		target->put(patch_path.child(relative_uri(base_uri, i->first, false)), i->second);
 	}
 
 
@@ -561,7 +546,7 @@ Parser::parse_patch(
 	for (Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
 		const string port_uri  = (*i)["port"].to_string();
-		const Path   port_path(Path(relative_uri(base_uri, port_uri, true)));
+		const Path   port_path = patch_path.child(relative_uri(base_uri, port_uri, false));
 		const string key       = (*i)["key"].to_string();
 		Objects::iterator ports_i = patch_ports.find(port_uri);
 		if (ports_i == patch_ports.end())
@@ -606,7 +591,7 @@ Parser::parse_patch(
 	for (uint32_t index = 0; index < patch_ports.size(); ++index) {
 		Objects::iterator i = ports_by_index[index];
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
-		const Path port_path(relative_uri(base_uri, i->first, true));
+		const Path port_path = patch_path.child(relative_uri(base_uri, i->first, false));
 		std::pair<Properties::iterator,Properties::iterator> types_range
 				= i->second.equal_range(uris.rdf_type);
 		if (types_range.first == i->second.end()) {
@@ -639,7 +624,7 @@ Parser::parse_patch(
 	}
 
 	parse_properties(world, target, model, subject_node, patch_path, data);
-	parse_connections(world, target, model, subject_node, "/");
+	parse_connections(world, target, model, subject_node, patch_path);
 
 
 	/* Enable */
@@ -722,17 +707,13 @@ Parser::parse_connections(
 
 	const Glib::ustring& base_uri = model.base_uri().to_string();
 
+	std::cout << "PARSE CONNECTIONS " << subject << " : " << parent << endl;
 	Redland::Query::Results results = query.run(*world->rdf_world, model);
 	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
 		Glib::Mutex::Lock lock(world->rdf_world->mutex());
-		string src_path = parent.base() + relative_uri(base_uri, (*i)["src"].to_string(), false);
-		string dst_path = parent.base() + relative_uri(base_uri, (*i)["dst"].to_string(), false);
-		if (Path::is_valid(src_path) && Path::is_valid(dst_path)) {
-			target->connect(src_path, dst_path);
-		} else {
-			LOG(error) << "Invalid path in connection "
-				<< src_path << " => " <<  dst_path << endl;
-		}
+		const Path src_path(parent.child(relative_uri(base_uri, (*i)["src"].to_string(), false)));
+		const Path dst_path(parent.child(relative_uri(base_uri, (*i)["dst"].to_string(), false)));
+		target->connect(src_path, dst_path);
 	}
 
 	return true;

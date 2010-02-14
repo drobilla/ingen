@@ -51,24 +51,23 @@ protected:
 	void on_show();
 
 private:
-	void disable_name_entry();
-	void enable_name_entry();
 	void disable_poly_spinner();
 	void enable_poly_spinner();
 
 	void ok_clicked();
 	void cancel_clicked();
+	void selection_changed();
+
+	Raul::Symbol symbol_from_filename(const Glib::ustring& filename);
+	Raul::Symbol avoid_symbol_clash(const Raul::Symbol& symbol);
 
 	GraphObject::Properties _initial_data;
 
 	SharedPtr<PatchModel> _patch;
 
-	Gtk::RadioButton* _name_from_file_radio;
-	Gtk::RadioButton* _name_from_user_radio;
-	Gtk::Entry*       _name_entry;
+	Gtk::Entry*       _symbol_entry;
+	Gtk::RadioButton* _poly_voices_radio;
 	Gtk::RadioButton* _poly_from_file_radio;
-	Gtk::RadioButton* _poly_from_parent_radio;
-	Gtk::RadioButton* _poly_from_user_radio;
 	Gtk::SpinButton*  _poly_spinbutton;
 	Gtk::Button*      _ok_button;
 	Gtk::Button*      _cancel_button;

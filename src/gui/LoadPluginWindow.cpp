@@ -38,7 +38,7 @@ namespace GUI {
 
 LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Window(cobject)
-	, _plugin_name_offset(0)
+	, _name_offset(0)
 	, _has_shown(false)
 	, _refresh_list(true)
 {
@@ -290,23 +290,27 @@ LoadPluginWindow::plugin_selection_changed()
 {
 	size_t n_selected = _selection->get_selected_rows().size();
 	if (n_selected == 0) {
-		_plugin_name_offset = 0;
+		_name_offset = 0;
 		_node_name_entry->set_text("");
+		_node_name_entry->set_sensitive(false);
 	} else if (n_selected == 1) {
 		Gtk::TreeModel::iterator iter = _plugins_liststore->get_iter(
 				*_selection->get_selected_rows().begin());
 		if (iter) {
 			Gtk::TreeModel::Row row = *iter;
 			boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin);
-			_plugin_name_offset = App::instance().store()->child_name_offset(
+			_name_offset = App::instance().store()->child_name_offset(
 					_patch->path(), p->default_node_symbol());
-			_node_name_entry->set_text(generate_module_name(p, _plugin_name_offset));
+			_node_name_entry->set_text(generate_module_name(p, _name_offset));
+			_node_name_entry->set_sensitive(true);
 		} else {
-			_plugin_name_offset = 0;
+			_name_offset = 0;
 			_node_name_entry->set_text("");
+			_node_name_entry->set_sensitive(false);
 		}
 	} else {
-		_node_name_entry->set_text(NAME_ENTRY_MULTI_STRING);
+		_node_name_entry->set_text("");
+		_node_name_entry->set_sensitive(false);
 	}
 }
 
@@ -338,7 +342,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	string                 name       = _node_name_entry->get_text();
 
 	if (name.empty() || name == NAME_ENTRY_MULTI_STRING)
-		name = generate_module_name(plugin, _plugin_name_offset);
+		name = generate_module_name(plugin, _name_offset);
 
 	if (name.empty() || !Symbol::is_valid(name)) {
 		Gtk::MessageDialog dialog(*this,
@@ -355,7 +359,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		App::instance().engine()->put(path, props);
 
 		if (_selection->get_selected_rows().size() == 1)
-			_node_name_entry->set_text(generate_module_name(plugin, _plugin_name_offset + 1));
+			_node_name_entry->set_text(generate_module_name(plugin, _name_offset + 1));
 
 		// Cascade next node
 		Atom& x = _initial_data.find(uris.ingenui_canvas_x)->second;
@@ -372,7 +376,7 @@ LoadPluginWindow::add_clicked()
 	_selection->selected_foreach_iter(
 			sigc::mem_fun(*this, &LoadPluginWindow::load_plugin));
 
-	++_plugin_name_offset;
+	++_name_offset;
 }
 
 

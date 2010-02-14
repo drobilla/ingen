@@ -130,7 +130,7 @@ private:
 
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
-	int _plugin_name_offset; // see comments for generate_plugin_name
+	int _name_offset; // see comments for generate_plugin_name
 
 	bool              _has_shown;
 	bool              _refresh_list;

@@ -269,8 +269,6 @@ WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Prop
 	if (w != _patch_windows.end())
 		_load_patch_win->set_transient_for(*w->second);
 
-	_load_patch_win->set_merge(); // Import is the only choice
-
 	_load_patch_win->present(patch, data);
 }
 

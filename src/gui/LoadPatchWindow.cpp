@@ -39,27 +39,30 @@ namespace GUI {
 
 LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::FileChooserDialog(cobject)
-	, _replace(true)
+	, _merge_ports(true)
 {
-	xml->get_widget("load_patch_poly_from_current_radio", _poly_from_current_radio);
+	xml->get_widget("load_patch_poly_voices_radio", _poly_voices_radio);
 	xml->get_widget("load_patch_poly_from_file_radio", _poly_from_file_radio);
-	xml->get_widget("load_patch_poly_from_user_radio", _poly_from_user_radio);
 	xml->get_widget("load_patch_poly_spinbutton", _poly_spinbutton);
+	xml->get_widget("load_patch_merge_ports_radio", _merge_ports_radio);
+	xml->get_widget("load_patch_insert_ports_radio", _insert_ports_radio);
 	xml->get_widget("load_patch_ok_button", _ok_button);
 	xml->get_widget("load_patch_cancel_button", _cancel_button);
 
-	_poly_from_current_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
 	_poly_from_file_radio->signal_toggled().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::poly_from_file_selected));
-	_poly_from_user_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::poly_from_user_selected));
+	_poly_voices_radio->signal_toggled().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::poly_voices_selected));
+	_merge_ports_radio->signal_toggled().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::merge_ports_selected));
+	_insert_ports_radio->signal_toggled().connect(
+			sigc::mem_fun(this, &LoadPatchWindow::insert_ports_selected));
 	_ok_button->signal_clicked().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::ok_clicked));
 	_cancel_button->signal_clicked().connect(
 			sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
 
-	_poly_from_current_radio->set_active(true);
+	_poly_voices_radio->set_active(true);
 
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.om");
@@ -89,7 +92,7 @@ LoadPatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties da
 }
 
 
-/** Sets the patch controller for this window and initializes everything.
+/** Sets the patch model for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
  */
@@ -97,6 +100,7 @@ void
 LoadPatchWindow::set_patch(SharedPtr<PatchModel> patch)
 {
 	_patch = patch;
+	_poly_spinbutton->set_value(patch->poly());
 }
 
 
@@ -120,9 +124,22 @@ LoadPatchWindow::poly_from_file_selected()
 
 
 void
-LoadPatchWindow::poly_from_user_selected()
+LoadPatchWindow::poly_voices_selected()
 {
 	_poly_spinbutton->property_sensitive() = true;
+}
+
+void
+LoadPatchWindow::merge_ports_selected()
+{
+	_merge_ports = true;
+}
+
+
+void
+LoadPatchWindow::insert_ports_selected()
+{
+	_merge_ports = false;
 }
 
 
@@ -136,7 +153,7 @@ LoadPatchWindow::ok_clicked()
 	optional<Path>   parent;
 	optional<Symbol> symbol;
 
-	if (_poly_from_user_radio->get_active())
+	if (_poly_voices_radio->get_active())
 		_initial_data.insert(make_pair(
 				App::instance().uris().ingen_polyphony,
 				_poly_spinbutton->get_value_as_int()));
@@ -145,6 +162,8 @@ LoadPatchWindow::ok_clicked()
 		parent = _patch->path().parent();
 		symbol = _patch->symbol();
 	}
+
+	cout << "MERGE PORTS: " << _merge_ports << endl;
 
 	_patch.reset();
 	hide();

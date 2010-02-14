@@ -831,191 +831,140 @@
         <property name="visible">True</property>
         <property name="spacing">24</property>
         <child>
-          <widget class="GtkTable" id="table6">
+          <widget class="GtkAlignment" id="alignment1">
             <property name="visible">True</property>
-            <property name="n_rows">2</property>
-            <property name="n_columns">4</property>
-            <property name="column_spacing">12</property>
-            <property name="row_spacing">4</property>
+            <property name="xalign">0</property>
+            <property name="xscale">0</property>
+            <property name="yscale">0</property>
             <child>
-              <widget class="GtkLabel" id="label79">
+              <widget class="GtkTable" id="table6">
                 <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;b&gt;Name: &lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-              </widget>
-              <packing>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label80">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;b&gt;Polyphony: &lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-              </widget>
-              <packing>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkRadioButton" id="load_subpatch_name_from_file_radio">
-                <property name="label" translatable="yes">Load from file</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip" translatable="yes">Use the name stored in the patch file</property>
-                <property name="use_underline">True</property>
-                <property name="active">True</property>
-                <property name="draw_indicator">True</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkRadioButton" id="load_subpatch_poly_from_file_radio">
-                <property name="label" translatable="yes">Load from file</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip" translatable="yes">Use the polyphony value stored in the patch file</property>
-                <property name="use_underline">True</property>
-                <property name="active">True</property>
-                <property name="draw_indicator">True</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkHBox" id="hbox46">
-                <property name="visible">True</property>
+                <property name="n_rows">2</property>
+                <property name="n_columns">3</property>
+                <property name="column_spacing">12</property>
+                <property name="row_spacing">12</property>
                 <child>
-                  <widget class="GtkRadioButton" id="load_subpatch_poly_from_user_radio">
-                    <property name="label" translatable="yes">Specify: </property>
+                  <widget class="GtkLabel" id="label79">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes">_Symbol: </property>
+                    <property name="use_markup">True</property>
+                    <property name="use_underline">True</property>
+                    <property name="mnemonic_widget">load_subpatch_symbol_entry</property>
+                  </widget>
+                  <packing>
+                    <property name="x_options">GTK_FILL</property>
+                    <property name="y_options"></property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkLabel" id="label80">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes">Polyphony: </property>
+                    <property name="use_markup">True</property>
+                  </widget>
+                  <packing>
+                    <property name="top_attach">1</property>
+                    <property name="bottom_attach">2</property>
+                    <property name="x_options">GTK_FILL</property>
+                    <property name="y_options"></property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkRadioButton" id="load_subpatch_poly_from_file_radio">
+                    <property name="label" translatable="yes">Load from _file</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
-                    <property name="tooltip" translatable="yes">Specify a custom polyphony value for new patch</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip" translatable="yes">Use the polyphony value stored in the patch file</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">load_subpatch_poly_from_file_radio</property>
+                    <property name="group">load_subpatch_poly_voices_radio</property>
                   </widget>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
+                    <property name="left_attach">2</property>
+                    <property name="right_attach">3</property>
+                    <property name="top_attach">1</property>
+                    <property name="bottom_attach">2</property>
+                    <property name="x_options">GTK_FILL</property>
+                    <property name="y_options"></property>
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkSpinButton" id="load_subpatch_poly_spinbutton">
+                  <widget class="GtkHBox" id="hbox46">
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="tooltip" translatable="yes">Specify a custom polyphony value for new patch</property>
-                    <property name="adjustment">1 0 1000 1 10 0</property>
-                    <property name="climb_rate">1</property>
+                    <child>
+                      <widget class="GtkRadioButton" id="load_subpatch_poly_voices_radio">
+                        <property name="label" translatable="yes">_Voices: </property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip" translatable="yes">Specify a custom polyphony value for new patch</property>
+                        <property name="use_underline">True</property>
+                        <property name="active">True</property>
+                        <property name="draw_indicator">True</property>
+                        <property name="group">load_subpatch_poly_from_file_radio</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkSpinButton" id="load_subpatch_poly_spinbutton">
+                        <property name="visible">True</property>
+                        <property name="sensitive">False</property>
+                        <property name="can_focus">True</property>
+                        <property name="tooltip" translatable="yes">Specify a custom polyphony value for new patch</property>
+                        <property name="invisible_char">&#x25CF;</property>
+                        <property name="adjustment">1 0 1000 1 10 0</property>
+                        <property name="climb_rate">1</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
                   </widget>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </widget>
-              <packing>
-                <property name="left_attach">3</property>
-                <property name="right_attach">4</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options">GTK_FILL</property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkRadioButton" id="load_subpatch_poly_from_parent_radio">
-                <property name="label" translatable="yes">Same as parent (?)</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip" translatable="yes">Set polyphony to the same value as the parent (containing) patch</property>
-                <property name="use_underline">True</property>
-                <property name="draw_indicator">True</property>
-                <property name="group">load_subpatch_poly_from_file_radio</property>
-              </widget>
-              <packing>
-                <property name="left_attach">2</property>
-                <property name="right_attach">3</property>
-                <property name="top_attach">1</property>
-                <property name="bottom_attach">2</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkLabel" id="label104">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-              </widget>
-              <packing>
-                <property name="left_attach">2</property>
-                <property name="right_attach">3</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkHBox" id="hbox45">
-                <property name="visible">True</property>
-                <child>
-                  <widget class="GtkRadioButton" id="load_subpatch_name_from_user_radio">
-                    <property name="label" translatable="yes">Specify: </property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
-                    <property name="tooltip" translatable="yes">Specify the name for the new patch</property>
-                    <property name="use_underline">True</property>
-                    <property name="draw_indicator">True</property>
-                    <property name="group">load_subpatch_name_from_file_radio</property>
-                  </widget>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
+                    <property name="left_attach">1</property>
+                    <property name="right_attach">2</property>
+                    <property name="top_attach">1</property>
+                    <property name="bottom_attach">2</property>
+                    <property name="x_options">GTK_FILL</property>
+                    <property name="y_options">GTK_FILL</property>
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkEntry" id="load_subpatch_name_entry">
+                  <widget class="GtkLabel" id="label104">
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
+                    <property name="xalign">0</property>
+                  </widget>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="right_attach">3</property>
+                    <property name="x_options">GTK_FILL</property>
+                    <property name="y_options"></property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkEntry" id="load_subpatch_symbol_entry">
+                    <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="tooltip" translatable="yes">Specify the name for the new patch</property>
+                    <property name="invisible_char">&#x25CF;</property>
                     <property name="activates_default">True</property>
                   </widget>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="position">1</property>
+                    <property name="left_attach">1</property>
+                    <property name="right_attach">3</property>
                   </packing>
                 </child>
               </widget>
-              <packing>
-                <property name="left_attach">3</property>
-                <property name="right_attach">4</property>
-                <property name="y_options">GTK_FILL</property>
-              </packing>
             </child>
           </widget>
           <packing>
@@ -1078,103 +1027,151 @@
       <widget class="GtkVBox" id="vbox11">
         <property name="spacing">24</property>
         <child>
-          <widget class="GtkTable" id="table14">
+          <widget class="GtkAlignment" id="alignment1">
             <property name="visible">True</property>
-            <property name="n_columns">4</property>
-            <property name="column_spacing">12</property>
-            <property name="row_spacing">4</property>
+            <property name="xalign">0</property>
+            <property name="xscale">0</property>
             <child>
-              <widget class="GtkLabel" id="label123">
+              <widget class="GtkTable" id="table14">
                 <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">&lt;b&gt;Polyphony: &lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-              </widget>
-              <packing>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkRadioButton" id="load_patch_poly_from_current_radio">
-                <property name="label" translatable="yes">Keep current</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip" translatable="yes">Use the same polyphony as the current patch</property>
-                <property name="use_underline">True</property>
-                <property name="active">True</property>
-                <property name="draw_indicator">True</property>
-              </widget>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="right_attach">2</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkRadioButton" id="load_patch_poly_from_file_radio">
-                <property name="label" translatable="yes">Load from file</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip" translatable="yes">Use the polyphony value stored in the patch file</property>
-                <property name="use_underline">True</property>
-                <property name="draw_indicator">True</property>
-                <property name="group">load_patch_poly_from_current_radio</property>
-              </widget>
-              <packing>
-                <property name="left_attach">2</property>
-                <property name="right_attach">3</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options"></property>
-              </packing>
-            </child>
-            <child>
-              <widget class="GtkHBox" id="hbox58">
-                <property name="visible">True</property>
+                <property name="n_rows">2</property>
+                <property name="n_columns">3</property>
+                <property name="column_spacing">12</property>
+                <property name="row_spacing">12</property>
                 <child>
-                  <widget class="GtkRadioButton" id="load_patch_poly_from_user_radio">
-                    <property name="label" translatable="yes">Specify:</property>
+                  <widget class="GtkLabel" id="label123">
+                    <property name="visible">True</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes">Polyphony: </property>
+                    <property name="use_markup">True</property>
+                  </widget>
+                  <packing>
+                    <property name="x_options">GTK_FILL</property>
+                    <property name="y_options"></property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkRadioButton" id="load_patch_poly_from_file_radio">
+                    <property name="label" translatable="yes">Load from _File</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip" translatable="yes">Use the polyphony value stored in the patch file</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">load_patch_poly_from_current_radio</property>
+                    <property name="group">load_patch_poly_voices_radio</property>
                   </widget>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">0</property>
+                    <property name="left_attach">2</property>
+                    <property name="right_attach">3</property>
+                    <property name="x_options">GTK_FILL</property>
+                    <property name="y_options"></property>
                   </packing>
                 </child>
                 <child>
-                  <widget class="GtkSpinButton" id="load_patch_poly_spinbutton">
+                  <widget class="GtkLabel" id="label1">
                     <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="tooltip" translatable="yes">Specify a custom polyphony value for new patch</property>
-                    <property name="adjustment">1 0 100 1 10 0</property>
-                    <property name="climb_rate">1</property>
+                    <property name="xalign">0</property>
+                    <property name="label" translatable="yes">Ports: </property>
+                    <property name="use_markup">True</property>
                   </widget>
                   <packing>
-                    <property name="expand">False</property>
-                    <property name="position">1</property>
+                    <property name="top_attach">1</property>
+                    <property name="bottom_attach">2</property>
+                    <property name="y_options">GTK_FILL</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkRadioButton" id="load_patch_insert_ports_radio">
+                    <property name="label" translatable="yes">_Insert new ports</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip" translatable="yes">Create new ports for all of the loaded patch's ports</property>
+                    <property name="use_underline">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">load_patch_merge_ports_radio</property>
+                  </widget>
+                  <packing>
+                    <property name="left_attach">2</property>
+                    <property name="right_attach">3</property>
+                    <property name="top_attach">1</property>
+                    <property name="bottom_attach">2</property>
+                    <property name="y_options">GTK_FILL</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkRadioButton" id="load_patch_merge_ports_radio">
+                    <property name="label" translatable="yes">_Merge with existing ports</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">False</property>
+                    <property name="has_tooltip">True</property>
+                    <property name="tooltip" translatable="yes">Merge current ports and loaded patch's ports wherever possible</property>
+                    <property name="use_underline">True</property>
+                    <property name="active">True</property>
+                    <property name="draw_indicator">True</property>
+                  </widget>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="right_attach">2</property>
+                    <property name="top_attach">1</property>
+                    <property name="bottom_attach">2</property>
+                    <property name="y_options">GTK_FILL</property>
+                  </packing>
+                </child>
+                <child>
+                  <widget class="GtkHBox" id="hbox58">
+                    <property name="visible">True</property>
+                    <property name="spacing">6</property>
+                    <child>
+                      <widget class="GtkRadioButton" id="load_patch_poly_voices_radio">
+                        <property name="label" translatable="yes">_Voices:</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="has_tooltip">True</property>
+                        <property name="tooltip" translatable="yes">Set polyphonic to a specific number of voices</property>
+                        <property name="use_underline">True</property>
+                        <property name="active">True</property>
+                        <property name="draw_indicator">True</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <widget class="GtkSpinButton" id="load_patch_poly_spinbutton">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="tooltip" translatable="yes">Specify a custom polyphony value for new patch</property>
+                        <property name="invisible_char">&#x25CF;</property>
+                        <property name="adjustment">1 0 100 1 10 0</property>
+                        <property name="climb_rate">1</property>
+                      </widget>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </widget>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="right_attach">2</property>
+                    <property name="x_options">GTK_FILL</property>
+                    <property name="y_options">GTK_FILL</property>
                   </packing>
                 </child>
               </widget>
-              <packing>
-                <property name="left_attach">3</property>
-                <property name="right_attach">4</property>
-                <property name="x_options">GTK_FILL</property>
-                <property name="y_options">GTK_FILL</property>
-              </packing>
             </child>
           </widget>
           <packing>
             <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="position">2</property>
           </packing>
         </child>
