@@ -53,9 +53,9 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	_plugins_liststore = Gtk::ListStore::create(_plugins_columns);
 	_plugins_treeview->set_model(_plugins_liststore);
 	_plugins_treeview->append_column("", _plugins_columns._col_icon);
-	_plugins_treeview->append_column("Name", _plugins_columns._col_name);
-	_plugins_treeview->append_column("Type", _plugins_columns._col_type);
-	_plugins_treeview->append_column("URI", _plugins_columns._col_uri);
+	_plugins_treeview->append_column("_Name", _plugins_columns._col_name);
+	_plugins_treeview->append_column("_Type", _plugins_columns._col_type);
+	_plugins_treeview->append_column("_URI", _plugins_columns._col_uri);
 
 	// This could be nicer.. store the TreeViewColumns locally maybe?
 	_plugins_treeview->get_column(1)->set_sort_column(_plugins_columns._col_name);
