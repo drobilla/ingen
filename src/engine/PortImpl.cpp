@@ -76,8 +76,9 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	else
 		_polyphonic = true;
 
-	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type",  type.uri());
-	set_property("http://lv2plug.in/ns/lv2core#index", Atom((int32_t)index));
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	add_property(uris.rdf_type,  type.uri());
+	set_property(uris.lv2_index, Atom((int32_t)index));
 	set_context(_context);
 
 	if (type == PortType::EVENTS)
