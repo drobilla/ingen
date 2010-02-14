@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-
-export INGEN_MODULE_PATH="`pwd`/../../libs/engine/.libs:`pwd`/../../libs/serialisation/.libs:`pwd`/../../libs/gui/.libs:`pwd`/../../libs/client/.libs:`pwd`/../../bindings/.libs"
-export INGEN_GLADE_PATH="`pwd`/../../libs/gui/ingen_gui.glade"
-libtool --mode=execute gdb --args ./ingen $@
