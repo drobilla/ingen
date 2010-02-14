@@ -36,6 +36,8 @@ public:
 	void*       port_data(Shared::PortType port_type);
 	const void* port_data(Shared::PortType port_type) const;
 
+	void prepare_write(Context& context);
+
 	void copy(Context& context, const Buffer* src);
 
 	void resize(size_t size);

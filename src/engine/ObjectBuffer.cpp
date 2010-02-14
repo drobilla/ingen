@@ -55,8 +55,7 @@ ObjectBuffer::ObjectBuffer(BufferFactory& factory, size_t capacity)
 		exit(EXIT_FAILURE);
 	}
 
-	object()->type = 0;
-	object()->size = capacity;
+	clear();
 }
 
 
@@ -121,6 +120,13 @@ ObjectBuffer::port_data(PortType port_type) const
 	default:
 		return _buf;
 	}
+}
+
+
+void
+ObjectBuffer::prepare_write(Context& context)
+{
+	_buf->size = _size - sizeof(LV2_Object);
 }
 
 
