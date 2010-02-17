@@ -340,6 +340,7 @@ SetMetadata::post_process()
 	case NOT_FOUND:
 		_request->respond_error((boost::format(
 				"Unable to find object `%1%'") % _subject).str());
+		break;
 	case INTERNAL:
 		_request->respond_error("Internal error");
 		break;
