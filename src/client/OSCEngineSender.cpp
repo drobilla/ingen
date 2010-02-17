@@ -89,7 +89,7 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 void
 OSCEngineSender::register_client(Shared::ClientInterface* client)
 {
-	send("/register_client", "i", next_id(), LO_ARGS_END, LO_ARGS_END);
+	send("/register_client", "i", next_id(), LO_ARGS_END);
 }
 
 

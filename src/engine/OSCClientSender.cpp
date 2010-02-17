@@ -53,7 +53,7 @@ OSCClientSender::response_ok(int32_t id)
 	if (!_enabled)
 		return;
 
-	if (lo_send(_address, "/ok", "i", id) < 0) {
+	if (lo_send(_address, "/ok", "i", id, LO_ARGS_END) < 0) {
 		Raul::error << "Unable to send OK " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
@@ -73,7 +73,7 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 	if (!_enabled)
 		return;
 
-	if (lo_send(_address, "/error", "is", id, msg.c_str()) < 0) {
+	if (lo_send(_address, "/error", "is", id, msg.c_str(), LO_ARGS_END) < 0) {
 		Raul::error << "Unable to send error " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
