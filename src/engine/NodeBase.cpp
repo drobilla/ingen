@@ -110,7 +110,7 @@ NodeBase::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		return true;
 
 	if (_ports)
-		for (size_t i=0; i < _ports->size(); ++i)
+		for (size_t i = 0; i < _ports->size(); ++i)
 			_ports->at(i)->prepare_poly(bufs, poly);
 
 	return true;

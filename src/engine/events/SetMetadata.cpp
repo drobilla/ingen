@@ -216,6 +216,7 @@ SetMetadata::pre_process()
 				} else if (key == uris.ingen_polyphony) {
 					if (value.type() == Atom::INT) {
 						op = POLYPHONY;
+						_blocking = true;
 						_patch->prepare_internal_poly(*_engine.buffer_factory(), value.get_int32());
 					} else {
 						_error = BAD_VALUE_TYPE;
@@ -314,6 +315,9 @@ SetMetadata::execute(ProcessContext& context)
 		_object->remove_property(p->first, p->second);
 
 	QueuedEvent::execute(context);
+
+	if (_blocking)
+		_request->unblock();
 }
 
 

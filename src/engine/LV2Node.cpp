@@ -91,9 +91,9 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		}
 
 		// Initialize the values of new ports
-		for (unsigned long j=0; j < num_ports(); ++j) {
-			PortImpl* const port = _ports->at(j);
-			Buffer* buffer = port->prepared_buffer(i).get();
+		for (uint32_t j = 0; j < num_ports(); ++j) {
+			PortImpl* const port   = _ports->at(j);
+			Buffer* const   buffer = port->prepared_buffer(i).get();
 
 			// FIXME: Preserve individual voice values
 			if (port->type() == PortType::CONTROL) {

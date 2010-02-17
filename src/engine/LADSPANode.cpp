@@ -43,7 +43,13 @@ using namespace Shared;
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LADSPANode::LADSPANode(PluginImpl* plugin, const string& path, bool polyphonic, PatchImpl* parent, const LADSPA_Descriptor* descriptor, SampleRate srate, size_t buffer_size)
+LADSPANode::LADSPANode(PluginImpl*              plugin,
+                       const string&            path,
+                       bool                     polyphonic,
+                       PatchImpl*               parent,
+                       const LADSPA_Descriptor* descriptor,
+                       SampleRate               srate,
+                       size_t                   buffer_size)
 	: NodeBase(plugin, path, polyphonic, parent, srate, buffer_size)
 	, _descriptor(descriptor)
 	, _instances(NULL)
@@ -55,8 +61,9 @@ LADSPANode::LADSPANode(PluginImpl* plugin, const string& path, bool polyphonic, 
 
 LADSPANode::~LADSPANode()
 {
-	for (uint32_t i=0; i < _polyphony; ++i)
-		_descriptor->cleanup((*_instances)[i]);
+	if (_instances)
+		for (uint32_t i=0; i < _polyphony; ++i)
+			_descriptor->cleanup((*_instances)[i]);
 
 	delete _instances;
 }
@@ -81,9 +88,9 @@ LADSPANode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		}
 
 		// Initialize the values of new ports
-		for (unsigned long j=0; j < num_ports(); ++j) {
-			PortImpl* const port = _ports->at(j);
-			Buffer* buffer = port->prepared_buffer(i).get();
+		for (uint32_t j = 0; j < num_ports(); ++j) {
+			PortImpl* const port   = _ports->at(j);
+			Buffer* const   buffer = port->prepared_buffer(i).get();
 
 			// FIXME: Preserve individual voice values
 			if (port->type() == PortType::CONTROL) {
