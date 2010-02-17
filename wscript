@@ -28,6 +28,8 @@ def set_options(opt):
 			help="Do not build HTTP via libsoup support, even if libsoup exists")
 	opt.add_option('--log-debug', action='store_true', default=False, dest='log_debug',
 			help="Print debugging output")
+	opt.add_option('--liblo-bundles', action='store_true', default=False, dest='liblo_bundles',
+			help="Use liblo bundle support (experimental, requires patched liblo)")
 
 def configure(conf):
 	autowaf.configure(conf)
@@ -75,6 +77,9 @@ def configure(conf):
 	
 	if Options.options.log_debug:
 		conf.define('LOG_DEBUG', 1)
+	
+	if Options.options.liblo_bundles:
+		conf.define('LIBLO_BUNDLES', 1)
 
 	conf.write_config_header('ingen-config.h')
 

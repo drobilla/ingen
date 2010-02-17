@@ -84,6 +84,10 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	// It's important this is first and returns nonzero.
 	lo_server_add_method(_server, NULL, NULL, set_response_address_cb, this);
 
+#ifdef LIBLO_BUNDLES
+	lo_server_add_bundle_handler(_server, bundle_cb, this);
+#endif
+
 	// Commands
 	lo_server_add_method(_server, "/ping", "i", ping_cb, this);
 	lo_server_add_method(_server, "/ping_queued", "i", ping_slow_cb, this);
@@ -228,10 +232,31 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 }
 
 
+#ifdef LIBLO_BUNDLES
+int
+OSCEngineReceiver::_bundle_cb(lo_bundle_edge edge)
+{
+	switch (edge) {
+	case LO_BUNDLE_BEGIN:
+		info << "BUNDLE BEGIN" << endl;
+		break;
+	case LO_BUNDLE_END:
+		info << "BUNDLE END" << endl;
+		break;
+	}
+	return 0;
+}
+#endif
+
+
 void
 OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 {
-	error << "liblo server error " << num << " for path `" << path << "' (" << msg << ")" << endl;
+	error << "liblo server error" << num;
+	if (path) {
+		error << " for path `" << path << "'";
+	}
+	error << " (" << msg << ")" << endl;
 }
 
 
@@ -581,9 +606,6 @@ OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 
 	const char* object_path = &argv[1]->s;
 	const char* key         = &argv[2]->s;
-
-	cout << "SET PROPERTY " << object_path << " : " << key << " PENDING: " <<
-		lo_server_events_pending(_server) << endl;
 
 	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
 

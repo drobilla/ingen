@@ -22,6 +22,7 @@
 #include <lo/lo.h>
 #include "QueuedEngineInterface.hpp"
 #include "Request.hpp"
+#include "ingen-config.h"
 
 namespace Ingen {
 
@@ -75,6 +76,14 @@ private:
 	friend class ReceiveThread;
 
 	ReceiveThread* _receive_thread;
+
+#ifdef LIBLO_BUNDLES
+	static int bundle_cb(lo_bundle_edge edge, void* myself) {
+		return ((OSCEngineReceiver*)myself)->_bundle_cb(edge);
+	}
+
+	int _bundle_cb(lo_bundle_edge edge);
+#endif
 
 	static void error_cb(int num, const char* msg, const char* path);
 	static int  set_response_address_cb(LO_HANDLER_ARGS, void* myself);
