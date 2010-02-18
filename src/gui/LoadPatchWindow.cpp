@@ -100,11 +100,11 @@ LoadPatchWindow::present(SharedPtr<PatchModel> patch, bool import, GraphObject::
 {
 	_import = import;
 	set_patch(patch);
-	_symbol_label->set_visible(!import);
-	_symbol_entry->set_visible(!import);
-	_ports_label->set_visible(_import);
-	_merge_ports_radio->set_visible(_import);
-	_insert_ports_radio->set_visible(_import);
+	_symbol_label->property_visible() = !import;
+	_symbol_entry->property_visible() = !import;
+	_ports_label->property_visible() = _import;
+	_merge_ports_radio->property_visible() = _import;
+	_insert_ports_radio->property_visible() = _import;
 	_initial_data = data;
 	Gtk::Window::present();
 }
