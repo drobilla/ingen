@@ -63,6 +63,11 @@ Delete::~Delete()
 void
 Delete::pre_process()
 {
+	if (_path.is_root() || _path == "path:/control_in" || _path == "path:/control_out") {
+		QueuedEvent::pre_process();
+		return;
+	}
+
 	_removed_bindings = _engine.control_bindings()->remove(_path);
 
 	_store_iterator = _engine.engine_store()->find(_path);
@@ -168,16 +173,12 @@ Delete::post_process()
 {
 	_removed_bindings.reset();
 
-	if (!_node && !_port) {
-		if (_path.is_root()) {
-			_request->respond_error("You can not destroy the root patch (/)");
-		} else {
-			string msg = string("Could not find object ") + _path.str() + " to destroy";
-			_request->respond_error(msg);
-		}
-	}
-
-	if (_patch_node_listnode) {
+	if (_path.is_root() || _path == "path:/control_in" || _path == "path:/control_out") {
+		_request->respond_error(_path.chop_scheme() + " can not be deleted");
+	} else if (!_node && !_port) {
+		string msg = string("Could not find object ") + _path.chop_scheme() + " to delete";
+		_request->respond_error(msg);
+	} else if (_patch_node_listnode) {
 		assert(_node);
 		_node->deactivate();
 		_request->respond_ok();
@@ -197,7 +198,7 @@ Delete::post_process()
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_port_listnode);
 	} else {
-		_request->respond_error("Unable to destroy object");
+		_request->respond_error("Unable to delete object " + _path.chop_scheme());
 	}
 
 	if (_driver_port) {
