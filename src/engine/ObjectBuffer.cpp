@@ -100,9 +100,17 @@ ObjectBuffer::port_data(PortType port_type)
 {
 	switch (port_type.symbol()) {
 	case PortType::CONTROL:
-		return object()->body;
 	case PortType::AUDIO:
-		return ((LV2_Vector_Body*)object()->body)->elems;
+		switch (_type.symbol()) {
+			case PortType::CONTROL:
+				return (float*)object()->body;
+			case PortType::AUDIO:
+				return ((LV2_Vector_Body*)object()->body)->elems;
+			default:
+				warn << "Audio data requested from non-audio buffer" << endl;
+				return NULL;
+		}
+		break;
 	default:
 		return _buf;
 	}
