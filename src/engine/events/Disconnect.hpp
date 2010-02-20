@@ -22,6 +22,7 @@
 #include "QueuedEvent.hpp"
 #include "types.hpp"
 #include "PatchImpl.hpp"
+#include "BufferFactory.hpp"
 
 namespace Raul {
 	template <typename T> class ListNode;
@@ -30,13 +31,10 @@ namespace Raul {
 
 namespace Ingen {
 
-class NodeImpl;
-class ConnectionImpl;
-class MidiMessage;
-class PortImpl;
+class CompiledPatch;
 class InputPort;
 class OutputPort;
-class CompiledPatch;
+class PortImpl;
 
 namespace Events {
 
@@ -60,7 +58,8 @@ public:
 			SharedPtr<Request> request,
 			SampleCount        timestamp,
 			PortImpl* const    src_port,
-			PortImpl* const    dst_port);
+			PortImpl* const    dst_port,
+			bool               reconnect_dst_port);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -87,12 +86,15 @@ private:
 	OutputPort* _src_output_port;
 	InputPort*  _dst_input_port;
 
-	bool _lookup;
-
 	PatchImpl::Connections::Node* _patch_connection;
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 
+	Raul::Array<BufferFactory::Ref>* _buffers;
+
 	ErrorType _error;
+	bool      _internal;
+	bool      _reconnect_dst_port;
+	bool      _clear_dst_port;
 };
 
 

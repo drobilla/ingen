@@ -34,6 +34,8 @@ static const size_t message_context_queue_size = 1024;
 //static const timespec main_rate     = { 0, 500000000 }; // 1/2 second
 static const timespec main_rate       = { 0, 125000000 }; // 1/8 second
 
+static const size_t event_bytes_per_frame = 4;
+
 
 } // namespace Ingen
 

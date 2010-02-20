@@ -42,8 +42,7 @@ public:
 	        const std::string& name,
 	        bool               polyphonic,
 	        PatchImpl*         parent,
-	        SampleRate         srate,
-	        size_t             buffer_size);
+	        SampleRate         srate);
 
 	~LV2Node();
 
@@ -52,7 +51,7 @@ public:
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
-	void activate();
+	void activate(BufferFactory& bufs);
 	void deactivate();
 
 	void message_run(MessageContext& context);

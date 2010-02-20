@@ -69,13 +69,12 @@ LV2Plugin::instantiate(BufferFactory&    bufs,
                        Ingen::PatchImpl* parent,
                        Engine&           engine)
 {
-	SampleCount srate       = engine.driver()->sample_rate();
-	SampleCount buffer_size = engine.driver()->buffer_size();
+	const SampleCount srate = engine.driver()->sample_rate();
 
 	load(); // FIXME: unload at some point
 
 	Glib::Mutex::Lock lock(engine.world()->rdf_world->mutex());
-	LV2Node* n = new LV2Node(this, name, polyphonic, parent, srate, buffer_size);
+	LV2Node* n = new LV2Node(this, name, polyphonic, parent, srate);
 
 	if ( ! n->instantiate(bufs) ) {
 		delete n;

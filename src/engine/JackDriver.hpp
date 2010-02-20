@@ -112,7 +112,7 @@ public:
 	bool is_realtime() const { return jack_is_realtime(_client); }
 
 	jack_client_t* jack_client()  const { return _client; }
-	SampleCount    buffer_size()  const { return _buffer_size; }
+	SampleCount    block_length() const { return _block_length; }
 	SampleCount    sample_rate()  const { return _sample_rate; }
 	bool           is_activated() const { return _is_activated; }
 
@@ -133,8 +133,8 @@ private:
 	inline static int process_cb(jack_nframes_t nframes, void* const jack_driver) {
 		return ((JackDriver*)jack_driver)->_process_cb(nframes);
 	}
-	inline static int buffer_size_cb(jack_nframes_t nframes, void* const jack_driver) {
-		return ((JackDriver*)jack_driver)->_buffer_size_cb(nframes);
+	inline static int block_length_cb(jack_nframes_t nframes, void* const jack_driver) {
+		return ((JackDriver*)jack_driver)->_block_length_cb(nframes);
 	}
 	inline static int sample_rate_cb(jack_nframes_t nframes, void* const jack_driver) {
 		return ((JackDriver*)jack_driver)->_sample_rate_cb(nframes);
@@ -144,7 +144,7 @@ private:
 	void _thread_init_cb();
 	void _shutdown_cb();
 	int  _process_cb(jack_nframes_t nframes);
-	int  _buffer_size_cb(jack_nframes_t nframes);
+	int  _block_length_cb(jack_nframes_t nframes);
 	int  _sample_rate_cb(jack_nframes_t nframes);
 
 	Engine&                _engine;
@@ -152,7 +152,7 @@ private:
 	Raul::Semaphore        _sem;
 	Raul::AtomicInt        _flag;
 	jack_client_t*         _client;
-	jack_nframes_t         _buffer_size;
+	jack_nframes_t         _block_length;
 	jack_nframes_t         _sample_rate;
 	uint32_t               _midi_event_type;
 	bool                   _is_activated;

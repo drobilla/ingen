@@ -40,7 +40,7 @@ namespace Internals {
 class NoteNode : public NodeBase
 {
 public:
-	NoteNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
+	NoteNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);
 	~NoteNode();
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
@@ -68,7 +68,7 @@ private:
 	/** Voice, one of these always exists for each voice */
 	struct Voice {
 		enum State { FREE, ACTIVE, HOLDING };
-		Voice() : state(FREE), note(0) {}
+		Voice() : state(FREE), note(0), time(0) {}
 		State state; uint8_t note; SampleCount time;
 	};
 

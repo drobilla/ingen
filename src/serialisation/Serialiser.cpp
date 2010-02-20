@@ -48,6 +48,9 @@
 #include "shared/LV2URIMap.hpp"
 #include "Serialiser.hpp"
 
+
+#include "/home/dave/code/lad/trunk/ingen/src/client/NodeModel.hpp"
+
 #define LOG(s) s << "[Serialiser] "
 
 using namespace std;

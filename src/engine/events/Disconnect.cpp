@@ -19,15 +19,18 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "events/Disconnect.hpp"
-#include "Request.hpp"
-#include "Engine.hpp"
+#include "AudioBuffer.hpp"
+#include "ClientBroadcaster.hpp"
 #include "ConnectionImpl.hpp"
+#include "DuplexPort.hpp"
+#include "Engine.hpp"
+#include "EngineStore.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
-#include "ClientBroadcaster.hpp"
 #include "PortImpl.hpp"
-#include "EngineStore.hpp"
+#include "ProcessContext.hpp"
+#include "Request.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -48,10 +51,13 @@ Disconnect::Disconnect(
 	, _patch(NULL)
 	, _src_port(NULL)
 	, _dst_port(NULL)
-	, _lookup(true)
 	, _patch_connection(NULL)
 	, _compiled_patch(NULL)
+	, _buffers(NULL)
 	, _error(NO_ERROR)
+	, _internal(false)
+	, _reconnect_dst_port(true)
+	, _clear_dst_port(false)
 {
 }
 
@@ -61,30 +67,28 @@ Disconnect::Disconnect(
 		SharedPtr<Request>   request,
 		SampleCount          timestamp,
 		PortImpl* const      src_port,
-		PortImpl* const      dst_port)
+		PortImpl* const      dst_port,
+		bool                 reconnect_dst_port)
 	: QueuedEvent(engine, request, timestamp)
 	, _src_port_path(src_port->path())
 	, _dst_port_path(dst_port->path())
 	, _patch(src_port->parent_node()->parent_patch())
 	, _src_port(src_port)
 	, _dst_port(dst_port)
-	, _lookup(false)
 	, _compiled_patch(NULL)
+	, _buffers(NULL)
 	, _error(NO_ERROR)
+	, _internal(true)
+	, _reconnect_dst_port(reconnect_dst_port)
+	, _clear_dst_port(false)
 {
-	// FIXME: These break for patch ports.. is that ok?
-	/*assert(src_port->is_output());
-	assert(dst_port->is_input());
-	assert(src_port->type() == dst_port->type());
-	assert(src_port->parent_node()->parent_patch()
-			== dst_port->parent_node()->parent_patch()); */
 }
 
 
 void
 Disconnect::pre_process()
 {
-	if (_lookup) {
+	if (!_internal) {
 		if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
 				&& _src_port_path.parent() != _dst_port_path.parent().parent()
 				&& _src_port_path.parent().parent() != _dst_port_path.parent()) {
@@ -156,8 +160,16 @@ Disconnect::pre_process()
 		}
 
 	_patch_connection = _patch->remove_connection(_src_port, _dst_port);
+	_dst_input_port->decrement_num_connections();
 
-	if (_patch->enabled())
+	if (_dst_input_port->num_connections() == 0) {
+		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
+		_dst_input_port->get_buffers(*_engine.buffer_factory(), _buffers, _dst_input_port->poly());
+		_clear_dst_port = true;
+	}
+
+
+	if (!_internal && _patch->enabled())
 		_compiled_patch = _patch->compile();
 
 	QueuedEvent::pre_process();
@@ -171,30 +183,41 @@ Disconnect::execute(ProcessContext& context)
 
 	if (_error == NO_ERROR) {
 		InputPort::Connections::Node* const port_connection
-			= _dst_input_port->remove_connection(_src_output_port);
+			= _dst_input_port->remove_connection(context, _src_output_port);
+		port_connection->elem()->recycle_buffer();
+		if (_reconnect_dst_port) {
+			if (_buffers)
+				_engine.maid()->push(_dst_input_port->set_buffers(_buffers));
+			else
+				_dst_input_port->setup_buffers(*_engine.buffer_factory(), _dst_input_port->poly());
+			_dst_input_port->connect_buffers();
+			if (_clear_dst_port) {
+				for (uint32_t v = 0; v < _dst_input_port->poly(); ++v) {
+					if (_dst_input_port->type() == PortType::CONTROL) {
+						PtrCast<AudioBuffer>(_dst_input_port->buffer(v))->set_value(
+								_dst_input_port->value().get_float(),
+								context.start(), context.start());
+					} else {
+						_dst_input_port->buffer(v)->clear();
+					}
+				}
+			}
+		} else {
+			_dst_input_port->recycle_buffers();
+		}
 
 		if (port_connection != NULL) {
 			assert(_patch_connection);
-
-			if (port_connection->elem() != _patch_connection->elem()) {
-				error << "Corrupt connections:" << endl
-					<< "\t" << port_connection->elem() << ": "
-					<< port_connection->elem()->src_port_path()
-					<< " -> " << port_connection->elem()->dst_port_path() << endl
-					<< "!=" << endl
-					<< "\t" << _patch_connection->elem() << ": "
-					<< _patch_connection->elem()->src_port_path()
-					<< " -> " << _patch_connection->elem()->dst_port_path() << endl;
-			}
 			assert(port_connection->elem() == _patch_connection->elem());
 
 			// Destroy list node, which will drop reference to connection itself
 			_engine.maid()->push(port_connection);
 			_engine.maid()->push(_patch_connection);
 
-			if (_patch->compiled_patch() != NULL)
+			if (!_internal) {
 				_engine.maid()->push(_patch->compiled_patch());
-			_patch->compiled_patch(_compiled_patch);
+				_patch->compiled_patch(_compiled_patch);
+			}
 		} else {
 			_error = CONNECTION_NOT_FOUND;
 		}

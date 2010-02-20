@@ -47,8 +47,8 @@ static InternalPlugin note_plugin(NS_INTERNALS "Note", "note");
 
 InternalPlugin& NoteNode::internal_plugin() { return note_plugin; }
 
-NoteNode::NoteNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-	: NodeBase(&note_plugin, path, polyphonic, parent, srate, buffer_size)
+NoteNode::NoteNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate)
+	: NodeBase(&note_plugin, path, polyphonic, parent, srate)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)
 	, _sustain(false)
@@ -56,26 +56,26 @@ NoteNode::NoteNode(BufferFactory& bufs, const string& path, bool polyphonic, Pat
 	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom(), _buffer_size);
+	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());
 	_midi_in_port->set_property(uris.lv2_name, "Input");
 	_ports->at(0) = _midi_in_port;
 
-	_freq_port = new OutputPort(bufs, this, "frequency", 1, _polyphony, PortType::AUDIO, 440.0f, _buffer_size);
+	_freq_port = new OutputPort(bufs, this, "frequency", 1, _polyphony, PortType::AUDIO, 440.0f);
 	_freq_port->set_property(uris.lv2_name, "Frequency");
 	_ports->at(1) = _freq_port;
 
-	_vel_port = new OutputPort(bufs, this, "velocity", 2, _polyphony, PortType::AUDIO, 0.0f, _buffer_size);
+	_vel_port = new OutputPort(bufs, this, "velocity", 2, _polyphony, PortType::AUDIO, 0.0f);
 	_vel_port->set_property(uris.lv2_minimum, 0.0f);
 	_vel_port->set_property(uris.lv2_maximum, 1.0f);
 	_vel_port->set_property(uris.lv2_name, "Velocity");
 	_ports->at(2) = _vel_port;
 
-	_gate_port = new OutputPort(bufs, this, "gate", 3, _polyphony, PortType::AUDIO, 0.0f, _buffer_size);
+	_gate_port = new OutputPort(bufs, this, "gate", 3, _polyphony, PortType::AUDIO, 0.0f);
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_gate_port->set_property(uris.lv2_name, "Gate");
 	_ports->at(3) = _gate_port;
 
-	_trig_port = new OutputPort(bufs, this, "trigger", 4, _polyphony, PortType::AUDIO, 0.0f, _buffer_size);
+	_trig_port = new OutputPort(bufs, this, "trigger", 4, _polyphony, PortType::AUDIO, 0.0f);
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_trig_port->set_property(uris.lv2_name, "Trigger");
 	_ports->at(4) = _trig_port;
@@ -99,7 +99,7 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (_prepared_voices && poly <= _prepared_voices->size())
 		return true;
 
-	_prepared_voices = new Raul::Array<Voice>(poly, *_voices);
+	_prepared_voices = new Raul::Array<Voice>(poly, *_voices, Voice());
 
 	return true;
 }
@@ -108,20 +108,16 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 NoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
-	if (!_polyphonic)
-		return true;
-
-	NodeBase::apply_poly(maid, poly);
+	if (!NodeBase::apply_poly(maid, poly))
+		return false;
 
 	if (_prepared_voices) {
-		assert(poly <= _prepared_voices->size());
+		assert(_polyphony <= _prepared_voices->size());
 		maid.push(_voices);
 		_voices = _prepared_voices;
 		_prepared_voices = NULL;
 	}
-
-	_polyphony = poly;
-	assert(_voices->size() >= _polyphony);
+	assert(_polyphony <= _voices->size());
 
 	return true;
 }
@@ -202,7 +198,6 @@ void
 NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
-	assert(time - context.start() < _buffer_size);
 	assert(note_num <= 127);
 
 	Key*   key         = &_keys[note_num];
@@ -293,7 +288,6 @@ void
 NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
-	assert(time - context.start() < _buffer_size);
 
 	Key* key = &_keys[note_num];
 
@@ -333,7 +327,6 @@ void
 NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
-	assert(time - context.start() < _buffer_size);
 
 	// Find a key to reassign to the freed voice (the newest, if there is one)
 	Key*    replace_key     = NULL;
@@ -375,7 +368,6 @@ void
 NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
-	assert(time - context.start() < _buffer_size);
 
 #ifdef LOG_DEBUG
 	LOG(debug) << "All notes off @ " << time << endl;
@@ -411,7 +403,6 @@ void
 NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
-	assert(time - context.start() < _buffer_size);
 
 	_sustain = false;
 

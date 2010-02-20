@@ -46,10 +46,11 @@ public:
 	SharedPtr<ConnectionModel> get_connection(const Raul::Path& src_port_path,
 	                                          const Raul::Path& dst_port_path) const;
 
-	uint32_t poly()               const { return _poly; }
-	uint32_t internal_polyphony() const { return _poly; }
-	bool     enabled()            const;
-	bool     polyphonic()         const;
+	//uint32_t poly()          const { return _poly; }
+	bool     enabled()       const;
+	bool     polyphonic()    const;
+
+	uint32_t internal_poly() const;
 
 	/** "editable" = arranging,connecting,adding,deleting,etc
 	 * not editable (control mode) you can just change controllers (performing)
@@ -62,8 +63,6 @@ public:
 		}
 	}
 
-	virtual Raul::Atom& set_meta_property(const Raul::URI& key, const Raul::Atom& value);
-
 	// Signals
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node;
 	sigc::signal<void, SharedPtr<NodeModel> >       signal_removed_node;
@@ -74,10 +73,9 @@ public:
 private:
 	friend class ClientStore;
 
-	PatchModel(const Raul::Path& patch_path, size_t internal_poly)
+	PatchModel(const Raul::Path& patch_path)
 		: NodeModel("http://drobilla.net/ns/ingen#Patch", patch_path)
 		, _connections(new Connections())
-		, _poly(internal_poly)
 		, _editable(true)
 	{
 	}
@@ -90,7 +88,6 @@ private:
 	void remove_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 
 	SharedPtr<Connections> _connections;
-	uint32_t               _poly;
 	bool                   _editable;
 };
 

@@ -64,6 +64,9 @@ public:
 	void process(Context& context);
 	void queue(Context& context);
 
+	void allocate_buffer(BufferFactory& bufs);
+	void recycle_buffer() { _local_buffer = NULL; }
+
 	/** Get the buffer for a particular voice.
 	 * A Connection is smart - it knows the destination port requesting the
 	 * buffer, and will return accordingly (e.g. the same buffer for every
@@ -72,14 +75,14 @@ public:
 	inline BufferFactory::Ref buffer(uint32_t voice) const {
 		if (must_mix() || must_queue()) {
 			return _local_buffer;
-		} else if ( ! _src_port->polyphonic()) {
+		} else if (_src_port->poly() == 1) {
 			return _src_port->buffer(0);
 		} else {
 			return _src_port->buffer(voice);
 		}
 	}
 
-	void set_buffer_size(BufferFactory& bufs, size_t size);
+	void update_buffer_size(Context& context, BufferFactory& bufs);
 	void prepare_poly(BufferFactory& bufs, uint32_t poly);
 	void apply_poly(Raul::Maid& maid, uint32_t poly);
 

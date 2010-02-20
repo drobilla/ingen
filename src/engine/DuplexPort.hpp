@@ -43,6 +43,7 @@ public:
 	           NodeImpl*          parent,
 	           const std::string& name,
 	           uint32_t           index,
+	           bool               polyphonic,
 	           uint32_t           poly,
 	           Shared::PortType   type,
 	           const Raul::Atom&  value,
@@ -50,6 +51,8 @@ public:
 	           bool               is_output);
 
 	virtual ~DuplexPort() {}
+
+	void get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly);
 
 	void pre_process(Context& context);
 	void post_process(Context& context);

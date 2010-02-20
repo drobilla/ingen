@@ -21,11 +21,12 @@
 #include "raul/List.hpp"
 #include "raul/Array.hpp"
 #include "util.hpp"
-#include "PluginImpl.hpp"
+#include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
-#include "PortImpl.hpp"
-#include "PatchImpl.hpp"
 #include "EngineStore.hpp"
+#include "PatchImpl.hpp"
+#include "PluginImpl.hpp"
+#include "PortImpl.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -33,12 +34,12 @@ using namespace std;
 namespace Ingen {
 
 
-NodeBase::NodeBase(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size)
-	: NodeImpl(parent, symbol, polyphonic)
+NodeBase::NodeBase(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphonic, PatchImpl* parent, SampleRate srate)
+	: NodeImpl(parent, symbol)
 	, _plugin(plugin)
-	, _polyphony((polyphonic && parent) ? parent->internal_polyphony() : 1)
+	, _polyphonic(polyphonic)
+	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
 	, _srate(srate)
-	, _buffer_size(buffer_size)
 	, _valid_ports(NULL)
 	, _input_ready(1)
 	, _process_lock(0)
@@ -51,7 +52,7 @@ NodeBase::NodeBase(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphon
 {
 	assert(_plugin);
 	assert(_polyphony > 0);
-	assert(_parent == NULL || (_polyphony == parent->internal_polyphony() || _polyphony == 1));
+	assert(_parent == NULL || (_polyphony == parent->internal_poly() || _polyphony == 1));
 }
 
 
@@ -83,21 +84,40 @@ NodeBase::plugin() const
 
 
 void
-NodeBase::activate()
+NodeBase::activate(BufferFactory& bufs)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	assert(!_activated);
 	_activated = true;
+
+	for (unsigned long p = 0; p < num_ports(); ++p) {
+		PortImpl* const port = _ports->at(p);
+		port->setup_buffers(bufs, port->poly());
+		port->connect_buffers();
+		for (uint32_t v = 0; v < _polyphony; ++v) {
+			if (!port->buffer(v))
+				continue;
+			if (port->type() == PortType::CONTROL)
+				((AudioBuffer*)port->buffer(v).get())->set_value(port->value().get_float(), 0, 0);
+			else
+				port->buffer(v)->clear();
+		}
+	}
 }
 
 
 void
 NodeBase::deactivate()
 {
-	// FIXME: Not true with monolithic GUI/engine
-	//ThreadManager::assert_thread(THREAD_POST_PROCESS);
 	assert(_activated);
 	_activated = false;
+	for (uint32_t i = 0; i < _polyphony; ++i) {
+		for (unsigned long j = 0; j < num_ports(); ++j) {
+			PortImpl* const port = _ports->at(j);
+			if (port->is_output() && port->buffer(i))
+				port->buffer(i)->clear();
+		}
+	}
 }
 
 
@@ -107,11 +127,10 @@ NodeBase::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	if (!_polyphonic)
-		return true;
+		poly = 1;
 
-	if (_ports)
-		for (size_t i = 0; i < _ports->size(); ++i)
-			_ports->at(i)->prepare_poly(bufs, poly);
+	for (size_t i = 0; i < _ports->size(); ++i)
+		_ports->at(i)->prepare_poly(bufs, poly);
 
 	return true;
 }
@@ -123,31 +142,24 @@ NodeBase::apply_poly(Raul::Maid& maid, uint32_t poly)
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	if (!_polyphonic)
-		return true;
+		poly = 1;
 
-	for (size_t i=0; i < num_ports(); ++i) {
+	_polyphony = poly;
+
+	for (size_t i = 0; i < num_ports(); ++i)
 		_ports->at(i)->apply_poly(maid, poly);
-		assert(_ports->at(i)->poly() == poly);
-	}
-
-	for (uint32_t i=0; i < num_ports(); ++i)
-		for (uint32_t j=0; j < _polyphony; ++j)
-			set_port_buffer(j, i, _ports->at(i)->prepared_buffer(j));
 
 	return true;
 }
 
 
 void
-NodeBase::set_buffer_size(BufferFactory& bufs, size_t size)
+NodeBase::set_buffer_size(Context& context, BufferFactory& bufs, PortType type, size_t size)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
-	_buffer_size = size;
-
 	if (_ports)
-		for (size_t i=0; i < _ports->size(); ++i)
-			_ports->at(i)->set_buffer_size(bufs, size);
+		for (size_t i = 0; i < _ports->size(); ++i)
+			if (_ports->at(i)->type() == type && _ports->at(i)->context() == context.id())
+				_ports->at(i)->set_buffer_size(context, bufs, size);
 }
 
 
@@ -250,6 +262,15 @@ NodeBase::reset_valid_ports()
 {
 	if (_valid_ports)
 		memset(_valid_ports, '\0', num_ports() / 8);
+}
+
+
+void
+NodeBase::set_port_buffer(uint32_t voice, uint32_t port_num, BufferFactory::Ref buf)
+{
+	/*debug << path() << " set port " << port_num << " voice " << voice
+			<< " buffer " << buf << endl;*/
+	assert(voice < _polyphony);
 }
 
 

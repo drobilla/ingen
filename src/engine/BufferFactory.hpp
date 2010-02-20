@@ -24,6 +24,7 @@
 #include "glibmm/thread.h"
 #include "raul/RingBuffer.hpp"
 #include "raul/AtomicPtr.hpp"
+#include "types.hpp"
 
 namespace Ingen {
 
@@ -40,10 +41,16 @@ public:
 
 	typedef boost::intrusive_ptr<Buffer> Ref;
 
+	static size_t audio_buffer_size(SampleCount nframes);
+	size_t        default_buffer_size(PortType type);
+
 	Ref get(Shared::PortType type, size_t size=0, bool force_create=false);
 
+	Ref silent_buffer() { return _silent_buffer; }
+
+	void set_block_length(SampleCount block_length);
+
 private:
-	friend class BufferDeleter;
 	friend class Buffer;
 	void recycle(Buffer* buf);
 
@@ -68,6 +75,8 @@ private:
 	Glib::Mutex                  _mutex;
 	Engine&                      _engine;
 	SharedPtr<Shared::LV2URIMap> _map;
+
+	Ref _silent_buffer;
 };
 
 } // namespace Ingen

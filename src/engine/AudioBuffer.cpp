@@ -36,15 +36,14 @@ namespace Ingen {
 using namespace Shared;
 
 
-AudioBuffer::AudioBuffer(BufferFactory& factory, Shared::PortType type, size_t size)
-	: ObjectBuffer(factory, size + sizeof(LV2_Object)
-			+ (type == PortType::AUDIO ? sizeof(LV2_Vector_Body) : 0))
+AudioBuffer::AudioBuffer(BufferFactory& bufs, Shared::PortType type, size_t size)
+	: ObjectBuffer(bufs, size)
 	, _state(OK)
 	, _set_value(0)
 	, _set_time(0)
 {
-	assert(size >= sizeof(Sample));
-	assert(this->size() > size);
+	assert(size >= sizeof(LV2_Object) + sizeof(Sample));
+	assert(this->size() >= size);
 	assert(data());
 	_type = type;
 
@@ -67,6 +66,8 @@ AudioBuffer::AudioBuffer(BufferFactory& factory, Shared::PortType type, size_t s
 		<< "\tdata @   " << (void*)data()
 		<< "\t(offset " << (char*)data() - (char*)object() << ")"
 		<< endl;*/
+
+	clear();
 }
 
 
@@ -111,7 +112,9 @@ AudioBuffer::set_value(Sample val, FrameTime cycle_start, FrameTime time)
 	if (offset < nframes()) {
 		set_block(val, offset, nframes() - 1);
 
-		if (offset > 0)
+		if (offset == 0)
+			_state = OK;
+		else
 			_state = HALF_SET_CYCLE_1;
 	} // else trigger at very end of block
 

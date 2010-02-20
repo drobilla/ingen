@@ -140,9 +140,6 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 
 	client->put(port->path(), port->properties());
 
-	if (graph_parent && graph_parent->internal_polyphony() > 1)
-		client->set_property(port->meta_uri(), map.ingen_polyphonic, bool(port->polyphonic()));
-
 	// Send control value
 	if (port->type() == PortType::CONTROL) {
 		//const Sample& value = PtrCast<const AudioBuffer>(port->buffer(0))->value_at(0);

@@ -21,6 +21,7 @@
 #include <stdint.h>
 #include "GraphObject.hpp"
 
+#include <iostream>
 namespace Ingen {
 namespace Shared {
 

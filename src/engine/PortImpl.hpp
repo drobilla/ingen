@@ -35,7 +35,6 @@ namespace Ingen {
 
 class NodeImpl;
 class Buffer;
-class ProcessContext;
 class BufferFactory;
 
 
@@ -55,7 +54,12 @@ public:
 	/** A port's parent is always a node, so static cast should be safe */
 	NodeImpl* parent_node() const { return (NodeImpl*)_parent; }
 
-	bool set_polyphonic(Raul::Maid& maid, bool p);
+	/** Set the buffers array for this port.
+	 *
+	 * Audio thread.  Returned value must be freed by caller.
+	 * \a buffers must be poly() long
+	 */
+	Raul::Array<BufferFactory::Ref>* set_buffers(Raul::Array<BufferFactory::Ref>* buffers);
 
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -66,7 +70,6 @@ public:
 	/** Apply a new polyphony value.
 	 *
 	 * Audio thread.
-	 *
 	 * \a poly Must be < the most recent value passed to prepare_poly.
 	 */
 	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
@@ -75,7 +78,7 @@ public:
 	void              set_value(const Raul::Atom& v) { _value = v; }
 
 	inline BufferFactory::Ref buffer(uint32_t voice) const {
-		return _buffers->at(voice);
+		return _buffers->at((_poly == 1) ? 0 : voice);
 	}
 	inline BufferFactory::Ref prepared_buffer(uint32_t voice) const {
 		return _prepared_buffers->at(voice);
@@ -83,24 +86,36 @@ public:
 
 	/** Called once per process cycle */
 	virtual void pre_process(Context& context) = 0;
-	virtual void process(ProcessContext& context) {};
 	virtual void post_process(Context& context) = 0;
 
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
+
+	virtual void get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly) = 0;
+
+	void setup_buffers(BufferFactory& bufs, uint32_t poly) {
+		get_buffers(bufs, _buffers, poly);
+	}
+
 	virtual void connect_buffers();
+	virtual void recycle_buffers();
 
 	virtual bool is_input()  const = 0;
 	virtual bool is_output() const = 0;
 
-	uint32_t         index()       const { return _index; }
-	uint32_t         poly()        const { return _poly; }
-	Shared::PortType type()        const { return _type; }
-	size_t           buffer_size() const {
-		return (_type == Shared::PortType::CONTROL) ? 1 : _buffer_size;
+	uint32_t         index() const { return _index; }
+	Shared::PortType type()  const { return _type; }
+
+	size_t buffer_size() const { return _buffer_size; }
+
+	uint32_t poly() const {
+		return _poly;
+	}
+	uint32_t prepared_poly() const {
+		return (_prepared_buffers) ? _prepared_buffers->size() : 1;
 	}
 
-	void set_buffer_size(BufferFactory& factory, size_t size);
+	void set_buffer_size(Context& context, BufferFactory& bufs, size_t size);
 
 	void broadcast(bool b) { _broadcast = b; }
 	bool broadcast()       { return _broadcast; }

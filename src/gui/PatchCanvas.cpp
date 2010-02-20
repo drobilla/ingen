@@ -658,7 +658,7 @@ PatchCanvas::paste()
 	string created = "/";
 	Resource::Properties props;
 	props.insert(make_pair(uris.rdf_type,        uris.ingen_Patch));
-	props.insert(make_pair(uris.ingen_polyphony, Raul::Atom(int32_t(_patch->poly()))));
+	props.insert(make_pair(uris.ingen_polyphony, Raul::Atom(int32_t(_patch->internal_poly()))));
 	clipboard.put(Path(), props);
 	size_t first_slash;
 	while (to_create != "/" && !to_create.empty()

@@ -120,7 +120,7 @@ LoadPatchWindow::set_patch(SharedPtr<PatchModel> patch)
 	_patch = patch;
 	_symbol_entry->set_text("");
 	_symbol_entry->set_sensitive(!_import);
-	_poly_spinbutton->set_value(patch->poly());
+	_poly_spinbutton->set_value(patch->internal_poly());
 }
 
 

@@ -166,6 +166,8 @@ Engine::activate()
 {
 	assert(_driver);
 
+	_buffer_factory->set_block_length(_driver->block_length());
+
 	_message_context->Thread::start();
 
 	uint32_t parallelism = _world->conf->option("parallelism").get_int32();
@@ -178,12 +180,11 @@ Engine::activate()
 	// Create root patch
 	PatchImpl* root_patch = _driver->root_patch();
 	if (!root_patch) {
-		root_patch = new PatchImpl(*this, "root", 1, NULL,
-				_driver->sample_rate(), _driver->buffer_size(), 1);
+		root_patch = new PatchImpl(*this, "root", 1, NULL, _driver->sample_rate(), 1);
 		root_patch->meta().set_property(uris.rdf_type, uris.ingen_Patch);
 		root_patch->meta().set_property(uris.ingen_polyphony, Raul::Atom(int32_t(1)));
 		root_patch->set_property(uris.rdf_type, uris.ingen_Node);
-		root_patch->activate();
+		root_patch->activate(*_buffer_factory);
 		_world->store->add(root_patch);
 		root_patch->compiled_patch(root_patch->compile());
 		_driver->set_root_patch(root_patch);

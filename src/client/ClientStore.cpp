@@ -249,10 +249,10 @@ void
 ClientStore::put(const URI& uri, const Resource::Properties& properties)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	LOG(debug) << "PUT " << uri << " {" << endl;
+	/*LOG(info) << "PUT " << uri << " {" << endl;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
-		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	LOG(debug) << "}" << endl;
+		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	LOG(info) << "}" << endl;*/
 
 	bool is_path = Path::is_valid(uri.str());
 	bool is_meta = ResourceImpl::is_meta_uri(uri);
@@ -292,11 +292,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	ResourceImpl::type(properties, is_patch, is_node, is_port, is_output, data_type);
 
 	if (is_patch) {
-		uint32_t poly = 1;
-		iterator p = properties.find(uris.ingen_polyphony);
-		if (p != properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
-			poly = p->second.get_int32();
-		SharedPtr<PatchModel> model(new PatchModel(path, poly));
+		SharedPtr<PatchModel> model(new PatchModel(path));
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_node) {
@@ -340,6 +336,13 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 void
 ClientStore::delta(const URI& uri, const Resource::Properties& remove, const Resource::Properties& add)
 {
+	typedef Resource::Properties::const_iterator iterator;
+	/*LOG(info) << "DELTA " << uri << " {" << endl;
+	for (iterator i = remove.begin(); i != remove.end(); ++i)
+		LOG(info) << "    - " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	for (iterator i = add.begin(); i != add.end(); ++i)
+		LOG(info) << "    + " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	LOG(info) << "}" << endl;*/
 	bool is_meta = ResourceImpl::is_meta_uri(uri);
 	string path_str = is_meta ? (string("/") + uri.chop_start("#")) : uri.str();
 	if (!Path::is_valid(path_str)) {

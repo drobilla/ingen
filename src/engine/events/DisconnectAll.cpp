@@ -48,8 +48,9 @@ DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleC
 	, _parent(NULL)
 	, _node(NULL)
 	, _port(NULL)
-	, _lookup(true)
+	, _compiled_patch(NULL)
 	, _error(NO_ERROR)
+	, _deleting(false)
 {
 }
 
@@ -63,8 +64,9 @@ DisconnectAll::DisconnectAll(Engine& engine, PatchImpl* parent, GraphObjectImpl*
 	, _parent(parent)
 	, _node(dynamic_cast<NodeImpl*>(object))
 	, _port(dynamic_cast<PortImpl*>(object))
-	, _lookup(false)
+	, _compiled_patch(NULL)
 	, _error(NO_ERROR)
+	, _deleting(true)
 {
 }
 
@@ -79,7 +81,7 @@ DisconnectAll::~DisconnectAll()
 void
 DisconnectAll::pre_process()
 {
-	if (_lookup) {
+	if (!_deleting) {
 		_parent = _engine.engine_store()->find_patch(_parent_path);
 
 		if (_parent == NULL) {
@@ -113,10 +115,11 @@ DisconnectAll::pre_process()
 		for (PatchImpl::Connections::const_iterator i = _parent->connections().begin();
 				i != _parent->connections().end(); ++i) {
 			ConnectionImpl* c = (ConnectionImpl*)i->get();
+			const bool reconnect_input = !_deleting || (c->dst_port()->parent_node() != _node);
 			if ((c->src_port()->parent_node() == _node || c->dst_port()->parent_node() == _node)
 					&& !c->pending_disconnection()) {
 				Disconnect* ev = new Disconnect(_engine,
-						SharedPtr<Request>(), _time, c->src_port(), c->dst_port());
+						SharedPtr<Request>(), _time, c->src_port(), c->dst_port(), reconnect_input);
 				ev->pre_process();
 				_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
 				c->pending_disconnection(true);
@@ -126,15 +129,19 @@ DisconnectAll::pre_process()
 		for (PatchImpl::Connections::const_iterator i = _parent->connections().begin();
 				i != _parent->connections().end(); ++i) {
 			ConnectionImpl* c = (ConnectionImpl*)i->get();
+			const bool reconnect_input = !_deleting || (c->dst_port()->parent_node() != _node);
 			if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {
 				Disconnect* ev = new Disconnect(_engine,
-						SharedPtr<Request>(), _time, c->src_port(), c->dst_port());
+						SharedPtr<Request>(), _time, c->src_port(), c->dst_port(), reconnect_input);
 				ev->pre_process();
 				_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
 				c->pending_disconnection(true);
 			}
 		}
 	}
+
+	if (!_deleting && _parent->enabled())
+		_compiled_patch = _parent->compile();
 
 	QueuedEvent::pre_process();
 }
@@ -146,9 +153,13 @@ DisconnectAll::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin(); i != _disconnect_events.end(); ++i)
+		for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin();
+				i != _disconnect_events.end(); ++i)
 			(*i)->execute(context);
 	}
+
+	_engine.maid()->push(_parent->compiled_patch());
+	_parent->compiled_patch(_compiled_patch);
 }
 
 

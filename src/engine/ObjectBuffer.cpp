@@ -38,8 +38,8 @@ using namespace Shared;
 /** Allocate a new object buffer.
  * \a capacity is in bytes, including LV2_Object header
  */
-ObjectBuffer::ObjectBuffer(BufferFactory& factory, size_t capacity)
-	: Buffer(factory, PortType(PortType::VALUE), capacity)
+ObjectBuffer::ObjectBuffer(BufferFactory& bufs, size_t capacity)
+	: Buffer(bufs, PortType(PortType::VALUE), capacity)
 {
 	capacity += sizeof(LV2_Object);
 

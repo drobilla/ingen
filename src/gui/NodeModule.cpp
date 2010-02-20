@@ -390,10 +390,13 @@ NodeModule::store_location()
 
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		Shared::Resource::Properties props;
-		props.insert(make_pair(uris.ingenui_canvas_x, Atom(x)));
-		props.insert(make_pair(uris.ingenui_canvas_y, Atom(y)));
-		App::instance().engine()->put(_node->path(), props);
+		Shared::Resource::Properties remove;
+		remove.insert(make_pair(uris.ingenui_canvas_x, uris.wildcard));
+		remove.insert(make_pair(uris.ingenui_canvas_y, uris.wildcard));
+		Shared::Resource::Properties add;
+		add.insert(make_pair(uris.ingenui_canvas_x, Atom(x)));
+		add.insert(make_pair(uris.ingenui_canvas_y, Atom(y)));
+		App::instance().engine()->delta(_node->path(), remove, add);
 	}
 }
 

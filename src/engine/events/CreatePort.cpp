@@ -90,7 +90,7 @@ CreatePort::pre_process()
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());
 
-		size_t buffer_size = _engine.driver()->buffer_size();
+		size_t buffer_size = _engine.buffer_factory()->default_buffer_size(_data_type);
 
 		const uint32_t old_num_ports = (_patch->external_ports())
 			? _patch->external_ports()->size()
@@ -104,7 +104,11 @@ CreatePort::pre_process()
 			return;
 		}
 
-		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(), _data_type, buffer_size, _is_output);
+		Shared::Resource::Properties::const_iterator poly_i = _properties.find(uris.ingen_polyphonic);
+		bool polyphonic = (poly_i != _properties.end() && poly_i->second.type() == Atom::BOOL
+				&& poly_i->second.get_bool());
+
+		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(), _data_type, buffer_size, _is_output, polyphonic);
 		if (_patch->parent())
 			_patch_port->set_property(uris.rdf_instanceOf, _patch_port->meta_uri());
 
@@ -121,7 +125,7 @@ CreatePort::pre_process()
 				_patch->add_input(new Raul::List<PortImpl*>::Node(_patch_port));
 
 			if (_patch->external_ports())
-				_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, *_patch->external_ports());
+				_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, *_patch->external_ports(), NULL);
 			else
 				_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, NULL);
 

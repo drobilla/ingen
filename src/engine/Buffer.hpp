@@ -37,8 +37,8 @@ class BufferFactory;
 class Buffer : public boost::noncopyable, public Raul::Deletable
 {
 public:
-	Buffer(BufferFactory& factory, Shared::PortType type, size_t size)
-		: _factory(factory)
+	Buffer(BufferFactory& bufs, Shared::PortType type, size_t size)
+		: _factory(bufs)
 		, _type(type)
 		, _size(size)
 		, _refs(0)

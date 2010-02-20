@@ -55,11 +55,8 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 	if (must_mix() || must_queue())
 		_local_buffer = bufs.get(dst_port->type(), dst_port->buffer_size(), true);
 
-
 	if (must_queue())
 		_queue = new Raul::RingBuffer<LV2_Object>(src_port->buffer_size() * 2);
-
-	//dump();
 }
 
 
@@ -68,24 +65,38 @@ ConnectionImpl::dump() const
 {
 	debug << _src_port->path() << " -> " << _dst_port->path()
 		<< (must_mix()   ? " (MIX) " : " (DIRECT) ")
-		<< (must_queue() ? " (QUEUE)" : " (NOQUEUE)") << endl;
+		<< (must_queue() ? " (QUEUE)" : " (NOQUEUE) ")
+		<< "POLY: " << _src_port->poly() << " => " << _dst_port->poly() << endl;
 }
 
 
 void
-ConnectionImpl::set_buffer_size(BufferFactory& bufs, size_t size)
+ConnectionImpl::update_buffer_size(Context& context, BufferFactory& bufs)
 {
-	if (must_mix())
-		_local_buffer = bufs.get(_dst_port->type(), _dst_port->buffer(0)->size());
+	if (must_mix() || must_queue())
+		allocate_buffer(bufs);
+}
+
+
+void
+ConnectionImpl::allocate_buffer(BufferFactory& bufs)
+{
+	if (!_local_buffer)
+		_local_buffer = bufs.get(_dst_port->type(), _dst_port->buffer_size());
 }
 
 
 void
 ConnectionImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
-	_src_port->prepare_poly(bufs, poly);
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	if (must_mix())
+	assert(_src_port->prepared_poly() == _dst_port->prepared_poly()
+			|| _src_port->prepared_poly() == 1
+			|| _dst_port->prepared_poly() == 1);
+
+	const bool mix = _src_port->prepared_poly() > _dst_port->prepared_poly();
+	if ((mix || must_queue()) && !_local_buffer)
 		_local_buffer = bufs.get(_dst_port->type(), _dst_port->buffer(0)->size());
 }
 
@@ -93,12 +104,15 @@ ConnectionImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 void
 ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
-	_src_port->apply_poly(maid, poly);
+	ThreadManager::assert_thread(THREAD_PROCESS);
+
+	assert(_src_port->poly() == _dst_port->poly()
+			|| _src_port->poly() == 1
+			|| _dst_port->poly() == 1);
 
 	// Recycle buffer if it's no longer needed
-	if (!must_mix() && _local_buffer)
-		_local_buffer.reset(NULL);
-		//_local_buffer.reset(); // old boost is missing this
+	if (!(must_mix() || must_queue()))
+		_local_buffer = NULL;
 }
 
 
@@ -118,6 +132,8 @@ ConnectionImpl::process(Context& context)
 			return;
 		}
 
+		local_buf->clear();
+
 		if (_queue->read_space()) {
 			LV2_Object obj;
 			_queue->full_peek(sizeof(LV2_Object), &obj);
@@ -130,6 +146,7 @@ ConnectionImpl::process(Context& context)
 		for (uint32_t v = 0; v < num_srcs; ++v)
 			srcs[v] = src_port()->buffer(v).get();
 
+		_local_buffer->clear();
 		mix(context, _local_buffer.get(), srcs, num_srcs);
 	}
 }

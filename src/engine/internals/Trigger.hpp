@@ -43,7 +43,7 @@ namespace Internals {
 class TriggerNode : public NodeBase
 {
 public:
-	TriggerNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
+	TriggerNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);
 
 	void process(ProcessContext& context);
 

@@ -18,6 +18,7 @@
 #include <string>
 #include <boost/format.hpp>
 #include "raul/log.hpp"
+#include "raul/Maid.hpp"
 #include "interface/PortType.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "ClientBroadcaster.hpp"
@@ -68,19 +69,19 @@ SetMetadata::SetMetadata(
 	, _create(create)
 	, _is_meta(meta)
 {
-#if 0
-	LOG(debug) << "Set " << subject << " {" << endl;
+	/*
+	LOG(info) << "Set " << subject << " {" << endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
-		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	LOG(debug) << "}" << endl;
+		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	LOG(info) << "}" << endl;
 
-	LOG(debug) << "Unset " << subject << " {" << endl;
+	LOG(info) << "Unset " << subject << " {" << endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = remove.begin(); i != remove.end(); ++i)
-		LOG(debug) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	LOG(debug) << "}" << endl;
-#endif
+		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	LOG(info) << "}" << endl;
+	*/
 }
 
 
@@ -131,7 +132,7 @@ SetMetadata::pre_process()
 		} else if (is_node) {
 			const iterator p = _properties.find(uris.rdf_instanceOf);
 			_create_event = new CreateNode(_engine, sub_request, _time,
-					path, p->second.get_uri(), true, _properties);
+					path, p->second.get_uri(), _properties);
 		} else if (is_port) {
 			_blocking = bool(_request);
 			_create_event = new CreatePort(_engine, sub_request, _time,
@@ -159,6 +160,18 @@ SetMetadata::pre_process()
 			obj->properties().erase(p->first);
 #endif
 
+	for (Properties::const_iterator p = _remove.begin(); p != _remove.end(); ++p) {
+		const Raul::URI&  key   = p->first;
+		const Raul::Atom& value = p->second;
+		if (key == uris.ingen_controlBinding && value == uris.wildcard) {
+			PortImpl* port = dynamic_cast<PortImpl*>(_object);
+			if (port)
+				_old_bindings = _engine.control_bindings()->remove(port);
+		}
+		_object->remove_property(key, value);
+	}
+
+
 	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p) {
 		const Raul::URI&  key   = p->first;
 		const Raul::Atom& value = p->second;
@@ -176,17 +189,11 @@ SetMetadata::pre_process()
 						_error = BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.ingen_value) {
-					PortImpl* port = dynamic_cast<PortImpl*>(_object);
-					if (port) {
-						SetPortValue* ev = new SetPortValue(_engine, _request, _time, port, value);
-						ev->pre_process();
-						_set_events.push_back(ev);
-					} else {
-						_error = BAD_OBJECT_TYPE;
-					}
+					SetPortValue* ev = new SetPortValue(_engine, _request, _time, port, value);
+					ev->pre_process();
+					_set_events.push_back(ev);
 				} else if (key == uris.ingen_controlBinding) {
-					PortImpl* port = dynamic_cast<PortImpl*>(_object);
-					if (port && port->type() == Shared::PortType::CONTROL) {
+					if (port->type() == Shared::PortType::CONTROL) {
 						if (value == uris.wildcard) {
 							_engine.control_bindings()->learn(port);
 						} else if (value.type() == Atom::DICT) {
@@ -202,14 +209,9 @@ SetMetadata::pre_process()
 				if (key == uris.ingen_enabled) {
 					if (value.type() == Atom::BOOL) {
 						op = ENABLE;
-						if (value.get_bool() && !_patch->compiled_patch())
+						// FIXME: defer this until all other metadata has been processed
+						if (value.get_bool() && !_patch->enabled())
 							_compiled_patch = _patch->compile();
-					} else {
-						_error = BAD_VALUE_TYPE;
-					}
-				} else if (key == uris.ingen_polyphonic) {
-					if (value.type() == Atom::BOOL) {
-						op = POLYPHONIC;
 					} else {
 						_error = BAD_VALUE_TYPE;
 					}
@@ -222,6 +224,27 @@ SetMetadata::pre_process()
 						_error = BAD_VALUE_TYPE;
 					}
 				}
+			} else if (key == uris.ingen_polyphonic) {
+				PatchImpl* parent = dynamic_cast<PatchImpl*>(obj->parent());
+				if (parent) {
+					if (value.type() == Atom::BOOL) {
+						op = POLYPHONIC;
+						_blocking = true;
+						obj->set_property(key, value.get_bool());
+						NodeBase* node = dynamic_cast<NodeBase*>(obj);
+						if (node)
+							node->set_polyphonic(value.get_bool());
+						if (value.get_bool()) {
+							obj->prepare_poly(*_engine.buffer_factory(), parent->internal_poly());
+						} else {
+							obj->prepare_poly(*_engine.buffer_factory(), 1);
+						}
+					} else {
+						_error = BAD_VALUE_TYPE;
+					}
+				} else {
+					_error = BAD_OBJECT_TYPE;
+				}
 			}
 		}
 
@@ -231,17 +254,6 @@ SetMetadata::pre_process()
 		}
 
 		_types.push_back(op);
-	}
-
-	for (Properties::iterator p = _remove.begin(); p != _remove.end(); ++p) {
-		const Raul::URI&  key   = p->first;
-		const Raul::Atom& value = p->second;
-		if (key == uris.ingen_controlBinding && value == uris.wildcard) {
-			PortImpl* port = dynamic_cast<PortImpl*>(_object);
-			if (port)
-				_old_bindings = _engine.control_bindings()->remove(port);
-		}
-		_object->remove_property(key, value);
 	}
 
 	QueuedEvent::pre_process();
@@ -281,21 +293,30 @@ SetMetadata::execute(ProcessContext& context)
 			break;
 		case ENABLE:
 			if (value.get_bool()) {
-				if (!_patch->compiled_patch())
+				if (_compiled_patch) {
+					_engine.maid()->push(_patch->compiled_patch());
 					_patch->compiled_patch(_compiled_patch);
+				}
 				_patch->enable();
 			} else {
 				_patch->disable();
 			}
 			break;
 		case POLYPHONIC:
-			if (object)
-				if (!object->set_polyphonic(*_engine.maid(), value.get_bool()))
-					_error = INTERNAL;
+			{
+				PatchImpl* parent = reinterpret_cast<PatchImpl*>(object->parent());
+				if (value.get_bool())
+					object->apply_poly(*_engine.maid(), parent->internal_poly());
+				else
+					object->apply_poly(*_engine.maid(), 1);
+			}
 			break;
 		case POLYPHONY:
-			if (!_patch->apply_internal_poly(*_engine.maid(), value.get_int32()))
+			if (_patch->internal_poly() != static_cast<uint32_t>(value.get_int32()) &&
+					!_patch->apply_internal_poly(*_engine.buffer_factory(),
+						*_engine.maid(), value.get_int32())) {
 				_error = INTERNAL;
+			}
 			break;
 		case CONTROL_BINDING:
 			if (port) {
@@ -310,9 +331,6 @@ SetMetadata::execute(ProcessContext& context)
 			break;
 		}
 	}
-
-	for (Properties::const_iterator p = _remove.begin(); p != _remove.end(); ++p, ++t)
-		_object->remove_property(p->first, p->second);
 
 	QueuedEvent::execute(context);
 

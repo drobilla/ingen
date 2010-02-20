@@ -23,14 +23,14 @@
 #include "events/SendPortValue.hpp"
 #include "events/SendPortActivity.hpp"
 #include "AudioBuffer.hpp"
-#include "EventBuffer.hpp"
-#include "Engine.hpp"
 #include "BufferFactory.hpp"
+#include "Engine.hpp"
+#include "EventBuffer.hpp"
 #include "LV2Object.hpp"
 #include "NodeImpl.hpp"
 #include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
-#include "ProcessContext.hpp"
+#include "ThreadManager.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -48,7 +48,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
                    PortType            type,
                    const Atom&         value,
                    size_t              buffer_size)
-	: GraphObjectImpl(node, name, (type == PortType::AUDIO || type == PortType::CONTROL))
+	: GraphObjectImpl(node, name)
 	, _bufs(bufs)
 	, _index(index)
 	, _poly(poly)
@@ -59,22 +59,14 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _set_by_user(false)
 	, _last_broadcasted_value(value)
 	, _context(Context::AUDIO)
-	, _buffers(new Array<BufferFactory::Ref>(poly))
+	, _buffers(new Array<BufferFactory::Ref>(static_cast<size_t>(poly)))
 	, _prepared_buffers(NULL)
 {
 	assert(node != NULL);
 	assert(_poly > 0);
 
-	_buffers->alloc(_poly);
-	for (uint32_t v = 0; v < _poly; ++v)
-		_buffers->at(v) = bufs.get(_type, _buffer_size);
-
-	_prepared_buffers = _buffers;
-
-	if (node->parent() == NULL)
-		_polyphonic = false;
-	else
-		_polyphonic = true;
+	if (_buffer_size == 0)
+		_buffer_size = bufs.default_buffer_size(type);
 
 	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	add_property(uris.rdf_type,  type.uri());
@@ -83,43 +75,49 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 	if (type == PortType::EVENTS)
 		_broadcast = true; // send activity blips
-
-	assert(_buffers->size() > 0);
 }
 
 
 PortImpl::~PortImpl()
 {
-	for (uint32_t v = 0; v < _poly; ++v)
-		_buffers->at(v).reset(NULL); // really old boost is missing this
-		//_buffers->at(v).reset(); // old boost is missing this
-
 	delete _buffers;
 }
 
 
-bool
-PortImpl::set_polyphonic(Maid& maid, bool p)
+Raul::Array<BufferFactory::Ref>*
+PortImpl::set_buffers(Raul::Array<BufferFactory::Ref>* buffers)
 {
-	if (_type == PortType::CONTROL || _type == PortType::AUDIO)
-		return GraphObjectImpl::set_polyphonic(maid, p);
-	else
-		return (!p);
+	ThreadManager::assert_thread(THREAD_PROCESS);
+
+	Raul::Array<BufferFactory::Ref>* ret = NULL;
+	if (buffers != _buffers) {
+		ret = _buffers;
+		_buffers = buffers;
+	}
+
+	connect_buffers();
+
+	return ret;
 }
 
 
 bool
 PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
-	if (!_polyphonic || !_parent->polyphonic())
-		return true;
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+	if (_type != PortType::CONTROL && _type != PortType::AUDIO)
+		return false;
 
-	/* FIXME: poly never goes down, harsh on memory.. */
-	if (poly > _poly) {
-		_prepared_buffers = new Array<BufferFactory::Ref>(poly, *_buffers);
-		for (uint32_t i = _poly; i < _prepared_buffers->size(); ++i)
-			_prepared_buffers->at(i) = bufs.get(_type, _buffer_size);
+	if (_prepared_buffers && _prepared_buffers->size() < poly) {
+		delete _prepared_buffers;
+		_prepared_buffers = NULL;
 	}
+
+	if (!_prepared_buffers)
+		_prepared_buffers = new Array<BufferFactory::Ref>(poly, *_buffers, NULL);
+
+	get_buffers(bufs, _prepared_buffers, poly);
+	assert(prepared_poly() == poly);
 
 	return true;
 }
@@ -128,27 +126,28 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 PortImpl::apply_poly(Maid& maid, uint32_t poly)
 {
-	if (!_polyphonic || !_parent->polyphonic())
-		return true;
+	ThreadManager::assert_thread(THREAD_PROCESS);
+	if (_type != PortType::CONTROL && _type != PortType::AUDIO)
+		return false;
 
 	assert(poly <= _prepared_buffers->size());
 
 	// Apply a new set of buffers from a preceding call to prepare_poly
-	if (_prepared_buffers && _buffers != _prepared_buffers) {
-		maid.push(_buffers);
-		_buffers = _prepared_buffers;
-	}
+	maid.push(set_buffers(_prepared_buffers));
+	assert(_buffers == _prepared_buffers);
+	_prepared_buffers = NULL;
 
 	_poly = poly;
 	assert(_buffers->size() >= poly);
 	assert(this->poly() == poly);
+	assert(!_prepared_buffers);
 
 	return true;
 }
 
 
 void
-PortImpl::set_buffer_size(BufferFactory& bufs, size_t size)
+PortImpl::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
 {
 	_buffer_size = size;
 
@@ -164,6 +163,14 @@ PortImpl::connect_buffers()
 {
 	for (uint32_t v = 0; v < _poly; ++v)
 		PortImpl::parent_node()->set_port_buffer(v, _index, buffer(v));
+}
+
+
+void
+PortImpl::recycle_buffers()
+{
+	for (uint32_t v = 0; v < _poly; ++v)
+		_buffers->at(v) = NULL;
 }
 
 

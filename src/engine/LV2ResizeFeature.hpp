@@ -40,6 +40,7 @@ struct ResizeFeature : public Shared::LV2Features::Feature {
 			port->connect_buffers();
 			return true;
 		} else {
+			// TODO: Implement realtime allocator and support this in audio thread
 			return false;
 		}
 	}

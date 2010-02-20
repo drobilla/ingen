@@ -31,6 +31,7 @@ namespace Shared { class Plugin; class Node; class Port; }
 
 class Buffer;
 class BufferFactory;
+class Context;
 class MessageContext;
 class PatchImpl;
 class PluginImpl;
@@ -52,8 +53,8 @@ class ProcessContext;
 class NodeImpl : public GraphObjectImpl, virtual public Ingen::Shared::Node
 {
 public:
-	NodeImpl(GraphObjectImpl* parent, const Raul::Symbol& symbol, bool poly)
-		: GraphObjectImpl(parent, symbol, poly)
+	NodeImpl(GraphObjectImpl* parent, const Raul::Symbol& symbol)
+		: GraphObjectImpl(parent, symbol)
 	{}
 
 	/** Activate this Node.
@@ -62,25 +63,9 @@ public:
 	 * inserted in to a patch.  Any non-realtime actions that need to be
 	 * done before the Node is ready for use should be done here.
 	 */
-	virtual void activate()   = 0;
-	virtual void deactivate() = 0;
-	virtual bool activated()  = 0;
-
-	/** Prepare for a new (external) polyphony value.
-	 *
-	 * Preprocessor thread, poly is actually applied by apply_poly.
-	 * \return true on success.
-	 */
-	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly) = 0;
-
-	/** Apply a new (external) polyphony value.
-	 *
-	 * Audio thread.
-	 *
-	 * \param poly Must be < the most recent value passed to prepare_poly.
-	 * \param maid Any objects no longer needed will be pushed to this
-	 */
-	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly) = 0;
+	virtual void activate(BufferFactory& bufs) = 0;
+	virtual void deactivate()                  = 0;
+	virtual bool activated()                   = 0;
 
 	/** Parallelism: Reset flags for start of a new cycle.
 	 */
@@ -169,7 +154,8 @@ public:
 	 */
 	virtual const Shared::Plugin* plugin() const = 0;
 
-	virtual void set_buffer_size(BufferFactory& bufs, size_t size) = 0;
+	virtual void set_buffer_size(Context& context, BufferFactory& bufs,
+			Shared::PortType type, size_t size) = 0;
 };
 
 

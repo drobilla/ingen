@@ -34,8 +34,8 @@ using namespace Shared;
 /** Allocate a new event buffer.
  * \a capacity is in bytes (not number of events).
  */
-EventBuffer::EventBuffer(BufferFactory& factory, size_t capacity)
-	: Buffer(factory, PortType(PortType::EVENTS), capacity)
+EventBuffer::EventBuffer(BufferFactory& bufs, size_t capacity)
+	: Buffer(bufs, PortType(PortType::EVENTS), capacity)
 	, _latest_frames(0)
 	, _latest_subframes(0)
 {

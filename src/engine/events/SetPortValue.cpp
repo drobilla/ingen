@@ -99,7 +99,7 @@ SetPortValue::pre_process()
 		apply(*_engine.message_context());
 		_port->parent_node()->set_port_valid(_port->index());
 		_engine.message_context()->run(_port,
-				_engine.driver()->frame_time() + _engine.driver()->buffer_size());
+				_engine.driver()->frame_time() + _engine.driver()->block_length());
 	}
 
 	if (_port) {

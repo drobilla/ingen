@@ -17,6 +17,7 @@
 
 #include <cstdlib>
 #include <cassert>
+#include "shared/LV2URIMap.hpp"
 #include "util.hpp"
 #include "DuplexPort.hpp"
 #include "ConnectionImpl.hpp"
@@ -37,6 +38,7 @@ DuplexPort::DuplexPort(
 		NodeImpl*         parent,
 		const string&     name,
 		uint32_t          index,
+		bool              polyphonic,
 		uint32_t          poly,
 		PortType          type,
 		const Raul::Atom& value,
@@ -48,6 +50,17 @@ DuplexPort::DuplexPort(
 	, _is_output(is_output)
 {
 	assert(PortImpl::_parent == parent);
+	set_property(Shared::LV2URIMap::instance().ingen_polyphonic, polyphonic);
+}
+
+
+void
+DuplexPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly)
+{
+	if (_is_output)
+		return InputPort::get_buffers(bufs, buffers, poly);
+	else
+		return OutputPort::get_buffers(bufs, buffers, poly);
 }
 
 

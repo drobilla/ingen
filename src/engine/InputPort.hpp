@@ -28,8 +28,10 @@
 namespace Ingen {
 
 class ConnectionImpl;
-class OutputPort;
+class Context;
 class NodeImpl;
+class OutputPort;
+class ProcessContext;
 
 
 /** An input port on a Node or Patch.
@@ -53,31 +55,33 @@ public:
 	          uint32_t            poly,
 	          Shared::PortType    type,
 	          const Raul::Atom&   value,
-	          size_t              buffer_size);
+	          size_t              buffer_size=0);
 
 	virtual ~InputPort() {}
 
 	typedef Raul::List< SharedPtr<ConnectionImpl> > Connections;
 
 	void               add_connection(Connections::Node* c);
-	Connections::Node* remove_connection(const OutputPort* src_port);
+	Connections::Node* remove_connection(ProcessContext& context, const OutputPort* src_port);
 
-	void set_buffer_size(BufferFactory& bufs, size_t size);
-	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
+	void set_buffer_size(Context& context, BufferFactory& bufs, size_t size);
+
+	void get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly);
 
 	void pre_process(Context& context);
 	void post_process(Context& context);
 
-	size_t num_connections() const { return _connections.size(); }
+	size_t num_connections() const { return _num_connections; } ///< Pre-process thread
+	void increment_num_connections() { ++_num_connections; }
+	void decrement_num_connections() { --_num_connections; }
 
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
+	bool is_silent() const;
 
 protected:
-	void connect_buffers();
-	bool can_direct() const;
-
+	size_t      _num_connections; ///< Pre-process thread
 	Connections _connections;
 };
 

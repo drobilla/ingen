@@ -217,7 +217,6 @@ ResourceImpl::remove_properties(const Properties& p)
 
 
 void
-
 ResourceImpl::dump(std::ostream& os) const
 {
 	typedef Resource::Properties::const_iterator iterator;

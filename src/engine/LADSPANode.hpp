@@ -41,8 +41,7 @@ public:
 	           bool                     polyphonic,
 	           PatchImpl*               parent,
 	           const LADSPA_Descriptor* descriptor,
-	           SampleRate               srate,
-	           size_t                   buffer_size);
+	           SampleRate               srate);
 
 	~LADSPANode();
 
@@ -51,7 +50,7 @@ public:
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
-	void activate();
+	void activate(BufferFactory& bufs);
 	void deactivate();
 
 	void process(ProcessContext& context);

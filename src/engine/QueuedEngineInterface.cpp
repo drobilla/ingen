@@ -47,7 +47,7 @@ QueuedEngineInterface::now() const
 	// Exactly one cycle latency (some could run ASAP if we get lucky, but not always, and a slight
 	// constant latency is far better than jittery lower (average) latency
 	if (_engine.driver())
-		return _engine.driver()->frame_time() + _engine.driver()->buffer_size();
+		return _engine.driver()->frame_time() + _engine.driver()->block_length();
 	else
 		return 0;
 }

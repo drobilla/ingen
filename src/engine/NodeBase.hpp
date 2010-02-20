@@ -28,13 +28,16 @@
 #include "raul/Semaphore.hpp"
 #include "contexts.lv2/contexts.h"
 #include "interface/Port.hpp"
+#include "interface/PortType.hpp"
 #include "NodeImpl.hpp"
 
 namespace Ingen {
 
-class PluginImpl;
-class PatchImpl;
+class Context;
 class EngineStore;
+class PatchImpl;
+class PluginImpl;
+class BufferFactory;
 
 namespace Shared { class ClientInterface; }
 
@@ -50,14 +53,21 @@ public:
 	         const Raul::Symbol& symbol,
 	         bool                poly,
 	         PatchImpl*          parent,
-	         SampleRate          rate,
-	         size_t              buffer_size);
+	         SampleRate          rate);
 
 	virtual ~NodeBase();
 
-	virtual void activate();
+	virtual void activate(BufferFactory& bufs);
 	virtual void deactivate();
 	bool activated() { return _activated; }
+
+	/** Flag node as polyphonic.
+	 *
+	 * Note this will not actually allocate voices etc., prepare_poly
+	 * and apply_poly must be called after this function to truly make
+	 * a node polyphonic.
+	 */
+	virtual void set_polyphonic(bool p) { _polyphonic = p; }
 
 	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
@@ -81,12 +91,12 @@ public:
 	virtual void process(ProcessContext& context) = 0;
 	virtual void post_process(Context& context);
 
-	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf) {}
+	virtual void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf);
 
-	virtual void set_buffer_size(BufferFactory& bufs, size_t size);
+	virtual void set_buffer_size(Context& context, BufferFactory& bufs,
+			Shared::PortType type, size_t size);
 
 	SampleRate sample_rate() const { return _srate; }
-	size_t     buffer_size() const { return _buffer_size; }
 	uint32_t   num_ports()   const { return _ports ? _ports->size() : 0; }
 	uint32_t   polyphony()   const { return _polyphony; }
 	bool       traversed()   const { return _traversed; }
@@ -117,9 +127,9 @@ protected:
 
 	PluginImpl* _plugin;
 
+	bool       _polyphonic;
 	uint32_t   _polyphony;
 	SampleRate _srate;
-	size_t     _buffer_size;
 
 	void* _valid_ports; ///< Valid port flags for message context
 

@@ -44,39 +44,38 @@ ControllerNode::ControllerNode(BufferFactory& bufs,
                                const string&  path,
                                bool           polyphonic,
                                PatchImpl*     parent,
-                               SampleRate     srate,
-                               size_t         buffer_size)
-	: NodeBase(&controller_plugin, path, false, parent, srate, buffer_size)
+                               SampleRate     srate)
+	: NodeBase(&controller_plugin, path, false, parent, srate)
 	, _learning(false)
 {
 	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	_ports = new Raul::Array<PortImpl*>(6);
 
-	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom(), _buffer_size);
+	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());
 	_midi_in_port->set_property(uris.lv2_name, "Input");
 	_ports->at(0) = _midi_in_port;
 
-	_param_port = new InputPort(bufs, this, "controller", 1, 1, PortType::CONTROL, 0.0f, sizeof(Sample));
+	_param_port = new InputPort(bufs, this, "controller", 1, 1, PortType::CONTROL, 0.0f);
 	_param_port->set_property(uris.lv2_minimum, 0.0f);
 	_param_port->set_property(uris.lv2_maximum, 127.0f);
 	_param_port->set_property(uris.lv2_integer, true);
 	_param_port->set_property(uris.lv2_name, "Controller");
 	_ports->at(1) = _param_port;
 
-	_log_port = new InputPort(bufs, this, "logarithmic", 2, 1, PortType::CONTROL, 0.0f, sizeof(Sample));
+	_log_port = new InputPort(bufs, this, "logarithmic", 2, 1, PortType::CONTROL, 0.0f);
 	_log_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_log_port->set_property(uris.lv2_name, "Logarithmic");
 	_ports->at(2) = _log_port;
 
-	_min_port = new InputPort(bufs, this, "minimum", 3, 1, PortType::CONTROL, 0.0f, sizeof(Sample));
+	_min_port = new InputPort(bufs, this, "minimum", 3, 1, PortType::CONTROL, 0.0f);
 	_min_port->set_property(uris.lv2_name, "Minimum");
 	_ports->at(3) = _min_port;
 
-	_max_port = new InputPort(bufs, this, "maximum", 4, 1, PortType::CONTROL, 1.0f, sizeof(Sample));
+	_max_port = new InputPort(bufs, this, "maximum", 4, 1, PortType::CONTROL, 1.0f);
 	_max_port->set_property(uris.lv2_name, "Maximum");
 	_ports->at(4) = _max_port;
 
-	_audio_port = new OutputPort(bufs, this, "ar_output", 5, 1, PortType::AUDIO, 0.0f, _buffer_size);
+	_audio_port = new OutputPort(bufs, this, "ar_output", 5, 1, PortType::AUDIO, 0.0f);
 	_audio_port->set_property(uris.lv2_name, "Output");
 	_ports->at(5) = _audio_port;
 }
@@ -112,8 +111,6 @@ ControllerNode::process(ProcessContext& context)
 void
 ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t val, FrameTime time)
 {
-	assert(time - context.start() < _buffer_size);
-
 	Sample scaled_value;
 
 	const Sample nval = (val / 127.0f); // normalized [0, 1]

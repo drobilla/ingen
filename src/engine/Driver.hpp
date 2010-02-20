@@ -105,8 +105,8 @@ public:
 	virtual void       set_root_patch(PatchImpl* patch) = 0;
 	virtual PatchImpl* root_patch()                     = 0;
 
-	/** Return the buffer size in frames (i.e. the maximum length of a process cycle) */
-	virtual SampleCount buffer_size() const = 0;
+	/** Return the audio buffer size in frames (i.e. the maximum length of a process cycle) */
+	virtual SampleCount block_length() const = 0;
 
 	/** Return the sample rate in Hz */
 	virtual SampleCount sample_rate() const = 0;

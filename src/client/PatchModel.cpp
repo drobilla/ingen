@@ -169,22 +169,19 @@ PatchModel::enabled() const
 }
 
 
-Raul::Atom&
-PatchModel::set_meta_property(const Raul::URI& key, const Atom& value)
+uint32_t
+PatchModel::internal_poly() const
 {
-	if (key == Shared::LV2URIMap::instance().ingen_polyphony)
-		_poly = value.get_int32();
-
-	return NodeModel::set_meta_property(key, value);
+	const Raul::Atom& poly = get_property(Shared::LV2URIMap::instance().ingen_polyphony);
+	return poly.is_valid() ? poly.get_int32() : 1;
 }
 
 
 bool
 PatchModel::polyphonic() const
 {
-	return (_parent)
-		? (_poly > 1) && _poly == PtrCast<PatchModel>(_parent)->poly() && _poly > 1
-		: (_poly > 1);
+	const Raul::Atom& poly = get_property(Shared::LV2URIMap::instance().ingen_polyphonic);
+	return poly.is_valid() && poly.get_bool();
 }
 
 

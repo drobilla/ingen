@@ -47,6 +47,7 @@ InputPort::InputPort(BufferFactory&      bufs,
                      const Raul::Atom&   value,
                      size_t              buffer_size)
 	: PortImpl(bufs, parent, symbol, index, poly, type, value, buffer_size)
+	, _num_connections(0)
 {
 	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 
@@ -62,81 +63,60 @@ InputPort::InputPort(BufferFactory&      bufs,
 
 
 bool
-InputPort::can_direct() const
+InputPort::apply_poly(Maid& maid, uint32_t poly)
 {
-	return _connections.size() == 1
-		&& _connections.front()->src_port()->poly() == poly()
-		&& (_connections.front()->src_port()->type() == type()
-			|| (_connections.front()->src_port()->type() == PortType::AUDIO
-				&& type() == PortType::CONTROL));
-}
+	bool ret = PortImpl::apply_poly(maid, poly);
+	if (!ret)
+		poly = 1;
 
-
-void
-InputPort::set_buffer_size(BufferFactory& bufs, size_t size)
-{
-	PortImpl::set_buffer_size(bufs, size);
-	assert(_buffer_size = size);
-
-	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		((ConnectionImpl*)c->get())->set_buffer_size(bufs, size);
-}
-
-
-bool
-InputPort::prepare_poly(BufferFactory& bufs, uint32_t poly)
-{
-	PortImpl::prepare_poly(bufs, poly);
-
-	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		((ConnectionImpl*)c->get())->prepare_poly(bufs, poly);
+	assert(_buffers->size() >= poly);
 
 	return true;
 }
 
 
-bool
-InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
+void
+InputPort::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
 {
-	if (!_polyphonic || !_parent->polyphonic())
-		return true;
+	PortImpl::set_buffer_size(context, bufs, size);
 
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		((ConnectionImpl*)c->get())->apply_poly(maid, poly);
-
-	PortImpl::apply_poly(maid, poly);
-	assert(this->poly() == poly);
-
-	if (_connections.size() == 1) {
-		ConnectionImpl* c = _connections.begin()->get();
-		for (uint32_t v = _poly; v < poly; ++v)
-			_buffers->at(v) = c->buffer(v);
-	}
-
-	for (uint32_t i = 0; i < _poly; ++i)
-		PortImpl::parent_node()->set_port_buffer(i, _index, buffer(i));
-
-	return true;
+		((ConnectionImpl*)c->get())->update_buffer_size(context, bufs);
 }
 
 
-/** Connect buffers to the appropriate locations based on the current connections */
+/** Set \a buffers appropriately if this port has \a num_connections connections.
+ */
 void
-InputPort::connect_buffers()
+InputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly)
 {
-	// Single connection now, use it directly
-	if (_connections.size() == 1) {
-		for (uint32_t v = 0; v < _poly; ++v)
-			_buffers->at(v) = _connections.front()->buffer(v);
+	size_t num_connections = (ThreadManager::current_thread_id() == THREAD_PROCESS)
+			? _connections.size() : _num_connections;
 
-	// Use local buffers
+	if (_type == PortType::AUDIO && num_connections == 0) {
+		// Audio input with no connections, use shared zero buffer
+		for (uint32_t v = 0; v < poly; ++v)
+			buffers->at(v) = bufs.silent_buffer();
+
+	} else if (num_connections == 1) {
+		if (ThreadManager::current_thread_id() == THREAD_PROCESS) {
+			// Single connection, use it directly
+			for (uint32_t v = 0; v < poly; ++v)
+				buffers->at(v) = _connections.front()->buffer(v);
+		} else {
+			// Not in the process thread, will be set later
+			for (uint32_t v = 0; v < poly; ++v)
+				buffers->at(v) = NULL;
+		}
+
 	} else {
-		for (uint32_t v = 0; v < _poly; ++v)
-			_buffers->at(v) = _bufs.get(_type, _buffer_size); // Use local buffer
+		// Use local buffers
+		for (uint32_t v = 0; v < poly; ++v) {
+			buffers->at(v) = NULL; // Release first (potential immediate recycling)
+			buffers->at(v) = _bufs.get(_type, _buffer_size);
+			buffers->at(v)->clear();
+		}
 	}
-
-	// Connect node to buffers
-	PortImpl::connect_buffers();
 }
 
 
@@ -144,6 +124,9 @@ InputPort::connect_buffers()
  *
  * The buffer of this port will be set directly to the connection's buffer
  * if there is only one connection, since no copying/mixing needs to take place.
+ *
+ * Note that setup_buffers must be called after this before the change
+ * will audibly take effect.
  */
 void
 InputPort::add_connection(Connections::Node* const c)
@@ -151,7 +134,6 @@ InputPort::add_connection(Connections::Node* const c)
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	_connections.push_back(c);
-	connect_buffers();
 
 	// Automatically broadcast connected control inputs
 	if (_type == PortType::CONTROL)
@@ -159,9 +141,13 @@ InputPort::add_connection(Connections::Node* const c)
 }
 
 
-/** Remove a connection.  Realtime safe. */
+/** Remove a connection.  Realtime safe.
+ *
+ * Note that setup_buffers must be called after this before the change
+ * will audibly take effect.
+ */
 InputPort::Connections::Node*
-InputPort::remove_connection(const OutputPort* src_port)
+InputPort::remove_connection(ProcessContext& context, const OutputPort* src_port)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
@@ -181,12 +167,6 @@ InputPort::remove_connection(const OutputPort* src_port)
 		return NULL;
 	}
 
-	connect_buffers();
-
-	if (_connections.size() == 0)
-		for (uint32_t v = 0; v < _poly; ++v)
-			buffer(v)->clear();
-
 	// Turn off broadcasting if we're no longer connected
 	if (_type == PortType::CONTROL && _connections.size() == 0)
 		_broadcast = false;
@@ -204,14 +184,15 @@ InputPort::pre_process(Context& context)
 	if (_set_by_user)
 		return;
 
-	//connect_buffers();
-
 	// Process connections (mix down polyphony, if necessary)
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		(*c)->process(context);
 
 	// Multiple connections, mix them all into our local buffers
 	if (_connections.size() > 1) {
+		for (uint32_t v = 0; v < _poly; ++v)
+			buffer(v)->prepare_write(context);
+
 		for (uint32_t v = 0; v < _poly; ++v) {
 			const uint32_t        num_srcs = _connections.size();
 			Connections::iterator c        = _connections.begin();
@@ -237,11 +218,18 @@ void
 InputPort::post_process(Context& context)
 {
 	// Prepare buffers for next cycle
-	if (!can_direct())
+	if (type() != PortType::CONTROL && num_connections() > 1)
 		for (uint32_t v = 0; v < _poly; ++v)
 			buffer(v)->prepare_write(context);
 
 	_set_by_user = false;
+}
+
+
+bool
+InputPort::is_silent() const
+{
+	return (_connections.size() == 0 && _type == PortType::AUDIO);
 }
 
 

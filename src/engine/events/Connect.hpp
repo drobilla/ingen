@@ -34,7 +34,6 @@ namespace Ingen {
 class PatchImpl;
 class NodeImpl;
 class ConnectionImpl;
-class MidiMessage;
 class PortImpl;
 class InputPort;
 class OutputPort;
@@ -57,7 +56,6 @@ public:
 	void post_process();
 
 private:
-
 	enum ErrorType {
 		NO_ERROR,
 		PARENT_PATCH_DIFFERENT,
@@ -82,6 +80,8 @@ private:
 	SharedPtr<ConnectionImpl>     _connection;
 	PatchImpl::Connections::Node* _patch_listnode;
 	InputPort::Connections::Node* _port_listnode;
+
+	Raul::Array<BufferFactory::Ref>* _buffers;
 
 	ErrorType _error;
 };

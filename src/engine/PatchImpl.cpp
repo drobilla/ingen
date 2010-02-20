@@ -27,6 +27,7 @@
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "ProcessSlave.hpp"
+#include "Driver.hpp"
 #include "ingen-config.h"
 
 using namespace std;
@@ -37,9 +38,9 @@ namespace Ingen {
 using namespace Shared;
 
 
-PatchImpl::PatchImpl(Engine& engine, const Raul::Symbol& symbol, uint32_t poly, PatchImpl* parent, SampleRate srate, size_t buffer_size, uint32_t internal_poly)
+PatchImpl::PatchImpl(Engine& engine, const Raul::Symbol& symbol, uint32_t poly, PatchImpl* parent, SampleRate srate, uint32_t internal_poly)
 	: NodeBase(new PatchPlugin("http://example.org/FIXME", "patch", "Ingen Patch"),
-		symbol, poly, parent, srate, buffer_size)
+		symbol, poly, parent, srate)
 	, _engine(engine)
 	, _internal_poly(internal_poly)
 	, _compiled_patch(NULL)
@@ -59,12 +60,12 @@ PatchImpl::~PatchImpl()
 
 
 void
-PatchImpl::activate()
+PatchImpl::activate(BufferFactory& bufs)
 {
-	NodeBase::activate();
+	NodeBase::activate(bufs);
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
-		(*i)->activate();
+		(*i)->activate(bufs);
 
 	assert(_activated);
 }
@@ -95,7 +96,8 @@ PatchImpl::disable()
 	_process = false;
 
 	for (List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
-		(*i)->clear_buffers();
+		if ((*i)->context() == Context::AUDIO)
+			(*i)->clear_buffers();
 }
 
 
@@ -104,7 +106,7 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	/* TODO: ports?  internal/external poly? */
+	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(bufs, poly);
@@ -112,21 +114,31 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
 		((ConnectionImpl*)i->get())->prepare_poly(bufs, poly);
 
-	/* FIXME: Deal with failure */
-
 	return true;
 }
 
 
 bool
-PatchImpl::apply_internal_poly(Raul::Maid& maid, uint32_t poly)
+PatchImpl::apply_internal_poly(BufferFactory& bufs, Raul::Maid& maid, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	/* TODO: ports?  internal/external poly? */
+	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
+
+	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
+		((ConnectionImpl*)i->get())->apply_poly(maid, poly);
+
+	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		for (uint32_t j = 0; j < (*i)->num_ports(); ++j) {
+			PortImpl* const port = (*i)->port_impl(j);
+			if (port->is_input() && dynamic_cast<InputPort*>(port)->num_connections() == 1)
+				port->setup_buffers(bufs, port->poly());
+			port->connect_buffers();
+		}
+	}
 
 	_internal_poly = poly;
 
@@ -239,23 +251,18 @@ PatchImpl::process_parallel(ProcessContext& context)
 void
 PatchImpl::process_single(ProcessContext& context)
 {
-	CompiledPatch* const cp = _compiled_patch;
-
-	for (size_t i=0; i < cp->size(); ++i)
-		(*cp)[i].node()->process(context);
+	for (size_t i = 0; i < _compiled_patch->size(); ++i)
+		(*_compiled_patch)[i].node()->process(context);
 }
 
 
 void
-PatchImpl::set_buffer_size(BufferFactory& bufs, size_t size)
+PatchImpl::set_buffer_size(Context& context, BufferFactory& bufs, PortType type, size_t size)
 {
-	NodeBase::set_buffer_size(bufs, size);
-	assert(_buffer_size == size);
+	NodeBase::set_buffer_size(context, bufs, type, size);
 
-	CompiledPatch* const cp = _compiled_patch;
-
-	for (size_t i=0; i < cp->size(); ++i)
-		(*cp)[i].node()->set_buffer_size(bufs, size);
+	for (size_t i = 0; i < _compiled_patch->size(); ++i)
+		(*_compiled_patch)[i].node()->set_buffer_size(context, bufs, type, size);
 }
 
 
@@ -347,7 +354,7 @@ PatchImpl::num_ports() const
 /** Create a port.  Not realtime safe.
  */
 PortImpl*
-PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, size_t buffer_size, bool is_output)
+PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, size_t buffer_size, bool is_output, bool polyphonic)
 {
 	if (type == PortType::UNKNOWN) {
 		error << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
@@ -356,7 +363,8 @@ PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, s
 
 	assert( !(type == PortType::UNKNOWN) );
 
-	return new DuplexPort(bufs, this, name, num_ports(), _polyphony, type, Raul::Atom(), buffer_size, is_output);
+	return new DuplexPort(bufs, this, name, num_ports(), polyphonic, _polyphony,
+			type, Raul::Atom(), buffer_size, is_output);
 }
 
 

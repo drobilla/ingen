@@ -46,7 +46,9 @@ public:
 	           uint32_t            poly,
 	           Shared::PortType    type,
 	           const Raul::Atom&   value,
-	           size_t              buffer_size);
+	           size_t              buffer_size=0);
+
+	void get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly);
 
 	void pre_process(Context& context);
 	void post_process(Context& context);

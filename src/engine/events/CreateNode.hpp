@@ -45,7 +45,6 @@ public:
 			SampleCount                         timestamp,
 			const Raul::Path&                   node_path,
 			const Raul::URI&                    plugin_uri,
-			bool                                poly,
 			const Shared::Resource::Properties& properties);
 
 	void pre_process();

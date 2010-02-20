@@ -81,13 +81,13 @@ CreatePatch::pre_process()
 	}
 
 	uint32_t poly = 1;
-	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_polyphony()))
+	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_poly()))
 		poly = _poly;
 
 	const LV2URIMap& uris = *_engine.world()->uris.get();
 
 	_patch = new PatchImpl(_engine, path.symbol(), poly, _parent,
-			_engine.driver()->sample_rate(), _engine.driver()->buffer_size(), _poly);
+			_engine.driver()->sample_rate(), _poly);
 	_patch->meta().properties().insert(_properties.begin(), _properties.end());
 	_patch->meta().set_property(uris.rdf_type, uris.ingen_Patch);
 	_patch->set_property(uris.rdf_type, uris.ingen_Node);
@@ -99,7 +99,7 @@ CreatePatch::pre_process()
 			_compiled_patch = _parent->compile();
 	}
 
-	_patch->activate();
+	_patch->activate(*_engine.buffer_factory());
 
 	// Insert into EngineStore
 	//_patch->add_to_store(_engine.engine_store());
@@ -114,16 +114,15 @@ CreatePatch::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
-	if (_patch != NULL) {
-		if (_parent == NULL) {
+	if (_patch) {
+		if (!_parent) {
 			assert(_path.is_root());
 			assert(_patch->parent_patch() == NULL);
 			_engine.driver()->set_root_patch(_patch);
 		} else {
-			assert(_parent != NULL);
+			assert(_parent);
 			assert(!_path.is_root());
-			if (_parent->compiled_patch() != NULL)
-				_engine.maid()->push(_parent->compiled_patch());
+			_engine.maid()->push(_parent->compiled_patch());
 			_parent->compiled_patch(_compiled_patch);
 		}
 	}

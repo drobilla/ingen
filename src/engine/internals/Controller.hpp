@@ -40,7 +40,7 @@ namespace Internals {
 class ControllerNode : public NodeBase
 {
 public:
-	ControllerNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate, size_t buffer_size);
+	ControllerNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);
 
 	void process(ProcessContext& context);
 

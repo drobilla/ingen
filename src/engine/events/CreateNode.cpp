@@ -19,6 +19,7 @@
 #include "raul/Path.hpp"
 #include "raul/Path.hpp"
 #include "redlandmm/World.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "CreateNode.hpp"
 #include "Request.hpp"
 #include "PatchImpl.hpp"
@@ -46,12 +47,11 @@ CreateNode::CreateNode(
 		SampleCount                  timestamp,
 		const Path&                  path,
 		const URI&                   plugin_uri,
-		bool                         polyphonic,
 		const Resource::Properties&  properties)
 	: QueuedEvent(engine, request, timestamp)
 	, _path(path)
 	, _plugin_uri(plugin_uri)
-	, _polyphonic(polyphonic)
+	, _polyphonic(false)
 	, _patch(NULL)
 	, _plugin(NULL)
 	, _node(NULL)
@@ -69,6 +69,12 @@ CreateNode::CreateNode(
 		_plugin_label = uri.substr(colon + 1);
 		uri = "";
 	}
+
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const Resource::Properties::const_iterator p = properties.find(uris.ingen_polyphonic);
+	if (p != properties.end() && p->second.type() == Raul::Atom::BOOL
+			&& p->second.get_bool())
+		_polyphonic = true;
 }
 
 
@@ -93,7 +99,7 @@ CreateNode::pre_process()
 
 		if (_node != NULL) {
 			_node->properties().insert(_properties.begin(), _properties.end());
-			_node->activate();
+			_node->activate(*_engine.buffer_factory());
 
 			// This can be done here because the audio thread doesn't touch the
 			// node tree - just the process order array
@@ -116,9 +122,8 @@ CreateNode::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
-	if (_node != NULL) {
-		if (_patch->compiled_patch() != NULL)
-			_engine.maid()->push(_patch->compiled_patch());
+	if (_node) {
+		_engine.maid()->push(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);
 	}
 }

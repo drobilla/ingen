@@ -67,8 +67,7 @@ LADSPAPlugin::instantiate(BufferFactory&    bufs,
 {
 	assert(_id != 0);
 
-	SampleCount srate       = engine.driver()->sample_rate();
-	SampleCount buffer_size = engine.driver()->buffer_size();
+	const SampleCount srate = engine.driver()->sample_rate();
 
 	union {
 		void*                      dp;
@@ -97,7 +96,7 @@ LADSPAPlugin::instantiate(BufferFactory&    bufs,
 	}
 
 	if (descriptor != NULL) {
-		n = new LADSPANode(this, name, polyphonic, parent, descriptor, srate, buffer_size);
+		n = new LADSPANode(this, name, polyphonic, parent, descriptor, srate);
 
 		if ( ! n->instantiate(bufs) ) {
 			delete n;

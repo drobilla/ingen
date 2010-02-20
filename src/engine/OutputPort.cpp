@@ -46,15 +46,24 @@ OutputPort::OutputPort(BufferFactory&      bufs,
 
 	if (type == PortType::CONTROL)
 		_broadcast = true;
+
+	setup_buffers(bufs, poly);
+}
+
+
+void
+OutputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly)
+{
+	for (uint32_t v = 0; v < poly; ++v)
+		buffers->at(v) = bufs.get(_type, _buffer_size);
 }
 
 
 void
 OutputPort::pre_process(Context& context)
 {
-	connect_buffers();
 	for (uint32_t v = 0; v < _poly; ++v)
-		buffer(v)->prepare_write(context);
+		_buffers->at(v)->prepare_write(context);
 }
 
 
@@ -62,7 +71,7 @@ void
 OutputPort::post_process(Context& context)
 {
 	for (uint32_t v = 0; v < _poly; ++v)
-		buffer(v)->prepare_read(context);
+		_buffers->at(v)->prepare_read(context);
 
 	if (_broadcast)
 		broadcast_value(context, false);

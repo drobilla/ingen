@@ -132,16 +132,15 @@ Delete::execute(ProcessContext& context)
 {
 	QueuedEvent::execute(context);
 
+	PatchImpl* parent_patch = NULL;
+
 	if (_patch_node_listnode) {
 		assert(_node);
 
 		if (_disconnect_event)
 			_disconnect_event->execute(context);
 
-		if (_node->parent_patch()->compiled_patch())
-			_engine.maid()->push(_node->parent_patch()->compiled_patch());
-
-		_node->parent_patch()->compiled_patch(_compiled_patch);
+		parent_patch = _node->parent_patch();
 
 	} else if (_patch_port_listnode) {
 		assert(_port);
@@ -149,19 +148,19 @@ Delete::execute(ProcessContext& context)
 		if (_disconnect_event)
 			_disconnect_event->execute(context);
 
-		if (_port->parent_patch()->compiled_patch())
-			_engine.maid()->push(_port->parent_patch()->compiled_patch());
+		parent_patch = _port->parent_patch();
 
-		_port->parent_patch()->compiled_patch(_compiled_patch);
-
-		if (_port->parent_patch()->external_ports())
-			_engine.maid()->push(_port->parent_patch()->external_ports());
-
+		_engine.maid()->push(_port->parent_patch()->external_ports());
 		_port->parent_patch()->external_ports(_ports_array);
 
 		if ( ! _port->parent_patch()->parent()) {
 			_driver_port = _engine.driver()->remove_port(_port->path());
 		}
+	}
+
+	if (parent_patch) {
+		_engine.maid()->push(parent_patch->compiled_patch());
+		parent_patch->compiled_patch(_compiled_patch);
 	}
 
 	_request->unblock();
@@ -174,7 +173,8 @@ Delete::post_process()
 	_removed_bindings.reset();
 
 	if (_path.is_root() || _path == "path:/control_in" || _path == "path:/control_out") {
-		_request->respond_error(_path.chop_scheme() + " can not be deleted");
+		// XXX: Just ignore?
+		//_request->respond_error(_path.chop_scheme() + " can not be deleted");
 	} else if (!_node && !_port) {
 		string msg = string("Could not find object ") + _path.chop_scheme() + " to delete";
 		_request->respond_error(msg);

@@ -39,8 +39,8 @@ public:
 
 	virtual const Connections& connections() const = 0;
 
-	virtual bool     enabled()            const = 0;
-	virtual uint32_t internal_polyphony() const = 0;
+	virtual bool     enabled()       const = 0;
+	virtual uint32_t internal_poly() const = 0;
 };
 
 

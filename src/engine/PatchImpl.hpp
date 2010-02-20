@@ -31,9 +31,10 @@ namespace Ingen {
 
 namespace Shared { class Connection; }
 
-class ConnectionImpl;
-class Engine;
 class CompiledPatch;
+class ConnectionImpl;
+class Context;
+class Engine;
 class ProcessContext;
 
 
@@ -53,17 +54,16 @@ public:
 	          uint32_t            poly,
 	          PatchImpl*          parent,
 	          SampleRate          srate,
-	          size_t              buffer_size,
 	          uint32_t            local_poly);
 
 	virtual ~PatchImpl();
 
-	void activate();
+	void activate(BufferFactory& bufs);
 	void deactivate();
 
 	void process(ProcessContext& context);
 
-	void set_buffer_size(BufferFactory& bufs, size_t size);
+	void set_buffer_size(Context& context, BufferFactory& bufs, Shared::PortType type, size_t size);
 
 	/** Prepare for a new (internal) polyphony value.
 	 *
@@ -79,7 +79,7 @@ public:
 	 * \param poly Must be < the most recent value passed to prepare_internal_poly.
 	 * \param maid Any objects no longer needed will be pushed to this
 	 */
-	bool apply_internal_poly(Raul::Maid& maid, uint32_t poly);
+	bool apply_internal_poly(BufferFactory& bufs, Raul::Maid& maid, uint32_t poly);
 
 	// Patch specific stuff not inherited from Node
 
@@ -96,7 +96,7 @@ public:
 
 	uint32_t num_ports() const;
 
-	PortImpl* create_port(BufferFactory& bufs, const std::string& name, Shared::PortType type, size_t buffer_size, bool is_output);
+	PortImpl* create_port(BufferFactory& bufs, const std::string& name, Shared::PortType type, size_t buffer_size, bool is_output, bool polyphonic);
 	void add_input(Raul::List<PortImpl*>::Node* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
 	void add_output(Raul::List<PortImpl*>::Node* port) { _output_ports.push_back(port); } ///< Preprocessor thread
 	Raul::List<PortImpl*>::Node* remove_port(const std::string& name);
@@ -121,7 +121,7 @@ public:
 	void enable() { _process = true; }
 	void disable();
 
-	uint32_t internal_polyphony() const { return _internal_poly; }
+	uint32_t internal_poly() const { return _internal_poly; }
 
 private:
 	inline void compile_recursive(NodeImpl* n, CompiledPatch* output) const;

@@ -24,12 +24,10 @@
 
 namespace Ingen {
 
-class PatchImpl;
+class CompiledPatch;
 class NodeImpl;
-class Connection;
+class PatchImpl;
 class PortImpl;
-class InputPort;
-class OutputPort;
 
 namespace Events {
 
@@ -76,10 +74,10 @@ private:
 	PortImpl*               _port;
 	Raul::List<Disconnect*> _disconnect_events;
 
-	bool _lookup;
-	bool _disconnect_parent;
+	CompiledPatch* _compiled_patch; ///< New process order for Patch
 
 	ErrorType _error;
+	bool      _deleting;
 };
 
 

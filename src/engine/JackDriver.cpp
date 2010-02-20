@@ -60,11 +60,8 @@ JackPort::JackPort(JackDriver* driver, DuplexPort* patch_port)
 	, _driver(driver)
 	, _jack_port(NULL)
 {
-	assert(patch_port->poly() == 1);
-
+	patch_port->setup_buffers(*driver->_engine.buffer_factory(), patch_port->poly());
 	create();
-
-	patch_port->buffer(0)->clear();
 }
 
 
@@ -188,7 +185,7 @@ JackDriver::JackDriver(Engine& engine)
 	, _sem(0)
 	, _flag(0)
 	, _client(NULL)
-	, _buffer_size(0)
+	, _block_length(0)
 	, _sample_rate(0)
 	, _is_activated(false)
 	, _local_client(true)
@@ -252,14 +249,14 @@ JackDriver::attach(const std::string& server_name,
 
 	_local_client = (jack_client == NULL);
 
-	_buffer_size = jack_get_buffer_size(_client) * sizeof(Sample);
+	_block_length = jack_get_buffer_size(_client);
 	_sample_rate = jack_get_sample_rate(_client);
 
 	jack_on_shutdown(_client, shutdown_cb, this);
 
 	jack_set_thread_init_callback(_client, thread_init_cb, this);
 	jack_set_sample_rate_callback(_client, sample_rate_cb, this);
-	jack_set_buffer_size_callback(_client, buffer_size_cb, this);
+	jack_set_buffer_size_callback(_client, block_length_cb, this);
 
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->create();
@@ -370,7 +367,7 @@ DriverPort*
 JackDriver::create_port(DuplexPort* patch_port)
 {
 	try {
-		if (patch_port->buffer_size() == _buffer_size)
+		if (patch_port->type() == PortType::AUDIO || patch_port->type() == PortType::EVENTS)
 			return new JackPort(this, patch_port);
 		else
 			return NULL;
@@ -412,7 +409,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	// FIXME: all of this time stuff is screwy
 
 	// FIXME: support nframes != buffer_size, even though that never damn well happens
-	assert(nframes == _buffer_size / sizeof(Sample));
+	assert(nframes == _block_length);
 
 	// Note that Jack can not call this function for a cycle, if overloaded
 	const jack_nframes_t start_of_current_cycle = jack_last_frame_time(_client);
@@ -497,11 +494,12 @@ JackDriver::_sample_rate_cb(jack_nframes_t nframes)
 
 
 int
-JackDriver::_buffer_size_cb(jack_nframes_t nframes)
+JackDriver::_block_length_cb(jack_nframes_t nframes)
 {
 	if (_root_patch) {
-		_buffer_size = nframes * sizeof(Sample);
-		_root_patch->set_buffer_size(*_engine.buffer_factory(), _buffer_size);
+		_block_length = nframes;
+		_root_patch->set_buffer_size(context(), *_engine.buffer_factory(), PortType::AUDIO,
+				_engine.buffer_factory()->audio_buffer_size(nframes));
 	}
 	return 0;
 }

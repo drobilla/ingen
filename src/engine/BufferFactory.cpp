@@ -35,16 +35,39 @@ using namespace Shared;
 BufferFactory::BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> map)
 	: _engine(engine)
 	, _map(map)
+	, _silent_buffer(NULL)
 {
 }
 
-struct BufferDeleter {
-	BufferDeleter(BufferFactory& bf) : _factory(bf) {}
-	void operator()(void* ptr) {
-		_factory.recycle((Buffer*)ptr);
+
+void
+BufferFactory::set_block_length(SampleCount block_length)
+{
+	_silent_buffer = create(PortType::AUDIO, audio_buffer_size(block_length));
+}
+
+
+size_t
+BufferFactory::audio_buffer_size(SampleCount nframes)
+{
+	return sizeof(LV2_Object) + sizeof(LV2_Vector_Body) + (nframes * sizeof(float));
+}
+
+
+size_t
+BufferFactory::default_buffer_size(PortType type)
+{
+	switch (type.symbol()) {
+		case PortType::AUDIO:
+			return audio_buffer_size(_engine.driver()->block_length());
+		case PortType::CONTROL:
+			return sizeof(LV2_Object) + sizeof(float);
+		case PortType::EVENTS:
+			return _engine.driver()->block_length() * event_bytes_per_frame;
+		default:
+			return 1024; // Who knows
 	}
-	BufferFactory& _factory;
-};
+}
 
 
 BufferFactory::Ref
@@ -67,6 +90,7 @@ BufferFactory::get(Shared::PortType type, size_t size, bool force_create)
 		if (ThreadManager::current_thread_id() != THREAD_PROCESS) {
 			return create(type, size);
 		} else {
+			assert(false);
 			error << "Failed to obtain buffer" << endl;
 			return Ref();
 		}
@@ -84,35 +108,31 @@ BufferFactory::create(Shared::PortType type, size_t size)
 
 	Buffer* buffer = NULL;
 
+	if (size == 0)
+		size = default_buffer_size(type);
+
 	if (type.is_control()) {
-		if (size == 0)
-			size = sizeof(LV2_Object) + sizeof(float);
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
 		ret->object()->type = _map->object_class_vector.id;
 		((LV2_Vector_Body*)ret->object()->body)->elem_type = _map->object_class_float32.id;
 		buffer = ret;
 	} else if (type.is_audio()) {
-		if (size == 0)
-			size = sizeof(LV2_Object) + sizeof(LV2_Vector_Body)
-				+ _engine.driver()->buffer_size() * sizeof(float);
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
 		ret->object()->type = _map->object_class_float32.id;
 		buffer = ret;
 	} else if (type.is_events()) {
-		if (size == 0)
-			size = _engine.driver()->buffer_size() * 4; // FIXME
 		buffer = new EventBuffer(*this, size);
 	} else if (type.is_value() || type.is_message()) {
-		if (size == 0)
-			size = 32; // FIXME
 		buffer = new ObjectBuffer(*this, std::max(size, sizeof(LV2_Object) + sizeof(void*)));
 	} else {
 		error << "Failed to create buffer of unknown type" << endl;
 		return Ref();
 	}
 
+	assert(buffer);
 	return Ref(buffer);
 }
+
 
 void
 BufferFactory::recycle(Buffer* buf)

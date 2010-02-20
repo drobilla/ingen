@@ -35,6 +35,7 @@ namespace Ingen {
 class PatchImpl;
 class Context;
 class ProcessContext;
+class BufferFactory;
 
 
 /** An object on the audio graph - Patch, Node, Port, etc.
@@ -55,15 +56,12 @@ public:
 	const Raul::URI&    uri()      const { return _path; }
 	const Raul::Symbol& symbol()   const { return _symbol; }
 
-	bool         polyphonic() const                       { return _polyphonic; }
-	virtual bool set_polyphonic(Raul::Maid& maid, bool p) { _polyphonic = p; return true; }
-
 	GraphObject*     graph_parent() const { return _parent; }
 	GraphObjectImpl* parent()       const { return _parent; }
 	Resource&        meta()               { return _meta; }
 	const Resource&  meta()         const { return _meta; }
 
-	virtual void process(ProcessContext& context) = 0;
+	//virtual void process(ProcessContext& context) = 0;
 
 	/** Rename */
 	virtual void set_path(const Raul::Path& new_path) {
@@ -83,14 +81,29 @@ public:
 
 	SharedPtr<GraphObject> find_child(const std::string& name) const;
 
+	/** Prepare for a new (external) polyphony value.
+	 *
+	 * Preprocessor thread, poly is actually applied by apply_poly.
+	 * \return true on success.
+	 */
+	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly) = 0;
+
+	/** Apply a new (external) polyphony value.
+	 *
+	 * Audio thread.
+	 *
+	 * \param poly Must be <= the most recent value passed to prepare_poly.
+	 * \param maid Any objects no longer needed will be pushed to this
+	 */
+	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly) = 0;
+
 protected:
-	GraphObjectImpl(GraphObjectImpl* parent, const Raul::Symbol& symbol, bool polyphonic=false);
+	GraphObjectImpl(GraphObjectImpl* parent, const Raul::Symbol& symbol);
 
 	GraphObjectImpl* _parent;
 	Raul::Path       _path;
 	Raul::Symbol     _symbol;
 	ResourceImpl     _meta;
-	bool             _polyphonic;
 };
 
 

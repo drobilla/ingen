@@ -22,12 +22,14 @@
 #include "ClientBroadcaster.hpp"
 #include "Connect.hpp"
 #include "ConnectionImpl.hpp"
+#include "DuplexPort.hpp"
 #include "Engine.hpp"
-#include "InputPort.hpp"
 #include "EngineStore.hpp"
+#include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
+#include "ProcessContext.hpp"
 #include "Request.hpp"
 #include "types.hpp"
 
@@ -50,6 +52,7 @@ Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timesta
 	, _compiled_patch(NULL)
 	, _patch_listnode(NULL)
 	, _port_listnode(NULL)
+	, _buffers(NULL)
 	, _error(NO_ERROR)
 {
 }
@@ -157,6 +160,18 @@ Connect::pre_process()
 	}
 
 	_patch->add_connection(_patch_listnode);
+	_dst_input_port->increment_num_connections();
+
+	switch (_dst_input_port->num_connections()) {
+	case 1:
+		_connection->allocate_buffer(*_engine.buffer_factory());
+		break;
+	case 2:
+		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
+		_dst_input_port->get_buffers(*_engine.buffer_factory(), _buffers, _dst_input_port->poly());
+	default:
+		break;
+	}
 
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
@@ -173,8 +188,12 @@ Connect::execute(ProcessContext& context)
 	if (_error == NO_ERROR) {
 		// This must be inserted here, since they're actually used by the audio thread
 		_dst_input_port->add_connection(_port_listnode);
-		if (_patch->compiled_patch() != NULL)
-			_engine.maid()->push(_patch->compiled_patch());
+		if (_buffers)
+			_engine.maid()->push(_dst_input_port->set_buffers(_buffers));
+		else
+			_dst_input_port->setup_buffers(*_engine.buffer_factory(), _dst_input_port->poly());
+		_dst_input_port->connect_buffers();
+		_engine.maid()->push(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);
 	}
 }

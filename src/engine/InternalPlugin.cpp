@@ -49,16 +49,15 @@ InternalPlugin::instantiate(BufferFactory&    bufs,
 {
 	assert(_type == Internal);
 
-	SampleCount srate       = engine.driver()->sample_rate();
-	SampleCount buffer_size = engine.driver()->buffer_size();
+	const SampleCount srate = engine.driver()->sample_rate();
 
 	const string uri_str = uri().str();
 	if (uri_str == NS_INTERNALS "Note") {
-		return new NoteNode(bufs, name, polyphonic, parent, srate, buffer_size);
+		return new NoteNode(bufs, name, polyphonic, parent, srate);
 	} else if (uri_str == NS_INTERNALS "Trigger") {
-		return new TriggerNode(bufs, name, polyphonic, parent, srate, buffer_size);
+		return new TriggerNode(bufs, name, polyphonic, parent, srate);
 	} else if (uri_str == NS_INTERNALS "Controller") {
-		return new ControllerNode(bufs, name, polyphonic, parent, srate, buffer_size);
+		return new ControllerNode(bufs, name, polyphonic, parent, srate);
 	} else {
 		return NULL;
 	}
