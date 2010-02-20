@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include "lv2.h"
 #include "engine/Engine.hpp"
-#include "engine/AudioDriver.hpp"
+#include "engine/Driver.hpp"
 #include "engine/ProcessContext.hpp"
 #include "engine/PatchImpl.hpp"
 #include "module/World.hpp"
@@ -34,7 +34,7 @@ using namespace Ingen;
 
 /* Plugin */
 
-struct IngenLV2Driver : public Ingen::AudioDriver {
+struct IngenLV2Driver : public Ingen::Driver {
 	IngenLV2Driver(Engine& engine, SampleCount buffer_size, SampleCount sample_rate)
 		: _context(engine)
 		, _buffer_size(buffer_size)
