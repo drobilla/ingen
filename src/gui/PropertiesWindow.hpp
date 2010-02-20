@@ -67,6 +67,7 @@ private:
 
 	Gtk::Widget* create_value_widget(const Raul::URI& uri, const Raul::Atom& value);
 
+	void reset();
 	void on_show();
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);

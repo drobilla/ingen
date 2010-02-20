@@ -64,17 +64,27 @@ PropertiesWindow::PropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 }
 
 
+void
+PropertiesWindow::reset()
+{
+	_table->children().clear();
+	_table->resize(1, 3);
+	_table->property_n_rows() = 1;
+
+	_records.clear();
+
+	_property_connection.disconnect();
+	_model.reset();
+}
+
+
 /** Set the node this window is associated with.
  * This function MUST be called before using this object in any way.
  */
 void
 PropertiesWindow::set_object(SharedPtr<ObjectModel> model)
 {
-	_table->children().clear();
-	_table->resize(1, 3);
-	_table->property_n_rows() = 1;
-
-	_property_connection.disconnect();
+	reset();
 	_model = model;
 
 	set_title(model->path().chop_scheme() + " Properties - Ingen");
@@ -264,7 +274,7 @@ bad_type:
 void
 PropertiesWindow::cancel_clicked()
 {
-	set_object(_model); // reset
+	reset();
 	Gtk::Window::hide();
 }
 
@@ -295,7 +305,7 @@ void
 PropertiesWindow::ok_clicked()
 {
 	apply_clicked();
-	Gtk::Window::hide();
+	cancel_clicked();
 }
 
 
