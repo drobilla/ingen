@@ -209,6 +209,14 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		// LV2 port symbols are guaranteed to be unique, valid C identifiers
 		port_name = slv2_value_as_string(slv2_port_get_symbol(plug, id));
+
+		if (!Symbol::is_valid(port_name)) {
+			error << "Plugin " << _lv2_plugin->uri() << " port " << j
+				<< " has illegal symbol `" << port_name << "'" << endl;
+			ret = false;
+			break;
+		}
+
 		assert(port_name.find("/") == string::npos);
 
 		port_path = path().child(port_name);
@@ -261,12 +269,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		if (data_type == PortType::UNKNOWN || direction == UNKNOWN) {
-			delete _ports;
-			_ports = NULL;
-			delete _instances;
-			_instances = NULL;
 			ret = false;
-			goto done;
+			break;
 		}
 
 		if (val.type() == Atom::NIL)
@@ -319,7 +323,16 @@ LV2Node::instantiate(BufferFactory& bufs)
 		_ports->at(j) = port;
 	}
 
-done:
+	if (!ret) {
+		for (uint32_t i = 0; i < _polyphony; ++i) {
+			slv2_instance_deactivate((*_instances)[i]);
+		}
+		delete _ports;
+		_ports = NULL;
+		delete _instances;
+		_instances = NULL;
+	}
+
 	delete[] min_values;
 	delete[] max_values;
 	delete[] def_values;
