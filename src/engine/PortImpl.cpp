@@ -132,12 +132,13 @@ PortImpl::apply_poly(Maid& maid, uint32_t poly)
 
 	assert(poly <= _prepared_buffers->size());
 
+	_poly = poly;
+
 	// Apply a new set of buffers from a preceding call to prepare_poly
 	maid.push(set_buffers(_prepared_buffers));
 	assert(_buffers == _prepared_buffers);
 	_prepared_buffers = NULL;
 
-	_poly = poly;
 	assert(_buffers->size() >= poly);
 	assert(this->poly() == poly);
 	assert(!_prepared_buffers);
