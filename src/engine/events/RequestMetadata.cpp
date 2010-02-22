@@ -46,7 +46,6 @@ RequestMetadata::RequestMetadata(Engine&            engine,
                                  const URI&         subject,
                                  const URI&         key)
 	: QueuedEvent(engine, request, timestamp)
-	, _error(NO_ERROR)
 	, _special_type(NONE)
 	, _uri(subject)
 	, _key(key)

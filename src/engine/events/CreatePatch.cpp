@@ -50,7 +50,6 @@ CreatePatch::CreatePatch(
 	, _parent(NULL)
 	, _compiled_patch(NULL)
 	, _poly(poly)
-	, _error(NO_ERROR)
 	, _properties(properties)
 {
 }

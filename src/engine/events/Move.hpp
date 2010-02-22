@@ -70,7 +70,6 @@ private:
 	Raul::Path            _new_path;
 	PatchImpl*            _parent_patch;
 	EngineStore::iterator _store_iterator;
-	ErrorType             _error;
 };
 
 

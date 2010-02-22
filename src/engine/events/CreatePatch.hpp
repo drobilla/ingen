@@ -56,7 +56,6 @@ private:
 	PatchImpl*       _parent;
 	CompiledPatch*   _compiled_patch;
 	int              _poly;
-	ErrorType        _error;
 
 	Shared::Resource::Properties _properties;
 };

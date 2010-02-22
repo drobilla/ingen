@@ -82,12 +82,13 @@ public:
 	void post_process();
 
 private:
-	enum { NO_ERROR,
+	enum ErrorType {
+		NO_ERROR,
 		NOT_FOUND,
 		INTERNAL,
 		BAD_OBJECT_TYPE,
 		BAD_VALUE_TYPE
-	} _error;
+	};
 
 	enum SpecialType {
 		NONE,

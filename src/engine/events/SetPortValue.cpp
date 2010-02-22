@@ -58,7 +58,6 @@ SetPortValue::SetPortValue(Engine&            engine,
 	, _port_path(port_path)
 	, _value(value)
 	, _port(NULL)
-	, _error(NO_ERROR)
 {
 }
 
@@ -74,7 +73,6 @@ SetPortValue::SetPortValue(Engine&            engine,
 	, _port_path(port->path())
 	, _value(value)
 	, _port(port)
-	, _error(NO_ERROR)
 {
 }
 

@@ -56,17 +56,21 @@ public:
 
 	inline SampleCount time() const { return _time; }
 
+	int error() { return _error; }
+
 protected:
 	Event(Engine& engine, SharedPtr<Request> request, FrameTime time)
 		: _engine(engine)
 		, _request(request)
 		, _time(time)
+		, _error(0) // success
 		, _executed(false)
 	{}
 
 	Engine&            _engine;
 	SharedPtr<Request> _request;
 	FrameTime          _time;
+	int                _error;
 	bool               _executed;
 };
 

@@ -74,7 +74,6 @@ private:
 	const Raul::Path _port_path;
 	const Raul::Atom _value;
 	PortImpl*        _port;
-	ErrorType        _error;
 };
 
 

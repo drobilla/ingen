@@ -113,6 +113,10 @@ CreateNode::pre_process()
 				_compiled_patch = _patch->compile();
 		}
 	}
+
+	if (!_node)
+		_error = 1;
+
 	QueuedEvent::pre_process();
 }
 

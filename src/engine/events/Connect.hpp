@@ -82,8 +82,6 @@ private:
 	InputPort::Connections::Node* _port_listnode;
 
 	Raul::Array<BufferFactory::Ref>* _buffers;
-
-	ErrorType _error;
 };
 
 

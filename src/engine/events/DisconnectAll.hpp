@@ -76,7 +76,6 @@ private:
 
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 
-	ErrorType _error;
 	bool      _deleting;
 };
 

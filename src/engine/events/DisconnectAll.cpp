@@ -49,7 +49,6 @@ DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleC
 	, _node(NULL)
 	, _port(NULL)
 	, _compiled_patch(NULL)
-	, _error(NO_ERROR)
 	, _deleting(false)
 {
 }
@@ -65,7 +64,6 @@ DisconnectAll::DisconnectAll(Engine& engine, PatchImpl* parent, GraphObjectImpl*
 	, _node(dynamic_cast<NodeImpl*>(object))
 	, _port(dynamic_cast<PortImpl*>(object))
 	, _compiled_patch(NULL)
-	, _error(NO_ERROR)
 	, _deleting(true)
 {
 }

@@ -61,7 +61,6 @@ private:
 		CREATION_FAILED
 	};
 
-	ErrorType               _error;
 	Raul::Path              _path;
 	Raul::URI               _type;
 	bool                    _is_output;

@@ -56,7 +56,7 @@ public:
 	void post_process();
 
 private:
-	enum { NO_ERROR, NOT_FOUND } _error;
+	enum ErrorType { NO_ERROR, NOT_FOUND };
 	enum {
 		NONE,
 		PORT_VALUE

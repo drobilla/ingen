@@ -58,7 +58,6 @@ SetMetadata::SetMetadata(
 		const Properties&   properties,
 		const Properties&   remove)
 	: QueuedEvent(engine, request, timestamp, false)
-	, _error(NO_ERROR)
 	, _create_event(NULL)
 	, _subject(subject)
 	, _properties(properties)
@@ -347,13 +346,14 @@ SetMetadata::post_process()
 
 	switch (_error) {
 	case NO_ERROR:
-		_request->respond_ok();
+		if (_create_event)
+			_create_event->post_process();
+		else
+			_request->respond_ok();
 		if (_create)
 			_engine.broadcaster()->put(_subject, _properties);
 		else
 			_engine.broadcaster()->delta(_subject, _remove, _properties);
-		if (_create_event)
-			_create_event->post_process();
 		break;
 	case NOT_FOUND:
 		_request->respond_error((boost::format(

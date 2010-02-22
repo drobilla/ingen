@@ -53,7 +53,6 @@ Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timesta
 	, _patch_listnode(NULL)
 	, _port_listnode(NULL)
 	, _buffers(NULL)
-	, _error(NO_ERROR)
 {
 }
 

@@ -52,7 +52,6 @@ CreatePort::CreatePort(
 		bool                        is_output,
 		const Resource::Properties& properties)
 	: QueuedEvent(engine, request, timestamp, bool(request))
-	, _error(NO_ERROR)
 	, _path(path)
 	, _type(type)
 	, _is_output(is_output)

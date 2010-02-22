@@ -40,7 +40,6 @@ Move::Move(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, co
 	, _new_path(new_path)
 	, _parent_patch(NULL)
 	, _store_iterator(engine.engine_store()->end())
-	, _error(NO_ERROR)
 {
 }
 
