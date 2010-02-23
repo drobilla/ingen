@@ -270,7 +270,6 @@ NodeBase::set_port_buffer(uint32_t voice, uint32_t port_num, BufferFactory::Ref 
 {
 	/*debug << path() << " set port " << port_num << " voice " << voice
 			<< " buffer " << buf << endl;*/
-	assert(voice < _polyphony);
 }
 
 

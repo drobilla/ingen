@@ -140,6 +140,10 @@ PatchImpl::apply_internal_poly(BufferFactory& bufs, Raul::Maid& maid, uint32_t p
 		}
 	}
 
+	const bool polyphonic = parent_patch() && (_internal_poly == parent_patch()->internal_poly());
+	for (List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+		(*i)->setup_buffers(bufs, polyphonic ? poly : 1);
+
 	_internal_poly = poly;
 
 	return true;

@@ -108,7 +108,10 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (_type != PortType::CONTROL && _type != PortType::AUDIO)
 		return false;
 
-	if (_prepared_buffers && _prepared_buffers->size() < poly) {
+	if (_poly == poly)
+		return true;
+
+	if (_prepared_buffers && _prepared_buffers->size() != poly) {
 		delete _prepared_buffers;
 		_prepared_buffers = NULL;
 	}
@@ -130,7 +133,10 @@ PortImpl::apply_poly(Maid& maid, uint32_t poly)
 	if (_type != PortType::CONTROL && _type != PortType::AUDIO)
 		return false;
 
-	assert(poly <= _prepared_buffers->size());
+	if (!_prepared_buffers)
+		return true;
+
+	assert(poly == _prepared_buffers->size());
 
 	_poly = poly;
 
@@ -138,6 +144,12 @@ PortImpl::apply_poly(Maid& maid, uint32_t poly)
 	maid.push(set_buffers(_prepared_buffers));
 	assert(_buffers == _prepared_buffers);
 	_prepared_buffers = NULL;
+
+	if (_type == PortType::CONTROL)
+		for (uint32_t v = 0; v < _poly; ++v)
+			if (_buffers->at(v))
+				boost::static_pointer_cast<AudioBuffer>(_buffers->at(v))->set_value(
+						_value.get_float(), 0, 0);
 
 	assert(_buffers->size() >= poly);
 	assert(this->poly() == poly);

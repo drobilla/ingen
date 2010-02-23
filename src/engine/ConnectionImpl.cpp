@@ -146,7 +146,6 @@ ConnectionImpl::process(Context& context)
 		for (uint32_t v = 0; v < num_srcs; ++v)
 			srcs[v] = src_port()->buffer(v).get();
 
-		_local_buffer->clear();
 		mix(context, _local_buffer.get(), srcs, num_srcs);
 	}
 }
