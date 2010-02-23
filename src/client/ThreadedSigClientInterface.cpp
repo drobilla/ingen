@@ -33,8 +33,6 @@ namespace Client {
 void
 ThreadedSigClientInterface::push_sig(Closure ev)
 {
-	_attached = true;
-
 	bool success = false;
 	while (!success) {
 		success = _sigs.push(ev);

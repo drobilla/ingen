@@ -42,6 +42,12 @@ PostProcessor::PostProcessor(Engine& engine, size_t queue_size)
 }
 
 
+PostProcessor::~PostProcessor()
+{
+	free(_event_buffer);
+}
+
+
 void
 PostProcessor::process()
 {

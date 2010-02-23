@@ -53,7 +53,7 @@ class LV2URIMap;
  * set World::serialiser and World::parser to valid objects.
  */
 struct World {
-	World() : conf(0) {}
+	World() : argc(0), argv(0), conf(0), rdf_world(0), slv2_world(0), lv2_features(0) {}
 
 	bool load(const char* name);
 	void unload_all();

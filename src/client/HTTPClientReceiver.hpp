@@ -56,7 +56,7 @@ private:
 
 	class Listener : public Raul::Thread {
 	public:
-		Listener(HTTPClientReceiver* receiver, const std::string uri);
+		Listener(HTTPClientReceiver* receiver, const std::string& uri);
 		~Listener();
 		void _run();
 	private:

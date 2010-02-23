@@ -114,7 +114,6 @@ private:
 	std::string                  _error_predicate;
 	bool                         _create;
 	bool                         _is_meta;
-	bool                         _success;
 
 	SharedPtr<ControlBindings::Bindings> _old_bindings;
 };

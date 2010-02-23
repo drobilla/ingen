@@ -30,7 +30,8 @@ namespace Shared {
 
 
 OSCSender::OSCSender()
-	: _transfer(NULL)
+	: _send_state(Immediate)
+	, _transfer(NULL)
 	, _address(NULL)
 	, _enabled(true)
 {

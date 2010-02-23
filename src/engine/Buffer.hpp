@@ -41,6 +41,7 @@ public:
 		: _factory(bufs)
 		, _type(type)
 		, _size(size)
+		, _next(NULL)
 		, _refs(0)
 	{}
 

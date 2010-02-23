@@ -59,6 +59,12 @@ ObjectBuffer::ObjectBuffer(BufferFactory& bufs, size_t capacity)
 }
 
 
+ObjectBuffer::~ObjectBuffer()
+{
+	free(_buf);
+}
+
+
 void
 ObjectBuffer::clear()
 {

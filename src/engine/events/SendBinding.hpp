@@ -65,10 +65,11 @@ public:
 		}
 	}
 
-	inline void operator=(const SendBinding& ev) {
+	inline SendBinding& operator=(const SendBinding& ev) {
 		_port = ev._port;
 		_type = ev._type;
 		_num  = ev._num;
+		return *this;
 	}
 
 	void post_process();

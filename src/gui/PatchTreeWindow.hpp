@@ -88,7 +88,8 @@ class PatchTreeView : public Gtk::TreeView
 {
 public:
 	PatchTreeView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
-	: Gtk::TreeView(cobject)
+		: Gtk::TreeView(cobject)
+		, _window(NULL)
 	{}
 
 	void set_window(PatchTreeWindow* win) { _window = win; }

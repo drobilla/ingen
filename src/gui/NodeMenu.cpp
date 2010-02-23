@@ -170,7 +170,7 @@ NodeMenu::on_menu_disconnect()
 
 
 void
-NodeMenu::on_preset_activated(const std::string uri)
+NodeMenu::on_preset_activated(const std::string& uri)
 {
 #ifdef HAVE_SLV2
 	const NodeModel* const   node   = (NodeModel*)_object.get();
@@ -197,7 +197,7 @@ NodeMenu::on_preset_activated(const std::string uri)
 
 
 bool
-NodeMenu::on_preset_clicked(const std::string uri, GdkEventButton* ev)
+NodeMenu::on_preset_clicked(const std::string& uri, GdkEventButton* ev)
 {
 	on_preset_activated(uri);
 	return false;

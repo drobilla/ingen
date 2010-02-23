@@ -58,11 +58,12 @@ public:
 	{
 	}
 
-	inline void operator=(const SendPortValue& ev) {
+	inline SendPortValue& operator=(const SendPortValue& ev) {
 		_port = ev._port;
 		_omni = ev._omni;
 		_voice_num = ev._voice_num;
 		_value = ev._value;
+		return *this;
 	}
 
 	void post_process();

@@ -30,6 +30,7 @@ class Context;
 class ObjectBuffer : public Buffer {
 public:
 	ObjectBuffer(BufferFactory& bufs, size_t capacity);
+	~ObjectBuffer();
 
 	void clear();
 

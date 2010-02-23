@@ -99,7 +99,10 @@ App::App(Ingen::Shared::World* world)
 
 App::~App()
 {
+	delete _configuration;
+	delete _window_factory;
 }
+
 
 void
 App::init(Ingen::Shared::World* world)

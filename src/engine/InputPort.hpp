@@ -78,7 +78,6 @@ public:
 
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
-	bool is_silent() const;
 
 protected:
 	size_t      _num_connections; ///< Pre-process thread

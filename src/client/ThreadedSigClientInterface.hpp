@@ -118,7 +118,6 @@ private:
 	Glib::Cond  _cond;
 
 	Raul::SRSWQueue<Closure> _sigs;
-	bool                     _attached;
 
 	sigc::slot<void>                                              bundle_begin_slot;
 	sigc::slot<void>                                              bundle_end_slot;

@@ -226,12 +226,5 @@ InputPort::post_process(Context& context)
 }
 
 
-bool
-InputPort::is_silent() const
-{
-	return (_connections.size() == 0 && _type == PortType::AUDIO);
-}
-
-
 } // namespace Ingen
 

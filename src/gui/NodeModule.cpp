@@ -66,11 +66,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 NodeModule::~NodeModule()
 {
 	NodeControlWindow* win = App::instance().window_factory()->control_window(_node);
-
-	if (win) {
-		// Should remove from window factory via signal
-		delete win;
-	}
+	delete win; // Will be removed from window factory via signal
 }
 
 

@@ -51,8 +51,9 @@ public:
 	{
 	}
 
-	inline void operator=(const SendPortActivity& ev) {
+	inline SendPortActivity& operator=(const SendPortActivity& ev) {
 		_port = ev._port;
+		return *this;
 	}
 
 	void post_process();

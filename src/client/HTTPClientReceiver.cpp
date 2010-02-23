@@ -62,7 +62,7 @@ HTTPClientReceiver::~HTTPClientReceiver()
 }
 
 
-HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::string uri)
+HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::string& uri)
 	: _uri(uri)
 	, _receiver(receiver)
 {

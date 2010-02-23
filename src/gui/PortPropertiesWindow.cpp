@@ -35,7 +35,8 @@ namespace GUI {
 
 PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Window(cobject)
-	//, _enable_signal(false)
+	, _initial_min(0.0f)
+	, _initial_max(1.0f)
 {
 	xml->get_widget("port_properties_min_spinner", _min_spinner);
 	xml->get_widget("port_properties_max_spinner", _max_spinner);
@@ -86,8 +87,6 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 	_connections.push_back(pm->signal_property.connect(
 			sigc::mem_fun(this, &PortPropertiesWindow::property_changed)));
 
-	//_enable_signal = true;
-
 	Gtk::Window::present();
 }
 
@@ -96,7 +95,6 @@ void
 PortPropertiesWindow::property_changed(const URI& key, const Atom& value)
 {
 	const Shared::LV2URIMap& uris = App::instance().uris();
-	//_enable_signal = false;
 
 	if (value.type() == Atom::FLOAT) {
 		if (key == uris.lv2_minimum)
@@ -104,8 +102,6 @@ PortPropertiesWindow::property_changed(const URI& key, const Atom& value)
 		else if (key == uris.lv2_maximum)
 			_max_spinner->set_value(value.get_float());
 	}
-
-	//_enable_signal = true;
 }
 
 

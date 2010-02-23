@@ -45,6 +45,7 @@ class HTTPClientSender
 public:
 	HTTPClientSender(Engine& engine)
 		: _engine(engine)
+		, _enabled(true)
 	{}
 
 	bool enabled() const { return _enabled; }

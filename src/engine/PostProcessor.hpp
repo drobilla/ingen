@@ -43,6 +43,7 @@ class PostProcessor
 {
 public:
 	PostProcessor(Engine& engine, size_t queue_size);
+	~PostProcessor();
 
 	/** Push a list of events on to the process queue, realtime-safe, not thread-safe. */
 	inline void append(Raul::List<Event*>* l) { _events.append(*l); }

@@ -40,6 +40,7 @@ struct IngenLV2Driver : public Ingen::Driver {
 		, _buffer_size(buffer_size)
 		, _sample_rate(sample_rate)
 		, _frame_time(0)
+		, _root_patch(NULL)
 	{}
 
 	void activate() {}

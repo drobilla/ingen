@@ -49,6 +49,8 @@ Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timesta
 	, _patch(NULL)
 	, _src_port(NULL)
 	, _dst_port(NULL)
+	, _src_output_port(NULL)
+	, _dst_input_port(NULL)
 	, _compiled_patch(NULL)
 	, _patch_listnode(NULL)
 	, _port_listnode(NULL)
