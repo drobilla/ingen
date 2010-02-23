@@ -21,6 +21,7 @@
 #include <cmath>
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
+#include "raul/Array.hpp"
 #include "AudioBuffer.hpp"
 #include "InputPort.hpp"
 #include "LV2Node.hpp"
@@ -60,10 +61,6 @@ LV2Node::LV2Node(LV2Plugin*    plugin,
 
 LV2Node::~LV2Node()
 {
-	if (_instances)
-		for (uint32_t i = 0; i < _polyphony; ++i)
-			slv2_instance_free((*_instances)[i]);
-
 	delete _instances;
 }
 
@@ -76,18 +73,18 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 
 	NodeBase::prepare_poly(bufs, poly);
 
-	if ( (!_polyphonic)
-			|| (_prepared_instances && poly <= _prepared_instances->size()) ) {
+	if (_polyphony == poly)
 		return true;
-	}
 
 	SharedPtr<LV2Info> info = _lv2_plugin->lv2_info();
-	_prepared_instances = new Raul::Array<SLV2Instance>(poly, *_instances, NULL);
+	_prepared_instances = new Instances(poly, *_instances, SharedPtr<void>());
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
-		_prepared_instances->at(i) = slv2_plugin_instantiate(
-				_lv2_plugin->slv2_plugin(), _srate, _features->array());
+		_prepared_instances->at(i) = SharedPtr<void>(
+				slv2_plugin_instantiate(
+					_lv2_plugin->slv2_plugin(), _srate, _features->array()),
+				slv2_instance_free);
 
-		if (_prepared_instances->at(i) == NULL) {
+		if (!_prepared_instances->at(i)) {
 			error << "Failed to instantiate plugin" << endl;
 			return false;
 		}
@@ -106,7 +103,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		}
 
 		if (_activated)
-			slv2_instance_activate(_prepared_instances->at(i));
+			slv2_instance_activate((SLV2Instance)(*_prepared_instances)[i].get());
 	}
 
 	return true;
@@ -149,7 +146,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	assert(num_ports > 0);
 
 	_ports     = new Raul::Array<PortImpl*>(num_ports, NULL);
-	_instances = new Raul::Array<SLV2Instance>(_polyphony, NULL);
+	_instances = new Instances(_polyphony, SharedPtr<void>());
 
 	_features = info->world().lv2_features->lv2_features(this);
 
@@ -157,8 +154,11 @@ LV2Node::instantiate(BufferFactory& bufs)
 	SLV2Value ctx_ext_uri = slv2_value_new_uri(info->lv2_world(), LV2_CONTEXT_MESSAGE);
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
-		(*_instances)[i] = slv2_plugin_instantiate(plug, _srate, _features->array());
-		if ((*_instances)[i] == NULL) {
+		(*_instances)[i] = SharedPtr<void>(
+				slv2_plugin_instantiate(plug, _srate, _features->array()),
+				slv2_instance_free);
+
+		if (!instance(i)) {
 			error << "Failed to instantiate plugin" << endl;
 			return false;
 		}
@@ -167,7 +167,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			continue;
 
 		const void* ctx_ext = slv2_instance_get_extension_data(
-				(*_instances)[i], LV2_CONTEXT_MESSAGE);
+				instance(i), LV2_CONTEXT_MESSAGE);
 
 		if (i == 0 && ctx_ext) {
 			Raul::info << _lv2_plugin->uri() << " has message context" << endl;
@@ -324,9 +324,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 	}
 
 	if (!ret) {
-		for (uint32_t i = 0; i < _polyphony; ++i) {
-			slv2_instance_deactivate((*_instances)[i]);
-		}
 		delete _ports;
 		_ports = NULL;
 		delete _instances;
@@ -351,7 +348,7 @@ LV2Node::activate(BufferFactory& bufs)
 	NodeBase::activate(bufs);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
-		slv2_instance_activate((*_instances)[i]);
+		slv2_instance_activate(instance(i));
 }
 
 
@@ -361,7 +358,7 @@ LV2Node::deactivate()
 	NodeBase::deactivate();
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
-		slv2_instance_deactivate((*_instances)[i]);
+		slv2_instance_deactivate(instance(i));
 }
 
 
@@ -376,8 +373,9 @@ LV2Node::message_run(MessageContext& context)
 
 	if (!_valid_ports)
 		_valid_ports = calloc(num_ports() / 8, 1);
+
 	if (_message_funcs)
-		(*_message_funcs->message_run)((*_instances)[0]->lv2_handle, _valid_ports, _valid_ports);
+		(*_message_funcs->message_run)(instance(0)->lv2_handle, _valid_ports, _valid_ports);
 }
 
 
@@ -387,7 +385,7 @@ LV2Node::process(ProcessContext& context)
 	NodeBase::pre_process(context);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
-		slv2_instance_run((*_instances)[i], context.nframes());
+		slv2_instance_run(instance(i), context.nframes());
 
 	NodeBase::post_process(context);
 }
@@ -397,7 +395,7 @@ void
 LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num, BufferFactory::Ref buf)
 {
 	NodeBase::set_port_buffer(voice, port_num, buf);
-	slv2_instance_connect_port((*_instances)[voice], port_num,
+	slv2_instance_connect_port(instance(voice), port_num,
 			buf ? buf->port_data(_ports->at(port_num)->type()) : NULL);
 }
 

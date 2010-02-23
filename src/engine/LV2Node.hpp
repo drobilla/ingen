@@ -61,9 +61,13 @@ public:
 	void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf);
 
 protected:
-	LV2Plugin*                 _lv2_plugin;
-	Raul::Array<SLV2Instance>* _instances;
-	Raul::Array<SLV2Instance>* _prepared_instances;
+	inline SLV2Instance instance(uint32_t voice) { return (SLV2Instance)(*_instances)[voice].get(); }
+
+	typedef Raul::Array< SharedPtr<void> > Instances;
+
+	LV2Plugin* _lv2_plugin;
+	Instances* _instances;
+	Instances* _prepared_instances;
 
 	LV2MessageContext* _message_funcs;
 

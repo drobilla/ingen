@@ -60,10 +60,6 @@ LADSPANode::LADSPANode(PluginImpl*              plugin,
 
 LADSPANode::~LADSPANode()
 {
-	if (_instances)
-		for (uint32_t i = 0; i < _polyphony; ++i)
-			_descriptor->cleanup((*_instances)[i]);
-
 	delete _instances;
 }
 
@@ -76,15 +72,14 @@ LADSPANode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 
 	NodeBase::prepare_poly(bufs, poly);
 
-	if ( (!_polyphonic)
-			|| (_prepared_instances && poly <= _prepared_instances->size()) ) {
+	if (_polyphony == poly)
 		return true;
-	}
 
-	_prepared_instances = new Raul::Array<LADSPA_Handle>(poly, *_instances, NULL);
+	_prepared_instances = new Instances(poly, *_instances, SharedPtr<Instance>());
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
-		_prepared_instances->at(i) = _descriptor->instantiate(_descriptor, _srate);
-		if (_prepared_instances->at(i) == NULL) {
+		_prepared_instances->at(i) = SharedPtr<Instance>(new Instance(_descriptor,
+				_descriptor->instantiate(_descriptor, _srate)));
+		if (!_prepared_instances->at(i)->handle) {
 			error << "Failed to instantiate plugin" << endl;
 			return false;
 		}
@@ -103,7 +98,7 @@ LADSPANode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		}
 
 		if (_activated && _descriptor->activate)
-			_descriptor->activate(_prepared_instances->at(i));
+			_descriptor->activate(_prepared_instances->at(i)->handle);
 	}
 
 	return true;
@@ -142,11 +137,12 @@ LADSPANode::instantiate(BufferFactory& bufs)
 	if (!_ports)
 		_ports = new Raul::Array<PortImpl*>(_descriptor->PortCount);
 
-	_instances = new Raul::Array<LADSPA_Handle>(_polyphony, NULL);
+	_instances = new Instances(_polyphony);
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
-		(*_instances)[i] = _descriptor->instantiate(_descriptor, _srate);
-		if ((*_instances)[i] == NULL) {
+		(*_instances)[i] = SharedPtr<Instance>(new Instance(
+				_descriptor, _descriptor->instantiate(_descriptor, _srate)));
+		if (!instance(i)) {
 			error << "Failed to instantiate plugin" << endl;
 			return false;
 		}
@@ -251,7 +247,7 @@ LADSPANode::activate(BufferFactory& bufs)
 
 	if (_descriptor->activate != NULL)
 		for (uint32_t i = 0; i < _polyphony; ++i)
-			_descriptor->activate((*_instances)[i]);
+			_descriptor->activate(instance(i));
 }
 
 
@@ -262,7 +258,7 @@ LADSPANode::deactivate()
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		if (_descriptor->deactivate != NULL)
-			_descriptor->deactivate((*_instances)[i]);
+			_descriptor->deactivate(instance(i));
 }
 
 
@@ -272,7 +268,7 @@ LADSPANode::process(ProcessContext& context)
 	NodeBase::pre_process(context);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
-		_descriptor->run((*_instances)[i], context.nframes());
+		_descriptor->run(instance(i), context.nframes());
 
 	NodeBase::post_process(context);
 }
@@ -283,7 +279,7 @@ LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, BufferFactory::Re
 {
 	NodeBase::set_port_buffer(voice, port_num, buf);
 
-	_descriptor->connect_port((*_instances)[voice], port_num,
+	_descriptor->connect_port(instance(voice), port_num,
 			buf ? (LADSPA_Data*)buf->port_data(_ports->at(port_num)->type()) : NULL);
 }
 

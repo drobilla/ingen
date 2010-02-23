@@ -58,14 +58,30 @@ public:
 	void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf);
 
 protected:
+	inline LADSPA_Handle instance(uint32_t voice) { return (*_instances)[voice]->handle; }
+
 	void get_port_limits(unsigned long            port_index,
 	                     boost::optional<Sample>& default_value,
 	                     boost::optional<Sample>& lower_bound,
 	                     boost::optional<Sample>& upper_bound);
 
-	const LADSPA_Descriptor*    _descriptor;
-	Raul::Array<LADSPA_Handle>* _instances;
-	Raul::Array<LADSPA_Handle>* _prepared_instances;
+	struct Instance {
+		Instance(const LADSPA_Descriptor* d=NULL, LADSPA_Handle h=NULL)
+			: descriptor(d), handle(h)
+		{}
+		~Instance() {
+			if (descriptor && handle)
+				descriptor->cleanup(handle);
+		}
+		const LADSPA_Descriptor* descriptor;
+		LADSPA_Handle            handle;
+	};
+
+	typedef Raul::Array< SharedPtr<Instance> > Instances;
+
+	const LADSPA_Descriptor* _descriptor;
+	Instances*               _instances;
+	Instances*               _prepared_instances;
 };
 
 
