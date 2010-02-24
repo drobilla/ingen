@@ -48,7 +48,7 @@ struct IngenLV2Driver : public Ingen::Driver {
 	bool is_activated() const { return true; }
 
 	void run(uint32_t nframes) {
-		_context.set_time_slice(nframes, _frame_time, _frame_time + nframes);
+		_context.locate(_frame_time, nframes, 0);
 		if (_root_patch)
 			_root_patch->process(_context);
 		_frame_time += nframes;

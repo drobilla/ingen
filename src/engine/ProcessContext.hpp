@@ -25,30 +25,19 @@
 namespace Ingen {
 
 
-/** Context of a process() call.
+/** Context of a process() call (the audio context).
  *
- * This is used to pass whatever information a GraphObject might need to
- * process in the audio thread, e.g. the available thread pool, sink for
- * events (generated in the audio thread, not user initiated events), etc.
- *
- * Note the distinction between nframes and start/end.  If transport speed
- * != 1.0, end-start != nframes (though currently that is never the case, it
- * may be in the future with sequencerey things).
+ * This class currently adds no functionality to Context, but the
+ * separate type is useful for writing functions that must only
+ * be run in the audio context (the function taking a ProcessContext
+ * parameter makes this clear, and makes breaking the rules obvious).
  *
  * \ingroup engine
  */
 class ProcessContext : public Context
 {
 public:
-	ProcessContext(Engine& engine)
-		: Context(engine, AUDIO)
-	{}
-
-	void set_time_slice(SampleCount nframes, SampleCount offset, FrameTime start, FrameTime end) {
-		locate(start, offset);
-		_nframes = nframes;
-		_end = end;
-	}
+	ProcessContext(Engine& engine) : Context(engine, AUDIO) {}
 };
 
 

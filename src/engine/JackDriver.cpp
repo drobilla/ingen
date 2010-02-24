@@ -413,15 +413,14 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 
 	// Note that Jack can not call this function for a cycle, if overloaded
 	const jack_nframes_t start_of_current_cycle = jack_last_frame_time(_client);
-	const jack_nframes_t end_of_current_cycle   = start_of_current_cycle + nframes;
 
 	_transport_state = jack_transport_query(_client, &_position);
 
-	_process_context.set_time_slice(nframes, 0, start_of_current_cycle, end_of_current_cycle);
+	_process_context.locate(start_of_current_cycle, nframes, 0);
 
 	for (Engine::ProcessSlaves::iterator i = _engine.process_slaves().begin();
 			i != _engine.process_slaves().end(); ++i) {
-		(*i)->context().set_time_slice(nframes, 0, start_of_current_cycle, end_of_current_cycle);
+		(*i)->context().locate(start_of_current_cycle, nframes, 0);
 	}
 
 	// Read input
@@ -442,15 +441,12 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	if (_root_patch) {
 		_root_patch->process(_process_context);
 #if 0
-		const FrameTime cycle_start = _process_context.start();
 		static const SampleCount control_block_size = nframes / 2;
 		for (jack_nframes_t i = 0; i < nframes; i += control_block_size) {
 			const SampleCount block_size = (i + control_block_size < nframes)
 					? control_block_size
 					: nframes - i;
-			_process_context.set_time_slice(block_size, i,
-					cycle_start + i,
-					cycle_start + i + block_size);
+			_process_context.locate(start_of_current_cycle + i, block_size, i);
 			_root_patch->process(_process_context);
 		}
 #endif

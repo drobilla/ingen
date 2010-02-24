@@ -25,6 +25,19 @@ namespace Ingen {
 
 class Engine;
 
+
+/** Graph execution context.
+ *
+ * This is used to pass whatever information a GraphObject might need to
+ * process; such as the current time, a sink for generated events, etc.
+ *
+ * Note the logical distinction between nframes (jack relative) and start/end
+ * (timeline relative).  If transport speed != 1.0, then end-start != nframes
+ * (though currently this is never the case, it may be if ingen incorporates
+ * tempo and varispeed).
+ *
+ * \ingroup engine
+ */
 class Context
 {
 public:
@@ -34,12 +47,12 @@ public:
 	};
 
 	Context(Engine& engine, ID id)
-		: _id(id)
-		, _engine(engine)
+		: _engine(engine)
+		, _id(id)
 		, _event_sink(engine, event_queue_size)
 		, _start(0)
-		, _nframes(0)
 		, _end(0)
+		, _nframes(0)
 		, _offset(0)
 		, _realtime(true)
 	{}
@@ -48,12 +61,24 @@ public:
 
 	ID id() const { return _id; }
 
-	void locate(FrameTime s, SampleCount o=0) { _start = s; _offset=o; }
+	void locate(FrameTime s, SampleCount nframes, SampleCount offset) {
+		_start = s;
+		_end = s + nframes;
+		_nframes = nframes;
+		_offset = offset;
+	}
+
+	void locate(const Context& other) {
+		_start = other._start;
+		_end = other._end;
+		_nframes = other._nframes;
+		_offset = other._offset;
+	}
 
 	inline Engine&     engine()   const { return _engine; }
 	inline FrameTime   start()    const { return _start; }
-	inline SampleCount nframes()  const { return _nframes; }
 	inline FrameTime   end()      const { return _end; }
+	inline SampleCount nframes()  const { return _nframes; }
 	inline SampleCount offset()   const { return _offset; }
 	inline bool        realtime() const { return _realtime; }
 
@@ -61,13 +86,13 @@ public:
 	inline EventSink&        event_sink()       { return _event_sink; }
 
 protected:
-	ID      _id;      ///< Fast ID for this context
 	Engine& _engine;  ///< Engine we're running in
+	ID      _id;      ///< Fast ID for this context
 
 	EventSink   _event_sink; ///< Sink for events generated in a realtime context
 	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
-	SampleCount _nframes;    ///< Length of this cycle in frames
 	FrameTime   _end;        ///< End frame of this cycle, timeline relative
+	SampleCount _nframes;    ///< Length of this cycle in frames
 	SampleCount _offset;     ///< Start offset relative to start of driver buffers
 	bool        _realtime;   ///< True iff context is hard realtime
 };
