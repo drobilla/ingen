@@ -172,10 +172,10 @@ PortImpl::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
 
 
 void
-PortImpl::connect_buffers()
+PortImpl::connect_buffers(SampleCount offset)
 {
 	for (uint32_t v = 0; v < _poly; ++v)
-		PortImpl::parent_node()->set_port_buffer(v, _index, buffer(v));
+		PortImpl::parent_node()->set_port_buffer(v, _index, buffer(v), offset);
 }
 
 

@@ -119,7 +119,7 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 
 
 bool
-PatchImpl::apply_internal_poly(BufferFactory& bufs, Raul::Maid& maid, uint32_t poly)
+PatchImpl::apply_internal_poly(ProcessContext& context, BufferFactory& bufs, Raul::Maid& maid, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
@@ -136,7 +136,7 @@ PatchImpl::apply_internal_poly(BufferFactory& bufs, Raul::Maid& maid, uint32_t p
 			PortImpl* const port = (*i)->port_impl(j);
 			if (port->is_input() && dynamic_cast<InputPort*>(port)->num_connections() == 1)
 				port->setup_buffers(bufs, port->poly());
-			port->connect_buffers();
+			port->connect_buffers(context.offset());
 		}
 	}
 

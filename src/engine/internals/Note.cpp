@@ -148,6 +148,11 @@ NoteNode::process(ProcessContext& context)
 		debug << endl;
 #endif
 
+		if (frames < context.offset())
+			continue;
+		if (frames > context.nframes())
+			break;
+
 		const FrameTime time = context.start() + (FrameTime)frames;
 
 		if (size >= 3) {

@@ -17,9 +17,10 @@
 
 #include <cassert>
 #include "shared/LV2URIMap.hpp"
+#include "internals/Controller.hpp"
+#include "internals/Delay.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
-#include "internals/Controller.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
@@ -52,12 +53,14 @@ InternalPlugin::instantiate(BufferFactory&    bufs,
 	const SampleCount srate = engine.driver()->sample_rate();
 
 	const string uri_str = uri().str();
-	if (uri_str == NS_INTERNALS "Note") {
+	if (uri_str == NS_INTERNALS "Controller") {
+		return new ControllerNode(bufs, name, polyphonic, parent, srate);
+	} else if (uri_str == NS_INTERNALS "Delay") {
+		return new DelayNode(bufs, name, polyphonic, parent, srate);
+	} else if (uri_str == NS_INTERNALS "Note") {
 		return new NoteNode(bufs, name, polyphonic, parent, srate);
 	} else if (uri_str == NS_INTERNALS "Trigger") {
 		return new TriggerNode(bufs, name, polyphonic, parent, srate);
-	} else if (uri_str == NS_INTERNALS "Controller") {
-		return new ControllerNode(bufs, name, polyphonic, parent, srate);
 	} else {
 		return NULL;
 	}

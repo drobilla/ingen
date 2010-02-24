@@ -32,8 +32,8 @@ public:
 	EventBuffer(BufferFactory& bufs, size_t capacity);
 	~EventBuffer();
 
-	void*       port_data(Shared::PortType port_type)       { return _data; }
-	const void* port_data(Shared::PortType port_type) const { return _data; }
+	void*       port_data(Shared::PortType port_type, SampleCount offset=0)       { return _data; }
+	const void* port_data(Shared::PortType port_type, SampleCount offset=0) const { return _data; }
 
 	inline void rewind() const { lv2_event_begin(&_iter, _data); }
 

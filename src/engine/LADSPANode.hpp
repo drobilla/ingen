@@ -55,7 +55,8 @@ public:
 
 	void process(ProcessContext& context);
 
-	void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf);
+	void set_port_buffer(uint32_t voice, uint32_t port_num,
+			IntrusivePtr<Buffer> buf, SampleCount offset);
 
 protected:
 	inline LADSPA_Handle instance(uint32_t voice) { return (*_instances)[voice]->handle; }

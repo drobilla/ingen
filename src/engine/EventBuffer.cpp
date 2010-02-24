@@ -83,7 +83,8 @@ EventBuffer::prepare_read(Context& context)
 void
 EventBuffer::prepare_write(Context& context)
 {
-	clear();
+	if (context.offset() == 0)
+		clear();
 }
 
 

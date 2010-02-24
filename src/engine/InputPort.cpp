@@ -217,11 +217,6 @@ InputPort::pre_process(Context& context)
 void
 InputPort::post_process(Context& context)
 {
-	// Prepare buffers for next cycle
-	if (type() != PortType::CONTROL && num_connections() > 1)
-		for (uint32_t v = 0; v < _poly; ++v)
-			buffer(v)->prepare_write(context);
-
 	_set_by_user = false;
 }
 

@@ -275,12 +275,13 @@ LADSPANode::process(ProcessContext& context)
 
 
 void
-LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num, BufferFactory::Ref buf)
+LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num,
+		IntrusivePtr<Buffer> buf, SampleCount offset)
 {
-	NodeBase::set_port_buffer(voice, port_num, buf);
+	NodeBase::set_port_buffer(voice, port_num, buf, offset);
 
 	_descriptor->connect_port(instance(voice), port_num,
-			buf ? (LADSPA_Data*)buf->port_data(_ports->at(port_num)->type()) : NULL);
+			buf ? (LADSPA_Data*)buf->port_data(_ports->at(port_num)->type(), offset) : NULL);
 }
 
 

@@ -58,7 +58,8 @@ public:
 
 	void process(ProcessContext& context);
 
-	void set_port_buffer(uint32_t voice, uint32_t port_num, IntrusivePtr<Buffer> buf);
+	void set_port_buffer(uint32_t voice, uint32_t port_num,
+			IntrusivePtr<Buffer> buf, SampleCount offset);
 
 protected:
 	inline SLV2Instance instance(uint32_t voice) { return (SLV2Instance)(*_instances)[voice].get(); }

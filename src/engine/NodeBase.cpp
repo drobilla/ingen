@@ -216,8 +216,10 @@ NodeBase::pre_process(Context& context)
 	// Mix down input ports
 	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);
-		if (port->context() == Context::AUDIO)
+		if (port->context() == Context::AUDIO) {
 			port->pre_process(context);
+			port->connect_buffers(context.offset());
+		}
 	}
 }
 
@@ -266,10 +268,11 @@ NodeBase::reset_valid_ports()
 
 
 void
-NodeBase::set_port_buffer(uint32_t voice, uint32_t port_num, BufferFactory::Ref buf)
+NodeBase::set_port_buffer(uint32_t voice, uint32_t port_num,
+		BufferFactory::Ref buf, SampleCount offset)
 {
-	/*debug << path() << " set port " << port_num << " voice " << voice
-			<< " buffer " << buf << endl;*/
+	/*std::cout << path() << " set port " << port_num << " voice " << voice
+			<< " buffer " << buf << " offset " << offset << std::endl;*/
 }
 
 

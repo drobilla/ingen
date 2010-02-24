@@ -97,7 +97,7 @@ public:
 		get_buffers(bufs, _buffers, poly);
 	}
 
-	virtual void connect_buffers();
+	virtual void connect_buffers(SampleCount offset=0);
 	virtual void recycle_buffers();
 
 	virtual bool is_input()  const = 0;

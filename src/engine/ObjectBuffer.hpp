@@ -34,8 +34,8 @@ public:
 
 	void clear();
 
-	void*       port_data(Shared::PortType port_type);
-	const void* port_data(Shared::PortType port_type) const;
+	void*       port_data(Shared::PortType port_type, SampleCount offset);
+	const void* port_data(Shared::PortType port_type, SampleCount offset) const;
 
 	void prepare_write(Context& context);
 

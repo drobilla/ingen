@@ -79,7 +79,7 @@ public:
 	 * \param poly Must be < the most recent value passed to prepare_internal_poly.
 	 * \param maid Any objects no longer needed will be pushed to this
 	 */
-	bool apply_internal_poly(BufferFactory& bufs, Raul::Maid& maid, uint32_t poly);
+	bool apply_internal_poly(ProcessContext& context, BufferFactory& bufs, Raul::Maid& maid, uint32_t poly);
 
 	// Patch specific stuff not inherited from Node
 

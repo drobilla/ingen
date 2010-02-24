@@ -102,7 +102,7 @@ ObjectBuffer::resize(size_t size)
 
 
 void*
-ObjectBuffer::port_data(PortType port_type)
+ObjectBuffer::port_data(PortType port_type, SampleCount offset)
 {
 	switch (port_type.symbol()) {
 	case PortType::CONTROL:
@@ -111,7 +111,7 @@ ObjectBuffer::port_data(PortType port_type)
 			case PortType::CONTROL:
 				return (float*)object()->body;
 			case PortType::AUDIO:
-				return ((LV2_Vector_Body*)object()->body)->elems;
+				return (float*)((LV2_Vector_Body*)object()->body)->elems + offset;
 			default:
 				warn << "Audio data requested from non-audio buffer" << endl;
 				return NULL;
@@ -124,13 +124,21 @@ ObjectBuffer::port_data(PortType port_type)
 
 
 const void*
-ObjectBuffer::port_data(PortType port_type) const
+ObjectBuffer::port_data(PortType port_type, SampleCount offset) const
 {
 	switch (port_type.symbol()) {
 	case PortType::CONTROL:
-		return _buf + sizeof(LV2_Object);
 	case PortType::AUDIO:
-		return _buf + sizeof(LV2_Object) + sizeof(LV2_Vector_Body);
+		switch (_type.symbol()) {
+			case PortType::CONTROL:
+				return (float*)object()->body;
+			case PortType::AUDIO:
+				return (float*)((LV2_Vector_Body*)object()->body)->elems + offset;
+			default:
+				warn << "Audio data requested from non-audio buffer" << endl;
+				return NULL;
+		}
+		break;
 	default:
 		return _buf;
 	}

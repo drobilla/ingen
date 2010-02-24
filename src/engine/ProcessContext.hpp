@@ -42,22 +42,13 @@ class ProcessContext : public Context
 public:
 	ProcessContext(Engine& engine)
 		: Context(engine, AUDIO)
-		, _nframes(0)
-		, _end(0)
 	{}
 
-	void set_time_slice(SampleCount nframes, FrameTime start, FrameTime end) {
-		locate(start);
+	void set_time_slice(SampleCount nframes, SampleCount offset, FrameTime start, FrameTime end) {
+		locate(start, offset);
 		_nframes = nframes;
 		_end = end;
 	}
-
-	inline SampleCount nframes() const { return _nframes; }
-	inline FrameTime   end()     const { return _end; }
-
-private:
-	SampleCount _nframes; ///< Length of this cycle in frames
-	FrameTime   _end;     ///< End frame of this cycle, timeline relative
 };
 
 

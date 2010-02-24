@@ -18,7 +18,6 @@
 #include <math.h>
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
-#include "raul/IntrusivePtr.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendBinding.hpp"
 #include "AudioBuffer.hpp"

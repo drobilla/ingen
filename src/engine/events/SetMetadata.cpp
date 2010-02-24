@@ -26,6 +26,7 @@
 #include "CreateNode.hpp"
 #include "CreatePatch.hpp"
 #include "CreatePort.hpp"
+#include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "GraphObjectImpl.hpp"
@@ -312,7 +313,8 @@ SetMetadata::execute(ProcessContext& context)
 			break;
 		case POLYPHONY:
 			if (_patch->internal_poly() != static_cast<uint32_t>(value.get_int32()) &&
-					!_patch->apply_internal_poly(*_engine.buffer_factory(),
+					!_patch->apply_internal_poly(_engine.driver()->context(),
+						*_engine.buffer_factory(),
 						*_engine.maid(), value.get_int32())) {
 				_error = INTERNAL;
 			}

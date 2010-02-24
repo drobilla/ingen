@@ -59,7 +59,7 @@ public:
 		_index = start_index;
 		_state = STATE_RUNNING;
 		_compiled_patch = compiled_patch;
-		_process_context.set_time_slice(context.nframes(), context.start(), context.end());
+		_process_context.set_time_slice(context.nframes(), context.offset(), context.start(), context.end());
 
 		Raul::Slave::whip();
 	}

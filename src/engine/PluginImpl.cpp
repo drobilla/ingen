@@ -17,9 +17,6 @@
 
 #include "raul/log.hpp"
 #include "PluginImpl.hpp"
-#include "internals/Note.hpp"
-#include "internals/Trigger.hpp"
-#include "internals/Controller.hpp"
 
 using namespace std;
 using namespace Raul;

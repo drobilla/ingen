@@ -38,6 +38,9 @@ public:
 		, _engine(engine)
 		, _event_sink(engine, event_queue_size)
 		, _start(0)
+		, _nframes(0)
+		, _end(0)
+		, _offset(0)
 		, _realtime(true)
 	{}
 
@@ -45,11 +48,14 @@ public:
 
 	ID id() const { return _id; }
 
-	void locate(FrameTime s) { _start = s; }
+	void locate(FrameTime s, SampleCount o=0) { _start = s; _offset=o; }
 
-	inline Engine&   engine()   const { return _engine; }
-	inline FrameTime start()    const { return _start; }
-	inline bool      realtime() const { return _realtime; }
+	inline Engine&     engine()   const { return _engine; }
+	inline FrameTime   start()    const { return _start; }
+	inline SampleCount nframes()  const { return _nframes; }
+	inline FrameTime   end()      const { return _end; }
+	inline SampleCount offset()   const { return _offset; }
+	inline bool        realtime() const { return _realtime; }
 
 	inline const EventSink&  event_sink() const { return _event_sink; }
 	inline EventSink&        event_sink()       { return _event_sink; }
@@ -58,10 +64,12 @@ protected:
 	ID      _id;      ///< Fast ID for this context
 	Engine& _engine;  ///< Engine we're running in
 
-private:
-	EventSink _event_sink; ///< Sink for events generated in a realtime context
-	FrameTime _start;      ///< Start frame of this cycle, timeline relative
-	bool      _realtime;   ///< True iff context is hard realtime
+	EventSink   _event_sink; ///< Sink for events generated in a realtime context
+	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
+	SampleCount _nframes;    ///< Length of this cycle in frames
+	FrameTime   _end;        ///< End frame of this cycle, timeline relative
+	SampleCount _offset;     ///< Start offset relative to start of driver buffers
+	bool        _realtime;   ///< True iff context is hard realtime
 };
 
 

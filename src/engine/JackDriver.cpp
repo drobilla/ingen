@@ -417,11 +417,11 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 
 	_transport_state = jack_transport_query(_client, &_position);
 
-	_process_context.set_time_slice(nframes, start_of_current_cycle, end_of_current_cycle);
+	_process_context.set_time_slice(nframes, 0, start_of_current_cycle, end_of_current_cycle);
 
 	for (Engine::ProcessSlaves::iterator i = _engine.process_slaves().begin();
 			i != _engine.process_slaves().end(); ++i) {
-		(*i)->context().set_time_slice(nframes, start_of_current_cycle, end_of_current_cycle);
+		(*i)->context().set_time_slice(nframes, 0, start_of_current_cycle, end_of_current_cycle);
 	}
 
 	// Read input
@@ -432,13 +432,29 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	_engine.control_bindings()->pre_process(_process_context,
 			PtrCast<EventBuffer>(_root_patch->port_impl(0)->buffer(0)).get());
 
+	_engine.post_processor()->set_end_time(_process_context.end());
+
 	// Process events that came in during the last cycle
 	// (Aiming for jitter-free 1 block event latency, ideally)
 	_engine.process_events(_process_context);
 
 	// Run root patch
-	if (_root_patch)
+	if (_root_patch) {
 		_root_patch->process(_process_context);
+#if 0
+		const FrameTime cycle_start = _process_context.start();
+		static const SampleCount control_block_size = nframes / 2;
+		for (jack_nframes_t i = 0; i < nframes; i += control_block_size) {
+			const SampleCount block_size = (i + control_block_size < nframes)
+					? control_block_size
+					: nframes - i;
+			_process_context.set_time_slice(block_size, i,
+					cycle_start + i,
+					cycle_start + i + block_size);
+			_root_patch->process(_process_context);
+		}
+#endif
+	}
 
 	// Emit control binding feedback
 	_engine.control_bindings()->post_process(_process_context,
@@ -452,7 +468,6 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->post_process(_process_context);
 
-	_engine.post_processor()->set_end_time(_process_context.end());
 
 	return 0;
 }

@@ -25,9 +25,10 @@
 #include "raul/Atom.hpp"
 #include "ingen-config.h"
 #include "module/World.hpp"
+#include "internals/Controller.hpp"
+#include "internals/Delay.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
-#include "internals/Controller.hpp"
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
 #include "NodeFactory.hpp"
@@ -137,14 +138,17 @@ NodeFactory::load_plugins()
 void
 NodeFactory::load_internal_plugins()
 {
+	InternalPlugin& controller_plug = ControllerNode::internal_plugin();
+	_plugins.insert(make_pair(controller_plug.uri(), &controller_plug));
+
+	InternalPlugin& delay_plug = DelayNode::internal_plugin();
+	_plugins.insert(make_pair(delay_plug.uri(), &delay_plug));
+
 	InternalPlugin& note_plug = NoteNode::internal_plugin();
 	_plugins.insert(make_pair(note_plug.uri(), &note_plug));
 
 	InternalPlugin& trigger_plug = TriggerNode::internal_plugin();
 	_plugins.insert(make_pair(trigger_plug.uri(), &trigger_plug));
-
-	InternalPlugin& controller_plug = ControllerNode::internal_plugin();
-	_plugins.insert(make_pair(controller_plug.uri(), &controller_plug));
 }
 
 

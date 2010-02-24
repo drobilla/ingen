@@ -50,8 +50,8 @@ public:
 
 	virtual void resize(size_t size) { _size = size; }
 
-	virtual void*       port_data(Shared::PortType port_type) = 0;
-	virtual const void* port_data(Shared::PortType port_type) const = 0;
+	virtual void*       port_data(Shared::PortType port_type, SampleCount offset=0) = 0;
+	virtual const void* port_data(Shared::PortType port_type, SampleCount offset=0) const = 0;
 
 	/** Rewind (ie reset read pointer), but leave contents unchanged */
 	virtual void rewind() const {}
