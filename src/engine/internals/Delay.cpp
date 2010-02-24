@@ -54,7 +54,7 @@ static InternalPlugin note_plugin(NS_INTERNALS "Delay", "delay");
 InternalPlugin& DelayNode::internal_plugin() { return note_plugin; }
 
 DelayNode::DelayNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate)
-	: NodeBase(&note_plugin, path, polyphonic, parent, srate)
+	: NodeImpl(&note_plugin, path, polyphonic, parent, srate)
 	, _buffer(0)
 	, _buffer_length(0)
 	, _buffer_mask(0)
@@ -97,7 +97,7 @@ DelayNode::~DelayNode()
 void
 DelayNode::activate(BufferFactory& bufs)
 {
-	NodeBase::activate(bufs);
+	NodeImpl::activate(bufs);
 	const SampleCount min_size = MAX_DELAY_SECONDS * _srate;
 
 	// Smallest power of two larger than min_size
@@ -142,7 +142,7 @@ DelayNode::process(ProcessContext& context)
 	AudioBuffer* const in_buf    = (AudioBuffer*)_in_port->buffer(0).get();
 	AudioBuffer* const out_buf   = (AudioBuffer*)_out_port->buffer(0).get();
 
-	NodeBase::pre_process(context);
+	NodeImpl::pre_process(context);
 
 	DelayNode* plugin_data = this;
 
@@ -199,7 +199,7 @@ DelayNode::process(ProcessContext& context)
 
 	_write_phase = write_phase;
 
-	NodeBase::post_process(context);
+	NodeImpl::post_process(context);
 }
 
 

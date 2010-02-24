@@ -23,7 +23,7 @@
 #include "raul/List.hpp"
 #include "interface/PortType.hpp"
 #include "interface/Patch.hpp"
-#include "NodeBase.hpp"
+#include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "CompiledPatch.hpp"
 
@@ -46,7 +46,7 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class PatchImpl : public NodeBase, public Ingen::Shared::Patch
+class PatchImpl : public NodeImpl, public Ingen::Shared::Patch
 {
 public:
 	PatchImpl(Engine&             engine,

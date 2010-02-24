@@ -24,7 +24,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "NodeBase.hpp"
+#include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"

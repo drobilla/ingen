@@ -231,7 +231,7 @@ SetMetadata::pre_process()
 						op = POLYPHONIC;
 						_blocking = true;
 						obj->set_property(key, value.get_bool());
-						NodeBase* node = dynamic_cast<NodeBase*>(obj);
+						NodeImpl* node = dynamic_cast<NodeImpl*>(obj);
 						if (node)
 							node->set_polyphonic(value.get_bool());
 						if (value.get_bool()) {
@@ -280,7 +280,7 @@ SetMetadata::execute(ProcessContext& context)
 		(*i)->execute(context);
 
 	GraphObjectImpl* const object = dynamic_cast<GraphObjectImpl*>(_object);
-	NodeBase* const        node   = dynamic_cast<NodeBase*>(_object);
+	NodeImpl* const        node   = dynamic_cast<NodeImpl*>(_object);
 	PortImpl* const        port   = dynamic_cast<PortImpl*>(_object);
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();

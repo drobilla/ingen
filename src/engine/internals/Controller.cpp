@@ -45,7 +45,7 @@ ControllerNode::ControllerNode(BufferFactory& bufs,
                                bool           polyphonic,
                                PatchImpl*     parent,
                                SampleRate     srate)
-	: NodeBase(&controller_plugin, path, false, parent, srate)
+	: NodeImpl(&controller_plugin, path, false, parent, srate)
 	, _learning(false)
 {
 	const LV2URIMap& uris = Shared::LV2URIMap::instance();
@@ -84,7 +84,7 @@ ControllerNode::ControllerNode(BufferFactory& bufs,
 void
 ControllerNode::process(ProcessContext& context)
 {
-	NodeBase::pre_process(context);
+	NodeImpl::pre_process(context);
 
 	uint32_t frames    = 0;
 	uint32_t subframes = 0;
@@ -104,7 +104,7 @@ ControllerNode::process(ProcessContext& context)
 		midi_in->increment();
 	}
 
-	NodeBase::post_process(context);
+	NodeImpl::post_process(context);
 }
 
 

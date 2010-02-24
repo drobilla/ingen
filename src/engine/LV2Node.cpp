@@ -49,7 +49,7 @@ LV2Node::LV2Node(LV2Plugin*    plugin,
 				 bool          polyphonic,
 				 PatchImpl*    parent,
 				 SampleRate    srate)
-	: NodeBase(plugin, name, polyphonic, parent, srate)
+	: NodeImpl(plugin, name, polyphonic, parent, srate)
 	, _lv2_plugin(plugin)
 	, _instances(NULL)
 	, _prepared_instances(NULL)
@@ -71,7 +71,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (!_polyphonic)
 		poly = 1;
 
-	NodeBase::prepare_poly(bufs, poly);
+	NodeImpl::prepare_poly(bufs, poly);
 
 	if (_polyphony == poly)
 		return true;
@@ -123,7 +123,7 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 	}
 	assert(poly <= _instances->size());
 
-	return NodeBase::apply_poly(maid, poly);
+	return NodeImpl::apply_poly(maid, poly);
 }
 
 
@@ -345,7 +345,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 void
 LV2Node::activate(BufferFactory& bufs)
 {
-	NodeBase::activate(bufs);
+	NodeImpl::activate(bufs);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		slv2_instance_activate(instance(i));
@@ -355,7 +355,7 @@ LV2Node::activate(BufferFactory& bufs)
 void
 LV2Node::deactivate()
 {
-	NodeBase::deactivate();
+	NodeImpl::deactivate();
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		slv2_instance_deactivate(instance(i));
@@ -382,12 +382,12 @@ LV2Node::message_run(MessageContext& context)
 void
 LV2Node::process(ProcessContext& context)
 {
-	NodeBase::pre_process(context);
+	NodeImpl::pre_process(context);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		slv2_instance_run(instance(i), context.nframes());
 
-	NodeBase::post_process(context);
+	NodeImpl::post_process(context);
 }
 
 
@@ -395,7 +395,7 @@ void
 LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num,
 		IntrusivePtr<Buffer> buf, SampleCount offset)
 {
-	NodeBase::set_port_buffer(voice, port_num, buf, offset);
+	NodeImpl::set_port_buffer(voice, port_num, buf, offset);
 	slv2_instance_connect_port(instance(voice), port_num,
 			buf ? buf->port_data(_ports->at(port_num)->type(), offset) : NULL);
 }

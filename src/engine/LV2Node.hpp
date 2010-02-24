@@ -23,7 +23,7 @@
 #include "raul/IntrusivePtr.hpp"
 #include "contexts.lv2/contexts.h"
 #include "types.hpp"
-#include "NodeBase.hpp"
+#include "NodeImpl.hpp"
 #include "LV2Features.hpp"
 
 namespace Ingen {
@@ -35,7 +35,7 @@ class LV2Plugin;
  *
  * \ingroup engine
  */
-class LV2Node : public NodeBase
+class LV2Node : public NodeImpl
 {
 public:
 	LV2Node(LV2Plugin*         plugin,

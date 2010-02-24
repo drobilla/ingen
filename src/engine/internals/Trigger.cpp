@@ -44,7 +44,7 @@ static InternalPlugin trigger_plugin(NS_INTERNALS "Trigger", "trigger");
 InternalPlugin& TriggerNode::internal_plugin() { return trigger_plugin; }
 
 TriggerNode::TriggerNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate)
-	: NodeBase(&trigger_plugin, path, false, parent, srate)
+	: NodeImpl(&trigger_plugin, path, false, parent, srate)
 	, _learning(false)
 {
 	const LV2URIMap& uris = LV2URIMap::instance();
@@ -82,7 +82,7 @@ TriggerNode::TriggerNode(BufferFactory& bufs, const string& path, bool polyphoni
 void
 TriggerNode::process(ProcessContext& context)
 {
-	NodeBase::pre_process(context);
+	NodeImpl::pre_process(context);
 
 	uint32_t frames = 0;
 	uint32_t subframes = 0;
@@ -120,7 +120,7 @@ TriggerNode::process(ProcessContext& context)
 		midi_in->increment();
 	}
 
-	NodeBase::post_process(context);
+	NodeImpl::post_process(context);
 }
 
 

@@ -49,7 +49,7 @@ LADSPANode::LADSPANode(PluginImpl*              plugin,
                        PatchImpl*               parent,
                        const LADSPA_Descriptor* descriptor,
                        SampleRate               srate)
-	: NodeBase(plugin, path, polyphonic, parent, srate)
+	: NodeImpl(plugin, path, polyphonic, parent, srate)
 	, _descriptor(descriptor)
 	, _instances(NULL)
 	, _prepared_instances(NULL)
@@ -70,7 +70,7 @@ LADSPANode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (!_polyphonic)
 		poly = 1;
 
-	NodeBase::prepare_poly(bufs, poly);
+	NodeImpl::prepare_poly(bufs, poly);
 
 	if (_polyphony == poly)
 		return true;
@@ -118,7 +118,7 @@ LADSPANode::apply_poly(Raul::Maid& maid, uint32_t poly)
 	}
 	assert(poly <= _instances->size());
 
-	return NodeBase::apply_poly(maid, poly);
+	return NodeImpl::apply_poly(maid, poly);
 }
 
 
@@ -243,7 +243,7 @@ LADSPANode::instantiate(BufferFactory& bufs)
 void
 LADSPANode::activate(BufferFactory& bufs)
 {
-	NodeBase::activate(bufs);
+	NodeImpl::activate(bufs);
 
 	if (_descriptor->activate != NULL)
 		for (uint32_t i = 0; i < _polyphony; ++i)
@@ -254,7 +254,7 @@ LADSPANode::activate(BufferFactory& bufs)
 void
 LADSPANode::deactivate()
 {
-	NodeBase::deactivate();
+	NodeImpl::deactivate();
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		if (_descriptor->deactivate != NULL)
@@ -265,12 +265,12 @@ LADSPANode::deactivate()
 void
 LADSPANode::process(ProcessContext& context)
 {
-	NodeBase::pre_process(context);
+	NodeImpl::pre_process(context);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		_descriptor->run(instance(i), context.nframes());
 
-	NodeBase::post_process(context);
+	NodeImpl::post_process(context);
 }
 
 
@@ -278,7 +278,7 @@ void
 LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num,
 		IntrusivePtr<Buffer> buf, SampleCount offset)
 {
-	NodeBase::set_port_buffer(voice, port_num, buf, offset);
+	NodeImpl::set_port_buffer(voice, port_num, buf, offset);
 
 	_descriptor->connect_port(instance(voice), port_num,
 			buf ? (LADSPA_Data*)buf->port_data(_ports->at(port_num)->type(), offset) : NULL);

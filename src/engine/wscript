@@ -22,8 +22,8 @@ def build(bld):
 		InputPort.cpp
 		InternalPlugin.cpp
 		MessageContext.cpp
-		NodeBase.cpp
 		NodeFactory.cpp
+		NodeImpl.cpp
 		ObjectBuffer.cpp
 		ObjectSender.cpp
 		OutputPort.cpp

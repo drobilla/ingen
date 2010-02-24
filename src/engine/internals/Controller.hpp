@@ -19,7 +19,7 @@
 #define INGEN_INTERNALS_CONTROLLER_HPP
 
 #include <string>
-#include "NodeBase.hpp"
+#include "NodeImpl.hpp"
 
 namespace Ingen {
 
@@ -37,7 +37,7 @@ namespace Internals {
  *
  * \ingroup engine
  */
-class ControllerNode : public NodeBase
+class ControllerNode : public NodeImpl
 {
 public:
 	ControllerNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);

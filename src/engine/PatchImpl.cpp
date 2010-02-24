@@ -39,7 +39,7 @@ using namespace Shared;
 
 
 PatchImpl::PatchImpl(Engine& engine, const Raul::Symbol& symbol, uint32_t poly, PatchImpl* parent, SampleRate srate, uint32_t internal_poly)
-	: NodeBase(new PatchPlugin("http://example.org/FIXME", "patch", "Ingen Patch"),
+	: NodeImpl(new PatchPlugin("http://example.org/FIXME", "patch", "Ingen Patch"),
 		symbol, poly, parent, srate)
 	, _engine(engine)
 	, _internal_poly(internal_poly)
@@ -62,7 +62,7 @@ PatchImpl::~PatchImpl()
 void
 PatchImpl::activate(BufferFactory& bufs)
 {
-	NodeBase::activate(bufs);
+	NodeImpl::activate(bufs);
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->activate(bufs);
@@ -76,7 +76,7 @@ PatchImpl::deactivate()
 {
 	if (_activated) {
 
-		NodeBase::deactivate();
+		NodeImpl::deactivate();
 
 		for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 			if ((*i)->activated())
@@ -160,7 +160,7 @@ PatchImpl::process(ProcessContext& context)
 	if (!_process)
 		return;
 
-	NodeBase::pre_process(context);
+	NodeImpl::pre_process(context);
 
 	// Run all nodes
 	if (_compiled_patch && _compiled_patch->size() > 0) {
@@ -180,7 +180,7 @@ PatchImpl::process(ProcessContext& context)
 		}
 	}
 
-	NodeBase::post_process(context);
+	NodeImpl::post_process(context);
 }
 
 
@@ -263,7 +263,7 @@ PatchImpl::process_single(ProcessContext& context)
 void
 PatchImpl::set_buffer_size(Context& context, BufferFactory& bufs, PortType type, size_t size)
 {
-	NodeBase::set_buffer_size(context, bufs, type, size);
+	NodeImpl::set_buffer_size(context, bufs, type, size);
 
 	for (size_t i = 0; i < _compiled_patch->size(); ++i)
 		(*_compiled_patch)[i].node()->set_buffer_size(context, bufs, type, size);
@@ -349,7 +349,7 @@ PatchImpl::num_ports() const
 	ThreadID context = ThreadManager::current_thread_id();
 
 	if (context == THREAD_PROCESS)
-		return NodeBase::num_ports();
+		return NodeImpl::num_ports();
 	else
 		return _input_ports.size() + _output_ports.size();
 }

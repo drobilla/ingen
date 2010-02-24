@@ -23,7 +23,7 @@
 #include "types.hpp"
 //#include "Buffer.hpp"
 //#include "BufferFactory.hpp"
-#include "NodeBase.hpp"
+#include "NodeImpl.hpp"
 
 namespace Ingen {
 
@@ -41,7 +41,7 @@ namespace Internals {
  *
  * \ingroup engine
  */
-class DelayNode : public NodeBase
+class DelayNode : public NodeImpl
 {
 public:
 	DelayNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);

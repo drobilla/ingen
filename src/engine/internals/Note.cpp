@@ -48,7 +48,7 @@ static InternalPlugin note_plugin(NS_INTERNALS "Note", "note");
 InternalPlugin& NoteNode::internal_plugin() { return note_plugin; }
 
 NoteNode::NoteNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate)
-	: NodeBase(&note_plugin, path, polyphonic, parent, srate)
+	: NodeImpl(&note_plugin, path, polyphonic, parent, srate)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)
 	, _sustain(false)
@@ -94,7 +94,7 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (!_polyphonic)
 		return true;
 
-	NodeBase::prepare_poly(bufs, poly);
+	NodeImpl::prepare_poly(bufs, poly);
 
 	if (_prepared_voices && poly <= _prepared_voices->size())
 		return true;
@@ -108,7 +108,7 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 NoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
-	if (!NodeBase::apply_poly(maid, poly))
+	if (!NodeImpl::apply_poly(maid, poly))
 		return false;
 
 	if (_prepared_voices) {
@@ -127,7 +127,7 @@ void
 NoteNode::process(ProcessContext& context)
 {
 	EventBuffer* const midi_in = (EventBuffer*)_midi_in_port->buffer(0).get();
-	NodeBase::pre_process(context);
+	NodeImpl::pre_process(context);
 
 	uint32_t frames    = 0;
 	uint32_t subframes = 0;
@@ -195,7 +195,7 @@ NoteNode::process(ProcessContext& context)
 		}
 	}
 
-	NodeBase::post_process(context);
+	NodeImpl::post_process(context);
 }
 
 

@@ -20,7 +20,7 @@
 
 #include <string>
 #include "types.hpp"
-#include "NodeBase.hpp"
+#include "NodeImpl.hpp"
 
 namespace Ingen {
 
@@ -37,7 +37,7 @@ namespace Internals {
  *
  * \ingroup engine
  */
-class NoteNode : public NodeBase
+class NoteNode : public NodeImpl
 {
 public:
 	NoteNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);

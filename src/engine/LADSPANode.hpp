@@ -23,7 +23,7 @@
 #include <boost/optional.hpp>
 #include "raul/IntrusivePtr.hpp"
 #include "types.hpp"
-#include "NodeBase.hpp"
+#include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 
 namespace Ingen {
@@ -33,7 +33,7 @@ namespace Ingen {
  *
  * \ingroup engine
  */
-class LADSPANode : public NodeBase
+class LADSPANode : public NodeImpl
 {
 public:
 	LADSPANode(PluginImpl*              plugin,

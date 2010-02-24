@@ -62,7 +62,7 @@ CreatePort::CreatePort(
 	, _properties(properties)
 {
 	/* This is blocking because of the two different sets of Patch ports, the array used in the
-	 * audio thread (inherited from NodeBase), and the arrays used in the pre processor thread.
+	 * audio thread (inherited from NodeImpl), and the arrays used in the pre processor thread.
 	 * If two add port events arrive in the same cycle and the second pre processes before the
 	 * first executes, bad things happen (ports are lost).
 	 *

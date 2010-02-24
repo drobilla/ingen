@@ -19,7 +19,7 @@
 #define INGEN_INTERNALS_TRIGGER_HPP
 
 #include <string>
-#include "NodeBase.hpp"
+#include "NodeImpl.hpp"
 
 namespace Ingen {
 
@@ -40,7 +40,7 @@ namespace Internals {
  *
  * \ingroup engine
  */
-class TriggerNode : public NodeBase
+class TriggerNode : public NodeImpl
 {
 public:
 	TriggerNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);
