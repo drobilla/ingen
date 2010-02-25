@@ -163,6 +163,7 @@ ConnectionImpl::queue(Context& context)
 		return;
 	}
 
+	src_buf->rewind();
 	while (src_buf->is_valid()) {
 		LV2_Event*  ev  = src_buf->get_event();
 		LV2_Object* obj = LV2_OBJECT_FROM_EVENT(ev);
