@@ -86,7 +86,7 @@ private:
 	OutputPort* _src_output_port;
 	InputPort*  _dst_input_port;
 
-	PatchImpl::Connections::Node* _patch_connection;
+	SharedPtr<ConnectionImpl> _connection;
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 
 	Raul::Array<BufferFactory::Ref>* _buffers;

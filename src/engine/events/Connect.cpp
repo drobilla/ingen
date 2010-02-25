@@ -52,7 +52,6 @@ Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timesta
 	, _src_output_port(NULL)
 	, _dst_input_port(NULL)
 	, _compiled_patch(NULL)
-	, _patch_listnode(NULL)
 	, _port_listnode(NULL)
 	, _buffers(NULL)
 {
@@ -149,8 +148,9 @@ Connect::pre_process()
 		return;
 	}
 
-	_connection = SharedPtr<ConnectionImpl>(new ConnectionImpl(*_engine.buffer_factory(), _src_port, _dst_port));
-	_patch_listnode = new PatchImpl::Connections::Node(_connection);
+	_connection = SharedPtr<ConnectionImpl>(
+			new ConnectionImpl(*_engine.buffer_factory(), _src_port, _dst_port));
+
 	_port_listnode = new InputPort::Connections::Node(_connection);
 
 	// Need to be careful about patch port connections here and adding a node's
@@ -160,7 +160,7 @@ Connect::pre_process()
 		src_node->dependants()->push_back(new Raul::List<NodeImpl*>::Node(dst_node));
 	}
 
-	_patch->add_connection(_patch_listnode);
+	_patch->add_connection(_connection);
 	_dst_input_port->increment_num_connections();
 
 	switch (_dst_input_port->num_connections()) {

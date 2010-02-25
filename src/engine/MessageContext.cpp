@@ -118,7 +118,7 @@ MessageContext::execute(const Request& req)
 				lv2_contexts_port_is_valid(valid_ports, i)) {
 			PatchImpl::Connections& wires = patch->connections();
 			for (PatchImpl::Connections::iterator c = wires.begin(); c != wires.end(); ++c) {
-				ConnectionImpl* ci = dynamic_cast<ConnectionImpl*>(c->get());
+				ConnectionImpl* ci = (ConnectionImpl*)c->second.get();
 				if (ci->src_port() == p && ci->dst_port()->context() == Context::MESSAGE) {
 					_queue.insert(Request(req.time, ci->dst_port()));
 				}

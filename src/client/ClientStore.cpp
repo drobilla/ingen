@@ -478,7 +478,7 @@ ClientStore::disconnect(const Path& src_port_path, const Path& dst_port_path)
 	SharedPtr<PatchModel> patch = connection_patch(src_port_path, dst_port_path);
 
 	if (patch)
-		patch->remove_connection(src_port_path, dst_port_path);
+		patch->remove_connection(src_port.get(), dst_port.get());
 	else
 		LOG(error) << "Disconnection in non-existent patch: "
 			<< src_port_path << " -> " << dst_port_path << endl;

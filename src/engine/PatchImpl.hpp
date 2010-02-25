@@ -102,8 +102,9 @@ public:
 	Raul::List<PortImpl*>::Node* remove_port(const std::string& name);
 	void                   clear_ports();
 
-	void               add_connection(Connections::Node* c) { _connections.push_back(c); }
-	Connections::Node* remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
+	void add_connection(SharedPtr<ConnectionImpl> c);
+
+	SharedPtr<ConnectionImpl> remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
 
 	bool has_connection(const PortImpl* src_port, const PortImpl* dst_port) const;
 

@@ -367,7 +367,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 
 	for (Shared::Patch::Connections::const_iterator c = patch->connections().begin();
 			c != patch->connections().end(); ++c) {
-		serialise_connection(patch, *c);
+		serialise_connection(patch, c->second);
 	}
 }
 

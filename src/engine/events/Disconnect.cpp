@@ -51,7 +51,6 @@ Disconnect::Disconnect(
 	, _patch(NULL)
 	, _src_port(NULL)
 	, _dst_port(NULL)
-	, _patch_connection(NULL)
 	, _compiled_patch(NULL)
 	, _buffers(NULL)
 	, _internal(false)
@@ -62,12 +61,12 @@ Disconnect::Disconnect(
 
 
 Disconnect::Disconnect(
-		Engine&              engine,
-		SharedPtr<Request>   request,
-		SampleCount          timestamp,
-		PortImpl* const      src_port,
-		PortImpl* const      dst_port,
-		bool                 reconnect_dst_port)
+		Engine&            engine,
+		SharedPtr<Request> request,
+		SampleCount        timestamp,
+		PortImpl* const    src_port,
+		PortImpl* const    dst_port,
+		bool               reconnect_dst_port)
 	: QueuedEvent(engine, request, timestamp)
 	, _src_port_path(src_port->path())
 	, _dst_port_path(dst_port->path())
@@ -157,7 +156,7 @@ Disconnect::pre_process()
 			break;
 		}
 
-	_patch_connection = _patch->remove_connection(_src_port, _dst_port);
+	_connection = _patch->remove_connection(_src_port, _dst_port);
 	_dst_input_port->decrement_num_connections();
 
 	if (_dst_input_port->num_connections() == 0) {
@@ -180,9 +179,9 @@ Disconnect::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		InputPort::Connections::Node* const port_connection
+		InputPort::Connections::Node* const port_connections_node
 			= _dst_input_port->remove_connection(context, _src_output_port);
-		port_connection->elem()->recycle_buffer();
+		port_connections_node->elem()->recycle_buffer();
 		if (_reconnect_dst_port) {
 			if (_buffers)
 				_engine.maid()->push(_dst_input_port->set_buffers(_buffers));
@@ -204,13 +203,11 @@ Disconnect::execute(ProcessContext& context)
 			_dst_input_port->recycle_buffers();
 		}
 
-		if (port_connection != NULL) {
-			assert(_patch_connection);
-			assert(port_connection->elem() == _patch_connection->elem());
+		if (port_connections_node) {
+			assert(_connection);
+			assert(port_connections_node->elem() == _connection);
 
-			// Destroy list node, which will drop reference to connection itself
-			_engine.maid()->push(port_connection);
-			_engine.maid()->push(_patch_connection);
+			_engine.maid()->push(port_connections_node);
 
 			if (!_internal) {
 				_engine.maid()->push(_patch->compiled_patch());
@@ -231,8 +228,32 @@ Disconnect::post_process()
             _request->respond_ok();
         _engine.broadcaster()->disconnect(_src_port->path(), _dst_port->path());
     } else {
-        string msg = "Unable to disconnect ";
-        msg.append(_src_port_path.str() + " -> " + _dst_port_path.str());
+        string msg("Unable to disconnect ");
+        msg.append(_src_port_path.str() + " => " + _dst_port_path.str());
+		msg.append(" (");
+		switch (_error) {
+		case PARENT_PATCH_DIFFERENT:
+			msg.append("Ports exist in different patches");
+			break;
+		case PORT_NOT_FOUND:
+			msg.append("Port not found");
+			break;
+		case TYPE_MISMATCH:
+			msg.append("Ports have incompatible types");
+			break;
+		case NOT_CONNECTED:
+			msg.append("Ports are not connected");
+			break;
+		case PARENTS_NOT_FOUND:
+			msg.append("Parent node not found");
+			break;
+		case CONNECTION_NOT_FOUND:
+			msg.append("Connection not found");
+			break;
+		default:
+			break;
+		}
+		msg.append(")");
         if (_request)
             _request->respond_error(msg);
     }

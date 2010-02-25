@@ -78,7 +78,6 @@ private:
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 
 	SharedPtr<ConnectionImpl>     _connection;
-	PatchImpl::Connections::Node* _patch_listnode;
 	InputPort::Connections::Node* _port_listnode;
 
 	Raul::Array<BufferFactory::Ref>* _buffers;

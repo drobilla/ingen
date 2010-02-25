@@ -112,7 +112,7 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 		(*i)->prepare_poly(bufs, poly);
 
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
-		((ConnectionImpl*)i->get())->prepare_poly(bufs, poly);
+		((ConnectionImpl*)i->second.get())->prepare_poly(bufs, poly);
 
 	return true;
 }
@@ -129,7 +129,7 @@ PatchImpl::apply_internal_poly(ProcessContext& context, BufferFactory& bufs, Rau
 		(*i)->apply_poly(maid, poly);
 
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
-		((ConnectionImpl*)i->get())->apply_poly(maid, poly);
+		((ConnectionImpl*)i->second.get())->apply_poly(maid, poly);
 
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		for (uint32_t j = 0; j < (*i)->num_ports(); ++j) {
@@ -301,42 +301,39 @@ PatchImpl::remove_node(const Raul::Symbol& symbol)
 }
 
 
+void
+PatchImpl::add_connection(SharedPtr<ConnectionImpl> c)
+{
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+	_connections.insert(make_pair(make_pair(c->src_port(), c->dst_port()), c));
+}
+
+
 /** Remove a connection.
  * Preprocessing thread only.
  */
-PatchImpl::Connections::Node*
+SharedPtr<ConnectionImpl>
 PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	bool found = false;
-	Connections::Node* connection = NULL;
-	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
-		ConnectionImpl* const c = (ConnectionImpl*)i->get();
-		if (c->src_port() == src_port && c->dst_port() == dst_port) {
-			connection = _connections.erase(i);
-			found = true;
-			break;
-		}
-	}
-
-	if ( ! found)
+	Connections::iterator i = _connections.find(make_pair(src_port, dst_port));
+	if (i != _connections.end()) {
+		SharedPtr<ConnectionImpl> c = PtrCast<ConnectionImpl>(i->second);
+		_connections.erase(i);
+		return c;
+	} else {
 		error << "[PatchImpl::remove_connection] Connection not found" << endl;
-
-	return connection;
+		return SharedPtr<ConnectionImpl>();
+	}
 }
 
 
 bool
 PatchImpl::has_connection(const PortImpl* src_port, const PortImpl* dst_port) const
 {
-	// FIXME: Doesn't scale
-	for (Connections::const_iterator i = _connections.begin(); i != _connections.end(); ++i) {
-		ConnectionImpl* const c = (ConnectionImpl*)i->get();
-		if (c->src_port() == src_port && c->dst_port() == dst_port)
-			return true;
-	}
-
-	return false;
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+	Connections::const_iterator i = _connections.find(make_pair(src_port, dst_port));
+	return (i != _connections.end());
 }
 
 
@@ -479,10 +476,10 @@ PatchImpl::compile() const
 
 	// Add any queued connections that must be run after a cycle
 	for (Connections::const_iterator i = _connections.begin(); i != _connections.end(); ++i) {
-		ConnectionImpl* const c = (ConnectionImpl*)i->get();
+		SharedPtr<ConnectionImpl> c = PtrCast<ConnectionImpl>(i->second);
 		if (c->src_port()->context() == Context::AUDIO &&
 				c->dst_port()->context() == Context::MESSAGE) {
-			compiled_patch->queued_connections.push_back(c);
+			compiled_patch->queued_connections.push_back(c.get());
 		}
 	}
 

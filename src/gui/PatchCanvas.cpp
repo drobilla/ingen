@@ -272,7 +272,7 @@ PatchCanvas::build()
 	// Create connections
 	for (PatchModel::Connections::const_iterator i = _patch->connections().begin();
 			i != _patch->connections().end(); ++i) {
-		connection(PtrCast<ConnectionModel>(*i));
+		connection(PtrCast<ConnectionModel>(i->second));
 	}
 }
 
@@ -708,7 +708,7 @@ PatchCanvas::paste()
 	assert(root);
 	for (Patch::Connections::const_iterator i = root->connections().begin();
 			i != root->connections().end(); ++i) {
-		App::instance().engine()->connect((*i)->src_port_path(), (*i)->dst_port_path());
+		App::instance().engine()->connect(i->second->src_port_path(), i->second->dst_port_path());
 	}
 }
 

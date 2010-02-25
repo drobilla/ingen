@@ -27,6 +27,9 @@
 #include "ConnectionModel.hpp"
 
 namespace Ingen {
+
+namespace Shared { class Port; }
+
 namespace Client {
 
 class ClientStore;
@@ -43,8 +46,8 @@ public:
 
 	const Connections& connections() const { return *_connections.get(); }
 
-	SharedPtr<ConnectionModel> get_connection(const Raul::Path& src_port_path,
-	                                          const Raul::Path& dst_port_path) const;
+	SharedPtr<ConnectionModel> get_connection(const Shared::Port* src_port,
+	                                          const Shared::Port* dst_port);
 
 	//uint32_t poly()          const { return _poly; }
 	bool     enabled()       const;
@@ -85,7 +88,7 @@ private:
 	bool remove_child(SharedPtr<ObjectModel> c);
 
 	void add_connection(SharedPtr<ConnectionModel> cm);
-	void remove_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
+	void remove_connection(const Shared::Port* src_port, const Shared::Port* dst_port);
 
 	SharedPtr<Connections> _connections;
 	bool                   _editable;

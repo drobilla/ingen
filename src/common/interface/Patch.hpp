@@ -18,6 +18,7 @@
 #ifndef INGEN_INTERFACE_PATCH_HPP
 #define INGEN_INTERFACE_PATCH_HPP
 
+#include <map>
 #include "raul/SharedPtr.hpp"
 #include "raul/List.hpp"
 #include "interface/Node.hpp"
@@ -35,7 +36,8 @@ class Connection;
 class Patch : virtual public Node
 {
 public:
-	typedef Raul::List< SharedPtr<Connection> > Connections;
+	typedef std::pair<const Port*, const Port*> ConnectionsKey;
+	typedef std::map< ConnectionsKey, SharedPtr<Connection> > Connections;
 
 	virtual const Connections& connections() const = 0;
 

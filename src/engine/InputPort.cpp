@@ -81,7 +81,7 @@ InputPort::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
 	PortImpl::set_buffer_size(context, bufs, size);
 
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		((ConnectionImpl*)c->get())->update_buffer_size(context, bufs);
+		(*c)->update_buffer_size(context, bufs);
 }
 
 
@@ -156,8 +156,10 @@ InputPort::remove_connection(ProcessContext& context, const OutputPort* src_port
 		Connections::iterator next = i;
 		++next;
 
-		if ((*i)->src_port() == src_port)
+		if ((*i)->src_port() == src_port) {
 			connection = _connections.erase(i);
+			break;
+		}
 
 		i = next;
 	}

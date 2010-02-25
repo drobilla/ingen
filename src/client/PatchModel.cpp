@@ -59,7 +59,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 		Connections::iterator next = j;
 		++next;
 
-		SharedPtr<ConnectionModel> cm = PtrCast<ConnectionModel>(*j);
+		SharedPtr<ConnectionModel> cm = PtrCast<ConnectionModel>(j->second);
 		assert(cm);
 
 		if (cm->src_port_path().parent() == o->path()
@@ -68,7 +68,6 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 				|| cm->dst_port_path() == o->path()) {
 			signal_removed_connection.emit(cm);
 			_connections->erase(j); // cuts our reference
-			assert(!get_connection(cm->src_port_path(), cm->dst_port_path())); // no duplicates
 		}
 		j = next;
 	}
@@ -98,13 +97,13 @@ PatchModel::clear()
 
 
 SharedPtr<ConnectionModel>
-PatchModel::get_connection(const Path& src_port_path, const Path& dst_port_path) const
+PatchModel::get_connection(const Shared::Port* src_port, const Shared::Port* dst_port)
 {
-	for (Connections::const_iterator i = _connections->begin(); i != _connections->end(); ++i)
-		if ((*i)->src_port_path() == src_port_path && (*i)->dst_port_path() == dst_port_path)
-			return PtrCast<ConnectionModel>(*i);
-
-	return SharedPtr<ConnectionModel>();
+	Connections::iterator i = _connections->find(make_pair(src_port, dst_port));
+	if (i != _connections->end())
+		return PtrCast<ConnectionModel>(i->second);
+	else
+		return SharedPtr<ConnectionModel>();
 }
 
 
@@ -130,34 +129,31 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 	assert(cm->dst_port()->parent().get() == this
 	       || cm->dst_port()->parent()->parent().get() == this);
 
-	SharedPtr<ConnectionModel> existing = get_connection(cm->src_port_path(), cm->dst_port_path());
+	SharedPtr<ConnectionModel> existing = get_connection(
+			cm->src_port().get(), cm->dst_port().get());
 
 	if (existing) {
 		assert(cm->src_port() == existing->src_port());
 		assert(cm->dst_port() == existing->dst_port());
 	} else {
-		_connections->push_back(new Connections::Node(cm));
+		_connections->insert(make_pair(make_pair(cm->src_port().get(), cm->dst_port().get()), cm));
 		signal_new_connection.emit(cm);
 	}
 }
 
 
 void
-PatchModel::remove_connection(const Path& src_port_path, const Path& dst_port_path)
+PatchModel::remove_connection(const Shared::Port* src_port, const Shared::Port* dst_port)
 {
-	for (Connections::iterator i = _connections->begin(); i != _connections->end(); ++i) {
-		SharedPtr<ConnectionModel> cm = PtrCast<ConnectionModel>(*i);
-		assert(cm);
-		if (cm->src_port_path() == src_port_path && cm->dst_port_path() == dst_port_path) {
-			signal_removed_connection.emit(cm);
-			delete _connections->erase(i); // cuts our reference
-			assert(!get_connection(src_port_path, dst_port_path)); // no duplicates
-			return;
-		}
+	Connections::iterator i = _connections->find(make_pair(src_port, dst_port));
+	if (i != _connections->end()) {
+		SharedPtr<ConnectionModel> c = PtrCast<ConnectionModel>(i->second);
+		signal_removed_connection.emit(c);
+		_connections->erase(i);
+	} else {
+		warn << "[PatchModel::remove_connection] Failed to find connection " <<
+				src_port->path() << " -> " << dst_port->path() << endl;
 	}
-
-	warn << "[PatchModel::remove_connection] Failed to find connection " <<
-		src_port_path << " -> " << dst_port_path << endl;
 }
 
 
