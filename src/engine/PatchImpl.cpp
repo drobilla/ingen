@@ -172,12 +172,9 @@ PatchImpl::process(ProcessContext& context)
 	}
 
 	// Queue any cross-context connections
-	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
-		ConnectionImpl* const c = (ConnectionImpl*)i->get();
-		if (c->src_port()->context() == Context::AUDIO &&
-				c->dst_port()->context() == Context::MESSAGE) {
-			c->queue(context);
-		}
+	for (CompiledPatch::QueuedConnections::iterator i = _compiled_patch->queued_connections.begin();
+			i != _compiled_patch->queued_connections.end(); ++i) {
+		(*i)->queue(context);
 	}
 
 	NodeImpl::post_process(context);
@@ -478,6 +475,15 @@ PatchImpl::compile() const
 		NodeImpl* const node = (*i);
 		if ( ! node->traversed())
 			compile_recursive(node, compiled_patch);
+	}
+
+	// Add any queued connections that must be run after a cycle
+	for (Connections::const_iterator i = _connections.begin(); i != _connections.end(); ++i) {
+		ConnectionImpl* const c = (ConnectionImpl*)i->get();
+		if (c->src_port()->context() == Context::AUDIO &&
+				c->dst_port()->context() == Context::MESSAGE) {
+			compiled_patch->queued_connections.push_back(c);
+		}
 	}
 
 	assert(compiled_patch->size() == _nodes.size());

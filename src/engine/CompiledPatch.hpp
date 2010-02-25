@@ -25,6 +25,7 @@
 
 namespace Ingen {
 
+class ConnectionImpl;
 
 /** All information required about a node to execute it in an audio thread.
  */
@@ -51,23 +52,22 @@ private:
 };
 
 
-/** A patch and a set of connections, "compiled" into a flat structure with
- * the correct order so the audio thread(s) can execute it without
- * threading problems (since the preprocessor thread fiddles with other
- * things).
- *
- * Currently objects still have some 'heavyweight' connection state, but
- * eventually this should be the only place a particular set of connections
- * in a patch is stored, so various "connection presets" can be switched
- * in a realtime safe way.
+/** A patch ``compiled'' into a flat structure with the correct order so
+ * the audio thread(s) can execute it without threading problems (since
+ * the preprocessor thread modifies the graph).
  *
  * The nodes contained here are sorted in the order they must be executed.
  * The parallel processing algorithm guarantees no node will be executed
- * before it's providers, using this order as well as semaphores.
+ * before its providers, using this order as well as semaphores.
  */
 struct CompiledPatch : public std::vector<CompiledNode>
                      , public Raul::Deletable
-                     , public boost::noncopyable {
+                     , public boost::noncopyable
+{
+	typedef std::vector<ConnectionImpl*> QueuedConnections;
+
+	/** All (audio context => other context) connections */
+	std::vector<ConnectionImpl*> queued_connections;
 };
 
 
