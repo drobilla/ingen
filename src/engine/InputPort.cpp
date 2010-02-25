@@ -93,7 +93,7 @@ InputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buf
 	size_t num_connections = (ThreadManager::current_thread_id() == THREAD_PROCESS)
 			? _connections.size() : _num_connections;
 
-	if (_type == PortType::AUDIO && num_connections == 0) {
+	if (buffer_type() == PortType::AUDIO && num_connections == 0) {
 		// Audio input with no connections, use shared zero buffer
 		for (uint32_t v = 0; v < poly; ++v)
 			buffers->at(v) = bufs.silent_buffer();
@@ -113,7 +113,7 @@ InputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buf
 		// Use local buffers
 		for (uint32_t v = 0; v < poly; ++v) {
 			buffers->at(v) = NULL; // Release first (potential immediate recycling)
-			buffers->at(v) = _bufs.get(_type, _buffer_size);
+			buffers->at(v) = _bufs.get(buffer_type(), _buffer_size);
 			buffers->at(v)->clear();
 		}
 	}
@@ -136,7 +136,7 @@ InputPort::add_connection(Connections::Node* const c)
 	_connections.push_back(c);
 
 	// Automatically broadcast connected control inputs
-	if (_type == PortType::CONTROL)
+	if (is_a(PortType::CONTROL))
 		_broadcast = true;
 }
 
@@ -170,7 +170,7 @@ InputPort::remove_connection(ProcessContext& context, const OutputPort* src_port
 	}
 
 	// Turn off broadcasting if we're no longer connected
-	if (_type == PortType::CONTROL && _connections.size() == 0)
+	if (is_a(PortType::CONTROL) && _connections.size() == 0)
 		_broadcast = false;
 
 	return connection;

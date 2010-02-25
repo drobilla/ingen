@@ -77,7 +77,7 @@ JackPort::create()
 	_jack_port = jack_port_register(
 			_driver->jack_client(),
 			ingen_jack_port_name(_patch_port->path()).c_str(),
-			(_patch_port->type() == PortType::AUDIO)
+			(_patch_port->buffer_type() == PortType::AUDIO)
 				? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE,
 			(_patch_port->is_input())
 				? JackPortIsInput : JackPortIsOutput,
@@ -115,13 +115,13 @@ JackPort::pre_process(ProcessContext& context)
 
 	const SampleCount nframes = context.nframes();
 
-	if (_patch_port->type() == PortType::AUDIO) {
+	if (_patch_port->buffer_type() == PortType::AUDIO) {
 		jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
 		AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 
 		patch_buf->copy(jack_buf, 0, nframes - 1);
 
-	} else if (_patch_port->type() == PortType::EVENTS) {
+	} else if (_patch_port->buffer_type() == PortType::EVENTS) {
 		void*          jack_buf  = jack_port_get_buffer(_jack_port, nframes);
 		EventBuffer*   patch_buf = (EventBuffer*)_patch_port->buffer(0).get();
 
@@ -149,13 +149,13 @@ JackPort::post_process(ProcessContext& context)
 
 	const SampleCount nframes = context.nframes();
 
-	if (_patch_port->type() == PortType::AUDIO) {
+	if (_patch_port->buffer_type() == PortType::AUDIO) {
 		jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
 		AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 
 		memcpy(jack_buf, patch_buf->data(), nframes * sizeof(Sample));
 
-	} else if (_patch_port->type() == PortType::EVENTS) {
+	} else if (_patch_port->buffer_type() == PortType::EVENTS) {
 		void*        jack_buf  = jack_port_get_buffer(_jack_port, context.nframes());
 		EventBuffer* patch_buf = (EventBuffer*)_patch_port->buffer(0).get();
 
@@ -367,7 +367,8 @@ DriverPort*
 JackDriver::create_port(DuplexPort* patch_port)
 {
 	try {
-		if (patch_port->type() == PortType::AUDIO || patch_port->type() == PortType::EVENTS)
+		if (patch_port->buffer_type() == PortType::AUDIO
+				|| patch_port->buffer_type() == PortType::EVENTS)
 			return new JackPort(this, patch_port);
 		else
 			return NULL;

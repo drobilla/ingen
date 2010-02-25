@@ -89,10 +89,10 @@ LADSPANode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 			PortImpl* const port   = _ports->at(j);
 			Buffer* const   buffer = port->prepared_buffer(i).get();
 			if (buffer) {
-				if (port->type() == PortType::CONTROL) {
+				if (port->is_a(PortType::CONTROL)) {
 					((AudioBuffer*)buffer)->set_value(port->value().get_float(), 0, 0);
-				} else if (port->type() == PortType::AUDIO) {
-					((AudioBuffer*)buffer)->set_value(0.0f, 0, 0);
+				} else {
+					buffer->clear();
 				}
 			}
 		}
@@ -281,7 +281,7 @@ LADSPANode::set_port_buffer(uint32_t voice, uint32_t port_num,
 	NodeImpl::set_port_buffer(voice, port_num, buf, offset);
 
 	_descriptor->connect_port(instance(voice), port_num,
-			buf ? (LADSPA_Data*)buf->port_data(_ports->at(port_num)->type(), offset) : NULL);
+			buf ? (LADSPA_Data*)buf->port_data(_ports->at(port_num)->buffer_type(), offset) : NULL);
 }
 
 

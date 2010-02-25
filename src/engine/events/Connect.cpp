@@ -47,8 +47,6 @@ Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timesta
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
 	, _patch(NULL)
-	, _src_port(NULL)
-	, _dst_port(NULL)
 	, _src_output_port(NULL)
 	, _dst_input_port(NULL)
 	, _compiled_patch(NULL)
@@ -61,58 +59,46 @@ Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timesta
 void
 Connect::pre_process()
 {
-	if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
-			&& _src_port_path.parent() != _dst_port_path.parent().parent()
-			&& _src_port_path.parent().parent() != _dst_port_path.parent()) {
-		_error = PARENT_PATCH_DIFFERENT;
-		QueuedEvent::pre_process();
-		return;
-	}
-
-	_src_port = _engine.engine_store()->find_port(_src_port_path);
-	_dst_port = _engine.engine_store()->find_port(_dst_port_path);
-
-	if (_src_port == NULL || _dst_port == NULL) {
+	PortImpl* src_port = _engine.engine_store()->find_port(_src_port_path);
+	PortImpl* dst_port = _engine.engine_store()->find_port(_dst_port_path);
+	if (!src_port || !dst_port) {
 		_error = PORT_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	const PortType src_type = _src_port->type();
-	const PortType dst_type = _dst_port->type();
-
-	if (	!(
-			// Equal types
-			(src_type == dst_type)
-
-			|| // or Control=>Audio or Audio=>Control
-			((src_type == PortType::CONTROL || src_type == PortType::AUDIO)
-				&& (dst_type == PortType::CONTROL || dst_type == PortType::AUDIO))
-
-			|| // or Events=>Message or Message=>Events
-			((src_type == PortType::EVENTS || src_type == PortType::MESSAGE)
-				&& (dst_type == PortType::EVENTS || dst_type == PortType::MESSAGE))
-			)) {
-		_error = TYPE_MISMATCH;
-		QueuedEvent::pre_process();
-		return;
-	}
-
-	_dst_input_port = dynamic_cast<InputPort*>(_dst_port);
-	_src_output_port = dynamic_cast<OutputPort*>(_src_port);
-
+	_dst_input_port = dynamic_cast<InputPort*>(dst_port);
+	_src_output_port = dynamic_cast<OutputPort*>(src_port);
 	if (!_dst_input_port || !_src_output_port) {
 		_error = DIRECTION_MISMATCH;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	NodeImpl* const src_node = _src_port->parent_node();
-	NodeImpl* const dst_node = _dst_port->parent_node();
+	NodeImpl* const src_node = src_port->parent_node();
+	NodeImpl* const dst_node = dst_port->parent_node();
+	if (!src_node || !dst_node) {
+		_error = PARENTS_NOT_FOUND;
+		QueuedEvent::pre_process();
+		return;
+	}
+
+	if (src_node->parent() != dst_node->parent()
+			&& src_node != dst_node->parent()
+			&& src_node->parent() != dst_node) {
+		_error = PARENT_PATCH_DIFFERENT;
+		QueuedEvent::pre_process();
+		return;
+	}
+
+	if (!ConnectionImpl::can_connect(_src_output_port, _dst_input_port)) {
+		_error = TYPE_MISMATCH;
+		QueuedEvent::pre_process();
+		return;
+	}
 
 	// Connection to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
-
 		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
 		if (src_node->parent() == dst_node)
 			_patch = dynamic_cast<PatchImpl*>(dst_node);
@@ -128,28 +114,14 @@ Connect::pre_process()
 		_patch = src_node->parent_patch();
 	}
 
-	assert(_patch);
-
 	if (_patch->has_connection(_src_output_port, _dst_input_port)) {
 		_error = ALREADY_CONNECTED;
 		QueuedEvent::pre_process();
 		return;
 	}
 
-	if (src_node == NULL || dst_node == NULL) {
-		_error = PARENTS_NOT_FOUND;
-		QueuedEvent::pre_process();
-		return;
-	}
-
-	if (_patch != src_node && src_node->parent() != _patch && dst_node->parent() != _patch) {
-		_error = PARENTS_NOT_FOUND;
-		QueuedEvent::pre_process();
-		return;
-	}
-
 	_connection = SharedPtr<ConnectionImpl>(
-			new ConnectionImpl(*_engine.buffer_factory(), _src_port, _dst_port));
+			new ConnectionImpl(*_engine.buffer_factory(), _src_output_port, _dst_input_port));
 
 	_port_listnode = new InputPort::Connections::Node(_connection);
 

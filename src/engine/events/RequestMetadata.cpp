@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "raul/IntrusivePtr.hpp"
 #include "interface/ClientInterface.hpp"
 #include "events/RequestMetadata.hpp"
 #include "shared/LV2Object.hpp"
@@ -94,11 +95,15 @@ RequestMetadata::execute(ProcessContext& context)
 	if (_special_type == PORT_VALUE) {
 		PortImpl* port = dynamic_cast<PortImpl*>(_resource);
 		if (port) {
-			if (port->type() == PortType::CONTROL || port->type() == PortType::AUDIO)
-				_value = ((AudioBuffer*)port->buffer(0).get())->value_at(0); // TODO: offset
-			else if (port->type() == PortType::VALUE || port->type() == PortType::MESSAGE)
-				LV2Object::to_atom(context.engine().world(),
-						((ObjectBuffer*)port->buffer(0).get())->object(), _value);
+			IntrusivePtr<AudioBuffer> abuf = PtrCast<AudioBuffer>(port->buffer(0));
+			if (abuf) {
+				_value = abuf->value_at(0);
+			} else {
+				IntrusivePtr<ObjectBuffer> obuf = PtrCast<ObjectBuffer>(port->buffer(0));
+				if (obuf) {
+					LV2Object::to_atom(obuf->object(), _value);
+				}
+			}
 		} else {
 			_resource = 0;
 		}

@@ -32,6 +32,8 @@ using namespace std;
 namespace Ingen {
 
 class PortImpl;
+class OutputPort;
+class InputPort;
 class Buffer;
 class BufferFactory;
 
@@ -91,6 +93,8 @@ public:
 
 	/** Returns true if this connection crosses contexts and must buffer */
 	inline bool must_queue() const { return _src_port->context() != _dst_port->context(); }
+
+	static bool can_connect(const OutputPort* src, const InputPort* dst);
 
 protected:
 	void dump() const;

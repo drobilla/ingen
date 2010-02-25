@@ -89,7 +89,7 @@ Port::Port(
 
 	pm->signal_moved.connect(sigc::mem_fun(this, &Port::moved));
 
-	if (pm->type().is_control()) {
+	if (App::instance().can_control(pm.get())) {
 		set_toggled(pm->is_toggle());
 		show_control();
 		pm->signal_property.connect(sigc::mem_fun(this, &Port::property_changed));
@@ -114,7 +114,7 @@ void
 Port::update_metadata()
 {
 	SharedPtr<PortModel> pm = _port_model.lock();
-	if (pm && pm->type().is_control()) {
+	if (App::instance().can_control(pm.get()) && pm->is_numeric()) {
 		boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(pm->parent());
 		if (parent) {
 			float min = 0.0f;
@@ -191,22 +191,15 @@ Port::set_control(float value, bool signal)
 	if (signal) {
 		App&                        app   = App::instance();
 		Ingen::Shared::World* const world = app.world();
-		if (model()->type() == PortType::CONTROL) {
-			app.engine()->set_property(model()->path(),
-					world->uris->ingen_value, Atom(value));
-			PatchWindow* pw = app.window_factory()->patch_window(
-					PtrCast<PatchModel>(model()->parent()));
-			if (!pw)
-				pw = app.window_factory()->patch_window(
-						PtrCast<PatchModel>(model()->parent()->parent()));
-			if (pw)
-				pw->show_port_status(model().get(), value);
-
-		} else if (model()->type() == PortType::EVENTS) {
-			app.engine()->set_property(model()->path(),
-					world->uris->ingen_value,
-					Atom("http://example.org/ev#BangEvent", 0, NULL));
-		}
+		app.engine()->set_property(model()->path(),
+				world->uris->ingen_value, Atom(value));
+		PatchWindow* pw = app.window_factory()->patch_window(
+				PtrCast<PatchModel>(model()->parent()));
+		if (!pw)
+			pw = app.window_factory()->patch_window(
+					PtrCast<PatchModel>(model()->parent()->parent()));
+		if (pw)
+			pw->show_port_status(model().get(), value);
 	}
 
 	FlowCanvas::Port::set_control(value);

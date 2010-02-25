@@ -28,8 +28,8 @@ class World;
 
 namespace LV2Object {
 
-	bool to_atom(World* world, const LV2_Object* object, Raul::Atom& atom);
-	bool from_atom(World* word, const Raul::Atom& atom, LV2_Object* object);
+	bool to_atom(const LV2_Object* object, Raul::Atom& atom);
+	bool from_atom(const Raul::Atom& atom, LV2_Object* object);
 
 } // namespace LV2Object
 

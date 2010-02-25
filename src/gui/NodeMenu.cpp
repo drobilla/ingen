@@ -149,7 +149,7 @@ NodeMenu::on_menu_randomize()
 
 	const NodeModel* const nm = (NodeModel*)_object.get();
 	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
-		if ((*i)->is_input() && (*i)->type().is_control()) {
+		if ((*i)->is_input() && App::instance().can_control(i->get())) {
 			float min = 0.0f, max = 1.0f;
 			nm->port_value_range(*i, min, max);
 			const float val = ((rand() / (float)RAND_MAX) * (max - min) + min);
@@ -209,7 +209,7 @@ NodeMenu::has_control_inputs()
 {
 	const NodeModel* const nm = (NodeModel*)_object.get();
 	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i)
-		if ((*i)->is_input() && (*i)->type().is_control())
+		if ((*i)->is_input() && (*i)->is_numeric())
 			return true;
 
 	return false;

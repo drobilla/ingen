@@ -94,10 +94,10 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 			PortImpl* const port   = _ports->at(j);
 			Buffer* const   buffer = port->prepared_buffer(i).get();
 			if (buffer) {
-				if (port->type() == PortType::CONTROL) {
+				if (port->is_a(PortType::CONTROL)) {
 					((AudioBuffer*)buffer)->set_value(port->value().get_float(), 0, 0);
-				} else if (port->type() == PortType::AUDIO) {
-					((AudioBuffer*)buffer)->set_value(0.0f, 0, 0);
+				} else {
+					buffer->clear();
 				}
 			}
 		}
@@ -201,6 +201,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 	SLV2Value port_property_pred = slv2_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/lv2core#portProperty");
 
+	SLV2Value supports_pred = slv2_value_new_uri(info->lv2_world(),
+			LV2_OBJECT_URI "#supports");
+
 	//SLV2Value as_large_as_pred = slv2_value_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/dev/resize-port#asLargeAs");
 
@@ -302,6 +305,17 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 		}
 
+		// Set obj:supports properties
+		SLV2Values types = slv2_port_get_value(plug, id, supports_pred);
+		for (uint32_t i = 0; i < slv2_values_size(types); ++i) {
+			SLV2Value type = slv2_values_get_at(types, i);
+			std::cout << path() << " port " << id << " supports " <<
+				slv2_value_as_uri(type) << std::endl;
+			if (slv2_value_is_uri(type)) {
+				port->add_property(uris.obj_supports, Raul::URI(slv2_value_as_uri(type)));
+			}
+		}
+
 		SLV2Values contexts = slv2_port_get_value(plug, id, context_pred);
 		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {
 			SLV2Value c = slv2_values_get_at(contexts, i);
@@ -397,7 +411,7 @@ LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num,
 {
 	NodeImpl::set_port_buffer(voice, port_num, buf, offset);
 	slv2_instance_connect_port(instance(voice), port_num,
-			buf ? buf->port_data(_ports->at(port_num)->type(), offset) : NULL);
+			buf ? buf->port_data(_ports->at(port_num)->buffer_type(), offset) : NULL);
 }
 
 

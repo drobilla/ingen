@@ -19,13 +19,16 @@
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "raul/IntrusivePtr.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"
 #include "Engine.hpp"
 #include "EventBuffer.hpp"
 #include "InputPort.hpp"
+#include "InputPort.hpp"
 #include "MessageContext.hpp"
+#include "OutputPort.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "mix.hpp"
@@ -53,7 +56,7 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 	assert(src_port->path() != dst_port->path());
 
 	if (must_mix() || must_queue())
-		_local_buffer = bufs.get(dst_port->type(), dst_port->buffer_size(), true);
+		_local_buffer = bufs.get(dst_port->buffer_type(), dst_port->buffer_size(), true);
 
 	if (must_queue())
 		_queue = new Raul::RingBuffer<LV2_Object>(src_port->buffer_size() * 2);
@@ -82,7 +85,7 @@ void
 ConnectionImpl::allocate_buffer(BufferFactory& bufs)
 {
 	if (!_local_buffer)
-		_local_buffer = bufs.get(_dst_port->type(), _dst_port->buffer_size());
+		_local_buffer = bufs.get(_dst_port->buffer_type(), _dst_port->buffer_size());
 }
 
 
@@ -97,7 +100,7 @@ ConnectionImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 
 	const bool mix = _src_port->prepared_poly() > _dst_port->prepared_poly();
 	if ((mix || must_queue()) && !_local_buffer)
-		_local_buffer = bufs.get(_dst_port->type(), _dst_port->buffer(0)->size());
+		_local_buffer = bufs.get(_dst_port->buffer_type(), _dst_port->buffer(0)->size());
 }
 
 
@@ -178,6 +181,25 @@ ConnectionImpl::queue(Context& context)
 
 		context.engine().message_context()->run(_dst_port, context.start() + ev->frames);
 	}
+}
+
+
+bool
+ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
+{
+	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	return (
+			(   (src->is_a(PortType::CONTROL) || src->is_a(PortType::AUDIO))
+			 && (dst->is_a(PortType::CONTROL) || dst->is_a(PortType::AUDIO)))
+			|| (   src->is_a(PortType::EVENTS)   && src->context() == Context::AUDIO
+				&& dst->is_a(PortType::MESSAGE)  && dst->context() == Context::MESSAGE)
+			|| (   src->is_a(PortType::MESSAGE)  && src->context() == Context::MESSAGE
+				&& dst->is_a(PortType::EVENTS)   && dst->context() == Context::AUDIO)
+			|| (src->is_a(PortType::EVENTS) && dst->is_a(PortType::EVENTS))
+			|| (src->is_a(PortType::CONTROL) && dst->supports(uris.object_class_float32))
+			|| (src->is_a(PortType::AUDIO)   && dst->supports(uris.object_class_vector))
+			|| (src->supports(uris.object_class_float32) && dst->is_a(PortType::CONTROL))
+			|| (src->supports(uris.object_class_vector)  && dst->is_a(PortType::AUDIO)));
 }
 
 

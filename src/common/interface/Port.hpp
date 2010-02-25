@@ -18,6 +18,7 @@
 #ifndef INGEN_INTERFACE_PORT_HPP
 #define INGEN_INTERFACE_PORT_HPP
 
+#include <set>
 #include <stdint.h>
 #include "GraphObject.hpp"
 #include "PortType.hpp"
@@ -37,9 +38,16 @@ namespace Shared {
 class Port : public virtual GraphObject
 {
 public:
+	typedef std::set<Shared::PortType> PortTypes;
+
+	virtual const PortTypes& types() const = 0;
+
+	inline bool is_a(PortType type) const { return types().find(type) != types().end(); }
+
+	virtual bool supports(const Raul::URI& value_type) const = 0;
+
 	virtual uint32_t          index()    const = 0;
 	virtual bool              is_input() const = 0;
-	virtual Shared::PortType  type()     const = 0;
 	virtual const Raul::Atom& value()    const = 0;
 };
 

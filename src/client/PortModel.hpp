@@ -41,8 +41,11 @@ class PortModel : public ObjectModel, public Ingen::Shared::Port
 public:
 	enum Direction { INPUT, OUTPUT };
 
+	const PortTypes& types() const { return _types; }
+
+	bool supports(const Raul::URI& value_type) const;
+
 	inline uint32_t          index()     const { return _index; }
-	inline Shared::PortType  type()      const { return _type; }
 	inline const Raul::Atom& value()     const { return _current_val; }
 	inline bool              connected() const { return (_connections > 0); }
 	inline bool              is_input()  const { return (_direction == INPUT); }
@@ -50,6 +53,7 @@ public:
 
 	bool port_property(const std::string& uri) const;
 
+	bool is_numeric()     const { return is_a(Shared::PortType::CONTROL); }
 	bool is_logarithmic() const { return port_property("http://drobilla.net/ns/ingen#logarithmic"); }
 	bool is_integer()     const { return port_property("http://lv2plug.in/ns/lv2core#integer"); }
 	bool is_toggle()      const { return port_property("http://lv2plug.in/ns/lv2core#toggled"); }
@@ -83,12 +87,12 @@ private:
 	PortModel(const Raul::Path& path, uint32_t index, Shared::PortType type, Direction dir)
 		: ObjectModel(path)
 		, _index(index)
-		, _type(type)
 		, _direction(dir)
 		, _current_val(0.0f)
 		, _connections(0)
 	{
-		if (_type == Shared::PortType::UNKNOWN)
+		_types.insert(type);
+		if (type == Shared::PortType::UNKNOWN)
 			Raul::warn << "[PortModel] Unknown port type" << std::endl;
 	}
 
@@ -100,11 +104,11 @@ private:
 
 	void set(SharedPtr<ObjectModel> model);
 
-	uint32_t         _index;
-	Shared::PortType _type;
-	Direction        _direction;
-	Raul::Atom       _current_val;
-	size_t           _connections;
+	uint32_t                   _index;
+	std::set<Shared::PortType> _types;
+	Direction                  _direction;
+	Raul::Atom                 _current_val;
+	size_t                     _connections;
 };
 
 

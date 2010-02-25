@@ -193,7 +193,7 @@ SetMetadata::pre_process()
 					ev->pre_process();
 					_set_events.push_back(ev);
 				} else if (key == uris.ingen_controlBinding) {
-					if (port->type() == Shared::PortType::CONTROL) {
+					if (port->is_a(Shared::PortType::CONTROL)) {
 						if (value == uris.wildcard) {
 							_engine.control_bindings()->learn(port);
 						} else if (value.type() == Atom::DICT) {

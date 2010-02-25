@@ -53,7 +53,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _index(index)
 	, _poly(poly)
 	, _buffer_size(buffer_size)
-	, _type(type)
+	, _buffer_type(type)
 	, _value(value)
 	, _broadcast(false)
 	, _set_by_user(false)
@@ -62,6 +62,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _buffers(new Array<BufferFactory::Ref>(static_cast<size_t>(poly)))
 	, _prepared_buffers(NULL)
 {
+	_types.insert(type);
 	assert(node != NULL);
 	assert(_poly > 0);
 
@@ -81,6 +82,13 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 PortImpl::~PortImpl()
 {
 	delete _buffers;
+}
+
+
+bool
+PortImpl::supports(const Raul::URI& value_type) const
+{
+	return has_property(Shared::LV2URIMap::instance().obj_supports, value_type);
 }
 
 
@@ -105,7 +113,7 @@ bool
 PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	if (_type != PortType::CONTROL && _type != PortType::AUDIO)
+	if (buffer_type() != PortType::CONTROL && buffer_type() != PortType::AUDIO)
 		return false;
 
 	if (_poly == poly)
@@ -130,7 +138,7 @@ bool
 PortImpl::apply_poly(Maid& maid, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
-	if (_type != PortType::CONTROL && _type != PortType::AUDIO)
+	if (buffer_type() != PortType::CONTROL && buffer_type() != PortType::AUDIO)
 		return false;
 
 	if (!_prepared_buffers)
@@ -145,7 +153,7 @@ PortImpl::apply_poly(Maid& maid, uint32_t poly)
 	assert(_buffers == _prepared_buffers);
 	_prepared_buffers = NULL;
 
-	if (_type == PortType::CONTROL)
+	if (is_a(PortType::CONTROL))
 		for (uint32_t v = 0; v < _poly; ++v)
 			if (_buffers->at(v))
 				boost::static_pointer_cast<AudioBuffer>(_buffers->at(v))->set_value(
@@ -199,7 +207,7 @@ void
 PortImpl::broadcast_value(Context& context, bool force)
 {
 	Raul::Atom val;
-	switch (_type.symbol()) {
+	switch (buffer_type().symbol()) {
 	case PortType::UNKNOWN:
 		break;
 	case PortType::AUDIO:
@@ -214,7 +222,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::VALUE:
 	case PortType::MESSAGE:
-		LV2Object::to_atom(context.engine().world(), ((ObjectBuffer*)buffer(0).get())->object(), val);
+		LV2Object::to_atom(((ObjectBuffer*)buffer(0).get())->object(), val);
 		break;
 	}
 
@@ -239,6 +247,14 @@ PortImpl::set_context(Context::ID c)
 		set_property(uris.ctx_context, uris.ctx_MessageContext);
 		break;
 	}
+}
+
+
+PortType
+PortImpl::buffer_type() const
+{
+	// TODO: multiple types
+	return *_types.begin();
 }
 
 

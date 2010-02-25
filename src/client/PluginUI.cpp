@@ -87,7 +87,7 @@ lv2_ui_write(LV2UI_Controller controller,
 	} else if (format == map->object_transfer.id) {
 		LV2_Object* buf = (LV2_Object*)buffer;
 		Raul::Atom val;
-		Shared::LV2Object::to_atom(ui->world(), buf, val);
+		Shared::LV2Object::to_atom(buf, val);
 		ui->world()->engine->set_property(port->path(), map->ingen_value, val);
 
 	} else {

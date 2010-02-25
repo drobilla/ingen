@@ -222,7 +222,7 @@ NodeModule::embed_gui(bool embed)
 
 			for (NodeModel::Ports::const_iterator p = _node->ports().begin();
 					p != _node->ports().end(); ++p)
-				if ((*p)->type().is_control() && (*p)->is_output())
+				if ((*p)->is_output() && App::instance().can_control(p->get()))
 					App::instance().engine()->set_property((*p)->path(), uris.ingen_broadcast, true);
 		}
 
@@ -232,7 +232,7 @@ NodeModule::embed_gui(bool embed)
 		_plugin_ui.reset();
 
 		for (NodeModel::Ports::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
-			if ((*p)->type().is_control() && (*p)->is_output())
+			if ((*p)->is_output() && App::instance().can_control(p->get()))
 				App::instance().engine()->set_property((*p)->path(), uris.ingen_broadcast, false);
 	}
 
@@ -351,7 +351,7 @@ NodeModule::set_control_values()
 {
 	uint32_t index=0;
 	for (NodeModel::Ports::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p) {
-		if ((*p)->type().is_control())
+		if (App::instance().can_control(p->get()))
 			value_changed(index, (*p)->value());
 		++index;
 	}

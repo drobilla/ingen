@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <string>
+#include <set>
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
 #include "interface/Port.hpp"
@@ -103,8 +104,13 @@ public:
 	virtual bool is_input()  const = 0;
 	virtual bool is_output() const = 0;
 
-	uint32_t         index() const { return _index; }
-	Shared::PortType type()  const { return _type; }
+	uint32_t index() const { return _index; }
+
+	const PortTypes& types() const { return _types; }
+
+	PortType buffer_type() const;
+
+	bool supports(const Raul::URI& value_type) const;
 
 	size_t buffer_size() const { return _buffer_size; }
 
@@ -116,6 +122,7 @@ public:
 	}
 
 	void set_buffer_size(Context& context, BufferFactory& bufs, size_t size);
+	void set_buffer_type(PortType type);
 
 	void broadcast(bool b) { _broadcast = b; }
 	bool broadcast()       { return _broadcast; }
@@ -137,15 +144,16 @@ protected:
 	         const Raul::Atom&   value,
 	         size_t              buffer_size);
 
-	BufferFactory&   _bufs;
-	uint32_t         _index;
-	uint32_t         _poly;
-	uint32_t         _buffer_size;
-	Shared::PortType _type;
-	Raul::Atom       _value;
-	bool             _broadcast;
-	bool             _set_by_user;
-	Raul::Atom       _last_broadcasted_value;
+	BufferFactory&             _bufs;
+	uint32_t                   _index;
+	uint32_t                   _poly;
+	uint32_t                   _buffer_size;
+	PortType                   _buffer_type;
+	std::set<Shared::PortType> _types;
+	Raul::Atom                 _value;
+	bool                       _broadcast;
+	bool                       _set_by_user;
+	Raul::Atom                 _last_broadcasted_value;
 
 	Context::ID                      _context;
 	Raul::Array<BufferFactory::Ref>* _buffers;

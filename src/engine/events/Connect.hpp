@@ -70,8 +70,6 @@ private:
 	Raul::Path _dst_port_path;
 
 	PatchImpl*  _patch;
-	PortImpl*   _src_port;
-	PortImpl*   _dst_port;
 	OutputPort* _src_output_port;
 	InputPort*  _dst_input_port;
 

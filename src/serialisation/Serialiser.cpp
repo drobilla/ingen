@@ -417,8 +417,10 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 		_model->add_statement(port_id, "rdf:type",
 				Redland::Resource(_model->world(), "lv2:OutputPort"));
 
-	_model->add_statement(port_id, "rdf:type",
-			Redland::Resource(_model->world(), port->type().uri().str()));
+	for (Port::PortTypes::const_iterator i = port->types().begin();
+			i != port->types().end(); ++i)
+		_model->add_statement(port_id, "rdf:type",
+				Redland::Resource(_model->world(), i->uri().str()));
 
 	if (dynamic_cast<Patch*>(port->graph_parent()))
 		_model->add_statement(port_id, "rdf:instanceOf",
@@ -439,8 +441,10 @@ Serialiser::serialise_port_meta(const Port* port, const Redland::Node& port_id)
 		_model->add_statement(port_id, "rdf:type",
 				Redland::Resource(_model->world(), "lv2:OutputPort"));
 
-	_model->add_statement(port_id, "rdf:type",
-			Redland::Resource(_model->world(), port->type().uri().str()));
+	for (Port::PortTypes::const_iterator i = port->types().begin();
+			i != port->types().end(); ++i)
+		_model->add_statement(port_id, "rdf:type",
+				Redland::Resource(_model->world(), i->uri().str()));
 
 	_model->add_statement(port_id, "lv2:index",
 			AtomRDF::atom_to_node(*_model, Atom((int)port->index())));
@@ -450,7 +454,7 @@ Serialiser::serialise_port_meta(const Port* port, const Redland::Node& port_id)
 			if (port->value().is_valid()) {
 				_model->add_statement(port_id, "lv2:default",
 						AtomRDF::atom_to_node(*_model, Atom(port->value())));
-			} else if (port->type() == PortType::CONTROL) {
+			} else if (port->is_a(PortType::CONTROL)) {
 				LOG(warn) << "Port " << port->path() << " has no lv2:default" << endl;
 			}
 		}

@@ -141,11 +141,8 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	client->put(port->path(), port->properties());
 
 	// Send control value
-	if (port->type() == PortType::CONTROL) {
-		//const Sample& value = PtrCast<const AudioBuffer>(port->buffer(0))->value_at(0);
-		const Sample& value = ((const AudioBuffer*)port->buffer(0).get())->value_at(0);
-		client->set_property(port->path(), map.ingen_value, value);
-	}
+	if (port->is_a(PortType::CONTROL))
+		client->set_property(port->path(), map.ingen_value, port->value());
 
 	if (bundle)
 		client->bundle_end();

@@ -101,6 +101,7 @@ public:
 	const Quark midi_noteNumber;
 	const Quark obj_MessagePort;
 	const Quark obj_ValuePort;
+	const Quark obj_supports;
 	const Quark object_class_bool;
 	const Quark object_class_float32;
 	const Quark object_class_int32;

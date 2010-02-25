@@ -68,6 +68,7 @@ public:
 	inline bool operator!=(const Symbol& symbol) const { return (_symbol != symbol); }
 	inline bool operator==(const PortType& type) const { return (_symbol == type._symbol); }
 	inline bool operator!=(const PortType& type) const { return (_symbol != type._symbol); }
+	inline bool operator<(const PortType& type)  const { return (_symbol < type._symbol); }
 
 	inline bool is_audio()   { return _symbol == AUDIO; }
 	inline bool is_control() { return _symbol == CONTROL; }

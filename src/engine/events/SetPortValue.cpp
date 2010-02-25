@@ -176,7 +176,7 @@ SetPortValue::apply(Context& context)
 		ObjectBuffer* const obuf = dynamic_cast<ObjectBuffer*>(buf);
 		if (obuf) {
 			obuf->object()->size = obuf->size() - sizeof(LV2_Object);
-			if (LV2Object::from_atom(_engine.world(), _value, obuf->object())) {
+			if (LV2Object::from_atom(_value, obuf->object())) {
 				debug << "Converted atom " << _value << " :: " << obuf->object()->type
 					<< " * " << obuf->object()->size << " @ " << obuf->object() << endl;
 				return;

@@ -30,10 +30,11 @@
 #include "module/World.hpp"
 #include "engine/Engine.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/runtime_paths.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "client/ObjectModel.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
-#include "shared/runtime_paths.hpp"
 #include "NodeModule.hpp"
 #include "ControlPanel.hpp"
 #include "SubpatchModule.hpp"
@@ -386,6 +387,16 @@ App::icon_destroyed(void* data)
 	delete p; // allocated in App::icon_from_path
 
 	return NULL;
+}
+
+
+bool
+App::can_control(const Shared::Port* port) const
+{
+	return port->is_a(PortType::CONTROL)
+		|| (port->is_a(PortType::VALUE)
+				&& (port->supports(uris().object_class_float32)
+					|| port->supports(uris().object_class_string)));
 }
 
 

@@ -35,6 +35,13 @@ PortModel::set_property(const Raul::URI&  uri,
 
 
 bool
+PortModel::supports(const Raul::URI& value_type) const
+{
+	return has_property(Shared::LV2URIMap::instance().obj_supports, value_type);
+}
+
+
+bool
 PortModel::port_property(const std::string& uri) const
 {
 	return has_property(Shared::LV2URIMap::instance().lv2_portProperty, Raul::URI(uri));
@@ -47,7 +54,7 @@ PortModel::set(SharedPtr<ObjectModel> model)
 	SharedPtr<PortModel> port = PtrCast<PortModel>(model);
 	if (port) {
 		_index = port->_index;
-		_type = port->_type;
+		_types = port->_types;
 		_direction = port->_direction;
 		_current_val = port->_current_val;
 		_connections = port->_connections;

@@ -89,24 +89,16 @@ Configuration::get_port_color(const PortModel* p)
 {
 	assert(p != NULL);
 
-	if (p->type().is_control()) {
-		return _control_port_color;
-	} else if (p->type().is_audio()) {
+	if (p->is_a(Shared::PortType::AUDIO)) {
 		return _audio_port_color;
-	} else if (p->type().is_events()) {
-		return _event_port_color;
-	/*} else if (p->type().is_osc()) {
-		return _osc_port_color;
-	*/} else if (p->type().is_value()) {
-		return _value_port_color;
-	} else if (p->type().is_message()) {
+	} else if (App::instance().can_control(p)) {
+		return _control_port_color;
+	} else if (p->is_a(Shared::PortType::EVENTS) || p->is_a(Shared::PortType::MESSAGE)) {
 		return _event_port_color;
 	}
 
-	error << "[Configuration] Unknown port type " << p->type().uri()
-		<< ", port will appear black." << endl;
-
-	return 0x000000FF;
+	warn << "[Configuration] No known port type for " << p->path() << endl;
+	return 0x666666FF;
 }
 
 

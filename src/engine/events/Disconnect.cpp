@@ -190,10 +190,12 @@ Disconnect::execute(ProcessContext& context)
 			_dst_input_port->connect_buffers();
 			if (_clear_dst_port) {
 				for (uint32_t v = 0; v < _dst_input_port->poly(); ++v) {
-					if (_dst_input_port->type() == PortType::CONTROL) {
-						PtrCast<AudioBuffer>(_dst_input_port->buffer(v))->set_value(
-								_dst_input_port->value().get_float(),
-								context.start(), context.start());
+					if (_dst_input_port->is_a(PortType::CONTROL)) {
+						IntrusivePtr<AudioBuffer> abuf(PtrCast<AudioBuffer>(
+									_dst_input_port->buffer(v)));
+						if (abuf)
+							abuf->set_value(_dst_input_port->value().get_float(),
+									context.start(), context.start());
 					} else {
 						_dst_input_port->buffer(v)->clear();
 					}

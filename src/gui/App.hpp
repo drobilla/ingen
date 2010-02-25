@@ -35,11 +35,13 @@ namespace Ingen {
 		class EngineInterface;
 		class ClientInterface;
 		class World;
+		class Port;
 	}
 	namespace Client {
+		class ClientStore;
 		class PatchModel;
 		class PluginModel;
-		class ClientStore;
+		class PortModel;
 		class SigClientInterface;
 	}
 	namespace Serialisation {
@@ -48,6 +50,7 @@ namespace Ingen {
 }
 
 namespace Ingen {
+
 namespace GUI {
 
 class MessagesWindow;
@@ -88,6 +91,7 @@ public:
 
 	void port_activity(Port* port);
 	void activity_port_destroyed(Port* port);
+	bool can_control(const Shared::Port* port) const;
 
 	bool signal() const { return _enable_signal; }
 	bool disable_signals()  { bool old = _enable_signal; _enable_signal = false; return old; }
@@ -113,8 +117,8 @@ public:
 	static void init(Ingen::Shared::World* world);
 	static void run();
 
-	inline Ingen::Shared::World*     world() { return _world; }
-	inline Ingen::Shared::LV2URIMap& uris()  { return *_world->uris; }
+	inline Ingen::Shared::World*     world() const { return _world; }
+	inline Ingen::Shared::LV2URIMap& uris()  const { return *_world->uris; }
 
 protected:
 

@@ -61,10 +61,10 @@ PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
 		_destroy_menuitem->hide();
 	}
 
-	if (port->type() == PortType::EVENTS)
+	if (port->is_a(PortType::EVENTS))
 		_polyphonic_menuitem->hide();
 
-	if (port->type() == PortType::CONTROL) {
+	if (App::instance().can_control(port.get()) && port->is_numeric()) {
 		_learn_menuitem->show();
 		_unlearn_menuitem->show();
 
