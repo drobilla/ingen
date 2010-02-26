@@ -218,7 +218,7 @@ main(int argc, char** argv)
 
 			engine_interface->load_plugins();
 			if (conf.option("gui").get_bool())
-				engine_interface->request_plugins();
+				engine_interface->get("ingen:plugins");
 			world->parser->parse_document(
 					world, engine_interface.get(), uri, data_path, parent, symbol);
 

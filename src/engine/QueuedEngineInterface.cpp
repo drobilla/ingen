@@ -264,11 +264,4 @@ QueuedEngineInterface::request_property(const URI& uri, const URI& key)
 }
 
 
-void
-QueuedEngineInterface::request_plugins()
-{
-	push_queued(new Events::RequestPlugins(_engine, _request, now()));
-}
-
-
 } // namespace Ingen

@@ -106,7 +106,6 @@ public:
 	void ping();
 	void get(const Raul::URI& uri);
 	void request_property(const Raul::URI& path, const Raul::URI& key);
-	void request_plugins();
 
 protected:
 	const Raul::URI _engine_url;

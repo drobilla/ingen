@@ -48,7 +48,6 @@ def build(bld):
 		events/Note.cpp
 		events/RegisterClient.cpp
 		events/RequestMetadata.cpp
-		events/RequestPlugins.cpp
 		events/SendBinding.cpp
 		events/SendPortActivity.cpp
 		events/SendPortValue.cpp

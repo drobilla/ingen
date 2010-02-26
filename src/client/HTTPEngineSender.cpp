@@ -224,14 +224,6 @@ HTTPEngineSender::request_property(const URI& object_path, const URI& key)
 }
 
 
-void
-HTTPEngineSender::request_plugins()
-{
-	SoupMessage* msg = soup_message_new("GET", (_engine_url.str() + "/plugins").c_str());
-	HTTPClientReceiver::send(msg);
-}
-
-
 } // namespace Client
 } // namespace Ingen
 

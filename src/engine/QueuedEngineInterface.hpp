@@ -102,7 +102,6 @@ public:
 	virtual void ping();
 	virtual void get(const Raul::URI& uri);
 	virtual void request_property(const Raul::URI& object_path, const Raul::URI& key);
-	virtual void request_plugins();
 
 protected:
 	virtual void disable_responses();

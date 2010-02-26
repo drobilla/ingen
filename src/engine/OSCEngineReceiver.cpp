@@ -112,8 +112,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	// Queries
 	lo_server_add_method(_server, "/request_property", "iss", request_property_cb, this);
 	lo_server_add_method(_server, "/get", "is", get_cb, this);
-	lo_server_add_method(_server, "/request_plugins", "i", request_plugins_cb, this);
-	lo_server_add_method(_server, "/request_all_objects", "i", request_all_objects_cb, this);
 
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 
@@ -631,21 +629,6 @@ OSCEngineReceiver::_request_property_cb(const char* path, const char* types, lo_
 	request_property(object_path, key);
 	return 0;
 }
-
-
-/** \page engine_osc_namespace
- * <h2>/request_plugins</h2>
- * \arg \b response-id (integer)
- *
- * Request the engine send a list of all known plugins.
- */
-int
-OSCEngineReceiver::_request_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	request_plugins();
-	return 0;
-}
-
 
 
 //  Static Callbacks //

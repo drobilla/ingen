@@ -19,6 +19,7 @@
 #define INGEN_EVENTS_GET_HPP
 
 #include "QueuedEvent.hpp"
+#include "NodeFactory.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -43,13 +44,13 @@ public:
 		const Raul::URI&   uri);
 
 	void pre_process();
-	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	const Raul::URI   _uri;
-	GraphObjectImpl*  _object;
-	const PluginImpl* _plugin;
+	const Raul::URI      _uri;
+	GraphObjectImpl*     _object;
+	const PluginImpl*    _plugin;
+	NodeFactory::Plugins _plugins;
 };
 
 

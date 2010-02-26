@@ -66,8 +66,6 @@ public:
 
 	virtual void request_property(const Raul::URI& uri,
 	                              const Raul::URI& key) = 0;
-
-	virtual void request_plugins() = 0;
 };
 
 

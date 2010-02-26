@@ -36,7 +36,6 @@
 #include "events/Ping.hpp"
 #include "events/RegisterClient.hpp"
 #include "events/RequestMetadata.hpp"
-#include "events/RequestPlugins.hpp"
 #include "events/SetMetadata.hpp"
 #include "events/SetPortValue.hpp"
 #include "events/UnregisterClient.hpp"

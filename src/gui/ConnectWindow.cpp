@@ -462,7 +462,7 @@ ConnectWindow::gtk_callback()
 			}
 		}
 	} else if (_connect_stage == 4) {
-		App::instance().engine()->request_plugins();
+		App::instance().engine()->get("ingen:plugins");
 		hide();
 		if (_widgets_loaded)
 			_progress_label->set_text("Connected to engine");

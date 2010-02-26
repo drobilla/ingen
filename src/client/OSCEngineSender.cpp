@@ -261,13 +261,6 @@ OSCEngineSender::request_property(const URI& object_path, const URI& key)
 }
 
 
-void
-OSCEngineSender::request_plugins()
-{
-	send("/request_plugins", "i", next_id(), LO_ARGS_END);
-}
-
-
 } // namespace Client
 } // namespace Ingen
 

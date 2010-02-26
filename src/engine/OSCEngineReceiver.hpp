@@ -112,8 +112,6 @@ private:
 	LO_HANDLER(set_property);
 	LO_HANDLER(property_set);
 	LO_HANDLER(request_property);
-	LO_HANDLER(request_plugins);
-	LO_HANDLER(request_all_objects);
 
 	lo_server _server;
 };

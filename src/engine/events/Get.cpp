@@ -49,27 +49,25 @@ Get::Get(
 void
 Get::pre_process()
 {
-	if (Path::is_valid(_uri.str()))
+	if (_uri == "ingen:plugins") {
+		_plugins = _engine.node_factory()->plugins();
+	} else if (Path::is_valid(_uri.str())) {
 		_object = _engine.engine_store()->find_object(Path(_uri.str()));
-	else
+	} else {
 		_plugin = _engine.node_factory()->plugin(_uri);
+	}
 
 	QueuedEvent::pre_process();
 }
 
 
 void
-Get::execute(ProcessContext& context)
-{
-	QueuedEvent::execute(context);
-	assert(_time >= context.start() && _time <= context.end());
-}
-
-
-void
 Get::post_process()
 {
-	if (!_object && !_plugin) {
+	if (_uri == "ingen:plugins") {
+		_request->respond_ok();
+		_engine.broadcaster()->send_plugins_to(_request->client(), _plugins);
+	} else if (!_object && !_plugin) {
 		_request->respond_error("Unable to find object requested.");
 	} else if (_request->client()) {
 		_request->respond_ok();
