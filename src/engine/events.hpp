@@ -32,7 +32,6 @@
 #include "events/Get.hpp"
 #include "events/LoadPlugins.hpp"
 #include "events/Move.hpp"
-#include "events/Note.hpp"
 #include "events/Ping.hpp"
 #include "events/RegisterClient.hpp"
 #include "events/RequestMetadata.hpp"

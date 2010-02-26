@@ -45,7 +45,6 @@ def build(bld):
 		events/Get.cpp
 		events/LoadPlugins.cpp
 		events/Move.cpp
-		events/Note.cpp
 		events/RegisterClient.cpp
 		events/RequestMetadata.cpp
 		events/SendBinding.cpp
