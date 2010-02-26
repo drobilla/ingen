@@ -34,7 +34,6 @@ def build(bld):
 		ProcessSlave.cpp
 		QueuedEngineInterface.cpp
 		QueuedEvent.cpp
-		events/AllNotesOff.cpp
 		events/Connect.cpp
 		events/CreateNode.cpp
 		events/CreatePatch.cpp

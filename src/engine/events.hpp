@@ -20,7 +20,6 @@
 
 #include "ingen-config.h"
 
-#include "events/AllNotesOff.hpp"
 #include "events/Connect.hpp"
 #include "events/CreateNode.hpp"
 #include "events/CreatePatch.hpp"
