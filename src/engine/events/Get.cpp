@@ -74,7 +74,7 @@ Get::post_process()
 	} else if (_request->client()) {
 		_request->respond_ok();
 		if (_object)
-			_request->client()->put(_uri, _object->properties());
+			ObjectSender::send_object(_request->client(), _object, true);
 		else if (_plugin)
 			_request->client()->put(_uri, _plugin->properties());
 	} else {

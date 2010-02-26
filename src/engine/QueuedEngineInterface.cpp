@@ -271,11 +271,4 @@ QueuedEngineInterface::request_plugins()
 }
 
 
-void
-QueuedEngineInterface::request_all_objects()
-{
-	push_queued(new Events::RequestAllObjects(_engine, _request, now()));
-}
-
-
 } // namespace Ingen

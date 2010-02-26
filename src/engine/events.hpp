@@ -35,7 +35,6 @@
 #include "events/Note.hpp"
 #include "events/Ping.hpp"
 #include "events/RegisterClient.hpp"
-#include "events/RequestAllObjects.hpp"
 #include "events/RequestMetadata.hpp"
 #include "events/RequestPlugins.hpp"
 #include "events/SetMetadata.hpp"

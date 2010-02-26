@@ -268,14 +268,6 @@ OSCEngineSender::request_plugins()
 }
 
 
-void
-OSCEngineSender::request_all_objects()
-{
-	send("/request_all_objects", "i", next_id(), LO_ARGS_END);
-}
-
-
 } // namespace Client
 } // namespace Ingen
-
 

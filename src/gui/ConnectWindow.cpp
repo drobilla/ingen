@@ -445,7 +445,7 @@ ConnectWindow::gtk_callback()
 			}
 		}
 	} else if (_connect_stage == 2) {
-		App::instance().engine()->request_all_objects();
+		App::instance().engine()->get(Path("/"));
 		if (_widgets_loaded)
 			_progress_label->set_text(string("Requesting root patch..."));
 		++_connect_stage;

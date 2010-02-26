@@ -232,16 +232,6 @@ HTTPEngineSender::request_plugins()
 }
 
 
-void
-HTTPEngineSender::request_all_objects()
-{
-	SoupMessage* msg = soup_message_new("GET", (_engine_url.str() + "/patch").c_str());
-	HTTPClientReceiver::send(msg);
-}
-
-
-
 } // namespace Client
 } // namespace Ingen
-
 

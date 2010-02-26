@@ -107,7 +107,6 @@ public:
 	void get(const Raul::URI& uri);
 	void request_property(const Raul::URI& path, const Raul::URI& key);
 	void request_plugins();
-	void request_all_objects();
 
 protected:
 	const Raul::URI _engine_url;

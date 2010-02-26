@@ -647,19 +647,6 @@ OSCEngineReceiver::_request_plugins_cb(const char* path, const char* types, lo_a
 }
 
 
-/** \page engine_osc_namespace
- * <h2>/request_all_objects</h2>
- * \arg \b response-id (integer)
- *
- * Requests all information about all known objects.
- */
-int
-OSCEngineReceiver::_request_all_objects_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	request_all_objects();
-	return 0;
-}
-
 
 //  Static Callbacks //
 

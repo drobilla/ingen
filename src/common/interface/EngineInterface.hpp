@@ -68,8 +68,6 @@ public:
 	                              const Raul::URI& key) = 0;
 
 	virtual void request_plugins() = 0;
-
-	virtual void request_all_objects() = 0;
 };
 
 
