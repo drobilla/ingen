@@ -92,7 +92,7 @@ InputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buf
 
 	} else if (num_connections == 1) {
 		if (ThreadManager::current_thread_id() == THREAD_PROCESS) {
-			if (!_connections.front()->must_mix()) {
+			if (!_connections.front()->must_mix() && !_connections.front()->must_queue()) {
 				// Single non-mixing conneciton, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v)
 					buffers->at(v) = _connections.front()->buffer(v);
@@ -180,7 +180,7 @@ InputPort::pre_process(Context& context)
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		max_num_srcs += (*c)->src_port()->poly();
 
-	Buffer* srcs[max_num_srcs];
+	IntrusivePtr<Buffer> srcs[max_num_srcs];
 
 	if (_connections.empty()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
@@ -217,8 +217,8 @@ InputPort::post_process(Context& context)
 bool
 InputPort::direct_connect() const
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-	return _connections.size() == 1 && !_connections.front()->must_mix();
+	return _connections.size() == 1 && !_connections.front()->must_mix()
+			&& !_connections.front()->must_queue();
 }
 
 

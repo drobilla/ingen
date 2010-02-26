@@ -28,19 +28,19 @@ using namespace Raul;
 namespace Ingen {
 
 inline void
-mix(Context& context, Buffer* dst, const Buffer*const* srcs, uint32_t num_srcs)
+mix(Context& context, Buffer* dst, const IntrusivePtr<Buffer>* srcs, uint32_t num_srcs)
 {
 	using Shared::PortType;
 	switch (dst->type().symbol()) {
 	case PortType::AUDIO:
 	case PortType::CONTROL:
 		// Copy the first source
-		dst->copy(context, srcs[0]);
+		dst->copy(context, srcs[0].get());
 
 		// Mix in the rest
 		for (uint32_t i = 1; i < num_srcs; ++i) {
 			assert(srcs[i]->type() == PortType::AUDIO || srcs[i]->type() == PortType::CONTROL);
-			((AudioBuffer*)dst)->accumulate(context, (AudioBuffer*)srcs[i]);
+			((AudioBuffer*)dst)->accumulate(context, (AudioBuffer*)srcs[i].get());
 		}
 
 		break;
@@ -55,7 +55,7 @@ mix(Context& context, Buffer* dst, const Buffer*const* srcs, uint32_t num_srcs)
 		while (true) {
 			const EventBuffer* first = NULL;
 			for (uint32_t i = 0; i < num_srcs; ++i) {
-				const EventBuffer* const src = (const EventBuffer*)srcs[i];
+				const EventBuffer* const src = (const EventBuffer*)srcs[i].get();
 				if (src->is_valid()) {
 					if (!first || src->get_event()->frames < first->get_event()->frames)
 						first = src;
@@ -76,7 +76,10 @@ mix(Context& context, Buffer* dst, const Buffer*const* srcs, uint32_t num_srcs)
 		break;
 
 	default:
-		error << "Mix of unsupported buffer types" << std::endl;
+		if (num_srcs == 1)
+			dst->copy(context, srcs[0].get());
+		else
+			error << "Mix of unsupported buffer types" << std::endl;
 		return;
 	}
 }

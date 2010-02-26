@@ -22,6 +22,7 @@
 #include <boost/utility.hpp>
 #include "raul/log.hpp"
 #include "raul/Deletable.hpp"
+#include "raul/IntrusivePtr.hpp"
 #include "interface/PortType.hpp"
 #include "interface/Connection.hpp"
 #include "object.lv2/object.h"
@@ -67,7 +68,7 @@ public:
 	void queue(Context& context);
 
 	void get_sources(Context& context, uint32_t voice,
-			Buffer** srcs, uint32_t max_num_srcs, uint32_t& num_srcs);
+			IntrusivePtr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs);
 
 	/** Get the buffer for a particular voice.
 	 * A Connection is smart - it knows the destination port requesting the

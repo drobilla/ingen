@@ -135,7 +135,8 @@ Connect::pre_process()
 	_patch->add_connection(_connection);
 	_dst_input_port->increment_num_connections();
 
-	if ((_dst_input_port->num_connections() == 1 && _connection->must_mix())
+	if ((_dst_input_port->num_connections() == 1
+				&& (_connection->must_mix() || _connection->must_queue()))
 			|| _dst_input_port->num_connections() == 2) {
 		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
 		_dst_input_port->get_buffers(*_engine.buffer_factory(),

@@ -72,12 +72,17 @@ ConnectionImpl::dump() const
 
 void
 ConnectionImpl::get_sources(Context& context, uint32_t voice,
-		Buffer** srcs, uint32_t max_num_srcs, uint32_t& num_srcs)
+		IntrusivePtr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs)
 {
-	if (must_queue())
-		return;
-
-	if (must_mix()) {
+	if (must_queue() && _queue->read_space() > 0) {
+		LV2_Object obj;
+		_queue->peek(sizeof(LV2_Object), &obj);
+		IntrusivePtr<Buffer> buf = context.engine().buffer_factory()->get(
+				dst_port()->buffer_type(), sizeof(LV2_Object) + obj.size);
+		void* data = buf->port_data(PortType::MESSAGE, context.offset());
+		_queue->full_read(sizeof(LV2_Object) + obj.size, (LV2_Object*)data);
+		srcs[num_srcs++] = buf;
+	} else if (must_mix()) {
 		// Mixing down voices: every src voice mixed into every dst voice
 		for (uint32_t v = 0; v < _src_port->poly(); ++v) {
 			assert(num_srcs < max_num_srcs);
