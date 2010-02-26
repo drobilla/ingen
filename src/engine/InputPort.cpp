@@ -75,19 +75,10 @@ InputPort::apply_poly(Maid& maid, uint32_t poly)
 }
 
 
-void
-InputPort::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
-{
-	PortImpl::set_buffer_size(context, bufs, size);
-
-	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		(*c)->update_buffer_size(context, bufs);
-}
-
-
 /** Set \a buffers appropriately if this port has \a num_connections connections.
+ * \return true iff buffers are locally owned by the port
  */
-void
+bool
 InputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly)
 {
 	size_t num_connections = (ThreadManager::current_thread_id() == THREAD_PROCESS)
@@ -97,26 +88,25 @@ InputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buf
 		// Audio input with no connections, use shared zero buffer
 		for (uint32_t v = 0; v < poly; ++v)
 			buffers->at(v) = bufs.silent_buffer();
+		return false;
 
 	} else if (num_connections == 1) {
 		if (ThreadManager::current_thread_id() == THREAD_PROCESS) {
-			// Single connection, use it directly
-			for (uint32_t v = 0; v < poly; ++v)
-				buffers->at(v) = _connections.front()->buffer(v);
-		} else {
-			// Not in the process thread, will be set later
-			for (uint32_t v = 0; v < poly; ++v)
-				buffers->at(v) = NULL;
-		}
-
-	} else {
-		// Use local buffers
-		for (uint32_t v = 0; v < poly; ++v) {
-			buffers->at(v) = NULL; // Release first (potential immediate recycling)
-			buffers->at(v) = _bufs.get(buffer_type(), _buffer_size);
-			buffers->at(v)->clear();
+			if (!_connections.front()->must_mix()) {
+				// Single non-mixing conneciton, use buffers directly
+				for (uint32_t v = 0; v < poly; ++v)
+					buffers->at(v) = _connections.front()->buffer(v);
+				return false;
+			}
 		}
 	}
+
+	// Otherwise, allocate local buffers
+	for (uint32_t v = 0; v < poly; ++v) {
+		buffers->at(v) = _bufs.get(buffer_type(), _buffer_size);
+		buffers->at(v)->clear();
+	}
+	return true;
 }
 
 
@@ -186,30 +176,31 @@ InputPort::pre_process(Context& context)
 	if (_set_by_user)
 		return;
 
-	// Process connections (mix down polyphony, if necessary)
+	uint32_t max_num_srcs = 0;
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		(*c)->process(context);
+		max_num_srcs += (*c)->src_port()->poly();
 
-	// Multiple connections, mix them all into our local buffers
-	if (_connections.size() > 1) {
-		for (uint32_t v = 0; v < _poly; ++v)
-			buffer(v)->prepare_write(context);
+	Buffer* srcs[max_num_srcs];
 
+	if (_connections.empty()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
-			const uint32_t        num_srcs = _connections.size();
-			Connections::iterator c        = _connections.begin();
-			Buffer* srcs[num_srcs];
-			for (uint32_t i = 0; c != _connections.end(); ++c) {
-				assert(i < num_srcs);
-				srcs[i++] = (*c)->buffer(v).get();
-			}
+			buffer(v)->prepare_read(context);
+		}
+	} else if (direct_connect()) {
+		for (uint32_t v = 0; v < _poly; ++v) {
+			_buffers->at(v) = _connections.front()->buffer(v);
+			_buffers->at(v)->prepare_read(context);
+		}
+	} else {
+		for (uint32_t v = 0; v < _poly; ++v) {
+			uint32_t num_srcs = 0;
+			for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
+				(*c)->get_sources(context, v, srcs, max_num_srcs, num_srcs);
 
 			mix(context, buffer(v).get(), srcs, num_srcs);
+			buffer(v)->prepare_read(context);
 		}
 	}
-
-	for (uint32_t v = 0; v < _poly; ++v)
-		buffer(v)->prepare_read(context);
 
 	if (_broadcast)
 		broadcast_value(context, false);
@@ -220,6 +211,14 @@ void
 InputPort::post_process(Context& context)
 {
 	_set_by_user = false;
+}
+
+
+bool
+InputPort::direct_connect() const
+{
+	ThreadManager::assert_thread(THREAD_PROCESS);
+	return _connections.size() == 1 && !_connections.front()->must_mix();
 }
 
 

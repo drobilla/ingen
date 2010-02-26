@@ -54,7 +54,7 @@ DuplexPort::DuplexPort(
 }
 
 
-void
+bool
 DuplexPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly)
 {
 	if (_is_output)

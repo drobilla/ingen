@@ -23,6 +23,7 @@
 #include <boost/utility.hpp>
 #include "types.hpp"
 #include "ObjectBuffer.hpp"
+#include "Context.hpp"
 
 using namespace std;
 
@@ -42,7 +43,7 @@ public:
 	void copy(Context& context, const Buffer* src);
 	void accumulate(Context& context, const AudioBuffer* src);
 
-	bool is_control() const { return _type.symbol() == Shared::PortType::CONTROL; }
+	inline bool is_control() const { return _type.symbol() == Shared::PortType::CONTROL; }
 
 	inline Sample* data() const {
 		return (is_control())
@@ -73,6 +74,35 @@ private:
 	Sample    _set_value; ///< Value set by set_value (for completing the set next cycle)
 	FrameTime _set_time;  ///< Time _set_value was set (to reset next cycle)
 };
+
+
+/** Accumulate a block of @a src into buffer.
+ */
+inline void
+AudioBuffer::accumulate(Context& context, const AudioBuffer* const src)
+{
+	Sample* const       buf     = data();
+	const Sample* const src_buf = src->data();
+
+	if (is_control()) {
+		if (src->is_control()) { // control => control
+			buf[0] += src_buf[0];
+		} else { // audio => control
+			buf[0] += src_buf[context.offset()];
+		}
+	} else {
+		const SampleCount end = context.offset() + context.nframes();
+		if (src->is_control()) { // control => audio
+			for (SampleCount i = context.offset(); i < end; ++i) {
+				buf[i] += src_buf[0];
+			}
+		} else { // audio => audio
+			for (SampleCount i = context.offset(); i < end; ++i) {
+				buf[i] += src_buf[i];
+			}
+		}
+	}
+}
 
 
 } // namespace Ingen

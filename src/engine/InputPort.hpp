@@ -65,9 +65,8 @@ public:
 	Connections::Node* remove_connection(ProcessContext& context, const OutputPort* src_port);
 
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
-	void set_buffer_size(Context& context, BufferFactory& bufs, size_t size);
 
-	void get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly);
+	bool get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly);
 
 	void pre_process(Context& context);
 	void post_process(Context& context);
@@ -78,6 +77,8 @@ public:
 
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
+
+	bool direct_connect() const;
 
 protected:
 	size_t      _num_connections; ///< Pre-process thread

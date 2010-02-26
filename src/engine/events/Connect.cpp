@@ -135,15 +135,11 @@ Connect::pre_process()
 	_patch->add_connection(_connection);
 	_dst_input_port->increment_num_connections();
 
-	switch (_dst_input_port->num_connections()) {
-	case 1:
-		_connection->allocate_buffer(*_engine.buffer_factory());
-		break;
-	case 2:
+	if ((_dst_input_port->num_connections() == 1 && _connection->must_mix())
+			|| _dst_input_port->num_connections() == 2) {
 		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
-		_dst_input_port->get_buffers(*_engine.buffer_factory(), _buffers, _dst_input_port->poly());
-	default:
-		break;
+		_dst_input_port->get_buffers(*_engine.buffer_factory(),
+				_buffers, _dst_input_port->poly());
 	}
 
 	if (_patch->enabled())

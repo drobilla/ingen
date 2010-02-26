@@ -111,8 +111,9 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(bufs, poly);
 
-	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
-		((ConnectionImpl*)i->second.get())->prepare_poly(bufs, poly);
+	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+		for (uint32_t j = 0; j < (*i)->num_ports(); ++j)
+			(*i)->port_impl(j)->prepare_poly_buffers(bufs);
 
 	return true;
 }
@@ -128,13 +129,10 @@ PatchImpl::apply_internal_poly(ProcessContext& context, BufferFactory& bufs, Rau
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 
-	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i)
-		((ConnectionImpl*)i->second.get())->apply_poly(maid, poly);
-
 	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		for (uint32_t j = 0; j < (*i)->num_ports(); ++j) {
 			PortImpl* const port = (*i)->port_impl(j);
-			if (port->is_input() && dynamic_cast<InputPort*>(port)->num_connections() == 1)
+			if (port->is_input() && dynamic_cast<InputPort*>(port)->direct_connect())
 				port->setup_buffers(bufs, port->poly());
 			port->connect_buffers(context.offset());
 		}

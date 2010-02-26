@@ -127,10 +127,15 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (!_prepared_buffers)
 		_prepared_buffers = new Array<BufferFactory::Ref>(poly, *_buffers, NULL);
 
-	get_buffers(bufs, _prepared_buffers, poly);
-	assert(prepared_poly() == poly);
-
 	return true;
+}
+
+
+void
+PortImpl::prepare_poly_buffers(BufferFactory& bufs)
+{
+	if (_prepared_buffers)
+		get_buffers(bufs, _prepared_buffers, _prepared_buffers->size());
 }
 
 

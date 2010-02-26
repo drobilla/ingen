@@ -55,9 +55,6 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 	assert(src_port != dst_port);
 	assert(src_port->path() != dst_port->path());
 
-	if (must_mix() || must_queue())
-		_local_buffer = bufs.get(dst_port->buffer_type(), dst_port->buffer_size(), true);
-
 	if (must_queue())
 		_queue = new Raul::RingBuffer<LV2_Object>(src_port->buffer_size() * 2);
 }
@@ -74,82 +71,23 @@ ConnectionImpl::dump() const
 
 
 void
-ConnectionImpl::update_buffer_size(Context& context, BufferFactory& bufs)
+ConnectionImpl::get_sources(Context& context, uint32_t voice,
+		Buffer** srcs, uint32_t max_num_srcs, uint32_t& num_srcs)
 {
-	if (must_mix() || must_queue())
-		allocate_buffer(bufs);
-}
+	if (must_queue())
+		return;
 
-
-void
-ConnectionImpl::allocate_buffer(BufferFactory& bufs)
-{
-	if (!_local_buffer)
-		_local_buffer = bufs.get(_dst_port->buffer_type(), _dst_port->buffer_size());
-}
-
-
-void
-ConnectionImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
-{
-	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-
-	assert(_src_port->prepared_poly() == _dst_port->prepared_poly()
-			|| _src_port->prepared_poly() == 1
-			|| _dst_port->prepared_poly() == 1);
-
-	const bool mix = _src_port->prepared_poly() > _dst_port->prepared_poly();
-	if ((mix || must_queue()) && !_local_buffer)
-		_local_buffer = bufs.get(_dst_port->buffer_type(), _dst_port->buffer(0)->size());
-}
-
-
-void
-ConnectionImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
-{
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
-	assert(_src_port->poly() == _dst_port->poly()
-			|| _src_port->poly() == 1
-			|| _dst_port->poly() == 1);
-
-	// Recycle buffer if it's no longer needed
-	if (!(must_mix() || must_queue()))
-		_local_buffer = NULL;
-}
-
-
-void
-ConnectionImpl::process(Context& context)
-{
-	if (must_queue()) {
-		IntrusivePtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
-		if (!src_buf) {
-			error << "Queued connection but source is not an EventBuffer" << endl;
-			return;
+	if (must_mix()) {
+		// Mixing down voices: every src voice mixed into every dst voice
+		for (uint32_t v = 0; v < _src_port->poly(); ++v) {
+			assert(num_srcs < max_num_srcs);
+			srcs[num_srcs++] = _src_port->buffer(v).get();
 		}
-
-		IntrusivePtr<ObjectBuffer> local_buf = PtrCast<ObjectBuffer>(_local_buffer);
-		if (!local_buf) {
-			error << "Queued connection but local buffer is not an ObjectBuffer" << endl;
-			return;
-		}
-
-		local_buf->clear();
-
-		if (_queue->read_space()) {
-			LV2_Object obj;
-			_queue->full_peek(sizeof(LV2_Object), &obj);
-			_queue->full_read(sizeof(LV2_Object) + obj.size, local_buf->object());
-		}
-
-	} else if (must_mix()) {
-		const uint32_t num_srcs = src_port()->poly();
-		Buffer* srcs[num_srcs];
-		for (uint32_t v = 0; v < num_srcs; ++v)
-			srcs[v] = src_port()->buffer(v).get();
-
-		mix(context, _local_buffer.get(), srcs, num_srcs);
+	} else {
+		// Matching polyphony: each src voice mixed into corresponding dst voice
+		assert(_src_port->poly() == _dst_port->poly());
+		assert(num_srcs < max_num_srcs);
+		srcs[num_srcs++] = _src_port->buffer(voice).get();
 	}
 }
 
@@ -166,8 +104,7 @@ ConnectionImpl::queue(Context& context)
 		return;
 	}
 
-	src_buf->rewind();
-	while (src_buf->is_valid()) {
+	for (src_buf->rewind(); src_buf->is_valid(); src_buf->increment()) {
 		LV2_Event*  ev  = src_buf->get_event();
 		LV2_Object* obj = LV2_OBJECT_FROM_EVENT(ev);
 		/*debug << _src_port->path() << " -> " << _dst_port->path()
@@ -177,8 +114,6 @@ ConnectionImpl::queue(Context& context)
 		debug << endl;*/
 
 		_queue->write(sizeof(LV2_Object) + obj->size, obj);
-		src_buf->increment();
-
 		context.engine().message_context()->run(_dst_port, context.start() + ev->frames);
 	}
 }

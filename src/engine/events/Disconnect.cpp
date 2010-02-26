@@ -161,7 +161,8 @@ Disconnect::pre_process()
 
 	if (_dst_input_port->num_connections() == 0) {
 		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
-		_dst_input_port->get_buffers(*_engine.buffer_factory(), _buffers, _dst_input_port->poly());
+		_dst_input_port->get_buffers(*_engine.buffer_factory(),
+				_buffers, _dst_input_port->poly());
 		_clear_dst_port = true;
 	}
 
@@ -181,7 +182,6 @@ Disconnect::execute(ProcessContext& context)
 	if (_error == NO_ERROR) {
 		InputPort::Connections::Node* const port_connections_node
 			= _dst_input_port->remove_connection(context, _src_output_port);
-		port_connections_node->elem()->recycle_buffer();
 		if (_reconnect_dst_port) {
 			if (_buffers)
 				_engine.maid()->push(_dst_input_port->set_buffers(_buffers));

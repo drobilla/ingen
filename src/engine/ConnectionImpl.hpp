@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <boost/utility.hpp>
+#include "raul/log.hpp"
 #include "raul/Deletable.hpp"
 #include "interface/PortType.hpp"
 #include "interface/Connection.hpp"
@@ -63,11 +64,10 @@ public:
 	bool pending_disconnection()       { return _pending_disconnection; }
 	void pending_disconnection(bool b) { _pending_disconnection = b; }
 
-	void process(Context& context);
 	void queue(Context& context);
 
-	void allocate_buffer(BufferFactory& bufs);
-	void recycle_buffer() { _local_buffer = NULL; }
+	void get_sources(Context& context, uint32_t voice,
+			Buffer** srcs, uint32_t max_num_srcs, uint32_t& num_srcs);
 
 	/** Get the buffer for a particular voice.
 	 * A Connection is smart - it knows the destination port requesting the
@@ -75,18 +75,15 @@ public:
 	 * voice in a mono->poly connection).
 	 */
 	inline BufferFactory::Ref buffer(uint32_t voice) const {
-		if (must_mix() || must_queue()) {
-			return _local_buffer;
-		} else if (_src_port->poly() == 1) {
+		assert(!must_mix());
+		assert(!must_queue());
+		assert(_src_port->poly() == 1 || _src_port->poly() > voice);
+		if (_src_port->poly() == 1) {
 			return _src_port->buffer(0);
 		} else {
 			return _src_port->buffer(voice);
 		}
 	}
-
-	void update_buffer_size(Context& context, BufferFactory& bufs);
-	void prepare_poly(BufferFactory& bufs, uint32_t poly);
-	void apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	/** Returns true if this connection must mix down voices into a local buffer */
 	inline bool must_mix() const { return _src_port->poly() > _dst_port->poly(); }
@@ -104,7 +101,6 @@ protected:
 	BufferFactory&     _bufs;
 	PortImpl* const    _src_port;
 	PortImpl* const    _dst_port;
-	BufferFactory::Ref _local_buffer;
 	bool               _pending_disconnection;
 };
 

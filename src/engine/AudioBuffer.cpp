@@ -194,32 +194,6 @@ AudioBuffer::copy(Context& context, const Buffer* src)
 }
 
 
-/** Accumulate a block of @a src into buffer.
- *
- * @a start_sample and @a end_sample define the inclusive range to be accumulated.
- * This function only adds the same range in one buffer to another.
- */
-void
-AudioBuffer::accumulate(Context& context, const AudioBuffer* const src)
-{
-	Sample* const       buf     = data();
-	const Sample* const src_buf = src->data();
-
-	const size_t frames = std::min(nframes(), src->nframes());
-	assert(frames != 0);
-
-	// Mix initial portions
-	SampleCount i = 0;
-	for (; i < frames; ++i)
-		buf[i] += src_buf[i];
-
-	// Extend/Mix the final sample of src if it is shorter
-	const Sample last = src_buf[i - 1];
-	while (i < nframes())
-		buf[i++] += last;
-}
-
-
 void
 AudioBuffer::prepare_read(Context& context)
 {
