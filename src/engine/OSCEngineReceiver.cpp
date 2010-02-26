@@ -85,7 +85,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, NULL, NULL, set_response_address_cb, this);
 
 #ifdef LIBLO_BUNDLES
-	lo_server_add_bundle_handler(_server, bundle_cb, this);
+	lo_server_add_bundle_handlers(_server, bundle_start_cb, bundle_end_cb, this);
 #endif
 
 	// Commands
@@ -232,16 +232,17 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 
 #ifdef LIBLO_BUNDLES
 int
-OSCEngineReceiver::_bundle_cb(lo_bundle_edge edge)
+OSCEngineReceiver::_bundle_start_cb(lo_timetag time)
 {
-	switch (edge) {
-	case LO_BUNDLE_BEGIN:
-		info << "BUNDLE BEGIN" << endl;
-		break;
-	case LO_BUNDLE_END:
-		info << "BUNDLE END" << endl;
-		break;
-	}
+	info << "BUNDLE START" << endl;
+	return 0;
+}
+
+
+int
+OSCEngineReceiver::_bundle_end_cb()
+{
+	info << "BUNDLE END" << endl;
 	return 0;
 }
 #endif

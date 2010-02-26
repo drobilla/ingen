@@ -78,11 +78,15 @@ private:
 	ReceiveThread* _receive_thread;
 
 #ifdef LIBLO_BUNDLES
-	static int bundle_cb(lo_bundle_edge edge, void* myself) {
-		return ((OSCEngineReceiver*)myself)->_bundle_cb(edge);
+	static int bundle_start_cb(lo_timetag time, void* myself) {
+		return ((OSCEngineReceiver*)myself)->_bundle_start_cb(time);
+	}
+	static int bundle_end_cb(void* myself) {
+		return ((OSCEngineReceiver*)myself)->_bundle_end_cb();
 	}
 
-	int _bundle_cb(lo_bundle_edge edge);
+	int _bundle_start_cb(lo_timetag time);
+	int _bundle_end_cb();
 #endif
 
 	static void error_cb(int num, const char* msg, const char* path);
