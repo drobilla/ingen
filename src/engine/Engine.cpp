@@ -199,6 +199,8 @@ Engine::activate()
 		Shared::Resource::Properties in_properties(control_properties);
 		in_properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
 		in_properties.insert(make_pair(uris.lv2_index, 0));
+		in_properties.insert(make_pair(uris.ingenui_canvas_x, 32.0f));
+		in_properties.insert(make_pair(uris.ingenui_canvas_y, 32.0f));
 
 		execute_and_delete_event(context, new Events::CreatePort(
 				*this, SharedPtr<Request>(), 0,
@@ -208,6 +210,8 @@ Engine::activate()
 		Shared::Resource::Properties out_properties(control_properties);
 		out_properties.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
 		out_properties.insert(make_pair(uris.lv2_index, 1));
+		out_properties.insert(make_pair(uris.ingenui_canvas_x, 128.0f));
+		out_properties.insert(make_pair(uris.ingenui_canvas_y, 32.0f));
 
 		execute_and_delete_event(context, new Events::CreatePort(
 				*this, SharedPtr<Request>(), 0,

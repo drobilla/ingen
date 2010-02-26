@@ -254,8 +254,6 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 
 	show_all();
 
-	_view->canvas()->scroll_to_center();
-
 	_view->signal_object_entered.connect(sigc::mem_fun(this, &PatchWindow::object_entered));
 	_view->signal_object_left.connect(sigc::mem_fun(this, &PatchWindow::object_left));
 
