@@ -135,13 +135,13 @@ Connect::pre_process()
 	_patch->add_connection(_connection);
 	_dst_input_port->increment_num_connections();
 
-	if ((_dst_input_port->num_connections() == 1
+	/*if ((_dst_input_port->num_connections() == 1
 				&& (_connection->must_mix() || _connection->must_queue()))
-			|| _dst_input_port->num_connections() == 2) {
+			|| _dst_input_port->num_connections() == 2) {*/
 		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
 		_dst_input_port->get_buffers(*_engine.buffer_factory(),
 				_buffers, _dst_input_port->poly());
-	}
+	//}
 
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
@@ -158,10 +158,11 @@ Connect::execute(ProcessContext& context)
 	if (_error == NO_ERROR) {
 		// This must be inserted here, since they're actually used by the audio thread
 		_dst_input_port->add_connection(_port_listnode);
-		if (_buffers)
+		assert(_buffers);
+		//if (_buffers)
 			_engine.maid()->push(_dst_input_port->set_buffers(_buffers));
-		else
-			_dst_input_port->setup_buffers(*_engine.buffer_factory(), _dst_input_port->poly());
+		//else
+		//	_dst_input_port->setup_buffers(*_engine.buffer_factory(), _dst_input_port->poly());
 		_dst_input_port->connect_buffers();
 		_engine.maid()->push(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);
