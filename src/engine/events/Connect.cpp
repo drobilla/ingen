@@ -179,7 +179,8 @@ Connect::post_process()
 		return;
 	}
 
-	ss << boost::format("Unable to make connection %1% -> %2% (") % _src_port_path % _dst_port_path;
+	ss << boost::format("Unable to make connection %1% -> %2% (")
+		% _src_port_path.chop_scheme() % _dst_port_path.chop_scheme();
 
 	switch (_error) {
 	case PARENT_PATCH_DIFFERENT:

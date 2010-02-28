@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "raul/log.hpp"
 #include "raul/Maid.hpp"
-#include "raul/Path.hpp"
 #include "raul/Path.hpp"
 #include "redlandmm/World.hpp"
 #include "shared/LV2URIMap.hpp"
@@ -62,12 +62,23 @@ CreateNode::CreateNode(
 	string uri = _plugin_uri.str();
 	if (uri.substr(0, 3) == "om:") {
 		size_t colon = 2;
+
 		uri = uri.substr(colon + 1);
-		if ((colon = uri.find(":")) == string::npos)
+		if ((colon = uri.find(":")) == string::npos) {
+			Raul::error << "Invalid plugin URI `" << _plugin_uri << "'" << endl;
 			return;
-		_plugin_type = uri.substr(0, colon + 1);
-		_plugin_label = uri.substr(colon + 1);
-		uri = "";
+		}
+		_plugin_type = uri.substr(0, colon);
+
+		uri = uri.substr(colon + 1);
+		if ((colon = uri.find(":")) == string::npos) {
+			Raul::error << "Invalid plugin URI `" << _plugin_uri << "'" << endl;
+			return;
+		}
+		_plugin_lib = uri.substr(0, colon);
+
+		uri = uri.substr(colon + 1);
+		_plugin_label = uri;
 	}
 
 	const LV2URIMap& uris = Shared::LV2URIMap::instance();
