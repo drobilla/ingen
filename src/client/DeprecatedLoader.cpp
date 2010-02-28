@@ -124,20 +124,6 @@ DeprecatedLoader::translate_load_path(const string& path)
 	if (t != _load_path_translations.end()) {
 		assert(Path::is_valid((*t).second));
 		return (*t).second;
-	// Filthy, filthy kludges
-	} else if (path.find("midi_") != string::npos) {
-		if (path.substr(path.find_last_of("/")) == "/MIDI_In")
-			return path.substr(0, path.find_last_of("/")) + "/input";
-		else if (path.substr(path.find_last_of("/")) == "/Note_Number")
-			return path.substr(0, path.find_last_of("/")) + "/note";
-		else if (path.substr(path.find_last_of("/")) == "/Gate")
-			return path.substr(0, path.find_last_of("/")) + "/gate";
-		else if (path.substr(path.find_last_of("/")) == "/Trigger")
-			return path.substr(0, path.find_last_of("/")) + "/trigger";
-		else if (path.substr(path.find_last_of("/")) == "/Velocity")
-			return path.substr(0, path.find_last_of("/")) + "/velocity";
-		else
-			return path;
 	} else {
 		return path;
 	}
@@ -459,37 +445,29 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		bool is_port = false;
 
 		Resource::Properties props;
-		props.insert(make_pair(uris.rdf_type, uris.ingen_Patch));
 
 		if (plugin_type == "Internal") {
 			is_port = true;
 			if (plugin_label == "audio_input") {
 				props.insert(make_pair(uris.rdf_type, uris.lv2_AudioPort));
 				props.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
-				_engine->put(path, props);
 			} else if (plugin_label == "audio_output") {
 				props.insert(make_pair(uris.rdf_type, uris.lv2_AudioPort));
 				props.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
-				_engine->put(path, props);
 			} else if (plugin_label == "control_input") {
 				props.insert(make_pair(uris.rdf_type, uris.lv2_ControlPort));
 				props.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
-				_engine->put(path, props);
 			} else if (plugin_label == "control_output" ) {
 				props.insert(make_pair(uris.rdf_type, uris.lv2_ControlPort));
 				props.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
-				_engine->put(path, props);
 			} else if (plugin_label == "midi_input") {
 				props.insert(make_pair(uris.rdf_type, uris.lv2ev_EventPort));
 				props.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
-				_engine->put(path, props);
 			} else if (plugin_label == "midi_output" ) {
 				props.insert(make_pair(uris.rdf_type, uris.lv2ev_EventPort));
 				props.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
-				_engine->put(path, props);
 			} else {
 				is_port = false;
-				LOG(warn) << "Unknown internal plugin label `" << plugin_label << "'" << endl;
 			}
 		}
 
@@ -503,7 +481,8 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 
 			// Set up translations (for connections etc) to alias both the old
 			// module path and the old module/port path to the new port path
-			_load_path_translations[old_path] = new_path;
+			if (old_path != new_path)
+				_load_path_translations[old_path] = new_path;
 			_load_path_translations[old_path + "/in"] = new_path;
 			_load_path_translations[old_path + "/out"] = new_path;
 
@@ -519,12 +498,24 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		} else {
 			if (plugin_label == "note_in") {
 				plugin_uri = NS_INTERNALS "Note";
-			} else if (plugin_label == "control_input") {
+				_load_path_translations[path + "/Frequency"] = path + "/frequency";
+				_load_path_translations[path + "/Velocity"] = path + "/velocity";
+				_load_path_translations[path + "/Gate"] = path + "/gate";
+				_load_path_translations[path + "/Trigger"] = path + "/trigger";
+			} else if (plugin_label == "control_input" || plugin_label == "midi_control_in") {
 				plugin_uri = NS_INTERNALS "Controller";
+				_load_path_translations[path + "/Controller_Number"] = path + "/controller";
+				_load_path_translations[path + "/Logarithmic"] = path + "/logarithmic";
+				_load_path_translations[path + "/Min"] = path + "/minimum";
+				_load_path_translations[path + "/Max"] = path + "/maximum";
+				_load_path_translations[path + "/Out"] = path + "/ar_output";
 			} else if (plugin_label == "transport") {
 				plugin_uri = NS_INTERNALS "Transport";
 			} else if (plugin_label == "trigger_in") {
 				plugin_uri = NS_INTERNALS "Trigger";
+				_load_path_translations[path + "/Velocity"] = path + "/velocity";
+				_load_path_translations[path + "/Gate"] = path + "/gate";
+				_load_path_translations[path + "/Trigger"] = path + "/trigger";
 			}
 
 			if (plugin_uri.empty())
