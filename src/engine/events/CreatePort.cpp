@@ -96,7 +96,9 @@ CreatePort::pre_process()
 			: 0;
 
 		Shared::Resource::Properties::const_iterator index_i = _properties.find(uris.lv2_index);
-		if (index_i->second.type() != Atom::INT
+		if (index_i == _properties.end()) {
+			index_i = _properties.insert(make_pair(uris.lv2_index, (int)old_num_ports));
+		} else if (index_i->second.type() != Atom::INT
 				|| index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
 			QueuedEvent::pre_process();
 			_error = BAD_INDEX;
