@@ -181,7 +181,7 @@ bool
 WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 {
 	if (_patch_windows.size() <= 1)
-		return App::instance().quit(*win);
+		return !App::instance().quit(*win);
 
 	PatchWindowMap::iterator w = _patch_windows.find(win->patch()->path());
 
