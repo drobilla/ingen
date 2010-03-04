@@ -126,12 +126,15 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 
 
 void
-PatchCanvas::show_menu(GdkEvent* event)
+PatchCanvas::show_menu(bool position,  unsigned button, uint32_t time)
 {
 	if (!_internal_menu)
 		build_menus();
 
-	_menu->popup(event->button.button, event->button.time);
+	if (position)
+		_menu->popup(sigc::mem_fun(this, &PatchCanvas::auto_menu_position), button, time);
+	else
+		_menu->popup(button, time);
 }
 
 
@@ -518,6 +521,25 @@ PatchCanvas::disconnect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 }
 
 
+void
+PatchCanvas::auto_menu_position(int& x, int& y, bool& push_in)
+{
+	int scroll_x, scroll_y;
+	get_scroll_offsets(scroll_x, scroll_y);
+
+	Gtk::Container* parent     = get_parent();
+	const int       win_width  = parent->get_width();
+	const int       win_height = parent->get_height();
+
+	x = (win_width / 2.0);
+	y = (win_height / 2.0);
+	push_in = true;
+
+	_last_click_x = scroll_x + x;
+	_last_click_y = scroll_y + y;
+}
+
+
 bool
 PatchCanvas::canvas_event(GdkEvent* event)
 {
@@ -530,7 +552,7 @@ PatchCanvas::canvas_event(GdkEvent* event)
 		if (event->button.button == 3) {
 			_last_click_x = (int)event->button.x;
 			_last_click_y = (int)event->button.y;
-			show_menu(event);
+			show_menu(false, event->button.button, event->button.time);
 			ret = true;
 		}
 		break;
@@ -546,6 +568,10 @@ PatchCanvas::canvas_event(GdkEvent* event)
 				_patch->set_editable(!_patch->get_editable());
 				ret = true;
 			}
+			break;
+		case GDK_space:
+		case GDK_Menu:
+			show_menu(true, 3, event->key.time);
 		default: break;
 		}
 

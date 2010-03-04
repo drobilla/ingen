@@ -81,7 +81,7 @@ public:
 	void paste();
 	void select_all();
 
-	void show_menu(GdkEvent* event);
+	void show_menu(bool position, unsigned button, uint32_t time);
 
 	bool canvas_event(GdkEvent* event);
 
@@ -106,6 +106,8 @@ private:
 
 	void build_internal_menu();
 	void build_classless_menu();
+
+    void auto_menu_position(int& x, int& y, bool& push_in);
 
 #ifdef HAVE_SLV2
 	typedef std::multimap<const std::string, SLV2PluginClass> LV2Children;
