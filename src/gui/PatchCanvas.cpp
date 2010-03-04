@@ -61,6 +61,7 @@ namespace GUI {
 PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	: Canvas(width, height)
 	, _patch(patch)
+	, _auto_position_count(0)
 	, _last_click_x(0)
 	, _last_click_y(0)
 	, _paste_count(0)
@@ -524,19 +525,23 @@ PatchCanvas::disconnect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 void
 PatchCanvas::auto_menu_position(int& x, int& y, bool& push_in)
 {
-	int scroll_x, scroll_y;
-	get_scroll_offsets(scroll_x, scroll_y);
+	std::pair<int,int> scroll_offsets;
+	get_scroll_offsets(scroll_offsets.first, scroll_offsets.second);
 
-	Gtk::Container* parent     = get_parent();
-	const int       win_width  = parent->get_width();
-	const int       win_height = parent->get_height();
+	if (_auto_position_count > 0 && scroll_offsets != _auto_position_scroll_offsets)
+		_auto_position_count = 0; // scrolling happened since last time, reset
 
-	x = (win_width / 2.0);
-	y = (win_height / 2.0);
+	const int cascade = (_auto_position_count > 0) ? (_auto_position_count * 32) : 0;
+
+	x = 64 + cascade;
+	y = 64 + cascade;
 	push_in = true;
 
-	_last_click_x = scroll_x + x;
-	_last_click_y = scroll_y + y;
+	_last_click_x = scroll_offsets.first  + x;
+	_last_click_y = scroll_offsets.second + y;
+
+	++_auto_position_count;
+	_auto_position_scroll_offsets = scroll_offsets;
 }
 
 
@@ -550,6 +555,7 @@ PatchCanvas::canvas_event(GdkEvent* event)
 	switch (event->type) {
 	case GDK_BUTTON_PRESS:
 		if (event->button.button == 3) {
+			_auto_position_count = 0;
 			_last_click_x = (int)event->button.x;
 			_last_click_y = (int)event->button.y;
 			show_menu(false, event->button.button, event->button.time);
