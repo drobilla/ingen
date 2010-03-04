@@ -540,13 +540,13 @@ PatchCanvas::canvas_event(GdkEvent* event)
 		case GDK_Delete:
 			destroy_selection();
 			ret = true;
-            break;
+			break;
 		case GDK_e:
 			if (event->key.state == 0) {
 				_patch->set_editable(!_patch->get_editable());
 				ret = true;
 			}
-        default: break;
+		default: break;
 		}
 
 	default: break;

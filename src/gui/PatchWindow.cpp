@@ -618,10 +618,7 @@ PatchWindow::on_hide()
 bool
 PatchWindow::on_event(GdkEvent* event)
 {
-	if (_view->canvas()->canvas_event(event))
-		return true;
-	else
-		return Gtk::Window::on_event(event);
+	return (_view->canvas()->canvas_event(event)) ? true : Gtk::Window::on_event(event);
 }
 
 
