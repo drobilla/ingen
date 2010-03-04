@@ -575,6 +575,9 @@ PatchCanvas::canvas_event(GdkEvent* event)
 				ret = true;
 			}
 			break;
+		case GDK_Home:
+			scroll_to(0, 0);
+			break;
 		case GDK_space:
 		case GDK_Menu:
 			show_menu(true, 3, event->key.time);
