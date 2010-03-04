@@ -472,7 +472,8 @@ PatchWindow::event_save_as()
 
 		bool confirm = true;
 		if (Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
-			if (Glib::file_test(filename + "/manifest.ttl", Glib::FILE_TEST_EXISTS)) {
+			if (Glib::file_test(Glib::build_filename(filename, "manifest.ttl"),
+						Glib::FILE_TEST_EXISTS)) {
 				Gtk::MessageDialog confirm_dialog(*this, (boost::format("<b>"
 						"A bundle named \"%1%\" already exists.  Replace it?"
 						"</b>") % basename).str(),
@@ -615,30 +616,12 @@ PatchWindow::on_hide()
 
 
 bool
-PatchWindow::on_key_press_event(GdkEventKey* event)
+PatchWindow::on_event(GdkEvent* event)
 {
-	bool ret = false;
-
-	ret = _view->canvas()->canvas_key_event(event);
-
-	if (!ret)
-		ret = Gtk::Window::on_key_press_event(event);
-
-	return ret;
-}
-
-
-bool
-PatchWindow::on_key_release_event(GdkEventKey* event)
-{
-	bool ret = false;
-
-	ret = _view->canvas()->canvas_key_event(event);
-
-	if (!ret)
-		ret = Gtk::Window::on_key_release_event(event);
-
-	return ret;
+	if (_view->canvas()->canvas_event(event))
+		return true;
+	else
+		return Gtk::Window::on_event(event);
 }
 
 

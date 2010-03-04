@@ -536,39 +536,23 @@ PatchCanvas::canvas_event(GdkEvent* event)
 		break;
 
 	case GDK_KEY_PRESS:
-	case GDK_KEY_RELEASE:
-		ret = canvas_key_event(&event->key);
+		switch (event->key.keyval) {
+		case GDK_Delete:
+			destroy_selection();
+			ret = true;
+            break;
+		case GDK_e:
+			if (event->key.state == 0) {
+				_patch->set_editable(!_patch->get_editable());
+				ret = true;
+			}
+        default: break;
+		}
 
-	default:
-		break;
+	default: break;
 	}
 
 	return (ret ? true : Canvas::canvas_event(event));
-}
-
-
-bool
-PatchCanvas::canvas_key_event(GdkEventKey* event)
-{
-	switch (event->type) {
-	case GDK_KEY_PRESS:
-		switch (event->keyval) {
-		case GDK_Delete:
-			destroy_selection();
-			return true;
-		case GDK_e:
-			if (event->state == 0) {
-				_patch->set_editable(!_patch->get_editable());
-				return true;
-			} else {
-				return false;
-			}
-		default:
-			return false;
-		}
-	default:
-		return false;
-	}
 }
 
 

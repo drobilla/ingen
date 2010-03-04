@@ -83,7 +83,7 @@ public:
 
 	void show_menu(GdkEvent* event);
 
-	bool canvas_key_event(GdkEventKey* event);
+	bool canvas_event(GdkEvent* event);
 
 private:
 	enum ControlType { NUMBER, BUTTON };
@@ -118,8 +118,6 @@ private:
 #endif
 
 	GraphObject::Properties get_initial_data();
-
-	bool canvas_event(GdkEvent* event);
 
 	SharedPtr<FlowCanvas::Port> get_port_view(SharedPtr<PortModel> port);
 
