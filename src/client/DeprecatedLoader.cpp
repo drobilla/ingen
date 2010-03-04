@@ -27,6 +27,7 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
+#include <glibmm/miscutils.h>
 #include "raul/log.hpp"
 #include "raul/Path.hpp"
 #include "shared/LV2URIMap.hpp"
@@ -571,7 +572,7 @@ DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent,
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
 			initial_data.insert(make_pair(uris.ingen_polyphony, (int)poly));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"filename"))) {
-			filename = base_filename + "/" + (const char*)key;
+			filename = Glib::build_filename(base_filename, (const char*)key);
 		} else {  // Don't know what this tag is, add it as variable
 			if (key != NULL && strlen((const char*)key) > 0)
 				add_variable(initial_data, (const char*)cur->name, (const char*)key);

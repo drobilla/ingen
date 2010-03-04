@@ -19,6 +19,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <glibmm/module.h>
+#include <glibmm/miscutils.h>
 #include "ingen-config.h"
 #include "runtime_paths.hpp"
 
@@ -45,8 +46,8 @@ set_bundle_path_from_code(void* function)
 
 #ifdef BUNDLE
 	string bundle = bin_loc;
-	bundle = bundle.substr(0, bundle.find_last_of("/"));
-	bundle_path = bundle;;
+	bundle = bundle.substr(0, bundle.find_last_of(G_DIR_SEPARATOR));
+	bundle_path = bundle;
 #endif
 }
 
@@ -58,9 +59,9 @@ data_file_path(const std::string& name)
 {
 	std::string ret;
 #ifdef BUNDLE
-	ret = bundle_path + "/" + INGEN_DATA_DIR + "/" + name;
+	ret = Glib::build_filename(bundle_path, Glib::build_path(INGEN_DATA_DIR, name));
 #else
-	ret = std::string(INGEN_DATA_DIR) + "/" + name;
+	ret = Glib::build_filename(INGEN_DATA_DIR, name);
 #endif
 	return ret;
 }
@@ -73,7 +74,7 @@ module_path(const std::string& name)
 {
 	std::string ret;
 #ifdef BUNDLE
-	ret = Glib::Module::build_path(bundle_path + "/" + INGEN_MODULE_DIR, name);
+	ret = Glib::Module::build_path(Glib::build_path(bundle_path, INGEN_MODULE_DIR), name);
 #else
 	ret = Glib::Module::build_path(INGEN_MODULE_DIR, name);
 #endif

@@ -20,6 +20,7 @@
 #include <dirent.h>
 #include <float.h>
 #include <cmath>
+#include <glibmm/miscutils.h>
 #include "redlandmm/World.hpp"
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
@@ -223,7 +224,7 @@ NodeFactory::load_ladspa_plugins()
 			if (!strcmp(pfile->d_name, ".") || !strcmp(pfile->d_name, ".."))
 				continue;
 
-			const string lib_path = dir +"/"+ pfile->d_name;
+			const string lib_path = Glib::build_filename(dir, pfile->d_name);
 
 			// Ignore stupid libtool files.  Kludge alert.
 			if (lib_path.substr(lib_path.length()-3) == ".la")

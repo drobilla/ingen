@@ -220,7 +220,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			break;
 		}
 
-		assert(port_name.find("/") == string::npos);
+		assert(port_name.find('/') == string::npos);
 
 		port_path = path().child(port_name);
 
