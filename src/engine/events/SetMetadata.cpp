@@ -99,7 +99,7 @@ SetMetadata::pre_process()
 {
 	typedef Properties::const_iterator iterator;
 
-	bool is_graph_object = (_subject.scheme() == Path::scheme && Path::is_valid(_subject.str()));
+	const bool is_graph_object = Path::is_path(_subject);
 
 	_object = is_graph_object
 			? _engine.engine_store()->find_object(Path(_subject.str()))

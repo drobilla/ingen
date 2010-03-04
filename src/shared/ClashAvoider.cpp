@@ -31,7 +31,7 @@ namespace Shared {
 const URI
 ClashAvoider::map_uri(const Raul::URI& in)
 {
-	if (in.scheme() == Path::scheme && Path::is_valid(in.str()))
+	if (Path::is_path(in))
 		return map_path(in.str());
 	else
 		return in;

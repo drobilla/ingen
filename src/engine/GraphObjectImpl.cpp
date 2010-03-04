@@ -29,7 +29,7 @@ using namespace Shared;
 
 
 GraphObjectImpl::GraphObjectImpl(GraphObjectImpl* parent, const Symbol& symbol)
-	: ResourceImpl(parent ? parent->path().child(symbol) : Raul::Path::root.child(symbol))
+	: ResourceImpl(parent ? parent->path().child(symbol) : Raul::Path::root())
 	, _parent(parent)
 	, _path(parent ? parent->path().child(symbol) : "/")
 	, _symbol(symbol)

@@ -177,7 +177,7 @@ ClientStore::object(const Path& path)
 SharedPtr<Resource>
 ClientStore::resource(const URI& uri)
 {
-	if (uri.scheme() == Path::scheme && Path::is_valid(uri.str()))
+	if (Path::is_path(uri))
 		return object(uri.str());
 	else
 		return plugin(uri);

@@ -31,7 +31,7 @@ ObjectModel::ObjectModel(const Path& path)
 	: ResourceImpl(path)
 	, _meta(ResourceImpl::meta_uri(path))
 	, _path(path)
-	, _symbol((path == Path::root) ? "root" : path.symbol())
+	, _symbol((path == Path::root()) ? "root" : path.symbol())
 {
 }
 

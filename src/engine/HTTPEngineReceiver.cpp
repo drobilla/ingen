@@ -117,7 +117,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 
 	// Special GET paths
 	if (msg->method == SOUP_METHOD_GET) {
-		if (path == Path::root.str() || path.empty()) {
+		if (path == Path::root().str() || path.empty()) {
 			const string r = string("@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n")
 				.append("\n<> rdfs:seeAlso <plugins> ;")
 				.append("\n   rdfs:seeAlso <stream>  ;")

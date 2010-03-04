@@ -299,7 +299,7 @@ Parser::parse(
 			string subject_str = subject.to_string();
 			if (URI::is_valid(subject_str)) {
 				if (subject == document_uri)
-					subject_str = Path::root.str();
+					subject_str = Path::root().str();
 				parse_properties(world, target, model, subject, subject_str);
 			}
 		}

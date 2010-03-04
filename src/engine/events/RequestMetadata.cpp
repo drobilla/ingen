@@ -59,7 +59,7 @@ RequestMetadata::RequestMetadata(Engine&            engine,
 void
 RequestMetadata::pre_process()
 {
-	const bool is_object = (_uri.scheme() == Path::scheme && Path::is_valid(_uri.str()));
+	const bool is_object = Path::is_path(_uri);
 	if (_request->client()) {
 		if (is_object)
 			_resource = _engine.engine_store()->find_object(Path(_uri.str()));
