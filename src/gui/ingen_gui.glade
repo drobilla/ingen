@@ -2227,7 +2227,7 @@ Contributors:
               <widget class="GtkMenuItem" id="canvas_menu_add_audio_input">
                 <property name="visible">True</property>
                 <property name="tooltip" translatable="yes">Add an audio input to this patch</property>
-                <property name="label" translatable="yes">Audio</property>
+                <property name="label" translatable="yes">_Audio</property>
                 <property name="use_underline">True</property>
                 <signal name="activate" handler="on_canvas_menu_add_audio_input_activate"/>
               </widget>
@@ -2236,7 +2236,7 @@ Contributors:
               <widget class="GtkMenuItem" id="canvas_menu_add_control_input">
                 <property name="visible">True</property>
                 <property name="tooltip" translatable="yes">Add a control input (and a control slider for it) to this patch</property>
-                <property name="label" translatable="yes">Control</property>
+                <property name="label" translatable="yes">_Control</property>
                 <property name="use_underline">True</property>
                 <signal name="activate" handler="on_canvas_menu_add_control_input_activate"/>
               </widget>
@@ -2245,7 +2245,7 @@ Contributors:
               <widget class="GtkMenuItem" id="canvas_menu_add_event_input">
                 <property name="visible">True</property>
                 <property name="tooltip" translatable="yes">Add a generic event input to this patch</property>
-                <property name="label" translatable="yes">Event</property>
+                <property name="label" translatable="yes">_Event</property>
                 <property name="use_underline">True</property>
                 <signal name="activate" handler="on_canvas_menu_add_event_input_activate"/>
               </widget>
@@ -2266,7 +2266,7 @@ Contributors:
               <widget class="GtkMenuItem" id="canvas_menu_add_audio_output">
                 <property name="visible">True</property>
                 <property name="tooltip" translatable="yes">Add an audio output to this patch</property>
-                <property name="label" translatable="yes">Audio</property>
+                <property name="label" translatable="yes">_Audio</property>
                 <property name="use_underline">True</property>
                 <signal name="activate" handler="on_canvas_menu_add_audio_output_activate"/>
               </widget>
@@ -2275,7 +2275,7 @@ Contributors:
               <widget class="GtkMenuItem" id="canvas_menu_add_control_output">
                 <property name="visible">True</property>
                 <property name="tooltip" translatable="yes">Add a control output to this patch</property>
-                <property name="label" translatable="yes">Control</property>
+                <property name="label" translatable="yes">_Control</property>
                 <property name="use_underline">True</property>
                 <signal name="activate" handler="on_canvas_menu_add_control_output_activate"/>
               </widget>
@@ -2284,7 +2284,7 @@ Contributors:
               <widget class="GtkMenuItem" id="canvas_menu_add_event_output">
                 <property name="visible">True</property>
                 <property name="tooltip" translatable="yes">Add a generic event output to this patch</property>
-                <property name="label" translatable="yes">Event</property>
+                <property name="label" translatable="yes">_Event</property>
                 <property name="use_underline">True</property>
                 <signal name="activate" handler="on_canvas_menu_add_event_output_activate"/>
               </widget>
