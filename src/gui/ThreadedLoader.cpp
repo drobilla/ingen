@@ -137,7 +137,7 @@ ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& file
 {
 	if (App::instance().serialiser()) {
 		Serialiser::Record r(model, filename);
-		if (filename.find(".ingen.lv2") != string::npos)
+		if (filename.find(".ingen") != string::npos)
 			App::instance().serialiser()->write_bundle(r);
 		else
 			App::instance().serialiser()->to_file(r);

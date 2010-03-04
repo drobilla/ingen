@@ -18,8 +18,9 @@
 #include "PatchWindow.hpp"
 #include <cassert>
 #include <sstream>
-#include <fstream>
 #include <boost/format.hpp>
+#include <glib/gstdio.h>
+#include <glibmm/fileutils.h>
 #include "raul/AtomRDF.hpp"
 #include "interface/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
@@ -408,7 +409,8 @@ PatchWindow::event_save()
 	} else {
 		App::instance().loader()->save_patch(_patch, document.get_uri());
 		_status_bar->push(
-				(boost::format("Wrote %1% to %2%") % _patch->path() % document.get_uri()).str(),
+				(boost::format("Saved %1% to %2%") % _patch->path().chop_scheme()
+				 % document.get_uri()).str(),
 				STATUS_CONTEXT_PATCH);
 	}
 }
@@ -426,8 +428,6 @@ PatchWindow::event_save_as()
 		save_button->property_has_default() = true;
 
 		Gtk::FileFilter filt;
-		filt.add_pattern("*.ingen.ttl");
-		filt.set_name("Ingen patches");
 		filt.add_pattern("*.ingen.lv2");
 		filt.set_name("Ingen bundles");
 		dialog.set_filter(filt);
@@ -442,50 +442,68 @@ PatchWindow::event_save_as()
 		if (dialog.run() != Gtk::RESPONSE_OK)
 			break;
 
-		string filename = dialog.get_filename();
+		std::string filename = dialog.get_filename();
+		std::string basename = Glib::path_get_basename(filename);
 
-		string base = filename.substr(0, filename.find("."));
-		if (base.find("/") != string::npos)
-			base = base.substr(base.find_last_of("/") + 1);
-
-		if (!Symbol::is_valid(base)) {
+		if (basename.find('.') == string::npos) {
+			filename += ".ingen.lv2";
+			basename += ".ingen.lv2";
+		} else if (filename.substr(filename.length() - 10) != ".ingen.lv2") {
 			Gtk::MessageDialog error_dialog(*this,
-					"<b>Ingen patch file names must be valid symbols</b>", true,
-					Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
-			error_dialog.set_secondary_text(
-				"The first character must be _, a-z, or A-Z, and "
-				"subsequent characters must be _, a-z, A-Z, or 0-9.");
+"<b>" "Ingen patches must be saved to Ingen bundles (*.ingen.lv2)." "</b>",
+					true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 			error_dialog.run();
 			continue;
 		}
 
-		const bool is_bundle = filename.find(".ingen.lv2") != string::npos;
-		const bool is_patch = filename.find(".ingen.ttl") != string::npos;
+		const std::string symbol(basename.substr(0, basename.find('.')));
 
-		// Save a bundle by default
-		if (!is_bundle && !is_patch)
-			filename += ".ingen.ttl";
+		if (!Symbol::is_valid(symbol)) {
+			Gtk::MessageDialog error_dialog(*this,
+					"<b>" "Ingen bundle names must be valid symbols." "</b>",
+					true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+			error_dialog.set_secondary_text(
+"All characters must be _, a-z, A-Z, or 0-9, but the first may not be 0-9.");
+			error_dialog.run();
+			continue;
+		}
 
-		_patch->set_property(uris.lv2_symbol, Atom(base.c_str()));
+		_patch->set_property(uris.lv2_symbol, Atom(symbol.c_str()));
 
 		bool confirm = true;
-		std::fstream fin;
-		fin.open(filename.c_str(), std::ios::in);
-		if (fin.is_open()) {  // File exists
-			string msg = "File already exists!  Are you sure you want to overwrite ";
-			msg += filename + "?";
-			Gtk::MessageDialog confirm_dialog(*this,
-					msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+		if (Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
+			if (Glib::file_test(filename + "/manifest.ttl", Glib::FILE_TEST_EXISTS)) {
+				Gtk::MessageDialog confirm_dialog(*this, (boost::format("<b>"
+						"A bundle named \"%1%\" already exists.  Replace it?"
+						"</b>") % basename).str(),
+						true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+				confirm = (confirm_dialog.run() == Gtk::RESPONSE_YES);
+			} else {
+				Gtk::MessageDialog confirm_dialog(*this, (boost::format("<b>"
+"A directory named \"%1%\" already exists, but is not an Ingen bundle.  \
+Save into it anyway?" "</b>") % basename).str(),
+						true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+				confirm_dialog.set_secondary_text(
+"This will create at least 2 .ttl files in this directory, and possibly several \
+more files and/or directories, recursively.  Existing files will be overwritten.");
+				confirm = (confirm_dialog.run() == Gtk::RESPONSE_YES);
+			}
+		} else if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+			Gtk::MessageDialog confirm_dialog(*this, (boost::format("<b>"
+"A file named \"%1%\" already exists.  Replace it with an Ingen bundle?" "</b>") % basename).str(),
+					true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
 			confirm = (confirm_dialog.run() == Gtk::RESPONSE_YES);
+			if (confirm)
+				::g_remove(filename.c_str());
 		}
-		fin.close();
 
 		if (confirm) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			App::instance().loader()->save_patch(_patch, uri);
 			_patch->set_property(uris.ingen_document, Atom(Atom::URI, uri.c_str()));
 			_status_bar->push(
-					(boost::format("Wrote %1% to %2%") % _patch->path() % uri).str(),
+					(boost::format("Saved %1% to %2%") % _patch->path().chop_scheme()
+					 % filename).str(),
 					STATUS_CONTEXT_PATCH);
 		}
 
@@ -519,16 +537,13 @@ PatchWindow::event_draw()
 			filename += ".dot";
 
 		bool confirm = true;
-		std::fstream fin;
-		fin.open(filename.c_str(), std::ios::in);
-		if (fin.is_open()) {  // File exists
+		if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
 			const string msg = string("File exists!\n")
 				+ "Are you sure you want to overwrite " + filename + "?";
 			Gtk::MessageDialog confirm_dialog(*this,
 				msg, false, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
 			confirm = (confirm_dialog.run() == Gtk::RESPONSE_YES);
 		}
-		fin.close();
 
 		if (confirm) {
 			_view->canvas()->render_to_dot(filename);

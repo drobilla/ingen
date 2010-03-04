@@ -162,6 +162,9 @@ LoadPatchWindow::ok_clicked()
 					uris.ingen_polyphony,
 					_poly_spinbutton->get_value_as_int()));
 
+	if (get_uri() == "")
+		return;
+
 	if (_import) {
 		// If unset load_patch will load value
 		optional<Path>   parent;

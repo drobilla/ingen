@@ -339,8 +339,6 @@ App::quit(Gtk::Window& dialog_parent)
 	if (quit)
 		Gtk::Main::quit();
 
-	//App::instance().engine()->quit();
-
 	return quit;
 }
 

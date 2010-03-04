@@ -19,6 +19,8 @@
 #include <locale.h>
 #include <glibmm/ustring.h>
 #include <glibmm/miscutils.h>
+#include <glibmm/fileutils.h>
+#include <glibmm/convert.h>
 #include "raul/log.hpp"
 #include "redlandmm/Model.hpp"
 #include "redlandmm/Node.hpp"
@@ -83,11 +85,20 @@ Parser::parse_document(
 {
 	normalise_uri(document_uri);
 
+	const std::string filename(Glib::filename_from_uri(document_uri));
+	const size_t      ext = filename.find(".ingen.lv2");
+	if (ext == filename.length() - 10
+			|| (ext == filename.length() - 11 && filename[filename.length() - 1] == '/')) {
+		std::string basename(Glib::path_get_basename(filename));
+		basename = basename.substr(0, basename.find('.'));
+		document_uri += "/" + basename + ".ingen.ttl";
+	}
+
 	Redland::Model model(*world->rdf_world, document_uri, document_uri);
 
-	LOG(info) << "Parsing document " << document_uri << endl;
+	LOG(info) << "Parsing " << document_uri << endl;
 	if (data_path)
-		LOG(info) << "Document path: " << *data_path << endl;
+		LOG(info) << "Path: " << *data_path << endl;
 	if (parent)
 		LOG(info) << "Parent: " << *parent << endl;
 	if (symbol)
