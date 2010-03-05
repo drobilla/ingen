@@ -27,6 +27,7 @@
 #include "client/ClientStore.hpp"
 #include "interface/EngineInterface.hpp"
 #include "serialisation/Serialiser.hpp"
+#include "serialisation/names.hpp"
 #include "client/PatchModel.hpp"
 #include "UploadPatchWindow.hpp"
 #include "App.hpp"
@@ -254,7 +255,7 @@ UploadPatchWindow::upload_clicked()
 	Serialiser s(*App::instance().world(), App::instance().store());
 
 	const string uri = string("http://rdf.drobilla.net/ingen_patches/")
-		.append(symbol).append(".ingen.ttl");
+		.append(symbol).append(INGEN_PATCH_FILE_EXT);
 
 	const string str = s.to_string(_patch, uri, extra_rdf);
 

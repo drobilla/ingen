@@ -32,6 +32,7 @@
 #include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "Parser.hpp"
+#include "names.hpp"
 
 #define LOG(s) s << "[Parser] "
 
@@ -86,12 +87,13 @@ Parser::parse_document(
 	normalise_uri(document_uri);
 
 	const std::string filename(Glib::filename_from_uri(document_uri));
-	const size_t      ext = filename.find(".ingen.lv2");
-	if (ext == filename.length() - 10
-			|| (ext == filename.length() - 11 && filename[filename.length() - 1] == '/')) {
+	const size_t      ext = filename.find(INGEN_BUNDLE_EXT);
+	const size_t      ext_len = strlen(INGEN_BUNDLE_EXT);
+	if (ext == filename.length() - ext_len
+			|| (ext == filename.length() - ext_len - 1 && filename[filename.length() - 1] == '/')) {
 		std::string basename(Glib::path_get_basename(filename));
 		basename = basename.substr(0, basename.find('.'));
-		document_uri += "/" + basename + ".ingen.ttl";
+		document_uri += "/" + basename + INGEN_PATCH_FILE_EXT;
 	}
 
 	Redland::Model model(*world->rdf_world, document_uri, document_uri);

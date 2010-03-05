@@ -47,6 +47,7 @@
 #include "shared/ResourceImpl.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "Serialiser.hpp"
+#include "names.hpp"
 
 #define LOG(s) s << "[Serialiser] "
 
@@ -132,11 +133,11 @@ Serialiser::write_bundle(const Record& record)
 
 	string symbol = uri_to_symbol(record.uri);
 
-	const string root_file = bundle_uri + symbol + ".ingen.ttl";
+	const string root_file = bundle_uri + symbol + INGEN_PATCH_FILE_EXT;
 	start_to_filename(root_file);
 	serialise(object);
 	finish();
-	records.push_back(Record(object, bundle_uri + symbol + ".ingen.ttl"));
+	records.push_back(Record(object, bundle_uri + symbol + INGEN_PATCH_FILE_EXT));
 	write_manifest(bundle_uri, records);
 }
 
