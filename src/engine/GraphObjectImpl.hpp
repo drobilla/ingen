@@ -32,6 +32,8 @@ namespace Raul { class Maid; }
 
 namespace Ingen {
 
+namespace Shared { class LV2URIMap; }
+
 class PatchImpl;
 class Context;
 class ProcessContext;
@@ -98,7 +100,8 @@ public:
 	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly) = 0;
 
 protected:
-	GraphObjectImpl(GraphObjectImpl* parent, const Raul::Symbol& symbol);
+	GraphObjectImpl(Shared::LV2URIMap& uris,
+			GraphObjectImpl* parent, const Raul::Symbol& symbol);
 
 	GraphObjectImpl* _parent;
 	Raul::Path       _path;

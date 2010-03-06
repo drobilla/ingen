@@ -25,10 +25,10 @@ using namespace Ingen;
 
 struct IngenJackModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
-		Ingen::JackDriver* driver = new Ingen::JackDriver(*world->local_engine.get());
-		driver->attach(world->conf->option("jack-server").get_string(),
-				world->conf->option("jack-client").get_string(), NULL);
-		world->local_engine->set_driver(SharedPtr<Driver>(driver));
+		Ingen::JackDriver* driver = new Ingen::JackDriver(*world->local_engine().get());
+		driver->attach(world->conf()->option("jack-server").get_string(),
+				world->conf()->option("jack-client").get_string(), NULL);
+		world->local_engine()->set_driver(SharedPtr<Driver>(driver));
 	}
 };
 

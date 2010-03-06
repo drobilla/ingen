@@ -34,16 +34,16 @@ enum ThreadID {
 
 class ThreadManager {
 public:
-	inline static ThreadID current_thread_id() {
-		return (ThreadID)Raul::Thread::get().context();
+	inline static bool thread_is(ThreadID id) {
+		return Raul::Thread::get().is_context(id);
 	}
 
 	inline static void assert_thread(ThreadID id) {
-		assert(single_threaded || current_thread_id() == id);
+		assert(single_threaded || Raul::Thread::get().is_context(id));
 	}
 
 	inline static void assert_not_thread(ThreadID id) {
-		assert(single_threaded || current_thread_id() != id);
+		assert(single_threaded || !Raul::Thread::get().is_context(id));
 	}
 
 	/** Set to true during initialisation so ensure_thread doesn't fail.

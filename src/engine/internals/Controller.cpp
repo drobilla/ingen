@@ -36,19 +36,20 @@ namespace Internals {
 
 using namespace Shared;
 
-static InternalPlugin controller_plugin(NS_INTERNALS "Controller", "controller");
+InternalPlugin* ControllerNode::internal_plugin(Shared::LV2URIMap& uris) {
+	return new InternalPlugin(uris, NS_INTERNALS "Controller", "controller");
+}
 
-InternalPlugin& ControllerNode::internal_plugin() { return controller_plugin; }
-
-ControllerNode::ControllerNode(BufferFactory& bufs,
-                               const string&  path,
-                               bool           polyphonic,
-                               PatchImpl*     parent,
-                               SampleRate     srate)
-	: NodeImpl(&controller_plugin, path, false, parent, srate)
+ControllerNode::ControllerNode(InternalPlugin* plugin,
+                               BufferFactory&  bufs,
+                               const string&   path,
+                               bool            polyphonic,
+                               PatchImpl*      parent,
+                               SampleRate      srate)
+	: NodeImpl(plugin, path, false, parent, srate)
 	, _learning(false)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const LV2URIMap& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(6);
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());

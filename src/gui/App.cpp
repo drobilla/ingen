@@ -90,10 +90,10 @@ App::App(Ingen::Shared::World* world)
 	_about_dialog->property_program_name() = "Ingen";
 	_about_dialog->property_logo_icon_name() = "ingen";
 
-	PluginModel::set_rdf_world(*world->rdf_world);
+	PluginModel::set_rdf_world(*world->rdf_world());
 
 #ifdef HAVE_SLV2
-	PluginModel::set_slv2_world(world->slv2_world);
+	PluginModel::set_slv2_world(world->slv2_world());
 #endif
 }
 
@@ -109,7 +109,7 @@ void
 App::init(Ingen::Shared::World* world)
 {
 	Gnome::Canvas::init();
-	_main = new Gtk::Main(world->argc, world->argv);
+	_main = new Gtk::Main(&world->argc(), &world->argv());
 
 	if (!_instance)
 		_instance = new App(world);
@@ -169,12 +169,12 @@ App::attach(SharedPtr<SigClientInterface> client,
 	assert( ! _store);
 	assert( ! _loader);
 
-	_world->engine->register_client(client.get());
+	_world->engine()->register_client(client.get());
 
 	_client = client;
 	_handle = handle;
-	_store  = SharedPtr<ClientStore>(new ClientStore(_world->engine, client));
-	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(_world->engine));
+	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->engine(), client));
+	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(_world->uris(), _world->engine()));
 
 	_patch_tree_window->init(*_store);
 
@@ -186,7 +186,7 @@ App::attach(SharedPtr<SigClientInterface> client,
 void
 App::detach()
 {
-	if (_world->engine) {
+	if (_world->engine()) {
 		_window_factory->clear();
 		_store->clear();
 
@@ -194,18 +194,18 @@ App::detach()
 		_store.reset();
 		_client.reset();
 		_handle.reset();
-		_world->engine.reset();
+		_world->set_engine(SharedPtr<EngineInterface>());
 	}
 }
 
 
-const SharedPtr<Serialiser>&
+SharedPtr<Serialiser>
 App::serialiser()
 {
-	if (!_world->serialiser)
+	if (!_world->serialiser())
 		_world->load("ingen_serialisation");
 
-	return _world->serialiser;
+	return _world->serialiser();
 }
 
 
@@ -299,8 +299,8 @@ App::gtk_main_iteration()
 	if (!_client)
 		return false;
 
-	if (_world->local_engine) {
-		_world->local_engine->main_iteration();
+	if (_world->local_engine()) {
+		_world->local_engine()->main_iteration();
 	} else {
 		_enable_signal = false;
 		_client->emit_signals();
@@ -326,7 +326,7 @@ bool
 App::quit(Gtk::Window& dialog_parent)
 {
 	bool quit = true;
-	if (App::instance().world()->local_engine) {
+	if (App::instance().world()->local_engine()) {
 		Gtk::MessageDialog d(dialog_parent,
 			"The engine is running in this process.  Quitting will terminate Ingen."
 			"\n\n" "Are you sure you want to quit?",

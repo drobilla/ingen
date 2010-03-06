@@ -43,8 +43,8 @@ ingen_module_load() {
 void
 script_iteration(Ingen::Shared::World* world)
 {
-	if (world->local_engine)
-		world->local_engine->main_iteration();
+	if (world->local_engine())
+		world->local_engine()->main_iteration();
 }
 
 } // extern "C"

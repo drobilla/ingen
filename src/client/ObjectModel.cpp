@@ -27,9 +27,9 @@ namespace Ingen {
 namespace Client {
 
 
-ObjectModel::ObjectModel(const Path& path)
-	: ResourceImpl(path)
-	, _meta(ResourceImpl::meta_uri(path))
+ObjectModel::ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path)
+	: ResourceImpl(uris, path)
+	, _meta(uris, ResourceImpl::meta_uri(path))
 	, _path(path)
 	, _symbol((path == Path::root()) ? "root" : path.symbol())
 {
@@ -76,7 +76,7 @@ ObjectModel::get_property(const Raul::URI& key) const
 bool
 ObjectModel::polyphonic() const
 {
-	const Raul::Atom& polyphonic = get_property(Shared::LV2URIMap::instance().ingen_polyphonic);
+	const Raul::Atom& polyphonic = get_property(_uris.ingen_polyphonic);
 	return (polyphonic.is_valid() && polyphonic.get_bool());
 }
 

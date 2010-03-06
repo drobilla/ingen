@@ -28,6 +28,8 @@
 
 namespace Ingen {
 
+namespace Shared { class LV2URIMap; }
+
 class PatchImpl;
 class NodeImpl;
 class Engine;
@@ -43,8 +45,9 @@ class PluginImpl : public Ingen::Shared::Plugin
                  , public boost::noncopyable
 {
 public:
-	PluginImpl(Type type, const std::string& uri, const std::string library_path="")
-		: ResourceImpl(uri)
+	PluginImpl(Shared::LV2URIMap& uris,
+			Type type, const std::string& uri, const std::string library_path="")
+		: ResourceImpl(uris, uri)
 		, _type(type)
 		, _library_path(library_path)
 		, _module(NULL)

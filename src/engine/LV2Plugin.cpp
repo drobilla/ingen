@@ -32,12 +32,11 @@ namespace Ingen {
 
 
 LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
-	: PluginImpl(Plugin::LV2, uri)
+	: PluginImpl(*lv2_info->world().uris().get(), Plugin::LV2, uri)
 	, _slv2_plugin(NULL)
 	, _lv2_info(lv2_info)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-	set_property(uris.rdf_type, uris.lv2_Plugin);
+	set_property(_uris.rdf_type, _uris.lv2_Plugin);
 }
 
 
@@ -73,7 +72,7 @@ LV2Plugin::instantiate(BufferFactory&    bufs,
 
 	load(); // FIXME: unload at some point
 
-	Glib::Mutex::Lock lock(engine.world()->rdf_world->mutex());
+	Glib::Mutex::Lock lock(engine.world()->rdf_world()->mutex());
 	LV2Node* n = new LV2Node(this, name, polyphonic, parent, srate);
 
 	if ( ! n->instantiate(bufs) ) {

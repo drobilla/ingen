@@ -58,13 +58,14 @@ def build(bld):
 		internals/Note.cpp
 		internals/Trigger.cpp
 	'''
-
+	
+	if bld.env['HAVE_LADSPA_H'] == 1:
+		core_source += ' LADSPAPlugin.cpp LADSPANode.cpp '
+	if bld.env['HAVE_SLV2'] == 1:
+		core_source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
+	
 	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = core_source
-	if bld.env['HAVE_LADSPA_H'] == 1:
-		obj.source += ' LADSPAPlugin.cpp LADSPANode.cpp '
-	if bld.env['HAVE_SLV2'] == 1:
-		obj.source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
 	obj.export_incdirs = ['.']
 	obj.includes     = ['.', '..', '../..', '../common']
 	obj.name         = 'libingen_engine'
@@ -115,19 +116,14 @@ def build(bld):
 		obj.install_path = '${LIBDIR}/ingen'
 		autowaf.use_lib(bld, obj, core_libs + ' JACK')
 
-	# Lightweight ingen/lv2 wrapper
-	#obj = bld.new_task_gen('cxx', 'shlib')
-	#obj.source = core_source
-	#if bld.env['HAVE_LADSPA_H'] == 1:
-	#	obj.source += ' LADSPAPlugin.cpp LADSPANode.cpp '
-	#if bld.env['HAVE_SLV2'] == 1:
-	#	obj.source += ' LV2Plugin.cpp LV2Node.cpp '
-	#obj.export_incdirs = ['.']
-	#obj.includes     = ['.', '..', '../common', './events']
-	#obj.name         = 'ingen_lv2'
-	#obj.target       = 'ingen.lv2/ingen_lv2'
-	#obj.install_path = ''
-	#core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
-	#autowaf.use_lib(bld, obj, core_libs)
-
-
+	# Ingen LV2 wrapper
+	obj = bld.new_task_gen('cxx', 'shlib')
+	obj.source = ' ingen_lv2.cpp '
+	obj.export_incdirs = ['.']
+	obj.includes     = ['.', '..', '../..', '../common']
+	obj.name         = 'libingen_lv2'
+	obj.target       = 'ingen_lv2'
+	obj.install_path = '${LIBDIR}/ingen'
+	obj.uselib_local = 'libingen_shared libingen_module'
+	obj.add_objects  = 'libingen_engine'
+	autowaf.use_lib(bld, obj, core_libs)

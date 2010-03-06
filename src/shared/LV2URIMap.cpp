@@ -19,11 +19,10 @@
 #include <cassert>
 #include <stdint.h>
 #include <glib.h>
+#include <boost/shared_ptr.hpp>
 #include "raul/log.hpp"
 #include "object.lv2/object.h"
 #include "LV2URIMap.hpp"
-#include "module/ingen_module.hpp"
-#include "module/World.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -36,6 +35,12 @@ LV2URIMap::Quark::Quark(const char* c_str)
 	: Raul::URI(c_str)
 	, id(g_quark_from_string(c_str))
 {
+}
+
+const char*
+LV2URIMap::Quark::c_str() const
+{
+	return g_quark_to_string(id);
 }
 
 #define NS_CTX     "http://lv2plug.in/ns/dev/contexts#"
@@ -114,23 +119,14 @@ LV2URIMap::LV2URIMap()
 }
 
 
-const LV2URIMap&
-LV2URIMap::instance()
-{
-	return *ingen_get_world()->uris;
-}
+struct null_deleter { void operator()(void const *) const {} };
 
 
 uint32_t
 LV2URIMap::uri_to_id(const char* map,
                      const char* uri)
 {
-	const uint32_t ret = static_cast<uint32_t>(g_quark_from_string(uri));
-	debug << "[LV2URIMap] ";
-	if (map)
-		debug << map << " : ";
-	debug << uri << " => " << ret << endl;
-	return ret;
+	return static_cast<uint32_t>(g_quark_from_string(uri));
 }
 
 

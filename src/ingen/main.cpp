@@ -30,6 +30,7 @@
 #include "raul/SharedPtr.hpp"
 #include "redlandmm/World.hpp"
 #include "interface/EngineInterface.hpp"
+#include "shared/Configuration.hpp"
 #include "shared/runtime_paths.hpp"
 #include "module/ingen_module.hpp"
 #include "module/Module.hpp"
@@ -44,51 +45,30 @@ using namespace std;
 using namespace Raul;
 using namespace Ingen;
 
-SharedPtr<Ingen::Engine> engine;
+Ingen::Shared::World* world = NULL;
 
 void
 ingen_interrupt(int)
 {
 	cout << "ingen: Interrupted" << endl;
-	engine->quit();
+	if (world->local_engine())
+		world->local_engine()->quit();
+	ingen_world_free(world);
+	exit(1);
 }
 
 void
 ingen_abort(const char* msg)
 {
 	cerr << "ingen: Error: " << msg << endl;
-	ingen_destroy_world();
+	ingen_world_free(world);
 	exit(1);
 }
 
 int
 main(int argc, char** argv)
 {
-	Raul::Configuration conf("A realtime modular audio processor.",
-	"Ingen is a flexible modular system that be used in various ways.\n"
-	"The engine can run as a stand-alone server controlled via a network protocol\n"
-	"(e.g. OSC), or internal to another process (e.g. the GUI).  The GUI, or other\n"
-	"clients, can communicate with the engine via any supported protocol, or host the\n"
-	"engine in the same process.  Many clients can connect to an engine at once.\n\n"
-	"Examples:\n"
-	"  ingen -e                     # Run an engine, listen for OSC\n"
-	"  ingen -g                     # Run a GUI, connect via OSC\n"
-	"  ingen -eg                    # Run an engine and a GUI in one process\n"
-	"  ingen -egl patch.ing.ttl     # Run an engine and a GUI and load a patch file\n"
-	"  ingen -egl patch.ing.lv2     # Run an engine and a GUI and load a patch bundle");
-
-	conf.add("client-port", 'C', "Client OSC port", Atom::INT, Atom())
-		.add("connect",     'c', "Connect to engine URI", Atom::STRING, "osc.udp://localhost:16180")
-		.add("engine",      'e', "Run (JACK) engine", Atom::BOOL, false)
-		.add("engine-port", 'E', "Engine listen port", Atom::INT,  16180)
-		.add("gui",         'g', "Launch the GTK graphical interface", Atom::BOOL, false)
-		.add("help",        'h', "Print this help message", Atom::BOOL, false)
-		.add("jack-client", 'n', "JACK client name", Atom::STRING, "ingen")
-		.add("jack-server", 's', "JACK server name", Atom::STRING, "default")
-		.add("load",        'l', "Load patch", Atom::STRING, Atom())
-		.add("parallelism", 'p', "Number of concurrent process threads", Atom::INT, 1)
-		.add("path",        'L', "Target path for loaded patch", Atom::STRING, Atom())
-		.add("run",         'r', "Run script", Atom::STRING, Atom());
+	Shared::Configuration conf;
 
 	// Parse command line options
 	try {
@@ -107,8 +87,10 @@ main(int argc, char** argv)
 		return EXIT_SUCCESS;
 	}
 
+#ifdef BUNDLE
 	// Set bundle path from executable location so resources/modules can be found
 	Shared::set_bundle_path_from_code((void*)&main);
+#endif
 
 	SharedPtr<Shared::EngineInterface> engine_interface;
 
@@ -117,37 +99,19 @@ main(int argc, char** argv)
 	g_type_init();
 #endif
 
-	Ingen::Shared::World* world = ingen_get_world();
+	Ingen::Shared::World* world = ingen_world_new(&conf, argc, argv);
 
-	world->argc = argc;
-	world->argv = argv;
-	world->conf = &conf;
-
-	// Set up RDF namespaces
-	world->rdf_world->add_prefix("dc",      "http://purl.org/dc/elements/1.1/");
-	world->rdf_world->add_prefix("doap",    "http://usefulinc.com/ns/doap#");
-	world->rdf_world->add_prefix("ingen",   "http://drobilla.net/ns/ingen#");
-	world->rdf_world->add_prefix("ingenui", "http://drobilla.net/ns/ingenuity#");
-	world->rdf_world->add_prefix("lv2",     "http://lv2plug.in/ns/lv2core#");
-	world->rdf_world->add_prefix("lv2ev",   "http://lv2plug.in/ns/ext/event#");
-	world->rdf_world->add_prefix("ctx",     "http://lv2plug.in/ns/dev/contexts#");
-	world->rdf_world->add_prefix("lv2midi", "http://lv2plug.in/ns/ext/midi#");
-	world->rdf_world->add_prefix("midi",    "http://drobilla.net/ns/dev/midi#");
-	world->rdf_world->add_prefix("owl",     "http://www.w3.org/2002/07/owl#");
-	world->rdf_world->add_prefix("rdfs",    "http://www.w3.org/2000/01/rdf-schema#");
-	world->rdf_world->add_prefix("sp",      "http://lv2plug.in/ns/dev/string-port#");
-	world->rdf_world->add_prefix("xsd",     "http://www.w3.org/2001/XMLSchema#");
+	assert(!world->local_engine());
 
 	// Run engine
 	if (conf.option("engine").get_bool()) {
 		if (!world->load("ingen_engine"))
 			ingen_abort("Unable to load engine module");
 
-		if (!world->local_engine)
+		if (!world->local_engine())
 			ingen_abort("Unable to create engine");
 
-		engine = world->local_engine;
-		engine_interface = world->engine;
+		engine_interface = world->engine();
 
 		// Not loading a GUI, load network engine interfaces
 		if (!conf.option("gui").get_bool()) {
@@ -175,14 +139,14 @@ main(int argc, char** argv)
 	}
 
 	// Activate the engine, if we have one
-	if (engine) {
+	if (world->local_engine()) {
 		if (!world->load("ingen_jack"))
 			ingen_abort("Unable to load jack module");
 
-		engine->activate();
+		world->local_engine()->activate();
 	}
 
-	world->engine = engine_interface;
+	world->set_engine(engine_interface);
 
 	// Load a patch
 	if (conf.option("load").is_valid() && engine_interface) {
@@ -206,7 +170,7 @@ main(int argc, char** argv)
 		if (!world->load("ingen_serialisation"))
 			ingen_abort("Unable to load serialisation module");
 
-		if (world->parser) {
+		if (world->parser()) {
 			// Assumption:  Containing ':' means URI, otherwise filename
 			string uri = conf.option("load").get_string();
 			if (uri.find(':') == string::npos) {
@@ -220,7 +184,7 @@ main(int argc, char** argv)
 			engine_interface->load_plugins();
 			if (conf.option("gui").get_bool())
 				engine_interface->get("ingen:plugins");
-			world->parser->parse_document(
+			world->parser()->parse_document(
 					world, engine_interface.get(), uri, data_path, parent, symbol);
 
 		} else {
@@ -245,19 +209,17 @@ main(int argc, char** argv)
 #endif
 
 	// Listen to OSC and run main loop
-	} else if (engine && !conf.option("gui").get_bool()) {
+	} else if (world->local_engine() && !conf.option("gui").get_bool()) {
 		signal(SIGINT, ingen_interrupt);
 		signal(SIGTERM, ingen_interrupt);
-		engine->main(); // Block here
+		world->local_engine()->main(); // Block here
 	}
 
 	// Shut down
-	if (engine) {
-		engine->deactivate();
-		engine.reset();
-	}
+	if (world->local_engine())
+		world->local_engine()->deactivate();
 
-	ingen_destroy_world();
+	ingen_world_free(world);
 
 	return 0;
 }

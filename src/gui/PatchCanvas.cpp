@@ -661,11 +661,12 @@ PatchCanvas::paste()
 	clear_selection();
 	++_paste_count;
 
-	Builder builder(*App::instance().engine());
-	ClientStore clipboard;
+	const LV2URIMap& uris = App::instance().uris();
+
+	Builder builder(App::instance().world()->uris(), *App::instance().engine());
+	ClientStore clipboard(App::instance().world()->uris());
 	clipboard.set_plugins(App::instance().store()->plugins());
 
-	const LV2URIMap& uris = App::instance().uris();
 
 	// mkdir -p
 	string to_create = _patch->path().chop_scheme().substr(1);

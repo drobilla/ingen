@@ -28,12 +28,13 @@ namespace Ingen {
 using namespace Shared;
 
 
-GraphObjectImpl::GraphObjectImpl(GraphObjectImpl* parent, const Symbol& symbol)
-	: ResourceImpl(parent ? parent->path().child(symbol) : Raul::Path::root())
+GraphObjectImpl::GraphObjectImpl(Shared::LV2URIMap& uris,
+		GraphObjectImpl* parent, const Symbol& symbol)
+	: ResourceImpl(uris, parent ? parent->path().child(symbol) : Raul::Path::root())
 	, _parent(parent)
 	, _path(parent ? parent->path().child(symbol) : "/")
 	, _symbol(symbol)
-	, _meta(ResourceImpl::meta_uri(uri()))
+	, _meta(uris, ResourceImpl::meta_uri(uri()))
 {
 }
 

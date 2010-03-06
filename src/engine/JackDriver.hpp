@@ -97,7 +97,7 @@ public:
 	void        add_port(DriverPort* port);
 	DriverPort* driver_port(const Raul::Path& path);
 
-	Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path);
+	Raul::Deletable* remove_port(const Raul::Path& path, DriverPort** port=NULL);
 
 	PatchImpl* root_patch()                     { return _root_patch; }
 	void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }

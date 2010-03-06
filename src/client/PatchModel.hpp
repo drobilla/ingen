@@ -76,8 +76,8 @@ public:
 private:
 	friend class ClientStore;
 
-	PatchModel(const Raul::Path& patch_path)
-		: NodeModel("http://drobilla.net/ns/ingen#Patch", patch_path)
+	PatchModel(Shared::LV2URIMap& uris, const Raul::Path& patch_path)
+		: NodeModel(uris, "http://drobilla.net/ns/ingen#Patch", patch_path)
 		, _connections(new Connections())
 		, _editable(true)
 	{

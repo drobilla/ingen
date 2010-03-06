@@ -133,7 +133,7 @@ LADSPANode::apply_poly(Raul::Maid& maid, uint32_t poly)
 bool
 LADSPANode::instantiate(BufferFactory& bufs)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const LV2URIMap& uris = bufs.uris();
 	if (!_ports)
 		_ports = new Raul::Array<PortImpl*>(_descriptor->PortCount);
 

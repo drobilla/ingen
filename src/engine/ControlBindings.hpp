@@ -56,7 +56,7 @@ public:
 
 	typedef std::map<Key, PortImpl*> Bindings;
 
-	ControlBindings(Engine& engine, SharedPtr<Shared::LV2URIMap> map);
+	ControlBindings(Engine& engine);
 	~ControlBindings();
 
 	void learn(PortImpl* port);
@@ -88,9 +88,8 @@ private:
 	Raul::Atom control_to_port_value(PortImpl* port, Type type, int16_t value);
 	int16_t    port_value_to_control(PortImpl* port, Type type);
 
-	Engine&                      _engine;
-	SharedPtr<Shared::LV2URIMap> _map;
-	PortImpl*                    _learn_port;
+	Engine&   _engine;
+	PortImpl* _learn_port;
 
 	SharedPtr<Bindings> _bindings;
 	EventBuffer*        _feedback;

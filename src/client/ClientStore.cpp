@@ -37,8 +37,10 @@ using namespace Shared;
 namespace Client {
 
 
-ClientStore::ClientStore(SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter)
-	: _engine(engine)
+ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap> uris,
+		SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter)
+	: _uris(uris)
+	, _engine(engine)
 	, _emitter(emitter)
 	, _plugins(new Plugins())
 {
@@ -257,14 +259,12 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	bool is_path = Path::is_valid(uri.str());
 	bool is_meta = ResourceImpl::is_meta_uri(uri);
 
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-
 	if (!(is_path || is_meta)) {
-		const Atom& type = properties.find(uris.rdf_type)->second;
+		const Atom& type = properties.find(_uris->rdf_type)->second;
 		if (type.type() == Atom::URI) {
 			const URI& type_uri = type.get_uri();
 			if (Plugin::type_from_uri(type_uri) != Plugin::NIL) {
-				SharedPtr<PluginModel> p(new PluginModel(uri, type_uri, properties));
+				SharedPtr<PluginModel> p(new PluginModel(uris(), uri, type_uri, properties));
 				add_plugin(p);
 				return;
 			}
@@ -289,24 +289,24 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 
 	bool is_patch, is_node, is_port, is_output;
 	PortType data_type(PortType::UNKNOWN);
-	ResourceImpl::type(properties, is_patch, is_node, is_port, is_output, data_type);
+	ResourceImpl::type(uris(), properties, is_patch, is_node, is_port, is_output, data_type);
 
 	if (is_patch) {
-		SharedPtr<PatchModel> model(new PatchModel(path));
+		SharedPtr<PatchModel> model(new PatchModel(uris(), path));
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_node) {
-		const Resource::Properties::const_iterator p = properties.find(uris.rdf_instanceOf);
+		const Resource::Properties::const_iterator p = properties.find(_uris->rdf_instanceOf);
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == Atom::URI) {
 			if (!(plug = plugin(p->second.get_uri()))) {
 				LOG(warn) << "Unable to find plugin " << p->second.get_uri() << endl;
 				plug = SharedPtr<PluginModel>(
-						new PluginModel(p->second.get_uri(), uris.ingen_nil, Resource::Properties()));
+						new PluginModel(uris(), p->second.get_uri(), _uris->ingen_nil, Resource::Properties()));
 				add_plugin(plug);
 			}
 
-			SharedPtr<NodeModel> n(new NodeModel(plug, path));
+			SharedPtr<NodeModel> n(new NodeModel(uris(), plug, path));
 			n->set_properties(properties);
 			add_object(n);
 		} else {
@@ -315,9 +315,9 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	} else if (is_port) {
 		if (data_type != PortType::UNKNOWN) {
 			PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
-			const Resource::Properties::const_iterator i = properties.find(uris.lv2_index);
+			const Resource::Properties::const_iterator i = properties.find(_uris->lv2_index);
 			if (i != properties.end() && i->second.type() == Atom::INT) {
-				SharedPtr<PortModel> p(new PortModel(path, i->second.get_int32(), data_type, pdir));
+				SharedPtr<PortModel> p(new PortModel(uris(), path, i->second.get_int32(), data_type, pdir));
 				p->set_properties(properties);
 				add_object(p);
 			} else {

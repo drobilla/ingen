@@ -28,7 +28,7 @@ PortModel::set_property(const Raul::URI&  uri,
                         const Raul::Atom& value)
 {
 	Raul::Atom& ret = ObjectModel::set_property(uri, value);
-	if (uri == Shared::LV2URIMap::instance().ingen_value)
+	if (uri == _uris.ingen_value)
 		this->value(value);
 	return ret;
 }
@@ -37,14 +37,14 @@ PortModel::set_property(const Raul::URI&  uri,
 bool
 PortModel::supports(const Raul::URI& value_type) const
 {
-	return has_property(Shared::LV2URIMap::instance().obj_supports, value_type);
+	return has_property(_uris.obj_supports, value_type);
 }
 
 
 bool
 PortModel::port_property(const std::string& uri) const
 {
-	return has_property(Shared::LV2URIMap::instance().lv2_portProperty, Raul::URI(uri));
+	return has_property(_uris.lv2_portProperty, Raul::URI(uri));
 }
 
 
@@ -62,6 +62,17 @@ PortModel::set(SharedPtr<ObjectModel> model)
 	}
 
 	ObjectModel::set(model);
+}
+
+
+bool
+PortModel::has_context(const Raul::URI& uri)
+{
+	const Raul::Atom& context = get_property(_uris.ctx_context);
+	if (uri == _uris.ctx_AudioContext && !context.is_valid())
+		return true;
+	else
+		return context == uri;
 }
 
 

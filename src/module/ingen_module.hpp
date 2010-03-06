@@ -18,12 +18,14 @@
 #ifndef INGEN_MODULE_HPP
 #define INGEN_MODULE_HPP
 
+namespace Raul { class Configuration; }
+
 namespace Ingen { namespace Shared { class World; } }
 
 extern "C" {
 
-Ingen::Shared::World* ingen_get_world();
-void                  ingen_destroy_world();
+Ingen::Shared::World* ingen_world_new(Raul::Configuration* conf, int& argc, char**& argv);
+void                  ingen_world_free(Ingen::Shared::World* world);
 
 } // extern "C"
 

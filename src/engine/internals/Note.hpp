@@ -40,7 +40,14 @@ namespace Internals {
 class NoteNode : public NodeImpl
 {
 public:
-	NoteNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);
+	NoteNode(
+			InternalPlugin*    plugin,
+			BufferFactory&     bufs,
+			const std::string& path,
+			bool               polyphonic,
+			PatchImpl*         parent,
+			SampleRate         srate);
+
 	~NoteNode();
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
@@ -55,7 +62,7 @@ public:
 	void sustain_on(ProcessContext& context, FrameTime time);
 	void sustain_off(ProcessContext& context, FrameTime time);
 
-	static InternalPlugin& internal_plugin();
+	static InternalPlugin* internal_plugin(Shared::LV2URIMap& uris);
 
 private:
 	/** Key, one for each key on the keyboard */

@@ -31,17 +31,17 @@ namespace Ingen {
 
 
 LADSPAPlugin::LADSPAPlugin(
+		Shared::LV2URIMap& uris,
 		const std::string& library_path,
 		const std::string& uri,
 		unsigned long      id,
 		const std::string& label,
 		const std::string& name)
-	: PluginImpl(Plugin::LADSPA, uri, library_path)
+	: PluginImpl(uris, Plugin::LADSPA, uri, library_path)
 	, _id(id)
 	, _label(label)
 	, _name(name)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	set_property(uris.rdf_type,   uris.ingen_LADSPAPlugin);
 	set_property(uris.lv2_symbol, Symbol::symbolify(label));
 	set_property(uris.doap_name,  name);
@@ -51,7 +51,7 @@ LADSPAPlugin::LADSPAPlugin(
 const Raul::Atom&
 LADSPAPlugin::get_property(const Raul::URI& uri) const
 {
-	if (uri == Shared::LV2URIMap::instance().doap_name)
+	if (uri == _uris.doap_name)
 		return _name;
 	else
 		return ResourceImpl::get_property(uri);

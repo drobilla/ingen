@@ -43,7 +43,7 @@ class HTTPClientReceiver;
 class HTTPEngineSender : public Shared::EngineInterface
 {
 public:
-	HTTPEngineSender(const Shared::World* world, const Raul::URI& engine_url);
+	HTTPEngineSender(Shared::World* world, const Raul::URI& engine_url);
 	~HTTPEngineSender();
 
 	Raul::URI uri() const { return _engine_url; }

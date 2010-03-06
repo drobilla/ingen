@@ -127,7 +127,7 @@ ConnectionImpl::queue(Context& context)
 bool
 ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const LV2URIMap& uris = src->bufs().uris();
 	return (
 			(   (src->is_a(PortType::CONTROL) || src->is_a(PortType::AUDIO))
 			 && (dst->is_a(PortType::CONTROL) || dst->is_a(PortType::AUDIO)))

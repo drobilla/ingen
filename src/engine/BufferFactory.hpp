@@ -37,7 +37,8 @@ namespace Shared { class LV2URIMap; }
 
 class BufferFactory {
 public:
-	BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> map);
+	BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> uris);
+	~BufferFactory();
 
 	typedef boost::intrusive_ptr<Buffer> Ref;
 
@@ -49,6 +50,8 @@ public:
 	Ref silent_buffer() { return _silent_buffer; }
 
 	void set_block_length(SampleCount block_length);
+
+	Shared::LV2URIMap& uris() { assert(_uris); return *_uris.get(); }
 
 private:
 	friend class Buffer;
@@ -67,6 +70,8 @@ private:
 		}
 	}
 
+	void free_list(Buffer* head);
+
 	Raul::AtomicPtr<Buffer> _free_audio;
 	Raul::AtomicPtr<Buffer> _free_control;
 	Raul::AtomicPtr<Buffer> _free_event;
@@ -74,7 +79,7 @@ private:
 
 	Glib::Mutex                  _mutex;
 	Engine&                      _engine;
-	SharedPtr<Shared::LV2URIMap> _map;
+	SharedPtr<Shared::LV2URIMap> _uris;
 
 	Ref _silent_buffer;
 };

@@ -9,6 +9,7 @@ def build(bld):
 	obj.source = '''
 		Builder.cpp
 		ClashAvoider.cpp
+		Configuration.cpp
 		LV2Features.cpp
 		LV2Object.cpp
 		LV2URIMap.cpp

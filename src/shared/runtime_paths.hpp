@@ -27,8 +27,10 @@
 namespace Ingen {
 namespace Shared {
 
+void set_bundle_path(const char* path);
 void set_bundle_path_from_code(void* function);
 
+std::string bundle_file_path(const std::string& name);
 std::string data_file_path(const std::string& name);
 std::string module_path(const std::string& name);
 

@@ -55,7 +55,7 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 
 	LOG(info) << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
 
-	if (!engine.world()->parser || !engine.world()->serialiser)
+	if (!engine.world()->parser() || !engine.world()->serialiser())
 		engine.world()->load("ingen_serialisation");
 
 	Thread::set_name("HTTPEngineReceiver");
@@ -99,7 +99,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 {
 	HTTPEngineReceiver* me = (HTTPEngineReceiver*)data;
 
-	SharedPtr<Store> store = me->_engine.world()->store;
+	SharedPtr<Store> store = me->_engine.world()->store();
 	if (!store) {
 		soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 		return;
@@ -110,7 +110,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		path = path.substr(0, path.length()-1);
 	}
 
-	SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
+	SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser();
 
 	const string base_uri = "path:/";
 	const char* mime_type = "text/plain";
@@ -180,7 +180,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		}
 
 		// Get serialiser
-		SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser;
+		SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser();
 		if (!serialiser) {
 			soup_message_set_status(msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			soup_message_set_response(msg, "text/plain", SOUP_MEMORY_STATIC,
@@ -200,7 +200,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 		Glib::RWLock::WriterLock lock(store->lock());
 
 		// Get parser
-		SharedPtr<Parser> parser = me->_engine.world()->parser;
+		SharedPtr<Parser> parser = me->_engine.world()->parser();
 		if (!parser) {
 			soup_message_set_status(msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			return;

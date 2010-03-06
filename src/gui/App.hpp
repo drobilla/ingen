@@ -105,12 +105,12 @@ public:
 
 	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
 
-	const SharedPtr<Shared::EngineInterface>&    engine() const { return _world->engine; }
-	const SharedPtr<Client::SigClientInterface>& client() const { return _client; }
-	const SharedPtr<Client::ClientStore>&        store()  const { return _store; }
-	const SharedPtr<ThreadedLoader>&             loader() const { return _loader; }
+	SharedPtr<Shared::EngineInterface>    engine() const { return _world->engine(); }
+	SharedPtr<Client::SigClientInterface> client() const { return _client; }
+	SharedPtr<Client::ClientStore>        store()  const { return _store; }
+	SharedPtr<ThreadedLoader>             loader() const { return _loader; }
 
-	const SharedPtr<Serialisation::Serialiser>& serialiser();
+	SharedPtr<Serialisation::Serialiser> serialiser();
 
 	static inline App& instance() { assert(_instance); return *_instance; }
 
@@ -118,7 +118,7 @@ public:
 	static void run();
 
 	inline Ingen::Shared::World*     world() const { return _world; }
-	inline Ingen::Shared::LV2URIMap& uris()  const { return *_world->uris; }
+	inline Ingen::Shared::LV2URIMap& uris()  const { return *_world->uris(); }
 
 protected:
 

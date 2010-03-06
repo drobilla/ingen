@@ -55,7 +55,7 @@ lv2_ui_write(LV2UI_Controller controller,
 
 	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
 
-	SharedPtr<Shared::LV2URIMap> map = ui->world()->uris;
+	const Shared::LV2URIMap& uris = *ui->world()->uris().get();
 
 	// float (special case, always 0)
 	if (format == 0) {
@@ -63,18 +63,18 @@ lv2_ui_write(LV2UI_Controller controller,
 		if (*(float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
 
-		ui->world()->engine->set_property(port->path(), map->ingen_value, Atom(*(float*)buffer));
+		ui->world()->engine()->set_property(port->path(), uris.ingen_value, Atom(*(float*)buffer));
 
-	} else if (format == map->ui_format_events.id) {
+	} else if (format == uris.ui_format_events.id) {
 		LV2_Event_Buffer*  buf = (LV2_Event_Buffer*)buffer;
 		LV2_Event_Iterator iter;
 		uint8_t*           data;
 		lv2_event_begin(&iter, buf);
 		while (lv2_event_is_valid(&iter)) {
 			LV2_Event* const ev = lv2_event_get(&iter, &data);
-			if (ev->type == map->midi_event.id) {
+			if (ev->type == uris.midi_event.id) {
 				// FIXME: bundle multiple events by writing an entire buffer here
-				ui->world()->engine->set_property(port->path(), map->ingen_value,
+				ui->world()->engine()->set_property(port->path(), uris.ingen_value,
 					Atom("http://lv2plug.in/ns/ext/midi#MidiEvent", ev->size, data));
 			} else {
 				warn << "Unable to send event type " << ev->type <<
@@ -84,11 +84,11 @@ lv2_ui_write(LV2UI_Controller controller,
 			lv2_event_increment(&iter);
 		}
 
-	} else if (format == map->object_transfer.id) {
+	} else if (format == uris.object_transfer.id) {
 		LV2_Object* buf = (LV2_Object*)buffer;
 		Raul::Atom val;
-		Shared::LV2Object::to_atom(buf, val);
-		ui->world()->engine->set_property(port->path(), map->ingen_value, val);
+		Shared::LV2Object::to_atom(uris, buf, val);
+		ui->world()->engine()->set_property(port->path(), uris.ingen_value, val);
 
 	} else {
 		warn << "Unknown value format " << format
@@ -122,7 +122,7 @@ PluginUI::create(Ingen::Shared::World* world,
 	Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
 	SharedPtr<PluginUI> ret;
 
-	SLV2Value gtk_gui_uri = slv2_value_new_uri(world->slv2_world,
+	SLV2Value gtk_gui_uri = slv2_value_new_uri(world->slv2_world(),
 		"http://lv2plug.in/ns/extensions/ui#GtkUI");
 
 	SLV2UIs uis = slv2_plugin_get_uis(plugin);
@@ -141,7 +141,7 @@ PluginUI::create(Ingen::Shared::World* world,
 	if (ui) {
 		info << "Found GTK Plugin UI: " << slv2_ui_get_uri(ui) << endl;
 		ret = SharedPtr<PluginUI>(new PluginUI(world, node));
-		ret->_features = world->lv2_features->lv2_features(node.get());
+		ret->_features = world->lv2_features()->lv2_features(node.get());
 		SLV2UIInstance inst = slv2_ui_instantiate(
 				plugin, ui, lv2_ui_write, ret.get(), ret->_features->array());
 

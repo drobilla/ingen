@@ -102,7 +102,7 @@ SetPortValue::pre_process()
 
 	if (_port) {
 		_port->set_value(_value);
-		_port->set_property(_engine.world()->uris->ingen_value, _value);
+		_port->set_property(_engine.world()->uris()->ingen_value, _value);
 	}
 
 	QueuedEvent::pre_process();
@@ -151,7 +151,7 @@ SetPortValue::apply(Context& context)
 			return;
 		}
 
-		SharedPtr<LV2URIMap> uris = _engine.world()->uris;
+		LV2URIMap& uris = *_engine.world()->uris().get();
 
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
 		if (ebuf) {
@@ -159,14 +159,14 @@ SetPortValue::apply(Context& context)
 
 			// Size 0 event, pass it along to the plugin as a typed but empty event
 			if (_value.data_size() == 0) {
-				const uint32_t type_id = uris->uri_to_id(NULL, _value.get_blob_type());
+				const uint32_t type_id = uris.uri_to_id(NULL, _value.get_blob_type());
 				ebuf->append(frames, 0, type_id, 0, NULL);
 				_port->raise_set_by_user_flag();
 				return;
 
 			} else if (!strcmp(_value.get_blob_type(), "http://lv2plug.in/ns/ext/midi#MidiEvent")) {
 				ebuf->prepare_write(context);
-				ebuf->append(frames, 0, uris->midi_event.id, _value.data_size(),
+				ebuf->append(frames, 0, uris.midi_event.id, _value.data_size(),
 						(const uint8_t*)_value.get_blob());
 				_port->raise_set_by_user_flag();
 				return;
@@ -176,7 +176,7 @@ SetPortValue::apply(Context& context)
 		ObjectBuffer* const obuf = dynamic_cast<ObjectBuffer*>(buf);
 		if (obuf) {
 			obuf->object()->size = obuf->size() - sizeof(LV2_Object);
-			if (LV2Object::from_atom(_value, obuf->object())) {
+			if (LV2Object::from_atom(uris, _value, obuf->object())) {
 				debug << "Converted atom " << _value << " :: " << obuf->object()->type
 					<< " * " << obuf->object()->size << " @ " << obuf->object() << endl;
 				return;
@@ -200,7 +200,7 @@ SetPortValue::post_process()
 		assert(_port != NULL);
 		_request->respond_ok();
 		_engine.broadcaster()->set_property(_port_path,
-				_engine.world()->uris->ingen_value, _value);
+				_engine.world()->uris()->ingen_value, _value);
 		break;
 	case TYPE_MISMATCH:
 		ss << "Illegal value type " << _value.type()

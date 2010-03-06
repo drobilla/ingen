@@ -49,18 +49,24 @@ using namespace Shared;
 
 static const float MAX_DELAY_SECONDS = 8.0f;
 
-static InternalPlugin note_plugin(NS_INTERNALS "Delay", "delay");
+InternalPlugin* DelayNode::internal_plugin(Shared::LV2URIMap& uris) {
+	return new InternalPlugin(uris, NS_INTERNALS "Delay", "delay");
+}
 
-InternalPlugin& DelayNode::internal_plugin() { return note_plugin; }
-
-DelayNode::DelayNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate)
-	: NodeImpl(&note_plugin, path, polyphonic, parent, srate)
+DelayNode::DelayNode(
+		InternalPlugin*    plugin,
+		BufferFactory&     bufs,
+		const std::string& path,
+		bool               polyphonic,
+		PatchImpl*         parent,
+		SampleRate         srate)
+	: NodeImpl(plugin, path, polyphonic, parent, srate)
 	, _buffer(0)
 	, _buffer_length(0)
 	, _buffer_mask(0)
 	, _write_phase(0)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const LV2URIMap& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(3);
 
 	const float default_delay = 1.0f;

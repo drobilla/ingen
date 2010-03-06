@@ -38,9 +38,7 @@ public:
 		return SharedPtr<LV2_Feature>(&uri_map_feature, NullDeleter<LV2_Feature>);
 	}
 
-	uint32_t uri_to_id(const char* map, const char* uri);
-
-	static const LV2URIMap& instance();
+	virtual uint32_t uri_to_id(const char* map, const char* uri);
 
 private:
 	static uint32_t uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
@@ -53,6 +51,7 @@ private:
 public:
 	struct Quark : public Raul::URI {
 		Quark(const char* str);
+		const char* c_str() const;
 		uint32_t id;
 	};
 

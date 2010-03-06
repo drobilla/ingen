@@ -39,15 +39,21 @@ namespace Internals {
 
 using namespace Shared;
 
-static InternalPlugin trigger_plugin(NS_INTERNALS "Trigger", "trigger");
+InternalPlugin* TriggerNode::internal_plugin(Shared::LV2URIMap& uris) {
+	return new InternalPlugin(uris, NS_INTERNALS "Trigger", "trigger");
+}
 
-InternalPlugin& TriggerNode::internal_plugin() { return trigger_plugin; }
-
-TriggerNode::TriggerNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate)
-	: NodeImpl(&trigger_plugin, path, false, parent, srate)
+TriggerNode::TriggerNode(
+		InternalPlugin*    plugin,
+		BufferFactory&     bufs,
+		const std::string& path,
+		bool               polyphonic,
+		PatchImpl*         parent,
+		SampleRate         srate)
+	: NodeImpl(plugin, path, false, parent, srate)
 	, _learning(false)
 {
-	const LV2URIMap& uris = LV2URIMap::instance();
+	const LV2URIMap& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(5);
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());

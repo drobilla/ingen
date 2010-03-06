@@ -31,6 +31,9 @@
 #include "shared/ResourceImpl.hpp"
 
 namespace Ingen {
+
+namespace Shared { class LV2URIMap; }
+
 namespace Client {
 
 class ClientStore;
@@ -79,7 +82,7 @@ public:
 protected:
 	friend class ClientStore;
 
-	ObjectModel(const Raul::Path& path);
+	ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path);
 
 	virtual void set_path(const Raul::Path& p);
 	virtual void set_parent(SharedPtr<ObjectModel> p);
@@ -89,12 +92,11 @@ protected:
 	virtual void set(SharedPtr<ObjectModel> model);
 
 	ResourceImpl           _meta;
-
 	SharedPtr<ObjectModel> _parent;
 
 private:
-	Raul::Path             _path;
-	Raul::Symbol           _symbol;
+	Raul::Path   _path;
+	Raul::Symbol _symbol;
 };
 
 

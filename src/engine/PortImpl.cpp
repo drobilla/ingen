@@ -48,7 +48,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
                    PortType            type,
                    const Atom&         value,
                    size_t              buffer_size)
-	: GraphObjectImpl(node, name)
+	: GraphObjectImpl(bufs.uris(), node, name)
 	, _bufs(bufs)
 	, _index(index)
 	, _poly(poly)
@@ -69,7 +69,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	if (_buffer_size == 0)
 		_buffer_size = bufs.default_buffer_size(type);
 
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const LV2URIMap& uris = bufs.uris();
 	add_property(uris.rdf_type,  type.uri());
 	set_property(uris.lv2_index, Atom((int32_t)index));
 	set_context(_context);
@@ -88,7 +88,7 @@ PortImpl::~PortImpl()
 bool
 PortImpl::supports(const Raul::URI& value_type) const
 {
-	return has_property(Shared::LV2URIMap::instance().obj_supports, value_type);
+	return has_property(_bufs.uris().obj_supports, value_type);
 }
 
 
@@ -227,7 +227,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::VALUE:
 	case PortType::MESSAGE:
-		LV2Object::to_atom(((ObjectBuffer*)buffer(0).get())->object(), val);
+		LV2Object::to_atom(_bufs.uris(), ((ObjectBuffer*)buffer(0).get())->object(), val);
 		break;
 	}
 
@@ -242,11 +242,11 @@ PortImpl::broadcast_value(Context& context, bool force)
 void
 PortImpl::set_context(Context::ID c)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const LV2URIMap& uris = _bufs.uris();
 	_context = c;
 	switch (c) {
 	case Context::AUDIO:
-		set_property(uris.ctx_context, uris.ctx_AudioContext);
+		remove_property(uris.ctx_context, uris.wildcard);
 		break;
 	case Context::MESSAGE:
 		set_property(uris.ctx_context, uris.ctx_MessageContext);

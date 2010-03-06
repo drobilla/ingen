@@ -49,7 +49,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 	: PortImpl(bufs, parent, symbol, index, poly, type, value, buffer_size)
 	, _num_connections(0)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const LV2URIMap& uris = bufs.uris();
 
 	if (!dynamic_cast<Patch*>(parent))
 		add_property(uris.rdf_type, uris.lv2_InputPort);
@@ -81,7 +81,7 @@ InputPort::apply_poly(Maid& maid, uint32_t poly)
 bool
 InputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly)
 {
-	size_t num_connections = (ThreadManager::current_thread_id() == THREAD_PROCESS)
+	size_t num_connections = (ThreadManager::thread_is(THREAD_PROCESS))
 			? _connections.size() : _num_connections;
 
 	if (buffer_type() == PortType::AUDIO && num_connections == 0) {
@@ -91,7 +91,7 @@ InputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buf
 		return false;
 
 	} else if (num_connections == 1) {
-		if (ThreadManager::current_thread_id() == THREAD_PROCESS) {
+		if (ThreadManager::thread_is(THREAD_PROCESS)) {
 			if (!_connections.front()->must_mix() && !_connections.front()->must_queue()) {
 				// Single non-mixing conneciton, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v)

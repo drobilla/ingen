@@ -40,7 +40,13 @@ namespace Internals {
 class ControllerNode : public NodeImpl
 {
 public:
-	ControllerNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);
+	ControllerNode(
+			InternalPlugin*    plugin,
+			BufferFactory&     bufs,
+			const std::string& path,
+			bool               polyphonic,
+			PatchImpl*         parent,
+			SampleRate         srate);
 
 	void process(ProcessContext& context);
 
@@ -48,7 +54,7 @@ public:
 
 	void learn() { _learning = true; }
 
-	static InternalPlugin& internal_plugin();
+	static InternalPlugin* internal_plugin(Shared::LV2URIMap& uris);
 
 private:
 	bool _learning;

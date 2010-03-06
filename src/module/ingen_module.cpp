@@ -28,46 +28,16 @@
 
 extern "C" {
 
-static Ingen::Shared::World* world = NULL;
-
 Ingen::Shared::World*
-ingen_get_world()
+ingen_world_new(Raul::Configuration* conf, int& argc, char**& argv)
 {
-    static Ingen::Shared::World* world = NULL;
-
-	if (!world) {
-		world = new Ingen::Shared::World();
-        world->rdf_world = new Redland::World();
-#ifdef HAVE_SLV2
-		world->slv2_world = slv2_world_new_using_rdf_world(world->rdf_world->world());
-		world->lv2_features = new Ingen::Shared::LV2Features();
-		world->uris = PtrCast<Ingen::Shared::LV2URIMap>(
-				world->lv2_features->feature(LV2_URI_MAP_URI));
-		slv2_world_load_all(world->slv2_world);
-#else
-		world->uris = SharedPtr<Ingen::Shared::LV2URIMap>(
-				new Ingen::Shared::LV2URIMap());
-#endif
-		world->engine.reset();
-		world->local_engine.reset();
-	}
-
-	return world;
+	return new Ingen::Shared::World(conf, argc, argv);
 }
 
 void
-ingen_destroy_world()
+ingen_world_free(Ingen::Shared::World* world)
 {
-	if (world) {
-		world->unload_all();
-#ifdef HAVE_SLV2
-		slv2_world_free(world->slv2_world);
-		delete world->lv2_features;
-#endif
-        delete world->rdf_world;
-		delete world;
-		world = NULL;
-	}
+	delete world;
 }
 
 } // extern "C"

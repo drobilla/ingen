@@ -42,6 +42,7 @@ Delete::Delete(Engine& engine, SharedPtr<Request> request, FrameTime time, const
 	: QueuedEvent(engine, request, time, true)
 	, _path(path)
 	, _store_iterator(engine.engine_store()->end())
+	, _garbage(NULL)
 	, _driver_port(NULL)
 	, _patch_node_listnode(NULL)
 	, _patch_port_listnode(NULL)
@@ -153,9 +154,8 @@ Delete::execute(ProcessContext& context)
 		_engine.maid()->push(_port->parent_patch()->external_ports());
 		_port->parent_patch()->external_ports(_ports_array);
 
-		if ( ! _port->parent_patch()->parent()) {
-			_driver_port = _engine.driver()->remove_port(_port->path());
-		}
+		if ( ! _port->parent_patch()->parent())
+			_garbage = _engine.driver()->remove_port(_port->path(), &_driver_port);
 	}
 
 	if (parent_patch) {
@@ -201,10 +201,10 @@ Delete::post_process()
 		_request->respond_error("Unable to delete object " + _path.chop_scheme());
 	}
 
-	if (_driver_port) {
-		_driver_port->elem()->destroy();
-		_engine.maid()->push(_driver_port);
-	}
+	if (_driver_port)
+		_driver_port->destroy();
+
+	_engine.maid()->push(_garbage);
 }
 
 

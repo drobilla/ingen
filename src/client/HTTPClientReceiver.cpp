@@ -133,7 +133,7 @@ HTTPClientReceiver::close_session()
 void
 HTTPClientReceiver::update(const std::string& str)
 {
-	LOG(info) << _world->parser->parse_update(_world, _target.get(), str, _url);
+	LOG(info) << _world->parser()->parse_update(_world, _target.get(), str, _url);
 }
 
 void
@@ -188,7 +188,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
-			me->_world->parser->parse_string(me->_world, me->_target.get(),
+			me->_world->parser()->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data), me->_url);
 		}
 
@@ -198,7 +198,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
-			me->_world->parser->parse_string(me->_world, me->_target.get(),
+			me->_world->parser()->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data),
 					Glib::ustring("/patch/"));
 		}
@@ -226,9 +226,9 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 void
 HTTPClientReceiver::start(bool dump)
 {
-	Glib::Mutex::Lock lock(_world->rdf_world->mutex());
+	Glib::Mutex::Lock lock(_world->rdf_world()->mutex());
 
-	if (!_world->parser)
+	if (!_world->parser())
 		_world->load("ingen_serialisation");
 
 	SoupMessage* msg = soup_message_new("GET", (_url + "/stream").c_str());

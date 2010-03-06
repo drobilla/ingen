@@ -59,10 +59,10 @@ HTTPClientSender::put(const URI&                  uri,
 	const string path     = (uri.substr(0, 6) == "path:/") ? uri.substr(6) : uri.str();
 	const string full_uri = _url + "/" + path;
 
-	Redland::Model model(*_engine.world()->rdf_world);
+	Redland::Model model(*_engine.world()->rdf_world());
 	for (Resource::Properties::const_iterator i = properties.begin(); i != properties.end(); ++i)
 		model.add_statement(
-				Redland::Resource(*_engine.world()->rdf_world, path),
+				Redland::Resource(*_engine.world()->rdf_world(), path),
 				i->first.str(),
 				AtomRDF::atom_to_node(model, i->second));
 
@@ -111,7 +111,7 @@ void
 HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& value)
 {
 #if 0
-	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world, value);
+	Redland::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world(), value);
 	const string msg = string(
 			"@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
 			"@prefix ingen:   <http://drobilla.net/ns/ingen#> .\n"

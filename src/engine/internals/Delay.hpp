@@ -44,14 +44,21 @@ namespace Internals {
 class DelayNode : public NodeImpl
 {
 public:
-	DelayNode(BufferFactory& bufs, const std::string& path, bool polyphonic, PatchImpl* parent, SampleRate srate);
+	DelayNode(
+			InternalPlugin*    plugin,
+			BufferFactory&     bufs,
+			const std::string& path,
+			bool               polyphonic,
+			PatchImpl*         parent,
+			SampleRate         srate);
+
 	~DelayNode();
 
 	void activate(BufferFactory& bufs);
 
 	void process(ProcessContext& context);
 
-	static InternalPlugin& internal_plugin();
+	static InternalPlugin* internal_plugin(Shared::LV2URIMap& uris);
 
 	float delay_samples() const { return _delay_samples; }
 

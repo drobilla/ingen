@@ -21,11 +21,17 @@
 #include <map>
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include <boost/utility.hpp>
 #include <glibmm/module.h>
+#include "ingen-config.h"
 #include "raul/Configuration.hpp"
+#include "raul/SharedPtr.hpp"
 #include "Module.hpp"
+#include "module/ingen_module.hpp"
 
+#ifdef HAVE_SLV2
 typedef struct _SLV2World* SLV2World;
+#endif
 
 namespace Redland { class World; }
 
@@ -41,6 +47,7 @@ class EngineInterface;
 class Store;
 class LV2Features;
 class LV2URIMap;
+struct WorldImpl;
 
 
 /** The "world" all Ingen modules may share.
@@ -52,46 +59,53 @@ class LV2URIMap;
  * using World::load, e.g. loading the "ingen_serialisation" module will
  * set World::serialiser and World::parser to valid objects.
  */
-struct World {
-	World() : argc(0), argv(0), conf(0), rdf_world(0), slv2_world(0), lv2_features(0) {}
+class World : public boost::noncopyable {
+	friend Ingen::Shared::World* ::ingen_world_new(Raul::Configuration*, int&, char**&);
+	World(Raul::Configuration* conf, int& argc, char**& argv);
 
-	bool load(const char* name);
-	void unload_all();
+	friend void ::ingen_world_free(Ingen::Shared::World* world);
+	virtual ~World();
+
+	WorldImpl* _impl;
+
+public:
+	virtual bool load(const char* name);
+	virtual void unload_all();
 
 	typedef SharedPtr<Ingen::Shared::EngineInterface> (*InterfaceFactory)(
 			World* world, const std::string& engine_url);
 
-	void add_interface_factory(const std::string& scheme, InterfaceFactory factory);
-	SharedPtr<Ingen::Shared::EngineInterface> interface(const std::string& engine_url);
+	virtual void add_interface_factory(const std::string& scheme, InterfaceFactory factory);
+	virtual SharedPtr<Ingen::Shared::EngineInterface> interface(const std::string& engine_url);
 
-	bool run(const std::string& mime_type, const std::string& filename);
+	virtual bool run(const std::string& mime_type, const std::string& filename);
 
-	int                  argc;
-	char**               argv;
-	Raul::Configuration* conf;
+	virtual void set_local_engine(SharedPtr<Engine> e);
+	virtual void set_engine(SharedPtr<EngineInterface> e);
+	virtual void set_serialiser(SharedPtr<Serialisation::Serialiser> s);
+	virtual void set_parser(SharedPtr<Serialisation::Parser> p);
+	virtual void set_store(SharedPtr<Store> s);
 
-	Redland::World*      rdf_world;
-    SLV2World            slv2_world;
-	LV2Features*         lv2_features;
+	virtual SharedPtr<Engine>                    local_engine();
+	virtual SharedPtr<EngineInterface>           engine();
+	virtual SharedPtr<Serialisation::Serialiser> serialiser();
+	virtual SharedPtr<Serialisation::Parser>     parser();
+	virtual SharedPtr<Store>                     store();
 
-	boost::shared_ptr<LV2URIMap> uris;
+	virtual Redland::World*      rdf_world();
+	virtual SharedPtr<LV2URIMap> uris();
 
-    boost::shared_ptr<EngineInterface>           engine;
-    boost::shared_ptr<Engine>                    local_engine;
-    boost::shared_ptr<Serialisation::Serialiser> serialiser;
-    boost::shared_ptr<Serialisation::Parser>     parser;
-    boost::shared_ptr<Store>                     store;
+	virtual int&    argc();
+	virtual char**& argv();
 
-private:
-	typedef std::map< const std::string, boost::shared_ptr<Module> > Modules;
-	Modules modules;
+	virtual Raul::Configuration* conf();
+	virtual void set_conf(Raul::Configuration* c);
 
-	typedef std::map<const std::string, InterfaceFactory> InterfaceFactories;
-	InterfaceFactories interface_factories;
+	virtual LV2Features* lv2_features();
 
-	typedef bool (*ScriptRunner)(World* world, const char* filename);
-	typedef std::map<const std::string, ScriptRunner> ScriptRunners;
-	ScriptRunners script_runners;
+#ifdef HAVE_SLV2
+	virtual SLV2World slv2_world();
+#endif
 };
 
 

@@ -21,16 +21,22 @@
 #include <map>
 #include <sigc++/sigc++.h>
 #include "raul/URI.hpp"
+#include "raul/SharedPtr.hpp"
 #include "interface/Resource.hpp"
 #include "interface/PortType.hpp"
 
 namespace Ingen {
 namespace Shared {
 
+class LV2URIMap;
+
 class ResourceImpl : virtual public Resource
 {
 public:
-	ResourceImpl(const Raul::URI& uri) : _uri(uri) {}
+	ResourceImpl(LV2URIMap& uris, const Raul::URI& uri)
+		: _uris(uris), _uri(uri) {}
+
+	LV2URIMap& uris() const { return _uris; }
 
 	virtual void             set_uri(const Raul::URI& uri) { _uri = uri; }
 	virtual const Raul::URI& uri()  const { return _uri; }
@@ -56,6 +62,7 @@ public:
 	 * output parameter set to true.  Otherwise false is returned.
 	 */
 	static bool type(
+			const LV2URIMap&  uris,
 			const Properties& properties,
 			bool& patch,
 			bool& node,
@@ -66,6 +73,8 @@ public:
 
 protected:
 	Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;
+
+	LV2URIMap& _uris;
 
 private:
 	Raul::URI          _uri;

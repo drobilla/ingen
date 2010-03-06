@@ -225,7 +225,7 @@ QueuedEngineInterface::set_property(const URI&  uri,
 	bool   meta = (hash != string::npos);
 	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
 	Resource::Properties remove;
-	remove.insert(make_pair(predicate, Shared::LV2URIMap::instance().wildcard));
+	remove.insert(make_pair(predicate, _engine.world()->uris()->wildcard));
 	Resource::Properties add;
 	add.insert(make_pair(predicate, value));
 	push_queued(new Events::SetMetadata(_engine, _request, now(), false, meta, path, add, remove));

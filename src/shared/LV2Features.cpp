@@ -28,7 +28,6 @@ namespace Shared {
 
 LV2Features::LV2Features()
 {
-	add_feature(LV2_URI_MAP_URI, SharedPtr<Feature>(new LV2URIMap()));
 }
 
 

@@ -33,7 +33,7 @@ SendPortValue::post_process()
 {
 	_engine.broadcaster()->set_property(
 			_port->path(),
-			_engine.world()->uris->ingen_value, _value);
+			_engine.world()->uris()->ingen_value, _value);
 }
 
 

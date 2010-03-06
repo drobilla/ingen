@@ -30,8 +30,8 @@ namespace Ingen {
 namespace Client {
 
 
-NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path)
-	: ObjectModel(path)
+NodeModel::NodeModel(Shared::LV2URIMap& uris, SharedPtr<PluginModel> plugin, const Path& path)
+	: ObjectModel(uris, path)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
 	, _num_values(0)
@@ -40,8 +40,8 @@ NodeModel::NodeModel(SharedPtr<PluginModel> plugin, const Path& path)
 {
 }
 
-NodeModel::NodeModel(const URI& plugin_uri, const Path& path)
-	: ObjectModel(path)
+NodeModel::NodeModel(Shared::LV2URIMap& uris, const URI& plugin_uri, const Path& path)
+	: ObjectModel(uris, path)
 	, _plugin_uri(plugin_uri)
 	, _num_values(0)
 	, _min_values(0)
@@ -206,14 +206,13 @@ NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float
 void
 NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
 {
-	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
 	assert(port->parent().get() == this);
 
 	default_port_value_range(port, min, max);
 
 	// Possibly overriden
-	const Atom& min_atom = port->get_property(uris.lv2_minimum);
-	const Atom& max_atom = port->get_property(uris.lv2_maximum);
+	const Atom& min_atom = port->get_property(_uris.lv2_minimum);
+	const Atom& max_atom = port->get_property(_uris.lv2_maximum);
 	if (min_atom.type() == Atom::FLOAT)
 		min = min_atom.get_float();
 	if (max_atom.type() == Atom::FLOAT)

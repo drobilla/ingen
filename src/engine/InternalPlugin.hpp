@@ -20,10 +20,6 @@
 
 #include "ingen-config.h"
 
-#ifndef HAVE_SLV2
-#error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."
-#endif
-
 #include <cstdlib>
 #include <glibmm/module.h>
 #include <boost/utility.hpp>
@@ -44,7 +40,8 @@ class BufferFactory;
 class InternalPlugin : public PluginImpl
 {
 public:
-	InternalPlugin(const std::string& uri, const std::string& symbol);
+	InternalPlugin(Shared::LV2URIMap& uris,
+			const std::string& uri, const std::string& symbol);
 
 	NodeImpl* instantiate(BufferFactory&     bufs,
 	                      const std::string& name,

@@ -32,11 +32,31 @@ namespace Ingen {
 
 using namespace Shared;
 
-BufferFactory::BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> map)
+BufferFactory::BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> a_uris)
 	: _engine(engine)
-	, _map(map)
+	, _uris(a_uris)
 	, _silent_buffer(NULL)
 {
+	assert(_uris);
+}
+
+
+BufferFactory::~BufferFactory()
+{
+	free_list(_free_audio.get());
+	free_list(_free_control.get());
+	free_list(_free_event.get());
+	free_list(_free_object.get());
+}
+
+
+void
+BufferFactory::free_list(Buffer* head)
+{
+	Buffer* next = head->_next;
+	delete head;
+	if (next)
+		free_list(next);
 }
 
 
@@ -87,7 +107,7 @@ BufferFactory::get(Shared::PortType type, size_t size, bool force_create)
 	}
 
 	if (!try_head) {
-		if (ThreadManager::current_thread_id() != THREAD_PROCESS) {
+		if (!ThreadManager::thread_is(THREAD_PROCESS)) {
 			return create(type, size);
 		} else {
 			assert(false);
@@ -113,12 +133,12 @@ BufferFactory::create(Shared::PortType type, size_t size)
 
 	if (type.is_control()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
-		ret->object()->type = _map->object_class_vector.id;
-		((LV2_Vector_Body*)ret->object()->body)->elem_type = _map->object_class_float32.id;
+		ret->object()->type = _uris->object_class_vector.id;
+		((LV2_Vector_Body*)ret->object()->body)->elem_type = _uris->object_class_float32.id;
 		buffer = ret;
 	} else if (type.is_audio()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
-		ret->object()->type = _map->object_class_float32.id;
+		ret->object()->type = _uris->object_class_float32.id;
 		buffer = ret;
 	} else if (type.is_events()) {
 		buffer = new EventBuffer(*this, size);

@@ -74,13 +74,13 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 void
 ConnectWindow::start(Ingen::Shared::World* world)
 {
-	if (world->local_engine) {
+	if (world->local_engine()) {
 		_mode = INTERNAL;
 		if (_widgets_loaded)
 			_internal_radio->set_active(true);
 	}
 
-	set_connected_to(world->engine);
+	set_connected_to(world->engine());
 
 	connect(true);
 }
@@ -89,7 +89,7 @@ ConnectWindow::start(Ingen::Shared::World* world)
 void
 ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 {
-	App::instance().world()->engine = engine;
+	App::instance().world()->set_engine(engine);
 
 	if (!_widgets_loaded)
 		return;
@@ -111,7 +111,7 @@ ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 		_connect_button->set_sensitive(true);
 		_disconnect_button->set_sensitive(false);
 
-		if (App::instance().world()->local_engine)
+		if (App::instance().world()->local_engine())
 			_internal_radio->set_sensitive(true);
 		else
 			_internal_radio->set_sensitive(false);
@@ -178,7 +178,7 @@ ConnectWindow::connect(bool existing)
 		}
 
 		if (existing)
-			uri = world->engine->uri().str();
+			uri = world->engine()->uri().str();
 
 		// Create client-side listener
 		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
@@ -198,14 +198,14 @@ ConnectWindow::connect(bool existing)
 		if (!existing) {
 #ifdef HAVE_LIBLO
 			if (scheme == "osc.udp" || scheme == "osc.tcp")
-				world->engine = SharedPtr<EngineInterface>(new OSCEngineSender(uri));
+				world->set_engine(SharedPtr<EngineInterface>(new OSCEngineSender(uri)));
 #endif
 #ifdef HAVE_SOUP
 			if (scheme == "http")
-				world->engine = SharedPtr<EngineInterface>(new HTTPEngineSender(world, uri));
+				world->set_engine(SharedPtr<EngineInterface>(new HTTPEngineSender(world, uri)));
 #endif
 		} else {
-			uri = world->engine->uri().str();
+			uri = world->engine()->uri().str();
 			scheme = uri.substr(0, uri.find(":"));
 		}
 
@@ -223,8 +223,8 @@ ConnectWindow::connect(bool existing)
 		const string cmd = string("ingen -e --engine-port=").append(port_str);
 
 		if (Raul::Process::launch(cmd)) {
-			world->engine = SharedPtr<EngineInterface>(
-					new OSCEngineSender(string("osc.udp://localhost:").append(port_str)));
+			world->set_engine(SharedPtr<EngineInterface>(
+					new OSCEngineSender(string("osc.udp://localhost:").append(port_str))));
 
 			// FIXME: static args
 			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
@@ -246,15 +246,15 @@ ConnectWindow::connect(bool existing)
 	} else
 #endif // defined(HAVE_LIBLO) || defined(HAVE_SOUP)
 	if (_mode == INTERNAL) {
-		if (!world->local_engine)
+		if (!world->local_engine())
 			world->load("ingen_engine");
 
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 
-		if (!world->local_engine->driver())
+		if (!world->local_engine()->driver())
 			world->load("ingen_jack");
 
-		world->local_engine->activate();
+		world->local_engine()->activate();
 
 		App::instance().attach(client);
 		App::instance().register_callbacks();

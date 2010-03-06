@@ -136,6 +136,8 @@ public:
 	Context::ID context() const            { return _context; }
 	void        set_context(Context::ID c);
 
+	BufferFactory& bufs() const { return _bufs; }
+
 protected:
 	PortImpl(BufferFactory&      bufs,
 	         NodeImpl*           node,

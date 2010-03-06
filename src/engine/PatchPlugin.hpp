@@ -35,10 +35,12 @@ class NodeImpl;
 class PatchPlugin : public PluginImpl
 {
 public:
-	PatchPlugin(const std::string& uri,
-	            const std::string& symbol,
-	            const std::string& name)
-		: PluginImpl(Plugin::Patch, uri)
+	PatchPlugin(
+			Shared::LV2URIMap& uris,
+			const std::string& uri,
+			const std::string& symbol,
+			const std::string& name)
+		: PluginImpl(uris, Plugin::Patch, uri)
 	{}
 
 	NodeImpl* instantiate(BufferFactory& bufs,

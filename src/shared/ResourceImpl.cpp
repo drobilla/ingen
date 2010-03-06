@@ -67,8 +67,7 @@ ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value)
 void
 ResourceImpl::remove_property(const Raul::URI& uri, const Raul::Atom& value)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-	if (value == uris.wildcard) {
+	if (value == _uris.wildcard) {
 		_properties.erase(uri);
 	} else {
 		Properties::iterator i = _properties.find(uri);
@@ -113,13 +112,13 @@ ResourceImpl::get_property(const Raul::URI& uri) const
 
 bool
 ResourceImpl::type(
+		const LV2URIMap&  uris,
 		const Properties& properties,
 		bool& patch,
 		bool& node,
 		bool& port, bool& is_output, PortType& data_type)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	const std::pair<iterator,iterator> types_range = properties.equal_range(uris.rdf_type);
 
 	patch = node = port = is_output = false;
@@ -198,10 +197,9 @@ ResourceImpl::add_properties(const Properties& p)
 void
 ResourceImpl::remove_properties(const Properties& p)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = p.begin(); i != p.end(); ++i) {
-		if (i->second == uris.wildcard) {
+		if (i->second == _uris.wildcard) {
 			_properties.erase(i->first);
 		} else {
 			for (Properties::iterator j = _properties.find(i->first);

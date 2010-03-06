@@ -52,8 +52,9 @@ class ConnectionModel;
  */
 class ClientStore : public Shared::Store, public Shared::CommonInterface, public sigc::trackable {
 public:
-	ClientStore(SharedPtr<Shared::EngineInterface> engine=SharedPtr<Shared::EngineInterface>(),
-	            SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
+	ClientStore(SharedPtr<Shared::LV2URIMap> uris,
+			SharedPtr<Shared::EngineInterface> engine=SharedPtr<Shared::EngineInterface>(),
+			SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
 
 	SharedPtr<PluginModel>      plugin(const Raul::URI& uri);
 	SharedPtr<ObjectModel>      object(const Raul::Path& path);
@@ -65,6 +66,8 @@ public:
 	SharedPtr<const Plugins> plugins() const                   { return _plugins; }
 	SharedPtr<Plugins>       plugins()                         { return _plugins; }
 	void                     set_plugins(SharedPtr<Plugins> p) { _plugins = p; }
+
+	Shared::LV2URIMap& uris() { return *_uris.get(); }
 
 	// CommonInterface
 	bool new_object(const Shared::GraphObject* object);
@@ -99,6 +102,7 @@ private:
 
 	bool attempt_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
 
+	SharedPtr<Shared::LV2URIMap>       _uris;
 	SharedPtr<Shared::EngineInterface> _engine;
 	SharedPtr<SigClientInterface>      _emitter;
 

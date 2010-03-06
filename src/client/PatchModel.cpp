@@ -160,7 +160,7 @@ PatchModel::remove_connection(const Shared::Port* src_port, const Shared::Port* 
 bool
 PatchModel::enabled() const
 {
-	const Raul::Atom& enabled = get_property(Shared::LV2URIMap::instance().ingen_enabled);
+	const Raul::Atom& enabled = get_property(_uris.ingen_enabled);
 	return (enabled.is_valid() && enabled.get_bool());
 }
 
@@ -168,7 +168,7 @@ PatchModel::enabled() const
 uint32_t
 PatchModel::internal_poly() const
 {
-	const Raul::Atom& poly = get_property(Shared::LV2URIMap::instance().ingen_polyphony);
+	const Raul::Atom& poly = get_property(_uris.ingen_polyphony);
 	return poly.is_valid() ? poly.get_int32() : 1;
 }
 
@@ -176,7 +176,7 @@ PatchModel::internal_poly() const
 bool
 PatchModel::polyphonic() const
 {
-	const Raul::Atom& poly = get_property(Shared::LV2URIMap::instance().ingen_polyphonic);
+	const Raul::Atom& poly = get_property(_uris.ingen_polyphonic);
 	return poly.is_valid() && poly.get_bool();
 }
 

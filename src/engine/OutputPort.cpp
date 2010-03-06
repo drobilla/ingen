@@ -39,10 +39,8 @@ OutputPort::OutputPort(BufferFactory&      bufs,
                        size_t              buffer_size)
 	: PortImpl(bufs, parent, symbol, index, poly, type, value, buffer_size)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-
 	if (!dynamic_cast<Patch*>(parent))
-		add_property(uris.rdf_type, uris.lv2_OutputPort);
+		add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort);
 
 	if (type == PortType::CONTROL)
 		_broadcast = true;

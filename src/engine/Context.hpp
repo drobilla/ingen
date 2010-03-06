@@ -20,6 +20,7 @@
 
 #include "EventSink.hpp"
 #include "tuning.hpp"
+#include "types.hpp"
 
 namespace Ingen {
 

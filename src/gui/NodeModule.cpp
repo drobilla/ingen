@@ -120,7 +120,7 @@ NodeModule::show_human_names(bool b)
 	const LV2URIMap& uris = App::instance().uris();
 
 	if (b && node()->plugin()) {
-		Glib::Mutex::Lock lock(App::instance().world()->rdf_world->mutex());
+		Glib::Mutex::Lock lock(App::instance().world()->rdf_world()->mutex());
 		const Raul::Atom& name_property = node()->get_property(uris.lv2_name);
 		if (name_property.type() == Atom::STRING)
 			set_name(name_property.get_string());

@@ -138,7 +138,7 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 bool
 LV2Node::instantiate(BufferFactory& bufs)
 {
-	const LV2URIMap&   uris = Shared::LV2URIMap::instance();
+	const LV2URIMap&   uris = bufs.uris();
 	SharedPtr<LV2Info> info = _lv2_plugin->lv2_info();
 	SLV2Plugin         plug = _lv2_plugin->slv2_plugin();
 
@@ -148,7 +148,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	_ports     = new Raul::Array<PortImpl*>(num_ports, NULL);
 	_instances = new Instances(_polyphony, SharedPtr<void>());
 
-	_features = info->world().lv2_features->lv2_features(this);
+	_features = info->world().lv2_features()->lv2_features(this);
 
 	uint32_t port_buffer_size = 0;
 	SLV2Value ctx_ext_uri = slv2_value_new_uri(info->lv2_world(), LV2_CONTEXT_MESSAGE);
@@ -309,8 +309,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 		SLV2Values types = slv2_port_get_value(plug, id, supports_pred);
 		for (uint32_t i = 0; i < slv2_values_size(types); ++i) {
 			SLV2Value type = slv2_values_get_at(types, i);
-			std::cout << path() << " port " << id << " supports " <<
-				slv2_value_as_uri(type) << std::endl;
+			Raul::info << path() << " port " << id << " supports " <<
+					slv2_value_as_uri(type) << std::endl;
 			if (slv2_value_is_uri(type)) {
 				port->add_property(uris.obj_supports, Raul::URI(slv2_value_as_uri(type)));
 			}

@@ -32,8 +32,9 @@ namespace Ingen {
 namespace Shared {
 
 
-Builder::Builder(CommonInterface& interface)
-	: _interface(interface)
+Builder::Builder(SharedPtr<Shared::LV2URIMap> uris, CommonInterface& interface)
+	: _uris(uris)
+	, _interface(interface)
 {
 }
 
@@ -41,7 +42,7 @@ Builder::Builder(CommonInterface& interface)
 void
 Builder::build(SharedPtr<const GraphObject> object)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const LV2URIMap& uris = *_uris.get();
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (!object->path().is_root()) {

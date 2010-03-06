@@ -37,17 +37,17 @@ namespace Ingen {
 void
 MessageContext::run(PortImpl* port, FrameTime time)
 {
-	if (ThreadManager::current_thread_id() == THREAD_PRE_PROCESS) {
+	if (ThreadManager::thread_is(THREAD_PRE_PROCESS)) {
 		assert(port);
 		Glib::Mutex::Lock lock(_mutex);
 		_non_rt_request = Request(time, port);
 		_sem.post();
 		_cond.wait(_mutex);
-	} else if (ThreadManager::current_thread_id() == THREAD_PROCESS) {
+	} else if (ThreadManager::thread_is(THREAD_PROCESS)) {
 		Request r(time, port);
 		_requests.write(sizeof(Request), &r);
 		// signal() will be called at the end of this process cycle
-	} else if (ThreadManager::current_thread_id() == THREAD_MESSAGE) {
+	} else if (ThreadManager::thread_is(THREAD_MESSAGE)) {
 		warn << "Message context recursion at " << port->path() << endl;
 	} else {
 		error << "Run requested from unknown thread" << endl;

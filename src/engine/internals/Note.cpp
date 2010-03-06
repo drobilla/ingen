@@ -43,18 +43,27 @@ namespace Internals {
 
 using namespace Shared;
 
-static InternalPlugin note_plugin(NS_INTERNALS "Note", "note");
+InternalPlugin* NoteNode::internal_plugin(Shared::LV2URIMap& uris) {
+	return new InternalPlugin(uris, NS_INTERNALS "Note", "note");
+}
 
-InternalPlugin& NoteNode::internal_plugin() { return note_plugin; }
-
-NoteNode::NoteNode(BufferFactory& bufs, const string& path, bool polyphonic, PatchImpl* parent, SampleRate srate)
-	: NodeImpl(&note_plugin, path, polyphonic, parent, srate)
+NoteNode::NoteNode(
+		InternalPlugin*    plugin,
+		BufferFactory&     bufs,
+		const std::string& path,
+		bool               polyphonic,
+		PatchImpl*         parent,
+		SampleRate         srate)
+	: NodeImpl(plugin, path, polyphonic, parent, srate)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)
 	, _sustain(false)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const LV2URIMap& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(5);
+
+
+	std::cout << "NEW NOTE NODE" << std::endl;
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());
 	_midi_in_port->set_property(uris.lv2_name, "Input");

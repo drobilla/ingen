@@ -19,6 +19,7 @@
 #define INGEN_SERIALISATION_LOADER_HPP
 
 #include <string>
+#include <list>
 #include <glibmm/ustring.h>
 #include <boost/optional.hpp>
 #include "interface/GraphObject.hpp"
@@ -68,6 +69,18 @@ public:
 			boost::optional<Raul::Path>   parent=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Symbol> symbol=boost::optional<Raul::Symbol>(),
 			boost::optional<Properties>   data=boost::optional<Properties>());
+
+	struct PatchRecord {
+		PatchRecord(const Raul::URI& u, const Glib::ustring& f) : uri(u), filename(f) {}
+		const Raul::URI     uri;
+		const Glib::ustring filename;
+	};
+
+	typedef std::list<PatchRecord> PatchRecords;
+
+	virtual PatchRecords find_patches(
+			Ingen::Shared::World* world,
+			const Glib::ustring&  manifest_uri);
 
 private:
 	boost::optional<Raul::Path> parse(

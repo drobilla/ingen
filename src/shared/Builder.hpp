@@ -25,8 +25,9 @@ namespace Raul { class Path; }
 namespace Ingen {
 namespace Shared {
 
-class GraphObject;
 class CommonInterface;
+class GraphObject;
+class LV2URIMap;
 
 
 /** Wrapper for CommonInterface to create existing objects/models.
@@ -36,7 +37,7 @@ class CommonInterface;
 class Builder
 {
 public:
-	Builder(CommonInterface& interface);
+	Builder(SharedPtr<Shared::LV2URIMap> uris, CommonInterface& interface);
 	virtual ~Builder() {}
 
 	void build(SharedPtr<const GraphObject> object);
@@ -45,7 +46,8 @@ public:
 private:
 	void build_object(SharedPtr<const GraphObject> object);
 
-	CommonInterface& _interface;
+	SharedPtr<Shared::LV2URIMap> _uris;
+	CommonInterface&             _interface;
 };
 
 

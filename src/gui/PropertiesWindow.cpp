@@ -18,7 +18,6 @@
 #include <cassert>
 #include <string>
 #include "raul/log.hpp"
-#include "module/ingen_module.hpp"
 #include "module/World.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PluginModel.hpp"
@@ -89,7 +88,7 @@ PropertiesWindow::set_object(SharedPtr<ObjectModel> model)
 
 	set_title(model->path().chop_scheme() + " Properties - Ingen");
 
-	Shared::World* world = ingen_get_world();
+	Shared::World* world = App::instance().world();
 
 	ostringstream ss;
 	unsigned n_rows = 0;
@@ -100,7 +99,7 @@ PropertiesWindow::set_object(SharedPtr<ObjectModel> model)
 		const Raul::Atom& value = i->second;
 
 		// Column 0: Property
-		Gtk::Label* lab = manage(new Gtk::Label(world->rdf_world->qualify(i->first.str()), 0.0, 0.5));
+		Gtk::Label* lab = manage(new Gtk::Label(world->rdf_world()->qualify(i->first.str()), 0.0, 0.5));
 		_table->attach(*lab, 0, 1, n_rows, n_rows + 1, Gtk::FILL|Gtk::SHRINK, Gtk::SHRINK);
 
 		// Column 1: Type

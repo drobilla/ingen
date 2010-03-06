@@ -77,13 +77,13 @@ public:
 	virtual ~Driver() {}
 
 	/** Activate driver (begin processing graph and events). */
-	virtual void activate()   = 0;
+	virtual void activate() {}
 
 	/** Deactivate driver (stop processing graph and events). */
-	virtual void deactivate() = 0;
+	virtual void deactivate() {}
 
 	/** Return true iff driver is activated (processing graph and events). */
-	virtual bool is_activated() const = 0;
+	virtual bool is_activated() const { return true; }
 
 	/** Create a port ready to be inserted with add_input (non realtime).
 	 * May return NULL if the Driver can not create the port for some reason.
@@ -97,7 +97,7 @@ public:
 	virtual void add_port(DriverPort* port) = 0;
 
 	/** Remove a system visible port. */
-	virtual Raul::List<DriverPort*>::Node* remove_port(const Raul::Path& path) = 0;
+	virtual Raul::Deletable* remove_port(const Raul::Path& path, Ingen::DriverPort** port=NULL) = 0;
 
 	/** Return true iff this driver supports the given type of I/O */
 	virtual bool supports(Shared::PortType port_type, Shared::EventType event_type) = 0;

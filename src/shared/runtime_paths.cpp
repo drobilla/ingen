@@ -41,29 +41,44 @@ set_bundle_path_from_code(void* function)
 	Dl_info dli;
 	dladdr(function, &dli);
 
+#ifdef BUNDLE
 	char bin_loc[PATH_MAX];
 	realpath(dli.dli_fname, bin_loc);
+#else
+	const char* bin_loc = dli.dli_fname;
+#endif
 
-#ifdef BUNDLE
 	string bundle = bin_loc;
 	bundle = bundle.substr(0, bundle.find_last_of(G_DIR_SEPARATOR));
 	bundle_path = bundle;
-#endif
 }
 
+
+void
+set_bundle_path(const char* path)
+{
+	bundle_path = path;
+}
+
+
+/** Return the absolute path of a file in an Ingen LV2 bundle
+ */
+std::string
+bundle_file_path(const std::string& name)
+{
+	return Glib::build_filename(bundle_path, name);
+}
 
 /** Return the absolute path of a 'resource' file.
  */
 std::string
 data_file_path(const std::string& name)
 {
-	std::string ret;
 #ifdef BUNDLE
-	ret = Glib::build_filename(bundle_path, Glib::build_path(INGEN_DATA_DIR, name));
+	return Glib::build_filename(bundle_path, Glib::build_path(INGEN_DATA_DIR, name));
 #else
-	ret = Glib::build_filename(INGEN_DATA_DIR, name);
+	return Glib::build_filename(INGEN_DATA_DIR, name);
 #endif
-	return ret;
 }
 
 
@@ -72,13 +87,11 @@ data_file_path(const std::string& name)
 std::string
 module_path(const std::string& name)
 {
-	std::string ret;
 #ifdef BUNDLE
-	ret = Glib::Module::build_path(Glib::build_path(bundle_path, INGEN_MODULE_DIR), name);
+	return  Glib::Module::build_path(Glib::build_path(bundle_path, INGEN_MODULE_DIR), name);
 #else
-	ret = Glib::Module::build_path(INGEN_MODULE_DIR, name);
+	return Glib::Module::build_path(INGEN_MODULE_DIR, name);
 #endif
-	return ret;
 }
 
 

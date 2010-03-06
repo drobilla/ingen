@@ -58,22 +58,23 @@ using namespace Shared;
 
 bool ThreadManager::single_threaded = true;
 
-Engine::Engine(Ingen::Shared::World* world)
-	: _world(world)
+Engine::Engine(Ingen::Shared::World* a_world)
+	: _world(a_world)
 	, _maid(new Raul::Maid(maid_queue_size))
 	, _post_processor(new PostProcessor(*this, post_processor_queue_size))
 	, _broadcaster(new ClientBroadcaster())
-	, _node_factory(new NodeFactory(world))
+	, _node_factory(new NodeFactory(a_world))
 	, _message_context(new MessageContext(*this))
-	, _buffer_factory(new BufferFactory(*this, world->uris))
-	, _control_bindings(new ControlBindings(*this, world->uris))
+	, _buffer_factory(new BufferFactory(*this, a_world->uris()))
+	//, _buffer_factory(NULL)
+	, _control_bindings(new ControlBindings(*this))
 	, _quit_flag(false)
 	, _activated(false)
 {
-	if (world->store) {
-		assert(PtrCast<EngineStore>(world->store));
+	if (a_world->store()) {
+		assert(PtrCast<EngineStore>(a_world->store()));
 	} else {
-		world->store = SharedPtr<Shared::Store>(new EngineStore());
+		a_world->set_store(SharedPtr<Shared::Store>(new EngineStore()));
 	}
 }
 
@@ -101,7 +102,7 @@ Engine::~Engine()
 SharedPtr<EngineStore>
 Engine::engine_store() const
 {
-	 return PtrCast<EngineStore>(_world->store);
+	 return PtrCast<EngineStore>(_world->store());
 }
 
 
@@ -137,13 +138,6 @@ Engine::main_iteration()
 }
 
 
-Ingen::QueuedEngineInterface*
-Engine::new_local_interface()
-{
-	return new Ingen::QueuedEngineInterface(*this, Ingen::event_queue_size);
-}
-
-
 void
 Engine::add_event_source(SharedPtr<EventSource> source)
 {
@@ -164,18 +158,23 @@ execute_and_delete_event(ProcessContext& context, QueuedEvent* ev)
 bool
 Engine::activate()
 {
+	if (_activated)
+		return true;
+
 	assert(_driver);
+	//assert(ThreadManager::single_threaded == true);
+	ThreadManager::single_threaded = true;
 
 	_buffer_factory->set_block_length(_driver->block_length());
 
 	_message_context->Thread::start();
 
-	uint32_t parallelism = _world->conf->option("parallelism").get_int32();
+	uint32_t parallelism = _world->conf()->option("parallelism").get_int32();
 
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->activate_source();
 
-	const LV2URIMap& uris = *world()->uris;
+	const LV2URIMap& uris = *world()->uris().get();
 
 	// Create root patch
 	PatchImpl* root_patch = _driver->root_patch();
@@ -185,7 +184,7 @@ Engine::activate()
 		root_patch->meta().set_property(uris.ingen_polyphony, Raul::Atom(int32_t(1)));
 		root_patch->set_property(uris.rdf_type, uris.ingen_Node);
 		root_patch->activate(*_buffer_factory);
-		_world->store->add(root_patch);
+		_world->store()->add(root_patch);
 		root_patch->compiled_patch(root_patch->compile());
 		_driver->set_root_patch(root_patch);
 

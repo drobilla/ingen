@@ -29,6 +29,8 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/fileutils.h>
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
@@ -101,19 +103,26 @@ void
 Serialiser::write_manifest(const std::string& bundle_uri,
                            const Records&     records)
 {
-	const string filename = Glib::filename_from_uri(bundle_uri) + "manifest.ttl";
+	const string bundle_path(Glib::filename_from_uri(bundle_uri));
+	const string filename(Glib::build_filename(bundle_path, "manifest.ttl"));
 	start_to_filename(filename);
     _model->set_base_uri(bundle_uri);
 	for (Records::const_iterator i = records.begin(); i != records.end(); ++i) {
 		SharedPtr<Patch> patch = PtrCast<Patch>(i->object);
 		if (patch) {
-			const Redland::Resource subject(_model->world(), uri_to_symbol(i->uri));
+			const std::string filename = uri_to_symbol(i->uri) + INGEN_PATCH_FILE_EXT;
+			const Redland::Resource subject(_model->world(), filename);
 			_model->add_statement(subject, "rdf:type",
 				Redland::Resource(_model->world(), "ingen:Patch"));
 			_model->add_statement(subject, "rdf:type",
 				Redland::Resource(_model->world(), "lv2:Plugin"));
 			_model->add_statement(subject, "rdfs:seeAlso",
-				Redland::Resource(_model->world(), i->uri));
+				Redland::Resource(_model->world(), filename));
+			_model->add_statement(subject, "lv2:binary",
+				Redland::Resource(_model->world(),
+					Glib::Module::build_path("", "ingen_lv2")));
+			symlink(Glib::Module::build_path(INGEN_MODULE_DIR, "ingen_lv2").c_str(),
+					Glib::Module::build_path(bundle_path, "ingen_lv2").c_str());
 		}
 	}
 	finish();
@@ -178,7 +187,7 @@ Serialiser::start_to_filename(const string& filename)
 		_base_uri = "file://" + filename;
 	else
 		_base_uri = filename;
-	_model = new Redland::Model(*_world.rdf_world);
+	_model = new Redland::Model(*_world.rdf_world());
     _model->set_base_uri(_base_uri);
 	_mode = TO_FILE;
 }
@@ -201,7 +210,7 @@ Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 
 	_root_path = root;
 	_base_uri = base_uri;
-	_model = new Redland::Model(*_world.rdf_world);
+	_model = new Redland::Model(*_world.rdf_world());
     _model->set_base_uri(base_uri);
 	_mode = TO_STRING;
 }
@@ -310,18 +319,26 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 	_model->add_statement(patch_id, "rdf:type",
 			Redland::Resource(_model->world(), "lv2:Plugin"));
 
-	GraphObject::Properties::const_iterator s = patch->properties().find("lv2:symbol");
-	// If symbol is stored as a property, write that
-	if (s != patch->properties().end() && s->second.is_valid()) {
-		_model->add_statement(patch_id, "lv2:symbol",
-			Redland::Literal(_model->world(), s->second.get_string()));
-	// Otherwise take the one from our path (if possible)
-	} else if (!patch->path().is_root()) {
-		_model->add_statement(patch_id, "lv2:symbol",
-				Redland::Literal(_model->world(), patch->path().symbol()));
+	const LV2URIMap& uris = *_world.uris().get();
+
+	// Always write a symbol (required by Ingen)
+	string symbol;
+	GraphObject::Properties::const_iterator s = patch->properties().find(uris.lv2_symbol);
+	if (s == patch->properties().end()
+			|| !s->second.type() == Atom::STRING
+			|| !Symbol::is_valid(s->second.get_string())) {
+		symbol = Glib::path_get_basename(Glib::filename_from_uri(_model->base_uri().to_c_string()));
+		symbol = Symbol::symbolify(symbol.substr(0, symbol.find('.')));
+		_model->add_statement(patch_id, uris.lv2_symbol.c_str(),
+			Redland::Literal(_model->world(), symbol));
 	} else {
-		LOG(warn) << "Patch has no lv2:symbol" << endl;
+		symbol = s->second.get_string();
 	}
+
+	// If the patch has no doap:name (required by LV2), use the symbol
+	if (patch->meta().properties().find(uris.doap_name) == patch->meta().properties().end())
+		_model->add_statement(patch_id, uris.doap_name.c_str(),
+				Redland::Literal(_model->world(), symbol));
 
 	serialise_properties(patch_id, NULL, patch->meta().properties());
 
@@ -427,6 +444,9 @@ Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 		_model->add_statement(port_id, "rdf:instanceOf",
 				class_rdf_node(port->path()));
 
+	_model->add_statement(port_id, "lv2:symbol",
+			Redland::Literal(_model->world(), port->path().symbol()));
+
 	serialise_properties(port_id, &port->meta(), port->properties());
 }
 
@@ -449,6 +469,9 @@ Serialiser::serialise_port_meta(const Port* port, const Redland::Node& port_id)
 
 	_model->add_statement(port_id, "lv2:index",
 			AtomRDF::atom_to_node(*_model, Atom((int)port->index())));
+
+	_model->add_statement(port_id, "lv2:symbol",
+			Redland::Literal(_model->world(), port->path().symbol()));
 
 	if (!port->get_property("http://lv2plug.in/ns/lv2core#default").is_valid()) {
 		if (port->is_input()) {
@@ -480,7 +503,7 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 		? instance_rdf_node(connection->dst_port_path())
 		: class_rdf_node(connection->dst_port_path());
 
-	const Redland::Node connection_node = _world.rdf_world->blank_id();
+	const Redland::Node connection_node = _world.rdf_world()->blank_id();
 	_model->add_statement(connection_node, "ingen:source", src_node);
 	_model->add_statement(connection_node, "ingen:destination", dst_node);
 	if (parent) {

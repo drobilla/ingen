@@ -31,7 +31,6 @@ EventSource::EventSource(size_t queue_size)
 	: _blocking_semaphore(0)
 {
 	Thread::set_context(THREAD_PRE_PROCESS);
-	assert(context() == THREAD_PRE_PROCESS);
 	set_name("EventSource");
 }
 

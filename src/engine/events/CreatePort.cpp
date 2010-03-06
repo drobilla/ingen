@@ -84,7 +84,7 @@ CreatePort::pre_process()
 
 	_patch = _engine.engine_store()->find_patch(_path.parent());
 
-	const LV2URIMap& uris = *_engine.world()->uris.get();
+	const LV2URIMap& uris = *_engine.world()->uris().get();
 
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());

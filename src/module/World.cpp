@@ -15,12 +15,19 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "ingen-config.h"
+#include <boost/utility.hpp>
 #include <glibmm/module.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
+#ifdef HAVE_SLV2
+#include "slv2/slv2.h"
+#endif
 #include "raul/log.hpp"
-#include "ingen-config.h"
+#include "redlandmm/World.hpp"
 #include "shared/runtime_paths.hpp"
+#include "shared/LV2Features.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "World.hpp"
 
 #define LOG(s) s << "[Module] "
@@ -85,6 +92,124 @@ load_module(const string& name)
 	}
 }
 
+
+struct WorldImpl : public boost::noncopyable {
+	WorldImpl(Raul::Configuration* conf, int& a_argc, char**& a_argv)
+		: argc(a_argc)
+		, argv(a_argv)
+		, conf(conf)
+		, lv2_features(NULL)
+		, rdf_world(new Redland::World())
+		, uris(new Shared::LV2URIMap())
+#ifdef HAVE_SLV2
+		, slv2_world(slv2_world_new_using_rdf_world(rdf_world->c_obj()))
+#endif
+	{
+#ifdef HAVE_SLV2
+		lv2_features = new Ingen::Shared::LV2Features();
+		lv2_features->add_feature(LV2_URI_MAP_URI, uris);
+		slv2_world_load_all(slv2_world);
+#endif
+
+		// Set up RDF namespaces
+		rdf_world->add_prefix("dc",      "http://purl.org/dc/elements/1.1/");
+		rdf_world->add_prefix("doap",    "http://usefulinc.com/ns/doap#");
+		rdf_world->add_prefix("ingen",   "http://drobilla.net/ns/ingen#");
+		rdf_world->add_prefix("ingenui", "http://drobilla.net/ns/ingenuity#");
+		rdf_world->add_prefix("lv2",     "http://lv2plug.in/ns/lv2core#");
+		rdf_world->add_prefix("lv2ev",   "http://lv2plug.in/ns/ext/event#");
+		rdf_world->add_prefix("ctx",     "http://lv2plug.in/ns/dev/contexts#");
+		rdf_world->add_prefix("lv2midi", "http://lv2plug.in/ns/ext/midi#");
+		rdf_world->add_prefix("midi",    "http://drobilla.net/ns/dev/midi#");
+		rdf_world->add_prefix("owl",     "http://www.w3.org/2002/07/owl#");
+		rdf_world->add_prefix("rdfs",    "http://www.w3.org/2000/01/rdf-schema#");
+		rdf_world->add_prefix("sp",      "http://lv2plug.in/ns/dev/string-port#");
+		rdf_world->add_prefix("xsd",     "http://www.w3.org/2001/XMLSchema#");
+	}
+
+	virtual ~WorldImpl()
+	{
+		modules.clear();
+		interface_factories.clear();
+		script_runners.clear();
+
+	#ifdef HAVE_SLV2
+		slv2_world_free(slv2_world);
+		slv2_world = NULL;
+	#endif
+
+		delete rdf_world;
+		rdf_world = NULL;
+
+		delete lv2_features;
+		lv2_features = NULL;
+
+		uris.reset();
+	}
+
+	typedef std::map< const std::string, SharedPtr<Module> > Modules;
+	Modules modules;
+
+	typedef std::map<const std::string, World::InterfaceFactory> InterfaceFactories;
+	InterfaceFactories interface_factories;
+
+	typedef bool (*ScriptRunner)(World* world, const char* filename);
+	typedef std::map<const std::string, ScriptRunner> ScriptRunners;
+	ScriptRunners script_runners;
+
+	int&                                 argc;
+	char**&                              argv;
+	Raul::Configuration*                 conf;
+	LV2Features*                         lv2_features;
+	Redland::World*                      rdf_world;
+	SharedPtr<LV2URIMap>                 uris;
+    SharedPtr<EngineInterface>           engine;
+	SharedPtr<Engine>                    local_engine;
+    SharedPtr<Serialisation::Serialiser> serialiser;
+    SharedPtr<Serialisation::Parser>     parser;
+    SharedPtr<Store>                     store;
+#ifdef HAVE_SLV2
+    SLV2World                            slv2_world;
+#endif
+};
+
+
+World::World(Raul::Configuration* conf, int& argc, char**& argv)
+	: _impl(new WorldImpl(conf, argc, argv))
+{
+}
+
+
+World::~World()
+{
+	unload_all();
+	delete _impl;
+}
+
+void World::set_local_engine(SharedPtr<Engine> e)                  { _impl->local_engine = e; }
+void World::set_engine(SharedPtr<EngineInterface> e)               { _impl->engine = e; }
+void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
+void World::set_parser(SharedPtr<Serialisation::Parser> p)         { _impl->parser = p; }
+void World::set_store(SharedPtr<Store> s)                          { _impl->store = s; }
+void World::set_conf(Raul::Configuration* c)                       { _impl->conf = c; }
+
+int&                                 World::argc()         { return _impl->argc; }
+char**&                              World::argv()         { return _impl->argv; }
+SharedPtr<Engine>                    World::local_engine() { return _impl->local_engine; }
+SharedPtr<EngineInterface>           World::engine()       { return _impl->engine; }
+SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
+SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
+SharedPtr<Store>                     World::store()        { return _impl->store; }
+Raul::Configuration*                 World::conf()         { return _impl->conf; }
+LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
+
+#ifdef HAVE_SLV2
+SLV2World            World::slv2_world() { return _impl->slv2_world; }
+#endif
+Redland::World*      World::rdf_world() { return _impl->rdf_world; }
+SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }
+
+
 /** Load an Ingen module.
  * @return true on success, false on failure
  */
@@ -97,7 +222,7 @@ World::load(const char* name)
 		Module* module = module_load();
 		module->library = lib;
 		module->load(this);
-		modules.insert(make_pair(string(name), module));
+		_impl->modules.insert(make_pair(string(name), module));
 		return true;
 	} else {
 		LOG(error) << "Failed to load module `" << name << "'" << endl;
@@ -111,7 +236,7 @@ World::load(const char* name)
 void
 World::unload_all()
 {
-	modules.clear();
+	_impl->modules.clear();
 }
 
 
@@ -121,8 +246,8 @@ SharedPtr<Ingen::Shared::EngineInterface>
 World::interface(const std::string& url)
 {
 	const string scheme = url.substr(0, url.find(":"));
-	const InterfaceFactories::const_iterator i = interface_factories.find(scheme);
-	if (i == interface_factories.end()) {
+	const WorldImpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
+	if (i == _impl->interface_factories.end()) {
 		warn << "Unknown URI scheme `" << scheme << "'" << endl;
 		return SharedPtr<Ingen::Shared::EngineInterface>();
 	}
@@ -135,8 +260,8 @@ World::interface(const std::string& url)
 bool
 World::run(const std::string& mime_type, const std::string& filename)
 {
-	const ScriptRunners::const_iterator i = script_runners.find(mime_type);
-	if (i == script_runners.end()) {
+	const WorldImpl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
+	if (i == _impl->script_runners.end()) {
 		warn << "Unknown script MIME type `" << mime_type << "'" << endl;
 		return false;
 	}
@@ -147,7 +272,7 @@ World::run(const std::string& mime_type, const std::string& filename)
 void
 World::add_interface_factory(const std::string& scheme, InterfaceFactory factory)
 {
-	interface_factories.insert(make_pair(scheme, factory));
+	_impl->interface_factories.insert(make_pair(scheme, factory));
 }
 
 

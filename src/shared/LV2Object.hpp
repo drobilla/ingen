@@ -25,11 +25,12 @@ namespace Ingen {
 namespace Shared {
 
 class World;
+class LV2URIMap;
 
 namespace LV2Object {
 
-	bool to_atom(const LV2_Object* object, Raul::Atom& atom);
-	bool from_atom(const Raul::Atom& atom, LV2_Object* object);
+	bool to_atom(const Shared::LV2URIMap& uris, const LV2_Object* object, Raul::Atom& atom);
+	bool from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Object* object);
 
 } // namespace LV2Object
 

@@ -50,7 +50,7 @@ DuplexPort::DuplexPort(
 	, _is_output(is_output)
 {
 	assert(PortImpl::_parent == parent);
-	set_property(Shared::LV2URIMap::instance().ingen_polyphonic, polyphonic);
+	set_property(bufs.uris().ingen_polyphonic, polyphonic);
 }
 
 

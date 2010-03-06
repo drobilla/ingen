@@ -192,7 +192,7 @@ Port::set_control(float value, bool signal)
 		App&                        app   = App::instance();
 		Ingen::Shared::World* const world = app.world();
 		app.engine()->set_property(model()->path(),
-				world->uris->ingen_value, Atom(value));
+				world->uris()->ingen_value, Atom(value));
 		PatchWindow* pw = app.window_factory()->patch_window(
 				PtrCast<PatchModel>(model()->parent()));
 		if (!pw)
@@ -241,8 +241,7 @@ Port::dash()
 	if (!pm)
 		return NULL;
 
-	const Raul::Atom& context = pm->get_property(uris.ctx_context);
-	if (!context.is_valid() || context.type() != Atom::URI || context == uris.ctx_AudioContext)
+	if (pm->has_context(uris.ctx_AudioContext))
 		return NULL;
 
 	if (!_dash) {

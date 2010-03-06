@@ -111,13 +111,13 @@ SetMetadata::pre_process()
 		return;
 	}
 
-	const LV2URIMap& uris = *_engine.world()->uris.get();
+	const LV2URIMap& uris = *_engine.world()->uris().get();
 
 	if (is_graph_object && !_object) {
 		Path path(_subject.str());
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
 		PortType data_type(PortType::UNKNOWN);
-		ResourceImpl::type(_properties, is_patch, is_node, is_port, is_output, data_type);
+		ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output, data_type);
 
 		// Create a separate request without a source so EventSource isn't unblocked twice
 		SharedPtr<Request> sub_request(new Request(NULL, _request->client(), _request->id()));

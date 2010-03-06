@@ -74,7 +74,7 @@ RequestMetadata::pre_process()
 
 	GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_resource);
 	if (obj) {
-		if (_key == _engine.world()->uris->ingen_value)
+		if (_key == _engine.world()->uris()->ingen_value)
 			_special_type = PORT_VALUE;
 		else if (_is_meta)
 			_value = obj->meta().get_property(_key);
@@ -101,7 +101,7 @@ RequestMetadata::execute(ProcessContext& context)
 			} else {
 				IntrusivePtr<ObjectBuffer> obuf = PtrCast<ObjectBuffer>(port->buffer(0));
 				if (obuf) {
-					LV2Object::to_atom(obuf->object(), _value);
+					LV2Object::to_atom(*_engine.world()->uris().get(), obuf->object(), _value);
 				}
 			}
 		} else {
@@ -119,7 +119,7 @@ RequestMetadata::post_process()
 			if (_resource) {
 				_request->respond_ok();
 				_request->client()->set_property(_uri.str(),
-						_engine.world()->uris->ingen_value, _value);
+						_engine.world()->uris()->ingen_value, _value);
 			} else {
 				const string msg = "Get value for non-port " + _uri.str();
 				_request->respond_error(msg);

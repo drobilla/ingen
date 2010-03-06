@@ -212,15 +212,13 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 
 	size_t poly = 0;
 
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-
 	/* Use parameter overridden polyphony, if given */
-	GraphObject::Properties::iterator poly_param = initial_data.find(uris.ingen_polyphony);
+	GraphObject::Properties::iterator poly_param = initial_data.find(_uris->ingen_polyphony);
 	if (poly_param != initial_data.end() && poly_param->second.type() == Atom::INT)
 		poly = poly_param->second.get_int32();
 
-	if (initial_data.find(uris.ingen_document) == initial_data.end())
-		initial_data.insert(make_pair(uris.ingen_document, filename));
+	if (initial_data.find(_uris->ingen_document) == initial_data.end())
+		initial_data.insert(make_pair(_uris->ingen_document, filename));
 
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 
@@ -284,8 +282,8 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 	// Create it, if we're not merging
 	if (!existing && !path.is_root()) {
 		Resource::Properties props;
-		props.insert(make_pair(uris.rdf_type,        uris.ingen_Patch));
-		props.insert(make_pair(uris.ingen_polyphony, Atom((int32_t)poly)));
+		props.insert(make_pair(_uris->rdf_type,        _uris->ingen_Patch));
+		props.insert(make_pair(_uris->ingen_polyphony, Atom((int32_t)poly)));
 		_engine->put(path, props);
 		for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_property(path, i->first, i->second);
@@ -330,7 +328,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 				for ( ; i != pm->controls().end(); ++i) {
 					const float value = i->value();
 					_engine->set_property(translate_load_path(i->port_path().str()),
-							uris.ingen_value, Atom(value));
+							_uris->ingen_value, Atom(value));
 				}
 			} else {
 				LOG(warn) << "Unknown preset `" << pm->name() << "'" << endl;
@@ -347,7 +345,7 @@ DeprecatedLoader::load_patch(const Glib::ustring&    filename,
 	//	_engine->set_property(subject, i->first, i->second);
 
 	if (!existing)
-		_engine->set_property(path, uris.ingen_enabled, (bool)true);
+		_engine->set_property(path, _uris->ingen_enabled, (bool)true);
 
 	_load_path_translations.clear();
 
@@ -439,8 +437,6 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		return false;
 	}
 
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-
 	// Compatibility hacks for old patches that represent patch ports as nodes
 	if (plugin_uri.empty()) {
 		bool is_port = false;
@@ -450,23 +446,23 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 		if (plugin_type == "Internal") {
 			is_port = true;
 			if (plugin_label == "audio_input") {
-				props.insert(make_pair(uris.rdf_type, uris.lv2_AudioPort));
-				props.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_AudioPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_InputPort));
 			} else if (plugin_label == "audio_output") {
-				props.insert(make_pair(uris.rdf_type, uris.lv2_AudioPort));
-				props.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_AudioPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_OutputPort));
 			} else if (plugin_label == "control_input") {
-				props.insert(make_pair(uris.rdf_type, uris.lv2_ControlPort));
-				props.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_ControlPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_InputPort));
 			} else if (plugin_label == "control_output" ) {
-				props.insert(make_pair(uris.rdf_type, uris.lv2_ControlPort));
-				props.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_ControlPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_OutputPort));
 			} else if (plugin_label == "midi_input") {
-				props.insert(make_pair(uris.rdf_type, uris.lv2ev_EventPort));
-				props.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2ev_EventPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_InputPort));
 			} else if (plugin_label == "midi_output" ) {
-				props.insert(make_pair(uris.rdf_type, uris.lv2ev_EventPort));
-				props.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2ev_EventPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->lv2_OutputPort));
 			} else {
 				is_port = false;
 			}
@@ -523,11 +519,11 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				plugin_uri = "om:" + plugin_type + ":" + library_name + ":" + plugin_label;
 
 			Resource::Properties props;
-			props.insert(make_pair(uris.rdf_type,       uris.ingen_Node));
-			props.insert(make_pair(uris.rdf_instanceOf, Atom(Atom::URI, plugin_uri)));
+			props.insert(make_pair(_uris->rdf_type,       _uris->ingen_Node));
+			props.insert(make_pair(_uris->rdf_instanceOf, Atom(Atom::URI, plugin_uri)));
 			_engine->put(path, props);
 
-			_engine->set_property(path, uris.ingen_polyphonic, bool(polyphonic));
+			_engine->set_property(path, _uris->ingen_polyphonic, bool(polyphonic));
 
 			for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 				_engine->set_property(path, i->first, i->second);
@@ -538,10 +534,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 	// Not deprecated
 	} else {
 		Resource::Properties props;
-		props.insert(make_pair(uris.rdf_type,       uris.ingen_Node));
-		props.insert(make_pair(uris.rdf_instanceOf, Atom(Atom::URI, plugin_uri)));
+		props.insert(make_pair(_uris->rdf_type,       _uris->ingen_Node));
+		props.insert(make_pair(_uris->rdf_instanceOf, Atom(Atom::URI, plugin_uri)));
 		_engine->put(path, props);
-		_engine->set_property(path, uris.ingen_polyphonic, bool(polyphonic));
+		_engine->set_property(path, _uris->ingen_polyphonic, bool(polyphonic));
 		for (GraphObject::Properties::const_iterator i = initial_data.begin(); i != initial_data.end(); ++i)
 			_engine->set_property(path, i->first, i->second);
 		return true;
@@ -562,15 +558,13 @@ DeprecatedLoader::load_subpatch(const string& base_filename, const Path& parent,
 	size_t poly     = 0;
 
 	GraphObject::Properties initial_data;
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-
 	while (cur != NULL) {
 		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
 
 		if ((!xmlStrcmp(cur->name, (const xmlChar*)"name"))) {
 			name = (const char*)key;
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"polyphony"))) {
-			initial_data.insert(make_pair(uris.ingen_polyphony, (int)poly));
+			initial_data.insert(make_pair(_uris->ingen_polyphony, (int)poly));
 		} else if ((!xmlStrcmp(cur->name, (const xmlChar*)"filename"))) {
 			filename = Glib::build_filename(base_filename, (const char*)key);
 		} else {  // Don't know what this tag is, add it as variable

@@ -30,6 +30,9 @@
 #include "shared/ResourceImpl.hpp"
 
 namespace Ingen {
+
+namespace Shared { class LV2URIMap; }
+
 namespace Client {
 
 class PatchModel;
@@ -46,6 +49,7 @@ class PluginModel : public Ingen::Shared::Plugin
 {
 public:
 	PluginModel(
+			Shared::LV2URIMap&                  uris,
 			const Raul::URI&                    uri,
 			const Raul::URI&                    type_uri,
 			const Shared::Resource::Properties& properties);

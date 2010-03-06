@@ -36,7 +36,7 @@ namespace Ingen {
 
 
 NodeImpl::NodeImpl(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphonic, PatchImpl* parent, SampleRate srate)
-	: GraphObjectImpl(parent, symbol)
+	: GraphObjectImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
 	, _polyphonic(polyphonic)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)

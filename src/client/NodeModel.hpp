@@ -32,6 +32,9 @@
 namespace Raul { class Path; }
 
 namespace Ingen {
+
+namespace Shared { class LV2URIMap; }
+
 namespace Client {
 
 class PluginModel;
@@ -71,8 +74,8 @@ public:
 protected:
 	friend class ClientStore;
 
-	NodeModel(const Raul::URI& plugin_uri, const Raul::Path& path);
-	NodeModel(SharedPtr<PluginModel> plugin, const Raul::Path& path);
+	NodeModel(Shared::LV2URIMap& uris, const Raul::URI& plugin_uri, const Raul::Path& path);
+	NodeModel(Shared::LV2URIMap& uris, SharedPtr<PluginModel> plugin, const Raul::Path& path);
 
 	NodeModel(const Raul::Path& path);
 	void add_child(SharedPtr<ObjectModel> c);
@@ -86,14 +89,14 @@ protected:
 
 	virtual void clear();
 
-	Ports                  _ports;      ///< Vector of ports (not a Table to preserve order)
-	Raul::URI              _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
-	SharedPtr<PluginModel> _plugin;     ///< The plugin this node is an instance of
+	Ports                        _ports;      ///< Vector of ports (not a Table to preserve order)
+	Raul::URI                    _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	SharedPtr<PluginModel>       _plugin;     ///< The plugin this node is an instance of
 
 private:
-	mutable uint32_t       _num_values; ///< Size of _min_values and _max_values
-	mutable float*         _min_values; ///< Port min values (cached for LV2)
-	mutable float*         _max_values; ///< Port max values (cached for LV2)
+	mutable uint32_t _num_values; ///< Size of _min_values and _max_values
+	mutable float*   _min_values; ///< Port min values (cached for LV2)
+	mutable float*   _max_values; ///< Port max values (cached for LV2)
 };
 
 

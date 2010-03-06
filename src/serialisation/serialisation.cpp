@@ -25,10 +25,10 @@ using namespace Ingen;
 
 struct IngenModule : public Shared::Module {
 	void load(Shared::World* world) {
-		world->parser = SharedPtr<Serialisation::Parser>(
-				new Serialisation::Parser());
-		world->serialiser = SharedPtr<Serialisation::Serialiser>(
-				new Serialisation::Serialiser(*world, world->store));
+		world->set_parser(SharedPtr<Serialisation::Parser>(
+				new Serialisation::Parser()));
+		world->set_serialiser(SharedPtr<Serialisation::Serialiser>(
+				new Serialisation::Serialiser(*world, world->store())));
 	}
 };
 

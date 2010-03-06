@@ -54,7 +54,7 @@ public:
 	SLV2Value message_port_class;
 
 	Ingen::Shared::World& world()     { return *_world; }
-	SLV2World             lv2_world() { return _world->slv2_world; }
+	SLV2World             lv2_world() { return _world->slv2_world(); }
 
 private:
 	Ingen::Shared::World* _world;

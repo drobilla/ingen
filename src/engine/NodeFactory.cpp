@@ -66,8 +66,7 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 NodeFactory::~NodeFactory()
 {
 	for (Plugins::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
-		if (i->second->type() != Shared::Plugin::Internal)
-			delete i->second;
+		delete i->second;
 
 	_plugins.clear();
 }
@@ -111,7 +110,7 @@ NodeFactory::load_plugins()
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	_world->rdf_world->mutex().lock();
+	_world->rdf_world()->mutex().lock();
 
 	// Only load if we havn't already, so every client connecting doesn't cause
 	// this (expensive!) stuff to happen.  Not the best solution - would be nice
@@ -132,24 +131,25 @@ NodeFactory::load_plugins()
 		_has_loaded = true;
 	}
 
-	_world->rdf_world->mutex().unlock();
+	_world->rdf_world()->mutex().unlock();
 }
 
 
 void
 NodeFactory::load_internal_plugins()
 {
-	InternalPlugin& controller_plug = ControllerNode::internal_plugin();
-	_plugins.insert(make_pair(controller_plug.uri(), &controller_plug));
+	Shared::LV2URIMap& uris = *_world->uris().get();
+	InternalPlugin* controller_plug = ControllerNode::internal_plugin(uris);
+	_plugins.insert(make_pair(controller_plug->uri(), controller_plug));
 
-	InternalPlugin& delay_plug = DelayNode::internal_plugin();
-	_plugins.insert(make_pair(delay_plug.uri(), &delay_plug));
+	InternalPlugin* delay_plug = DelayNode::internal_plugin(uris);
+	_plugins.insert(make_pair(delay_plug->uri(), delay_plug));
 
-	InternalPlugin& note_plug = NoteNode::internal_plugin();
-	_plugins.insert(make_pair(note_plug.uri(), &note_plug));
+	InternalPlugin* note_plug = NoteNode::internal_plugin(uris);
+	_plugins.insert(make_pair(note_plug->uri(), note_plug));
 
-	InternalPlugin& trigger_plug = TriggerNode::internal_plugin();
-	_plugins.insert(make_pair(trigger_plug.uri(), &trigger_plug));
+	InternalPlugin* trigger_plug = TriggerNode::internal_plugin(uris);
+	_plugins.insert(make_pair(trigger_plug->uri(), trigger_plug));
 }
 
 
@@ -159,7 +159,7 @@ NodeFactory::load_internal_plugins()
 void
 NodeFactory::load_lv2_plugins()
 {
-	SLV2Plugins plugins = slv2_world_get_all_plugins(_world->slv2_world);
+	SLV2Plugins plugins = slv2_world_get_all_plugins(_world->slv2_world());
 
 	for (unsigned i=0; i < slv2_plugins_size(plugins); ++i) {
 
@@ -177,7 +177,7 @@ NodeFactory::load_lv2_plugins()
 		_plugins.insert(make_pair(uri, plugin));
 	}
 
-	slv2_plugins_free(_world->slv2_world, plugins);
+	slv2_plugins_free(_world->slv2_world(), plugins);
 }
 #endif // HAVE_SLV2
 
@@ -254,10 +254,11 @@ NodeFactory::load_ladspa_plugins()
 				const Plugins::const_iterator i = _plugins.find(uri);
 
 				if (i == _plugins.end()) {
-					LADSPAPlugin* plugin = new LADSPAPlugin(lib_path, uri,
-						descriptor->UniqueID,
-						descriptor->Label,
-						descriptor->Name);
+					LADSPAPlugin* plugin = new LADSPAPlugin(*_world->uris().get(),
+							lib_path, uri,
+							descriptor->UniqueID,
+							descriptor->Label,
+							descriptor->Name);
 
 					_plugins.insert(make_pair(uri, plugin));
 

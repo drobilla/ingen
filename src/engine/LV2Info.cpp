@@ -31,22 +31,22 @@ using namespace std;
 namespace Ingen {
 
 LV2Info::LV2Info(Ingen::Shared::World* world)
-	: input_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_INPUT))
-	, output_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_OUTPUT))
-	, control_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_CONTROL))
-	, audio_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_AUDIO))
-	, event_class(slv2_value_new_uri(world->slv2_world, SLV2_PORT_CLASS_EVENT))
-	, value_port_class(slv2_value_new_uri(world->slv2_world, LV2_OBJECT_URI "#ValuePort"))
-	, message_port_class(slv2_value_new_uri(world->slv2_world, LV2_OBJECT_URI "#MessagePort"))
+	: input_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_INPUT))
+	, output_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_OUTPUT))
+	, control_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_CONTROL))
+	, audio_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_AUDIO))
+	, event_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_EVENT))
+	, value_port_class(slv2_value_new_uri(world->slv2_world(), LV2_OBJECT_URI "#ValuePort"))
+	, message_port_class(slv2_value_new_uri(world->slv2_world(), LV2_OBJECT_URI "#MessagePort"))
 	, _world(world)
 {
 	assert(world);
 
-	world->lv2_features->add_feature(LV2_EVENT_URI,
+	world->lv2_features()->add_feature(LV2_EVENT_URI,
 			SharedPtr<Shared::LV2Features::Feature>(new EventFeature()));
-	world->lv2_features->add_feature(LV2_BLOB_SUPPORT_URI,
+	world->lv2_features()->add_feature(LV2_BLOB_SUPPORT_URI,
 			SharedPtr<Shared::LV2Features::Feature>(new BlobFeature()));
-	world->lv2_features->add_feature(LV2_RESIZE_PORT_URI,
+	world->lv2_features()->add_feature(LV2_RESIZE_PORT_URI,
 			SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
 }
 

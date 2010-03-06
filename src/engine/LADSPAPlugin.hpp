@@ -37,11 +37,13 @@ class NodeImpl;
 class LADSPAPlugin : public PluginImpl
 {
 public:
-	LADSPAPlugin(const std::string& library_path,
-	             const std::string& uri,
-	             unsigned long      id,
-	             const std::string& label,
-	             const std::string& name);
+	LADSPAPlugin(
+			Shared::LV2URIMap& uris,
+			const std::string& library_path,
+	        const std::string& uri,
+	        unsigned long      id,
+	        const std::string& label,
+	        const std::string& name);
 
 	NodeImpl* instantiate(BufferFactory& bufs,
 	                      const std::string& name,

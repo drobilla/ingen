@@ -81,8 +81,8 @@ CreateNode::CreateNode(
 		_plugin_label = uri;
 	}
 
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-	const Resource::Properties::const_iterator p = properties.find(uris.ingen_polyphonic);
+	const Resource::Properties::const_iterator p = properties.find(
+			engine.world()->uris()->ingen_polyphonic);
 	if (p != properties.end() && p->second.type() == Raul::Atom::BOOL
 			&& p->second.get_bool())
 		_polyphonic = true;

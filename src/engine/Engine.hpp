@@ -61,7 +61,7 @@ class QueuedEvent;
  *
  * \ingroup engine
  */
-class Engine : boost::noncopyable
+class Engine : public boost::noncopyable
 {
 public:
 	Engine(Ingen::Shared::World* world);
@@ -78,32 +78,30 @@ public:
 	virtual bool activate();
 	virtual void deactivate();
 
-	void process_events(ProcessContext& context);
+	virtual void process_events(ProcessContext& context);
 
 	virtual bool activated() { return _activated; }
 
-	BufferFactory*     buffer_factory()   const { return _buffer_factory; }
-	ClientBroadcaster* broadcaster()      const { return _broadcaster; }
-	ControlBindings*   control_bindings() const { return _control_bindings; }
-	Driver*            driver()           const { return _driver.get(); }
-	MessageContext*    message_context()  const { return _message_context; }
-	NodeFactory*       node_factory()     const { return _node_factory; }
-	PostProcessor*     post_processor()   const { return _post_processor; }
-	Raul::Maid*        maid()             const { return _maid; }
+	virtual BufferFactory*     buffer_factory()   const { return _buffer_factory; }
+	virtual ClientBroadcaster* broadcaster()      const { return _broadcaster; }
+	virtual ControlBindings*   control_bindings() const { return _control_bindings; }
+	virtual Driver*            driver()           const { return _driver.get(); }
+	virtual MessageContext*    message_context()  const { return _message_context; }
+	virtual NodeFactory*       node_factory()     const { return _node_factory; }
+	virtual PostProcessor*     post_processor()   const { return _post_processor; }
+	virtual Raul::Maid*        maid()             const { return _maid; }
 
-	SharedPtr<EngineStore> engine_store() const;
+	virtual SharedPtr<EngineStore> engine_store() const;
 
 	virtual void set_driver(SharedPtr<Driver> driver) { _driver = driver; }
 
 	virtual void add_event_source(SharedPtr<EventSource> source);
 
-	Ingen::QueuedEngineInterface* new_local_interface();
-
-	Ingen::Shared::World* world() { return _world; }
+	virtual Ingen::Shared::World* world() { return _world; }
 
 	typedef std::vector<ProcessSlave*> ProcessSlaves;
-	inline const ProcessSlaves& process_slaves() const { return _process_slaves; }
-	inline ProcessSlaves& process_slaves() { return _process_slaves; }
+	virtual const ProcessSlaves& process_slaves() const { return _process_slaves; }
+	virtual ProcessSlaves& process_slaves() { return _process_slaves; }
 
 private:
 	typedef std::set< SharedPtr<EventSource> > EventSources;

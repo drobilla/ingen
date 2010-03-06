@@ -18,6 +18,8 @@
 #include <cassert>
 #include <cmath>
 #include "raul/log.hpp"
+#include "module/World.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "ThreadManager.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
@@ -39,7 +41,8 @@ using namespace Shared;
 
 
 PatchImpl::PatchImpl(Engine& engine, const Raul::Symbol& symbol, uint32_t poly, PatchImpl* parent, SampleRate srate, uint32_t internal_poly)
-	: NodeImpl(new PatchPlugin("http://example.org/FIXME", "patch", "Ingen Patch"),
+	: NodeImpl(new PatchPlugin(*engine.world()->uris().get(),
+				engine.world()->uris()->ingen_Patch.c_str(), "patch", "Ingen Patch"),
 		symbol, poly, parent, srate)
 	, _engine(engine)
 	, _internal_poly(internal_poly)
@@ -338,9 +341,7 @@ PatchImpl::has_connection(const PortImpl* src_port, const PortImpl* dst_port) co
 uint32_t
 PatchImpl::num_ports() const
 {
-	ThreadID context = ThreadManager::current_thread_id();
-
-	if (context == THREAD_PROCESS)
+	if (ThreadManager::thread_is(THREAD_PROCESS))
 		return NodeImpl::num_ports();
 	else
 		return _input_ports.size() + _output_ports.size();

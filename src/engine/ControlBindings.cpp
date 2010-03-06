@@ -18,6 +18,8 @@
 #include <math.h>
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
+#include "shared/LV2URIMap.hpp"
+#include "module/World.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendBinding.hpp"
 #include "AudioBuffer.hpp"
@@ -36,9 +38,8 @@ using namespace Raul;
 namespace Ingen {
 
 
-ControlBindings::ControlBindings(Engine& engine, SharedPtr<Shared::LV2URIMap> map)
+ControlBindings::ControlBindings(Engine& engine)
 	: _engine(engine)
-	, _map(map)
 	, _learn_port(NULL)
 	, _bindings(new Bindings())
 	, _feedback(new EventBuffer(*_engine.buffer_factory(), 1024)) // FIXME: size
@@ -55,8 +56,8 @@ ControlBindings::~ControlBindings()
 ControlBindings::Key
 ControlBindings::port_binding(PortImpl* port)
 {
-	const Shared::LV2URIMap& uris    = Shared::LV2URIMap::instance();
-	const Raul::Atom&        binding = port->get_property(uris.ingen_controlBinding);
+	const Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Raul::Atom& binding = port->get_property(uris.ingen_controlBinding);
 	Key key;
 	if (binding.type() == Atom::DICT) {
 		const Atom::DictValue&          dict = binding.get_dict();
@@ -114,6 +115,7 @@ ControlBindings::port_binding_changed(ProcessContext& context, PortImpl* port)
 void
 ControlBindings::port_value_changed(ProcessContext& context, PortImpl* port)
 {
+	const Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 	Key key = port_binding(port);
 	if (key) {
 		int16_t  value = port_value_to_control(port, key.type);
@@ -150,7 +152,7 @@ ControlBindings::port_value_changed(ProcessContext& context, PortImpl* port)
 			break;
 		}
 		if (size > 0)
-			_feedback->append(0, 0, _map->midi_event.id, size, buf);
+			_feedback->append(0, 0, uris.midi_event.id, size, buf);
 	}
 }
 
@@ -166,7 +168,7 @@ ControlBindings::learn(PortImpl* port)
 Raul::Atom
 ControlBindings::control_to_port_value(PortImpl* port, Type type, int16_t value)
 {
-	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 
 	// TODO: cache these to avoid the lookup
 	float min     = port->get_property(uris.lv2_minimum).get_float();
@@ -203,7 +205,7 @@ ControlBindings::port_value_to_control(PortImpl* port, Type type)
 	if (port->value().type() != Atom::FLOAT)
 		return 0;
 
-	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 
 	// TODO: cache these to avoid the lookup
 	float min     = port->get_property(uris.lv2_minimum).get_float();
@@ -259,7 +261,7 @@ ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type ty
 bool
 ControlBindings::bind(ProcessContext& context, Key key)
 {
-	const Shared::LV2URIMap& uris = Shared::LV2URIMap::instance();
+	const Shared::LV2URIMap& uris = *context.engine().world()->uris().get();
 	assert(_learn_port);
 	if (key.type == MIDI_NOTE) {
 		bool toggled = _learn_port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
@@ -336,12 +338,14 @@ ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 	SharedPtr<Bindings> bindings = _bindings;
 	_feedback->clear();
 
+	const Shared::LV2URIMap& uris = *context.engine().world()->uris().get();
+
 	// Learn from input if necessary
 	if (_learn_port) {
 		for (buffer->rewind();
 				buffer->get_event(&frames, &subframes, &type, &size, &buf);
 				buffer->increment()) {
-			if (type != _map->midi_event.id)
+			if (type != uris.midi_event.id)
 				continue;
 
 			const Key key = midi_event_key(size, buf, value);
@@ -358,7 +362,7 @@ ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 	for (buffer->rewind();
 			buffer->get_event(&frames, &subframes, &type, &size, &buf);
 			buffer->increment()) {
-		if (type != _map->midi_event.id)
+		if (type != uris.midi_event.id)
 			continue;
 
 		const Key key = midi_event_key(size, buf, value);

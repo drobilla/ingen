@@ -27,10 +27,10 @@ using namespace Ingen;
 struct IngenOSCModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
 		SharedPtr<OSCEngineReceiver> interface(
-				new Ingen::OSCEngineReceiver(*world->local_engine.get(),
+				new Ingen::OSCEngineReceiver(*world->local_engine().get(),
 					event_queue_size,
-					world->conf->option("engine-port").get_int32()));
-		world->local_engine->add_event_source(interface);
+					world->conf()->option("engine-port").get_int32()));
+		world->local_engine()->add_event_source(interface);
 	}
 };
 

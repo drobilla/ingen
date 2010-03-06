@@ -192,7 +192,7 @@ JackDriver::JackDriver(Engine& engine)
 	, _process_context(engine)
 	, _root_patch(NULL)
 {
-	_midi_event_type = _engine.world()->uris->uri_to_id(
+	_midi_event_type = _engine.world()->uris()->uri_to_id(
 			NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 }
 
@@ -274,8 +274,8 @@ JackDriver::activate()
 	}
 
 	if (!_client)
-		attach(_engine.world()->conf->option("jack-server").get_string(),
-				_engine.world()->conf->option("jack-client").get_string(), NULL);
+		attach(_engine.world()->conf()->option("jack-server").get_string(),
+				_engine.world()->conf()->option("jack-client").get_string(), NULL);
 
 	jack_set_process_callback(_client, process_cb, this);
 
@@ -338,14 +338,19 @@ JackDriver::add_port(DriverPort* port)
  *
  * It is the callers responsibility to delete the returned port.
  */
-Raul::List<DriverPort*>::Node*
-JackDriver::remove_port(const Path& path)
+Raul::Deletable*
+JackDriver::remove_port(const Path& path, DriverPort** port)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		if ((*i)->patch_port()->path() == path)
-			return (Raul::List<DriverPort*>::Node*)(_ports.erase(i));
+	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+		if ((*i)->patch_port()->path() == path) {
+			Raul::List<Ingen::JackPort*>::Node* node = _ports.erase(i);
+			if (port)
+				*port = node->elem();
+			return node;
+		}
+	}
 
 	LOG(warn) << "Unable to find port " << path << endl;
 	return NULL;

@@ -58,6 +58,8 @@ public:
 	bool is_integer()     const { return port_property("http://lv2plug.in/ns/lv2core#integer"); }
 	bool is_toggle()      const { return port_property("http://lv2plug.in/ns/lv2core#toggled"); }
 
+	bool has_context(const Raul::URI& context);
+
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 
 	Raul::Atom& set_property(const Raul::URI&  uri, const Raul::Atom& value);
@@ -84,8 +86,9 @@ public:
 private:
 	friend class ClientStore;
 
-	PortModel(const Raul::Path& path, uint32_t index, Shared::PortType type, Direction dir)
-		: ObjectModel(path)
+	PortModel(Shared::LV2URIMap& uris,
+			const Raul::Path& path, uint32_t index, Shared::PortType type, Direction dir)
+		: ObjectModel(uris, path)
 		, _index(index)
 		, _direction(dir)
 		, _current_val(0.0f)

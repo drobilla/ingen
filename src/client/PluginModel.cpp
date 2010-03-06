@@ -40,8 +40,9 @@ SLV2Plugins PluginModel::_slv2_plugins = NULL;
 Redland::World* PluginModel::_rdf_world = NULL;
 
 
-PluginModel::PluginModel(const URI& uri, const URI& type_uri, const Resource::Properties& properties)
-	: ResourceImpl(uri)
+PluginModel::PluginModel(Shared::LV2URIMap& uris,
+		const URI& uri, const URI& type_uri, const Resource::Properties& properties)
+	: ResourceImpl(uris, uri)
 	, _type(type_from_uri(type_uri.str()))
 {
 	add_properties(properties);
@@ -69,7 +70,7 @@ PluginModel::get_property(const URI& key) const
 		return val;
 
 	// No lv2:symbol from data or engine, invent one
-	if (key == Shared::LV2URIMap::instance().lv2_symbol) {
+	if (key == _uris.lv2_symbol) {
 		const URI& uri = this->uri();
 		size_t last_slash = uri.find_last_of('/');
 		size_t last_hash  = uri.find_last_of('#');

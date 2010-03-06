@@ -136,13 +136,11 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	if (graph_parent)
 		client->put(port->meta_uri(), port->meta().properties());
 
-	const Shared::LV2URIMap& map = Shared::LV2URIMap::instance();
-
 	client->put(port->path(), port->properties());
 
 	// Send control value
 	if (port->is_a(PortType::CONTROL))
-		client->set_property(port->path(), map.ingen_value, port->value());
+		client->set_property(port->path(), port->bufs().uris().ingen_value, port->value());
 
 	if (bundle)
 		client->bundle_end();

@@ -32,10 +32,8 @@ namespace LV2Object {
 
 
 bool
-to_atom(const LV2_Object* object, Raul::Atom& atom)
+to_atom(const Shared::LV2URIMap& uris, const LV2_Object* object, Raul::Atom& atom)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-
 	if (object->type == uris.object_class_string.id) {
 		atom = Raul::Atom((char*)(object + 1));
 		return true;
@@ -57,10 +55,8 @@ to_atom(const LV2_Object* object, Raul::Atom& atom)
  * object->size should be the capacity of the object (not including header)
  */
 bool
-from_atom(const Raul::Atom& atom, LV2_Object* object)
+from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Object* object)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
-
 	char* str;
 	switch (atom.type()) {
 	case Raul::Atom::FLOAT:

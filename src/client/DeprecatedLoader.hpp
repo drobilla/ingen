@@ -33,6 +33,9 @@
 namespace Raul { class Path; }
 
 namespace Ingen {
+
+namespace Shared { class LV2URIMap; }
+
 namespace Client {
 
 class PresetModel; // defined in DeprecatedLoader.cpp
@@ -45,8 +48,11 @@ class PresetModel; // defined in DeprecatedLoader.cpp
 class DeprecatedLoader
 {
 public:
-	DeprecatedLoader(SharedPtr<Shared::EngineInterface> engine)
-		: _engine(engine)
+	DeprecatedLoader(
+			SharedPtr<Shared::LV2URIMap> uris,
+			SharedPtr<Shared::EngineInterface> engine)
+		: _uris(uris)
+		, _engine(engine)
 	{
 		assert(_engine);
 	}
@@ -64,6 +70,7 @@ private:
 	std::string nameify_if_invalid(const std::string& name);
 	std::string translate_load_path(const std::string& path);
 
+	SharedPtr<Shared::LV2URIMap>       _uris;
 	SharedPtr<Shared::EngineInterface> _engine;
 
 	/// Translations of paths from the loading file to actual paths (for deprecated patches)

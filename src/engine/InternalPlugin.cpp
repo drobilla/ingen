@@ -32,11 +32,11 @@ namespace Ingen {
 
 using namespace Internals;
 
-InternalPlugin::InternalPlugin(const std::string& uri, const std::string& symbol)
-	: PluginImpl(Plugin::Internal, uri)
+InternalPlugin::InternalPlugin(Shared::LV2URIMap& uris,
+		const std::string& uri, const std::string& symbol)
+	: PluginImpl(uris, Plugin::Internal, uri)
 	, _symbol(symbol)
 {
-	const LV2URIMap& uris = Shared::LV2URIMap::instance();
 	set_property(uris.rdf_type, uris.ingen_Internal);
 }
 
@@ -53,14 +53,15 @@ InternalPlugin::instantiate(BufferFactory&    bufs,
 	const SampleCount srate = engine.driver()->sample_rate();
 
 	const string uri_str = uri().str();
+
 	if (uri_str == NS_INTERNALS "Controller") {
-		return new ControllerNode(bufs, name, polyphonic, parent, srate);
+		return new ControllerNode(this, bufs, name, polyphonic, parent, srate);
 	} else if (uri_str == NS_INTERNALS "Delay") {
-		return new DelayNode(bufs, name, polyphonic, parent, srate);
+		return new DelayNode(this, bufs, name, polyphonic, parent, srate);
 	} else if (uri_str == NS_INTERNALS "Note") {
-		return new NoteNode(bufs, name, polyphonic, parent, srate);
+		return new NoteNode(this, bufs, name, polyphonic, parent, srate);
 	} else if (uri_str == NS_INTERNALS "Trigger") {
-		return new TriggerNode(bufs, name, polyphonic, parent, srate);
+		return new TriggerNode(this, bufs, name, polyphonic, parent, srate);
 	} else {
 		return NULL;
 	}

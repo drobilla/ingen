@@ -31,9 +31,9 @@ namespace Ingen {
 namespace GUI {
 
 
-ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
+ThreadedLoader::ThreadedLoader(SharedPtr<Shared::LV2URIMap> uris, SharedPtr<EngineInterface> engine)
 	: _engine(engine)
-	, _deprecated_loader(engine)
+	, _deprecated_loader(uris, engine)
 {
 	set_name("Loader");
 
@@ -47,12 +47,12 @@ ThreadedLoader::ThreadedLoader(SharedPtr<EngineInterface> engine)
 SharedPtr<Parser>
 ThreadedLoader::parser()
 {
-	Ingen::Shared::World* world = ingen_get_world();
+	Ingen::Shared::World* world = App::instance().world();
 
-	if (!world->parser)
+	if (!world->parser())
 		world->load("ingen_serialisation");
 
-	return world->parser;
+	return world->parser();
 }
 
 
@@ -79,7 +79,7 @@ ThreadedLoader::load_patch(bool                             merge,
 {
 	_mutex.lock();
 
-	Ingen::Shared::World* world = ingen_get_world();
+	Ingen::Shared::World* world = App::instance().world();
 
 	Glib::ustring engine_base = "";
 	if (engine_parent) {
@@ -101,9 +101,9 @@ ThreadedLoader::load_patch(bool                             merge,
 				false)));
 	} else {
 		_events.push_back(sigc::hide_return(sigc::bind(
-				sigc::mem_fun(world->parser.get(), &Ingen::Serialisation::Parser::parse_document),
+				sigc::mem_fun(world->parser().get(), &Ingen::Serialisation::Parser::parse_document),
 				App::instance().world(),
-				App::instance().world()->engine.get(),
+				App::instance().world()->engine().get(),
 				document_uri,
 				data_path,
 				engine_parent,

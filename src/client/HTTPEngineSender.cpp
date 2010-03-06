@@ -33,8 +33,8 @@ using namespace Shared;
 namespace Client {
 
 
-HTTPEngineSender::HTTPEngineSender(const World* world, const URI& engine_url)
-	: _world(*world->rdf_world)
+HTTPEngineSender::HTTPEngineSender(World* world, const URI& engine_url)
+	: _world(*world->rdf_world())
 	, _engine_url(engine_url)
 	, _id(0)
 	, _enabled(true)
