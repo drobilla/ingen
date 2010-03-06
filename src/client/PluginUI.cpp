@@ -109,8 +109,10 @@ PluginUI::PluginUI(Ingen::Shared::World* world,
 
 PluginUI::~PluginUI()
 {
-	Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
-	slv2_ui_instance_free(_instance);
+	if (_instance) {
+		Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
+		slv2_ui_instance_free(_instance);
+	}
 }
 
 

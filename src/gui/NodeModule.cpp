@@ -328,7 +328,7 @@ NodeModule::popup_gui()
 
 			return true;
 		} else {
-			warn << "No LV2 GUI for " << _node->path() << endl;
+			warn << "No LV2 GUI for " << _node->path().chop_scheme() << endl;
 		}
 	}
 #endif
