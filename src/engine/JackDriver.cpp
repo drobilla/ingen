@@ -470,7 +470,6 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->post_process(_process_context);
 
-
 	return 0;
 }
 

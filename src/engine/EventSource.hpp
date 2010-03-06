@@ -45,7 +45,9 @@ public:
 	virtual void activate_source()   { Slave::start(); }
 	virtual void deactivate_source() { Slave::stop(); }
 
-	void process(PostProcessor& dest, ProcessContext& context);
+	void process(PostProcessor& dest, ProcessContext& context, bool limit=true);
+
+	bool empty() { return _events.empty(); }
 
 	/** Signal that a blocking event is finished.
 	 *

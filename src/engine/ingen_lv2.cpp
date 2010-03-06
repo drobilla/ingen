@@ -25,19 +25,20 @@
 #include "raul/log.hpp"
 #include "raul/Thread.hpp"
 #include "raul/SharedPtr.hpp"
-#include "engine/AudioBuffer.hpp"
-#include "engine/Engine.hpp"
-#include "engine/ThreadManager.hpp"
-#include "engine/Driver.hpp"
-#include "engine/ProcessContext.hpp"
-#include "engine/PatchImpl.hpp"
-#include "engine/QueuedEngineInterface.hpp"
+#include "interface/EngineInterface.hpp"
 #include "module/World.hpp"
 #include "module/ingen_module.hpp"
 #include "shared/runtime_paths.hpp"
 #include "shared/Configuration.hpp"
+#include "engine/AudioBuffer.hpp"
+#include "engine/Driver.hpp"
+#include "engine/Engine.hpp"
+#include "engine/PatchImpl.hpp"
+#include "engine/PostProcessor.hpp"
+#include "engine/ProcessContext.hpp"
+#include "engine/QueuedEngineInterface.hpp"
+#include "engine/ThreadManager.hpp"
 #include "serialisation/Parser.hpp"
-#include "interface/EngineInterface.hpp"
 
 using namespace Ingen;
 
@@ -132,6 +133,8 @@ public:
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			(*i)->pre_process(_context);
 
+		_context.engine().process_events(_context);
+
 		if (_root_patch)
 			_root_patch->process(_context);
 
@@ -192,6 +195,8 @@ public:
 
 	virtual bool            is_realtime() const { return true; }
 	virtual ProcessContext& context()           { return _context; }
+
+	Ports& ports() { return _ports; }
 
 private:
 	ProcessContext _context;
@@ -254,27 +259,31 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	Raul::Thread::get().set_context(THREAD_PRE_PROCESS);
 	ThreadManager::single_threaded = true;
 
-	ProcessContext context(*engine.get());
-
 	// FIXME: fixed (or at least maximum) buffer size
 	engine->set_driver(SharedPtr<Driver>(new LV2Driver(*engine.get(), rate, 4096)));
 
 	engine->activate();
 	ThreadManager::single_threaded = true;
 
+	ProcessContext context(*engine.get());
+	context.locate(0, UINT_MAX, 0);
+
+	engine->post_processor()->set_end_time(UINT_MAX);
+
 	// FIXME: don't load all plugins, only necessary ones
 	plugin->world->engine()->load_plugins();
-	engine->process_events(context);
+	interface->process(*engine->post_processor(), context, false);
+	engine->post_processor()->process();
 
 	plugin->world->parser()->parse_document(plugin->world,
 			plugin->world->engine().get(), patch->filename);
-	engine->process_events(context);
+
+	while (!interface->empty()) {
+		interface->process(*engine->post_processor(), context, false);
+		engine->post_processor()->process();
+	}
 
 	engine->deactivate();
-
-	// Activate and deactivate to create root patch, allocate buffers, etc
-	//engine->activate();
-	//engine->deactivate();
 
 	return (LV2_Handle)plugin;
 }
@@ -283,6 +292,14 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 static void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
+	IngenPlugin* me = (IngenPlugin*)instance;
+	LV2::LV2Driver* driver = (LV2::LV2Driver*)me->world->local_engine()->driver();
+	if (port < driver->ports().size()) {
+		driver->ports().at(port)->set_buffer(data);
+		assert(driver->ports().at(port)->patch_port()->index() == port);
+	} else {
+		Raul::warn << "Connect to non-existent port " << port << std::endl;
+	}
 }
 
 

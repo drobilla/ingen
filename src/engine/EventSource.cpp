@@ -61,7 +61,7 @@ EventSource::push_queued(QueuedEvent* const ev)
  * Executed events will be pushed to @a dest.
  */
 void
-EventSource::process(PostProcessor& dest, ProcessContext& context)
+EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
@@ -82,7 +82,8 @@ EventSource::process(PostProcessor& dest, ProcessContext& context)
 	while (ev && ev->is_prepared() && ev->time() < context.end()) {
 		ev->execute(context);
 		new_head = new_head->next();
-		if (++num_events_processed > MAX_QUEUED_EVENTS)
+		++num_events_processed;
+		if (limit && num_events_processed > MAX_QUEUED_EVENTS)
 			break;
 		ev = (new_head ? (QueuedEvent*)new_head->elem() : NULL);
 	}
@@ -105,8 +106,6 @@ EventSource::_whipped()
 
 	QueuedEvent* const ev = (QueuedEvent*)pb->elem();
 	assert(ev);
-	if (!ev)
-		return;
 
 	assert(!ev->is_prepared());
 	ev->pre_process();
