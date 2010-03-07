@@ -619,7 +619,12 @@ PatchWindow::on_hide()
 bool
 PatchWindow::on_event(GdkEvent* event)
 {
-	return (_view->canvas()->canvas_event(event)) ? true : Gtk::Window::on_event(event);
+	if ((event->type == GDK_KEY_PRESS || event->type == GDK_KEY_RELEASE)
+			&& _view->canvas()->canvas_event(event)) {
+		return true;
+	} else {
+		return Gtk::Window::on_event(event);
+	}
 }
 
 
