@@ -114,11 +114,6 @@ private:
 	std::string              _base_uri;
 	Shared::World&           _world;
 	Redland::Model*          _model;
-
-#ifdef USE_BLANK_NODES
-	typedef std::map<Raul::Path, Redland::Node> NodeMap;
-	NodeMap _node_map;
-#endif
 };
 
 
