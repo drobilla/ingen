@@ -19,6 +19,7 @@
 #include <cassert>
 #include <cstring>
 #include <sstream>
+#include "ingen-config.h"
 #include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
 #include "OSCClientReceiver.hpp"

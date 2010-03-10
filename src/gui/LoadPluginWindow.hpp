@@ -24,6 +24,7 @@
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "raul/Table.hpp"
+#include "ingen-config.h"
 #include "interface/GraphObject.hpp"
 #include "client/ClientStore.hpp"
 #include "Window.hpp"
