@@ -15,16 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "redlandmm/World.hpp"
-#include "uri-map.lv2/uri-map.h"
-#include "ingen-config.h"
-#include "shared/LV2Features.hpp"
-#include "shared/LV2URIMap.hpp"
-#include "ingen_module.hpp"
 #include "World.hpp"
-#ifdef HAVE_SLV2
-#include "slv2/slv2.h"
-#endif
+#include "ingen_module.hpp"
 
 extern "C" {
 
