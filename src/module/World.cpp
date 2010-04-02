@@ -77,6 +77,9 @@ load_module(const string& name)
 			Shared::module_path(name),
             Glib::MODULE_BIND_LAZY);
 
+	// FIXME: SEGV on exit without this
+	module->make_resident();
+
 	if (*module) {
 		LOG(info) << "Loaded `" <<  name << "' from " << INGEN_MODULE_DIR << endl;
 		return SharedPtr<Glib::Module>(module);
@@ -129,6 +132,8 @@ struct WorldImpl : public boost::noncopyable {
 
 	virtual ~WorldImpl()
 	{
+		local_engine.reset();
+
 		modules.clear();
 		interface_factories.clear();
 		script_runners.clear();

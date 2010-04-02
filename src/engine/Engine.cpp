@@ -83,11 +83,11 @@ Engine::~Engine()
 {
 	deactivate();
 
-	for (EngineStore::iterator i = engine_store()->begin();
-			i != engine_store()->end(); ++i) {
-		if ( ! PtrCast<GraphObjectImpl>(i->second)->parent() )
-			i->second.reset();
-	}
+	SharedPtr<EngineStore> store = engine_store();
+	if (store)
+		for (EngineStore::iterator i = store->begin(); i != store->end(); ++i)
+			if ( ! PtrCast<GraphObjectImpl>(i->second)->parent() )
+				i->second.reset();
 
 	delete _broadcaster;
 	delete _node_factory;
