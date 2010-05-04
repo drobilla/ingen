@@ -18,7 +18,7 @@
 #include "raul/IntrusivePtr.hpp"
 #include "interface/ClientInterface.hpp"
 #include "events/RequestMetadata.hpp"
-#include "shared/LV2Object.hpp"
+#include "shared/LV2Atom.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
@@ -101,7 +101,7 @@ RequestMetadata::execute(ProcessContext& context)
 			} else {
 				IntrusivePtr<ObjectBuffer> obuf = PtrCast<ObjectBuffer>(port->buffer(0));
 				if (obuf) {
-					LV2Object::to_atom(*_engine.world()->uris().get(), obuf->atom(), _value);
+					LV2Atom::to_atom(*_engine.world()->uris().get(), obuf->atom(), _value);
 				}
 			}
 		} else {

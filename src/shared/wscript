@@ -10,8 +10,8 @@ def build(bld):
 		Builder.cpp
 		ClashAvoider.cpp
 		Configuration.cpp
+		LV2Atom.cpp
 		LV2Features.cpp
-		LV2Object.cpp
 		LV2URIMap.cpp
 		ResourceImpl.cpp
 		Store.cpp

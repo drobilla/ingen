@@ -20,7 +20,7 @@
 #include "event.lv2/event.h"
 #include "shared/LV2URIMap.hpp"
 #include "shared/LV2Features.hpp"
-#include "shared/LV2Object.hpp"
+#include "shared/LV2Atom.hpp"
 #include "module/World.hpp"
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
@@ -176,7 +176,7 @@ SetPortValue::apply(Context& context)
 		ObjectBuffer* const obuf = dynamic_cast<ObjectBuffer*>(buf);
 		if (obuf) {
 			obuf->atom()->size = obuf->size() - sizeof(LV2_Atom);
-			if (LV2Object::from_atom(uris, _value, obuf->atom())) {
+			if (LV2Atom::from_atom(uris, _value, obuf->atom())) {
 				debug << "Converted atom " << _value << " :: " << obuf->atom()->type
 					<< " * " << obuf->atom()->size << " @ " << obuf->atom() << endl;
 				return;

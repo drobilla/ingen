@@ -26,7 +26,7 @@
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "EventBuffer.hpp"
-#include "LV2Object.hpp"
+#include "LV2Atom.hpp"
 #include "NodeImpl.hpp"
 #include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
@@ -227,7 +227,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::VALUE:
 	case PortType::MESSAGE:
-		LV2Object::to_atom(_bufs.uris(), ((ObjectBuffer*)buffer(0).get())->atom(), val);
+		LV2Atom::to_atom(_bufs.uris(), ((ObjectBuffer*)buffer(0).get())->atom(), val);
 		break;
 	}
 

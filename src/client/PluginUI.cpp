@@ -20,7 +20,7 @@
 #include "atom.lv2/atom.h"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "shared/LV2Object.hpp"
+#include "shared/LV2Atom.hpp"
 #include "PluginUI.hpp"
 #include "NodeModel.hpp"
 #include "PortModel.hpp"
@@ -87,7 +87,7 @@ lv2_ui_write(LV2UI_Controller controller,
 	} else if (format == uris.object_transfer.id) {
 		LV2_Atom* buf = (LV2_Atom*)buffer;
 		Raul::Atom val;
-		Shared::LV2Object::to_atom(uris, buf, val);
+		Shared::LV2Atom::to_atom(uris, buf, val);
 		ui->world()->engine()->set_property(port->path(), uris.ingen_value, val);
 
 	} else {

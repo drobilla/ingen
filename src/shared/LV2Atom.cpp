@@ -20,7 +20,7 @@
 #include "uri-map.lv2/uri-map.h"
 #include "atom.lv2/atom.h"
 #include "LV2Features.hpp"
-#include "LV2Object.hpp"
+#include "LV2Atom.hpp"
 #include "LV2URIMap.hpp"
 
 using namespace std;
@@ -28,7 +28,7 @@ using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
-namespace LV2Object {
+namespace LV2Atom {
 
 
 bool
@@ -90,7 +90,7 @@ from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* objec
 }
 
 
-} // namespace LV2Object
+} // namespace LV2Atom
 
 } // namespace Shared
 } // namespace Ingen

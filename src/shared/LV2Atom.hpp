@@ -27,12 +27,12 @@ namespace Shared {
 class World;
 class LV2URIMap;
 
-namespace LV2Object {
+namespace LV2Atom {
 
 	bool to_atom(const Shared::LV2URIMap& uris, const LV2_Atom* object, Raul::Atom& atom);
 	bool from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* object);
 
-} // namespace LV2Object
+} // namespace LV2Atom
 
 } // namespace Shared
 } // namespace Ingen
