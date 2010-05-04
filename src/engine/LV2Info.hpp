@@ -31,7 +31,7 @@
 #include "shared/LV2Features.hpp"
 #include "uri-map.lv2/uri-map.h"
 #include "event.lv2/event.h"
-#include "object.lv2/object.h"
+#include "atom.lv2/atom.h"
 #include "resize-port.lv2/resize-port.h"
 
 namespace Ingen {

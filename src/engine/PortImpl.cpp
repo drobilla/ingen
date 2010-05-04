@@ -227,7 +227,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::VALUE:
 	case PortType::MESSAGE:
-		LV2Object::to_atom(_bufs.uris(), ((ObjectBuffer*)buffer(0).get())->object(), val);
+		LV2Object::to_atom(_bufs.uris(), ((ObjectBuffer*)buffer(0).get())->atom(), val);
 		break;
 	}
 

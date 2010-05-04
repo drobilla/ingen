@@ -18,7 +18,7 @@
 #define __STDC_LIMIT_MACROS 1
 #include <cassert>
 #include <stdint.h>
-#include "object.lv2/object.h"
+#include "atom.lv2/atom.h"
 #include "LV2Info.hpp"
 #include "module/World.hpp"
 #include "LV2Features.hpp"
@@ -36,8 +36,8 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 	, control_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_CONTROL))
 	, audio_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_AUDIO))
 	, event_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_EVENT))
-	, value_port_class(slv2_value_new_uri(world->slv2_world(), LV2_OBJECT_URI "#ValuePort"))
-	, message_port_class(slv2_value_new_uri(world->slv2_world(), LV2_OBJECT_URI "#MessagePort"))
+	, value_port_class(slv2_value_new_uri(world->slv2_world(), LV2_ATOM_URI "#ValuePort"))
+	, message_port_class(slv2_value_new_uri(world->slv2_world(), LV2_ATOM_URI "#MessagePort"))
 	, _world(world)
 {
 	assert(world);

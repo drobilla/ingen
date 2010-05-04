@@ -56,7 +56,7 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 	assert(src_port->path() != dst_port->path());
 
 	if (must_queue())
-		_queue = new Raul::RingBuffer<LV2_Object>(src_port->buffer_size() * 2);
+		_queue = new Raul::RingBuffer<LV2_Atom>(src_port->buffer_size() * 2);
 }
 
 
@@ -75,12 +75,12 @@ ConnectionImpl::get_sources(Context& context, uint32_t voice,
 		IntrusivePtr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs)
 {
 	if (must_queue() && _queue->read_space() > 0) {
-		LV2_Object obj;
-		_queue->peek(sizeof(LV2_Object), &obj);
+		LV2_Atom obj;
+		_queue->peek(sizeof(LV2_Atom), &obj);
 		IntrusivePtr<Buffer> buf = context.engine().buffer_factory()->get(
-				dst_port()->buffer_type(), sizeof(LV2_Object) + obj.size);
+				dst_port()->buffer_type(), sizeof(LV2_Atom) + obj.size);
 		void* data = buf->port_data(PortType::MESSAGE, context.offset());
-		_queue->full_read(sizeof(LV2_Object) + obj.size, (LV2_Object*)data);
+		_queue->full_read(sizeof(LV2_Atom) + obj.size, (LV2_Atom*)data);
 		srcs[num_srcs++] = buf;
 	} else if (must_mix()) {
 		// Mixing down voices: every src voice mixed into every dst voice
@@ -110,15 +110,15 @@ ConnectionImpl::queue(Context& context)
 	}
 
 	for (src_buf->rewind(); src_buf->is_valid(); src_buf->increment()) {
-		LV2_Event*  ev  = src_buf->get_event();
-		LV2_Object* obj = LV2_OBJECT_FROM_EVENT(ev);
+		LV2_Event* ev  = src_buf->get_event();
+		LV2_Atom*  obj = LV2_ATOM_FROM_EVENT(ev);
 		/*debug << _src_port->path() << " -> " << _dst_port->path()
 			<< " QUEUE OBJECT TYPE " << obj->type << ":";
 		for (size_t i = 0; i < obj->size; ++i)
 			debug << " " << std::hex << (int)obj->body[i];
 		debug << endl;*/
 
-		_queue->write(sizeof(LV2_Object) + obj->size, obj);
+		_queue->write(sizeof(LV2_Atom) + obj->size, obj);
 		context.engine().message_context()->run(_dst_port, context.start() + ev->frames);
 	}
 }

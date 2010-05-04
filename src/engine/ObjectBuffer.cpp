@@ -36,17 +36,17 @@ using namespace Shared;
 
 
 /** Allocate a new object buffer.
- * \a capacity is in bytes, including LV2_Object header
+ * \a capacity is in bytes, including LV2_Atom header
  */
 ObjectBuffer::ObjectBuffer(BufferFactory& bufs, size_t capacity)
 	: Buffer(bufs, PortType(PortType::VALUE), capacity)
 {
-	capacity += sizeof(LV2_Object);
+	capacity += sizeof(LV2_Atom);
 
 #ifdef HAVE_POSIX_MEMALIGN
 	const int ret = posix_memalign((void**)&_buf, 16, capacity);
 #else
-	_buf = (LV2_Object*)malloc(capacity);
+	_buf = (LV2_Atom*)malloc(capacity);
 	const int ret = (_buf != NULL) ? 0 : -1;
 #endif
 
@@ -83,17 +83,17 @@ ObjectBuffer::copy(Context& context, const Buffer* src_buf)
 
 	// Copy only if src is a POD object that fits
 	if (src->_buf->type != 0 && src_buf->size() <= size())
-		memcpy(_buf, src->_buf, sizeof(LV2_Object) + src_buf->size());
+		memcpy(_buf, src->_buf, sizeof(LV2_Atom) + src_buf->size());
 }
 
 
 void
 ObjectBuffer::resize(size_t size)
 {
-	const uint32_t contents_size = sizeof(LV2_Object) + _buf->size;
+	const uint32_t contents_size = sizeof(LV2_Atom) + _buf->size;
 
-	_buf  = (LV2_Object*)realloc(_buf, sizeof(LV2_Object) + size);
-	_size = size + sizeof(LV2_Object);
+	_buf  = (LV2_Atom*)realloc(_buf, sizeof(LV2_Atom) + size);
+	_size = size + sizeof(LV2_Atom);
 
 	// If we shrunk and chopped the current contents, clear corrupt data
 	if (size < contents_size)
@@ -109,9 +109,9 @@ ObjectBuffer::port_data(PortType port_type, SampleCount offset)
 	case PortType::AUDIO:
 		switch (_type.symbol()) {
 			case PortType::CONTROL:
-				return (float*)object()->body;
+				return (float*)atom()->body;
 			case PortType::AUDIO:
-				return (float*)((LV2_Vector_Body*)object()->body)->elems + offset;
+				return (float*)((LV2_Vector_Body*)atom()->body)->elems + offset;
 			default:
 				warn << "Audio data requested from non-audio buffer" << endl;
 				return NULL;
@@ -131,9 +131,9 @@ ObjectBuffer::port_data(PortType port_type, SampleCount offset) const
 	case PortType::AUDIO:
 		switch (_type.symbol()) {
 			case PortType::CONTROL:
-				return (float*)object()->body;
+				return (float*)atom()->body;
 			case PortType::AUDIO:
-				return (float*)((LV2_Vector_Body*)object()->body)->elems + offset;
+				return (float*)((LV2_Vector_Body*)atom()->body)->elems + offset;
 			default:
 				warn << "Audio data requested from non-audio buffer" << endl;
 				return NULL;
@@ -148,7 +148,7 @@ ObjectBuffer::port_data(PortType port_type, SampleCount offset) const
 void
 ObjectBuffer::prepare_write(Context& context)
 {
-	_buf->size = _size - sizeof(LV2_Object);
+	_buf->size = _size - sizeof(LV2_Atom);
 }
 
 

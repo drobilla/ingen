@@ -17,7 +17,7 @@
 
 #include "raul/log.hpp"
 #include "event.lv2/event-helpers.h"
-#include "object.lv2/object.h"
+#include "atom.lv2/atom.h"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "shared/LV2Object.hpp"
@@ -85,7 +85,7 @@ lv2_ui_write(LV2UI_Controller controller,
 		}
 
 	} else if (format == uris.object_transfer.id) {
-		LV2_Object* buf = (LV2_Object*)buffer;
+		LV2_Atom* buf = (LV2_Atom*)buffer;
 		Raul::Atom val;
 		Shared::LV2Object::to_atom(uris, buf, val);
 		ui->world()->engine()->set_property(port->path(), uris.ingen_value, val);

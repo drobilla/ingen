@@ -20,7 +20,7 @@
 
 #include "event.lv2/event.h"
 #include "event.lv2/event-helpers.h"
-#include "object.lv2/object.h"
+#include "atom.lv2/atom.h"
 #include "interface/PortType.hpp"
 #include "Buffer.hpp"
 
@@ -64,7 +64,7 @@ public:
 	               uint16_t* size,
 	               uint8_t** data) const;
 
-	LV2_Object* get_object() const;
+	LV2_Atom*   get_atom() const;
 	LV2_Event*  get_event() const;
 
 	bool append(uint32_t       frames,

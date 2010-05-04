@@ -163,13 +163,13 @@ EventBuffer::get_event(uint32_t* frames,
 
 /** Get the object currently pointed to, or NULL if invalid.
  */
-LV2_Object*
-EventBuffer::get_object() const
+LV2_Atom*
+EventBuffer::get_atom() const
 {
 	if (lv2_event_is_valid(&_iter)) {
 		uint8_t* data;
 		LV2_Event* ev = lv2_event_get(&_iter, &data);
-		return LV2_OBJECT_FROM_EVENT(ev);
+		return LV2_ATOM_FROM_EVENT(ev);
 	}
 	return NULL;
 }

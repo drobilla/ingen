@@ -101,7 +101,7 @@ RequestMetadata::execute(ProcessContext& context)
 			} else {
 				IntrusivePtr<ObjectBuffer> obuf = PtrCast<ObjectBuffer>(port->buffer(0));
 				if (obuf) {
-					LV2Object::to_atom(*_engine.world()->uris().get(), obuf->object(), _value);
+					LV2Object::to_atom(*_engine.world()->uris().get(), obuf->atom(), _value);
 				}
 			}
 		} else {

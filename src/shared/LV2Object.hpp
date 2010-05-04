@@ -19,7 +19,7 @@
 #define INGEN_SHARED_LV2OBJECT_HPP
 
 namespace Raul { class Atom; }
-typedef struct _LV2_Object LV2_Object;
+typedef struct _LV2_Atom LV2_Atom;
 
 namespace Ingen {
 namespace Shared {
@@ -29,8 +29,8 @@ class LV2URIMap;
 
 namespace LV2Object {
 
-	bool to_atom(const Shared::LV2URIMap& uris, const LV2_Object* object, Raul::Atom& atom);
-	bool from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Object* object);
+	bool to_atom(const Shared::LV2URIMap& uris, const LV2_Atom* object, Raul::Atom& atom);
+	bool from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* object);
 
 } // namespace LV2Object
 

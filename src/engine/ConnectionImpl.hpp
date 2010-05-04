@@ -25,7 +25,7 @@
 #include "raul/IntrusivePtr.hpp"
 #include "interface/PortType.hpp"
 #include "interface/Connection.hpp"
-#include "object.lv2/object.h"
+#include "atom.lv2/atom.h"
 #include "PortImpl.hpp"
 #include "PortImpl.hpp"
 
@@ -97,7 +97,7 @@ public:
 protected:
 	void dump() const;
 
-	Raul::RingBuffer<LV2_Object>* _queue;
+	Raul::RingBuffer<LV2_Atom>* _queue;
 
 	BufferFactory&     _bufs;
 	PortImpl* const    _src_port;

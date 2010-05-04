@@ -202,7 +202,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			"http://lv2plug.in/ns/lv2core#portProperty");
 
 	SLV2Value supports_pred = slv2_value_new_uri(info->lv2_world(),
-			LV2_OBJECT_URI "#supports");
+			LV2_ATOM_URI "#supports");
 
 	//SLV2Value as_large_as_pred = slv2_value_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/dev/resize-port#asLargeAs");

@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include "raul/log.hpp"
 #include "raul/SharedPtr.hpp"
-#include "object.lv2/object.h"
+#include "atom.lv2/atom.h"
 #include "ingen-config.h"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
@@ -42,29 +42,29 @@ AudioBuffer::AudioBuffer(BufferFactory& bufs, Shared::PortType type, size_t size
 	, _set_value(0)
 	, _set_time(0)
 {
-	assert(size >= sizeof(LV2_Object) + sizeof(Sample));
+	assert(size >= sizeof(LV2_Atom) + sizeof(Sample));
 	assert(this->size() >= size);
 	assert(data());
 	_type = type;
 
 	// Control port / Single float object
 	if (type == PortType::CONTROL) {
-		object()->type = 0;//map->float_type;
+		atom()->type = 0;//map->float_type;
 
 	// Audio port / Vector of float
 	} else {
 		assert(type == PortType::AUDIO);
-		object()->type = 0;//map->vector_type;
-		LV2_Vector_Body* body = (LV2_Vector_Body*)object()->body;
+		atom()->type = 0;//map->vector_type;
+		LV2_Vector_Body* body = (LV2_Vector_Body*)atom()->body;
 		body->elem_count = size / sizeof(Sample);
 		body->elem_type = 0;//map->float_type;
 	}
 	/*debug << "Created Audio Buffer" << endl
-		<< "\tobject @ " << (void*)object() << endl
-		<< "\tbody @   " << (void*)object()->body
-		<< "\t(offset " << (char*)object()->body - (char*)object() << ")" << endl
+		<< "\tobject @ " << (void*)atom() << endl
+		<< "\tbody @   " << (void*)atom()->body
+		<< "\t(offset " << (char*)atom()->body - (char*)atom() << ")" << endl
 		<< "\tdata @   " << (void*)data()
-		<< "\t(offset " << (char*)data() - (char*)object() << ")"
+		<< "\t(offset " << (char*)data() - (char*)atom() << ")"
 		<< endl;*/
 
 	clear();

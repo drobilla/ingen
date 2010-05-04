@@ -21,7 +21,7 @@
 #include <glib.h>
 #include <boost/shared_ptr.hpp>
 #include "raul/log.hpp"
-#include "object.lv2/object.h"
+#include "atom.lv2/atom.h"
 #include "LV2URIMap.hpp"
 
 using namespace std;
@@ -99,12 +99,12 @@ LV2URIMap::LV2URIMap()
 	, obj_MessagePort("http://lv2plug.in/ns/dev/objects#MessagePort")
 	, obj_ValuePort("http://lv2plug.in/ns/dev/objects#ValuePort")
 	, obj_supports("http://lv2plug.in/ns/dev/objects#supports")
-	, object_class_bool(LV2_OBJECT_URI "#Bool")
-	, object_class_float32(LV2_OBJECT_URI "#Float32")
-	, object_class_int32(LV2_OBJECT_URI "#Int32")
-	, object_class_string(LV2_OBJECT_URI "#String")
-	, object_class_vector(LV2_OBJECT_URI "#Vector")
-	, object_transfer(LV2_OBJECT_URI "#ObjectTransfer")
+	, object_class_bool(LV2_ATOM_URI "#Bool")
+	, object_class_float32(LV2_ATOM_URI "#Float32")
+	, object_class_int32(LV2_ATOM_URI "#Int32")
+	, object_class_string(LV2_ATOM_URI "#String")
+	, object_class_vector(LV2_ATOM_URI "#Vector")
+	, object_transfer(LV2_ATOM_URI "#ObjectTransfer")
 	, rdf_instanceOf(NS_RDF "instanceOf")
 	, rdf_type(NS_RDF "type")
 	, rdfs_seeAlso(NS_RDFS "seeAlso")

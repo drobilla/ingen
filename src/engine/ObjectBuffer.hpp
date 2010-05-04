@@ -19,7 +19,7 @@
 #define INGEN_ENGINE_OBJECTBUFFER_HPP
 
 #include "raul/Atom.hpp"
-#include "object.lv2/object.h"
+#include "atom.lv2/atom.h"
 #include "interface/PortType.hpp"
 #include "Buffer.hpp"
 
@@ -43,11 +43,11 @@ public:
 
 	void resize(size_t size);
 
-	LV2_Object*       object()       { return _buf; }
-	const LV2_Object* object() const { return _buf; }
+	LV2_Atom*       atom()       { return _buf; }
+	const LV2_Atom* atom() const { return _buf; }
 
 private:
-	LV2_Object* _buf; ///< Contents
+	LV2_Atom* _buf; ///< Contents
 };
 
 

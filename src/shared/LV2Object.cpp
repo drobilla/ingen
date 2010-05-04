@@ -18,7 +18,7 @@
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "uri-map.lv2/uri-map.h"
-#include "object.lv2/object.h"
+#include "atom.lv2/atom.h"
 #include "LV2Features.hpp"
 #include "LV2Object.hpp"
 #include "LV2URIMap.hpp"
@@ -32,7 +32,7 @@ namespace LV2Object {
 
 
 bool
-to_atom(const Shared::LV2URIMap& uris, const LV2_Object* object, Raul::Atom& atom)
+to_atom(const Shared::LV2URIMap& uris, const LV2_Atom* object, Raul::Atom& atom)
 {
 	if (object->type == uris.object_class_string.id) {
 		atom = Raul::Atom((char*)(object + 1));
@@ -55,7 +55,7 @@ to_atom(const Shared::LV2URIMap& uris, const LV2_Object* object, Raul::Atom& ato
  * object->size should be the capacity of the object (not including header)
  */
 bool
-from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Object* object)
+from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* object)
 {
 	char* str;
 	switch (atom.type()) {

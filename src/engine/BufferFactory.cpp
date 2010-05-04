@@ -70,7 +70,7 @@ BufferFactory::set_block_length(SampleCount block_length)
 size_t
 BufferFactory::audio_buffer_size(SampleCount nframes)
 {
-	return sizeof(LV2_Object) + sizeof(LV2_Vector_Body) + (nframes * sizeof(float));
+	return sizeof(LV2_Atom) + sizeof(LV2_Vector_Body) + (nframes * sizeof(float));
 }
 
 
@@ -81,7 +81,7 @@ BufferFactory::default_buffer_size(PortType type)
 		case PortType::AUDIO:
 			return audio_buffer_size(_engine.driver()->block_length());
 		case PortType::CONTROL:
-			return sizeof(LV2_Object) + sizeof(float);
+			return sizeof(LV2_Atom) + sizeof(float);
 		case PortType::EVENTS:
 			return _engine.driver()->block_length() * event_bytes_per_frame;
 		default:
@@ -133,17 +133,17 @@ BufferFactory::create(Shared::PortType type, size_t size)
 
 	if (type.is_control()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
-		ret->object()->type = _uris->object_class_vector.id;
-		((LV2_Vector_Body*)ret->object()->body)->elem_type = _uris->object_class_float32.id;
+		ret->atom()->type = _uris->object_class_vector.id;
+		((LV2_Vector_Body*)ret->atom()->body)->elem_type = _uris->object_class_float32.id;
 		buffer = ret;
 	} else if (type.is_audio()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
-		ret->object()->type = _uris->object_class_float32.id;
+		ret->atom()->type = _uris->object_class_float32.id;
 		buffer = ret;
 	} else if (type.is_events()) {
 		buffer = new EventBuffer(*this, size);
 	} else if (type.is_value() || type.is_message()) {
-		buffer = new ObjectBuffer(*this, std::max(size, sizeof(LV2_Object) + sizeof(void*)));
+		buffer = new ObjectBuffer(*this, std::max(size, sizeof(LV2_Atom) + sizeof(void*)));
 	} else {
 		error << "Failed to create buffer of unknown type" << endl;
 		return Ref();
