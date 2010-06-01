@@ -83,7 +83,6 @@ def configure(conf):
 
 	conf.write_config_header('ingen-config.h')
 
-	autowaf.print_summary(conf)
 	autowaf.display_msg(conf, "Jack", str(conf.env['HAVE_JACK'] == 1))
 	autowaf.display_msg(conf, "OSC", str(conf.env['HAVE_LIBLO'] == 1))
 	autowaf.display_msg(conf, "HTTP", str(conf.env['HAVE_SOUP'] == 1))
