@@ -97,8 +97,8 @@ module_path(const std::string& name)
 	// MacPorts glib doesnt seem to do portable path building correctly...
 	if (ret.substr(ret.length() - 3) == ".so")
 		ret = ret.substr(0, ret.length() - 2).append("dylib");
-	return ret;
 #endif
+	return ret;
 }
 
 
