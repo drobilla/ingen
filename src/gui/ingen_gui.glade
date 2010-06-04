@@ -4,6 +4,8 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkWindow" id="patch_win">
     <property name="title" translatable="yes">Ingen</property>
+    <property name="default_width">776</property>
+    <property name="default_height">480</property>
     <child>
       <widget class="GtkVBox" id="patch_win_vbox">
         <property name="visible">True</property>
