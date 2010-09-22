@@ -190,13 +190,13 @@ LV2Node::instantiate(BufferFactory& bufs)
 	slv2_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
 
 	SLV2Value context_pred = slv2_value_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/dev/contexts#context");
+			"http://lv2plug.in/ns/ext/contexts#context");
 
 	SLV2Value default_pred = slv2_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/lv2core#default");
 
 	SLV2Value min_size_pred = slv2_value_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/dev/resize-port#minimumSize");
+			"http://lv2plug.in/ns/ext/resize-port#minimumSize");
 
 	SLV2Value port_property_pred = slv2_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/lv2core#portProperty");
@@ -205,7 +205,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			LV2_ATOM_URI "#supports");
 
 	//SLV2Value as_large_as_pred = slv2_value_new_uri(info->lv2_world(),
-	//		"http://lv2plug.in/ns/dev/resize-port#asLargeAs");
+	//		"http://lv2plug.in/ns/ext/resize-port#asLargeAs");
 
 	for (uint32_t j = 0; j < num_ports; ++j) {
 		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);

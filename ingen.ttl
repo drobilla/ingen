@@ -2,7 +2,7 @@
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix hi:   <http://lv2plug.in/ns/dev/host-info#> .
+@prefix hi:   <http://lv2plug.in/ns/ext/host-info#> .
 
 <http://drobilla.net/software/ingen> a doap:Project, hi:Host ;
     doap:name "Ingen" ;
@@ -28,7 +28,7 @@
     ] , [
         hi:extension <http://lv2plug.in/ns/ext/midi> ;
     ] , [
-        hi:extension <http://lv2plug.in/ns/dev/presets> ;
+        hi:extension <http://lv2plug.in/ns/ext/presets> ;
     ] , [
         hi:extension <http://lv2plug.in/ns/ext/event> ;
     ] ;

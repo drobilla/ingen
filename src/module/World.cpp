@@ -121,12 +121,12 @@ struct WorldImpl : public boost::noncopyable {
 		rdf_world->add_prefix("ingenui", "http://drobilla.net/ns/ingenuity#");
 		rdf_world->add_prefix("lv2",     "http://lv2plug.in/ns/lv2core#");
 		rdf_world->add_prefix("lv2ev",   "http://lv2plug.in/ns/ext/event#");
-		rdf_world->add_prefix("ctx",     "http://lv2plug.in/ns/dev/contexts#");
+		rdf_world->add_prefix("ctx",     "http://lv2plug.in/ns/ext/contexts#");
 		rdf_world->add_prefix("lv2midi", "http://lv2plug.in/ns/ext/midi#");
-		rdf_world->add_prefix("midi",    "http://drobilla.net/ns/dev/midi#");
+		rdf_world->add_prefix("midi",    "http://drobilla.net/ns/ext/midi#");
 		rdf_world->add_prefix("owl",     "http://www.w3.org/2002/07/owl#");
 		rdf_world->add_prefix("rdfs",    "http://www.w3.org/2000/01/rdf-schema#");
-		rdf_world->add_prefix("sp",      "http://lv2plug.in/ns/dev/string-port#");
+		rdf_world->add_prefix("sp",      "http://lv2plug.in/ns/ext/string-port#");
 		rdf_world->add_prefix("xsd",     "http://www.w3.org/2001/XMLSchema#");
 	}
 

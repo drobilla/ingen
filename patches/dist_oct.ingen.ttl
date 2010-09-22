@@ -10,7 +10,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <DubDelay>
-    ingen:plugin <http://drobilla.net/ns/dev/mda-lv2/DubDelay> ;
+    ingen:plugin <http://drobilla.net/ns/ext/mda-lv2/DubDelay> ;
     ingen:polyphonic true ;
     ingen:port <DubDelay/delay>, <DubDelay/f_x_mix>, <DubDelay/fb_tone>, <DubDelay/feedback>, <DubDelay/in1>, <DubDelay/in2>, <DubDelay/lfo_dep_>, <DubDelay/lfo_rate>, <DubDelay/out1>, <DubDelay/out2>, <DubDelay/output> ;
     lv2var:variable [

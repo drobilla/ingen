@@ -43,12 +43,12 @@ LV2URIMap::Quark::c_str() const
 	return g_quark_to_string(id);
 }
 
-#define NS_CTX     "http://lv2plug.in/ns/dev/contexts#"
+#define NS_CTX     "http://lv2plug.in/ns/ext/contexts#"
 #define NS_INGEN   "http://drobilla.net/ns/ingen#"
 #define NS_INGENUI "http://drobilla.net/ns/ingenuity#"
 #define NS_LV2     "http://lv2plug.in/ns/lv2core#"
-#define NS_MIDI    "http://drobilla.net/ns/dev/midi#"
-#define NS_MIDI    "http://drobilla.net/ns/dev/midi#"
+#define NS_MIDI    "http://drobilla.net/ns/ext/midi#"
+#define NS_MIDI    "http://drobilla.net/ns/ext/midi#"
 #define NS_RDF     "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS    "http://www.w3.org/2000/01/rdf-schema#"
 
@@ -96,9 +96,9 @@ LV2URIMap::LV2URIMap()
 	, midi_controllerNumber(NS_MIDI "controllerNumber")
 	, midi_event("http://lv2plug.in/ns/ext/midi#MidiEvent")
 	, midi_noteNumber(NS_MIDI "noteNumber")
-	, obj_MessagePort("http://lv2plug.in/ns/dev/objects#MessagePort")
-	, obj_ValuePort("http://lv2plug.in/ns/dev/objects#ValuePort")
-	, obj_supports("http://lv2plug.in/ns/dev/objects#supports")
+	, obj_MessagePort("http://lv2plug.in/ns/ext/objects#MessagePort")
+	, obj_ValuePort("http://lv2plug.in/ns/ext/objects#ValuePort")
+	, obj_supports("http://lv2plug.in/ns/ext/objects#supports")
 	, object_class_bool(LV2_ATOM_URI "#Bool")
 	, object_class_float32(LV2_ATOM_URI "#Float32")
 	, object_class_int32(LV2_ATOM_URI "#Int32")
@@ -108,7 +108,7 @@ LV2URIMap::LV2URIMap()
 	, rdf_instanceOf(NS_RDF "instanceOf")
 	, rdf_type(NS_RDF "type")
 	, rdfs_seeAlso(NS_RDFS "seeAlso")
-	, string_transfer("http://lv2plug.in/ns/dev/string-port#StringTransfer")
+	, string_transfer("http://lv2plug.in/ns/ext/string-port#StringTransfer")
 	, ui_format_events("http://lv2plug.in/ns/extensions/ui#Events")
 	, wildcard(NS_INGEN "wildcard")
 {
