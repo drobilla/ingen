@@ -172,7 +172,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		if (i == 0 && ctx_ext) {
 			Raul::info << _lv2_plugin->uri() << " has message context" << endl;
 			assert(!_message_funcs);
-			_message_funcs = (LV2MessageContext*)ctx_ext;
+			_message_funcs = (LV2_Contexts_MessageContext*)ctx_ext;
 		}
 	}
 

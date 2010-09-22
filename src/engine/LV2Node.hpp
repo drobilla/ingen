@@ -70,7 +70,7 @@ protected:
 	Instances* _instances;
 	Instances* _prepared_instances;
 
-	LV2MessageContext* _message_funcs;
+	LV2_Contexts_MessageContext* _message_funcs;
 
 	SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
