@@ -36,7 +36,7 @@ namespace Shared { class Node; }
  */
 class LV2Info {
 public:
-	LV2Info(Ingen::Shared::World* world);
+	explicit LV2Info(Ingen::Shared::World* world);
 	~LV2Info();
 
 	SLV2Value input_class;

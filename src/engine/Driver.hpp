@@ -58,7 +58,7 @@ public:
 	DuplexPort* patch_port() const { return _patch_port; }
 
 protected:
-	DriverPort(DuplexPort* port) : _patch_port(port) {}
+	explicit DriverPort(DuplexPort* port) : _patch_port(port) {}
 
 	DuplexPort* _patch_port;
 };

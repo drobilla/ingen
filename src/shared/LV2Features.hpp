@@ -46,7 +46,7 @@ public:
 	public:
 		typedef std::vector< SharedPtr<LV2_Feature> > FeatureVector;
 
-		FeatureArray(FeatureVector& features)
+		explicit FeatureArray(FeatureVector& features)
 			: _features(features)
 		{
 			_array = (LV2_Feature**)malloc(sizeof(LV2_Feature) * (features.size() + 1));

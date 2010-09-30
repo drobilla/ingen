@@ -56,7 +56,7 @@ public:
 
 	typedef std::map<Key, PortImpl*> Bindings;
 
-	ControlBindings(Engine& engine);
+	explicit ControlBindings(Engine& engine);
 	~ControlBindings();
 
 	void learn(PortImpl* port);

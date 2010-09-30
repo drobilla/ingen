@@ -61,7 +61,7 @@ protected:
 	{}
 
 	// NULL event base (for internal events only!)
-	QueuedEvent(Engine& engine)
+	explicit QueuedEvent(Engine& engine)
 		: Event(engine, SharedPtr<Request>(), 0)
 		, _pre_processed(false)
 		, _blocking(false)

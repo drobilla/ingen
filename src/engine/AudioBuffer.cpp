@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <cassert>
 #include <stdlib.h>
+#include <cassert>
 #include "raul/log.hpp"
 #include "raul/SharedPtr.hpp"
 #include "atom.lv2/atom.h"

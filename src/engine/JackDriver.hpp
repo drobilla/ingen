@@ -77,7 +77,7 @@ private:
 class JackDriver : public Driver
 {
 public:
-	JackDriver(Engine& engine);
+	explicit JackDriver(Engine& engine);
 	~JackDriver();
 
 	bool supports(Shared::PortType port_type, Shared::EventType event_type);

@@ -39,7 +39,7 @@ class ProcessContext;
 class EventSource : protected Raul::Slave
 {
 public:
-	EventSource(size_t queue_size);
+	explicit EventSource(size_t queue_size);
 	virtual ~EventSource();
 
 	virtual void activate_source()   { Slave::start(); }

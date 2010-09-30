@@ -51,7 +51,7 @@ class LV2Info;
 class NodeFactory
 {
 public:
-	NodeFactory(Ingen::Shared::World* world);
+	explicit NodeFactory(Ingen::Shared::World* world);
 	~NodeFactory();
 
 	void load_plugins();

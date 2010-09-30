@@ -37,7 +37,7 @@ namespace Ingen {
 class ProcessContext : public Context
 {
 public:
-	ProcessContext(Engine& engine) : Context(engine, AUDIO) {}
+	explicit ProcessContext(Engine& engine) : Context(engine, AUDIO) {}
 };
 
 

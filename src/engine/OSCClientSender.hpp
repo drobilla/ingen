@@ -38,7 +38,7 @@ namespace Shared { class EngineInterface; }
 class OSCClientSender : public Shared::ClientInterface, public Shared::OSCSender
 {
 public:
-	OSCClientSender(const Raul::URI& url)
+	explicit OSCClientSender(const Raul::URI& url)
 		: _url(url)
 	{
 		_address = lo_address_new_from_url(url.c_str());

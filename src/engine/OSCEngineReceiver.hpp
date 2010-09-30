@@ -67,7 +67,7 @@ public:
 
 private:
 	struct ReceiveThread : public Raul::Thread {
-		ReceiveThread(OSCEngineReceiver& receiver) : _receiver(receiver) {}
+		explicit ReceiveThread(OSCEngineReceiver& receiver) : _receiver(receiver) {}
 		virtual void _run();
 	private:
 		OSCEngineReceiver& _receiver;

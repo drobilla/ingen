@@ -43,7 +43,7 @@ class HTTPClientSender
 	, public Shared::HTTPSender
 {
 public:
-	HTTPClientSender(Engine& engine)
+	explicit HTTPClientSender(Engine& engine)
 		: _engine(engine)
 		, _enabled(true)
 	{}

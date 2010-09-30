@@ -45,7 +45,7 @@ class PortImpl;
 class MessageContext : public Context, public Raul::Thread
 {
 public:
-	MessageContext(Engine& engine)
+	explicit MessageContext(Engine& engine)
 		: Context(engine, MESSAGE)
 		, Raul::Thread("MessageContext")
 		, _sem(0)

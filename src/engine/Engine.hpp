@@ -64,7 +64,7 @@ class QueuedEvent;
 class Engine : public boost::noncopyable
 {
 public:
-	Engine(Ingen::Shared::World* world);
+	explicit Engine(Ingen::Shared::World* world);
 
 	virtual ~Engine();
 
