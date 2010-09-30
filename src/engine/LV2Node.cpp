@@ -26,6 +26,7 @@
 #include "InputPort.hpp"
 #include "LV2Node.hpp"
 #include "LV2Plugin.hpp"
+#include "LV2URIMap.hpp"
 #include "EventBuffer.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"

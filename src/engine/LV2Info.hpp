@@ -27,12 +27,6 @@
 #include <string>
 #include "slv2/slv2.h"
 #include "module/World.hpp"
-#include "shared/LV2URIMap.hpp"
-#include "shared/LV2Features.hpp"
-#include "uri-map.lv2/uri-map.h"
-#include "event.lv2/event.h"
-#include "atom.lv2/atom.h"
-#include "resize-port.lv2/resize-port.h"
 
 namespace Ingen {
 

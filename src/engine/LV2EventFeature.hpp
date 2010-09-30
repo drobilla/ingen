@@ -18,6 +18,7 @@
 #ifndef INGEN_ENGINE_LV2EVENTFEATURE_HPP
 #define INGEN_ENGINE_LV2EVENTFEATURE_HPP
 
+#include "event.lv2/event.h"
 #include "shared/LV2Features.hpp"
 
 namespace Ingen {
