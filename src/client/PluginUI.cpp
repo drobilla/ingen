@@ -53,7 +53,14 @@ lv2_ui_write(LV2UI_Controller controller,
 
 	PluginUI* ui = (PluginUI*)controller;
 
-	SharedPtr<PortModel> port = ui->node()->ports()[port_index];
+	NodeModel::Ports ports = ui->node()->ports();
+	if (port_index >= ports.size()) {
+		error << "UI for " << ui->node()->plugin()->uri()
+		      << " tried to write to non-existent port " << port_index << endl;
+		return;
+	}
+
+	SharedPtr<PortModel> port = ports[port_index];
 
 	const Shared::LV2URIMap& uris = *ui->world()->uris().get();
 
