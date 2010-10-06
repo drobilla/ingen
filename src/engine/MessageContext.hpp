@@ -23,7 +23,7 @@
 #include "raul/Thread.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/AtomicPtr.hpp"
-#include "atom.lv2/atom.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "Context.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"

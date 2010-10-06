@@ -18,8 +18,8 @@
 #define __STDC_LIMIT_MACROS 1
 #include <stdint.h>
 #include "raul/log.hpp"
-#include "event.lv2/event.h"
-#include "event.lv2/event-helpers.h"
+#include "lv2/lv2plug.in/ns/ext/event/event.h"
+#include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
 #include "ingen-config.h"
 #include "EventBuffer.hpp"
 #include "ProcessContext.hpp"

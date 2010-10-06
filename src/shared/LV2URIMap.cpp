@@ -21,7 +21,7 @@
 #include <glib.h>
 #include <boost/shared_ptr.hpp>
 #include "raul/log.hpp"
-#include "atom.lv2/atom.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "LV2URIMap.hpp"
 
 using namespace std;

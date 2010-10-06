@@ -25,8 +25,7 @@
 #include "raul/IntrusivePtr.hpp"
 #include "interface/PortType.hpp"
 #include "interface/Connection.hpp"
-#include "atom.lv2/atom.h"
-#include "PortImpl.hpp"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "PortImpl.hpp"
 
 using namespace std;

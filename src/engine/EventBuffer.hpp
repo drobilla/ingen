@@ -18,9 +18,9 @@
 #ifndef INGEN_ENGINE_EVENTBUFFER_HPP
 #define INGEN_ENGINE_EVENTBUFFER_HPP
 
-#include "event.lv2/event.h"
-#include "event.lv2/event-helpers.h"
-#include "atom.lv2/atom.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/event/event.h"
+#include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
 #include "interface/PortType.hpp"
 #include "Buffer.hpp"
 

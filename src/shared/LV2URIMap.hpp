@@ -20,7 +20,7 @@
 
 #include <boost/utility.hpp>
 #include <raul/URI.hpp>
-#include "uri-map.lv2/uri-map.h"
+#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "ingen-config.h"
 #include "LV2Features.hpp"
 

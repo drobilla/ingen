@@ -17,8 +17,8 @@
 
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
-#include "uri-map.lv2/uri-map.h"
-#include "atom.lv2/atom.h"
+#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "LV2Features.hpp"
 #include "LV2Atom.hpp"
 #include "LV2URIMap.hpp"
