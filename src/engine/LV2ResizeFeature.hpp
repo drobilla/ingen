@@ -19,7 +19,7 @@
 #define INGEN_ENGINE_LV2RESIZEFEATURE_HPP
 
 #include "raul/log.hpp"
-#include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
+#include "lv2/http/lv2plug.in/ns/ext/resize-port/resize-port.h"
 #include "shared/LV2Features.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"

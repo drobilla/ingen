@@ -20,7 +20,7 @@
 #include <stdint.h>
 #include <algorithm>
 #include "raul/log.hpp"
-#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
+#include "lv2/http/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "ingen-config.h"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"

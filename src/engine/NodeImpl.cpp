@@ -17,7 +17,7 @@
 
 #include <cassert>
 #include <stdint.h>
-#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
+#include "lv2/http/lv2plug.in/ns/ext/contexts/contexts.h"
 #include "raul/List.hpp"
 #include "raul/Array.hpp"
 #include "util.hpp"

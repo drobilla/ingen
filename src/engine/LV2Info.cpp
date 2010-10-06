@@ -18,7 +18,7 @@
 #define __STDC_LIMIT_MACROS 1
 #include <cassert>
 #include <stdint.h>
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/http/lv2plug.in/ns/ext/atom/atom.h"
 #include "LV2Info.hpp"
 #include "module/World.hpp"
 #include "LV2Features.hpp"

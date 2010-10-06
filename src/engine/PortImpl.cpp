@@ -18,7 +18,7 @@
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
+#include "lv2/http/lv2plug.in/ns/ext/contexts/contexts.h"
 #include "interface/PortType.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendPortActivity.hpp"
