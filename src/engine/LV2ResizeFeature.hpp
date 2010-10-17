@@ -35,12 +35,12 @@ struct ResizeFeature : public Shared::LV2Features::Feature {
 	                        size_t                       size) {
 		NodeImpl* node = (NodeImpl*)data;
 		PortImpl* port = node->port_impl(index);
-		if (port->context() == Context::MESSAGE) {
-			info << "Resizing " << port->path() << " to " << size << " bytes" << endl;
+		switch (port->context()) {
+		case Context::MESSAGE:
 			port->buffer(0)->resize(size);
 			port->connect_buffers();
 			return true;
-		} else {
+		default:
 			// TODO: Implement realtime allocator and support this in audio thread
 			return false;
 		}
