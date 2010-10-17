@@ -19,7 +19,7 @@
 #define INGEN_SHARED_LV2URIMAP_HPP
 
 #include <boost/utility.hpp>
-#include <raul/URI.hpp>
+#include "raul/URI.hpp"
 #include "lv2/http/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "ingen-config.h"
 #include "LV2Features.hpp"
