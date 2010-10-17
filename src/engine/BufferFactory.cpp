@@ -70,7 +70,7 @@ BufferFactory::set_block_length(SampleCount block_length)
 size_t
 BufferFactory::audio_buffer_size(SampleCount nframes)
 {
-	return sizeof(LV2_Atom) + sizeof(LV2_Vector_Body) + (nframes * sizeof(float));
+	return sizeof(LV2_Atom) + sizeof(LV2_Atom_Vector) + (nframes * sizeof(float));
 }
 
 
@@ -134,7 +134,7 @@ BufferFactory::create(Shared::PortType type, size_t size)
 	if (type.is_control()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
 		ret->atom()->type = _uris->object_class_vector.id;
-		((LV2_Vector_Body*)ret->atom()->body)->elem_type = _uris->object_class_float32.id;
+		((LV2_Atom_Vector*)ret->atom()->body)->elem_type = _uris->object_class_float32.id;
 		buffer = ret;
 	} else if (type.is_audio()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);

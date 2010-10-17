@@ -84,8 +84,8 @@ private:
 			"http://lv2plug.in/ns/lv2core#AudioPort",
 			"http://lv2plug.in/ns/lv2core#ControlPort",
 			"http://lv2plug.in/ns/ext/event#EventPort",
-			"http://lv2plug.in/ns/ext/objects#ValuePort",
-			"http://lv2plug.in/ns/ext/objects#MessagePort"
+			"http://lv2plug.in/ns/ext/atom-port#ValuePort",
+			"http://lv2plug.in/ns/ext/atom-port#MessagePort"
 		};
 		return uris[symbol_num];
 	}

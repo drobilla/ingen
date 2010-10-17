@@ -19,6 +19,7 @@
 #include "PortModel.hpp"
 #include "NodeModel.hpp"
 
+
 namespace Ingen {
 namespace Client {
 
@@ -37,7 +38,7 @@ PortModel::set_property(const Raul::URI&  uri,
 bool
 PortModel::supports(const Raul::URI& value_type) const
 {
-	return has_property(_uris.obj_supports, value_type);
+	return has_property(_uris.aport_supports, value_type);
 }
 
 

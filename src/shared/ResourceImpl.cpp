@@ -149,10 +149,10 @@ ResourceImpl::type(
 		} else if (atom == uris.lv2ev_EventPort) {
 			data_type = PortType::EVENTS;
 			port = true;
-		} else if (atom == uris.obj_ValuePort) {
+		} else if (atom == uris.aport_ValuePort) {
 			data_type = PortType::VALUE;
 			port = true;
-		} else if (atom == uris.obj_MessagePort) {
+		} else if (atom == uris.aport_MessagePort) {
 			data_type = PortType::MESSAGE;
 			port = true;
 		} else {

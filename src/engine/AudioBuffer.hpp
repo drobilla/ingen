@@ -48,13 +48,13 @@ public:
 	inline Sample* data() const {
 		return (is_control())
 				? (Sample*)atom()->body
-				: (Sample*)(atom()->body + sizeof(LV2_Vector_Body));
+				: (Sample*)(atom()->body + sizeof(LV2_Atom_Vector));
 	}
 
 	inline SampleCount nframes() const {
 		return (is_control())
 				? 1
-				: (_size - sizeof(LV2_Atom) - sizeof(LV2_Vector_Body)) / sizeof(Sample);
+				: (_size - sizeof(LV2_Atom) - sizeof(LV2_Atom_Vector)) / sizeof(Sample);
 	}
 
 	inline Sample& value_at(size_t offset) const
@@ -68,7 +68,7 @@ public:
 private:
 	enum State { OK, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
 
-	LV2_Vector_Body* vector() { return(LV2_Vector_Body*)atom()->body; }
+	LV2_Atom_Vector* vector() { return(LV2_Atom_Vector*)atom()->body; }
 
 	State     _state;     ///< State of buffer for setting values next cycle
 	Sample    _set_value; ///< Value set by set_value (for completing the set next cycle)

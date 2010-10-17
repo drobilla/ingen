@@ -25,31 +25,31 @@ namespace Ingen {
 struct BlobFeature : public Shared::LV2Features::Feature {
 	BlobFeature() {
 		LV2_Blob_Support* data = (LV2_Blob_Support*)malloc(sizeof(LV2_Blob_Support));
-		data->data                = NULL;
-		data->reference_size      = sizeof(LV2_Blob*);
-		data->lv2_blob_new        = &blob_new;
-		data->lv2_reference_get   = &reference_get;
-		data->lv2_reference_copy  = &reference_copy;
-		data->lv2_reference_reset = &reference_reset;
-		_feature.URI              = LV2_BLOB_SUPPORT_URI;
-		_feature.data             = data;
+		data->data      = NULL;
+		data->ref_size  = sizeof(LV2_Blob*);
+		data->blob_new  = &blob_new;
+		data->ref_get   = &ref_get;
+		data->ref_copy  = &ref_copy;
+		data->ref_reset = &ref_reset;
+		_feature.URI    = LV2_BLOB_SUPPORT_URI;
+		_feature.data   = data;
 	}
 
 	static void blob_new(LV2_Blob_Support_Data data,
-	                     LV2_Reference*        reference,
-	                     LV2_Blob_Destroy      destroy_func,
+	                     LV2_Atom*             reference,
+	                     LV2_Blob_Destroy      destroy,
 	                     uint32_t              type,
 	                     size_t                size) {}
 
-	static LV2_Blob* reference_get(LV2_Blob_Support_Data data,
-	                               LV2_Reference*        ref) { return 0; }
+	static LV2_Blob* ref_get(LV2_Blob_Support_Data data,
+	                         LV2_Atom*             ref) { return 0; }
 
-	static void reference_copy(LV2_Blob_Support_Data data,
-	                           LV2_Reference*        dst,
-	                           LV2_Reference*        src) {}
+	static void ref_copy(LV2_Blob_Support_Data data,
+	                     LV2_Atom*             dst,
+	                     LV2_Atom*             src) {}
 
-	static void reference_reset(LV2_Blob_Support_Data data,
-	                            LV2_Reference*        ref) {}
+	static void ref_reset(LV2_Blob_Support_Data data,
+	                      LV2_Atom*             ref) {}
 
 	SharedPtr<LV2_Feature> feature(Shared::Node*) {
 		return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);

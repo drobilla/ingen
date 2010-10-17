@@ -36,8 +36,10 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 	, control_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_CONTROL))
 	, audio_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_AUDIO))
 	, event_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_EVENT))
-	, value_port_class(slv2_value_new_uri(world->slv2_world(), LV2_ATOM_URI "#ValuePort"))
-	, message_port_class(slv2_value_new_uri(world->slv2_world(), LV2_ATOM_URI "#MessagePort"))
+	, value_port_class(slv2_value_new_uri(world->slv2_world(),
+	                                      "http://lv2plug.in/ns/ext/atom-port#ValuePort"))
+	, message_port_class(slv2_value_new_uri(world->slv2_world(),
+	                     "http://lv2plug.in/ns/ext/atom-port#MessagePort"))
 	, _world(world)
 {
 	assert(world);

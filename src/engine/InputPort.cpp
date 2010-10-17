@@ -217,8 +217,10 @@ InputPort::post_process(Context& context)
 bool
 InputPort::direct_connect() const
 {
-	return _connections.size() == 1 && !_connections.front()->must_mix()
-			&& !_connections.front()->must_queue();
+	return (context() == Context::AUDIO)
+		&& _connections.size() == 1
+		&& !_connections.front()->must_mix()
+		&& !_connections.front()->must_queue();
 }
 
 

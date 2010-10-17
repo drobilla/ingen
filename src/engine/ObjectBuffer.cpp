@@ -111,7 +111,7 @@ ObjectBuffer::port_data(PortType port_type, SampleCount offset)
 			case PortType::CONTROL:
 				return (float*)atom()->body;
 			case PortType::AUDIO:
-				return (float*)((LV2_Vector_Body*)atom()->body)->elems + offset;
+				return (float*)((LV2_Atom_Vector*)atom()->body)->elems + offset;
 			default:
 				warn << "Audio data requested from non-audio buffer" << endl;
 				return NULL;
@@ -133,7 +133,7 @@ ObjectBuffer::port_data(PortType port_type, SampleCount offset) const
 			case PortType::CONTROL:
 				return (float*)atom()->body;
 			case PortType::AUDIO:
-				return (float*)((LV2_Vector_Body*)atom()->body)->elems + offset;
+				return (float*)((LV2_Atom_Vector*)atom()->body)->elems + offset;
 			default:
 				warn << "Audio data requested from non-audio buffer" << endl;
 				return NULL;

@@ -98,9 +98,9 @@ public:
 	const Quark midi_controllerNumber;
 	const Quark midi_event;
 	const Quark midi_noteNumber;
-	const Quark obj_MessagePort;
-	const Quark obj_ValuePort;
-	const Quark obj_supports;
+	const Quark aport_MessagePort;
+	const Quark aport_ValuePort;
+	const Quark aport_supports;
 	const Quark object_class_bool;
 	const Quark object_class_float32;
 	const Quark object_class_int32;
@@ -110,7 +110,6 @@ public:
 	const Quark rdf_instanceOf;
 	const Quark rdf_type;
 	const Quark rdfs_seeAlso;
-	const Quark string_transfer;
 	const Quark ui_format_events;
 	const Quark wildcard;
 };

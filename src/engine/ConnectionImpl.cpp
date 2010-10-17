@@ -129,16 +129,28 @@ ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
 	const LV2URIMap& uris = src->bufs().uris();
 	return (
+			// (Audio | Control) => (Audio | Control)
 			(   (src->is_a(PortType::CONTROL) || src->is_a(PortType::AUDIO))
 			 && (dst->is_a(PortType::CONTROL) || dst->is_a(PortType::AUDIO)))
-			|| (   src->is_a(PortType::EVENTS)   && src->context() == Context::AUDIO
-				&& dst->is_a(PortType::MESSAGE)  && dst->context() == Context::MESSAGE)
-			|| (   src->is_a(PortType::MESSAGE)  && src->context() == Context::MESSAGE
-				&& dst->is_a(PortType::EVENTS)   && dst->context() == Context::AUDIO)
-			|| (src->is_a(PortType::EVENTS) && dst->is_a(PortType::EVENTS))
+
+			// (Events | Message) => (Events | Message)
+			|| ( (src->is_a(PortType::EVENTS) || src->is_a(PortType::MESSAGE))
+			  && (dst->is_a(PortType::EVENTS) || dst->is_a(PortType::MESSAGE)))
+
+			// (Message | Value) => (Message | Value)
+			|| ( (src->is_a(PortType::MESSAGE) || src->is_a(PortType::VALUE))
+			  && (dst->is_a(PortType::MESSAGE) || dst->is_a(PortType::VALUE)))
+
+			// Control => atom:Float32 Value
 			|| (src->is_a(PortType::CONTROL) && dst->supports(uris.object_class_float32))
+
+			// Audio => atom:Vector Value			
 			|| (src->is_a(PortType::AUDIO)   && dst->supports(uris.object_class_vector))
+
+			// atom:Float32 Value => Control
 			|| (src->supports(uris.object_class_float32) && dst->is_a(PortType::CONTROL))
+
+			// atom:Vector Value => Audio
 			|| (src->supports(uris.object_class_vector)  && dst->is_a(PortType::AUDIO)));
 }
 

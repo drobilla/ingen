@@ -154,8 +154,6 @@ Port::value_changed(const Atom& value)
 		return;
 	else if (value.type() == Atom::FLOAT)
 		FlowCanvas::Port::set_control(value.get_float());
-	else
-		warn << "Unknown port value type " << (unsigned)value.type() << endl;
 }
 
 

@@ -30,7 +30,7 @@ namespace Ingen {
 namespace GUI {
 
 
-/** Node properties window.
+/** Object properties window.
  *
  * Loaded by libglade as a derived object.
  *

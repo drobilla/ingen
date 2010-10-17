@@ -160,7 +160,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 				slv2_instance_free);
 
 		if (!instance(i)) {
-			error << "Failed to instantiate plugin" << endl;
+			error << "Failed to instantiate plugin " << _lv2_plugin->uri()
+			      << " voice " << i << endl;
 			return false;
 		}
 
@@ -203,7 +204,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			"http://lv2plug.in/ns/lv2core#portProperty");
 
 	SLV2Value supports_pred = slv2_value_new_uri(info->lv2_world(),
-			LV2_ATOM_URI "#supports");
+			"http://lv2plug.in/ns/ext/atom-port#supports");
 
 	//SLV2Value as_large_as_pred = slv2_value_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/ext/resize-port#asLargeAs");
@@ -273,6 +274,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		if (data_type == PortType::UNKNOWN || direction == UNKNOWN) {
+			warn << "Unknown type or direction for port `" << port_name << "'" << endl;
 			ret = false;
 			break;
 		}
@@ -306,14 +308,12 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 		}
 
-		// Set obj:supports properties
+		// Set aport:supports properties
 		SLV2Values types = slv2_port_get_value(plug, id, supports_pred);
 		for (uint32_t i = 0; i < slv2_values_size(types); ++i) {
 			SLV2Value type = slv2_values_get_at(types, i);
-			Raul::info << path() << " port " << id << " supports " <<
-					slv2_value_as_uri(type) << std::endl;
 			if (slv2_value_is_uri(type)) {
-				port->add_property(uris.obj_supports, Raul::URI(slv2_value_as_uri(type)));
+				port->add_property(uris.aport_supports, Raul::URI(slv2_value_as_uri(type)));
 			}
 		}
 
@@ -390,7 +390,7 @@ LV2Node::message_run(MessageContext& context)
 		_valid_ports = calloc(num_ports() / 8, 1);
 
 	if (_message_funcs)
-		(*_message_funcs->message_run)(instance(0)->lv2_handle, _valid_ports, _valid_ports);
+		(*_message_funcs->run)(instance(0)->lv2_handle, _valid_ports, _valid_ports);
 }
 
 
