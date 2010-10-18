@@ -172,7 +172,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 				instance(i), LV2_CONTEXT_MESSAGE);
 
 		if (i == 0 && ctx_ext) {
-			Raul::info << _lv2_plugin->uri() << " has message context" << endl;
 			assert(!_message_funcs);
 			_message_funcs = (LV2_Contexts_MessageContext*)ctx_ext;
 		}
@@ -322,7 +321,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 			SLV2Value c = slv2_values_get_at(contexts, i);
 			const char* context = slv2_value_as_string(c);
 			if (!strcmp(LV2_CONTEXT_MESSAGE, context)) {
-				Raul::info << _lv2_plugin->uri() << " port " << i << " has message context" << endl;
 				if (!_message_funcs) {
 					warn << _lv2_plugin->uri()
 							<< " has a message port, but no context extension data." << endl;

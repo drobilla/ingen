@@ -115,6 +115,13 @@ LV2URIMap::LV2URIMap()
 	uri_map_feature_data.callback_data = this;
 	uri_map_feature.URI = LV2_URI_MAP_URI;
 	uri_map_feature.data = &uri_map_feature_data;
+
+	uri_unmap_feature_data.id_to_uri = &LV2URIMap::uri_unmap_id_to_uri;
+	uri_unmap_feature_data.callback_data = this;
+	uri_unmap_feature.URI = LV2_URI_UNMAP_URI;
+	uri_unmap_feature.data = &uri_unmap_feature_data;
+
+	_unmap_feature = SharedPtr<UnmapFeature>(new UnmapFeature(*this));
 }
 
 
@@ -129,13 +136,41 @@ LV2URIMap::uri_to_id(const char* map,
 }
 
 
+const char*
+LV2URIMap::id_to_uri(const char*    map,
+                     const uint32_t id)
+{
+	// FIXME: Handle event map properly
+	return g_quark_to_string(id);
+}
+
+
 uint32_t
 LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
                              const char*               map,
                              const char*               uri)
 {
+	LV2URIMap*     me = (LV2URIMap*)callback_data;
+	const uint32_t id = me->uri_to_id(map, uri);
+	
+	// FIXME: Handle event type map properly
+	assert(!map || strcmp(map, "http://lv2plug.in/ns/ext/event") || id <= UINT16_MAX);
+
+	return id;
+}
+
+
+const char*
+LV2URIMap::uri_unmap_id_to_uri(LV2_URI_Map_Callback_Data callback_data,
+                               const char*               map,
+                               uint32_t                  id)
+{
 	LV2URIMap* me = (LV2URIMap*)callback_data;
-	return me->uri_to_id(map, uri);
+
+	// FIXME: Handle event type map properly
+	assert(!map || strcmp(map, "http://lv2plug.in/ns/ext/event") || id <= UINT16_MAX);
+
+	return me->id_to_uri(map, id);
 }
 
 
