@@ -203,7 +203,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			"http://lv2plug.in/ns/lv2core#portProperty");
 
 	SLV2Value supports_pred = slv2_value_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/ext/atom-port#supports");
+			"http://lv2plug.in/ns/ext/atom#supports");
 
 	//SLV2Value as_large_as_pred = slv2_value_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/ext/resize-port#asLargeAs");
@@ -307,12 +307,12 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 		}
 
-		// Set aport:supports properties
+		// Set atom:supports properties
 		SLV2Values types = slv2_port_get_value(plug, id, supports_pred);
 		for (uint32_t i = 0; i < slv2_values_size(types); ++i) {
 			SLV2Value type = slv2_values_get_at(types, i);
 			if (slv2_value_is_uri(type)) {
-				port->add_property(uris.aport_supports, Raul::URI(slv2_value_as_uri(type)));
+				port->add_property(uris.atom_supports, Raul::URI(slv2_value_as_uri(type)));
 			}
 		}
 

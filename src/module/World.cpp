@@ -129,7 +129,6 @@ struct WorldImpl : public boost::noncopyable {
 		rdf_world->add_prefix("rdfs",    "http://www.w3.org/2000/01/rdf-schema#");
 		rdf_world->add_prefix("xsd",     "http://www.w3.org/2001/XMLSchema#");
 		rdf_world->add_prefix("atom",    "http://lv2plug.in/ns/ext/atom#");
-		rdf_world->add_prefix("aport",   "http://lv2plug.in/ns/ext/atom-port#");
 		rdf_world->add_prefix("xsd",     "http://www.w3.org/2001/XMLSchema#");
 	}
 

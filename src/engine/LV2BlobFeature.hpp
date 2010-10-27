@@ -26,30 +26,30 @@ struct BlobFeature : public Shared::LV2Features::Feature {
 	BlobFeature() {
 		LV2_Blob_Support* data = (LV2_Blob_Support*)malloc(sizeof(LV2_Blob_Support));
 		data->data      = NULL;
-		data->ref_size  = sizeof(LV2_Blob*);
-		data->blob_new  = &blob_new;
+		data->ref_size  = sizeof(LV2_Blob);
 		data->ref_get   = &ref_get;
 		data->ref_copy  = &ref_copy;
 		data->ref_reset = &ref_reset;
+		data->blob_new  = &blob_new;
 		_feature.URI    = LV2_BLOB_SUPPORT_URI;
 		_feature.data   = data;
 	}
 
+	static LV2_Blob ref_get(LV2_Blob_Support_Data data,
+	                        LV2_Atom_Reference*   ref) { return 0; }
+
+	static void ref_copy(LV2_Blob_Support_Data data,
+	                     LV2_Atom_Reference*   dst,
+	                     LV2_Atom_Reference*   src) {}
+
+	static void ref_reset(LV2_Blob_Support_Data data,
+	                      LV2_Atom_Reference*   ref) {}
+
 	static void blob_new(LV2_Blob_Support_Data data,
-	                     LV2_Atom*             reference,
+	                     LV2_Atom_Reference*   reference,
 	                     LV2_Blob_Destroy      destroy,
 	                     uint32_t              type,
 	                     size_t                size) {}
-
-	static LV2_Blob* ref_get(LV2_Blob_Support_Data data,
-	                         LV2_Atom*             ref) { return 0; }
-
-	static void ref_copy(LV2_Blob_Support_Data data,
-	                     LV2_Atom*             dst,
-	                     LV2_Atom*             src) {}
-
-	static void ref_reset(LV2_Blob_Support_Data data,
-	                      LV2_Atom*             ref) {}
 
 	SharedPtr<LV2_Feature> feature(Shared::Node*) {
 		return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);

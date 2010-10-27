@@ -121,9 +121,9 @@ public:
 	const Quark midi_controllerNumber;
 	const Quark midi_event;
 	const Quark midi_noteNumber;
-	const Quark aport_MessagePort;
-	const Quark aport_ValuePort;
-	const Quark aport_supports;
+	const Quark atom_MessagePort;
+	const Quark atom_ValuePort;
+	const Quark atom_supports;
 	const Quark object_class_bool;
 	const Quark object_class_float32;
 	const Quark object_class_int32;

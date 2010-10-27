@@ -38,7 +38,7 @@ PortModel::set_property(const Raul::URI&  uri,
 bool
 PortModel::supports(const Raul::URI& value_type) const
 {
-	return has_property(_uris.aport_supports, value_type);
+	return has_property(_uris.atom_supports, value_type);
 }
 
 
