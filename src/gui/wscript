@@ -49,7 +49,7 @@ def build(bld):
 	obj.name           = 'libingen_gui'
 	obj.target         = 'ingen_gui'
 	obj.install_path   = '${LIBDIR}/ingen'
-	obj.uselib_local   = 'libingen_shared libingen_module'
+	obj.uselib_local   = 'libingen_shared libingen_module libingen_client libingen_serialisation'
 	autowaf.use_lib(bld, obj, '''
 		CURL
 		FLOWCANVAS
