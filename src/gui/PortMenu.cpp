@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <math.h>
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
 #include "interface/EngineInterface.hpp"
@@ -129,10 +130,10 @@ PortMenu::on_menu_reset_range()
 	float min, max;
 	parent->default_port_value_range(model, min, max);
 
-	if (!isnan(min))
+	if (!std::isnan(min))
 		App::instance().engine()->set_property(_object->path(), uris.lv2_minimum, min);
 
-	if (!isnan(max))
+	if (!std::isnan(max))
 		App::instance().engine()->set_property(_object->path(), uris.lv2_maximum, max);
 }
 
