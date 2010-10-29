@@ -36,6 +36,16 @@ ObjectModel::ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path)
 }
 
 
+ObjectModel::ObjectModel(const ObjectModel& copy)
+	: ResourceImpl(copy)
+	, _meta(copy._meta)
+	, _parent(copy._parent)
+	, _path(copy._path)
+	, _symbol(copy._symbol)
+{
+}
+
+
 ObjectModel::~ObjectModel()
 {
 }

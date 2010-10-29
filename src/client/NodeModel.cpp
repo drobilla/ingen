@@ -31,7 +31,8 @@ namespace Client {
 
 
 NodeModel::NodeModel(Shared::LV2URIMap& uris, SharedPtr<PluginModel> plugin, const Path& path)
-	: ObjectModel(uris, path)
+	: Node()
+	, ObjectModel(uris, path)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
 	, _num_values(0)
@@ -41,7 +42,8 @@ NodeModel::NodeModel(Shared::LV2URIMap& uris, SharedPtr<PluginModel> plugin, con
 }
 
 NodeModel::NodeModel(Shared::LV2URIMap& uris, const URI& plugin_uri, const Path& path)
-	: ObjectModel(uris, path)
+	: Node()
+	, ObjectModel(uris, path)
 	, _plugin_uri(plugin_uri)
 	, _num_values(0)
 	, _min_values(0)
@@ -51,7 +53,8 @@ NodeModel::NodeModel(Shared::LV2URIMap& uris, const URI& plugin_uri, const Path&
 
 
 NodeModel::NodeModel(const NodeModel& copy)
-	: ObjectModel(copy)
+	: Node(copy)
+	, ObjectModel(copy)
 	, _plugin_uri(copy._plugin_uri)
 	, _num_values(copy._num_values)
 	, _min_values((float*)malloc(sizeof(float) * _num_values))

@@ -1,3 +1,4 @@
+
 /* This file is part of Ingen.
  * Copyright (C) 2007-2009 David Robillard <http://drobilla.net>
  *
@@ -83,7 +84,8 @@ protected:
 	friend class ClientStore;
 
 	ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path);
-
+	ObjectModel(const ObjectModel& copy);
+	
 	virtual void set_path(const Raul::Path& p);
 	virtual void set_parent(SharedPtr<ObjectModel> p);
 	virtual void add_child(SharedPtr<ObjectModel> c) {}
