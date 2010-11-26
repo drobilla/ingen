@@ -20,7 +20,7 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/convert.h>
 #include <glib.h>
-#include "lv2/http/lv2plug.in/ns/lv2core/lv2.h"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "ingen-config.h"
 #include "raul/log.hpp"
 #include "raul/Thread.hpp"

@@ -16,9 +16,9 @@
  */
 
 #include "raul/log.hpp"
-#include "lv2/http/lv2plug.in/ns/ext/atom/atom.h"
-#include "lv2/http/lv2plug.in/ns/ext/event/event.h"
-#include "lv2/http/lv2plug.in/ns/ext/event/event-helpers.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/event/event.h"
+#include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "shared/LV2Atom.hpp"

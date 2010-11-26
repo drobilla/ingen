@@ -32,6 +32,7 @@ def set_options(opt):
 		       help="Use liblo bundle support (experimental, requires patched liblo)")
 
 def configure(conf):
+	conf.line_just = max(conf.line_just, 67)
 	autowaf.configure(conf)
 	autowaf.display_header('Ingen Configuration')
 	conf.check_tool('compiler_cxx')
@@ -70,6 +71,15 @@ def configure(conf):
 	conf.check(function_name='posix_memalign',
 		   header_name='stdlib.h',
 		   define_name='HAVE_POSIX_MEMALIGN')
+
+	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/lv2core/lv2.h')
+	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/atom/atom.h')
+	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/contexts/contexts.h')
+	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/event/event-helpers.h')
+	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/event/event.h')
+	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/resize-port/resize-port.h')
+	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/uri-map/uri-map.h')
+	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h')
 
 	build_gui = conf.env['HAVE_GLADEMM'] == 1 and conf.env['HAVE_FLOWCANVAS'] == 1
 

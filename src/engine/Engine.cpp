@@ -22,7 +22,7 @@
 #include "raul/Deletable.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
-#include "lv2/http/lv2plug.in/ns/ext/uri-map/uri-map.h"
+#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "common/interface/EventType.hpp"
 #include "events/CreatePatch.hpp"
 #include "events/CreatePort.hpp"

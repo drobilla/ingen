@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "lv2/http/lv2plug.in/ns/ext/contexts/contexts.h"
+#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "ConnectionImpl.hpp"

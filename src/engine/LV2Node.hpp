@@ -21,7 +21,7 @@
 #include <string>
 #include "slv2/slv2.h"
 #include "raul/IntrusivePtr.hpp"
-#include "lv2/http/lv2plug.in/ns/ext/contexts/contexts.h"
+#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 #include "types.hpp"
 #include "NodeImpl.hpp"
 #include "LV2Features.hpp"

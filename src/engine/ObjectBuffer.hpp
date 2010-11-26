@@ -19,7 +19,7 @@
 #define INGEN_ENGINE_OBJECTBUFFER_HPP
 
 #include "raul/Atom.hpp"
-#include "lv2/http/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "interface/PortType.hpp"
 #include "Buffer.hpp"
 
