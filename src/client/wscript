@@ -34,7 +34,7 @@ def build(bld):
 	obj.export_incdirs = ['.']
 	obj.name         = 'libingen_client'
 	obj.target       = 'ingen_client'
-	obj.install_path = '${LIBDIR}/ingen'
+	obj.install_path = '${LIBDIR}'
 	obj.uselib_local = 'libingen_shared'
 	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM SOUP XML2 SIGCPP LIBLO SOUP')
 

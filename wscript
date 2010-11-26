@@ -67,13 +67,11 @@ def configure(conf):
 	if conf.env['BUNDLE']:
 		conf.define('INGEN_DATA_DIR', os.path.join(
 				conf.env['DATADIRNAME'], 'ingen'))
-		conf.define('INGEN_MODULE_DIR', os.path.join(
-				conf.env['LIBDIRNAME'], 'ingen'))
+		conf.define('INGEN_MODULE_DIR', conf.env['LIBDIRNAME'])
 	else:
 		conf.define('INGEN_DATA_DIR', os.path.join(
 				conf.env['DATADIR'], 'ingen'))
-		conf.define('INGEN_MODULE_DIR', os.path.join(
-				conf.env['LIBDIR'], 'ingen'))
+		conf.define('INGEN_MODULE_DIR',	conf.env['LIBDIR'])
 	
 	if Options.options.log_debug:
 		conf.define('LOG_DEBUG', 1)

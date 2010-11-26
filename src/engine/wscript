@@ -63,14 +63,14 @@ def build(bld):
 		core_source += ' LADSPAPlugin.cpp LADSPANode.cpp '
 	if bld.env['HAVE_SLV2'] == 1:
 		core_source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
-	
+
 	obj = bld.new_task_gen('cxx', 'shlib')
 	obj.source = core_source
 	obj.export_incdirs = ['.']
 	obj.includes     = ['.', '..', '../..', '../common']
 	obj.name         = 'libingen_engine'
 	obj.target       = 'ingen_engine'
-	obj.install_path = '${LIBDIR}/ingen'
+	obj.install_path = '${LIBDIR}'
 	obj.uselib_local = 'libingen_shared'
 	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
 	autowaf.use_lib(bld, obj, core_libs)
@@ -87,7 +87,7 @@ def build(bld):
 		obj.includes     = ['.', '..', '../..', '../common', '../engine']
 		obj.name         = 'libingen_http'
 		obj.target       = 'ingen_http'
-		obj.install_path = '${LIBDIR}/ingen'
+		obj.install_path = '${LIBDIR}'
 		autowaf.use_lib(bld, obj, core_libs + ' SOUP')
 
 	if bld.env['HAVE_LIBLO'] == 1:
@@ -103,7 +103,7 @@ def build(bld):
 		obj.includes     = ['.', '..', '../..', '../common', '../engine']
 		obj.name         = 'libingen_osc'
 		obj.target       = 'ingen_osc'
-		obj.install_path = '${LIBDIR}/ingen'
+		obj.install_path = '${LIBDIR}'
 		autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
 
 	if bld.env['HAVE_JACK'] == 1:
@@ -113,7 +113,7 @@ def build(bld):
 		obj.includes     = ['.', '..', '../..', '../common', '../engine']
 		obj.name         = 'libingen_jack'
 		obj.target       = 'ingen_jack'
-		obj.install_path = '${LIBDIR}/ingen'
+		obj.install_path = '${LIBDIR}'
 		obj.uselib_local = 'libingen_engine'
 		autowaf.use_lib(bld, obj, core_libs + ' JACK')
 
@@ -124,7 +124,7 @@ def build(bld):
 	obj.includes     = ['.', '..', '../..', '../common']
 	obj.name         = 'libingen_lv2'
 	obj.target       = 'ingen_lv2'
-	obj.install_path = '${LIBDIR}/ingen'
+	obj.install_path = '${LIBDIR}'
 	obj.uselib_local = 'libingen_shared libingen_module'
 	obj.add_objects  = 'libingen_engine'
 	autowaf.use_lib(bld, obj, core_libs)
