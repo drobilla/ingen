@@ -17,47 +17,59 @@ blddir = 'build'
 def set_options(opt):
 	autowaf.set_options(opt)
 	opt.add_option('--data-dir', type='string', dest='datadir',
-			help="Ingen data install directory [Default: PREFIX/share/ingen]")
+		       help="Ingen data install directory [Default: PREFIX/share/ingen]")
 	opt.add_option('--module-dir', type='string', dest='moduledir',
-			help="Ingen module install directory [Default: PREFIX/lib/ingen]")
+		       help="Ingen module install directory [Default: PREFIX/lib/ingen]")
 	opt.add_option('--no-ladspa', action='store_true', default=False, dest='no_ladspa',
-			help="Do not build LADSPA support, even if ladspa.h is found")
+		       help="Do not build LADSPA support, even if ladspa.h is found")
 	opt.add_option('--no-osc', action='store_true', default=False, dest='no_osc',
-			help="Do not build OSC via liblo support, even if liblo exists")
+		       help="Do not build OSC via liblo support, even if liblo exists")
 	opt.add_option('--no-http', action='store_true', default=False, dest='no_http',
-			help="Do not build HTTP via libsoup support, even if libsoup exists")
+		       help="Do not build HTTP via libsoup support, even if libsoup exists")
 	opt.add_option('--log-debug', action='store_true', default=False, dest='log_debug',
-			help="Print debugging output")
+		       help="Print debugging output")
 	opt.add_option('--liblo-bundles', action='store_true', default=False, dest='liblo_bundles',
-			help="Use liblo bundle support (experimental, requires patched liblo)")
+		       help="Use liblo bundle support (experimental, requires patched liblo)")
 
 def configure(conf):
 	autowaf.configure(conf)
 	autowaf.display_header('Ingen Configuration')
 	conf.check_tool('compiler_cxx')
-	autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM', atleast_version='2.14.0', mandatory=True)
-	autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD', atleast_version='2.14.0', mandatory=True)
-	autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM', atleast_version='2.11.12', mandatory=False)
-	autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM', atleast_version='2.14.0', mandatory=False)
-	autowaf.check_pkg(conf, 'jack', uselib_store='JACK', atleast_version='0.109.0', mandatory=True)
-	autowaf.check_pkg(conf, 'slv2', uselib_store='SLV2', atleast_version='0.6.0', mandatory=True)
-	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL', atleast_version='0.6.2', mandatory=True)
-	autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS', atleast_version='0.6.1', mandatory=False)
-	autowaf.check_pkg(conf, 'libxml-2.0', uselib_store='XML2', atleast_version='2.6.0', mandatory=False)
-	autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM', atleast_version='2.6.0', mandatory=False)
+	autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
+			  atleast_version='2.14.0', mandatory=True)
+	autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
+			  atleast_version='2.14.0', mandatory=True)
+	autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
+			  atleast_version='2.11.12', mandatory=False)
+	autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM',
+			  atleast_version='2.14.0', mandatory=False)
+	autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
+			  atleast_version='0.109.0', mandatory=True)
+	autowaf.check_pkg(conf, 'slv2', uselib_store='SLV2',
+			  atleast_version='0.6.0', mandatory=True)
+	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
+			  atleast_version='0.6.2', mandatory=True)
+	autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS',
+			  atleast_version='0.6.1', mandatory=False)
+	autowaf.check_pkg(conf, 'libxml-2.0', uselib_store='XML2',
+			  atleast_version='2.6.0', mandatory=False)
+	autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM',
+			  atleast_version='2.6.0', mandatory=False)
+	autowaf.check_pkg(conf, 'redlandmm', uselib_store='REDLANDMM',
+			  atleast_version='0.0.0', mandatory=False)
 	if not Options.options.no_http:
-		autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP', atleast_version='2.4.0', mandatory=False)
+		autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP',
+				  atleast_version='2.4.0', mandatory=False)
 	if not Options.options.no_ladspa:
 		autowaf.check_header(conf, 'ladspa.h', 'HAVE_LADSPA_H', mandatory=False)
 	if not Options.options.no_osc:
-		autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO', atleast_version='0.25', mandatory=False)
-	autowaf.check_pkg(conf, 'redlandmm', uselib_store='REDLANDMM', atleast_version='0.0.0', mandatory=False)
+		autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO',
+				  atleast_version='0.25', mandatory=False)
 
 	# Check for posix_memalign (OSX, amazingly, doesn't have it)
-	conf.check(
-			function_name='posix_memalign',
-			header_name='stdlib.h',
-			define_name='HAVE_POSIX_MEMALIGN')
+	conf.check(function_name='posix_memalign',
+		   header_name='stdlib.h',
+		   define_name='HAVE_POSIX_MEMALIGN')
 
 	build_gui = conf.env['HAVE_GLADEMM'] == 1 and conf.env['HAVE_FLOWCANVAS'] == 1
 
