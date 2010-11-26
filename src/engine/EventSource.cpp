@@ -76,21 +76,27 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 
 	size_t num_events_processed = 0;
 
-	QueuedEvent*              ev       = (QueuedEvent*)_events.front();
-	Raul::List<Event*>::Node* new_head = _events.head();
+	Raul::List<Event*>::Node* head = _events.head();
+	Raul::List<Event*>::Node* tail = head;
+
+	if (!head)
+		return;
+	
+	QueuedEvent* ev = (QueuedEvent*)head->elem();
 
 	while (ev && ev->is_prepared() && ev->time() < context.end()) {
 		ev->execute(context);
-		new_head = new_head->next();
+		tail = head;
+		head = head->next();
 		++num_events_processed;
 		if (limit && num_events_processed > MAX_QUEUED_EVENTS)
 			break;
-		ev = (new_head ? (QueuedEvent*)new_head->elem() : NULL);
+		ev = (head ? (QueuedEvent*)head->elem() : NULL);
 	}
 
 	if (num_events_processed > 0) {
 		Raul::List<Event*> front;
-		_events.chop_front(front, num_events_processed, new_head);
+		_events.chop_front(front, num_events_processed, tail);
 		dest.append(&front);
 	}
 }
