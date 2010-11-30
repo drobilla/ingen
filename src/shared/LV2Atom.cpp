@@ -34,16 +34,16 @@ namespace LV2Atom {
 bool
 to_atom(const Shared::LV2URIMap& uris, const LV2_Atom* object, Raul::Atom& atom)
 {
-	if (object->type == uris.object_class_string.id) {
+	if (object->type == uris.atom_String.id) {
 		atom = Raul::Atom((char*)(object + 1));
 		return true;
-	} else if (object->type == uris.object_class_bool.id) {
+	} else if (object->type == uris.atom_Bool.id) {
 		atom = Raul::Atom((bool)(int32_t*)(object + 1));
 		return true;
-	} else if (object->type == uris.object_class_int32.id) {
+	} else if (object->type == uris.atom_Int32.id) {
 		atom = Raul::Atom((int32_t*)(object + 1));
 		return true;
-	} else if (object->type == uris.object_class_float32.id) {
+	} else if (object->type == uris.atom_Float32.id) {
 		atom = Raul::Atom((float*)(object + 1));
 		return true;
 	}
@@ -60,17 +60,17 @@ from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* objec
 	char* str;
 	switch (atom.type()) {
 	case Raul::Atom::FLOAT:
-		object->type = uris.object_class_float32.id;
+		object->type = uris.atom_Float32.id;
 		object->size = sizeof(float);
 		*(float*)(object + 1) = atom.get_float();
 		break;
 	case Raul::Atom::INT:
-		object->type = uris.object_class_int32.id;
+		object->type = uris.atom_Int32.id;
 		object->size = sizeof(int32_t);
 		*(int32_t*)(object + 1) = atom.get_int32();
 		break;
 	case Raul::Atom::STRING:
-		object->type = uris.object_class_string.id;
+		object->type = uris.atom_String.id;
 		object->size = std::min((uint16_t)object->size, (uint16_t)(strlen(atom.get_string()) + 1));
 		str = ((char*)(object + 1));
 		str[object->size - 1] = '\0';
@@ -78,7 +78,7 @@ from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* objec
 		break;
 	case Raul::Atom::BLOB:
 		error << "TODO: Blob support" << endl;
-		/*object->type = uris.object_class_string;
+		/*object->type = uris.atom_String;
 		*(uint16_t*)(object + 1) = uris.uri_to_id(NULL, atom.get_blob_type());
 		memcpy(((char*)(object + 1) + sizeof(uint32_t)), atom.get_blob(),
 				std::min(atom.data_size(), (size_t)object->size));*/

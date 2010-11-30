@@ -152,7 +152,7 @@ ControlBindings::port_value_changed(ProcessContext& context, PortImpl* port)
 			break;
 		}
 		if (size > 0)
-			_feedback->append(0, 0, uris.midi_event.id, size, buf);
+			_feedback->append(0, 0, uris.midi_MidiEvent.id, size, buf);
 	}
 }
 
@@ -345,7 +345,7 @@ ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 		for (buffer->rewind();
 				buffer->get_event(&frames, &subframes, &type, &size, &buf);
 				buffer->increment()) {
-			if (type != uris.midi_event.id)
+			if (type != uris.midi_MidiEvent.id)
 				continue;
 
 			const Key key = midi_event_key(size, buf, value);
@@ -362,7 +362,7 @@ ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 	for (buffer->rewind();
 			buffer->get_event(&frames, &subframes, &type, &size, &buf);
 			buffer->increment()) {
-		if (type != uris.midi_event.id)
+		if (type != uris.midi_MidiEvent.id)
 			continue;
 
 		const Key key = midi_event_key(size, buf, value);

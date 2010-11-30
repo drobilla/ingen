@@ -97,13 +97,13 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 			xml->get_widget_derived("toggle_control", tc);
 			control = tc;
 		} else if (pm->is_a(Shared::PortType::CONTROL)
-				|| pm->supports(App::instance().uris().object_class_float32)) {
+				|| pm->supports(App::instance().uris().atom_Float32)) {
 			SliderControl* sc;
 			Glib::RefPtr<Gnome::Glade::Xml> xml
 					= GladeFactory::new_glade_reference("control_strip");
 			xml->get_widget_derived("control_strip", sc);
 			control = sc;
-		} else if (pm->supports(App::instance().uris().object_class_string)) {
+		} else if (pm->supports(App::instance().uris().atom_String)) {
 			StringControl* sc;
 			Glib::RefPtr<Gnome::Glade::Xml> xml
 					= GladeFactory::new_glade_reference("string_control");

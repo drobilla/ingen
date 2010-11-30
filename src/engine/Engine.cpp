@@ -192,7 +192,7 @@ Engine::activate()
 
 		Shared::Resource::Properties control_properties;
 		control_properties.insert(make_pair(uris.lv2_name, "Control"));
-		control_properties.insert(make_pair(uris.rdf_type, uris.lv2ev_EventPort));
+		control_properties.insert(make_pair(uris.rdf_type, uris.ev_EventPort));
 
 		// Add control input
 		Shared::Resource::Properties in_properties(control_properties);
@@ -203,7 +203,7 @@ Engine::activate()
 
 		execute_and_delete_event(context, new Events::CreatePort(
 				*this, SharedPtr<Request>(), 0,
-				"/control_in", uris.lv2ev_EventPort, false, in_properties));
+				"/control_in", uris.ev_EventPort, false, in_properties));
 
 		// Add control out
 		Shared::Resource::Properties out_properties(control_properties);
@@ -214,7 +214,7 @@ Engine::activate()
 
 		execute_and_delete_event(context, new Events::CreatePort(
 				*this, SharedPtr<Request>(), 0,
-				"/control_out", uris.lv2ev_EventPort, true, out_properties));
+				"/control_out", uris.ev_EventPort, true, out_properties));
 	}
 
 	_driver->activate();

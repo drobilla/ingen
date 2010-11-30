@@ -458,10 +458,10 @@ DeprecatedLoader::load_node(const Path& parent, xmlDocPtr doc, const xmlNodePtr 
 				props.insert(make_pair(_uris->rdf_type, _uris->lv2_ControlPort));
 				props.insert(make_pair(_uris->rdf_type, _uris->lv2_OutputPort));
 			} else if (plugin_label == "midi_input") {
-				props.insert(make_pair(_uris->rdf_type, _uris->lv2ev_EventPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->ev_EventPort));
 				props.insert(make_pair(_uris->rdf_type, _uris->lv2_InputPort));
 			} else if (plugin_label == "midi_output" ) {
-				props.insert(make_pair(_uris->rdf_type, _uris->lv2ev_EventPort));
+				props.insert(make_pair(_uris->rdf_type, _uris->ev_EventPort));
 				props.insert(make_pair(_uris->rdf_type, _uris->lv2_OutputPort));
 			} else {
 				is_port = false;

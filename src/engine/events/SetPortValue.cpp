@@ -166,7 +166,7 @@ SetPortValue::apply(Context& context)
 
 			} else if (!strcmp(_value.get_blob_type(), "http://lv2plug.in/ns/ext/midi#MidiEvent")) {
 				ebuf->prepare_write(context);
-				ebuf->append(frames, 0, uris.midi_event.id, _value.data_size(),
+				ebuf->append(frames, 0, uris.midi_MidiEvent.id, _value.data_size(),
 						(const uint8_t*)_value.get_blob());
 				_port->raise_set_by_user_flag();
 				return;

@@ -146,7 +146,7 @@ ResourceImpl::type(
 		} else if (atom == uris.lv2_ControlPort) {
 			port = true;
 			data_type = PortType::CONTROL;
-		} else if (atom == uris.lv2ev_EventPort) {
+		} else if (atom == uris.ev_EventPort) {
 			data_type = PortType::EVENTS;
 			port = true;
 		} else if (atom == uris.atom_ValuePort) {

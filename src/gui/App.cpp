@@ -393,8 +393,8 @@ App::can_control(const Shared::Port* port) const
 {
 	return port->is_a(PortType::CONTROL)
 		|| (port->is_a(PortType::VALUE)
-				&& (port->supports(uris().object_class_float32)
-					|| port->supports(uris().object_class_string)));
+				&& (port->supports(uris().atom_Float32)
+					|| port->supports(uris().atom_String)));
 }
 
 

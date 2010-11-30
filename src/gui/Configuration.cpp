@@ -92,7 +92,7 @@ Configuration::get_port_color(const PortModel* p)
 	const Shared::LV2URIMap& uris = App::instance().uris();
 	if (p->is_a(Shared::PortType::AUDIO)) {
 		return _audio_port_color;
-	} else if (p->supports(uris.object_class_string)) {
+	} else if (p->supports(uris.atom_String)) {
 		return _string_port_color;
 	} else if (App::instance().can_control(p)) {
 		return _control_port_color;

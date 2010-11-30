@@ -133,12 +133,12 @@ BufferFactory::create(Shared::PortType type, size_t size)
 
 	if (type.is_control()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
-		ret->atom()->type = _uris->object_class_vector.id;
-		((LV2_Atom_Vector*)ret->atom()->body)->elem_type = _uris->object_class_float32.id;
+		ret->atom()->type = _uris->atom_Vector.id;
+		((LV2_Atom_Vector*)ret->atom()->body)->elem_type = _uris->atom_Float32.id;
 		buffer = ret;
 	} else if (type.is_audio()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, size);
-		ret->atom()->type = _uris->object_class_float32.id;
+		ret->atom()->type = _uris->atom_Float32.id;
 		buffer = ret;
 	} else if (type.is_events()) {
 		buffer = new EventBuffer(*this, size);

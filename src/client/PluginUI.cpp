@@ -73,14 +73,14 @@ lv2_ui_write(LV2UI_Controller controller,
 
 		ui->world()->engine()->set_property(port->path(), uris.ingen_value, Atom(*(float*)buffer));
 
-	} else if (format == uris.ui_format_events.id) {
+	} else if (format == uris.ui_Events.id) {
 		LV2_Event_Buffer*  buf = (LV2_Event_Buffer*)buffer;
 		LV2_Event_Iterator iter;
 		uint8_t*           data;
 		lv2_event_begin(&iter, buf);
 		while (lv2_event_is_valid(&iter)) {
 			LV2_Event* const ev = lv2_event_get(&iter, &data);
-			if (ev->type == uris.midi_event.id) {
+			if (ev->type == uris.midi_MidiEvent.id) {
 				// FIXME: bundle multiple events by writing an entire buffer here
 				ui->world()->engine()->set_property(port->path(), uris.ingen_value,
 					Atom("http://lv2plug.in/ns/ext/midi#MidiEvent", ev->size, data));
@@ -92,7 +92,7 @@ lv2_ui_write(LV2UI_Controller controller,
 			lv2_event_increment(&iter);
 		}
 
-	} else if (format == uris.object_transfer.id) {
+	} else if (format == uris.atom_AtomTransfer.id) {
 		LV2_Atom* buf = (LV2_Atom*)buffer;
 		Raul::Atom val;
 		Shared::LV2Atom::to_atom(uris, buf, val);
