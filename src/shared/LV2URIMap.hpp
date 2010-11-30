@@ -70,6 +70,12 @@ private:
 	LV2_URI_Unmap_Feature uri_unmap_feature_data;
 
 	SharedPtr<UnmapFeature> _unmap_feature;
+
+	typedef std::map<uint16_t, uint32_t> EventToGlobal;
+	typedef std::map<uint32_t, uint16_t> GlobalToEvent;
+
+	EventToGlobal _event_to_global;
+	GlobalToEvent _global_to_event;
 	
 public:
 	struct Quark : public Raul::URI {
