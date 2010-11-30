@@ -18,10 +18,15 @@
 #ifndef INGEN_SHARED_LV2URIMAP_HPP
 #define INGEN_SHARED_LV2URIMAP_HPP
 
+#include <map>
+
 #include <boost/utility.hpp>
+
 #include "raul/URI.hpp"
+
 #include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h"
+
 #include "ingen-config.h"
 #include "LV2Features.hpp"
 
