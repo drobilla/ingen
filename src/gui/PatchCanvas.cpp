@@ -183,8 +183,10 @@ PatchCanvas::build_menus()
  * @a plugin class into @a menu
  */
 size_t
-PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
-		SLV2PluginClass plugin_class, SLV2PluginClasses classes, const LV2Children& children)
+PatchCanvas::build_plugin_class_menu(
+	Gtk::Menu* menu,
+	SLV2PluginClass plugin_class, SLV2PluginClasses classes, const LV2Children& children,
+	std::set<const char*>& ancestors)
 {
 	size_t      num_items     = 0;
 	SLV2Value   class_uri     = slv2_plugin_class_get_uri(plugin_class);
@@ -197,10 +199,16 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		return 0;
 
 	// Add submenus
+	ancestors.insert(class_uri_str);
 	for (LV2Children::const_iterator i = kids.first; i != kids.second; ++i) {
 		SLV2PluginClass c = i->second;
 		const char* sub_label_str = slv2_value_as_string(slv2_plugin_class_get_label(c));
 		const char* sub_uri_str   = slv2_value_as_string(slv2_plugin_class_get_uri(c));
+		if (ancestors.find(sub_uri_str) != ancestors.end()) {
+			LOG(warn) << "Infinite LV2 class recursion: " << class_uri_str
+			          << " <: " << sub_uri_str << endl;
+			return 0;
+		}
 
 		Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(sub_label_str);
 		menu->items().push_back(menu_elem);
@@ -209,7 +217,7 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 		Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
 		menu_item->set_submenu(*submenu);
 
-		size_t num_child_items = build_plugin_class_menu(submenu, c, classes, children);
+		size_t num_child_items = build_plugin_class_menu(submenu, c, classes, children, ancestors);
 
 		_class_menus.insert(make_pair(sub_uri_str, MenuRecord(menu_item, submenu)));
 		if (num_child_items == 0)
@@ -217,6 +225,7 @@ PatchCanvas::build_plugin_class_menu(Gtk::Menu* menu,
 
 		++num_items;
 	}
+	ancestors.erase(class_uri_str);
 
 	return num_items;
 }
@@ -248,7 +257,8 @@ PatchCanvas::build_plugin_menu()
 			p = slv2_plugin_class_get_uri(lv2_plugin);
 		children.insert(make_pair(slv2_value_as_string(p), c));
 	}
-	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes, children);
+	std::set<const char*> ancestors;
+	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes, children, ancestors);
 }
 
 #endif

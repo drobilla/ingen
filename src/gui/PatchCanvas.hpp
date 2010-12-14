@@ -20,6 +20,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 #include <boost/shared_ptr.hpp>
 #include "ingen-config.h"
 #include "flowcanvas/Canvas.hpp"
@@ -116,7 +117,8 @@ private:
 			Gtk::Menu*         menu,
 			SLV2PluginClass    plugin_class,
 			SLV2PluginClasses  classes,
-			const LV2Children& children);
+			const LV2Children& children,
+			std::set<const char*>& ancestors);
 #endif
 
 	GraphObject::Properties get_initial_data();
