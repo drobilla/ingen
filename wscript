@@ -51,7 +51,7 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
 			  atleast_version='0.6.2', mandatory=True)
 	autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS',
-			  atleast_version='0.6.1', mandatory=False)
+			  atleast_version='0.7.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libxml-2.0', uselib_store='XML2',
 			  atleast_version='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM',
