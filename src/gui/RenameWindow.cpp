@@ -40,8 +40,8 @@ RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 	glade_xml->get_widget("rename_cancel_button", _cancel_button);
 	glade_xml->get_widget("rename_ok_button", _ok_button);
 
-	_symbol_entry->signal_changed().connect(sigc::mem_fun(this, &RenameWindow::symbol_changed));
-	_label_entry->signal_changed().connect(sigc::mem_fun(this, &RenameWindow::label_changed));
+	_symbol_entry->signal_changed().connect(sigc::mem_fun(this, &RenameWindow::values_changed));
+	_label_entry->signal_changed().connect(sigc::mem_fun(this, &RenameWindow::values_changed));
 	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &RenameWindow::cancel_clicked));
 	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &RenameWindow::ok_clicked));
 
@@ -72,13 +72,11 @@ RenameWindow::present(SharedPtr<ObjectModel> object)
 }
 
 
-/** Called every time the user types into the name input box.
- * Used to display warning messages, and enable/disable the rename button.
- */
 void
-RenameWindow::symbol_changed()
+RenameWindow::values_changed()
 {
 	const string& symbol = _symbol_entry->get_text();
+	const string& label  = _label_entry->get_text();
 	if (symbol.length() == 0) {
 		_message_label->set_text("Symbol must be at least 1 character");
 		_ok_button->property_sensitive() = false;
@@ -88,18 +86,7 @@ RenameWindow::symbol_changed()
 	} else if (App::instance().store()->object(_object->parent()->path().base() + symbol)) {
 		_message_label->set_text("An object already exists with that path");
 		_ok_button->property_sensitive() = false;
-	} else {
-		_message_label->set_text("");
-		_ok_button->property_sensitive() = true;
-	}
-}
-
-
-void
-RenameWindow::label_changed()
-{
-	const string& label = _label_entry->get_text();
-	if (label.empty()) {
+	} else if (label.empty()) {
 		_message_label->set_text("Label must be at least 1 character");
 		_ok_button->property_sensitive() = false;
 	} else {

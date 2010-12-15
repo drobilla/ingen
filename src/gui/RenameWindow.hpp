@@ -44,8 +44,7 @@ public:
 private:
 	void set_object(SharedPtr<ObjectModel> object);
 
-	void symbol_changed();
-	void label_changed();
+	void values_changed();
 	void cancel_clicked();
 	void ok_clicked();
 
