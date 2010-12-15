@@ -18,10 +18,15 @@
 #ifndef INGEN_ENGINE_HTTPENGINERECEIVER_HPP
 #define INGEN_ENGINE_HTTPENGINERECEIVER_HPP
 
-#include <string>
 #include <stdint.h>
-#include <libsoup/soup.h>
+
+#include <string>
+
 #include "QueuedEngineInterface.hpp"
+
+typedef struct _SoupServer SoupServer;
+typedef struct _SoupMessage SoupMessage;
+typedef struct SoupClientContext SoupClientContext;
 
 namespace Ingen {
 

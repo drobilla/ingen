@@ -16,9 +16,11 @@
  */
 
 #include <libsoup/soup.h>
-#include "raul/log.hpp"
+
 #include "raul/AtomRDF.hpp"
+#include "raul/log.hpp"
 #include "redlandmm/Model.hpp"
+
 #include "module/World.hpp"
 #include "HTTPEngineSender.hpp"
 #include "HTTPClientReceiver.hpp"

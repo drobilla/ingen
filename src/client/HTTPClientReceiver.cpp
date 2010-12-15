@@ -15,14 +15,20 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <list>
+#include <errno.h>
+
 #include <cassert>
 #include <cstring>
+#include <list>
 #include <sstream>
+
 #include <sys/socket.h>
-#include <errno.h>
+
+#include <libsoup/soup.h>
+
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
+
 #include "module/Module.hpp"
 #include "module/World.hpp"
 #include "HTTPClientReceiver.hpp"

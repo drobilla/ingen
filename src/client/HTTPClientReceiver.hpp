@@ -20,7 +20,6 @@
 
 #include <cstdlib>
 #include <boost/utility.hpp>
-#include <libsoup/soup.h>
 #include <glibmm/thread.h>
 #include "redlandmm/World.hpp"
 #include "raul/Deletable.hpp"
@@ -28,6 +27,9 @@
 #include "raul/Thread.hpp"
 #include "interface/ClientInterface.hpp"
 #include "serialisation/Parser.hpp"
+
+typedef struct _SoupSession SoupSession;
+typedef struct _SoupMessage SoupMessage;
 
 namespace Ingen {
 namespace Client {

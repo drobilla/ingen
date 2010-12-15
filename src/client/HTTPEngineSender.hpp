@@ -19,11 +19,15 @@
 #define INGEN_CLIENT_HTTPENGINESENDER_HPP
 
 #include <inttypes.h>
+
 #include <string>
-#include <libsoup/soup.h>
+
 #include "raul/Path.hpp"
-#include "interface/EngineInterface.hpp"
 #include "redlandmm/World.hpp"
+
+#include "interface/EngineInterface.hpp"
+
+typedef struct _SoupSession SoupSession;
 
 namespace Ingen {
 

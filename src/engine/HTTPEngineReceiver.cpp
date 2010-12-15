@@ -15,23 +15,29 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <string>
+
 #include <boost/format.hpp>
-#include "raul/log.hpp"
+
+#include <libsoup/soup.h>
+
 #include "raul/Atom.hpp"
 #include "raul/SharedPtr.hpp"
+#include "raul/log.hpp"
+
 #include "interface/ClientInterface.hpp"
 #include "module/Module.hpp"
 #include "serialisation/Parser.hpp"
 #include "serialisation/Serialiser.hpp"
+
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
+#include "EventSource.hpp"
 #include "HTTPClientSender.hpp"
 #include "HTTPEngineReceiver.hpp"
-#include "EventSource.hpp"
 #include "ThreadManager.hpp"
 
 #define LOG(s) s << "[HTTPEngineReceiver] "
