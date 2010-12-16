@@ -83,24 +83,21 @@ def configure(conf):
 
 	build_gui = conf.env['HAVE_GLADEMM'] == 1 and conf.env['HAVE_FLOWCANVAS'] == 1
 
-	conf.define('INGEN_VERSION', INGEN_VERSION)
-	conf.env['INGEN_VERSION'] = INGEN_VERSION
-	conf.define('BUILD_INGEN_GUI', int(build_gui))
-	conf.define('HAVE_JACK_MIDI', int(conf.env['HAVE_JACK'] == 1))
+	autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
+	autowaf.define(conf, 'BUILD_INGEN_GUI', int(build_gui))
+	autowaf.define(conf, 'HAVE_JACK_MIDI', int(conf.env['HAVE_JACK'] == 1))
 	if conf.env['BUNDLE']:
-		conf.define('INGEN_DATA_DIR', os.path.join(
-				conf.env['DATADIRNAME'], 'ingen'))
-		conf.define('INGEN_MODULE_DIR', conf.env['LIBDIRNAME'])
+		autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIRNAME'], 'ingen'))
+		autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIRNAME'])
 	else:
-		conf.define('INGEN_DATA_DIR', os.path.join(
-				conf.env['DATADIR'], 'ingen'))
-		conf.define('INGEN_MODULE_DIR',	conf.env['LIBDIR'])
+		autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIR'], 'ingen'))
+		autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIR'])
 	
 	if Options.options.log_debug:
-		conf.define('LOG_DEBUG', 1)
+		autowaf.define(conf, 'LOG_DEBUG', 1)
 	
 	if Options.options.liblo_bundles:
-		conf.define('LIBLO_BUNDLES', 1)
+		autowaf.define(conf, 'LIBLO_BUNDLES', 1)
 
 	conf.write_config_header('ingen-config.h', remove=False)
 

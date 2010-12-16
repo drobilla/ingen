@@ -3,7 +3,7 @@ import autowaf
 
 def build(bld):
 	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/gui', bld.path.ant_glob('*.hpp')
+	bld.install_files('${INCLUDEDIR}/ingen/gui', bld.path.ant_glob('*.hpp'))
 
 	obj = bld(features = 'cxx cxxshlib')
 	obj.source = '''
