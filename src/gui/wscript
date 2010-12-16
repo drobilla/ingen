@@ -3,9 +3,9 @@ import autowaf
 
 def build(bld):
 	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/gui', '*.hpp')
+	bld.install_files('${INCLUDEDIR}/ingen/gui', bld.path.ant_glob('*.hpp')
 
-	obj = bld.new_task_gen('cxx', 'shlib')
+	obj = bld(features = 'cxx cxxshlib')
 	obj.source = '''
 		App.cpp
 		BreadCrumbs.cpp
@@ -44,12 +44,12 @@ def build(bld):
 	if bld.env['HAVE_CURL'] != 0:
 		obj.source += 'UploadPatchWindow.cpp'
 
-	obj.export_incdirs = ['.']
-	obj.includes       = ['.', '..', '../..', '../common', '../client', '../module']
-	obj.name           = 'libingen_gui'
-	obj.target         = 'ingen_gui'
-	obj.install_path   = '${LIBDIR}'
-	obj.uselib_local   = 'libingen_shared libingen_module libingen_client libingen_serialisation'
+	obj.export_includes = ['.']
+	obj.includes        = ['.', '..', '../..', '../common', '../client', '../module']
+	obj.name            = 'libingen_gui'
+	obj.target          = 'ingen_gui'
+	obj.install_path    = '${LIBDIR}'
+	obj.use             = 'libingen_shared libingen_module libingen_client libingen_serialisation'
 	autowaf.use_lib(bld, obj, '''
 		CURL
 		FLOWCANVAS

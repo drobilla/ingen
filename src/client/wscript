@@ -3,9 +3,9 @@ import autowaf
 
 def build(bld):
 	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/client', '*.hpp')
+	bld.install_files('${INCLUDEDIR}/ingen/client', bld.path.ant_glob('*.hpp'))
 
-	obj = bld.new_task_gen('cxx', 'shlib')
+	obj = bld(features = 'cxx cxxshlib')
 	obj.source = '''
 		ClientStore.cpp
 		NodeModel.cpp
@@ -30,11 +30,11 @@ def build(bld):
 	if bld.env['HAVE_LIBLO'] == 1:
 		obj.source += ' OSCClientReceiver.cpp OSCEngineSender.cpp '
 
-	obj.includes     = ['.', '..', '../..', '../common']
-	obj.export_incdirs = ['.']
-	obj.name         = 'libingen_client'
-	obj.target       = 'ingen_client'
-	obj.install_path = '${LIBDIR}'
-	obj.uselib_local = 'libingen_shared'
+	obj.includes        = ['.', '..', '../..', '../common']
+	obj.export_includes = ['.']
+	obj.name            = 'libingen_client'
+	obj.target          = 'ingen_client'
+	obj.install_path    = '${LIBDIR}'
+	obj.use             = 'libingen_shared'
 	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM SOUP XML2 SIGCPP LIBLO SOUP')
 

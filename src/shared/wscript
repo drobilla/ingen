@@ -3,9 +3,9 @@ import autowaf
 
 def build(bld):
 	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/shared', '*.hpp')
+	bld.install_files('${INCLUDEDIR}/ingen/shared', bld.path.ant_glob('*.hpp'))
 
-	obj = bld.new_task_gen('cxx', 'shlib')
+	obj = bld(features = 'cxx cxxshlib')
 	obj.source = '''
 		Builder.cpp
 		ClashAvoider.cpp
@@ -22,11 +22,11 @@ def build(bld):
 	if bld.env['HAVE_SOUP'] == 1:
 		autowaf.use_lib(bld, obj, 'SOUP')
 		obj.source += ' HTTPSender.cpp '
-	obj.export_incdirs = ['.']
-	obj.includes     = ['.', '..', '../..', '../common']
-	obj.name         = 'libingen_shared'
-	obj.target       = 'ingen_shared'
-	obj.vnum         = '0.0.0'
-	obj.install_path = '${LIBDIR}'
+	obj.export_includes = ['.']
+	obj.includes        = ['.', '..', '../..', '../common']
+	obj.name            = 'libingen_shared'
+	obj.target          = 'ingen_shared'
+	obj.vnum            = '0.0.0'
+	obj.install_path    = '${LIBDIR}'
 	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM LIBLO')
 

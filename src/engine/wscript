@@ -3,7 +3,7 @@ import autowaf
 
 def build(bld):
 	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/engine', '*.hpp')
+	bld.install_files('${INCLUDEDIR}/ingen/engine', bld.path.ant_glob('*.hpp'))
 
 	core_source = '''
 		AudioBuffer.cpp
@@ -64,19 +64,19 @@ def build(bld):
 	if bld.env['HAVE_SLV2'] == 1:
 		core_source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
 
-	obj = bld.new_task_gen('cxx', 'shlib')
+	obj = bld(features = 'cxx cxxshlib')
 	obj.source = core_source
-	obj.export_incdirs = ['.']
-	obj.includes     = ['.', '..', '../..', '../common']
-	obj.name         = 'libingen_engine'
-	obj.target       = 'ingen_engine'
-	obj.install_path = '${LIBDIR}'
-	obj.uselib_local = 'libingen_shared'
+	obj.export_includes = ['.']
+	obj.includes        = ['.', '..', '../..', '../common']
+	obj.name            = 'libingen_engine'
+	obj.target          = 'ingen_engine'
+	obj.install_path    = '${LIBDIR}'
+	obj.use             = 'libingen_shared'
 	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
 	autowaf.use_lib(bld, obj, core_libs)
 
 	if bld.env['HAVE_SOUP'] == 1:
-		obj = bld.new_task_gen('cxx', 'shlib')
+		obj = bld(features = 'cxx cxxshlib')
 		obj.source = '''
 			EventSource.cpp
 			QueuedEngineInterface.cpp
@@ -91,7 +91,7 @@ def build(bld):
 		autowaf.use_lib(bld, obj, core_libs + ' SOUP')
 
 	if bld.env['HAVE_LIBLO'] == 1:
-		obj = bld.new_task_gen('cxx', 'shlib')
+		obj = bld(features = 'cxx cxxshlib')
 		obj.source = '''
 			EventSource.cpp
 			QueuedEngineInterface.cpp
@@ -99,32 +99,32 @@ def build(bld):
 			OSCEngineReceiver.cpp
 			ingen_osc.cpp
 		'''
-		obj.export_incdirs = ['.']
-		obj.includes     = ['.', '..', '../..', '../common', '../engine']
-		obj.name         = 'libingen_osc'
-		obj.target       = 'ingen_osc'
-		obj.install_path = '${LIBDIR}'
+		obj.export_includes = ['.']
+		obj.includes        = ['.', '..', '../..', '../common', '../engine']
+		obj.name            = 'libingen_osc'
+		obj.target          = 'ingen_osc'
+		obj.install_path    = '${LIBDIR}'
 		autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
 
 	if bld.env['HAVE_JACK'] == 1:
-		obj = bld.new_task_gen('cxx', 'shlib')
+		obj = bld(features = 'cxx cxxshlib')
 		obj.source = 'JackDriver.cpp ingen_jack.cpp'
-		obj.export_incdirs = ['.']
-		obj.includes     = ['.', '..', '../..', '../common', '../engine']
-		obj.name         = 'libingen_jack'
-		obj.target       = 'ingen_jack'
-		obj.install_path = '${LIBDIR}'
-		obj.uselib_local = 'libingen_engine'
+		obj.export_includes = ['.']
+		obj.includes        = ['.', '..', '../..', '../common', '../engine']
+		obj.name            = 'libingen_jack'
+		obj.target          = 'ingen_jack'
+		obj.install_path    = '${LIBDIR}'
+		obj.use             = 'libingen_engine'
 		autowaf.use_lib(bld, obj, core_libs + ' JACK')
 
 	# Ingen LV2 wrapper
-	obj = bld.new_task_gen('cxx', 'shlib')
+	obj = bld(features = 'cxx cxxshlib')
 	obj.source = ' ingen_lv2.cpp '
-	obj.export_incdirs = ['.']
-	obj.includes     = ['.', '..', '../..', '../common']
-	obj.name         = 'libingen_lv2'
-	obj.target       = 'ingen_lv2'
-	obj.install_path = '${LIBDIR}'
-	obj.uselib_local = 'libingen_shared libingen_module'
-	obj.add_objects  = 'libingen_engine'
+	obj.export_includes = ['.']
+	obj.includes	    = ['.', '..', '../..', '../common']
+	obj.name	    = 'libingen_lv2'
+	obj.target	    = 'ingen_lv2'
+	obj.install_path    = '${LIBDIR}'
+	obj.use             = 'libingen_shared libingen_module'
+	obj.add_objects	    = 'libingen_engine'
 	autowaf.use_lib(bld, obj, core_libs)

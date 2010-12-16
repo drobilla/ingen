@@ -11,10 +11,10 @@ APPNAME = 'ingen'
 VERSION = INGEN_VERSION
 
 # Mandatory variables
-srcdir = '.'
-blddir = 'build'
+top = '.'
+out = 'build'
 
-def set_options(opt):
+def options(opt):
 	autowaf.set_options(opt)
 	opt.add_option('--data-dir', type='string', dest='datadir',
 		       help="Ingen data install directory [Default: PREFIX/share/ingen]")
@@ -84,6 +84,7 @@ def configure(conf):
 	build_gui = conf.env['HAVE_GLADEMM'] == 1 and conf.env['HAVE_FLOWCANVAS'] == 1
 
 	conf.define('INGEN_VERSION', INGEN_VERSION)
+	conf.env['INGEN_VERSION'] = INGEN_VERSION
 	conf.define('BUILD_INGEN_GUI', int(build_gui))
 	conf.define('HAVE_JACK_MIDI', int(conf.env['HAVE_JACK'] == 1))
 	if conf.env['BUNDLE']:
@@ -101,7 +102,7 @@ def configure(conf):
 	if Options.options.liblo_bundles:
 		conf.define('LIBLO_BUNDLES', 1)
 
-	conf.write_config_header('ingen-config.h')
+	conf.write_config_header('ingen-config.h', remove=False)
 
 	autowaf.display_msg(conf, "Jack", str(conf.env['HAVE_JACK'] == 1))
 	autowaf.display_msg(conf, "OSC", str(conf.env['HAVE_LIBLO'] == 1))
@@ -117,7 +118,8 @@ def build(bld):
 	opts.moduledir = opts.moduledir or bld.env['PREFIX'] + 'lib/ingen'
 	
 	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/interface', 'src/common/interface/*.hpp')
+	bld.install_files('${INCLUDEDIR}/ingen/interface',
+			  bld.path.ant_glob('src/common/interface/*.hpp'))
 
 	# Modules
 	bld.add_subdirs('src/engine')
@@ -133,8 +135,8 @@ def build(bld):
 	bld.add_subdirs('src/ingen')
 
 	# Documentation
-	autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, srcdir, blddir)
-	bld.install_files('${HTMLDIR}', blddir + '/default/doc/html/*')
+	autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, top, out)
+	#bld.install_files('${HTMLDIR}', bld.path.ant_glob(out + '/default/doc/html/*'))
 
 	# Icons
 	icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
