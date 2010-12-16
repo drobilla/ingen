@@ -134,10 +134,10 @@ PluginModel::get_property(const URI& key) const
 void
 PluginModel::set(SharedPtr<PluginModel> p)
 {
-	_type      = p->_type;
-	_icon_path = p->_icon_path;
+	_type = p->_type;
 
 #ifdef HAVE_SLV2
+	_icon_path = p->_icon_path;
 	if (p->_slv2_plugin)
 		_slv2_plugin = p->_slv2_plugin;
 #endif
