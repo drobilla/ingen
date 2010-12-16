@@ -136,7 +136,6 @@ def build(bld):
 
 	# Documentation
 	autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, top, out)
-	#bld.install_files('${HTMLDIR}', bld.path.ant_glob(out + '/default/doc/html/*'))
 
 	# Icons
 	icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
