@@ -503,7 +503,7 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 		? instance_rdf_node(connection->dst_port_path())
 		: class_rdf_node(connection->dst_port_path());
 
-	const Redland::Node connection_node = _world.rdf_world()->blank_id();
+	const Redland::Node connection_node = Redland::Node::blank_id(*_world.rdf_world());
 	_model->add_statement(connection_node, "ingen:source", src_node);
 	_model->add_statement(connection_node, "ingen:destination", dst_node);
 	if (parent) {
