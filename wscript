@@ -57,7 +57,7 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM',
 			  atleast_version='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'redlandmm', uselib_store='REDLANDMM',
-			  atleast_version='0.0.0', mandatory=False)
+			  atleast_version='0.1.0', mandatory=False)
 	if not Options.options.no_http:
 		autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP',
 				  atleast_version='2.4.0', mandatory=False)
