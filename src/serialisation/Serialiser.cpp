@@ -226,9 +226,9 @@ Serialiser::finish()
 {
 	string ret = "";
 	if (_mode == TO_FILE) {
-		_model->serialise_to_file(_base_uri);
+		_model->serialise_to_file(_base_uri, "turtle");
 	} else {
-		char* c_str = _model->serialise_to_string();
+		char* c_str = _model->serialise_to_string("turtle");
 		if (c_str != NULL) {
 			ret = c_str;
 			free(c_str);

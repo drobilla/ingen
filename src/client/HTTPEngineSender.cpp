@@ -128,7 +128,7 @@ HTTPEngineSender::put(const URI&                  uri,
 				i->first.str(),
 				AtomRDF::atom_to_node(model, i->second));
 
-	const string str = model.serialise_to_string();
+	const string str = model.serialise_to_string("turtle");
 	SoupMessage* msg = soup_message_new(SOUP_METHOD_PUT, full_uri.c_str());
 	assert(msg);
 	soup_message_set_request(msg, "application/x-turtle", SOUP_MEMORY_COPY, str.c_str(), str.length());
