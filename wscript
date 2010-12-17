@@ -141,3 +141,4 @@ def build(bld):
 			os.path.join(bld.env['DATADIR'], 'icons', 'hicolor', s, 'apps', 'ingen.png'),
 			'icons/' + s + '/ingen.png')
 
+	bld.add_post_fun(autowaf.run_ldconfig)
