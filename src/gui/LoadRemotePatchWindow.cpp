@@ -76,12 +76,11 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Propert
 		"       doap:name    ?name ."
 		"}"));
 
-	Redland::Query::Results results = query.run(*App::instance().world()->rdf_world(), model);
-
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+	SharedPtr<Redland::QueryResults> results(query.run(*App::instance().world()->rdf_world(), model));
+	for (; !results->finished(); results->next()) {
 		Gtk::TreeModel::iterator iter = _liststore->append();
-		(*iter)[_columns._col_name] = (*i)["name"].to_string();
-		(*iter)[_columns._col_uri] = (*i)["uri"].to_string();
+		(*iter)[_columns._col_name] = results->get("name").to_string();
+		(*iter)[_columns._col_uri]  = results->get("uri").to_string();
 	}
 
 	_treeview->columns_autosize();

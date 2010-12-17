@@ -85,10 +85,10 @@ Parser::find_patches(
 
 	std::list<PatchRecord> records;
 
-	Redland::Query::Results results(query.run(*world->rdf_world(), model, manifest_uri));
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		const Redland::Node& patch((*i)["patch"]);
-		const Redland::Node& file((*i)["file"]);
+	SharedPtr<Redland::QueryResults> results(query.run(*world->rdf_world(), model, manifest_uri));
+	for (; !results->finished(); results->next()) {
+		const Redland::Node& patch(results->get("patch"));
+		const Redland::Node& file(results->get("file"));
 		records.push_back(PatchRecord(patch.to_c_string(), file.to_c_string()));
 	}
 
@@ -187,10 +187,10 @@ Parser::parse_update(
 	// Delete anything explicitly declared to not exist
 	Glib::ustring query_str = Glib::ustring("SELECT DISTINCT ?o WHERE { ?o a owl:Nothing }");
 	Redland::Query query(*world->rdf_world(), query_str);
-	Redland::Query::Results results = query.run(*world->rdf_world(), model, base_uri);
+	SharedPtr<Redland::QueryResults> results(query.run(*world->rdf_world(), model, base_uri));
 
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		const Redland::Node& object = (*i)["o"];
+	for (; !results->finished(); results->next()) {
+		const Redland::Node& object = results->get("o");
 		target->del(object.to_string());
 	}
 
@@ -200,13 +200,12 @@ Parser::parse_update(
 		"?s ?p ?o .\n"
 		"}");
 
-	results = Redland::Query::Results(query.run(*world->rdf_world(), model, base_uri));
-
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+	results = query.run(*world->rdf_world(), model, base_uri);
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		string               obj_uri((*i)["s"].to_string());
-		const string         key((*i)["p"].to_string());
-		const Redland::Node& val_node((*i)["o"]);
+		string               obj_uri(results->get("s").to_string());
+		const string         key(results->get("p").to_string());
+		const Redland::Node& val_node(results->get("o"));
 		const Atom           a(AtomRDF::node_to_atom(model, val_node));
 		if (obj_uri.find(":") == string::npos)
 			obj_uri = Path(obj_uri).str();
@@ -226,12 +225,11 @@ Parser::parse_update(
 		"?path ingen:value ?value .\n"
 		"}");
 
-	results = Redland::Query::Results(query.run(*world->rdf_world(), model, base_uri));
-
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+	results = query.run(*world->rdf_world(), model, base_uri);
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		const string obj_path = (*i)["path"].to_string();
-		const Redland::Node& val_node = (*i)["value"];
+		const string obj_path = results->get("path").to_string();
+		const Redland::Node& val_node = results->get("value");
 		const Atom a(AtomRDF::node_to_atom(model, val_node));
 		target->set_property(obj_path, world->uris()->ingen_value, a);
 	}
@@ -258,7 +256,7 @@ Parser::parse(
 		: Glib::ustring("SELECT DISTINCT ?s ?t WHERE { ?s a ?t . }");
 
 	Redland::Query query(*world->rdf_world(), query_str);
-	Redland::Query::Results results(query.run(*world->rdf_world(), model, document_uri));
+	SharedPtr<Redland::QueryResults> results(query.run(*world->rdf_world(), model, document_uri));
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
 #define NS_LV2   "http://lv2plug.in/ns/lv2core#"
@@ -279,9 +277,9 @@ Parser::parse(
 	boost::optional<Path> ret;
 	boost::optional<Path> root_path;
 
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
-		const Redland::Node& subject = (data_path ? subject_node : (*i)["s"]);
-		const Redland::Node& rdf_class = (*i)["t"];
+	for (; !results->finished(); results->next()) {
+		const Redland::Node& subject = (data_path ? subject_node : results->get("s"));
+		const Redland::Node& rdf_class = results->get("t");
 
 		if (!data_path)
 			path_str = relative_uri(document_uri, subject.to_c_string(), true);
@@ -360,7 +358,7 @@ Parser::parse_patch(
 	const LV2URIMap& uris = *world->uris().get();
 	uint32_t patch_poly = 0;
 
-	typedef Redland::Query::Results Results;
+	typedef Redland::QueryResults Results;
 
 	/* Use parameter overridden polyphony, if given */
 	if (data) {
@@ -376,9 +374,9 @@ Parser::parse_patch(
 		Redland::Query query(*world->rdf_world(), Glib::ustring(
 			"SELECT DISTINCT ?poly WHERE { ") + subject + " ingen:polyphony ?poly }");
 
-		Results results = query.run(*world->rdf_world(), model);
-		if (results.size() > 0) {
-			const Redland::Node& poly_node = (*results.begin())["poly"];
+		SharedPtr<Redland::QueryResults> results(query.run(*world->rdf_world(), model));
+		if (!results->finished()) {
+			const Redland::Node& poly_node = results->get("poly");
 			if (poly_node.is_int())
 				patch_poly = poly_node.to_int();
 			else
@@ -424,17 +422,16 @@ Parser::parse_patch(
 			"?patch a ingen:Patch .\n"
 		"}");
 	set<string> patches;
-	Results results = query.run(*world->rdf_world(), model, base_uri);
-	for (Results::iterator i = results.begin(); i != results.end(); ++i) {
+	SharedPtr<Redland::QueryResults> results(query.run(*world->rdf_world(), model, base_uri));
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		patches.insert((*i)["patch"].to_string());
+		patches.insert(results->get("patch").to_string());
 	}
 
 	typedef multimap<Raul::URI, Raul::Atom> Properties;
 	typedef map<string, Redland::Node>      Resources;
 	typedef map<string, Properties>         Objects;
 	typedef map<string, string>             Types;
-
 
 	/* Find nodes on this patch */
 	query = Redland::Query(*world->rdf_world(), Glib::ustring(
@@ -447,10 +444,10 @@ Parser::parse_patch(
 	Resources resources;
 	Types     types;
 	results = query.run(*world->rdf_world(), model, base_uri);
-	for (Results::iterator i = results.begin(); i != results.end(); ++i) {
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		Redland::Node& node = (*i)["node"];
-		Redland::Node& type = (*i)["type"];
+		const Redland::Node& node = results->get("node");
+		const Redland::Node& type = results->get("type");
 		if (node.type() == Redland::Node::RESOURCE && type.type() == Redland::Node::RESOURCE) {
 			types.insert(make_pair(node.to_string(), type.to_string()));
 			if (patches.find(type.to_string()) != patches.end()) {
@@ -470,14 +467,14 @@ Parser::parse_patch(
 			"?node      ?predicate ?object .\n"
 		"}");
 	results = query.run(*world->rdf_world(), model, base_uri);
-	for (Results::iterator i = results.begin(); i != results.end(); ++i) {
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		Redland::Node&    node      = (*i)["node"];
-		Redland::Node&    predicate = (*i)["predicate"];
-		Redland::Node&    object    = (*i)["object"];
-		Objects::iterator patch_i   = patch_nodes.find(node.to_string());
-		Objects::iterator plug_i    = plugin_nodes.find(node.to_string());
-		Types::iterator   type_i    = types.find(node.to_string());
+		const Redland::Node& node      = results->get("node");
+		const Redland::Node& predicate = results->get("predicate");
+		const Redland::Node& object    = results->get("object");
+		Objects::iterator    patch_i   = patch_nodes.find(node.to_string());
+		Objects::iterator    plug_i    = plugin_nodes.find(node.to_string());
+		Types::iterator      type_i    = types.find(node.to_string());
 		if (node.type() == Redland::Node::RESOURCE && type_i != types.end()) {
 			if (skip_property(predicate))
 				continue;
@@ -529,10 +526,10 @@ Parser::parse_patch(
 		"}");
 	Objects node_ports;
 	results = query.run(*world->rdf_world(), model, base_uri);
-	for (Results::iterator i = results.begin(); i != results.end(); ++i) {
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		const string node_uri = (*i)["node"].to_string();
-		const string port_uri = (*i)["port"].to_string();
+		const string node_uri = results->get("node").to_string();
+		const string port_uri = results->get("port").to_string();
 		if (port_uri.length() <= node_uri.length()) {
 			LOG(warn) << "Port on " << node_uri << " has bad URI: " << port_uri << endl;
 			continue;
@@ -545,8 +542,8 @@ Parser::parse_patch(
 		const Path   node_path = patch_path.child(relative_uri(base_uri, node_uri, false));
 		const Symbol port_sym  = port_uri.substr(node_uri.length() + 1);
 		const Path   port_path = node_path.child(port_sym);
-		const string key       = (*i)["key"].to_string();
-		p->second.insert(make_pair(key, AtomRDF::node_to_atom(model, (*i)["val"])));
+		const string key       = results->get("key").to_string();
+		p->second.insert(make_pair(key, AtomRDF::node_to_atom(model, results->get("val"))));
 	}
 
 	for (Objects::iterator i = node_ports.begin(); i != node_ports.end(); ++i) {
@@ -562,10 +559,10 @@ Parser::parse_patch(
 		"}");
 	Objects patch_ports;
 	results = query.run(*world->rdf_world(), model, base_uri);
-	for (Results::iterator i = results.begin(); i != results.end(); ++i) {
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		Redland::Node& port = (*i)["port"];
-		Redland::Node& type = (*i)["type"];
+		const Redland::Node& port = results->get("port");
+		const Redland::Node& type = results->get("type");
 		if (port.type() == Redland::Node::RESOURCE && type.type() == Redland::Node::RESOURCE) {
 			types.insert(make_pair(port.to_string(), type.to_string()));
 			patch_ports.insert(make_pair(port.to_string(), Properties()));
@@ -580,15 +577,15 @@ Parser::parse_patch(
 			"?port      ?key     ?val .\n"
 		"}");
 	results = query.run(*world->rdf_world(), model, base_uri);
-	for (Results::iterator i = results.begin(); i != results.end(); ++i) {
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		const string port_uri  = (*i)["port"].to_string();
+		const string port_uri  = results->get("port").to_string();
 		const Path   port_path = patch_path.child(relative_uri(base_uri, port_uri, false));
-		const string key       = (*i)["key"].to_string();
+		const string key       = results->get("key").to_string();
 		Objects::iterator ports_i = patch_ports.find(port_uri);
 		if (ports_i == patch_ports.end())
 			ports_i = patch_ports.insert(make_pair(port_uri, Properties())).first;
-		ports_i->second.insert(make_pair(key, AtomRDF::node_to_atom(model, (*i)["val"])));
+		ports_i->second.insert(make_pair(key, AtomRDF::node_to_atom(model, results->get("val"))));
 	}
 
 	std::vector<Objects::iterator> ports_by_index(patch_ports.size(), patch_ports.end());
@@ -671,9 +668,9 @@ Parser::parse_patch(
 		"}");
 
 	results = query.run(*world->rdf_world(), model, base_uri);
-	for (Results::iterator i = results.begin(); i != results.end(); ++i) {
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		const Redland::Node& enabled_node = (*i)["enabled"];
+		const Redland::Node& enabled_node = results->get("enabled");
 		if (enabled_node.is_bool() && enabled_node) {
 			target->set_property(patch_path, uris.ingen_enabled, (bool)true);
 			break;
@@ -703,14 +700,14 @@ Parser::parse_node(
 			+ subject.to_turtle_token() + " rdf:instanceOf ?plug .\n"
 		"}");
 
-	Redland::Query::Results results = query.run(*world->rdf_world(), model);
+	SharedPtr<Redland::QueryResults> results(query.run(*world->rdf_world(), model));
 
-	if (results.size() == 0) {
+	if (results->finished()) {
 		LOG(error) << "Node missing mandatory rdf:instanceOf property" << endl;
 		return boost::optional<Path>();
 	}
 
-	const Redland::Node& plugin_node = (*results.begin())["plug"];
+	const Redland::Node& plugin_node = results->get("plug");
 	if (plugin_node.type() != Redland::Node::RESOURCE) {
 		LOG(error) << "Node's rdf:instanceOf property is not a resource" << endl;
 		return boost::optional<Path>();
@@ -744,11 +741,11 @@ Parser::parse_connections(
 
 	const Glib::ustring& base_uri = model.base_uri().to_string();
 
-	Redland::Query::Results results = query.run(*world->rdf_world(), model);
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+	SharedPtr<Redland::QueryResults> results(query.run(*world->rdf_world(), model));
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		const Path src_path(parent.child(relative_uri(base_uri, (*i)["src"].to_string(), false)));
-		const Path dst_path(parent.child(relative_uri(base_uri, (*i)["dst"].to_string(), false)));
+		const Path src_path(parent.child(relative_uri(base_uri, results->get("src").to_string(), false)));
+		const Path dst_path(parent.child(relative_uri(base_uri, results->get("dst").to_string(), false)));
 		target->connect(src_path, dst_path);
 	}
 
@@ -773,12 +770,12 @@ Parser::parse_properties(
 		"}");
 
 	Resource::Properties properties;
-	Redland::Query::Results results = query.run(*world->rdf_world(), model);
-	for (Redland::Query::Results::iterator i = results.begin(); i != results.end(); ++i) {
+	SharedPtr<Redland::QueryResults> results(query.run(*world->rdf_world(), model));
+	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		const string         key = string((*i)["key"]);
-		const Redland::Node& val = (*i)["val"];
-		if (skip_property((*i)["key"]))
+		const string         key = string(results->get("key"));
+		const Redland::Node& val = results->get("val");
+		if (skip_property(results->get("key")))
 			continue;
 		if (!key.empty() && val.type() != Redland::Node::BLANK)
 			properties.insert(make_pair(key, AtomRDF::node_to_atom(model, val)));
