@@ -154,7 +154,7 @@ SetPortValue::apply(Context& context)
 		LV2URIMap& uris = *_engine.world()->uris().get();
 
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
-		if (ebuf) {
+		if (ebuf && _value.type() == Atom::BLOB) {
 			const uint32_t frames = std::max(uint32_t(_time - start), ebuf->latest_frames());
 
 			// Size 0 event, pass it along to the plugin as a typed but empty event
