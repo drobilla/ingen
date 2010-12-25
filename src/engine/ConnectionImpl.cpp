@@ -56,7 +56,7 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 	assert(src_port->path() != dst_port->path());
 
 	if (must_queue())
-		_queue = new Raul::RingBuffer<LV2_Atom>(src_port->buffer_size() * 2);
+		_queue = new Raul::RingBuffer(src_port->buffer_size() * 2);
 }
 
 

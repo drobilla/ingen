@@ -90,11 +90,11 @@ protected:
 	/** Execute a request (possibly enqueueing more requests) */
 	void execute(const Request& req);
 
-	Raul::Semaphore           _sem;
-	Raul::RingBuffer<Request> _requests;
-	Glib::Mutex               _mutex;
-	Glib::Cond                _cond;
-	Request                   _non_rt_request;
+	Raul::Semaphore  _sem;
+	Raul::RingBuffer _requests;
+	Glib::Mutex      _mutex;
+	Glib::Cond       _cond;
+	Request          _non_rt_request;
 
 	struct RequestEarlier {
 		bool operator()(const Request& r1, const Request& r2) {

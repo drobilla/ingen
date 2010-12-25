@@ -48,8 +48,8 @@ public:
 	bool read(uint32_t event_buffer_size, uint8_t* event_buffer);
 
 private:
-	Engine&                   _engine;
-	Raul::RingBuffer<uint8_t> _events;
+	Engine&          _engine;
+	Raul::RingBuffer _events;
 };
 
 

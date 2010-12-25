@@ -96,7 +96,7 @@ public:
 protected:
 	void dump() const;
 
-	Raul::RingBuffer<LV2_Atom>* _queue;
+	Raul::RingBuffer* _queue;
 
 	BufferFactory&     _bufs;
 	PortImpl* const    _src_port;
