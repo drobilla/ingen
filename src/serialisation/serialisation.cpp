@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "raul/Atom.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
 #include "Parser.hpp"

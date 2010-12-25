@@ -20,7 +20,6 @@
 
 #include <vector>
 #include "raul/URI.hpp"
-#include "raul/Atom.hpp"
 #include "shared/ResourceImpl.hpp"
 #include "QueuedEvent.hpp"
 

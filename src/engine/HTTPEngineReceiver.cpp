@@ -23,7 +23,6 @@
 
 #include <libsoup/soup.h>
 
-#include "raul/Atom.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/log.hpp"
 

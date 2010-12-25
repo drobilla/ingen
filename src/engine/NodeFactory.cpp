@@ -23,7 +23,6 @@
 #include <glibmm/miscutils.h>
 #include "redlandmm/World.hpp"
 #include "raul/log.hpp"
-#include "raul/Atom.hpp"
 #include "ingen-config.h"
 #include "module/World.hpp"
 #include "internals/Controller.hpp"

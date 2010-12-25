@@ -24,7 +24,6 @@
 #include <cassert>
 #include <boost/utility.hpp>
 #include <sigc++/sigc++.h>
-#include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 #include "raul/URI.hpp"
 #include "raul/SharedPtr.hpp"

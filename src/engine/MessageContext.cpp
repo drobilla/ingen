@@ -17,7 +17,6 @@
 
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 #include "raul/log.hpp"
-#include "raul/Atom.hpp"
 #include "ConnectionImpl.hpp"
 #include "Engine.hpp"
 #include "MessageContext.hpp"

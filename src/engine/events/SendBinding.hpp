@@ -18,7 +18,6 @@
 #ifndef INGEN_EVENTS_SENDBINDING_HPP
 #define INGEN_EVENTS_SENDBINDING_HPP
 
-#include "raul/Atom.hpp"
 #include "engine/Event.hpp"
 #include "engine/ControlBindings.hpp"
 #include "engine/types.hpp"

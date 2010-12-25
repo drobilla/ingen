@@ -27,7 +27,6 @@
 #include <libsoup/soup.h>
 
 #include "raul/log.hpp"
-#include "raul/Atom.hpp"
 
 #include "module/Module.hpp"
 #include "module/World.hpp"

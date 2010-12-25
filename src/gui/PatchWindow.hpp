@@ -21,11 +21,10 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "raul/Atom.hpp"
 #include "raul/SharedPtr.hpp"
 #include "Window.hpp"
 
-namespace Raul { class Path; }
+namespace Raul { class Atom; class Path; }
 
 namespace Ingen {
 
