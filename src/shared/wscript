@@ -28,5 +28,6 @@ def build(bld):
 	obj.target          = 'ingen_shared'
 	obj.vnum            = '0.0.0'
 	obj.install_path    = '${LIBDIR}'
+	obj.linkflags       = '-ldl'
 	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM LIBLO')
 
