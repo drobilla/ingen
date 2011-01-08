@@ -15,13 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <string>
+
 #include "raul/log.hpp"
-#include "QueuedEngineInterface.hpp"
-#include "tuning.hpp"
-#include "EventSource.hpp"
-#include "events.hpp"
-#include "Engine.hpp"
+
 #include "Driver.hpp"
+#include "Engine.hpp"
+#include "EventSource.hpp"
+#include "QueuedEngineInterface.hpp"
+#include "events.hpp"
+#include "tuning.hpp"
 
 #define LOG(s) s << "[QueuedEngineInterface] "
 

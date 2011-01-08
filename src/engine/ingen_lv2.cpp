@@ -16,20 +16,20 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <stdlib.h>
-#include <glibmm/miscutils.h>
-#include <glibmm/convert.h>
 #include <glib.h>
+#include <stdlib.h>
+
+#include <string>
+#include <vector>
+#include <glibmm/convert.h>
+#include <glibmm/miscutils.h>
+
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
-#include "ingen-config.h"
-#include "raul/log.hpp"
-#include "raul/Thread.hpp"
+
 #include "raul/SharedPtr.hpp"
-#include "interface/EngineInterface.hpp"
-#include "module/World.hpp"
-#include "module/ingen_module.hpp"
-#include "shared/runtime_paths.hpp"
-#include "shared/Configuration.hpp"
+#include "raul/Thread.hpp"
+#include "raul/log.hpp"
+
 #include "engine/AudioBuffer.hpp"
 #include "engine/Driver.hpp"
 #include "engine/Engine.hpp"
@@ -38,7 +38,14 @@
 #include "engine/ProcessContext.hpp"
 #include "engine/QueuedEngineInterface.hpp"
 #include "engine/ThreadManager.hpp"
+#include "interface/EngineInterface.hpp"
+#include "module/World.hpp"
+#include "module/ingen_module.hpp"
 #include "serialisation/Parser.hpp"
+#include "shared/Configuration.hpp"
+#include "shared/runtime_paths.hpp"
+
+#include "ingen-config.h"
 
 using namespace Ingen;
 

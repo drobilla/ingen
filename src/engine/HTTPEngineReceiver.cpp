@@ -155,7 +155,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 			// Respond with port number of stream for client
 			const int port = client->listen_port();
 			char buf[32];
-			snprintf(buf, 32, "%d", port);
+			snprintf(buf, sizeof(buf), "%d", port);
 			soup_message_set_status(msg, SOUP_STATUS_OK);
 			soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY, buf, strlen(buf));
 			return;

@@ -26,7 +26,6 @@
 #include "Engine.hpp"
 #include "EventBuffer.hpp"
 #include "InputPort.hpp"
-#include "InputPort.hpp"
 #include "MessageContext.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"

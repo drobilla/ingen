@@ -16,6 +16,7 @@
  */
 
 #include <cassert>
+#include <string>
 #include "shared/LV2URIMap.hpp"
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"

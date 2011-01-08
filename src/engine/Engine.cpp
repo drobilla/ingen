@@ -42,7 +42,6 @@
 #include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
-#include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "ProcessSlave.hpp"
 #include "QueuedEngineInterface.hpp"

@@ -16,6 +16,7 @@
  */
 
 #include <cstdlib>
+#include <string>
 #include <pthread.h>
 #include <dirent.h>
 #include <float.h>

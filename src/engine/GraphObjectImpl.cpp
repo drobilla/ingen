@@ -15,6 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <string>
+
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
 #include "EngineStore.hpp"

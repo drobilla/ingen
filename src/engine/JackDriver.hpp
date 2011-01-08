@@ -18,14 +18,18 @@
 #ifndef INGEN_ENGINE_JACKAUDIODRIVER_HPP
 #define INGEN_ENGINE_JACKAUDIODRIVER_HPP
 
+#include <string>
+
 #include <jack/jack.h>
 #include <jack/transport.h>
+
 #include "raul/AtomicInt.hpp"
 #include "raul/List.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/Thread.hpp"
-#include "Driver.hpp"
+
 #include "Buffer.hpp"
+#include "Driver.hpp"
 #include "ProcessContext.hpp"
 
 namespace Raul { class Path; }

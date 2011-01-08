@@ -18,6 +18,7 @@
 #include <cassert>
 #include <cmath>
 #include <map>
+#include <string>
 #include <stdint.h>
 #include <boost/optional.hpp>
 #include "shared/LV2URIMap.hpp"

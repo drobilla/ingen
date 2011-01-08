@@ -15,6 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <algorithm>
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 #include "raul/log.hpp"
 #include "ConnectionImpl.hpp"
@@ -22,7 +23,6 @@
 #include "MessageContext.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
-#include "PortImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"

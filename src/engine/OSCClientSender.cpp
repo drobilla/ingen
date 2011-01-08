@@ -15,17 +15,21 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <cassert>
 #include <unistd.h>
+
+#include <cassert>
+#include <string>
+
 #include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
-#include "interface/ClientInterface.hpp"
+
 #include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "OSCClientSender.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
+#include "interface/ClientInterface.hpp"
 #include "util.hpp"
 
 using namespace std;

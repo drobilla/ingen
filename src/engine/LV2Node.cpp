@@ -15,22 +15,26 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <cassert>
 #include <float.h>
 #include <stdint.h>
+
+#include <cassert>
 #include <cmath>
+#include <string>
+
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
+
 #include "AudioBuffer.hpp"
+#include "EventBuffer.hpp"
 #include "InputPort.hpp"
 #include "LV2Node.hpp"
 #include "LV2Plugin.hpp"
 #include "LV2URIMap.hpp"
-#include "EventBuffer.hpp"
+#include "MessageContext.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
-#include "MessageContext.hpp"
 
 using namespace std;
 using namespace Raul;

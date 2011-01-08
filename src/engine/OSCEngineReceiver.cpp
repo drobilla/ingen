@@ -60,7 +60,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	_receive_thread = new ReceiveThread(*this);
 
 	char port_str[6];
-	snprintf(port_str, 6, "%u", port);
+	snprintf(port_str, sizeof(port_str), "%u", port);
 
 	_server = lo_server_new(port_str, error_cb);
 #ifdef ENABLE_AVAHI

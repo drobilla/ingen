@@ -16,14 +16,17 @@
  */
 
 #include <cassert>
+#include <string>
 #include <glibmm.h>
+
 #include "redlandmm/World.hpp"
+
 #include "shared/LV2URIMap.hpp"
-#include "LV2Plugin.hpp"
-#include "LV2Node.hpp"
-#include "NodeImpl.hpp"
-#include "Engine.hpp"
 #include "Driver.hpp"
+#include "Engine.hpp"
+#include "LV2Node.hpp"
+#include "LV2Plugin.hpp"
+#include "NodeImpl.hpp"
 
 using namespace std;
 using namespace Raul;

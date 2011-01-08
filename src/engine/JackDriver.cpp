@@ -16,19 +16,19 @@
  */
 
 #include <cstdlib>
+#include <string>
+
 #include <jack/midiport.h>
+
 #include "raul/log.hpp"
 #include "raul/List.hpp"
-#include "module/World.hpp"
-#include "shared/LV2Features.hpp"
-#include "shared/LV2URIMap.hpp"
+
 #include "AudioBuffer.hpp"
 #include "ControlBindings.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "Event.hpp"
 #include "EventBuffer.hpp"
-#include "EventSource.hpp"
 #include "EventSource.hpp"
 #include "JackDriver.hpp"
 #include "MessageContext.hpp"
@@ -39,6 +39,9 @@
 #include "QueuedEvent.hpp"
 #include "ThreadManager.hpp"
 #include "ingen-config.h"
+#include "module/World.hpp"
+#include "shared/LV2Features.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "tuning.hpp"
 #include "util.hpp"
 

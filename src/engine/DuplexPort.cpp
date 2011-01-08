@@ -17,14 +17,17 @@
 
 #include <cstdlib>
 #include <cassert>
+#include <string>
+
 #include "shared/LV2URIMap.hpp"
-#include "util.hpp"
-#include "DuplexPort.hpp"
+
 #include "ConnectionImpl.hpp"
-#include "OutputPort.hpp"
-#include "NodeImpl.hpp"
-#include "ProcessContext.hpp"
+#include "DuplexPort.hpp"
 #include "EventBuffer.hpp"
+#include "NodeImpl.hpp"
+#include "OutputPort.hpp"
+#include "ProcessContext.hpp"
+#include "util.hpp"
 
 using namespace std;
 

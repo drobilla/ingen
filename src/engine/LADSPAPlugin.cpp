@@ -16,6 +16,7 @@
  */
 
 #include <cassert>
+#include <string>
 #include <ladspa.h>
 #include <raul/Symbol.hpp>
 #include "shared/LV2URIMap.hpp"
