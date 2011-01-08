@@ -66,7 +66,10 @@ def build(bld):
 		XML2
 	''')
 
-	# GUI runtime files
-	bld.install_files('${DATADIR}/ingen', 'ingen_gui.glade')
-
-
+	# Glade XML UI definition
+	bld(features      = 'subst',
+	    source        = 'ingen_gui.glade',
+	    target        = '../../ingen_gui.glade',
+	    install_path  = '${DATADIR}/ingen',
+	    chmod         = 0755,
+		INGEN_VERSION = bld.env['INGEN_VERSION'])

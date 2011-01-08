@@ -129,7 +129,16 @@ def build(bld):
 		bld.add_subdirs('src/gui')
 
 	# Program
-	bld.add_subdirs('src/ingen')
+	obj = bld(features = 'c cxx cxxprogram')
+	obj.target       = 'ingen'
+	obj.source       = 'src/ingen/main.cpp'
+	obj.includes     = ['.', 'src', 'src/common']
+	obj.defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"'
+	obj.use          = 'libingen_module libingen_shared'
+	obj.install_path = '${BINDIR}'
+	autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM REDLANDMM RAUL LV2CORE SLV2 INGEN LIBLO SOUP')
+
+	bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
 
 	# Documentation
 	autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, top, out)

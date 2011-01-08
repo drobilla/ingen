@@ -30,24 +30,37 @@ namespace GUI {
 
 Glib::ustring GladeFactory::glade_filename = "";
 
+inline static bool
+is_readable(const std::string& filename)
+{
+	std::ifstream fs(filename.c_str());
+	const bool fail = fs.fail();
+	fs.close();
+	return !fail;
+}
 
 void
 GladeFactory::find_glade_file()
 {
-	char* env_path = getenv("INGEN_GLADE_PATH");
-	if (env_path)
-		glade_filename = env_path;
-	else
-		glade_filename = Shared::data_file_path("ingen_gui.glade");
+	// Try file in bundle (directory where executable resides)
+	glade_filename = Shared::bundle_file_path("ingen_gui.glade");
+	if (is_readable(glade_filename))
+		return;
 
-	ifstream fs(glade_filename.c_str());
-	if (fs.fail()) {
-		error << "[GladeFactory] Unable to find ingen_gui.glade in " << INGEN_DATA_DIR << endl;
-		throw;
+	// Try ENGINE_GLADE_PATH from the environment
+	const char* const env_path = getenv("INGEN_GLADE_PATH");
+	if (env_path && is_readable(env_path)) {
+		glade_filename = env_path;
+		return;
 	}
 
-	fs.close();
-	info << "[GladeFactory] Loading widgets from " << glade_filename.c_str() << endl;
+	// Try the default system installed path
+	glade_filename = Shared::data_file_path("ingen_gui.glade");
+	if (is_readable(glade_filename))
+		return;
+
+	error << "[GladeFactory] Unable to find ingen_gui.glade in " << INGEN_DATA_DIR << endl;
+	throw std::runtime_error("Unable to find glade file");
 }
 
 

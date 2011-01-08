@@ -1829,7 +1829,9 @@
   <widget class="GtkAboutDialog" id="about_win">
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">normal</property>
-    <property name="copyright" translatable="yes">Copyright (C) 2005-2008 David Robillard &lt;http://drobilla.net&gt;</property>
+    <property name="program_name">Ingen</property>
+    <property name="version">@INGEN_VERSION@</property>
+    <property name="copyright" translatable="yes">Copyright (C) 2005-2010 David Robillard &lt;http://drobilla.net&gt;</property>
     <property name="website">http://drobilla.net/software/ingen</property>
     <property name="license" translatable="yes">Licensed under the GNU GPL, Version 2.
 

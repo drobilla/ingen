@@ -87,10 +87,8 @@ main(int argc, char** argv)
 		return EXIT_SUCCESS;
 	}
 
-#ifdef BUNDLE
 	// Set bundle path from executable location so resources/modules can be found
 	Shared::set_bundle_path_from_code((void*)&main);
-#endif
 
 	SharedPtr<Shared::EngineInterface> engine_interface;
 
