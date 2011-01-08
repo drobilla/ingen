@@ -51,7 +51,7 @@ struct BlobFeature : public Shared::LV2Features::Feature {
 	                     uint32_t              type,
 	                     size_t                size) {}
 
-	SharedPtr<LV2_Feature> feature(Shared::Node*) {
+	SharedPtr<LV2_Feature> feature(Shared::World*, Shared::Node*) {
 		return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 	}
 

@@ -26,9 +26,11 @@
 #include "ingen-config.h"
 
 namespace Ingen {
+
 namespace Shared {
 
 class Node;
+class World;
 
 /** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
  */
@@ -39,7 +41,7 @@ public:
 	class Feature {
 	public:
 		virtual ~Feature() {}
-		virtual SharedPtr<LV2_Feature> feature(Node* node) = 0;
+		virtual SharedPtr<LV2_Feature> feature(Shared::World* world, Node* node) = 0;
 	};
 
 	class FeatureArray {
@@ -70,7 +72,7 @@ public:
 
 	void add_feature(const std::string& uri, SharedPtr<Feature> feature);
 
-	SharedPtr<LV2Features::FeatureArray> lv2_features(Node* node) const;
+	SharedPtr<LV2Features::FeatureArray> lv2_features(Shared::World* world, Node* node) const;
 
 private:
 	typedef std::map< std::string, SharedPtr<Feature> > Features;

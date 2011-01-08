@@ -40,14 +40,14 @@ class LV2URIMap : public boost::noncopyable, public LV2Features::Feature {
 public:
 	LV2URIMap();
 
-	SharedPtr<LV2_Feature> feature(Node*) {
+	SharedPtr<LV2_Feature> feature(Shared::World*, Node*) {
 		return SharedPtr<LV2_Feature>(&uri_map_feature, NullDeleter<LV2_Feature>);
 	}
 
 	struct UnmapFeature : public LV2Features::Feature {
 		UnmapFeature(const LV2URIMap& map) : _feature(map.uri_unmap_feature) {}
 		
-		SharedPtr<LV2_Feature> feature(Node*) {
+		SharedPtr<LV2_Feature> feature(Shared::World*, Node*) {
 			return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 		}
 

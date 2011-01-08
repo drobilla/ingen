@@ -34,22 +34,18 @@ namespace Ingen {
 
 
 void
-MessageContext::run(PortImpl* port, FrameTime time)
+MessageContext::run(NodeImpl* node, FrameTime time)
 {
-	if (ThreadManager::thread_is(THREAD_PRE_PROCESS)) {
-		assert(port);
-		Glib::Mutex::Lock lock(_mutex);
-		_non_rt_request = Request(time, port);
-		_sem.post();
-		_cond.wait(_mutex);
-	} else if (ThreadManager::thread_is(THREAD_PROCESS)) {
-		Request r(time, port);
+	if (ThreadManager::thread_is(THREAD_PROCESS)) {
+		const Request r(time, node);
 		_requests.write(sizeof(Request), &r);
 		// signal() will be called at the end of this process cycle
-	} else if (ThreadManager::thread_is(THREAD_MESSAGE)) {
-		warn << "Message context recursion at " << port->path() << endl;
 	} else {
-		error << "Run requested from unknown thread" << endl;
+		assert(node);
+		Glib::Mutex::Lock lock(_mutex);
+		_non_rt_request = Request(time, node);
+		_sem.post();
+		_cond.wait(_mutex);
 	}
 }
 
@@ -66,7 +62,7 @@ MessageContext::_run()
 		{
 			Glib::Mutex::Lock lock(_mutex);
 			const Request req = _non_rt_request;
-			if (req.port) {
+			if (req.node) {
 				_queue.insert(req);
 				_end_time = std::max(_end_time, req.time);
 				_cond.broadcast(); // Notify caller we got the message
@@ -76,7 +72,7 @@ MessageContext::_run()
 		// Enqueue (and thereby sort) requests from audio thread
 		while (has_requests()) {
 			_requests.full_read(sizeof(Request), &req);
-			if (req.port) {
+			if (req.node) {
 				_queue.insert(req);
 			} else {
 				_end_time = req.time;
@@ -105,7 +101,7 @@ MessageContext::_run()
 void
 MessageContext::execute(const Request& req)
 {
-	NodeImpl* node = req.port->parent_node();
+	NodeImpl* node = req.node;
 	node->message_run(*this);
 
 	void*      valid_ports = node->valid_ports();
@@ -119,7 +115,7 @@ MessageContext::execute(const Request& req)
 			for (PatchImpl::Connections::iterator c = wires.begin(); c != wires.end(); ++c) {
 				ConnectionImpl* ci = (ConnectionImpl*)c->second.get();
 				if (ci->src_port() == p && ci->dst_port()->context() == Context::MESSAGE) {
-					_queue.insert(Request(req.time, ci->dst_port()));
+					_queue.insert(Request(req.time, ci->dst_port()->parent_node()));
 				}
 			}
 		}

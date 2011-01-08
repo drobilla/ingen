@@ -415,7 +415,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	// FIXME: all of this time stuff is screwy
 
 	// FIXME: support nframes != buffer_size, even though that never damn well happens
-	assert(nframes == _block_length);
+	//assert(nframes == _block_length);
 
 	// Note that Jack can not call this function for a cycle, if overloaded
 	const jack_nframes_t start_of_current_cycle = jack_last_frame_time(_client);

@@ -39,7 +39,7 @@ struct EventFeature : public Shared::LV2Features::Feature {
 	static uint32_t event_unref(LV2_Event_Callback_Data callback_data,
 	                            LV2_Event*              event) { return 0; }
 
-	SharedPtr<LV2_Feature> feature(Shared::Node*) {
+	SharedPtr<LV2_Feature> feature(Shared::World*, Shared::Node*) {
 		return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 	}
 

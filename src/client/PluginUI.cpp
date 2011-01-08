@@ -151,7 +151,7 @@ PluginUI::create(Ingen::Shared::World* world,
 	if (ui) {
 		info << "Found GTK Plugin UI: " << slv2_ui_get_uri(ui) << endl;
 		ret = SharedPtr<PluginUI>(new PluginUI(world, node));
-		ret->_features = world->lv2_features()->lv2_features(node.get());
+		ret->_features = world->lv2_features()->lv2_features(world, node.get());
 		SLV2UIInstance inst = slv2_ui_instantiate(
 				plugin, ui, lv2_ui_write, ret.get(), ret->_features->array());
 

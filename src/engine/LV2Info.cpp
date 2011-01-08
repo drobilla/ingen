@@ -16,14 +16,21 @@
  */
 
 #define __STDC_LIMIT_MACROS 1
-#include <cassert>
+
 #include <stdint.h>
+
+#include <cassert>
+
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "LV2Info.hpp"
+#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
+
 #include "module/World.hpp"
-#include "LV2Features.hpp"
-#include "LV2EventFeature.hpp"
+
 #include "LV2BlobFeature.hpp"
+#include "LV2EventFeature.hpp"
+#include "LV2Features.hpp"
+#include "LV2Info.hpp"
+#include "LV2RequestRunFeature.hpp"
 #include "LV2ResizeFeature.hpp"
 
 using namespace std;
@@ -50,6 +57,8 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 			SharedPtr<Shared::LV2Features::Feature>(new BlobFeature()));
 	world->lv2_features()->add_feature(LV2_RESIZE_PORT_URI,
 			SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
+	world->lv2_features()->add_feature(LV2_CONTEXTS_URI "#RequestRunFeature",
+			SharedPtr<Shared::LV2Features::Feature>(new RequestRunFeature()));
 }
 
 LV2Info::~LV2Info()

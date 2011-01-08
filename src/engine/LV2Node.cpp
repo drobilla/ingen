@@ -149,10 +149,11 @@ LV2Node::instantiate(BufferFactory& bufs)
 	_ports     = new Raul::Array<PortImpl*>(num_ports, NULL);
 	_instances = new Instances(_polyphony, SharedPtr<void>());
 
-	_features = info->world().lv2_features()->lv2_features(this);
+	_features = info->world().lv2_features()->lv2_features(&info->world(), this);
 
 	uint32_t port_buffer_size = 0;
-	SLV2Value ctx_ext_uri = slv2_value_new_uri(info->lv2_world(), LV2_CONTEXT_MESSAGE);
+	SLV2Value ctx_ext_uri = slv2_value_new_uri(info->lv2_world(),
+	                                           LV2_CONTEXTS_URI "#MessageContext");
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		(*_instances)[i] = SharedPtr<void>(
@@ -169,7 +170,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			continue;
 
 		const void* ctx_ext = slv2_instance_get_extension_data(
-				instance(i), LV2_CONTEXT_MESSAGE);
+			instance(i), LV2_CONTEXTS_URI "#MessageContext");
 
 		if (i == 0 && ctx_ext) {
 			assert(!_message_funcs);
@@ -320,7 +321,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {
 			SLV2Value c = slv2_values_get_at(contexts, i);
 			const char* context = slv2_value_as_string(c);
-			if (!strcmp(LV2_CONTEXT_MESSAGE, context)) {
+			if (!strcmp(LV2_CONTEXTS_URI "#MessageContext", context)) {
 				if (!_message_funcs) {
 					warn << _lv2_plugin->uri()
 							<< " has a message port, but no context extension data." << endl;

@@ -31,7 +31,7 @@
 
 namespace Ingen {
 
-class PortImpl;
+class NodeImpl;
 
 /** Context of a message_run() call.
  *
@@ -55,16 +55,16 @@ public:
 		Thread::set_context(THREAD_MESSAGE);
 	}
 
-	/** Schedule a port value change at a certain time.
+	/** Schedule a message context run at a certain time.
 	 * Safe to call from either process thread or pre-process thread.
 	 */
-	void run(PortImpl* port, FrameTime time);
+	void run(NodeImpl* node, FrameTime time);
 
 protected:
 	struct Request {
-		Request(FrameTime t=0, PortImpl* p=0) : time(t), port(p) {}
+		Request(FrameTime t=0, NodeImpl* n=0) : time(t), node(n) {}
 		FrameTime time;
-		PortImpl* port;
+		NodeImpl* node;
 	};
 
 public:

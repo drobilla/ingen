@@ -51,7 +51,7 @@ struct ResizeFeature : public Shared::LV2Features::Feature {
 		free(feature);
 	}
 
-	SharedPtr<LV2_Feature> feature(Shared::Node* n) {
+	SharedPtr<LV2_Feature> feature(Shared::World* w, Shared::Node* n) {
 		NodeImpl* node = dynamic_cast<NodeImpl*>(n);
 		if (!node)
 			return SharedPtr<LV2_Feature>();

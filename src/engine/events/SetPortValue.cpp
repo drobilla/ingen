@@ -96,7 +96,7 @@ SetPortValue::pre_process()
 	if (_port && _port->context() == Context::MESSAGE) {
 		apply(*_engine.message_context());
 		_port->parent_node()->set_port_valid(_port->index());
-		_engine.message_context()->run(_port,
+		_engine.message_context()->run(_port->parent_node(),
 				_engine.driver()->frame_time() + _engine.driver()->block_length());
 	}
 

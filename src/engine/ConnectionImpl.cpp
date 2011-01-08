@@ -119,7 +119,7 @@ ConnectionImpl::queue(Context& context)
 		debug << endl;*/
 
 		_queue->write(sizeof(LV2_Atom) + obj->size, obj);
-		context.engine().message_context()->run(_dst_port, context.start() + ev->frames);
+		context.engine().message_context()->run(_dst_port->parent_node(), context.start() + ev->frames);
 	}
 }
 
