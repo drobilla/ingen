@@ -143,7 +143,7 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 		_learning = false;
 	}
 
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 	LOG(debug) << path() << " note " << (int)note_num << " on @ " << time << endl;
 #endif
 

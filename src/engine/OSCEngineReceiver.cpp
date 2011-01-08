@@ -76,7 +76,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 		free(lo_url);
 	}
 
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 	lo_server_add_method(_server, NULL, NULL, generic_cb, NULL);
 #endif
 

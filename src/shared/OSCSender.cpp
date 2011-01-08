@@ -84,7 +84,7 @@ OSCSender::send(const char *path, const char *types, ...)
 	if (!_enabled)
 		return 0;
 
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 	info << "[OSCSender] " << path << " (" << types << ")" << endl;
 #endif
 

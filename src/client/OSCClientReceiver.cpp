@@ -39,7 +39,7 @@ OSCClientReceiver::OSCClientReceiver(int listen_port, SharedPtr<Shared::ClientIn
 	, _listen_port(listen_port)
 	, _st(NULL)
 {
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 	start(true);
 #else
 	start(false); // true = dump, false = shutup

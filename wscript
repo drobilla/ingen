@@ -84,7 +84,7 @@ def configure(conf):
 	build_gui = conf.env['HAVE_GLADEMM'] == 1 and conf.env['HAVE_FLOWCANVAS'] == 1
 
 	autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
-	autowaf.define(conf, 'BUILD_INGEN_GUI', int(build_gui))
+	autowaf.define(conf, 'INGEN_BUILD_GUI', int(build_gui))
 	autowaf.define(conf, 'HAVE_JACK_MIDI', int(conf.env['HAVE_JACK'] == 1))
 	if conf.env['BUNDLE']:
 		autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIRNAME'], 'ingen'))
@@ -94,7 +94,7 @@ def configure(conf):
 		autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIR'])
 	
 	if Options.options.log_debug:
-		autowaf.define(conf, 'LOG_DEBUG', 1)
+		autowaf.define(conf, 'RAUL_LOG_DEBUG', 1)
 	
 	if Options.options.liblo_bundles:
 		autowaf.define(conf, 'LIBLO_BUNDLES', 1)
@@ -106,7 +106,7 @@ def configure(conf):
 	autowaf.display_msg(conf, "HTTP", str(conf.env['HAVE_SOUP'] == 1))
 	autowaf.display_msg(conf, "LV2", str(conf.env['HAVE_SLV2'] == 1))
 	autowaf.display_msg(conf, "LADSPA", str(conf.env['HAVE_LADSPA_H'] == 1))
-	autowaf.display_msg(conf, "GUI", str(conf.env['BUILD_INGEN_GUI'] == 1))
+	autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
 	print
 
 def build(bld):
@@ -125,7 +125,7 @@ def build(bld):
 	bld.add_subdirs('src/shared')
 	bld.add_subdirs('src/client')
 
-	if bld.env['BUILD_INGEN_GUI']:
+	if bld.env['INGEN_BUILD_GUI']:
 		bld.add_subdirs('src/gui')
 
 	# Program

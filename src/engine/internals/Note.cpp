@@ -147,7 +147,7 @@ NoteNode::process(ProcessContext& context)
 	for (midi_in->rewind(); midi_in->get_event(&frames, &subframes, &type, &size, &buf);
 			midi_in->increment()) {
 
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 		LOG(debug) << "EVENT TYPE " << type << " @ " << frames << "." << subframes << ": ";
 		for (uint16_t i = 0; i < size; ++i)
 			debug << (int)((char)buf[i]) << " ";
@@ -216,7 +216,7 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	uint32_t voice_num = 0;
 
 	if (key->state != Key::OFF) {
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 		LOG(debug) << "Double midi note received" << endl;
 #endif
 		return;
@@ -247,7 +247,7 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 	LOG(debug) << "Note " << (int)note_num << " on @ " << time
 		<< ". Voice " << voice_num << " / " << _polyphony << endl;
 #endif
@@ -257,7 +257,7 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 		assert(_keys[voice->note].state == Key::ON_ASSIGNED);
 		assert(_keys[voice->note].voice == voice_num);
 		_keys[voice->note].state = Key::Key::ON_UNASSIGNED;
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 		LOG(debug) << "Stole voice " << voice_num << endl;
 #endif
 	}
@@ -302,7 +302,7 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 
 	Key* key = &_keys[note_num];
 
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 	debug << "Note " << (int)note_num << " off @ " << time << endl;
 #endif
 
@@ -312,19 +312,19 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 			assert((*_voices)[key->voice].note == note_num);
 
 			if ( ! _sustain) {
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 				debug << "Free voice " << key->voice << endl;
 #endif
 				free_voice(context, key->voice, time);
 			} else {
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 				debug << "Hold voice " << key->voice << endl;
 #endif
 				(*_voices)[key->voice].state = Voice::HOLDING;
 			}
 
 		} else {
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 			debug << "WARNING: Assigned key, but voice not active" << endl;
 #endif
 		}
@@ -366,7 +366,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 		(*_voices)[voice].state = Voice::ACTIVE;
 	} else {
 		// No new note for voice, deactivate (set gate low)
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 		LOG(debug) << "Note off: key " << (*_voices)[voice].note << " voice " << voice << endl;
 #endif
 		((AudioBuffer*)_gate_port->buffer(voice).get())->set_value(0.0f, context.start(), time);
@@ -380,7 +380,7 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 
-#ifdef LOG_DEBUG
+#ifdef RAUL_LOG_DEBUG
 	LOG(debug) << "All notes off @ " << time << endl;
 #endif
 
