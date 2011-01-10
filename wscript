@@ -69,8 +69,9 @@ def configure(conf):
 
 	# Check for posix_memalign (OSX, amazingly, doesn't have it)
 	conf.check(function_name='posix_memalign',
-		   header_name='stdlib.h',
-		   define_name='HAVE_POSIX_MEMALIGN')
+	           header_name='stdlib.h',
+	           define_name='HAVE_POSIX_MEMALIGN',
+	           mandatory=False)
 
 	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/lv2core/lv2.h')
 	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/atom/atom.h')
