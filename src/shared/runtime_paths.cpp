@@ -85,14 +85,19 @@ data_file_path(const std::string& name)
 /** Return the absolute path of a module (dynamically loaded shared library).
  */
 std::string
-module_path(const std::string& name)
+module_path(const std::string& name, std::string dir)
 {
 	std::string ret;
+	if (dir == "") {
 #ifdef BUNDLE
-	ret =  Glib::Module::build_path(Glib::build_path(bundle_path, INGEN_MODULE_DIR), name);
+		dir = Glib::build_path(bundle_path, INGEN_MODULE_DIR);
 #else
-	ret = Glib::Module::build_path(INGEN_MODULE_DIR, name);
+		dir = INGEN_MODULE_DIR;
 #endif
+	}
+
+	ret = Glib::Module::build_path(dir, name);
+
 #ifdef __APPLE__
 	// MacPorts glib doesnt seem to do portable path building correctly...
 	if (ret.substr(ret.length() - 3) == ".so")

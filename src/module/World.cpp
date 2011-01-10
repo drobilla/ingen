@@ -58,7 +58,7 @@ load_module(const string& name)
 		string dir;
 		istringstream iss(module_path);
 		while (getline(iss, dir, ':')) {
-			string filename = Glib::Module::build_path(dir, name);
+			string filename = Shared::module_path(name, dir);
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
 				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY);
 				if (*module) {
@@ -73,10 +73,8 @@ load_module(const string& name)
 	}
 
 	// Try default directory if not found
-	module = new Glib::Module(
-			Shared::module_path(name),
-            Glib::MODULE_BIND_LAZY);
-
+	module = new Glib::Module(Shared::module_path(name), Glib::MODULE_BIND_LAZY);
+	
 	// FIXME: SEGV on exit without this
 	module->make_resident();
 
