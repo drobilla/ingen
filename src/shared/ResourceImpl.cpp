@@ -52,7 +52,6 @@ ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
 			return;
 
 	_properties.insert(make_pair(uri, value));
-	signal_property.emit(uri, value);
 }
 
 

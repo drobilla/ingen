@@ -19,7 +19,6 @@
 #define INGEN_SHARED_RESOURCEIMPL_HPP
 
 #include <map>
-#include <sigc++/sigc++.h>
 #include "raul/URI.hpp"
 #include "raul/SharedPtr.hpp"
 #include "interface/Resource.hpp"
@@ -54,8 +53,6 @@ public:
 	void              remove_properties(const Properties& p);
 
 	void dump(std::ostream& os) const;
-
-	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
 
 	/** Get the ingen type from a set of Properties.
 	 * If some coherent ingen type is found, true is returned and the appropriate

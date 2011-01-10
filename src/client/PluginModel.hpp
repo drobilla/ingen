@@ -94,6 +94,7 @@ public:
 
 	// Signals
 	sigc::signal<void> signal_changed;
+	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
 
 protected:
 	friend class ClientStore;
