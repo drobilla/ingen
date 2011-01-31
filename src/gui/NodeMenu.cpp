@@ -88,27 +88,37 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 
 #ifdef HAVE_SLV2
 	if (plugin && plugin->type() == PluginModel::LV2) {
-		SLV2Results presets = slv2_plugin_query_sparql(plugin->slv2_plugin(),
-				"PREFIX pset: <http://lv2plug.in/ns/ext/presets#>\n"
-				"PREFIX dc:   <http://dublincore.org/documents/dcmi-namespace/>\n"
-				"SELECT ?p ?name WHERE { <> pset:hasPreset ?p . ?p dc:title ?name }\n");
-		if (!slv2_results_finished(presets)) {
+		SLV2Value preset_pred = slv2_value_new_uri(
+			plugin->slv2_world(),
+			"http://lv2plug.in/ns/dev/presets#hasPreset");
+		SLV2Value title_pred = slv2_value_new_uri(
+			plugin->slv2_world(),
+			"http://dublincore.org/documents/dcmi-namespace/title");
+		SLV2Values presets = slv2_plugin_get_value(
+			plugin->slv2_plugin(), preset_pred);
+		if (presets) {
 			_presets_menu = Gtk::manage(new Gtk::Menu());
-			for (; !slv2_results_finished(presets); slv2_results_next(presets)) {
-				SLV2Value uri  = slv2_results_get_binding_value(presets, 0);
-				SLV2Value name = slv2_results_get_binding_value(presets, 1);
-				_presets_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(
-							slv2_value_as_string(name),
+
+			for (unsigned i = 0; i < slv2_values_size(presets); ++i) {
+				SLV2Value  uri    = slv2_values_get_at(presets, i);
+				SLV2Values titles = slv2_plugin_get_value_for_subject(
+					plugin->slv2_plugin(), uri, title_pred);
+				if (titles) {
+					SLV2Value title = slv2_values_get_at(titles, 0);
+					_presets_menu->items().push_back(
+						Gtk::Menu_Helpers::MenuElem(
+							slv2_value_as_string(title),
 							sigc::bind(
 								sigc::mem_fun(this, &NodeMenu::on_preset_activated),
 								string(slv2_value_as_string(uri)))));
 
-				// I have no idea why this is necessary, signal_activated doesn't work
-				// in this menu (and only this menu)
-				Gtk::MenuItem* item = &(_presets_menu->items().back());
-				item->signal_button_release_event().connect(
+					// I have no idea why this is necessary, signal_activated doesn't work
+					// in this menu (and only this menu)
+					Gtk::MenuItem* item = &(_presets_menu->items().back());
+					item->signal_button_release_event().connect(
 						sigc::bind<0>(sigc::mem_fun(this, &NodeMenu::on_preset_clicked),
-								string(slv2_value_as_string(uri))));
+						              string(slv2_value_as_string(uri))));
+				}
 			}
 			items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 			items().push_front(Gtk::Menu_Helpers::ImageMenuElem("_Presets",
@@ -116,7 +126,9 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 			Gtk::MenuItem* presets_menu_item = &(items().front());
 			presets_menu_item->set_submenu(*_presets_menu);
 		}
-		slv2_results_free(presets);
+		slv2_values_free(presets);
+		slv2_value_free(title_pred);
+		slv2_value_free(preset_pred);
 	}
 #endif
 
@@ -175,23 +187,42 @@ NodeMenu::on_preset_activated(const std::string& uri)
 #ifdef HAVE_SLV2
 	const NodeModel* const   node   = (NodeModel*)_object.get();
 	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(node->plugin());
-	const string query = string(
-			"PREFIX pset: <http://lv2plug.in/ns/ext/presets#>\n"
-			"PREFIX dc:   <http://dublincore.org/documents/dcmi-namespace/>\n"
-			"SELECT ?sym ?val WHERE { <") + uri + "> lv2:port ?port . "
-				" ?port lv2:symbol ?sym ; pset:value ?val . }";
-	SLV2Results values = slv2_plugin_query_sparql(plugin->slv2_plugin(), query.c_str());
+
+	SLV2Value port_pred = slv2_value_new_uri(
+		plugin->slv2_world(),
+		"http://lv2plug.in/ns/lv2core#port");
+	SLV2Value symbol_pred = slv2_value_new_uri(
+		plugin->slv2_world(),
+		"http://lv2plug.in/ns/lv2core#symbol");
+	SLV2Value value_pred = slv2_value_new_uri(
+		plugin->slv2_world(),
+		"http://lv2plug.in/ns/ext/presets#value");
+	SLV2Value  subject = slv2_value_new_uri(plugin->slv2_world(), uri.c_str());
+	SLV2Values ports   = slv2_plugin_get_value_for_subject(
+		plugin->slv2_plugin(),
+		subject,
+		port_pred);
 	App::instance().engine()->bundle_begin();
-	for (; !slv2_results_finished(values); slv2_results_next(values)) {
-		SLV2Value sym  = slv2_results_get_binding_value(values, 0);
-		SLV2Value val = slv2_results_get_binding_value(values, 1);
-		App::instance().engine()->set_property(
+	for (unsigned i = 0; i < slv2_values_size(ports); ++i) {
+		SLV2Value  uri    = slv2_values_get_at(ports, i);
+		SLV2Values values = slv2_plugin_get_value_for_subject(
+			plugin->slv2_plugin(), uri, value_pred);
+		SLV2Values symbols = slv2_plugin_get_value_for_subject(
+			plugin->slv2_plugin(), uri, symbol_pred);
+		if (values && symbols) {
+			SLV2Value val = slv2_values_get_at(values, 0);
+			SLV2Value sym = slv2_values_get_at(symbols, 0);
+			App::instance().engine()->set_property(
 				node->path().base() + slv2_value_as_string(sym),
 				App::instance().uris().ingen_value,
 				slv2_value_as_float(val));
+		}
 	}
 	App::instance().engine()->bundle_end();
-	slv2_results_free(values);
+	slv2_values_free(ports);
+	slv2_value_free(value_pred);
+	slv2_value_free(symbol_pred);
+	slv2_value_free(port_pred);
 #endif
 }
 
