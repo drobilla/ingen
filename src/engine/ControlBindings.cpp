@@ -175,7 +175,7 @@ ControlBindings::control_to_port_value(PortImpl* port, Type type, int16_t value)
 	float max     = port->get_property(uris.lv2_maximum).get_float();
 	bool  toggled = port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
 
-	float normal;
+	float normal = 0.0f;
 	switch (type) {
 	case MIDI_CC:
 	case MIDI_CHANNEL_PRESSURE:
