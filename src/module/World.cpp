@@ -103,7 +103,7 @@ struct WorldImpl : public boost::noncopyable {
 		, rdf_world(new Redland::World())
 		, uris(new Shared::LV2URIMap())
 #ifdef HAVE_SLV2
-		, slv2_world(slv2_world_new_using_rdf_world(rdf_world->c_obj()))
+		, slv2_world(slv2_world_new())
 #endif
 	{
 #ifdef HAVE_SLV2
