@@ -35,10 +35,6 @@
 #include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
 #include "ThreadManager.hpp"
-#ifdef HAVE_LADSPA_H
-#include "LADSPANode.hpp"
-#include "LADSPAPlugin.hpp"
-#endif
 #ifdef HAVE_SLV2
 #include "slv2/slv2.h"
 #include "LV2Plugin.hpp"
@@ -80,31 +76,6 @@ NodeFactory::plugin(const Raul::URI& uri)
 }
 
 
-/** DEPRECATED: Find a plugin by type, lib, label.
- *
- * Slow.  Evil.  Do not use.
- */
-PluginImpl*
-NodeFactory::plugin(const string& type, const string& lib, const string& label)
-{
-	if (type != "LADSPA" || lib.empty() || label.empty())
-		return NULL;
-
-#ifdef HAVE_LADSPA_H
-	for (Plugins::const_iterator i = _plugins.begin(); i != _plugins.end(); ++i) {
-		LADSPAPlugin* lp = dynamic_cast<LADSPAPlugin*>(i->second);
-		if (lp && lp->library_name() == lib
-				&& lp->label() == label)
-			return lp;
-	}
-#endif
-
-	error << "Failed to find " << type << " plugin " << lib << " / " << label << endl;
-
-	return NULL;
-}
-
-
 void
 NodeFactory::load_plugins()
 {
@@ -122,10 +93,6 @@ NodeFactory::load_plugins()
 
 #ifdef HAVE_SLV2
 		load_lv2_plugins();
-#endif
-
-#ifdef HAVE_LADSPA_H
-		load_ladspa_plugins();
 #endif
 
 		_has_loaded = true;
@@ -180,101 +147,5 @@ NodeFactory::load_lv2_plugins()
 	slv2_plugins_free(_world->slv2_world(), plugins);
 }
 #endif // HAVE_SLV2
-
-
-#ifdef HAVE_LADSPA_H
-/** Loads information about all LADSPA plugins into internal plugin database.
- */
-void
-NodeFactory::load_ladspa_plugins()
-{
-	char* env_ladspa_path = getenv("LADSPA_PATH");
-	string ladspa_path;
-	if (!env_ladspa_path) {
-		info << "Using default LADSPA_PATH=/usr/lib/ladspa:/usr/local/lib/ladspa:~/.ladspa" << endl;
-		ladspa_path = string("/usr/lib/ladspa:/usr/local/lib/ladspa:").append(
-				getenv("HOME")).append("/.ladspa");
-	} else {
-		ladspa_path = env_ladspa_path;
-	}
-
-	// Yep, this should use an sstream alright..
-	while (!ladspa_path.empty()) {
-		const string dir = ladspa_path.substr(0, ladspa_path.find(':'));
-		if (ladspa_path.find(':') != string::npos)
-			ladspa_path = ladspa_path.substr(ladspa_path.find(':')+1);
-		else
-			ladspa_path.clear();
-
-		DIR* pdir = opendir(dir.c_str());
-		if (pdir == NULL)
-			continue;
-
-		struct dirent* pfile;
-		while ((pfile = readdir(pdir))) {
-			union {
-				void*                      dp;
-				LADSPA_Descriptor_Function fp;
-			} df;
-			df.dp = NULL;
-			df.fp = NULL;
-
-			LADSPA_Descriptor* descriptor = NULL;
-
-			if (!strcmp(pfile->d_name, ".") || !strcmp(pfile->d_name, ".."))
-				continue;
-
-			const string lib_path = Glib::build_filename(dir, pfile->d_name);
-
-			// Ignore stupid libtool files.  Kludge alert.
-			if (lib_path.substr(lib_path.length()-3) == ".la")
-				continue;
-
-			Glib::Module* plugin_library = new Glib::Module(lib_path, Glib::MODULE_BIND_LOCAL);
-			if (!plugin_library)
-				continue;
-
-			if (!(*plugin_library)) {
-				delete plugin_library;
-				continue;
-			}
-
-			bool found = plugin_library->get_symbol("ladspa_descriptor", df.dp);
-			if (!found || !df.dp) {
-				warn << "Non-LADSPA library " << lib_path << " found in LADSPA path" << endl;
-				delete plugin_library;
-				continue;
-			}
-
-			for (unsigned long i=0; (descriptor = (LADSPA_Descriptor*)df.fp(i)) != NULL; ++i) {
-				char id_str[11];
-				snprintf(id_str, 11, "%lu", descriptor->UniqueID);
-				const string uri = string("urn:ladspa:").append(id_str);
-
-				const Plugins::const_iterator i = _plugins.find(uri);
-
-				if (i == _plugins.end()) {
-					LADSPAPlugin* plugin = new LADSPAPlugin(*_world->uris().get(),
-							lib_path, uri,
-							descriptor->UniqueID,
-							descriptor->Label,
-							descriptor->Name);
-
-					_plugins.insert(make_pair(uri, plugin));
-
-				} else {
-					warn << "Duplicate " << uri
-					     << " - Using " << i->second->library_path()
-					     << " over " << lib_path << endl;
-				}
-			}
-
-			delete plugin_library;
-		}
-		closedir(pdir);
-	}
-}
-#endif // HAVE_LADSPA_H
-
 
 } // namespace Ingen

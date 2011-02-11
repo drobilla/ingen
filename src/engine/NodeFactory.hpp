@@ -38,13 +38,7 @@ class LV2Info;
 #endif
 
 
-/** Loads plugins and creates Nodes from them.
- *
- * NodeFactory's responsibility is to get enough information to allow the
- * loading of a plugin possible (ie finding/opening shared libraries etc)
- *
- * The constructor of various Node types (ie LADSPANode) are responsible
- * for actually creating a Node instance of the plugin.
+/** Discovers and loads plugin libraries.
  *
  * \ingroup engine
  */
@@ -61,16 +55,7 @@ public:
 
 	PluginImpl* plugin(const Raul::URI& uri);
 
-	/** DEPRECATED */
-	PluginImpl* plugin(const std::string& type,
-	                   const std::string& lib,
-	                   const std::string& label);
-
 private:
-#ifdef HAVE_LADSPA_H
-	void load_ladspa_plugins();
-#endif
-
 #ifdef HAVE_SLV2
 	void load_lv2_plugins();
 #endif

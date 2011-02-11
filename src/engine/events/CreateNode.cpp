@@ -51,36 +51,14 @@ CreateNode::CreateNode(
 	: QueuedEvent(engine, request, timestamp)
 	, _path(path)
 	, _plugin_uri(plugin_uri)
-	, _polyphonic(false)
 	, _patch(NULL)
 	, _plugin(NULL)
 	, _node(NULL)
 	, _compiled_patch(NULL)
 	, _node_already_exists(false)
+	, _polyphonic(false)
 	, _properties(properties)
 {
-	string uri = _plugin_uri.str();
-	if (uri.substr(0, 3) == "om:") {
-		size_t colon = 2;
-
-		uri = uri.substr(colon + 1);
-		if ((colon = uri.find(":")) == string::npos) {
-			Raul::error << "Invalid plugin URI `" << _plugin_uri << "'" << endl;
-			return;
-		}
-		_plugin_type = uri.substr(0, colon);
-
-		uri = uri.substr(colon + 1);
-		if ((colon = uri.find(":")) == string::npos) {
-			Raul::error << "Invalid plugin URI `" << _plugin_uri << "'" << endl;
-			return;
-		}
-		_plugin_lib = uri.substr(0, colon);
-
-		uri = uri.substr(colon + 1);
-		_plugin_label = uri;
-	}
-
 	const Resource::Properties::const_iterator p = properties.find(
 			engine.world()->uris()->ingen_polyphonic);
 	if (p != properties.end() && p->second.type() == Raul::Atom::BOOL
@@ -98,11 +76,8 @@ CreateNode::pre_process()
 		return;
 	}
 
-	_patch = _engine.engine_store()->find_patch(_path.parent());
-
-	_plugin = (_plugin_label.empty())
-			? _engine.node_factory()->plugin(_plugin_uri.str())
-			: _engine.node_factory()->plugin(_plugin_type, _plugin_lib, _plugin_label);
+	_patch  = _engine.engine_store()->find_patch(_path.parent());
+	_plugin = _engine.node_factory()->plugin(_plugin_uri.str());
 
 	if (_patch && _plugin) {
 

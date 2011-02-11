@@ -53,16 +53,13 @@ public:
 
 private:
 	Raul::Path     _path;
-	Raul::URI      _plugin_uri; ///< If nonempty then type, library, label, are ignored
-	std::string    _plugin_type;
-	std::string    _plugin_lib;
-	std::string    _plugin_label;
-	bool           _polyphonic;
+	Raul::URI      _plugin_uri;
 	PatchImpl*     _patch;
 	PluginImpl*    _plugin;
 	NodeImpl*      _node;
 	CompiledPatch* _compiled_patch; ///< Patch's new process order
 	bool           _node_already_exists;
+	bool           _polyphonic;
 
 	Shared::Resource::Properties _properties;
 };

@@ -59,8 +59,6 @@ def build(bld):
 		internals/Trigger.cpp
 	'''
 	
-	if bld.env['HAVE_LADSPA_H'] == 1:
-		core_source += ' LADSPAPlugin.cpp LADSPANode.cpp '
 	if bld.env['HAVE_SLV2'] == 1:
 		core_source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
 

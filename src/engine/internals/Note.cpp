@@ -399,7 +399,7 @@ NoteNode::note_to_freq(int num)
 	static const float A4 = 440.0f;
 	if (num >= 0 && num <= 119)
 		return A4 * powf(2.0f, (float)(num - 57.0f) / 12.0f);
-	return 1.0f;  // Some LADSPA plugins don't like freq=0
+	return 1.0f;  // Frequency of zero causes numerical problems...
 }
 
 
