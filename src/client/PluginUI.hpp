@@ -18,8 +18,10 @@
 #ifndef INGEN_CLIENT_PLUGINUI_HPP
 #define INGEN_CLIENT_PLUGINUI_HPP
 
-#include "slv2/slv2.h"
 #include "raul/SharedPtr.hpp"
+#include "slv2/slv2.h"
+#include "slv2/ui.h"
+
 #include "LV2Features.hpp"
 
 namespace Ingen {
