@@ -515,6 +515,8 @@ JackDriver::_sample_rate_cb(jack_nframes_t nframes)
 int
 JackDriver::_block_length_cb(jack_nframes_t nframes)
 {
+	cout << "FIXME: JACK BLOCK LENGTH CALLBACK: " << nframes << endl;
+	return 0;
 	if (_root_patch) {
 		_block_length = nframes;
 		_root_patch->set_buffer_size(context(), *_engine.buffer_factory(), PortType::AUDIO,
