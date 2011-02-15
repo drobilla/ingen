@@ -111,13 +111,21 @@ Serialiser::write_manifest(const std::string& bundle_uri,
 		if (patch) {
 			const std::string filename = uri_to_symbol(i->uri) + INGEN_PATCH_FILE_EXT;
 			const Redland::Resource subject(_model->world(), filename);
-			_model->add_statement(subject, "rdf:type",
+			_model->add_statement(
+				subject,
+				Redland::Curie(_model->world(), "rdf:type"),
 				Redland::Resource(_model->world(), "ingen:Patch"));
-			_model->add_statement(subject, "rdf:type",
+			_model->add_statement(
+				subject,
+				Redland::Curie(_model->world(), "rdf:type"),
 				Redland::Resource(_model->world(), "lv2:Plugin"));
-			_model->add_statement(subject, "rdfs:seeAlso",
+			_model->add_statement(
+				subject,
+				Redland::Curie(_model->world(), "rdfs:seeAlso"),
 				Redland::Resource(_model->world(), filename));
-			_model->add_statement(subject, "lv2:binary",
+			_model->add_statement(
+				subject,
+				Redland::Curie(_model->world(), "lv2:binary"),
 				Redland::Resource(_model->world(),
 					Glib::Module::build_path("", "ingen_lv2")));
 			symlink(Glib::Module::build_path(INGEN_MODULE_DIR, "ingen_lv2").c_str(),
@@ -161,8 +169,10 @@ Serialiser::to_string(SharedPtr<GraphObject>         object,
 	Redland::Resource base_rdf_node(_model->world(), base_uri);
 	for (GraphObject::Properties::const_iterator v = extra_rdf.begin(); v != extra_rdf.end(); ++v) {
 		if (v->first.find(":") != string::npos) {
-			_model->add_statement(base_rdf_node, v->first.str(),
-					AtomRDF::atom_to_node(*_model, v->second));
+			_model->add_statement(
+				base_rdf_node,
+				AtomRDF::atom_to_node(*_model, v->first),
+				AtomRDF::atom_to_node(*_model, v->second));
 		} else {
 			LOG(warn) << "Not serialising extra RDF with key '" << v->first << "'" << endl;
 		}
@@ -310,11 +320,15 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 {
 	assert(_model);
 
-	_model->add_statement(patch_id, "rdf:type",
-			Redland::Resource(_model->world(), "ingen:Patch"));
+	_model->add_statement(
+		patch_id,
+		Redland::Curie(_model->world(), "rdf:type"),
+		Redland::Resource(_model->world(), "ingen:Patch"));
 
-	_model->add_statement(patch_id, "rdf:type",
-			Redland::Resource(_model->world(), "lv2:Plugin"));
+	_model->add_statement(
+		patch_id,
+		Redland::Curie(_model->world(), "rdf:type"),
+		Redland::Resource(_model->world(), "lv2:Plugin"));
 
 	const LV2URIMap& uris = *_world.uris().get();
 
@@ -326,7 +340,9 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 			|| !Symbol::is_valid(s->second.get_string())) {
 		symbol = Glib::path_get_basename(Glib::filename_from_uri(_model->base_uri().to_c_string()));
 		symbol = Symbol::symbolify(symbol.substr(0, symbol.find('.')));
-		_model->add_statement(patch_id, uris.lv2_symbol.c_str(),
+		_model->add_statement(
+			patch_id,
+			AtomRDF::atom_to_node(*_model, uris.lv2_symbol.c_str()),
 			Redland::Literal(_model->world(), symbol));
 	} else {
 		symbol = s->second.get_string();
@@ -334,8 +350,10 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 
 	// If the patch has no doap:name (required by LV2), use the symbol
 	if (patch->meta().properties().find(uris.doap_name) == patch->meta().properties().end())
-		_model->add_statement(patch_id, uris.doap_name.c_str(),
-				Redland::Literal(_model->world(), symbol));
+		_model->add_statement(
+			patch_id,
+			AtomRDF::atom_to_node(*_model, uris.doap_name),
+			Redland::Literal(_model->world(), symbol));
 
 	serialise_properties(patch_id, NULL, patch->meta().properties());
 
@@ -351,13 +369,19 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 			const Redland::Resource class_id(_model->world(),
 					string(META_PREFIX) + subpatch->path().chop_start("/"));
 			const Redland::Node     node_id(instance_rdf_node(n->second->path()));
-			_model->add_statement(patch_id, "ingen:node", node_id);
+			_model->add_statement(
+				patch_id,
+				Redland::Curie(_model->world(), "ingen:node"),
+				node_id);
 			serialise_patch(subpatch, class_id);
 			serialise_node(subpatch, class_id, node_id);
 		} else if (node) {
 			const Redland::Resource class_id(_model->world(), node->plugin()->uri().str());
 			const Redland::Node     node_id(instance_rdf_node(n->second->path()));
-			_model->add_statement(patch_id, "ingen:node", node_id);
+			_model->add_statement(
+				patch_id,
+				Redland::Curie(_model->world(), "ingen:node"),
+				node_id);
 			serialise_node(node, class_id, node_id);
 		}
 	}
@@ -374,7 +398,10 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Redland::Node&
 		if (p->properties().find("http://lv2plug.in/ns/lv2core#name") == p->properties().end())
 			p->set_property("http://lv2plug.in/ns/lv2core#name", Atom(p->symbol().c_str()));
 
-		_model->add_statement(patch_id, "http://lv2plug.in/ns/lv2core#port", port_id);
+		_model->add_statement(
+			patch_id,
+			Redland::Resource(_model->world(), "http://lv2plug.in/ns/lv2core#port"),
+			port_id);
 		serialise_port_meta(p, port_id);
 		if (root)
 			serialise_properties(port_id, &p->meta(), p->properties());
@@ -394,7 +421,9 @@ Serialiser::serialise_plugin(const Shared::Plugin& plugin)
 
 	const Redland::Node plugin_id = Redland::Resource(_model->world(), plugin.uri().str());
 
-	_model->add_statement(plugin_id, "rdf:type",
+	_model->add_statement(
+		plugin_id,
+		Redland::Curie(_model->world(), "rdf:type"),
 		Redland::Resource(_model->world(), plugin.type_uri().str()));
 }
 
@@ -403,12 +432,18 @@ void
 Serialiser::serialise_node(SharedPtr<Shared::Node> node,
 		const Redland::Node& class_id, const Redland::Node& node_id)
 {
-	_model->add_statement(node_id, "rdf:type",
-			Redland::Resource(_model->world(), "ingen:Node"));
-	_model->add_statement(node_id, "rdf:instanceOf",
-			class_id);
-	_model->add_statement(node_id, "lv2:symbol",
-			Redland::Literal(_model->world(), node->path().symbol()));
+	_model->add_statement(
+		node_id,
+		Redland::Curie(_model->world(), "rdf:type"),
+		Redland::Resource(_model->world(), "ingen:Node"));
+	_model->add_statement(
+		node_id,
+		Redland::Curie(_model->world(), "rdf:instanceOf"),
+		class_id);
+	_model->add_statement(
+		node_id,
+		Redland::Curie(_model->world(), "lv2:symbol"),
+		Redland::Literal(_model->world(), node->path().symbol()));
 
 	serialise_properties(node_id, &node->meta(), node->properties());
 
@@ -416,7 +451,10 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node,
 		Port* p = node->port(i);
 		const Redland::Node port_id = instance_rdf_node(p->path());
 		serialise_port(p, port_id);
-		_model->add_statement(node_id, "lv2:port", port_id);
+		_model->add_statement(
+			node_id,
+			Redland::Curie(_model->world(), "lv2:port"),
+			port_id);
 	}
 }
 
@@ -426,23 +464,33 @@ void
 Serialiser::serialise_port(const Port* port, const Redland::Node& port_id)
 {
 	if (port->is_input())
-		_model->add_statement(port_id, "rdf:type",
-				Redland::Resource(_model->world(), "lv2:InputPort"));
+		_model->add_statement(
+			port_id,
+			Redland::Curie(_model->world(), "rdf:type"),
+			Redland::Resource(_model->world(), "lv2:InputPort"));
 	else
-		_model->add_statement(port_id, "rdf:type",
-				Redland::Resource(_model->world(), "lv2:OutputPort"));
+		_model->add_statement(
+			port_id,
+			Redland::Curie(_model->world(), "rdf:type"),
+			Redland::Resource(_model->world(), "lv2:OutputPort"));
 
 	for (Port::PortTypes::const_iterator i = port->types().begin();
 			i != port->types().end(); ++i)
-		_model->add_statement(port_id, "rdf:type",
-				Redland::Resource(_model->world(), i->uri().str()));
+		_model->add_statement(
+			port_id,
+			Redland::Curie(_model->world(), "rdf:type"),
+			Redland::Resource(_model->world(), i->uri().str()));
 
 	if (dynamic_cast<Patch*>(port->graph_parent()))
-		_model->add_statement(port_id, "rdf:instanceOf",
-				class_rdf_node(port->path()));
+		_model->add_statement(
+			port_id,
+			Redland::Curie(_model->world(), "rdf:instanceOf"),
+			class_rdf_node(port->path()));
 
-	_model->add_statement(port_id, "lv2:symbol",
-			Redland::Literal(_model->world(), port->path().symbol()));
+	_model->add_statement(
+		port_id,
+		Redland::Curie(_model->world(), "lv2:symbol"),
+		Redland::Literal(_model->world(), port->path().symbol()));
 
 	serialise_properties(port_id, &port->meta(), port->properties());
 }
@@ -453,28 +501,40 @@ void
 Serialiser::serialise_port_meta(const Port* port, const Redland::Node& port_id)
 {
 	if (port->is_input())
-		_model->add_statement(port_id, "rdf:type",
-				Redland::Resource(_model->world(), "lv2:InputPort"));
+		_model->add_statement(
+			port_id,
+			Redland::Curie(_model->world(), "rdf:type"),
+			Redland::Resource(_model->world(), "lv2:InputPort"));
 	else
-		_model->add_statement(port_id, "rdf:type",
-				Redland::Resource(_model->world(), "lv2:OutputPort"));
+		_model->add_statement(
+			port_id,
+			Redland::Curie(_model->world(), "rdf:type"),
+			Redland::Resource(_model->world(), "lv2:OutputPort"));
 
 	for (Port::PortTypes::const_iterator i = port->types().begin();
 			i != port->types().end(); ++i)
-		_model->add_statement(port_id, "rdf:type",
-				Redland::Resource(_model->world(), i->uri().str()));
+		_model->add_statement(
+			port_id,
+			Redland::Curie(_model->world(), "rdf:type"),
+			Redland::Resource(_model->world(), i->uri().str()));
 
-	_model->add_statement(port_id, "lv2:index",
-			AtomRDF::atom_to_node(*_model, Atom((int)port->index())));
+	_model->add_statement(
+		port_id,
+		Redland::Curie(_model->world(), "lv2:index"),
+		AtomRDF::atom_to_node(*_model, Atom((int)port->index())));
 
-	_model->add_statement(port_id, "lv2:symbol",
-			Redland::Literal(_model->world(), port->path().symbol()));
+	_model->add_statement(
+		port_id,
+		Redland::Curie(_model->world(), "lv2:symbol"),
+		Redland::Literal(_model->world(), port->path().symbol()));
 
 	if (!port->get_property("http://lv2plug.in/ns/lv2core#default").is_valid()) {
 		if (port->is_input()) {
 			if (port->value().is_valid()) {
-				_model->add_statement(port_id, "lv2:default",
-						AtomRDF::atom_to_node(*_model, Atom(port->value())));
+				_model->add_statement(
+					port_id,
+					Redland::Curie(_model->world(), "lv2:default"),
+					AtomRDF::atom_to_node(*_model, Atom(port->value())));
 			} else if (port->is_a(PortType::CONTROL)) {
 				LOG(warn) << "Port " << port->path() << " has no lv2:default" << endl;
 			}
@@ -501,14 +561,25 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 		: class_rdf_node(connection->dst_port_path());
 
 	const Redland::Node connection_node = Redland::Node::blank_id(*_world.rdf_world());
-	_model->add_statement(connection_node, "ingen:source", src_node);
-	_model->add_statement(connection_node, "ingen:destination", dst_node);
+	_model->add_statement(
+		connection_node,
+		Redland::Curie(_model->world(), "ingen:source"),
+		src_node);
+	_model->add_statement(
+		connection_node,
+		Redland::Curie(_model->world(), "ingen:destination"),
+		dst_node);
 	if (parent) {
 		const Redland::Node parent_node = class_rdf_node(parent->path());
-		_model->add_statement(parent_node, "ingen:connection", connection_node);
+		_model->add_statement(
+			parent_node,
+			Redland::Curie(_model->world(), "ingen:connection"),
+			connection_node);
 	} else {
-		_model->add_statement(connection_node, "rdf:type",
-				Redland::Resource(_model->world(), "ingen:Connection"));
+		_model->add_statement(
+			connection_node,
+			Redland::Curie(_model->world(), "rdf:type"),
+			Redland::Resource(_model->world(), "ingen:Connection"));
 	}
 }
 

@@ -100,8 +100,7 @@ PluginModel::get_property(const URI& key) const
 #ifdef HAVE_SLV2
 	if (_slv2_plugin) {
 		boost::optional<Raul::Atom&> ret;
-		SLV2Value  lv2_pred = slv2_value_new_uri(_slv2_world,
-				_rdf_world->expand_uri(key.str()).c_str());
+		SLV2Value  lv2_pred = slv2_value_new_uri(_slv2_world, key.str().c_str());
 		SLV2Values values   = slv2_plugin_get_value(_slv2_plugin, lv2_pred);
 		slv2_value_free(lv2_pred);
 		for (unsigned i = 0; i < slv2_values_size(values); ++i) {

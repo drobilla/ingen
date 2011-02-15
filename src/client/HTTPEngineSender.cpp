@@ -125,7 +125,7 @@ HTTPEngineSender::put(const URI&                  uri,
 	for (Resource::Properties::const_iterator i = properties.begin(); i != properties.end(); ++i)
 		model.add_statement(
 				Redland::Resource(_world, path),
-				i->first.str(),
+				AtomRDF::atom_to_node(model, i->first),
 				AtomRDF::atom_to_node(model, i->second));
 
 	const string str = model.serialise_to_string("turtle");

@@ -581,10 +581,11 @@ Parser::parse_node(
 		return boost::optional<Path>();
 	}
 
-	const string plugin_uri = world->rdf_world()->expand_uri(plugin_node.to_c_string());
 	Resource::Properties props;
-	props.insert(make_pair(uris.rdf_type,       Raul::URI(uris.ingen_Node)));
-	props.insert(make_pair(uris.rdf_instanceOf, Raul::Atom(Raul::Atom::URI, plugin_uri)));
+	props.insert(make_pair(uris.rdf_type,
+	                       Raul::URI(uris.ingen_Node)));
+	props.insert(make_pair(uris.rdf_instanceOf,
+	                       AtomRDF::node_to_atom(model, plugin_node)));
 	target->put(path, props);
 
 	parse_properties(world, target, model, subject, path, data);
