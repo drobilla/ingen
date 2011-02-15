@@ -66,6 +66,8 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Propert
 	set_patch(patch);
 	_initial_data = data;
 
+	cerr << "FIXME: load remote patch" << endl;
+#if 0
 	Redland::Model model(*App::instance().world()->rdf_world(),
 			"http://rdf.drobilla.net/ingen_patches/index.ttl",
 			"http://rdf.drobilla.net/ingen_patches/");
@@ -86,6 +88,7 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Propert
 	_treeview->columns_autosize();
 
 	Gtk::Window::present();
+#endif
 }
 
 
