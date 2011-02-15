@@ -24,7 +24,6 @@
 #include "raul/log.hpp"
 #include "redlandmm/Model.hpp"
 #include "redlandmm/Node.hpp"
-#include "redlandmm/Query.hpp"
 #include "raul/TableImpl.hpp"
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
@@ -85,7 +84,9 @@ Parser::find_patches(
 	Ingen::Shared::World* world,
 	const Glib::ustring&  manifest_uri)
 {
-	Redland::Model model(*world->rdf_world(), manifest_uri, manifest_uri);
+	//Redland::Model model(*world->rdf_world(), manifest_uri, manifest_uri);
+	Redland::Model model(*world->rdf_world(), manifest_uri);
+	model.load_file(manifest_uri);
 
 	Redland::Resource rdf_type(*world->rdf_world(),     NS_RDF   "type");
 	Redland::Resource rdfs_seeAlso(*world->rdf_world(), NS_RDFS  "seeAlso");
@@ -138,7 +139,8 @@ Parser::parse_document(
 		document_uri += basename + INGEN_PATCH_FILE_EXT;
 	}
 
-	Redland::Model model(*world->rdf_world(), document_uri, document_uri);
+	Redland::Model model(*world->rdf_world(), document_uri);
+	model.load_file(document_uri);
 
 	LOG(info) << "Parsing " << document_uri << endl;
 	if (data_path)
@@ -173,7 +175,8 @@ Parser::parse_string(
 		boost::optional<Raul::Symbol>            symbol,
 		boost::optional<GraphObject::Properties> data)
 {
-	Redland::Model model(*world->rdf_world(), str.c_str(), str.length(), base_uri);
+	Redland::Model model(*world->rdf_world(), base_uri);
+	model.load_string(str.c_str(), str.length(), base_uri);
 
 	LOG(info) << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
 	if (!base_uri.empty())
@@ -310,8 +313,6 @@ Parser::parse(
 		                       || (rdf_class == in_port_class)
 		                       || (rdf_class == out_port_class);
 
-		const Glib::ustring subject_uri_tok = Glib::ustring("<").append(subject).append(">");
-
 		if (is_object) {
 			if (path_str.empty() || path_str[0] != '/')
 				path_str = "/" + path_str;
@@ -350,7 +351,7 @@ Parser::parse(
 		} else if (is_plugin) {
 			string subject_str = subject.to_string();
 			if (URI::is_valid(subject_str)) {
-				if (subject == document_uri)
+				if (subject_str == document_uri)
 					subject_str = Path::root().str();
 				parse_properties(world, target, model, subject, subject_str);
 			}
@@ -373,8 +374,6 @@ Parser::parse_patch(
 		boost::optional<GraphObject::Properties> data)
 {
 	const LV2URIMap& uris = *world->uris().get();
-
-	typedef Redland::QueryResults Results;
 
 	Redland::Resource ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
 	Redland::Resource lv2_port(*world->rdf_world(),        NS_LV2   "port");
@@ -442,8 +441,6 @@ Parser::parse_patch(
 	typedef map<string, Properties>         Objects;
 	typedef map<string, string>             Types;
 
-	SharedPtr<Redland::QueryResults> results;
-
 	Objects   patch_nodes;
 	Objects   plugin_nodes;
 	Resources resources;
@@ -462,7 +459,7 @@ Parser::parse_patch(
 			const Redland::Node& object    = np.get_object();
 			if (!skip_property(predicate)) {
 				node_properties.insert(
-					make_pair(predicate,
+					make_pair(predicate.to_string(),
 					          AtomRDF::node_to_atom(model, object)));
 			}
 		}
@@ -483,7 +480,7 @@ Parser::parse_patch(
 				const Redland::Node& object    = pp.get_object();
 				if (!skip_property(predicate)) {
 					port_properties.insert(
-						make_pair(predicate,
+						make_pair(predicate.to_string(),
 						          AtomRDF::node_to_atom(model, object)));
 				}
 			}
@@ -512,7 +509,7 @@ Parser::parse_patch(
 			const Redland::Node& object    = pp.get_object();
 			if (!skip_property(predicate)) {
 				port_properties.insert(
-					make_pair(predicate,
+					make_pair(predicate.to_string(),
 					          AtomRDF::node_to_atom(model, object)));
 			}
 		}
@@ -660,7 +657,7 @@ Parser::parse_properties(
 		const Redland::Node& key = i.get_predicate();
 		const Redland::Node& val = i.get_object();
 		if (!skip_property(key)) {
-			properties.insert(make_pair(string(key),
+			properties.insert(make_pair(key.to_string(),
 			                            AtomRDF::node_to_atom(model, val)));
 		}
 	}

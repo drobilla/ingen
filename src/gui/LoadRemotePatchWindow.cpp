@@ -18,7 +18,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
-#include "redlandmm/Query.hpp"
 #include "client/PatchModel.hpp"
 #include "interface/EngineInterface.hpp"
 #include "module/World.hpp"

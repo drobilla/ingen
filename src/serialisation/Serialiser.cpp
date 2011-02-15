@@ -106,7 +106,6 @@ Serialiser::write_manifest(const std::string& bundle_uri,
 	const string bundle_path(Glib::filename_from_uri(bundle_uri));
 	const string filename(Glib::build_filename(bundle_path, "manifest.ttl"));
 	start_to_filename(filename);
-    _model->set_base_uri(bundle_uri);
 	for (Records::const_iterator i = records.begin(); i != records.end(); ++i) {
 		SharedPtr<Patch> patch = PtrCast<Patch>(i->object);
 		if (patch) {
@@ -187,8 +186,7 @@ Serialiser::start_to_filename(const string& filename)
 		_base_uri = "file://" + filename;
 	else
 		_base_uri = filename;
-	_model = new Redland::Model(*_world.rdf_world());
-    _model->set_base_uri(_base_uri);
+	_model = new Redland::Model(*_world.rdf_world(), _base_uri);
 	_mode = TO_FILE;
 }
 
@@ -210,8 +208,7 @@ Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 
 	_root_path = root;
 	_base_uri = base_uri;
-	_model = new Redland::Model(*_world.rdf_world());
-    _model->set_base_uri(base_uri);
+	_model = new Redland::Model(*_world.rdf_world(), base_uri);
 	_mode = TO_STRING;
 }
 

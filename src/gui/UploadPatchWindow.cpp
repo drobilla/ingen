@@ -21,7 +21,6 @@
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
 #include <curl/curl.h>
-#include "redlandmm/Query.hpp"
 #include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/ClientStore.hpp"
