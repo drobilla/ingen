@@ -37,7 +37,7 @@ SLV2World   PluginModel::_slv2_world   = NULL;
 SLV2Plugins PluginModel::_slv2_plugins = NULL;
 #endif
 
-Redland::World* PluginModel::_rdf_world = NULL;
+Sord::World* PluginModel::_rdf_world = NULL;
 
 
 PluginModel::PluginModel(Shared::LV2URIMap& uris,
@@ -47,7 +47,6 @@ PluginModel::PluginModel(Shared::LV2URIMap& uris,
 {
 	add_properties(properties);
 
-	Glib::Mutex::Lock lock(_rdf_world->mutex());
 	assert(_rdf_world);
 	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", this->type_uri());
 #ifdef HAVE_SLV2
@@ -177,7 +176,6 @@ PluginModel::port_human_name(uint32_t index) const
 {
 #ifdef HAVE_SLV2
 	if (_slv2_plugin) {
-		Glib::Mutex::Lock lock(_rdf_world->mutex());
 		SLV2Port  port = slv2_plugin_get_port_by_index(_slv2_plugin, index);
 		SLV2Value name = slv2_port_get_name(_slv2_plugin, port);
 		string    ret  = slv2_value_as_string(name);
@@ -193,8 +191,6 @@ PluginModel::port_human_name(uint32_t index) const
 bool
 PluginModel::has_ui() const
 {
-	Glib::Mutex::Lock lock(_rdf_world->mutex());
-
 	SLV2Value gtk_gui_uri = slv2_value_new_uri(_slv2_world,
 		"http://lv2plug.in/ns/extensions/ui#GtkUI");
 
@@ -224,7 +220,6 @@ const string&
 PluginModel::icon_path() const
 {
 	if (_icon_path.empty() && _type == LV2) {
-		Glib::Mutex::Lock lock(_rdf_world->mutex());
 		_icon_path = get_lv2_icon_path(_slv2_plugin);
 	}
 

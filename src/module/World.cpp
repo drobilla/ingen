@@ -24,7 +24,7 @@
 #include "slv2/slv2.h"
 #endif
 #include "raul/log.hpp"
-#include "redlandmm/World.hpp"
+#include "sord/sordmm.hpp"
 #include "shared/runtime_paths.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
@@ -100,7 +100,7 @@ struct WorldImpl : public boost::noncopyable {
 		, argv(a_argv)
 		, conf(conf)
 		, lv2_features(NULL)
-		, rdf_world(new Redland::World())
+		, rdf_world(new Sord::World())
 		, uris(new Shared::LV2URIMap())
 #ifdef HAVE_SLV2
 		, slv2_world(slv2_world_new())
@@ -166,7 +166,7 @@ struct WorldImpl : public boost::noncopyable {
 	char**&                              argv;
 	Raul::Configuration*                 conf;
 	LV2Features*                         lv2_features;
-	Redland::World*                      rdf_world;
+	Sord::World*                         rdf_world;
 	SharedPtr<LV2URIMap>                 uris;
     SharedPtr<EngineInterface>           engine;
 	SharedPtr<Engine>                    local_engine;
@@ -211,7 +211,7 @@ LV2Features*                         World::lv2_features() { return _impl->lv2_f
 #ifdef HAVE_SLV2
 SLV2World            World::slv2_world() { return _impl->slv2_world; }
 #endif
-Redland::World*      World::rdf_world() { return _impl->rdf_world; }
+Sord::World*         World::rdf_world() { return _impl->rdf_world; }
 SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }
 
 

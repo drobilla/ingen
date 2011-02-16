@@ -17,5 +17,5 @@ def build(bld):
 	obj.vnum	    = '0.0.0'
 	obj.use             = 'libingen_shared'
 	obj.install_path    = '${LIBDIR}'
-	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL REDLANDMM')
+	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL SORD')
 

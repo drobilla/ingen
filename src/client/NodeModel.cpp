@@ -185,9 +185,6 @@ NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
 
 		if (!_min_values) {
-
-			Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
-
 			_num_values = slv2_plugin_get_num_ports(_plugin->slv2_plugin());
 			_min_values = new float[_num_values];
 			_max_values = new float[_num_values];

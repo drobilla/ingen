@@ -18,9 +18,11 @@
 #ifndef INGEN_CLIENT_PLUGINMODEL_HPP
 #define INGEN_CLIENT_PLUGINMODEL_HPP
 
+#include <sigc++/sigc++.h>
+
 #include "ingen-config.h"
 #include "raul/SharedPtr.hpp"
-#include "redlandmm/World.hpp"
+#include "sord/sordmm.hpp"
 #ifdef HAVE_SLV2
 #include "slv2/slv2.h"
 #endif
@@ -67,12 +69,10 @@ public:
 	SLV2Plugin       slv2_plugin() const { return _slv2_plugin; }
 
 	SLV2Port slv2_port(uint32_t index) {
-		Glib::Mutex::Lock lock(_rdf_world->mutex());
 		return slv2_plugin_get_port_by_index(_slv2_plugin, index);
 	}
 
 	static void set_slv2_world(SLV2World world) {
-		Glib::Mutex::Lock lock(_rdf_world->mutex());
 		_slv2_world = world;
 		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
 	}
@@ -86,11 +86,11 @@ public:
 	static std::string get_lv2_icon_path(SLV2Plugin plugin);
 #endif
 
-	static void set_rdf_world(Redland::World& world) {
+	static void set_rdf_world(Sord::World& world) {
 		_rdf_world = &world;
 	}
 
-	static Redland::World* rdf_world() { return _rdf_world; }
+	static Sord::World* rdf_world() { return _rdf_world; }
 
 	// Signals
 	sigc::signal<void> signal_changed;
@@ -111,7 +111,7 @@ private:
 	mutable std::string _icon_path;
 #endif
 
-	static Redland::World* _rdf_world;
+	static Sord::World* _rdf_world;
 };
 
 

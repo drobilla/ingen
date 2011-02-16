@@ -33,7 +33,7 @@
 typedef struct _SLV2World* SLV2World;
 #endif
 
-namespace Redland { class World; }
+namespace Sord { class World; }
 
 namespace Ingen {
 
@@ -53,7 +53,7 @@ struct WorldImpl;
 /** The "world" all Ingen modules may share.
  *
  * All loaded components of Ingen, as well as things requiring shared access
- * and/or locking (e.g. Redland, SLV2).
+ * and/or locking (e.g. Sord, SLV2).
  *
  * Ingen modules are shared libraries which modify the World when loaded
  * using World::load, e.g. loading the "ingen_serialisation" module will
@@ -92,7 +92,7 @@ public:
 	virtual SharedPtr<Serialisation::Parser>     parser();
 	virtual SharedPtr<Store>                     store();
 
-	virtual Redland::World*      rdf_world();
+	virtual Sord::World*         rdf_world();
 	virtual SharedPtr<LV2URIMap> uris();
 
 	virtual int&    argc();

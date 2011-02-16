@@ -70,7 +70,7 @@ def build(bld):
 	obj.target          = 'ingen_engine'
 	obj.install_path    = '${LIBDIR}'
 	obj.use             = 'libingen_shared'
-	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL REDLANDMM'
+	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL SORD'
 	autowaf.use_lib(bld, obj, core_libs)
 
 	if bld.env['HAVE_SOUP'] == 1:

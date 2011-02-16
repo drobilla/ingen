@@ -23,7 +23,7 @@
 #include <string>
 
 #include "raul/Path.hpp"
-#include "redlandmm/World.hpp"
+#include "sord/sordmm.hpp"
 
 #include "interface/EngineInterface.hpp"
 
@@ -116,7 +116,7 @@ public:
 
 protected:
 	SoupSession*    _session;
-	Redland::World& _world;
+	Sord::World&    _world;
 	const Raul::URI _engine_url;
 	int             _client_port;
 	int32_t         _id;

@@ -54,7 +54,7 @@ def configure(conf):
 			  atleast_version='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM',
 			  atleast_version='2.6.0', mandatory=False)
-	autowaf.check_pkg(conf, 'redlandmm', uselib_store='REDLANDMM',
+	autowaf.check_pkg(conf, 'sord', uselib_store='SORD',
 			  atleast_version='0.1.0', mandatory=False)
 	if not Options.options.no_http:
 		autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP',
@@ -132,7 +132,7 @@ def build(bld):
 	obj.defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"'
 	obj.use          = 'libingen_module libingen_shared'
 	obj.install_path = '${BINDIR}'
-	autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM REDLANDMM RAUL LV2CORE SLV2 INGEN LIBLO SOUP')
+	autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LV2CORE SLV2 INGEN LIBLO SOUP')
 
 	bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
 

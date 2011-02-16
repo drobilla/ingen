@@ -19,7 +19,7 @@
 #include <string>
 #include <glibmm.h>
 
-#include "redlandmm/World.hpp"
+#include "sord/sordmm.hpp"
 
 #include "shared/LV2URIMap.hpp"
 #include "Driver.hpp"
@@ -75,7 +75,6 @@ LV2Plugin::instantiate(BufferFactory&    bufs,
 
 	load(); // FIXME: unload at some point
 
-	Glib::Mutex::Lock lock(engine.world()->rdf_world()->mutex());
 	LV2Node* n = new LV2Node(this, name, polyphonic, parent, srate);
 
 	if ( ! n->instantiate(bufs) ) {

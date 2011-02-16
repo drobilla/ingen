@@ -22,7 +22,7 @@
 #include <float.h>
 #include <cmath>
 #include <glibmm/miscutils.h>
-#include "redlandmm/World.hpp"
+#include "sord/sordmm.hpp"
 #include "raul/log.hpp"
 #include "ingen-config.h"
 #include "module/World.hpp"
@@ -81,8 +81,6 @@ NodeFactory::load_plugins()
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	_world->rdf_world()->mutex().lock();
-
 	// Only load if we havn't already, so every client connecting doesn't cause
 	// this (expensive!) stuff to happen.  Not the best solution - would be nice
 	// if clients could refresh plugins list for whatever reason :/
@@ -97,8 +95,6 @@ NodeFactory::load_plugins()
 
 		_has_loaded = true;
 	}
-
-	_world->rdf_world()->mutex().unlock();
 }
 
 

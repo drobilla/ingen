@@ -28,7 +28,7 @@
 #include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
-#include "redlandmm/World.hpp"
+#include "sord/sordmm.hpp"
 #include "interface/EngineInterface.hpp"
 #include "shared/Configuration.hpp"
 #include "shared/runtime_paths.hpp"

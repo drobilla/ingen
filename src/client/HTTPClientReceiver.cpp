@@ -231,8 +231,6 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 void
 HTTPClientReceiver::start(bool dump)
 {
-	Glib::Mutex::Lock lock(_world->rdf_world()->mutex());
-
 	if (!_world->parser())
 		_world->load("ingen_serialisation");
 

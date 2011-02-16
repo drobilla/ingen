@@ -24,8 +24,8 @@
 #include <boost/optional.hpp>
 #include "interface/GraphObject.hpp"
 
-namespace Raul { class Path; }
-namespace Redland { class World; class Model; class Node; }
+namespace Raul  { class Path; }
+namespace Sord  { class World; class Model; class Node; }
 namespace Ingen { namespace Shared { class CommonInterface; } }
 
 namespace Ingen {
@@ -86,7 +86,7 @@ private:
 	boost::optional<Raul::Path> parse(
 			Ingen::Shared::World*         world,
 			Shared::CommonInterface*      target,
-			Redland::Model&               model,
+			Sord::Model&                  model,
 			Glib::ustring                 document_uri,
 			boost::optional<Raul::Path>   data_path=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Path>   parent=boost::optional<Raul::Path>(),
@@ -96,8 +96,8 @@ private:
 	boost::optional<Raul::Path> parse_patch(
 			Ingen::Shared::World*           world,
 			Ingen::Shared::CommonInterface* target,
-			Redland::Model&                 model,
-			const Redland::Node&            subject,
+			Sord::Model&                    model,
+			const Sord::Node&               subject,
 			boost::optional<Raul::Path>     parent=boost::optional<Raul::Path>(),
 			boost::optional<Raul::Symbol>   symbol=boost::optional<Raul::Symbol>(),
 			boost::optional<Properties>     data=boost::optional<Properties>());
@@ -105,27 +105,27 @@ private:
 	boost::optional<Raul::Path> parse_node(
 			Ingen::Shared::World*           world,
 			Ingen::Shared::CommonInterface* target,
-			Redland::Model&                 model,
-			const Redland::Node&            subject,
+			Sord::Model&                    model,
+			const Sord::Node&               subject,
 			const Raul::Path&               path,
 			boost::optional<Properties>     data=boost::optional<Properties>());
 
 	bool parse_properties(
 			Ingen::Shared::World*           world,
 			Ingen::Shared::CommonInterface* target,
-			Redland::Model&                 model,
-			const Redland::Node&            subject,
+			Sord::Model&                    model,
+			const Sord::Node&               subject,
 			const Raul::URI&                uri,
-			boost::optional<Properties>     data=boost::optional<Properties>());
+			boost::optional<Properties>     data = boost::optional<Properties>());
 
 	bool parse_connections(
 			Ingen::Shared::World*           world,
 			Ingen::Shared::CommonInterface* target,
-			Redland::Model&                 model,
-			const Redland::Node&            subject,
+			Sord::Model&                    model,
+			const Sord::Node&               subject,
 			const Raul::Path&               patch);
 
-	bool skip_property(const Redland::Node& predicate);
+	bool skip_property(const Sord::Node& predicate);
 };
 
 

@@ -67,17 +67,17 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Propert
 
 	cerr << "FIXME: load remote patch" << endl;
 #if 0
-	Redland::Model model(*App::instance().world()->rdf_world(),
+	Sord::Model model(*App::instance().world()->rdf_world(),
 			"http://rdf.drobilla.net/ingen_patches/index.ttl",
 			"http://rdf.drobilla.net/ingen_patches/");
 
-	Redland::Query query(*App::instance().world()->rdf_world(), Glib::ustring(
+	Sord::Query query(*App::instance().world()->rdf_world(), Glib::ustring(
 		"SELECT DISTINCT ?name ?uri WHERE {"
 		"  ?uri a            ingen:Patch ;"
 		"       doap:name    ?name ."
 		"}"));
 
-	SharedPtr<Redland::QueryResults> results(query.run(*App::instance().world()->rdf_world(), model));
+	SharedPtr<Sord::QueryResults> results(query.run(*App::instance().world()->rdf_world(), model));
 	for (; !results->finished(); results->next()) {
 		Gtk::TreeModel::iterator iter = _liststore->append();
 		(*iter)[_columns._col_name] = results->get("name").to_string();

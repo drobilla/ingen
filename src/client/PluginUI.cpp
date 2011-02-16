@@ -118,7 +118,6 @@ PluginUI::PluginUI(Ingen::Shared::World* world,
 PluginUI::~PluginUI()
 {
 	if (_instance) {
-		Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
 		slv2_ui_instance_free(_instance);
 	}
 }
@@ -129,7 +128,6 @@ PluginUI::create(Ingen::Shared::World* world,
                  SharedPtr<NodeModel>  node,
                  SLV2Plugin            plugin)
 {
-	Glib::Mutex::Lock lock(PluginModel::rdf_world()->mutex());
 	SharedPtr<PluginUI> ret;
 
 	SLV2Value gtk_gui_uri = slv2_value_new_uri(world->slv2_world(),

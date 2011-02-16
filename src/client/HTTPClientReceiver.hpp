@@ -21,7 +21,7 @@
 #include <cstdlib>
 #include <boost/utility.hpp>
 #include <glibmm/thread.h>
-#include "redlandmm/World.hpp"
+#include "sord/sordmm.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"

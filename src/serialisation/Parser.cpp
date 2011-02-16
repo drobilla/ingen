@@ -22,8 +22,7 @@
 #include <glibmm/fileutils.h>
 #include <glibmm/convert.h>
 #include "raul/log.hpp"
-#include "redlandmm/Model.hpp"
-#include "redlandmm/Node.hpp"
+#include "sord/sordmm.hpp"
 #include "raul/TableImpl.hpp"
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
@@ -32,6 +31,9 @@
 #include "shared/LV2URIMap.hpp"
 #include "Parser.hpp"
 #include "names.hpp"
+
+#include "serd/serd.h"
+#include "sord/sordmm.hpp"
 
 #define LOG(s) s << "[Parser] "
 
@@ -44,9 +46,9 @@ using namespace std;
 using namespace Raul;
 using namespace Ingen::Shared;
 
-static const Redland::Node nil;
+static const Sord::Node nil;
 
-typedef set<Redland::Node> RDFNodes;
+typedef set<Sord::Node> RDFNodes;
 
 namespace Ingen {
 namespace Serialisation {
@@ -55,16 +57,26 @@ namespace Serialisation {
 static Glib::ustring
 relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 {
-	raptor_uri* base_uri = raptor_new_uri((const unsigned char*)base.c_str());
-	raptor_uri* full_uri = raptor_new_uri((const unsigned char*)uri.c_str());
+	if (uri == base) {
+		return leading_slash ? "/" : "";
+	}
 
-	Glib::ustring ret((const char*)raptor_uri_to_relative_uri_string(base_uri, full_uri));
+	SerdURI base_uri;
+	serd_uri_parse((const uint8_t*)base.c_str(), &base_uri);
 
-	raptor_free_uri(base_uri);
-	raptor_free_uri(full_uri);
+	SerdURI  normal_base_uri;
+	SerdNode normal_base_uri_node = serd_node_new_uri_from_string(
+		(const uint8_t*)".", &base_uri, &normal_base_uri);
 
-	if (leading_slash && ret[0] != '/')
-		ret = Glib::ustring("/") + ret;
+	Glib::ustring normal_base_str((const char*)normal_base_uri_node.buf);
+
+	Glib::ustring ret = uri;
+	if (uri.length() >= normal_base_str.length()
+	    && uri.substr(0, normal_base_str.length()) == normal_base_str) {
+		ret = uri.substr(normal_base_str.length());
+		if (leading_slash && ret[0] != '/')
+			ret = Glib::ustring("/") + ret;
+	}
 
 	return ret;
 }
@@ -84,22 +96,21 @@ Parser::find_patches(
 	Ingen::Shared::World* world,
 	const Glib::ustring&  manifest_uri)
 {
-	//Redland::Model model(*world->rdf_world(), manifest_uri, manifest_uri);
-	Redland::Model model(*world->rdf_world(), manifest_uri);
+	Sord::Model model(*world->rdf_world(), manifest_uri);
 	model.load_file(manifest_uri);
 
-	Redland::Resource rdf_type(*world->rdf_world(),     NS_RDF   "type");
-	Redland::Resource rdfs_seeAlso(*world->rdf_world(), NS_RDFS  "seeAlso");
-	Redland::Resource ingen_Patch(*world->rdf_world(),  NS_INGEN "Patch");
+	Sord::Resource rdf_type(*world->rdf_world(),     NS_RDF   "type");
+	Sord::Resource rdfs_seeAlso(*world->rdf_world(), NS_RDFS  "seeAlso");
+	Sord::Resource ingen_Patch(*world->rdf_world(),  NS_INGEN "Patch");
 
 	RDFNodes patches;
-	for (Redland::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
+	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
 		patches.insert(i.get_subject());
 	}
 
 	std::list<PatchRecord> records;
 	for (RDFNodes::const_iterator i = patches.begin(); i != patches.end(); ++i) {
-		Redland::Iter f = model.find(*i, rdfs_seeAlso, nil);
+		Sord::Iter f = model.find(*i, rdfs_seeAlso, nil);
 		if (f.end()) {
 			LOG(error) << "Patch has no rdfs:seeAlso" << endl;
 			continue;
@@ -127,7 +138,11 @@ Parser::parse_document(
 {
 	normalise_uri(document_uri);
 
-	assert(document_uri[document_uri.length() - 1] == '/');
+	if (document_uri.substr(document_uri.length() - 4) != ".ttl") {
+		if (document_uri[document_uri.length() - 1] != '/') {
+			document_uri.append("/");
+		}
+	}
 	
 	const std::string filename(Glib::filename_from_uri(document_uri));
 	const size_t      ext = filename.find(INGEN_BUNDLE_EXT);
@@ -139,7 +154,7 @@ Parser::parse_document(
 		document_uri += basename + INGEN_PATCH_FILE_EXT;
 	}
 
-	Redland::Model model(*world->rdf_world(), document_uri);
+	Sord::Model model(*world->rdf_world(), document_uri);
 	model.load_file(document_uri);
 
 	LOG(info) << "Parsing " << document_uri << endl;
@@ -175,7 +190,7 @@ Parser::parse_string(
 		boost::optional<Raul::Symbol>            symbol,
 		boost::optional<GraphObject::Properties> data)
 {
-	Redland::Model model(*world->rdf_world(), base_uri);
+	Sord::Model model(*world->rdf_world(), base_uri);
 	model.load_string(str.c_str(), str.length(), base_uri);
 
 	LOG(info) << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
@@ -184,7 +199,7 @@ Parser::parse_string(
 	info << endl;
 
 	bool ret = parse(world, target, model, base_uri, data_path, parent, symbol, data);
-	Redland::Resource subject(*world->rdf_world(), base_uri);
+	Sord::Resource subject(*world->rdf_world(), base_uri);
 	parse_connections(world, target, model, subject, parent ? *parent : "/");
 
 	return ret;
@@ -203,20 +218,20 @@ Parser::parse_update(
 		boost::optional<GraphObject::Properties> data)
 {
 	#if 0
-	Redland::Model model(*world->rdf_world(), str.c_str(), str.length(), base_uri);
+	Sord::Model model(*world->rdf_world(), str.c_str(), str.length(), base_uri);
 
 	// Delete anything explicitly declared to not exist
 	Glib::ustring query_str = Glib::ustring("SELECT DISTINCT ?o WHERE { ?o a owl:Nothing }");
-	Redland::Query query(*world->rdf_world(), query_str);
-	SharedPtr<Redland::QueryResults> results(query.run(*world->rdf_world(), model, base_uri));
+	Sord::Query query(*world->rdf_world(), query_str);
+	SharedPtr<Sord::QueryResults> results(query.run(*world->rdf_world(), model, base_uri));
 
 	for (; !results->finished(); results->next()) {
-		const Redland::Node& object = results->get("o");
+		const Sord::Node& object = results->get("o");
 		target->del(object.to_string());
 	}
 
 	// Properties
-	query = Redland::Query(*world->rdf_world(),
+	query = Sord::Query(*world->rdf_world(),
 		"SELECT DISTINCT ?s ?p ?o WHERE {\n"
 		"?s ?p ?o .\n"
 		"}");
@@ -226,7 +241,7 @@ Parser::parse_update(
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
 		string               obj_uri(results->get("s").to_string());
 		const string         key(results->get("p").to_string());
-		const Redland::Node& val_node(results->get("o"));
+		const Sord::Node& val_node(results->get("o"));
 		const Atom           a(AtomRDF::node_to_atom(model, val_node));
 		if (obj_uri.find(":") == string::npos)
 			obj_uri = Path(obj_uri).str();
@@ -237,11 +252,11 @@ Parser::parse_update(
 
 
 	// Connections
-	Redland::Resource subject(*world->rdf_world(), base_uri);
+	Sord::Resource subject(*world->rdf_world(), base_uri);
 	parse_connections(world, target, model, subject, "/");
 
 	// Port values
-	query = Redland::Query(*world->rdf_world(),
+	query = Sord::Query(*world->rdf_world(),
 		"SELECT DISTINCT ?path ?value WHERE {\n"
 		"?path ingen:value ?value .\n"
 		"}");
@@ -249,8 +264,8 @@ Parser::parse_update(
 	results = query.run(*world->rdf_world(), model, base_uri);
 	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		const string obj_path = results->get("path").to_string();
-		const Redland::Node& val_node = results->get("value");
+		const string      obj_path = results->get("path").to_string();
+		const Sord::Node& val_node = results->get("value");
 		const Atom a(AtomRDF::node_to_atom(model, val_node));
 		target->set_property(obj_path, world->uris()->ingen_value, a);
 	}
@@ -265,30 +280,30 @@ boost::optional<Path>
 Parser::parse(
 		Ingen::Shared::World*                    world,
 		Ingen::Shared::CommonInterface*          target,
-		Redland::Model&                          model,
+		Sord::Model&                             model,
 		Glib::ustring                            document_uri,
 		boost::optional<Raul::Path>              data_path,
 		boost::optional<Raul::Path>              parent,
 		boost::optional<Raul::Symbol>            symbol,
 		boost::optional<GraphObject::Properties> data)
 {
-	const Redland::Node::Type res = Redland::Node::RESOURCE;
+	const Sord::Node::Type res = Sord::Node::RESOURCE;
 
-	const Redland::Resource rdf_type(*world->rdf_world(), NS_RDF "type");
+	const Sord::Resource rdf_type(*world->rdf_world(), NS_RDF "type");
 
-	const Redland::Node patch_class    (*world->rdf_world(), res, NS_INGEN "Patch");
-	const Redland::Node node_class     (*world->rdf_world(), res, NS_INGEN "Node");
-	const Redland::Node internal_class (*world->rdf_world(), res, NS_INGEN "Internal");
-	const Redland::Node ladspa_class   (*world->rdf_world(), res, NS_INGEN "LADSPAPlugin");
-	const Redland::Node in_port_class  (*world->rdf_world(), res, NS_LV2 "InputPort");
-	const Redland::Node out_port_class (*world->rdf_world(), res, NS_LV2 "OutputPort");
-	const Redland::Node lv2_class      (*world->rdf_world(), res, NS_LV2 "Plugin");
+	const Sord::Node patch_class    (*world->rdf_world(), res, NS_INGEN "Patch");
+	const Sord::Node node_class     (*world->rdf_world(), res, NS_INGEN "Node");
+	const Sord::Node internal_class (*world->rdf_world(), res, NS_INGEN "Internal");
+	const Sord::Node ladspa_class   (*world->rdf_world(), res, NS_INGEN "LADSPAPlugin");
+	const Sord::Node in_port_class  (*world->rdf_world(), res, NS_LV2 "InputPort");
+	const Sord::Node out_port_class (*world->rdf_world(), res, NS_LV2 "OutputPort");
+	const Sord::Node lv2_class      (*world->rdf_world(), res, NS_LV2 "Plugin");
 
-	Redland::Node subject;
+	Sord::Node subject = nil;
 	if (data_path && data_path->is_root()) {
 		subject = model.base_uri();
 	} else if (data_path) {
-		subject = Redland::Node(*world->rdf_world(), res, data_path->chop_start("/"));
+		subject = Sord::Node(*world->rdf_world(), res, data_path->chop_start("/"));
 	} else {
 		subject = nil;
 	}
@@ -297,9 +312,9 @@ Parser::parse(
 	boost::optional<Path> ret;
 	boost::optional<Path> root_path;
 
-	for (Redland::Iter i = model.find(subject, rdf_type, nil); !i.end(); ++i) {
-		const Redland::Node& subject   = i.get_subject();
-		const Redland::Node& rdf_class = i.get_object();
+	for (Sord::Iter i = model.find(subject, rdf_type, nil); !i.end(); ++i) {
+		const Sord::Node& subject   = i.get_subject();
+		const Sord::Node& rdf_class = i.get_object();
 
 		if (!data_path)
 			path_str = relative_uri(document_uri, subject.to_c_string(), true);
@@ -367,19 +382,19 @@ boost::optional<Path>
 Parser::parse_patch(
 		Ingen::Shared::World*                    world,
 		Ingen::Shared::CommonInterface*          target,
-		Redland::Model&                          model,
-		const Redland::Node&                     subject_node,
+		Sord::Model&                             model,
+		const Sord::Node&                        subject_node,
 		boost::optional<Raul::Path>              parent,
 		boost::optional<Raul::Symbol>            a_symbol,
 		boost::optional<GraphObject::Properties> data)
 {
 	const LV2URIMap& uris = *world->uris().get();
 
-	Redland::Resource ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
-	Redland::Resource lv2_port(*world->rdf_world(),        NS_LV2   "port");
-	Redland::Resource lv2_symbol(*world->rdf_world(),      NS_LV2   "symbol");
+	Sord::Resource ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
+	Sord::Resource lv2_port(*world->rdf_world(),        NS_LV2   "port");
+	Sord::Resource lv2_symbol(*world->rdf_world(),      NS_LV2   "symbol");
 
-	const Redland::Node& patch = subject_node;
+	const Sord::Node& patch = subject_node;
 
 	uint32_t patch_poly = 0;
 
@@ -392,9 +407,9 @@ Parser::parse_patch(
 
 	/* Load polyphony from file if necessary */
 	if (patch_poly == 0) {
-		Redland::Iter i = model.find(subject_node, ingen_polyphony, nil);
+		Sord::Iter i = model.find(subject_node, ingen_polyphony, nil);
 		if (!i.end()) {
-			const Redland::Node& poly_node = i.get_object();
+			const Sord::Node& poly_node = i.get_object();
 			if (poly_node.is_int())
 				patch_poly = poly_node.to_int();
 			else
@@ -432,12 +447,12 @@ Parser::parse_patch(
 	props.insert(make_pair(uris.ingen_polyphony, Raul::Atom(int32_t(patch_poly))));
 	target->put(patch_path, props);
 
-	Redland::Resource rdf_type(*world->rdf_world(),    NS_RDF   "type");
-	Redland::Resource ingen_Patch(*world->rdf_world(), NS_INGEN "Patch");
-	Redland::Resource ingen_node(*world->rdf_world(),  NS_INGEN "node");
+	Sord::Resource rdf_type(*world->rdf_world(),    NS_RDF   "type");
+	Sord::Resource ingen_Patch(*world->rdf_world(), NS_INGEN "Patch");
+	Sord::Resource ingen_node(*world->rdf_world(),  NS_INGEN "node");
 
 	typedef multimap<Raul::URI, Raul::Atom> Properties;
-	typedef map<string, Redland::Node>      Resources;
+	typedef map<string, Sord::Node>         Resources;
 	typedef map<string, Properties>         Objects;
 	typedef map<string, string>             Types;
 
@@ -447,16 +462,16 @@ Parser::parse_patch(
 	Types     types;
 
 	/* For each node in this patch */
-	typedef map<Redland::Node, Properties> Nodes;
+	typedef map<Sord::Node, Properties> Nodes;
 	Nodes nodes;
-	for (Redland::Iter n = model.find(subject_node, ingen_node, nil); !n.end(); ++n) {
-		Redland::Node node = n.get_object();
+	for (Sord::Iter n = model.find(subject_node, ingen_node, nil); !n.end(); ++n) {
+		Sord::Node node = n.get_object();
 
 		/* Get all node properties */
 		Properties node_properties;
-		for (Redland::Iter np = model.find(node, nil, nil); !np.end(); ++np) {
-			const Redland::Node& predicate = np.get_predicate();
-			const Redland::Node& object    = np.get_object();
+		for (Sord::Iter np = model.find(node, nil, nil); !np.end(); ++np) {
+			const Sord::Node& predicate = np.get_predicate();
+			const Sord::Node& object    = np.get_object();
 			if (!skip_property(predicate)) {
 				node_properties.insert(
 					make_pair(predicate.to_string(),
@@ -470,14 +485,14 @@ Parser::parse_patch(
 		target->put(node_path, node_properties);
 
 		/* For each port on this node */
-		for (Redland::Iter p = model.find(node, lv2_port, nil); !p.end(); ++p) {
-			Redland::Node port = p.get_object();
+		for (Sord::Iter p = model.find(node, lv2_port, nil); !p.end(); ++p) {
+			Sord::Node port = p.get_object();
 
 			/* Get all port properties */
 			Properties port_properties;
-			for (Redland::Iter pp = model.find(port, nil, nil); !pp.end(); ++pp) {
-				const Redland::Node& predicate = pp.get_predicate();
-				const Redland::Node& object    = pp.get_object();
+			for (Sord::Iter pp = model.find(port, nil, nil); !pp.end(); ++pp) {
+				const Sord::Node& predicate = pp.get_predicate();
+				const Sord::Node& object    = pp.get_object();
 				if (!skip_property(predicate)) {
 					port_properties.insert(
 						make_pair(predicate.to_string(),
@@ -499,14 +514,14 @@ Parser::parse_patch(
 	}
 
 	/* For each port on this patch */
-	for (Redland::Iter p = model.find(patch, lv2_port, nil); !p.end(); ++p) {
-		Redland::Node port = p.get_object();
+	for (Sord::Iter p = model.find(patch, lv2_port, nil); !p.end(); ++p) {
+		Sord::Node port = p.get_object();
 
 		/* Get all port properties */
 		Properties port_properties;
-		for (Redland::Iter pp = model.find(port, nil, nil); !pp.end(); ++pp) {
-			const Redland::Node& predicate = pp.get_predicate();
-			const Redland::Node& object    = pp.get_object();
+		for (Sord::Iter pp = model.find(port, nil, nil); !pp.end(); ++pp) {
+			const Sord::Node& predicate = pp.get_predicate();
+			const Sord::Node& object    = pp.get_object();
 			if (!skip_property(predicate)) {
 				port_properties.insert(
 					make_pair(predicate.to_string(),
@@ -533,7 +548,7 @@ Parser::parse_patch(
 	target->set_property(patch_path, uris.ingen_enabled, (bool)true);
 #if 0
 	/* Enable */
-	query = Redland::Query(*world->rdf_world(), Glib::ustring(
+	query = Sord::Query(*world->rdf_world(), Glib::ustring(
 		"SELECT DISTINCT ?enabled WHERE {\n")
 			+ subject + " ingen:enabled ?enabled .\n"
 		"}");
@@ -541,7 +556,7 @@ Parser::parse_patch(
 	results = query.run(*world->rdf_world(), model, base_uri);
 	for (; !results->finished(); results->next()) {
 		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		const Redland::Node& enabled_node = results->get("enabled");
+		const Sord::Node& enabled_node = results->get("enabled");
 		if (enabled_node.is_bool() && enabled_node) {
 			target->set_property(patch_path, uris.ingen_enabled, (bool)true);
 			break;
@@ -559,24 +574,24 @@ boost::optional<Path>
 Parser::parse_node(
 		Ingen::Shared::World*                    world,
 		Ingen::Shared::CommonInterface*          target,
-		Redland::Model&                          model,
-		const Redland::Node&                     subject,
+		Sord::Model&                             model,
+		const Sord::Node&                        subject,
 		const Raul::Path&                        path,
 		boost::optional<GraphObject::Properties> data)
 {
 	const LV2URIMap& uris = *world->uris().get();
 
-	Redland::Resource rdf_instanceOf(*world->rdf_world(), NS_RDF "instanceOf");
+	Sord::Resource rdf_instanceOf(*world->rdf_world(), NS_RDF "instanceOf");
 
 	/* Get plugin */
-	Redland::Iter i = model.find(subject, rdf_instanceOf, nil);
+	Sord::Iter i = model.find(subject, rdf_instanceOf, nil);
 	if (i.end()) {
 		LOG(error) << "Node missing mandatory rdf:instanceOf property" << endl;
 		return boost::optional<Path>();
 	}
 
-	const Redland::Node& plugin_node = i.get_object();
-	if (plugin_node.type() != Redland::Node::RESOURCE) {
+	const Sord::Node& plugin_node = i.get_object();
+	if (plugin_node.type() != Sord::Node::RESOURCE) {
 		LOG(error) << "Node's rdf:instanceOf property is not a resource" << endl;
 		return boost::optional<Path>();
 	}
@@ -597,24 +612,24 @@ bool
 Parser::parse_connections(
 		Ingen::Shared::World*           world,
 		Ingen::Shared::CommonInterface* target,
-		Redland::Model&                 model,
-		const Redland::Node&            subject,
+		Sord::Model&                    model,
+		const Sord::Node&               subject,
 		const Raul::Path&               parent)
 {
-	Redland::Resource ingen_connection(*world->rdf_world(),  NS_INGEN "connection");
-	Redland::Resource ingen_source(*world->rdf_world(),      NS_INGEN "source");
-	Redland::Resource ingen_destination(*world->rdf_world(), NS_INGEN "destination");
+	Sord::Resource ingen_connection(*world->rdf_world(),  NS_INGEN "connection");
+	Sord::Resource ingen_source(*world->rdf_world(),      NS_INGEN "source");
+	Sord::Resource ingen_destination(*world->rdf_world(), NS_INGEN "destination");
 
 	const Glib::ustring& base_uri = model.base_uri().to_string();
 
 	RDFNodes connections;
-	for (Redland::Iter i = model.find(subject, ingen_connection, nil); !i.end(); ++i) {
+	for (Sord::Iter i = model.find(subject, ingen_connection, nil); !i.end(); ++i) {
 		connections.insert(i.get_object());
 	}
 
 	for (RDFNodes::const_iterator i = connections.begin(); i != connections.end(); ++i) {
-		Redland::Iter s = model.find(*i, ingen_source, nil);
-		Redland::Iter d = model.find(*i, ingen_destination, nil);
+		Sord::Iter s = model.find(*i, ingen_source, nil);
+		Sord::Iter d = model.find(*i, ingen_destination, nil);
 
 		if (s.end()) {
 			LOG(error) << "Connection has no source" << endl;
@@ -648,15 +663,15 @@ bool
 Parser::parse_properties(
 		Ingen::Shared::World*                    world,
 		Ingen::Shared::CommonInterface*          target,
-		Redland::Model&                          model,
-		const Redland::Node&                     subject,
+		Sord::Model&                             model,
+		const Sord::Node&                        subject,
 		const Raul::URI&                         uri,
 		boost::optional<GraphObject::Properties> data)
 {
 	Resource::Properties properties;
-	for (Redland::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
-		const Redland::Node& key = i.get_predicate();
-		const Redland::Node& val = i.get_object();
+	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
+		const Sord::Node& key = i.get_predicate();
+		const Sord::Node& val = i.get_object();
 		if (!skip_property(key)) {
 			properties.insert(make_pair(key.to_string(),
 			                            AtomRDF::node_to_atom(model, val)));
@@ -674,7 +689,7 @@ Parser::parse_properties(
 
 
 bool
-Parser::skip_property(const Redland::Node& predicate)
+Parser::skip_property(const Sord::Node& predicate)
 {
 	return (predicate.to_string() == "http://drobilla.net/ns/ingen#node"
 			|| predicate.to_string() == "http://lv2plug.in/ns/lv2core#port");

@@ -18,7 +18,7 @@
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "redlandmm/World.hpp"
+#include "sord/sordmm.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "CreateNode.hpp"
 #include "Request.hpp"

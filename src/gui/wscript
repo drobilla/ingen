@@ -58,7 +58,7 @@ def build(bld):
 		GNOMECANVASMM
 		GTKMM
 		RAUL
-		REDLANDMM
+		SORD
 		SIGCPP
 		LV2CORE
 		SLV2

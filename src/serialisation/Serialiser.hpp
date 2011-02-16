@@ -25,8 +25,7 @@
 #include <cassert>
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
-#include "redlandmm/World.hpp"
-#include "redlandmm/Model.hpp"
+#include "sord/sordmm.hpp"
 #include "interface/GraphObject.hpp"
 #include "shared/Store.hpp"
 
@@ -93,27 +92,27 @@ private:
 
 	void setup_prefixes();
 
-	void serialise_patch(SharedPtr<Shared::Patch> p, const Redland::Node& id);
+	void serialise_patch(SharedPtr<Shared::Patch> p, const Sord::Node& id);
 	void serialise_node(SharedPtr<Shared::Node> n,
-			const Redland::Node& class_id, const Redland::Node& id);
-	void serialise_port(const Shared::Port* p, const Redland::Node& id);
-	void serialise_port_meta(const Shared::Port* p, const Redland::Node& id);
+			const Sord::Node& class_id, const Sord::Node& id);
+	void serialise_port(const Shared::Port* p, const Sord::Node& id);
+	void serialise_port_meta(const Shared::Port* p, const Sord::Node& id);
 
-	void serialise_meta_properties(Redland::Node subject, const Properties& properties);
+	void serialise_meta_properties(Sord::Node subject, const Properties& properties);
 	void serialise_properties(
-			Redland::Node           subject,
+			Sord::Node           subject,
 			const Shared::Resource* meta,
 			const Properties&       properties);
 
-	Redland::Node instance_rdf_node(const Raul::Path& path);
-	Redland::Node class_rdf_node(const Raul::Path& path);
+	Sord::Node instance_rdf_node(const Raul::Path& path);
+	Sord::Node class_rdf_node(const Raul::Path& path);
 
 	Raul::Path               _root_path;
 	SharedPtr<Shared::Store> _store;
 	Mode                     _mode;
 	std::string              _base_uri;
 	Shared::World&           _world;
-	Redland::Model*          _model;
+	Sord::Model*             _model;
 };
 
 
