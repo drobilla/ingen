@@ -20,6 +20,7 @@
 #include "module/World.hpp"
 #include "module/Module.hpp"
 #include "module/ingen_module.hpp"
+#include "serialisation/names.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
 #include "client/PatchModel.hpp"
@@ -137,7 +138,7 @@ ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& file
 {
 	if (App::instance().serialiser()) {
 		Serialiser::Record r(model, filename);
-		if (filename.find(".ing.lv2") != string::npos)
+		if (filename.find(INGEN_BUNDLE_EXT) != string::npos)
 			App::instance().serialiser()->write_bundle(r);
 		else
 			App::instance().serialiser()->to_file(r);

@@ -34,8 +34,8 @@ Configuration::Configuration()
 	"  ingen -e                     # Run an engine, listen for OSC\n"
 	"  ingen -g                     # Run a GUI, connect via OSC\n"
 	"  ingen -eg                    # Run an engine and a GUI in one process\n"
-	"  ingen -egl patch.ing.ttl     # Run an engine and a GUI and load a patch file\n"
-	"  ingen -egl patch.ing.lv2     # Run an engine and a GUI and load a patch bundle")
+	"  ingen -egl patch.ttl         # Run an engine and a GUI and load a patch file\n"
+	"  ingen -egl patch.ingen       # Run an engine and a GUI and load a patch bundle")
 {
 	add("client-port", 'C', "Client OSC port", Atom::INT, Atom())
 		.add("connect",     'c', "Connect to engine URI", Atom::STRING, "osc.udp://localhost:16180")

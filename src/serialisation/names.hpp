@@ -18,7 +18,7 @@
 #ifndef INGEN_SERIALISATION_NAMES_HPP
 #define INGEN_SERIALISATION_NAMES_HPP
 
-#define INGEN_PATCH_FILE_EXT ".ing.ttl"
-#define INGEN_BUNDLE_EXT     ".ing.lv2"
+#define INGEN_PATCH_FILE_EXT ".ttl"
+#define INGEN_BUNDLE_EXT     ".ingen"
 
 #endif // INGEN_SERIALISATION_NAMES_HPP
