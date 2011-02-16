@@ -105,8 +105,7 @@ private:
 	                          const Shared::Resource* meta,
 	                          const Properties&       properties);
 
-	Sord::Node instance_rdf_node(const Raul::Path& path);
-	Sord::Node class_rdf_node(const Raul::Path& path);
+	Sord::Node path_rdf_node(const Raul::Path& path);
 
 	Raul::Path               _root_path;
 	SharedPtr<Shared::Store> _store;

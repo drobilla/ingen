@@ -99,9 +99,9 @@ Parser::find_patches(Ingen::Shared::World* world,
 	Sord::Model model(*world->rdf_world(), manifest_uri);
 	model.load_file(manifest_uri);
 
-	Sord::Resource rdf_type(*world->rdf_world(),     NS_RDF   "type");
-	Sord::Resource rdfs_seeAlso(*world->rdf_world(), NS_RDFS  "seeAlso");
-	Sord::Resource ingen_Patch(*world->rdf_world(),  NS_INGEN "Patch");
+	Sord::URI rdf_type(*world->rdf_world(),     NS_RDF   "type");
+	Sord::URI rdfs_seeAlso(*world->rdf_world(), NS_RDFS  "seeAlso");
+	Sord::URI ingen_Patch(*world->rdf_world(),  NS_INGEN "Patch");
 
 	RDFNodes patches;
 	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
@@ -196,7 +196,7 @@ Parser::parse_string(Ingen::Shared::World*                    world,
 	info << endl;
 
 	bool ret = parse(world, target, model, base_uri, data_path, parent, symbol, data);
-	Sord::Resource subject(*world->rdf_world(), base_uri);
+	Sord::URI subject(*world->rdf_world(), base_uri);
 	parse_connections(world, target, model, subject, parent ? *parent : "/");
 
 	return ret;
@@ -246,7 +246,7 @@ Parser::parse_update(Ingen::Shared::World*                    world,
 	}
 
 	// Connections
-	Sord::Resource subject(*world->rdf_world(), base_uri);
+	Sord::URI subject(*world->rdf_world(), base_uri);
 	parse_connections(world, target, model, subject, "/");
 
 	// Port values
@@ -279,9 +279,9 @@ Parser::parse(Ingen::Shared::World*                    world,
               boost::optional<Raul::Symbol>            symbol,
               boost::optional<GraphObject::Properties> data)
 {
-	const Sord::Node::Type res = Sord::Node::RESOURCE;
+	const Sord::Node::Type res = Sord::Node::URI;
 
-	const Sord::Resource rdf_type(*world->rdf_world(), NS_RDF "type");
+	const Sord::URI rdf_type(*world->rdf_world(), NS_RDF "type");
 
 	const Sord::Node patch_class    (*world->rdf_world(), res, NS_INGEN "Patch");
 	const Sord::Node node_class     (*world->rdf_world(), res, NS_INGEN "Node");
@@ -380,9 +380,9 @@ Parser::parse_patch(Ingen::Shared::World*                    world,
 {
 	const LV2URIMap& uris = *world->uris().get();
 
-	Sord::Resource ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
-	Sord::Resource lv2_port(*world->rdf_world(),        NS_LV2   "port");
-	Sord::Resource lv2_symbol(*world->rdf_world(),      NS_LV2   "symbol");
+	Sord::URI ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
+	Sord::URI lv2_port(*world->rdf_world(),        NS_LV2   "port");
+	Sord::URI lv2_symbol(*world->rdf_world(),      NS_LV2   "symbol");
 
 	const Sord::Node& patch = subject_node;
 
@@ -437,9 +437,9 @@ Parser::parse_patch(Ingen::Shared::World*                    world,
 	props.insert(make_pair(uris.ingen_polyphony, Raul::Atom(int32_t(patch_poly))));
 	target->put(patch_path, props);
 
-	Sord::Resource rdf_type(*world->rdf_world(),    NS_RDF   "type");
-	Sord::Resource ingen_Patch(*world->rdf_world(), NS_INGEN "Patch");
-	Sord::Resource ingen_node(*world->rdf_world(),  NS_INGEN "node");
+	Sord::URI rdf_type(*world->rdf_world(),    NS_RDF   "type");
+	Sord::URI ingen_Patch(*world->rdf_world(), NS_INGEN "Patch");
+	Sord::URI ingen_node(*world->rdf_world(),  NS_INGEN "node");
 
 	typedef multimap<Raul::URI, Raul::Atom> Properties;
 	typedef map<string, Sord::Node>         Resources;
@@ -569,7 +569,7 @@ Parser::parse_node(Ingen::Shared::World*                    world,
 {
 	const LV2URIMap& uris = *world->uris().get();
 
-	Sord::Resource rdf_instanceOf(*world->rdf_world(), NS_RDF "instanceOf");
+	Sord::URI rdf_instanceOf(*world->rdf_world(), NS_RDF "instanceOf");
 
 	/* Get plugin */
 	Sord::Iter i = model.find(subject, rdf_instanceOf, nil);
@@ -579,7 +579,7 @@ Parser::parse_node(Ingen::Shared::World*                    world,
 	}
 
 	const Sord::Node& plugin_node = i.get_object();
-	if (plugin_node.type() != Sord::Node::RESOURCE) {
+	if (plugin_node.type() != Sord::Node::URI) {
 		LOG(error) << "Node's rdf:instanceOf property is not a resource" << endl;
 		return boost::optional<Path>();
 	}
@@ -602,9 +602,9 @@ Parser::parse_connections(Ingen::Shared::World*           world,
                           const Sord::Node&               subject,
                           const Raul::Path&               parent)
 {
-	Sord::Resource ingen_connection(*world->rdf_world(),  NS_INGEN "connection");
-	Sord::Resource ingen_source(*world->rdf_world(),      NS_INGEN "source");
-	Sord::Resource ingen_destination(*world->rdf_world(), NS_INGEN "destination");
+	Sord::URI ingen_connection(*world->rdf_world(),  NS_INGEN "connection");
+	Sord::URI ingen_source(*world->rdf_world(),      NS_INGEN "source");
+	Sord::URI ingen_destination(*world->rdf_world(), NS_INGEN "destination");
 
 	const Glib::ustring& base_uri = model.base_uri().to_string();
 

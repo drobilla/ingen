@@ -123,10 +123,9 @@ HTTPEngineSender::put(const URI&                  uri,
 
 	Sord::Model model(_world);
 	for (Resource::Properties::const_iterator i = properties.begin(); i != properties.end(); ++i)
-		model.add_statement(
-				Sord::Resource(_world, path),
-				AtomRDF::atom_to_node(model, i->first),
-				AtomRDF::atom_to_node(model, i->second));
+		model.add_statement(Sord::URI(_world, path),
+		                    AtomRDF::atom_to_node(model, i->first),
+		                    AtomRDF::atom_to_node(model, i->second));
 
 	const string str = model.write_to_string("turtle");
 	SoupMessage* msg = soup_message_new(SOUP_METHOD_PUT, full_uri.c_str());

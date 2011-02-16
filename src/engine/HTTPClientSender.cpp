@@ -62,7 +62,7 @@ HTTPClientSender::put(const URI&                  uri,
 	Sord::Model model(*_engine.world()->rdf_world());
 	for (Resource::Properties::const_iterator i = properties.begin(); i != properties.end(); ++i)
 		model.add_statement(
-				Sord::Resource(*_engine.world()->rdf_world(), path),
+				Sord::URI(*_engine.world()->rdf_world(), path),
 				AtomRDF::atom_to_node(model, i->first.str()),
 				AtomRDF::atom_to_node(model, i->second));
 
