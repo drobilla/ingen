@@ -37,15 +37,14 @@ using namespace Ingen::Client;
 
 namespace GUI {
 
-class LoadPluginWindow;
+class BreadCrumbs;
 class LoadPatchWindow;
-class NewSubpatchWindow;
+class LoadPluginWindow;
 class NewSubpatchWindow;
 class NodeControlWindow;
 class PatchDescriptionWindow;
-class SubpatchModule;
-class BreadCrumbs;
 class PatchView;
+class SubpatchModule;
 
 
 /** A window for a patch.

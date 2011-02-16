@@ -40,11 +40,10 @@ using namespace Ingen::Client;
 
 namespace GUI {
 
-class PatchCanvas;
 class LoadPluginWindow;
 class NewSubpatchWindow;
-class NewSubpatchWindow;
 class NodeControlWindow;
+class PatchCanvas;
 class PatchDescriptionWindow;
 class SubpatchModule;
 
