@@ -57,23 +57,11 @@ public:
 
 	typedef Shared::GraphObject::Properties Properties;
 
-	struct Record {
-		Record(SharedPtr<Shared::GraphObject> o, const std::string& u)
-			: object(o), uri(u)
-			{}
+	void to_file(SharedPtr<Shared::GraphObject> object,
+	             const std::string&             filename);
 
-		const SharedPtr<Shared::GraphObject> object;
-		const std::string                    uri;
-	};
-
-	typedef std::list<Record> Records;
-
-	void to_file(const Record& record);
-
-	void write_bundle(const Record& record);
-
-	void write_manifest(const std::string& bundle_uri,
-	                    const Records&     records);
+	void write_bundle(SharedPtr<Shared::GraphObject> object,
+	                  const std::string&             filename);
 
 	std::string to_string(SharedPtr<Shared::GraphObject> object,
 	                      const std::string&             base_uri,
@@ -81,7 +69,6 @@ public:
 
 	void start_to_string(const Raul::Path& root, const std::string& base_uri);
 	void serialise(SharedPtr<Shared::GraphObject> object) throw (std::logic_error);
-	void serialise_plugin(const Shared::Plugin& p);
 	void serialise_connection(SharedPtr<Shared::GraphObject> parent,
 	                          SharedPtr<Shared::Connection>  c) throw (std::logic_error);
 
@@ -106,6 +93,10 @@ private:
 	                          const Properties&       properties);
 
 	Sord::Node path_rdf_node(const Raul::Path& path);
+
+	void write_manifest(const std::string&       bundle_uri,
+	                    SharedPtr<Shared::Patch> patch,
+	                    const std::string&       patch_symbol);
 
 	Raul::Path               _root_path;
 	SharedPtr<Shared::Store> _store;

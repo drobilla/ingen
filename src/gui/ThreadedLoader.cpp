@@ -137,11 +137,10 @@ void
 ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& filename)
 {
 	if (App::instance().serialiser()) {
-		Serialiser::Record r(model, filename);
 		if (filename.find(INGEN_BUNDLE_EXT) != string::npos)
-			App::instance().serialiser()->write_bundle(r);
+			App::instance().serialiser()->write_bundle(model, filename);
 		else
-			App::instance().serialiser()->to_file(r);
+			App::instance().serialiser()->to_file(model, filename);
 	}
 }
 

@@ -99,9 +99,14 @@ HTTPEngineReceiver::deactivate_source()
 
 
 void
-HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const char* path_str,
-			GHashTable *query, SoupClientContext* client, void* data)
+HTTPEngineReceiver::message_callback(SoupServer*        server,
+                                     SoupMessage*       msg,
+                                     const char*        path_str,
+                                     GHashTable*        query,
+                                     SoupClientContext* client,
+                                     void*              data)
 {
+	#if 0
 	HTTPEngineReceiver* me = (HTTPEngineReceiver*)data;
 
 	SharedPtr<Store> store = me->_engine.world()->store();
@@ -221,6 +226,7 @@ HTTPEngineReceiver::message_callback(SoupServer* server, SoupMessage* msg, const
 	} else {
 		soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
 	}
+	#endif
 }
 
 

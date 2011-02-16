@@ -78,11 +78,9 @@ Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
 }
 
 void
-Serialiser::to_file(const Record& record)
+Serialiser::to_file(SharedPtr<Shared::GraphObject> object,
+                    const std::string&             filename)
 {
-	SharedPtr<GraphObject> object = record.object;
-	const string& filename = record.uri;
-
 	_root_path = object->path();
 	start_to_filename(filename);
 	serialise(object);
@@ -93,61 +91,64 @@ static
 std::string
 uri_to_symbol(const std::string& uri)
 {
-	return Path::nameify(Glib::path_get_basename(Glib::filename_from_uri(uri)));
+	const std::string filename = Glib::filename_from_uri(uri);
+	return Path::nameify(Glib::path_get_basename(
+		                     filename.substr(0, filename.find_last_of('.'))));
 }
 
 void
-Serialiser::write_manifest(const std::string& bundle_uri,
-                           const Records&     records)
+Serialiser::write_manifest(const std::string&       bundle_uri,
+                           SharedPtr<Shared::Patch> patch,
+                           const std::string&       patch_symbol)
 {
-	const string bundle_path(Glib::filename_from_uri(bundle_uri));
-	const string filename(Glib::build_filename(bundle_path, "manifest.ttl"));
-	start_to_filename(filename);
 	Sord::World& world = _model->world();
-	for (Records::const_iterator i = records.begin(); i != records.end(); ++i) {
-		SharedPtr<Patch> patch = PtrCast<Patch>(i->object);
-		if (patch) {
-			const std::string filename = uri_to_symbol(i->uri) + INGEN_PATCH_FILE_EXT;
-			const Sord::URI   subject(world, filename);
-			_model->add_statement(subject,
-			                      Sord::Curie(world, "rdf:type"),
-			                      Sord::Curie(world, "ingen:Patch"));
-			_model->add_statement(subject,
-			                      Sord::Curie(world, "rdf:type"),
-			                      Sord::Curie(world, "lv2:Plugin"));
-			_model->add_statement(subject,
-			                      Sord::Curie(world, "rdfs:seeAlso"),
-			                      Sord::URI(world, filename));
-			_model->add_statement(
-				subject,
-				Sord::Curie(world, "lv2:binary"),
-				Sord::URI(world, Glib::Module::build_path("", "ingen_lv2")));
-			symlink(Glib::Module::build_path(INGEN_MODULE_DIR, "ingen_lv2").c_str(),
-			        Glib::Module::build_path(bundle_path, "ingen_lv2").c_str());
-		}
-	}
+
+	const string bundle_path(Glib::filename_from_uri(bundle_uri));
+	const string manifest_path(Glib::build_filename(bundle_path, "manifest.ttl"));
+	const string binary_path(Glib::Module::build_path("", "ingen_lv2"));
+
+	start_to_filename(manifest_path);
+
+	const string    filename(patch_symbol + INGEN_PATCH_FILE_EXT);
+	const Sord::URI subject(world, filename);
+
+	_model->add_statement(subject,
+	                      Sord::Curie(world, "rdf:type"),
+	                      Sord::Curie(world, "ingen:Patch"));
+	_model->add_statement(subject,
+	                      Sord::Curie(world, "rdf:type"),
+	                      Sord::Curie(world, "lv2:Plugin"));
+	_model->add_statement(subject,
+	                      Sord::Curie(world, "rdfs:seeAlso"),
+	                      Sord::URI(world, filename));
+	_model->add_statement(subject,
+	                      Sord::Curie(world, "lv2:binary"),
+	                      Sord::URI(world, binary_path));
+
+	symlink(Glib::Module::build_path(INGEN_MODULE_DIR, "ingen_lv2").c_str(),
+	        Glib::Module::build_path(bundle_path, "ingen_lv2").c_str());
+
 	finish();
 }
 
 void
-Serialiser::write_bundle(const Record& record)
+Serialiser::write_bundle(SharedPtr<GraphObject> object,
+                         const std::string&     uri)
 {
-	SharedPtr<GraphObject> object = record.object;
-	string bundle_uri = record.uri;
+	string bundle_uri = uri;
 	if (bundle_uri[bundle_uri.length()-1] != '/')
 		bundle_uri.append("/");
 
 	g_mkdir_with_parents(Glib::filename_from_uri(bundle_uri).c_str(), 0744);
-	Records records;
 
-	string symbol = uri_to_symbol(record.uri);
-
+	const string symbol    = uri_to_symbol(uri);
 	const string root_file = bundle_uri + symbol + INGEN_PATCH_FILE_EXT;
+
 	start_to_filename(root_file);
 	serialise(object);
 	finish();
-	records.push_back(Record(object, bundle_uri + symbol + INGEN_PATCH_FILE_EXT));
-	write_manifest(bundle_uri, records);
+
+	write_manifest(bundle_uri, PtrCast<Shared::Patch>(object), symbol);
 }
 
 string
@@ -329,7 +330,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 			continue;
 
 		SharedPtr<Shared::Patch> subpatch = PtrCast<Shared::Patch>(n->second);
-		SharedPtr<Shared::Node>  node  = PtrCast<Shared::Node>(n->second);
+		SharedPtr<Shared::Node>  node     = PtrCast<Shared::Node>(n->second);
 		if (subpatch) {
 			const Sord::URI class_id(world,
 			                         string(META_PREFIX) + subpatch->path().chop_start("/"));
@@ -371,18 +372,6 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 	     c != patch->connections().end(); ++c) {
 		serialise_connection(patch, c->second);
 	}
-}
-
-void
-Serialiser::serialise_plugin(const Shared::Plugin& plugin)
-{
-	assert(_model);
-
-	const Sord::Node plugin_id = Sord::URI(_model->world(), plugin.uri().str());
-
-	_model->add_statement(plugin_id,
-	                      Sord::Curie(_model->world(), "rdf:type"),
-	                      Sord::URI(_model->world(), plugin.type_uri().str()));
 }
 
 void
