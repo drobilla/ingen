@@ -15,25 +15,29 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <set>
 #include <locale.h>
-#include <glibmm/ustring.h>
-#include <glibmm/miscutils.h>
-#include <glibmm/fileutils.h>
+
+#include <set>
+
 #include <glibmm/convert.h>
-#include "raul/log.hpp"
-#include "sord/sordmm.hpp"
-#include "raul/TableImpl.hpp"
+#include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/ustring.h>
+
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
-#include "interface/EngineInterface.hpp"
-#include "module/World.hpp"
-#include "shared/LV2URIMap.hpp"
-#include "Parser.hpp"
-#include "names.hpp"
+#include "raul/TableImpl.hpp"
+#include "raul/log.hpp"
 
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
+
+#include "interface/EngineInterface.hpp"
+#include "module/World.hpp"
+#include "shared/LV2URIMap.hpp"
+
+#include "Parser.hpp"
+#include "names.hpp"
 
 #define LOG(s) s << "[Parser] "
 
@@ -52,7 +56,6 @@ typedef set<Sord::Node> RDFNodes;
 
 namespace Ingen {
 namespace Serialisation {
-
 
 static Glib::ustring
 relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
@@ -81,7 +84,6 @@ relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 	return ret;
 }
 
-
 static void
 normalise_uri(Glib::ustring& uri)
 {
@@ -90,11 +92,9 @@ normalise_uri(Glib::ustring& uri)
 		uri = uri.substr(0, dotslash) + uri.substr(dotslash + 2);
 }
 
-
 Parser::PatchRecords
-Parser::find_patches(
-	Ingen::Shared::World* world,
-	const Glib::ustring&  manifest_uri)
+Parser::find_patches(Ingen::Shared::World* world,
+                     const Glib::ustring&  manifest_uri)
 {
 	Sord::Model model(*world->rdf_world(), manifest_uri);
 	model.load_file(manifest_uri);
@@ -122,19 +122,17 @@ Parser::find_patches(
 	return records;
 }
 
-
 /** Parse a patch from RDF into a CommonInterface (engine or client).
  * @return whether or not load was successful.
  */
 bool
-Parser::parse_document(
-		Ingen::Shared::World*                    world,
-		Ingen::Shared::CommonInterface*          target,
-		Glib::ustring                            document_uri,
-		boost::optional<Raul::Path>              data_path,
-		boost::optional<Raul::Path>              parent,
-		boost::optional<Raul::Symbol>            symbol,
-		boost::optional<GraphObject::Properties> data)
+Parser::parse_document(Ingen::Shared::World*                    world,
+                       Ingen::Shared::CommonInterface*          target,
+                       Glib::ustring                            document_uri,
+                       boost::optional<Raul::Path>              data_path,
+                       boost::optional<Raul::Path>              parent,
+                       boost::optional<Raul::Symbol>            symbol,
+                       boost::optional<GraphObject::Properties> data)
 {
 	normalise_uri(document_uri);
 
@@ -148,7 +146,8 @@ Parser::parse_document(
 	const size_t      ext = filename.find(INGEN_BUNDLE_EXT);
 	const size_t      ext_len = strlen(INGEN_BUNDLE_EXT);
 	if (ext == filename.length() - ext_len
-			|| (ext == filename.length() - ext_len - 1 && filename[filename.length() - 1] == '/')) {
+	    || ((ext == filename.length() - ext_len - 1)
+	        && filename[filename.length() - 1] == '/')) {
 		std::string basename(Glib::path_get_basename(filename));
 		basename = basename.substr(0, basename.find('.'));
 		document_uri += basename + INGEN_PATCH_FILE_EXT;
@@ -170,7 +169,7 @@ Parser::parse_document(
 
 	if (parsed_path) {
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
-				Atom(Atom::URI, document_uri.c_str()));
+		                     Atom(Atom::URI, document_uri.c_str()));
 	} else {
 		LOG(warn) << "Document URI lost" << endl;
 	}
@@ -178,17 +177,15 @@ Parser::parse_document(
 	return parsed_path;
 }
 
-
 bool
-Parser::parse_string(
-		Ingen::Shared::World*                    world,
-		Ingen::Shared::CommonInterface*          target,
-		const Glib::ustring&                     str,
-		const Glib::ustring&                     base_uri,
-		boost::optional<Raul::Path>              data_path,
-		boost::optional<Raul::Path>              parent,
-		boost::optional<Raul::Symbol>            symbol,
-		boost::optional<GraphObject::Properties> data)
+Parser::parse_string(Ingen::Shared::World*                    world,
+                     Ingen::Shared::CommonInterface*          target,
+                     const Glib::ustring&                     str,
+                     const Glib::ustring&                     base_uri,
+                     boost::optional<Raul::Path>              data_path,
+                     boost::optional<Raul::Path>              parent,
+                     boost::optional<Raul::Symbol>            symbol,
+                     boost::optional<GraphObject::Properties> data)
 {
 	Sord::Model model(*world->rdf_world(), base_uri);
 	model.load_string(str.c_str(), str.length(), base_uri);
@@ -205,19 +202,17 @@ Parser::parse_string(
 	return ret;
 }
 
-
 bool
-Parser::parse_update(
-		Ingen::Shared::World*                    world,
-		Shared::CommonInterface*                 target,
-		const Glib::ustring&                     str,
-		const Glib::ustring&                     base_uri,
-		boost::optional<Raul::Path>              data_path,
-		boost::optional<Raul::Path>              parent,
-		boost::optional<Raul::Symbol>            symbol,
-		boost::optional<GraphObject::Properties> data)
+Parser::parse_update(Ingen::Shared::World*                    world,
+                     Shared::CommonInterface*                 target,
+                     const Glib::ustring&                     str,
+                     const Glib::ustring&                     base_uri,
+                     boost::optional<Raul::Path>              data_path,
+                     boost::optional<Raul::Path>              parent,
+                     boost::optional<Raul::Symbol>            symbol,
+                     boost::optional<GraphObject::Properties> data)
 {
-	#if 0
+#if 0
 	Sord::Model model(*world->rdf_world(), str.c_str(), str.length(), base_uri);
 
 	// Delete anything explicitly declared to not exist
@@ -232,9 +227,9 @@ Parser::parse_update(
 
 	// Properties
 	query = Sord::Query(*world->rdf_world(),
-		"SELECT DISTINCT ?s ?p ?o WHERE {\n"
-		"?s ?p ?o .\n"
-		"}");
+	                    "SELECT DISTINCT ?s ?p ?o WHERE {\n"
+	                    "?s ?p ?o .\n"
+	                    "}");
 
 	results = query.run(*world->rdf_world(), model, base_uri);
 	for (; !results->finished(); results->next()) {
@@ -250,16 +245,15 @@ Parser::parse_update(
 			target->set_property(string("path:") + obj_uri, key, a);
 	}
 
-
 	// Connections
 	Sord::Resource subject(*world->rdf_world(), base_uri);
 	parse_connections(world, target, model, subject, "/");
 
 	// Port values
 	query = Sord::Query(*world->rdf_world(),
-		"SELECT DISTINCT ?path ?value WHERE {\n"
-		"?path ingen:value ?value .\n"
-		"}");
+	                    "SELECT DISTINCT ?path ?value WHERE {\n"
+	                    "?path ingen:value ?value .\n"
+	                    "}");
 
 	results = query.run(*world->rdf_world(), model, base_uri);
 	for (; !results->finished(); results->next()) {
@@ -271,21 +265,19 @@ Parser::parse_update(
 	}
 
 	return parse(world, target, model, base_uri, data_path, parent, symbol, data);
-	#endif
+#endif
 	return false;
 }
 
-
 boost::optional<Path>
-Parser::parse(
-		Ingen::Shared::World*                    world,
-		Ingen::Shared::CommonInterface*          target,
-		Sord::Model&                             model,
-		Glib::ustring                            document_uri,
-		boost::optional<Raul::Path>              data_path,
-		boost::optional<Raul::Path>              parent,
-		boost::optional<Raul::Symbol>            symbol,
-		boost::optional<GraphObject::Properties> data)
+Parser::parse(Ingen::Shared::World*                    world,
+              Ingen::Shared::CommonInterface*          target,
+              Sord::Model&                             model,
+              Glib::ustring                            document_uri,
+              boost::optional<Raul::Path>              data_path,
+              boost::optional<Raul::Path>              parent,
+              boost::optional<Raul::Symbol>            symbol,
+              boost::optional<GraphObject::Properties> data)
 {
 	const Sord::Node::Type res = Sord::Node::RESOURCE;
 
@@ -320,13 +312,13 @@ Parser::parse(
 			path_str = relative_uri(document_uri, subject.to_c_string(), true);
 
 		const bool is_plugin =    (rdf_class == ladspa_class)
-		                       || (rdf_class == lv2_class)
-		                       || (rdf_class == internal_class);
+			|| (rdf_class == lv2_class)
+			|| (rdf_class == internal_class);
 
 		const bool is_object =    (rdf_class == patch_class)
-		                       || (rdf_class == node_class)
-		                       || (rdf_class == in_port_class)
-		                       || (rdf_class == out_port_class);
+			|| (rdf_class == node_class)
+			|| (rdf_class == in_port_class)
+			|| (rdf_class == out_port_class);
 
 		if (is_object) {
 			if (path_str.empty() || path_str[0] != '/')
@@ -377,16 +369,14 @@ Parser::parse(
 	return root_path;
 }
 
-
 boost::optional<Path>
-Parser::parse_patch(
-		Ingen::Shared::World*                    world,
-		Ingen::Shared::CommonInterface*          target,
-		Sord::Model&                             model,
-		const Sord::Node&                        subject_node,
-		boost::optional<Raul::Path>              parent,
-		boost::optional<Raul::Symbol>            a_symbol,
-		boost::optional<GraphObject::Properties> data)
+Parser::parse_patch(Ingen::Shared::World*                    world,
+                    Ingen::Shared::CommonInterface*          target,
+                    Sord::Model&                             model,
+                    const Sord::Node&                        subject_node,
+                    boost::optional<Raul::Path>              parent,
+                    boost::optional<Raul::Symbol>            a_symbol,
+                    boost::optional<GraphObject::Properties> data)
 {
 	const LV2URIMap& uris = *world->uris().get();
 
@@ -549,9 +539,9 @@ Parser::parse_patch(
 #if 0
 	/* Enable */
 	query = Sord::Query(*world->rdf_world(), Glib::ustring(
-		"SELECT DISTINCT ?enabled WHERE {\n")
-			+ subject + " ingen:enabled ?enabled .\n"
-		"}");
+		                    "SELECT DISTINCT ?enabled WHERE {\n")
+	                    + subject + " ingen:enabled ?enabled .\n"
+	                    "}");
 
 	results = query.run(*world->rdf_world(), model, base_uri);
 	for (; !results->finished(); results->next()) {
@@ -569,15 +559,13 @@ Parser::parse_patch(
 	return patch_path;
 }
 
-
 boost::optional<Path>
-Parser::parse_node(
-		Ingen::Shared::World*                    world,
-		Ingen::Shared::CommonInterface*          target,
-		Sord::Model&                             model,
-		const Sord::Node&                        subject,
-		const Raul::Path&                        path,
-		boost::optional<GraphObject::Properties> data)
+Parser::parse_node(Ingen::Shared::World*                    world,
+                   Ingen::Shared::CommonInterface*          target,
+                   Sord::Model&                             model,
+                   const Sord::Node&                        subject,
+                   const Raul::Path&                        path,
+                   boost::optional<GraphObject::Properties> data)
 {
 	const LV2URIMap& uris = *world->uris().get();
 
@@ -607,14 +595,12 @@ Parser::parse_node(
 	return path;
 }
 
-
 bool
-Parser::parse_connections(
-		Ingen::Shared::World*           world,
-		Ingen::Shared::CommonInterface* target,
-		Sord::Model&                    model,
-		const Sord::Node&               subject,
-		const Raul::Path&               parent)
+Parser::parse_connections(Ingen::Shared::World*           world,
+                          Ingen::Shared::CommonInterface* target,
+                          Sord::Model&                    model,
+                          const Sord::Node&               subject,
+                          const Raul::Path&               parent)
 {
 	Sord::Resource ingen_connection(*world->rdf_world(),  NS_INGEN "connection");
 	Sord::Resource ingen_source(*world->rdf_world(),      NS_INGEN "source");
@@ -658,15 +644,13 @@ Parser::parse_connections(
 	return true;
 }
 
-
 bool
-Parser::parse_properties(
-		Ingen::Shared::World*                    world,
-		Ingen::Shared::CommonInterface*          target,
-		Sord::Model&                             model,
-		const Sord::Node&                        subject,
-		const Raul::URI&                         uri,
-		boost::optional<GraphObject::Properties> data)
+Parser::parse_properties(Ingen::Shared::World*                    world,
+                         Ingen::Shared::CommonInterface*          target,
+                         Sord::Model&                             model,
+                         const Sord::Node&                        subject,
+                         const Raul::URI&                         uri,
+                         boost::optional<GraphObject::Properties> data)
 {
 	Resource::Properties properties;
 	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
@@ -687,14 +671,12 @@ Parser::parse_properties(
 	return true;
 }
 
-
 bool
 Parser::skip_property(const Sord::Node& predicate)
 {
 	return (predicate.to_string() == "http://drobilla.net/ns/ingen#node"
-			|| predicate.to_string() == "http://lv2plug.in/ns/lv2core#port");
+	        || predicate.to_string() == "http://lv2plug.in/ns/lv2core#port");
 }
-
 
 } // namespace Serialisation
 } // namespace Ingen

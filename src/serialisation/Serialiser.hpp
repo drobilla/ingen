@@ -18,31 +18,33 @@
 #ifndef INGEN_SERIALISATION_SERIALISER_HPP
 #define INGEN_SERIALISATION_SERIALISER_HPP
 
-#include <map>
-#include <utility>
-#include <string>
-#include <stdexcept>
 #include <cassert>
-#include "raul/SharedPtr.hpp"
+#include <map>
+#include <stdexcept>
+#include <string>
+#include <utility>
+
 #include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
+
 #include "sord/sordmm.hpp"
+
 #include "interface/GraphObject.hpp"
 #include "shared/Store.hpp"
 
 namespace Ingen {
 
 namespace Shared {
-	class Plugin;
-	class GraphObject;
-	class Patch;
-	class Node;
-	class Port;
-	class Connection;
-	class World;
+class Plugin;
+class GraphObject;
+class Patch;
+class Node;
+class Port;
+class Connection;
+class World;
 }
 
 namespace Serialisation {
-
 
 /** Serialises Ingen objects (patches, nodes, etc) to RDF.
  *
@@ -58,7 +60,7 @@ public:
 	struct Record {
 		Record(SharedPtr<Shared::GraphObject> o, const std::string& u)
 			: object(o), uri(u)
-		{}
+			{}
 
 		const SharedPtr<Shared::GraphObject> object;
 		const std::string                    uri;
@@ -90,19 +92,18 @@ private:
 
 	void start_to_filename(const std::string& filename);
 
-	void setup_prefixes();
-
 	void serialise_patch(SharedPtr<Shared::Patch> p, const Sord::Node& id);
 	void serialise_node(SharedPtr<Shared::Node> n,
-			const Sord::Node& class_id, const Sord::Node& id);
+	                    const Sord::Node& class_id, const Sord::Node& id);
 	void serialise_port(const Shared::Port* p, const Sord::Node& id);
 	void serialise_port_meta(const Shared::Port* p, const Sord::Node& id);
 
-	void serialise_meta_properties(Sord::Node subject, const Properties& properties);
-	void serialise_properties(
-			Sord::Node           subject,
-			const Shared::Resource* meta,
-			const Properties&       properties);
+	void serialise_meta_properties(Sord::Node        subject,
+	                               const Properties& properties);
+
+	void serialise_properties(Sord::Node              subject,
+	                          const Shared::Resource* meta,
+	                          const Properties&       properties);
 
 	Sord::Node instance_rdf_node(const Raul::Path& path);
 	Sord::Node class_rdf_node(const Raul::Path& path);
@@ -114,7 +115,6 @@ private:
 	Shared::World&           _world;
 	Sord::Model*             _model;
 };
-
 
 } // namespace Serialisation
 } // namespace Ingen

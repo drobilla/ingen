@@ -15,37 +15,43 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <locale.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cmath>
-#include <cstdlib> // atof
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include <locale.h>
 #include <stdexcept>
 #include <string>
-#include <utility> // pair, make_pair
+#include <utility>
 #include <vector>
+
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <glibmm/convert.h>
-#include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
-#include "raul/log.hpp"
+#include <glibmm/miscutils.h>
+
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
 #include "raul/Path.hpp"
 #include "raul/TableImpl.hpp"
+#include "raul/log.hpp"
+
 #include "sord/sordmm.hpp"
-#include "module/World.hpp"
-#include "interface/EngineInterface.hpp"
-#include "interface/Plugin.hpp"
-#include "interface/Patch.hpp"
-#include "interface/Node.hpp"
-#include "interface/Port.hpp"
+
 #include "interface/Connection.hpp"
-#include "shared/ResourceImpl.hpp"
+#include "interface/EngineInterface.hpp"
+#include "interface/Node.hpp"
+#include "interface/Patch.hpp"
+#include "interface/Plugin.hpp"
+#include "interface/Port.hpp"
+#include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
+#include "shared/ResourceImpl.hpp"
+
 #include "Serialiser.hpp"
 #include "names.hpp"
 
@@ -60,9 +66,7 @@ using namespace Ingen::Shared;
 namespace Ingen {
 namespace Serialisation {
 
-
 #define META_PREFIX "#"
-
 
 Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
 	: _root_path("/")
@@ -70,7 +74,6 @@ Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
 	, _world(world)
 {
 }
-
 
 void
 Serialiser::to_file(const Record& record)
@@ -84,7 +87,6 @@ Serialiser::to_file(const Record& record)
 	finish();
 }
 
-
 static
 std::string
 uri_to_symbol(const std::string& uri)
@@ -95,7 +97,6 @@ uri_to_symbol(const std::string& uri)
 	symbol = Path::nameify(symbol);
 	return symbol;
 }
-
 
 void
 Serialiser::write_manifest(const std::string& bundle_uri,
@@ -125,14 +126,13 @@ Serialiser::write_manifest(const std::string& bundle_uri,
 				subject,
 				Sord::Curie(_model->world(), "lv2:binary"),
 				Sord::Resource(_model->world(),
-					Glib::Module::build_path("", "ingen_lv2")));
+				               Glib::Module::build_path("", "ingen_lv2")));
 			symlink(Glib::Module::build_path(INGEN_MODULE_DIR, "ingen_lv2").c_str(),
-					Glib::Module::build_path(bundle_path, "ingen_lv2").c_str());
+			        Glib::Module::build_path(bundle_path, "ingen_lv2").c_str());
 		}
 	}
 	finish();
 }
-
 
 void
 Serialiser::write_bundle(const Record& record)
@@ -155,11 +155,10 @@ Serialiser::write_bundle(const Record& record)
 	write_manifest(bundle_uri, records);
 }
 
-
 string
 Serialiser::to_string(SharedPtr<GraphObject>         object,
-	                  const string&                  base_uri,
-	                  const GraphObject::Properties& extra_rdf)
+                      const string&                  base_uri,
+                      const GraphObject::Properties& extra_rdf)
 {
 	start_to_string(object->path(), base_uri);
 	serialise(object);
@@ -179,7 +178,6 @@ Serialiser::to_string(SharedPtr<GraphObject>         object,
 	return finish();
 }
 
-
 /** Begin a serialization to a file.
  *
  * This must be called before any serializing methods.
@@ -197,7 +195,6 @@ Serialiser::start_to_filename(const string& filename)
 	_model = new Sord::Model(*_world.rdf_world(), _base_uri);
 	_mode = TO_FILE;
 }
-
 
 /** Begin a serialization to a string.
  *
@@ -219,7 +216,6 @@ Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 	_model = new Sord::Model(*_world.rdf_world(), base_uri);
 	_mode = TO_STRING;
 }
-
 
 /** Finish a serialization.
  *
@@ -246,7 +242,6 @@ Serialiser::finish()
 	return ret;
 }
 
-
 Sord::Node
 Serialiser::instance_rdf_node(const Path& path)
 {
@@ -255,7 +250,6 @@ Serialiser::instance_rdf_node(const Path& path)
 	return Sord::Resource(_model->world(), path.chop_scheme().substr(1));
 }
 
-
 Sord::Node
 Serialiser::class_rdf_node(const Path& path)
 {
@@ -263,7 +257,6 @@ Serialiser::class_rdf_node(const Path& path)
 	assert(path.is_child_of(_root_path));
 	return Sord::Resource(_model->world(), path.chop_scheme().substr(1));
 }
-
 
 void
 Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
@@ -278,7 +271,7 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 			serialise_patch(patch, patch_id);
 		} else {
 			const Sord::Resource patch_id(_model->world(),
-					string(META_PREFIX) + patch->path().chop_start("/"));
+			                              string(META_PREFIX) + patch->path().chop_start("/"));
 			serialise_patch(patch, patch_id);
 			serialise_node(patch, patch_id, instance_rdf_node(patch->path()));
 		}
@@ -299,9 +292,8 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 	}
 
 	LOG(warn) << "Unsupported object type, "
-		<< object->path() << " not serialised." << endl;
+	          << object->path() << " not serialised." << endl;
 }
-
 
 void
 Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& patch_id)
@@ -324,8 +316,8 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 	string symbol;
 	GraphObject::Properties::const_iterator s = patch->properties().find(uris.lv2_symbol);
 	if (s == patch->properties().end()
-			|| !s->second.type() == Atom::STRING
-			|| !Symbol::is_valid(s->second.get_string())) {
+	    || !s->second.type() == Atom::STRING
+	    || !Symbol::is_valid(s->second.get_string())) {
 		symbol = Glib::path_get_basename(Glib::filename_from_uri(_model->base_uri().to_c_string()));
 		symbol = Symbol::symbolify(symbol.substr(0, symbol.find('.')));
 		_model->add_statement(
@@ -346,7 +338,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 	serialise_properties(patch_id, NULL, patch->meta().properties());
 
 	for (Store::const_iterator n = _store->children_begin(patch);
-			n != _store->children_end(patch); ++n) {
+	     n != _store->children_end(patch); ++n) {
 
 		if (n->first.parent() != patch->path())
 			continue;
@@ -355,7 +347,7 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 		SharedPtr<Shared::Node>  node  = PtrCast<Shared::Node>(n->second);
 		if (subpatch) {
 			const Sord::Resource class_id(_model->world(),
-					string(META_PREFIX) + subpatch->path().chop_start("/"));
+			                              string(META_PREFIX) + subpatch->path().chop_start("/"));
 			const Sord::Node     node_id(instance_rdf_node(n->second->path()));
 			_model->add_statement(
 				patch_id,
@@ -396,11 +388,10 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 	}
 
 	for (Shared::Patch::Connections::const_iterator c = patch->connections().begin();
-			c != patch->connections().end(); ++c) {
+	     c != patch->connections().end(); ++c) {
 		serialise_connection(patch, c->second);
 	}
 }
-
 
 void
 Serialiser::serialise_plugin(const Shared::Plugin& plugin)
@@ -415,10 +406,10 @@ Serialiser::serialise_plugin(const Shared::Plugin& plugin)
 		Sord::Resource(_model->world(), plugin.type_uri().str()));
 }
 
-
 void
 Serialiser::serialise_node(SharedPtr<Shared::Node> node,
-		const Sord::Node& class_id, const Sord::Node& node_id)
+                           const Sord::Node&       class_id,
+                           const Sord::Node&       node_id)
 {
 	_model->add_statement(
 		node_id,
@@ -446,7 +437,6 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node,
 	}
 }
 
-
 /** Serialise a port on a Node */
 void
 Serialiser::serialise_port(const Port* port, const Sord::Node& port_id)
@@ -463,7 +453,7 @@ Serialiser::serialise_port(const Port* port, const Sord::Node& port_id)
 			Sord::Curie(_model->world(), "lv2:OutputPort"));
 
 	for (Port::PortTypes::const_iterator i = port->types().begin();
-			i != port->types().end(); ++i)
+	     i != port->types().end(); ++i)
 		_model->add_statement(
 			port_id,
 			Sord::Curie(_model->world(), "rdf:type"),
@@ -483,7 +473,6 @@ Serialiser::serialise_port(const Port* port, const Sord::Node& port_id)
 	serialise_properties(port_id, &port->meta(), port->properties());
 }
 
-
 /** Serialise a port on a Patch */
 void
 Serialiser::serialise_port_meta(const Port* port, const Sord::Node& port_id)
@@ -500,7 +489,7 @@ Serialiser::serialise_port_meta(const Port* port, const Sord::Node& port_id)
 			Sord::Curie(_model->world(), "lv2:OutputPort"));
 
 	for (Port::PortTypes::const_iterator i = port->types().begin();
-			i != port->types().end(); ++i)
+	     i != port->types().end(); ++i)
 		_model->add_statement(
 			port_id,
 			Sord::Curie(_model->world(), "rdf:type"),
@@ -531,7 +520,6 @@ Serialiser::serialise_port_meta(const Port* port, const Sord::Node& port_id)
 
 	serialise_properties(port_id, NULL, port->meta().properties());
 }
-
 
 void
 Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
@@ -571,14 +559,13 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 	}
 }
 
-
 void
-Serialiser::serialise_properties(
-		Sord::Node                     subject,
-		const Shared::Resource*        meta,
-		const GraphObject::Properties& properties)
+Serialiser::serialise_properties(Sord::Node                     subject,
+                                 const Shared::Resource*        meta,
+                                 const GraphObject::Properties& properties)
 {
-	for (GraphObject::Properties::const_iterator v = properties.begin(); v != properties.end(); ++v) {
+	for (GraphObject::Properties::const_iterator v = properties.begin();
+	     v != properties.end(); ++v) {
 		if (v->second.is_valid()) {
 			if (!meta || !meta->has_property(v->first.str(), v->second)) {
 				const Sord::Resource key(_model->world(), v->first.str());
@@ -587,7 +574,7 @@ Serialiser::serialise_properties(
 					_model->add_statement(subject, key, value);
 				} else {
 					LOG(warn) << "Can not serialise variable '" << v->first << "' :: "
-							<< (int)v->second.type() << endl;
+					          << (int)v->second.type() << endl;
 				}
 			}
 		} else {
@@ -595,7 +582,6 @@ Serialiser::serialise_properties(
 		}
 	}
 }
-
 
 } // namespace Serialisation
 } // namespace Ingen
