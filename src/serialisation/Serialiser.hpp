@@ -60,8 +60,8 @@ public:
 	void to_file(SharedPtr<Shared::GraphObject> object,
 	             const std::string&             filename);
 
-	void write_bundle(SharedPtr<Shared::GraphObject> object,
-	                  const std::string&             filename);
+	void write_bundle(SharedPtr<Shared::Patch> patch,
+	                  const std::string&       uri);
 
 	std::string to_string(SharedPtr<Shared::GraphObject> object,
 	                      const std::string&             base_uri,
