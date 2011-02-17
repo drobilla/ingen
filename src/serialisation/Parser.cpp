@@ -310,7 +310,7 @@ Parser::parse(Ingen::Shared::World*                    world,
 		subject = nil;
 	}
 
-	std::string           path_str;
+	std::string           path_str = data_path ? data_path->chop_scheme() : "/";
 	boost::optional<Path> ret;
 	boost::optional<Path> root_path;
 
@@ -376,7 +376,7 @@ Parser::parse(Ingen::Shared::World*                    world,
 
 	}
 
-	return root_path;
+	return boost::optional<Path>(Path(path_str));
 }
 
 boost::optional<Path>
