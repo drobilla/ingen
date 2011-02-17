@@ -62,7 +62,7 @@ load_module(const string& name)
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
 				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY);
 				if (*module) {
-					LOG(info) << "Loaded `" <<  name << "' from " << filename << endl;
+					LOG(info) << "Loading " << filename << endl;
 					return SharedPtr<Glib::Module>(module);
 				} else {
 					delete module;
@@ -79,7 +79,7 @@ load_module(const string& name)
 	module->make_resident();
 
 	if (*module) {
-		LOG(info) << "Loaded `" <<  name << "' from " << INGEN_MODULE_DIR << endl;
+		LOG(info) << "Loading " << Shared::module_path(name) << endl;
 		return SharedPtr<Glib::Module>(module);
 	} else if (!module_path_found) {
 		LOG(error) << "Unable to find " << name

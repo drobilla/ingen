@@ -18,8 +18,9 @@
 #ifndef INGEN_MODULE_MODULE_HPP
 #define INGEN_MODULE_MODULE_HPP
 
-#include <string>
 #include <glibmm/module.h>
+
+#include "raul/log.hpp"
 #include "raul/SharedPtr.hpp"
 
 namespace Ingen {
@@ -32,7 +33,10 @@ class World;
  * All components of Ingen reside in one of these.
  */
 struct Module {
-	virtual ~Module() {}
+	virtual ~Module() {
+		Raul::info << "[Module] Unloading " << library->get_name() << std::endl;
+	}
+
 	virtual void load(Ingen::Shared::World* world) = 0;
 
 	SharedPtr<Glib::Module> library;
