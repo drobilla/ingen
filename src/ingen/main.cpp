@@ -96,7 +96,7 @@ main(int argc, char** argv)
 		return EXIT_SUCCESS;
 	}
 
-	// Set bundle path from executable location so resources/modules can be found
+	// Set bundle path from executable location so resources can be found
 	Shared::set_bundle_path_from_code((void*)&main);
 
 	SharedPtr<Shared::EngineInterface> engine_interface;
@@ -181,9 +181,10 @@ main(int argc, char** argv)
 		string uri = conf.option("load").get_string();
 		if (!serd_uri_string_has_scheme((const uint8_t*)uri.c_str())) {
 			// Does not start with legal URI scheme, assume path
-			uri = (Glib::path_is_absolute(uri))
+			uri = Glib::filename_to_uri(
+				(Glib::path_is_absolute(uri))
 				? uri
-				: Glib::build_filename(Glib::get_current_dir(), uri);
+				: Glib::build_filename(Glib::get_current_dir(), uri));
 		}
 
 		engine_interface->load_plugins();
