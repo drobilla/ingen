@@ -161,7 +161,6 @@ main(int argc, char** argv)
 
 	// Load a patch
 	if (conf.option("load").is_valid() && engine_interface) {
-		boost::optional<Path>   data_path = Path("/");
 		boost::optional<Path>   parent;
 		boost::optional<Symbol> symbol;
 		const Raul::Atom&       path_option = conf.option("path");
@@ -197,7 +196,7 @@ main(int argc, char** argv)
 		if (conf.option("gui").get_bool())
 			engine_interface->get("ingen:plugins");
 		world->parser()->parse_file(
-			world, engine_interface.get(), uri, data_path, parent, symbol);
+			world, engine_interface.get(), uri, parent, symbol);
 	}
 
 	// Load GUI

@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright (C) 2007-2009 David Robillard <http://drobilla.net>
+ * Copyright (C) 2007-2011 David Robillard <http://drobilla.net>
  *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -31,10 +31,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 ThreadedLoader::ThreadedLoader(SharedPtr<Shared::LV2URIMap> uris, SharedPtr<EngineInterface> engine)
 	: _engine(engine)
-	, _deprecated_loader(uris, engine)
 {
 	set_name("Loader");
 
@@ -43,7 +41,6 @@ ThreadedLoader::ThreadedLoader(SharedPtr<Shared::LV2URIMap> uris, SharedPtr<Engi
 	else
 		warn << "Failed to load ingen_serialisation module, load disabled." << endl;
 }
-
 
 SharedPtr<Parser>
 ThreadedLoader::parser()
@@ -55,7 +52,6 @@ ThreadedLoader::parser()
 
 	return world->parser();
 }
-
 
 void
 ThreadedLoader::_whipped()
@@ -71,11 +67,10 @@ ThreadedLoader::_whipped()
 }
 
 void
-ThreadedLoader::load_patch(bool                             merge,
-                           const Glib::ustring&             document_uri,
-                           optional<Path>                   data_path,
-                           optional<Path>                   engine_parent,
-                           optional<Symbol>                 engine_symbol,
+ThreadedLoader::load_patch(bool                              merge,
+                           const Glib::ustring&              document_uri,
+                           optional<Path>                    engine_parent,
+                           optional<Symbol>                  engine_symbol,
                            optional<GraphObject::Properties> engine_data)
 {
 	_mutex.lock();
@@ -90,35 +85,21 @@ ThreadedLoader::load_patch(bool                             merge,
 			engine_base = engine_parent.get().base();
 	}
 
-	// Filthy hack to load deprecated patches based on file extension
-	if (document_uri.substr(document_uri.length()-3) == ".om") {
-		_events.push_back(sigc::hide_return(sigc::bind(
-				sigc::mem_fun(_deprecated_loader,
-				              &DeprecatedLoader::load_patch),
-				document_uri,
-				merge,
-				engine_parent,
-				engine_symbol,
-				*engine_data,
-				false)));
-	} else {
-		_events.push_back(sigc::hide_return(sigc::bind(
-				sigc::mem_fun(world->parser().get(),
-				              &Ingen::Serialisation::Parser::parse_file),
-				App::instance().world(),
-				App::instance().world()->engine().get(),
-				document_uri,
-				data_path,
-				engine_parent,
-				engine_symbol,
-				engine_data)));
-	}
+	_events.push_back(
+		sigc::hide_return(
+			sigc::bind(sigc::mem_fun(world->parser().get(),
+			                         &Ingen::Serialisation::Parser::parse_file),
+			           App::instance().world(),
+			           App::instance().world()->engine().get(),
+			           document_uri,
+			           engine_parent,
+			           engine_symbol,
+			           engine_data)));
 
 	whip();
 
 	_mutex.unlock();
 }
-
 
 void
 ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename)
@@ -134,7 +115,6 @@ ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename)
 	whip();
 }
 
-
 void
 ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& filename)
 {
@@ -145,7 +125,6 @@ ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& file
 			App::instance().serialiser()->to_file(model, filename);
 	}
 }
-
 
 } // namespace GUI
 } // namespace Ingen

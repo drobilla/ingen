@@ -47,7 +47,6 @@ public:
 		Ingen::Shared::World*         world,
 		Shared::CommonInterface*      target,
 		Glib::ustring                 document_uri,
-		boost::optional<Raul::Path>   data_path=boost::optional<Raul::Path>(),
 		boost::optional<Raul::Path>   parent=boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol=boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data=boost::optional<Properties>());

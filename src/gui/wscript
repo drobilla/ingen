@@ -63,7 +63,6 @@ def build(bld):
 		LV2CORE
 		SLV2
 		SOUP
-		XML2
 	''')
 
 	# Glade XML UI definition

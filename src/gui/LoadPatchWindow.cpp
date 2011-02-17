@@ -175,7 +175,7 @@ LoadPatchWindow::ok_clicked()
 			symbol = _patch->symbol();
 		}
 
-		App::instance().loader()->load_patch(true, get_uri(), Path("/"),
+		App::instance().loader()->load_patch(true, get_uri(),
 				parent, symbol, _initial_data);
 
 	} else {
@@ -193,7 +193,7 @@ LoadPatchWindow::ok_clicked()
 
 			symbol = avoid_symbol_clash(symbol);
 
-			App::instance().loader()->load_patch(false, *i, Path("/"),
+			App::instance().loader()->load_patch(false, *i,
 					_patch->path(), symbol, _initial_data);
 		}
 	}

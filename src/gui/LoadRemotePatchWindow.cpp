@@ -140,7 +140,7 @@ LoadRemotePatchWindow::open_clicked()
 	if (!_patch->path().is_root())
 		parent = _patch->path().parent();
 
-	App::instance().loader()->load_patch(true, uri, Path("/"),
+	App::instance().loader()->load_patch(true, uri,
 			parent, symbol, _initial_data);
 
 	hide();

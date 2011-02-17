@@ -131,7 +131,6 @@ bool
 Parser::parse_file(Ingen::Shared::World*                    world,
                    Ingen::Shared::CommonInterface*          target,
                    Glib::ustring                            file_uri,
-                   boost::optional<Raul::Path>              data_path,
                    boost::optional<Raul::Path>              parent,
                    boost::optional<Raul::Symbol>            symbol,
                    boost::optional<GraphObject::Properties> data)
@@ -170,15 +169,13 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 	model.load_file(filename);
 
 	LOG(info) << "Parsing " << file_uri << endl;
-	if (data_path)
-		LOG(info) << "Path: " << *data_path << endl;
 	if (parent)
 		LOG(info) << "Parent: " << *parent << endl;
 	if (symbol)
 		LOG(info) << "Symbol: " << *symbol << endl;
 
 	boost::optional<Path> parsed_path
-		= parse(world, target, model, filename, data_path, parent, symbol, data);
+		= parse(world, target, model, filename, Path("/"), parent, symbol, data);
 
 	if (parsed_path) {
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
