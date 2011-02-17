@@ -15,28 +15,35 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ingen-config.h"
+#include <signal.h>
+#include <stdlib.h>
+
 #include <iostream>
 #include <string>
-#include <stdlib.h>
-#include <signal.h>
+
 #include <boost/optional.hpp>
+
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/thread.h>
-#include "raul/log.hpp"
+
 #include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
+#include "raul/log.hpp"
+
+#include "serd/serd.h"
 #include "sord/sordmm.hpp"
+
+#include "ingen-config.h"
+
+#include "engine/Engine.hpp"
 #include "interface/EngineInterface.hpp"
+#include "module/World.hpp"
+#include "module/ingen_module.hpp"
+#include "serialisation/Parser.hpp"
 #include "shared/Configuration.hpp"
 #include "shared/runtime_paths.hpp"
-#include "module/ingen_module.hpp"
-#include "module/Module.hpp"
-#include "module/World.hpp"
-#include "engine/Engine.hpp"
-#include "serialisation/Parser.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
@@ -54,15 +61,17 @@ ingen_interrupt(int)
 	if (world->local_engine())
 		world->local_engine()->quit();
 	ingen_world_free(world);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 void
-ingen_abort(const char* msg)
+ingen_try(bool cond, const char* msg)
 {
-	cerr << "ingen: Error: " << msg << endl;
-	ingen_world_free(world);
-	exit(1);
+	if (!cond) {
+		cerr << "ingen: Error: " << msg << endl;
+		ingen_world_free(world);
+		exit(EXIT_FAILURE);
+	}
 }
 
 int
@@ -99,47 +108,45 @@ main(int argc, char** argv)
 
 	Ingen::Shared::World* world = ingen_world_new(&conf, argc, argv);
 
-	assert(!world->local_engine());
-
 	// Run engine
 	if (conf.option("engine").get_bool()) {
-		if (!world->load("ingen_engine"))
-			ingen_abort("Unable to load engine module");
+		ingen_try(world->load("ingen_engine"),
+		          "Unable to load engine module");
 
-		if (!world->local_engine())
-			ingen_abort("Unable to create engine");
+		ingen_try(world->local_engine(),
+		          "Unable to create engine");
 
 		engine_interface = world->engine();
 
 		// Not loading a GUI, load network engine interfaces
 		if (!conf.option("gui").get_bool()) {
 			#ifdef HAVE_LIBLO
-			if (!world->load("ingen_osc"))
-				ingen_abort("Unable to load OSC module");
+			ingen_try(world->load("ingen_osc"),
+			          "Unable to load OSC module");
 			#endif
 			#ifdef HAVE_SOUP
-			if (!world->load("ingen_http"))
-				ingen_abort("Unable to load HTTP module");
+			ingen_try(world->load("ingen_http"),
+			          "Unable to load HTTP module");
 			#endif
 		}
 	}
 
 	// Load client library (required for patch loading and/or GUI)
 	if (conf.option("load").is_valid() || conf.option("gui").get_bool())
-		if (!world->load("ingen_client"))
-			ingen_abort("Unable to load client module");
+		ingen_try(world->load("ingen_client"),
+		          "Unable to load client module");
 
 	// If we don't have a local engine interface (for GUI), use network
 	if (!engine_interface) {
 		const char* const uri = conf.option("connect").get_string();
-		if (!(engine_interface = world->interface(uri)))
-			ingen_abort((string("Unable to create interface to `") + uri + "'").c_str());
+		ingen_try((engine_interface = world->interface(uri)),
+		          (string("Unable to create interface to `") + uri + "'").c_str());
 	}
 
 	// Activate the engine, if we have one
 	if (world->local_engine()) {
-		if (!world->load("ingen_jack"))
-			ingen_abort("Unable to load jack module");
+		ingen_try(world->load("ingen_jack"),
+		          "Unable to load jack module");
 
 		world->local_engine()->activate();
 	}
@@ -165,41 +172,37 @@ main(int argc, char** argv)
 			}
 		}
 
-		if (!world->load("ingen_serialisation"))
-			ingen_abort("Unable to load serialisation module");
+		ingen_try(world->load("ingen_serialisation"),
+		          "Unable to load serialisation module");
 
-		if (world->parser()) {
-			// Assumption:  Containing ':' means URI, otherwise filename
-			string uri = conf.option("load").get_string();
-			if (uri.find(':') == string::npos) {
-				if (Glib::path_is_absolute(uri))
-					uri = Glib::filename_to_uri(uri);
-				else
-					uri = Glib::filename_to_uri(Glib::build_filename(
-						Glib::get_current_dir(), uri));
-			}
-
-			engine_interface->load_plugins();
-			if (conf.option("gui").get_bool())
-				engine_interface->get("ingen:plugins");
-			world->parser()->parse_document(
-					world, engine_interface.get(), uri, data_path, parent, symbol);
-
-		} else {
-			ingen_abort("Unable to create parser");
+		ingen_try(world->parser(),
+		          "Unable to create parser");
+		          
+		string uri = conf.option("load").get_string();
+		if (!serd_uri_string_has_scheme((const uint8_t*)uri.c_str())) {
+			// Does not start with legal URI scheme, assume path
+			uri = (Glib::path_is_absolute(uri))
+				? uri
+				: Glib::build_filename(Glib::get_current_dir(), uri);
 		}
+
+		engine_interface->load_plugins();
+		if (conf.option("gui").get_bool())
+			engine_interface->get("ingen:plugins");
+		world->parser()->parse_document(
+			world, engine_interface.get(), uri, data_path, parent, symbol);
 	}
 
 	// Load GUI
 	if (conf.option("gui").get_bool())
-		if (!world->load("ingen_gui"))
-			ingen_abort("Unable to load GUI module");
+		ingen_try(world->load("ingen_gui"),
+		          "Unable to load GUI module");
 
 	// Run a script
 	if (conf.option("run").is_valid()) {
 #ifdef WITH_BINDINGS
-		if (!world->load("ingen_bindings"))
-			ingen_abort("Unable to load bindings module");
+		ingen_try(world->load("ingen_bindings"),
+		          "Unable to load bindings module");
 
 		world->run("application/x-python", conf.option("run").get_string());
 #else
