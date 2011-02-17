@@ -28,16 +28,12 @@ struct IngenBindingsModule : public Ingen::Shared::Module {
 	}
 };
 
-static IngenBindingsModule* module = NULL;
-
 extern "C" {
 
 Ingen::Shared::Module*
-ingen_module_load() {
-	if (!module)
-		module = new IngenBindingsModule();
-
-	return module;
+ingen_module_load()
+{
+	return new IngenBindingsModule();
 }
 
 void

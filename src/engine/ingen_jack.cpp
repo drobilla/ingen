@@ -32,16 +32,12 @@ struct IngenJackModule : public Ingen::Shared::Module {
 	}
 };
 
-static IngenJackModule* module = NULL;
-
 extern "C" {
 
 Ingen::Shared::Module*
-ingen_module_load() {
-	if (!module)
-		module = new IngenJackModule();
-
-	return module;
+ingen_module_load()
+{
+	return new IngenJackModule();
 }
 
 } // extern "C"

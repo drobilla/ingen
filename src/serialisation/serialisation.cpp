@@ -22,7 +22,7 @@
 
 using namespace Ingen;
 
-struct IngenModule : public Shared::Module {
+struct IngenSerialisationModule : public Shared::Module {
 	void load(Shared::World* world) {
 		world->set_parser(SharedPtr<Serialisation::Parser>(
 				new Serialisation::Parser()));
@@ -31,16 +31,11 @@ struct IngenModule : public Shared::Module {
 	}
 };
 
-static IngenModule* module = NULL;
-
 extern "C" {
 
 Shared::Module*
 ingen_module_load() {
-	if (!module)
-		module = new IngenModule();
-
-	return module;
+	return new IngenSerialisationModule();
 }
 
 } // extern "C"

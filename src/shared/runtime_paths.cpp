@@ -15,11 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <dlfcn.h>
 #include <limits.h>
 #include <stdlib.h>
+
+#include <dlfcn.h>
+
 #include <glibmm/module.h>
 #include <glibmm/miscutils.h>
+
+#include "raul/log.hpp"
+
 #include "ingen-config.h"
 #include "runtime_paths.hpp"
 
@@ -29,7 +34,6 @@ namespace Ingen {
 namespace Shared {
 
 static std::string bundle_path;
-
 
 /** Must be called once at startup, and passed a pointer to a function
  * that lives in the 'top level' of the bundle (e.g. the executable).
@@ -48,18 +52,18 @@ set_bundle_path_from_code(void* function)
 	const char* bin_loc = dli.dli_fname;
 #endif
 
+	Raul::info << "[Module] Binary location: " << bin_loc << std::endl;
+
 	string bundle = bin_loc;
 	bundle = bundle.substr(0, bundle.find_last_of(G_DIR_SEPARATOR));
 	bundle_path = bundle;
 }
-
 
 void
 set_bundle_path(const char* path)
 {
 	bundle_path = path;
 }
-
 
 /** Return the absolute path of a file in an Ingen LV2 bundle
  */
@@ -80,7 +84,6 @@ data_file_path(const std::string& name)
 	return Glib::build_filename(INGEN_DATA_DIR, name);
 #endif
 }
-
 
 /** Return the absolute path of a module (dynamically loaded shared library).
  */
@@ -105,7 +108,6 @@ module_path(const std::string& name, std::string dir)
 #endif
 	return ret;
 }
-
 
 } // namespace Ingen
 } // namespace Shared

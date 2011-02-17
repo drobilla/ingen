@@ -37,16 +37,12 @@ struct IngenEngineModule : public Ingen::Shared::Module {
 	}
 };
 
-static IngenEngineModule* module = NULL;
-
 extern "C" {
 
 Ingen::Shared::Module*
-ingen_module_load() {
-	if (!module)
-		module = new IngenEngineModule();
-
-	return module;
+ingen_module_load()
+{
+	return new IngenEngineModule();
 }
 
 } // extern "C"

@@ -1,5 +1,5 @@
 /* Ingen.LV2 - A thin wrapper which allows Ingen to run as an LV2 plugin.
- * Copyright (C) 2008-2009 David Robillard <http://drobilla.net>
+ * Copyright (C) 2008-2011 David Robillard <http://drobilla.net>
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -16,11 +16,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <glib.h>
 #include <stdlib.h>
 
 #include <string>
 #include <vector>
+
+#include <glib.h>
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
 
@@ -47,12 +48,7 @@
 
 #include "ingen-config.h"
 
-using namespace Ingen;
-
-namespace Ingen {
-namespace LV2 {
-
-/** Record of a patch found in this LV2 bundle */
+/** Record of a patch in this Ingen LV2 bundle */
 struct LV2Patch {
 	LV2Patch(const std::string& u, const std::string& f);
 
@@ -61,16 +57,24 @@ struct LV2Patch {
 	LV2_Descriptor    descriptor;
 };
 
+class Lib {
+public:
+	Lib();
+	~Lib();
 
-/* Static library data */
-typedef std::vector< SharedPtr<const LV2Patch> > LV2Patches;
-static bool           initialised = false;
-static LV2Patches     patches;
-static Configuration  conf;
-static int            argc = 0;
-static char**         argv = NULL;
-static Shared::World* world = NULL;
+	typedef std::vector< SharedPtr<const LV2Patch> > Patches;
 
+	Patches              patches;
+	Ingen::Configuration conf;
+	int                  argc;
+	char**               argv;
+};
+
+/** Library state (constructed/destructed on library load/unload) */
+Lib lib;
+
+namespace Ingen {
+namespace LV2 {
 
 struct LV2Driver;
 
@@ -119,7 +123,6 @@ private:
 	LV2Driver* _driver;
 	void*      _buffer;
 };
-
 
 struct LV2Driver : public Driver {
 private:
@@ -177,7 +180,6 @@ public:
 		return NULL;
 	}
 
-
 	virtual bool supports(Shared::PortType port_type, Shared::EventType event_type) {
 		return true;
 	}
@@ -217,16 +219,19 @@ private:
 } // namespace LV2
 } // namespace Ingen
 
-
-/* LV2 Plugin Interface */
-
 extern "C" {
 
+/** LV2 plugin library entry point */
+LV2_SYMBOL_EXPORT
+const LV2_Descriptor*
+lv2_descriptor(uint32_t index)
+{
+	return index < lib.patches.size() ? &lib.patches[index]->descriptor : NULL;
+}
 
 struct IngenPlugin {
 	Ingen::Shared::World* world;
 };
-
 
 static LV2_Handle
 ingen_instantiate(const LV2_Descriptor*    descriptor,
@@ -234,12 +239,13 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
                   const char*              bundle_path,
                   const LV2_Feature*const* features)
 {
-	Shared::set_bundle_path(bundle_path);
-
+	using namespace Ingen;
 	using namespace LV2;
 
+	Shared::set_bundle_path(bundle_path);
+
 	const LV2Patch* patch = NULL;
-	for (LV2Patches::iterator i = patches.begin(); i != patches.end(); ++i) {
+	for (Lib::Patches::iterator i = lib.patches.begin(); i != lib.patches.end(); ++i) {
 		if (&(*i)->descriptor == descriptor) {
 			patch = (*i).get();
 			break;
@@ -252,14 +258,19 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
-	//plugin->world = ingen_world_new(&conf, argc, argv);
-	plugin->world = LV2::world;
+	plugin->world = ingen_world_new(&lib.conf, lib.argc, lib.argv);
+	if (!plugin->world->load("ingen_serialisation")) {
+		ingen_world_free(plugin->world);
+		return NULL;
+	}
 
 	SharedPtr<Engine> engine(new Engine(plugin->world));
 	plugin->world->set_local_engine(engine);
 
 	SharedPtr<QueuedEngineInterface> interface(
-			new Ingen::QueuedEngineInterface(*plugin->world->local_engine(), event_queue_size));
+		new Ingen::QueuedEngineInterface(*plugin->world->local_engine(),
+		                                 event_queue_size));
+
 	plugin->world->set_engine(interface);
 	plugin->world->local_engine()->add_event_source(interface);
 
@@ -283,7 +294,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->post_processor()->process();
 
 	plugin->world->parser()->parse_document(plugin->world,
-			plugin->world->engine().get(), patch->filename);
+	                                        plugin->world->engine().get(),
+	                                        patch->filename);
 
 	while (!interface->empty()) {
 		interface->process(*engine->post_processor(), context, false);
@@ -295,12 +307,12 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	return (LV2_Handle)plugin;
 }
 
-
 static void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
-	IngenPlugin* me = (IngenPlugin*)instance;
-	LV2::LV2Driver* driver = (LV2::LV2Driver*)me->world->local_engine()->driver();
+	IngenPlugin*             me     = (IngenPlugin*)instance;
+	SharedPtr<Ingen::Engine> engine = me->world->local_engine();
+	Ingen::LV2::LV2Driver*   driver = (Ingen::LV2::LV2Driver*)engine->driver();
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
 		assert(driver->ports().at(port)->patch_port()->index() == port);
@@ -309,7 +321,6 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 	}
 }
 
-
 static void
 ingen_activate(LV2_Handle instance)
 {
@@ -317,16 +328,14 @@ ingen_activate(LV2_Handle instance)
 	me->world->local_engine()->activate();
 }
 
-
 static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
 	// FIXME: don't do this every call
-	Raul::Thread::get().set_context(THREAD_PROCESS);
-	((LV2::LV2Driver*)me->world->local_engine()->driver())->run(sample_count);
+	Raul::Thread::get().set_context(Ingen::THREAD_PROCESS);
+	((Ingen::LV2::LV2Driver*)me->world->local_engine()->driver())->run(sample_count);
 }
-
 
 static void
 ingen_deactivate(LV2_Handle instance)
@@ -335,17 +344,15 @@ ingen_deactivate(LV2_Handle instance)
 	me->world->local_engine()->deactivate();
 }
 
-
 static void
 ingen_cleanup(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
-	me->world->set_local_engine(SharedPtr<Engine>());
-	me->world->set_engine(SharedPtr<EngineInterface>());
-	//ingen_world_free(me->world);
+	me->world->set_local_engine(SharedPtr<Ingen::Engine>());
+	me->world->set_engine(SharedPtr<Ingen::EngineInterface>());
+	ingen_world_free(me->world);
 	free(instance);
 }
-
 
 static const void*
 ingen_extension_data(const char* uri)
@@ -353,14 +360,9 @@ ingen_extension_data(const char* uri)
 	return NULL;
 }
 
-
-/* Library Code */
-
-namespace Ingen {
-namespace LV2 {
-
 LV2Patch::LV2Patch(const std::string& u, const std::string& f)
-	: uri(u), filename(f)
+	: uri(u)
+	, filename(f)
 {
 	descriptor.URI            = uri.c_str();
 	descriptor.instantiate    = ingen_instantiate;
@@ -372,63 +374,44 @@ LV2Patch::LV2Patch(const std::string& u, const std::string& f)
 	descriptor.extension_data = ingen_extension_data;
 }
 
-} // namespace LV2
-} // namespace Ingen
-
-
-static void
-init()
+/** Library constructor (called on shared library load) */
+Lib::Lib()
+	: argc(0)
+	, argv(NULL)
 {
-	Shared::set_bundle_path_from_code((void*)&init);
+	if (!Glib::thread_supported())
+		Glib::thread_init();
 
+	using namespace Ingen;
 	using namespace LV2;
 
-	//Shared::World* world = ingen_world_new(&conf, argc, argv);
+	Ingen::Shared::set_bundle_path_from_code((void*)&lv2_descriptor);
 
-	world = ingen_world_new(&conf, argc, argv);
+	Ingen::Shared::World* world = ingen_world_new(&conf, argc, argv);
 	if (!world->load("ingen_serialisation")) {
-		Raul::error << "Unable to load serialisation module" << std::endl;
-		//ingen_world_free(world);
+		ingen_world_free(world);
 		return;
 	}
 
+	assert(world->parser());
+	
+	typedef Serialisation::Parser::PatchRecords Records;
 
-	Serialisation::Parser::PatchRecords records(
-			world->parser()->find_patches(world,
-				Glib::filename_to_uri(Shared::bundle_file_path("manifest.ttl"))));
+	Records records(world->parser()->find_patches(
+		                world, Glib::filename_to_uri(
+			                Shared::bundle_file_path("manifest.ttl"))));
 
-	for (Serialisation::Parser::PatchRecords::iterator i = records.begin();
-			i != records.end(); ++i) {
+	for (Records::iterator i = records.begin(); i != records.end(); ++i) {
 		patches.push_back(SharedPtr<const LV2Patch>(
-				new LV2Patch(i->uri.str(), i->filename)));
+			                  new LV2Patch(i->uri.str(), i->filename)));
 	}
 
-
-	//ingen_world_free(world);
-
-	initialised = true;
+	ingen_world_free(world);
 }
 
-
-/* LV2 Library Interface */
-
-extern "C" {
-
-LV2_SYMBOL_EXPORT
-const LV2_Descriptor*
-lv2_descriptor(uint32_t index)
+/** Library destructor (called on shared library unload) */
+Lib::~Lib()
 {
-	if (!LV2::initialised)
-		init();
-
-	if (index >= LV2::patches.size())
-		return NULL;
-	else
-		return &LV2::patches[index]->descriptor;
 }
-
-}
-
 
 } // extern "C"
-

@@ -34,16 +34,12 @@ struct IngenOSCModule : public Ingen::Shared::Module {
 	}
 };
 
-static IngenOSCModule* module = NULL;
-
 extern "C" {
 
 Ingen::Shared::Module*
-ingen_module_load() {
-	if (!module)
-		module = new IngenOSCModule();
-
-	return module;
+ingen_module_load()
+{
+	return new IngenOSCModule();
 }
 
 } // extern "C"

@@ -60,16 +60,12 @@ struct IngenClientModule : public Ingen::Shared::Module {
 	}
 };
 
-static IngenClientModule* module = NULL;
-
 extern "C" {
 
 Ingen::Shared::Module*
-ingen_module_load() {
-	if (!module)
-		module = new IngenClientModule();
-
-	return module;
+ingen_module_load()
+{
+	return new IngenClientModule();
 }
 
 } // extern "C"
