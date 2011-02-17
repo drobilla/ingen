@@ -19,6 +19,8 @@
 
 #include <set>
 
+#include <boost/format.hpp>
+
 #include <glibmm/convert.h>
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
@@ -126,37 +128,48 @@ Parser::find_patches(Ingen::Shared::World* world,
  * @return whether or not load was successful.
  */
 bool
-Parser::parse_document(Ingen::Shared::World*                    world,
-                       Ingen::Shared::CommonInterface*          target,
-                       Glib::ustring                            document_uri,
-                       boost::optional<Raul::Path>              data_path,
-                       boost::optional<Raul::Path>              parent,
-                       boost::optional<Raul::Symbol>            symbol,
-                       boost::optional<GraphObject::Properties> data)
+Parser::parse_file(Ingen::Shared::World*                    world,
+                   Ingen::Shared::CommonInterface*          target,
+                   Glib::ustring                            file_uri,
+                   boost::optional<Raul::Path>              data_path,
+                   boost::optional<Raul::Path>              parent,
+                   boost::optional<Raul::Symbol>            symbol,
+                   boost::optional<GraphObject::Properties> data)
 {
-	normalise_uri(document_uri);
+	normalise_uri(file_uri);
 
-	if (document_uri.substr(document_uri.length() - 4) != ".ttl") {
-		if (document_uri[document_uri.length() - 1] != '/') {
-			document_uri.append("/");
+	const size_t  colon = file_uri.find(":");
+	Glib::ustring file_path = file_uri;
+	if (colon != Glib::ustring::npos) {
+		const Glib::ustring scheme = file_uri.substr(0, colon);
+		if (scheme != "file") {
+			LOG(error) << (boost::format("Unsupported URI scheme `%1%'") % scheme) << endl;
+			return false;
+		}
+		if (file_uri.substr(0, 7) == "file://") {
+			file_path = file_uri.substr(7);
+		} else {
+			file_path = file_uri.substr(5);
 		}
 	}
-	
-	const std::string filename(Glib::filename_from_uri(document_uri));
-	const size_t      ext = filename.find(INGEN_BUNDLE_EXT);
-	const size_t      ext_len = strlen(INGEN_BUNDLE_EXT);
-	if (ext == filename.length() - ext_len
-	    || ((ext == filename.length() - ext_len - 1)
-	        && filename[filename.length() - 1] == '/')) {
-		std::string basename(Glib::path_get_basename(filename));
-		basename = basename.substr(0, basename.find('.'));
-		document_uri += basename + INGEN_PATCH_FILE_EXT;
+
+	std::string filename = Glib::filename_from_uri(file_uri);
+
+	if (file_uri.substr(file_uri.length() - 4) != ".ttl") {
+		// Not a Turtle file, maybe a bundle, check for manifest
+		if (file_uri[file_uri.length() - 1] != '/') {
+			file_uri.append("/");
+		}
+		Parser::PatchRecords records = find_patches(world, file_uri + "manifest.ttl");
+		if (!records.empty()) {
+			filename = Glib::filename_from_uri(records.front().file_uri);
+		}
 	}
 
-	Sord::Model model(*world->rdf_world(), document_uri);
-	model.load_file(document_uri);
+	Sord::Model model(*world->rdf_world(), filename);
+	model.load_file(filename);
 
-	LOG(info) << "Parsing " << document_uri << endl;
+	LOG(info) << "Parsing " << file_uri << endl;
 	if (data_path)
 		LOG(info) << "Path: " << *data_path << endl;
 	if (parent)
@@ -165,11 +178,11 @@ Parser::parse_document(Ingen::Shared::World*                    world,
 		LOG(info) << "Symbol: " << *symbol << endl;
 
 	boost::optional<Path> parsed_path
-		= parse(world, target, model, document_uri, data_path, parent, symbol, data);
+		= parse(world, target, model, filename, data_path, parent, symbol, data);
 
 	if (parsed_path) {
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
-		                     Atom(Atom::URI, document_uri.c_str()));
+		                     Atom(Atom::URI, file_uri.c_str()));
 	} else {
 		LOG(warn) << "Document URI lost" << endl;
 	}

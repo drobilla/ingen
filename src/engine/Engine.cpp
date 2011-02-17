@@ -110,8 +110,8 @@ Engine::main()
 {
 	Raul::Thread::get().set_context(THREAD_POST_PROCESS);
 
-	// Loop until quit flag is set (by OSCReceiver)
-	while ( ! _quit_flag) {
+	// Loop until quit flag is set
+	while (!_quit_flag) {
 		nanosleep(&main_rate, NULL);
 		main_iteration();
 	}

@@ -15,10 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "ingen-config.h"
+
 #include <cstdlib>
 #include <string>
 
 #include <jack/midiport.h>
+#ifdef INGEN_JACK_SESSION
+#include <jack/session.h>
+#include <boost/format.hpp>
+#include "serialisation/Serialiser.hpp"
+#endif
 
 #include "raul/log.hpp"
 #include "raul/List.hpp"
@@ -38,7 +45,6 @@
 #include "ProcessSlave.hpp"
 #include "QueuedEvent.hpp"
 #include "ThreadManager.hpp"
-#include "ingen-config.h"
 #include "module/World.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
@@ -224,20 +230,30 @@ JackDriver::attach(const std::string& server_name,
 {
 	assert(!_client);
 	if (!jack_client) {
-		// Try supplied server name
-		if (!server_name.empty()) {
+		#ifdef INGEN_JACK_SESSION
+		const std::string uuid = _engine.world()->jack_uuid();
+		if (!uuid.empty()) {
 			_client = jack_client_open(client_name.c_str(),
-					JackServerName, NULL, server_name.c_str());
-			if (_client)
-				LOG(info) << "Connected to JACK server `" << server_name << "'" << endl;
+			                           JackSessionID, NULL,
+			                           uuid.c_str());
+			LOG(info) << "Connected to JACK server as client `"
+			          << client_name.c_str() << "' UUID `" << uuid << "'" << endl;
 		}
+		#endif
 
+		// Try supplied server name
+		if (!_client && !server_name.empty()) {
+			if ((_client = jack_client_open(client_name.c_str(),
+			                               JackServerName, NULL,
+			                                server_name.c_str()))) {
+				LOG(info) << "Connected to JACK server `" << server_name << "'" << endl;
+			}
+		}
+		
 		// Either server name not specified, or supplied server name does not exist
 		// Connect to default server
 		if (!_client) {
-			_client = jack_client_open(client_name.c_str(), JackNullOption, NULL);
-
-			if (_client)
+			if ((_client = jack_client_open(client_name.c_str(), JackNullOption, NULL)))
 				LOG(info) << "Connected to default JACK server" << endl;
 		}
 
@@ -260,6 +276,9 @@ JackDriver::attach(const std::string& server_name,
 	jack_set_thread_init_callback(_client, thread_init_cb, this);
 	jack_set_sample_rate_callback(_client, sample_rate_cb, this);
 	jack_set_buffer_size_callback(_client, block_length_cb, this);
+#ifdef INGEN_JACK_SESSION
+	jack_set_session_callback(_client, session_cb, this);
+#endif
 
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		(*i)->create();
@@ -523,5 +542,39 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 	return 0;
 }
 
+
+#ifdef INGEN_JACK_SESSION
+void
+JackDriver::_session_cb(jack_session_event_t* event)
+{
+	LOG(info) << "Jack session save to " << event->session_dir << endl;
+
+	const string cmd = (boost::format("ingen -eg -n %1% -u %2% -l ${SESSION_DIR}")
+	                    % jack_get_client_name(_client)
+	                    % event->client_uuid).str();
+
+	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser();
+	if (serialiser) {
+		SharedPtr<Patch> root(_engine.driver()->root_patch(), NullDeleter<Patch>);
+		serialiser->write_bundle(root, string("file://") + event->session_dir);
+	}
+
+	event->command_line = strdup(cmd.c_str());
+	jack_session_reply(_client, event);
+
+	switch (event->type) {
+	case JackSessionSave:
+		break;
+	case JackSessionSaveAndQuit:
+		LOG(warn) << "Jack session quit" << endl;
+		_engine.quit();
+		break;
+	case JackSessionSaveTemplate:
+		break;
+	}
+
+	jack_session_event_free(event);
+}
+#endif
 
 } // namespace Ingen

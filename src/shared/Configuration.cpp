@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright (C) 2010 David Robillard <http://drobilla.net>
+ * Copyright (C) 2010-2011 David Robillard <http://drobilla.net>
  *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -16,6 +16,7 @@
  */
 
 #include "raul/Atom.hpp"
+
 #include "Configuration.hpp"
 
 using namespace Raul;
@@ -45,6 +46,9 @@ Configuration::Configuration()
 		.add("help",        'h', "Print this help message", Atom::BOOL, false)
 		.add("jack-client", 'n', "JACK client name", Atom::STRING, "ingen")
 		.add("jack-server", 's', "JACK server name", Atom::STRING, "")
+#ifdef INGEN_JACK_SESSION
+		.add("uuid",        'u', "JACK session UUID", Atom::STRING, "")
+#endif
 		.add("load",        'l', "Load patch", Atom::STRING, Atom())
 		.add("parallelism", 'p', "Number of concurrent process threads", Atom::INT, 1)
 		.add("path",        'L', "Target path for loaded patch", Atom::STRING, Atom())

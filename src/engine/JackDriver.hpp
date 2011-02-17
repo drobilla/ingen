@@ -18,10 +18,15 @@
 #ifndef INGEN_ENGINE_JACKAUDIODRIVER_HPP
 #define INGEN_ENGINE_JACKAUDIODRIVER_HPP
 
+#include "ingen-config.h"
+
 #include <string>
 
 #include <jack/jack.h>
 #include <jack/transport.h>
+#ifdef INGEN_JACK_SESSION
+#include <jack/session.h>
+#endif
 
 #include "raul/AtomicInt.hpp"
 #include "raul/List.hpp"
@@ -143,6 +148,11 @@ private:
 	inline static int sample_rate_cb(jack_nframes_t nframes, void* const jack_driver) {
 		return ((JackDriver*)jack_driver)->_sample_rate_cb(nframes);
 	}
+#ifdef INGEN_JACK_SESSION
+	inline static void session_cb(jack_session_event_t* event, void* jack_driver) {
+		((JackDriver*)jack_driver)->_session_cb(event);
+	}
+#endif
 
 	// Non static callbacks (methods)
 	void _thread_init_cb();
@@ -150,6 +160,9 @@ private:
 	int  _process_cb(jack_nframes_t nframes);
 	int  _block_length_cb(jack_nframes_t nframes);
 	int  _sample_rate_cb(jack_nframes_t nframes);
+#ifdef INGEN_JACK_SESSION
+	void _session_cb(jack_session_event_t* event);
+#endif
 
 	Engine&                _engine;
 	Raul::Thread*          _jack_thread;

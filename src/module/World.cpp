@@ -176,6 +176,9 @@ struct WorldImpl : public boost::noncopyable {
 #ifdef HAVE_SLV2
     SLV2World                            slv2_world;
 #endif
+#ifdef INGEN_JACK_SESSION
+	std::string                          jack_uuid;
+#endif
 };
 
 
@@ -280,6 +283,23 @@ World::add_interface_factory(const std::string& scheme, InterfaceFactory factory
 	_impl->interface_factories.insert(make_pair(scheme, factory));
 }
 
+
+#ifdef INGEN_JACK_SESSION
+
+void
+World::set_jack_uuid(const std::string& uuid)
+{
+	_impl->jack_uuid = uuid;
+}
+
+
+std::string
+World::jack_uuid()
+{
+	return _impl->jack_uuid;
+}
+
+#endif // INGEN_JACK_SESSION
 
 
 } // namespace Shared

@@ -261,7 +261,7 @@ App::activity_port_destroyed(Port* port)
 bool
 App::animate()
 {
-	for (ActivityPorts::iterator i = _activity_ports.begin(); i != _activity_ports.end() ; ) {
+	for (ActivityPorts::iterator i = _activity_ports.begin(); i != _activity_ports.end(); ) {
 		ActivityPorts::iterator next = i;
 		++next;
 
@@ -300,7 +300,10 @@ App::gtk_main_iteration()
 		return false;
 
 	if (_world->local_engine()) {
-		_world->local_engine()->main_iteration();
+		if (!_world->local_engine()->main_iteration()) {
+			Gtk::Main::quit();
+			return false;
+		}
 	} else {
 		_enable_signal = false;
 		_client->emit_signals();

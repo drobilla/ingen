@@ -93,7 +93,8 @@ ThreadedLoader::load_patch(bool                             merge,
 	// Filthy hack to load deprecated patches based on file extension
 	if (document_uri.substr(document_uri.length()-3) == ".om") {
 		_events.push_back(sigc::hide_return(sigc::bind(
-				sigc::mem_fun(_deprecated_loader, &DeprecatedLoader::load_patch),
+				sigc::mem_fun(_deprecated_loader,
+				              &DeprecatedLoader::load_patch),
 				document_uri,
 				merge,
 				engine_parent,
@@ -102,7 +103,8 @@ ThreadedLoader::load_patch(bool                             merge,
 				false)));
 	} else {
 		_events.push_back(sigc::hide_return(sigc::bind(
-				sigc::mem_fun(world->parser().get(), &Ingen::Serialisation::Parser::parse_document),
+				sigc::mem_fun(world->parser().get(),
+				              &Ingen::Serialisation::Parser::parse_file),
 				App::instance().world(),
 				App::instance().world()->engine().get(),
 				document_uri,

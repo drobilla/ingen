@@ -108,6 +108,12 @@ main(int argc, char** argv)
 
 	Ingen::Shared::World* world = ingen_world_new(&conf, argc, argv);
 
+#if INGEN_JACK_SESSION
+	if (conf.option("uuid").get_string()) {
+		world->set_jack_uuid(conf.option("uuid").get_string());
+	}
+#endif
+
 	// Run engine
 	if (conf.option("engine").get_bool()) {
 		ingen_try(world->load("ingen_engine"),
@@ -190,7 +196,7 @@ main(int argc, char** argv)
 		engine_interface->load_plugins();
 		if (conf.option("gui").get_bool())
 			engine_interface->get("ingen:plugins");
-		world->parser()->parse_document(
+		world->parser()->parse_file(
 			world, engine_interface.get(), uri, data_path, parent, symbol);
 	}
 

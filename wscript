@@ -20,6 +20,9 @@ def options(opt):
 		       help="Ingen data install directory [Default: PREFIX/share/ingen]")
 	opt.add_option('--module-dir', type='string', dest='moduledir',
 		       help="Ingen module install directory [Default: PREFIX/lib/ingen]")
+	opt.add_option('--no-jack-session', action='store_true', default=False,
+			dest='no_jack_session',
+			help="Do not build JACK session support")
 	opt.add_option('--no-osc', action='store_true', default=False, dest='no_osc',
 		       help="Do not build OSC via liblo support, even if liblo exists")
 	opt.add_option('--no-http', action='store_true', default=False, dest='no_http',
@@ -44,6 +47,8 @@ def configure(conf):
 			  atleast_version='2.14.0', mandatory=False)
 	autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
 			  atleast_version='0.109.0', mandatory=True)
+	autowaf.check_pkg(conf, 'jack', uselib_store='NEW_JACK',
+			  atleast_version='0.120.0', mandatory=False)
 	autowaf.check_pkg(conf, 'slv2', uselib_store='SLV2',
 			  atleast_version='0.6.0', mandatory=True)
 	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
@@ -62,6 +67,9 @@ def configure(conf):
 	if not Options.options.no_osc:
 		autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO',
 				  atleast_version='0.25', mandatory=False)
+	if not Options.options.no_jack_session:
+		if conf.env['HAVE_NEW_JACK']:
+			autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
 
 	# Check for posix_memalign (OSX, amazingly, doesn't have it)
 	conf.check(function_name='posix_memalign',
@@ -99,6 +107,8 @@ def configure(conf):
 	conf.write_config_header('ingen-config.h', remove=False)
 
 	autowaf.display_msg(conf, "Jack", str(conf.env['HAVE_JACK'] == 1))
+	autowaf.display_msg(conf, "Jack session support",
+	                    str(conf.env['INGEN_JACK_SESSION'] == 1))
 	autowaf.display_msg(conf, "OSC", str(conf.env['HAVE_LIBLO'] == 1))
 	autowaf.display_msg(conf, "HTTP", str(conf.env['HAVE_SOUP'] == 1))
 	autowaf.display_msg(conf, "LV2", str(conf.env['HAVE_SLV2'] == 1))

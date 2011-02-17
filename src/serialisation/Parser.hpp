@@ -43,7 +43,7 @@ public:
 
 	typedef Shared::GraphObject::Properties Properties;
 
-	virtual bool parse_document(
+	virtual bool parse_file(
 		Ingen::Shared::World*         world,
 		Shared::CommonInterface*      target,
 		Glib::ustring                 document_uri,
@@ -73,9 +73,11 @@ public:
 		boost::optional<Properties>   data=boost::optional<Properties>());
 
 	struct PatchRecord {
-		PatchRecord(const Raul::URI& u, const Glib::ustring& f) : uri(u), filename(f) {}
-		const Raul::URI     uri;
-		const Glib::ustring filename;
+		PatchRecord(const Raul::URI& u, const Glib::ustring& f)
+			: patch_uri(u), file_uri(f)
+		{}
+		const Raul::URI     patch_uri;
+		const Glib::ustring file_uri;
 	};
 
 	typedef std::list<PatchRecord> PatchRecords;

@@ -106,6 +106,11 @@ public:
 #ifdef HAVE_SLV2
 	virtual SLV2World slv2_world();
 #endif
+
+#ifdef INGEN_JACK_SESSION
+	virtual void        set_jack_uuid(const std::string& uuid);
+	virtual std::string jack_uuid();
+#endif
 };
 
 

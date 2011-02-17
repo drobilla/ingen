@@ -293,9 +293,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	interface->process(*engine->post_processor(), context, false);
 	engine->post_processor()->process();
 
-	plugin->world->parser()->parse_document(plugin->world,
-	                                        plugin->world->engine().get(),
-	                                        patch->filename);
+	plugin->world->parser()->parse_file(plugin->world,
+	                                    plugin->world->engine().get(),
+	                                    patch->filename);
 
 	while (!interface->empty()) {
 		interface->process(*engine->post_processor(), context, false);
@@ -402,8 +402,9 @@ Lib::Lib()
 			                Shared::bundle_file_path("manifest.ttl"))));
 
 	for (Records::iterator i = records.begin(); i != records.end(); ++i) {
-		patches.push_back(SharedPtr<const LV2Patch>(
-			                  new LV2Patch(i->uri.str(), i->filename)));
+		patches.push_back(
+			SharedPtr<const LV2Patch>(new LV2Patch(i->patch_uri.str(),
+			                                       i->file_uri)));
 	}
 
 	ingen_world_free(world);
