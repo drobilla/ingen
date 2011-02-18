@@ -221,60 +221,39 @@ Parser::parse(Ingen::Shared::World*                    world,
 		subject = nil;
 	}
 
-	std::string           path_str = data_path ? data_path->chop_scheme() : "/";
+	Raul::Path path("/");
+	if (data_path) {
+		path = *data_path;
+	} else if (parent && symbol) {
+		path = parent->child(*symbol);
+	}
+
 	boost::optional<Path> ret;
 	boost::optional<Path> root_path;
-
 	for (Sord::Iter i = model.find(subject, rdf_type, nil); !i.end(); ++i) {
 		const Sord::Node& subject   = i.get_subject();
 		const Sord::Node& rdf_class = i.get_object();
 
-		if (!data_path)
-			path_str = relative_uri(document_uri, subject.to_c_string(), true);
+		if (rdf_class == patch_class) {
+			ret = parse_patch(world, target, model, subject, parent, symbol, data);
+		} else if (rdf_class == node_class) {
+			ret = parse_node(world, target, model, subject, path, data);
+		} else if (rdf_class == in_port_class || rdf_class == out_port_class) {
+			parse_properties(world, target, model, subject, path, data);
+			ret = path;
+		}
 
-		const bool is_object =    (rdf_class == patch_class)
-			|| (rdf_class == node_class)
-			|| (rdf_class == in_port_class)
-			|| (rdf_class == out_port_class);
+		if (!ret) {
+			LOG(error) << "Failed to parse object " << path << endl;
+			return boost::optional<Path>();
+		}
 
-		if (is_object) {
-			if (path_str.empty() || path_str[0] != '/')
-				path_str = "/" + path_str;
-
-			if (!Path::is_valid(path_str)) {
-				LOG(warn) << "Invalid path '" << path_str << "', object skipped" << endl;
-				continue;
-			}
-
-			string path = (parent && symbol)
-				? parent->child(*symbol).str()
-				: (parent ? *parent : Path("/")).child(path_str.substr(path_str.find("/")+1)).str();
-
-			if (!Path::is_valid(path)) {
-				LOG(warn) << "Invalid path '" << path << "' transformed to /" << endl;
-				path = "/";
-			}
-
-			if (rdf_class == patch_class) {
-				ret = parse_patch(world, target, model, subject, parent, symbol, data);
-			} else if (rdf_class == node_class) {
-				ret = parse_node(world, target, model, subject, path, data);
-			} else if (rdf_class == in_port_class || rdf_class == out_port_class) {
-				parse_properties(world, target, model, subject, path, data);
-				ret = path;
-			}
-
-			if (!ret) {
-				LOG(error) << "Failed to parse object " << path << endl;
-				return boost::optional<Path>();
-			}
-
-			if (data_path && subject.to_string() == data_path->str())
-				root_path = ret;
+		if (data_path && subject.to_string() == data_path->str()) {
+			root_path = ret;
 		}
 	}
 
-	return boost::optional<Path>(Path(path_str));
+	return path;
 }
 
 boost::optional<Path>

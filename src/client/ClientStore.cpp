@@ -255,9 +255,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 		LOG(info) << "}" << endl;*/
-
-	bool is_meta = ResourceImpl::is_meta_uri(uri);
-
+	
 	// Check if uri is a plugin
 	const Atom& type = properties.find(_uris->rdf_type)->second;
 	if (type.type() == Atom::URI) {
@@ -266,9 +264,10 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 			SharedPtr<PluginModel> p(new PluginModel(uris(), uri, type_uri, properties));
 			add_plugin(p);
 			return;
-		} else {
 		}
 	}
+
+	bool is_meta = ResourceImpl::is_meta_uri(uri);
 
 	string path_str = is_meta ? (string("/") + uri.chop_start("#")) : uri.str();
 	if (!Path::is_valid(path_str)) {
@@ -287,6 +286,10 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	bool is_patch, is_node, is_port, is_output;
 	PortType data_type(PortType::UNKNOWN);
 	ResourceImpl::type(uris(), properties, is_patch, is_node, is_port, is_output, data_type);
+
+	if (path.is_root()) {
+		is_patch = true;
+	}
 
 	if (is_patch) {
 		SharedPtr<PatchModel> model(new PatchModel(uris(), path));
@@ -307,7 +310,7 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 			n->set_properties(properties);
 			add_object(n);
 		} else {
-			LOG(error) << "Plugin with no type" << endl;
+			LOG(warn) << "Node " << path << " has no plugin" << endl;
 		}
 	} else if (is_port) {
 		if (data_type != PortType::UNKNOWN) {
