@@ -47,14 +47,18 @@ ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap> uris,
 	if (!emitter)
 		return;
 
-	emitter->signal_object_deleted.connect(sigc::mem_fun(this, &ClientStore::del));
-	emitter->signal_object_moved.connect(sigc::mem_fun(this, &ClientStore::move));
-	emitter->signal_put.connect(sigc::mem_fun(this, &ClientStore::put));
-	emitter->signal_delta.connect(sigc::mem_fun(this, &ClientStore::delta));
-	emitter->signal_connection.connect(sigc::mem_fun(this, &ClientStore::connect));
-	emitter->signal_disconnection.connect(sigc::mem_fun(this, &ClientStore::disconnect));
-	emitter->signal_property_change.connect(sigc::mem_fun(this, &ClientStore::set_property));
-	emitter->signal_activity.connect(sigc::mem_fun(this, &ClientStore::activity));
+#define CONNECT(signal, method) \
+	emitter->signal_ ## signal .connect( \
+		sigc::mem_fun(this, &ClientStore:: method));
+
+	CONNECT(object_deleted, del);
+	CONNECT(object_moved, move);
+	CONNECT(put, put);
+	CONNECT(delta, delta);
+	CONNECT(connection, connect);
+	CONNECT(disconnection, disconnect);
+	CONNECT(property_change, set_property);
+	CONNECT(activity, activity);
 }
 
 
