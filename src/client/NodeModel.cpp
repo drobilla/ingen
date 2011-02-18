@@ -221,6 +221,33 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) c
 }
 
 
+std::string
+NodeModel::port_label(SharedPtr<PortModel> port) const
+{
+	const Raul::Atom& name = port->get_property("http://lv2plug.in/ns/lv2core#name");
+	if (name.is_valid()) {
+		return name.get_string();
+	}
+	
+#ifdef HAVE_SLV2
+	if (_plugin && _plugin->type() == PluginModel::LV2) {
+		SLV2World  c_world  = _plugin->slv2_world();
+		SLV2Plugin c_plugin = _plugin->slv2_plugin();
+		SLV2Value  c_sym    = slv2_value_new_string(c_world, port->symbol().c_str());
+		SLV2Port   c_port   = slv2_plugin_get_port_by_symbol(c_plugin, c_sym);
+		if (c_port) {
+			SLV2Value c_name = slv2_port_get_name(c_plugin, c_port);
+			if (c_name && slv2_value_is_string(c_name)) {
+				return slv2_value_as_string(c_name);
+			}
+		}
+	}
+#endif
+
+	return port->symbol().c_str();
+}
+
+
 void
 NodeModel::set(SharedPtr<ObjectModel> model)
 {

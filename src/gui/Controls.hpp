@@ -54,7 +54,7 @@ protected:
 	virtual void set_value(const Raul::Atom& value) = 0;
 	virtual void set_range(float min, float max) {}
 
-	void set_name(const std::string& name);
+	void set_label(const std::string& name);
 	void menu_properties();
 
 	ControlPanel*                _control_panel;

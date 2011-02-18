@@ -67,6 +67,8 @@ public:
 	void default_port_value_range(SharedPtr<PortModel> port, float& min, float& max) const;
 	void port_value_range(SharedPtr<PortModel> port, float& min, float& max) const;
 
+	std::string port_label(SharedPtr<PortModel> port) const;
+
 	// Signals
 	sigc::signal<void, SharedPtr<PortModel> > signal_new_port;
 	sigc::signal<void, SharedPtr<PortModel> > signal_removed_port;

@@ -73,6 +73,12 @@ Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 	_control_connection.disconnect();
 	_control_connection = pm->signal_value_changed.connect(sigc::mem_fun(this, &Control::set_value));
+
+	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
+	if (parent)
+		set_label(parent->port_label(pm));
+	else
+		set_label(pm->symbol().c_str());
 }
 
 
@@ -95,7 +101,7 @@ Control::disable()
 
 
 void
-Control::set_name(const string& name)
+Control::set_label(const string& name)
 {
 	const string name_markup = string("<span weight=\"bold\">") + name + "</span>";
 	_name_label->set_markup(name_markup);
@@ -136,8 +142,6 @@ SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 	assert(_name_label);
 	assert(_slider);
-
-	set_name(pm->path().symbol());
 
 	_slider->set_draw_value(false);
 
@@ -320,8 +324,6 @@ ToggleControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(_name_label);
 	assert(_checkbutton);
 
-	set_name(pm->path().symbol());
-
 	_checkbutton->signal_toggled().connect(sigc::mem_fun(*this, &ToggleControl::toggled));
 	set_value(pm->value());
 
@@ -384,8 +386,6 @@ StringControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 
 	assert(_name_label);
 	assert(_entry);
-
-	set_name(pm->path().symbol());
 
 	_entry->signal_activate().connect(sigc::mem_fun(*this, &StringControl::activated));
 	set_value(pm->value());
