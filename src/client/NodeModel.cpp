@@ -198,8 +198,6 @@ NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float
 			max = _max_values[port->index()];
 	}
 #endif
-
-	// TODO: LADSPA support
 }
 
 

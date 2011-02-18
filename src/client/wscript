@@ -25,7 +25,10 @@ def build(bld):
 		'''
 
 	if bld.env['HAVE_LIBLO'] == 1:
-		obj.source += ' OSCClientReceiver.cpp OSCEngineSender.cpp '
+		obj.source += '''
+			OSCClientReceiver.cpp
+			OSCEngineSender.cpp
+		'''
 
 	obj.includes        = ['.', '..', '../..', '../common']
 	obj.export_includes = ['.']

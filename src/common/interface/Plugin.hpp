@@ -29,7 +29,7 @@ namespace Shared {
 class Plugin : virtual public Resource
 {
 public:
-	enum Type { NIL, LV2, LADSPA, Internal, Patch };
+	enum Type { NIL, LV2, Internal, Patch };
 
 	virtual Type type() const = 0;
 
@@ -37,7 +37,6 @@ public:
 		static const Raul::URI uris[] = {
 			"http://drobilla.net/ns/ingen#nil",
 			"http://lv2plug.in/ns/lv2core#Plugin",
-			"http://drobilla.net/ns/ingen#LADSPAPlugin",
 			"http://drobilla.net/ns/ingen#Internal",
 			"http://drobilla.net/ns/ingen#Patch"
 		};
@@ -50,8 +49,6 @@ public:
 	static inline Type type_from_uri(const Raul::URI& uri) {
 		if (uri == type_uri(LV2))
 			return LV2;
-		else if (uri == type_uri(LADSPA))
-			return LADSPA;
 		else if (uri == type_uri(Internal))
 			return Internal;
 		else if (uri == type_uri(Patch))

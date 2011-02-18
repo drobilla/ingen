@@ -696,7 +696,6 @@ PatchCanvas::paste()
 	if (!_patch->path().is_root())
 		clipboard.put(_patch->path(), props);
 
-	boost::optional<Raul::Path>   data_path;
 	boost::optional<Raul::Path>   parent;
 	boost::optional<Raul::Symbol> symbol;
 
@@ -705,7 +704,7 @@ PatchCanvas::paste()
 	}
 
 	ClashAvoider avoider(*App::instance().store().get(), clipboard, &clipboard);
-	parser->parse_string(App::instance().world(), &avoider, str, Path().str(), data_path,
+	parser->parse_string(App::instance().world(), &avoider, str, Path().str(),
 			parent, symbol);
 
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {

@@ -228,15 +228,10 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugi
 	const Atom& name = plugin->get_property(uris.doap_name);
 	if (name.is_valid() && name.type() == Atom::STRING)
 			row[_plugins_columns._col_name] = name.get_string();
-	else if (plugin->type() == Plugin::LADSPA)
-		App::instance().engine()->request_property(plugin->uri(), uris.doap_name);
 
 	switch (plugin->type()) {
 	case Plugin::LV2:
 		row[_plugins_columns._col_type] = "LV2";
-		break;
-	case Plugin::LADSPA:
-		row[_plugins_columns._col_type] = "LADSPA";
 		break;
 	case Plugin::Internal:
 		row[_plugins_columns._col_type] = "Internal";

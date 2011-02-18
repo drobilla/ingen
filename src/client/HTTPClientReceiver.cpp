@@ -138,7 +138,7 @@ HTTPClientReceiver::close_session()
 void
 HTTPClientReceiver::update(const std::string& str)
 {
-	LOG(info) << _world->parser()->parse_update(_world, _target.get(), str, _url);
+	//LOG(info) << _world->parser()->parse_update(_world, _target.get(), str, _url);
 }
 
 void

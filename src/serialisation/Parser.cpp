@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright (C) 2007-2009 David Robillard <http://drobilla.net>
+ * Copyright (C) 2007-2011 David Robillard <http://drobilla.net>
  *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -86,14 +86,6 @@ relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 	return ret;
 }
 
-static void
-normalise_uri(Glib::ustring& uri)
-{
-	size_t dotslash = string::npos;
-	while ((dotslash = uri.find("./")) != string::npos)
-		uri = uri.substr(0, dotslash) + uri.substr(dotslash + 2);
-}
-
 Parser::PatchRecords
 Parser::find_patches(Ingen::Shared::World* world,
                      const Glib::ustring&  manifest_uri)
@@ -105,22 +97,17 @@ Parser::find_patches(Ingen::Shared::World* world,
 	Sord::URI rdfs_seeAlso(*world->rdf_world(), NS_RDFS  "seeAlso");
 	Sord::URI ingen_Patch(*world->rdf_world(),  NS_INGEN "Patch");
 
-	RDFNodes patches;
-	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
-		patches.insert(i.get_subject());
-	}
-
 	std::list<PatchRecord> records;
-	for (RDFNodes::const_iterator i = patches.begin(); i != patches.end(); ++i) {
-		Sord::Iter f = model.find(*i, rdfs_seeAlso, nil);
-		if (f.end()) {
+	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
+		const Sord::Node patch = i.get_subject();
+		Sord::Iter       f     = model.find(patch, rdfs_seeAlso, nil);
+		if (!f.end()) {
+			records.push_back(PatchRecord(patch.to_c_string(),
+			                              f.get_object().to_c_string()));
+		} else {
 			LOG(error) << "Patch has no rdfs:seeAlso" << endl;
-			continue;
 		}
-		records.push_back(PatchRecord(i->to_c_string(),
-		                              f.get_object().to_c_string()));
 	}
-
 	return records;
 }
 
@@ -135,38 +122,32 @@ Parser::parse_file(Ingen::Shared::World*                    world,
                    boost::optional<Raul::Symbol>            symbol,
                    boost::optional<GraphObject::Properties> data)
 {
-	normalise_uri(file_uri);
-
-	const size_t  colon = file_uri.find(":");
-	Glib::ustring file_path = file_uri;
+	const size_t colon = file_uri.find(":");
 	if (colon != Glib::ustring::npos) {
 		const Glib::ustring scheme = file_uri.substr(0, colon);
 		if (scheme != "file") {
-			LOG(error) << (boost::format("Unsupported URI scheme `%1%'") % scheme) << endl;
+			LOG(error) << (boost::format("Unsupported URI scheme `%1%'")
+			               % scheme) << endl;
 			return false;
 		}
-		if (file_uri.substr(0, 7) == "file://") {
-			file_path = file_uri.substr(7);
-		} else {
-			file_path = file_uri.substr(5);
-		}
+	} else {
+		file_uri = Glib::ustring("file://") + file_uri;
 	}
 
-	std::string filename = Glib::filename_from_uri(file_uri);
-
 	if (file_uri.substr(file_uri.length() - 4) != ".ttl") {
-		// Not a Turtle file, maybe a bundle, check for manifest
+		// Not a Turtle file, try to open it as a bundle
 		if (file_uri[file_uri.length() - 1] != '/') {
 			file_uri.append("/");
 		}
 		Parser::PatchRecords records = find_patches(world, file_uri + "manifest.ttl");
 		if (!records.empty()) {
-			filename = Glib::filename_from_uri(records.front().file_uri);
+			file_uri = records.front().file_uri;
 		}
 	}
 
-	Sord::Model model(*world->rdf_world(), filename);
-	model.load_file(filename);
+	// Load patch file into model
+	Sord::Model model(*world->rdf_world(), file_uri);
+	model.load_file(file_uri);
 
 	LOG(info) << "Parsing " << file_uri << endl;
 	if (parent)
@@ -175,7 +156,7 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 		LOG(info) << "Symbol: " << *symbol << endl;
 
 	boost::optional<Path> parsed_path
-		= parse(world, target, model, filename, Path("/"), parent, symbol, data);
+		= parse(world, target, model, file_uri, Path("/"), parent, symbol, data);
 
 	if (parsed_path) {
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
@@ -192,91 +173,25 @@ Parser::parse_string(Ingen::Shared::World*                    world,
                      Ingen::Shared::CommonInterface*          target,
                      const Glib::ustring&                     str,
                      const Glib::ustring&                     base_uri,
-                     boost::optional<Raul::Path>              data_path,
                      boost::optional<Raul::Path>              parent,
                      boost::optional<Raul::Symbol>            symbol,
                      boost::optional<GraphObject::Properties> data)
 {
+	// Load string into model
 	Sord::Model model(*world->rdf_world(), base_uri);
 	model.load_string(str.c_str(), str.length(), base_uri);
 
-	LOG(info) << "Parsing " << (data_path ? data_path->str() : "*") << " from string";
+	LOG(info) << "Parsing string";
 	if (!base_uri.empty())
 		info << " (base " << base_uri << ")";
 	info << endl;
 
+	boost::optional<Raul::Path> data_path;
 	bool ret = parse(world, target, model, base_uri, data_path, parent, symbol, data);
 	Sord::URI subject(*world->rdf_world(), base_uri);
 	parse_connections(world, target, model, subject, parent ? *parent : "/");
 
 	return ret;
-}
-
-bool
-Parser::parse_update(Ingen::Shared::World*                    world,
-                     Shared::CommonInterface*                 target,
-                     const Glib::ustring&                     str,
-                     const Glib::ustring&                     base_uri,
-                     boost::optional<Raul::Path>              data_path,
-                     boost::optional<Raul::Path>              parent,
-                     boost::optional<Raul::Symbol>            symbol,
-                     boost::optional<GraphObject::Properties> data)
-{
-#if 0
-	Sord::Model model(*world->rdf_world(), str.c_str(), str.length(), base_uri);
-
-	// Delete anything explicitly declared to not exist
-	Glib::ustring query_str = Glib::ustring("SELECT DISTINCT ?o WHERE { ?o a owl:Nothing }");
-	Sord::Query query(*world->rdf_world(), query_str);
-	SharedPtr<Sord::QueryResults> results(query.run(*world->rdf_world(), model, base_uri));
-
-	for (; !results->finished(); results->next()) {
-		const Sord::Node& object = results->get("o");
-		target->del(object.to_string());
-	}
-
-	// Properties
-	query = Sord::Query(*world->rdf_world(),
-	                    "SELECT DISTINCT ?s ?p ?o WHERE {\n"
-	                    "?s ?p ?o .\n"
-	                    "}");
-
-	results = query.run(*world->rdf_world(), model, base_uri);
-	for (; !results->finished(); results->next()) {
-		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		string               obj_uri(results->get("s").to_string());
-		const string         key(results->get("p").to_string());
-		const Sord::Node& val_node(results->get("o"));
-		const Atom           a(AtomRDF::node_to_atom(model, val_node));
-		if (obj_uri.find(":") == string::npos)
-			obj_uri = Path(obj_uri).str();
-		obj_uri = relative_uri(base_uri, obj_uri, true);
-		if (!key.empty())
-			target->set_property(string("path:") + obj_uri, key, a);
-	}
-
-	// Connections
-	Sord::URI subject(*world->rdf_world(), base_uri);
-	parse_connections(world, target, model, subject, "/");
-
-	// Port values
-	query = Sord::Query(*world->rdf_world(),
-	                    "SELECT DISTINCT ?path ?value WHERE {\n"
-	                    "?path ingen:value ?value .\n"
-	                    "}");
-
-	results = query.run(*world->rdf_world(), model, base_uri);
-	for (; !results->finished(); results->next()) {
-		Glib::Mutex::Lock lock(world->rdf_world()->mutex());
-		const string      obj_path = results->get("path").to_string();
-		const Sord::Node& val_node = results->get("value");
-		const Atom a(AtomRDF::node_to_atom(model, val_node));
-		target->set_property(obj_path, world->uris()->ingen_value, a);
-	}
-
-	return parse(world, target, model, base_uri, data_path, parent, symbol, data);
-#endif
-	return false;
 }
 
 boost::optional<Path>
@@ -289,23 +204,19 @@ Parser::parse(Ingen::Shared::World*                    world,
               boost::optional<Raul::Symbol>            symbol,
               boost::optional<GraphObject::Properties> data)
 {
-	const Sord::Node::Type res = Sord::Node::URI;
-
-	const Sord::URI rdf_type(*world->rdf_world(), NS_RDF "type");
-
-	const Sord::Node patch_class    (*world->rdf_world(), res, NS_INGEN "Patch");
-	const Sord::Node node_class     (*world->rdf_world(), res, NS_INGEN "Node");
-	const Sord::Node internal_class (*world->rdf_world(), res, NS_INGEN "Internal");
-	const Sord::Node ladspa_class   (*world->rdf_world(), res, NS_INGEN "LADSPAPlugin");
-	const Sord::Node in_port_class  (*world->rdf_world(), res, NS_LV2 "InputPort");
-	const Sord::Node out_port_class (*world->rdf_world(), res, NS_LV2 "OutputPort");
-	const Sord::Node lv2_class      (*world->rdf_world(), res, NS_LV2 "Plugin");
+	const Sord::URI rdf_type       (*world->rdf_world(), NS_RDF   "type");
+	const Sord::URI patch_class    (*world->rdf_world(), NS_INGEN "Patch");
+	const Sord::URI node_class     (*world->rdf_world(), NS_INGEN "URI");
+	const Sord::URI internal_class (*world->rdf_world(), NS_INGEN "Internal");
+	const Sord::URI in_port_class  (*world->rdf_world(), NS_LV2   "InputPort");
+	const Sord::URI out_port_class (*world->rdf_world(), NS_LV2   "OutputPort");
+	const Sord::URI lv2_class      (*world->rdf_world(), NS_LV2   "Plugin");
 
 	Sord::Node subject = nil;
 	if (data_path && data_path->is_root()) {
 		subject = model.base_uri();
 	} else if (data_path) {
-		subject = Sord::Node(*world->rdf_world(), res, data_path->chop_start("/"));
+		subject = Sord::URI(*world->rdf_world(), data_path->chop_start("/"));
 	} else {
 		subject = nil;
 	}
@@ -320,10 +231,6 @@ Parser::parse(Ingen::Shared::World*                    world,
 
 		if (!data_path)
 			path_str = relative_uri(document_uri, subject.to_c_string(), true);
-
-		const bool is_plugin =    (rdf_class == ladspa_class)
-			|| (rdf_class == lv2_class)
-			|| (rdf_class == internal_class);
 
 		const bool is_object =    (rdf_class == patch_class)
 			|| (rdf_class == node_class)
@@ -364,16 +271,7 @@ Parser::parse(Ingen::Shared::World*                    world,
 
 			if (data_path && subject.to_string() == data_path->str())
 				root_path = ret;
-
-		} else if (is_plugin) {
-			string subject_str = subject.to_string();
-			if (URI::is_valid(subject_str)) {
-				if (subject_str == document_uri)
-					subject_str = Path::root().str();
-				parse_properties(world, target, model, subject, subject_str);
-			}
 		}
-
 	}
 
 	return boost::optional<Path>(Path(path_str));

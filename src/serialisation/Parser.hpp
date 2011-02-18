@@ -56,17 +56,6 @@ public:
 		Shared::CommonInterface*      target,
 		const Glib::ustring&          str,
 		const Glib::ustring&          base_uri,
-		boost::optional<Raul::Path>   data_path=boost::optional<Raul::Path>(),
-		boost::optional<Raul::Path>   parent=boost::optional<Raul::Path>(),
-		boost::optional<Raul::Symbol> symbol=boost::optional<Raul::Symbol>(),
-		boost::optional<Properties>   data=boost::optional<Properties>());
-
-	virtual bool parse_update(
-		Ingen::Shared::World*         world,
-		Shared::CommonInterface*      target,
-		const Glib::ustring&          str,
-		const Glib::ustring&          base_uri,
-		boost::optional<Raul::Path>   data_path=boost::optional<Raul::Path>(),
 		boost::optional<Raul::Path>   parent=boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol=boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data=boost::optional<Properties>());
@@ -81,9 +70,8 @@ public:
 
 	typedef std::list<PatchRecord> PatchRecords;
 
-	virtual PatchRecords find_patches(
-			Ingen::Shared::World* world,
-			const Glib::ustring&  manifest_uri);
+	virtual PatchRecords find_patches(Ingen::Shared::World* world,
+	                                  const Glib::ustring&  manifest_uri);
 
 private:
 	boost::optional<Raul::Path> parse(

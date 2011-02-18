@@ -104,7 +104,6 @@ public:
 	const Quark doap_name;
 	const Quark ev_EventPort;
 	const Quark ingen_Internal;
-	const Quark ingen_LADSPAPlugin;
 	const Quark ingen_Node;
 	const Quark ingen_Patch;
 	const Quark ingen_Port;

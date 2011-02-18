@@ -254,22 +254,19 @@ ClientStore::put(const URI& uri, const Resource::Properties& properties)
 	/*LOG(info) << "PUT " << uri << " {" << endl;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	LOG(info) << "}" << endl;*/
+		LOG(info) << "}" << endl;*/
 
-	bool is_path = Path::is_valid(uri.str());
 	bool is_meta = ResourceImpl::is_meta_uri(uri);
 
-	if (!(is_path || is_meta)) {
-		const Atom& type = properties.find(_uris->rdf_type)->second;
-		if (type.type() == Atom::URI) {
-			const URI& type_uri = type.get_uri();
-			if (Plugin::type_from_uri(type_uri) != Plugin::NIL) {
-				SharedPtr<PluginModel> p(new PluginModel(uris(), uri, type_uri, properties));
-				add_plugin(p);
-				return;
-			}
+	// Check if uri is a plugin
+	const Atom& type = properties.find(_uris->rdf_type)->second;
+	if (type.type() == Atom::URI) {
+		const URI& type_uri = type.get_uri();
+		if (Plugin::type_from_uri(type_uri) != Plugin::NIL) {
+			SharedPtr<PluginModel> p(new PluginModel(uris(), uri, type_uri, properties));
+			add_plugin(p);
+			return;
 		} else {
-			LOG(error) << "Non-URI type " << type << endl;
 		}
 	}
 
