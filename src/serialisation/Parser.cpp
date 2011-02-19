@@ -513,12 +513,8 @@ Parser::parse_node(Ingen::Shared::World*                    world,
 		parse_patch(world, target, sub_model, sub_node,
 		            path.parent(), Raul::Symbol(path.symbol()));
 
-		cout << "DONE PARSING SUB PATCH FILE" << endl;
-
 		parse_patch(world, target, model, subject,
 		            path.parent(), Raul::Symbol(path.symbol()));
-
-		cout << "} SUB PATCH" << endl;
 	} else {
 		Resource::Properties props = get_properties(model, subject);
 		props.insert(make_pair(uris.rdf_type,
