@@ -88,7 +88,8 @@ private:
 	bool remove_child(SharedPtr<ObjectModel> c);
 
 	void add_connection(SharedPtr<ConnectionModel> cm);
-	void remove_connection(const Shared::Port* src_port, const Shared::Port* dst_port);
+	void remove_connection(const Shared::Port* src_port,
+	                       const Shared::Port* dst_port);
 
 	SharedPtr<Connections> _connections;
 	bool                   _editable;

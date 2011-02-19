@@ -17,28 +17,34 @@
 
 #include "raul/log.hpp"
 #include "raul/PathTable.hpp"
+
 #include "shared/LV2URIMap.hpp"
+
 #include "ClientStore.hpp"
+#include "NodeModel.hpp"
 #include "ObjectModel.hpp"
 #include "PatchModel.hpp"
-#include "NodeModel.hpp"
-#include "PortModel.hpp"
-#include "PluginModel.hpp"
 #include "PatchModel.hpp"
+#include "PluginModel.hpp"
+#include "PortModel.hpp"
 #include "SigClientInterface.hpp"
 
 #define LOG(s) s << "[ClientStore] "
+
+//#define INGEN_CLIENT_STORE_DUMP 1
 
 using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
 using namespace Shared;
+
 namespace Client {
 
-
-ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap> uris,
-		SharedPtr<EngineInterface> engine, SharedPtr<SigClientInterface> emitter)
+ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap>       uris,
+                         SharedPtr<Shared::EngineInterface> engine,
+                         SharedPtr<SigClientInterface>      emitter)
 	: _uris(uris)
 	, _engine(engine)
 	, _emitter(emitter)
@@ -61,14 +67,12 @@ ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap> uris,
 	CONNECT(activity, activity);
 }
 
-
 void
 ClientStore::clear()
 {
 	Store::clear();
 	_plugins->clear();
 }
-
 
 void
 ClientStore::add_object(SharedPtr<ObjectModel> object)
@@ -97,8 +101,9 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 
 	}
 
-	for (Resource::Properties::const_iterator i = object->properties().begin();
-			i != object->properties().end(); ++i)
+	typedef Shared::Resource::Properties::const_iterator Iterator;
+	for (Iterator i = object->properties().begin();
+	     i != object->properties().end(); ++i)
 		object->signal_property(i->first, i->second);
 
 	LOG(debug) << "Added " << object->path() << " {" << endl;
@@ -108,7 +113,6 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 	LOG(debug) << "}" << endl;
 }
 
-
 SharedPtr<ObjectModel>
 ClientStore::remove_object(const Path& path)
 {
@@ -116,12 +120,11 @@ ClientStore::remove_object(const Path& path)
 
 	if (i != end()) {
 		assert((*i).second->path() == path);
-		SharedPtr<ObjectModel> result = PtrCast<ObjectModel>((*i).second);
-		assert(result);
-		iterator descendants_end = find_descendants_end(i);
-		SharedPtr<Store::Objects> removed = yank(i, descendants_end);
+		SharedPtr<ObjectModel>    result  = PtrCast<ObjectModel>((*i).second);
+		iterator                  end     = find_descendants_end(i);
+		SharedPtr<Store::Objects> removed = yank(i, end);
 
-		LOG(debug) << "[ClientStore] Removing " << i->first << " {" << endl;
+		LOG(debug) << "Removing " << i->first << " {" << endl;
 		for (iterator i = removed->begin(); i != removed->end(); ++i) {
 			LOG(debug) << "\t" << i->first << endl;
 		}
@@ -148,7 +151,6 @@ ClientStore::remove_object(const Path& path)
 	}
 }
 
-
 SharedPtr<PluginModel>
 ClientStore::plugin(const URI& uri)
 {
@@ -159,7 +161,6 @@ ClientStore::plugin(const URI& uri)
 	else
 		return (*i).second;
 }
-
 
 SharedPtr<ObjectModel>
 ClientStore::object(const Path& path)
@@ -176,7 +177,7 @@ ClientStore::object(const Path& path)
 	}
 }
 
-SharedPtr<Resource>
+SharedPtr<Shared::Resource>
 ClientStore::resource(const URI& uri)
 {
 	if (Path::is_path(uri))
@@ -197,16 +198,14 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 	}
 }
 
-
 /* ****** Signal Handlers ******** */
-
 
 void
 ClientStore::del(const Path& path)
 {
 	SharedPtr<ObjectModel> removed = remove_object(path);
 	removed.reset();
-	debug << "[ClientStore] removed object " << path << ", count: " << removed.use_count();
+	LOG(debug) << "Removed object " << path << ", count: " << removed.use_count();
 }
 
 void
@@ -221,14 +220,15 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 		return;
 	}
 
-	iterator descendants_end = find_descendants_end(parent);
+	typedef Table<Path, SharedPtr<Shared::GraphObject> > Removed;
 
-	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
-			= yank(parent, descendants_end);
+	iterator           end     = find_descendants_end(parent);
+	SharedPtr<Removed> removed = yank(parent, end);
 
 	assert(removed->size() > 0);
 
-	for (Table<Path, SharedPtr<Shared::GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
+	typedef Table<Path, SharedPtr<Shared::GraphObject> > PathTable;
+	for (PathTable::iterator i = removed->begin(); i != removed->end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(old_path, child_old_path));
 
@@ -246,23 +246,25 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 	cram(*removed.get());
 }
 
-
 void
-ClientStore::put(const URI&                  uri,
-                 const Resource::Properties& properties,
-                 Resource::Graph             ctx)
+ClientStore::put(const URI&                          uri,
+                 const Shared::Resource::Properties& properties,
+                 Shared::Resource::Graph             ctx)
 {
-	typedef Resource::Properties::const_iterator iterator;
-	/*
+	typedef Resource::Properties::const_iterator Iterator;
+#ifdef INGEN_CLIENT_STORE_DUMP
 	LOG(info) << "PUT " << uri << " {" << endl;
-	for (iterator i = properties.begin(); i != properties.end(); ++i)
-		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	for (Iterator i = properties.begin(); i != properties.end(); ++i)
+		LOG(info) << '\t' << i->first << " = " << i->second
+		          << " :: " << i->second.type() << endl;
 	LOG(info) << "}" << endl;
-	*/
+#endif
 
 	bool is_patch, is_node, is_port, is_output;
 	PortType data_type(PortType::UNKNOWN);
-	ResourceImpl::type(uris(), properties, is_patch, is_node, is_port, is_output, data_type);
+	ResourceImpl::type(uris(), properties,
+	                   is_patch, is_node, is_port, is_output,
+	                   data_type);
 	// Check if uri is a plugin
 	const Atom& type = properties.find(_uris->rdf_type)->second;
 	if (type.type() == Atom::URI) {
@@ -299,13 +301,16 @@ ClientStore::put(const URI&                  uri,
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_node) {
-		const Resource::Properties::const_iterator p = properties.find(_uris->rdf_instanceOf);
+		const Iterator p = properties.find(_uris->rdf_instanceOf);
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == Atom::URI) {
 			if (!(plug = plugin(p->second.get_uri()))) {
 				LOG(warn) << "Unable to find plugin " << p->second.get_uri() << endl;
 				plug = SharedPtr<PluginModel>(
-						new PluginModel(uris(), p->second.get_uri(), _uris->ingen_nil, Resource::Properties()));
+					new PluginModel(uris(),
+					                p->second.get_uri(),
+					                _uris->ingen_nil,
+					                Resource::Properties()));
 				add_plugin(plug);
 			}
 
@@ -318,9 +323,11 @@ ClientStore::put(const URI&                  uri,
 	} else if (is_port) {
 		if (data_type != PortType::UNKNOWN) {
 			PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
-			const Resource::Properties::const_iterator i = properties.find(_uris->lv2_index);
+			const Iterator i = properties.find(_uris->lv2_index);
 			if (i != properties.end() && i->second.type() == Atom::INT) {
-				SharedPtr<PortModel> p(new PortModel(uris(), path, i->second.get_int32(), data_type, pdir));
+				const uint32_t index = i->second.get_int32();
+				SharedPtr<PortModel> p(
+					new PortModel(uris(), path, index, data_type, pdir));
 				p->set_properties(properties);
 				add_object(p);
 			} else {
@@ -335,17 +342,22 @@ ClientStore::put(const URI&                  uri,
 	}
 }
 
-
 void
-ClientStore::delta(const URI& uri, const Resource::Properties& remove, const Resource::Properties& add)
+ClientStore::delta(const URI&                  uri,
+                   const Resource::Properties& remove,
+                   const Resource::Properties& add)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	/*LOG(info) << "DELTA " << uri << " {" << endl;
+#ifdef INGEN_CLIENT_STORE_DUMP
+	LOG(info) << "DELTA " << uri << " {" << endl;
 	for (iterator i = remove.begin(); i != remove.end(); ++i)
-		LOG(info) << "    - " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+		LOG(info) << "    - " << i->first << " = " << i->second
+		          << " :: " << i->second.type() << endl;
 	for (iterator i = add.begin(); i != add.end(); ++i)
-		LOG(info) << "    + " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	LOG(info) << "}" << endl;*/
+		LOG(info) << "    + " << i->first << " = " << i->second
+		          << " :: " << i->second.type() << endl;
+	LOG(info) << "}" << endl;
+#endif
 
 	if (!Path::is_valid(uri.str())) {
 		LOG(error) << "Bad path `" << uri.str() << "'" << endl;
@@ -363,7 +375,6 @@ ClientStore::delta(const URI& uri, const Resource::Properties& remove, const Res
 	}
 }
 
-
 void
 ClientStore::set_property(const URI& subject_uri, const URI& predicate, const Atom& value)
 {
@@ -380,7 +391,6 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 	}
 }
 
-
 void
 ClientStore::activity(const Path& path)
 {
@@ -390,7 +400,6 @@ ClientStore::activity(const Path& path)
 	else
 		LOG(error) << "Activity for non-existent port " << path << endl;
 }
-
 
 SharedPtr<PatchModel>
 ClientStore::connection_patch(const Path& src_port_path, const Path& dst_port_path)
@@ -416,20 +425,15 @@ ClientStore::connection_patch(const Path& src_port_path, const Path& dst_port_pa
 	return patch;
 }
 
-
 bool
-ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_path)
+ClientStore::attempt_connection(const Path& src_port_path,
+                                const Path& dst_port_path)
 {
 	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
 	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
 
 	if (src_port && dst_port) {
-		assert(src_port->parent());
-		assert(dst_port->parent());
-
-		SharedPtr<PatchModel> patch = connection_patch(src_port_path, dst_port_path);
-		assert(patch);
-
+		SharedPtr<PatchModel>      patch = connection_patch(src_port_path, dst_port_path);
 		SharedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
 
 		src_port->connected_to(dst_port);
@@ -442,42 +446,30 @@ ClientStore::attempt_connection(const Path& src_port_path, const Path& dst_port_
 	return false;
 }
 
-
 void
-ClientStore::connect(const Path& src_port_path, const Path& dst_port_path)
+ClientStore::connect(const Path& src_path,
+                     const Path& dst_path)
 {
-	attempt_connection(src_port_path, dst_port_path);
+	attempt_connection(src_path, dst_path);
 }
 
-
 void
-ClientStore::disconnect(const Path& src_port_path, const Path& dst_port_path)
+ClientStore::disconnect(const Path& src_path,
+                        const Path& dst_path)
 {
-	// Find the ports and create a ConnectionModel just to get at the parent path
-	// finding logic in ConnectionModel.  So I'm lazy.
-
-	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
-	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
+	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_path));
+	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_path));
 
 	if (src_port)
 		src_port->disconnected_from(dst_port);
-	else
-		LOG(warn) << "Disconnection from non-existent src port " << src_port_path << endl;
 
 	if (dst_port)
-		dst_port->disconnected_from(dst_port);
-	else
-		LOG(warn) << "Disconnection from non-existent dst port " << dst_port_path << endl;
+		dst_port->disconnected_from(src_port);
 
-	SharedPtr<PatchModel> patch = connection_patch(src_port_path, dst_port_path);
-
+	SharedPtr<PatchModel> patch = connection_patch(src_path, dst_path);
 	if (patch)
 		patch->remove_connection(src_port.get(), dst_port.get());
-	else
-		LOG(error) << "Disconnection in non-existent patch: "
-			<< src_port_path << " -> " << dst_port_path << endl;
 }
-
 
 } // namespace Client
 } // namespace Ingen

@@ -19,14 +19,17 @@
 #define INGEN_CLIENT_CLIENTSTORE_HPP
 
 #include <cassert>
-#include <string>
 #include <list>
+#include <string>
+
 #include "raul/SharedPtr.hpp"
+
 #include <sigc++/sigc++.h>
+
+#include "interface/EngineInterface.hpp"
 #include "raul/Path.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
-#include "interface/EngineInterface.hpp"
 #include "shared/Store.hpp"
 
 namespace Raul { class Atom; }
@@ -37,24 +40,25 @@ namespace Shared { class GraphObject; }
 
 namespace Client {
 
-class SigClientInterface;
-class ObjectModel;
-class PluginModel;
-class PatchModel;
 class NodeModel;
+class ObjectModel;
+class PatchModel;
+class PluginModel;
 class PortModel;
-class ConnectionModel;
-
+class SigClientInterface;
 
 /** Automatically manages models of objects in the engine.
  *
  * \ingroup IngenClient
  */
-class ClientStore : public Shared::Store, public Shared::CommonInterface, public sigc::trackable {
+class ClientStore : public Shared::Store
+                  , public Shared::CommonInterface
+                  , public sigc::trackable {
 public:
-	ClientStore(SharedPtr<Shared::LV2URIMap> uris,
-			SharedPtr<Shared::EngineInterface> engine=SharedPtr<Shared::EngineInterface>(),
-			SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
+	ClientStore(
+		SharedPtr<Shared::LV2URIMap>       uris,
+		SharedPtr<Shared::EngineInterface> engine=SharedPtr<Shared::EngineInterface>(),
+		SharedPtr<SigClientInterface>      emitter=SharedPtr<SigClientInterface>());
 
 	SharedPtr<PluginModel>      plugin(const Raul::URI& uri);
 	SharedPtr<ObjectModel>      object(const Raul::Path& path);
@@ -106,7 +110,8 @@ private:
 
 	void add_plugin(SharedPtr<PluginModel> plugin);
 
-	SharedPtr<PatchModel> connection_patch(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
+	SharedPtr<PatchModel> connection_patch(const Raul::Path& src_port_path,
+	                                       const Raul::Path& dst_port_path);
 
 	void bundle_begin() {}
 	void bundle_end()   {}
@@ -115,7 +120,8 @@ private:
 	void object_moved(const Raul::Path& old_path, const Raul::Path& new_path);
 	void activity(const Raul::Path& path);
 
-	bool attempt_connection(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
+	bool attempt_connection(const Raul::Path& src_port_path,
+	                        const Raul::Path& dst_port_path);
 
 	SharedPtr<Shared::LV2URIMap>       _uris;
 	SharedPtr<Shared::EngineInterface> _engine;
@@ -123,7 +129,6 @@ private:
 
 	SharedPtr<Plugins> _plugins; ///< Map, keyed by plugin URI
 };
-
 
 } // namespace Client
 } // namespace Ingen
