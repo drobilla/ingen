@@ -628,8 +628,9 @@ PatchCanvas::select_all()
 void
 PatchCanvas::copy_selection()
 {
+	static const char* base_uri = "";
 	Serialiser serialiser(*App::instance().world(), App::instance().store());
-	serialiser.start_to_string(_patch->path(), "http://example.org/");
+	serialiser.start_to_string(_patch->path(), base_uri);
 
 	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {
 		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
@@ -646,7 +647,8 @@ PatchCanvas::copy_selection()
 			c != _selected_connections.end(); ++c) {
 		boost::shared_ptr<Connection> connection = boost::dynamic_pointer_cast<Connection>(*c);
 		if (connection) {
-			Sord::URI subject(*App::instance().world()->rdf_world(), _patch->path().str());
+			const Sord::URI subject(*App::instance().world()->rdf_world(),
+			                        base_uri);
 			serialiser.serialise_connection(subject, connection->model());
 		}
 	}
@@ -706,25 +708,26 @@ PatchCanvas::paste()
 	}
 
 	ClashAvoider avoider(*App::instance().store().get(), clipboard, &clipboard);
-	parser->parse_string(App::instance().world(), &avoider, str, Path().str(),
-			parent, symbol);
+	parser->parse_string(App::instance().world(), &avoider, str, "",
+	                     parent, symbol);
 
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
 		if (_patch->path().is_root() && i->first.is_root())
 			continue;
-		GraphObject::Properties::iterator x = i->second->properties().find(uris.ingenui_canvas_x);
+
+		GraphObject::Properties& props = i->second->properties();
+
+		GraphObject::Properties::iterator x = props.find(uris.ingenui_canvas_x);
 		if (x != i->second->properties().end())
 			x->second = x->second.get_float() + (20.0f * _paste_count);
-		GraphObject::Properties::iterator y = i->second->properties().find(uris.ingenui_canvas_y);
+
+		GraphObject::Properties::iterator y = props.find(uris.ingenui_canvas_y);
 		if (y != i->second->properties().end())
 			y->second = y->second.get_float() + (20.0f * _paste_count);
-		if (i->first.parent().is_root()) {
-			GraphObject::Properties::iterator s = i->second->properties().find(uris.ingen_selected);
-			if (s != i->second->properties().end())
-				s->second = true;
-			else
-				i->second->properties().insert(make_pair(uris.ingen_selected, true));
-		}
+
+		if (i->first.parent().is_root())
+			i->second->set_property(uris.ingen_selected, true);
+
 		builder.build(i->second);
 	}
 
@@ -733,7 +736,8 @@ PatchCanvas::paste()
 	assert(root);
 	for (Patch::Connections::const_iterator i = root->connections().begin();
 			i != root->connections().end(); ++i) {
-		App::instance().engine()->connect(i->second->src_port_path(), i->second->dst_port_path());
+		App::instance().engine()->connect(i->second->src_port_path(),
+		                                  i->second->dst_port_path());
 	}
 }
 

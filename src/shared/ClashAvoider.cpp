@@ -108,7 +108,9 @@ ClashAvoider::map_path(const Raul::Path& in)
 				std::stringstream ss;
 				ss << base_path << "_" << offset;
 				if (!exists(ss.str())) {
-					const string name = (base_path.length() > 1) ? base_path.symbol() : "_";
+					string name = base_path.symbol();
+					if (name == "")
+						name = "_";
 					string str = ss.str();
 					InsertRecord i = _symbol_map.insert(make_pair(in, str));
 					debug << "HIT: offset = " << offset << ", str = " << str << endl;
@@ -148,7 +150,7 @@ ClashAvoider::put(const Raul::URI&                    path,
                   const Shared::Resource::Properties& properties,
                   Resource::Graph                     ctx)
 {
-	_target.put(map_uri(path), properties);
+	_target.put(map_uri(path), properties, ctx);
 }
 
 

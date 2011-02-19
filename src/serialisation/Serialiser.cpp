@@ -252,11 +252,7 @@ Serialiser::finish()
 	if (_mode == TO_FILE) {
 		_model->write_to_file(_base_uri, "turtle");
 	} else {
-		char* c_str = _model->write_to_string("turtle");
-		if (c_str != NULL) {
-			ret = c_str;
-			free(c_str);
-		}
+		ret = _model->write_to_string("turtle");
 	}
 
 	delete _model;

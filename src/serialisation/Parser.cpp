@@ -238,8 +238,6 @@ Parser::parse(Ingen::Shared::World*                    world,
 		subject = model.base_uri();
 	} else if (data_path) {
 		subject = Sord::URI(*world->rdf_world(), data_path->chop_start("/"));
-	} else {
-		subject = nil;
 	}
 
 	Raul::Path path("/");
@@ -275,7 +273,9 @@ Parser::parse(Ingen::Shared::World*                    world,
 		if (types.find(patch_class) != types.end()) {
 			ret = parse_patch(world, target, model, subject, parent, symbol, data);
 		} else if (types.find(node_class) != types.end()) {
-			ret = parse_node(world, target, model, subject, path, data);
+			ret = parse_node(world, target, model,
+			                 subject, path.child(subject.to_string()),
+			                 data);
 		} else if (types.find(port_class) != types.end()) {
 			parse_properties(world, target, model, subject, path, data);
 			ret = path;
@@ -461,7 +461,6 @@ Parser::parse_patch(Ingen::Shared::World*                    world,
 		target->put(i->second.first, i->second.second);
 	}
 
-	//parse_properties(world, target, model, subject_node, patch_path, data);
 	parse_connections(world, target, model, subject_node, patch_path);
 
 	return patch_path;
