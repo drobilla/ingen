@@ -39,6 +39,8 @@ namespace Serialisation {
 
 class Parser {
 public:
+	Parser(Ingen::Shared::World& world);
+
 	virtual ~Parser() {}
 
 	typedef Shared::GraphObject::Properties Properties;
@@ -115,8 +117,6 @@ private:
 		Sord::Model&                    model,
 		const Sord::Node&               subject,
 		const Raul::Path&               patch);
-
-	bool skip_property(const Sord::Node& predicate);
 };
 
 } // namespace Serialisation

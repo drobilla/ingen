@@ -69,8 +69,8 @@ public:
 
 	void start_to_string(const Raul::Path& root, const std::string& base_uri);
 	void serialise(SharedPtr<Shared::GraphObject> object) throw (std::logic_error);
-	void serialise_connection(SharedPtr<Shared::GraphObject> parent,
-	                          SharedPtr<Shared::Connection>  c) throw (std::logic_error);
+	void serialise_connection(const Sord::Node&             parent,
+	                          SharedPtr<Shared::Connection> c) throw (std::logic_error);
 
 	std::string finish();
 
@@ -79,22 +79,24 @@ private:
 
 	void start_to_filename(const std::string& filename);
 
-	void serialise_patch(SharedPtr<Shared::Patch> p, const Sord::Node& id);
+	void serialise_patch(SharedPtr<Shared::Patch> p,
+	                     const Sord::Node&        id);
+
 	void serialise_node(SharedPtr<Shared::Node> n,
-	                    const Sord::Node& class_id, const Sord::Node& id);
-	void serialise_port(const Shared::Port* p, const Sord::Node& id);
-	void serialise_port_meta(const Shared::Port* p, const Sord::Node& id);
+	                    const Sord::Node&       class_id,
+	                    const Sord::Node&       id);
 
-	void serialise_meta_properties(Sord::Node        subject,
-	                               const Properties& properties);
+	void serialise_port(const Shared::Port*     p,
+	                    Shared::Resource::Graph context,
+	                    const Sord::Node&       id);
 
-	void serialise_properties(Sord::Node              subject,
-	                          const Shared::Resource* meta,
-	                          const Properties&       properties);
+	void serialise_properties(const Shared::GraphObject* o,
+	                          Shared::Resource::Graph    context,
+	                          Sord::Node                 id);
 
 	Sord::Node path_rdf_node(const Raul::Path& path);
 
-	void write_manifest(const std::string&       bundle_uri,
+	void write_manifest(const std::string&       bundle_path,
 	                    SharedPtr<Shared::Patch> patch,
 	                    const std::string&       patch_symbol);
 

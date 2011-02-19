@@ -95,11 +95,10 @@ uri_to_symbol(const std::string& uri)
 }
 
 void
-Serialiser::write_manifest(const std::string&       bundle_uri,
+Serialiser::write_manifest(const std::string&       bundle_path,
                            SharedPtr<Shared::Patch> patch,
                            const std::string&       patch_symbol)
 {
-	const string bundle_path(Glib::filename_from_uri(bundle_uri));
 	const string manifest_path(Glib::build_filename(bundle_path, "manifest.ttl"));
 	const string binary_path(Glib::Module::build_path("", "ingen_lv2"));
 
@@ -129,24 +128,56 @@ Serialiser::write_manifest(const std::string&       bundle_uri,
 	finish();
 }
 
+std::string
+normal_bundle_uri(const std::string& uri)
+{
+	std::string ret = uri;
+	size_t i;
+	while ((i = ret.find("/./")) != std::string::npos) {
+		ret = ret.substr(0, i) + ret.substr(i + 2);
+	}
+	const size_t last_slash = ret.find_last_of("/");
+	if (last_slash != std::string::npos) {
+		return ret.substr(0, last_slash);
+	} else {
+		return ret + "/";
+	}
+	return ret;
+}
+
 void
 Serialiser::write_bundle(SharedPtr<Shared::Patch> patch,
                          const std::string&       uri)
 {
-	string bundle_uri = uri;
-	if (bundle_uri[bundle_uri.length()-1] != '/')
-		bundle_uri.append("/");
+	Glib::ustring path = "";
+	try {
+		path = Glib::filename_from_uri(uri);
+	} catch (...) {
+		LOG(error) << "Illegal file URI `" << uri << "'" << endl;
+		return;
+	}
 
-	g_mkdir_with_parents(Glib::filename_from_uri(bundle_uri).c_str(), 0744);
+	if (Glib::file_test(path, Glib::FILE_TEST_EXISTS)
+		&& !Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
+		path = Glib::path_get_dirname(path);
+	}
+
+	if (path[path.length() - 1] != '/')
+		path.append("/");
+
+	g_mkdir_with_parents(path.c_str(), 0744);
 
 	const string symbol    = uri_to_symbol(uri);
-	const string root_file = bundle_uri + symbol + INGEN_PATCH_FILE_EXT;
+	const string root_file = path + symbol + INGEN_PATCH_FILE_EXT;
 
 	start_to_filename(root_file);
+	const Path old_root_path = _root_path;
+	_root_path = patch->path();
 	serialise_patch(patch, Sord::URI(_model->world(), ""));
+	_root_path = old_root_path;
 	finish();
 
-	write_manifest(bundle_uri, patch, symbol);
+	write_manifest(path, patch, symbol);
 }
 
 string
@@ -160,13 +191,9 @@ Serialiser::to_string(SharedPtr<GraphObject>         object,
 	Sord::URI base_rdf_node(_model->world(), base_uri);
 	for (GraphObject::Properties::const_iterator v = extra_rdf.begin();
 	     v != extra_rdf.end(); ++v) {
-		if (v->first.find(":") != string::npos) {
-			_model->add_statement(base_rdf_node,
-			                      AtomRDF::atom_to_node(*_model, v->first),
-			                      AtomRDF::atom_to_node(*_model, v->second));
-		} else {
-			LOG(warn) << "Not serialising extra RDF with key '" << v->first << "'" << endl;
-		}
+		_model->add_statement(base_rdf_node,
+		                      AtomRDF::atom_to_node(*_model, v->first),
+		                      AtomRDF::atom_to_node(*_model, v->second));
 	}
 
 	return finish();
@@ -244,7 +271,8 @@ Serialiser::path_rdf_node(const Path& path)
 {
 	assert(_model);
 	assert(path.is_child_of(_root_path));
-	return Sord::URI(_model->world(), path.chop_scheme().substr(1));
+	const Path rel_path(path.relative_to_base(_root_path));
+	return Sord::URI(_model->world(), rel_path.chop_scheme().substr(1));
 }
 
 void
@@ -269,7 +297,7 @@ Serialiser::serialise(SharedPtr<GraphObject> object) throw (std::logic_error)
 
 	SharedPtr<Shared::Port> port = PtrCast<Shared::Port>(object);
 	if (port) {
-		serialise_port(port.get(), path_rdf_node(port->path()));
+		serialise_port(port.get(), Resource::DEFAULT, path_rdf_node(port->path()));
 		return;
 	}
 
@@ -299,7 +327,8 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 	if (s == patch->properties().end()
 	    || !s->second.type() == Atom::STRING
 	    || !Symbol::is_valid(s->second.get_string())) {
-		symbol = Glib::path_get_basename(Glib::filename_from_uri(_model->base_uri().to_c_string()));
+		const string path = Glib::filename_from_uri(_model->base_uri().to_c_string());
+		symbol = Glib::path_get_basename(path);
 		symbol = Symbol::symbolify(symbol.substr(0, symbol.find('.')));
 		_model->add_statement(
 			patch_id,
@@ -310,12 +339,12 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 	}
 
 	// If the patch has no doap:name (required by LV2), use the symbol
-	if (patch->meta().properties().find(uris.doap_name) == patch->meta().properties().end())
+	if (patch->properties().find(uris.doap_name) == patch->properties().end())
 		_model->add_statement(patch_id,
 		                      AtomRDF::atom_to_node(*_model, uris.doap_name),
 		                      Sord::Literal(world, symbol));
 
-	serialise_properties(patch_id, NULL, patch->meta().properties());
+	serialise_properties(patch.get(), Resource::INTERNAL, patch_id);
 
 	for (Store::const_iterator n = _store->children_begin(patch);
 	     n != _store->children_end(patch); ++n) {
@@ -367,10 +396,6 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 		}
 	}
 
-	assert(_model);
-
-	bool root = (patch->path() == _root_path);
-
 	for (uint32_t i = 0; i < patch->num_ports(); ++i) {
 		Port* p = patch->port(i);
 		const Sord::Node port_id = path_rdf_node(p->path());
@@ -382,14 +407,12 @@ Serialiser::serialise_patch(SharedPtr<Shared::Patch> patch, const Sord::Node& pa
 		_model->add_statement(patch_id,
 		                      Sord::URI(world, NS_LV2 "port"),
 		                      port_id);
-		serialise_port_meta(p, port_id);
-		if (root)
-			serialise_properties(port_id, &p->meta(), p->properties());
+		serialise_port(p, Resource::INTERNAL, port_id);
 	}
 
 	for (Shared::Patch::Connections::const_iterator c = patch->connections().begin();
 	     c != patch->connections().end(); ++c) {
-		serialise_connection(patch, c->second);
+		serialise_connection(patch_id, c->second);
 	}
 }
 
@@ -408,96 +431,72 @@ Serialiser::serialise_node(SharedPtr<Shared::Node> node,
 	                      Sord::Curie(_model->world(), "lv2:symbol"),
 	                      Sord::Literal(_model->world(), node->path().symbol()));
 
-	serialise_properties(node_id, &node->meta(), node->properties());
+	serialise_properties(node.get(), Resource::EXTERNAL, node_id);
 
 	for (uint32_t i = 0; i < node->num_ports(); ++i) {
 		Port* const      p       = node->port(i);
 		const Sord::Node port_id = path_rdf_node(p->path());
-		serialise_port(p, port_id);
+		serialise_port(p, Resource::EXTERNAL, port_id);
 		_model->add_statement(node_id,
 		                      Sord::Curie(_model->world(), "lv2:port"),
 		                      port_id);
 	}
 }
 
-/** Serialise a port on a Node */
 void
-Serialiser::serialise_port(const Port* port, const Sord::Node& port_id)
+Serialiser::serialise_port(const Port*             port,
+                           Shared::Resource::Graph context,
+                           const Sord::Node&       port_id)
 {
 	Sord::World& world = _model->world();
 
-	if (port->is_input())
+	if (port->is_input()) {
 		_model->add_statement(port_id,
 		                      Sord::Curie(world, "rdf:type"),
 		                      Sord::Curie(world, "lv2:InputPort"));
-	else
+	} else {
 		_model->add_statement(port_id,
 		                      Sord::Curie(world, "rdf:type"),
 		                      Sord::Curie(world, "lv2:OutputPort"));
+	}
 
 	for (Port::PortTypes::const_iterator i = port->types().begin();
-	     i != port->types().end(); ++i)
+	     i != port->types().end(); ++i) {
 		_model->add_statement(port_id,
 		                      Sord::Curie(world, "rdf:type"),
 		                      Sord::URI(world, i->uri().str()));
+	}
 
 	_model->add_statement(port_id,
 	                      Sord::Curie(world, "lv2:symbol"),
 	                      Sord::Literal(world, port->path().symbol()));
 
-	serialise_properties(port_id, &port->meta(), port->properties());
-}
+	serialise_properties(port, context, port_id);
 
-/** Serialise a port on a Patch */
-void
-Serialiser::serialise_port_meta(const Port* port, const Sord::Node& port_id)
-{
-	Sord::World& world = _model->world();
+	if (context == Resource::INTERNAL) {
+		_model->add_statement(
+			port_id,
+			Sord::Curie(world, "lv2:index"),
+			AtomRDF::atom_to_node(*_model, Atom((int)port->index())));
 
-	if (port->is_input())
-		_model->add_statement(port_id,
-		                      Sord::Curie(world, "rdf:type"),
-		                      Sord::Curie(world, "lv2:InputPort"));
-	else
-		_model->add_statement(port_id,
-		                      Sord::Curie(world, "rdf:type"),
-		                      Sord::Curie(world, "lv2:OutputPort"));
-
-	for (Port::PortTypes::const_iterator i = port->types().begin();
-	     i != port->types().end(); ++i)
-		_model->add_statement(port_id,
-		                      Sord::Curie(world, "rdf:type"),
-		                      Sord::URI(world, i->uri().str()));
-
-	_model->add_statement(
-		port_id,
-		Sord::Curie(world, "lv2:index"),
-		AtomRDF::atom_to_node(*_model, Atom((int)port->index())));
-
-	_model->add_statement(
-		port_id,
-		Sord::Curie(world, "lv2:symbol"),
-		Sord::Literal(world, port->path().symbol()));
-
-	if (!port->get_property(NS_LV2 "default").is_valid()) {
-		if (port->is_input()) {
-			if (port->value().is_valid()) {
-				_model->add_statement(
-					port_id,
-					Sord::Curie(world, "lv2:default"),
-					AtomRDF::atom_to_node(*_model, port->value()));
-			} else if (port->is_a(PortType::CONTROL)) {
-				LOG(warn) << "Port " << port->path() << " has no lv2:default" << endl;
+		if (!port->get_property(NS_LV2 "default").is_valid()) {
+			if (port->is_input()) {
+				if (port->value().is_valid()) {
+					_model->add_statement(
+						port_id,
+						Sord::Curie(world, "lv2:default"),
+						AtomRDF::atom_to_node(*_model, port->value()));
+				} else if (port->is_a(PortType::CONTROL)) {
+					LOG(warn) << "Port " << port->path() << " has no lv2:default" << endl;
+				}
 			}
 		}
 	}
-
-	serialise_properties(port_id, NULL, port->meta().properties());
 }
 
 void
-Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
-                                 SharedPtr<Connection>  connection) throw (std::logic_error)
+Serialiser::serialise_connection(const Sord::Node&     parent,
+                                 SharedPtr<Connection> connection) throw (std::logic_error)
 {
 	Sord::World& world = _model->world();
 
@@ -515,38 +514,35 @@ Serialiser::serialise_connection(SharedPtr<GraphObject> parent,
 	                      Sord::Curie(world, "ingen:destination"),
 	                      dst);
 
-	if (parent) {
-		const Sord::Node parent_id = path_rdf_node(parent->path());
-		_model->add_statement(parent_id,
-		                      Sord::Curie(world, "ingen:connection"),
-		                      connection_id);
-	} else {
-		_model->add_statement(connection_id,
-		                      Sord::Curie(world, "rdf:type"),
-		                      Sord::Curie(world, "ingen:Connection"));
-	}
+	_model->add_statement(parent,
+	                      Sord::Curie(world, "ingen:connection"),
+	                      connection_id);
+}
+
+static bool
+skip_property(const Sord::Node& predicate)
+{
+	return (predicate.to_string() == "http://drobilla.net/ns/ingen#document");
 }
 
 void
-Serialiser::serialise_properties(Sord::Node                     subject,
-                                 const Shared::Resource*        meta,
-                                 const GraphObject::Properties& properties)
+Serialiser::serialise_properties(const Shared::GraphObject* o,
+                                 Shared::Resource::Graph    context,
+                                 Sord::Node                 id)
 {
-	for (GraphObject::Properties::const_iterator v = properties.begin();
-	     v != properties.end(); ++v) {
-		if (v->second.is_valid()) {
-			if (!meta || !meta->has_property(v->first.str(), v->second)) {
-				const Sord::URI  key(_model->world(), v->first.str());
-				const Sord::Node value(AtomRDF::atom_to_node(*_model, v->second));
-				if (value.is_valid()) {
-					_model->add_statement(subject, key, value);
-				} else {
-					LOG(warn) << "Can not serialise variable '" << v->first << "' :: "
-					          << (int)v->second.type() << endl;
-				}
+	const GraphObject::Properties props = o->properties(context);
+
+	typedef GraphObject::Properties::const_iterator iterator;
+	for (iterator v = props.begin(); v != props.end(); ++v) {
+		const Sord::URI  key(_model->world(), v->first.str());
+		const Sord::Node value(AtomRDF::atom_to_node(*_model, v->second));
+		if (!skip_property(key)) {
+			if (value.is_valid()) {
+				_model->add_statement(id, key, value);
+			} else {
+				LOG(warn) << "Can not serialise variable '" << v->first << "' :: "
+				          << (int)v->second.type() << endl;
 			}
-		} else {
-			LOG(warn) << "Property '" << v->first << "' has no value" << endl;
 		}
 	}
 }

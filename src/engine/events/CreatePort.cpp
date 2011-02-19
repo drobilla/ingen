@@ -110,11 +110,8 @@ CreatePort::pre_process()
 				&& poly_i->second.get_bool());
 
 		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(), _data_type, buffer_size, _is_output, polyphonic);
-		if (_patch->parent())
-			_patch_port->set_property(uris.rdf_instanceOf, _patch_port->meta_uri());
 
 		_patch_port->properties().insert(_properties.begin(), _properties.end());
-		_patch_port->meta().properties().insert(_properties.begin(), _properties.end());
 
 		assert(index_i->second == Atom((int)_patch_port->index()));
 

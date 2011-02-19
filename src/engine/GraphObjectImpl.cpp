@@ -35,7 +35,6 @@ GraphObjectImpl::GraphObjectImpl(Shared::LV2URIMap& uris,
 	, _parent(parent)
 	, _path(parent ? parent->path().child(symbol) : "/")
 	, _symbol(symbol)
-	, _meta(uris, ResourceImpl::meta_uri(uri()))
 {
 }
 
@@ -43,22 +42,23 @@ GraphObjectImpl::GraphObjectImpl(Shared::LV2URIMap& uris,
 void
 GraphObjectImpl::add_meta_property(const Raul::URI& key, const Atom& value)
 {
-	_meta.add_property(key, value);
+	add_property(key, Resource::Property(value, Resource::INTERNAL));
 }
 
 
 void
 GraphObjectImpl::set_meta_property(const Raul::URI& key, const Atom& value)
 {
-	_meta.set_property(key, value);
+	set_property(key, Resource::Property(value, Resource::INTERNAL));
 }
 
 
 const Atom&
 GraphObjectImpl::get_property(const Raul::URI& key) const
 {
+	static const Atom null_atom;
 	Resource::Properties::const_iterator i = properties().find(key);
-	return (i != properties().end()) ? i->second : _meta.get_property(key);
+	return (i != properties().end()) ? i->second : null_atom;
 }
 
 

@@ -39,15 +39,11 @@ class GraphObject : public Raul::Deletable
                   , public virtual Resource
 {
 public:
-	virtual const Resource& meta() const = 0;
-	virtual       Resource& meta()       = 0;
-
 	virtual void set_path(const Raul::Path& path) = 0;
 
-	virtual const Raul::Path&   path()       const = 0;
-	virtual const Raul::Symbol& symbol()     const = 0;
-
-	virtual GraphObject* graph_parent() const = 0;
+	virtual const Raul::Path&   path()         const = 0;
+	virtual const Raul::Symbol& symbol()       const = 0;
+	virtual GraphObject*        graph_parent() const = 0;
 };
 
 

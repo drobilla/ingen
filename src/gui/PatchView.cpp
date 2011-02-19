@@ -77,10 +77,6 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 
 	_poly_spin->set_value(patch->internal_poly());
 
-	for (GraphObject::Properties::const_iterator i = patch->meta().properties().begin();
-			i != patch->meta().properties().end(); ++i)
-		property_changed(i->first, i->second);
-
 	for (GraphObject::Properties::const_iterator i = patch->properties().begin();
 			i != patch->properties().end(); ++i)
 		property_changed(i->first, i->second);

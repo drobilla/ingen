@@ -62,9 +62,6 @@ public:
 	void        add_property(const Raul::URI& key, const Raul::Atom& value);
 	Raul::Atom& set_meta_property(const Raul::URI& key, const Raul::Atom& value);
 
-	Resource&              meta()             { return _meta; }
-	const Resource&        meta()       const { return _meta; }
-	const Raul::URI&       meta_uri()   const { return _meta.uri(); }
 	const Raul::Path&      path()       const { return _path; }
 	const Raul::Symbol&    symbol()     const { return _symbol; }
 	SharedPtr<ObjectModel> parent()     const { return _parent; }

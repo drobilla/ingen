@@ -157,13 +157,11 @@ QueuedEngineInterface::bundle_end()
 
 
 void
-QueuedEngineInterface::put(const URI&                  uri,
-                           const Resource::Properties& properties)
+QueuedEngineInterface::put(const URI&                    uri,
+                           const Resource::Properties&   properties,
+                           const Shared::Resource::Graph ctx)
 {
-	bool meta = ResourceImpl::is_meta_uri(uri);
-	URI  subject(meta ? (string("path:/") + uri.substr(6)) : uri.str());
-
-	push_queued(new Events::SetMetadata(_engine, _request, now(), true, meta, subject, properties));
+	push_queued(new Events::SetMetadata(_engine, _request, now(), true, ctx, uri, properties));
 }
 
 
@@ -172,10 +170,7 @@ QueuedEngineInterface::delta(const URI&                          uri,
                              const Shared::Resource::Properties& remove,
                              const Shared::Resource::Properties& add)
 {
-	bool meta = ResourceImpl::is_meta_uri(uri);
-	URI  subject(meta ? (string("path:/") + uri.substr(6)) : uri.str());
-
-	push_queued(new Events::SetMetadata(_engine, _request, now(), false, meta, subject, add, remove));
+	push_queued(new Events::SetMetadata(_engine, _request, now(), false, Resource::DEFAULT, uri, add, remove));
 }
 
 
@@ -224,14 +219,11 @@ QueuedEngineInterface::set_property(const URI&  uri,
                                     const URI&  predicate,
                                     const Atom& value)
 {
-	size_t hash = uri.find("#");
-	bool   meta = (hash != string::npos);
-	Path path = meta ? (string("/") + path.chop_start("/")) : uri.str();
 	Resource::Properties remove;
 	remove.insert(make_pair(predicate, _engine.world()->uris()->wildcard));
 	Resource::Properties add;
 	add.insert(make_pair(predicate, value));
-	push_queued(new Events::SetMetadata(_engine, _request, now(), false, meta, path, add, remove));
+	push_queued(new Events::SetMetadata(_engine, _request, now(), false, Resource::DEFAULT, uri, add, remove));
 }
 
 // Requests //
@@ -257,13 +249,7 @@ QueuedEngineInterface::get(const URI& uri)
 void
 QueuedEngineInterface::request_property(const URI& uri, const URI& key)
 {
-	size_t hash = uri.find("#");
-	bool   meta = (hash != string::npos);
-	const string path_str = string("/") + uri.chop_start("/");
-	if (meta && Path::is_valid(path_str))
-		push_queued(new Events::RequestMetadata(_engine, _request, now(), meta, path_str, key));
-	else
-		push_queued(new Events::RequestMetadata(_engine, _request, now(), meta, uri, key));
+	push_queued(new Events::RequestMetadata(_engine, _request, now(), Resource::DEFAULT, uri, key));
 }
 
 

@@ -135,7 +135,8 @@ OSCEngineSender::quit()
 
 void
 OSCEngineSender::put(const Raul::URI&                    path,
-                     const Shared::Resource::Properties& properties)
+                     const Shared::Resource::Properties& properties,
+                     Shared::Resource::Graph             ctx)
 {
 	typedef Shared::Resource::Properties::const_iterator iterator;
 	lo_message m = lo_message_new();

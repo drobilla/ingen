@@ -97,10 +97,6 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 
 	}
 
-	for (Resource::Properties::const_iterator i = object->meta().properties().begin();
-			i != object->meta().properties().end(); ++i)
-		object->signal_property(i->first, i->second);
-
 	for (Resource::Properties::const_iterator i = object->properties().begin();
 			i != object->properties().end(); ++i)
 		object->signal_property(i->first, i->second);
@@ -252,44 +248,47 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 
 
 void
-ClientStore::put(const URI& uri, const Resource::Properties& properties)
+ClientStore::put(const URI&                  uri,
+                 const Resource::Properties& properties,
+                 Resource::Graph             ctx)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	/*LOG(info) << "PUT " << uri << " {" << endl;
+	/*
+	LOG(info) << "PUT " << uri << " {" << endl;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-		LOG(info) << "}" << endl;*/
-	
+	LOG(info) << "}" << endl;
+	*/
+
+	bool is_patch, is_node, is_port, is_output;
+	PortType data_type(PortType::UNKNOWN);
+	ResourceImpl::type(uris(), properties, is_patch, is_node, is_port, is_output, data_type);
 	// Check if uri is a plugin
 	const Atom& type = properties.find(_uris->rdf_type)->second;
 	if (type.type() == Atom::URI) {
-		const URI& type_uri = type.get_uri();
-		if (Plugin::type_from_uri(type_uri) != Plugin::NIL) {
+		const URI&         type_uri    = type.get_uri();
+		const Plugin::Type plugin_type = Plugin::type_from_uri(type_uri);
+		if (plugin_type == Plugin::Patch) {
+			is_patch = true;
+		} else if (plugin_type != Plugin::NIL) {
 			SharedPtr<PluginModel> p(new PluginModel(uris(), uri, type_uri, properties));
 			add_plugin(p);
 			return;
 		}
 	}
 
-	bool is_meta = ResourceImpl::is_meta_uri(uri);
-
-	string path_str = is_meta ? (string("/") + uri.chop_start("#")) : uri.str();
-	if (!Path::is_valid(path_str)) {
-		LOG(error) << "Bad path: " << uri.str() << " - " << path_str << endl;
+	if (!Path::is_valid(uri.str())) {
+		LOG(error) << "Bad path `" << uri.str() << "'" << endl;
 		return;
 	}
 
-	Path path(is_meta ? (string("/") + uri.chop_start("#")) : uri.str());
+	const Path path(uri.str());
 
 	SharedPtr<ObjectModel> obj = PtrCast<ObjectModel>(object(path));
 	if (obj) {
 		obj->set_properties(properties);
 		return;
 	}
-
-	bool is_patch, is_node, is_port, is_output;
-	PortType data_type(PortType::UNKNOWN);
-	ResourceImpl::type(uris(), properties, is_patch, is_node, is_port, is_output, data_type);
 
 	if (path.is_root()) {
 		is_patch = true;
@@ -347,14 +346,13 @@ ClientStore::delta(const URI& uri, const Resource::Properties& remove, const Res
 	for (iterator i = add.begin(); i != add.end(); ++i)
 		LOG(info) << "    + " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
 	LOG(info) << "}" << endl;*/
-	bool is_meta = ResourceImpl::is_meta_uri(uri);
-	string path_str = is_meta ? (string("/") + uri.chop_start("#")) : uri.str();
-	if (!Path::is_valid(path_str)) {
-		LOG(error) << "Bad path: " << uri.str() << " - " << path_str << endl;
+
+	if (!Path::is_valid(uri.str())) {
+		LOG(error) << "Bad path `" << uri.str() << "'" << endl;
 		return;
 	}
 
-	Path path(is_meta ? (string("/") + uri.chop_start("#")) : uri.str());
+	const Path path(uri.str());
 
 	SharedPtr<ObjectModel> obj = object(path);
 	if (obj) {
@@ -370,23 +368,15 @@ void
 ClientStore::set_property(const URI& subject_uri, const URI& predicate, const Atom& value)
 {
 	SharedPtr<Resource> subject = resource(subject_uri);
-
-	size_t hash = subject_uri.find("#");
-	if (!value.is_valid()) {
-		LOG(error) << "Property '" << predicate << "' is invalid" << endl;
-	} else if (subject) {
+	if (subject) {
 		subject->set_property(predicate, value);
-	} else if (ResourceImpl::is_meta_uri(subject_uri)) {
-		Path instance_path = string("/") + subject_uri.substr(hash + 1);
-		SharedPtr<ObjectModel> om = PtrCast<ObjectModel>(subject);
-		if (om)
-			om->meta().set_property(predicate, value);
 	} else {
 		SharedPtr<PluginModel> plugin = this->plugin(subject_uri);
 		if (plugin)
 			plugin->set_property(predicate, value);
 		else
-			LOG(warn) << "Property '" << predicate << "' for unknown object " << subject_uri << endl;
+			LOG(warn) << "Property '" << predicate << "' for unknown object "
+			          << subject_uri << endl;
 	}
 }
 

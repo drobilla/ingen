@@ -49,7 +49,8 @@ public:
 	// Object commands
 
 	virtual void put(const Raul::URI&            path,
-	                 const Resource::Properties& properties);
+	                 const Resource::Properties& properties,
+	                 Resource::Graph             ctx=Resource::DEFAULT);
 
 	virtual void delta(const Raul::URI&                    path,
 	                   const Shared::Resource::Properties& remove,

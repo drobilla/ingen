@@ -64,10 +64,6 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 	ret->set_port(port);
 	ret->set_menu(port->menu());
 
-	for (GraphObject::Properties::const_iterator m = model->meta().properties().begin();
-			m != model->meta().properties().end(); ++m)
-		ret->property_changed(m->first, m->second);
-
 	for (GraphObject::Properties::const_iterator m = model->properties().begin();
 			m != model->properties().end(); ++m)
 		ret->property_changed(m->first, m->second);
@@ -104,7 +100,7 @@ PatchPortModule::store_location()
 		Shared::Resource::Properties props;
 		props.insert(make_pair(uris.ingenui_canvas_x, Atom(x)));
 		props.insert(make_pair(uris.ingenui_canvas_y, Atom(y)));
-		App::instance().engine()->put(_model->meta_uri(), props);
+		App::instance().engine()->put(_model->path(), props, Resource::INTERNAL);
 	}
 }
 

@@ -133,7 +133,7 @@ public:
 
 	void raise_set_by_user_flag() { _set_by_user = true; }
 
-	Context::ID context() const            { return _context; }
+	Context::ID context() const { return _context; }
 	void        set_context(Context::ID c);
 
 	BufferFactory& bufs() const { return _bufs; }

@@ -72,7 +72,8 @@ public:
 	// CommonInterface object commands
 
 	virtual void put(const Raul::URI&                    path,
-	                 const Shared::Resource::Properties& properties);
+	                 const Shared::Resource::Properties& properties,
+	                 const Shared::Resource::Graph       g=Shared::Resource::DEFAULT);
 
 	virtual void delta(const Raul::URI&                    path,
 	                   const Shared::Resource::Properties& remove,

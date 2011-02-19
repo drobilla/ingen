@@ -645,8 +645,10 @@ PatchCanvas::copy_selection()
 	for (list<boost::shared_ptr<FlowCanvas::Connection> >::iterator c = _selected_connections.begin();
 			c != _selected_connections.end(); ++c) {
 		boost::shared_ptr<Connection> connection = boost::dynamic_pointer_cast<Connection>(*c);
-		if (connection)
-			serialiser.serialise_connection(_patch, connection->model());
+		if (connection) {
+			Sord::URI subject(*App::instance().world()->rdf_world(), _patch->path().str());
+			serialiser.serialise_connection(subject, connection->model());
+		}
 	}
 
 	string result = serialiser.finish();

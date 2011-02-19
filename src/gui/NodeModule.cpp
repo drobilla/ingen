@@ -94,9 +94,6 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	else
 		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
 
-	for (GraphObject::Properties::const_iterator m = node->meta().properties().begin(); m != node->meta().properties().end(); ++m)
-		ret->property_changed(m->first, m->second);
-
 	for (GraphObject::Properties::const_iterator m = node->properties().begin(); m != node->properties().end(); ++m)
 		ret->property_changed(m->first, m->second);
 
@@ -392,6 +389,7 @@ NodeModule::store_location()
 		add.insert(make_pair(uris.ingenui_canvas_x, Atom(x)));
 		add.insert(make_pair(uris.ingenui_canvas_y, Atom(y)));
 		App::instance().engine()->delta(_node->path(), remove, add);
+		// FIXME: context
 	}
 }
 

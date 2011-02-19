@@ -91,7 +91,7 @@ NodeImpl::activate(BufferFactory& bufs)
 	assert(!_activated);
 	_activated = true;
 
-	for (unsigned long p = 0; p < num_ports(); ++p) {
+	for (uint32_t p = 0; p < num_ports(); ++p) {
 		PortImpl* const port = _ports->at(p);
 		port->setup_buffers(bufs, port->poly());
 		port->connect_buffers();
@@ -130,8 +130,9 @@ NodeImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (!_polyphonic)
 		poly = 1;
 
-	for (size_t i = 0; i < _ports->size(); ++i)
-		_ports->at(i)->prepare_poly(bufs, poly);
+	if (_ports)
+		for (size_t i = 0; i < _ports->size(); ++i)
+			_ports->at(i)->prepare_poly(bufs, poly);
 
 	return true;
 }
@@ -147,8 +148,9 @@ NodeImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 	_polyphony = poly;
 
-	for (size_t i = 0; i < num_ports(); ++i)
-		_ports->at(i)->apply_poly(maid, poly);
+	if (_ports)
+		for (size_t i = 0; i < num_ports(); ++i)
+			_ports->at(i)->apply_poly(maid, poly);
 
 	return true;
 }

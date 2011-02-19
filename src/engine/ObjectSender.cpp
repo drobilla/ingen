@@ -63,8 +63,13 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 	if (bundle)
 		client->transfer_begin();
 
-	client->put(patch->meta_uri(), patch->meta().properties());
-	client->put(patch->path(),     patch->properties());
+	client->put(patch->path(),
+	            patch->properties(Resource::INTERNAL),
+	            Resource::INTERNAL);
+
+	client->put(patch->path(),
+	            patch->properties(Resource::EXTERNAL),
+	            Resource::EXTERNAL);
 
 	if (recursive) {
 		// Send nodes
@@ -130,11 +135,6 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 
 	if (bundle)
 		client->bundle_begin();
-
-	PatchImpl* graph_parent = dynamic_cast<PatchImpl*>(port->parent_node());
-
-	if (graph_parent)
-		client->put(port->meta_uri(), port->meta().properties());
 
 	client->put(port->path(), port->properties());
 

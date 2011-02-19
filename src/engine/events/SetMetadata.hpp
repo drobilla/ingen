@@ -69,7 +69,7 @@ public:
 			SharedPtr<Request>                  request,
 			SampleCount                         timestamp,
 			bool                                create,
-			bool                                meta,
+			Shared::Resource::Graph             context,
 			const Raul::URI&                    subject,
 			const Shared::Resource::Properties& properties,
 			const Shared::Resource::Properties& remove=Shared::Resource::Properties());
@@ -112,7 +112,7 @@ private:
 	CompiledPatch*               _compiled_patch;
 	std::string                  _error_predicate;
 	bool                         _create;
-	bool                         _is_meta;
+	Shared::Resource::Graph      _context;
 
 	SharedPtr<ControlBindings::Bindings> _old_bindings;
 };

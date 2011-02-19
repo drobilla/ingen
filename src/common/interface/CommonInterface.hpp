@@ -46,7 +46,8 @@ public:
 	virtual void bundle_end() = 0;
 
 	virtual void put(const Raul::URI&            uri,
-	                 const Resource::Properties& properties) = 0;
+	                 const Resource::Properties& properties,
+	                 Resource::Graph             ctx=Resource::DEFAULT) = 0;
 
 	virtual void delta(const Raul::URI&            uri,
 	                   const Resource::Properties& remove,

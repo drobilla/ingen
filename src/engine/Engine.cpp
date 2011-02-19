@@ -179,9 +179,11 @@ Engine::activate()
 	PatchImpl* root_patch = _driver->root_patch();
 	if (!root_patch) {
 		root_patch = new PatchImpl(*this, "root", 1, NULL, _driver->sample_rate(), 1);
-		root_patch->meta().set_property(uris.rdf_type, uris.ingen_Patch);
-		root_patch->meta().set_property(uris.ingen_polyphony, Raul::Atom(int32_t(1)));
-		root_patch->set_property(uris.rdf_type, uris.ingen_Node);
+		root_patch->set_property(uris.rdf_type,
+		                         Resource::Property(uris.ingen_Patch, Resource::INTERNAL));
+		root_patch->set_property(uris.ingen_polyphony,
+		                         Resource::Property(Raul::Atom(int32_t(1)),
+		                                            Resource::INTERNAL));
 		root_patch->activate(*_buffer_factory);
 		_world->store()->add(root_patch);
 		root_patch->compiled_patch(root_patch->compile());
@@ -197,8 +199,10 @@ Engine::activate()
 		Shared::Resource::Properties in_properties(control_properties);
 		in_properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
 		in_properties.insert(make_pair(uris.lv2_index, 0));
-		in_properties.insert(make_pair(uris.ingenui_canvas_x, 32.0f));
-		in_properties.insert(make_pair(uris.ingenui_canvas_y, 32.0f));
+		in_properties.insert(make_pair(uris.ingenui_canvas_x,
+		                               Resource::Property(32.0f, Resource::EXTERNAL)));
+		in_properties.insert(make_pair(uris.ingenui_canvas_y,
+		                               Resource::Property(32.0f, Resource::EXTERNAL)));
 
 		execute_and_delete_event(context, new Events::CreatePort(
 				*this, SharedPtr<Request>(), 0,
@@ -208,8 +212,10 @@ Engine::activate()
 		Shared::Resource::Properties out_properties(control_properties);
 		out_properties.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
 		out_properties.insert(make_pair(uris.lv2_index, 1));
-		out_properties.insert(make_pair(uris.ingenui_canvas_x, 128.0f));
-		out_properties.insert(make_pair(uris.ingenui_canvas_y, 32.0f));
+		out_properties.insert(make_pair(uris.ingenui_canvas_x,
+		                                Resource::Property(128.0f, Resource::EXTERNAL)));
+		out_properties.insert(make_pair(uris.ingenui_canvas_y,
+		                                Resource::Property(32.0f, Resource::EXTERNAL)));
 
 		execute_and_delete_event(context, new Events::CreatePort(
 				*this, SharedPtr<Request>(), 0,

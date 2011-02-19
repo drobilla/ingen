@@ -54,14 +54,11 @@ class GraphObjectImpl : virtual public Ingen::Shared::GraphObject
 public:
 	virtual ~GraphObjectImpl() {}
 
-	const Raul::URI&    meta_uri() const { return _meta.uri(); }
-	const Raul::URI&    uri()      const { return _path; }
-	const Raul::Symbol& symbol()   const { return _symbol; }
+	const Raul::URI&    uri()    const { return _path; }
+	const Raul::Symbol& symbol() const { return _symbol; }
 
 	GraphObject*     graph_parent() const { return _parent; }
 	GraphObjectImpl* parent()       const { return _parent; }
-	Resource&        meta()               { return _meta; }
-	const Resource&  meta()         const { return _meta; }
 
 	//virtual void process(ProcessContext& context) = 0;
 
@@ -106,7 +103,6 @@ protected:
 	GraphObjectImpl* _parent;
 	Raul::Path       _path;
 	Raul::Symbol     _symbol;
-	ResourceImpl     _meta;
 };
 
 

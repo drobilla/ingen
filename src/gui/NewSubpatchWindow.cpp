@@ -96,14 +96,17 @@ NewSubpatchWindow::ok_clicked()
 	const Path     path = _patch->path().base() + Path::nameify(_name_entry->get_text());
 	const uint32_t poly = _poly_spinbutton->get_value_as_int();
 
+	// Create patch
 	Resource::Properties props;
 	props.insert(make_pair(app.uris().rdf_type,        app.uris().ingen_Patch));
 	props.insert(make_pair(app.uris().ingen_polyphony, Atom(int32_t(poly))));
-	app.engine()->put(ResourceImpl::meta_uri(path), props);
+	props.insert(make_pair(app.uris().ingen_enabled,   Atom(bool(true))));
+	app.engine()->put(path, props, Resource::INTERNAL);
 
+	// Set external (node perspective) properties
 	props = _initial_data;
-	props.insert(make_pair(app.uris().ingen_enabled, bool(true)));
-	app.engine()->put(path, props);
+	props.insert(make_pair(app.uris().rdf_type, app.uris().ingen_Patch));
+	app.engine()->put(path, _initial_data, Resource::EXTERNAL);
 
 	hide();
 }

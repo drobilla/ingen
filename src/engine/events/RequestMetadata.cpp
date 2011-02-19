@@ -43,7 +43,7 @@ using namespace Shared;
 RequestMetadata::RequestMetadata(Engine&            engine,
                                  SharedPtr<Request> request,
                                  SampleCount        timestamp,
-                                 bool               is_meta,
+                                 Resource::Graph    ctx,
                                  const URI&         subject,
                                  const URI&         key)
 	: QueuedEvent(engine, request, timestamp)
@@ -51,7 +51,7 @@ RequestMetadata::RequestMetadata(Engine&            engine,
 	, _uri(subject)
 	, _key(key)
 	, _resource(0)
-	, _is_meta(is_meta)
+	, _context(ctx)
 {
 }
 
@@ -76,8 +76,6 @@ RequestMetadata::pre_process()
 	if (obj) {
 		if (_key == _engine.world()->uris()->ingen_value)
 			_special_type = PORT_VALUE;
-		else if (_is_meta)
-			_value = obj->meta().get_property(_key);
 		else
 			_value = obj->get_property(_key);
 	} else {

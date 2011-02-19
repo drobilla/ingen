@@ -29,7 +29,7 @@ namespace Client {
 
 ObjectModel::ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path)
 	: ResourceImpl(uris, path)
-	, _meta(uris, ResourceImpl::meta_uri(path))
+	, _meta(uris, Raul::URI("http://example.org/FIXME"))
 	, _path(path)
 	, _symbol((path == Path::root()) ? "root" : path.symbol())
 {
@@ -62,8 +62,7 @@ ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value)
 Raul::Atom&
 ObjectModel::set_meta_property(const Raul::URI& key, const Raul::Atom& value)
 {
-	signal_property.emit(key, value);
-	return _meta.set_property(key, value);
+	return set_property(key, Resource::Property(value, Resource::INTERNAL));
 }
 
 
@@ -78,8 +77,9 @@ ObjectModel::add_property(const Raul::URI& key, const Raul::Atom& value)
 const Atom&
 ObjectModel::get_property(const Raul::URI& key) const
 {
+	static const Atom null_atom;
 	Resource::Properties::const_iterator i = properties().find(key);
-	return (i != properties().end()) ? i->second : _meta.get_property(key);
+	return (i != properties().end()) ? i->second : null_atom;
 }
 
 
@@ -103,11 +103,8 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 	if (o->_parent)
 		_parent = o->_parent;
 
-	for (Properties::const_iterator v = o->meta().properties().begin(); v != o->meta().properties().end(); ++v) {
-		o->meta().set_property(v->first, v->second);
-		signal_property.emit(v->first, v->second);
-	}
-	for (Properties::const_iterator v = o->properties().begin(); v != o->properties().end(); ++v) {
+	for (Properties::const_iterator v = o->properties().begin();
+	     v != o->properties().end(); ++v) {
 		ResourceImpl::set_property(v->first, v->second);
 		signal_property.emit(v->first, v->second);
 	}
@@ -117,9 +114,8 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 void
 ObjectModel::set_path(const Raul::Path& p)
 {
-	_path = p;
+	_path   = p;
 	_symbol = p.symbol();
-	_meta.set_uri(ResourceImpl::meta_uri(p));
 	signal_moved.emit();
 }
 

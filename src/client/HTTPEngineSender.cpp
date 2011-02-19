@@ -116,7 +116,8 @@ HTTPEngineSender::quit()
 
 void
 HTTPEngineSender::put(const URI&                  uri,
-	                  const Resource::Properties& properties)
+                      const Resource::Properties& properties,
+                      Shared::Resource::Graph     ctx)
 {
 	const string path     = (uri.substr(0, 6) == "path:/") ? uri.substr(6) : uri.str();
 	const string full_uri = _engine_url.str() + "/" + path;

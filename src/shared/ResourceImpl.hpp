@@ -43,6 +43,8 @@ public:
 	const Properties& properties() const { return _properties; }
 	Properties&       properties()       { return _properties; }
 
+	Properties properties(Resource::Graph ctx) const;
+
 	const Raul::Atom& get_property(const Raul::URI& uri) const;
 	Raul::Atom&       set_property(const Raul::URI& uri, const Raul::Atom& value);
 	void              remove_property(const Raul::URI& uri, const Raul::Atom& value);
@@ -64,9 +66,6 @@ public:
 			bool& patch,
 			bool& node,
 			bool& port, bool& is_output, PortType& data_type);
-
-	static bool            is_meta_uri(const Raul::URI& uri);
-	static const Raul::URI meta_uri(const Raul::URI& uri);
 
 protected:
 	Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;

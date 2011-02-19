@@ -27,20 +27,6 @@ namespace Ingen {
 namespace Shared {
 
 
-bool
-ResourceImpl::is_meta_uri(const Raul::URI& uri)
-{
-	return uri.substr(0, 6) == "meta:#";
-}
-
-
-const Raul::URI
-ResourceImpl::meta_uri(const Raul::URI& uri)
-{
-	return string("meta:#") + uri.chop_start("/");
-}
-
-
 void
 ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
 {
@@ -154,8 +140,6 @@ ResourceImpl::type(
 		} else if (atom == uris.atom_MessagePort) {
 			data_type = PortType::MESSAGE;
 			port = true;
-		} else {
-			warn << "[ResourceImpl] Unrecognized type " << atom << endl;
 		}
 	}
 
@@ -224,6 +208,26 @@ ResourceImpl::dump(std::ostream& os) const
 	os << "]" << endl;
 }
 
+
+Resource::Properties
+ResourceImpl::properties(Resource::Graph ctx) const
+{
+	if (ctx == Resource::DEFAULT) {
+		return properties();
+	}
+
+	typedef Resource::Properties::const_iterator iterator;
+
+	Properties props;
+	for (iterator i = _properties.begin(); i != _properties.end(); ++i) {
+		if (i->second.context() == Resource::DEFAULT
+		    || i->second.context() == ctx) {
+			props.insert(make_pair(i->first, i->second));
+		}
+	}
+
+	return props;
+}
 
 } // namespace Shared
 } // namespace Ingen

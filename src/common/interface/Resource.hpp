@@ -30,22 +30,66 @@ namespace Shared {
 class Resource
 {
 public:
-	virtual ~Resource() {}
-	typedef std::multimap<Raul::URI, Raul::Atom> Properties;
+	enum Graph {
+		DEFAULT,
+		EXTERNAL,
+		INTERNAL
+	};
 
-	virtual const Raul::URI&  uri()        const = 0;
+	class Property : public Raul::Atom {
+	public:
+		Property(const Raul::Atom& atom, Graph ctx=DEFAULT)
+			: Raul::Atom(atom)
+			, _ctx(ctx)
+		{}
+
+		Property()                       : Raul::Atom(),     _ctx(DEFAULT) {}
+		Property(int32_t val)            : Raul::Atom(val),  _ctx(DEFAULT) {}
+		Property(float val)              : Raul::Atom(val),  _ctx(DEFAULT) {}
+		Property(bool val)               : Raul::Atom(val),  _ctx(DEFAULT) {}
+		Property(const char* val)        : Raul::Atom(val),  _ctx(DEFAULT) {}
+		Property(const std::string& val) : Raul::Atom(val),  _ctx(DEFAULT) {}
+
+		Property(const Raul::Atom::DictValue& dict)
+			: Raul::Atom(dict)
+			, _ctx(DEFAULT)
+		{}
+
+		Property(Type t, const std::string& uri)
+			: Raul::Atom(t, uri)
+			, _ctx(DEFAULT)
+		{}
+
+		Graph context() const          { return _ctx; }
+		void  set_context(Graph ctx) { _ctx = ctx; }
+
+	private:
+		Graph _ctx;
+	};
+
+	virtual ~Resource() {}
+
+	virtual const Raul::URI& uri() const = 0;
+
+	typedef std::multimap<Raul::URI, Property> Properties;
+
+	static void set_context(Properties& props, Graph ctx) {
+		for (Properties::iterator i = props.begin(); i != props.end(); ++i) {
+			i->second.set_context(ctx);
+		}
+	}
+
+	virtual Properties properties(Resource::Graph ctx) const = 0;
+
 	virtual const Properties& properties() const = 0;
 	virtual Properties&       properties()       = 0;
-
-	virtual Raul::Atom& set_property(const Raul::URI&  uri,
-	                                 const Raul::Atom& value) = 0;
-
-	virtual void add_property(const Raul::URI&  uri,
-	                          const Raul::Atom& value) = 0;
-
-	virtual const Raul::Atom& get_property(const Raul::URI& uri) const = 0;
-
-	virtual bool has_property(const Raul::URI& uri, const Raul::Atom& value) const = 0;
+	virtual const Raul::Atom& get_property(const Raul::URI&  uri) const   = 0;
+	virtual Raul::Atom&       set_property(const Raul::URI&  uri,
+	                                       const Raul::Atom& value)       = 0;
+	virtual void              add_property(const Raul::URI&  uri,
+	                                       const Raul::Atom& value)       = 0;
+	virtual bool              has_property(const Raul::URI&  uri,
+	                                       const Raul::Atom& value) const = 0;
 };
 
 

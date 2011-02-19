@@ -69,7 +69,8 @@ public:
 	void bundle_end()   { BROADCAST(bundle_end); }
 
 	void put(const Raul::URI&                    uri,
-	         const Shared::Resource::Properties& properties) {
+	         const Shared::Resource::Properties& properties,
+	         Shared::Resource::Graph             ctx=Shared::Resource::DEFAULT) {
 		BROADCAST(put, uri, properties);
 	}
 

@@ -54,7 +54,7 @@ SetMetadata::SetMetadata(
 		SharedPtr<Request>  request,
 		SampleCount         timestamp,
 		bool                create,
-		bool                meta,
+		Resource::Graph     context,
 		const URI&          subject,
 		const Properties&   properties,
 		const Properties&   remove)
@@ -67,10 +67,14 @@ SetMetadata::SetMetadata(
 	, _patch(NULL)
 	, _compiled_patch(NULL)
 	, _create(create)
-	, _is_meta(meta)
+	, _context(context)
 {
+	if (context != Resource::DEFAULT) {
+		Resource::set_context(_properties, context);
+	}
+
 	/*
-	LOG(info) << "Set " << subject << " {" << endl;
+	LOG(info) << "Set " << subject << " : " << context << " {" << endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i)
 		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
@@ -177,7 +181,7 @@ SetMetadata::pre_process()
 		const Raul::Atom& value = p->second;
 		SpecialType       op    = NONE;
 		if (obj) {
-			Resource& resource = _is_meta ? obj->meta() : *obj;
+			Resource& resource = *obj;
 			resource.add_property(key, value);
 
 			PortImpl* port = dynamic_cast<PortImpl*>(_object);
@@ -353,7 +357,7 @@ SetMetadata::post_process()
 		else
 			_request->respond_ok();
 		if (_create)
-			_engine.broadcaster()->put(_subject, _properties);
+			_engine.broadcaster()->put(_subject, _properties, _context);
 		else
 			_engine.broadcaster()->delta(_subject, _remove, _properties);
 		break;

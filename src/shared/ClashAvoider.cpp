@@ -145,7 +145,8 @@ ClashAvoider::exists(const Raul::Path& path) const
 
 void
 ClashAvoider::put(const Raul::URI&                    path,
-                  const Shared::Resource::Properties& properties)
+                  const Shared::Resource::Properties& properties,
+                  Resource::Graph                     ctx)
 {
 	_target.put(map_uri(path), properties);
 }

@@ -68,7 +68,8 @@ public:
 	void error(const std::string& msg);
 
 	virtual void put(const Raul::URI&                    path,
-	                 const Shared::Resource::Properties& properties);
+	                 const Shared::Resource::Properties& properties,
+	                 Shared::Resource::Graph             ctx);
 
 	virtual void delta(const Raul::URI&                    path,
 	                   const Shared::Resource::Properties& remove,

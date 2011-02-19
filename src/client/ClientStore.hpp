@@ -71,13 +71,28 @@ public:
 
 	// CommonInterface
 	bool new_object(const Shared::GraphObject* object);
-	void put(const Raul::URI& path, const Shared::Resource::Properties& properties);
-	void delta(const Raul::URI& path, const Shared::Resource::Properties& remove,
-			const Shared::Resource::Properties& add);
-	void move(const Raul::Path& old_path, const Raul::Path& new_path);
-	void set_property(const Raul::URI& subject_path, const Raul::URI& predicate, const Raul::Atom& value);
-	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
-	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
+
+	void put(const Raul::URI&                    uri,
+	         const Shared::Resource::Properties& properties,
+	         Shared::Resource::Graph             ctx=Shared::Resource::DEFAULT);
+
+	void delta(const Raul::URI&                    uri,
+	           const Shared::Resource::Properties& remove,
+	           const Shared::Resource::Properties& add);
+
+	void move(const Raul::Path& old_path,
+	          const Raul::Path& new_path);
+
+	void set_property(const Raul::URI&  subject_path,
+	                  const Raul::URI&  predicate,
+	                  const Raul::Atom& value);
+
+	void connect(const Raul::Path& src_port_path,
+	             const Raul::Path& dst_port_path);
+
+	void disconnect(const Raul::Path& src_port_path,
+	                const Raul::Path& dst_port_path);
+
 	void del(const Raul::Path& path);
 
 	sigc::signal< void, SharedPtr<ObjectModel> > signal_new_object;

@@ -294,11 +294,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 		if (direction == INPUT && data_type == PortType::CONTROL) {
 			port->set_value(val);
 			if (!isnan(min_values[j])) {
-				port->meta().set_property(uris.lv2_minimum, min_values[j]);
 				port->set_property(uris.lv2_minimum, min_values[j]);
 			}
 			if (!isnan(max_values[j])) {
-				port->meta().set_property(uris.lv2_maximum, max_values[j]);
 				port->set_property(uris.lv2_maximum, max_values[j]);
 			}
 		}

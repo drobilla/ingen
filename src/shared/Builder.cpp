@@ -97,7 +97,6 @@ void
 Builder::build_object(SharedPtr<const GraphObject> object)
 {
 	typedef GraphObject::Properties::const_iterator iterator;
-	_interface.put(object->meta().uri(), object->meta().properties());
 	_interface.put(object->uri(), object->properties());
 }
 

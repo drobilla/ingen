@@ -157,7 +157,7 @@ PortPropertiesWindow::ok()
 	Shared::Resource::Properties props;
 	props.insert(make_pair(uris.lv2_minimum, float(_min_spinner->get_value())));
 	props.insert(make_pair(uris.lv2_maximum, float(_max_spinner->get_value())));
-	App::instance().engine()->put(_port_model->meta().uri(), props);
+	App::instance().engine()->put(_port_model->path(), props);
 	hide();
 }
 

@@ -87,9 +87,10 @@ CreatePatch::pre_process()
 
 	_patch = new PatchImpl(_engine, path.symbol(), poly, _parent,
 			_engine.driver()->sample_rate(), _poly);
-	_patch->meta().properties().insert(_properties.begin(), _properties.end());
-	_patch->meta().set_property(uris.rdf_type, uris.ingen_Patch);
-	_patch->set_property(uris.rdf_type, uris.ingen_Node);
+	_patch->properties().insert(_properties.begin(), _properties.end());
+	_patch->add_property(uris.rdf_type, uris.ingen_Patch);
+	_patch->add_property(uris.rdf_type,
+	                     Resource::Property(uris.ingen_Node, Resource::EXTERNAL));
 
 	if (_parent != NULL) {
 		_parent->add_node(new PatchImpl::Nodes::Node(_patch));

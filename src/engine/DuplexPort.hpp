@@ -54,8 +54,8 @@ public:
 
 	bool get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly);
 
-	void pre_process(Context& context);
-	void post_process(Context& context);
+	void pre_process(Ingen::Context& context);
+	void post_process(Ingen::Context& context);
 
 	bool is_input()  const { return !_is_output; }
 	bool is_output() const { return _is_output; }

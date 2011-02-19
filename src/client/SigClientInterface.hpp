@@ -50,7 +50,8 @@ public:
 	sigc::signal<void, std::string>                                 signal_error;
 	sigc::signal<void, Raul::Path, uint32_t>                        signal_new_patch;
 	sigc::signal<void, Raul::Path, Raul::URI, uint32_t, bool>       signal_new_port;
-	sigc::signal<void, Raul::URI, Shared::Resource::Properties>     signal_put;
+	sigc::signal<void, Raul::URI, Shared::Resource::Properties,
+	                              Shared::Resource::Graph>          signal_put;
 	sigc::signal<void, Raul::URI, Shared::Resource::Properties,
 	                              Shared::Resource::Properties>     signal_delta;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_moved;
@@ -89,8 +90,10 @@ protected:
 	void error(const std::string& msg)
 		{ EMIT(error, msg); }
 
-	void put(const Raul::URI& uri, const Shared::Resource::Properties& properties)
-		{ EMIT(put, uri, properties); }
+	void put(const Raul::URI& uri,
+	         const Shared::Resource::Properties& properties,
+	         Shared::Resource::Graph             ctx=Shared::Resource::DEFAULT)
+		{ EMIT(put, uri, properties, ctx); }
 
 	void delta(const Raul::URI& uri,
 			const Shared::Resource::Properties& remove, const Shared::Resource::Properties& add)

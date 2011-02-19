@@ -44,12 +44,12 @@ namespace Events {
 class RequestMetadata : public QueuedEvent
 {
 public:
-	RequestMetadata(Engine&            engine,
-	                SharedPtr<Request> request,
-	                SampleCount        timestamp,
-	                bool               meta,
-	                const Raul::URI&   subject,
-	                const Raul::URI&   key);
+	RequestMetadata(Engine&                 engine,
+	                SharedPtr<Request>      request,
+	                SampleCount             timestamp,
+	                Shared::Resource::Graph context,
+	                const Raul::URI&        subject,
+	                const Raul::URI&        key);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -62,11 +62,11 @@ private:
 		PORT_VALUE
 	} _special_type;
 
-	Raul::URI             _uri;
-	Raul::URI             _key;
-	Raul::Atom            _value;
-	Shared::ResourceImpl* _resource;
-	bool                  _is_meta;
+	Raul::URI               _uri;
+	Raul::URI               _key;
+	Raul::Atom              _value;
+	Shared::ResourceImpl*   _resource;
+	Shared::Resource::Graph _context;
 };
 
 
