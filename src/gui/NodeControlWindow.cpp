@@ -45,7 +45,7 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
 	property_resizable() = true;
 	set_border_width(5);
 
-	set_title(_node->path().chop_scheme() + " Controls - Ingen");
+	set_title(_node->plugin_model()->human_name() + " - Ingen");
 
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("warehouse_win");
 	xml->get_widget_derived("control_panel_vbox", _control_panel);
