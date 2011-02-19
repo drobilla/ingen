@@ -197,7 +197,6 @@ JackDriver::JackDriver(Engine& engine)
 	, _block_length(0)
 	, _sample_rate(0)
 	, _is_activated(false)
-	, _local_client(true)
 	, _process_context(engine)
 	, _root_patch(NULL)
 {
@@ -210,7 +209,7 @@ JackDriver::~JackDriver()
 {
 	deactivate();
 
-	if (_local_client)
+	if (_client)
 		jack_client_close(_client);
 }
 
@@ -265,8 +264,6 @@ JackDriver::attach(const std::string& server_name,
 	} else {
 		_client = (jack_client_t*)jack_client;
 	}
-
-	_local_client = (jack_client == NULL);
 
 	_block_length = jack_get_buffer_size(_client);
 	_sample_rate = jack_get_sample_rate(_client);
@@ -323,9 +320,8 @@ JackDriver::deactivate()
 		for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			(*i)->destroy();
 
-		jack_deactivate(_client);
-
-		if (_local_client) {
+		if (_client) {
+			jack_deactivate(_client);
 			jack_client_close(_client);
 			_client = NULL;
 		}

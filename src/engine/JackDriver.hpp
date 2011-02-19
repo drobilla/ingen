@@ -173,7 +173,6 @@ private:
 	jack_nframes_t         _sample_rate;
 	uint32_t               _midi_event_type;
 	bool                   _is_activated;
-	bool                   _local_client; ///< Whether _client should be closed on destruction
 	jack_position_t        _position;
 	jack_transport_state_t _transport_state;
 	Raul::List<JackPort*>  _ports;
