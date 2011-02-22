@@ -16,20 +16,20 @@
  */
 
 #include "raul/log.hpp"
+
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/event/event.h"
 #include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
-#include "shared/LV2Features.hpp"
-#include "shared/LV2URIMap.hpp"
+
 #include "shared/LV2Atom.hpp"
-#include "PluginUI.hpp"
+#include "shared/LV2URIMap.hpp"
+
 #include "NodeModel.hpp"
+#include "PluginUI.hpp"
 #include "PortModel.hpp"
 
 using namespace std;
 using namespace Raul;
-using Ingen::Shared::LV2URIMap;
-using Ingen::Shared::LV2Features;
 
 namespace Ingen {
 namespace Client {
@@ -41,20 +41,9 @@ lv2_ui_write(LV2UI_Controller controller,
              uint32_t         format,
              const void*      buffer)
 {
-	/*fprintf(stderr, "lv2_ui_write (format %u):\n", format);
-	fprintf(stderr, "RAW:\n");
-	for (uint32_t i=0; i < buffer_size; ++i) {
-		unsigned char byte = ((unsigned char*)buffer)[i];
-		if (byte >= 32 && byte <= 126)
-			fprintf(stderr, "%c  ", ((unsigned char*)buffer)[i]);
-		else
-			fprintf(stderr, "%2X ", ((unsigned char*)buffer)[i]);
-	}
-	fprintf(stderr, "\n");*/
+	PluginUI* const ui = (PluginUI*)controller;
 
-	PluginUI* ui = (PluginUI*)controller;
-
-	NodeModel::Ports ports = ui->node()->ports();
+	const NodeModel::Ports& ports = ui->node()->ports();
 	if (port_index >= ports.size()) {
 		error << "UI for " << ui->node()->plugin()->uri()
 		      << " tried to write to non-existent port " << port_index << endl;
@@ -71,7 +60,9 @@ lv2_ui_write(LV2UI_Controller controller,
 		if (*(float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
 
-		ui->world()->engine()->set_property(port->path(), uris.ingen_value, Atom(*(float*)buffer));
+		ui->world()->engine()->set_property(port->path(),
+		                                    uris.ingen_value,
+		                                    Atom(*(float*)buffer));
 
 	} else if (format == uris.ui_Events.id) {
 		LV2_Event_Buffer*  buf = (LV2_Event_Buffer*)buffer;
@@ -82,11 +73,13 @@ lv2_ui_write(LV2UI_Controller controller,
 			LV2_Event* const ev = lv2_event_get(&iter, &data);
 			if (ev->type == uris.midi_MidiEvent.id) {
 				// FIXME: bundle multiple events by writing an entire buffer here
-				ui->world()->engine()->set_property(port->path(), uris.ingen_value,
+				ui->world()->engine()->set_property(
+					port->path(),
+					uris.ingen_value,
 					Atom("http://lv2plug.in/ns/ext/midi#MidiEvent", ev->size, data));
 			} else {
-				warn << "Unable to send event type " << ev->type <<
-					" over OSC, ignoring event" << endl;
+				warn << "Unable to serialise UI event type " << ev->type
+				     << ", event lost" << endl;
 			}
 
 			lv2_event_increment(&iter);
@@ -100,8 +93,7 @@ lv2_ui_write(LV2UI_Controller controller,
 
 	} else {
 		warn << "Unknown value format " << format
-			<< ", either plugin " << ui->node()->plugin()->uri() << " is broken"
-			<< " or this is an Ingen bug" << endl;
+		     << " from LV2 UI " << ui->node()->plugin()->uri() << endl;
 	}
 }
 
@@ -130,7 +122,8 @@ PluginUI::create(Ingen::Shared::World* world,
 {
 	SharedPtr<PluginUI> ret;
 
-	SLV2Value gtk_gui_uri = slv2_value_new_uri(world->slv2_world(),
+	SLV2Value gtk_gui_uri = slv2_value_new_uri(
+		world->slv2_world(),
 		"http://lv2plug.in/ns/extensions/ui#GtkUI");
 
 	SLV2UIs uis = slv2_plugin_get_uis(plugin);
@@ -151,7 +144,7 @@ PluginUI::create(Ingen::Shared::World* world,
 		ret = SharedPtr<PluginUI>(new PluginUI(world, node));
 		ret->_features = world->lv2_features()->lv2_features(world, node.get());
 		SLV2UIInstance inst = slv2_ui_instantiate(
-				plugin, ui, lv2_ui_write, ret.get(), ret->_features->array());
+			plugin, ui, lv2_ui_write, ret.get(), ret->_features->array());
 
 		if (inst) {
 			ret->_instance = inst;
