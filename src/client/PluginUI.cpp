@@ -154,7 +154,7 @@ PluginUI::create(Ingen::Shared::World* world,
 				plugin, ui, lv2_ui_write, ret.get(), ret->_features->array());
 
 		if (inst) {
-			ret->set_instance(inst);
+			ret->_instance = inst;
 		} else {
 			error << "Failed to instantiate Plugin UI" << endl;
 			ret = SharedPtr<PluginUI>();
@@ -165,6 +165,25 @@ PluginUI::create(Ingen::Shared::World* world,
 	return ret;
 }
 
+LV2UI_Widget
+PluginUI::get_widget()
+{
+	return (LV2UI_Widget*)slv2_ui_instance_get_widget(_instance);
+}
+
+void
+PluginUI::port_event(uint32_t    port_index,
+                     uint32_t    buffer_size,
+                     uint32_t    format,
+                     const void* buffer)
+{
+	const LV2UI_Descriptor* ui_desc = slv2_ui_instance_get_descriptor(_instance);
+	LV2UI_Handle            ui      = slv2_ui_instance_get_handle(_instance);
+
+	if (ui_desc->port_event) {
+		ui_desc->port_event(ui, port_index, buffer_size, 0, buffer);
+	}
+}
 
 } // namespace Client
 } // namespace Ingen

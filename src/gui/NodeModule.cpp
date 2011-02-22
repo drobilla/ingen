@@ -154,20 +154,15 @@ NodeModule::value_changed(uint32_t index, const Atom& value)
 	if (!_plugin_ui)
 		return;
 
-	float                   float_val = 0.0f;
-	SLV2UIInstance          inst      = _plugin_ui->instance();
-	const LV2UI_Descriptor* ui_desc   = slv2_ui_instance_get_descriptor(inst);
-	LV2UI_Handle            ui        = slv2_ui_instance_get_handle(inst);
+	float float_val = 0.0f;
 
 	switch (value.type()) {
 	case Atom::FLOAT:
 		float_val = value.get_float();
-		if (ui_desc->port_event)
-			ui_desc->port_event(ui, index, 4, 0, &float_val);
+		_plugin_ui->port_event(index, 4, 0, &float_val);
 		break;
 	case Atom::STRING:
-		if (ui_desc->port_event)
-			ui_desc->port_event(ui, index, strlen(value.get_string()), 0, value.get_string());
+		_plugin_ui->port_event(index, strlen(value.get_string()), 0, value.get_string());
 		break;
 	default:
 		break;
@@ -201,9 +196,8 @@ NodeModule::embed_gui(bool embed)
 		}
 
 		if (_plugin_ui) {
-			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_plugin_ui->instance());
+			GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
 			_gui_widget = Glib::wrap(c_widget);
-			assert(_gui_widget);
 
 			Gtk::Container* container = new Gtk::EventBox();
 			container->set_name("ingen_embedded_node_gui_container");
@@ -308,7 +302,7 @@ NodeModule::popup_gui()
 		_plugin_ui = plugin->ui(App::instance().world(), _node);
 
 		if (_plugin_ui) {
-			GtkWidget* c_widget = (GtkWidget*)slv2_ui_instance_get_widget(_plugin_ui->instance());
+			GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
 			_gui_widget = Glib::wrap(c_widget);
 
 			_gui_window = new Gtk::Window();

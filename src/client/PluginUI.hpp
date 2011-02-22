@@ -43,15 +43,20 @@ public:
 	                                  SharedPtr<NodeModel>  node,
 	                                  SLV2Plugin            plugin);
 
-	Ingen::Shared::World* world()    const { return _world; }
-	SharedPtr<NodeModel>  node()     const { return _node; }
-	SLV2UIInstance        instance() const { return _instance; }
+	LV2UI_Widget get_widget();
+
+	void port_event(uint32_t    port_index,
+	                uint32_t    buffer_size,
+	                uint32_t    format,
+	                const void* buffer);
+
+
+	Ingen::Shared::World* world() const { return _world; }
+	SharedPtr<NodeModel>  node()  const { return _node; }
 
 private:
 	PluginUI(Ingen::Shared::World* world,
 	         SharedPtr<NodeModel>  node);
-
-	void set_instance(SLV2UIInstance instance) { _instance = instance; }
 
 	Ingen::Shared::World* _world;
 	SharedPtr<NodeModel>  _node;
