@@ -51,6 +51,8 @@ def configure(conf):
 			  atleast_version='0.120.0', mandatory=False)
 	autowaf.check_pkg(conf, 'slv2', uselib_store='SLV2',
 			  atleast_version='0.6.0', mandatory=True)
+	autowaf.check_pkg(conf, 'suil', uselib_store='SUIL',
+			  atleast_version='0.0.0', mandatory=True)
 	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
 			  atleast_version='0.6.2', mandatory=True)
 	autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS',
@@ -95,10 +97,10 @@ def configure(conf):
 	else:
 		autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIR'], 'ingen'))
 		autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIR'])
-	
+
 	if Options.options.log_debug:
 		autowaf.define(conf, 'RAUL_LOG_DEBUG', 1)
-	
+
 	if Options.options.liblo_bundles:
 		autowaf.define(conf, 'LIBLO_BUNDLES', 1)
 
@@ -110,6 +112,7 @@ def configure(conf):
 	autowaf.display_msg(conf, "OSC", str(conf.env['HAVE_LIBLO'] == 1))
 	autowaf.display_msg(conf, "HTTP", str(conf.env['HAVE_SOUP'] == 1))
 	autowaf.display_msg(conf, "LV2", str(conf.env['HAVE_SLV2'] == 1))
+	autowaf.display_msg(conf, "LV2 UI", str(conf.env['HAVE_SUIL'] == 1))
 	autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
 	print
 
@@ -117,7 +120,7 @@ def build(bld):
 	opts           = Options.options
 	opts.datadir   = opts.datadir   or bld.env['PREFIX'] + 'share'
 	opts.moduledir = opts.moduledir or bld.env['PREFIX'] + 'lib/ingen'
-	
+
 	# Headers
 	bld.install_files('${INCLUDEDIR}/ingen/interface',
 			  bld.path.ant_glob('src/common/interface/*.hpp'))
@@ -140,7 +143,7 @@ def build(bld):
 	obj.defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"'
 	obj.use          = 'libingen_module libingen_shared'
 	obj.install_path = '${BINDIR}'
-	autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LV2CORE SLV2 INGEN LIBLO SOUP')
+	autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LV2CORE SLV2 SUIL INGEN LIBLO SOUP')
 
 	bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
 

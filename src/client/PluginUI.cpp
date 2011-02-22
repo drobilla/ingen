@@ -21,6 +21,8 @@
 #include "lv2/lv2plug.in/ns/ext/event/event.h"
 #include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
 
+#include "slv2/ui.h"
+
 #include "shared/LV2Atom.hpp"
 #include "shared/LV2URIMap.hpp"
 
@@ -109,9 +111,7 @@ PluginUI::PluginUI(Ingen::Shared::World* world,
 
 PluginUI::~PluginUI()
 {
-	if (_instance) {
-		slv2_ui_instance_free(_instance);
-	}
+	suil_instance_free(_instance);
 }
 
 
@@ -120,48 +120,52 @@ PluginUI::create(Ingen::Shared::World* world,
                  SharedPtr<NodeModel>  node,
                  SLV2Plugin            plugin)
 {
-	SharedPtr<PluginUI> ret;
+	SharedPtr<PluginUI> ret(new PluginUI(world, node));
+	ret->_features = world->lv2_features()->lv2_features(world, node.get());
 
-	SLV2Value gtk_gui_uri = slv2_value_new_uri(
-		world->slv2_world(),
-		"http://lv2plug.in/ns/extensions/ui#GtkUI");
-
-	SLV2UIs uis = slv2_plugin_get_uis(plugin);
-	SLV2UI  ui  = NULL;
-
-	if (slv2_values_size(uis) > 0) {
-		for (unsigned i=0; i < slv2_uis_size(uis); ++i) {
-			SLV2UI this_ui = slv2_uis_get_at(uis, i);
-			if (slv2_ui_is_a(this_ui, gtk_gui_uri)) {
-				ui = this_ui;
-				break;
-			}
+	// Build Suil UI set for this plugin
+	const char* const plugin_uri = slv2_value_as_uri(slv2_plugin_get_uri(plugin));
+	SLV2UIs           slv2_uis   = slv2_plugin_get_uis(plugin);
+	SuilUIs           suil_uis   = suil_uis_new(plugin_uri);
+	for (unsigned i = 0; i < slv2_uis_size(slv2_uis); ++i) {
+		SLV2UI     ui      = slv2_uis_get_at(slv2_uis, i);
+		SLV2Values classes = slv2_ui_get_classes(ui);
+		SLV2Value  type    = slv2_values_get_at(classes, 0); // FIXME?
+		if (!suil_ui_type_supported(slv2_value_as_uri(type))) {
+			warn << "Unsupported LV2 UI type " << slv2_value_as_uri(type) << endl;
+			continue;
 		}
+
+		suil_uis_add(suil_uis,
+		             slv2_value_as_uri(slv2_ui_get_uri(ui)),
+		             slv2_value_as_uri(type),
+		             slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_bundle_uri(ui))),
+		             slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_binary_uri(ui))));
 	}
 
-	if (ui) {
-		info << "Found GTK Plugin UI: " << slv2_ui_get_uri(ui) << endl;
-		ret = SharedPtr<PluginUI>(new PluginUI(world, node));
-		ret->_features = world->lv2_features()->lv2_features(world, node.get());
-		SLV2UIInstance inst = slv2_ui_instantiate(
-			plugin, ui, lv2_ui_write, ret.get(), ret->_features->array());
+	// Attempt to instantiate a UI
+	SuilInstance instance = suil_instance_new(
+		suil_uis,
+		"http://lv2plug.in/ns/extensions/ui#GtkUI",
+		NULL,
+		lv2_ui_write,
+		ret.get(),
+		ret->_features->array());
 
-		if (inst) {
-			ret->_instance = inst;
-		} else {
-			error << "Failed to instantiate Plugin UI" << endl;
-			ret = SharedPtr<PluginUI>();
-		}
+	if (instance) {
+		ret->_instance = instance;
+	} else {
+		error << "Failed to instantiate LV2 UI" << endl;
+		ret.reset();
 	}
 
-	slv2_value_free(gtk_gui_uri);
 	return ret;
 }
 
 LV2UI_Widget
 PluginUI::get_widget()
 {
-	return (LV2UI_Widget*)slv2_ui_instance_get_widget(_instance);
+	return (LV2UI_Widget*)suil_instance_get_widget(_instance);
 }
 
 void
@@ -170,12 +174,7 @@ PluginUI::port_event(uint32_t    port_index,
                      uint32_t    format,
                      const void* buffer)
 {
-	const LV2UI_Descriptor* ui_desc = slv2_ui_instance_get_descriptor(_instance);
-	LV2UI_Handle            ui      = slv2_ui_instance_get_handle(_instance);
-
-	if (ui_desc->port_event) {
-		ui_desc->port_event(ui, port_index, buffer_size, 0, buffer);
-	}
+	suil_instance_port_event(_instance, port_index, buffer_size, format, buffer);
 }
 
 } // namespace Client

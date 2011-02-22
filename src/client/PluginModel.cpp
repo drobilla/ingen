@@ -18,13 +18,17 @@
 #include <sstream>
 #include <ctype.h>
 #include <boost/optional.hpp>
+
 #include "raul/Path.hpp"
 #include "raul/Atom.hpp"
-#include "ingen-config.h"
-#include "shared/LV2URIMap.hpp"
-#include "PluginModel.hpp"
+#include "slv2/ui.h"
+
 #include "PatchModel.hpp"
+#include "PluginModel.hpp"
 #include "PluginUI.hpp"
+#include "shared/LV2URIMap.hpp"
+
+#include "ingen-config.h"
 
 using namespace std;
 using namespace Raul;
@@ -191,17 +195,8 @@ PluginModel::port_human_name(uint32_t index) const
 bool
 PluginModel::has_ui() const
 {
-	SLV2Value gtk_gui_uri = slv2_value_new_uri(_slv2_world,
-		"http://lv2plug.in/ns/extensions/ui#GtkUI");
-
 	SLV2UIs uis = slv2_plugin_get_uis(_slv2_plugin);
-
-	if (slv2_values_size(uis) > 0)
-		for (unsigned i=0; i < slv2_uis_size(uis); ++i)
-			if (slv2_ui_is_a(slv2_uis_get_at(uis, i), gtk_gui_uri))
-				return true;
-
-	return false;
+	return (slv2_values_size(uis) > 0);
 }
 
 
