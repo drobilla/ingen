@@ -130,17 +130,21 @@ PluginUI::create(Ingen::Shared::World* world,
 	for (unsigned i = 0; i < slv2_uis_size(slv2_uis); ++i) {
 		SLV2UI     ui      = slv2_uis_get_at(slv2_uis, i);
 		SLV2Values classes = slv2_ui_get_classes(ui);
-		SLV2Value  type    = slv2_values_get_at(classes, 0); // FIXME?
-		if (!suil_ui_type_supported(slv2_value_as_uri(type))) {
-			warn << "Unsupported LV2 UI type " << slv2_value_as_uri(type) << endl;
-			continue;
+		for (unsigned j = 0; j < slv2_values_size(classes); ++j) {
+			SLV2Value type = slv2_values_get_at(classes, j);
+			if (suil_ui_type_supported("http://lv2plug.in/ns/extensions/ui#GtkUI",
+			                           slv2_value_as_uri(type))) {
+				suil_uis_add(
+					suil_uis,
+					slv2_value_as_uri(slv2_ui_get_uri(ui)),
+					slv2_value_as_uri(type),
+					slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_bundle_uri(ui))),
+					slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_binary_uri(ui))));
+				break;
+			} else {
+				warn << "Unsupported LV2 UI type " << slv2_value_as_uri(type) << endl;
+			}
 		}
-
-		suil_uis_add(suil_uis,
-		             slv2_value_as_uri(slv2_ui_get_uri(ui)),
-		             slv2_value_as_uri(type),
-		             slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_bundle_uri(ui))),
-		             slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_binary_uri(ui))));
 	}
 
 	// Attempt to instantiate a UI
