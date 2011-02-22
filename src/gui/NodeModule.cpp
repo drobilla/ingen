@@ -53,13 +53,19 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 {
 	assert(_node);
 
-	node->signal_new_port.connect(sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
-	node->signal_removed_port.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
-	node->signal_property.connect(sigc::mem_fun(this, &NodeModule::property_changed));
-	node->signal_moved.connect(sigc::mem_fun(this, &NodeModule::rename));
+	node->signal_new_port.connect(
+		sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
+	node->signal_removed_port.connect(
+		sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
+	node->signal_property.connect(
+		sigc::mem_fun(this, &NodeModule::property_changed));
+	node->signal_moved.connect(
+		sigc::mem_fun(this, &NodeModule::rename));
+
 	PluginModel* plugin = dynamic_cast<PluginModel*>(node->plugin());
-	if (plugin)
+	if (plugin) {
 		plugin->signal_changed.connect(sigc::mem_fun(this, &NodeModule::plugin_changed));
+	}
 }
 
 
@@ -76,15 +82,18 @@ NodeModule::create_menu()
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget_derived("object_menu", _menu);
 	_menu->init(_node);
-	_menu->signal_embed_gui.connect(sigc::mem_fun(this, &NodeModule::embed_gui));
-	_menu->signal_popup_gui.connect(sigc::hide_return(sigc::mem_fun(this, &NodeModule::popup_gui)));
-
+	_menu->signal_embed_gui.connect(
+		sigc::mem_fun(this, &NodeModule::embed_gui));
+	_menu->signal_popup_gui.connect(
+		sigc::hide_return(sigc::mem_fun(this, &NodeModule::popup_gui)));
 	set_menu(_menu);
 }
 
 
 boost::shared_ptr<NodeModule>
-NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node, bool human)
+NodeModule::create(boost::shared_ptr<PatchCanvas> canvas,
+                   SharedPtr<NodeModel>           node,
+                   bool                           human)
 {
 	boost::shared_ptr<NodeModule> ret;
 
@@ -94,10 +103,12 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> n
 	else
 		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
 
-	for (GraphObject::Properties::const_iterator m = node->properties().begin(); m != node->properties().end(); ++m)
+	for (GraphObject::Properties::const_iterator m = node->properties().begin();
+	     m != node->properties().end(); ++m)
 		ret->property_changed(m->first, m->second);
 
-	for (NodeModel::Ports::const_iterator p = node->ports().begin(); p != node->ports().end(); ++p)
+	for (NodeModel::Ports::const_iterator p = node->ports().begin();
+	     p != node->ports().end(); ++p)
 		ret->add_port(*p, false);
 
 	ret->set_stacked_border(node->polyphonic());
@@ -191,7 +202,6 @@ NodeModule::embed_gui(bool embed)
 
 		if (!_plugin_ui) {
 			const PluginModel* const pm = dynamic_cast<const PluginModel*>(_node->plugin());
-			assert(pm);
 			_plugin_ui = pm->ui(App::instance().world(), _node);
 		}
 
@@ -221,9 +231,12 @@ NodeModule::embed_gui(bool embed)
 		FlowCanvas::Module::embed(NULL);
 		_plugin_ui.reset();
 
-		for (NodeModel::Ports::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p)
+		for (NodeModel::Ports::const_iterator p = _node->ports().begin();
+		     p != _node->ports().end(); ++p)
 			if ((*p)->is_output() && App::instance().can_control(p->get()))
-				App::instance().engine()->set_property((*p)->path(), uris.ingen_broadcast, false);
+				App::instance().engine()->set_property((*p)->path(),
+				                                       uris.ingen_broadcast,
+				                                       false);
 	}
 
 	if (embed && _embed_item) {
@@ -339,8 +352,9 @@ NodeModule::on_gui_window_close()
 void
 NodeModule::set_control_values()
 {
-	uint32_t index=0;
-	for (NodeModel::Ports::const_iterator p = _node->ports().begin(); p != _node->ports().end(); ++p) {
+	uint32_t index = 0;
+	for (NodeModel::Ports::const_iterator p = _node->ports().begin();
+	     p != _node->ports().end(); ++p) {
 		if (App::instance().can_control(p->get()))
 			value_changed(index, (*p)->value());
 		++index;
