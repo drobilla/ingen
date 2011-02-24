@@ -36,5 +36,5 @@ def build(bld):
 	obj.target          = 'ingen_client'
 	obj.install_path    = '${LIBDIR}'
 	obj.use             = 'libingen_shared'
-	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 SUIL RAUL SORD SOUP SIGCPP LIBLO SOUP')
+	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL SORD SOUP SIGCPP LIBLO SOUP')
 

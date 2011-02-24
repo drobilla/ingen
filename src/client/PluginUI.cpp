@@ -109,7 +109,7 @@ PluginUI::PluginUI(Ingen::Shared::World* world,
 
 PluginUI::~PluginUI()
 {
-	suil_instance_free(_instance);
+	slv2_ui_instance_free(_instance);
 }
 
 
@@ -121,35 +121,15 @@ PluginUI::create(Ingen::Shared::World* world,
 	SharedPtr<PluginUI> ret(new PluginUI(world, node));
 	ret->_features = world->lv2_features()->lv2_features(world, node.get());
 
-	// Build Suil UI set for this plugin
-	const char* const plugin_uri = slv2_value_as_uri(slv2_plugin_get_uri(plugin));
-	SLV2UIs           slv2_uis   = slv2_plugin_get_uis(plugin);
-	SuilUIs           suil_uis   = suil_uis_new(plugin_uri);
-	for (unsigned i = 0; i < slv2_uis_size(slv2_uis); ++i) {
-		SLV2UI     ui      = slv2_uis_get_at(slv2_uis, i);
-		SLV2Values classes = slv2_ui_get_classes(ui);
-		for (unsigned j = 0; j < slv2_values_size(classes); ++j) {
-			SLV2Value type = slv2_values_get_at(classes, j);
-			if (suil_ui_type_supported("http://lv2plug.in/ns/extensions/ui#GtkUI",
-			                           slv2_value_as_uri(type))) {
-				suil_uis_add(
-					suil_uis,
-					slv2_value_as_uri(slv2_ui_get_uri(ui)),
-					slv2_value_as_uri(type),
-					slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_bundle_uri(ui))),
-					slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_binary_uri(ui))));
-				break;
-			} else {
-				warn << "Unsupported LV2 UI type " << slv2_value_as_uri(type) << endl;
-			}
-		}
-	}
+	SLV2Value gtk_ui = slv2_value_new_uri(
+		world->slv2_world(), "http://lv2plug.in/ns/extensions/ui#GtkUI");
 
-	// Attempt to instantiate a UI
-	SuilInstance instance = suil_instance_new(
-		suil_uis,
-		"http://lv2plug.in/ns/extensions/ui#GtkUI",
-		NULL,
+	SLV2UI ui = slv2_plugin_get_default_ui(plugin, gtk_ui);
+
+	SLV2UIInstance instance = slv2_ui_instance_new(
+		plugin,
+		ui,
+		gtk_ui,
 		lv2_ui_write,
 		ret.get(),
 		ret->_features->array());
@@ -167,7 +147,7 @@ PluginUI::create(Ingen::Shared::World* world,
 LV2UI_Widget
 PluginUI::get_widget()
 {
-	return (LV2UI_Widget*)suil_instance_get_widget(_instance);
+	return (LV2UI_Widget*)slv2_ui_instance_get_widget(_instance);
 }
 
 void
@@ -176,7 +156,8 @@ PluginUI::port_event(uint32_t    port_index,
                      uint32_t    format,
                      const void* buffer)
 {
-	suil_instance_port_event(_instance, port_index, buffer_size, format, buffer);
+	slv2_ui_instance_port_event(
+		_instance, port_index, buffer_size, format, buffer);
 }
 
 } // namespace Client

@@ -62,7 +62,6 @@ def build(bld):
 		SIGCPP
 		LV2CORE
 		SLV2
-		SUIL
 		SOUP
 	''')
 

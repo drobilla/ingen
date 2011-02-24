@@ -20,7 +20,6 @@
 
 #include "raul/SharedPtr.hpp"
 #include "slv2/slv2.h"
-#include "suil/suil.h"
 
 #include "LV2Features.hpp"
 
@@ -60,7 +59,7 @@ private:
 
 	Ingen::Shared::World* _world;
 	SharedPtr<NodeModel>  _node;
-	SuilInstance          _instance;
+	SLV2UIInstance        _instance;
 
     SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
