@@ -19,9 +19,8 @@
 #include <ctype.h>
 #include <boost/optional.hpp>
 
-#include "raul/Path.hpp"
 #include "raul/Atom.hpp"
-#include "slv2/ui.h"
+#include "raul/Path.hpp"
 
 #include "PatchModel.hpp"
 #include "PluginModel.hpp"
