@@ -52,7 +52,7 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'slv2', uselib_store='SLV2',
 			  atleast_version='0.6.0', mandatory=True)
 	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
-			  atleast_version='0.6.2', mandatory=True)
+			  atleast_version='0.8.0', mandatory=True)
 	autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS',
 			  atleast_version='0.7.0', mandatory=False)
 	autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM',
