@@ -111,7 +111,7 @@ def configure(conf):
 	autowaf.display_msg(conf, "HTTP", str(conf.env['HAVE_SOUP'] == 1))
 	autowaf.display_msg(conf, "LV2", str(conf.env['HAVE_SLV2'] == 1))
 	autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
-	print
+	print()
 
 def build(bld):
 	opts           = Options.options
