@@ -126,14 +126,18 @@ PluginUI::create(Ingen::Shared::World* world,
 
 	SLV2UI ui = slv2_plugin_get_default_ui(plugin, gtk_ui);
 
+	SLV2UIHost ui_host = slv2_ui_host_new(
+		ret.get(), lv2_ui_write, NULL, NULL, NULL);
+
 	SLV2UIInstance instance = slv2_ui_instance_new(
 		plugin,
 		ui,
 		gtk_ui,
-		lv2_ui_write,
-		ret.get(),
+		ui_host,
 		ret->_features->array());
 
+	slv2_ui_host_free(ui_host);
+	
 	if (instance) {
 		ret->_instance = instance;
 	} else {
