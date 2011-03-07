@@ -210,7 +210,15 @@ InputPort::pre_process(Context& context)
 void
 InputPort::post_process(Context& context)
 {
-	_set_by_user = false;
+	if (_set_by_user) {
+		if (buffer_type() == PortType::EVENTS) {
+			// Clear events received via a SetPortValue
+			for (uint32_t v = 0; v < _poly; ++v) {
+				buffer(v)->clear();
+			}
+		}
+		_set_by_user = false;
+	}
 }
 
 

@@ -170,6 +170,28 @@ LV2URIMap::id_to_uri(const char*    map,
 }
 
 
+std::pair<bool, uint32_t>
+LV2URIMap::event_to_global(uint16_t event_id) const
+{
+	EventToGlobal::const_iterator i = _event_to_global.find(event_id);
+	if (i == _event_to_global.end()) {
+		return std::make_pair(false, uint32_t(0));
+	}
+	return std::make_pair(true, i->second);
+}
+
+
+std::pair<bool, uint16_t>
+LV2URIMap::global_to_event(uint32_t global_id) const
+{
+	GlobalToEvent::const_iterator i = _global_to_event.find(global_id);
+	if (i == _global_to_event.end()) {
+		return std::make_pair(false, uint16_t(0));
+	}
+	return std::make_pair(true, i->second);
+}
+
+
 uint32_t
 LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
                              const char*               map,

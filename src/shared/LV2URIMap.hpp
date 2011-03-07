@@ -19,6 +19,7 @@
 #define INGEN_SHARED_LV2URIMAP_HPP
 
 #include <map>
+#include <utility>
 
 #include <boost/utility.hpp>
 
@@ -58,6 +59,9 @@ public:
 		
 	virtual uint32_t    uri_to_id(const char* map, const char* uri);
 	virtual const char* id_to_uri(const char* map, uint32_t id);
+
+	std::pair<bool, uint32_t> event_to_global(uint16_t event_id) const;
+	std::pair<bool, uint16_t> global_to_event(uint32_t global_id) const;
 
 private:
 	static uint32_t uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,

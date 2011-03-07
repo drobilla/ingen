@@ -71,7 +71,9 @@ lv2_ui_write(LV2UI_Controller controller,
 		lv2_event_begin(&iter, buf);
 		while (lv2_event_is_valid(&iter)) {
 			LV2_Event* const ev = lv2_event_get(&iter, &data);
-			if (ev->type == uris.midi_MidiEvent.id) {
+			std::pair<bool, uint16_t> midi_id =
+			  uris.global_to_event(uris.midi_MidiEvent.id);
+			if (midi_id.first && ev->type == midi_id.second) {
 				// FIXME: bundle multiple events by writing an entire buffer here
 				ui->world()->engine()->set_property(
 					port->path(),
