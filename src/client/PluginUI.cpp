@@ -34,6 +34,8 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
+SLV2UIHost PluginUI::ui_host = NULL;
+
 static void
 lv2_ui_write(LV2UI_Controller controller,
              uint32_t         port_index,
@@ -120,6 +122,10 @@ PluginUI::create(Ingen::Shared::World* world,
                  SharedPtr<NodeModel>  node,
                  SLV2Plugin            plugin)
 {
+	if (!PluginUI::ui_host) {
+		PluginUI::ui_host = slv2_ui_host_new(lv2_ui_write, NULL, NULL, NULL);
+	}
+
 	SharedPtr<PluginUI> ret(new PluginUI(world, node));
 	ret->_features = world->lv2_features()->lv2_features(world, node.get());
 
@@ -128,14 +134,12 @@ PluginUI::create(Ingen::Shared::World* world,
 
 	SLV2UI ui = slv2_plugin_get_default_ui(plugin, gtk_ui);
 
-	SLV2UIHost ui_host = slv2_ui_host_new(
-		ret.get(), lv2_ui_write, NULL, NULL, NULL);
-
 	SLV2UIInstance instance = slv2_ui_instance_new(
 		plugin,
 		ui,
 		gtk_ui,
 		ui_host,
+		ret.get(),
 		ret->_features->array());
 
 	slv2_ui_host_free(ui_host);

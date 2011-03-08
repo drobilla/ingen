@@ -61,6 +61,8 @@ private:
 	SharedPtr<NodeModel>  _node;
 	SLV2UIInstance        _instance;
 
+	static SLV2UIHost ui_host;
+
     SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
 
