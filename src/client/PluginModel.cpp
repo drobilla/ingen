@@ -105,8 +105,8 @@ PluginModel::get_property(const URI& key) const
 		SLV2Value  lv2_pred = slv2_value_new_uri(_slv2_world, key.str().c_str());
 		SLV2Values values   = slv2_plugin_get_value(_slv2_plugin, lv2_pred);
 		slv2_value_free(lv2_pred);
-		for (unsigned i = 0; i < slv2_values_size(values); ++i) {
-			SLV2Value val = slv2_values_get_at(values, i);
+		SLV2_FOREACH(i, values) {
+			SLV2Value val = slv2_values_get(values, i);
 			if (slv2_value_is_uri(val)) {
 				ret = set_property(key, Atom(Atom::URI, slv2_value_as_uri(val)));
 				break;
@@ -232,7 +232,7 @@ PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
 	SLV2Values paths = slv2_plugin_get_value(plugin, svg_icon_pred);
 
 	if (slv2_values_size(paths) > 0) {
-		SLV2Value value = slv2_values_get_at(paths, 0);
+		SLV2Value value = slv2_values_get_first(paths);
 		if (slv2_value_is_uri(value))
 			result = slv2_uri_to_path(slv2_value_as_string(value));
 		slv2_values_free(paths);

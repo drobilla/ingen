@@ -249,8 +249,8 @@ PatchCanvas::build_plugin_menu()
 	SLV2PluginClasses classes    = slv2_world_get_plugin_classes(PluginModel::slv2_world());
 
 	LV2Children children;
-	for (unsigned i = 0; i < slv2_plugin_classes_size(classes); ++i) {
-		SLV2PluginClass c = slv2_plugin_classes_get_at(classes, i);
+	SLV2_FOREACH(i, classes) {
+		SLV2PluginClass c = slv2_plugin_classes_get(classes, i);
 		SLV2Value       p = slv2_plugin_class_get_parent_uri(c);
 		if (!p)
 			p = slv2_plugin_class_get_uri(lv2_plugin);

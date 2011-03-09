@@ -124,23 +124,18 @@ NodeFactory::load_lv2_plugins()
 {
 	SLV2Plugins plugins = slv2_world_get_all_plugins(_world->slv2_world());
 
-	for (unsigned i=0; i < slv2_plugins_size(plugins); ++i) {
-
-		SLV2Plugin lv2_plug = slv2_plugins_get_at(plugins, i);
+	SLV2_FOREACH(i, plugins) {
+		SLV2Plugin lv2_plug = slv2_plugins_get(plugins, i);
 
 		const string uri(slv2_value_as_uri(slv2_plugin_get_uri(lv2_plug)));
 
-#ifndef NDEBUG
 		assert(_plugins.find(uri) == _plugins.end());
-#endif
 
 		LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
 
 		plugin->slv2_plugin(lv2_plug);
 		_plugins.insert(make_pair(uri, plugin));
 	}
-
-	slv2_plugins_free(_world->slv2_world(), plugins);
 }
 #endif // HAVE_SLV2
 

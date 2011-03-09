@@ -99,12 +99,12 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 		if (presets) {
 			_presets_menu = Gtk::manage(new Gtk::Menu());
 
-			for (unsigned i = 0; i < slv2_values_size(presets); ++i) {
-				SLV2Value  uri    = slv2_values_get_at(presets, i);
+			SLV2_FOREACH(i, presets) {
+				SLV2Value  uri    = slv2_values_get(presets, i);
 				SLV2Values titles = slv2_plugin_get_value_for_subject(
 					plugin->slv2_plugin(), uri, title_pred);
 				if (titles) {
-					SLV2Value title = slv2_values_get_at(titles, 0);
+					SLV2Value title = slv2_values_get_first(titles);
 					_presets_menu->items().push_back(
 						Gtk::Menu_Helpers::MenuElem(
 							slv2_value_as_string(title),
@@ -203,15 +203,15 @@ NodeMenu::on_preset_activated(const std::string& uri)
 		subject,
 		port_pred);
 	App::instance().engine()->bundle_begin();
-	for (unsigned i = 0; i < slv2_values_size(ports); ++i) {
-		SLV2Value  uri    = slv2_values_get_at(ports, i);
+	SLV2_FOREACH(i, ports) {
+		SLV2Value  uri    = slv2_values_get(ports, i);
 		SLV2Values values = slv2_plugin_get_value_for_subject(
 			plugin->slv2_plugin(), uri, value_pred);
 		SLV2Values symbols = slv2_plugin_get_value_for_subject(
 			plugin->slv2_plugin(), uri, symbol_pred);
 		if (values && symbols) {
-			SLV2Value val = slv2_values_get_at(values, 0);
-			SLV2Value sym = slv2_values_get_at(symbols, 0);
+			SLV2Value val = slv2_values_get_first(values);
+			SLV2Value sym = slv2_values_get_first(symbols);
 			App::instance().engine()->set_property(
 				node->path().base() + slv2_value_as_string(sym),
 				App::instance().uris().ingen_value,

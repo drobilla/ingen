@@ -249,8 +249,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 		if (data_type == PortType::VALUE || data_type == PortType::MESSAGE) {
 			// Get default value, and its length
 			SLV2Values defaults = slv2_port_get_value(plug, id, default_pred);
-			for (uint32_t i = 0; i < slv2_values_size(defaults); ++i) {
-				SLV2Value d = slv2_values_get_at(defaults, i);
+			SLV2_FOREACH(i, defaults) {
+				SLV2Value d = slv2_values_get(defaults, i);
 				if (slv2_value_is_string(d)) {
 					const char*  str_val     = slv2_value_as_string(d);
 					const size_t str_val_len = strlen(str_val);
@@ -261,8 +261,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 			// Get minimum size, if set in data
 			SLV2Values sizes = slv2_port_get_value(plug, id, min_size_pred);
-			for (uint32_t i = 0; i < slv2_values_size(sizes); ++i) {
-				SLV2Value d = slv2_values_get_at(sizes, i);
+			SLV2_FOREACH(i, sizes) {
+				SLV2Value d = slv2_values_get(sizes, i);
 				if (slv2_value_is_int(d)) {
 					size_t size_val = slv2_value_as_int(d);
 					port_buffer_size = size_val;
@@ -303,8 +303,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		// Set lv2:portProperty properties
 		SLV2Values properties = slv2_port_get_value(plug, id, port_property_pred);
-		for (uint32_t i = 0; i < slv2_values_size(properties); ++i) {
-			SLV2Value p = slv2_values_get_at(properties, i);
+		SLV2_FOREACH(i, properties) {
+			SLV2Value p = slv2_values_get(properties, i);
 			if (slv2_value_is_uri(p)) {
 				port->set_property(uris.lv2_portProperty, Raul::URI(slv2_value_as_uri(p)));
 			}
@@ -312,16 +312,16 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		// Set atom:supports properties
 		SLV2Values types = slv2_port_get_value(plug, id, supports_pred);
-		for (uint32_t i = 0; i < slv2_values_size(types); ++i) {
-			SLV2Value type = slv2_values_get_at(types, i);
+		SLV2_FOREACH(i, types) {
+			SLV2Value type = slv2_values_get(types, i);
 			if (slv2_value_is_uri(type)) {
 				port->add_property(uris.atom_supports, Raul::URI(slv2_value_as_uri(type)));
 			}
 		}
 
 		SLV2Values contexts = slv2_port_get_value(plug, id, context_pred);
-		for (uint32_t i = 0; i < slv2_values_size(contexts); ++i) {
-			SLV2Value c = slv2_values_get_at(contexts, i);
+		SLV2_FOREACH(i, contexts) {
+			SLV2Value c = slv2_values_get(contexts, i);
 			const char* context = slv2_value_as_string(c);
 			if (!strcmp(LV2_CONTEXTS_URI "#MessageContext", context)) {
 				if (!_message_funcs) {
@@ -331,8 +331,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 				port->set_context(Context::MESSAGE);
 			} else {
 				warn << _lv2_plugin->uri() << " port " << i << " has unknown context "
-					<< slv2_value_as_string(slv2_values_get_at(contexts, i))
-					<< endl;
+				     << slv2_value_as_string(c)
+				     << endl;
 			}
 		}
 
