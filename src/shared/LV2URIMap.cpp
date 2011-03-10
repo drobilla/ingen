@@ -16,12 +16,19 @@
  */
 
 #define __STDC_LIMIT_MACROS 1
-#include <cassert>
+
+#include <assert.h>
 #include <stdint.h>
+
 #include <glib.h>
+
 #include <boost/shared_ptr.hpp>
+
 #include "raul/log.hpp"
+
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/event/event.h"
+
 #include "LV2URIMap.hpp"
 
 using namespace std;
@@ -132,18 +139,18 @@ LV2URIMap::uri_to_id(const char* map,
                      const char* uri)
 {
 	const uint32_t id = static_cast<uint32_t>(g_quark_from_string(uri));
-	if (map && !strcmp(map, "http://lv2plug.in/ns/ext/event")) {
+	if (map && !strcmp(map, LV2_EVENT_URI)) {
 		GlobalToEvent::iterator i = _global_to_event.find(id);
 		if (i != _global_to_event.end()) {
 			return i->second;
 		} else {
 			if (_global_to_event.size() + 1 > UINT16_MAX) {
 				error << "Event URI " << uri << " ID out of range." << endl;
-				return NULL;
+				return 0;
 			}
 			const uint16_t ev_id = _global_to_event.size() + 1;
 			assert(_event_to_global.find(ev_id) == _event_to_global.end());
-			_global_to_event.insert(make_pair(id, ev_id));
+			_global_to_event.insert(make_pair(id,    ev_id));
 			_event_to_global.insert(make_pair(ev_id, id));
 			return ev_id;
 		}
@@ -157,7 +164,7 @@ const char*
 LV2URIMap::id_to_uri(const char*    map,
                      const uint32_t id)
 {
-	if (map && !strcmp(map, "http://lv2plug.in/ns/ext/event")) {
+	if (map && !strcmp(map, LV2_EVENT_URI)) {
 		EventToGlobal::iterator i = _event_to_global.find(id);
 		if (i == _event_to_global.end()) {
 			error << "Failed to unmap event URI " << id << endl;

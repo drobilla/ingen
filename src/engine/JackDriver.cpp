@@ -145,7 +145,9 @@ JackPort::pre_process(ProcessContext& context)
 			jack_midi_event_t ev;
 			jack_midi_event_get(&ev, jack_buf, i);
 
-			if (!patch_buf->append(ev.time, 0, _driver->_midi_event_type, ev.size, ev.buffer))
+			if (!patch_buf->append(ev.time, 0,
+			                       _driver->_midi_event_type,
+			                       ev.size, ev.buffer))
 				LOG(warn) << "Failed to write MIDI to port buffer, event(s) lost!" << endl;
 		}
 	}
