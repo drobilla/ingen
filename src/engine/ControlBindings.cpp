@@ -151,8 +151,11 @@ ControlBindings::port_value_changed(ProcessContext& context, PortImpl* port)
 		default:
 			break;
 		}
-		if (size > 0)
-			_feedback->append(0, 0, uris.midi_MidiEvent.id, size, buf);
+		if (size > 0) {
+			_feedback->append(0, 0,
+			                  uris.global_to_event(uris.midi_MidiEvent.id).second,
+			                  size, buf);
+		}
 	}
 }
 
@@ -340,12 +343,15 @@ ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 
 	const Shared::LV2URIMap& uris = *context.engine().world()->uris().get();
 
+	// TODO: cache
+	const uint32_t midi_event_type = uris.global_to_event(uris.midi_MidiEvent.id).second;
+
 	// Learn from input if necessary
 	if (_learn_port) {
 		for (buffer->rewind();
 				buffer->get_event(&frames, &subframes, &type, &size, &buf);
 				buffer->increment()) {
-			if (type != uris.midi_MidiEvent.id)
+			if (type != midi_event_type)
 				continue;
 
 			const Key key = midi_event_key(size, buf, value);
@@ -362,7 +368,7 @@ ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 	for (buffer->rewind();
 			buffer->get_event(&frames, &subframes, &type, &size, &buf);
 			buffer->increment()) {
-		if (type != uris.midi_MidiEvent.id)
+		if (type != midi_event_type)
 			continue;
 
 		const Key key = midi_event_key(size, buf, value);

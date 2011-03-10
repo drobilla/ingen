@@ -30,6 +30,8 @@
 #include "raul/log.hpp"
 #include "raul/List.hpp"
 
+#include "lv2/lv2plug.in/ns/ext/event/event.h"
+
 #include "AudioBuffer.hpp"
 #include "ControlBindings.hpp"
 #include "DuplexPort.hpp"
@@ -201,7 +203,7 @@ JackDriver::JackDriver(Engine& engine)
 	, _root_patch(NULL)
 {
 	_midi_event_type = _engine.world()->uris()->uri_to_id(
-			NULL, "http://lv2plug.in/ns/ext/midi#MidiEvent");
+			LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 }
 
 
