@@ -252,6 +252,10 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugi
 void
 LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 {
+	if (plugin->slv2_plugin() && slv2_plugin_is_replaced(plugin->slv2_plugin())) {
+		return;
+	}
+
 	Gtk::TreeModel::iterator iter = _plugins_liststore->append();
 	Gtk::TreeModel::Row row = *iter;
 	_rows.insert(make_pair(plugin->uri(), iter));

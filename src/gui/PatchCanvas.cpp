@@ -18,6 +18,7 @@
 #include <cassert>
 #include <map>
 #include <string>
+#include <boost/format.hpp>
 #include "raul/log.hpp"
 #include "flowcanvas/Canvas.hpp"
 #include "flowcanvas/Ellipse.hpp"
@@ -336,6 +337,11 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 		_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
 				sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
 	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->slv2_plugin()) {
+		if (slv2_plugin_is_replaced(p->slv2_plugin())) {
+			info << (boost::format("[Menu] LV2 plugin <%s> hidden") % p->uri()) << endl;
+			return;
+		}
+
 		SLV2PluginClass pc            = slv2_plugin_get_class(p->slv2_plugin());
 		SLV2Value       class_uri     = slv2_plugin_class_get_uri(pc);
 		const char*     class_uri_str = slv2_value_as_string(class_uri);
