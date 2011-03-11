@@ -338,7 +338,7 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 				sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
 	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->slv2_plugin()) {
 		if (slv2_plugin_is_replaced(p->slv2_plugin())) {
-			info << (boost::format("[Menu] LV2 plugin <%s> hidden") % p->uri()) << endl;
+			//info << (boost::format("[Menu] LV2 plugin <%s> hidden") % p->uri()) << endl;
 			return;
 		}
 
