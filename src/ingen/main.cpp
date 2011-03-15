@@ -153,8 +153,6 @@ main(int argc, char** argv)
 	if (world->local_engine()) {
 		ingen_try(world->load("ingen_jack"),
 		          "Unable to load jack module");
-
-		world->local_engine()->activate();
 	}
 
 	world->set_engine(engine_interface);
@@ -219,6 +217,7 @@ main(int argc, char** argv)
 	} else if (world->local_engine() && !conf.option("gui").get_bool()) {
 		signal(SIGINT, ingen_interrupt);
 		signal(SIGTERM, ingen_interrupt);
+		world->local_engine()->activate();
 		world->local_engine()->main(); // Block here
 	}
 

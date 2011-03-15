@@ -76,8 +76,10 @@ ConnectWindow::start(Ingen::Shared::World* world)
 {
 	if (world->local_engine()) {
 		_mode = INTERNAL;
-		if (_widgets_loaded)
+		if (_widgets_loaded) {
 			_internal_radio->set_active(true);
+		}
+		world->local_engine()->activate();
 	}
 
 	set_connected_to(world->engine());
