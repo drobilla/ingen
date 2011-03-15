@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import os
-import autowaf
-import Options
+
+import waflib.Options as Options
+from waflib.extras import autowaf as autowaf
 
 # Version of this package (even if built as a child)
 INGEN_VERSION = '0.5.1'
@@ -36,7 +37,7 @@ def configure(conf):
 	conf.line_just = max(conf.line_just, 67)
 	autowaf.configure(conf)
 	autowaf.display_header('Ingen Configuration')
-	conf.check_tool('compiler_cxx')
+	conf.load('compiler_cxx')
 	autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
 			  atleast_version='2.14.0', mandatory=True)
 	autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
@@ -66,7 +67,7 @@ def configure(conf):
 		autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO',
 				  atleast_version='0.25', mandatory=False)
 	if not Options.options.no_jack_session:
-		if conf.env['HAVE_NEW_JACK']:
+		if conf.is_defined('HAVE_NEW_JACK'):
 			autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
 
 	# Check for posix_memalign (OSX, amazingly, doesn't have it)
@@ -84,11 +85,12 @@ def configure(conf):
 	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/uri-map/uri-map.h')
 	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h')
 
-	build_gui = conf.env['HAVE_GLADEMM'] == 1 and conf.env['HAVE_FLOWCANVAS'] == 1
+	build_gui = conf.is_defined('HAVE_GLADEMM') and conf.is_defined('HAVE_FLOWCANVAS')
 
 	autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 	autowaf.define(conf, 'INGEN_BUILD_GUI', int(build_gui))
-	autowaf.define(conf, 'HAVE_JACK_MIDI', int(conf.env['HAVE_JACK'] == 1))
+	if conf.is_defined('HAVE_JACK'):
+		autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
 	if conf.env['BUNDLE']:
 		autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIRNAME'], 'ingen'))
 		autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIRNAME'])
@@ -104,12 +106,12 @@ def configure(conf):
 
 	conf.write_config_header('ingen-config.h', remove=False)
 
-	autowaf.display_msg(conf, "Jack", str(conf.env['HAVE_JACK'] == 1))
+	autowaf.display_msg(conf, "Jack", conf.is_defined('HAVE_JACK'))
 	autowaf.display_msg(conf, "Jack session support",
-	                    str(conf.env['INGEN_JACK_SESSION'] == 1))
-	autowaf.display_msg(conf, "OSC", str(conf.env['HAVE_LIBLO'] == 1))
-	autowaf.display_msg(conf, "HTTP", str(conf.env['HAVE_SOUP'] == 1))
-	autowaf.display_msg(conf, "LV2", str(conf.env['HAVE_SLV2'] == 1))
+	                    conf.is_defined('INGEN_JACK_SESSION'))
+	autowaf.display_msg(conf, "OSC", conf.is_defined('HAVE_LIBLO'))
+	autowaf.display_msg(conf, "HTTP", conf.is_defined('HAVE_SOUP'))
+	autowaf.display_msg(conf, "LV2", conf.is_defined('HAVE_SLV2'))
 	autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
 	print('')
 
@@ -123,14 +125,14 @@ def build(bld):
 			  bld.path.ant_glob('src/common/interface/*.hpp'))
 
 	# Modules
-	bld.add_subdirs('src/engine')
-	bld.add_subdirs('src/serialisation')
-	bld.add_subdirs('src/module')
-	bld.add_subdirs('src/shared')
-	bld.add_subdirs('src/client')
+	bld.recurse('src/engine')
+	bld.recurse('src/serialisation')
+	bld.recurse('src/module')
+	bld.recurse('src/shared')
+	bld.recurse('src/client')
 
 	if bld.env['INGEN_BUILD_GUI']:
-		bld.add_subdirs('src/gui')
+		bld.recurse('src/gui')
 
 	# Program
 	obj = bld(features = 'c cxx cxxprogram')
