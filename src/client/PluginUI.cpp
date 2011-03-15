@@ -126,13 +126,19 @@ PluginUI::create(Ingen::Shared::World* world,
 		PluginUI::ui_host = slv2_ui_host_new(lv2_ui_write, NULL, NULL, NULL);
 	}
 
-	SharedPtr<PluginUI> ret(new PluginUI(world, node));
-	ret->_features = world->lv2_features()->lv2_features(world, node.get());
-
 	SLV2Value gtk_ui = slv2_value_new_uri(
 		world->slv2_world(), "http://lv2plug.in/ns/extensions/ui#GtkUI");
 
 	SLV2UI ui = slv2_plugin_get_default_ui(plugin, gtk_ui);
+
+	slv2_value_free(gtk_ui);
+
+	if (!ui) {
+		return SharedPtr<PluginUI>();
+	}
+
+	SharedPtr<PluginUI> ret(new PluginUI(world, node));
+	ret->_features = world->lv2_features()->lv2_features(world, node.get());
 
 	SLV2UIInstance instance = slv2_ui_instance_new(
 		plugin,
@@ -142,8 +148,6 @@ PluginUI::create(Ingen::Shared::World* world,
 		ret.get(),
 		ret->_features->array());
 
-	slv2_ui_host_free(ui_host);
-	
 	if (instance) {
 		ret->_instance = instance;
 	} else {
