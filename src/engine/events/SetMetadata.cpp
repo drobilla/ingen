@@ -106,8 +106,8 @@ SetMetadata::pre_process()
 	const bool is_graph_object = Path::is_path(_subject);
 
 	_object = is_graph_object
-			? _engine.engine_store()->find_object(Path(_subject.str()))
-			: _object = _engine.node_factory()->plugin(_subject);
+		? _engine.engine_store()->find_object(Path(_subject.str()))
+		: static_cast<Shared::ResourceImpl*>(_engine.node_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
 		_error = NOT_FOUND;
