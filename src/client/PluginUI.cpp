@@ -131,9 +131,8 @@ PluginUI::create(Ingen::Shared::World* world,
 
 	SLV2UI ui = slv2_plugin_get_default_ui(plugin, gtk_ui);
 
-	slv2_value_free(gtk_ui);
-
 	if (!ui) {
+		slv2_value_free(gtk_ui);
 		return SharedPtr<PluginUI>();
 	}
 
@@ -147,6 +146,8 @@ PluginUI::create(Ingen::Shared::World* world,
 		ui_host,
 		ret.get(),
 		ret->_features->array());
+
+	slv2_value_free(gtk_ui);
 
 	if (instance) {
 		ret->_instance = instance;
