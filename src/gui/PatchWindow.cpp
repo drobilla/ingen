@@ -87,6 +87,9 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_fullscreen_menuitem", _menu_fullscreen);
 	xml->get_widget("patch_human_names_menuitem", _menu_human_names);
 	xml->get_widget("patch_show_port_names_menuitem", _menu_show_port_names);
+	xml->get_widget("patch_zoom_in_menuitem", _menu_zoom_in);
+	xml->get_widget("patch_zoom_out_menuitem", _menu_zoom_out);
+	xml->get_widget("patch_zoom_normal_menuitem", _menu_zoom_normal);
 	xml->get_widget("patch_status_bar_menuitem", _menu_show_status_bar);
 	xml->get_widget("patch_arrange_menuitem", _menu_arrange);
 	xml->get_widget("patch_view_messages_window_menuitem", _menu_view_messages_window);
@@ -135,6 +138,14 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 		sigc::mem_fun(this, &PatchWindow::event_port_names_toggled));
 	_menu_arrange->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_arrange));
+	_menu_quit->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_quit));
+	_menu_zoom_in->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_zoom_in));
+	_menu_zoom_out->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_zoom_out));
+	_menu_zoom_normal->signal_activate().connect(
+		sigc::mem_fun(this, &PatchWindow::event_zoom_normal));
 	_menu_view_engine_window->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_engine));
 	_menu_view_control_window->signal_activate().connect(
@@ -639,6 +650,26 @@ void
 PatchWindow::event_quit()
 {
 	App::instance().quit(*this);
+}
+
+
+void
+PatchWindow::event_zoom_in()
+{
+	_view->canvas()->set_font_size(_view->canvas()->get_font_size() + 1.0);
+}
+
+void
+PatchWindow::event_zoom_out()
+{
+	_view->canvas()->set_font_size(_view->canvas()->get_font_size() - 1.0);
+}
+
+
+void
+PatchWindow::event_zoom_normal()
+{
+	_view->canvas()->set_zoom_and_font_size(1.0, _view->canvas()->get_default_font_size());
 }
 
 

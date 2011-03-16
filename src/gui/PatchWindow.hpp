@@ -96,6 +96,9 @@ private:
 	void event_status_bar_toggled();
 	void event_human_names_toggled();
 	void event_port_names_toggled();
+	void event_zoom_in();
+	void event_zoom_out();
+	void event_zoom_normal();
 	void event_arrange();
 	void event_show_properties();
 	void event_show_controls();
@@ -131,6 +134,9 @@ private:
 	Gtk::CheckMenuItem* _menu_human_names;
 	Gtk::CheckMenuItem* _menu_show_port_names;
 	Gtk::CheckMenuItem* _menu_show_status_bar;
+	Gtk::MenuItem*      _menu_zoom_in;
+	Gtk::MenuItem*      _menu_zoom_out;
+	Gtk::MenuItem*      _menu_zoom_normal;
 	Gtk::MenuItem*      _menu_fullscreen;
 	Gtk::MenuItem*      _menu_arrange;
 	Gtk::MenuItem*      _menu_view_engine_window;
