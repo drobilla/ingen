@@ -18,13 +18,13 @@ def build(bld):
 		ingen_client.cpp
 	'''
 
-	if bld.env['HAVE_SOUP'] == 1:
+	if bld.is_defined('HAVE_SOUP'):
 		obj.source += '''
 			HTTPClientReceiver.cpp
 			HTTPEngineSender.cpp
 		'''
 
-	if bld.env['HAVE_LIBLO'] == 1:
+	if bld.is_defined('HAVE_LIBLO'):
 		obj.source += '''
 			OSCClientReceiver.cpp
 			OSCEngineSender.cpp

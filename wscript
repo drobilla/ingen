@@ -85,10 +85,9 @@ def configure(conf):
 	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/uri-map/uri-map.h')
 	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h')
 
-	build_gui = conf.is_defined('HAVE_GLADEMM') and conf.is_defined('HAVE_FLOWCANVAS')
-
 	autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
-	autowaf.define(conf, 'INGEN_BUILD_GUI', int(build_gui))
+	if conf.is_defined('HAVE_GLADEMM') and conf.is_defined('HAVE_FLOWCANVAS'):
+		autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
 	if conf.is_defined('HAVE_JACK'):
 		autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
 	if conf.env['BUNDLE']:
@@ -131,7 +130,7 @@ def build(bld):
 	bld.recurse('src/shared')
 	bld.recurse('src/client')
 
-	if bld.env['INGEN_BUILD_GUI']:
+	if bld.is_defined('INGEN_BUILD_GUI'):
 		bld.recurse('src/gui')
 
 	# Program

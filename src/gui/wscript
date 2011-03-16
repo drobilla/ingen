@@ -42,7 +42,7 @@ def build(bld):
 		ingen_gui.cpp
 	'''
 
-	if bld.env['HAVE_CURL'] != 0:
+	if bld.is_defined('HAVE_CURL'):
 		obj.source += 'UploadPatchWindow.cpp'
 
 	obj.export_includes = ['.']

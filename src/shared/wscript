@@ -17,9 +17,9 @@ def build(bld):
 		Store.cpp
 		runtime_paths.cpp
 	'''
-	if bld.env['HAVE_LIBLO'] == 1:
+	if bld.is_defined('HAVE_LIBLO'):
 		obj.source += ' OSCSender.cpp '
-	if bld.env['HAVE_SOUP'] == 1:
+	if bld.is_defined('HAVE_SOUP'):
 		autowaf.use_lib(bld, obj, 'SOUP')
 		obj.source += ' HTTPSender.cpp '
 	obj.export_includes = ['.']
