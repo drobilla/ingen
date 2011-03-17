@@ -58,7 +58,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	: Canvas(width, height)
 	, _patch(patch)
@@ -108,24 +107,35 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 			"event_out", "Event Out", "http://lv2plug.in/ns/ext/event#EventPort", true));
 
 	// Connect to model signals to track state
-	_patch->signal_new_node.connect(sigc::mem_fun(this, &PatchCanvas::add_node));
-	_patch->signal_removed_node.connect(sigc::mem_fun(this, &PatchCanvas::remove_node));
-	_patch->signal_new_port.connect(sigc::mem_fun(this, &PatchCanvas::add_port));
-	_patch->signal_removed_port.connect(sigc::mem_fun(this, &PatchCanvas::remove_port));
-	_patch->signal_new_connection.connect(sigc::mem_fun(this, &PatchCanvas::connection));
-	_patch->signal_removed_connection.connect(sigc::mem_fun(this, &PatchCanvas::disconnection));
+	_patch->signal_new_node.connect(
+		sigc::mem_fun(this, &PatchCanvas::add_node));
+	_patch->signal_removed_node.connect(
+		sigc::mem_fun(this, &PatchCanvas::remove_node));
+	_patch->signal_new_port.connect(
+		sigc::mem_fun(this, &PatchCanvas::add_port));
+	_patch->signal_removed_port.connect(
+		sigc::mem_fun(this, &PatchCanvas::remove_port));
+	_patch->signal_new_connection.connect(
+		sigc::mem_fun(this, &PatchCanvas::connection));
+	_patch->signal_removed_connection.connect(
+		sigc::mem_fun(this, &PatchCanvas::disconnection));
 
-	App::instance().store()->signal_new_plugin.connect(sigc::mem_fun(this, &PatchCanvas::add_plugin));
+	App::instance().store()->signal_new_plugin.connect(
+		sigc::mem_fun(this, &PatchCanvas::add_plugin));
 
 	// Connect widget signals to do things
-	_menu_load_plugin->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
-	_menu_load_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_load_patch));
-	_menu_new_patch->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_new_patch));
-	_menu_edit->signal_activate().connect(sigc::mem_fun(this, &PatchCanvas::menu_edit_toggled));
+	_menu_load_plugin->signal_activate().connect(
+		sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
+	_menu_load_patch->signal_activate().connect(
+		sigc::mem_fun(this, &PatchCanvas::menu_load_patch));
+	_menu_new_patch->signal_activate().connect(
+		sigc::mem_fun(this, &PatchCanvas::menu_new_patch));
+	_menu_edit->signal_activate().connect(
+		sigc::mem_fun(this, &PatchCanvas::menu_edit_toggled));
 
-	_patch->signal_editable.connect(sigc::mem_fun(this, &PatchCanvas::patch_editable_changed));
+	_patch->signal_editable.connect(
+		sigc::mem_fun(this, &PatchCanvas::patch_editable_changed));
 }
-
 
 void
 PatchCanvas::show_menu(bool position,  unsigned button, uint32_t time)
@@ -139,7 +149,6 @@ PatchCanvas::show_menu(bool position,  unsigned button, uint32_t time)
 		_menu->popup(button, time);
 }
 
-
 void
 PatchCanvas::build_menus()
 {
@@ -147,7 +156,9 @@ PatchCanvas::build_menus()
 	if (_internal_menu) {
 		_internal_menu->items().clear();
 	} else {
-		_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("I_nternal",
+		_menu->items().push_back(
+			Gtk::Menu_Helpers::ImageMenuElem(
+				"I_nternal",
 				*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
 		Gtk::MenuItem* internal_menu_item = &(_menu->items().back());
 		_internal_menu = Gtk::manage(new Gtk::Menu());
@@ -218,7 +229,8 @@ PatchCanvas::build_plugin_class_menu(
 		Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
 		menu_item->set_submenu(*submenu);
 
-		size_t num_child_items = build_plugin_class_menu(submenu, c, classes, children, ancestors);
+		size_t num_child_items = build_plugin_class_menu(
+			submenu, c, classes, children, ancestors);
 
 		_class_menus.insert(make_pair(sub_uri_str, MenuRecord(menu_item, submenu)));
 		if (num_child_items == 0)
@@ -231,14 +243,15 @@ PatchCanvas::build_plugin_class_menu(
 	return num_items;
 }
 
-
 void
 PatchCanvas::build_plugin_menu()
 {
 	if (_plugin_menu) {
 		_plugin_menu->items().clear();
 	} else {
-		_menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem("_Plugin",
+		_menu->items().push_back(
+			Gtk::Menu_Helpers::ImageMenuElem(
+				"_Plugin",
 				*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
 		Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
 		_plugin_menu = Gtk::manage(new Gtk::Menu());
@@ -290,7 +303,6 @@ PatchCanvas::build()
 	}
 }
 
-
 void
 PatchCanvas::arrange(bool use_length_hints, bool center)
 {
@@ -299,7 +311,6 @@ PatchCanvas::arrange(bool use_length_hints, bool center)
 	for (list<boost::shared_ptr<Item> >::iterator i = _items.begin(); i != _items.end(); ++i)
 		(*i)->store_location();
 }
-
 
 void
 PatchCanvas::show_human_names(bool b)
@@ -316,7 +327,6 @@ PatchCanvas::show_human_names(bool b)
 	}
 }
 
-
 void
 PatchCanvas::show_port_names(bool b)
 {
@@ -327,7 +337,6 @@ PatchCanvas::show_port_names(bool b)
 			m->set_show_port_labels(b);
 	}
 }
-
 
 void
 PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
@@ -362,11 +371,14 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 				Gtk::Menu* menu = i->second.menu;
 				if (icon) {
 					Gtk::Image* image = new Gtk::Image(icon);
-					menu->items().push_back(Gtk::Menu_Helpers::ImageMenuElem(p->human_name(),
-							*image,
+					menu->items().push_back(
+						Gtk::Menu_Helpers::ImageMenuElem(
+							p->human_name(), *image,
 							sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
 				} else {
-					menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
+					menu->items().push_back(
+						Gtk::Menu_Helpers::MenuElem(
+							p->human_name(),
 							sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
 				}
 				if (!i->second.item->is_visible())
@@ -375,7 +387,6 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 		}
 	}
 }
-
 
 void
 PatchCanvas::add_node(SharedPtr<NodeModel> nm)
@@ -399,7 +410,6 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 	_views.insert(std::make_pair(nm, module));
 }
 
-
 void
 PatchCanvas::remove_node(SharedPtr<NodeModel> nm)
 {
@@ -410,7 +420,6 @@ PatchCanvas::remove_node(SharedPtr<NodeModel> nm)
 		_views.erase(i);
 	}
 }
-
 
 void
 PatchCanvas::add_port(SharedPtr<PortModel> pm)
@@ -423,7 +432,6 @@ PatchCanvas::add_port(SharedPtr<PortModel> pm)
 	add_item(view);
 	view->show();
 }
-
 
 void
 PatchCanvas::remove_port(SharedPtr<PortModel> pm)
@@ -445,7 +453,6 @@ PatchCanvas::remove_port(SharedPtr<PortModel> pm)
 
 	assert(_views.find(pm) == _views.end());
 }
-
 
 SharedPtr<FlowCanvas::Port>
 PatchCanvas::get_port_view(SharedPtr<PortModel> port)
@@ -472,7 +479,6 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 	return SharedPtr<FlowCanvas::Port>();
 }
 
-
 void
 PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 {
@@ -490,7 +496,6 @@ PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 	}
 }
 
-
 void
 PatchCanvas::disconnection(SharedPtr<ConnectionModel> cm)
 {
@@ -503,7 +508,6 @@ PatchCanvas::disconnection(SharedPtr<ConnectionModel> cm)
 		LOG(error) << "Unable to find ports to disconnect "
 			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
 }
-
 
 void
 PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
@@ -521,7 +525,6 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 	App::instance().engine()->connect(src->model()->path(), dst->model()->path());
 }
 
-
 void
 PatchCanvas::disconnect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
                         boost::shared_ptr<FlowCanvas::Connectable> dst_port)
@@ -535,7 +538,6 @@ PatchCanvas::disconnect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 	App::instance().engine()->disconnect(src->model()->path(),
 	                                     dst->model()->path());
 }
-
 
 void
 PatchCanvas::auto_menu_position(int& x, int& y, bool& push_in)
@@ -558,7 +560,6 @@ PatchCanvas::auto_menu_position(int& x, int& y, bool& push_in)
 	++_auto_position_count;
 	_auto_position_scroll_offsets = scroll_offsets;
 }
-
 
 bool
 PatchCanvas::canvas_event(GdkEvent* event)
@@ -605,16 +606,21 @@ PatchCanvas::canvas_event(GdkEvent* event)
 	return (ret ? true : Canvas::canvas_event(event));
 }
 
+#define FOREACH_ITEM(iter, coll) \
+	for (list<boost::shared_ptr<Item> >::iterator (iter) = coll.begin(); \
+	     (iter) != coll.end(); ++(iter))
 
 void
 PatchCanvas::destroy_selection()
 {
-	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {
-		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
+	FOREACH_ITEM(m, _selected_items) {
+		boost::shared_ptr<NodeModule> module(
+			boost::dynamic_pointer_cast<NodeModule>(*m));
 		if (module) {
 			App::instance().engine()->del(module->node()->path());
 		} else {
-			boost::shared_ptr<PatchPortModule> port_module = boost::dynamic_pointer_cast<PatchPortModule>(*m);
+			boost::shared_ptr<PatchPortModule> port_module(
+				boost::dynamic_pointer_cast<PatchPortModule>(*m));
 			if (port_module)
 				App::instance().engine()->del(port_module->port()->path());
 		}
@@ -625,7 +631,7 @@ void
 PatchCanvas::select_all()
 {
 	unselect_ports();
-	for (list<boost::shared_ptr<Item> >::iterator m = _items.begin(); m != _items.end(); ++m)
+	FOREACH_ITEM(m, _items)
 		if (boost::dynamic_pointer_cast<FlowCanvas::Module>(*m))
 			if (!(*m)->selected())
 				select_item(*m);
@@ -638,12 +644,14 @@ PatchCanvas::copy_selection()
 	Serialiser serialiser(*App::instance().world(), App::instance().store());
 	serialiser.start_to_string(_patch->path(), base_uri);
 
-	for (list<boost::shared_ptr<Item> >::iterator m = _selected_items.begin(); m != _selected_items.end(); ++m) {
-		boost::shared_ptr<NodeModule> module = boost::dynamic_pointer_cast<NodeModule>(*m);
+	FOREACH_ITEM(m, _selected_items) {
+		boost::shared_ptr<NodeModule> module(
+			boost::dynamic_pointer_cast<NodeModule>(*m));
 		if (module) {
 			serialiser.serialise(module->node());
 		} else {
-			boost::shared_ptr<PatchPortModule> port_module = boost::dynamic_pointer_cast<PatchPortModule>(*m);
+			boost::shared_ptr<PatchPortModule> port_module(
+				boost::dynamic_pointer_cast<PatchPortModule>(*m));
 			if (port_module)
 				serialiser.serialise(port_module->port());
 		}
@@ -666,7 +674,6 @@ PatchCanvas::copy_selection()
 	clipboard->set_text(result);
 }
 
-
 void
 PatchCanvas::paste()
 {
@@ -686,13 +693,14 @@ PatchCanvas::paste()
 	ClientStore clipboard(App::instance().world()->uris());
 	clipboard.set_plugins(App::instance().store()->plugins());
 
-
 	// mkdir -p
 	string to_create = _patch->path().chop_scheme().substr(1);
 	string created = "/";
 	Resource::Properties props;
-	props.insert(make_pair(uris.rdf_type,        uris.ingen_Patch));
-	props.insert(make_pair(uris.ingen_polyphony, Raul::Atom(int32_t(_patch->internal_poly()))));
+	props.insert(make_pair(uris.rdf_type,
+	                       uris.ingen_Patch));
+	props.insert(make_pair(uris.ingen_polyphony,
+	                       Raul::Atom(int32_t(_patch->internal_poly()))));
 	clipboard.put(Path(), props);
 	size_t first_slash;
 	while (to_create != "/" && !to_create.empty()
@@ -747,7 +755,6 @@ PatchCanvas::paste()
 	}
 }
 
-
 void
 PatchCanvas::generate_port_name(
 		const string& sym_base,  string& symbol,
@@ -771,7 +778,6 @@ PatchCanvas::generate_port_name(
 	name.append(" ").append(num_buf);
 }
 
-
 void
 PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 		const Raul::URI& type, bool is_output)
@@ -783,13 +789,16 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	const LV2URIMap& uris = App::instance().uris();
 
 	Resource::Properties props = get_initial_data();
-	props.insert(make_pair(uris.rdf_type, type));
-	props.insert(make_pair(uris.rdf_type, is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
-	props.insert(make_pair(uris.lv2_index, Atom(int32_t(_patch->num_ports()))));
-	props.insert(make_pair(uris.lv2_name, Atom(name.c_str())));
+	props.insert(make_pair(uris.rdf_type,
+	                       type));
+	props.insert(make_pair(uris.rdf_type,
+	                       is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
+	props.insert(make_pair(uris.lv2_index,
+	                       Atom(int32_t(_patch->num_ports()))));
+	props.insert(make_pair(uris.lv2_name,
+	                       Atom(name.c_str())));
 	App::instance().engine()->put(path, props);
 }
-
 
 void
 PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
@@ -816,7 +825,6 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	App::instance().engine()->put(path, props);
 }
 
-
 /** Try to guess a suitable location for a new module.
  */
 void
@@ -828,7 +836,6 @@ PatchCanvas::get_new_module_location(double& x, double& y)
 	x = scroll_x + 20;
 	y = scroll_y + 20;
 }
-
 
 GraphObject::Properties
 PatchCanvas::get_initial_data()
@@ -846,13 +853,11 @@ PatchCanvas::menu_load_plugin()
 	App::instance().window_factory()->present_load_plugin(_patch, get_initial_data());
 }
 
-
 void
 PatchCanvas::menu_load_patch()
 {
 	App::instance().window_factory()->present_load_subpatch(_patch, get_initial_data());
 }
-
 
 void
 PatchCanvas::menu_new_patch()
@@ -860,13 +865,11 @@ PatchCanvas::menu_new_patch()
 	App::instance().window_factory()->present_new_subpatch(_patch, get_initial_data());
 }
 
-
 void
 PatchCanvas::menu_edit_toggled()
 {
 	_patch->set_editable(_menu_edit->get_active());
 }
-
 
 void
 PatchCanvas::patch_editable_changed(bool editable)
@@ -874,7 +877,6 @@ PatchCanvas::patch_editable_changed(bool editable)
 	if (_menu_edit->get_active() != editable)
 		_menu_edit->set_active(editable);
 }
-
 
 } // namespace GUI
 } // namespace Ingen
