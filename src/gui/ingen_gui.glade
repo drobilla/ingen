@@ -9,6 +9,7 @@
     <child>
       <widget class="GtkVBox" id="patch_win_vbox">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
           <widget class="GtkMenuBar" id="menubar">
             <property name="visible">True</property>
@@ -335,8 +336,8 @@
                     </child>
                     <child>
                       <widget class="GtkImageMenuItem" id="patch_fullscreen_menuitem">
-                        <property name="visible">True</property>
                         <property name="label">gtk-fullscreen</property>
+                        <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <signal name="activate" handler="patch_fullscreen_menuitem"/>
@@ -460,19 +461,43 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkScrolledWindow" id="patch_win_scrolledwin">
+          <widget class="GtkHPaned" id="hpaned1">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">automatic</property>
-            <property name="vscrollbar_policy">automatic</property>
             <child>
-              <widget class="GtkViewport" id="patch_win_viewport">
+              <widget class="GtkScrolledWindow" id="patch_win_scrolledwin">
                 <property name="visible">True</property>
-                <property name="shadow_type">none</property>
+                <property name="can_focus">True</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <placeholder/>
+                  <widget class="GtkViewport" id="patch_win_viewport">
+                    <property name="visible">True</property>
+                    <property name="resize_mode">queue</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </widget>
                 </child>
               </widget>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkTextView" id="patch_documentation_textview">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="editable">False</property>
+                <property name="wrap_mode">word</property>
+                <property name="cursor_visible">False</property>
+              </widget>
+              <packing>
+                <property name="resize">False</property>
+                <property name="shrink">True</property>
+              </packing>
             </child>
           </widget>
           <packing>

@@ -95,6 +95,7 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	xml->get_widget("patch_view_messages_window_menuitem", _menu_view_messages_window);
 	xml->get_widget("patch_view_patch_tree_window_menuitem", _menu_view_patch_tree_window);
 	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
+	xml->get_widget("patch_documentation_textview", _doc_textview);
 
 	_menu_view_control_window->property_sensitive() = false;
 	string engine_name = App::instance().engine()->uri().str();

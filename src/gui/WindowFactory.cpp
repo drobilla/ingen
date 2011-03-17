@@ -116,6 +116,16 @@ WindowFactory::patch_window(SharedPtr<PatchModel> patch)
 }
 
 
+PatchWindow*
+WindowFactory::parent_patch_window(SharedPtr<NodeModel> node)
+{
+	if (!node)
+		return NULL;
+
+	return patch_window(PtrCast<PatchModel>(node->parent()));
+}
+
+
 NodeControlWindow*
 WindowFactory::control_window(SharedPtr<NodeModel> node)
 {

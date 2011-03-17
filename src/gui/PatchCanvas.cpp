@@ -606,6 +606,18 @@ PatchCanvas::canvas_event(GdkEvent* event)
 	return (ret ? true : Canvas::canvas_event(event));
 }
 
+void
+PatchCanvas::clear_selection()
+{
+	const App&   app = App::instance();
+	PatchWindow* win = app.window_factory()->patch_window(_patch);
+	if (win) {
+		win->doc_textview()->hide();
+	}
+
+	FlowCanvas::Canvas::clear_selection();
+}
+
 #define FOREACH_ITEM(iter, coll) \
 	for (list<boost::shared_ptr<Item> >::iterator (iter) = coll.begin(); \
 	     (iter) != coll.end(); ++(iter))

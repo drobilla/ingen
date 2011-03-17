@@ -62,6 +62,7 @@ public:
 	size_t num_open_patch_windows();
 
 	PatchWindow*       patch_window(SharedPtr<PatchModel> patch);
+	PatchWindow*       parent_patch_window(SharedPtr<NodeModel> node);
 	NodeControlWindow* control_window(SharedPtr<NodeModel> node);
 
 	void present_patch(SharedPtr<PatchModel> model,

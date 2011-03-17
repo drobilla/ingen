@@ -57,6 +57,8 @@ public:
 	PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	~PatchWindow();
 
+	Gtk::TextView* doc_textview() { return _doc_textview; }
+
 	void set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view);
 	void set_patch(SharedPtr<PatchModel> pc, SharedPtr<PatchView> view);
 
@@ -150,6 +152,8 @@ private:
 	Gtk::Viewport*      _viewport;
 	BreadCrumbs*        _breadcrumbs;
 	Gtk::Statusbar*     _status_bar;
+
+	Gtk::TextView* _doc_textview;
 
 	sigc::connection _entered_connection;
 	sigc::connection _left_connection;

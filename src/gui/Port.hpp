@@ -58,6 +58,8 @@ public:
 	void value_changed(const Raul::Atom& value);
 	void activity();
 
+	void set_selected(bool b);
+
 	ArtVpathDash* dash();
 
 private:

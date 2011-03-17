@@ -243,6 +243,59 @@ PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
 }
 #endif
 
+std::string
+PluginModel::documentation() const
+{
+	std::string doc;
+	#ifdef HAVE_SLV2
+	if (!_slv2_plugin)
+		return doc;
+
+	//SLV2Value lv2_documentation = slv2_value_new_uri(
+	//	_slv2_world, SLV2_NAMESPACE_LV2 "documentation");
+	SLV2Value rdfs_comment = slv2_value_new_uri(
+		_slv2_world, "http://www.w3.org/2000/01/rdf-schema#comment");
+
+	SLV2Values vals = slv2_plugin_get_value(_slv2_plugin,
+	                                        rdfs_comment);
+	SLV2Value val = slv2_values_get_first(vals);
+	if (slv2_value_is_string(val)) {
+		doc += slv2_value_as_string(val);
+	}
+	slv2_value_free(rdfs_comment);
+	slv2_values_free(vals);
+	#endif
+	return doc;
+}
+
+std::string
+PluginModel::port_documentation(uint32_t index) const
+{
+	std::string doc;
+	#ifdef HAVE_SLV2
+	if (!_slv2_plugin)
+		return doc;
+
+	SLV2Port  port = slv2_plugin_get_port_by_index(_slv2_plugin, index);
+
+	//SLV2Value lv2_documentation = slv2_value_new_uri(
+	//	_slv2_world, SLV2_NAMESPACE_LV2 "documentation");
+	SLV2Value rdfs_comment = slv2_value_new_uri(
+		_slv2_world, "http://www.w3.org/2000/01/rdf-schema#comment");
+
+	SLV2Values vals = slv2_port_get_value(_slv2_plugin,
+	                                      port,
+	                                      rdfs_comment);
+	SLV2Value val = slv2_values_get_first(vals);
+	if (slv2_value_is_string(val)) {
+		doc += slv2_value_as_string(val);
+	}
+	slv2_value_free(rdfs_comment);
+	slv2_values_free(vals);
+	#endif
+	return doc;
+}
+
 
 } // namespace Client
 } // namespace Ingen

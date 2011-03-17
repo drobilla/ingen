@@ -439,9 +439,22 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 void
 NodeModule::set_selected(bool b)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const App&       app  = App::instance();
+	const LV2URIMap& uris = app.uris();
 	if (b != selected()) {
 		Module::set_selected(b);
+		if (b) {
+			PatchWindow* win = app.window_factory()->parent_patch_window(node());
+			if (win) {
+				const std::string& doc = node()->plugin_model()->documentation();
+				if (!doc.empty()) {
+					win->doc_textview()->get_buffer()->set_text(doc);
+					win->doc_textview()->show();
+				} else {
+					win->doc_textview()->hide();
+				}
+			}
+		}
 		if (App::instance().signal())
 			App::instance().engine()->set_property(_node->path(), uris.ingen_selected, b);
 	}

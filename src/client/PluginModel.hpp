@@ -86,6 +86,9 @@ public:
 	static std::string get_lv2_icon_path(SLV2Plugin plugin);
 #endif
 
+	std::string documentation() const;
+	std::string port_documentation(uint32_t index) const;
+
 	static void set_rdf_world(Sord::World& world) {
 		_rdf_world = &world;
 	}
