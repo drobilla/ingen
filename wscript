@@ -51,7 +51,7 @@ def configure(conf):
 	autowaf.check_pkg(conf, 'jack', uselib_store='NEW_JACK',
 			  atleast_version='0.120.0', mandatory=False)
 	autowaf.check_pkg(conf, 'slv2', uselib_store='SLV2',
-			  atleast_version='0.6.0', mandatory=True)
+			  atleast_version='0.7.0', mandatory=True)
 	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
 			  atleast_version='0.8.0', mandatory=True)
 	autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS',
