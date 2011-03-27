@@ -90,12 +90,8 @@ def configure(conf):
 		autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
 	if conf.is_defined('HAVE_JACK'):
 		autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
-	if conf.env['BUNDLE']:
-		autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIRNAME'], 'ingen'))
-		autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIRNAME'])
-	else:
-		autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIR'], 'ingen'))
-		autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIR'])
+	autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIR'], 'ingen'))
+	autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIR'])
 
 	if Options.options.log_debug:
 		autowaf.define(conf, 'RAUL_LOG_DEBUG', 1)
