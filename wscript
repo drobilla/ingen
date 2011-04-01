@@ -52,8 +52,6 @@ def configure(conf):
 			  atleast_version='0.7.0', mandatory=True)
 	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
 			  atleast_version='0.8.0', mandatory=True)
-	autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS',
-			  atleast_version='0.8.0', mandatory=False)
 	autowaf.check_pkg(conf, 'sord', uselib_store='SORD',
 			  atleast_version='0.1.0', mandatory=False)
 	if not Options.options.no_gui:
@@ -63,6 +61,8 @@ def configure(conf):
 		                  atleast_version='2.14.0', mandatory=False)
 		autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM',
 		                  atleast_version='2.6.0', mandatory=False)
+		autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS',
+		                  atleast_version='0.8.0', mandatory=False)
 	if not Options.options.no_http:
 		autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP',
 				  atleast_version='2.4.0', mandatory=False)
