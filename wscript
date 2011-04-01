@@ -21,6 +21,8 @@ def options(opt):
 		       help="Ingen data install directory [Default: PREFIX/share/ingen]")
 	opt.add_option('--module-dir', type='string', dest='moduledir',
 		       help="Ingen module install directory [Default: PREFIX/lib/ingen]")
+	opt.add_option('--no-gui', action='store_true', default=False, dest='no_gui',
+		       help="Do not build GUI")
 	opt.add_option('--no-jack-session', action='store_true', default=False,
 			dest='no_jack_session',
 			help="Do not build JACK session support")
@@ -42,10 +44,6 @@ def configure(conf):
 			  atleast_version='2.14.0', mandatory=True)
 	autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
 			  atleast_version='2.14.0', mandatory=True)
-	autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
-			  atleast_version='2.11.12', mandatory=False)
-	autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM',
-			  atleast_version='2.14.0', mandatory=False)
 	autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
 			  atleast_version='0.109.0', mandatory=True)
 	autowaf.check_pkg(conf, 'jack', uselib_store='NEW_JACK',
@@ -56,10 +54,15 @@ def configure(conf):
 			  atleast_version='0.8.0', mandatory=True)
 	autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS',
 			  atleast_version='0.8.0', mandatory=False)
-	autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM',
-			  atleast_version='2.6.0', mandatory=False)
 	autowaf.check_pkg(conf, 'sord', uselib_store='SORD',
 			  atleast_version='0.1.0', mandatory=False)
+	if not Options.options.no_gui:
+		autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
+		                  atleast_version='2.11.12', mandatory=False)
+		autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM',
+		                  atleast_version='2.14.0', mandatory=False)
+		autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM',
+		                  atleast_version='2.6.0', mandatory=False)
 	if not Options.options.no_http:
 		autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP',
 				  atleast_version='2.4.0', mandatory=False)
@@ -86,10 +89,15 @@ def configure(conf):
 	autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h')
 
 	autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
-	if conf.is_defined('HAVE_GLADEMM') and conf.is_defined('HAVE_FLOWCANVAS'):
+
+	if (not Options.options.no_gui
+		and conf.is_defined('HAVE_GLADEMM')
+		and conf.is_defined('HAVE_FLOWCANVAS')):
 		autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
+	
 	if conf.is_defined('HAVE_JACK'):
 		autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
+
 	autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIR'], 'ingen'))
 	autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIR'])
 
