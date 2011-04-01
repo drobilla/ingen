@@ -19,10 +19,11 @@
 #define INGEN_ENGINE_PLUGINIMPL_HPP
 
 #include <cstdlib>
-#include <glibmm/module.h>
-#include <boost/utility.hpp>
-#include <dlfcn.h>
 #include <string>
+
+#include <boost/utility.hpp>
+#include <glibmm/module.h>
+
 #include "interface/Plugin.hpp"
 #include "shared/ResourceImpl.hpp"
 

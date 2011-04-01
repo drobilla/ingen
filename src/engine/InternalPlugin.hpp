@@ -21,10 +21,11 @@
 #include "ingen-config.h"
 
 #include <cstdlib>
-#include <glibmm/module.h>
-#include <boost/utility.hpp>
-#include <dlfcn.h>
 #include <string>
+
+#include <boost/utility.hpp>
+#include <glibmm/module.h>
+
 #include "PluginImpl.hpp"
 
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"

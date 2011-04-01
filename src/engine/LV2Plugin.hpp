@@ -25,12 +25,14 @@
 #endif
 
 #include <cstdlib>
+#include <string>
+
 #include <glibmm/module.h>
 #include <boost/utility.hpp>
-#include <dlfcn.h>
-#include <string>
+
 #include "slv2/slv2.h"
 #include "raul/SharedPtr.hpp"
+
 #include "PluginImpl.hpp"
 #include "LV2Info.hpp"
 
