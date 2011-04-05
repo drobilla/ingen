@@ -21,8 +21,6 @@
 #include <string>
 #include <math.h>
 #include "types.hpp"
-//#include "Buffer.hpp"
-//#include "BufferFactory.hpp"
 #include "NodeImpl.hpp"
 
 namespace Ingen {
@@ -35,12 +33,6 @@ class BufferFactory;
 namespace Internals {
 
 
-/** MIDI note input node.
- *
- * For pitched instruments like keyboard, etc.
- *
- * \ingroup engine
- */
 class DelayNode : public NodeImpl
 {
 public:
