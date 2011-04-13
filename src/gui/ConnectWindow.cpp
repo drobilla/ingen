@@ -15,22 +15,20 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <string>
-#include <time.h>
-#include <sys/time.h>
 #include <stdlib.h>
-#include <sys/time.h>
+#include <string>
 #include <sys/resource.h>
-#include "raul/log.hpp"
+#include <sys/time.h>
+#include <time.h>
+
 #include "raul/Process.hpp"
+#include "raul/log.hpp"
+
 #include "ingen-config.h"
 #include "ingen/EngineInterface.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
-#include "engine/tuning.hpp"
 #include "engine/Engine.hpp"
-#include "engine/QueuedEngineInterface.hpp"
-#include "engine/Driver.hpp"
 #ifdef HAVE_SOUP
 #include "client/HTTPClientReceiver.hpp"
 #include "client/HTTPEngineSender.hpp"
@@ -42,11 +40,11 @@
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ThreadedSigClientInterface.hpp"
-#include "App.hpp"
-#include "WindowFactory.hpp"
-#include "ConnectWindow.hpp"
 
-using Ingen::QueuedEngineInterface;
+#include "App.hpp"
+#include "ConnectWindow.hpp"
+#include "WindowFactory.hpp"
+
 using namespace Ingen::Client;
 using namespace std;
 using namespace Raul;
