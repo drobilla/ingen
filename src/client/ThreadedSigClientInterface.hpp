@@ -23,7 +23,7 @@
 #include <sigc++/sigc++.h>
 #include <glibmm/thread.h>
 #include "raul/Atom.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "SigClientInterface.hpp"
 #include "raul/SRSWQueue.hpp"
 

@@ -19,8 +19,8 @@
 #include "raul/log.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
-#include "common/interface/Node.hpp"
-#include "common/interface/Port.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Port.hpp"
 #include "Store.hpp"
 
 using namespace std;

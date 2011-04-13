@@ -16,12 +16,12 @@
  */
 
 #include "raul/Atom.hpp"
-#include "common/interface/CommonInterface.hpp"
-#include "common/interface/Patch.hpp"
-#include "common/interface/Node.hpp"
-#include "common/interface/Port.hpp"
-#include "common/interface/Connection.hpp"
-#include "common/interface/Plugin.hpp"
+#include "ingen/CommonInterface.hpp"
+#include "ingen/Patch.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Port.hpp"
+#include "ingen/Connection.hpp"
+#include "ingen/Plugin.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "Builder.hpp"
 

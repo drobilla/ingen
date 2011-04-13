@@ -16,7 +16,7 @@
  */
 
 #include "ObjectSender.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
@@ -24,7 +24,7 @@
 #include "PortImpl.hpp"
 #include "ConnectionImpl.hpp"
 #include "NodeFactory.hpp"
-#include "interface/PortType.hpp"
+#include "ingen/PortType.hpp"
 #include "AudioBuffer.hpp"
 
 using namespace std;

@@ -19,7 +19,7 @@
 #include "raul/Maid.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
-#include "interface/PortType.hpp"
+#include "ingen/PortType.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendPortActivity.hpp"
 #include "AudioBuffer.hpp"

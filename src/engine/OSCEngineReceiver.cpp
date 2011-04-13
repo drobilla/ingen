@@ -17,19 +17,25 @@
 
 //#define ENABLE_AVAHI 1
 
-#include <cstdlib>
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <string>
+
 #include <lo/lo.h>
-#include "ingen-config.h"
-#include "raul/log.hpp"
+
 #include "raul/AtomLiblo.hpp"
 #include "raul/SharedPtr.hpp"
-#include "interface/ClientInterface.hpp"
+#include "raul/log.hpp"
+
+#include "ingen-config.h"
+#include "ingen/ClientInterface.hpp"
+
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
+#include "EventSource.hpp"
 #include "OSCClientSender.hpp"
 #include "OSCEngineReceiver.hpp"
-#include "EventSource.hpp"
 #include "ThreadManager.hpp"
 
 #define LOG(s) s << "[OSCEngineReceiver] "

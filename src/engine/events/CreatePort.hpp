@@ -21,8 +21,8 @@
 #include "QueuedEvent.hpp"
 #include "raul/Path.hpp"
 #include "raul/Array.hpp"
-#include "interface/PortType.hpp"
-#include "interface/Resource.hpp"
+#include "ingen/PortType.hpp"
+#include "ingen/Resource.hpp"
 
 namespace Ingen {
 

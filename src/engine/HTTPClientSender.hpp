@@ -22,7 +22,7 @@
 #include <string>
 #include <pthread.h>
 #include "raul/Thread.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "shared/HTTPSender.hpp"
 
 namespace Ingen {

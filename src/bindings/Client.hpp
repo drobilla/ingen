@@ -1,4 +1,4 @@
-#include "interface/Resource.hpp"
+#include "ingen/Resource.hpp"
 
 /** Need a stub ClientInterface without pure virtual methods
  * to allow inheritance in the script

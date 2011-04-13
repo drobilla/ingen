@@ -21,8 +21,8 @@
 #include <string>
 #include <boost/utility.hpp>
 #include "raul/Deletable.hpp"
-#include "interface/PortType.hpp"
-#include "interface/EventType.hpp"
+#include "ingen/PortType.hpp"
+#include "ingen/EventType.hpp"
 #include "DuplexPort.hpp"
 
 namespace Raul { class Path; }

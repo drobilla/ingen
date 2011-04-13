@@ -22,9 +22,9 @@
 #include <string>
 #include <memory>
 #include "raul/SharedPtr.hpp"
-#include "interface/ClientInterface.hpp"
-#include "interface/EngineInterface.hpp"
-#include "interface/Resource.hpp"
+#include "ingen/ClientInterface.hpp"
+#include "ingen/EngineInterface.hpp"
+#include "ingen/Resource.hpp"
 #include "EventSource.hpp"
 #include "Request.hpp"
 #include "tuning.hpp"

@@ -25,7 +25,7 @@
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "serialisation/Parser.hpp"
 
 typedef struct _SoupSession SoupSession;

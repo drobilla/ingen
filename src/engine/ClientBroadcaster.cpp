@@ -18,7 +18,7 @@
 #include <cassert>
 #include <unistd.h>
 #include "raul/log.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PluginImpl.hpp"
 #include "ConnectionImpl.hpp"

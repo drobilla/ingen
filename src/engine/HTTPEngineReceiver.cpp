@@ -26,7 +26,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/log.hpp"
 
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "module/Module.hpp"
 #include "serialisation/Parser.hpp"
 #include "serialisation/Serialiser.hpp"

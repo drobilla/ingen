@@ -20,7 +20,7 @@
 #include <cassert>
 #include <boost/optional.hpp>
 #include <glibmm/miscutils.h>
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PatchModel.hpp"

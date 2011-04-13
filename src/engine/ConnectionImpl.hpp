@@ -23,8 +23,8 @@
 #include "raul/log.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/IntrusivePtr.hpp"
-#include "interface/PortType.hpp"
-#include "interface/Connection.hpp"
+#include "ingen/PortType.hpp"
+#include "ingen/Connection.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "PortImpl.hpp"
 

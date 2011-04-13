@@ -42,12 +42,12 @@
 
 #include "sord/sordmm.hpp"
 
-#include "interface/Connection.hpp"
-#include "interface/EngineInterface.hpp"
-#include "interface/Node.hpp"
-#include "interface/Patch.hpp"
-#include "interface/Plugin.hpp"
-#include "interface/Port.hpp"
+#include "ingen/Connection.hpp"
+#include "ingen/EngineInterface.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Patch.hpp"
+#include "ingen/Plugin.hpp"
+#include "ingen/Port.hpp"
 #include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "shared/ResourceImpl.hpp"

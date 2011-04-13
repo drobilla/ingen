@@ -23,8 +23,8 @@
 #include <vector>
 #include <sigc++/sigc++.h>
 #include "raul/SharedPtr.hpp"
-#include "interface/Node.hpp"
-#include "interface/Port.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Port.hpp"
 #include "ObjectModel.hpp"
 #include "PortModel.hpp"
 #include "PluginModel.hpp"

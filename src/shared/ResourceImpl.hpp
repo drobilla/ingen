@@ -21,8 +21,8 @@
 #include <map>
 #include "raul/URI.hpp"
 #include "raul/SharedPtr.hpp"
-#include "interface/Resource.hpp"
-#include "interface/PortType.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/PortType.hpp"
 
 namespace Ingen {
 namespace Shared {

@@ -23,7 +23,7 @@
 #include <list>
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
-#include "interface/Connection.hpp"
+#include "ingen/Connection.hpp"
 #include "PortModel.hpp"
 
 namespace Ingen {

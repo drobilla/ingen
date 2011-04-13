@@ -18,9 +18,9 @@
 #ifndef INGEN_INTERFACE_PLUGIN_HPP
 #define INGEN_INTERFACE_PLUGIN_HPP
 
-#include <string>
 #include "raul/URI.hpp"
-#include "interface/Resource.hpp"
+
+#include "ingen/Resource.hpp"
 
 namespace Ingen {
 namespace Shared {

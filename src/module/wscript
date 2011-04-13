@@ -11,7 +11,7 @@ def build(bld):
 		ingen_module.cpp
 	'''
 	obj.export_includes = ['.']
-	obj.includes	    = ['.', '..', '../..', '../common']
+	obj.includes	    = ['.', '..', '../..', '../../include']
 	obj.name	    = 'libingen_module'
 	obj.target	    = 'ingen_module'
 	obj.vnum	    = '0.0.0'

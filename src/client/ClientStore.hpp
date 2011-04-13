@@ -26,7 +26,7 @@
 
 #include <sigc++/sigc++.h>
 
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "raul/Path.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"

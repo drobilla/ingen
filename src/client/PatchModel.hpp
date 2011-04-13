@@ -21,7 +21,7 @@
 #include <cassert>
 #include <sigc++/sigc++.h>
 #include "raul/SharedPtr.hpp"
-#include "interface/Patch.hpp"
+#include "ingen/Patch.hpp"
 #include "NodeModel.hpp"
 
 #include "ConnectionModel.hpp"

@@ -18,7 +18,7 @@
 #include <cassert>
 #include <cmath>
 #include "ingen-config.h"
-#include "interface/Port.hpp"
+#include "ingen/Port.hpp"
 #include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "NodeModel.hpp"

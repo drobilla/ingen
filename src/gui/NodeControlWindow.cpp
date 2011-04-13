@@ -16,7 +16,7 @@
  */
 
 #include <cmath>
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
 #include "App.hpp"

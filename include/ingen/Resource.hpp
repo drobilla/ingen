@@ -18,10 +18,11 @@
 #ifndef INGEN_INTERFACE_RESOURCE_HPP
 #define INGEN_INTERFACE_RESOURCE_HPP
 
-#include <string>
 #include <map>
+#include <string>
 
-namespace Raul { class Atom; class URI; }
+#include "raul/Atom.hpp"
+#include "raul/URI.hpp"
 
 namespace Ingen {
 namespace Shared {

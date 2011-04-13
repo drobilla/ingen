@@ -16,7 +16,7 @@
  */
 
 #include "raul/IntrusivePtr.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "events/RequestMetadata.hpp"
 #include "shared/LV2Atom.hpp"
 #include "shared/LV2URIMap.hpp"

@@ -16,9 +16,9 @@
  */
 
 #include "raul/log.hpp"
-#include "common/interface/Patch.hpp"
-#include "common/interface/Plugin.hpp"
-#include "common/interface/Port.hpp"
+#include "ingen/Patch.hpp"
+#include "ingen/Plugin.hpp"
+#include "ingen/Port.hpp"
 #include "ThreadedSigClientInterface.hpp"
 
 using namespace std;

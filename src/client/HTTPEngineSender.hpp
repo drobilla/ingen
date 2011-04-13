@@ -25,7 +25,7 @@
 #include "raul/Path.hpp"
 #include "sord/sordmm.hpp"
 
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 
 typedef struct _SoupSession SoupSession;
 

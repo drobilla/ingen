@@ -18,8 +18,9 @@
 #ifndef INGEN_INTERFACE_ENGINEINTERFACE_HPP
 #define INGEN_INTERFACE_ENGINEINTERFACE_HPP
 
-#include <inttypes.h>
-#include "interface/CommonInterface.hpp"
+#include <stdint.h>
+
+#include "ingen/CommonInterface.hpp"
 
 namespace Ingen {
 namespace Shared {

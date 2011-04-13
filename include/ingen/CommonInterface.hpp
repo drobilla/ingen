@@ -18,10 +18,11 @@
 #ifndef INGEN_INTERFACE_COMMONINTERFACE_HPP
 #define INGEN_INTERFACE_COMMONINTERFACE_HPP
 
-#include <inttypes.h>
-#include <string>
-#include "interface/CommonInterface.hpp"
-#include "interface/GraphObject.hpp"
+#include "raul/Path.hpp"
+#include "raul/URI.hpp"
+
+#include "ingen/CommonInterface.hpp"
+#include "ingen/GraphObject.hpp"
 
 namespace Raul { class Atom; class Path; class URI; }
 

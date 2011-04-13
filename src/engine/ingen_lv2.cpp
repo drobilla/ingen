@@ -39,7 +39,7 @@
 #include "engine/ProcessContext.hpp"
 #include "engine/QueuedEngineInterface.hpp"
 #include "engine/ThreadManager.hpp"
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "module/World.hpp"
 #include "module/ingen_module.hpp"
 #include "serialisation/Parser.hpp"

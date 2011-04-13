@@ -19,7 +19,7 @@
 #include <boost/format.hpp>
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
-#include "interface/PortType.hpp"
+#include "ingen/PortType.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"

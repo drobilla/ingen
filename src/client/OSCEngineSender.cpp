@@ -19,9 +19,9 @@
 #include "raul/AtomLiblo.hpp"
 #include "raul/Path.hpp"
 
-#include "common/interface/Patch.hpp"
-#include "common/interface/Port.hpp"
-#include "common/interface/Plugin.hpp"
+#include "ingen/Patch.hpp"
+#include "ingen/Port.hpp"
+#include "ingen/Plugin.hpp"
 
 #include "OSCEngineSender.hpp"
 

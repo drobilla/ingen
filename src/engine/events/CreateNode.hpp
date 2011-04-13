@@ -20,7 +20,7 @@
 
 #include <string>
 #include "QueuedEvent.hpp"
-#include "interface/Resource.hpp"
+#include "ingen/Resource.hpp"
 
 namespace Ingen {
 

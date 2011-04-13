@@ -16,7 +16,7 @@
  */
 
 #include "Get.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "Request.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"

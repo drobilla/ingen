@@ -20,7 +20,7 @@
 
 #include <inttypes.h>
 #include <string>
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "EventSource.hpp"
 
 namespace Ingen {

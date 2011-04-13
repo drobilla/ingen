@@ -21,7 +21,7 @@
 #include <map>
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
-#include "interface/GraphObject.hpp"
+#include "ingen/GraphObject.hpp"
 
 using namespace Ingen::Shared;
 

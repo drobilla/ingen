@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "interface/Patch.hpp"
+#include "ingen/Patch.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "Buffer.hpp"
 #include "NodeImpl.hpp"

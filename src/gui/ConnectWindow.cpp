@@ -24,7 +24,7 @@
 #include "raul/log.hpp"
 #include "raul/Process.hpp"
 #include "ingen-config.h"
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "module/Module.hpp"
 #include "module/World.hpp"
 #include "engine/tuning.hpp"

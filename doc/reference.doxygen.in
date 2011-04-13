@@ -569,9 +569,8 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = \
+	@INGEN_SRCDIR@/include/ingen \
 	@INGEN_SRCDIR@/src/client \
-	@INGEN_SRCDIR@/src/common \
-	@INGEN_SRCDIR@/src/common/interface \
 	@INGEN_SRCDIR@/src/engine \
 	@INGEN_SRCDIR@/src/gui \
 	@INGEN_SRCDIR@/src/ingen \

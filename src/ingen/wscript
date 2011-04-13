@@ -5,7 +5,7 @@ def build(bld):
 	obj = bld(features = 'c cxx cxxprogram')
 	obj.target       = 'ingen'
 	obj.source       = 'main.cpp'
-	obj.includes     = ['..', '../..', '../common']
+	obj.includes     = ['..', '../..', '../../include']
 	obj.defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"'
 	obj.use          = 'libingen_module libingen_shared'
 	obj.install_path = '${BINDIR}'

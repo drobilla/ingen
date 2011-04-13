@@ -24,7 +24,7 @@
 #include <boost/utility.hpp>
 #include <glibmm/module.h>
 
-#include "interface/Plugin.hpp"
+#include "ingen/Plugin.hpp"
 #include "shared/ResourceImpl.hpp"
 
 namespace Ingen {

@@ -29,7 +29,7 @@
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "util.hpp"
 
 using namespace std;

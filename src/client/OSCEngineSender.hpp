@@ -21,7 +21,7 @@
 #include <inttypes.h>
 #include <string>
 #include <lo/lo.h>
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "shared/OSCSender.hpp"
 
 namespace Ingen {

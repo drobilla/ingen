@@ -21,7 +21,7 @@
 #include <inttypes.h>
 #include <string>
 #include <map>
-#include "interface/CommonInterface.hpp"
+#include "ingen/CommonInterface.hpp"
 
 namespace Raul { class Atom; class Path; }
 

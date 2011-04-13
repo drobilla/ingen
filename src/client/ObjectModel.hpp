@@ -27,7 +27,7 @@
 #include "raul/Path.hpp"
 #include "raul/URI.hpp"
 #include "raul/SharedPtr.hpp"
-#include "interface/GraphObject.hpp"
+#include "ingen/GraphObject.hpp"
 #include "shared/ResourceImpl.hpp"
 
 namespace Ingen {

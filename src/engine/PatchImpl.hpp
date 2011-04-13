@@ -21,8 +21,8 @@
 #include <cstdlib>
 #include <string>
 #include "raul/List.hpp"
-#include "interface/PortType.hpp"
-#include "interface/Patch.hpp"
+#include "ingen/PortType.hpp"
+#include "ingen/Patch.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "CompiledPatch.hpp"

@@ -23,7 +23,7 @@
 #include <map>
 #include <pthread.h>
 #include "raul/SharedPtr.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "NodeFactory.hpp"
 
 using namespace std;

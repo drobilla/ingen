@@ -65,7 +65,7 @@ def build(bld):
 	obj = bld(features = 'cxx cxxshlib')
 	obj.source = core_source
 	obj.export_includes = ['.']
-	obj.includes        = ['.', '..', '../..', '../common']
+	obj.includes        = ['.', '..', '../..', '../../include']
 	obj.name            = 'libingen_engine'
 	obj.target          = 'ingen_engine'
 	obj.install_path    = '${LIBDIR}'
@@ -82,7 +82,7 @@ def build(bld):
 			HTTPEngineReceiver.cpp
 			ingen_http.cpp
 		'''
-		obj.includes     = ['.', '..', '../..', '../common', '../engine']
+		obj.includes     = ['.', '..', '../..', '../../include', '../engine']
 		obj.name         = 'libingen_http'
 		obj.target       = 'ingen_http'
 		obj.install_path = '${LIBDIR}'
@@ -98,7 +98,7 @@ def build(bld):
 			ingen_osc.cpp
 		'''
 		obj.export_includes = ['.']
-		obj.includes        = ['.', '..', '../..', '../common', '../engine']
+		obj.includes        = ['.', '..', '../..', '../../include', '../engine']
 		obj.name            = 'libingen_osc'
 		obj.target          = 'ingen_osc'
 		obj.install_path    = '${LIBDIR}'
@@ -108,7 +108,7 @@ def build(bld):
 		obj = bld(features = 'cxx cxxshlib')
 		obj.source = 'JackDriver.cpp ingen_jack.cpp'
 		obj.export_includes = ['.']
-		obj.includes        = ['.', '..', '../..', '../common', '../engine']
+		obj.includes        = ['.', '..', '../..', '../../include', '../engine']
 		obj.name            = 'libingen_jack'
 		obj.target          = 'ingen_jack'
 		obj.install_path    = '${LIBDIR}'
@@ -119,7 +119,7 @@ def build(bld):
 	obj = bld(features = 'cxx cxxshlib')
 	obj.source = ' ingen_lv2.cpp '
 	obj.export_includes = ['.']
-	obj.includes	    = ['.', '..', '../..', '../common']
+	obj.includes	    = ['.', '..', '../..', '../../include']
 	obj.name	    = 'libingen_lv2'
 	obj.target	    = 'ingen_lv2'
 	obj.install_path    = '${LIBDIR}'

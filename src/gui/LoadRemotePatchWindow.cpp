@@ -19,7 +19,7 @@
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
 #include "client/PatchModel.hpp"
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "module/World.hpp"
 #include "App.hpp"
 #include "Configuration.hpp"

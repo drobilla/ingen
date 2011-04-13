@@ -19,7 +19,7 @@
 #define INGEN_ENGINE_MIX_HPP
 
 #include "raul/log.hpp"
-#include "interface/PortType.hpp"
+#include "ingen/PortType.hpp"
 #include "Buffer.hpp"
 #include "Context.hpp"
 

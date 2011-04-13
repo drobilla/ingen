@@ -26,8 +26,8 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "interface/PortType.hpp"
-#include "interface/EventType.hpp"
+#include "ingen/PortType.hpp"
+#include "ingen/EventType.hpp"
 
 namespace Raul { class Maid; }
 

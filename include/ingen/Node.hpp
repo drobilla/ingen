@@ -15,39 +15,39 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_INTERFACE_GRAPHOBJECT_HPP
-#define INGEN_INTERFACE_GRAPHOBJECT_HPP
+#ifndef INGEN_INTERFACE_NODE_HPP
+#define INGEN_INTERFACE_NODE_HPP
 
-#include "raul/Deletable.hpp"
-#include "raul/Path.hpp"
-#include "raul/Symbol.hpp"
-#include "interface/Resource.hpp"
+#include <stdint.h>
 
-namespace Raul { class Atom; }
+#include "ingen/GraphObject.hpp"
 
 namespace Ingen {
 namespace Shared {
 
+class Port;
+class Plugin;
 
-/** An object on the audio graph - Patch, Node, Port, etc.
+
+/** A Node (or "module") in a Patch (which is also a Node).
+ *
+ * A Node is a unit with input/output ports, a process() method, and some other
+ * things.
  *
  * Purely virtual (except for the destructor).
  *
  * \ingroup interface
  */
-class GraphObject : public Raul::Deletable
-                  , public virtual Resource
+class Node : public virtual GraphObject
 {
 public:
-	virtual void set_path(const Raul::Path& path) = 0;
-
-	virtual const Raul::Path&   path()         const = 0;
-	virtual const Raul::Symbol& symbol()       const = 0;
-	virtual GraphObject*        graph_parent() const = 0;
+	virtual uint32_t      num_ports()          const = 0;
+	virtual Port*         port(uint32_t index) const = 0;
+	virtual const Plugin* plugin()             const = 0;
 };
 
 
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_GRAPHOBJECT_HPP
+#endif // INGEN_INTERFACE_NODE_HPP

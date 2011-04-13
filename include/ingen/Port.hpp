@@ -15,38 +15,46 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_INTERFACE_NODE_HPP
-#define INGEN_INTERFACE_NODE_HPP
+#ifndef INGEN_INTERFACE_PORT_HPP
+#define INGEN_INTERFACE_PORT_HPP
 
 #include <stdint.h>
-#include "GraphObject.hpp"
+
+#include <set>
+
+#include "ingen/GraphObject.hpp"
+#include "ingen/PortType.hpp"
+
+namespace Raul { class Atom; }
 
 namespace Ingen {
 namespace Shared {
 
-class Port;
-class Plugin;
 
-
-/** A Node (or "module") in a Patch (which is also a Node).
- *
- * A Node is a unit with input/output ports, a process() method, and some other
- * things.
+/** A Port on a Node.
  *
  * Purely virtual (except for the destructor).
  *
  * \ingroup interface
  */
-class Node : public virtual GraphObject
+class Port : public virtual GraphObject
 {
 public:
-	virtual uint32_t      num_ports()          const = 0;
-	virtual Port*         port(uint32_t index) const = 0;
-	virtual const Plugin* plugin()             const = 0;
+	typedef std::set<Shared::PortType> PortTypes;
+
+	virtual const PortTypes& types() const = 0;
+
+	inline bool is_a(PortType type) const { return types().find(type) != types().end(); }
+
+	virtual bool supports(const Raul::URI& value_type) const = 0;
+
+	virtual uint32_t          index()    const = 0;
+	virtual bool              is_input() const = 0;
+	virtual const Raul::Atom& value()    const = 0;
 };
 
 
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_NODE_HPP
+#endif // INGEN_INTERFACE_PORT_HPP

@@ -22,8 +22,8 @@
 #include <string>
 #include <lo/lo.h>
 #include <pthread.h>
-#include "interface/ClientInterface.hpp"
-#include "interface/GraphObject.hpp"
+#include "ingen/ClientInterface.hpp"
+#include "ingen/GraphObject.hpp"
 #include "shared/OSCSender.hpp"
 
 namespace Ingen {

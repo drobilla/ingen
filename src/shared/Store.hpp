@@ -21,7 +21,7 @@
 #include <string>
 #include <glibmm/thread.h>
 #include "raul/PathTable.hpp"
-#include "interface/GraphObject.hpp"
+#include "ingen/GraphObject.hpp"
 
 namespace Ingen {
 namespace Shared {

@@ -29,7 +29,7 @@
 
 #include "sord/sordmm.hpp"
 
-#include "interface/GraphObject.hpp"
+#include "ingen/GraphObject.hpp"
 #include "shared/Store.hpp"
 
 namespace Ingen {

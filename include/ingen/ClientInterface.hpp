@@ -15,44 +15,50 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_INTERFACE_PORT_HPP
-#define INGEN_INTERFACE_PORT_HPP
+#ifndef INGEN_INTERFACE_CLIENTINTERFACE_HPP
+#define INGEN_INTERFACE_CLIENTINTERFACE_HPP
 
-#include <set>
 #include <stdint.h>
-#include "GraphObject.hpp"
-#include "PortType.hpp"
 
-namespace Raul { class Atom; }
+#include <string>
+
+#include "ingen/CommonInterface.hpp"
+
+namespace Raul { class Path; class URI; }
 
 namespace Ingen {
 namespace Shared {
 
-
-/** A Port on a Node.
- *
+/** The (only) interface the engine uses to communicate with clients.
  * Purely virtual (except for the destructor).
  *
  * \ingroup interface
  */
-class Port : public virtual GraphObject
+class ClientInterface : public CommonInterface
 {
 public:
-	typedef std::set<Shared::PortType> PortTypes;
+	virtual ~ClientInterface() {}
 
-	virtual const PortTypes& types() const = 0;
+	virtual Raul::URI uri() const = 0;
 
-	inline bool is_a(PortType type) const { return types().find(type) != types().end(); }
+	virtual void response_ok(int32_t id) = 0;
+	virtual void response_error(int32_t id, const std::string& msg) = 0;
 
-	virtual bool supports(const Raul::URI& value_type) const = 0;
+	/** Transfers are 'weak' bundles.  These are used to break a large group
+	 * of similar/related messages into larger chunks (solely for communication
+	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
+	 * bundles (so a transfer can exceed the maximum bundle (packet) size).
+	 */
+	virtual void transfer_begin() = 0;
+	virtual void transfer_end()   = 0;
 
-	virtual uint32_t          index()    const = 0;
-	virtual bool              is_input() const = 0;
-	virtual const Raul::Atom& value()    const = 0;
+	virtual void error(const std::string& msg) = 0;
+
+	virtual void activity(const Raul::Path& path) = 0;
 };
 
 
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_PORT_HPP
+#endif

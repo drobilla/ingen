@@ -21,7 +21,7 @@
 #include <inttypes.h>
 #include <sigc++/sigc++.h>
 #include "raul/Path.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 
 namespace Ingen {
 namespace Client {

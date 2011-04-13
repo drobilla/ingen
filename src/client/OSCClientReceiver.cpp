@@ -15,13 +15,17 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <assert.h>
+#include <stdio.h>
+#include <string.h>
+
 #include <list>
-#include <cassert>
-#include <cstring>
 #include <sstream>
-#include "ingen-config.h"
+
 #include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
+
+#include "ingen-config.h"
 #include "OSCClientReceiver.hpp"
 
 #define LOG(s) s << "[OSCClientReceiver] "

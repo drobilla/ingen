@@ -28,7 +28,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
 #include "client/ConnectionModel.hpp"
-#include "interface/GraphObject.hpp"
+#include "ingen/GraphObject.hpp"
 #include "NodeModule.hpp"
 
 using namespace FlowCanvas;

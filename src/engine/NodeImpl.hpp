@@ -23,7 +23,7 @@
 #include "raul/AtomicInt.hpp"
 #include "raul/IntrusivePtr.hpp"
 #include "raul/Semaphore.hpp"
-#include "interface/Node.hpp"
+#include "ingen/Node.hpp"
 #include "GraphObjectImpl.hpp"
 #include "types.hpp"
 

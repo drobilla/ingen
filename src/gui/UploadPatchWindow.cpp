@@ -24,7 +24,7 @@
 #include "module/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/ClientStore.hpp"
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "serialisation/names.hpp"
 #include "client/PatchModel.hpp"

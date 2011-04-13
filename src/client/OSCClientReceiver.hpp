@@ -23,7 +23,7 @@
 #include <lo/lo.h>
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 
 namespace Ingen {
 namespace Client {

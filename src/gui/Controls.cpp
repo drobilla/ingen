@@ -18,7 +18,7 @@
 #include <cmath>
 #include <algorithm>
 #include "raul/log.hpp"
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/PluginModel.hpp"
 #include "client/NodeModel.hpp"

@@ -24,7 +24,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
-#include "interface/PortType.hpp"
+#include "ingen/PortType.hpp"
 #include "types.hpp"
 #include "BufferFactory.hpp"
 

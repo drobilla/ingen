@@ -17,7 +17,7 @@
 
 #include <utility>
 #include <gtkmm.h>
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/ObjectModel.hpp"
 #include "App.hpp"

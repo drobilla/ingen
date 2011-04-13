@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "interface/ClientInterface.hpp"
+#include "ingen/ClientInterface.hpp"
 #include "Request.hpp"
 #include "UnregisterClient.hpp"
 #include "Engine.hpp"

@@ -21,7 +21,7 @@
 #include <libglademm/xml.h>
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
-#include "interface/GraphObject.hpp"
+#include "ingen/GraphObject.hpp"
 #include "Window.hpp"
 
 namespace Ingen {

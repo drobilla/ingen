@@ -124,8 +124,8 @@ def build(bld):
 	opts.moduledir = opts.moduledir or bld.env['PREFIX'] + 'lib/ingen'
 
 	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/interface',
-			  bld.path.ant_glob('src/common/interface/*.hpp'))
+	bld.install_files('${INCLUDEDIR}/ingen',
+	                  bld.path.ant_glob('include/ingen/*.hpp'))
 
 	# Modules
 	bld.recurse('src/engine')
@@ -141,7 +141,7 @@ def build(bld):
 	obj = bld(features = 'c cxx cxxprogram')
 	obj.target       = 'ingen'
 	obj.source       = 'src/ingen/main.cpp'
-	obj.includes     = ['.', 'src', 'src/common']
+	obj.includes     = ['.', 'src', 'include']
 	obj.defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"'
 	obj.use          = 'libingen_module libingen_shared'
 	obj.install_path = '${BINDIR}'

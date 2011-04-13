@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "interface/EngineInterface.hpp"
-#include "interface/PortType.hpp"
+#include "ingen/EngineInterface.hpp"
+#include "ingen/PortType.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PortModel.hpp"

@@ -17,7 +17,7 @@
 
 #include "SubpatchModule.hpp"
 #include <cassert>
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
 #include "NodeModule.hpp"

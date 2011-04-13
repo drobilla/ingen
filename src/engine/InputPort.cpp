@@ -18,7 +18,7 @@
 #include "InputPort.hpp"
 #include <cstdlib>
 #include <cassert>
-#include "interface/Patch.hpp"
+#include "ingen/Patch.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"

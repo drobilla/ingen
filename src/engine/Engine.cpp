@@ -23,7 +23,7 @@
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
 #include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
-#include "common/interface/EventType.hpp"
+#include "ingen/EventType.hpp"
 #include "events/CreatePatch.hpp"
 #include "events/CreatePort.hpp"
 #include "module/World.hpp"

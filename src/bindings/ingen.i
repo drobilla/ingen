@@ -1,9 +1,9 @@
 %include "stl.i"
 %module(directors="1") ingen
 %{
-#include "common/interface/CommonInterface.hpp"
-#include "common/interface/ClientInterface.hpp"
-#include "common/interface/EngineInterface.hpp"
+#include "ingen/CommonInterface.hpp"
+#include "ingen/ClientInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "module/World.hpp"
 #include "ingen_bindings.hpp"
 #include "Client.hpp"
@@ -11,10 +11,10 @@
 
 /*%ignore Ingen::Shared::EngineInterface;*/
 
-%include "../common/interface/CommonInterface.hpp"
-%include "../common/interface/ClientInterface.hpp"
-%include "../common/interface/EngineInterface.hpp"
-%include "../module/World.hpp"
+%include "../../include/ingen/CommonInterface.hpp"
+%include "../../include/ingen/ClientInterface.hpp"
+%include "../../include/ingen/EngineInterface.hpp"
+%include "../../includemodule/World.hpp"
 //%include "../module/module.h"
 %include "ingen_bindings.hpp"
 

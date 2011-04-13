@@ -23,7 +23,7 @@
 #include <sigc++/sigc++.h>
 #include "raul/log.hpp"
 #include "raul/SharedPtr.hpp"
-#include "interface/Port.hpp"
+#include "ingen/Port.hpp"
 #include "ObjectModel.hpp"
 
 namespace Raul { class Path; }

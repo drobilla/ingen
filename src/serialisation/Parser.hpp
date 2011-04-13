@@ -25,9 +25,10 @@
 
 #include <boost/optional.hpp>
 
-#include "interface/GraphObject.hpp"
+#include "raul/Path.hpp"
 
-namespace Raul  { class Path; }
+#include "ingen/GraphObject.hpp"
+
 namespace Sord  { class World; class Model; class Node; }
 namespace Ingen { namespace Shared { class CommonInterface; } }
 

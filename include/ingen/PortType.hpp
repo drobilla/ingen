@@ -18,7 +18,7 @@
 #ifndef INGEN_INTERFACE_PORTTYPE_HPP
 #define INGEN_INTERFACE_PORTTYPE_HPP
 
-#include <raul/URI.hpp>
+#include "raul/URI.hpp"
 
 namespace Ingen {
 namespace Shared {

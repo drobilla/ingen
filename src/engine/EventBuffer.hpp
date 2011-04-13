@@ -21,7 +21,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/event/event.h"
 #include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
-#include "interface/PortType.hpp"
+#include "ingen/PortType.hpp"
 #include "Buffer.hpp"
 
 namespace Ingen {

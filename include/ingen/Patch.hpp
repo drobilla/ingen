@@ -15,40 +15,40 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_EVENTS_REGISTERCLIENT_HPP
-#define INGEN_EVENTS_REGISTERCLIENT_HPP
+#ifndef INGEN_INTERFACE_PATCH_HPP
+#define INGEN_INTERFACE_PATCH_HPP
 
-#include "raul/URI.hpp"
-#include "ingen/ClientInterface.hpp"
-#include "QueuedEvent.hpp"
+#include <map>
+#include <utility>
+
+#include "raul/SharedPtr.hpp"
+
+#include "ingen/Node.hpp"
 
 namespace Ingen {
-namespace Events {
+namespace Shared {
+
+class Connection;
 
 
-/** Registers a new client with the OSC system, so it can receive updates.
+/** A Path (graph of Nodes/Connections)
  *
- * \ingroup engine
+ * \ingroup interface
  */
-class RegisterClient : public QueuedEvent
+class Patch : virtual public Node
 {
 public:
-	RegisterClient(Engine&                  engine,
-	               SharedPtr<Request>       request,
-	               SampleCount              timestamp,
-	               const Raul::URI&         uri,
-	               Shared::ClientInterface* client);
+	typedef std::pair<const Port*, const Port*> ConnectionsKey;
+	typedef std::map< ConnectionsKey, SharedPtr<Connection> > Connections;
 
-	void pre_process();
-	void post_process();
+	virtual const Connections& connections() const = 0;
 
-private:
-	Raul::URI                _uri;
-	Shared::ClientInterface* _client;
+	virtual bool     enabled()       const = 0;
+	virtual uint32_t internal_poly() const = 0;
 };
 
 
+} // namespace Shared
 } // namespace Ingen
-} // namespace Events
 
-#endif // INGEN_EVENTS_REGISTERCLIENT_HPP
+#endif // INGEN_INTERFACE_PATCH_HPP

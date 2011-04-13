@@ -16,7 +16,7 @@
  */
 
 #include "raul/TableImpl.hpp"
-#include "interface/GraphObject.hpp"
+#include "ingen/GraphObject.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "ObjectModel.hpp"
 

@@ -23,10 +23,10 @@
 #include <set>
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
-#include "interface/Port.hpp"
+#include "ingen/Port.hpp"
 #include "types.hpp"
 #include "GraphObjectImpl.hpp"
-#include "interface/PortType.hpp"
+#include "ingen/PortType.hpp"
 #include "Buffer.hpp"
 #include "Context.hpp"
 

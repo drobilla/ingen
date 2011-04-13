@@ -18,7 +18,7 @@
 #include <cassert>
 #include <utility>
 #include "PatchPortModule.hpp"
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"

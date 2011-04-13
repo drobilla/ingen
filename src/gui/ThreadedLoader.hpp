@@ -25,7 +25,7 @@
 #include "raul/Thread.hpp"
 #include "raul/Slave.hpp"
 #include <glibmm/thread.h>
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "serialisation/Parser.hpp"
 using std::string;

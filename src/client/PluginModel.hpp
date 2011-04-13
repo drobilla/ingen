@@ -26,8 +26,8 @@
 #ifdef HAVE_SLV2
 #include "slv2/slv2.h"
 #endif
-#include "interface/EngineInterface.hpp"
-#include "interface/Plugin.hpp"
+#include "ingen/EngineInterface.hpp"
+#include "ingen/Plugin.hpp"
 #include "module/World.hpp"
 #include "shared/ResourceImpl.hpp"
 

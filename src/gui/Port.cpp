@@ -18,7 +18,7 @@
 #include <cassert>
 #include "raul/log.hpp"
 #include "flowcanvas/Module.hpp"
-#include "interface/EngineInterface.hpp"
+#include "ingen/EngineInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PortModel.hpp"
