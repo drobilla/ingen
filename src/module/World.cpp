@@ -29,6 +29,7 @@
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "World.hpp"
+#include "Module.hpp"
 
 #define LOG(s) s << "[Module] "
 
@@ -94,7 +95,8 @@ load_module(const string& name)
 }
 
 
-struct WorldImpl : public boost::noncopyable {
+class WorldImpl : public boost::noncopyable {
+public:
 	WorldImpl(Raul::Configuration* conf, int& a_argc, char**& a_argv)
 		: argc(a_argc)
 		, argv(a_argv)

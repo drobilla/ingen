@@ -18,10 +18,12 @@
 #include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
 #include "raul/Path.hpp"
-#include "OSCEngineSender.hpp"
+
 #include "common/interface/Patch.hpp"
 #include "common/interface/Port.hpp"
 #include "common/interface/Plugin.hpp"
+
+#include "OSCEngineSender.hpp"
 
 #define LOG(s) s << "[OSCEngineSender] "
 

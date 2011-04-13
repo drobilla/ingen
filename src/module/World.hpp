@@ -20,13 +20,16 @@
 
 #include <map>
 #include <string>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
+
 #include <glibmm/module.h>
-#include "ingen-config.h"
+
 #include "raul/Configuration.hpp"
 #include "raul/SharedPtr.hpp"
-#include "Module.hpp"
+
+#include "ingen-config.h"
 #include "module/ingen_module.hpp"
 
 #ifdef HAVE_SLV2
@@ -44,10 +47,10 @@ namespace Serialisation { class Serialiser; class Parser; }
 namespace Shared {
 
 class EngineInterface;
-class Store;
 class LV2Features;
 class LV2URIMap;
-struct WorldImpl;
+class Store;
+class WorldImpl;
 
 
 /** The "world" all Ingen modules may share.
@@ -60,14 +63,6 @@ struct WorldImpl;
  * set World::serialiser and World::parser to valid objects.
  */
 class World : public boost::noncopyable {
-	friend Ingen::Shared::World* ::ingen_world_new(Raul::Configuration*, int&, char**&);
-	World(Raul::Configuration* conf, int& argc, char**& argv);
-
-	friend void ::ingen_world_free(Ingen::Shared::World* world);
-	virtual ~World();
-
-	WorldImpl* _impl;
-
 public:
 	virtual bool load(const char* name);
 	virtual void unload_all();
@@ -75,10 +70,14 @@ public:
 	typedef SharedPtr<Ingen::Shared::EngineInterface> (*InterfaceFactory)(
 			World* world, const std::string& engine_url);
 
-	virtual void add_interface_factory(const std::string& scheme, InterfaceFactory factory);
-	virtual SharedPtr<Ingen::Shared::EngineInterface> interface(const std::string& engine_url);
+	virtual void add_interface_factory(const std::string& scheme,
+	                                   InterfaceFactory   factory);
+	
+	virtual SharedPtr<Ingen::Shared::EngineInterface> interface(
+		const std::string& engine_url);
 
-	virtual bool run(const std::string& mime_type, const std::string& filename);
+	virtual bool run(const std::string& mime_type,
+	                 const std::string& filename);
 
 	virtual void set_local_engine(SharedPtr<Engine> e);
 	virtual void set_engine(SharedPtr<EngineInterface> e);
@@ -111,6 +110,15 @@ public:
 	virtual void        set_jack_uuid(const std::string& uuid);
 	virtual std::string jack_uuid();
 #endif
+
+private:
+	friend Ingen::Shared::World* ::ingen_world_new(Raul::Configuration*, int&, char**&);
+	World(Raul::Configuration* conf, int& argc, char**& argv);
+
+	friend void ::ingen_world_free(Ingen::Shared::World* world);
+	virtual ~World();
+
+	WorldImpl* _impl;
 };
 
 
@@ -118,4 +126,3 @@ public:
 } // namespace Ingen
 
 #endif // INGEN_MODULE_WORLD_HPP
-

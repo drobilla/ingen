@@ -19,14 +19,15 @@
 #define INGEN_ENGINE_ENGINE_HPP
 
 #include <cassert>
-#include <vector>
 #include <set>
+#include <vector>
+
 #include <boost/utility.hpp>
+
 #include "raul/SharedPtr.hpp"
+
 #include "interface/PortType.hpp"
 #include "interface/EventType.hpp"
-
-template<typename T> class Queue;
 
 namespace Raul { class Maid; }
 
@@ -71,16 +72,14 @@ public:
 	virtual int  main();
 	virtual bool main_iteration();
 
-	/** Set the quit flag that should kill all threads and exit cleanly.
-	 * Note that it will take some time. */
-	virtual void quit() { _quit_flag = true; }
+	virtual void quit();
 
 	virtual bool activate();
 	virtual void deactivate();
 
 	virtual void process_events(ProcessContext& context);
 
-	virtual bool activated() { return _activated; }
+	virtual bool activated();
 
 	virtual BufferFactory*     buffer_factory()   const { return _buffer_factory; }
 	virtual ClientBroadcaster* broadcaster()      const { return _broadcaster; }
@@ -101,7 +100,7 @@ public:
 
 	typedef std::vector<ProcessSlave*> ProcessSlaves;
 	virtual const ProcessSlaves& process_slaves() const { return _process_slaves; }
-	virtual ProcessSlaves& process_slaves() { return _process_slaves; }
+	virtual ProcessSlaves&       process_slaves()       { return _process_slaves; }
 
 private:
 	typedef std::set< SharedPtr<EventSource> > EventSources;

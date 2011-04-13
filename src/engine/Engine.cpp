@@ -138,6 +138,13 @@ Engine::main_iteration()
 
 
 void
+Engine::quit()
+{
+	_quit_flag = true;
+}
+
+
+void
 Engine::add_event_source(SharedPtr<EventSource> source)
 {
 	_event_sources.insert(source);
@@ -260,6 +267,13 @@ Engine::process_events(ProcessContext& context)
 {
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->process(*_post_processor, context);
+}
+
+
+bool
+Engine::activated()
+{
+	return _activated;
 }
 
 
