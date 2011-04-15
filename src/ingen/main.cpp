@@ -40,7 +40,6 @@
 #include "engine/Engine.hpp"
 #include "ingen/EngineInterface.hpp"
 #include "module/World.hpp"
-#include "module/ingen_module.hpp"
 #include "serialisation/Parser.hpp"
 #include "shared/Configuration.hpp"
 #include "shared/runtime_paths.hpp"
@@ -60,7 +59,7 @@ ingen_interrupt(int)
 	cout << "ingen: Interrupted" << endl;
 	if (world->local_engine())
 		world->local_engine()->quit();
-	ingen_world_free(world);
+	delete world;
 	exit(EXIT_FAILURE);
 }
 
@@ -69,7 +68,7 @@ ingen_try(bool cond, const char* msg)
 {
 	if (!cond) {
 		cerr << "ingen: Error: " << msg << endl;
-		ingen_world_free(world);
+		delete world;
 		exit(EXIT_FAILURE);
 	}
 }
@@ -106,7 +105,7 @@ main(int argc, char** argv)
 	g_type_init();
 #endif
 
-	Ingen::Shared::World* world = ingen_world_new(&conf, argc, argv);
+	Ingen::Shared::World* world = new Ingen::Shared::World(&conf, argc, argv);
 
 #if INGEN_JACK_SESSION
 	if (conf.option("uuid").get_string()) {
@@ -225,7 +224,7 @@ main(int argc, char** argv)
 	if (world->local_engine())
 		world->local_engine()->deactivate();
 
-	ingen_world_free(world);
+	delete world;
 
 	return 0;
 }

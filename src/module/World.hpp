@@ -30,7 +30,6 @@
 #include "raul/SharedPtr.hpp"
 
 #include "ingen-config.h"
-#include "module/ingen_module.hpp"
 
 #ifdef HAVE_SLV2
 typedef struct _SLV2World* SLV2World;
@@ -64,6 +63,9 @@ class WorldImpl;
  */
 class World : public boost::noncopyable {
 public:
+	World(Raul::Configuration* conf, int& argc, char**& argv);
+	virtual ~World();
+
 	virtual bool load(const char* name);
 	virtual void unload_all();
 
@@ -102,22 +104,12 @@ public:
 
 	virtual LV2Features* lv2_features();
 
-#ifdef HAVE_SLV2
 	virtual SLV2World slv2_world();
-#endif
 
-#ifdef INGEN_JACK_SESSION
 	virtual void        set_jack_uuid(const std::string& uuid);
 	virtual std::string jack_uuid();
-#endif
 
 private:
-	friend Ingen::Shared::World* ::ingen_world_new(Raul::Configuration*, int&, char**&);
-	World(Raul::Configuration* conf, int& argc, char**& argv);
-
-	friend void ::ingen_world_free(Ingen::Shared::World* world);
-	virtual ~World();
-
 	WorldImpl* _impl;
 };
 

@@ -106,6 +106,8 @@ public:
 		, uris(new Shared::LV2URIMap())
 #ifdef HAVE_SLV2
 		, slv2_world(slv2_world_new())
+#else
+		, slv2_world(NULL)
 #endif
 	{
 #ifdef HAVE_SLV2
@@ -140,10 +142,10 @@ public:
 		interface_factories.clear();
 		script_runners.clear();
 
-	#ifdef HAVE_SLV2
+#ifdef HAVE_SLV2
 		slv2_world_free(slv2_world);
 		slv2_world = NULL;
-	#endif
+#endif
 
 		delete rdf_world;
 		rdf_world = NULL;
@@ -175,12 +177,8 @@ public:
     SharedPtr<Serialisation::Serialiser> serialiser;
     SharedPtr<Serialisation::Parser>     parser;
     SharedPtr<Store>                     store;
-#ifdef HAVE_SLV2
     SLV2World                            slv2_world;
-#endif
-#ifdef INGEN_JACK_SESSION
 	std::string                          jack_uuid;
-#endif
 };
 
 
@@ -286,8 +284,6 @@ World::add_interface_factory(const std::string& scheme, InterfaceFactory factory
 }
 
 
-#ifdef INGEN_JACK_SESSION
-
 void
 World::set_jack_uuid(const std::string& uuid)
 {
@@ -300,8 +296,6 @@ World::jack_uuid()
 {
 	return _impl->jack_uuid;
 }
-
-#endif // INGEN_JACK_SESSION
 
 
 } // namespace Shared

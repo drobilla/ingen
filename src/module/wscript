@@ -8,7 +8,6 @@ def build(bld):
 	obj = bld(features = 'cxx cxxshlib')
 	obj.source = '''
 		World.cpp
-		ingen_module.cpp
 	'''
 	obj.export_includes = ['.']
 	obj.includes	    = ['.', '..', '../..', '../../include']

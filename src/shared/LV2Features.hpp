@@ -41,7 +41,8 @@ public:
 	class Feature {
 	public:
 		virtual ~Feature() {}
-		virtual SharedPtr<LV2_Feature> feature(Shared::World* world, Node* node) = 0;
+		virtual SharedPtr<LV2_Feature> feature(Shared::World* world,
+		                                       Node*          node) = 0;
 	};
 
 	class FeatureArray {
@@ -72,7 +73,8 @@ public:
 
 	void add_feature(const std::string& uri, SharedPtr<Feature> feature);
 
-	SharedPtr<LV2Features::FeatureArray> lv2_features(Shared::World* world, Node* node) const;
+	SharedPtr<FeatureArray> lv2_features(Shared::World* world,
+	                                     Node*          node) const;
 
 private:
 	typedef std::map< std::string, SharedPtr<Feature> > Features;

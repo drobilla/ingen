@@ -19,7 +19,6 @@
 #include "raul/log.hpp"
 #include "module/World.hpp"
 #include "module/Module.hpp"
-#include "module/ingen_module.hpp"
 #include "serialisation/names.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"

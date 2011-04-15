@@ -41,7 +41,6 @@
 #include "engine/ThreadManager.hpp"
 #include "ingen/EngineInterface.hpp"
 #include "module/World.hpp"
-#include "module/ingen_module.hpp"
 #include "serialisation/Parser.hpp"
 #include "shared/Configuration.hpp"
 #include "shared/runtime_paths.hpp"
@@ -258,9 +257,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
-	plugin->world = ingen_world_new(&lib.conf, lib.argc, lib.argv);
+	plugin->world = new World(&lib.conf, lib.argc, lib.argv);
 	if (!plugin->world->load("ingen_serialisation")) {
-		ingen_world_free(plugin->world);
+		delete plugin->world;
 		return NULL;
 	}
 
@@ -350,7 +349,7 @@ ingen_cleanup(LV2_Handle instance)
 	IngenPlugin* me = (IngenPlugin*)instance;
 	me->world->set_local_engine(SharedPtr<Ingen::Engine>());
 	me->world->set_engine(SharedPtr<Ingen::EngineInterface>());
-	ingen_world_free(me->world);
+	delete me->world;
 	free(instance);
 }
 
@@ -387,9 +386,9 @@ Lib::Lib()
 
 	Ingen::Shared::set_bundle_path_from_code((void*)&lv2_descriptor);
 
-	Ingen::Shared::World* world = ingen_world_new(&conf, argc, argv);
+	Ingen::Shared::World* world = new Ingen::Shared::World(&conf, argc, argv);
 	if (!world->load("ingen_serialisation")) {
-		ingen_world_free(world);
+		delete world;
 		return;
 	}
 
@@ -407,7 +406,7 @@ Lib::Lib()
 			                                       i->file_uri)));
 	}
 
-	ingen_world_free(world);
+	delete world;
 }
 
 /** Library destructor (called on shared library unload) */
