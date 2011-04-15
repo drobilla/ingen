@@ -26,7 +26,7 @@
 #include "ingen/EventType.hpp"
 #include "events/CreatePatch.hpp"
 #include "events/CreatePort.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "shared/Store.hpp"

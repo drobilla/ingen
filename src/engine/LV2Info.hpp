@@ -26,7 +26,7 @@
 #include <map>
 #include <string>
 #include "slv2/slv2.h"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 
 namespace Ingen {
 

@@ -19,7 +19,7 @@
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
 #include "shared/LV2URIMap.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "events/SendPortValue.hpp"
 #include "events/SendBinding.hpp"
 #include "AudioBuffer.hpp"

@@ -130,7 +130,6 @@ def build(bld):
 	# Modules
 	bld.recurse('src/engine')
 	bld.recurse('src/serialisation')
-	bld.recurse('src/module')
 	bld.recurse('src/shared')
 	bld.recurse('src/client')
 
@@ -143,7 +142,7 @@ def build(bld):
 	obj.source       = 'src/ingen/main.cpp'
 	obj.includes     = ['.', 'src', 'include']
 	obj.defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"'
-	obj.use          = 'libingen_module libingen_shared'
+	obj.use          = 'libingen_shared'
 	obj.install_path = '${BINDIR}'
 	autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LV2CORE SLV2 INGEN LIBLO SOUP')
 

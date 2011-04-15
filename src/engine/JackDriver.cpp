@@ -47,7 +47,7 @@
 #include "ProcessSlave.hpp"
 #include "QueuedEvent.hpp"
 #include "ThreadManager.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "tuning.hpp"

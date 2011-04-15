@@ -19,7 +19,7 @@
 #include <cmath>
 #include <string>
 #include "raul/log.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "ThreadManager.hpp"
 #include "NodeImpl.hpp"

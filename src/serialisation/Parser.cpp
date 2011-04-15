@@ -35,7 +35,7 @@
 #include "sord/sordmm.hpp"
 
 #include "ingen/EngineInterface.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "shared/LV2URIMap.hpp"
 
 #include "Parser.hpp"

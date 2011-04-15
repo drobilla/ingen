@@ -21,7 +21,7 @@
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"
 
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "HTTPEngineSender.hpp"
 #include "HTTPClientReceiver.hpp"
 

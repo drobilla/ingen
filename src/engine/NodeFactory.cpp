@@ -25,7 +25,7 @@
 #include "sord/sordmm.hpp"
 #include "raul/log.hpp"
 #include "ingen-config.h"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
 #include "internals/Note.hpp"

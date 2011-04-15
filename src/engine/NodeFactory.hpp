@@ -25,7 +25,7 @@
 #include <glibmm/module.h>
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "ingen-config.h"
 
 namespace Ingen {

@@ -17,8 +17,8 @@
 
 #include "ingen-config.h"
 #include "raul/SharedPtr.hpp"
-#include "module/Module.hpp"
-#include "module/World.hpp"
+#include "shared/Module.hpp"
+#include "shared/World.hpp"
 #ifdef HAVE_LIBLO
 #include "OSCEngineSender.hpp"
 #endif

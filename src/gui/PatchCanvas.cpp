@@ -31,7 +31,7 @@
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"
 #include "client/ClientStore.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "App.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"

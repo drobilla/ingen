@@ -27,7 +27,7 @@
 #include "raul/log.hpp"
 #include "raul/Path.hpp"
 #include "flowcanvas/Connection.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "engine/Engine.hpp"
 #include "ingen/EngineInterface.hpp"
 #include "shared/runtime_paths.hpp"

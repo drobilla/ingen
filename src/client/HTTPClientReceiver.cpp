@@ -28,8 +28,7 @@
 
 #include "raul/log.hpp"
 
-#include "module/Module.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "HTTPClientReceiver.hpp"
 
 #define LOG(s) s << "[HTTPClientReceiver] "

@@ -26,8 +26,8 @@
 
 #include "ingen-config.h"
 #include "ingen/EngineInterface.hpp"
-#include "module/Module.hpp"
-#include "module/World.hpp"
+#include "shared/Module.hpp"
+#include "shared/World.hpp"
 #include "engine/Engine.hpp"
 #ifdef HAVE_SOUP
 #include "client/HTTPClientReceiver.hpp"

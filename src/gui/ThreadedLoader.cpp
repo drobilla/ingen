@@ -17,8 +17,8 @@
 
 #include <string>
 #include "raul/log.hpp"
-#include "module/World.hpp"
-#include "module/Module.hpp"
+#include "shared/World.hpp"
+#include "shared/Module.hpp"
 #include "serialisation/names.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"

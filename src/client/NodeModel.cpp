@@ -19,7 +19,7 @@
 #include <cmath>
 #include "ingen-config.h"
 #include "ingen/Port.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "NodeModel.hpp"
 

@@ -40,7 +40,7 @@
 #include "engine/QueuedEngineInterface.hpp"
 #include "engine/ThreadManager.hpp"
 #include "ingen/EngineInterface.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "serialisation/Parser.hpp"
 #include "shared/Configuration.hpp"
 #include "shared/runtime_paths.hpp"

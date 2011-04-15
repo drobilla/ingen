@@ -28,7 +28,7 @@
 #endif
 #include "ingen/EngineInterface.hpp"
 #include "ingen/Plugin.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "shared/ResourceImpl.hpp"
 
 namespace Ingen {

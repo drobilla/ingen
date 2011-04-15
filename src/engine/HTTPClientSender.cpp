@@ -21,7 +21,7 @@
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
 #include "serialisation/Serialiser.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "HTTPClientSender.hpp"
 #include "Engine.hpp"
 

@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "module/Module.hpp"
+#include "shared/Module.hpp"
 #include "App.hpp"
 
 struct IngenGUIModule : public Ingen::Shared::Module {

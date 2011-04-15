@@ -27,7 +27,7 @@
 #include <libglademm.h>
 #include "raul/SharedPtr.hpp"
 #include "raul/Deletable.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 
 namespace Ingen {
 	class Engine;

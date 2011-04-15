@@ -15,6 +15,7 @@ def build(bld):
 		LV2URIMap.cpp
 		ResourceImpl.cpp
 		Store.cpp
+		World.cpp
 		runtime_paths.cpp
 	'''
 	if bld.is_defined('HAVE_LIBLO'):

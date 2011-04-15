@@ -18,7 +18,7 @@
 #include <cassert>
 #include <string>
 #include "raul/log.hpp"
-#include "module/World.hpp"
+#include "shared/World.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PluginModel.hpp"
 #include "App.hpp"
