@@ -29,11 +29,7 @@
 #include "raul/Configuration.hpp"
 #include "raul/SharedPtr.hpp"
 
-#include "ingen-config.h"
-
-#ifdef HAVE_SLV2
 typedef struct _SLV2World* SLV2World;
-#endif
 
 namespace Sord { class World; }
 
