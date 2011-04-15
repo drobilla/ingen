@@ -39,17 +39,13 @@ class BufferFactory;
 class ClientBroadcaster;
 class ControlBindings;
 class Driver;
-class Driver;
 class EngineStore;
-class Event;
 class EventSource;
 class MessageContext;
 class NodeFactory;
 class PostProcessor;
 class ProcessContext;
 class ProcessSlave;
-class QueuedEngineInterface;
-class QueuedEvent;
 
 
 /** The main class for the Engine.
