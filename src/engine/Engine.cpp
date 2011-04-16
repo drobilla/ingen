@@ -57,15 +57,14 @@ using namespace Shared;
 bool ThreadManager::single_threaded = true;
 
 Engine::Engine(Ingen::Shared::World* a_world)
-	: _world(a_world)
-	, _maid(new Raul::Maid(maid_queue_size))
-	, _post_processor(new PostProcessor(*this, post_processor_queue_size))
-	, _broadcaster(new ClientBroadcaster())
-	, _node_factory(new NodeFactory(a_world))
-	, _message_context(new MessageContext(*this))
+	: _broadcaster(new ClientBroadcaster())
 	, _buffer_factory(new BufferFactory(*this, a_world->uris()))
 	, _control_bindings(new ControlBindings(*this))
-	, _quit_flag(false)
+	, _maid(new Raul::Maid(maid_queue_size))
+	, _message_context(new MessageContext(*this))
+	, _node_factory(new NodeFactory(a_world))
+	, _post_processor(new PostProcessor(*this, post_processor_queue_size))
+	, _world(a_world)
 {
 	if (a_world->store()) {
 		assert(PtrCast<EngineStore>(a_world->store()));
@@ -84,11 +83,10 @@ Engine::~Engine()
 			if ( ! PtrCast<GraphObjectImpl>(i->second)->parent() )
 				i->second.reset();
 
-	delete _broadcaster;
-	delete _node_factory;
-	delete _post_processor;
-
 	delete _maid;
+	delete _post_processor;
+	delete _node_factory;
+	delete _broadcaster;
 
 	munlockall();
 }
