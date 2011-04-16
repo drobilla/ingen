@@ -65,7 +65,6 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _node_factory(new NodeFactory(a_world))
 	, _message_context(new MessageContext(*this))
 	, _buffer_factory(new BufferFactory(*this, a_world->uris()))
-	//, _buffer_factory(NULL)
 	, _control_bindings(new ControlBindings(*this))
 	, _quit_flag(false)
 	, _activated(false)
@@ -105,42 +104,18 @@ Engine::engine_store() const
 }
 
 
-int
-Engine::main()
+void
+Engine::quit()
 {
-	Raul::Thread::get().set_context(THREAD_POST_PROCESS);
-
-	// Loop until quit flag is set
-	while (!_quit_flag) {
-		nanosleep(&main_rate, NULL);
-		main_iteration();
-	}
-	info << "Finished main loop" << endl;
-
-	deactivate();
-
-	return 0;
+	_quit_flag = true;
 }
 
-
-/** Run one iteration of the main loop.
- *
- * NOT realtime safe (this is where deletion actually occurs)
- */
 bool
 Engine::main_iteration()
 {
 	_post_processor->process();
 	_maid->cleanup();
-
 	return !_quit_flag;
-}
-
-
-void
-Engine::quit()
-{
-	_quit_flag = true;
 }
 
 

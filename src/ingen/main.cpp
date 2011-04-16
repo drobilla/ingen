@@ -17,6 +17,7 @@
 
 #include <signal.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <iostream>
 #include <string>
@@ -30,6 +31,7 @@
 #include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
+#include "raul/Thread.hpp"
 #include "raul/log.hpp"
 
 #include "serd/serd.h"
@@ -50,6 +52,8 @@
 using namespace std;
 using namespace Raul;
 using namespace Ingen;
+
+static const timespec main_rate = { 0, 125000000 }; // 1/8 second
 
 Ingen::Shared::World* world = NULL;
 
@@ -212,12 +216,22 @@ main(int argc, char** argv)
 		cerr << "This build of ingen does not support scripting." << endl;
 #endif
 
-	// Listen to OSC and run main loop
+	// Run main loop
 	} else if (world->local_engine() && !conf.option("gui").get_bool()) {
+		// Set up signal handlers that will set quit_flag on interrupt
 		signal(SIGINT, ingen_interrupt);
 		signal(SIGTERM, ingen_interrupt);
+
+		// Activate the enginie
 		world->local_engine()->activate();
-		world->local_engine()->main(); // Block here
+
+		// Run engine main loop until interrupt
+		while (world->local_engine()->main_iteration()) {
+			nanosleep(&main_rate, NULL);
+		}
+		info << "Finished main loop" << endl;
+
+		world->local_engine()->deactivate();
 	}
 
 	// Shut down

@@ -18,7 +18,6 @@
 #ifndef INGEN_ENGINE_ENGINE_HPP
 #define INGEN_ENGINE_ENGINE_HPP
 
-#include <cassert>
 #include <set>
 #include <vector>
 
@@ -48,16 +47,15 @@ class ProcessContext;
 class ProcessSlave;
 
 
-/** The main class for the Engine.
- *
- * This is a (GoF) facade for the engine.  Pointers to all components are
- * available for more advanced control than this facade allows.
- *
- * Most objects in the engine have (directly or indirectly) a pointer to the
- * Engine they are a part of.
- *
- * \ingroup engine
- */
+/**
+   The engine which executes the process graph.
+
+   This is a simple class that provides pointers to the various components
+   that make up the engine implementation.  In processes with a local engine,
+   it can be accessed via the Ingen::Shared::World.
+
+  \ingroup engine
+*/
 class Engine : public boost::noncopyable
 {
 public:
@@ -65,13 +63,29 @@ public:
 
 	virtual ~Engine();
 
-	virtual int  main();
-	virtual bool main_iteration();
-
-	virtual void quit();
-
 	virtual bool activate();
 	virtual void deactivate();
+
+	/**
+	   Indicate that a quit is desired
+
+	   This function simply sets a flag which affects the return value of
+	   main iteration, it does not actually force the engine to stop running
+	   or block.  The code driving the engine is responsible for stopping
+	   and cleaning up when main_iteration returns false.
+	*/
+	virtual void quit();
+
+	/**
+	   Run a single iteration of the main context.
+
+	   The main context performs housekeeping duties like collecting garbage.
+	   This should be called regularly, e.g. a few times per second.
+	   The return value indicates whether execution should continue; i.e. if
+	   false is returned, the caller should cease calling main_iteration()
+	   and stop the engine.
+	*/
+	virtual bool main_iteration();
 
 	virtual void process_events(ProcessContext& context);
 
