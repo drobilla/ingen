@@ -25,6 +25,7 @@
 #endif
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"
+#include "ingen/EngineBase.hpp"
 #include "shared/runtime_paths.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
@@ -172,7 +173,7 @@ public:
 	Sord::World*                         rdf_world;
 	SharedPtr<LV2URIMap>                 uris;
     SharedPtr<EngineInterface>           engine;
-	SharedPtr<Engine>                    local_engine;
+	SharedPtr<EngineBase>                local_engine;
     SharedPtr<Serialisation::Serialiser> serialiser;
     SharedPtr<Serialisation::Parser>     parser;
     SharedPtr<Store>                     store;
@@ -191,7 +192,7 @@ World::~World()
 	delete _impl;
 }
 
-void World::set_local_engine(SharedPtr<Engine> e)                  { _impl->local_engine = e; }
+void World::set_local_engine(SharedPtr<EngineBase> e)              { _impl->local_engine = e; }
 void World::set_engine(SharedPtr<EngineInterface> e)               { _impl->engine = e; }
 void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
 void World::set_parser(SharedPtr<Serialisation::Parser> p)         { _impl->parser = p; }
@@ -200,7 +201,7 @@ void World::set_conf(Raul::Configuration* c)                       { _impl->conf
 
 int&                                 World::argc()         { return _impl->argc; }
 char**&                              World::argv()         { return _impl->argv; }
-SharedPtr<Engine>                    World::local_engine() { return _impl->local_engine; }
+SharedPtr<EngineBase>                World::local_engine() { return _impl->local_engine; }
 SharedPtr<EngineInterface>           World::engine()       { return _impl->engine; }
 SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
 SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }

@@ -246,7 +246,7 @@ ConnectWindow::connect(bool existing)
 
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 
-		if (!world->local_engine()->driver())
+		if (!((Engine*)world->local_engine().get())->driver())
 			world->load("ingen_jack");
 
 		world->local_engine()->activate();

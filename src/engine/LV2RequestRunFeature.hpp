@@ -48,9 +48,10 @@ struct RequestRunFeature : public Shared::LV2Features::Feature {
 		if (!data->world->local_engine())
 			return;
 
-		data->world->local_engine()->message_context()->run(
+		Engine* engine = (Engine*)data->world->local_engine().get();
+		engine->message_context()->run(
 			dynamic_cast<NodeImpl*>(data->node),
-			data->world->local_engine()->driver()->frame_time());
+			engine->driver()->frame_time());
 	}
 
 	static void delete_feature(LV2_Feature* feature) {

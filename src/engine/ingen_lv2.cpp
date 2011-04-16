@@ -267,11 +267,12 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->world->set_local_engine(engine);
 
 	SharedPtr<QueuedEngineInterface> interface(
-		new Ingen::QueuedEngineInterface(*plugin->world->local_engine(),
-		                                 event_queue_size));
+		new Ingen::QueuedEngineInterface(
+			*engine.get(),
+			event_queue_size));
 
 	plugin->world->set_engine(interface);
-	plugin->world->local_engine()->add_event_source(interface);
+	engine->add_event_source(interface);
 
 	Raul::Thread::get().set_context(THREAD_PRE_PROCESS);
 	ThreadManager::single_threaded = true;
@@ -309,9 +310,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 static void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
-	IngenPlugin*             me     = (IngenPlugin*)instance;
-	SharedPtr<Ingen::Engine> engine = me->world->local_engine();
-	Ingen::LV2::LV2Driver*   driver = (Ingen::LV2::LV2Driver*)engine->driver();
+	IngenPlugin*           me     = (IngenPlugin*)instance;
+	Ingen::Engine*         engine = (Ingen::Engine*)me->world->local_engine().get();
+	Ingen::LV2::LV2Driver* driver = (Ingen::LV2::LV2Driver*)engine->driver();
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
 		assert(driver->ports().at(port)->patch_port()->index() == port);
@@ -330,10 +331,11 @@ ingen_activate(LV2_Handle instance)
 static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
-	IngenPlugin* me = (IngenPlugin*)instance;
+	IngenPlugin*   me     = (IngenPlugin*)instance;
+	Ingen::Engine* engine = (Ingen::Engine*)me->world->local_engine().get();
 	// FIXME: don't do this every call
 	Raul::Thread::get().set_context(Ingen::THREAD_PROCESS);
-	((Ingen::LV2::LV2Driver*)me->world->local_engine()->driver())->run(sample_count);
+	((Ingen::LV2::LV2Driver*)engine->driver())->run(sample_count);
 }
 
 static void

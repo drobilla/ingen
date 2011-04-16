@@ -35,7 +35,7 @@ namespace Sord { class World; }
 
 namespace Ingen {
 
-class Engine;
+class EngineBase;
 
 namespace Serialisation { class Serialiser; class Parser; }
 
@@ -76,13 +76,13 @@ public:
 	virtual bool run(const std::string& mime_type,
 	                 const std::string& filename);
 
-	virtual void set_local_engine(SharedPtr<Engine> e);
+	virtual void set_local_engine(SharedPtr<EngineBase> e);
 	virtual void set_engine(SharedPtr<EngineInterface> e);
 	virtual void set_serialiser(SharedPtr<Serialisation::Serialiser> s);
 	virtual void set_parser(SharedPtr<Serialisation::Parser> p);
 	virtual void set_store(SharedPtr<Store> s);
 
-	virtual SharedPtr<Engine>                    local_engine();
+	virtual SharedPtr<EngineBase>                local_engine();
 	virtual SharedPtr<EngineInterface>           engine();
 	virtual SharedPtr<Serialisation::Serialiser> serialiser();
 	virtual SharedPtr<Serialisation::Parser>     parser();

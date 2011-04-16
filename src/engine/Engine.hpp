@@ -25,8 +25,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/PortType.hpp"
-#include "ingen/EventType.hpp"
+#include "ingen/EngineBase.hpp"
 
 namespace Raul { class Maid; }
 
@@ -54,7 +53,7 @@ class ProcessContext;
 
    @ingroup engine
 */
-class Engine : public boost::noncopyable
+class Engine : public boost::noncopyable, public EngineBase
 {
 public:
 	explicit Engine(Ingen::Shared::World* world);
