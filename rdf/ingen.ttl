@@ -1,5 +1,5 @@
 # Ingen Ontology
-# Copyright (C) 2008 David Robillard <http://drobilla.net>
+# Copyright 2008-2011 David Robillard <http://drobilla.net>
 #
 # This document describes classes and properties that define a "patch" or
 # "graph" representing a dataflow program or system.  It borrows heavily

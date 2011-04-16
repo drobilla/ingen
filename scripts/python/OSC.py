@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # Open SoundControl for Python
-# Copyright (C) 2002 Daniel Holth, Clinton McChesney
+# Copyright 2002 Daniel Holth, Clinton McChesney
 # Modified by Leonard Ritter
 #
 # This library is free software; you can redistribute it and/or modify it

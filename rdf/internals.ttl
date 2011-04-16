@@ -1,5 +1,5 @@
 # Ingen Internal Plugins
-# Copyright (C) 2008 David Robillard <http://drobilla.net>
+# Copyright 2008-2011 David Robillard <http://drobilla.net>
 #
 # This document describes internal plugins that are implemented in
 # Ingen itself.  This set is deliberately as small as possible: an

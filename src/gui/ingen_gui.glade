@@ -1895,7 +1895,7 @@
     <property name="type_hint">normal</property>
     <property name="program_name">Ingen</property>
     <property name="version">@INGEN_VERSION@</property>
-    <property name="copyright" translatable="yes">Copyright (C) 2005-2010 David Robillard &lt;http://drobilla.net&gt;</property>
+    <property name="copyright" translatable="yes">Copyright 2005-2011 David Robillard &lt;http://drobilla.net&gt;</property>
     <property name="website">http://drobilla.net/software/ingen</property>
     <property name="license" translatable="yes">Licensed under the GNU GPL, Version 2.
 

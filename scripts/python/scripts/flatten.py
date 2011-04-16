@@ -5,7 +5,7 @@
 #    flatten.py - a python script that merges all subpatches in an Ingen patch
 #                 into the parent patch
 #
-#    Copyright (C) 2005 Lars Luthman
+#    Copyright 2005 Lars Luthman
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
