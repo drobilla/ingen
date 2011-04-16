@@ -231,11 +231,7 @@ QueuedEngineInterface::set_property(const URI&  uri,
 void
 QueuedEngineInterface::ping()
 {
-	if (_engine.activated()) {
-		push_queued(new Events::Ping(_engine, _request, now()));
-	} else if (_request) {
-		_request->respond_ok();
-	}
+	push_queued(new Events::Ping(_engine, _request, now()));
 }
 
 

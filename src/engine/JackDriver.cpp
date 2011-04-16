@@ -291,18 +291,23 @@ JackDriver::attach(const std::string& server_name,
 void
 JackDriver::activate()
 {
+	Shared::World* world = _engine.world();
+
 	if (_is_activated) {
 		LOG(warn) << "Jack driver already activated." << endl;
 		return;
 	}
 
 	if (!_client)
-		attach(_engine.world()->conf()->option("jack-server").get_string(),
-				_engine.world()->conf()->option("jack-client").get_string(), NULL);
+		attach(world->conf()->option("jack-server").get_string(),
+		       world->conf()->option("jack-client").get_string(), NULL);
 
 	jack_set_process_callback(_client, process_cb, this);
 
 	_is_activated = true;
+
+	_process_context.activate(world->conf()->option("parallelism").get_int32(),
+	                          is_realtime());
 
 	if (jack_activate(_client)) {
 		LOG(error) << "Could not activate Jack client, aborting." << endl;
@@ -446,8 +451,8 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 
 	_process_context.locate(start_of_current_cycle, nframes, 0);
 
-	for (Engine::ProcessSlaves::iterator i = _engine.process_slaves().begin();
-			i != _engine.process_slaves().end(); ++i) {
+	for (ProcessContext::Slaves::iterator i = _process_context.slaves().begin();
+			i != _process_context.slaves().end(); ++i) {
 		(*i)->context().locate(start_of_current_cycle, nframes, 0);
 	}
 

@@ -43,7 +43,6 @@
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
-#include "ProcessSlave.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "ThreadManager.hpp"
 #include "tuning.hpp"
@@ -67,7 +66,6 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _buffer_factory(new BufferFactory(*this, a_world->uris()))
 	, _control_bindings(new ControlBindings(*this))
 	, _quit_flag(false)
-	, _activated(false)
 {
 	if (a_world->store()) {
 		assert(PtrCast<EngineStore>(a_world->store()));
@@ -126,6 +124,13 @@ Engine::add_event_source(SharedPtr<EventSource> source)
 }
 
 
+void
+Engine::set_driver(SharedPtr<Driver> driver)
+{
+	_driver = driver;
+}
+
+
 static void
 execute_and_delete_event(ProcessContext& context, QueuedEvent* ev)
 {
@@ -139,18 +144,12 @@ execute_and_delete_event(ProcessContext& context, QueuedEvent* ev)
 bool
 Engine::activate()
 {
-	if (_activated)
-		return true;
-
 	assert(_driver);
-	//assert(ThreadManager::single_threaded == true);
 	ThreadManager::single_threaded = true;
 
 	_buffer_factory->set_block_length(_driver->block_length());
 
 	_message_context->Thread::start();
-
-	uint32_t parallelism = _world->conf()->option("parallelism").get_int32();
 
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->activate_source();
@@ -205,15 +204,8 @@ Engine::activate()
 	}
 
 	_driver->activate();
-
-	_process_slaves.clear();
-	_process_slaves.reserve(parallelism);
-	for (size_t i=0; i < parallelism - 1; ++i)
-		_process_slaves.push_back(new ProcessSlave(*this, _driver->is_realtime()));
-
 	root_patch->enable();
 
-	_activated = true;
 	ThreadManager::single_threaded = false;
 
 	return true;
@@ -223,16 +215,12 @@ Engine::activate()
 void
 Engine::deactivate()
 {
-	if (!_activated)
-		return;
-
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->deactivate_source();
 
 	_driver->deactivate();
 	_driver->root_patch()->deactivate();
 
-	_activated = false;
 	ThreadManager::single_threaded = true;
 }
 
@@ -240,15 +228,10 @@ Engine::deactivate()
 void
 Engine::process_events(ProcessContext& context)
 {
+	ThreadManager::assert_thread(THREAD_PROCESS);
+
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->process(*_post_processor, context);
-}
-
-
-bool
-Engine::activated()
-{
-	return _activated;
 }
 
 

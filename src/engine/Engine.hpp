@@ -44,8 +44,6 @@ class MessageContext;
 class NodeFactory;
 class PostProcessor;
 class ProcessContext;
-class ProcessSlave;
-
 
 /**
    The engine which executes the process graph.
@@ -54,7 +52,7 @@ class ProcessSlave;
    that make up the engine implementation.  In processes with a local engine,
    it can be accessed via the Ingen::Shared::World.
 
-  \ingroup engine
+   @ingroup engine
 */
 class Engine : public boost::noncopyable
 {
@@ -63,6 +61,9 @@ public:
 
 	virtual ~Engine();
 
+	virtual void set_driver(SharedPtr<Driver> driver);
+	virtual void add_event_source(SharedPtr<EventSource> source);
+
 	virtual bool activate();
 	virtual void deactivate();
 
@@ -70,26 +71,29 @@ public:
 	   Indicate that a quit is desired
 
 	   This function simply sets a flag which affects the return value of
-	   main iteration, it does not actually force the engine to stop running
-	   or block.  The code driving the engine is responsible for stopping
-	   and cleaning up when main_iteration returns false.
+	   main_iteration, it does not actually force the engine to stop running or
+	   block.  The code driving the engine is responsible for stopping and
+	   cleaning up when main_iteration returns false.
 	*/
 	virtual void quit();
 
 	/**
 	   Run a single iteration of the main context.
 
-	   The main context performs housekeeping duties like collecting garbage.
-	   This should be called regularly, e.g. a few times per second.
-	   The return value indicates whether execution should continue; i.e. if
-	   false is returned, the caller should cease calling main_iteration()
-	   and stop the engine.
+	   The main context post-processes events and performs housekeeping duties
+	   like collecting garbage.  This should be called regularly, e.g. a few
+	   times per second.  The return value indicates whether execution should
+	   continue; i.e. if false is returned, a quit has been requested and the
+	   caller should cease calling main_iteration() and stop the engine.
 	*/
 	virtual bool main_iteration();
 
-	virtual void process_events(ProcessContext& context);
+	/**
+	   Process all events for this process cycle.
 
-	virtual bool activated();
+	   Must be called (likely by the Driver) from the process thread.
+	*/
+	virtual void process_events(ProcessContext& context);
 
 	virtual BufferFactory*     buffer_factory()   const { return _buffer_factory; }
 	virtual ClientBroadcaster* broadcaster()      const { return _broadcaster; }
@@ -99,24 +103,14 @@ public:
 	virtual NodeFactory*       node_factory()     const { return _node_factory; }
 	virtual PostProcessor*     post_processor()   const { return _post_processor; }
 	virtual Raul::Maid*        maid()             const { return _maid; }
+	virtual Shared::World*     world()            const { return _world; }
 
 	virtual SharedPtr<EngineStore> engine_store() const;
-
-	virtual void set_driver(SharedPtr<Driver> driver) { _driver = driver; }
-
-	virtual void add_event_source(SharedPtr<EventSource> source);
-
-	virtual Ingen::Shared::World* world() { return _world; }
-
-	typedef std::vector<ProcessSlave*> ProcessSlaves;
-	virtual const ProcessSlaves& process_slaves() const { return _process_slaves; }
-	virtual ProcessSlaves&       process_slaves()       { return _process_slaves; }
 
 private:
 	typedef std::set< SharedPtr<EventSource> > EventSources;
 	EventSources _event_sources;
 
-	ProcessSlaves         _process_slaves;
 	Ingen::Shared::World* _world;
 	SharedPtr<Driver>     _driver;
 	Raul::Maid*           _maid;
@@ -128,9 +122,7 @@ private:
 	ControlBindings*      _control_bindings;
 
 	bool _quit_flag;
-	bool _activated;
 };
-
 
 } // namespace Ingen
 

@@ -19,9 +19,13 @@
 #define INGEN_ENGINE_PROCESSSLAVE_HPP
 
 #include <sstream>
-#include "raul/Slave.hpp"
+
 #include "raul/Array.hpp"
 #include "raul/AtomicInt.hpp"
+#include "raul/Slave.hpp"
+
+#include "Driver.hpp"
+#include "Engine.hpp"
 #include "ProcessContext.hpp"
 
 namespace Ingen {
@@ -33,11 +37,12 @@ class CompiledPatch;
 class ProcessSlave : protected Raul::Slave {
 public:
 	ProcessSlave(Engine& engine, bool realtime)
-		: _id(_next_id++)
+		: _engine(engine)
+		, _id(_next_id++)
 		, _index(0)
 		, _state(STATE_FINISHED)
 		, _compiled_patch(NULL)
-		, _process_context(engine)
+		, _context(NULL)
 	{
 		std::stringstream ss;
 		ss << "Process Slave ";
@@ -54,12 +59,15 @@ public:
 		stop();
 	}
 
-	inline void whip(CompiledPatch* compiled_patch, uint32_t start_index, ProcessContext& context) {
+	inline void whip(CompiledPatch*  compiled_patch,
+	                 uint32_t        start_index,
+	                 ProcessContext& context)
+	{
 		assert(_state == STATE_FINISHED);
-		_index = start_index;
-		_state = STATE_RUNNING;
+		_index          = start_index;
+		_state          = STATE_RUNNING;
 		_compiled_patch = compiled_patch;
-		_process_context.locate(context);
+		_context        = &context;
 
 		Raul::Slave::whip();
 	}
@@ -70,28 +78,27 @@ public:
 	}
 
 	inline uint32_t              id()      const { return _id; }
-	inline const ProcessContext& context() const { return _process_context; }
-	inline       ProcessContext& context()       { return _process_context; }
+	inline const ProcessContext& context() const { return _engine.driver()->context(); }
+	inline       ProcessContext& context()       { return _engine.driver()->context(); }
 
 private:
-
 	void _whipped();
 
 	static uint32_t _next_id;
 
-	static const int STATE_RUNNING = 0;
+	static const int STATE_RUNNING          = 0;
 	static const int STATE_FINISH_SIGNALLED = 1;
-	static const int STATE_FINISHED = 2;
+	static const int STATE_FINISHED         = 2;
 
-	uint32_t         _id;
-	uint32_t         _index;
-	Raul::AtomicInt  _state;
-	CompiledPatch*   _compiled_patch;
-	ProcessContext   _process_context;
+	Engine&         _engine;
+	uint32_t        _id;
+	uint32_t        _index;
+	Raul::AtomicInt _state;
+	CompiledPatch*  _compiled_patch;
+	ProcessContext* _context;
 };
 
 
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_PROCESSSLAVE_HPP
-

@@ -15,40 +15,22 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_ENGINE_PROCESSCONTEXT_HPP
-#define INGEN_ENGINE_PROCESSCONTEXT_HPP
-
-#include <vector>
-
-#include "Context.hpp"
-#include "EventSink.hpp"
-#include "types.hpp"
+#include "ProcessContext.hpp"
+#include "ProcessSlave.hpp"
 
 namespace Ingen {
 
-class ProcessSlave;
-
-/** Context of a process() call (the audio context).
- * \ingroup engine
- */
-class ProcessContext : public Context
+void
+ProcessContext::activate(uint32_t parallelism, bool sched_rt)
 {
-public:
-	explicit ProcessContext(Engine& engine) : Context(engine, AUDIO) {}
+	for (uint32_t i = 0; i < _slaves.size(); ++i) {
+		delete _slaves[i];
+	}
+	_slaves.clear();
+	_slaves.reserve(parallelism);
+	for (uint32_t i = 0; i < parallelism - 1; ++i) {
+		_slaves.push_back(new ProcessSlave(_engine, sched_rt));
+	}
+}
 
-	typedef std::vector<ProcessSlave*> Slaves;
-
-	const Slaves& slaves() const { return _slaves; }
-	Slaves&       slaves()       { return _slaves; }
-
-	void activate(uint32_t parallelism, bool sched_rt);
-
-private:
-	Slaves _slaves;
-};
-
-
-
-} // namespace Ingen
-
-#endif // INGEN_ENGINE_PROCESSCONTEXT_HPP
+}

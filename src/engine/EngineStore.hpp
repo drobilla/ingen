@@ -18,8 +18,8 @@
 #ifndef INGEN_ENGINE_OBJECTSTORE_HPP
 #define INGEN_ENGINE_OBJECTSTORE_HPP
 
-#include <string>
 #include "raul/SharedPtr.hpp"
+
 #include "shared/Store.hpp"
 
 namespace Ingen {

@@ -166,7 +166,7 @@ PatchImpl::process(ProcessContext& context)
 
 	// Run all nodes
 	if (_compiled_patch && _compiled_patch->size() > 0) {
-		if (_engine.process_slaves().size() > 0) {
+		if (context.slaves().size() > 0) {
 			process_parallel(context);
 		} else {
 			process_single(context);
@@ -186,7 +186,7 @@ PatchImpl::process(ProcessContext& context)
 void
 PatchImpl::process_parallel(ProcessContext& context)
 {
-	size_t n_slaves = _engine.process_slaves().size();
+	size_t n_slaves = context.slaves().size();
 
 	CompiledPatch* const cp = _compiled_patch;
 
@@ -196,11 +196,11 @@ PatchImpl::process_parallel(ProcessContext& context)
 		n_slaves = cp->size()-1;
 
 	if (n_slaves > 0) {
-		for (size_t i=0; i < cp->size(); ++i)
+		for (size_t i = 0; i < cp->size(); ++i)
 			(*cp)[i].node()->reset_input_ready();
 
-		for (size_t i=0; i < n_slaves; ++i)
-			_engine.process_slaves()[i]->whip(cp, i+1, context);
+		for (size_t i = 0; i < n_slaves; ++i)
+			context.slaves()[i]->whip(cp, i+1, context);
 	}
 
 
@@ -211,11 +211,10 @@ PatchImpl::process_parallel(ProcessContext& context)
 	 * waiting in the Jack thread which pisses Jack off.
 	 */
 
-	size_t index = 0;
+	size_t index        = 0;
 	size_t num_finished = 0; // Number of consecutive finished nodes hit
 
 	while (num_finished < cp->size()) {
-
 		CompiledNode& n = (*cp)[index];
 
 		if (n.node()->process_lock()) {
@@ -223,7 +222,7 @@ PatchImpl::process_parallel(ProcessContext& context)
 				n.node()->process(context);
 
 				/* Signal dependants their input is ready */
-				for (size_t i=0; i < n.dependants().size(); ++i)
+				for (uint32_t i = 0; i < n.dependants().size(); ++i)
 					n.dependants()[i]->signal_input_ready();
 
 				++num_finished;
@@ -246,8 +245,8 @@ PatchImpl::process_parallel(ProcessContext& context)
 	 * FIXME: This probably breaks (race) at extremely small nframes where
 	 * ingen is the majority of the DSP load.
 	 */
-	for (size_t i=0; i < n_slaves; ++i)
-		_engine.process_slaves()[i]->finish();
+	for (uint32_t i = 0; i < n_slaves; ++i)
+		context.slaves()[i]->finish();
 }
 
 
