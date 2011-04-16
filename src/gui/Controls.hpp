@@ -32,7 +32,6 @@ namespace GUI {
 
 class ControlPanel;
 
-
 /** A group of controls (for a single Port) in a ControlPanel.
  *
  * \ingroup GUI
@@ -67,7 +66,6 @@ protected:
 	Gtk::Label*    _name_label;
 };
 
-
 /** A slider for a continuous control.
  *
  * \ingroup GUI
@@ -100,7 +98,6 @@ private:
 	Gtk::HScale*     _slider;
 };
 
-
 /** A radio button for toggle controls.
  *
  * \ingroup GUI
@@ -119,7 +116,6 @@ private:
 	Gtk::CheckButton* _checkbutton;
 };
 
-
 /** A text entry for string controls.
  *
  * \ingroup GUI
@@ -137,7 +133,6 @@ private:
 
 	Gtk::Entry* _entry;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

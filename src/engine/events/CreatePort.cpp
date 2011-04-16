@@ -42,7 +42,6 @@ namespace Events {
 
 using namespace Shared;
 
-
 CreatePort::CreatePort(
 		Engine&                     engine,
 		SharedPtr<Request>          request,
@@ -72,7 +71,6 @@ CreatePort::CreatePort(
 	if (_data_type == PortType::UNKNOWN)
 		_error = UNKNOWN_TYPE;
 }
-
 
 void
 CreatePort::pre_process()
@@ -143,7 +141,6 @@ CreatePort::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 CreatePort::execute(ProcessContext& context)
 {
@@ -162,7 +159,6 @@ CreatePort::execute(ProcessContext& context)
 	if (_request)
 		_request->unblock();
 }
-
 
 void
 CreatePort::post_process()
@@ -190,7 +186,6 @@ CreatePort::post_process()
 		break;
 	}
 }
-
 
 } // namespace Ingen
 } // namespace Events

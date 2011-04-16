@@ -32,7 +32,6 @@ namespace Ingen {
 using namespace Client;
 namespace GUI {
 
-
 PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Window(cobject)
 	, _initial_min(0.0f)
@@ -49,7 +48,6 @@ PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::
 	_ok_button->signal_clicked().connect(sigc::mem_fun(this,
 				&PortPropertiesWindow::ok));
 }
-
 
 /** Set the port this window is associated with.
  * This function MUST be called before using this object in any way.
@@ -90,7 +88,6 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 	Gtk::Window::present();
 }
 
-
 void
 PortPropertiesWindow::property_changed(const URI& key, const Atom& value)
 {
@@ -103,7 +100,6 @@ PortPropertiesWindow::property_changed(const URI& key, const Atom& value)
 			_max_spinner->set_value(value.get_float());
 	}
 }
-
 
 void
 PortPropertiesWindow::min_changed()
@@ -123,7 +119,6 @@ PortPropertiesWindow::min_changed()
 	}
 }
 
-
 void
 PortPropertiesWindow::max_changed()
 {
@@ -142,13 +137,11 @@ PortPropertiesWindow::max_changed()
 	}
 }
 
-
 void
 PortPropertiesWindow::cancel()
 {
 	hide();
 }
-
 
 void
 PortPropertiesWindow::ok()
@@ -160,7 +153,6 @@ PortPropertiesWindow::ok()
 	App::instance().engine()->put(_port_model->path(), props);
 	hide();
 }
-
 
 } // namespace GUI
 } // namespace Ingen

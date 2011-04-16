@@ -92,13 +92,11 @@ DelayNode::DelayNode(
 
 }
 
-
 DelayNode::~DelayNode()
 {
 	//_buffer.reset();
 	free(_buffer);
 }
-
 
 void
 DelayNode::activate(BufferFactory& bufs)
@@ -118,7 +116,6 @@ DelayNode::activate(BufferFactory& bufs)
 	_write_phase = 0;
 }
 
-
 static inline float f_clamp(float x, float a, float b)
 {
 	const float x1 = fabs(x - a);
@@ -131,7 +128,6 @@ static inline float f_clamp(float x, float a, float b)
 	return x;
 }
 
-
 static inline float cube_interp(const float fr, const float inm1, const float
                                 in, const float inp1, const float inp2)
 {
@@ -139,7 +135,6 @@ static inline float cube_interp(const float fr, const float inm1, const float
 	 fr * (4.0f * inp1 + 2.0f * inm1 - 5.0f * in - inp2 +
 	 fr * (3.0f * (in - inp1) - inm1 + inp2)));
 }
-
 
 void
 DelayNode::process(ProcessContext& context)
@@ -207,7 +202,6 @@ DelayNode::process(ProcessContext& context)
 
 	NodeImpl::post_process(context);
 }
-
 
 } // namespace Internals
 } // namespace Ingen

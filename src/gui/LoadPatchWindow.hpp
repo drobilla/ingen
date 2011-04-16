@@ -31,7 +31,6 @@ using Ingen::Client::PatchModel;
 
 namespace GUI {
 
-
 /** 'Add Subpatch' window.
  *
  * Loaded by glade as a derived object.
@@ -79,7 +78,6 @@ private:
 	bool _import;
 	bool _merge_ports;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

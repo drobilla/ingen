@@ -34,7 +34,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-
 HTTPSender::HTTPSender()
 	: _listen_port(-1)
 	, _listen_sock(-1)
@@ -81,7 +80,6 @@ HTTPSender::HTTPSender()
 	start();
 }
 
-
 HTTPSender::~HTTPSender()
 {
 	stop();
@@ -121,7 +119,6 @@ HTTPSender::_run()
 	_listen_sock = -1;
 }
 
-
 void
 HTTPSender::bundle_begin()
 {
@@ -129,7 +126,6 @@ HTTPSender::bundle_begin()
 	_send_state = SendingBundle;
 	_transfer = "";
 }
-
 
 void
 HTTPSender::bundle_end()
@@ -140,7 +136,6 @@ HTTPSender::bundle_end()
 	_send_state = Immediate;
 	_mutex.unlock();
 }
-
 
 void
 HTTPSender::send_chunk(const std::string& buf)
@@ -155,7 +150,6 @@ HTTPSender::send_chunk(const std::string& buf)
 		_transfer.append(buf);
 	}
 }
-
 
 } // namespace Shared
 } // namespace Ingen

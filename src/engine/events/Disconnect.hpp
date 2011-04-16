@@ -38,7 +38,6 @@ class PortImpl;
 
 namespace Events {
 
-
 /** Make a Connection between two Ports.
  *
  * \ingroup engine
@@ -95,7 +94,6 @@ private:
 	bool      _reconnect_dst_port;
 	bool      _clear_dst_port;
 };
-
 
 } // namespace Ingen
 } // namespace Events

@@ -27,7 +27,6 @@ using namespace std;
 namespace Ingen {
 namespace Events {
 
-
 void
 SendBinding::post_process()
 {
@@ -48,7 +47,6 @@ SendBinding::post_process()
 	_port->set_property(uris.ingen_controlBinding, dict); // FIXME: thread unsafe
 	_engine.broadcaster()->set_property(_port->path(), uris.ingen_controlBinding, dict);
 }
-
 
 } // namespace Ingen
 } // namespace Events

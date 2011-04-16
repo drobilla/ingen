@@ -29,7 +29,6 @@ class GraphObjectImpl;
 
 namespace Events {
 
-
 /** \page methods
  * <h2>GET</h2>
  * As per HTTP (RFC2616 S9.3).
@@ -68,7 +67,6 @@ private:
 	Shared::ResourceImpl*   _resource;
 	Shared::Resource::Graph _context;
 };
-
 
 } // namespace Ingen
 } // namespace Events

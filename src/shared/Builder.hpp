@@ -29,7 +29,6 @@ class CommonInterface;
 class GraphObject;
 class LV2URIMap;
 
-
 /** Wrapper for CommonInterface to create existing objects/models.
  *
  * \ingroup interface
@@ -49,7 +48,6 @@ private:
 	SharedPtr<Shared::LV2URIMap> _uris;
 	CommonInterface&             _interface;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

@@ -26,7 +26,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-
 ObjectModel::ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path)
 	: ResourceImpl(uris, path)
 	, _meta(uris, Raul::URI("http://example.org/FIXME"))
@@ -34,7 +33,6 @@ ObjectModel::ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path)
 	, _symbol((path == Path::root()) ? "root" : path.symbol())
 {
 }
-
 
 ObjectModel::ObjectModel(const ObjectModel& copy)
 	: ResourceImpl(copy)
@@ -45,11 +43,9 @@ ObjectModel::ObjectModel(const ObjectModel& copy)
 {
 }
 
-
 ObjectModel::~ObjectModel()
 {
 }
-
 
 Raul::Atom&
 ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value)
@@ -58,13 +54,11 @@ ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value)
 	return ResourceImpl::set_property(key, value);
 }
 
-
 Raul::Atom&
 ObjectModel::set_meta_property(const Raul::URI& key, const Raul::Atom& value)
 {
 	return set_property(key, Resource::Property(value, Resource::INTERNAL));
 }
-
 
 void
 ObjectModel::add_property(const Raul::URI& key, const Raul::Atom& value)
@@ -72,7 +66,6 @@ ObjectModel::add_property(const Raul::URI& key, const Raul::Atom& value)
 	ResourceImpl::add_property(key, value);
 	signal_property.emit(key, value);
 }
-
 
 const Atom&
 ObjectModel::get_property(const Raul::URI& key) const
@@ -82,14 +75,12 @@ ObjectModel::get_property(const Raul::URI& key) const
 	return (i != properties().end()) ? i->second : null_atom;
 }
 
-
 bool
 ObjectModel::polyphonic() const
 {
 	const Raul::Atom& polyphonic = get_property(_uris.ingen_polyphonic);
 	return (polyphonic.is_valid() && polyphonic.get_bool());
 }
-
 
 /** Merge the data of @a model with self, as much as possible.
  *
@@ -110,7 +101,6 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 	}
 }
 
-
 void
 ObjectModel::set_path(const Raul::Path& p)
 {
@@ -119,14 +109,12 @@ ObjectModel::set_path(const Raul::Path& p)
 	signal_moved.emit();
 }
 
-
 void
 ObjectModel::set_parent(SharedPtr<ObjectModel> p)
 {
 	assert(_path.is_child_of(p->path()));
 	_parent = p;
 }
-
 
 } // namespace Client
 } // namespace Ingen

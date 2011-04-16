@@ -26,7 +26,6 @@
 namespace Ingen {
 namespace Shared {
 
-
 class Store : public Raul::PathTable< SharedPtr<Shared::GraphObject> > {
 public:
 	virtual ~Store() {}
@@ -50,7 +49,6 @@ public:
 private:
 	Glib::RWLock _lock;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

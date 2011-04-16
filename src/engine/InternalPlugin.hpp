@@ -35,7 +35,6 @@ namespace Ingen {
 class NodeImpl;
 class BufferFactory;
 
-
 /** Implementation of an Internal plugin.
  */
 class InternalPlugin : public PluginImpl
@@ -55,7 +54,6 @@ public:
 private:
 	const std::string _symbol;
 };
-
 
 } // namespace Ingen
 

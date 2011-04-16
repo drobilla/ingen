@@ -43,7 +43,6 @@ QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queue_size)
 {
 }
 
-
 SampleCount
 QueuedEngineInterface::now() const
 {
@@ -55,14 +54,12 @@ QueuedEngineInterface::now() const
 		return 0;
 }
 
-
 void
 QueuedEngineInterface::set_next_response_id(int32_t id)
 {
 	if (_request)
 		_request->set_id(id);
 }
-
 
 void
 QueuedEngineInterface::disable_responses()
@@ -71,9 +68,7 @@ QueuedEngineInterface::disable_responses()
 	_request->set_id(0);
 }
 
-
 /* *** EngineInterface implementation below here *** */
-
 
 void
 QueuedEngineInterface::register_client(ClientInterface* client)
@@ -87,7 +82,6 @@ QueuedEngineInterface::register_client(ClientInterface* client)
 	}
 }
 
-
 void
 QueuedEngineInterface::unregister_client(const URI& uri)
 {
@@ -98,15 +92,12 @@ QueuedEngineInterface::unregister_client(const URI& uri)
 	}
 }
 
-
-
 // Engine commands
 void
 QueuedEngineInterface::load_plugins()
 {
 	push_queued(new Events::LoadPlugins(_engine, _request, now()));
 }
-
 
 void
 QueuedEngineInterface::activate()
@@ -121,13 +112,11 @@ QueuedEngineInterface::activate()
 	in_activate = false;
 }
 
-
 void
 QueuedEngineInterface::deactivate()
 {
 	push_queued(new Events::Deactivate(_engine, _request, now()));
 }
-
 
 void
 QueuedEngineInterface::quit()
@@ -135,7 +124,6 @@ QueuedEngineInterface::quit()
 	_request->respond_ok();
 	_engine.quit();
 }
-
 
 // Bundle commands
 
@@ -145,16 +133,13 @@ QueuedEngineInterface::bundle_begin()
 	_in_bundle = true;
 }
 
-
 void
 QueuedEngineInterface::bundle_end()
 {
 	_in_bundle = false;
 }
 
-
 // Object commands
-
 
 void
 QueuedEngineInterface::put(const URI&                    uri,
@@ -164,7 +149,6 @@ QueuedEngineInterface::put(const URI&                    uri,
 	push_queued(new Events::SetMetadata(_engine, _request, now(), true, ctx, uri, properties));
 }
 
-
 void
 QueuedEngineInterface::delta(const URI&                          uri,
                              const Shared::Resource::Properties& remove,
@@ -173,7 +157,6 @@ QueuedEngineInterface::delta(const URI&                          uri,
 	push_queued(new Events::SetMetadata(_engine, _request, now(), false, Resource::DEFAULT, uri, add, remove));
 }
 
-
 void
 QueuedEngineInterface::move(const Path& old_path,
                             const Path& new_path)
@@ -181,13 +164,11 @@ QueuedEngineInterface::move(const Path& old_path,
 	push_queued(new Events::Move(_engine, _request, now(), old_path, new_path));
 }
 
-
 void
 QueuedEngineInterface::del(const Path& path)
 {
 	push_queued(new Events::Delete(_engine, _request, now(), path));
 }
-
 
 void
 QueuedEngineInterface::connect(const Path& src_port_path,
@@ -197,7 +178,6 @@ QueuedEngineInterface::connect(const Path& src_port_path,
 
 }
 
-
 void
 QueuedEngineInterface::disconnect(const Path& src_port_path,
                                   const Path& dst_port_path)
@@ -205,14 +185,12 @@ QueuedEngineInterface::disconnect(const Path& src_port_path,
 	push_queued(new Events::Disconnect(_engine, _request, now(), src_port_path, dst_port_path));
 }
 
-
 void
 QueuedEngineInterface::disconnect_all(const Path& patch_path,
                                       const Path& path)
 {
 	push_queued(new Events::DisconnectAll(_engine, _request, now(), patch_path, path));
 }
-
 
 void
 QueuedEngineInterface::set_property(const URI&  uri,
@@ -234,19 +212,16 @@ QueuedEngineInterface::ping()
 	push_queued(new Events::Ping(_engine, _request, now()));
 }
 
-
 void
 QueuedEngineInterface::get(const URI& uri)
 {
 	push_queued(new Events::Get(_engine, _request, now(), uri));
 }
 
-
 void
 QueuedEngineInterface::request_property(const URI& uri, const URI& key)
 {
 	push_queued(new Events::RequestMetadata(_engine, _request, now(), Resource::DEFAULT, uri, key));
 }
-
 
 } // namespace Ingen

@@ -72,10 +72,8 @@ private:
 	uint32_t _value_port_color;
 };
 
-
 } // namespace GUI
 } // namespace Ingen
 
 #endif // INGEN_GUI_CONFIGURATION_HPP
-
 

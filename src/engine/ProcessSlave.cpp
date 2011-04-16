@@ -23,9 +23,7 @@ using namespace std;
 
 namespace Ingen {
 
-
 uint32_t ProcessSlave::_next_id = 0;
-
 
 void
 ProcessSlave::_whipped()
@@ -69,6 +67,5 @@ ProcessSlave::_whipped()
 	_compiled_patch = NULL;
 	_state = STATE_FINISHED;
 }
-
 
 } // namespace Ingen

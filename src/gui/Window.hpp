@@ -32,7 +32,6 @@ namespace GUI {
 class PatchWindow;
 class PatchTreeView;
 
-
 /** Ingen GUI Window
  * \ingroup GUI
  */
@@ -52,7 +51,6 @@ public:
 	static bool key_press_handler(Gtk::Window* win, GdkEventKey* event);
 };
 
-
 /** Ingen GUI Dialog
  * \ingroup GUI
  */
@@ -69,7 +67,6 @@ public:
 			return Gtk::Dialog::on_key_press_event(event);
 	}
 };
-
 
 } // namespace GUI
 } // namespace Ingen

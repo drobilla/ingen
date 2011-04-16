@@ -29,7 +29,6 @@ using Ingen::Client::ObjectModel;
 namespace Ingen {
 namespace GUI {
 
-
 /** Rename window.  Handles renaming of any (Ingen) object.
  *
  * \ingroup GUI

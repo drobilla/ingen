@@ -29,7 +29,6 @@
 namespace Ingen {
 namespace GUI {
 
-
 PortMenu::PortMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: ObjectMenu(cobject, xml)
 	, _patch_port(NULL)
@@ -39,7 +38,6 @@ PortMenu::PortMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 	xml->get_widget("port_set_max_menuitem", _set_max_menuitem);
 	xml->get_widget("port_reset_range_menuitem", _reset_range_menuitem);
 }
-
 
 void
 PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
@@ -84,7 +82,6 @@ PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
 	_enable_signal = true;
 }
 
-
 void
 PortMenu::on_menu_disconnect()
 {
@@ -97,7 +94,6 @@ PortMenu::on_menu_disconnect()
 	}
 }
 
-
 void
 PortMenu::on_menu_set_min()
 {
@@ -108,7 +104,6 @@ PortMenu::on_menu_set_min()
 		App::instance().engine()->set_property(_object->path(), uris.lv2_minimum, value);
 }
 
-
 void
 PortMenu::on_menu_set_max()
 {
@@ -118,7 +113,6 @@ PortMenu::on_menu_set_max()
 	if (value.is_valid())
 		App::instance().engine()->set_property(_object->path(), uris.lv2_maximum, value);
 }
-
 
 void
 PortMenu::on_menu_reset_range()
@@ -136,7 +130,6 @@ PortMenu::on_menu_reset_range()
 	if (!std::isnan(max))
 		App::instance().engine()->set_property(_object->path(), uris.lv2_maximum, max);
 }
-
 
 } // namespace GUI
 } // namespace Ingen

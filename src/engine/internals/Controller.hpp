@@ -29,7 +29,6 @@ class InternalPlugin;
 
 namespace Internals {
 
-
 /** MIDI control input node.
  *
  * Creating one of these nodes is how a user makes "MIDI Bindings".  Note that
@@ -66,7 +65,6 @@ private:
 	InputPort*  _max_port;
 	OutputPort* _audio_port;
 };
-
 
 } // namespace Ingen
 } // namespace Internals

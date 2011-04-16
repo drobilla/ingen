@@ -29,7 +29,6 @@ class PortImpl;
 class Engine;
 class Event;
 
-
 /** Sink for events generated in the audio thread.
  *
  * Implemented as a flat ringbuffer of events, which are constructed directly
@@ -51,8 +50,6 @@ private:
 	Engine&          _engine;
 	Raul::RingBuffer _events;
 };
-
-
 
 } // namespace Ingen
 

@@ -54,7 +54,6 @@ private:
 	Ingen::Shared::World* _world;
 };
 
-
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_LV2INFO_HPP

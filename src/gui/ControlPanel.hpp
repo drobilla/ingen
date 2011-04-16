@@ -39,7 +39,6 @@ using namespace Ingen::Client;
 
 namespace GUI {
 
-
 /** A group of controls for a node (or patch).
  *
  * Used by both NodeControlWindow and the main window (for patch controls).
@@ -80,7 +79,6 @@ private:
 	std::vector<Control*> _controls;
 	Gtk::VBox*            _control_box;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

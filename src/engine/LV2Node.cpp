@@ -43,7 +43,6 @@ namespace Ingen {
 
 using namespace Shared;
 
-
 /** Partially construct a LV2Node.
  *
  * Object is not usable until instantiate() is called with success.
@@ -63,12 +62,10 @@ LV2Node::LV2Node(LV2Plugin*    plugin,
 	assert(_lv2_plugin);
 }
 
-
 LV2Node::~LV2Node()
 {
 	delete _instances;
 }
-
 
 bool
 LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
@@ -114,7 +111,6 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	return true;
 }
 
-
 bool
 LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
@@ -130,7 +126,6 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 	return NodeImpl::apply_poly(maid, poly);
 }
-
 
 /** Instantiate self from LV2 plugin descriptor.
  *
@@ -357,7 +352,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 	return ret;
 }
 
-
 void
 LV2Node::activate(BufferFactory& bufs)
 {
@@ -367,7 +361,6 @@ LV2Node::activate(BufferFactory& bufs)
 		slv2_instance_activate(instance(i));
 }
 
-
 void
 LV2Node::deactivate()
 {
@@ -376,7 +369,6 @@ LV2Node::deactivate()
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		slv2_instance_deactivate(instance(i));
 }
-
 
 void
 LV2Node::message_run(MessageContext& context)
@@ -394,7 +386,6 @@ LV2Node::message_run(MessageContext& context)
 		(*_message_funcs->run)(instance(0)->lv2_handle, _valid_ports, _valid_ports);
 }
 
-
 void
 LV2Node::process(ProcessContext& context)
 {
@@ -406,7 +397,6 @@ LV2Node::process(ProcessContext& context)
 	NodeImpl::post_process(context);
 }
 
-
 void
 LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num,
 		IntrusivePtr<Buffer> buf, SampleCount offset)
@@ -415,7 +405,6 @@ LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num,
 	slv2_instance_connect_port(instance(voice), port_num,
 			buf ? buf->port_data(_ports->at(port_num)->buffer_type(), offset) : NULL);
 }
-
 
 } // namespace Ingen
 

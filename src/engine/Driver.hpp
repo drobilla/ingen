@@ -32,7 +32,6 @@ namespace Ingen {
 class DuplexPort;
 class ProcessContext;
 
-
 /** Representation of a "system" (eg outside Ingen) port.
  *
  * This is the class through which the rest of the engine manages everything
@@ -62,7 +61,6 @@ protected:
 
 	DuplexPort* _patch_port;
 };
-
 
 /** Driver abstract base class.
  *
@@ -120,7 +118,6 @@ public:
 
 	virtual ProcessContext& context() = 0;
 };
-
 
 } // namespace Ingen
 

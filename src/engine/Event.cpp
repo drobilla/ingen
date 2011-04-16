@@ -30,7 +30,6 @@
 
 namespace Ingen {
 
-
 void
 Event::execute(ProcessContext& context)
 {
@@ -45,13 +44,11 @@ Event::execute(ProcessContext& context)
 	_executed = true;
 }
 
-
 void
 Event::post_process()
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
 }
-
 
 } // namespace Ingen
 

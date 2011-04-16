@@ -87,12 +87,10 @@ NoteNode::NoteNode(
 	_ports->at(4) = _trig_port;
 }
 
-
 NoteNode::~NoteNode()
 {
 	delete _voices;
 }
-
 
 bool
 NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
@@ -110,7 +108,6 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	return true;
 }
 
-
 bool
 NoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
@@ -127,7 +124,6 @@ NoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 	return true;
 }
-
 
 void
 NoteNode::process(ProcessContext& context)
@@ -203,7 +199,6 @@ NoteNode::process(ProcessContext& context)
 
 	NodeImpl::post_process(context);
 }
-
 
 void
 NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
@@ -294,7 +289,6 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert((*_voices)[key->voice].note == note_num);
 }
 
-
 void
 NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 {
@@ -332,7 +326,6 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 
 	key->state = Key::OFF;
 }
-
 
 void
 NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
@@ -374,7 +367,6 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 	}
 }
 
-
 void
 NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 {
@@ -392,7 +384,6 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 	}
 }
 
-
 float
 NoteNode::note_to_freq(int num)
 {
@@ -402,13 +393,11 @@ NoteNode::note_to_freq(int num)
 	return 1.0f;  // Frequency of zero causes numerical problems...
 }
 
-
 void
 NoteNode::sustain_on(ProcessContext& context, FrameTime time)
 {
 	_sustain = true;
 }
-
 
 void
 NoteNode::sustain_off(ProcessContext& context, FrameTime time)
@@ -421,7 +410,6 @@ NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 		if ((*_voices)[i].state == Voice::HOLDING)
 			free_voice(context, i, time);
 }
-
 
 } // namespace Internals
 } // namespace Ingen

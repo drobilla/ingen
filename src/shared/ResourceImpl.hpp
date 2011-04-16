@@ -77,7 +77,6 @@ private:
 	mutable Properties _properties;
 };
 
-
 } // namespace Shared
 } // namespace Ingen
 

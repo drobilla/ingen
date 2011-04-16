@@ -34,7 +34,6 @@ using namespace Raul;
 
 namespace Ingen {
 
-
 /** Find the Patch at the given path.
  */
 PatchImpl*
@@ -43,7 +42,6 @@ EngineStore::find_patch(const Path& path)
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<PatchImpl*>(object);
 }
-
 
 /** Find the Node at the given path.
  */
@@ -54,7 +52,6 @@ EngineStore::find_node(const Path& path)
 	return dynamic_cast<NodeImpl*>(object);
 }
 
-
 /** Find the Port at the given path.
  */
 PortImpl*
@@ -63,7 +60,6 @@ EngineStore::find_port(const Path& path)
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<PortImpl*>(object);
 }
-
 
 /** Find the Object at the given path.
  */
@@ -74,7 +70,6 @@ EngineStore::find_object(const Path& path)
 	return ((i == end()) ? NULL : dynamic_cast<GraphObjectImpl*>(i->second.get()));
 }
 
-
 /** Add an object to the store. Not realtime safe.
  */
 void
@@ -84,7 +79,6 @@ EngineStore::add(Shared::GraphObject* obj)
 	Store::add(obj);
 }
 
-
 /** Add a family of objects to the store. Not realtime safe.
  */
 void
@@ -93,7 +87,6 @@ EngineStore::add(const Objects& table)
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	cram(table);
 }
-
 
 /** Remove an object from the store.
  *
@@ -105,7 +98,6 @@ EngineStore::remove(const Path& path)
 {
 	return remove(find(path));
 }
-
 
 /** Remove an object from the store.
  *
@@ -129,7 +121,6 @@ EngineStore::remove(iterator object)
 	}
 }
 
-
 /** Remove all children of an object from the store.
  *
  * Returned is a vector containing all descendants of the object removed
@@ -140,7 +131,6 @@ EngineStore::remove_children(const Path& path)
 {
 	return remove_children(find(path));
 }
-
 
 /** Remove all children of an object from the store.
  *
@@ -164,6 +154,5 @@ EngineStore::remove_children(iterator object)
 
 	return SharedPtr<EngineStore::Objects>();
 }
-
 
 } // namespace Ingen

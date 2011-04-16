@@ -280,7 +280,7 @@ Parser::parse(Ingen::Shared::World*                    world,
 			parse_properties(world, target, model, subject, path, data);
 			ret = path;
 		}
-		
+
 		if (!ret) {
 			LOG(error) << "Failed to parse " << path << endl;
 			return boost::optional<Path>();

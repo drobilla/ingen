@@ -35,7 +35,6 @@ namespace Ingen {
 
 using namespace Shared;
 
-
 DuplexPort::DuplexPort(
 		BufferFactory&    bufs,
 		NodeImpl*         parent,
@@ -56,7 +55,6 @@ DuplexPort::DuplexPort(
 	set_property(bufs.uris().ingen_polyphonic, polyphonic);
 }
 
-
 bool
 DuplexPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly)
 {
@@ -65,7 +63,6 @@ DuplexPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* bu
 	else
 		return OutputPort::get_buffers(bufs, buffers, poly);
 }
-
 
 /** Prepare for the execution of parent patch */
 void
@@ -84,7 +81,6 @@ DuplexPort::pre_process(Context& context)
 	}
 }
 
-
 /** Finalize after the execution of parent patch (deliver outputs) */
 void
 DuplexPort::post_process(Context& context)
@@ -98,7 +94,6 @@ DuplexPort::post_process(Context& context)
 			broadcast_value(context, false);
 	}
 }
-
 
 } // namespace Ingen
 

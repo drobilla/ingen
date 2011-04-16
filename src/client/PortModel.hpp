@@ -31,7 +31,6 @@ namespace Raul { class Path; }
 namespace Ingen {
 namespace Client {
 
-
 /** Model of a port.
  *
  * \ingroup IngenClient
@@ -113,7 +112,6 @@ private:
 	Raul::Atom                 _current_val;
 	size_t                     _connections;
 };
-
 
 } // namespace Client
 } // namespace Ingen

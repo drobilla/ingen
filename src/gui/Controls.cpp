@@ -36,7 +36,6 @@ namespace Ingen {
 using namespace Client;
 namespace GUI {
 
-
 // ////////////////////// Control ///////////////////////////////// //
 
 Control::Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
@@ -53,14 +52,12 @@ Control::Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>&
 			sigc::mem_fun(this, &Control::menu_properties));
 }
 
-
 Control::~Control()
 {
 	_enable_signal = false;
 	_control_connection.disconnect();
 	_port_model.reset();
 }
-
 
 void
 Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
@@ -81,7 +78,6 @@ Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 		set_label(pm->symbol().c_str());
 }
 
-
 void
 Control::enable()
 {
@@ -89,7 +85,6 @@ Control::enable()
 			i != children().end(); ++i)
 		i->get_widget()->set_sensitive(true);
 }
-
 
 void
 Control::disable()
@@ -99,14 +94,12 @@ Control::disable()
 		i->get_widget()->set_sensitive(false);
 }
 
-
 void
 Control::set_label(const string& name)
 {
 	const string name_markup = string("<span weight=\"bold\">") + name + "</span>";
 	_name_label->set_markup(name_markup);
 }
-
 
 void
 Control::menu_properties()
@@ -118,9 +111,7 @@ Control::menu_properties()
 	window->present(_port_model);
 }
 
-
 // ////////////////// SliderControl ////////////////////// //
-
 
 SliderControl::SliderControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Control(cobject, xml)
@@ -130,7 +121,6 @@ SliderControl::SliderControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	xml->get_widget("control_strip_slider", _slider);
 	xml->get_widget("control_strip_spinner", _value_spinner);
 }
-
 
 void
 SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
@@ -181,7 +171,6 @@ SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	show_all();
 }
 
-
 bool
 SliderControl::clicked(GdkEventButton* ev)
 {
@@ -192,7 +181,6 @@ SliderControl::clicked(GdkEventButton* ev)
 		return false;
 	}
 }
-
 
 void
 SliderControl::set_value(const Atom& atom)
@@ -220,7 +208,6 @@ SliderControl::set_value(const Atom& atom)
 	}
 }
 
-
 void
 SliderControl::port_property_changed(const URI& key, const Atom& value)
 {
@@ -235,7 +222,6 @@ SliderControl::port_property_changed(const URI& key, const Atom& value)
 	_enable_signal = true;
 }
 
-
 void
 SliderControl::set_range(float min, float max)
 {
@@ -244,7 +230,6 @@ SliderControl::set_range(float min, float max)
 
 	_slider->set_range(min, max);
 }
-
 
 void
 SliderControl::update_value_from_slider()
@@ -270,7 +255,6 @@ SliderControl::update_value_from_slider()
 	}
 }
 
-
 void
 SliderControl::update_value_from_spinner()
 {
@@ -285,7 +269,6 @@ SliderControl::update_value_from_spinner()
 		_enable_signal = true;
 	}
 }
-
 
 /** Callback for when slider is grabbed so we can ignore set_control
  * events for this port (and avoid nasty feedback issues).
@@ -302,9 +285,7 @@ SliderControl::slider_pressed(GdkEvent* ev)
 	return false;
 }
 
-
 // ///////////// ToggleControl ////////////// //
-
 
 ToggleControl::ToggleControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Control(cobject, xml)
@@ -312,7 +293,6 @@ ToggleControl::ToggleControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	xml->get_widget("toggle_control_name_label", _name_label);
 	xml->get_widget("toggle_control_check", _checkbutton);
 }
-
 
 void
 ToggleControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
@@ -330,7 +310,6 @@ ToggleControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	_enable_signal = true;
 	show_all();
 }
-
 
 void
 ToggleControl::set_value(const Atom& val)
@@ -355,7 +334,6 @@ ToggleControl::set_value(const Atom& val)
 	_enable_signal = true;
 }
 
-
 void
 ToggleControl::toggled()
 {
@@ -365,9 +343,7 @@ ToggleControl::toggled()
 	}
 }
 
-
 // ///////////// StringControl ////////////// //
-
 
 StringControl::StringControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Control(cobject, xml)
@@ -375,7 +351,6 @@ StringControl::StringControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	xml->get_widget("string_control_name_label", _name_label);
 	xml->get_widget("string_control_entry",      _entry);
 }
-
 
 void
 StringControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
@@ -394,7 +369,6 @@ StringControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	show_all();
 }
 
-
 void
 StringControl::set_value(const Atom& val)
 {
@@ -406,7 +380,6 @@ StringControl::set_value(const Atom& val)
 	_enable_signal = true;
 }
 
-
 void
 StringControl::activated()
 {
@@ -414,7 +387,6 @@ StringControl::activated()
 		_control_panel->value_changed_atom(_port_model,
 				Raul::Atom(_entry->get_text().c_str()));
 }
-
 
 } // namespace GUI
 } // namespace Ingen

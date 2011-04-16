@@ -64,7 +64,6 @@ protected:
 	Gtk::MenuItem*         _properties_menuitem;
 };
 
-
 } // namespace GUI
 } // namespace Ingen
 

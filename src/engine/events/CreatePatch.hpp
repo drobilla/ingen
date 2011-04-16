@@ -28,7 +28,6 @@ class CompiledPatch;
 
 namespace Events {
 
-
 /** Creates a new Patch.
  *
  * \ingroup engine
@@ -60,9 +59,7 @@ private:
 	Shared::Resource::Properties _properties;
 };
 
-
 } // namespace Ingen
 } // namespace Events
-
 
 #endif // INGEN_EVENTS_CREATEPATCH_HPP

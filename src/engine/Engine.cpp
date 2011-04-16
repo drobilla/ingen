@@ -74,7 +74,6 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	}
 }
 
-
 Engine::~Engine()
 {
 	deactivate();
@@ -94,13 +93,11 @@ Engine::~Engine()
 	munlockall();
 }
 
-
 SharedPtr<EngineStore>
 Engine::engine_store() const
 {
 	 return PtrCast<EngineStore>(_world->store());
 }
-
 
 void
 Engine::quit()
@@ -116,20 +113,17 @@ Engine::main_iteration()
 	return !_quit_flag;
 }
 
-
 void
 Engine::add_event_source(SharedPtr<EventSource> source)
 {
 	_event_sources.insert(source);
 }
 
-
 void
 Engine::set_driver(SharedPtr<Driver> driver)
 {
 	_driver = driver;
 }
-
 
 static void
 execute_and_delete_event(ProcessContext& context, QueuedEvent* ev)
@@ -139,7 +133,6 @@ execute_and_delete_event(ProcessContext& context, QueuedEvent* ev)
 	ev->post_process();
 	delete ev;
 }
-
 
 bool
 Engine::activate()
@@ -211,7 +204,6 @@ Engine::activate()
 	return true;
 }
 
-
 void
 Engine::deactivate()
 {
@@ -224,7 +216,6 @@ Engine::deactivate()
 	ThreadManager::single_threaded = true;
 }
 
-
 void
 Engine::process_events(ProcessContext& context)
 {
@@ -233,6 +224,5 @@ Engine::process_events(ProcessContext& context)
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->process(*_post_processor, context);
 }
-
 
 } // namespace Ingen

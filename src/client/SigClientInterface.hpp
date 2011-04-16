@@ -26,7 +26,6 @@
 namespace Ingen {
 namespace Client {
 
-
 /** A LibSigC++ signal emitting interface for clients to use.
  *
  * This simply emits an sigc signal for every event (eg OSC message) coming from
@@ -117,7 +116,6 @@ protected:
 	void activity(const Raul::Path& port_path)
 		{ EMIT(activity, port_path); }
 };
-
 
 } // namespace Client
 } // namespace Ingen

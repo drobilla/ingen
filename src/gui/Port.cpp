@@ -40,7 +40,6 @@ namespace GUI {
 
 ArtVpathDash* Port::_dash;
 
-
 SharedPtr<Port>
 Port::create(
 		boost::shared_ptr<FlowCanvas::Module> module,
@@ -61,7 +60,6 @@ Port::create(
 	}
 	return SharedPtr<Port>(new Port(module, pm, label, flip));
 }
-
 
 /** @a flip Make an input port appear as an output port, and vice versa.
  */
@@ -103,12 +101,10 @@ Port::Port(
 	value_changed(pm->value());
 }
 
-
 Port::~Port()
 {
 	App::instance().activity_port_destroyed(this);
 }
-
 
 void
 Port::update_metadata()
@@ -126,7 +122,6 @@ Port::update_metadata()
 	}
 }
 
-
 void
 Port::create_menu()
 {
@@ -137,7 +132,6 @@ Port::create_menu()
 	set_menu(menu);
 }
 
-
 void
 Port::moved()
 {
@@ -145,7 +139,6 @@ Port::moved()
 		set_name(model()->symbol().c_str());
 	module().lock()->resize();
 }
-
 
 void
 Port::value_changed(const Atom& value)
@@ -155,7 +148,6 @@ Port::value_changed(const Atom& value)
 	else if (value.type() == Atom::FLOAT)
 		FlowCanvas::Port::set_control(value.get_float());
 }
-
 
 bool
 Port::on_event(GdkEvent* ev)
@@ -175,13 +167,11 @@ Port::on_event(GdkEvent* ev)
 	return false;
 }
 
-
 void
 Port::activity()
 {
 	App::instance().port_activity(this);
 }
-
 
 void
 Port::set_control(float value, bool signal)
@@ -202,7 +192,6 @@ Port::set_control(float value, bool signal)
 
 	FlowCanvas::Port::set_control(value);
 }
-
 
 void
 Port::property_changed(const URI& key, const Atom& value)
@@ -229,7 +218,6 @@ Port::property_changed(const URI& key, const Atom& value)
 		}
 	}
 }
-
 
 ArtVpathDash*
 Port::dash()
@@ -276,7 +264,6 @@ Port::set_selected(bool b)
 		}
 	}
 }
-
 
 } // namespace GUI
 } // namespace Ingen

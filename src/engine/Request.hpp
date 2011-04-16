@@ -25,7 +25,6 @@
 
 namespace Ingen {
 
-
 /** Record of a request (used to respond to clients).
  *
  * This is a glorified std::pair<ClientInterface*, int32_t> for replying
@@ -71,7 +70,6 @@ private:
 	Shared::ClientInterface* _client;
 	int32_t                  _id;
 };
-
 
 } // namespace Ingen
 

@@ -39,7 +39,6 @@ namespace GUI {
 
 class App;
 
-
 /** The initially visible "Connect to engine" window.
  *
  * This handles actually connecting to the engine and making sure everything
@@ -104,7 +103,6 @@ private:
 	Gtk::Button*       _connect_button;
 	Gtk::Button*       _quit_button;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

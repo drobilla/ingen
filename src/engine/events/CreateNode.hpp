@@ -31,7 +31,6 @@ class CompiledPatch;
 
 namespace Events {
 
-
 /** An event to load a Node and insert it into a Patch.
  *
  * \ingroup engine
@@ -63,7 +62,6 @@ private:
 
 	Shared::Resource::Properties _properties;
 };
-
 
 } // namespace Ingen
 } // namespace Events

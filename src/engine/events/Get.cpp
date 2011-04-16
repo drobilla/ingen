@@ -32,7 +32,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Events {
 
-
 Get::Get(
 		Engine&              engine,
 		SharedPtr<Request>   request,
@@ -44,7 +43,6 @@ Get::Get(
 	, _plugin(NULL)
 {
 }
-
 
 void
 Get::pre_process()
@@ -59,7 +57,6 @@ Get::pre_process()
 
 	QueuedEvent::pre_process();
 }
-
 
 void
 Get::post_process()
@@ -79,7 +76,6 @@ Get::post_process()
 		_request->respond_error("Unable to find client to send object.");
 	}
 }
-
 
 } // namespace Ingen
 } // namespace Events

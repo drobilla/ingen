@@ -39,7 +39,6 @@ using Ingen::Client::PatchModel;
 
 namespace GUI {
 
-
 /** 'Load Plugin' window.
  *
  * Loaded by glade as a derived object.
@@ -143,7 +142,6 @@ private:
 	Gtk::ComboBox*    _filter_combo;
 	Gtk::Entry*       _search_entry;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

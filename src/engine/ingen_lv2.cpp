@@ -393,7 +393,7 @@ Lib::Lib()
 	}
 
 	assert(world->parser());
-	
+
 	typedef Serialisation::Parser::PatchRecords Records;
 
 	Records records(world->parser()->find_patches(

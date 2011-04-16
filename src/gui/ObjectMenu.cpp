@@ -29,7 +29,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 ObjectMenu::ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::Menu(cobject)
 	, _enable_signal(false)
@@ -47,7 +46,6 @@ ObjectMenu::ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade:
 	xml->get_widget("object_destroy_menuitem", _destroy_menuitem);
 	xml->get_widget("object_properties_menuitem", _properties_menuitem);
 }
-
 
 void
 ObjectMenu::init(SharedPtr<ObjectModel> object)
@@ -88,7 +86,6 @@ ObjectMenu::init(SharedPtr<ObjectModel> object)
 	_enable_signal = true;
 }
 
-
 void
 ObjectMenu::on_menu_learn()
 {
@@ -96,7 +93,6 @@ ObjectMenu::on_menu_learn()
 			App::instance().uris().ingen_controlBinding,
 			App::instance().uris().wildcard);
 }
-
 
 void
 ObjectMenu::on_menu_unlearn()
@@ -108,7 +104,6 @@ ObjectMenu::on_menu_unlearn()
 	App::instance().engine()->delta(_object->path(), remove, Resource::Properties());
 }
 
-
 void
 ObjectMenu::on_menu_polyphonic()
 {
@@ -117,7 +112,6 @@ ObjectMenu::on_menu_polyphonic()
 				App::instance().uris().ingen_polyphonic,
 				bool(_polyphonic_menuitem->get_active()));
 }
-
 
 void
 ObjectMenu::property_changed(const URI& predicate, const Atom& value)
@@ -129,20 +123,17 @@ ObjectMenu::property_changed(const URI& predicate, const Atom& value)
 	_enable_signal = true;
 }
 
-
 void
 ObjectMenu::on_menu_destroy()
 {
 	App::instance().engine()->del(_object->path());
 }
 
-
 void
 ObjectMenu::on_menu_properties()
 {
 	App::instance().window_factory()->present_properties(_object);
 }
-
 
 } // namespace GUI
 } // namespace Ingen

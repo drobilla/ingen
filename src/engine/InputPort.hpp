@@ -33,7 +33,6 @@ class NodeImpl;
 class OutputPort;
 class ProcessContext;
 
-
 /** An input port on a Node or Patch.
  *
  * All ports have a Buffer, but the actual contents (data) of that buffer may be
@@ -84,7 +83,6 @@ protected:
 	size_t      _num_connections; ///< Pre-process thread
 	Connections _connections;
 };
-
 
 } // namespace Ingen
 

@@ -29,7 +29,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-
 NodeModel::NodeModel(Shared::LV2URIMap& uris, SharedPtr<PluginModel> plugin, const Path& path)
 	: Node()
 	, ObjectModel(uris, path)
@@ -51,7 +50,6 @@ NodeModel::NodeModel(Shared::LV2URIMap& uris, const URI& plugin_uri, const Path&
 {
 }
 
-
 NodeModel::NodeModel(const NodeModel& copy)
 	: Node(copy)
 	, ObjectModel(copy)
@@ -64,12 +62,10 @@ NodeModel::NodeModel(const NodeModel& copy)
 	memcpy(_max_values, copy._max_values, sizeof(float) * _num_values);
 }
 
-
 NodeModel::~NodeModel()
 {
 	clear();
 }
-
 
 void
 NodeModel::remove_port(SharedPtr<PortModel> port)
@@ -83,7 +79,6 @@ NodeModel::remove_port(SharedPtr<PortModel> port)
 	signal_removed_port.emit(port);
 }
 
-
 void
 NodeModel::remove_port(const Path& port_path)
 {
@@ -94,7 +89,6 @@ NodeModel::remove_port(const Path& port_path)
 		}
 	}
 }
-
 
 void
 NodeModel::clear()
@@ -107,7 +101,6 @@ NodeModel::clear()
 	_max_values = 0;
 }
 
-
 void
 NodeModel::add_child(SharedPtr<ObjectModel> c)
 {
@@ -119,7 +112,6 @@ NodeModel::add_child(SharedPtr<ObjectModel> c)
 	assert(pm);
 	add_port(pm);
 }
-
 
 bool
 NodeModel::remove_child(SharedPtr<ObjectModel> c)
@@ -137,7 +129,6 @@ NodeModel::remove_child(SharedPtr<ObjectModel> c)
 	return true;
 }
 
-
 void
 NodeModel::add_port(SharedPtr<PortModel> pm)
 {
@@ -154,7 +145,6 @@ NodeModel::add_port(SharedPtr<PortModel> pm)
 	signal_new_port.emit(pm);
 }
 
-
 SharedPtr<PortModel>
 NodeModel::get_port(const Raul::Symbol& symbol) const
 {
@@ -164,14 +154,12 @@ NodeModel::get_port(const Raul::Symbol& symbol) const
 	return SharedPtr<PortModel>();
 }
 
-
 Shared::Port*
 NodeModel::port(uint32_t index) const
 {
 	assert(index < num_ports());
 	return dynamic_cast<Shared::Port*>(_ports[index].get());
 }
-
 
 void
 NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
@@ -200,7 +188,6 @@ NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float
 #endif
 }
 
-
 void
 NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
 {
@@ -220,7 +207,6 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) c
 		max = min + 1.0;
 }
 
-
 std::string
 NodeModel::port_label(SharedPtr<PortModel> port) const
 {
@@ -228,7 +214,7 @@ NodeModel::port_label(SharedPtr<PortModel> port) const
 	if (name.is_valid()) {
 		return name.get_string();
 	}
-	
+
 #ifdef HAVE_SLV2
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
 		SLV2World  c_world  = _plugin->slv2_world();
@@ -247,7 +233,6 @@ NodeModel::port_label(SharedPtr<PortModel> port) const
 	return port->symbol().c_str();
 }
 
-
 void
 NodeModel::set(SharedPtr<ObjectModel> model)
 {
@@ -259,7 +244,6 @@ NodeModel::set(SharedPtr<ObjectModel> model)
 
 	ObjectModel::set(model);
 }
-
 
 } // namespace Client
 } // namespace Ingen

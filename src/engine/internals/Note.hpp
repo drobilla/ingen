@@ -30,7 +30,6 @@ class InternalPlugin;
 
 namespace Internals {
 
-
 /** MIDI note input node.
  *
  * For pitched instruments like keyboard, etc.
@@ -93,7 +92,6 @@ private:
 	OutputPort* _gate_port;
 	OutputPort* _trig_port;
 };
-
 
 } // namespace Ingen
 } // namespace Internals

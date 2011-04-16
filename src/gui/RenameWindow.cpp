@@ -30,7 +30,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 	: Window(cobject)
 {
@@ -48,7 +47,6 @@ RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 	_ok_button->property_sensitive() = false;
 }
 
-
 /** Set the object this window is renaming.
  * This function MUST be called before using this object in any way.
  */
@@ -62,7 +60,6 @@ RenameWindow::set_object(SharedPtr<ObjectModel> object)
 		(name_atom.type() == Atom::STRING) ? name_atom.get_string() : "");
 }
 
-
 void
 RenameWindow::present(SharedPtr<ObjectModel> object)
 {
@@ -70,7 +67,6 @@ RenameWindow::present(SharedPtr<ObjectModel> object)
 	_symbol_entry->grab_focus();
 	Gtk::Window::present();
 }
-
 
 void
 RenameWindow::values_changed()
@@ -95,14 +91,12 @@ RenameWindow::values_changed()
 	}
 }
 
-
 void
 RenameWindow::cancel_clicked()
 {
 	_symbol_entry->set_text("");
 	hide();
 }
-
 
 /** Rename the object.
  *
@@ -134,7 +128,6 @@ RenameWindow::ok_clicked()
 
 	hide();
 }
-
 
 } // namespace GUI
 } // namespace Ingen

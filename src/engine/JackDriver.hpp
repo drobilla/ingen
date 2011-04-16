@@ -47,7 +47,6 @@ class PortImpl;
 class DuplexPort;
 class JackDriver;
 
-
 /** Used internally by JackDriver to represent a Jack port.
  *
  * A Jack port always has a one-to-one association with a Patch port.
@@ -72,8 +71,6 @@ private:
 	JackDriver*  _driver;
 	jack_port_t* _jack_port;
 };
-
-
 
 /** The Jack Driver.
  *
@@ -179,7 +176,6 @@ private:
 	ProcessContext         _process_context;
 	PatchImpl*             _root_patch;
 };
-
 
 } // namespace Ingen
 

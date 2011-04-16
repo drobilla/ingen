@@ -27,7 +27,6 @@
 namespace Ingen {
 namespace Shared {
 
-
 class Resource
 {
 public:
@@ -92,7 +91,6 @@ public:
 	virtual bool              has_property(const Raul::URI&  uri,
 	                                       const Raul::Atom& value) const = 0;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

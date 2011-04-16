@@ -42,7 +42,6 @@ SLV2Plugins PluginModel::_slv2_plugins = NULL;
 
 Sord::World* PluginModel::_rdf_world = NULL;
 
-
 PluginModel::PluginModel(Shared::LV2URIMap& uris,
 		const URI& uri, const URI& type_uri, const Resource::Properties& properties)
 	: ResourceImpl(uris, uri)
@@ -61,7 +60,6 @@ PluginModel::PluginModel(Shared::LV2URIMap& uris,
 		set_property("http://usefulinc.com/ns/doap#name",
 				Atom(uri.substr(uri.find_last_of('#') + 1).c_str()));
 }
-
 
 const Atom&
 PluginModel::get_property(const URI& key) const
@@ -131,7 +129,6 @@ PluginModel::get_property(const URI& key) const
 	return nil;
 }
 
-
 void
 PluginModel::set(SharedPtr<PluginModel> p)
 {
@@ -151,7 +148,6 @@ PluginModel::set(SharedPtr<PluginModel> p)
 	signal_changed.emit();
 }
 
-
 Symbol
 PluginModel::default_node_symbol()
 {
@@ -162,7 +158,6 @@ PluginModel::default_node_symbol()
 		return "_";
 }
 
-
 string
 PluginModel::human_name()
 {
@@ -172,7 +167,6 @@ PluginModel::human_name()
 	else
 		return default_node_symbol().c_str();
 }
-
 
 string
 PluginModel::port_human_name(uint32_t index) const
@@ -189,7 +183,6 @@ PluginModel::port_human_name(uint32_t index) const
 	return "";
 }
 
-
 #ifdef HAVE_SLV2
 bool
 PluginModel::has_ui() const
@@ -197,7 +190,6 @@ PluginModel::has_ui() const
 	SLV2UIs uis = slv2_plugin_get_uis(_slv2_plugin);
 	return (slv2_values_size(uis) > 0);
 }
-
 
 SharedPtr<PluginUI>
 PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const
@@ -209,7 +201,6 @@ PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const
 	return ret;
 }
 
-
 const string&
 PluginModel::icon_path() const
 {
@@ -219,7 +210,6 @@ PluginModel::icon_path() const
 
 	return _icon_path;
 }
-
 
 /** RDF world mutex must be held by the caller */
 string
@@ -295,7 +285,6 @@ PluginModel::port_documentation(uint32_t index) const
 	#endif
 	return doc;
 }
-
 
 } // namespace Client
 } // namespace Ingen

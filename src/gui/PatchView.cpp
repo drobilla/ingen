@@ -36,7 +36,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::Box(cobject)
 	, _breadcrumb_container(NULL)
@@ -60,7 +59,6 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 	_canvas_scrolledwindow->property_vadjustment().get_value()->set_step_increment(10);
 
 }
-
 
 void
 PatchView::set_patch(SharedPtr<PatchModel> patch)
@@ -112,7 +110,6 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	_canvas->grab_focus();
 }
 
-
 SharedPtr<PatchView>
 PatchView::create(SharedPtr<PatchModel> patch)
 {
@@ -124,14 +121,12 @@ PatchView::create(SharedPtr<PatchModel> patch)
 	return SharedPtr<PatchView>(result);
 }
 
-
 void
 PatchView::on_editable_sig(bool editable)
 {
 	_edit_mode_but->set_active(editable);
 	_canvas->lock(!editable);
 }
-
 
 void
 PatchView::editable_toggled()
@@ -140,14 +135,12 @@ PatchView::editable_toggled()
 	set_editable(editable);
 }
 
-
 void
 PatchView::set_editable(bool editable)
 {
 	_patch->set_editable(editable);
 	_canvas->lock(!editable);
 }
-
 
 void
 PatchView::canvas_item_entered(Gnome::Canvas::Item* item)
@@ -160,7 +153,6 @@ PatchView::canvas_item_entered(Gnome::Canvas::Item* item)
 	if (p)
 		signal_object_entered.emit(p->model().get());
 }
-
 
 void
 PatchView::canvas_item_left(Gnome::Canvas::Item* item)
@@ -176,7 +168,6 @@ PatchView::canvas_item_left(Gnome::Canvas::Item* item)
 		signal_object_left.emit(p->model().get());
 }
 
-
 void
 PatchView::process_toggled()
 {
@@ -188,7 +179,6 @@ PatchView::process_toggled()
 			(bool)_process_but->get_active());
 }
 
-
 void
 PatchView::poly_changed()
 {
@@ -197,13 +187,11 @@ PatchView::poly_changed()
 			_poly_spin->get_value_as_int());
 }
 
-
 void
 PatchView::refresh_clicked()
 {
 	App::instance().engine()->get(_patch->path());
 }
-
 
 void
 PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
@@ -217,7 +205,6 @@ PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 	}
 	_enable_signal = true;
 }
-
 
 } // namespace GUI
 } // namespace Ingen

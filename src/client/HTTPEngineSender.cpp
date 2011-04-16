@@ -34,7 +34,6 @@ namespace Ingen {
 using namespace Shared;
 namespace Client {
 
-
 HTTPEngineSender::HTTPEngineSender(World* world, const URI& engine_url)
 	: _world(*world->rdf_world())
 	, _engine_url(engine_url)
@@ -43,7 +42,6 @@ HTTPEngineSender::HTTPEngineSender(World* world, const URI& engine_url)
 {
 	_session = soup_session_sync_new();
 }
-
 
 HTTPEngineSender::~HTTPEngineSender()
 {
@@ -58,9 +56,7 @@ HTTPEngineSender::attach(int32_t ping_id, bool block)
 	HTTPClientReceiver::send(msg);
 }
 
-
 /* *** EngineInterface implementation below here *** */
-
 
 /** Register with the engine via HTTP.
  *
@@ -75,12 +71,10 @@ HTTPEngineSender::register_client(ClientInterface* client)
 	HTTPClientReceiver::send(msg);*/
 }
 
-
 void
 HTTPEngineSender::unregister_client(const URI& uri)
 {
 }
-
 
 // Engine commands
 void
@@ -90,29 +84,22 @@ HTTPEngineSender::load_plugins()
 	HTTPClientReceiver::send(msg);
 }
 
-
 void
 HTTPEngineSender::activate()
 {
 }
-
 
 void
 HTTPEngineSender::deactivate()
 {
 }
 
-
 void
 HTTPEngineSender::quit()
 {
 }
 
-
-
 // Object commands
-
-
 
 void
 HTTPEngineSender::put(const URI&                  uri,
@@ -135,7 +122,6 @@ HTTPEngineSender::put(const URI&                  uri,
 	soup_session_send_message(_session, msg);
 }
 
-
 void
 HTTPEngineSender::delta(const Raul::URI&                    path,
 	                    const Shared::Resource::Properties& remove,
@@ -143,7 +129,6 @@ HTTPEngineSender::delta(const Raul::URI&                    path,
 {
 	warn << "FIXME: HTTP DELTA" << endl;
 }
-
 
 void
 HTTPEngineSender::move(const Path& old_path,
@@ -156,7 +141,6 @@ HTTPEngineSender::move(const Path& old_path,
 	soup_session_send_message(_session, msg);
 }
 
-
 void
 HTTPEngineSender::del(const Path& uri)
 {
@@ -166,13 +150,11 @@ HTTPEngineSender::del(const Path& uri)
 	soup_session_send_message(_session, msg);
 }
 
-
 void
 HTTPEngineSender::connect(const Path& src_port_path,
                           const Path& dst_port_path)
 {
 }
-
 
 void
 HTTPEngineSender::disconnect(const Path& src_port_path,
@@ -180,13 +162,11 @@ HTTPEngineSender::disconnect(const Path& src_port_path,
 {
 }
 
-
 void
 HTTPEngineSender::disconnect_all(const Path& parent_patch_path,
                                  const Path& path)
 {
 }
-
 
 void
 HTTPEngineSender::set_property(const URI&  subject,
@@ -198,8 +178,6 @@ HTTPEngineSender::set_property(const URI&  subject,
 	put(subject, prop);
 }
 
-
-
 // Requests //
 
 void
@@ -209,7 +187,6 @@ HTTPEngineSender::ping()
 	get(_engine_url);
 }
 
-
 void
 HTTPEngineSender::get(const URI& uri)
 {
@@ -218,13 +195,11 @@ HTTPEngineSender::get(const URI& uri)
 	HTTPClientReceiver::send(msg);
 }
 
-
 void
 HTTPEngineSender::request_property(const URI& object_path, const URI& key)
 {
 	LOG(warn) << "TODO: request property" << endl;
 }
-
 
 } // namespace Client
 } // namespace Ingen

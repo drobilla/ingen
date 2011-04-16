@@ -34,7 +34,6 @@ namespace Client {
 
 class ClientStore;
 
-
 /** Client's model of a patch.
  *
  * \ingroup IngenClient
@@ -94,7 +93,6 @@ private:
 	SharedPtr<Connections> _connections;
 	bool                   _editable;
 };
-
 
 } // namespace Client
 } // namespace Ingen

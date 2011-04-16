@@ -32,7 +32,6 @@ class DriverPort;
 
 namespace Events {
 
-
 /** An event to add a Port to a Patch.
  *
  * \ingroup engine
@@ -73,7 +72,6 @@ private:
 
 	Shared::Resource::Properties _properties;
 };
-
 
 } // namespace Ingen
 } // namespace Events

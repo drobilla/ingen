@@ -30,7 +30,6 @@ using Client::ConnectionModel;
 
 namespace GUI {
 
-
 /** A Connection in a Patch.
  *
  * \ingroup GUI
@@ -49,7 +48,6 @@ public:
 private:
 	SharedPtr<ConnectionModel> _connection_model;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

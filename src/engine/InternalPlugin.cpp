@@ -41,7 +41,6 @@ InternalPlugin::InternalPlugin(Shared::LV2URIMap& uris,
 	set_property(uris.rdf_type, uris.ingen_Internal);
 }
 
-
 NodeImpl*
 InternalPlugin::instantiate(BufferFactory&    bufs,
                             const string&     name,
@@ -67,6 +66,5 @@ InternalPlugin::instantiate(BufferFactory&    bufs,
 		return NULL;
 	}
 }
-
 
 } // namespace Ingen

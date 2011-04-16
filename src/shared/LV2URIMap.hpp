@@ -34,7 +34,6 @@
 namespace Ingen {
 namespace Shared {
 
-
 /** Implementation of the LV2 URI Map and URI Unmap extensions
  */
 class LV2URIMap : public boost::noncopyable, public LV2Features::Feature {
@@ -47,7 +46,7 @@ public:
 
 	struct UnmapFeature : public LV2Features::Feature {
 		UnmapFeature(const LV2URIMap& map) : _feature(map.uri_unmap_feature) {}
-		
+
 		SharedPtr<LV2_Feature> feature(Shared::World*, Node*) {
 			return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 		}
@@ -56,7 +55,7 @@ public:
 	};
 
 	SharedPtr<UnmapFeature> unmap_feature() { return _unmap_feature; }
-		
+
 	virtual uint32_t    uri_to_id(const char* map, const char* uri);
 	virtual const char* id_to_uri(const char* map, uint32_t id);
 
@@ -85,7 +84,7 @@ private:
 
 	EventToGlobal _event_to_global;
 	GlobalToEvent _global_to_event;
-	
+
 public:
 	struct Quark : public Raul::URI {
 		Quark(const char* str);
@@ -150,7 +149,6 @@ public:
 	const Quark ui_Events;
 	const Quark wildcard;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

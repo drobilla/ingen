@@ -31,7 +31,6 @@ using namespace Raul;
 
 namespace Ingen {
 
-
 PostProcessor::PostProcessor(Engine& engine, size_t queue_size)
     : _engine(engine)
 	, _max_time(0)
@@ -41,12 +40,10 @@ PostProcessor::PostProcessor(Engine& engine, size_t queue_size)
 {
 }
 
-
 PostProcessor::~PostProcessor()
 {
 	free(_event_buffer);
 }
-
 
 void
 PostProcessor::process()
@@ -89,6 +86,5 @@ PostProcessor::process()
 		n = next;
 	}
 }
-
 
 } // namespace Ingen

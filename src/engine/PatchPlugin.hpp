@@ -27,7 +27,6 @@ namespace Ingen {
 
 class NodeImpl;
 
-
 /** Implementation of a Patch plugin.
  *
  * Patches don't actually work like this yet...
@@ -59,7 +58,6 @@ private:
 	const std::string _symbol;
 	const std::string _name;
 };
-
 
 } // namespace Ingen
 

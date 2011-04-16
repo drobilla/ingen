@@ -39,7 +39,6 @@ namespace GUI {
 class PatchCanvas;
 class NodeControlWindow;
 
-
 /** A module to represent a subpatch
  *
  * \ingroup GUI
@@ -60,7 +59,6 @@ public:
 protected:
 	SharedPtr<PatchModel> _patch;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

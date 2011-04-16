@@ -39,7 +39,6 @@ namespace Ingen {
 
 using namespace Shared;
 
-
 PortImpl::PortImpl(BufferFactory&      bufs,
                    NodeImpl* const     node,
                    const Raul::Symbol& name,
@@ -78,19 +77,16 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 		_broadcast = true; // send activity blips
 }
 
-
 PortImpl::~PortImpl()
 {
 	delete _buffers;
 }
-
 
 bool
 PortImpl::supports(const Raul::URI& value_type) const
 {
 	return has_property(_bufs.uris().atom_supports, value_type);
 }
-
 
 Raul::Array<BufferFactory::Ref>*
 PortImpl::set_buffers(Raul::Array<BufferFactory::Ref>* buffers)
@@ -107,7 +103,6 @@ PortImpl::set_buffers(Raul::Array<BufferFactory::Ref>* buffers)
 
 	return ret;
 }
-
 
 bool
 PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
@@ -130,14 +125,12 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	return true;
 }
 
-
 void
 PortImpl::prepare_poly_buffers(BufferFactory& bufs)
 {
 	if (_prepared_buffers)
 		get_buffers(bufs, _prepared_buffers, _prepared_buffers->size());
 }
-
 
 bool
 PortImpl::apply_poly(Maid& maid, uint32_t poly)
@@ -171,7 +164,6 @@ PortImpl::apply_poly(Maid& maid, uint32_t poly)
 	return true;
 }
 
-
 void
 PortImpl::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
 {
@@ -183,14 +175,12 @@ PortImpl::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
 	connect_buffers();
 }
 
-
 void
 PortImpl::connect_buffers(SampleCount offset)
 {
 	for (uint32_t v = 0; v < _poly; ++v)
 		PortImpl::parent_node()->set_port_buffer(v, _index, buffer(v), offset);
 }
-
 
 void
 PortImpl::recycle_buffers()
@@ -199,14 +189,12 @@ PortImpl::recycle_buffers()
 		_buffers->at(v) = NULL;
 }
 
-
 void
 PortImpl::clear_buffers()
 {
 	for (uint32_t v = 0; v < _poly; ++v)
 		buffer(v)->clear();
 }
-
 
 void
 PortImpl::broadcast_value(Context& context, bool force)
@@ -238,7 +226,6 @@ PortImpl::broadcast_value(Context& context, bool force)
 	}
 }
 
-
 void
 PortImpl::set_context(Context::ID c)
 {
@@ -254,13 +241,11 @@ PortImpl::set_context(Context::ID c)
 	}
 }
 
-
 PortType
 PortImpl::buffer_type() const
 {
 	// TODO: multiple types
 	return *_types.begin();
 }
-
 
 } // namespace Ingen

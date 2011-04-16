@@ -38,7 +38,6 @@ class InputPort;
 class Buffer;
 class BufferFactory;
 
-
 /** Represents a single inbound connection for an InputPort.
  *
  * This can be a group of ports (ie coming from a polyphonic Node) or
@@ -103,7 +102,6 @@ protected:
 	PortImpl* const    _dst_port;
 	bool               _pending_disconnection;
 };
-
 
 } // namespace Ingen
 

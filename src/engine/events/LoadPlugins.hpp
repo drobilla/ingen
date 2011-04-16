@@ -23,7 +23,6 @@
 namespace Ingen {
 namespace Events {
 
-
 /** Loads all plugins into the internal plugin database (in NodeFactory).
  *
  * \ingroup engine
@@ -38,7 +37,6 @@ public:
 	void pre_process();
 	void post_process();
 };
-
 
 } // namespace Ingen
 } // namespace Events

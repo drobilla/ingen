@@ -21,7 +21,6 @@
 
 namespace Ingen {
 
-
 void
 QueuedEvent::pre_process()
 {
@@ -29,7 +28,6 @@ QueuedEvent::pre_process()
 	assert(_pre_processed == false);
 	_pre_processed = true;
 }
-
 
 void
 QueuedEvent::execute(ProcessContext& context)
@@ -44,7 +42,6 @@ QueuedEvent::execute(ProcessContext& context)
 
 	Event::execute(context);
 }
-
 
 } // namespace Ingen
 

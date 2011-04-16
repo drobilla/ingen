@@ -26,7 +26,6 @@
 namespace Ingen {
 namespace GUI {
 
-
 /** Messages Window.
  *
  * Loaded by libglade as a derived object.
@@ -48,7 +47,6 @@ private:
 	Gtk::Button*   _clear_button;
 	Gtk::Button*   _close_button;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

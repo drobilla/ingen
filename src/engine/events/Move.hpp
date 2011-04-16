@@ -28,7 +28,6 @@ class PatchImpl;
 
 namespace Events {
 
-
 /** \page methods
  * <h2>MOVE</h2>
  * As per WebDAV (RFC4918 S9.9).
@@ -71,7 +70,6 @@ private:
 	PatchImpl*            _parent_patch;
 	EngineStore::iterator _store_iterator;
 };
-
 
 } // namespace Ingen
 } // namespace Events

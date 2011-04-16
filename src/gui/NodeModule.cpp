@@ -44,7 +44,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
 	: FlowCanvas::Module(canvas, node->path().symbol(), 0, 0, true, canvas->show_port_names())
 	, _node(node)
@@ -68,13 +67,11 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	}
 }
 
-
 NodeModule::~NodeModule()
 {
 	NodeControlWindow* win = App::instance().window_factory()->control_window(_node);
 	delete win; // Will be removed from window factory via signal
 }
-
 
 void
 NodeModule::create_menu()
@@ -88,7 +85,6 @@ NodeModule::create_menu()
 		sigc::hide_return(sigc::mem_fun(this, &NodeModule::popup_gui)));
 	set_menu(_menu);
 }
-
 
 boost::shared_ptr<NodeModule>
 NodeModule::create(boost::shared_ptr<PatchCanvas> canvas,
@@ -120,7 +116,6 @@ NodeModule::create(boost::shared_ptr<PatchCanvas> canvas,
 
 	return ret;
 }
-
 
 void
 NodeModule::show_human_names(bool b)
@@ -158,7 +153,6 @@ NodeModule::show_human_names(bool b)
 	resize();
 }
 
-
 void
 NodeModule::value_changed(uint32_t index, const Atom& value)
 {
@@ -180,14 +174,12 @@ NodeModule::value_changed(uint32_t index, const Atom& value)
 	}
 }
 
-
 void
 NodeModule::plugin_changed()
 {
 	for (PortVector::iterator p = ports().begin(); p != ports().end(); ++p)
 		PtrCast<Ingen::GUI::Port>(*p)->update_metadata();
 }
-
 
 void
 NodeModule::embed_gui(bool embed)
@@ -249,7 +241,6 @@ NodeModule::embed_gui(bool embed)
 	resize();
 }
 
-
 void
 NodeModule::rename()
 {
@@ -258,7 +249,6 @@ NodeModule::rename()
 		resize();
 	}
 }
-
 
 void
 NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
@@ -273,7 +263,6 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 		resize();
 }
 
-
 boost::shared_ptr<Port>
 NodeModule::port(boost::shared_ptr<PortModel> model)
 {
@@ -284,7 +273,6 @@ NodeModule::port(boost::shared_ptr<PortModel> model)
 	}
 	return boost::shared_ptr<Port>();
 }
-
 
 void
 NodeModule::remove_port(SharedPtr<PortModel> model)
@@ -297,7 +285,6 @@ NodeModule::remove_port(SharedPtr<PortModel> model)
 		warn << "Failed to find port on module " << model->path() << endl;
 	}
 }
-
 
 bool
 NodeModule::popup_gui()
@@ -338,7 +325,6 @@ NodeModule::popup_gui()
 	return false;
 }
 
-
 void
 NodeModule::on_gui_window_close()
 {
@@ -347,7 +333,6 @@ NodeModule::on_gui_window_close()
 	_plugin_ui.reset();
 	_gui_widget = NULL;
 }
-
 
 void
 NodeModule::set_control_values()
@@ -361,13 +346,11 @@ NodeModule::set_control_values()
 	}
 }
 
-
 void
 NodeModule::show_control_window()
 {
 	App::instance().window_factory()->present_controls(_node);
 }
-
 
 void
 NodeModule::on_double_click(GdkEventButton* ev)
@@ -375,7 +358,6 @@ NodeModule::on_double_click(GdkEventButton* ev)
 	if ( ! popup_gui() )
 		show_control_window();
 }
-
 
 void
 NodeModule::store_location()
@@ -400,7 +382,6 @@ NodeModule::store_location()
 		// FIXME: context
 	}
 }
-
 
 void
 NodeModule::property_changed(const URI& key, const Atom& value)
@@ -435,7 +416,6 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 	}
 }
 
-
 void
 NodeModule::set_selected(bool b)
 {
@@ -459,7 +439,6 @@ NodeModule::set_selected(bool b)
 			App::instance().engine()->set_property(_node->path(), uris.ingen_selected, b);
 	}
 }
-
 
 } // namespace GUI
 } // namespace Ingen

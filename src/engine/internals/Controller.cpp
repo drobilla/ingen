@@ -81,7 +81,6 @@ ControllerNode::ControllerNode(InternalPlugin* plugin,
 	_ports->at(5) = _audio_port;
 }
 
-
 void
 ControllerNode::process(ProcessContext& context)
 {
@@ -107,7 +106,6 @@ ControllerNode::process(ProcessContext& context)
 
 	NodeImpl::post_process(context);
 }
-
 
 void
 ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t val, FrameTime time)
@@ -143,7 +141,6 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 	if (control_num == ((AudioBuffer*)_param_port->buffer(0).get())->value_at(0))
 		((AudioBuffer*)_audio_port->buffer(0).get())->set_value(scaled_value, context.start(), time);
 }
-
 
 } // namespace Internals
 } // namespace Ingen

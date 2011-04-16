@@ -39,7 +39,6 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-
 WindowFactory::WindowFactory()
 	: _load_plugin_win(NULL)
 	, _load_patch_win(NULL)
@@ -62,7 +61,6 @@ WindowFactory::WindowFactory()
 #endif
 }
 
-
 WindowFactory::~WindowFactory()
 {
 	for (PatchWindowMap::iterator i = _patch_windows.begin(); i != _patch_windows.end(); ++i)
@@ -72,7 +70,6 @@ WindowFactory::~WindowFactory()
 		delete i->second;
 
 }
-
 
 void
 WindowFactory::clear()
@@ -88,7 +85,6 @@ WindowFactory::clear()
 	_control_windows.clear();
 }
 
-
 /** Returns the number of Patch windows currently visible.
  */
 size_t
@@ -102,8 +98,6 @@ WindowFactory::num_open_patch_windows()
 	return ret;
 }
 
-
-
 PatchWindow*
 WindowFactory::patch_window(SharedPtr<PatchModel> patch)
 {
@@ -115,7 +109,6 @@ WindowFactory::patch_window(SharedPtr<PatchModel> patch)
 	return (w == _patch_windows.end()) ? NULL : w->second;
 }
 
-
 PatchWindow*
 WindowFactory::parent_patch_window(SharedPtr<NodeModel> node)
 {
@@ -125,7 +118,6 @@ WindowFactory::parent_patch_window(SharedPtr<NodeModel> node)
 	return patch_window(PtrCast<PatchModel>(node->parent()));
 }
 
-
 NodeControlWindow*
 WindowFactory::control_window(SharedPtr<NodeModel> node)
 {
@@ -133,7 +125,6 @@ WindowFactory::control_window(SharedPtr<NodeModel> node)
 
 	return (w == _control_windows.end()) ? NULL : w->second;
 }
-
 
 /** Present a PatchWindow for a Patch.
  *
@@ -165,7 +156,6 @@ WindowFactory::present_patch(SharedPtr<PatchModel> patch, PatchWindow* preferred
 	}
 }
 
-
 PatchWindow*
 WindowFactory::new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 {
@@ -186,7 +176,6 @@ WindowFactory::new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView
 	return win;
 }
 
-
 bool
 WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 {
@@ -203,7 +192,6 @@ WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 	return false;
 }
 
-
 void
 WindowFactory::present_controls(SharedPtr<NodeModel> node)
 {
@@ -216,7 +204,6 @@ WindowFactory::present_controls(SharedPtr<NodeModel> node)
 		win->present();
 	}
 }
-
 
 NodeControlWindow*
 WindowFactory::new_control_window(SharedPtr<NodeModel> node)
@@ -235,7 +222,6 @@ WindowFactory::new_control_window(SharedPtr<NodeModel> node)
 	return win;
 }
 
-
 bool
 WindowFactory::remove_control_window(NodeControlWindow* win, GdkEventAny* ignored)
 {
@@ -248,7 +234,6 @@ WindowFactory::remove_control_window(NodeControlWindow* win, GdkEventAny* ignore
 
 	return true;
 }
-
 
 void
 WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Properties data)
@@ -267,7 +252,6 @@ WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Pro
 	_load_plugin_win->present(patch, data);
 }
 
-
 void
 WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
@@ -278,7 +262,6 @@ WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Prop
 
 	_load_patch_win->present(patch, true, data);
 }
-
 
 void
 WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
@@ -291,7 +274,6 @@ WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::P
 	_load_patch_win->present(patch, false, data);
 }
 
-
 void
 WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
@@ -302,7 +284,6 @@ WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObjec
 
 	_load_remote_patch_win->present(patch, data);
 }
-
 
 void
 WindowFactory::present_upload_patch(SharedPtr<PatchModel> patch)
@@ -328,7 +309,6 @@ WindowFactory::present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::Pr
 	_new_subpatch_win->present(patch, data);
 }
 
-
 void
 WindowFactory::present_rename(SharedPtr<ObjectModel> object)
 {
@@ -341,7 +321,6 @@ WindowFactory::present_rename(SharedPtr<ObjectModel> object)
 
 	_rename_win->present(object);
 }
-
 
 void
 WindowFactory::present_properties(SharedPtr<ObjectModel> object)
@@ -357,7 +336,6 @@ WindowFactory::present_properties(SharedPtr<ObjectModel> object)
 
 	_properties_win->present(object);
 }
-
 
 } // namespace GUI
 } // namespace Ingen

@@ -25,7 +25,6 @@
 namespace Ingen {
 namespace Shared {
 
-
 class Plugin : virtual public Resource
 {
 public:
@@ -57,7 +56,6 @@ public:
 			return NIL;
 	}
 };
-
 
 } // namespace Shared
 } // namespace Ingen

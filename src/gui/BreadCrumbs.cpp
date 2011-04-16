@@ -35,7 +35,6 @@ BreadCrumbs::BreadCrumbs()
 			sigc::mem_fun(this, &BreadCrumbs::object_destroyed));
 }
 
-
 SharedPtr<PatchView>
 BreadCrumbs::view(const Path& path)
 {
@@ -45,7 +44,6 @@ BreadCrumbs::view(const Path& path)
 
 	return SharedPtr<PatchView>();
 }
-
 
 /** Sets up the crumbs to display @a path.
  *
@@ -78,7 +76,6 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 		_active_path = path;
 		_enable_signal = old_enable_signal;
 
-
 	// Moving to a child of the full path, just append crumbs (preserve view cache)
 	} else if (_breadcrumbs.size() > 0 && (path.is_child_of(_full_path))) {
 
@@ -101,7 +98,6 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
 			(*i)->set_active(false);
 		_breadcrumbs.back()->set_active(true);
-
 
 	// Rebuild from scratch
 	// Getting here is bad unless absolutely necessary, since the PatchView cache is lost
@@ -143,7 +139,6 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 	_enable_signal = old_enable_signal;
 }
 
-
 /** Create a new crumb, assigning it a reference to @a view if their paths
  * match, otherwise ignoring @a view.
  */
@@ -159,7 +154,6 @@ BreadCrumbs::create_crumb(const Path&          path,
 
 	return but;
 }
-
 
 void
 BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
@@ -179,7 +173,6 @@ BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
 	}
 }
 
-
 void
 BreadCrumbs::object_destroyed(const Path& path)
 {
@@ -196,7 +189,6 @@ BreadCrumbs::object_destroyed(const Path& path)
 	}
 }
 
-
 void
 BreadCrumbs::object_moved(const Path& old_path, const Path& new_path)
 {
@@ -205,7 +197,6 @@ BreadCrumbs::object_moved(const Path& old_path, const Path& new_path)
 			(*i)->set_path(new_path);
 	}
 }
-
 
 } // namespace GUI
 } // namespace Ingen

@@ -37,7 +37,6 @@ namespace GUI {
 
 using namespace Ingen::Client;
 
-
 Configuration::Configuration()
 	// Colours from  the Tango palette with modified V and alpha
 	: _name_style(HUMAN)
@@ -49,11 +48,9 @@ Configuration::Configuration()
 {
 }
 
-
 Configuration::~Configuration()
 {
 }
-
 
 /** Loads settings from the rc file.  Passing no parameter will load from
  * the default location.
@@ -64,7 +61,6 @@ Configuration::load_settings(string filename)
 	/* ... */
 }
 
-
 /** Saves settings to rc file.  Passing no parameter will save to the
  * default location.
  */
@@ -74,7 +70,6 @@ Configuration::save_settings(string filename)
 	/* ... */
 }
 
-
 /** Applies the current loaded settings to whichever parts of the app
  * need updating.
  */
@@ -83,7 +78,6 @@ Configuration::apply_settings()
 {
 	/* ... */
 }
-
 
 uint32_t
 Configuration::get_port_color(const PortModel* p)
@@ -103,7 +97,6 @@ Configuration::get_port_color(const PortModel* p)
 	warn << "[Configuration] No known port type for " << p->path() << endl;
 	return 0x666666FF;
 }
-
 
 } // namespace GUI
 } // namespace Ingen

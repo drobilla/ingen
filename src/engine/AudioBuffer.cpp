@@ -35,7 +35,6 @@ namespace Ingen {
 
 using namespace Shared;
 
-
 AudioBuffer::AudioBuffer(BufferFactory& bufs, Shared::PortType type, size_t size)
 	: ObjectBuffer(bufs, size)
 	, _state(OK)
@@ -70,7 +69,6 @@ AudioBuffer::AudioBuffer(BufferFactory& bufs, Shared::PortType type, size_t size
 	clear();
 }
 
-
 void
 AudioBuffer::resize(size_t size)
 {
@@ -81,7 +79,6 @@ AudioBuffer::resize(size_t size)
 	clear();
 }
 
-
 /** Empty (ie zero) the buffer.
  */
 void
@@ -91,7 +88,6 @@ AudioBuffer::clear()
 	set_block(0, 0, nframes() - 1);
 	_state = OK;
 }
-
 
 /** Set value of buffer to @a val after @a start_sample.
  *
@@ -122,7 +118,6 @@ AudioBuffer::set_value(Sample val, FrameTime cycle_start, FrameTime time)
 	_set_value = val;
 }
 
-
 /** Set a block of buffer to @a val.
  *
  * @a start_sample and @a end_sample define the inclusive range to be set.
@@ -139,7 +134,6 @@ AudioBuffer::set_block(Sample val, size_t start_offset, size_t end_offset)
 	for (size_t i = start_offset; i <= end_offset; ++i)
 		buf[i] = val;
 }
-
 
 /** Copy a block of @a src into buffer.
  *
@@ -159,7 +153,6 @@ AudioBuffer::copy(const Sample* src, size_t start_sample, size_t end_sample)
 	for (size_t i = start_sample; i <= copy_end; ++i)
 		buf[i] = src[i];
 }
-
 
 void
 AudioBuffer::copy(Context& context, const Buffer* src)
@@ -193,7 +186,6 @@ AudioBuffer::copy(Context& context, const Buffer* src)
 	}
 }
 
-
 void
 AudioBuffer::prepare_read(Context& context)
 {
@@ -211,6 +203,5 @@ AudioBuffer::prepare_read(Context& context)
 		break;
 	}
 }
-
 
 } // namespace Ingen

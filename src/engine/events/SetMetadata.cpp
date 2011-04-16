@@ -48,7 +48,6 @@ namespace Events {
 using namespace Shared;
 typedef Shared::Resource::Properties Properties;
 
-
 SetMetadata::SetMetadata(
 		Engine&             engine,
 		SharedPtr<Request>  request,
@@ -88,7 +87,6 @@ SetMetadata::SetMetadata(
 	*/
 }
 
-
 SetMetadata::~SetMetadata()
 {
 	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
@@ -96,7 +94,6 @@ SetMetadata::~SetMetadata()
 
 	delete _create_event;
 }
-
 
 void
 SetMetadata::pre_process()
@@ -174,7 +171,6 @@ SetMetadata::pre_process()
 		}
 		_object->remove_property(key, value);
 	}
-
 
 	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p) {
 		const Raul::URI&  key   = p->first;
@@ -263,7 +259,6 @@ SetMetadata::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 SetMetadata::execute(ProcessContext& context)
 {
@@ -343,7 +338,6 @@ SetMetadata::execute(ProcessContext& context)
 		_request->unblock();
 }
 
-
 void
 SetMetadata::post_process()
 {
@@ -379,7 +373,6 @@ SetMetadata::post_process()
 		break;
 	}
 }
-
 
 } // namespace Ingen
 } // namespace Events

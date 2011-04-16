@@ -30,7 +30,6 @@ class JackDriver;
 class NodeFactory;
 class PatchImpl;
 
-
 /* Some boilerplate killing macros... */
 #define LO_HANDLER_ARGS const char* path, const char* types, lo_arg** argv, int argc, lo_message msg
 
@@ -42,9 +41,7 @@ int _##name##_cb (LO_HANDLER_ARGS);\
 inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
 { return ((OSCEngineReceiver*)myself)->_##name##_cb(path, types, argv, argc, msg); }
 
-
 /* FIXME: Make this receive and preprocess in the same thread? */
-
 
 /** Receives OSC messages from liblo.
  *
@@ -119,7 +116,6 @@ private:
 
 	lo_server _server;
 };
-
 
 } // namespace Ingen
 

@@ -19,10 +19,8 @@
 #include "PortModel.hpp"
 #include "NodeModel.hpp"
 
-
 namespace Ingen {
 namespace Client {
-
 
 Raul::Atom&
 PortModel::set_property(const Raul::URI&  uri,
@@ -34,20 +32,17 @@ PortModel::set_property(const Raul::URI&  uri,
 	return ret;
 }
 
-
 bool
 PortModel::supports(const Raul::URI& value_type) const
 {
 	return has_property(_uris.atom_supports, value_type);
 }
 
-
 bool
 PortModel::port_property(const std::string& uri) const
 {
 	return has_property(_uris.lv2_portProperty, Raul::URI(uri));
 }
-
 
 void
 PortModel::set(SharedPtr<ObjectModel> model)
@@ -65,7 +60,6 @@ PortModel::set(SharedPtr<ObjectModel> model)
 	ObjectModel::set(model);
 }
 
-
 bool
 PortModel::has_context(const Raul::URI& uri)
 {
@@ -75,7 +69,6 @@ PortModel::has_context(const Raul::URI& uri)
 	else
 		return context == uri;
 }
-
 
 } // namespace Client
 } // namespace Ingen

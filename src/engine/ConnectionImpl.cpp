@@ -58,7 +58,6 @@ ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl
 		_queue = new Raul::RingBuffer(src_port->buffer_size() * 2);
 }
 
-
 void
 ConnectionImpl::dump() const
 {
@@ -67,7 +66,6 @@ ConnectionImpl::dump() const
 		<< (must_queue() ? " (QUEUE)" : " (NOQUEUE) ")
 		<< "POLY: " << _src_port->poly() << " => " << _dst_port->poly() << endl;
 }
-
 
 void
 ConnectionImpl::get_sources(Context& context, uint32_t voice,
@@ -95,7 +93,6 @@ ConnectionImpl::get_sources(Context& context, uint32_t voice,
 	}
 }
 
-
 void
 ConnectionImpl::queue(Context& context)
 {
@@ -122,7 +119,6 @@ ConnectionImpl::queue(Context& context)
 	}
 }
 
-
 bool
 ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
@@ -143,7 +139,7 @@ ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 			// Control => atom:Float32 Value
 			|| (src->is_a(PortType::CONTROL) && dst->supports(uris.atom_Float32))
 
-			// Audio => atom:Vector Value			
+			// Audio => atom:Vector Value
 			|| (src->is_a(PortType::AUDIO)   && dst->supports(uris.atom_Vector))
 
 			// atom:Float32 Value => Control
@@ -152,7 +148,6 @@ ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 			// atom:Vector Value => Audio
 			|| (src->supports(uris.atom_Vector)  && dst->is_a(PortType::AUDIO)));
 }
-
 
 } // namespace Ingen
 

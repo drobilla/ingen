@@ -28,7 +28,6 @@ class PortImpl;
 
 namespace Events {
 
-
 /** A special event used internally to send port values from the audio thread.
  *
  * This is created in the audio thread (using in-place new on a preallocated
@@ -74,7 +73,6 @@ private:
 	uint32_t   _voice_num;
 	Raul::Atom _value;
 };
-
 
 } // namespace Ingen
 } // namespace Events

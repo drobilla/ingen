@@ -27,7 +27,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-
 /** Push an event (from the engine, ie 'new patch') on to the queue.
  */
 void
@@ -45,7 +44,6 @@ ThreadedSigClientInterface::push_sig(Closure ev)
 		}
 	}
 }
-
 
 /** Process all queued events that came from the OSC thread.
  *
@@ -72,7 +70,6 @@ ThreadedSigClientInterface::emit_signals()
 
 	return true;
 }
-
 
 } // namespace Client
 } // namespace Ingen

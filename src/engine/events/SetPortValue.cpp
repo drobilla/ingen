@@ -46,7 +46,6 @@ namespace Events {
 
 using namespace Shared;
 
-
 SetPortValue::SetPortValue(Engine&            engine,
                            SharedPtr<Request> request,
                            bool               queued,
@@ -60,7 +59,6 @@ SetPortValue::SetPortValue(Engine&            engine,
 	, _port(NULL)
 {
 }
-
 
 /** Internal */
 SetPortValue::SetPortValue(Engine&            engine,
@@ -79,7 +77,6 @@ SetPortValue::SetPortValue(Engine&            engine,
 SetPortValue::~SetPortValue()
 {
 }
-
 
 void
 SetPortValue::pre_process()
@@ -108,7 +105,6 @@ SetPortValue::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 SetPortValue::execute(ProcessContext& context)
 {
@@ -121,7 +117,6 @@ SetPortValue::execute(ProcessContext& context)
 	apply(context);
 	_engine.control_bindings()->port_value_changed(context, _port);
 }
-
 
 void
 SetPortValue::apply(Context& context)
@@ -192,7 +187,6 @@ SetPortValue::apply(Context& context)
 	}
 }
 
-
 void
 SetPortValue::post_process()
 {
@@ -223,7 +217,6 @@ SetPortValue::post_process()
 		break;
 	}
 }
-
 
 } // namespace Ingen
 } // namespace Events

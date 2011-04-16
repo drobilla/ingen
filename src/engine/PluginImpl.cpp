@@ -23,7 +23,6 @@ using namespace Raul;
 
 namespace Ingen {
 
-
 void
 PluginImpl::load()
 {
@@ -35,7 +34,6 @@ PluginImpl::load()
 	}
 }
 
-
 void
 PluginImpl::unload()
 {
@@ -45,7 +43,6 @@ PluginImpl::unload()
 		_module = NULL;
 	}
 }
-
 
 } // namespace Ingen
 

@@ -33,7 +33,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-
 /** Note the sending port is implicitly set by liblo, lo_send by default sends
  * from the most recently created server, so create the OSC listener before
  * this to have it all happen on the same port.  Yeah, this is a big magic :/
@@ -45,12 +44,10 @@ OSCEngineSender::OSCEngineSender(const URI& engine_url)
 	_address = lo_address_new_from_url(engine_url.c_str());
 }
 
-
 OSCEngineSender::~OSCEngineSender()
 {
 	lo_address_free(_address);
 }
-
 
 /** Attempt to connect to the engine (by pinging it).
  *
@@ -81,7 +78,6 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 
 /* *** EngineInterface implementation below here *** */
 
-
 /** Register with the engine via OSC.
  *
  * Note that this does not actually use 'client', since the engine creates
@@ -94,13 +90,11 @@ OSCEngineSender::register_client(Shared::ClientInterface* client)
 	send("/register_client", "i", next_id(), LO_ARGS_END);
 }
 
-
 void
 OSCEngineSender::unregister_client(const URI& uri)
 {
 	send("/unregister_client", "i", next_id(), LO_ARGS_END);
 }
-
 
 // Engine commands
 void
@@ -109,13 +103,11 @@ OSCEngineSender::load_plugins()
 	send("/load_plugins", "i", next_id(), LO_ARGS_END);
 }
 
-
 void
 OSCEngineSender::activate()
 {
 	send("/activate", "i", next_id(), LO_ARGS_END);
 }
-
 
 void
 OSCEngineSender::deactivate()
@@ -123,17 +115,13 @@ OSCEngineSender::deactivate()
 	send("/deactivate", "i", next_id(), LO_ARGS_END);
 }
 
-
 void
 OSCEngineSender::quit()
 {
 	send("/quit", "i", next_id(), LO_ARGS_END);
 }
 
-
-
 // Object commands
-
 
 void
 OSCEngineSender::put(const Raul::URI&                    path,
@@ -151,7 +139,6 @@ OSCEngineSender::put(const Raul::URI&                    path,
 	send_message("/put", m);
 }
 
-
 void
 OSCEngineSender::delta(const Raul::URI&                    path,
                        const Shared::Resource::Properties& remove,
@@ -159,7 +146,6 @@ OSCEngineSender::delta(const Raul::URI&                    path,
 {
 	warn << "FIXME: OSC DELTA" << endl;
 }
-
 
 void
 OSCEngineSender::move(const Path& old_path,
@@ -172,7 +158,6 @@ OSCEngineSender::move(const Path& old_path,
 		LO_ARGS_END);
 }
 
-
 void
 OSCEngineSender::del(const Path& path)
 {
@@ -181,7 +166,6 @@ OSCEngineSender::del(const Path& path)
 		path.c_str(),
 		LO_ARGS_END);
 }
-
 
 void
 OSCEngineSender::connect(const Path& src_port_path,
@@ -194,7 +178,6 @@ OSCEngineSender::connect(const Path& src_port_path,
 		LO_ARGS_END);
 }
 
-
 void
 OSCEngineSender::disconnect(const Path& src_port_path,
                             const Path& dst_port_path)
@@ -206,7 +189,6 @@ OSCEngineSender::disconnect(const Path& src_port_path,
 		LO_ARGS_END);
 }
 
-
 void
 OSCEngineSender::disconnect_all(const Path& parent_patch_path,
                                 const Path& path)
@@ -217,7 +199,6 @@ OSCEngineSender::disconnect_all(const Path& parent_patch_path,
 		path.c_str(),
 		LO_ARGS_END);
 }
-
 
 void
 OSCEngineSender::set_property(const URI&  subject,
@@ -232,8 +213,6 @@ OSCEngineSender::set_property(const URI&  subject,
 	send_message("/set_property", m);
 }
 
-
-
 // Requests //
 
 void
@@ -241,7 +220,6 @@ OSCEngineSender::ping()
 {
 	send("/ping", "i", next_id(), LO_ARGS_END);
 }
-
 
 void
 OSCEngineSender::get(const URI& uri)
@@ -252,7 +230,6 @@ OSCEngineSender::get(const URI& uri)
 		LO_ARGS_END);
 }
 
-
 void
 OSCEngineSender::request_property(const URI& object_path, const URI& key)
 {
@@ -262,7 +239,6 @@ OSCEngineSender::request_property(const URI& object_path, const URI& key)
 		key.c_str(),
 		LO_ARGS_END);
 }
-
 
 } // namespace Client
 } // namespace Ingen

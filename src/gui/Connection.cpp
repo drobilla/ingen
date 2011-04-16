@@ -37,6 +37,5 @@ Connection::Connection(boost::shared_ptr<FlowCanvas::Canvas>      canvas,
 		_bpath.property_dash() = src_port->dash();
 }
 
-
 }   // namespace GUI
 }   // namespace Ingen

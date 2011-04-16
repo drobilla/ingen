@@ -23,7 +23,6 @@
 namespace Ingen {
 namespace Shared {
 
-
 /** A connection between two ports.
  *
  * \ingroup interface
@@ -35,7 +34,6 @@ public:
 	virtual const Raul::Path src_port_path() const = 0;
 	virtual const Raul::Path dst_port_path() const = 0;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

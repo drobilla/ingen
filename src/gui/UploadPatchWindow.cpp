@@ -40,7 +40,6 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-
 UploadPatchWindow::UploadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Dialog(cobject)
 	, _thread(NULL)
@@ -53,13 +52,11 @@ UploadPatchWindow::UploadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr
 	xml->get_widget("upload_patch_cancel_button", _cancel_button);
 	xml->get_widget("upload_patch_upload_button", _upload_button);
 
-
 	_symbol_entry->signal_changed().connect(sigc::mem_fun(this, &UploadPatchWindow::symbol_changed));
 	_short_name_entry->signal_changed().connect(sigc::mem_fun(this, &UploadPatchWindow::short_name_changed));
 	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &UploadPatchWindow::cancel_clicked));
 	_upload_button->signal_clicked().connect(sigc::mem_fun(this, &UploadPatchWindow::upload_clicked));
 }
-
 
 void
 UploadPatchWindow::present(SharedPtr<PatchModel> patch)
@@ -68,7 +65,6 @@ UploadPatchWindow::present(SharedPtr<PatchModel> patch)
 
 	Gtk::Window::present();
 }
-
 
 void
 UploadPatchWindow::on_show()
@@ -85,7 +81,6 @@ UploadPatchWindow::on_show()
 		_short_name_entry->set_text(atom.get_string());
 }
 
-
 void
 UploadPatchWindow::on_hide()
 {
@@ -94,7 +89,6 @@ UploadPatchWindow::on_hide()
 	delete _thread;
 	_thread = NULL;
 }
-
 
 bool
 UploadPatchWindow::is_symbol(const Glib::ustring& s)
@@ -112,7 +106,6 @@ UploadPatchWindow::is_symbol(const Glib::ustring& s)
 	return true;
 }
 
-
 void
 UploadPatchWindow::symbol_changed()
 {
@@ -121,7 +114,6 @@ UploadPatchWindow::symbol_changed()
 			&& _short_name_entry->get_text().length() > 0);
 }
 
-
 void
 UploadPatchWindow::short_name_changed()
 {
@@ -129,7 +121,6 @@ UploadPatchWindow::short_name_changed()
 			is_symbol(_symbol_entry->get_text())
 			&& _short_name_entry->get_text().length() > 0);
 }
-
 
 size_t
 UploadThread::curl_read_cb(void *ptr, size_t size, size_t nmemb, void *data)
@@ -140,7 +131,6 @@ UploadThread::curl_read_cb(void *ptr, size_t size, size_t nmemb, void *data)
 
 	return ss->readsome((char*)ptr, nmemb);
 }
-
 
 int
 UploadThread::curl_progress_cb(void   *thread,
@@ -155,7 +145,6 @@ UploadThread::curl_progress_cb(void   *thread,
 			99));
 	return 0;
 }
-
 
 UploadThread::UploadThread(UploadPatchWindow* win, const string& str, const string& url)
 	: Thread("Upload")
@@ -180,7 +169,6 @@ UploadThread::UploadThread(UploadPatchWindow* win, const string& str, const stri
 	curl_easy_setopt(_curl, CURLOPT_PROGRESSDATA, this);
 }
 
-
 void
 UploadThread::_run()
 {
@@ -200,7 +188,6 @@ UploadThread::_run()
 	_headers = NULL;
 	_curl = NULL;
 }
-
 
 bool
 UploadPatchWindow::progress_callback()
@@ -229,7 +216,6 @@ UploadPatchWindow::progress_callback()
 		return true;
 	}
 }
-
 
 void
 UploadPatchWindow::upload_clicked()
@@ -268,7 +254,6 @@ UploadPatchWindow::upload_clicked()
 		sigc::mem_fun(this, &UploadPatchWindow::progress_callback), 100);
 }
 
-
 void
 UploadPatchWindow::cancel_clicked()
 {
@@ -279,7 +264,6 @@ UploadPatchWindow::cancel_clicked()
 
 	hide();
 }
-
 
 } // namespace GUI
 } // namespace Ingen

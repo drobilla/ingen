@@ -26,7 +26,6 @@ namespace Ingen {
 
 class Engine;
 
-
 /** Graph execution context.
  *
  * This is used to pass whatever information a GraphObject might need to
@@ -97,7 +96,6 @@ protected:
 	SampleCount _offset;     ///< Start offset relative to start of driver buffers
 	bool        _realtime;   ///< True iff context is hard realtime
 };
-
 
 } // namespace Ingen
 

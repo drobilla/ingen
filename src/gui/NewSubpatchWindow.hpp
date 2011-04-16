@@ -33,7 +33,6 @@ using Ingen::Client::PatchModel;
 
 namespace GUI {
 
-
 /** 'New Subpatch' window.
  *
  * Loaded by glade as a derived object.
@@ -63,7 +62,6 @@ private:
 	Gtk::Button*     _ok_button;
 	Gtk::Button*     _cancel_button;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

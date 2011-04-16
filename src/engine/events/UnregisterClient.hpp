@@ -24,7 +24,6 @@
 namespace Ingen {
 namespace Events {
 
-
 /** Unregisters an OSC client so it no longer receives notifications.
  *
  * \ingroup engine
@@ -42,7 +41,6 @@ public:
 private:
 	Raul::URI _uri;
 };
-
 
 } // namespace Ingen
 } // namespace Events

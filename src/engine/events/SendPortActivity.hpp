@@ -27,7 +27,6 @@ class PortImpl;
 
 namespace Events {
 
-
 /** A special event used internally to send port activity notification (e.g.
  * MIDI event activity) from the audio thread.
  *
@@ -61,7 +60,6 @@ public:
 private:
 	PortImpl* _port;
 };
-
 
 } // namespace Ingen
 } // namespace Events

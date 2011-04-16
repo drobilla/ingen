@@ -47,8 +47,6 @@ private:
 	Slaves _slaves;
 };
 
-
-
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_PROCESSCONTEXT_HPP

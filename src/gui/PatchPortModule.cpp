@@ -38,7 +38,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> model)
 	: FlowCanvas::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
@@ -52,7 +51,6 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 
 	model->signal_property.connect(sigc::mem_fun(this, &PatchPortModule::property_changed));
 }
-
 
 boost::shared_ptr<PatchPortModule>
 PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> model, bool human)
@@ -72,7 +70,6 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortMod
 	return ret;
 }
 
-
 void
 PatchPortModule::create_menu()
 {
@@ -82,7 +79,6 @@ PatchPortModule::create_menu()
 
 	set_menu(_menu);
 }
-
 
 void
 PatchPortModule::store_location()
@@ -104,7 +100,6 @@ PatchPortModule::store_location()
 	}
 }
 
-
 void
 PatchPortModule::show_human_names(bool b)
 {
@@ -118,14 +113,12 @@ PatchPortModule::show_human_names(bool b)
 	resize();
 }
 
-
 void
 PatchPortModule::set_name(const std::string& n)
 {
 	_port->set_name(n);
 	Module::resize();
 }
-
 
 void
 PatchPortModule::property_changed(const URI& key, const Atom& value)
@@ -164,7 +157,6 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 	}
 }
 
-
 void
 PatchPortModule::set_selected(bool b)
 {
@@ -175,8 +167,6 @@ PatchPortModule::set_selected(bool b)
 				   App::instance().uris().ingen_selected, b);
 	}
 }
-
-
 
 } // namespace GUI
 } // namespace Ingen

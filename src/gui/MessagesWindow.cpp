@@ -22,7 +22,6 @@ namespace Ingen {
 namespace GUI {
 using std::string;
 
-
 MessagesWindow::MessagesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 	: Window(cobject)
 {
@@ -33,7 +32,6 @@ MessagesWindow::MessagesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome
 	_clear_button->signal_clicked().connect(sigc::mem_fun(this, &MessagesWindow::clear_clicked));
 	_close_button->signal_clicked().connect(sigc::mem_fun(this, &Window::hide));
 }
-
 
 void
 MessagesWindow::post(const string& msg)
@@ -46,7 +44,6 @@ MessagesWindow::post(const string& msg)
 		_clear_button->set_sensitive(true);
 }
 
-
 void
 MessagesWindow::clear_clicked()
 {
@@ -54,7 +51,6 @@ MessagesWindow::clear_clicked()
 	text_buf->erase(text_buf->begin(), text_buf->end());
 	_clear_button->set_sensitive(false);
 }
-
 
 } // namespace GUI
 } // namespace Ingen

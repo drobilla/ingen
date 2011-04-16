@@ -32,7 +32,6 @@ class BufferFactory;
 
 namespace Internals {
 
-
 class DelayNode : public NodeImpl
 {
 public:
@@ -70,7 +69,6 @@ private:
 	float    _last_delay_time;
 	float    _delay_samples;
 };
-
 
 } // namespace Ingen
 } // namespace Internals

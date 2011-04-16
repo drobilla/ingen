@@ -84,7 +84,6 @@ TriggerNode::TriggerNode(
 	_ports->at(4) = _vel_port;
 }
 
-
 void
 TriggerNode::process(ProcessContext& context)
 {
@@ -129,7 +128,6 @@ TriggerNode::process(ProcessContext& context)
 	NodeImpl::post_process(context);
 }
 
-
 void
 TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
 {
@@ -157,7 +155,6 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 	}
 }
 
-
 void
 TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 {
@@ -166,7 +163,6 @@ TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 	if (note_num == lrintf(((AudioBuffer*)_note_port->buffer(0).get())->value_at(0)))
 		((AudioBuffer*)_gate_port->buffer(0).get())->set_value(0.0f, context.start(), time);
 }
-
 
 } // namespace Internals
 } // namespace Ingen

@@ -38,7 +38,6 @@ namespace Client {
 
 class ClientStore;
 
-
 /** Base class for all GraphObject models (NodeModel, PatchModel, PortModel).
  *
  * There are no non-const public methods intentionally, models are not allowed
@@ -81,7 +80,7 @@ protected:
 
 	ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path);
 	ObjectModel(const ObjectModel& copy);
-	
+
 	virtual void set_path(const Raul::Path& p);
 	virtual void set_parent(SharedPtr<ObjectModel> p);
 	virtual void add_child(SharedPtr<ObjectModel> c) {}
@@ -96,7 +95,6 @@ private:
 	Raul::Path   _path;
 	Raul::Symbol _symbol;
 };
-
 
 } // namespace Client
 } // namespace Ingen

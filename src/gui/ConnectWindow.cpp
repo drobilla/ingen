@@ -54,7 +54,6 @@ namespace Raul { class Deletable; }
 namespace Ingen {
 namespace GUI {
 
-
 ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Dialog(cobject)
 	, _xml(xml)
@@ -67,7 +66,6 @@ ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 	, _quit_flag(false)
 {
 }
-
 
 void
 ConnectWindow::start(Ingen::Shared::World* world)
@@ -84,7 +82,6 @@ ConnectWindow::start(Ingen::Shared::World* world)
 
 	connect(true);
 }
-
 
 void
 ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
@@ -128,7 +125,6 @@ ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
 	}
 }
 
-
 void
 ConnectWindow::set_connecting_widget_states()
 {
@@ -144,7 +140,6 @@ ConnectWindow::set_connecting_widget_states()
 	_url_entry->set_sensitive(false);
 	_port_spinbutton->set_sensitive(false);
 }
-
 
 /** Launch (if applicable) and connect to the Engine.
  *
@@ -264,7 +259,6 @@ ConnectWindow::connect(bool existing)
 	}
 }
 
-
 void
 ConnectWindow::disconnect()
 {
@@ -285,20 +279,17 @@ ConnectWindow::disconnect()
 	_disconnect_button->set_sensitive(false);
 }
 
-
 void
 ConnectWindow::activate()
 {
 	App::instance().engine()->activate();
 }
 
-
 void
 ConnectWindow::deactivate()
 {
 	App::instance().engine()->deactivate();
 }
-
 
 void
 ConnectWindow::on_show()
@@ -311,7 +302,6 @@ ConnectWindow::on_show()
 
 	Gtk::Dialog::on_show();
 }
-
 
 void
 ConnectWindow::load_widgets()
@@ -346,7 +336,6 @@ ConnectWindow::load_widgets()
     server_toggled();
 }
 
-
 void
 ConnectWindow::on_hide()
 {
@@ -355,14 +344,12 @@ ConnectWindow::on_hide()
 		quit();
 }
 
-
 void
 ConnectWindow::quit_clicked()
 {
 	if (App::instance().quit(*this))
 		_quit_flag = true;
 }
-
 
 void
 ConnectWindow::server_toggled()
@@ -372,7 +359,6 @@ ConnectWindow::server_toggled()
 	_mode = CONNECT_REMOTE;
 }
 
-
 void
 ConnectWindow::launch_toggled()
 {
@@ -381,7 +367,6 @@ ConnectWindow::launch_toggled()
 	_mode = LAUNCH_REMOTE;
 }
 
-
 void
 ConnectWindow::internal_toggled()
 {
@@ -389,7 +374,6 @@ ConnectWindow::internal_toggled()
 	_port_spinbutton->set_sensitive(false);
 	_mode = INTERNAL;
 }
-
 
 bool
 ConnectWindow::gtk_callback()
@@ -489,14 +473,12 @@ ConnectWindow::gtk_callback()
 	}
 }
 
-
 void
 ConnectWindow::quit()
 {
 	_quit_flag = true;
 	Gtk::Main::quit();
 }
-
 
 } // namespace GUI
 } // namespace Ingen

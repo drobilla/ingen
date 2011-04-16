@@ -24,7 +24,6 @@
 namespace Ingen {
 namespace GUI {
 
-
 /** Creates glade references, so various objects can create widgets.
  * Purely static.
  *
@@ -39,7 +38,6 @@ private:
 	static void find_glade_file();
 	static Glib::ustring glade_filename;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

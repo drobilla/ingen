@@ -29,7 +29,6 @@ class QueuedEvent;
 class PostProcessor;
 class ProcessContext;
 
-
 /** Source for events to run in the audio thread.
  *
  * The Driver gets events from an EventSource in the process callback
@@ -68,7 +67,6 @@ private:
 	Raul::AtomicPtr<Raul::List<Event*>::Node> _prepared_back;
 	Raul::Semaphore                           _blocking_semaphore;
 };
-
 
 } // namespace Ingen
 

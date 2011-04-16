@@ -25,11 +25,9 @@ using namespace std;
 namespace Ingen {
 namespace Shared {
 
-
 LV2Features::LV2Features()
 {
 }
-
 
 SharedPtr<LV2Features::Feature>
 LV2Features::feature(const std::string& uri)
@@ -41,13 +39,11 @@ LV2Features::feature(const std::string& uri)
 		return SharedPtr<Feature>();
 }
 
-
 void
 LV2Features::add_feature(const std::string& uri, SharedPtr<Feature> feature)
 {
 	_features.insert(make_pair(uri, feature));
 }
-
 
 SharedPtr<LV2Features::FeatureArray>
 LV2Features::lv2_features(Shared::World* world, Node* node) const
@@ -60,7 +56,6 @@ LV2Features::lv2_features(Shared::World* world, Node* node) const
 	}
 	return SharedPtr<FeatureArray>(new FeatureArray(vec));
 }
-
 
 } // namespace Shared
 } // namespace Ingen

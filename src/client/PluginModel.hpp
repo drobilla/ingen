@@ -41,7 +41,6 @@ class PatchModel;
 class NodeModel;
 class PluginUI;
 
-
 /** Model for a plugin available for loading.
  *
  * \ingroup IngenClient
@@ -116,7 +115,6 @@ private:
 
 	static Sord::World* _rdf_world;
 };
-
 
 } // namespace Client
 } // namespace Ingen

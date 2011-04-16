@@ -49,7 +49,6 @@ namespace Ingen {
 using namespace Shared;
 using namespace Serialisation;
 
-
 HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	: QueuedEngineInterface(engine, 64) // FIXME
 	, _server(soup_server_new(SOUP_SERVER_PORT, port, NULL))
@@ -66,7 +65,6 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	Thread::set_name("HTTPEngineReceiver");
 }
 
-
 HTTPEngineReceiver::~HTTPEngineReceiver()
 {
 	deactivate();
@@ -80,7 +78,6 @@ HTTPEngineReceiver::~HTTPEngineReceiver()
 	}
 }
 
-
 void
 HTTPEngineReceiver::activate_source()
 {
@@ -89,14 +86,12 @@ HTTPEngineReceiver::activate_source()
 	_receive_thread->start();
 }
 
-
 void
 HTTPEngineReceiver::deactivate_source()
 {
 	_receive_thread->stop();
 	EventSource::deactivate_source();
 }
-
 
 void
 HTTPEngineReceiver::message_callback(SoupServer*        server,
@@ -228,7 +223,6 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 	}
 	#endif
 }
-
 
 /** Override the semaphore driven _run method of QueuedEngineInterface
  * to wait on HTTP requests and process them immediately in this thread.

@@ -183,7 +183,7 @@ main(int argc, char** argv)
 
 		ingen_try(world->parser(),
 		          "Unable to create parser");
-		          
+
 		string uri = conf.option("load").get_string();
 		if (!serd_uri_string_has_scheme((const uint8_t*)uri.c_str())) {
 			// Does not start with legal URI scheme, assume path

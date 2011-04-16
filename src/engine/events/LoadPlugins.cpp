@@ -24,7 +24,6 @@
 namespace Ingen {
 namespace Events {
 
-
 LoadPlugins::LoadPlugins(Engine& engine, SharedPtr<Request> request, SampleCount timestamp)
 	: QueuedEvent(engine, request, timestamp, bool(request))
 {
@@ -46,7 +45,6 @@ LoadPlugins::post_process()
 
 	_request->respond_ok();
 }
-
 
 } // namespace Ingen
 } // namespace Events

@@ -48,7 +48,6 @@ namespace Ingen {
 
 using namespace Internals;
 
-
 NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	: _world(world)
 	, _has_loaded(false)
@@ -58,7 +57,6 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 {
 }
 
-
 NodeFactory::~NodeFactory()
 {
 	for (Plugins::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
@@ -67,14 +65,12 @@ NodeFactory::~NodeFactory()
 	_plugins.clear();
 }
 
-
 PluginImpl*
 NodeFactory::plugin(const Raul::URI& uri)
 {
 	const Plugins::const_iterator i = _plugins.find(uri);
 	return ((i != _plugins.end()) ? i->second : NULL);
 }
-
 
 void
 NodeFactory::load_plugins()
@@ -97,7 +93,6 @@ NodeFactory::load_plugins()
 	}
 }
 
-
 void
 NodeFactory::load_internal_plugins()
 {
@@ -114,7 +109,6 @@ NodeFactory::load_internal_plugins()
 	InternalPlugin* trigger_plug = TriggerNode::internal_plugin(uris);
 	_plugins.insert(make_pair(trigger_plug->uri(), trigger_plug));
 }
-
 
 #ifdef HAVE_SLV2
 /** Loads information about all LV2 plugins into internal plugin database.

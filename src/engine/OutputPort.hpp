@@ -24,7 +24,6 @@
 
 namespace Ingen {
 
-
 /** An output port.
  *
  * Output ports always have a locally allocated buffer, and buffer() will
@@ -58,7 +57,6 @@ public:
 	bool is_input()  const { return false; }
 	bool is_output() const { return true; }
 };
-
 
 } // namespace Ingen
 

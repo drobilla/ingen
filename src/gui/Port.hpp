@@ -33,7 +33,6 @@ using Ingen::Client::PortModel;
 
 namespace GUI {
 
-
 /** A Port on an Module.
  *
  * \ingroup GUI
@@ -79,7 +78,6 @@ private:
 	bool               _pressed;
 	bool               _flipped;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

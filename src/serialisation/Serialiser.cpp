@@ -214,7 +214,7 @@ Serialiser::start_to_filename(const string& filename)
 	} else {
 		_base_uri = filename;
 	}
-	
+
 	_model = new Sord::Model(*_world.rdf_world(), _base_uri);
 	_mode = TO_FILE;
 }

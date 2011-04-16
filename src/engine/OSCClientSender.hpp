@@ -30,7 +30,6 @@ namespace Ingen {
 
 namespace Shared { class EngineInterface; }
 
-
 /** Implements ClientInterface for OSC clients (sends OSC messages).
  *
  * \ingroup engine
@@ -94,7 +93,6 @@ public:
 private:
 	Raul::URI _url;
 };
-
 
 } // namespace Ingen
 

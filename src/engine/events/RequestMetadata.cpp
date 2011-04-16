@@ -39,7 +39,6 @@ namespace Events {
 
 using namespace Shared;
 
-
 RequestMetadata::RequestMetadata(Engine&            engine,
                                  SharedPtr<Request> request,
                                  SampleCount        timestamp,
@@ -54,7 +53,6 @@ RequestMetadata::RequestMetadata(Engine&            engine,
 	, _context(ctx)
 {
 }
-
 
 void
 RequestMetadata::pre_process()
@@ -85,7 +83,6 @@ RequestMetadata::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 RequestMetadata::execute(ProcessContext& context)
 {
@@ -107,7 +104,6 @@ RequestMetadata::execute(ProcessContext& context)
 		}
 	}
 }
-
 
 void
 RequestMetadata::post_process()
@@ -133,7 +129,6 @@ RequestMetadata::post_process()
 		_request->respond_error("Unknown client");
 	}
 }
-
 
 } // namespace Ingen
 } // namespace Events

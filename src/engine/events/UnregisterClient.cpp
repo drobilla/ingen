@@ -26,13 +26,11 @@ using namespace Raul;
 namespace Ingen {
 namespace Events {
 
-
 UnregisterClient::UnregisterClient(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const URI& uri)
 	: QueuedEvent(engine, request, timestamp)
 	, _uri(uri)
 {
 }
-
 
 void
 UnregisterClient::post_process()
@@ -42,7 +40,6 @@ UnregisterClient::post_process()
 	else
 		_request->respond_error("Unable to unregister client");
 }
-
 
 } // namespace Ingen
 } // namespace Events

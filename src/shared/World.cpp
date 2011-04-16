@@ -75,7 +75,7 @@ load_module(const string& name)
 
 	// Try default directory if not found
 	module = new Glib::Module(Shared::module_path(name), Glib::MODULE_BIND_LAZY);
-	
+
 	// FIXME: SEGV on exit without this
 	module->make_resident();
 
@@ -93,7 +93,6 @@ load_module(const string& name)
 		return SharedPtr<Glib::Module>();
 	}
 }
-
 
 class WorldImpl : public boost::noncopyable {
 public:
@@ -181,12 +180,10 @@ public:
 	std::string                          jack_uuid;
 };
 
-
 World::World(Raul::Configuration* conf, int& argc, char**& argv)
 	: _impl(new WorldImpl(conf, argc, argv))
 {
 }
-
 
 World::~World()
 {
@@ -217,7 +214,6 @@ SLV2World            World::slv2_world() { return _impl->slv2_world; }
 Sord::World*         World::rdf_world() { return _impl->rdf_world; }
 SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }
 
-
 /** Load an Ingen module.
  * @return true on success, false on failure
  */
@@ -238,7 +234,6 @@ World::load(const char* name)
 	}
 }
 
-
 /** Unload all loaded Ingen modules.
  */
 void
@@ -246,7 +241,6 @@ World::unload_all()
 {
 	_impl->modules.clear();
 }
-
 
 /** Get an interface for a remote engine at @a url
  */
@@ -262,7 +256,6 @@ World::interface(const std::string& url)
 
 	return i->second(this, url);
 }
-
 
 /** Run a script of type @a mime_type at filename @a filename */
 bool
@@ -283,20 +276,17 @@ World::add_interface_factory(const std::string& scheme, InterfaceFactory factory
 	_impl->interface_factories.insert(make_pair(scheme, factory));
 }
 
-
 void
 World::set_jack_uuid(const std::string& uuid)
 {
 	_impl->jack_uuid = uuid;
 }
 
-
 std::string
 World::jack_uuid()
 {
 	return _impl->jack_uuid;
 }
-
 
 } // namespace Shared
 } // namespace Ingen

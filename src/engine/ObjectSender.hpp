@@ -28,7 +28,6 @@ class NodeImpl;
 class PortImpl;
 class PluginImpl;
 
-
 /** Utility class for sending GraphObjects to clients through ClientInterface.
  *
  * While ClientInterface is the direct low level message-based interface

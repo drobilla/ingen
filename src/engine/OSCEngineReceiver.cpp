@@ -47,7 +47,6 @@ namespace Ingen {
 
 using namespace Shared;
 
-
 /*! \page engine_osc_namespace Engine OSC Namespace Documentation
  *
  * <p>These are the commands the engine recognizes.  A client can control every
@@ -57,7 +56,6 @@ using namespace Shared;
  * know about the state of the engine, it must listen to the "notification band".
  * See the "Client OSC Namespace Documentation" for details.
  */
-
 
 OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t port)
 	: QueuedEngineInterface(engine, queue_size) // FIXME
@@ -124,7 +122,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	Thread::set_name("OSCEngineReceiver");
 }
 
-
 OSCEngineReceiver::~OSCEngineReceiver()
 {
 	deactivate();
@@ -141,7 +138,6 @@ OSCEngineReceiver::~OSCEngineReceiver()
 	}
 }
 
-
 void
 OSCEngineReceiver::activate_source()
 {
@@ -151,14 +147,12 @@ OSCEngineReceiver::activate_source()
 	_receive_thread->set_scheduling(SCHED_FIFO, 5); // Jack default appears to be 10
 }
 
-
 void
 OSCEngineReceiver::deactivate_source()
 {
 	_receive_thread->stop();
 	EventSource::deactivate_source();
 }
-
 
 /** Override the semaphore driven _run method of QueuedEngineInterface
  * to wait on OSC messages and prepare them right away in the same thread.
@@ -184,7 +178,6 @@ OSCEngineReceiver::ReceiveThread::_run()
 		// No more unprepared events
 	}
 }
-
 
 /** Create a new request for this message, if necessary.
  *
@@ -235,7 +228,6 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	return 1;
 }
 
-
 #ifdef LIBLO_BUNDLES
 int
 OSCEngineReceiver::_bundle_start_cb(lo_timetag time)
@@ -244,7 +236,6 @@ OSCEngineReceiver::_bundle_start_cb(lo_timetag time)
 	return 0;
 }
 
-
 int
 OSCEngineReceiver::_bundle_end_cb()
 {
@@ -252,7 +243,6 @@ OSCEngineReceiver::_bundle_end_cb()
 	return 0;
 }
 #endif
-
 
 void
 OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
@@ -263,7 +253,6 @@ OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 	}
 	error << " (" << msg << ")" << endl;
 }
-
 
 /** \page engine_osc_namespace
  * <h2>/ping</h2>
@@ -279,7 +268,6 @@ OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, 
 		warn << "Unable to send response (" << lo_address_errstr(addr) << ")" << endl;
 	return 0;
 }
-
 
 /** \page engine_osc_namespace
  * <h2>/ping_queued</h2>
@@ -297,7 +285,6 @@ OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** a
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/quit</h2>
  * \arg \b response-id (integer)
@@ -313,7 +300,6 @@ OSCEngineReceiver::_quit_cb(const char* path, const char* types, lo_arg** argv, 
 	quit();
 	return 0;
 }
-
 
 /** \page engine_osc_namespace
  * <h2>/register_client</h2>
@@ -336,7 +322,6 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/unregister_client</h2>
  * \arg \b response-id (integer)
@@ -355,7 +340,6 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/load_plugins</h2>
  * \arg \b response-id (integer)
@@ -368,7 +352,6 @@ OSCEngineReceiver::_load_plugins_cb(const char* path, const char* types, lo_arg*
 	load_plugins();
 	return 0;
 }
-
 
 /** \page engine_osc_namespace
  * <h2>/activate</h2>
@@ -385,7 +368,6 @@ OSCEngineReceiver::_engine_activate_cb(const char* path, const char* types, lo_a
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/deactivate</h2>
  * \arg \b response-id (integer)
@@ -398,7 +380,6 @@ OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo
 	QueuedEngineInterface::deactivate();
 	return 0;
 }
-
 
 /** \page engine_osc_namespace
  * <h2>/get</h2>
@@ -413,7 +394,6 @@ OSCEngineReceiver::_get_cb(const char* path, const char* types, lo_arg** argv, i
 	get(&argv[1]->s);
 	return 0;
 }
-
 
 /** \page engine_osc_namespace
  * <h2>/put</h2>
@@ -436,7 +416,6 @@ OSCEngineReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, i
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/move</h2>
  * \arg \b response-id (integer)
@@ -455,7 +434,6 @@ OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, 
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/del</h2>
  * \arg \b response-id (integer)
@@ -471,7 +449,6 @@ OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, i
 	del(obj_path);
 	return 0;
 }
-
 
 /** \page engine_osc_namespace
  * <h2>/connect</h2>
@@ -491,7 +468,6 @@ OSCEngineReceiver::_connect_cb(const char* path, const char* types, lo_arg** arg
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/disconnect</h2>
  * \arg \b response-id (integer)
@@ -510,7 +486,6 @@ OSCEngineReceiver::_disconnect_cb(const char* path, const char* types, lo_arg** 
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/disconnect_all</h2>
  * \arg \b response-id (integer)
@@ -528,7 +503,6 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 	disconnect_all(patch_path, object_path);
 	return 0;
 }
-
 
 /** \page engine_osc_namespace
  * <h2>/note_on</h2>
@@ -552,7 +526,6 @@ OSCEngineReceiver::_note_on_cb(const char* path, const char* types, lo_arg** arg
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/note_off</h2>
  * \arg \b response-id (integer)
@@ -573,7 +546,6 @@ OSCEngineReceiver::_note_off_cb(const char* path, const char* types, lo_arg** ar
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/all_notes_off</h2>
  * \arg \b response-id (integer)
@@ -592,7 +564,6 @@ OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg
 	//all_notes_off(patch_path);
 	return 0;
 }
-
 
 /** \page engine_osc_namespace
  * <h2>/set_property</h2>
@@ -618,7 +589,6 @@ OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	return 0;
 }
 
-
 /** \page engine_osc_namespace
  * <h2>/request_property</h2>
  * \arg \b response-id (integer)
@@ -637,9 +607,7 @@ OSCEngineReceiver::_request_property_cb(const char* path, const char* types, lo_
 	return 0;
 }
 
-
 //  Static Callbacks //
-
 
 // Display incoming OSC messages (for debugging purposes)
 int
@@ -655,7 +623,6 @@ OSCEngineReceiver::generic_cb(const char* path, const char* types, lo_arg** argv
 
 	return 1;  // not handled
 }
-
 
 int
 OSCEngineReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg, void* user_data)
@@ -673,6 +640,5 @@ OSCEngineReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 
 	return 0;
 }
-
 
 } // namespace Ingen

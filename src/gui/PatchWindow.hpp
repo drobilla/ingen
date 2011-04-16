@@ -46,7 +46,6 @@ class PatchDescriptionWindow;
 class PatchView;
 class SubpatchModule;
 
-
 /** A window for a patch.
  *
  * \ingroup GUI
@@ -161,7 +160,6 @@ private:
 	/** Invisible bin used to store breadcrumbs when not shown by a view */
 	Gtk::Alignment _breadcrumb_bin;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

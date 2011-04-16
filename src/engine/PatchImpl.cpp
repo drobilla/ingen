@@ -40,7 +40,6 @@ namespace Ingen {
 
 using namespace Shared;
 
-
 PatchImpl::PatchImpl(Engine& engine, const Raul::Symbol& symbol, uint32_t poly, PatchImpl* parent, SampleRate srate, uint32_t internal_poly)
 	: NodeImpl(new PatchPlugin(*engine.world()->uris().get(),
 				engine.world()->uris()->ingen_Patch.c_str(), "patch", "Ingen Patch"),
@@ -53,7 +52,6 @@ PatchImpl::PatchImpl(Engine& engine, const Raul::Symbol& symbol, uint32_t poly, 
 	assert(internal_poly >= 1);
 }
 
-
 PatchImpl::~PatchImpl()
 {
 	assert(!_activated);
@@ -61,7 +59,6 @@ PatchImpl::~PatchImpl()
 	delete _compiled_patch;
 	delete _plugin;
 }
-
 
 void
 PatchImpl::activate(BufferFactory& bufs)
@@ -73,7 +70,6 @@ PatchImpl::activate(BufferFactory& bufs)
 
 	assert(_activated);
 }
-
 
 void
 PatchImpl::deactivate()
@@ -91,7 +87,6 @@ PatchImpl::deactivate()
 	assert(!_activated);
 }
 
-
 void
 PatchImpl::disable()
 {
@@ -103,7 +98,6 @@ PatchImpl::disable()
 		if ((*i)->context() == Context::AUDIO)
 			(*i)->clear_buffers();
 }
-
 
 bool
 PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
@@ -121,7 +115,6 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 
 	return true;
 }
-
 
 bool
 PatchImpl::apply_internal_poly(ProcessContext& context, BufferFactory& bufs, Raul::Maid& maid, uint32_t poly)
@@ -150,7 +143,6 @@ PatchImpl::apply_internal_poly(ProcessContext& context, BufferFactory& bufs, Rau
 
 	return true;
 }
-
 
 /** Run the patch for the specified number of frames.
  *
@@ -182,7 +174,6 @@ PatchImpl::process(ProcessContext& context)
 	NodeImpl::post_process(context);
 }
 
-
 void
 PatchImpl::process_parallel(ProcessContext& context)
 {
@@ -202,7 +193,6 @@ PatchImpl::process_parallel(ProcessContext& context)
 		for (size_t i = 0; i < n_slaves; ++i)
 			context.slaves()[i]->whip(cp, i+1, context);
 	}
-
 
 	/* Process ourself until everything is done
 	 * This is analogous to ProcessSlave::_whipped(), but this is the master
@@ -249,14 +239,12 @@ PatchImpl::process_parallel(ProcessContext& context)
 		context.slaves()[i]->finish();
 }
 
-
 void
 PatchImpl::process_single(ProcessContext& context)
 {
 	for (size_t i = 0; i < _compiled_patch->size(); ++i)
 		(*_compiled_patch)[i].node()->process(context);
 }
-
 
 void
 PatchImpl::set_buffer_size(Context& context, BufferFactory& bufs, PortType type, size_t size)
@@ -267,9 +255,7 @@ PatchImpl::set_buffer_size(Context& context, BufferFactory& bufs, PortType type,
 		(*_compiled_patch)[i].node()->set_buffer_size(context, bufs, type, size);
 }
 
-
 // Patch specific stuff
-
 
 /** Add a node.
  * Preprocessing thread only.
@@ -286,7 +272,6 @@ PatchImpl::add_node(List<NodeImpl*>::Node* ln)
 	_nodes.push_back(ln);
 }
 
-
 /** Remove a node.
  * Preprocessing thread only.
  */
@@ -301,14 +286,12 @@ PatchImpl::remove_node(const Raul::Symbol& symbol)
 	return NULL;
 }
 
-
 void
 PatchImpl::add_connection(SharedPtr<ConnectionImpl> c)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	_connections.insert(make_pair(make_pair(c->src_port(), c->dst_port()), c));
 }
-
 
 /** Remove a connection.
  * Preprocessing thread only.
@@ -328,7 +311,6 @@ PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 	}
 }
 
-
 bool
 PatchImpl::has_connection(const PortImpl* src_port, const PortImpl* dst_port) const
 {
@@ -336,7 +318,6 @@ PatchImpl::has_connection(const PortImpl* src_port, const PortImpl* dst_port) co
 	Connections::const_iterator i = _connections.find(make_pair(src_port, dst_port));
 	return (i != _connections.end());
 }
-
 
 uint32_t
 PatchImpl::num_ports() const
@@ -346,7 +327,6 @@ PatchImpl::num_ports() const
 	else
 		return _input_ports.size() + _output_ports.size();
 }
-
 
 /** Create a port.  Not realtime safe.
  */
@@ -363,7 +343,6 @@ PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, s
 	return new DuplexPort(bufs, this, name, num_ports(), polyphonic, _polyphony,
 			type, Raul::Atom(), buffer_size, is_output);
 }
-
 
 /** Remove port from ports list used in pre-processing thread.
  *
@@ -402,7 +381,6 @@ PatchImpl::remove_port(const string& symbol)
 	return ret;
 }
 
-
 /** Remove all ports from ports list used in pre-processing thread.
  *
  * Ports are not removed from ports array for process thread (which could be
@@ -418,7 +396,6 @@ PatchImpl::clear_ports()
 	_input_ports.clear();
 	_output_ports.clear();
 }
-
 
 Raul::Array<PortImpl*>*
 PatchImpl::build_ports_array() const
@@ -437,7 +414,6 @@ PatchImpl::build_ports_array() const
 
 	return result;
 }
-
 
 /** Find the process order for this Patch.
  *
@@ -486,6 +462,5 @@ PatchImpl::compile() const
 
 	return compiled_patch;
 }
-
 
 } // namespace Ingen

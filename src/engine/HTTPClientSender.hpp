@@ -31,7 +31,6 @@ class Engine;
 
 namespace Shared { class EngineInterface; }
 
-
 /** Implements ClientInterface for HTTP clients.
  * Sends changes as RDF deltas over an HTTP stream
  * (a single message with chunked encoding response).
@@ -97,7 +96,6 @@ private:
 	std::string _url;
 	bool        _enabled;
 };
-
 
 } // namespace Ingen
 

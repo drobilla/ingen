@@ -62,7 +62,6 @@ typedef jack_default_audio_sample_t jack_sample_t;
 
 namespace Ingen {
 
-
 //// JackPort ////
 
 JackPort::JackPort(JackDriver* driver, DuplexPort* patch_port)
@@ -75,12 +74,10 @@ JackPort::JackPort(JackDriver* driver, DuplexPort* patch_port)
 	create();
 }
 
-
 JackPort::~JackPort()
 {
 	assert(_jack_port == NULL);
 }
-
 
 void
 JackPort::create()
@@ -100,7 +97,6 @@ JackPort::create()
 	}
 }
 
-
 void
 JackPort::destroy()
 {
@@ -110,13 +106,11 @@ JackPort::destroy()
 	_jack_port = NULL;
 }
 
-
 void
 JackPort::move(const Raul::Path& path)
 {
 	jack_port_set_name(_jack_port, ingen_jack_port_name(path).c_str());
 }
-
 
 void
 JackPort::pre_process(ProcessContext& context)
@@ -153,7 +147,6 @@ JackPort::pre_process(ProcessContext& context)
 	}
 }
 
-
 void
 JackPort::post_process(ProcessContext& context)
 {
@@ -189,7 +182,6 @@ JackPort::post_process(ProcessContext& context)
 	}
 }
 
-
 //// JackDriver ////
 
 JackDriver::JackDriver(Engine& engine)
@@ -208,7 +200,6 @@ JackDriver::JackDriver(Engine& engine)
 			LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 }
 
-
 JackDriver::~JackDriver()
 {
 	deactivate();
@@ -217,14 +208,12 @@ JackDriver::~JackDriver()
 		jack_client_close(_client);
 }
 
-
 bool
 JackDriver::supports(Shared::PortType port_type, Shared::EventType event_type)
 {
 	return (port_type == PortType::AUDIO
 			|| (port_type == PortType::EVENTS && event_type == EventType::MIDI));
 }
-
 
 bool
 JackDriver::attach(const std::string& server_name,
@@ -252,7 +241,7 @@ JackDriver::attach(const std::string& server_name,
 				LOG(info) << "Connected to JACK server `" << server_name << "'" << endl;
 			}
 		}
-		
+
 		// Either server name not specified, or supplied server name does not exist
 		// Connect to default server
 		if (!_client) {
@@ -287,7 +276,6 @@ JackDriver::attach(const std::string& server_name,
 	return true;
 }
 
-
 void
 JackDriver::activate()
 {
@@ -317,7 +305,6 @@ JackDriver::activate()
 	}
 }
 
-
 void
 JackDriver::deactivate()
 {
@@ -340,7 +327,6 @@ JackDriver::deactivate()
 	}
 }
 
-
 /** Add a Jack port.
  *
  * Realtime safe, this is to be called at the beginning of a process cycle to
@@ -355,7 +341,6 @@ JackDriver::add_port(DriverPort* port)
 	assert(dynamic_cast<JackPort*>(port));
 	_ports.push_back((JackPort*)port);
 }
-
 
 /** Remove a Jack port.
  *
@@ -383,7 +368,6 @@ JackDriver::remove_port(const Path& path, DriverPort** port)
 	return NULL;
 }
 
-
 DriverPort*
 JackDriver::port(const Path& path)
 {
@@ -393,7 +377,6 @@ JackDriver::port(const Path& path)
 
 	return NULL;
 }
-
 
 DriverPort*
 JackDriver::create_port(DuplexPort* patch_port)
@@ -409,7 +392,6 @@ JackDriver::create_port(DuplexPort* patch_port)
 	}
 }
 
-
 DriverPort*
 JackDriver::driver_port(const Path& path)
 {
@@ -422,9 +404,7 @@ JackDriver::driver_port(const Path& path)
 	return NULL;
 }
 
-
 /**** Jack Callbacks ****/
-
 
 /** Jack process callback, drives entire audio thread.
  *
@@ -500,7 +480,6 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	return 0;
 }
 
-
 void
 JackDriver::_thread_init_cb()
 {
@@ -511,7 +490,6 @@ JackDriver::_thread_init_cb()
 	ThreadManager::assert_thread(THREAD_PROCESS);
 }
 
-
 void
 JackDriver::_shutdown_cb()
 {
@@ -521,7 +499,6 @@ JackDriver::_shutdown_cb()
 	_jack_thread = NULL;
 	_client = NULL;
 }
-
 
 int
 JackDriver::_sample_rate_cb(jack_nframes_t nframes)
@@ -535,7 +512,6 @@ JackDriver::_sample_rate_cb(jack_nframes_t nframes)
 	return 0;
 }
 
-
 int
 JackDriver::_block_length_cb(jack_nframes_t nframes)
 {
@@ -546,7 +522,6 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 	}
 	return 0;
 }
-
 
 #ifdef INGEN_JACK_SESSION
 void

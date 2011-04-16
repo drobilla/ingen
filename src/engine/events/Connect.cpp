@@ -41,7 +41,6 @@ namespace Events {
 
 using namespace Shared;
 
-
 Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& src_port_path, const Path& dst_port_path)
 	: QueuedEvent(engine, request, timestamp)
 	, _src_port_path(src_port_path)
@@ -54,7 +53,6 @@ Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timesta
 	, _buffers(NULL)
 {
 }
-
 
 void
 Connect::pre_process()
@@ -149,7 +147,6 @@ Connect::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 Connect::execute(ProcessContext& context)
 {
@@ -168,7 +165,6 @@ Connect::execute(ProcessContext& context)
 		_patch->compiled_patch(_compiled_patch);
 	}
 }
-
 
 void
 Connect::post_process()
@@ -202,7 +198,6 @@ Connect::post_process()
 	ss << ")";
 	_request->respond_error(ss.str());
 }
-
 
 } // namespace Ingen
 } // namespace Events

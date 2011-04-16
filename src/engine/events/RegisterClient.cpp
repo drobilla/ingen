@@ -25,7 +25,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Events {
 
-
 RegisterClient::RegisterClient(Engine&                  engine,
                                SharedPtr<Request>       request,
                                SampleCount              timestamp,
@@ -37,7 +36,6 @@ RegisterClient::RegisterClient(Engine&                  engine,
 {
 }
 
-
 void
 RegisterClient::pre_process()
 {
@@ -46,13 +44,11 @@ RegisterClient::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 RegisterClient::post_process()
 {
 	_request->respond_ok();
 }
-
 
 } // namespace Ingen
 } // namespace Events

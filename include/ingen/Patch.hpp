@@ -30,7 +30,6 @@ namespace Shared {
 
 class Connection;
 
-
 /** A Path (graph of Nodes/Connections)
  *
  * \ingroup interface
@@ -46,7 +45,6 @@ public:
 	virtual bool     enabled()       const = 0;
 	virtual uint32_t internal_poly() const = 0;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

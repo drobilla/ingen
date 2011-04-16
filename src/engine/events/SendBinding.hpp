@@ -28,7 +28,6 @@ class PortImpl;
 
 namespace Events {
 
-
 /** A special event used internally to send control bindings from the audio thread.
  *
  * See SendPortValue documentation for details.
@@ -78,7 +77,6 @@ private:
 	ControlBindings::Type _type;
 	int16_t               _num;
 };
-
 
 } // namespace Ingen
 } // namespace Events

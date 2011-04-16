@@ -32,7 +32,6 @@ using Ingen::Client::PatchModel;
 
 namespace GUI {
 
-
 /** Columns for the remote patch list.
  *
  * \ingroup GUI
@@ -48,8 +47,6 @@ public:
   Gtk::TreeModelColumn<Glib::ustring> _col_name;
   Gtk::TreeModelColumn<Glib::ustring> _col_uri;
 };
-
-
 
 /* Load remote patch ("import location") dialog.
  *
@@ -84,7 +81,6 @@ private:
 	Gtk::Button*   _open_button;
 	Gtk::Button*   _cancel_button;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

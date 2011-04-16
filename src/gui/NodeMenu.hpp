@@ -29,7 +29,6 @@ using Ingen::Client::NodeModel;
 namespace Ingen {
 namespace GUI {
 
-
 /** Menu for a Node.
  *
  * \ingroup GUI
@@ -62,7 +61,6 @@ protected:
 	Gtk::MenuItem*      _randomize_menuitem;
 	Gtk::Menu*          _presets_menu;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

@@ -23,7 +23,6 @@
 namespace Ingen {
 namespace Shared {
 
-
 /** The type of a port.
  *
  * This type refers to the type of the port itself (not necessarily the type
@@ -92,7 +91,6 @@ private:
 
 	Symbol _symbol;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

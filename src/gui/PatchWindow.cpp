@@ -172,7 +172,6 @@ PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glad
 	clipboard->signal_owner_change().connect(sigc::mem_fun(this, &PatchWindow::event_clipboard_changed));
 }
 
-
 PatchWindow::~PatchWindow()
 {
 	// Prevents deletion
@@ -180,7 +179,6 @@ PatchWindow::~PatchWindow()
 
 	delete _breadcrumbs;
 }
-
 
 /** Set the patch controller from a Path (for use by eg. BreadCrumbs)
  */
@@ -196,7 +194,6 @@ PatchWindow::set_patch_from_path(const Path& path, SharedPtr<PatchView> view)
 			App::instance().window_factory()->present_patch(model, this);
 	}
 }
-
 
 /** Sets the patch controller for this window and initializes everything.
  *
@@ -236,7 +233,6 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	_viewport->remove();
 	_viewport->add(*_view.get());
 
-
 	if (_breadcrumbs->get_parent())
 		_breadcrumbs->get_parent()->remove(*_breadcrumbs);
 
@@ -274,7 +270,6 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 	_enable_signal = true;
 }
 
-
 void
 PatchWindow::patch_port_added(SharedPtr<PortModel> port)
 {
@@ -282,7 +277,6 @@ PatchWindow::patch_port_added(SharedPtr<PortModel> port)
 		_menu_view_control_window->property_sensitive() = true;
 	}
 }
-
 
 void
 PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
@@ -300,7 +294,6 @@ PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 
 	_menu_view_control_window->property_sensitive() = false;
 }
-
 
 void
 PatchWindow::show_status(ObjectModel* model)
@@ -321,7 +314,6 @@ PatchWindow::show_status(ObjectModel* model)
 		_status_bar->push(msg.str(), STATUS_CONTEXT_HOVER);
 	}
 }
-
 
 void
 PatchWindow::show_port_status(PortModel* port, const Raul::Atom& value)
@@ -347,13 +339,11 @@ PatchWindow::show_port_status(PortModel* port, const Raul::Atom& value)
 	_status_bar->push(msg.str(), STATUS_CONTEXT_HOVER);
 }
 
-
 void
 PatchWindow::object_entered(ObjectModel* model)
 {
 	show_status(model);
 }
-
 
 void
 PatchWindow::object_left(ObjectModel* model)
@@ -361,13 +351,11 @@ PatchWindow::object_left(ObjectModel* model)
 	_status_bar->pop(STATUS_CONTEXT_HOVER);
 }
 
-
 void
 PatchWindow::editable_changed(bool editable)
 {
 	_menu_edit_controls->set_active(editable);
 }
-
 
 void
 PatchWindow::event_show_engine()
@@ -376,7 +364,6 @@ PatchWindow::event_show_engine()
 		App::instance().connect_window()->show();
 }
 
-
 void
 PatchWindow::event_clipboard_changed(GdkEventOwnerChange* ev)
 {
@@ -384,13 +371,11 @@ PatchWindow::event_clipboard_changed(GdkEventOwnerChange* ev)
 	_menu_paste->set_sensitive(clipboard->wait_is_text_available());
 }
 
-
 void
 PatchWindow::event_show_controls()
 {
 	App::instance().window_factory()->present_controls(_patch);
 }
-
 
 void
 PatchWindow::event_show_properties()
@@ -398,20 +383,17 @@ PatchWindow::event_show_properties()
 	App::instance().window_factory()->present_properties(_patch);
 }
 
-
 void
 PatchWindow::event_import()
 {
 	App::instance().window_factory()->present_load_patch(_patch);
 }
 
-
 void
 PatchWindow::event_import_location()
 {
 	App::instance().window_factory()->present_load_remote_patch(_patch);
 }
-
 
 void
 PatchWindow::event_save()
@@ -427,7 +409,6 @@ PatchWindow::event_save()
 				STATUS_CONTEXT_PATCH);
 	}
 }
-
 
 void
 PatchWindow::event_save_as()
@@ -526,13 +507,11 @@ more files and/or directories, recursively.  Existing files will be overwritten.
 	}
 }
 
-
 void
 PatchWindow::event_upload()
 {
 	App::instance().window_factory()->present_upload_patch(_patch);
 }
-
 
 void
 PatchWindow::event_draw()
@@ -568,14 +547,12 @@ PatchWindow::event_draw()
 	}
 }
 
-
 void
 PatchWindow::event_edit_controls()
 {
 	if (_view)
 		_view->set_editable(_menu_edit_controls->get_active());
 }
-
 
 void
 PatchWindow::event_copy()
@@ -584,14 +561,12 @@ PatchWindow::event_copy()
 		_view->canvas()->copy_selection();
 }
 
-
 void
 PatchWindow::event_paste()
 {
 	if (_view)
 		_view->canvas()->paste();
 }
-
 
 void
 PatchWindow::event_delete()
@@ -600,14 +575,12 @@ PatchWindow::event_delete()
 		_view->canvas()->destroy_selection();
 }
 
-
 void
 PatchWindow::event_select_all()
 {
 	if (_view)
 		_view->canvas()->select_all();
 }
-
 
 void
 PatchWindow::on_show()
@@ -618,7 +591,6 @@ PatchWindow::on_show()
 	Gtk::Window::on_show();
 }
 
-
 void
 PatchWindow::on_hide()
 {
@@ -626,7 +598,6 @@ PatchWindow::on_hide()
 	get_position(_x, _y);
 	Gtk::Window::on_hide();
 }
-
 
 bool
 PatchWindow::on_event(GdkEvent* event)
@@ -639,20 +610,17 @@ PatchWindow::on_event(GdkEvent* event)
 	}
 }
 
-
 void
 PatchWindow::event_close()
 {
 	App::instance().window_factory()->remove_patch_window(this);
 }
 
-
 void
 PatchWindow::event_quit()
 {
 	App::instance().quit(*this);
 }
-
 
 void
 PatchWindow::event_zoom_in()
@@ -666,20 +634,17 @@ PatchWindow::event_zoom_out()
 	_view->canvas()->set_font_size(_view->canvas()->get_font_size() - 1.0);
 }
 
-
 void
 PatchWindow::event_zoom_normal()
 {
 	_view->canvas()->set_zoom_and_font_size(1.0, _view->canvas()->get_default_font_size());
 }
 
-
 void
 PatchWindow::event_arrange()
 {
 	_view->canvas()->arrange(false, false);
 }
-
 
 void
 PatchWindow::event_fullscreen_toggled()
@@ -696,7 +661,6 @@ PatchWindow::event_fullscreen_toggled()
 	}
 }
 
-
 void
 PatchWindow::event_status_bar_toggled()
 {
@@ -705,8 +669,6 @@ PatchWindow::event_status_bar_toggled()
 	else
 		_status_bar->hide();
 }
-
-
 
 void
 PatchWindow::event_human_names_toggled()
@@ -717,7 +679,6 @@ PatchWindow::event_human_names_toggled()
 	else
 		App::instance().configuration()->set_name_style(Configuration::PATH);
 }
-
 
 void
 PatchWindow::event_port_names_toggled()
@@ -730,7 +691,6 @@ PatchWindow::event_port_names_toggled()
 		_view->canvas()->show_port_names(false);
 	}
 }
-
 
 } // namespace GUI
 } // namespace Ingen

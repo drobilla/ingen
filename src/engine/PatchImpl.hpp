@@ -37,7 +37,6 @@ class Context;
 class Engine;
 class ProcessContext;
 
-
 /** A group of nodes in a graph, possibly polyphonic.
  *
  * Note that this is also a Node, just one which contains Nodes.
@@ -141,8 +140,6 @@ private:
 	bool                  _process;
 };
 
-
-
 /** Private helper for compile */
 inline void
 PatchImpl::compile_recursive(NodeImpl* n, CompiledPatch* output) const
@@ -159,7 +156,6 @@ PatchImpl::compile_recursive(NodeImpl* n, CompiledPatch* output) const
 
 	output->push_back(CompiledNode(n, n->providers()->size(), n->dependants()));
 }
-
 
 } // namespace Ingen
 

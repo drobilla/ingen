@@ -32,7 +32,6 @@ using namespace Raul;
 
 namespace Ingen {
 
-
 void
 MessageContext::run(NodeImpl* node, FrameTime time)
 {
@@ -48,7 +47,6 @@ MessageContext::run(NodeImpl* node, FrameTime time)
 		_cond.wait(_mutex);
 	}
 }
-
 
 void
 MessageContext::_run()
@@ -96,7 +94,6 @@ MessageContext::_run()
 		}
 	}
 }
-
 
 void
 MessageContext::execute(const Request& req)

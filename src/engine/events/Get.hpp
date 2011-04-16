@@ -29,7 +29,6 @@ class PluginImpl;
 
 namespace Events {
 
-
 /** A request from a client to send an object.
  *
  * \ingroup engine
@@ -52,7 +51,6 @@ private:
 	const PluginImpl*    _plugin;
 	NodeFactory::Plugins _plugins;
 };
-
 
 } // namespace Ingen
 } // namespace Events

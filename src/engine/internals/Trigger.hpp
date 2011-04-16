@@ -29,7 +29,6 @@ class InternalPlugin;
 
 namespace Internals {
 
-
 /** MIDI trigger input node.
  *
  * Just has a gate,  for drums etc.  A control port is used to select
@@ -69,7 +68,6 @@ private:
 	OutputPort* _trig_port;
 	OutputPort* _vel_port;
 };
-
 
 } // namespace Ingen
 } // namespace Internals

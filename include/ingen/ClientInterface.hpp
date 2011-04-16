@@ -57,7 +57,6 @@ public:
 	virtual void activity(const Raul::Path& path) = 0;
 };
 
-
 } // namespace Shared
 } // namespace Ingen
 

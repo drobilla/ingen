@@ -31,7 +31,6 @@ using namespace Ingen::Client;
 namespace Ingen {
 namespace GUI {
 
-
 NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: ObjectMenu(cobject, xml)
 	, _controls_menuitem(NULL)
@@ -58,7 +57,6 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 	node_menu->remove(*_controls_menuitem);
 	insert(*_controls_menuitem, 0);
 }
-
 
 void
 NodeMenu::init(SharedPtr<NodeModel> node)
@@ -146,13 +144,11 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 	_enable_signal = true;
 }
 
-
 void
 NodeMenu::on_menu_embed_gui()
 {
 	signal_embed_gui.emit(_embed_gui_menuitem->get_active());
 }
-
 
 void
 NodeMenu::on_menu_randomize()
@@ -173,13 +169,11 @@ NodeMenu::on_menu_randomize()
 	App::instance().engine()->bundle_end();
 }
 
-
 void
 NodeMenu::on_menu_disconnect()
 {
 	App::instance().engine()->disconnect_all(_object->parent()->path(), _object->path());
 }
-
 
 void
 NodeMenu::on_preset_activated(const std::string& uri)
@@ -226,14 +220,12 @@ NodeMenu::on_preset_activated(const std::string& uri)
 #endif
 }
 
-
 bool
 NodeMenu::on_preset_clicked(const std::string& uri, GdkEventButton* ev)
 {
 	on_preset_activated(uri);
 	return false;
 }
-
 
 bool
 NodeMenu::has_control_inputs()
@@ -246,20 +238,17 @@ NodeMenu::has_control_inputs()
 	return false;
 }
 
-
 void
 NodeMenu::enable_controls_menuitem()
 {
 	_controls_menuitem->property_sensitive() = true;
 }
 
-
 void
 NodeMenu::disable_controls_menuitem()
 {
 	_controls_menuitem->property_sensitive() = false;
 }
-
 
 } // namespace GUI
 } // namespace Ingen

@@ -29,7 +29,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-
 void
 PatchModel::add_child(SharedPtr<ObjectModel> c)
 {
@@ -45,7 +44,6 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 	if (nm)
 		signal_new_node.emit(nm);
 }
-
 
 bool
 PatchModel::remove_child(SharedPtr<ObjectModel> o)
@@ -83,7 +81,6 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 	return true;
 }
 
-
 void
 PatchModel::clear()
 {
@@ -95,7 +92,6 @@ PatchModel::clear()
 	assert(_ports.empty());
 }
 
-
 SharedPtr<ConnectionModel>
 PatchModel::get_connection(const Shared::Port* src_port, const Shared::Port* dst_port)
 {
@@ -105,7 +101,6 @@ PatchModel::get_connection(const Shared::Port* src_port, const Shared::Port* dst
 	else
 		return SharedPtr<ConnectionModel>();
 }
-
 
 /** Add a connection to this patch.
  *
@@ -141,7 +136,6 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 	}
 }
 
-
 void
 PatchModel::remove_connection(const Shared::Port* src_port, const Shared::Port* dst_port)
 {
@@ -156,14 +150,12 @@ PatchModel::remove_connection(const Shared::Port* src_port, const Shared::Port* 
 	}
 }
 
-
 bool
 PatchModel::enabled() const
 {
 	const Raul::Atom& enabled = get_property(_uris.ingen_enabled);
 	return (enabled.is_valid() && enabled.get_bool());
 }
-
 
 uint32_t
 PatchModel::internal_poly() const
@@ -172,14 +164,12 @@ PatchModel::internal_poly() const
 	return poly.is_valid() ? poly.get_int32() : 1;
 }
 
-
 bool
 PatchModel::polyphonic() const
 {
 	const Raul::Atom& poly = get_property(_uris.ingen_polyphonic);
 	return poly.is_valid() && poly.get_bool();
 }
-
 
 } // namespace Client
 } // namespace Ingen

@@ -31,7 +31,6 @@ class CompiledPatch;
 
 namespace Events {
 
-
 /** \page methods
  * <h2>POST</h2>
  * As per HTTP (RFC2616 S9.5).
@@ -116,7 +115,6 @@ private:
 
 	SharedPtr<ControlBindings::Bindings> _old_bindings;
 };
-
 
 } // namespace Ingen
 } // namespace Events

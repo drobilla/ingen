@@ -40,7 +40,6 @@ namespace Client {
 class PluginModel;
 class ClientStore;
 
-
 /** Node model class, used by the client to store engine's state.
  *
  * \ingroup IngenClient
@@ -100,7 +99,6 @@ private:
 	mutable float*   _min_values; ///< Port min values (cached for LV2)
 	mutable float*   _max_values; ///< Port max values (cached for LV2)
 };
-
 
 } // namespace Client
 } // namespace Ingen

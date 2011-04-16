@@ -29,7 +29,6 @@ namespace Client {
 
 class NodeModel;
 
-
 /** Model for a plugin available for loading.
  *
  * \ingroup IngenClient
@@ -49,7 +48,6 @@ public:
 	                uint32_t    format,
 	                const void* buffer);
 
-
 	Ingen::Shared::World* world() const { return _world; }
 	SharedPtr<NodeModel>  node()  const { return _node; }
 
@@ -66,10 +64,8 @@ private:
     SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
 
-
 } // namespace Client
 } // namespace Ingen
 
 #endif // INGEN_CLIENT_PLUGINUI_HPP
-
 

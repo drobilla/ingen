@@ -42,7 +42,6 @@ class PluginImpl;
 class PortImpl;
 class ProcessContext;
 
-
 /** A Node (or "module") in a Patch (which is also a Node).
  *
  * A Node is a unit with input/output ports, a process() method, and some other
@@ -214,7 +213,6 @@ protected:
 	bool _activated;
 	bool _traversed; ///< Flag for process order algorithm
 };
-
 
 } // namespace Ingen
 

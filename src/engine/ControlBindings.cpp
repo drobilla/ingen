@@ -37,7 +37,6 @@ using namespace Raul;
 
 namespace Ingen {
 
-
 ControlBindings::ControlBindings(Engine& engine)
 	: _engine(engine)
 	, _learn_port(NULL)
@@ -46,12 +45,10 @@ ControlBindings::ControlBindings(Engine& engine)
 {
 }
 
-
 ControlBindings::~ControlBindings()
 {
 	delete _feedback;
 }
-
 
 ControlBindings::Key
 ControlBindings::port_binding(PortImpl* port)
@@ -80,7 +77,6 @@ ControlBindings::port_binding(PortImpl* port)
 	return key;
 }
 
-
 ControlBindings::Key
 ControlBindings::midi_event_key(uint16_t size, uint8_t* buf, uint16_t& value)
 {
@@ -102,7 +98,6 @@ ControlBindings::midi_event_key(uint16_t size, uint8_t* buf, uint16_t& value)
 	}
 }
 
-
 void
 ControlBindings::port_binding_changed(ProcessContext& context, PortImpl* port)
 {
@@ -110,7 +105,6 @@ ControlBindings::port_binding_changed(ProcessContext& context, PortImpl* port)
 	if (key)
 		_bindings->insert(make_pair(key, port));
 }
-
 
 void
 ControlBindings::port_value_changed(ProcessContext& context, PortImpl* port)
@@ -159,14 +153,12 @@ ControlBindings::port_value_changed(ProcessContext& context, PortImpl* port)
 	}
 }
 
-
 void
 ControlBindings::learn(PortImpl* port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	_learn_port = port;
 }
-
 
 Raul::Atom
 ControlBindings::control_to_port_value(PortImpl* port, Type type, int16_t value)
@@ -200,7 +192,6 @@ ControlBindings::control_to_port_value(PortImpl* port, Type type, int16_t value)
 
 	return Raul::Atom(scaled_value);
 }
-
 
 int16_t
 ControlBindings::port_value_to_control(PortImpl* port, Type type)
@@ -242,7 +233,6 @@ ControlBindings::port_value_to_control(PortImpl* port, Type type)
 	}
 }
 
-
 void
 ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value)
 {
@@ -259,7 +249,6 @@ ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type ty
 	const Events::SendPortValue ev(context.engine(), context.start(), port, true, 0, port_value);
 	context.event_sink().write(sizeof(ev), &ev);
 }
-
 
 bool
 ControlBindings::bind(ProcessContext& context, Key key)
@@ -280,7 +269,6 @@ ControlBindings::bind(ProcessContext& context, Key key)
 	_learn_port = NULL;
 	return true;
 }
-
 
 SharedPtr<ControlBindings::Bindings>
 ControlBindings::remove(const Raul::Path& path)
@@ -304,7 +292,6 @@ ControlBindings::remove(const Raul::Path& path)
 	return old_bindings;
 }
 
-
 SharedPtr<ControlBindings::Bindings>
 ControlBindings::remove(PortImpl* port)
 {
@@ -326,7 +313,6 @@ ControlBindings::remove(PortImpl* port)
 	_bindings = copy;
 	return old_bindings;
 }
-
 
 void
 ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
@@ -383,7 +369,6 @@ ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 	}
 }
 
-
 void
 ControlBindings::post_process(ProcessContext& context, EventBuffer* buffer)
 {
@@ -393,6 +378,5 @@ ControlBindings::post_process(ProcessContext& context, EventBuffer* buffer)
 		buffer->copy(context, _feedback);
 	}
 }
-
 
 } // namespace Ingen

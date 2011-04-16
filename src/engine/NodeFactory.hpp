@@ -37,7 +37,6 @@ class PluginImpl;
 class LV2Info;
 #endif
 
-
 /** Discovers and loads plugin libraries.
  *
  * \ingroup engine
@@ -69,7 +68,6 @@ private:
 	SharedPtr<LV2Info>    _lv2_info;
 #endif
 };
-
 
 } // namespace Ingen
 

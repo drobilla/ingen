@@ -34,7 +34,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
                                  const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Window(cobject)
@@ -68,13 +67,11 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
 	_patches_treeview->columns_autosize();
 }
 
-
 void
 PatchTreeWindow::init(ClientStore& store)
 {
 	store.signal_new_object.connect(sigc::mem_fun(this, &PatchTreeWindow::new_object));
 }
-
 
 void
 PatchTreeWindow::new_object(SharedPtr<ObjectModel> object)
@@ -83,7 +80,6 @@ PatchTreeWindow::new_object(SharedPtr<ObjectModel> object)
 	if (patch)
 		add_patch(patch);
 }
-
 
 void
 PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
@@ -126,7 +122,6 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		pm));
 }
 
-
 void
 PatchTreeWindow::remove_patch(SharedPtr<PatchModel> pm)
 {
@@ -134,7 +129,6 @@ PatchTreeWindow::remove_patch(SharedPtr<PatchModel> pm)
 	if (i != _patch_treestore->children().end())
 		_patch_treestore->erase(i);
 }
-
 
 Gtk::TreeModel::iterator
 PatchTreeWindow::find_patch(
@@ -154,7 +148,6 @@ PatchTreeWindow::find_patch(
 	return root.end();
 }
 
-
 /** Show the context menu for the selected patch in the patches treeview.
  */
 void
@@ -169,7 +162,6 @@ PatchTreeWindow::show_patch_menu(GdkEventButton* ev)
 	}
 }
 
-
 void
 PatchTreeWindow::event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::TreeView::Column* col)
 {
@@ -179,7 +171,6 @@ PatchTreeWindow::event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::Tr
 
 	App::instance().window_factory()->present_patch(pm);
 }
-
 
 void
 PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
@@ -195,7 +186,6 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 		App::instance().engine()->set_property(pm->path(),
 				App::instance().uris().ingen_enabled, (bool)!pm->enabled());
 }
-
 
 void
 PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
@@ -215,7 +205,6 @@ PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
 	_enable_signal = true;
 }
 
-
 void
 PatchTreeWindow::patch_moved(SharedPtr<PatchModel> patch)
 {
@@ -233,7 +222,6 @@ PatchTreeWindow::patch_moved(SharedPtr<PatchModel> patch)
 
 	_enable_signal = true;
 }
-
 
 } // namespace GUI
 } // namespace Ingen

@@ -40,7 +40,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::FileChooserDialog(cobject)
 	, _merge_ports(false)
@@ -95,7 +94,6 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 	}
 }
 
-
 void
 LoadPatchWindow::present(SharedPtr<PatchModel> patch, bool import, GraphObject::Properties data)
 {
@@ -110,7 +108,6 @@ LoadPatchWindow::present(SharedPtr<PatchModel> patch, bool import, GraphObject::
 	Gtk::Window::present();
 }
 
-
 /** Sets the patch model for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
@@ -124,7 +121,6 @@ LoadPatchWindow::set_patch(SharedPtr<PatchModel> patch)
 	_poly_spinbutton->set_value(patch->internal_poly());
 }
 
-
 void
 LoadPatchWindow::on_show()
 {
@@ -133,20 +129,17 @@ LoadPatchWindow::on_show()
 	Gtk::FileChooserDialog::on_show();
 }
 
-
 void
 LoadPatchWindow::merge_ports_selected()
 {
 	_merge_ports = true;
 }
 
-
 void
 LoadPatchWindow::insert_ports_selected()
 {
 	_merge_ports = false;
 }
-
 
 void
 LoadPatchWindow::ok_clicked()
@@ -202,14 +195,12 @@ LoadPatchWindow::ok_clicked()
 	hide();
 }
 
-
 void
 LoadPatchWindow::cancel_clicked()
 {
 	_patch.reset();
 	hide();
 }
-
 
 Raul::Symbol
 LoadPatchWindow::symbol_from_filename(const Glib::ustring& filename)
@@ -218,7 +209,6 @@ LoadPatchWindow::symbol_from_filename(const Glib::ustring& filename)
 	symbol_str = symbol_str.substr(0, symbol_str.find('.'));
 	return Raul::Symbol::symbolify(symbol_str);
 }
-
 
 Raul::Symbol
 LoadPatchWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
@@ -235,7 +225,6 @@ LoadPatchWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
 	}
 }
 
-
 void
 LoadPatchWindow::selection_changed()
 {
@@ -251,7 +240,6 @@ LoadPatchWindow::selection_changed()
 		_symbol_entry->set_sensitive(true);
 	}
 }
-
 
 } // namespace GUI
 } // namespace Ingen

@@ -40,7 +40,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Events {
 
-
 DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& parent_path, const Path& node_path)
 	: QueuedEvent(engine, request, timestamp)
 	, _parent_path(parent_path)
@@ -52,7 +51,6 @@ DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleC
 	, _deleting(false)
 {
 }
-
 
 /** Internal version for use by other events.
  */
@@ -68,13 +66,11 @@ DisconnectAll::DisconnectAll(Engine& engine, PatchImpl* parent, GraphObjectImpl*
 {
 }
 
-
 DisconnectAll::~DisconnectAll()
 {
 	for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin(); i != _disconnect_events.end(); ++i)
 		delete (*i);
 }
-
 
 void
 DisconnectAll::pre_process()
@@ -144,7 +140,6 @@ DisconnectAll::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 DisconnectAll::execute(ProcessContext& context)
 {
@@ -159,7 +154,6 @@ DisconnectAll::execute(ProcessContext& context)
 	_engine.maid()->push(_parent->compiled_patch());
 	_parent->compiled_patch(_compiled_patch);
 }
-
 
 void
 DisconnectAll::post_process()
@@ -190,7 +184,6 @@ DisconnectAll::post_process()
 		}
 	}
 }
-
 
 } // namespace Ingen
 } // namespace Events

@@ -28,7 +28,6 @@ class PortImpl;
 
 namespace Events {
 
-
 /** A ping that travels through the pre-processed event queue before responding
  * (useful for the order guarantee).
  *
@@ -43,7 +42,6 @@ public:
 
 	void post_process() { _request->respond_ok(); }
 };
-
 
 } // namespace Ingen
 } // namespace Events

@@ -47,7 +47,6 @@ class LV2URIMap;
 class Store;
 class WorldImpl;
 
-
 /** The "world" all Ingen modules may share.
  *
  * All loaded components of Ingen, as well as things requiring shared access
@@ -70,7 +69,7 @@ public:
 
 	virtual void add_interface_factory(const std::string& scheme,
 	                                   InterfaceFactory   factory);
-	
+
 	virtual SharedPtr<Ingen::Shared::EngineInterface> interface(
 		const std::string& engine_url);
 
@@ -108,7 +107,6 @@ public:
 private:
 	WorldImpl* _impl;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

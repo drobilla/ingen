@@ -33,7 +33,6 @@ namespace GUI {
 class PatchWindow;
 class PatchTreeView;
 
-
 /** Window with a TreeView of all loaded patches.
  *
  * \ingroup GUI
@@ -82,7 +81,6 @@ protected:
 	Glib::RefPtr<Gtk::TreeSelection> _patch_tree_selection;
 };
 
-
 /** Derived TreeView class to support context menus for patches */
 class PatchTreeView : public Gtk::TreeView
 {
@@ -107,7 +105,6 @@ private:
 	PatchTreeWindow* _window;
 
 }; // struct PatchTreeView
-
 
 } // namespace GUI
 } // namespace Ingen

@@ -33,7 +33,6 @@ namespace Events {
 
 class Disconnect;
 
-
 /** An event to disconnect all connections to a Node.
  *
  * \ingroup engine
@@ -79,9 +78,7 @@ private:
 	bool      _deleting;
 };
 
-
 } // namespace Ingen
 } // namespace Events
-
 
 #endif // INGEN_EVENTS_DISCONNECTALL_HPP

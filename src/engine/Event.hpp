@@ -30,7 +30,6 @@ class Engine;
 class Request;
 class ProcessContext;
 
-
 /** Base class for all events (both realtime and QueuedEvent).
  *
  * This is for time-critical events like note ons.  There is no non-realtime
@@ -73,7 +72,6 @@ protected:
 	int                _error;
 	bool               _executed;
 };
-
 
 } // namespace Ingen
 

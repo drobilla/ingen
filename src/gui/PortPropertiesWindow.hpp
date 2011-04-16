@@ -27,7 +27,6 @@
 namespace Ingen {
 namespace GUI {
 
-
 /** Port properties window.
  *
  * Loaded by libglade as a derived object.

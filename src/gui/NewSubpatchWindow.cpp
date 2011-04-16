@@ -29,7 +29,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Window(cobject)
 {
@@ -64,7 +63,6 @@ NewSubpatchWindow::set_patch(SharedPtr<PatchModel> patch)
 	_patch = patch;
 }
 
-
 /** Called every time the user types into the name input box.
  * Used to display warning messages, and enable/disable the OK button.
  */
@@ -88,7 +86,6 @@ NewSubpatchWindow::name_changed()
 	}
 }
 
-
 void
 NewSubpatchWindow::ok_clicked()
 {
@@ -111,13 +108,11 @@ NewSubpatchWindow::ok_clicked()
 	hide();
 }
 
-
 void
 NewSubpatchWindow::cancel_clicked()
 {
 	hide();
 }
-
 
 } // namespace GUI
 } // namespace Ingen

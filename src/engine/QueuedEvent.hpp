@@ -22,7 +22,6 @@
 
 namespace Ingen {
 
-
 /** An Event with a not-time-critical preprocessing stage.
  *
  * These events are events that aren't able to be executed immediately by the
@@ -70,7 +69,6 @@ protected:
 	bool _pre_processed;
 	bool _blocking;
 };
-
 
 } // namespace Ingen
 

@@ -78,7 +78,6 @@ private:
 	bool              _quit_flag;
 };
 
-
 } // namespace Client
 } // namespace Ingen
 

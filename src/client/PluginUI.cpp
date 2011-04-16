@@ -101,7 +101,6 @@ lv2_ui_write(LV2UI_Controller controller,
 	}
 }
 
-
 PluginUI::PluginUI(Ingen::Shared::World* world,
                    SharedPtr<NodeModel>  node)
 	: _world(world)
@@ -110,12 +109,10 @@ PluginUI::PluginUI(Ingen::Shared::World* world,
 {
 }
 
-
 PluginUI::~PluginUI()
 {
 	slv2_ui_instance_free(_instance);
 }
-
 
 SharedPtr<PluginUI>
 PluginUI::create(Ingen::Shared::World* world,

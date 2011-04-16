@@ -29,7 +29,6 @@ using Ingen::Client::PortModel;
 namespace Ingen {
 namespace GUI {
 
-
 /** Menu for a Port.
  *
  * \ingroup GUI
@@ -54,7 +53,6 @@ private:
 	Gtk::MenuItem* _set_max_menuitem;
 	Gtk::MenuItem* _reset_range_menuitem;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

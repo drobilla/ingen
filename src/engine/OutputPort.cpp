@@ -48,7 +48,6 @@ OutputPort::OutputPort(BufferFactory&      bufs,
 	setup_buffers(bufs, poly);
 }
 
-
 bool
 OutputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly)
 {
@@ -58,14 +57,12 @@ OutputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* bu
 	return true;
 }
 
-
 void
 OutputPort::pre_process(Context& context)
 {
 	for (uint32_t v = 0; v < _poly; ++v)
 		_buffers->at(v)->prepare_write(context);
 }
-
 
 void
 OutputPort::post_process(Context& context)
@@ -76,6 +73,5 @@ OutputPort::post_process(Context& context)
 	if (_broadcast)
 		broadcast_value(context, false);
 }
-
 
 } // namespace Ingen

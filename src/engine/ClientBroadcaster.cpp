@@ -34,7 +34,6 @@ using Ingen::Shared::ClientInterface;
 
 namespace Ingen {
 
-
 /** Register a client to receive messages over the notification band.
  */
 void
@@ -49,7 +48,6 @@ ClientBroadcaster::register_client(const URI& uri, ClientInterface* client)
 		LOG(warn) << "Client already registered: " << uri << endl;
 	}
 }
-
 
 /** Remove a client from the list of registered clients.
  *
@@ -68,8 +66,6 @@ ClientBroadcaster::unregister_client(const URI& uri)
 	return (erased > 0);
 }
 
-
-
 /** Looks up the client with the given source @a uri (which is used as the
  * unique identifier for registered clients).
  */
@@ -84,14 +80,12 @@ ClientBroadcaster::client(const URI& uri)
 	}
 }
 
-
 void
 ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 {
 	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c)
 		send_plugins_to((*c).second, plugins);
 }
-
 
 void
 ClientBroadcaster::send_plugins_to(ClientInterface* client, const NodeFactory::Plugins& plugins)
@@ -106,7 +100,6 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client, const NodeFactory::P
 	client->transfer_end();
 }
 
-
 /** Send an object to all clients.
  *
  * @param o         Object to send
@@ -118,6 +111,5 @@ ClientBroadcaster::send_object(const GraphObjectImpl* o, bool recursive)
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
 		ObjectSender::send_object((*i).second, o, recursive);
 }
-
 
 } // namespace Ingen

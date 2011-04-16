@@ -30,7 +30,6 @@ namespace Ingen {
 namespace Shared {
 namespace LV2Atom {
 
-
 bool
 to_atom(const Shared::LV2URIMap& uris, const LV2_Atom* object, Raul::Atom& atom)
 {
@@ -49,7 +48,6 @@ to_atom(const Shared::LV2URIMap& uris, const LV2_Atom* object, Raul::Atom& atom)
 	}
 	return false;
 }
-
 
 /** Convert an atom to an LV2 object, if possible.
  * object->size should be the capacity of the object (not including header)
@@ -88,7 +86,6 @@ from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* objec
 	}
 	return true;
 }
-
 
 } // namespace LV2Atom
 

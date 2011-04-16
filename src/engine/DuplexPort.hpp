@@ -27,7 +27,6 @@ namespace Ingen {
 
 class NodeImpl;
 
-
 /** A duplex port (which is both an InputPort and an OutputPort)
  *
  * This is used for Patch ports, since they need to appear as both an input
@@ -63,7 +62,6 @@ public:
 protected:
 	bool _is_output;
 };
-
 
 } // namespace Ingen
 

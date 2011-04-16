@@ -22,7 +22,6 @@ using namespace std;
 
 namespace Ingen {
 
-
 /** \a size is not size_t because an event will never be even remotely close
  * to UINT32_MAX in size, so uint32_t saves wasted space on 64-bit.
  */
@@ -37,7 +36,6 @@ EventSink::write(uint32_t size, const Event* ev)
 
 	return true;
 }
-
 
 /** Read the next event into event_buffer.
  *
@@ -58,6 +56,5 @@ EventSink::read(uint32_t event_buffer_size, uint8_t* event_buffer)
 	else
 		return false;
 }
-
 
 } // namespace Ingen

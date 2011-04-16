@@ -39,7 +39,6 @@ class PatchCanvas;
 class Port;
 class NodeMenu;
 
-
 /** A module in a patch.
  *
  * This base class is extended for various types of modules.
@@ -93,7 +92,6 @@ protected:
 	Gtk::Widget*           _gui_widget;
 	Gtk::Window*           _gui_window; ///< iff popped up
 };
-
 
 } // namespace GUI
 } // namespace Ingen

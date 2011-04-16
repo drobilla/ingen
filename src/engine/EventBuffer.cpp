@@ -66,12 +66,10 @@ EventBuffer::EventBuffer(BufferFactory& bufs, size_t capacity)
 	clear();
 }
 
-
 EventBuffer::~EventBuffer()
 {
 	free(_data);
 }
-
 
 void
 EventBuffer::prepare_read(Context& context)
@@ -79,14 +77,12 @@ EventBuffer::prepare_read(Context& context)
 	rewind();
 }
 
-
 void
 EventBuffer::prepare_write(Context& context)
 {
 	if (context.offset() == 0)
 		clear();
 }
-
 
 void
 EventBuffer::copy(Context& context, const Buffer* src_buf)
@@ -111,7 +107,6 @@ EventBuffer::copy(Context& context, const Buffer* src_buf)
 	assert(event_count() == src->event_count());
 }
 
-
 /** Increment the read position by one event.
  *
  * \return true if increment was successful, or false if end of buffer reached.
@@ -127,7 +122,6 @@ EventBuffer::increment() const
 	}
 }
 
-
 /** \return true iff the cursor is valid (ie get_event is safe)
  */
 bool
@@ -135,7 +129,6 @@ EventBuffer::is_valid() const
 {
 	return lv2_event_is_valid(&_iter);
 }
-
 
 /** Read an event from the current position in the buffer
  *
@@ -160,7 +153,6 @@ EventBuffer::get_event(uint32_t* frames,
 	}
 }
 
-
 /** Get the object currently pointed to, or NULL if invalid.
  */
 LV2_Atom*
@@ -174,7 +166,6 @@ EventBuffer::get_atom() const
 	return NULL;
 }
 
-
 /** Get the event currently pointed to, or NULL if invalid.
  */
 LV2_Event*
@@ -186,7 +177,6 @@ EventBuffer::get_event() const
 	}
 	return NULL;
 }
-
 
 /** Append an event to the buffer.
  *
@@ -221,6 +211,5 @@ EventBuffer::append(uint32_t       frames,
 		return true;
 	}
 }
-
 
 } // namespace Ingen

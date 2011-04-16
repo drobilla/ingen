@@ -27,7 +27,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 Glib::ustring GladeFactory::glade_filename = "";
 
 inline static bool
@@ -63,7 +62,6 @@ GladeFactory::find_glade_file()
 	throw std::runtime_error("Unable to find glade file");
 }
 
-
 Glib::RefPtr<Gnome::Glade::Xml>
 GladeFactory::new_glade_reference(const string& toplevel_widget)
 {
@@ -80,7 +78,6 @@ GladeFactory::new_glade_reference(const string& toplevel_widget)
 		throw ex;
 	}
 }
-
 
 } // namespace GUI
 } // namespace Ingen

@@ -32,7 +32,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 PropertiesWindow::PropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 	: Window(cobject)
 {
@@ -62,7 +61,6 @@ PropertiesWindow::PropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 			sigc::mem_fun(this, &PropertiesWindow::ok_clicked));
 }
 
-
 void
 PropertiesWindow::reset()
 {
@@ -75,7 +73,6 @@ PropertiesWindow::reset()
 	_property_connection.disconnect();
 	_model.reset();
 }
-
 
 /** Set the node this window is associated with.
  * This function MUST be called before using this object in any way.
@@ -181,7 +178,6 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 	return NULL;
 }
 
-
 void
 PropertiesWindow::on_show()
 {
@@ -209,7 +205,6 @@ PropertiesWindow::on_show()
 	Gtk::Window::on_show();
 }
 
-
 void
 PropertiesWindow::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
@@ -229,7 +224,6 @@ PropertiesWindow::property_changed(const Raul::URI& predicate, const Raul::Atom&
 	}
 	record.value = value;
 }
-
 
 void
 PropertiesWindow::value_edited(const Raul::URI& predicate)
@@ -271,14 +265,12 @@ bad_type:
 	return;
 }
 
-
 void
 PropertiesWindow::cancel_clicked()
 {
 	reset();
 	Gtk::Window::hide();
 }
-
 
 void
 PropertiesWindow::apply_clicked()
@@ -301,14 +293,12 @@ PropertiesWindow::apply_clicked()
 	LOG(debug) << "}" << endl;
 }
 
-
 void
 PropertiesWindow::ok_clicked()
 {
 	apply_clicked();
 	cancel_clicked();
 }
-
 
 } // namespace GUI
 } // namespace Ingen

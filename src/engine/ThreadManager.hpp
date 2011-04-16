@@ -23,13 +23,11 @@
 
 namespace Ingen {
 
-
 enum ThreadID {
 	THREAD_PRE_PROCESS,
 	THREAD_PROCESS,
 	THREAD_MESSAGE,
 };
-
 
 class ThreadManager {
 public:
@@ -50,7 +48,6 @@ public:
 	 */
 	static bool single_threaded;
 };
-
 
 } // namespace Ingen
 

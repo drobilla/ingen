@@ -30,7 +30,6 @@ namespace Ingen {
 
 class LV2Plugin;
 
-
 /** An instance of a LV2 plugin.
  *
  * \ingroup engine
@@ -74,7 +73,6 @@ protected:
 
 	SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
-
 
 } // namespace Ingen
 

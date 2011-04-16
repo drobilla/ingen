@@ -27,7 +27,6 @@ namespace Shared {
 
 class ClientInterface;
 
-
 /** The (only) interface clients use to communicate with the engine.
  * Purely virtual (except for the destructor).
  *
@@ -68,7 +67,6 @@ public:
 	virtual void request_property(const Raul::URI& uri,
 	                              const Raul::URI& key) = 0;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

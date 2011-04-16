@@ -49,7 +49,6 @@ private:
 	LV2_Atom* _buf; ///< Contents
 };
 
-
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_OBJECTBUFFER_HPP

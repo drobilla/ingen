@@ -26,7 +26,6 @@ using namespace std;
 
 namespace Ingen {
 
-
 EventSource::EventSource(size_t queue_size)
 	: _blocking_semaphore(0)
 {
@@ -34,12 +33,10 @@ EventSource::EventSource(size_t queue_size)
 	set_name("EventSource");
 }
 
-
 EventSource::~EventSource()
 {
 	Thread::stop();
 }
-
 
 /** Push an unprepared event onto the queue.
  */
@@ -54,7 +51,6 @@ EventSource::push_queued(QueuedEvent* const ev)
 
 	whip();
 }
-
 
 /** Process all events for a cycle.
  *
@@ -81,7 +77,7 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 
 	if (!head)
 		return;
-	
+
 	QueuedEvent* ev = (QueuedEvent*)head->elem();
 
 	while (ev && ev->is_prepared() && ev->time() < context.end()) {
@@ -100,7 +96,6 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 		dest.append(&front);
 	}
 }
-
 
 /** Pre-process a single event */
 void
@@ -125,7 +120,6 @@ EventSource::_whipped()
 	if (ev->is_blocking())
 		_blocking_semaphore.wait();
 }
-
 
 } // namespace Ingen
 

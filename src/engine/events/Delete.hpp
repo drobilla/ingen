@@ -40,7 +40,6 @@ namespace Events {
 
 class DisconnectAll;
 
-
 /** \page methods
  * <h2>DELETE</h2>
  * As per WebDAV (RFC4918 S9.6).
@@ -87,7 +86,6 @@ private:
 
 	SharedPtr< Raul::Table<Raul::Path, SharedPtr<Shared::GraphObject> > > _removed_table;
 };
-
 
 } // namespace Ingen
 } // namespace Events

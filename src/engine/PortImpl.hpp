@@ -38,7 +38,6 @@ class NodeImpl;
 class Buffer;
 class BufferFactory;
 
-
 /** A port on a Node.
  *
  * This is a non-template abstract base class, which basically exists so
@@ -165,7 +164,6 @@ protected:
 	// Dynamic polyphony
 	Raul::Array<BufferFactory::Ref>* _prepared_buffers;
 };
-
 
 } // namespace Ingen
 

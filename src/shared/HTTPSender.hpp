@@ -58,7 +58,6 @@ protected:
 	std::string  _transfer;
 };
 
-
 } // namespace Shared
 } // namespace Ingen
 

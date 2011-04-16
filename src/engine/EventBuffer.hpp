@@ -26,7 +26,6 @@
 
 namespace Ingen {
 
-
 class EventBuffer : public Buffer {
 public:
 	EventBuffer(BufferFactory& bufs, size_t capacity);
@@ -79,7 +78,6 @@ private:
 	uint32_t                   _latest_frames;    ///< Latest time of all events (frames)
 	uint32_t                   _latest_subframes; ///< Latest time of all events (subframes)
 };
-
 
 } // namespace Ingen
 

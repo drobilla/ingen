@@ -27,7 +27,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-
 const URI
 ClashAvoider::map_uri(const Raul::URI& in)
 {
@@ -36,7 +35,6 @@ ClashAvoider::map_uri(const Raul::URI& in)
 	else
 		return in;
 }
-
 
 const Path
 ClashAvoider::map_path(const Raul::Path& in)
@@ -130,7 +128,6 @@ ClashAvoider::map_path(const Raul::Path& in)
 	}
 }
 
-
 bool
 ClashAvoider::exists(const Raul::Path& path) const
 {
@@ -144,7 +141,6 @@ ClashAvoider::exists(const Raul::Path& path) const
 		return false;
 }
 
-
 void
 ClashAvoider::put(const Raul::URI&                    path,
                   const Shared::Resource::Properties& properties,
@@ -152,7 +148,6 @@ ClashAvoider::put(const Raul::URI&                    path,
 {
 	_target.put(map_uri(path), properties, ctx);
 }
-
 
 void
 ClashAvoider::delta(const Raul::URI&                    path,
@@ -162,14 +157,12 @@ ClashAvoider::delta(const Raul::URI&                    path,
 	_target.delta(map_uri(path), remove, add);
 }
 
-
 void
 ClashAvoider::move(const Raul::Path& old_path,
                    const Raul::Path& new_path)
 {
 	_target.move(map_path(old_path), map_path(new_path));
 }
-
 
 void
 ClashAvoider::connect(const Raul::Path& src_port_path,
@@ -178,14 +171,12 @@ ClashAvoider::connect(const Raul::Path& src_port_path,
 	_target.connect(map_path(src_port_path), map_path(dst_port_path));
 }
 
-
 void
 ClashAvoider::disconnect(const Raul::Path& src_port_path,
                          const Raul::Path& dst_port_path)
 {
 	_target.disconnect(map_path(src_port_path), map_path(dst_port_path));
 }
-
 
 void
 ClashAvoider::set_property(const Raul::URI&  subject,
@@ -195,13 +186,11 @@ ClashAvoider::set_property(const Raul::URI&  subject,
 	_target.set_property(map_uri(subject), predicate, value);
 }
 
-
 void
 ClashAvoider::del(const Raul::Path& path)
 {
 	_target.del(map_path(path));
 }
-
 
 } // namespace Shared
 } // namespace Ingen

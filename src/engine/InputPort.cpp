@@ -61,7 +61,6 @@ InputPort::InputPort(BufferFactory&      bufs,
 	}
 }
 
-
 bool
 InputPort::apply_poly(Maid& maid, uint32_t poly)
 {
@@ -73,7 +72,6 @@ InputPort::apply_poly(Maid& maid, uint32_t poly)
 
 	return true;
 }
-
 
 /** Set \a buffers appropriately if this port has \a num_connections connections.
  * \return true iff buffers are locally owned by the port
@@ -109,7 +107,6 @@ InputPort::get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buf
 	return true;
 }
 
-
 /** Add a connection.  Realtime safe.
  *
  * The buffer of this port will be set directly to the connection's buffer
@@ -129,7 +126,6 @@ InputPort::add_connection(Connections::Node* const c)
 	if (is_a(PortType::CONTROL))
 		_broadcast = true;
 }
-
 
 /** Remove a connection.  Realtime safe.
  *
@@ -165,7 +161,6 @@ InputPort::remove_connection(ProcessContext& context, const OutputPort* src_port
 
 	return connection;
 }
-
 
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.
  */
@@ -206,7 +201,6 @@ InputPort::pre_process(Context& context)
 		broadcast_value(context, false);
 }
 
-
 void
 InputPort::post_process(Context& context)
 {
@@ -221,7 +215,6 @@ InputPort::post_process(Context& context)
 	}
 }
 
-
 bool
 InputPort::direct_connect() const
 {
@@ -230,7 +223,6 @@ InputPort::direct_connect() const
 		&& !_connections.front()->must_mix()
 		&& !_connections.front()->must_queue();
 }
-
 
 } // namespace Ingen
 

@@ -23,13 +23,11 @@
 namespace Ingen {
 namespace Events {
 
-
 void
 SendPortActivity::post_process()
 {
 	_engine.broadcaster()->activity(_port->path());
 }
-
 
 } // namespace Ingen
 } // namespace Events

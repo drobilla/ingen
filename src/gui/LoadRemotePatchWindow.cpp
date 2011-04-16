@@ -33,7 +33,6 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-
 LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Dialog(cobject)
 {
@@ -55,7 +54,6 @@ LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType* cobject, const Glib
 	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &LoadRemotePatchWindow::cancel_clicked));
 	_uri_entry->signal_changed().connect(sigc::mem_fun(this, &LoadRemotePatchWindow::uri_changed));
 }
-
 
 void
 LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties data)
@@ -90,7 +88,6 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Propert
 #endif
 }
 
-
 /** Sets the patch controller for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
@@ -101,20 +98,17 @@ LoadRemotePatchWindow::set_patch(SharedPtr<PatchModel> patch)
 	_patch = patch;
 }
 
-
 void
 LoadRemotePatchWindow::uri_changed()
 {
 	_open_button->property_sensitive() = (_uri_entry->get_text().length() > 0);
 }
 
-
 void
 LoadRemotePatchWindow::patch_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col)
 {
 	open_clicked();
 }
-
 
 void
 LoadRemotePatchWindow::patch_selected()
@@ -126,7 +120,6 @@ LoadRemotePatchWindow::patch_selected()
 		_uri_entry->set_text(uri);
 	}
 }
-
 
 void
 LoadRemotePatchWindow::open_clicked()
@@ -146,13 +139,11 @@ LoadRemotePatchWindow::open_clicked()
 	hide();
 }
 
-
 void
 LoadRemotePatchWindow::cancel_clicked()
 {
 	hide();
 }
-
 
 } // namespace GUI
 } // namespace Ingen

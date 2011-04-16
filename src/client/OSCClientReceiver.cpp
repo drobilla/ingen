@@ -50,12 +50,10 @@ OSCClientReceiver::OSCClientReceiver(int listen_port, SharedPtr<Shared::ClientIn
 #endif
 }
 
-
 OSCClientReceiver::~OSCClientReceiver()
 {
 	stop();
 }
-
 
 void
 OSCClientReceiver::start(bool dump_osc)
@@ -95,7 +93,6 @@ OSCClientReceiver::start(bool dump_osc)
 	lo_server_thread_start(_st);
 }
 
-
 void
 OSCClientReceiver::stop()
 {
@@ -105,7 +102,6 @@ OSCClientReceiver::stop()
 		_st = NULL;
 	}
 }
-
 
 int
 OSCClientReceiver::generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data)
@@ -121,14 +117,11 @@ OSCClientReceiver::generic_cb(const char* path, const char* types, lo_arg** argv
 	return 1;  // not handled
 }
 
-
 void
 OSCClientReceiver::lo_error_cb(int num, const char* msg, const char* path)
 {
 	LOG(error) << "Got error from server: " << msg << endl;
 }
-
-
 
 int
 OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data)
@@ -140,7 +133,6 @@ OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 
 	return 0;
 }
-
 
 void
 OSCClientReceiver::setup_callbacks()
@@ -157,7 +149,6 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/activity", "s", activity_cb, this);
 }
 
-
 /** Catches errors that aren't a direct result of a client request.
  */
 int
@@ -167,14 +158,12 @@ OSCClientReceiver::_error_cb(const char* path, const char* types, lo_arg** argv,
 	return 0;
 }
 
-
 int
 OSCClientReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	_target->del((const char*)&argv[0]->s);
 	return 0;
 }
-
 
 int
 OSCClientReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -187,14 +176,12 @@ OSCClientReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, i
 	return 0;
 }
 
-
 int
 OSCClientReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	_target->move((const char*)&argv[0]->s, (const char*)&argv[1]->s);
 	return 0;
 }
-
 
 int
 OSCClientReceiver::_connection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -207,7 +194,6 @@ OSCClientReceiver::_connection_cb(const char* path, const char* types, lo_arg** 
 	return 0;
 }
 
-
 int
 OSCClientReceiver::_disconnection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
@@ -218,7 +204,6 @@ OSCClientReceiver::_disconnection_cb(const char* path, const char* types, lo_arg
 
 	return 0;
 }
-
 
 /** Notification of a new or updated property.
  */
@@ -238,7 +223,6 @@ OSCClientReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	return 0;
 }
 
-
 int
 OSCClientReceiver::_activity_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
@@ -249,7 +233,6 @@ OSCClientReceiver::_activity_cb(const char* path, const char* types, lo_arg** ar
 	return 0;
 }
 
-
 int
 OSCClientReceiver::_response_ok_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
@@ -259,7 +242,6 @@ OSCClientReceiver::_response_ok_cb(const char* path, const char* types, lo_arg**
 	return 0;
 }
 
-
 int
 OSCClientReceiver::_response_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
@@ -268,7 +250,6 @@ OSCClientReceiver::_response_error_cb(const char* path, const char* types, lo_ar
 
 	return 0;
 }
-
 
 } // namespace Client
 } // namespace Ingen

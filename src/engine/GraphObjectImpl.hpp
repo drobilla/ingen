@@ -39,7 +39,6 @@ class Context;
 class ProcessContext;
 class BufferFactory;
 
-
 /** An object on the audio graph - Patch, Node, Port, etc.
  *
  * Each of these is a Raul::Deletable and so can be deleted in a realtime safe
@@ -104,7 +103,6 @@ protected:
 	Raul::Path       _path;
 	Raul::Symbol     _symbol;
 };
-
 
 } // namespace Ingen
 

@@ -33,7 +33,6 @@ using namespace Raul;
 
 namespace Ingen {
 
-
 LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
 	: PluginImpl(*lv2_info->world().uris().get(), Plugin::LV2, uri)
 	, _slv2_plugin(NULL)
@@ -41,7 +40,6 @@ LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
 {
 	set_property(_uris.rdf_type, _uris.lv2_Plugin);
 }
-
 
 const string
 LV2Plugin::symbol() const
@@ -62,7 +60,6 @@ LV2Plugin::symbol() const
 
 	return "lv2_symbol";
 }
-
 
 NodeImpl*
 LV2Plugin::instantiate(BufferFactory&    bufs,
@@ -85,13 +82,11 @@ LV2Plugin::instantiate(BufferFactory&    bufs,
 	return n;
 }
 
-
 void
 LV2Plugin::slv2_plugin(SLV2Plugin p)
 {
 	_slv2_plugin = p;
 }
-
 
 const std::string&
 LV2Plugin::library_path() const
@@ -109,6 +104,5 @@ LV2Plugin::library_path() const
 
 	return _library_path;
 }
-
 
 } // namespace Ingen

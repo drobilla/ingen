@@ -31,7 +31,6 @@ namespace Client {
 
 class ClientStore;
 
-
 /** Class to represent a port->port connection in the engine.
  *
  * This can either have pointers to the connection ports' models, or just
@@ -68,7 +67,6 @@ private:
 	const SharedPtr<PortModel> _src_port;
 	const SharedPtr<PortModel> _dst_port;
 };
-
 
 } // namespace Client
 } // namespace Ingen

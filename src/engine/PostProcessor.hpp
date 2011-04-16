@@ -27,7 +27,6 @@ namespace Ingen {
 class Event;
 class Engine;
 
-
 /** Processor for Events after leaving the audio thread.
  *
  * The audio thread pushes events to this when it is done with them (which
@@ -61,7 +60,6 @@ private:
 	uint32_t           _event_buffer_size;
 	uint8_t*           _event_buffer;
 };
-
 
 } // namespace Ingen
 

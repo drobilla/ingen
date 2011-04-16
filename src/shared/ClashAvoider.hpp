@@ -30,7 +30,6 @@ namespace Shared {
 
 class Store;
 
-
 /** A wrapper for a CommonInterface that creates objects but possibly maps
  * symbol names to avoid clashes with the existing objects in a store.
  */
@@ -87,7 +86,6 @@ private:
 	typedef std::map<Raul::Path, Raul::Path> SymbolMap;
 	SymbolMap _symbol_map;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

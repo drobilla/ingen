@@ -47,7 +47,6 @@ class PatchCanvas;
 class PatchDescriptionWindow;
 class SubpatchModule;
 
-
 /** The patch specific contents of a PatchWindow (ie the canvas and whatever else).
  *
  * \ingroup GUI
@@ -102,7 +101,6 @@ private:
 
 	bool _enable_signal;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

@@ -27,7 +27,6 @@ using namespace std;
 namespace Ingen {
 namespace Events {
 
-
 void
 SendPortValue::post_process()
 {
@@ -35,7 +34,6 @@ SendPortValue::post_process()
 			_port->path(),
 			_engine.world()->uris()->ingen_value, _value);
 }
-
 
 } // namespace Ingen
 } // namespace Events

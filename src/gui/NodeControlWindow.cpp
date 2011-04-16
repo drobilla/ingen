@@ -31,7 +31,6 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-
 /** Create a node control window and load a new ControlPanel for it.
  */
 NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
@@ -61,7 +60,6 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
 	_callback_enabled = true;
 }
 
-
 /** Create a node control window and with an existing ControlPanel.
  */
 NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* panel)
@@ -83,12 +81,10 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* pa
 	_callback_enabled = true;
 }
 
-
 NodeControlWindow::~NodeControlWindow()
 {
 	delete _control_panel;
 }
-
 
 void
 NodeControlWindow::resize()
@@ -105,7 +101,6 @@ NodeControlWindow::resize()
 	Gtk::Window::resize(width, height);
 }
 
-
 void
 NodeControlWindow::on_show()
 {
@@ -121,7 +116,6 @@ NodeControlWindow::on_show()
 	Gtk::Window::on_show();
 }
 
-
 void
 NodeControlWindow::on_hide()
 {
@@ -129,7 +123,6 @@ NodeControlWindow::on_hide()
 	get_position(_x, _y);
 	Gtk::Window::on_hide();
 }
-
 
 } // namespace GUI
 } // namespace Ingen

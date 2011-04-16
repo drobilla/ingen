@@ -38,7 +38,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Events {
 
-
 Disconnect::Disconnect(
 		Engine&            engine,
 		SharedPtr<Request> request,
@@ -58,7 +57,6 @@ Disconnect::Disconnect(
 	, _clear_dst_port(false)
 {
 }
-
 
 Disconnect::Disconnect(
 		Engine&            engine,
@@ -80,7 +78,6 @@ Disconnect::Disconnect(
 	, _clear_dst_port(false)
 {
 }
-
 
 void
 Disconnect::pre_process()
@@ -166,13 +163,11 @@ Disconnect::pre_process()
 		_clear_dst_port = true;
 	}
 
-
 	if (!_internal && _patch->enabled())
 		_compiled_patch = _patch->compile();
 
 	QueuedEvent::pre_process();
 }
-
 
 void
 Disconnect::execute(ProcessContext& context)
@@ -221,7 +216,6 @@ Disconnect::execute(ProcessContext& context)
 	}
 }
 
-
 void
 Disconnect::post_process()
 {
@@ -260,7 +254,6 @@ Disconnect::post_process()
             _request->respond_error(msg);
     }
 }
-
 
 } // namespace Ingen
 } // namespace Events

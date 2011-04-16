@@ -37,7 +37,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-
 LV2URIMap::Quark::Quark(const char* c_str)
 	: Raul::URI(c_str)
 	, id(g_quark_from_string(c_str))
@@ -130,9 +129,7 @@ LV2URIMap::LV2URIMap()
 	_unmap_feature = SharedPtr<UnmapFeature>(new UnmapFeature(*this));
 }
 
-
 struct null_deleter { void operator()(void const *) const {} };
-
 
 uint32_t
 LV2URIMap::uri_to_id(const char* map,
@@ -159,7 +156,6 @@ LV2URIMap::uri_to_id(const char* map,
 	}
 }
 
-
 const char*
 LV2URIMap::id_to_uri(const char*    map,
                      const uint32_t id)
@@ -176,7 +172,6 @@ LV2URIMap::id_to_uri(const char*    map,
 	}
 }
 
-
 std::pair<bool, uint32_t>
 LV2URIMap::event_to_global(uint16_t event_id) const
 {
@@ -186,7 +181,6 @@ LV2URIMap::event_to_global(uint16_t event_id) const
 	}
 	return std::make_pair(true, i->second);
 }
-
 
 std::pair<bool, uint16_t>
 LV2URIMap::global_to_event(uint32_t global_id) const
@@ -198,7 +192,6 @@ LV2URIMap::global_to_event(uint32_t global_id) const
 	return std::make_pair(true, i->second);
 }
 
-
 uint32_t
 LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
                              const char*               map,
@@ -208,7 +201,6 @@ LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 	return me->uri_to_id(map, uri);
 }
 
-
 const char*
 LV2URIMap::uri_unmap_id_to_uri(LV2_URI_Map_Callback_Data callback_data,
                                const char*               map,
@@ -217,7 +209,6 @@ LV2URIMap::uri_unmap_id_to_uri(LV2_URI_Map_Callback_Data callback_data,
 	LV2URIMap* me = (LV2URIMap*)callback_data;
 	return me->id_to_uri(map, id);
 }
-
 
 } // namespace Shared
 } // namespace Ingen

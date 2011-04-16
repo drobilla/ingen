@@ -26,7 +26,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-
 void
 ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
 {
@@ -40,14 +39,12 @@ ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
 	_properties.insert(make_pair(uri, value));
 }
 
-
 Raul::Atom&
 ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value)
 {
 	_properties.erase(uri);
 	return _properties.insert(make_pair(uri, value))->second;
 }
-
 
 void
 ResourceImpl::remove_property(const Raul::URI& uri, const Raul::Atom& value)
@@ -65,7 +62,6 @@ ResourceImpl::remove_property(const Raul::URI& uri, const Raul::Atom& value)
 	}
 }
 
-
 bool
 ResourceImpl::has_property(const Raul::URI& uri, const Raul::Atom& value) const
 {
@@ -78,13 +74,11 @@ ResourceImpl::has_property(const Raul::URI& uri, const Raul::Atom& value) const
 	return false;
 }
 
-
 Raul::Atom&
 ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value) const
 {
 	return const_cast<ResourceImpl*>(this)->set_property(uri, value);
 }
-
 
 const Raul::Atom&
 ResourceImpl::get_property(const Raul::URI& uri) const
@@ -93,7 +87,6 @@ ResourceImpl::get_property(const Raul::URI& uri) const
 	Properties::const_iterator i = _properties.find(uri);
 	return (i != _properties.end()) ? i->second : nil;
 }
-
 
 bool
 ResourceImpl::type(
@@ -156,7 +149,6 @@ ResourceImpl::type(
 	}
 }
 
-
 void
 ResourceImpl::set_properties(const Properties& p)
 {
@@ -167,7 +159,6 @@ ResourceImpl::set_properties(const Properties& p)
 		add_property(i->first, i->second);
 }
 
-
 void
 ResourceImpl::add_properties(const Properties& p)
 {
@@ -175,7 +166,6 @@ ResourceImpl::add_properties(const Properties& p)
 	for (iterator i = p.begin(); i != p.end(); ++i)
 		add_property(i->first, i->second);
 }
-
 
 void
 ResourceImpl::remove_properties(const Properties& p)
@@ -196,7 +186,6 @@ ResourceImpl::remove_properties(const Properties& p)
 	}
 }
 
-
 void
 ResourceImpl::dump(std::ostream& os) const
 {
@@ -207,7 +196,6 @@ ResourceImpl::dump(std::ostream& os) const
 	}
 	os << "]" << endl;
 }
-
 
 Resource::Properties
 ResourceImpl::properties(Resource::Graph ctx) const

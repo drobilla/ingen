@@ -23,7 +23,6 @@
 namespace Ingen {
 namespace Shared {
 
-
 /** A type of event (that can live in an EventBuffer).
  */
 class EventType {
@@ -72,7 +71,6 @@ private:
 
 	Symbol _symbol;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

@@ -28,7 +28,6 @@ namespace Ingen {
 
 using namespace Shared;
 
-
 GraphObjectImpl::GraphObjectImpl(Shared::LV2URIMap& uris,
 		GraphObjectImpl* parent, const Symbol& symbol)
 	: ResourceImpl(uris, parent ? parent->path().child(symbol) : Raul::Path::root())
@@ -38,20 +37,17 @@ GraphObjectImpl::GraphObjectImpl(Shared::LV2URIMap& uris,
 {
 }
 
-
 void
 GraphObjectImpl::add_meta_property(const Raul::URI& key, const Atom& value)
 {
 	add_property(key, Resource::Property(value, Resource::INTERNAL));
 }
 
-
 void
 GraphObjectImpl::set_meta_property(const Raul::URI& key, const Atom& value)
 {
 	set_property(key, Resource::Property(value, Resource::INTERNAL));
 }
-
 
 const Atom&
 GraphObjectImpl::get_property(const Raul::URI& key) const
@@ -61,19 +57,16 @@ GraphObjectImpl::get_property(const Raul::URI& key) const
 	return (i != properties().end()) ? i->second : null_atom;
 }
 
-
 PatchImpl*
 GraphObjectImpl::parent_patch() const
 {
 	return dynamic_cast<PatchImpl*>((NodeImpl*)_parent);
 }
 
-
 SharedPtr<GraphObject>
 GraphObjectImpl::find_child(const string& name) const
 {
 	throw;
 }
-
 
 } // namespace Ingen

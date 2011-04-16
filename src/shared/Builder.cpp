@@ -31,13 +31,11 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-
 Builder::Builder(SharedPtr<Shared::LV2URIMap> uris, CommonInterface& interface)
 	: _uris(uris)
 	, _interface(interface)
 {
 }
-
 
 void
 Builder::build(SharedPtr<const GraphObject> object)
@@ -78,7 +76,6 @@ Builder::build(SharedPtr<const GraphObject> object)
 	}
 }
 
-
 void
 Builder::connect(SharedPtr<const GraphObject> object)
 {
@@ -92,14 +89,12 @@ Builder::connect(SharedPtr<const GraphObject> object)
 	}
 }
 
-
 void
 Builder::build_object(SharedPtr<const GraphObject> object)
 {
 	typedef GraphObject::Properties::const_iterator iterator;
 	_interface.put(object->uri(), object->properties());
 }
-
 
 } // namespace Shared
 } // namespace Ingen

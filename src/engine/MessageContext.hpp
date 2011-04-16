@@ -107,7 +107,6 @@ protected:
 	FrameTime _end_time;
 };
 
-
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_MESSAGECONTEXT_HPP

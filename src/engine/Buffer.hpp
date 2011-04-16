@@ -87,11 +87,9 @@ private:
 
 } // namespace Ingen
 
-
 namespace boost {
 	inline void intrusive_ptr_add_ref(Ingen::Buffer* b) { b->ref(); }
 	inline void intrusive_ptr_release(Ingen::Buffer* b) { b->deref(); }
 }
-
 
 #endif // INGEN_ENGINE_BUFFER_HPP

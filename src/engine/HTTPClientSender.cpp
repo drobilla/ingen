@@ -37,20 +37,17 @@ HTTPClientSender::response_ok(int32_t id)
 {
 }
 
-
 void
 HTTPClientSender::response_error(int32_t id, const std::string& msg)
 {
 	warn << "HTTP Error " << id << " (" << msg << ")" << endl;
 }
 
-
 void
 HTTPClientSender::error(const std::string& msg)
 {
 	warn << "HTTP send error " << msg << endl;
 }
-
 
 void
 HTTPClientSender::put(const URI&                  uri,
@@ -71,7 +68,6 @@ HTTPClientSender::put(const URI&                  uri,
 	send_chunk(str);
 }
 
-
 void
 HTTPClientSender::delta(const URI&                  uri,
                         const Resource::Properties& remove,
@@ -79,14 +75,12 @@ HTTPClientSender::delta(const URI&                  uri,
 {
 }
 
-
 void
 HTTPClientSender::del(const Path& path)
 {
 	assert(!path.is_root());
 	send_chunk(string("<").append(path.str()).append("> a <http://www.w3.org/2002/07/owl#Nothing> ."));
 }
-
 
 void
 HTTPClientSender::connect(const Path& src_path, const Path& dst_path)
@@ -100,13 +94,11 @@ HTTPClientSender::connect(const Path& src_path, const Path& dst_path)
 	send_chunk(msg);
 }
 
-
 void
 HTTPClientSender::disconnect(const Path& src_path, const Path& dst_path)
 {
 	//send("/ingen/disconnection", "ss", src_path.c_str(), dst_path.c_str(), LO_ARGS_END);
 }
-
 
 void
 HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& value)
@@ -124,7 +116,6 @@ HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& v
 #endif
 }
 
-
 void
 HTTPClientSender::activity(const Path& path)
 {
@@ -133,7 +124,6 @@ HTTPClientSender::activity(const Path& path)
 			path.str()).append("> ingen:activity true .\n");
 	send_chunk(msg);
 }
-
 
 void
 HTTPClientSender::move(const Path& old_path, const Path& new_path)
@@ -144,6 +134,5 @@ HTTPClientSender::move(const Path& old_path, const Path& new_path)
 			old_path.str()).append("> rdf:subject <").append(new_path.str()).append("> .\n");
 	send_chunk(msg);
 }
-
 
 } // namespace Ingen

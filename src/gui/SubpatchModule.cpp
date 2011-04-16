@@ -30,7 +30,6 @@
 namespace Ingen {
 namespace GUI {
 
-
 SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PatchModel> patch)
 	: NodeModule(canvas, patch)
 	, _patch(patch)
@@ -38,7 +37,6 @@ SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<
 	assert(canvas);
 	assert(patch);
 }
-
 
 void
 SubpatchModule::on_double_click(GdkEventButton* event)
@@ -53,7 +51,6 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 
 	App::instance().window_factory()->present_patch(_patch, preferred);
 }
-
 
 /** Browse to this patch in current (parent's) window
  * (unless an existing window is displaying it)
@@ -71,7 +68,6 @@ SubpatchModule::browse_to_patch()
 
 	App::instance().window_factory()->present_patch(_patch, preferred);
 }
-
 
 void
 SubpatchModule::menu_remove()

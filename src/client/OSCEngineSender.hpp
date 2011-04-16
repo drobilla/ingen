@@ -27,7 +27,6 @@
 namespace Ingen {
 namespace Client {
 
-
 /* OSC (via liblo) interface to the engine.
  *
  * Clients can use this opaquely as an EngineInterface* to control the engine
@@ -53,7 +52,6 @@ public:
 	void disable_responses() { _id = -1; }
 
 	void attach(int32_t ping_id, bool block);
-
 
 	/* *** EngineInterface implementation below here *** */
 
@@ -113,7 +111,6 @@ protected:
 	int             _client_port;
 	int32_t         _id;
 };
-
 
 } // namespace Client
 } // namespace Ingen

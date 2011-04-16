@@ -40,7 +40,6 @@ BufferFactory::BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> a_uris
 	assert(_uris);
 }
 
-
 BufferFactory::~BufferFactory()
 {
 	free_list(_free_audio.get());
@@ -48,7 +47,6 @@ BufferFactory::~BufferFactory()
 	free_list(_free_event.get());
 	free_list(_free_object.get());
 }
-
 
 void
 BufferFactory::free_list(Buffer* head)
@@ -59,20 +57,17 @@ BufferFactory::free_list(Buffer* head)
 		free_list(next);
 }
 
-
 void
 BufferFactory::set_block_length(SampleCount block_length)
 {
 	_silent_buffer = create(PortType::AUDIO, audio_buffer_size(block_length));
 }
 
-
 size_t
 BufferFactory::audio_buffer_size(SampleCount nframes)
 {
 	return sizeof(LV2_Atom) + sizeof(LV2_Atom_Vector) + (nframes * sizeof(float));
 }
-
 
 size_t
 BufferFactory::default_buffer_size(PortType type)
@@ -88,7 +83,6 @@ BufferFactory::default_buffer_size(PortType type)
 			return 1024; // Who knows
 	}
 }
-
 
 BufferFactory::Ref
 BufferFactory::get(Shared::PortType type, size_t size, bool force_create)
@@ -119,7 +113,6 @@ BufferFactory::get(Shared::PortType type, size_t size, bool force_create)
 	try_head->_next = NULL;
 	return Ref(try_head);
 }
-
 
 BufferFactory::Ref
 BufferFactory::create(Shared::PortType type, size_t size)
@@ -153,7 +146,6 @@ BufferFactory::create(Shared::PortType type, size_t size)
 	return Ref(buffer);
 }
 
-
 void
 BufferFactory::recycle(Buffer* buf)
 {
@@ -164,6 +156,5 @@ BufferFactory::recycle(Buffer* buf)
 		buf->_next = try_head;
 	} while (!head_ptr.compare_and_exchange(try_head, buf));
 }
-
 
 } // namespace Ingen

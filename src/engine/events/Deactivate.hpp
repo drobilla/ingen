@@ -24,7 +24,6 @@
 namespace Ingen {
 namespace Events {
 
-
 /** Deactivates the engine.
  *
  * \ingroup engine
@@ -41,7 +40,6 @@ public:
 		_engine.deactivate();
 	}
 };
-
 
 } // namespace Ingen
 } // namespace Events

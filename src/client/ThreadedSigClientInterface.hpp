@@ -34,7 +34,6 @@ namespace Ingen {
 namespace Shared { class EngineInterface; }
 namespace Client {
 
-
 /** A LibSigC++ signal emitting interface for clients to use.
  *
  * This emits signals (possibly) in a different thread than the ClientInterface
@@ -142,7 +141,6 @@ private:
 	sigc::slot<void, Raul::Path, Raul::Atom>                      port_value_slot;
 	sigc::slot<void, Raul::Path>                                  activity_slot;
 };
-
 
 } // namespace Client
 } // namespace Ingen

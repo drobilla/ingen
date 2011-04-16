@@ -106,7 +106,6 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 	//m_add_button->grab_default();
 }
 
-
 void
 LoadPluginWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties data)
 {
@@ -114,7 +113,6 @@ LoadPluginWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties d
 	_initial_data = data;
 	Gtk::Window::present();
 }
-
 
 /** Called every time the user types into the name input box.
  * Used to display warning messages, and enable/disable the OK button.
@@ -137,7 +135,6 @@ LoadPluginWindow::name_changed()
 	}
 }
 
-
 #ifdef HAVE_NEW_GTKMM
 void
 LoadPluginWindow::name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event)
@@ -145,7 +142,6 @@ LoadPluginWindow::name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton*
 	_search_entry->set_text("");
 }
 #endif // HAVE_NEW_GTKMM
-
 
 /** Sets the patch controller for this window and initializes everything.
  *
@@ -166,7 +162,6 @@ LoadPluginWindow::set_patch(SharedPtr<PatchModel> patch)
 	else
 		_polyphonic_checkbutton->property_sensitive() = true;*/
 }
-
 
 /** Populates the plugin list on the first show.
  *
@@ -192,7 +187,6 @@ LoadPluginWindow::on_show()
 	Gtk::Window::on_show();
 }
 
-
 void
 LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 {
@@ -210,7 +204,6 @@ LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 	_plugins_treeview->columns_autosize();
 }
 
-
 void
 LoadPluginWindow::new_plugin(SharedPtr<PluginModel> pm)
 {
@@ -219,7 +212,6 @@ LoadPluginWindow::new_plugin(SharedPtr<PluginModel> pm)
 	else
 		_refresh_list = true;
 }
-
 
 void
 LoadPluginWindow::set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugin)
@@ -248,7 +240,6 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugi
 	row[_plugins_columns._col_plugin] = plugin;
 }
 
-
 void
 LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 {
@@ -267,17 +258,13 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 			plugin->uri()));
 }
 
-
-
 ///// Event Handlers //////
-
 
 void
 LoadPluginWindow::plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col)
 {
 	add_clicked();
 }
-
 
 void
 LoadPluginWindow::plugin_selection_changed()
@@ -308,7 +295,6 @@ LoadPluginWindow::plugin_selection_changed()
 	}
 }
 
-
 /** Generate an automatic name for this Node.
  *
  * Offset is an offset of the number that will be appended to the plugin's
@@ -324,7 +310,6 @@ LoadPluginWindow::generate_module_name(SharedPtr<PluginModel> plugin, int offset
 		ss << "_" << offset;
 	return ss.str();
 }
-
 
 void
 LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
@@ -365,14 +350,12 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	}
 }
 
-
 void
 LoadPluginWindow::add_clicked()
 {
 	_selection->selected_foreach_iter(
 			sigc::mem_fun(*this, &LoadPluginWindow::load_plugin));
 }
-
 
 void
 LoadPluginWindow::filter_changed()
@@ -429,7 +412,6 @@ LoadPluginWindow::filter_changed()
 	}
 }
 
-
 bool
 LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 {
@@ -440,7 +422,6 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 		return Gtk::Window::on_key_press_event(event);
 	}
 }
-
 
 void
 LoadPluginWindow::plugin_property_changed(const URI&  plugin,
@@ -454,7 +435,6 @@ LoadPluginWindow::plugin_property_changed(const URI&  plugin,
 			(*i->second)[_plugins_columns._col_name] = value.get_string();
 	}
 }
-
 
 } // namespace GUI
 } // namespace Ingen

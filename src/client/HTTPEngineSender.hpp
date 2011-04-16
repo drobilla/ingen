@@ -60,7 +60,6 @@ public:
 
 	void attach(int32_t ping_id, bool block);
 
-
 	/* *** EngineInterface implementation below here *** */
 
 	void enable()  { _enabled = true; }
@@ -123,7 +122,6 @@ protected:
 	int32_t         _id;
 	bool            _enabled;
 };
-
 
 } // namespace Client
 } // namespace Ingen

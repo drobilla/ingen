@@ -38,7 +38,6 @@ int _##name##_cb (LO_HANDLER_ARGS);\
 inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
 { return ((OSCClientReceiver*)osc_listener)->_##name##_cb(path, types, argv, argc, msg); }
 
-
 /** Callbacks for "notification band" OSC messages.
  *
  * Receives all notification of engine state, but not replies on the "control
@@ -93,7 +92,6 @@ private:
 	LO_HANDLER(set_property);
 	LO_HANDLER(activity);
 };
-
 
 } // namespace Client
 } // namespace Ingen

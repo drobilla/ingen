@@ -35,7 +35,6 @@ namespace GUI {
 class ControlGroup;
 class ControlPanel;
 
-
 /** Window with controls (sliders) for all control-rate ports on a Node.
  *
  * \ingroup GUI
@@ -66,7 +65,6 @@ private:
 	int  _x;
 	int  _y;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

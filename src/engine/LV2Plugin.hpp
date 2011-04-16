@@ -41,7 +41,6 @@ namespace Ingen {
 class PatchImpl;
 class NodeImpl;
 
-
 /** Implementation of an LV2 plugin (loaded shared library).
  */
 class LV2Plugin : public PluginImpl
@@ -68,7 +67,6 @@ private:
 	SLV2Plugin         _slv2_plugin;
 	SharedPtr<LV2Info> _lv2_info;
 };
-
 
 } // namespace Ingen
 

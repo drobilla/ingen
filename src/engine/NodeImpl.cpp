@@ -34,7 +34,6 @@ using namespace std;
 
 namespace Ingen {
 
-
 NodeImpl::NodeImpl(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphonic, PatchImpl* parent, SampleRate srate)
 	: GraphObjectImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
@@ -56,7 +55,6 @@ NodeImpl::NodeImpl(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphon
 	assert(_parent == NULL || (_polyphony == parent->internal_poly() || _polyphony == 1));
 }
 
-
 NodeImpl::~NodeImpl()
 {
 	if (_activated)
@@ -69,20 +67,17 @@ NodeImpl::~NodeImpl()
 	free(_valid_ports);
 }
 
-
 Shared::Port*
 NodeImpl::port(uint32_t index) const
 {
 	return (*_ports)[index];
 }
 
-
 const Shared::Plugin*
 NodeImpl::plugin() const
 {
 	return _plugin;
 }
-
 
 void
 NodeImpl::activate(BufferFactory& bufs)
@@ -106,7 +101,6 @@ NodeImpl::activate(BufferFactory& bufs)
 	}
 }
 
-
 void
 NodeImpl::deactivate()
 {
@@ -120,7 +114,6 @@ NodeImpl::deactivate()
 		}
 	}
 }
-
 
 bool
 NodeImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
@@ -136,7 +129,6 @@ NodeImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 
 	return true;
 }
-
 
 bool
 NodeImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
@@ -155,7 +147,6 @@ NodeImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 	return true;
 }
 
-
 void
 NodeImpl::set_buffer_size(Context& context, BufferFactory& bufs, PortType type, size_t size)
 {
@@ -165,7 +156,6 @@ NodeImpl::set_buffer_size(Context& context, BufferFactory& bufs, PortType type, 
 				_ports->at(i)->set_buffer_size(context, bufs, size);
 }
 
-
 void
 NodeImpl::reset_input_ready()
 {
@@ -174,20 +164,17 @@ NodeImpl::reset_input_ready()
 	_input_ready.reset(0);
 }
 
-
 bool
 NodeImpl::process_lock()
 {
 	return _process_lock.compare_and_exchange(0, 1);
 }
 
-
 void
 NodeImpl::process_unlock()
 {
 	_process_lock = 0;
 }
-
 
 void
 NodeImpl::wait_for_input(size_t num_providers)
@@ -199,7 +186,6 @@ NodeImpl::wait_for_input(size_t num_providers)
 		_input_ready.wait();
 }
 
-
 void
 NodeImpl::signal_input_ready()
 {
@@ -207,7 +193,6 @@ NodeImpl::signal_input_ready()
 	++_n_inputs_ready;
 	_input_ready.post();
 }
-
 
 /** Prepare to run a cycle (in the audio thread)
  */
@@ -226,7 +211,6 @@ NodeImpl::pre_process(Context& context)
 	}
 }
 
-
 /** Prepare to run a cycle (in the audio thread)
  */
 void
@@ -242,7 +226,6 @@ NodeImpl::post_process(Context& context)
 	}
 }
 
-
 /** Flag a port as set (for message context)
  */
 void
@@ -254,13 +237,11 @@ NodeImpl::set_port_valid(uint32_t port_index)
 	lv2_contexts_set_port_valid(_valid_ports, port_index);
 }
 
-
 void*
 NodeImpl::valid_ports()
 {
 	return _valid_ports;
 }
-
 
 void
 NodeImpl::reset_valid_ports()
@@ -269,7 +250,6 @@ NodeImpl::reset_valid_ports()
 		memset(_valid_ports, '\0', num_ports() / 8);
 }
 
-
 void
 NodeImpl::set_port_buffer(uint32_t voice, uint32_t port_num,
 		BufferFactory::Ref buf, SampleCount offset)
@@ -277,7 +257,6 @@ NodeImpl::set_port_buffer(uint32_t voice, uint32_t port_num,
 	/*std::cout << path() << " set port " << port_num << " voice " << voice
 			<< " buffer " << buf << " offset " << offset << std::endl;*/
 }
-
 
 } // namespace Ingen
 

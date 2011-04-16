@@ -37,13 +37,11 @@ using namespace Raul;
 
 namespace Ingen {
 
-
 /*! \page client_osc_namespace Client OSC Namespace Documentation
  *
  * <p>These are the commands the client recognizes.  All monitoring of
  * changes in the engine happens via these commands.</p>
  */
-
 
 /** \page client_osc_namespace
  * <h2>/ok</h2>
@@ -62,7 +60,6 @@ OSCClientSender::response_ok(int32_t id)
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
 }
-
 
 /** \page client_osc_namespace
  * <h2>/error</h2>
@@ -83,7 +80,6 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 	}
 }
 
-
 /** \page client_osc_namespace
  * <h2>/error</h2>
  * \arg \b message (string) - Error message (natural language text)
@@ -97,7 +93,6 @@ OSCClientSender::error(const std::string& msg)
 {
 	send("/error", "s", msg.c_str(), LO_ARGS_END);
 }
-
 
 /** \page client_osc_namespace
  * <h2>/put</h2>
@@ -123,7 +118,6 @@ OSCClientSender::put(const Raul::URI&                    path,
 	send_message("/put", m);
 }
 
-
 void
 OSCClientSender::delta(const Raul::URI&                    path,
                        const Shared::Resource::Properties& remove,
@@ -131,7 +125,6 @@ OSCClientSender::delta(const Raul::URI&                    path,
 {
 	warn << "FIXME: OSC DELTA" << endl;
 }
-
 
 /** \page client_osc_namespace
  * <h2>/move</h2>
@@ -147,8 +140,6 @@ OSCClientSender::move(const Path& old_path, const Path& new_path)
 	send("/move", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
 }
 
-
-
 /** \page client_osc_namespace
  * <h2>/delete</h2>
  * \arg \b path (string) - Path of object (which no longer exists)
@@ -160,7 +151,6 @@ OSCClientSender::del(const Path& path)
 {
 	send("/delete", "s", path.c_str(), LO_ARGS_END);
 }
-
 
 /** \page client_osc_namespace
  * <h2>/connect</h2>
@@ -175,7 +165,6 @@ OSCClientSender::connect(const Path& src_port_path, const Path& dst_port_path)
 	send("/connect", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
 
-
 /** \page client_osc_namespace
  * <h2>/disconnect</h2>
  * \arg \b src-path (string) - Path of the source port
@@ -188,7 +177,6 @@ OSCClientSender::disconnect(const Path& src_port_path, const Path& dst_port_path
 {
 	send("/disconnect", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
-
 
 /** \page client_osc_namespace
  * <h2>/set_property</h2>
@@ -208,7 +196,6 @@ OSCClientSender::set_property(const URI& path, const URI& key, const Atom& value
 	send_message("/set_property", m);
 }
 
-
 /** \page client_osc_namespace
  * <h2>/activity</h2>
  * \arg \b path (string) - Path of object
@@ -223,6 +210,5 @@ OSCClientSender::activity(const Path& path)
 
 	lo_send(_address, "/activity", "s", path.c_str(), LO_ARGS_END);
 }
-
 
 } // namespace Ingen

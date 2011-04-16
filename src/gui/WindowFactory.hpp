@@ -47,7 +47,6 @@ class PatchWindow;
 class RenameWindow;
 class UploadPatchWindow;
 
-
 /** Manager/Factory for all windows.
  *
  * This serves as a nice centralized spot for all window management issues,
@@ -92,7 +91,6 @@ private:
 
 	PatchWindow* new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view);
 
-
 	NodeControlWindow* new_control_window(SharedPtr<NodeModel> node);
 	bool               remove_control_window(NodeControlWindow* win, GdkEventAny* ignored);
 
@@ -107,7 +105,6 @@ private:
 	PropertiesWindow*      _properties_win;
 	RenameWindow*          _rename_win;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

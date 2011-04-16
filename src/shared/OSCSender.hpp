@@ -51,7 +51,6 @@ protected:
 	bool       _enabled;
 };
 
-
 } // namespace Shared
 } // namespace Ingen
 

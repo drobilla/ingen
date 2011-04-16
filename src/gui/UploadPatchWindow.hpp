@@ -37,7 +37,6 @@ namespace GUI {
 
 class UploadPatchWindow;
 
-
 class UploadThread : public Raul::Thread {
 public:
 	UploadThread(UploadPatchWindow* win,
@@ -57,7 +56,6 @@ private:
 	std::istringstream _stream;
 	std::string        _url;
 };
-
 
 /* Upload patch dialog.
  *
@@ -99,7 +97,6 @@ private:
 	Gtk::Button*      _upload_button;
 
 };
-
 
 } // namespace GUI
 } // namespace Ingen

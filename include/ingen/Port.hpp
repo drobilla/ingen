@@ -30,7 +30,6 @@ namespace Raul { class Atom; }
 namespace Ingen {
 namespace Shared {
 
-
 /** A Port on a Node.
  *
  * Purely virtual (except for the destructor).
@@ -52,7 +51,6 @@ public:
 	virtual bool              is_input() const = 0;
 	virtual const Raul::Atom& value()    const = 0;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

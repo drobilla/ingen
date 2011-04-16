@@ -36,7 +36,6 @@ class NodeImpl;
 class Engine;
 class BufferFactory;
 
-
 /** Implementation of a plugin (internal code, or a loaded shared library).
  *
  * Conceptually, a Node is an instance of this.
@@ -77,7 +76,6 @@ protected:
 	mutable std::string _library_path;
 	Glib::Module*       _module;
 };
-
 
 } // namespace Ingen
 

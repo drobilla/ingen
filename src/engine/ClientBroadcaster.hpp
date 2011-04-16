@@ -37,7 +37,6 @@ class PluginImpl;
 class PatchImpl;
 class ConnectionImpl;
 
-
 /** Broadcaster for all clients.
  *
  * This is a ClientInterface that forwards all messages to all registered
@@ -61,7 +60,6 @@ public:
 #define BROADCAST(msg, ...) \
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) \
 		(*i).second->msg(__VA_ARGS__)
-
 
 	// CommonInterface
 
@@ -121,7 +119,6 @@ private:
 	typedef std::map<Raul::URI, Shared::ClientInterface*> Clients;
 	Clients _clients;
 };
-
 
 } // namespace Ingen
 

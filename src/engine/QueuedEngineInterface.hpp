@@ -34,7 +34,6 @@ namespace Ingen {
 
 class Engine;
 
-
 /** A queued (preprocessed) event source / interface.
  *
  * This is the bridge between the EngineInterface presented to the client, and
@@ -114,7 +113,6 @@ protected:
 private:
 	SampleCount now() const;
 };
-
 
 } // namespace Ingen
 

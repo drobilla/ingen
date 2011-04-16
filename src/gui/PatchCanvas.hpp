@@ -49,7 +49,6 @@ namespace GUI {
 
 class NodeModule;
 
-
 /** Patch canvas widget.
  *
  * \ingroup GUI
@@ -171,7 +170,6 @@ private:
 	Gtk::MenuItem*      _menu_new_patch;
 	Gtk::CheckMenuItem* _menu_edit;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

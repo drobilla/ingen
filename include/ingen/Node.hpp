@@ -28,7 +28,6 @@ namespace Shared {
 class Port;
 class Plugin;
 
-
 /** A Node (or "module") in a Patch (which is also a Node).
  *
  * A Node is a unit with input/output ports, a process() method, and some other
@@ -45,7 +44,6 @@ public:
 	virtual Port*         port(uint32_t index) const = 0;
 	virtual const Plugin* plugin()             const = 0;
 };
-
 
 } // namespace Shared
 } // namespace Ingen

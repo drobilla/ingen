@@ -32,7 +32,6 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-
 ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::HBox(cobject)
 	, _callback_enabled(true)
@@ -42,13 +41,11 @@ ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 	show_all();
 }
 
-
 ControlPanel::~ControlPanel()
 {
 	for (vector<Control*>::iterator i = _controls.begin(); i != _controls.end(); ++i)
 		delete (*i);
 }
-
 
 void
 ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
@@ -63,7 +60,6 @@ ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
 	_callback_enabled = true;
 }
 
-
 Control*
 ControlPanel::find_port(const Path& path) const
 {
@@ -73,7 +69,6 @@ ControlPanel::find_port(const Path& path) const
 
 	return NULL;
 }
-
 
 /** Add a control to the panel for the given port.
  */
@@ -131,7 +126,6 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 	_ideal_size.second = controls_size.height;
 }
 
-
 /** Remove the control for the given port.
  */
 void
@@ -149,7 +143,6 @@ ControlPanel::remove_port(const Path& path)
 	}
 }
 
-
 /** Callback for Controls to notify this of a change.
  */
 void
@@ -162,7 +155,6 @@ ControlPanel::value_changed_atom(SharedPtr<PortModel> port, const Raul::Atom& va
 		port->value(val);
 	}
 }
-
 
 } // namespace GUI
 } // namespace Ingen

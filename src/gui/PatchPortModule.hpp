@@ -40,7 +40,6 @@ class PatchCanvas;
 class Port;
 class PortMenu;
 
-
 /** A "module" to represent a patch's port on its own canvas.
  *
  * Translation: This is the nameless single port pseudo module thingy.
@@ -75,7 +74,6 @@ protected:
 	SharedPtr<Port>      _port;
 	PortMenu*            _menu;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

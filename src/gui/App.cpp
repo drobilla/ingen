@@ -70,7 +70,6 @@ Gtk::Main* App::_main = 0;
 /// Singleton instance
 App* App::_instance = 0;
 
-
 App::App(Ingen::Shared::World* world)
 	: _configuration(new Configuration())
 	, _about_dialog(NULL)
@@ -97,13 +96,11 @@ App::App(Ingen::Shared::World* world)
 #endif
 }
 
-
 App::~App()
 {
 	delete _configuration;
 	delete _window_factory;
 }
-
 
 void
 App::init(Ingen::Shared::World* world)
@@ -151,7 +148,6 @@ App::init(Ingen::Shared::World* world)
 			break;
 }
 
-
 void
 App::run()
 {
@@ -159,7 +155,6 @@ App::run()
 	_main->run();
 	info << "[GUI] Exiting" << endl;
 }
-
 
 void
 App::attach(SharedPtr<SigClientInterface> client,
@@ -182,7 +177,6 @@ App::attach(SharedPtr<SigClientInterface> client,
 	_client->signal_error.connect(sigc::mem_fun(this, &App::error_message));
 }
 
-
 void
 App::detach()
 {
@@ -198,7 +192,6 @@ App::detach()
 	}
 }
 
-
 SharedPtr<Serialiser>
 App::serialiser()
 {
@@ -208,13 +201,11 @@ App::serialiser()
 	return _world->serialiser();
 }
 
-
 void
 App::error_response(int32_t id, const string& str)
 {
 	error_message(str);
 }
-
 
 void
 App::error_message(const string& str)
@@ -226,7 +217,6 @@ App::error_message(const string& str)
 
 	_messages_window->set_urgency_hint(true);
 }
-
 
 void
 App::port_activity(Port* port)
@@ -246,7 +236,6 @@ App::port_activity(Port* port)
 	port->set_highlighted(true, false, true, false);
 }
 
-
 void
 App::activity_port_destroyed(Port* port)
 {
@@ -256,7 +245,6 @@ App::activity_port_destroyed(Port* port)
 
 	return;
 }
-
 
 bool
 App::animate()
@@ -278,9 +266,7 @@ App::animate()
 	return true;
 }
 
-
 /******** Event Handlers ************/
-
 
 void
 App::register_callbacks()
@@ -291,7 +277,6 @@ App::register_callbacks()
 	Glib::signal_timeout().connect(
 		sigc::mem_fun(App::instance(), &App::animate), 50, G_PRIORITY_DEFAULT);
 }
-
 
 bool
 App::gtk_main_iteration()
@@ -313,14 +298,12 @@ App::gtk_main_iteration()
 	return true;
 }
 
-
 void
 App::show_about()
 {
 	_about_dialog->run();
 	_about_dialog->hide();
 }
-
 
 /** Prompt (if necessary) and quit application (if confirmed).
  * @return true iff the application quit.
@@ -344,7 +327,6 @@ App::quit(Gtk::Window& dialog_parent)
 
 	return quit;
 }
-
 
 Glib::RefPtr<Gdk::Pixbuf>
 App::icon_from_path(const string& path, int size)
@@ -376,7 +358,6 @@ App::icon_from_path(const string& path, int size)
 	return buf;
 }
 
-
 void*
 App::icon_destroyed(void* data)
 {
@@ -390,7 +371,6 @@ App::icon_destroyed(void* data)
 	return NULL;
 }
 
-
 bool
 App::can_control(const Shared::Port* port) const
 {
@@ -399,7 +379,6 @@ App::can_control(const Shared::Port* port) const
 				&& (port->supports(uris().atom_Float32)
 					|| port->supports(uris().atom_String)));
 }
-
 
 } // namespace GUI
 } // namespace Ingen

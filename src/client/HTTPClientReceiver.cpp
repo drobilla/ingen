@@ -57,14 +57,12 @@ HTTPClientReceiver::HTTPClientReceiver(
 	client_receiver = this;
 }
 
-
 HTTPClientReceiver::~HTTPClientReceiver()
 {
 	stop();
 	if (client_receiver == this)
 		client_receiver = NULL;
 }
-
 
 HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::string& uri)
 	: _uri(uri)
@@ -104,7 +102,6 @@ HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::
 	}
 }
 
-
 HTTPClientReceiver::Listener::~Listener()
 {
 	close(_sock);
@@ -122,7 +119,6 @@ HTTPClientReceiver::send(SoupMessage* msg)
 	soup_session_queue_message(client_session, msg, message_callback, client_receiver);
 }
 
-
 void
 HTTPClientReceiver::close_session()
 {
@@ -132,7 +128,6 @@ HTTPClientReceiver::close_session()
 		soup_session_abort(s);
 	}
 }
-
 
 void
 HTTPClientReceiver::update(const std::string& str)
@@ -167,7 +162,6 @@ HTTPClientReceiver::Listener::_run()
 
 	LOG(info) << "HTTP listener finished" << endl;
 }
-
 
 void
 HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, void* ptr)
@@ -226,7 +220,6 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 	}
 }
 
-
 void
 HTTPClientReceiver::start(bool dump)
 {
@@ -238,14 +231,12 @@ HTTPClientReceiver::start(bool dump)
 	soup_session_queue_message(client_session, msg, message_callback, this);
 }
 
-
 void
 HTTPClientReceiver::stop()
 {
 	//unregister_client();
 	close_session();
 }
-
 
 } // namespace Client
 } // namespace Ingen

@@ -29,7 +29,6 @@ using namespace Ingen::Client;
 namespace Ingen {
 namespace GUI {
 
-
 /** Object properties window.
  *
  * Loaded by libglade as a derived object.

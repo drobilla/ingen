@@ -31,7 +31,6 @@ class NodeImpl;
 class PortImpl;
 class GraphObjectImpl;
 
-
 /** Storage for all GraphObjects (tree of GraphObject's sorted by path).
  *
  * All looking up in pre_process() methods (and anything else that isn't in-band
@@ -57,7 +56,6 @@ public:
 	SharedPtr<Objects> remove_children(const Raul::Path& path);
 	SharedPtr<Objects> remove_children(Objects::iterator i);
 };
-
 
 } // namespace Ingen
 

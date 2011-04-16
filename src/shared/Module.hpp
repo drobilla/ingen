@@ -42,7 +42,6 @@ struct Module {
 	SharedPtr<Glib::Module> library;
 };
 
-
 } // namespace Shared
 } // namespace Ingen
 

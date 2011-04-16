@@ -29,7 +29,6 @@ using namespace std;
 
 namespace Ingen {
 
-
 class AudioBuffer : public ObjectBuffer
 {
 public:
@@ -75,7 +74,6 @@ private:
 	FrameTime _set_time;  ///< Time _set_value was set (to reset next cycle)
 };
 
-
 /** Accumulate a block of @a src into buffer.
  */
 inline void
@@ -103,7 +101,6 @@ AudioBuffer::accumulate(Context& context, const AudioBuffer* const src)
 		}
 	}
 }
-
 
 } // namespace Ingen
 

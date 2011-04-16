@@ -29,7 +29,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-
 void
 Store::add(GraphObject* o)
 {
@@ -48,7 +47,6 @@ Store::add(GraphObject* o)
 	}
 }
 
-
 Store::const_iterator
 Store::children_begin(SharedPtr<Shared::GraphObject> o) const
 {
@@ -58,7 +56,6 @@ Store::children_begin(SharedPtr<Shared::GraphObject> o) const
 	return parent;
 }
 
-
 Store::const_iterator
 Store::children_end(SharedPtr<Shared::GraphObject> o) const
 {
@@ -66,7 +63,6 @@ Store::children_end(SharedPtr<Shared::GraphObject> o) const
 	assert(parent != end());
 	return find_descendants_end(parent);
 }
-
 
 SharedPtr<Shared::GraphObject>
 Store::find_child(SharedPtr<Shared::GraphObject> parent, const string& child_name) const
@@ -80,7 +76,6 @@ Store::find_child(SharedPtr<Shared::GraphObject> parent, const string& child_nam
 	else
 		return SharedPtr<Shared::GraphObject>();
 }
-
 
 unsigned
 Store::child_name_offset(const Raul::Path&   parent,
@@ -104,7 +99,6 @@ Store::child_name_offset(const Raul::Path&   parent,
 
 	return offset;
 }
-
 
 } // namespace Shared
 } // namespace Ingen

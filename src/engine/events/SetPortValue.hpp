@@ -28,7 +28,6 @@ class PortImpl;
 
 namespace Events {
 
-
 /** An event to change the value of a port.
  *
  * This event can either be queued or immediate, depending on the queued
@@ -75,7 +74,6 @@ private:
 	const Raul::Atom _value;
 	PortImpl*        _port;
 };
-
 
 } // namespace Ingen
 } // namespace Events

@@ -30,7 +30,6 @@
 namespace Ingen {
 namespace GUI {
 
-
 /** Collection of breadcrumb buttons forming a path.
  * This doubles as a cache for PatchViews.
  *

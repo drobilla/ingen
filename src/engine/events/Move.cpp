@@ -33,7 +33,6 @@ namespace Events {
 
 using namespace Shared;
 
-
 Move::Move(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& path, const Path& new_path)
 	: QueuedEvent(engine, request, timestamp)
 	, _old_path(path)
@@ -43,11 +42,9 @@ Move::Move(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, co
 {
 }
 
-
 Move::~Move()
 {
 }
-
 
 void
 Move::pre_process()
@@ -94,7 +91,6 @@ Move::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 Move::execute(ProcessContext& context)
 {
@@ -107,7 +103,6 @@ Move::execute(ProcessContext& context)
 			driver_port->move(_new_path);
 	}
 }
-
 
 void
 Move::post_process()
@@ -130,7 +125,6 @@ Move::post_process()
 		_request->respond_error(msg);
 	}
 }
-
 
 } // namespace Ingen
 } // namespace Events

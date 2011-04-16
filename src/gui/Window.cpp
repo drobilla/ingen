@@ -20,7 +20,6 @@
 namespace Ingen {
 namespace GUI {
 
-
 bool
 Window::key_press_handler(Gtk::Window* win, GdkEventKey* event)
 {
@@ -30,7 +29,6 @@ Window::key_press_handler(Gtk::Window* win, GdkEventKey* event)
 	}
 	return false;
 }
-
 
 } // namespace GUI
 } // namespace Ingen

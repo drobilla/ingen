@@ -63,7 +63,6 @@ class ThreadedLoader;
 class WindowFactory;
 class Port;
 
-
 /** Singleton master class most everything is contained within.
  *
  * This is a horrible god-object, but it's shrinking in size as things are
@@ -166,7 +165,6 @@ protected:
 
 	bool _enable_signal;
 };
-
 
 } // namespace GUI
 } // namespace Ingen

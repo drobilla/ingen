@@ -41,7 +41,6 @@ class CompiledPatch;
 
 namespace Events {
 
-
 /** Make a Connection between two Ports.
  *
  * \ingroup engine
@@ -80,7 +79,6 @@ private:
 
 	Raul::Array<BufferFactory::Ref>* _buffers;
 };
-
 
 } // namespace Ingen
 } // namespace Events

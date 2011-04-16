@@ -51,7 +51,6 @@ private:
 	std::vector<NodeImpl*> _dependants; ///< Nodes this one's output ports are connected to
 };
 
-
 /** A patch ``compiled'' into a flat structure with the correct order so
  * the audio thread(s) can execute it without threading problems (since
  * the preprocessor thread modifies the graph).
@@ -69,7 +68,6 @@ struct CompiledPatch : public std::vector<CompiledNode>
 	/** All (audio context => other context) connections */
 	std::vector<ConnectionImpl*> queued_connections;
 };
-
 
 } // namespace Ingen
 

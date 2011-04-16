@@ -37,7 +37,6 @@ namespace Events {
 
 using namespace Shared;
 
-
 Delete::Delete(Engine& engine, SharedPtr<Request> request, FrameTime time, const Raul::Path& path)
 	: QueuedEvent(engine, request, time, true)
 	, _path(path)
@@ -54,12 +53,10 @@ Delete::Delete(Engine& engine, SharedPtr<Request> request, FrameTime time, const
 	assert(request->source());
 }
 
-
 Delete::~Delete()
 {
 	delete _disconnect_event;
 }
-
 
 void
 Delete::pre_process()
@@ -127,7 +124,6 @@ Delete::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 Delete::execute(ProcessContext& context)
 {
@@ -165,7 +161,6 @@ Delete::execute(ProcessContext& context)
 
 	_request->unblock();
 }
-
 
 void
 Delete::post_process()
@@ -206,7 +201,6 @@ Delete::post_process()
 
 	_engine.maid()->push(_garbage);
 }
-
 
 } // namespace Ingen
 } // namespace Events

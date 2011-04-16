@@ -28,7 +28,6 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-
 OSCSender::OSCSender()
 	: _send_state(Immediate)
 	, _transfer(NULL)
@@ -36,7 +35,6 @@ OSCSender::OSCSender()
 	, _enabled(true)
 {
 }
-
 
 void
 OSCSender::bundle_begin()
@@ -48,13 +46,11 @@ OSCSender::bundle_begin()
 	_send_state = SendingBundle;
 }
 
-
 void
 OSCSender::bundle_end()
 {
 	transfer_end();
 }
-
 
 void
 OSCSender::transfer_begin()
@@ -66,7 +62,6 @@ OSCSender::transfer_begin()
 	_send_state = SendingTransfer;
 }
 
-
 void
 OSCSender::transfer_end()
 {
@@ -76,7 +71,6 @@ OSCSender::transfer_end()
 	_transfer = NULL;
 	_send_state = Immediate;
 }
-
 
 int
 OSCSender::send(const char *path, const char *types, ...)
@@ -103,7 +97,6 @@ OSCSender::send(const char *path, const char *types, ...)
 
 	return ret;
 }
-
 
 void
 OSCSender::send_message(const char* path, lo_message msg)

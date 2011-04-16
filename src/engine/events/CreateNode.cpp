@@ -66,7 +66,6 @@ CreateNode::CreateNode(
 		_polyphonic = true;
 }
 
-
 void
 CreateNode::pre_process()
 {
@@ -105,7 +104,6 @@ CreateNode::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 CreateNode::execute(ProcessContext& context)
 {
@@ -116,7 +114,6 @@ CreateNode::execute(ProcessContext& context)
 		_patch->compiled_patch(_compiled_patch);
 	}
 }
-
 
 void
 CreateNode::post_process()
@@ -143,7 +140,6 @@ CreateNode::post_process()
 		_engine.broadcaster()->send_object(_node, true); // yes, send ports
 	}
 }
-
 
 } // namespace Ingen
 } // namespace Events

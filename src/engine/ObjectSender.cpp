@@ -56,7 +56,6 @@ ObjectSender::send_object(ClientInterface* client, const GraphObjectImpl* object
 	}
 }
 
-
 void
 ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive, bool bundle)
 {
@@ -95,7 +94,6 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 		client->transfer_end();
 }
 
-
 /** Sends a node or a patch */
 void
 ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recursive, bool bundle)
@@ -127,7 +125,6 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 		client->transfer_end();
 }
 
-
 void
 ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bundle)
 {
@@ -145,7 +142,6 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	if (bundle)
 		client->bundle_end();
 }
-
 
 } // namespace Ingen
 

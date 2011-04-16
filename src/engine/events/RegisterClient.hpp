@@ -25,7 +25,6 @@
 namespace Ingen {
 namespace Events {
 
-
 /** Registers a new client with the OSC system, so it can receive updates.
  *
  * \ingroup engine
@@ -46,7 +45,6 @@ private:
 	Raul::URI                _uri;
 	Shared::ClientInterface* _client;
 };
-
 
 } // namespace Ingen
 } // namespace Events

@@ -36,7 +36,6 @@ namespace Events {
 
 using namespace Shared;
 
-
 CreatePatch::CreatePatch(
 		Engine&                     engine,
 		SharedPtr<Request>          request,
@@ -53,7 +52,6 @@ CreatePatch::CreatePatch(
 	, _properties(properties)
 {
 }
-
 
 void
 CreatePatch::pre_process()
@@ -108,7 +106,6 @@ CreatePatch::pre_process()
 	QueuedEvent::pre_process();
 }
 
-
 void
 CreatePatch::execute(ProcessContext& context)
 {
@@ -127,7 +124,6 @@ CreatePatch::execute(ProcessContext& context)
 		}
 	}
 }
-
 
 void
 CreatePatch::post_process()
@@ -162,7 +158,6 @@ CreatePatch::post_process()
 		}
 	}
 }
-
 
 } // namespace Ingen
 } // namespace Events

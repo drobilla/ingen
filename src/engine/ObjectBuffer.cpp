@@ -34,7 +34,6 @@ namespace Ingen {
 
 using namespace Shared;
 
-
 /** Allocate a new object buffer.
  * \a capacity is in bytes, including LV2_Atom header
  */
@@ -58,12 +57,10 @@ ObjectBuffer::ObjectBuffer(BufferFactory& bufs, size_t capacity)
 	clear();
 }
 
-
 ObjectBuffer::~ObjectBuffer()
 {
 	free(_buf);
 }
-
 
 void
 ObjectBuffer::clear()
@@ -72,7 +69,6 @@ ObjectBuffer::clear()
 	_buf->type = 0;
 	_buf->size = 0;
 }
-
 
 void
 ObjectBuffer::copy(Context& context, const Buffer* src_buf)
@@ -86,7 +82,6 @@ ObjectBuffer::copy(Context& context, const Buffer* src_buf)
 		memcpy(_buf, src->_buf, sizeof(LV2_Atom) + src_buf->size());
 }
 
-
 void
 ObjectBuffer::resize(size_t size)
 {
@@ -99,7 +94,6 @@ ObjectBuffer::resize(size_t size)
 	if (size < contents_size)
 		clear();
 }
-
 
 void*
 ObjectBuffer::port_data(PortType port_type, SampleCount offset)
@@ -122,7 +116,6 @@ ObjectBuffer::port_data(PortType port_type, SampleCount offset)
 	}
 }
 
-
 const void*
 ObjectBuffer::port_data(PortType port_type, SampleCount offset) const
 {
@@ -144,13 +137,11 @@ ObjectBuffer::port_data(PortType port_type, SampleCount offset) const
 	}
 }
 
-
 void
 ObjectBuffer::prepare_write(Context& context)
 {
 	_buf->size = _size - sizeof(LV2_Atom);
 }
-
 
 } // namespace Ingen
 

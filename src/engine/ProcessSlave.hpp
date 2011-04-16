@@ -33,7 +33,6 @@ namespace Ingen {
 class NodeImpl;
 class CompiledPatch;
 
-
 class ProcessSlave : protected Raul::Slave {
 public:
 	ProcessSlave(Engine& engine, bool realtime)
@@ -97,7 +96,6 @@ private:
 	CompiledPatch*  _compiled_patch;
 	ProcessContext* _context;
 };
-
 
 } // namespace Ingen
 
