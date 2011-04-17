@@ -36,8 +36,14 @@ class EngineBase
 public:
 	virtual ~EngineBase() {}
 
+	/**
+	   Activate the engine.
+	*/
 	virtual bool activate() = 0;
 
+	/**
+	   Deactivate the engine.
+	*/
 	virtual void deactivate() = 0;
 
 	/**

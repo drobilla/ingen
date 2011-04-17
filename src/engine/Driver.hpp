@@ -80,9 +80,6 @@ public:
 	/** Deactivate driver (stop processing graph and events). */
 	virtual void deactivate() {}
 
-	/** Return true iff driver is activated (processing graph and events). */
-	virtual bool is_activated() const { return true; }
-
 	/** Create a port ready to be inserted with add_input (non realtime).
 	 * May return NULL if the Driver can not create the port for some reason.
 	 */

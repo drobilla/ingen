@@ -120,7 +120,6 @@ public:
 	jack_client_t* jack_client()  const { return _client; }
 	SampleCount    block_length() const { return _block_length; }
 	SampleCount    sample_rate()  const { return _sample_rate; }
-	bool           is_activated() const { return _is_activated; }
 
 	inline SampleCount frame_time() const { return _client ? jack_frame_time(_client) : 0; }
 
