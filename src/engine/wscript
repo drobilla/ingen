@@ -124,6 +124,6 @@ def build(bld):
 	obj.name	    = 'libingen_lv2'
 	obj.target	    = 'ingen_lv2'
 	obj.install_path    = '${LIBDIR}'
-	obj.use             = 'libingen_shared libingen_module'
+	obj.use             = 'libingen_shared'
 	obj.add_objects	    = 'libingen_engine'
 	autowaf.use_lib(bld, obj, core_libs)

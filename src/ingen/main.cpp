@@ -140,11 +140,6 @@ main(int argc, char** argv)
 		}
 	}
 
-	// Load client library (required for patch loading and/or GUI)
-	if (conf.option("load").is_valid() || conf.option("gui").get_bool())
-		ingen_try(world->load_module("client"),
-		          "Unable to load client module");
-
 	// If we don't have a local engine interface (for GUI), use network
 	if (!engine_interface) {
 		const char* const uri = conf.option("connect").get_string();
