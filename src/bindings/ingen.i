@@ -20,7 +20,7 @@
 
 // generate directors for all classes that have virtual methods
 %feature("director");         
-%feature("director") Ingen::Shared::ClientInterface;
+%feature("director") Ingen::ClientInterface;
 //%feature("director") Ingen::Shared::EngineInterface;
 
 typedef Ingen::Shared::World World;

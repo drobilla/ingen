@@ -32,10 +32,9 @@ using namespace Raul;
  * stops sucking.  Probably a good idea to inline them as well */
 
 namespace Ingen {
+namespace Engine {
 
-using namespace Shared;
-
-AudioBuffer::AudioBuffer(BufferFactory& bufs, Shared::PortType type, size_t size)
+AudioBuffer::AudioBuffer(BufferFactory& bufs, PortType type, size_t size)
 	: ObjectBuffer(bufs, size)
 	, _state(OK)
 	, _set_value(0)
@@ -204,4 +203,5 @@ AudioBuffer::prepare_read(Context& context)
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen

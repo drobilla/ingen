@@ -276,7 +276,7 @@ void
 PropertiesWindow::apply_clicked()
 {
 	LOG(debug) << "apply {" << endl;
-	Shared::Resource::Properties properties;
+	Resource::Properties properties;
 	for (Records::const_iterator r = _records.begin(); r != _records.end(); ++r) {
 		const Raul::URI& uri    = r->first;
 		const Record&    record = r->second;

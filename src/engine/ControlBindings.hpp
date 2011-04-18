@@ -26,6 +26,7 @@
 #include "BufferFactory.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class Engine;
 class ProcessContext;
@@ -95,6 +96,7 @@ private:
 	EventBuffer*        _feedback;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_CONTROLBINDINGS_HPP

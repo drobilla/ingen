@@ -35,9 +35,8 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
-
-using namespace Shared;
 
 RequestMetadata::RequestMetadata(Engine&            engine,
                                  SharedPtr<Request> request,
@@ -96,7 +95,9 @@ RequestMetadata::execute(ProcessContext& context)
 			} else {
 				IntrusivePtr<ObjectBuffer> obuf = PtrCast<ObjectBuffer>(port->buffer(0));
 				if (obuf) {
-					LV2Atom::to_atom(*_engine.world()->uris().get(), obuf->atom(), _value);
+					Ingen::Shared::LV2Atom::to_atom(*_engine.world()->uris().get(),
+					                                obuf->atom(),
+					                                _value);
 				}
 			}
 		} else {
@@ -130,6 +131,7 @@ RequestMetadata::post_process()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

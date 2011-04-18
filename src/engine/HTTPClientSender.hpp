@@ -27,9 +27,11 @@
 
 namespace Ingen {
 
-class Engine;
+class EngineInterface;
 
-namespace Shared { class EngineInterface; }
+namespace Engine {
+
+class Engine;
 
 /** Implements ClientInterface for HTTP clients.
  * Sends changes as RDF deltas over an HTTP stream
@@ -38,8 +40,8 @@ namespace Shared { class EngineInterface; }
  * \ingroup engine
  */
 class HTTPClientSender
-	: public Shared::ClientInterface
-	, public Shared::HTTPSender
+	: public ClientInterface
+	, public Ingen::Shared::HTTPSender
 {
 public:
 	explicit HTTPClientSender(Engine& engine)
@@ -66,13 +68,13 @@ public:
 
 	void error(const std::string& msg);
 
-	virtual void put(const Raul::URI&                    path,
-	                 const Shared::Resource::Properties& properties,
-	                 Shared::Resource::Graph             ctx);
+	virtual void put(const Raul::URI&            path,
+	                 const Resource::Properties& properties,
+	                 Resource::Graph             ctx);
 
-	virtual void delta(const Raul::URI&                    path,
-	                   const Shared::Resource::Properties& remove,
-	                   const Shared::Resource::Properties& add);
+	virtual void delta(const Raul::URI&            path,
+	                   const Resource::Properties& remove,
+	                   const Resource::Properties& add);
 
 	virtual void del(const Raul::Path& path);
 
@@ -97,6 +99,7 @@ private:
 	bool        _enabled;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_HTTPCLIENTSENDER_HPP

@@ -19,6 +19,7 @@
 #include "ProcessSlave.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 void
 ProcessContext::activate(uint32_t parallelism, bool sched_rt)
@@ -33,4 +34,5 @@ ProcessContext::activate(uint32_t parallelism, bool sched_rt)
 	}
 }
 
-}
+} // namespace Engine
+} // namespace Ingen

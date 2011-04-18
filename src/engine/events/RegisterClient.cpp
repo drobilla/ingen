@@ -23,13 +23,14 @@
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
-RegisterClient::RegisterClient(Engine&                  engine,
-                               SharedPtr<Request>       request,
-                               SampleCount              timestamp,
-                               const URI&               uri,
-                               Shared::ClientInterface* client)
+RegisterClient::RegisterClient(Engine&            engine,
+                               SharedPtr<Request> request,
+                               SampleCount        timestamp,
+                               const URI&         uri,
+                               ClientInterface*   client)
 	: QueuedEvent(engine, request, timestamp)
 	, _uri(uri)
 	, _client(client)
@@ -50,6 +51,7 @@ RegisterClient::post_process()
 	_request->respond_ok();
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

@@ -23,6 +23,7 @@
 #include "NodeImpl.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class InputPort;
 class OutputPort;
@@ -93,6 +94,7 @@ private:
 	OutputPort* _trig_port;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Internals
 

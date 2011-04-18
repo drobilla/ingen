@@ -44,8 +44,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 /*! \page engine_osc_namespace Engine OSC Namespace Documentation
  *
@@ -209,7 +208,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 
 	/* Different address than last time, have to do a lookup */
 	if (!r || !r->client() || strcmp(url, r->client()->uri().c_str())) {
-		Shared::ClientInterface* client = me->_engine.broadcaster()->client(url);
+		ClientInterface* client = me->_engine.broadcaster()->client(url);
 		if (client)
 			me->_request = SharedPtr<Request>(new Request(me, client, id));
 		else
@@ -315,7 +314,7 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 	lo_address addr = lo_message_get_source(msg);
 
 	char* const url = lo_address_get_url(addr);
-	Shared::ClientInterface* client = new OSCClientSender((const char*)url);
+	ClientInterface* client = new OSCClientSender((const char*)url);
 	register_client(client);
 	free(url);
 
@@ -641,4 +640,5 @@ OSCEngineReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 	return 0;
 }
 
+} // namespace Engine
 } // namespace Ingen

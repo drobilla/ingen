@@ -31,6 +31,7 @@
 #include "types.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class Engine;
 
@@ -44,7 +45,8 @@ class Engine;
  * If you do not register a request, you have no way of knowing if your calls
  * are successful.
  */
-class QueuedEngineInterface : public EventSource, public Shared::EngineInterface
+class QueuedEngineInterface : public EventSource,
+                              public EngineInterface
 {
 public:
 	QueuedEngineInterface(Engine& engine, size_t queue_size);
@@ -55,7 +57,7 @@ public:
 	void set_next_response_id(int32_t id);
 
 	// Client registration
-	virtual void register_client(Shared::ClientInterface* client);
+	virtual void register_client(ClientInterface* client);
 	virtual void unregister_client(const Raul::URI& uri);
 
 	// Engine commands
@@ -70,13 +72,13 @@ public:
 
 	// CommonInterface object commands
 
-	virtual void put(const Raul::URI&                    path,
-	                 const Shared::Resource::Properties& properties,
-	                 const Shared::Resource::Graph       g=Shared::Resource::DEFAULT);
+	virtual void put(const Raul::URI&            path,
+	                 const Resource::Properties& properties,
+	                 const Resource::Graph       g=Resource::DEFAULT);
 
-	virtual void delta(const Raul::URI&                    path,
-	                   const Shared::Resource::Properties& remove,
-	                   const Shared::Resource::Properties& add);
+	virtual void delta(const Raul::URI&            path,
+	                   const Resource::Properties& remove,
+	                   const Resource::Properties& add);
 
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path);
@@ -87,7 +89,7 @@ public:
 	virtual void disconnect(const Raul::Path& src_port_path,
 	                        const Raul::Path& dst_port_path);
 
-	virtual void set_property(const Raul::URI&  subject_path,
+	virtual void set_property(const Raul::URI& subject_path,
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value);
 
@@ -101,7 +103,8 @@ public:
 	// Requests
 	virtual void ping();
 	virtual void get(const Raul::URI& uri);
-	virtual void request_property(const Raul::URI& object_path, const Raul::URI& key);
+	virtual void request_property(const Raul::URI& object_path,
+	                              const Raul::URI& key);
 
 protected:
 	virtual void disable_responses();
@@ -114,6 +117,7 @@ private:
 	SampleCount now() const;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_QUEUEDENGINEINTERFACE_HPP

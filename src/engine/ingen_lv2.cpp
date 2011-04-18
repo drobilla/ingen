@@ -63,19 +63,19 @@ public:
 
 	typedef std::vector< SharedPtr<const LV2Patch> > Patches;
 
-	Patches              patches;
-	Ingen::Configuration conf;
-	int                  argc;
-	char**               argv;
+	Patches                      patches;
+	Ingen::Shared::Configuration conf;
+	int                          argc;
+	char**                       argv;
 };
 
 /** Library state (constructed/destructed on library load/unload) */
 Lib lib;
 
 namespace Ingen {
-namespace LV2 {
+namespace Engine {
 
-struct LV2Driver;
+class LV2Driver;
 
 class LV2Port : public DriverPort
 {
@@ -123,7 +123,7 @@ private:
 	void*      _buffer;
 };
 
-struct LV2Driver : public Driver {
+class LV2Driver : public Ingen::Engine::Driver {
 private:
 	typedef std::vector<LV2Port*> Ports;
 
@@ -164,7 +164,8 @@ public:
 		_ports.push_back((LV2Port*)port);
 	}
 
-	virtual Raul::Deletable* remove_port(const Raul::Path& path, Ingen::DriverPort** port=NULL) {
+	virtual Raul::Deletable* remove_port(const Raul::Path& path,
+	                                     DriverPort** port=NULL) {
 		// Note this doesn't have to be realtime safe since there's no dynamic LV2 ports
 		ThreadManager::assert_thread(THREAD_PROCESS);
 
@@ -179,7 +180,7 @@ public:
 		return NULL;
 	}
 
-	virtual bool supports(Shared::PortType port_type, Shared::EventType event_type) {
+	virtual bool supports(PortType port_type, EventType event_type) {
 		return true;
 	}
 
@@ -215,10 +216,13 @@ private:
 	Ports          _ports;
 };
 
-} // namespace LV2
+} // namespace Engine
 } // namespace Ingen
 
 extern "C" {
+
+using namespace Ingen;
+using namespace Ingen::Engine;
 
 /** LV2 plugin library entry point */
 LV2_SYMBOL_EXPORT
@@ -238,9 +242,6 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
                   const char*              bundle_path,
                   const LV2_Feature*const* features)
 {
-	using namespace Ingen;
-	using namespace LV2;
-
 	Shared::set_bundle_path(bundle_path);
 
 	const LV2Patch* patch = NULL;
@@ -257,31 +258,32 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
-	plugin->world = new World(&lib.conf, lib.argc, lib.argv);
+	plugin->world = new Ingen::Shared::World(&lib.conf, lib.argc, lib.argv);
 	if (!plugin->world->load_module("serialisation")) {
 		delete plugin->world;
 		return NULL;
 	}
 
-	SharedPtr<Engine> engine(new Engine(plugin->world));
+	SharedPtr<Engine::Engine> engine(new Engine::Engine(plugin->world));
 	plugin->world->set_local_engine(engine);
 
-	SharedPtr<QueuedEngineInterface> interface(
-		new Ingen::QueuedEngineInterface(
+	SharedPtr<Engine::QueuedEngineInterface> interface(
+		new Engine::QueuedEngineInterface(
 			*engine.get(),
-			event_queue_size));
+			Engine::event_queue_size));
 
 	plugin->world->set_engine(interface);
 	engine->add_event_source(interface);
 
-	Raul::Thread::get().set_context(THREAD_PRE_PROCESS);
-	ThreadManager::single_threaded = true;
+	Raul::Thread::get().set_context(Engine::THREAD_PRE_PROCESS);
+	Engine::ThreadManager::single_threaded = true;
 
 	// FIXME: fixed (or at least maximum) buffer size
-	engine->set_driver(SharedPtr<Driver>(new LV2Driver(*engine.get(), rate, 4096)));
-
+	LV2Driver* driver = new LV2Driver(*engine.get(), rate, 4096);
+	engine->set_driver(SharedPtr<Ingen::Engine::Driver>(driver));
+	
 	engine->activate();
-	ThreadManager::single_threaded = true;
+	Engine::ThreadManager::single_threaded = true;
 
 	ProcessContext context(*engine.get());
 	context.locate(0, UINT_MAX, 0);
@@ -310,9 +312,11 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 static void
 ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
-	IngenPlugin*           me     = (IngenPlugin*)instance;
-	Ingen::Engine*         engine = (Ingen::Engine*)me->world->local_engine().get();
-	Ingen::LV2::LV2Driver* driver = (Ingen::LV2::LV2Driver*)engine->driver();
+	using namespace Ingen::Engine;
+
+	IngenPlugin*    me     = (IngenPlugin*)instance;
+	Engine::Engine* engine = (Engine::Engine*)me->world->local_engine().get();
+	LV2Driver*      driver = (LV2Driver*)engine->driver();
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
 		assert(driver->ports().at(port)->patch_port()->index() == port);
@@ -331,11 +335,11 @@ ingen_activate(LV2_Handle instance)
 static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
-	IngenPlugin*   me     = (IngenPlugin*)instance;
-	Ingen::Engine* engine = (Ingen::Engine*)me->world->local_engine().get();
+	IngenPlugin*    me     = (IngenPlugin*)instance;
+	Engine::Engine* engine = (Engine::Engine*)me->world->local_engine().get();
 	// FIXME: don't do this every call
-	Raul::Thread::get().set_context(Ingen::THREAD_PROCESS);
-	((Ingen::LV2::LV2Driver*)engine->driver())->run(sample_count);
+	Raul::Thread::get().set_context(Ingen::Engine::THREAD_PROCESS);
+	((LV2Driver*)engine->driver())->run(sample_count);
 }
 
 static void
@@ -349,7 +353,7 @@ static void
 ingen_cleanup(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
-	me->world->set_local_engine(SharedPtr<Ingen::Engine>());
+	me->world->set_local_engine(SharedPtr<Ingen::Engine::Engine>());
 	me->world->set_engine(SharedPtr<Ingen::EngineInterface>());
 	delete me->world;
 	free(instance);
@@ -384,7 +388,6 @@ Lib::Lib()
 		Glib::thread_init();
 
 	using namespace Ingen;
-	using namespace LV2;
 
 	Ingen::Shared::set_bundle_path_from_code((void*)&lv2_descriptor);
 

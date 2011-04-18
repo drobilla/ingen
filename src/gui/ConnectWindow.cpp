@@ -84,7 +84,7 @@ ConnectWindow::start(Ingen::Shared::World* world)
 }
 
 void
-ConnectWindow::set_connected_to(SharedPtr<Shared::EngineInterface> engine)
+ConnectWindow::set_connected_to(SharedPtr<EngineInterface> engine)
 {
 	App::instance().world()->set_engine(engine);
 
@@ -246,7 +246,7 @@ ConnectWindow::connect(bool existing)
 
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 
-		if (!((Engine*)world->local_engine().get())->driver())
+		if (!((Engine::Engine*)world->local_engine().get())->driver())
 			world->load_module("jack");
 
 		world->local_engine()->activate();
@@ -266,7 +266,7 @@ ConnectWindow::disconnect()
 	_attached = false;
 
 	App::instance().detach();
-	set_connected_to(SharedPtr<Ingen::Shared::EngineInterface>());
+	set_connected_to(SharedPtr<Ingen::EngineInterface>());
 
 	if (!_widgets_loaded)
 		return;

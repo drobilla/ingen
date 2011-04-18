@@ -29,12 +29,12 @@
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
-using namespace Shared;
-
-BufferFactory::BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> a_uris)
+BufferFactory::BufferFactory(Engine&                             engine,
+                             SharedPtr<Ingen::Shared::LV2URIMap> uris)
 	: _engine(engine)
-	, _uris(a_uris)
+	, _uris(uris)
 	, _silent_buffer(NULL)
 {
 	assert(_uris);
@@ -85,7 +85,7 @@ BufferFactory::default_buffer_size(PortType type)
 }
 
 BufferFactory::Ref
-BufferFactory::get(Shared::PortType type, size_t size, bool force_create)
+BufferFactory::get(PortType type, size_t size, bool force_create)
 {
 	Raul::AtomicPtr<Buffer>& head_ptr = free_list(type);
 	Buffer* try_head = NULL;
@@ -115,7 +115,7 @@ BufferFactory::get(Shared::PortType type, size_t size, bool force_create)
 }
 
 BufferFactory::Ref
-BufferFactory::create(Shared::PortType type, size_t size)
+BufferFactory::create(PortType type, size_t size)
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
 
@@ -157,4 +157,5 @@ BufferFactory::recycle(Buffer* buf)
 	} while (!head_ptr.compare_and_exchange(try_head, buf));
 }
 
+} // namespace Engine
 } // namespace Ingen

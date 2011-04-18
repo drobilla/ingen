@@ -40,6 +40,7 @@
 namespace Raul { class Path; }
 
 namespace Ingen {
+namespace Engine {
 
 class Engine;
 class PatchImpl;
@@ -86,7 +87,7 @@ public:
 	explicit JackDriver(Engine& engine);
 	~JackDriver();
 
-	bool supports(Shared::PortType port_type, Shared::EventType event_type);
+	bool supports(PortType port_type, EventType event_type);
 
 	bool attach(const std::string& server_name,
 	            const std::string& client_name,
@@ -176,6 +177,7 @@ private:
 	PatchImpl*             _root_patch;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_JACKAUDIODRIVER_HPP

@@ -24,6 +24,7 @@
 #include "raul/RingBuffer.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class PortImpl;
 class Engine;
@@ -51,6 +52,7 @@ private:
 	Raul::RingBuffer _events;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_EVENTSINK_HPP

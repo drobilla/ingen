@@ -34,8 +34,7 @@
 #include "util.hpp"
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 /** Constructor for a connection from a node's output port.
  *
@@ -122,7 +121,7 @@ ConnectionImpl::queue(Context& context)
 bool
 ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
-	const LV2URIMap& uris = src->bufs().uris();
+	const Ingen::Shared::LV2URIMap& uris = src->bufs().uris();
 	return (
 			// (Audio | Control) => (Audio | Control)
 			(   (src->is_a(PortType::CONTROL) || src->is_a(PortType::AUDIO))
@@ -149,5 +148,6 @@ ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 			|| (src->supports(uris.atom_Vector)  && dst->is_a(PortType::AUDIO)));
 }
 
+} // namespace Engine
 } // namespace Ingen
 

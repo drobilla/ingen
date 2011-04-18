@@ -34,9 +34,7 @@
 using namespace std;
 
 namespace Ingen {
-
-namespace Shared { class Patch; }
-using namespace Shared;
+namespace Engine {
 
 InputPort::InputPort(BufferFactory&      bufs,
                      NodeImpl*           parent,
@@ -49,7 +47,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 	: PortImpl(bufs, parent, symbol, index, poly, type, value, buffer_size)
 	, _num_connections(0)
 {
-	const LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
 
 	if (!dynamic_cast<Patch*>(parent))
 		add_property(uris.rdf_type, uris.lv2_InputPort);
@@ -224,5 +222,6 @@ InputPort::direct_connect() const
 		&& !_connections.front()->must_queue();
 }
 
+} // namespace Engine
 } // namespace Ingen
 

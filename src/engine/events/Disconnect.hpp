@@ -30,6 +30,7 @@ namespace Raul {
 }
 
 namespace Ingen {
+namespace Engine {
 
 class CompiledPatch;
 class InputPort;
@@ -95,7 +96,8 @@ private:
 	bool      _clear_dst_port;
 };
 
-} // namespace Ingen
 } // namespace Events
+} // namespace Engine
+} // namespace Ingen
 
 #endif // INGEN_EVENTS_DISCONNECT_HPP

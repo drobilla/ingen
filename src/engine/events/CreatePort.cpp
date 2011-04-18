@@ -38,9 +38,8 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
-
-using namespace Shared;
 
 CreatePort::CreatePort(
 		Engine&                     engine,
@@ -82,7 +81,7 @@ CreatePort::pre_process()
 
 	_patch = _engine.engine_store()->find_patch(_path.parent());
 
-	const LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());
@@ -93,7 +92,7 @@ CreatePort::pre_process()
 			? _patch->external_ports()->size()
 			: 0;
 
-		Shared::Resource::Properties::const_iterator index_i = _properties.find(uris.lv2_index);
+		Resource::Properties::const_iterator index_i = _properties.find(uris.lv2_index);
 		if (index_i == _properties.end()) {
 			index_i = _properties.insert(make_pair(uris.lv2_index, (int)old_num_ports));
 		} else if (index_i->second.type() != Atom::INT
@@ -103,7 +102,7 @@ CreatePort::pre_process()
 			return;
 		}
 
-		Shared::Resource::Properties::const_iterator poly_i = _properties.find(uris.ingen_polyphonic);
+		Resource::Properties::const_iterator poly_i = _properties.find(uris.ingen_polyphonic);
 		bool polyphonic = (poly_i != _properties.end() && poly_i->second.type() == Atom::BOOL
 				&& poly_i->second.get_bool());
 
@@ -187,6 +186,7 @@ CreatePort::post_process()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

@@ -30,6 +30,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
 PostProcessor::PostProcessor(Engine& engine, size_t queue_size)
     : _engine(engine)
@@ -87,4 +88,5 @@ PostProcessor::process()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen

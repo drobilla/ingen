@@ -31,11 +31,12 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 void
-ObjectSender::send_object(ClientInterface* client, const GraphObjectImpl* object, bool recursive)
+ObjectSender::send_object(ClientInterface*       client,
+                          const GraphObjectImpl* object,
+                          bool                   recursive)
 {
 	const PatchImpl* patch = dynamic_cast<const PatchImpl*>(object);
 	if (patch) {
@@ -143,5 +144,6 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 		client->bundle_end();
 }
 
+} // namespace Engine
 } // namespace Ingen
 

@@ -31,7 +31,10 @@ namespace Raul { template <typename T> class List; class Maid; }
 
 namespace Ingen {
 
-namespace Shared { class Plugin; class Port; }
+class Plugin;
+class Port;
+
+namespace Engine {
 
 class Buffer;
 class BufferFactory;
@@ -49,7 +52,7 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class NodeImpl : public GraphObjectImpl, virtual public Ingen::Shared::Node
+class NodeImpl : public GraphObjectImpl, virtual public Node
 {
 public:
 	NodeImpl(PluginImpl*         plugin,
@@ -142,8 +145,8 @@ public:
 			IntrusivePtr<Buffer> buf,
 			SampleCount          offset);
 
-	virtual Shared::Port* port(uint32_t index)      const;
-	virtual PortImpl*     port_impl(uint32_t index) const { return (*_ports)[index]; }
+	virtual Port*     port(uint32_t index)      const;
+	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
 
 	/** Nodes that are connected to this Node's inputs.
 	 * (This Node depends on them)
@@ -176,12 +179,12 @@ public:
 	/** Information about the Plugin this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (ie Patch)
 	 */
-	virtual const Shared::Plugin* plugin() const;
+	virtual const Plugin* plugin() const;
 
 	virtual void plugin(PluginImpl* pi) { _plugin = pi; }
 
 	virtual void set_buffer_size(Context& context, BufferFactory& bufs,
-			Shared::PortType type, size_t size);
+			PortType type, size_t size);
 
 	/** The Patch this Node belongs to. */
 	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }
@@ -214,6 +217,7 @@ protected:
 	bool _traversed; ///< Flag for process order algorithm
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_NODEIMPL_HPP

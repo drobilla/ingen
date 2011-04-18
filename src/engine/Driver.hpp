@@ -28,6 +28,7 @@
 namespace Raul { class Path; }
 
 namespace Ingen {
+namespace Engine {
 
 class DuplexPort;
 class ProcessContext;
@@ -92,12 +93,12 @@ public:
 	virtual void add_port(DriverPort* port) = 0;
 
 	/** Remove a system visible port. */
-	virtual Raul::Deletable* remove_port(const Raul::Path&   path,
-	                                     Ingen::DriverPort** port=NULL) = 0;
+	virtual Raul::Deletable* remove_port(const Raul::Path& path,
+	                                     DriverPort**      port=NULL) = 0;
 
 	/** Return true iff this driver supports the given type of I/O */
-	virtual bool supports(Shared::PortType  port_type,
-	                      Shared::EventType event_type) = 0;
+	virtual bool supports(PortType  port_type,
+	                      EventType event_type) = 0;
 
 	virtual void       set_root_patch(PatchImpl* patch) = 0;
 	virtual PatchImpl* root_patch()                     = 0;
@@ -116,6 +117,7 @@ public:
 	virtual ProcessContext& context() = 0;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_DRIVER_HPP

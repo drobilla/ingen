@@ -30,6 +30,7 @@
 #include "tuning.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class NodeImpl;
 
@@ -107,6 +108,7 @@ protected:
 	FrameTime _end_time;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_MESSAGECONTEXT_HPP

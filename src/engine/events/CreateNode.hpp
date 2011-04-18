@@ -23,6 +23,7 @@
 #include "ingen/Resource.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class PatchImpl;
 class PluginImpl;
@@ -39,12 +40,12 @@ class CreateNode : public QueuedEvent
 {
 public:
 	CreateNode(
-			Engine&                             engine,
-			SharedPtr<Request>                  request,
-			SampleCount                         timestamp,
-			const Raul::Path&                   node_path,
-			const Raul::URI&                    plugin_uri,
-			const Shared::Resource::Properties& properties);
+			Engine&                     engine,
+			SharedPtr<Request>          request,
+			SampleCount                 timestamp,
+			const Raul::Path&           node_path,
+			const Raul::URI&            plugin_uri,
+			const Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -60,9 +61,10 @@ private:
 	bool           _node_already_exists;
 	bool           _polyphonic;
 
-	Shared::Resource::Properties _properties;
+	Resource::Properties _properties;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

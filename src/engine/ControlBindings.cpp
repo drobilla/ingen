@@ -36,6 +36,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
 ControlBindings::ControlBindings(Engine& engine)
 	: _engine(engine)
@@ -53,7 +54,7 @@ ControlBindings::~ControlBindings()
 ControlBindings::Key
 ControlBindings::port_binding(PortImpl* port)
 {
-	const Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 	const Raul::Atom& binding = port->get_property(uris.ingen_controlBinding);
 	Key key;
 	if (binding.type() == Atom::DICT) {
@@ -109,7 +110,7 @@ ControlBindings::port_binding_changed(ProcessContext& context, PortImpl* port)
 void
 ControlBindings::port_value_changed(ProcessContext& context, PortImpl* port)
 {
-	const Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 	Key key = port_binding(port);
 	if (key) {
 		int16_t  value = port_value_to_control(port, key.type);
@@ -163,7 +164,7 @@ ControlBindings::learn(PortImpl* port)
 Raul::Atom
 ControlBindings::control_to_port_value(PortImpl* port, Type type, int16_t value)
 {
-	const Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 
 	// TODO: cache these to avoid the lookup
 	float min     = port->get_property(uris.lv2_minimum).get_float();
@@ -199,7 +200,7 @@ ControlBindings::port_value_to_control(PortImpl* port, Type type)
 	if (port->value().type() != Atom::FLOAT)
 		return 0;
 
-	const Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 
 	// TODO: cache these to avoid the lookup
 	float min     = port->get_property(uris.lv2_minimum).get_float();
@@ -253,7 +254,7 @@ ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type ty
 bool
 ControlBindings::bind(ProcessContext& context, Key key)
 {
-	const Shared::LV2URIMap& uris = *context.engine().world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *context.engine().world()->uris().get();
 	assert(_learn_port);
 	if (key.type == MIDI_NOTE) {
 		bool toggled = _learn_port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
@@ -327,7 +328,7 @@ ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 	SharedPtr<Bindings> bindings = _bindings;
 	_feedback->clear();
 
-	const Shared::LV2URIMap& uris = *context.engine().world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *context.engine().world()->uris().get();
 
 	// TODO: cache
 	const uint32_t midi_event_type = uris.global_to_event(uris.midi_MidiEvent.id).second;
@@ -379,4 +380,5 @@ ControlBindings::post_process(ProcessContext& context, EventBuffer* buffer)
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen

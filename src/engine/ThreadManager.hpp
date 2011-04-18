@@ -22,6 +22,7 @@
 #include "raul/Thread.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 enum ThreadID {
 	THREAD_PRE_PROCESS,
@@ -49,6 +50,7 @@ public:
 	static bool single_threaded;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_THREADMANAGER_HPP

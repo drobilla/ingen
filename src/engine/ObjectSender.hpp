@@ -20,7 +20,9 @@
 
 namespace Ingen {
 
-namespace Shared { class ClientInterface; }
+class ClientInterface;
+
+namespace Engine {
 
 class GraphObjectImpl;
 class PatchImpl;
@@ -39,18 +41,25 @@ class PluginImpl;
  */
 class ObjectSender {
 public:
-	static void send_object(Shared::ClientInterface* client,
-			const GraphObjectImpl* object, bool recursive);
+	static void send_object(ClientInterface*       client,
+	                        const GraphObjectImpl* object,
+	                        bool                   recursive);
 
 private:
-	static void send_patch(Shared::ClientInterface* client,
-			const PatchImpl* patch, bool recursive, bool bundle=true);
-	static void send_node(Shared::ClientInterface* client,
-			const NodeImpl* node, bool recursive, bool bundle=true);
-	static void send_port(Shared::ClientInterface* client,
-			const PortImpl* port, bool bundle=true);
+	static void send_patch(ClientInterface* client,
+	                       const PatchImpl* patch,
+	                       bool             recursive,
+	                       bool             bundle=true);
+	static void send_node(ClientInterface*  client,
+	                      const NodeImpl*   node,
+	                      bool              recursive,
+	                      bool              bundle=true);
+	static void send_port(ClientInterface*  client,
+	                      const PortImpl*   port,
+	                      bool              bundle=true);
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_OBJECTSENDER_HPP

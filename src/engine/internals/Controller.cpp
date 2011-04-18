@@ -32,9 +32,8 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 namespace Internals {
-
-using namespace Shared;
 
 InternalPlugin* ControllerNode::internal_plugin(Shared::LV2URIMap& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Controller", "controller");
@@ -49,7 +48,7 @@ ControllerNode::ControllerNode(InternalPlugin* plugin,
 	: NodeImpl(plugin, path, false, parent, srate)
 	, _learning(false)
 {
-	const LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(6);
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());
@@ -143,5 +142,6 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 }
 
 } // namespace Internals
+} // namespace Engine
 } // namespace Ingen
 

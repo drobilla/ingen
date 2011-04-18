@@ -21,7 +21,6 @@
 #include "raul/URI.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 /** The type of a port.
  *
@@ -92,7 +91,6 @@ private:
 	Symbol _symbol;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_PORTTYPE_HPP

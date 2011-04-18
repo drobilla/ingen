@@ -27,7 +27,6 @@
 namespace Raul { class Atom; class Path; class URI; }
 
 namespace Ingen {
-namespace Shared {
 
 /** Abstract interface common to both engine and clients.
  * Purely virtual (except for the destructor).
@@ -69,7 +68,6 @@ public:
 	                          const Raul::Atom& value) = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_COMMONINTERFACE_HPP

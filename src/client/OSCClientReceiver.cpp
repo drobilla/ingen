@@ -36,9 +36,8 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-using namespace Shared;
-
-OSCClientReceiver::OSCClientReceiver(int listen_port, SharedPtr<Shared::ClientInterface> target)
+OSCClientReceiver::OSCClientReceiver(int                        listen_port,
+                                     SharedPtr<ClientInterface> target)
 	: _target(target)
 	, _listen_port(listen_port)
 	, _st(NULL)

@@ -42,9 +42,8 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
-
-using namespace Shared;
 
 SetPortValue::SetPortValue(Engine&            engine,
                            SharedPtr<Request> request,
@@ -146,7 +145,7 @@ SetPortValue::apply(Context& context)
 			return;
 		}
 
-		LV2URIMap& uris = *_engine.world()->uris().get();
+		Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
 		if (ebuf && _value.type() == Atom::BLOB) {
@@ -174,7 +173,7 @@ SetPortValue::apply(Context& context)
 		ObjectBuffer* const obuf = dynamic_cast<ObjectBuffer*>(buf);
 		if (obuf) {
 			obuf->atom()->size = obuf->size() - sizeof(LV2_Atom);
-			if (LV2Atom::from_atom(uris, _value, obuf->atom())) {
+			if (Ingen::Shared::LV2Atom::from_atom(uris, _value, obuf->atom())) {
 				debug << "Converted atom " << _value << " :: " << obuf->atom()->type
 					<< " * " << obuf->atom()->size << " @ " << obuf->atom() << endl;
 				return;
@@ -218,6 +217,7 @@ SetPortValue::post_process()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

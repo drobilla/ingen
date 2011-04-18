@@ -25,12 +25,13 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
 void
 SendBinding::post_process()
 {
-	const LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 	Raul::Atom::DictValue dict;
 	if (_type == ControlBindings::MIDI_CC) {
 		dict[uris.rdf_type] = uris.midi_Controller;
@@ -48,6 +49,7 @@ SendBinding::post_process()
 	_engine.broadcaster()->set_property(_port->path(), uris.ingen_controlBinding, dict);
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

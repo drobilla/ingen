@@ -33,6 +33,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 
 NodeImpl::NodeImpl(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphonic, PatchImpl* parent, SampleRate srate)
 	: GraphObjectImpl(plugin->uris(), parent, symbol)
@@ -67,13 +68,13 @@ NodeImpl::~NodeImpl()
 	free(_valid_ports);
 }
 
-Shared::Port*
+Port*
 NodeImpl::port(uint32_t index) const
 {
 	return (*_ports)[index];
 }
 
-const Shared::Plugin*
+const Plugin*
 NodeImpl::plugin() const
 {
 	return _plugin;
@@ -258,5 +259,6 @@ NodeImpl::set_port_buffer(uint32_t voice, uint32_t port_num,
 			<< " buffer " << buf << " offset " << offset << std::endl;*/
 }
 
+} // namespace Engine
 } // namespace Ingen
 

@@ -22,6 +22,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 
 uint32_t ProcessSlave::_next_id = 0;
 
@@ -68,4 +69,5 @@ ProcessSlave::_whipped()
 	_state = STATE_FINISHED;
 }
 
+} // namespace Engine
 } // namespace Ingen

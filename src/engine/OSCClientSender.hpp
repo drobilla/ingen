@@ -28,13 +28,17 @@
 
 namespace Ingen {
 
-namespace Shared { class EngineInterface; }
+class EngineInterface;
+
+namespace Engine {
+
 
 /** Implements ClientInterface for OSC clients (sends OSC messages).
  *
  * \ingroup engine
  */
-class OSCClientSender : public Shared::ClientInterface, public Shared::OSCSender
+class OSCClientSender : public ClientInterface,
+                        public Ingen::Shared::OSCSender
 {
 public:
 	explicit OSCClientSender(const Raul::URI& url)
@@ -65,13 +69,13 @@ public:
 
 	void error(const std::string& msg);
 
-	virtual void put(const Raul::URI&                    path,
-	                 const Shared::Resource::Properties& properties,
-	                 Shared::Resource::Graph             ctx=Shared::Resource::DEFAULT);
+	virtual void put(const Raul::URI&            path,
+	                 const Resource::Properties& properties,
+	                 Resource::Graph             ctx=Resource::DEFAULT);
 
-	virtual void delta(const Raul::URI&                    path,
-	                   const Shared::Resource::Properties& remove,
-	                   const Shared::Resource::Properties& add);
+	virtual void delta(const Raul::URI&            path,
+	                   const Resource::Properties& remove,
+	                   const Resource::Properties& add);
 
 	virtual void del(const Raul::Path& path);
 
@@ -94,6 +98,7 @@ private:
 	Raul::URI _url;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_OSCCLIENTSENDER_HPP

@@ -23,6 +23,7 @@
 #include "raul/List.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class Event;
 class Engine;
@@ -61,6 +62,7 @@ private:
 	uint8_t*           _event_buffer;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_POSTPROCESSOR_HPP

@@ -23,6 +23,7 @@
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class CompiledPatch;
 class NodeImpl;
@@ -78,6 +79,7 @@ private:
 	bool      _deleting;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

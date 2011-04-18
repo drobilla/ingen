@@ -46,8 +46,9 @@ using namespace Raul;
 
 namespace Ingen {
 
-using namespace Shared;
 using namespace Serialisation;
+
+namespace Engine {
 
 HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	: QueuedEngineInterface(engine, 64) // FIXME
@@ -233,5 +234,6 @@ HTTPEngineReceiver::ReceiveThread::_run()
 	soup_server_run(_receiver._server);
 }
 
+} // namespace Engine
 } // namespace Ingen
 

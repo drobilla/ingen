@@ -31,6 +31,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 
 class PortImpl;
 class OutputPort;
@@ -48,7 +49,7 @@ class BufferFactory;
  *
  * \ingroup engine
  */
-class ConnectionImpl : public Raul::Deletable, public Shared::Connection
+class ConnectionImpl : public Raul::Deletable, public Connection
 {
 public:
 	ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl* dst_port);
@@ -103,6 +104,7 @@ protected:
 	bool               _pending_disconnection;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_CONNECTIONIMPL_HPP

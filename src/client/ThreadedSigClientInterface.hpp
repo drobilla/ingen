@@ -31,7 +31,9 @@
 typedef sigc::slot<void> Closure;
 
 namespace Ingen {
-namespace Shared { class EngineInterface; }
+
+class EngineInterface;
+
 namespace Client {
 
 /** A LibSigC++ signal emitting interface for clients to use.
@@ -82,14 +84,14 @@ public:
 	void error(const std::string& msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
 
-	void put(const Raul::URI& path,
-	         const Shared::Resource::Properties& properties,
-	         Shared::Resource::Graph             ctx=Shared::Resource::DEFAULT)
+	void put(const Raul::URI&            path,
+	         const Resource::Properties& properties,
+	         Resource::Graph             ctx=Resource::DEFAULT)
 		{ push_sig(sigc::bind(put_slot, path, properties, ctx)); }
 
-	void delta(const Raul::URI&                    path,
-	           const Shared::Resource::Properties& remove,
-	           const Shared::Resource::Properties& add)
+	void delta(const Raul::URI&            path,
+	           const Resource::Properties& remove,
+	           const Resource::Properties& add)
 		{ push_sig(sigc::bind(delta_slot, path, remove, add)); }
 
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
@@ -128,10 +130,10 @@ private:
 	sigc::slot<void, std::string>                                 error_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>          new_plugin_slot;
 	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool>       new_port_slot;
-	sigc::slot<void, Raul::URI, Shared::Resource::Properties,
-	                            Shared::Resource::Graph>          put_slot;
-	sigc::slot<void, Raul::URI, Shared::Resource::Properties,
-	                            Shared::Resource::Properties>     delta_slot;
+	sigc::slot<void, Raul::URI, Resource::Properties,
+	                            Resource::Graph>                  put_slot;
+	sigc::slot<void, Raul::URI, Resource::Properties,
+	                            Resource::Properties>             delta_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      connection_slot;
 	sigc::slot<void, Raul::Path>                                  object_deleted_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      object_moved_slot;

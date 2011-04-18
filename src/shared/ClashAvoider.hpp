@@ -51,9 +51,9 @@ public:
 	                 const Resource::Properties& properties,
 	                 Resource::Graph             ctx=Resource::DEFAULT);
 
-	virtual void delta(const Raul::URI&                    path,
-	                   const Shared::Resource::Properties& remove,
-	                   const Shared::Resource::Properties& add);
+	virtual void delta(const Raul::URI&            path,
+	                   const Resource::Properties& remove,
+	                   const Resource::Properties& add);
 
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path);

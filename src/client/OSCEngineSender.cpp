@@ -85,7 +85,7 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
  * traversal.  It is a parameter to remain compatible with EngineInterface.
  */
 void
-OSCEngineSender::register_client(Shared::ClientInterface* client)
+OSCEngineSender::register_client(ClientInterface* client)
 {
 	send("/register_client", "i", next_id(), LO_ARGS_END);
 }
@@ -124,11 +124,11 @@ OSCEngineSender::quit()
 // Object commands
 
 void
-OSCEngineSender::put(const Raul::URI&                    path,
-                     const Shared::Resource::Properties& properties,
-                     Shared::Resource::Graph             ctx)
+OSCEngineSender::put(const Raul::URI&            path,
+                     const Resource::Properties& properties,
+                     Resource::Graph             ctx)
 {
-	typedef Shared::Resource::Properties::const_iterator iterator;
+	typedef Resource::Properties::const_iterator iterator;
 	lo_message m = lo_message_new();
 	lo_message_add_int32(m, next_id());
 	lo_message_add_string(m, path.c_str());
@@ -141,8 +141,8 @@ OSCEngineSender::put(const Raul::URI&                    path,
 
 void
 OSCEngineSender::delta(const Raul::URI&                    path,
-                       const Shared::Resource::Properties& remove,
-                       const Shared::Resource::Properties& add)
+                       const Resource::Properties& remove,
+                       const Resource::Properties& add)
 {
 	warn << "FIXME: OSC DELTA" << endl;
 }

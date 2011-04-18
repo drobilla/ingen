@@ -21,7 +21,6 @@
 #include "raul/URI.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 /** A type of event (that can live in an EventBuffer).
  */
@@ -72,7 +71,6 @@ private:
 	Symbol _symbol;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_EVENTTYPE_HPP

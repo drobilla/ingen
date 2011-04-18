@@ -23,6 +23,7 @@
 #include "engine/types.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class PortImpl;
 
@@ -74,6 +75,7 @@ private:
 	Raul::Atom _value;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

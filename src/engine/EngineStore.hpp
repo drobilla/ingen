@@ -24,7 +24,9 @@
 
 namespace Ingen {
 
-namespace Shared { class GraphObject; }
+class GraphObject;
+
+namespace Engine {
 
 class PatchImpl;
 class NodeImpl;
@@ -40,7 +42,7 @@ class GraphObjectImpl;
  * Searching with find*() is fast (O(log(n)) binary search on contiguous
  * memory) and realtime safe, but modification (add or remove) are neither.
  */
-class EngineStore : public Shared::Store
+class EngineStore : public Ingen::Shared::Store
 {
 public:
 	PatchImpl*       find_patch(const Raul::Path& path);
@@ -48,7 +50,7 @@ public:
 	PortImpl*        find_port(const Raul::Path& path);
 	GraphObjectImpl* find_object(const Raul::Path& path);
 
-	void add(Shared::GraphObject* o);
+	void add(Ingen::GraphObject* o);
 	void add(const Objects& family);
 
 	SharedPtr<Objects> remove(const Raul::Path& path);
@@ -57,6 +59,7 @@ public:
 	SharedPtr<Objects> remove_children(Objects::iterator i);
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // OBJECTSTORE

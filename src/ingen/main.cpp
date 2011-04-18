@@ -102,7 +102,7 @@ main(int argc, char** argv)
 	// Set bundle path from executable location so resources can be found
 	Shared::set_bundle_path_from_code((void*)&main);
 
-	SharedPtr<Shared::EngineInterface> engine_interface;
+	SharedPtr<EngineInterface> engine_interface;
 
 	Glib::thread_init();
 #if HAVE_SOUP

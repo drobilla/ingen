@@ -21,6 +21,7 @@
 #include "ClientBroadcaster.hpp"
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
 void
@@ -29,6 +30,7 @@ SendPortActivity::post_process()
 	_engine.broadcaster()->activity(_port->path());
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

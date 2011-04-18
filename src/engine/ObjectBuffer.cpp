@@ -31,8 +31,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 /** Allocate a new object buffer.
  * \a capacity is in bytes, including LV2_Atom header
@@ -143,5 +142,6 @@ ObjectBuffer::prepare_write(Context& context)
 	_buf->size = _size - sizeof(LV2_Atom);
 }
 
+} // namespace Engine
 } // namespace Ingen
 

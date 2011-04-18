@@ -142,17 +142,17 @@ ClashAvoider::exists(const Raul::Path& path) const
 }
 
 void
-ClashAvoider::put(const Raul::URI&                    path,
-                  const Shared::Resource::Properties& properties,
-                  Resource::Graph                     ctx)
+ClashAvoider::put(const Raul::URI&            path,
+                  const Resource::Properties& properties,
+                  Resource::Graph             ctx)
 {
 	_target.put(map_uri(path), properties, ctx);
 }
 
 void
-ClashAvoider::delta(const Raul::URI&                    path,
-                    const Shared::Resource::Properties& remove,
-                    const Shared::Resource::Properties& add)
+ClashAvoider::delta(const Raul::URI&            path,
+                    const Resource::Properties& remove,
+                    const Resource::Properties& add)
 {
 	_target.delta(map_uri(path), remove, add);
 }

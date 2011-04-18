@@ -40,8 +40,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 /** Partially construct a LV2Node.
  *
@@ -138,9 +137,9 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 bool
 LV2Node::instantiate(BufferFactory& bufs)
 {
-	const LV2URIMap&   uris = bufs.uris();
-	SharedPtr<LV2Info> info = _lv2_plugin->lv2_info();
-	SLV2Plugin         plug = _lv2_plugin->slv2_plugin();
+	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
+	SharedPtr<LV2Info>              info = _lv2_plugin->lv2_info();
+	SLV2Plugin                      plug = _lv2_plugin->slv2_plugin();
 
 	uint32_t num_ports = slv2_plugin_get_num_ports(plug);
 	assert(num_ports > 0);
@@ -406,5 +405,6 @@ LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num,
 			buf ? buf->port_data(_ports->at(port_num)->buffer_type(), offset) : NULL);
 }
 
+} // namespace Engine
 } // namespace Ingen
 

@@ -28,8 +28,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 /** Allocate a new event buffer.
  * \a capacity is in bytes (not number of events).
@@ -212,4 +211,5 @@ EventBuffer::append(uint32_t       frames,
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen

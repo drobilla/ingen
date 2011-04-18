@@ -37,9 +37,8 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
-
-using namespace Shared;
 
 CreateNode::CreateNode(
 		Engine&                      engine,
@@ -141,6 +140,7 @@ CreateNode::post_process()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

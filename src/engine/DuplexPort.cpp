@@ -32,8 +32,7 @@
 using namespace std;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 DuplexPort::DuplexPort(
 		BufferFactory&    bufs,
@@ -95,5 +94,6 @@ DuplexPort::post_process(Context& context)
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 

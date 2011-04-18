@@ -31,7 +31,9 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
 using namespace Shared;
+
 namespace Client {
 
 HTTPEngineSender::HTTPEngineSender(World* world, const URI& engine_url)
@@ -104,7 +106,7 @@ HTTPEngineSender::quit()
 void
 HTTPEngineSender::put(const URI&                  uri,
                       const Resource::Properties& properties,
-                      Shared::Resource::Graph     ctx)
+                      Resource::Graph     ctx)
 {
 	const string path     = (uri.substr(0, 6) == "path:/") ? uri.substr(6) : uri.str();
 	const string full_uri = _engine_url.str() + "/" + path;
@@ -123,9 +125,9 @@ HTTPEngineSender::put(const URI&                  uri,
 }
 
 void
-HTTPEngineSender::delta(const Raul::URI&                    path,
-	                    const Shared::Resource::Properties& remove,
-	                    const Shared::Resource::Properties& add)
+HTTPEngineSender::delta(const Raul::URI&            path,
+	                    const Resource::Properties& remove,
+	                    const Resource::Properties& add)
 {
 	warn << "FIXME: HTTP DELTA" << endl;
 }

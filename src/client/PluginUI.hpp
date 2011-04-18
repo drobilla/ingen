@@ -24,7 +24,11 @@
 #include "LV2Features.hpp"
 
 namespace Ingen {
-namespace Shared { class EngineInterface; class World; }
+
+class EngineInterface; 
+
+namespace Shared { class World; }
+
 namespace Client {
 
 class NodeModel;

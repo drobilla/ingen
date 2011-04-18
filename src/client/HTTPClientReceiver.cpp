@@ -46,9 +46,9 @@ static SoupSession*        client_session  = NULL;
 static HTTPClientReceiver* client_receiver = NULL;
 
 HTTPClientReceiver::HTTPClientReceiver(
-		Shared::World*                     world,
-		const std::string&                 url,
-		SharedPtr<Shared::ClientInterface> target)
+		Shared::World*             world,
+		const std::string&         url,
+		SharedPtr<ClientInterface> target)
 	: _target(target)
 	, _world(world)
 	, _url(url)

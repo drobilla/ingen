@@ -30,6 +30,7 @@
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
 Get::Get(
@@ -77,6 +78,7 @@ Get::post_process()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

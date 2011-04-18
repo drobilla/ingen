@@ -35,6 +35,7 @@
 #include "client/ObjectModel.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"
+#include "client/SigClientInterface.hpp"
 #include "NodeModule.hpp"
 #include "ControlPanel.hpp"
 #include "SubpatchModule.hpp"
@@ -160,9 +161,9 @@ void
 App::attach(SharedPtr<SigClientInterface> client,
             SharedPtr<Raul::Deletable>    handle)
 {
-	assert( ! _client);
-	assert( ! _store);
-	assert( ! _loader);
+	assert(!_client);
+	assert(!_store);
+	assert(!_loader);
 
 	_world->engine()->register_client(client.get());
 
@@ -372,7 +373,7 @@ App::icon_destroyed(void* data)
 }
 
 bool
-App::can_control(const Shared::Port* port) const
+App::can_control(const Ingen::Port* port) const
 {
 	return port->is_a(PortType::CONTROL)
 		|| (port->is_a(PortType::VALUE)

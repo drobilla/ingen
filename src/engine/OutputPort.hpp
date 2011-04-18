@@ -23,6 +23,7 @@
 #include "PortImpl.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 /** An output port.
  *
@@ -43,7 +44,7 @@ public:
 	           const Raul::Symbol& symbol,
 	           uint32_t            index,
 	           uint32_t            poly,
-	           Shared::PortType    type,
+	           PortType    type,
 	           const Raul::Atom&   value,
 	           size_t              buffer_size=0);
 
@@ -58,6 +59,7 @@ public:
 	bool is_output() const { return true; }
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_OUTPUTPORT_HPP

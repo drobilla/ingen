@@ -25,6 +25,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 
 EventSource::EventSource(size_t queue_size)
 	: _blocking_semaphore(0)
@@ -121,5 +122,6 @@ EventSource::_whipped()
 		_blocking_semaphore.wait();
 }
 
+} // namespace Engine
 } // namespace Ingen
 

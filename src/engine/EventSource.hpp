@@ -23,6 +23,7 @@
 #include "raul/List.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class Event;
 class QueuedEvent;
@@ -68,6 +69,7 @@ private:
 	Raul::Semaphore                           _blocking_semaphore;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_EVENTSOURCE_HPP

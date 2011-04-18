@@ -23,7 +23,6 @@
 #include "ingen/CommonInterface.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 class ClientInterface;
 
@@ -68,7 +67,6 @@ public:
 	                              const Raul::URI& key) = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_ENGINEINTERFACE_HPP

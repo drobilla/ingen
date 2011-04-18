@@ -30,9 +30,9 @@
 
 using namespace std;
 using namespace Raul;
-using Ingen::Shared::ClientInterface;
 
 namespace Ingen {
+namespace Engine {
 
 /** Register a client to receive messages over the notification band.
  */
@@ -112,4 +112,5 @@ ClientBroadcaster::send_object(const GraphObjectImpl* o, bool recursive)
 		ObjectSender::send_object((*i).second, o, recursive);
 }
 
+} // namespace Engine
 } // namespace Ingen

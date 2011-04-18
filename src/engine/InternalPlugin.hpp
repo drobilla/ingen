@@ -31,6 +31,7 @@
 #define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
 namespace Ingen {
+namespace Engine {
 
 class NodeImpl;
 class BufferFactory;
@@ -46,7 +47,7 @@ public:
 	NodeImpl* instantiate(BufferFactory&     bufs,
 	                      const std::string& name,
 	                      bool               polyphonic,
-	                      Ingen::PatchImpl*  parent,
+	                      PatchImpl*         parent,
 	                      Engine&            engine);
 
 	const std::string symbol() const { return _symbol; }
@@ -55,6 +56,7 @@ private:
 	const std::string _symbol;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_INTERNALPLUGIN_HPP

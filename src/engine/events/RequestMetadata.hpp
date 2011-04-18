@@ -18,13 +18,17 @@
 #ifndef INGEN_EVENTS_REQUESTMETADATA_HPP
 #define INGEN_EVENTS_REQUESTMETADATA_HPP
 
-#include "QueuedEvent.hpp"
 #include "raul/Atom.hpp"
 #include "raul/URI.hpp"
+
+#include "QueuedEvent.hpp"
 
 namespace Ingen {
 
 namespace Shared { class ResourceImpl; }
+
+namespace Engine {
+
 class GraphObjectImpl;
 
 namespace Events {
@@ -43,12 +47,12 @@ namespace Events {
 class RequestMetadata : public QueuedEvent
 {
 public:
-	RequestMetadata(Engine&                 engine,
-	                SharedPtr<Request>      request,
-	                SampleCount             timestamp,
-	                Shared::Resource::Graph context,
-	                const Raul::URI&        subject,
-	                const Raul::URI&        key);
+	RequestMetadata(Engine&            engine,
+	                SharedPtr<Request> request,
+	                SampleCount        timestamp,
+	                Resource::Graph    context,
+	                const Raul::URI&   subject,
+	                const Raul::URI&   key);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -61,13 +65,14 @@ private:
 		PORT_VALUE
 	} _special_type;
 
-	Raul::URI               _uri;
-	Raul::URI               _key;
-	Raul::Atom              _value;
-	Shared::ResourceImpl*   _resource;
-	Shared::Resource::Graph _context;
+	Raul::URI                    _uri;
+	Raul::URI                    _key;
+	Raul::Atom                   _value;
+	Ingen::Shared::ResourceImpl* _resource;
+	Resource::Graph              _context;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

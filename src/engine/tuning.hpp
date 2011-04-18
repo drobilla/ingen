@@ -22,6 +22,7 @@
 #include <time.h>
 
 namespace Ingen {
+namespace Engine {
 
 // FIXME: put this in a Config class
 
@@ -33,6 +34,7 @@ static const size_t message_context_queue_size = 1024;
 
 static const size_t event_bytes_per_frame = 4;
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_TUNING_HPP

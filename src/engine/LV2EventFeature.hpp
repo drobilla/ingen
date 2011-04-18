@@ -22,8 +22,9 @@
 #include "shared/LV2Features.hpp"
 
 namespace Ingen {
+namespace Engine {
 
-struct EventFeature : public Shared::LV2Features::Feature {
+struct EventFeature : public Ingen::Shared::LV2Features::Feature {
 	EventFeature() {
 		LV2_Event_Feature* data = (LV2_Event_Feature*)malloc(sizeof(LV2_Event_Feature));
 		data->lv2_event_ref   = &event_ref;
@@ -39,7 +40,7 @@ struct EventFeature : public Shared::LV2Features::Feature {
 	static uint32_t event_unref(LV2_Event_Callback_Data callback_data,
 	                            LV2_Event*              event) { return 0; }
 
-	SharedPtr<LV2_Feature> feature(Shared::World*, Shared::Node*) {
+	SharedPtr<LV2_Feature> feature(Shared::World*, Node*) {
 		return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 	}
 
@@ -47,6 +48,7 @@ private:
 	LV2_Feature _feature;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_LV2EVENTFEATURE_HPP

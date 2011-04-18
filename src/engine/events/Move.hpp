@@ -23,6 +23,7 @@
 #include "EngineStore.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class PatchImpl;
 
@@ -71,6 +72,7 @@ private:
 	EngineStore::iterator _store_iterator;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

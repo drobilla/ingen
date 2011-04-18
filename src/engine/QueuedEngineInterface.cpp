@@ -32,8 +32,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queue_size)
 	: EventSource(queue_size)
@@ -142,17 +141,17 @@ QueuedEngineInterface::bundle_end()
 // Object commands
 
 void
-QueuedEngineInterface::put(const URI&                    uri,
-                           const Resource::Properties&   properties,
-                           const Shared::Resource::Graph ctx)
+QueuedEngineInterface::put(const URI&                  uri,
+                           const Resource::Properties& properties,
+                           const Resource::Graph       ctx)
 {
 	push_queued(new Events::SetMetadata(_engine, _request, now(), true, ctx, uri, properties));
 }
 
 void
-QueuedEngineInterface::delta(const URI&                          uri,
-                             const Shared::Resource::Properties& remove,
-                             const Shared::Resource::Properties& add)
+QueuedEngineInterface::delta(const URI&                  uri,
+                             const Resource::Properties& remove,
+                             const Resource::Properties& add)
 {
 	push_queued(new Events::SetMetadata(_engine, _request, now(), false, Resource::DEFAULT, uri, add, remove));
 }
@@ -224,4 +223,5 @@ QueuedEngineInterface::request_property(const URI& uri, const URI& key)
 	push_queued(new Events::RequestMetadata(_engine, _request, now(), Resource::DEFAULT, uri, key));
 }
 
+} // namespace Engine
 } // namespace Ingen

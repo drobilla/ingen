@@ -37,9 +37,9 @@ namespace Client {
 class HTTPClientReceiver : public boost::noncopyable, public Raul::Deletable
 {
 public:
-	HTTPClientReceiver(Shared::World*                     world,
-	                   const std::string&                 url,
-	                   SharedPtr<Shared::ClientInterface> target);
+	HTTPClientReceiver(Shared::World*             world,
+	                   const std::string&         url,
+	                   SharedPtr<ClientInterface> target);
 
 	~HTTPClientReceiver();
 
@@ -70,8 +70,8 @@ private:
 	friend class Listener;
 	SharedPtr<Listener> _listener;
 
-	Glib::Mutex _mutex;
-	SharedPtr<Shared::ClientInterface> _target;
+	Glib::Mutex                _mutex;
+	SharedPtr<ClientInterface> _target;
 
 	Shared::World*    _world;
 	const std::string _url;

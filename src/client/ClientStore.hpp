@@ -36,7 +36,7 @@ namespace Raul { class Atom; }
 
 namespace Ingen {
 
-namespace Shared { class GraphObject; }
+class GraphObject;
 
 namespace Client {
 
@@ -52,17 +52,17 @@ class SigClientInterface;
  * \ingroup IngenClient
  */
 class ClientStore : public Shared::Store
-                  , public Shared::CommonInterface
+                  , public CommonInterface
                   , public sigc::trackable {
 public:
 	ClientStore(
-		SharedPtr<Shared::LV2URIMap>       uris,
-		SharedPtr<Shared::EngineInterface> engine=SharedPtr<Shared::EngineInterface>(),
-		SharedPtr<SigClientInterface>      emitter=SharedPtr<SigClientInterface>());
+		SharedPtr<Shared::LV2URIMap>  uris,
+		SharedPtr<EngineInterface>    engine=SharedPtr<EngineInterface>(),
+		SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
 
-	SharedPtr<PluginModel>      plugin(const Raul::URI& uri);
-	SharedPtr<ObjectModel>      object(const Raul::Path& path);
-	SharedPtr<Shared::Resource> resource(const Raul::URI& uri);
+	SharedPtr<PluginModel>  plugin(const Raul::URI& uri);
+	SharedPtr<ObjectModel>  object(const Raul::Path& path);
+	SharedPtr<Resource>     resource(const Raul::URI& uri);
 
 	void clear();
 
@@ -74,15 +74,15 @@ public:
 	Shared::LV2URIMap& uris() { return *_uris.get(); }
 
 	// CommonInterface
-	bool new_object(const Shared::GraphObject* object);
+	bool new_object(const GraphObject* object);
 
-	void put(const Raul::URI&                    uri,
-	         const Shared::Resource::Properties& properties,
-	         Shared::Resource::Graph             ctx=Shared::Resource::DEFAULT);
+	void put(const Raul::URI&            uri,
+	         const Resource::Properties& properties,
+	         Resource::Graph             ctx=Resource::DEFAULT);
 
-	void delta(const Raul::URI&                    uri,
-	           const Shared::Resource::Properties& remove,
-	           const Shared::Resource::Properties& add);
+	void delta(const Raul::URI&            uri,
+	           const Resource::Properties& remove,
+	           const Resource::Properties& add);
 
 	void move(const Raul::Path& old_path,
 	          const Raul::Path& new_path);
@@ -103,7 +103,7 @@ public:
 	sigc::signal< void, SharedPtr<PluginModel> > signal_new_plugin;
 
 private:
-	void add(Shared::GraphObject* o) { throw; }
+	void add(GraphObject* o) { throw; }
 
 	void add_object(SharedPtr<ObjectModel> object);
 	SharedPtr<ObjectModel> remove_object(const Raul::Path& path);
@@ -123,9 +123,9 @@ private:
 	bool attempt_connection(const Raul::Path& src_port_path,
 	                        const Raul::Path& dst_port_path);
 
-	SharedPtr<Shared::LV2URIMap>       _uris;
-	SharedPtr<Shared::EngineInterface> _engine;
-	SharedPtr<SigClientInterface>      _emitter;
+	SharedPtr<Shared::LV2URIMap>  _uris;
+	SharedPtr<EngineInterface>    _engine;
+	SharedPtr<SigClientInterface> _emitter;
 
 	SharedPtr<Plugins> _plugins; ///< Map, keyed by plugin URI
 };

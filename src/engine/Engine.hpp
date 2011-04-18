@@ -33,6 +33,8 @@ namespace Ingen {
 
 namespace Shared { class World; }
 
+namespace Engine {
+
 class BufferFactory;
 class ClientBroadcaster;
 class ControlBindings;
@@ -74,28 +76,28 @@ public:
 
 	void process_events(ProcessContext& context);
 
-	ClientBroadcaster* broadcaster()      const { return _broadcaster; }
-	BufferFactory*     buffer_factory()   const { return _buffer_factory; }
-	ControlBindings*   control_bindings() const { return _control_bindings; }
-	Driver*            driver()           const { return _driver.get(); }
-	Raul::Maid*        maid()             const { return _maid; }
-	MessageContext*    message_context()  const { return _message_context; }
-	NodeFactory*       node_factory()     const { return _node_factory; }
-	PostProcessor*     post_processor()   const { return _post_processor; }
-	Shared::World*     world()            const { return _world; }
+	ClientBroadcaster*    broadcaster()      const { return _broadcaster; }
+	BufferFactory*        buffer_factory()   const { return _buffer_factory; }
+	ControlBindings*      control_bindings() const { return _control_bindings; }
+	Driver*               driver()           const { return _driver.get(); }
+	Raul::Maid*           maid()             const { return _maid; }
+	MessageContext*       message_context()  const { return _message_context; }
+	NodeFactory*          node_factory()     const { return _node_factory; }
+	PostProcessor*        post_processor()   const { return _post_processor; }
+	Ingen::Shared::World* world()            const { return _world; }
 
 	SharedPtr<EngineStore> engine_store() const;
 
 private:
-	ClientBroadcaster* _broadcaster;
-	BufferFactory*     _buffer_factory;
-	ControlBindings*   _control_bindings;
-	SharedPtr<Driver>  _driver;
-	Raul::Maid*        _maid;
-	MessageContext*    _message_context;
-	NodeFactory*       _node_factory;
-	PostProcessor*     _post_processor;
-	Shared::World*     _world;
+	ClientBroadcaster*    _broadcaster;
+	BufferFactory*        _buffer_factory;
+	ControlBindings*      _control_bindings;
+	SharedPtr<Driver>     _driver;
+	Raul::Maid*           _maid;
+	MessageContext*       _message_context;
+	NodeFactory*          _node_factory;
+	PostProcessor*        _post_processor;
+	Ingen::Shared::World* _world;
 
 	typedef std::set< SharedPtr<EventSource> > EventSources;
 	EventSources _event_sources;
@@ -103,6 +105,7 @@ private:
 	bool _quit_flag;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_ENGINE_HPP

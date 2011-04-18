@@ -31,6 +31,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
 void
 MessageContext::run(NodeImpl* node, FrameTime time)
@@ -121,4 +122,5 @@ MessageContext::execute(const Request& req)
 	node->reset_valid_ports();
 }
 
+} // namespace Engine
 } // namespace Ingen

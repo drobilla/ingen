@@ -29,6 +29,7 @@
 #include "BufferFactory.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class Context;
 class Engine;
@@ -37,7 +38,7 @@ class BufferFactory;
 class Buffer : public boost::noncopyable, public Raul::Deletable
 {
 public:
-	Buffer(BufferFactory& bufs, Shared::PortType type, size_t size)
+	Buffer(BufferFactory& bufs, PortType type, size_t size)
 		: _factory(bufs)
 		, _type(type)
 		, _size(size)
@@ -50,8 +51,8 @@ public:
 
 	virtual void resize(size_t size) { _size = size; }
 
-	virtual void*       port_data(Shared::PortType port_type, SampleCount offset=0) = 0;
-	virtual const void* port_data(Shared::PortType port_type, SampleCount offset=0) const = 0;
+	virtual void*       port_data(PortType port_type, SampleCount offset=0) = 0;
+	virtual const void* port_data(PortType port_type, SampleCount offset=0) const = 0;
 
 	/** Rewind (ie reset read pointer), but leave contents unchanged */
 	virtual void rewind() const {}
@@ -61,7 +62,7 @@ public:
 	virtual void prepare_read(Context& context) {}
 	virtual void prepare_write(Context& context) {}
 
-	Shared::PortType type() const { return _type; }
+	PortType type() const { return _type; }
 	size_t           size() const { return _size; }
 
 	inline void ref() { ++_refs; }
@@ -74,7 +75,7 @@ public:
 
 protected:
 	BufferFactory&   _factory;
-	Shared::PortType _type;
+	PortType _type;
 	size_t           _size;
 
 	friend class BufferFactory;
@@ -85,11 +86,12 @@ private:
 	size_t  _refs; ///< Intrusive reference count for intrusive_ptr
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 namespace boost {
-	inline void intrusive_ptr_add_ref(Ingen::Buffer* b) { b->ref(); }
-	inline void intrusive_ptr_release(Ingen::Buffer* b) { b->deref(); }
+inline void intrusive_ptr_add_ref(Ingen::Engine::Buffer* b) { b->ref(); }
+inline void intrusive_ptr_release(Ingen::Engine::Buffer* b) { b->deref(); }
 }
 
 #endif // INGEN_ENGINE_BUFFER_HPP

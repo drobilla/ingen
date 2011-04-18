@@ -23,6 +23,7 @@
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
 /** Registers a new client with the OSC system, so it can receive updates.
@@ -32,20 +33,21 @@ namespace Events {
 class RegisterClient : public QueuedEvent
 {
 public:
-	RegisterClient(Engine&                  engine,
-	               SharedPtr<Request>       request,
-	               SampleCount              timestamp,
-	               const Raul::URI&         uri,
-	               Shared::ClientInterface* client);
+	RegisterClient(Engine&            engine,
+	               SharedPtr<Request> request,
+	               SampleCount        timestamp,
+	               const Raul::URI&   uri,
+	               ClientInterface*   client);
 
 	void pre_process();
 	void post_process();
 
 private:
-	Raul::URI                _uri;
-	Shared::ClientInterface* _client;
+	Raul::URI        _uri;
+	ClientInterface* _client;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

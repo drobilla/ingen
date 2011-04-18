@@ -154,11 +154,11 @@ NodeModel::get_port(const Raul::Symbol& symbol) const
 	return SharedPtr<PortModel>();
 }
 
-Shared::Port*
+Ingen::Port*
 NodeModel::port(uint32_t index) const
 {
 	assert(index < num_ports());
-	return dynamic_cast<Shared::Port*>(_ports[index].get());
+	return dynamic_cast<Ingen::Port*>(_ports[index].get());
 }
 
 void

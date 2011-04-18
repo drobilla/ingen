@@ -29,6 +29,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 
 class GraphObjectImpl;
 class NodeImpl;
@@ -44,16 +45,16 @@ class ConnectionImpl;
  *
  * \ingroup engine
  */
-class ClientBroadcaster : public Shared::ClientInterface
+class ClientBroadcaster : public ClientInterface
 {
 public:
-	void register_client(const Raul::URI& uri, Shared::ClientInterface* client);
+	void register_client(const Raul::URI& uri, ClientInterface* client);
 	bool unregister_client(const Raul::URI& uri);
 
-	Shared::ClientInterface* client(const Raul::URI& uri);
+	ClientInterface* client(const Raul::URI& uri);
 
 	void send_plugins(const NodeFactory::Plugins& plugin_list);
-	void send_plugins_to(Shared::ClientInterface*, const NodeFactory::Plugins& plugin_list);
+	void send_plugins_to(ClientInterface*, const NodeFactory::Plugins& plugin_list);
 
 	void send_object(const GraphObjectImpl* p, bool recursive);
 
@@ -66,15 +67,15 @@ public:
 	void bundle_begin() { BROADCAST(bundle_begin); }
 	void bundle_end()   { BROADCAST(bundle_end); }
 
-	void put(const Raul::URI&                    uri,
-	         const Shared::Resource::Properties& properties,
-	         Shared::Resource::Graph             ctx=Shared::Resource::DEFAULT) {
+	void put(const Raul::URI&            uri,
+	         const Resource::Properties& properties,
+	         Resource::Graph             ctx=Resource::DEFAULT) {
 		BROADCAST(put, uri, properties);
 	}
 
-	void delta(const Raul::URI&                    uri,
-	           const Shared::Resource::Properties& remove,
-	           const Shared::Resource::Properties& add) {
+	void delta(const Raul::URI&            uri,
+	           const Resource::Properties& remove,
+	           const Resource::Properties& add) {
 		BROADCAST(delta, uri, remove, add);
 	}
 
@@ -116,10 +117,11 @@ public:
 	void activity(const Raul::Path& path) { BROADCAST(activity, path); }
 
 private:
-	typedef std::map<Raul::URI, Shared::ClientInterface*> Clients;
+	typedef std::map<Raul::URI, ClientInterface*> Clients;
 	Clients _clients;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_CLIENTBROADCASTER_HPP

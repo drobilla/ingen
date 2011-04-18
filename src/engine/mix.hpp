@@ -26,11 +26,12 @@
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
 inline void
 mix(Context& context, Buffer* dst, const IntrusivePtr<Buffer>* srcs, uint32_t num_srcs)
 {
-	using Shared::PortType;
+	using Ingen::PortType;
 	switch (dst->type().symbol()) {
 	case PortType::AUDIO:
 	case PortType::CONTROL:
@@ -84,6 +85,7 @@ mix(Context& context, Buffer* dst, const IntrusivePtr<Buffer>* srcs, uint32_t nu
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_MIX_HPP

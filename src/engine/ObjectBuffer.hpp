@@ -23,6 +23,7 @@
 #include "Buffer.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class Context;
 
@@ -33,8 +34,8 @@ public:
 
 	void clear();
 
-	void*       port_data(Shared::PortType port_type, SampleCount offset);
-	const void* port_data(Shared::PortType port_type, SampleCount offset) const;
+	void*       port_data(PortType port_type, SampleCount offset);
+	const void* port_data(PortType port_type, SampleCount offset) const;
 
 	void prepare_write(Context& context);
 
@@ -49,6 +50,7 @@ private:
 	LV2_Atom* _buf; ///< Contents
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_OBJECTBUFFER_HPP

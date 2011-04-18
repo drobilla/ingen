@@ -24,6 +24,7 @@
 #include <boost/utility.hpp>
 
 namespace Ingen {
+namespace Engine {
 
 class ConnectionImpl;
 
@@ -69,6 +70,7 @@ struct CompiledPatch : public std::vector<CompiledNode>
 	std::vector<ConnectionImpl*> queued_connections;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_COMPILEDPATCH_HPP

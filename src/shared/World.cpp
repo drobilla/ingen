@@ -245,14 +245,14 @@ World::unload_modules()
 
 /** Get an interface for a remote engine at @a url
  */
-SharedPtr<Ingen::Shared::EngineInterface>
+SharedPtr<EngineInterface>
 World::interface(const std::string& url)
 {
 	const string scheme = url.substr(0, url.find(":"));
 	const Pimpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
 	if (i == _impl->interface_factories.end()) {
 		warn << "Unknown URI scheme `" << scheme << "'" << endl;
-		return SharedPtr<Ingen::Shared::EngineInterface>();
+		return SharedPtr<EngineInterface>();
 	}
 
 	return i->second(this, url);

@@ -22,6 +22,7 @@
 #include "ingen/Resource.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class PatchImpl;
 class CompiledPatch;
@@ -36,12 +37,12 @@ class CreatePatch : public QueuedEvent
 {
 public:
 	CreatePatch(
-			Engine&                             engine,
-			SharedPtr<Request>                  request,
-			SampleCount                         timestamp,
-			const Raul::Path&                   path,
-			int                                 poly,
-			const Shared::Resource::Properties& properties);
+			Engine&                     engine,
+			SharedPtr<Request>          request,
+			SampleCount                 timestamp,
+			const Raul::Path&           path,
+			int                         poly,
+			const Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -56,9 +57,10 @@ private:
 	CompiledPatch*   _compiled_patch;
 	int              _poly;
 
-	Shared::Resource::Properties _properties;
+	Resource::Properties _properties;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

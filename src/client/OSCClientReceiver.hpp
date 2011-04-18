@@ -54,7 +54,7 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
 class OSCClientReceiver : public boost::noncopyable, public Raul::Deletable
 {
 public:
-	OSCClientReceiver(int listen_port, SharedPtr<Shared::ClientInterface> target);
+	OSCClientReceiver(int listen_port, SharedPtr<ClientInterface> target);
 	~OSCClientReceiver();
 
 	std::string uri() const { return lo_server_thread_get_url(_st); }
@@ -73,7 +73,7 @@ private:
 	static int  generic_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* user_data);
 	static int  unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* osc_receiver);
 
-	SharedPtr<Shared::ClientInterface> _target;
+	SharedPtr<ClientInterface> _target;
 
 	int              _listen_port;
 	lo_server_thread _st;

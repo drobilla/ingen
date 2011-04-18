@@ -29,6 +29,7 @@ namespace Raul {
 }
 
 namespace Ingen {
+namespace Engine {
 
 class GraphObjectImpl;
 class NodeImpl;
@@ -84,9 +85,10 @@ private:
 
 	SharedPtr<ControlBindings::Bindings> _removed_bindings;
 
-	SharedPtr< Raul::Table<Raul::Path, SharedPtr<Shared::GraphObject> > > _removed_table;
+	SharedPtr< Raul::Table<Raul::Path, SharedPtr<GraphObject> > > _removed_table;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

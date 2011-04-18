@@ -44,7 +44,8 @@ class ClientStore;
  *
  * \ingroup IngenClient
  */
-class NodeModel : public ObjectModel, virtual public Ingen::Shared::Node
+class NodeModel : public ObjectModel,
+                  virtual public Ingen::Node
 {
 public:
 	NodeModel(const NodeModel& copy);
@@ -54,11 +55,11 @@ public:
 
 	SharedPtr<PortModel> get_port(const Raul::Symbol& symbol) const;
 
-	Shared::Port* port(uint32_t index) const;
+	Port* port(uint32_t index) const;
 
 	const Raul::URI&       plugin_uri()   const { return _plugin_uri; }
-	const Shared::Plugin*  plugin()       const { return _plugin.get(); }
-	Shared::Plugin*        plugin()             { return _plugin.get(); }
+	const Plugin*          plugin()       const { return _plugin.get(); }
+	Plugin*                plugin()             { return _plugin.get(); }
 	SharedPtr<PluginModel> plugin_model() const { return _plugin; }
 	uint32_t               num_ports()    const { return _ports.size(); }
 	const Ports&           ports()        const { return _ports; }

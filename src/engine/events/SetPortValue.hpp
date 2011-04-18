@@ -23,6 +23,7 @@
 #include "types.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class PortImpl;
 
@@ -75,6 +76,7 @@ private:
 	PortImpl*        _port;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

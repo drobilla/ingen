@@ -33,9 +33,8 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
-
-using namespace Shared;
 
 Delete::Delete(Engine& engine, SharedPtr<Request> request, FrameTime time, const Raul::Path& path)
 	: QueuedEvent(engine, request, time, true)
@@ -202,5 +201,6 @@ Delete::post_process()
 	_engine.maid()->push(_garbage);
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events

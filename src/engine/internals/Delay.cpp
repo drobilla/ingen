@@ -43,9 +43,8 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Internals {
-
-using namespace Shared;
 
 static const float MAX_DELAY_SECONDS = 8.0f;
 
@@ -66,7 +65,7 @@ DelayNode::DelayNode(
 	, _buffer_mask(0)
 	, _write_phase(0)
 {
-	const LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(3);
 
 	const float default_delay = 1.0f;
@@ -204,5 +203,6 @@ DelayNode::process(ProcessContext& context)
 }
 
 } // namespace Internals
+} // namespace Engine
 } // namespace Ingen
 

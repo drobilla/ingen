@@ -28,8 +28,9 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
-struct ResizeFeature : public Shared::LV2Features::Feature {
+struct ResizeFeature : public Ingen::Shared::LV2Features::Feature {
 	static bool resize_port(LV2_Resize_Port_Feature_Data data,
 	                        uint32_t                     index,
 	                        size_t                       size) {
@@ -51,7 +52,7 @@ struct ResizeFeature : public Shared::LV2Features::Feature {
 		free(feature);
 	}
 
-	SharedPtr<LV2_Feature> feature(Shared::World* w, Shared::Node* n) {
+	SharedPtr<LV2_Feature> feature(Shared::World* w, Node* n) {
 		NodeImpl* node = dynamic_cast<NodeImpl*>(n);
 		if (!node)
 			return SharedPtr<LV2_Feature>();
@@ -66,6 +67,7 @@ struct ResizeFeature : public Shared::LV2Features::Feature {
 	}
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_LV2RESIZEFEATURE_HPP

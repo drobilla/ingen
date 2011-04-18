@@ -24,6 +24,7 @@
 #include "NodeImpl.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class InputPort;
 class OutputPort;
@@ -70,6 +71,7 @@ private:
 	float    _delay_samples;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Internals
 

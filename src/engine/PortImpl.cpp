@@ -36,8 +36,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 PortImpl::PortImpl(BufferFactory&      bufs,
                    NodeImpl* const     node,
@@ -68,7 +67,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	if (_buffer_size == 0)
 		_buffer_size = bufs.default_buffer_size(type);
 
-	const LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
 	add_property(uris.rdf_type,  type.uri());
 	set_property(uris.lv2_index, Atom((int32_t)index));
 	set_context(_context);
@@ -215,7 +214,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::VALUE:
 	case PortType::MESSAGE:
-		LV2Atom::to_atom(_bufs.uris(), ((ObjectBuffer*)buffer(0).get())->atom(), val);
+		Ingen::Shared::LV2Atom::to_atom(_bufs.uris(), ((ObjectBuffer*)buffer(0).get())->atom(), val);
 		break;
 	}
 
@@ -229,7 +228,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 void
 PortImpl::set_context(Context::ID c)
 {
-	const LV2URIMap& uris = _bufs.uris();
+	const Ingen::Shared::LV2URIMap& uris = _bufs.uris();
 	_context = c;
 	switch (c) {
 	case Context::AUDIO:
@@ -248,4 +247,5 @@ PortImpl::buffer_type() const
 	return *_types.begin();
 }
 
+} // namespace Engine
 } // namespace Ingen

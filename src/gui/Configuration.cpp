@@ -84,13 +84,13 @@ Configuration::get_port_color(const PortModel* p)
 {
 	assert(p != NULL);
 	const Shared::LV2URIMap& uris = App::instance().uris();
-	if (p->is_a(Shared::PortType::AUDIO)) {
+	if (p->is_a(PortType::AUDIO)) {
 		return _audio_port_color;
 	} else if (p->supports(uris.atom_String)) {
 		return _string_port_color;
 	} else if (App::instance().can_control(p)) {
 		return _control_port_color;
-	} else if (p->is_a(Shared::PortType::EVENTS) || p->is_a(Shared::PortType::MESSAGE)) {
+	} else if (p->is_a(PortType::EVENTS) || p->is_a(PortType::MESSAGE)) {
 		return _event_port_color;
 	}
 

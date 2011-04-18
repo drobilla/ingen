@@ -43,7 +43,7 @@ using namespace Shared;
 namespace Client {
 
 ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap>       uris,
-                         SharedPtr<Shared::EngineInterface> engine,
+                         SharedPtr<EngineInterface> engine,
                          SharedPtr<SigClientInterface>      emitter)
 	: _uris(uris)
 	, _engine(engine)
@@ -101,7 +101,7 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 
 	}
 
-	typedef Shared::Resource::Properties::const_iterator Iterator;
+	typedef Resource::Properties::const_iterator Iterator;
 	for (Iterator i = object->properties().begin();
 	     i != object->properties().end(); ++i)
 		object->signal_property(i->first, i->second);
@@ -177,7 +177,7 @@ ClientStore::object(const Path& path)
 	}
 }
 
-SharedPtr<Shared::Resource>
+SharedPtr<Resource>
 ClientStore::resource(const URI& uri)
 {
 	if (Path::is_path(uri))
@@ -220,14 +220,14 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 		return;
 	}
 
-	typedef Table<Path, SharedPtr<Shared::GraphObject> > Removed;
+	typedef Table<Path, SharedPtr<GraphObject> > Removed;
 
 	iterator           end     = find_descendants_end(parent);
 	SharedPtr<Removed> removed = yank(parent, end);
 
 	assert(removed->size() > 0);
 
-	typedef Table<Path, SharedPtr<Shared::GraphObject> > PathTable;
+	typedef Table<Path, SharedPtr<GraphObject> > PathTable;
 	for (PathTable::iterator i = removed->begin(); i != removed->end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(old_path, child_old_path));
@@ -247,9 +247,9 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 }
 
 void
-ClientStore::put(const URI&                          uri,
-                 const Shared::Resource::Properties& properties,
-                 Shared::Resource::Graph             ctx)
+ClientStore::put(const URI&                  uri,
+                 const Resource::Properties& properties,
+                 Resource::Graph             ctx)
 {
 	typedef Resource::Properties::const_iterator Iterator;
 #ifdef INGEN_CLIENT_STORE_DUMP

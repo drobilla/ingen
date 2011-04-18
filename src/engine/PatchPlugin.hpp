@@ -24,6 +24,7 @@
 #include "PluginImpl.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class NodeImpl;
 
@@ -42,10 +43,10 @@ public:
 		: PluginImpl(uris, Plugin::Patch, uri)
 	{}
 
-	NodeImpl* instantiate(BufferFactory& bufs,
+	NodeImpl* instantiate(BufferFactory&     bufs,
 	                      const std::string& name,
 	                      bool               polyphonic,
-	                      Ingen::PatchImpl*  parent,
+	                      PatchImpl*         parent,
 	                      Engine&            engine)
 	{
 		return NULL;
@@ -59,6 +60,7 @@ private:
 	const std::string _name;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_PATCHPLUGIN_HPP

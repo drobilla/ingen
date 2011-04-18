@@ -25,14 +25,15 @@
 #include "Buffer.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class EventBuffer : public Buffer {
 public:
 	EventBuffer(BufferFactory& bufs, size_t capacity);
 	~EventBuffer();
 
-	void*       port_data(Shared::PortType port_type, SampleCount offset=0)       { return _data; }
-	const void* port_data(Shared::PortType port_type, SampleCount offset=0) const { return _data; }
+	void*       port_data(PortType port_type, SampleCount offset=0)       { return _data; }
+	const void* port_data(PortType port_type, SampleCount offset=0) const { return _data; }
 
 	inline void rewind() const { lv2_event_begin(&_iter, _data); }
 
@@ -79,6 +80,7 @@ private:
 	uint32_t                   _latest_subframes; ///< Latest time of all events (subframes)
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_EVENTBUFFER_HPP

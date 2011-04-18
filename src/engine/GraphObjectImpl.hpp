@@ -34,6 +34,8 @@ namespace Ingen {
 
 namespace Shared { class LV2URIMap; }
 
+namespace Engine {
+
 class PatchImpl;
 class Context;
 class ProcessContext;
@@ -47,7 +49,7 @@ class BufferFactory;
  *
  * \ingroup engine
  */
-class GraphObjectImpl : virtual public Ingen::Shared::GraphObject
+class GraphObjectImpl : virtual public GraphObject
                       , public Ingen::Shared::ResourceImpl
 {
 public:
@@ -96,14 +98,16 @@ public:
 	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly) = 0;
 
 protected:
-	GraphObjectImpl(Shared::LV2URIMap& uris,
-			GraphObjectImpl* parent, const Raul::Symbol& symbol);
+	GraphObjectImpl(Ingen::Shared::LV2URIMap& uris,
+	                GraphObjectImpl*          parent,
+	                const Raul::Symbol&       symbol);
 
 	GraphObjectImpl* _parent;
 	Raul::Path       _path;
 	Raul::Symbol     _symbol;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_GRAPHOBJECTIMPL_HPP

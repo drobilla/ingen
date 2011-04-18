@@ -23,6 +23,7 @@
 #include "types.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class GraphObjectImpl;
 class PluginImpl;
@@ -52,6 +53,7 @@ private:
 	NodeFactory::Plugins _plugins;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

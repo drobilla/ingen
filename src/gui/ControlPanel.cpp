@@ -91,7 +91,7 @@ ControlPanel::add_port(SharedPtr<PortModel> pm)
 					= GladeFactory::new_glade_reference("toggle_control");
 			xml->get_widget_derived("toggle_control", tc);
 			control = tc;
-		} else if (pm->is_a(Shared::PortType::CONTROL)
+		} else if (pm->is_a(PortType::CONTROL)
 				|| pm->supports(App::instance().uris().atom_Float32)) {
 			SliderControl* sc;
 			Glib::RefPtr<Gnome::Glade::Xml> xml

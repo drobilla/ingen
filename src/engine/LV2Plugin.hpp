@@ -37,6 +37,7 @@
 #include "LV2Info.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class PatchImpl;
 class NodeImpl;
@@ -51,7 +52,7 @@ public:
 	NodeImpl* instantiate(BufferFactory&     bufs,
 	                      const std::string& name,
 	                      bool               polyphonic,
-	                      Ingen::PatchImpl*  parent,
+	                      PatchImpl*         parent,
 	                      Engine&            engine);
 
 	const std::string symbol() const;
@@ -68,6 +69,7 @@ private:
 	SharedPtr<LV2Info> _lv2_info;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_LV2PLUGIN_HPP

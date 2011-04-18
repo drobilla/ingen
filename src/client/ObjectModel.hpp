@@ -49,7 +49,7 @@ class ClientStore;
  *
  * \ingroup IngenClient
  */
-class ObjectModel : virtual public Ingen::Shared::GraphObject
+class ObjectModel : virtual public GraphObject
                   , public Ingen::Shared::ResourceImpl
 {
 public:

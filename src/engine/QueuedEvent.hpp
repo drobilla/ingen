@@ -21,6 +21,7 @@
 #include "Event.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 /** An Event with a not-time-critical preprocessing stage.
  *
@@ -70,6 +71,7 @@ protected:
 	bool _blocking;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_QUEUEDEVENT_HPP

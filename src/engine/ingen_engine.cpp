@@ -26,11 +26,12 @@ using namespace Ingen;
 
 struct IngenEngineModule : public Ingen::Shared::Module {
 	virtual void load(Ingen::Shared::World* world) {
-		set_denormal_flags();
-		SharedPtr<Engine> engine(new Ingen::Engine(world));
+		Engine::set_denormal_flags();
+		SharedPtr<Engine::Engine> engine(new Engine::Engine(world));
 		world->set_local_engine(engine);
-		SharedPtr<QueuedEngineInterface> interface(
-				new Ingen::QueuedEngineInterface(*engine.get(), event_queue_size));
+		SharedPtr<Engine::QueuedEngineInterface> interface(
+				new Engine::QueuedEngineInterface(*engine.get(),
+				                                  Engine::event_queue_size));
 		world->set_engine(interface);
 		engine->add_event_source(interface);
 		assert(world->local_engine() == engine);

@@ -23,6 +23,7 @@
 #include "Request.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class PortImpl;
 
@@ -43,6 +44,7 @@ public:
 	void post_process() { _request->respond_ok(); }
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

@@ -21,6 +21,7 @@
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
 /** Loads all plugins into the internal plugin database (in NodeFactory).
@@ -38,6 +39,7 @@ public:
 	void post_process();
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

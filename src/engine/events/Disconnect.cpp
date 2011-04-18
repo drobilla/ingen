@@ -36,6 +36,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
 Disconnect::Disconnect(
@@ -255,6 +256,7 @@ Disconnect::post_process()
     }
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

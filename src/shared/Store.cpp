@@ -48,7 +48,7 @@ Store::add(GraphObject* o)
 }
 
 Store::const_iterator
-Store::children_begin(SharedPtr<Shared::GraphObject> o) const
+Store::children_begin(SharedPtr<GraphObject> o) const
 {
 	const_iterator parent = find(o->path());
 	assert(parent != end());
@@ -57,15 +57,15 @@ Store::children_begin(SharedPtr<Shared::GraphObject> o) const
 }
 
 Store::const_iterator
-Store::children_end(SharedPtr<Shared::GraphObject> o) const
+Store::children_end(SharedPtr<GraphObject> o) const
 {
 	const_iterator parent = find(o->path());
 	assert(parent != end());
 	return find_descendants_end(parent);
 }
 
-SharedPtr<Shared::GraphObject>
-Store::find_child(SharedPtr<Shared::GraphObject> parent, const string& child_name) const
+SharedPtr<GraphObject>
+Store::find_child(SharedPtr<GraphObject> parent, const string& child_name) const
 {
 	const_iterator pi = find(parent->path());
 	assert(pi != end());
@@ -74,7 +74,7 @@ Store::find_child(SharedPtr<Shared::GraphObject> parent, const string& child_nam
 	if (child != end())
 		return child->second;
 	else
-		return SharedPtr<Shared::GraphObject>();
+		return SharedPtr<GraphObject>();
 }
 
 unsigned

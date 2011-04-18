@@ -37,10 +37,14 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
-using namespace Shared;
-
-PatchImpl::PatchImpl(Engine& engine, const Raul::Symbol& symbol, uint32_t poly, PatchImpl* parent, SampleRate srate, uint32_t internal_poly)
+PatchImpl::PatchImpl(Engine&             engine,
+                     const Raul::Symbol& symbol,
+                     uint32_t            poly,
+                     PatchImpl*          parent,
+                     SampleRate          srate,
+                     uint32_t            internal_poly)
 	: NodeImpl(new PatchPlugin(*engine.world()->uris().get(),
 				engine.world()->uris()->ingen_Patch.c_str(), "patch", "Ingen Patch"),
 		symbol, poly, parent, srate)
@@ -463,4 +467,5 @@ PatchImpl::compile() const
 	return compiled_patch;
 }
 
+} // namespace Engine
 } // namespace Ingen

@@ -39,9 +39,8 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Internals {
-
-using namespace Shared;
 
 InternalPlugin* NoteNode::internal_plugin(Shared::LV2URIMap& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Note", "note");
@@ -59,7 +58,7 @@ NoteNode::NoteNode(
 	, _prepared_voices(NULL)
 	, _sustain(false)
 {
-	const LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(5);
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());
@@ -412,5 +411,6 @@ NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 }
 
 } // namespace Internals
+} // namespace Engine
 } // namespace Ingen
 

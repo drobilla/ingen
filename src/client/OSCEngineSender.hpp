@@ -34,7 +34,7 @@ namespace Client {
  *
  * \ingroup IngenClient
  */
-class OSCEngineSender : public Shared::EngineInterface, public Shared::OSCSender {
+class OSCEngineSender : public EngineInterface, public Shared::OSCSender {
 public:
 	OSCEngineSender(const Raul::URI& engine_url);
 	~OSCEngineSender();
@@ -64,7 +64,7 @@ public:
 	void transfer_end()   { OSCSender::transfer_end(); }
 
 	// Client registration
-	void register_client(Shared::ClientInterface* client);
+	void register_client(ClientInterface* client);
 	void unregister_client(const Raul::URI& uri);
 
 	// Engine commands
@@ -75,13 +75,13 @@ public:
 
 	// Object commands
 
-	virtual void put(const Raul::URI&                    path,
-	                 const Shared::Resource::Properties& properties,
-	                 Shared::Resource::Graph             ctx=Shared::Resource::DEFAULT);
+	virtual void put(const Raul::URI&            path,
+	                 const Resource::Properties& properties,
+	                 Resource::Graph             ctx=Resource::DEFAULT);
 
-	virtual void delta(const Raul::URI&                    path,
-	                   const Shared::Resource::Properties& remove,
-	                   const Shared::Resource::Properties& add);
+	virtual void delta(const Raul::URI&            path,
+	                   const Resource::Properties& remove,
+	                   const Resource::Properties& add);
 
 	virtual void del(const Raul::Path& path);
 

@@ -25,11 +25,11 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
-using namespace Shared;
-
-GraphObjectImpl::GraphObjectImpl(Shared::LV2URIMap& uris,
-		GraphObjectImpl* parent, const Symbol& symbol)
+GraphObjectImpl::GraphObjectImpl(Ingen::Shared::LV2URIMap& uris,
+                                 GraphObjectImpl*          parent,
+                                 const Symbol&             symbol)
 	: ResourceImpl(uris, parent ? parent->path().child(symbol) : Raul::Path::root())
 	, _parent(parent)
 	, _path(parent ? parent->path().child(symbol) : "/")
@@ -64,9 +64,10 @@ GraphObjectImpl::parent_patch() const
 }
 
 SharedPtr<GraphObject>
-GraphObjectImpl::find_child(const string& name) const
+GraphObjectImpl::find_child(const std::string& name) const
 {
 	throw;
 }
 
+} // namespace Engine
 } // namespace Ingen

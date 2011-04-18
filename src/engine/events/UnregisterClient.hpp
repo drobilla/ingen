@@ -22,6 +22,7 @@
 #include "raul/URI.hpp"
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
 /** Unregisters an OSC client so it no longer receives notifications.
@@ -42,6 +43,7 @@ private:
 	Raul::URI _uri;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

@@ -36,12 +36,12 @@ namespace Sord { class World; }
 namespace Ingen {
 
 class EngineBase;
+class EngineInterface;
 
 namespace Serialisation { class Serialiser; class Parser; }
 
 namespace Shared {
 
-class EngineInterface;
 class LV2Features;
 class LV2URIMap;
 class Store;
@@ -63,14 +63,14 @@ public:
 	virtual bool load_module(const char* name);
 	virtual void unload_modules();
 
-	typedef SharedPtr<Shared::EngineInterface> (*InterfaceFactory)(
+	typedef SharedPtr<EngineInterface> (*InterfaceFactory)(
 			World*             world,
 			const std::string& engine_url);
 
 	virtual void add_interface_factory(const std::string& scheme,
 	                                   InterfaceFactory   factory);
 
-	virtual SharedPtr<Shared::EngineInterface> interface(
+	virtual SharedPtr<EngineInterface> interface(
 		const std::string& engine_url);
 
 	virtual bool run(const std::string& mime_type,

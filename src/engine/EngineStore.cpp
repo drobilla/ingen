@@ -33,6 +33,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
 /** Find the Patch at the given path.
  */
@@ -73,7 +74,7 @@ EngineStore::find_object(const Path& path)
 /** Add an object to the store. Not realtime safe.
  */
 void
-EngineStore::add(Shared::GraphObject* obj)
+EngineStore::add(GraphObject* obj)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	Store::add(obj);
@@ -155,4 +156,5 @@ EngineStore::remove_children(iterator object)
 	return SharedPtr<EngineStore::Objects>();
 }
 
+} // namespace Engine
 } // namespace Ingen

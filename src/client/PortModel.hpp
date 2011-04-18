@@ -35,7 +35,7 @@ namespace Client {
  *
  * \ingroup IngenClient
  */
-class PortModel : public ObjectModel, public Ingen::Shared::Port
+class PortModel : public ObjectModel, public Ingen::Port
 {
 public:
 	enum Direction { INPUT, OUTPUT };
@@ -52,7 +52,7 @@ public:
 
 	bool port_property(const std::string& uri) const;
 
-	bool is_numeric()     const { return is_a(Shared::PortType::CONTROL); }
+	bool is_numeric()     const { return is_a(PortType::CONTROL); }
 	bool is_logarithmic() const { return port_property("http://drobilla.net/ns/ingen#logarithmic"); }
 	bool is_integer()     const { return port_property("http://lv2plug.in/ns/lv2core#integer"); }
 	bool is_toggle()      const { return port_property("http://lv2plug.in/ns/lv2core#toggled"); }
@@ -86,7 +86,7 @@ private:
 	friend class ClientStore;
 
 	PortModel(Shared::LV2URIMap& uris,
-			const Raul::Path& path, uint32_t index, Shared::PortType type, Direction dir)
+			const Raul::Path& path, uint32_t index, PortType type, Direction dir)
 		: ObjectModel(uris, path)
 		, _index(index)
 		, _direction(dir)
@@ -94,7 +94,7 @@ private:
 		, _connections(0)
 	{
 		_types.insert(type);
-		if (type == Shared::PortType::UNKNOWN)
+		if (type == PortType::UNKNOWN)
 			Raul::warn << "[PortModel] Unknown port type" << std::endl;
 	}
 
@@ -106,11 +106,11 @@ private:
 
 	void set(SharedPtr<ObjectModel> model);
 
-	uint32_t                   _index;
-	std::set<Shared::PortType> _types;
-	Direction                  _direction;
-	Raul::Atom                 _current_val;
-	size_t                     _connections;
+	uint32_t           _index;
+	std::set<PortType> _types;
+	Direction          _direction;
+	Raul::Atom         _current_val;
+	size_t             _connections;
 };
 
 } // namespace Client

@@ -33,6 +33,7 @@
 namespace Raul { class Maid; }
 
 namespace Ingen {
+namespace Engine {
 
 class NodeImpl;
 class Buffer;
@@ -46,7 +47,7 @@ class BufferFactory;
  *
  * \ingroup engine
  */
-class PortImpl : public GraphObjectImpl, public Ingen::Shared::Port
+class PortImpl : public GraphObjectImpl, public Port
 {
 public:
 	~PortImpl();
@@ -143,7 +144,7 @@ protected:
 	         const Raul::Symbol& name,
 	         uint32_t            index,
 	         uint32_t            poly,
-	         Shared::PortType    type,
+	         PortType    type,
 	         const Raul::Atom&   value,
 	         size_t              buffer_size);
 
@@ -152,7 +153,7 @@ protected:
 	uint32_t                   _poly;
 	uint32_t                   _buffer_size;
 	PortType                   _buffer_type;
-	std::set<Shared::PortType> _types;
+	std::set<PortType> _types;
 	Raul::Atom                 _value;
 	bool                       _broadcast;
 	bool                       _set_by_user;
@@ -165,6 +166,7 @@ protected:
 	Raul::Array<BufferFactory::Ref>* _prepared_buffers;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_PORTIMPL_HPP

@@ -38,6 +38,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
 DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& parent_path, const Path& node_path)
@@ -185,6 +186,7 @@ DisconnectAll::post_process()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

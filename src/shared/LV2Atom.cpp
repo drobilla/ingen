@@ -88,6 +88,5 @@ from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* objec
 }
 
 } // namespace LV2Atom
-
 } // namespace Shared
 } // namespace Ingen

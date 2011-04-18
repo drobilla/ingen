@@ -93,7 +93,7 @@ PatchModel::clear()
 }
 
 SharedPtr<ConnectionModel>
-PatchModel::get_connection(const Shared::Port* src_port, const Shared::Port* dst_port)
+PatchModel::get_connection(const Port* src_port, const Ingen::Port* dst_port)
 {
 	Connections::iterator i = _connections->find(make_pair(src_port, dst_port));
 	if (i != _connections->end())
@@ -137,7 +137,7 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 }
 
 void
-PatchModel::remove_connection(const Shared::Port* src_port, const Shared::Port* dst_port)
+PatchModel::remove_connection(const Port* src_port, const Ingen::Port* dst_port)
 {
 	Connections::iterator i = _connections->find(make_pair(src_port, dst_port));
 	if (i != _connections->end()) {

@@ -25,7 +25,6 @@
 namespace Raul { class Atom; class Path; class Symbol; }
 
 namespace Ingen {
-namespace Shared {
 
 /** An object on the audio graph - Patch, Node, Port, etc.
  *
@@ -44,7 +43,6 @@ public:
 	virtual GraphObject*        graph_parent() const = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_GRAPHOBJECT_HPP

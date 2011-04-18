@@ -21,6 +21,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 
 /** \a size is not size_t because an event will never be even remotely close
  * to UINT32_MAX in size, so uint32_t saves wasted space on 64-bit.
@@ -57,4 +58,5 @@ EventSink::read(uint32_t event_buffer_size, uint8_t* event_buffer)
 		return false;
 }
 
+} // namespace Engine
 } // namespace Ingen

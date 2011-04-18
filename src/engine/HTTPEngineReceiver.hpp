@@ -29,6 +29,7 @@ typedef struct _SoupMessage SoupMessage;
 typedef struct SoupClientContext SoupClientContext;
 
 namespace Ingen {
+namespace Engine {
 
 class HTTPEngineReceiver : public QueuedEngineInterface
 {
@@ -60,6 +61,7 @@ private:
 	SoupServer*    _server;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_HTTPENGINERECEIVER_HPP

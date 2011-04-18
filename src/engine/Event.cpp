@@ -29,6 +29,7 @@
  */
 
 namespace Ingen {
+namespace Engine {
 
 void
 Event::execute(ProcessContext& context)
@@ -50,5 +51,6 @@ Event::post_process()
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
 }
 
+} // namespace Engine
 } // namespace Ingen
 

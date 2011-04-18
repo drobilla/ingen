@@ -26,7 +26,6 @@
 #include "ingen/Node.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 class Connection;
 
@@ -46,7 +45,6 @@ public:
 	virtual uint32_t internal_poly() const = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_PATCH_HPP

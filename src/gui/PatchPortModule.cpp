@@ -93,7 +93,7 @@ PatchPortModule::store_location()
 
 	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
 			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		Shared::Resource::Properties props;
+		Resource::Properties props;
 		props.insert(make_pair(uris.ingenui_canvas_x, Atom(x)));
 		props.insert(make_pair(uris.ingenui_canvas_y, Atom(y)));
 		App::instance().engine()->put(_model->path(), props, Resource::INTERNAL);

@@ -25,7 +25,6 @@
 #include "raul/URI.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 class Resource
 {
@@ -92,7 +91,6 @@ public:
 	                                       const Raul::Atom& value) const = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_RESOURCE_HPP

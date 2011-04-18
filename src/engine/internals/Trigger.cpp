@@ -35,9 +35,8 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Internals {
-
-using namespace Shared;
 
 InternalPlugin* TriggerNode::internal_plugin(Shared::LV2URIMap& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Trigger", "trigger");
@@ -53,7 +52,7 @@ TriggerNode::TriggerNode(
 	: NodeImpl(plugin, path, false, parent, srate)
 	, _learning(false)
 {
-	const LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(5);
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());
@@ -165,4 +164,5 @@ TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 }
 
 } // namespace Internals
+} // namespace Engine
 } // namespace Ingen

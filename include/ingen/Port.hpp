@@ -28,7 +28,6 @@
 namespace Raul { class Atom; }
 
 namespace Ingen {
-namespace Shared {
 
 /** A Port on a Node.
  *
@@ -39,7 +38,7 @@ namespace Shared {
 class Port : public virtual GraphObject
 {
 public:
-	typedef std::set<Shared::PortType> PortTypes;
+	typedef std::set<PortType> PortTypes;
 
 	virtual const PortTypes& types() const = 0;
 
@@ -52,7 +51,6 @@ public:
 	virtual const Raul::Atom& value()    const = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_PORT_HPP

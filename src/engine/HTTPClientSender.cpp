@@ -29,8 +29,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 void
 HTTPClientSender::response_ok(int32_t id)
@@ -52,7 +51,7 @@ HTTPClientSender::error(const std::string& msg)
 void
 HTTPClientSender::put(const URI&                  uri,
                       const Resource::Properties& properties,
-                      Shared::Resource::Graph     ctx)
+                      Resource::Graph             ctx)
 {
 	const string path     = (uri.substr(0, 6) == "path:/") ? uri.substr(6) : uri.str();
 	const string full_uri = _url + "/" + path;
@@ -135,4 +134,5 @@ HTTPClientSender::move(const Path& old_path, const Path& new_path)
 	send_chunk(msg);
 }
 
+} // namespace Engine
 } // namespace Ingen

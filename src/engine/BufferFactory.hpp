@@ -28,16 +28,18 @@
 
 namespace Ingen {
 
-using namespace Shared;
+namespace Shared { class LV2URIMap; }
+
+namespace Engine {
 
 class Engine;
 class Buffer;
 
-namespace Shared { class LV2URIMap; }
-
 class BufferFactory {
 public:
-	BufferFactory(Engine& engine, SharedPtr<Shared::LV2URIMap> uris);
+	BufferFactory(Engine&                             engine,
+	              SharedPtr<Ingen::Shared::LV2URIMap> uris);
+
 	~BufferFactory();
 
 	typedef boost::intrusive_ptr<Buffer> Ref;
@@ -45,21 +47,21 @@ public:
 	static size_t audio_buffer_size(SampleCount nframes);
 	size_t        default_buffer_size(PortType type);
 
-	Ref get(Shared::PortType type, size_t size=0, bool force_create=false);
+	Ref get(PortType type, size_t size=0, bool force_create=false);
 
 	Ref silent_buffer() { return _silent_buffer; }
 
 	void set_block_length(SampleCount block_length);
 
-	Shared::LV2URIMap& uris() { assert(_uris); return *_uris.get(); }
+	Ingen::Shared::LV2URIMap& uris() { assert(_uris); return *_uris.get(); }
 
 private:
 	friend class Buffer;
 	void recycle(Buffer* buf);
 
-	Ref create(Shared::PortType type, size_t size=0);
+	Ref create(PortType type, size_t size=0);
 
-	inline Raul::AtomicPtr<Buffer>& free_list(Shared::PortType type) {
+	inline Raul::AtomicPtr<Buffer>& free_list(PortType type) {
 		switch (type.symbol()) {
 		case PortType::AUDIO:   return _free_audio;
 		case PortType::CONTROL: return _free_control;
@@ -77,13 +79,14 @@ private:
 	Raul::AtomicPtr<Buffer> _free_event;
 	Raul::AtomicPtr<Buffer> _free_object;
 
-	Glib::Mutex                  _mutex;
-	Engine&                      _engine;
-	SharedPtr<Shared::LV2URIMap> _uris;
+	Glib::Mutex                         _mutex;
+	Engine&                             _engine;
+	SharedPtr<Ingen::Shared::LV2URIMap> _uris;
 
 	Ref _silent_buffer;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_BUFFERFACTORY_HPP

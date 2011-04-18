@@ -45,15 +45,15 @@ class PluginUI;
  *
  * \ingroup IngenClient
  */
-class PluginModel : public Ingen::Shared::Plugin
+class PluginModel : public Ingen::Plugin
                   , public Ingen::Shared::ResourceImpl
 {
 public:
 	PluginModel(
-			Shared::LV2URIMap&                  uris,
-			const Raul::URI&                    uri,
-			const Raul::URI&                    type_uri,
-			const Shared::Resource::Properties& properties);
+			Shared::LV2URIMap&                 uris,
+			const Raul::URI&                   uri,
+			const Raul::URI&                   type_uri,
+			const Ingen::Resource::Properties& properties);
 
 	Type type() const { return _type; }
 

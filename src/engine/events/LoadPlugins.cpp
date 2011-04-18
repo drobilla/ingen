@@ -22,6 +22,7 @@
 #include "ClientBroadcaster.hpp"
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
 LoadPlugins::LoadPlugins(Engine& engine, SharedPtr<Request> request, SampleCount timestamp)
@@ -46,6 +47,7 @@ LoadPlugins::post_process()
 	_request->respond_ok();
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

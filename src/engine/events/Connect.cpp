@@ -37,9 +37,8 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
-
-using namespace Shared;
 
 Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& src_port_path, const Path& dst_port_path)
 	: QueuedEvent(engine, request, timestamp)
@@ -199,6 +198,7 @@ Connect::post_process()
 	_request->respond_error(ss.str());
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

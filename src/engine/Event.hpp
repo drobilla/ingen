@@ -25,6 +25,7 @@
 #include "types.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class Engine;
 class Request;
@@ -73,6 +74,7 @@ protected:
 	bool               _executed;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_EVENT_HPP

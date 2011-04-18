@@ -27,6 +27,7 @@
 #include "LV2Features.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class LV2Plugin;
 
@@ -71,9 +72,10 @@ protected:
 
 	LV2_Contexts_MessageContext* _message_funcs;
 
-	SharedPtr<Shared::LV2Features::FeatureArray> _features;
+	SharedPtr<Ingen::Shared::LV2Features::FeatureArray> _features;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_LV2NODE_HPP

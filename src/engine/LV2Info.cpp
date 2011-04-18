@@ -36,6 +36,7 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 
 LV2Info::LV2Info(Ingen::Shared::World* world)
 	: input_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_INPUT))
@@ -72,4 +73,5 @@ LV2Info::~LV2Info()
 	slv2_value_free(message_port_class);
 }
 
+} // namespace Engine
 } // namespace Ingen

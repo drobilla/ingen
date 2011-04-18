@@ -30,6 +30,7 @@ namespace Raul {
 }
 
 namespace Ingen {
+namespace Engine {
 
 class PatchImpl;
 class NodeImpl;
@@ -80,6 +81,7 @@ private:
 	Raul::Array<BufferFactory::Ref>* _buffers;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

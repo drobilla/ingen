@@ -27,12 +27,10 @@
 #include <gtkmm.h>
 #include <libglademm/xml.h>
 #include <libglademm.h>
-#include "raul/SharedPtr.hpp"
-#include "client/ThreadedSigClientInterface.hpp"
-#include "Window.hpp"
-using Ingen::Client::SigClientInterface;
 
-namespace Ingen { class Engine; class QueuedEngineInterface; }
+#include "raul/SharedPtr.hpp"
+
+#include "Window.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -51,7 +49,7 @@ class ConnectWindow : public Dialog
 public:
 	ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_connected_to(SharedPtr<Shared::EngineInterface> engine);
+	void set_connected_to(SharedPtr<EngineInterface> engine);
 	void start(Ingen::Shared::World* world);
 	void on_response(int32_t id) { _attached = true; }
 

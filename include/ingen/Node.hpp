@@ -23,7 +23,6 @@
 #include "ingen/GraphObject.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 class Port;
 class Plugin;
@@ -45,7 +44,6 @@ public:
 	virtual const Plugin* plugin()             const = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_NODE_HPP

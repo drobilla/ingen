@@ -24,6 +24,7 @@
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class GraphObjectImpl;
 class PatchImpl;
@@ -64,14 +65,14 @@ class SetMetadata : public QueuedEvent
 {
 public:
 	SetMetadata(
-			Engine&                             engine,
-			SharedPtr<Request>                  request,
-			SampleCount                         timestamp,
-			bool                                create,
-			Shared::Resource::Graph             context,
-			const Raul::URI&                    subject,
-			const Shared::Resource::Properties& properties,
-			const Shared::Resource::Properties& remove=Shared::Resource::Properties());
+			Engine&                     engine,
+			SharedPtr<Request>          request,
+			SampleCount                 timestamp,
+			bool                        create,
+			Resource::Graph             context,
+			const Raul::URI&            subject,
+			const Resource::Properties& properties,
+			const Resource::Properties& remove = Resource::Properties());
 
 	~SetMetadata();
 
@@ -104,18 +105,19 @@ private:
 	std::vector<SpecialType>     _types;
 	std::vector<SpecialType>     _remove_types;
 	Raul::URI                    _subject;
-	Shared::Resource::Properties _properties;
-	Shared::Resource::Properties _remove;
-	Shared::ResourceImpl*        _object;
+	Resource::Properties         _properties;
+	Resource::Properties         _remove;
+	Ingen::Shared::ResourceImpl* _object;
 	PatchImpl*                   _patch;
 	CompiledPatch*               _compiled_patch;
 	std::string                  _error_predicate;
 	bool                         _create;
-	Shared::Resource::Graph      _context;
+	Resource::Graph              _context;
 
 	SharedPtr<ControlBindings::Bindings> _old_bindings;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

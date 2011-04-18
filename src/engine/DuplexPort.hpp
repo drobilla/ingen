@@ -24,6 +24,7 @@
 #include "OutputPort.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class NodeImpl;
 
@@ -44,7 +45,7 @@ public:
 	           uint32_t           index,
 	           bool               polyphonic,
 	           uint32_t           poly,
-	           Shared::PortType   type,
+	           PortType   type,
 	           const Raul::Atom&  value,
 	           size_t             buffer_size,
 	           bool               is_output);
@@ -53,8 +54,8 @@ public:
 
 	bool get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly);
 
-	void pre_process(Ingen::Context& context);
-	void post_process(Ingen::Context& context);
+	void pre_process(Context& context);
+	void post_process(Context& context);
 
 	bool is_input()  const { return !_is_output; }
 	bool is_output() const { return _is_output; }
@@ -63,6 +64,7 @@ protected:
 	bool _is_output;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_DUPLEXPORT_HPP

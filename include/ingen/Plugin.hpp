@@ -23,7 +23,6 @@
 #include "ingen/Resource.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 class Plugin : virtual public Resource
 {
@@ -57,7 +56,6 @@ public:
 	}
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_PLUGIN_HPP

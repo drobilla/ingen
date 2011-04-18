@@ -20,6 +20,7 @@
 #include "ProcessContext.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 void
 QueuedEvent::pre_process()
@@ -43,5 +44,6 @@ QueuedEvent::execute(ProcessContext& context)
 	Event::execute(context);
 }
 
+} // namespace Engine
 } // namespace Ingen
 

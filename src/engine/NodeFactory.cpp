@@ -45,6 +45,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
 using namespace Internals;
 
@@ -96,7 +97,7 @@ NodeFactory::load_plugins()
 void
 NodeFactory::load_internal_plugins()
 {
-	Shared::LV2URIMap& uris = *_world->uris().get();
+	Ingen::Shared::LV2URIMap& uris = *_world->uris().get();
 	InternalPlugin* controller_plug = ControllerNode::internal_plugin(uris);
 	_plugins.insert(make_pair(controller_plug->uri(), controller_plug));
 
@@ -133,4 +134,5 @@ NodeFactory::load_lv2_plugins()
 }
 #endif // HAVE_SLV2
 
+} // namespace Engine
 } // namespace Ingen

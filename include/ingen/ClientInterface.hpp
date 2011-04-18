@@ -27,7 +27,6 @@
 namespace Raul { class Path; class URI; }
 
 namespace Ingen {
-namespace Shared {
 
 /** The (only) interface the engine uses to communicate with clients.
  * Purely virtual (except for the destructor).
@@ -57,7 +56,6 @@ public:
 	virtual void activity(const Raul::Path& path) = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif

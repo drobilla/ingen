@@ -24,6 +24,7 @@
 #include "EventSource.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 /** Record of a request (used to respond to clients).
  *
@@ -37,7 +38,9 @@ namespace Ingen {
 class Request
 {
 public:
-	Request(EventSource* source=0, Shared::ClientInterface* client=0, int32_t id=1)
+	Request(EventSource*     source=0,
+	        ClientInterface* client=0,
+	        int32_t          id=1)
 		: _source(source)
         , _client(client)
 		, _id(id)
@@ -47,8 +50,8 @@ public:
 	int32_t      id() const         { return _id; }
 	void         set_id(int32_t id) { _id = id; }
 
-	Shared::ClientInterface* client() const { return _client; }
-	void set_client(Shared::ClientInterface* client) { _client = client; }
+	ClientInterface* client() const { return _client; }
+	void set_client(ClientInterface* client) { _client = client; }
 
     void unblock() {
         if (_source)
@@ -66,11 +69,12 @@ public:
 	}
 
 private:
-    EventSource*             _source;
-	Shared::ClientInterface* _client;
-	int32_t                  _id;
+    EventSource*     _source;
+	ClientInterface* _client;
+	int32_t          _id;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_REQUEST_HPP

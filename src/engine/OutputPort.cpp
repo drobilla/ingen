@@ -25,9 +25,7 @@
 using namespace std;
 
 namespace Ingen {
-
-namespace Shared { class Patch; }
-using namespace Shared;
+namespace Engine {
 
 OutputPort::OutputPort(BufferFactory&      bufs,
                        NodeImpl*           parent,
@@ -74,4 +72,5 @@ OutputPort::post_process(Context& context)
 		broadcast_value(context, false);
 }
 
+} // namespace Engine
 } // namespace Ingen

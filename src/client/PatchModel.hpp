@@ -28,7 +28,7 @@
 
 namespace Ingen {
 
-namespace Shared { class Port; }
+class Port;
 
 namespace Client {
 
@@ -38,15 +38,15 @@ class ClientStore;
  *
  * \ingroup IngenClient
  */
-class PatchModel : public NodeModel, public Ingen::Shared::Patch
+class PatchModel : public NodeModel, public Ingen::Patch
 {
 public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */
 
 	const Connections& connections() const { return *_connections.get(); }
 
-	SharedPtr<ConnectionModel> get_connection(const Shared::Port* src_port,
-	                                          const Shared::Port* dst_port);
+	SharedPtr<ConnectionModel> get_connection(const Ingen::Port* src_port,
+	                                          const Ingen::Port* dst_port);
 
 	//uint32_t poly()          const { return _poly; }
 	bool     enabled()       const;
@@ -87,8 +87,8 @@ private:
 	bool remove_child(SharedPtr<ObjectModel> c);
 
 	void add_connection(SharedPtr<ConnectionModel> cm);
-	void remove_connection(const Shared::Port* src_port,
-	                       const Shared::Port* dst_port);
+	void remove_connection(const Ingen::Port* src_port,
+	                       const Ingen::Port* dst_port);
 
 	SharedPtr<Connections> _connections;
 	bool                   _editable;

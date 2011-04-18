@@ -25,6 +25,7 @@
 #include "ingen-config.h"
 
 namespace Ingen {
+namespace Engine {
 
 class JackDriver;
 class NodeFactory;
@@ -117,6 +118,7 @@ private:
 	lo_server _server;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_OSCENGINERECEIVER_HPP

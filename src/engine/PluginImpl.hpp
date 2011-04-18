@@ -31,6 +31,8 @@ namespace Ingen {
 
 namespace Shared { class LV2URIMap; }
 
+namespace Engine {
+
 class PatchImpl;
 class NodeImpl;
 class Engine;
@@ -40,13 +42,15 @@ class BufferFactory;
  *
  * Conceptually, a Node is an instance of this.
  */
-class PluginImpl : public Ingen::Shared::Plugin
+class PluginImpl : public Plugin
                  , public Ingen::Shared::ResourceImpl
                  , public boost::noncopyable
 {
 public:
-	PluginImpl(Shared::LV2URIMap& uris,
-			Type type, const std::string& uri, const std::string library_path="")
+	PluginImpl(Ingen::Shared::LV2URIMap& uris,
+	           Type                      type,
+	           const std::string&        uri,
+	           const std::string         library_path = "")
 		: ResourceImpl(uris, uri)
 		, _type(type)
 		, _library_path(library_path)
@@ -56,7 +60,7 @@ public:
 	virtual NodeImpl* instantiate(BufferFactory&     bufs,
 	                              const std::string& name,
 	                              bool               polyphonic,
-	                              Ingen::PatchImpl*  parent,
+	                              PatchImpl*         parent,
 	                              Engine&            engine) = 0;
 
 	virtual const std::string symbol() const = 0;
@@ -77,6 +81,7 @@ protected:
 	Glib::Module*       _module;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_PLUGINIMPL_HPP

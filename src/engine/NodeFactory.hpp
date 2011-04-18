@@ -29,6 +29,7 @@
 #include "ingen-config.h"
 
 namespace Ingen {
+namespace Engine {
 
 class NodeImpl;
 class PatchImpl;
@@ -69,6 +70,7 @@ private:
 #endif
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_NODEFACTORY_HPP

@@ -136,7 +136,7 @@ Parser::find_patches(Ingen::Shared::World* world,
  */
 bool
 Parser::parse_file(Ingen::Shared::World*                    world,
-                   Ingen::Shared::CommonInterface*          target,
+                   Ingen::CommonInterface*                  target,
                    Glib::ustring                            file_uri,
                    boost::optional<Raul::Path>              parent,
                    boost::optional<Raul::Symbol>            symbol,
@@ -190,7 +190,7 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 
 bool
 Parser::parse_string(Ingen::Shared::World*                    world,
-                     Ingen::Shared::CommonInterface*          target,
+                     Ingen::CommonInterface*                  target,
                      const Glib::ustring&                     str,
                      const Glib::ustring&                     base_uri,
                      boost::optional<Raul::Path>              parent,
@@ -216,7 +216,7 @@ Parser::parse_string(Ingen::Shared::World*                    world,
 
 boost::optional<Path>
 Parser::parse(Ingen::Shared::World*                    world,
-              Ingen::Shared::CommonInterface*          target,
+              Ingen::CommonInterface*                  target,
               Sord::Model&                             model,
               Glib::ustring                            document_uri,
               boost::optional<Raul::Path>              data_path,
@@ -350,7 +350,7 @@ get_port(Ingen::Shared::World* world,
 
 boost::optional<Path>
 Parser::parse_patch(Ingen::Shared::World*                    world,
-                    Ingen::Shared::CommonInterface*          target,
+                    Ingen::CommonInterface*                  target,
                     Sord::Model&                             model,
                     const Sord::Node&                        subject_node,
                     boost::optional<Raul::Path>              parent,
@@ -468,7 +468,7 @@ Parser::parse_patch(Ingen::Shared::World*                    world,
 
 boost::optional<Path>
 Parser::parse_node(Ingen::Shared::World*                    world,
-                   Ingen::Shared::CommonInterface*          target,
+                   Ingen::CommonInterface*                  target,
                    Sord::Model&                             model,
                    const Sord::Node&                        subject,
                    const Raul::Path&                        path,
@@ -524,11 +524,11 @@ Parser::parse_node(Ingen::Shared::World*                    world,
 }
 
 bool
-Parser::parse_connections(Ingen::Shared::World*           world,
-                          Ingen::Shared::CommonInterface* target,
-                          Sord::Model&                    model,
-                          const Sord::Node&               subject,
-                          const Raul::Path&               parent)
+Parser::parse_connections(Ingen::Shared::World*   world,
+                          Ingen::CommonInterface* target,
+                          Sord::Model&            model,
+                          const Sord::Node&       subject,
+                          const Raul::Path&       parent)
 {
 	Sord::URI ingen_connection(*world->rdf_world(),  NS_INGEN "connection");
 	Sord::URI ingen_source(*world->rdf_world(),      NS_INGEN "source");
@@ -574,7 +574,7 @@ Parser::parse_connections(Ingen::Shared::World*           world,
 
 bool
 Parser::parse_properties(Ingen::Shared::World*                    world,
-                         Ingen::Shared::CommonInterface*          target,
+                         Ingen::CommonInterface*                  target,
                          Sord::Model&                             model,
                          const Sord::Node&                        subject,
                          const Raul::URI&                         uri,

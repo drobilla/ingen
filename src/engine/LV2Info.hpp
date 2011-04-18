@@ -30,7 +30,9 @@
 
 namespace Ingen {
 
-namespace Shared { class Node; }
+class Node;
+
+namespace Engine {
 
 /** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
  */
@@ -54,6 +56,7 @@ private:
 	Ingen::Shared::World* _world;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_LV2INFO_HPP

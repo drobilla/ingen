@@ -27,9 +27,10 @@
 
 namespace Ingen {
 
+class Node;
+
 namespace Shared {
 
-class Node;
 class World;
 
 /** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).

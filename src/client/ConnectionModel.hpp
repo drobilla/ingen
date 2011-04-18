@@ -41,7 +41,7 @@ class ClientStore;
  *
  * \ingroup IngenClient
  */
-class ConnectionModel : public Shared::Connection
+class ConnectionModel : public Connection
 {
 public:
 	SharedPtr<PortModel> src_port() const { return _src_port; }

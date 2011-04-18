@@ -43,10 +43,10 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
 
-using namespace Shared;
-typedef Shared::Resource::Properties Properties;
+typedef Resource::Properties Properties;
 
 SetMetadata::SetMetadata(
 		Engine&             engine,
@@ -112,13 +112,13 @@ SetMetadata::pre_process()
 		return;
 	}
 
-	const LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 
 	if (is_graph_object && !_object) {
 		Path path(_subject.str());
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
 		PortType data_type(PortType::UNKNOWN);
-		ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output, data_type);
+		Shared::ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output, data_type);
 
 		// Create a separate request without a source so EventSource isn't unblocked twice
 		SharedPtr<Request> sub_request(new Request(NULL, _request->client(), _request->id()));
@@ -193,7 +193,7 @@ SetMetadata::pre_process()
 					ev->pre_process();
 					_set_events.push_back(ev);
 				} else if (key == uris.ingen_controlBinding) {
-					if (port->is_a(Shared::PortType::CONTROL)) {
+					if (port->is_a(PortType::CONTROL)) {
 						if (value == uris.wildcard) {
 							_engine.control_bindings()->learn(port);
 						} else if (value.type() == Atom::DICT) {
@@ -322,7 +322,7 @@ SetMetadata::execute(ProcessContext& context)
 			if (port) {
 				_engine.control_bindings()->port_binding_changed(context, port);
 			} else if (node) {
-				if (node->plugin_impl()->type() == Shared::Plugin::Internal) {
+				if (node->plugin_impl()->type() == Plugin::Internal) {
 					node->learn();
 				}
 			}
@@ -374,6 +374,7 @@ SetMetadata::post_process()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

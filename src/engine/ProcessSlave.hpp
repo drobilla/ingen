@@ -29,6 +29,7 @@
 #include "ProcessContext.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class NodeImpl;
 class CompiledPatch;
@@ -97,6 +98,7 @@ private:
 	ProcessContext* _context;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_PROCESSSLAVE_HPP

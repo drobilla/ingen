@@ -51,8 +51,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-
-using namespace Shared;
+namespace Engine {
 
 bool ThreadManager::single_threaded = true;
 
@@ -69,7 +68,7 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	if (a_world->store()) {
 		assert(PtrCast<EngineStore>(a_world->store()));
 	} else {
-		a_world->set_store(SharedPtr<Shared::Store>(new EngineStore()));
+		a_world->set_store(SharedPtr<Ingen::Shared::Store>(new EngineStore()));
 	}
 }
 
@@ -145,7 +144,7 @@ Engine::activate()
 	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
 		(*i)->activate_source();
 
-	const LV2URIMap& uris = *world()->uris().get();
+	const Ingen::Shared::LV2URIMap& uris = *world()->uris().get();
 
 	// Create root patch
 	PatchImpl* root_patch = _driver->root_patch();
@@ -163,12 +162,12 @@ Engine::activate()
 
 		ProcessContext context(*this);
 
-		Shared::Resource::Properties control_properties;
+		Resource::Properties control_properties;
 		control_properties.insert(make_pair(uris.lv2_name, "Control"));
 		control_properties.insert(make_pair(uris.rdf_type, uris.ev_EventPort));
 
 		// Add control input
-		Shared::Resource::Properties in_properties(control_properties);
+		Resource::Properties in_properties(control_properties);
 		in_properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
 		in_properties.insert(make_pair(uris.lv2_index, 0));
 		in_properties.insert(make_pair(uris.ingenui_canvas_x,
@@ -181,7 +180,7 @@ Engine::activate()
 				"/control_in", uris.ev_EventPort, false, in_properties));
 
 		// Add control out
-		Shared::Resource::Properties out_properties(control_properties);
+		Resource::Properties out_properties(control_properties);
 		out_properties.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
 		out_properties.insert(make_pair(uris.lv2_index, 1));
 		out_properties.insert(make_pair(uris.ingenui_canvas_x,
@@ -223,4 +222,5 @@ Engine::process_events(ProcessContext& context)
 		(*i)->process(*_post_processor, context);
 }
 
+} // namespace Engine
 } // namespace Ingen

@@ -25,6 +25,7 @@
 #include "ingen/Resource.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class PatchImpl;
 class PortImpl;
@@ -40,13 +41,13 @@ class CreatePort : public QueuedEvent
 {
 public:
 	CreatePort(
-			Engine&                             engine,
-			SharedPtr<Request>                  request,
-			SampleCount                         timestamp,
-			const Raul::Path&                   path,
-			const Raul::URI&                    type,
-			bool                                is_output,
-			const Shared::Resource::Properties& properties);
+			Engine&                     engine,
+			SharedPtr<Request>          request,
+			SampleCount                 timestamp,
+			const Raul::Path&           path,
+			const Raul::URI&            type,
+			bool                        is_output,
+			const Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -63,16 +64,17 @@ private:
 	Raul::Path              _path;
 	Raul::URI               _type;
 	bool                    _is_output;
-	Shared::PortType        _data_type;
+	PortType                _data_type;
 	PatchImpl*              _patch;
 	PortImpl*               _patch_port;
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch
 	DriverPort*             _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
 	bool                    _succeeded;
 
-	Shared::Resource::Properties _properties;
+	Resource::Properties _properties;
 };
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events
 

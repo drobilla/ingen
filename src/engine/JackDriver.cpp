@@ -61,6 +61,7 @@ using namespace Raul;
 typedef jack_default_audio_sample_t jack_sample_t;
 
 namespace Ingen {
+namespace Engine {
 
 //// JackPort ////
 
@@ -209,7 +210,7 @@ JackDriver::~JackDriver()
 }
 
 bool
-JackDriver::supports(Shared::PortType port_type, Shared::EventType event_type)
+JackDriver::supports(PortType port_type, EventType event_type)
 {
 	return (port_type == PortType::AUDIO
 			|| (port_type == PortType::EVENTS && event_type == EventType::MIDI));
@@ -357,7 +358,7 @@ JackDriver::remove_port(const Path& path, DriverPort** port)
 
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i)->patch_port()->path() == path) {
-			Raul::List<Ingen::JackPort*>::Node* node = _ports.erase(i);
+			Raul::List<JackPort*>::Node* node = _ports.erase(i);
 			if (port)
 				*port = node->elem();
 			return node;
@@ -557,4 +558,5 @@ JackDriver::_session_cb(jack_session_event_t* event)
 }
 #endif
 
+} // namespace Engine
 } // namespace Ingen

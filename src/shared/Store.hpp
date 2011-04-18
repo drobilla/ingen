@@ -26,19 +26,19 @@
 namespace Ingen {
 namespace Shared {
 
-class Store : public Raul::PathTable< SharedPtr<Shared::GraphObject> > {
+class Store : public Raul::PathTable< SharedPtr<GraphObject> > {
 public:
 	virtual ~Store() {}
 
-	virtual void add(Shared::GraphObject* o);
+	virtual void add(GraphObject* o);
 
-	typedef Raul::Table< Raul::Path, SharedPtr<Shared::GraphObject> > Objects;
+	typedef Raul::Table< Raul::Path, SharedPtr<GraphObject> > Objects;
 
-	const_iterator children_begin(SharedPtr<Shared::GraphObject> o) const;
-	const_iterator children_end(SharedPtr<Shared::GraphObject> o) const;
+	const_iterator children_begin(SharedPtr<GraphObject> o) const;
+	const_iterator children_end(SharedPtr<GraphObject> o) const;
 
-	SharedPtr<Shared::GraphObject> find_child(SharedPtr<Shared::GraphObject> parent,
-	                                          const std::string& child_name) const;
+	SharedPtr<GraphObject> find_child(SharedPtr<GraphObject> parent,
+	                                  const std::string&     child_name) const;
 
 	unsigned child_name_offset(const Raul::Path&   parent,
 	                           const Raul::Symbol& symbol,

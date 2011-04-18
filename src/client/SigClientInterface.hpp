@@ -35,7 +35,8 @@ namespace Client {
  * The signals here match the calls to ClientInterface exactly.  See the
  * documentation for ClientInterface for meanings of signal parameters.
  */
-class SigClientInterface : public Ingen::Shared::ClientInterface, public sigc::trackable
+class SigClientInterface : public Ingen::ClientInterface,
+                           public sigc::trackable
 {
 public:
 	SigClientInterface() {}
@@ -49,10 +50,10 @@ public:
 	sigc::signal<void, std::string>                                 signal_error;
 	sigc::signal<void, Raul::Path, uint32_t>                        signal_new_patch;
 	sigc::signal<void, Raul::Path, Raul::URI, uint32_t, bool>       signal_new_port;
-	sigc::signal<void, Raul::URI, Shared::Resource::Properties,
-	                              Shared::Resource::Graph>          signal_put;
-	sigc::signal<void, Raul::URI, Shared::Resource::Properties,
-	                              Shared::Resource::Properties>     signal_delta;
+	sigc::signal<void, Raul::URI, Resource::Properties,
+	             Resource::Graph>                                   signal_put;
+	sigc::signal<void, Raul::URI, Resource::Properties,
+	             Resource::Properties>                              signal_delta;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_moved;
 	sigc::signal<void, Raul::Path>                                  signal_object_deleted;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_connection;
@@ -89,13 +90,14 @@ protected:
 	void error(const std::string& msg)
 		{ EMIT(error, msg); }
 
-	void put(const Raul::URI& uri,
-	         const Shared::Resource::Properties& properties,
-	         Shared::Resource::Graph             ctx=Shared::Resource::DEFAULT)
+	void put(const Raul::URI&            uri,
+	         const Resource::Properties& properties,
+	         Resource::Graph             ctx=Resource::DEFAULT)
 		{ EMIT(put, uri, properties, ctx); }
 
-	void delta(const Raul::URI& uri,
-			const Shared::Resource::Properties& remove, const Shared::Resource::Properties& add)
+	void delta(const Raul::URI&            uri,
+	           const Resource::Properties& remove,
+	           const Resource::Properties& add)
 		{ EMIT(delta, uri, remove, add); }
 
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)

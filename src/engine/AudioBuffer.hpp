@@ -28,11 +28,12 @@
 using namespace std;
 
 namespace Ingen {
+namespace Engine {
 
 class AudioBuffer : public ObjectBuffer
 {
 public:
-	AudioBuffer(BufferFactory& bufs, Shared::PortType type, size_t capacity);
+	AudioBuffer(BufferFactory& bufs, PortType type, size_t capacity);
 
 	void clear();
 
@@ -42,7 +43,7 @@ public:
 	void copy(Context& context, const Buffer* src);
 	void accumulate(Context& context, const AudioBuffer* src);
 
-	inline bool is_control() const { return _type.symbol() == Shared::PortType::CONTROL; }
+	inline bool is_control() const { return _type.symbol() == PortType::CONTROL; }
 
 	inline Sample* data() const {
 		return (is_control())
@@ -102,6 +103,7 @@ AudioBuffer::accumulate(Context& context, const AudioBuffer* const src)
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_AUDIOBUFFER_HPP

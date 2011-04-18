@@ -34,12 +34,13 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
-struct RequestRunFeature : public Shared::LV2Features::Feature {
+struct RequestRunFeature : public Ingen::Shared::LV2Features::Feature {
 	struct Data {
-		inline Data(Shared::World* w, Shared::Node* n) : world(w), node(n) {}
+		inline Data(Shared::World* w, Node* n) : world(w), node(n) {}
 		Shared::World* world;
-		Shared::Node*  node;
+		Node*          node;
 	};
 
 	static void request_run(LV2_Contexts_Request_Run_Data data_ptr,
@@ -59,7 +60,7 @@ struct RequestRunFeature : public Shared::LV2Features::Feature {
 		free(feature);
 	}
 
-	SharedPtr<LV2_Feature> feature(Shared::World* world, Shared::Node* n) {
+	SharedPtr<LV2_Feature> feature(Shared::World* world, Node* n) {
 		NodeImpl* node = dynamic_cast<NodeImpl*>(n);
 		if (!node)
 			return SharedPtr<LV2_Feature>();
@@ -77,6 +78,7 @@ struct RequestRunFeature : public Shared::LV2Features::Feature {
 	}
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_LV2_REQUEST_RUN_FEATURE_HPP

@@ -21,7 +21,6 @@
 #include "raul/Path.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 /** A connection between two ports.
  *
@@ -35,7 +34,6 @@ public:
 	virtual const Raul::Path dst_port_path() const = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_CONNECTION_HPP

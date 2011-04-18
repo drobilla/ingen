@@ -22,6 +22,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
 void
 PluginImpl::load()
@@ -44,5 +45,6 @@ PluginImpl::unload()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 

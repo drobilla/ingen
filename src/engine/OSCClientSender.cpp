@@ -36,6 +36,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
 /*! \page client_osc_namespace Client OSC Namespace Documentation
  *
@@ -104,11 +105,11 @@ OSCClientSender::error(const std::string& msg)
  * PUT a set of properties to a path (see \ref methods).
  */
 void
-OSCClientSender::put(const Raul::URI&                    path,
-                     const Shared::Resource::Properties& properties,
-                     Shared::Resource::Graph             ctx)
+OSCClientSender::put(const Raul::URI&            path,
+                     const Resource::Properties& properties,
+                     Resource::Graph             ctx)
 {
-	typedef Shared::Resource::Properties::const_iterator iterator;
+	typedef Resource::Properties::const_iterator iterator;
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
@@ -119,9 +120,9 @@ OSCClientSender::put(const Raul::URI&                    path,
 }
 
 void
-OSCClientSender::delta(const Raul::URI&                    path,
-                       const Shared::Resource::Properties& remove,
-                       const Shared::Resource::Properties& add)
+OSCClientSender::delta(const Raul::URI&            path,
+                       const Resource::Properties& remove,
+                       const Resource::Properties& add)
 {
 	warn << "FIXME: OSC DELTA" << endl;
 }
@@ -160,7 +161,8 @@ OSCClientSender::del(const Path& path)
  * Notification a new connection has been made.
  */
 void
-OSCClientSender::connect(const Path& src_port_path, const Path& dst_port_path)
+OSCClientSender::connect(const Path& src_port_path,
+                         const Path& dst_port_path)
 {
 	send("/connect", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
@@ -173,7 +175,8 @@ OSCClientSender::connect(const Path& src_port_path, const Path& dst_port_path)
  * Notification a connection has been unmade.
  */
 void
-OSCClientSender::disconnect(const Path& src_port_path, const Path& dst_port_path)
+OSCClientSender::disconnect(const Path& src_port_path,
+                            const Path& dst_port_path)
 {
 	send("/disconnect", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
@@ -187,7 +190,9 @@ OSCClientSender::disconnect(const Path& src_port_path, const Path& dst_port_path
  * Notification of a property.
  */
 void
-OSCClientSender::set_property(const URI& path, const URI& key, const Atom& value)
+OSCClientSender::set_property(const URI& path,
+                              const URI& key,
+                              const Atom& value)
 {
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
@@ -211,4 +216,5 @@ OSCClientSender::activity(const Path& path)
 	lo_send(_address, "/activity", "s", path.c_str(), LO_ARGS_END);
 }
 
+} // namespace Engine
 } // namespace Ingen

@@ -40,6 +40,7 @@
 #endif
 
 namespace Ingen {
+namespace Engine {
 
 /** Set flags to disable denormal processing.
  */
@@ -83,6 +84,7 @@ ingen_jack_port_name(const Raul::Path& path)
 	return path.chop_start("/");
 }
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_UTIL_HPP

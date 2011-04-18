@@ -29,7 +29,9 @@
 
 namespace Ingen {
 
-namespace Shared { class Connection; }
+class Connection;
+
+namespace Engine {
 
 class CompiledPatch;
 class ConnectionImpl;
@@ -45,7 +47,7 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class PatchImpl : public NodeImpl, public Ingen::Shared::Patch
+class PatchImpl : public NodeImpl, public Patch
 {
 public:
 	PatchImpl(Engine&             engine,
@@ -62,7 +64,7 @@ public:
 
 	void process(ProcessContext& context);
 
-	void set_buffer_size(Context& context, BufferFactory& bufs, Shared::PortType type, size_t size);
+	void set_buffer_size(Context& context, BufferFactory& bufs, PortType type, size_t size);
 
 	/** Prepare for a new (internal) polyphony value.
 	 *
@@ -97,7 +99,7 @@ public:
 
 	uint32_t num_ports() const;
 
-	PortImpl* create_port(BufferFactory& bufs, const std::string& name, Shared::PortType type, size_t buffer_size, bool is_output, bool polyphonic);
+	PortImpl* create_port(BufferFactory& bufs, const std::string& name, PortType type, size_t buffer_size, bool is_output, bool polyphonic);
 	void add_input(Raul::List<PortImpl*>::Node* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
 	void add_output(Raul::List<PortImpl*>::Node* port) { _output_ports.push_back(port); } ///< Preprocessor thread
 	Raul::List<PortImpl*>::Node* remove_port(const std::string& name);
@@ -157,6 +159,7 @@ PatchImpl::compile_recursive(NodeImpl* n, CompiledPatch* output) const
 	output->push_back(CompiledNode(n, n->providers()->size(), n->dependants()));
 }
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_PATCHIMPL_HPP

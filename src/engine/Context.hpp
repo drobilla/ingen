@@ -23,6 +23,7 @@
 #include "types.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class Engine;
 
@@ -97,6 +98,7 @@ protected:
 	bool        _realtime;   ///< True iff context is hard realtime
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_CONTEXT_HPP

@@ -30,12 +30,11 @@
 #include "shared/World.hpp"
 
 namespace Ingen {
-	class Engine;
+	class ClientInterface;
+	class EngineInterface;
+	class Port;
 	namespace Shared {
-		class EngineInterface;
-		class ClientInterface;
 		class World;
-		class Port;
 	}
 	namespace Client {
 		class ClientStore;
@@ -63,11 +62,7 @@ class ThreadedLoader;
 class WindowFactory;
 class Port;
 
-/** Singleton master class most everything is contained within.
- *
- * This is a horrible god-object, but it's shrinking in size as things are
- * moved out.  Hopefully it will go away entirely some day..
- *
+/** Ingen Gtk Application.
  * \ingroup GUI
  */
 class App
@@ -90,7 +85,7 @@ public:
 
 	void port_activity(Port* port);
 	void activity_port_destroyed(Port* port);
-	bool can_control(const Shared::Port* port) const;
+	bool can_control(const Ingen::Port* port) const;
 
 	bool signal() const { return _enable_signal; }
 	bool disable_signals()  { bool old = _enable_signal; _enable_signal = false; return old; }
@@ -104,7 +99,7 @@ public:
 
 	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
 
-	SharedPtr<Shared::EngineInterface>    engine() const { return _world->engine(); }
+	SharedPtr<Ingen::EngineInterface>     engine() const { return _world->engine(); }
 	SharedPtr<Client::SigClientInterface> client() const { return _client; }
 	SharedPtr<Client::ClientStore>        store()  const { return _store; }
 	SharedPtr<ThreadedLoader>             loader() const { return _loader; }

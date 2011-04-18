@@ -21,8 +21,9 @@
 #include "shared/LV2Features.hpp"
 
 namespace Ingen {
+namespace Engine {
 
-struct BlobFeature : public Shared::LV2Features::Feature {
+struct BlobFeature : public Ingen::Shared::LV2Features::Feature {
 	BlobFeature() {
 		LV2_Blob_Support* data = (LV2_Blob_Support*)malloc(sizeof(LV2_Blob_Support));
 		data->data      = NULL;
@@ -51,7 +52,7 @@ struct BlobFeature : public Shared::LV2Features::Feature {
 	                     uint32_t              type,
 	                     size_t                size) {}
 
-	SharedPtr<LV2_Feature> feature(Shared::World*, Shared::Node*) {
+	SharedPtr<LV2_Feature> feature(Shared::World*, Node*) {
 		return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 	}
 
@@ -59,6 +60,7 @@ private:
 	LV2_Feature _feature;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_LV2BLOBFEATURE_HPP

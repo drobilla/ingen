@@ -30,6 +30,7 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 
 using namespace Internals;
 
@@ -42,11 +43,11 @@ InternalPlugin::InternalPlugin(Shared::LV2URIMap& uris,
 }
 
 NodeImpl*
-InternalPlugin::instantiate(BufferFactory&    bufs,
-                            const string&     name,
-                            bool              polyphonic,
-                            Ingen::PatchImpl* parent,
-                            Engine&           engine)
+InternalPlugin::instantiate(BufferFactory& bufs,
+                            const string&  name,
+                            bool           polyphonic,
+                            PatchImpl*     parent,
+                            Engine&        engine)
 {
 	assert(_type == Internal);
 
@@ -67,4 +68,5 @@ InternalPlugin::instantiate(BufferFactory&    bufs,
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen

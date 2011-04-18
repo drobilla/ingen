@@ -29,9 +29,8 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+namespace Engine {
 namespace Events {
-
-using namespace Shared;
 
 Move::Move(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& path, const Path& new_path)
 	: QueuedEvent(engine, request, timestamp)
@@ -67,12 +66,12 @@ Move::pre_process()
 		return;
 	}
 
-	SharedPtr< Table<Path, SharedPtr<Shared::GraphObject> > > removed
+	SharedPtr< Table<Path, SharedPtr<GraphObject> > > removed
 			= _engine.engine_store()->remove(_store_iterator);
 
 	assert(removed->size() > 0);
 
-	for (Table<Path, SharedPtr<Shared::GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
+	for (Table<Path, SharedPtr<GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
 		const Path& child_old_path = i->first;
 		assert(Path::descendant_comparator(_old_path, child_old_path));
 
@@ -126,5 +125,6 @@ Move::post_process()
 	}
 }
 
+} // namespace Engine
 } // namespace Ingen
 } // namespace Events

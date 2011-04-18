@@ -26,6 +26,7 @@
 #include "PortImpl.hpp"
 
 namespace Ingen {
+namespace Engine {
 
 class ConnectionImpl;
 class Context;
@@ -52,7 +53,7 @@ public:
 	          const Raul::Symbol& symbol,
 	          uint32_t            index,
 	          uint32_t            poly,
-	          Shared::PortType    type,
+	          PortType    type,
 	          const Raul::Atom&   value,
 	          size_t              buffer_size=0);
 
@@ -84,6 +85,7 @@ protected:
 	Connections _connections;
 };
 
+} // namespace Engine
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_INPUTPORT_HPP

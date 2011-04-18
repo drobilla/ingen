@@ -23,10 +23,12 @@
 namespace Raul { class Path; }
 
 namespace Ingen {
-namespace Shared {
 
 class CommonInterface;
 class GraphObject;
+
+namespace Shared {
+
 class LV2URIMap;
 
 /** Wrapper for CommonInterface to create existing objects/models.
