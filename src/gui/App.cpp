@@ -196,7 +196,7 @@ SharedPtr<Serialiser>
 App::serialiser()
 {
 	if (!_world->serialiser())
-		_world->load("ingen_serialisation");
+		_world->load_module("serialisation");
 
 	return _world->serialiser();
 }

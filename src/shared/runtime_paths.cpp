@@ -99,7 +99,7 @@ module_path(const std::string& name, std::string dir)
 #endif
 	}
 
-	ret = Glib::Module::build_path(dir, name);
+	ret = Glib::Module::build_path(dir, string("ingen_") + name);
 
 #ifdef __APPLE__
 	// MacPorts glib doesnt seem to do portable path building correctly...

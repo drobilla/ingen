@@ -242,12 +242,12 @@ ConnectWindow::connect(bool existing)
 #endif // defined(HAVE_LIBLO) || defined(HAVE_SOUP)
 	if (_mode == INTERNAL) {
 		if (!world->local_engine())
-			world->load("ingen_engine");
+			world->load_module("engine");
 
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 
 		if (!((Engine*)world->local_engine().get())->driver())
-			world->load("ingen_jack");
+			world->load_module("jack");
 
 		world->local_engine()->activate();
 

@@ -47,7 +47,7 @@ ThreadedLoader::parser()
 	Ingen::Shared::World* world = App::instance().world();
 
 	if (!world->parser())
-		world->load("ingen_serialisation");
+		world->load_module("serialisation");
 
 	return world->parser();
 }

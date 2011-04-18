@@ -45,7 +45,6 @@ class EngineInterface;
 class LV2Features;
 class LV2URIMap;
 class Store;
-class WorldImpl;
 
 /** The "world" all Ingen modules may share.
  *
@@ -61,16 +60,17 @@ public:
 	World(Raul::Configuration* conf, int& argc, char**& argv);
 	virtual ~World();
 
-	virtual bool load(const char* name);
-	virtual void unload_all();
+	virtual bool load_module(const char* name);
+	virtual void unload_modules();
 
-	typedef SharedPtr<Ingen::Shared::EngineInterface> (*InterfaceFactory)(
-			World* world, const std::string& engine_url);
+	typedef SharedPtr<Shared::EngineInterface> (*InterfaceFactory)(
+			World*             world,
+			const std::string& engine_url);
 
 	virtual void add_interface_factory(const std::string& scheme,
 	                                   InterfaceFactory   factory);
 
-	virtual SharedPtr<Ingen::Shared::EngineInterface> interface(
+	virtual SharedPtr<Shared::EngineInterface> interface(
 		const std::string& engine_url);
 
 	virtual bool run(const std::string& mime_type,
@@ -105,7 +105,9 @@ public:
 	virtual std::string jack_uuid();
 
 private:
-	WorldImpl* _impl;
+	class Pimpl;
+
+	Pimpl* _impl;
 };
 
 } // namespace Shared

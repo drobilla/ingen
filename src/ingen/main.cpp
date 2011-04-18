@@ -39,11 +39,11 @@
 
 #include "ingen-config.h"
 
-#include "engine/Engine.hpp"
+#include "ingen/EngineBase.hpp"
 #include "ingen/EngineInterface.hpp"
-#include "shared/World.hpp"
 #include "serialisation/Parser.hpp"
 #include "shared/Configuration.hpp"
+#include "shared/World.hpp"
 #include "shared/runtime_paths.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
@@ -119,7 +119,7 @@ main(int argc, char** argv)
 
 	// Run engine
 	if (conf.option("engine").get_bool()) {
-		ingen_try(world->load("ingen_engine"),
+		ingen_try(world->load_module("engine"),
 		          "Unable to load engine module");
 
 		ingen_try(world->local_engine(),
@@ -130,11 +130,11 @@ main(int argc, char** argv)
 		// Not loading a GUI, load network engine interfaces
 		if (!conf.option("gui").get_bool()) {
 			#ifdef HAVE_LIBLO
-			ingen_try(world->load("ingen_osc"),
+			ingen_try(world->load_module("osc"),
 			          "Unable to load OSC module");
 			#endif
 			#ifdef HAVE_SOUP
-			ingen_try(world->load("ingen_http"),
+			ingen_try(world->load_module("http"),
 			          "Unable to load HTTP module");
 			#endif
 		}
@@ -142,7 +142,7 @@ main(int argc, char** argv)
 
 	// Load client library (required for patch loading and/or GUI)
 	if (conf.option("load").is_valid() || conf.option("gui").get_bool())
-		ingen_try(world->load("ingen_client"),
+		ingen_try(world->load_module("client"),
 		          "Unable to load client module");
 
 	// If we don't have a local engine interface (for GUI), use network
@@ -154,7 +154,7 @@ main(int argc, char** argv)
 
 	// Activate the engine, if we have one
 	if (world->local_engine()) {
-		ingen_try(world->load("ingen_jack"),
+		ingen_try(world->load_module("jack"),
 		          "Unable to load jack module");
 	}
 
@@ -178,7 +178,7 @@ main(int argc, char** argv)
 			}
 		}
 
-		ingen_try(world->load("ingen_serialisation"),
+		ingen_try(world->load_module("serialisation"),
 		          "Unable to load serialisation module");
 
 		ingen_try(world->parser(),
@@ -202,13 +202,13 @@ main(int argc, char** argv)
 
 	// Load GUI
 	if (conf.option("gui").get_bool())
-		ingen_try(world->load("ingen_gui"),
+		ingen_try(world->load_module("gui"),
 		          "Unable to load GUI module");
 
 	// Run a script
 	if (conf.option("run").is_valid()) {
 #ifdef WITH_BINDINGS
-		ingen_try(world->load("ingen_bindings"),
+		ingen_try(world->load_module("bindings"),
 		          "Unable to load bindings module");
 
 		world->run("application/x-python", conf.option("run").get_string());

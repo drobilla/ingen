@@ -17,6 +17,7 @@
 
 #include "raul/Atom.hpp"
 
+#include "ingen-config.h"
 #include "Configuration.hpp"
 
 using namespace Raul;

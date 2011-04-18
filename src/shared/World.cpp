@@ -49,7 +49,7 @@ namespace Shared {
  * \param name The base name of the module, e.g. "ingen_serialisation"
  */
 static SharedPtr<Glib::Module>
-load_module(const string& name)
+ingen_load_module(const string& name)
 {
 	Glib::Module* module = NULL;
 
@@ -95,9 +95,9 @@ load_module(const string& name)
 	}
 }
 
-class WorldImpl : public boost::noncopyable {
+class World::Pimpl {
 public:
-	WorldImpl(Raul::Configuration* conf, int& a_argc, char**& a_argv)
+	Pimpl(Raul::Configuration* conf, int& a_argc, char**& a_argv)
 		: argc(a_argc)
 		, argv(a_argv)
 		, conf(conf)
@@ -134,7 +134,7 @@ public:
 		rdf_world->add_prefix("xsd",     "http://www.w3.org/2001/XMLSchema#");
 	}
 
-	virtual ~WorldImpl()
+	virtual ~Pimpl()
 	{
 		local_engine.reset();
 
@@ -182,13 +182,13 @@ public:
 };
 
 World::World(Raul::Configuration* conf, int& argc, char**& argv)
-	: _impl(new WorldImpl(conf, argc, argv))
+	: _impl(new Pimpl(conf, argc, argv))
 {
 }
 
 World::~World()
 {
-	unload_all();
+	unload_modules();
 	delete _impl;
 }
 
@@ -219,9 +219,9 @@ SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }
  * @return true on success, false on failure
  */
 bool
-World::load(const char* name)
+World::load_module(const char* name)
 {
-	SharedPtr<Glib::Module> lib = load_module(name);
+	SharedPtr<Glib::Module> lib = ingen_load_module(name);
 	Ingen::Shared::Module* (*module_load)() = NULL;
 	if (lib && lib->get_symbol("ingen_module_load", (void*&)module_load)) {
 		Module* module = module_load();
@@ -238,7 +238,7 @@ World::load(const char* name)
 /** Unload all loaded Ingen modules.
  */
 void
-World::unload_all()
+World::unload_modules()
 {
 	_impl->modules.clear();
 }
@@ -249,7 +249,7 @@ SharedPtr<Ingen::Shared::EngineInterface>
 World::interface(const std::string& url)
 {
 	const string scheme = url.substr(0, url.find(":"));
-	const WorldImpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
+	const Pimpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
 	if (i == _impl->interface_factories.end()) {
 		warn << "Unknown URI scheme `" << scheme << "'" << endl;
 		return SharedPtr<Ingen::Shared::EngineInterface>();
@@ -262,7 +262,7 @@ World::interface(const std::string& url)
 bool
 World::run(const std::string& mime_type, const std::string& filename)
 {
-	const WorldImpl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
+	const Pimpl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
 	if (i == _impl->script_runners.end()) {
 		warn << "Unknown script MIME type `" << mime_type << "'" << endl;
 		return false;
