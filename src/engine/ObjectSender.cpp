@@ -61,7 +61,7 @@ void
 ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive, bool bundle)
 {
 	if (bundle)
-		client->transfer_begin();
+		client->bundle_begin();
 
 	client->put(patch->path(),
 	            patch->properties(Resource::INTERNAL),
@@ -92,7 +92,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 	}
 
 	if (bundle)
-		client->transfer_end();
+		client->bundle_end();
 }
 
 /** Sends a node or a patch */
@@ -112,7 +112,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	}
 
 	if (bundle)
-		client->transfer_begin();
+		client->bundle_begin();
 
 	client->put(node->path(), node->properties());
 
@@ -123,7 +123,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 	}
 
 	if (bundle)
-		client->transfer_end();
+		client->bundle_end();
 }
 
 void

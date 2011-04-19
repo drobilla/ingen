@@ -54,10 +54,8 @@ public:
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false; }
 
-	void bundle_begin()   { HTTPSender::bundle_begin(); }
-	void bundle_end()     { HTTPSender::bundle_end(); }
-	void transfer_begin() { HTTPSender::transfer_begin(); }
-	void transfer_end()   { HTTPSender::transfer_end(); }
+	void bundle_begin() { HTTPSender::bundle_begin(); }
+	void bundle_end()   { HTTPSender::bundle_end(); }
 
 	Raul::URI uri() const { return "http://example.org/"; }
 

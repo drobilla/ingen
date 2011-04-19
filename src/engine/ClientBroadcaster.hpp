@@ -111,8 +111,6 @@ public:
 	void response_ok(int32_t id) {} ///< N/A
 	void response_error(int32_t id, const std::string& msg) {} ///< N/A
 
-	void transfer_begin()                 { BROADCAST(transfer_begin); }
-	void transfer_end()                   { BROADCAST(transfer_end); }
 	void error(const std::string& msg)    { BROADCAST(error, msg); }
 	void activity(const Raul::Path& path) { BROADCAST(activity, path); }
 

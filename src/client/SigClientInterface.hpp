@@ -78,9 +78,6 @@ protected:
 	void bundle_end()
 		{ EMIT(bundle_end); }
 
-	void transfer_begin() {}
-	void transfer_end()   {}
-
 	void response_ok(int32_t id)
 		{ EMIT(response_ok, id); }
 

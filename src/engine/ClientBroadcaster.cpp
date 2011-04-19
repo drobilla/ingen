@@ -90,14 +90,14 @@ ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 void
 ClientBroadcaster::send_plugins_to(ClientInterface* client, const NodeFactory::Plugins& plugins)
 {
-	client->transfer_begin();
+	client->bundle_begin();
 
 	for (NodeFactory::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
 		const PluginImpl* const plugin = i->second;
 		client->put(plugin->uri(), plugin->properties());
 	}
 
-	client->transfer_end();
+	client->bundle_end();
 }
 
 /** Send an object to all clients.

@@ -31,22 +31,14 @@ public:
 
 	lo_address address() const { return _address; }
 
-	// Message bundling
 	void bundle_begin();
 	void bundle_end();
-
-	// Transfers (loose bundling)
-	void transfer_begin();
-	void transfer_end();
 
 protected:
 	int  send(const char *path, const char *types, ...);
 	void send_message(const char* path, lo_message m);
 
-	enum SendState { Immediate, SendingBundle, SendingTransfer };
-
-	SendState  _send_state;
-	lo_bundle  _transfer;
+	lo_bundle  _bundle;
 	lo_address _address;
 	bool       _enabled;
 };

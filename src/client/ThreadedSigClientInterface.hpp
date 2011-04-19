@@ -72,9 +72,6 @@ public:
 	void bundle_end()
 		{ push_sig(bundle_end_slot); }
 
-	void transfer_begin() {}
-	void transfer_end()   {}
-
 	void response_ok(int32_t id)
 		{ push_sig(sigc::bind(response_ok_slot, id)); }
 

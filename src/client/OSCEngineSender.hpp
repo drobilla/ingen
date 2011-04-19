@@ -60,8 +60,6 @@ public:
 
 	void bundle_begin()   { OSCSender::bundle_begin(); }
 	void bundle_end()     { OSCSender::bundle_end(); }
-	void transfer_begin() { OSCSender::transfer_begin(); }
-	void transfer_end()   { OSCSender::transfer_end(); }
 
 	// Client registration
 	void register_client(ClientInterface* client);

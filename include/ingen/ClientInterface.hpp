@@ -41,15 +41,8 @@ public:
 	virtual Raul::URI uri() const = 0;
 
 	virtual void response_ok(int32_t id) = 0;
-	virtual void response_error(int32_t id, const std::string& msg) = 0;
 
-	/** Transfers are 'weak' bundles.  These are used to break a large group
-	 * of similar/related messages into larger chunks (solely for communication
-	 * efficiency).  A bunch of messages in a transfer will arrive as 1 or more
-	 * bundles (so a transfer can exceed the maximum bundle (packet) size).
-	 */
-	virtual void transfer_begin() = 0;
-	virtual void transfer_end()   = 0;
+	virtual void response_error(int32_t id, const std::string& msg) = 0;
 
 	virtual void error(const std::string& msg) = 0;
 

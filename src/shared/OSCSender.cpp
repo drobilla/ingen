@@ -29,8 +29,7 @@ namespace Ingen {
 namespace Shared {
 
 OSCSender::OSCSender()
-	: _send_state(Immediate)
-	, _transfer(NULL)
+	: _bundle(NULL)
 	, _address(NULL)
 	, _enabled(true)
 {
@@ -39,37 +38,19 @@ OSCSender::OSCSender()
 void
 OSCSender::bundle_begin()
 {
-	assert(!_transfer);
+	assert(!_bundle);
 	lo_timetag t;
 	lo_timetag_now(&t);
-	_transfer = lo_bundle_new(t);
-	_send_state = SendingBundle;
+	_bundle = lo_bundle_new(t);
 }
 
 void
 OSCSender::bundle_end()
 {
-	transfer_end();
-}
-
-void
-OSCSender::transfer_begin()
-{
-	assert(!_transfer);
-	lo_timetag t;
-	lo_timetag_now(&t);
-	_transfer = lo_bundle_new(t);
-	_send_state = SendingTransfer;
-}
-
-void
-OSCSender::transfer_end()
-{
-	assert(_transfer);
-	lo_send_bundle(_address, _transfer);
-	lo_bundle_free_messages(_transfer);
-	_transfer = NULL;
-	_send_state = Immediate;
+	assert(_bundle);
+	lo_send_bundle(_address, _bundle);
+	lo_bundle_free_messages(_bundle);
+	_bundle = NULL;
 }
 
 int
@@ -110,17 +91,16 @@ OSCSender::send_message(const char* path, lo_message msg)
 		return;
 	}
 
-	if (_transfer) {
-		if (lo_bundle_length(_transfer) + lo_message_length(msg, path) > MAX_BUNDLE_SIZE) {
-			if (_send_state == SendingBundle)
-				warn << "Maximum bundle size reached, bundle split" << endl;
-			lo_send_bundle(_address, _transfer);
-			lo_bundle_free_messages(_transfer);
+	if (_bundle) {
+		if (lo_bundle_length(_bundle) + lo_message_length(msg, path) > MAX_BUNDLE_SIZE) {
+			warn << "Maximum bundle size reached, bundle split" << endl;
+			lo_send_bundle(_address, _bundle);
+			lo_bundle_free_messages(_bundle);
 			lo_timetag t;
 			lo_timetag_now(&t);
-			_transfer = lo_bundle_new(t);
+			_bundle = lo_bundle_new(t);
 		}
-		lo_bundle_add_message(_transfer, path, msg);
+		lo_bundle_add_message(_bundle, path, msg);
 
 	} else {
 		lo_send_message(_address, path, msg);

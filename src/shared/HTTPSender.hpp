@@ -31,13 +31,8 @@ public:
 	HTTPSender();
 	virtual ~HTTPSender();
 
-	// Message bundling
 	void bundle_begin();
 	void bundle_end();
-
-	// Transfers (loose bundling)
-	void transfer_begin() { bundle_begin(); }
-	void transfer_end()   { bundle_end(); }
 
 	int listen_port() const { return _listen_port; }
 

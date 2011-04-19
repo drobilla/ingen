@@ -65,11 +65,8 @@ public:
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false; }
 
-	void bundle_begin()   { transfer_begin(); }
-	void bundle_end()     { transfer_end(); }
-
-	void transfer_begin() {}
-	void transfer_end()   {}
+	void bundle_begin() {}
+	void bundle_end()   {}
 
 	// Client registration
 	void register_client(ClientInterface* client);

@@ -13,8 +13,6 @@ public:
 
 	void bundle_begin() {}
 	void bundle_end() {}
-	void transfer_begin() {}
-	void transfer_end() {}
 	void response_ok(int32_t id) {}
 	void response_error(int32_t id, const std::string& msg) {}
 	void error(const std::string& msg) {}

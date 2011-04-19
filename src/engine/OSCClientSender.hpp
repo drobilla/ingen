@@ -55,10 +55,8 @@ public:
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false; }
 
-	void bundle_begin()   { OSCSender::bundle_begin(); }
-	void bundle_end()     { OSCSender::bundle_end(); }
-	void transfer_begin() { OSCSender::transfer_begin(); }
-	void transfer_end()   { OSCSender::transfer_end(); }
+	void bundle_begin() { OSCSender::bundle_begin(); }
+	void bundle_end()   { OSCSender::bundle_end(); }
 
 	Raul::URI uri() const { return _url; }
 
