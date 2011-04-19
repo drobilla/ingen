@@ -290,8 +290,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	engine->post_processor()->set_end_time(UINT_MAX);
 
-	// FIXME: don't load all plugins, only necessary ones
-	plugin->world->engine()->load_plugins();
+	// TODO: Load only necessary plugins
+	plugin->world->engine()->get("ingen:plugins");
 	interface->process(*engine->post_processor(), context, false);
 	engine->post_processor()->process();
 

@@ -92,11 +92,6 @@ QueuedEngineInterface::unregister_client(const URI& uri)
 }
 
 // Engine commands
-void
-QueuedEngineInterface::load_plugins()
-{
-	push_queued(new Events::LoadPlugins(_engine, _request, now()));
-}
 
 void
 QueuedEngineInterface::activate()

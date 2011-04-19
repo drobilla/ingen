@@ -76,7 +76,6 @@ public:
 	void unregister_client(const Raul::URI& uri);
 
 	// Engine commands
-	void load_plugins();
 	void activate();
 	void deactivate();
 	void quit();

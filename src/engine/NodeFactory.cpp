@@ -66,6 +66,16 @@ NodeFactory::~NodeFactory()
 	_plugins.clear();
 }
 
+const NodeFactory::Plugins&
+NodeFactory::plugins()
+{
+	if (!_has_loaded) {
+		// TODO: Plugin list refreshing
+		load_plugins();
+	}
+	return _plugins;
+}
+
 PluginImpl*
 NodeFactory::plugin(const Raul::URI& uri)
 {

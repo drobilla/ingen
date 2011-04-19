@@ -51,7 +51,7 @@ public:
 	void load_plugins();
 
 	typedef std::map<Raul::URI, PluginImpl*> Plugins;
-	const Plugins& plugins() const { return _plugins; }
+	const Plugins& plugins();
 
 	PluginImpl* plugin(const Raul::URI& uri);
 

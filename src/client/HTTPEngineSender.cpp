@@ -79,12 +79,6 @@ HTTPEngineSender::unregister_client(const URI& uri)
 }
 
 // Engine commands
-void
-HTTPEngineSender::load_plugins()
-{
-	SoupMessage* msg = soup_message_new("GET", (_engine_url.str() + "/plugins").c_str());
-	HTTPClientReceiver::send(msg);
-}
 
 void
 HTTPEngineSender::activate()

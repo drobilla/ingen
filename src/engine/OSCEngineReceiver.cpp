@@ -97,7 +97,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/quit", "i", quit_cb, this);
 	lo_server_add_method(_server, "/register_client", "i", register_client_cb, this);
 	lo_server_add_method(_server, "/unregister_client", "i", unregister_client_cb, this);
-	lo_server_add_method(_server, "/load_plugins", "i", load_plugins_cb, this);
 	lo_server_add_method(_server, "/activate", "i", engine_activate_cb, this);
 	lo_server_add_method(_server, "/deactivate", "i", engine_deactivate_cb, this);
 	lo_server_add_method(_server, "/put", NULL, put_cb, this);
@@ -336,19 +335,6 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 	unregister_client(url);
 	free(url);
 
-	return 0;
-}
-
-/** \page engine_osc_namespace
- * <h2>/load_plugins</h2>
- * \arg \b response-id (integer)
- *
- * Locate all available plugins, making them available for use.
- */
-int
-OSCEngineReceiver::_load_plugins_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	load_plugins();
 	return 0;
 }
 

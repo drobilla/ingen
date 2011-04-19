@@ -97,11 +97,6 @@ OSCEngineSender::unregister_client(const URI& uri)
 }
 
 // Engine commands
-void
-OSCEngineSender::load_plugins()
-{
-	send("/load_plugins", "i", next_id(), LO_ARGS_END);
-}
 
 void
 OSCEngineSender::activate()

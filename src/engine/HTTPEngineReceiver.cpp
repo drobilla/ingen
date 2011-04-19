@@ -134,7 +134,7 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 
 		} else if (msg->method == SOUP_METHOD_GET && path.substr(0, 8) == "/plugins") {
 			// FIXME: kludge
-			me->load_plugins();
+			me->get("ingen:plugins");
 			me->_receive_thread->whip();
 
 			serialiser->start_to_string("/", base_uri);

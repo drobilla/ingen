@@ -97,7 +97,6 @@ private:
 	LO_HANDLER(ping_slow);
 	LO_HANDLER(register_client);
 	LO_HANDLER(unregister_client);
-	LO_HANDLER(load_plugins);
 	LO_HANDLER(engine_activate);
 	LO_HANDLER(engine_deactivate);
 	LO_HANDLER(get);

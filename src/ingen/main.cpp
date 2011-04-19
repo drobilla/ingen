@@ -188,9 +188,7 @@ main(int argc, char** argv)
 				: Glib::build_filename(Glib::get_current_dir(), uri));
 		}
 
-		engine_interface->load_plugins();
-		if (conf.option("gui").get_bool())
-			engine_interface->get("ingen:plugins");
+		engine_interface->get("ingen:plugins");
 		world->parser()->parse_file(
 			world, engine_interface.get(), uri, parent, symbol);
 	}

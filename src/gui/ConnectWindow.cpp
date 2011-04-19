@@ -439,7 +439,7 @@ ConnectWindow::gtk_callback()
 			if (root) {
 				set_connected_to(App::instance().engine());
 				App::instance().window_factory()->present_patch(root);
-				App::instance().engine()->load_plugins();
+				App::instance().engine()->get("ingen:plugins");
 				if (_widgets_loaded)
 					_progress_label->set_text(string("Loading plugins..."));
 				++_connect_stage;

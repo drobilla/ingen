@@ -47,7 +47,6 @@ public:
 	virtual void unregister_client(const Raul::URI& uri) = 0;
 
 	// Engine commands
-	virtual void load_plugins() = 0;
 	virtual void activate() = 0;
 	virtual void deactivate() = 0;
 	virtual void quit() = 0;
