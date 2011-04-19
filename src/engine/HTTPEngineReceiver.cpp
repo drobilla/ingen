@@ -89,24 +89,25 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
                                      SoupClientContext* client,
                                      void*              data)
 {
-	#if 0
 	HTTPEngineReceiver* me = (HTTPEngineReceiver*)data;
+
+	using namespace Ingen::Shared;
 
 	SharedPtr<Store> store = me->_engine.world()->store();
 	if (!store) {
-		soup_message_set_status (msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+		soup_message_set_status(msg, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 		return;
 	}
 
 	string path = path_str;
-	if (path[path.length()-1] == '/') {
+	if (path[path.length() - 1] == '/') {
 		path = path.substr(0, path.length()-1);
 	}
 
 	SharedPtr<Serialiser> serialiser = me->_engine.world()->serialiser();
 
-	const string base_uri = "path:/";
-	const char* mime_type = "text/plain";
+	const string base_uri  = "path:/";
+	const char*  mime_type = "text/plain";
 
 	// Special GET paths
 	if (msg->method == SOUP_METHOD_GET) {
@@ -121,6 +122,7 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 
 		} else if (msg->method == SOUP_METHOD_GET && path.substr(0, 8) == "/plugins") {
 			// FIXME: kludge
+			#if 0
 			me->get("ingen:plugins");
 			me->_receive_thread->whip();
 
@@ -131,10 +133,13 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 			const string r = serialiser->finish();
 			soup_message_set_status(msg, SOUP_STATUS_OK);
 			soup_message_set_response(msg, mime_type, SOUP_MEMORY_COPY, r.c_str(), r.length());
+			#endif
 			return;
 
 		} else if (path.substr(0, 6) == "/patch") {
 			path = '/' + path.substr(6);
+			if (path.substr(0, 2) == "//")
+				path = path.substr(1);
 
 		} else if (path.substr(0, 7) == "/stream") {
 			HTTPClientSender* client = new HTTPClientSender(me->_engine);
@@ -152,7 +157,7 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 
 	if (!Path::is_valid(path)) {
 		LOG(error) << "Bad HTTP path: " << path << endl;
-		soup_message_set_status (msg, SOUP_STATUS_BAD_REQUEST);
+		soup_message_set_status(msg, SOUP_STATUS_BAD_REQUEST);
 		const string& err = (boost::format("Bad path: %1%") % path).str();
 		soup_message_set_response(msg, "text/plain", SOUP_MEMORY_COPY,
 				err.c_str(), err.length());
@@ -209,7 +214,6 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 	} else {
 		soup_message_set_status(msg, SOUP_STATUS_NOT_IMPLEMENTED);
 	}
-	#endif
 }
 
 /** Override the semaphore driven _run method of QueuedEngineInterface

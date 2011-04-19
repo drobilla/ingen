@@ -266,7 +266,7 @@ Sord::Node
 Serialiser::path_rdf_node(const Path& path)
 {
 	assert(_model);
-	assert(path.is_child_of(_root_path));
+	assert(path == _root_path || path.is_child_of(_root_path));
 	const Path rel_path(path.relative_to_base(_root_path));
 	return Sord::URI(_model->world(), rel_path.chop_scheme().substr(1));
 }
@@ -323,8 +323,7 @@ Serialiser::serialise_patch(SharedPtr<Patch> patch, const Sord::Node& patch_id)
 	if (s == patch->properties().end()
 	    || !s->second.type() == Atom::STRING
 	    || !Symbol::is_valid(s->second.get_string())) {
-		const string path = Glib::filename_from_uri(_model->base_uri().to_c_string());
-		symbol = Glib::path_get_basename(path);
+		symbol = Glib::path_get_basename(_model->base_uri().to_c_string());
 		symbol = Symbol::symbolify(symbol.substr(0, symbol.find('.')));
 		_model->add_statement(
 			patch_id,

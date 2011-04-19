@@ -53,13 +53,16 @@ HTTPClientSender::put(const URI&                  uri,
                       const Resource::Properties& properties,
                       Resource::Graph             ctx)
 {
-	const string path     = (uri.substr(0, 6) == "path:/") ? uri.substr(6) : uri.str();
-	const string full_uri = _url + "/" + path;
+	const std::string request_uri = (Raul::Path::is_path(uri))
+		? _url + "/patch" + uri.substr(uri.find("/"))
+		: uri.str();
+
 
 	Sord::Model model(*_engine.world()->rdf_world());
-	for (Resource::Properties::const_iterator i = properties.begin(); i != properties.end(); ++i)
+	for (Resource::Properties::const_iterator i = properties.begin();
+	     i != properties.end(); ++i)
 		model.add_statement(
-				Sord::URI(*_engine.world()->rdf_world(), path),
+				Sord::URI(*_engine.world()->rdf_world(), request_uri),
 				AtomRDF::atom_to_node(model, i->first.str()),
 				AtomRDF::atom_to_node(model, i->second));
 

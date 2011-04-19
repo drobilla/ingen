@@ -106,7 +106,7 @@ HTTPEngineSender::delta(const Raul::URI&            path,
 	                    const Resource::Properties& remove,
 	                    const Resource::Properties& add)
 {
-	warn << "FIXME: HTTP DELTA" << endl;
+	LOG(warn) << "TODO: HTTP delta" << endl;
 }
 
 void
@@ -133,18 +133,21 @@ void
 HTTPEngineSender::connect(const Path& src_port_path,
                           const Path& dst_port_path)
 {
+	LOG(warn) << "TODO: HTTP connect" << endl;
 }
 
 void
 HTTPEngineSender::disconnect(const Path& src_port_path,
                              const Path& dst_port_path)
 {
+	LOG(warn) << "TODO: HTTP disconnect" << endl;
 }
 
 void
 HTTPEngineSender::disconnect_all(const Path& parent_patch_path,
                                  const Path& path)
 {
+	LOG(warn) << "TODO: HTTP disconnect_all" << endl;
 }
 
 void
@@ -169,8 +172,17 @@ HTTPEngineSender::ping()
 void
 HTTPEngineSender::get(const URI& uri)
 {
-	LOG(debug) << "Get " << _engine_url << endl;
-	SoupMessage* msg = soup_message_new("GET", uri.c_str());
+	if (!Raul::Path::is_path(uri) && uri.scheme() != "http") {
+		LOG(warn) << "Ignoring GET of non-HTTP URI " << uri << endl;
+		return;
+	}
+
+	const std::string request_uri = (Raul::Path::is_path(uri))
+		?_engine_url.str() + "/patch" + uri.substr(uri.find("/"))
+		: uri.str();
+	cout << "Get " << request_uri << endl;
+	LOG(debug) << "Get " << request_uri << endl;
+	SoupMessage* msg = soup_message_new("GET", request_uri.c_str());
 	HTTPClientReceiver::send(msg);
 }
 

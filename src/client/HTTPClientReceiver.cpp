@@ -190,15 +190,17 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 					Glib::ustring(msg->response_body->data), me->_url);
 		}
 
-	} else if (path == "/patch") {
+	} else if (path.substr(0, 6) == "/patch") {
 		if (msg->response_body->data == NULL) {
 			LOG(error) << "Empty response" << endl;
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
 			me->_target->response_ok(0);
-			me->_world->parser()->parse_string(me->_world, me->_target.get(),
-					Glib::ustring(msg->response_body->data),
-					Glib::ustring("/patch/"));
+			me->_world->parser()->parse_string(
+				me->_world,
+				me->_target.get(),
+				Glib::ustring(msg->response_body->data),
+				path);
 		}
 
 	} else if (path == "/stream") {
