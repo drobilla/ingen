@@ -142,6 +142,8 @@ main(int argc, char** argv)
 
 	// If we don't have a local engine interface (for GUI), use network
 	if (!engine_interface) {
+		ingen_try(world->load_module("client"),
+		          "Unable to load client module");
 		const char* const uri = conf.option("connect").get_string();
 		ingen_try((engine_interface = world->interface(uri)),
 		          (string("Unable to create interface to `") + uri + "'").c_str());
