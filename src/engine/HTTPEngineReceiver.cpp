@@ -64,34 +64,21 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 		engine.world()->load_module("ingen_serialisation");
 
 	Thread::set_name("HTTPEngineReceiver");
+	start();
+	_receive_thread->set_name("HTTPEngineReceiver Listener");
+	_receive_thread->start();
 }
 
 HTTPEngineReceiver::~HTTPEngineReceiver()
 {
-	deactivate();
-	stop();
 	_receive_thread->stop();
+	stop();
 	delete _receive_thread;
 
 	if (_server)  {
 		soup_server_quit(_server);
 		_server = NULL;
 	}
-}
-
-void
-HTTPEngineReceiver::activate_source()
-{
-	EventSource::activate_source();
-	_receive_thread->set_name("HTTPEngineReceiver Listener");
-	_receive_thread->start();
-}
-
-void
-HTTPEngineReceiver::deactivate_source()
-{
-	_receive_thread->stop();
-	EventSource::deactivate_source();
 }
 
 void

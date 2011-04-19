@@ -141,9 +141,6 @@ Engine::activate()
 
 	_message_context->Thread::start();
 
-	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
-		(*i)->activate_source();
-
 	const Ingen::Shared::LV2URIMap& uris = *world()->uris().get();
 
 	// Create root patch
@@ -204,9 +201,6 @@ Engine::activate()
 void
 Engine::deactivate()
 {
-	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
-		(*i)->deactivate_source();
-
 	_driver->deactivate();
 	_driver->root_patch()->deactivate();
 

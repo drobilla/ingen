@@ -37,9 +37,6 @@ public:
 	HTTPEngineReceiver(Engine& engine, uint16_t port);
 	~HTTPEngineReceiver();
 
-	void activate_source();
-	void deactivate_source();
-
 private:
 	struct ReceiveThread : public Raul::Thread {
 		explicit ReceiveThread(HTTPEngineReceiver& receiver) : _receiver(receiver) {}

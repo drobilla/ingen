@@ -118,13 +118,16 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 
 	Thread::set_name("OSCEngineReceiver");
+	start();
+	_receive_thread->set_name("OSCEngineReceiver Listener");
+	_receive_thread->start();
+	_receive_thread->set_scheduling(SCHED_FIFO, 5);
 }
 
 OSCEngineReceiver::~OSCEngineReceiver()
 {
-	deactivate();
-	stop();
 	_receive_thread->stop();
+	stop();
 	delete _receive_thread;
 
 	if (_server != NULL)  {
@@ -134,22 +137,6 @@ OSCEngineReceiver::~OSCEngineReceiver()
 		lo_server_free(_server);
 		_server = NULL;
 	}
-}
-
-void
-OSCEngineReceiver::activate_source()
-{
-	EventSource::activate_source();
-	_receive_thread->set_name("OSCEngineReceiver Listener");
-	_receive_thread->start();
-	_receive_thread->set_scheduling(SCHED_FIFO, 5); // Jack default appears to be 10
-}
-
-void
-OSCEngineReceiver::deactivate_source()
-{
-	_receive_thread->stop();
-	EventSource::deactivate_source();
 }
 
 /** Override the semaphore driven _run method of QueuedEngineInterface

@@ -40,6 +40,13 @@ QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queue_size)
 	, _engine(engine)
 	, _in_bundle(false)
 {
+	start();
+}
+
+
+QueuedEngineInterface::~QueuedEngineInterface()
+{
+	stop();
 }
 
 SampleCount
@@ -96,14 +103,8 @@ QueuedEngineInterface::unregister_client(const URI& uri)
 void
 QueuedEngineInterface::activate()
 {
-	static bool in_activate = false;
-	if (!in_activate) {
-		in_activate = true;
-		_engine.activate();
-	}
-	EventSource::activate_source();
+	_engine.activate();
 	push_queued(new Events::Ping(_engine, _request, now()));
-	in_activate = false;
 }
 
 void

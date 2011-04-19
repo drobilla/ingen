@@ -60,9 +60,6 @@ public:
 	OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t port);
 	~OSCEngineReceiver();
 
-	void activate_source();
-	void deactivate_source();
-
 private:
 	struct ReceiveThread : public Raul::Thread {
 		explicit ReceiveThread(OSCEngineReceiver& receiver) : _receiver(receiver) {}

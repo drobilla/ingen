@@ -42,9 +42,6 @@ public:
 	explicit EventSource(size_t queue_size);
 	virtual ~EventSource();
 
-	virtual void activate_source()   { Slave::start(); }
-	virtual void deactivate_source() { Slave::stop(); }
-
 	void process(PostProcessor& dest, ProcessContext& context, bool limit=true);
 
 	bool empty() { return _events.empty(); }
