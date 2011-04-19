@@ -26,10 +26,12 @@ using namespace Ingen;
 
 struct IngenHTTPModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
-		SharedPtr<HTTPEngineReceiver> interface(
-				new Ingen::HTTPEngineReceiver(*world->local_engine().get(),
-						world->conf()->option("engine-port").get_int32()));
-		world->local_engine()->add_event_source(interface);
+		Engine::Engine* engine = (Engine::Engine*)world->local_engine().get();
+		SharedPtr<Engine::HTTPEngineReceiver> interface(
+			new Engine::HTTPEngineReceiver(
+				*engine,
+				world->conf()->option("engine-port").get_int32()));
+		engine->add_event_source(interface);
 	}
 };
 
