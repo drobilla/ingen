@@ -288,13 +288,17 @@ ConnectWindow::disconnect()
 void
 ConnectWindow::activate()
 {
-	App::instance().engine()->activate();
+	App::instance().engine()->set_property("ingen:driver",
+	                                       "ingen:enabled",
+	                                       true);
 }
 
 void
 ConnectWindow::deactivate()
 {
-	App::instance().engine()->deactivate();
+	App::instance().engine()->set_property("ingen:driver",
+	                                       "ingen:enabled",
+	                                       false);
 }
 
 void

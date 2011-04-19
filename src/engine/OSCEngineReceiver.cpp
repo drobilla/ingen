@@ -97,8 +97,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	lo_server_add_method(_server, "/quit", "i", quit_cb, this);
 	lo_server_add_method(_server, "/register_client", "i", register_client_cb, this);
 	lo_server_add_method(_server, "/unregister_client", "i", unregister_client_cb, this);
-	lo_server_add_method(_server, "/activate", "i", engine_activate_cb, this);
-	lo_server_add_method(_server, "/deactivate", "i", engine_deactivate_cb, this);
 	lo_server_add_method(_server, "/put", NULL, put_cb, this);
 	lo_server_add_method(_server, "/move", "iss", move_cb, this);
 	lo_server_add_method(_server, "/delete", "is", del_cb, this);
@@ -324,34 +322,6 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 	unregister_client(url);
 	free(url);
 
-	return 0;
-}
-
-/** \page engine_osc_namespace
- * <h2>/activate</h2>
- * \arg \b response-id (integer)
- *
- * Activate the engine (event processing and all drivers, e.g. audio and MIDI).
- * Note that you <b>must</b> send this message first if you want the engine to do
- * anything at all - <em>including respond to your messages!</em>
- */
-int
-OSCEngineReceiver::_engine_activate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	QueuedEngineInterface::activate();
-	return 0;
-}
-
-/** \page engine_osc_namespace
- * <h2>/deactivate</h2>
- * \arg \b response-id (integer)
- *
- * Deactivate the engine.
- */
-int
-OSCEngineReceiver::_engine_deactivate_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	QueuedEngineInterface::deactivate();
 	return 0;
 }
 

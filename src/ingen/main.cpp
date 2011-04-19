@@ -225,8 +225,6 @@ main(int argc, char** argv)
 			nanosleep(&main_rate, NULL);
 		}
 		info << "Finished main loop" << endl;
-
-		world->local_engine()->deactivate();
 	}
 
 	// Shut down

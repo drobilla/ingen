@@ -101,18 +101,6 @@ OSCEngineSender::unregister_client(const URI& uri)
 // Engine commands
 
 void
-OSCEngineSender::activate()
-{
-	send("/activate", "i", next_id(), LO_ARGS_END);
-}
-
-void
-OSCEngineSender::deactivate()
-{
-	send("/deactivate", "i", next_id(), LO_ARGS_END);
-}
-
-void
 OSCEngineSender::quit()
 {
 	send("/quit", "i", next_id(), LO_ARGS_END);

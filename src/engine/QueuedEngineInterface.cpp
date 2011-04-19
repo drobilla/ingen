@@ -100,19 +100,6 @@ QueuedEngineInterface::unregister_client(const URI& uri)
 // Engine commands
 
 void
-QueuedEngineInterface::activate()
-{
-	_engine.activate();
-	push_queued(new Events::Ping(_engine, _request, now()));
-}
-
-void
-QueuedEngineInterface::deactivate()
-{
-	push_queued(new Events::Deactivate(_engine, _request, now()));
-}
-
-void
 QueuedEngineInterface::quit()
 {
 	_request->respond_ok();
@@ -191,11 +178,23 @@ QueuedEngineInterface::set_property(const URI&  uri,
                                     const URI&  predicate,
                                     const Atom& value)
 {
-	Resource::Properties remove;
-	remove.insert(make_pair(predicate, _engine.world()->uris()->wildcard));
-	Resource::Properties add;
-	add.insert(make_pair(predicate, value));
-	push_queued(new Events::SetMetadata(_engine, _request, now(), false, Resource::DEFAULT, uri, add, remove));
+	if (uri == "ingen:engine" && predicate == "ingen:enabled"
+	    && value.type() == Atom::BOOL) {
+		if (value.get_bool()) {
+			_engine.activate();
+			push_queued(new Events::Ping(_engine, _request, now()));
+		} else {
+			push_queued(new Events::Deactivate(_engine, _request, now()));
+		}
+	} else {
+		Resource::Properties remove;
+		remove.insert(make_pair(predicate, _engine.world()->uris()->wildcard));
+		Resource::Properties add;
+		add.insert(make_pair(predicate, value));
+		push_queued(new Events::SetMetadata(
+			            _engine, _request, now(), false, Resource::DEFAULT,
+			            uri, add, remove));
+	}
 }
 
 // Requests //

@@ -81,16 +81,6 @@ HTTPEngineSender::unregister_client(const URI& uri)
 // Engine commands
 
 void
-HTTPEngineSender::activate()
-{
-}
-
-void
-HTTPEngineSender::deactivate()
-{
-}
-
-void
 HTTPEngineSender::quit()
 {
 }
