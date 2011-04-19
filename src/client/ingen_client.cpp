@@ -32,7 +32,8 @@ using namespace Ingen;
 SharedPtr<Ingen::EngineInterface>
 new_osc_interface(Ingen::Shared::World* world, const std::string& url)
 {
-	Client::OSCEngineSender* oes = Client::OSCEngineSender::create(url);
+	Client::OSCEngineSender* oes = Client::OSCEngineSender::create(
+		url, world->conf()->option("packet-size").get_int32());
 	oes->attach(rand(), true);
 	return SharedPtr<EngineInterface>(oes);
 }

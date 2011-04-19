@@ -41,8 +41,10 @@ class OSCClientSender : public ClientInterface,
                         public Ingen::Shared::OSCSender
 {
 public:
-	explicit OSCClientSender(const Raul::URI& url)
-		: _url(url)
+	explicit OSCClientSender(const Raul::URI& url,
+	                         size_t           max_packet_size)
+		: Shared::OSCSender(max_packet_size)
+		, _url(url)
 	{
 		_address = lo_address_new_from_url(url.c_str());
 	}

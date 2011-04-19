@@ -51,6 +51,7 @@ Configuration::Configuration()
 		.add("uuid",        'u', "JACK session UUID", Atom::STRING, "")
 #endif
 		.add("load",        'l', "Load patch", Atom::STRING, Atom())
+		.add("packet-size", 'k', "Maximum UDP packet size", Atom::INT, 4096)
 		.add("parallelism", 'p', "Number of concurrent process threads", Atom::INT, 1)
 		.add("path",        'L', "Target path for loaded patch", Atom::STRING, Atom())
 		.add("queue-size",  'q', "Event queue size", Atom::INT, 1024)

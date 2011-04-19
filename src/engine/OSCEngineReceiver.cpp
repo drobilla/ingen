@@ -300,7 +300,9 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 	lo_address addr = lo_message_get_source(msg);
 
 	char* const url = lo_address_get_url(addr);
-	ClientInterface* client = new OSCClientSender((const char*)url);
+	ClientInterface* client = new OSCClientSender(
+		(const char*)url,
+		_engine.world()->conf()->option("packet-size").get_int32());
 	register_client(client);
 	free(url);
 
@@ -602,12 +604,13 @@ OSCEngineReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 	const lo_address addr = lo_message_get_source(msg);
 	char* const      url  = lo_address_get_url(addr);
 
-	warn << "Unknown OSC command " << path << " (" << types << ")" << endl;
+	warn << "Unknown OSC command " << path << " (" << types << ") "
+	     << "received from " << url << endl;
 
 	string error_msg = "Unknown command: ";
 	error_msg.append(path).append(" ").append(types);
 
-	OSCClientSender(url).error(error_msg);
+	lo_send(addr, "/error", "s", error_msg.c_str(), LO_ARGS_END);
 	free(url);
 
 	return 0;

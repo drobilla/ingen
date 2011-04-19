@@ -192,11 +192,16 @@ ConnectWindow::connect(bool existing)
 		if (!existing) {
 #ifdef HAVE_LIBLO
 			if (scheme == "osc.udp" || scheme == "osc.tcp")
-				world->set_engine(SharedPtr<EngineInterface>(new OSCEngineSender(uri)));
+				world->set_engine(
+					SharedPtr<EngineInterface>(
+						new OSCEngineSender(
+							uri,
+							world->conf()->option("packet-size").get_int32())));
 #endif
 #ifdef HAVE_SOUP
 			if (scheme == "http")
-				world->set_engine(SharedPtr<EngineInterface>(new HTTPEngineSender(world, uri)));
+				world->set_engine(SharedPtr<EngineInterface>(
+					                  new HTTPEngineSender(world, uri)));
 #endif
 		} else {
 			uri = world->engine()->uri().str();
@@ -218,7 +223,9 @@ ConnectWindow::connect(bool existing)
 
 		if (Raul::Process::launch(cmd)) {
 			world->set_engine(SharedPtr<EngineInterface>(
-					new OSCEngineSender(string("osc.udp://localhost:").append(port_str))));
+					new OSCEngineSender(
+						string("osc.udp://localhost:").append(port_str),
+						world->conf()->option("packet-size").get_int32())));
 
 			// FIXME: static args
 			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));

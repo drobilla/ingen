@@ -15,10 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <cassert>
+#include <assert.h>
 #include <unistd.h>
 #include <stdarg.h>
+
 #include "raul/log.hpp"
+
 #include "OSCSender.hpp"
 #include "ingen-config.h"
 
@@ -28,9 +30,10 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-OSCSender::OSCSender()
+OSCSender::OSCSender(size_t max_packet_size)
 	: _bundle(NULL)
 	, _address(NULL)
+	, _max_packet_size(max_packet_size)
 	, _enabled(true)
 {
 }
@@ -82,17 +85,13 @@ OSCSender::send(const char *path, const char *types, ...)
 void
 OSCSender::send_message(const char* path, lo_message msg)
 {
-	// FIXME: size?  liblo doesn't export this.
-	// Don't want to exceed max UDP packet size (good default value?)
-	static const size_t MAX_BUNDLE_SIZE = 1024;
-
 	if (!_enabled) {
 		lo_message_free(msg);
 		return;
 	}
 
 	if (_bundle) {
-		if (lo_bundle_length(_bundle) + lo_message_length(msg, path) > MAX_BUNDLE_SIZE) {
+		if (lo_bundle_length(_bundle) + lo_message_length(msg, path) > _max_packet_size) {
 			warn << "Maximum bundle size reached, bundle split" << endl;
 			lo_send_bundle(_address, _bundle);
 			lo_bundle_free_messages(_bundle);

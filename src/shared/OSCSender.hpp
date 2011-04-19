@@ -18,7 +18,9 @@
 #ifndef INGEN_SHARED_OSCSENDER_HPP
 #define INGEN_SHARED_OSCSENDER_HPP
 
-#include <inttypes.h>
+#include <stdbool.h>
+#include <stddef.h>
+
 #include <lo/lo.h>
 
 namespace Ingen {
@@ -26,7 +28,7 @@ namespace Shared {
 
 class OSCSender {
 public:
-	OSCSender();
+	OSCSender(size_t max_packet_size);
 	virtual ~OSCSender() {}
 
 	lo_address address() const { return _address; }
@@ -40,6 +42,7 @@ protected:
 
 	lo_bundle  _bundle;
 	lo_address _address;
+	size_t     _max_packet_size;
 	bool       _enabled;
 };
 

@@ -37,8 +37,10 @@ namespace Client {
  * from the most recently created server, so create the OSC listener before
  * this to have it all happen on the same port.  Yeah, this is a big magic :/
  */
-OSCEngineSender::OSCEngineSender(const URI& engine_url)
-	: _engine_url(engine_url)
+OSCEngineSender::OSCEngineSender(const URI& engine_url,
+                                 size_t     max_packet_size)
+	: Shared::OSCSender(max_packet_size)
+	, _engine_url(engine_url)
 	, _id(0)
 {
 	_address = lo_address_new_from_url(engine_url.c_str());

@@ -18,13 +18,18 @@
 #ifndef INGEN_CLIENT_OSCENGINESENDER_HPP
 #define INGEN_CLIENT_OSCENGINESENDER_HPP
 
-#include <inttypes.h>
+#include <stdbool.h>
+#include <stddef.h>
+
 #include <string>
+
 #include <lo/lo.h>
+
 #include "ingen/EngineInterface.hpp"
 #include "shared/OSCSender.hpp"
 
 namespace Ingen {
+
 namespace Client {
 
 /* OSC (via liblo) interface to the engine.
@@ -36,11 +41,14 @@ namespace Client {
  */
 class OSCEngineSender : public EngineInterface, public Shared::OSCSender {
 public:
-	OSCEngineSender(const Raul::URI& engine_url);
+	OSCEngineSender(const Raul::URI& engine_url,
+	                size_t           max_packet_size);
+
 	~OSCEngineSender();
 
-	static OSCEngineSender* create(const Raul::URI& engine_url) {
-		return new OSCEngineSender(engine_url);
+	static OSCEngineSender* create(const Raul::URI& engine_url,
+	                               size_t           max_packet_size) {
+		return new OSCEngineSender(engine_url, max_packet_size);
 	}
 
 	Raul::URI uri() const { return _engine_url; }
