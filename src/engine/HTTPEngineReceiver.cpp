@@ -61,7 +61,7 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	LOG(info) << "Started HTTP server on port " << soup_server_get_port(_server) << endl;
 
 	if (!engine.world()->parser() || !engine.world()->serialiser())
-		engine.world()->load_module("ingen_serialisation");
+		engine.world()->load_module("serialisation");
 
 	Thread::set_name("HTTPEngineReceiver");
 	start();

@@ -224,7 +224,7 @@ void
 HTTPClientReceiver::start(bool dump)
 {
 	if (!_world->parser())
-		_world->load_module("ingen_serialisation");
+		_world->load_module("serialisation");
 
 	SoupMessage* msg = soup_message_new("GET", (_url + "/stream").c_str());
 	assert(SOUP_IS_MESSAGE(msg));
