@@ -97,7 +97,7 @@ public:
 	void disconnect(const Raul::Path& src_port_path,
 	                const Raul::Path& dst_port_path);
 
-	void del(const Raul::Path& path);
+	void del(const Raul::URI& uri);
 
 	sigc::signal< void, SharedPtr<ObjectModel> > signal_new_object;
 	sigc::signal< void, SharedPtr<PluginModel> > signal_new_plugin;

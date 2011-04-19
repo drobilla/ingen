@@ -94,7 +94,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t
 	// Commands
 	lo_server_add_method(_server, "/ping", "i", ping_cb, this);
 	lo_server_add_method(_server, "/ping_queued", "i", ping_slow_cb, this);
-	lo_server_add_method(_server, "/quit", "i", quit_cb, this);
 	lo_server_add_method(_server, "/register_client", "i", register_client_cb, this);
 	lo_server_add_method(_server, "/unregister_client", "i", unregister_client_cb, this);
 	lo_server_add_method(_server, "/put", NULL, put_cb, this);
@@ -269,22 +268,6 @@ OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** a
 }
 
 /** \page engine_osc_namespace
- * <h2>/quit</h2>
- * \arg \b response-id (integer)
- *
- * Terminate the engine.
- * Note that there are NO order guarantees with this command at all.  You could
- * send 10 messages then quit, and the quit reply could come immediately and the
- * 10 messages would never get executed.
- */
-int
-OSCEngineReceiver::_quit_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	quit();
-	return 0;
-}
-
-/** \page engine_osc_namespace
  * <h2>/register_client</h2>
  * \arg \b response-id (integer)
  *
@@ -388,9 +371,9 @@ OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, 
 int
 OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* obj_path = &argv[1]->s;
+	const char* uri = &argv[1]->s;
 
-	del(obj_path);
+	del(uri);
 	return 0;
 }
 

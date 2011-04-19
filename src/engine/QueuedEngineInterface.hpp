@@ -59,9 +59,6 @@ public:
 	virtual void register_client(ClientInterface* client);
 	virtual void unregister_client(const Raul::URI& uri);
 
-	// Engine commands
-	virtual void quit();
-
 	// Bundles
 	virtual void bundle_begin();
 	virtual void bundle_end();
@@ -89,7 +86,7 @@ public:
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value);
 
-	virtual void del(const Raul::Path& path);
+	virtual void del(const Raul::URI& uri);
 
 	// EngineInterface object commands
 

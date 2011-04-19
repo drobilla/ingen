@@ -58,11 +58,10 @@ class DisconnectAll;
 class Delete : public QueuedEvent
 {
 public:
-	Delete(
-			Engine&            engine,
-			SharedPtr<Request> request,
-			FrameTime          timestamp,
-			const Raul::Path&  path);
+	Delete(Engine&            engine,
+	       SharedPtr<Request> request,
+	       FrameTime          timestamp,
+	       const Raul::URI&   uri);
 
 	~Delete();
 
@@ -71,6 +70,7 @@ public:
 	void post_process();
 
 private:
+	Raul::URI                      _uri;
 	Raul::Path                     _path;
 	EngineStore::iterator          _store_iterator;
 	SharedPtr<NodeImpl>            _node;                ///< Non-NULL iff a node

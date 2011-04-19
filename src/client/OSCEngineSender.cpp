@@ -98,14 +98,6 @@ OSCEngineSender::unregister_client(const URI& uri)
 	send("/unregister_client", "i", next_id(), LO_ARGS_END);
 }
 
-// Engine commands
-
-void
-OSCEngineSender::quit()
-{
-	send("/quit", "i", next_id(), LO_ARGS_END);
-}
-
 // Object commands
 
 void
@@ -144,11 +136,11 @@ OSCEngineSender::move(const Path& old_path,
 }
 
 void
-OSCEngineSender::del(const Path& path)
+OSCEngineSender::del(const URI& uri)
 {
 	send("/delete", "is",
 		next_id(),
-		path.c_str(),
+		uri.c_str(),
 		LO_ARGS_END);
 }
 

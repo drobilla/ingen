@@ -75,10 +75,9 @@ HTTPClientSender::delta(const URI&                  uri,
 }
 
 void
-HTTPClientSender::del(const Path& path)
+HTTPClientSender::del(const URI& uri)
 {
-	assert(!path.is_root());
-	send_chunk(string("<").append(path.str()).append("> a <http://www.w3.org/2002/07/owl#Nothing> ."));
+	send_chunk(string("<").append(uri.str()).append("> a <http://www.w3.org/2002/07/owl#Nothing> ."));
 }
 
 void

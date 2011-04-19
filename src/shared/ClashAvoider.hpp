@@ -68,7 +68,7 @@ public:
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value);
 
-	virtual void del(const Raul::Path& path);
+	virtual void del(const Raul::URI& uri);
 
 private:
 	const Raul::URI  map_uri(const Raul::URI& in);

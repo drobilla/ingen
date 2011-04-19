@@ -97,15 +97,6 @@ QueuedEngineInterface::unregister_client(const URI& uri)
 	}
 }
 
-// Engine commands
-
-void
-QueuedEngineInterface::quit()
-{
-	_request->respond_ok();
-	_engine.quit();
-}
-
 // Bundle commands
 
 void
@@ -146,9 +137,14 @@ QueuedEngineInterface::move(const Path& old_path,
 }
 
 void
-QueuedEngineInterface::del(const Path& path)
+QueuedEngineInterface::del(const URI& uri)
 {
-	push_queued(new Events::Delete(_engine, _request, now(), path));
+	if (uri == "ingen:engine") {
+		_request->respond_ok();
+		_engine.quit();
+	} else {
+		push_queued(new Events::Delete(_engine, _request, now(), uri));
+	}
 }
 
 void

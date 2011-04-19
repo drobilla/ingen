@@ -18,7 +18,7 @@ public:
 	void error(const std::string& msg) {}
 	void put(const Raul::URI& path, const Ingen::Resource::Properties& properties) {}
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path) {}
-	void del(const Raul::Path& path) {}
+	void del(const Raul::URI& uri) {}
 	void move(const Raul::Path& old_path, const Raul::Path& new_path) {}
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path) {}
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value) {}

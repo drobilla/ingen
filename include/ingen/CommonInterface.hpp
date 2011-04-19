@@ -55,7 +55,7 @@ public:
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path) = 0;
 
-	virtual void del(const Raul::Path& path) = 0;
+	virtual void del(const Raul::URI& uri) = 0;
 
 	virtual void connect(const Raul::Path& src_port_path,
 	                     const Raul::Path& dst_port_path) = 0;

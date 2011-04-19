@@ -84,8 +84,8 @@ public:
 		BROADCAST(move, old_path, new_path);
 	}
 
-	void del(const Raul::Path& path) {
-		BROADCAST(del, path);
+	void del(const Raul::URI& uri) {
+		BROADCAST(del, uri);
 	}
 
 	void connect(const Raul::Path& src_port_path,

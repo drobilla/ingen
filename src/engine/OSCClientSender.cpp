@@ -148,9 +148,9 @@ OSCClientSender::move(const Path& old_path, const Path& new_path)
  * DELETE an object (see \ref methods).
  */
 void
-OSCClientSender::del(const Path& path)
+OSCClientSender::del(const URI& uri)
 {
-	send("/delete", "s", path.c_str(), LO_ARGS_END);
+	send("/delete", "s", uri.c_str(), LO_ARGS_END);
 }
 
 /** \page client_osc_namespace

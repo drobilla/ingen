@@ -46,9 +46,6 @@ public:
 	virtual void register_client(ClientInterface* client) = 0;
 	virtual void unregister_client(const Raul::URI& uri) = 0;
 
-	// Engine commands
-	virtual void quit() = 0;
-
 	// Object commands
 
 	virtual void disconnect_all(const Raul::Path& parent_patch_path,

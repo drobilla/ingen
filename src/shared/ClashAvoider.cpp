@@ -187,9 +187,10 @@ ClashAvoider::set_property(const Raul::URI&  subject,
 }
 
 void
-ClashAvoider::del(const Raul::Path& path)
+ClashAvoider::del(const Raul::URI& uri)
 {
-	_target.del(map_path(path));
+	if (Raul::Path::is_path(uri))
+		_target.del(map_path(Raul::Path(uri.str())));
 }
 
 } // namespace Shared

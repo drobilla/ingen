@@ -174,10 +174,10 @@ BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
 }
 
 void
-BreadCrumbs::object_destroyed(const Path& path)
+BreadCrumbs::object_destroyed(const URI& uri)
 {
 	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
-		if ((*i)->path() == path) {
+		if ((*i)->path() == uri) {
 			// Remove all crumbs after the removed one (inclusive)
 			for (std::list<BreadCrumb*>::iterator j = i; j != _breadcrumbs.end(); ) {
 				BreadCrumb* bc = *j;

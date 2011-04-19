@@ -201,8 +201,12 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 /* ****** Signal Handlers ******** */
 
 void
-ClientStore::del(const Path& path)
+ClientStore::del(const URI& uri)
 {
+	if (!Raul::Path::is_path(uri))
+		return;
+
+	const Raul::Path path(uri.str());
 	SharedPtr<ObjectModel> removed = remove_object(path);
 	removed.reset();
 	LOG(debug) << "Removed object " << path << ", count: " << removed.use_count();

@@ -36,9 +36,12 @@ namespace Ingen {
 namespace Engine {
 namespace Events {
 
-Delete::Delete(Engine& engine, SharedPtr<Request> request, FrameTime time, const Raul::Path& path)
+Delete::Delete(Engine&            engine,
+               SharedPtr<Request> request,
+               FrameTime          time,
+               const Raul::URI&   uri)
 	: QueuedEvent(engine, request, time, true)
-	, _path(path)
+	, _uri(uri)
 	, _store_iterator(engine.engine_store()->end())
 	, _garbage(NULL)
 	, _driver_port(NULL)
@@ -50,6 +53,9 @@ Delete::Delete(Engine& engine, SharedPtr<Request> request, FrameTime time, const
 {
 	assert(request);
 	assert(request->source());
+
+	if (Raul::Path::is_path(uri))
+		_path = Raul::Path(uri.str());
 }
 
 Delete::~Delete()
@@ -166,7 +172,8 @@ Delete::post_process()
 {
 	_removed_bindings.reset();
 
-	if (_path.is_root() || _path == "path:/control_in" || _path == "path:/control_out") {
+	if (!Raul::Path::is_path(_uri)
+	    || _path.is_root() || _path == "path:/control_in" || _path == "path:/control_out") {
 		// XXX: Just ignore?
 		//_request->respond_error(_path.chop_scheme() + " can not be deleted");
 	} else if (!_node && !_port) {

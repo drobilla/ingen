@@ -78,13 +78,6 @@ HTTPEngineSender::unregister_client(const URI& uri)
 {
 }
 
-// Engine commands
-
-void
-HTTPEngineSender::quit()
-{
-}
-
 // Object commands
 
 void
@@ -128,7 +121,7 @@ HTTPEngineSender::move(const Path& old_path,
 }
 
 void
-HTTPEngineSender::del(const Path& uri)
+HTTPEngineSender::del(const URI& uri)
 {
 	const string path     = (uri.substr(0, 6) == "path:/") ? uri.substr(6) : uri.str();
 	const string full_uri = _engine_url.str() + "/" + path;

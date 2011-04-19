@@ -72,9 +72,6 @@ public:
 	void register_client(ClientInterface* client);
 	void unregister_client(const Raul::URI& uri);
 
-	// Engine commands
-	void quit();
-
 	// Object commands
 
 	virtual void put(const Raul::URI&            path,
@@ -85,7 +82,7 @@ public:
 	                   const Resource::Properties& remove,
 	                   const Resource::Properties& add);
 
-	virtual void del(const Raul::Path& path);
+	virtual void del(const Raul::URI& uri);
 
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path);
