@@ -20,9 +20,13 @@
 
 #include <sigc++/sigc++.h>
 
-#include "ingen-config.h"
 #include "raul/SharedPtr.hpp"
+#include "raul/Symbol.hpp"
+
 #include "sord/sordmm.hpp"
+
+#include "ingen-config.h"
+
 #ifdef HAVE_SLV2
 #include "slv2/slv2.h"
 #endif

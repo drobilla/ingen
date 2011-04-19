@@ -24,6 +24,7 @@
 
 #include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
+#include "raul/Path.hpp"
 
 #include "ingen-config.h"
 #include "OSCClientReceiver.hpp"
@@ -178,7 +179,10 @@ OSCClientReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, i
 int
 OSCClientReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	_target->move((const char*)&argv[0]->s, (const char*)&argv[1]->s);
+	const char* old_path = &argv[1]->s;
+	const char* new_path = &argv[2]->s;
+
+	_target->move(old_path, new_path);
 	return 0;
 }
 

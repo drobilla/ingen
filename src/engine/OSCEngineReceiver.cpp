@@ -25,6 +25,7 @@
 #include <lo/lo.h>
 
 #include "raul/AtomLiblo.hpp"
+#include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/log.hpp"
 

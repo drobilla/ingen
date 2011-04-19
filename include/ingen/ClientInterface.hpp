@@ -22,9 +22,11 @@
 
 #include <string>
 
+#include "raul/URI.hpp"
+
 #include "ingen/CommonInterface.hpp"
 
-namespace Raul { class Path; class URI; }
+namespace Raul { class Path; }
 
 namespace Ingen {
 

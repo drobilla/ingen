@@ -18,9 +18,9 @@
 #ifndef INGEN_SHARED_RESOURCEIMPL_HPP
 #define INGEN_SHARED_RESOURCEIMPL_HPP
 
-#include <map>
 #include "raul/URI.hpp"
 #include "raul/SharedPtr.hpp"
+
 #include "ingen/Resource.hpp"
 #include "ingen/PortType.hpp"
 
