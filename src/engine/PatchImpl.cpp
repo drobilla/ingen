@@ -79,7 +79,6 @@ void
 PatchImpl::deactivate()
 {
 	if (_activated) {
-
 		NodeImpl::deactivate();
 
 		for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {

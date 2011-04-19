@@ -75,7 +75,6 @@ ConnectWindow::start(Ingen::Shared::World* world)
 		if (_widgets_loaded) {
 			_internal_radio->set_active(true);
 		}
-		world->local_engine()->activate();
 	}
 
 	set_connected_to(world->engine());
@@ -417,7 +416,6 @@ ConnectWindow::gtk_callback()
 
 	} else if (_connect_stage == 1) {
 		if (_attached) {
-			App::instance().engine()->activate();
 			++_connect_stage;
 		} else {
 			const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
