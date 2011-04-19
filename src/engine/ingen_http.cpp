@@ -19,7 +19,6 @@
 #include "shared/World.hpp"
 #include "HTTPEngineReceiver.hpp"
 #include "Engine.hpp"
-#include "tuning.hpp"
 
 using namespace std;
 using namespace Ingen;

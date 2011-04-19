@@ -20,7 +20,6 @@
 #include "Engine.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "util.hpp"
-#include "tuning.hpp"
 
 using namespace Ingen;
 
@@ -31,7 +30,7 @@ struct IngenEngineModule : public Ingen::Shared::Module {
 		world->set_local_engine(engine);
 		SharedPtr<Engine::QueuedEngineInterface> interface(
 				new Engine::QueuedEngineInterface(*engine.get(),
-				                                  Engine::event_queue_size));
+				                                  engine->event_queue_size()));
 		world->set_engine(interface);
 		engine->add_event_source(interface);
 		assert(world->local_engine() == engine);

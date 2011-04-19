@@ -19,7 +19,6 @@
 #include "shared/World.hpp"
 #include "OSCEngineReceiver.hpp"
 #include "Engine.hpp"
-#include "tuning.hpp"
 
 using namespace std;
 using namespace Ingen;
@@ -30,7 +29,7 @@ struct IngenOSCModule : public Ingen::Shared::Module {
 		SharedPtr<Engine::OSCEngineReceiver> interface(
 			new Engine::OSCEngineReceiver(
 				*engine,
-				Engine::event_queue_size,
+				engine->event_queue_size(),
 				world->conf()->option("engine-port").get_int32()));
 		engine->add_event_source(interface);
 	}

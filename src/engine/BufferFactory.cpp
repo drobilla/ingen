@@ -31,6 +31,8 @@ using namespace Raul;
 namespace Ingen {
 namespace Engine {
 
+static const size_t EVENT_BYTES_PER_FRAME = 4; // FIXME
+
 BufferFactory::BufferFactory(Engine&                             engine,
                              SharedPtr<Ingen::Shared::LV2URIMap> uris)
 	: _engine(engine)
@@ -78,7 +80,7 @@ BufferFactory::default_buffer_size(PortType type)
 		case PortType::CONTROL:
 			return sizeof(LV2_Atom) + sizeof(float);
 		case PortType::EVENTS:
-			return _engine.driver()->block_length() * event_bytes_per_frame;
+			return _engine.driver()->block_length() * EVENT_BYTES_PER_FRAME;
 		default:
 			return 1024; // Who knows
 	}

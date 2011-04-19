@@ -27,7 +27,6 @@
 #include "ingen/Resource.hpp"
 #include "EventSource.hpp"
 #include "Request.hpp"
-#include "tuning.hpp"
 #include "types.hpp"
 
 namespace Ingen {

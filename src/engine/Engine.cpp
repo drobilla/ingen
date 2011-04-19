@@ -45,7 +45,6 @@
 #include "ProcessContext.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "ThreadManager.hpp"
-#include "tuning.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -56,14 +55,14 @@ namespace Engine {
 bool ThreadManager::single_threaded = true;
 
 Engine::Engine(Ingen::Shared::World* a_world)
-	: _broadcaster(new ClientBroadcaster())
+	: _world(a_world)
+	, _broadcaster(new ClientBroadcaster())
 	, _buffer_factory(new BufferFactory(*this, a_world->uris()))
 	, _control_bindings(new ControlBindings(*this))
-	, _maid(new Raul::Maid(maid_queue_size))
+	, _maid(new Raul::Maid(event_queue_size()))
 	, _message_context(new MessageContext(*this))
 	, _node_factory(new NodeFactory(a_world))
-	, _post_processor(new PostProcessor(*this, post_processor_queue_size))
-	, _world(a_world)
+	, _post_processor(new PostProcessor(*this, event_queue_size()))
 {
 	if (a_world->store()) {
 		assert(PtrCast<EngineStore>(a_world->store()));
@@ -94,6 +93,12 @@ SharedPtr<EngineStore>
 Engine::engine_store() const
 {
 	 return PtrCast<EngineStore>(_world->store());
+}
+
+size_t
+Engine::event_queue_size() const
+{
+	return world()->conf()->option("queue-size").get_int32();
 }
 
 void

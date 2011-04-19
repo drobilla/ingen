@@ -24,7 +24,6 @@
 #include "EventSource.hpp"
 #include "QueuedEngineInterface.hpp"
 #include "events.hpp"
-#include "tuning.hpp"
 
 #define LOG(s) s << "[QueuedEngineInterface] "
 

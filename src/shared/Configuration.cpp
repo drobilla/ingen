@@ -53,6 +53,7 @@ Configuration::Configuration()
 		.add("load",        'l', "Load patch", Atom::STRING, Atom())
 		.add("parallelism", 'p', "Number of concurrent process threads", Atom::INT, 1)
 		.add("path",        'L', "Target path for loaded patch", Atom::STRING, Atom())
+		.add("queue-size",  'q', "Event queue size", Atom::INT, 1024)
 		.add("run",         'r', "Run script", Atom::STRING, Atom());
 }
 

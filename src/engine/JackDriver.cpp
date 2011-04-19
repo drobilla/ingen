@@ -50,7 +50,6 @@
 #include "shared/World.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "tuning.hpp"
 #include "util.hpp"
 
 #define LOG(s) s << "[JackDriver] "

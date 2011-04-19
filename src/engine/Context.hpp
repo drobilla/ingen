@@ -18,8 +18,10 @@
 #ifndef INGEN_ENGINE_CONTEXT_HPP
 #define INGEN_ENGINE_CONTEXT_HPP
 
+#include "shared/World.hpp"
+
+#include "Engine.hpp"
 #include "EventSink.hpp"
-#include "tuning.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -50,7 +52,7 @@ public:
 	Context(Engine& engine, ID id)
 		: _engine(engine)
 		, _id(id)
-		, _event_sink(engine, event_queue_size)
+		, _event_sink(engine, engine.event_queue_size())
 		, _start(0)
 		, _end(0)
 		, _nframes(0)

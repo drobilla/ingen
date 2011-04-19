@@ -76,6 +76,8 @@ public:
 
 	void process_events(ProcessContext& context);
 
+	Ingen::Shared::World* world() const { return _world; }
+
 	ClientBroadcaster*    broadcaster()      const { return _broadcaster; }
 	BufferFactory*        buffer_factory()   const { return _buffer_factory; }
 	ControlBindings*      control_bindings() const { return _control_bindings; }
@@ -84,20 +86,22 @@ public:
 	MessageContext*       message_context()  const { return _message_context; }
 	NodeFactory*          node_factory()     const { return _node_factory; }
 	PostProcessor*        post_processor()   const { return _post_processor; }
-	Ingen::Shared::World* world()            const { return _world; }
 
 	SharedPtr<EngineStore> engine_store() const;
 
+	size_t event_queue_size() const;
+
 private:
-	ClientBroadcaster*    _broadcaster;
-	BufferFactory*        _buffer_factory;
-	ControlBindings*      _control_bindings;
-	SharedPtr<Driver>     _driver;
-	Raul::Maid*           _maid;
-	MessageContext*       _message_context;
-	NodeFactory*          _node_factory;
-	PostProcessor*        _post_processor;
 	Ingen::Shared::World* _world;
+
+	ClientBroadcaster* _broadcaster;
+	BufferFactory*     _buffer_factory;
+	ControlBindings*   _control_bindings;
+	SharedPtr<Driver>  _driver;
+	Raul::Maid*        _maid;
+	MessageContext*    _message_context;
+	NodeFactory*       _node_factory;
+	PostProcessor*     _post_processor;
 
 	typedef std::set< SharedPtr<EventSource> > EventSources;
 	EventSources _event_sources;

@@ -27,7 +27,6 @@
 #include "Context.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
-#include "tuning.hpp"
 
 namespace Ingen {
 namespace Engine {
@@ -50,7 +49,7 @@ public:
 		: Context(engine, MESSAGE)
 		, Raul::Thread("MessageContext")
 		, _sem(0)
-		, _requests(message_context_queue_size)
+		, _requests(engine.event_queue_size())
 		, _end_time(0)
 	{
 		Thread::set_context(THREAD_MESSAGE);
