@@ -67,6 +67,8 @@ private:
 		OBJECT_NOT_FOUND,
 	};
 
+	void remove_connection(ConnectionImpl* c);
+
 	Raul::Path              _parent_path;
 	Raul::Path              _path;
 	PatchImpl*              _parent;

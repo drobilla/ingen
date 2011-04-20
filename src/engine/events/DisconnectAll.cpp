@@ -74,6 +74,17 @@ DisconnectAll::~DisconnectAll()
 }
 
 void
+DisconnectAll::remove_connection(ConnectionImpl* c)
+{
+	const bool reconnect_input = !_deleting || (c->dst_port()->parent_node() != _node);
+	Disconnect* ev = new Disconnect(_engine, SharedPtr<Request>(), _time,
+	                                c->src_port(), c->dst_port(), reconnect_input);
+	ev->pre_process();
+	_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
+	c->pending_disconnection(true);
+}
+
+void
 DisconnectAll::pre_process()
 {
 	if (!_deleting) {
@@ -110,27 +121,20 @@ DisconnectAll::pre_process()
 		for (PatchImpl::Connections::const_iterator i = _parent->connections().begin();
 				i != _parent->connections().end(); ++i) {
 			ConnectionImpl* c = (ConnectionImpl*)i->second.get();
-			const bool reconnect_input = !_deleting || (c->dst_port()->parent_node() != _node);
-			if ((c->src_port()->parent_node() == _node || c->dst_port()->parent_node() == _node)
-					&& !c->pending_disconnection()) {
-				Disconnect* ev = new Disconnect(_engine,
-						SharedPtr<Request>(), _time, c->src_port(), c->dst_port(), reconnect_input);
-				ev->pre_process();
-				_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
-				c->pending_disconnection(true);
+			if (!c->pending_disconnection()
+			    && (c->src_port()->parent_node() == _node
+			        || c->dst_port()->parent_node() == _node)) {
+				remove_connection(c);
 			}
 		}
 	} else { // _port
 		for (PatchImpl::Connections::const_iterator i = _parent->connections().begin();
 				i != _parent->connections().end(); ++i) {
 			ConnectionImpl* c = (ConnectionImpl*)i->second.get();
-			const bool reconnect_input = !_deleting || (c->dst_port()->parent_node() != _node);
-			if ((c->src_port() == _port || c->dst_port() == _port) && !c->pending_disconnection()) {
-				Disconnect* ev = new Disconnect(_engine,
-						SharedPtr<Request>(), _time, c->src_port(), c->dst_port(), reconnect_input);
-				ev->pre_process();
-				_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
-				c->pending_disconnection(true);
+			if (!c->pending_disconnection()
+			    && (c->src_port() == _port
+			        || c->dst_port() == _port)) {
+				remove_connection(c);
 			}
 		}
 	}
