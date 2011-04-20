@@ -27,6 +27,7 @@
 #include "NodeImpl.hpp"
 #include "OSCClientSender.hpp"
 #include "PatchImpl.hpp"
+
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "ingen/ClientInterface.hpp"
@@ -38,16 +39,17 @@ using namespace Raul;
 namespace Ingen {
 namespace Engine {
 
-/*! \page client_osc_namespace Client OSC Namespace Documentation
+/** @page client_osc_namespace Client OSC Namespace Documentation
  *
  * <p>These are the commands the client recognizes.  All monitoring of
  * changes in the engine happens via these commands.</p>
  */
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/ok</h2>
- * \arg \b response-id (int) - Request ID this is a response to
+ * @arg @p response-id :: Integer
  *
+ * @par
  * Successful response to some command.
  */
 void
@@ -56,17 +58,20 @@ OSCClientSender::response_ok(int32_t id)
 	if (!_enabled)
 		return;
 
+
+	
 	if (lo_send(_address, "/ok", "i", id, LO_ARGS_END) < 0) {
 		Raul::error << "Unable to send OK " << id << "! ("
 			<< lo_address_errstr(_address) << ")" << endl;
 	}
 }
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/error</h2>
- * \arg \b response-id (int) - Request ID this is a response to
- * \arg \b message (string) - Error message (natural language text)
+ * @arg @p response-id :: Integer
+ * @arg @p message :: String
  *
+ * @par
  * Unsuccessful response to some command.
  */
 void
@@ -81,13 +86,13 @@ OSCClientSender::response_error(int32_t id, const std::string& msg)
 	}
 }
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/error</h2>
- * \arg \b message (string) - Error message (natural language text)
+ * @arg @p message :: String
  *
- * Notification that an error has occurred.
- * This is for notification of errors that aren't a direct response to a
- * user command, ie "unexpected" errors.
+ * @par
+ * Notification that an error has occurred.  This is for notification of errors
+ * that aren't a direct response to a user command, i.e. "unexpected" errors.
  */
 void
 OSCClientSender::error(const std::string& msg)
@@ -95,14 +100,15 @@ OSCClientSender::error(const std::string& msg)
 	send("/error", "s", msg.c_str(), LO_ARGS_END);
 }
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/put</h2>
- * \arg \b path (string) - Path of object
- * \arg \b predicate
- * \arg \b value
- * \arg \b ...
+ * @arg @p path :: String
+ * @arg @p predicate :: URI String
+ * @arg @p value
+ * @arg @p ...
  *
- * PUT a set of properties to a path (see \ref methods).
+ * @par
+ * PUT a set of properties to a path.
  */
 void
 OSCClientSender::put(const Raul::URI&            path,
@@ -127,12 +133,13 @@ OSCClientSender::delta(const Raul::URI&            path,
 	warn << "FIXME: OSC DELTA" << endl;
 }
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/move</h2>
- * \arg \b old-path (string) - Old path of object
- * \arg \b new-path (string) - New path of object
+ * @arg @p old-path :: String
+ * @arg @p new-path :: String
  *
- * MOVE an object to a new path (see \ref methods).
+ * @par
+ * MOVE an object to a new path.
  * The new path will have the same parent as the old path.
  */
 void
@@ -141,11 +148,12 @@ OSCClientSender::move(const Path& old_path, const Path& new_path)
 	send("/move", "ss", old_path.c_str(), new_path.c_str(), LO_ARGS_END);
 }
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/delete</h2>
- * \arg \b path (string) - Path of object (which no longer exists)
+ * @arg @p path :: String
  *
- * DELETE an object (see \ref methods).
+ * @par
+ * DELETE an object.
  */
 void
 OSCClientSender::del(const URI& uri)
@@ -153,11 +161,12 @@ OSCClientSender::del(const URI& uri)
 	send("/delete", "s", uri.c_str(), LO_ARGS_END);
 }
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/connect</h2>
- * \arg \b src-path (string) - Path of the source port
- * \arg \b dst-path (string) - Path of the destination port
+ * @arg @p src-path :: String
+ * @arg @p dst-path :: String
  *
+ * @par
  * Notification a new connection has been made.
  */
 void
@@ -167,11 +176,12 @@ OSCClientSender::connect(const Path& src_port_path,
 	send("/connect", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/disconnect</h2>
- * \arg \b src-path (string) - Path of the source port
- * \arg \b dst-path (string) - Path of the destination port
+ * @arg @p src-path :: String
+ * @arg @p dst-path :: String
  *
+ * @par
  * Notification a connection has been unmade.
  */
 void
@@ -181,12 +191,13 @@ OSCClientSender::disconnect(const Path& src_port_path,
 	send("/disconnect", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
 }
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/set_property</h2>
- * \arg \b path (string) - Path of the object associated with property (node, patch, or port)
- * \arg \b key (string)
- * \arg \b value (string)
+ * @arg @p path :: String
+ * @arg @p key :: URI String
+ * @arg @p value
  *
+ * @par
  * Notification of a property.
  */
 void
@@ -201,10 +212,11 @@ OSCClientSender::set_property(const URI& path,
 	send_message("/set_property", m);
 }
 
-/** \page client_osc_namespace
+/** @page client_osc_namespace
  * <h2>/activity</h2>
- * \arg \b path (string) - Path of object
+ * @arg @p path :: String
  *
+ * @par
  * Notification of "activity" (e.g. port message blinkenlights).
  */
 void

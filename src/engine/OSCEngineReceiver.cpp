@@ -47,14 +47,14 @@ using namespace Raul;
 namespace Ingen {
 namespace Engine {
 
-/*! \page engine_osc_namespace Engine OSC Namespace Documentation
+/** @page engine_osc_namespace Engine OSC Namespace Documentation
  *
  * <p>These are the commands the engine recognizes.  A client can control every
  * aspect of the engine entirely with these commands.</p>
  *
  * <p>All commands on this page are in the "control band".  If a client needs to
  * know about the state of the engine, it must listen to the "notification band".
- * See the "Client OSC Namespace Documentation" for details.
+ * See the "Client OSC Namespace Documentation" for details.</p>
  */
 
 OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t port)
@@ -237,11 +237,9 @@ OSCEngineReceiver::error_cb(int num, const char* msg, const char* path)
 	error << " (" << msg << ")" << endl;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/ping</h2>
- * \arg \b response-id (integer)
- *
- * Reply to sender immediately with a successful response.
+ * @arg @p response-id :: Integer
  */
 int
 OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -252,14 +250,15 @@ OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, 
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/ping_queued</h2>
- * \arg \b response-id (integer)
+ * @arg @p response-id :: Integer
  *
- * Reply to sender with a successful response after going through the event queue.
- * This is useful for checking if the engine is actually active, or for sending after
- * several events as a sentinel and wait on it's response, to know when all previous
- * events have finished processing.
+ * @par
+ * Reply to sender with a successful response after going through the
+ * event queue.  This is useful for checking if the engine is actually active,
+ * or for sending after several events as a sentinel and wait on it's response,
+ * to know when all previous events have finished processing.
  */
 int
 OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -268,13 +267,13 @@ OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** a
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/register_client</h2>
- * \arg \b response-id (integer)
+ * @arg @p response-id :: Integer
  *
- * Register a new client with the engine.
- * The incoming address will be used for the new registered client.  If you
- * want to register a different specific address, use the URL version.
+ * @par
+ * Register a new client with the engine.  The incoming address will be
+ * used for the new registered client.
  */
 int
 OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -291,10 +290,11 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/unregister_client</h2>
- * \arg \b response-id (integer)
+ * @arg @p response-id :: Integer
  *
+ * @par
  * Unregister a client.
  */
 int
@@ -309,11 +309,12 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/get</h2>
- * \arg \b response-id (integer)
- * \arg \b uri (string) - URI of object (patch, port, node, plugin) to send
+ * @arg @p response-id :: Integer
+ * @arg @p uri :: URI String
  *
+ * @par
  * Request all properties of an object.
  */
 int
@@ -323,15 +324,16 @@ OSCEngineReceiver::_get_cb(const char* path, const char* types, lo_arg** argv, i
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/put</h2>
- * \arg \b response-id (integer)
- * \arg \b path (string) - Path of object
- * \arg \b predicate
- * \arg \b value
- * \arg \b ...
+ * @arg @p response-id :: Integer
+ * @arg @p path :: String
+ * @arg @p predicate :: URI String
+ * @arg @p value
+ * @arg @p ...
  *
- * PUT a set of properties to a path (see \ref methods).
+ * @par
+ * PUT a set of properties to a path.
  */
 int
 OSCEngineReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -344,13 +346,14 @@ OSCEngineReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, i
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/move</h2>
- * \arg \b response-id (integer)
- * \arg \b old-path - Object's path
- * \arg \b new-path - Object's new path
+ * @arg @p response-id :: Integer
+ * @arg @p old-path :: String
+ * @arg @p new-path :: String
  *
- * MOVE an object to a new path (see \ref methods).
+ * @par
+ * MOVE an object to a new path.
  */
 int
 OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -362,12 +365,13 @@ OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, 
 	return 0;
 }
 
-/** \page engine_osc_namespace
- * <h2>/del</h2>
- * \arg \b response-id (integer)
- * \arg \b path (string) - Full path of the object
+/** @page engine_osc_namespace
+ * <h2>/delete</h2>
+ * @arg @p response-id :: Integer
+ * @arg @p path :: String
  *
- * DELETE an object (see \ref methods).
+ * @par
+ * DELETE an object.
  */
 int
 OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
@@ -378,12 +382,13 @@ OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, i
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/connect</h2>
- * \arg \b response-id (integer)
- * \arg \b src-port-path (string) - Full path of source port
- * \arg \b dst-port-path (string) - Full path of destination port
+ * @arg @p response-id :: Integer
+ * @arg @p src-port-path :: String
+ * @arg @p dst-port-path :: String
  *
+ * @par
  * Connect two ports (which must be in the same patch).
  */
 int
@@ -396,12 +401,13 @@ OSCEngineReceiver::_connect_cb(const char* path, const char* types, lo_arg** arg
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/disconnect</h2>
- * \arg \b response-id (integer)
- * \arg \b src-port-path (string) - Full path of source port
- * \arg \b dst-port-path (string) - Full path of destination port
+ * @arg @p response-id :: Integer
+ * @arg @p src-port-path :: String
+ * @arg @p dst-port-path :: String
  *
+ * @par
  * Disconnect two ports.
  */
 int
@@ -414,12 +420,13 @@ OSCEngineReceiver::_disconnect_cb(const char* path, const char* types, lo_arg** 
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/disconnect_all</h2>
- * \arg \b response-id (integer)
- * \arg \b patch-path (string) - The (parent) patch in which to disconnect object.
- * \arg \b object-path (string) - Full path of object.
+ * @arg @p response-id :: Integer
+ * @arg @p patch-path :: String
+ * @arg @p object-path :: String
  *
+ * @par
  * Disconnect all connections to/from a node/port.
  */
 int
@@ -432,13 +439,14 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/note_on</h2>
- * \arg \b response-id (integer)
- * \arg \b node-path (string) - Patch of Node to trigger (must be a trigger or note node)
- * \arg \b note-num (int) - MIDI style note number (0-127)
- * \arg \b velocity (int) - MIDI style velocity (0-127)
+ * @arg @p response-id :: Integer
+ * @arg @p node-path :: String
+ * @arg @p note-num (int)
+ * @arg @p velocity (int)
  *
+ * @par
  * Trigger a note-on, just as if it came from MIDI.
  */
 int
@@ -454,12 +462,13 @@ OSCEngineReceiver::_note_on_cb(const char* path, const char* types, lo_arg** arg
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/note_off</h2>
- * \arg \b response-id (integer)
- * \arg \b node-path (string) - Patch of Node to trigger (must be a trigger or note node)
- * \arg \b note-num (int) - MIDI style note number (0-127)
+ * @arg @p response-id :: Integer
+ * @arg @p node-path :: String
+ * @arg @p note-num :: Integer
  *
+ * @par
  * Trigger a note-off, just as if it came from MIDI.
  */
 int
@@ -474,11 +483,12 @@ OSCEngineReceiver::_note_off_cb(const char* path, const char* types, lo_arg** ar
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/all_notes_off</h2>
- * \arg \b response-id (integer)
- * \arg \b patch-path (string) - Patch of patch to send event to
+ * @arg @p response-id :: Integer
+ * @arg @p patch-path :: String
  *
+ * @par
  * Trigger a note-off for all voices, just as if it came from MIDI.
  */
 int
@@ -493,13 +503,14 @@ OSCEngineReceiver::_all_notes_off_cb(const char* path, const char* types, lo_arg
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/set_property</h2>
- * \arg \b response-id (integer)
- * \arg \b object-path (string) - Full path of object to associate property with
- * \arg \b key (string) - URI for predicate of this property (e.g. "http://drobilla.net/ns/ingen#enabled")
- * \arg \b value (string) - Value of property
+ * @arg @p response-id :: Integer
+ * @arg @p uri :: URI String
+ * @arg @p key :: URI String
+ * @arg @p value :: String
  *
+ * @par
  * Set a property on a graph object.
  */
 int
@@ -517,11 +528,11 @@ OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	return 0;
 }
 
-/** \page engine_osc_namespace
+/** @page engine_osc_namespace
  * <h2>/request_property</h2>
- * \arg \b response-id (integer)
- * \arg \b uri (string) - Subject
- * \arg \b key (string) - Predicate
+ * @arg @p response-id :: Integer
+ * @arg @p uri :: URI String
+ * @arg @p key :: URI String
  *
  * Request the value of a property on an object.
  */
@@ -536,6 +547,7 @@ OSCEngineReceiver::_request_property_cb(const char* path, const char* types, lo_
 }
 
 //  Static Callbacks //
+
 
 // Display incoming OSC messages (for debugging purposes)
 int
