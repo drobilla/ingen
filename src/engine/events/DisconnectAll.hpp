@@ -18,7 +18,8 @@
 #ifndef INGEN_EVENTS_DISCONNECTALL_HPP
 #define INGEN_EVENTS_DISCONNECTALL_HPP
 
-#include "raul/List.hpp"
+#include <list>
+
 #include "raul/Path.hpp"
 
 #include "Disconnect.hpp"
@@ -77,7 +78,8 @@ private:
 	NodeImpl*  _node;
 	PortImpl*  _port;
 
-	Raul::List<Disconnect::Impl*> _disconnect_events;
+	typedef std::list<Disconnect::Impl*> Impls;
+	Impls _impls;
 
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 

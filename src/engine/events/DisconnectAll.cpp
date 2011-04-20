@@ -16,22 +16,23 @@
  */
 
 #include <boost/format.hpp>
+
 #include "raul/Array.hpp"
-#include "raul/List.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
+
 #include "ClientBroadcaster.hpp"
 #include "ConnectionImpl.hpp"
-#include "events/DisconnectAll.hpp"
-#include "events/Disconnect.hpp"
 #include "Engine.hpp"
+#include "EngineStore.hpp"
 #include "InputPort.hpp"
 #include "NodeImpl.hpp"
-#include "EngineStore.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "Request.hpp"
+#include "events/Disconnect.hpp"
+#include "events/DisconnectAll.hpp"
 #include "util.hpp"
 
 using namespace std;
@@ -69,21 +70,18 @@ DisconnectAll::DisconnectAll(Engine& engine, PatchImpl* parent, GraphObjectImpl*
 
 DisconnectAll::~DisconnectAll()
 {
-	for (Raul::List<Disconnect::Impl*>::iterator i = _disconnect_events.begin();
-	     i != _disconnect_events.end(); ++i)
+	for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i)
 		delete (*i);
 }
 
 void
 DisconnectAll::remove_connection(ConnectionImpl* c)
 {
-
-	_disconnect_events.push_back(
-		new Raul::List<Disconnect::Impl*>::Node(
-			new Disconnect::Impl(_engine,
-			                     _parent,
-			                     dynamic_cast<OutputPort*>(c->src_port()),
-			                     dynamic_cast<InputPort*>(c->dst_port()))));
+	_impls.push_back(
+		new Disconnect::Impl(_engine,
+		                     _parent,
+		                     dynamic_cast<OutputPort*>(c->src_port()),
+		                     dynamic_cast<InputPort*>(c->dst_port())));
 }
 
 void
@@ -153,8 +151,7 @@ DisconnectAll::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		for (Raul::List<Disconnect::Impl*>::iterator i = _disconnect_events.begin();
-		     i != _disconnect_events.end(); ++i) {
+		for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i) {
 			(*i)->execute(context,
 			              !_deleting || ((*i)->dst_port()->parent_node() != _node));
 		}
