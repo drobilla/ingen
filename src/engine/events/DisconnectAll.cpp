@@ -75,13 +75,24 @@ DisconnectAll::~DisconnectAll()
 }
 
 void
-DisconnectAll::remove_connection(ConnectionImpl* c)
+DisconnectAll::maybe_remove_connection(ConnectionImpl* c)
 {
-	_impls.push_back(
-		new Disconnect::Impl(_engine,
-		                     _parent,
-		                     dynamic_cast<OutputPort*>(c->src_port()),
-		                     dynamic_cast<InputPort*>(c->dst_port())));
+	if (c->pending_disconnection())
+		return;
+
+	OutputPort* src = dynamic_cast<OutputPort*>(c->src_port());
+	InputPort*  dst = dynamic_cast<InputPort*>(c->dst_port());
+	
+	if (_node) {
+		if (src->parent_node() == _node || dst->parent_node() == _node) {
+			_impls.push_back(new Disconnect::Impl(_engine, _parent, src, dst));
+		}
+	} else {
+		assert(_port);
+		if (src == _port || dst == _port) {
+			_impls.push_back(new Disconnect::Impl(_engine, _parent, src, dst));
+		}
+	}
 }
 
 void
@@ -117,26 +128,9 @@ DisconnectAll::pre_process()
 		assert((_node || _port) && !(_node && _port));
 	}
 
-	if (_node) {
-		for (PatchImpl::Connections::const_iterator i = _parent->connections().begin();
-				i != _parent->connections().end(); ++i) {
-			ConnectionImpl* c = (ConnectionImpl*)i->second.get();
-			if (!c->pending_disconnection()
-			    && (c->src_port()->parent_node() == _node
-			        || c->dst_port()->parent_node() == _node)) {
-				remove_connection(c);
-			}
-		}
-	} else { // _port
-		for (PatchImpl::Connections::const_iterator i = _parent->connections().begin();
-				i != _parent->connections().end(); ++i) {
-			ConnectionImpl* c = (ConnectionImpl*)i->second.get();
-			if (!c->pending_disconnection()
-			    && (c->src_port() == _port
-			        || c->dst_port() == _port)) {
-				remove_connection(c);
-			}
-		}
+	for (Patch::Connections::const_iterator i = _parent->connections().begin();
+	     i != _parent->connections().end(); ++i) {
+		maybe_remove_connection((ConnectionImpl*)i->second.get());
 	}
 
 	if (!_deleting && _parent->enabled())
