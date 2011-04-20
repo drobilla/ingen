@@ -55,7 +55,6 @@ Disconnect::Disconnect(
 	, _buffers(NULL)
 	, _internal(false)
 	, _reconnect_dst_port(true)
-	, _clear_dst_port(false)
 {
 }
 
@@ -76,7 +75,6 @@ Disconnect::Disconnect(
 	, _buffers(NULL)
 	, _internal(true)
 	, _reconnect_dst_port(reconnect_dst_port)
-	, _clear_dst_port(false)
 {
 }
 
@@ -161,7 +159,16 @@ Disconnect::pre_process()
 		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
 		_dst_input_port->get_buffers(*_engine.buffer_factory(),
 				_buffers, _dst_input_port->poly());
-		_clear_dst_port = true;
+
+		const bool  is_control = _dst_input_port->is_a(PortType::CONTROL);
+		const float value      = is_control ? _dst_input_port->value().get_float() : 0;
+		for (uint32_t i = 0; i < _buffers->size(); ++i) {
+			if (is_control) {
+				PtrCast<AudioBuffer>(_buffers->at(i))->set_value(value, 0, 0);
+			} else {
+				_buffers->at(i)->clear();
+			}
+		}
 	}
 
 	if (!_internal && _patch->enabled())
@@ -184,19 +191,6 @@ Disconnect::execute(ProcessContext& context)
 			else
 				_dst_input_port->setup_buffers(*_engine.buffer_factory(), _dst_input_port->poly());
 			_dst_input_port->connect_buffers();
-			if (_clear_dst_port) {
-				for (uint32_t v = 0; v < _dst_input_port->poly(); ++v) {
-					if (_dst_input_port->is_a(PortType::CONTROL)) {
-						IntrusivePtr<AudioBuffer> abuf(PtrCast<AudioBuffer>(
-									_dst_input_port->buffer(v)));
-						if (abuf)
-							abuf->set_value(_dst_input_port->value().get_float(),
-									context.start(), context.start());
-					} else {
-						_dst_input_port->buffer(v)->clear();
-					}
-				}
-			}
 		} else {
 			_dst_input_port->recycle_buffers();
 		}

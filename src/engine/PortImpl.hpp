@@ -94,7 +94,9 @@ public:
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
 
-	virtual bool get_buffers(BufferFactory& bufs, Raul::Array<BufferFactory::Ref>* buffers, uint32_t poly) = 0;
+	virtual bool get_buffers(BufferFactory&                   bufs,
+	                         Raul::Array<BufferFactory::Ref>* buffers,
+	                         uint32_t                         poly) = 0;
 
 	void setup_buffers(BufferFactory& bufs, uint32_t poly) {
 		get_buffers(bufs, _buffers, poly);

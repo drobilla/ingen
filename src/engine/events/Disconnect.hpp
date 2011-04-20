@@ -91,9 +91,8 @@ private:
 
 	Raul::Array<BufferFactory::Ref>* _buffers;
 
-	bool      _internal;
-	bool      _reconnect_dst_port;
-	bool      _clear_dst_port;
+	bool _internal;
+	bool _reconnect_dst_port;
 };
 
 } // namespace Events

@@ -74,9 +74,9 @@ public:
 	}
 
 protected:
-	BufferFactory&   _factory;
-	PortType _type;
-	size_t           _size;
+	BufferFactory& _factory;
+	PortType       _type;
+	size_t         _size;
 
 	friend class BufferFactory;
 	virtual ~Buffer() {}
