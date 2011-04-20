@@ -101,8 +101,8 @@ public:
 	void move(const Raul::Path& old_path, const Raul::Path& new_path)
 		{ push_sig(sigc::bind(object_moved_slot, old_path, new_path)); }
 
-	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
-		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
+	void disconnect(const Raul::URI& src, const Raul::URI& dst)
+		{ push_sig(sigc::bind(disconnection_slot, src, dst)); }
 
 	void disconnect_all(const Raul::Path& parent_patch_path, const Raul::Path& path)
 		{ push_sig(sigc::bind(disconnect_all_slot, parent_patch_path, path)); }
@@ -138,7 +138,7 @@ private:
 	sigc::slot<void, Raul::Path, Raul::Path>                      connection_slot;
 	sigc::slot<void, Raul::URI>                                   object_deleted_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      object_moved_slot;
-	sigc::slot<void, Raul::Path, Raul::Path>                      disconnection_slot;
+	sigc::slot<void, Raul::URI, Raul::URI>                        disconnection_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      disconnect_all_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            variable_change_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            property_change_slot;

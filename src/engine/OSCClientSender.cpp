@@ -185,10 +185,10 @@ OSCClientSender::connect(const Path& src_port_path,
  * Notification a connection has been unmade.
  */
 void
-OSCClientSender::disconnect(const Path& src_port_path,
-                            const Path& dst_port_path)
+OSCClientSender::disconnect(const URI& src,
+                            const URI& dst)
 {
-	send("/disconnect", "ss", src_port_path.c_str(), dst_port_path.c_str(), LO_ARGS_END);
+	send("/disconnect", "ss", src.c_str(), dst.c_str(), LO_ARGS_END);
 }
 
 /** @page client_osc_namespace

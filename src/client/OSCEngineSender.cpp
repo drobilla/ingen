@@ -156,13 +156,13 @@ OSCEngineSender::connect(const Path& src_port_path,
 }
 
 void
-OSCEngineSender::disconnect(const Path& src_port_path,
-                            const Path& dst_port_path)
+OSCEngineSender::disconnect(const URI& src,
+                            const URI& dst)
 {
 	send("/disconnect", "iss",
 		next_id(),
-		src_port_path.c_str(),
-		dst_port_path.c_str(),
+		src.c_str(),
+		dst.c_str(),
 		LO_ARGS_END);
 }
 

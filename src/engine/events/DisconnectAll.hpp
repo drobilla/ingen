@@ -48,8 +48,8 @@ public:
 			Engine&            engine,
 			SharedPtr<Request> request,
 			SampleCount        timestamp,
-			const Raul::Path&  parent_path,
-			const Raul::Path&  node_path);
+			const Raul::Path&  parent,
+			const Raul::Path&  object);
 
 	DisconnectAll(
 			Engine&          engine,

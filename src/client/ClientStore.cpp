@@ -459,9 +459,17 @@ ClientStore::connect(const Path& src_path,
 }
 
 void
-ClientStore::disconnect(const Path& src_path,
-                        const Path& dst_path)
+ClientStore::disconnect(const URI& src,
+                        const URI& dst)
 {
+	if (!Path::is_path(src) && !Path::is_path(dst)) {
+		std::cerr << "Bad disconnect notification " << src << " => " << dst << std::endl;
+		return;
+	}
+
+	const Path src_path(src.str());
+	const Path dst_path(dst.str());
+
 	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_path));
 	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_path));
 

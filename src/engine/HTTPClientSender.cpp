@@ -96,7 +96,8 @@ HTTPClientSender::connect(const Path& src_path, const Path& dst_path)
 }
 
 void
-HTTPClientSender::disconnect(const Path& src_path, const Path& dst_path)
+HTTPClientSender::disconnect(const URI& src,
+                             const URI& dst)
 {
 }
 

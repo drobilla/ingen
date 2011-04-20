@@ -57,7 +57,7 @@ public:
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_moved;
 	sigc::signal<void, Raul::URI>                                   signal_object_deleted;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_connection;
-	sigc::signal<void, Raul::Path, Raul::Path>                      signal_disconnection;
+	sigc::signal<void, Raul::URI, Raul::URI>                        signal_disconnection;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_disconnect_all;
 	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_variable_change;
 	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_property_change;
@@ -107,8 +107,8 @@ protected:
 	void move(const Raul::Path& old_path, const Raul::Path& new_path)
 		{ EMIT(object_moved, old_path, new_path); }
 
-	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
-		{ EMIT(disconnection, src_port_path, dst_port_path); }
+	void disconnect(const Raul::URI& src, const Raul::URI& dst)
+		{ EMIT(disconnection, src, dst); }
 
 	void disconnect_all(const Raul::Path& parent_patch_path, const Raul::Path& path)
 		{ EMIT(disconnect_all, parent_patch_path, path); }

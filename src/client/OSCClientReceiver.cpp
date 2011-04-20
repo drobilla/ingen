@@ -200,10 +200,10 @@ OSCClientReceiver::_connection_cb(const char* path, const char* types, lo_arg** 
 int
 OSCClientReceiver::_disconnection_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* src_port_path = &argv[0]->s;
-	const char* dst_port_path = &argv[1]->s;
+	const char* src_uri = &argv[0]->s;
+	const char* dst_uri = &argv[1]->s;
 
-	_target->disconnect(src_port_path, dst_port_path);
+	_target->disconnect(src_uri, dst_uri);
 
 	return 0;
 }

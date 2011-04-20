@@ -93,9 +93,9 @@ public:
 		BROADCAST(connect, src_port_path, dst_port_path);
 	}
 
-	void disconnect(const Raul::Path& src_port_path,
-	                const Raul::Path& dst_port_path) {
-		BROADCAST(disconnect, src_port_path, dst_port_path);
+	void disconnect(const Raul::URI& src,
+	                const Raul::URI& dst) {
+		BROADCAST(disconnect, src, dst);
 	}
 
 	void disconnect_all(const Raul::Path& parent_patch_path,

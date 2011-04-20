@@ -156,10 +156,16 @@ QueuedEngineInterface::connect(const Path& src_port_path,
 }
 
 void
-QueuedEngineInterface::disconnect(const Path& src_port_path,
-                                  const Path& dst_port_path)
+QueuedEngineInterface::disconnect(const URI& src,
+                                  const URI& dst)
 {
-	push_queued(new Events::Disconnect(_engine, _request, now(), src_port_path, dst_port_path));
+	if (!Path::is_path(src) && !Path::is_path(dst)) {
+		std::cerr << "Bad disconnect request " << src << " => " << dst << std::endl;
+		return;
+	}
+		
+	push_queued(new Events::Disconnect(_engine, _request, now(),
+	                                   Path(src.str()), Path(dst.str())));
 }
 
 void

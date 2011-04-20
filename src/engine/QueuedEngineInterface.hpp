@@ -79,8 +79,8 @@ public:
 	virtual void connect(const Raul::Path& src_port_path,
 	                     const Raul::Path& dst_port_path);
 
-	virtual void disconnect(const Raul::Path& src_port_path,
-	                        const Raul::Path& dst_port_path);
+	virtual void disconnect(const Raul::URI& src,
+	                        const Raul::URI& dst);
 
 	virtual void set_property(const Raul::URI& subject_path,
 	                          const Raul::URI&  predicate,

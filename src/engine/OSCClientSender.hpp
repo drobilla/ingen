@@ -85,8 +85,8 @@ public:
 	virtual void connect(const Raul::Path& src_port_path,
 	                     const Raul::Path& dst_port_path);
 
-	virtual void disconnect(const Raul::Path& src_port_path,
-	                        const Raul::Path& dst_port_path);
+	virtual void disconnect(const Raul::URI& src,
+	                        const Raul::URI& dst);
 
 	virtual void disconnect_all(const Raul::Path& parent_patch_path,
 	                            const Raul::Path& path);

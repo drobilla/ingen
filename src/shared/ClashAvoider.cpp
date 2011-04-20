@@ -172,10 +172,10 @@ ClashAvoider::connect(const Raul::Path& src_port_path,
 }
 
 void
-ClashAvoider::disconnect(const Raul::Path& src_port_path,
-                         const Raul::Path& dst_port_path)
+ClashAvoider::disconnect(const Raul::URI& src,
+                         const Raul::URI& dst)
 {
-	_target.disconnect(map_path(src_port_path), map_path(dst_port_path));
+	_target.disconnect(map_uri(src), map_uri(dst));
 }
 
 

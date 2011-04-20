@@ -137,8 +137,8 @@ HTTPEngineSender::connect(const Path& src_port_path,
 }
 
 void
-HTTPEngineSender::disconnect(const Path& src_port_path,
-                             const Path& dst_port_path)
+HTTPEngineSender::disconnect(const URI& src,
+                             const URI& dst)
 {
 	LOG(warn) << "TODO: HTTP disconnect" << endl;
 }
