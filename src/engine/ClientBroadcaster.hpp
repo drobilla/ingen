@@ -98,6 +98,11 @@ public:
 		BROADCAST(disconnect, src_port_path, dst_port_path);
 	}
 
+	void disconnect_all(const Raul::Path& parent_patch_path,
+	                    const Raul::Path& path) {
+		BROADCAST(disconnect_all, parent_patch_path, path);
+	}
+
 	void set_property(const Raul::URI&  subject,
 	                  const Raul::URI&  predicate,
 	                  const Raul::Atom& value) {

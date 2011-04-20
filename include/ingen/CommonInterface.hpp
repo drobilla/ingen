@@ -60,6 +60,9 @@ public:
 	virtual void disconnect(const Raul::Path& src_port_path,
 	                        const Raul::Path& dst_port_path) = 0;
 
+	virtual void disconnect_all(const Raul::Path& parent_patch_path,
+	                            const Raul::Path& path) = 0;
+
 	virtual void set_property(const Raul::URI&  subject,
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value) = 0;

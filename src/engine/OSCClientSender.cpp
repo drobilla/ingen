@@ -192,6 +192,21 @@ OSCClientSender::disconnect(const Path& src_port_path,
 }
 
 /** @page client_osc_namespace
+ * <h2>/disconnect_all</h2>
+ * @arg @p parent-patch-path :: String
+ * @arg @p path :: String
+ *
+ * @par
+ * Notification all connections to an object have been disconnected.
+ */
+void
+OSCClientSender::disconnect_all(const Raul::Path& parent_patch_path,
+                                const Raul::Path& path)
+{
+	send("/disconnect_all", "ss", parent_patch_path.c_str(), path.c_str(), LO_ARGS_END);
+}
+
+/** @page client_osc_namespace
  * <h2>/set_property</h2>
  * @arg @p path :: String
  * @arg @p key :: URI String

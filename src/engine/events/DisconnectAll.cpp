@@ -69,19 +69,21 @@ DisconnectAll::DisconnectAll(Engine& engine, PatchImpl* parent, GraphObjectImpl*
 
 DisconnectAll::~DisconnectAll()
 {
-	for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin(); i != _disconnect_events.end(); ++i)
+	for (Raul::List<Disconnect::Impl*>::iterator i = _disconnect_events.begin();
+	     i != _disconnect_events.end(); ++i)
 		delete (*i);
 }
 
 void
 DisconnectAll::remove_connection(ConnectionImpl* c)
 {
-	const bool reconnect_input = !_deleting || (c->dst_port()->parent_node() != _node);
-	Disconnect* ev = new Disconnect(_engine, SharedPtr<Request>(), _time,
-	                                c->src_port(), c->dst_port(), reconnect_input);
-	ev->pre_process();
-	_disconnect_events.push_back(new Raul::List<Disconnect*>::Node(ev));
-	c->pending_disconnection(true);
+
+	_disconnect_events.push_back(
+		new Raul::List<Disconnect::Impl*>::Node(
+			new Disconnect::Impl(_engine,
+			                     _parent,
+			                     dynamic_cast<OutputPort*>(c->src_port()),
+			                     dynamic_cast<InputPort*>(c->dst_port()))));
 }
 
 void
@@ -151,9 +153,11 @@ DisconnectAll::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin();
-				i != _disconnect_events.end(); ++i)
-			(*i)->execute(context);
+		for (Raul::List<Disconnect::Impl*>::iterator i = _disconnect_events.begin();
+		     i != _disconnect_events.end(); ++i) {
+			(*i)->execute(context,
+			              !_deleting || ((*i)->dst_port()->parent_node() != _node));
+		}
 	}
 
 	_engine.maid()->push(_parent->compiled_patch());
@@ -166,9 +170,7 @@ DisconnectAll::post_process()
 	if (_error == NO_ERROR) {
 		if (_request)
 			_request->respond_ok();
-		for (Raul::List<Disconnect*>::iterator i = _disconnect_events.begin();
-				i != _disconnect_events.end(); ++i)
-			(*i)->post_process();
+		_engine.broadcaster()->disconnect_all(_parent_path, _path);
 	} else {
 		if (_request) {
 			boost::format fmt("Unable to disconnect %1% (%2%)");

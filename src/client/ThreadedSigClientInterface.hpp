@@ -57,6 +57,7 @@ public:
 	, object_deleted_slot(signal_object_deleted.make_slot())
 	, object_moved_slot(signal_object_moved.make_slot())
 	, disconnection_slot(signal_disconnection.make_slot())
+	, disconnect_all_slot(signal_disconnect_all.make_slot())
 	, variable_change_slot(signal_variable_change.make_slot())
 	, property_change_slot(signal_property_change.make_slot())
 	, port_value_slot(signal_port_value.make_slot())
@@ -103,6 +104,9 @@ public:
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ push_sig(sigc::bind(disconnection_slot, src_port_path, dst_port_path)); }
 
+	void disconnect_all(const Raul::Path& parent_patch_path, const Raul::Path& path)
+		{ push_sig(sigc::bind(disconnect_all_slot, parent_patch_path, path)); }
+
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(property_change_slot, subject, key, value)); }
 
@@ -135,6 +139,7 @@ private:
 	sigc::slot<void, Raul::URI>                                   object_deleted_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      object_moved_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                      disconnection_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>                      disconnect_all_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            variable_change_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            property_change_slot;
 	sigc::slot<void, Raul::Path, Raul::Atom>                      port_value_slot;

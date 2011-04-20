@@ -31,6 +31,7 @@
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "Request.hpp"
+#include "ThreadManager.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -52,58 +53,81 @@ Disconnect::Disconnect(
 	, _src_port(NULL)
 	, _dst_port(NULL)
 	, _compiled_patch(NULL)
-	, _buffers(NULL)
-	, _internal(false)
-	, _reconnect_dst_port(true)
 {
 }
 
-Disconnect::Disconnect(
-		Engine&            engine,
-		SharedPtr<Request> request,
-		SampleCount        timestamp,
-		PortImpl* const    src_port,
-		PortImpl* const    dst_port,
-		bool               reconnect_dst_port)
-	: QueuedEvent(engine, request, timestamp)
-	, _src_port_path(src_port->path())
-	, _dst_port_path(dst_port->path())
-	, _patch(src_port->parent_node()->parent_patch())
-	, _src_port(src_port)
-	, _dst_port(dst_port)
-	, _compiled_patch(NULL)
+Disconnect::Impl::Impl(Engine&     e,
+                       PatchImpl*  patch,
+                       OutputPort* s,
+                       InputPort*  d)
+	: _engine(e)
+	, _src_output_port(s)
+	, _dst_input_port(d)
+	, _patch(patch)
+	, _connection(patch->remove_connection(_src_output_port, _dst_input_port))
 	, _buffers(NULL)
-	, _internal(true)
-	, _reconnect_dst_port(reconnect_dst_port)
 {
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+
+	NodeImpl* const src_node = _src_output_port->parent_node();
+	NodeImpl* const dst_node = _dst_input_port->parent_node();
+
+	for (Raul::List<NodeImpl*>::iterator i = dst_node->providers()->begin();
+	     i != dst_node->providers()->end(); ++i) {
+		if ((*i) == src_node) {
+			delete dst_node->providers()->erase(i);
+			break;
+		}
+	}
+
+	for (Raul::List<NodeImpl*>::iterator i = src_node->dependants()->begin();
+	     i != src_node->dependants()->end(); ++i) {
+		if ((*i) == dst_node) {
+			delete src_node->dependants()->erase(i);
+			break;
+		}
+	}
+
+	_dst_input_port->decrement_num_connections();
+
+	if (_dst_input_port->num_connections() == 0) {
+		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
+		_dst_input_port->get_buffers(*_engine.buffer_factory(),
+				_buffers, _dst_input_port->poly());
+
+		const bool  is_control = _dst_input_port->is_a(PortType::CONTROL);
+		const float value      = is_control ? _dst_input_port->value().get_float() : 0;
+		for (uint32_t i = 0; i < _buffers->size(); ++i) {
+			if (is_control) {
+				PtrCast<AudioBuffer>(_buffers->at(i))->set_value(value, 0, 0);
+			} else {
+				_buffers->at(i)->clear();
+			}
+		}
+	}
+
+	_connection->pending_disconnection(true);
 }
 
 void
 Disconnect::pre_process()
 {
-	if (!_internal) {
-		if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
-				&& _src_port_path.parent() != _dst_port_path.parent().parent()
-				&& _src_port_path.parent().parent() != _dst_port_path.parent()) {
-			_error = PARENT_PATCH_DIFFERENT;
-			QueuedEvent::pre_process();
-			return;
-		}
-
-		_src_port = _engine.engine_store()->find_port(_src_port_path);
-		_dst_port = _engine.engine_store()->find_port(_dst_port_path);
+	if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
+	    && _src_port_path.parent() != _dst_port_path.parent().parent()
+	    && _src_port_path.parent().parent() != _dst_port_path.parent()) {
+		_error = PARENT_PATCH_DIFFERENT;
+		QueuedEvent::pre_process();
+		return;
 	}
+
+	_src_port = _engine.engine_store()->find_port(_src_port_path);
+	_dst_port = _engine.engine_store()->find_port(_dst_port_path);
 
 	if (_src_port == NULL || _dst_port == NULL) {
 		_error = PORT_NOT_FOUND;
 		QueuedEvent::pre_process();
 		return;
 	}
-
-	_dst_input_port = dynamic_cast<InputPort*>(_dst_port);
-	_src_output_port = dynamic_cast<OutputPort*>(_src_port);
-	assert(_src_output_port);
-	assert(_dst_input_port);
 
 	NodeImpl* const src_node = _src_port->parent_node();
 	NodeImpl* const dst_node = _dst_port->parent_node();
@@ -128,7 +152,7 @@ Disconnect::pre_process()
 
 	assert(_patch);
 
-	if (!_patch->has_connection(_src_output_port, _dst_input_port)) {
+	if (!_patch->has_connection(_src_port, _dst_port)) {
 		_error = NOT_CONNECTED;
 		QueuedEvent::pre_process();
 		return;
@@ -140,41 +164,46 @@ Disconnect::pre_process()
 		return;
 	}
 
-	for (Raul::List<NodeImpl*>::iterator i = dst_node->providers()->begin(); i != dst_node->providers()->end(); ++i)
-		if ((*i) == src_node) {
-			delete dst_node->providers()->erase(i);
-			break;
-		}
+	_impl = SharedPtr<Impl>(
+		new Impl(_engine,
+		         _patch,
+		         dynamic_cast<OutputPort*>(_src_port),
+		         dynamic_cast<InputPort*>(_dst_port)));
 
-	for (Raul::List<NodeImpl*>::iterator i = src_node->dependants()->begin(); i != src_node->dependants()->end(); ++i)
-		if ((*i) == dst_node) {
-			delete src_node->dependants()->erase(i);
-			break;
-		}
-
-	_connection = _patch->remove_connection(_src_port, _dst_port);
-	_dst_input_port->decrement_num_connections();
-
-	if (_dst_input_port->num_connections() == 0) {
-		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
-		_dst_input_port->get_buffers(*_engine.buffer_factory(),
-				_buffers, _dst_input_port->poly());
-
-		const bool  is_control = _dst_input_port->is_a(PortType::CONTROL);
-		const float value      = is_control ? _dst_input_port->value().get_float() : 0;
-		for (uint32_t i = 0; i < _buffers->size(); ++i) {
-			if (is_control) {
-				PtrCast<AudioBuffer>(_buffers->at(i))->set_value(value, 0, 0);
-			} else {
-				_buffers->at(i)->clear();
-			}
-		}
-	}
-
-	if (!_internal && _patch->enabled())
+	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
 
 	QueuedEvent::pre_process();
+}
+
+bool
+Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
+{
+	ThreadManager::assert_thread(THREAD_PROCESS);
+
+	InputPort::Connections::Node* const port_connections_node
+		= _dst_input_port->remove_connection(context, _src_output_port);
+	if (!port_connections_node) {
+		return false;
+	}
+
+	if (set_dst_buffers) {
+		if (_buffers) {
+			_engine.maid()->push(_dst_input_port->set_buffers(_buffers));
+		} else {
+			_dst_input_port->setup_buffers(*_engine.buffer_factory(),
+			                               _dst_input_port->poly());
+		}
+		_dst_input_port->connect_buffers();
+	} else {
+		_dst_input_port->recycle_buffers();
+	}
+
+	assert(_connection);
+	assert(port_connections_node->elem() == _connection);
+
+	_engine.maid()->push(port_connections_node);
+	return true;
 }
 
 void
@@ -183,31 +212,13 @@ Disconnect::execute(ProcessContext& context)
 	QueuedEvent::execute(context);
 
 	if (_error == NO_ERROR) {
-		InputPort::Connections::Node* const port_connections_node
-			= _dst_input_port->remove_connection(context, _src_output_port);
-		if (_reconnect_dst_port) {
-			if (_buffers)
-				_engine.maid()->push(_dst_input_port->set_buffers(_buffers));
-			else
-				_dst_input_port->setup_buffers(*_engine.buffer_factory(), _dst_input_port->poly());
-			_dst_input_port->connect_buffers();
-		} else {
-			_dst_input_port->recycle_buffers();
-		}
-
-		if (port_connections_node) {
-			assert(_connection);
-			assert(port_connections_node->elem() == _connection);
-
-			_engine.maid()->push(port_connections_node);
-
-			if (!_internal) {
-				_engine.maid()->push(_patch->compiled_patch());
-				_patch->compiled_patch(_compiled_patch);
-			}
-		} else {
+		if (!_impl->execute(context, true)) {
 			_error = CONNECTION_NOT_FOUND;
+			return;
 		}
+
+		_engine.maid()->push(_patch->compiled_patch());
+		_patch->compiled_patch(_compiled_patch);
 	}
 }
 

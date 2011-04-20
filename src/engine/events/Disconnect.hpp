@@ -53,20 +53,31 @@ public:
 			const Raul::Path&  src_port_path,
 			const Raul::Path&  dst_port_path);
 
-	Disconnect(
-			Engine&            engine,
-			SharedPtr<Request> request,
-			SampleCount        timestamp,
-			PortImpl* const    src_port,
-			PortImpl* const    dst_port,
-			bool               reconnect_dst_port);
-
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
-private:
+	class Impl {
+	public:
+		Impl(Engine&     e,
+		     PatchImpl*  patch,
+		     OutputPort* s,
+		     InputPort*  d);
 
+		bool execute(ProcessContext& context, bool set_dst_buffers);
+
+		InputPort* dst_port() { return _dst_input_port; }
+
+	private:
+		Engine&                          _engine;
+		OutputPort*                      _src_output_port;
+		InputPort*                       _dst_input_port;
+		PatchImpl*                       _patch;
+		SharedPtr<ConnectionImpl>        _connection;
+		Raul::Array<BufferFactory::Ref>* _buffers;
+	};
+
+private:
 	enum ErrorType {
 		NO_ERROR,
 		PARENT_PATCH_DIFFERENT,
@@ -80,19 +91,13 @@ private:
 	Raul::Path _src_port_path;
 	Raul::Path _dst_port_path;
 
-	PatchImpl*  _patch;
-	PortImpl*   _src_port;
-	PortImpl*   _dst_port;
-	OutputPort* _src_output_port;
-	InputPort*  _dst_input_port;
+	PatchImpl* _patch;
+	PortImpl*  _src_port;
+	PortImpl*  _dst_port;
 
-	SharedPtr<ConnectionImpl> _connection;
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 
-	Raul::Array<BufferFactory::Ref>* _buffers;
-
-	bool _internal;
-	bool _reconnect_dst_port;
+	SharedPtr<Impl> _impl;
 };
 
 } // namespace Events

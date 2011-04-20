@@ -63,6 +63,7 @@ ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap>       uris,
 	CONNECT(delta, delta);
 	CONNECT(connection, connect);
 	CONNECT(disconnection, disconnect);
+	CONNECT(disconnect_all, disconnect_all);
 	CONNECT(property_change, set_property);
 	CONNECT(activity, activity);
 }
@@ -473,6 +474,29 @@ ClientStore::disconnect(const Path& src_path,
 	SharedPtr<PatchModel> patch = connection_patch(src_path, dst_path);
 	if (patch)
 		patch->remove_connection(src_port.get(), dst_port.get());
+}
+
+void
+ClientStore::disconnect_all(const Raul::Path& parent_patch_path,
+                            const Raul::Path& path)
+{
+	SharedPtr<PatchModel>  patch  = PtrCast<PatchModel>(object(parent_patch_path));
+	SharedPtr<ObjectModel> object = this->object(path);
+
+	if (!patch || !object)
+		return;
+
+	const PatchModel::Connections connections = patch->connections();
+	for (PatchModel::Connections::const_iterator i = connections.begin();
+	     i != connections.end(); ++i) {
+		SharedPtr<ConnectionModel> c = PtrCast<ConnectionModel>(i->second);
+		if (c->src_port()->parent() == object
+		    || c->dst_port()->parent() == object) {
+			c->src_port()->disconnected_from(c->dst_port());
+			c->dst_port()->disconnected_from(c->src_port());
+			patch->remove_connection(c->src_port().get(), c->dst_port().get());
+		}
+	}
 }
 
 } // namespace Client

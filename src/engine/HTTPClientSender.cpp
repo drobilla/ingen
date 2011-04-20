@@ -98,7 +98,12 @@ HTTPClientSender::connect(const Path& src_path, const Path& dst_path)
 void
 HTTPClientSender::disconnect(const Path& src_path, const Path& dst_path)
 {
-	//send("/ingen/disconnection", "ss", src_path.c_str(), dst_path.c_str(), LO_ARGS_END);
+}
+
+void
+HTTPClientSender::disconnect_all(const Raul::Path& parent_patch_path,
+                                 const Raul::Path& path)
+{
 }
 
 void

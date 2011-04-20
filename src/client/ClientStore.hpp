@@ -97,6 +97,9 @@ public:
 	void disconnect(const Raul::Path& src_port_path,
 	                const Raul::Path& dst_port_path);
 
+	void disconnect_all(const Raul::Path& parent_patch_path,
+	                    const Raul::Path& path);
+
 	void del(const Raul::URI& uri);
 
 	sigc::signal< void, SharedPtr<ObjectModel> > signal_new_object;

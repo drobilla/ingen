@@ -178,6 +178,14 @@ ClashAvoider::disconnect(const Raul::Path& src_port_path,
 	_target.disconnect(map_path(src_port_path), map_path(dst_port_path));
 }
 
+
+void
+ClashAvoider::disconnect_all(const Raul::Path& parent_patch_path,
+                             const Raul::Path& path)
+{
+	_target.disconnect_all(map_path(parent_patch_path), map_path(path));
+}
+
 void
 ClashAvoider::set_property(const Raul::URI&  subject,
                            const Raul::URI&  predicate,

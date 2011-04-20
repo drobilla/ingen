@@ -58,6 +58,7 @@ public:
 	sigc::signal<void, Raul::URI>                                   signal_object_deleted;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_connection;
 	sigc::signal<void, Raul::Path, Raul::Path>                      signal_disconnection;
+	sigc::signal<void, Raul::Path, Raul::Path>                      signal_disconnect_all;
 	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_variable_change;
 	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_property_change;
 	sigc::signal<void, Raul::Path, Raul::Atom>                      signal_port_value;
@@ -108,6 +109,9 @@ protected:
 
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
 		{ EMIT(disconnection, src_port_path, dst_port_path); }
+
+	void disconnect_all(const Raul::Path& parent_patch_path, const Raul::Path& path)
+		{ EMIT(disconnect_all, parent_patch_path, path); }
 
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ EMIT(property_change, subject, key, value); }

@@ -20,6 +20,8 @@
 
 #include "raul/List.hpp"
 #include "raul/Path.hpp"
+
+#include "Disconnect.hpp"
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
@@ -69,16 +71,17 @@ private:
 
 	void remove_connection(ConnectionImpl* c);
 
-	Raul::Path              _parent_path;
-	Raul::Path              _path;
-	PatchImpl*              _parent;
-	NodeImpl*               _node;
-	PortImpl*               _port;
-	Raul::List<Disconnect*> _disconnect_events;
+	Raul::Path _parent_path;
+	Raul::Path _path;
+	PatchImpl* _parent;
+	NodeImpl*  _node;
+	PortImpl*  _port;
+
+	Raul::List<Disconnect::Impl*> _disconnect_events;
 
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 
-	bool      _deleting;
+	bool _deleting;
 };
 
 } // namespace Engine
