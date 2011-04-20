@@ -88,16 +88,15 @@ private:
 		CONNECTION_NOT_FOUND
 	};
 
-	Raul::Path _src_port_path;
-	Raul::Path _dst_port_path;
+	const Raul::Path _src_port_path;
+	const Raul::Path _dst_port_path;
 
 	PatchImpl* _patch;
 	PortImpl*  _src_port;
 	PortImpl*  _dst_port;
 
-	CompiledPatch* _compiled_patch; ///< New process order for Patch
-
-	SharedPtr<Impl> _impl;
+	Impl*          _impl;
+	CompiledPatch* _compiled_patch;
 };
 
 } // namespace Events

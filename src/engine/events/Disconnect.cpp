@@ -52,6 +52,7 @@ Disconnect::Disconnect(
 	, _patch(NULL)
 	, _src_port(NULL)
 	, _dst_port(NULL)
+	, _impl(NULL)
 	, _compiled_patch(NULL)
 {
 }
@@ -164,11 +165,10 @@ Disconnect::pre_process()
 		return;
 	}
 
-	_impl = SharedPtr<Impl>(
-		new Impl(_engine,
-		         _patch,
-		         dynamic_cast<OutputPort*>(_src_port),
-		         dynamic_cast<InputPort*>(_dst_port)));
+	_impl = new Impl(_engine,
+	                 _patch,
+	                 dynamic_cast<OutputPort*>(_src_port),
+	                 dynamic_cast<InputPort*>(_dst_port));
 
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
@@ -259,6 +259,8 @@ Disconnect::post_process()
         if (_request)
             _request->respond_error(msg);
     }
+
+    delete _impl;
 }
 
 } // namespace Engine
