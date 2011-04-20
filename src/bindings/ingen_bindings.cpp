@@ -1,7 +1,7 @@
 #include "python2.4/Python.h"
 #include "raul/log.hpp"
 #include "ingen_bindings.hpp"
-#include "engine/Engine.hpp"
+#include "server/Engine.hpp"
 #include "shared/World.hpp"
 
 bool

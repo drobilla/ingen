@@ -29,23 +29,23 @@
 using namespace Ingen;
 
 #ifdef HAVE_LIBLO
-SharedPtr<Ingen::EngineInterface>
+SharedPtr<Ingen::ServerInterface>
 new_osc_interface(Ingen::Shared::World* world, const std::string& url)
 {
 	Client::OSCEngineSender* oes = Client::OSCEngineSender::create(
 		url, world->conf()->option("packet-size").get_int32());
 	oes->attach(rand(), true);
-	return SharedPtr<EngineInterface>(oes);
+	return SharedPtr<ServerInterface>(oes);
 }
 #endif
 
 #ifdef HAVE_SOUP
-SharedPtr<Ingen::EngineInterface>
+SharedPtr<Ingen::ServerInterface>
 new_http_interface(Ingen::Shared::World* world, const std::string& url)
 {
 	Client::HTTPEngineSender* hes = new Client::HTTPEngineSender(world, url);
 	hes->attach(rand(), true);
-	return SharedPtr<EngineInterface>(hes);
+	return SharedPtr<ServerInterface>(hes);
 }
 #endif
 

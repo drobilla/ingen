@@ -7,7 +7,7 @@ class Client : public Ingen::ClientInterface
 {
 public:
     /** Wrapper for engine->register_client to appease SWIG */
-    virtual void subscribe(Ingen::yEngineInterface* engine) {
+    virtual void subscribe(Ingen::yServerInterface* engine) {
         engine->register_client(this);
     }
 

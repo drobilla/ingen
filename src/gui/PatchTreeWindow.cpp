@@ -17,7 +17,7 @@
 
 #include "raul/log.hpp"
 #include "raul/Path.hpp"
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"

@@ -17,7 +17,7 @@
 
 #include <gtkmm.h>
 #include "ingen-config.h"
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
 #include "client/PluginModel.hpp"

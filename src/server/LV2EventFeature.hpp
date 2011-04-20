@@ -1,0 +1,54 @@
+/* This file is part of Ingen.
+ * Copyright 2009-2011 David Robillard <http://drobilla.net>
+ *
+ * Ingen is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * Ingen is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+#ifndef INGEN_ENGINE_LV2EVENTFEATURE_HPP
+#define INGEN_ENGINE_LV2EVENTFEATURE_HPP
+
+#include "lv2/lv2plug.in/ns/ext/event/event.h"
+#include "shared/LV2Features.hpp"
+
+namespace Ingen {
+namespace Server {
+
+struct EventFeature : public Ingen::Shared::LV2Features::Feature {
+	EventFeature() {
+		LV2_Event_Feature* data = (LV2_Event_Feature*)malloc(sizeof(LV2_Event_Feature));
+		data->lv2_event_ref   = &event_ref;
+		data->lv2_event_unref = &event_unref;
+		data->callback_data   = this;
+		_feature.URI          = LV2_EVENT_URI;
+		_feature.data         = data;
+	}
+
+	static uint32_t event_ref(LV2_Event_Callback_Data callback_data,
+	                          LV2_Event*              event) { return 0; }
+
+	static uint32_t event_unref(LV2_Event_Callback_Data callback_data,
+	                            LV2_Event*              event) { return 0; }
+
+	SharedPtr<LV2_Feature> feature(Shared::World*, Node*) {
+		return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
+	}
+
+private:
+	LV2_Feature _feature;
+};
+
+} // namespace Server
+} // namespace Ingen
+
+#endif // INGEN_ENGINE_LV2EVENTFEATURE_HPP

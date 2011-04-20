@@ -25,10 +25,10 @@
 #include "raul/log.hpp"
 
 #include "ingen-config.h"
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/Module.hpp"
 #include "shared/World.hpp"
-#include "engine/Engine.hpp"
+#include "server/Engine.hpp"
 #ifdef HAVE_SOUP
 #include "client/HTTPClientReceiver.hpp"
 #include "client/HTTPEngineSender.hpp"
@@ -83,7 +83,7 @@ ConnectWindow::start(Ingen::Shared::World* world)
 }
 
 void
-ConnectWindow::set_connected_to(SharedPtr<EngineInterface> engine)
+ConnectWindow::set_connected_to(SharedPtr<ServerInterface> engine)
 {
 	App::instance().world()->set_engine(engine);
 
@@ -142,7 +142,7 @@ ConnectWindow::set_connecting_widget_states()
 
 /** Launch (if applicable) and connect to the Engine.
  *
- * This will create the EngineInterface and ClientInterface and initialize
+ * This will create the ServerInterface and ClientInterface and initialize
  * the App with them.
  */
 void
@@ -193,14 +193,14 @@ ConnectWindow::connect(bool existing)
 #ifdef HAVE_LIBLO
 			if (scheme == "osc.udp" || scheme == "osc.tcp")
 				world->set_engine(
-					SharedPtr<EngineInterface>(
+					SharedPtr<ServerInterface>(
 						new OSCEngineSender(
 							uri,
 							world->conf()->option("packet-size").get_int32())));
 #endif
 #ifdef HAVE_SOUP
 			if (scheme == "http")
-				world->set_engine(SharedPtr<EngineInterface>(
+				world->set_engine(SharedPtr<ServerInterface>(
 					                  new HTTPEngineSender(world, uri)));
 #endif
 		} else {
@@ -222,7 +222,7 @@ ConnectWindow::connect(bool existing)
 		const string cmd = string("ingen -e --engine-port=").append(port_str);
 
 		if (Raul::Process::launch(cmd)) {
-			world->set_engine(SharedPtr<EngineInterface>(
+			world->set_engine(SharedPtr<ServerInterface>(
 					new OSCEngineSender(
 						string("osc.udp://localhost:").append(port_str),
 						world->conf()->option("packet-size").get_int32())));
@@ -252,7 +252,7 @@ ConnectWindow::connect(bool existing)
 
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 
-		if (!((Engine::Engine*)world->local_engine().get())->driver())
+		if (!((Server::Engine*)world->local_engine().get())->driver())
 			world->load_module("jack");
 
 		world->local_engine()->activate();
@@ -272,7 +272,7 @@ ConnectWindow::disconnect()
 	_attached = false;
 
 	App::instance().detach();
-	set_connected_to(SharedPtr<Ingen::EngineInterface>());
+	set_connected_to(SharedPtr<Ingen::ServerInterface>());
 
 	if (!_widgets_loaded)
 		return;

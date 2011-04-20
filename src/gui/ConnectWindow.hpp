@@ -49,7 +49,7 @@ class ConnectWindow : public Dialog
 public:
 	ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_connected_to(SharedPtr<EngineInterface> engine);
+	void set_connected_to(SharedPtr<ServerInterface> engine);
 	void start(Ingen::Shared::World* world);
 	void on_response(int32_t id) { _attached = true; }
 

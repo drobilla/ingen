@@ -32,7 +32,7 @@ typedef sigc::slot<void> Closure;
 
 namespace Ingen {
 
-class EngineInterface;
+class ServerInterface;
 
 namespace Client {
 

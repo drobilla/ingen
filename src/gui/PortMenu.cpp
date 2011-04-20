@@ -18,7 +18,7 @@
 #include <math.h>
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/PortModel.hpp"

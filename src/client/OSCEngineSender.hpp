@@ -25,7 +25,7 @@
 
 #include <lo/lo.h>
 
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/OSCSender.hpp"
 
 namespace Ingen {
@@ -34,12 +34,12 @@ namespace Client {
 
 /* OSC (via liblo) interface to the engine.
  *
- * Clients can use this opaquely as an EngineInterface* to control the engine
+ * Clients can use this opaquely as an ServerInterface* to control the engine
  * over OSC (whether over a network or not, etc).
  *
  * \ingroup IngenClient
  */
-class OSCEngineSender : public EngineInterface, public Shared::OSCSender {
+class OSCEngineSender : public ServerInterface, public Shared::OSCSender {
 public:
 	OSCEngineSender(const Raul::URI& engine_url,
 	                size_t           max_packet_size);
@@ -61,7 +61,7 @@ public:
 
 	void attach(int32_t ping_id, bool block);
 
-	/* *** EngineInterface implementation below here *** */
+	/* *** ServerInterface implementation below here *** */
 
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false; }

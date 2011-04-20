@@ -40,7 +40,7 @@
 #include "ingen-config.h"
 
 #include "ingen/EngineBase.hpp"
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "serialisation/Parser.hpp"
 #include "shared/Configuration.hpp"
 #include "shared/World.hpp"
@@ -102,7 +102,7 @@ main(int argc, char** argv)
 	// Set bundle path from executable location so resources can be found
 	Shared::set_bundle_path_from_code((void*)&main);
 
-	SharedPtr<EngineInterface> engine_interface;
+	SharedPtr<ServerInterface> engine_interface;
 
 	Glib::thread_init();
 #if HAVE_SOUP

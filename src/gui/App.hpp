@@ -31,7 +31,7 @@
 
 namespace Ingen {
 	class ClientInterface;
-	class EngineInterface;
+	class ServerInterface;
 	class Port;
 	namespace Shared {
 		class World;
@@ -99,7 +99,7 @@ public:
 
 	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
 
-	SharedPtr<Ingen::EngineInterface>     engine() const { return _world->engine(); }
+	SharedPtr<Ingen::ServerInterface>     engine() const { return _world->engine(); }
 	SharedPtr<Client::SigClientInterface> client() const { return _client; }
 	SharedPtr<Client::ClientStore>        store()  const { return _store; }
 	SharedPtr<ThreadedLoader>             loader() const { return _loader; }

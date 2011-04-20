@@ -22,7 +22,7 @@
 #include "raul/log.hpp"
 #include "flowcanvas/Canvas.hpp"
 #include "flowcanvas/Ellipse.hpp"
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "shared/Builder.hpp"
 #include "shared/ClashAvoider.hpp"

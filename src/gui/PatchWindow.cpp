@@ -22,7 +22,7 @@
 #include <glib/gstdio.h>
 #include <glibmm/fileutils.h>
 #include "raul/AtomRDF.hpp"
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ClientStore.hpp"

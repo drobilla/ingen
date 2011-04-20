@@ -25,7 +25,7 @@
 #include "raul/Path.hpp"
 #include "sord/sordmm.hpp"
 
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 
 typedef struct _SoupSession SoupSession;
 
@@ -39,12 +39,12 @@ class HTTPClientReceiver;
 
 /* HTTP (via libsoup) interface to the engine.
  *
- * Clients can use this opaquely as an EngineInterface to control the engine
+ * Clients can use this opaquely as an ServerInterface to control the engine
  * over HTTP (whether over a network or not).
  *
  * \ingroup IngenClient
  */
-class HTTPEngineSender : public EngineInterface
+class HTTPEngineSender : public ServerInterface
 {
 public:
 	HTTPEngineSender(Shared::World* world, const Raul::URI& engine_url);
@@ -60,7 +60,7 @@ public:
 
 	void attach(int32_t ping_id, bool block);
 
-	/* *** EngineInterface implementation below here *** */
+	/* *** ServerInterface implementation below here *** */
 
 	void enable()  { _enabled = true; }
 	void disable() { _enabled = false; }

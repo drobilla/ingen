@@ -58,13 +58,13 @@ HTTPEngineSender::attach(int32_t ping_id, bool block)
 	HTTPClientReceiver::send(msg);
 }
 
-/* *** EngineInterface implementation below here *** */
+/* *** ServerInterface implementation below here *** */
 
 /** Register with the engine via HTTP.
  *
  * Note that this does not actually use 'key', since the engine creates
  * it's own key for HTTP clients (namely the incoming URL), for NAT
- * traversal.  It is a parameter to remain compatible with EngineInterface.
+ * traversal.  It is a parameter to remain compatible with ServerInterface.
  */
 void
 HTTPEngineSender::register_client(ClientInterface* client)

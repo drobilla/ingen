@@ -25,7 +25,7 @@
 #include "raul/Thread.hpp"
 #include "raul/Slave.hpp"
 #include <glibmm/thread.h>
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "serialisation/Parser.hpp"
 using std::string;
@@ -54,7 +54,7 @@ class ThreadedLoader : public Raul::Slave
 {
 public:
 	ThreadedLoader(SharedPtr<Shared::LV2URIMap> uris,
-	               SharedPtr<EngineInterface>   engine);
+	               SharedPtr<ServerInterface>   engine);
 
 	void load_patch(bool                              merge,
                     const Glib::ustring&              document_uri,
@@ -75,7 +75,7 @@ private:
 
 	void _whipped();
 
-	SharedPtr<EngineInterface> _engine;
+	SharedPtr<ServerInterface> _engine;
 
 	Glib::Mutex   _mutex;
 	list<Closure> _events;

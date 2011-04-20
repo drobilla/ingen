@@ -43,7 +43,7 @@
 #include "sord/sordmm.hpp"
 
 #include "ingen/Connection.hpp"
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"

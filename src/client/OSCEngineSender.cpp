@@ -78,13 +78,13 @@ OSCEngineSender::attach(int32_t ping_id, bool block)
 	this->ping();
 }
 
-/* *** EngineInterface implementation below here *** */
+/* *** ServerInterface implementation below here *** */
 
 /** Register with the engine via OSC.
  *
  * Note that this does not actually use 'client', since the engine creates
  * it's own key for OSC clients (namely the incoming URL), for NAT
- * traversal.  It is a parameter to remain compatible with EngineInterface.
+ * traversal.  It is a parameter to remain compatible with ServerInterface.
  */
 void
 OSCEngineSender::register_client(ClientInterface* client)

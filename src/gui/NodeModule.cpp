@@ -19,7 +19,7 @@
 #include "ingen-config.h"
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/PatchModel.hpp"
 #include "client/NodeModel.hpp"

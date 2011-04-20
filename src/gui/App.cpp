@@ -28,8 +28,8 @@
 #include "raul/Path.hpp"
 #include "flowcanvas/Connection.hpp"
 #include "shared/World.hpp"
-#include "engine/Engine.hpp"
-#include "ingen/EngineInterface.hpp"
+#include "server/Engine.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/runtime_paths.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/ObjectModel.hpp"
@@ -189,7 +189,7 @@ App::detach()
 		_store.reset();
 		_client.reset();
 		_handle.reset();
-		_world->set_engine(SharedPtr<EngineInterface>());
+		_world->set_engine(SharedPtr<ServerInterface>());
 	}
 }
 

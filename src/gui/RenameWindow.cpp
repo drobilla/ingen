@@ -17,7 +17,7 @@
 
 #include <cassert>
 #include <string>
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/ObjectModel.hpp"
 #include "client/ClientStore.hpp"

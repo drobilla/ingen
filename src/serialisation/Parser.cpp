@@ -34,7 +34,7 @@
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
 
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "shared/World.hpp"
 #include "shared/LV2URIMap.hpp"
 

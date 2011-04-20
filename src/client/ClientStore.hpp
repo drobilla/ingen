@@ -26,7 +26,7 @@
 
 #include <sigc++/sigc++.h>
 
-#include "ingen/EngineInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "raul/Path.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
@@ -57,7 +57,7 @@ class ClientStore : public Shared::Store
 public:
 	ClientStore(
 		SharedPtr<Shared::LV2URIMap>  uris,
-		SharedPtr<EngineInterface>    engine=SharedPtr<EngineInterface>(),
+		SharedPtr<ServerInterface>    engine=SharedPtr<ServerInterface>(),
 		SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
 
 	SharedPtr<PluginModel>  plugin(const Raul::URI& uri);
@@ -127,7 +127,7 @@ private:
 	                        const Raul::Path& dst_port_path);
 
 	SharedPtr<Shared::LV2URIMap>  _uris;
-	SharedPtr<EngineInterface>    _engine;
+	SharedPtr<ServerInterface>    _engine;
 	SharedPtr<SigClientInterface> _emitter;
 
 	SharedPtr<Plugins> _plugins; ///< Map, keyed by plugin URI

@@ -172,7 +172,7 @@ public:
 	LV2Features*                         lv2_features;
 	Sord::World*                         rdf_world;
 	SharedPtr<LV2URIMap>                 uris;
-    SharedPtr<EngineInterface>           engine;
+    SharedPtr<ServerInterface>           engine;
 	SharedPtr<EngineBase>                local_engine;
     SharedPtr<Serialisation::Serialiser> serialiser;
     SharedPtr<Serialisation::Parser>     parser;
@@ -193,7 +193,7 @@ World::~World()
 }
 
 void World::set_local_engine(SharedPtr<EngineBase> e)              { _impl->local_engine = e; }
-void World::set_engine(SharedPtr<EngineInterface> e)               { _impl->engine = e; }
+void World::set_engine(SharedPtr<ServerInterface> e)               { _impl->engine = e; }
 void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
 void World::set_parser(SharedPtr<Serialisation::Parser> p)         { _impl->parser = p; }
 void World::set_store(SharedPtr<Store> s)                          { _impl->store = s; }
@@ -202,7 +202,7 @@ void World::set_conf(Raul::Configuration* c)                       { _impl->conf
 int&                                 World::argc()         { return _impl->argc; }
 char**&                              World::argv()         { return _impl->argv; }
 SharedPtr<EngineBase>                World::local_engine() { return _impl->local_engine; }
-SharedPtr<EngineInterface>           World::engine()       { return _impl->engine; }
+SharedPtr<ServerInterface>           World::engine()       { return _impl->engine; }
 SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
 SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
 SharedPtr<Store>                     World::store()        { return _impl->store; }
@@ -245,14 +245,14 @@ World::unload_modules()
 
 /** Get an interface for a remote engine at @a url
  */
-SharedPtr<EngineInterface>
+SharedPtr<ServerInterface>
 World::interface(const std::string& url)
 {
 	const string scheme = url.substr(0, url.find(":"));
 	const Pimpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
 	if (i == _impl->interface_factories.end()) {
 		warn << "Unknown URI scheme `" << scheme << "'" << endl;
-		return SharedPtr<EngineInterface>();
+		return SharedPtr<ServerInterface>();
 	}
 
 	return i->second(this, url);

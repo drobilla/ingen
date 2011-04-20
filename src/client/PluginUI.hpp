@@ -25,7 +25,7 @@
 
 namespace Ingen {
 
-class EngineInterface; 
+class ServerInterface; 
 
 namespace Shared { class World; }
 
