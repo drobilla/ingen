@@ -3,74 +3,74 @@ from waflib.extras import autowaf as autowaf
 import waflib.Utils as Utils
 
 def build(bld):
-	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/gui', bld.path.ant_glob('*.hpp'))
+    # Headers
+    bld.install_files('${INCLUDEDIR}/ingen/gui', bld.path.ant_glob('*.hpp'))
 
-	obj = bld(features = 'cxx cxxshlib')
-	obj.source = '''
-		App.cpp
-		BreadCrumbs.cpp
-		Configuration.cpp
-		ConnectWindow.cpp
-		Connection.cpp
-		ControlPanel.cpp
-		Controls.cpp
-		GladeFactory.cpp
-		LoadPatchWindow.cpp
-		LoadPluginWindow.cpp
-		LoadRemotePatchWindow.cpp
-		MessagesWindow.cpp
-		NewSubpatchWindow.cpp
-		NodeControlWindow.cpp
-		NodeMenu.cpp
-		NodeModule.cpp
-		ObjectMenu.cpp
-		PatchCanvas.cpp
-		PatchPortModule.cpp
-		PatchTreeWindow.cpp
-		PatchView.cpp
-		PatchWindow.cpp
-		Port.cpp
-		PortMenu.cpp
-		PortPropertiesWindow.cpp
-		PropertiesWindow.cpp
-		RenameWindow.cpp
-		SubpatchModule.cpp
-		ThreadedLoader.cpp
-		Window.cpp
-		WindowFactory.cpp
-		ingen_gui.cpp
-	'''
+    obj = bld(features = 'cxx cxxshlib')
+    obj.source = '''
+            App.cpp
+            BreadCrumbs.cpp
+            Configuration.cpp
+            ConnectWindow.cpp
+            Connection.cpp
+            ControlPanel.cpp
+            Controls.cpp
+            GladeFactory.cpp
+            LoadPatchWindow.cpp
+            LoadPluginWindow.cpp
+            LoadRemotePatchWindow.cpp
+            MessagesWindow.cpp
+            NewSubpatchWindow.cpp
+            NodeControlWindow.cpp
+            NodeMenu.cpp
+            NodeModule.cpp
+            ObjectMenu.cpp
+            PatchCanvas.cpp
+            PatchPortModule.cpp
+            PatchTreeWindow.cpp
+            PatchView.cpp
+            PatchWindow.cpp
+            Port.cpp
+            PortMenu.cpp
+            PortPropertiesWindow.cpp
+            PropertiesWindow.cpp
+            RenameWindow.cpp
+            SubpatchModule.cpp
+            ThreadedLoader.cpp
+            Window.cpp
+            WindowFactory.cpp
+            ingen_gui.cpp
+    '''
 
-	if bld.is_defined('HAVE_CURL'):
-		obj.source += 'UploadPatchWindow.cpp'
+    if bld.is_defined('HAVE_CURL'):
+        obj.source += 'UploadPatchWindow.cpp'
 
-	obj.export_includes = ['.']
-	obj.includes        = ['.', '..', '../..', '../../include', '../client', '../module']
-	obj.name            = 'libingen_gui'
-	obj.target          = 'ingen_gui'
-	obj.install_path    = '${LIBDIR}'
-	obj.use             = 'libingen_shared libingen_client libingen_serialisation'
-	autowaf.use_lib(bld, obj, '''
-		CURL
-		FLOWCANVAS
-		GLADEMM
-		GLIBMM
-		GNOMECANVASMM
-		GTKMM
-		RAUL
-		SORD
-		SIGCPP
-		LV2CORE
-		SLV2
-		SOUP
-		SUIL
-	''')
+    obj.export_includes = ['.']
+    obj.includes        = ['.', '..', '../..', '../../include', '../client', '../module']
+    obj.name            = 'libingen_gui'
+    obj.target          = 'ingen_gui'
+    obj.install_path    = '${LIBDIR}'
+    obj.use             = 'libingen_shared libingen_client libingen_serialisation'
+    autowaf.use_lib(bld, obj, '''
+            CURL
+            FLOWCANVAS
+            GLADEMM
+            GLIBMM
+            GNOMECANVASMM
+            GTKMM
+            RAUL
+            SORD
+            SIGCPP
+            LV2CORE
+            SLV2
+            SOUP
+            SUIL
+    ''')
 
-	# Glade XML UI definition
-	bld(features      = 'subst',
-	    source        = 'ingen_gui.glade',
-	    target        = '../../ingen_gui.glade',
-	    install_path  = '${DATADIR}/ingen',
-	    chmod         = Utils.O755,
-		INGEN_VERSION = bld.env['INGEN_VERSION'])
+    # Glade XML UI definition
+    bld(features      = 'subst',
+        source        = 'ingen_gui.glade',
+        target        = '../../ingen_gui.glade',
+        install_path  = '${DATADIR}/ingen',
+        chmod         = Utils.O755,
+            INGEN_VERSION = bld.env['INGEN_VERSION'])

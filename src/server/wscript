@@ -2,127 +2,127 @@
 from waflib.extras import autowaf as autowaf
 
 def build(bld):
-	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/server', bld.path.ant_glob('*.hpp'))
+    # Headers
+    bld.install_files('${INCLUDEDIR}/ingen/server', bld.path.ant_glob('*.hpp'))
 
-	core_source = '''
-		AudioBuffer.cpp
-		BufferFactory.cpp
-		ClientBroadcaster.cpp
-		ConnectionImpl.cpp
-		ControlBindings.cpp
-		DuplexPort.cpp
-		Engine.cpp
-		EngineStore.cpp
-		Event.cpp
-		EventBuffer.cpp
-		EventSink.cpp
-		EventSource.cpp
-		GraphObjectImpl.cpp
-		InputPort.cpp
-		InternalPlugin.cpp
-		MessageContext.cpp
-		NodeFactory.cpp
-		NodeImpl.cpp
-		ObjectBuffer.cpp
-		ObjectSender.cpp
-		OutputPort.cpp
-		PatchImpl.cpp
-		PluginImpl.cpp
-		PortImpl.cpp
-		PostProcessor.cpp
-		ProcessContext.cpp
-		ProcessSlave.cpp
-		QueuedEngineInterface.cpp
-		QueuedEvent.cpp
-		events/Connect.cpp
-		events/CreateNode.cpp
-		events/CreatePatch.cpp
-		events/CreatePort.cpp
-		events/Delete.cpp
-		events/Disconnect.cpp
-		events/DisconnectAll.cpp
-		events/Get.cpp
-		events/Move.cpp
-		events/RegisterClient.cpp
-		events/RequestMetadata.cpp
-		events/SendBinding.cpp
-		events/SendPortActivity.cpp
-		events/SendPortValue.cpp
-		events/SetMetadata.cpp
-		events/SetPortValue.cpp
-		events/UnregisterClient.cpp
-		ingen_engine.cpp
-		internals/Controller.cpp
-		internals/Delay.cpp
-		internals/Note.cpp
-		internals/Trigger.cpp
-	'''
-	
-	if bld.is_defined('HAVE_SLV2'):
-		core_source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
+    core_source = '''
+            AudioBuffer.cpp
+            BufferFactory.cpp
+            ClientBroadcaster.cpp
+            ConnectionImpl.cpp
+            ControlBindings.cpp
+            DuplexPort.cpp
+            Engine.cpp
+            EngineStore.cpp
+            Event.cpp
+            EventBuffer.cpp
+            EventSink.cpp
+            EventSource.cpp
+            GraphObjectImpl.cpp
+            InputPort.cpp
+            InternalPlugin.cpp
+            MessageContext.cpp
+            NodeFactory.cpp
+            NodeImpl.cpp
+            ObjectBuffer.cpp
+            ObjectSender.cpp
+            OutputPort.cpp
+            PatchImpl.cpp
+            PluginImpl.cpp
+            PortImpl.cpp
+            PostProcessor.cpp
+            ProcessContext.cpp
+            ProcessSlave.cpp
+            QueuedEngineInterface.cpp
+            QueuedEvent.cpp
+            events/Connect.cpp
+            events/CreateNode.cpp
+            events/CreatePatch.cpp
+            events/CreatePort.cpp
+            events/Delete.cpp
+            events/Disconnect.cpp
+            events/DisconnectAll.cpp
+            events/Get.cpp
+            events/Move.cpp
+            events/RegisterClient.cpp
+            events/RequestMetadata.cpp
+            events/SendBinding.cpp
+            events/SendPortActivity.cpp
+            events/SendPortValue.cpp
+            events/SetMetadata.cpp
+            events/SetPortValue.cpp
+            events/UnregisterClient.cpp
+            ingen_engine.cpp
+            internals/Controller.cpp
+            internals/Delay.cpp
+            internals/Note.cpp
+            internals/Trigger.cpp
+    '''
 
-	obj = bld(features = 'cxx cxxshlib')
-	obj.source = core_source
-	obj.export_includes = ['.']
-	obj.includes        = ['.', '..', '../..', '../../include']
-	obj.name            = 'libingen_server'
-	obj.target          = 'ingen_server'
-	obj.install_path    = '${LIBDIR}'
-	obj.use             = 'libingen_shared'
-	core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL SORD'
-	autowaf.use_lib(bld, obj, core_libs)
+    if bld.is_defined('HAVE_SLV2'):
+        core_source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
 
-	if bld.is_defined('HAVE_SOUP'):
-		obj = bld(features = 'cxx cxxshlib')
-		obj.source = '''
-			EventSource.cpp
-			QueuedEngineInterface.cpp
-			HTTPClientSender.cpp
-			HTTPEngineReceiver.cpp
-			ingen_http.cpp
-		'''
-		obj.includes     = ['.', '..', '../..', '../../include', '../server']
-		obj.name         = 'libingen_http'
-		obj.target       = 'ingen_http'
-		obj.install_path = '${LIBDIR}'
-		autowaf.use_lib(bld, obj, core_libs + ' SOUP')
+    obj = bld(features = 'cxx cxxshlib')
+    obj.source = core_source
+    obj.export_includes = ['.']
+    obj.includes        = ['.', '..', '../..', '../../include']
+    obj.name            = 'libingen_server'
+    obj.target          = 'ingen_server'
+    obj.install_path    = '${LIBDIR}'
+    obj.use             = 'libingen_shared'
+    core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL SORD'
+    autowaf.use_lib(bld, obj, core_libs)
 
-	if bld.is_defined('HAVE_LIBLO'):
-		obj = bld(features = 'cxx cxxshlib')
-		obj.source = '''
-			EventSource.cpp
-			QueuedEngineInterface.cpp
-			OSCClientSender.cpp
-			OSCEngineReceiver.cpp
-			ingen_osc.cpp
-		'''
-		obj.export_includes = ['.']
-		obj.includes        = ['.', '..', '../..', '../../include', '../server']
-		obj.name            = 'libingen_osc'
-		obj.target          = 'ingen_osc'
-		obj.install_path    = '${LIBDIR}'
-		autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
+    if bld.is_defined('HAVE_SOUP'):
+        obj = bld(features = 'cxx cxxshlib')
+        obj.source = '''
+                EventSource.cpp
+                QueuedEngineInterface.cpp
+                HTTPClientSender.cpp
+                HTTPEngineReceiver.cpp
+                ingen_http.cpp
+        '''
+        obj.includes     = ['.', '..', '../..', '../../include', '../server']
+        obj.name         = 'libingen_http'
+        obj.target       = 'ingen_http'
+        obj.install_path = '${LIBDIR}'
+        autowaf.use_lib(bld, obj, core_libs + ' SOUP')
 
-	if bld.is_defined('HAVE_JACK'):
-		obj = bld(features = 'cxx cxxshlib')
-		obj.source = 'JackDriver.cpp ingen_jack.cpp'
-		obj.export_includes = ['.']
-		obj.includes        = ['.', '..', '../..', '../../include', '../server']
-		obj.name            = 'libingen_jack'
-		obj.target          = 'ingen_jack'
-		obj.install_path    = '${LIBDIR}'
-		obj.use             = 'libingen_server'
-		autowaf.use_lib(bld, obj, core_libs + ' JACK')
+    if bld.is_defined('HAVE_LIBLO'):
+        obj = bld(features = 'cxx cxxshlib')
+        obj.source = '''
+                EventSource.cpp
+                QueuedEngineInterface.cpp
+                OSCClientSender.cpp
+                OSCEngineReceiver.cpp
+                ingen_osc.cpp
+        '''
+        obj.export_includes = ['.']
+        obj.includes        = ['.', '..', '../..', '../../include', '../server']
+        obj.name            = 'libingen_osc'
+        obj.target          = 'ingen_osc'
+        obj.install_path    = '${LIBDIR}'
+        autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
 
-	# Ingen LV2 wrapper
-	obj = bld(features = 'cxx cxxshlib')
-	obj.source = ' ingen_lv2.cpp '
-	obj.export_includes = ['.']
-	obj.includes	    = ['.', '..', '../..', '../../include']
-	obj.name	    = 'libingen_lv2'
-	obj.target	    = 'ingen_lv2'
-	obj.install_path    = '${LIBDIR}'
-	obj.use             = 'libingen_shared'
-	obj.add_objects	    = 'libingen_server'
-	autowaf.use_lib(bld, obj, core_libs)
+    if bld.is_defined('HAVE_JACK'):
+        obj = bld(features = 'cxx cxxshlib')
+        obj.source = 'JackDriver.cpp ingen_jack.cpp'
+        obj.export_includes = ['.']
+        obj.includes        = ['.', '..', '../..', '../../include', '../server']
+        obj.name            = 'libingen_jack'
+        obj.target          = 'ingen_jack'
+        obj.install_path    = '${LIBDIR}'
+        obj.use             = 'libingen_server'
+        autowaf.use_lib(bld, obj, core_libs + ' JACK')
+
+    # Ingen LV2 wrapper
+    obj = bld(features = 'cxx cxxshlib')
+    obj.source = ' ingen_lv2.cpp '
+    obj.export_includes = ['.']
+    obj.includes        = ['.', '..', '../..', '../../include']
+    obj.name            = 'libingen_lv2'
+    obj.target          = 'ingen_lv2'
+    obj.install_path    = '${LIBDIR}'
+    obj.use             = 'libingen_shared'
+    obj.add_objects     = 'libingen_server'
+    autowaf.use_lib(bld, obj, core_libs)

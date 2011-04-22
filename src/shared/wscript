@@ -2,33 +2,32 @@
 from waflib.extras import autowaf as autowaf
 
 def build(bld):
-	# Headers
-	bld.install_files('${INCLUDEDIR}/ingen/shared', bld.path.ant_glob('*.hpp'))
+    # Headers
+    bld.install_files('${INCLUDEDIR}/ingen/shared', bld.path.ant_glob('*.hpp'))
 
-	obj = bld(features = 'cxx cxxshlib')
-	obj.source = '''
-		Builder.cpp
-		ClashAvoider.cpp
-		Configuration.cpp
-		LV2Atom.cpp
-		LV2Features.cpp
-		LV2URIMap.cpp
-		ResourceImpl.cpp
-		Store.cpp
-		World.cpp
-		runtime_paths.cpp
-	'''
-	if bld.is_defined('HAVE_LIBLO'):
-		obj.source += ' OSCSender.cpp '
-	if bld.is_defined('HAVE_SOUP'):
-		autowaf.use_lib(bld, obj, 'SOUP')
-		obj.source += ' HTTPSender.cpp '
-	obj.export_includes = ['.']
-	obj.includes        = ['.', '..', '../..', '../../include']
-	obj.name            = 'libingen_shared'
-	obj.target          = 'ingen_shared'
-	obj.vnum            = '0.0.0'
-	obj.install_path    = '${LIBDIR}'
-	obj.linkflags       = '-ldl'
-	autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL SORD LIBLO')
-
+    obj = bld(features = 'cxx cxxshlib')
+    obj.source = '''
+            Builder.cpp
+            ClashAvoider.cpp
+            Configuration.cpp
+            LV2Atom.cpp
+            LV2Features.cpp
+            LV2URIMap.cpp
+            ResourceImpl.cpp
+            Store.cpp
+            World.cpp
+            runtime_paths.cpp
+    '''
+    if bld.is_defined('HAVE_LIBLO'):
+        obj.source += ' OSCSender.cpp '
+    if bld.is_defined('HAVE_SOUP'):
+        autowaf.use_lib(bld, obj, 'SOUP')
+        obj.source += ' HTTPSender.cpp '
+    obj.export_includes = ['.']
+    obj.includes        = ['.', '..', '../..', '../../include']
+    obj.name            = 'libingen_shared'
+    obj.target          = 'ingen_shared'
+    obj.vnum            = '0.0.0'
+    obj.install_path    = '${LIBDIR}'
+    obj.linkflags       = '-ldl'
+    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL SORD LIBLO')
