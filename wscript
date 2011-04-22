@@ -50,6 +50,8 @@ def configure(conf):
 			  atleast_version='0.120.0', mandatory=False)
 	autowaf.check_pkg(conf, 'slv2', uselib_store='SLV2',
 			  atleast_version='0.7.0', mandatory=True)
+	autowaf.check_pkg(conf, 'suil', uselib_store='SUIL',
+			  atleast_version='0.0.0', mandatory=False)
 	autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
 			  atleast_version='0.8.0', mandatory=True)
 	autowaf.check_pkg(conf, 'sord', uselib_store='SORD',

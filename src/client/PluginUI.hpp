@@ -19,7 +19,10 @@
 #define INGEN_CLIENT_PLUGINUI_HPP
 
 #include "raul/SharedPtr.hpp"
+
 #include "slv2/slv2.h"
+
+#include "suil/suil.h"
 
 #include "LV2Features.hpp"
 
@@ -45,7 +48,7 @@ public:
 	                                  SharedPtr<NodeModel>  node,
 	                                  SLV2Plugin            plugin);
 
-	LV2UI_Widget get_widget();
+	SuilWidget get_widget();
 
 	void port_event(uint32_t    port_index,
 	                uint32_t    buffer_size,
@@ -61,9 +64,9 @@ private:
 
 	Ingen::Shared::World* _world;
 	SharedPtr<NodeModel>  _node;
-	SLV2UIInstance        _instance;
+	SuilInstance          _instance;
 
-	static SLV2UIHost ui_host;
+	static SuilHost ui_host;
 
     SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
