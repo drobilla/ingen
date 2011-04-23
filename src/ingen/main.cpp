@@ -119,8 +119,8 @@ main(int argc, char** argv)
 
 	// Run engine
 	if (conf.option("engine").get_bool()) {
-		ingen_try(world->load_module("engine"),
-		          "Unable to load engine module");
+		ingen_try(world->load_module("server"),
+		          "Unable to load server module");
 
 		ingen_try(world->local_engine(),
 		          "Unable to create engine");

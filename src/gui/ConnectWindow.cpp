@@ -248,7 +248,7 @@ ConnectWindow::connect(bool existing)
 #endif // defined(HAVE_LIBLO) || defined(HAVE_SOUP)
 	if (_mode == INTERNAL) {
 		if (!world->local_engine())
-			world->load_module("engine");
+			world->load_module("server");
 
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 
