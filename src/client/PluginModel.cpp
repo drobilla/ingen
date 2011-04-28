@@ -103,7 +103,7 @@ PluginModel::get_property(const URI& key) const
 		SLV2Value  lv2_pred = slv2_value_new_uri(_slv2_world, key.str().c_str());
 		SLV2Values values   = slv2_plugin_get_value(_slv2_plugin, lv2_pred);
 		slv2_value_free(lv2_pred);
-		SLV2_FOREACH(i, values) {
+		SLV2_FOREACH(values, i, values) {
 			SLV2Value val = slv2_values_get(values, i);
 			if (slv2_value_is_uri(val)) {
 				ret = set_property(key, Atom(Atom::URI, slv2_value_as_uri(val)));

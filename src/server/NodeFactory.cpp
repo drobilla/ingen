@@ -129,7 +129,7 @@ NodeFactory::load_lv2_plugins()
 {
 	SLV2Plugins plugins = slv2_world_get_all_plugins(_world->slv2_world());
 
-	SLV2_FOREACH(i, plugins) {
+	SLV2_FOREACH(plugins, i, plugins) {
 		SLV2Plugin lv2_plug = slv2_plugins_get(plugins, i);
 
 		const string uri(slv2_value_as_uri(slv2_plugin_get_uri(lv2_plug)));

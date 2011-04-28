@@ -97,7 +97,7 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 		if (presets) {
 			_presets_menu = Gtk::manage(new Gtk::Menu());
 
-			SLV2_FOREACH(i, presets) {
+			SLV2_FOREACH(values, i, presets) {
 				SLV2Value  uri    = slv2_values_get(presets, i);
 				SLV2Values titles = slv2_plugin_get_value_for_subject(
 					plugin->slv2_plugin(), uri, title_pred);
@@ -197,7 +197,7 @@ NodeMenu::on_preset_activated(const std::string& uri)
 		subject,
 		port_pred);
 	App::instance().engine()->bundle_begin();
-	SLV2_FOREACH(i, ports) {
+	SLV2_FOREACH(values, i, ports) {
 		SLV2Value  uri    = slv2_values_get(ports, i);
 		SLV2Values values = slv2_plugin_get_value_for_subject(
 			plugin->slv2_plugin(), uri, value_pred);

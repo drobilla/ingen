@@ -243,7 +243,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		if (data_type == PortType::VALUE || data_type == PortType::MESSAGE) {
 			// Get default value, and its length
 			SLV2Values defaults = slv2_port_get_value(plug, id, default_pred);
-			SLV2_FOREACH(i, defaults) {
+			SLV2_FOREACH(values, i, defaults) {
 				SLV2Value d = slv2_values_get(defaults, i);
 				if (slv2_value_is_string(d)) {
 					const char*  str_val     = slv2_value_as_string(d);
@@ -255,7 +255,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 			// Get minimum size, if set in data
 			SLV2Values sizes = slv2_port_get_value(plug, id, min_size_pred);
-			SLV2_FOREACH(i, sizes) {
+			SLV2_FOREACH(values, i, sizes) {
 				SLV2Value d = slv2_values_get(sizes, i);
 				if (slv2_value_is_int(d)) {
 					size_t size_val = slv2_value_as_int(d);
@@ -297,7 +297,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		// Set lv2:portProperty properties
 		SLV2Values properties = slv2_port_get_value(plug, id, port_property_pred);
-		SLV2_FOREACH(i, properties) {
+		SLV2_FOREACH(values, i, properties) {
 			SLV2Value p = slv2_values_get(properties, i);
 			if (slv2_value_is_uri(p)) {
 				port->set_property(uris.lv2_portProperty, Raul::URI(slv2_value_as_uri(p)));
@@ -306,7 +306,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		// Set atom:supports properties
 		SLV2Values types = slv2_port_get_value(plug, id, supports_pred);
-		SLV2_FOREACH(i, types) {
+		SLV2_FOREACH(values, i, types) {
 			SLV2Value type = slv2_values_get(types, i);
 			if (slv2_value_is_uri(type)) {
 				port->add_property(uris.atom_supports, Raul::URI(slv2_value_as_uri(type)));
@@ -314,7 +314,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		SLV2Values contexts = slv2_port_get_value(plug, id, context_pred);
-		SLV2_FOREACH(i, contexts) {
+		SLV2_FOREACH(values, i, contexts) {
 			SLV2Value c = slv2_values_get(contexts, i);
 			const char* context = slv2_value_as_string(c);
 			if (!strcmp(LV2_CONTEXTS_URI "#MessageContext", context)) {

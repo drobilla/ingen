@@ -130,7 +130,7 @@ PluginUI::create(Ingen::Shared::World* world,
 	SLV2UIs      uis      = slv2_plugin_get_uis(plugin);
 	SLV2UI       ui       = NULL;
 	SLV2Value    ui_type  = NULL;
-	SLV2_FOREACH(u, uis) {
+	SLV2_FOREACH(uis, u, uis) {
 		SLV2UI this_ui = slv2_uis_get(uis, u);
 		if (slv2_ui_is_supported(this_ui,
 		                         suil_ui_supported,
