@@ -34,7 +34,7 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-SuilHost PluginUI::ui_host = NULL;
+SuilHost* PluginUI::ui_host = NULL;
 
 static void
 lv2_ui_write(SuilController controller,
@@ -150,7 +150,7 @@ PluginUI::create(Ingen::Shared::World* world,
 	SharedPtr<PluginUI> ret(new PluginUI(world, node));
 	ret->_features = world->lv2_features()->lv2_features(world, node.get());
 
-	SuilInstance instance = suil_instance_new(
+	SuilInstance* instance = suil_instance_new(
 		PluginUI::ui_host,
 		ret.get(),
 		slv2_value_as_uri(gtk_ui),

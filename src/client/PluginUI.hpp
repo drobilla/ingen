@@ -64,9 +64,9 @@ private:
 
 	Ingen::Shared::World* _world;
 	SharedPtr<NodeModel>  _node;
-	SuilInstance          _instance;
+	SuilInstance*         _instance;
 
-	static SuilHost ui_host;
+	static SuilHost* ui_host;
 
     SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
