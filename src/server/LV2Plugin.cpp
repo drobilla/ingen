@@ -19,6 +19,8 @@
 #include <string>
 #include <glibmm.h>
 
+#include "raul/log.hpp"
+
 #include "sord/sordmm.hpp"
 
 #include "shared/LV2URIMap.hpp"
@@ -98,7 +100,7 @@ LV2Plugin::library_path() const
 		if (v) {
 			_library_path = slv2_uri_to_path(slv2_value_as_uri(v));
 		} else {
-			warn << uri() << " has no library path" << endl;
+			Raul::warn << uri() << " has no library path" << std::endl;
 			return empty_string;
 		}
 	}

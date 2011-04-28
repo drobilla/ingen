@@ -46,14 +46,14 @@ bool
 EventSink::read(uint32_t event_buffer_size, uint8_t* event_buffer)
 {
 	uint32_t read_size;
-	bool success = _events.full_read(sizeof(uint32_t), (uint8_t*)&read_size);
-	if (!success)
+	uint32_t s = _events.read(sizeof(uint32_t), (uint8_t*)&read_size);
+	if (!s)
 		return false;
 
 	assert(read_size <= event_buffer_size);
 
 	if (read_size > 0)
-		return _events.full_read(read_size, event_buffer);
+		return _events.read(read_size, event_buffer);
 	else
 		return false;
 }

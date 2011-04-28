@@ -70,7 +70,7 @@ MessageContext::_run()
 
 		// Enqueue (and thereby sort) requests from audio thread
 		while (has_requests()) {
-			_requests.full_read(sizeof(Request), &req);
+			_requests.read(sizeof(Request), &req);
 			if (req.node) {
 				_queue.insert(req);
 			} else {
