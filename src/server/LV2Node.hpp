@@ -19,7 +19,7 @@
 #define INGEN_ENGINE_LV2NODE_HPP
 
 #include <string>
-#include "slv2/slv2.h"
+#include "lilv/lilv.h"
 #include "raul/IntrusivePtr.hpp"
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 #include "types.hpp"
@@ -62,7 +62,7 @@ public:
 			IntrusivePtr<Buffer> buf, SampleCount offset);
 
 protected:
-	inline SLV2Instance instance(uint32_t voice) { return (SLV2Instance)(*_instances)[voice].get(); }
+	inline LilvInstance instance(uint32_t voice) { return (LilvInstance)(*_instances)[voice].get(); }
 
 	typedef Raul::Array< SharedPtr<void> > Instances;
 

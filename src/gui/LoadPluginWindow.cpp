@@ -243,7 +243,7 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugi
 void
 LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 {
-	if (plugin->slv2_plugin() && slv2_plugin_is_replaced(plugin->slv2_plugin())) {
+	if (plugin->lilv_plugin() && lilv_plugin_is_replaced(plugin->lilv_plugin())) {
 		return;
 	}
 

@@ -49,8 +49,8 @@
 #include "ThreadedLoader.hpp"
 #include "WindowFactory.hpp"
 #include "Port.hpp"
-#ifdef HAVE_SLV2
-#include "slv2/slv2.h"
+#ifdef HAVE_LILV
+#include "lilv/lilv.h"
 #endif
 
 using namespace std;
@@ -92,8 +92,8 @@ App::App(Ingen::Shared::World* world)
 
 	PluginModel::set_rdf_world(*world->rdf_world());
 
-#ifdef HAVE_SLV2
-	PluginModel::set_slv2_world(world->slv2_world());
+#ifdef HAVE_LILV
+	PluginModel::set_lilv_world(world->lilv_world());
 #endif
 }
 

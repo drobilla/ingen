@@ -20,8 +20,8 @@
 
 #include "ingen-config.h"
 
-#ifdef HAVE_SLV2
-#include "slv2/slv2.h"
+#ifdef HAVE_LILV
+#include "lilv/lilv.h"
 #endif
 
 #include <gtkmm.h>

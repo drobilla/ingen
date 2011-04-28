@@ -27,8 +27,8 @@
 
 #include "ingen-config.h"
 
-#ifdef HAVE_SLV2
-#include "slv2/slv2.h"
+#ifdef HAVE_LILV
+#include "lilv/lilv.h"
 #endif
 #include "ingen/ServerInterface.hpp"
 #include "ingen/Plugin.hpp"
@@ -67,17 +67,17 @@ public:
 	std::string  human_name();
 	std::string  port_human_name(uint32_t index) const;
 
-#ifdef HAVE_SLV2
-	static SLV2World slv2_world()        { return _slv2_world; }
-	SLV2Plugin       slv2_plugin() const { return _slv2_plugin; }
+#ifdef HAVE_LILV
+	static LilvWorld lilv_world()        { return _lilv_world; }
+	LilvPlugin       lilv_plugin() const { return _lilv_plugin; }
 
-	SLV2Port slv2_port(uint32_t index) {
-		return slv2_plugin_get_port_by_index(_slv2_plugin, index);
+	LilvPort lilv_port(uint32_t index) {
+		return lilv_plugin_get_port_by_index(_lilv_plugin, index);
 	}
 
-	static void set_slv2_world(SLV2World world) {
-		_slv2_world = world;
-		_slv2_plugins = slv2_world_get_all_plugins(_slv2_world);
+	static void set_lilv_world(LilvWorld world) {
+		_lilv_world = world;
+		_lilv_plugins = lilv_world_get_all_plugins(_lilv_world);
 	}
 
 	bool has_ui() const;
@@ -86,7 +86,7 @@ public:
 	                       SharedPtr<NodeModel>  node) const;
 
 	const std::string& icon_path() const;
-	static std::string get_lv2_icon_path(SLV2Plugin plugin);
+	static std::string get_lv2_icon_path(LilvPlugin plugin);
 #endif
 
 	std::string documentation() const;
@@ -109,11 +109,11 @@ protected:
 private:
 	Type _type;
 
-#ifdef HAVE_SLV2
-	static SLV2World   _slv2_world;
-	static SLV2Plugins _slv2_plugins;
+#ifdef HAVE_LILV
+	static LilvWorld   _lilv_world;
+	static LilvPlugins _lilv_plugins;
 
-	SLV2Plugin          _slv2_plugin;
+	LilvPlugin          _lilv_plugin;
 	mutable std::string _icon_path;
 #endif
 

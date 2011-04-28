@@ -38,7 +38,7 @@ namespace Server {
 
 LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
 	: PluginImpl(*lv2_info->world().uris().get(), Plugin::LV2, uri)
-	, _slv2_plugin(NULL)
+	, _lilv_plugin(NULL)
 	, _lv2_info(lv2_info)
 {
 	set_property(_uris.rdf_type, _uris.lv2_Plugin);
@@ -86,9 +86,9 @@ LV2Plugin::instantiate(BufferFactory& bufs,
 }
 
 void
-LV2Plugin::slv2_plugin(SLV2Plugin p)
+LV2Plugin::lilv_plugin(LilvPlugin p)
 {
-	_slv2_plugin = p;
+	_lilv_plugin = p;
 }
 
 const std::string&
@@ -96,9 +96,9 @@ LV2Plugin::library_path() const
 {
 	static const std::string empty_string;
 	if (_library_path.empty()) {
-		SLV2Value v = slv2_plugin_get_library_uri(_slv2_plugin);
+		LilvValue v = lilv_plugin_get_library_uri(_lilv_plugin);
 		if (v) {
-			_library_path = slv2_uri_to_path(slv2_value_as_uri(v));
+			_library_path = lilv_uri_to_path(lilv_value_as_uri(v));
 		} else {
 			Raul::warn << uri() << " has no library path" << std::endl;
 			return empty_string;

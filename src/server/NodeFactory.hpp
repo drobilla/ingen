@@ -34,7 +34,7 @@ namespace Server {
 class NodeImpl;
 class PatchImpl;
 class PluginImpl;
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 class LV2Info;
 #endif
 
@@ -56,7 +56,7 @@ public:
 	PluginImpl* plugin(const Raul::URI& uri);
 
 private:
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 	void load_lv2_plugins();
 #endif
 
@@ -65,7 +65,7 @@ private:
 	Plugins               _plugins;
 	Ingen::Shared::World* _world;
 	bool                  _has_loaded;
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 	SharedPtr<LV2Info>    _lv2_info;
 #endif
 };

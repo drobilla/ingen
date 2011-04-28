@@ -20,7 +20,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "slv2/slv2.h"
+#include "lilv/lilv.h"
 
 #include "suil/suil.h"
 
@@ -46,7 +46,7 @@ public:
 
 	static SharedPtr<PluginUI> create(Ingen::Shared::World* world,
 	                                  SharedPtr<NodeModel>  node,
-	                                  SLV2Plugin            plugin);
+	                                  LilvPlugin            plugin);
 
 	SuilWidget get_widget();
 

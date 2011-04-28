@@ -19,13 +19,13 @@
 #define INGEN_ENGINE_LV2INFO_HPP
 
 #include "ingen-config.h"
-#ifndef HAVE_SLV2
-#error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."
+#ifndef HAVE_LILV
+#error "This file requires Lilv, but HAVE_LILV is not defined.  Please report."
 #endif
 
 #include <map>
 #include <string>
-#include "slv2/slv2.h"
+#include "lilv/lilv.h"
 #include "shared/World.hpp"
 
 namespace Ingen {
@@ -41,16 +41,16 @@ public:
 	explicit LV2Info(Ingen::Shared::World* world);
 	~LV2Info();
 
-	SLV2Value input_class;
-	SLV2Value output_class;
-	SLV2Value control_class;
-	SLV2Value audio_class;
-	SLV2Value event_class;
-	SLV2Value value_port_class;
-	SLV2Value message_port_class;
+	LilvValue input_class;
+	LilvValue output_class;
+	LilvValue control_class;
+	LilvValue audio_class;
+	LilvValue event_class;
+	LilvValue value_port_class;
+	LilvValue message_port_class;
 
 	Ingen::Shared::World& world()     { return *_world; }
-	SLV2World             lv2_world() { return _world->slv2_world(); }
+	LilvWorld             lv2_world() { return _world->lilv_world(); }
 
 private:
 	Ingen::Shared::World* _world;

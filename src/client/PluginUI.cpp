@@ -117,7 +117,7 @@ PluginUI::~PluginUI()
 SharedPtr<PluginUI>
 PluginUI::create(Ingen::Shared::World* world,
                  SharedPtr<NodeModel>  node,
-                 SLV2Plugin            plugin)
+                 LilvPlugin            plugin)
 {
 	if (!PluginUI::ui_host) {
 		PluginUI::ui_host = suil_host_new(lv2_ui_write, NULL, NULL, NULL);
@@ -125,14 +125,14 @@ PluginUI::create(Ingen::Shared::World* world,
 
 	static const char* gtk_ui_uri = "http://lv2plug.in/ns/extensions/ui#GtkUI";
 
-	SLV2Value gtk_ui = slv2_value_new_uri(world->slv2_world(), gtk_ui_uri);
+	LilvValue gtk_ui = lilv_value_new_uri(world->lilv_world(), gtk_ui_uri);
 
-	SLV2UIs      uis      = slv2_plugin_get_uis(plugin);
-	SLV2UI       ui       = NULL;
-	SLV2Value    ui_type  = NULL;
-	SLV2_FOREACH(uis, u, uis) {
-		SLV2UI this_ui = slv2_uis_get(uis, u);
-		if (slv2_ui_is_supported(this_ui,
+	LilvUIs      uis      = lilv_plugin_get_uis(plugin);
+	LilvUI       ui       = NULL;
+	LilvValue    ui_type  = NULL;
+	LILV_FOREACH(uis, u, uis) {
+		LilvUI this_ui = lilv_uis_get(uis, u);
+		if (lilv_ui_is_supported(this_ui,
 		                         suil_ui_supported,
 		                         gtk_ui,
 		                         &ui_type)) {
@@ -143,7 +143,7 @@ PluginUI::create(Ingen::Shared::World* world,
 	}
 
 	if (!ui) {
-		slv2_value_free(gtk_ui);
+		lilv_value_free(gtk_ui);
 		return SharedPtr<PluginUI>();
 	}
 
@@ -153,15 +153,15 @@ PluginUI::create(Ingen::Shared::World* world,
 	SuilInstance* instance = suil_instance_new(
 		PluginUI::ui_host,
 		ret.get(),
-		slv2_value_as_uri(gtk_ui),
-		slv2_value_as_uri(slv2_plugin_get_uri(plugin)),
-		slv2_value_as_uri(slv2_ui_get_uri(ui)),
-		slv2_value_as_uri(ui_type),
-		slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_bundle_uri(ui))),
-		slv2_uri_to_path(slv2_value_as_uri(slv2_ui_get_binary_uri(ui))),
+		lilv_value_as_uri(gtk_ui),
+		lilv_value_as_uri(lilv_plugin_get_uri(plugin)),
+		lilv_value_as_uri(lilv_ui_get_uri(ui)),
+		lilv_value_as_uri(ui_type),
+		lilv_uri_to_path(lilv_value_as_uri(lilv_ui_get_bundle_uri(ui))),
+		lilv_uri_to_path(lilv_value_as_uri(lilv_ui_get_binary_uri(ui))),
 		ret->_features->array());
 
-	slv2_value_free(gtk_ui);
+	lilv_value_free(gtk_ui);
 
 	if (instance) {
 		ret->_instance = instance;

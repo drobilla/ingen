@@ -62,7 +62,7 @@ def build(bld):
             SORD
             SIGCPP
             LV2CORE
-            SLV2
+            LILV
             SOUP
             SUIL
     ''')

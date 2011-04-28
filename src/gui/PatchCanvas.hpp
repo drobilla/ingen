@@ -110,13 +110,13 @@ private:
 
     void auto_menu_position(int& x, int& y, bool& push_in);
 
-#ifdef HAVE_SLV2
-	typedef std::multimap<const std::string, SLV2PluginClass> LV2Children;
+#ifdef HAVE_LILV
+	typedef std::multimap<const std::string, LilvPluginClass> LV2Children;
 	void build_plugin_menu();
 	size_t build_plugin_class_menu(
 			Gtk::Menu*         menu,
-			SLV2PluginClass    plugin_class,
-			SLV2PluginClasses  classes,
+			LilvPluginClass    plugin_class,
+			LilvPluginClasses  classes,
 			const LV2Children& children,
 			std::set<const char*>& ancestors);
 #endif

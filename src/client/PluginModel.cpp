@@ -35,9 +35,9 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-#ifdef HAVE_SLV2
-SLV2World   PluginModel::_slv2_world   = NULL;
-SLV2Plugins PluginModel::_slv2_plugins = NULL;
+#ifdef HAVE_LILV
+LilvWorld   PluginModel::_lilv_world   = NULL;
+LilvPlugins PluginModel::_lilv_plugins = NULL;
 #endif
 
 Sord::World* PluginModel::_rdf_world = NULL;
@@ -51,10 +51,10 @@ PluginModel::PluginModel(Shared::LV2URIMap& uris,
 
 	assert(_rdf_world);
 	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", this->type_uri());
-#ifdef HAVE_SLV2
-	SLV2Value plugin_uri = slv2_value_new_uri(_slv2_world, uri.c_str());
-	_slv2_plugin = slv2_plugins_get_by_uri(_slv2_plugins, plugin_uri);
-	slv2_value_free(plugin_uri);
+#ifdef HAVE_LILV
+	LilvValue plugin_uri = lilv_value_new_uri(_lilv_world, uri.c_str());
+	_lilv_plugin = lilv_plugins_get_by_uri(_lilv_plugins, plugin_uri);
+	lilv_value_free(plugin_uri);
 #endif
 	if (_type == Internal)
 		set_property("http://usefulinc.com/ns/doap#name",
@@ -97,29 +97,29 @@ PluginModel::get_property(const URI& key) const
 		return get_property(key);
 	}
 
-#ifdef HAVE_SLV2
-	if (_slv2_plugin) {
+#ifdef HAVE_LILV
+	if (_lilv_plugin) {
 		boost::optional<Raul::Atom&> ret;
-		SLV2Value  lv2_pred = slv2_value_new_uri(_slv2_world, key.str().c_str());
-		SLV2Values values   = slv2_plugin_get_value(_slv2_plugin, lv2_pred);
-		slv2_value_free(lv2_pred);
-		SLV2_FOREACH(values, i, values) {
-			SLV2Value val = slv2_values_get(values, i);
-			if (slv2_value_is_uri(val)) {
-				ret = set_property(key, Atom(Atom::URI, slv2_value_as_uri(val)));
+		LilvValue  lv2_pred = lilv_value_new_uri(_lilv_world, key.str().c_str());
+		LilvValues values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
+		lilv_value_free(lv2_pred);
+		LILV_FOREACH(values, i, values) {
+			LilvValue val = lilv_values_get(values, i);
+			if (lilv_value_is_uri(val)) {
+				ret = set_property(key, Atom(Atom::URI, lilv_value_as_uri(val)));
 				break;
-			} else if (slv2_value_is_string(val)) {
-				ret = set_property(key, slv2_value_as_string(val));
+			} else if (lilv_value_is_string(val)) {
+				ret = set_property(key, lilv_value_as_string(val));
 				break;
-			} else if (slv2_value_is_float(val)) {
-				ret = set_property(key, Atom(slv2_value_as_float(val)));
+			} else if (lilv_value_is_float(val)) {
+				ret = set_property(key, Atom(lilv_value_as_float(val)));
 				break;
-			} else if (slv2_value_is_int(val)) {
-				ret = set_property(key, Atom(slv2_value_as_int(val)));
+			} else if (lilv_value_is_int(val)) {
+				ret = set_property(key, Atom(lilv_value_as_int(val)));
 				break;
 			}
 		}
-		slv2_values_free(values);
+		lilv_values_free(values);
 
 		if (ret)
 			return *ret;
@@ -134,10 +134,10 @@ PluginModel::set(SharedPtr<PluginModel> p)
 {
 	_type = p->_type;
 
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 	_icon_path = p->_icon_path;
-	if (p->_slv2_plugin)
-		_slv2_plugin = p->_slv2_plugin;
+	if (p->_lilv_plugin)
+		_lilv_plugin = p->_lilv_plugin;
 #endif
 
 	for (Properties::const_iterator v = p->properties().begin(); v != p->properties().end(); ++v) {
@@ -171,24 +171,24 @@ PluginModel::human_name()
 string
 PluginModel::port_human_name(uint32_t index) const
 {
-#ifdef HAVE_SLV2
-	if (_slv2_plugin) {
-		SLV2Port  port = slv2_plugin_get_port_by_index(_slv2_plugin, index);
-		SLV2Value name = slv2_port_get_name(_slv2_plugin, port);
-		string    ret  = slv2_value_as_string(name);
-		slv2_value_free(name);
+#ifdef HAVE_LILV
+	if (_lilv_plugin) {
+		LilvPort  port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
+		LilvValue name = lilv_port_get_name(_lilv_plugin, port);
+		string    ret  = lilv_value_as_string(name);
+		lilv_value_free(name);
 		return ret;
 	}
 #endif
 	return "";
 }
 
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 bool
 PluginModel::has_ui() const
 {
-	SLV2UIs uis = slv2_plugin_get_uis(_slv2_plugin);
-	return (slv2_values_size(uis) > 0);
+	LilvUIs uis = lilv_plugin_get_uis(_lilv_plugin);
+	return (lilv_values_size(uis) > 0);
 }
 
 SharedPtr<PluginUI>
@@ -197,7 +197,7 @@ PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const
 	if (_type != LV2)
 		return SharedPtr<PluginUI>();
 
-	SharedPtr<PluginUI> ret = PluginUI::create(world, node, _slv2_plugin);
+	SharedPtr<PluginUI> ret = PluginUI::create(world, node, _lilv_plugin);
 	return ret;
 }
 
@@ -205,7 +205,7 @@ const string&
 PluginModel::icon_path() const
 {
 	if (_icon_path.empty() && _type == LV2) {
-		_icon_path = get_lv2_icon_path(_slv2_plugin);
+		_icon_path = get_lv2_icon_path(_lilv_plugin);
 	}
 
 	return _icon_path;
@@ -213,22 +213,22 @@ PluginModel::icon_path() const
 
 /** RDF world mutex must be held by the caller */
 string
-PluginModel::get_lv2_icon_path(SLV2Plugin plugin)
+PluginModel::get_lv2_icon_path(LilvPlugin plugin)
 {
 	string result;
-	SLV2Value svg_icon_pred = slv2_value_new_uri(_slv2_world,
+	LilvValue svg_icon_pred = lilv_value_new_uri(_lilv_world,
 		"http://ll-plugins.nongnu.org/lv2/namespace#svgIcon");
 
-	SLV2Values paths = slv2_plugin_get_value(plugin, svg_icon_pred);
+	LilvValues paths = lilv_plugin_get_value(plugin, svg_icon_pred);
 
-	if (slv2_values_size(paths) > 0) {
-		SLV2Value value = slv2_values_get_first(paths);
-		if (slv2_value_is_uri(value))
-			result = slv2_uri_to_path(slv2_value_as_string(value));
-		slv2_values_free(paths);
+	if (lilv_values_size(paths) > 0) {
+		LilvValue value = lilv_values_get_first(paths);
+		if (lilv_value_is_uri(value))
+			result = lilv_uri_to_path(lilv_value_as_string(value));
+		lilv_values_free(paths);
 	}
 
-	slv2_value_free(svg_icon_pred);
+	lilv_value_free(svg_icon_pred);
 	return result;
 }
 #endif
@@ -237,23 +237,23 @@ std::string
 PluginModel::documentation() const
 {
 	std::string doc;
-	#ifdef HAVE_SLV2
-	if (!_slv2_plugin)
+	#ifdef HAVE_LILV
+	if (!_lilv_plugin)
 		return doc;
 
-	//SLV2Value lv2_documentation = slv2_value_new_uri(
-	//	_slv2_world, SLV2_NAMESPACE_LV2 "documentation");
-	SLV2Value rdfs_comment = slv2_value_new_uri(
-		_slv2_world, "http://www.w3.org/2000/01/rdf-schema#comment");
+	//LilvValue lv2_documentation = lilv_value_new_uri(
+	//	_lilv_world, LILV_NAMESPACE_LV2 "documentation");
+	LilvValue rdfs_comment = lilv_value_new_uri(
+		_lilv_world, "http://www.w3.org/2000/01/rdf-schema#comment");
 
-	SLV2Values vals = slv2_plugin_get_value(_slv2_plugin,
+	LilvValues vals = lilv_plugin_get_value(_lilv_plugin,
 	                                        rdfs_comment);
-	SLV2Value val = slv2_values_get_first(vals);
-	if (slv2_value_is_string(val)) {
-		doc += slv2_value_as_string(val);
+	LilvValue val = lilv_values_get_first(vals);
+	if (lilv_value_is_string(val)) {
+		doc += lilv_value_as_string(val);
 	}
-	slv2_value_free(rdfs_comment);
-	slv2_values_free(vals);
+	lilv_value_free(rdfs_comment);
+	lilv_values_free(vals);
 	#endif
 	return doc;
 }
@@ -262,26 +262,26 @@ std::string
 PluginModel::port_documentation(uint32_t index) const
 {
 	std::string doc;
-	#ifdef HAVE_SLV2
-	if (!_slv2_plugin)
+	#ifdef HAVE_LILV
+	if (!_lilv_plugin)
 		return doc;
 
-	SLV2Port  port = slv2_plugin_get_port_by_index(_slv2_plugin, index);
+	LilvPort  port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
 
-	//SLV2Value lv2_documentation = slv2_value_new_uri(
-	//	_slv2_world, SLV2_NAMESPACE_LV2 "documentation");
-	SLV2Value rdfs_comment = slv2_value_new_uri(
-		_slv2_world, "http://www.w3.org/2000/01/rdf-schema#comment");
+	//LilvValue lv2_documentation = lilv_value_new_uri(
+	//	_lilv_world, LILV_NAMESPACE_LV2 "documentation");
+	LilvValue rdfs_comment = lilv_value_new_uri(
+		_lilv_world, "http://www.w3.org/2000/01/rdf-schema#comment");
 
-	SLV2Values vals = slv2_port_get_value(_slv2_plugin,
+	LilvValues vals = lilv_port_get_value(_lilv_plugin,
 	                                      port,
 	                                      rdfs_comment);
-	SLV2Value val = slv2_values_get_first(vals);
-	if (slv2_value_is_string(val)) {
-		doc += slv2_value_as_string(val);
+	LilvValue val = lilv_values_get_first(vals);
+	if (lilv_value_is_string(val)) {
+		doc += lilv_value_as_string(val);
 	}
-	slv2_value_free(rdfs_comment);
-	slv2_values_free(vals);
+	lilv_value_free(rdfs_comment);
+	lilv_values_free(vals);
 	#endif
 	return doc;
 }

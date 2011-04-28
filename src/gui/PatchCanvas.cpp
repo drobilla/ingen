@@ -167,7 +167,7 @@ PatchCanvas::build_menus()
 	}
 
 	// Build skeleton LV2 plugin class heirarchy for 'Plugin' menu
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 	if (!_plugin_menu)
 		build_plugin_menu();
 
@@ -189,7 +189,7 @@ PatchCanvas::build_menus()
 		add_plugin(i->second);
 }
 
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 
 /** Recursively build the plugin class menu heirarchy rooted at
  * @a plugin class into @a menu
@@ -197,12 +197,12 @@ PatchCanvas::build_menus()
 size_t
 PatchCanvas::build_plugin_class_menu(
 	Gtk::Menu* menu,
-	SLV2PluginClass plugin_class, SLV2PluginClasses classes, const LV2Children& children,
+	LilvPluginClass plugin_class, LilvPluginClasses classes, const LV2Children& children,
 	std::set<const char*>& ancestors)
 {
 	size_t      num_items     = 0;
-	SLV2Value   class_uri     = slv2_plugin_class_get_uri(plugin_class);
-	const char* class_uri_str = slv2_value_as_string(class_uri);
+	LilvValue   class_uri     = lilv_plugin_class_get_uri(plugin_class);
+	const char* class_uri_str = lilv_value_as_string(class_uri);
 
 	const std::pair<LV2Children::const_iterator, LV2Children::const_iterator> kids
 			= children.equal_range(class_uri_str);
@@ -213,9 +213,9 @@ PatchCanvas::build_plugin_class_menu(
 	// Add submenus
 	ancestors.insert(class_uri_str);
 	for (LV2Children::const_iterator i = kids.first; i != kids.second; ++i) {
-		SLV2PluginClass c = i->second;
-		const char* sub_label_str = slv2_value_as_string(slv2_plugin_class_get_label(c));
-		const char* sub_uri_str   = slv2_value_as_string(slv2_plugin_class_get_uri(c));
+		LilvPluginClass c = i->second;
+		const char* sub_label_str = lilv_value_as_string(lilv_plugin_class_get_label(c));
+		const char* sub_uri_str   = lilv_value_as_string(lilv_plugin_class_get_uri(c));
 		if (ancestors.find(sub_uri_str) != ancestors.end()) {
 			LOG(warn) << "Infinite LV2 class recursion: " << class_uri_str
 			          << " <: " << sub_uri_str << endl;
@@ -259,16 +259,16 @@ PatchCanvas::build_plugin_menu()
 		_menu->reorder_child(*plugin_menu_item, 5);
 	}
 
-	SLV2PluginClass   lv2_plugin = slv2_world_get_plugin_class(PluginModel::slv2_world());
-	SLV2PluginClasses classes    = slv2_world_get_plugin_classes(PluginModel::slv2_world());
+	LilvPluginClass   lv2_plugin = lilv_world_get_plugin_class(PluginModel::lilv_world());
+	LilvPluginClasses classes    = lilv_world_get_plugin_classes(PluginModel::lilv_world());
 
 	LV2Children children;
-	SLV2_FOREACH(plugin_classes, i, classes) {
-		SLV2PluginClass c = slv2_plugin_classes_get(classes, i);
-		SLV2Value       p = slv2_plugin_class_get_parent_uri(c);
+	LILV_FOREACH(plugin_classes, i, classes) {
+		LilvPluginClass c = lilv_plugin_classes_get(classes, i);
+		LilvValue       p = lilv_plugin_class_get_parent_uri(c);
 		if (!p)
-			p = slv2_plugin_class_get_uri(lv2_plugin);
-		children.insert(make_pair(slv2_value_as_string(p), c));
+			p = lilv_plugin_class_get_uri(lv2_plugin);
+		children.insert(make_pair(lilv_value_as_string(p), c));
 	}
 	std::set<const char*> ancestors;
 	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes, children, ancestors);
@@ -345,18 +345,18 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 	if (_internal_menu && p->type() == Plugin::Internal) {
 		_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
 				sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
-	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->slv2_plugin()) {
-		if (slv2_plugin_is_replaced(p->slv2_plugin())) {
+	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->lilv_plugin()) {
+		if (lilv_plugin_is_replaced(p->lilv_plugin())) {
 			//info << (boost::format("[Menu] LV2 plugin <%s> hidden") % p->uri()) << endl;
 			return;
 		}
 
-		SLV2PluginClass pc            = slv2_plugin_get_class(p->slv2_plugin());
-		SLV2Value       class_uri     = slv2_plugin_class_get_uri(pc);
-		const char*     class_uri_str = slv2_value_as_string(class_uri);
+		LilvPluginClass pc            = lilv_plugin_get_class(p->lilv_plugin());
+		LilvValue       class_uri     = lilv_plugin_class_get_uri(pc);
+		const char*     class_uri_str = lilv_value_as_string(class_uri);
 
 		Glib::RefPtr<Gdk::Pixbuf> icon = App::instance().icon_from_path(
-					PluginModel::get_lv2_icon_path(p->slv2_plugin()), 16);
+					PluginModel::get_lv2_icon_path(p->lilv_plugin()), 16);
 
 		pair<iterator,iterator> range = _class_menus.equal_range(class_uri_str);
 		if (range.first == _class_menus.end() || range.first == range.second

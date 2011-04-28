@@ -20,8 +20,8 @@
 
 #include "ingen-config.h"
 
-#ifndef HAVE_SLV2
-#error "This file requires SLV2, but HAVE_SLV2 is not defined.  Please report."
+#ifndef HAVE_LILV
+#error "This file requires Lilv, but HAVE_LILV is not defined.  Please report."
 #endif
 
 #include <cstdlib>
@@ -30,7 +30,7 @@
 #include <glibmm/module.h>
 #include <boost/utility.hpp>
 
-#include "slv2/slv2.h"
+#include "lilv/lilv.h"
 #include "raul/SharedPtr.hpp"
 
 #include "PluginImpl.hpp"
@@ -61,11 +61,11 @@ public:
 
 	const std::string& library_path() const;
 
-	SLV2Plugin slv2_plugin() const       { return _slv2_plugin; }
-	void       slv2_plugin(SLV2Plugin p);
+	LilvPlugin lilv_plugin() const       { return _lilv_plugin; }
+	void       lilv_plugin(LilvPlugin p);
 
 private:
-	SLV2Plugin         _slv2_plugin;
+	LilvPlugin         _lilv_plugin;
 	SharedPtr<LV2Info> _lv2_info;
 };
 

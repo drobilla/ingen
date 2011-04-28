@@ -39,7 +39,7 @@ namespace Ingen { namespace Shared {
         Ingen::Shared::script_iteration($self);
     }
 
-    /*SLV2World slv2() { return $self->me->slv2_world; }*/
+    /*LILVWorld lilv() { return $self->me->lilv_world; }*/
 };
 
 } }

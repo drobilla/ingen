@@ -29,7 +29,7 @@
 #include "raul/Configuration.hpp"
 #include "raul/SharedPtr.hpp"
 
-typedef struct _SLV2World* SLV2World;
+typedef struct _LilvWorld* LilvWorld;
 
 namespace Sord { class World; }
 
@@ -49,7 +49,7 @@ class Store;
 /** The "world" all Ingen modules may share.
  *
  * All loaded components of Ingen, as well as things requiring shared access
- * and/or locking (e.g. Sord, SLV2).
+ * and/or locking (e.g. Sord, Lilv).
  *
  * Ingen modules are shared libraries which modify the World when loaded
  * using World::load, e.g. loading the "ingen_serialisation" module will
@@ -99,7 +99,7 @@ public:
 
 	virtual LV2Features* lv2_features();
 
-	virtual SLV2World slv2_world();
+	virtual LilvWorld lilv_world();
 
 	virtual void        set_jack_uuid(const std::string& uuid);
 	virtual std::string jack_uuid();

@@ -35,8 +35,8 @@
 #include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
 #include "ThreadManager.hpp"
-#ifdef HAVE_SLV2
-#include "slv2/slv2.h"
+#ifdef HAVE_LILV
+#include "lilv/lilv.h"
 #include "LV2Plugin.hpp"
 #include "LV2Node.hpp"
 #endif
@@ -52,7 +52,7 @@ using namespace Internals;
 NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	: _world(world)
 	, _has_loaded(false)
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 	, _lv2_info(new LV2Info(world))
 #endif
 {
@@ -96,7 +96,7 @@ NodeFactory::load_plugins()
 
 		load_internal_plugins();
 
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 		load_lv2_plugins();
 #endif
 
@@ -121,28 +121,28 @@ NodeFactory::load_internal_plugins()
 	_plugins.insert(make_pair(trigger_plug->uri(), trigger_plug));
 }
 
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 /** Loads information about all LV2 plugins into internal plugin database.
  */
 void
 NodeFactory::load_lv2_plugins()
 {
-	SLV2Plugins plugins = slv2_world_get_all_plugins(_world->slv2_world());
+	LilvPlugins plugins = lilv_world_get_all_plugins(_world->lilv_world());
 
-	SLV2_FOREACH(plugins, i, plugins) {
-		SLV2Plugin lv2_plug = slv2_plugins_get(plugins, i);
+	LILV_FOREACH(plugins, i, plugins) {
+		LilvPlugin lv2_plug = lilv_plugins_get(plugins, i);
 
-		const string uri(slv2_value_as_uri(slv2_plugin_get_uri(lv2_plug)));
+		const string uri(lilv_value_as_uri(lilv_plugin_get_uri(lv2_plug)));
 
 		assert(_plugins.find(uri) == _plugins.end());
 
 		LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
 
-		plugin->slv2_plugin(lv2_plug);
+		plugin->lilv_plugin(lv2_plug);
 		_plugins.insert(make_pair(uri, plugin));
 	}
 }
-#endif // HAVE_SLV2
+#endif // HAVE_LILV
 
 } // namespace Server
 } // namespace Ingen

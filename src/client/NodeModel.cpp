@@ -169,14 +169,14 @@ NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float
 	max = 1.0;
 
 	// Get range from client-side LV2 data
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
 
 		if (!_min_values) {
-			_num_values = slv2_plugin_get_num_ports(_plugin->slv2_plugin());
+			_num_values = lilv_plugin_get_num_ports(_plugin->lilv_plugin());
 			_min_values = new float[_num_values];
 			_max_values = new float[_num_values];
-			slv2_plugin_get_port_ranges_float(_plugin->slv2_plugin(),
+			lilv_plugin_get_port_ranges_float(_plugin->lilv_plugin(),
 					_min_values, _max_values, 0);
 		}
 
@@ -215,16 +215,16 @@ NodeModel::port_label(SharedPtr<PortModel> port) const
 		return name.get_string();
 	}
 
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
-		SLV2World  c_world  = _plugin->slv2_world();
-		SLV2Plugin c_plugin = _plugin->slv2_plugin();
-		SLV2Value  c_sym    = slv2_value_new_string(c_world, port->symbol().c_str());
-		SLV2Port   c_port   = slv2_plugin_get_port_by_symbol(c_plugin, c_sym);
+		LilvWorld  c_world  = _plugin->lilv_world();
+		LilvPlugin c_plugin = _plugin->lilv_plugin();
+		LilvValue  c_sym    = lilv_value_new_string(c_world, port->symbol().c_str());
+		LilvPort   c_port   = lilv_plugin_get_port_by_symbol(c_plugin, c_sym);
 		if (c_port) {
-			SLV2Value c_name = slv2_port_get_name(c_plugin, c_port);
-			if (c_name && slv2_value_is_string(c_name)) {
-				return slv2_value_as_string(c_name);
+			LilvValue c_name = lilv_port_get_name(c_plugin, c_port);
+			if (c_name && lilv_value_is_string(c_name)) {
+				return lilv_value_as_string(c_name);
 			}
 		}
 	}

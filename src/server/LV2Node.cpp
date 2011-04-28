@@ -81,9 +81,9 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	_prepared_instances = new Instances(poly, *_instances, SharedPtr<void>());
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		_prepared_instances->at(i) = SharedPtr<void>(
-				slv2_plugin_instantiate(
-					_lv2_plugin->slv2_plugin(), _srate, _features->array()),
-				slv2_instance_free);
+				lilv_plugin_instantiate(
+					_lv2_plugin->lilv_plugin(), _srate, _features->array()),
+				lilv_instance_free);
 
 		if (!_prepared_instances->at(i)) {
 			error << "Failed to instantiate plugin" << endl;
@@ -104,7 +104,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		}
 
 		if (_activated)
-			slv2_instance_activate((SLV2Instance)(*_prepared_instances)[i].get());
+			lilv_instance_activate((LilvInstance)(*_prepared_instances)[i].get());
 	}
 
 	return true;
@@ -139,9 +139,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 {
 	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
 	SharedPtr<LV2Info>              info = _lv2_plugin->lv2_info();
-	SLV2Plugin                      plug = _lv2_plugin->slv2_plugin();
+	LilvPlugin                      plug = _lv2_plugin->lilv_plugin();
 
-	uint32_t num_ports = slv2_plugin_get_num_ports(plug);
+	uint32_t num_ports = lilv_plugin_get_num_ports(plug);
 	assert(num_ports > 0);
 
 	_ports     = new Raul::Array<PortImpl*>(num_ports, NULL);
@@ -150,13 +150,13 @@ LV2Node::instantiate(BufferFactory& bufs)
 	_features = info->world().lv2_features()->lv2_features(&info->world(), this);
 
 	uint32_t port_buffer_size = 0;
-	SLV2Value ctx_ext_uri = slv2_value_new_uri(info->lv2_world(),
+	LilvValue ctx_ext_uri = lilv_value_new_uri(info->lv2_world(),
 	                                           LV2_CONTEXTS_URI "#MessageContext");
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		(*_instances)[i] = SharedPtr<void>(
-				slv2_plugin_instantiate(plug, _srate, _features->array()),
-				slv2_instance_free);
+				lilv_plugin_instantiate(plug, _srate, _features->array()),
+				lilv_instance_free);
 
 		if (!instance(i)) {
 			error << "Failed to instantiate plugin " << _lv2_plugin->uri()
@@ -164,10 +164,10 @@ LV2Node::instantiate(BufferFactory& bufs)
 			return false;
 		}
 
-		if (!slv2_plugin_has_feature(plug, ctx_ext_uri))
+		if (!lilv_plugin_has_feature(plug, ctx_ext_uri))
 			continue;
 
-		const void* ctx_ext = slv2_instance_get_extension_data(
+		const void* ctx_ext = lilv_instance_get_extension_data(
 			instance(i), LV2_CONTEXTS_URI "#MessageContext");
 
 		if (i == 0 && ctx_ext) {
@@ -176,7 +176,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 	}
 
-	slv2_value_free(ctx_ext_uri);
+	lilv_value_free(ctx_ext_uri);
 
 	string port_name;
 	Path   port_path;
@@ -187,31 +187,31 @@ LV2Node::instantiate(BufferFactory& bufs)
 	float* min_values = new float[num_ports];
 	float* max_values = new float[num_ports];
 	float* def_values = new float[num_ports];
-	slv2_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
+	lilv_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
 
-	SLV2Value context_pred = slv2_value_new_uri(info->lv2_world(),
+	LilvValue context_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/contexts#context");
 
-	SLV2Value default_pred = slv2_value_new_uri(info->lv2_world(),
+	LilvValue default_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/lv2core#default");
 
-	SLV2Value min_size_pred = slv2_value_new_uri(info->lv2_world(),
+	LilvValue min_size_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/resize-port#minimumSize");
 
-	SLV2Value port_property_pred = slv2_value_new_uri(info->lv2_world(),
+	LilvValue port_property_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/lv2core#portProperty");
 
-	SLV2Value supports_pred = slv2_value_new_uri(info->lv2_world(),
+	LilvValue supports_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/atom#supports");
 
-	//SLV2Value as_large_as_pred = slv2_value_new_uri(info->lv2_world(),
+	//LilvValue as_large_as_pred = lilv_value_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/ext/resize-port#asLargeAs");
 
 	for (uint32_t j = 0; j < num_ports; ++j) {
-		SLV2Port id = slv2_plugin_get_port_by_index(plug, j);
+		LilvPort id = lilv_plugin_get_port_by_index(plug, j);
 
 		// LV2 port symbols are guaranteed to be unique, valid C identifiers
-		port_name = slv2_value_as_string(slv2_port_get_symbol(plug, id));
+		port_name = lilv_value_as_string(lilv_port_get_symbol(plug, id));
 
 		if (!Symbol::is_valid(port_name)) {
 			error << "Plugin " << _lv2_plugin->uri() << " port " << j
@@ -226,15 +226,15 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		Raul::Atom val;
 		PortType data_type = PortType::UNKNOWN;
-		if (slv2_port_is_a(plug, id, info->control_class)) {
+		if (lilv_port_is_a(plug, id, info->control_class)) {
 			data_type = PortType::CONTROL;
-		} else if (slv2_port_is_a(plug, id, info->audio_class)) {
+		} else if (lilv_port_is_a(plug, id, info->audio_class)) {
 			data_type = PortType::AUDIO;
-		} else if (slv2_port_is_a(plug, id, info->event_class)) {
+		} else if (lilv_port_is_a(plug, id, info->event_class)) {
 			data_type = PortType::EVENTS;
-		} else if (slv2_port_is_a(plug, id, info->value_port_class)) {
+		} else if (lilv_port_is_a(plug, id, info->value_port_class)) {
 			data_type = PortType::VALUE;
-		} else if (slv2_port_is_a(plug, id, info->message_port_class)) {
+		} else if (lilv_port_is_a(plug, id, info->message_port_class)) {
 			data_type = PortType::MESSAGE;
 		}
 
@@ -242,11 +242,11 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		if (data_type == PortType::VALUE || data_type == PortType::MESSAGE) {
 			// Get default value, and its length
-			SLV2Values defaults = slv2_port_get_value(plug, id, default_pred);
-			SLV2_FOREACH(values, i, defaults) {
-				SLV2Value d = slv2_values_get(defaults, i);
-				if (slv2_value_is_string(d)) {
-					const char*  str_val     = slv2_value_as_string(d);
+			LilvValues defaults = lilv_port_get_value(plug, id, default_pred);
+			LILV_FOREACH(values, i, defaults) {
+				LilvValue d = lilv_values_get(defaults, i);
+				if (lilv_value_is_string(d)) {
+					const char*  str_val     = lilv_value_as_string(d);
 					const size_t str_val_len = strlen(str_val);
 					val = str_val;
 					port_buffer_size = str_val_len;
@@ -254,20 +254,20 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 
 			// Get minimum size, if set in data
-			SLV2Values sizes = slv2_port_get_value(plug, id, min_size_pred);
-			SLV2_FOREACH(values, i, sizes) {
-				SLV2Value d = slv2_values_get(sizes, i);
-				if (slv2_value_is_int(d)) {
-					size_t size_val = slv2_value_as_int(d);
+			LilvValues sizes = lilv_port_get_value(plug, id, min_size_pred);
+			LILV_FOREACH(values, i, sizes) {
+				LilvValue d = lilv_values_get(sizes, i);
+				if (lilv_value_is_int(d)) {
+					size_t size_val = lilv_value_as_int(d);
 					port_buffer_size = size_val;
 				}
 			}
 		}
 
 		enum { UNKNOWN, INPUT, OUTPUT } direction = UNKNOWN;
-		if (slv2_port_is_a(plug, id, info->input_class)) {
+		if (lilv_port_is_a(plug, id, info->input_class)) {
 			direction = INPUT;
-		} else if (slv2_port_is_a(plug, id, info->output_class)) {
+		} else if (lilv_port_is_a(plug, id, info->output_class)) {
 			direction = OUTPUT;
 		}
 
@@ -296,27 +296,27 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		// Set lv2:portProperty properties
-		SLV2Values properties = slv2_port_get_value(plug, id, port_property_pred);
-		SLV2_FOREACH(values, i, properties) {
-			SLV2Value p = slv2_values_get(properties, i);
-			if (slv2_value_is_uri(p)) {
-				port->set_property(uris.lv2_portProperty, Raul::URI(slv2_value_as_uri(p)));
+		LilvValues properties = lilv_port_get_value(plug, id, port_property_pred);
+		LILV_FOREACH(values, i, properties) {
+			LilvValue p = lilv_values_get(properties, i);
+			if (lilv_value_is_uri(p)) {
+				port->set_property(uris.lv2_portProperty, Raul::URI(lilv_value_as_uri(p)));
 			}
 		}
 
 		// Set atom:supports properties
-		SLV2Values types = slv2_port_get_value(plug, id, supports_pred);
-		SLV2_FOREACH(values, i, types) {
-			SLV2Value type = slv2_values_get(types, i);
-			if (slv2_value_is_uri(type)) {
-				port->add_property(uris.atom_supports, Raul::URI(slv2_value_as_uri(type)));
+		LilvValues types = lilv_port_get_value(plug, id, supports_pred);
+		LILV_FOREACH(values, i, types) {
+			LilvValue type = lilv_values_get(types, i);
+			if (lilv_value_is_uri(type)) {
+				port->add_property(uris.atom_supports, Raul::URI(lilv_value_as_uri(type)));
 			}
 		}
 
-		SLV2Values contexts = slv2_port_get_value(plug, id, context_pred);
-		SLV2_FOREACH(values, i, contexts) {
-			SLV2Value c = slv2_values_get(contexts, i);
-			const char* context = slv2_value_as_string(c);
+		LilvValues contexts = lilv_port_get_value(plug, id, context_pred);
+		LILV_FOREACH(values, i, contexts) {
+			LilvValue c = lilv_values_get(contexts, i);
+			const char* context = lilv_value_as_string(c);
 			if (!strcmp(LV2_CONTEXTS_URI "#MessageContext", context)) {
 				if (!_message_funcs) {
 					warn << _lv2_plugin->uri()
@@ -325,7 +325,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 				port->set_context(Context::MESSAGE);
 			} else {
 				warn << _lv2_plugin->uri() << " port " << i << " has unknown context "
-				     << slv2_value_as_string(c)
+				     << lilv_value_as_string(c)
 				     << endl;
 			}
 		}
@@ -343,10 +343,10 @@ LV2Node::instantiate(BufferFactory& bufs)
 	delete[] min_values;
 	delete[] max_values;
 	delete[] def_values;
-	slv2_value_free(context_pred);
-	slv2_value_free(default_pred);
-	slv2_value_free(min_size_pred);
-	slv2_value_free(port_property_pred);
+	lilv_value_free(context_pred);
+	lilv_value_free(default_pred);
+	lilv_value_free(min_size_pred);
+	lilv_value_free(port_property_pred);
 
 	return ret;
 }
@@ -357,7 +357,7 @@ LV2Node::activate(BufferFactory& bufs)
 	NodeImpl::activate(bufs);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
-		slv2_instance_activate(instance(i));
+		lilv_instance_activate(instance(i));
 }
 
 void
@@ -366,7 +366,7 @@ LV2Node::deactivate()
 	NodeImpl::deactivate();
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
-		slv2_instance_deactivate(instance(i));
+		lilv_instance_deactivate(instance(i));
 }
 
 void
@@ -391,7 +391,7 @@ LV2Node::process(ProcessContext& context)
 	NodeImpl::pre_process(context);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
-		slv2_instance_run(instance(i), context.nframes());
+		lilv_instance_run(instance(i), context.nframes());
 
 	NodeImpl::post_process(context);
 }
@@ -401,7 +401,7 @@ LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num,
 		IntrusivePtr<Buffer> buf, SampleCount offset)
 {
 	NodeImpl::set_port_buffer(voice, port_num, buf, offset);
-	slv2_instance_connect_port(instance(voice), port_num,
+	lilv_instance_connect_port(instance(voice), port_num,
 			buf ? buf->port_data(_ports->at(port_num)->buffer_type(), offset) : NULL);
 }
 

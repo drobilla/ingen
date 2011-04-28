@@ -39,14 +39,14 @@ namespace Ingen {
 namespace Server {
 
 LV2Info::LV2Info(Ingen::Shared::World* world)
-	: input_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_INPUT))
-	, output_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_OUTPUT))
-	, control_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_CONTROL))
-	, audio_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_AUDIO))
-	, event_class(slv2_value_new_uri(world->slv2_world(), SLV2_PORT_CLASS_EVENT))
-	, value_port_class(slv2_value_new_uri(world->slv2_world(),
+	: input_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_INPUT))
+	, output_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_OUTPUT))
+	, control_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_CONTROL))
+	, audio_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_AUDIO))
+	, event_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_EVENT))
+	, value_port_class(lilv_value_new_uri(world->lilv_world(),
 	                                      "http://lv2plug.in/ns/ext/atom#ValuePort"))
-	, message_port_class(slv2_value_new_uri(world->slv2_world(),
+	, message_port_class(lilv_value_new_uri(world->lilv_world(),
 	                     "http://lv2plug.in/ns/ext/atom#MessagePort"))
 	, _world(world)
 {
@@ -64,13 +64,13 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 
 LV2Info::~LV2Info()
 {
-	slv2_value_free(input_class);
-	slv2_value_free(output_class);
-	slv2_value_free(control_class);
-	slv2_value_free(audio_class);
-	slv2_value_free(event_class);
-	slv2_value_free(value_port_class);
-	slv2_value_free(message_port_class);
+	lilv_value_free(input_class);
+	lilv_value_free(output_class);
+	lilv_value_free(control_class);
+	lilv_value_free(audio_class);
+	lilv_value_free(event_class);
+	lilv_value_free(value_port_class);
+	lilv_value_free(message_port_class);
 }
 
 } // namespace Server

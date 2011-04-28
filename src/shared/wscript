@@ -30,4 +30,4 @@ def build(bld):
     obj.vnum            = '0.0.0'
     obj.install_path    = '${LIBDIR}'
     obj.linkflags       = '-ldl'
-    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE SLV2 RAUL SORD LIBLO')
+    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV RAUL SORD LIBLO')

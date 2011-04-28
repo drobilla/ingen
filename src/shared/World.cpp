@@ -20,8 +20,8 @@
 #include <glibmm/module.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
-#ifdef HAVE_SLV2
-#include "slv2/slv2.h"
+#ifdef HAVE_LILV
+#include "lilv/lilv.h"
 #endif
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"
@@ -104,17 +104,17 @@ public:
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
 		, uris(new Shared::LV2URIMap())
-#ifdef HAVE_SLV2
-		, slv2_world(slv2_world_new())
+#ifdef HAVE_LILV
+		, lilv_world(lilv_world_new())
 #else
-		, slv2_world(NULL)
+		, lilv_world(NULL)
 #endif
 	{
-#ifdef HAVE_SLV2
+#ifdef HAVE_LILV
 		lv2_features = new Ingen::Shared::LV2Features();
 		lv2_features->add_feature(LV2_URI_MAP_URI, uris);
 		lv2_features->add_feature(LV2_URI_UNMAP_URI, uris->unmap_feature());
-		slv2_world_load_all(slv2_world);
+		lilv_world_load_all(lilv_world);
 #endif
 
 		// Set up RDF namespaces
@@ -142,9 +142,9 @@ public:
 		interface_factories.clear();
 		script_runners.clear();
 
-#ifdef HAVE_SLV2
-		slv2_world_free(slv2_world);
-		slv2_world = NULL;
+#ifdef HAVE_LILV
+		lilv_world_free(lilv_world);
+		lilv_world = NULL;
 #endif
 
 		delete rdf_world;
@@ -177,7 +177,7 @@ public:
     SharedPtr<Serialisation::Serialiser> serialiser;
     SharedPtr<Serialisation::Parser>     parser;
     SharedPtr<Store>                     store;
-    SLV2World                            slv2_world;
+    LilvWorld                            lilv_world;
 	std::string                          jack_uuid;
 };
 
@@ -209,8 +209,8 @@ SharedPtr<Store>                     World::store()        { return _impl->store
 Raul::Configuration*                 World::conf()         { return _impl->conf; }
 LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
 
-#ifdef HAVE_SLV2
-SLV2World            World::slv2_world() { return _impl->slv2_world; }
+#ifdef HAVE_LILV
+LilvWorld            World::lilv_world() { return _impl->lilv_world; }
 #endif
 Sord::World*         World::rdf_world() { return _impl->rdf_world; }
 SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }

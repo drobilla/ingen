@@ -59,7 +59,7 @@ def build(bld):
             internals/Trigger.cpp
     '''
 
-    if bld.is_defined('HAVE_SLV2'):
+    if bld.is_defined('HAVE_LILV'):
         core_source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
 
     obj = bld(features = 'cxx cxxshlib')
@@ -70,7 +70,7 @@ def build(bld):
     obj.target          = 'ingen_server'
     obj.install_path    = '${LIBDIR}'
     obj.use             = 'libingen_shared'
-    core_libs = 'GLIBMM GTHREAD LV2CORE SLV2 RAUL SORD'
+    core_libs = 'GLIBMM GTHREAD LV2CORE LILV RAUL SORD'
     autowaf.use_lib(bld, obj, core_libs)
 
     if bld.is_defined('HAVE_SOUP'):
