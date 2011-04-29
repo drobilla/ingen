@@ -61,11 +61,11 @@ public:
 
 	const std::string& library_path() const;
 
-	LilvPlugin lilv_plugin() const       { return _lilv_plugin; }
-	void       lilv_plugin(LilvPlugin p);
+	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
+	void              lilv_plugin(const LilvPlugin* p);
 
 private:
-	LilvPlugin         _lilv_plugin;
+	const LilvPlugin*  _lilv_plugin;
 	SharedPtr<LV2Info> _lv2_info;
 };
 

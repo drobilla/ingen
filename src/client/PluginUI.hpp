@@ -46,7 +46,7 @@ public:
 
 	static SharedPtr<PluginUI> create(Ingen::Shared::World* world,
 	                                  SharedPtr<NodeModel>  node,
-	                                  LilvPlugin            plugin);
+	                                  const LilvPlugin*     plugin);
 
 	SuilWidget get_widget();
 

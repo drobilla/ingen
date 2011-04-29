@@ -217,15 +217,18 @@ NodeModel::port_label(SharedPtr<PortModel> port) const
 
 #ifdef HAVE_LILV
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
-		LilvWorld  c_world  = _plugin->lilv_world();
-		LilvPlugin c_plugin = _plugin->lilv_plugin();
-		LilvValue  c_sym    = lilv_value_new_string(c_world, port->symbol().c_str());
-		LilvPort   c_port   = lilv_plugin_get_port_by_symbol(c_plugin, c_sym);
+		LilvWorld*        c_world  = _plugin->lilv_world();
+		const LilvPlugin* c_plugin = _plugin->lilv_plugin();
+		LilvValue*        c_sym    = lilv_value_new_string(c_world, port->symbol().c_str());
+		const LilvPort*   c_port   = lilv_plugin_get_port_by_symbol(c_plugin, c_sym);
 		if (c_port) {
-			LilvValue c_name = lilv_port_get_name(c_plugin, c_port);
+			LilvValue* c_name = lilv_port_get_name(c_plugin, c_port);
 			if (c_name && lilv_value_is_string(c_name)) {
-				return lilv_value_as_string(c_name);
+				std::string ret(lilv_value_as_string(c_name));
+				lilv_value_free(c_name);
+				return ret;
 			}
+			lilv_value_free(c_name);
 		}
 	}
 #endif

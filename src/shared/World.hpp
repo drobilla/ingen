@@ -29,7 +29,7 @@
 #include "raul/Configuration.hpp"
 #include "raul/SharedPtr.hpp"
 
-typedef struct _LilvWorld* LilvWorld;
+typedef struct LilvWorldImpl LilvWorld;
 
 namespace Sord { class World; }
 
@@ -99,7 +99,7 @@ public:
 
 	virtual LV2Features* lv2_features();
 
-	virtual LilvWorld lilv_world();
+	virtual LilvWorld* lilv_world();
 
 	virtual void        set_jack_uuid(const std::string& uuid);
 	virtual std::string jack_uuid();

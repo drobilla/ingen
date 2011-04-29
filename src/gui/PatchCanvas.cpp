@@ -196,13 +196,15 @@ PatchCanvas::build_menus()
  */
 size_t
 PatchCanvas::build_plugin_class_menu(
-	Gtk::Menu* menu,
-	LilvPluginClass plugin_class, LilvPluginClasses classes, const LV2Children& children,
-	std::set<const char*>& ancestors)
+	Gtk::Menu*               menu,
+	const LilvPluginClass*   plugin_class,
+	const LilvPluginClasses* classes,
+	const LV2Children&       children,
+	std::set<const char*>&   ancestors)
 {
-	size_t      num_items     = 0;
-	LilvValue   class_uri     = lilv_plugin_class_get_uri(plugin_class);
-	const char* class_uri_str = lilv_value_as_string(class_uri);
+	size_t           num_items     = 0;
+	const LilvValue* class_uri     = lilv_plugin_class_get_uri(plugin_class);
+	const char*      class_uri_str = lilv_value_as_string(class_uri);
 
 	const std::pair<LV2Children::const_iterator, LV2Children::const_iterator> kids
 			= children.equal_range(class_uri_str);
@@ -213,7 +215,7 @@ PatchCanvas::build_plugin_class_menu(
 	// Add submenus
 	ancestors.insert(class_uri_str);
 	for (LV2Children::const_iterator i = kids.first; i != kids.second; ++i) {
-		LilvPluginClass c = i->second;
+		const LilvPluginClass* c = i->second;
 		const char* sub_label_str = lilv_value_as_string(lilv_plugin_class_get_label(c));
 		const char* sub_uri_str   = lilv_value_as_string(lilv_plugin_class_get_uri(c));
 		if (ancestors.find(sub_uri_str) != ancestors.end()) {
@@ -259,13 +261,14 @@ PatchCanvas::build_plugin_menu()
 		_menu->reorder_child(*plugin_menu_item, 5);
 	}
 
-	LilvPluginClass   lv2_plugin = lilv_world_get_plugin_class(PluginModel::lilv_world());
-	LilvPluginClasses classes    = lilv_world_get_plugin_classes(PluginModel::lilv_world());
+	const LilvWorld*         world      = PluginModel::lilv_world();
+	const LilvPluginClass*   lv2_plugin = lilv_world_get_plugin_class(world);
+	const LilvPluginClasses* classes    = lilv_world_get_plugin_classes(world);
 
 	LV2Children children;
 	LILV_FOREACH(plugin_classes, i, classes) {
-		LilvPluginClass c = lilv_plugin_classes_get(classes, i);
-		LilvValue       p = lilv_plugin_class_get_parent_uri(c);
+		const LilvPluginClass* c = lilv_plugin_classes_get(classes, i);
+		const LilvValue*       p = lilv_plugin_class_get_parent_uri(c);
 		if (!p)
 			p = lilv_plugin_class_get_uri(lv2_plugin);
 		children.insert(make_pair(lilv_value_as_string(p), c));
@@ -351,9 +354,9 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 			return;
 		}
 
-		LilvPluginClass pc            = lilv_plugin_get_class(p->lilv_plugin());
-		LilvValue       class_uri     = lilv_plugin_class_get_uri(pc);
-		const char*     class_uri_str = lilv_value_as_string(class_uri);
+		const LilvPluginClass* pc            = lilv_plugin_get_class(p->lilv_plugin());
+		const LilvValue*       class_uri     = lilv_plugin_class_get_uri(pc);
+		const char*            class_uri_str = lilv_value_as_string(class_uri);
 
 		Glib::RefPtr<Gdk::Pixbuf> icon = App::instance().icon_from_path(
 					PluginModel::get_lv2_icon_path(p->lilv_plugin()), 16);

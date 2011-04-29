@@ -177,7 +177,7 @@ public:
     SharedPtr<Serialisation::Serialiser> serialiser;
     SharedPtr<Serialisation::Parser>     parser;
     SharedPtr<Store>                     store;
-    LilvWorld                            lilv_world;
+    LilvWorld*                           lilv_world;
 	std::string                          jack_uuid;
 };
 
@@ -210,7 +210,7 @@ Raul::Configuration*                 World::conf()         { return _impl->conf;
 LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
 
 #ifdef HAVE_LILV
-LilvWorld            World::lilv_world() { return _impl->lilv_world; }
+LilvWorld*           World::lilv_world() { return _impl->lilv_world; }
 #endif
 Sord::World*         World::rdf_world() { return _impl->rdf_world; }
 SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }

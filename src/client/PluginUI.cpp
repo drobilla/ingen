@@ -117,7 +117,7 @@ PluginUI::~PluginUI()
 SharedPtr<PluginUI>
 PluginUI::create(Ingen::Shared::World* world,
                  SharedPtr<NodeModel>  node,
-                 LilvPlugin            plugin)
+                 const LilvPlugin*     plugin)
 {
 	if (!PluginUI::ui_host) {
 		PluginUI::ui_host = suil_host_new(lv2_ui_write, NULL, NULL, NULL);
@@ -125,13 +125,13 @@ PluginUI::create(Ingen::Shared::World* world,
 
 	static const char* gtk_ui_uri = "http://lv2plug.in/ns/extensions/ui#GtkUI";
 
-	LilvValue gtk_ui = lilv_value_new_uri(world->lilv_world(), gtk_ui_uri);
+	LilvValue* gtk_ui = lilv_value_new_uri(world->lilv_world(), gtk_ui_uri);
 
-	LilvUIs      uis      = lilv_plugin_get_uis(plugin);
-	LilvUI       ui       = NULL;
-	LilvValue    ui_type  = NULL;
+	LilvUIs*         uis     = lilv_plugin_get_uis(plugin);
+	const LilvUI*    ui      = NULL;
+	const LilvValue* ui_type = NULL;
 	LILV_FOREACH(uis, u, uis) {
-		LilvUI this_ui = lilv_uis_get(uis, u);
+		const LilvUI* this_ui = lilv_uis_get(uis, u);
 		if (lilv_ui_is_supported(this_ui,
 		                         suil_ui_supported,
 		                         gtk_ui,

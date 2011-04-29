@@ -41,16 +41,16 @@ public:
 	explicit LV2Info(Ingen::Shared::World* world);
 	~LV2Info();
 
-	LilvValue input_class;
-	LilvValue output_class;
-	LilvValue control_class;
-	LilvValue audio_class;
-	LilvValue event_class;
-	LilvValue value_port_class;
-	LilvValue message_port_class;
+	LilvValue* input_class;
+	LilvValue* output_class;
+	LilvValue* control_class;
+	LilvValue* audio_class;
+	LilvValue* event_class;
+	LilvValue* value_port_class;
+	LilvValue* message_port_class;
 
 	Ingen::Shared::World& world()     { return *_world; }
-	LilvWorld             lv2_world() { return _world->lilv_world(); }
+	LilvWorld*            lv2_world() { return _world->lilv_world(); }
 
 private:
 	Ingen::Shared::World* _world;

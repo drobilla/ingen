@@ -111,14 +111,14 @@ private:
     void auto_menu_position(int& x, int& y, bool& push_in);
 
 #ifdef HAVE_LILV
-	typedef std::multimap<const std::string, LilvPluginClass> LV2Children;
+	typedef std::multimap<const std::string, const LilvPluginClass*> LV2Children;
 	void build_plugin_menu();
 	size_t build_plugin_class_menu(
-			Gtk::Menu*         menu,
-			LilvPluginClass    plugin_class,
-			LilvPluginClasses  classes,
-			const LV2Children& children,
-			std::set<const char*>& ancestors);
+			Gtk::Menu*               menu,
+			const LilvPluginClass*   plugin_class,
+			const LilvPluginClasses* classes,
+			const LV2Children&       children,
+			std::set<const char*>&   ancestors);
 #endif
 
 	GraphObject::Properties get_initial_data();

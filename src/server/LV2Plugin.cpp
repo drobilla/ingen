@@ -86,7 +86,7 @@ LV2Plugin::instantiate(BufferFactory& bufs,
 }
 
 void
-LV2Plugin::lilv_plugin(LilvPlugin p)
+LV2Plugin::lilv_plugin(const LilvPlugin* p)
 {
 	_lilv_plugin = p;
 }
@@ -96,7 +96,7 @@ LV2Plugin::library_path() const
 {
 	static const std::string empty_string;
 	if (_library_path.empty()) {
-		LilvValue v = lilv_plugin_get_library_uri(_lilv_plugin);
+		const LilvValue* v = lilv_plugin_get_library_uri(_lilv_plugin);
 		if (v) {
 			_library_path = lilv_uri_to_path(lilv_value_as_uri(v));
 		} else {

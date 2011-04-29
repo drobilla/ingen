@@ -127,10 +127,10 @@ NodeFactory::load_internal_plugins()
 void
 NodeFactory::load_lv2_plugins()
 {
-	LilvPlugins plugins = lilv_world_get_all_plugins(_world->lilv_world());
+	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());
 
 	LILV_FOREACH(plugins, i, plugins) {
-		LilvPlugin lv2_plug = lilv_plugins_get(plugins, i);
+		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);
 
 		const string uri(lilv_value_as_uri(lilv_plugin_get_uri(lv2_plug)));
 

@@ -104,7 +104,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		}
 
 		if (_activated)
-			lilv_instance_activate((LilvInstance)(*_prepared_instances)[i].get());
+			lilv_instance_activate((LilvInstance*)(*_prepared_instances)[i].get());
 	}
 
 	return true;
@@ -139,7 +139,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 {
 	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
 	SharedPtr<LV2Info>              info = _lv2_plugin->lv2_info();
-	LilvPlugin                      plug = _lv2_plugin->lilv_plugin();
+	const LilvPlugin*               plug = _lv2_plugin->lilv_plugin();
 
 	uint32_t num_ports = lilv_plugin_get_num_ports(plug);
 	assert(num_ports > 0);
@@ -150,8 +150,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 	_features = info->world().lv2_features()->lv2_features(&info->world(), this);
 
 	uint32_t port_buffer_size = 0;
-	LilvValue ctx_ext_uri = lilv_value_new_uri(info->lv2_world(),
-	                                           LV2_CONTEXTS_URI "#MessageContext");
+	LilvValue* ctx_ext_uri = lilv_value_new_uri(info->lv2_world(),
+	                                            LV2_CONTEXTS_URI "#MessageContext");
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		(*_instances)[i] = SharedPtr<void>(
@@ -189,26 +189,26 @@ LV2Node::instantiate(BufferFactory& bufs)
 	float* def_values = new float[num_ports];
 	lilv_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
 
-	LilvValue context_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* context_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/contexts#context");
 
-	LilvValue default_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* default_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/lv2core#default");
 
-	LilvValue min_size_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* min_size_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/resize-port#minimumSize");
 
-	LilvValue port_property_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* port_property_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/lv2core#portProperty");
 
-	LilvValue supports_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* supports_pred = lilv_value_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/atom#supports");
 
 	//LilvValue as_large_as_pred = lilv_value_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/ext/resize-port#asLargeAs");
 
 	for (uint32_t j = 0; j < num_ports; ++j) {
-		LilvPort id = lilv_plugin_get_port_by_index(plug, j);
+		const LilvPort* id = lilv_plugin_get_port_by_index(plug, j);
 
 		// LV2 port symbols are guaranteed to be unique, valid C identifiers
 		port_name = lilv_value_as_string(lilv_port_get_symbol(plug, id));
@@ -242,9 +242,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		if (data_type == PortType::VALUE || data_type == PortType::MESSAGE) {
 			// Get default value, and its length
-			LilvValues defaults = lilv_port_get_value(plug, id, default_pred);
+			LilvValues* defaults = lilv_port_get_value(plug, id, default_pred);
 			LILV_FOREACH(values, i, defaults) {
-				LilvValue d = lilv_values_get(defaults, i);
+				const LilvValue* d = lilv_values_get(defaults, i);
 				if (lilv_value_is_string(d)) {
 					const char*  str_val     = lilv_value_as_string(d);
 					const size_t str_val_len = strlen(str_val);
@@ -254,9 +254,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 
 			// Get minimum size, if set in data
-			LilvValues sizes = lilv_port_get_value(plug, id, min_size_pred);
+			LilvValues* sizes = lilv_port_get_value(plug, id, min_size_pred);
 			LILV_FOREACH(values, i, sizes) {
-				LilvValue d = lilv_values_get(sizes, i);
+				const LilvValue* d = lilv_values_get(sizes, i);
 				if (lilv_value_is_int(d)) {
 					size_t size_val = lilv_value_as_int(d);
 					port_buffer_size = size_val;
@@ -296,26 +296,26 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		// Set lv2:portProperty properties
-		LilvValues properties = lilv_port_get_value(plug, id, port_property_pred);
+		LilvValues* properties = lilv_port_get_value(plug, id, port_property_pred);
 		LILV_FOREACH(values, i, properties) {
-			LilvValue p = lilv_values_get(properties, i);
+			const LilvValue* p = lilv_values_get(properties, i);
 			if (lilv_value_is_uri(p)) {
 				port->set_property(uris.lv2_portProperty, Raul::URI(lilv_value_as_uri(p)));
 			}
 		}
 
 		// Set atom:supports properties
-		LilvValues types = lilv_port_get_value(plug, id, supports_pred);
+		LilvValues* types = lilv_port_get_value(plug, id, supports_pred);
 		LILV_FOREACH(values, i, types) {
-			LilvValue type = lilv_values_get(types, i);
+			const LilvValue* type = lilv_values_get(types, i);
 			if (lilv_value_is_uri(type)) {
 				port->add_property(uris.atom_supports, Raul::URI(lilv_value_as_uri(type)));
 			}
 		}
 
-		LilvValues contexts = lilv_port_get_value(plug, id, context_pred);
+		LilvValues* contexts = lilv_port_get_value(plug, id, context_pred);
 		LILV_FOREACH(values, i, contexts) {
-			LilvValue c = lilv_values_get(contexts, i);
+			const LilvValue* c = lilv_values_get(contexts, i);
 			const char* context = lilv_value_as_string(c);
 			if (!strcmp(LV2_CONTEXTS_URI "#MessageContext", context)) {
 				if (!_message_funcs) {

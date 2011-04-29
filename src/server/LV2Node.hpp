@@ -62,7 +62,9 @@ public:
 			IntrusivePtr<Buffer> buf, SampleCount offset);
 
 protected:
-	inline LilvInstance instance(uint32_t voice) { return (LilvInstance)(*_instances)[voice].get(); }
+	inline LilvInstance* instance(uint32_t voice) {
+		return (LilvInstance*)(*_instances)[voice].get();
+	}
 
 	typedef Raul::Array< SharedPtr<void> > Instances;
 

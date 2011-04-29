@@ -68,14 +68,14 @@ public:
 	std::string  port_human_name(uint32_t index) const;
 
 #ifdef HAVE_LILV
-	static LilvWorld lilv_world()        { return _lilv_world; }
-	LilvPlugin       lilv_plugin() const { return _lilv_plugin; }
+	static LilvWorld* lilv_world()        { return _lilv_world; }
+	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
 
-	LilvPort lilv_port(uint32_t index) {
+	const LilvPort* lilv_port(uint32_t index) {
 		return lilv_plugin_get_port_by_index(_lilv_plugin, index);
 	}
 
-	static void set_lilv_world(LilvWorld world) {
+	static void set_lilv_world(LilvWorld* world) {
 		_lilv_world = world;
 		_lilv_plugins = lilv_world_get_all_plugins(_lilv_world);
 	}
@@ -86,7 +86,7 @@ public:
 	                       SharedPtr<NodeModel>  node) const;
 
 	const std::string& icon_path() const;
-	static std::string get_lv2_icon_path(LilvPlugin plugin);
+	static std::string get_lv2_icon_path(const LilvPlugin* plugin);
 #endif
 
 	std::string documentation() const;
@@ -110,10 +110,10 @@ private:
 	Type _type;
 
 #ifdef HAVE_LILV
-	static LilvWorld   _lilv_world;
-	static LilvPlugins _lilv_plugins;
+	static LilvWorld*         _lilv_world;
+	static const LilvPlugins* _lilv_plugins;
 
-	LilvPlugin          _lilv_plugin;
+	const LilvPlugin*   _lilv_plugin;
 	mutable std::string _icon_path;
 #endif
 
