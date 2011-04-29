@@ -52,9 +52,9 @@ PluginModel::PluginModel(Shared::LV2URIMap& uris,
 	assert(_rdf_world);
 	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", this->type_uri());
 #ifdef HAVE_LILV
-	LilvValue* plugin_uri = lilv_new_uri(_lilv_world, uri.c_str());
+	LilvNode* plugin_uri = lilv_new_uri(_lilv_world, uri.c_str());
 	_lilv_plugin = lilv_plugins_get_by_uri(_lilv_plugins, plugin_uri);
-	lilv_value_free(plugin_uri);
+	lilv_node_free(plugin_uri);
 #endif
 	if (_type == Internal)
 		set_property("http://usefulinc.com/ns/doap#name",
@@ -100,26 +100,26 @@ PluginModel::get_property(const URI& key) const
 #ifdef HAVE_LILV
 	if (_lilv_plugin) {
 		boost::optional<Raul::Atom&> ret;
-		LilvValue*  lv2_pred = lilv_new_uri(_lilv_world, key.str().c_str());
-		LilvValues* values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
-		lilv_value_free(lv2_pred);
-		LILV_FOREACH(values, i, values) {
-			const LilvValue* val = lilv_values_get(values, i);
-			if (lilv_value_is_uri(val)) {
-				ret = set_property(key, Atom(Atom::URI, lilv_value_as_uri(val)));
+		LilvNode*  lv2_pred = lilv_new_uri(_lilv_world, key.str().c_str());
+		LilvNodes* values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
+		lilv_node_free(lv2_pred);
+		LILV_FOREACH(nodes, i, values) {
+			const LilvNode* val = lilv_nodes_get(values, i);
+			if (lilv_node_is_uri(val)) {
+				ret = set_property(key, Atom(Atom::URI, lilv_node_as_uri(val)));
 				break;
-			} else if (lilv_value_is_string(val)) {
-				ret = set_property(key, lilv_value_as_string(val));
+			} else if (lilv_node_is_string(val)) {
+				ret = set_property(key, lilv_node_as_string(val));
 				break;
-			} else if (lilv_value_is_float(val)) {
-				ret = set_property(key, Atom(lilv_value_as_float(val)));
+			} else if (lilv_node_is_float(val)) {
+				ret = set_property(key, Atom(lilv_node_as_float(val)));
 				break;
-			} else if (lilv_value_is_int(val)) {
-				ret = set_property(key, Atom(lilv_value_as_int(val)));
+			} else if (lilv_node_is_int(val)) {
+				ret = set_property(key, Atom(lilv_node_as_int(val)));
 				break;
 			}
 		}
-		lilv_values_free(values);
+		lilv_nodes_free(values);
 
 		if (ret)
 			return *ret;
@@ -174,9 +174,9 @@ PluginModel::port_human_name(uint32_t index) const
 #ifdef HAVE_LILV
 	if (_lilv_plugin) {
 		const LilvPort* port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
-		LilvValue*      name = lilv_port_get_name(_lilv_plugin, port);
-		const string    ret(lilv_value_as_string(name));
-		lilv_value_free(name);
+		LilvNode*      name = lilv_port_get_name(_lilv_plugin, port);
+		const string    ret(lilv_node_as_string(name));
+		lilv_node_free(name);
 		return ret;
 	}
 #endif
@@ -188,7 +188,7 @@ bool
 PluginModel::has_ui() const
 {
 	LilvUIs* uis = lilv_plugin_get_uis(_lilv_plugin);
-	const bool ret = (lilv_values_size(uis) > 0);
+	const bool ret = (lilv_nodes_size(uis) > 0);
 	lilv_uis_free(uis);
 	return ret;
 }
@@ -218,19 +218,19 @@ string
 PluginModel::get_lv2_icon_path(const LilvPlugin* plugin)
 {
 	string result;
-	LilvValue* svg_icon_pred = lilv_new_uri(_lilv_world,
+	LilvNode* svg_icon_pred = lilv_new_uri(_lilv_world,
 		"http://ll-plugins.nongnu.org/lv2/namespace#svgIcon");
 
-	LilvValues* paths = lilv_plugin_get_value(plugin, svg_icon_pred);
+	LilvNodes* paths = lilv_plugin_get_value(plugin, svg_icon_pred);
 
-	if (lilv_values_size(paths) > 0) {
-		const LilvValue* value = lilv_values_get_first(paths);
-		if (lilv_value_is_uri(value))
-			result = lilv_uri_to_path(lilv_value_as_string(value));
-		lilv_values_free(paths);
+	if (lilv_nodes_size(paths) > 0) {
+		const LilvNode* value = lilv_nodes_get_first(paths);
+		if (lilv_node_is_uri(value))
+			result = lilv_uri_to_path(lilv_node_as_string(value));
+		lilv_nodes_free(paths);
 	}
 
-	lilv_value_free(svg_icon_pred);
+	lilv_node_free(svg_icon_pred);
 	return result;
 }
 #endif
@@ -243,19 +243,19 @@ PluginModel::documentation() const
 	if (!_lilv_plugin)
 		return doc;
 
-	//LilvValue lv2_documentation = lilv_new_uri(
+	//LilvNode lv2_documentation = lilv_new_uri(
 	//	_lilv_world, LILV_NAMESPACE_LV2 "documentation");
-	LilvValue* rdfs_comment = lilv_new_uri(
+	LilvNode* rdfs_comment = lilv_new_uri(
 		_lilv_world, "http://www.w3.org/2000/01/rdf-schema#comment");
 
-	LilvValues* vals = lilv_plugin_get_value(_lilv_plugin,
+	LilvNodes* vals = lilv_plugin_get_value(_lilv_plugin,
 	                                         rdfs_comment);
-	const LilvValue* val = lilv_values_get_first(vals);
-	if (lilv_value_is_string(val)) {
-		doc += lilv_value_as_string(val);
+	const LilvNode* val = lilv_nodes_get_first(vals);
+	if (lilv_node_is_string(val)) {
+		doc += lilv_node_as_string(val);
 	}
-	lilv_value_free(rdfs_comment);
-	lilv_values_free(vals);
+	lilv_node_free(rdfs_comment);
+	lilv_nodes_free(vals);
 	#endif
 	return doc;
 }
@@ -270,20 +270,20 @@ PluginModel::port_documentation(uint32_t index) const
 
 	const LilvPort*  port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
 
-	//LilvValue lv2_documentation = lilv_new_uri(
+	//LilvNode lv2_documentation = lilv_new_uri(
 	//	_lilv_world, LILV_NAMESPACE_LV2 "documentation");
-	LilvValue* rdfs_comment = lilv_new_uri(
+	LilvNode* rdfs_comment = lilv_new_uri(
 		_lilv_world, "http://www.w3.org/2000/01/rdf-schema#comment");
 
-	LilvValues* vals = lilv_port_get_value(_lilv_plugin,
-	                                       port,
-	                                       rdfs_comment);
-	const LilvValue* val = lilv_values_get_first(vals);
-	if (lilv_value_is_string(val)) {
-		doc += lilv_value_as_string(val);
+	LilvNodes* vals = lilv_port_get_value(_lilv_plugin,
+	                                      port,
+	                                      rdfs_comment);
+	const LilvNode* val = lilv_nodes_get_first(vals);
+	if (lilv_node_is_string(val)) {
+		doc += lilv_node_as_string(val);
 	}
-	lilv_value_free(rdfs_comment);
-	lilv_values_free(vals);
+	lilv_node_free(rdfs_comment);
+	lilv_nodes_free(vals);
 	#endif
 	return doc;
 }

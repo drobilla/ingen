@@ -86,36 +86,36 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 
 #ifdef HAVE_LILV
 	if (plugin && plugin->type() == PluginModel::LV2) {
-		LilvValue* preset_pred = lilv_new_uri(
+		LilvNode* preset_pred = lilv_new_uri(
 			plugin->lilv_world(),
 			"http://lv2plug.in/ns/dev/presets#hasPreset");
-		LilvValue* title_pred = lilv_new_uri(
+		LilvNode* title_pred = lilv_new_uri(
 			plugin->lilv_world(),
 			"http://dublincore.org/documents/dcmi-namespace/title");
-		LilvValues* presets = lilv_plugin_get_value(
+		LilvNodes* presets = lilv_plugin_get_value(
 			plugin->lilv_plugin(), preset_pred);
 		if (presets) {
 			_presets_menu = Gtk::manage(new Gtk::Menu());
 
-			LILV_FOREACH(values, i, presets) {
-				const LilvValue*  uri    = lilv_values_get(presets, i);
-				LilvValues* titles = lilv_plugin_get_value_for_subject(
+			LILV_FOREACH(nodes, i, presets) {
+				const LilvNode* uri = lilv_nodes_get(presets, i);
+				LilvNodes* titles   = lilv_plugin_get_value_for_subject(
 					plugin->lilv_plugin(), uri, title_pred);
 				if (titles) {
-					const LilvValue* title = lilv_values_get_first(titles);
+					const LilvNode* title = lilv_nodes_get_first(titles);
 					_presets_menu->items().push_back(
 						Gtk::Menu_Helpers::MenuElem(
-							lilv_value_as_string(title),
+							lilv_node_as_string(title),
 							sigc::bind(
 								sigc::mem_fun(this, &NodeMenu::on_preset_activated),
-								string(lilv_value_as_string(uri)))));
+								string(lilv_node_as_string(uri)))));
 
 					// I have no idea why this is necessary, signal_activated doesn't work
 					// in this menu (and only this menu)
 					Gtk::MenuItem* item = &(_presets_menu->items().back());
 					item->signal_button_release_event().connect(
 						sigc::bind<0>(sigc::mem_fun(this, &NodeMenu::on_preset_clicked),
-						              string(lilv_value_as_string(uri))));
+						              string(lilv_node_as_string(uri))));
 				}
 			}
 			items().push_front(Gtk::Menu_Helpers::SeparatorElem());
@@ -124,9 +124,9 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 			Gtk::MenuItem* presets_menu_item = &(items().front());
 			presets_menu_item->set_submenu(*_presets_menu);
 		}
-		lilv_values_free(presets);
-		lilv_value_free(title_pred);
-		lilv_value_free(preset_pred);
+		lilv_nodes_free(presets);
+		lilv_node_free(title_pred);
+		lilv_node_free(preset_pred);
 	}
 #endif
 
@@ -182,41 +182,41 @@ NodeMenu::on_preset_activated(const std::string& uri)
 	const NodeModel* const   node   = (NodeModel*)_object.get();
 	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(node->plugin());
 
-	LilvValue* port_pred = lilv_new_uri(
+	LilvNode* port_pred = lilv_new_uri(
 		plugin->lilv_world(),
 		"http://lv2plug.in/ns/lv2core#port");
-	LilvValue* symbol_pred = lilv_new_uri(
+	LilvNode* symbol_pred = lilv_new_uri(
 		plugin->lilv_world(),
 		"http://lv2plug.in/ns/lv2core#symbol");
-	LilvValue* value_pred = lilv_new_uri(
+	LilvNode* value_pred = lilv_new_uri(
 		plugin->lilv_world(),
 		"http://lv2plug.in/ns/ext/presets#value");
-	LilvValue*  subject = lilv_new_uri(plugin->lilv_world(), uri.c_str());
-	LilvValues* ports   = lilv_plugin_get_value_for_subject(
+	LilvNode*  subject = lilv_new_uri(plugin->lilv_world(), uri.c_str());
+	LilvNodes* ports   = lilv_plugin_get_value_for_subject(
 		plugin->lilv_plugin(),
 		subject,
 		port_pred);
 	App::instance().engine()->bundle_begin();
-	LILV_FOREACH(values, i, ports) {
-		const LilvValue*  uri    = lilv_values_get(ports, i);
-		LilvValues* values = lilv_plugin_get_value_for_subject(
+	LILV_FOREACH(nodes, i, ports) {
+		const LilvNode*  uri    = lilv_nodes_get(ports, i);
+		LilvNodes* values = lilv_plugin_get_value_for_subject(
 			plugin->lilv_plugin(), uri, value_pred);
-		LilvValues* symbols = lilv_plugin_get_value_for_subject(
+		LilvNodes* symbols = lilv_plugin_get_value_for_subject(
 			plugin->lilv_plugin(), uri, symbol_pred);
 		if (values && symbols) {
-			const LilvValue* val = lilv_values_get_first(values);
-			const LilvValue* sym = lilv_values_get_first(symbols);
+			const LilvNode* val = lilv_nodes_get_first(values);
+			const LilvNode* sym = lilv_nodes_get_first(symbols);
 			App::instance().engine()->set_property(
-				node->path().base() + lilv_value_as_string(sym),
+				node->path().base() + lilv_node_as_string(sym),
 				App::instance().uris().ingen_value,
-				lilv_value_as_float(val));
+				lilv_node_as_float(val));
 		}
 	}
 	App::instance().engine()->bundle_end();
-	lilv_values_free(ports);
-	lilv_value_free(value_pred);
-	lilv_value_free(symbol_pred);
-	lilv_value_free(port_pred);
+	lilv_nodes_free(ports);
+	lilv_node_free(value_pred);
+	lilv_node_free(symbol_pred);
+	lilv_node_free(port_pred);
 #endif
 }
 

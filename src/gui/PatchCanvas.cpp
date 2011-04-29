@@ -203,8 +203,8 @@ PatchCanvas::build_plugin_class_menu(
 	std::set<const char*>&   ancestors)
 {
 	size_t           num_items     = 0;
-	const LilvValue* class_uri     = lilv_plugin_class_get_uri(plugin_class);
-	const char*      class_uri_str = lilv_value_as_string(class_uri);
+	const LilvNode* class_uri     = lilv_plugin_class_get_uri(plugin_class);
+	const char*      class_uri_str = lilv_node_as_string(class_uri);
 
 	const std::pair<LV2Children::const_iterator, LV2Children::const_iterator> kids
 			= children.equal_range(class_uri_str);
@@ -216,8 +216,8 @@ PatchCanvas::build_plugin_class_menu(
 	ancestors.insert(class_uri_str);
 	for (LV2Children::const_iterator i = kids.first; i != kids.second; ++i) {
 		const LilvPluginClass* c = i->second;
-		const char* sub_label_str = lilv_value_as_string(lilv_plugin_class_get_label(c));
-		const char* sub_uri_str   = lilv_value_as_string(lilv_plugin_class_get_uri(c));
+		const char* sub_label_str = lilv_node_as_string(lilv_plugin_class_get_label(c));
+		const char* sub_uri_str   = lilv_node_as_string(lilv_plugin_class_get_uri(c));
 		if (ancestors.find(sub_uri_str) != ancestors.end()) {
 			LOG(warn) << "Infinite LV2 class recursion: " << class_uri_str
 			          << " <: " << sub_uri_str << endl;
@@ -268,10 +268,10 @@ PatchCanvas::build_plugin_menu()
 	LV2Children children;
 	LILV_FOREACH(plugin_classes, i, classes) {
 		const LilvPluginClass* c = lilv_plugin_classes_get(classes, i);
-		const LilvValue*       p = lilv_plugin_class_get_parent_uri(c);
+		const LilvNode*       p = lilv_plugin_class_get_parent_uri(c);
 		if (!p)
 			p = lilv_plugin_class_get_uri(lv2_plugin);
-		children.insert(make_pair(lilv_value_as_string(p), c));
+		children.insert(make_pair(lilv_node_as_string(p), c));
 	}
 	std::set<const char*> ancestors;
 	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes, children, ancestors);
@@ -355,8 +355,8 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 		}
 
 		const LilvPluginClass* pc            = lilv_plugin_get_class(p->lilv_plugin());
-		const LilvValue*       class_uri     = lilv_plugin_class_get_uri(pc);
-		const char*            class_uri_str = lilv_value_as_string(class_uri);
+		const LilvNode*        class_uri     = lilv_plugin_class_get_uri(pc);
+		const char*            class_uri_str = lilv_node_as_string(class_uri);
 
 		Glib::RefPtr<Gdk::Pixbuf> icon = App::instance().icon_from_path(
 					PluginModel::get_lv2_icon_path(p->lilv_plugin()), 16);

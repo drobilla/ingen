@@ -132,7 +132,7 @@ NodeFactory::load_lv2_plugins()
 	LILV_FOREACH(plugins, i, plugins) {
 		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);
 
-		const string uri(lilv_value_as_uri(lilv_plugin_get_uri(lv2_plug)));
+		const string uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
 
 		assert(_plugins.find(uri) == _plugins.end());
 

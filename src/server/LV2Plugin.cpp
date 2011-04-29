@@ -96,9 +96,9 @@ LV2Plugin::library_path() const
 {
 	static const std::string empty_string;
 	if (_library_path.empty()) {
-		const LilvValue* v = lilv_plugin_get_library_uri(_lilv_plugin);
-		if (v) {
-			_library_path = lilv_uri_to_path(lilv_value_as_uri(v));
+		const LilvNode* n = lilv_plugin_get_library_uri(_lilv_plugin);
+		if (n) {
+			_library_path = lilv_uri_to_path(lilv_node_as_uri(n));
 		} else {
 			Raul::warn << uri() << " has no library path" << std::endl;
 			return empty_string;

@@ -125,11 +125,11 @@ PluginUI::create(Ingen::Shared::World* world,
 
 	static const char* gtk_ui_uri = "http://lv2plug.in/ns/extensions/ui#GtkUI";
 
-	LilvValue* gtk_ui = lilv_new_uri(world->lilv_world(), gtk_ui_uri);
+	LilvNode* gtk_ui = lilv_new_uri(world->lilv_world(), gtk_ui_uri);
 
-	LilvUIs*         uis     = lilv_plugin_get_uis(plugin);
-	const LilvUI*    ui      = NULL;
-	const LilvValue* ui_type = NULL;
+	LilvUIs*        uis     = lilv_plugin_get_uis(plugin);
+	const LilvUI*   ui      = NULL;
+	const LilvNode* ui_type = NULL;
 	LILV_FOREACH(uis, u, uis) {
 		const LilvUI* this_ui = lilv_uis_get(uis, u);
 		if (lilv_ui_is_supported(this_ui,
@@ -143,7 +143,7 @@ PluginUI::create(Ingen::Shared::World* world,
 	}
 
 	if (!ui) {
-		lilv_value_free(gtk_ui);
+		lilv_node_free(gtk_ui);
 		return SharedPtr<PluginUI>();
 	}
 
@@ -153,15 +153,15 @@ PluginUI::create(Ingen::Shared::World* world,
 	SuilInstance* instance = suil_instance_new(
 		PluginUI::ui_host,
 		ret.get(),
-		lilv_value_as_uri(gtk_ui),
-		lilv_value_as_uri(lilv_plugin_get_uri(plugin)),
-		lilv_value_as_uri(lilv_ui_get_uri(ui)),
-		lilv_value_as_uri(ui_type),
-		lilv_uri_to_path(lilv_value_as_uri(lilv_ui_get_bundle_uri(ui))),
-		lilv_uri_to_path(lilv_value_as_uri(lilv_ui_get_binary_uri(ui))),
+		lilv_node_as_uri(gtk_ui),
+		lilv_node_as_uri(lilv_plugin_get_uri(plugin)),
+		lilv_node_as_uri(lilv_ui_get_uri(ui)),
+		lilv_node_as_uri(ui_type),
+		lilv_uri_to_path(lilv_node_as_uri(lilv_ui_get_bundle_uri(ui))),
+		lilv_uri_to_path(lilv_node_as_uri(lilv_ui_get_binary_uri(ui))),
 		ret->_features->array());
 
-	lilv_value_free(gtk_ui);
+	lilv_node_free(gtk_ui);
 
 	if (instance) {
 		ret->_instance = instance;

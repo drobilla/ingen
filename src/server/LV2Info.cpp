@@ -64,13 +64,13 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 
 LV2Info::~LV2Info()
 {
-	lilv_value_free(input_class);
-	lilv_value_free(output_class);
-	lilv_value_free(control_class);
-	lilv_value_free(audio_class);
-	lilv_value_free(event_class);
-	lilv_value_free(value_port_class);
-	lilv_value_free(message_port_class);
+	lilv_node_free(input_class);
+	lilv_node_free(output_class);
+	lilv_node_free(control_class);
+	lilv_node_free(audio_class);
+	lilv_node_free(event_class);
+	lilv_node_free(value_port_class);
+	lilv_node_free(message_port_class);
 }
 
 } // namespace Server
