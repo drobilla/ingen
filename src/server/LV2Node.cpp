@@ -150,7 +150,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	_features = info->world().lv2_features()->lv2_features(&info->world(), this);
 
 	uint32_t port_buffer_size = 0;
-	LilvValue* ctx_ext_uri = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* ctx_ext_uri = lilv_new_uri(info->lv2_world(),
 	                                            LV2_CONTEXTS_URI "#MessageContext");
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
@@ -189,22 +189,22 @@ LV2Node::instantiate(BufferFactory& bufs)
 	float* def_values = new float[num_ports];
 	lilv_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
 
-	LilvValue* context_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* context_pred = lilv_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/contexts#context");
 
-	LilvValue* default_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* default_pred = lilv_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/lv2core#default");
 
-	LilvValue* min_size_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* min_size_pred = lilv_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/resize-port#minimumSize");
 
-	LilvValue* port_property_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* port_property_pred = lilv_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/lv2core#portProperty");
 
-	LilvValue* supports_pred = lilv_value_new_uri(info->lv2_world(),
+	LilvValue* supports_pred = lilv_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/atom#supports");
 
-	//LilvValue as_large_as_pred = lilv_value_new_uri(info->lv2_world(),
+	//LilvValue as_large_as_pred = lilv_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/ext/resize-port#asLargeAs");
 
 	for (uint32_t j = 0; j < num_ports; ++j) {

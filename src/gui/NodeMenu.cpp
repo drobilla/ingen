@@ -86,10 +86,10 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 
 #ifdef HAVE_LILV
 	if (plugin && plugin->type() == PluginModel::LV2) {
-		LilvValue* preset_pred = lilv_value_new_uri(
+		LilvValue* preset_pred = lilv_new_uri(
 			plugin->lilv_world(),
 			"http://lv2plug.in/ns/dev/presets#hasPreset");
-		LilvValue* title_pred = lilv_value_new_uri(
+		LilvValue* title_pred = lilv_new_uri(
 			plugin->lilv_world(),
 			"http://dublincore.org/documents/dcmi-namespace/title");
 		LilvValues* presets = lilv_plugin_get_value(
@@ -182,16 +182,16 @@ NodeMenu::on_preset_activated(const std::string& uri)
 	const NodeModel* const   node   = (NodeModel*)_object.get();
 	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(node->plugin());
 
-	LilvValue* port_pred = lilv_value_new_uri(
+	LilvValue* port_pred = lilv_new_uri(
 		plugin->lilv_world(),
 		"http://lv2plug.in/ns/lv2core#port");
-	LilvValue* symbol_pred = lilv_value_new_uri(
+	LilvValue* symbol_pred = lilv_new_uri(
 		plugin->lilv_world(),
 		"http://lv2plug.in/ns/lv2core#symbol");
-	LilvValue* value_pred = lilv_value_new_uri(
+	LilvValue* value_pred = lilv_new_uri(
 		plugin->lilv_world(),
 		"http://lv2plug.in/ns/ext/presets#value");
-	LilvValue*  subject = lilv_value_new_uri(plugin->lilv_world(), uri.c_str());
+	LilvValue*  subject = lilv_new_uri(plugin->lilv_world(), uri.c_str());
 	LilvValues* ports   = lilv_plugin_get_value_for_subject(
 		plugin->lilv_plugin(),
 		subject,

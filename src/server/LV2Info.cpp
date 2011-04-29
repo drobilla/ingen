@@ -39,14 +39,14 @@ namespace Ingen {
 namespace Server {
 
 LV2Info::LV2Info(Ingen::Shared::World* world)
-	: input_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_INPUT))
-	, output_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_OUTPUT))
-	, control_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_CONTROL))
-	, audio_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_AUDIO))
-	, event_class(lilv_value_new_uri(world->lilv_world(), LILV_PORT_CLASS_EVENT))
-	, value_port_class(lilv_value_new_uri(world->lilv_world(),
+	: input_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_INPUT))
+	, output_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_OUTPUT))
+	, control_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_CONTROL))
+	, audio_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_AUDIO))
+	, event_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_EVENT))
+	, value_port_class(lilv_new_uri(world->lilv_world(),
 	                                      "http://lv2plug.in/ns/ext/atom#ValuePort"))
-	, message_port_class(lilv_value_new_uri(world->lilv_world(),
+	, message_port_class(lilv_new_uri(world->lilv_world(),
 	                     "http://lv2plug.in/ns/ext/atom#MessagePort"))
 	, _world(world)
 {
