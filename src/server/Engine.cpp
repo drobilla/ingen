@@ -63,6 +63,7 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _message_context(new MessageContext(*this))
 	, _node_factory(new NodeFactory(a_world))
 	, _post_processor(new PostProcessor(*this, event_queue_size()))
+	, _quit_flag(false)
 {
 	if (a_world->store()) {
 		assert(PtrCast<EngineStore>(a_world->store()));
