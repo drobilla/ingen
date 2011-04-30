@@ -39,15 +39,15 @@ namespace Ingen {
 namespace Server {
 
 LV2Info::LV2Info(Ingen::Shared::World* world)
-	: input_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_INPUT))
-	, output_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_OUTPUT))
-	, control_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_CONTROL))
-	, audio_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_AUDIO))
-	, event_class(lilv_new_uri(world->lilv_world(), LILV_PORT_CLASS_EVENT))
+	: input_class(lilv_new_uri(world->lilv_world(), LILV_URI_INPUT_PORT))
+	, output_class(lilv_new_uri(world->lilv_world(), LILV_URI_OUTPUT_PORT))
+	, control_class(lilv_new_uri(world->lilv_world(), LILV_URI_CONTROL_PORT))
+	, audio_class(lilv_new_uri(world->lilv_world(), LILV_URI_AUDIO_PORT))
+	, event_class(lilv_new_uri(world->lilv_world(), LILV_URI_EVENT_PORT))
 	, value_port_class(lilv_new_uri(world->lilv_world(),
-	                                      "http://lv2plug.in/ns/ext/atom#ValuePort"))
+	                                "http://lv2plug.in/ns/ext/atom#ValuePort"))
 	, message_port_class(lilv_new_uri(world->lilv_world(),
-	                     "http://lv2plug.in/ns/ext/atom#MessagePort"))
+	                                  "http://lv2plug.in/ns/ext/atom#MessagePort"))
 	, _world(world)
 {
 	assert(world);
