@@ -99,8 +99,8 @@ NodeMenu::init(SharedPtr<NodeModel> node)
 
 			LILV_FOREACH(nodes, i, presets) {
 				const LilvNode* uri = lilv_nodes_get(presets, i);
-				LilvNodes* titles   = lilv_plugin_get_value_for_subject(
-					plugin->lilv_plugin(), uri, title_pred);
+				LilvNodes* titles   = lilv_world_find_nodes(
+					plugin->lilv_world(), uri, title_pred, NULL);
 				if (titles) {
 					const LilvNode* title = lilv_nodes_get_first(titles);
 					_presets_menu->items().push_back(
@@ -192,17 +192,18 @@ NodeMenu::on_preset_activated(const std::string& uri)
 		plugin->lilv_world(),
 		"http://lv2plug.in/ns/ext/presets#value");
 	LilvNode*  subject = lilv_new_uri(plugin->lilv_world(), uri.c_str());
-	LilvNodes* ports   = lilv_plugin_get_value_for_subject(
-		plugin->lilv_plugin(),
+	LilvNodes* ports   = lilv_world_find_nodes(
+		plugin->lilv_world(),
 		subject,
-		port_pred);
+		port_pred,
+		NULL);
 	App::instance().engine()->bundle_begin();
 	LILV_FOREACH(nodes, i, ports) {
-		const LilvNode*  uri    = lilv_nodes_get(ports, i);
-		LilvNodes* values = lilv_plugin_get_value_for_subject(
-			plugin->lilv_plugin(), uri, value_pred);
-		LilvNodes* symbols = lilv_plugin_get_value_for_subject(
-			plugin->lilv_plugin(), uri, symbol_pred);
+		const LilvNode* uri = lilv_nodes_get(ports, i);
+		LilvNodes* values = lilv_world_find_nodes(
+			plugin->lilv_world(), uri, value_pred, NULL);
+		LilvNodes* symbols = lilv_world_find_nodes(
+			plugin->lilv_world(), uri, symbol_pred, NULL);
 		if (values && symbols) {
 			const LilvNode* val = lilv_nodes_get_first(values);
 			const LilvNode* sym = lilv_nodes_get_first(symbols);
