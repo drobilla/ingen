@@ -112,10 +112,12 @@ Parser::find_patches(Ingen::Shared::World* world,
 {
 	const Sord::URI ingen_Patch (*world->rdf_world(), NS_INGEN "Patch");
 	const Sord::URI rdf_type    (*world->rdf_world(), NS_RDF   "type");
-	const Sord::URI rdfs_seeAlso(*world->rdf_world(),  NS_RDFS  "seeAlso");
+	const Sord::URI rdfs_seeAlso(*world->rdf_world(), NS_RDFS  "seeAlso");
 
 	Sord::Model model(*world->rdf_world(), manifest_uri);
-	model.load_file(manifest_uri);
+	SerdEnv* env = serd_env_new();
+	model.load_file(env, manifest_uri);
+	serd_env_free(env);
 
 	std::list<PatchRecord> records;
 	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
@@ -167,7 +169,9 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 
 	// Load patch file into model
 	Sord::Model model(*world->rdf_world(), file_uri);
-	model.load_file(file_uri);
+	SerdEnv* env = serd_env_new();
+	model.load_file(env, file_uri);
+	serd_env_free(env);
 
 	LOG(info) << "Parsing " << file_uri << endl;
 	if (parent)
@@ -199,7 +203,9 @@ Parser::parse_string(Ingen::Shared::World*                    world,
 {
 	// Load string into model
 	Sord::Model model(*world->rdf_world(), base_uri);
-	model.load_string(str.c_str(), str.length(), base_uri);
+	SerdEnv* env = serd_env_new();
+	model.load_string(env, str.c_str(), str.length(), base_uri);
+	serd_env_free(env);
 
 	LOG(info) << "Parsing string";
 	if (!base_uri.empty())
@@ -506,7 +512,9 @@ Parser::parse_node(Ingen::Shared::World*                    world,
 			string((const char*)sub_uri.buf) + "/" + basename + ".ttl";
 
 		Sord::Model sub_model(*world->rdf_world(), sub_file);
-		sub_model.load_file(sub_file);
+		SerdEnv* env = serd_env_new();
+		sub_model.load_file(env, sub_file);
+		serd_env_free(env);
 
 		Sord::URI sub_node(*world->rdf_world(), sub_file);
 		parse_patch(world, target, sub_model, sub_node,
