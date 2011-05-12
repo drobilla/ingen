@@ -70,8 +70,6 @@ public:
 	}
 
 	const Raul::Atom& get_property(const Raul::URI& key) const;
-	void              add_meta_property(const Raul::URI& key, const Raul::Atom& value);
-	void              set_meta_property(const Raul::URI& key, const Raul::Atom& value);
 
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;

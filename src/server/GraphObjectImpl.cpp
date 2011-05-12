@@ -37,18 +37,6 @@ GraphObjectImpl::GraphObjectImpl(Ingen::Shared::LV2URIMap& uris,
 {
 }
 
-void
-GraphObjectImpl::add_meta_property(const Raul::URI& key, const Atom& value)
-{
-	add_property(key, Resource::Property(value, Resource::INTERNAL));
-}
-
-void
-GraphObjectImpl::set_meta_property(const Raul::URI& key, const Atom& value)
-{
-	set_property(key, Resource::Property(value, Resource::INTERNAL));
-}
-
 const Atom&
 GraphObjectImpl::get_property(const Raul::URI& key) const
 {

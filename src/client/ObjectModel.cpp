@@ -54,12 +54,6 @@ ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value)
 	return ResourceImpl::set_property(key, value);
 }
 
-Raul::Atom&
-ObjectModel::set_meta_property(const Raul::URI& key, const Raul::Atom& value)
-{
-	return set_property(key, Resource::Property(value, Resource::INTERNAL));
-}
-
 void
 ObjectModel::add_property(const Raul::URI& key, const Raul::Atom& value)
 {
