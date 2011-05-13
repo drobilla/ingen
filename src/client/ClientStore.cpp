@@ -153,7 +153,7 @@ ClientStore::remove_object(const Path& path)
 }
 
 SharedPtr<PluginModel>
-ClientStore::plugin(const URI& uri)
+ClientStore::_plugin(const URI& uri)
 {
 	assert(uri.length() > 0);
 	Plugins::iterator i = _plugins->find(uri);
@@ -161,6 +161,12 @@ ClientStore::plugin(const URI& uri)
 		return SharedPtr<PluginModel>();
 	else
 		return (*i).second;
+}
+
+SharedPtr<const PluginModel>
+ClientStore::plugin(const Raul::URI& uri) const
+{
+	return const_cast<ClientStore*>(this)->_plugin(uri);
 }
 
 SharedPtr<ObjectModel>
@@ -185,18 +191,24 @@ ClientStore::object(const Path& path) const
 }
 
 SharedPtr<Resource>
-ClientStore::resource(const URI& uri)
+ClientStore::_resource(const URI& uri)
 {
 	if (Path::is_path(uri))
 		return _object(uri.str());
 	else
-		return plugin(uri);
+		return _plugin(uri);
+}
+
+SharedPtr<const Resource>
+ClientStore::resource(const Raul::URI& uri) const
+{
+	return const_cast<ClientStore*>(this)->_resource(uri);
 }
 
 void
 ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 {
-	SharedPtr<PluginModel> existing = this->plugin(pm->uri());
+	SharedPtr<PluginModel> existing = _plugin(pm->uri());
 	if (existing) {
 		existing->set(pm);
 	} else {
@@ -315,7 +327,7 @@ ClientStore::put(const URI&                  uri,
 		const Iterator p = properties.find(_uris->rdf_instanceOf);
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == Atom::URI) {
-			if (!(plug = plugin(p->second.get_uri()))) {
+			if (!(plug = _plugin(p->second.get_uri()))) {
 				LOG(warn) << "Unable to find plugin " << p->second.get_uri() << endl;
 				plug = SharedPtr<PluginModel>(
 					new PluginModel(uris(),
@@ -389,11 +401,11 @@ ClientStore::delta(const URI&                  uri,
 void
 ClientStore::set_property(const URI& subject_uri, const URI& predicate, const Atom& value)
 {
-	SharedPtr<Resource> subject = resource(subject_uri);
+	SharedPtr<Resource> subject = _resource(subject_uri);
 	if (subject) {
 		subject->set_property(predicate, value);
 	} else {
-		SharedPtr<PluginModel> plugin = this->plugin(subject_uri);
+		SharedPtr<PluginModel> plugin = _plugin(subject_uri);
 		if (plugin)
 			plugin->set_property(predicate, value);
 		else
