@@ -225,13 +225,13 @@ Disconnect::execute(ProcessContext& context)
 void
 Disconnect::post_process()
 {
-    if (_error == NO_ERROR) {
-        if (_request)
-            _request->respond_ok();
-        _engine.broadcaster()->disconnect(_src_port->path(), _dst_port->path());
-    } else {
-        string msg("Unable to disconnect ");
-        msg.append(_src_port_path.str() + " => " + _dst_port_path.str());
+	if (_error == NO_ERROR) {
+		if (_request)
+			_request->respond_ok();
+		_engine.broadcaster()->disconnect(_src_port->path(), _dst_port->path());
+	} else {
+		string msg("Unable to disconnect ");
+		msg.append(_src_port_path.str() + " => " + _dst_port_path.str());
 		msg.append(" (");
 		switch (_error) {
 		case PARENT_PATCH_DIFFERENT:
@@ -256,11 +256,11 @@ Disconnect::post_process()
 			break;
 		}
 		msg.append(")");
-        if (_request)
-            _request->respond_error(msg);
-    }
+		if (_request)
+			_request->respond_error(msg);
+	}
 
-    delete _impl;
+	delete _impl;
 }
 
 } // namespace Server

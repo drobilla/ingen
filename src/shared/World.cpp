@@ -172,12 +172,12 @@ public:
 	LV2Features*                         lv2_features;
 	Sord::World*                         rdf_world;
 	SharedPtr<LV2URIMap>                 uris;
-    SharedPtr<ServerInterface>           engine;
+	SharedPtr<ServerInterface>           engine;
 	SharedPtr<EngineBase>                local_engine;
-    SharedPtr<Serialisation::Serialiser> serialiser;
-    SharedPtr<Serialisation::Parser>     parser;
-    SharedPtr<Store>                     store;
-    LilvWorld*                           lilv_world;
+	SharedPtr<Serialisation::Serialiser> serialiser;
+	SharedPtr<Serialisation::Parser>     parser;
+	SharedPtr<Store>                     store;
+	LilvWorld*                           lilv_world;
 	std::string                          jack_uuid;
 };
 

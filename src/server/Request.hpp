@@ -42,7 +42,7 @@ public:
 	        ClientInterface* client=0,
 	        int32_t          id=1)
 		: _source(source)
-        , _client(client)
+		, _client(client)
 		, _id(id)
 	{}
 
@@ -53,10 +53,10 @@ public:
 	ClientInterface* client() const { return _client; }
 	void set_client(ClientInterface* client) { _client = client; }
 
-    void unblock() {
-        if (_source)
-            _source->unblock();
-    }
+	void unblock() {
+		if (_source)
+			_source->unblock();
+	}
 
 	void respond_ok() {
 		if (_client)
@@ -69,7 +69,7 @@ public:
 	}
 
 private:
-    EventSource*     _source;
+	EventSource*     _source;
 	ClientInterface* _client;
 	int32_t          _id;
 };

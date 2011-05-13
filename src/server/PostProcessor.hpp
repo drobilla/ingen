@@ -48,8 +48,8 @@ public:
 	/** Push a list of events on to the process queue, realtime-safe, not thread-safe. */
 	inline void append(Raul::List<Event*>* l) { _events.append(*l); }
 
-    /** Post-process and delete all pending events */
-    void process();
+	/** Post-process and delete all pending events */
+	void process();
 
 	/** Set the latest event time that should be post-processed */
 	void set_end_time(FrameTime time) { _max_time = time; }

@@ -68,7 +68,7 @@ private:
 
 	static SuilHost* ui_host;
 
-    SharedPtr<Shared::LV2Features::FeatureArray> _features;
+	SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
 
 } // namespace Client

@@ -111,8 +111,8 @@ OSCClientReceiver::generic_cb(const char* path, const char* types, lo_arg** argv
 	for (int i=0; i < argc; ++i) {
 		lo_arg_pp(lo_type(types[i]), argv[i]);
 		printf("\t");
-    }
-    printf("\n");
+	}
+	printf("\n");
 
 	return 1;  // not handled
 }
