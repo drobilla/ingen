@@ -24,8 +24,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 
-#include <glibmm/module.h>
-
 #include "raul/Configuration.hpp"
 #include "raul/SharedPtr.hpp"
 

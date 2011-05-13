@@ -33,6 +33,7 @@
 #include <glibmm/convert.h>
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
+#include <glibmm/module.h>
 
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
