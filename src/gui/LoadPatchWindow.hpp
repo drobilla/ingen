@@ -42,9 +42,11 @@ class LoadPatchWindow : public Gtk::FileChooserDialog
 public:
 	LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_patch(SharedPtr<PatchModel> patch);
+	void set_patch(SharedPtr<const PatchModel> patch);
 
-	void present(SharedPtr<PatchModel> patch, bool import, GraphObject::Properties data);
+	void present(SharedPtr<const PatchModel> patch,
+	             bool                        import,
+	             GraphObject::Properties     data);
 
 protected:
 	void on_show();
@@ -62,7 +64,7 @@ private:
 
 	GraphObject::Properties _initial_data;
 
-	SharedPtr<PatchModel> _patch;
+	SharedPtr<const PatchModel> _patch;
 
 	Gtk::Label*       _symbol_label;
 	Gtk::Entry*       _symbol_entry;

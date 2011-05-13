@@ -41,11 +41,10 @@ namespace GUI {
 ArtVpathDash* Port::_dash;
 
 SharedPtr<Port>
-Port::create(
-		boost::shared_ptr<FlowCanvas::Module> module,
-		SharedPtr<PortModel>                  pm,
-		bool                                  human_name,
-		bool                                  flip)
+Port::create(boost::shared_ptr<FlowCanvas::Module> module,
+             SharedPtr<const PortModel>            pm,
+             bool                                  human_name,
+             bool                                  flip)
 {
 	Glib::ustring label(human_name ? "" : pm->path().symbol());
 	if (human_name) {
@@ -63,11 +62,10 @@ Port::create(
 
 /** @a flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(
-		boost::shared_ptr<FlowCanvas::Module> module,
-		SharedPtr<PortModel>                  pm,
-		const string&                         name,
-		bool                                  flip)
+Port::Port(boost::shared_ptr<FlowCanvas::Module> module,
+           SharedPtr<const PortModel>            pm,
+           const string&                         name,
+           bool                                  flip)
 	: FlowCanvas::Port(module, name,
 			flip ? (!pm->is_input()) : pm->is_input(),
 			App::instance().configuration()->get_port_color(pm.get()))
@@ -111,9 +109,9 @@ Port::~Port()
 void
 Port::update_metadata()
 {
-	SharedPtr<PortModel> pm = _port_model.lock();
+	SharedPtr<const PortModel> pm = _port_model.lock();
 	if (App::instance().can_control(pm.get()) && pm->is_numeric()) {
-		boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(pm->parent());
+		boost::shared_ptr<const NodeModel> parent = PtrCast<const NodeModel>(pm->parent());
 		if (parent) {
 			float min = 0.0f;
 			float max = 1.0f;
@@ -184,10 +182,10 @@ Port::set_control(float value, bool signal)
 		app.engine()->set_property(model()->path(),
 				world->uris()->ingen_value, Atom(value));
 		PatchWindow* pw = app.window_factory()->patch_window(
-				PtrCast<PatchModel>(model()->parent()));
+				PtrCast<const PatchModel>(model()->parent()));
 		if (!pw)
 			pw = app.window_factory()->patch_window(
-					PtrCast<PatchModel>(model()->parent()->parent()));
+					PtrCast<const PatchModel>(model()->parent()->parent()));
 		if (pw)
 			pw->show_port_status(model().get(), value);
 	}
@@ -225,7 +223,7 @@ ArtVpathDash*
 Port::dash()
 {
 	const LV2URIMap& uris = App::instance().uris();
-	SharedPtr<PortModel> pm = _port_model.lock();
+	SharedPtr<const PortModel> pm = _port_model.lock();
 	if (!pm)
 		return NULL;
 
@@ -248,11 +246,11 @@ Port::set_selected(bool b)
 {
 	if (b != selected()) {
 		FlowCanvas::Port::set_selected(b);
-		SharedPtr<PortModel> pm = _port_model.lock();
+		SharedPtr<const PortModel> pm = _port_model.lock();
 		if (pm && b) {
-			const App&           app  = App::instance();
-			SharedPtr<NodeModel> node = PtrCast<NodeModel>(pm->parent());
-			PatchWindow*         win  = app.window_factory()->parent_patch_window(node);
+			const App&                 app  = App::instance();
+			SharedPtr<const NodeModel> node = PtrCast<NodeModel>(pm->parent());
+			PatchWindow*               win  = app.window_factory()->parent_patch_window(node);
 			if (win) {
 				const std::string& doc = node->plugin_model()->port_documentation(
 					pm->index());

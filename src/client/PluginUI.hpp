@@ -44,9 +44,9 @@ class PluginUI {
 public:
 	~PluginUI();
 
-	static SharedPtr<PluginUI> create(Ingen::Shared::World* world,
-	                                  SharedPtr<NodeModel>  node,
-	                                  const LilvPlugin*     plugin);
+	static SharedPtr<PluginUI> create(Ingen::Shared::World*      world,
+	                                  SharedPtr<const NodeModel> node,
+	                                  const LilvPlugin*          plugin);
 
 	SuilWidget get_widget();
 
@@ -55,16 +55,16 @@ public:
 	                uint32_t    format,
 	                const void* buffer);
 
-	Ingen::Shared::World* world() const { return _world; }
-	SharedPtr<NodeModel>  node()  const { return _node; }
+	Ingen::Shared::World*       world() const { return _world; }
+	SharedPtr<const NodeModel>  node()  const { return _node; }
 
 private:
-	PluginUI(Ingen::Shared::World* world,
-	         SharedPtr<NodeModel>  node);
+	PluginUI(Ingen::Shared::World*       world,
+	         SharedPtr<const NodeModel>  node);
 
-	Ingen::Shared::World* _world;
-	SharedPtr<NodeModel>  _node;
-	SuilInstance*         _instance;
+	Ingen::Shared::World*      _world;
+	SharedPtr<const NodeModel> _node;
+	SuilInstance*              _instance;
 
 	static SuilHost* ui_host;
 

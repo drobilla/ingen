@@ -36,7 +36,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+PatchView::PatchView(BaseObjectType*                        cobject,
+                     const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::Box(cobject)
 	, _breadcrumb_container(NULL)
 	, _enable_signal(true)
@@ -61,7 +62,7 @@ PatchView::PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::X
 }
 
 void
-PatchView::set_patch(SharedPtr<PatchModel> patch)
+PatchView::set_patch(SharedPtr<const PatchModel> patch)
 {
 	assert(!_canvas); // FIXME: remove
 
@@ -114,7 +115,7 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 }
 
 SharedPtr<PatchView>
-PatchView::create(SharedPtr<PatchModel> patch)
+PatchView::create(SharedPtr<const PatchModel> patch)
 {
 	const Glib::RefPtr<Gnome::Glade::Xml>& xml = GladeFactory::new_glade_reference("patch_view_box");
 	PatchView* result = NULL;
@@ -152,7 +153,7 @@ PatchView::canvas_item_entered(Gnome::Canvas::Item* item)
 	if (m)
 		signal_object_entered.emit(m->node().get());
 
-	Port* p = dynamic_cast<Port*>(item);
+	const Port* p = dynamic_cast<const Port*>(item);
 	if (p)
 		signal_object_entered.emit(p->model().get());
 }
@@ -166,7 +167,7 @@ PatchView::canvas_item_left(Gnome::Canvas::Item* item)
 		return;
 	}
 
-	Port* p = dynamic_cast<Port*>(item);
+	const Port* p = dynamic_cast<const Port*>(item);
 	if (p)
 		signal_object_left.emit(p->model().get());
 }

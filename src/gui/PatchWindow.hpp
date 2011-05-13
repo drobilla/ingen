@@ -59,13 +59,13 @@ public:
 	Gtk::TextView* doc_textview() { return _doc_textview; }
 
 	void set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view);
-	void set_patch(SharedPtr<PatchModel> pc, SharedPtr<PatchView> view);
+	void set_patch(SharedPtr<const PatchModel> pc, SharedPtr<PatchView> view);
 
-	SharedPtr<PatchModel> patch() const { return _patch; }
+	SharedPtr<const PatchModel> patch() const { return _patch; }
 
 	Gtk::MenuItem* menu_view_control_window() { return _menu_view_control_window; }
 
-	void show_port_status(PortModel* model, const Raul::Atom& value);
+	void show_port_status(const PortModel* model, const Raul::Atom& value);
 
 protected:
 	void on_show();
@@ -73,11 +73,11 @@ protected:
 	bool on_event(GdkEvent* event);
 
 private:
-	void patch_port_added(SharedPtr<PortModel> port);
-	void patch_port_removed(SharedPtr<PortModel> port);
-	void show_status(ObjectModel* model);
-	void object_entered(ObjectModel* model);
-	void object_left(ObjectModel* model);
+	void patch_port_added(SharedPtr<const PortModel> port);
+	void patch_port_removed(SharedPtr<const PortModel> port);
+	void show_status(const ObjectModel* model);
+	void object_entered(const ObjectModel* model);
+	void object_left(const ObjectModel* model);
 	void editable_changed(bool editable);
 
 	void event_import();
@@ -106,8 +106,8 @@ private:
 	void event_show_engine();
 	void event_clipboard_changed(GdkEventOwnerChange* ev);
 
-	SharedPtr<PatchModel> _patch;
-	SharedPtr<PatchView>  _view;
+	SharedPtr<const PatchModel> _patch;
+	SharedPtr<PatchView>        _view;
 
 	sigc::connection new_port_connection;
 	sigc::connection removed_port_connection;

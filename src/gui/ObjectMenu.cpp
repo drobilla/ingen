@@ -31,12 +31,12 @@ namespace GUI {
 
 ObjectMenu::ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::Menu(cobject)
-	, _enable_signal(false)
 	, _polyphonic_menuitem(NULL)
 	, _disconnect_menuitem(NULL)
 	, _rename_menuitem(NULL)
 	, _destroy_menuitem(NULL)
 	, _properties_menuitem(NULL)
+	, _enable_signal(false)
 {
 	xml->get_widget("object_learn_menuitem", _learn_menuitem);
 	xml->get_widget("object_unlearn_menuitem", _unlearn_menuitem);
@@ -48,7 +48,7 @@ ObjectMenu::ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade:
 }
 
 void
-ObjectMenu::init(SharedPtr<ObjectModel> object)
+ObjectMenu::init(SharedPtr<const ObjectModel> object)
 {
 	_object = object;
 

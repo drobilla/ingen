@@ -32,7 +32,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-ControlPanel::ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+ControlPanel::ControlPanel(BaseObjectType*                        cobject,
+                           const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::HBox(cobject)
 	, _callback_enabled(true)
 {
@@ -48,12 +49,13 @@ ControlPanel::~ControlPanel()
 }
 
 void
-ControlPanel::init(SharedPtr<NodeModel> node, uint32_t poly)
+ControlPanel::init(SharedPtr<const NodeModel> node, uint32_t poly)
 {
 	assert(node != NULL);
 	assert(poly > 0);
 
-	for (NodeModel::Ports::const_iterator i = node->ports().begin(); i != node->ports().end(); ++i) {
+	for (NodeModel::Ports::const_iterator i = node->ports().begin();
+	     i != node->ports().end(); ++i) {
 		add_port(*i);
 	}
 
@@ -73,7 +75,7 @@ ControlPanel::find_port(const Path& path) const
 /** Add a control to the panel for the given port.
  */
 void
-ControlPanel::add_port(SharedPtr<PortModel> pm)
+ControlPanel::add_port(SharedPtr<const PortModel> pm)
 {
 	assert(pm);
 
@@ -146,13 +148,13 @@ ControlPanel::remove_port(const Path& path)
 /** Callback for Controls to notify this of a change.
  */
 void
-ControlPanel::value_changed_atom(SharedPtr<PortModel> port, const Raul::Atom& val)
+ControlPanel::value_changed_atom(SharedPtr<const PortModel> port,
+                                 const Raul::Atom&          val)
 {
 	if (_callback_enabled) {
 		App::instance().engine()->set_property(port->path(),
 				App::instance().uris().ingen_value,
 				val);
-		port->value(val);
 	}
 }
 

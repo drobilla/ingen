@@ -38,14 +38,15 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> model)
+PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas,
+                                 SharedPtr<const PortModel>     model)
 	: FlowCanvas::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
 {
 	assert(canvas);
 	assert(model);
 
-	assert(PtrCast<PatchModel>(model->parent()));
+	assert(PtrCast<const PatchModel>(model->parent()));
 
 	set_stacked_border(model->polyphonic());
 
@@ -54,7 +55,9 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 }
 
 boost::shared_ptr<PatchPortModule>
-PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> model, bool human)
+PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas,
+                        SharedPtr<const PortModel>     model,
+                        bool                           human)
 {
 	boost::shared_ptr<PatchPortModule> ret(new PatchPortModule(canvas, model));
 	boost::shared_ptr<Port> port(Port::create(ret, model, human, true));

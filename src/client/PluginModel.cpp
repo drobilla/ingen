@@ -149,7 +149,7 @@ PluginModel::set(SharedPtr<PluginModel> p)
 }
 
 Symbol
-PluginModel::default_node_symbol()
+PluginModel::default_node_symbol() const
 {
 	const Atom& name_atom = get_property("http://lv2plug.in/ns/lv2core#symbol");
 	if (name_atom.is_valid() && name_atom.type() == Atom::STRING)
@@ -159,7 +159,7 @@ PluginModel::default_node_symbol()
 }
 
 string
-PluginModel::human_name()
+PluginModel::human_name() const
 {
 	const Atom& name_atom = get_property("http://usefulinc.com/ns/doap#name");
 	if (name_atom.type() == Atom::STRING)
@@ -194,7 +194,8 @@ PluginModel::has_ui() const
 }
 
 SharedPtr<PluginUI>
-PluginModel::ui(Ingen::Shared::World* world, SharedPtr<NodeModel> node) const
+PluginModel::ui(Ingen::Shared::World*      world,
+                SharedPtr<const NodeModel> node) const
 {
 	if (_type != LV2)
 		return SharedPtr<PluginUI>();

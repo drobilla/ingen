@@ -29,7 +29,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+NewSubpatchWindow::NewSubpatchWindow(BaseObjectType*                        cobject,
+                                     const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Window(cobject)
 {
 	xml->get_widget("new_subpatch_name_entry", _name_entry);
@@ -46,7 +47,8 @@ NewSubpatchWindow::NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr
 }
 
 void
-NewSubpatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+NewSubpatchWindow::present(SharedPtr<const PatchModel> patch,
+                           GraphObject::Properties     data)
 {
 	set_patch(patch);
 	_initial_data = data;
@@ -58,7 +60,7 @@ NewSubpatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties 
  * This function MUST be called before using the window in any way!
  */
 void
-NewSubpatchWindow::set_patch(SharedPtr<PatchModel> patch)
+NewSubpatchWindow::set_patch(SharedPtr<const PatchModel> patch)
 {
 	_patch = patch;
 }

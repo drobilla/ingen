@@ -42,19 +42,21 @@ namespace GUI {
 class NewSubpatchWindow : public Window
 {
 public:
-	NewSubpatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	NewSubpatchWindow(BaseObjectType*                        cobject,
+	                  const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_patch(SharedPtr<PatchModel> patch);
+	void set_patch(SharedPtr<const PatchModel> patch);
 
-	void present(SharedPtr<PatchModel> patch, GraphObject::Properties data);
+	void present(SharedPtr<const PatchModel> patch,
+	             GraphObject::Properties     data);
 
 private:
 	void name_changed();
 	void ok_clicked();
 	void cancel_clicked();
 
-	GraphObject::Properties _initial_data;
-	SharedPtr<PatchModel>  _patch;
+	GraphObject::Properties     _initial_data;
+	SharedPtr<const PatchModel> _patch;
 
 	Gtk::Entry*      _name_entry;
 	Gtk::Label*      _message_label;

@@ -50,9 +50,9 @@ public:
 	NodeModel(const NodeModel& copy);
 	virtual ~NodeModel();
 
-	typedef std::vector< SharedPtr<PortModel> > Ports;
+	typedef std::vector< SharedPtr<const PortModel> > Ports;
 
-	SharedPtr<PortModel> get_port(const Raul::Symbol& symbol) const;
+	SharedPtr<const PortModel> get_port(const Raul::Symbol& symbol) const;
 
 	Port* port(uint32_t index) const;
 
@@ -63,22 +63,28 @@ public:
 	uint32_t               num_ports()    const { return _ports.size(); }
 	const Ports&           ports()        const { return _ports; }
 
-	void default_port_value_range(SharedPtr<PortModel> port, float& min, float& max) const;
-	void port_value_range(SharedPtr<PortModel> port, float& min, float& max) const;
+	void default_port_value_range(SharedPtr<const PortModel> port,
+	                              float& min, float& max) const;
+	void port_value_range(SharedPtr<const PortModel> port,
+	                      float& min, float& max) const;
 
-	std::string port_label(SharedPtr<PortModel> port) const;
+	std::string port_label(SharedPtr<const PortModel> port) const;
 
 	// Signals
-	INGEN_SIGNAL(new_port, void, SharedPtr<PortModel>);
-	INGEN_SIGNAL(removed_port, void, SharedPtr<PortModel>);
+	INGEN_SIGNAL(new_port, void, SharedPtr<const PortModel>);
+	INGEN_SIGNAL(removed_port, void, SharedPtr<const PortModel>);
 
 protected:
 	friend class ClientStore;
 
-	NodeModel(Shared::LV2URIMap& uris, const Raul::URI& plugin_uri, const Raul::Path& path);
-	NodeModel(Shared::LV2URIMap& uris, SharedPtr<PluginModel> plugin, const Raul::Path& path);
-
+	NodeModel(Shared::LV2URIMap&     uris,
+	          const Raul::URI&       plugin_uri,
+	          const Raul::Path&      path);
+	NodeModel(Shared::LV2URIMap&     uris,
+	          SharedPtr<PluginModel> plugin,
+	          const Raul::Path&      path);
 	NodeModel(const Raul::Path& path);
+
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);
 	void add_port(SharedPtr<PortModel> pm);
@@ -90,9 +96,9 @@ protected:
 
 	virtual void clear();
 
-	Ports                        _ports;      ///< Vector of ports (not a Table to preserve order)
-	Raul::URI                    _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
-	SharedPtr<PluginModel>       _plugin;     ///< The plugin this node is an instance of
+	Ports                  _ports; ///< Vector of ports (not a Table to preserve order)
+	Raul::URI              _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	SharedPtr<PluginModel> _plugin; ///< The plugin this node is an instance of
 
 private:
 	mutable uint32_t _num_values; ///< Size of _min_values and _max_values

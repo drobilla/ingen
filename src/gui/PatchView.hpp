@@ -54,21 +54,22 @@ class SubpatchModule;
 class PatchView : public Gtk::Box
 {
 public:
-	PatchView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	PatchView(BaseObjectType*                        cobject,
+	          const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 
-	SharedPtr<PatchCanvas> canvas()               const { return _canvas; }
-	SharedPtr<PatchModel>  patch()                const { return _patch; }
-	Gtk::ToolItem*         breadcrumb_container() const { return _breadcrumb_container; }
+	SharedPtr<PatchCanvas>       canvas()               const { return _canvas; }
+	SharedPtr<const PatchModel>  patch()                const { return _patch; }
+	Gtk::ToolItem*               breadcrumb_container() const { return _breadcrumb_container; }
 
 	void set_editable(bool editable);
 
-	static SharedPtr<PatchView> create(SharedPtr<PatchModel> patch);
+	static SharedPtr<PatchView> create(SharedPtr<const PatchModel> patch);
 
-	sigc::signal<void, ObjectModel*> signal_object_entered;
-	sigc::signal<void, ObjectModel*> signal_object_left;
+	sigc::signal<void, const ObjectModel*> signal_object_entered;
+	sigc::signal<void, const ObjectModel*> signal_object_left;
 
 private:
-	void set_patch(SharedPtr<PatchModel> patch);
+	void set_patch(SharedPtr<const PatchModel> patch);
 
 	void process_toggled();
 	void poly_changed();
@@ -84,8 +85,8 @@ private:
 
 	void zoom_full();
 
-	SharedPtr<PatchModel>  _patch;
-	SharedPtr<PatchCanvas> _canvas;
+	SharedPtr<const PatchModel> _patch;
+	SharedPtr<PatchCanvas>      _canvas;
 
 	Gtk::ScrolledWindow* _canvas_scrolledwindow;
 

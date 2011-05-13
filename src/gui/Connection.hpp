@@ -38,15 +38,15 @@ class Connection : public FlowCanvas::Connection
 {
 public:
 	Connection(boost::shared_ptr<FlowCanvas::Canvas>      canvas,
-	           boost::shared_ptr<ConnectionModel>         model,
+	           boost::shared_ptr<const ConnectionModel>   model,
 	           boost::shared_ptr<FlowCanvas::Connectable> src,
 	           boost::shared_ptr<FlowCanvas::Connectable> dst,
 	           uint32_t                                   color);
 
-	SharedPtr<ConnectionModel> model() const { return _connection_model; }
+	SharedPtr<const ConnectionModel> model() const { return _connection_model; }
 
 private:
-	SharedPtr<ConnectionModel> _connection_model;
+	SharedPtr<const ConnectionModel> _connection_model;
 };
 
 } // namespace GUI

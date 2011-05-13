@@ -42,11 +42,11 @@ class ControlPanel;
 class NodeControlWindow : public Window
 {
 public:
-	NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly);
-	NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* panel);
+	NodeControlWindow(SharedPtr<const NodeModel> node, uint32_t poly);
+	NodeControlWindow(SharedPtr<const NodeModel> node, ControlPanel* panel);
 	virtual ~NodeControlWindow();
 
-	SharedPtr<NodeModel> node() { return _node; }
+	SharedPtr<const NodeModel> node() const { return _node; }
 
 	ControlPanel* control_panel() const { return _control_panel; }
 
@@ -57,9 +57,9 @@ protected:
 	void on_hide();
 
 private:
-	SharedPtr<NodeModel>    _node;
-	ControlPanel*           _control_panel;
-	bool                    _callback_enabled;
+	SharedPtr<const NodeModel> _node;
+	ControlPanel*              _control_panel;
+	bool                       _callback_enabled;
 
 	bool _position_stored;
 	int  _x;

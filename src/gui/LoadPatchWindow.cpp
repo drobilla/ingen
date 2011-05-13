@@ -40,7 +40,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+LoadPatchWindow::LoadPatchWindow(BaseObjectType*                        cobject,
+                                 const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Gtk::FileChooserDialog(cobject)
 	, _merge_ports(false)
 {
@@ -95,7 +96,9 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gno
 }
 
 void
-LoadPatchWindow::present(SharedPtr<PatchModel> patch, bool import, GraphObject::Properties data)
+LoadPatchWindow::present(SharedPtr<const PatchModel> patch,
+                         bool                        import,
+                         GraphObject::Properties     data)
 {
 	_import = import;
 	set_patch(patch);
@@ -113,7 +116,7 @@ LoadPatchWindow::present(SharedPtr<PatchModel> patch, bool import, GraphObject::
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPatchWindow::set_patch(SharedPtr<PatchModel> patch)
+LoadPatchWindow::set_patch(SharedPtr<const PatchModel> patch)
 {
 	_patch = patch;
 	_symbol_entry->set_text("");

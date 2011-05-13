@@ -50,22 +50,22 @@ class NodeModule : public FlowCanvas::Module
 public:
 	static boost::shared_ptr<NodeModule> create (
 			boost::shared_ptr<PatchCanvas> canvas,
-			SharedPtr<NodeModel> node,
-			bool human_names);
+			SharedPtr<const NodeModel>     node,
+			bool                           human_names);
 
 	virtual ~NodeModule();
 
-	boost::shared_ptr<Port> port(boost::shared_ptr<PortModel> model);
+	boost::shared_ptr<Port> port(boost::shared_ptr<const PortModel> model);
 
-	void remove_port(SharedPtr<PortModel> port);
+	void remove_port(SharedPtr<const PortModel> port);
 
 	virtual void store_location();
 	void show_human_names(bool b);
 
-	SharedPtr<NodeModel> node() const { return _node; }
+	SharedPtr<const NodeModel> node() const { return _node; }
 
 protected:
-	NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node);
+	NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<const NodeModel> node);
 
 	void on_double_click(GdkEventButton* ev);
 
@@ -78,7 +78,7 @@ protected:
 	void rename();
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
-	void add_port(SharedPtr<PortModel> port, bool resize=true);
+	void add_port(SharedPtr<const PortModel> port, bool resize=true);
 
 	void value_changed(uint32_t index, const Raul::Atom& value);
 	void plugin_changed();
@@ -86,11 +86,11 @@ protected:
 
 	void create_menu();
 
-	SharedPtr<NodeModel>   _node;
-	NodeMenu*              _menu;
-	SharedPtr<PluginUI>    _plugin_ui;
-	Gtk::Widget*           _gui_widget;
-	Gtk::Window*           _gui_window; ///< iff popped up
+	SharedPtr<const NodeModel> _node;
+	NodeMenu*                  _menu;
+	SharedPtr<PluginUI>        _plugin_ui;
+	Gtk::Widget*               _gui_widget;
+	Gtk::Window*               _gui_window; ///< iff popped up
 };
 
 } // namespace GUI

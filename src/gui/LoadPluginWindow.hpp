@@ -50,12 +50,12 @@ class LoadPluginWindow : public Window
 public:
 	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_patch(SharedPtr<PatchModel> patch);
+	void set_patch(SharedPtr<const PatchModel> patch);
 	void set_plugins(SharedPtr<const Client::ClientStore::Plugins> plugins);
 
-	void add_plugin(SharedPtr<PluginModel> plugin);
+	void add_plugin(SharedPtr<const PluginModel> plugin);
 
-	void present(SharedPtr<PatchModel> patch, GraphObject::Properties data);
+	void present(SharedPtr<const PatchModel> patch, GraphObject::Properties data);
 
 protected:
 	void on_show();
@@ -79,7 +79,7 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring>              _col_uri;
 
 		// Not displayed:
-		Gtk::TreeModelColumn<SharedPtr<PluginModel> > _col_plugin;
+		Gtk::TreeModelColumn< SharedPtr<const PluginModel> > _col_plugin;
 	};
 
 	/** Column for the filter criteria combo box. */
@@ -101,8 +101,8 @@ private:
 	void name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event);
 #endif
 
-	void set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugin);
-	void new_plugin(SharedPtr<PluginModel> plugin);
+	void set_row(Gtk::TreeModel::Row& row, SharedPtr<const PluginModel> plugin);
+	void new_plugin(SharedPtr<const PluginModel> plugin);
 
 	void plugin_property_changed(const Raul::URI&  plugin,
 	                             const Raul::URI&  predicate,
@@ -111,13 +111,14 @@ private:
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();
 
-	std::string generate_module_name(SharedPtr<PluginModel> plugin, int offset = 0);
+	std::string generate_module_name(SharedPtr<const PluginModel> plugin,
+	                                 int                          offset=0);
 
 	void load_plugin(const Gtk::TreeModel::iterator& iter);
 
 	GraphObject::Properties _initial_data;
 
-	SharedPtr<PatchModel> _patch;
+	SharedPtr<const PatchModel> _patch;
 
 	typedef std::map<Raul::URI, Gtk::TreeModel::iterator> Rows;
 	Rows _rows;

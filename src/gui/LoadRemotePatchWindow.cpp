@@ -33,7 +33,8 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType*                        cobject,
+                                             const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Dialog(cobject)
 {
 	xml->get_widget("load_remote_patch_treeview", _treeview);
@@ -56,7 +57,8 @@ LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType* cobject, const Glib
 }
 
 void
-LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+LoadRemotePatchWindow::present(SharedPtr<const PatchModel> patch,
+                               GraphObject::Properties     data)
 {
 	_liststore->clear();
 
@@ -93,7 +95,7 @@ LoadRemotePatchWindow::present(SharedPtr<PatchModel> patch, GraphObject::Propert
  * This function MUST be called before using the window in any way!
  */
 void
-LoadRemotePatchWindow::set_patch(SharedPtr<PatchModel> patch)
+LoadRemotePatchWindow::set_patch(SharedPtr<const PatchModel> patch)
 {
 	_patch = patch;
 }

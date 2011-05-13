@@ -189,7 +189,8 @@ PatchWindow::set_patch_from_path(const Path& path, SharedPtr<PatchView> view)
 		assert(view->patch()->path() == path);
 		App::instance().window_factory()->present_patch(view->patch(), this, view);
 	} else {
-		SharedPtr<PatchModel> model = PtrCast<PatchModel>(App::instance().store()->object(path));
+		SharedPtr<const PatchModel> model = PtrCast<const PatchModel>(
+			App::instance().store()->object(path));
 		if (model)
 			App::instance().window_factory()->present_patch(model, this);
 	}
@@ -200,7 +201,8 @@ PatchWindow::set_patch_from_path(const Path& path, SharedPtr<PatchView> view)
  * If @a view is NULL, a new view will be created.
  */
 void
-PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
+PatchWindow::set_patch(SharedPtr<const PatchModel> patch,
+                       SharedPtr<PatchView>        view)
 {
 	if (!patch || patch == _patch)
 		return;
@@ -271,7 +273,7 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 }
 
 void
-PatchWindow::patch_port_added(SharedPtr<PortModel> port)
+PatchWindow::patch_port_added(SharedPtr<const PortModel> port)
 {
 	if (port->is_input() && App::instance().can_control(port.get())) {
 		_menu_view_control_window->property_sensitive() = true;
@@ -279,7 +281,7 @@ PatchWindow::patch_port_added(SharedPtr<PortModel> port)
 }
 
 void
-PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
+PatchWindow::patch_port_removed(SharedPtr<const PortModel> port)
 {
 	if (!(port->is_input() && App::instance().can_control(port.get())))
 		return;
@@ -296,19 +298,19 @@ PatchWindow::patch_port_removed(SharedPtr<PortModel> port)
 }
 
 void
-PatchWindow::show_status(ObjectModel* model)
+PatchWindow::show_status(const ObjectModel* model)
 {
 	std::stringstream msg;
 	msg << model->path().chop_scheme();
 
-	PortModel* port = 0;
-	NodeModel* node = 0;
+	const PortModel* port = 0;
+	const NodeModel* node = 0;
 
-	if ((port = dynamic_cast<PortModel*>(model))) {
+	if ((port = dynamic_cast<const PortModel*>(model))) {
 		show_port_status(port, port->value());
 
-	} else if ((node = dynamic_cast<NodeModel*>(model))) {
-		PluginModel* plugin = dynamic_cast<PluginModel*>(node->plugin());
+	} else if ((node = dynamic_cast<const NodeModel*>(model))) {
+		const PluginModel* plugin = dynamic_cast<const PluginModel*>(node->plugin());
 		if (plugin)
 			msg << ((boost::format(" (%1%)") % plugin->human_name()).str());
 		_status_bar->push(msg.str(), STATUS_CONTEXT_HOVER);
@@ -316,12 +318,12 @@ PatchWindow::show_status(ObjectModel* model)
 }
 
 void
-PatchWindow::show_port_status(PortModel* port, const Raul::Atom& value)
+PatchWindow::show_port_status(const PortModel* port, const Raul::Atom& value)
 {
 	std::stringstream msg;
 	msg << port->path().chop_scheme();
 
-	NodeModel* parent = dynamic_cast<NodeModel*>(port->parent().get());
+	const NodeModel* parent = dynamic_cast<const NodeModel*>(port->parent().get());
 	if (parent) {
 		const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
 		if (plugin) {
@@ -340,13 +342,13 @@ PatchWindow::show_port_status(PortModel* port, const Raul::Atom& value)
 }
 
 void
-PatchWindow::object_entered(ObjectModel* model)
+PatchWindow::object_entered(const ObjectModel* model)
 {
 	show_status(model);
 }
 
 void
-PatchWindow::object_left(ObjectModel* model)
+PatchWindow::object_left(const ObjectModel* model)
 {
 	_status_bar->pop(STATUS_CONTEXT_HOVER);
 }
@@ -462,7 +464,7 @@ PatchWindow::event_save_as()
 			continue;
 		}
 
-		_patch->set_property(uris.lv2_symbol, Atom(symbol.c_str()));
+		//_patch->set_property(uris.lv2_symbol, Atom(symbol.c_str()));
 
 		bool confirm = true;
 		if (Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
@@ -495,7 +497,7 @@ more files and/or directories, recursively.  Existing files will be overwritten.
 		if (confirm) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			App::instance().loader()->save_patch(_patch, uri);
-			_patch->set_property(uris.ingen_document, Atom(Atom::URI, uri.c_str()));
+			//_patch->set_property(uris.ingen_document, Atom(Atom::URI, uri.c_str()));
 			_status_bar->push(
 					(boost::format("Saved %1% to %2%") % _patch->path().chop_scheme()
 					 % filename).str(),

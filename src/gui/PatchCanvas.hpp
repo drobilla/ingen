@@ -56,7 +56,7 @@ class NodeModule;
 class PatchCanvas : public FlowCanvas::Canvas
 {
 public:
-	PatchCanvas(SharedPtr<PatchModel> patch, int width, int height);
+	PatchCanvas(SharedPtr<const PatchModel> patch, int width, int height);
 
 	virtual ~PatchCanvas() {}
 
@@ -67,12 +67,12 @@ public:
 	bool show_port_names() const { return _show_port_names; }
 
 	void add_plugin(SharedPtr<PluginModel> pm);
-	void add_node(SharedPtr<NodeModel> nm);
-	void remove_node(SharedPtr<NodeModel> nm);
-	void add_port(SharedPtr<PortModel> pm);
-	void remove_port(SharedPtr<PortModel> pm);
-	void connection(SharedPtr<ConnectionModel> cm);
-	void disconnection(SharedPtr<ConnectionModel> cm);
+	void add_node(SharedPtr<const NodeModel> nm);
+	void remove_node(SharedPtr<const NodeModel> nm);
+	void add_port(SharedPtr<const PortModel> pm);
+	void remove_port(SharedPtr<const PortModel> pm);
+	void connection(SharedPtr<const ConnectionModel> cm);
+	void disconnection(SharedPtr<const ConnectionModel> cm);
 
 	void get_new_module_location(double& x, double& y);
 
@@ -131,9 +131,11 @@ private:
 	void disconnect(boost::shared_ptr<FlowCanvas::Connectable> src,
 	                boost::shared_ptr<FlowCanvas::Connectable> dst);
 
-	SharedPtr<PatchModel> _patch;
+	SharedPtr<const PatchModel> _patch;
 
-	typedef std::map<SharedPtr<ObjectModel>, SharedPtr<FlowCanvas::Module> > Views;
+	typedef std::map<SharedPtr<const ObjectModel>,
+	                 SharedPtr<FlowCanvas::Module>
+	                 > Views;
 	Views _views;
 
 	int                _auto_position_count;
@@ -153,8 +155,6 @@ private:
 
 	ClassMenus _class_menus;
 
-	bool                _human_names;
-	bool                _show_port_names;
 	Gtk::Menu*          _menu;
 	Gtk::Menu*          _internal_menu;
 	Gtk::Menu*          _classless_menu;
@@ -169,6 +169,9 @@ private:
 	Gtk::MenuItem*      _menu_load_patch;
 	Gtk::MenuItem*      _menu_new_patch;
 	Gtk::CheckMenuItem* _menu_edit;
+
+	bool _human_names;
+	bool _show_port_names;
 };
 
 } // namespace GUI

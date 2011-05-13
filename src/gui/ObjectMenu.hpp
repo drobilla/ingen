@@ -41,7 +41,7 @@ class ObjectMenu : public Gtk::Menu
 public:
 	ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void init(SharedPtr<ObjectModel> object);
+	void init(SharedPtr<const ObjectModel> object);
 
 protected:
 	void         on_menu_learn();
@@ -53,15 +53,16 @@ protected:
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
-	bool                   _enable_signal;
-	SharedPtr<ObjectModel> _object;
-	Gtk::MenuItem*         _learn_menuitem;
-	Gtk::MenuItem*         _unlearn_menuitem;
-	Gtk::CheckMenuItem*    _polyphonic_menuitem;
-	Gtk::MenuItem*         _disconnect_menuitem;
-	Gtk::MenuItem*         _rename_menuitem;
-	Gtk::MenuItem*         _destroy_menuitem;
-	Gtk::MenuItem*         _properties_menuitem;
+	SharedPtr<const ObjectModel> _object;
+	Gtk::MenuItem*               _learn_menuitem;
+	Gtk::MenuItem*               _unlearn_menuitem;
+	Gtk::CheckMenuItem*          _polyphonic_menuitem;
+	Gtk::MenuItem*               _disconnect_menuitem;
+	Gtk::MenuItem*               _rename_menuitem;
+	Gtk::MenuItem*               _destroy_menuitem;
+	Gtk::MenuItem*               _properties_menuitem;
+
+	bool _enable_signal;
 };
 
 } // namespace GUI

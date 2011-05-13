@@ -61,7 +61,7 @@ PortModel::set(SharedPtr<ObjectModel> model)
 }
 
 bool
-PortModel::has_context(const Raul::URI& uri)
+PortModel::has_context(const Raul::URI& uri) const
 {
 	const Raul::Atom& context = get_property(_uris.ctx_context);
 	if (uri == _uris.ctx_AudioContext && !context.is_valid())

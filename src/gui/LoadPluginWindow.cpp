@@ -35,7 +35,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+LoadPluginWindow::LoadPluginWindow(BaseObjectType*                        cobject,
+                                   const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Window(cobject)
 	, _name_offset(0)
 	, _has_shown(false)
@@ -107,7 +108,8 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<G
 }
 
 void
-LoadPluginWindow::present(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+LoadPluginWindow::present(SharedPtr<const PatchModel> patch,
+                          GraphObject::Properties     data)
 {
 	set_patch(patch);
 	_initial_data = data;
@@ -148,7 +150,7 @@ LoadPluginWindow::name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton*
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPluginWindow::set_patch(SharedPtr<PatchModel> patch)
+LoadPluginWindow::set_patch(SharedPtr<const PatchModel> patch)
 {
 	if (_patch) {
 		_patch = patch;
@@ -205,7 +207,7 @@ LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 }
 
 void
-LoadPluginWindow::new_plugin(SharedPtr<PluginModel> pm)
+LoadPluginWindow::new_plugin(SharedPtr<const PluginModel> pm)
 {
 	if (is_visible())
 		add_plugin(pm);
@@ -214,7 +216,8 @@ LoadPluginWindow::new_plugin(SharedPtr<PluginModel> pm)
 }
 
 void
-LoadPluginWindow::set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugin)
+LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
+                          SharedPtr<const PluginModel> plugin)
 {
 	const LV2URIMap& uris = App::instance().uris();
 	const Atom& name = plugin->get_property(uris.doap_name);
@@ -241,14 +244,14 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row& row, SharedPtr<PluginModel> plugi
 }
 
 void
-LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
+LoadPluginWindow::add_plugin(SharedPtr<const PluginModel> plugin)
 {
 	if (plugin->lilv_plugin() && lilv_plugin_is_replaced(plugin->lilv_plugin())) {
 		return;
 	}
 
 	Gtk::TreeModel::iterator iter = _plugins_liststore->append();
-	Gtk::TreeModel::Row row = *iter;
+	Gtk::TreeModel::Row      row  = *iter;
 	_rows.insert(make_pair(plugin->uri(), iter));
 
 	set_row(row, plugin);
@@ -261,7 +264,8 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 ///// Event Handlers //////
 
 void
-LoadPluginWindow::plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col)
+LoadPluginWindow::plugin_activated(const Gtk::TreeModel::Path& path,
+                                   Gtk::TreeViewColumn*        col)
 {
 	add_clicked();
 }
@@ -279,7 +283,8 @@ LoadPluginWindow::plugin_selection_changed()
 				*_selection->get_selected_rows().begin());
 		if (iter) {
 			Gtk::TreeModel::Row row = *iter;
-			boost::shared_ptr<PluginModel> p = row.get_value(_plugins_columns._col_plugin);
+			boost::shared_ptr<const PluginModel> p = row.get_value(
+				_plugins_columns._col_plugin);
 			_name_offset = App::instance().store()->child_name_offset(
 					_patch->path(), p->default_node_symbol());
 			_node_name_entry->set_text(generate_module_name(p, _name_offset));
@@ -302,7 +307,8 @@ LoadPluginWindow::plugin_selection_changed()
  * sends the notification back.
  */
 string
-LoadPluginWindow::generate_module_name(SharedPtr<PluginModel> plugin, int offset)
+LoadPluginWindow::generate_module_name(SharedPtr<const PluginModel> plugin,
+                                       int                          offset)
 {
 	std::stringstream ss;
 	ss << plugin->default_node_symbol();
@@ -314,11 +320,11 @@ LoadPluginWindow::generate_module_name(SharedPtr<PluginModel> plugin, int offset
 void
 LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 {
-	const LV2URIMap&       uris       = App::instance().uris();
-	Gtk::TreeModel::Row    row        = *iter;
-	SharedPtr<PluginModel> plugin     = row.get_value(_plugins_columns._col_plugin);
-	bool                   polyphonic = _polyphonic_checkbutton->get_active();
-	string                 name       = _node_name_entry->get_text();
+	const LV2URIMap&             uris       = App::instance().uris();
+	Gtk::TreeModel::Row          row        = *iter;
+	SharedPtr<const PluginModel> plugin     = row.get_value(_plugins_columns._col_plugin);
+	bool                         polyphonic = _polyphonic_checkbutton->get_active();
+	string                       name       = _node_name_entry->get_text();
 
 	if (name.empty())
 		name = generate_module_name(plugin, _name_offset);

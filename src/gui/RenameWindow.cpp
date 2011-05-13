@@ -30,7 +30,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
+RenameWindow::RenameWindow(BaseObjectType*                        cobject,
+                           const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 	: Window(cobject)
 {
 	glade_xml->get_widget("rename_symbol_entry", _symbol_entry);
@@ -39,10 +40,14 @@ RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
 	glade_xml->get_widget("rename_cancel_button", _cancel_button);
 	glade_xml->get_widget("rename_ok_button", _ok_button);
 
-	_symbol_entry->signal_changed().connect(sigc::mem_fun(this, &RenameWindow::values_changed));
-	_label_entry->signal_changed().connect(sigc::mem_fun(this, &RenameWindow::values_changed));
-	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &RenameWindow::cancel_clicked));
-	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &RenameWindow::ok_clicked));
+	_symbol_entry->signal_changed().connect(
+		sigc::mem_fun(this, &RenameWindow::values_changed));
+	_label_entry->signal_changed().connect(
+		sigc::mem_fun(this, &RenameWindow::values_changed));
+	_cancel_button->signal_clicked().connect(
+		sigc::mem_fun(this, &RenameWindow::cancel_clicked));
+	_ok_button->signal_clicked().connect(
+		sigc::mem_fun(this, &RenameWindow::ok_clicked));
 
 	_ok_button->property_sensitive() = false;
 }
@@ -51,7 +56,7 @@ RenameWindow::RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Gl
  * This function MUST be called before using this object in any way.
  */
 void
-RenameWindow::set_object(SharedPtr<ObjectModel> object)
+RenameWindow::set_object(SharedPtr<const ObjectModel> object)
 {
 	_object = object;
 	_symbol_entry->set_text(object->path().symbol());
@@ -61,7 +66,7 @@ RenameWindow::set_object(SharedPtr<ObjectModel> object)
 }
 
 void
-RenameWindow::present(SharedPtr<ObjectModel> object)
+RenameWindow::present(SharedPtr<const ObjectModel> object)
 {
 	set_object(object);
 	_symbol_entry->grab_focus();
@@ -79,7 +84,7 @@ RenameWindow::values_changed()
 	} else if (!Path::is_valid_name(symbol)) {
 		_message_label->set_text("Symbol contains invalid characters");
 		_ok_button->property_sensitive() = false;
-	} else if (App::instance().store()->object(_object->parent()->path().base() + symbol)) {
+	} else if (App::instance().store()->object(_object->parent()->path().child(symbol))) {
 		_message_label->set_text("An object already exists with that path");
 		_ok_button->property_sensitive() = false;
 	} else if (label.empty()) {

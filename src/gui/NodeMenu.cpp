@@ -59,21 +59,22 @@ NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 }
 
 void
-NodeMenu::init(SharedPtr<NodeModel> node)
+NodeMenu::init(SharedPtr<const NodeModel> node)
 {
 	ObjectMenu::init(node);
 
 	_learn_menuitem->signal_activate().connect(sigc::mem_fun(this,
 			&NodeMenu::on_menu_learn));
-	_controls_menuitem->signal_activate().connect(sigc::bind(
-			sigc::mem_fun(App::instance().window_factory(), &WindowFactory::present_controls),
-			node));
-	_popup_gui_menuitem->signal_activate().connect(sigc::mem_fun(signal_popup_gui,
-			&sigc::signal<void>::emit));
-	_embed_gui_menuitem->signal_toggled().connect(sigc::mem_fun(this,
-			&NodeMenu::on_menu_embed_gui));
-	_randomize_menuitem->signal_activate().connect(sigc::mem_fun(this,
-			&NodeMenu::on_menu_randomize));
+	_controls_menuitem->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(App::instance().window_factory(),
+		                         &WindowFactory::present_controls),
+		           node));
+	_popup_gui_menuitem->signal_activate().connect(
+		sigc::mem_fun(signal_popup_gui, &sigc::signal<void>::emit));
+	_embed_gui_menuitem->signal_toggled().connect(
+		sigc::mem_fun(this, &NodeMenu::on_menu_embed_gui));
+	_randomize_menuitem->signal_activate().connect(
+		sigc::mem_fun(this, &NodeMenu::on_menu_randomize));
 
 	const PluginModel* plugin = dynamic_cast<const PluginModel*>(node->plugin());
 	if (plugin && plugin->type() == PluginModel::LV2 && plugin->has_ui()) {

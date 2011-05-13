@@ -32,7 +32,8 @@ namespace Ingen {
 using namespace Client;
 namespace GUI {
 
-PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+PortPropertiesWindow::PortPropertiesWindow(BaseObjectType*                        cobject,
+                                           const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Window(cobject)
 	, _initial_min(0.0f)
 	, _initial_max(1.0f)
@@ -53,7 +54,7 @@ PortPropertiesWindow::PortPropertiesWindow(BaseObjectType* cobject, const Glib::
  * This function MUST be called before using this object in any way.
  */
 void
-PortPropertiesWindow::present(SharedPtr<PortModel> pm)
+PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
 {
 	assert(pm);
 

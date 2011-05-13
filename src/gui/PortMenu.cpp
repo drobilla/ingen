@@ -29,7 +29,8 @@
 namespace Ingen {
 namespace GUI {
 
-PortMenu::PortMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+PortMenu::PortMenu(BaseObjectType*                        cobject,
+                   const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: ObjectMenu(cobject, xml)
 	, _patch_port(NULL)
 {
@@ -40,7 +41,7 @@ PortMenu::PortMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml
 }
 
 void
-PortMenu::init(SharedPtr<PortModel> port, bool patch_port)
+PortMenu::init(SharedPtr<const PortModel> port, bool patch_port)
 {
 	ObjectMenu::init(port);
 	_patch_port = patch_port;
@@ -97,9 +98,9 @@ PortMenu::on_menu_disconnect()
 void
 PortMenu::on_menu_set_min()
 {
-	const LV2URIMap&     uris  = App::instance().uris();
-	SharedPtr<PortModel> model = PtrCast<PortModel>(_object);
-	const Raul::Atom&    value = model->get_property(uris.ingen_value);
+	const LV2URIMap&           uris  = App::instance().uris();
+	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
+	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
 		App::instance().engine()->set_property(_object->path(), uris.lv2_minimum, value);
 }
@@ -107,9 +108,9 @@ PortMenu::on_menu_set_min()
 void
 PortMenu::on_menu_set_max()
 {
-	const LV2URIMap&     uris  = App::instance().uris();
-	SharedPtr<PortModel> model = PtrCast<PortModel>(_object);
-	const Raul::Atom&    value = model->get_property(uris.ingen_value);
+	const LV2URIMap&           uris  = App::instance().uris();
+	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
+	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
 		App::instance().engine()->set_property(_object->path(), uris.lv2_maximum, value);
 }
@@ -117,9 +118,9 @@ PortMenu::on_menu_set_max()
 void
 PortMenu::on_menu_reset_range()
 {
-	const LV2URIMap&     uris   = App::instance().uris();
-	SharedPtr<PortModel> model  = PtrCast<PortModel>(_object);
-	SharedPtr<NodeModel> parent = PtrCast<NodeModel>(_object->parent());
+	const LV2URIMap&           uris   = App::instance().uris();
+	SharedPtr<const PortModel> model  = PtrCast<const PortModel>(_object);
+	SharedPtr<const NodeModel> parent = PtrCast<const NodeModel>(_object->parent());
 
 	float min, max;
 	parent->default_port_value_range(model, min, max);

@@ -85,7 +85,7 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 		PtrCast<ObjectModel>(existing->second)->set(object);
 	} else {
 		if (!object->path().is_root()) {
-			SharedPtr<ObjectModel> parent = this->object(object->path().parent());
+			SharedPtr<ObjectModel> parent = _object(object->path().parent());
 			if (parent) {
 				assert(object->path().is_child_of(parent->path()));
 				object->set_parent(parent);
@@ -137,7 +137,7 @@ ClientStore::remove_object(const Path& path)
 		if (!result->path().is_root()) {
 			assert(result->parent());
 
-			SharedPtr<ObjectModel> parent = this->object(result->path().parent());
+			SharedPtr<ObjectModel> parent = _object(result->path().parent());
 			if (parent) {
 				parent->remove_child(result);
 			}
@@ -164,7 +164,7 @@ ClientStore::plugin(const URI& uri)
 }
 
 SharedPtr<ObjectModel>
-ClientStore::object(const Path& path)
+ClientStore::_object(const Path& path)
 {
 	assert(path.length() > 0);
 	iterator i = find(path);
@@ -178,11 +178,17 @@ ClientStore::object(const Path& path)
 	}
 }
 
+SharedPtr<const ObjectModel>
+ClientStore::object(const Path& path) const
+{
+	return const_cast<ClientStore*>(this)->_object(path);
+}
+
 SharedPtr<Resource>
 ClientStore::resource(const URI& uri)
 {
 	if (Path::is_path(uri))
-		return object(uri.str());
+		return _object(uri.str());
 	else
 		return plugin(uri);
 }
@@ -291,7 +297,7 @@ ClientStore::put(const URI&                  uri,
 
 	const Path path(uri.str());
 
-	SharedPtr<ObjectModel> obj = PtrCast<ObjectModel>(object(path));
+	SharedPtr<ObjectModel> obj = PtrCast<ObjectModel>(_object(path));
 	if (obj) {
 		obj->set_properties(properties);
 		return;
@@ -371,7 +377,7 @@ ClientStore::delta(const URI&                  uri,
 
 	const Path path(uri.str());
 
-	SharedPtr<ObjectModel> obj = object(path);
+	SharedPtr<ObjectModel> obj = _object(path);
 	if (obj) {
 		obj->remove_properties(remove);
 		obj->add_properties(add);
@@ -399,7 +405,7 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 void
 ClientStore::activity(const Path& path)
 {
-	SharedPtr<PortModel> port = PtrCast<PortModel>(object(path));
+	SharedPtr<PortModel> port = PtrCast<PortModel>(_object(path));
 	if (port)
 		port->signal_activity().emit();
 	else
@@ -412,16 +418,16 @@ ClientStore::connection_patch(const Path& src_port_path, const Path& dst_port_pa
 	SharedPtr<PatchModel> patch;
 
 	if (src_port_path.parent() == dst_port_path.parent())
-		patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
+		patch = PtrCast<PatchModel>(_object(src_port_path.parent()));
 
 	if (!patch && src_port_path.parent() == dst_port_path.parent().parent())
-		patch = PtrCast<PatchModel>(this->object(src_port_path.parent()));
+		patch = PtrCast<PatchModel>(_object(src_port_path.parent()));
 
 	if (!patch && src_port_path.parent().parent() == dst_port_path.parent())
-		patch = PtrCast<PatchModel>(this->object(dst_port_path.parent()));
+		patch = PtrCast<PatchModel>(_object(dst_port_path.parent()));
 
 	if (!patch)
-		patch = PtrCast<PatchModel>(this->object(src_port_path.parent().parent()));
+		patch = PtrCast<PatchModel>(_object(src_port_path.parent().parent()));
 
 	if (!patch)
 		LOG(error) << "Unable to find connection patch " << src_port_path
@@ -434,8 +440,8 @@ bool
 ClientStore::attempt_connection(const Path& src_port_path,
                                 const Path& dst_port_path)
 {
-	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_port_path));
-	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_port_path));
+	SharedPtr<PortModel> src_port = PtrCast<PortModel>(_object(src_port_path));
+	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(_object(dst_port_path));
 
 	if (src_port && dst_port) {
 		SharedPtr<PatchModel>      patch = connection_patch(src_port_path, dst_port_path);
@@ -470,8 +476,8 @@ ClientStore::disconnect(const URI& src,
 	const Path src_path(src.str());
 	const Path dst_path(dst.str());
 
-	SharedPtr<PortModel> src_port = PtrCast<PortModel>(object(src_path));
-	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(object(dst_path));
+	SharedPtr<PortModel> src_port = PtrCast<PortModel>(_object(src_path));
+	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(_object(dst_path));
 
 	if (src_port)
 		src_port->disconnected_from(dst_port);
@@ -488,8 +494,8 @@ void
 ClientStore::disconnect_all(const Raul::Path& parent_patch_path,
                             const Raul::Path& path)
 {
-	SharedPtr<PatchModel>  patch  = PtrCast<PatchModel>(object(parent_patch_path));
-	SharedPtr<ObjectModel> object = this->object(path);
+	SharedPtr<PatchModel>  patch  = PtrCast<PatchModel>(_object(parent_patch_path));
+	SharedPtr<ObjectModel> object = _object(path);
 
 	if (!patch || !object)
 		return;

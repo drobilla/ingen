@@ -62,13 +62,12 @@ public:
                     optional<Raul::Symbol>            engine_symbol,
                     optional<GraphObject::Properties> engine_data);
 
-	void save_patch(SharedPtr<PatchModel> model, const string& filename);
+	void save_patch(SharedPtr<const PatchModel> model, const string& filename);
 
 	SharedPtr<Parser> parser();
 
 private:
-
-	void save_patch_event(SharedPtr<PatchModel> model, const string& filename);
+	void save_patch_event(SharedPtr<const PatchModel> model, const string& filename);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	typedef sigc::slot<void> Closure;

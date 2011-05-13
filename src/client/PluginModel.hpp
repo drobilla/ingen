@@ -62,8 +62,8 @@ public:
 
 	virtual const Raul::Atom& get_property(const Raul::URI& key) const;
 
-	Raul::Symbol default_node_symbol();
-	std::string  human_name();
+	Raul::Symbol default_node_symbol() const;
+	std::string  human_name() const;
 	std::string  port_human_name(uint32_t index) const;
 
 #ifdef HAVE_LILV
@@ -81,8 +81,8 @@ public:
 
 	bool has_ui() const;
 
-	SharedPtr<PluginUI> ui(Ingen::Shared::World* world,
-	                       SharedPtr<NodeModel>  node) const;
+	SharedPtr<PluginUI> ui(Ingen::Shared::World*       world,
+	                       SharedPtr<const NodeModel>  node) const;
 
 	const std::string& icon_path() const;
 	static std::string get_lv2_icon_path(const LilvPlugin* plugin);

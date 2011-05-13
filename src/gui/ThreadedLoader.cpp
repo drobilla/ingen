@@ -101,7 +101,8 @@ ThreadedLoader::load_patch(bool                              merge,
 }
 
 void
-ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename)
+ThreadedLoader::save_patch(SharedPtr<const PatchModel> model,
+                           const string&               filename)
 {
 	_mutex.lock();
 
@@ -115,7 +116,8 @@ ThreadedLoader::save_patch(SharedPtr<PatchModel> model, const string& filename)
 }
 
 void
-ThreadedLoader::save_patch_event(SharedPtr<PatchModel> model, const string& filename)
+ThreadedLoader::save_patch_event(SharedPtr<const PatchModel> model,
+                                 const string&               filename)
 {
 	if (App::instance().serialiser()) {
 		if (filename.find(INGEN_BUNDLE_EXT) != string::npos)

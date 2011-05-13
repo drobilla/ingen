@@ -60,26 +60,26 @@ public:
 
 	size_t num_open_patch_windows();
 
-	PatchWindow*       patch_window(SharedPtr<PatchModel> patch);
-	PatchWindow*       parent_patch_window(SharedPtr<NodeModel> node);
-	NodeControlWindow* control_window(SharedPtr<NodeModel> node);
+	PatchWindow*       patch_window(SharedPtr<const PatchModel> patch);
+	PatchWindow*       parent_patch_window(SharedPtr<const NodeModel> node);
+	NodeControlWindow* control_window(SharedPtr<const NodeModel> node);
 
-	void present_patch(SharedPtr<PatchModel> model,
+	void present_patch(SharedPtr<const PatchModel> model,
 	                   PatchWindow*          preferred = NULL,
 	                   SharedPtr<PatchView>  view      = SharedPtr<PatchView>());
 
-	void present_controls(SharedPtr<NodeModel> node);
+	void present_controls(SharedPtr<const NodeModel> node);
 
 	typedef GraphObject::Properties Properties;
 
-	void present_load_plugin(SharedPtr<PatchModel> patch, Properties data=Properties());
-	void present_load_patch(SharedPtr<PatchModel> patch, Properties data=Properties());
-	void present_load_subpatch(SharedPtr<PatchModel> patch, Properties data=Properties());
-	void present_load_remote_patch(SharedPtr<PatchModel> patch, Properties data=Properties());
-	void present_upload_patch(SharedPtr<PatchModel> patch);
-	void present_new_subpatch(SharedPtr<PatchModel> patch, Properties data=Properties());
-	void present_rename(SharedPtr<ObjectModel> object);
-	void present_properties(SharedPtr<ObjectModel> object);
+	void present_load_plugin(SharedPtr<const PatchModel> patch, Properties data=Properties());
+	void present_load_patch(SharedPtr<const PatchModel> patch, Properties data=Properties());
+	void present_load_subpatch(SharedPtr<const PatchModel> patch, Properties data=Properties());
+	void present_load_remote_patch(SharedPtr<const PatchModel> patch, Properties data=Properties());
+	void present_upload_patch(SharedPtr<const PatchModel> patch);
+	void present_new_subpatch(SharedPtr<const PatchModel> patch, Properties data=Properties());
+	void present_rename(SharedPtr<const ObjectModel> object);
+	void present_properties(SharedPtr<const ObjectModel> object);
 
 	bool remove_patch_window(PatchWindow* win, GdkEventAny* ignored = NULL);
 
@@ -89,10 +89,12 @@ private:
 	typedef std::map<Raul::Path, PatchWindow*>       PatchWindowMap;
 	typedef std::map<Raul::Path, NodeControlWindow*> ControlWindowMap;
 
-	PatchWindow* new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view);
+	PatchWindow* new_patch_window(SharedPtr<const PatchModel> patch,
+	                              SharedPtr<PatchView>        view);
 
-	NodeControlWindow* new_control_window(SharedPtr<NodeModel> node);
-	bool               remove_control_window(NodeControlWindow* win, GdkEventAny* ignored);
+	NodeControlWindow* new_control_window(SharedPtr<const NodeModel> node);
+	bool               remove_control_window(NodeControlWindow* win,
+	                                         GdkEventAny*       ignored);
 
 	PatchWindowMap   _patch_windows;
 	ControlWindowMap _control_windows;

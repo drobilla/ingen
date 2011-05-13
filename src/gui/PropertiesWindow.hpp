@@ -38,10 +38,11 @@ namespace GUI {
 class PropertiesWindow : public Window
 {
 public:
-	PropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	PropertiesWindow(BaseObjectType*                        cobject,
+	                 const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void present(SharedPtr<ObjectModel> model) { set_object(model); Gtk::Window::present(); }
-	void set_object(SharedPtr<ObjectModel> model);
+	void present(SharedPtr<const ObjectModel> model);
+	void set_object(SharedPtr<const ObjectModel> model);
 
 private:
 	/** Record of a property (row in the table) */
@@ -83,14 +84,14 @@ private:
 	TypeColumns                  _type_cols;
 	Glib::RefPtr<Gtk::ListStore> _type_choices;
 
-	SharedPtr<ObjectModel> _model;
-	sigc::connection       _property_connection;
-	Gtk::VBox*             _vbox;
-	Gtk::ScrolledWindow*   _scrolledwindow;
-	Gtk::Table*            _table;
-	Gtk::Button*           _cancel_button;
-	Gtk::Button*           _apply_button;
-	Gtk::Button*           _ok_button;
+	SharedPtr<const ObjectModel> _model;
+	sigc::connection             _property_connection;
+	Gtk::VBox*                   _vbox;
+	Gtk::ScrolledWindow*         _scrolledwindow;
+	Gtk::Table*                  _table;
+	Gtk::Button*                 _cancel_button;
+	Gtk::Button*                 _apply_button;
+	Gtk::Button*                 _ok_button;
 };
 
 } // namespace GUI

@@ -38,7 +38,7 @@ class NodeMenu : public ObjectMenu
 public:
 	NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void init(SharedPtr<NodeModel> node);
+	void init(SharedPtr<const NodeModel> node);
 
 	bool has_control_inputs();
 

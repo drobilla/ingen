@@ -54,7 +54,8 @@ namespace Raul { class Deletable; }
 namespace Ingen {
 namespace GUI {
 
-ConnectWindow::ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+ConnectWindow::ConnectWindow(BaseObjectType*                        cobject,
+                             const Glib::RefPtr<Gnome::Glade::Xml>& xml)
 	: Dialog(cobject)
 	, _xml(xml)
 	, _mode(CONNECT_REMOTE)
@@ -444,7 +445,8 @@ ConnectWindow::gtk_callback()
 		++_connect_stage;
 	} else if (_connect_stage == 3) {
 		if (App::instance().store()->size() > 0) {
-			SharedPtr<PatchModel> root = PtrCast<PatchModel>(App::instance().store()->object("/"));
+			SharedPtr<const PatchModel> root = PtrCast<const PatchModel>(
+				App::instance().store()->object("/"));
 			if (root) {
 				set_connected_to(App::instance().engine());
 				App::instance().window_factory()->present_patch(root);

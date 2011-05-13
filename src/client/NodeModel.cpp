@@ -29,7 +29,9 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-NodeModel::NodeModel(Shared::LV2URIMap& uris, SharedPtr<PluginModel> plugin, const Path& path)
+NodeModel::NodeModel(Shared::LV2URIMap&     uris,
+                     SharedPtr<PluginModel> plugin,
+                     const Path&            path)
 	: Node()
 	, ObjectModel(uris, path)
 	, _plugin_uri(plugin->uri())
@@ -40,7 +42,9 @@ NodeModel::NodeModel(Shared::LV2URIMap& uris, SharedPtr<PluginModel> plugin, con
 {
 }
 
-NodeModel::NodeModel(Shared::LV2URIMap& uris, const URI& plugin_uri, const Path& path)
+NodeModel::NodeModel(Shared::LV2URIMap& uris,
+                     const URI&         plugin_uri,
+                     const Path&        path)
 	: Node()
 	, ObjectModel(uris, path)
 	, _plugin_uri(plugin_uri)
@@ -145,7 +149,7 @@ NodeModel::add_port(SharedPtr<PortModel> pm)
 	_signal_new_port.emit(pm);
 }
 
-SharedPtr<PortModel>
+SharedPtr<const PortModel>
 NodeModel::get_port(const Raul::Symbol& symbol) const
 {
 	for (Ports::const_iterator i = _ports.begin(); i != _ports.end(); ++i)
@@ -158,11 +162,12 @@ Ingen::Port*
 NodeModel::port(uint32_t index) const
 {
 	assert(index < num_ports());
-	return dynamic_cast<Ingen::Port*>(_ports[index].get());
+	return const_cast<Ingen::Port*>(dynamic_cast<const Ingen::Port*>(_ports[index].get()));
 }
 
 void
-NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
+NodeModel::default_port_value_range(SharedPtr<const PortModel> port,
+                                    float& min, float& max) const
 {
 	// Default control values
 	min = 0.0;
@@ -189,7 +194,7 @@ NodeModel::default_port_value_range(SharedPtr<PortModel> port, float& min, float
 }
 
 void
-NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) const
+NodeModel::port_value_range(SharedPtr<const PortModel> port, float& min, float& max) const
 {
 	assert(port->parent().get() == this);
 
@@ -208,7 +213,7 @@ NodeModel::port_value_range(SharedPtr<PortModel> port, float& min, float& max) c
 }
 
 std::string
-NodeModel::port_label(SharedPtr<PortModel> port) const
+NodeModel::port_label(SharedPtr<const PortModel> port) const
 {
 	const Raul::Atom& name = port->get_property("http://lv2plug.in/ns/lv2core#name");
 	if (name.is_valid()) {

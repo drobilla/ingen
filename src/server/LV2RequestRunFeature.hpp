@@ -61,7 +61,7 @@ struct RequestRunFeature : public Ingen::Shared::LV2Features::Feature {
 	}
 
 	SharedPtr<LV2_Feature> feature(Shared::World* world, Node* n) {
-		NodeImpl* node = dynamic_cast<NodeImpl*>(n);
+		const NodeImpl* node = dynamic_cast<const NodeImpl*>(n);
 		if (!node)
 			return SharedPtr<LV2_Feature>();
 

@@ -61,9 +61,10 @@ public:
 		SharedPtr<ServerInterface>    engine=SharedPtr<ServerInterface>(),
 		SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
 
-	SharedPtr<PluginModel>  plugin(const Raul::URI& uri);
-	SharedPtr<ObjectModel>  object(const Raul::Path& path);
-	SharedPtr<Resource>     resource(const Raul::URI& uri);
+	SharedPtr<PluginModel> plugin(const Raul::URI& uri);
+	SharedPtr<Resource>    resource(const Raul::URI& uri);
+
+	SharedPtr<const ObjectModel> object(const Raul::Path& path) const;
 
 	void clear();
 
@@ -108,6 +109,8 @@ public:
 
 private:
 	void add(GraphObject* o) { throw; }
+
+	SharedPtr<ObjectModel> _object(const Raul::Path& path);
 
 	void add_object(SharedPtr<ObjectModel> object);
 	SharedPtr<ObjectModel> remove_object(const Raul::Path& path);

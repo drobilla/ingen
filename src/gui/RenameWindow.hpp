@@ -36,24 +36,25 @@ namespace GUI {
 class RenameWindow : public Window
 {
 public:
-	RenameWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	RenameWindow(BaseObjectType*                        cobject,
+	             const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void present(SharedPtr<ObjectModel> object);
+	void present(SharedPtr<const ObjectModel> object);
 
 private:
-	void set_object(SharedPtr<ObjectModel> object);
+	void set_object(SharedPtr<const ObjectModel> object);
 
 	void values_changed();
 	void cancel_clicked();
 	void ok_clicked();
 
-	SharedPtr<ObjectModel> _object;
+	SharedPtr<const ObjectModel> _object;
 
-	Gtk::Entry*      _symbol_entry;
-	Gtk::Entry*      _label_entry;
-	Gtk::Label*      _message_label;
-	Gtk::Button*     _cancel_button;
-	Gtk::Button*     _ok_button;
+	Gtk::Entry*  _symbol_entry;
+	Gtk::Entry*  _label_entry;
+	Gtk::Label*  _message_label;
+	Gtk::Button* _cancel_button;
+	Gtk::Button* _ok_button;
 };
 
 } // namespace GUI

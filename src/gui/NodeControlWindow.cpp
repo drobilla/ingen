@@ -33,7 +33,8 @@ namespace GUI {
 
 /** Create a node control window and load a new ControlPanel for it.
  */
-NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
+NodeControlWindow::NodeControlWindow(SharedPtr<const NodeModel> node,
+                                     uint32_t                   poly)
 	: _node(node)
 	, _position_stored(false)
 	, _x(0)
@@ -62,7 +63,8 @@ NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, uint32_t poly)
 
 /** Create a node control window and with an existing ControlPanel.
  */
-NodeControlWindow::NodeControlWindow(SharedPtr<NodeModel> node, ControlPanel* panel)
+NodeControlWindow::NodeControlWindow(SharedPtr<const NodeModel> node,
+                                     ControlPanel*              panel)
 	: _node(node)
 	, _control_panel(panel)
 {

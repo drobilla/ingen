@@ -30,7 +30,8 @@
 namespace Ingen {
 namespace GUI {
 
-SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PatchModel> patch)
+SubpatchModule::SubpatchModule(boost::shared_ptr<PatchCanvas> canvas,
+                               SharedPtr<const PatchModel>    patch)
 	: NodeModule(canvas, patch)
 	, _patch(patch)
 {

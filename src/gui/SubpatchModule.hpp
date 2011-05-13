@@ -46,7 +46,8 @@ class NodeControlWindow;
 class SubpatchModule : public NodeModule
 {
 public:
-	SubpatchModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PatchModel> controller);
+	SubpatchModule(boost::shared_ptr<PatchCanvas> canvas,
+	               SharedPtr<const PatchModel>    controller);
 	virtual ~SubpatchModule() {}
 
 	void on_double_click(GdkEventButton* ev);
@@ -54,10 +55,10 @@ public:
 	void browse_to_patch();
 	void menu_remove();
 
-	SharedPtr<PatchModel> patch() { return _patch; }
+	SharedPtr<const PatchModel> patch() const { return _patch; }
 
 protected:
-	SharedPtr<PatchModel> _patch;
+	SharedPtr<const PatchModel> _patch;
 };
 
 } // namespace GUI

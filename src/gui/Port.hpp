@@ -42,13 +42,13 @@ class Port : public FlowCanvas::Port
 public:
 	static SharedPtr<Port> create(
 			boost::shared_ptr<FlowCanvas::Module> module,
-			SharedPtr<PortModel>                  pm,
+			SharedPtr<const PortModel>            pm,
 			bool                                  human_name,
 			bool                                  flip=false);
 
 	~Port();
 
-	SharedPtr<PortModel> model() const { return _port_model.lock(); }
+	SharedPtr<const PortModel> model() const { return _port_model.lock(); }
 
 	void create_menu();
 	void update_metadata();
@@ -63,9 +63,9 @@ public:
 
 private:
 	Port(boost::shared_ptr<FlowCanvas::Module> module,
-	     SharedPtr<PortModel>                  pm,
+	     SharedPtr<const PortModel>            pm,
 	     const std::string&                    name,
-	     bool                                  flip=false);
+	     bool                                  flip = false);
 
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 
@@ -74,9 +74,9 @@ private:
 
 	static ArtVpathDash* _dash;
 
-	WeakPtr<PortModel> _port_model;
-	bool               _pressed;
-	bool               _flipped;
+	WeakPtr<const PortModel> _port_model;
+	bool                     _pressed;
+	bool                     _flipped;
 };
 
 } // namespace GUI

@@ -34,11 +34,11 @@ public:
 
 	typedef Raul::Table< Raul::Path, SharedPtr<GraphObject> > Objects;
 
-	const_iterator children_begin(SharedPtr<GraphObject> o) const;
-	const_iterator children_end(SharedPtr<GraphObject> o) const;
+	const_iterator children_begin(SharedPtr<const GraphObject> o) const;
+	const_iterator children_end(SharedPtr<const GraphObject> o) const;
 
-	SharedPtr<GraphObject> find_child(SharedPtr<GraphObject> parent,
-	                                  const std::string&     child_name) const;
+	SharedPtr<GraphObject> find_child(SharedPtr<const GraphObject> parent,
+	                                  const std::string&           child_name) const;
 
 	unsigned child_name_offset(const Raul::Path&   parent,
 	                           const Raul::Symbol& symbol,

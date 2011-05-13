@@ -55,11 +55,13 @@ public:
 class LoadRemotePatchWindow : public Dialog
 {
 public:
-	LoadRemotePatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	LoadRemotePatchWindow(BaseObjectType*                        cobject,
+	                      const Glib::RefPtr<Gnome::Glade::Xml>& xml);
 
-	void set_patch(SharedPtr<PatchModel> patch);
+	void set_patch(SharedPtr<const PatchModel> patch);
 
-	void present(SharedPtr<PatchModel> patch, GraphObject::Properties data);
+	void present(SharedPtr<const PatchModel> patch,
+	             GraphObject::Properties     data);
 
 private:
 	void patch_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
@@ -70,7 +72,7 @@ private:
 
 	GraphObject::Properties _initial_data;
 
-	SharedPtr<PatchModel> _patch;
+	SharedPtr<const PatchModel> _patch;
 
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	Glib::RefPtr<Gtk::ListStore>     _liststore;

@@ -47,14 +47,15 @@ namespace GUI {
  */
 class ControlPanel : public Gtk::HBox {
 public:
-	ControlPanel(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	ControlPanel(BaseObjectType*                        cobject,
+	             const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
 	virtual ~ControlPanel();
 
-	void init(SharedPtr<NodeModel> node, uint32_t poly);
+	void init(SharedPtr<const NodeModel> node, uint32_t poly);
 
 	Control* find_port(const Raul::Path& path) const;
 
-	void add_port(SharedPtr<PortModel> port);
+	void add_port(SharedPtr<const PortModel> port);
 	void remove_port(const Raul::Path& path);
 
 	void enable_port(const Raul::Path& path);
@@ -64,10 +65,10 @@ public:
 	std::pair<int,int> ideal_size()   const { return _ideal_size; }
 
 	// Callback for Control
-	void value_changed_atom(SharedPtr<PortModel> port, const Raul::Atom& val);
+	void value_changed_atom(SharedPtr<const PortModel> port, const Raul::Atom& val);
 
 	template <typename T>
-	void value_changed(SharedPtr<PortModel> port, T val) {
+	void value_changed(SharedPtr<const PortModel> port, T val) {
 		this->value_changed_atom(port, Raul::Atom(val));
 	}
 

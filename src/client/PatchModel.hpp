@@ -57,10 +57,10 @@ public:
 	 * not editable (control mode) you can just change controllers (performing)
 	 */
 	bool get_editable() const { return _editable; }
-	void set_editable(bool e) {
+	void set_editable(bool e) const {
 		if (_editable != e) {
 			_editable = e;
-			_signal_editable.emit(e);
+			const_cast<PatchModel*>(this)->signal_editable().emit(e);
 		}
 	}
 
@@ -90,7 +90,7 @@ private:
 	                       const Ingen::Port* dst_port);
 
 	SharedPtr<Connections> _connections;
-	bool                   _editable;
+	mutable bool           _editable;
 };
 
 } // namespace Client

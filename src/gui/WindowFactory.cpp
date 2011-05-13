@@ -63,10 +63,12 @@ WindowFactory::WindowFactory()
 
 WindowFactory::~WindowFactory()
 {
-	for (PatchWindowMap::iterator i = _patch_windows.begin(); i != _patch_windows.end(); ++i)
+	for (PatchWindowMap::iterator i = _patch_windows.begin();
+	     i != _patch_windows.end(); ++i)
 		delete i->second;
 
-	for (ControlWindowMap::iterator i = _control_windows.begin(); i != _control_windows.end(); ++i)
+	for (ControlWindowMap::iterator i = _control_windows.begin();
+	     i != _control_windows.end(); ++i)
 		delete i->second;
 
 }
@@ -74,12 +76,14 @@ WindowFactory::~WindowFactory()
 void
 WindowFactory::clear()
 {
-	for (PatchWindowMap::iterator i = _patch_windows.begin(); i != _patch_windows.end(); ++i)
+	for (PatchWindowMap::iterator i = _patch_windows.begin();
+	     i != _patch_windows.end(); ++i)
 		delete i->second;
 
 	_patch_windows.clear();
 
-	for (ControlWindowMap::iterator i = _control_windows.begin(); i != _control_windows.end(); ++i)
+	for (ControlWindowMap::iterator i = _control_windows.begin();
+	     i != _control_windows.end(); ++i)
 		delete i->second;
 
 	_control_windows.clear();
@@ -91,7 +95,8 @@ size_t
 WindowFactory::num_open_patch_windows()
 {
 	size_t ret = 0;
-	for (PatchWindowMap::iterator i = _patch_windows.begin(); i != _patch_windows.end(); ++i)
+	for (PatchWindowMap::iterator i = _patch_windows.begin();
+	     i != _patch_windows.end(); ++i)
 		if (i->second->is_visible())
 			++ret;
 
@@ -99,7 +104,7 @@ WindowFactory::num_open_patch_windows()
 }
 
 PatchWindow*
-WindowFactory::patch_window(SharedPtr<PatchModel> patch)
+WindowFactory::patch_window(SharedPtr<const PatchModel> patch)
 {
 	if (!patch)
 		return NULL;
@@ -110,7 +115,7 @@ WindowFactory::patch_window(SharedPtr<PatchModel> patch)
 }
 
 PatchWindow*
-WindowFactory::parent_patch_window(SharedPtr<NodeModel> node)
+WindowFactory::parent_patch_window(SharedPtr<const NodeModel> node)
 {
 	if (!node)
 		return NULL;
@@ -119,7 +124,7 @@ WindowFactory::parent_patch_window(SharedPtr<NodeModel> node)
 }
 
 NodeControlWindow*
-WindowFactory::control_window(SharedPtr<NodeModel> node)
+WindowFactory::control_window(SharedPtr<const NodeModel> node)
 {
 	ControlWindowMap::iterator w = _control_windows.find(node->path());
 
@@ -129,11 +134,13 @@ WindowFactory::control_window(SharedPtr<NodeModel> node)
 /** Present a PatchWindow for a Patch.
  *
  * If @a preferred is not NULL, it will be set to display @a patch if the patch
- * does not already have a visible window, otherwise that window will be presented and
- * @a preferred left unmodified.
+ * does not already have a visible window, otherwise that window will be
+ * presented and @a preferred left unmodified.
  */
 void
-WindowFactory::present_patch(SharedPtr<PatchModel> patch, PatchWindow* preferred, SharedPtr<PatchView> view)
+WindowFactory::present_patch(SharedPtr<const PatchModel> patch,
+                             PatchWindow*                preferred,
+                             SharedPtr<PatchView>        view)
 {
 	assert( !view || view->patch() == patch);
 
@@ -157,7 +164,8 @@ WindowFactory::present_patch(SharedPtr<PatchModel> patch, PatchWindow* preferred
 }
 
 PatchWindow*
-WindowFactory::new_patch_window(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
+WindowFactory::new_patch_window(SharedPtr<const PatchModel> patch,
+                                SharedPtr<PatchView>        view)
 {
 	assert( !view || view->patch() == patch);
 
@@ -193,7 +201,7 @@ WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 }
 
 void
-WindowFactory::present_controls(SharedPtr<NodeModel> node)
+WindowFactory::present_controls(SharedPtr<const NodeModel> node)
 {
 	NodeControlWindow* win = control_window(node);
 
@@ -206,7 +214,7 @@ WindowFactory::present_controls(SharedPtr<NodeModel> node)
 }
 
 NodeControlWindow*
-WindowFactory::new_control_window(SharedPtr<NodeModel> node)
+WindowFactory::new_control_window(SharedPtr<const NodeModel> node)
 {
 	uint32_t poly = 1;
 	if (node->polyphonic() && node->parent())
@@ -236,7 +244,8 @@ WindowFactory::remove_control_window(NodeControlWindow* win, GdkEventAny* ignore
 }
 
 void
-WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+WindowFactory::present_load_plugin(SharedPtr<const PatchModel> patch,
+                                   GraphObject::Properties     data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -248,12 +257,14 @@ WindowFactory::present_load_plugin(SharedPtr<PatchModel> patch, GraphObject::Pro
 	int width, height;
 	w->second->get_size(width, height);
 	_load_plugin_win->set_default_size(width - width / 8, height / 2);
-	_load_plugin_win->set_title(string("Load Plugin - ") + patch->path().chop_scheme() + " - Ingen");
+	_load_plugin_win->set_title(
+		string("Load Plugin - ") + patch->path().chop_scheme() + " - Ingen");
 	_load_plugin_win->present(patch, data);
 }
 
 void
-WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+WindowFactory::present_load_patch(SharedPtr<const PatchModel> patch,
+                                  GraphObject::Properties     data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -264,7 +275,8 @@ WindowFactory::present_load_patch(SharedPtr<PatchModel> patch, GraphObject::Prop
 }
 
 void
-WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+WindowFactory::present_load_subpatch(SharedPtr<const PatchModel> patch,
+                                     GraphObject::Properties     data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -275,7 +287,8 @@ WindowFactory::present_load_subpatch(SharedPtr<PatchModel> patch, GraphObject::P
 }
 
 void
-WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+WindowFactory::present_load_remote_patch(SharedPtr<const PatchModel> patch,
+                                         GraphObject::Properties     data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -286,7 +299,7 @@ WindowFactory::present_load_remote_patch(SharedPtr<PatchModel> patch, GraphObjec
 }
 
 void
-WindowFactory::present_upload_patch(SharedPtr<PatchModel> patch)
+WindowFactory::present_upload_patch(SharedPtr<const PatchModel> patch)
 {
 #ifdef HAVE_CURL
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
@@ -299,7 +312,8 @@ WindowFactory::present_upload_patch(SharedPtr<PatchModel> patch)
 }
 
 void
-WindowFactory::present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::Properties data)
+WindowFactory::present_new_subpatch(SharedPtr<const PatchModel> patch,
+                                    GraphObject::Properties     data)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -310,7 +324,7 @@ WindowFactory::present_new_subpatch(SharedPtr<PatchModel> patch, GraphObject::Pr
 }
 
 void
-WindowFactory::present_rename(SharedPtr<ObjectModel> object)
+WindowFactory::present_rename(SharedPtr<const ObjectModel> object)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(object->path());
 	if (w == _patch_windows.end())
@@ -323,7 +337,7 @@ WindowFactory::present_rename(SharedPtr<ObjectModel> object)
 }
 
 void
-WindowFactory::present_properties(SharedPtr<ObjectModel> object)
+WindowFactory::present_properties(SharedPtr<const ObjectModel> object)
 {
 	PatchWindowMap::iterator w = _patch_windows.find(object->path());
 	if (w == _patch_windows.end())

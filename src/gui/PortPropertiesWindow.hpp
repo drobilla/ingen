@@ -36,9 +36,10 @@ namespace GUI {
 class PortPropertiesWindow : public Window
 {
 public:
-	PortPropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	PortPropertiesWindow(BaseObjectType*                        cobject,
+	                     const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
 
-	void present(SharedPtr<Client::PortModel> port_model);
+	void present(SharedPtr<const Client::PortModel> port_model);
 
 private:
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
@@ -51,12 +52,12 @@ private:
 	float _initial_min;
 	float _initial_max;
 
-	SharedPtr<Client::PortModel> _port_model;
-	Gtk::SpinButton*             _min_spinner;
-	Gtk::SpinButton*             _max_spinner;
-	Gtk::Button*                 _cancel_button;
-	Gtk::Button*                 _ok_button;
-	std::list<sigc::connection>  _connections;
+	SharedPtr<const Client::PortModel> _port_model;
+	Gtk::SpinButton*                   _min_spinner;
+	Gtk::SpinButton*                   _max_spinner;
+	Gtk::Button*                       _cancel_button;
+	Gtk::Button*                       _ok_button;
+	std::list<sigc::connection>        _connections;
 };
 
 } // namespace GUI

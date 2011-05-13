@@ -49,19 +49,21 @@ class PortMenu;
 class PatchPortModule : public FlowCanvas::Module
 {
 public:
-	static boost::shared_ptr<PatchPortModule> create(boost::shared_ptr<PatchCanvas> canvas,
-	                                                 SharedPtr<PortModel>           model,
-	                                                 bool                           human);
+	static boost::shared_ptr<PatchPortModule> create(
+		boost::shared_ptr<PatchCanvas> canvas,
+		SharedPtr<const PortModel>     model,
+		bool                           human);
 
 	virtual void store_location();
 	void show_human_names(bool b);
 
 	void set_name(const std::string& n);
 
-	SharedPtr<PortModel> port() const { return _model; }
+	SharedPtr<const PortModel> port() const { return _model; }
 
 protected:
-	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<PortModel> model);
+	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas,
+	                SharedPtr<const PortModel>     model);
 
 	void create_menu();
 	void set_selected(bool b);
@@ -70,9 +72,9 @@ protected:
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
-	SharedPtr<PortModel> _model;
-	SharedPtr<Port>      _port;
-	PortMenu*            _menu;
+	SharedPtr<const PortModel> _model;
+	SharedPtr<Port>            _port;
+	PortMenu*                  _menu;
 };
 
 } // namespace GUI

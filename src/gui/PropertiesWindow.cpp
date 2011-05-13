@@ -32,7 +32,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-PropertiesWindow::PropertiesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
+PropertiesWindow::PropertiesWindow(BaseObjectType*                        cobject,
+                                   const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
 	: Window(cobject)
 {
 	glade_xml->get_widget("properties_vbox", _vbox);
@@ -74,11 +75,18 @@ PropertiesWindow::reset()
 	_model.reset();
 }
 
+void
+PropertiesWindow::present(SharedPtr<const ObjectModel> model)
+{
+	set_object(model);
+	Gtk::Window::present();
+}
+
 /** Set the node this window is associated with.
  * This function MUST be called before using this object in any way.
  */
 void
-PropertiesWindow::set_object(SharedPtr<ObjectModel> model)
+PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 {
 	reset();
 	_model = model;

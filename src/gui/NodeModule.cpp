@@ -44,7 +44,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeModel> node)
+NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas,
+                       SharedPtr<const NodeModel>     node)
 	: FlowCanvas::Module(canvas, node->path().symbol(), 0, 0, true, canvas->show_port_names())
 	, _node(node)
 	, _gui_widget(NULL)
@@ -61,7 +62,7 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 	node->signal_moved().connect(
 		sigc::mem_fun(this, &NodeModule::rename));
 
-	PluginModel* plugin = dynamic_cast<PluginModel*>(node->plugin());
+	const PluginModel* plugin = dynamic_cast<const PluginModel*>(node->plugin());
 	if (plugin) {
 		plugin->signal_changed().connect(
 			sigc::mem_fun(this, &NodeModule::plugin_changed));
@@ -89,12 +90,12 @@ NodeModule::create_menu()
 
 boost::shared_ptr<NodeModule>
 NodeModule::create(boost::shared_ptr<PatchCanvas> canvas,
-                   SharedPtr<NodeModel>           node,
+                   SharedPtr<const NodeModel>     node,
                    bool                           human)
 {
 	boost::shared_ptr<NodeModule> ret;
 
-	SharedPtr<PatchModel> patch = PtrCast<PatchModel>(node);
+	SharedPtr<const PatchModel> patch = PtrCast<const PatchModel>(node);
 	if (patch)
 		ret = boost::shared_ptr<NodeModule>(new SubpatchModule(canvas, patch));
 	else
@@ -252,7 +253,7 @@ NodeModule::rename()
 }
 
 void
-NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
+NodeModule::add_port(SharedPtr<const PortModel> port, bool resize_to_fit)
 {
 	Module::add_port(Port::create(PtrCast<NodeModule>(shared_from_this()), port,
 			App::instance().configuration()->name_style() == Configuration::HUMAN));
@@ -266,7 +267,7 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 }
 
 boost::shared_ptr<Port>
-NodeModule::port(boost::shared_ptr<PortModel> model)
+NodeModule::port(boost::shared_ptr<const PortModel> model)
 {
 	for (PortVector::const_iterator p = ports().begin(); p != ports().end(); ++p) {
 		SharedPtr<Port> port = PtrCast<Port>(*p);
@@ -277,7 +278,7 @@ NodeModule::port(boost::shared_ptr<PortModel> model)
 }
 
 void
-NodeModule::remove_port(SharedPtr<PortModel> model)
+NodeModule::remove_port(SharedPtr<const PortModel> model)
 {
 	SharedPtr<Port> p = port(model);
 	if (p) {

@@ -58,19 +58,19 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
+PatchCanvas::PatchCanvas(SharedPtr<const PatchModel> patch, int width, int height)
 	: Canvas(width, height)
 	, _patch(patch)
 	, _auto_position_count(0)
 	, _last_click_x(0)
 	, _last_click_y(0)
 	, _paste_count(0)
-	, _human_names(true)
-	, _show_port_names(true)
 	, _menu(NULL)
 	, _internal_menu(NULL)
 	, _classless_menu(NULL)
 	, _plugin_menu(NULL)
+	, _human_names(true)
+	, _show_port_names(true)
 {
 	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
 	xml->get_widget("canvas_menu", _menu);
@@ -392,13 +392,13 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 }
 
 void
-PatchCanvas::add_node(SharedPtr<NodeModel> nm)
+PatchCanvas::add_node(SharedPtr<const NodeModel> nm)
 {
 	boost::shared_ptr<PatchCanvas> shared_this =
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
 
-	SharedPtr<PatchModel> pm = PtrCast<PatchModel>(nm);
-	SharedPtr<NodeModule> module;
+	SharedPtr<const PatchModel> pm = PtrCast<const PatchModel>(nm);
+	SharedPtr<NodeModule>       module;
 	if (pm) {
 		module = SubpatchModule::create(shared_this, pm, _human_names);
 	} else {
@@ -414,7 +414,7 @@ PatchCanvas::add_node(SharedPtr<NodeModel> nm)
 }
 
 void
-PatchCanvas::remove_node(SharedPtr<NodeModel> nm)
+PatchCanvas::remove_node(SharedPtr<const NodeModel> nm)
 {
 	Views::iterator i = _views.find(nm);
 
@@ -425,7 +425,7 @@ PatchCanvas::remove_node(SharedPtr<NodeModel> nm)
 }
 
 void
-PatchCanvas::add_port(SharedPtr<PortModel> pm)
+PatchCanvas::add_port(SharedPtr<const PortModel> pm)
 {
 	boost::shared_ptr<PatchCanvas> shared_this =
 		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
@@ -437,7 +437,7 @@ PatchCanvas::add_port(SharedPtr<PortModel> pm)
 }
 
 void
-PatchCanvas::remove_port(SharedPtr<PortModel> pm)
+PatchCanvas::remove_port(SharedPtr<const PortModel> pm)
 {
 	Views::iterator i = _views.find(pm);
 
@@ -483,7 +483,7 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 }
 
 void
-PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
+PatchCanvas::connection(SharedPtr<const ConnectionModel> cm)
 {
 	assert(cm);
 
@@ -491,8 +491,10 @@ PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 	const SharedPtr<FlowCanvas::Port> dst = get_port_view(cm->dst_port());
 
 	if (src && dst) {
-		add_connection(boost::shared_ptr<GUI::Connection>(new GUI::Connection(shared_from_this(),
-				cm, src, dst, src->color() + 0x22222200)));
+		add_connection(
+			boost::shared_ptr<GUI::Connection>(
+				new GUI::Connection(shared_from_this(), cm, src, dst,
+				                    src->color() + 0x22222200)));
 	} else {
 		LOG(error) << "Unable to find ports to connect "
 			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
@@ -500,7 +502,7 @@ PatchCanvas::connection(SharedPtr<ConnectionModel> cm)
 }
 
 void
-PatchCanvas::disconnection(SharedPtr<ConnectionModel> cm)
+PatchCanvas::disconnection(SharedPtr<const ConnectionModel> cm)
 {
 	const SharedPtr<FlowCanvas::Port> src = get_port_view(cm->src_port());
 	const SharedPtr<FlowCanvas::Port> dst = get_port_view(cm->dst_port());
@@ -761,7 +763,8 @@ PatchCanvas::paste()
 	}
 
 	// Successful connections
-	SharedPtr<PatchModel> root = PtrCast<PatchModel>(clipboard.object(_patch->path()));
+	SharedPtr<const PatchModel> root = PtrCast<const PatchModel>(
+		clipboard.object(_patch->path()));
 	assert(root);
 	for (Patch::Connections::const_iterator i = root->connections().begin();
 			i != root->connections().end(); ++i) {

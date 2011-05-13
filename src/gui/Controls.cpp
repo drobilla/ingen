@@ -60,7 +60,7 @@ Control::~Control()
 }
 
 void
-Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
+Control::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
 {
 	_control_panel = panel;
 	_port_model = pm,
@@ -124,7 +124,7 @@ SliderControl::SliderControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 }
 
 void
-SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
+SliderControl::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
 {
 	_enable_signal = false;
 	_enabled = true;
@@ -297,7 +297,7 @@ ToggleControl::ToggleControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 }
 
 void
-ToggleControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
+ToggleControl::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
 {
 	_enable_signal = false;
 
@@ -355,7 +355,7 @@ StringControl::StringControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::
 }
 
 void
-StringControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
+StringControl::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
 {
 	_enable_signal = false;
 
