@@ -23,7 +23,6 @@
 #include <vector>
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "raul/SharedPtr.hpp"
-#include "ingen-config.h"
 
 namespace Ingen {
 

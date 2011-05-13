@@ -28,7 +28,6 @@
 #include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h"
 
-#include "ingen-config.h"
 #include "LV2Features.hpp"
 
 namespace Ingen {
