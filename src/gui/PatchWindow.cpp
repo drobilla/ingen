@@ -255,12 +255,12 @@ PatchWindow::set_patch(SharedPtr<PatchModel> patch, SharedPtr<PatchView> view)
 
 	set_title(_patch->path().chop_scheme() + " - Ingen");
 
-	new_port_connection = patch->signal_new_port.connect(
-			sigc::mem_fun(this, &PatchWindow::patch_port_added));
-	removed_port_connection = patch->signal_removed_port.connect(
-			sigc::mem_fun(this, &PatchWindow::patch_port_removed));
-	removed_port_connection = patch->signal_editable.connect(
-			sigc::mem_fun(this, &PatchWindow::editable_changed));
+	new_port_connection = patch->signal_new_port().connect(
+		sigc::mem_fun(this, &PatchWindow::patch_port_added));
+	removed_port_connection = patch->signal_removed_port().connect(
+		sigc::mem_fun(this, &PatchWindow::patch_port_removed));
+	removed_port_connection = patch->signal_editable().connect(
+		sigc::mem_fun(this, &PatchWindow::editable_changed));
 
 	show_all();
 

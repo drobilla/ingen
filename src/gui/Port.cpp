@@ -85,16 +85,18 @@ Port::Port(
 	_rect->property_dash() = dash;
 	set_border_width(dash ? 2.0 : 0.0);
 
-	pm->signal_moved.connect(sigc::mem_fun(this, &Port::moved));
+	pm->signal_moved().connect(sigc::mem_fun(this, &Port::moved));
 
 	if (App::instance().can_control(pm.get())) {
 		set_toggled(pm->is_toggle());
 		show_control();
-		pm->signal_property.connect(sigc::mem_fun(this, &Port::property_changed));
-		pm->signal_value_changed.connect(sigc::mem_fun(this, &Port::value_changed));
+		pm->signal_property().connect(
+			sigc::mem_fun(this, &Port::property_changed));
+		pm->signal_value_changed().connect(
+			sigc::mem_fun(this, &Port::value_changed));
 	}
 
-	pm->signal_activity.connect(sigc::mem_fun(this, &Port::activity));
+	pm->signal_activity().connect(sigc::mem_fun(this, &Port::activity));
 
 	update_metadata();
 

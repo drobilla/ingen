@@ -1,4 +1,3 @@
-
 /* This file is part of Ingen.
  * Copyright 2007-2011 David Robillard <http://drobilla.net>
  *
@@ -23,12 +22,12 @@
 #include <algorithm>
 #include <cassert>
 #include <boost/utility.hpp>
-#include <sigc++/sigc++.h>
 #include "raul/Path.hpp"
 #include "raul/URI.hpp"
 #include "raul/SharedPtr.hpp"
 #include "ingen/GraphObject.hpp"
 #include "shared/ResourceImpl.hpp"
+#include "client/signal.hpp"
 
 namespace Ingen {
 
@@ -68,11 +67,11 @@ public:
 	GraphObject* graph_parent() const { return _parent.get(); }
 
 	// Signals
-	sigc::signal<void, SharedPtr<ObjectModel> >             signal_new_child;
-	sigc::signal<void, SharedPtr<ObjectModel> >             signal_removed_child;
-	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
-	sigc::signal<void>                                      signal_destroyed;
-	sigc::signal<void>                                      signal_moved;
+	INGEN_SIGNAL(new_child, void, SharedPtr<ObjectModel>);
+	INGEN_SIGNAL(removed_child, void, SharedPtr<ObjectModel>);
+	INGEN_SIGNAL(property, void, const Raul::URI&, const Raul::Atom&);
+	INGEN_SIGNAL(destroyed, void);
+	INGEN_SIGNAL(moved, void);
 
 protected:
 	friend class ClientStore;

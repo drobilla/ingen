@@ -50,7 +50,7 @@ ObjectModel::~ObjectModel()
 Raul::Atom&
 ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value)
 {
-	signal_property.emit(key, value);
+	_signal_property.emit(key, value);
 	return ResourceImpl::set_property(key, value);
 }
 
@@ -58,7 +58,7 @@ void
 ObjectModel::add_property(const Raul::URI& key, const Raul::Atom& value)
 {
 	ResourceImpl::add_property(key, value);
-	signal_property.emit(key, value);
+	_signal_property.emit(key, value);
 }
 
 const Atom&
@@ -91,7 +91,7 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 	for (Properties::const_iterator v = o->properties().begin();
 	     v != o->properties().end(); ++v) {
 		ResourceImpl::set_property(v->first, v->second);
-		signal_property.emit(v->first, v->second);
+		_signal_property.emit(v->first, v->second);
 	}
 }
 
@@ -100,7 +100,7 @@ ObjectModel::set_path(const Raul::Path& p)
 {
 	_path   = p;
 	_symbol = p.symbol();
-	signal_moved.emit();
+	_signal_moved.emit();
 }
 
 void

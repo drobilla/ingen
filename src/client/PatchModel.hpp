@@ -19,7 +19,6 @@
 #define INGEN_CLIENT_PATCHMODEL_HPP
 
 #include <cassert>
-#include <sigc++/sigc++.h>
 #include "raul/SharedPtr.hpp"
 #include "ingen/Patch.hpp"
 #include "NodeModel.hpp"
@@ -61,16 +60,16 @@ public:
 	void set_editable(bool e) {
 		if (_editable != e) {
 			_editable = e;
-			signal_editable.emit(e);
+			_signal_editable.emit(e);
 		}
 	}
 
 	// Signals
-	sigc::signal<void, SharedPtr<NodeModel> >       signal_new_node;
-	sigc::signal<void, SharedPtr<NodeModel> >       signal_removed_node;
-	sigc::signal<void, SharedPtr<ConnectionModel> > signal_new_connection;
-	sigc::signal<void, SharedPtr<ConnectionModel> > signal_removed_connection;
-	sigc::signal<void, bool>                        signal_editable;
+	INGEN_SIGNAL(new_node, void, SharedPtr<NodeModel>);
+	INGEN_SIGNAL(removed_node, void, SharedPtr<NodeModel>);
+	INGEN_SIGNAL(new_connection, void, SharedPtr<ConnectionModel>);
+	INGEN_SIGNAL(removed_connection, void, SharedPtr<ConnectionModel>);
+	INGEN_SIGNAL(editable, void, bool);
 
 private:
 	friend class ClientStore;

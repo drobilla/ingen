@@ -174,7 +174,7 @@ void
 LoadPluginWindow::on_show()
 {
 	if (!_has_shown) {
-		App::instance().store()->signal_new_plugin.connect(
+		App::instance().store()->signal_new_plugin().connect(
 				sigc::mem_fun(this, &LoadPluginWindow::add_plugin));
 		_has_shown = true;
 	}
@@ -253,9 +253,9 @@ LoadPluginWindow::add_plugin(SharedPtr<PluginModel> plugin)
 
 	set_row(row, plugin);
 
-	plugin->signal_property.connect(sigc::bind<0>(
-			sigc::mem_fun(this, &LoadPluginWindow::plugin_property_changed),
-			plugin->uri()));
+	plugin->signal_property().connect(
+		sigc::bind<0>(sigc::mem_fun(this, &LoadPluginWindow::plugin_property_changed),
+		              plugin->uri()));
 }
 
 ///// Event Handlers //////

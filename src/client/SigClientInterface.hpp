@@ -19,18 +19,17 @@
 #define INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
 
 #include <inttypes.h>
-#include <sigc++/sigc++.h>
 #include "raul/Path.hpp"
 #include "ingen/ClientInterface.hpp"
+#include "client/signal.hpp"
 
 namespace Ingen {
 namespace Client {
 
 /** A LibSigC++ signal emitting interface for clients to use.
  *
- * This simply emits an sigc signal for every event (eg OSC message) coming from
- * the engine.  Use Store (which extends this) if you want a nice client-side
- * model of the engine.
+ * This simply emits a signal for every event that comes from the engine.
+ * For a higher level model based view of the engine, use ClientStore.
  *
  * The signals here match the calls to ClientInterface exactly.  See the
  * documentation for ClientInterface for meanings of signal parameters.
@@ -43,26 +42,24 @@ public:
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
-	sigc::signal<void, int32_t>                                     signal_response_ok;
-	sigc::signal<void, int32_t, std::string>                        signal_response_error;
-	sigc::signal<void>                                              signal_bundle_begin;
-	sigc::signal<void>                                              signal_bundle_end;
-	sigc::signal<void, std::string>                                 signal_error;
-	sigc::signal<void, Raul::Path, uint32_t>                        signal_new_patch;
-	sigc::signal<void, Raul::Path, Raul::URI, uint32_t, bool>       signal_new_port;
-	sigc::signal<void, Raul::URI, Resource::Properties,
-	             Resource::Graph>                                   signal_put;
-	sigc::signal<void, Raul::URI, Resource::Properties,
-	             Resource::Properties>                              signal_delta;
-	sigc::signal<void, Raul::Path, Raul::Path>                      signal_object_moved;
-	sigc::signal<void, Raul::URI>                                   signal_object_deleted;
-	sigc::signal<void, Raul::Path, Raul::Path>                      signal_connection;
-	sigc::signal<void, Raul::URI, Raul::URI>                        signal_disconnection;
-	sigc::signal<void, Raul::Path, Raul::Path>                      signal_disconnect_all;
-	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_variable_change;
-	sigc::signal<void, Raul::URI, Raul::URI, Raul::Atom>            signal_property_change;
-	sigc::signal<void, Raul::Path, Raul::Atom>                      signal_port_value;
-	sigc::signal<void, Raul::Path>                                  signal_activity;
+	INGEN_SIGNAL(response_ok, void, int32_t)
+	INGEN_SIGNAL(response_error, void, int32_t, std::string)
+	INGEN_SIGNAL(bundle_begin, void)
+	INGEN_SIGNAL(bundle_end, void)
+	INGEN_SIGNAL(error, void, std::string)
+	INGEN_SIGNAL(new_patch, void, Raul::Path, uint32_t)
+	INGEN_SIGNAL(new_port, void, Raul::Path, Raul::URI, uint32_t, bool)
+	INGEN_SIGNAL(put, void, Raul::URI, Resource::Properties, Resource::Graph)
+	INGEN_SIGNAL(delta, void, Raul::URI, Resource::Properties, Resource::Properties)
+	INGEN_SIGNAL(object_moved, void, Raul::Path, Raul::Path)
+	INGEN_SIGNAL(object_deleted, void, Raul::URI)
+	INGEN_SIGNAL(connection, void, Raul::Path, Raul::Path)
+	INGEN_SIGNAL(disconnection, void, Raul::URI, Raul::URI)
+	INGEN_SIGNAL(disconnect_all, void, Raul::Path, Raul::Path)
+	INGEN_SIGNAL(variable_change, void, Raul::URI, Raul::URI, Raul::Atom)
+	INGEN_SIGNAL(property_change, void, Raul::URI, Raul::URI, Raul::Atom)
+	INGEN_SIGNAL(port_value, void, Raul::Path, Raul::Atom)
+	INGEN_SIGNAL(activity, void, Raul::Path)
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
@@ -71,7 +68,7 @@ protected:
 
 	// ClientInterface hooks that fire the above signals
 
-#define EMIT(name, ...) { signal_ ## name (__VA_ARGS__); }
+#define EMIT(name, ...) { _signal_ ## name (__VA_ARGS__); }
 
 	void bundle_begin()
 		{ EMIT(bundle_begin); }

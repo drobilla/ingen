@@ -397,7 +397,7 @@ ConnectWindow::gtk_callback()
 	timeval now;
 	gettimeofday(&now, NULL);
 	static const timeval start = now;
-	static timeval last = now;
+	static timeval       last  = now;
 
 	// Show if attempted connection goes on for a noticeable amount of time
 	if (!is_visible()) {
@@ -411,7 +411,7 @@ ConnectWindow::gtk_callback()
 
 	if (_connect_stage == 0) {
 		_attached = false;
-		App::instance().client()->signal_response_ok.connect(
+		App::instance().client()->signal_response_ok().connect(
 				sigc::mem_fun(this, &ConnectWindow::on_response));
 
 		_ping_id = abs(rand()) / 2 * 2; // avoid -1

@@ -78,7 +78,7 @@ ObjectMenu::init(SharedPtr<ObjectModel> object)
 	_properties_menuitem->signal_activate().connect(
 			sigc::mem_fun(this, &ObjectMenu::on_menu_properties));
 
-	object->signal_property.connect(sigc::mem_fun(this, &ObjectMenu::property_changed));
+	object->signal_property().connect(sigc::mem_fun(this, &ObjectMenu::property_changed));
 
 	_learn_menuitem->hide();
 	_unlearn_menuitem->hide();

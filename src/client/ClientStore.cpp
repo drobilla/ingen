@@ -42,9 +42,9 @@ using namespace Shared;
 
 namespace Client {
 
-ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap>       uris,
-                         SharedPtr<ServerInterface> engine,
-                         SharedPtr<SigClientInterface>      emitter)
+ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap>  uris,
+                         SharedPtr<ServerInterface>    engine,
+                         SharedPtr<SigClientInterface> emitter)
 	: _uris(uris)
 	, _engine(engine)
 	, _emitter(emitter)
@@ -54,8 +54,8 @@ ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap>       uris,
 		return;
 
 #define CONNECT(signal, method) \
-	emitter->signal_ ## signal .connect( \
-		sigc::mem_fun(this, &ClientStore:: method));
+	emitter->signal_##signal().connect( \
+		sigc::mem_fun(this, &ClientStore::method));
 
 	CONNECT(object_deleted, del);
 	CONNECT(object_moved, move);
@@ -93,11 +93,11 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 				assert(parent && (object->parent() == parent));
 
 				(*this)[object->path()] = object;
-				signal_new_object.emit(object);
+				_signal_new_object.emit(object);
 			}
 		} else {
 			(*this)[object->path()] = object;
-			signal_new_object.emit(object);
+			_signal_new_object.emit(object);
 		}
 
 	}
@@ -105,7 +105,7 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 	typedef Resource::Properties::const_iterator Iterator;
 	for (Iterator i = object->properties().begin();
 	     i != object->properties().end(); ++i)
-		object->signal_property(i->first, i->second);
+		object->signal_property().emit(i->first, i->second);
 
 	LOG(debug) << "Added " << object->path() << " {" << endl;
 	for (iterator i = begin(); i != end(); ++i) {
@@ -132,7 +132,7 @@ ClientStore::remove_object(const Path& path)
 		LOG(debug) << "}" << endl;
 
 		if (result)
-			result->signal_destroyed.emit();
+			result->signal_destroyed().emit();
 
 		if (!result->path().is_root()) {
 			assert(result->parent());
@@ -195,7 +195,7 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 		existing->set(pm);
 	} else {
 		_plugins->insert(make_pair(pm->uri(), pm));
-		signal_new_plugin(pm);
+		_signal_new_plugin.emit(pm);
 	}
 }
 
@@ -401,7 +401,7 @@ ClientStore::activity(const Path& path)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(object(path));
 	if (port)
-		port->signal_activity.emit();
+		port->signal_activity().emit();
 	else
 		LOG(error) << "Activity for non-existent port " << path << endl;
 }

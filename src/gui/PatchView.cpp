@@ -80,11 +80,14 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 		property_changed(i->first, i->second);
 
 	// Connect model signals to track state
-	patch->signal_property.connect(sigc::mem_fun(this, &PatchView::property_changed));
+	patch->signal_property().connect(
+		sigc::mem_fun(this, &PatchView::property_changed));
 
 	// Connect widget signals to do things
-	_process_but->signal_toggled().connect(sigc::mem_fun(this, &PatchView::process_toggled));
-	_refresh_but->signal_clicked().connect(sigc::mem_fun(this, &PatchView::refresh_clicked));
+	_process_but->signal_toggled().connect(
+		sigc::mem_fun(this, &PatchView::process_toggled));
+	_refresh_but->signal_clicked().connect(
+		sigc::mem_fun(this, &PatchView::refresh_clicked));
 
 	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(
 		_canvas.get(), &PatchCanvas::set_zoom), 1.0));
@@ -92,7 +95,7 @@ PatchView::set_patch(SharedPtr<PatchModel> patch)
 	_zoom_full_but->signal_clicked().connect(
 		sigc::mem_fun(_canvas.get(), &PatchCanvas::zoom_full));
 
-	patch->signal_editable.connect(sigc::mem_fun(
+	patch->signal_editable().connect(sigc::mem_fun(
 			*this, &PatchView::on_editable_sig));
 
 	_edit_mode_but->signal_toggled().connect(sigc::mem_fun(

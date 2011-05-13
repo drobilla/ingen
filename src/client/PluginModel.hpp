@@ -18,8 +18,6 @@
 #ifndef INGEN_CLIENT_PLUGINMODEL_HPP
 #define INGEN_CLIENT_PLUGINMODEL_HPP
 
-#include <sigc++/sigc++.h>
-
 #include "raul/SharedPtr.hpp"
 #include "raul/Symbol.hpp"
 
@@ -34,6 +32,7 @@
 #include "ingen/Plugin.hpp"
 #include "shared/World.hpp"
 #include "shared/ResourceImpl.hpp"
+#include "client/signal.hpp"
 
 namespace Ingen {
 
@@ -99,8 +98,8 @@ public:
 	static Sord::World* rdf_world() { return _rdf_world; }
 
 	// Signals
-	sigc::signal<void> signal_changed;
-	sigc::signal<void, const Raul::URI&, const Raul::Atom&> signal_property;
+	INGEN_SIGNAL(changed, void);
+	INGEN_SIGNAL(property, void, const Raul::URI&, const Raul::Atom&);
 
 protected:
 	friend class ClientStore;

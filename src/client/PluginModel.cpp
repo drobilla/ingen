@@ -142,10 +142,10 @@ PluginModel::set(SharedPtr<PluginModel> p)
 
 	for (Properties::const_iterator v = p->properties().begin(); v != p->properties().end(); ++v) {
 		ResourceImpl::set_property(v->first, v->second);
-		signal_property.emit(v->first, v->second);
+		_signal_property.emit(v->first, v->second);
 	}
 
-	signal_changed.emit();
+	_signal_changed.emit();
 }
 
 Symbol

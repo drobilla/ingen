@@ -75,14 +75,17 @@ PortPropertiesWindow::present(SharedPtr<PortModel> pm)
 	_initial_max = max;
 
 	_min_spinner->set_value(min);
-	_connections.push_back(_min_spinner->signal_value_changed().connect(
-				sigc::mem_fun(*this, &PortPropertiesWindow::min_changed)));
+	_connections.push_back(
+		_min_spinner->signal_value_changed().connect(
+			sigc::mem_fun(*this, &PortPropertiesWindow::min_changed)));
 
 	_max_spinner->set_value(max);
-	_connections.push_back(_max_spinner->signal_value_changed().connect(
-				sigc::mem_fun(*this, &PortPropertiesWindow::max_changed)));
+	_connections.push_back(
+		_max_spinner->signal_value_changed().connect(
+			sigc::mem_fun(*this, &PortPropertiesWindow::max_changed)));
 
-	_connections.push_back(pm->signal_property.connect(
+	_connections.push_back(
+		pm->signal_property().connect(
 			sigc::mem_fun(this, &PortPropertiesWindow::property_changed)));
 
 	Gtk::Window::present();

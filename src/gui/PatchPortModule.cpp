@@ -49,7 +49,8 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas, SharedPt
 
 	set_stacked_border(model->polyphonic());
 
-	model->signal_property.connect(sigc::mem_fun(this, &PatchPortModule::property_changed));
+	model->signal_property().connect(
+		sigc::mem_fun(this, &PatchPortModule::property_changed));
 }
 
 boost::shared_ptr<PatchPortModule>

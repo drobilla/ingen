@@ -21,7 +21,6 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
-#include <sigc++/sigc++.h>
 #include "raul/SharedPtr.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Port.hpp"
@@ -70,8 +69,8 @@ public:
 	std::string port_label(SharedPtr<PortModel> port) const;
 
 	// Signals
-	sigc::signal<void, SharedPtr<PortModel> > signal_new_port;
-	sigc::signal<void, SharedPtr<PortModel> > signal_removed_port;
+	INGEN_SIGNAL(new_port, void, SharedPtr<PortModel>);
+	INGEN_SIGNAL(removed_port, void, SharedPtr<PortModel>);
 
 protected:
 	friend class ClientStore;

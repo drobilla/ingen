@@ -122,7 +122,7 @@ PropertiesWindow::set_object(SharedPtr<ObjectModel> model)
 
 	_table->show_all();
 
-	_property_connection = model->signal_property.connect(
+	_property_connection = model->signal_property().connect(
 			sigc::mem_fun(this, &PropertiesWindow::property_changed));
 }
 

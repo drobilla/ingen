@@ -20,7 +20,6 @@
 
 #include <cstdlib>
 #include <string>
-#include <sigc++/sigc++.h>
 #include "raul/log.hpp"
 #include "raul/SharedPtr.hpp"
 #include "ingen/Port.hpp"
@@ -66,21 +65,21 @@ public:
 	inline void value(const Raul::Atom& val) {
 		if (val != _current_val) {
 			_current_val = val;
-			signal_value_changed.emit(val);
+			_signal_value_changed.emit(val);
 		}
 	}
 
 	inline void value(uint32_t voice, const Raul::Atom& val) {
 		// FIXME: implement properly
-		signal_voice_changed.emit(voice, val);
+		_signal_voice_changed.emit(voice, val);
 	}
 
 	// Signals
-	sigc::signal<void, const Raul::Atom&>           signal_value_changed; ///< Value ports
-	sigc::signal<void, uint32_t, const Raul::Atom&> signal_voice_changed; ///< Polyphonic value ports
-	sigc::signal<void>                              signal_activity; ///< Message ports
-	sigc::signal<void, SharedPtr<PortModel> >       signal_connection;
-	sigc::signal<void, SharedPtr<PortModel> >       signal_disconnection;
+	INGEN_SIGNAL(value_changed, void, const Raul::Atom&);
+	INGEN_SIGNAL(voice_changed, void, uint32_t, const Raul::Atom&);
+	INGEN_SIGNAL(activity, void);
+	INGEN_SIGNAL(connection, void, SharedPtr<PortModel>);
+	INGEN_SIGNAL(disconnection, void, SharedPtr<PortModel>);
 
 private:
 	friend class ClientStore;
@@ -101,8 +100,8 @@ private:
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }
 	bool remove_child(SharedPtr<ObjectModel> c) { throw; }
 
-	void connected_to(SharedPtr<PortModel> p)      { ++_connections; signal_connection.emit(p); }
-	void disconnected_from(SharedPtr<PortModel> p) { --_connections; signal_disconnection.emit(p); }
+	void connected_to(SharedPtr<PortModel> p)      { ++_connections; _signal_connection.emit(p); }
+	void disconnected_from(SharedPtr<PortModel> p) { --_connections; _signal_disconnection.emit(p); }
 
 	void set(SharedPtr<ObjectModel> model);
 

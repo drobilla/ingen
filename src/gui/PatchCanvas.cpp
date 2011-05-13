@@ -107,20 +107,20 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 			"event_out", "Event Out", "http://lv2plug.in/ns/ext/event#EventPort", true));
 
 	// Connect to model signals to track state
-	_patch->signal_new_node.connect(
+	_patch->signal_new_node().connect(
 		sigc::mem_fun(this, &PatchCanvas::add_node));
-	_patch->signal_removed_node.connect(
+	_patch->signal_removed_node().connect(
 		sigc::mem_fun(this, &PatchCanvas::remove_node));
-	_patch->signal_new_port.connect(
+	_patch->signal_new_port().connect(
 		sigc::mem_fun(this, &PatchCanvas::add_port));
-	_patch->signal_removed_port.connect(
+	_patch->signal_removed_port().connect(
 		sigc::mem_fun(this, &PatchCanvas::remove_port));
-	_patch->signal_new_connection.connect(
+	_patch->signal_new_connection().connect(
 		sigc::mem_fun(this, &PatchCanvas::connection));
-	_patch->signal_removed_connection.connect(
+	_patch->signal_removed_connection().connect(
 		sigc::mem_fun(this, &PatchCanvas::disconnection));
 
-	App::instance().store()->signal_new_plugin.connect(
+	App::instance().store()->signal_new_plugin().connect(
 		sigc::mem_fun(this, &PatchCanvas::add_plugin));
 
 	// Connect widget signals to do things
@@ -133,7 +133,7 @@ PatchCanvas::PatchCanvas(SharedPtr<PatchModel> patch, int width, int height)
 	_menu_edit->signal_activate().connect(
 		sigc::mem_fun(this, &PatchCanvas::menu_edit_toggled));
 
-	_patch->signal_editable.connect(
+	_patch->signal_editable().connect(
 		sigc::mem_fun(this, &PatchCanvas::patch_editable_changed));
 }
 

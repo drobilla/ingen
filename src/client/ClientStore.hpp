@@ -31,6 +31,7 @@
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
 #include "shared/Store.hpp"
+#include "client/signal.hpp"
 
 namespace Raul { class Atom; }
 
@@ -102,8 +103,8 @@ public:
 
 	void del(const Raul::URI& uri);
 
-	sigc::signal< void, SharedPtr<ObjectModel> > signal_new_object;
-	sigc::signal< void, SharedPtr<PluginModel> > signal_new_plugin;
+	INGEN_SIGNAL(new_object,  void, SharedPtr<ObjectModel>);
+	INGEN_SIGNAL(new_plugin,  void, SharedPtr<PluginModel>);
 
 private:
 	void add(GraphObject* o) { throw; }

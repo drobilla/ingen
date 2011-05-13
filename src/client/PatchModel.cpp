@@ -42,7 +42,7 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 
 	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(c);
 	if (nm)
-		signal_new_node.emit(nm);
+		_signal_new_node.emit(nm);
 }
 
 bool
@@ -64,7 +64,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 				|| cm->src_port_path() == o->path()
 				|| cm->dst_port_path().parent() == o->path()
 				|| cm->dst_port_path() == o->path()) {
-			signal_removed_connection.emit(cm);
+			_signal_removed_connection.emit(cm);
 			_connections->erase(j); // cuts our reference
 		}
 		j = next;
@@ -76,7 +76,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 
 	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(o);
 	if (nm)
-		signal_removed_node.emit(nm);
+		_signal_removed_node.emit(nm);
 
 	return true;
 }
@@ -132,7 +132,7 @@ PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
 		assert(cm->dst_port() == existing->dst_port());
 	} else {
 		_connections->insert(make_pair(make_pair(cm->src_port().get(), cm->dst_port().get()), cm));
-		signal_new_connection.emit(cm);
+		_signal_new_connection.emit(cm);
 	}
 }
 
@@ -142,7 +142,7 @@ PatchModel::remove_connection(const Port* src_port, const Ingen::Port* dst_port)
 	Connections::iterator i = _connections->find(make_pair(src_port, dst_port));
 	if (i != _connections->end()) {
 		SharedPtr<ConnectionModel> c = PtrCast<ConnectionModel>(i->second);
-		signal_removed_connection.emit(c);
+		_signal_removed_connection.emit(c);
 		_connections->erase(i);
 	} else {
 		warn << "[PatchModel::remove_connection] Failed to find connection " <<

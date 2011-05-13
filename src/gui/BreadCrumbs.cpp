@@ -31,7 +31,7 @@ BreadCrumbs::BreadCrumbs()
 	, _full_path("/")
 	, _enable_signal(true)
 {
-	App::instance().client()->signal_object_deleted.connect(
+	App::instance().client()->signal_object_deleted().connect(
 			sigc::mem_fun(this, &BreadCrumbs::object_destroyed));
 }
 

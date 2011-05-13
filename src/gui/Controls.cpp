@@ -69,7 +69,8 @@ Control::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 	assert(panel);
 
 	_control_connection.disconnect();
-	_control_connection = pm->signal_value_changed.connect(sigc::mem_fun(this, &Control::set_value));
+	_control_connection = pm->signal_value_changed().connect(
+		sigc::mem_fun(this, &Control::set_value));
 
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
 	if (parent)
@@ -160,7 +161,8 @@ SliderControl::init(ControlPanel* panel, SharedPtr<PortModel> pm)
 		_slider->set_increments(0, 0);
 	}
 
-	pm->signal_property.connect(sigc::mem_fun(this, &SliderControl::port_property_changed));
+	pm->signal_property().connect(
+		sigc::mem_fun(this, &SliderControl::port_property_changed));
 
 	_slider->set_range(std::min(min, pm->value().get_float()), std::max(max, pm->value().get_float()));
 

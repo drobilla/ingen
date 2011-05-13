@@ -54,7 +54,7 @@ PortModel::set(SharedPtr<ObjectModel> model)
 		_direction = port->_direction;
 		_current_val = port->_current_val;
 		_connections = port->_connections;
-		signal_value_changed.emit(_current_val);
+		_signal_value_changed.emit(_current_val);
 	}
 
 	ObjectModel::set(model);

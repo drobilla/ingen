@@ -70,7 +70,8 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
 void
 PatchTreeWindow::init(ClientStore& store)
 {
-	store.signal_new_object.connect(sigc::mem_fun(this, &PatchTreeWindow::new_object));
+	store.signal_new_object().connect(
+		sigc::mem_fun(this, &PatchTreeWindow::new_object));
 }
 
 void
@@ -109,17 +110,17 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		}
 	}
 
-	pm->signal_property.connect(sigc::bind(
-			sigc::mem_fun(this, &PatchTreeWindow::patch_property_changed),
-			pm));
+	pm->signal_property().connect(
+		sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_property_changed),
+		           pm));
 
-	pm->signal_moved.connect(sigc::bind(
-		sigc::mem_fun(this, &PatchTreeWindow::patch_moved),
-		pm));
+	pm->signal_moved().connect(
+		sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::patch_moved),
+		           pm));
 
-	pm->signal_destroyed.connect(sigc::bind(
-		sigc::mem_fun(this, &PatchTreeWindow::remove_patch),
-		pm));
+	pm->signal_destroyed().connect(
+		sigc::bind(sigc::mem_fun(this, &PatchTreeWindow::remove_patch),
+		           pm));
 }
 
 void

@@ -52,18 +52,19 @@ NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<NodeMode
 {
 	assert(_node);
 
-	node->signal_new_port.connect(
+	node->signal_new_port().connect(
 		sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
-	node->signal_removed_port.connect(
+	node->signal_removed_port().connect(
 		sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
-	node->signal_property.connect(
+	node->signal_property().connect(
 		sigc::mem_fun(this, &NodeModule::property_changed));
-	node->signal_moved.connect(
+	node->signal_moved().connect(
 		sigc::mem_fun(this, &NodeModule::rename));
 
 	PluginModel* plugin = dynamic_cast<PluginModel*>(node->plugin());
 	if (plugin) {
-		plugin->signal_changed.connect(sigc::mem_fun(this, &NodeModule::plugin_changed));
+		plugin->signal_changed().connect(
+			sigc::mem_fun(this, &NodeModule::plugin_changed));
 	}
 }
 
@@ -256,8 +257,9 @@ NodeModule::add_port(SharedPtr<PortModel> port, bool resize_to_fit)
 	Module::add_port(Port::create(PtrCast<NodeModule>(shared_from_this()), port,
 			App::instance().configuration()->name_style() == Configuration::HUMAN));
 
-	port->signal_value_changed.connect(sigc::bind<0>(
-			sigc::mem_fun(this, &NodeModule::value_changed), port->index()));
+	port->signal_value_changed().connect(
+		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::value_changed),
+		              port->index()));
 
 	if (resize_to_fit)
 		resize();

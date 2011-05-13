@@ -47,23 +47,22 @@ class ThreadedSigClientInterface : public SigClientInterface
 {
 public:
 	ThreadedSigClientInterface(uint32_t queue_size)
-	: _sigs(queue_size)
-	, response_ok_slot(signal_response_ok.make_slot())
-	, response_error_slot(signal_response_error.make_slot())
-	, error_slot(signal_error.make_slot())
-	, new_port_slot(signal_new_port.make_slot())
-	, put_slot(signal_put.make_slot())
-	, connection_slot(signal_connection.make_slot())
-	, object_deleted_slot(signal_object_deleted.make_slot())
-	, object_moved_slot(signal_object_moved.make_slot())
-	, disconnection_slot(signal_disconnection.make_slot())
-	, disconnect_all_slot(signal_disconnect_all.make_slot())
-	, variable_change_slot(signal_variable_change.make_slot())
-	, property_change_slot(signal_property_change.make_slot())
-	, port_value_slot(signal_port_value.make_slot())
-	, activity_slot(signal_activity.make_slot())
-	{
-	}
+		: _sigs(queue_size)
+		, response_ok_slot(_signal_response_ok.make_slot())
+		, response_error_slot(_signal_response_error.make_slot())
+		, error_slot(_signal_error.make_slot())
+		, new_port_slot(_signal_new_port.make_slot())
+		, put_slot(_signal_put.make_slot())
+		, connection_slot(_signal_connection.make_slot())
+		, object_deleted_slot(_signal_object_deleted.make_slot())
+		, object_moved_slot(_signal_object_moved.make_slot())
+		, disconnection_slot(_signal_disconnection.make_slot())
+		, disconnect_all_slot(_signal_disconnect_all.make_slot())
+		, variable_change_slot(_signal_variable_change.make_slot())
+		, property_change_slot(_signal_property_change.make_slot())
+		, port_value_slot(_signal_port_value.make_slot())
+		, activity_slot(_signal_activity.make_slot())
+	{}
 
 	virtual Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
