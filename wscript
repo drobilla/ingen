@@ -36,8 +36,8 @@ def options(opt):
                    help="Use liblo bundle support (experimental, requires patched liblo)")
 
 def configure(conf):
-    conf.line_just = max(conf.line_just, 67)
     autowaf.configure(conf)
+    conf.line_just = 67
     autowaf.display_header('Ingen Configuration')
     conf.load('compiler_cxx')
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
