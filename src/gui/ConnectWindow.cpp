@@ -351,7 +351,7 @@ void
 ConnectWindow::on_hide()
 {
 	Gtk::Dialog::on_hide();
-	if (!_attached)
+	if (App::instance().window_factory()->num_open_patch_windows() == 0)
 		quit();
 }
 
