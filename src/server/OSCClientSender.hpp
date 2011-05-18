@@ -20,8 +20,9 @@
 
 #include <cassert>
 #include <string>
+
 #include <lo/lo.h>
-#include <pthread.h>
+
 #include "ingen/ClientInterface.hpp"
 #include "ingen/GraphObject.hpp"
 #include "shared/OSCSender.hpp"

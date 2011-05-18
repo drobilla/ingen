@@ -15,26 +15,31 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <cstdlib>
-#include <string>
-#include <pthread.h>
-#include <dirent.h>
 #include <float.h>
-#include <cmath>
+#include <math.h>
+#include <stdlib.h>
+
+#include <string>
+
 #include <glibmm/miscutils.h>
+
 #include "sord/sordmm.hpp"
+
 #include "raul/log.hpp"
-#include "ingen-config.h"
-#include "shared/World.hpp"
+
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
+#include "shared/World.hpp"
+
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
 #include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
 #include "ThreadManager.hpp"
+
+#include "ingen-config.h"
 #ifdef HAVE_LILV
 #include "lilv/lilv.h"
 #include "LV2Plugin.hpp"

@@ -18,15 +18,13 @@
 #ifndef INGEN_ENGINE_NODEFACTORY_HPP
 #define INGEN_ENGINE_NODEFACTORY_HPP
 
-#include <list>
 #include <map>
-#include <string>
-#include <pthread.h>
-#include <glibmm/module.h>
+
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
-#include "shared/World.hpp"
+
 #include "ingen-config.h"
+#include "shared/World.hpp"
 
 namespace Ingen {
 namespace Server {

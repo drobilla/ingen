@@ -18,12 +18,14 @@
 #ifndef INGEN_ENGINE_CLIENTBROADCASTER_HPP
 #define INGEN_ENGINE_CLIENTBROADCASTER_HPP
 
-#include <string>
 #include <list>
 #include <map>
-#include <pthread.h>
+#include <string>
+
 #include "raul/SharedPtr.hpp"
+
 #include "ingen/ClientInterface.hpp"
+
 #include "NodeFactory.hpp"
 
 using namespace std;
