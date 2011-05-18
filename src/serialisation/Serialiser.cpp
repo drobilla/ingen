@@ -251,9 +251,9 @@ Serialiser::finish()
 {
 	string ret = "";
 	if (_mode == TO_FILE) {
-		_model->write_to_file(_base_uri, "turtle");
+		_model->write_to_file(_base_uri, SERD_TURTLE);
 	} else {
-		ret = _model->write_to_string("turtle");
+		ret = _model->write_to_string(SERD_TURTLE);
 	}
 
 	delete _model;

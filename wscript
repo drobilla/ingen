@@ -55,7 +55,7 @@ def configure(conf):
     autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
                       atleast_version='0.8.0', mandatory=True)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
-                      atleast_version='0.2.0', mandatory=False)
+                      atleast_version='0.3.0', mandatory=False)
     if not Options.options.no_gui:
         autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
                           atleast_version='2.11.12', mandatory=False)

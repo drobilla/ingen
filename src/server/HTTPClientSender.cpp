@@ -66,7 +66,7 @@ HTTPClientSender::put(const URI&                  uri,
 				AtomRDF::atom_to_node(model, i->first.str()),
 				AtomRDF::atom_to_node(model, i->second));
 
-	const string str = model.write_to_string("turtle");
+	const string str = model.write_to_string(SERD_TURTLE);
 	send_chunk(str);
 }
 
