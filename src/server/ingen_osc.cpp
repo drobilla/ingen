@@ -29,7 +29,6 @@ struct IngenOSCModule : public Ingen::Shared::Module {
 		SharedPtr<Server::OSCEngineReceiver> interface(
 			new Server::OSCEngineReceiver(
 				*engine,
-				engine->event_queue_size(),
 				world->conf()->option("engine-port").get_int32()));
 		engine->add_event_source(interface);
 	}

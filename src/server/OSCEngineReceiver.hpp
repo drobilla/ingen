@@ -57,7 +57,7 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
 class OSCEngineReceiver : public QueuedEngineInterface
 {
 public:
-	OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t port);
+	OSCEngineReceiver(Engine& engine, uint16_t port);
 	~OSCEngineReceiver();
 
 private:

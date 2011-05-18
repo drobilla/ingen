@@ -18,9 +18,9 @@
 #ifndef INGEN_ENGINE_EVENTSOURCE_HPP
 #define INGEN_ENGINE_EVENTSOURCE_HPP
 
+#include "raul/AtomicPtr.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/Slave.hpp"
-#include "raul/List.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -39,12 +39,12 @@ class ProcessContext;
 class EventSource : protected Raul::Slave
 {
 public:
-	explicit EventSource(size_t queue_size);
+	explicit EventSource();
 	virtual ~EventSource();
 
 	void process(PostProcessor& dest, ProcessContext& context, bool limit=true);
 
-	bool empty() { return _events.empty(); }
+	bool empty() { return !_head.get(); }
 
 	/** Signal that a blocking event is finished.
 	 *
@@ -61,9 +61,11 @@ protected:
 	virtual void _whipped(); ///< Prepare 1 event
 
 private:
-	Raul::List<Event*>                        _events;
-	Raul::AtomicPtr<Raul::List<Event*>::Node> _prepared_back;
-	Raul::Semaphore                           _blocking_semaphore;
+	Raul::AtomicPtr<QueuedEvent> _head;
+	Raul::AtomicPtr<QueuedEvent> _prepared_back;
+	Raul::AtomicPtr<QueuedEvent> _tail;
+
+	Raul::Semaphore _blocking_semaphore;
 };
 
 } // namespace Server

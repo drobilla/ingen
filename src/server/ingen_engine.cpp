@@ -29,8 +29,7 @@ struct IngenEngineModule : public Ingen::Shared::Module {
 		SharedPtr<Server::Engine> engine(new Server::Engine(world));
 		world->set_local_engine(engine);
 		SharedPtr<Server::QueuedEngineInterface> interface(
-				new Server::QueuedEngineInterface(*engine.get(),
-				                                  engine->event_queue_size()));
+			new Server::QueuedEngineInterface(*engine.get()));
 		world->set_engine(interface);
 		engine->add_event_source(interface);
 		assert(world->local_engine() == engine);

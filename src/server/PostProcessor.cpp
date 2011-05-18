@@ -15,16 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <cassert>
-#include <pthread.h>
+#include <assert.h>
+
 #include "raul/log.hpp"
-#include "raul/SRSWQueue.hpp"
-#include "events/SendPortValue.hpp"
-#include "Event.hpp"
-#include "PostProcessor.hpp"
-#include "Engine.hpp"
+
 #include "Driver.hpp"
+#include "Engine.hpp"
+#include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
+#include "QueuedEvent.hpp"
+#include "events/SendPortValue.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -32,10 +32,9 @@ using namespace Raul;
 namespace Ingen {
 namespace Server {
 
-PostProcessor::PostProcessor(Engine& engine, size_t queue_size)
+PostProcessor::PostProcessor(Engine& engine)
     : _engine(engine)
 	, _max_time(0)
-	, _events(queue_size)
 	, _event_buffer_size(sizeof(Events::SendPortValue)) // FIXME: make generic
 	, _event_buffer((uint8_t*)malloc(_event_buffer_size))
 {
@@ -44,6 +43,21 @@ PostProcessor::PostProcessor(Engine& engine, size_t queue_size)
 PostProcessor::~PostProcessor()
 {
 	free(_event_buffer);
+}
+
+void
+PostProcessor::append(QueuedEvent* first, QueuedEvent* last)
+{
+	assert(first);
+	assert(last);
+	QueuedEvent* const head = _head.get();
+	QueuedEvent* const tail = _tail.get();
+	if (!head) {
+		_head = first;
+	} else {
+		tail->next(first);
+	}
+	_tail = last;
 }
 
 void
@@ -75,16 +89,21 @@ PostProcessor::process()
 	}
 
 	/* Process normal events */
-	Raul::List<Event*>::Node* n = _events.head();
-	while (n) {
-		if (n->elem()->time() > end_time)
+	QueuedEvent* ev = _head.get();
+	while (ev) {
+		if (ev->time() > end_time)
 			break;
-		Raul::List<Event*>::Node* next = n->next();
-		n->elem()->post_process();
-		_events.erase(_events.begin());
-		delete n->elem();
-		delete n;
-		n = next;
+
+		QueuedEvent* const next = (QueuedEvent*)ev->next();
+		ev->post_process();
+		if (next) {
+			_head = next;
+		} else {
+			_head = NULL;
+			_tail = NULL;
+		}
+		delete ev;
+		ev = next;
 	}
 }
 

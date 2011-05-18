@@ -62,7 +62,7 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _maid(new Raul::Maid(event_queue_size()))
 	, _message_context(new MessageContext(*this))
 	, _node_factory(new NodeFactory(a_world))
-	, _post_processor(new PostProcessor(*this, event_queue_size()))
+	, _post_processor(new PostProcessor(*this))
 	, _quit_flag(false)
 {
 	if (a_world->store()) {

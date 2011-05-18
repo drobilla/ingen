@@ -268,9 +268,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->world->set_local_engine(engine);
 
 	SharedPtr<Server::QueuedEngineInterface> interface(
-		new Server::QueuedEngineInterface(
-			*engine.get(),
-			engine->event_queue_size()));
+		new Server::QueuedEngineInterface(*engine.get()));
 
 	plugin->world->set_engine(interface);
 	engine->add_event_source(interface);

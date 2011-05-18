@@ -18,14 +18,15 @@
 #ifndef INGEN_ENGINE_POSTPROCESSOR_HPP
 #define INGEN_ENGINE_POSTPROCESSOR_HPP
 
-#include <pthread.h>
-#include "raul/SRSWQueue.hpp"
-#include "raul/List.hpp"
+#include "raul/AtomicInt.hpp"
+#include "raul/AtomicPtr.hpp"
+
+#include "types.hpp"
 
 namespace Ingen {
 namespace Server {
 
-class Event;
+class QueuedEvent;
 class Engine;
 
 /** Processor for Events after leaving the audio thread.
@@ -42,11 +43,13 @@ class Engine;
 class PostProcessor
 {
 public:
-	PostProcessor(Engine& engine, size_t queue_size);
+	PostProcessor(Engine& engine);
 	~PostProcessor();
 
-	/** Push a list of events on to the process queue, realtime-safe, not thread-safe. */
-	inline void append(Raul::List<Event*>* l) { _events.append(*l); }
+	/** Push a list of events on to the process queue.
+	    realtime-safe, not thread-safe.
+	*/
+	void append(QueuedEvent* first, QueuedEvent* last);
 
 	/** Post-process and delete all pending events */
 	void process();
@@ -55,11 +58,12 @@ public:
 	void set_end_time(FrameTime time) { _max_time = time; }
 
 private:
-	Engine&            _engine;
-	Raul::AtomicInt    _max_time;
-	Raul::List<Event*> _events;
-	uint32_t           _event_buffer_size;
-	uint8_t*           _event_buffer;
+	Engine&                      _engine;
+	Raul::AtomicPtr<QueuedEvent> _head;
+	Raul::AtomicPtr<QueuedEvent> _tail;
+	Raul::AtomicInt              _max_time;
+	uint32_t                     _event_buffer_size;
+	uint8_t*                     _event_buffer;
 };
 
 } // namespace Server

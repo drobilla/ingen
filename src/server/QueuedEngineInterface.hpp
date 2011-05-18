@@ -48,7 +48,7 @@ class QueuedEngineInterface : public EventSource,
                               public ServerInterface
 {
 public:
-	QueuedEngineInterface(Engine& engine, size_t queue_size);
+	QueuedEngineInterface(Engine& engine);
 	virtual ~QueuedEngineInterface();
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }

@@ -51,7 +51,7 @@ using namespace Serialisation;
 namespace Server {
 
 HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
-	: QueuedEngineInterface(engine, 64) // FIXME
+	: QueuedEngineInterface(engine)
 	, _server(soup_server_new(SOUP_SERVER_PORT, port, NULL))
 {
 	_receive_thread = new ReceiveThread(*this);

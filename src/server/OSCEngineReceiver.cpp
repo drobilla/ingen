@@ -57,8 +57,8 @@ namespace Server {
  * See the "Client OSC Namespace Documentation" for details.</p>
  */
 
-OSCEngineReceiver::OSCEngineReceiver(Engine& engine, size_t queue_size, uint16_t port)
-	: QueuedEngineInterface(engine, queue_size) // FIXME
+OSCEngineReceiver::OSCEngineReceiver(Engine& engine, uint16_t port)
+	: QueuedEngineInterface(engine)
 	, _server(NULL)
 {
 	_receive_thread = new ReceiveThread(*this);

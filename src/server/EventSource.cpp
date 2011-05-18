@@ -15,19 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <sys/mman.h>
 #include "EventSource.hpp"
-#include "QueuedEvent.hpp"
 #include "PostProcessor.hpp"
-#include "ThreadManager.hpp"
 #include "ProcessContext.hpp"
+#include "QueuedEvent.hpp"
+#include "ThreadManager.hpp"
 
 using namespace std;
 
 namespace Ingen {
 namespace Server {
 
-EventSource::EventSource(size_t queue_size)
+EventSource::EventSource()
 	: _blocking_semaphore(0)
 {
 	Thread::set_context(THREAD_PRE_PROCESS);
@@ -45,10 +44,22 @@ void
 EventSource::push_queued(QueuedEvent* const ev)
 {
 	assert(!ev->is_prepared());
-	Raul::List<Event*>::Node* node = new Raul::List<Event*>::Node(ev);
-	_events.push_back(node);
-	if (_prepared_back.get() == NULL)
-		_prepared_back = node;
+	assert(!ev->next());
+
+	QueuedEvent* const head = _head.get();
+	QueuedEvent* const tail = _tail.get();
+
+	if (!head) {
+		_head = ev;
+		_tail = ev;
+	} else {
+		_tail = ev;
+		tail->next(ev);
+	}
+
+	if (!_prepared_back.get()) {
+		_prepared_back = ev;
+	}
 
 	whip();
 }
@@ -62,39 +73,35 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	if (_events.empty())
+	if (!_head.get())
 		return;
 
 	/* Limit the maximum number of queued events to process per cycle.  This
-	 * makes the process callback (more) realtime-safe by preventing being
-	 * choked by events coming in faster than they can be processed.
-	 * FIXME: test this and figure out a good value */
+	   makes the process callback (more) realtime-safe by preventing being
+	   choked by events coming in faster than they can be processed.
+	   FIXME: test this and figure out a good value
+	*/
 	const size_t MAX_QUEUED_EVENTS = context.nframes() / 32;
 
 	size_t num_events_processed = 0;
 
-	Raul::List<Event*>::Node* head = _events.head();
-	Raul::List<Event*>::Node* tail = head;
-
-	if (!head)
-		return;
-
-	QueuedEvent* ev = (QueuedEvent*)head->elem();
+	QueuedEvent* ev   = _head.get();
+	QueuedEvent* last = ev;
 
 	while (ev && ev->is_prepared() && ev->time() < context.end()) {
 		ev->execute(context);
-		tail = head;
-		head = head->next();
+		last = ev;
+		ev = (QueuedEvent*)ev->next();
 		++num_events_processed;
-		if (limit && num_events_processed > MAX_QUEUED_EVENTS)
+		if (limit && (num_events_processed > MAX_QUEUED_EVENTS))
 			break;
-		ev = (head ? (QueuedEvent*)head->elem() : NULL);
 	}
 
 	if (num_events_processed > 0) {
-		Raul::List<Event*> front;
-		_events.chop_front(front, num_events_processed, tail);
-		dest.append(&front);
+		dest.append(_head.get(), last);
+		_head = (QueuedEvent*)last->next();
+		if (!last->next())
+			_tail = NULL;
 	}
 }
 
@@ -102,19 +109,15 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 void
 EventSource::_whipped()
 {
-	Raul::List<Event*>::Node* pb = _prepared_back.get();
-	if (!pb)
+	QueuedEvent* ev = _prepared_back.get();
+	if (!ev)
 		return;
-
-	QueuedEvent* const ev = (QueuedEvent*)pb->elem();
-	assert(ev);
 
 	assert(!ev->is_prepared());
 	ev->pre_process();
 	assert(ev->is_prepared());
 
-	assert(_prepared_back.get() == pb);
-	_prepared_back = pb->next();
+	_prepared_back = (QueuedEvent*)ev->next();
 
 	// If event was blocking, wait for event to being run through the
 	// process thread before preparing the next event

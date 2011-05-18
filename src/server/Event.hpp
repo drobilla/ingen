@@ -19,9 +19,12 @@
 #define INGEN_ENGINE_EVENT_HPP
 
 #include <cassert>
+
 #include "raul/SharedPtr.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Path.hpp"
+#include "raul/AtomicPtr.hpp"
+
 #include "types.hpp"
 
 namespace Ingen {
@@ -56,6 +59,10 @@ public:
 
 	inline SampleCount time() const { return _time; }
 
+	/** Get the next event in the event process list. */
+	Event* next() const    { return _next.get(); }
+	void   next(Event* ev) { _next = ev; }
+
 	int error() { return _error; }
 
 protected:
@@ -67,11 +74,12 @@ protected:
 		, _executed(false)
 	{}
 
-	Engine&            _engine;
-	SharedPtr<Request> _request;
-	FrameTime          _time;
-	int                _error;
-	bool               _executed;
+	Engine&                _engine;
+	SharedPtr<Request>     _request;
+	Raul::AtomicPtr<Event> _next;
+	FrameTime              _time;
+	int                    _error;
+	bool                   _executed;
 };
 
 } // namespace Server

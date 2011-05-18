@@ -33,8 +33,8 @@ using namespace Raul;
 namespace Ingen {
 namespace Server {
 
-QueuedEngineInterface::QueuedEngineInterface(Engine& engine, size_t queue_size)
-	: EventSource(queue_size)
+QueuedEngineInterface::QueuedEngineInterface(Engine& engine)
+	: EventSource()
 	, _request(new Request(this, NULL, 0))
 	, _engine(engine)
 	, _in_bundle(false)
