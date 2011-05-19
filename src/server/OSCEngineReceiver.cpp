@@ -380,6 +380,9 @@ int
 OSCEngineReceiver::_delta_end_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	delta(_delta_uri, _delta_remove, _delta_add);
+	_delta_uri = Raul::URI();
+	_delta_remove.clear();
+	_delta_add.clear();
 	return 0;
 }
 

@@ -183,7 +183,7 @@ OSCClientReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, i
 int
 OSCClientReceiver::_delta_begin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	const char* obj_path = &argv[1]->s;
+	const char* obj_path = &argv[0]->s;
 	assert(_delta_remove.empty());
 	assert(_delta_add.empty());
 	_delta_uri = obj_path;
@@ -193,16 +193,16 @@ OSCClientReceiver::_delta_begin_cb(const char* path, const char* types, lo_arg**
 int
 OSCClientReceiver::_delta_remove_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	_delta_remove.insert(make_pair(&argv[1]->s,
-	                               AtomLiblo::lo_arg_to_atom(types[2], argv[2])));
+	_delta_remove.insert(make_pair(&argv[0]->s,
+	                               AtomLiblo::lo_arg_to_atom(types[1], argv[1])));
 	return 0;
 }
 
 int
 OSCClientReceiver::_delta_add_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	_delta_add.insert(make_pair(&argv[1]->s,
-	                            AtomLiblo::lo_arg_to_atom(types[2], argv[2])));
+	_delta_add.insert(make_pair(&argv[0]->s,
+	                            AtomLiblo::lo_arg_to_atom(types[1], argv[1])));
 	return 0;
 }
 
@@ -210,6 +210,9 @@ int
 OSCClientReceiver::_delta_end_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	_target->delta(_delta_uri, _delta_remove, _delta_add);
+	_delta_uri = Raul::URI();
+	_delta_remove.clear();
+	_delta_add.clear();
 	return 0;
 }
 
