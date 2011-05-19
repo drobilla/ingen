@@ -78,6 +78,10 @@ private:
 	int              _listen_port;
 	lo_server_thread _st;
 
+	Raul::URI            _delta_uri;
+	Resource::Properties _delta_remove;
+	Resource::Properties _delta_add;
+
 	LO_HANDLER(error);
 	LO_HANDLER(response_ok);
 	LO_HANDLER(response_error);
@@ -89,6 +93,10 @@ private:
 	LO_HANDLER(connection);
 	LO_HANDLER(disconnection);
 	LO_HANDLER(put);
+	LO_HANDLER(delta_begin);
+	LO_HANDLER(delta_remove);
+	LO_HANDLER(delta_add);
+	LO_HANDLER(delta_end);
 	LO_HANDLER(set_property);
 	LO_HANDLER(activity);
 };

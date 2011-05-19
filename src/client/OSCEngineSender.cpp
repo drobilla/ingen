@@ -117,11 +117,37 @@ OSCEngineSender::put(const Raul::URI&            path,
 }
 
 void
-OSCEngineSender::delta(const Raul::URI&                    path,
+OSCEngineSender::delta(const Raul::URI&            path,
                        const Resource::Properties& remove,
                        const Resource::Properties& add)
 {
-	warn << "FIXME: OSC DELTA" << endl;
+	typedef Resource::Properties::const_iterator iterator;
+
+	const bool bundle = !_bundle;
+	if (bundle)
+		bundle_begin();
+
+	const int32_t id = next_id();
+	send("/delta_begin", "is", id, path.c_str(), LO_ARGS_END);
+
+	for (iterator i = remove.begin(); i != remove.end(); ++i) {
+		lo_message m = lo_message_new();
+		lo_message_add_string(m, i->first.c_str());
+		Raul::AtomLiblo::lo_message_add_atom(m, i->second);
+		send_message("/delta_remove", m);
+	}
+
+	for (iterator i = add.begin(); i != add.end(); ++i) {
+		lo_message m = lo_message_new();
+		lo_message_add_string(m, i->first.c_str());
+		Raul::AtomLiblo::lo_message_add_atom(m, i->second);
+		send_message("/delta_add", m);
+	}
+
+	send("/delta_end", "i", id, LO_ARGS_END);
+
+	if (bundle)
+		bundle_end();
 }
 
 void

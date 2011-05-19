@@ -141,6 +141,10 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/error", "is", response_error_cb, this);
 	lo_server_thread_add_method(_st, "/plugin", "sss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/put", NULL, put_cb, this);
+	lo_server_thread_add_method(_st, "/delta_begin", NULL, delta_begin_cb, this);
+	lo_server_thread_add_method(_st, "/delta_remove", NULL, delta_remove_cb, this);
+	lo_server_thread_add_method(_st, "/delta_add", NULL, delta_add_cb, this);
+	lo_server_thread_add_method(_st, "/delta_end", NULL, delta_end_cb, this);
 	lo_server_thread_add_method(_st, "/move", "ss", move_cb, this);
 	lo_server_thread_add_method(_st, "/delete", "s", del_cb, this);
 	lo_server_thread_add_method(_st, "/connect", "ss", connection_cb, this);
@@ -173,6 +177,39 @@ OSCClientReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, i
 	for (int i = 1; i < argc-1; i += 2)
 		prop.insert(make_pair(&argv[i]->s, AtomLiblo::lo_arg_to_atom(types[i+1], argv[i+1])));
 	_target->put(obj_path, prop);
+	return 0;
+}
+
+int
+OSCClientReceiver::_delta_begin_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	const char* obj_path = &argv[1]->s;
+	assert(_delta_remove.empty());
+	assert(_delta_add.empty());
+	_delta_uri = obj_path;
+	return 0;
+}
+
+int
+OSCClientReceiver::_delta_remove_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	_delta_remove.insert(make_pair(&argv[1]->s,
+	                               AtomLiblo::lo_arg_to_atom(types[2], argv[2])));
+	return 0;
+}
+
+int
+OSCClientReceiver::_delta_add_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	_delta_add.insert(make_pair(&argv[1]->s,
+	                            AtomLiblo::lo_arg_to_atom(types[2], argv[2])));
+	return 0;
+}
+
+int
+OSCClientReceiver::_delta_end_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+{
+	_target->delta(_delta_uri, _delta_remove, _delta_add);
 	return 0;
 }
 

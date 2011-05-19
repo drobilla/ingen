@@ -72,6 +72,10 @@ private:
 
 	ReceiveThread* _receive_thread;
 
+	Raul::URI            _delta_uri;
+	Resource::Properties _delta_remove;
+	Resource::Properties _delta_add;
+
 #ifdef LIBLO_BUNDLES
 	static int bundle_start_cb(lo_timetag time, void* myself) {
 		return ((OSCEngineReceiver*)myself)->_bundle_start_cb(time);
@@ -96,6 +100,10 @@ private:
 	LO_HANDLER(unregister_client);
 	LO_HANDLER(get);
 	LO_HANDLER(put);
+	LO_HANDLER(delta_begin);
+	LO_HANDLER(delta_remove);
+	LO_HANDLER(delta_add);
+	LO_HANDLER(delta_end);
 	LO_HANDLER(move);
 	LO_HANDLER(del);
 	LO_HANDLER(connect);
