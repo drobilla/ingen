@@ -118,6 +118,7 @@ OSCClientSender::put(const Raul::URI&            path,
 	typedef Resource::Properties::const_iterator iterator;
 	lo_message m = lo_message_new();
 	lo_message_add_string(m, path.c_str());
+	lo_message_add_string(m, Resource::graph_to_uri(ctx).c_str());
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
 		lo_message_add_string(m, i->first.c_str());
 		Raul::AtomLiblo::lo_message_add_atom(m, i->second);

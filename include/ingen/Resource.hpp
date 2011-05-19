@@ -23,6 +23,9 @@
 
 #include "raul/Atom.hpp"
 #include "raul/URI.hpp"
+#include "raul/log.hpp"
+
+#define NS_INGEN "http://drobilla.net/software/ingen#"
 
 namespace Ingen {
 
@@ -34,6 +37,37 @@ public:
 		EXTERNAL,
 		INTERNAL
 	};
+
+	static Raul::URI graph_to_uri(Graph g) {
+		switch (g) {
+		default:
+		case DEFAULT:
+			return "http://drobilla.net/software/ingen#defaultContext";
+		case EXTERNAL:
+			return "http://drobilla.net/software/ingen#externalContext";
+		case INTERNAL:
+			return "http://drobilla.net/software/ingen#internalContext";
+		}
+	}
+
+	static Graph uri_to_graph(const char* uri) {
+		const size_t prefix_len = strlen("http://drobilla.net/software/ingen#");
+		if (strncmp(uri, NS_INGEN, sizeof(NS_INGEN) - 1)) {
+			return DEFAULT;
+		}
+
+		const char* suffix = uri + prefix_len;
+		if (!strcmp(suffix, "defaultContext")) {
+			return DEFAULT;
+		} else if (!strcmp(suffix, "externalContext")) {
+			return EXTERNAL;
+		} else if (!strcmp(suffix, "internalContext")) {
+			return INTERNAL;
+		}
+
+		Raul::error << "Unknown context URI " << uri << std::endl;
+		return DEFAULT;
+	}
 
 	class Property : public Raul::Atom {
 	public:

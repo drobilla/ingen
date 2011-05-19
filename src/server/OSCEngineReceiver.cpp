@@ -332,6 +332,7 @@ OSCEngineReceiver::_get_cb(const char* path, const char* types, lo_arg** argv, i
  * <h2>/put</h2>
  * @arg @p response-id :: Integer
  * @arg @p path :: String
+ * @arg @p context :: URI String
  * @arg @p predicate :: URI String
  * @arg @p value
  * @arg @p ...
@@ -343,10 +344,12 @@ int
 OSCEngineReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
 	const char* obj_path = &argv[1]->s;
+	const char* ctx      = &argv[2]->s;
 	Resource::Properties prop;
-	for (int i = 2; i < argc-1; i += 2)
-		prop.insert(make_pair(&argv[i]->s, AtomLiblo::lo_arg_to_atom(types[i+1], argv[i+1])));
-	put(obj_path, prop);
+	for (int i = 3; i < argc-1; i += 2)
+		prop.insert(make_pair(&argv[i]->s,
+		                      AtomLiblo::lo_arg_to_atom(types[i+1], argv[i+1])));
+	put(obj_path, prop, Resource::uri_to_graph(ctx));
 	return 0;
 }
 
