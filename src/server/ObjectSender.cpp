@@ -134,11 +134,15 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	if (bundle)
 		client->bundle_begin();
 
-	client->put(port->path(), port->properties());
-
-	// Send control value
-	if (port->is_a(PortType::CONTROL))
-		client->set_property(port->path(), port->bufs().uris().ingen_value, port->value());
+	if (port->is_a(PortType::CONTROL)) {
+		Resource::Properties props = port->properties();
+		props.erase(port->bufs().uris().ingen_value);
+		props.insert(make_pair(port->bufs().uris().ingen_value,
+		                       port->value()));
+		client->put(port->path(), props);
+	} else {
+		client->put(port->path(), port->properties());
+	}
 
 	if (bundle)
 		client->bundle_end();

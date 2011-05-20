@@ -74,6 +74,8 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 	if (type == PortType::EVENTS)
 		_broadcast = true; // send activity blips
+	else if (type == PortType::CONTROL)
+		_value = Raul::Atom(0.0f);
 }
 
 PortImpl::~PortImpl()
