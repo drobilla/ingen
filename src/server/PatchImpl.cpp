@@ -343,8 +343,12 @@ PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, s
 
 	assert( !(type == PortType::UNKNOWN) );
 
+	Raul::Atom value;
+	if (type == PortType::CONTROL)
+		value = 0.0f;
+
 	return new DuplexPort(bufs, this, name, num_ports(), polyphonic, _polyphony,
-			type, Raul::Atom(), buffer_size, is_output);
+			type, value, buffer_size, is_output);
 }
 
 /** Remove port from ports list used in pre-processing thread.
