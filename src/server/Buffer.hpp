@@ -28,6 +28,8 @@
 #include "types.hpp"
 #include "BufferFactory.hpp"
 
+#define IntrusivePtr boost::intrusive_ptr
+
 namespace Ingen {
 namespace Server {
 
