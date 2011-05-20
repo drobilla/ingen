@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
