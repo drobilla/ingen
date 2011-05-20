@@ -19,10 +19,10 @@
 #define INGEN_GUI_PATCHVIEW_HPP
 
 #include <string>
+
 #include <gtkmm.h>
-#include <libglademm/xml.h>
-#include <libglademm.h>
 #include <libgnomecanvasmm.h>
+
 #include "raul/SharedPtr.hpp"
 
 namespace Raul { class Atom; }
@@ -54,8 +54,8 @@ class SubpatchModule;
 class PatchView : public Gtk::Box
 {
 public:
-	PatchView(BaseObjectType*                        cobject,
-	          const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	PatchView(BaseObjectType*                   cobject,
+	          const Glib::RefPtr<Gtk::Builder>& xml);
 
 	SharedPtr<PatchCanvas>       canvas()               const { return _canvas; }
 	SharedPtr<const PatchModel>  patch()                const { return _patch; }

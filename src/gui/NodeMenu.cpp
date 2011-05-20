@@ -31,7 +31,8 @@ using namespace Ingen::Client;
 namespace Ingen {
 namespace GUI {
 
-NodeMenu::NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+NodeMenu::NodeMenu(BaseObjectType*                   cobject,
+                   const Glib::RefPtr<Gtk::Builder>& xml)
 	: ObjectMenu(cobject, xml)
 	, _controls_menuitem(NULL)
 	, _presets_menu(NULL)

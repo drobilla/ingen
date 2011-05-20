@@ -32,8 +32,8 @@ namespace Ingen {
 using namespace Client;
 namespace GUI {
 
-PortPropertiesWindow::PortPropertiesWindow(BaseObjectType*                        cobject,
-                                           const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+PortPropertiesWindow::PortPropertiesWindow(BaseObjectType*                   cobject,
+                                           const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 	, _initial_min(0.0f)
 	, _initial_max(1.0f)

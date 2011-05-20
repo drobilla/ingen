@@ -19,7 +19,7 @@
 #define INGEN_GUI_PATCHTREEWINDOW_HPP
 
 #include <gtkmm.h>
-#include <libglademm.h>
+
 #include "Window.hpp"
 
 namespace Raul { class Path; }
@@ -40,7 +40,8 @@ class PatchTreeView;
 class PatchTreeWindow : public Window
 {
 public:
-	PatchTreeWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	PatchTreeWindow(BaseObjectType*                   cobject,
+	                const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void init(Client::ClientStore& store);
 
@@ -85,7 +86,8 @@ protected:
 class PatchTreeView : public Gtk::TreeView
 {
 public:
-	PatchTreeView(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+	PatchTreeView(BaseObjectType*                   cobject,
+	              const Glib::RefPtr<Gtk::Builder>& xml)
 		: Gtk::TreeView(cobject)
 		, _window(NULL)
 	{}

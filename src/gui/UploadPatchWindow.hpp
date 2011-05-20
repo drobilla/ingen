@@ -19,13 +19,17 @@
 #define INGEN_GUI_UPLOADPATCHWINDOW_HPP
 
 #include <sstream>
-#include <libglademm/xml.h>
-#include <gtkmm.h>
+
 #include <curl/curl.h>
+
+#include <gtkmm.h>
+
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 #include "raul/AtomicInt.hpp"
+
 #include "client/PluginModel.hpp"
+
 #include "Window.hpp"
 
 namespace Ingen {
@@ -64,7 +68,8 @@ private:
 class UploadPatchWindow : public Dialog
 {
 public:
-	UploadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	UploadPatchWindow(BaseObjectType*                   cobject,
+	                  const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void present(SharedPtr<PatchModel> patch);
 

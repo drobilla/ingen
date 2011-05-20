@@ -36,8 +36,8 @@ namespace GUI {
 class PortMenu : public ObjectMenu
 {
 public:
-	PortMenu(BaseObjectType*                        cobject,
-	         const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	PortMenu(BaseObjectType*                   cobject,
+	         const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void init(SharedPtr<const PortModel> port, bool patch_port=false);
 

@@ -29,8 +29,8 @@
 namespace Ingen {
 namespace GUI {
 
-PortMenu::PortMenu(BaseObjectType*                        cobject,
-                   const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+PortMenu::PortMenu(BaseObjectType*                   cobject,
+                   const Glib::RefPtr<Gtk::Builder>& xml)
 	: ObjectMenu(cobject, xml)
 	, _patch_port(NULL)
 {

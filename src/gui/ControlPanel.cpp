@@ -24,7 +24,7 @@
 #include "App.hpp"
 #include "ControlPanel.hpp"
 #include "Controls.hpp"
-#include "GladeFactory.hpp"
+#include "WidgetFactory.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -32,8 +32,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-ControlPanel::ControlPanel(BaseObjectType*                        cobject,
-                           const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+ControlPanel::ControlPanel(BaseObjectType*                   cobject,
+                           const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::HBox(cobject)
 	, _callback_enabled(true)
 {
@@ -89,21 +89,21 @@ ControlPanel::add_port(SharedPtr<const PortModel> pm)
 	if (pm->is_input()) {
 		if (pm->is_toggle()) {
 			ToggleControl* tc;
-			Glib::RefPtr<Gnome::Glade::Xml> xml
-					= GladeFactory::new_glade_reference("toggle_control");
+			Glib::RefPtr<Gtk::Builder> xml
+					= WidgetFactory::create("toggle_control");
 			xml->get_widget_derived("toggle_control", tc);
 			control = tc;
 		} else if (pm->is_a(PortType::CONTROL)
 				|| pm->supports(App::instance().uris().atom_Float32)) {
 			SliderControl* sc;
-			Glib::RefPtr<Gnome::Glade::Xml> xml
-					= GladeFactory::new_glade_reference("control_strip");
+			Glib::RefPtr<Gtk::Builder> xml
+					= WidgetFactory::create("control_strip");
 			xml->get_widget_derived("control_strip", sc);
 			control = sc;
 		} else if (pm->supports(App::instance().uris().atom_String)) {
 			StringControl* sc;
-			Glib::RefPtr<Gnome::Glade::Xml> xml
-					= GladeFactory::new_glade_reference("string_control");
+			Glib::RefPtr<Gtk::Builder> xml
+					= WidgetFactory::create("string_control");
 			xml->get_widget_derived("string_control", sc);
 			control = sc;
 		}

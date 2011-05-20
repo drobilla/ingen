@@ -19,9 +19,9 @@
 #define INGEN_GUI_PATCHWINDOW_HPP
 
 #include <gtkmm.h>
-#include <libglademm/xml.h>
-#include <libglademm.h>
+
 #include "raul/SharedPtr.hpp"
+
 #include "Window.hpp"
 
 namespace Raul { class Atom; class Path; }
@@ -53,7 +53,8 @@ class SubpatchModule;
 class PatchWindow : public Window
 {
 public:
-	PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	PatchWindow(BaseObjectType*                   cobject,
+	            const Glib::RefPtr<Gtk::Builder>& xml);
 	~PatchWindow();
 
 	Gtk::TextView* doc_textview() { return _doc_textview; }

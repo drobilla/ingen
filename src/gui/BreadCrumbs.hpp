@@ -19,12 +19,14 @@
 #define INGEN_GUI_BREADCRUMBS_HPP
 
 #include <list>
+
 #include <gtkmm.h>
-#include <libglademm/xml.h>
-#include <libglademm.h>
+
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
+
 #include "client/PatchModel.hpp"
+
 #include "PatchView.hpp"
 
 namespace Ingen {

@@ -34,8 +34,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-PatchTreeWindow::PatchTreeWindow(BaseObjectType*                        cobject,
-                                 const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+PatchTreeWindow::PatchTreeWindow(BaseObjectType*                   cobject,
+                                 const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 	, _enable_signal(true)
 {

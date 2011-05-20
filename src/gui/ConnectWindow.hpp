@@ -25,8 +25,6 @@
 #endif
 
 #include <gtkmm.h>
-#include <libglademm/xml.h>
-#include <libglademm.h>
 
 #include "raul/SharedPtr.hpp"
 
@@ -47,7 +45,8 @@ class App;
 class ConnectWindow : public Dialog
 {
 public:
-	ConnectWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	ConnectWindow(BaseObjectType*                   cobject,
+	              const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void set_connected_to(SharedPtr<ServerInterface> engine);
 	void start(Ingen::Shared::World* world);
@@ -77,7 +76,7 @@ private:
 	bool gtk_callback();
 	void quit();
 
-	const Glib::RefPtr<Gnome::Glade::Xml> _xml;
+	const Glib::RefPtr<Gtk::Builder> _xml;
 
 	Mode    _mode;
 	int32_t _ping_id;

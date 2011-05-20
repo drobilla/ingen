@@ -29,8 +29,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-NewSubpatchWindow::NewSubpatchWindow(BaseObjectType*                        cobject,
-                                     const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+NewSubpatchWindow::NewSubpatchWindow(BaseObjectType*                   cobject,
+                                     const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 {
 	xml->get_widget("new_subpatch_name_entry", _name_entry);

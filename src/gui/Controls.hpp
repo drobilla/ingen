@@ -19,11 +19,12 @@
 #define INGEN_GUI_CONTROLS_HPP
 
 #include <cassert>
+
 #include <gtkmm.h>
-#include <libglademm/xml.h>
-#include <libglademm.h>
-#include "client/PortModel.hpp"
+
 #include "raul/SharedPtr.hpp"
+
+#include "client/PortModel.hpp"
 
 namespace Ingen { namespace Client { class PortModel; } }
 
@@ -39,7 +40,8 @@ class ControlPanel;
 class Control : public Gtk::VBox
 {
 public:
-	Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	Control(BaseObjectType*                   cobject,
+	        const Glib::RefPtr<Gtk::Builder>& xml);
 	virtual ~Control();
 
 	virtual void init(ControlPanel* panel, SharedPtr<const Client::PortModel> pm);
@@ -73,7 +75,9 @@ protected:
 class SliderControl : public Control
 {
 public:
-	SliderControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	SliderControl(BaseObjectType*                   cobject,
+	              const Glib::RefPtr<Gtk::Builder>& xml);
+
 	void init(ControlPanel* panel, SharedPtr<const Client::PortModel> pm);
 
 	void set_min(float val);
@@ -105,7 +109,8 @@ private:
 class ToggleControl : public Control
 {
 public:
-	ToggleControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	ToggleControl(BaseObjectType*                   cobject,
+	              const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void init(ControlPanel* panel, SharedPtr<const Client::PortModel> pm);
 
@@ -123,7 +128,8 @@ private:
 class StringControl : public Control
 {
 public:
-	StringControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	StringControl(BaseObjectType*                   cobject,
+	              const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void init(ControlPanel* panel, SharedPtr<const Client::PortModel> pm);
 

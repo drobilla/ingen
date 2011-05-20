@@ -54,8 +54,8 @@ namespace Raul { class Deletable; }
 namespace Ingen {
 namespace GUI {
 
-ConnectWindow::ConnectWindow(BaseObjectType*                        cobject,
-                             const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+ConnectWindow::ConnectWindow(BaseObjectType*                   cobject,
+                             const Glib::RefPtr<Gtk::Builder>& xml)
 	: Dialog(cobject)
 	, _xml(xml)
 	, _mode(CONNECT_REMOTE)

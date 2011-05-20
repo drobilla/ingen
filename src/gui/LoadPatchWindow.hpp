@@ -18,10 +18,12 @@
 #ifndef INGEN_GUI_LOADSUBPATCHWINDOW_HPP
 #define INGEN_GUI_LOADSUBPATCHWINDOW_HPP
 
-#include <libglademm/xml.h>
 #include <gtkmm.h>
+
 #include "raul/SharedPtr.hpp"
+
 #include "ingen/GraphObject.hpp"
+
 using namespace Ingen::Shared;
 
 namespace Ingen {
@@ -33,14 +35,15 @@ namespace GUI {
 
 /** 'Add Subpatch' window.
  *
- * Loaded by glade as a derived object.
+ * Loaded from XML as a derived object.
  *
  * \ingroup GUI
  */
 class LoadPatchWindow : public Gtk::FileChooserDialog
 {
 public:
-	LoadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	LoadPatchWindow(BaseObjectType*                   cobject,
+	                const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void set_patch(SharedPtr<const PatchModel> patch);
 

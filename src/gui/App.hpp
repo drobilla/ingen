@@ -22,11 +22,13 @@
 #include <string>
 #include <map>
 #include <utility>
-#include <libgnomecanvasmm.h>
+
 #include <gtkmm.h>
-#include <libglademm.h>
+#include <libgnomecanvasmm.h>
+
 #include "raul/SharedPtr.hpp"
 #include "raul/Deletable.hpp"
+
 #include "shared/World.hpp"
 
 namespace Ingen {

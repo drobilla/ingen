@@ -19,14 +19,16 @@
 #define INGEN_GUI_LOADPLUGINWINDOW_HPP
 
 #include <map>
-#include <libglademm/xml.h>
-#include <libglademm.h>
+
 #include <gtkmm.h>
+
 #include "raul/SharedPtr.hpp"
 #include "raul/Table.hpp"
+
 #include "ingen-config.h"
 #include "ingen/GraphObject.hpp"
 #include "client/ClientStore.hpp"
+
 #include "Window.hpp"
 
 using namespace Ingen::Shared;
@@ -41,14 +43,15 @@ namespace GUI {
 
 /** 'Load Plugin' window.
  *
- * Loaded by glade as a derived object.
+ * Loaded from XML as a derived object.
  *
  * \ingroup GUI
  */
 class LoadPluginWindow : public Window
 {
 public:
-	LoadPluginWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	LoadPluginWindow(BaseObjectType*                   cobject,
+	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void set_patch(SharedPtr<const PatchModel> patch);
 	void set_plugins(SharedPtr<const Client::ClientStore::Plugins> plugins);

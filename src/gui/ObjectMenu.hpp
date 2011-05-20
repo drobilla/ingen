@@ -19,10 +19,13 @@
 #define INGEN_GUI_OBJECTMENU_HPP
 
 #include <string>
+
 #include <gtkmm.h>
-#include <libglademm/xml.h>
+
 #include "raul/SharedPtr.hpp"
+
 #include "client/ObjectModel.hpp"
+
 using Ingen::Client::ObjectModel;
 
 namespace Ingen {
@@ -39,7 +42,8 @@ class PatchCanvas;
 class ObjectMenu : public Gtk::Menu
 {
 public:
-	ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	ObjectMenu(BaseObjectType*                   cobject,
+	           const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void init(SharedPtr<const ObjectModel> object);
 

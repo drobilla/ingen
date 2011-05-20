@@ -22,12 +22,13 @@ namespace Ingen {
 namespace GUI {
 using std::string;
 
-MessagesWindow::MessagesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
+MessagesWindow::MessagesWindow(BaseObjectType*                   cobject,
+                               const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 {
-	glade_xml->get_widget("messages_textview", _textview);
-	glade_xml->get_widget("messages_clear_button", _clear_button);
-	glade_xml->get_widget("messages_close_button", _close_button);
+	xml->get_widget("messages_textview", _textview);
+	xml->get_widget("messages_clear_button", _clear_button);
+	xml->get_widget("messages_close_button", _close_button);
 
 	_clear_button->signal_clicked().connect(sigc::mem_fun(this, &MessagesWindow::clear_clicked));
 	_close_button->signal_clicked().connect(sigc::mem_fun(this, &Window::hide));

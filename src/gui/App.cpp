@@ -42,7 +42,7 @@
 #include "LoadPluginWindow.hpp"
 #include "PatchWindow.hpp"
 #include "MessagesWindow.hpp"
-#include "GladeFactory.hpp"
+#include "WidgetFactory.hpp"
 #include "PatchTreeWindow.hpp"
 #include "Configuration.hpp"
 #include "ConnectWindow.hpp"
@@ -78,15 +78,15 @@ App::App(Ingen::Shared::World* world)
 	, _world(world)
 	, _enable_signal(true)
 {
-	Glib::RefPtr<Gnome::Glade::Xml> glade_xml = GladeFactory::new_glade_reference();
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
 
 	Glib::set_application_name("Ingen");
 	gtk_window_set_default_icon_name("ingen");
 
-	glade_xml->get_widget_derived("connect_win", _connect_window);
-	glade_xml->get_widget_derived("messages_win", _messages_window);
-	glade_xml->get_widget_derived("patch_tree_win", _patch_tree_window);
-	glade_xml->get_widget("about_win", _about_dialog);
+	xml->get_widget_derived("connect_win", _connect_window);
+	xml->get_widget_derived("messages_win", _messages_window);
+	xml->get_widget_derived("patch_tree_win", _patch_tree_window);
+	xml->get_widget("about_win", _about_dialog);
 	_about_dialog->property_program_name() = "Ingen";
 	_about_dialog->property_logo_icon_name() = "ingen";
 

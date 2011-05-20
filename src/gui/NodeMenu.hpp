@@ -36,7 +36,8 @@ namespace GUI {
 class NodeMenu : public ObjectMenu
 {
 public:
-	NodeMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	NodeMenu(BaseObjectType*                   cobject,
+	         const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void init(SharedPtr<const NodeModel> node);
 

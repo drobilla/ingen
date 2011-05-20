@@ -19,9 +19,11 @@
 #define INGEN_GUI_PORTPROPERTIESWINDOW_HPP
 
 #include <gtkmm.h>
-#include <libglademm.h>
+
 #include "raul/SharedPtr.hpp"
+
 #include "client/PortModel.hpp"
+
 #include "Window.hpp"
 
 namespace Ingen {
@@ -29,15 +31,15 @@ namespace GUI {
 
 /** Port properties window.
  *
- * Loaded by libglade as a derived object.
+ * Loaded from XML as a derived object.
  *
  * \ingroup GUI
  */
 class PortPropertiesWindow : public Window
 {
 public:
-	PortPropertiesWindow(BaseObjectType*                        cobject,
-	                     const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	PortPropertiesWindow(BaseObjectType*                   cobject,
+	                     const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void present(SharedPtr<const Client::PortModel> port_model);
 

@@ -21,7 +21,7 @@
 #include "client/NodeModel.hpp"
 #include "App.hpp"
 #include "NodeControlWindow.hpp"
-#include "GladeFactory.hpp"
+#include "WidgetFactory.hpp"
 #include "Controls.hpp"
 #include "ControlPanel.hpp"
 #include "PatchWindow.hpp"
@@ -47,7 +47,7 @@ NodeControlWindow::NodeControlWindow(SharedPtr<const NodeModel> node,
 
 	set_title(_node->plugin_model()->human_name() + " - Ingen");
 
-	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("warehouse_win");
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("warehouse_win");
 	xml->get_widget_derived("control_panel_vbox", _control_panel);
 
 	show_all_children();

@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "GladeFactory.hpp"
+#include "WidgetFactory.hpp"
 #include <fstream>
 #include "raul/log.hpp"
 #include "ingen-config.h"
@@ -27,7 +27,7 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-Glib::ustring GladeFactory::glade_filename = "";
+Glib::ustring WidgetFactory::ui_filename = "";
 
 inline static bool
 is_readable(const std::string& filename)
@@ -39,42 +39,43 @@ is_readable(const std::string& filename)
 }
 
 void
-GladeFactory::find_glade_file()
+WidgetFactory::find_ui_file()
 {
 	// Try file in bundle (directory where executable resides)
-	glade_filename = Shared::bundle_file_path("ingen_gui.glade");
-	if (is_readable(glade_filename))
+	ui_filename = Shared::bundle_file_path("ingen_gui.ui");
+	if (is_readable(ui_filename))
 		return;
 
-	// Try ENGINE_GLADE_PATH from the environment
-	const char* const env_path = getenv("INGEN_GLADE_PATH");
+	// Try ENGINE_UI_PATH from the environment
+	const char* const env_path = getenv("INGEN_UI_PATH");
 	if (env_path && is_readable(env_path)) {
-		glade_filename = env_path;
+		ui_filename = env_path;
 		return;
 	}
 
 	// Try the default system installed path
-	glade_filename = Shared::data_file_path("ingen_gui.glade");
-	if (is_readable(glade_filename))
+	ui_filename = Shared::data_file_path("ingen_gui.ui");
+	if (is_readable(ui_filename))
 		return;
 
-	error << "[GladeFactory] Unable to find ingen_gui.glade in " << INGEN_DATA_DIR << endl;
-	throw std::runtime_error("Unable to find glade file");
+	error << "[WidgetFactory] Unable to find ingen_gui.ui in "
+	      << INGEN_DATA_DIR << endl;
+	throw std::runtime_error("Unable to find UI file");
 }
 
-Glib::RefPtr<Gnome::Glade::Xml>
-GladeFactory::new_glade_reference(const string& toplevel_widget)
+Glib::RefPtr<Gtk::Builder>
+WidgetFactory::create(const string& toplevel_widget)
 {
-	if (glade_filename.empty())
-		find_glade_file();
+	if (ui_filename.empty())
+		find_ui_file();
 
 	try {
 		if (toplevel_widget.empty())
-			return Gnome::Glade::Xml::create(glade_filename);
+			return Gtk::Builder::create_from_file(ui_filename);
 		else
-			return Gnome::Glade::Xml::create(glade_filename, toplevel_widget.c_str());
-	} catch (const Gnome::Glade::XmlError& ex) {
-		error << "[GladeFactory] " << ex.what() << endl;
+			return Gtk::Builder::create_from_file(ui_filename, toplevel_widget.c_str());
+	} catch (const Gtk::BuilderError& ex) {
+		error << "[WidgetFactory] " << ex.what() << endl;
 		throw ex;
 	}
 }

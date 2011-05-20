@@ -19,7 +19,6 @@
 #define INGEN_GUI_WINDOW_HPP
 
 #include <gtkmm.h>
-#include <libglademm.h>
 
 namespace Raul { class Path; }
 

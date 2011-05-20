@@ -24,7 +24,7 @@
 #include "client/NodeModel.hpp"
 #include "App.hpp"
 #include "Configuration.hpp"
-#include "GladeFactory.hpp"
+#include "WidgetFactory.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"
 #include "Port.hpp"
@@ -77,7 +77,7 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas,
 void
 PatchPortModule::create_menu()
 {
-	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
 	xml->get_widget_derived("object_menu", _menu);
 	_menu->init(_model, true);
 

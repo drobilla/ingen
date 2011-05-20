@@ -35,8 +35,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-LoadPluginWindow::LoadPluginWindow(BaseObjectType*                        cobject,
-                                   const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
+                                   const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 	, _name_offset(0)
 	, _has_shown(false)

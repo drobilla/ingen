@@ -51,7 +51,8 @@ static const int STATUS_CONTEXT_ENGINE = 0;
 static const int STATUS_CONTEXT_PATCH = 1;
 static const int STATUS_CONTEXT_HOVER = 2;
 
-PatchWindow::PatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+PatchWindow::PatchWindow(BaseObjectType*                   cobject,
+                         const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 	, _enable_signal(true)
 	, _position_stored(false)

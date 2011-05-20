@@ -19,7 +19,7 @@
 #include "ingen-config.h"
 #include "client/PatchModel.hpp"
 #include "App.hpp"
-#include "GladeFactory.hpp"
+#include "WidgetFactory.hpp"
 #include "LoadPatchWindow.hpp"
 #include "LoadPluginWindow.hpp"
 #include "LoadRemotePatchWindow.hpp"
@@ -47,7 +47,7 @@ WindowFactory::WindowFactory()
 	, _new_subpatch_win(NULL)
 	, _properties_win(NULL)
 {
-	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
 
 	xml->get_widget_derived("load_plugin_win", _load_plugin_win);
 	xml->get_widget_derived("load_patch_win", _load_patch_win);
@@ -169,7 +169,7 @@ WindowFactory::new_patch_window(SharedPtr<const PatchModel> patch,
 {
 	assert( !view || view->patch() == patch);
 
-	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference("patch_win");
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("patch_win");
 
 	PatchWindow* win = NULL;
 	xml->get_widget_derived("patch_win", win);

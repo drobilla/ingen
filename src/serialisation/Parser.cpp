@@ -43,7 +43,7 @@
 
 #define LOG(s) s << "[Parser] "
 
-#define NS_INGEN "http://drobilla.net/ns/ingen#"
+//#define NS_INGEN "http://drobilla.net/ns/ingen#" // defined in Resource.hpp
 #define NS_LV2   "http://lv2plug.in/ns/lv2core#"
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"

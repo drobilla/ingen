@@ -33,8 +33,8 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType*                        cobject,
-                                             const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+LoadRemotePatchWindow::LoadRemotePatchWindow(BaseObjectType*                   cobject,
+                                             const Glib::RefPtr<Gtk::Builder>& xml)
 	: Dialog(cobject)
 {
 	xml->get_widget("load_remote_patch_treeview", _treeview);

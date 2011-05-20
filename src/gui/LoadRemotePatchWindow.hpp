@@ -18,11 +18,14 @@
 #ifndef INGEN_GUI_LOADREMOTEPATCHWINDOW_HPP
 #define INGEN_GUI_LOADREMOTEPATCHWINDOW_HPP
 
-#include <libglademm/xml.h>
 #include <gtkmm.h>
+
 #include "raul/SharedPtr.hpp"
+
 #include "ingen/GraphObject.hpp"
+
 #include "Window.hpp"
+
 using namespace Ingen::Shared;
 
 namespace Ingen {
@@ -55,8 +58,8 @@ public:
 class LoadRemotePatchWindow : public Dialog
 {
 public:
-	LoadRemotePatchWindow(BaseObjectType*                        cobject,
-	                      const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	LoadRemotePatchWindow(BaseObjectType*                   cobject,
+	                      const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void set_patch(SharedPtr<const PatchModel> patch);
 

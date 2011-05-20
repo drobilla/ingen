@@ -28,7 +28,7 @@
 #include "NewSubpatchWindow.hpp"
 #include "NodeControlWindow.hpp"
 #include "PatchTreeWindow.hpp"
-#include "GladeFactory.hpp"
+#include "WidgetFactory.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -36,8 +36,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-PatchView::PatchView(BaseObjectType*                        cobject,
-                     const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+PatchView::PatchView(BaseObjectType*                   cobject,
+                     const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::Box(cobject)
 	, _breadcrumb_container(NULL)
 	, _enable_signal(true)
@@ -117,7 +117,7 @@ PatchView::set_patch(SharedPtr<const PatchModel> patch)
 SharedPtr<PatchView>
 PatchView::create(SharedPtr<const PatchModel> patch)
 {
-	const Glib::RefPtr<Gnome::Glade::Xml>& xml = GladeFactory::new_glade_reference("patch_view_box");
+	const Glib::RefPtr<Gtk::Builder>& xml = WidgetFactory::create("patch_view_box");
 	PatchView* result = NULL;
 	xml->get_widget_derived("patch_view_box", result);
 	assert(result);

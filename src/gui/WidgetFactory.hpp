@@ -19,24 +19,25 @@
 #define INGEN_GUI_GLADEFACTORY_HPP
 
 #include <string>
-#include <libglademm/xml.h>
+
+#include <gtkmm.h>
 
 namespace Ingen {
 namespace GUI {
 
-/** Creates glade references, so various objects can create widgets.
+/** Loads widgets from an XML description.
  * Purely static.
  *
  * \ingroup GUI
  */
-class GladeFactory {
+class WidgetFactory {
 public:
-	static Glib::RefPtr<Gnome::Glade::Xml>
-	new_glade_reference(const std::string& toplevel_widget = "");
+	static Glib::RefPtr<Gtk::Builder>
+	create(const std::string& toplevel_widget="");
 
 private:
-	static void find_glade_file();
-	static Glib::ustring glade_filename;
+	static void find_ui_file();
+	static Glib::ustring ui_filename;
 };
 
 } // namespace GUI

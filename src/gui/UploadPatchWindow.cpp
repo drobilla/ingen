@@ -40,7 +40,8 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-UploadPatchWindow::UploadPatchWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+UploadPatchWindow::UploadPatchWindow(BaseObjectType*                   cobject,
+                                     const Glib::RefPtr<Gtk::Builder>& xml)
 	: Dialog(cobject)
 	, _thread(NULL)
 	, _progress_pct(0)

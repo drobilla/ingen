@@ -30,15 +30,15 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-RenameWindow::RenameWindow(BaseObjectType*                        cobject,
-                           const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
+RenameWindow::RenameWindow(BaseObjectType*                   cobject,
+                           const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 {
-	glade_xml->get_widget("rename_symbol_entry", _symbol_entry);
-	glade_xml->get_widget("rename_label_entry", _label_entry);
-	glade_xml->get_widget("rename_message_label", _message_label);
-	glade_xml->get_widget("rename_cancel_button", _cancel_button);
-	glade_xml->get_widget("rename_ok_button", _ok_button);
+	xml->get_widget("rename_symbol_entry", _symbol_entry);
+	xml->get_widget("rename_label_entry", _label_entry);
+	xml->get_widget("rename_message_label", _message_label);
+	xml->get_widget("rename_cancel_button", _cancel_button);
+	xml->get_widget("rename_ok_button", _ok_button);
 
 	_symbol_entry->signal_changed().connect(
 		sigc::mem_fun(this, &RenameWindow::values_changed));

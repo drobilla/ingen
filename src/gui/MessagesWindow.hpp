@@ -19,8 +19,9 @@
 #define INGEN_GUI_MESSAGESWINDOW_HPP
 
 #include <string>
+
 #include <gtkmm.h>
-#include <libglademm/xml.h>
+
 #include "Window.hpp"
 
 namespace Ingen {
@@ -28,15 +29,16 @@ namespace GUI {
 
 /** Messages Window.
  *
- * Loaded by libglade as a derived object.
- * This is shown when errors occur (ie during patch loading).
+ * Loaded from XML as a derived object.
+ * This is shown when errors occur (e.g. during patch loading).
  *
  * \ingroup GUI
  */
 class MessagesWindow : public Window
 {
 public:
-	MessagesWindow(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	MessagesWindow(BaseObjectType*                   cobject,
+	               const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void post(const std::string& str);
 

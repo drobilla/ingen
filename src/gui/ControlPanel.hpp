@@ -18,13 +18,12 @@
 #ifndef INGEN_GUI_CONTROLPANEL_HPP
 #define INGEN_GUI_CONTROLPANEL_HPP
 
-#include <vector>
 #include <string>
-#include <utility> // for pair<>
-#include <sigc++/sigc++.h>
+#include <utility>
+#include <vector>
+
 #include <gtkmm.h>
-#include <libglademm/xml.h>
-#include <libglademm.h>
+
 #include "Controls.hpp"
 
 namespace Raul { class Path; }
@@ -47,8 +46,8 @@ namespace GUI {
  */
 class ControlPanel : public Gtk::HBox {
 public:
-	ControlPanel(BaseObjectType*                        cobject,
-	             const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml);
+	ControlPanel(BaseObjectType*                   cobject,
+	             const Glib::RefPtr<Gtk::Builder>& xml);
 	virtual ~ControlPanel();
 
 	void init(SharedPtr<const NodeModel> node, uint32_t poly);

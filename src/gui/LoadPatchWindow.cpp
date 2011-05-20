@@ -40,8 +40,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-LoadPatchWindow::LoadPatchWindow(BaseObjectType*                        cobject,
-                                 const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+LoadPatchWindow::LoadPatchWindow(BaseObjectType*                   cobject,
+                                 const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::FileChooserDialog(cobject)
 	, _merge_ports(false)
 {

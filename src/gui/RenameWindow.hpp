@@ -19,9 +19,11 @@
 #define INGEN_GUI_RENAMEWINDOW_HPP
 
 #include <gtkmm.h>
-#include <libglademm.h>
+
 #include "raul/SharedPtr.hpp"
+
 #include "client/ObjectModel.hpp"
+
 #include "Window.hpp"
 
 using Ingen::Client::ObjectModel;
@@ -36,8 +38,8 @@ namespace GUI {
 class RenameWindow : public Window
 {
 public:
-	RenameWindow(BaseObjectType*                        cobject,
-	             const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	RenameWindow(BaseObjectType*                   cobject,
+	             const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void present(SharedPtr<const ObjectModel> object);
 

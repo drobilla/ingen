@@ -15,7 +15,6 @@ def build(bld):
             Connection.cpp
             ControlPanel.cpp
             Controls.cpp
-            GladeFactory.cpp
             LoadPatchWindow.cpp
             LoadPluginWindow.cpp
             LoadRemotePatchWindow.cpp
@@ -37,6 +36,7 @@ def build(bld):
             RenameWindow.cpp
             SubpatchModule.cpp
             ThreadedLoader.cpp
+            WidgetFactory.cpp
             Window.cpp
             WindowFactory.cpp
             ingen_gui.cpp
@@ -67,10 +67,10 @@ def build(bld):
             SUIL
     ''')
 
-    # Glade XML UI definition
+    # XML UI definition
     bld(features      = 'subst',
-        source        = 'ingen_gui.glade',
-        target        = '../../ingen_gui.glade',
+        source        = 'ingen_gui.ui',
+        target        = '../../ingen_gui.ui',
         install_path  = '${DATADIR}/ingen',
         chmod         = Utils.O755,
             INGEN_VERSION = bld.env['INGEN_VERSION'])

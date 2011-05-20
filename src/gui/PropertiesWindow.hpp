@@ -19,9 +19,11 @@
 #define INGEN_GUI_PROPERTIES_WINDOW_HPP
 
 #include <gtkmm.h>
-#include <libglademm.h>
+
 #include "raul/SharedPtr.hpp"
+
 #include "client/NodeModel.hpp"
+
 #include "Window.hpp"
 
 using namespace Ingen::Client;
@@ -31,15 +33,15 @@ namespace GUI {
 
 /** Object properties window.
  *
- * Loaded by libglade as a derived object.
+ * Loaded from XML as a derived object.
  *
  * \ingroup GUI
  */
 class PropertiesWindow : public Window
 {
 public:
-	PropertiesWindow(BaseObjectType*                        cobject,
-	                 const Glib::RefPtr<Gnome::Glade::Xml>& refGlade);
+	PropertiesWindow(BaseObjectType*                   cobject,
+	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void present(SharedPtr<const ObjectModel> model);
 	void set_object(SharedPtr<const ObjectModel> model);

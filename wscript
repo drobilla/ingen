@@ -58,11 +58,9 @@ def configure(conf):
                       atleast_version='0.3.0', mandatory=False)
     if not Options.options.no_gui:
         autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
-                          atleast_version='2.11.12', mandatory=False)
+                          atleast_version='2.12.0', mandatory=False)
         autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM',
                           atleast_version='2.14.0', mandatory=False)
-        autowaf.check_pkg(conf, 'libglademm-2.4', uselib_store='GLADEMM',
-                          atleast_version='2.6.0', mandatory=False)
         autowaf.check_pkg(conf, 'flowcanvas', uselib_store='FLOWCANVAS',
                           atleast_version='0.8.0', mandatory=False)
     if not Options.options.no_http:
@@ -92,9 +90,7 @@ def configure(conf):
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
-    if (not Options.options.no_gui
-            and conf.is_defined('HAVE_GLADEMM')
-            and conf.is_defined('HAVE_FLOWCANVAS')):
+    if not Options.options.no_gui and conf.is_defined('HAVE_FLOWCANVAS'):
         autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
 
     if conf.is_defined('HAVE_JACK'):

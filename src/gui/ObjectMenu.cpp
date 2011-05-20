@@ -29,7 +29,8 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-ObjectMenu::ObjectMenu(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
+                       const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::Menu(cobject)
 	, _polyphonic_menuitem(NULL)
 	, _disconnect_menuitem(NULL)

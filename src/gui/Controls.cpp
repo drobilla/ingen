@@ -26,7 +26,7 @@
 #include "App.hpp"
 #include "ControlPanel.hpp"
 #include "Controls.hpp"
-#include "GladeFactory.hpp"
+#include "WidgetFactory.hpp"
 #include "PortPropertiesWindow.hpp"
 
 using namespace std;
@@ -38,13 +38,14 @@ namespace GUI {
 
 // ////////////////////// Control ///////////////////////////////// //
 
-Control::Control(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
+Control::Control(BaseObjectType*                   cobject,
+                 const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::VBox(cobject)
 	, _control_panel(NULL)
 	, _enable_signal(false)
 	, _name_label(NULL)
 {
-	Glib::RefPtr<Gnome::Glade::Xml> menu_xml = GladeFactory::new_glade_reference("port_control_menu");
+	Glib::RefPtr<Gtk::Builder> menu_xml = WidgetFactory::create("port_control_menu");
 	menu_xml->get_widget("port_control_menu", _menu);
 	menu_xml->get_widget("port_control_menu_properties", _menu_properties);
 
@@ -105,7 +106,7 @@ Control::set_label(const string& name)
 void
 Control::menu_properties()
 {
-	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
 
 	PortPropertiesWindow* window;
 	xml->get_widget_derived("port_properties_win", window);
@@ -114,7 +115,8 @@ Control::menu_properties()
 
 // ////////////////// SliderControl ////////////////////// //
 
-SliderControl::SliderControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+SliderControl::SliderControl(BaseObjectType*                   cobject,
+                             const Glib::RefPtr<Gtk::Builder>& xml)
 	: Control(cobject, xml)
 	, _enabled(true)
 {
@@ -289,7 +291,8 @@ SliderControl::slider_pressed(GdkEvent* ev)
 
 // ///////////// ToggleControl ////////////// //
 
-ToggleControl::ToggleControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+ToggleControl::ToggleControl(BaseObjectType*                   cobject,
+                             const Glib::RefPtr<Gtk::Builder>& xml)
 	: Control(cobject, xml)
 {
 	xml->get_widget("toggle_control_name_label", _name_label);
@@ -347,7 +350,8 @@ ToggleControl::toggled()
 
 // ///////////// StringControl ////////////// //
 
-StringControl::StringControl(BaseObjectType* cobject, const Glib::RefPtr<Gnome::Glade::Xml>& xml)
+StringControl::StringControl(BaseObjectType*                   cobject,
+                             const Glib::RefPtr<Gtk::Builder>& xml)
 	: Control(cobject, xml)
 {
 	xml->get_widget("string_control_name_label", _name_label);

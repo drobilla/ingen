@@ -32,16 +32,16 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-PropertiesWindow::PropertiesWindow(BaseObjectType*                        cobject,
-                                   const Glib::RefPtr<Gnome::Glade::Xml>& glade_xml)
+PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
+                                   const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 {
-	glade_xml->get_widget("properties_vbox", _vbox);
-	glade_xml->get_widget("properties_scrolledwindow", _scrolledwindow);
-	glade_xml->get_widget("properties_table", _table);
-	glade_xml->get_widget("properties_cancel_button", _cancel_button);
-	glade_xml->get_widget("properties_apply_button", _apply_button);
-	glade_xml->get_widget("properties_ok_button", _ok_button);
+	xml->get_widget("properties_vbox", _vbox);
+	xml->get_widget("properties_scrolledwindow", _scrolledwindow);
+	xml->get_widget("properties_table", _table);
+	xml->get_widget("properties_cancel_button", _cancel_button);
+	xml->get_widget("properties_apply_button", _apply_button);
+	xml->get_widget("properties_ok_button", _ok_button);
 
 	_type_choices = Gtk::ListStore::create(_type_cols);
 	for (int i = Raul::Atom::INT; i <= Raul::Atom::BLOB; ++i) {

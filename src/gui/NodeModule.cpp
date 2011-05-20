@@ -26,7 +26,7 @@
 #include "client/PluginModel.hpp"
 #include "client/PluginUI.hpp"
 #include "App.hpp"
-#include "GladeFactory.hpp"
+#include "WidgetFactory.hpp"
 #include "NodeControlWindow.hpp"
 #include "NodeModule.hpp"
 #include "PatchCanvas.hpp"
@@ -78,7 +78,7 @@ NodeModule::~NodeModule()
 void
 NodeModule::create_menu()
 {
-	Glib::RefPtr<Gnome::Glade::Xml> xml = GladeFactory::new_glade_reference();
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
 	xml->get_widget_derived("object_menu", _menu);
 	_menu->init(_node);
 	_menu->signal_embed_gui.connect(

@@ -18,10 +18,12 @@
 #ifndef INGEN_GUI_NEWSUBPATCHWINDOW_HPP
 #define INGEN_GUI_NEWSUBPATCHWINDOW_HPP
 
-#include <libglademm/xml.h>
 #include <gtkmm.h>
+
 #include "raul/SharedPtr.hpp"
+
 #include "ingen/GraphObject.hpp"
+
 #include "Window.hpp"
 
 namespace Ingen {
@@ -35,15 +37,15 @@ namespace GUI {
 
 /** 'New Subpatch' window.
  *
- * Loaded by glade as a derived object.
+ * Loaded from XML as a derived object.
  *
  * \ingroup GUI
  */
 class NewSubpatchWindow : public Window
 {
 public:
-	NewSubpatchWindow(BaseObjectType*                        cobject,
-	                  const Glib::RefPtr<Gnome::Glade::Xml>& xml);
+	NewSubpatchWindow(BaseObjectType*                   cobject,
+	                  const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void set_patch(SharedPtr<const PatchModel> patch);
 

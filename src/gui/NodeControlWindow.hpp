@@ -19,9 +19,10 @@
 #define INGEN_GUI_NODECONTROLWINDOW_HPP
 
 #include <gtkmm.h>
-#include <libglademm.h>
 #include <sigc++/sigc++.h>
+
 #include "raul/SharedPtr.hpp"
+
 #include "Window.hpp"
 
 namespace Ingen { namespace Client {
