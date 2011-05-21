@@ -25,7 +25,7 @@
 #include "raul/URI.hpp"
 #include "raul/log.hpp"
 
-#define NS_INGEN "http://drobilla.net/software/ingen#"
+#define NS_INGEN "http://drobilla.net/ns/ingen#"
 
 namespace Ingen {
 
@@ -42,21 +42,20 @@ public:
 		switch (g) {
 		default:
 		case DEFAULT:
-			return "http://drobilla.net/software/ingen#defaultContext";
+			return NS_INGEN "defaultContext";
 		case EXTERNAL:
-			return "http://drobilla.net/software/ingen#externalContext";
+			return NS_INGEN "externalContext";
 		case INTERNAL:
-			return "http://drobilla.net/software/ingen#internalContext";
+			return NS_INGEN "internalContext";
 		}
 	}
 
 	static Graph uri_to_graph(const char* uri) {
-		const size_t prefix_len = strlen("http://drobilla.net/software/ingen#");
 		if (strncmp(uri, NS_INGEN, sizeof(NS_INGEN) - 1)) {
 			return DEFAULT;
 		}
 
-		const char* suffix = uri + prefix_len;
+		const char* suffix = uri + sizeof(NS_INGEN) - 1;
 		if (!strcmp(suffix, "defaultContext")) {
 			return DEFAULT;
 		} else if (!strcmp(suffix, "externalContext")) {

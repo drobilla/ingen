@@ -21,11 +21,11 @@
 #include <string>
 #include <list>
 
+#include <boost/optional.hpp>
 #include <glibmm/ustring.h>
 
-#include <boost/optional.hpp>
-
 #include "raul/Path.hpp"
+#include "serd/serd.h"
 
 #include "ingen/GraphObject.hpp"
 
@@ -74,8 +74,9 @@ public:
 
 	typedef std::list<PatchRecord> PatchRecords;
 
-	virtual PatchRecords find_patches(Shared::World* world,
-	                                  const Glib::ustring&  manifest_uri);
+	virtual PatchRecords find_patches(Shared::World*       world,
+	                                  SerdEnv*             env,
+	                                  const Glib::ustring& manifest_uri);
 
 private:
 	boost::optional<Raul::Path> parse(

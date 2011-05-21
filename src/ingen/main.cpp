@@ -157,6 +157,10 @@ main(int argc, char** argv)
 
 	world->set_engine(engine_interface);
 
+	if (world->local_engine()) {
+		world->local_engine()->activate();
+	}
+
 	// Load a patch
 	if (conf.option("load").is_valid() && engine_interface) {
 		boost::optional<Path>   parent;
@@ -191,6 +195,7 @@ main(int argc, char** argv)
 		}
 
 		engine_interface->get("ingen:plugins");
+		engine_interface->get("path:/");
 		world->parser()->parse_file(
 			world, engine_interface.get(), uri, parent, symbol);
 	}
@@ -217,7 +222,7 @@ main(int argc, char** argv)
 		signal(SIGINT, ingen_interrupt);
 		signal(SIGTERM, ingen_interrupt);
 
-		// Activate the enginie
+		// Activate the engine
 		world->local_engine()->activate();
 
 		// Run engine main loop until interrupt

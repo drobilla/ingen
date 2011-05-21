@@ -108,6 +108,7 @@ Parser::Parser(Ingen::Shared::World& world)
 
 Parser::PatchRecords
 Parser::find_patches(Ingen::Shared::World* world,
+                     SerdEnv*              env,
                      const Glib::ustring&  manifest_uri)
 {
 	const Sord::URI ingen_Patch (*world->rdf_world(), NS_INGEN "Patch");
@@ -115,9 +116,7 @@ Parser::find_patches(Ingen::Shared::World* world,
 	const Sord::URI rdfs_seeAlso(*world->rdf_world(), NS_RDFS  "seeAlso");
 
 	Sord::Model model(*world->rdf_world(), manifest_uri);
-	SerdEnv* env = serd_env_new(NULL);
 	model.load_file(env, SERD_TURTLE, manifest_uri);
-	serd_env_free(env);
 
 	std::list<PatchRecord> records;
 	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
@@ -156,21 +155,35 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 		file_uri = Glib::ustring("file://") + file_uri;
 	}
 
+	const bool is_bundle = (file_uri.substr(file_uri.length() - 4) != ".ttl");
+
+	if (is_bundle && file_uri[file_uri.length() - 1] != '/') {
+		file_uri.append("/");
+	}
+
+	SerdNode base_node = serd_node_from_string(
+		SERD_URI, (const uint8_t*)file_uri.c_str());
+	SerdEnv* env = serd_env_new(&base_node);
+
 	if (file_uri.substr(file_uri.length() - 4) != ".ttl") {
 		// Not a Turtle file, try to open it as a bundle
 		if (file_uri[file_uri.length() - 1] != '/') {
 			file_uri.append("/");
 		}
-		Parser::PatchRecords records = find_patches(world, file_uri + "manifest.ttl");
+		Parser::PatchRecords records = find_patches(world, env, file_uri + "manifest.ttl");
 		if (!records.empty()) {
 			file_uri = records.front().file_uri;
 		}
 	}
 
+	base_node = serd_node_from_string(
+		SERD_URI, (const uint8_t*)file_uri.c_str());
+	serd_env_set_base_uri(env, &base_node);
+
 	// Load patch file into model
 	Sord::Model model(*world->rdf_world(), file_uri);
-	SerdEnv* env = serd_env_new(NULL);
 	model.load_file(env, SERD_TURTLE, file_uri);
+
 	serd_env_free(env);
 
 	LOG(info) << "Parsing " << file_uri << endl;
@@ -260,6 +273,7 @@ Parser::parse(Ingen::Shared::World*                    world,
 		const Sord::Node& subject   = i.get_subject();
 		const Sord::Node& rdf_class = i.get_object();
 
+		assert(rdf_class.is_uri());
 		Subjects::iterator s = subjects.find(subject);
 		if (s == subjects.end()) {
 			std::set<Sord::Node> types;
@@ -285,10 +299,18 @@ Parser::parse(Ingen::Shared::World*                    world,
 		} else if (types.find(port_class) != types.end()) {
 			parse_properties(world, target, model, subject, path, data);
 			ret = path;
+		} else {
+			LOG(error) << "Subject has no known types" << endl;
 		}
 
 		if (!ret) {
 			LOG(error) << "Failed to parse " << path << endl;
+			LOG(error) << "Types:" << endl;
+			for (std::set<Sord::Node>::const_iterator t = types.begin();
+			     t != types.end(); ++t) {
+				LOG(error) << " :: " << *t << endl;
+				assert((*t).is_uri());
+			}
 			return boost::optional<Path>();
 		}
 

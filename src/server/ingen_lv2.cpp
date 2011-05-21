@@ -399,9 +399,15 @@ Lib::Lib()
 
 	typedef Serialisation::Parser::PatchRecords Records;
 
-	Records records(world->parser()->find_patches(
-		                world, Glib::filename_to_uri(
-			                Shared::bundle_file_path("manifest.ttl"))));
+	const std::string manifest_path = Shared::bundle_file_path("manifest.ttl");
+	const SerdNode    base_node     = serd_node_from_string(
+		SERD_URI, (const uint8_t*)manifest_path.c_str());
+
+	SerdEnv* env = serd_env_new(&base_node);
+	Records records(
+		world->parser()->find_patches(world, env,
+		                              Glib::filename_to_uri(manifest_path)));
+	serd_env_free(env);
 
 	for (Records::iterator i = records.begin(); i != records.end(); ++i) {
 		patches.push_back(
