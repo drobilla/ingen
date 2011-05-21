@@ -106,10 +106,8 @@ Control::set_label(const string& name)
 void
 Control::menu_properties()
 {
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
-
 	PortPropertiesWindow* window;
-	xml->get_widget_derived("port_properties_win", window);
+	WidgetFactory::get_widget_derived("port_properties_win", window);
 	window->present(_port_model);
 }
 

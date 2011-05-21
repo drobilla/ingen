@@ -78,15 +78,13 @@ App::App(Ingen::Shared::World* world)
 	, _world(world)
 	, _enable_signal(true)
 {
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
-
 	Glib::set_application_name("Ingen");
 	gtk_window_set_default_icon_name("ingen");
 
-	xml->get_widget_derived("connect_win", _connect_window);
-	xml->get_widget_derived("messages_win", _messages_window);
-	xml->get_widget_derived("patch_tree_win", _patch_tree_window);
-	xml->get_widget("about_win", _about_dialog);
+	WidgetFactory::get_widget_derived("connect_win", _connect_window);
+	WidgetFactory::get_widget_derived("messages_win", _messages_window);
+	WidgetFactory::get_widget_derived("patch_tree_win", _patch_tree_window);
+	WidgetFactory::get_widget("about_win", _about_dialog);
 	_about_dialog->property_program_name() = "Ingen";
 	_about_dialog->property_logo_icon_name() = "ingen";
 

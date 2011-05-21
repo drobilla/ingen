@@ -126,8 +126,7 @@ void
 Port::create_menu()
 {
 	PortMenu* menu = NULL;
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
-	xml->get_widget_derived("object_menu", menu);
+	WidgetFactory::get_widget_derived("object_menu", menu);
 	menu->init(model(), _flipped);
 	set_menu(menu);
 }

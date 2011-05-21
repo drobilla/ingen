@@ -35,6 +35,18 @@ public:
 	static Glib::RefPtr<Gtk::Builder>
 	create(const std::string& toplevel_widget="");
 
+	template<typename T>
+	static void get_widget(const Glib::ustring& name, T*& widget) {
+		Glib::RefPtr<Gtk::Builder> xml = create(name);
+		xml->get_widget(name, widget);
+	}
+
+	template<typename T>
+	static void get_widget_derived(const Glib::ustring& name, T*& widget) {
+		Glib::RefPtr<Gtk::Builder> xml = create(name);
+		xml->get_widget_derived(name, widget);
+	}
+
 private:
 	static void find_ui_file();
 	static Glib::ustring ui_filename;

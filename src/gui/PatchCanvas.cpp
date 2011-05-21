@@ -72,7 +72,7 @@ PatchCanvas::PatchCanvas(SharedPtr<const PatchModel> patch, int width, int heigh
 	, _human_names(true)
 	, _show_port_names(true)
 {
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("canvas_menu");
 	xml->get_widget("canvas_menu", _menu);
 
 	xml->get_widget("canvas_menu_add_audio_input", _menu_add_audio_input);

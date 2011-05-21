@@ -117,9 +117,8 @@ PatchView::set_patch(SharedPtr<const PatchModel> patch)
 SharedPtr<PatchView>
 PatchView::create(SharedPtr<const PatchModel> patch)
 {
-	const Glib::RefPtr<Gtk::Builder>& xml = WidgetFactory::create("patch_view_box");
 	PatchView* result = NULL;
-	xml->get_widget_derived("patch_view_box", result);
+	WidgetFactory::get_widget_derived("patch_view_box", result);
 	assert(result);
 	result->set_patch(patch);
 	return SharedPtr<PatchView>(result);

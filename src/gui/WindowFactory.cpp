@@ -47,17 +47,15 @@ WindowFactory::WindowFactory()
 	, _new_subpatch_win(NULL)
 	, _properties_win(NULL)
 {
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
-
-	xml->get_widget_derived("load_plugin_win", _load_plugin_win);
-	xml->get_widget_derived("load_patch_win", _load_patch_win);
-	xml->get_widget_derived("load_remote_patch_win", _load_remote_patch_win);
-	xml->get_widget_derived("new_subpatch_win", _new_subpatch_win);
-	xml->get_widget_derived("properties_win", _properties_win);
-	xml->get_widget_derived("rename_win", _rename_win);
+	WidgetFactory::get_widget_derived("load_plugin_win", _load_plugin_win);
+	WidgetFactory::get_widget_derived("load_patch_win", _load_patch_win);
+	WidgetFactory::get_widget_derived("load_remote_patch_win", _load_remote_patch_win);
+	WidgetFactory::get_widget_derived("new_subpatch_win", _new_subpatch_win);
+	WidgetFactory::get_widget_derived("properties_win", _properties_win);
+	WidgetFactory::get_widget_derived("rename_win", _rename_win);
 
 #ifdef HAVE_CURL
-	xml->get_widget_derived("upload_patch_win", _upload_patch_win);
+	WidgetFactory::get_widget_derived("upload_patch_win", _upload_patch_win);
 #endif
 }
 
@@ -169,10 +167,8 @@ WindowFactory::new_patch_window(SharedPtr<const PatchModel> patch,
 {
 	assert( !view || view->patch() == patch);
 
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("patch_win");
-
 	PatchWindow* win = NULL;
-	xml->get_widget_derived("patch_win", win);
+	WidgetFactory::get_widget_derived("patch_win", win);
 	assert(win);
 
 	win->set_patch(patch, view);

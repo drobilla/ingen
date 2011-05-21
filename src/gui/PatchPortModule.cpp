@@ -77,8 +77,7 @@ PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas,
 void
 PatchPortModule::create_menu()
 {
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create();
-	xml->get_widget_derived("object_menu", _menu);
+	WidgetFactory::get_widget_derived("object_menu", _menu);
 	_menu->init(_model, true);
 
 	set_menu(_menu);

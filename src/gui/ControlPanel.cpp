@@ -89,22 +89,16 @@ ControlPanel::add_port(SharedPtr<const PortModel> pm)
 	if (pm->is_input()) {
 		if (pm->is_toggle()) {
 			ToggleControl* tc;
-			Glib::RefPtr<Gtk::Builder> xml
-					= WidgetFactory::create("toggle_control");
-			xml->get_widget_derived("toggle_control", tc);
+			WidgetFactory::get_widget_derived("toggle_control", tc);
 			control = tc;
 		} else if (pm->is_a(PortType::CONTROL)
 				|| pm->supports(App::instance().uris().atom_Float32)) {
 			SliderControl* sc;
-			Glib::RefPtr<Gtk::Builder> xml
-					= WidgetFactory::create("control_strip");
-			xml->get_widget_derived("control_strip", sc);
+			WidgetFactory::get_widget_derived("control_strip", sc);
 			control = sc;
 		} else if (pm->supports(App::instance().uris().atom_String)) {
 			StringControl* sc;
-			Glib::RefPtr<Gtk::Builder> xml
-					= WidgetFactory::create("string_control");
-			xml->get_widget_derived("string_control", sc);
+			WidgetFactory::get_widget_derived("string_control", sc);
 			control = sc;
 		}
 	}
