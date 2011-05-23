@@ -19,8 +19,8 @@
 #define INGEN_ENGINE_LV2NODE_HPP
 
 #include <string>
+#include <boost/intrusive_ptr.hpp>
 #include "lilv/lilv.h"
-#include "raul/IntrusivePtr.hpp"
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 #include "types.hpp"
 #include "NodeImpl.hpp"
@@ -59,7 +59,7 @@ public:
 	void process(ProcessContext& context);
 
 	void set_port_buffer(uint32_t voice, uint32_t port_num,
-			IntrusivePtr<Buffer> buf, SampleCount offset);
+			boost::intrusive_ptr<Buffer> buf, SampleCount offset);
 
 protected:
 	inline LilvInstance* instance(uint32_t voice) {

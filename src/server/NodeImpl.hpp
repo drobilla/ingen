@@ -19,9 +19,9 @@
 #define INGEN_ENGINE_NODEIMPL_HPP
 
 #include <string>
+#include <boost/intrusive_ptr.hpp>
 #include "raul/Array.hpp"
 #include "raul/AtomicInt.hpp"
-#include "raul/IntrusivePtr.hpp"
 #include "raul/Semaphore.hpp"
 #include "ingen/Node.hpp"
 #include "GraphObjectImpl.hpp"
@@ -140,10 +140,10 @@ public:
 
 	/** Set the buffer of a port to a given buffer (e.g. connect plugin to buffer) */
 	virtual void set_port_buffer(
-			uint32_t             voice,
-			uint32_t             port_num,
-			IntrusivePtr<Buffer> buf,
-			SampleCount          offset);
+			uint32_t                      voice,
+			uint32_t                      port_num,
+			boost::intrusive_ptr<Buffer>  buf,
+			SampleCount                   offset);
 
 	virtual Port*     port(uint32_t index)      const;
 	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }

@@ -16,9 +16,9 @@
  */
 
 #include <algorithm>
+#include <boost/intrusive_ptr.hpp>
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
-#include "raul/IntrusivePtr.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
@@ -68,12 +68,12 @@ ConnectionImpl::dump() const
 
 void
 ConnectionImpl::get_sources(Context& context, uint32_t voice,
-		IntrusivePtr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs)
+		boost::intrusive_ptr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs)
 {
 	if (must_queue() && _queue->read_space() > 0) {
 		LV2_Atom obj;
 		_queue->peek(sizeof(LV2_Atom), &obj);
-		IntrusivePtr<Buffer> buf = context.engine().buffer_factory()->get(
+		boost::intrusive_ptr<Buffer> buf = context.engine().buffer_factory()->get(
 				dst_port()->buffer_type(), sizeof(LV2_Atom) + obj.size);
 		void* data = buf->port_data(PortType::MESSAGE, context.offset());
 		_queue->read(sizeof(LV2_Atom) + obj.size, (LV2_Atom*)data);
@@ -98,7 +98,8 @@ ConnectionImpl::queue(Context& context)
 	if (!must_queue())
 		return;
 
-	IntrusivePtr<EventBuffer> src_buf = PtrCast<EventBuffer>(_src_port->buffer(0));
+	boost::intrusive_ptr<EventBuffer> src_buf =
+			boost::dynamic_pointer_cast<EventBuffer>(_src_port->buffer(0));
 	if (!src_buf) {
 		error << "Queued connection but source is not an EventBuffer" << endl;
 		return;

@@ -18,6 +18,7 @@
 #ifndef INGEN_ENGINE_MIX_HPP
 #define INGEN_ENGINE_MIX_HPP
 
+#include <boost/intrusive_ptr.hpp>
 #include "raul/log.hpp"
 #include "ingen/PortType.hpp"
 #include "Buffer.hpp"
@@ -29,7 +30,7 @@ namespace Ingen {
 namespace Server {
 
 inline void
-mix(Context& context, Buffer* dst, const IntrusivePtr<Buffer>* srcs, uint32_t num_srcs)
+mix(Context& context, Buffer* dst, const boost::intrusive_ptr<Buffer>* srcs, uint32_t num_srcs)
 {
 	using Ingen::PortType;
 	switch (dst->type().symbol()) {

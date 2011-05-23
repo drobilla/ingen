@@ -175,7 +175,7 @@ InputPort::pre_process(Context& context)
 	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
 		max_num_srcs += (*c)->src_port()->poly();
 
-	IntrusivePtr<Buffer> srcs[max_num_srcs];
+	boost::intrusive_ptr<Buffer> srcs[max_num_srcs];
 
 	if (_connections.empty()) {
 		for (uint32_t v = 0; v < _poly; ++v) {

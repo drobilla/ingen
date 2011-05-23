@@ -19,10 +19,10 @@
 #define INGEN_ENGINE_CONNECTIONIMPL_HPP
 
 #include <cstdlib>
+#include <boost/intrusive_ptr.hpp>
 #include <boost/utility.hpp>
 #include "raul/log.hpp"
 #include "raul/Deletable.hpp"
-#include "raul/IntrusivePtr.hpp"
 #include "ingen/PortType.hpp"
 #include "ingen/Connection.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
@@ -67,7 +67,7 @@ public:
 	void queue(Context& context);
 
 	void get_sources(Context& context, uint32_t voice,
-			IntrusivePtr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs);
+			boost::intrusive_ptr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs);
 
 	/** Get the buffer for a particular voice.
 	 * A Connection is smart - it knows the destination port requesting the

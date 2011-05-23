@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "raul/IntrusivePtr.hpp"
+#include <boost/intrusive_ptr.hpp>
 #include "ingen/ClientInterface.hpp"
 #include "events/RequestMetadata.hpp"
 #include "shared/LV2Atom.hpp"
@@ -89,11 +89,13 @@ RequestMetadata::execute(ProcessContext& context)
 	if (_special_type == PORT_VALUE) {
 		PortImpl* port = dynamic_cast<PortImpl*>(_resource);
 		if (port) {
-			IntrusivePtr<AudioBuffer> abuf = PtrCast<AudioBuffer>(port->buffer(0));
+			boost::intrusive_ptr<AudioBuffer> abuf =
+					boost::dynamic_pointer_cast<AudioBuffer>(port->buffer(0));
 			if (abuf) {
 				_value = abuf->value_at(0);
 			} else {
-				IntrusivePtr<ObjectBuffer> obuf = PtrCast<ObjectBuffer>(port->buffer(0));
+				boost::intrusive_ptr<ObjectBuffer> obuf =
+						boost::dynamic_pointer_cast<ObjectBuffer>(port->buffer(0));
 				if (obuf) {
 					Ingen::Shared::LV2Atom::to_atom(*_engine.world()->uris().get(),
 					                                obuf->atom(),

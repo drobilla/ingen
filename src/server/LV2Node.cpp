@@ -398,7 +398,7 @@ LV2Node::process(ProcessContext& context)
 
 void
 LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num,
-		IntrusivePtr<Buffer> buf, SampleCount offset)
+		boost::intrusive_ptr<Buffer> buf, SampleCount offset)
 {
 	NodeImpl::set_port_buffer(voice, port_num, buf, offset);
 	lilv_instance_connect_port(instance(voice), port_num,
