@@ -21,12 +21,14 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+
 #include "raul/SharedPtr.hpp"
+
 #include "ingen/Node.hpp"
 #include "ingen/Port.hpp"
-#include "ObjectModel.hpp"
-#include "PortModel.hpp"
-#include "PluginModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/PortModel.hpp"
+#include "ingen/client/PluginModel.hpp"
 
 namespace Raul { class Path; }
 

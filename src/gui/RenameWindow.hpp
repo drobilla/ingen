@@ -22,7 +22,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "client/ObjectModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
 
 #include "Window.hpp"
 

@@ -19,7 +19,7 @@
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
-#include "ThreadedSigClientInterface.hpp"
+#include "ingen/client/ThreadedSigClientInterface.hpp"
 
 using namespace std;
 using namespace Raul;

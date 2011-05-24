@@ -31,7 +31,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
 
-#include "client/ConnectionModel.hpp"
+#include "ingen/client/ConnectionModel.hpp"
 #include "ingen/GraphObject.hpp"
 #include "NodeModule.hpp"
 

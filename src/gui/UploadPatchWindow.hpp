@@ -28,7 +28,7 @@
 #include "raul/Thread.hpp"
 #include "raul/AtomicInt.hpp"
 
-#include "client/PluginModel.hpp"
+#include "ingen/client/PluginModel.hpp"
 
 #include "Window.hpp"
 

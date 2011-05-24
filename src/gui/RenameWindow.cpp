@@ -17,10 +17,13 @@
 
 #include <cassert>
 #include <string>
-#include "ingen/ServerInterface.hpp"
+
 #include "shared/LV2URIMap.hpp"
-#include "client/ObjectModel.hpp"
-#include "client/ClientStore.hpp"
+
+#include "ingen/ServerInterface.hpp"
+#include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/ClientStore.hpp"
+
 #include "App.hpp"
 #include "RenameWindow.hpp"
 

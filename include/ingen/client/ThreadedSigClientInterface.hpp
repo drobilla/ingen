@@ -18,14 +18,18 @@
 #ifndef INGEN_CLIENT_THREADEDSIGCLIENTINTERFACE_HPP
 #define INGEN_CLIENT_THREADEDSIGCLIENTINTERFACE_HPP
 
-#include <inttypes.h>
+#include <stdint.h>
+
 #include <string>
+
 #include <sigc++/sigc++.h>
 #include <glibmm/thread.h>
+
 #include "raul/Atom.hpp"
-#include "ingen/ClientInterface.hpp"
-#include "SigClientInterface.hpp"
 #include "raul/SRSWQueue.hpp"
+
+#include "ingen/ClientInterface.hpp"
+#include "ingen/client/SigClientInterface.hpp"
 
 /** Returns nothing and takes no parameters (because they have all been bound) */
 typedef sigc::slot<void> Closure;

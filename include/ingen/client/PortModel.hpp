@@ -20,10 +20,12 @@
 
 #include <cstdlib>
 #include <string>
-#include "raul/log.hpp"
+
 #include "raul/SharedPtr.hpp"
+#include "raul/log.hpp"
+
 #include "ingen/Port.hpp"
-#include "ObjectModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
 
 namespace Raul { class Path; }
 

@@ -21,8 +21,8 @@
 #include <fstream>
 #include <map>
 #include "raul/log.hpp"
-#include "client/PortModel.hpp"
-#include "client/PluginModel.hpp"
+#include "ingen/client/PortModel.hpp"
+#include "ingen/client/PluginModel.hpp"
 #include "serialisation/Parser.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "flowcanvas/Port.hpp"

@@ -22,10 +22,11 @@
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
-#include "PatchModel.hpp"
-#include "PluginModel.hpp"
-#include "PluginUI.hpp"
 #include "shared/LV2URIMap.hpp"
+
+#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/PluginModel.hpp"
+#include "ingen/client/PluginUI.hpp"
 
 using namespace std;
 using namespace Raul;

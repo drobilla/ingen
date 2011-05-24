@@ -22,7 +22,7 @@
 #include "serialisation/names.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
-#include "client/PatchModel.hpp"
+#include "ingen/client/PatchModel.hpp"
 
 using namespace std;
 using namespace Raul;

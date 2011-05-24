@@ -15,19 +15,23 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <stddef.h>
+
 #include <cassert>
 #include <algorithm>
-#include <ctype.h>
-#include "ingen-config.h"
+
 #include "ingen/ServerInterface.hpp"
+#include "ingen/client/ClientStore.hpp"
+#include "ingen/client/PatchModel.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "client/PatchModel.hpp"
-#include "client/ClientStore.hpp"
+
 #include "App.hpp"
 #include "LoadPluginWindow.hpp"
-#include "PatchWindow.hpp"
-#include "PatchView.hpp"
 #include "PatchCanvas.hpp"
+#include "PatchView.hpp"
+#include "PatchWindow.hpp"
+
+#include "ingen-config.h"
 
 using namespace std;
 using namespace Raul;

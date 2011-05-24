@@ -23,11 +23,11 @@
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"
 
-#include "ingen/ServerInterface.hpp"
 #include "ingen/Plugin.hpp"
-#include "shared/World.hpp"
+#include "ingen/ServerInterface.hpp"
+#include "ingen/client/signal.hpp"
 #include "shared/ResourceImpl.hpp"
-#include "client/signal.hpp"
+#include "shared/World.hpp"
 
 namespace Ingen {
 

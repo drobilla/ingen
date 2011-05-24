@@ -24,9 +24,9 @@
 #include "shared/LV2Atom.hpp"
 #include "shared/LV2URIMap.hpp"
 
-#include "NodeModel.hpp"
-#include "PluginUI.hpp"
-#include "PortModel.hpp"
+#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/PluginUI.hpp"
+#include "ingen/client/PortModel.hpp"
 
 using namespace std;
 using namespace Raul;

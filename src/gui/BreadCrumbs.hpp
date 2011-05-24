@@ -25,7 +25,7 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 
-#include "client/PatchModel.hpp"
+#include "ingen/client/PatchModel.hpp"
 
 #include "PatchView.hpp"
 

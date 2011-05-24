@@ -22,8 +22,8 @@
 
 #include "raul/Path.hpp"
 
-#include "client/signal.hpp"
 #include "ingen/ClientInterface.hpp"
+#include "ingen/client/signal.hpp"
 
 namespace Ingen {
 namespace Client {

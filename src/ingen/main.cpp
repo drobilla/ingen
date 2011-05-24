@@ -45,7 +45,7 @@
 #include "shared/Configuration.hpp"
 #include "shared/World.hpp"
 #include "shared/runtime_paths.hpp"
-#include "client/ThreadedSigClientInterface.hpp"
+#include "ingen/client/ThreadedSigClientInterface.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif

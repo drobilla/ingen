@@ -23,11 +23,11 @@
 #include <curl/curl.h>
 #include "shared/World.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "client/ClientStore.hpp"
+#include "ingen/client/ClientStore.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "serialisation/Serialiser.hpp"
 #include "serialisation/names.hpp"
-#include "client/PatchModel.hpp"
+#include "ingen/client/PatchModel.hpp"
 #include "UploadPatchWindow.hpp"
 #include "App.hpp"
 #include "Configuration.hpp"

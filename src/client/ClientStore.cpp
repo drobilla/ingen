@@ -20,15 +20,14 @@
 
 #include "shared/LV2URIMap.hpp"
 
-#include "ClientStore.hpp"
-#include "ConnectionModel.hpp"
-#include "NodeModel.hpp"
-#include "ObjectModel.hpp"
-#include "PatchModel.hpp"
-#include "PatchModel.hpp"
-#include "PluginModel.hpp"
-#include "PortModel.hpp"
-#include "SigClientInterface.hpp"
+#include "ingen/client/ClientStore.hpp"
+#include "ingen/client/ConnectionModel.hpp"
+#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/PluginModel.hpp"
+#include "ingen/client/PortModel.hpp"
+#include "ingen/client/SigClientInterface.hpp"
 
 #define LOG(s) s << "[ClientStore] "
 

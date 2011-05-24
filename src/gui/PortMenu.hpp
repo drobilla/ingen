@@ -21,7 +21,7 @@
 #include <string>
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
-#include "client/PortModel.hpp"
+#include "ingen/client/PortModel.hpp"
 #include "ObjectMenu.hpp"
 
 using Ingen::Client::PortModel;

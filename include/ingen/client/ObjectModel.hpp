@@ -26,8 +26,8 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
-#include "client/signal.hpp"
 #include "ingen/GraphObject.hpp"
+#include "ingen/client/signal.hpp"
 #include "shared/ResourceImpl.hpp"
 
 namespace Ingen {

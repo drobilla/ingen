@@ -16,8 +16,8 @@
  */
 
 #include "shared/LV2URIMap.hpp"
-#include "PortModel.hpp"
-#include "NodeModel.hpp"
+#include "ingen/client/PortModel.hpp"
+#include "ingen/client/NodeModel.hpp"
 
 namespace Ingen {
 namespace Client {

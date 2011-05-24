@@ -24,7 +24,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "client/ObjectModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
 
 using Ingen::Client::ObjectModel;
 

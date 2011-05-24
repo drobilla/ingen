@@ -18,7 +18,7 @@
 #include "raul/TableImpl.hpp"
 #include "ingen/GraphObject.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "ObjectModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
 
 using namespace std;
 using namespace Raul;

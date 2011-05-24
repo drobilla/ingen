@@ -27,7 +27,7 @@
 
 #include "ingen-config.h"
 #include "ingen/GraphObject.hpp"
-#include "client/ClientStore.hpp"
+#include "ingen/client/ClientStore.hpp"
 
 #include "Window.hpp"
 

@@ -21,7 +21,7 @@
 #include "ingen/Port.hpp"
 #include "shared/World.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "NodeModel.hpp"
+#include "ingen/client/NodeModel.hpp"
 
 using namespace std;
 using namespace Raul;

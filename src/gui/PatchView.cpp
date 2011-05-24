@@ -20,7 +20,7 @@
 #include "raul/log.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "client/PatchModel.hpp"
+#include "ingen/client/PatchModel.hpp"
 #include "App.hpp"
 #include "PatchView.hpp"
 #include "PatchCanvas.hpp"

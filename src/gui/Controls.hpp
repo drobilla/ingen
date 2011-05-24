@@ -24,7 +24,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "client/PortModel.hpp"
+#include "ingen/client/PortModel.hpp"
 
 namespace Ingen { namespace Client { class PortModel; } }
 

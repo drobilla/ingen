@@ -18,7 +18,7 @@
 #include "SubpatchModule.hpp"
 #include <cassert>
 #include "ingen/ServerInterface.hpp"
-#include "client/PatchModel.hpp"
+#include "ingen/client/PatchModel.hpp"
 #include "App.hpp"
 #include "NodeModule.hpp"
 #include "NodeControlWindow.hpp"

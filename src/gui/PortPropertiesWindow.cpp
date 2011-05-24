@@ -19,8 +19,8 @@
 #include <string>
 #include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "client/NodeModel.hpp"
-#include "client/PluginModel.hpp"
+#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/PluginModel.hpp"
 #include "App.hpp"
 #include "Controls.hpp"
 #include "PortPropertiesWindow.hpp"

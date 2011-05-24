@@ -21,7 +21,7 @@
 #include "raul/SharedPtr.hpp"
 
 #include "ingen/Patch.hpp"
-#include "NodeModel.hpp"
+#include "ingen/client/NodeModel.hpp"
 
 namespace Ingen {
 

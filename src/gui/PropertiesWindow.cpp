@@ -19,8 +19,8 @@
 #include <string>
 #include "raul/log.hpp"
 #include "shared/World.hpp"
-#include "client/NodeModel.hpp"
-#include "client/PluginModel.hpp"
+#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/PluginModel.hpp"
 #include "App.hpp"
 #include "PropertiesWindow.hpp"
 

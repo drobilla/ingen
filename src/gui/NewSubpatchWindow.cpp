@@ -18,8 +18,8 @@
 #include "App.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "client/PatchModel.hpp"
-#include "client/ClientStore.hpp"
+#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/ClientStore.hpp"
 #include "NewSubpatchWindow.hpp"
 #include "PatchView.hpp"
 

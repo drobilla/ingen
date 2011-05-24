@@ -21,7 +21,7 @@
 #include <string>
 #include <gtkmm.h>
 #include "raul/SharedPtr.hpp"
-#include "client/NodeModel.hpp"
+#include "ingen/client/NodeModel.hpp"
 #include "ObjectMenu.hpp"
 
 using Ingen::Client::NodeModel;

@@ -29,9 +29,9 @@
 #include "shared/Module.hpp"
 #include "shared/World.hpp"
 #include "server/Engine.hpp"
-#include "client/ClientStore.hpp"
-#include "client/PatchModel.hpp"
-#include "client/ThreadedSigClientInterface.hpp"
+#include "ingen/client/ClientStore.hpp"
+#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/ThreadedSigClientInterface.hpp"
 
 #include "App.hpp"
 #include "ConnectWindow.hpp"

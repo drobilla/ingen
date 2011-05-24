@@ -22,14 +22,15 @@
 #include <list>
 #include <string>
 
-#include "raul/SharedPtr.hpp"
-
-#include "ingen/ServerInterface.hpp"
 #include "raul/Path.hpp"
 #include "raul/PathTable.hpp"
+#include "raul/SharedPtr.hpp"
 #include "raul/TableImpl.hpp"
+
+#include "ingen/ServerInterface.hpp"
+#include "ingen/client/signal.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "shared/Store.hpp"
-#include "client/signal.hpp"
 
 namespace Raul { class Atom; }
 

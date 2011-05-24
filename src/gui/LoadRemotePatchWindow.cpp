@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <boost/optional/optional.hpp>
-#include "client/PatchModel.hpp"
+#include "ingen/client/PatchModel.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "shared/World.hpp"
 #include "App.hpp"

@@ -17,11 +17,13 @@
 
 #include <cassert>
 #include "raul/log.hpp"
+
 #include "shared/LV2URIMap.hpp"
-#include "PatchModel.hpp"
-#include "NodeModel.hpp"
-#include "ConnectionModel.hpp"
-#include "ClientStore.hpp"
+
+#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/ConnectionModel.hpp"
+#include "ingen/client/ClientStore.hpp"
 
 using namespace std;
 using namespace Raul;
