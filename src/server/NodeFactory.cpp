@@ -23,9 +23,9 @@
 
 #include <glibmm/miscutils.h>
 
-#include "sord/sordmm.hpp"
-
+#include "lilv/lilv.h"
 #include "raul/log.hpp"
+#include "sord/sordmm.hpp"
 
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
@@ -35,16 +35,11 @@
 
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
+#include "LV2Node.hpp"
+#include "LV2Plugin.hpp"
 #include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
 #include "ThreadManager.hpp"
-
-#include "ingen-config.h"
-#ifdef HAVE_LILV
-#include "lilv/lilv.h"
-#include "LV2Plugin.hpp"
-#include "LV2Node.hpp"
-#endif
 
 using namespace std;
 using namespace Raul;
@@ -57,9 +52,7 @@ using namespace Internals;
 NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	: _world(world)
 	, _has_loaded(false)
-#ifdef HAVE_LILV
 	, _lv2_info(new LV2Info(world))
-#endif
 {
 }
 
@@ -98,13 +91,8 @@ NodeFactory::load_plugins()
 	// if clients could refresh plugins list for whatever reason :/
 	if (!_has_loaded) {
 		_plugins.clear(); // FIXME: assert empty?
-
 		load_internal_plugins();
-
-#ifdef HAVE_LILV
 		load_lv2_plugins();
-#endif
-
 		_has_loaded = true;
 	}
 }
@@ -126,7 +114,6 @@ NodeFactory::load_internal_plugins()
 	_plugins.insert(make_pair(trigger_plug->uri(), trigger_plug));
 }
 
-#ifdef HAVE_LILV
 /** Loads information about all LV2 plugins into internal plugin database.
  */
 void
@@ -147,7 +134,6 @@ NodeFactory::load_lv2_plugins()
 		_plugins.insert(make_pair(uri, plugin));
 	}
 }
-#endif // HAVE_LILV
 
 } // namespace Server
 } // namespace Ingen

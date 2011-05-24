@@ -15,7 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ingen-config.h"
 #include "App.hpp"
 #include <cassert>
 #include <string>
@@ -26,6 +25,7 @@
 #include <sys/time.h>
 #include "raul/log.hpp"
 #include "raul/Path.hpp"
+#include "lilv/lilv.h"
 #include "flowcanvas/Connection.hpp"
 #include "shared/World.hpp"
 #include "server/Engine.hpp"
@@ -49,9 +49,6 @@
 #include "ThreadedLoader.hpp"
 #include "WindowFactory.hpp"
 #include "Port.hpp"
-#ifdef HAVE_LILV
-#include "lilv/lilv.h"
-#endif
 
 using namespace std;
 using namespace Raul;
@@ -89,10 +86,7 @@ App::App(Ingen::Shared::World* world)
 	_about_dialog->property_logo_icon_name() = "ingen";
 
 	PluginModel::set_rdf_world(*world->rdf_world());
-
-#ifdef HAVE_LILV
 	PluginModel::set_lilv_world(world->lilv_world());
-#endif
 }
 
 App::~App()

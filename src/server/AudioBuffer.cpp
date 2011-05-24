@@ -20,7 +20,6 @@
 #include "raul/log.hpp"
 #include "raul/SharedPtr.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "ingen-config.h"
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
 #include "LV2Features.hpp"

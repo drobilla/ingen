@@ -15,16 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ingen-config.h"
 #include <boost/utility.hpp>
+
 #include <glibmm/module.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
-#ifdef HAVE_LILV
+
 #include "lilv/lilv.h"
-#endif
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"
+
 #include "ingen/EngineBase.hpp"
 #include "shared/runtime_paths.hpp"
 #include "shared/LV2Features.hpp"
@@ -104,18 +104,12 @@ public:
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
 		, uris(new Shared::LV2URIMap())
-#ifdef HAVE_LILV
 		, lilv_world(lilv_world_new())
-#else
-		, lilv_world(NULL)
-#endif
 	{
-#ifdef HAVE_LILV
 		lv2_features = new Ingen::Shared::LV2Features();
 		lv2_features->add_feature(LV2_URI_MAP_URI, uris);
 		lv2_features->add_feature(LV2_URI_UNMAP_URI, uris->unmap_feature());
 		lilv_world_load_all(lilv_world);
-#endif
 
 		// Set up RDF namespaces
 		rdf_world->add_prefix("dc",      "http://purl.org/dc/elements/1.1/");
@@ -142,10 +136,8 @@ public:
 		interface_factories.clear();
 		script_runners.clear();
 
-#ifdef HAVE_LILV
 		lilv_world_free(lilv_world);
 		lilv_world = NULL;
-#endif
 
 		delete rdf_world;
 		rdf_world = NULL;
@@ -209,9 +201,7 @@ SharedPtr<Store>                     World::store()        { return _impl->store
 Raul::Configuration*                 World::conf()         { return _impl->conf; }
 LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
 
-#ifdef HAVE_LILV
 LilvWorld*           World::lilv_world() { return _impl->lilv_world; }
-#endif
 Sord::World*         World::rdf_world() { return _impl->rdf_world; }
 SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }
 

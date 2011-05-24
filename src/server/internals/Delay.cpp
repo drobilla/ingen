@@ -31,7 +31,6 @@
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
-#include "ingen-config.h"
 #include "util.hpp"
 
 #define LOG(s) s << "[DelayNode] "

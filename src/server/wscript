@@ -21,6 +21,9 @@ def build(bld):
             GraphObjectImpl.cpp
             InputPort.cpp
             InternalPlugin.cpp
+            LV2Info.cpp
+            LV2Node.cpp
+            LV2Plugin.cpp
             MessageContext.cpp
             NodeFactory.cpp
             NodeImpl.cpp
@@ -58,9 +61,6 @@ def build(bld):
             internals/Note.cpp
             internals/Trigger.cpp
     '''
-
-    if bld.is_defined('HAVE_LILV'):
-        core_source += ' LV2Info.cpp LV2Plugin.cpp LV2Node.cpp '
 
     obj = bld(features = 'cxx cxxshlib')
     obj.source = core_source

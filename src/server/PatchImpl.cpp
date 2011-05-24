@@ -31,7 +31,6 @@
 #include "Engine.hpp"
 #include "ProcessSlave.hpp"
 #include "Driver.hpp"
-#include "ingen-config.h"
 
 using namespace std;
 using namespace Raul;

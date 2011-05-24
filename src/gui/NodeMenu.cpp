@@ -16,7 +16,6 @@
  */
 
 #include <gtkmm.h>
-#include "ingen-config.h"
 #include "ingen/ServerInterface.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "client/NodeModel.hpp"
@@ -86,7 +85,6 @@ NodeMenu::init(SharedPtr<const NodeModel> node)
 		_embed_gui_menuitem->hide();
 	}
 
-#ifdef HAVE_LILV
 	if (plugin && plugin->type() == PluginModel::LV2) {
 		LilvNode* preset_pred = lilv_new_uri(
 			plugin->lilv_world(),
@@ -130,7 +128,6 @@ NodeMenu::init(SharedPtr<const NodeModel> node)
 		lilv_node_free(title_pred);
 		lilv_node_free(preset_pred);
 	}
-#endif
 
 	if (has_control_inputs())
 		_randomize_menuitem->show();
@@ -180,7 +177,6 @@ NodeMenu::on_menu_disconnect()
 void
 NodeMenu::on_preset_activated(const std::string& uri)
 {
-#ifdef HAVE_LILV
 	const NodeModel* const   node   = (NodeModel*)_object.get();
 	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(node->plugin());
 
@@ -220,7 +216,6 @@ NodeMenu::on_preset_activated(const std::string& uri)
 	lilv_node_free(value_pred);
 	lilv_node_free(symbol_pred);
 	lilv_node_free(port_pred);
-#endif
 }
 
 bool

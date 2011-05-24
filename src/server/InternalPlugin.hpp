@@ -18,8 +18,6 @@
 #ifndef INGEN_ENGINE_INTERNALPLUGIN_HPP
 #define INGEN_ENGINE_INTERNALPLUGIN_HPP
 
-#include "ingen-config.h"
-
 #include <cstdlib>
 #include <string>
 

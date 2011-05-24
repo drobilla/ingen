@@ -18,13 +18,9 @@
 #ifndef INGEN_ENGINE_LV2INFO_HPP
 #define INGEN_ENGINE_LV2INFO_HPP
 
-#include "ingen-config.h"
-#ifndef HAVE_LILV
-#error "This file requires Lilv, but HAVE_LILV is not defined.  Please report."
-#endif
-
 #include <map>
 #include <string>
+
 #include "lilv/lilv.h"
 #include "shared/World.hpp"
 

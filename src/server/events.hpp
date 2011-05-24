@@ -18,8 +18,6 @@
 #ifndef INGEN_ENGINE_EVENTS_HPP
 #define INGEN_ENGINE_EVENTS_HPP
 
-#include "ingen-config.h"
-
 #include "events/Connect.hpp"
 #include "events/CreateNode.hpp"
 #include "events/CreatePatch.hpp"

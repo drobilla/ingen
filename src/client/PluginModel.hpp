@@ -18,16 +18,11 @@
 #ifndef INGEN_CLIENT_PLUGINMODEL_HPP
 #define INGEN_CLIENT_PLUGINMODEL_HPP
 
+#include "lilv/lilv.h"
 #include "raul/SharedPtr.hpp"
 #include "raul/Symbol.hpp"
-
 #include "sord/sordmm.hpp"
 
-#include "ingen-config.h"
-
-#ifdef HAVE_LILV
-#include "lilv/lilv.h"
-#endif
 #include "ingen/ServerInterface.hpp"
 #include "ingen/Plugin.hpp"
 #include "shared/World.hpp"
@@ -66,18 +61,12 @@ public:
 	std::string  human_name() const;
 	std::string  port_human_name(uint32_t index) const;
 
-#ifdef HAVE_LILV
 	static LilvWorld* lilv_world()        { return _lilv_world; }
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
 
-	const LilvPort* lilv_port(uint32_t index) {
-		return lilv_plugin_get_port_by_index(_lilv_plugin, index);
-	}
+	const LilvPort* lilv_port(uint32_t index) const;
 
-	static void set_lilv_world(LilvWorld* world) {
-		_lilv_world = world;
-		_lilv_plugins = lilv_world_get_all_plugins(_lilv_world);
-	}
+	static void set_lilv_world(LilvWorld* world);
 
 	bool has_ui() const;
 
@@ -86,7 +75,6 @@ public:
 
 	const std::string& icon_path() const;
 	static std::string get_lv2_icon_path(const LilvPlugin* plugin);
-#endif
 
 	std::string documentation() const;
 	std::string port_documentation(uint32_t index) const;
@@ -108,13 +96,11 @@ protected:
 private:
 	Type _type;
 
-#ifdef HAVE_LILV
 	static LilvWorld*         _lilv_world;
 	static const LilvPlugins* _lilv_plugins;
 
 	const LilvPlugin*   _lilv_plugin;
 	mutable std::string _icon_path;
-#endif
 
 	static Sord::World* _rdf_world;
 };

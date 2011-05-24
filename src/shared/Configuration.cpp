@@ -17,7 +17,6 @@
 
 #include "raul/Atom.hpp"
 
-#include "ingen-config.h"
 #include "Configuration.hpp"
 
 using namespace Raul;
@@ -47,9 +46,7 @@ Configuration::Configuration()
 		.add("help",        'h', "Print this help message", Atom::BOOL, false)
 		.add("jack-client", 'n', "JACK client name", Atom::STRING, "ingen")
 		.add("jack-server", 's', "JACK server name", Atom::STRING, "")
-#ifdef INGEN_JACK_SESSION
 		.add("uuid",        'u', "JACK session UUID", Atom::STRING, "")
-#endif
 		.add("load",        'l', "Load patch", Atom::STRING, Atom())
 		.add("packet-size", 'k', "Maximum UDP packet size", Atom::INT, 4096)
 		.add("parallelism", 'p', "Number of concurrent process threads", Atom::INT, 1)

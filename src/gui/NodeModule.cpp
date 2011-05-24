@@ -16,7 +16,6 @@
  */
 
 #include <cassert>
-#include "ingen-config.h"
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "ingen/ServerInterface.hpp"
@@ -291,7 +290,6 @@ NodeModule::remove_port(SharedPtr<const PortModel> model)
 bool
 NodeModule::popup_gui()
 {
-#ifdef HAVE_LILV
 	if (_node->plugin() && _node->plugin()->type() == PluginModel::LV2) {
 		if (_plugin_ui) {
 			warn << "LV2 GUI already embedded, cannot pop up" << endl;
@@ -323,7 +321,7 @@ NodeModule::popup_gui()
 			warn << "No LV2 GUI for " << _node->path().chop_scheme() << endl;
 		}
 	}
-#endif
+
 	return false;
 }
 

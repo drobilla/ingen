@@ -18,7 +18,6 @@
 #include "WidgetFactory.hpp"
 #include <fstream>
 #include "raul/log.hpp"
-#include "ingen-config.h"
 #include "shared/runtime_paths.hpp"
 
 using namespace std;

@@ -23,7 +23,6 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
-#include "ingen-config.h"
 #include "shared/World.hpp"
 
 namespace Ingen {
@@ -32,9 +31,7 @@ namespace Server {
 class NodeImpl;
 class PatchImpl;
 class PluginImpl;
-#ifdef HAVE_LILV
 class LV2Info;
-#endif
 
 /** Discovers and loads plugin libraries.
  *
@@ -54,18 +51,15 @@ public:
 	PluginImpl* plugin(const Raul::URI& uri);
 
 private:
-#ifdef HAVE_LILV
 	void load_lv2_plugins();
-#endif
-
 	void load_internal_plugins();
 
 	Plugins               _plugins;
 	Ingen::Shared::World* _world;
 	bool                  _has_loaded;
-#ifdef HAVE_LILV
+
 	SharedPtr<LV2Info>    _lv2_info;
-#endif
+
 };
 
 } // namespace Server

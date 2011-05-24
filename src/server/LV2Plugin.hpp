@@ -18,12 +18,6 @@
 #ifndef INGEN_ENGINE_LV2PLUGIN_HPP
 #define INGEN_ENGINE_LV2PLUGIN_HPP
 
-#include "ingen-config.h"
-
-#ifndef HAVE_LILV
-#error "This file requires Lilv, but HAVE_LILV is not defined.  Please report."
-#endif
-
 #include <cstdlib>
 #include <string>
 

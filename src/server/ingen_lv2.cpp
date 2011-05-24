@@ -45,8 +45,6 @@
 #include "shared/Configuration.hpp"
 #include "shared/runtime_paths.hpp"
 
-#include "ingen-config.h"
-
 /** Record of a patch in this Ingen LV2 bundle */
 struct LV2Patch {
 	LV2Patch(const std::string& u, const std::string& f);

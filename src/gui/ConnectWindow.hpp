@@ -18,14 +18,9 @@
 #ifndef INGEN_GUI_CONNECTWINDOW_HPP
 #define INGEN_GUI_CONNECTWINDOW_HPP
 
-#include "ingen-config.h"
-
-#ifdef HAVE_LILV
-#include "lilv/lilv.h"
-#endif
-
 #include <gtkmm.h>
 
+#include "lilv/lilv.h"
 #include "raul/SharedPtr.hpp"
 
 #include "Window.hpp"

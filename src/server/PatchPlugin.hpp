@@ -18,8 +18,6 @@
 #ifndef INGEN_ENGINE_PATCHPLUGIN_HPP
 #define INGEN_ENGINE_PATCHPLUGIN_HPP
 
-#include "ingen-config.h"
-
 #include <string>
 #include "PluginImpl.hpp"
 

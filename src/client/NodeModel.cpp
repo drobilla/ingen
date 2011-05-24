@@ -17,7 +17,7 @@
 
 #include <cassert>
 #include <cmath>
-#include "ingen-config.h"
+
 #include "ingen/Port.hpp"
 #include "shared/World.hpp"
 #include "shared/LV2URIMap.hpp"
@@ -174,9 +174,7 @@ NodeModel::default_port_value_range(SharedPtr<const PortModel> port,
 	max = 1.0;
 
 	// Get range from client-side LV2 data
-#ifdef HAVE_LILV
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
-
 		if (!_min_values) {
 			_num_values = lilv_plugin_get_num_ports(_plugin->lilv_plugin());
 			_min_values = new float[_num_values];
@@ -190,7 +188,6 @@ NodeModel::default_port_value_range(SharedPtr<const PortModel> port,
 		if (!std::isnan(_max_values[port->index()]))
 			max = _max_values[port->index()];
 	}
-#endif
 }
 
 void
@@ -220,7 +217,6 @@ NodeModel::port_label(SharedPtr<const PortModel> port) const
 		return name.get_string();
 	}
 
-#ifdef HAVE_LILV
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
 		LilvWorld*        c_world  = _plugin->lilv_world();
 		const LilvPlugin* c_plugin = _plugin->lilv_plugin();
@@ -236,7 +232,6 @@ NodeModel::port_label(SharedPtr<const PortModel> port) const
 			lilv_node_free(c_name);
 		}
 	}
-#endif
 
 	return port->symbol().c_str();
 }

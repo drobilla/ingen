@@ -45,7 +45,6 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 #include "ThreadedLoader.hpp"
-#include "ingen-config.h"
 
 #define LOG(s) s << "[PatchCanvas] "
 
@@ -167,7 +166,6 @@ PatchCanvas::build_menus()
 	}
 
 	// Build skeleton LV2 plugin class heirarchy for 'Plugin' menu
-#ifdef HAVE_LILV
 	if (!_plugin_menu)
 		build_plugin_menu();
 
@@ -181,15 +179,12 @@ PatchCanvas::build_menus()
 		classless_menu_item->set_submenu(*_classless_menu);
 		_classless_menu->hide();
 	}
-#endif
 
 	// Add known plugins to menu heirarchy
 	SharedPtr<const ClientStore::Plugins> plugins = App::instance().store()->plugins();
 	for (ClientStore::Plugins::const_iterator i = plugins->begin(); i != plugins->end(); ++i)
 		add_plugin(i->second);
 }
-
-#ifdef HAVE_LILV
 
 /** Recursively build the plugin class menu heirarchy rooted at
  * @a plugin class into @a menu
@@ -276,8 +271,6 @@ PatchCanvas::build_plugin_menu()
 	std::set<const char*> ancestors;
 	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes, children, ancestors);
 }
-
-#endif
 
 void
 PatchCanvas::build()
