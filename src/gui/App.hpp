@@ -74,8 +74,7 @@ public:
 
 	void error_message(const std::string& msg);
 
-	void attach(SharedPtr<Client::SigClientInterface> client,
-	            SharedPtr<Raul::Deletable>            handle=SharedPtr<Raul::Deletable>());
+	void attach(SharedPtr<Client::SigClientInterface> client);
 
 	void detach();
 
@@ -143,7 +142,6 @@ protected:
 	static App*       _instance;
 
 	SharedPtr<Client::SigClientInterface> _client;
-	SharedPtr<Raul::Deletable>            _handle;
 	SharedPtr<Client::ClientStore>        _store;
 	SharedPtr<ThreadedLoader>             _loader;
 

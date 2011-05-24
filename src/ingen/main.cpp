@@ -45,6 +45,7 @@
 #include "shared/Configuration.hpp"
 #include "shared/World.hpp"
 #include "shared/runtime_paths.hpp"
+#include "client/ThreadedSigClientInterface.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
@@ -105,17 +106,15 @@ main(int argc, char** argv)
 	SharedPtr<ServerInterface> engine_interface;
 
 	Glib::thread_init();
-#if HAVE_SOUP
+#ifdef HAVE_SOUP
 	g_type_init();
 #endif
 
 	Ingen::Shared::World* world = new Ingen::Shared::World(&conf, argc, argv);
 
-#if INGEN_JACK_SESSION
 	if (conf.option("uuid").get_string()) {
 		world->set_jack_uuid(conf.option("uuid").get_string());
 	}
-#endif
 
 	// Run engine
 	if (conf.option("engine").get_bool()) {
@@ -145,7 +144,7 @@ main(int argc, char** argv)
 		ingen_try(world->load_module("client"),
 		          "Unable to load client module");
 		const char* const uri = conf.option("connect").get_string();
-		ingen_try((engine_interface = world->interface(uri)),
+		ingen_try((engine_interface = world->interface(uri, SharedPtr<ClientInterface>())),
 		          (string("Unable to create interface to `") + uri + "'").c_str());
 	}
 

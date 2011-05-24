@@ -22,6 +22,7 @@
 
 #include <string>
 
+#include "raul/Deletable.hpp"
 #include "raul/Path.hpp"
 #include "sord/sordmm.hpp"
 
@@ -47,7 +48,10 @@ class HTTPClientReceiver;
 class HTTPEngineSender : public ServerInterface
 {
 public:
-	HTTPEngineSender(Shared::World* world, const Raul::URI& engine_url);
+	HTTPEngineSender(Shared::World*             world,
+	                 const Raul::URI&           engine_url,
+	                 SharedPtr<Raul::Deletable> receiver);
+
 	~HTTPEngineSender();
 
 	Raul::URI uri() const { return _engine_url; }
@@ -106,6 +110,8 @@ public:
 	void request_property(const Raul::URI& path, const Raul::URI& key);
 
 protected:
+	SharedPtr<Raul::Deletable> _receiver;
+
 	SoupSession*    _session;
 	Sord::World&    _world;
 	const Raul::URI _engine_url;

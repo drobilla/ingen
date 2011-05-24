@@ -29,12 +29,6 @@
 #include "shared/Module.hpp"
 #include "shared/World.hpp"
 #include "server/Engine.hpp"
-#ifdef HAVE_SOUP
-#include "client/HTTPClientReceiver.hpp"
-#endif
-#ifdef HAVE_LIBLO
-#include "client/OSCClientReceiver.hpp"
-#endif
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
 #include "client/ThreadedSigClientInterface.hpp"
@@ -78,7 +72,7 @@ ConnectWindow::start(Ingen::Shared::World* world)
 
 	set_connected_to(world->engine());
 
-	connect(true);
+	connect(world->engine());
 }
 
 void
@@ -175,27 +169,10 @@ ConnectWindow::connect(bool existing)
 
 		// Create client-side listener
 		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
-		SharedPtr<Raul::Deletable> client;
 
-		string scheme = uri.substr(0, uri.find(":"));
+		world->set_engine(world->interface(uri, tsci));
 
-#ifdef HAVE_LIBLO
-		if (scheme == "osc.udp" || scheme == "osc.tcp")
-			client = SharedPtr<OSCClientReceiver>(new OSCClientReceiver(16181, tsci));
-#endif
-#ifdef HAVE_SOUP
-		if (scheme == "http")
-			client = SharedPtr<HTTPClientReceiver>(new HTTPClientReceiver(world, uri, tsci));
-#endif
-
-		if (!existing) {
-			world->set_engine(world->interface(uri));
-		} else {
-			uri = world->engine()->uri().str();
-			scheme = uri.substr(0, uri.find(":"));
-		}
-
-		App::instance().attach(tsci, client);
+		App::instance().attach(tsci);
 		App::instance().register_callbacks();
 
 		Glib::signal_timeout().connect(
@@ -204,19 +181,17 @@ ConnectWindow::connect(bool existing)
 	} else if (_mode == LAUNCH_REMOTE) {
 #ifdef HAVE_LIBLO
 		int port = _port_spinbutton->get_value_as_int();
-		char port_str[6];
-		snprintf(port_str, 6, "%u", port);
-		const string cmd = string("ingen -e --engine-port=").append(port_str);
+		char port_str[8];
+		snprintf(port_str, sizeof(port_str), "%u", port);
+		const string cmd = string("ingen -e -E ").append(port_str);
 
 		if (Raul::Process::launch(cmd)) {
 			const std::string engine_uri = string("osc.udp://localhost:").append(port_str);
-			world->set_engine(world->interface(engine_uri));
 
-			// FIXME: static args
 			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
-			SharedPtr<OSCClientReceiver> client(new OSCClientReceiver(16181, tsci));
+			world->set_engine(world->interface(engine_uri, tsci));
 
-			App::instance().attach(tsci, client);
+			App::instance().attach(tsci);
 			App::instance().register_callbacks();
 
 			Glib::signal_timeout().connect(

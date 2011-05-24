@@ -137,6 +137,9 @@ OSCClientReceiver::unknown_cb(const char* path, const char* types, lo_arg** argv
 void
 OSCClientReceiver::setup_callbacks()
 {
+	if (!_target)
+		return;
+
 	lo_server_thread_add_method(_st, "/ok", "i", response_ok_cb, this);
 	lo_server_thread_add_method(_st, "/error", "is", response_error_cb, this);
 	lo_server_thread_add_method(_st, "/plugin", "sss", plugin_cb, this);

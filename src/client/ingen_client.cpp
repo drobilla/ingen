@@ -20,9 +20,11 @@
 #include "shared/Module.hpp"
 #include "shared/World.hpp"
 #ifdef HAVE_LIBLO
+#include "OSCClientReceiver.hpp"
 #include "OSCEngineSender.hpp"
 #endif
 #ifdef HAVE_SOUP
+#include "HTTPClientReceiver.hpp"
 #include "HTTPEngineSender.hpp"
 #endif
 
@@ -30,10 +32,14 @@ using namespace Ingen;
 
 #ifdef HAVE_LIBLO
 SharedPtr<Ingen::ServerInterface>
-new_osc_interface(Ingen::Shared::World* world, const std::string& url)
+new_osc_interface(Ingen::Shared::World*      world,
+                  const std::string&         url,
+                  SharedPtr<ClientInterface> respond_to)
 {
-	Client::OSCEngineSender* oes = Client::OSCEngineSender::create(
-		url, world->conf()->option("packet-size").get_int32());
+	SharedPtr<Client::OSCClientReceiver> receiver(
+		new Client::OSCClientReceiver(16181, respond_to));
+	Client::OSCEngineSender* oes = new Client::OSCEngineSender(
+		url, world->conf()->option("packet-size").get_int32(), receiver);
 	oes->attach(rand(), true);
 	return SharedPtr<ServerInterface>(oes);
 }
@@ -41,9 +47,14 @@ new_osc_interface(Ingen::Shared::World* world, const std::string& url)
 
 #ifdef HAVE_SOUP
 SharedPtr<Ingen::ServerInterface>
-new_http_interface(Ingen::Shared::World* world, const std::string& url)
+new_http_interface(Ingen::Shared::World*      world,
+                   const std::string&         url,
+                   SharedPtr<ClientInterface> respond_to)
 {
-	Client::HTTPEngineSender* hes = new Client::HTTPEngineSender(world, url);
+	SharedPtr<Client::HTTPClientReceiver> receiver(
+		new Client::HTTPClientReceiver(world, url, respond_to));
+	Client::HTTPEngineSender* hes = new Client::HTTPEngineSender(
+		world, url, receiver);
 	hes->attach(rand(), true);
 	return SharedPtr<ServerInterface>(hes);
 }

@@ -24,6 +24,8 @@
 
 #include <lo/lo.h>
 
+#include "raul/Deletable.hpp"
+
 #include "ingen/ServerInterface.hpp"
 #include "shared/OSCSender.hpp"
 
@@ -40,15 +42,11 @@ namespace Client {
  */
 class OSCEngineSender : public ServerInterface, public Shared::OSCSender {
 public:
-	OSCEngineSender(const Raul::URI& engine_url,
-	                size_t           max_packet_size);
+	OSCEngineSender(const Raul::URI&           engine_url,
+	                size_t                     max_packet_size,
+	                SharedPtr<Raul::Deletable> receiver);
 
 	~OSCEngineSender();
-
-	static OSCEngineSender* create(const Raul::URI& engine_url,
-	                               size_t           max_packet_size) {
-		return new OSCEngineSender(engine_url, max_packet_size);
-	}
 
 	Raul::URI uri() const { return _engine_url; }
 
@@ -106,6 +104,8 @@ public:
 	void request_property(const Raul::URI& path, const Raul::URI& key);
 
 protected:
+	SharedPtr<Raul::Deletable> _receiver;
+
 	const Raul::URI _engine_url;
 	int             _client_port;
 	int32_t         _id;

@@ -169,6 +169,7 @@ public:
 	SharedPtr<Serialisation::Serialiser> serialiser;
 	SharedPtr<Serialisation::Parser>     parser;
 	SharedPtr<Store>                     store;
+	SharedPtr<ClientInterface>           client;
 	LilvWorld*                           lilv_world;
 	std::string                          jack_uuid;
 };
@@ -189,6 +190,7 @@ void World::set_engine(SharedPtr<ServerInterface> e)               { _impl->engi
 void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
 void World::set_parser(SharedPtr<Serialisation::Parser> p)         { _impl->parser = p; }
 void World::set_store(SharedPtr<Store> s)                          { _impl->store = s; }
+void World::set_client(SharedPtr<ClientInterface> c)               { _impl->client = c; }
 void World::set_conf(Raul::Configuration* c)                       { _impl->conf = c; }
 
 int&                                 World::argc()         { return _impl->argc; }
@@ -198,6 +200,7 @@ SharedPtr<ServerInterface>           World::engine()       { return _impl->engin
 SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
 SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
 SharedPtr<Store>                     World::store()        { return _impl->store; }
+SharedPtr<ClientInterface>           World::client()       { return _impl->client; }
 Raul::Configuration*                 World::conf()         { return _impl->conf; }
 LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
 
@@ -207,7 +210,7 @@ SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }
 
 /** Load an Ingen module.
  * @return true on success, false on failure
- */
+m */
 bool
 World::load_module(const char* name)
 {
@@ -236,16 +239,18 @@ World::unload_modules()
 /** Get an interface for a remote engine at @a url
  */
 SharedPtr<ServerInterface>
-World::interface(const std::string& url)
+World::interface(
+	const std::string&         engine_url,
+	SharedPtr<ClientInterface> respond_to)
 {
-	const string scheme = url.substr(0, url.find(":"));
+	const string scheme = engine_url.substr(0, engine_url.find(":"));
 	const Pimpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
 	if (i == _impl->interface_factories.end()) {
 		warn << "Unknown URI scheme `" << scheme << "'" << endl;
 		return SharedPtr<ServerInterface>();
 	}
 
-	return i->second(this, url);
+	return i->second(this, engine_url, respond_to);
 }
 
 /** Run a script of type @a mime_type at filename @a filename */

@@ -37,9 +37,11 @@ namespace Client {
  * from the most recently created server, so create the OSC listener before
  * this to have it all happen on the same port.  Yeah, this is a big magic :/
  */
-OSCEngineSender::OSCEngineSender(const URI& engine_url,
-                                 size_t     max_packet_size)
+OSCEngineSender::OSCEngineSender(const URI&                 engine_url,
+                                 size_t                     max_packet_size,
+                                 SharedPtr<Raul::Deletable> receiver)
 	: Shared::OSCSender(max_packet_size)
+	, _receiver(receiver)
 	, _engine_url(engine_url)
 	, _id(0)
 {

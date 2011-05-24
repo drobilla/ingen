@@ -150,8 +150,7 @@ App::run()
 }
 
 void
-App::attach(SharedPtr<SigClientInterface> client,
-            SharedPtr<Raul::Deletable>    handle)
+App::attach(SharedPtr<SigClientInterface> client)
 {
 	assert(!_client);
 	assert(!_store);
@@ -160,7 +159,6 @@ App::attach(SharedPtr<SigClientInterface> client,
 	_world->engine()->register_client(client.get());
 
 	_client = client;
-	_handle = handle;
 	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->engine(), client));
 	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(_world->uris(), _world->engine()));
 
@@ -182,7 +180,6 @@ App::detach()
 		_loader.reset();
 		_store.reset();
 		_client.reset();
-		_handle.reset();
 		_world->set_engine(SharedPtr<ServerInterface>());
 	}
 }
