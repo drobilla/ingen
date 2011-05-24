@@ -83,7 +83,7 @@ HTTPEngineSender::unregister_client(const URI& uri)
 void
 HTTPEngineSender::put(const URI&                  uri,
                       const Resource::Properties& properties,
-                      Resource::Graph     ctx)
+                      Resource::Graph             ctx)
 {
 	const string path     = (uri.substr(0, 6) == "path:/") ? uri.substr(6) : uri.str();
 	const string full_uri = _engine_url.str() + "/" + path;
@@ -94,7 +94,7 @@ HTTPEngineSender::put(const URI&                  uri,
 		                    AtomRDF::atom_to_node(model, i->first),
 		                    AtomRDF::atom_to_node(model, i->second));
 
-	const string str = model.write_to_string(SERD_TURTLE);
+	const string str = model.write_to_string("");
 	SoupMessage* msg = soup_message_new(SOUP_METHOD_PUT, full_uri.c_str());
 	assert(msg);
 	soup_message_set_request(msg, "application/x-turtle", SOUP_MEMORY_COPY, str.c_str(), str.length());
