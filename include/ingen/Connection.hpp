@@ -18,7 +18,7 @@
 #ifndef INGEN_INTERFACE_CONNECTION_HPP
 #define INGEN_INTERFACE_CONNECTION_HPP
 
-#include "raul/Path.hpp"
+namespace Raul { class Path; }
 
 namespace Ingen {
 
@@ -30,8 +30,9 @@ class Connection
 {
 public:
 	virtual ~Connection() {}
-	virtual const Raul::Path src_port_path() const = 0;
-	virtual const Raul::Path dst_port_path() const = 0;
+
+	virtual const Raul::Path& src_port_path() const = 0;
+	virtual const Raul::Path& dst_port_path() const = 0;
 };
 
 } // namespace Ingen

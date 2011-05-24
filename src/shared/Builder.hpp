@@ -20,8 +20,6 @@
 
 #include "raul/SharedPtr.hpp"
 
-namespace Raul { class Path; }
-
 namespace Ingen {
 
 class CommonInterface;
@@ -55,4 +53,5 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_SHARED_BUILDER_HPP
+
 

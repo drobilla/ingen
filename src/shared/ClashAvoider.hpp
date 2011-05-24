@@ -19,8 +19,10 @@
 #define INGEN_SHARED_CLASHAVOIDER_HPP
 
 #include <inttypes.h>
-#include <string>
+
 #include <map>
+#include <string>
+
 #include "ingen/CommonInterface.hpp"
 
 namespace Raul { class Atom; class Path; }

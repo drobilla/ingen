@@ -74,7 +74,6 @@ public:
 	/** The Patch this object is a child of. */
 	virtual PatchImpl* parent_patch() const;
 
-	/** Raul::Path is dynamically generated from parent to ease renaming */
 	const Raul::Path& path() const { return _path; }
 
 	SharedPtr<GraphObject> find_child(const std::string& name) const;

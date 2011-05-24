@@ -21,6 +21,7 @@
 #include "shared/LV2URIMap.hpp"
 
 #include "ClientStore.hpp"
+#include "ConnectionModel.hpp"
 #include "NodeModel.hpp"
 #include "ObjectModel.hpp"
 #include "PatchModel.hpp"

@@ -18,9 +18,10 @@
 #ifndef INGEN_SHARED_HTTPSENDER_HPP
 #define INGEN_SHARED_HTTPSENDER_HPP
 
-#include <stdint.h>
 #include <string>
+
 #include <glibmm/thread.h>
+
 #include "raul/Thread.hpp"
 
 namespace Ingen {

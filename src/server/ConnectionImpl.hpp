@@ -57,8 +57,8 @@ public:
 	PortImpl* src_port() const { return _src_port; }
 	PortImpl* dst_port() const { return _dst_port; }
 
-	const Raul::Path src_port_path() const { return _src_port->path(); }
-	const Raul::Path dst_port_path() const { return _dst_port->path(); }
+	const Raul::Path& src_port_path() const { return _src_port->path(); }
+	const Raul::Path& dst_port_path() const { return _dst_port->path(); }
 
 	/** Used by some (recursive) events to prevent double disconnections */
 	bool pending_disconnection()       { return _pending_disconnection; }

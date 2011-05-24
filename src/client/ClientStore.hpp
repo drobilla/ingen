@@ -24,8 +24,6 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include <sigc++/sigc++.h>
-
 #include "ingen/ServerInterface.hpp"
 #include "raul/Path.hpp"
 #include "raul/PathTable.hpp"
@@ -54,7 +52,7 @@ class SigClientInterface;
  */
 class ClientStore : public Shared::Store
                   , public CommonInterface
-                  , public sigc::trackable {
+                  , public INGEN_TRACKABLE {
 public:
 	ClientStore(
 		SharedPtr<Shared::LV2URIMap>  uris,

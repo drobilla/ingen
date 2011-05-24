@@ -27,4 +27,6 @@ public: \
 sigc::signal<__VA_ARGS__>  signal_##name() const { return _signal_##name; } \
 sigc::signal<__VA_ARGS__>& signal_##name()       { return _signal_##name; }
 
+#define INGEN_TRACKABLE sigc::trackable
+
 #endif // INGEN_CLIENT_SIGNAL_HPP

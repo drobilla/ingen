@@ -38,16 +38,7 @@ int _##name##_cb (LO_HANDLER_ARGS);\
 inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
 { return ((OSCClientReceiver*)osc_listener)->_##name##_cb(path, types, argv, argc, msg); }
 
-/** Callbacks for "notification band" OSC messages.
- *
- * Receives all notification of engine state, but not replies on the "control
- * band".  See OSC namespace documentation for details.
- *
- * Right now this class and Comm share the same lo_server_thread and the barrier
- * between them is a bit odd, but eventually this class will be able to listen
- * on a completely different port (ie have it's own lo_server_thread) to allow
- * things like listening to the notification band over TCP while sending commands
- * on the control band over UDP.
+/** Client-side receiver for OSC messages from the engine.
  *
  * \ingroup IngenClient
  */

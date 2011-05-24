@@ -18,12 +18,10 @@
 #ifndef INGEN_CLIENT_PATCHMODEL_HPP
 #define INGEN_CLIENT_PATCHMODEL_HPP
 
-#include <cassert>
 #include "raul/SharedPtr.hpp"
+
 #include "ingen/Patch.hpp"
 #include "NodeModel.hpp"
-
-#include "ConnectionModel.hpp"
 
 namespace Ingen {
 
@@ -32,6 +30,7 @@ class Port;
 namespace Client {
 
 class ClientStore;
+class ConnectionModel;
 
 /** Client's model of a patch.
  *
@@ -47,10 +46,8 @@ public:
 	SharedPtr<ConnectionModel> get_connection(const Ingen::Port* src_port,
 	                                          const Ingen::Port* dst_port);
 
-	//uint32_t poly()          const { return _poly; }
 	bool     enabled()       const;
 	bool     polyphonic()    const;
-
 	uint32_t internal_poly() const;
 
 	/** "editable" = arranging,connecting,adding,deleting,etc

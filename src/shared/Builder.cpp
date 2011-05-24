@@ -16,14 +16,16 @@
  */
 
 #include "raul/Atom.hpp"
+#include "raul/Path.hpp"
+
 #include "ingen/CommonInterface.hpp"
-#include "ingen/Patch.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Port.hpp"
 #include "ingen/Connection.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
+#include "ingen/Port.hpp"
+#include "shared/Builder.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "Builder.hpp"
 
 using namespace std;
 using namespace Raul;

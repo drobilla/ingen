@@ -18,7 +18,6 @@
 #ifndef INGEN_CLIENT_OSCENGINESENDER_HPP
 #define INGEN_CLIENT_OSCENGINESENDER_HPP
 
-#include <stdbool.h>
 #include <stddef.h>
 
 #include <string>

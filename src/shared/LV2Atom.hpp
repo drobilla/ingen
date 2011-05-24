@@ -15,26 +15,31 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_SHARED_LV2OBJECT_HPP
-#define INGEN_SHARED_LV2OBJECT_HPP
+#ifndef INGEN_SHARED_LV2ATOM_HPP
+#define INGEN_SHARED_LV2ATOM_HPP
+
+typedef struct _LV2_Atom LV2_Atom;
 
 namespace Raul { class Atom; }
-typedef struct _LV2_Atom LV2_Atom;
 
 namespace Ingen {
 namespace Shared {
 
-class World;
 class LV2URIMap;
 
 namespace LV2Atom {
 
-	bool to_atom(const Shared::LV2URIMap& uris, const LV2_Atom* object, Raul::Atom& atom);
-	bool from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* object);
+bool to_atom(const LV2URIMap& uris,
+             const LV2_Atom*  object,
+             Raul::Atom&      atom);
+
+bool from_atom(const LV2URIMap&  uris,
+               const Raul::Atom& atom,
+               LV2_Atom*         object);
 
 } // namespace LV2Atom
 
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_LV2OBJECT_HPP
+#endif // INGEN_SHARED_LV2ATOM_HPP

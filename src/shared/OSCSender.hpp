@@ -18,7 +18,6 @@
 #ifndef INGEN_SHARED_OSCSENDER_HPP
 #define INGEN_SHARED_OSCSENDER_HPP
 
-#include <stdbool.h>
 #include <stddef.h>
 
 #include <lo/lo.h>

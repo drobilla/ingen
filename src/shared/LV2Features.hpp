@@ -21,7 +21,9 @@
 #include <map>
 #include <string>
 #include <vector>
+
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+
 #include "raul/SharedPtr.hpp"
 
 namespace Ingen {

@@ -18,10 +18,12 @@
 #ifndef INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
 #define INGEN_CLIENT_SIGCLIENTINTERFACE_HPP
 
-#include <inttypes.h>
+#include <stdint.h>
+
 #include "raul/Path.hpp"
-#include "ingen/ClientInterface.hpp"
+
 #include "client/signal.hpp"
+#include "ingen/ClientInterface.hpp"
 
 namespace Ingen {
 namespace Client {
@@ -35,7 +37,7 @@ namespace Client {
  * documentation for ClientInterface for meanings of signal parameters.
  */
 class SigClientInterface : public Ingen::ClientInterface,
-                           public sigc::trackable
+                           public INGEN_TRACKABLE
 {
 public:
 	SigClientInterface() {}

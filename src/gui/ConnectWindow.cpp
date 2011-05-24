@@ -31,11 +31,9 @@
 #include "server/Engine.hpp"
 #ifdef HAVE_SOUP
 #include "client/HTTPClientReceiver.hpp"
-#include "client/HTTPEngineSender.hpp"
 #endif
 #ifdef HAVE_LIBLO
 #include "client/OSCClientReceiver.hpp"
-#include "client/OSCEngineSender.hpp"
 #endif
 #include "client/ClientStore.hpp"
 #include "client/PatchModel.hpp"
@@ -191,19 +189,7 @@ ConnectWindow::connect(bool existing)
 #endif
 
 		if (!existing) {
-#ifdef HAVE_LIBLO
-			if (scheme == "osc.udp" || scheme == "osc.tcp")
-				world->set_engine(
-					SharedPtr<ServerInterface>(
-						new OSCEngineSender(
-							uri,
-							world->conf()->option("packet-size").get_int32())));
-#endif
-#ifdef HAVE_SOUP
-			if (scheme == "http")
-				world->set_engine(SharedPtr<ServerInterface>(
-					                  new HTTPEngineSender(world, uri)));
-#endif
+			world->set_engine(world->interface(uri));
 		} else {
 			uri = world->engine()->uri().str();
 			scheme = uri.substr(0, uri.find(":"));
@@ -223,10 +209,8 @@ ConnectWindow::connect(bool existing)
 		const string cmd = string("ingen -e --engine-port=").append(port_str);
 
 		if (Raul::Process::launch(cmd)) {
-			world->set_engine(SharedPtr<ServerInterface>(
-					new OSCEngineSender(
-						string("osc.udp://localhost:").append(port_str),
-						world->conf()->option("packet-size").get_int32())));
+			const std::string engine_uri = string("osc.udp://localhost:").append(port_str);
+			world->set_engine(world->interface(engine_uri));
 
 			// FIXME: static args
 			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));

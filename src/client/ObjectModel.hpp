@@ -18,16 +18,17 @@
 #ifndef INGEN_CLIENT_OBJECTMODEL_HPP
 #define INGEN_CLIENT_OBJECTMODEL_HPP
 
-#include <cstdlib>
 #include <algorithm>
 #include <cassert>
-#include <boost/utility.hpp>
+#include <cstdlib>
+
 #include "raul/Path.hpp"
-#include "raul/URI.hpp"
 #include "raul/SharedPtr.hpp"
+#include "raul/URI.hpp"
+
+#include "client/signal.hpp"
 #include "ingen/GraphObject.hpp"
 #include "shared/ResourceImpl.hpp"
-#include "client/signal.hpp"
 
 namespace Ingen {
 

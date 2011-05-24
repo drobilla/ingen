@@ -18,10 +18,6 @@
 #ifndef INGEN_SHARED_RUNTIME_PATHS_HPP
 #define INGEN_SHARED_RUNTIME_PATHS_HPP
 
-#ifndef _GNU_SOURCE
-	#define _GNU_SOURCE
-#endif
-
 #include <string>
 
 namespace Ingen {

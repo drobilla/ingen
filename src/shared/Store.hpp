@@ -19,8 +19,11 @@
 #define INGEN_SHARED_STORE_HPP
 
 #include <string>
+
 #include <glibmm/thread.h>
+
 #include "raul/PathTable.hpp"
+
 #include "ingen/GraphObject.hpp"
 
 namespace Ingen {
