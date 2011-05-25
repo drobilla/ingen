@@ -20,7 +20,7 @@
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
-#include "serialisation/Serialiser.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 #include "shared/World.hpp"
 #include "HTTPClientSender.hpp"
 #include "Engine.hpp"

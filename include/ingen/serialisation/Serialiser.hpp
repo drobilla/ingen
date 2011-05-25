@@ -18,11 +18,8 @@
 #ifndef INGEN_SERIALISATION_SERIALISER_HPP
 #define INGEN_SERIALISATION_SERIALISER_HPP
 
-#include <cassert>
-#include <map>
 #include <stdexcept>
 #include <string>
-#include <utility>
 
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
@@ -30,7 +27,6 @@
 #include "sord/sordmm.hpp"
 
 #include "ingen/GraphObject.hpp"
-#include "shared/Store.hpp"
 
 namespace Ingen {
 
@@ -41,13 +37,13 @@ class Node;
 class Port;
 class Connection;
 
-namespace Shared { class World; }
+namespace Shared { class World; class Store; }
 
 namespace Serialisation {
 
 /** Serialises Ingen objects (patches, nodes, etc) to RDF.
  *
- * \ingroup IngenClient
+ * \ingroup IngenSerialisation
  */
 class Serialiser
 {
@@ -77,37 +73,8 @@ public:
 	std::string finish();
 
 private:
-	enum Mode { TO_FILE, TO_STRING };
-
-	void start_to_filename(const std::string& filename);
-
-	void serialise_patch(SharedPtr<const Patch> p,
-	                     const Sord::Node&      id);
-
-	void serialise_node(SharedPtr<const Node> n,
-	                    const Sord::Node&     class_id,
-	                    const Sord::Node&     id);
-
-	void serialise_port(const Port*       p,
-	                    Resource::Graph   context,
-	                    const Sord::Node& id);
-
-	void serialise_properties(const GraphObject* o,
-	                          Resource::Graph    context,
-	                          Sord::Node         id);
-
-	Sord::Node path_rdf_node(const Raul::Path& path);
-
-	void write_manifest(const std::string&     bundle_path,
-	                    SharedPtr<const Patch> patch,
-	                    const std::string&     patch_symbol);
-
-	Raul::Path               _root_path;
-	SharedPtr<Shared::Store> _store;
-	Mode                     _mode;
-	std::string              _base_uri;
-	Shared::World&           _world;
-	Sord::Model*             _model;
+	struct Impl;
+	Impl* me;
 };
 
 } // namespace Serialisation

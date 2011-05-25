@@ -23,7 +23,7 @@
 #include "raul/log.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/PluginModel.hpp"
-#include "serialisation/Parser.hpp"
+#include "ingen/serialisation/Parser.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "flowcanvas/Port.hpp"
 #include "App.hpp"

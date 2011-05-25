@@ -23,6 +23,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <map>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -49,12 +50,12 @@
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
-#include "shared/World.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "shared/ResourceImpl.hpp"
+#include "shared/Store.hpp"
+#include "shared/World.hpp"
 
-#include "Serialiser.hpp"
-#include "names.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 
 #define LOG(s) s << "[Serialiser] "
 
@@ -69,19 +70,66 @@ using namespace Ingen::Shared;
 namespace Ingen {
 namespace Serialisation {
 
+struct Serialiser::Impl {
+	Impl(Shared::World& world, SharedPtr<Shared::Store> store)
+		: _root_path("/")
+		, _store(store)
+		, _world(world)
+	{}
+
+	enum Mode { TO_FILE, TO_STRING };
+
+	void start_to_filename(const std::string& filename);
+
+	void serialise_patch(SharedPtr<const Patch> p,
+	                     const Sord::Node&      id);
+
+	void serialise_node(SharedPtr<const Node> n,
+	                    const Sord::Node&     class_id,
+	                    const Sord::Node&     id);
+
+	void serialise_port(const Port*       p,
+	                    Resource::Graph   context,
+	                    const Sord::Node& id);
+
+	void serialise_properties(const GraphObject* o,
+	                          Resource::Graph    context,
+	                          Sord::Node         id);
+
+	void write_bundle(SharedPtr<const Patch> patch,
+	                  const std::string&     uri);
+
+	Sord::Node path_rdf_node(const Raul::Path& path);
+
+	void write_manifest(const std::string&     bundle_path,
+	                    SharedPtr<const Patch> patch,
+	                    const std::string&     patch_symbol);
+
+	void serialise_connection(const Sord::Node& parent,
+	                          SharedPtr<const Connection> c)
+			throw (std::logic_error);
+
+	std::string finish();
+
+	Raul::Path               _root_path;
+	SharedPtr<Shared::Store> _store;
+	Mode                     _mode;
+	std::string              _base_uri;
+	Shared::World&           _world;
+	Sord::Model*             _model;
+};
+
+
 Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
-	: _root_path("/")
-	, _store(store)
-	, _world(world)
-{
-}
+	: me(new Impl(world, store))
+{}
 
 void
 Serialiser::to_file(SharedPtr<const GraphObject> object,
                     const std::string&           filename)
 {
-	_root_path = object->path();
-	start_to_filename(filename);
+	me->_root_path = object->path();
+	me->start_to_filename(filename);
 	serialise(object);
 	finish();
 }
@@ -96,9 +144,9 @@ uri_to_symbol(const std::string& uri)
 }
 
 void
-Serialiser::write_manifest(const std::string&     bundle_path,
-                           SharedPtr<const Patch> patch,
-                           const std::string&     patch_symbol)
+Serialiser::Impl::write_manifest(const std::string&     bundle_path,
+                                 SharedPtr<const Patch> patch,
+                                 const std::string&     patch_symbol)
 {
 	const string manifest_path(Glib::build_filename(bundle_path, "manifest.ttl"));
 	const string binary_path(Glib::Module::build_path("", "ingen_lv2"));
@@ -107,7 +155,7 @@ Serialiser::write_manifest(const std::string&     bundle_path,
 
 	Sord::World& world = _model->world();
 
-	const string    filename(patch_symbol + INGEN_PATCH_FILE_EXT);
+	const string    filename(patch_symbol + ".ttl");
 	const Sord::URI subject(world, filename);
 
 	_model->add_statement(subject,
@@ -150,6 +198,13 @@ void
 Serialiser::write_bundle(SharedPtr<const Patch> patch,
                          const std::string&     uri)
 {
+	me->write_bundle(patch, uri);
+}
+
+void
+Serialiser::Impl::write_bundle(SharedPtr<const Patch> patch,
+                               const std::string&     uri)
+{
 	Glib::ustring path = "";
 	try {
 		path = Glib::filename_from_uri(uri);
@@ -169,7 +224,7 @@ Serialiser::write_bundle(SharedPtr<const Patch> patch,
 	g_mkdir_with_parents(path.c_str(), 0744);
 
 	const string symbol    = uri_to_symbol(uri);
-	const string root_file = path + symbol + INGEN_PATCH_FILE_EXT;
+	const string root_file = path + symbol + ".ttl";
 
 	start_to_filename(root_file);
 	const Path old_root_path = _root_path;
@@ -189,12 +244,12 @@ Serialiser::to_string(SharedPtr<const GraphObject>   object,
 	start_to_string(object->path(), base_uri);
 	serialise(object);
 
-	Sord::URI base_rdf_node(_model->world(), base_uri);
+	Sord::URI base_rdf_node(me->_model->world(), base_uri);
 	for (GraphObject::Properties::const_iterator v = extra_rdf.begin();
 	     v != extra_rdf.end(); ++v) {
-		_model->add_statement(base_rdf_node,
-		                      AtomRDF::atom_to_node(*_model, v->first),
-		                      AtomRDF::atom_to_node(*_model, v->second));
+		me->_model->add_statement(base_rdf_node,
+		                          AtomRDF::atom_to_node(*me->_model, v->first),
+		                          AtomRDF::atom_to_node(*me->_model, v->second));
 	}
 
 	return finish();
@@ -205,7 +260,7 @@ Serialiser::to_string(SharedPtr<const GraphObject>   object,
  * This must be called before any serializing methods.
  */
 void
-Serialiser::start_to_filename(const string& filename)
+Serialiser::Impl::start_to_filename(const string& filename)
 {
 	setlocale(LC_NUMERIC, "C");
 
@@ -235,19 +290,20 @@ Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 {
 	setlocale(LC_NUMERIC, "C");
 
-	_root_path = root;
-	_base_uri  = base_uri;
-	_model     = new Sord::Model(*_world.rdf_world(), base_uri);
-	_mode      = TO_STRING;
+	me->_root_path = root;
+	me->_base_uri  = base_uri;
+	me->_model     = new Sord::Model(*me->_world.rdf_world(), base_uri);
+	me->_mode      = Impl::TO_STRING;
 }
 
-/** Finish a serialization.
- *
- * If this was a serialization to a string, the serialization output
- * will be returned, otherwise the empty string is returned.
- */
-string
+std::string
 Serialiser::finish()
+{
+	return me->finish();
+}
+
+std::string
+Serialiser::Impl::finish()
 {
 	string ret = "";
 	if (_mode == TO_FILE) {
@@ -264,7 +320,7 @@ Serialiser::finish()
 }
 
 Sord::Node
-Serialiser::path_rdf_node(const Path& path)
+Serialiser::Impl::path_rdf_node(const Path& path)
 {
 	assert(_model);
 	assert(path == _root_path || path.is_child_of(_root_path));
@@ -275,26 +331,26 @@ Serialiser::path_rdf_node(const Path& path)
 void
 Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_error)
 {
-	if (!_model)
+	if (!me->_model)
 		throw std::logic_error("serialise called without serialization in progress");
 
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
-		const Sord::URI patch_id(_model->world(), "");
-		serialise_patch(patch, patch_id);
+		const Sord::URI patch_id(me->_model->world(), "");
+		me->serialise_patch(patch, patch_id);
 		return;
 	}
 
 	SharedPtr<const Node> node = PtrCast<const Node>(object);
 	if (node) {
-		const Sord::URI plugin_id(_model->world(), node->plugin()->uri().str());
-		serialise_node(node, plugin_id, path_rdf_node(node->path()));
+		const Sord::URI plugin_id(me->_model->world(), node->plugin()->uri().str());
+		me->serialise_node(node, plugin_id, me->path_rdf_node(node->path()));
 		return;
 	}
 
 	SharedPtr<const Port> port = PtrCast<const Port>(object);
 	if (port) {
-		serialise_port(port.get(), Resource::DEFAULT, path_rdf_node(port->path()));
+		me->serialise_port(port.get(), Resource::DEFAULT, me->path_rdf_node(port->path()));
 		return;
 	}
 
@@ -303,7 +359,8 @@ Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_err
 }
 
 void
-Serialiser::serialise_patch(SharedPtr<const Patch> patch, const Sord::Node& patch_id)
+Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
+                                  const Sord::Node&      patch_id)
 {
 	assert(_model);
 	Sord::World& world = _model->world();
@@ -413,9 +470,9 @@ Serialiser::serialise_patch(SharedPtr<const Patch> patch, const Sord::Node& patc
 }
 
 void
-Serialiser::serialise_node(SharedPtr<const Node> node,
-                           const Sord::Node&     class_id,
-                           const Sord::Node&     node_id)
+Serialiser::Impl::serialise_node(SharedPtr<const Node> node,
+                                 const Sord::Node&     class_id,
+                                 const Sord::Node&     node_id)
 {
 	_model->add_statement(node_id,
 	                      Sord::Curie(_model->world(), "rdf:type"),
@@ -440,9 +497,9 @@ Serialiser::serialise_node(SharedPtr<const Node> node,
 }
 
 void
-Serialiser::serialise_port(const Port*       port,
-                           Resource::Graph   context,
-                           const Sord::Node& port_id)
+Serialiser::Impl::serialise_port(const Port*       port,
+                                 Resource::Graph   context,
+                                 const Sord::Node& port_id)
 {
 	Sord::World& world = _model->world();
 
@@ -491,14 +548,24 @@ Serialiser::serialise_port(const Port*       port,
 }
 
 void
-Serialiser::serialise_connection(const Sord::Node&     parent,
-                                 SharedPtr<const Connection> connection) throw (std::logic_error)
+Serialiser::serialise_connection(const Sord::Node&           parent,
+                                 SharedPtr<const Connection> connection)
+		throw (std::logic_error)
 {
-	Sord::World& world = _model->world();
+	return me->serialise_connection(parent, connection);
+}
 
+void
+Serialiser::Impl::serialise_connection(const Sord::Node&           parent,
+                                       SharedPtr<const Connection> connection)
+		throw (std::logic_error)
+{
 	if (!_model)
 		throw std::logic_error(
 			"serialise_connection called without serialization in progress");
+
+
+	Sord::World& world = _model->world();
 
 	const Sord::Node src           = path_rdf_node(connection->src_port_path());
 	const Sord::Node dst           = path_rdf_node(connection->dst_port_path());
@@ -522,9 +589,9 @@ skip_property(const Sord::Node& predicate)
 }
 
 void
-Serialiser::serialise_properties(const GraphObject*     o,
-                                 Ingen::Resource::Graph context,
-                                 Sord::Node             id)
+Serialiser::Impl::serialise_properties(const GraphObject*     o,
+                                       Ingen::Resource::Graph context,
+                                       Sord::Node             id)
 {
 	const GraphObject::Properties props = o->properties(context);
 

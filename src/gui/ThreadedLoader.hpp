@@ -26,8 +26,9 @@
 #include "raul/Slave.hpp"
 #include <glibmm/thread.h>
 #include "ingen/ServerInterface.hpp"
-#include "serialisation/Serialiser.hpp"
-#include "serialisation/Parser.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
+#include "ingen/serialisation/Parser.hpp"
+
 using std::string;
 using std::list;
 using boost::optional;

@@ -24,7 +24,7 @@
 #ifdef INGEN_JACK_SESSION
 #include <jack/session.h>
 #include <boost/format.hpp>
-#include "serialisation/Serialiser.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 #endif
 
 #include "raul/log.hpp"

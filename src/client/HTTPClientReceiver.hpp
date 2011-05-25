@@ -26,7 +26,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 #include "ingen/ClientInterface.hpp"
-#include "serialisation/Parser.hpp"
+#include "ingen/serialisation/Parser.hpp"
 
 typedef struct _SoupSession SoupSession;
 typedef struct _SoupMessage SoupMessage;

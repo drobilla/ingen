@@ -18,8 +18,8 @@
 #include "shared/Module.hpp"
 #include "shared/World.hpp"
 
-#include "Parser.hpp"
-#include "Serialiser.hpp"
+#include "ingen/serialisation/Parser.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 
 using namespace Ingen;
 

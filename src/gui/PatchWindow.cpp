@@ -26,7 +26,6 @@
 #include "shared/LV2URIMap.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "serialisation/names.hpp"
 #include "App.hpp"
 #include "PatchCanvas.hpp"
 #include "LoadPluginWindow.hpp"
@@ -425,7 +424,7 @@ PatchWindow::event_save_as()
 		save_button->property_has_default() = true;
 
 		Gtk::FileFilter filt;
-		filt.add_pattern("*" INGEN_BUNDLE_EXT);
+		filt.add_pattern("*.ingen");
 		filt.set_name("Ingen bundles");
 		dialog.set_filter(filt);
 
@@ -443,11 +442,11 @@ PatchWindow::event_save_as()
 		std::string basename = Glib::path_get_basename(filename);
 
 		if (basename.find('.') == string::npos) {
-			filename += INGEN_BUNDLE_EXT;
-			basename += INGEN_BUNDLE_EXT;
-		} else if (filename.substr(filename.length() - 10) != INGEN_BUNDLE_EXT) {
+			filename += ".ingen";
+			basename += ".ingen";
+		} else if (filename.substr(filename.length() - 10) != ".ingen") {
 			Gtk::MessageDialog error_dialog(*this,
-"<b>" "Ingen patches must be saved to Ingen bundles (*" INGEN_BUNDLE_EXT ")." "</b>",
+"<b>" "Ingen patches must be saved to Ingen bundles (*.ingen)." "</b>",
 					true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 			error_dialog.run();
 			continue;

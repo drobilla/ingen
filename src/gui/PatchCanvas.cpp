@@ -26,7 +26,7 @@
 #include "shared/LV2URIMap.hpp"
 #include "shared/Builder.hpp"
 #include "shared/ClashAvoider.hpp"
-#include "serialisation/Serialiser.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/NodeModel.hpp"

@@ -41,7 +41,7 @@
 #include "server/ThreadManager.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "shared/World.hpp"
-#include "serialisation/Parser.hpp"
+#include "ingen/serialisation/Parser.hpp"
 #include "shared/Configuration.hpp"
 #include "shared/runtime_paths.hpp"
 

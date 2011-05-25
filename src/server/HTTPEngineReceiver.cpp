@@ -28,8 +28,8 @@
 
 #include "ingen/ClientInterface.hpp"
 #include "shared/Module.hpp"
-#include "serialisation/Parser.hpp"
-#include "serialisation/Serialiser.hpp"
+#include "ingen/serialisation/Parser.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"

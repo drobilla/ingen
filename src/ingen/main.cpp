@@ -41,7 +41,7 @@
 
 #include "ingen/EngineBase.hpp"
 #include "ingen/ServerInterface.hpp"
-#include "serialisation/Parser.hpp"
+#include "ingen/serialisation/Parser.hpp"
 #include "shared/Configuration.hpp"
 #include "shared/World.hpp"
 #include "shared/runtime_paths.hpp"

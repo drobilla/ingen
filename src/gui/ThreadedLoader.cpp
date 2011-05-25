@@ -19,7 +19,6 @@
 #include "raul/log.hpp"
 #include "shared/World.hpp"
 #include "shared/Module.hpp"
-#include "serialisation/names.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
 #include "ingen/client/PatchModel.hpp"
@@ -120,7 +119,7 @@ ThreadedLoader::save_patch_event(SharedPtr<const PatchModel> model,
                                  const string&               filename)
 {
 	if (App::instance().serialiser()) {
-		if (filename.find(INGEN_BUNDLE_EXT) != string::npos)
+		if (filename.find(".ingen") != string::npos)
 			App::instance().serialiser()->write_bundle(model, filename);
 		else
 			App::instance().serialiser()->to_file(model, filename);

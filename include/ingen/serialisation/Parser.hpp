@@ -29,8 +29,6 @@
 
 #include "ingen/GraphObject.hpp"
 
-namespace Sord  { class World; class Model; class Node; }
-
 namespace Ingen {
 
 class CommonInterface;
@@ -39,6 +37,10 @@ namespace Shared { class World; }
 
 namespace Serialisation {
 
+/** Parse Ingen objects from RDF.
+ *
+ * \ingroup IngenSerialisation
+ */
 class Parser {
 public:
 	Parser(Shared::World& world);
@@ -77,49 +79,6 @@ public:
 	virtual PatchRecords find_patches(Shared::World*       world,
 	                                  SerdEnv*             env,
 	                                  const Glib::ustring& manifest_uri);
-
-private:
-	boost::optional<Raul::Path> parse(
-		Shared::World*                world,
-		CommonInterface*              target,
-		Sord::Model&                  model,
-		Glib::ustring                 document_uri,
-		boost::optional<Raul::Path>   data_path = boost::optional<Raul::Path>(),
-		boost::optional<Raul::Path>   parent    = boost::optional<Raul::Path>(),
-		boost::optional<Raul::Symbol> symbol    = boost::optional<Raul::Symbol>(),
-		boost::optional<Properties>   data      = boost::optional<Properties>());
-
-	boost::optional<Raul::Path> parse_patch(
-		Shared::World*                world,
-		CommonInterface*              target,
-		Sord::Model&                  model,
-		const Sord::Node&             subject,
-		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
-		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
-		boost::optional<Properties>   data   = boost::optional<Properties>());
-
-	boost::optional<Raul::Path> parse_node(
-		Shared::World*              world,
-		CommonInterface*            target,
-		Sord::Model&                model,
-		const Sord::Node&           subject,
-		const Raul::Path&           path,
-		boost::optional<Properties> data = boost::optional<Properties>());
-
-	bool parse_properties(
-		Shared::World*              world,
-		CommonInterface*            target,
-		Sord::Model&                model,
-		const Sord::Node&           subject,
-		const Raul::URI&            uri,
-		boost::optional<Properties> data = boost::optional<Properties>());
-
-	bool parse_connections(
-		Shared::World*    world,
-		CommonInterface*  target,
-		Sord::Model&      model,
-		const Sord::Node& subject,
-		const Raul::Path& patch);
 };
 
 } // namespace Serialisation

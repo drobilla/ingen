@@ -26,7 +26,6 @@
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "shared/runtime_paths.hpp"
-#include "serialisation/names.hpp"
 #include "App.hpp"
 #include "LoadPatchWindow.hpp"
 #include "PatchView.hpp"
@@ -75,12 +74,10 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType*                   cobject,
 			sigc::mem_fun(this, &LoadPatchWindow::selection_changed));
 
 	Gtk::FileFilter filt;
-	filt.add_pattern("*" INGEN_PATCH_FILE_EXT);
-	filt.set_name("Ingen patch files (*" INGEN_PATCH_FILE_EXT ")");
-	filt.add_pattern("*" INGEN_BUNDLE_EXT);
-	filt.set_name("Ingen bundles (*" INGEN_BUNDLE_EXT ")");
-	filt.add_pattern("*.om");
-	filt.set_name("Om patch files (*.om)");
+	filt.add_pattern("*.ttl");
+	filt.set_name("Ingen patch files (*.ttl)");
+	filt.add_pattern("*.ingen");
+	filt.set_name("Ingen bundles (*.ingen)");
 
 	set_filter(filt);
 
