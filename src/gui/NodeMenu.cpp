@@ -23,6 +23,7 @@
 #include "App.hpp"
 #include "NodeMenu.hpp"
 #include "WindowFactory.hpp"
+#include "WidgetFactory.hpp"
 
 using namespace std;
 using namespace Ingen::Client;
@@ -36,12 +37,13 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 	, _controls_menuitem(NULL)
 	, _presets_menu(NULL)
 {
+	Glib::RefPtr<Gtk::Builder> nxml = WidgetFactory::create("node_menu");
 	Gtk::Menu* node_menu = NULL;
-	xml->get_widget("node_menu", node_menu);
-	xml->get_widget("node_controls_menuitem", _controls_menuitem);
-	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
-	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
-	xml->get_widget("node_randomize_menuitem", _randomize_menuitem);
+	nxml->get_widget("node_menu", node_menu);
+	nxml->get_widget("node_controls_menuitem", _controls_menuitem);
+	nxml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
+	nxml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
+	nxml->get_widget("node_randomize_menuitem", _randomize_menuitem);
 
 	items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 
