@@ -3,9 +3,6 @@ from waflib.extras import autowaf as autowaf
 import waflib.Utils as Utils
 
 def build(bld):
-    # Headers
-    bld.install_files('${INCLUDEDIR}/ingen/gui', bld.path.ant_glob('*.hpp'))
-
     obj = bld(features = 'cxx cxxshlib')
     obj.source = '''
             App.cpp

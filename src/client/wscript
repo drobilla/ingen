@@ -2,9 +2,6 @@
 from waflib.extras import autowaf as autowaf
 
 def build(bld):
-    # Headers
-    bld.install_files('${INCLUDEDIR}/ingen/client', bld.path.ant_glob('*.hpp'))
-
     obj = bld(features = 'cxx cxxshlib')
     obj.source = '''
             ClientStore.cpp
