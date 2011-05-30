@@ -73,9 +73,6 @@ public:
 
 	Shared::LV2URIMap& uris() { return *_uris.get(); }
 
-	// CommonInterface
-	bool new_object(const GraphObject* object);
-
 	void put(const Raul::URI&            uri,
 	         const Resource::Properties& properties,
 	         Resource::Graph             ctx=Resource::DEFAULT);
@@ -124,7 +121,6 @@ private:
 	void bundle_end()   {}
 
 	// Slots for SigClientInterface signals
-	void object_moved(const Raul::Path& old_path, const Raul::Path& new_path);
 	void activity(const Raul::Path& path);
 
 	bool attempt_connection(const Raul::Path& src_port_path,
