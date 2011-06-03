@@ -48,10 +48,10 @@ class NodeMenu;
 class NodeModule : public FlowCanvas::Module
 {
 public:
-	static boost::shared_ptr<NodeModule> create (
-			boost::shared_ptr<PatchCanvas> canvas,
-			SharedPtr<const NodeModel>     node,
-			bool                           human_names);
+	static boost::shared_ptr<NodeModule> create(
+		PatchCanvas&               canvas,
+		SharedPtr<const NodeModel> node,
+		bool                       human_names);
 
 	virtual ~NodeModule();
 
@@ -65,7 +65,7 @@ public:
 	SharedPtr<const NodeModel> node() const { return _node; }
 
 protected:
-	NodeModule(boost::shared_ptr<PatchCanvas> canvas, SharedPtr<const NodeModel> node);
+	NodeModule(PatchCanvas& canvas, SharedPtr<const NodeModel> node);
 
 	void on_double_click(GdkEventButton* ev);
 

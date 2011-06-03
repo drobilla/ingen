@@ -275,9 +275,6 @@ PatchCanvas::build_plugin_menu()
 void
 PatchCanvas::build()
 {
-	boost::shared_ptr<PatchCanvas> shared_this =
-		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
-
 	// Create modules for nodes
 	for (Store::const_iterator i = App::instance().store()->children_begin(_patch);
 			i != App::instance().store()->children_end(_patch); ++i) {
@@ -387,15 +384,12 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 void
 PatchCanvas::add_node(SharedPtr<const NodeModel> nm)
 {
-	boost::shared_ptr<PatchCanvas> shared_this =
-		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
-
 	SharedPtr<const PatchModel> pm = PtrCast<const PatchModel>(nm);
 	SharedPtr<NodeModule>       module;
 	if (pm) {
-		module = SubpatchModule::create(shared_this, pm, _human_names);
+		module = SubpatchModule::create(*this, pm, _human_names);
 	} else {
-		module = NodeModule::create(shared_this, nm, _human_names);
+		module = NodeModule::create(*this, nm, _human_names);
 		const PluginModel* plugm = dynamic_cast<const PluginModel*>(nm->plugin());
 		if (plugm && !plugm->icon_path().empty())
 			module->set_icon(App::instance().icon_from_path(plugm->icon_path(), 100));
@@ -420,10 +414,7 @@ PatchCanvas::remove_node(SharedPtr<const NodeModel> nm)
 void
 PatchCanvas::add_port(SharedPtr<const PortModel> pm)
 {
-	boost::shared_ptr<PatchCanvas> shared_this =
-		boost::dynamic_pointer_cast<PatchCanvas>(shared_from_this());
-
-	SharedPtr<PatchPortModule> view = PatchPortModule::create(shared_this, pm, _human_names);
+	SharedPtr<PatchPortModule> view = PatchPortModule::create(*this, pm, _human_names);
 	_views.insert(std::make_pair(pm, view));
 	add_item(view);
 	view->show();
@@ -486,7 +477,7 @@ PatchCanvas::connection(SharedPtr<const ConnectionModel> cm)
 	if (src && dst) {
 		add_connection(
 			boost::shared_ptr<GUI::Connection>(
-				new GUI::Connection(shared_from_this(), cm, src, dst,
+				new GUI::Connection(*this, cm, src, dst,
 				                    src->color() + 0x22222200)));
 	} else {
 		LOG(error) << "Unable to find ports to connect "

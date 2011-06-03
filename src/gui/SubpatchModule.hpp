@@ -46,8 +46,9 @@ class NodeControlWindow;
 class SubpatchModule : public NodeModule
 {
 public:
-	SubpatchModule(boost::shared_ptr<PatchCanvas> canvas,
-	               SharedPtr<const PatchModel>    controller);
+	SubpatchModule(PatchCanvas&                canvas,
+	               SharedPtr<const PatchModel> controller);
+
 	virtual ~SubpatchModule() {}
 
 	void on_double_click(GdkEventButton* ev);

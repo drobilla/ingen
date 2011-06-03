@@ -43,9 +43,9 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-NodeModule::NodeModule(boost::shared_ptr<PatchCanvas> canvas,
-                       SharedPtr<const NodeModel>     node)
-	: FlowCanvas::Module(canvas, node->path().symbol(), 0, 0, true, canvas->show_port_names())
+NodeModule::NodeModule(PatchCanvas&               canvas,
+                       SharedPtr<const NodeModel> node)
+	: FlowCanvas::Module(canvas, node->path().symbol(), 0, 0, true, canvas.show_port_names())
 	, _node(node)
 	, _gui_widget(NULL)
 	, _gui_window(NULL)
@@ -87,9 +87,9 @@ NodeModule::create_menu()
 }
 
 boost::shared_ptr<NodeModule>
-NodeModule::create(boost::shared_ptr<PatchCanvas> canvas,
-                   SharedPtr<const NodeModel>     node,
-                   bool                           human)
+NodeModule::create(PatchCanvas&               canvas,
+                   SharedPtr<const NodeModel> node,
+                   bool                       human)
 {
 	boost::shared_ptr<NodeModule> ret;
 
@@ -401,9 +401,9 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != selected()) {
 				if (value.get_bool())
-					_canvas.lock()->select_item(shared_from_this());
+					_canvas->select_item(shared_from_this());
 				else
-					_canvas.lock()->unselect_item(shared_from_this());
+					_canvas->unselect_item(shared_from_this());
 			}
 		}
 		break;

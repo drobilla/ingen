@@ -25,7 +25,7 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-Connection::Connection(boost::shared_ptr<FlowCanvas::Canvas>      canvas,
+Connection::Connection(FlowCanvas::Canvas&                        canvas,
                        boost::shared_ptr<const ConnectionModel>   model,
                        boost::shared_ptr<FlowCanvas::Connectable> src,
                        boost::shared_ptr<FlowCanvas::Connectable> dst,

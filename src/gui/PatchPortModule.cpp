@@ -38,12 +38,11 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas,
-                                 SharedPtr<const PortModel>     model)
+PatchPortModule::PatchPortModule(PatchCanvas&               canvas,
+                                 SharedPtr<const PortModel> model)
 	: FlowCanvas::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
 {
-	assert(canvas);
 	assert(model);
 
 	assert(PtrCast<const PatchModel>(model->parent()));
@@ -55,9 +54,9 @@ PatchPortModule::PatchPortModule(boost::shared_ptr<PatchCanvas> canvas,
 }
 
 boost::shared_ptr<PatchPortModule>
-PatchPortModule::create(boost::shared_ptr<PatchCanvas> canvas,
-                        SharedPtr<const PortModel>     model,
-                        bool                           human)
+PatchPortModule::create(PatchCanvas&               canvas,
+                        SharedPtr<const PortModel> model,
+                        bool                       human)
 {
 	boost::shared_ptr<PatchPortModule> ret(new PatchPortModule(canvas, model));
 	boost::shared_ptr<Port> port(Port::create(ret, model, human, true));
@@ -150,9 +149,9 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != selected()) {
 				if (value.get_bool()) {
-					_canvas.lock()->select_item(shared_from_this());
+					_canvas->select_item(shared_from_this());
 				} else {
-					_canvas.lock()->unselect_item(shared_from_this());
+					_canvas->unselect_item(shared_from_this());
 				}
 			}
 		}

@@ -50,9 +50,9 @@ class PatchPortModule : public FlowCanvas::Module
 {
 public:
 	static boost::shared_ptr<PatchPortModule> create(
-		boost::shared_ptr<PatchCanvas> canvas,
-		SharedPtr<const PortModel>     model,
-		bool                           human);
+		PatchCanvas&               canvas,
+		SharedPtr<const PortModel> model,
+		bool                       human);
 
 	virtual void store_location();
 	void show_human_names(bool b);
@@ -62,8 +62,8 @@ public:
 	SharedPtr<const PortModel> port() const { return _model; }
 
 protected:
-	PatchPortModule(boost::shared_ptr<PatchCanvas> canvas,
-	                SharedPtr<const PortModel>     model);
+	PatchPortModule(PatchCanvas&               canvas,
+	                SharedPtr<const PortModel> model);
 
 	void create_menu();
 	void set_selected(bool b);

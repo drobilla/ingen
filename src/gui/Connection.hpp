@@ -37,7 +37,7 @@ namespace GUI {
 class Connection : public FlowCanvas::Connection
 {
 public:
-	Connection(boost::shared_ptr<FlowCanvas::Canvas>      canvas,
+	Connection(FlowCanvas::Canvas&                        canvas,
 	           boost::shared_ptr<const ConnectionModel>   model,
 	           boost::shared_ptr<FlowCanvas::Connectable> src,
 	           boost::shared_ptr<FlowCanvas::Connectable> dst,
