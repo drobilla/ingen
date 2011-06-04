@@ -48,6 +48,10 @@
 
 #define LOG(s) s << "[PatchCanvas] "
 
+#define FOREACH_ITEM(iter, coll) \
+	for (ItemList::iterator (iter) = coll.begin(); \
+	     (iter) != coll.end(); ++(iter))
+
 using Ingen::Client::ClientStore;
 using Ingen::Serialisation::Serialiser;
 using Ingen::Client::PluginModel;
@@ -197,9 +201,9 @@ PatchCanvas::build_plugin_class_menu(
 	const LV2Children&       children,
 	std::set<const char*>&   ancestors)
 {
-	size_t           num_items     = 0;
+	size_t          num_items     = 0;
 	const LilvNode* class_uri     = lilv_plugin_class_get_uri(plugin_class);
-	const char*      class_uri_str = lilv_node_as_string(class_uri);
+	const char*     class_uri_str = lilv_node_as_string(class_uri);
 
 	const std::pair<LV2Children::const_iterator, LV2Children::const_iterator> kids
 			= children.equal_range(class_uri_str);
@@ -297,19 +301,10 @@ PatchCanvas::build()
 }
 
 void
-PatchCanvas::arrange(bool use_length_hints, bool center)
-{
-	FlowCanvas::Canvas::arrange(false, center);
-
-	for (list<boost::shared_ptr<Item> >::iterator i = _items.begin(); i != _items.end(); ++i)
-		(*i)->store_location();
-}
-
-void
 PatchCanvas::show_human_names(bool b)
 {
 	_human_names = b;
-	for (ItemList::iterator m = _items.begin(); m != _items.end(); ++m) {
+	FOREACH_ITEM(m, items()) {
 		boost::shared_ptr<NodeModule> mod = boost::dynamic_pointer_cast<NodeModule>(*m);
 		if (mod)
 			mod->show_human_names(b);
@@ -324,7 +319,7 @@ void
 PatchCanvas::show_port_names(bool b)
 {
 	_show_port_names = b;
-	for (ItemList::iterator i = _items.begin(); i != _items.end(); ++i) {
+	FOREACH_ITEM(i, items()) {
 		boost::shared_ptr<FlowCanvas::Module> m = boost::dynamic_pointer_cast<FlowCanvas::Module>(*i);
 		if (m)
 			m->set_show_port_labels(b);
@@ -607,14 +602,10 @@ PatchCanvas::clear_selection()
 	FlowCanvas::Canvas::clear_selection();
 }
 
-#define FOREACH_ITEM(iter, coll) \
-	for (list<boost::shared_ptr<Item> >::iterator (iter) = coll.begin(); \
-	     (iter) != coll.end(); ++(iter))
-
 void
 PatchCanvas::destroy_selection()
 {
-	FOREACH_ITEM(m, _selected_items) {
+	FOREACH_ITEM(m, selected_items()) {
 		boost::shared_ptr<NodeModule> module(
 			boost::dynamic_pointer_cast<NodeModule>(*m));
 		if (module) {
@@ -632,7 +623,7 @@ void
 PatchCanvas::select_all()
 {
 	unselect_ports();
-	FOREACH_ITEM(m, _items)
+	FOREACH_ITEM(m, items())
 		if (boost::dynamic_pointer_cast<FlowCanvas::Module>(*m))
 			if (!(*m)->selected())
 				select_item(*m);
@@ -645,7 +636,7 @@ PatchCanvas::copy_selection()
 	Serialiser serialiser(*App::instance().world(), App::instance().store());
 	serialiser.start_to_string(_patch->path(), base_uri);
 
-	FOREACH_ITEM(m, _selected_items) {
+	FOREACH_ITEM(m, selected_items()) {
 		boost::shared_ptr<NodeModule> module(
 			boost::dynamic_pointer_cast<NodeModule>(*m));
 		if (module) {
@@ -658,8 +649,8 @@ PatchCanvas::copy_selection()
 		}
 	}
 
-	for (list<boost::shared_ptr<FlowCanvas::Connection> >::iterator c = _selected_connections.begin();
-			c != _selected_connections.end(); ++c) {
+	for (list<boost::shared_ptr<FlowCanvas::Connection> >::iterator c = selected_connections().begin();
+	     c != selected_connections().end(); ++c) {
 		boost::shared_ptr<Connection> connection = boost::dynamic_pointer_cast<Connection>(*c);
 		if (connection) {
 			const Sord::URI subject(*App::instance().world()->rdf_world(),
