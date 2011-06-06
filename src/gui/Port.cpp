@@ -136,7 +136,6 @@ Port::moved()
 {
 	if (App::instance().configuration()->name_style() == Configuration::PATH)
 		set_name(model()->symbol().c_str());
-	module().lock()->resize();
 }
 
 void
