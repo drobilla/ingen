@@ -133,7 +133,7 @@ NodeModule::show_human_names(bool b)
 		set_name(node()->symbol().c_str());
 	}
 
-	for (PortVector::const_iterator i = ports().begin(); i != ports().end(); ++i) {
+	for (Ports::const_iterator i = ports().begin(); i != ports().end(); ++i) {
 		SharedPtr<Ingen::GUI::Port> port = PtrCast<Ingen::GUI::Port>(*i);
 		Glib::ustring label(port->model()->symbol().c_str());
 		if (b) {
@@ -177,7 +177,7 @@ NodeModule::value_changed(uint32_t index, const Atom& value)
 void
 NodeModule::plugin_changed()
 {
-	for (PortVector::iterator p = ports().begin(); p != ports().end(); ++p)
+	for (Ports::iterator p = ports().begin(); p != ports().end(); ++p)
 		PtrCast<Ingen::GUI::Port>(*p)->update_metadata();
 }
 
@@ -267,7 +267,7 @@ NodeModule::add_port(SharedPtr<const PortModel> port, bool resize_to_fit)
 boost::shared_ptr<Port>
 NodeModule::port(boost::shared_ptr<const PortModel> model)
 {
-	for (PortVector::const_iterator p = ports().begin(); p != ports().end(); ++p) {
+	for (Ports::const_iterator p = ports().begin(); p != ports().end(); ++p) {
 		SharedPtr<Port> port = PtrCast<Port>(*p);
 		if (port->model() == model)
 			return port;

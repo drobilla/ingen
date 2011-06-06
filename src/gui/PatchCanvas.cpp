@@ -49,7 +49,7 @@
 #define LOG(s) s << "[PatchCanvas] "
 
 #define FOREACH_ITEM(iter, coll) \
-	for (ItemList::iterator (iter) = coll.begin(); \
+	for (Items::iterator (iter) = coll.begin(); \
 	     (iter) != coll.end(); ++(iter))
 
 using Ingen::Client::ClientStore;
@@ -449,7 +449,7 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 	} else {
 		module = PtrCast<NodeModule>(_views[port->parent()]);
 		if (module) {
-			for (PortVector::const_iterator p = module->ports().begin();
+			for (Module::Ports::const_iterator p = module->ports().begin();
 					p != module->ports().end(); ++p) {
 				boost::shared_ptr<GUI::Port> pv = boost::dynamic_pointer_cast<GUI::Port>(*p);
 				if (pv && pv->model() == port)
