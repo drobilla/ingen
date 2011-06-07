@@ -1,4 +1,5 @@
-/* This file is part of In* Copyright 2007-2011 David Robillard <http://drobilla.net>
+/* This file is part of Ingen
+ * Copyright 2007-2011 David Robillard <http://drobilla.net>
  *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -55,9 +56,9 @@ public:
 
 	virtual ~NodeModule();
 
-	boost::shared_ptr<Port> port(boost::shared_ptr<const PortModel> model);
+	Port* port(boost::shared_ptr<const PortModel> model);
 
-	void remove_port(SharedPtr<const PortModel> port);
+	void delete_port_view(SharedPtr<const PortModel> port);
 
 	virtual void store_location();
 	void show_human_names(bool b);
@@ -78,7 +79,7 @@ protected:
 	void rename();
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
-	void add_port(SharedPtr<const PortModel> port, bool resize=true);
+	void new_port_view(SharedPtr<const PortModel> port, bool resize=true);
 
 	void value_changed(uint32_t index, const Raul::Atom& value);
 	void plugin_changed();

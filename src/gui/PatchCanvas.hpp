@@ -124,13 +124,13 @@ private:
 
 	GraphObject::Properties get_initial_data();
 
-	SharedPtr<FlowCanvas::Port> get_port_view(SharedPtr<PortModel> port);
+	FlowCanvas::Port* get_port_view(SharedPtr<PortModel> port);
 
-	void connect(boost::shared_ptr<FlowCanvas::Connectable> src,
-	             boost::shared_ptr<FlowCanvas::Connectable> dst);
+	void connect(FlowCanvas::Connectable* src,
+	             FlowCanvas::Connectable* dst);
 
-	void disconnect(boost::shared_ptr<FlowCanvas::Connectable> src,
-	                boost::shared_ptr<FlowCanvas::Connectable> dst);
+	void disconnect(FlowCanvas::Connectable* src,
+	                FlowCanvas::Connectable* dst);
 
 	SharedPtr<const PatchModel> _patch;
 

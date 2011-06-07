@@ -305,11 +305,11 @@ PatchCanvas::show_human_names(bool b)
 {
 	_human_names = b;
 	FOREACH_ITEM(m, items()) {
-		boost::shared_ptr<NodeModule> mod = boost::dynamic_pointer_cast<NodeModule>(*m);
+		NodeModule* mod = dynamic_cast<NodeModule*>(*m);
 		if (mod)
 			mod->show_human_names(b);
 
-		boost::shared_ptr<PatchPortModule> pmod = boost::dynamic_pointer_cast<PatchPortModule>(*m);
+		PatchPortModule* pmod = dynamic_cast<PatchPortModule*>(*m);
 		if (pmod)
 			pmod->show_human_names(b);
 	}
@@ -320,7 +320,7 @@ PatchCanvas::show_port_names(bool b)
 {
 	_show_port_names = b;
 	FOREACH_ITEM(i, items()) {
-		boost::shared_ptr<FlowCanvas::Module> m = boost::dynamic_pointer_cast<FlowCanvas::Module>(*i);
+		FlowCanvas::Module* m = dynamic_cast<FlowCanvas::Module*>(*i);
 		if (m)
 			m->set_show_port_labels(b);
 	}
@@ -390,7 +390,6 @@ PatchCanvas::add_node(SharedPtr<const NodeModel> nm)
 			module->set_icon(App::instance().icon_from_path(plugm->icon_path(), 100));
 	}
 
-	add_item(module);
 	module->show();
 	_views.insert(std::make_pair(nm, module));
 }
@@ -401,7 +400,6 @@ PatchCanvas::remove_node(SharedPtr<const NodeModel> nm)
 	Views::iterator i = _views.find(nm);
 
 	if (i != _views.end()) {
-		remove_item(i->second);
 		_views.erase(i);
 	}
 }
@@ -411,7 +409,6 @@ PatchCanvas::add_port(SharedPtr<const PortModel> pm)
 {
 	SharedPtr<PatchPortModule> view = PatchPortModule::create(*this, pm, _human_names);
 	_views.insert(std::make_pair(pm, view));
-	add_item(view);
 	view->show();
 }
 
@@ -422,43 +419,39 @@ PatchCanvas::remove_port(SharedPtr<const PortModel> pm)
 
 	// Port on this patch
 	if (i != _views.end()) {
-		bool ret = remove_item(i->second);
-		if (!ret)
-			warn << "Failed to remove port item " << pm->path() << endl;
-		i->second.reset();
 		_views.erase(i);
 
 	} else {
 		SharedPtr<NodeModule> module = PtrCast<NodeModule>(_views[pm->parent()]);
-		module->remove_port(pm);
+		module->delete_port_view(pm);
 	}
 
 	assert(_views.find(pm) == _views.end());
 }
 
-SharedPtr<FlowCanvas::Port>
+FlowCanvas::Port*
 PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 {
 	SharedPtr<FlowCanvas::Module> module = _views[port];
 
 	// Port on this patch
 	if (module) {
-		return (PtrCast<PatchPortModule>(module))
-			? *(PtrCast<PatchPortModule>(module)->ports().begin())
-			: PtrCast<FlowCanvas::Port>(module);
+		return (dynamic_cast<PatchPortModule*>(module.get()))
+			? *(dynamic_cast<PatchPortModule*>(module.get())->ports().begin())
+			: dynamic_cast<FlowCanvas::Port*>(module.get());
 	} else {
 		module = PtrCast<NodeModule>(_views[port->parent()]);
 		if (module) {
 			for (Module::Ports::const_iterator p = module->ports().begin();
 					p != module->ports().end(); ++p) {
-				boost::shared_ptr<GUI::Port> pv = boost::dynamic_pointer_cast<GUI::Port>(*p);
+				GUI::Port* pv = dynamic_cast<GUI::Port*>(*p);
 				if (pv && pv->model() == port)
 					return pv;
 			}
 		}
 	}
 
-	return SharedPtr<FlowCanvas::Port>();
+	return NULL;
 }
 
 void
@@ -466,14 +459,13 @@ PatchCanvas::connection(SharedPtr<const ConnectionModel> cm)
 {
 	assert(cm);
 
-	const SharedPtr<FlowCanvas::Port> src = get_port_view(cm->src_port());
-	const SharedPtr<FlowCanvas::Port> dst = get_port_view(cm->dst_port());
+	FlowCanvas::Port* const src = get_port_view(cm->src_port());
+	FlowCanvas::Port* const dst = get_port_view(cm->dst_port());
 
 	if (src && dst) {
 		add_connection(
-			boost::shared_ptr<GUI::Connection>(
-				new GUI::Connection(*this, cm, src, dst,
-				                    src->color() + 0x22222200)));
+			new GUI::Connection(*this, cm, src, dst,
+			                    src->color() + 0x22222200));
 	} else {
 		LOG(error) << "Unable to find ports to connect "
 			<< cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
@@ -483,8 +475,8 @@ PatchCanvas::connection(SharedPtr<const ConnectionModel> cm)
 void
 PatchCanvas::disconnection(SharedPtr<const ConnectionModel> cm)
 {
-	const SharedPtr<FlowCanvas::Port> src = get_port_view(cm->src_port());
-	const SharedPtr<FlowCanvas::Port> dst = get_port_view(cm->dst_port());
+	FlowCanvas::Port* const src = get_port_view(cm->src_port());
+	FlowCanvas::Port* const dst = get_port_view(cm->dst_port());
 
 	if (src && dst)
 		remove_connection(src, dst);
@@ -494,14 +486,14 @@ PatchCanvas::disconnection(SharedPtr<const ConnectionModel> cm)
 }
 
 void
-PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
-                     boost::shared_ptr<FlowCanvas::Connectable> dst_port)
+PatchCanvas::connect(FlowCanvas::Connectable* src_port,
+                     FlowCanvas::Connectable* dst_port)
 {
-	const boost::shared_ptr<Ingen::GUI::Port> src
-		= boost::dynamic_pointer_cast<Ingen::GUI::Port>(src_port);
+	const Ingen::GUI::Port* const src
+		= dynamic_cast<Ingen::GUI::Port*>(src_port);
 
-	const boost::shared_ptr<Ingen::GUI::Port> dst
-		= boost::dynamic_pointer_cast<Ingen::GUI::Port>(dst_port);
+	const Ingen::GUI::Port* const dst
+		= dynamic_cast<Ingen::GUI::Port*>(dst_port);
 
 	if (!src || !dst)
 		return;
@@ -510,14 +502,14 @@ PatchCanvas::connect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
 }
 
 void
-PatchCanvas::disconnect(boost::shared_ptr<FlowCanvas::Connectable> src_port,
-                        boost::shared_ptr<FlowCanvas::Connectable> dst_port)
+PatchCanvas::disconnect(FlowCanvas::Connectable* src_port,
+                        FlowCanvas::Connectable* dst_port)
 {
-	const boost::shared_ptr<Ingen::GUI::Port> src
-		= boost::dynamic_pointer_cast<Ingen::GUI::Port>(src_port);
+	const Ingen::GUI::Port* const src
+		= dynamic_cast<Ingen::GUI::Port*>(src_port);
 
-	const boost::shared_ptr<Ingen::GUI::Port> dst
-		= boost::dynamic_pointer_cast<Ingen::GUI::Port>(dst_port);
+	const Ingen::GUI::Port* const dst
+		= dynamic_cast<Ingen::GUI::Port*>(dst_port);
 
 	App::instance().engine()->disconnect(src->model()->path(),
 	                                     dst->model()->path());
@@ -606,13 +598,11 @@ void
 PatchCanvas::destroy_selection()
 {
 	FOREACH_ITEM(m, selected_items()) {
-		boost::shared_ptr<NodeModule> module(
-			boost::dynamic_pointer_cast<NodeModule>(*m));
+		NodeModule* module = dynamic_cast<NodeModule*>(*m);
 		if (module) {
 			App::instance().engine()->del(module->node()->path());
 		} else {
-			boost::shared_ptr<PatchPortModule> port_module(
-				boost::dynamic_pointer_cast<PatchPortModule>(*m));
+			PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(*m);
 			if (port_module)
 				App::instance().engine()->del(port_module->port()->path());
 		}
@@ -624,7 +614,7 @@ PatchCanvas::select_all()
 {
 	unselect_ports();
 	FOREACH_ITEM(m, items())
-		if (boost::dynamic_pointer_cast<FlowCanvas::Module>(*m))
+		if (dynamic_cast<FlowCanvas::Module*>(*m))
 			if (!(*m)->selected())
 				select_item(*m);
 }
@@ -637,21 +627,19 @@ PatchCanvas::copy_selection()
 	serialiser.start_to_string(_patch->path(), base_uri);
 
 	FOREACH_ITEM(m, selected_items()) {
-		boost::shared_ptr<NodeModule> module(
-			boost::dynamic_pointer_cast<NodeModule>(*m));
+		NodeModule* module = dynamic_cast<NodeModule*>(*m);
 		if (module) {
 			serialiser.serialise(module->node());
 		} else {
-			boost::shared_ptr<PatchPortModule> port_module(
-				boost::dynamic_pointer_cast<PatchPortModule>(*m));
+			PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(*m);
 			if (port_module)
 				serialiser.serialise(port_module->port());
 		}
 	}
 
-	for (list<boost::shared_ptr<FlowCanvas::Connection> >::iterator c = selected_connections().begin();
+	for (SelectedConnections::iterator c = selected_connections().begin();
 	     c != selected_connections().end(); ++c) {
-		boost::shared_ptr<Connection> connection = boost::dynamic_pointer_cast<Connection>(*c);
+		Connection* const connection = dynamic_cast<Connection*>(*c);
 		if (connection) {
 			const Sord::URI subject(*App::instance().world()->rdf_world(),
 			                        base_uri);

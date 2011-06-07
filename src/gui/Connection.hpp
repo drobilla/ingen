@@ -37,11 +37,11 @@ namespace GUI {
 class Connection : public FlowCanvas::Connection
 {
 public:
-	Connection(FlowCanvas::Canvas&                        canvas,
-	           boost::shared_ptr<const ConnectionModel>   model,
-	           boost::shared_ptr<FlowCanvas::Connectable> src,
-	           boost::shared_ptr<FlowCanvas::Connectable> dst,
-	           uint32_t                                   color);
+	Connection(FlowCanvas::Canvas&                      canvas,
+	           boost::shared_ptr<const ConnectionModel> model,
+	           FlowCanvas::Connectable*                 src,
+	           FlowCanvas::Connectable*                 dst,
+	           uint32_t                                 color);
 
 	SharedPtr<const ConnectionModel> model() const { return _connection_model; }
 

@@ -41,10 +41,10 @@ namespace GUI {
 ArtVpathDash* Port::_dash;
 
 SharedPtr<Port>
-Port::create(boost::shared_ptr<FlowCanvas::Module> module,
-             SharedPtr<const PortModel>            pm,
-             bool                                  human_name,
-             bool                                  flip)
+Port::create(FlowCanvas::Module&        module,
+             SharedPtr<const PortModel> pm,
+             bool                       human_name,
+             bool                       flip)
 {
 	Glib::ustring label(human_name ? "" : pm->path().symbol());
 	if (human_name) {
@@ -62,10 +62,10 @@ Port::create(boost::shared_ptr<FlowCanvas::Module> module,
 
 /** @a flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(boost::shared_ptr<FlowCanvas::Module> module,
-           SharedPtr<const PortModel>            pm,
-           const string&                         name,
-           bool                                  flip)
+Port::Port(FlowCanvas::Module&        module,
+           SharedPtr<const PortModel> pm,
+           const string&              name,
+           bool                       flip)
 	: FlowCanvas::Port(module, name,
 			flip ? (!pm->is_input()) : pm->is_input(),
 			App::instance().configuration()->get_port_color(pm.get()))
@@ -73,7 +73,6 @@ Port::Port(boost::shared_ptr<FlowCanvas::Module> module,
 	, _pressed(false)
 	, _flipped(flip)
 {
-	assert(module);
 	assert(pm);
 
 	delete _menu;

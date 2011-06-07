@@ -59,9 +59,8 @@ PatchPortModule::create(PatchCanvas&               canvas,
                         bool                       human)
 {
 	boost::shared_ptr<PatchPortModule> ret(new PatchPortModule(canvas, model));
-	boost::shared_ptr<Port> port(Port::create(ret, model, human, true));
+	boost::shared_ptr<Port> port(Port::create(*ret, model, human, true));
 
-	ret->add_port(port);
 	ret->set_port(port);
 	ret->set_menu(port->menu());
 
@@ -149,9 +148,9 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != selected()) {
 				if (value.get_bool()) {
-					_canvas->select_item(shared_from_this());
+					_canvas->select_item(this);
 				} else {
-					_canvas->unselect_item(shared_from_this());
+					_canvas->unselect_item(this);
 				}
 			}
 		}

@@ -218,10 +218,11 @@ App::port_activity(Port* port)
 		inserted.first->second = false;
 
 	if (port->is_output()) {
-		for (Port::Connections::const_iterator i = port->connections().begin(); i != port->connections().end(); ++i) {
-			const SharedPtr<Port> dst = PtrCast<Port>(i->lock()->dest().lock());
+		for (Port::Connections::const_iterator i = port->connections().begin();
+		     i != port->connections().end(); ++i) {
+			Port* const dst = dynamic_cast<Port*>((*i)->dest());
 			if (dst)
-				port_activity(dst.get());
+				port_activity(dst);
 		}
 	}
 

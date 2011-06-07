@@ -41,10 +41,10 @@ class Port : public FlowCanvas::Port
 {
 public:
 	static SharedPtr<Port> create(
-			boost::shared_ptr<FlowCanvas::Module> module,
-			SharedPtr<const PortModel>            pm,
-			bool                                  human_name,
-			bool                                  flip=false);
+			FlowCanvas::Module&        module,
+			SharedPtr<const PortModel> pm,
+			bool                       human_name,
+			bool                       flip = false);
 
 	~Port();
 
@@ -62,10 +62,10 @@ public:
 	ArtVpathDash* dash();
 
 private:
-	Port(boost::shared_ptr<FlowCanvas::Module> module,
-	     SharedPtr<const PortModel>            pm,
-	     const std::string&                    name,
-	     bool                                  flip = false);
+	Port(FlowCanvas::Module&        module,
+	     SharedPtr<const PortModel> pm,
+	     const std::string&         name,
+	     bool                       flip=false);
 
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 

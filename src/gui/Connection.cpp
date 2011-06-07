@@ -25,15 +25,15 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-Connection::Connection(FlowCanvas::Canvas&                        canvas,
-                       boost::shared_ptr<const ConnectionModel>   model,
-                       boost::shared_ptr<FlowCanvas::Connectable> src,
-                       boost::shared_ptr<FlowCanvas::Connectable> dst,
-                       uint32_t                                   color)
+Connection::Connection(FlowCanvas::Canvas&                      canvas,
+                       boost::shared_ptr<const ConnectionModel> model,
+                       FlowCanvas::Connectable*                 src,
+                       FlowCanvas::Connectable*                 dst,
+                       uint32_t                                 color)
 	: FlowCanvas::Connection(canvas, src, dst, color)
 	, _connection_model(model)
 {
-	boost::shared_ptr<Port> src_port = boost::dynamic_pointer_cast<Port>(src);
+	Port* const src_port = dynamic_cast<Port*>(src);
 	if (src_port)
 		_bpath.property_dash() = src_port->dash();
 }

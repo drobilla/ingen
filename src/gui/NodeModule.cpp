@@ -53,9 +53,9 @@ NodeModule::NodeModule(PatchCanvas&               canvas,
 	assert(_node);
 
 	node->signal_new_port().connect(
-		sigc::bind(sigc::mem_fun(this, &NodeModule::add_port), true));
+		sigc::bind(sigc::mem_fun(this, &NodeModule::new_port_view), true));
 	node->signal_removed_port().connect(
-		sigc::hide_return(sigc::mem_fun(this, &NodeModule::remove_port)));
+		sigc::hide_return(sigc::mem_fun(this, &NodeModule::delete_port_view)));
 	node->signal_property().connect(
 		sigc::mem_fun(this, &NodeModule::property_changed));
 	node->signal_moved().connect(
@@ -105,7 +105,7 @@ NodeModule::create(PatchCanvas&               canvas,
 
 	for (NodeModel::Ports::const_iterator p = node->ports().begin();
 	     p != node->ports().end(); ++p)
-		ret->add_port(*p, false);
+		ret->new_port_view(*p, false);
 
 	ret->set_stacked_border(node->polyphonic());
 
@@ -134,7 +134,7 @@ NodeModule::show_human_names(bool b)
 	}
 
 	for (Ports::const_iterator i = ports().begin(); i != ports().end(); ++i) {
-		SharedPtr<Ingen::GUI::Port> port = PtrCast<Ingen::GUI::Port>(*i);
+		Ingen::GUI::Port* const port = dynamic_cast<Ingen::GUI::Port*>(*i);
 		Glib::ustring label(port->model()->symbol().c_str());
 		if (b) {
 			const Raul::Atom& name_property = port->model()->get_property(uris.lv2_name);
@@ -178,7 +178,7 @@ void
 NodeModule::plugin_changed()
 {
 	for (Ports::iterator p = ports().begin(); p != ports().end(); ++p)
-		PtrCast<Ingen::GUI::Port>(*p)->update_metadata();
+		dynamic_cast<Ingen::GUI::Port*>(*p)->update_metadata();
 }
 
 void
@@ -251,10 +251,10 @@ NodeModule::rename()
 }
 
 void
-NodeModule::add_port(SharedPtr<const PortModel> port, bool resize_to_fit)
+NodeModule::new_port_view(SharedPtr<const PortModel> port, bool resize_to_fit)
 {
-	Module::add_port(Port::create(PtrCast<NodeModule>(shared_from_this()), port,
-			App::instance().configuration()->name_style() == Configuration::HUMAN));
+	Port::create(*this, port,
+	             App::instance().configuration()->name_style() == Configuration::HUMAN);
 
 	port->signal_value_changed().connect(
 		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::value_changed),
@@ -264,24 +264,23 @@ NodeModule::add_port(SharedPtr<const PortModel> port, bool resize_to_fit)
 		resize();
 }
 
-boost::shared_ptr<Port>
+Port*
 NodeModule::port(boost::shared_ptr<const PortModel> model)
 {
 	for (Ports::const_iterator p = ports().begin(); p != ports().end(); ++p) {
-		SharedPtr<Port> port = PtrCast<Port>(*p);
+		Port* const port = dynamic_cast<Port*>(*p);
 		if (port->model() == model)
 			return port;
 	}
-	return boost::shared_ptr<Port>();
+	return NULL;
 }
 
 void
-NodeModule::remove_port(SharedPtr<const PortModel> model)
+NodeModule::delete_port_view(SharedPtr<const PortModel> model)
 {
-	SharedPtr<Port> p = port(model);
+	Port* p = port(model);
 	if (p) {
-		Module::remove_port(p);
-		p.reset();
+		delete p;
 	} else {
 		warn << "Failed to find port on module " << model->path() << endl;
 	}
@@ -401,9 +400,9 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != selected()) {
 				if (value.get_bool())
-					_canvas->select_item(shared_from_this());
+					_canvas->select_item(this);
 				else
-					_canvas->unselect_item(shared_from_this());
+					_canvas->unselect_item(this);
 			}
 		}
 		break;
