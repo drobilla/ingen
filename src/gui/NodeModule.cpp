@@ -53,7 +53,7 @@ NodeModule::NodeModule(PatchCanvas&               canvas,
 	assert(_node);
 
 	node->signal_new_port().connect(
-		sigc::bind(sigc::mem_fun(this, &NodeModule::new_port_view), true));
+		sigc::mem_fun(this, &NodeModule::new_port_view));
 	node->signal_removed_port().connect(
 		sigc::hide_return(sigc::mem_fun(this, &NodeModule::delete_port_view)));
 	node->signal_property().connect(
@@ -105,14 +105,12 @@ NodeModule::create(PatchCanvas&               canvas,
 
 	for (NodeModel::Ports::const_iterator p = node->ports().begin();
 	     p != node->ports().end(); ++p)
-		ret->new_port_view(*p, false);
+		ret->new_port_view(*p);
 
 	ret->set_stacked_border(node->polyphonic());
 
 	if (human)
 		ret->show_human_names(human); // FIXME: double port iteration
-	else
-		ret->resize();
 
 	return ret;
 }
@@ -149,8 +147,6 @@ NodeModule::show_human_names(bool b)
 		}
 		(*i)->set_name(label);
 	}
-
-	resize();
 }
 
 void
@@ -237,8 +233,6 @@ NodeModule::embed_gui(bool embed)
 	} else {
 		set_default_base_color();
 	}
-
-	resize();
 }
 
 void
@@ -246,12 +240,11 @@ NodeModule::rename()
 {
 	if (App::instance().configuration()->name_style() == Configuration::PATH) {
 		set_name(_node->path().symbol());
-		resize();
 	}
 }
 
 void
-NodeModule::new_port_view(SharedPtr<const PortModel> port, bool resize_to_fit)
+NodeModule::new_port_view(SharedPtr<const PortModel> port)
 {
 	Port::create(*this, port,
 	             App::instance().configuration()->name_style() == Configuration::HUMAN);
@@ -259,9 +252,6 @@ NodeModule::new_port_view(SharedPtr<const PortModel> port, bool resize_to_fit)
 	port->signal_value_changed().connect(
 		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::value_changed),
 		              port->index()));
-
-	if (resize_to_fit)
-		resize();
 }
 
 Port*

@@ -68,7 +68,6 @@ PatchPortModule::create(PatchCanvas&               canvas,
 			m != model->properties().end(); ++m)
 		ret->property_changed(m->first, m->second);
 
-	ret->resize();
 	return ret;
 }
 
@@ -110,15 +109,13 @@ PatchPortModule::show_human_names(bool b)
 		set_name(name.get_string());
 	else
 		set_name(_model->symbol().c_str());
-
-	resize();
 }
 
 void
 PatchPortModule::set_name(const std::string& n)
 {
 	_port->set_name(n);
-	Module::resize();
+	_must_resize = true;
 }
 
 void

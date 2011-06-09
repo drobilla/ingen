@@ -79,7 +79,7 @@ protected:
 	void rename();
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
-	void new_port_view(SharedPtr<const PortModel> port, bool resize=true);
+	void new_port_view(SharedPtr<const PortModel> port);
 
 	void value_changed(uint32_t index, const Raul::Atom& value);
 	void plugin_changed();
