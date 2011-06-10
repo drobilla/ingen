@@ -49,7 +49,7 @@ class PortMenu;
 class PatchPortModule : public FlowCanvas::Module
 {
 public:
-	static boost::shared_ptr<PatchPortModule> create(
+	static PatchPortModule* create(
 		PatchCanvas&               canvas,
 		SharedPtr<const PortModel> model,
 		bool                       human);
@@ -68,12 +68,12 @@ protected:
 	void create_menu();
 	void set_selected(bool b);
 
-	void set_port(SharedPtr<Port> port) { _port = port; }
+	void set_port(Port* port) { _port = port; }
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
 	SharedPtr<const PortModel> _model;
-	SharedPtr<Port>            _port;
+	Port*                      _port;
 	PortMenu*                  _menu;
 };
 

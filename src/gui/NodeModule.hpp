@@ -49,7 +49,7 @@ class NodeMenu;
 class NodeModule : public FlowCanvas::Module
 {
 public:
-	static boost::shared_ptr<NodeModule> create(
+	static NodeModule* create(
 		PatchCanvas&               canvas,
 		SharedPtr<const NodeModel> node,
 		bool                       human_names);

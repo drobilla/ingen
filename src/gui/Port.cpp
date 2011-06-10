@@ -40,7 +40,7 @@ namespace GUI {
 
 ArtVpathDash* Port::_dash;
 
-SharedPtr<Port>
+Port*
 Port::create(FlowCanvas::Module&        module,
              SharedPtr<const PortModel> pm,
              bool                       human_name,
@@ -57,7 +57,7 @@ Port::create(FlowCanvas::Module&        module,
 				label = parent->plugin_model()->port_human_name(pm->index());
 		}
 	}
-	return SharedPtr<Port>(new Port(module, pm, label, flip));
+	return new Port(module, pm, label, flip);
 }
 
 /** @a flip Make an input port appear as an output port, and vice versa.

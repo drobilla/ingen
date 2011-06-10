@@ -135,7 +135,7 @@ private:
 	SharedPtr<const PatchModel> _patch;
 
 	typedef std::map<SharedPtr<const ObjectModel>,
-	                 SharedPtr<FlowCanvas::Module>
+	                 FlowCanvas::Module*
 	                 > Views;
 	Views _views;
 

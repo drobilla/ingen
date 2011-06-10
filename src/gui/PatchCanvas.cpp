@@ -380,7 +380,7 @@ void
 PatchCanvas::add_node(SharedPtr<const NodeModel> nm)
 {
 	SharedPtr<const PatchModel> pm = PtrCast<const PatchModel>(nm);
-	SharedPtr<NodeModule>       module;
+	NodeModule*                 module;
 	if (pm) {
 		module = SubpatchModule::create(*this, pm, _human_names);
 	} else {
@@ -400,6 +400,7 @@ PatchCanvas::remove_node(SharedPtr<const NodeModel> nm)
 	Views::iterator i = _views.find(nm);
 
 	if (i != _views.end()) {
+		delete i->second;
 		_views.erase(i);
 	}
 }
@@ -407,7 +408,7 @@ PatchCanvas::remove_node(SharedPtr<const NodeModel> nm)
 void
 PatchCanvas::add_port(SharedPtr<const PortModel> pm)
 {
-	SharedPtr<PatchPortModule> view = PatchPortModule::create(*this, pm, _human_names);
+	PatchPortModule* view = PatchPortModule::create(*this, pm, _human_names);
 	_views.insert(std::make_pair(pm, view));
 	view->show();
 }
@@ -419,10 +420,11 @@ PatchCanvas::remove_port(SharedPtr<const PortModel> pm)
 
 	// Port on this patch
 	if (i != _views.end()) {
+		delete i->second;
 		_views.erase(i);
 
 	} else {
-		SharedPtr<NodeModule> module = PtrCast<NodeModule>(_views[pm->parent()]);
+		NodeModule* module = dynamic_cast<NodeModule*>(_views[pm->parent()]);
 		module->delete_port_view(pm);
 	}
 
@@ -432,15 +434,16 @@ PatchCanvas::remove_port(SharedPtr<const PortModel> pm)
 FlowCanvas::Port*
 PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 {
-	SharedPtr<FlowCanvas::Module> module = _views[port];
+	FlowCanvas::Module* module = _views[port];
 
 	// Port on this patch
 	if (module) {
-		return (dynamic_cast<PatchPortModule*>(module.get()))
-			? *(dynamic_cast<PatchPortModule*>(module.get())->ports().begin())
-			: dynamic_cast<FlowCanvas::Port*>(module.get());
+		PatchPortModule* ppm = dynamic_cast<PatchPortModule*>(module);
+		return ppm
+			? *ppm->ports().begin()
+			: dynamic_cast<FlowCanvas::Port*>(module);
 	} else {
-		module = PtrCast<NodeModule>(_views[port->parent()]);
+		module = dynamic_cast<NodeModule*>(_views[port->parent()]);
 		if (module) {
 			for (Module::Ports::const_iterator p = module->ports().begin();
 					p != module->ports().end(); ++p) {

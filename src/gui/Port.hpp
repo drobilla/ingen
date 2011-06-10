@@ -40,11 +40,11 @@ namespace GUI {
 class Port : public FlowCanvas::Port
 {
 public:
-	static SharedPtr<Port> create(
-			FlowCanvas::Module&        module,
-			SharedPtr<const PortModel> pm,
-			bool                       human_name,
-			bool                       flip = false);
+	static Port* create(
+		FlowCanvas::Module&        module,
+		SharedPtr<const PortModel> pm,
+		bool                       human_name,
+		bool                       flip = false);
 
 	~Port();
 

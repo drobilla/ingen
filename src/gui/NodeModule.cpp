@@ -86,18 +86,18 @@ NodeModule::create_menu()
 	set_menu(_menu);
 }
 
-boost::shared_ptr<NodeModule>
+NodeModule*
 NodeModule::create(PatchCanvas&               canvas,
                    SharedPtr<const NodeModel> node,
                    bool                       human)
 {
-	boost::shared_ptr<NodeModule> ret;
+	NodeModule* ret;
 
 	SharedPtr<const PatchModel> patch = PtrCast<const PatchModel>(node);
 	if (patch)
-		ret = boost::shared_ptr<NodeModule>(new SubpatchModule(canvas, patch));
+		ret = new SubpatchModule(canvas, patch);
 	else
-		ret = boost::shared_ptr<NodeModule>(new NodeModule(canvas, node));
+		ret = new NodeModule(canvas, node);
 
 	for (GraphObject::Properties::const_iterator m = node->properties().begin();
 	     m != node->properties().end(); ++m)

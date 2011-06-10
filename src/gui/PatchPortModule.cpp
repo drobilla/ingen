@@ -53,13 +53,13 @@ PatchPortModule::PatchPortModule(PatchCanvas&               canvas,
 		sigc::mem_fun(this, &PatchPortModule::property_changed));
 }
 
-boost::shared_ptr<PatchPortModule>
+PatchPortModule*
 PatchPortModule::create(PatchCanvas&               canvas,
                         SharedPtr<const PortModel> model,
                         bool                       human)
 {
-	boost::shared_ptr<PatchPortModule> ret(new PatchPortModule(canvas, model));
-	boost::shared_ptr<Port> port(Port::create(*ret, model, human, true));
+	PatchPortModule* ret  = new PatchPortModule(canvas, model);
+	Port*            port = Port::create(*ret, model, human, true);
 
 	ret->set_port(port);
 	ret->set_menu(port->menu());
