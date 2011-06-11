@@ -128,12 +128,9 @@ ControlPanel::add_port(SharedPtr<const PortModel> pm)
 void
 ControlPanel::remove_port(const Path& path)
 {
-	bool was_first = false;
 	for (vector<Control*>::iterator cg = _controls.begin(); cg != _controls.end(); ++cg) {
 		if ((*cg)->port_model()->path() == path) {
 			_control_box->remove(**cg);
-			if (cg == _controls.begin())
-				was_first = true;
 			_controls.erase(cg);
 			break;
 		}

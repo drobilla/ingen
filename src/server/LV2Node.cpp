@@ -280,6 +280,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		if (val.type() == Atom::NIL)
 			val = isnan(def_values[j]) ? 0.0f : def_values[j];
 
+		// TODO: set buffer size when necessary
 		if (direction == INPUT)
 			port = new InputPort(bufs, this, port_name, j, _polyphony, data_type, val);
 		else

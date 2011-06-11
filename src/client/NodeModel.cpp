@@ -140,10 +140,8 @@ NodeModel::add_port(SharedPtr<PortModel> pm)
 	assert(pm->path().is_child_of(path()));
 	assert(pm->parent().get() == this);
 
-	Ports::iterator existing = find(_ports.begin(), _ports.end(), pm);
-
 	// Store should have handled this by merging the two
-	assert(existing == _ports.end());
+	assert(find(_ports.begin(), _ports.end(), pm) == _ports.end());
 
 	_ports.push_back(pm);
 	_signal_new_port.emit(pm);
