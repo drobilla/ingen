@@ -16,12 +16,16 @@
  */
 
 #include <utility>
+
 #include <gtkmm.h>
+
 #include "ingen/ServerInterface.hpp"
-#include "shared/LV2URIMap.hpp"
 #include "ingen/client/ObjectModel.hpp"
+#include "shared/LV2URIMap.hpp"
+
 #include "App.hpp"
 #include "ObjectMenu.hpp"
+#include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
 using namespace Raul;
@@ -30,7 +34,7 @@ namespace Ingen {
 namespace GUI {
 
 ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
-                       const Glib::RefPtr<Gtk::Builder>& xml)
+                       const Glib::RefPtr<Gtk::Builder>& deriv_xml)
 	: Gtk::Menu(cobject)
 	, _polyphonic_menuitem(NULL)
 	, _disconnect_menuitem(NULL)
@@ -39,6 +43,7 @@ ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
 	, _properties_menuitem(NULL)
 	, _enable_signal(false)
 {
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("object_menu");
 	xml->get_widget("object_learn_menuitem", _learn_menuitem);
 	xml->get_widget("object_unlearn_menuitem", _unlearn_menuitem);
 	xml->get_widget("object_polyphonic_menuitem", _polyphonic_menuitem);

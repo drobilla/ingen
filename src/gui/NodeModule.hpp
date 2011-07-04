@@ -85,7 +85,7 @@ protected:
 	void plugin_changed();
 	void set_control_values();
 
-	void create_menu();
+	bool show_menu(GdkEventButton* ev);
 
 	SharedPtr<const NodeModel> _node;
 	NodeMenu*                  _menu;

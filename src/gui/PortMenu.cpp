@@ -64,19 +64,17 @@ PortMenu::init(SharedPtr<const PortModel> port, bool patch_port)
 	if (port->is_a(PortType::EVENTS))
 		_polyphonic_menuitem->hide();
 
+	_port_menu->remove(*_reset_range_menuitem);
+	_port_menu->remove(*_set_min_menuitem);
+	_port_menu->remove(*_set_max_menuitem);
 	if (App::instance().can_control(port.get()) && port->is_numeric()) {
 		_learn_menuitem->show();
 		_unlearn_menuitem->show();
 
 		items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 
-		_port_menu->remove(*_reset_range_menuitem);
 		insert(*_reset_range_menuitem, 0);
-
-		_port_menu->remove(*_set_max_menuitem);
 		insert(*_set_max_menuitem, 0);
-
-		_port_menu->remove(*_set_min_menuitem);
 		insert(*_set_min_menuitem, 0);
 	}
 

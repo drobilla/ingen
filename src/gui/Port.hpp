@@ -50,7 +50,7 @@ public:
 
 	SharedPtr<const PortModel> model() const { return _port_model.lock(); }
 
-	void create_menu();
+	bool show_menu(GdkEventButton* ev);
 	void update_metadata();
 
 	virtual void set_control(float value, bool signal);

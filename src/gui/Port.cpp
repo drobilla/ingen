@@ -75,9 +75,6 @@ Port::Port(FlowCanvas::Module&        module,
 {
 	assert(pm);
 
-	delete _menu;
-	_menu = NULL;
-
 	ArtVpathDash* dash = this->dash();
 	_rect.property_dash() = dash;
 	set_border_width(dash ? 2.0 : 0.0);
@@ -121,13 +118,14 @@ Port::update_metadata()
 	}
 }
 
-void
-Port::create_menu()
+bool
+Port::show_menu(GdkEventButton* ev)
 {
 	PortMenu* menu = NULL;
-	WidgetFactory::get_widget_derived("object_menu", menu);
+	WidgetFactory::get_widget_derived("port_menu", menu);
 	menu->init(model(), _flipped);
-	set_menu(menu);
+	menu->popup(ev->button, ev->time);
+	return true;
 }
 
 void

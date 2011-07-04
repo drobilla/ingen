@@ -62,7 +62,6 @@ PatchPortModule::create(PatchCanvas&               canvas,
 	Port*            port = Port::create(*ret, model, human, true);
 
 	ret->set_port(port);
-	ret->set_menu(port->menu());
 
 	for (GraphObject::Properties::const_iterator m = model->properties().begin();
 			m != model->properties().end(); ++m)
@@ -71,13 +70,13 @@ PatchPortModule::create(PatchCanvas&               canvas,
 	return ret;
 }
 
-void
-PatchPortModule::create_menu()
+bool
+PatchPortModule::show_menu(GdkEventButton* ev)
 {
 	WidgetFactory::get_widget_derived("object_menu", _menu);
 	_menu->init(_model, true);
-
-	set_menu(_menu);
+	_menu->popup(ev->button, ev->time);
+	return true;
 }
 
 void

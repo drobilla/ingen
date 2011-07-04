@@ -65,7 +65,7 @@ protected:
 	PatchPortModule(PatchCanvas&               canvas,
 	                SharedPtr<const PortModel> model);
 
-	void create_menu();
+	bool show_menu(GdkEventButton* ev);
 	void set_selected(bool b);
 
 	void set_port(Port* port) { _port = port; }
