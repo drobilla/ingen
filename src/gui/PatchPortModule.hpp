@@ -74,7 +74,6 @@ protected:
 
 	SharedPtr<const PortModel> _model;
 	Port*                      _port;
-	PortMenu*                  _menu;
 };
 
 } // namespace GUI

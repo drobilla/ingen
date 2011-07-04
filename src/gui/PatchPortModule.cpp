@@ -73,10 +73,8 @@ PatchPortModule::create(PatchCanvas&               canvas,
 bool
 PatchPortModule::show_menu(GdkEventButton* ev)
 {
-	WidgetFactory::get_widget_derived("object_menu", _menu);
-	_menu->init(_model, true);
-	_menu->popup(ev->button, ev->time);
-	return true;
+	std::cout << "PPM SHOW MENU" << std::endl;
+	return _port->show_menu(ev);
 }
 
 void

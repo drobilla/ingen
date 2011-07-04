@@ -57,25 +57,27 @@ PortMenu::init(SharedPtr<const PortModel> port, bool patch_port)
 
 	if ( ! PtrCast<PatchModel>(port->parent()) ) {
 		_polyphonic_menuitem->set_sensitive(false);
-		_rename_menuitem->hide();
-		_destroy_menuitem->hide();
+		_rename_menuitem->set_sensitive(false);
+		_destroy_menuitem->set_sensitive(false);
 	}
 
 	if (port->is_a(PortType::EVENTS))
 		_polyphonic_menuitem->hide();
 
-	_port_menu->remove(*_reset_range_menuitem);
-	_port_menu->remove(*_set_min_menuitem);
-	_port_menu->remove(*_set_max_menuitem);
-	if (App::instance().can_control(port.get()) && port->is_numeric()) {
+	items().push_back(
+		Gtk::Menu_Helpers::MenuElem(
+			"Disconnect All", sigc::mem_fun(this, &PortMenu::on_menu_disconnect)));
+
+	const bool is_control = App::instance().can_control(port.get())
+		&& port->is_numeric();
+
+	_reset_range_menuitem->set_sensitive(is_control);
+	_set_max_menuitem->set_sensitive(is_control);
+	_set_min_menuitem->set_sensitive(is_control);
+
+	if (is_control) {
 		_learn_menuitem->show();
 		_unlearn_menuitem->show();
-
-		items().push_front(Gtk::Menu_Helpers::SeparatorElem());
-
-		insert(*_reset_range_menuitem, 0);
-		insert(*_set_max_menuitem, 0);
-		insert(*_set_min_menuitem, 0);
 	}
 
 	_enable_signal = true;
