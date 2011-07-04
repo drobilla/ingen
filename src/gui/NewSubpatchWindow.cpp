@@ -44,6 +44,8 @@ NewSubpatchWindow::NewSubpatchWindow(BaseObjectType*                   cobject,
 	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &NewSubpatchWindow::cancel_clicked));
 
 	_ok_button->property_sensitive() = false;
+
+	_poly_spinbutton->get_adjustment()->configure(1.0, 1.0, 128, 1.0, 10.0, 0);
 }
 
 void
