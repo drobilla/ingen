@@ -122,7 +122,7 @@ def build(bld):
     opts.moduledir = opts.moduledir or bld.env['PREFIX'] + 'lib/ingen'
 
     # Headers
-    for i in ['client', 'serialisation']:
+    for i in ['', 'client', 'serialisation']:
         bld.install_files('${INCLUDEDIR}/ingen/%s' % i,
                           bld.path.ant_glob('include/ingen/%s/*' % i))
 
