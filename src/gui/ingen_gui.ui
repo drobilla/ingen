@@ -677,6 +677,7 @@
     <child>
       <object class="GtkVBox" id="vbox4">
         <property name="visible">True</property>
+        <property name="orientation">vertical</property>
         <child>
           <object class="GtkTable" id="table1">
             <property name="visible">True</property>
@@ -716,8 +717,8 @@
               <object class="GtkSpinButton" id="new_subpatch_polyphony_spinbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="invisible_char">&#x25CF;</property>
                 <property name="activates_default">True</property>
-                <property name="adjustment"></property>
                 <property name="climb_rate">1</property>
               </object>
               <packing>
@@ -734,7 +735,7 @@
               <object class="GtkEntry" id="new_subpatch_name_entry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="has_focus">True</property>
+                <property name="invisible_char">&#x25CF;</property>
                 <property name="activates_default">True</property>
               </object>
               <packing>
@@ -770,7 +771,7 @@
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
+                <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -786,7 +787,7 @@
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
-                <property name="receives_default">False</property>
+                <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -933,7 +934,6 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="invisible_char">&#x25CF;</property>
-                        <property name="adjustment"></property>
                         <property name="climb_rate">1</property>
                       </object>
                       <packing>
@@ -1212,7 +1212,6 @@
                           <object class="GtkSpinButton" id="patch_view_poly_spin">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="adjustment"></property>
                             <property name="climb_rate">1</property>
                             <property name="numeric">True</property>
                           </object>
@@ -1399,7 +1398,6 @@
                     <property name="can_focus">True</property>
                     <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                     <property name="width_chars">12</property>
-                    <property name="adjustment"></property>
                     <property name="digits">4</property>
                     <property name="numeric">True</property>
                   </object>
@@ -1420,7 +1418,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="adjustment"></property>
                 <property name="digits">63</property>
                 <property name="draw_value">False</property>
               </object>
@@ -1964,7 +1961,6 @@ Contributors:
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
-                        <property name="adjustment"></property>
                         <property name="climb_rate">1</property>
                         <property name="numeric">True</property>
                       </object>
@@ -2645,7 +2641,6 @@ Thank you for contributing.</property>
               <object class="GtkSpinButton" id="port_properties_min_spinner">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="adjustment"></property>
                 <property name="climb_rate">1</property>
                 <property name="digits">5</property>
                 <property name="numeric">True</property>
@@ -2660,7 +2655,6 @@ Thank you for contributing.</property>
               <object class="GtkSpinButton" id="port_properties_max_spinner">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="adjustment"></property>
                 <property name="climb_rate">1</property>
                 <property name="digits">5</property>
                 <property name="numeric">True</property>
