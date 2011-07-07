@@ -17,6 +17,7 @@ out = 'build'
 
 def options(opt):
     autowaf.set_options(opt)
+    opt.load('compiler_cxx')
     opt.add_option('--data-dir', type='string', dest='datadir',
                    help="Ingen data install directory [Default: PREFIX/share/ingen]")
     opt.add_option('--module-dir', type='string', dest='moduledir',
@@ -38,6 +39,7 @@ def options(opt):
 def configure(conf):
     autowaf.configure(conf)
     conf.line_just = 67
+
     autowaf.display_header('Ingen Configuration')
     conf.load('compiler_cxx')
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
@@ -79,14 +81,14 @@ def configure(conf):
                define_name='HAVE_POSIX_MEMALIGN',
                mandatory=False)
 
-    autowaf.check_header(conf, 'lv2/lv2plug.in/ns/lv2core/lv2.h')
-    autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/atom/atom.h')
-    autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/contexts/contexts.h')
-    autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/event/event-helpers.h')
-    autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/event/event.h')
-    autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/resize-port/resize-port.h')
-    autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/uri-map/uri-map.h')
-    autowaf.check_header(conf, 'lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/lv2core/lv2.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/atom/atom.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/contexts/contexts.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/event/event-helpers.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/event/event.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/resize-port/resize-port.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/uri-map/uri-map.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h')
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
