@@ -139,12 +139,13 @@ SetMetadata::pre_process()
 			_create_event = new CreatePort(_engine, sub_request, _time,
 					path, data_type.uri(), is_output, _properties);
 		}
-		if (_create_event)
+		if (_create_event) {
 			_create_event->pre_process();
-		else
+			// Grab the object for applying properties, if the create-event succeeded
+			_object = _engine.engine_store()->find_object(Path(_subject.str()));
+		} else {
 			_error = BAD_OBJECT_TYPE;
-		QueuedEvent::pre_process();
-		return;
+		}
 	}
 
 	_types.reserve(_properties.size());
@@ -268,11 +269,7 @@ SetMetadata::execute(ProcessContext& context)
 	}
 
 	if (_create_event) {
-		QueuedEvent::execute(context);
 		_create_event->execute(context);
-		if (_blocking)
-			_request->unblock();
-		return;
 	}
 
 	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
