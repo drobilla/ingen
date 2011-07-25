@@ -32,22 +32,22 @@ struct BlobFeature : public Ingen::Shared::LV2Features::Feature {
 		data->ref_copy  = &ref_copy;
 		data->ref_reset = &ref_reset;
 		data->blob_new  = &blob_new;
-		_feature.URI    = LV2_BLOB_SUPPORT_URI;
+		_feature.URI    = LV2_REFERENCE_BLOB_SUPPORT_URI;
 		_feature.data   = data;
 	}
 
 	static LV2_Blob ref_get(LV2_Blob_Support_Data data,
-	                        LV2_Atom_Reference*   ref) { return 0; }
+	                        LV2_Reference*        ref) { return 0; }
 
 	static void ref_copy(LV2_Blob_Support_Data data,
-	                     LV2_Atom_Reference*   dst,
-	                     LV2_Atom_Reference*   src) {}
+	                     LV2_Reference*        dst,
+	                     LV2_Reference*        src) {}
 
 	static void ref_reset(LV2_Blob_Support_Data data,
-	                      LV2_Atom_Reference*   ref) {}
+	                      LV2_Reference*        ref) {}
 
 	static void blob_new(LV2_Blob_Support_Data data,
-	                     LV2_Atom_Reference*   reference,
+	                     LV2_Reference*        reference,
 	                     LV2_Blob_Destroy      destroy,
 	                     uint32_t              type,
 	                     size_t                size) {}

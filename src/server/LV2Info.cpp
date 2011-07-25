@@ -55,7 +55,7 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 
 	world->lv2_features()->add_feature(LV2_EVENT_URI,
 			SharedPtr<Shared::LV2Features::Feature>(new EventFeature()));
-	world->lv2_features()->add_feature(LV2_BLOB_SUPPORT_URI,
+	world->lv2_features()->add_feature(LV2_REFERENCE_BLOB_SUPPORT_URI,
 			SharedPtr<Shared::LV2Features::Feature>(new BlobFeature()));
 	world->lv2_features()->add_feature(LV2_RESIZE_PORT_URI,
 			SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
