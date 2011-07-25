@@ -83,6 +83,7 @@ def configure(conf):
 
     autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/lv2core/lv2.h')
     autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/atom/atom.h')
+    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/reference/reference.h')
     autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/contexts/contexts.h')
     autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/event/event-helpers.h')
     autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/event/event.h')
