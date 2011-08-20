@@ -37,14 +37,12 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 	, _controls_menuitem(NULL)
 	, _presets_menu(NULL)
 {
-	Glib::RefPtr<Gtk::Builder> nxml = WidgetFactory::create("node_menu");
-	Gtk::Menu* node_menu = NULL;
-	nxml->get_widget("node_menu", node_menu);
-	nxml->get_widget("node_controls_menuitem", _controls_menuitem);
-	nxml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
-	nxml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
-	nxml->get_widget("node_randomize_menuitem", _randomize_menuitem);
+	xml->get_widget("node_controls_menuitem", _controls_menuitem);
+	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
+	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
+	xml->get_widget("node_randomize_menuitem", _randomize_menuitem);
 
+	/*
 	items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 
 	node_menu->remove(*_randomize_menuitem);
@@ -58,6 +56,7 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 
 	node_menu->remove(*_controls_menuitem);
 	insert(*_controls_menuitem, 0);
+	*/
 }
 
 void
@@ -120,7 +119,6 @@ NodeMenu::init(SharedPtr<const NodeModel> node)
 						              string(lilv_node_as_string(uri))));
 				}
 			}
-			items().push_front(Gtk::Menu_Helpers::SeparatorElem());
 			items().push_front(Gtk::Menu_Helpers::ImageMenuElem("_Presets",
 					*(manage(new Gtk::Image(Gtk::Stock::INDEX, Gtk::ICON_SIZE_MENU)))));
 			Gtk::MenuItem* presets_menu_item = &(items().front());

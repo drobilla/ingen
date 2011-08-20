@@ -62,7 +62,7 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 	property_visible() = false;
 
 	xml->get_widget("patch_win_vbox", _vbox);
-	xml->get_widget("patch_win_viewport", _viewport);
+	xml->get_widget("patch_win_alignment", _alignment);
 	xml->get_widget("patch_win_status_bar", _status_bar);
 	//xml->get_widget("patch_win_status_bar", _status_bar);
 	//xml->get_widget("patch_open_menuitem", _menu_open);
@@ -228,12 +228,12 @@ PatchWindow::set_patch(SharedPtr<const PatchModel> patch,
 
 	assert(_view);
 
-	// Add view to our viewport
+	// Add view to our alignment
 	if (_view->get_parent())
 		_view->get_parent()->remove(*_view.get());
 
-	_viewport->remove();
-	_viewport->add(*_view.get());
+	_alignment->remove();
+	_alignment->add(*_view.get());
 
 	if (_breadcrumbs->get_parent())
 		_breadcrumbs->get_parent()->remove(*_breadcrumbs);

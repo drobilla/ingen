@@ -77,7 +77,7 @@ NodeModule::~NodeModule()
 bool
 NodeModule::show_menu(GdkEventButton* ev)
 {
-	WidgetFactory::get_widget_derived("node_menu", _menu);
+	WidgetFactory::get_widget_derived("object_menu", _menu);
 	_menu->init(_node);
 	_menu->signal_embed_gui.connect(
 		sigc::mem_fun(this, &NodeModule::embed_gui));

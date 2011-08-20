@@ -34,7 +34,7 @@ namespace Ingen {
 namespace GUI {
 
 ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
-                       const Glib::RefPtr<Gtk::Builder>& deriv_xml)
+                       const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::Menu(cobject)
 	, _polyphonic_menuitem(NULL)
 	, _disconnect_menuitem(NULL)
@@ -43,7 +43,6 @@ ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
 	, _properties_menuitem(NULL)
 	, _enable_signal(false)
 {
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("object_menu");
 	xml->get_widget("object_learn_menuitem", _learn_menuitem);
 	xml->get_widget("object_unlearn_menuitem", _unlearn_menuitem);
 	xml->get_widget("object_polyphonic_menuitem", _polyphonic_menuitem);

@@ -34,7 +34,7 @@ PortMenu::PortMenu(BaseObjectType*                   cobject,
 	: ObjectMenu(cobject, xml)
 	, _patch_port(NULL)
 {
-	xml->get_widget("port_menu", _port_menu);
+	xml->get_widget("object_menu", _port_menu);
 	xml->get_widget("port_set_min_menuitem", _set_min_menuitem);
 	xml->get_widget("port_set_max_menuitem", _set_max_menuitem);
 	xml->get_widget("port_reset_range_menuitem", _reset_range_menuitem);
@@ -63,10 +63,6 @@ PortMenu::init(SharedPtr<const PortModel> port, bool patch_port)
 
 	if (port->is_a(PortType::EVENTS))
 		_polyphonic_menuitem->hide();
-
-	items().push_back(
-		Gtk::Menu_Helpers::MenuElem(
-			"Disconnect All", sigc::mem_fun(this, &PortMenu::on_menu_disconnect)));
 
 	const bool is_control = App::instance().can_control(port.get())
 		&& port->is_numeric();

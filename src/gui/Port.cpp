@@ -122,7 +122,7 @@ bool
 Port::show_menu(GdkEventButton* ev)
 {
 	PortMenu* menu = NULL;
-	WidgetFactory::get_widget_derived("port_menu", menu);
+	WidgetFactory::get_widget_derived("object_menu", menu);
 	menu->init(model(), _flipped);
 	menu->popup(ev->button, ev->time);
 	return true;
