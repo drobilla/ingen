@@ -19,14 +19,15 @@
 #include "raul/midi_events.h"
 #include "shared/LV2URIMap.hpp"
 #include "internals/Controller.hpp"
-#include "PostProcessor.hpp"
-#include "events/SendPortValue.hpp"
-#include "InputPort.hpp"
-#include "OutputPort.hpp"
-#include "InternalPlugin.hpp"
+
 #include "AudioBuffer.hpp"
-#include "ProcessContext.hpp"
 #include "EventBuffer.hpp"
+#include "InputPort.hpp"
+#include "InternalPlugin.hpp"
+#include "Notification.hpp"
+#include "OutputPort.hpp"
+#include "PostProcessor.hpp"
+#include "ProcessContext.hpp"
 #include "util.hpp"
 
 using namespace std;

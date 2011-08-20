@@ -20,12 +20,12 @@
 #include "raul/midi_events.h"
 #include "shared/LV2URIMap.hpp"
 #include "shared/World.hpp"
-#include "events/SendPortValue.hpp"
-#include "events/SendBinding.hpp"
+
 #include "AudioBuffer.hpp"
 #include "ControlBindings.hpp"
 #include "Engine.hpp"
 #include "EventBuffer.hpp"
+#include "Notification.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
@@ -247,8 +247,9 @@ ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type ty
 		reinterpret_cast<AudioBuffer*>(port->buffer(v).get())->set_value(
 				port_value.get_float(), context.start(), context.start());
 
-	const Events::SendPortValue ev(context.engine(), context.start(), port, true, 0, port_value);
-	context.event_sink().write(sizeof(ev), &ev);
+	const Notification note(Notification::PORT_VALUE,
+	                        context.start(), port, port_value);
+	context.event_sink().write(sizeof(note), &note);
 }
 
 bool
@@ -264,8 +265,9 @@ ControlBindings::bind(ProcessContext& context, Key key)
 
 	_bindings->insert(make_pair(key, _learn_port));
 
-	const Events::SendBinding ev(context.engine(), context.start(), _learn_port, key.type, key.num);
-	context.event_sink().write(sizeof(ev), &ev);
+	// FIXME
+	//const Events::SendBinding ev(context.engine(), context.start(), _learn_port, key.type, key.num);
+	//context.event_sink().write(sizeof(ev), &ev);
 
 	_learn_port = NULL;
 	return true;

@@ -15,19 +15,22 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
+
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
+
 #include "shared/LV2URIMap.hpp"
-#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
+
 #include "ingen/PortType.hpp"
-#include "events/SendPortValue.hpp"
-#include "events/SendPortActivity.hpp"
+
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "EventBuffer.hpp"
 #include "LV2Atom.hpp"
 #include "NodeImpl.hpp"
+#include "Notification.hpp"
 #include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
@@ -208,20 +211,24 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::EVENTS:
 		if (((EventBuffer*)buffer(0).get())->event_count() > 0) {
-			const Events::SendPortActivity ev(context.engine(), context.start(), this);
-			context.event_sink().write(sizeof(ev), &ev);
+			const Notification note(Notification::PORT_ACTIVITY,
+			                        context.start(), this, Atom(true));
+			context.event_sink().write(sizeof(note), &note);
 		}
 		break;
 	case PortType::VALUE:
 	case PortType::MESSAGE:
-		Ingen::Shared::LV2Atom::to_atom(_bufs.uris(), ((ObjectBuffer*)buffer(0).get())->atom(), val);
+		Ingen::Shared::LV2Atom::to_atom(_bufs.uris(),
+		                                ((ObjectBuffer*)buffer(0).get())->atom(),
+		                                val);
 		break;
 	}
 
 	if (val.is_valid() && (force || val != _last_broadcasted_value)) {
 		_last_broadcasted_value = val;
-		const Events::SendPortValue ev(context.engine(), context.start(), this, true, 0, val);
-		context.event_sink().write(sizeof(ev), &ev);
+		const Notification note(Notification::PORT_VALUE,
+		                        context.start(), this, val);
+		context.event_sink().write(sizeof(note), &note);
 	}
 }
 

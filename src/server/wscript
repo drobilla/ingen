@@ -24,6 +24,7 @@ def build(bld):
             MessageContext.cpp
             NodeFactory.cpp
             NodeImpl.cpp
+            Notification.cpp
             ObjectBuffer.cpp
             ObjectSender.cpp
             OutputPort.cpp
@@ -46,9 +47,6 @@ def build(bld):
             events/Move.cpp
             events/RegisterClient.cpp
             events/RequestMetadata.cpp
-            events/SendBinding.cpp
-            events/SendPortActivity.cpp
-            events/SendPortValue.cpp
             events/SetMetadata.cpp
             events/SetPortValue.cpp
             events/UnregisterClient.cpp

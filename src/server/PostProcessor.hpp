@@ -62,8 +62,6 @@ private:
 	Raul::AtomicPtr<QueuedEvent> _head;
 	Raul::AtomicPtr<QueuedEvent> _tail;
 	Raul::AtomicInt              _max_time;
-	uint32_t                     _event_buffer_size;
-	uint8_t*                     _event_buffer;
 };
 
 } // namespace Server

@@ -21,14 +21,17 @@
 #include <cstdlib>
 #include <string>
 #include <set>
+
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
+
 #include "ingen/Port.hpp"
-#include "types.hpp"
-#include "GraphObjectImpl.hpp"
 #include "ingen/PortType.hpp"
+
 #include "Buffer.hpp"
 #include "Context.hpp"
+#include "GraphObjectImpl.hpp"
+#include "types.hpp"
 
 namespace Raul { class Maid; }
 

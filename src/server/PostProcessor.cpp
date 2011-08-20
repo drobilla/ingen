@@ -21,10 +21,10 @@
 
 #include "Driver.hpp"
 #include "Engine.hpp"
+#include "Notification.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "QueuedEvent.hpp"
-#include "events/SendPortValue.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -35,14 +35,11 @@ namespace Server {
 PostProcessor::PostProcessor(Engine& engine)
     : _engine(engine)
 	, _max_time(0)
-	, _event_buffer_size(sizeof(Events::SendPortValue)) // FIXME: make generic
-	, _event_buffer((uint8_t*)malloc(_event_buffer_size))
 {
 }
 
 PostProcessor::~PostProcessor()
 {
-	free(_event_buffer);
 }
 
 void
@@ -76,13 +73,14 @@ PostProcessor::process()
 	/* Process audio thread generated events */
 	while (true) {
 		Driver* driver = _engine.driver();
-		if (driver && driver->context().event_sink().read(_event_buffer_size, _event_buffer)) {
-			if (((Event*)_event_buffer)->time() > end_time) {
-				warn << "Lost event with time "
-					<< ((Event*)_event_buffer)->time() << " > " << end_time << endl;
+		Notification note;
+		if (driver && driver->context().event_sink().peek(sizeof(note), &note)) {
+			if (note.time > end_time) {
 				break;
 			}
-			((Event*)_event_buffer)->post_process();
+
+			note.post_process(_engine);
+			driver->context().event_sink().skip(sizeof(note));
 		} else {
 			break;
 		}

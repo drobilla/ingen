@@ -18,6 +18,8 @@
 #ifndef INGEN_ENGINE_CONTEXT_HPP
 #define INGEN_ENGINE_CONTEXT_HPP
 
+#include "raul/RingBuffer.hpp"
+
 #include "shared/World.hpp"
 
 #include "Engine.hpp"
@@ -52,7 +54,7 @@ public:
 	Context(Engine& engine, ID id)
 		: _engine(engine)
 		, _id(id)
-		, _event_sink(engine, engine.event_queue_size())
+		, _event_sink(engine.event_queue_size())
 		, _start(0)
 		, _end(0)
 		, _nframes(0)
@@ -85,14 +87,15 @@ public:
 	inline SampleCount offset()   const { return _offset; }
 	inline bool        realtime() const { return _realtime; }
 
-	inline const EventSink&  event_sink() const { return _event_sink; }
-	inline EventSink&        event_sink()       { return _event_sink; }
+	inline const Raul::RingBuffer &  event_sink() const { return _event_sink; }
+	inline Raul::RingBuffer&         event_sink()       { return _event_sink; }
 
 protected:
 	Engine& _engine;  ///< Engine we're running in
 	ID      _id;      ///< Fast ID for this context
 
-	EventSink   _event_sink; ///< Sink for events generated in a realtime context
+	Raul::RingBuffer _event_sink; ///< Port updates from process context
+
 	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
 	FrameTime   _end;        ///< End frame of this cycle, timeline relative
 	SampleCount _nframes;    ///< Length of this cycle in frames

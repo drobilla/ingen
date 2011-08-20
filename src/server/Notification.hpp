@@ -15,28 +15,46 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <sstream>
-#include "events/SendPortValue.hpp"
-#include "shared/LV2URIMap.hpp"
-#include "Engine.hpp"
-#include "PortImpl.hpp"
-#include "ClientBroadcaster.hpp"
+#ifndef INGEN_ENGINE_NOTIFICATION_HPP
+#define INGEN_ENGINE_NOTIFICATION_HPP
 
-using namespace std;
+#include "raul/Atom.hpp"
+
+#include "ControlBindings.hpp"
+#include "types.hpp"
 
 namespace Ingen {
 namespace Server {
-namespace Events {
 
-void
-SendPortValue::post_process()
+class Engine;
+class PortImpl;
+
+struct Notification
 {
-	_engine.broadcaster()->set_property(
-			_port->path(),
-			_engine.world()->uris()->ingen_value, _value);
-}
+	enum Type {
+		NIL,
+		PORT_VALUE,
+		PORT_ACTIVITY,
+		PORT_BINDING
+	};
+
+	Notification(
+		Type                        type  = NIL,
+		FrameTime                   time  = 0,
+		PortImpl*                   port  = 0,
+		const Raul::Atom&           value = Raul::Atom(),
+		const ControlBindings::Type btype = ControlBindings::NULL_CONTROL);
+
+	void post_process(Engine& engine);
+
+	Type                        type;
+	const ControlBindings::Type binding_type;
+	FrameTime                   time;
+	PortImpl*                   port;
+	const Raul::Atom            value;
+};
 
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
+#endif // INGEN_ENGINE_NOTIFICATION_HPP
