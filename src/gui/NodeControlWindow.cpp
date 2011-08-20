@@ -47,7 +47,8 @@ NodeControlWindow::NodeControlWindow(SharedPtr<const NodeModel> node,
 
 	set_title(_node->plugin_model()->human_name() + " - Ingen");
 
-	WidgetFactory::get_widget_derived("control_panel_vbox", _control_panel);
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("warehouse_win");
+	xml->get_widget_derived("control_panel_vbox", _control_panel);
 
 	show_all_children();
 
