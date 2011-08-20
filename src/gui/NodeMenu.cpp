@@ -41,22 +41,6 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
 	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
 	xml->get_widget("node_randomize_menuitem", _randomize_menuitem);
-
-	/*
-	items().push_front(Gtk::Menu_Helpers::SeparatorElem());
-
-	node_menu->remove(*_randomize_menuitem);
-	insert(*_randomize_menuitem, 0);
-
-	node_menu->remove(*_embed_gui_menuitem);
-	insert(*_embed_gui_menuitem, 0);
-
-	node_menu->remove(*_popup_gui_menuitem);
-	insert(*_popup_gui_menuitem, 0);
-
-	node_menu->remove(*_controls_menuitem);
-	insert(*_controls_menuitem, 0);
-	*/
 }
 
 void
@@ -250,4 +234,3 @@ NodeMenu::disable_controls_menuitem()
 
 } // namespace GUI
 } // namespace Ingen
-
