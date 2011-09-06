@@ -307,7 +307,11 @@ Serialiser::Impl::finish()
 {
 	string ret = "";
 	if (_mode == TO_FILE) {
-		_model->write_to_file(_base_uri, SERD_TURTLE);
+		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
+		if (st) {
+			LOG(error) << "Error writing file `" << _base_uri << "' ("
+			           << serd_strerror(st) << ")" << std::endl;
+		}
 	} else {
 		ret = _model->write_to_string(_base_uri, SERD_TURTLE);
 	}
