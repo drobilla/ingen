@@ -92,6 +92,8 @@ public:
 	bool disable_signals()  { bool old = _enable_signal; _enable_signal = false; return old; }
 	void enable_signals(bool b) { _enable_signal = b; }
 
+	uint32_t sample_rate() const;
+
 	ConnectWindow*   connect_window()  const { return _connect_window; }
 	MessagesWindow*  messages_dialog() const { return _messages_window; }
 	PatchTreeWindow* patch_tree()      const { return _patch_tree_window; }
@@ -136,6 +138,10 @@ protected:
 	bool animate();
 	void error_response(int32_t id, const std::string& str);
 
+	void property_change(const Raul::URI&  subject,
+	                     const Raul::URI&  key,
+	                     const Raul::Atom& value);
+
 	static void* icon_destroyed(void* data);
 
 	static Gtk::Main* _main;
@@ -154,6 +160,8 @@ protected:
 	WindowFactory*    _window_factory;
 
 	Ingen::Shared::World* _world;
+
+	uint32_t _sample_rate;
 
 	typedef std::map<Port*, bool> ActivityPorts;
 	ActivityPorts _activity_ports;

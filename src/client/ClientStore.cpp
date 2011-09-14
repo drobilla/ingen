@@ -401,6 +401,10 @@ ClientStore::delta(const URI&                  uri,
 void
 ClientStore::set_property(const URI& subject_uri, const URI& predicate, const Atom& value)
 {
+	if (subject_uri == _uris->ingen_engine) {
+		LOG(info) << "Engine property " << predicate << " = " << value << endl;
+		return;
+	}
 	SharedPtr<Resource> subject = _resource(subject_uri);
 	if (subject) {
 		subject->set_property(predicate, value);

@@ -165,7 +165,7 @@ NodeModel::port(uint32_t index) const
 
 void
 NodeModel::default_port_value_range(SharedPtr<const PortModel> port,
-                                    float& min, float& max) const
+                                    float& min, float& max, uint32_t srate) const
 {
 	// Default control values
 	min = 0.0;
@@ -186,10 +186,16 @@ NodeModel::default_port_value_range(SharedPtr<const PortModel> port,
 		if (!std::isnan(_max_values[port->index()]))
 			max = _max_values[port->index()];
 	}
+
+	if (port->port_property(_uris.lv2_sampleRate)) {
+		min *= srate;
+		max *= srate;
+	}
 }
 
 void
-NodeModel::port_value_range(SharedPtr<const PortModel> port, float& min, float& max) const
+NodeModel::port_value_range(SharedPtr<const PortModel> port,
+                            float& min, float& max, uint32_t srate) const
 {
 	assert(port->parent().get() == this);
 
@@ -205,6 +211,11 @@ NodeModel::port_value_range(SharedPtr<const PortModel> port, float& min, float& 
 
 	if (max <= min)
 		max = min + 1.0;
+
+	if (port->port_property(_uris.lv2_sampleRate)) {
+		min *= srate;
+		max *= srate;
+	}
 }
 
 std::string

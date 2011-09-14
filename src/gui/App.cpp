@@ -50,6 +50,8 @@
 #include "WindowFactory.hpp"
 #include "Port.hpp"
 
+#define LOG(s) s << "[GUI] "
+
 using namespace std;
 using namespace Raul;
 using namespace Ingen::Client;
@@ -73,6 +75,7 @@ App::App(Ingen::Shared::World* world)
 	, _about_dialog(NULL)
 	, _window_factory(new WindowFactory())
 	, _world(world)
+	, _sample_rate(48000)
 	, _enable_signal(true)
 {
 	Glib::set_application_name("Ingen");
@@ -146,7 +149,7 @@ App::run()
 {
 	assert(_main);
 	_main->run();
-	info << "[GUI] Exiting" << endl;
+	LOG(info) << "Exiting" << endl;
 }
 
 void
@@ -168,6 +171,8 @@ App::attach(SharedPtr<SigClientInterface> client)
 		sigc::mem_fun(this, &App::error_response));
 	_client->signal_error().connect(
 		sigc::mem_fun(this, &App::error_message));
+	_client->signal_property_change().connect(
+		sigc::mem_fun(this, &App::property_change));
 }
 
 void
@@ -208,6 +213,21 @@ App::error_message(const string& str)
 		_messages_window->present();
 
 	_messages_window->set_urgency_hint(true);
+}
+
+void
+App::property_change(const Raul::URI&  subject,
+                     const Raul::URI&  key,
+                     const Raul::Atom& value)
+{
+	if (subject == uris().ingen_engine && key == uris().ingen_sampleRate) {
+		if (value.type() == Atom::INT) {
+			LOG(info) << "Sample rate: " << value << std::endl;
+			_sample_rate = value.get_int32();
+		} else {
+			error << "Engine sample rate property is not an integer" << std::endl;
+		}
+	}
 }
 
 void
@@ -371,6 +391,12 @@ App::can_control(const Ingen::Port* port) const
 		|| (port->is_a(PortType::VALUE)
 				&& (port->supports(uris().atom_Float32)
 					|| port->supports(uris().atom_String)));
+}
+
+uint32_t
+App::sample_rate() const
+{
+	return _sample_rate;
 }
 
 } // namespace GUI

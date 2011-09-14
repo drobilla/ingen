@@ -39,9 +39,9 @@ PortModel::supports(const Raul::URI& value_type) const
 }
 
 bool
-PortModel::port_property(const std::string& uri) const
+PortModel::port_property(const Raul::URI& uri) const
 {
-	return has_property(_uris.lv2_portProperty, Raul::URI(uri));
+	return has_property(_uris.lv2_portProperty, uri);
 }
 
 void

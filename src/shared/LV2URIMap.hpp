@@ -113,10 +113,12 @@ public:
 	const Quark ingen_controlBinding;
 	const Quark ingen_document;
 	const Quark ingen_enabled;
+	const Quark ingen_engine;
 	const Quark ingen_nil;
 	const Quark ingen_node;
 	const Quark ingen_polyphonic;
 	const Quark ingen_polyphony;
+	const Quark ingen_sampleRate;
 	const Quark ingen_selected;
 	const Quark ingen_value;
 	const Quark ingenui_canvas_x;
@@ -133,6 +135,7 @@ public:
 	const Quark lv2_minimum;
 	const Quark lv2_name;
 	const Quark lv2_portProperty;
+	const Quark lv2_sampleRate;
 	const Quark lv2_symbol;
 	const Quark lv2_toggled;
 	const Quark midi_Bender;

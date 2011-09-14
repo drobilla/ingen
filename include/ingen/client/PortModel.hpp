@@ -51,7 +51,7 @@ public:
 	inline bool              is_input()  const { return (_direction == INPUT); }
 	inline bool              is_output() const { return (_direction == OUTPUT); }
 
-	bool port_property(const std::string& uri) const;
+	bool port_property(const Raul::URI& uri) const;
 
 	bool is_numeric()     const { return is_a(PortType::CONTROL); }
 	bool is_logarithmic() const { return port_property("http://drobilla.net/ns/ingen#logarithmic"); }

@@ -152,7 +152,7 @@ SliderControl::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
 
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
 	if (parent)
-		parent->port_value_range(_port_model, min, max);
+		parent->port_value_range(_port_model, min, max, App::instance().sample_rate());
 
 	if (pm->is_integer() || pm->is_toggle()) {
 		_slider->set_increments(1, 10);
@@ -164,7 +164,8 @@ SliderControl::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
 	pm->signal_property().connect(
 		sigc::mem_fun(this, &SliderControl::port_property_changed));
 
-	_slider->set_range(std::min(min, pm->value().get_float()), std::max(max, pm->value().get_float()));
+	set_range(std::min(min, pm->value().get_float()),
+	          std::max(max, pm->value().get_float()));
 
 	set_value(pm->value());
 
@@ -201,10 +202,8 @@ SliderControl::set_value(const Atom& atom)
 			if (val < lower || val > upper)
 				set_range(min(lower, val), max(lower, val));
 			_slider->set_value(val);
-		}
-
-		if (_value_spinner->get_value() != val)
 			_value_spinner->set_value(val);
+		}
 
 		_enable_signal = true;
 	}
@@ -231,6 +230,7 @@ SliderControl::set_range(float min, float max)
 		max = min + 1.0;
 
 	_slider->set_range(min, max);
+	_value_spinner->set_range(min, max);
 }
 
 void

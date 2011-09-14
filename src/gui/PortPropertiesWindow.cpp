@@ -70,7 +70,8 @@ PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
 	float min = 0.0f, max = 1.0f;
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
 	if (parent)
-		parent->port_value_range(_port_model, min, max);
+		parent->port_value_range(_port_model, min, max,
+		                         App::instance().sample_rate());
 
 	_initial_min = min;
 	_initial_max = max;

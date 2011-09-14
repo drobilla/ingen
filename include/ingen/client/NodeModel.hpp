@@ -66,9 +66,10 @@ public:
 	const Ports&           ports()        const { return _ports; }
 
 	void default_port_value_range(SharedPtr<const PortModel> port,
-	                              float& min, float& max) const;
+	                              float& min, float& max, uint32_t srate=1) const;
+
 	void port_value_range(SharedPtr<const PortModel> port,
-	                      float& min, float& max) const;
+	                      float& min, float& max, uint32_t srate=1) const;
 
 	std::string port_label(SharedPtr<const PortModel> port) const;
 

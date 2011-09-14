@@ -50,8 +50,9 @@ ObjectModel::~ObjectModel()
 Raul::Atom&
 ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value)
 {
-	_signal_property.emit(key, value);
-	return ResourceImpl::set_property(key, value);
+	Raul::Atom& my_value = ResourceImpl::set_property(key, value);
+	_signal_property.emit(key, my_value);
+	return my_value;
 }
 
 void
@@ -68,6 +69,7 @@ ObjectModel::get_property(const Raul::URI& key) const
 	Resource::Properties::const_iterator i = properties().find(key);
 	return (i != properties().end()) ? i->second : null_atom;
 }
+
 
 bool
 ObjectModel::polyphonic() const

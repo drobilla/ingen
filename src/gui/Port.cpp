@@ -111,7 +111,7 @@ Port::update_metadata()
 		if (parent) {
 			float min = 0.0f;
 			float max = 1.0f;
-			parent->port_value_range(pm, min, max);
+			parent->port_value_range(pm, min, max, App::instance().sample_rate());
 			set_control_min(min);
 			set_control_max(max);
 		}
@@ -193,12 +193,20 @@ Port::property_changed(const URI& key, const Atom& value)
 {
 	const LV2URIMap& uris = App::instance().uris();
 	if (value.type() == Atom::FLOAT) {
-		if (key == uris.ingen_value && !_pressed)
-			set_control(value.get_float(), false);
-		else if (key == uris.lv2_minimum)
-			set_control_min(value.get_float());
-		else if (key == uris.lv2_maximum)
-			set_control_max(value.get_float());
+		float val = value.get_float();
+		if (key == uris.ingen_value && !_pressed) {
+			set_control(val, false);
+		} else if (key == uris.lv2_minimum) {
+			if (model()->port_property(uris.lv2_sampleRate)) {
+				val *= App::instance().sample_rate();
+			}
+			set_control_min(val);
+		} else if (key == uris.lv2_maximum) {
+			if (model()->port_property(uris.lv2_sampleRate)) {
+				val *= App::instance().sample_rate();
+			}
+			set_control_max(val);
+		}
 	} else if (key == uris.lv2_portProperty) {
 		if (value == uris.lv2_toggled)
 			set_toggled(true);

@@ -15,10 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "ClientBroadcaster.hpp"
+#include "Driver.hpp"
+#include "Engine.hpp"
 #include "Request.hpp"
 #include "events/RegisterClient.hpp"
-#include "Engine.hpp"
-#include "ClientBroadcaster.hpp"
+#include "shared/LV2URIMap.hpp"
 
 using namespace Raul;
 
@@ -49,6 +51,16 @@ void
 RegisterClient::post_process()
 {
 	_request->respond_ok();
+
+	/* Tell the client the engine's sample rate (which it needs to know to
+	   interpret control bounds for lv2:sampleRate ports).  This is a bit of a
+	   kludge.  TODO: keep a proper RDF model to describe the engine and send
+	   that to clients.
+	*/
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	_client->set_property(uris.ingen_engine,
+	                      uris.ingen_sampleRate,
+	                      int32_t(_engine.driver()->sample_rate()));
 }
 
 } // namespace Server

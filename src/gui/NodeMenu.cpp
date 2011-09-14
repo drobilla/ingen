@@ -142,7 +142,7 @@ NodeMenu::on_menu_randomize()
 	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
 		if ((*i)->is_input() && App::instance().can_control(i->get())) {
 			float min = 0.0f, max = 1.0f;
-			nm->port_value_range(*i, min, max);
+			nm->port_value_range(*i, min, max, App::instance().sample_rate());
 			const float val = ((rand() / (float)RAND_MAX) * (max - min) + min);
 			App::instance().engine()->set_property((*i)->path(),
 					App::instance().uris().ingen_value, val);
