@@ -56,12 +56,12 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _buffer_size(buffer_size)
 	, _buffer_type(type)
 	, _value(value)
-	, _broadcast(false)
-	, _set_by_user(false)
 	, _last_broadcasted_value(value)
 	, _context(Context::AUDIO)
 	, _buffers(new Array<BufferFactory::Ref>(static_cast<size_t>(poly)))
 	, _prepared_buffers(NULL)
+	, _broadcast(false)
+	, _set_by_user(false)
 {
 	_types.insert(type);
 	assert(node != NULL);

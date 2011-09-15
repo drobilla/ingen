@@ -149,26 +149,23 @@ protected:
 	         const Raul::Symbol& name,
 	         uint32_t            index,
 	         uint32_t            poly,
-	         PortType    type,
+	         PortType            type,
 	         const Raul::Atom&   value,
 	         size_t              buffer_size);
 
-	BufferFactory&             _bufs;
-	uint32_t                   _index;
-	uint32_t                   _poly;
-	uint32_t                   _buffer_size;
-	PortType                   _buffer_type;
-	std::set<PortType> _types;
-	Raul::Atom                 _value;
-	bool                       _broadcast;
-	bool                       _set_by_user;
-	Raul::Atom                 _last_broadcasted_value;
-
+	BufferFactory&                   _bufs;
+	uint32_t                         _index;
+	uint32_t                         _poly;
+	uint32_t                         _buffer_size;
+	PortType                         _buffer_type;
+	std::set<PortType>               _types;
+	Raul::Atom                       _value;
+	Raul::Atom                       _last_broadcasted_value;
 	Context::ID                      _context;
 	Raul::Array<BufferFactory::Ref>* _buffers;
-
-	// Dynamic polyphony
 	Raul::Array<BufferFactory::Ref>* _prepared_buffers;
+	bool                             _broadcast;
+	bool                             _set_by_user;
 };
 
 } // namespace Server
