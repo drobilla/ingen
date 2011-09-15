@@ -60,10 +60,20 @@ public:
 	explicit ControlBindings(Engine& engine);
 	~ControlBindings();
 
+	Key port_binding(PortImpl* port) const;
+	Key binding_key(const Raul::Atom& binding) const;
+
 	void learn(PortImpl* port);
 
-	void port_binding_changed(ProcessContext& context, PortImpl* port);
-	void port_value_changed(ProcessContext& context, PortImpl* port);
+	void port_binding_changed(ProcessContext&   context,
+	                          PortImpl*         port,
+	                          const Raul::Atom& binding);
+
+	void port_value_changed(ProcessContext&   context,
+	                        PortImpl*         port,
+	                        Key               key,
+	                        const Raul::Atom& value);
+
 	void pre_process(ProcessContext& context, EventBuffer* control_in);
 	void post_process(ProcessContext& context, EventBuffer* control_out);
 
@@ -80,14 +90,21 @@ public:
 	SharedPtr<Bindings> remove(PortImpl* port);
 
 private:
-	Key port_binding(PortImpl* port);
 	Key midi_event_key(uint16_t size, uint8_t* buf, uint16_t& value);
 
 	void set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value);
 	bool bind(ProcessContext& context, Key key);
 
-	Raul::Atom control_to_port_value(PortImpl* port, Type type, int16_t value);
-	int16_t    port_value_to_control(PortImpl* port, Type type);
+	Raul::Atom control_to_port_value(Type              type,
+	                                 int16_t           value,
+	                                 const Raul::Atom& min,
+	                                 const Raul::Atom& max) const;
+
+	int16_t port_value_to_control(PortImpl*         port,
+	                              Type              type,
+	                              const Raul::Atom& value,
+	                              const Raul::Atom& min,
+	                              const Raul::Atom& max) const;
 
 	Engine&   _engine;
 	PortImpl* _learn_port;

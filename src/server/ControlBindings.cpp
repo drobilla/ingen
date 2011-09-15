@@ -52,10 +52,18 @@ ControlBindings::~ControlBindings()
 }
 
 ControlBindings::Key
-ControlBindings::port_binding(PortImpl* port)
+ControlBindings::port_binding(PortImpl* port) const
 {
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 	const Raul::Atom& binding = port->get_property(uris.ingen_controlBinding);
+	return binding_key(binding);
+}
+
+ControlBindings::Key
+ControlBindings::binding_key(const Raul::Atom& binding) const
+{
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
 	Key key;
 	if (binding.type() == Atom::DICT) {
 		const Atom::DictValue&          dict = binding.get_dict();
@@ -100,20 +108,26 @@ ControlBindings::midi_event_key(uint16_t size, uint8_t* buf, uint16_t& value)
 }
 
 void
-ControlBindings::port_binding_changed(ProcessContext& context, PortImpl* port)
+ControlBindings::port_binding_changed(ProcessContext&   context,
+                                      PortImpl*         port,
+                                      const Raul::Atom& binding)
 {
-	Key key = port_binding(port);
-	if (key)
+	const Key key = binding_key(binding);
+	if (key) {
 		_bindings->insert(make_pair(key, port));
+	}
 }
 
 void
-ControlBindings::port_value_changed(ProcessContext& context, PortImpl* port)
+ControlBindings::port_value_changed(ProcessContext&   context,
+                                    PortImpl*         port,
+                                    Key               key,
+                                    const Raul::Atom& value_atom)
 {
 	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
-	Key key = port_binding(port);
 	if (key) {
-		int16_t  value = port_value_to_control(port, key.type);
+		int16_t value = port_value_to_control(
+			port, key.type, value_atom, port->minimum(), port->maximum());
 		uint16_t size  = 0;
 		uint8_t  buf[4];
 		switch (key.type) {
@@ -162,14 +176,14 @@ ControlBindings::learn(PortImpl* port)
 }
 
 Raul::Atom
-ControlBindings::control_to_port_value(PortImpl* port, Type type, int16_t value)
+ControlBindings::control_to_port_value(Type              type,
+                                       int16_t           value,
+                                       const Raul::Atom& min_atom,
+                                       const Raul::Atom& max_atom) const
 {
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
-
-	// TODO: cache these to avoid the lookup
-	float min     = port->get_property(uris.lv2_minimum).get_float();
-	float max     = port->get_property(uris.lv2_maximum).get_float();
-	bool  toggled = port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
+	float min = min_atom.get_float();
+	float max = max_atom.get_float();
+	//bool  toggled = port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
 
 	float normal = 0.0f;
 	switch (type) {
@@ -188,26 +202,26 @@ ControlBindings::control_to_port_value(PortImpl* port, Type type, int16_t value)
 	}
 
 	float scaled_value = normal * (max - min) + min;
-	if (toggled)
-		scaled_value = (scaled_value < 0.5) ? 0.0 : 1.0;
+	//if (toggled)
+	//	scaled_value = (scaled_value < 0.5) ? 0.0 : 1.0;
 
 	return Raul::Atom(scaled_value);
 }
 
 int16_t
-ControlBindings::port_value_to_control(PortImpl* port, Type type)
+ControlBindings::port_value_to_control(PortImpl*         port,
+                                       Type              type,
+                                       const Raul::Atom& value_atom,
+                                       const Raul::Atom& min_atom,
+                                       const Raul::Atom& max_atom) const
 {
-	if (port->value().type() != Atom::FLOAT)
+	if (value_atom.type() != Atom::FLOAT)
 		return 0;
 
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
-
-	// TODO: cache these to avoid the lookup
-	float min     = port->get_property(uris.lv2_minimum).get_float();
-	float max     = port->get_property(uris.lv2_maximum).get_float();
-	//bool  toggled = port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
-	float value   = port->value().get_float();
-	float normal  = (value - min) / (max - min);
+	const float min    = min_atom.get_float();
+	const float max    = max_atom.get_float();
+	const float value  = value_atom.get_float();
+	float       normal = (value - min) / (max - min);
 
 	if (normal < 0.0f) {
 		warn << "Value " << value << " (normal " << normal << ") for "
@@ -235,9 +249,14 @@ ControlBindings::port_value_to_control(PortImpl* port, Type type)
 }
 
 void
-ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value)
+ControlBindings::set_port_value(ProcessContext& context,
+                                PortImpl*       port,
+                                Type            type,
+                                int16_t         value)
 {
-	const Raul::Atom port_value(control_to_port_value(port, type, value));
+	const Raul::Atom port_value(
+		control_to_port_value(type, value, port->minimum(), port->maximum()));
+
 	port->set_value(port_value);
 
 	assert(port_value.type() == Atom::FLOAT);
@@ -247,8 +266,8 @@ ControlBindings::set_port_value(ProcessContext& context, PortImpl* port, Type ty
 		reinterpret_cast<AudioBuffer*>(port->buffer(v).get())->set_value(
 				port_value.get_float(), context.start(), context.start());
 
-	const Notification note(Notification::PORT_VALUE,
-	                        context.start(), port, port_value);
+	const Notification note = Notification::make(
+		Notification::PORT_VALUE, context.start(), port, port_value);
 	context.event_sink().write(sizeof(note), &note);
 }
 
@@ -265,9 +284,9 @@ ControlBindings::bind(ProcessContext& context, Key key)
 
 	_bindings->insert(make_pair(key, _learn_port));
 
-	// FIXME
-	//const Events::SendBinding ev(context.engine(), context.start(), _learn_port, key.type, key.num);
-	//context.event_sink().write(sizeof(ev), &ev);
+	const Notification note = Notification::make(
+		Notification::PORT_BINDING, context.start(), _learn_port, key.num, key.type);
+	context.event_sink().write(sizeof(note), &note);
 
 	_learn_port = NULL;
 	return true;

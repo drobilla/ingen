@@ -268,6 +268,8 @@ SetMetadata::execute(ProcessContext& context)
 		return;
 	}
 
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+
 	if (_create_event) {
 		_create_event->execute(context);
 	}
@@ -281,6 +283,7 @@ SetMetadata::execute(ProcessContext& context)
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();
 	for (Properties::const_iterator p = _properties.begin(); p != _properties.end(); ++p, ++t) {
+		const Raul::Atom& key   = p->first;
 		const Raul::Atom& value = p->second;
 		switch (*t) {
 		case ENABLE_BROADCAST:
@@ -317,7 +320,7 @@ SetMetadata::execute(ProcessContext& context)
 			break;
 		case CONTROL_BINDING:
 			if (port) {
-				_engine.control_bindings()->port_binding_changed(context, port);
+				_engine.control_bindings()->port_binding_changed(context, port, value);
 			} else if (node) {
 				if (node->plugin_impl()->type() == Plugin::Internal) {
 					node->learn();
@@ -325,6 +328,13 @@ SetMetadata::execute(ProcessContext& context)
 			}
 			break;
 		case NONE:
+			if (port) {
+				if (key == uris.lv2_minimum) {
+					port->set_minimum(value);
+				} else if (key == uris.lv2_maximum) {
+					port->set_maximum(value);
+				}
+			}
 			break;
 		}
 	}

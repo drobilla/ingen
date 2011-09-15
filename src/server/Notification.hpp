@@ -38,20 +38,24 @@ struct Notification
 		PORT_BINDING
 	};
 
-	Notification(
+	static inline Notification make(
 		Type                        type  = NIL,
 		FrameTime                   time  = 0,
 		PortImpl*                   port  = 0,
 		const Raul::Atom&           value = Raul::Atom(),
-		const ControlBindings::Type btype = ControlBindings::NULL_CONTROL);
+		const ControlBindings::Type btype = ControlBindings::NULL_CONTROL)
+	{
+		const Notification note = { port, type, btype, value };
+		return note;
+	}
 
-	void post_process(Engine& engine);
+	static void post_process(Notification& note,
+	                         Engine&       engine);
 
-	Type                        type;
-	const ControlBindings::Type binding_type;
-	FrameTime                   time;
-	PortImpl*                   port;
-	const Raul::Atom            value;
+	PortImpl*             port;
+	Type                  type;
+	ControlBindings::Type binding_type;
+	Raul::Atom            value;
 };
 
 } // namespace Server

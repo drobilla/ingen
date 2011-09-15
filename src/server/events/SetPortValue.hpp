@@ -19,6 +19,8 @@
 #define INGEN_EVENTS_SETPORTVALUE_HPP
 
 #include "raul/Atom.hpp"
+
+#include "ControlBindings.hpp"
 #include "QueuedEvent.hpp"
 #include "types.hpp"
 
@@ -70,10 +72,11 @@ private:
 
 	void apply(Context& context);
 
-	bool             _queued;
-	const Raul::Path _port_path;
-	const Raul::Atom _value;
-	PortImpl*        _port;
+	bool                 _queued;
+	const Raul::Path     _port_path;
+	const Raul::Atom     _value;
+	PortImpl*            _port;
+	ControlBindings::Key _binding;
 };
 
 } // namespace Server

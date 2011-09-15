@@ -101,6 +101,8 @@ SetPortValue::pre_process()
 		_port->set_property(_engine.world()->uris()->ingen_value, _value);
 	}
 
+	_binding = _engine.control_bindings()->port_binding(_port);
+
 	QueuedEvent::pre_process();
 }
 
@@ -114,7 +116,7 @@ SetPortValue::execute(ProcessContext& context)
 		return;
 
 	apply(context);
-	_engine.control_bindings()->port_value_changed(context, _port);
+	_engine.control_bindings()->port_value_changed(context, _port, _binding, _value);
 }
 
 void

@@ -18,10 +18,14 @@
 #ifndef INGEN_EVENTS_SETMETADATA_HPP
 #define INGEN_EVENTS_SETMETADATA_HPP
 
+
 #include <vector>
+
 #include "raul/URI.hpp"
-#include "shared/ResourceImpl.hpp"
+
+#include "ControlBindings.hpp"
 #include "QueuedEvent.hpp"
+#include "shared/ResourceImpl.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -113,6 +117,7 @@ private:
 	std::string                  _error_predicate;
 	bool                         _create;
 	Resource::Graph              _context;
+	ControlBindings::Key         _binding;
 
 	SharedPtr<ControlBindings::Bindings> _old_bindings;
 };

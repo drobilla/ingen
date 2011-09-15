@@ -290,9 +290,11 @@ LV2Node::instantiate(BufferFactory& bufs)
 			port->set_value(val);
 			if (!isnan(min_values[j])) {
 				port->set_property(uris.lv2_minimum, min_values[j]);
+				port->set_minimum(min_values[j]);
 			}
 			if (!isnan(max_values[j])) {
 				port->set_property(uris.lv2_maximum, max_values[j]);
+				port->set_maximum(max_values[j]);
 			}
 		}
 

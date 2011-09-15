@@ -71,18 +71,13 @@ PostProcessor::process()
 	/* FIXME: process events from all threads if parallel */
 
 	/* Process audio thread generated events */
-	while (true) {
-		Driver* driver = _engine.driver();
-		Notification note;
-		if (driver && driver->context().event_sink().peek(sizeof(note), &note)) {
-			if (note.time > end_time) {
-				break;
-			}
-
-			note.post_process(_engine);
-			driver->context().event_sink().skip(sizeof(note));
-		} else {
-			break;
+	Driver* driver = _engine.driver();
+	if (driver) {
+		Notification   note;
+		const uint32_t read_space = driver->context().event_sink().read_space();
+		for (uint32_t i = 0; i <= read_space; i += sizeof(note)) {
+			driver->context().event_sink().read(sizeof(note), &note);
+			Notification::post_process(note, _engine);
 		}
 	}
 

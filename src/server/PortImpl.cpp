@@ -56,6 +56,8 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _buffer_size(buffer_size)
 	, _buffer_type(type)
 	, _value(value)
+	, _min(0.0f)
+	, _max(1.0f)
 	, _last_broadcasted_value(value)
 	, _context(Context::AUDIO)
 	, _buffers(new Array<BufferFactory::Ref>(static_cast<size_t>(poly)))
@@ -211,8 +213,8 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::EVENTS:
 		if (((EventBuffer*)buffer(0).get())->event_count() > 0) {
-			const Notification note(Notification::PORT_ACTIVITY,
-			                        context.start(), this, Atom(true));
+			const Notification note = Notification::make(
+				Notification::PORT_ACTIVITY, context.start(), this, Atom(true));
 			context.event_sink().write(sizeof(note), &note);
 		}
 		break;
@@ -226,8 +228,8 @@ PortImpl::broadcast_value(Context& context, bool force)
 
 	if (val.is_valid() && (force || val != _last_broadcasted_value)) {
 		_last_broadcasted_value = val;
-		const Notification note(Notification::PORT_VALUE,
-		                        context.start(), this, val);
+		const Notification note = Notification::make(
+			Notification::PORT_VALUE, context.start(), this, val);
 		context.event_sink().write(sizeof(note), &note);
 	}
 }

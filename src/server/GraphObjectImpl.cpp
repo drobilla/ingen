@@ -20,6 +20,7 @@
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
 #include "EngineStore.hpp"
+#include "ThreadManager.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -40,6 +41,7 @@ GraphObjectImpl::GraphObjectImpl(Ingen::Shared::LV2URIMap& uris,
 const Atom&
 GraphObjectImpl::get_property(const Raul::URI& key) const
 {
+	ThreadManager::assert_not_thread(THREAD_PROCESS);
 	static const Atom null_atom;
 	Resource::Properties::const_iterator i = properties().find(key);
 	return (i != properties().end()) ? i->second : null_atom;

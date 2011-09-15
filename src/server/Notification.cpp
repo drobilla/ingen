@@ -24,37 +24,26 @@
 namespace Ingen {
 namespace Server {
 
-Notification::Notification(Type                        y,
-                           FrameTime                   t,
-                           PortImpl*                   p,
-                           const Raul::Atom&           v,
-                           const ControlBindings::Type bt)
-	: type(y)
-	, binding_type(bt)
-	, time(t)
-	, port(p)
-	, value(v)
-{}
-
 void
-Notification::post_process(Engine& engine)
+Notification::post_process(Notification& note,
+                           Engine&       engine)
 {
-	switch (type) {
+	switch (note.type) {
 	case PORT_VALUE:
 		engine.broadcaster()->set_property(
-			port->path(),
-			engine.world()->uris()->ingen_value, value);
+			note.port->path(),
+			engine.world()->uris()->ingen_value, note.value);
 		break;
 	case PORT_ACTIVITY:
-		engine.broadcaster()->activity(port->path());
+		engine.broadcaster()->activity(note.port->path());
 		break;
 	case PORT_BINDING: {
 		const Ingen::Shared::LV2URIMap& uris = *engine.world()->uris().get();
 		Raul::Atom::DictValue dict;
-		switch (binding_type) {
+		switch (note.binding_type) {
 		case ControlBindings::MIDI_CC:
 			dict[uris.rdf_type]              = uris.midi_Controller;
-			dict[uris.midi_controllerNumber] = value.get_int32();
+			dict[uris.midi_controllerNumber] = note.value.get_int32();
 			break;
 		case ControlBindings::MIDI_BENDER:
 			dict[uris.rdf_type] = uris.midi_Bender;
@@ -64,15 +53,15 @@ Notification::post_process(Engine& engine)
 			break;
 		case ControlBindings::MIDI_NOTE:
 			dict[uris.rdf_type]        = uris.midi_Note;
-			dict[uris.midi_noteNumber] = value.get_int32();
+			dict[uris.midi_noteNumber] = note.value.get_int32();
 			break;
 		case ControlBindings::MIDI_RPN: // TODO
 		case ControlBindings::MIDI_NRPN: // TODO
 		case ControlBindings::NULL_CONTROL:
 			break;
 		}
-		port->set_property(uris.ingen_controlBinding, dict); // FIXME: thread unsafe
-		engine.broadcaster()->set_property(port->path(),
+		note.port->set_property(uris.ingen_controlBinding, dict); // FIXME: thread unsafe
+		engine.broadcaster()->set_property(note.port->path(),
 		                                   uris.ingen_controlBinding,
 		                                   dict);
 		break;

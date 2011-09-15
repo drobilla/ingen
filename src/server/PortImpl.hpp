@@ -83,6 +83,16 @@ public:
 	const Raul::Atom& value() const { return _value; }
 	void              set_value(const Raul::Atom& v) { _value = v; }
 
+	const Raul::Atom& minimum() const { return _min; }
+	const Raul::Atom& maximum() const { return _max; }
+
+	/* The following two methods store the range in variables so it can be
+	   accessed in the process thread, which is required for applying control
+	   bindings from incoming MIDI data.
+	*/
+	void set_minimum(const Raul::Atom& min) { _min = min; }
+	void set_maximum(const Raul::Atom& max) { _max = max; }
+
 	inline BufferFactory::Ref buffer(uint32_t voice) const {
 		return _buffers->at((_poly == 1) ? 0 : voice);
 	}
@@ -160,6 +170,8 @@ protected:
 	PortType                         _buffer_type;
 	std::set<PortType>               _types;
 	Raul::Atom                       _value;
+	Raul::Atom                       _min;
+	Raul::Atom                       _max;
 	Raul::Atom                       _last_broadcasted_value;
 	Context::ID                      _context;
 	Raul::Array<BufferFactory::Ref>* _buffers;
