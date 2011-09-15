@@ -47,14 +47,14 @@ PostProcessor::append(QueuedEvent* first, QueuedEvent* last)
 {
 	assert(first);
 	assert(last);
-	QueuedEvent* const head = _head.get();
-	QueuedEvent* const tail = _tail.get();
-	if (!head) {
-		_head = first;
+	assert(!last->next());
+	if (_head.get()) {
+		_tail.get()->next(first);
+		_tail = last;
 	} else {
-		tail->next(first);
+		_tail = last;
+		_head = first;
 	}
-	_tail = last;
 }
 
 void
@@ -88,19 +88,19 @@ PostProcessor::process()
 
 	/* Process normal events */
 	QueuedEvent* ev = _head.get();
-	while (ev) {
-		if (ev->time() > end_time)
-			break;
-
+	if (!ev) {
+		return;
+	}
+	
+	QueuedEvent* const tail = _tail.get();
+	_head = (QueuedEvent*)tail->next();
+	while (ev && ev->time() <= end_time) {
 		QueuedEvent* const next = (QueuedEvent*)ev->next();
 		ev->post_process();
-		if (next) {
-			_head = next;
-		} else {
-			_head = NULL;
-			_tail = NULL;
-		}
 		delete ev;
+		if (ev == tail) {
+			break;
+		}
 		ev = next;
 	}
 }

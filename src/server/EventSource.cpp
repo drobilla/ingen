@@ -98,9 +98,11 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 	}
 
 	if (num_events_processed > 0) {
+		QueuedEvent* next = (QueuedEvent*)last->next();
+		last->next(NULL);
 		dest.append(_head.get(), last);
-		_head = (QueuedEvent*)last->next();
-		if (!last->next())
+		_head = next;
+		if (!next)
 			_tail = NULL;
 	}
 }
