@@ -75,7 +75,7 @@ PostProcessor::process()
 	if (driver) {
 		Notification   note;
 		const uint32_t read_space = driver->context().event_sink().read_space();
-		for (uint32_t i = 0; i <= read_space; i += sizeof(note)) {
+		for (uint32_t i = 0; i < read_space; i += sizeof(note)) {
 			driver->context().event_sink().read(sizeof(note), &note);
 			Notification::post_process(note, _engine);
 		}
