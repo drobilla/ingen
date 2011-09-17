@@ -513,15 +513,20 @@ ClientStore::disconnect_all(const Raul::Path& parent_patch_path,
 	SharedPtr<PatchModel>  patch  = PtrCast<PatchModel>(_object(parent_patch_path));
 	SharedPtr<ObjectModel> object = _object(path);
 
-	if (!patch || !object)
+	if (!patch || !object) {
+		std::cerr << "Bad disconnect all notification " << path
+		          << " in " << parent_patch_path << std::endl;
 		return;
+	}
 
 	const PatchModel::Connections connections = patch->connections();
 	for (PatchModel::Connections::const_iterator i = connections.begin();
 	     i != connections.end(); ++i) {
 		SharedPtr<ConnectionModel> c = PtrCast<ConnectionModel>(i->second);
 		if (c->src_port()->parent() == object
-		    || c->dst_port()->parent() == object) {
+		    || c->dst_port()->parent() == object
+		    || c->src_port()->path() == path
+		    || c->dst_port()->path() == path) {
 			c->src_port()->disconnected_from(c->dst_port());
 			c->dst_port()->disconnected_from(c->src_port());
 			patch->remove_connection(c->src_port().get(), c->dst_port().get());
