@@ -422,10 +422,9 @@ void
 ClientStore::activity(const Path& path, const Atom& value)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(_object(path));
-	if (port)
+	if (port) {
 		port->signal_activity().emit(value);
-	else
-		LOG(error) << "Activity for non-existent port " << path << endl;
+	}
 }
 
 SharedPtr<PatchModel>
