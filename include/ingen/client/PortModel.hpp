@@ -80,7 +80,7 @@ public:
 	// Signals
 	INGEN_SIGNAL(value_changed, void, const Raul::Atom&);
 	INGEN_SIGNAL(voice_changed, void, uint32_t, const Raul::Atom&);
-	INGEN_SIGNAL(activity, void);
+	INGEN_SIGNAL(activity, void, const Raul::Atom&);
 	INGEN_SIGNAL(connection, void, SharedPtr<PortModel>);
 	INGEN_SIGNAL(disconnection, void, SharedPtr<PortModel>);
 

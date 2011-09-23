@@ -18,12 +18,15 @@
 #ifndef INGEN_ENGINE_AUDIOBUFFER_HPP
 #define INGEN_ENGINE_AUDIOBUFFER_HPP
 
-#include <cstddef>
 #include <cassert>
+#include <cmath>
+#include <cstddef>
+
 #include <boost/utility.hpp>
-#include "types.hpp"
-#include "ObjectBuffer.hpp"
+
 #include "Context.hpp"
+#include "ObjectBuffer.hpp"
+#include "types.hpp"
 
 using namespace std;
 
@@ -42,6 +45,8 @@ public:
 	void copy(const Sample* src, size_t start_sample, size_t end_sample);
 	void copy(Context& context, const Buffer* src);
 	void accumulate(Context& context, const AudioBuffer* src);
+
+	float peak(Context& context) const;
 
 	inline bool is_control() const { return _type.symbol() == PortType::CONTROL; }
 

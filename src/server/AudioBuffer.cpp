@@ -184,6 +184,17 @@ AudioBuffer::copy(Context& context, const Buffer* src)
 	}
 }
 
+float
+AudioBuffer::peak(Context& context) const
+{
+	float peak = 0.0f;
+	// FIXME: use context time range?
+	for (FrameTime i = 0; i < nframes(); ++i) {
+		peak = fmaxf(peak, value_at(i));
+	}
+	return peak;
+}
+
 void
 AudioBuffer::prepare_read(Context& context)
 {

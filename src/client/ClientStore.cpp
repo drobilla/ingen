@@ -419,11 +419,11 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 }
 
 void
-ClientStore::activity(const Path& path)
+ClientStore::activity(const Path& path, const Atom& value)
 {
 	SharedPtr<PortModel> port = PtrCast<PortModel>(_object(path));
 	if (port)
-		port->signal_activity().emit();
+		port->signal_activity().emit(value);
 	else
 		LOG(error) << "Activity for non-existent port " << path << endl;
 }

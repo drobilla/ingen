@@ -48,7 +48,8 @@ public:
 
 	virtual void error(const std::string& msg) = 0;
 
-	virtual void activity(const Raul::Path& path) = 0;
+	virtual void activity(const Raul::Path& path,
+	                      const Raul::Atom& value) = 0;
 };
 
 } // namespace Ingen

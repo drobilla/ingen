@@ -113,8 +113,8 @@ public:
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(property_change_slot, subject, key, value)); }
 
-	void activity(const Raul::Path& port_path)
-		{ push_sig(sigc::bind(activity_slot, port_path)); }
+	void activity(const Raul::Path& port_path, const Raul::Atom& value)
+		{ push_sig(sigc::bind(activity_slot, port_path, value)); }
 
 	/** Process all queued events - Called from GTK thread to emit signals. */
 	bool emit_signals();
@@ -146,7 +146,7 @@ private:
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            variable_change_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            property_change_slot;
 	sigc::slot<void, Raul::Path, Raul::Atom>                      port_value_slot;
-	sigc::slot<void, Raul::Path>                                  activity_slot;
+	sigc::slot<void, Raul::Path, Raul::Atom>                      activity_slot;
 };
 
 } // namespace Client

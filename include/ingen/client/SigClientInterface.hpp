@@ -61,7 +61,7 @@ public:
 	INGEN_SIGNAL(variable_change, void, Raul::URI, Raul::URI, Raul::Atom)
 	INGEN_SIGNAL(property_change, void, Raul::URI, Raul::URI, Raul::Atom)
 	INGEN_SIGNAL(port_value, void, Raul::Path, Raul::Atom)
-	INGEN_SIGNAL(activity, void, Raul::Path)
+	INGEN_SIGNAL(activity, void, Raul::Path, Raul::Atom)
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
@@ -115,8 +115,8 @@ protected:
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ EMIT(property_change, subject, key, value); }
 
-	void activity(const Raul::Path& port_path)
-		{ EMIT(activity, port_path); }
+	void activity(const Raul::Path& port_path, const Raul::Atom& value)
+		{ EMIT(activity, port_path, value); }
 };
 
 } // namespace Client

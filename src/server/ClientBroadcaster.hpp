@@ -119,7 +119,11 @@ public:
 	void response_error(int32_t id, const std::string& msg) {} ///< N/A
 
 	void error(const std::string& msg)    { BROADCAST(error, msg); }
-	void activity(const Raul::Path& path) { BROADCAST(activity, path); }
+
+	void activity(const Raul::Path& path,
+	              const Raul::Atom& value) {
+		BROADCAST(activity, path, value);
+	}
 
 private:
 	typedef std::map<Raul::URI, ClientInterface*> Clients;

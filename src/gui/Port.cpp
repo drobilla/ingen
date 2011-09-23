@@ -77,7 +77,7 @@ Port::Port(FlowCanvas::Module&        module,
 
 	ArtVpathDash* dash = this->dash();
 	_rect.property_dash() = dash;
-	set_border_width(dash ? 2.0 : 0.0);
+	set_border_width(1.0);
 
 	pm->signal_moved().connect(sigc::mem_fun(this, &Port::moved));
 
@@ -162,10 +162,63 @@ Port::on_event(GdkEvent* ev)
 	return false;
 }
 
-void
-Port::activity()
+/* Peak colour stuff */
+
+static inline uint32_t
+rgba_to_uint(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 {
-	App::instance().port_activity(this);
+	return ((((uint32_t)(r)) << 24) |
+	        (((uint32_t)(g)) << 16) |
+	        (((uint32_t)(b)) << 8) |
+	        (((uint32_t)(a))));
+}
+
+static inline uint8_t
+mono_interpolate(uint8_t v1, uint8_t v2, float f)
+{
+	return ((int)rint((v2) * (f) + (v1) * (1 - (f))));
+}
+
+#define RGBA_R(x) (((uint32_t)(x)) >> 24)
+#define RGBA_G(x) ((((uint32_t)(x)) >> 16) & 0xFF)
+#define RGBA_B(x) ((((uint32_t)(x)) >> 8) & 0xFF)
+#define RGBA_A(x) (((uint32_t)(x)) & 0xFF)
+
+static inline uint32_t
+rgba_interpolate(uint32_t c1, uint32_t c2, float f)
+{
+	return rgba_to_uint(
+		mono_interpolate(RGBA_R(c1), RGBA_R(c2), f),
+        mono_interpolate(RGBA_G(c1), RGBA_G(c2), f),
+        mono_interpolate(RGBA_B(c1), RGBA_B(c2), f),
+		mono_interpolate(RGBA_A(c1), RGBA_A(c2), f));
+}
+
+inline static uint32_t
+peak_color(float peak)
+{
+	static const uint32_t min      = 0x4A8A0EC0;
+	static const uint32_t max      = 0xFFCE1FC0;
+	static const uint32_t peak_min = 0xFF561FC0;
+	static const uint32_t peak_max = 0xFF0A38C0;
+
+	if (peak < 1.0) {
+		return rgba_interpolate(min, max, peak);
+	} else {
+		return rgba_interpolate(peak_min, peak_max, fminf(peak, 2.0f) - 1.0f);
+	}
+}
+
+/* End peak colour stuff */
+
+void
+Port::activity(const Raul::Atom& value)
+{
+	if (model()->is_a(PortType::AUDIO)) {
+		set_fill_color(peak_color(value.get_float()));
+	} else {
+		App::instance().port_activity(this);
+	}
 }
 
 void

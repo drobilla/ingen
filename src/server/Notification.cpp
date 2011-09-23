@@ -35,7 +35,7 @@ Notification::post_process(Notification& note,
 			engine.world()->uris()->ingen_value, note.value);
 		break;
 	case PORT_ACTIVITY:
-		engine.broadcaster()->activity(note.port->path());
+		engine.broadcaster()->activity(note.port->path(), note.value);
 		break;
 	case PORT_BINDING: {
 		const Ingen::Shared::LV2URIMap& uris = *engine.world()->uris().get();

@@ -40,8 +40,7 @@ OutputPort::OutputPort(BufferFactory&      bufs,
 	if (!dynamic_cast<Patch*>(parent))
 		add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort);
 
-	if (type == PortType::CONTROL)
-		_broadcast = true;
+	_broadcast = true;
 
 	setup_buffers(bufs, poly);
 }

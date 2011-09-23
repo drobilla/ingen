@@ -76,9 +76,6 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	add_property(uris.rdf_type,  type.uri());
 	set_property(uris.lv2_index, Atom((int32_t)index));
 	set_context(_context);
-
-	if (type == PortType::EVENTS)
-		_broadcast = true; // send activity blips
 }
 
 PortImpl::~PortImpl()
@@ -208,6 +205,13 @@ PortImpl::broadcast_value(Context& context, bool force)
 	case PortType::UNKNOWN:
 		break;
 	case PortType::AUDIO:
+		val = ((AudioBuffer*)buffer(0).get())->peak(context);
+		{
+			const Notification note = Notification::make(
+				Notification::PORT_ACTIVITY, context.start(), this, val);
+			context.event_sink().write(sizeof(note), &note);
+		}
+		return;
 	case PortType::CONTROL:
 		val = ((AudioBuffer*)buffer(0).get())->value_at(0);
 		break;

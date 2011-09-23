@@ -25,6 +25,7 @@
 #include "ConnectionImpl.hpp"
 #include "EventBuffer.hpp"
 #include "NodeImpl.hpp"
+#include "Notification.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
@@ -122,9 +123,8 @@ InputPort::add_connection(Connections::Node* const c)
 
 	_connections.push_back(c);
 
-	// Automatically broadcast connected control inputs
-	if (is_a(PortType::CONTROL))
-		_broadcast = true;
+	// Broadcast value/activity of connected input
+	_broadcast = true;
 }
 
 /** Remove a connection.  Realtime safe.
@@ -156,8 +156,15 @@ InputPort::remove_connection(ProcessContext& context, const OutputPort* src_port
 	}
 
 	// Turn off broadcasting if we're no longer connected
-	if (is_a(PortType::CONTROL) && _connections.size() == 0)
+	if (_connections.size() == 0) {
+		if (is_a(PortType::AUDIO)) {
+			// Send an update peak of 0.0 to reset to silence
+			const Notification note = Notification::make(
+				Notification::PORT_ACTIVITY, context.start(), this, 0.0f);
+			context.event_sink().write(sizeof(note), &note);
+		}
 		_broadcast = false;
+	}
 
 	return connection;
 }

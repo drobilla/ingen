@@ -55,7 +55,7 @@ public:
 
 	virtual void set_control(float value, bool signal);
 	void value_changed(const Raul::Atom& value);
-	void activity();
+	void activity(const Raul::Atom& value);
 
 	void set_selected(bool b);
 

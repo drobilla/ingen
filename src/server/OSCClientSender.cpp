@@ -261,12 +261,15 @@ OSCClientSender::set_property(const URI& path,
  * Notification of "activity" (e.g. port message blinkenlights).
  */
 void
-OSCClientSender::activity(const Path& path)
+OSCClientSender::activity(const Path& path, const Raul::Atom& value)
 {
 	if (!_enabled)
 		return;
 
-	lo_send(_address, "/activity", "s", path.c_str(), LO_ARGS_END);
+	lo_message m = lo_message_new();
+	lo_message_add_string(m, path.c_str());
+	AtomLiblo::lo_message_add_atom(m, value);
+	send_message("/activity", m);
 }
 
 } // namespace Server
