@@ -350,6 +350,7 @@ PatchWindow::object_entered(const ObjectModel* model)
 void
 PatchWindow::object_left(const ObjectModel* model)
 {
+	_status_bar->pop(STATUS_CONTEXT_PATCH);
 	_status_bar->pop(STATUS_CONTEXT_HOVER);
 }
 
@@ -497,7 +498,8 @@ more files and/or directories, recursively.  Existing files will be overwritten.
 		if (confirm) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			App::instance().loader()->save_patch(_patch, uri);
-			//_patch->set_property(uris.ingen_document, Atom(Atom::URI, uri.c_str()));
+			const_cast<PatchModel*>(_patch.get())->set_property(
+				uris.ingen_document, Atom(Atom::URI, uri.c_str()), Resource::EXTERNAL);
 			_status_bar->push(
 					(boost::format("Saved %1% to %2%") % _patch->path().chop_scheme()
 					 % filename).str(),

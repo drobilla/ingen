@@ -117,7 +117,8 @@ public:
 	virtual Properties&       properties()       = 0;
 	virtual const Raul::Atom& get_property(const Raul::URI&  uri) const   = 0;
 	virtual Raul::Atom&       set_property(const Raul::URI&  uri,
-	                                       const Raul::Atom& value)       = 0;
+	                                       const Raul::Atom& value,
+	                                       Graph             ctx=DEFAULT) = 0;
 	virtual void              add_property(const Raul::URI&  uri,
 	                                       const Raul::Atom& value)       = 0;
 	virtual bool              has_property(const Raul::URI&  uri,

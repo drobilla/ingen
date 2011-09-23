@@ -46,7 +46,8 @@ public:
 	Properties properties(Resource::Graph ctx) const;
 
 	const Raul::Atom& get_property(const Raul::URI& uri) const;
-	Raul::Atom&       set_property(const Raul::URI& uri, const Raul::Atom& value);
+	Raul::Atom&       set_property(const Raul::URI& uri, const Raul::Atom& value,
+	                               Resource::Graph ctx=Resource::DEFAULT);
 	void              remove_property(const Raul::URI& uri, const Raul::Atom& value);
 	bool              has_property(const Raul::URI& uri, const Raul::Atom& value) const;
 	void              add_property(const Raul::URI& uri, const Raul::Atom& value);
