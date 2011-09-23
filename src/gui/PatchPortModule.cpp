@@ -80,20 +80,24 @@ PatchPortModule::show_menu(GdkEventButton* ev)
 void
 PatchPortModule::store_location()
 {
-	const float x = static_cast<float>(property_x());
-	const float y = static_cast<float>(property_y());
+	const Atom x(static_cast<float>(property_x()));
+	const Atom y(static_cast<float>(property_y()));
 
 	const LV2URIMap& uris = App::instance().uris();
 
 	const Atom& existing_x = _model->get_property(uris.ingenui_canvas_x);
 	const Atom& existing_y = _model->get_property(uris.ingenui_canvas_y);
 
-	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
-			|| existing_x.get_float() != x || existing_y.get_float() != y) {
-		Resource::Properties props;
-		props.insert(make_pair(uris.ingenui_canvas_x, Atom(x)));
-		props.insert(make_pair(uris.ingenui_canvas_y, Atom(y)));
-		App::instance().engine()->put(_model->path(), props, Resource::INTERNAL);
+	if (x != existing_x && y != existing_y) {
+		Resource::Properties remove;
+		remove.insert(make_pair(uris.ingenui_canvas_x, uris.wildcard));
+		remove.insert(make_pair(uris.ingenui_canvas_y, uris.wildcard));
+		Resource::Properties add;
+		add.insert(make_pair(uris.ingenui_canvas_x,
+		                     Resource::Property(x, Resource::INTERNAL)));
+		add.insert(make_pair(uris.ingenui_canvas_y,
+		                     Resource::Property(y, Resource::INTERNAL)));
+		App::instance().engine()->delta(_model->path(), remove, add);
 	}
 }
 

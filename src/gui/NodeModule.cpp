@@ -352,24 +352,22 @@ NodeModule::on_double_click(GdkEventButton* ev)
 void
 NodeModule::store_location()
 {
-	const float x = static_cast<float>(property_x());
-	const float y = static_cast<float>(property_y());
+	const Atom x(static_cast<float>(property_x()));
+	const Atom y(static_cast<float>(property_y()));
 
 	const LV2URIMap& uris = App::instance().uris();
 
 	const Atom& existing_x = _node->get_property(uris.ingenui_canvas_x);
 	const Atom& existing_y = _node->get_property(uris.ingenui_canvas_y);
 
-	if (existing_x.type() != Atom::FLOAT || existing_y.type() != Atom::FLOAT
-			|| existing_x.get_float() != x || existing_y.get_float() != y) {
+	if (x != existing_x && y != existing_y) {
 		Resource::Properties remove;
 		remove.insert(make_pair(uris.ingenui_canvas_x, uris.wildcard));
 		remove.insert(make_pair(uris.ingenui_canvas_y, uris.wildcard));
 		Resource::Properties add;
-		add.insert(make_pair(uris.ingenui_canvas_x, Atom(x)));
-		add.insert(make_pair(uris.ingenui_canvas_y, Atom(y)));
+		add.insert(make_pair(uris.ingenui_canvas_x, x));
+		add.insert(make_pair(uris.ingenui_canvas_y, y));
 		App::instance().engine()->delta(_node->path(), remove, add);
-		// FIXME: context
 	}
 }
 
