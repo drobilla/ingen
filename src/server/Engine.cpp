@@ -57,7 +57,6 @@ bool ThreadManager::single_threaded = true;
 Engine::Engine(Ingen::Shared::World* a_world)
 	: _world(a_world)
 	, _broadcaster(new ClientBroadcaster())
-	, _buffer_factory(new BufferFactory(*this, a_world->uris()))
 	, _control_bindings(new ControlBindings(*this))
 	, _maid(new Raul::Maid(event_queue_size()))
 	, _message_context(new MessageContext(*this))
@@ -66,9 +65,13 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _quit_flag(false)
 {
 	if (a_world->store()) {
-		assert(PtrCast<EngineStore>(a_world->store()));
+		SharedPtr<EngineStore> estore = PtrCast<EngineStore>(a_world->store());
+		_buffer_factory = estore->buffer_factory().get();
 	} else {
-		a_world->set_store(SharedPtr<Ingen::Shared::Store>(new EngineStore()));
+		_buffer_factory = new BufferFactory(*this, a_world->uris());
+		a_world->set_store(
+			SharedPtr<Ingen::Shared::Store>(
+				new EngineStore(SharedPtr<BufferFactory>(_buffer_factory))));
 	}
 }
 
@@ -85,6 +88,8 @@ Engine::~Engine()
 	delete _maid;
 	delete _post_processor;
 	delete _node_factory;
+	delete _message_context;
+	delete _control_bindings;
 	delete _broadcaster;
 
 	munlockall();

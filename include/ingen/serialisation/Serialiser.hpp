@@ -49,6 +49,7 @@ class Serialiser
 {
 public:
 	Serialiser(Shared::World& world, SharedPtr<Shared::Store> store);
+	~Serialiser();
 
 	typedef GraphObject::Properties Properties;
 

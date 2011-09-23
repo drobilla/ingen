@@ -206,6 +206,8 @@ JackDriver::~JackDriver()
 
 	if (_client)
 		jack_client_close(_client);
+
+	delete _jack_thread;
 }
 
 bool
@@ -322,7 +324,9 @@ JackDriver::deactivate()
 			_client = NULL;
 		}
 
-		_jack_thread->stop();
+		delete _jack_thread;
+		_jack_thread = NULL;
+
 		LOG(info) << "Deactivated Jack client" << endl;
 	}
 }
@@ -483,11 +487,13 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 void
 JackDriver::_thread_init_cb()
 {
-	// Initialize thread specific data
-	_jack_thread = Thread::create_for_this_thread("Jack");
-	assert(&Thread::get() == _jack_thread);
+	if (_jack_thread) {
+		delete _jack_thread;
+	}
+
+	_jack_thread = &Thread::get();
+	_jack_thread->set_name("Jack");
 	_jack_thread->set_context(THREAD_PROCESS);
-	ThreadManager::assert_thread(THREAD_PROCESS);
 }
 
 void

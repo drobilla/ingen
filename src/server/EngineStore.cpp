@@ -35,6 +35,11 @@ using namespace Raul;
 namespace Ingen {
 namespace Server {
 
+EngineStore::~EngineStore()
+{
+	clear();
+}
+
 /** Find the Patch at the given path.
  */
 PatchImpl*

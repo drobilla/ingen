@@ -130,6 +130,9 @@ public:
 
 	virtual ~Pimpl()
 	{
+		serialiser.reset();
+		parser.reset();
+
 		local_engine.reset();
 
 		modules.clear();

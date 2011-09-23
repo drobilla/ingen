@@ -238,9 +238,11 @@ PluginModel::documentation() const
 
 	LilvNodes* vals = lilv_plugin_get_value(_lilv_plugin,
 	                                         rdfs_comment);
-	const LilvNode* val = lilv_nodes_get_first(vals);
-	if (lilv_node_is_string(val)) {
-		doc += lilv_node_as_string(val);
+	if (vals) {
+		const LilvNode* val = lilv_nodes_get_first(vals);
+		if (lilv_node_is_string(val)) {
+			doc += lilv_node_as_string(val);
+		}
 	}
 	lilv_node_free(rdfs_comment);
 	lilv_nodes_free(vals);
@@ -266,9 +268,11 @@ PluginModel::port_documentation(uint32_t index) const
 	LilvNodes* vals = lilv_port_get_value(_lilv_plugin,
 	                                      port,
 	                                      rdfs_comment);
-	const LilvNode* val = lilv_nodes_get_first(vals);
-	if (lilv_node_is_string(val)) {
-		doc += lilv_node_as_string(val);
+	if (vals) {
+		const LilvNode* val = lilv_nodes_get_first(vals);
+		if (lilv_node_is_string(val)) {
+			doc += lilv_node_as_string(val);
+		}
 	}
 	lilv_node_free(rdfs_comment);
 	lilv_nodes_free(vals);

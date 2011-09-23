@@ -124,6 +124,11 @@ Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
 	: me(new Impl(world, store))
 {}
 
+Serialiser::~Serialiser()
+{
+	delete me;
+}
+
 void
 Serialiser::to_file(SharedPtr<const GraphObject> object,
                     const std::string&           filename)

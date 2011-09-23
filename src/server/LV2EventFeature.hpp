@@ -34,6 +34,10 @@ struct EventFeature : public Ingen::Shared::LV2Features::Feature {
 		_feature.data         = data;
 	}
 
+	~EventFeature() {
+		free(_feature.data);
+	}
+
 	static uint32_t event_ref(LV2_Event_Callback_Data callback_data,
 	                          LV2_Event*              event) { return 0; }
 

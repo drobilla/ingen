@@ -44,6 +44,7 @@ BufferFactory::BufferFactory(Engine&                             engine,
 
 BufferFactory::~BufferFactory()
 {
+	_silent_buffer.reset();
 	free_list(_free_audio.get());
 	free_list(_free_control.get());
 	free_list(_free_event.get());
@@ -53,10 +54,11 @@ BufferFactory::~BufferFactory()
 void
 BufferFactory::free_list(Buffer* head)
 {
-	Buffer* next = head->_next;
-	delete head;
-	if (next)
-		free_list(next);
+	while (head) {
+		Buffer* next = head->_next;
+		delete head;
+		head = next;
+	}
 }
 
 void

@@ -129,8 +129,11 @@ DisconnectAll::pre_process()
 	}
 
 	for (Patch::Connections::const_iterator i = _parent->connections().begin();
-	     i != _parent->connections().end(); ++i) {
+	     i != _parent->connections().end();) {
+		Patch::Connections::const_iterator next = i;
+		++next;
 		maybe_remove_connection((ConnectionImpl*)i->second.get());
+		i = next;
 	}
 
 	if (!_deleting && _parent->enabled())

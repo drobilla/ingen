@@ -28,10 +28,11 @@ class GraphObject;
 
 namespace Server {
 
-class PatchImpl;
-class NodeImpl;
-class PortImpl;
+class BufferFactory;
 class GraphObjectImpl;
+class NodeImpl;
+class PatchImpl;
+class PortImpl;
 
 /** Storage for all GraphObjects (tree of GraphObject's sorted by path).
  *
@@ -45,6 +46,11 @@ class GraphObjectImpl;
 class EngineStore : public Ingen::Shared::Store
 {
 public:
+	EngineStore(SharedPtr<BufferFactory> f) : _factory(f) {}
+	~EngineStore();
+
+	SharedPtr<BufferFactory> buffer_factory() const { return _factory; }
+
 	PatchImpl*       find_patch(const Raul::Path& path);
 	NodeImpl*        find_node(const Raul::Path& path);
 	PortImpl*        find_port(const Raul::Path& path);
@@ -57,6 +63,14 @@ public:
 	SharedPtr<Objects> remove(Objects::iterator i);
 	SharedPtr<Objects> remove_children(const Raul::Path& path);
 	SharedPtr<Objects> remove_children(Objects::iterator i);
+
+private:
+	/* This holds a reference to the BufferFactory since the objects stored
+	   here refer to it, so the BufferFactory may only be deleted after the
+	   EngineStore is emptied and deleted.
+	*/
+	   
+	SharedPtr<BufferFactory> _factory;
 };
 
 } // namespace Server

@@ -56,7 +56,7 @@ struct RequestRunFeature : public Ingen::Shared::LV2Features::Feature {
 	}
 
 	static void delete_feature(LV2_Feature* feature) {
-		delete (Data*)feature->data;
+		free(feature->data);
 		free(feature);
 	}
 

@@ -36,6 +36,10 @@ struct BlobFeature : public Ingen::Shared::LV2Features::Feature {
 		_feature.data   = data;
 	}
 
+	~BlobFeature() {
+		free(_feature.data);
+	}
+
 	static LV2_Blob ref_get(LV2_Blob_Support_Data data,
 	                        LV2_Reference*        ref) { return 0; }
 
