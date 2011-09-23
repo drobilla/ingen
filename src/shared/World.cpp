@@ -210,7 +210,7 @@ SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }
 
 /** Load an Ingen module.
  * @return true on success, false on failure
-m */
+ */
 bool
 World::load_module(const char* name)
 {
@@ -228,6 +228,19 @@ World::load_module(const char* name)
 	}
 }
 
+bool
+World::run_module(const char* name)
+{
+	Pimpl::Modules::iterator i = _impl->modules.find(name);
+	if (i == _impl->modules.end()) {
+		LOG(error) << "Attempt to run unloaded module `" << name << "'" << endl;
+		return false;
+	}
+
+	i->second->run(this);
+	return true;
+}
+	
 /** Unload all loaded Ingen modules.
  */
 void

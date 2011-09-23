@@ -38,6 +38,7 @@ struct Module {
 	}
 
 	virtual void load(Ingen::Shared::World* world) = 0;
+	virtual void run(Ingen::Shared::World* world) {}
 
 	SharedPtr<Glib::Module> library;
 };

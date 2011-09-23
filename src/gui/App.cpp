@@ -133,21 +133,22 @@ App::init(Ingen::Shared::World* world)
 		"widget \"*ingen_embedded_node_gui_container*\" style \"ingen_embedded_node_gui_style\"\n";
 
 	Gtk::RC::parse_string(rc_style);
-
-	App::instance().connect_window()->start(world);
-
-	// Run main iterations here until we're attached to the engine
-	// (otherwise with 'ingen -egl' we'll get a bunch of notifications about load immediately
-	// before even knowing about the root patch or plugins)
-	while (!App::instance().connect_window()->attached())
-		if (_main->iteration())
-			break;
 }
 
 void
 App::run()
 {
-	assert(_main);
+	App& me = App::instance();
+
+	me._connect_window->start(me.world());
+
+	// Run main iterations here until we're attached to the engine. Otherwise
+	// with 'ingen -egl' we'd get a bunch of notifications about load
+	// immediately before even knowing about the root patch or plugins)
+	while (!me._connect_window->attached())
+		if (me._main->iteration())
+			break;
+
 	_main->run();
 	LOG(info) << "Exiting" << endl;
 }

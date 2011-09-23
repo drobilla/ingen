@@ -60,6 +60,8 @@ public:
 	virtual ~World();
 
 	virtual bool load_module(const char* name);
+	virtual bool run_module(const char* name);
+
 	virtual void unload_modules();
 
 	typedef SharedPtr<ServerInterface> (*InterfaceFactory)(

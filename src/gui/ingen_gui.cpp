@@ -21,6 +21,8 @@
 struct IngenGUIModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
 		Ingen::GUI::App::init(world);
+	}
+	void run(Ingen::Shared::World* world) {
 		Ingen::GUI::App::run();
 	}
 };

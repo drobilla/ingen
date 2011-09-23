@@ -94,7 +94,7 @@ PluginModel::get_property(const URI& key) const
 	}
 
 	if (_lilv_plugin) {
-		boost::optional<Raul::Atom&> ret;
+		boost::optional<const Raul::Atom&> ret;
 		LilvNode*  lv2_pred = lilv_new_uri(_lilv_world, key.str().c_str());
 		LilvNodes* values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
 		lilv_node_free(lv2_pred);

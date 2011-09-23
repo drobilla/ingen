@@ -59,13 +59,18 @@ static const timespec main_rate = { 0, 125000000 }; // 1/8 second
 Ingen::Shared::World* world = NULL;
 
 void
-ingen_interrupt(int)
+ingen_interrupt(int signal)
 {
-	cout << "ingen: Interrupted" << endl;
-	if (world->local_engine())
-		world->local_engine()->quit();
-	delete world;
-	exit(EXIT_FAILURE);
+	if (signal == SIGTERM) {
+		cerr << "ingen: Terminated" << endl;
+		delete world;
+		exit(EXIT_FAILURE);
+	} else {
+		cout << "ingen: Interrupted" << endl;
+		if (world && world->local_engine()) {
+			world->local_engine()->quit();
+		}
+	}
 }
 
 void
@@ -110,7 +115,7 @@ main(int argc, char** argv)
 	g_type_init();
 #endif
 
-	Ingen::Shared::World* world = new Ingen::Shared::World(&conf, argc, argv);
+	world = new Ingen::Shared::World(&conf, argc, argv);
 
 	if (conf.option("uuid").get_string()) {
 		world->set_jack_uuid(conf.option("uuid").get_string());
@@ -148,20 +153,29 @@ main(int argc, char** argv)
 		          (string("Unable to create interface to `") + uri + "'").c_str());
 	}
 
+	world->set_engine(engine_interface);
+
+	// Load necessary modules before activating engine (and Jack driver)
+
+	if (conf.option("load").is_valid()) {
+		ingen_try(world->load_module("serialisation"),
+		          "Unable to load serialisation module");
+	}
+
+	if (conf.option("gui").get_bool()) {
+		ingen_try(world->load_module("gui"),
+		          "Unable to load GUI module");
+	}
+
 	// Activate the engine, if we have one
 	if (world->local_engine()) {
 		ingen_try(world->load_module("jack"),
 		          "Unable to load jack module");
-	}
-
-	world->set_engine(engine_interface);
-
-	if (world->local_engine()) {
 		world->local_engine()->activate();
 	}
 
 	// Load a patch
-	if (conf.option("load").is_valid() && engine_interface) {
+	if (conf.option("load").is_valid()) {
 		boost::optional<Path>   parent;
 		boost::optional<Symbol> symbol;
 		const Raul::Atom&       path_option = conf.option("path");
@@ -177,9 +191,6 @@ main(int argc, char** argv)
 				cerr << "Invalid path given: '" << path_option << endl;
 			}
 		}
-
-		ingen_try(world->load_module("serialisation"),
-		          "Unable to load serialisation module");
 
 		ingen_try(world->parser(),
 		          "Unable to create parser");
@@ -199,13 +210,10 @@ main(int argc, char** argv)
 			world, engine_interface.get(), uri, parent, symbol);
 	}
 
-	// Load GUI
-	if (conf.option("gui").get_bool())
-		ingen_try(world->load_module("gui"),
-		          "Unable to load GUI module");
-
-	// Run a script
-	if (conf.option("run").is_valid()) {
+	if (conf.option("gui").get_bool()) {
+		world->run_module("gui");
+	} else if (conf.option("run").is_valid()) {
+		// Run a script
 #ifdef WITH_BINDINGS
 		ingen_try(world->load_module("bindings"),
 		          "Unable to load bindings module");
@@ -215,14 +223,12 @@ main(int argc, char** argv)
 		cerr << "This build of ingen does not support scripting." << endl;
 #endif
 
-	// Run main loop
 	} else if (world->local_engine() && !conf.option("gui").get_bool()) {
+		// Run main loop
+
 		// Set up signal handlers that will set quit_flag on interrupt
 		signal(SIGINT, ingen_interrupt);
 		signal(SIGTERM, ingen_interrupt);
-
-		// Activate the engine
-		world->local_engine()->activate();
 
 		// Run engine main loop until interrupt
 		while (world->local_engine()->main_iteration()) {

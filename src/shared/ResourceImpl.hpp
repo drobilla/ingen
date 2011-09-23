@@ -46,7 +46,7 @@ public:
 	Properties properties(Resource::Graph ctx) const;
 
 	const Raul::Atom& get_property(const Raul::URI& uri) const;
-	Raul::Atom&       set_property(const Raul::URI& uri, const Raul::Atom& value,
+	const Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value,
 	                               Resource::Graph ctx=Resource::DEFAULT);
 	void              remove_property(const Raul::URI& uri, const Raul::Atom& value);
 	bool              has_property(const Raul::URI& uri, const Raul::Atom& value) const;
@@ -69,7 +69,7 @@ public:
 			bool& port, bool& is_output, PortType& data_type);
 
 protected:
-	Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;
+	const Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;
 
 	LV2URIMap& _uris;
 

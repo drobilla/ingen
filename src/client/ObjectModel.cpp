@@ -47,11 +47,11 @@ ObjectModel::~ObjectModel()
 {
 }
 
-Raul::Atom&
+const Raul::Atom&
 ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value,
                           Resource::Graph ctx)
 {
-	Raul::Atom& my_value = ResourceImpl::set_property(key, value, ctx);
+	const Raul::Atom& my_value = ResourceImpl::set_property(key, value, ctx);
 	_signal_property.emit(key, my_value);
 	return my_value;
 }
