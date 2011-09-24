@@ -42,12 +42,15 @@ Get::Get(
 	, _uri(uri)
 	, _object(NULL)
 	, _plugin(NULL)
+	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
 }
 
 void
 Get::pre_process()
 {
+	_lock.acquire();
+
 	if (_uri == "ingen:plugins") {
 		_plugins = _engine.node_factory()->plugins();
 	} else if (Path::is_valid(_uri.str())) {
@@ -76,6 +79,8 @@ Get::post_process()
 	} else {
 		_request->respond_error("Unable to find client to send object.");
 	}
+
+	_lock.release();
 }
 
 } // namespace Server

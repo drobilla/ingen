@@ -86,6 +86,8 @@ private:
 	SharedPtr<ControlBindings::Bindings> _removed_bindings;
 
 	SharedPtr< Raul::Table<Raul::Path, SharedPtr<GraphObject> > > _removed_table;
+
+	Glib::RWLock::WriterLock _lock;
 };
 
 } // namespace Server

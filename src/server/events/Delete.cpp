@@ -50,6 +50,7 @@ Delete::Delete(Engine&            engine,
 	, _ports_array(NULL)
 	, _compiled_patch(NULL)
 	, _disconnect_event(NULL)
+	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
 	assert(request);
 	assert(request->source());
@@ -70,6 +71,8 @@ Delete::pre_process()
 		QueuedEvent::pre_process();
 		return;
 	}
+
+	_lock.acquire();
 
 	_removed_bindings = _engine.control_bindings()->remove(_path);
 
@@ -170,6 +173,7 @@ Delete::execute(ProcessContext& context)
 void
 Delete::post_process()
 {
+	_lock.release();
 	_removed_bindings.reset();
 
 	if (!Raul::Path::is_path(_uri)

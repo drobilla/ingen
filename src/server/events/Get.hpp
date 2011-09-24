@@ -18,6 +18,8 @@
 #ifndef INGEN_EVENTS_GET_HPP
 #define INGEN_EVENTS_GET_HPP
 
+#include <glibmm/thread.h>
+
 #include "QueuedEvent.hpp"
 #include "NodeFactory.hpp"
 #include "types.hpp"
@@ -47,10 +49,11 @@ public:
 	void post_process();
 
 private:
-	const Raul::URI      _uri;
-	GraphObjectImpl*     _object;
-	const PluginImpl*    _plugin;
-	NodeFactory::Plugins _plugins;
+	const Raul::URI          _uri;
+	const GraphObjectImpl*   _object;
+	const PluginImpl*        _plugin;
+	NodeFactory::Plugins     _plugins;
+	Glib::RWLock::ReaderLock _lock;
 };
 
 } // namespace Server

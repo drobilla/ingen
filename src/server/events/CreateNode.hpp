@@ -19,8 +19,12 @@
 #define INGEN_EVENTS_CREATENODE_HPP
 
 #include <string>
-#include "QueuedEvent.hpp"
+
+#include <glibmm/thread.h>
+
 #include "ingen/Resource.hpp"
+
+#include "QueuedEvent.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -61,7 +65,8 @@ private:
 	bool           _node_already_exists;
 	bool           _polyphonic;
 
-	Resource::Properties _properties;
+	Resource::Properties     _properties;
+	Glib::RWLock::WriterLock _lock;
 };
 
 } // namespace Server

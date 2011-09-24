@@ -58,6 +58,7 @@ CreatePort::CreatePort(
 	, _patch_port(NULL)
 	, _driver_port(NULL)
 	, _properties(properties)
+	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
 	/* This is blocking because of the two different sets of Patch ports, the array used in the
 	 * audio thread (inherited from NodeImpl), and the arrays used in the pre processor thread.
@@ -74,6 +75,8 @@ CreatePort::CreatePort(
 void
 CreatePort::pre_process()
 {
+	_lock.acquire();
+
 	if (_error == UNKNOWN_TYPE || _engine.engine_store()->find_object(_path)) {
 		QueuedEvent::pre_process();
 		return;
@@ -161,8 +164,10 @@ CreatePort::execute(ProcessContext& context)
 void
 CreatePort::post_process()
 {
-	if (!_request)
+	if (!_request) {
+		_lock.release();
 		return;
+	}
 
 	string msg;
 	switch (_error) {
@@ -183,6 +188,8 @@ CreatePort::post_process()
 		_request->respond_error(msg);
 		break;
 	}
+
+	_lock.release();
 }
 
 } // namespace Server

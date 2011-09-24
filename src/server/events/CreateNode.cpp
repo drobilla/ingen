@@ -57,6 +57,7 @@ CreateNode::CreateNode(
 	, _node_already_exists(false)
 	, _polyphonic(false)
 	, _properties(properties)
+	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
 	const Resource::Properties::const_iterator p = properties.find(
 			engine.world()->uris()->ingen_polyphonic);
@@ -68,6 +69,8 @@ CreateNode::CreateNode(
 void
 CreateNode::pre_process()
 {
+	_lock.acquire();
+
 	if (_engine.engine_store()->find_object(_path) != NULL) {
 		_node_already_exists = true;
 		QueuedEvent::pre_process();
@@ -117,8 +120,10 @@ CreateNode::execute(ProcessContext& context)
 void
 CreateNode::post_process()
 {
-	if (!_request)
+	if (!_request) {
+		_lock.release();
 		return;
+	}
 
 	string msg;
 	if (_node_already_exists) {
@@ -138,6 +143,8 @@ CreateNode::post_process()
 		_request->respond_ok();
 		_engine.broadcaster()->send_object(_node, true); // yes, send ports
 	}
+
+	_lock.release();
 }
 
 } // namespace Server
