@@ -213,11 +213,5 @@ QueuedEngineInterface::get(const URI& uri)
 	push_queued(new Events::Get(_engine, _request, now(), uri));
 }
 
-void
-QueuedEngineInterface::request_property(const URI& uri, const URI& key)
-{
-	push_queued(new Events::RequestMetadata(_engine, _request, now(), Resource::DEFAULT, uri, key));
-}
-
 } // namespace Server
 } // namespace Ingen

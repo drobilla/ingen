@@ -106,12 +106,6 @@ NodeControlWindow::resize()
 void
 NodeControlWindow::on_show()
 {
-	for (NodeModel::Ports::const_iterator i = _node->ports().begin();
-			i != _node->ports().end(); ++i)
-		if ((*i)->is_input() && App::instance().can_control(i->get()))
-			App::instance().engine()->request_property((*i)->path(),
-					App::instance().uris().ingen_value);
-
 	if (_position_stored)
 		move(_x, _y);
 

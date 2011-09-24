@@ -189,12 +189,6 @@ HTTPEngineSender::get(const URI& uri)
 	HTTPClientReceiver::send(msg);
 }
 
-void
-HTTPEngineSender::request_property(const URI& object_path, const URI& key)
-{
-	LOG(warn) << "TODO: request property" << endl;
-}
-
 } // namespace Client
 } // namespace Ingen
 

@@ -236,16 +236,6 @@ OSCEngineSender::get(const URI& uri)
 		LO_ARGS_END);
 }
 
-void
-OSCEngineSender::request_property(const URI& object_path, const URI& key)
-{
-	send("/request_property", "iss",
-		next_id(),
-		object_path.c_str(),
-		key.c_str(),
-		LO_ARGS_END);
-}
-
 } // namespace Client
 } // namespace Ingen
 

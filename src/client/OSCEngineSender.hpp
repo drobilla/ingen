@@ -101,7 +101,6 @@ public:
 	// Requests //
 	void ping();
 	void get(const Raul::URI& uri);
-	void request_property(const Raul::URI& path, const Raul::URI& key);
 
 protected:
 	SharedPtr<Raul::Deletable> _receiver;

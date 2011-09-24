@@ -46,7 +46,6 @@ def build(bld):
             events/Get.cpp
             events/Move.cpp
             events/RegisterClient.cpp
-            events/RequestMetadata.cpp
             events/SetMetadata.cpp
             events/SetPortValue.cpp
             events/UnregisterClient.cpp

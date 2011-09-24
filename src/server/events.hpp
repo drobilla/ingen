@@ -30,7 +30,6 @@
 #include "events/Move.hpp"
 #include "events/Ping.hpp"
 #include "events/RegisterClient.hpp"
-#include "events/RequestMetadata.hpp"
 #include "events/SetMetadata.hpp"
 #include "events/SetPortValue.hpp"
 #include "events/UnregisterClient.hpp"

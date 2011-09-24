@@ -114,7 +114,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, uint16_t port)
 	lo_server_add_method(_server, "/set_property", NULL, set_property_cb, this);
 
 	// Queries
-	lo_server_add_method(_server, "/request_property", "iss", request_property_cb, this);
 	lo_server_add_method(_server, "/get", "is", get_cb, this);
 
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
@@ -571,23 +570,6 @@ OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	return 0;
 }
 
-/** @page engine_osc_namespace
- * <h2>/request_property</h2>
- * @arg @p response-id :: Integer
- * @arg @p uri :: URI String
- * @arg @p key :: URI String
- *
- * Request the value of a property on an object.
- */
-int
-OSCEngineReceiver::_request_property_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* object_path = &argv[1]->s;
-	const char* key         = &argv[2]->s;
-
-	request_property(object_path, key);
-	return 0;
-}
 
 //  Static Callbacks //
 

@@ -115,7 +115,6 @@ private:
 	LO_HANDLER(learn);
 	LO_HANDLER(set_property);
 	LO_HANDLER(property_set);
-	LO_HANDLER(request_property);
 
 	lo_server _server;
 };
