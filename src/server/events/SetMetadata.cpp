@@ -257,6 +257,10 @@ SetMetadata::pre_process()
 		_types.push_back(op);
 	}
 
+	if (!_create_event) {
+		_lock.release();
+	}
+
 	QueuedEvent::pre_process();
 }
 
@@ -378,7 +382,9 @@ SetMetadata::post_process()
 		break;
 	}
 
-	_lock.release();
+	if (_create_event) {
+		_lock.release();
+	}
 }
 
 } // namespace Server
