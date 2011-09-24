@@ -18,13 +18,17 @@
 #ifndef INGEN_ENGINE_BUFFER_HPP
 #define INGEN_ENGINE_BUFFER_HPP
 
-#include <cstddef>
 #include <cassert>
-#include <boost/utility.hpp>
+#include <cstddef>
+
 #include <boost/intrusive_ptr.hpp>
+#include <boost/utility.hpp>
+
+#include "ingen/PortType.hpp"
+#include "raul/AtomicInt.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
-#include "ingen/PortType.hpp"
+
 #include "types.hpp"
 #include "BufferFactory.hpp"
 
@@ -68,7 +72,6 @@ public:
 	inline void ref() { ++_refs; }
 
 	inline void deref() {
-		assert(_refs > 0);
 		if ((--_refs) == 0)
 			_factory.recycle(this);
 	}
@@ -82,8 +85,8 @@ protected:
 	virtual ~Buffer() {}
 
 private:
-	Buffer* _next; ///< Intrusive linked list for BufferFactory
-	size_t  _refs; ///< Intrusive reference count for intrusive_ptr
+	Buffer*         _next; ///< Intrusive linked list for BufferFactory
+	Raul::AtomicInt _refs; ///< Intrusive reference count for intrusive_ptr
 };
 
 } // namespace Server

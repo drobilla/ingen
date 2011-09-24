@@ -27,6 +27,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "ProcessContext.hpp"
+#include "ThreadManager.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -53,6 +54,8 @@ public:
 
 		if (realtime)
 			set_scheduling(SCHED_FIFO, 40);
+
+		set_context(THREAD_PROCESS);
 	}
 
 	~ProcessSlave() {
