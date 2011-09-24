@@ -307,7 +307,7 @@ Port::set_selected(bool b)
 			const App&                 app  = App::instance();
 			SharedPtr<const NodeModel> node = PtrCast<NodeModel>(pm->parent());
 			PatchWindow*               win  = app.window_factory()->parent_patch_window(node);
-			if (win) {
+			if (win && node->plugin_model()) {
 				const std::string& doc = node->plugin_model()->port_documentation(
 					pm->index());
 				if (!doc.empty()) {
