@@ -50,7 +50,7 @@ ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value,
 	     (i != _properties.end()) && (i->first == uri);) {
 		Properties::iterator next = i;
 		++next;
-		if (i->second.context() == ctx && i->second == value) {
+		if (i->second.context() == ctx) {
 			_properties.erase(i);
 		}
 		i = next;
