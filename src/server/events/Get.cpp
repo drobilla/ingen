@@ -15,17 +15,15 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "Get.hpp"
 #include "ingen/ClientInterface.hpp"
-#include "Request.hpp"
+
+#include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "ClientBroadcaster.hpp"
-#include "PatchImpl.hpp"
-#include "NodeImpl.hpp"
-#include "PortImpl.hpp"
+#include "Get.hpp"
 #include "ObjectSender.hpp"
-#include "ProcessContext.hpp"
+#include "PluginImpl.hpp"
+#include "Request.hpp"
 
 using namespace Raul;
 
@@ -33,11 +31,10 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Get::Get(
-		Engine&              engine,
-		SharedPtr<Request>   request,
-		SampleCount          timestamp,
-		const URI&           uri)
+Get::Get(Engine&            engine,
+         SharedPtr<Request> request,
+         SampleCount        timestamp,
+         const URI&         uri)
 	: QueuedEvent(engine, request, timestamp)
 	, _uri(uri)
 	, _object(NULL)
