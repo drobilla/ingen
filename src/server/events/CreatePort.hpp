@@ -18,8 +18,6 @@
 #ifndef INGEN_EVENTS_CREATEPORT_HPP
 #define INGEN_EVENTS_CREATEPORT_HPP
 
-#include <glibmm/thread.h>
-
 #include "raul/Array.hpp"
 #include "raul/Path.hpp"
 
@@ -75,8 +73,7 @@ private:
 	DriverPort*             _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
 	bool                    _succeeded;
 
-	Resource::Properties     _properties;
-	Glib::RWLock::WriterLock _lock;
+	Resource::Properties _properties;
 };
 
 } // namespace Server

@@ -20,8 +20,6 @@
 
 #include <string>
 
-#include <glibmm/thread.h>
-
 #include "ingen/Resource.hpp"
 
 #include "QueuedEvent.hpp"
@@ -65,8 +63,7 @@ private:
 	bool           _node_already_exists;
 	bool           _polyphonic;
 
-	Resource::Properties     _properties;
-	Glib::RWLock::WriterLock _lock;
+	Resource::Properties _properties;
 };
 
 } // namespace Server

@@ -53,11 +53,6 @@ public:
 	ClientInterface* client() const { return _client; }
 	void set_client(ClientInterface* client) { _client = client; }
 
-	void unblock() {
-		if (_source)
-			_source->unblock();
-	}
-
 	void respond_ok() {
 		if (_client)
 			_client->response_ok(_id);

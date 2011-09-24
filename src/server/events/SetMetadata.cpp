@@ -57,7 +57,7 @@ SetMetadata::SetMetadata(
 		const URI&          subject,
 		const Properties&   properties,
 		const Properties&   remove)
-	: QueuedEvent(engine, request, timestamp, false)
+	: QueuedEvent(engine, request, timestamp)
 	, _create_event(NULL)
 	, _subject(subject)
 	, _properties(properties)
@@ -67,6 +67,7 @@ SetMetadata::SetMetadata(
 	, _compiled_patch(NULL)
 	, _create(create)
 	, _context(context)
+	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
 	if (context != Resource::DEFAULT) {
 		Resource::set_context(_properties, context);
@@ -102,6 +103,8 @@ SetMetadata::pre_process()
 
 	const bool is_graph_object = Path::is_path(_subject);
 
+	_lock.acquire();
+
 	_object = is_graph_object
 		? _engine.engine_store()->find_object(Path(_subject.str()))
 		: static_cast<Shared::ResourceImpl*>(_engine.node_factory()->plugin(_subject));
@@ -135,7 +138,6 @@ SetMetadata::pre_process()
 			_create_event = new CreateNode(_engine, sub_request, _time,
 					path, p->second.get_uri(), _properties);
 		} else if (is_port) {
-			_blocking = bool(_request);
 			_create_event = new CreatePort(_engine, sub_request, _time,
 					path, data_type.uri(), is_output, _properties);
 		}
@@ -219,7 +221,6 @@ SetMetadata::pre_process()
 				} else if (key == uris.ingen_polyphony) {
 					if (value.type() == Atom::INT) {
 						op = POLYPHONY;
-						_blocking = true;
 						_patch->prepare_internal_poly(*_engine.buffer_factory(), value.get_int32());
 					} else {
 						_error = BAD_VALUE_TYPE;
@@ -230,7 +231,6 @@ SetMetadata::pre_process()
 				if (parent) {
 					if (value.type() == Atom::BOOL) {
 						op = POLYPHONIC;
-						_blocking = true;
 						obj->set_property(key, value.get_bool(), value.context());
 						NodeImpl* node = dynamic_cast<NodeImpl*>(obj);
 						if (node)
@@ -340,9 +340,6 @@ SetMetadata::execute(ProcessContext& context)
 	}
 
 	QueuedEvent::execute(context);
-
-	if (_blocking)
-		_request->unblock();
 }
 
 void
@@ -380,6 +377,8 @@ SetMetadata::post_process()
 					% _subject % _error_predicate).str());
 		break;
 	}
+
+	_lock.release();
 }
 
 } // namespace Server

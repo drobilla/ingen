@@ -45,30 +45,23 @@ public:
 
 	virtual void execute(ProcessContext& context);
 
-	/** True iff this event blocks the prepare phase of other events. */
-	bool is_blocking() { return _blocking; }
-
-	bool is_prepared() { return _pre_processed; }
+	bool is_prepared() const { return _pre_processed; }
 
 protected:
 	QueuedEvent(Engine&            engine,
 	            SharedPtr<Request> request,
-	            FrameTime          time,
-	            bool               blocking=false)
+	            FrameTime          time)
 		: Event(engine, request, time)
 		, _pre_processed(false)
-		, _blocking(blocking)
 	{}
 
 	// NULL event base (for internal events only!)
 	explicit QueuedEvent(Engine& engine)
 		: Event(engine, SharedPtr<Request>(), 0)
 		, _pre_processed(false)
-		, _blocking(false)
 	{}
 
 	bool _pre_processed;
-	bool _blocking;
 };
 
 } // namespace Server

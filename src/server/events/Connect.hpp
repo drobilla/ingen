@@ -49,7 +49,11 @@ namespace Events {
 class Connect : public QueuedEvent
 {
 public:
-	Connect(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Raul::Path& src_port_path, const Raul::Path& dst_port_path);
+	Connect(Engine&            engine,
+	        SharedPtr<Request> request,
+	        SampleCount        timestamp,
+	        const Raul::Path&  src_port_path,
+	        const Raul::Path&  dst_port_path);
 
 	void pre_process();
 	void execute(ProcessContext& context);

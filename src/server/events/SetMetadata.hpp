@@ -18,6 +18,7 @@
 #ifndef INGEN_EVENTS_SETMETADATA_HPP
 #define INGEN_EVENTS_SETMETADATA_HPP
 
+#include <glibmm/thread.h>
 
 #include <vector>
 
@@ -120,6 +121,8 @@ private:
 	ControlBindings::Key         _binding;
 
 	SharedPtr<ControlBindings::Bindings> _old_bindings;
+
+	Glib::RWLock::WriterLock _lock;
 };
 
 } // namespace Server

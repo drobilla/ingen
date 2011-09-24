@@ -49,7 +49,7 @@ CreatePort::CreatePort(
 		const Raul::URI&            type,
 		bool                        is_output,
 		const Resource::Properties& properties)
-	: QueuedEvent(engine, request, timestamp, bool(request))
+	: QueuedEvent(engine, request, timestamp)
 	, _path(path)
 	, _type(type)
 	, _is_output(is_output)
@@ -58,16 +58,7 @@ CreatePort::CreatePort(
 	, _patch_port(NULL)
 	, _driver_port(NULL)
 	, _properties(properties)
-	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
-	/* This is blocking because of the two different sets of Patch ports, the array used in the
-	 * audio thread (inherited from NodeImpl), and the arrays used in the pre processor thread.
-	 * If two add port events arrive in the same cycle and the second pre processes before the
-	 * first executes, bad things happen (ports are lost).
-	 *
-	 * TODO: fix this using RCU?
-	 */
-
 	if (_data_type == PortType::UNKNOWN)
 		_error = UNKNOWN_TYPE;
 }
@@ -75,8 +66,6 @@ CreatePort::CreatePort(
 void
 CreatePort::pre_process()
 {
-	_lock.acquire();
-
 	if (_error == UNKNOWN_TYPE || _engine.engine_store()->find_object(_path)) {
 		QueuedEvent::pre_process();
 		return;
@@ -156,16 +145,12 @@ CreatePort::execute(ProcessContext& context)
 	if (_driver_port) {
 		_engine.driver()->add_port(_driver_port);
 	}
-
-	if (_request)
-		_request->unblock();
 }
 
 void
 CreatePort::post_process()
 {
 	if (!_request) {
-		_lock.release();
 		return;
 	}
 
@@ -188,8 +173,6 @@ CreatePort::post_process()
 		_request->respond_error(msg);
 		break;
 	}
-
-	_lock.release();
 }
 
 } // namespace Server

@@ -16,9 +16,13 @@
  */
 
 #include <string>
+
 #include <boost/format.hpp>
+#include <glibmm/thread.h>
+
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
+
 #include "ClientBroadcaster.hpp"
 #include "Connect.hpp"
 #include "ConnectionImpl.hpp"
@@ -40,7 +44,11 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& src_port_path, const Path& dst_port_path)
+Connect::Connect(Engine&            engine,
+                 SharedPtr<Request> request,
+                 SampleCount        timestamp,
+                 const Path&        src_port_path,
+                 const Path&        dst_port_path)
 	: QueuedEvent(engine, request, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
@@ -50,12 +58,13 @@ Connect::Connect(Engine& engine, SharedPtr<Request> request, SampleCount timesta
 	, _compiled_patch(NULL)
 	, _port_listnode(NULL)
 	, _buffers(NULL)
-{
-}
+{}
 
 void
 Connect::pre_process()
 {
+	Glib::RWLock::ReaderLock rlock(_engine.engine_store()->lock());
+	
 	PortImpl* src_port = _engine.engine_store()->find_port(_src_port_path);
 	PortImpl* dst_port = _engine.engine_store()->find_port(_dst_port_path);
 	if (!src_port || !dst_port) {
@@ -122,15 +131,23 @@ Connect::pre_process()
 
 	_port_listnode = new InputPort::Connections::Node(_connection);
 
-	// Need to be careful about patch port connections here and adding a node's
-	// parent as a dependant/provider, or adding a patch as it's own provider...
-	if (src_node != dst_node && src_node->parent() == dst_node->parent()) {
-		dst_node->providers()->push_back(new Raul::List<NodeImpl*>::Node(src_node));
-		src_node->dependants()->push_back(new Raul::List<NodeImpl*>::Node(dst_node));
-	}
+	rlock.release();
 
-	_patch->add_connection(_connection);
-	_dst_input_port->increment_num_connections();
+	{
+		Glib::RWLock::ReaderLock wlock(_engine.engine_store()->lock());
+
+		/* Need to be careful about patch port connections here and adding a
+		   node's parent as a dependant/provider, or adding a patch as its own
+		   provider...
+		*/
+		if (src_node != dst_node && src_node->parent() == dst_node->parent()) {
+			dst_node->providers()->push_back(new Raul::List<NodeImpl*>::Node(src_node));
+			src_node->dependants()->push_back(new Raul::List<NodeImpl*>::Node(dst_node));
+		}
+
+		_patch->add_connection(_connection);
+		_dst_input_port->increment_num_connections();
+	}
 
 	/*if ((_dst_input_port->num_connections() == 1
 				&& (_connection->must_mix() || _connection->must_queue()))

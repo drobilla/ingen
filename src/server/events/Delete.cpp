@@ -40,7 +40,7 @@ Delete::Delete(Engine&            engine,
                SharedPtr<Request> request,
                FrameTime          time,
                const Raul::URI&   uri)
-	: QueuedEvent(engine, request, time, true)
+	: QueuedEvent(engine, request, time)
 	, _uri(uri)
 	, _store_iterator(engine.engine_store()->end())
 	, _garbage(NULL)
@@ -166,8 +166,6 @@ Delete::execute(ProcessContext& context)
 		_engine.maid()->push(parent_patch->compiled_patch());
 		parent_patch->compiled_patch(_compiled_patch);
 	}
-
-	_request->unblock();
 }
 
 void

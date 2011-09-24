@@ -15,15 +15,18 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <glibmm/thread.h>
+
 #include "raul/Path.hpp"
-#include "events/Move.hpp"
+
 #include "ClientBroadcaster.hpp"
+#include "Driver.hpp"
 #include "Engine.hpp"
-#include "NodeImpl.hpp"
 #include "EngineStore.hpp"
+#include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "Request.hpp"
-#include "Driver.hpp"
+#include "events/Move.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -48,6 +51,8 @@ Move::~Move()
 void
 Move::pre_process()
 {
+	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
+
 	if (!_old_path.parent().is_parent_of(_new_path)) {
 		_error = PARENT_DIFFERS;
 		QueuedEvent::pre_process();

@@ -27,7 +27,6 @@ namespace Ingen {
 namespace Server {
 
 EventSource::EventSource()
-	: _blocking_semaphore(0)
 {
 	Thread::set_context(THREAD_PRE_PROCESS);
 	set_name("EventSource");
@@ -120,11 +119,6 @@ EventSource::_whipped()
 	assert(ev->is_prepared());
 
 	_prepared_back = (QueuedEvent*)ev->next();
-
-	// If event was blocking, wait for event to being run through the
-	// process thread before preparing the next event
-	if (ev->is_blocking())
-		_blocking_semaphore.wait();
 }
 
 } // namespace Server

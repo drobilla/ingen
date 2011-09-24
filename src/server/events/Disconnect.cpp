@@ -15,10 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "raul/log.hpp"
+#include <glibmm/thread.h>
+
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "events/Disconnect.hpp"
+#include "raul/log.hpp"
+
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ConnectionImpl.hpp"
@@ -32,6 +34,7 @@
 #include "ProcessContext.hpp"
 #include "Request.hpp"
 #include "ThreadManager.hpp"
+#include "events/Disconnect.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -40,12 +43,11 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Disconnect::Disconnect(
-		Engine&            engine,
-		SharedPtr<Request> request,
-		SampleCount        timestamp,
-		const Raul::Path&  src_port_path,
-		const Raul::Path&  dst_port_path)
+Disconnect::Disconnect(Engine&            engine,
+                       SharedPtr<Request> request,
+                       SampleCount        timestamp,
+                       const Raul::Path&  src_port_path,
+                       const Raul::Path&  dst_port_path)
 	: QueuedEvent(engine, request, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
@@ -113,6 +115,8 @@ Disconnect::Impl::Impl(Engine&     e,
 void
 Disconnect::pre_process()
 {
+	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
+
 	if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
 	    && _src_port_path.parent() != _dst_port_path.parent().parent()
 	    && _src_port_path.parent().parent() != _dst_port_path.parent()) {

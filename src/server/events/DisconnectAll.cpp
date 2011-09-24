@@ -16,6 +16,7 @@
  */
 
 #include <boost/format.hpp>
+#include <glibmm/thread.h>
 
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
@@ -98,7 +99,11 @@ DisconnectAll::maybe_remove_connection(ConnectionImpl* c)
 void
 DisconnectAll::pre_process()
 {
+	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock(), Glib::NOT_LOCK);
+
 	if (!_deleting) {
+		lock.acquire();
+
 		_parent = _engine.engine_store()->find_patch(_parent_path);
 
 		if (_parent == NULL) {
@@ -115,7 +120,8 @@ DisconnectAll::pre_process()
 			return;
 		}
 
-		if (object->parent_patch() != _parent && object->parent()->parent_patch() != _parent) {
+		if (object->parent_patch() != _parent
+		    && object->parent()->parent_patch() != _parent) {
 			_error = INVALID_PARENT_PATH;
 			QueuedEvent::pre_process();
 			return;
