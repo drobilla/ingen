@@ -57,9 +57,13 @@ public:
 
 	const Raul::Atom& get_property(const Raul::URI& key) const;
 
-	const Raul::Atom& set_property(const Raul::URI& key, const Raul::Atom& value,
-	                               Resource::Graph ctx);
-	void        add_property(const Raul::URI& key, const Raul::Atom& value);
+	const Raul::Atom& set_property(const Raul::URI&  key,
+	                               const Raul::Atom& value,
+	                               Resource::Graph   ctx);
+
+	void add_property(const Raul::URI&  key,
+	                  const Raul::Atom& value,
+	                  Resource::Graph   ctx);
 
 	const Raul::Path&      path()       const { return _path; }
 	const Raul::Symbol&    symbol()     const { return _symbol; }

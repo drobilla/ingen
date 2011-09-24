@@ -174,12 +174,12 @@ SetMetadata::pre_process()
 	}
 
 	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p) {
-		const Raul::URI&  key   = p->first;
-		const Raul::Atom& value = p->second;
-		SpecialType       op    = NONE;
+		const Raul::URI&          key   = p->first;
+		const Resource::Property& value = p->second;
+		SpecialType               op    = NONE;
 		if (obj) {
 			Resource& resource = *obj;
-			resource.add_property(key, value);
+			resource.add_property(key, value, value.context());
 
 			PortImpl* port = dynamic_cast<PortImpl*>(_object);
 			if (port) {
@@ -231,7 +231,7 @@ SetMetadata::pre_process()
 					if (value.type() == Atom::BOOL) {
 						op = POLYPHONIC;
 						_blocking = true;
-						obj->set_property(key, value.get_bool());
+						obj->set_property(key, value.get_bool(), value.context());
 						NodeImpl* node = dynamic_cast<NodeImpl*>(obj);
 						if (node)
 							node->set_polyphonic(value.get_bool());

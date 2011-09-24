@@ -57,9 +57,10 @@ ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value,
 }
 
 void
-ObjectModel::add_property(const Raul::URI& key, const Raul::Atom& value)
+ObjectModel::add_property(const Raul::URI& key, const Raul::Atom& value,
+                          Resource::Graph ctx)
 {
-	ResourceImpl::add_property(key, value);
+	ResourceImpl::add_property(key, value, ctx);
 	_signal_property.emit(key, value);
 }
 

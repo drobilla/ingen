@@ -50,7 +50,8 @@ public:
 	                               Resource::Graph ctx=Resource::DEFAULT);
 	void              remove_property(const Raul::URI& uri, const Raul::Atom& value);
 	bool              has_property(const Raul::URI& uri, const Raul::Atom& value) const;
-	void              add_property(const Raul::URI& uri, const Raul::Atom& value);
+	void              add_property(const Raul::URI& uri, const Raul::Atom& value,
+	                               Graph ctx=DEFAULT);
 	void              set_properties(const Properties& p);
 	void              add_properties(const Properties& p);
 	void              remove_properties(const Properties& p);

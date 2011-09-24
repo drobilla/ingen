@@ -15,17 +15,24 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "SubpatchModule.hpp"
 #include <cassert>
+#include <utility>
+
 #include "ingen/ServerInterface.hpp"
 #include "ingen/client/PatchModel.hpp"
+
 #include "App.hpp"
-#include "NodeModule.hpp"
+#include "LV2URIMap.hpp"
 #include "NodeControlWindow.hpp"
-#include "PatchWindow.hpp"
+#include "NodeModule.hpp"
 #include "PatchCanvas.hpp"
+#include "PatchWindow.hpp"
 #include "Port.hpp"
+#include "SubpatchModule.hpp"
 #include "WindowFactory.hpp"
+
+using namespace std;
+using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -50,6 +57,30 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 		: App::instance().window_factory()->patch_window(parent) );
 
 	App::instance().window_factory()->present_patch(_patch, preferred);
+}
+
+void
+SubpatchModule::store_location()
+{
+	const Atom x(static_cast<float>(property_x()));
+	const Atom y(static_cast<float>(property_y()));
+
+	const LV2URIMap& uris = App::instance().uris();
+
+	const Atom& existing_x = _node->get_property(uris.ingenui_canvas_x);
+	const Atom& existing_y = _node->get_property(uris.ingenui_canvas_y);
+
+	if (x != existing_x && y != existing_y) {
+		Resource::Properties remove;
+		remove.insert(make_pair(uris.ingenui_canvas_x, uris.wildcard));
+		remove.insert(make_pair(uris.ingenui_canvas_y, uris.wildcard));
+		Resource::Properties add;
+		add.insert(make_pair(uris.ingenui_canvas_x,
+		                     Resource::Property(x, Resource::EXTERNAL)));
+		add.insert(make_pair(uris.ingenui_canvas_y,
+		                     Resource::Property(y, Resource::EXTERNAL)));
+		App::instance().engine()->delta(_node->path(), remove, add);
+	}
 }
 
 /** Browse to this patch in current (parent's) window

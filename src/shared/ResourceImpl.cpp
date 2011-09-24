@@ -27,16 +27,18 @@ namespace Ingen {
 namespace Shared {
 
 void
-ResourceImpl::add_property(const Raul::URI& uri, const Raul::Atom& value)
+ResourceImpl::add_property(const Raul::URI&  uri,
+                           const Raul::Atom& value,
+                           Graph             ctx)
 {
 	// Ignore duplicate statements
 	typedef Resource::Properties::const_iterator iterator;
 	const std::pair<iterator,iterator> range = _properties.equal_range(uri);
 	for (iterator i = range.first; i != range.second && i != _properties.end(); ++i)
-		if (i->second == value)
+		if (i->second == value && i->second.context() == ctx)
 			return;
 
-	_properties.insert(make_pair(uri, value));
+	_properties.insert(make_pair(uri, Property(value, ctx)));
 }
 
 const Raul::Atom&
@@ -165,7 +167,7 @@ void
 ResourceImpl::set_properties(const Properties& p)
 {
 	for (Resource::Properties::const_iterator i = p.begin(); i != p.end(); ++i) {
-		set_property(i->first, i->second);
+		set_property(i->first, i->second, i->second.context());
 	}
 }
 
@@ -174,7 +176,7 @@ ResourceImpl::add_properties(const Properties& p)
 {
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = p.begin(); i != p.end(); ++i)
-		add_property(i->first, i->second);
+		add_property(i->first, i->second, i->second.context());
 }
 
 void

@@ -122,7 +122,7 @@ private:
 			const LV2Children&       children,
 			std::set<const char*>&   ancestors);
 
-	GraphObject::Properties get_initial_data();
+	GraphObject::Properties get_initial_data(Resource::Graph ctx=Resource::DEFAULT);
 
 	FlowCanvas::Port* get_port_view(SharedPtr<PortModel> port);
 

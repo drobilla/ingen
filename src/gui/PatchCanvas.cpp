@@ -822,31 +822,36 @@ PatchCanvas::get_new_module_location(double& x, double& y)
 }
 
 GraphObject::Properties
-PatchCanvas::get_initial_data()
+PatchCanvas::get_initial_data(Resource::Graph ctx)
 {
 	GraphObject::Properties result;
 	const LV2URIMap& uris = App::instance().uris();
-	result.insert(make_pair(uris.ingenui_canvas_x, Atom((float)_last_click_x)));
-	result.insert(make_pair(uris.ingenui_canvas_y, Atom((float)_last_click_y)));
+	result.insert(make_pair(uris.ingenui_canvas_x,
+	                        Resource::Property((float)_last_click_x, ctx)));
+	result.insert(make_pair(uris.ingenui_canvas_y,
+	                        Resource::Property((float)_last_click_y, ctx)));
 	return result;
 }
 
 void
 PatchCanvas::menu_load_plugin()
 {
-	App::instance().window_factory()->present_load_plugin(_patch, get_initial_data());
+	App::instance().window_factory()->present_load_plugin(
+		_patch, get_initial_data());
 }
 
 void
 PatchCanvas::menu_load_patch()
 {
-	App::instance().window_factory()->present_load_subpatch(_patch, get_initial_data());
+	App::instance().window_factory()->present_load_subpatch(
+		_patch, get_initial_data(Resource::EXTERNAL));
 }
 
 void
 PatchCanvas::menu_new_patch()
 {
-	App::instance().window_factory()->present_new_subpatch(_patch, get_initial_data());
+	App::instance().window_factory()->present_new_subpatch(
+		_patch, get_initial_data(Resource::EXTERNAL));
 }
 
 void

@@ -120,7 +120,8 @@ public:
 	                                       const Raul::Atom& value,
 	                                       Graph             ctx=DEFAULT) = 0;
 	virtual void              add_property(const Raul::URI&  uri,
-	                                       const Raul::Atom& value)       = 0;
+	                                       const Raul::Atom& value,
+	                                       Graph             ctx=DEFAULT) = 0;
 	virtual bool              has_property(const Raul::URI&  uri,
 	                                       const Raul::Atom& value) const = 0;
 };
