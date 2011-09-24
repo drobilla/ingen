@@ -1863,6 +1863,7 @@ Contributors:
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <accelerator key="C" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_patch_copy_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
@@ -1875,6 +1876,7 @@ Contributors:
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <accelerator key="V" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                         <signal name="activate" handler="on_patch_paste_menuitem_activate" swapped="no"/>
                       </object>
                     </child>

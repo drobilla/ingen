@@ -34,7 +34,6 @@
 
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
-#include "EventSource.hpp"
 #include "OSCClientSender.hpp"
 #include "OSCEngineReceiver.hpp"
 #include "ThreadManager.hpp"
