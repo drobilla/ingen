@@ -16,8 +16,8 @@ top = '.'
 out = 'build'
 
 def options(opt):
-    autowaf.set_options(opt)
     opt.load('compiler_cxx')
+    autowaf.set_options(opt)
     opt.add_option('--data-dir', type='string', dest='datadir',
                    help="Ingen data install directory [Default: PREFIX/share/ingen]")
     opt.add_option('--module-dir', type='string', dest='moduledir',
@@ -37,11 +37,11 @@ def options(opt):
                    help="Use liblo bundle support (experimental, requires patched liblo)")
 
 def configure(conf):
+    conf.load('compiler_cxx')
     autowaf.configure(conf)
     conf.line_just = 67
 
     autowaf.display_header('Ingen Configuration')
-    conf.load('compiler_cxx')
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
                       atleast_version='2.14.0', mandatory=True)
     autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
