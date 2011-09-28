@@ -30,12 +30,15 @@
 @prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd:  <http://www.w3.org/2001/XMLSchema> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
 
-<> a lv2:Specification ;
+<http://drobilla.net/ns/ingen>
+    a owl:Ontology ;
     doap:name     "Ingen" ;
     doap:homepage <http://drobilla.net/software/ingen> ;
-    doap:maintainer [ a foaf:Person ;
+    doap:maintainer [
+        a foaf:Person ;
         foaf:name     "David Robillard" ;
         foaf:homepage <http://drobilla.net/> ;
         rdfs:seeAlso  <http://drobilla.net/drobilla.rdf>
@@ -46,7 +49,7 @@
 ## Plugin ##
 ############
 
-:Plugin a rdfs:Class ;
+:Plugin a owl:Class ;
     rdfs:label "Plugin" ;
     rdfs:comment """
 A class which can be instantiated into a :Node.  A plugin has a set of input
@@ -57,14 +60,14 @@ for details about the required properties (rdf:type, doap:name, doap:license,
 and lv2:port).
 """ .
 
-lv2:Plugin rdfs:subClassOf :Plugin .
+#lv2:Plugin rdfs:subClassOf :Plugin .
 
 
 ###########
 ## Patch ##
 ###########
 
-:Patch a rdfs:Class ;
+:Patch a owl:Class ;
     rdfs:subClassOf :Plugin ;
     rdfs:label "Patch" ;
     rdfs:comment """
@@ -72,13 +75,13 @@ A collection of Nodes connected together form a Patch, which is itself
 a :Plugin (and thus can be part of another patch, and so on)
 """ .
 
-:node a rdf:Property ;
+:node a owl:ObjectProperty ;
     rdfs:domain  :Patch ;
     rdfs:range   :Node ;
     rdfs:label   "node" ;
     rdfs:comment "Signifies a patch contains some node." .
 
-:polyphony a rdf:Property ;
+:polyphony a owl:ObjectProperty ;
     rdfs:domain  :Patch ;
     rdfs:range   xsd:integer ;
     rdfs:label   "Polyphony" ;
@@ -96,7 +99,7 @@ seen as polyphonic to the Patch's parent.
 ## Object ##
 ############
 
-:Object a rdfs:Class ;
+:Object a owl:Class ;
     rdfs:label "Ingen Object" ;
     rdfs:comment """
 A signal processing object which is part of a Patch.  An Object MUST have
@@ -105,7 +108,7 @@ possible (e.g. in a system which publishes node URIs in a heirarchial way
 such that the parent can be 'chopped' to get a legal symbol).
 """ .
 
-:polyphonic a rdf:Property ;
+:polyphonic a owl:ObjectProperty ;
     rdfs:domain  :Object ;
     rdfs:range   xsd:boolean ;
     rdfs:label   "Polyphonic" ;
@@ -124,7 +127,7 @@ polyphonic according to this property, if those voices are mixed down.
 ## Node ##
 ##########
 
-:Node a rdfs:Class ;
+:Node a owl:Class ;
     rdfs:subClassOf :Object ;
     rdfs:label      "Node" ;
     rdfs:comment """
@@ -140,7 +143,7 @@ of :Plugin.  When there are many such properties, an applications SHOULD
 use the most specific class it understands.
 """ .
 
-:enabled a rdf:Property ;
+:enabled a owl:ObjectProperty ;
     rdfs:domain  :Node ;
     rdfs:range   xsd:boolean ;
     rdfs:label   "Enabled" ;
@@ -151,7 +154,7 @@ use the most specific class it understands.
 ## Port ##
 ##########
 
-:Port a rdfs:Class ;
+:Port a owl:Class ;
     rdfs:subClassOf :Object ;
     rdfs:label      "Port" ;
     rdfs:comment """
@@ -167,7 +170,7 @@ parent's Plugin in the exact way Nodes inherit properties from their Plugin.
 ## Connection ##
 ################
 
-:Connection a rdfs:Class ;
+:Connection a owl:Class ;
     rdfs:label   "Connection" ;
     rdfs:comment """
 A connection between two ports.  Patches have a set of connections which
@@ -175,13 +178,13 @@ define how its component nodes and ports are connected.  A Connection MUST
 have exactly one :source property and exactly one :destination property.
 """ .
 
-:source a rdf:Property ;
+:source a owl:ObjectProperty ;
     rdfs:domain  :Connection ;
     rdfs:range   :Port ;
     rdfs:label   "Source" ;
     rdfs:comment "The source/sending port of this connection" .
 
-:destination a rdf:Property ;
+:destination a owl:ObjectProperty ;
     rdfs:domain  :Connection ;
     rdfs:range   :Port ;
     rdfs:label   "Destination" ;
