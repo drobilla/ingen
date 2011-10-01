@@ -84,6 +84,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 	iter = _criteria_liststore->append(); row = *iter;
 	row[_criteria_columns._col_label] = "URI contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::URI;
+	_filter_combo->pack_start(_criteria_columns._col_label);
 
 	_add_button->signal_clicked().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
