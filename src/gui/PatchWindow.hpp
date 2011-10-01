@@ -156,7 +156,6 @@ private:
 
 	Gtk::HPaned*         _doc_paned;
 	Gtk::ScrolledWindow* _doc_scrolledwindow;
-	Gtk::TextView*       _doc_textview;
 
 	sigc::connection _entered_connection;
 	sigc::connection _left_connection;

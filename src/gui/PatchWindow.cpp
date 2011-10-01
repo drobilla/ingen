@@ -107,7 +107,6 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
 	xml->get_widget("patch_documentation_paned", _doc_paned);
 	xml->get_widget("patch_documentation_scrolledwindow", _doc_scrolledwindow);
-	xml->get_widget("patch_documentation_textview", _doc_textview);
 
 	_menu_view_control_window->property_sensitive() = false;
 	string engine_name = App::instance().engine()->uri().str();
@@ -276,7 +275,8 @@ PatchWindow::set_patch(SharedPtr<const PatchModel> patch,
 	removed_port_connection = patch->signal_editable().connect(
 		sigc::mem_fun(this, &PatchWindow::editable_changed));
 
-	show_all();
+	show();
+	_alignment->show_all();
 
 	_view->signal_object_entered.connect(sigc::mem_fun(this, &PatchWindow::object_entered));
 	_view->signal_object_left.connect(sigc::mem_fun(this, &PatchWindow::object_left));
