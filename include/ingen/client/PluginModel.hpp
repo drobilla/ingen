@@ -76,7 +76,7 @@ public:
 	const std::string& icon_path() const;
 	static std::string get_lv2_icon_path(const LilvPlugin* plugin);
 
-	std::string documentation() const;
+	std::string documentation(bool* html) const;
 	std::string port_documentation(uint32_t index) const;
 
 	static void set_rdf_world(Sord::World& world) {

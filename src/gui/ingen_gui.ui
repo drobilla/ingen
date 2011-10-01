@@ -2187,12 +2187,18 @@ Contributors:
               </packing>
             </child>
             <child>
-              <object class="GtkTextView" id="patch_documentation_textview">
+              <object class="GtkViewport" id="patch_documentation_viewport">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="editable">False</property>
-                <property name="wrap_mode">word</property>
-                <property name="cursor_visible">False</property>
+                <property name="can_focus">False</property>
+                <child>
+                  <object class="GtkTextView" id="patch_documentation_textview">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="editable">False</property>
+                    <property name="wrap_mode">word</property>
+                    <property name="cursor_visible">False</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="resize">False</property>

@@ -311,10 +311,9 @@ Port::set_selected(bool b)
 				const std::string& doc = node->plugin_model()->port_documentation(
 					pm->index());
 				if (!doc.empty()) {
-					win->doc_textview()->get_buffer()->set_text(doc);
-					win->doc_textview()->show();
+					win->show_documentation(doc, false);
 				} else {
-					win->doc_textview()->hide();
+					win->hide_documentation();
 				}
 			}
 		}

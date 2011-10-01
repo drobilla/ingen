@@ -28,6 +28,8 @@
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 
+#include "ingen-config.h"
+
 using namespace std;
 using namespace Raul;
 
@@ -225,19 +227,27 @@ PluginModel::get_lv2_icon_path(const LilvPlugin* plugin)
 }
 
 std::string
-PluginModel::documentation() const
+PluginModel::documentation(bool* html) const
 {
 	std::string doc;
-	if (!_lilv_plugin)
+	if (!_lilv_plugin) {
 		return doc;
+	}
 
-	//LilvNode lv2_documentation = lilv_new_uri(
-	//	_lilv_world, LILV_NAMESPACE_LV2 "documentation");
-	LilvNode* rdfs_comment = lilv_new_uri(
-		_lilv_world, "http://www.w3.org/2000/01/rdf-schema#comment");
+	LilvNode* lv2_documentation = lilv_new_uri(_lilv_world,
+	                                           LILV_NS_LV2 "documentation");
+	LilvNode* rdfs_comment = lilv_new_uri(_lilv_world,
+	                                      LILV_NS_RDFS "comment");
 
-	LilvNodes* vals = lilv_plugin_get_value(_lilv_plugin,
-	                                         rdfs_comment);
+	LilvNodes* vals = lilv_plugin_get_value(_lilv_plugin, lv2_documentation);
+	if (vals) {
+		*html = true;
+		doc += std::string("<h2>") + human_name() + "</h2>\n";
+	} else {
+		*html = false;
+		vals = lilv_plugin_get_value(_lilv_plugin, rdfs_comment);
+	}
+
 	if (vals) {
 		const LilvNode* val = lilv_nodes_get_first(vals);
 		if (lilv_node_is_string(val)) {
@@ -245,6 +255,8 @@ PluginModel::documentation() const
 		}
 	}
 	lilv_node_free(rdfs_comment);
+	lilv_node_free(lv2_documentation);
+	
 	lilv_nodes_free(vals);
 
 	return doc;

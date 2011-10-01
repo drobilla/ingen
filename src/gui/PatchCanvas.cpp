@@ -591,7 +591,7 @@ PatchCanvas::clear_selection()
 	const App&   app = App::instance();
 	PatchWindow* win = app.window_factory()->patch_window(_patch);
 	if (win) {
-		win->doc_textview()->hide();
+		win->hide_documentation();
 	}
 
 	FlowCanvas::Canvas::clear_selection();

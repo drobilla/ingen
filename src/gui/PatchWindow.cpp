@@ -15,31 +15,40 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "PatchWindow.hpp"
 #include <cassert>
 #include <sstream>
+
 #include <boost/format.hpp>
 #include <glib/gstdio.h>
 #include <glibmm/fileutils.h>
+
 #include "raul/AtomRDF.hpp"
+
 #include "ingen/ServerInterface.hpp"
-#include "shared/LV2URIMap.hpp"
-#include "ingen/client/PatchModel.hpp"
 #include "ingen/client/ClientStore.hpp"
+#include "ingen/client/PatchModel.hpp"
+#include "shared/LV2URIMap.hpp"
+
 #include "App.hpp"
-#include "PatchCanvas.hpp"
-#include "LoadPluginWindow.hpp"
-#include "NewSubpatchWindow.hpp"
-#include "LoadPatchWindow.hpp"
-#include "NodeControlWindow.hpp"
-#include "Configuration.hpp"
-#include "MessagesWindow.hpp"
-#include "PatchTreeWindow.hpp"
 #include "BreadCrumbs.hpp"
+#include "Configuration.hpp"
 #include "ConnectWindow.hpp"
+#include "LoadPatchWindow.hpp"
+#include "LoadPluginWindow.hpp"
+#include "MessagesWindow.hpp"
+#include "NewSubpatchWindow.hpp"
+#include "NodeControlWindow.hpp"
+#include "PatchCanvas.hpp"
+#include "PatchTreeWindow.hpp"
+#include "PatchView.hpp"
+#include "PatchWindow.hpp"
 #include "ThreadedLoader.hpp"
 #include "WindowFactory.hpp"
-#include "PatchView.hpp"
+#include "ingen-config.h"
+
+#ifdef HAVE_WEBKIT
+#include <webkit/webkit.h>
+#endif
 
 using namespace Raul;
 
@@ -95,6 +104,7 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 	xml->get_widget("patch_view_messages_window_menuitem", _menu_view_messages_window);
 	xml->get_widget("patch_view_patch_tree_window_menuitem", _menu_view_patch_tree_window);
 	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
+	xml->get_widget("patch_documentation_viewport", _doc_viewport);
 	xml->get_widget("patch_documentation_textview", _doc_textview);
 
 	_menu_view_control_window->property_sensitive() = false;
@@ -297,6 +307,29 @@ PatchWindow::patch_port_removed(SharedPtr<const PortModel> port)
 	_menu_view_control_window->property_sensitive() = false;
 }
 
+void
+PatchWindow::show_documentation(const std::string& doc, bool html)
+{
+#ifdef HAVE_WEBKIT
+	WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+	webkit_web_view_load_html_string(view, doc.c_str(), "");
+	_doc_viewport->add(*Gtk::manage(Glib::wrap(GTK_WIDGET(view))));
+	_doc_viewport->show_all();
+#else
+	Gtk::TextView* view = Gtk::manage(new Gtk::TextView());
+	view->get_buffer()->set_text(doc);
+	_doc_viewport->add(*view);
+	_doc_viewport->show_all();
+#endif
+}
+
+void
+PatchWindow::hide_documentation()
+{
+	_doc_viewport->remove();
+	_doc_viewport->hide();
+}
+	
 void
 PatchWindow::show_status(const ObjectModel* model)
 {

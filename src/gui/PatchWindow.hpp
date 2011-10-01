@@ -57,10 +57,11 @@ public:
 	            const Glib::RefPtr<Gtk::Builder>& xml);
 	~PatchWindow();
 
-	Gtk::TextView* doc_textview() { return _doc_textview; }
-
 	void set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view);
 	void set_patch(SharedPtr<const PatchModel> pc, SharedPtr<PatchView> view);
+
+	void show_documentation(const std::string& doc, bool html);
+	void hide_documentation();
 
 	SharedPtr<const PatchModel> patch() const { return _patch; }
 
@@ -153,6 +154,7 @@ private:
 	BreadCrumbs*        _breadcrumbs;
 	Gtk::Statusbar*     _status_bar;
 
+	Gtk::Viewport* _doc_viewport;
 	Gtk::TextView* _doc_textview;
 
 	sigc::connection _entered_connection;

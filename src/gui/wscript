@@ -55,13 +55,14 @@ def build(bld):
             GLIBMM
             GNOMECANVASMM
             GTKMM
-            RAUL
-            SORD
-            SIGCPP
-            LV2CORE
             LILV
+            LV2CORE
+            RAUL
+            SIGCPP
+            SORD
             SOUP
             SUIL
+            WEBKIT
     ''')
 
     # XML UI definition

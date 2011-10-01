@@ -63,6 +63,8 @@ def configure(conf):
                           atleast_version='2.12.0', mandatory=False)
         autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM',
                           atleast_version='2.14.0', mandatory=False)
+        autowaf.check_pkg(conf, 'webkit-1.0', uselib_store='WEBKIT',
+                          atleast_version='1.4.0', mandatory=False)
         autowaf.check_pkg(conf, 'flowcanvas-1', uselib_store='FLOWCANVAS',
                           atleast_version='1.0.0', mandatory=False)
     if not Options.options.no_http:
@@ -117,6 +119,8 @@ def configure(conf):
     autowaf.display_msg(conf, "HTTP", conf.is_defined('HAVE_SOUP'))
     autowaf.display_msg(conf, "LV2", conf.is_defined('HAVE_LILV'))
     autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
+    autowaf.display_msg(conf, "HTML plugin documentation support",
+                        conf.is_defined('HAVE_WEBKIT'))
     print('')
 
 def build(bld):
