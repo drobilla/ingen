@@ -106,7 +106,7 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 	xml->get_widget("patch_view_patch_tree_window_menuitem", _menu_view_patch_tree_window);
 	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
 	xml->get_widget("patch_documentation_paned", _doc_paned);
-	xml->get_widget("patch_documentation_viewport", _doc_viewport);
+	xml->get_widget("patch_documentation_scrolledwindow", _doc_scrolledwindow);
 	xml->get_widget("patch_documentation_textview", _doc_textview);
 
 	_menu_view_control_window->property_sensitive() = false;
@@ -315,13 +315,13 @@ PatchWindow::show_documentation(const std::string& doc, bool html)
 #ifdef HAVE_WEBKIT
 	WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
 	webkit_web_view_load_html_string(view, doc.c_str(), "");
-	_doc_viewport->add(*Gtk::manage(Glib::wrap(GTK_WIDGET(view))));
-	_doc_viewport->show_all();
+	_doc_scrolledwindow->add(*Gtk::manage(Glib::wrap(GTK_WIDGET(view))));
+	_doc_scrolledwindow->show_all();
 #else
 	Gtk::TextView* view = Gtk::manage(new Gtk::TextView());
 	view->get_buffer()->set_text(doc);
-	_doc_viewport->add(*view);
-	_doc_viewport->show_all();
+	_doc_scrolledwindow->add(*view);
+	_doc_scrolledwindow->show_all();
 #endif
 	if (!_has_shown_documentation) {
 		int width, height;
@@ -334,8 +334,8 @@ PatchWindow::show_documentation(const std::string& doc, bool html)
 void
 PatchWindow::hide_documentation()
 {
-	_doc_viewport->remove();
-	_doc_viewport->hide();
+	_doc_scrolledwindow->remove();
+	_doc_scrolledwindow->hide();
 }
 	
 void

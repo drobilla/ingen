@@ -154,9 +154,9 @@ private:
 	BreadCrumbs*        _breadcrumbs;
 	Gtk::Statusbar*     _status_bar;
 
-	Gtk::HPaned*   _doc_paned;
-	Gtk::Viewport* _doc_viewport;
-	Gtk::TextView* _doc_textview;
+	Gtk::HPaned*         _doc_paned;
+	Gtk::ScrolledWindow* _doc_scrolledwindow;
+	Gtk::TextView*       _doc_textview;
 
 	sigc::connection _entered_connection;
 	sigc::connection _left_connection;

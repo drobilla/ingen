@@ -2187,9 +2187,10 @@ Contributors:
               </packing>
             </child>
             <child>
-              <object class="GtkViewport" id="patch_documentation_viewport">
+              <object class="GtkScrolledWindow" id="patch_documentation_scrolledwindow">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
+                <property name="shadow_type">in</property>
                 <child>
                   <object class="GtkTextView" id="patch_documentation_textview">
                     <property name="visible">True</property>
@@ -2201,7 +2202,7 @@ Contributors:
                 </child>
               </object>
               <packing>
-                <property name="resize">False</property>
+                <property name="resize">True</property>
                 <property name="shrink">True</property>
               </packing>
             </child>
