@@ -109,7 +109,7 @@ public:
 
 	virtual bool get_buffers(BufferFactory&                   bufs,
 	                         Raul::Array<BufferFactory::Ref>* buffers,
-	                         uint32_t                         poly) = 0;
+	                         uint32_t                         poly) const = 0;
 
 	void setup_buffers(BufferFactory& bufs, uint32_t poly) {
 		get_buffers(bufs, _buffers, poly);

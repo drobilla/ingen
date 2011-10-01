@@ -78,7 +78,7 @@ InputPort::apply_poly(Maid& maid, uint32_t poly)
 bool
 InputPort::get_buffers(BufferFactory&                   bufs,
                        Raul::Array<BufferFactory::Ref>* buffers,
-                       uint32_t                         poly)
+                       uint32_t                         poly) const
 {
 	size_t num_connections = (ThreadManager::thread_is(THREAD_PROCESS))
 			? _connections.size() : _num_connections;
