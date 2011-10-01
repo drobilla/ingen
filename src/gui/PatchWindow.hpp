@@ -154,6 +154,7 @@ private:
 	BreadCrumbs*        _breadcrumbs;
 	Gtk::Statusbar*     _status_bar;
 
+	Gtk::HPaned*   _doc_paned;
 	Gtk::Viewport* _doc_viewport;
 	Gtk::TextView* _doc_textview;
 
@@ -162,6 +163,8 @@ private:
 
 	/** Invisible bin used to store breadcrumbs when not shown by a view */
 	Gtk::Alignment _breadcrumb_bin;
+
+	bool _has_shown_documentation;
 };
 
 } // namespace GUI

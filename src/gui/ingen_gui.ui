@@ -2170,7 +2170,7 @@ Contributors:
           </packing>
         </child>
         <child>
-          <object class="GtkHPaned" id="hpaned1">
+          <object class="GtkHPaned" id="patch_documentation_paned">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>

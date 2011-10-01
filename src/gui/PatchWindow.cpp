@@ -67,6 +67,7 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 	, _x(0)
 	, _y(0)
 	, _breadcrumbs(NULL)
+	, _has_shown_documentation(false)
 {
 	property_visible() = false;
 
@@ -104,6 +105,7 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 	xml->get_widget("patch_view_messages_window_menuitem", _menu_view_messages_window);
 	xml->get_widget("patch_view_patch_tree_window_menuitem", _menu_view_patch_tree_window);
 	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
+	xml->get_widget("patch_documentation_paned", _doc_paned);
 	xml->get_widget("patch_documentation_viewport", _doc_viewport);
 	xml->get_widget("patch_documentation_textview", _doc_textview);
 
@@ -321,6 +323,12 @@ PatchWindow::show_documentation(const std::string& doc, bool html)
 	_doc_viewport->add(*view);
 	_doc_viewport->show_all();
 #endif
+	if (!_has_shown_documentation) {
+		int width, height;
+		get_size(width, height);
+		_doc_paned->set_position(width / 1.61803399);
+	}
+	_has_shown_documentation = true;
 }
 
 void
