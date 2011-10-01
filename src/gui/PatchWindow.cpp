@@ -56,8 +56,8 @@ namespace Ingen {
 namespace GUI {
 
 static const int STATUS_CONTEXT_ENGINE = 0;
-static const int STATUS_CONTEXT_PATCH = 1;
-static const int STATUS_CONTEXT_HOVER = 2;
+static const int STATUS_CONTEXT_PATCH  = 1;
+static const int STATUS_CONTEXT_HOVER  = 2;
 
 PatchWindow::PatchWindow(BaseObjectType*                   cobject,
                          const Glib::RefPtr<Gtk::Builder>& xml)
@@ -173,21 +173,20 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 		sigc::mem_fun(App::instance(), &App::show_about)));
 
 	_breadcrumbs = new BreadCrumbs();
-	_breadcrumbs->signal_patch_selected.connect(sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
+	_breadcrumbs->signal_patch_selected.connect(
+		sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
 
 #ifndef HAVE_CURL
 	_menu_upload->hide();
 #endif
 
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
-	clipboard->signal_owner_change().connect(sigc::mem_fun(this, &PatchWindow::event_clipboard_changed));
+	clipboard->signal_owner_change().connect(
+		sigc::mem_fun(this, &PatchWindow::event_clipboard_changed));
 }
 
 PatchWindow::~PatchWindow()
 {
-	// Prevents deletion
-	//m_patch->claim_patch_view();
-
 	delete _breadcrumbs;
 }
 
@@ -278,8 +277,10 @@ PatchWindow::set_patch(SharedPtr<const PatchModel> patch,
 	show();
 	_alignment->show_all();
 
-	_view->signal_object_entered.connect(sigc::mem_fun(this, &PatchWindow::object_entered));
-	_view->signal_object_left.connect(sigc::mem_fun(this, &PatchWindow::object_left));
+	_view->signal_object_entered.connect(
+		sigc::mem_fun(this, &PatchWindow::object_entered));
+	_view->signal_object_left.connect(
+		sigc::mem_fun(this, &PatchWindow::object_left));
 
 	_enable_signal = true;
 }
