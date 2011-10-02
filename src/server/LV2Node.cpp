@@ -303,7 +303,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		LILV_FOREACH(nodes, i, properties) {
 			const LilvNode* p = lilv_nodes_get(properties, i);
 			if (lilv_node_is_uri(p)) {
-				port->set_property(uris.lv2_portProperty, Raul::URI(lilv_node_as_uri(p)));
+				port->add_property(uris.lv2_portProperty, Raul::URI(lilv_node_as_uri(p)));
 			}
 		}
 

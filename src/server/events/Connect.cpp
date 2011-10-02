@@ -215,7 +215,6 @@ Connect::post_process()
 	_request->respond_error(ss.str());
 }
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
-
