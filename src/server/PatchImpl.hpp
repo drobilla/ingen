@@ -20,12 +20,14 @@
 
 #include <cstdlib>
 #include <string>
-#include "raul/List.hpp"
-#include "ingen/PortType.hpp"
+
 #include "ingen/Patch.hpp"
+#include "raul/List.hpp"
+
+#include "CompiledPatch.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
-#include "CompiledPatch.hpp"
+#include "PortType.hpp"
 
 namespace Ingen {
 

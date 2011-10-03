@@ -23,7 +23,6 @@
 #include <set>
 
 #include "ingen/GraphObject.hpp"
-#include "ingen/PortType.hpp"
 
 namespace Raul { class Atom; }
 
@@ -38,12 +37,6 @@ namespace Ingen {
 class Port : public virtual GraphObject
 {
 public:
-	typedef std::set<PortType> PortTypes;
-
-	virtual const PortTypes& types() const = 0;
-
-	inline bool is_a(PortType type) const { return types().find(type) != types().end(); }
-
 	virtual bool supports(const Raul::URI& value_type) const = 0;
 
 	virtual uint32_t          index()    const = 0;

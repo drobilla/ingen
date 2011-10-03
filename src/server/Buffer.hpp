@@ -24,13 +24,13 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/utility.hpp>
 
-#include "ingen/PortType.hpp"
 #include "raul/AtomicInt.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 
-#include "types.hpp"
 #include "BufferFactory.hpp"
+#include "PortType.hpp"
+#include "types.hpp"
 
 namespace Ingen {
 namespace Server {

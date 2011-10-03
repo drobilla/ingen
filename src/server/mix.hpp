@@ -19,10 +19,12 @@
 #define INGEN_ENGINE_MIX_HPP
 
 #include <boost/intrusive_ptr.hpp>
+
 #include "raul/log.hpp"
-#include "ingen/PortType.hpp"
+
 #include "Buffer.hpp"
 #include "Context.hpp"
+#include "PortType.hpp"
 
 using namespace Raul;
 

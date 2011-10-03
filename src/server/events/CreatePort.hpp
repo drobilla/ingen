@@ -21,9 +21,9 @@
 #include "raul/Array.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen/PortType.hpp"
 #include "ingen/Resource.hpp"
 
+#include "PortType.hpp"
 #include "QueuedEvent.hpp"
 
 namespace Ingen {
@@ -47,7 +47,6 @@ public:
 			SharedPtr<Request>          request,
 			SampleCount                 timestamp,
 			const Raul::Path&           path,
-			const Raul::URI&            type,
 			bool                        is_output,
 			const Resource::Properties& properties);
 
@@ -65,15 +64,13 @@ private:
 
 	Raul::Path              _path;
 	Raul::URI               _type;
-	bool                    _is_output;
 	PortType                _data_type;
 	PatchImpl*              _patch;
 	PortImpl*               _patch_port;
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch
 	DriverPort*             _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
-	bool                    _succeeded;
-
-	Resource::Properties _properties;
+	Resource::Properties    _properties;
+	bool                    _is_output;
 };
 
 } // namespace Server

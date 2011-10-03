@@ -41,8 +41,6 @@ class PortModel : public ObjectModel, public Ingen::Port
 public:
 	enum Direction { INPUT, OUTPUT };
 
-	const PortTypes& types() const { return _types; }
-
 	bool supports(const Raul::URI& value_type) const;
 
 	inline uint32_t          index()     const { return _index; }
@@ -53,7 +51,7 @@ public:
 
 	bool port_property(const Raul::URI& uri) const;
 
-	bool is_numeric()     const { return is_a(PortType::CONTROL); }
+	bool is_numeric()     const { return ObjectModel::is_a("http://lv2plug.in/ns/lv2core#ControlPort"); }
 	bool is_logarithmic() const { return port_property("http://drobilla.net/ns/ingen#logarithmic"); }
 	bool is_integer()     const { return port_property("http://lv2plug.in/ns/lv2core#integer"); }
 	bool is_toggle()      const { return port_property("http://lv2plug.in/ns/lv2core#toggled"); }
@@ -90,17 +88,15 @@ private:
 	friend class ClientStore;
 
 	PortModel(Shared::LV2URIMap& uris,
-			const Raul::Path& path, uint32_t index, PortType type, Direction dir)
+	          const Raul::Path&  path,
+	          uint32_t           index,
+	          Direction          dir)
 		: ObjectModel(uris, path)
 		, _index(index)
 		, _direction(dir)
 		, _current_val(0.0f)
 		, _connections(0)
-	{
-		_types.insert(type);
-		if (type == PortType::UNKNOWN)
-			Raul::warn << "[PortModel] Unknown port type" << std::endl;
-	}
+	{}
 
 	void add_child(SharedPtr<ObjectModel> c)    { throw; }
 	bool remove_child(SharedPtr<ObjectModel> c) { throw; }
@@ -111,7 +107,6 @@ private:
 	void set(SharedPtr<ObjectModel> model);
 
 	uint32_t           _index;
-	std::set<PortType> _types;
 	Direction          _direction;
 	Raul::Atom         _current_val;
 	size_t             _connections;

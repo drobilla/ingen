@@ -22,7 +22,6 @@
 #include "raul/SharedPtr.hpp"
 
 #include "ingen/Resource.hpp"
-#include "ingen/PortType.hpp"
 
 namespace Ingen {
 namespace Shared {
@@ -62,12 +61,12 @@ public:
 	 * If some coherent ingen type is found, true is returned and the appropriate
 	 * output parameter set to true.  Otherwise false is returned.
 	 */
-	static bool type(
-			const LV2URIMap&  uris,
-			const Properties& properties,
-			bool& patch,
-			bool& node,
-			bool& port, bool& is_output, PortType& data_type);
+	static bool type(const LV2URIMap&  uris,
+	                 const Properties& properties,
+	                 bool&             patch,
+	                 bool&             node,
+	                 bool&             port,
+	                 bool&             is_output);
 
 protected:
 	const Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;

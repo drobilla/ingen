@@ -55,6 +55,8 @@ class ObjectModel : virtual public GraphObject
 public:
 	virtual ~ObjectModel();
 
+	bool is_a(const Raul::URI& type) const;
+
 	const Raul::Atom& get_property(const Raul::URI& key) const;
 
 	const Raul::Atom& set_property(const Raul::URI&  key,

@@ -46,21 +46,46 @@ CreatePort::CreatePort(
 		SharedPtr<Request>          request,
 		SampleCount                 timestamp,
 		const Raul::Path&           path,
-		const Raul::URI&            type,
 		bool                        is_output,
 		const Resource::Properties& properties)
 	: QueuedEvent(engine, request, timestamp)
 	, _path(path)
-	, _type(type)
-	, _is_output(is_output)
-	, _data_type(type)
+	, _data_type(PortType::UNKNOWN)
 	, _patch(NULL)
 	, _patch_port(NULL)
+	, _ports_array(NULL)
 	, _driver_port(NULL)
 	, _properties(properties)
+	, _is_output(is_output)
 {
-	if (_data_type == PortType::UNKNOWN)
+	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+
+	typedef Resource::Properties::const_iterator Iterator;
+	typedef std::pair<Iterator, Iterator>        Range;
+	const Range types = properties.equal_range(uris.rdf_type);
+	for (Iterator i = types.first; i != types.second; ++i) {
+		const Raul::Atom& type = i->second;
+		if (type.type() != Atom::URI) {
+			warn << "Non-URI port type " << type << endl;
+			continue;
+		}
+
+		if (type == uris.lv2_AudioPort) {
+			_data_type = PortType::AUDIO;
+		} else if (type == uris.lv2_ControlPort) {
+			_data_type = PortType::CONTROL;
+		} else if (type == uris.ev_EventPort) {
+			_data_type = PortType::EVENTS;
+		} else if (type == uris.atom_ValuePort) {
+			_data_type = PortType::VALUE;
+		} else if (type == uris.atom_MessagePort) {
+			_data_type = PortType::MESSAGE;
+		}
+	}
+
+	if (_data_type == PortType::UNKNOWN) {
 		_error = UNKNOWN_TYPE;
+	}
 }
 
 void

@@ -24,7 +24,7 @@
 #include "PortImpl.hpp"
 #include "ConnectionImpl.hpp"
 #include "NodeFactory.hpp"
-#include "ingen/PortType.hpp"
+#include "PortType.hpp"
 #include "AudioBuffer.hpp"
 
 using namespace std;

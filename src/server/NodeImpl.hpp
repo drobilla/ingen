@@ -19,12 +19,16 @@
 #define INGEN_ENGINE_NODEIMPL_HPP
 
 #include <string>
+
 #include <boost/intrusive_ptr.hpp>
+
+#include "ingen/Node.hpp"
 #include "raul/Array.hpp"
 #include "raul/AtomicInt.hpp"
 #include "raul/Semaphore.hpp"
-#include "ingen/Node.hpp"
+
 #include "GraphObjectImpl.hpp"
+#include "PortType.hpp"
 #include "types.hpp"
 
 namespace Raul { template <typename T> class List; class Maid; }
@@ -183,8 +187,10 @@ public:
 
 	virtual void plugin(PluginImpl* pi) { _plugin = pi; }
 
-	virtual void set_buffer_size(Context& context, BufferFactory& bufs,
-			PortType type, size_t size);
+	virtual void set_buffer_size(Context&       context,
+	                             BufferFactory& bufs,
+	                             PortType       type,
+	                             size_t         size);
 
 	/** The Patch this Node belongs to. */
 	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }

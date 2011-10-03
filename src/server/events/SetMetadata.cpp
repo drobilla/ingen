@@ -16,11 +16,12 @@
  */
 
 #include <string>
+
 #include <boost/format.hpp>
+
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
-#include "ingen/PortType.hpp"
-#include "shared/LV2URIMap.hpp"
+
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreateNode.hpp"
@@ -33,9 +34,11 @@
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
+#include "PortType.hpp"
 #include "Request.hpp"
 #include "SetMetadata.hpp"
 #include "SetPortValue.hpp"
+#include "shared/LV2URIMap.hpp"
 
 #define LOG(s) s << "[SetMetadata] "
 
@@ -120,8 +123,7 @@ SetMetadata::pre_process()
 	if (is_graph_object && !_object) {
 		Path path(_subject.str());
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
-		PortType data_type(PortType::UNKNOWN);
-		Shared::ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output, data_type);
+		Shared::ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output);
 
 		// Create a separate request without a source so EventSource isn't unblocked twice
 		SharedPtr<Request> sub_request(new Request(NULL, _request->client(), _request->id()));
@@ -139,7 +141,7 @@ SetMetadata::pre_process()
 					path, p->second.get_uri(), _properties);
 		} else if (is_port) {
 			_create_event = new CreatePort(_engine, sub_request, _time,
-					path, data_type.uri(), is_output, _properties);
+					path, is_output, _properties);
 		}
 		if (_create_event) {
 			_create_event->pre_process();

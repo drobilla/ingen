@@ -22,8 +22,6 @@
 
 #include "shared/LV2URIMap.hpp"
 
-#include "ingen/PortType.hpp"
-
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
@@ -33,6 +31,7 @@
 #include "Notification.hpp"
 #include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
+#include "PortType.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;

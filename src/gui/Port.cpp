@@ -214,7 +214,7 @@ peak_color(float peak)
 void
 Port::activity(const Raul::Atom& value)
 {
-	if (model()->is_a(PortType::AUDIO)) {
+	if (model()->is_a(App::instance().uris().lv2_AudioPort)) {
 		set_fill_color(peak_color(value.get_float()));
 	} else {
 		App::instance().port_activity(this);

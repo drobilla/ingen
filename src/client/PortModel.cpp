@@ -51,7 +51,6 @@ PortModel::set(SharedPtr<ObjectModel> model)
 	SharedPtr<PortModel> port = PtrCast<PortModel>(model);
 	if (port) {
 		_index = port->_index;
-		_types = port->_types;
 		_direction = port->_direction;
 		_current_val = port->_current_val;
 		_connections = port->_connections;

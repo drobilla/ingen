@@ -26,11 +26,11 @@
 #include "raul/Atom.hpp"
 
 #include "ingen/Port.hpp"
-#include "ingen/PortType.hpp"
 
 #include "Buffer.hpp"
 #include "Context.hpp"
 #include "GraphObjectImpl.hpp"
+#include "PortType.hpp"
 #include "types.hpp"
 
 namespace Raul { class Maid; }
@@ -123,7 +123,11 @@ public:
 
 	uint32_t index() const { return _index; }
 
+	typedef std::set<PortType> PortTypes;
+
 	const PortTypes& types() const { return _types; }
+
+	inline bool is_a(PortType type) const { return _types.find(type) != _types.end(); }
 
 	PortType buffer_type() const;
 

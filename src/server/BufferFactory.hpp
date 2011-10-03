@@ -20,10 +20,10 @@
 
 #include <map>
 #include <boost/intrusive_ptr.hpp>
-#include "ingen/PortType.hpp"
 #include "glibmm/thread.h"
 #include "raul/RingBuffer.hpp"
 #include "raul/AtomicPtr.hpp"
+#include "PortType.hpp"
 #include "types.hpp"
 
 namespace Ingen {

@@ -19,14 +19,17 @@
 #define INGEN_ENGINE_COMPILEDPATCH_HPP
 
 #include <vector>
-#include "raul/List.hpp"
-#include "raul/Deletable.hpp"
+
 #include <boost/utility.hpp>
+
+#include "raul/Deletable.hpp"
+#include "raul/List.hpp"
 
 namespace Ingen {
 namespace Server {
 
 class ConnectionImpl;
+class NodeImpl;
 
 /** All information required about a node to execute it in an audio thread.
  */

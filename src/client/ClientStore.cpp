@@ -284,10 +284,9 @@ ClientStore::put(const URI&                  uri,
 #endif
 
 	bool is_patch, is_node, is_port, is_output;
-	PortType data_type(PortType::UNKNOWN);
 	ResourceImpl::type(uris(), properties,
-	                   is_patch, is_node, is_port, is_output,
-	                   data_type);
+	                   is_patch, is_node, is_port, is_output);
+
 	// Check if uri is a plugin
 	const Atom& type = properties.find(_uris->rdf_type)->second;
 	if (type.type() == Atom::URI) {
@@ -344,20 +343,16 @@ ClientStore::put(const URI&                  uri,
 			LOG(warn) << "Node " << path << " has no plugin" << endl;
 		}
 	} else if (is_port) {
-		if (data_type != PortType::UNKNOWN) {
-			PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
-			const Iterator i = properties.find(_uris->lv2_index);
-			if (i != properties.end() && i->second.type() == Atom::INT) {
-				const uint32_t index = i->second.get_int32();
-				SharedPtr<PortModel> p(
-					new PortModel(uris(), path, index, data_type, pdir));
-				p->set_properties(properties);
-				add_object(p);
-			} else {
-				LOG(error) << "Port " << path << " has no index" << endl;
-			}
+		PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
+		const Iterator i = properties.find(_uris->lv2_index);
+		if (i != properties.end() && i->second.type() == Atom::INT) {
+			const uint32_t index = i->second.get_int32();
+			SharedPtr<PortModel> p(
+				new PortModel(uris(), path, index, pdir));
+			p->set_properties(properties);
+			add_object(p);
 		} else {
-			LOG(warn) << "Port " << path << " has no type" << endl;
+			LOG(error) << "Port " << path << " has no index" << endl;
 		}
 	} else {
 		LOG(warn) << "Ignoring object " << path << " with unknown type "

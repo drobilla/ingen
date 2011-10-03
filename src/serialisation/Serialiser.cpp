@@ -522,13 +522,6 @@ Serialiser::Impl::serialise_port(const Port*       port,
 		                      Sord::Curie(world, "lv2:OutputPort"));
 	}
 
-	for (Port::PortTypes::const_iterator i = port->types().begin();
-	     i != port->types().end(); ++i) {
-		_model->add_statement(port_id,
-		                      Sord::Curie(world, "rdf:type"),
-		                      Sord::URI(world, i->uri().str()));
-	}
-
 	_model->add_statement(port_id,
 	                      Sord::Curie(world, "lv2:symbol"),
 	                      Sord::Literal(world, port->path().symbol()));
@@ -540,19 +533,6 @@ Serialiser::Impl::serialise_port(const Port*       port,
 			port_id,
 			Sord::Curie(world, "lv2:index"),
 			AtomRDF::atom_to_node(*_model, Atom((int)port->index())));
-
-		if (!port->get_property(NS_LV2 "default").is_valid()) {
-			if (port->is_input()) {
-				if (port->value().is_valid()) {
-					_model->add_statement(
-						port_id,
-						Sord::Curie(world, "lv2:default"),
-						AtomRDF::atom_to_node(*_model, port->value()));
-				} else if (port->is_a(PortType::CONTROL)) {
-					LOG(warn) << "Port " << port->path() << " has no lv2:default" << endl;
-				}
-			}
-		}
 	}
 }
 

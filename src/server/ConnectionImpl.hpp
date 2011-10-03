@@ -19,13 +19,15 @@
 #define INGEN_ENGINE_CONNECTIONIMPL_HPP
 
 #include <cstdlib>
+
 #include <boost/intrusive_ptr.hpp>
 #include <boost/utility.hpp>
-#include "raul/log.hpp"
-#include "raul/Deletable.hpp"
-#include "ingen/PortType.hpp"
+
 #include "ingen/Connection.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "raul/Deletable.hpp"
+#include "raul/log.hpp"
+
 #include "PortImpl.hpp"
 
 using namespace std;

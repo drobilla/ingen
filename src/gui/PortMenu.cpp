@@ -43,6 +43,8 @@ PortMenu::PortMenu(BaseObjectType*                   cobject,
 void
 PortMenu::init(SharedPtr<const PortModel> port, bool patch_port)
 {
+	const LV2URIMap& uris = App::instance().uris();
+
 	ObjectMenu::init(port);
 	_patch_port = patch_port;
 
@@ -61,7 +63,7 @@ PortMenu::init(SharedPtr<const PortModel> port, bool patch_port)
 		_destroy_menuitem->set_sensitive(false);
 	}
 
-	if (port->is_a(PortType::EVENTS))
+	if (port->is_a(uris.ev_EventPort))
 		_polyphonic_menuitem->hide();
 
 	const bool is_control = App::instance().can_control(port.get())

@@ -386,10 +386,10 @@ App::icon_destroyed(void* data)
 }
 
 bool
-App::can_control(const Ingen::Port* port) const
+App::can_control(const Client::PortModel* port) const
 {
-	return port->is_a(PortType::CONTROL)
-		|| (port->is_a(PortType::VALUE)
+	return port->is_a(uris().lv2_ControlPort)
+		|| (port->is_a(uris().atom_ValuePort)
 				&& (port->supports(uris().atom_Float32)
 					|| port->supports(uris().atom_String)));
 }

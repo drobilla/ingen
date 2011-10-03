@@ -103,18 +103,17 @@ ResourceImpl::get_property(const Raul::URI& uri) const
 }
 
 bool
-ResourceImpl::type(
-		const LV2URIMap&  uris,
-		const Properties& properties,
-		bool& patch,
-		bool& node,
-		bool& port, bool& is_output, PortType& data_type)
+ResourceImpl::type(const LV2URIMap&  uris,
+                   const Properties& properties,
+                   bool&             patch,
+                   bool&             node,
+                   bool&             port,
+                   bool&             is_output)
 {
 	typedef Resource::Properties::const_iterator iterator;
 	const std::pair<iterator,iterator> types_range = properties.equal_range(uris.rdf_type);
 
 	patch = node = port = is_output = false;
-	data_type = PortType::UNKNOWN;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Atom& atom = i->second;
 		if (atom.type() != Atom::URI) {
@@ -132,21 +131,6 @@ ResourceImpl::type(
 		} else if (atom == uris.lv2_OutputPort) {
 			port = true;
 			is_output = true;
-		} else if (atom == uris.lv2_AudioPort) {
-			port = true;
-			data_type = PortType::AUDIO;
-		} else if (atom == uris.lv2_ControlPort) {
-			port = true;
-			data_type = PortType::CONTROL;
-		} else if (atom == uris.ev_EventPort) {
-			data_type = PortType::EVENTS;
-			port = true;
-		} else if (atom == uris.atom_ValuePort) {
-			data_type = PortType::VALUE;
-			port = true;
-		} else if (atom == uris.atom_MessagePort) {
-			data_type = PortType::MESSAGE;
-			port = true;
 		}
 	}
 
@@ -166,9 +150,17 @@ ResourceImpl::type(
 void
 ResourceImpl::set_properties(const Properties& p)
 {
-	for (Resource::Properties::const_iterator i = p.begin(); i != p.end(); ++i) {
-		set_property(i->first, i->second, i->second.context());
+	/* Note a simple loop that calls set_property is inappropriate here since
+	   it will not correctly set multiple properties in p (notably rdf:type)
+	*/
+
+	// Erase existing properties with matching keys
+	for (Properties::const_iterator i = p.begin(); i != p.end(); ++i) {
+		_properties.erase(i->first);
 	}
+
+	// Set new properties
+	add_properties(p);
 }
 
 void

@@ -16,7 +16,6 @@
  */
 
 #include "ingen/ServerInterface.hpp"
-#include "ingen/PortType.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PortModel.hpp"
@@ -91,7 +90,7 @@ ControlPanel::add_port(SharedPtr<const PortModel> pm)
 			ToggleControl* tc;
 			WidgetFactory::get_widget_derived("toggle_control", tc);
 			control = tc;
-		} else if (pm->is_a(PortType::CONTROL)
+		} else if (pm->is_a(App::instance().uris().lv2_ControlPort)
 		           || pm->supports(App::instance().uris().atom_Float32)) {
 			SliderControl* sc;
 			WidgetFactory::get_widget_derived("control_strip", sc);

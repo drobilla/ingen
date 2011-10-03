@@ -86,7 +86,7 @@ public:
 
 	void port_activity(Port* port);
 	void activity_port_destroyed(Port* port);
-	bool can_control(const Ingen::Port* port) const;
+	bool can_control(const Client::PortModel* port) const;
 
 	bool signal() const { return _enable_signal; }
 	bool disable_signals()  { bool old = _enable_signal; _enable_signal = false; return old; }

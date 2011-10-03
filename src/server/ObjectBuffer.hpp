@@ -19,7 +19,7 @@
 #define INGEN_ENGINE_OBJECTBUFFER_HPP
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "ingen/PortType.hpp"
+
 #include "Buffer.hpp"
 
 namespace Ingen {

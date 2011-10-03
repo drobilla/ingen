@@ -72,8 +72,8 @@ InputPort::apply_poly(Maid& maid, uint32_t poly)
 	return true;
 }
 
-/** Set \a buffers appropriately if this port has \a num_connections connections.
- * \return true iff buffers are locally owned by the port
+/** Set @a buffers to the buffers to be used for this port.
+ * @return true iff buffers are locally owned by the port
  */
 bool
 InputPort::get_buffers(BufferFactory&                   bufs,
