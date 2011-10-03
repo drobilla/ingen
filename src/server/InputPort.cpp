@@ -178,12 +178,6 @@ InputPort::pre_process(Context& context)
 	if (_set_by_user)
 		return;
 
-	uint32_t max_num_srcs = 0;
-	for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
-		max_num_srcs += (*c)->src_port()->poly();
-
-	boost::intrusive_ptr<Buffer> srcs[max_num_srcs];
-
 	if (_connections.empty()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
 			buffer(v)->prepare_read(context);
@@ -194,10 +188,20 @@ InputPort::pre_process(Context& context)
 			_buffers->at(v)->prepare_read(context);
 		}
 	} else {
+		uint32_t max_num_srcs = 0;
+		for (Connections::const_iterator c = _connections.begin();
+		     c != _connections.end(); ++c) {
+			max_num_srcs += (*c)->src_port()->poly();
+		}
+
+		boost::intrusive_ptr<Buffer> srcs[max_num_srcs];
+
 		for (uint32_t v = 0; v < _poly; ++v) {
 			uint32_t num_srcs = 0;
-			for (Connections::iterator c = _connections.begin(); c != _connections.end(); ++c)
+			for (Connections::const_iterator c = _connections.begin();
+			     c != _connections.end(); ++c) {
 				(*c)->get_sources(context, v, srcs, max_num_srcs, num_srcs);
+			}
 
 			mix(context, buffer(v).get(), srcs, num_srcs);
 			buffer(v)->prepare_read(context);
