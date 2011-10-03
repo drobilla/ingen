@@ -93,10 +93,10 @@ public:
 		if (!is_input() || !_buffer)
 			return;
 
-		if (_patch_port->buffer_type() == PortType::AUDIO) {
+		if (_patch_port->is_a(PortType::AUDIO)) {
 			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 			patch_buf->copy((Sample*)_buffer, 0, context.nframes() - 1);
-		} else if (_patch_port->buffer_type() == PortType::EVENTS) {
+		} else if (_patch_port->is_a(PortType::EVENTS)) {
 			//Raul::warn << "TODO: LV2 event I/O" << std::endl;
 		}
 	}
@@ -105,10 +105,10 @@ public:
 		if (is_input() || !_buffer)
 			return;
 
-		if (_patch_port->buffer_type() == PortType::AUDIO) {
+		if (_patch_port->is_a(PortType::AUDIO)) {
 			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 			memcpy((Sample*)_buffer, patch_buf->data(), context.nframes() * sizeof(Sample));
-		} else if (_patch_port->buffer_type() == PortType::EVENTS) {
+		} else if (_patch_port->is_a(PortType::EVENTS)) {
 			//Raul::warn << "TODO: LV2 event I/O" << std::endl;
 		}
 	}

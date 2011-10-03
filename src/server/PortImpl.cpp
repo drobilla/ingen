@@ -53,7 +53,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _index(index)
 	, _poly(poly)
 	, _buffer_size(buffer_size)
-	, _buffer_type(type)
+	, _type(type)
 	, _value(value)
 	, _min(0.0f)
 	, _max(1.0f)
@@ -64,7 +64,6 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _broadcast(false)
 	, _set_by_user(false)
 {
-	_types.insert(type);
 	assert(node != NULL);
 	assert(_poly > 0);
 
@@ -200,7 +199,7 @@ void
 PortImpl::broadcast_value(Context& context, bool force)
 {
 	Raul::Atom val;
-	switch (buffer_type().symbol()) {
+	switch (_type.symbol()) {
 	case PortType::UNKNOWN:
 		break;
 	case PortType::AUDIO:
@@ -255,8 +254,7 @@ PortImpl::set_context(Context::ID c)
 PortType
 PortImpl::buffer_type() const
 {
-	// TODO: multiple types
-	return *_types.begin();
+	return _type;
 }
 
 } // namespace Server

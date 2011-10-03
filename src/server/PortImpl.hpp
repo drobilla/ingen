@@ -20,7 +20,6 @@
 
 #include <cstdlib>
 #include <string>
-#include <set>
 
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
@@ -123,11 +122,7 @@ public:
 
 	uint32_t index() const { return _index; }
 
-	typedef std::set<PortType> PortTypes;
-
-	const PortTypes& types() const { return _types; }
-
-	inline bool is_a(PortType type) const { return _types.find(type) != _types.end(); }
+	inline bool is_a(PortType type) const { return _type == type; }
 
 	PortType buffer_type() const;
 
@@ -143,7 +138,6 @@ public:
 	}
 
 	void set_buffer_size(Context& context, BufferFactory& bufs, size_t size);
-	void set_buffer_type(PortType type);
 
 	void broadcast(bool b) { _broadcast = b; }
 	bool broadcast()       { return _broadcast; }
@@ -171,8 +165,7 @@ protected:
 	uint32_t                         _index;
 	uint32_t                         _poly;
 	uint32_t                         _buffer_size;
-	PortType                         _buffer_type;
-	std::set<PortType>               _types;
+	PortType                         _type;
 	Raul::Atom                       _value;
 	Raul::Atom                       _min;
 	Raul::Atom                       _max;

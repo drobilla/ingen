@@ -83,7 +83,7 @@ InputPort::get_buffers(BufferFactory&                   bufs,
 	size_t num_connections = (ThreadManager::thread_is(THREAD_PROCESS))
 			? _connections.size() : _num_connections;
 
-	if (buffer_type() == PortType::AUDIO && num_connections == 0) {
+	if (is_a(PortType::AUDIO) && num_connections == 0) {
 		// Audio input with no connections, use shared zero buffer
 		for (uint32_t v = 0; v < poly; ++v)
 			buffers->at(v) = bufs.silent_buffer();
@@ -216,7 +216,7 @@ void
 InputPort::post_process(Context& context)
 {
 	if (_set_by_user) {
-		if (buffer_type() == PortType::EVENTS) {
+		if (is_a(PortType::EVENTS)) {
 			// Clear events received via a SetPortValue
 			for (uint32_t v = 0; v < _poly; ++v) {
 				buffer(v)->clear();
