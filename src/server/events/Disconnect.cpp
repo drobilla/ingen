@@ -185,9 +185,9 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	InputPort::Connections::Node* const port_connections_node
+	ConnectionImpl* const port_connection
 		= _dst_input_port->remove_connection(context, _src_output_port);
-	if (!port_connections_node) {
+	if (!port_connection) {
 		return false;
 	}
 
@@ -204,9 +204,8 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 	}
 
 	assert(_connection);
-	assert(port_connections_node->elem() == _connection);
+	assert(port_connection == _connection.get());
 
-	_engine.maid()->push(port_connections_node);
 	return true;
 }
 

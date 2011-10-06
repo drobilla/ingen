@@ -18,12 +18,16 @@
 #ifndef INGEN_ENGINE_INPUTPORT_HPP
 #define INGEN_ENGINE_INPUTPORT_HPP
 
-#include <string>
-#include <cstdlib>
 #include <cassert>
-#include "raul/List.hpp"
+#include <cstdlib>
+#include <string>
+
+#include <boost/intrusive/list.hpp>
+
 #include "raul/SharedPtr.hpp"
+
 #include "PortImpl.hpp"
+#include "ConnectionImpl.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -59,10 +63,11 @@ public:
 
 	virtual ~InputPort() {}
 
-	typedef Raul::List< SharedPtr<ConnectionImpl> > Connections;
+	typedef boost::intrusive::list<ConnectionImpl> Connections;
 
-	void               add_connection(Connections::Node* c);
-	Connections::Node* remove_connection(ProcessContext& context, const OutputPort* src_port);
+	void            add_connection(ConnectionImpl* c);
+	ConnectionImpl* remove_connection(ProcessContext&   context,
+	                                  const OutputPort* src_port);
 
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 

@@ -19,10 +19,14 @@
 #define INGEN_ENGINE_BUFFERFACTORY_HPP
 
 #include <map>
+
 #include <boost/intrusive_ptr.hpp>
-#include "glibmm/thread.h"
-#include "raul/RingBuffer.hpp"
+#include <glibmm/thread.h>
+
 #include "raul/AtomicPtr.hpp"
+#include "raul/RingBuffer.hpp"
+#include "raul/SharedPtr.hpp"
+
 #include "PortType.hpp"
 #include "types.hpp"
 
@@ -49,7 +53,7 @@ public:
 
 	Ref get(PortType type, size_t size=0, bool force_create=false);
 
-	Ref silent_buffer() { return _silent_buffer; }
+	Ref silent_buffer();
 
 	void set_block_length(SampleCount block_length);
 

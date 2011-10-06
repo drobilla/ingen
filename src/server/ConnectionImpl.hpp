@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 
+#include <boost/intrusive/list.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/utility.hpp>
 
@@ -28,7 +29,8 @@
 #include "raul/Deletable.hpp"
 #include "raul/log.hpp"
 
-#include "PortImpl.hpp"
+#include "BufferFactory.hpp"
+#include "Context.hpp"
 
 using namespace std;
 
@@ -51,7 +53,10 @@ class BufferFactory;
  *
  * \ingroup engine
  */
-class ConnectionImpl : public Raul::Deletable, public Connection
+class ConnectionImpl : public  Raul::Deletable
+                     , private Raul::Noncopyable
+                     , public  Connection
+                     , public  boost::intrusive::list_base_hook<>
 {
 public:
 	ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl* dst_port);
@@ -59,8 +64,8 @@ public:
 	PortImpl* src_port() const { return _src_port; }
 	PortImpl* dst_port() const { return _dst_port; }
 
-	const Raul::Path& src_port_path() const { return _src_port->path(); }
-	const Raul::Path& dst_port_path() const { return _dst_port->path(); }
+	const Raul::Path& src_port_path() const;
+	const Raul::Path& dst_port_path() const;
 
 	/** Used by some (recursive) events to prevent double disconnections */
 	bool pending_disconnection()       { return _pending_disconnection; }
@@ -68,30 +73,24 @@ public:
 
 	void queue(Context& context);
 
-	void get_sources(Context& context, uint32_t voice,
-			boost::intrusive_ptr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs);
+	void get_sources(Context&                      context,
+	                 uint32_t                      voice,
+	                 boost::intrusive_ptr<Buffer>* srcs,
+	                 uint32_t                      max_num_srcs,
+	                 uint32_t&                     num_srcs);
 
 	/** Get the buffer for a particular voice.
 	 * A Connection is smart - it knows the destination port requesting the
 	 * buffer, and will return accordingly (e.g. the same buffer for every
 	 * voice in a mono->poly connection).
 	 */
-	inline BufferFactory::Ref buffer(uint32_t voice) const {
-		assert(!must_mix());
-		assert(!must_queue());
-		assert(_src_port->poly() == 1 || _src_port->poly() > voice);
-		if (_src_port->poly() == 1) {
-			return _src_port->buffer(0);
-		} else {
-			return _src_port->buffer(voice);
-		}
-	}
+	BufferFactory::Ref buffer(uint32_t voice) const;
 
 	/** Returns true if this connection must mix down voices into a local buffer */
-	inline bool must_mix() const { return _src_port->poly() > _dst_port->poly(); }
+	bool must_mix() const;
 
 	/** Returns true if this connection crosses contexts and must buffer */
-	inline bool must_queue() const { return _src_port->context() != _dst_port->context(); }
+	bool must_queue() const;
 
 	static bool can_connect(const OutputPort* src, const InputPort* dst);
 

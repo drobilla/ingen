@@ -66,6 +66,18 @@ ConnectionImpl::dump() const
 		<< "POLY: " << _src_port->poly() << " => " << _dst_port->poly() << endl;
 }
 
+const Raul::Path&
+ConnectionImpl::src_port_path() const
+{
+	return _src_port->path();
+}
+
+const Raul::Path&
+ConnectionImpl::dst_port_path() const
+{
+	return _dst_port->path();
+}
+
 void
 ConnectionImpl::get_sources(Context& context, uint32_t voice,
 		boost::intrusive_ptr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs)
@@ -117,6 +129,31 @@ ConnectionImpl::queue(Context& context)
 		_queue->write(sizeof(LV2_Atom) + obj->size, obj);
 		context.engine().message_context()->run(_dst_port->parent_node(), context.start() + ev->frames);
 	}
+}
+
+BufferFactory::Ref
+ConnectionImpl::buffer(uint32_t voice) const
+{
+	assert(!must_mix());
+	assert(!must_queue());
+	assert(_src_port->poly() == 1 || _src_port->poly() > voice);
+	if (_src_port->poly() == 1) {
+		return _src_port->buffer(0);
+	} else {
+		return _src_port->buffer(voice);
+	}
+}
+
+bool
+ConnectionImpl::must_mix() const
+{
+	return _src_port->poly() > _dst_port->poly();
+}
+
+bool
+ConnectionImpl::must_queue() const
+{
+	return _src_port->context() != _dst_port->context();
 }
 
 bool

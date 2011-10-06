@@ -119,6 +119,12 @@ BufferFactory::get(PortType type, size_t size, bool force_create)
 }
 
 BufferFactory::Ref
+BufferFactory::silent_buffer()
+{
+	return _silent_buffer;
+}
+
+BufferFactory::Ref
 BufferFactory::create(PortType type, size_t size)
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);

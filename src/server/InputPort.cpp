@@ -91,10 +91,10 @@ InputPort::get_buffers(BufferFactory&                   bufs,
 
 	} else if (num_connections == 1) {
 		if (ThreadManager::thread_is(THREAD_PROCESS)) {
-			if (!_connections.front()->must_mix() && !_connections.front()->must_queue()) {
+			if (!_connections.front().must_mix() && !_connections.front().must_queue()) {
 				// Single non-mixing conneciton, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v)
-					buffers->at(v) = _connections.front()->buffer(v);
+					buffers->at(v) = _connections.front().buffer(v);
 				return false;
 			}
 		}
@@ -117,11 +117,11 @@ InputPort::get_buffers(BufferFactory&                   bufs,
  * will audibly take effect.
  */
 void
-InputPort::add_connection(Connections::Node* const c)
+InputPort::add_connection(ConnectionImpl* c)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	_connections.push_back(c);
+	_connections.push_front(*c);
 
 	// Broadcast value/activity of connected input
 	_broadcast = true;
@@ -132,31 +132,27 @@ InputPort::add_connection(Connections::Node* const c)
  * Note that setup_buffers must be called after this before the change
  * will audibly take effect.
  */
-InputPort::Connections::Node*
+ConnectionImpl*
 InputPort::remove_connection(ProcessContext& context, const OutputPort* src_port)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	Connections::Node* connection = NULL;
-	for (Connections::iterator i = _connections.begin(); i != _connections.end();) {
-		Connections::iterator next = i;
-		++next;
-
-		if ((*i)->src_port() == src_port) {
-			connection = _connections.erase(i);
+	ConnectionImpl* connection = NULL;
+	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+		if (i->src_port() == src_port) {
+			connection = &*i;
+			_connections.erase(i);
 			break;
 		}
-
-		i = next;
 	}
 
-	if ( ! connection) {
+	if (!connection) {
 		error << "[InputPort::remove_connection] Connection not found!" << endl;
 		return NULL;
 	}
 
 	// Turn off broadcasting if we're no longer connected
-	if (_connections.size() == 0) {
+	if (_connections.empty()) {
 		if (is_a(PortType::AUDIO)) {
 			// Send an update peak of 0.0 to reset to silence
 			const Notification note = Notification::make(
@@ -184,23 +180,23 @@ InputPort::pre_process(Context& context)
 		}
 	} else if (direct_connect()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
-			_buffers->at(v) = _connections.front()->buffer(v);
+			_buffers->at(v) = _connections.front().buffer(v);
 			_buffers->at(v)->prepare_read(context);
 		}
 	} else {
 		uint32_t max_num_srcs = 0;
 		for (Connections::const_iterator c = _connections.begin();
 		     c != _connections.end(); ++c) {
-			max_num_srcs += (*c)->src_port()->poly();
+			max_num_srcs += c->src_port()->poly();
 		}
 
 		boost::intrusive_ptr<Buffer> srcs[max_num_srcs];
 
 		for (uint32_t v = 0; v < _poly; ++v) {
 			uint32_t num_srcs = 0;
-			for (Connections::const_iterator c = _connections.begin();
+			for (Connections::iterator c = _connections.begin();
 			     c != _connections.end(); ++c) {
-				(*c)->get_sources(context, v, srcs, max_num_srcs, num_srcs);
+				c->get_sources(context, v, srcs, max_num_srcs, num_srcs);
 			}
 
 			mix(context, buffer(v).get(), srcs, num_srcs);
@@ -231,8 +227,8 @@ InputPort::direct_connect() const
 {
 	return (context() == Context::AUDIO)
 		&& _connections.size() == 1
-		&& !_connections.front()->must_mix()
-		&& !_connections.front()->must_queue();
+		&& !_connections.front().must_mix()
+		&& !_connections.front().must_queue();
 }
 
 } // namespace Server
