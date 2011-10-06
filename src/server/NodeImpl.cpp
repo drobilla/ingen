@@ -35,17 +35,21 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-NodeImpl::NodeImpl(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphonic, PatchImpl* parent, SampleRate srate)
+NodeImpl::NodeImpl(PluginImpl*         plugin,
+                   const Raul::Symbol& symbol,
+                   bool                polyphonic,
+                   PatchImpl*          parent,
+                   SampleRate          srate)
 	: GraphObjectImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
-	, _polyphonic(polyphonic)
+	, _ports(NULL)
+	, _valid_ports(NULL)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
 	, _srate(srate)
-	, _valid_ports(NULL)
 	, _input_ready(1)
 	, _process_lock(0)
 	, _n_inputs_ready(0)
-	, _ports(NULL)
+	, _polyphonic(polyphonic)
 	, _activated(false)
 	, _traversed(false)
 {

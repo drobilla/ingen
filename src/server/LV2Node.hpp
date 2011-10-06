@@ -68,13 +68,11 @@ protected:
 
 	typedef Raul::Array< SharedPtr<void> > Instances;
 
-	LV2Plugin* _lv2_plugin;
-	Instances* _instances;
-	Instances* _prepared_instances;
-
-	LV2_Contexts_MessageContext* _message_funcs;
-
-	SharedPtr<Ingen::Shared::LV2Features::FeatureArray> _features;
+	LV2Plugin*                                   _lv2_plugin;
+	Instances*                                   _instances;
+	Instances*                                   _prepared_instances;
+	LV2_Contexts_MessageContext*                 _message_funcs;
+	SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
 
 } // namespace Server

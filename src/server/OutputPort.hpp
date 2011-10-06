@@ -18,8 +18,9 @@
 #ifndef INGEN_ENGINE_OUTPUTPORT_HPP
 #define INGEN_ENGINE_OUTPUTPORT_HPP
 
-#include <string>
 #include <cstdlib>
+#include <string>
+
 #include "PortImpl.hpp"
 
 namespace Ingen {
@@ -44,9 +45,11 @@ public:
 	           const Raul::Symbol& symbol,
 	           uint32_t            index,
 	           uint32_t            poly,
-	           PortType    type,
+	           PortType            type,
 	           const Raul::Atom&   value,
 	           size_t              buffer_size=0);
+
+	virtual ~OutputPort() {}
 
 	bool get_buffers(BufferFactory&                   bufs,
 	                 Raul::Array<BufferFactory::Ref>* buffers,
@@ -54,8 +57,6 @@ public:
 
 	void pre_process(Context& context);
 	void post_process(Context& context);
-
-	virtual ~OutputPort() {}
 
 	bool is_input()  const { return false; }
 	bool is_output() const { return true; }

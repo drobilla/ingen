@@ -144,11 +144,10 @@ public:
 	virtual void post_process(Context& context);
 
 	/** Set the buffer of a port to a given buffer (e.g. connect plugin to buffer) */
-	virtual void set_port_buffer(
-			uint32_t                      voice,
-			uint32_t                      port_num,
-			boost::intrusive_ptr<Buffer>  buf,
-			SampleCount                   offset);
+	virtual void set_port_buffer(uint32_t                      voice,
+	                             uint32_t                      port_num,
+	                             boost::intrusive_ptr<Buffer>  buf,
+	                             SampleCount                   offset);
 
 	virtual Port*     port(uint32_t index)      const;
 	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
@@ -171,7 +170,7 @@ public:
 	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
 	/** Information about the Plugin this Node is an instance of.
-	 * Not the best name - not all nodes come from plugins (ie Patch)
+	 * Not the best name - not all nodes come from plugins (e.g. Patch)
 	 */
 	virtual PluginImpl* plugin_impl() const { return _plugin; }
 
@@ -199,23 +198,19 @@ public:
 	void               traversed(bool b)   { _traversed = b; }
 
 protected:
-	PluginImpl* _plugin;
-
-	bool       _polyphonic;
-	uint32_t   _polyphony;
-	SampleRate _srate;
-
-	void* _valid_ports; ///< Valid port flags for message context
-
-	Raul::Semaphore         _input_ready;    ///< Parallelism: input ready signal
-	Raul::AtomicInt         _process_lock;   ///< Parallelism: Waiting on inputs 'lock'
-	Raul::AtomicInt         _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
-	Raul::Array<PortImpl*>* _ports;          ///< Access in audio thread only
-	std::list<NodeImpl*>    _providers;      ///< Nodes connected to this one's input ports
-	std::list<NodeImpl*>    _dependants;     ///< Nodes this one's output ports are connected to
-
-	bool _activated;
-	bool _traversed; ///< Flag for process order algorithm
+	PluginImpl*             _plugin;
+	Raul::Array<PortImpl*>* _ports;  ///< Access in audio thread only
+	void*                   _valid_ports;  ///< Valid port flags for message context
+	uint32_t                _polyphony;
+	SampleRate              _srate;
+	Raul::Semaphore         _input_ready;  ///< Parallelism: input ready signal
+	Raul::AtomicInt         _process_lock;  ///< Parallelism: Waiting on inputs 'lock'
+	Raul::AtomicInt         _n_inputs_ready;  ///< Parallelism: # input ready signals this cycle
+	std::list<NodeImpl*>    _providers;  ///< Nodes connected to this one's input ports
+	std::list<NodeImpl*>    _dependants;  ///< Nodes this one's output ports are connected to
+	bool                    _polyphonic;
+	bool                    _activated;
+	bool                    _traversed;  ///< Flag for process order algorithm
 };
 
 } // namespace Server
