@@ -126,7 +126,7 @@ Connect::pre_process()
 	}
 
 	_connection = SharedPtr<ConnectionImpl>(
-			new ConnectionImpl(*_engine.buffer_factory(), _src_output_port, _dst_input_port));
+		new ConnectionImpl(_src_output_port, _dst_input_port));
 
 	rlock.release();
 

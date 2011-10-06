@@ -41,11 +41,10 @@ namespace Server {
  * This handles both polyphonic and monophonic nodes, transparently to the
  * user (InputPort).
  */
-ConnectionImpl::ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl* dst_port)
-	: _queue(NULL)
-	, _bufs(bufs)
-	, _src_port(src_port)
+ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
+	: _src_port(src_port)
 	, _dst_port(dst_port)
+	, _queue(NULL)
 	, _pending_disconnection(false)
 {
 	assert(src_port);

@@ -59,7 +59,7 @@ class ConnectionImpl : public  Raul::Deletable
                      , public  boost::intrusive::list_base_hook<>
 {
 public:
-	ConnectionImpl(BufferFactory& bufs, PortImpl* src_port, PortImpl* dst_port);
+	ConnectionImpl(PortImpl* src_port, PortImpl* dst_port);
 
 	PortImpl* src_port() const { return _src_port; }
 	PortImpl* dst_port() const { return _dst_port; }
@@ -97,12 +97,10 @@ public:
 protected:
 	void dump() const;
 
+	PortImpl* const   _src_port;
+	PortImpl* const   _dst_port;
 	Raul::RingBuffer* _queue;
-
-	BufferFactory&     _bufs;
-	PortImpl* const    _src_port;
-	PortImpl* const    _dst_port;
-	bool               _pending_disconnection;
+	bool              _pending_disconnection;
 };
 
 } // namespace Server
