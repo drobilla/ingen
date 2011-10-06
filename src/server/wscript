@@ -13,7 +13,6 @@ def build(bld):
             EngineStore.cpp
             Event.cpp
             EventBuffer.cpp
-            EventSink.cpp
             EventSource.cpp
             GraphObjectImpl.cpp
             InputPort.cpp

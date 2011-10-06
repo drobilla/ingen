@@ -23,7 +23,6 @@
 #include "shared/World.hpp"
 
 #include "Engine.hpp"
-#include "EventSink.hpp"
 #include "types.hpp"
 
 namespace Ingen {

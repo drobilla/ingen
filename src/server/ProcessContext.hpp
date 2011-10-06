@@ -21,7 +21,6 @@
 #include <vector>
 
 #include "Context.hpp"
-#include "EventSink.hpp"
 #include "types.hpp"
 
 namespace Ingen {
