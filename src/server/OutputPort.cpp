@@ -16,11 +16,12 @@
  */
 
 #include "ingen/Patch.hpp"
-#include "shared/LV2URIMap.hpp"
+
 #include "Buffer.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
+#include "shared/LV2URIMap.hpp"
 
 using namespace std;
 

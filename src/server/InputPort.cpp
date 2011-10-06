@@ -15,21 +15,23 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "InputPort.hpp"
 #include <cstdlib>
 #include <cassert>
+
 #include "ingen/Patch.hpp"
-#include "shared/LV2URIMap.hpp"
+
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"
 #include "EventBuffer.hpp"
+#include "InputPort.hpp"
 #include "NodeImpl.hpp"
 #include "Notification.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 #include "mix.hpp"
+#include "shared/LV2URIMap.hpp"
 #include "util.hpp"
 
 using namespace std;

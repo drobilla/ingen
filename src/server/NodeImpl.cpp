@@ -17,10 +17,11 @@
 
 #include <cassert>
 #include <stdint.h>
+
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
-#include "raul/List.hpp"
 #include "raul/Array.hpp"
-#include "util.hpp"
+#include "raul/List.hpp"
+
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
 #include "EngineStore.hpp"
@@ -29,6 +30,7 @@
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
+#include "util.hpp"
 
 using namespace std;
 
@@ -55,7 +57,6 @@ NodeImpl::NodeImpl(PluginImpl*         plugin,
 {
 	assert(_plugin);
 	assert(_polyphony > 0);
-	assert(_parent == NULL || (_polyphony == parent->internal_poly() || _polyphony == 1));
 }
 
 NodeImpl::~NodeImpl()
@@ -92,12 +93,15 @@ NodeImpl::activate(BufferFactory& bufs)
 		port->setup_buffers(bufs, port->poly());
 		port->connect_buffers();
 		for (uint32_t v = 0; v < _polyphony; ++v) {
-			if (!port->buffer(v))
-				continue;
-			if (port->is_a(PortType::CONTROL))
-				((AudioBuffer*)port->buffer(v).get())->set_value(port->value().get_float(), 0, 0);
-			else
-				port->buffer(v)->clear();
+			Buffer* const buf = port->buffer(v).get();
+			if (buf) {
+				if (port->is_a(PortType::CONTROL)) {
+					((AudioBuffer*)buf)->set_value(
+						port->value().get_float(), 0, 0);
+				} else {
+					buf->clear();
+				}
+			}
 		}
 	}
 }
@@ -149,12 +153,19 @@ NodeImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 }
 
 void
-NodeImpl::set_buffer_size(Context& context, BufferFactory& bufs, PortType type, size_t size)
+NodeImpl::set_buffer_size(Context&       context,
+                          BufferFactory& bufs,
+                          PortType       type,
+                          size_t         size)
 {
-	if (_ports)
-		for (size_t i = 0; i < _ports->size(); ++i)
-			if (_ports->at(i)->buffer_type() == type && _ports->at(i)->context() == context.id())
-				_ports->at(i)->set_buffer_size(context, bufs, size);
+	if (_ports) {
+		for (size_t i = 0; i < _ports->size(); ++i) {
+			PortImpl* const p = _ports->at(i);
+			if (p->buffer_type() == type && p->context() == context.id()) {
+				p->set_buffer_size(context, bufs, size);
+			}
+		}
+	}
 }
 
 void
@@ -252,8 +263,10 @@ NodeImpl::reset_valid_ports()
 }
 
 void
-NodeImpl::set_port_buffer(uint32_t voice, uint32_t port_num,
-		BufferFactory::Ref buf, SampleCount offset)
+NodeImpl::set_port_buffer(uint32_t           voice,
+                          uint32_t           port_num,
+                          BufferFactory::Ref buf,
+                          SampleCount        offset)
 {
 	/*std::cout << path() << " set port " << port_num << " voice " << voice
 			<< " buffer " << buf << " offset " << offset << std::endl;*/

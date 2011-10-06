@@ -18,19 +18,21 @@
 #include <cassert>
 #include <cmath>
 #include <string>
+
 #include "raul/log.hpp"
-#include "shared/World.hpp"
-#include "shared/LV2URIMap.hpp"
-#include "ThreadManager.hpp"
+
+#include "ConnectionImpl.hpp"
+#include "Driver.hpp"
+#include "DuplexPort.hpp"
+#include "Engine.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PatchPlugin.hpp"
 #include "PortImpl.hpp"
-#include "ConnectionImpl.hpp"
-#include "DuplexPort.hpp"
-#include "Engine.hpp"
 #include "ProcessSlave.hpp"
-#include "Driver.hpp"
+#include "ThreadManager.hpp"
+#include "shared/LV2URIMap.hpp"
+#include "shared/World.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -45,8 +47,9 @@ PatchImpl::PatchImpl(Engine&             engine,
                      SampleRate          srate,
                      uint32_t            internal_poly)
 	: NodeImpl(new PatchPlugin(*engine.world()->uris().get(),
-				engine.world()->uris()->ingen_Patch.c_str(), "patch", "Ingen Patch"),
-		symbol, poly, parent, srate)
+	                           engine.world()->uris()->ingen_Patch.c_str(),
+	                           "patch", "Ingen Patch"),
+	           symbol, poly, parent, srate)
 	, _engine(engine)
 	, _internal_poly(internal_poly)
 	, _compiled_patch(NULL)
