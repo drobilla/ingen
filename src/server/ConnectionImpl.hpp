@@ -67,10 +67,6 @@ public:
 	const Raul::Path& src_port_path() const;
 	const Raul::Path& dst_port_path() const;
 
-	/** Used by some (recursive) events to prevent double disconnections */
-	bool pending_disconnection()       { return _pending_disconnection; }
-	void pending_disconnection(bool b) { _pending_disconnection = b; }
-
 	void queue(Context& context);
 
 	void get_sources(Context&                      context,
@@ -100,7 +96,6 @@ protected:
 	PortImpl* const   _src_port;
 	PortImpl* const   _dst_port;
 	Raul::RingBuffer* _queue;
-	bool              _pending_disconnection;
 };
 
 } // namespace Server

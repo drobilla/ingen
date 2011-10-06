@@ -108,8 +108,6 @@ Disconnect::Impl::Impl(Engine&     e,
 			}
 		}
 	}
-
-	_connection->pending_disconnection(true);
 }
 
 void

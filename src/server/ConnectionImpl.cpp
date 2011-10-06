@@ -45,7 +45,6 @@ ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
 	: _src_port(src_port)
 	, _dst_port(dst_port)
 	, _queue(NULL)
-	, _pending_disconnection(false)
 {
 	assert(src_port);
 	assert(dst_port);

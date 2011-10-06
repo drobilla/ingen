@@ -15,6 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <set>
+
 #include <boost/format.hpp>
 #include <glibmm/thread.h>
 
@@ -76,27 +78,6 @@ DisconnectAll::~DisconnectAll()
 }
 
 void
-DisconnectAll::maybe_remove_connection(ConnectionImpl* c)
-{
-	if (c->pending_disconnection())
-		return;
-
-	OutputPort* src = dynamic_cast<OutputPort*>(c->src_port());
-	InputPort*  dst = dynamic_cast<InputPort*>(c->dst_port());
-	
-	if (_node) {
-		if (src->parent_node() == _node || dst->parent_node() == _node) {
-			_impls.push_back(new Disconnect::Impl(_engine, _parent, src, dst));
-		}
-	} else {
-		assert(_port);
-		if (src == _port || dst == _port) {
-			_impls.push_back(new Disconnect::Impl(_engine, _parent, src, dst));
-		}
-	}
-}
-
-void
 DisconnectAll::pre_process()
 {
 	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock(), Glib::NOT_LOCK);
@@ -134,12 +115,31 @@ DisconnectAll::pre_process()
 		assert((_node || _port) && !(_node && _port));
 	}
 
+	// Find set of connections to remove
+	std::set<ConnectionImpl*> to_remove;
 	for (Patch::Connections::const_iterator i = _parent->connections().begin();
-	     i != _parent->connections().end();) {
-		Patch::Connections::const_iterator next = i;
-		++next;
-		maybe_remove_connection((ConnectionImpl*)i->second.get());
-		i = next;
+	     i != _parent->connections().end(); ++i) {
+		ConnectionImpl* const c = (ConnectionImpl*)i->second.get();
+		if (_node) {
+			if (c->src_port()->parent_node() == _node
+			    || c->dst_port()->parent_node() == _node) {
+				to_remove.insert(c);
+			}
+		} else {
+			assert(_port);
+			if (c->src_port() == _port || c->dst_port() == _port) {
+				to_remove.insert(c);
+			}
+		}
+	}
+
+	// Create disconnect events (which erases from _parent->connections())
+	for (std::set<ConnectionImpl*>::const_iterator i = to_remove.begin();
+	     i != to_remove.end(); ++i) {
+		_impls.push_back(new Disconnect::Impl(
+			                 _engine, _parent,
+			                 dynamic_cast<OutputPort*>((*i)->src_port()),
+			                 dynamic_cast<InputPort*>((*i)->dst_port())));
 	}
 
 	if (!_deleting && _parent->enabled())
