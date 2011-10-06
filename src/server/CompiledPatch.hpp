@@ -19,6 +19,7 @@
 #define INGEN_ENGINE_COMPILEDPATCH_HPP
 
 #include <vector>
+#include <list>
 
 #include <boost/utility.hpp>
 
@@ -34,14 +35,14 @@ class NodeImpl;
 /** All information required about a node to execute it in an audio thread.
  */
 struct CompiledNode {
-	CompiledNode(NodeImpl* n, size_t np, Raul::List<NodeImpl*>* d)
+	CompiledNode(NodeImpl* n, size_t np, const std::list<NodeImpl*>& d)
 		: _node(n), _n_providers(np)
 	{
 		// Copy to a vector for maximum iteration speed and cache optimization
 		// (Need to take a copy anyway)
 
-		_dependants.reserve(d->size());
-		for (Raul::List<NodeImpl*>::iterator i = d->begin(); i != d->end(); ++i)
+		_dependants.reserve(d.size());
+		for (std::list<NodeImpl*>::const_iterator i = d.begin(); i != d.end(); ++i)
 			_dependants.push_back(*i);
 	}
 

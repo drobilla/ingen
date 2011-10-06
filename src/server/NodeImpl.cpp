@@ -46,8 +46,6 @@ NodeImpl::NodeImpl(PluginImpl* plugin, const Raul::Symbol& symbol, bool polyphon
 	, _process_lock(0)
 	, _n_inputs_ready(0)
 	, _ports(NULL)
-	, _providers(new Raul::List<NodeImpl*>())
-	, _dependants(new Raul::List<NodeImpl*>())
 	, _activated(false)
 	, _traversed(false)
 {
@@ -61,8 +59,6 @@ NodeImpl::~NodeImpl()
 	if (_activated)
 		deactivate();
 
-	delete _providers;
-	delete _dependants;
 	delete _ports;
 
 	free(_valid_ports);

@@ -75,18 +75,18 @@ Disconnect::Impl::Impl(Engine&     e,
 	NodeImpl* const src_node = _src_output_port->parent_node();
 	NodeImpl* const dst_node = _dst_input_port->parent_node();
 
-	for (Raul::List<NodeImpl*>::iterator i = dst_node->providers()->begin();
-	     i != dst_node->providers()->end(); ++i) {
+	for (std::list<NodeImpl*>::iterator i = dst_node->providers().begin();
+	     i != dst_node->providers().end(); ++i) {
 		if ((*i) == src_node) {
-			delete dst_node->providers()->erase(i);
+			dst_node->providers().erase(i);
 			break;
 		}
 	}
 
-	for (Raul::List<NodeImpl*>::iterator i = src_node->dependants()->begin();
-	     i != src_node->dependants()->end(); ++i) {
+	for (std::list<NodeImpl*>::iterator i = src_node->dependants().begin();
+	     i != src_node->dependants().end(); ++i) {
 		if ((*i) == dst_node) {
-			delete src_node->dependants()->erase(i);
+			src_node->dependants().erase(i);
 			break;
 		}
 	}

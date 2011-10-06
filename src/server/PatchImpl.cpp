@@ -444,7 +444,7 @@ PatchImpl::compile() const
 	for (Nodes::const_iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		NodeImpl* const node = (*i);
 		// Either a sink or connected to our output ports:
-		if ( ( ! node->traversed()) && node->dependants()->size() == 0)
+		if (!node->traversed() && node->dependants().size() == 0)
 			compile_recursive(node, compiled_patch);
 	}
 

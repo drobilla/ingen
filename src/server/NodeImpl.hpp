@@ -18,6 +18,7 @@
 #ifndef INGEN_ENGINE_NODEIMPL_HPP
 #define INGEN_ENGINE_NODEIMPL_HPP
 
+#include <list>
 #include <string>
 
 #include <boost/intrusive_ptr.hpp>
@@ -152,17 +153,11 @@ public:
 	virtual Port*     port(uint32_t index)      const;
 	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
 
-	/** Nodes that are connected to this Node's inputs.
-	 * (This Node depends on them)
-	 */
-	Raul::List<NodeImpl*>* providers()                         { return _providers; }
-	void                   providers(Raul::List<NodeImpl*>* l) { _providers = l; }
+	/** Nodes that are connected to this Node's inputs. */
+	std::list<NodeImpl*>& providers() { return _providers; }
 
-	/** Nodes are are connected to this Node's outputs.
-	 * (They depend on this Node)
-	 */
-	Raul::List<NodeImpl*>* dependants()                         { return _dependants; }
-	void                   dependants(Raul::List<NodeImpl*>* l) { _dependants = l; }
+	/** Nodes are are connected to this Node's outputs. */
+	std::list<NodeImpl*>& dependants() { return _dependants; }
 
 	/** Flag node as polyphonic.
 	 *
@@ -216,8 +211,8 @@ protected:
 	Raul::AtomicInt         _process_lock;   ///< Parallelism: Waiting on inputs 'lock'
 	Raul::AtomicInt         _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
 	Raul::Array<PortImpl*>* _ports;          ///< Access in audio thread only
-	Raul::List<NodeImpl*>*  _providers;      ///< Nodes connected to this one's input ports
-	Raul::List<NodeImpl*>*  _dependants;     ///< Nodes this one's output ports are connected to
+	std::list<NodeImpl*>    _providers;      ///< Nodes connected to this one's input ports
+	std::list<NodeImpl*>    _dependants;     ///< Nodes this one's output ports are connected to
 
 	bool _activated;
 	bool _traversed; ///< Flag for process order algorithm

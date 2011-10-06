@@ -154,11 +154,12 @@ PatchImpl::compile_recursive(NodeImpl* n, CompiledPatch* output) const
 	n->traversed(true);
 	assert(output != NULL);
 
-	for (Raul::List<NodeImpl*>::iterator i = n->providers()->begin(); i != n->providers()->end(); ++i)
-		if ( ! (*i)->traversed() )
-			compile_recursive((*i), output);
+	for (std::list<NodeImpl*>::iterator i = n->providers().begin();
+	     i != n->providers().end(); ++i)
+		if (!(*i)->traversed())
+			compile_recursive(*i, output);
 
-	output->push_back(CompiledNode(n, n->providers()->size(), n->dependants()));
+	output->push_back(CompiledNode(n, n->providers().size(), n->dependants()));
 }
 
 } // namespace Server

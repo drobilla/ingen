@@ -141,8 +141,8 @@ Connect::pre_process()
 		   provider...
 		*/
 		if (src_node != dst_node && src_node->parent() == dst_node->parent()) {
-			dst_node->providers()->push_back(new Raul::List<NodeImpl*>::Node(src_node));
-			src_node->dependants()->push_back(new Raul::List<NodeImpl*>::Node(dst_node));
+			dst_node->providers().push_back(src_node);
+			src_node->dependants().push_back(dst_node);
 		}
 
 		_patch->add_connection(_connection);
