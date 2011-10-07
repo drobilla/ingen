@@ -71,7 +71,7 @@ PatchImpl::activate(BufferFactory& bufs)
 {
 	NodeImpl::activate(bufs);
 
-	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->activate(bufs);
 
 	assert(_activated);
@@ -83,7 +83,7 @@ PatchImpl::deactivate()
 	if (_activated) {
 		NodeImpl::deactivate();
 
-		for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 			if ((*i)->activated())
 				(*i)->deactivate();
 			assert(!(*i)->activated());
@@ -99,7 +99,7 @@ PatchImpl::disable()
 
 	_process = false;
 
-	for (List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i)
 		if ((*i)->context() == Context::AUDIO)
 			(*i)->clear_buffers();
 }
@@ -111,10 +111,10 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 
 	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
 
-	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(bufs, poly);
 
-	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		for (uint32_t j = 0; j < (*i)->num_ports(); ++j)
 			(*i)->port_impl(j)->prepare_poly_buffers(bufs);
 
@@ -122,16 +122,19 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-PatchImpl::apply_internal_poly(ProcessContext& context, BufferFactory& bufs, Raul::Maid& maid, uint32_t poly)
+PatchImpl::apply_internal_poly(ProcessContext& context,
+                               BufferFactory&  bufs,
+                               Raul::Maid&     maid,
+                               uint32_t        poly)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
 
-	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->apply_poly(maid, poly);
 
-	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		for (uint32_t j = 0; j < (*i)->num_ports(); ++j) {
 			PortImpl* const port = (*i)->port_impl(j);
 			if (port->is_input() && dynamic_cast<InputPort*>(port)->direct_connect())
@@ -141,7 +144,7 @@ PatchImpl::apply_internal_poly(ProcessContext& context, BufferFactory& bufs, Rau
 	}
 
 	const bool polyphonic = parent_patch() && (poly == parent_patch()->internal_poly());
-	for (List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i)
+	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i)
 		(*i)->setup_buffers(bufs, polyphonic ? poly : 1);
 
 	_internal_poly = poly;
@@ -252,7 +255,10 @@ PatchImpl::process_single(ProcessContext& context)
 }
 
 void
-PatchImpl::set_buffer_size(Context& context, BufferFactory& bufs, PortType type, size_t size)
+PatchImpl::set_buffer_size(Context&       context,
+                           BufferFactory& bufs,
+                           PortType       type,
+                           size_t         size)
 {
 	NodeImpl::set_buffer_size(context, bufs, type, size);
 
@@ -266,7 +272,7 @@ PatchImpl::set_buffer_size(Context& context, BufferFactory& bufs, PortType type,
  * Preprocessing thread only.
  */
 void
-PatchImpl::add_node(List<NodeImpl*>::Node* ln)
+PatchImpl::add_node(Nodes::Node* ln)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	assert(ln != NULL);
@@ -284,7 +290,7 @@ PatchImpl::Nodes::Node*
 PatchImpl::remove_node(const Raul::Symbol& symbol)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	for (List<NodeImpl*>::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
+	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		if ((*i)->symbol() == symbol)
 			return _nodes.erase(i);
 
@@ -330,20 +336,23 @@ PatchImpl::num_ports() const
 	if (ThreadManager::thread_is(THREAD_PROCESS))
 		return NodeImpl::num_ports();
 	else
-		return _input_ports.size() + _output_ports.size();
+		return _inputs.size() + _outputs.size();
 }
 
 /** Create a port.  Not realtime safe.
  */
 PortImpl*
-PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, size_t buffer_size, bool is_output, bool polyphonic)
+PatchImpl::create_port(BufferFactory& bufs,
+                       const string&  name,
+                       PortType       type,
+                       size_t         buffer_size,
+                       bool           is_output,
+                       bool           polyphonic)
 {
 	if (type == PortType::UNKNOWN) {
 		error << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
 		return NULL;
 	}
-
-	assert( !(type == PortType::UNKNOWN) );
 
 	Raul::Atom value;
 	if (type == PortType::CONTROL)
@@ -360,25 +369,25 @@ PatchImpl::create_port(BufferFactory& bufs, const string& name, PortType type, s
  *
  * Realtime safe.  Preprocessing thread only.
  */
-List<PortImpl*>::Node*
+PatchImpl::Ports::Node*
 PatchImpl::remove_port(const string& symbol)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	bool found = false;
-	List<PortImpl*>::Node* ret = NULL;
-	for (List<PortImpl*>::iterator i = _input_ports.begin(); i != _input_ports.end(); ++i) {
+	Ports::Node* ret = NULL;
+	for (Ports::iterator i = _inputs.begin(); i != _inputs.end(); ++i) {
 		if ((*i)->symbol() == symbol) {
-			ret = _input_ports.erase(i);
+			ret = _inputs.erase(i);
 			found = true;
 			break;
 		}
 	}
 
 	if (!found)
-	for (List<PortImpl*>::iterator i = _output_ports.begin(); i != _output_ports.end(); ++i) {
+	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i) {
 		if ((*i)->symbol() == symbol) {
-			ret = _output_ports.erase(i);
+			ret = _outputs.erase(i);
 			found = true;
 			break;
 		}
@@ -402,8 +411,8 @@ PatchImpl::clear_ports()
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	_input_ports.clear();
-	_output_ports.clear();
+	_inputs.clear();
+	_outputs.clear();
 }
 
 Raul::Array<PortImpl*>*
@@ -411,15 +420,18 @@ PatchImpl::build_ports_array() const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	Raul::Array<PortImpl*>* const result = new Raul::Array<PortImpl*>(_input_ports.size() + _output_ports.size());
+	const size_t n = _inputs.size() + _outputs.size();
+	Raul::Array<PortImpl*>* const result = new Raul::Array<PortImpl*>(n);
 
 	size_t i = 0;
 
-	for (List<PortImpl*>::const_iterator p = _input_ports.begin(); p != _input_ports.end(); ++p,++i)
+	for (Ports::const_iterator p = _inputs.begin(); p != _inputs.end(); ++p,++i)
 		result->at(i) = *p;
 
-	for (List<PortImpl*>::const_iterator p = _output_ports.begin(); p != _output_ports.end(); ++p,++i)
+	for (Ports::const_iterator p = _outputs.begin(); p != _outputs.end(); ++p,++i)
 		result->at(i) = *p;
+
+	assert(i == n - 1);
 
 	return result;
 }
@@ -459,7 +471,8 @@ PatchImpl::compile() const
 	}
 
 	// Add any queued connections that must be run after a cycle
-	for (Connections::const_iterator i = _connections.begin(); i != _connections.end(); ++i) {
+	for (Connections::const_iterator i = _connections.begin();
+	     i != _connections.end(); ++i) {
 		SharedPtr<ConnectionImpl> c = PtrCast<ConnectionImpl>(i->second);
 		if (c->src_port()->context() == Context::AUDIO &&
 				c->dst_port()->context() == Context::MESSAGE) {

@@ -28,6 +28,7 @@
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortType.hpp"
+#include "ThreadManager.hpp"
 
 namespace Ingen {
 
@@ -66,7 +67,10 @@ public:
 
 	void process(ProcessContext& context);
 
-	void set_buffer_size(Context& context, BufferFactory& bufs, PortType type, size_t size);
+	void set_buffer_size(Context&       context,
+	                     BufferFactory& bufs,
+	                     PortType       type,
+	                     size_t         size);
 
 	/** Prepare for a new (internal) polyphony value.
 	 *
@@ -84,7 +88,10 @@ public:
 	 * \param poly Must be < the most recent value passed to prepare_internal_poly.
 	 * \param maid Any objects no longer needed will be pushed to this
 	 */
-	bool apply_internal_poly(ProcessContext& context, BufferFactory& bufs, Raul::Maid& maid, uint32_t poly);
+	bool apply_internal_poly(ProcessContext& context,
+	                         BufferFactory&  bufs,
+	                         Raul::Maid&     maid,
+	                         uint32_t        poly);
 
 	// Patch specific stuff not inherited from Node
 
@@ -101,15 +108,32 @@ public:
 
 	uint32_t num_ports() const;
 
-	PortImpl* create_port(BufferFactory& bufs, const std::string& name, PortType type, size_t buffer_size, bool is_output, bool polyphonic);
-	void add_input(Raul::List<PortImpl*>::Node* port)  { _input_ports.push_back(port); } ///< Preprocesser thread
-	void add_output(Raul::List<PortImpl*>::Node* port) { _output_ports.push_back(port); } ///< Preprocessor thread
-	Raul::List<PortImpl*>::Node* remove_port(const std::string& name);
-	void                   clear_ports();
+	PortImpl* create_port(BufferFactory&     bufs,
+	                      const std::string& name,
+	                      PortType           type,
+	                      size_t             buffer_size,
+	                      bool               is_output,
+	                      bool               polyphonic);
+
+	typedef Raul::List<PortImpl*> Ports;
+
+	void add_input(Ports::Node* port) {
+		ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+		_inputs.push_back(port);
+	}
+	
+	void add_output(Ports::Node* port) {
+		ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+		_outputs.push_back(port);
+	}
+
+	Ports::Node* remove_port(const std::string& name);
+	void         clear_ports();
 
 	void add_connection(SharedPtr<ConnectionImpl> c);
 
-	SharedPtr<ConnectionImpl> remove_connection(const PortImpl* src_port, const PortImpl* dst_port);
+	SharedPtr<ConnectionImpl> remove_connection(const PortImpl* src_port,
+	                                            const PortImpl* dst_port);
 
 	bool has_connection(const PortImpl* src_port, const PortImpl* dst_port) const;
 
@@ -134,14 +158,14 @@ private:
 	void process_parallel(ProcessContext& context);
 	void process_single(ProcessContext& context);
 
-	Engine&               _engine;
-	uint32_t              _internal_poly;
-	CompiledPatch*        _compiled_patch; ///< Accessed in audio thread only
-	Connections           _connections;    ///< Accessed in preprocessing thread only
-	Raul::List<PortImpl*> _input_ports;    ///< Accessed in preprocessing thread only
-	Raul::List<PortImpl*> _output_ports;   ///< Accessed in preprocessing thread only
-	Nodes                 _nodes;          ///< Accessed in preprocessing thread only
-	bool                  _process;
+	Engine&        _engine;
+	uint32_t       _internal_poly;
+	CompiledPatch* _compiled_patch;  ///< Process thread only
+	Connections    _connections;     ///< Pre-process thread only
+	Ports          _inputs;          ///< Pre-process thread only
+	Ports          _outputs;         ///< Pre-process thread only
+	Nodes          _nodes;           ///< Pre-process thread only
+	bool           _process;
 };
 
 /** Private helper for compile */
