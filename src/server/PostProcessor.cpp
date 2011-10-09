@@ -73,11 +73,13 @@ PostProcessor::process()
 	/* Process audio thread generated events */
 	Driver* driver = _engine.driver();
 	if (driver) {
-		Notification   note;
-		const uint32_t read_space = driver->context().event_sink().read_space();
+		Raul::RingBuffer& event_sink = driver->context().event_sink();
+		const uint32_t    read_space = event_sink.read_space();
+		Notification      note;
 		for (uint32_t i = 0; i < read_space; i += sizeof(note)) {
-			driver->context().event_sink().read(sizeof(note), &note);
-			Notification::post_process(note, _engine);
+			if (event_sink.read(sizeof(note), &note) == sizeof(note)) {
+				Notification::post_process(note, _engine);
+			}
 		}
 	}
 
