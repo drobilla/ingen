@@ -431,7 +431,7 @@ PatchImpl::build_ports_array() const
 	for (Ports::const_iterator p = _outputs.begin(); p != _outputs.end(); ++p,++i)
 		result->at(i) = *p;
 
-	assert(i == n - 1);
+	assert(i == n);
 
 	return result;
 }
