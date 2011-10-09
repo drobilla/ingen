@@ -186,7 +186,6 @@ JackPort::post_process(ProcessContext& context)
 
 JackDriver::JackDriver(Engine& engine)
 	: _engine(engine)
-	, _jack_thread(NULL)
 	, _sem(0)
 	, _flag(0)
 	, _client(NULL)
@@ -206,8 +205,6 @@ JackDriver::~JackDriver()
 
 	if (_client)
 		jack_client_close(_client);
-
-	delete _jack_thread;
 }
 
 bool
@@ -324,8 +321,7 @@ JackDriver::deactivate()
 			_client = NULL;
 		}
 
-		delete _jack_thread;
-		_jack_thread = NULL;
+		_jack_threads.clear();
 
 		LOG(info) << "Deactivated Jack client" << endl;
 	}
@@ -487,13 +483,10 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 void
 JackDriver::_thread_init_cb()
 {
-	if (_jack_thread) {
-		delete _jack_thread;
-	}
-
-	_jack_thread = &Thread::get();
-	_jack_thread->set_name("Jack");
-	_jack_thread->set_context(THREAD_PROCESS);
+	Raul::Thread* thread = &Thread::get();
+	thread->set_name("Jack");
+	thread->set_context(THREAD_PROCESS);
+	_jack_threads.push_back(SharedPtr<Raul::Thread>(thread));
 }
 
 void
@@ -501,8 +494,7 @@ JackDriver::_shutdown_cb()
 {
 	LOG(info) << "Jack shutdown.  Exiting." << endl;
 	_is_activated = false;
-	delete _jack_thread;
-	_jack_thread = NULL;
+	_jack_threads.clear();
 	_client = NULL;
 }
 

@@ -20,6 +20,7 @@
 
 #include "ingen-config.h"
 
+#include <list>
 #include <string>
 
 #include <jack/jack.h>
@@ -161,20 +162,20 @@ private:
 	void _session_cb(jack_session_event_t* event);
 #endif
 
-	Engine&                _engine;
-	Raul::Thread*          _jack_thread;
-	Raul::Semaphore        _sem;
-	Raul::AtomicInt        _flag;
-	jack_client_t*         _client;
-	jack_nframes_t         _block_length;
-	jack_nframes_t         _sample_rate;
-	uint32_t               _midi_event_type;
-	bool                   _is_activated;
-	jack_position_t        _position;
-	jack_transport_state_t _transport_state;
-	Raul::List<JackPort*>  _ports;
-	ProcessContext         _process_context;
-	PatchImpl*             _root_patch;
+	Engine&                              _engine;
+	std::list< SharedPtr<Raul::Thread> > _jack_threads;
+	Raul::Semaphore                      _sem;
+	Raul::AtomicInt                      _flag;
+	jack_client_t*                       _client;
+	jack_nframes_t                       _block_length;
+	jack_nframes_t                       _sample_rate;
+	uint32_t                             _midi_event_type;
+	bool                                 _is_activated;
+	jack_position_t                      _position;
+	jack_transport_state_t               _transport_state;
+	Raul::List<JackPort*>                _ports;
+	ProcessContext                       _process_context;
+	PatchImpl*                           _root_patch;
 };
 
 } // namespace Server
