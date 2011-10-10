@@ -18,7 +18,7 @@
 #ifndef INGEN_SHARED_LV2ATOM_HPP
 #define INGEN_SHARED_LV2ATOM_HPP
 
-typedef struct _LV2_Atom LV2_Atom;
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
 namespace Raul { class Atom; }
 
