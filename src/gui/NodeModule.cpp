@@ -70,6 +70,8 @@ NodeModule::NodeModule(PatchCanvas&               canvas,
 
 NodeModule::~NodeModule()
 {
+	embed_gui(false);
+
 	NodeControlWindow* win = App::instance().window_factory()->control_window(_node);
 	delete win; // Will be removed from window factory via signal
 }
