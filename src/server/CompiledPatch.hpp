@@ -34,7 +34,8 @@ class NodeImpl;
 
 /** All information required about a node to execute it in an audio thread.
  */
-struct CompiledNode {
+class CompiledNode {
+public:
 	CompiledNode(NodeImpl* n, size_t np, const std::list<NodeImpl*>& d)
 		: _node(n), _n_providers(np)
 	{
@@ -64,10 +65,11 @@ private:
  * The parallel processing algorithm guarantees no node will be executed
  * before its providers, using this order as well as semaphores.
  */
-struct CompiledPatch : public std::vector<CompiledNode>
-                     , public Raul::Deletable
-                     , public boost::noncopyable
+class CompiledPatch : public std::vector<CompiledNode>
+                    , public Raul::Deletable
+                    , public boost::noncopyable
 {
+public:
 	typedef std::vector<ConnectionImpl*> QueuedConnections;
 
 	/** All (audio context => other context) connections */

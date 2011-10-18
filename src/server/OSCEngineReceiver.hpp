@@ -68,7 +68,7 @@ private:
 		OSCEngineReceiver& _receiver;
 	};
 
-	friend class ReceiveThread;
+	friend struct ReceiveThread;
 
 	ReceiveThread* _receive_thread;
 
