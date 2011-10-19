@@ -39,7 +39,7 @@ def options(opt):
 def configure(conf):
     conf.load('compiler_cxx')
     autowaf.configure(conf)
-    conf.line_just = 67
+    conf.line_just = 48
 
     autowaf.display_header('Ingen Configuration')
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
@@ -83,15 +83,21 @@ def configure(conf):
                define_name='HAVE_POSIX_MEMALIGN',
                mandatory=False)
 
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/lv2core/lv2.h')
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/atom/atom.h')
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/reference/reference.h')
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/contexts/contexts.h')
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/event/event-helpers.h')
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/event/event.h')
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/resize-port/resize-port.h')
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/uri-map/uri-map.h')
-    autowaf.check_header(conf, 'c', 'lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h')
+    autowaf.check_pkg(conf, 'lv2core', uselib_store='LV2CORE')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-atom',
+                      uselib_store='LV2_ATOM')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-reference',
+                      uselib_store='LV2_REFERENCE')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-contexts',
+                      uselib_store='LV2_CONTEXTS')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-event',
+                      uselib_store='LV2_EVENT')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-resize-port',
+                      uselib_store='LV2_RESIZE')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-uri-map',
+                      uselib_store='LV2_URI_MAP')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-uri-unmap',
+                      uselib_store='LV2_URI_UNMAP')
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
@@ -150,7 +156,8 @@ def build(bld):
     obj.defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"'
     obj.use          = 'libingen_shared'
     obj.install_path = '${BINDIR}'
-    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LV2CORE LILV INGEN LIBLO SOUP')
+    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LIBLO SOUP' +
+                    ' LV2CORE LV2_EVENT LV2_URI_MAP LV2_PERSIST')
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
 
