@@ -86,8 +86,6 @@ def configure(conf):
     autowaf.check_pkg(conf, 'lv2core', uselib_store='LV2CORE')
     autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-atom',
                       uselib_store='LV2_ATOM')
-    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-reference',
-                      uselib_store='LV2_REFERENCE')
     autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-contexts',
                       uselib_store='LV2_CONTEXTS')
     autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-event',

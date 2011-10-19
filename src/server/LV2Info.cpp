@@ -22,12 +22,10 @@
 #include <cassert>
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "lv2/lv2plug.in/ns/ext/reference/reference.h"
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 
 #include "shared/World.hpp"
 
-#include "LV2BlobFeature.hpp"
 #include "LV2EventFeature.hpp"
 #include "LV2Features.hpp"
 #include "LV2Info.hpp"
@@ -55,8 +53,6 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 
 	world->lv2_features()->add_feature(LV2_EVENT_URI,
 			SharedPtr<Shared::LV2Features::Feature>(new EventFeature()));
-	world->lv2_features()->add_feature(LV2_REFERENCE_BLOB_SUPPORT_URI,
-			SharedPtr<Shared::LV2Features::Feature>(new BlobFeature()));
 	world->lv2_features()->add_feature(LV2_RESIZE_PORT_URI,
 			SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
 	world->lv2_features()->add_feature(LV2_CONTEXTS_URI "#RequestRunFeature",
