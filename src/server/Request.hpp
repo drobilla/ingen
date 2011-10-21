@@ -38,15 +38,12 @@ namespace Server {
 class Request
 {
 public:
-	Request(EventSource*     source=0,
-	        ClientInterface* client=0,
+	Request(ClientInterface* client=0,
 	        int32_t          id=1)
-		: _source(source)
-		, _client(client)
+		: _client(client)
 		, _id(id)
 	{}
 
-	EventSource* source()           { return _source; }
 	int32_t      id() const         { return _id; }
 	void         set_id(int32_t id) { _id = id; }
 
@@ -64,7 +61,6 @@ public:
 	}
 
 private:
-	EventSource*     _source;
 	ClientInterface* _client;
 	int32_t          _id;
 };

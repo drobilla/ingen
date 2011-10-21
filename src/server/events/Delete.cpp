@@ -53,7 +53,6 @@ Delete::Delete(Engine&            engine,
 	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
 	assert(request);
-	assert(request->source());
 
 	if (Raul::Path::is_path(uri))
 		_path = Raul::Path(uri.str());

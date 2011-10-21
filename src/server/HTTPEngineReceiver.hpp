@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "ServerInterfaceImpl.hpp"
+#include "raul/Thread.hpp"
 
 typedef struct _SoupServer SoupServer;
 typedef struct _SoupMessage SoupMessage;
@@ -31,20 +31,23 @@ typedef struct SoupClientContext SoupClientContext;
 namespace Ingen {
 namespace Server {
 
-class HTTPEngineReceiver : public ServerInterfaceImpl
+class ServerInterfaceImpl;
+class Engine;
+
+class HTTPEngineReceiver
 {
 public:
-	HTTPEngineReceiver(Engine& engine, uint16_t port);
+	HTTPEngineReceiver(Engine&                        engine,
+	                   SharedPtr<ServerInterfaceImpl> interface,
+	                   uint16_t                       port);
+
 	~HTTPEngineReceiver();
 
 private:
 	struct ReceiveThread : public Raul::Thread {
 		explicit ReceiveThread(HTTPEngineReceiver& receiver) : _receiver(receiver) {}
 		virtual void _run();
-		virtual void whip() {
-			while (_receiver.unprepared_events())
-				_receiver.whip();
-		}
+		virtual void whip();
 	private:
 		HTTPEngineReceiver& _receiver;
 	};
@@ -54,8 +57,10 @@ private:
 	static void message_callback(SoupServer* server, SoupMessage* msg, const char* path,
 			GHashTable *query, SoupClientContext* client, void* data);
 
-	ReceiveThread* _receive_thread;
-	SoupServer*    _server;
+	Engine&                        _engine;
+	SharedPtr<ServerInterfaceImpl> _interface;
+	ReceiveThread*                 _receive_thread;
+	SoupServer*                    _server;
 };
 
 } // namespace Server

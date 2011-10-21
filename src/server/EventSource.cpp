@@ -63,6 +63,16 @@ EventSource::push_queued(Event* const ev)
 	whip();
 }
 
+/** Prepare all unprepared events.
+ */
+void
+EventSource::prepare_all()
+{
+	while (unprepared_events()) {
+		whip();
+	}
+}
+
 /** Process all events for a cycle.
  *
  * Executed events will be pushed to @a dest.

@@ -36,6 +36,7 @@
 #include "Engine.hpp"
 #include "OSCClientSender.hpp"
 #include "OSCEngineReceiver.hpp"
+#include "ServerInterfaceImpl.hpp"
 #include "ThreadManager.hpp"
 
 #define LOG(s) s << "[OSCEngineReceiver] "
@@ -56,8 +57,11 @@ namespace Server {
  * See the "Client OSC Namespace Documentation" for details.</p>
  */
 
-OSCEngineReceiver::OSCEngineReceiver(Engine& engine, uint16_t port)
-	: ServerInterfaceImpl(engine)
+OSCEngineReceiver::OSCEngineReceiver(Engine&                        engine,
+                                     SharedPtr<ServerInterfaceImpl> interface,
+                                     uint16_t                       port)
+	: _engine(engine)
+	, _interface(interface)
 	, _server(NULL)
 {
 	_receive_thread = new ReceiveThread(*this);
@@ -117,8 +121,8 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, uint16_t port)
 
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 
-	Thread::set_name("OSCEngineReceiver");
-	start();
+	//_interface->set_name("OSCEngineReceiver");
+	//_interface->start();
 	_receive_thread->set_name("OSCEngineReceiver Listener");
 	_receive_thread->start();
 	_receive_thread->set_scheduling(SCHED_FIFO, 5);
@@ -127,7 +131,7 @@ OSCEngineReceiver::OSCEngineReceiver(Engine& engine, uint16_t port)
 OSCEngineReceiver::~OSCEngineReceiver()
 {
 	_receive_thread->stop();
-	stop();
+	//_interface->stop();
 	delete _receive_thread;
 
 	if (_server != NULL)  {
@@ -156,11 +160,9 @@ OSCEngineReceiver::ReceiveThread::_run()
 
 		// Enqueue every other message that is here "now"
 		// (would this provide truly atomic bundles?)
-		while (lo_server_recv_noblock(_receiver._server, 0) > 0)
-			if (_receiver.unprepared_events())
-				_receiver.whip();
+		while (lo_server_recv_noblock(_receiver._server, 0) > 0) {}
 
-		// No more unprepared events
+		_receiver._interface->prepare_all();;
 	}
 }
 
@@ -190,21 +192,21 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	const lo_address addr = lo_message_get_source(msg);
 	char* const      url  = lo_address_get_url(addr);
 
-	const SharedPtr<Request> r = me->_request;
+	const SharedPtr<Request> r = me->_interface->request();
 
 	/* Different address than last time, have to do a lookup */
 	if (!r || !r->client() || strcmp(url, r->client()->uri().c_str())) {
 		ClientInterface* client = me->_engine.broadcaster()->client(url);
-		if (client)
-			me->_request = SharedPtr<Request>(new Request(me, client, id));
-		else
-			me->_request = SharedPtr<Request>(new Request(me));
+		Request* req  = (client)
+			? new Request(client, id)
+			: new Request();
+		me->_interface->set_request(SharedPtr<Request>(req));
 	}
 
 	if (id != -1) {
-		me->set_next_response_id(id);
+		me->_interface->set_next_response_id(id);
 	} else {
-		me->disable_responses();
+		me->_interface->disable_responses();
 	}
 
 	free(url);
@@ -265,7 +267,7 @@ OSCEngineReceiver::_ping_cb(const char* path, const char* types, lo_arg** argv, 
 int
 OSCEngineReceiver::_ping_slow_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	ping();
+	_interface->ping();
 	return 0;
 }
 
@@ -286,7 +288,7 @@ OSCEngineReceiver::_register_client_cb(const char* path, const char* types, lo_a
 	ClientInterface* client = new OSCClientSender(
 		(const char*)url,
 		_engine.world()->conf()->option("packet-size").get_int32());
-	register_client(client);
+	_interface->register_client(client);
 	free(url);
 
 	return 0;
@@ -305,7 +307,7 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 	lo_address addr = lo_message_get_source(msg);
 
 	char* url = lo_address_get_url(addr);
-	unregister_client(url);
+	_interface->unregister_client(url);
 	free(url);
 
 	return 0;
@@ -322,7 +324,7 @@ OSCEngineReceiver::_unregister_client_cb(const char* path, const char* types, lo
 int
 OSCEngineReceiver::_get_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	get(&argv[1]->s);
+	_interface->get(&argv[1]->s);
 	return 0;
 }
 
@@ -347,7 +349,7 @@ OSCEngineReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, i
 	for (int i = 3; i < argc-1; i += 2)
 		prop.insert(make_pair(&argv[i]->s,
 		                      AtomLiblo::lo_arg_to_atom(types[i+1], argv[i+1])));
-	put(obj_path, prop, Resource::uri_to_graph(ctx));
+	_interface->put(obj_path, prop, Resource::uri_to_graph(ctx));
 	return 0;
 }
 
@@ -380,7 +382,7 @@ OSCEngineReceiver::_delta_add_cb(const char* path, const char* types, lo_arg** a
 int
 OSCEngineReceiver::_delta_end_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	delta(_delta_uri, _delta_remove, _delta_add);
+	_interface->delta(_delta_uri, _delta_remove, _delta_add);
 	_delta_uri = Raul::URI();
 	_delta_remove.clear();
 	_delta_add.clear();
@@ -402,7 +404,7 @@ OSCEngineReceiver::_move_cb(const char* path, const char* types, lo_arg** argv, 
 	const char* old_path = &argv[1]->s;
 	const char* new_path = &argv[2]->s;
 
-	move(old_path, new_path);
+	_interface->move(old_path, new_path);
 	return 0;
 }
 
@@ -419,7 +421,7 @@ OSCEngineReceiver::_del_cb(const char* path, const char* types, lo_arg** argv, i
 {
 	const char* uri = &argv[1]->s;
 
-	del(uri);
+	_interface->del(uri);
 	return 0;
 }
 
@@ -438,7 +440,7 @@ OSCEngineReceiver::_connect_cb(const char* path, const char* types, lo_arg** arg
 	const char* src_port_path = &argv[1]->s;
 	const char* dst_port_path = &argv[2]->s;
 
-	connect(src_port_path, dst_port_path);
+	_interface->connect(src_port_path, dst_port_path);
 	return 0;
 }
 
@@ -457,7 +459,7 @@ OSCEngineReceiver::_disconnect_cb(const char* path, const char* types, lo_arg** 
 	const char* src_port_path = &argv[1]->s;
 	const char* dst_port_path = &argv[2]->s;
 
-	disconnect(src_port_path, dst_port_path);
+	_interface->disconnect(src_port_path, dst_port_path);
 	return 0;
 }
 
@@ -476,7 +478,7 @@ OSCEngineReceiver::_disconnect_all_cb(const char* path, const char* types, lo_ar
 	const char* patch_path = &argv[1]->s;
 	const char* object_path = &argv[2]->s;
 
-	disconnect_all(patch_path, object_path);
+	_interface->disconnect_all(patch_path, object_path);
 	return 0;
 }
 
@@ -565,7 +567,7 @@ OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 
 	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
 
-	set_property(object_path, key, value);
+	_interface->set_property(object_path, key, value);
 	return 0;
 }
 

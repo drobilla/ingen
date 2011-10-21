@@ -45,7 +45,7 @@ class Engine;
  * are successful.
  */
 class ServerInterfaceImpl : public EventSource,
-                              public ServerInterface
+                            public ServerInterface
 {
 public:
 	ServerInterfaceImpl(Engine& engine);
@@ -97,9 +97,12 @@ public:
 	virtual void ping();
 	virtual void get(const Raul::URI& uri);
 
-protected:
+	SharedPtr<Request> request()                         { return _request; }
+	void               set_request(SharedPtr<Request> r) { _request = r; }
+
 	virtual void disable_responses();
 
+protected:
 	SharedPtr<Request> _request; ///< NULL if responding disabled
 	Engine&            _engine;
 	bool               _in_bundle; ///< True iff a bundle is currently being received

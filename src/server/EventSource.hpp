@@ -35,20 +35,20 @@ class ProcessContext;
  * (realtime audio thread) and executes them, then they are sent to the
  * PostProcessor and finalised (post-processing thread).
  */
-class EventSource : protected Raul::Slave
+class EventSource : public Raul::Slave
 {
 public:
 	explicit EventSource();
 	virtual ~EventSource();
 
+	void prepare_all();
 	void process(PostProcessor& dest, ProcessContext& context, bool limit=true);
 
-	bool empty() { return !_head.get(); }
+	inline bool unprepared_events() const { return (_prepared_back.get() != NULL); }
+	inline bool empty()             const { return !_head.get(); }
 
 protected:
 	void push_queued(Event* const ev);
-
-	inline bool unprepared_events() { return (_prepared_back.get() != NULL); }
 
 	virtual void _whipped(); ///< Prepare 1 event
 

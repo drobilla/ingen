@@ -126,7 +126,7 @@ SetMetadata::pre_process()
 		Shared::ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output);
 
 		// Create a separate request without a source so EventSource isn't unblocked twice
-		SharedPtr<Request> sub_request(new Request(NULL, _request->client(), _request->id()));
+		SharedPtr<Request> sub_request(new Request(_request->client(), _request->id()));
 
 		if (is_patch) {
 			uint32_t poly = 1;

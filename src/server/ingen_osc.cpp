@@ -18,6 +18,7 @@
 #include "ingen/shared/Module.hpp"
 #include "ingen/shared/World.hpp"
 #include "OSCEngineReceiver.hpp"
+#include "ServerInterfaceImpl.hpp"
 #include "Engine.hpp"
 
 using namespace std;
@@ -26,12 +27,17 @@ using namespace Ingen;
 struct IngenOSCModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
 		Server::Engine* engine = (Server::Engine*)world->local_engine().get();
-		SharedPtr<Server::OSCEngineReceiver> interface(
+		SharedPtr<Server::ServerInterfaceImpl> interface(
+			new Server::ServerInterfaceImpl(*engine));
+		receiver = SharedPtr<Server::OSCEngineReceiver>(
 			new Server::OSCEngineReceiver(
 				*engine,
+				interface,
 				world->conf()->option("engine-port").get_int32()));
 		engine->add_event_source(interface);
 	}
+
+	SharedPtr<Server::OSCEngineReceiver> receiver;
 };
 
 extern "C" {

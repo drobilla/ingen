@@ -20,16 +20,16 @@
 
 #include <stdint.h>
 #include <lo/lo.h>
-#include "ServerInterfaceImpl.hpp"
+
 #include "Request.hpp"
 #include "ingen-config.h"
 
 namespace Ingen {
+
 namespace Server {
 
-class JackDriver;
-class NodeFactory;
-class PatchImpl;
+class Engine;
+class ServerInterfaceImpl;
 
 /* Some boilerplate killing macros... */
 #define LO_HANDLER_ARGS const char* path, const char* types, lo_arg** argv, int argc, lo_message msg
@@ -54,10 +54,13 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
  *
  * \ingroup engine
  */
-class OSCEngineReceiver : public ServerInterfaceImpl
+class OSCEngineReceiver
 {
 public:
-	OSCEngineReceiver(Engine& engine, uint16_t port);
+	OSCEngineReceiver(Engine&                        engine,
+	                  SharedPtr<ServerInterfaceImpl> interface,
+	                  uint16_t                       port);
+
 	~OSCEngineReceiver();
 
 private:
@@ -116,7 +119,9 @@ private:
 	LO_HANDLER(set_property);
 	LO_HANDLER(property_set);
 
-	lo_server _server;
+	Engine&                        _engine;
+	SharedPtr<ServerInterfaceImpl> _interface;
+	lo_server                      _server;
 };
 
 } // namespace Server

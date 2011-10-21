@@ -37,6 +37,7 @@
 #include "EventSource.hpp"
 #include "HTTPClientSender.hpp"
 #include "HTTPEngineReceiver.hpp"
+#include "ServerInterfaceImpl.hpp"
 #include "ThreadManager.hpp"
 
 #define LOG(s) s << "[HTTPEngineReceiver] "
@@ -50,8 +51,11 @@ using namespace Serialisation;
 
 namespace Server {
 
-HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
-	: ServerInterfaceImpl(engine)
+HTTPEngineReceiver::HTTPEngineReceiver(Engine&                        engine,
+                                       SharedPtr<ServerInterfaceImpl> interface,
+                                       uint16_t                       port)
+	: _engine(engine)
+	, _interface(interface)
 	, _server(soup_server_new(SOUP_SERVER_PORT, port, NULL))
 {
 	_receive_thread = new ReceiveThread(*this);
@@ -63,8 +67,8 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 	if (!engine.world()->parser() || !engine.world()->serialiser())
 		engine.world()->load_module("serialisation");
 
-	Thread::set_name("HTTPEngineReceiver");
-	start();
+	_interface->set_name("HTTPEngineReceiver");
+	_interface->start();
 	_receive_thread->set_name("HTTPEngineReceiver Listener");
 	_receive_thread->start();
 }
@@ -72,13 +76,19 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
 HTTPEngineReceiver::~HTTPEngineReceiver()
 {
 	_receive_thread->stop();
-	stop();
+	_interface->stop();
 	delete _receive_thread;
 
 	if (_server)  {
 		soup_server_quit(_server);
 		_server = NULL;
 	}
+}
+
+void
+HTTPEngineReceiver::ReceiveThread::whip()
+{
+	_receiver._interface->prepare_all();
 }
 
 void
@@ -89,7 +99,8 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
                                      SoupClientContext* client,
                                      void*              data)
 {
-	HTTPEngineReceiver* me = (HTTPEngineReceiver*)data;
+	HTTPEngineReceiver*  me        = (HTTPEngineReceiver*)data;
+	ServerInterfaceImpl* interface = me->_interface.get();
 
 	using namespace Ingen::Shared;
 
@@ -123,7 +134,7 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 		} else if (msg->method == SOUP_METHOD_GET && path.substr(0, 8) == "/plugins") {
 			// FIXME: kludge
 			#if 0
-			me->get("ingen:plugins");
+			interface->get("ingen:plugins");
 			me->_receive_thread->whip();
 
 			serialiser->start_to_string("/", base_uri);
@@ -143,7 +154,7 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 
 		} else if (path.substr(0, 7) == "/stream") {
 			HTTPClientSender* client = new HTTPClientSender(me->_engine);
-			me->register_client(client);
+			interface->register_client(client);
 
 			// Respond with port number of stream for client
 			const int port = client->listen_port();
@@ -204,11 +215,11 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 			return;
 		}
 
-		parser->parse_string(me->_engine.world(), me, msg->request_body->data, base_uri);
+		parser->parse_string(me->_engine.world(), interface, msg->request_body->data, base_uri);
 		soup_message_set_status(msg, SOUP_STATUS_OK);
 
 	} else if (msg->method == SOUP_METHOD_DELETE) {
-		me->del(path);
+		interface->del(path);
 		soup_message_set_status(msg, SOUP_STATUS_OK);
 
 	} else {
