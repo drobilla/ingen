@@ -43,7 +43,7 @@
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
-#include "QueuedEngineInterface.hpp"
+#include "ServerInterfaceImpl.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;

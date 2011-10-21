@@ -20,7 +20,7 @@
 
 #include <stdint.h>
 #include <lo/lo.h>
-#include "QueuedEngineInterface.hpp"
+#include "ServerInterfaceImpl.hpp"
 #include "Request.hpp"
 #include "ingen-config.h"
 
@@ -46,15 +46,15 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
 
 /** Receives OSC messages from liblo.
  *
- * This inherits from QueuedEngineInterface and calls it's own functions
+ * This inherits from ServerInterfaceImpl and calls it's own functions
  * via OSC.  It's not actually a directly callable ServerInterface (it's
  * callable via OSC...) so it should be implemented-as-a (privately inherit)
- * QueuedEngineInterface, but it needs to be public so it's an EventSource
+ * ServerInterfaceImpl, but it needs to be public so it's an EventSource
  * the Driver can use.  This probably should be fixed somehow..
  *
  * \ingroup engine
  */
-class OSCEngineReceiver : public QueuedEngineInterface
+class OSCEngineReceiver : public ServerInterfaceImpl
 {
 public:
 	OSCEngineReceiver(Engine& engine, uint16_t port);

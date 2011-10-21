@@ -22,10 +22,10 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EventSource.hpp"
-#include "QueuedEngineInterface.hpp"
+#include "ServerInterfaceImpl.hpp"
 #include "events.hpp"
 
-#define LOG(s) s << "[QueuedEngineInterface] "
+#define LOG(s) s << "[ServerInterfaceImpl] "
 
 using namespace std;
 using namespace Raul;
@@ -33,7 +33,7 @@ using namespace Raul;
 namespace Ingen {
 namespace Server {
 
-QueuedEngineInterface::QueuedEngineInterface(Engine& engine)
+ServerInterfaceImpl::ServerInterfaceImpl(Engine& engine)
 	: EventSource()
 	, _request(new Request(this, NULL, 0))
 	, _engine(engine)
@@ -43,13 +43,13 @@ QueuedEngineInterface::QueuedEngineInterface(Engine& engine)
 }
 
 
-QueuedEngineInterface::~QueuedEngineInterface()
+ServerInterfaceImpl::~ServerInterfaceImpl()
 {
 	stop();
 }
 
 SampleCount
-QueuedEngineInterface::now() const
+ServerInterfaceImpl::now() const
 {
 	// Exactly one cycle latency (some could run ASAP if we get lucky, but not always, and a slight
 	// constant latency is far better than jittery lower (average) latency
@@ -60,14 +60,14 @@ QueuedEngineInterface::now() const
 }
 
 void
-QueuedEngineInterface::set_next_response_id(int32_t id)
+ServerInterfaceImpl::set_next_response_id(int32_t id)
 {
 	if (_request)
 		_request->set_id(id);
 }
 
 void
-QueuedEngineInterface::disable_responses()
+ServerInterfaceImpl::disable_responses()
 {
 	_request->set_client(NULL);
 	_request->set_id(0);
@@ -76,7 +76,7 @@ QueuedEngineInterface::disable_responses()
 /* *** ServerInterface implementation below here *** */
 
 void
-QueuedEngineInterface::register_client(ClientInterface* client)
+ServerInterfaceImpl::register_client(ClientInterface* client)
 {
 	push_queued(new Events::RegisterClient(_engine, _request, now(), client->uri(), client));
 	if (!_request) {
@@ -88,7 +88,7 @@ QueuedEngineInterface::register_client(ClientInterface* client)
 }
 
 void
-QueuedEngineInterface::unregister_client(const URI& uri)
+ServerInterfaceImpl::unregister_client(const URI& uri)
 {
 	push_queued(new Events::UnregisterClient(_engine, _request, now(), uri));
 	if (_request && _request->client() && _request->client()->uri() == uri) {
@@ -100,13 +100,13 @@ QueuedEngineInterface::unregister_client(const URI& uri)
 // Bundle commands
 
 void
-QueuedEngineInterface::bundle_begin()
+ServerInterfaceImpl::bundle_begin()
 {
 	_in_bundle = true;
 }
 
 void
-QueuedEngineInterface::bundle_end()
+ServerInterfaceImpl::bundle_end()
 {
 	_in_bundle = false;
 }
@@ -114,7 +114,7 @@ QueuedEngineInterface::bundle_end()
 // Object commands
 
 void
-QueuedEngineInterface::put(const URI&                  uri,
+ServerInterfaceImpl::put(const URI&                  uri,
                            const Resource::Properties& properties,
                            const Resource::Graph       ctx)
 {
@@ -122,7 +122,7 @@ QueuedEngineInterface::put(const URI&                  uri,
 }
 
 void
-QueuedEngineInterface::delta(const URI&                  uri,
+ServerInterfaceImpl::delta(const URI&                  uri,
                              const Resource::Properties& remove,
                              const Resource::Properties& add)
 {
@@ -130,14 +130,14 @@ QueuedEngineInterface::delta(const URI&                  uri,
 }
 
 void
-QueuedEngineInterface::move(const Path& old_path,
+ServerInterfaceImpl::move(const Path& old_path,
                             const Path& new_path)
 {
 	push_queued(new Events::Move(_engine, _request, now(), old_path, new_path));
 }
 
 void
-QueuedEngineInterface::del(const URI& uri)
+ServerInterfaceImpl::del(const URI& uri)
 {
 	if (uri == "ingen:engine") {
 		_request->respond_ok();
@@ -148,7 +148,7 @@ QueuedEngineInterface::del(const URI& uri)
 }
 
 void
-QueuedEngineInterface::connect(const Path& src_port_path,
+ServerInterfaceImpl::connect(const Path& src_port_path,
                                const Path& dst_port_path)
 {
 	push_queued(new Events::Connect(_engine, _request, now(), src_port_path, dst_port_path));
@@ -156,7 +156,7 @@ QueuedEngineInterface::connect(const Path& src_port_path,
 }
 
 void
-QueuedEngineInterface::disconnect(const URI& src,
+ServerInterfaceImpl::disconnect(const URI& src,
                                   const URI& dst)
 {
 	if (!Path::is_path(src) && !Path::is_path(dst)) {
@@ -169,14 +169,14 @@ QueuedEngineInterface::disconnect(const URI& src,
 }
 
 void
-QueuedEngineInterface::disconnect_all(const Path& patch_path,
+ServerInterfaceImpl::disconnect_all(const Path& patch_path,
                                       const Path& path)
 {
 	push_queued(new Events::DisconnectAll(_engine, _request, now(), patch_path, path));
 }
 
 void
-QueuedEngineInterface::set_property(const URI&  uri,
+ServerInterfaceImpl::set_property(const URI&  uri,
                                     const URI&  predicate,
                                     const Atom& value)
 {
@@ -202,13 +202,13 @@ QueuedEngineInterface::set_property(const URI&  uri,
 // Requests //
 
 void
-QueuedEngineInterface::ping()
+ServerInterfaceImpl::ping()
 {
 	push_queued(new Events::Ping(_engine, _request, now()));
 }
 
 void
-QueuedEngineInterface::get(const URI& uri)
+ServerInterfaceImpl::get(const URI& uri)
 {
 	push_queued(new Events::Get(_engine, _request, now(), uri));
 }

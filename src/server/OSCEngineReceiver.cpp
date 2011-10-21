@@ -57,7 +57,7 @@ namespace Server {
  */
 
 OSCEngineReceiver::OSCEngineReceiver(Engine& engine, uint16_t port)
-	: QueuedEngineInterface(engine)
+	: ServerInterfaceImpl(engine)
 	, _server(NULL)
 {
 	_receive_thread = new ReceiveThread(*this);
@@ -139,7 +139,7 @@ OSCEngineReceiver::~OSCEngineReceiver()
 	}
 }
 
-/** Override the semaphore driven _run method of QueuedEngineInterface
+/** Override the semaphore driven _run method of ServerInterfaceImpl
  * to wait on OSC messages and prepare them right away in the same thread.
  */
 void

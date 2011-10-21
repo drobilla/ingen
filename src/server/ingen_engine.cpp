@@ -18,7 +18,7 @@
 #include "ingen/shared/Module.hpp"
 #include "ingen/shared/World.hpp"
 #include "Engine.hpp"
-#include "QueuedEngineInterface.hpp"
+#include "ServerInterfaceImpl.hpp"
 #include "util.hpp"
 
 using namespace Ingen;
@@ -28,8 +28,8 @@ struct IngenEngineModule : public Ingen::Shared::Module {
 		Server::set_denormal_flags();
 		SharedPtr<Server::Engine> engine(new Server::Engine(world));
 		world->set_local_engine(engine);
-		SharedPtr<Server::QueuedEngineInterface> interface(
-			new Server::QueuedEngineInterface(*engine.get()));
+		SharedPtr<Server::ServerInterfaceImpl> interface(
+			new Server::ServerInterfaceImpl(*engine.get()));
 		world->set_engine(interface);
 		engine->add_event_source(interface);
 		assert(world->local_engine() == engine);

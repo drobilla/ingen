@@ -51,7 +51,7 @@ using namespace Serialisation;
 namespace Server {
 
 HTTPEngineReceiver::HTTPEngineReceiver(Engine& engine, uint16_t port)
-	: QueuedEngineInterface(engine)
+	: ServerInterfaceImpl(engine)
 	, _server(soup_server_new(SOUP_SERVER_PORT, port, NULL))
 {
 	_receive_thread = new ReceiveThread(*this);
@@ -216,7 +216,7 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 	}
 }
 
-/** Override the semaphore driven _run method of QueuedEngineInterface
+/** Override the semaphore driven _run method of ServerInterfaceImpl
  * to wait on HTTP requests and process them immediately in this thread.
  */
 void

@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "QueuedEngineInterface.hpp"
+#include "ServerInterfaceImpl.hpp"
 
 typedef struct _SoupServer SoupServer;
 typedef struct _SoupMessage SoupMessage;
@@ -31,7 +31,7 @@ typedef struct SoupClientContext SoupClientContext;
 namespace Ingen {
 namespace Server {
 
-class HTTPEngineReceiver : public QueuedEngineInterface
+class HTTPEngineReceiver : public ServerInterfaceImpl
 {
 public:
 	HTTPEngineReceiver(Engine& engine, uint16_t port);

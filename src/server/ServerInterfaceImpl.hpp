@@ -44,12 +44,12 @@ class Engine;
  * If you do not register a request, you have no way of knowing if your calls
  * are successful.
  */
-class QueuedEngineInterface : public EventSource,
+class ServerInterfaceImpl : public EventSource,
                               public ServerInterface
 {
 public:
-	QueuedEngineInterface(Engine& engine);
-	virtual ~QueuedEngineInterface();
+	ServerInterfaceImpl(Engine& engine);
+	virtual ~ServerInterfaceImpl();
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 

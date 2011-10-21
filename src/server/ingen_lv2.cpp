@@ -43,7 +43,7 @@
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
-#include "QueuedEngineInterface.hpp"
+#include "ServerInterfaceImpl.hpp"
 #include "ThreadManager.hpp"
 
 /** Record of a patch in this Ingen LV2 bundle */
@@ -285,8 +285,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->main = new MainThread(engine);
 	plugin->main->set_name("Main");
 
-	SharedPtr<Server::QueuedEngineInterface> interface(
-		new Server::QueuedEngineInterface(*engine.get()));
+	SharedPtr<Server::ServerInterfaceImpl> interface(
+		new Server::ServerInterfaceImpl(*engine.get()));
 
 	plugin->world->set_engine(interface);
 	engine->add_event_source(interface);
