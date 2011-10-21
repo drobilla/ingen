@@ -49,7 +49,7 @@ Connect::Connect(Engine&            engine,
                  SampleCount        timestamp,
                  const Path&        src_port_path,
                  const Path&        dst_port_path)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
 	, _patch(NULL)
@@ -68,7 +68,7 @@ Connect::pre_process()
 	PortImpl* dst_port = _engine.engine_store()->find_port(_dst_port_path);
 	if (!src_port || !dst_port) {
 		_error = PORT_NOT_FOUND;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -76,7 +76,7 @@ Connect::pre_process()
 	_src_output_port = dynamic_cast<OutputPort*>(src_port);
 	if (!_dst_input_port || !_src_output_port) {
 		_error = DIRECTION_MISMATCH;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -84,7 +84,7 @@ Connect::pre_process()
 	NodeImpl* const dst_node = dst_port->parent_node();
 	if (!src_node || !dst_node) {
 		_error = PARENTS_NOT_FOUND;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -92,13 +92,13 @@ Connect::pre_process()
 			&& src_node != dst_node->parent()
 			&& src_node->parent() != dst_node) {
 		_error = PARENT_PATCH_DIFFERENT;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
 	if (!ConnectionImpl::can_connect(_src_output_port, _dst_input_port)) {
 		_error = TYPE_MISMATCH;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -121,7 +121,7 @@ Connect::pre_process()
 
 	if (_patch->has_connection(_src_output_port, _dst_input_port)) {
 		_error = ALREADY_CONNECTED;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -153,13 +153,13 @@ Connect::pre_process()
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void
 Connect::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(context);
+	Event::execute(context);
 
 	if (_error == NO_ERROR) {
 		// This must be inserted here, since they're actually used by the audio thread

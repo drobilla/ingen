@@ -48,7 +48,7 @@ Disconnect::Disconnect(Engine&            engine,
                        SampleCount        timestamp,
                        const Raul::Path&  src_port_path,
                        const Raul::Path&  dst_port_path)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
 	, _patch(NULL)
@@ -119,7 +119,7 @@ Disconnect::pre_process()
 	    && _src_port_path.parent() != _dst_port_path.parent().parent()
 	    && _src_port_path.parent().parent() != _dst_port_path.parent()) {
 		_error = PARENT_PATCH_DIFFERENT;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -128,7 +128,7 @@ Disconnect::pre_process()
 
 	if (_src_port == NULL || _dst_port == NULL) {
 		_error = PORT_NOT_FOUND;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -157,13 +157,13 @@ Disconnect::pre_process()
 
 	if (!_patch->has_connection(_src_port, _dst_port)) {
 		_error = NOT_CONNECTED;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
 	if (src_node == NULL || dst_node == NULL) {
 		_error = PARENTS_NOT_FOUND;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -175,7 +175,7 @@ Disconnect::pre_process()
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 bool
@@ -210,7 +210,7 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 void
 Disconnect::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(context);
+	Event::execute(context);
 
 	if (_error == NO_ERROR) {
 		if (!_impl->execute(context, true)) {

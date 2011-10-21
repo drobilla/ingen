@@ -134,7 +134,7 @@ Engine::set_driver(SharedPtr<Driver> driver)
 }
 
 static void
-execute_and_delete_event(ProcessContext& context, QueuedEvent* ev)
+execute_and_delete_event(ProcessContext& context, Event* ev)
 {
 	ev->pre_process();
 	ev->execute(context);

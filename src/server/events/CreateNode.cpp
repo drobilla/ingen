@@ -47,7 +47,7 @@ CreateNode::CreateNode(
 		const Path&                  path,
 		const URI&                   plugin_uri,
 		const Resource::Properties&  properties)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _path(path)
 	, _plugin_uri(plugin_uri)
 	, _patch(NULL)
@@ -70,7 +70,7 @@ CreateNode::pre_process()
 {
 	if (_engine.engine_store()->find_object(_path) != NULL) {
 		_node_already_exists = true;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -100,13 +100,13 @@ CreateNode::pre_process()
 	if (!_node)
 		_error = 1;
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void
 CreateNode::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(context);
+	Event::execute(context);
 
 	if (_node) {
 		_engine.maid()->push(_patch->compiled_patch());

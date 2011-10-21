@@ -24,7 +24,7 @@
 #include "Notification.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -43,7 +43,7 @@ PostProcessor::~PostProcessor()
 }
 
 void
-PostProcessor::append(QueuedEvent* first, QueuedEvent* last)
+PostProcessor::append(Event* first, Event* last)
 {
 	assert(first);
 	assert(last);
@@ -84,15 +84,15 @@ PostProcessor::process()
 	}
 
 	/* Process normal events */
-	QueuedEvent* ev = _head.get();
+	Event* ev = _head.get();
 	if (!ev) {
 		return;
 	}
 	
-	QueuedEvent* const tail = _tail.get();
-	_head = (QueuedEvent*)tail->next();
+	Event* const tail = _tail.get();
+	_head = (Event*)tail->next();
 	while (ev && ev->time() <= end_time) {
-		QueuedEvent* const next = (QueuedEvent*)ev->next();
+		Event* const next = (Event*)ev->next();
 		ev->post_process();
 		delete ev;
 		if (ev == tail) {

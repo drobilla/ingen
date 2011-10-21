@@ -25,7 +25,7 @@ namespace Ingen {
 namespace Server {
 
 class Event;
-class QueuedEvent;
+class Event;
 class PostProcessor;
 class ProcessContext;
 
@@ -46,16 +46,16 @@ public:
 	bool empty() { return !_head.get(); }
 
 protected:
-	void push_queued(QueuedEvent* const ev);
+	void push_queued(Event* const ev);
 
 	inline bool unprepared_events() { return (_prepared_back.get() != NULL); }
 
 	virtual void _whipped(); ///< Prepare 1 event
 
 private:
-	Raul::AtomicPtr<QueuedEvent> _head;
-	Raul::AtomicPtr<QueuedEvent> _prepared_back;
-	Raul::AtomicPtr<QueuedEvent> _tail;
+	Raul::AtomicPtr<Event> _head;
+	Raul::AtomicPtr<Event> _prepared_back;
+	Raul::AtomicPtr<Event> _tail;
 };
 
 } // namespace Server

@@ -18,7 +18,7 @@
 #ifndef INGEN_EVENTS_PING_HPP
 #define INGEN_EVENTS_PING_HPP
 
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "types.hpp"
 #include "Request.hpp"
 
@@ -34,11 +34,11 @@ namespace Events {
  *
  * \ingroup engine
  */
-class Ping : public QueuedEvent
+class Ping : public Event
 {
 public:
 	Ping(Engine& engine, SharedPtr<Request> request, SampleCount timestamp)
-		: QueuedEvent(engine, request, timestamp)
+		: Event(engine, request, timestamp)
 	{}
 
 	void post_process() { _request->respond_ok(); }

@@ -19,7 +19,7 @@
 #define INGEN_EVENTS_CONNECT_HPP
 
 #include "raul/Path.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "PatchImpl.hpp"
 #include "InputPort.hpp"
 #include "types.hpp"
@@ -46,7 +46,7 @@ namespace Events {
  *
  * \ingroup engine
  */
-class Connect : public QueuedEvent
+class Connect : public Event
 {
 public:
 	Connect(Engine&            engine,

@@ -45,7 +45,7 @@
 #include "PortImpl.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessSlave.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "ThreadManager.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/LV2Features.hpp"

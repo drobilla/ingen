@@ -36,7 +36,7 @@ namespace Server {
 namespace Events {
 
 Move::Move(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& path, const Path& new_path)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _old_path(path)
 	, _new_path(new_path)
 	, _parent_patch(NULL)
@@ -55,19 +55,19 @@ Move::pre_process()
 
 	if (!_old_path.parent().is_parent_of(_new_path)) {
 		_error = PARENT_DIFFERS;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 	_store_iterator = _engine.engine_store()->find(_old_path);
 	if (_store_iterator == _engine.engine_store()->end())  {
 		_error = OBJECT_NOT_FOUND;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
 	if (_engine.engine_store()->find_object(_new_path))  {
 		_error = OBJECT_EXISTS;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -92,13 +92,13 @@ Move::pre_process()
 
 	_engine.engine_store()->add(*removed.get());
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void
 Move::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(context);
+	Event::execute(context);
 
 	SharedPtr<PortImpl> port = PtrCast<PortImpl>(_store_iterator->second);
 	if (port && port->parent()->parent() == NULL) {

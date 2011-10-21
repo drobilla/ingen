@@ -18,7 +18,7 @@
 #ifndef INGEN_EVENTS_DELETE_HPP
 #define INGEN_EVENTS_DELETE_HPP
 
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "ControlBindings.hpp"
@@ -55,7 +55,7 @@ class DisconnectAll;
 /** DELETE a graph object (see \ref methods).
  * \ingroup engine
  */
-class Delete : public QueuedEvent
+class Delete : public Event
 {
 public:
 	Delete(Engine&            engine,

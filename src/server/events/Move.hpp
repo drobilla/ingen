@@ -19,7 +19,7 @@
 #define INGEN_EVENTS_MOVE_HPP
 
 #include "raul/Path.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "EngineStore.hpp"
 
 namespace Ingen {
@@ -42,7 +42,7 @@ namespace Events {
 /** MOVE a graph object to a new path (see \ref methods).
  * \ingroup engine
  */
-class Move : public QueuedEvent
+class Move : public Event
 {
 public:
 	Move(

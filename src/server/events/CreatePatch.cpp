@@ -42,7 +42,7 @@ CreatePatch::CreatePatch(
 		const Raul::Path&           path,
 		int                         poly,
 		const Resource::Properties& properties)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _path(path)
 	, _patch(NULL)
 	, _parent(NULL)
@@ -57,13 +57,13 @@ CreatePatch::pre_process()
 {
 	if (_path.is_root() || _engine.engine_store()->find_object(_path) != NULL) {
 		_error = OBJECT_EXISTS;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
 	if (_poly < 1) {
 		_error = INVALID_POLY;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -72,7 +72,7 @@ CreatePatch::pre_process()
 	_parent = _engine.engine_store()->find_patch(path.parent());
 	if (_parent == NULL) {
 		_error = PARENT_NOT_FOUND;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -102,13 +102,13 @@ CreatePatch::pre_process()
 	//_patch->add_to_store(_engine.engine_store());
 	_engine.engine_store()->add(_patch);
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void
 CreatePatch::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(context);
+	Event::execute(context);
 
 	if (_patch) {
 		if (!_parent) {

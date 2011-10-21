@@ -26,7 +26,7 @@
 namespace Ingen {
 namespace Server {
 
-class QueuedEvent;
+class Event;
 class Engine;
 
 /** Processor for Events after leaving the audio thread.
@@ -49,7 +49,7 @@ public:
 	/** Push a list of events on to the process queue.
 	    realtime-safe, not thread-safe.
 	*/
-	void append(QueuedEvent* first, QueuedEvent* last);
+	void append(Event* first, Event* last);
 
 	/** Post-process and delete all pending events */
 	void process();
@@ -58,10 +58,10 @@ public:
 	void set_end_time(FrameTime time) { _max_time = time; }
 
 private:
-	Engine&                      _engine;
-	Raul::AtomicPtr<QueuedEvent> _head;
-	Raul::AtomicPtr<QueuedEvent> _tail;
-	Raul::AtomicInt              _max_time;
+	Engine&                _engine;
+	Raul::AtomicPtr<Event> _head;
+	Raul::AtomicPtr<Event> _tail;
+	Raul::AtomicInt        _max_time;
 };
 
 } // namespace Server

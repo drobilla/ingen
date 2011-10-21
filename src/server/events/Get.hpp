@@ -20,7 +20,7 @@
 
 #include <glibmm/thread.h>
 
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "NodeFactory.hpp"
 #include "types.hpp"
 
@@ -36,7 +36,7 @@ namespace Events {
  *
  * \ingroup engine
  */
-class Get : public QueuedEvent
+class Get : public Event
 {
 public:
 	Get(Engine&            engine,

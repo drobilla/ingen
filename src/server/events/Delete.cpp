@@ -40,7 +40,7 @@ Delete::Delete(Engine&            engine,
                SharedPtr<Request> request,
                FrameTime          time,
                const Raul::URI&   uri)
-	: QueuedEvent(engine, request, time)
+	: Event(engine, request, time)
 	, _uri(uri)
 	, _store_iterator(engine.engine_store()->end())
 	, _garbage(NULL)
@@ -68,7 +68,7 @@ void
 Delete::pre_process()
 {
 	if (_path.is_root() || _path == "path:/control_in" || _path == "path:/control_out") {
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -129,13 +129,13 @@ Delete::pre_process()
 
 	}
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void
 Delete::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(context);
+	Event::execute(context);
 
 	PatchImpl* parent_patch = NULL;
 

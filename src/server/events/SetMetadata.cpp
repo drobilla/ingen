@@ -60,7 +60,7 @@ SetMetadata::SetMetadata(
 		const URI&          subject,
 		const Properties&   properties,
 		const Properties&   remove)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _create_event(NULL)
 	, _subject(subject)
 	, _properties(properties)
@@ -114,7 +114,7 @@ SetMetadata::pre_process()
 
 	if (!_object && (!is_graph_object || !_create)) {
 		_error = NOT_FOUND;
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -263,14 +263,14 @@ SetMetadata::pre_process()
 		_lock.release();
 	}
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void
 SetMetadata::execute(ProcessContext& context)
 {
 	if (_error != NO_ERROR) {
-		QueuedEvent::execute(context);
+		Event::execute(context);
 		return;
 	}
 
@@ -345,7 +345,7 @@ SetMetadata::execute(ProcessContext& context)
 		}
 	}
 
-	QueuedEvent::execute(context);
+	Event::execute(context);
 }
 
 void

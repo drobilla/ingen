@@ -33,7 +33,6 @@ def build(bld):
             PostProcessor.cpp
             ProcessContext.cpp
             ProcessSlave.cpp
-            QueuedEvent.cpp
             ServerInterfaceImpl.cpp
             events/Connect.cpp
             events/CreateNode.cpp

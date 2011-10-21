@@ -25,7 +25,7 @@
 #include "raul/URI.hpp"
 
 #include "ControlBindings.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "ingen/shared/ResourceImpl.hpp"
 
 namespace Ingen {
@@ -66,7 +66,7 @@ class SetPortValue;
 /** Set properties of a graph object.
  * \ingroup engine
  */
-class SetMetadata : public QueuedEvent
+class SetMetadata : public Event
 {
 public:
 	SetMetadata(
@@ -105,7 +105,7 @@ private:
 
 	typedef std::vector<SetPortValue*> SetEvents;
 
-	QueuedEvent*                 _create_event;
+	Event*                 _create_event;
 	SetEvents                    _set_events;
 	std::vector<SpecialType>     _types;
 	std::vector<SpecialType>     _remove_types;

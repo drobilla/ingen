@@ -28,7 +28,7 @@ namespace Server {
 namespace Events {
 
 UnregisterClient::UnregisterClient(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const URI& uri)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _uri(uri)
 {
 }

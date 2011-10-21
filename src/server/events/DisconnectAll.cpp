@@ -46,7 +46,7 @@ namespace Server {
 namespace Events {
 
 DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& parent_path, const Path& node_path)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _parent_path(parent_path)
 	, _path(node_path)
 	, _parent(NULL)
@@ -60,7 +60,7 @@ DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleC
 /** Internal version for use by other events.
  */
 DisconnectAll::DisconnectAll(Engine& engine, PatchImpl* parent, GraphObjectImpl* object)
-	: QueuedEvent(engine)
+	: Event(engine)
 	, _parent_path(parent->path())
 	, _path(object->path())
 	, _parent(parent)
@@ -89,7 +89,7 @@ DisconnectAll::pre_process()
 
 		if (_parent == NULL) {
 			_error = PARENT_NOT_FOUND;
-			QueuedEvent::pre_process();
+			Event::pre_process();
 			return;
 		}
 
@@ -97,14 +97,14 @@ DisconnectAll::pre_process()
 
 		if (object == NULL) {
 			_error = OBJECT_NOT_FOUND;
-			QueuedEvent::pre_process();
+			Event::pre_process();
 			return;
 		}
 
 		if (object->parent_patch() != _parent
 		    && object->parent()->parent_patch() != _parent) {
 			_error = INVALID_PARENT_PATH;
-			QueuedEvent::pre_process();
+			Event::pre_process();
 			return;
 		}
 
@@ -145,13 +145,13 @@ DisconnectAll::pre_process()
 	if (!_deleting && _parent->enabled())
 		_compiled_patch = _parent->compile();
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void
 DisconnectAll::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(context);
+	Event::execute(context);
 
 	if (_error == NO_ERROR) {
 		for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i) {

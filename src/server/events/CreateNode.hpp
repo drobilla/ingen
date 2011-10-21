@@ -22,7 +22,7 @@
 
 #include "ingen/Resource.hpp"
 
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -38,7 +38,7 @@ namespace Events {
  *
  * \ingroup engine
  */
-class CreateNode : public QueuedEvent
+class CreateNode : public Event
 {
 public:
 	CreateNode(

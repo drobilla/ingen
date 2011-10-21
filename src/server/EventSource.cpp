@@ -18,7 +18,7 @@
 #include "EventSource.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -40,13 +40,13 @@ EventSource::~EventSource()
 /** Push an unprepared event onto the queue.
  */
 void
-EventSource::push_queued(QueuedEvent* const ev)
+EventSource::push_queued(Event* const ev)
 {
 	assert(!ev->is_prepared());
 	assert(!ev->next());
 
-	QueuedEvent* const head = _head.get();
-	QueuedEvent* const tail = _tail.get();
+	Event* const head = _head.get();
+	Event* const tail = _tail.get();
 
 	if (!head) {
 		_head = ev;
@@ -84,20 +84,20 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 
 	size_t num_events_processed = 0;
 
-	QueuedEvent* ev   = _head.get();
-	QueuedEvent* last = ev;
+	Event* ev   = _head.get();
+	Event* last = ev;
 
 	while (ev && ev->is_prepared() && ev->time() < context.end()) {
 		ev->execute(context);
 		last = ev;
-		ev = (QueuedEvent*)ev->next();
+		ev = (Event*)ev->next();
 		++num_events_processed;
 		if (limit && (num_events_processed > MAX_QUEUED_EVENTS))
 			break;
 	}
 
 	if (num_events_processed > 0) {
-		QueuedEvent* next = (QueuedEvent*)last->next();
+		Event* next = (Event*)last->next();
 		last->next(NULL);
 		dest.append(_head.get(), last);
 		_head = next;
@@ -110,7 +110,7 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 void
 EventSource::_whipped()
 {
-	QueuedEvent* ev = _prepared_back.get();
+	Event* ev = _prepared_back.get();
 	if (!ev)
 		return;
 
@@ -118,7 +118,7 @@ EventSource::_whipped()
 	ev->pre_process();
 	assert(ev->is_prepared());
 
-	_prepared_back = (QueuedEvent*)ev->next();
+	_prepared_back = (Event*)ev->next();
 }
 
 } // namespace Server

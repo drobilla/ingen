@@ -51,7 +51,7 @@ SetPortValue::SetPortValue(Engine&            engine,
                            SampleCount        timestamp,
                            const Raul::Path&  port_path,
                            const Raul::Atom&  value)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _queued(queued)
 	, _port_path(port_path)
 	, _value(value)
@@ -65,7 +65,7 @@ SetPortValue::SetPortValue(Engine&            engine,
                            SampleCount        timestamp,
                            PortImpl*          port,
                            const Raul::Atom&  value)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _queued(false)
 	, _port_path(port->path())
 	, _value(value)
@@ -103,7 +103,7 @@ SetPortValue::pre_process()
 
 	_binding = _engine.control_bindings()->port_binding(_port);
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void

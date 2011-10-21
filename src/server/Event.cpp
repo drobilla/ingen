@@ -32,13 +32,22 @@ namespace Ingen {
 namespace Server {
 
 void
+Event::pre_process()
+{
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+	assert(_pre_processed == false);
+	_pre_processed = true;
+}
+
+void
 Event::execute(ProcessContext& context)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
+	assert(_pre_processed);
 	assert(!_executed);
 	assert(_time <= context.end());
 
-	// Missed the event, jitter, damnit.
+	// Didn't get around to executing in time, jitter, oh well...
 	if (_time < context.start())
 		_time = context.start();
 
@@ -53,4 +62,3 @@ Event::post_process()
 
 } // namespace Server
 } // namespace Ingen
-

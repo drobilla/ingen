@@ -24,7 +24,7 @@
 #include "ingen/Resource.hpp"
 
 #include "PortType.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -39,7 +39,7 @@ namespace Events {
  *
  * \ingroup engine
  */
-class CreatePort : public QueuedEvent
+class CreatePort : public Event
 {
 public:
 	CreatePort(

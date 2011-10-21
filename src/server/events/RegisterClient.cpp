@@ -33,7 +33,7 @@ RegisterClient::RegisterClient(Engine&            engine,
                                SampleCount        timestamp,
                                const URI&         uri,
                                ClientInterface*   client)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _uri(uri)
 	, _client(client)
 {
@@ -44,7 +44,7 @@ RegisterClient::pre_process()
 {
 	_engine.broadcaster()->register_client(_uri, _client);
 
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void

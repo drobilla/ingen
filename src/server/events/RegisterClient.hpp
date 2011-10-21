@@ -20,7 +20,7 @@
 
 #include "raul/URI.hpp"
 #include "ingen/ClientInterface.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -30,7 +30,7 @@ namespace Events {
  *
  * \ingroup engine
  */
-class RegisterClient : public QueuedEvent
+class RegisterClient : public Event
 {
 public:
 	RegisterClient(Engine&            engine,

@@ -18,7 +18,7 @@
 #ifndef INGEN_EVENTS_CREATEPATCH_HPP
 #define INGEN_EVENTS_CREATEPATCH_HPP
 
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "ingen/Resource.hpp"
 
 namespace Ingen {
@@ -33,7 +33,7 @@ namespace Events {
  *
  * \ingroup engine
  */
-class CreatePatch : public QueuedEvent
+class CreatePatch : public Event
 {
 public:
 	CreatePatch(

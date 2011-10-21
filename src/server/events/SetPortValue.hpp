@@ -21,7 +21,7 @@
 #include "raul/Atom.hpp"
 
 #include "ControlBindings.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -40,7 +40,7 @@ namespace Events {
  *
  * \ingroup engine
  */
-class SetPortValue : public QueuedEvent
+class SetPortValue : public Event
 {
 public:
 	SetPortValue(Engine&              engine,

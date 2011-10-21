@@ -23,7 +23,7 @@
 #include "raul/Path.hpp"
 
 #include "Disconnect.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -41,7 +41,7 @@ class Disconnect;
  *
  * \ingroup engine
  */
-class DisconnectAll : public QueuedEvent
+class DisconnectAll : public Event
 {
 public:
 	DisconnectAll(

@@ -47,7 +47,7 @@ CreatePort::CreatePort(
 		const Raul::Path&           path,
 		bool                        is_output,
 		const Resource::Properties& properties)
-	: QueuedEvent(engine, request, timestamp)
+	: Event(engine, request, timestamp)
 	, _path(path)
 	, _data_type(PortType::UNKNOWN)
 	, _patch(NULL)
@@ -91,7 +91,7 @@ void
 CreatePort::pre_process()
 {
 	if (_error == UNKNOWN_TYPE || _engine.engine_store()->find_object(_path)) {
-		QueuedEvent::pre_process();
+		Event::pre_process();
 		return;
 	}
 
@@ -113,7 +113,7 @@ CreatePort::pre_process()
 			index_i = _properties.insert(make_pair(uris.lv2_index, (int)old_num_ports));
 		} else if (index_i->second.type() != Atom::INT
 				|| index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
-			QueuedEvent::pre_process();
+			Event::pre_process();
 			_error = BAD_INDEX;
 			return;
 		}
@@ -153,13 +153,13 @@ CreatePort::pre_process()
 			_error = CREATION_FAILED;
 		}
 	}
-	QueuedEvent::pre_process();
+	Event::pre_process();
 }
 
 void
 CreatePort::execute(ProcessContext& context)
 {
-	QueuedEvent::execute(context);
+	Event::execute(context);
 
 	if (_patch_port) {
 		_engine.maid()->push(_patch->external_ports());

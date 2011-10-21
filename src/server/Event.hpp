@@ -34,14 +34,15 @@ class Engine;
 class Request;
 class ProcessContext;
 
-/** Base class for all events (both realtime and QueuedEvent).
+/** An event (command) to perform some action on Ingen.
  *
- * This is for time-critical events like note ons.  There is no non-realtime
- * pre-execute method as in QueuedEvent's, any lookups etc need to be done in the
- * realtime execute() method.
+ * Virtuall all operations on Ingen are implemented as events.  An event has
+ * three distinct execution phases:
  *
- * QueuedEvent extends this class with a pre_process() method for any work that needs
- * to be done before processing in the realtime audio thread.
+ * 1) Pre-process: In a non-realtime thread, prepare event for execution
+ * 2) Execute: In the audio thread, execute (apply) event
+ * 3) Post-process: In a non-realtime thread, finalize event
+ *    (e.g. clean up and send replies)
  *
  * \ingroup engine
  */
@@ -50,14 +51,17 @@ class Event : public Raul::Deletable
 public:
 	virtual ~Event() {}
 
-	/** Execute this event in the audio thread (MUST be realtime safe). */
+	/** Pre-process event before execution (non-realtime). */
+	virtual void pre_process();
+
+	/** Execute this event in the audio thread (realtime). */
 	virtual void execute(ProcessContext& context);
 
-	/** Perform any actions after execution (ie send replies to commands)
-	 * (no realtime requirements). */
+	/** Post-process event after execution (non-realtime). */
 	virtual void post_process();
 
-	inline SampleCount time() const { return _time; }
+	inline bool        is_prepared() const { return _pre_processed; }
+	inline SampleCount time()        const { return _time; }
 
 	/** Get the next event in the event process list. */
 	Event* next() const    { return _next.get(); }
@@ -71,6 +75,16 @@ protected:
 		, _request(request)
 		, _time(time)
 		, _error(0) // success
+		, _pre_processed(false)
+		, _executed(false)
+	{}
+
+	/** Constructor for internal events only */
+	explicit Event(Engine& engine)
+		: _engine(engine)
+		, _time(0)
+		, _error(0) // success
+		, _pre_processed(false)
 		, _executed(false)
 	{}
 
@@ -79,6 +93,7 @@ protected:
 	Raul::AtomicPtr<Event> _next;
 	FrameTime              _time;
 	int                    _error;
+	bool                   _pre_processed;
 	bool                   _executed;
 };
 

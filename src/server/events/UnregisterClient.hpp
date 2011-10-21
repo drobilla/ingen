@@ -18,7 +18,7 @@
 #ifndef INGEN_EVENTS_UNREGISTERCLIENT_HPP
 #define INGEN_EVENTS_UNREGISTERCLIENT_HPP
 
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "raul/URI.hpp"
 
 namespace Ingen {
@@ -29,7 +29,7 @@ namespace Events {
  *
  * \ingroup engine
  */
-class UnregisterClient : public QueuedEvent
+class UnregisterClient : public Event
 {
 public:
 	UnregisterClient(Engine&            engine,

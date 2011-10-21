@@ -18,7 +18,7 @@
 #ifndef INGEN_EVENTS_DEACTIVATE_HPP
 #define INGEN_EVENTS_DEACTIVATE_HPP
 
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "Engine.hpp"
 
 namespace Ingen {
@@ -29,11 +29,11 @@ namespace Events {
  *
  * \ingroup engine
  */
-class Deactivate : public QueuedEvent
+class Deactivate : public Event
 {
 public:
 	Deactivate(Engine& engine, SharedPtr<Request> request, SampleCount timestamp)
-		: QueuedEvent(engine, request, timestamp)
+		: Event(engine, request, timestamp)
 	{}
 
 	void post_process() {

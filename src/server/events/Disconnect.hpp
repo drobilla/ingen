@@ -19,7 +19,7 @@
 #define INGEN_EVENTS_DISCONNECT_HPP
 
 #include "raul/Path.hpp"
-#include "QueuedEvent.hpp"
+#include "Event.hpp"
 #include "types.hpp"
 #include "PatchImpl.hpp"
 #include "BufferFactory.hpp"
@@ -43,7 +43,7 @@ namespace Events {
  *
  * \ingroup engine
  */
-class Disconnect : public QueuedEvent
+class Disconnect : public Event
 {
 public:
 	Disconnect(Engine&            engine,
