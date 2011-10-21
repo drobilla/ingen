@@ -94,8 +94,6 @@ def configure(conf):
                       uselib_store='LV2_RESIZE')
     autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-uri-map',
                       uselib_store='LV2_URI_MAP')
-    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-uri-unmap',
-                      uselib_store='LV2_URI_UNMAP')
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 

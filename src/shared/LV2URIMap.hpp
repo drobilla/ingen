@@ -26,14 +26,13 @@
 #include "raul/URI.hpp"
 
 #include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
-#include "lv2/lv2plug.in/ns/ext/uri-unmap/uri-unmap.h"
 
 #include "LV2Features.hpp"
 
 namespace Ingen {
 namespace Shared {
 
-/** Implementation of the LV2 URI Map and URI Unmap extensions
+/** Implementation of the LV2 URI Map extension
  */
 class LV2URIMap : public boost::noncopyable, public LV2Features::Feature {
 public:
@@ -42,18 +41,6 @@ public:
 	SharedPtr<LV2_Feature> feature(Shared::World*, Node*) {
 		return SharedPtr<LV2_Feature>(&uri_map_feature, NullDeleter<LV2_Feature>);
 	}
-
-	struct UnmapFeature : public LV2Features::Feature {
-		UnmapFeature(const LV2URIMap& map) : _feature(map.uri_unmap_feature) {}
-
-		SharedPtr<LV2_Feature> feature(Shared::World*, Node*) {
-			return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
-		}
-
-		LV2_Feature _feature;
-	};
-
-	SharedPtr<UnmapFeature> unmap_feature() { return _unmap_feature; }
 
 	virtual uint32_t    uri_to_id(const char* map, const char* uri);
 	virtual const char* id_to_uri(const char* map, uint32_t id);
@@ -66,19 +53,10 @@ private:
 	                                  const char*               map,
 	                                  const char*               uri);
 
-	static const char* uri_unmap_id_to_uri(LV2_URI_Map_Callback_Data callback_data,
-	                                       const char*               map,
-	                                       const uint32_t            id);
-
 	LV2_Feature         uri_map_feature;
 	LV2_URI_Map_Feature uri_map_feature_data;
 
-	LV2_Feature           uri_unmap_feature;
-	LV2_URI_Unmap_Feature uri_unmap_feature_data;
-
-	SharedPtr<UnmapFeature> _unmap_feature;
-
-	typedef std::map<uint16_t, uint32_t> EventToGlobal;
+typedef std::map<uint16_t, uint32_t> EventToGlobal;
 	typedef std::map<uint32_t, uint16_t> GlobalToEvent;
 
 	EventToGlobal _event_to_global;
