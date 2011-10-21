@@ -25,13 +25,13 @@
 #include "raul/log.hpp"
 
 #include "ingen-config.h"
+#include "ingen/EngineBase.hpp"
 #include "ingen/ServerInterface.hpp"
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/World.hpp"
-#include "server/Engine.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
+#include "ingen/shared/Module.hpp"
+#include "ingen/shared/World.hpp"
 
 #include "App.hpp"
 #include "ConnectWindow.hpp"
@@ -212,8 +212,7 @@ ConnectWindow::connect(bool existing)
 
 		SharedPtr<SigClientInterface> client(new SigClientInterface());
 
-		if (!((Server::Engine*)world->local_engine().get())->driver())
-			world->load_module("jack");
+		world->load_module("jack");
 
 		world->local_engine()->activate();
 

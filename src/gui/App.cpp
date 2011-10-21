@@ -26,6 +26,7 @@
 
 #include "flowcanvas/Connection.hpp"
 #include "ingen/ServerInterface.hpp"
+#include "ingen/EngineBase.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PatchModel.hpp"
@@ -35,7 +36,6 @@
 #include "raul/Path.hpp"
 #include "raul/log.hpp"
 
-#include "server/Engine.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/World.hpp"
 

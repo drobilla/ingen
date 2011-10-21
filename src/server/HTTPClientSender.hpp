@@ -24,7 +24,7 @@
 #include "raul/Thread.hpp"
 
 #include "ingen/ClientInterface.hpp"
-#include "shared/HTTPSender.hpp"
+#include "../shared/HTTPSender.hpp"
 
 namespace Ingen {
 

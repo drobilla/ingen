@@ -28,23 +28,23 @@
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
+#include "ingen/ServerInterface.hpp"
+#include "ingen/serialisation/Parser.hpp"
+#include "ingen/shared/Configuration.hpp"
+#include "ingen/shared/World.hpp"
+#include "ingen/shared/runtime_paths.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 #include "raul/log.hpp"
 
-#include "server/AudioBuffer.hpp"
-#include "server/Driver.hpp"
-#include "server/Engine.hpp"
-#include "server/PatchImpl.hpp"
-#include "server/PostProcessor.hpp"
-#include "server/ProcessContext.hpp"
-#include "server/QueuedEngineInterface.hpp"
-#include "server/ThreadManager.hpp"
-#include "ingen/ServerInterface.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/serialisation/Parser.hpp"
-#include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/runtime_paths.hpp"
+#include "AudioBuffer.hpp"
+#include "Driver.hpp"
+#include "Engine.hpp"
+#include "PatchImpl.hpp"
+#include "PostProcessor.hpp"
+#include "ProcessContext.hpp"
+#include "QueuedEngineInterface.hpp"
+#include "ThreadManager.hpp"
 
 /** Record of a patch in this Ingen LV2 bundle */
 struct LV2Patch {

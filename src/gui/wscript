@@ -5,7 +5,7 @@ import waflib.Utils as Utils
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',
               export_includes = ['../../include'],
-              includes        = ['..', '../..', '../../include'],
+              includes        = ['../..', '../../include'],
               name            = 'libingen_gui',
               target          = 'ingen_gui',
               install_path    = '${LIBDIR}',

@@ -25,7 +25,7 @@
 
 #include "ingen/ClientInterface.hpp"
 #include "ingen/GraphObject.hpp"
-#include "shared/OSCSender.hpp"
+#include "../shared/OSCSender.hpp"
 
 namespace Ingen {
 

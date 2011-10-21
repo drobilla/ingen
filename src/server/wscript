@@ -58,7 +58,7 @@ def build(bld):
     obj = bld(features        = 'cxx cxxshlib',
               source          = core_source,
               export_includes = ['../../include'],
-              includes        = ['.', '..', '../..', '../../include'],
+              includes        = ['.', '../..', '../../include'],
               name            = 'libingen_server',
               target          = 'ingen_server',
               install_path    = '${LIBDIR}',
@@ -71,7 +71,7 @@ def build(bld):
                   source       = '''HTTPClientSender.cpp
                                     HTTPEngineReceiver.cpp
                                     ingen_http.cpp''',
-                  includes     = ['.', '..', '../..', '../../include'],
+                  includes     = ['.', '../..', '../../include'],
                   name         = 'libingen_http',
                   target       = 'ingen_http',
                   install_path = '${LIBDIR}',
@@ -83,7 +83,7 @@ def build(bld):
                   source          = '''OSCClientSender.cpp
                                        OSCEngineReceiver.cpp
                                        ingen_osc.cpp''',
-                  includes        = ['.', '..', '../..', '../../include'],
+                  includes        = ['.', '../..', '../../include'],
                   name            = 'libingen_osc',
                   target          = 'ingen_osc',
                   install_path    = '${LIBDIR}',
@@ -93,7 +93,7 @@ def build(bld):
     if bld.is_defined('HAVE_JACK'):
         obj = bld(features        = 'cxx cxxshlib',
                   source          = 'JackDriver.cpp ingen_jack.cpp',
-                  includes        = ['.', '..', '../..', '../../include'],
+                  includes        = ['.', '../..', '../../include'],
                   name            = 'libingen_jack',
                   target          = 'ingen_jack',
                   install_path    = '${LIBDIR}',
@@ -103,7 +103,7 @@ def build(bld):
     # Ingen LV2 wrapper
     obj = bld(features = 'cxx cxxshlib',
     source = ' ingen_lv2.cpp ',
-    includes        = ['.', '..', '../..', '../../include'],
+    includes        = ['.', '../..', '../../include'],
     name            = 'libingen_lv2',
     target          = 'ingen_lv2',
     #install_path    = '${LIBDIR}',

@@ -3,7 +3,7 @@ from waflib.extras import autowaf as autowaf
 
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',
-              includes        = ['..', '../..', '../../include'],
+              includes        = ['../..', '../../include'],
               export_includes = ['../../include'],
               name            = 'libingen_client',
               target          = 'ingen_client',

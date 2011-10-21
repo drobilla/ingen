@@ -148,7 +148,7 @@ def build(bld):
     obj = bld(features     = 'c cxx cxxprogram',
               target       = 'ingen',
               source       = 'src/ingen/main.cpp',
-              includes     = ['.', './src', '../../include'],
+              includes     = ['.', '../../include'],
               defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"',
               use          = 'libingen_shared',
               install_path = '${BINDIR}')
