@@ -26,7 +26,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
 
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"

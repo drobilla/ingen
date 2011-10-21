@@ -26,7 +26,7 @@
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 
 #include "NodeImpl.hpp"
-#include "shared/LV2Features.hpp"
+#include "ingen/shared/LV2Features.hpp"
 #include "types.hpp"
 
 namespace Ingen {

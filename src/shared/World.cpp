@@ -29,8 +29,8 @@
 #include "ingen/shared/Module.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/runtime_paths.hpp"
-#include "shared/LV2Features.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2Features.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 
 #define LOG(s) s << "[Module] "
 

@@ -18,7 +18,7 @@
 #include <cmath>
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "internals/Trigger.hpp"
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"

@@ -31,7 +31,7 @@
 #include "PortImpl.hpp"
 #include "ProcessSlave.hpp"
 #include "ThreadManager.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/World.hpp"
 
 using namespace std;

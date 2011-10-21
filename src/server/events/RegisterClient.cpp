@@ -20,7 +20,7 @@
 #include "Engine.hpp"
 #include "Request.hpp"
 #include "events/RegisterClient.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 
 using namespace Raul;
 

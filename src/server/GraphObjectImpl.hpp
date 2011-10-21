@@ -26,7 +26,7 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "ingen/GraphObject.hpp"
-#include "shared/ResourceImpl.hpp"
+#include "ingen/shared/ResourceImpl.hpp"
 
 namespace Raul { class Maid; }
 

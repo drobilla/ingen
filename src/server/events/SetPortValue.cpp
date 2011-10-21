@@ -18,8 +18,8 @@
 #include <sstream>
 #include "raul/log.hpp"
 #include "lv2/lv2plug.in/ns/ext/event/event.h"
-#include "shared/LV2URIMap.hpp"
-#include "shared/LV2Features.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2Features.hpp"
 #include "ingen/shared/LV2Atom.hpp"
 #include "ingen/shared/World.hpp"
 #include "AudioBuffer.hpp"

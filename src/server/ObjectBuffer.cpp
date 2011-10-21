@@ -22,8 +22,8 @@
 #include "raul/log.hpp"
 #include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "ingen-config.h"
-#include "shared/LV2Features.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2Features.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ObjectBuffer.hpp"
 #include "Engine.hpp"
 

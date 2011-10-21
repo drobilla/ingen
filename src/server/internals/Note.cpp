@@ -20,7 +20,7 @@
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/midi_events.h"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "internals/Note.hpp"
 #include "AudioBuffer.hpp"
 #include "Driver.hpp"

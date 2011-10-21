@@ -17,8 +17,8 @@
 
 #include <cstdlib>
 
-#include "LV2Features.hpp"
-#include "LV2URIMap.hpp"
+#include "ingen/shared/LV2Features.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 
 using namespace std;
 

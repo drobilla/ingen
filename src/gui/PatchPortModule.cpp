@@ -19,7 +19,7 @@
 #include <utility>
 #include "PatchPortModule.hpp"
 #include "ingen/ServerInterface.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "App.hpp"

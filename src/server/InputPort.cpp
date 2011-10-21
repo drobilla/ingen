@@ -31,7 +31,7 @@
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 #include "mix.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "util.hpp"
 
 using namespace std;

@@ -22,7 +22,7 @@
 
 #include "raul/log.hpp"
 
-#include "shared/LV2Features.hpp"
+#include "ingen/shared/LV2Features.hpp"
 
 #include "Driver.hpp"
 #include "Engine.hpp"

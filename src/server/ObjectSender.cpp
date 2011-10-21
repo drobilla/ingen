@@ -17,7 +17,7 @@
 
 #include "ObjectSender.hpp"
 #include "ingen/ClientInterface.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"

@@ -20,7 +20,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "shared/Store.hpp"
+#include "ingen/shared/Store.hpp"
 
 namespace Ingen {
 

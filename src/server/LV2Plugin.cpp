@@ -23,7 +23,7 @@
 
 #include "sord/sordmm.hpp"
 
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "LV2Node.hpp"

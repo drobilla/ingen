@@ -24,7 +24,7 @@
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/serialisation/Parser.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "flowcanvas/Port.hpp"
 #include "App.hpp"
 #include "Port.hpp"

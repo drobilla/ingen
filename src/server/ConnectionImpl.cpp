@@ -19,7 +19,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"

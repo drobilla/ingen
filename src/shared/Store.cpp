@@ -21,7 +21,7 @@
 #include "raul/TableImpl.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Port.hpp"
-#include "Store.hpp"
+#include "ingen/shared/Store.hpp"
 
 using namespace std;
 using namespace Raul;

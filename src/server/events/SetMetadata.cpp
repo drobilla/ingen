@@ -38,7 +38,7 @@
 #include "Request.hpp"
 #include "SetMetadata.hpp"
 #include "SetPortValue.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 
 #define LOG(s) s << "[SetMetadata] "
 

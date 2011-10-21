@@ -25,7 +25,7 @@
 #include <glibmm/module.h>
 
 #include "ingen/Plugin.hpp"
-#include "shared/ResourceImpl.hpp"
+#include "ingen/shared/ResourceImpl.hpp"
 
 namespace Ingen {
 

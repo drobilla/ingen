@@ -36,7 +36,7 @@
 #include "raul/log.hpp"
 
 #include "server/Engine.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/World.hpp"
 
 #include "App.hpp"

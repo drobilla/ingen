@@ -23,7 +23,7 @@
 #include "flowcanvas/Canvas.hpp"
 #include "flowcanvas/Ellipse.hpp"
 #include "ingen/ServerInterface.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/Builder.hpp"
 #include "ingen/shared/ClashAvoider.hpp"
 #include "ingen/serialisation/Serialiser.hpp"

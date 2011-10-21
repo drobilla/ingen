@@ -26,7 +26,7 @@
 
 #include "ControlBindings.hpp"
 #include "QueuedEvent.hpp"
-#include "shared/ResourceImpl.hpp"
+#include "ingen/shared/ResourceImpl.hpp"
 
 namespace Ingen {
 namespace Server {

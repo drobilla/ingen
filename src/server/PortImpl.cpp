@@ -20,7 +20,7 @@
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/LV2Atom.hpp"
 
 #include "AudioBuffer.hpp"

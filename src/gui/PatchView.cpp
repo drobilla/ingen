@@ -19,7 +19,7 @@
 #include <fstream>
 #include "raul/log.hpp"
 #include "ingen/ServerInterface.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "App.hpp"
 #include "PatchView.hpp"

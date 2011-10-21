@@ -19,7 +19,7 @@
 #include "raul/log.hpp"
 #include "flowcanvas/Module.hpp"
 #include "ingen/ServerInterface.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "App.hpp"

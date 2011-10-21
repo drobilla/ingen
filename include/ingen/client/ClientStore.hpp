@@ -29,8 +29,8 @@
 
 #include "ingen/ServerInterface.hpp"
 #include "ingen/client/signal.hpp"
-#include "shared/LV2URIMap.hpp"
-#include "shared/Store.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/Store.hpp"
 
 namespace Raul { class Atom; }
 

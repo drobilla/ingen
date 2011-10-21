@@ -28,7 +28,7 @@
 
 #include "ingen/GraphObject.hpp"
 #include "ingen/client/signal.hpp"
-#include "shared/ResourceImpl.hpp"
+#include "ingen/shared/ResourceImpl.hpp"
 
 namespace Ingen {
 

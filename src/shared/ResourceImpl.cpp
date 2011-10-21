@@ -17,8 +17,8 @@
 
 #include "raul/log.hpp"
 #include "raul/Atom.hpp"
-#include "shared/LV2URIMap.hpp"
-#include "ResourceImpl.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/ResourceImpl.hpp"
 
 using namespace std;
 using namespace Raul;

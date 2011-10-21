@@ -48,8 +48,8 @@
 #include "QueuedEvent.hpp"
 #include "ThreadManager.hpp"
 #include "ingen/shared/World.hpp"
-#include "shared/LV2Features.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2Features.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "util.hpp"
 
 #define LOG(s) s << "[JackDriver] "

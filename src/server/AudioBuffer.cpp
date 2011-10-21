@@ -18,11 +18,10 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "ingen/shared/LV2Features.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "raul/SharedPtr.hpp"
 #include "raul/log.hpp"
-
-#include "shared/LV2Features.hpp"
 
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"

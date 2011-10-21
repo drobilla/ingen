@@ -24,7 +24,7 @@
 
 #include "suil/suil.h"
 
-#include "shared/LV2Features.hpp"
+#include "ingen/shared/LV2Features.hpp"
 
 namespace Ingen {
 

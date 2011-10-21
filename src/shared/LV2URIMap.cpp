@@ -24,12 +24,10 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "raul/log.hpp"
-
+#include "ingen/shared/LV2URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/event/event.h"
-
-#include "LV2URIMap.hpp"
+#include "raul/log.hpp"
 
 using namespace std;
 using namespace Raul;

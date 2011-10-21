@@ -26,7 +26,7 @@
 #include "ingen/Plugin.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "ingen/client/signal.hpp"
-#include "shared/ResourceImpl.hpp"
+#include "ingen/shared/ResourceImpl.hpp"
 #include "ingen/shared/World.hpp"
 
 namespace Ingen {

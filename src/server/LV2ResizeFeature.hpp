@@ -20,7 +20,7 @@
 
 #include "raul/log.hpp"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
-#include "shared/LV2Features.hpp"
+#include "ingen/shared/LV2Features.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 

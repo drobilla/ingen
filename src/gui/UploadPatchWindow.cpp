@@ -22,7 +22,7 @@
 #include <boost/optional/optional.hpp>
 #include <curl/curl.h>
 #include "ingen/shared/World.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "ingen/serialisation/Serialiser.hpp"

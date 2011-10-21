@@ -21,8 +21,7 @@
 #include "raul/log.hpp"
 
 #include "ingen/shared/ClashAvoider.hpp"
-
-#include "Store.hpp"
+#include "ingen/shared/Store.hpp"
 
 using namespace std;
 using namespace Raul;

@@ -19,7 +19,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "sord/sordmm.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "CreateNode.hpp"
 #include "Request.hpp"
 #include "PatchImpl.hpp"

@@ -22,7 +22,7 @@
 #include <map>
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "BufferFactory.hpp"
 
 namespace Ingen {

@@ -25,7 +25,7 @@
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
 #include "ingen/shared/Builder.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 
 using namespace std;
 using namespace Raul;

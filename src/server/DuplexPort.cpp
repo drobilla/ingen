@@ -19,7 +19,7 @@
 #include <cassert>
 #include <string>
 
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 
 #include "ConnectionImpl.hpp"
 #include "DuplexPort.hpp"

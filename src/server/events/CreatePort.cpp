@@ -19,7 +19,7 @@
 #include "raul/Atom.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreatePort.hpp"

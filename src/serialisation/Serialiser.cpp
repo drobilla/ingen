@@ -50,9 +50,9 @@
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
-#include "shared/LV2URIMap.hpp"
-#include "shared/ResourceImpl.hpp"
-#include "shared/Store.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/ResourceImpl.hpp"
+#include "ingen/shared/Store.hpp"
 #include "ingen/shared/World.hpp"
 
 #include "ingen/serialisation/Serialiser.hpp"

@@ -22,7 +22,7 @@
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
-#include "shared/LV2URIMap.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PluginModel.hpp"

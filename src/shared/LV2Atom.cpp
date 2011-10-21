@@ -16,13 +16,12 @@
  */
 
 #include "ingen/shared/LV2Atom.hpp"
+#include "ingen/shared/LV2Features.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "raul/Atom.hpp"
 #include "raul/log.hpp"
-
-#include "LV2Features.hpp"
-#include "LV2URIMap.hpp"
 
 using namespace std;
 using namespace Raul;
