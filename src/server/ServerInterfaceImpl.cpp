@@ -60,10 +60,12 @@ ServerInterfaceImpl::now() const
 }
 
 void
-ServerInterfaceImpl::set_next_response_id(int32_t id)
+ServerInterfaceImpl::respond_to(ClientInterface* client, int32_t id)
 {
-	if (_request)
+	if (_request) {
+		_request->set_client(client);
 		_request->set_id(id);
+	}
 }
 
 void

@@ -57,9 +57,9 @@ namespace Server {
  * See the "Client OSC Namespace Documentation" for details.</p>
  */
 
-OSCEngineReceiver::OSCEngineReceiver(Engine&                        engine,
-                                     SharedPtr<ServerInterfaceImpl> interface,
-                                     uint16_t                       port)
+OSCEngineReceiver::OSCEngineReceiver(Engine&                    engine,
+                                     SharedPtr<ServerInterface> interface,
+                                     uint16_t                   port)
 	: _engine(engine)
 	, _interface(interface)
 	, _server(NULL)
@@ -190,19 +190,10 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	const lo_address addr = lo_message_get_source(msg);
 	char* const      url  = lo_address_get_url(addr);
 
-	const SharedPtr<Request> r = me->_interface->request();
-
-	/* Different address than last time, have to do a lookup */
-	if (!r || !r->client() || strcmp(url, r->client()->uri().c_str())) {
-		ClientInterface* client = me->_engine.broadcaster()->client(url);
-		Request* req  = (client)
-			? new Request(client, id)
-			: new Request();
-		me->_interface->set_request(SharedPtr<Request>(req));
-	}
-
 	if (id != -1) {
-		me->_interface->set_next_response_id(id);
+		// TODO: Cache client
+		ClientInterface* client = me->_engine.broadcaster()->client(url);
+		me->_interface->respond_to(client, id);
 	} else {
 		me->_interface->disable_responses();
 	}

@@ -53,7 +53,8 @@ public:
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
-	void set_next_response_id(int32_t id);
+	virtual void respond_to(ClientInterface* client, int32_t id);
+	virtual void disable_responses();
 
 	// Client registration
 	virtual void register_client(ClientInterface* client);
@@ -99,8 +100,6 @@ public:
 
 	SharedPtr<Request> request()                         { return _request; }
 	void               set_request(SharedPtr<Request> r) { _request = r; }
-
-	virtual void disable_responses();
 
 protected:
 	SharedPtr<Request> _request; ///< NULL if responding disabled

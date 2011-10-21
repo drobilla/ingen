@@ -29,23 +29,27 @@ typedef struct _SoupMessage SoupMessage;
 typedef struct SoupClientContext SoupClientContext;
 
 namespace Ingen {
+
+class ServerInterface;
+
 namespace Server {
 
-class ServerInterfaceImpl;
 class Engine;
 
 class HTTPEngineReceiver
 {
 public:
-	HTTPEngineReceiver(Engine&                        engine,
-	                   SharedPtr<ServerInterfaceImpl> interface,
-	                   uint16_t                       port);
+	HTTPEngineReceiver(Engine&                    engine,
+	                   SharedPtr<ServerInterface> interface,
+	                   uint16_t                   port);
 
 	~HTTPEngineReceiver();
 
 private:
 	struct ReceiveThread : public Raul::Thread {
-		explicit ReceiveThread(HTTPEngineReceiver& receiver) : _receiver(receiver) {}
+		explicit ReceiveThread(HTTPEngineReceiver& receiver)
+			: _receiver(receiver)
+		{}
 		virtual void _run();
 	private:
 		HTTPEngineReceiver& _receiver;
@@ -53,13 +57,17 @@ private:
 
 	friend class ReceiveThread;
 
-	static void message_callback(SoupServer* server, SoupMessage* msg, const char* path,
-			GHashTable *query, SoupClientContext* client, void* data);
+	static void message_callback(SoupServer*         server,
+	                             SoupMessage*        msg,
+	                             const char*         path,
+	                             GHashTable         *query,
+	                             SoupClientContext*  client,
+	                             void*               data);
 
-	Engine&                        _engine;
-	SharedPtr<ServerInterfaceImpl> _interface;
-	ReceiveThread*                 _receive_thread;
-	SoupServer*                    _server;
+	Engine&                    _engine;
+	SharedPtr<ServerInterface> _interface;
+	ReceiveThread*             _receive_thread;
+	SoupServer*                _server;
 };
 
 } // namespace Server

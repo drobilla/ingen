@@ -39,7 +39,7 @@ public:
 	virtual Raul::URI uri() const = 0;
 
 	// Responses
-	virtual void set_next_response_id(int32_t id) = 0;
+	virtual void respond_to(ClientInterface* client, int32_t id) = 0;
 	virtual void disable_responses() = 0;
 
 	// Client registration
@@ -47,9 +47,7 @@ public:
 	virtual void unregister_client(const Raul::URI& uri) = 0;
 
 	// Requests
-
 	virtual void ping() = 0;
-
 	virtual void get(const Raul::URI& uri) = 0;
 };
 

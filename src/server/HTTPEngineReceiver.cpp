@@ -27,18 +27,16 @@
 #include "raul/log.hpp"
 
 #include "ingen/ClientInterface.hpp"
-#include "ingen/shared/Module.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
+#include "ingen/shared/Module.hpp"
+#include "ingen/shared/Store.hpp"
 
 #include "ClientBroadcaster.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
-#include "EventSource.hpp"
 #include "HTTPClientSender.hpp"
 #include "HTTPEngineReceiver.hpp"
-#include "ServerInterfaceImpl.hpp"
-#include "ThreadManager.hpp"
 
 #define LOG(s) s << "[HTTPEngineReceiver] "
 
@@ -51,9 +49,9 @@ using namespace Serialisation;
 
 namespace Server {
 
-HTTPEngineReceiver::HTTPEngineReceiver(Engine&                        engine,
-                                       SharedPtr<ServerInterfaceImpl> interface,
-                                       uint16_t                       port)
+HTTPEngineReceiver::HTTPEngineReceiver(Engine&                    engine,
+                                       SharedPtr<ServerInterface> interface,
+                                       uint16_t                   port)
 	: _engine(engine)
 	, _interface(interface)
 	, _server(soup_server_new(SOUP_SERVER_PORT, port, NULL))
@@ -67,8 +65,6 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine&                        engine,
 	if (!engine.world()->parser() || !engine.world()->serialiser())
 		engine.world()->load_module("serialisation");
 
-	_interface->set_name("HTTPEngineReceiver");
-	_interface->start();
 	_receive_thread->set_name("HTTPEngineReceiver Listener");
 	_receive_thread->start();
 }
@@ -76,7 +72,6 @@ HTTPEngineReceiver::HTTPEngineReceiver(Engine&                        engine,
 HTTPEngineReceiver::~HTTPEngineReceiver()
 {
 	_receive_thread->stop();
-	_interface->stop();
 	delete _receive_thread;
 
 	if (_server)  {
@@ -94,7 +89,7 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
                                      void*              data)
 {
 	HTTPEngineReceiver*  me        = (HTTPEngineReceiver*)data;
-	ServerInterfaceImpl* interface = me->_interface.get();
+	ServerInterface*     interface = me->_interface.get();
 
 	using namespace Ingen::Shared;
 
@@ -221,9 +216,6 @@ HTTPEngineReceiver::message_callback(SoupServer*        server,
 	}
 }
 
-/** Override the semaphore driven _run method of ServerInterfaceImpl
- * to wait on HTTP requests and process them immediately in this thread.
- */
 void
 HTTPEngineReceiver::ReceiveThread::_run()
 {

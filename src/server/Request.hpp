@@ -45,8 +45,8 @@ public:
 		, _id(id)
 	{}
 
-	int32_t      id() const         { return _id; }
-	void         set_id(int32_t id) { _id = id; }
+	int32_t id() const         { return _id; }
+	void    set_id(int32_t id) { _id = id; }
 
 	ClientInterface* client() const { return _client; }
 	void set_client(ClientInterface* client) { _client = client; }

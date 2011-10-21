@@ -374,7 +374,7 @@ ConnectWindow::gtk_callback()
 				sigc::mem_fun(this, &ConnectWindow::on_response));
 
 		_ping_id = abs(rand()) / 2 * 2; // avoid -1
-		App::instance().engine()->set_next_response_id(_ping_id);
+		App::instance().engine()->respond_to(App::instance().client().get(), _ping_id);
 		App::instance().engine()->ping();
 
 		if (_widgets_loaded) {
@@ -391,7 +391,7 @@ ConnectWindow::gtk_callback()
 			const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
 					(now.tv_usec - last.tv_usec) * 0.001f;
 			if (ms_since_last > 1000) {
-				App::instance().engine()->set_next_response_id(_ping_id);
+				App::instance().engine()->respond_to(App::instance().client().get(), _ping_id);
 				App::instance().engine()->ping();
 				last = now;
 			}

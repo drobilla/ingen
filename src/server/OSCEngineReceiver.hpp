@@ -23,16 +23,19 @@
 #include <lo/lo.h>
 
 #include "raul/Thread.hpp"
+#include "raul/URI.hpp"
 
-#include "Request.hpp"
+#include "ingen/Resource.hpp"
+
 #include "ingen-config.h"
 
 namespace Ingen {
 
+class ServerInterface;
+
 namespace Server {
 
 class Engine;
-class ServerInterfaceImpl;
 
 /* Some boilerplate killing macros... */
 #define LO_HANDLER_ARGS const char* path, const char* types, lo_arg** argv, int argc, lo_message msg
@@ -47,22 +50,16 @@ inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
 
 /* FIXME: Make this receive and preprocess in the same thread? */
 
-/** Receives OSC messages from liblo.
- *
- * This inherits from ServerInterfaceImpl and calls it's own functions
- * via OSC.  It's not actually a directly callable ServerInterface (it's
- * callable via OSC...) so it should be implemented-as-a (privately inherit)
- * ServerInterfaceImpl, but it needs to be public so it's an EventSource
- * the Driver can use.  This probably should be fixed somehow..
+/** Receive OSC messages and call interface functions.
  *
  * \ingroup engine
  */
 class OSCEngineReceiver
 {
 public:
-	OSCEngineReceiver(Engine&                        engine,
-	                  SharedPtr<ServerInterfaceImpl> interface,
-	                  uint16_t                       port);
+	OSCEngineReceiver(Engine&                    engine,
+	                  SharedPtr<ServerInterface> interface,
+	                  uint16_t                   port);
 
 	~OSCEngineReceiver();
 
@@ -122,9 +119,9 @@ private:
 	LO_HANDLER(set_property);
 	LO_HANDLER(property_set);
 
-	Engine&                        _engine;
-	SharedPtr<ServerInterfaceImpl> _interface;
-	lo_server                      _server;
+	Engine&                    _engine;
+	SharedPtr<ServerInterface> _interface;
+	lo_server                  _server;
 };
 
 } // namespace Server
