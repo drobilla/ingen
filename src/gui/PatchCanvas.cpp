@@ -728,15 +728,7 @@ PatchCanvas::paste()
 		builder.build(i->second);
 	}
 
-	// Successful connections
-	SharedPtr<const PatchModel> root = PtrCast<const PatchModel>(
-		clipboard.object(_patch->path()));
-	assert(root);
-	for (Patch::Connections::const_iterator i = root->connections().begin();
-			i != root->connections().end(); ++i) {
-		App::instance().engine()->connect(i->second->src_port_path(),
-		                                  i->second->dst_port_path());
-	}
+	builder.connect(PtrCast<const PatchModel>(clipboard.object(_patch->path())));
 }
 
 void
