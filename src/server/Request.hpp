@@ -19,9 +19,10 @@
 #define INGEN_ENGINE_REQUEST_HPP
 
 #include <inttypes.h>
+
 #include <string>
+
 #include "ingen/ClientInterface.hpp"
-#include "EventSource.hpp"
 
 namespace Ingen {
 namespace Server {

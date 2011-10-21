@@ -161,8 +161,6 @@ OSCEngineReceiver::ReceiveThread::_run()
 		// Enqueue every other message that is here "now"
 		// (would this provide truly atomic bundles?)
 		while (lo_server_recv_noblock(_receiver._server, 0) > 0) {}
-
-		_receiver._interface->prepare_all();;
 	}
 }
 

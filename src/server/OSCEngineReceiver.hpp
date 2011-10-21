@@ -19,7 +19,10 @@
 #define INGEN_ENGINE_OSCENGINERECEIVER_HPP
 
 #include <stdint.h>
+
 #include <lo/lo.h>
+
+#include "raul/Thread.hpp"
 
 #include "Request.hpp"
 #include "ingen-config.h"

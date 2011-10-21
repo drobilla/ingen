@@ -41,7 +41,6 @@ public:
 	explicit EventSource();
 	virtual ~EventSource();
 
-	void prepare_all();
 	void process(PostProcessor& dest, ProcessContext& context, bool limit=true);
 
 	inline bool unprepared_events() const { return (_prepared_back.get() != NULL); }

@@ -86,12 +86,6 @@ HTTPEngineReceiver::~HTTPEngineReceiver()
 }
 
 void
-HTTPEngineReceiver::ReceiveThread::whip()
-{
-	_receiver._interface->prepare_all();
-}
-
-void
 HTTPEngineReceiver::message_callback(SoupServer*        server,
                                      SoupMessage*       msg,
                                      const char*        path_str,

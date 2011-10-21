@@ -47,7 +47,6 @@ private:
 	struct ReceiveThread : public Raul::Thread {
 		explicit ReceiveThread(HTTPEngineReceiver& receiver) : _receiver(receiver) {}
 		virtual void _run();
-		virtual void whip();
 	private:
 		HTTPEngineReceiver& _receiver;
 	};
