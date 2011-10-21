@@ -34,8 +34,6 @@
 #include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
-#include "ProcessContext.hpp"
-#include "Request.hpp"
 #include "SetPortValue.hpp"
 
 using namespace std;
@@ -45,13 +43,14 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-SetPortValue::SetPortValue(Engine&            engine,
-                           SharedPtr<Request> request,
-                           bool               queued,
-                           SampleCount        timestamp,
-                           const Raul::Path&  port_path,
-                           const Raul::Atom&  value)
-	: Event(engine, request, timestamp)
+SetPortValue::SetPortValue(Engine&           engine,
+                           ClientInterface*  client,
+                           int32_t           id,
+                           bool              queued,
+                           SampleCount       timestamp,
+                           const Raul::Path& port_path,
+                           const Raul::Atom& value)
+	: Event(engine, client, id, timestamp)
 	, _queued(queued)
 	, _port_path(port_path)
 	, _value(value)
@@ -60,12 +59,13 @@ SetPortValue::SetPortValue(Engine&            engine,
 }
 
 /** Internal */
-SetPortValue::SetPortValue(Engine&            engine,
-                           SharedPtr<Request> request,
-                           SampleCount        timestamp,
-                           PortImpl*          port,
-                           const Raul::Atom&  value)
-	: Event(engine, request, timestamp)
+SetPortValue::SetPortValue(Engine&           engine,
+                           ClientInterface*  client,
+                           int32_t           id,
+                           SampleCount       timestamp,
+                           PortImpl*         port,
+                           const Raul::Atom& value)
+	: Event(engine, client, id, timestamp)
 	, _queued(false)
 	, _port_path(port->path())
 	, _value(value)
@@ -197,25 +197,25 @@ SetPortValue::post_process()
 	switch (_error) {
 	case NO_ERROR:
 		assert(_port != NULL);
-		_request->respond_ok();
+		respond_ok();
 		_engine.broadcaster()->set_property(_port_path,
 				_engine.world()->uris()->ingen_value, _value);
 		break;
 	case TYPE_MISMATCH:
 		ss << "Illegal value type " << _value.type()
 			<< " for port " << _port_path << endl;
-		_request->respond_error(ss.str());
+		respond_error(ss.str());
 		break;
 	case PORT_NOT_FOUND:
 		msg = "Unable to find port ";
 		msg.append(_port_path.str()).append(" to set value");
-		_request->respond_error(msg);
+		respond_error(msg);
 		break;
 	case NO_SPACE:
 		ss << "Attempt to write " << _value.data_size() << " bytes to "
 			<< _port_path.str() << ", with capacity "
 			<< _port->buffer_size() << endl;
-		_request->respond_error(ss.str());
+		respond_error(ss.str());
 		break;
 	}
 }

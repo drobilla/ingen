@@ -20,7 +20,6 @@
 
 #include "Event.hpp"
 #include "types.hpp"
-#include "Request.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -37,11 +36,14 @@ namespace Events {
 class Ping : public Event
 {
 public:
-	Ping(Engine& engine, SharedPtr<Request> request, SampleCount timestamp)
-		: Event(engine, request, timestamp)
+	Ping(Engine&          engine,
+	     ClientInterface* client,
+	     int32_t          id,
+	     SampleCount      timestamp)
+		: Event(engine, client, id, timestamp)
 	{}
 
-	void post_process() { _request->respond_ok(); }
+	void post_process() { respond_ok(); }
 };
 
 } // namespace Server

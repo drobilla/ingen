@@ -17,6 +17,8 @@
 
 #include "ingen/shared/Module.hpp"
 #include "ingen/shared/World.hpp"
+#include "raul/log.hpp"
+
 #include "JackDriver.hpp"
 #include "Engine.hpp"
 
@@ -25,6 +27,11 @@ using namespace Ingen;
 
 struct IngenJackModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
+		if (((Server::Engine*)world->local_engine().get())->driver()) {
+			Raul::warn << "Engine already has a driver" << std::endl;
+			return;
+		}
+			
 		Server::JackDriver* driver = new Server::JackDriver(
 			*(Server::Engine*)world->local_engine().get());
 		driver->attach(world->conf()->option("jack-server").get_string(),

@@ -31,7 +31,6 @@
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Request.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -40,14 +39,14 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-CreatePort::CreatePort(
-		Engine&                     engine,
-		SharedPtr<Request>          request,
-		SampleCount                 timestamp,
-		const Raul::Path&           path,
-		bool                        is_output,
-		const Resource::Properties& properties)
-	: Event(engine, request, timestamp)
+CreatePort::CreatePort(Engine&                     engine,
+                       ClientInterface*            client,
+                       int32_t                     id,
+                       SampleCount                 timestamp,
+                       const Raul::Path&           path,
+                       bool                        is_output,
+                       const Resource::Properties& properties)
+	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _data_type(PortType::UNKNOWN)
 	, _patch(NULL)
@@ -174,27 +173,23 @@ CreatePort::execute(ProcessContext& context)
 void
 CreatePort::post_process()
 {
-	if (!_request) {
-		return;
-	}
-
 	string msg;
 	switch (_error) {
 	case NO_ERROR:
-		_request->respond_ok();
+		respond_ok();
 		_engine.broadcaster()->send_object(_patch_port, true);
 		break;
 	case BAD_INDEX:
 		msg = string("Could not create port ") + _path.str() + " (Illegal index given)";
-		_request->respond_error(msg);
+		respond_error(msg);
 		break;
 	case UNKNOWN_TYPE:
 		msg = string("Could not create port ") + _path.str() + " (Unknown type)";
-		_request->respond_error(msg);
+		respond_error(msg);
 		break;
 	case CREATION_FAILED:
 		msg = string("Could not create port ") + _path.str() + " (Creation failed)";
-		_request->respond_error(msg);
+		respond_error(msg);
 		break;
 	}
 }

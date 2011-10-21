@@ -23,7 +23,6 @@
 #include "Get.hpp"
 #include "ObjectSender.hpp"
 #include "PluginImpl.hpp"
-#include "Request.hpp"
 
 using namespace Raul;
 
@@ -31,11 +30,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Get::Get(Engine&            engine,
-         SharedPtr<Request> request,
-         SampleCount        timestamp,
-         const URI&         uri)
-	: Event(engine, request, timestamp)
+Get::Get(Engine&          engine,
+         ClientInterface* client,
+         int32_t          id,
+         SampleCount      timestamp,
+         const URI&       uri)
+	: Event(engine, client, id, timestamp)
 	, _uri(uri)
 	, _object(NULL)
 	, _plugin(NULL)
@@ -63,23 +63,23 @@ void
 Get::post_process()
 {
 	if (_uri == "ingen:plugins") {
-		_request->respond_ok();
-		if (_request->client()) {
-			_engine.broadcaster()->send_plugins_to(_request->client(), _plugins);
+		respond_ok();
+		if (_request_client) {
+			_engine.broadcaster()->send_plugins_to(_request_client, _plugins);
 		}
 	} else if (!_object && !_plugin) {
-		_request->respond_error("Unable to find object requested.");
-	} else if (_request->client()) {
-		_request->respond_ok();
-		if (_request->client()) {
+		respond_error("Unable to find object requested.");
+	} else if (_request_client) {
+		respond_ok();
+		if (_request_client) {
 			if (_object) {
-				ObjectSender::send_object(_request->client(), _object, true);
+				ObjectSender::send_object(_request_client, _object, true);
 			} else if (_plugin) {
-				_request->client()->put(_uri, _plugin->properties());
+				_request_client->put(_uri, _plugin->properties());
 			}
 		}
 	} else {
-		_request->respond_error("Unable to find client to send object.");
+		respond_error("Unable to find client to send object.");
 	}
 
 	_lock.release();

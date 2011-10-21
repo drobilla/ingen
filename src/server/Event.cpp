@@ -15,6 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "ingen/ClientInterface.hpp"
+
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "Event.hpp"
@@ -58,6 +60,22 @@ void
 Event::post_process()
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
+}
+
+void
+Event::respond_ok()
+{
+	if (_request_client) {
+		_request_client->response_ok(_request_id);
+	}
+}
+
+void
+Event::respond_error(const std::string& msg)
+{
+	if (_request_client) {
+		_request_client->response_error(_request_id, msg);
+	}
 }
 
 } // namespace Server

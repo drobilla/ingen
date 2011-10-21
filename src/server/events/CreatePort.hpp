@@ -42,13 +42,13 @@ namespace Events {
 class CreatePort : public Event
 {
 public:
-	CreatePort(
-			Engine&                     engine,
-			SharedPtr<Request>          request,
-			SampleCount                 timestamp,
-			const Raul::Path&           path,
-			bool                        is_output,
-			const Resource::Properties& properties);
+	CreatePort(Engine&                     engine,
+	           ClientInterface*            client,
+	           int32_t                     id,
+	           SampleCount                 timestamp,
+	           const Raul::Path&           path,
+	           bool                        is_output,
+	           const Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);

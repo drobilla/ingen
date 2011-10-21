@@ -18,7 +18,6 @@
 #include "ClientBroadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "Request.hpp"
 #include "events/RegisterClient.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 
@@ -28,21 +27,20 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-RegisterClient::RegisterClient(Engine&            engine,
-                               SharedPtr<Request> request,
-                               SampleCount        timestamp,
-                               const URI&         uri,
-                               ClientInterface*   client)
-	: Event(engine, request, timestamp)
+RegisterClient::RegisterClient(Engine&          engine,
+                               ClientInterface* client,
+                               int32_t          id,
+                               SampleCount      timestamp,
+                               const URI&       uri)
+	: Event(engine, client, id, timestamp)
 	, _uri(uri)
-	, _client(client)
 {
 }
 
 void
 RegisterClient::pre_process()
 {
-	_engine.broadcaster()->register_client(_uri, _client);
+	_engine.broadcaster()->register_client(_uri, _request_client);
 
 	Event::pre_process();
 }
@@ -50,7 +48,7 @@ RegisterClient::pre_process()
 void
 RegisterClient::post_process()
 {
-	_request->respond_ok();
+	respond_ok();
 
 	/* Tell the client the engine's sample rate (which it needs to know to
 	   interpret control bounds for lv2:sampleRate ports).  This is a bit of a
@@ -58,9 +56,9 @@ RegisterClient::post_process()
 	   that to clients.
 	*/
 	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
-	_client->set_property(uris.ingen_engine,
-	                      uris.ingen_sampleRate,
-	                      int32_t(_engine.driver()->sample_rate()));
+	_request_client->set_property(uris.ingen_engine,
+	                              uris.ingen_sampleRate,
+	                              int32_t(_engine.driver()->sample_rate()));
 }
 
 } // namespace Server

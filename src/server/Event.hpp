@@ -18,20 +18,21 @@
 #ifndef INGEN_ENGINE_EVENT_HPP
 #define INGEN_ENGINE_EVENT_HPP
 
-#include <cassert>
-
-#include "raul/SharedPtr.hpp"
-#include "raul/Deletable.hpp"
-#include "raul/Path.hpp"
 #include "raul/AtomicPtr.hpp"
+#include "raul/Deletable.hpp"
+#include "raul/Noncopyable.hpp"
+#include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
 
 #include "types.hpp"
 
 namespace Ingen {
+
+class ClientInterface;
+
 namespace Server {
 
 class Engine;
-class Request;
 class ProcessContext;
 
 /** An event (command) to perform some action on Ingen.
@@ -46,7 +47,7 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class Event : public Raul::Deletable
+class Event : public Raul::Deletable, public Raul::Noncopyable
 {
 public:
 	virtual ~Event() {}
@@ -60,19 +61,32 @@ public:
 	/** Post-process event after execution (non-realtime). */
 	virtual void post_process();
 
-	inline bool        is_prepared() const { return _pre_processed; }
-	inline SampleCount time()        const { return _time; }
+	/** Return true iff this event has been pre-processed. */
+	inline bool is_prepared() const { return _pre_processed; }
 
-	/** Get the next event in the event process list. */
-	Event* next() const    { return _next.get(); }
-	void   next(Event* ev) { _next = ev; }
+	/** Return the time stamp of this event. */
+	inline SampleCount time() const { return _time; }
 
-	int error() { return _error; }
+	/** Get the next event to be processed after this one. */
+	Event* next() const { return _next.get(); }
 
+	/** Set the next event to be processed after this one. */
+	void next(Event* ev) { _next = ev; }
+
+	/** Return the error status of this event. */
+	int error() const { return _error; }
+
+	/** Respond to the originating client successfully. */
+	void respond_ok();
+
+	/** Respond to the originating client with an error. */
+	void respond_error(const std::string& msg);
+		
 protected:
-	Event(Engine& engine, SharedPtr<Request> request, FrameTime time)
+	Event(Engine& engine, ClientInterface* client, int32_t id, FrameTime time)
 		: _engine(engine)
-		, _request(request)
+		, _request_client(client)
+		, _request_id(id)
 		, _time(time)
 		, _error(0) // success
 		, _pre_processed(false)
@@ -82,6 +96,8 @@ protected:
 	/** Constructor for internal events only */
 	explicit Event(Engine& engine)
 		: _engine(engine)
+		, _request_client(NULL)
+		, _request_id(-1)
 		, _time(0)
 		, _error(0) // success
 		, _pre_processed(false)
@@ -89,8 +105,9 @@ protected:
 	{}
 
 	Engine&                _engine;
-	SharedPtr<Request>     _request;
 	Raul::AtomicPtr<Event> _next;
+	ClientInterface*       _request_client;
+	int32_t                _request_id;
 	FrameTime              _time;
 	int                    _error;
 	bool                   _pre_processed;

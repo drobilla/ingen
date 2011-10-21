@@ -41,13 +41,13 @@ namespace Events {
 class CreateNode : public Event
 {
 public:
-	CreateNode(
-			Engine&                     engine,
-			SharedPtr<Request>          request,
-			SampleCount                 timestamp,
-			const Raul::Path&           node_path,
-			const Raul::URI&            plugin_uri,
-			const Resource::Properties& properties);
+	CreateNode(Engine&                     engine,
+	           ClientInterface*            client,
+	           int32_t                     id,
+	           SampleCount                 timestamp,
+	           const Raul::Path&           node_path,
+	           const Raul::URI&            plugin_uri,
+	           const Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);

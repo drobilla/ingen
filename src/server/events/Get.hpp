@@ -39,10 +39,11 @@ namespace Events {
 class Get : public Event
 {
 public:
-	Get(Engine&            engine,
-	    SharedPtr<Request> request,
-	    SampleCount        timestamp,
-	    const Raul::URI&   uri);
+	Get(Engine&          engine,
+	    ClientInterface* client,
+	    int32_t          id,
+	    SampleCount      timestamp,
+	    const Raul::URI& uri);
 
 	void pre_process();
 	void post_process();

@@ -25,7 +25,6 @@
 #include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
-#include "Request.hpp"
 #include "events/Move.hpp"
 
 using namespace std;
@@ -35,8 +34,13 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Move::Move(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& path, const Path& new_path)
-	: Event(engine, request, timestamp)
+Move::Move(Engine&          engine,
+           ClientInterface* client,
+           int32_t          id,
+           SampleCount      timestamp,
+           const Path&      path,
+           const Path&      new_path)
+	: Event(engine, client, id, timestamp)
 	, _old_path(path)
 	, _new_path(new_path)
 	, _parent_patch(NULL)
@@ -114,7 +118,7 @@ Move::post_process()
 	string msg = "Unable to rename object - ";
 
 	if (_error == NO_ERROR) {
-		_request->respond_ok();
+		respond_ok();
 		_engine.broadcaster()->move(_old_path, _new_path);
 	} else {
 		if (_error == OBJECT_EXISTS)
@@ -126,7 +130,7 @@ Move::post_process()
 		else if (_error == PARENT_DIFFERS)
 			msg.append(_new_path.str()).append(" is a child of a different patch");
 
-		_request->respond_error(msg);
+		respond_error(msg);
 	}
 }
 

@@ -43,18 +43,20 @@ namespace Events {
 class SetPortValue : public Event
 {
 public:
-	SetPortValue(Engine&              engine,
-	             SharedPtr<Request>   request,
-	             bool                 queued,
-	             SampleCount          timestamp,
-	             const Raul::Path&    port_path,
-	             const Raul::Atom&    value);
+	SetPortValue(Engine&           engine,
+	             ClientInterface*  client,
+	             int32_t           id,
+	             bool              queued,
+	             SampleCount       timestamp,
+	             const Raul::Path& port_path,
+	             const Raul::Atom& value);
 
-	SetPortValue(Engine&              engine,
-	             SharedPtr<Request>   request,
-	             SampleCount          timestamp,
-	             PortImpl*            port,
-	             const Raul::Atom&    value);
+	SetPortValue(Engine&           engine,
+	             ClientInterface*  client,
+	             int32_t           id,
+	             SampleCount       timestamp,
+	             PortImpl*         port,
+	             const Raul::Atom& value);
 
 	~SetPortValue();
 

@@ -36,13 +36,13 @@ namespace Events {
 class CreatePatch : public Event
 {
 public:
-	CreatePatch(
-			Engine&                     engine,
-			SharedPtr<Request>          request,
-			SampleCount                 timestamp,
-			const Raul::Path&           path,
-			int                         poly,
-			const Resource::Properties& properties);
+	CreatePatch(Engine&                     engine,
+	            ClientInterface*            client,
+	            int32_t                     id,
+	            SampleCount                 timestamp,
+	            const Raul::Path&           path,
+	            int                         poly,
+	            const Resource::Properties& properties);
 
 	void pre_process();
 	void execute(ProcessContext& context);

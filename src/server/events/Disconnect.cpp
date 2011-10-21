@@ -32,7 +32,6 @@
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
-#include "Request.hpp"
 #include "ThreadManager.hpp"
 #include "events/Disconnect.hpp"
 
@@ -43,12 +42,13 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Disconnect::Disconnect(Engine&            engine,
-                       SharedPtr<Request> request,
-                       SampleCount        timestamp,
-                       const Raul::Path&  src_port_path,
-                       const Raul::Path&  dst_port_path)
-	: Event(engine, request, timestamp)
+Disconnect::Disconnect(Engine&           engine,
+                       ClientInterface*  client,
+                       int32_t           id,
+                       SampleCount       timestamp,
+                       const Raul::Path& src_port_path,
+                       const Raul::Path& dst_port_path)
+	: Event(engine, client, id, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
 	, _patch(NULL)
@@ -227,8 +227,7 @@ void
 Disconnect::post_process()
 {
 	if (_error == NO_ERROR) {
-		if (_request)
-			_request->respond_ok();
+		respond_ok();
 		_engine.broadcaster()->disconnect(_src_port->path(), _dst_port->path());
 	} else {
 		string msg("Unable to disconnect ");
@@ -257,8 +256,7 @@ Disconnect::post_process()
 			break;
 		}
 		msg.append(")");
-		if (_request)
-			_request->respond_error(msg);
+		respond_error(msg);
 	}
 
 	delete _impl;

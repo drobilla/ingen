@@ -21,7 +21,6 @@
 #include "sord/sordmm.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "CreateNode.hpp"
-#include "Request.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
@@ -40,14 +39,14 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-CreateNode::CreateNode(
-		Engine&                      engine,
-		SharedPtr<Request>           request,
-		SampleCount                  timestamp,
-		const Path&                  path,
-		const URI&                   plugin_uri,
-		const Resource::Properties&  properties)
-	: Event(engine, request, timestamp)
+CreateNode::CreateNode(Engine&                     engine,
+                       ClientInterface*            client,
+                       int32_t                     id,
+                       SampleCount                 timestamp,
+                       const Path&                 path,
+                       const URI&                  plugin_uri,
+                       const Resource::Properties& properties)
+	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _plugin_uri(plugin_uri)
 	, _patch(NULL)
@@ -117,26 +116,22 @@ CreateNode::execute(ProcessContext& context)
 void
 CreateNode::post_process()
 {
-	if (!_request) {
-		return;
-	}
-
 	string msg;
 	if (_node_already_exists) {
 		msg = string("Could not create node - ").append(_path.str());// + " already exists.";
-		_request->respond_error(msg);
+		respond_error(msg);
 	} else if (_patch == NULL) {
 		msg = "Could not find patch '" + _path.parent().str() +"' to add node.";
-		_request->respond_error(msg);
+		respond_error(msg);
 	} else if (_plugin == NULL) {
 		msg = "Unable to load node ";
 		msg += _path.str() + " (you're missing the plugin " + _plugin_uri.str() + ")";
-		_request->respond_error(msg);
+		respond_error(msg);
 	} else if (_node == NULL) {
 		msg = "Failed to instantiate plugin " + _plugin_uri.str();
-		_request->respond_error(msg);
+		respond_error(msg);
 	} else {
-		_request->respond_ok();
+		respond_ok();
 		_engine.broadcaster()->send_object(_node, true); // yes, send ports
 	}
 }

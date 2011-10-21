@@ -34,7 +34,6 @@
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
-#include "Request.hpp"
 #include "types.hpp"
 
 using namespace std;
@@ -44,12 +43,13 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Connect::Connect(Engine&            engine,
-                 SharedPtr<Request> request,
-                 SampleCount        timestamp,
-                 const Path&        src_port_path,
-                 const Path&        dst_port_path)
-	: Event(engine, request, timestamp)
+Connect::Connect(Engine&          engine,
+                 ClientInterface* client,
+                 int32_t          id,
+                 SampleCount      timestamp,
+                 const Path&      src_port_path,
+                 const Path&      dst_port_path)
+	: Event(engine, client, id, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)
 	, _patch(NULL)
@@ -177,7 +177,7 @@ Connect::post_process()
 {
 	std::ostringstream ss;
 	if (_error == NO_ERROR) {
-		_request->respond_ok();
+		respond_ok();
 		_engine.broadcaster()->connect(_src_port_path, _dst_port_path);
 		return;
 	}
@@ -202,7 +202,7 @@ Connect::post_process()
 		ss << "Unknown error";
 	}
 	ss << ")";
-	_request->respond_error(ss.str());
+	respond_error(ss.str());
 }
 
 } // namespace Events

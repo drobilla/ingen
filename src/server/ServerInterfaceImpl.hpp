@@ -26,7 +26,6 @@
 #include "ingen/ServerInterface.hpp"
 #include "ingen/Resource.hpp"
 #include "EventSource.hpp"
-#include "Request.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -98,11 +97,9 @@ public:
 	virtual void ping();
 	virtual void get(const Raul::URI& uri);
 
-	SharedPtr<Request> request()                         { return _request; }
-	void               set_request(SharedPtr<Request> r) { _request = r; }
-
 protected:
-	SharedPtr<Request> _request; ///< NULL if responding disabled
+	ClientInterface*   _request_client;
+	int32_t            _request_id;
 	Engine&            _engine;
 	bool               _in_bundle; ///< True iff a bundle is currently being received
 

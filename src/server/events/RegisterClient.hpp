@@ -33,18 +33,17 @@ namespace Events {
 class RegisterClient : public Event
 {
 public:
-	RegisterClient(Engine&            engine,
-	               SharedPtr<Request> request,
-	               SampleCount        timestamp,
-	               const Raul::URI&   uri,
-	               ClientInterface*   client);
+	RegisterClient(Engine&          engine,
+	               ClientInterface* client,
+	               int32_t          id,
+	               SampleCount      timestamp,
+	               const Raul::URI& uri);
 
 	void pre_process();
 	void post_process();
 
 private:
-	Raul::URI        _uri;
-	ClientInterface* _client;
+	Raul::URI _uri;
 };
 
 } // namespace Server

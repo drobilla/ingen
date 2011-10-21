@@ -33,7 +33,6 @@
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
-#include "Request.hpp"
 #include "events/Disconnect.hpp"
 #include "events/DisconnectAll.hpp"
 #include "util.hpp"
@@ -45,8 +44,13 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleCount timestamp, const Path& parent_path, const Path& node_path)
-	: Event(engine, request, timestamp)
+DisconnectAll::DisconnectAll(Engine&          engine,
+                             ClientInterface* client,
+                             int32_t          id,
+                             SampleCount      timestamp,
+                             const Path&      parent_path,
+                             const Path&      node_path)
+	: Event(engine, client, id, timestamp)
 	, _parent_path(parent_path)
 	, _path(node_path)
 	, _parent(NULL)
@@ -59,7 +63,9 @@ DisconnectAll::DisconnectAll(Engine& engine, SharedPtr<Request> request, SampleC
 
 /** Internal version for use by other events.
  */
-DisconnectAll::DisconnectAll(Engine& engine, PatchImpl* parent, GraphObjectImpl* object)
+DisconnectAll::DisconnectAll(Engine&          engine,
+                             PatchImpl*       parent,
+                             GraphObjectImpl* object)
 	: Event(engine)
 	, _parent_path(parent->path())
 	, _path(object->path())
@@ -168,27 +174,24 @@ void
 DisconnectAll::post_process()
 {
 	if (_error == NO_ERROR) {
-		if (_request)
-			_request->respond_ok();
+		respond_ok();
 		_engine.broadcaster()->disconnect_all(_parent_path, _path);
 	} else {
-		if (_request) {
-			boost::format fmt("Unable to disconnect %1% (%2%)");
-			fmt % _path;
-			switch (_error) {
-				case INVALID_PARENT_PATH:
-					fmt % string("Invalid parent path: ").append(_parent_path.str());
-					break;
-				case PARENT_NOT_FOUND:
-					fmt % string("Unable to find parent: ").append(_parent_path.str());
-					break;
-				case OBJECT_NOT_FOUND:
-					fmt % string("Unable to find object");
-				default:
-					break;
-			}
-			_request->respond_error(fmt.str());
+		boost::format fmt("Unable to disconnect %1% (%2%)");
+		fmt % _path;
+		switch (_error) {
+		case INVALID_PARENT_PATH:
+			fmt % string("Invalid parent path: ").append(_parent_path.str());
+			break;
+		case PARENT_NOT_FOUND:
+			fmt % string("Unable to find parent: ").append(_parent_path.str());
+			break;
+		case OBJECT_NOT_FOUND:
+			fmt % string("Unable to find object");
+		default:
+			break;
 		}
+		respond_error(fmt.str());
 	}
 }
 

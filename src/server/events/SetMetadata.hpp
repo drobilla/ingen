@@ -69,15 +69,15 @@ class SetPortValue;
 class SetMetadata : public Event
 {
 public:
-	SetMetadata(
-			Engine&                     engine,
-			SharedPtr<Request>          request,
-			SampleCount                 timestamp,
-			bool                        create,
-			Resource::Graph             context,
-			const Raul::URI&            subject,
-			const Resource::Properties& properties,
-			const Resource::Properties& remove = Resource::Properties());
+	SetMetadata(Engine&                     engine,
+	            ClientInterface*            client,
+	            int32_t                     id,
+	            SampleCount                 timestamp,
+	            bool                        create,
+	            Resource::Graph             context,
+	            const Raul::URI&            subject,
+	            const Resource::Properties& properties,
+	            const Resource::Properties& remove = Resource::Properties());
 
 	~SetMetadata();
 

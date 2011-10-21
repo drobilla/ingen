@@ -35,7 +35,6 @@
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
-#include "Request.hpp"
 #include "SetMetadata.hpp"
 #include "SetPortValue.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
@@ -51,16 +50,16 @@ namespace Events {
 
 typedef Resource::Properties Properties;
 
-SetMetadata::SetMetadata(
-		Engine&             engine,
-		SharedPtr<Request>  request,
-		SampleCount         timestamp,
-		bool                create,
-		Resource::Graph     context,
-		const URI&          subject,
-		const Properties&   properties,
-		const Properties&   remove)
-	: Event(engine, request, timestamp)
+SetMetadata::SetMetadata(Engine&           engine,
+                         ClientInterface*  client,
+                         int32_t           id,
+                         SampleCount       timestamp,
+                         bool              create,
+                         Resource::Graph   context,
+                         const URI&        subject,
+                         const Properties& properties,
+                         const Properties& remove)
+	: Event(engine, client, id, timestamp)
 	, _create_event(NULL)
 	, _subject(subject)
 	, _properties(properties)
@@ -125,23 +124,20 @@ SetMetadata::pre_process()
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
 		Shared::ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output);
 
-		// Create a separate request without a source so EventSource isn't unblocked twice
-		SharedPtr<Request> sub_request(new Request(_request->client(), _request->id()));
-
 		if (is_patch) {
 			uint32_t poly = 1;
 			iterator p = _properties.find(uris.ingen_polyphony);
 			if (p != _properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
 				poly = p->second.get_int32();
-			_create_event = new CreatePatch(_engine, sub_request, _time,
-					path, poly, _properties);
+			_create_event = new CreatePatch(_engine, _request_client, _request_id, _time,
+			                                path, poly, _properties);
 		} else if (is_node) {
 			const iterator p = _properties.find(uris.rdf_instanceOf);
-			_create_event = new CreateNode(_engine, sub_request, _time,
-					path, p->second.get_uri(), _properties);
+			_create_event = new CreateNode(_engine, _request_client, _request_id, _time,
+			                               path, p->second.get_uri(), _properties);
 		} else if (is_port) {
-			_create_event = new CreatePort(_engine, sub_request, _time,
-					path, is_output, _properties);
+			_create_event = new CreatePort(_engine, _request_client, _request_id, _time,
+			                               path, is_output, _properties);
 		}
 		if (_create_event) {
 			_create_event->pre_process();
@@ -194,7 +190,8 @@ SetMetadata::pre_process()
 						_error = BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.ingen_value) {
-					SetPortValue* ev = new SetPortValue(_engine, _request, _time, port, value);
+					SetPortValue* ev = new SetPortValue(
+						_engine, _request_client, _request_id, _time, port, value);
 					ev->pre_process();
 					_set_events.push_back(ev);
 				} else if (key == uris.ingen_controlBinding) {
@@ -359,7 +356,7 @@ SetMetadata::post_process()
 		if (_create_event) {
 			_create_event->post_process();
 		} else {
-			_request->respond_ok();
+			respond_ok();
 			if (_create)
 				_engine.broadcaster()->put(_subject, _properties, _context);
 			else
@@ -367,18 +364,18 @@ SetMetadata::post_process()
 		}
 		break;
 	case NOT_FOUND:
-		_request->respond_error((boost::format(
+		respond_error((boost::format(
 				"Unable to find object `%1%'") % _subject).str());
 		break;
 	case INTERNAL:
-		_request->respond_error("Internal error");
+		respond_error("Internal error");
 		break;
 	case BAD_OBJECT_TYPE:
-		_request->respond_error((boost::format(
+		respond_error((boost::format(
 				"Bad type for object `%1%'") % _subject).str());
 		break;
 	case BAD_VALUE_TYPE:
-		_request->respond_error((boost::format(
+		respond_error((boost::format(
 				"Bad metadata value type for subject `%1%' predicate `%2%'")
 					% _subject % _error_predicate).str());
 		break;

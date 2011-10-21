@@ -35,7 +35,8 @@ namespace Server {
 
 ServerInterfaceImpl::ServerInterfaceImpl(Engine& engine)
 	: EventSource()
-	, _request(new Request(NULL, 0))
+	, _request_client(NULL)
+	, _request_id(-1)
 	, _engine(engine)
 	, _in_bundle(false)
 {
@@ -62,17 +63,15 @@ ServerInterfaceImpl::now() const
 void
 ServerInterfaceImpl::respond_to(ClientInterface* client, int32_t id)
 {
-	if (_request) {
-		_request->set_client(client);
-		_request->set_id(id);
-	}
+	_request_client = client;
+	_request_id     = id;
 }
 
 void
 ServerInterfaceImpl::disable_responses()
 {
-	_request->set_client(NULL);
-	_request->set_id(0);
+	_request_client = NULL;
+	_request_id     = -1;
 }
 
 /* *** ServerInterface implementation below here *** */
@@ -80,23 +79,17 @@ ServerInterfaceImpl::disable_responses()
 void
 ServerInterfaceImpl::register_client(ClientInterface* client)
 {
-	push_queued(new Events::RegisterClient(_engine, _request, now(), client->uri(), client));
-	if (!_request) {
-		_request = SharedPtr<Request>(new Request(client, 1));
-	} else {
-		_request->set_id(1);
-		_request->set_client(client);
-	}
+	push_queued(new Events::RegisterClient(_engine, client, _request_id, now(), client->uri()));
+	_request_client = client;
+	_request_id     = 1;
 }
 
 void
 ServerInterfaceImpl::unregister_client(const URI& uri)
 {
-	push_queued(new Events::UnregisterClient(_engine, _request, now(), uri));
-	if (_request && _request->client() && _request->client()->uri() == uri) {
-		_request->set_id(0);
-		_request->set_client(NULL);
-	}
+	push_queued(new Events::UnregisterClient(_engine, _request_client, _request_id, now(), uri));
+	_request_client = NULL;
+	_request_id     = -1;
 }
 
 // Bundle commands
@@ -120,7 +113,7 @@ ServerInterfaceImpl::put(const URI&                  uri,
                          const Resource::Properties& properties,
                          const Resource::Graph       ctx)
 {
-	push_queued(new Events::SetMetadata(_engine, _request, now(), true, ctx, uri, properties));
+	push_queued(new Events::SetMetadata(_engine, _request_client, _request_id, now(), true, ctx, uri, properties));
 }
 
 void
@@ -128,24 +121,26 @@ ServerInterfaceImpl::delta(const URI&                  uri,
                            const Resource::Properties& remove,
                            const Resource::Properties& add)
 {
-	push_queued(new Events::SetMetadata(_engine, _request, now(), false, Resource::DEFAULT, uri, add, remove));
+	push_queued(new Events::SetMetadata(_engine, _request_client, _request_id, now(), false, Resource::DEFAULT, uri, add, remove));
 }
 
 void
 ServerInterfaceImpl::move(const Path& old_path,
                           const Path& new_path)
 {
-	push_queued(new Events::Move(_engine, _request, now(), old_path, new_path));
+	push_queued(new Events::Move(_engine, _request_client, _request_id, now(), old_path, new_path));
 }
 
 void
 ServerInterfaceImpl::del(const URI& uri)
 {
 	if (uri == "ingen:engine") {
-		_request->respond_ok();
+		if (_request_client) {
+			_request_client->response_ok(_request_id);
+		}
 		_engine.quit();
 	} else {
-		push_queued(new Events::Delete(_engine, _request, now(), uri));
+		push_queued(new Events::Delete(_engine, _request_client, _request_id, now(), uri));
 	}
 }
 
@@ -153,7 +148,7 @@ void
 ServerInterfaceImpl::connect(const Path& src_port_path,
                              const Path& dst_port_path)
 {
-	push_queued(new Events::Connect(_engine, _request, now(), src_port_path, dst_port_path));
+	push_queued(new Events::Connect(_engine, _request_client, _request_id, now(), src_port_path, dst_port_path));
 
 }
 
@@ -166,7 +161,7 @@ ServerInterfaceImpl::disconnect(const URI& src,
 		return;
 	}
 		
-	push_queued(new Events::Disconnect(_engine, _request, now(),
+	push_queued(new Events::Disconnect(_engine, _request_client, _request_id, now(),
 	                                   Path(src.str()), Path(dst.str())));
 }
 
@@ -174,7 +169,7 @@ void
 ServerInterfaceImpl::disconnect_all(const Path& patch_path,
                                     const Path& path)
 {
-	push_queued(new Events::DisconnectAll(_engine, _request, now(), patch_path, path));
+	push_queued(new Events::DisconnectAll(_engine, _request_client, _request_id, now(), patch_path, path));
 }
 
 void
@@ -186,9 +181,9 @@ ServerInterfaceImpl::set_property(const URI&  uri,
 	    && value.type() == Atom::BOOL) {
 		if (value.get_bool()) {
 			_engine.activate();
-			push_queued(new Events::Ping(_engine, _request, now()));
+			push_queued(new Events::Ping(_engine, _request_client, _request_id, now()));
 		} else {
-			push_queued(new Events::Deactivate(_engine, _request, now()));
+			push_queued(new Events::Deactivate(_engine, _request_client, _request_id, now()));
 		}
 	} else {
 		Resource::Properties remove;
@@ -196,7 +191,7 @@ ServerInterfaceImpl::set_property(const URI&  uri,
 		Resource::Properties add;
 		add.insert(make_pair(predicate, value));
 		push_queued(new Events::SetMetadata(
-			            _engine, _request, now(), false, Resource::DEFAULT,
+			            _engine, _request_client, _request_id, now(), false, Resource::DEFAULT,
 			            uri, add, remove));
 	}
 }
@@ -206,13 +201,13 @@ ServerInterfaceImpl::set_property(const URI&  uri,
 void
 ServerInterfaceImpl::ping()
 {
-	push_queued(new Events::Ping(_engine, _request, now()));
+	push_queued(new Events::Ping(_engine, _request_client, _request_id, now()));
 }
 
 void
 ServerInterfaceImpl::get(const URI& uri)
 {
-	push_queued(new Events::Get(_engine, _request, now(), uri));
+	push_queued(new Events::Get(_engine, _request_client, _request_id, now(), uri));
 }
 
 } // namespace Server

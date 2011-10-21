@@ -186,9 +186,9 @@ Engine::activate()
 		in_properties.insert(make_pair(uris.ingenui_canvas_y,
 		                               Resource::Property(32.0f, Resource::EXTERNAL)));
 
-		execute_and_delete_event(context, new Events::CreatePort(
-				*this, SharedPtr<Request>(), 0,
-				"/control_in", false, in_properties));
+		execute_and_delete_event(
+			context, new Events::CreatePort(*this, NULL, -1, 0,
+			                                "/control_in", false, in_properties));
 
 		// Add control out
 		Resource::Properties out_properties(control_properties);
@@ -202,9 +202,9 @@ Engine::activate()
 		out_properties.insert(make_pair(uris.ingenui_canvas_y,
 		                                Resource::Property(32.0f, Resource::EXTERNAL)));
 
-		execute_and_delete_event(context, new Events::CreatePort(
-				*this, SharedPtr<Request>(), 0,
-				"/control_out", true, out_properties));
+		execute_and_delete_event(
+			context, new Events::CreatePort(*this, NULL, -1, 0,
+			                                "/control_out", true, out_properties));
 	}
 
 	_driver->activate();

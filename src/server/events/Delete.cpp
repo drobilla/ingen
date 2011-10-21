@@ -28,7 +28,6 @@
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "Request.hpp"
 
 using namespace std;
 
@@ -36,11 +35,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Delete::Delete(Engine&            engine,
-               SharedPtr<Request> request,
-               FrameTime          time,
-               const Raul::URI&   uri)
-	: Event(engine, request, time)
+Delete::Delete(Engine&          engine,
+               ClientInterface* client,
+               int32_t          id,
+               FrameTime        time,
+               const Raul::URI& uri)
+	: Event(engine, client, id, time)
 	, _uri(uri)
 	, _store_iterator(engine.engine_store()->end())
 	, _garbage(NULL)
@@ -52,8 +52,6 @@ Delete::Delete(Engine&            engine,
 	, _disconnect_event(NULL)
 	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
-	assert(request);
-
 	if (Raul::Path::is_path(uri))
 		_path = Raul::Path(uri.str());
 }
@@ -176,14 +174,14 @@ Delete::post_process()
 	if (!Raul::Path::is_path(_uri)
 	    || _path.is_root() || _path == "path:/control_in" || _path == "path:/control_out") {
 		// XXX: Just ignore?
-		//_request->respond_error(_path.chop_scheme() + " can not be deleted");
+		//respond_error(_path.chop_scheme() + " can not be deleted");
 	} else if (!_node && !_port) {
 		string msg = string("Could not find object ") + _path.chop_scheme() + " to delete";
-		_request->respond_error(msg);
+		respond_error(msg);
 	} else if (_patch_node_listnode) {
 		assert(_node);
 		_node->deactivate();
-		_request->respond_ok();
+		respond_ok();
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
@@ -192,7 +190,7 @@ Delete::post_process()
 		_engine.maid()->push(_patch_node_listnode);
 	} else if (_patch_port_listnode) {
 		assert(_port);
-		_request->respond_ok();
+		respond_ok();
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
@@ -200,7 +198,7 @@ Delete::post_process()
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_port_listnode);
 	} else {
-		_request->respond_error("Unable to delete object " + _path.chop_scheme());
+		respond_error("Unable to delete object " + _path.chop_scheme());
 	}
 
 	if (_driver_port)
