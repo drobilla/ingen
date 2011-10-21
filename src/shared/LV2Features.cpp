@@ -16,7 +16,7 @@
  */
 
 #include <cstdlib>
-#include <cstring>
+
 #include "LV2Features.hpp"
 #include "LV2URIMap.hpp"
 
@@ -29,20 +29,25 @@ LV2Features::LV2Features()
 {
 }
 
-SharedPtr<LV2Features::Feature>
-LV2Features::feature(const std::string& uri)
+void
+LV2Features::add_feature(SharedPtr<Feature> feature)
 {
-	Features::const_iterator i = _features.find(uri);
-	if (i != _features.end())
-		return i->second;
-	else
-		return SharedPtr<Feature>();
+	_features.push_back(feature);
 }
 
-void
-LV2Features::add_feature(const std::string& uri, SharedPtr<Feature> feature)
+LV2Features::FeatureArray::FeatureArray(FeatureVector& features)
+	: _features(features)
 {
-	_features.insert(make_pair(uri, feature));
+	_array = (LV2_Feature**)malloc(sizeof(LV2_Feature) * (features.size() + 1));
+	_array[features.size()] = NULL;
+	for (size_t i = 0; i < features.size(); ++i) {
+		_array[i] = features[i].get();
+	}
+}
+
+LV2Features::FeatureArray::~FeatureArray()
+{
+	free(_array);
 }
 
 SharedPtr<LV2Features::FeatureArray>
@@ -50,9 +55,10 @@ LV2Features::lv2_features(Shared::World* world, Node* node) const
 {
 	FeatureArray::FeatureVector vec;
 	for (Features::const_iterator f = _features.begin(); f != _features.end(); ++f) {
-		SharedPtr<LV2_Feature> fptr = f->second->feature(world, node);
-		if (fptr)
+		SharedPtr<LV2_Feature> fptr = (*f)->feature(world, node);
+		if (fptr) {
 			vec.push_back(fptr);
+		}
 	}
 	return SharedPtr<FeatureArray>(new FeatureArray(vec));
 }

@@ -152,7 +152,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 	uint32_t port_buffer_size = 0;
 	LilvNode* ctx_ext_uri = lilv_new_uri(info->lv2_world(),
-	                                            LV2_CONTEXTS_URI "#MessageContext");
+	                                     LV2_CONTEXTS_URI "#MessageContext");
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		(*_instances)[i] = SharedPtr<void>(

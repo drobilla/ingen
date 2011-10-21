@@ -18,8 +18,6 @@
 #ifndef INGEN_SHARED_LV2FEATURES_HPP
 #define INGEN_SHARED_LV2FEATURES_HPP
 
-#include <map>
-#include <string>
 #include <vector>
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
@@ -43,6 +41,7 @@ public:
 	class Feature {
 	public:
 		virtual ~Feature() {}
+
 		virtual SharedPtr<LV2_Feature> feature(Shared::World* world,
 		                                       Node*          node) = 0;
 	};
@@ -51,18 +50,9 @@ public:
 	public:
 		typedef std::vector< SharedPtr<LV2_Feature> > FeatureVector;
 
-		explicit FeatureArray(FeatureVector& features)
-			: _features(features)
-		{
-			_array = (LV2_Feature**)malloc(sizeof(LV2_Feature) * (features.size() + 1));
-			_array[features.size()] = NULL;
-			for (size_t i = 0; i < features.size(); ++i)
-				_array[i] = features[i].get();
-		}
+		explicit FeatureArray(FeatureVector& features);
 
-		~FeatureArray() {
-			free(_array);
-		}
+		~FeatureArray();
 
 		LV2_Feature** array() { return _array; }
 
@@ -71,15 +61,13 @@ public:
 		LV2_Feature** _array;
 	};
 
-	SharedPtr<Feature> feature(const std::string& uri);
-
-	void add_feature(const std::string& uri, SharedPtr<Feature> feature);
+	void add_feature(SharedPtr<Feature> feature);
 
 	SharedPtr<FeatureArray> lv2_features(Shared::World* world,
 	                                     Node*          node) const;
 
 private:
-	typedef std::map< std::string, SharedPtr<Feature> > Features;
+	typedef std::vector< SharedPtr<Feature> > Features;
 	Features _features;
 };
 

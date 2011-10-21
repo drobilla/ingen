@@ -51,11 +51,11 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 {
 	assert(world);
 
-	world->lv2_features()->add_feature(LV2_EVENT_URI,
+	world->lv2_features()->add_feature(
 			SharedPtr<Shared::LV2Features::Feature>(new EventFeature()));
-	world->lv2_features()->add_feature(LV2_RESIZE_PORT_URI,
+	world->lv2_features()->add_feature(
 			SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
-	world->lv2_features()->add_feature(LV2_CONTEXTS_URI "#RequestRunFeature",
+	world->lv2_features()->add_feature(
 			SharedPtr<Shared::LV2Features::Feature>(new RequestRunFeature()));
 }
 

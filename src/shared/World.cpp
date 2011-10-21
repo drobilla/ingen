@@ -107,8 +107,8 @@ public:
 		, lilv_world(lilv_world_new())
 	{
 		lv2_features = new Ingen::Shared::LV2Features();
-		lv2_features->add_feature(LV2_URI_MAP_URI, uris);
-		lv2_features->add_feature(LV2_URI_UNMAP_URI, uris->unmap_feature());
+		lv2_features->add_feature(uris);
+		lv2_features->add_feature(uris->unmap_feature());
 		lilv_world_load_all(lilv_world);
 
 		// Set up RDF namespaces
