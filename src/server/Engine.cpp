@@ -152,7 +152,7 @@ Engine::activate()
 
 	_message_context->Thread::start();
 
-	const Ingen::Shared::LV2URIMap& uris = *world()->uris().get();
+	const Ingen::Shared::URIs& uris = *world()->uris().get();
 
 	// Create root patch
 	PatchImpl* root_patch = _driver->root_patch();

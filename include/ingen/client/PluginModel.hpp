@@ -31,7 +31,7 @@
 
 namespace Ingen {
 
-namespace Shared { class LV2URIMap; }
+namespace Shared { class URIs; }
 
 namespace Client {
 
@@ -47,11 +47,10 @@ class PluginModel : public Ingen::Plugin
                   , public Ingen::Shared::ResourceImpl
 {
 public:
-	PluginModel(
-			Shared::LV2URIMap&                 uris,
-			const Raul::URI&                   uri,
-			const Raul::URI&                   type_uri,
-			const Ingen::Resource::Properties& properties);
+	PluginModel(Shared::URIs&                      uris,
+	            const Raul::URI&                   uri,
+	            const Raul::URI&                   type_uri,
+	            const Ingen::Resource::Properties& properties);
 
 	Type type() const { return _type; }
 

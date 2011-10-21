@@ -69,7 +69,7 @@ UploadPatchWindow::present(SharedPtr<PatchModel> patch)
 void
 UploadPatchWindow::on_show()
 {
-	const Shared::LV2URIMap& uris = App::instance().uris();
+	const Shared::URIs& uris = App::instance().uris();
 	Gtk::Dialog::on_show();
 
 	Raul::Atom atom = _patch->get_property(uris.lv2_symbol);
@@ -222,7 +222,7 @@ UploadPatchWindow::upload_clicked()
 {
 	assert(!_thread);
 
-	const Shared::LV2URIMap& uris = App::instance().uris();
+	const Shared::URIs& uris = App::instance().uris();
 
 	Glib::ustring symbol = _symbol_entry->get_text();
 	Glib::ustring short_name = _short_name_entry->get_text();

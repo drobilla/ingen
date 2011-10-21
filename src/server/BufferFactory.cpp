@@ -33,8 +33,8 @@ namespace Server {
 
 static const size_t EVENT_BYTES_PER_FRAME = 4; // FIXME
 
-BufferFactory::BufferFactory(Engine&                             engine,
-                             SharedPtr<Ingen::Shared::LV2URIMap> uris)
+BufferFactory::BufferFactory(Engine&                        engine,
+                             SharedPtr<Ingen::Shared::URIs> uris)
 	: _engine(engine)
 	, _uris(uris)
 	, _silent_buffer(NULL)

@@ -66,7 +66,7 @@ SubpatchModule::store_location()
 	const Atom x(static_cast<float>(property_x()));
 	const Atom y(static_cast<float>(property_y()));
 
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 
 	const Atom& existing_x = _node->get_property(uris.ingenui_canvas_x);
 	const Atom& existing_y = _node->get_property(uris.ingenui_canvas_y);

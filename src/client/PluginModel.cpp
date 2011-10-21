@@ -41,8 +41,10 @@ const LilvPlugins* PluginModel::_lilv_plugins = NULL;
 
 Sord::World* PluginModel::_rdf_world = NULL;
 
-PluginModel::PluginModel(Shared::LV2URIMap& uris,
-		const URI& uri, const URI& type_uri, const Resource::Properties& properties)
+PluginModel::PluginModel(Shared::URIs&               uris,
+                         const URI&                  uri,
+                         const URI&                  type_uri,
+                         const Resource::Properties& properties)
 	: ResourceImpl(uris, uri)
 	, _type(type_from_uri(type_uri.str()))
 {

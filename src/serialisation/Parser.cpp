@@ -127,7 +127,7 @@ get_port(Ingen::Shared::World* world,
          const Raul::Path&     parent,
          PortRecord&           record)
 {
-	const LV2URIMap& uris = *world->uris().get();
+	const URIs& uris = *world->uris().get();
 
 	// Get all properties
 	Resource::Properties props = get_properties(model, subject);
@@ -212,7 +212,7 @@ parse_node(Ingen::Shared::World*                    world,
            const Raul::Path&                        path,
            boost::optional<GraphObject::Properties> data)
 {
-	const LV2URIMap& uris = *world->uris().get();
+	const URIs& uris = *world->uris().get();
 
 	Sord::URI rdf_instanceOf(*world->rdf_world(), NS_RDF "instanceOf");
 
@@ -276,7 +276,7 @@ parse_patch(Ingen::Shared::World*                    world,
 	const Sord::URI ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
 	const Sord::URI lv2_port(*world->rdf_world(),        NS_LV2 "port");
 
-	const LV2URIMap&  uris  = *world->uris().get();
+	const URIs&       uris  = *world->uris().get();
 	const Sord::Node& patch = subject_node;
 
 	uint32_t patch_poly = 0;

@@ -43,7 +43,7 @@ PortMenu::PortMenu(BaseObjectType*                   cobject,
 void
 PortMenu::init(SharedPtr<const PortModel> port, bool patch_port)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 
 	ObjectMenu::init(port);
 	_patch_port = patch_port;
@@ -96,7 +96,7 @@ PortMenu::on_menu_disconnect()
 void
 PortMenu::on_menu_set_min()
 {
-	const LV2URIMap&           uris  = App::instance().uris();
+	const URIs&                uris  = App::instance().uris();
 	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
 	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
@@ -106,7 +106,7 @@ PortMenu::on_menu_set_min()
 void
 PortMenu::on_menu_set_max()
 {
-	const LV2URIMap&           uris  = App::instance().uris();
+	const URIs&                uris  = App::instance().uris();
 	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
 	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
@@ -116,7 +116,7 @@ PortMenu::on_menu_set_max()
 void
 PortMenu::on_menu_reset_range()
 {
-	const LV2URIMap&           uris   = App::instance().uris();
+	const URIs&                uris  = App::instance().uris();
 	SharedPtr<const PortModel> model  = PtrCast<const PortModel>(_object);
 	SharedPtr<const NodeModel> parent = PtrCast<const NodeModel>(_object->parent());
 

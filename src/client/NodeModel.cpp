@@ -29,7 +29,7 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-NodeModel::NodeModel(Shared::LV2URIMap&     uris,
+NodeModel::NodeModel(Shared::URIs&          uris,
                      SharedPtr<PluginModel> plugin,
                      const Path&            path)
 	: Node()
@@ -42,7 +42,7 @@ NodeModel::NodeModel(Shared::LV2URIMap&     uris,
 {
 }
 
-NodeModel::NodeModel(Shared::LV2URIMap& uris,
+NodeModel::NodeModel(Shared::URIs& uris,
                      const URI&         plugin_uri,
                      const Path&        path)
 	: Node()

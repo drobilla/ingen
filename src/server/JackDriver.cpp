@@ -195,7 +195,7 @@ JackDriver::JackDriver(Engine& engine)
 	, _process_context(engine)
 	, _root_patch(NULL)
 {
-	_midi_event_type = _engine.world()->uris()->uri_to_id(
+	_midi_event_type = _engine.world()->lv2_uri_map()->uri_to_id(
 			LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
 }
 

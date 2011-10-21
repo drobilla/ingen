@@ -22,6 +22,7 @@ def build(bld):
             Module.cpp
             ResourceImpl.cpp
             Store.cpp
+            URIs.cpp
             World.cpp
             runtime_paths.cpp
     '''

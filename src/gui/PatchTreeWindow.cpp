@@ -192,7 +192,7 @@ void
 PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
 		SharedPtr<PatchModel> patch)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	_enable_signal = false;
 	if (key == uris.ingen_enabled && value.type() == Atom::BOOL) {
 		Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), patch);

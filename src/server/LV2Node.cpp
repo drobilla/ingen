@@ -138,7 +138,7 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 bool
 LV2Node::instantiate(BufferFactory& bufs)
 {
-	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::URIs& uris = bufs.uris();
 	SharedPtr<LV2Info>              info = _lv2_plugin->lv2_info();
 	const LilvPlugin*               plug = _lv2_plugin->lilv_plugin();
 

@@ -50,7 +50,7 @@ public:
 
 	void process(ProcessContext& context);
 
-	static InternalPlugin* internal_plugin(Shared::LV2URIMap& uris);
+	static InternalPlugin* internal_plugin(Shared::URIs& uris);
 
 	float delay_samples() const { return _delay_samples; }
 

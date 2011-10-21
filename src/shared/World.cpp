@@ -103,11 +103,12 @@ public:
 		, conf(conf)
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
-		, uris(new Shared::LV2URIMap())
+		, uris(new Shared::URIs())
+		, lv2_uri_map(new Ingen::Shared::LV2URIMap(*uris.get()))
 		, lilv_world(lilv_world_new())
 	{
 		lv2_features = new Ingen::Shared::LV2Features();
-		lv2_features->add_feature(uris);
+		lv2_features->add_feature(lv2_uri_map);
 		lilv_world_load_all(lilv_world);
 
 		// Set up RDF namespaces
@@ -165,7 +166,8 @@ public:
 	Raul::Configuration*                 conf;
 	LV2Features*                         lv2_features;
 	Sord::World*                         rdf_world;
-	SharedPtr<LV2URIMap>                 uris;
+	SharedPtr<URIs>                      uris;
+	SharedPtr<LV2URIMap>                 lv2_uri_map;
 	SharedPtr<ServerInterface>           engine;
 	SharedPtr<EngineBase>                local_engine;
 	SharedPtr<Serialisation::Serialiser> serialiser;
@@ -206,9 +208,10 @@ SharedPtr<ClientInterface>           World::client()       { return _impl->clien
 Raul::Configuration*                 World::conf()         { return _impl->conf; }
 LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
 
-LilvWorld*           World::lilv_world() { return _impl->lilv_world; }
-Sord::World*         World::rdf_world() { return _impl->rdf_world; }
-SharedPtr<LV2URIMap> World::uris()      { return _impl->uris; }
+LilvWorld*           World::lilv_world()  { return _impl->lilv_world; }
+Sord::World*         World::rdf_world()   { return _impl->rdf_world; }
+SharedPtr<URIs>      World::uris()        { return _impl->uris; }
+SharedPtr<LV2URIMap> World::lv2_uri_map() { return _impl->lv2_uri_map; }
 
 /** Load an Ingen module.
  * @return true on success, false on failure

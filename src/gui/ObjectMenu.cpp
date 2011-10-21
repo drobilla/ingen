@@ -121,7 +121,7 @@ ObjectMenu::on_menu_polyphonic()
 void
 ObjectMenu::property_changed(const URI& predicate, const Atom& value)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	_enable_signal = false;
 	if (predicate == uris.ingen_polyphonic && value.type() == Atom::BOOL)
 		_polyphonic_menuitem->set_active(value.get_bool());

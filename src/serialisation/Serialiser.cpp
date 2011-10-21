@@ -382,7 +382,7 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 	                      Sord::Curie(world, "rdf:type"),
 	                      Sord::Curie(world, "lv2:Plugin"));
 
-	const LV2URIMap& uris = *_world.uris().get();
+	const URIs& uris = *_world.uris().get();
 
 	// Always write a symbol (required by Ingen)
 	string symbol;

@@ -214,7 +214,7 @@ SliderControl::port_property_changed(const URI& key, const Atom& value)
 {
 	_enable_signal = false;
 
-	const Shared::LV2URIMap& uris = App::instance().uris();
+	const Shared::URIs& uris = App::instance().uris();
 	if (key == uris.lv2_minimum && value.type() == Atom::FLOAT)
 		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
 	else if (key == uris.lv2_maximum && value.type() == Atom::FLOAT)

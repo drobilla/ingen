@@ -458,7 +458,7 @@ PatchWindow::event_save()
 void
 PatchWindow::event_save_as()
 {
-	const Shared::LV2URIMap& uris = App::instance().uris();
+	const Shared::URIs& uris = App::instance().uris();
 	while (true) {
 		Gtk::FileChooserDialog dialog(*this, "Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
 

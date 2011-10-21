@@ -32,7 +32,7 @@ namespace Shared {
 namespace LV2Atom {
 
 bool
-to_atom(const Shared::LV2URIMap& uris, const LV2_Atom* object, Raul::Atom& atom)
+to_atom(const Shared::URIs& uris, const LV2_Atom* object, Raul::Atom& atom)
 {
 	if (object->type == uris.atom_String.id) {
 		atom = Raul::Atom((char*)(object + 1));
@@ -54,7 +54,7 @@ to_atom(const Shared::LV2URIMap& uris, const LV2_Atom* object, Raul::Atom& atom)
  * object->size should be the capacity of the object (not including header)
  */
 bool
-from_atom(const Shared::LV2URIMap& uris, const Raul::Atom& atom, LV2_Atom* object)
+from_atom(const Shared::URIs& uris, const Raul::Atom& atom, LV2_Atom* object)
 {
 	char* str;
 	switch (atom.type()) {

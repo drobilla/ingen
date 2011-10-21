@@ -34,7 +34,7 @@ namespace Raul { class Path; }
 
 namespace Ingen {
 
-namespace Shared { class LV2URIMap; }
+namespace Shared { class URIs; }
 
 namespace Client {
 
@@ -80,10 +80,10 @@ public:
 protected:
 	friend class ClientStore;
 
-	NodeModel(Shared::LV2URIMap&     uris,
+	NodeModel(Shared::URIs&          uris,
 	          const Raul::URI&       plugin_uri,
 	          const Raul::Path&      path);
-	NodeModel(Shared::LV2URIMap&     uris,
+	NodeModel(Shared::URIs&          uris,
 	          SharedPtr<PluginModel> plugin,
 	          const Raul::Path&      path);
 	NodeModel(const Raul::Path& path);

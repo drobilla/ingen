@@ -38,7 +38,7 @@ Notification::post_process(Notification& note,
 		engine.broadcaster()->activity(note.port->path(), note.value);
 		break;
 	case PORT_BINDING: {
-		const Ingen::Shared::LV2URIMap& uris = *engine.world()->uris().get();
+		const Ingen::Shared::URIs& uris = *engine.world()->uris().get();
 		Raul::Atom::DictValue dict;
 		switch (note.binding_type) {
 		case ControlBindings::MIDI_CC:

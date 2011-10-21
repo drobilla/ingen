@@ -25,15 +25,15 @@ namespace Raul { class Atom; }
 namespace Ingen {
 namespace Shared {
 
-class LV2URIMap;
+class URIs;
 
 namespace LV2Atom {
 
-bool to_atom(const LV2URIMap& uris,
-             const LV2_Atom*  object,
-             Raul::Atom&      atom);
+bool to_atom(const URIs&     uris,
+             const LV2_Atom* object,
+             Raul::Atom&     atom);
 
-bool from_atom(const LV2URIMap&  uris,
+bool from_atom(const URIs&       uris,
                const Raul::Atom& atom,
                LV2_Atom*         object);
 

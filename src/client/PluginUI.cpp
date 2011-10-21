@@ -54,7 +54,8 @@ lv2_ui_write(SuilController controller,
 
 	SharedPtr<const PortModel> port = ports[port_index];
 
-	const Shared::LV2URIMap& uris = *ui->world()->uris().get();
+	const Shared::URIs&      uris    = *ui->world()->uris().get();
+	const Shared::LV2URIMap& uri_map = *ui->world()->lv2_uri_map().get();
 
 	// float (special case, always 0)
 	if (format == 0) {
@@ -74,7 +75,7 @@ lv2_ui_write(SuilController controller,
 		while (lv2_event_is_valid(&iter)) {
 			LV2_Event* const ev = lv2_event_get(&iter, &data);
 			std::pair<bool, uint16_t> midi_id =
-			  uris.global_to_event(uris.midi_MidiEvent.id);
+				uri_map.global_to_event(uris.midi_MidiEvent.id);
 			if (midi_id.first && ev->type == midi_id.second) {
 				// FIXME: bundle multiple events by writing an entire buffer here
 				ui->world()->engine()->set_property(

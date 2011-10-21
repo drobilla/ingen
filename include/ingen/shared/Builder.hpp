@@ -27,7 +27,7 @@ class GraphObject;
 
 namespace Shared {
 
-class LV2URIMap;
+class URIs;
 
 /** Wrapper for CommonInterface to create existing objects/models.
  *
@@ -36,7 +36,7 @@ class LV2URIMap;
 class Builder
 {
 public:
-	Builder(SharedPtr<Shared::LV2URIMap> uris, CommonInterface& interface);
+	Builder(SharedPtr<Shared::URIs> uris, CommonInterface& interface);
 	virtual ~Builder() {}
 
 	void build(SharedPtr<const GraphObject> object);
@@ -45,8 +45,8 @@ public:
 private:
 	void build_object(SharedPtr<const GraphObject> object);
 
-	SharedPtr<Shared::LV2URIMap> _uris;
-	CommonInterface&             _interface;
+	SharedPtr<Shared::URIs> _uris;
+	CommonInterface&        _interface;
 };
 
 } // namespace Shared

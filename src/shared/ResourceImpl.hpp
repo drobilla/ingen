@@ -26,15 +26,17 @@
 namespace Ingen {
 namespace Shared {
 
-class LV2URIMap;
+class URIs;
 
 class ResourceImpl : virtual public Resource
 {
 public:
-	ResourceImpl(LV2URIMap& uris, const Raul::URI& uri)
-		: _uris(uris), _uri(uri) {}
+	ResourceImpl(URIs& uris, const Raul::URI& uri)
+		: _uris(uris)
+		, _uri(uri)
+	{}
 
-	LV2URIMap& uris() const { return _uris; }
+	URIs& uris() const { return _uris; }
 
 	virtual void             set_uri(const Raul::URI& uri) { _uri = uri; }
 	virtual const Raul::URI& uri()  const { return _uri; }
@@ -61,7 +63,7 @@ public:
 	 * If some coherent ingen type is found, true is returned and the appropriate
 	 * output parameter set to true.  Otherwise false is returned.
 	 */
-	static bool type(const LV2URIMap&  uris,
+	static bool type(const URIs&       uris,
 	                 const Properties& properties,
 	                 bool&             patch,
 	                 bool&             node,
@@ -71,7 +73,7 @@ public:
 protected:
 	const Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;
 
-	LV2URIMap& _uris;
+	URIs& _uris;
 
 private:
 	Raul::URI          _uri;

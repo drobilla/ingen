@@ -121,7 +121,7 @@ NodeModule::create(PatchCanvas&               canvas,
 void
 NodeModule::show_human_names(bool b)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 
 	if (b && node()->plugin()) {
 		const Raul::Atom& name_property = node()->get_property(uris.lv2_name);
@@ -183,7 +183,7 @@ NodeModule::plugin_changed()
 void
 NodeModule::embed_gui(bool embed)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	if (embed) {
 
 		if (_gui_window) {
@@ -357,7 +357,7 @@ NodeModule::store_location()
 	const Atom x(static_cast<float>(property_x()));
 	const Atom y(static_cast<float>(property_y()));
 
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 
 	const Atom& existing_x = _node->get_property(uris.ingenui_canvas_x);
 	const Atom& existing_y = _node->get_property(uris.ingenui_canvas_y);
@@ -376,7 +376,7 @@ NodeModule::store_location()
 void
 NodeModule::property_changed(const URI& key, const Atom& value)
 {
-	const Shared::LV2URIMap& uris = App::instance().uris();
+	const Shared::URIs& uris = App::instance().uris();
 	switch (value.type()) {
 	case Atom::FLOAT:
 		if (key == uris.ingenui_canvas_x) {
@@ -410,7 +410,7 @@ void
 NodeModule::set_selected(bool b)
 {
 	const App&       app  = App::instance();
-	const LV2URIMap& uris = app.uris();
+	const URIs& uris = app.uris();
 	if (b != selected()) {
 		Module::set_selected(b);
 		if (b) {

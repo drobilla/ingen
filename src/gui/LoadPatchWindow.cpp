@@ -149,7 +149,7 @@ LoadPatchWindow::ok_clicked()
 		return;
 	}
 
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 
 	if (_poly_voices_radio->get_active())
 		_initial_data.insert(make_pair(

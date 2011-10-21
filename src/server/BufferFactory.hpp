@@ -32,7 +32,7 @@
 
 namespace Ingen {
 
-namespace Shared { class LV2URIMap; }
+namespace Shared { class URIs; }
 
 namespace Server {
 
@@ -41,8 +41,8 @@ class Buffer;
 
 class BufferFactory {
 public:
-	BufferFactory(Engine&                             engine,
-	              SharedPtr<Ingen::Shared::LV2URIMap> uris);
+	BufferFactory(Engine&                        engine,
+	              SharedPtr<Ingen::Shared::URIs> uris);
 
 	~BufferFactory();
 
@@ -57,7 +57,7 @@ public:
 
 	void set_block_length(SampleCount block_length);
 
-	Ingen::Shared::LV2URIMap& uris() { assert(_uris); return *_uris.get(); }
+	Ingen::Shared::URIs& uris() { assert(_uris); return *_uris.get(); }
 
 private:
 	friend class Buffer;
@@ -83,9 +83,9 @@ private:
 	Raul::AtomicPtr<Buffer> _free_event;
 	Raul::AtomicPtr<Buffer> _free_object;
 
-	Glib::Mutex                         _mutex;
-	Engine&                             _engine;
-	SharedPtr<Ingen::Shared::LV2URIMap> _uris;
+	Glib::Mutex                    _mutex;
+	Engine&                        _engine;
+	SharedPtr<Ingen::Shared::URIs> _uris;
 
 	Ref _silent_buffer;
 };

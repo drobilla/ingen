@@ -114,8 +114,8 @@ public:
 	static void init(Ingen::Shared::World* world);
 	static void run();
 
-	inline Ingen::Shared::World*     world() const { return _world; }
-	inline Ingen::Shared::LV2URIMap& uris()  const { return *_world->uris(); }
+	inline Ingen::Shared::World* world() const { return _world; }
+	inline Ingen::Shared::URIs&  uris()  const { return *_world->uris(); }
 
 protected:
 

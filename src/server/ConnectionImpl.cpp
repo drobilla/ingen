@@ -157,7 +157,7 @@ ConnectionImpl::must_queue() const
 bool
 ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
-	const Ingen::Shared::LV2URIMap& uris = src->bufs().uris();
+	const Ingen::Shared::URIs& uris = src->bufs().uris();
 	return (
 			// (Audio | Control) => (Audio | Control)
 			(   (src->is_a(PortType::CONTROL) || src->is_a(PortType::AUDIO))

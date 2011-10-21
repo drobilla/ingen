@@ -39,7 +39,7 @@ class BufferFactory;
 class InternalPlugin : public PluginImpl
 {
 public:
-	InternalPlugin(Shared::LV2URIMap& uris,
+	InternalPlugin(Shared::URIs& uris,
 			const std::string& uri, const std::string& symbol);
 
 	NodeImpl* instantiate(BufferFactory&     bufs,

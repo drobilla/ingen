@@ -244,7 +244,7 @@ Port::set_control(float value, bool signal)
 void
 Port::property_changed(const URI& key, const Atom& value)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	if (value.type() == Atom::FLOAT) {
 		float val = value.get_float();
 		if (key == uris.ingen_value && !_pressed) {
@@ -278,7 +278,7 @@ Port::property_changed(const URI& key, const Atom& value)
 ArtVpathDash*
 Port::dash()
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	SharedPtr<const PortModel> pm = _port_model.lock();
 	if (!pm)
 		return NULL;

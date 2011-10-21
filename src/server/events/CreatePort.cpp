@@ -57,7 +57,7 @@ CreatePort::CreatePort(
 	, _properties(properties)
 	, _is_output(is_output)
 {
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 
 	typedef Resource::Properties::const_iterator Iterator;
 	typedef std::pair<Iterator, Iterator>        Range;
@@ -97,7 +97,7 @@ CreatePort::pre_process()
 
 	_patch = _engine.engine_store()->find_patch(_path.parent());
 
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());

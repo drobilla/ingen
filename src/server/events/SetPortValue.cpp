@@ -147,7 +147,8 @@ SetPortValue::apply(Context& context)
 			return;
 		}
 
-		Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+		Ingen::Shared::URIs&      uris    = *_engine.world()->uris().get();
+		Ingen::Shared::LV2URIMap& uri_map = *_engine.world()->lv2_uri_map().get();
 
 		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
 		if (ebuf && _value.type() == Atom::BLOB) {
@@ -155,7 +156,7 @@ SetPortValue::apply(Context& context)
 
 			// Size 0 event, pass it along to the plugin as a typed but empty event
 			if (_value.data_size() == 0) {
-				const uint32_t type_id = uris.uri_to_id(NULL, _value.get_blob_type());
+				const uint32_t type_id = uri_map.uri_to_id(NULL, _value.get_blob_type());
 				ebuf->append(frames, 0, type_id, 0, NULL);
 				_port->raise_set_by_user_flag();
 				return;
@@ -164,7 +165,7 @@ SetPortValue::apply(Context& context)
 			                   "http://lv2plug.in/ns/ext/midi#MidiEvent")) {
 				ebuf->prepare_write(context);
 				ebuf->append(frames, 0,
-				             uris.global_to_event(uris.midi_MidiEvent.id).second,
+				             uri_map.global_to_event(uris.midi_MidiEvent.id).second,
 				             _value.data_size(),
 				             (const uint8_t*)_value.get_blob());
 				_port->raise_set_by_user_flag();

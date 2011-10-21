@@ -29,7 +29,7 @@
 
 namespace Ingen {
 
-namespace Shared { class LV2URIMap; }
+namespace Shared { class URIs; }
 
 namespace Server {
 
@@ -47,7 +47,7 @@ class PluginImpl : public Plugin
                  , public boost::noncopyable
 {
 public:
-	PluginImpl(Ingen::Shared::LV2URIMap& uris,
+	PluginImpl(Ingen::Shared::URIs& uris,
 	           Type                      type,
 	           const std::string&        uri,
 	           const std::string         library_path = "")

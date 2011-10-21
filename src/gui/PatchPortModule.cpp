@@ -83,7 +83,7 @@ PatchPortModule::store_location()
 	const Atom x(static_cast<float>(property_x()));
 	const Atom y(static_cast<float>(property_y()));
 
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 
 	const Atom& existing_x = _model->get_property(uris.ingenui_canvas_x);
 	const Atom& existing_y = _model->get_property(uris.ingenui_canvas_y);
@@ -104,7 +104,7 @@ PatchPortModule::store_location()
 void
 PatchPortModule::show_human_names(bool b)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	const Atom& name = _model->get_property(uris.lv2_name);
 	if (b && name.type() == Atom::STRING)
 		set_name(name.get_string());
@@ -122,7 +122,7 @@ PatchPortModule::set_name(const std::string& n)
 void
 PatchPortModule::property_changed(const URI& key, const Atom& value)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	switch (value.type()) {
 	case Atom::FLOAT:
 		if (key == uris.ingenui_canvas_x) {

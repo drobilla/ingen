@@ -32,7 +32,7 @@
 
 namespace Ingen {
 
-namespace Shared { class LV2URIMap; }
+namespace Shared { class URIs; }
 
 namespace Client {
 
@@ -84,7 +84,7 @@ public:
 protected:
 	friend class ClientStore;
 
-	ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path);
+	ObjectModel(Shared::URIs& uris, const Raul::Path& path);
 	ObjectModel(const ObjectModel& copy);
 
 	virtual void set_path(const Raul::Path& p);

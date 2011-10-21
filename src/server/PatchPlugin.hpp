@@ -34,7 +34,7 @@ class PatchPlugin : public PluginImpl
 {
 public:
 	PatchPlugin(
-			Shared::LV2URIMap& uris,
+			Shared::URIs& uris,
 			const std::string& uri,
 			const std::string& symbol,
 			const std::string& name)

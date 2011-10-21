@@ -41,6 +41,7 @@ namespace Serialisation { class Serialiser; class Parser; }
 namespace Shared {
 
 class LV2Features;
+class URIs;
 class LV2URIMap;
 class Store;
 
@@ -92,8 +93,10 @@ public:
 	virtual SharedPtr<Store>                     store();
 	virtual SharedPtr<ClientInterface>           client();
 
-	virtual Sord::World*         rdf_world();
-	virtual SharedPtr<LV2URIMap> uris();
+	virtual Sord::World* rdf_world();
+	
+	virtual SharedPtr<URIs>      uris();
+	virtual SharedPtr<LV2URIMap> lv2_uri_map();
 
 	virtual int&    argc();
 	virtual char**& argv();

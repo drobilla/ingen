@@ -18,6 +18,7 @@
 #include <math.h>
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
+#include "shared/URIs.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "ingen/shared/World.hpp"
 
@@ -55,7 +56,7 @@ ControlBindings::Key
 ControlBindings::port_binding(PortImpl* port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 	const Raul::Atom& binding = port->get_property(uris.ingen_controlBinding);
 	return binding_key(binding);
 }
@@ -63,7 +64,7 @@ ControlBindings::port_binding(PortImpl* port) const
 ControlBindings::Key
 ControlBindings::binding_key(const Raul::Atom& binding) const
 {
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 	Key key;
 	if (binding.type() == Atom::DICT) {
 		const Atom::DictValue&          dict = binding.get_dict();
@@ -124,7 +125,9 @@ ControlBindings::port_value_changed(ProcessContext&   context,
                                     Key               key,
                                     const Raul::Atom& value_atom)
 {
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	Ingen::Shared::World*           world   = context.engine().world();
+	const Ingen::Shared::URIs&      uris    = *world->uris().get();
+	const Ingen::Shared::LV2URIMap& uri_map = *world->lv2_uri_map().get();
 	if (key) {
 		int16_t value = port_value_to_control(
 			port, key.type, value_atom, port->minimum(), port->maximum());
@@ -162,7 +165,7 @@ ControlBindings::port_value_changed(ProcessContext&   context,
 		}
 		if (size > 0) {
 			_feedback->append(0, 0,
-			                  uris.global_to_event(uris.midi_MidiEvent.id).second,
+			                  uri_map.global_to_event(uris.midi_MidiEvent.id).second,
 			                  size, buf);
 		}
 	}
@@ -274,7 +277,7 @@ ControlBindings::set_port_value(ProcessContext& context,
 bool
 ControlBindings::bind(ProcessContext& context, Key key)
 {
-	const Ingen::Shared::LV2URIMap& uris = *context.engine().world()->uris().get();
+	const Ingen::Shared::URIs& uris = *context.engine().world()->uris().get();
 	assert(_learn_port);
 	if (key.type == MIDI_NOTE) {
 		bool toggled = _learn_port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
@@ -349,10 +352,13 @@ ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
 	SharedPtr<Bindings> bindings = _bindings;
 	_feedback->clear();
 
-	const Ingen::Shared::LV2URIMap& uris = *context.engine().world()->uris().get();
+	Ingen::Shared::World*           world   = context.engine().world();
+	const Ingen::Shared::URIs&      uris    = *world->uris().get();
+	const Ingen::Shared::LV2URIMap& uri_map = *world->lv2_uri_map().get();
 
 	// TODO: cache
-	const uint32_t midi_event_type = uris.global_to_event(uris.midi_MidiEvent.id).second;
+	const uint32_t midi_event_type = uri_map.global_to_event(
+		uris.midi_MidiEvent.id).second;
 
 	// Learn from input if necessary
 	if (_learn_port) {

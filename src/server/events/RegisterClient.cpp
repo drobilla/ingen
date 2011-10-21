@@ -57,7 +57,7 @@ RegisterClient::post_process()
 	   kludge.  TODO: keep a proper RDF model to describe the engine and send
 	   that to clients.
 	*/
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 	_client->set_property(uris.ingen_engine,
 	                      uris.ingen_sampleRate,
 	                      int32_t(_engine.driver()->sample_rate()));

@@ -28,7 +28,7 @@ using namespace Raul;
 namespace Ingen {
 namespace Server {
 
-GraphObjectImpl::GraphObjectImpl(Ingen::Shared::LV2URIMap& uris,
+GraphObjectImpl::GraphObjectImpl(Ingen::Shared::URIs& uris,
                                  GraphObjectImpl*          parent,
                                  const Symbol&             symbol)
 	: ResourceImpl(uris, parent ? parent->path().child(symbol) : Raul::Path::root())

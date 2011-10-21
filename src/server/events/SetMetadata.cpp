@@ -118,7 +118,7 @@ SetMetadata::pre_process()
 		return;
 	}
 
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 
 	if (is_graph_object && !_object) {
 		Path path(_subject.str());
@@ -274,7 +274,7 @@ SetMetadata::execute(ProcessContext& context)
 		return;
 	}
 
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 
 	if (_create_event) {
 		_create_event->execute(context);

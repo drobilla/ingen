@@ -54,7 +54,7 @@ public:
 
 	void learn() { _learning = true; }
 
-	static InternalPlugin* internal_plugin(Shared::LV2URIMap& uris);
+	static InternalPlugin* internal_plugin(Shared::URIs& uris);
 
 private:
 	bool _learning;

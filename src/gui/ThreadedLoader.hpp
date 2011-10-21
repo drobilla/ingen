@@ -54,8 +54,7 @@ namespace GUI {
 class ThreadedLoader : public Raul::Slave
 {
 public:
-	ThreadedLoader(SharedPtr<Shared::LV2URIMap> uris,
-	               SharedPtr<ServerInterface>   engine);
+	ThreadedLoader(SharedPtr<ServerInterface> engine);
 
 	void load_patch(bool                              merge,
                     const Glib::ustring&              document_uri,

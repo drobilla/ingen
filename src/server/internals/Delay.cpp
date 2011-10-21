@@ -47,7 +47,7 @@ namespace Internals {
 
 static const float MAX_DELAY_SECONDS = 8.0f;
 
-InternalPlugin* DelayNode::internal_plugin(Shared::LV2URIMap& uris) {
+InternalPlugin* DelayNode::internal_plugin(Shared::URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Delay", "delay");
 }
 
@@ -64,7 +64,7 @@ DelayNode::DelayNode(
 	, _buffer_mask(0)
 	, _write_phase(0)
 {
-	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::URIs& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(3);
 
 	const float default_delay = 1.0f;

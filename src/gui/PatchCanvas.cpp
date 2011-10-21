@@ -670,7 +670,7 @@ PatchCanvas::paste()
 	clear_selection();
 	++_paste_count;
 
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 
 	Builder builder(App::instance().world()->uris(), *App::instance().engine());
 	ClientStore clipboard(App::instance().world()->uris());
@@ -762,7 +762,7 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	generate_port_name(sym_base, sym, name_base, name);
 	const Path& path = _patch->path().base() + sym;
 
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 
 	Resource::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type,
@@ -791,7 +791,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 		symbol = ss.str();
 	}
 
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 
 	const Path path = _patch->path().child(symbol);
 	// FIXME: polyphony?
@@ -817,7 +817,7 @@ GraphObject::Properties
 PatchCanvas::get_initial_data(Resource::Graph ctx)
 {
 	GraphObject::Properties result;
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	result.insert(make_pair(uris.ingenui_canvas_x,
 	                        Resource::Property((float)_last_click_x, ctx)));
 	result.insert(make_pair(uris.ingenui_canvas_y,

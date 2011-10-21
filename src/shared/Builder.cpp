@@ -33,7 +33,7 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-Builder::Builder(SharedPtr<Shared::LV2URIMap> uris, CommonInterface& interface)
+Builder::Builder(SharedPtr<Shared::URIs> uris, CommonInterface& interface)
 	: _uris(uris)
 	, _interface(interface)
 {
@@ -42,7 +42,7 @@ Builder::Builder(SharedPtr<Shared::LV2URIMap> uris, CommonInterface& interface)
 void
 Builder::build(SharedPtr<const GraphObject> object)
 {
-	const LV2URIMap& uris = *_uris.get();
+	const URIs& uris = *_uris.get();
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (!object->path().is_root()) {

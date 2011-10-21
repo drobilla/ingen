@@ -26,7 +26,7 @@ using namespace Raul;
 namespace Ingen {
 namespace Client {
 
-ObjectModel::ObjectModel(Shared::LV2URIMap& uris, const Raul::Path& path)
+ObjectModel::ObjectModel(Shared::URIs& uris, const Raul::Path& path)
 	: ResourceImpl(uris, path)
 	, _meta(uris, Raul::URI("http://example.org/FIXME"))
 	, _path(path)

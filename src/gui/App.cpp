@@ -168,7 +168,7 @@ App::attach(SharedPtr<SigClientInterface> client)
 
 	_client = client;
 	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->engine(), client));
-	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(_world->uris(), _world->engine()));
+	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(_world->engine()));
 
 	_patch_tree_window->init(*_store);
 

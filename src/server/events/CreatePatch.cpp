@@ -80,7 +80,7 @@ CreatePatch::pre_process()
 	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_poly()))
 		poly = _poly;
 
-	const Ingen::Shared::LV2URIMap& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 
 	_patch = new PatchImpl(_engine, path.symbol(), poly, _parent,
 			_engine.driver()->sample_rate(), _poly);

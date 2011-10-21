@@ -42,7 +42,7 @@ using namespace Shared;
 
 namespace Client {
 
-ClientStore::ClientStore(SharedPtr<Shared::LV2URIMap>  uris,
+ClientStore::ClientStore(SharedPtr<Shared::URIs>       uris,
                          SharedPtr<ServerInterface>    engine,
                          SharedPtr<SigClientInterface> emitter)
 	: _uris(uris)

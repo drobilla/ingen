@@ -70,7 +70,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	if (_buffer_size == 0)
 		_buffer_size = bufs.default_buffer_size(type);
 
-	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::URIs& uris = bufs.uris();
 	add_property(uris.rdf_type,  type.uri());
 	set_property(uris.lv2_index, Atom((int32_t)index));
 	set_context(_context);
@@ -239,7 +239,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 void
 PortImpl::set_context(Context::ID c)
 {
-	const Ingen::Shared::LV2URIMap& uris = _bufs.uris();
+	const Ingen::Shared::URIs& uris = _bufs.uris();
 	_context = c;
 	switch (c) {
 	case Context::AUDIO:

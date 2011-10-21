@@ -224,7 +224,7 @@ void
 LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
                           SharedPtr<const PluginModel> plugin)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	const Atom& name = plugin->get_property(uris.doap_name);
 	if (name.is_valid() && name.type() == Atom::STRING)
 			row[_plugins_columns._col_name] = name.get_string();
@@ -325,7 +325,7 @@ LoadPluginWindow::generate_module_name(SharedPtr<const PluginModel> plugin,
 void
 LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 {
-	const LV2URIMap&             uris       = App::instance().uris();
+	const URIs&                  uris       = App::instance().uris();
 	Gtk::TreeModel::Row          row        = *iter;
 	SharedPtr<const PluginModel> plugin     = row.get_value(_plugins_columns._col_plugin);
 	bool                         polyphonic = _polyphonic_checkbutton->get_active();
@@ -386,7 +386,7 @@ LoadPluginWindow::filter_changed()
 	Gtk::TreeModel::Row      model_row;
 	Gtk::TreeModel::iterator model_iter;
 	size_t                   num_visible = 0;
-	const LV2URIMap&         uris = App::instance().uris();
+	const URIs&              uris        = App::instance().uris();
 
 	for (ClientStore::Plugins::const_iterator i = App::instance().store()->plugins()->begin();
 			i != App::instance().store()->plugins()->end(); ++i) {
@@ -439,7 +439,7 @@ LoadPluginWindow::plugin_property_changed(const URI&  plugin,
 	                                      const URI&  predicate,
 	                                      const Atom& value)
 {
-	const LV2URIMap& uris = App::instance().uris();
+	const URIs& uris = App::instance().uris();
 	if (predicate == uris.doap_name) {
 		Rows::const_iterator i = _rows.find(plugin);
 		if (i != _rows.end() && value.type() == Atom::STRING)

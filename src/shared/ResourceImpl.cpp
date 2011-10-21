@@ -103,7 +103,7 @@ ResourceImpl::get_property(const Raul::URI& uri) const
 }
 
 bool
-ResourceImpl::type(const LV2URIMap&  uris,
+ResourceImpl::type(const URIs&       uris,
                    const Properties& properties,
                    bool&             patch,
                    bool&             node,

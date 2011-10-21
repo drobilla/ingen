@@ -50,7 +50,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 	: PortImpl(bufs, parent, symbol, index, poly, type, value, buffer_size)
 	, _num_connections(0)
 {
-	const Ingen::Shared::LV2URIMap& uris = bufs.uris();
+	const Ingen::Shared::URIs& uris = bufs.uris();
 
 	if (!dynamic_cast<Patch*>(parent))
 		add_property(uris.rdf_type, uris.lv2_InputPort);

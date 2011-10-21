@@ -115,7 +115,7 @@ RenameWindow::cancel_clicked()
 void
 RenameWindow::ok_clicked()
 {
-	const Shared::LV2URIMap& uris = App::instance().uris();
+	const Shared::URIs& uris = App::instance().uris();
 
 	const string& symbol_str = _symbol_entry->get_text();
 	const string& label      = _label_entry->get_text();
