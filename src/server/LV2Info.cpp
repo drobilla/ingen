@@ -27,7 +27,6 @@
 #include "ingen/shared/World.hpp"
 #include "shared/LV2Features.hpp"
 
-#include "LV2EventFeature.hpp"
 #include "LV2Info.hpp"
 #include "LV2RequestRunFeature.hpp"
 #include "LV2ResizeFeature.hpp"
@@ -51,8 +50,6 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 {
 	assert(world);
 
-	world->lv2_features()->add_feature(
-			SharedPtr<Shared::LV2Features::Feature>(new EventFeature()));
 	world->lv2_features()->add_feature(
 			SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
 	world->lv2_features()->add_feature(
