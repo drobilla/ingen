@@ -34,6 +34,8 @@ class CommonInterface
 public:
 	virtual ~CommonInterface() {}
 
+	virtual Raul::URI uri() const = 0;
+
 	/** Begin an atomic bundle */
 	virtual void bundle_begin() = 0;
 

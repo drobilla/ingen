@@ -40,8 +40,6 @@ class ClientInterface : public CommonInterface
 public:
 	virtual ~ClientInterface() {}
 
-	virtual Raul::URI uri() const = 0;
-
 	virtual void response_ok(int32_t id) = 0;
 
 	virtual void response_error(int32_t id, const std::string& msg) = 0;

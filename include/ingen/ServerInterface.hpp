@@ -36,8 +36,6 @@ class ServerInterface : public CommonInterface
 public:
 	virtual ~ServerInterface() {}
 
-	virtual Raul::URI uri() const = 0;
-
 	// Responses
 	virtual void respond_to(ClientInterface* client, int32_t id) = 0;
 	virtual void disable_responses() = 0;

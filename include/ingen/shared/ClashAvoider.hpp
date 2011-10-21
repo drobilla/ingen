@@ -40,6 +40,8 @@ public:
 	ClashAvoider(Store& store, CommonInterface& target, Store* also_avoid=NULL)
 		: _store(store), _target(target), _also_avoid(also_avoid) {}
 
+	Raul::URI uri() const { return "ingen:ClientStore"; }
+
 	void set_target(CommonInterface& target) { _target = target; }
 
 	// Bundles

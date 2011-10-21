@@ -15,8 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-//#define ENABLE_AVAHI 1
-
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -70,9 +68,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine&                    engine,
 	snprintf(port_str, sizeof(port_str), "%u", port);
 
 	_server = lo_server_new(port_str, error_cb);
-#ifdef ENABLE_AVAHI
-	lo_server_avahi_init(_server, "ingen");
-#endif
 
 	if (_server == NULL) {
 		LOG(error) << "Could not start OSC server.  Aborting." << endl;
@@ -135,9 +130,6 @@ OSCEngineReceiver::~OSCEngineReceiver()
 	delete _receive_thread;
 
 	if (_server != NULL)  {
-#ifdef ENABLE_AVAHI
-		lo_server_avahi_free(_server);
-#endif
 		lo_server_free(_server);
 		_server = NULL;
 	}
