@@ -29,7 +29,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Deletable.hpp"
 
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 
 namespace Ingen {
 	class ClientInterface;

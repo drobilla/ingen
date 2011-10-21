@@ -23,7 +23,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 
 namespace Ingen {
 namespace Server {

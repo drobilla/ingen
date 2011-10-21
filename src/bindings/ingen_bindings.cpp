@@ -2,7 +2,7 @@
 #include "raul/log.hpp"
 #include "ingen_bindings.hpp"
 #include "server/Engine.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 
 bool
 run(Ingen::Shared::World* world, const char* filename)

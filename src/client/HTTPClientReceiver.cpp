@@ -28,7 +28,7 @@
 
 #include "raul/log.hpp"
 
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 #include "HTTPClientReceiver.hpp"
 
 #define LOG(s) s << "[HTTPClientReceiver] "

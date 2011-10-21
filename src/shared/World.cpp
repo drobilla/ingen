@@ -26,11 +26,11 @@
 #include "sord/sordmm.hpp"
 
 #include "ingen/EngineBase.hpp"
+#include "ingen/shared/Module.hpp"
+#include "ingen/shared/World.hpp"
 #include "ingen/shared/runtime_paths.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
-#include "World.hpp"
-#include "Module.hpp"
 
 #define LOG(s) s << "[Module] "
 

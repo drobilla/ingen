@@ -22,7 +22,7 @@
 #include <string>
 
 #include "lilv/lilv.h"
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 
 namespace Ingen {
 

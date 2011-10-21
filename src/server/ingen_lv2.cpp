@@ -41,7 +41,7 @@
 #include "server/QueuedEngineInterface.hpp"
 #include "server/ThreadManager.hpp"
 #include "ingen/ServerInterface.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/runtime_paths.hpp"

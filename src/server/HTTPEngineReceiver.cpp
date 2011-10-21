@@ -27,7 +27,7 @@
 #include "raul/log.hpp"
 
 #include "ingen/ClientInterface.hpp"
-#include "shared/Module.hpp"
+#include "ingen/shared/Module.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
 

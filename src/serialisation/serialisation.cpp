@@ -15,8 +15,8 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "shared/Module.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/Module.hpp"
+#include "ingen/shared/World.hpp"
 
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"

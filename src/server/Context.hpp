@@ -20,7 +20,7 @@
 
 #include "raul/RingBuffer.hpp"
 
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 
 #include "Engine.hpp"
 #include "types.hpp"

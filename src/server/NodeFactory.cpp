@@ -31,7 +31,7 @@
 #include "internals/Delay.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"

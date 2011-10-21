@@ -53,7 +53,7 @@
 #include "shared/LV2URIMap.hpp"
 #include "shared/ResourceImpl.hpp"
 #include "shared/Store.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 
 #include "ingen/serialisation/Serialiser.hpp"
 

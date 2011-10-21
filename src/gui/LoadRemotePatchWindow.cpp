@@ -20,7 +20,7 @@
 #include <boost/optional/optional.hpp>
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/ServerInterface.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 #include "App.hpp"
 #include "Configuration.hpp"
 #include "LoadRemotePatchWindow.hpp"

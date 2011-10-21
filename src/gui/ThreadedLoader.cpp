@@ -17,8 +17,8 @@
 
 #include <string>
 #include "raul/log.hpp"
-#include "shared/World.hpp"
-#include "shared/Module.hpp"
+#include "ingen/shared/World.hpp"
+#include "ingen/shared/Module.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
 #include "ingen/client/PatchModel.hpp"

@@ -21,7 +21,7 @@
 #include "shared/LV2URIMap.hpp"
 #include "shared/LV2Features.hpp"
 #include "ingen/shared/LV2Atom.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"

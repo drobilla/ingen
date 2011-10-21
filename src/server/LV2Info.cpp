@@ -24,7 +24,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 #include "shared/LV2Features.hpp"
 
 #include "LV2EventFeature.hpp"

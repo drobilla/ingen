@@ -31,7 +31,7 @@
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 #include "App.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"

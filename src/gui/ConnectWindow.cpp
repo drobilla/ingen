@@ -26,8 +26,8 @@
 
 #include "ingen-config.h"
 #include "ingen/ServerInterface.hpp"
-#include "shared/Module.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/Module.hpp"
+#include "ingen/shared/World.hpp"
 #include "server/Engine.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"

@@ -19,7 +19,7 @@
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
 #include "shared/LV2URIMap.hpp"
-#include "shared/World.hpp"
+#include "ingen/shared/World.hpp"
 
 #include "AudioBuffer.hpp"
 #include "ControlBindings.hpp"
