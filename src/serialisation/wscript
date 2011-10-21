@@ -2,16 +2,12 @@
 from waflib.extras import autowaf as autowaf
 
 def build(bld):
-    obj = bld(features = 'cxx cxxshlib')
-    obj.source = '''
-            Parser.cpp
-            Serialiser.cpp
-            serialisation.cpp
-    '''
-    obj.export_includes = ['.']
-    obj.includes        = ['.', '..', '../..', '../../include']
-    obj.name            = 'libingen_serialisation'
-    obj.target          = 'ingen_serialisation'
-    obj.install_path    = '${LIBDIR}'
-    obj.use             = 'libingen_shared'
+    obj = bld(features        = 'cxx cxxshlib',
+              source          = 'Parser.cpp Serialiser.cpp serialisation.cpp',
+              export_includes = ['../../include'],
+              includes        = ['..', '../../include'],
+              name            = 'libingen_serialisation',
+              target          = 'ingen_serialisation',
+              install_path    = '${LIBDIR}',
+              use             = 'libingen_shared')
     autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV RAUL SORD')

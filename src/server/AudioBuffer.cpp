@@ -16,13 +16,16 @@
  */
 
 #include <stdlib.h>
-#include <cassert>
-#include "raul/log.hpp"
-#include "raul/SharedPtr.hpp"
+#include <assert.h>
+
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "raul/SharedPtr.hpp"
+#include "raul/log.hpp"
+
+#include "shared/LV2Features.hpp"
+
 #include "AudioBuffer.hpp"
 #include "ProcessContext.hpp"
-#include "LV2Features.hpp"
 
 using namespace std;
 using namespace Raul;

@@ -2,35 +2,36 @@
 from waflib.extras import autowaf as autowaf
 
 def build(bld):
-    obj = bld(features = 'cxx cxxshlib')
+    obj = bld(features        = 'cxx cxxshlib',
+              includes        = ['..', '../..', '../../include'],
+              export_includes = ['../../include'],
+              name            = 'libingen_client',
+              target          = 'ingen_client',
+              install_path    = '${LIBDIR}',
+              use             = 'libingen_shared')
+    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV SUIL RAUL SORD SOUP SIGCPP LIBLO SOUP')
+
     obj.source = '''
-            ClientStore.cpp
-            NodeModel.cpp
-            ObjectModel.cpp
-            PatchModel.cpp
-            PluginModel.cpp
-            PluginUI.cpp
-            PortModel.cpp
-            ThreadedSigClientInterface.cpp
-            ingen_client.cpp
+        ClientStore.cpp
+        NodeModel.cpp
+        ObjectModel.cpp
+        PatchModel.cpp
+        PluginModel.cpp
+        PluginUI.cpp
+        PortModel.cpp
+        ThreadedSigClientInterface.cpp
+        ingen_client.cpp
     '''
 
     if bld.is_defined('HAVE_SOUP'):
         obj.source += '''
-                HTTPClientReceiver.cpp
-                HTTPEngineSender.cpp
+            HTTPClientReceiver.cpp
+            HTTPEngineSender.cpp
         '''
 
     if bld.is_defined('HAVE_LIBLO'):
         obj.source += '''
-                OSCClientReceiver.cpp
-                OSCEngineSender.cpp
+            OSCClientReceiver.cpp
+            OSCEngineSender.cpp
         '''
 
-    obj.includes        = ['.', '..', '../..', '../../include']
-    obj.export_includes = ['../../include']
-    obj.name            = 'libingen_client'
-    obj.target          = 'ingen_client'
-    obj.install_path    = '${LIBDIR}'
-    obj.use             = 'libingen_shared'
-    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV SUIL RAUL SORD SOUP SIGCPP LIBLO SOUP')

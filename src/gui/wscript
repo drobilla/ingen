@@ -3,7 +3,30 @@ from waflib.extras import autowaf as autowaf
 import waflib.Utils as Utils
 
 def build(bld):
-    obj = bld(features = 'cxx cxxshlib')
+    obj = bld(features        = 'cxx cxxshlib',
+              export_includes = ['../../include'],
+              includes        = ['..', '../..', '../../include'],
+              name            = 'libingen_gui',
+              target          = 'ingen_gui',
+              install_path    = '${LIBDIR}',
+              use             = 'libingen_shared libingen_client libingen_serialisation')
+    autowaf.use_lib(bld, obj, '''
+            CURL
+            FLOWCANVAS
+            GLADEMM
+            GLIBMM
+            GNOMECANVASMM
+            GTKMM
+            LILV
+            LV2CORE
+            RAUL
+            SIGCPP
+            SORD
+            SOUP
+            SUIL
+            WEBKIT
+    ''')
+
     obj.source = '''
             App.cpp
             BreadCrumbs.cpp
@@ -42,33 +65,10 @@ def build(bld):
     if bld.is_defined('HAVE_CURL'):
         obj.source += 'UploadPatchWindow.cpp'
 
-    obj.export_includes = ['.']
-    obj.includes        = ['.', '..', '../..', '../../include', '../client', '../module']
-    obj.name            = 'libingen_gui'
-    obj.target          = 'ingen_gui'
-    obj.install_path    = '${LIBDIR}'
-    obj.use             = 'libingen_shared libingen_client libingen_serialisation'
-    autowaf.use_lib(bld, obj, '''
-            CURL
-            FLOWCANVAS
-            GLADEMM
-            GLIBMM
-            GNOMECANVASMM
-            GTKMM
-            LILV
-            LV2CORE
-            RAUL
-            SIGCPP
-            SORD
-            SOUP
-            SUIL
-            WEBKIT
-    ''')
-
     # XML UI definition
     bld(features      = 'subst',
         source        = 'ingen_gui.ui',
         target        = '../../ingen_gui.ui',
         install_path  = '${DATADIR}/ingen',
         chmod         = Utils.O755,
-            INGEN_VERSION = bld.env['INGEN_VERSION'])
+        INGEN_VERSION = bld.env['INGEN_VERSION'])

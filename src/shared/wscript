@@ -2,7 +2,16 @@
 from waflib.extras import autowaf as autowaf
 
 def build(bld):
-    obj = bld(features = 'cxx cxxshlib')
+    obj = bld(features        = 'cxx cxxshlib',
+              export_includes = ['../../include'],
+              includes        = ['..', '../..', '../../include'],
+              name            = 'libingen_shared',
+              target          = 'ingen_shared',
+              vnum            = '0.0.0',
+              install_path    = '${LIBDIR}',
+              linkflags       = '-ldl')
+    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV RAUL SORD LIBLO')
+
     obj.source = '''
             Builder.cpp
             ClashAvoider.cpp
@@ -15,16 +24,10 @@ def build(bld):
             World.cpp
             runtime_paths.cpp
     '''
+
     if bld.is_defined('HAVE_LIBLO'):
         obj.source += ' OSCSender.cpp '
+
     if bld.is_defined('HAVE_SOUP'):
         autowaf.use_lib(bld, obj, 'SOUP')
         obj.source += ' HTTPSender.cpp '
-    obj.export_includes = ['.']
-    obj.includes        = ['.', '..', '../..', '../../include']
-    obj.name            = 'libingen_shared'
-    obj.target          = 'ingen_shared'
-    obj.vnum            = '0.0.0'
-    obj.install_path    = '${LIBDIR}'
-    obj.linkflags       = '-ldl'
-    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV RAUL SORD LIBLO')

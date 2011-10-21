@@ -147,13 +147,13 @@ def build(bld):
         bld.recurse('src/gui')
 
     # Program
-    obj = bld(features = 'c cxx cxxprogram')
-    obj.target       = 'ingen'
-    obj.source       = 'src/ingen/main.cpp'
-    obj.includes     = ['.', 'src', 'include']
-    obj.defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"'
-    obj.use          = 'libingen_shared'
-    obj.install_path = '${BINDIR}'
+    obj = bld(features     = 'c cxx cxxprogram',
+              target       = 'ingen',
+              source       = 'src/ingen/main.cpp',
+              includes     = ['.', './src', '../../include'],
+              defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"',
+              use          = 'libingen_shared',
+              install_path = '${BINDIR}')
     autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LIBLO SOUP' +
                     ' LV2CORE LV2_EVENT LV2_URI_MAP LV2_PERSIST')
 

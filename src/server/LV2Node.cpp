@@ -26,12 +26,13 @@
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
 
+#include "shared/LV2URIMap.hpp"
+
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
 #include "InputPort.hpp"
 #include "LV2Node.hpp"
 #include "LV2Plugin.hpp"
-#include "LV2URIMap.hpp"
 #include "MessageContext.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"

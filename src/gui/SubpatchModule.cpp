@@ -21,8 +21,9 @@
 #include "ingen/ServerInterface.hpp"
 #include "ingen/client/PatchModel.hpp"
 
+#include "shared/LV2URIMap.hpp"
+
 #include "App.hpp"
-#include "LV2URIMap.hpp"
 #include "NodeControlWindow.hpp"
 #include "NodeModule.hpp"
 #include "PatchCanvas.hpp"

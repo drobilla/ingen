@@ -25,9 +25,9 @@
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 
 #include "shared/World.hpp"
+#include "shared/LV2Features.hpp"
 
 #include "LV2EventFeature.hpp"
-#include "LV2Features.hpp"
 #include "LV2Info.hpp"
 #include "LV2RequestRunFeature.hpp"
 #include "LV2ResizeFeature.hpp"

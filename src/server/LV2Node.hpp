@@ -19,12 +19,15 @@
 #define INGEN_ENGINE_LV2NODE_HPP
 
 #include <string>
+
 #include <boost/intrusive_ptr.hpp>
+
 #include "lilv/lilv.h"
 #include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
-#include "types.hpp"
+
 #include "NodeImpl.hpp"
-#include "LV2Features.hpp"
+#include "shared/LV2Features.hpp"
+#include "types.hpp"
 
 namespace Ingen {
 namespace Server {

@@ -21,12 +21,12 @@
 #include "raul/Maid.hpp"
 
 #include "shared/LV2URIMap.hpp"
+#include "shared/LV2Atom.hpp"
 
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "EventBuffer.hpp"
-#include "LV2Atom.hpp"
 #include "NodeImpl.hpp"
 #include "Notification.hpp"
 #include "ObjectBuffer.hpp"
