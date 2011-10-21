@@ -128,6 +128,7 @@ public:
 	const Quark lv2_InputPort;
 	const Quark lv2_OutputPort;
 	const Quark lv2_Plugin;
+	const Quark lv2_connectionOptional;
 	const Quark lv2_default;
 	const Quark lv2_index;
 	const Quark lv2_integer;

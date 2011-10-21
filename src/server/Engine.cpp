@@ -179,6 +179,8 @@ Engine::activate()
 		in_properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
 		in_properties.insert(make_pair(uris.rdf_type, uris.ev_EventPort));
 		in_properties.insert(make_pair(uris.lv2_index, 0));
+		in_properties.insert(make_pair(uris.lv2_portProperty,
+		                               uris.lv2_connectionOptional));
 		in_properties.insert(make_pair(uris.ingenui_canvas_x,
 		                               Resource::Property(32.0f, Resource::EXTERNAL)));
 		in_properties.insert(make_pair(uris.ingenui_canvas_y,
@@ -193,6 +195,8 @@ Engine::activate()
 		out_properties.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
 		out_properties.insert(make_pair(uris.rdf_type, uris.ev_EventPort));
 		out_properties.insert(make_pair(uris.lv2_index, 1));
+		in_properties.insert(make_pair(uris.lv2_portProperty,
+		                               uris.lv2_connectionOptional));
 		out_properties.insert(make_pair(uris.ingenui_canvas_x,
 		                                Resource::Property(128.0f, Resource::EXTERNAL)));
 		out_properties.insert(make_pair(uris.ingenui_canvas_y,

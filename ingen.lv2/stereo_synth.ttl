@@ -1,0 +1,67 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+@prefix ingenui: <http://drobilla.net/ns/ingenuity#> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix lv2ev: <http://lv2plug.in/ns/ext/event#> .
+@prefix ctx: <http://lv2plug.in/ns/ext/contexts#> .
+@prefix lv2midi: <http://lv2plug.in/ns/ext/midi#> .
+@prefix midi: <http://drobilla.net/ns/ext/midi#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+
+<>
+	ingen:polyphony 1 ;
+	lv2:port <audio_out_1> ,
+		<audio_out_2> ,
+		<control_in> ,
+		<control_out> ;
+	lv2:symbol "stereo_synth" ;
+	doap:name "Ingen Stereo Synth" ;
+	a ingen:Patch ,
+		lv2:Plugin .
+
+<audio_out_1>
+	ingen:polyphonic false ;
+	ingenui:canvas-x 154.25000000 ;
+	ingenui:canvas-y 52.50000000 ;
+	lv2:index 3 ;
+	lv2:name "Audio Out 1" ;
+	lv2:symbol "audio_out_1" ;
+	a lv2:AudioPort ,
+		lv2:OutputPort .
+
+<audio_out_2>
+	ingen:polyphonic false ;
+	ingenui:canvas-x 154.25000000 ;
+	ingenui:canvas-y 52.50000000 ;
+	lv2:index 5 ;
+	lv2:name "Audio Out 2" ;
+	lv2:symbol "audio_out_2" ;
+	a lv2:AudioPort ,
+		lv2:OutputPort .
+
+<control_in>
+	ingen:polyphonic false ;
+	ingenui:canvas-x 23.50000000 ;
+	ingenui:canvas-y 180.00000000 ;
+	lv2:index 0 ;
+	lv2:name "Control" ;
+	lv2:portProperty lv2:connectionOptional ;
+	lv2:symbol "control_in" ;
+	a lv2ev:EventPort ,
+		lv2:InputPort .
+
+<control_out>
+	ingen:polyphonic false ;
+	ingenui:canvas-x 23.50000000 ;
+	ingenui:canvas-y 137.50000000 ;
+	lv2:index 1 ;
+	lv2:name "Control" ;
+	lv2:portProperty lv2:connectionOptional ;
+	lv2:symbol "control_out" ;
+	a lv2ev:EventPort ,
+		lv2:OutputPort .

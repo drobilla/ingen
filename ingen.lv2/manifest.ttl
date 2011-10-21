@@ -1,0 +1,28 @@
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix templates: <http://drobilla.net/software/ingen/templates/> .
+
+<mono_synth.ttl>
+	a lv2:Plugin ,
+		ingen:Patch ;
+	rdfs:seeAlso <mono_synth.ttl> ;
+	lv2:binary <libingen_lv2.so> .
+
+<mono_effect.ttl>
+	a lv2:Plugin ,
+		ingen:Patch ;
+	rdfs:seeAlso <mono_effect.ttl> ;
+	lv2:binary <libingen_lv2.so> .
+
+<stereo_synth.ttl>
+	a lv2:Plugin ,
+		ingen:Patch ;
+	rdfs:seeAlso <stereo_synth.ttl> ;
+	lv2:binary <libingen_lv2.so> .
+
+<stereo_effect.ttl>
+	a lv2:Plugin ,
+		ingen:Patch ;
+	rdfs:seeAlso <stereo_effect.ttl> ;
+	lv2:binary <libingen_lv2.so> .

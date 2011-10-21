@@ -169,4 +169,8 @@ def build(bld):
                 os.path.join(bld.env['DATADIR'], 'icons', 'hicolor', s, 'apps', 'ingen.png'),
                 'icons/' + s + '/ingen.png')
 
+    # Template patches/plugins bundle
+    bld.install_files('${LV2DIR}/ingen.lv2/',
+                      bld.path.ant_glob('ingen.lv2/*'))
+
     bld.add_post_fun(autowaf.run_ldconfig)

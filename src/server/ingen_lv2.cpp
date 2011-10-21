@@ -17,6 +17,7 @@
  */
 
 #include <stdlib.h>
+#include <time.h>
 
 #include <string>
 #include <vector>
@@ -230,8 +231,25 @@ lv2_descriptor(uint32_t index)
 	return index < lib.patches.size() ? &lib.patches[index]->descriptor : NULL;
 }
 
+class MainThread : public Raul::Thread
+{
+public:
+	MainThread(SharedPtr<Engine> engine) : _engine(engine) {}
+
+private:
+	virtual void _run() {
+		static const timespec main_rate = { 0, 125000000 }; // 1/8 second
+		while (_engine->main_iteration()) {
+			nanosleep(&main_rate, NULL);
+		}
+	}
+
+	SharedPtr<Engine> _engine;
+};
+	
 struct IngenPlugin {
 	Ingen::Shared::World* world;
+	MainThread*           main;
 };
 
 static LV2_Handle
@@ -264,6 +282,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
 	plugin->world->set_local_engine(engine);
+	plugin->main = new MainThread(engine);
+	plugin->main->set_name("Main");
 
 	SharedPtr<Server::QueuedEngineInterface> interface(
 		new Server::QueuedEngineInterface(*engine.get()));
@@ -302,6 +322,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	engine->deactivate();
 
+	plugin->world->load_module("osc");
+
 	return (LV2_Handle)plugin;
 }
 
@@ -326,6 +348,7 @@ ingen_activate(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
 	me->world->local_engine()->activate();
+	me->main->start();
 }
 
 static void

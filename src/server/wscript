@@ -69,8 +69,6 @@ def build(bld):
     if bld.is_defined('HAVE_SOUP'):
         obj = bld(features = 'cxx cxxshlib')
         obj.source = '''
-                EventSource.cpp
-                QueuedEngineInterface.cpp
                 HTTPClientSender.cpp
                 HTTPEngineReceiver.cpp
                 ingen_http.cpp
@@ -79,13 +77,12 @@ def build(bld):
         obj.name         = 'libingen_http'
         obj.target       = 'ingen_http'
         obj.install_path = '${LIBDIR}'
+        obj.use          = 'libingen_server'
         autowaf.use_lib(bld, obj, core_libs + ' SOUP')
 
     if bld.is_defined('HAVE_LIBLO'):
         obj = bld(features = 'cxx cxxshlib')
         obj.source = '''
-                EventSource.cpp
-                QueuedEngineInterface.cpp
                 OSCClientSender.cpp
                 OSCEngineReceiver.cpp
                 ingen_osc.cpp
@@ -95,6 +92,7 @@ def build(bld):
         obj.name            = 'libingen_osc'
         obj.target          = 'ingen_osc'
         obj.install_path    = '${LIBDIR}'
+        obj.use             = 'libingen_server'
         autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
 
     if bld.is_defined('HAVE_JACK'):
@@ -115,7 +113,7 @@ def build(bld):
     obj.includes        = ['.', '..', '../..', '../../include']
     obj.name            = 'libingen_lv2'
     obj.target          = 'ingen_lv2'
-    obj.install_path    = '${LIBDIR}'
-    obj.use             = 'libingen_shared'
-    obj.add_objects     = 'libingen_server'
+    #obj.install_path    = '${LIBDIR}'
+    obj.install_path    = '${LV2DIR}/ingen.lv2/'
+    obj.use             = 'libingen_server libingen_shared'
     autowaf.use_lib(bld, obj, core_libs)

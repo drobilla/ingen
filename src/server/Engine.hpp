@@ -70,11 +70,11 @@ public:
 
 	virtual bool main_iteration();
 
-	void set_driver(SharedPtr<Driver> driver);
+	virtual void set_driver(SharedPtr<Driver> driver);
 
-	void add_event_source(SharedPtr<EventSource> source);
+	virtual void add_event_source(SharedPtr<EventSource> source);
 
-	void process_events(ProcessContext& context);
+	virtual void process_events(ProcessContext& context);
 
 	Ingen::Shared::World* world() const { return _world; }
 
