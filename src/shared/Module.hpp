@@ -20,7 +20,6 @@
 
 #include <glibmm/module.h>
 
-#include "raul/log.hpp"
 #include "raul/SharedPtr.hpp"
 
 namespace Ingen {
@@ -33,9 +32,7 @@ class World;
  * All components of Ingen reside in one of these.
  */
 struct Module {
-	virtual ~Module() {
-		Raul::info << "[Module] Unloading " << library->get_name() << std::endl;
-	}
+	virtual ~Module();
 
 	virtual void load(Ingen::Shared::World* world) = 0;
 	virtual void run(Ingen::Shared::World* world) {}

@@ -19,6 +19,7 @@ def build(bld):
             LV2Atom.cpp
             LV2Features.cpp
             LV2URIMap.cpp
+            Module.cpp
             ResourceImpl.cpp
             Store.cpp
             World.cpp

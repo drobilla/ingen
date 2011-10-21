@@ -18,7 +18,6 @@
 #ifndef INGEN_MODULE_WORLD_HPP
 #define INGEN_MODULE_WORLD_HPP
 
-#include <map>
 #include <string>
 
 #include <boost/shared_ptr.hpp>
