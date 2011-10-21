@@ -23,12 +23,11 @@
 
 #include <boost/utility.hpp>
 
+#include "ingen/shared/URIs.hpp"
+#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "raul/URI.hpp"
 
-#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
-
 #include "LV2Features.hpp"
-#include "URIs.hpp"
 
 namespace Ingen {
 namespace Shared {

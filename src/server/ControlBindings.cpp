@@ -18,7 +18,7 @@
 #include <math.h>
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
-#include "shared/URIs.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "ingen/shared/World.hpp"
 
