@@ -29,13 +29,13 @@
 
 #include "ingen-config.h"
 #include "ingen/ClientInterface.hpp"
+#include "ingen/ServerInterface.hpp"
 
-#include "ClientBroadcaster.hpp"
-#include "Engine.hpp"
+#include "../server/ClientBroadcaster.hpp"
+#include "../server/Engine.hpp"
+
 #include "OSCClientSender.hpp"
 #include "OSCEngineReceiver.hpp"
-#include "ServerInterfaceImpl.hpp"
-#include "ThreadManager.hpp"
 
 #define LOG(s) s << "[OSCEngineReceiver] "
 
@@ -116,8 +116,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine&                    engine,
 
 	lo_server_add_method(_server, NULL, NULL, unknown_cb, NULL);
 
-	//_interface->set_name("OSCEngineReceiver");
-	//_interface->start();
 	_receive_thread->set_name("OSCEngineReceiver Listener");
 	_receive_thread->start();
 	_receive_thread->set_scheduling(SCHED_FIFO, 5);
@@ -126,7 +124,6 @@ OSCEngineReceiver::OSCEngineReceiver(Engine&                    engine,
 OSCEngineReceiver::~OSCEngineReceiver()
 {
 	_receive_thread->stop();
-	//_interface->stop();
 	delete _receive_thread;
 
 	if (_server != NULL)  {
@@ -141,8 +138,6 @@ OSCEngineReceiver::~OSCEngineReceiver()
 void
 OSCEngineReceiver::ReceiveThread::_run()
 {
-	Thread::get().set_context(THREAD_PRE_PROCESS);
-
 	/* get a timestamp here and stamp all the events with the same time so
 	 * they all get executed in the same cycle */
 

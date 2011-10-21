@@ -33,8 +33,9 @@
 #include "ingen/shared/Module.hpp"
 #include "ingen/shared/Store.hpp"
 
-#include "ClientBroadcaster.hpp"
-#include "Engine.hpp"
+#include "../server/ClientBroadcaster.hpp"
+#include "../server/Engine.hpp"
+
 #include "HTTPClientSender.hpp"
 #include "HTTPEngineReceiver.hpp"
 

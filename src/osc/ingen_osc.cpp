@@ -17,28 +17,29 @@
 
 #include "ingen/shared/Module.hpp"
 #include "ingen/shared/World.hpp"
-#include "HTTPEngineReceiver.hpp"
-#include "ServerInterfaceImpl.hpp"
-#include "Engine.hpp"
+
+#include "../server/Engine.hpp"
+#include "../server/ServerInterfaceImpl.hpp"
+
+#include "OSCEngineReceiver.hpp"
 
 using namespace std;
 using namespace Ingen;
 
-struct IngenHTTPModule : public Ingen::Shared::Module {
+struct IngenOSCModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
 		Server::Engine* engine = (Server::Engine*)world->local_engine().get();
 		SharedPtr<Server::ServerInterfaceImpl> interface(
 			new Server::ServerInterfaceImpl(*engine));
-
-		receiver = SharedPtr<Server::HTTPEngineReceiver>(
-			new Server::HTTPEngineReceiver(
+		receiver = SharedPtr<Server::OSCEngineReceiver>(
+			new Server::OSCEngineReceiver(
 				*engine,
 				interface,
 				world->conf()->option("engine-port").get_int32()));
 		engine->add_event_source(interface);
 	}
 
-	SharedPtr<Server::HTTPEngineReceiver> receiver;
+	SharedPtr<Server::OSCEngineReceiver> receiver;
 };
 
 extern "C" {
@@ -46,7 +47,7 @@ extern "C" {
 Ingen::Shared::Module*
 ingen_module_load()
 {
-	return new IngenHTTPModule();
+	return new IngenOSCModule();
 }
 
 } // extern "C"

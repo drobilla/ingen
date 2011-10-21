@@ -136,10 +136,12 @@ def build(bld):
                           bld.path.ant_glob('include/ingen/%s/*' % i))
 
     # Modules
-    bld.recurse('src/client')
+    bld.recurse('src/shared')
     bld.recurse('src/serialisation')
     bld.recurse('src/server')
-    bld.recurse('src/shared')
+    bld.recurse('src/client')
+    bld.recurse('src/http')
+    bld.recurse('src/osc')
 
     if bld.is_defined('INGEN_BUILD_GUI'):
         bld.recurse('src/gui')

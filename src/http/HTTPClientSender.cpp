@@ -16,14 +16,18 @@
  */
 
 #include <string>
+
 #include <libsoup/soup.h>
-#include "raul/log.hpp"
-#include "raul/Atom.hpp"
-#include "raul/AtomRDF.hpp"
+
 #include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/shared/World.hpp"
+#include "raul/Atom.hpp"
+#include "raul/AtomRDF.hpp"
+#include "raul/log.hpp"
+
+#include "../server/Engine.hpp"
+
 #include "HTTPClientSender.hpp"
-#include "Engine.hpp"
 
 using namespace std;
 using namespace Raul;

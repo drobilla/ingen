@@ -65,30 +65,6 @@ def build(bld):
     core_libs = 'GLIBMM GTHREAD LV2CORE LILV RAUL SORD'
     autowaf.use_lib(bld, obj, core_libs)
 
-    if bld.is_defined('HAVE_SOUP'):
-        obj = bld(features     = 'cxx cxxshlib',
-                  source       = '''HTTPClientSender.cpp
-                                    HTTPEngineReceiver.cpp
-                                    ingen_http.cpp''',
-                  includes     = ['.', '../..', '../../include'],
-                  name         = 'libingen_http',
-                  target       = 'ingen_http',
-                  install_path = '${LIBDIR}',
-                  use          = 'libingen_server')
-        autowaf.use_lib(bld, obj, core_libs + ' SOUP')
-
-    if bld.is_defined('HAVE_LIBLO'):
-        obj = bld(features        = 'cxx cxxshlib',
-                  source          = '''OSCClientSender.cpp
-                                       OSCEngineReceiver.cpp
-                                       ingen_osc.cpp''',
-                  includes        = ['.', '../..', '../../include'],
-                  name            = 'libingen_osc',
-                  target          = 'ingen_osc',
-                  install_path    = '${LIBDIR}',
-                  use             = 'libingen_server')
-        autowaf.use_lib(bld, obj, core_libs + ' LIBLO')
-
     if bld.is_defined('HAVE_JACK'):
         obj = bld(features        = 'cxx cxxshlib',
                   source          = 'JackDriver.cpp ingen_jack.cpp',

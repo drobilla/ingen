@@ -22,16 +22,11 @@
 
 #include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
+#include "raul/Path.hpp"
 
-#include "EngineStore.hpp"
-#include "NodeImpl.hpp"
-#include "OSCClientSender.hpp"
-#include "PatchImpl.hpp"
-
-#include "PluginImpl.hpp"
-#include "PortImpl.hpp"
 #include "ingen/ClientInterface.hpp"
-#include "util.hpp"
+
+#include "OSCClientSender.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -57,8 +52,6 @@ OSCClientSender::response_ok(int32_t id)
 {
 	if (!_enabled)
 		return;
-
-
 	
 	if (lo_send(_address, "/ok", "i", id, LO_ARGS_END) < 0) {
 		Raul::error << "Unable to send OK " << id << "! ("
