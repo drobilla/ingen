@@ -15,40 +15,44 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "App.hpp"
 #include <cassert>
 #include <string>
 #include <fstream>
-#include <libgnomecanvasmm.h>
-#include <gtk/gtkwindow.h>
 #include <time.h>
 #include <sys/time.h>
-#include "raul/log.hpp"
-#include "raul/Path.hpp"
-#include "lilv/lilv.h"
+
+#include <libgnomecanvasmm.h>
+#include <gtk/gtkwindow.h>
+
 #include "flowcanvas/Connection.hpp"
-#include "shared/World.hpp"
-#include "server/Engine.hpp"
 #include "ingen/ServerInterface.hpp"
-#include "shared/runtime_paths.hpp"
-#include "shared/LV2URIMap.hpp"
+#include "ingen/client/ClientStore.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PatchModel.hpp"
-#include "ingen/client/ClientStore.hpp"
 #include "ingen/client/SigClientInterface.hpp"
-#include "NodeModule.hpp"
-#include "ControlPanel.hpp"
-#include "SubpatchModule.hpp"
-#include "LoadPluginWindow.hpp"
-#include "PatchWindow.hpp"
-#include "MessagesWindow.hpp"
-#include "WidgetFactory.hpp"
-#include "PatchTreeWindow.hpp"
+#include "ingen/shared/runtime_paths.hpp"
+#include "lilv/lilv.h"
+#include "raul/Path.hpp"
+#include "raul/log.hpp"
+
+#include "server/Engine.hpp"
+#include "shared/LV2URIMap.hpp"
+#include "shared/World.hpp"
+
+#include "App.hpp"
 #include "Configuration.hpp"
 #include "ConnectWindow.hpp"
-#include "ThreadedLoader.hpp"
-#include "WindowFactory.hpp"
+#include "ControlPanel.hpp"
+#include "LoadPluginWindow.hpp"
+#include "MessagesWindow.hpp"
+#include "NodeModule.hpp"
+#include "PatchTreeWindow.hpp"
+#include "PatchWindow.hpp"
 #include "Port.hpp"
+#include "SubpatchModule.hpp"
+#include "ThreadedLoader.hpp"
+#include "WidgetFactory.hpp"
+#include "WindowFactory.hpp"
 
 #define LOG(s) s << "[GUI] "
 

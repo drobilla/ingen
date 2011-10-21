@@ -21,7 +21,7 @@
 #include "lv2/lv2plug.in/ns/ext/event/event.h"
 #include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
 
-#include "shared/LV2Atom.hpp"
+#include "ingen/shared/LV2Atom.hpp"
 #include "shared/LV2URIMap.hpp"
 
 #include "ingen/client/NodeModel.hpp"

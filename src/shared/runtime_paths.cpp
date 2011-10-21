@@ -25,8 +25,9 @@
 
 #include "raul/log.hpp"
 
+#include "ingen/shared/runtime_paths.hpp"
+
 #include "ingen-config.h"
-#include "runtime_paths.hpp"
 
 using namespace std;
 

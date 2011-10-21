@@ -42,9 +42,9 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "ingen/serialisation/Parser.hpp"
-#include "shared/Configuration.hpp"
+#include "ingen/shared/Configuration.hpp"
 #include "shared/World.hpp"
-#include "shared/runtime_paths.hpp"
+#include "ingen/shared/runtime_paths.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"

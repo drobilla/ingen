@@ -25,7 +25,7 @@
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "shared/runtime_paths.hpp"
+#include "ingen/shared/runtime_paths.hpp"
 #include "App.hpp"
 #include "LoadPatchWindow.hpp"
 #include "PatchView.hpp"

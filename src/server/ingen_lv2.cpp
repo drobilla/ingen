@@ -43,8 +43,8 @@
 #include "ingen/ServerInterface.hpp"
 #include "shared/World.hpp"
 #include "ingen/serialisation/Parser.hpp"
-#include "shared/Configuration.hpp"
-#include "shared/runtime_paths.hpp"
+#include "ingen/shared/Configuration.hpp"
+#include "ingen/shared/runtime_paths.hpp"
 
 /** Record of a patch in this Ingen LV2 bundle */
 struct LV2Patch {

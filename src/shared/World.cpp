@@ -26,7 +26,7 @@
 #include "sord/sordmm.hpp"
 
 #include "ingen/EngineBase.hpp"
-#include "shared/runtime_paths.hpp"
+#include "ingen/shared/runtime_paths.hpp"
 #include "shared/LV2Features.hpp"
 #include "shared/LV2URIMap.hpp"
 #include "World.hpp"

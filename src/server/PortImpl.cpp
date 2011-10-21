@@ -21,7 +21,7 @@
 #include "raul/Maid.hpp"
 
 #include "shared/LV2URIMap.hpp"
-#include "shared/LV2Atom.hpp"
+#include "ingen/shared/LV2Atom.hpp"
 
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"

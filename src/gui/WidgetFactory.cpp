@@ -15,10 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "WidgetFactory.hpp"
 #include <fstream>
+
 #include "raul/log.hpp"
-#include "shared/runtime_paths.hpp"
+
+#include "ingen/shared/runtime_paths.hpp"
+
+#include "WidgetFactory.hpp"
 
 using namespace std;
 using namespace Raul;

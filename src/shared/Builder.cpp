@@ -24,7 +24,7 @@
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
-#include "shared/Builder.hpp"
+#include "ingen/shared/Builder.hpp"
 #include "shared/LV2URIMap.hpp"
 
 using namespace std;

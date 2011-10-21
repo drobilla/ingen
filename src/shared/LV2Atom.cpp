@@ -15,12 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "raul/log.hpp"
-#include "raul/Atom.hpp"
-#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
+#include "ingen/shared/LV2Atom.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
+#include "raul/Atom.hpp"
+#include "raul/log.hpp"
+
 #include "LV2Features.hpp"
-#include "LV2Atom.hpp"
 #include "LV2URIMap.hpp"
 
 using namespace std;

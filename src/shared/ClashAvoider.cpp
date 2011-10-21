@@ -17,8 +17,11 @@
 
 #include <cstdio>
 #include <sstream>
+
 #include "raul/log.hpp"
-#include "ClashAvoider.hpp"
+
+#include "ingen/shared/ClashAvoider.hpp"
+
 #include "Store.hpp"
 
 using namespace std;
