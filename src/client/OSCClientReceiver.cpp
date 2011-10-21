@@ -19,9 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <list>
-#include <sstream>
-
 #include "raul/log.hpp"
 #include "raul/AtomLiblo.hpp"
 #include "raul/Path.hpp"
@@ -40,8 +37,8 @@ namespace Client {
 OSCClientReceiver::OSCClientReceiver(int                        listen_port,
                                      SharedPtr<ClientInterface> target)
 	: _target(target)
-	, _listen_port(listen_port)
 	, _st(NULL)
+	, _listen_port(listen_port)
 {
 #ifdef RAUL_LOG_DEBUG
 	start(true);

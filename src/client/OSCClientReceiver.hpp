@@ -19,11 +19,13 @@
 #define INGEN_CLIENT_OSCCLIENTRECEIVER_HPP
 
 #include <cstdlib>
+
 #include <boost/utility.hpp>
 #include <lo/lo.h>
+
+#include "ingen/ClientInterface.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
-#include "ingen/ClientInterface.hpp"
 
 namespace Ingen {
 namespace Client {
@@ -65,13 +67,11 @@ private:
 	static int  unknown_cb(const char* path, const char* types, lo_arg** argv, int argc, void* data, void* osc_receiver);
 
 	SharedPtr<ClientInterface> _target;
-
-	int              _listen_port;
-	lo_server_thread _st;
-
-	Raul::URI            _delta_uri;
-	Resource::Properties _delta_remove;
-	Resource::Properties _delta_add;
+	lo_server_thread           _st;
+	Raul::URI                  _delta_uri;
+	Resource::Properties       _delta_remove;
+	Resource::Properties       _delta_add;
+	int                        _listen_port;
 
 	LO_HANDLER(error);
 	LO_HANDLER(response_ok);

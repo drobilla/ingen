@@ -15,20 +15,16 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include <assert.h>
 #include <errno.h>
-
-#include <cassert>
-#include <cstring>
-#include <list>
-#include <sstream>
-
+#include <string.h>
 #include <sys/socket.h>
 
 #include <libsoup/soup.h>
 
+#include "ingen/shared/World.hpp"
 #include "raul/log.hpp"
 
-#include "ingen/shared/World.hpp"
 #include "HTTPClientReceiver.hpp"
 
 #define LOG(s) s << "[HTTPClientReceiver] "

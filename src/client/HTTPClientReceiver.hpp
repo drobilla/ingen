@@ -19,14 +19,16 @@
 #define INGEN_CLIENT_HTTPCLIENTRECEIVER_HPP
 
 #include <cstdlib>
+
 #include <boost/utility.hpp>
 #include <glibmm/thread.h>
-#include "sord/sordmm.hpp"
+
+#include "ingen/ClientInterface.hpp"
+#include "ingen/serialisation/Parser.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
-#include "ingen/ClientInterface.hpp"
-#include "ingen/serialisation/Parser.hpp"
+#include "sord/sordmm.hpp"
 
 typedef struct _SoupSession SoupSession;
 typedef struct _SoupMessage SoupMessage;
@@ -68,14 +70,13 @@ private:
 	};
 
 	friend class Listener;
-	SharedPtr<Listener> _listener;
 
+	SharedPtr<Listener>        _listener;
 	Glib::Mutex                _mutex;
 	SharedPtr<ClientInterface> _target;
-
-	Shared::World*    _world;
-	const std::string _url;
-	bool              _quit_flag;
+	Shared::World*             _world;
+	const std::string          _url;
+	bool                       _quit_flag;
 };
 
 } // namespace Client
