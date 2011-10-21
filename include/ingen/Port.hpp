@@ -20,8 +20,6 @@
 
 #include <stdint.h>
 
-#include <set>
-
 #include "ingen/GraphObject.hpp"
 
 namespace Raul { class Atom; }

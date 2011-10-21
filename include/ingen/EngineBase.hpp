@@ -18,13 +18,7 @@
 #ifndef INGEN_ENGINE_BASE_HPP
 #define INGEN_ENGINE_BASE_HPP
 
-#include "raul/SharedPtr.hpp"
-
-namespace Raul { class Maid; }
-
 namespace Ingen {
-
-namespace Shared { class World; }
 
 /**
    The engine which executes the process graph.
@@ -47,7 +41,7 @@ public:
 	virtual void deactivate() = 0;
 
 	/**
-	   Indicate that a quit is desired
+	   Indicate that a quit is desired.
 
 	   This function simply sets a flag which affects the return value of
 	   main_iteration, it does not actually force the engine to stop running or
