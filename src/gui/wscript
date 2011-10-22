@@ -11,7 +11,6 @@ def build(bld):
               install_path    = '${LIBDIR}',
               use             = 'libingen_shared libingen_client libingen_serialisation')
     autowaf.use_lib(bld, obj, '''
-            CURL
             FLOWCANVAS
             GLADEMM
             GLIBMM
@@ -37,7 +36,6 @@ def build(bld):
             Controls.cpp
             LoadPatchWindow.cpp
             LoadPluginWindow.cpp
-            LoadRemotePatchWindow.cpp
             MessagesWindow.cpp
             NewSubpatchWindow.cpp
             NodeControlWindow.cpp
@@ -61,9 +59,6 @@ def build(bld):
             WindowFactory.cpp
             ingen_gui.cpp
     '''
-
-    if bld.is_defined('HAVE_CURL'):
-        obj.source += 'UploadPatchWindow.cpp'
 
     # XML UI definition
     bld(features      = 'subst',

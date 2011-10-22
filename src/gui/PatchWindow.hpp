@@ -84,10 +84,8 @@ private:
 	void editable_changed(bool editable);
 
 	void event_import();
-	void event_import_location();
 	void event_save();
 	void event_save_as();
-	void event_upload();
 	void event_draw();
 	void event_edit_controls();
 	void event_copy();
@@ -122,10 +120,8 @@ private:
 	int  _y;
 
 	Gtk::MenuItem*      _menu_import;
-	Gtk::MenuItem*      _menu_import_location;
 	Gtk::MenuItem*      _menu_save;
 	Gtk::MenuItem*      _menu_save_as;
-	Gtk::MenuItem*      _menu_upload;
 	Gtk::MenuItem*      _menu_draw;
 	Gtk::CheckMenuItem* _menu_edit_controls;
 	Gtk::MenuItem*      _menu_cut;

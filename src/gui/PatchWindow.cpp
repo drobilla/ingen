@@ -77,11 +77,9 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 	//xml->get_widget("patch_win_status_bar", _status_bar);
 	//xml->get_widget("patch_open_menuitem", _menu_open);
 	xml->get_widget("patch_import_menuitem", _menu_import);
-	xml->get_widget("patch_import_location_menuitem", _menu_import_location);
 	//xml->get_widget("patch_open_into_menuitem", _menu_open_into);
 	xml->get_widget("patch_save_menuitem", _menu_save);
 	xml->get_widget("patch_save_as_menuitem", _menu_save_as);
-	xml->get_widget("patch_upload_menuitem", _menu_upload);
 	xml->get_widget("patch_draw_menuitem", _menu_draw);
 	xml->get_widget("patch_edit_controls_menuitem", _menu_edit_controls);
 	xml->get_widget("patch_cut_menuitem", _menu_cut);
@@ -111,14 +109,10 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 	_menu_view_control_window->property_sensitive() = false;
 	_menu_import->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_import));
-	_menu_import_location->signal_activate().connect(
-		sigc::mem_fun(this, &PatchWindow::event_import_location));
 	_menu_save->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_save));
 	_menu_save_as->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_save_as));
-	_menu_upload->signal_activate().connect(
-		sigc::mem_fun(this, &PatchWindow::event_upload));
 	_menu_draw->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_draw));
 	_menu_edit_controls->signal_activate().connect(
@@ -159,10 +153,6 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &PatchWindow::event_show_controls));
 	_menu_view_patch_properties->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_properties));
-
-#ifndef HAVE_CURL
-	_menu_upload->hide();
-#endif
 
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->signal_owner_change().connect(
@@ -443,12 +433,6 @@ PatchWindow::event_import()
 }
 
 void
-PatchWindow::event_import_location()
-{
-	_app->window_factory()->present_load_remote_patch(_patch);
-}
-
-void
 PatchWindow::event_save()
 {
 	const Raul::Atom& document = _patch->get_property(_app->uris().ingen_document);
@@ -559,12 +543,6 @@ more files and/or directories, recursively.  Existing files will be overwritten.
 		_app->configuration()->set_patch_folder(dialog.get_current_folder());
 		break;
 	}
-}
-
-void
-PatchWindow::event_upload()
-{
-	_app->window_factory()->present_upload_patch(_patch);
 }
 
 void

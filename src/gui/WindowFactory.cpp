@@ -22,7 +22,6 @@
 #include "WidgetFactory.hpp"
 #include "LoadPatchWindow.hpp"
 #include "LoadPluginWindow.hpp"
-#include "LoadRemotePatchWindow.hpp"
 #include "NewSubpatchWindow.hpp"
 #include "NodeControlWindow.hpp"
 #include "PropertiesWindow.hpp"
@@ -30,9 +29,6 @@
 #include "PatchWindow.hpp"
 #include "RenameWindow.hpp"
 #include "WindowFactory.hpp"
-#ifdef HAVE_CURL
-#include "UploadPatchWindow.hpp"
-#endif
 
 using namespace std;
 
@@ -43,26 +39,18 @@ WindowFactory::WindowFactory(App& app)
 	: _app(app)
 	, _load_plugin_win(NULL)
 	, _load_patch_win(NULL)
-	, _load_remote_patch_win(NULL)
-	, _upload_patch_win(NULL)
 	, _new_subpatch_win(NULL)
 	, _properties_win(NULL)
 {
 	WidgetFactory::get_widget_derived("load_plugin_win", _load_plugin_win);
 	WidgetFactory::get_widget_derived("load_patch_win", _load_patch_win);
-	WidgetFactory::get_widget_derived("load_remote_patch_win", _load_remote_patch_win);
 	WidgetFactory::get_widget_derived("new_subpatch_win", _new_subpatch_win);
 	WidgetFactory::get_widget_derived("properties_win", _properties_win);
 	WidgetFactory::get_widget_derived("rename_win", _rename_win);
 
-#ifdef HAVE_CURL
-	WidgetFactory::get_widget_derived("upload_patch_win", _upload_patch_win);
-	_upload_patch_win->init_dialog(app);
-#endif
 
 	_load_plugin_win->init_window(app);
 	_load_patch_win->init(app);
-	//_load_remote_patch_win->init(app);
 	_new_subpatch_win->init_window(app);
 	_properties_win->init_window(app);
 	_rename_win->init_window(app);
@@ -289,31 +277,6 @@ WindowFactory::present_load_subpatch(SharedPtr<const PatchModel> patch,
 		_load_patch_win->set_transient_for(*w->second);
 
 	_load_patch_win->present(patch, false, data);
-}
-
-void
-WindowFactory::present_load_remote_patch(SharedPtr<const PatchModel> patch,
-                                         GraphObject::Properties     data)
-{
-	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
-
-	if (w != _patch_windows.end())
-		_load_remote_patch_win->set_transient_for(*w->second);
-
-	_load_remote_patch_win->present(patch, data);
-}
-
-void
-WindowFactory::present_upload_patch(SharedPtr<const PatchModel> patch)
-{
-#ifdef HAVE_CURL
-	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
-
-	if (w != _patch_windows.end())
-		_upload_patch_win->set_transient_for(*w->second);
-
-	_upload_patch_win->present(patch);
-#endif
 }
 
 void
