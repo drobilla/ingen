@@ -119,5 +119,17 @@ URIs::URIs()
 {
 }
 
+uint32_t
+URIs::map_uri(const char* uri)
+{
+	return static_cast<uint32_t>(g_quark_from_string(uri));
+}
+
+const char*
+URIs::unmap_uri(uint32_t urid)
+{
+	return g_quark_to_string(urid);
+}
+
 } // namespace Shared
 } // namespace Ingen

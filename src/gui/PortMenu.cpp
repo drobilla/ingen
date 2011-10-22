@@ -48,14 +48,14 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool patch_port)
 	ObjectMenu::init(app, port);
 	_patch_port = patch_port;
 
-	_set_min_menuitem->signal_activate().connect(sigc::mem_fun(this,
-			&PortMenu::on_menu_set_min));
+	_set_min_menuitem->signal_activate().connect(
+		sigc::mem_fun(this, &PortMenu::on_menu_set_min));
 
-	_set_max_menuitem->signal_activate().connect(sigc::mem_fun(this,
-			&PortMenu::on_menu_set_max));
+	_set_max_menuitem->signal_activate().connect(
+		sigc::mem_fun(this, &PortMenu::on_menu_set_max));
 
-	_reset_range_menuitem->signal_activate().connect(sigc::mem_fun(this,
-			&PortMenu::on_menu_reset_range));
+	_reset_range_menuitem->signal_activate().connect(
+		sigc::mem_fun(this, &PortMenu::on_menu_reset_range));
 
 	if ( ! PtrCast<PatchModel>(port->parent()) ) {
 		_polyphonic_menuitem->set_sensitive(false);

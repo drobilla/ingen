@@ -48,7 +48,7 @@ uint32_t
 LV2URIMap::uri_to_id(const char* map,
                      const char* uri)
 {
-	const uint32_t id = static_cast<uint32_t>(g_quark_from_string(uri));
+	const uint32_t id = _uris.map_uri(uri);
 	if (map && !strcmp(map, LV2_EVENT_URI)) {
 		GlobalToEvent::iterator i = _global_to_event.find(id);
 		if (i != _global_to_event.end()) {
@@ -79,9 +79,9 @@ LV2URIMap::id_to_uri(const char*    map,
 			error << "Failed to unmap event URI " << id << endl;
 			return NULL;
 		}
-		return g_quark_to_string(i->second);
+		return _uris.unmap_uri(i->second);
 	} else {
-		return g_quark_to_string(id);
+		return _uris.unmap_uri(id);
 	}
 }
 
