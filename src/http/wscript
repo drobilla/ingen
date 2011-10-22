@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+from waflib.extras import autowaf as autowaf
+
+def build(bld):
+    if bld.is_defined('HAVE_SOUP'):
+        obj = bld(features        = 'cxx cxxshlib',
+                  source          = '''HTTPClientSender.cpp
+                                       HTTPEngineReceiver.cpp
+                                       HTTPSender.cpp
+                                       ingen_http_server.cpp''',
+                  includes        = ['../..', '../../include'],
+                  name            = 'libingen_http_server',
+                  target          = 'ingen_http_server',
+                  install_path    = '${LIBDIR}',
+                  use             = 'libingen_server')
+        autowaf.use_lib(bld, obj, 'RAUL SOUP')
+
+        obj = bld(features        = 'cxx cxxshlib',
+                  source          = '''HTTPClientReceiver.cpp
+                                       HTTPEngineSender.cpp
+                                       HTTPSender.cpp
+                                       ingen_http_client.cpp''',
+                  includes        = ['../..', '../../include'],
+                  name            = 'libingen_http_client',
+                  target          = 'ingen_http_client',
+                  install_path    = '${LIBDIR}',
+                  use             = 'libingen_client')
+        autowaf.use_lib(bld, obj, 'RAUL SOUP')
