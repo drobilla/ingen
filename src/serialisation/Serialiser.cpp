@@ -39,7 +39,6 @@
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
 #include "raul/Path.hpp"
-#include "raul/TableImpl.hpp"
 #include "raul/log.hpp"
 
 #include "sord/sordmm.hpp"
@@ -139,15 +138,6 @@ Serialiser::to_file(SharedPtr<const GraphObject> object,
 	finish();
 }
 
-static
-std::string
-uri_to_symbol(const std::string& uri)
-{
-	const std::string filename = Glib::filename_from_uri(uri);
-	return Path::nameify(Glib::path_get_basename(
-		                     filename.substr(0, filename.find_last_of('.'))));
-}
-
 void
 Serialiser::Impl::write_manifest(const std::string&     bundle_path,
                                  SharedPtr<const Patch> patch,
@@ -201,23 +191,16 @@ normal_bundle_uri(const std::string& uri)
 
 void
 Serialiser::write_bundle(SharedPtr<const Patch> patch,
-                         const std::string&     uri)
+                         const std::string&     path)
 {
-	me->write_bundle(patch, uri);
+	me->write_bundle(patch, path);
 }
 
 void
 Serialiser::Impl::write_bundle(SharedPtr<const Patch> patch,
-                               const std::string&     uri)
+                               const std::string&     a_path)
 {
-	Glib::ustring path = "";
-	try {
-		path = Glib::filename_from_uri(uri);
-	} catch (...) {
-		LOG(error) << "Illegal file URI `" << uri << "'" << endl;
-		return;
-	}
-
+	std::string path(a_path);
 	if (Glib::file_test(path, Glib::FILE_TEST_EXISTS)
 	    && !Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
 		path = Glib::path_get_dirname(path);
@@ -228,8 +211,10 @@ Serialiser::Impl::write_bundle(SharedPtr<const Patch> patch,
 
 	g_mkdir_with_parents(path.c_str(), 0744);
 
-	const string symbol    = uri_to_symbol(uri);
-	const string root_file = path + symbol + ".ttl";
+	string symbol = Glib::path_get_basename(path);
+	symbol = symbol.substr(0, symbol.find("."));
+
+	const string root_file = Glib::build_filename(path, symbol + ".ttl");
 
 	start_to_filename(root_file);
 	const Path old_root_path = _root_path;

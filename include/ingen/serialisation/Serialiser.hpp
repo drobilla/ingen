@@ -57,7 +57,7 @@ public:
 	             const std::string&           filename);
 
 	void write_bundle(SharedPtr<const Patch> patch,
-	                  const std::string&     uri);
+	                  const std::string&     path);
 
 	std::string to_string(SharedPtr<const GraphObject> object,
 	                      const std::string&           base_uri,

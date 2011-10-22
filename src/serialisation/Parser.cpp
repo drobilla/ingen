@@ -59,27 +59,30 @@ namespace Serialisation {
 static Glib::ustring
 relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 {
-	const char* out = NULL;
-	if (uri == base) {
-		out = "";
-	} else {
-		SerdURI base_uri;
-		if (serd_uri_parse((const uint8_t*)base.c_str(), &base_uri)) {
-			LOG(error) << boost::format("Invalid base URI `%1%'") % base << endl;
-			return "";
+	Glib::ustring ret;
+	if (uri != base) {
+		SerdURI base_uri; 
+		serd_uri_parse((const uint8_t*)base.c_str(), &base_uri); 
+	 	 
+		SerdURI  normal_base_uri; 
+		SerdNode normal_base_uri_node = serd_node_new_uri_from_string( 
+			(const uint8_t*)".", &base_uri, &normal_base_uri); 
+	 	 
+		Glib::ustring normal_base_str((const char*)normal_base_uri_node.buf); 
+	 	 
+		ret = uri; 
+		if (uri.length() >= normal_base_str.length() 
+		    && uri.substr(0, normal_base_str.length()) == normal_base_str) { 
+			ret = uri.substr(normal_base_str.length());
+			if (leading_slash && ret[0] != '/') 
+				ret = Glib::ustring("/") + ret; 
 		}
-
-		SerdURI  out_uri;
-		SerdNode out_node = serd_node_new_uri_from_string(
-			(const uint8_t*)uri.c_str(), &base_uri, &out_uri);
-
-		out = (const char*)out_node.buf;
 	}
 
-	if (leading_slash && out[0] != '/') {
-		return Glib::ustring("/").append(out);
+	if (leading_slash && ret[0] != '/') {
+		ret = Glib::ustring("/").append(ret);
 	}
-	return out;
+	return ret;
 }
 
 static std::string
