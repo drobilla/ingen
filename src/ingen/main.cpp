@@ -204,19 +204,12 @@ main(int argc, char** argv)
 		ingen_try(world->parser(),
 		          "Unable to create parser");
 
-		string uri = conf.option("load").get_string();
-		if (!serd_uri_string_has_scheme((const uint8_t*)uri.c_str())) {
-			// Does not start with legal URI scheme, assume path
-			uri = Glib::filename_to_uri(
-				(Glib::path_is_absolute(uri))
-				? uri
-				: Glib::build_filename(Glib::get_current_dir(), uri));
-		}
+		const string path = conf.option("load").get_string();
 
 		engine_interface->get("ingen:plugins");
 		engine_interface->get("path:/");
 		world->parser()->parse_file(
-			world, engine_interface.get(), uri, parent, symbol);
+			world, engine_interface.get(), path, parent, symbol);
 	}
 
 	if (conf.option("gui").get_bool()) {

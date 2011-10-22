@@ -28,7 +28,6 @@
 
 #include "raul/Atom.hpp"
 #include "raul/AtomRDF.hpp"
-#include "raul/TableImpl.hpp"
 #include "raul/log.hpp"
 
 #include "serd/serd.h"
@@ -42,10 +41,9 @@
 
 #define LOG(s) s << "[Parser] "
 
-//#define NS_INGEN "http://drobilla.net/ns/ingen#" // defined in Resource.hpp
-#define NS_LV2   "http://lv2plug.in/ns/lv2core#"
-#define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-#define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
+#define NS_LV2  "http://lv2plug.in/ns/lv2core#"
+#define NS_RDF  "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#define NS_RDFS "http://www.w3.org/2000/01/rdf-schema#"
 
 using namespace std;
 using namespace Raul;
@@ -61,28 +59,27 @@ namespace Serialisation {
 static Glib::ustring
 relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 {
+	const char* out = NULL;
 	if (uri == base) {
-		return leading_slash ? "/" : "";
+		out = "";
+	} else {
+		SerdURI base_uri;
+		if (serd_uri_parse((const uint8_t*)base.c_str(), &base_uri)) {
+			LOG(error) << boost::format("Invalid base URI `%1%'") % base << endl;
+			return "";
+		}
+
+		SerdURI  out_uri;
+		SerdNode out_node = serd_node_new_uri_from_string(
+			(const uint8_t*)uri.c_str(), &base_uri, &out_uri);
+
+		out = (const char*)out_node.buf;
 	}
 
-	SerdURI base_uri;
-	serd_uri_parse((const uint8_t*)base.c_str(), &base_uri);
-
-	SerdURI  normal_base_uri;
-	SerdNode normal_base_uri_node = serd_node_new_uri_from_string(
-		(const uint8_t*)".", &base_uri, &normal_base_uri);
-
-	Glib::ustring normal_base_str((const char*)normal_base_uri_node.buf);
-
-	Glib::ustring ret = uri;
-	if (uri.length() >= normal_base_str.length()
-	    && uri.substr(0, normal_base_str.length()) == normal_base_str) {
-		ret = uri.substr(normal_base_str.length());
-		if (leading_slash && ret[0] != '/')
-			ret = Glib::ustring("/") + ret;
+	if (leading_slash && out[0] != '/') {
+		return Glib::ustring("/").append(out);
 	}
-
-	return ret;
+	return out;
 }
 
 static std::string
@@ -107,12 +104,10 @@ get_properties(Sord::Model&      model,
 {
 	Resource::Properties props;
 	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
-		const Sord::Node& predicate = i.get_predicate();
-		const Sord::Node& object    = i.get_object();
-		if (!skip_property(predicate)) {
+		if (!skip_property(i.get_predicate())) {
 			props.insert(
-				make_pair(predicate.to_string(),
-				          AtomRDF::node_to_atom(model, object)));
+				make_pair(i.get_predicate().to_string(),
+				          AtomRDF::node_to_atom(model, i.get_object())));
 		}
 	}
 	return props;
@@ -157,33 +152,32 @@ get_port(Ingen::Shared::World* world,
 
 static boost::optional<Raul::Path>
 parse(
-	Shared::World*                world,
-	CommonInterface*              target,
-	Sord::Model&                  model,
-	Glib::ustring                 document_uri,
-	boost::optional<Raul::Path>   data_path = boost::optional<Raul::Path>(),
-	boost::optional<Raul::Path>   parent    = boost::optional<Raul::Path>(),
-	boost::optional<Raul::Symbol> symbol    = boost::optional<Raul::Symbol>(),
-	boost::optional<Resource::Properties>   data      = boost::optional<Resource::Properties>());
+	Shared::World*                        world,
+	CommonInterface*                      target,
+	Sord::Model&                          model,
+	Glib::ustring                         document_uri,
+	boost::optional<Raul::Path>           parent    = boost::optional<Raul::Path>(),
+	boost::optional<Raul::Symbol>         symbol    = boost::optional<Raul::Symbol>(),
+	boost::optional<Resource::Properties> data      = boost::optional<Resource::Properties>());
 
 static boost::optional<Raul::Path>
 parse_patch(
-	Shared::World*                world,
-	CommonInterface*              target,
-	Sord::Model&                  model,
-	const Sord::Node&             subject,
-	boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
-	boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
-	boost::optional<Resource::Properties>   data   = boost::optional<Resource::Properties>());
+	Shared::World*                        world,
+	CommonInterface*                      target,
+	Sord::Model&                          model,
+	const Sord::Node&                     subject,
+	boost::optional<Raul::Path>           parent = boost::optional<Raul::Path>(),
+	boost::optional<Raul::Symbol>         symbol = boost::optional<Raul::Symbol>(),
+	boost::optional<Resource::Properties> data   = boost::optional<Resource::Properties>());
 
 
 static boost::optional<Raul::Path>
 parse_node(
-	Shared::World*              world,
-	CommonInterface*            target,
-	Sord::Model&                model,
-	const Sord::Node&           subject,
-	const Raul::Path&           path,
+	Shared::World*                        world,
+	CommonInterface*                      target,
+	Sord::Model&                          model,
+	const Sord::Node&                     subject,
+	const Raul::Path&                     path,
 	boost::optional<Resource::Properties> data = boost::optional<Resource::Properties>());
 
 
@@ -462,7 +456,6 @@ parse(Ingen::Shared::World*                    world,
       Ingen::CommonInterface*                  target,
       Sord::Model&                             model,
       Glib::ustring                            document_uri,
-      boost::optional<Raul::Path>              data_path,
       boost::optional<Raul::Path>              parent,
       boost::optional<Raul::Symbol>            symbol,
       boost::optional<GraphObject::Properties> data)
@@ -476,17 +469,10 @@ parse(Ingen::Shared::World*                    world,
 	const Sord::URI lv2_class     (*world->rdf_world(), NS_LV2   "Plugin");
 	const Sord::URI rdf_type      (*world->rdf_world(), NS_RDF   "type");
 
-	Sord::Node subject = nil;
-	if (data_path && data_path->is_root()) {
-		subject = model.base_uri();
-	} else if (data_path) {
-		subject = Sord::URI(*world->rdf_world(), data_path->chop_start("/"));
-	}
+	Sord::Node subject = model.base_uri();
 
 	Raul::Path path("/");
-	if (data_path) {
-		path = *data_path;
-	} else if (parent && symbol) {
+	if (parent && symbol) {
 		path = parent->child(*symbol);
 	}
 
@@ -510,7 +496,6 @@ parse(Ingen::Shared::World*                    world,
 
 	// Parse and create each subject
 	boost::optional<Path> ret;
-	boost::optional<Path> root_path;
 	for (Subjects::const_iterator i = subjects.begin(); i != subjects.end(); ++i) {
 		const Sord::Node&           subject = i->first;
 		const std::set<Sord::Node>& types   = i->second;
@@ -536,10 +521,6 @@ parse(Ingen::Shared::World*                    world,
 				assert((*t).is_uri());
 			}
 			return boost::optional<Path>();
-		}
-
-		if (data_path && subject.to_string() == data_path->str()) {
-			root_path = ret;
 		}
 	}
 
@@ -587,66 +568,39 @@ Parser::find_patches(Ingen::Shared::World* world,
 bool
 Parser::parse_file(Ingen::Shared::World*                    world,
                    Ingen::CommonInterface*                  target,
-                   Glib::ustring                            file_uri,
+                   Glib::ustring                            path,
                    boost::optional<Raul::Path>              parent,
                    boost::optional<Raul::Symbol>            symbol,
                    boost::optional<GraphObject::Properties> data)
 {
-	const size_t colon = file_uri.find(":");
-	if (colon != Glib::ustring::npos) {
-		const Glib::ustring scheme = file_uri.substr(0, colon);
-		if (scheme != "file") {
-			LOG(error) << (boost::format("Unsupported URI scheme `%1%'")
-			               % scheme) << endl;
-			return false;
-		}
-	} else {
-		file_uri = Glib::ustring("file://") + file_uri;
+	if (Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
+		// This is a bundle, append "/name.ttl" to get patch file path
+		path = Glib::build_filename(path, get_basename(path) + ".ttl");
 	}
 
-	const bool is_bundle = (file_uri.substr(file_uri.length() - 4) != ".ttl");
-
-	if (is_bundle && file_uri[file_uri.length() - 1] != '/') {
-		file_uri.append("/");
-	}
-
-	SerdNode base_node = serd_node_from_string(
-		SERD_URI, (const uint8_t*)file_uri.c_str());
-	SerdEnv* env = serd_env_new(&base_node);
-
-	if (file_uri.substr(file_uri.length() - 4) != ".ttl") {
-		// Not a Turtle file, try to open it as a bundle
-		if (file_uri[file_uri.length() - 1] != '/') {
-			file_uri.append("/");
-		}
-		Parser::PatchRecords records = find_patches(world, env, file_uri + "manifest.ttl");
-		if (!records.empty()) {
-			file_uri = records.front().file_uri;
-		}
-	}
-
-	base_node = serd_node_from_string(
-		SERD_URI, (const uint8_t*)file_uri.c_str());
-	serd_env_set_base_uri(env, &base_node);
+	const std::string uri       = Glib::filename_to_uri(path, "");
+	const uint8_t*    uri_c_str = (const uint8_t*)uri.c_str();
+	SerdNode          base_node = serd_node_from_string(SERD_URI, uri_c_str);
+	SerdEnv*          env       = serd_env_new(&base_node);
 
 	// Load patch file into model
-	Sord::Model model(*world->rdf_world(), file_uri);
-	model.load_file(env, SERD_TURTLE, file_uri);
+	Sord::Model model(*world->rdf_world(), uri);
+	model.load_file(env, SERD_TURTLE, uri);
 
 	serd_env_free(env);
 
-	LOG(info) << "Parsing " << file_uri << endl;
+	LOG(info) << "Parsing " << path << endl;
 	if (parent)
 		LOG(info) << "Parent: " << *parent << endl;
 	if (symbol)
 		LOG(info) << "Symbol: " << *symbol << endl;
 
 	boost::optional<Path> parsed_path
-		= parse(world, target, model, file_uri, Path("/"), parent, symbol, data);
+		= parse(world, target, model, path, parent, symbol, data);
 
 	if (parsed_path) {
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
-		                     Atom(Atom::URI, file_uri.c_str()));
+		                     Atom(Atom::URI, path.c_str()));
 	} else {
 		LOG(warn) << "Document URI lost" << endl;
 	}
@@ -674,8 +628,7 @@ Parser::parse_string(Ingen::Shared::World*                    world,
 		info << " (base " << base_uri << ")";
 	info << endl;
 
-	boost::optional<Raul::Path> data_path;
-	bool ret = parse(world, target, model, base_uri, data_path, parent, symbol, data);
+	bool ret = parse(world, target, model, base_uri, parent, symbol, data);
 	Sord::URI subject(*world->rdf_world(), base_uri);
 	parse_connections(world, target, model, subject, parent ? *parent : "/");
 

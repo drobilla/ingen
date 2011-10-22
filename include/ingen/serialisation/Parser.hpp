@@ -52,7 +52,7 @@ public:
 	virtual bool parse_file(
 		Shared::World*                world,
 		CommonInterface*              target,
-		Glib::ustring                 document_uri,
+		Glib::ustring                 path,
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data   = boost::optional<Properties>());

@@ -274,7 +274,7 @@ JackDriver::activate()
 	Shared::World* world = _engine.world();
 
 	if (_is_activated) {
-		LOG(warn) << "Jack driver already activated." << endl;
+		LOG(warn) << "Jack driver already activated" << endl;
 		return;
 	}
 
@@ -290,10 +290,10 @@ JackDriver::activate()
 	                          is_realtime());
 
 	if (jack_activate(_client)) {
-		LOG(error) << "Could not activate Jack client, aborting." << endl;
+		LOG(error) << "Could not activate Jack client, aborting" << endl;
 		exit(EXIT_FAILURE);
 	} else {
-		LOG(info) << "Activated Jack client." << endl;
+		LOG(info) << "Activated Jack client" << endl;
 	}
 }
 
