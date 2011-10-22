@@ -49,29 +49,29 @@ class Serialiser
 {
 public:
 	Serialiser(Shared::World& world, SharedPtr<Shared::Store> store);
-	~Serialiser();
+	virtual ~Serialiser();
 
 	typedef GraphObject::Properties Properties;
 
-	void to_file(SharedPtr<const GraphObject> object,
-	             const std::string&           filename);
+	virtual void to_file(SharedPtr<const GraphObject> object,
+	                     const std::string&           filename);
 
-	void write_bundle(SharedPtr<const Patch> patch,
-	                  const std::string&     path);
+	virtual void write_bundle(SharedPtr<const Patch> patch,
+	        	          const std::string&     path);
 
-	std::string to_string(SharedPtr<const GraphObject> object,
-	                      const std::string&           base_uri,
-	                      const Properties&            extra_rdf);
+	virtual std::string to_string(SharedPtr<const GraphObject> object,
+	                              const std::string&           base_uri,
+	                              const Properties&            extra_rdf);
 
-	void start_to_string(const Raul::Path&  root,
-	                     const std::string& base_uri);
+	virtual void start_to_string(const Raul::Path&  root,
+	                             const std::string& base_uri);
 
-	void serialise(SharedPtr<const GraphObject> object) throw (std::logic_error);
+	virtual void serialise(SharedPtr<const GraphObject> object) throw (std::logic_error);
 
-	void serialise_connection(const Sord::Node& parent,
-	                          SharedPtr<const Connection> c) throw (std::logic_error);
+	virtual void serialise_connection(const Sord::Node& parent,
+	                                  SharedPtr<const Connection> c) throw (std::logic_error);
 
-	std::string finish();
+	virtual std::string finish();
 
 private:
 	struct Impl;

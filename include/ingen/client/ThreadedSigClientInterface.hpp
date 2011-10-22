@@ -22,6 +22,7 @@
 
 #include <string>
 
+#undef nil
 #include <sigc++/sigc++.h>
 #include <glibmm/thread.h>
 

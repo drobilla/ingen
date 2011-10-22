@@ -20,6 +20,7 @@
 
 #include <string>
 
+#undef nil
 #include <glibmm/thread.h>
 
 #include "raul/PathTable.hpp"
