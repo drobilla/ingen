@@ -26,7 +26,7 @@
 using namespace std;
 using namespace Ingen;
 
-struct IngenOSCModule : public Ingen::Shared::Module {
+struct IngenOSCServerModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
 		Server::Engine* engine = (Server::Engine*)world->local_engine().get();
 		SharedPtr<Server::ServerInterfaceImpl> interface(
@@ -47,7 +47,7 @@ extern "C" {
 Ingen::Shared::Module*
 ingen_module_load()
 {
-	return new IngenOSCModule();
+	return new IngenOSCServerModule();
 }
 
 } // extern "C"

@@ -10,7 +10,7 @@ def build(bld):
               vnum            = '0.0.0',
               install_path    = '${LIBDIR}',
               linkflags       = '-ldl')
-    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV RAUL SORD LIBLO')
+    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV RAUL SORD')
 
     obj.source = '''
             Builder.cpp
@@ -26,10 +26,3 @@ def build(bld):
             World.cpp
             runtime_paths.cpp
     '''
-
-    if bld.is_defined('HAVE_LIBLO'):
-        obj.source += ' OSCSender.cpp '
-
-    if bld.is_defined('HAVE_SOUP'):
-        autowaf.use_lib(bld, obj, 'SOUP')
-        obj.source += ' HTTPSender.cpp '

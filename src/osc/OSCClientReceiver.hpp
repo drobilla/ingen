@@ -27,18 +27,10 @@
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 
+#include "macros.h"
+
 namespace Ingen {
 namespace Client {
-
-/** Arguments to a liblo handler */
-#define LO_HANDLER_ARGS const char* path, const char* types, lo_arg** argv, int argc, lo_message msg
-
-/** Define a static handler to be passed to lo_add_method, which is a trivial
- * wrapper around a non-static method that does the real work. */
-#define LO_HANDLER(name) \
-int _##name##_cb (LO_HANDLER_ARGS);\
-inline static int name##_cb(LO_HANDLER_ARGS, void* osc_listener)\
-{ return ((OSCClientReceiver*)osc_listener)->_##name##_cb(path, types, argv, argc, msg); }
 
 /** Client-side receiver for OSC messages from the engine.
  *
@@ -73,23 +65,23 @@ private:
 	Resource::Properties       _delta_add;
 	int                        _listen_port;
 
-	LO_HANDLER(error);
-	LO_HANDLER(response_ok);
-	LO_HANDLER(response_error);
-	LO_HANDLER(plugin);
-	LO_HANDLER(plugin_list_end);
-	LO_HANDLER(new_patch);
-	LO_HANDLER(del);
-	LO_HANDLER(move);
-	LO_HANDLER(connection);
-	LO_HANDLER(disconnection);
-	LO_HANDLER(put);
-	LO_HANDLER(delta_begin);
-	LO_HANDLER(delta_remove);
-	LO_HANDLER(delta_add);
-	LO_HANDLER(delta_end);
-	LO_HANDLER(set_property);
-	LO_HANDLER(activity);
+	LO_HANDLER(OSCClientReceiver, error);
+	LO_HANDLER(OSCClientReceiver, response_ok);
+	LO_HANDLER(OSCClientReceiver, response_error);
+	LO_HANDLER(OSCClientReceiver, plugin);
+	LO_HANDLER(OSCClientReceiver, plugin_list_end);
+	LO_HANDLER(OSCClientReceiver, new_patch);
+	LO_HANDLER(OSCClientReceiver, del);
+	LO_HANDLER(OSCClientReceiver, move);
+	LO_HANDLER(OSCClientReceiver, connection);
+	LO_HANDLER(OSCClientReceiver, disconnection);
+	LO_HANDLER(OSCClientReceiver, put);
+	LO_HANDLER(OSCClientReceiver, delta_begin);
+	LO_HANDLER(OSCClientReceiver, delta_remove);
+	LO_HANDLER(OSCClientReceiver, delta_add);
+	LO_HANDLER(OSCClientReceiver, delta_end);
+	LO_HANDLER(OSCClientReceiver, set_property);
+	LO_HANDLER(OSCClientReceiver, activity);
 };
 
 } // namespace Client

@@ -134,12 +134,12 @@ main(int argc, char** argv)
 		// Not loading a GUI, load network engine interfaces
 		if (!conf.option("gui").get_bool()) {
 			#ifdef HAVE_LIBLO
-			ingen_try(world->load_module("osc"),
-			          "Unable to load OSC module");
+			ingen_try(world->load_module("osc_server"),
+			          "Unable to load OSC server module");
 			#endif
 			#ifdef HAVE_SOUP
-			ingen_try(world->load_module("http"),
-			          "Unable to load HTTP module");
+			ingen_try(world->load_module("http_server"),
+			          "Unable to load HTTP server module");
 			#endif
 		}
 	}
@@ -148,6 +148,15 @@ main(int argc, char** argv)
 	if (!engine_interface) {
 		ingen_try(world->load_module("client"),
 		          "Unable to load client module");
+		#ifdef HAVE_LIBLO
+		ingen_try(world->load_module("osc_client"),
+		          "Unable to load OSC client module");
+		#endif
+		#ifdef HAVE_SOUP
+		ingen_try(world->load_module("http_client"),
+		          "Unable to load HTTP client module");
+		#endif
+
 		const char* const uri = conf.option("connect").get_string();
 		ingen_try((engine_interface = world->interface(uri, SharedPtr<ClientInterface>())),
 		          (string("Unable to create interface to `") + uri + "'").c_str());

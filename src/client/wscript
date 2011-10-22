@@ -9,7 +9,7 @@ def build(bld):
               target          = 'ingen_client',
               install_path    = '${LIBDIR}',
               use             = 'libingen_shared')
-    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV SUIL RAUL SORD SOUP SIGCPP LIBLO SOUP')
+    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV SUIL RAUL SORD SIGCPP')
 
     obj.source = '''
         ClientStore.cpp
@@ -22,16 +22,3 @@ def build(bld):
         ThreadedSigClientInterface.cpp
         ingen_client.cpp
     '''
-
-    if bld.is_defined('HAVE_SOUP'):
-        obj.source += '''
-            HTTPClientReceiver.cpp
-            HTTPEngineSender.cpp
-        '''
-
-    if bld.is_defined('HAVE_LIBLO'):
-        obj.source += '''
-            OSCClientReceiver.cpp
-            OSCEngineSender.cpp
-        '''
-

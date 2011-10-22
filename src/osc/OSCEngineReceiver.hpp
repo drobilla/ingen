@@ -28,6 +28,7 @@
 #include "ingen/Resource.hpp"
 
 #include "ingen-config.h"
+#include "macros.h"
 
 namespace Ingen {
 
@@ -36,17 +37,6 @@ class ServerInterface;
 namespace Server {
 
 class Engine;
-
-/* Some boilerplate killing macros... */
-#define LO_HANDLER_ARGS const char* path, const char* types, lo_arg** argv, int argc, lo_message msg
-
-/* Defines a static handler to be passed to lo_add_method, which is a trivial
- * wrapper around a non-static method that does the real work.  Makes a whoole
- * lot of ugly boiler plate go away */
-#define LO_HANDLER(name) \
-int _##name##_cb (LO_HANDLER_ARGS);\
-inline static int name##_cb(LO_HANDLER_ARGS, void* myself)\
-{ return ((OSCEngineReceiver*)myself)->_##name##_cb(path, types, argv, argc, msg); }
 
 /* FIXME: Make this receive and preprocess in the same thread? */
 
@@ -96,28 +86,28 @@ private:
 	static int  generic_cb(LO_HANDLER_ARGS, void* myself);
 	static int  unknown_cb(LO_HANDLER_ARGS, void* myself);
 
-	LO_HANDLER(quit);
-	LO_HANDLER(ping);
-	LO_HANDLER(ping_slow);
-	LO_HANDLER(register_client);
-	LO_HANDLER(unregister_client);
-	LO_HANDLER(get);
-	LO_HANDLER(put);
-	LO_HANDLER(delta_begin);
-	LO_HANDLER(delta_remove);
-	LO_HANDLER(delta_add);
-	LO_HANDLER(delta_end);
-	LO_HANDLER(move);
-	LO_HANDLER(del);
-	LO_HANDLER(connect);
-	LO_HANDLER(disconnect);
-	LO_HANDLER(disconnect_all);
-	LO_HANDLER(note_on);
-	LO_HANDLER(note_off);
-	LO_HANDLER(all_notes_off);
-	LO_HANDLER(learn);
-	LO_HANDLER(set_property);
-	LO_HANDLER(property_set);
+	LO_HANDLER(OSCEngineReceiver, quit);
+	LO_HANDLER(OSCEngineReceiver, ping);
+	LO_HANDLER(OSCEngineReceiver, ping_slow);
+	LO_HANDLER(OSCEngineReceiver, register_client);
+	LO_HANDLER(OSCEngineReceiver, unregister_client);
+	LO_HANDLER(OSCEngineReceiver, get);
+	LO_HANDLER(OSCEngineReceiver, put);
+	LO_HANDLER(OSCEngineReceiver, delta_begin);
+	LO_HANDLER(OSCEngineReceiver, delta_remove);
+	LO_HANDLER(OSCEngineReceiver, delta_add);
+	LO_HANDLER(OSCEngineReceiver, delta_end);
+	LO_HANDLER(OSCEngineReceiver, move);
+	LO_HANDLER(OSCEngineReceiver, del);
+	LO_HANDLER(OSCEngineReceiver, connect);
+	LO_HANDLER(OSCEngineReceiver, disconnect);
+	LO_HANDLER(OSCEngineReceiver, disconnect_all);
+	LO_HANDLER(OSCEngineReceiver, note_on);
+	LO_HANDLER(OSCEngineReceiver, note_off);
+	LO_HANDLER(OSCEngineReceiver, all_notes_off);
+	LO_HANDLER(OSCEngineReceiver, learn);
+	LO_HANDLER(OSCEngineReceiver, set_property);
+	LO_HANDLER(OSCEngineReceiver, property_set);
 
 	Engine&                    _engine;
 	SharedPtr<ServerInterface> _interface;

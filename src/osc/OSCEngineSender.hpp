@@ -27,7 +27,8 @@
 #include "raul/Deletable.hpp"
 
 #include "ingen/ServerInterface.hpp"
-#include "../shared/OSCSender.hpp"
+
+#include "OSCSender.hpp"
 
 namespace Ingen {
 

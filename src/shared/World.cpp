@@ -219,6 +219,11 @@ SharedPtr<LV2URIMap> World::lv2_uri_map() { return _impl->lv2_uri_map; }
 bool
 World::load_module(const char* name)
 {
+	Pimpl::Modules::iterator i = _impl->modules.find(name);
+	if (i != _impl->modules.end()) {
+		LOG(info) << "Module `" << name << "' already loaded" << endl;
+		return true;
+	}
 	SharedPtr<Glib::Module> lib = ingen_load_module(name);
 	Ingen::Shared::Module* (*module_load)() = NULL;
 	if (lib && lib->get_symbol("ingen_module_load", (void*&)module_load)) {

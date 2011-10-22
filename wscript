@@ -154,7 +154,7 @@ def build(bld):
               defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"',
               use          = 'libingen_shared',
               install_path = '${BINDIR}')
-    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LIBLO SOUP' +
+    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN' +
                     ' LV2CORE LV2_EVENT LV2_URI_MAP LV2_PERSIST')
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
