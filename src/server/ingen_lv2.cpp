@@ -179,10 +179,6 @@ public:
 		return NULL;
 	}
 
-	virtual bool supports(PortType port_type, EventType event_type) {
-		return true;
-	}
-
 	virtual DriverPort* create_port(DuplexPort* patch_port) {
 		return new LV2Port(this, patch_port);
 	}

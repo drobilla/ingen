@@ -19,9 +19,11 @@
 #define INGEN_ENGINE_DRIVER_HPP
 
 #include <string>
+
 #include <boost/utility.hpp>
+
 #include "raul/Deletable.hpp"
-#include "ingen/EventType.hpp"
+
 #include "DuplexPort.hpp"
 
 namespace Raul { class Path; }

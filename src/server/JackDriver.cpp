@@ -208,13 +208,6 @@ JackDriver::~JackDriver()
 }
 
 bool
-JackDriver::supports(PortType port_type, EventType event_type)
-{
-	return (port_type == PortType::AUDIO
-			|| (port_type == PortType::EVENTS && event_type == EventType::MIDI));
-}
-
-bool
 JackDriver::attach(const std::string& server_name,
                    const std::string& client_name,
                    void*              jack_client)

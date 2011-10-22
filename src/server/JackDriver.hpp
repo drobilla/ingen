@@ -88,8 +88,6 @@ public:
 	explicit JackDriver(Engine& engine);
 	~JackDriver();
 
-	bool supports(PortType port_type, EventType event_type);
-
 	bool attach(const std::string& server_name,
 	            const std::string& client_name,
 	            void*              jack_client);
