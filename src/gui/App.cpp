@@ -71,13 +71,10 @@ class Port;
 
 Gtk::Main* App::_main = 0;
 
-/// Singleton instance
-App* App::_instance = 0;
-
 App::App(Ingen::Shared::World* world)
-	: _configuration(new Configuration())
+	: _configuration(new Configuration(*this))
 	, _about_dialog(NULL)
-	, _window_factory(new WindowFactory())
+	, _window_factory(new WindowFactory(*this))
 	, _world(world)
 	, _sample_rate(48000)
 	, _enable_signal(true)
@@ -89,6 +86,9 @@ App::App(Ingen::Shared::World* world)
 	WidgetFactory::get_widget_derived("messages_win", _messages_window);
 	WidgetFactory::get_widget_derived("patch_tree_win", _patch_tree_window);
 	WidgetFactory::get_widget("about_win", _about_dialog);
+	_connect_window->init_dialog(*this);
+	_messages_window->init_window(*this);
+	_patch_tree_window->init_window(*this);
 	_about_dialog->property_program_name() = "Ingen";
 	_about_dialog->property_logo_icon_name() = "ingen";
 
@@ -102,22 +102,21 @@ App::~App()
 	delete _window_factory;
 }
 
-void
-App::init(Ingen::Shared::World* world)
+SharedPtr<App>
+App::create(Ingen::Shared::World* world)
 {
 	Gnome::Canvas::init();
 	_main = new Gtk::Main(&world->argc(), &world->argv());
 
-	if (!_instance)
-		_instance = new App(world);
+	App* app = new App(world);
 
 	// Load configuration settings
-	_instance->configuration()->load_settings();
-	_instance->configuration()->apply_settings();
+	app->configuration()->load_settings();
+	app->configuration()->apply_settings();
 
 	// Set default window icon
-	_instance->_about_dialog->property_program_name() = "Ingen";
-	_instance->_about_dialog->property_logo_icon_name() = "ingen";
+	app->_about_dialog->property_program_name() = "Ingen";
+	app->_about_dialog->property_logo_icon_name() = "ingen";
 	gtk_window_set_default_icon_name("ingen");
 
 	// Set style for embedded node GUIs
@@ -137,20 +136,20 @@ App::init(Ingen::Shared::World* world)
 		"widget \"*ingen_embedded_node_gui_container*\" style \"ingen_embedded_node_gui_style\"\n";
 
 	Gtk::RC::parse_string(rc_style);
+
+	return SharedPtr<App>(app);
 }
 
 void
 App::run()
 {
-	App& me = App::instance();
-
-	me._connect_window->start(me.world());
+	_connect_window->start(*this, world());
 
 	// Run main iterations here until we're attached to the engine. Otherwise
 	// with 'ingen -egl' we'd get a bunch of notifications about load
 	// immediately before even knowing about the root patch or plugins)
-	while (!me._connect_window->attached())
-		if (me._main->iteration())
+	while (!_connect_window->attached())
+		if (_main->iteration())
 			break;
 
 	_main->run();
@@ -168,9 +167,9 @@ App::attach(SharedPtr<SigClientInterface> client)
 
 	_client = client;
 	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->engine(), client));
-	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(_world->engine()));
+	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->engine()));
 
-	_patch_tree_window->init(*_store);
+	_patch_tree_window->init(*this, *_store);
 
 	_client->signal_response_error().connect(
 		sigc::mem_fun(this, &App::error_response));
@@ -290,10 +289,10 @@ void
 App::register_callbacks()
 {
 	Glib::signal_timeout().connect(
-		sigc::mem_fun(App::instance(), &App::gtk_main_iteration), 25, G_PRIORITY_DEFAULT);
+		sigc::mem_fun(*this, &App::gtk_main_iteration), 25, G_PRIORITY_DEFAULT);
 
 	Glib::signal_timeout().connect(
-		sigc::mem_fun(App::instance(), &App::animate), 50, G_PRIORITY_DEFAULT);
+		sigc::mem_fun(*this, &App::animate), 50, G_PRIORITY_DEFAULT);
 }
 
 bool
@@ -330,7 +329,7 @@ bool
 App::quit(Gtk::Window& dialog_parent)
 {
 	bool quit = true;
-	if (App::instance().world()->local_engine()) {
+	if (_world->local_engine()) {
 		Gtk::MessageDialog d(dialog_parent,
 			"The engine is running in this process.  Quitting will terminate Ingen."
 			"\n\n" "Are you sure you want to quit?",
@@ -345,6 +344,16 @@ App::quit(Gtk::Window& dialog_parent)
 
 	return quit;
 }
+
+struct IconDestroyNotification {
+	IconDestroyNotification(App& a, pair<string, int> k)
+		: app(a)
+		, key(k)
+	{}
+
+	App&              app;
+	pair<string, int> key;
+};
 
 Glib::RefPtr<Gdk::Pixbuf>
 App::icon_from_path(const string& path, int size)
@@ -368,8 +377,9 @@ App::icon_from_path(const string& path, int size)
 	try {
 		buf = Gdk::Pixbuf::create_from_file(path, size, size);
 		_icons.insert(make_pair(make_pair(path, size), buf.operator->()));
-		buf->add_destroy_notify_callback(new pair<string, int>(path, size),
-				&App::icon_destroyed);
+		buf->add_destroy_notify_callback(
+			new IconDestroyNotification(*this, make_pair(path, size)),
+			&App::icon_destroyed);
 	} catch (Glib::Error e) {
 		warn << "Error loading icon: " << e.what() << endl;
 	}
@@ -379,12 +389,12 @@ App::icon_from_path(const string& path, int size)
 void*
 App::icon_destroyed(void* data)
 {
-	pair<string, int>* p = static_cast<pair<string, int>*>(data);
-	Icons::iterator iter = instance()._icons.find(*p);
-	if (iter != instance()._icons.end())
-		instance()._icons.erase(iter);
+	IconDestroyNotification* note = (IconDestroyNotification*)data;
+	Icons::iterator iter = note->app._icons.find(note->key);
+	if (iter != note->app._icons.end())
+		note->app._icons.erase(iter);
 
-	delete p; // allocated in App::icon_from_path
+	delete note; // allocated in App::icon_from_path
 
 	return NULL;
 }

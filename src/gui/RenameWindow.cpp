@@ -87,7 +87,7 @@ RenameWindow::values_changed()
 	} else if (!Path::is_valid_name(symbol)) {
 		_message_label->set_text("Symbol contains invalid characters");
 		_ok_button->property_sensitive() = false;
-	} else if (App::instance().store()->object(_object->parent()->path().child(symbol))) {
+	} else if (_app->store()->object(_object->parent()->path().child(symbol))) {
 		_message_label->set_text("An object already exists with that path");
 		_ok_button->property_sensitive() = false;
 	} else if (label.empty()) {
@@ -115,7 +115,7 @@ RenameWindow::cancel_clicked()
 void
 RenameWindow::ok_clicked()
 {
-	const Shared::URIs& uris = App::instance().uris();
+	const Shared::URIs& uris = _app->uris();
 
 	const string& symbol_str = _symbol_entry->get_text();
 	const string& label      = _label_entry->get_text();
@@ -126,12 +126,12 @@ RenameWindow::ok_clicked()
 		const Symbol& symbol(symbol_str);
 		if (symbol != _object->symbol()) {
 			path = _object->path().parent().child(symbol);
-			App::instance().engine()->move(_object->path(), path);
+			_app->engine()->move(_object->path(), path);
 		}
 	}
 
 	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.get_string())) {
-		App::instance().engine()->set_property(path, uris.lv2_name, Atom(label));
+		_app->engine()->set_property(path, uris.lv2_name, Atom(label));
 	}
 
 	hide();

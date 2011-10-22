@@ -60,9 +60,14 @@ class NodeModule;
 class PatchCanvas : public FlowCanvas::Canvas
 {
 public:
-	PatchCanvas(SharedPtr<const PatchModel> patch, int width, int height);
+	PatchCanvas(App&                        app,
+	            SharedPtr<const PatchModel> patch,
+	            int                         width,
+	            int                         height);
 
 	virtual ~PatchCanvas() {}
+
+	App& app() { return _app; }
 
 	void build();
 	void show_human_names(bool show);
@@ -132,6 +137,7 @@ private:
 	void disconnect(FlowCanvas::Connectable* src,
 	                FlowCanvas::Connectable* dst);
 
+	App&                        _app;
 	SharedPtr<const PatchModel> _patch;
 
 	typedef std::map<SharedPtr<const ObjectModel>,

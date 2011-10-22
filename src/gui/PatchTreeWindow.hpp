@@ -43,7 +43,7 @@ public:
 	PatchTreeWindow(BaseObjectType*                   cobject,
 	                const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(Client::ClientStore& store);
+	void init(App& app, Client::ClientStore& store);
 
 	void new_object(SharedPtr<Client::ObjectModel> object);
 
@@ -76,10 +76,11 @@ protected:
 		Gtk::TreeModelColumn<SharedPtr<Client::PatchModel> > patch_model_col;
 	};
 
-	bool                             _enable_signal;
+	App*                             _app;
 	PatchTreeModelColumns            _patch_tree_columns;
 	Glib::RefPtr<Gtk::TreeStore>     _patch_treestore;
 	Glib::RefPtr<Gtk::TreeSelection> _patch_tree_selection;
+	bool                             _enable_signal;
 };
 
 /** Derived TreeView class to support context menus for patches */

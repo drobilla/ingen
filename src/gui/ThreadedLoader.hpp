@@ -54,7 +54,8 @@ namespace GUI {
 class ThreadedLoader : public Raul::Slave
 {
 public:
-	ThreadedLoader(SharedPtr<ServerInterface> engine);
+	ThreadedLoader(App&                       app,
+	               SharedPtr<ServerInterface> engine);
 
 	void load_patch(bool                              merge,
                     const Glib::ustring&              document_uri,
@@ -74,10 +75,10 @@ private:
 
 	void _whipped();
 
+	App&                       _app;
 	SharedPtr<ServerInterface> _engine;
-
-	Glib::Mutex   _mutex;
-	list<Closure> _events;
+	Glib::Mutex                _mutex;
+	list<Closure>              _events;
 };
 
 } // namespace GUI

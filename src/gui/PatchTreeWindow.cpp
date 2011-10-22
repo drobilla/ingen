@@ -37,6 +37,7 @@ namespace GUI {
 PatchTreeWindow::PatchTreeWindow(BaseObjectType*                   cobject,
                                  const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
+	, _app(NULL)
 	, _enable_signal(true)
 {
 	xml->get_widget_derived("patches_treeview", _patches_treeview);
@@ -68,8 +69,9 @@ PatchTreeWindow::PatchTreeWindow(BaseObjectType*                   cobject,
 }
 
 void
-PatchTreeWindow::init(ClientStore& store)
+PatchTreeWindow::init(App& app, ClientStore& store)
 {
+	_app = &app;
 	store.signal_new_object().connect(
 		sigc::mem_fun(this, &PatchTreeWindow::new_object));
 }
@@ -89,7 +91,7 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		Gtk::TreeModel::iterator iter = _patch_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
 		if (pm->path().is_root()) {
-			row[_patch_tree_columns.name_col] = App::instance().engine()->uri().str();
+			row[_patch_tree_columns.name_col] = _app->engine()->uri().str();
 		} else {
 			row[_patch_tree_columns.name_col] = pm->symbol().c_str();
 		}
@@ -170,7 +172,7 @@ PatchTreeWindow::event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::Tr
 	Gtk::TreeModel::Row row = *active;
 	SharedPtr<PatchModel> pm = row[_patch_tree_columns.patch_model_col];
 
-	App::instance().window_factory()->present_patch(pm);
+	_app->window_factory()->present_patch(pm);
 }
 
 void
@@ -184,15 +186,15 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	assert(pm);
 
 	if (_enable_signal)
-		App::instance().engine()->set_property(pm->path(),
-				App::instance().uris().ingen_enabled, (bool)!pm->enabled());
+		_app->engine()->set_property(pm->path(),
+				_app->uris().ingen_enabled, (bool)!pm->enabled());
 }
 
 void
 PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
 		SharedPtr<PatchModel> patch)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = _app->uris();
 	_enable_signal = false;
 	if (key == uris.ingen_enabled && value.type() == Atom::BOOL) {
 		Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), patch);

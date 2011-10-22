@@ -39,6 +39,7 @@ namespace GUI {
 PatchView::PatchView(BaseObjectType*                   cobject,
                      const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::Box(cobject)
+	, _app(NULL)
 	, _breadcrumb_container(NULL)
 	, _enable_signal(true)
 {
@@ -58,7 +59,12 @@ PatchView::PatchView(BaseObjectType*                   cobject,
 	_toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
 	_canvas_scrolledwindow->property_hadjustment().get_value()->set_step_increment(10);
 	_canvas_scrolledwindow->property_vadjustment().get_value()->set_step_increment(10);
+}
 
+void
+PatchView::init(App& app)
+{
+	_app = &app;
 }
 
 void
@@ -69,7 +75,7 @@ PatchView::set_patch(SharedPtr<const PatchModel> patch)
 	assert(_breadcrumb_container); // ensure created
 
 	_patch = patch;
-	_canvas = SharedPtr<PatchCanvas>(new PatchCanvas(patch, 1600*2, 1200*2));
+	_canvas = SharedPtr<PatchCanvas>(new PatchCanvas(*_app, patch, 1600*2, 1200*2));
 	_canvas->build();
 
 	_canvas_scrolledwindow->add(*_canvas);
@@ -115,12 +121,12 @@ PatchView::set_patch(SharedPtr<const PatchModel> patch)
 }
 
 SharedPtr<PatchView>
-PatchView::create(SharedPtr<const PatchModel> patch)
+PatchView::create(App& app, SharedPtr<const PatchModel> patch)
 {
 	PatchView* result = NULL;
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("warehouse_win");
 	xml->get_widget_derived("patch_view_box", result);
-	assert(result);
+	result->init(app);
 	result->set_patch(patch);
 	return SharedPtr<PatchView>(result);
 }
@@ -178,30 +184,30 @@ PatchView::process_toggled()
 	if (!_enable_signal)
 		return;
 
-	App::instance().engine()->set_property(_patch->path(),
-			App::instance().uris().ingen_enabled,
+	_app->engine()->set_property(_patch->path(),
+			_app->uris().ingen_enabled,
 			(bool)_process_but->get_active());
 }
 
 void
 PatchView::poly_changed()
 {
-	App::instance().engine()->set_property(_patch->path(),
-			App::instance().uris().ingen_polyphony,
+	_app->engine()->set_property(_patch->path(),
+			_app->uris().ingen_polyphony,
 			_poly_spin->get_value_as_int());
 }
 
 void
 PatchView::refresh_clicked()
 {
-	App::instance().engine()->get(_patch->path());
+	_app->engine()->get(_patch->path());
 }
 
 void
 PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
 	_enable_signal = false;
-	if (predicate == App::instance().uris().ingen_enabled) {
+	if (predicate == _app->uris().ingen_enabled) {
 	   if (value.type() == Atom::BOOL)
 		   _process_but->set_active(value.get_bool());
 	   else

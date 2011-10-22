@@ -56,6 +56,8 @@ public:
 
 	virtual ~NodeModule();
 
+	App& app() const;
+
 	Port* port(boost::shared_ptr<const PortModel> model);
 
 	void delete_port_view(SharedPtr<const PortModel> port);

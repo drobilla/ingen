@@ -44,7 +44,7 @@ public:
 	              const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void set_connected_to(SharedPtr<ServerInterface> engine);
-	void start(Ingen::Shared::World* world);
+	void start(App& app, Ingen::Shared::World* world);
 	void on_response(int32_t id) { _attached = true; }
 
 	bool attached()  const { return _finished_connecting; }

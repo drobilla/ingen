@@ -57,6 +57,7 @@ public:
 	            const Glib::RefPtr<Gtk::Builder>& xml);
 	~PatchWindow();
 
+	void init_window(App& app);
 	void set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view);
 	void set_patch(SharedPtr<const PatchModel> pc, SharedPtr<PatchView> view);
 

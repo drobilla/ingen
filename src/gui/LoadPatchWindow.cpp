@@ -42,6 +42,7 @@ namespace GUI {
 LoadPatchWindow::LoadPatchWindow(BaseObjectType*                   cobject,
                                  const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::FileChooserDialog(cobject)
+	, _app(NULL)
 	, _merge_ports(false)
 {
 	xml->get_widget("load_patch_symbol_label", _symbol_label);
@@ -124,8 +125,8 @@ LoadPatchWindow::set_patch(SharedPtr<const PatchModel> patch)
 void
 LoadPatchWindow::on_show()
 {
-	if (App::instance().configuration()->patch_folder().length() > 0)
-		set_current_folder(App::instance().configuration()->patch_folder());
+	if (_app->configuration()->patch_folder().length() > 0)
+		set_current_folder(_app->configuration()->patch_folder());
 	Gtk::FileChooserDialog::on_show();
 }
 
@@ -149,7 +150,7 @@ LoadPatchWindow::ok_clicked()
 		return;
 	}
 
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = _app->uris();
 
 	if (_poly_voices_radio->get_active())
 		_initial_data.insert(make_pair(
@@ -168,7 +169,7 @@ LoadPatchWindow::ok_clicked()
 			symbol = _patch->symbol();
 		}
 
-		App::instance().loader()->load_patch(true, get_uri(),
+		_app->loader()->load_patch(true, get_uri(),
 				parent, symbol, _initial_data);
 
 	} else {
@@ -186,7 +187,7 @@ LoadPatchWindow::ok_clicked()
 
 			symbol = avoid_symbol_clash(symbol);
 
-			App::instance().loader()->load_patch(false, *i,
+			_app->loader()->load_patch(false, *i,
 					_patch->path(), symbol, _initial_data);
 		}
 	}
@@ -213,7 +214,7 @@ LoadPatchWindow::symbol_from_filename(const Glib::ustring& filename)
 Raul::Symbol
 LoadPatchWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
 {
-	unsigned offset = App::instance().store()->child_name_offset(
+	unsigned offset = _app->store()->child_name_offset(
 			_patch->path(), symbol);
 
 	if (offset != 0) {

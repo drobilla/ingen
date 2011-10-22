@@ -41,14 +41,15 @@ namespace GUI {
 ArtVpathDash* Port::_dash;
 
 Port*
-Port::create(FlowCanvas::Module&        module,
+Port::create(App&                       app,
+             FlowCanvas::Module&        module,
              SharedPtr<const PortModel> pm,
              bool                       human_name,
              bool                       flip)
 {
 	Glib::ustring label(human_name ? "" : pm->path().symbol());
 	if (human_name) {
-		const Raul::Atom& name = pm->get_property(App::instance().uris().lv2_name);
+		const Raul::Atom& name = pm->get_property(app.uris().lv2_name);
 		if (name.type() == Raul::Atom::STRING) {
 			label = name.get_string();
 		} else {
@@ -57,18 +58,20 @@ Port::create(FlowCanvas::Module&        module,
 				label = parent->plugin_model()->port_human_name(pm->index());
 		}
 	}
-	return new Port(module, pm, label, flip);
+	return new Port(app, module, pm, label, flip);
 }
 
 /** @a flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(FlowCanvas::Module&        module,
+Port::Port(App&                       app,
+           FlowCanvas::Module&        module,
            SharedPtr<const PortModel> pm,
            const string&              name,
            bool                       flip)
 	: FlowCanvas::Port(module, name,
 			flip ? (!pm->is_input()) : pm->is_input(),
-			App::instance().configuration()->get_port_color(pm.get()))
+			app.configuration()->get_port_color(pm.get()))
+	, _app(app)
 	, _port_model(pm)
 	, _pressed(false)
 	, _flipped(flip)
@@ -81,7 +84,7 @@ Port::Port(FlowCanvas::Module&        module,
 
 	pm->signal_moved().connect(sigc::mem_fun(this, &Port::moved));
 
-	if (App::instance().can_control(pm.get())) {
+	if (app.can_control(pm.get())) {
 		set_toggled(pm->is_toggle());
 		show_control();
 		pm->signal_property().connect(
@@ -99,19 +102,19 @@ Port::Port(FlowCanvas::Module&        module,
 
 Port::~Port()
 {
-	App::instance().activity_port_destroyed(this);
+	_app.activity_port_destroyed(this);
 }
 
 void
 Port::update_metadata()
 {
 	SharedPtr<const PortModel> pm = _port_model.lock();
-	if (App::instance().can_control(pm.get()) && pm->is_numeric()) {
+	if (_app.can_control(pm.get()) && pm->is_numeric()) {
 		boost::shared_ptr<const NodeModel> parent = PtrCast<const NodeModel>(pm->parent());
 		if (parent) {
 			float min = 0.0f;
 			float max = 1.0f;
-			parent->port_value_range(pm, min, max, App::instance().sample_rate());
+			parent->port_value_range(pm, min, max, _app.sample_rate());
 			set_control_min(min);
 			set_control_max(max);
 		}
@@ -123,7 +126,7 @@ Port::show_menu(GdkEventButton* ev)
 {
 	PortMenu* menu = NULL;
 	WidgetFactory::get_widget_derived("object_menu", menu);
-	menu->init(model(), _flipped);
+	menu->init(_app, model(), _flipped);
 	menu->popup(ev->button, ev->time);
 	return true;
 }
@@ -131,7 +134,7 @@ Port::show_menu(GdkEventButton* ev)
 void
 Port::moved()
 {
-	if (App::instance().configuration()->name_style() == Configuration::PATH)
+	if (_app.configuration()->name_style() == Configuration::PATH)
 		set_name(model()->symbol().c_str());
 }
 
@@ -214,10 +217,10 @@ peak_color(float peak)
 void
 Port::activity(const Raul::Atom& value)
 {
-	if (model()->is_a(App::instance().uris().lv2_AudioPort)) {
+	if (model()->is_a(_app.uris().lv2_AudioPort)) {
 		set_fill_color(peak_color(value.get_float()));
 	} else {
-		App::instance().port_activity(this);
+		_app.port_activity(this);
 	}
 }
 
@@ -225,14 +228,13 @@ void
 Port::set_control(float value, bool signal)
 {
 	if (signal) {
-		App&                        app   = App::instance();
-		Ingen::Shared::World* const world = app.world();
-		app.engine()->set_property(model()->path(),
+		Ingen::Shared::World* const world = _app.world();
+		_app.engine()->set_property(model()->path(),
 				world->uris()->ingen_value, Atom(value));
-		PatchWindow* pw = app.window_factory()->patch_window(
+		PatchWindow* pw = _app.window_factory()->patch_window(
 				PtrCast<const PatchModel>(model()->parent()));
 		if (!pw)
-			pw = app.window_factory()->patch_window(
+			pw = _app.window_factory()->patch_window(
 					PtrCast<const PatchModel>(model()->parent()->parent()));
 		if (pw)
 			pw->show_port_status(model().get(), value);
@@ -244,19 +246,19 @@ Port::set_control(float value, bool signal)
 void
 Port::property_changed(const URI& key, const Atom& value)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = _app.uris();
 	if (value.type() == Atom::FLOAT) {
 		float val = value.get_float();
 		if (key == uris.ingen_value && !_pressed) {
 			set_control(val, false);
 		} else if (key == uris.lv2_minimum) {
 			if (model()->port_property(uris.lv2_sampleRate)) {
-				val *= App::instance().sample_rate();
+				val *= _app.sample_rate();
 			}
 			set_control_min(val);
 		} else if (key == uris.lv2_maximum) {
 			if (model()->port_property(uris.lv2_sampleRate)) {
-				val *= App::instance().sample_rate();
+				val *= _app.sample_rate();
 			}
 			set_control_max(val);
 		}
@@ -269,7 +271,7 @@ Port::property_changed(const URI& key, const Atom& value)
 		set_border_width(dash ? 2.0 : 0.0);
 	} else if (key == uris.lv2_name) {
 		if (value.type() == Atom::STRING
-				&& App::instance().configuration()->name_style() == Configuration::HUMAN) {
+				&& _app.configuration()->name_style() == Configuration::HUMAN) {
 			set_name(value.get_string());
 		}
 	}
@@ -278,7 +280,7 @@ Port::property_changed(const URI& key, const Atom& value)
 ArtVpathDash*
 Port::dash()
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = _app.uris();
 	SharedPtr<const PortModel> pm = _port_model.lock();
 	if (!pm)
 		return NULL;
@@ -304,9 +306,8 @@ Port::set_selected(bool b)
 		FlowCanvas::Port::set_selected(b);
 		SharedPtr<const PortModel> pm = _port_model.lock();
 		if (pm && b) {
-			const App&                 app  = App::instance();
 			SharedPtr<const NodeModel> node = PtrCast<NodeModel>(pm->parent());
-			PatchWindow*               win  = app.window_factory()->parent_patch_window(node);
+			PatchWindow*               win  = _app.window_factory()->parent_patch_window(node);
 			if (win && node->plugin_model()) {
 				const std::string& doc = node->plugin_model()->port_documentation(
 					pm->index());

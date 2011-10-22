@@ -111,8 +111,8 @@ public:
 
 	static inline App& instance() { assert(_instance); return *_instance; }
 
-	static void init(Ingen::Shared::World* world);
-	static void run();
+	static SharedPtr<App> create(Ingen::Shared::World* world);
+	void run();
 
 	inline Ingen::Shared::World* world() const { return _world; }
 	inline Ingen::Shared::URIs&  uris()  const { return *_world->uris(); }

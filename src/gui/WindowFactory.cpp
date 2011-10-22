@@ -39,8 +39,9 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-WindowFactory::WindowFactory()
-	: _load_plugin_win(NULL)
+WindowFactory::WindowFactory(App& app)
+	: _app(app)
+	, _load_plugin_win(NULL)
 	, _load_patch_win(NULL)
 	, _load_remote_patch_win(NULL)
 	, _upload_patch_win(NULL)
@@ -56,7 +57,15 @@ WindowFactory::WindowFactory()
 
 #ifdef HAVE_CURL
 	WidgetFactory::get_widget_derived("upload_patch_win", _upload_patch_win);
+	_upload_patch_win->init_dialog(app);
 #endif
+
+	_load_plugin_win->init_window(app);
+	_load_patch_win->init(app);
+	//_load_remote_patch_win->init(app);
+	_new_subpatch_win->init_window(app);
+	_properties_win->init_window(app);
+	_rename_win->init_window(app);
 }
 
 WindowFactory::~WindowFactory()
@@ -169,7 +178,7 @@ WindowFactory::new_patch_window(SharedPtr<const PatchModel> patch,
 
 	PatchWindow* win = NULL;
 	WidgetFactory::get_widget_derived("patch_win", win);
-	assert(win);
+	win->init_window(_app);
 
 	win->set_patch(patch, view);
 	_patch_windows[patch->path()] = win;
@@ -184,7 +193,7 @@ bool
 WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 {
 	if (_patch_windows.size() <= 1)
-		return !App::instance().quit(*win);
+		return !_app.quit(*win);
 
 	PatchWindowMap::iterator w = _patch_windows.find(win->patch()->path());
 
@@ -216,7 +225,7 @@ WindowFactory::new_control_window(SharedPtr<const NodeModel> node)
 	if (node->polyphonic() && node->parent())
 		poly = ((PatchModel*)node->parent().get())->internal_poly();
 
-	NodeControlWindow* win = new NodeControlWindow(node, poly);
+	NodeControlWindow* win = new NodeControlWindow(_app, node, poly);
 
 	_control_windows[node->path()] = win;
 

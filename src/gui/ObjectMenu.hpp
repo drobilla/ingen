@@ -45,7 +45,7 @@ public:
 	ObjectMenu(BaseObjectType*                   cobject,
 	           const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(SharedPtr<const ObjectModel> object);
+	void init(App& app, SharedPtr<const ObjectModel> object);
 
 protected:
 	void         on_menu_learn();
@@ -57,6 +57,7 @@ protected:
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
+	App*                         _app;
 	SharedPtr<const ObjectModel> _object;
 	Gtk::MenuItem*               _learn_menuitem;
 	Gtk::MenuItem*               _unlearn_menuitem;

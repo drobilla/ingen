@@ -20,16 +20,11 @@
 
 #include <gtkmm.h>
 
-namespace Raul { class Path; }
-
 namespace Ingen {
-
-namespace Client { class ClientStore; }
 
 namespace GUI {
 
-class PatchWindow;
-class PatchTreeView;
+class App;
 
 /** Ingen GUI Window
  * \ingroup GUI
@@ -37,8 +32,10 @@ class PatchTreeView;
 class Window : public Gtk::Window
 {
 public:
-	Window()                        : Gtk::Window()        {}
-	Window(BaseObjectType* cobject) : Gtk::Window(cobject) {}
+	Window()                        : Gtk::Window(), _app(NULL)        {}
+	Window(BaseObjectType* cobject) : Gtk::Window(cobject), _app(NULL) {}
+
+	virtual void init_window(App& app) { _app = &app; }
 
 	bool on_key_press_event(GdkEventKey* event) {
 		if (Ingen::GUI::Window::key_press_handler(this, event))
@@ -48,6 +45,8 @@ public:
 	}
 
 	static bool key_press_handler(Gtk::Window* win, GdkEventKey* event);
+
+	App* _app;
 };
 
 /** Ingen GUI Dialog
@@ -56,8 +55,10 @@ public:
 class Dialog : public Gtk::Dialog
 {
 public:
-	Dialog()                        : Gtk::Dialog()        {}
-	Dialog(BaseObjectType* cobject) : Gtk::Dialog(cobject) {}
+	Dialog()                        : Gtk::Dialog(), _app(NULL)        {}
+	Dialog(BaseObjectType* cobject) : Gtk::Dialog(cobject), _app(NULL) {}
+
+	virtual void init_dialog(App& app) { _app = &app; }
 
 	bool on_key_press_event(GdkEventKey* event) {
 		if (Ingen::GUI::Window::key_press_handler(this, event))
@@ -65,6 +66,8 @@ public:
 		else
 			return Gtk::Dialog::on_key_press_event(event);
 	}
+
+	App* _app;
 };
 
 } // namespace GUI

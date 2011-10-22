@@ -93,7 +93,7 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 
 	set_title(model->path().chop_scheme() + " Properties - Ingen");
 
-	Shared::World* world = App::instance().world();
+	Shared::World* world = _app->world();
 
 	ostringstream ss;
 	unsigned n_rows = 0;
@@ -296,7 +296,7 @@ PropertiesWindow::apply_clicked()
 		}
 	}
 
-	App::instance().engine()->put(_model->path(), properties);
+	_app->engine()->put(_model->path(), properties);
 
 	LOG(debug) << "}" << endl;
 }

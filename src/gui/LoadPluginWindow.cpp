@@ -132,7 +132,7 @@ LoadPluginWindow::name_changed()
 		string name = _node_name_entry->get_text();
 		if (!Path::is_valid_name(name)) {
 			_add_button->property_sensitive() = false;
-		} else if (App::instance().store()->find_child(_patch, name)) {
+		} else if (_app->store()->find_child(_patch, name)) {
 			_add_button->property_sensitive() = false;
 		} else if (name.length() == 0) {
 			_add_button->property_sensitive() = false;
@@ -181,13 +181,13 @@ void
 LoadPluginWindow::on_show()
 {
 	if (!_has_shown) {
-		App::instance().store()->signal_new_plugin().connect(
+		_app->store()->signal_new_plugin().connect(
 				sigc::mem_fun(this, &LoadPluginWindow::add_plugin));
 		_has_shown = true;
 	}
 
 	if (_refresh_list) {
-		set_plugins(App::instance().store()->plugins());
+		set_plugins(_app->store()->plugins());
 		_refresh_list = false;
 	}
 
@@ -224,7 +224,7 @@ void
 LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
                           SharedPtr<const PluginModel> plugin)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = _app->uris();
 	const Atom& name = plugin->get_property(uris.doap_name);
 	if (name.is_valid() && name.type() == Atom::STRING)
 			row[_plugins_columns._col_name] = name.get_string();
@@ -290,7 +290,7 @@ LoadPluginWindow::plugin_selection_changed()
 			Gtk::TreeModel::Row row = *iter;
 			boost::shared_ptr<const PluginModel> p = row.get_value(
 				_plugins_columns._col_plugin);
-			_name_offset = App::instance().store()->child_name_offset(
+			_name_offset = _app->store()->child_name_offset(
 					_patch->path(), p->default_node_symbol());
 			_node_name_entry->set_text(generate_module_name(p, _name_offset));
 			_node_name_entry->set_sensitive(true);
@@ -325,7 +325,7 @@ LoadPluginWindow::generate_module_name(SharedPtr<const PluginModel> plugin,
 void
 LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 {
-	const URIs&                  uris       = App::instance().uris();
+	const URIs&                  uris       = _app->uris();
 	Gtk::TreeModel::Row          row        = *iter;
 	SharedPtr<const PluginModel> plugin     = row.get_value(_plugins_columns._col_plugin);
 	bool                         polyphonic = _polyphonic_checkbutton->get_active();
@@ -346,7 +346,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		props.insert(make_pair(uris.rdf_type,         uris.ingen_Node));
 		props.insert(make_pair(uris.rdf_instanceOf,   plugin->uri()));
 		props.insert(make_pair(uris.ingen_polyphonic, polyphonic));
-		App::instance().engine()->put(path, props);
+		_app->engine()->put(path, props);
 
 		if (_selection->get_selected_rows().size() == 1) {
 			_name_offset = (_name_offset == 0) ? 2 : _name_offset + 1;
@@ -386,10 +386,10 @@ LoadPluginWindow::filter_changed()
 	Gtk::TreeModel::Row      model_row;
 	Gtk::TreeModel::iterator model_iter;
 	size_t                   num_visible = 0;
-	const URIs&              uris        = App::instance().uris();
+	const URIs&              uris        = _app->uris();
 
-	for (ClientStore::Plugins::const_iterator i = App::instance().store()->plugins()->begin();
-			i != App::instance().store()->plugins()->end(); ++i) {
+	for (ClientStore::Plugins::const_iterator i = _app->store()->plugins()->begin();
+			i != _app->store()->plugins()->end(); ++i) {
 
 		const SharedPtr<PluginModel> plugin = (*i).second;
 		const Atom& name = plugin->get_property(uris.doap_name);
@@ -439,7 +439,7 @@ LoadPluginWindow::plugin_property_changed(const URI&  plugin,
 	                                      const URI&  predicate,
 	                                      const Atom& value)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = _app->uris();
 	if (predicate == uris.doap_name) {
 		Rows::const_iterator i = _rows.find(plugin);
 		if (i != _rows.end() && value.type() == Atom::STRING)

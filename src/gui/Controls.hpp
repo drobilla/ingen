@@ -44,7 +44,9 @@ public:
 	        const Glib::RefPtr<Gtk::Builder>& xml);
 	virtual ~Control();
 
-	virtual void init(ControlPanel* panel, SharedPtr<const Client::PortModel> pm);
+	virtual void init(App&                               app,
+	                  ControlPanel*                      panel,
+	                  SharedPtr<const Client::PortModel> pm);
 
 	void enable();
 	void disable();
@@ -58,14 +60,14 @@ protected:
 	void set_label(const std::string& name);
 	void menu_properties();
 
+	App*                               _app;
 	ControlPanel*                      _control_panel;
 	SharedPtr<const Client::PortModel> _port_model;
 	sigc::connection                   _control_connection;
+	Gtk::Menu*                         _menu;
+	Gtk::MenuItem*                     _menu_properties;
+	Gtk::Label*                        _name_label;
 	bool                               _enable_signal;
-
-	Gtk::Menu*     _menu;
-	Gtk::MenuItem* _menu_properties;
-	Gtk::Label*    _name_label;
 };
 
 /** A slider for a continuous control.
@@ -78,7 +80,9 @@ public:
 	SliderControl(BaseObjectType*                   cobject,
 	              const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(ControlPanel* panel, SharedPtr<const Client::PortModel> pm);
+	void init(App&                               app,
+	          ControlPanel*                      panel,
+	          SharedPtr<const Client::PortModel> pm);
 
 	void set_min(float val);
 	void set_max(float val);
@@ -112,7 +116,9 @@ public:
 	ToggleControl(BaseObjectType*                   cobject,
 	              const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(ControlPanel* panel, SharedPtr<const Client::PortModel> pm);
+	void init(App&                               app,
+	          ControlPanel*                      panel,
+	          SharedPtr<const Client::PortModel> pm);
 
 private:
 	void set_value(const Raul::Atom& value);
@@ -131,7 +137,9 @@ public:
 	StringControl(BaseObjectType*                   cobject,
 	              const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(ControlPanel* panel, SharedPtr<const Client::PortModel> pm);
+	void init(App&                               app,
+	          ControlPanel*                      panel,
+	          SharedPtr<const Client::PortModel> pm);
 
 private:
 	void set_value(const Raul::Atom& value);

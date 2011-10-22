@@ -109,11 +109,6 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 	xml->get_widget("patch_documentation_scrolledwindow", _doc_scrolledwindow);
 
 	_menu_view_control_window->property_sensitive() = false;
-	string engine_name = App::instance().engine()->uri().str();
-	if (engine_name == "http://drobilla.net/ns/ingen#internal")
-		engine_name = "internal engine";
-	_status_bar->push(string("Connected to ") + engine_name, STATUS_CONTEXT_ENGINE);
-
 	_menu_import->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_import));
 	_menu_import_location->signal_activate().connect(
@@ -164,17 +159,6 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &PatchWindow::event_show_controls));
 	_menu_view_patch_properties->signal_activate().connect(
 		sigc::mem_fun(this, &PatchWindow::event_show_properties));
-	_menu_view_messages_window->signal_activate().connect(
-		sigc::mem_fun<void>(App::instance().messages_dialog(), &MessagesWindow::present));
-	_menu_view_patch_tree_window->signal_activate().connect(
-		sigc::mem_fun<void>(App::instance().patch_tree(), &PatchTreeWindow::present));
-
-	_menu_help_about->signal_activate().connect(sigc::hide_return(
-		sigc::mem_fun(App::instance(), &App::show_about)));
-
-	_breadcrumbs = new BreadCrumbs();
-	_breadcrumbs->signal_patch_selected.connect(
-		sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
 
 #ifndef HAVE_CURL
 	_menu_upload->hide();
@@ -190,6 +174,30 @@ PatchWindow::~PatchWindow()
 	delete _breadcrumbs;
 }
 
+void
+PatchWindow::init_window(App& app)
+{
+	Window::init_window(app);
+
+	string engine_name = _app->engine()->uri().str();
+	if (engine_name == "http://drobilla.net/ns/ingen#internal") {
+		engine_name = "internal engine";
+	}
+	_status_bar->push(string("Connected to ") + engine_name, STATUS_CONTEXT_ENGINE);
+
+	_menu_view_messages_window->signal_activate().connect(
+		sigc::mem_fun<void>(_app->messages_dialog(), &MessagesWindow::present));
+	_menu_view_patch_tree_window->signal_activate().connect(
+		sigc::mem_fun<void>(_app->patch_tree(), &PatchTreeWindow::present));
+
+	_menu_help_about->signal_activate().connect(sigc::hide_return(
+		sigc::mem_fun(_app, &App::show_about)));
+
+	_breadcrumbs = new BreadCrumbs(*_app);
+	_breadcrumbs->signal_patch_selected.connect(
+		sigc::mem_fun(this, &PatchWindow::set_patch_from_path));
+}
+
 /** Set the patch controller from a Path (for use by eg. BreadCrumbs)
  */
 void
@@ -197,12 +205,12 @@ PatchWindow::set_patch_from_path(const Path& path, SharedPtr<PatchView> view)
 {
 	if (view) {
 		assert(view->patch()->path() == path);
-		App::instance().window_factory()->present_patch(view->patch(), this, view);
+		_app->window_factory()->present_patch(view->patch(), this, view);
 	} else {
 		SharedPtr<const PatchModel> model = PtrCast<const PatchModel>(
-			App::instance().store()->object(path));
+			_app->store()->object(path));
 		if (model)
-			App::instance().window_factory()->present_patch(model, this);
+			_app->window_factory()->present_patch(model, this);
 	}
 }
 
@@ -234,7 +242,7 @@ PatchWindow::set_patch(SharedPtr<const PatchModel> patch,
 		_view = _breadcrumbs->view(patch->path());
 
 	if (!_view)
-		_view = PatchView::create(patch);
+		_view = PatchView::create(*_app, patch);
 
 	assert(_view);
 
@@ -259,7 +267,7 @@ PatchWindow::set_patch(SharedPtr<const PatchModel> patch,
 
 	for (NodeModel::Ports::const_iterator p = patch->ports().begin();
 			p != patch->ports().end(); ++p) {
-		if (App::instance().can_control(p->get())) {
+		if (_app->can_control(p->get())) {
 			_menu_view_control_window->property_sensitive() = true;
 			break;
 		}
@@ -288,7 +296,7 @@ PatchWindow::set_patch(SharedPtr<const PatchModel> patch,
 void
 PatchWindow::patch_port_added(SharedPtr<const PortModel> port)
 {
-	if (port->is_input() && App::instance().can_control(port.get())) {
+	if (port->is_input() && _app->can_control(port.get())) {
 		_menu_view_control_window->property_sensitive() = true;
 	}
 }
@@ -296,12 +304,12 @@ PatchWindow::patch_port_added(SharedPtr<const PortModel> port)
 void
 PatchWindow::patch_port_removed(SharedPtr<const PortModel> port)
 {
-	if (!(port->is_input() && App::instance().can_control(port.get())))
+	if (!(port->is_input() && _app->can_control(port.get())))
 		return;
 
 	for (NodeModel::Ports::const_iterator i = _patch->ports().begin();
 			i != _patch->ports().end(); ++i) {
-		if ((*i)->is_input() && App::instance().can_control(i->get())) {
+		if ((*i)->is_input() && _app->can_control(i->get())) {
 			_menu_view_control_window->property_sensitive() = true;
 			return;
 		}
@@ -406,7 +414,7 @@ void
 PatchWindow::event_show_engine()
 {
 	if (_patch)
-		App::instance().connect_window()->show();
+		_app->connect_window()->show();
 }
 
 void
@@ -419,35 +427,35 @@ PatchWindow::event_clipboard_changed(GdkEventOwnerChange* ev)
 void
 PatchWindow::event_show_controls()
 {
-	App::instance().window_factory()->present_controls(_patch);
+	_app->window_factory()->present_controls(_patch);
 }
 
 void
 PatchWindow::event_show_properties()
 {
-	App::instance().window_factory()->present_properties(_patch);
+	_app->window_factory()->present_properties(_patch);
 }
 
 void
 PatchWindow::event_import()
 {
-	App::instance().window_factory()->present_load_patch(_patch);
+	_app->window_factory()->present_load_patch(_patch);
 }
 
 void
 PatchWindow::event_import_location()
 {
-	App::instance().window_factory()->present_load_remote_patch(_patch);
+	_app->window_factory()->present_load_remote_patch(_patch);
 }
 
 void
 PatchWindow::event_save()
 {
-	const Raul::Atom& document = _patch->get_property(App::instance().uris().ingen_document);
+	const Raul::Atom& document = _patch->get_property(_app->uris().ingen_document);
 	if (!document.is_valid() || document.type() != Raul::Atom::URI) {
 		event_save_as();
 	} else {
-		App::instance().loader()->save_patch(_patch, document.get_uri());
+		_app->loader()->save_patch(_patch, document.get_uri());
 		_status_bar->push(
 				(boost::format("Saved %1% to %2%") % _patch->path().chop_scheme()
 				 % document.get_uri()).str(),
@@ -458,7 +466,7 @@ PatchWindow::event_save()
 void
 PatchWindow::event_save_as()
 {
-	const Shared::URIs& uris = App::instance().uris();
+	const Shared::URIs& uris = _app->uris();
 	while (true) {
 		Gtk::FileChooserDialog dialog(*this, "Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
 
@@ -475,8 +483,8 @@ PatchWindow::event_save_as()
 		const Raul::Atom& document = _patch->get_property(uris.ingen_document);
 		if (document.type() == Raul::Atom::URI)
 			dialog.set_uri(document.get_uri());
-		else if (App::instance().configuration()->patch_folder().length() > 0)
-			dialog.set_current_folder(App::instance().configuration()->patch_folder());
+		else if (_app->configuration()->patch_folder().length() > 0)
+			dialog.set_current_folder(_app->configuration()->patch_folder());
 
 		if (dialog.run() != Gtk::RESPONSE_OK)
 			break;
@@ -539,7 +547,7 @@ more files and/or directories, recursively.  Existing files will be overwritten.
 
 		if (confirm) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
-			App::instance().loader()->save_patch(_patch, uri);
+			_app->loader()->save_patch(_patch, uri);
 			const_cast<PatchModel*>(_patch.get())->set_property(
 				uris.ingen_document, Atom(Atom::URI, uri.c_str()), Resource::EXTERNAL);
 			_status_bar->push(
@@ -548,7 +556,7 @@ more files and/or directories, recursively.  Existing files will be overwritten.
 					STATUS_CONTEXT_PATCH);
 		}
 
-		App::instance().configuration()->set_patch_folder(dialog.get_current_folder());
+		_app->configuration()->set_patch_folder(dialog.get_current_folder());
 		break;
 	}
 }
@@ -556,7 +564,7 @@ more files and/or directories, recursively.  Existing files will be overwritten.
 void
 PatchWindow::event_upload()
 {
-	App::instance().window_factory()->present_upload_patch(_patch);
+	_app->window_factory()->present_upload_patch(_patch);
 }
 
 void
@@ -659,13 +667,13 @@ PatchWindow::on_event(GdkEvent* event)
 void
 PatchWindow::event_close()
 {
-	App::instance().window_factory()->remove_patch_window(this);
+	_app->window_factory()->remove_patch_window(this);
 }
 
 void
 PatchWindow::event_quit()
 {
-	App::instance().quit(*this);
+	_app->quit(*this);
 }
 
 void
@@ -721,9 +729,9 @@ PatchWindow::event_human_names_toggled()
 {
 	_view->canvas()->show_human_names(_menu_human_names->get_active());
 	if (_menu_human_names->get_active())
-		App::instance().configuration()->set_name_style(Configuration::HUMAN);
+		_app->configuration()->set_name_style(Configuration::HUMAN);
 	else
-		App::instance().configuration()->set_name_style(Configuration::PATH);
+		_app->configuration()->set_name_style(Configuration::PATH);
 }
 
 void

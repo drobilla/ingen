@@ -54,6 +54,8 @@ public:
 		SharedPtr<const PortModel> model,
 		bool                       human);
 
+	App& app() const;
+
 	virtual void store_location();
 	void show_human_names(bool b);
 

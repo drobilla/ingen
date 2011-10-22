@@ -20,11 +20,13 @@
 
 struct IngenGUIModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
-		Ingen::GUI::App::init(world);
+		app = Ingen::GUI::App::create(world);
 	}
 	void run(Ingen::Shared::World* world) {
-		Ingen::GUI::App::run();
+		app->run();
 	}
+
+	SharedPtr<Ingen::GUI::App> app;
 };
 
 extern "C" {

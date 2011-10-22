@@ -67,17 +67,17 @@ LoadRemotePatchWindow::present(SharedPtr<const PatchModel> patch,
 
 	cerr << "FIXME: load remote patch" << endl;
 #if 0
-	Sord::Model model(*App::instance().world()->rdf_world(),
+	Sord::Model model(*_app->world()->rdf_world(),
 			"http://rdf.drobilla.net/ingen_patches/index.ttl",
 			"http://rdf.drobilla.net/ingen_patches/");
 
-	Sord::Query query(*App::instance().world()->rdf_world(), Glib::ustring(
+	Sord::Query query(*_app->world()->rdf_world(), Glib::ustring(
 		"SELECT DISTINCT ?name ?uri WHERE {"
 		"  ?uri a            ingen:Patch ;"
 		"       doap:name    ?name ."
 		"}"));
 
-	SharedPtr<Sord::QueryResults> results(query.run(*App::instance().world()->rdf_world(), model));
+	SharedPtr<Sord::QueryResults> results(query.run(*_app->world()->rdf_world(), model));
 	for (; !results->finished(); results->next()) {
 		Gtk::TreeModel::iterator iter = _liststore->append();
 		(*iter)[_columns._col_name] = results->get("name").to_string();
@@ -135,7 +135,7 @@ LoadRemotePatchWindow::open_clicked()
 	if (!_patch->path().is_root())
 		parent = _patch->path().parent();
 
-	App::instance().loader()->load_patch(true, uri,
+	_app->loader()->load_patch(true, uri,
 			parent, symbol, _initial_data);
 
 	hide();

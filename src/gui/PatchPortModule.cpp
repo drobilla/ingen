@@ -59,15 +59,21 @@ PatchPortModule::create(PatchCanvas&               canvas,
                         bool                       human)
 {
 	PatchPortModule* ret  = new PatchPortModule(canvas, model);
-	Port*            port = Port::create(*ret, model, human, true);
+	Port*            port = Port::create(canvas.app(), *ret, model, human, true);
 
 	ret->set_port(port);
 
 	for (GraphObject::Properties::const_iterator m = model->properties().begin();
-			m != model->properties().end(); ++m)
+	     m != model->properties().end(); ++m)
 		ret->property_changed(m->first, m->second);
 
 	return ret;
+}
+
+App&
+PatchPortModule::app() const
+{
+	return ((PatchCanvas*)canvas())->app();
 }
 
 bool
@@ -83,7 +89,7 @@ PatchPortModule::store_location()
 	const Atom x(static_cast<float>(property_x()));
 	const Atom y(static_cast<float>(property_y()));
 
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = app().uris();
 
 	const Atom& existing_x = _model->get_property(uris.ingenui_canvas_x);
 	const Atom& existing_y = _model->get_property(uris.ingenui_canvas_y);
@@ -97,14 +103,14 @@ PatchPortModule::store_location()
 		                     Resource::Property(x, Resource::INTERNAL)));
 		add.insert(make_pair(uris.ingenui_canvas_y,
 		                     Resource::Property(y, Resource::INTERNAL)));
-		App::instance().engine()->delta(_model->path(), remove, add);
+		app().engine()->delta(_model->path(), remove, add);
 	}
 }
 
 void
 PatchPortModule::show_human_names(bool b)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = app().uris();
 	const Atom& name = _model->get_property(uris.lv2_name);
 	if (b && name.type() == Atom::STRING)
 		set_name(name.get_string());
@@ -122,7 +128,7 @@ PatchPortModule::set_name(const std::string& n)
 void
 PatchPortModule::property_changed(const URI& key, const Atom& value)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = app().uris();
 	switch (value.type()) {
 	case Atom::FLOAT:
 		if (key == uris.ingenui_canvas_x) {
@@ -133,10 +139,10 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 		break;
 	case Atom::STRING:
 		if (key == uris.lv2_name
-				&& App::instance().configuration()->name_style() == Configuration::HUMAN) {
+		    && app().configuration()->name_style() == Configuration::HUMAN) {
 			set_name(value.get_string());
 		} else if (key == uris.lv2_symbol
-				&& App::instance().configuration()->name_style() == Configuration::PATH) {
+		           && app().configuration()->name_style() == Configuration::PATH) {
 			set_name(value.get_string());
 		}
 		break;
@@ -161,9 +167,9 @@ PatchPortModule::set_selected(bool b)
 {
 	if (b != selected()) {
 		Module::set_selected(b);
-		if (App::instance().signal())
-			App::instance().engine()->set_property(_model->path(),
-				   App::instance().uris().ingen_selected, b);
+		if (app().signal())
+			app().engine()->set_property(_model->path(),
+			                             app().uris().ingen_selected, b);
 	}
 }
 

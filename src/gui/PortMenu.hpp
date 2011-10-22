@@ -39,7 +39,9 @@ public:
 	PortMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(SharedPtr<const PortModel> port, bool patch_port=false);
+	void init(App&                       app,
+	          SharedPtr<const PortModel> port,
+	          bool                       patch_port=false);
 
 private:
 	void on_menu_disconnect();

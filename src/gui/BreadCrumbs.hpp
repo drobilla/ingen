@@ -40,7 +40,7 @@ namespace GUI {
 class BreadCrumbs : public Gtk::HBox
 {
 public:
-	BreadCrumbs();
+	BreadCrumbs(App& app);
 
 	SharedPtr<PatchView> view(const Raul::Path& path);
 

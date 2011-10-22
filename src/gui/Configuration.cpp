@@ -37,9 +37,10 @@ namespace GUI {
 
 using namespace Ingen::Client;
 
-Configuration::Configuration()
+Configuration::Configuration(App& app)
 	// Colours from  the Tango palette with modified V and alpha
-	: _name_style(HUMAN)
+	: _app(app)
+	, _name_style(HUMAN)
 	, _audio_port_color(  0x4A8A0EC0) // Green
 	, _control_port_color(0x244678C0) // Blue
 	, _event_port_color(  0x960909C0) // Red
@@ -83,12 +84,12 @@ uint32_t
 Configuration::get_port_color(const PortModel* p)
 {
 	assert(p != NULL);
-	const Shared::URIs& uris = App::instance().uris();
+	const Shared::URIs& uris = _app.uris();
 	if (p->is_a(uris.lv2_AudioPort)) {
 		return _audio_port_color;
 	} else if (p->supports(uris.atom_String)) {
 		return _string_port_color;
-	} else if (App::instance().can_control(p)) {
+	} else if (_app.can_control(p)) {
 		return _control_port_color;
 	} else if (p->is_a(uris.ev_EventPort) || p->is_a(uris.atom_MessagePort)) {
 		return _event_port_color;

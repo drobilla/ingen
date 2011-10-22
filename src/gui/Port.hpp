@@ -33,6 +33,8 @@ using Ingen::Client::PortModel;
 
 namespace GUI {
 
+class App;
+
 /** A Port on an Module.
  *
  * \ingroup GUI
@@ -41,6 +43,7 @@ class Port : public FlowCanvas::Port
 {
 public:
 	static Port* create(
+		App&                       app,
 		FlowCanvas::Module&        module,
 		SharedPtr<const PortModel> pm,
 		bool                       human_name,
@@ -62,10 +65,11 @@ public:
 	ArtVpathDash* dash();
 
 private:
-	Port(FlowCanvas::Module&        module,
+	Port(App&                       app,
+	     FlowCanvas::Module&        module,
 	     SharedPtr<const PortModel> pm,
 	     const std::string&         name,
-	     bool                       flip=false);
+	     bool                       flip = false);
 
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 
@@ -74,9 +78,10 @@ private:
 
 	static ArtVpathDash* _dash;
 
+	App&                     _app;
 	WeakPtr<const PortModel> _port_model;
-	bool                     _pressed;
-	bool                     _flipped;
+	bool                     _pressed : 1;
+	bool                     _flipped : 1;
 };
 
 } // namespace GUI

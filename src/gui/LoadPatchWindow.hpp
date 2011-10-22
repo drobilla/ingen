@@ -45,6 +45,8 @@ public:
 	LoadPatchWindow(BaseObjectType*                   cobject,
 	                const Glib::RefPtr<Gtk::Builder>& xml);
 
+	void init(App& app) { _app = &app; }
+
 	void set_patch(SharedPtr<const PatchModel> patch);
 
 	void present(SharedPtr<const PatchModel> patch,
@@ -64,6 +66,8 @@ private:
 
 	Raul::Symbol symbol_from_filename(const Glib::ustring& filename);
 	Raul::Symbol avoid_symbol_clash(const Raul::Symbol& symbol);
+
+	App* _app;
 
 	GraphObject::Properties _initial_data;
 

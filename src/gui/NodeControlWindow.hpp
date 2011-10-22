@@ -43,8 +43,9 @@ class ControlPanel;
 class NodeControlWindow : public Window
 {
 public:
-	NodeControlWindow(SharedPtr<const NodeModel> node, uint32_t poly);
-	NodeControlWindow(SharedPtr<const NodeModel> node, ControlPanel* panel);
+	NodeControlWindow(App& app, SharedPtr<const NodeModel> node, uint32_t poly);
+	NodeControlWindow(App& app, SharedPtr<const NodeModel> node, ControlPanel* panel);
+
 	virtual ~NodeControlWindow();
 
 	SharedPtr<const NodeModel> node() const { return _node; }

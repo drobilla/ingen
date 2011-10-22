@@ -77,8 +77,8 @@ NewSubpatchWindow::name_changed()
 	if (!Path::is_valid_name(name)) {
 		_message_label->set_text("Name contains invalid characters.");
 		_ok_button->property_sensitive() = false;
-	} else if (App::instance().store()->find(_patch->path().base() + name)
-			!= App::instance().store()->end()) {
+	} else if (_app->store()->find(_patch->path().base() + name)
+			!= _app->store()->end()) {
 		_message_label->set_text("An object already exists with that name.");
 		_ok_button->property_sensitive() = false;
 	} else if (name.length() == 0) {
@@ -93,21 +93,20 @@ NewSubpatchWindow::name_changed()
 void
 NewSubpatchWindow::ok_clicked()
 {
-	App&           app  = App::instance();
 	const Path     path = _patch->path().base() + Path::nameify(_name_entry->get_text());
 	const uint32_t poly = _poly_spinbutton->get_value_as_int();
 
 	// Create patch
 	Resource::Properties props;
-	props.insert(make_pair(app.uris().rdf_type,        app.uris().ingen_Patch));
-	props.insert(make_pair(app.uris().ingen_polyphony, Atom(int32_t(poly))));
-	props.insert(make_pair(app.uris().ingen_enabled,   Atom(bool(true))));
-	app.engine()->put(path, props, Resource::INTERNAL);
+	props.insert(make_pair(_app->uris().rdf_type,        _app->uris().ingen_Patch));
+	props.insert(make_pair(_app->uris().ingen_polyphony, Atom(int32_t(poly))));
+	props.insert(make_pair(_app->uris().ingen_enabled,   Atom(bool(true))));
+	_app->engine()->put(path, props, Resource::INTERNAL);
 
 	// Set external (node perspective) properties
 	props = _initial_data;
-	props.insert(make_pair(app.uris().rdf_type, app.uris().ingen_Patch));
-	app.engine()->put(path, _initial_data, Resource::EXTERNAL);
+	props.insert(make_pair(_app->uris().rdf_type, _app->uris().ingen_Patch));
+	_app->engine()->put(path, _initial_data, Resource::EXTERNAL);
 
 	hide();
 }

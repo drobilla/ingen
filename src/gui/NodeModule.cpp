@@ -72,7 +72,7 @@ NodeModule::~NodeModule()
 {
 	embed_gui(false);
 
-	NodeControlWindow* win = App::instance().window_factory()->control_window(_node);
+	NodeControlWindow* win = app().window_factory()->control_window(_node);
 	delete win; // Will be removed from window factory via signal
 }
 
@@ -80,7 +80,7 @@ bool
 NodeModule::show_menu(GdkEventButton* ev)
 {
 	WidgetFactory::get_widget_derived("object_menu", _menu);
-	_menu->init(_node);
+	_menu->init(app(), _node);
 	_menu->signal_embed_gui.connect(
 		sigc::mem_fun(this, &NodeModule::embed_gui));
 	_menu->signal_popup_gui.connect(
@@ -118,10 +118,16 @@ NodeModule::create(PatchCanvas&               canvas,
 	return ret;
 }
 
+App&
+NodeModule::app() const
+{
+	return ((PatchCanvas*)canvas())->app();
+}
+
 void
 NodeModule::show_human_names(bool b)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = app().uris();
 
 	if (b && node()->plugin()) {
 		const Raul::Atom& name_property = node()->get_property(uris.lv2_name);
@@ -183,7 +189,7 @@ NodeModule::plugin_changed()
 void
 NodeModule::embed_gui(bool embed)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = app().uris();
 	if (embed) {
 
 		if (_gui_window) {
@@ -193,7 +199,7 @@ NodeModule::embed_gui(bool embed)
 
 		if (!_plugin_ui) {
 			const PluginModel* const pm = dynamic_cast<const PluginModel*>(_node->plugin());
-			_plugin_ui = pm->ui(App::instance().world(), _node);
+			_plugin_ui = pm->ui(app().world(), _node);
 		}
 
 		if (_plugin_ui) {
@@ -213,8 +219,8 @@ NodeModule::embed_gui(bool embed)
 
 			for (NodeModel::Ports::const_iterator p = _node->ports().begin();
 					p != _node->ports().end(); ++p)
-				if ((*p)->is_output() && App::instance().can_control(p->get()))
-					App::instance().engine()->set_property((*p)->path(), uris.ingen_broadcast, true);
+				if ((*p)->is_output() && app().can_control(p->get()))
+					app().engine()->set_property((*p)->path(), uris.ingen_broadcast, true);
 		}
 
 	} else { // un-embed
@@ -224,8 +230,8 @@ NodeModule::embed_gui(bool embed)
 
 		for (NodeModel::Ports::const_iterator p = _node->ports().begin();
 		     p != _node->ports().end(); ++p)
-			if ((*p)->is_output() && App::instance().can_control(p->get()))
-				App::instance().engine()->set_property((*p)->path(),
+			if ((*p)->is_output() && app().can_control(p->get()))
+				app().engine()->set_property((*p)->path(),
 				                                       uris.ingen_broadcast,
 				                                       false);
 	}
@@ -241,7 +247,7 @@ NodeModule::embed_gui(bool embed)
 void
 NodeModule::rename()
 {
-	if (App::instance().configuration()->name_style() == Configuration::PATH) {
+	if (app().configuration()->name_style() == Configuration::PATH) {
 		set_name(_node->path().symbol());
 	}
 }
@@ -249,8 +255,8 @@ NodeModule::rename()
 void
 NodeModule::new_port_view(SharedPtr<const PortModel> port)
 {
-	Port::create(*this, port,
-	             App::instance().configuration()->name_style() == Configuration::HUMAN);
+	Port::create(app(), *this, port,
+	             app().configuration()->name_style() == Configuration::HUMAN);
 
 	port->signal_value_changed().connect(
 		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::value_changed),
@@ -291,7 +297,7 @@ NodeModule::popup_gui()
 		const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_node->plugin());
 		assert(plugin);
 
-		_plugin_ui = plugin->ui(App::instance().world(), _node);
+		_plugin_ui = plugin->ui(app().world(), _node);
 
 		if (_plugin_ui) {
 			GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
@@ -332,7 +338,7 @@ NodeModule::set_control_values()
 	uint32_t index = 0;
 	for (NodeModel::Ports::const_iterator p = _node->ports().begin();
 	     p != _node->ports().end(); ++p) {
-		if (App::instance().can_control(p->get()))
+		if (app().can_control(p->get()))
 			value_changed(index, (*p)->value());
 		++index;
 	}
@@ -341,7 +347,7 @@ NodeModule::set_control_values()
 void
 NodeModule::show_control_window()
 {
-	App::instance().window_factory()->present_controls(_node);
+	app().window_factory()->present_controls(_node);
 }
 
 void
@@ -357,7 +363,7 @@ NodeModule::store_location()
 	const Atom x(static_cast<float>(property_x()));
 	const Atom y(static_cast<float>(property_y()));
 
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = app().uris();
 
 	const Atom& existing_x = _node->get_property(uris.ingenui_canvas_x);
 	const Atom& existing_y = _node->get_property(uris.ingenui_canvas_y);
@@ -369,14 +375,14 @@ NodeModule::store_location()
 		Resource::Properties add;
 		add.insert(make_pair(uris.ingenui_canvas_x, x));
 		add.insert(make_pair(uris.ingenui_canvas_y, y));
-		App::instance().engine()->delta(_node->path(), remove, add);
+		app().engine()->delta(_node->path(), remove, add);
 	}
 }
 
 void
 NodeModule::property_changed(const URI& key, const Atom& value)
 {
-	const Shared::URIs& uris = App::instance().uris();
+	const Shared::URIs& uris = app().uris();
 	switch (value.type()) {
 	case Atom::FLOAT:
 		if (key == uris.ingenui_canvas_x) {
@@ -399,7 +405,7 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 		break;
 	case Atom::STRING:
 		if (key == uris.lv2_name
-				&& App::instance().configuration()->name_style() == Configuration::HUMAN) {
+				&& app().configuration()->name_style() == Configuration::HUMAN) {
 			set_name(value.get_string());
 		}
 	default: break;
@@ -409,12 +415,11 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 void
 NodeModule::set_selected(bool b)
 {
-	const App&       app  = App::instance();
-	const URIs& uris = app.uris();
+	const URIs& uris = app().uris();
 	if (b != selected()) {
 		Module::set_selected(b);
 		if (b) {
-			PatchWindow* win = app.window_factory()->parent_patch_window(node());
+			PatchWindow* win = app().window_factory()->parent_patch_window(node());
 			if (win) {
 				std::string doc;
 				bool        html = false;
@@ -428,8 +433,8 @@ NodeModule::set_selected(bool b)
 				}
 			}
 		}
-		if (App::instance().signal())
-			App::instance().engine()->set_property(_node->path(), uris.ingen_selected, b);
+		if (app().signal())
+			app().engine()->set_property(_node->path(), uris.ingen_selected, b);
 	}
 }
 

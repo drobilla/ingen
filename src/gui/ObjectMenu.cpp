@@ -36,6 +36,7 @@ namespace GUI {
 ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
                        const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::Menu(cobject)
+	, _app(NULL)
 	, _polyphonic_menuitem(NULL)
 	, _disconnect_menuitem(NULL)
 	, _rename_menuitem(NULL)
@@ -53,11 +54,10 @@ ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
 }
 
 void
-ObjectMenu::init(SharedPtr<const ObjectModel> object)
+ObjectMenu::init(App& app, SharedPtr<const ObjectModel> object)
 {
+	_app = &app;
 	_object = object;
-
-	App& app = App::instance();
 
 	_polyphonic_menuitem->signal_toggled().connect(
 			sigc::mem_fun(this, &ObjectMenu::on_menu_polyphonic));
@@ -74,7 +74,7 @@ ObjectMenu::init(SharedPtr<const ObjectModel> object)
 			sigc::mem_fun(this, &ObjectMenu::on_menu_disconnect));
 
 	_rename_menuitem->signal_activate().connect(sigc::bind(
-			sigc::mem_fun(app.window_factory(), &WindowFactory::present_rename),
+			sigc::mem_fun(_app->window_factory(), &WindowFactory::present_rename),
 			object));
 
 	_destroy_menuitem->signal_activate().connect(
@@ -94,9 +94,9 @@ ObjectMenu::init(SharedPtr<const ObjectModel> object)
 void
 ObjectMenu::on_menu_learn()
 {
-	App::instance().engine()->set_property(_object->path(),
-			App::instance().uris().ingen_controlBinding,
-			App::instance().uris().wildcard);
+	_app->engine()->set_property(_object->path(),
+			_app->uris().ingen_controlBinding,
+			_app->uris().wildcard);
 }
 
 void
@@ -104,24 +104,24 @@ ObjectMenu::on_menu_unlearn()
 {
 	Resource::Properties remove;
 	remove.insert(std::make_pair(
-			App::instance().uris().ingen_controlBinding,
-			App::instance().uris().wildcard));
-	App::instance().engine()->delta(_object->path(), remove, Resource::Properties());
+			_app->uris().ingen_controlBinding,
+			_app->uris().wildcard));
+	_app->engine()->delta(_object->path(), remove, Resource::Properties());
 }
 
 void
 ObjectMenu::on_menu_polyphonic()
 {
 	if (_enable_signal)
-		App::instance().engine()->set_property(_object->path(),
-				App::instance().uris().ingen_polyphonic,
+		_app->engine()->set_property(_object->path(),
+				_app->uris().ingen_polyphonic,
 				bool(_polyphonic_menuitem->get_active()));
 }
 
 void
 ObjectMenu::property_changed(const URI& predicate, const Atom& value)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = _app->uris();
 	_enable_signal = false;
 	if (predicate == uris.ingen_polyphonic && value.type() == Atom::BOOL)
 		_polyphonic_menuitem->set_active(value.get_bool());
@@ -131,13 +131,13 @@ ObjectMenu::property_changed(const URI& predicate, const Atom& value)
 void
 ObjectMenu::on_menu_destroy()
 {
-	App::instance().engine()->del(_object->path());
+	_app->engine()->del(_object->path());
 }
 
 void
 ObjectMenu::on_menu_properties()
 {
-	App::instance().window_factory()->present_properties(_object);
+	_app->window_factory()->present_properties(_object);
 }
 
 } // namespace GUI

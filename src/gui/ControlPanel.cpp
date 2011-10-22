@@ -48,10 +48,12 @@ ControlPanel::~ControlPanel()
 }
 
 void
-ControlPanel::init(SharedPtr<const NodeModel> node, uint32_t poly)
+ControlPanel::init(App& app, SharedPtr<const NodeModel> node, uint32_t poly)
 {
 	assert(node != NULL);
 	assert(poly > 0);
+
+	_app = &app;
 
 	for (NodeModel::Ports::const_iterator i = node->ports().begin();
 	     i != node->ports().end(); ++i) {
@@ -90,12 +92,12 @@ ControlPanel::add_port(SharedPtr<const PortModel> pm)
 			ToggleControl* tc;
 			WidgetFactory::get_widget_derived("toggle_control", tc);
 			control = tc;
-		} else if (pm->is_a(App::instance().uris().lv2_ControlPort)
-		           || pm->supports(App::instance().uris().atom_Float32)) {
+		} else if (pm->is_a(_app->uris().lv2_ControlPort)
+		           || pm->supports(_app->uris().atom_Float32)) {
 			SliderControl* sc;
 			WidgetFactory::get_widget_derived("control_strip", sc);
 			control = sc;
-		} else if (pm->supports(App::instance().uris().atom_String)) {
+		} else if (pm->supports(_app->uris().atom_String)) {
 			StringControl* sc;
 			WidgetFactory::get_widget_derived("string_control", sc);
 			control = sc;
@@ -103,7 +105,7 @@ ControlPanel::add_port(SharedPtr<const PortModel> pm)
 	}
 
 	if (control) {
-		control->init(this, pm);
+		control->init(*_app, this, pm);
 
 		if (_controls.size() > 0)
 			_control_box->pack_start(*Gtk::manage(new Gtk::HSeparator()), false, false, 4);
@@ -142,9 +144,9 @@ ControlPanel::value_changed_atom(SharedPtr<const PortModel> port,
                                  const Raul::Atom&          val)
 {
 	if (_callback_enabled) {
-		App::instance().engine()->set_property(port->path(),
-				App::instance().uris().ingen_value,
-				val);
+		_app->engine()->set_property(port->path(),
+		                             _app->uris().ingen_value,
+		                             val);
 	}
 }
 

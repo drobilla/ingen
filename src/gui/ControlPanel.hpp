@@ -38,6 +38,8 @@ using namespace Ingen::Client;
 
 namespace GUI {
 
+class App;
+
 /** A group of controls for a node (or patch).
  *
  * Used by both NodeControlWindow and the main window (for patch controls).
@@ -50,7 +52,7 @@ public:
 	             const Glib::RefPtr<Gtk::Builder>& xml);
 	virtual ~ControlPanel();
 
-	void init(SharedPtr<const NodeModel> node, uint32_t poly);
+	void init(App& app, SharedPtr<const NodeModel> node, uint32_t poly);
 
 	Control* find_port(const Raul::Path& path) const;
 
@@ -72,12 +74,11 @@ public:
 	}
 
 private:
-	bool _callback_enabled;
-
-	std::pair<int,int> _ideal_size;
-
+	App*                  _app;
+	std::pair<int,int>    _ideal_size;
 	std::vector<Control*> _controls;
 	Gtk::VBox*            _control_box;
+	bool                  _callback_enabled;
 };
 
 } // namespace GUI

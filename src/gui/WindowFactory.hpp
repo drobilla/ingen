@@ -19,9 +19,11 @@
 #define INGEN_GUI_WINDOWFACTORY_HPP
 
 #include <map>
+
 #include <gtkmm.h>
-#include "raul/SharedPtr.hpp"
+
 #include "ingen/GraphObject.hpp"
+#include "raul/SharedPtr.hpp"
 
 using namespace Ingen::Shared;
 
@@ -36,6 +38,7 @@ using Ingen::Client::ObjectModel;
 
 namespace GUI {
 
+class App;
 class LoadPatchWindow;
 class LoadPluginWindow;
 class LoadRemotePatchWindow;
@@ -55,7 +58,7 @@ class UploadPatchWindow;
  */
 class WindowFactory {
 public:
-	WindowFactory();
+	WindowFactory(App& app);
 	~WindowFactory();
 
 	size_t num_open_patch_windows();
@@ -96,9 +99,9 @@ private:
 	bool               remove_control_window(NodeControlWindow* win,
 	                                         GdkEventAny*       ignored);
 
-	PatchWindowMap   _patch_windows;
-	ControlWindowMap _control_windows;
-
+	App&                   _app;
+	PatchWindowMap         _patch_windows;
+	ControlWindowMap       _control_windows;
 	LoadPluginWindow*      _load_plugin_win;
 	LoadPatchWindow*       _load_patch_win;
 	LoadRemotePatchWindow* _load_remote_patch_win;

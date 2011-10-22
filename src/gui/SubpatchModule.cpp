@@ -55,9 +55,9 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 
 	PatchWindow* const preferred = ( (parent && (event->state & GDK_SHIFT_MASK))
 		? NULL
-		: App::instance().window_factory()->patch_window(parent) );
+		: app().window_factory()->patch_window(parent) );
 
-	App::instance().window_factory()->present_patch(_patch, preferred);
+	app().window_factory()->present_patch(_patch, preferred);
 }
 
 void
@@ -66,7 +66,7 @@ SubpatchModule::store_location()
 	const Atom x(static_cast<float>(property_x()));
 	const Atom y(static_cast<float>(property_y()));
 
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = app().uris();
 
 	const Atom& existing_x = _node->get_property(uris.ingenui_canvas_x);
 	const Atom& existing_y = _node->get_property(uris.ingenui_canvas_y);
@@ -80,7 +80,7 @@ SubpatchModule::store_location()
 		                     Resource::Property(x, Resource::EXTERNAL)));
 		add.insert(make_pair(uris.ingenui_canvas_y,
 		                     Resource::Property(y, Resource::EXTERNAL)));
-		App::instance().engine()->delta(_node->path(), remove, add);
+		app().engine()->delta(_node->path(), remove, add);
 	}
 }
 
@@ -95,16 +95,16 @@ SubpatchModule::browse_to_patch()
 	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(_patch->parent());
 
 	PatchWindow* const preferred = ( (parent)
-		? App::instance().window_factory()->patch_window(parent)
+		? app().window_factory()->patch_window(parent)
 		: NULL );
 
-	App::instance().window_factory()->present_patch(_patch, preferred);
+	app().window_factory()->present_patch(_patch, preferred);
 }
 
 void
 SubpatchModule::menu_remove()
 {
-	App::instance().engine()->del(_patch->path());
+	app().engine()->del(_patch->path());
 }
 
 } // namespace GUI

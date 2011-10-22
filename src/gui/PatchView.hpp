@@ -57,13 +57,15 @@ public:
 	PatchView(BaseObjectType*                   cobject,
 	          const Glib::RefPtr<Gtk::Builder>& xml);
 
+	void init(App& app);
+
 	SharedPtr<PatchCanvas>       canvas()               const { return _canvas; }
 	SharedPtr<const PatchModel>  patch()                const { return _patch; }
 	Gtk::ToolItem*               breadcrumb_container() const { return _breadcrumb_container; }
 
 	void set_editable(bool editable);
 
-	static SharedPtr<PatchView> create(SharedPtr<const PatchModel> patch);
+	static SharedPtr<PatchView> create(App& app, SharedPtr<const PatchModel> patch);
 
 	sigc::signal<void, const ObjectModel*> signal_object_entered;
 	sigc::signal<void, const ObjectModel*> signal_object_left;
@@ -85,20 +87,21 @@ private:
 
 	void zoom_full();
 
+	App* _app;
+
 	SharedPtr<const PatchModel> _patch;
 	SharedPtr<PatchCanvas>      _canvas;
 
-	Gtk::ScrolledWindow* _canvas_scrolledwindow;
-
-	Gtk::Toolbar*           _toolbar;
-	Gtk::ToggleToolButton*  _process_but;
-	Gtk::SpinButton*        _poly_spin;
-	Gtk::ToolButton*        _refresh_but;
-	Gtk::ToolButton*        _save_but;
-	Gtk::ToolButton*        _zoom_normal_but;
-	Gtk::ToolButton*        _zoom_full_but;
-	Gtk::ToggleToolButton*  _edit_mode_but;
-	Gtk::ToolItem*          _breadcrumb_container;
+	Gtk::ScrolledWindow*   _canvas_scrolledwindow;
+	Gtk::Toolbar*          _toolbar;
+	Gtk::ToggleToolButton* _process_but;
+	Gtk::SpinButton*       _poly_spin;
+	Gtk::ToolButton*       _refresh_but;
+	Gtk::ToolButton*       _save_but;
+	Gtk::ToolButton*       _zoom_normal_but;
+	Gtk::ToolButton*       _zoom_full_but;
+	Gtk::ToggleToolButton* _edit_mode_but;
+	Gtk::ToolItem*         _breadcrumb_container;
 
 	bool _enable_signal;
 };

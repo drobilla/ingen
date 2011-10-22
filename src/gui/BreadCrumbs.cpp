@@ -26,13 +26,13 @@ namespace GUI {
 using namespace std;
 using namespace Raul;
 
-BreadCrumbs::BreadCrumbs()
+BreadCrumbs::BreadCrumbs(App& app)
 	: Gtk::HBox()
 	, _active_path("/")
 	, _full_path("/")
 	, _enable_signal(true)
 {
-	App::instance().client()->signal_object_deleted().connect(
+	app.client()->signal_object_deleted().connect(
 			sigc::mem_fun(this, &BreadCrumbs::object_destroyed));
 }
 

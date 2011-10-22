@@ -41,9 +41,10 @@ namespace GUI {
 Control::Control(BaseObjectType*                   cobject,
                  const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::VBox(cobject)
+	, _app(NULL)
 	, _control_panel(NULL)
-	, _enable_signal(false)
 	, _name_label(NULL)
+	, _enable_signal(false)
 {
 	Glib::RefPtr<Gtk::Builder> menu_xml = WidgetFactory::create("port_control_menu");
 	menu_xml->get_widget("port_control_menu", _menu);
@@ -61,8 +62,9 @@ Control::~Control()
 }
 
 void
-Control::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
+Control::init(App& app, ControlPanel* panel, SharedPtr<const PortModel> pm)
 {
+	_app = &app;
 	_control_panel = panel;
 	_port_model = pm,
 
@@ -124,12 +126,12 @@ SliderControl::SliderControl(BaseObjectType*                   cobject,
 }
 
 void
-SliderControl::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
+SliderControl::init(App& app, ControlPanel* panel, SharedPtr<const PortModel> pm)
 {
 	_enable_signal = false;
 	_enabled = true;
 
-	Control::init(panel, pm);
+	Control::init(app, panel, pm);
 
 	assert(_name_label);
 	assert(_slider);
@@ -152,7 +154,7 @@ SliderControl::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
 
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
 	if (parent)
-		parent->port_value_range(_port_model, min, max, App::instance().sample_rate());
+		parent->port_value_range(_port_model, min, max, app.sample_rate());
 
 	if (pm->is_integer() || pm->is_toggle()) {
 		_slider->set_increments(1, 10);
@@ -214,7 +216,7 @@ SliderControl::port_property_changed(const URI& key, const Atom& value)
 {
 	_enable_signal = false;
 
-	const Shared::URIs& uris = App::instance().uris();
+	const Shared::URIs& uris = _app->uris();
 	if (key == uris.lv2_minimum && value.type() == Atom::FLOAT)
 		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
 	else if (key == uris.lv2_maximum && value.type() == Atom::FLOAT)
@@ -298,11 +300,11 @@ ToggleControl::ToggleControl(BaseObjectType*                   cobject,
 }
 
 void
-ToggleControl::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
+ToggleControl::init(App& app, ControlPanel* panel, SharedPtr<const PortModel> pm)
 {
 	_enable_signal = false;
 
-	Control::init(panel, pm);
+	Control::init(app, panel, pm);
 
 	assert(_name_label);
 	assert(_checkbutton);
@@ -357,11 +359,11 @@ StringControl::StringControl(BaseObjectType*                   cobject,
 }
 
 void
-StringControl::init(ControlPanel* panel, SharedPtr<const PortModel> pm)
+StringControl::init(App& app, ControlPanel* panel, SharedPtr<const PortModel> pm)
 {
 	_enable_signal = false;
 
-	Control::init(panel, pm);
+	Control::init(app, panel, pm);
 
 	assert(_name_label);
 	assert(_entry);

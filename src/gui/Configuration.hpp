@@ -19,7 +19,9 @@
 #define INGEN_GUI_CONFIGURATION_HPP
 
 #include <stdint.h>
+
 #include <string>
+
 #include "raul/SharedPtr.hpp"
 
 namespace Ingen { namespace Client { class PortModel; } }
@@ -29,6 +31,7 @@ using std::string;
 namespace Ingen {
 namespace GUI {
 
+class App;
 class Port;
 
 /** Singleton state manager for the entire app.
@@ -41,7 +44,7 @@ class Port;
 class Configuration
 {
 public:
-	Configuration();
+	Configuration(App& app);
 	~Configuration();
 
 	void load_settings(string filename = "");
@@ -60,6 +63,8 @@ public:
 	void      set_name_style(NameStyle s) { _name_style = s; }
 
 private:
+	App& _app;
+
 	/** Most recent patch folder shown in open dialog */
 	string _patch_folder;
 

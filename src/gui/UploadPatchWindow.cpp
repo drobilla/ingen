@@ -69,7 +69,7 @@ UploadPatchWindow::present(SharedPtr<PatchModel> patch)
 void
 UploadPatchWindow::on_show()
 {
-	const Shared::URIs& uris = App::instance().uris();
+	const Shared::URIs& uris = _app->uris();
 	Gtk::Dialog::on_show();
 
 	Raul::Atom atom = _patch->get_property(uris.lv2_symbol);
@@ -222,7 +222,7 @@ UploadPatchWindow::upload_clicked()
 {
 	assert(!_thread);
 
-	const Shared::URIs& uris = App::instance().uris();
+	const Shared::URIs& uris = _app->uris();
 
 	Glib::ustring symbol = _symbol_entry->get_text();
 	Glib::ustring short_name = _short_name_entry->get_text();
@@ -237,7 +237,7 @@ UploadPatchWindow::upload_clicked()
 	_upload_progress->set_fraction(0.0);
 	_upload_progress->set_text("");
 
-	Serialiser s(*App::instance().world(), App::instance().store());
+	Serialiser s(*_app->world(), _app->store());
 
 	const string uri = string("http://rdf.drobilla.net/ingen_patches/")
 		.append(symbol).append(INGEN_PATCH_FILE_EXT);

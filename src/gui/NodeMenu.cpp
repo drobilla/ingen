@@ -44,14 +44,14 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 }
 
 void
-NodeMenu::init(SharedPtr<const NodeModel> node)
+NodeMenu::init(App& app, SharedPtr<const NodeModel> node)
 {
-	ObjectMenu::init(node);
+	ObjectMenu::init(app, node);
 
 	_learn_menuitem->signal_activate().connect(sigc::mem_fun(this,
 			&NodeMenu::on_menu_learn));
 	_controls_menuitem->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(App::instance().window_factory(),
+		sigc::bind(sigc::mem_fun(_app->window_factory(),
 		                         &WindowFactory::present_controls),
 		           node));
 	_popup_gui_menuitem->signal_activate().connect(
@@ -136,26 +136,26 @@ NodeMenu::on_menu_embed_gui()
 void
 NodeMenu::on_menu_randomize()
 {
-	App::instance().engine()->bundle_begin();
+	_app->engine()->bundle_begin();
 
 	const NodeModel* const nm = (NodeModel*)_object.get();
 	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
-		if ((*i)->is_input() && App::instance().can_control(i->get())) {
+		if ((*i)->is_input() && _app->can_control(i->get())) {
 			float min = 0.0f, max = 1.0f;
-			nm->port_value_range(*i, min, max, App::instance().sample_rate());
+			nm->port_value_range(*i, min, max, _app->sample_rate());
 			const float val = ((rand() / (float)RAND_MAX) * (max - min) + min);
-			App::instance().engine()->set_property((*i)->path(),
-					App::instance().uris().ingen_value, val);
+			_app->engine()->set_property((*i)->path(),
+					_app->uris().ingen_value, val);
 		}
 	}
 
-	App::instance().engine()->bundle_end();
+	_app->engine()->bundle_end();
 }
 
 void
 NodeMenu::on_menu_disconnect()
 {
-	App::instance().engine()->disconnect_all(_object->parent()->path(), _object->path());
+	_app->engine()->disconnect_all(_object->parent()->path(), _object->path());
 }
 
 void
@@ -179,7 +179,7 @@ NodeMenu::on_preset_activated(const std::string& uri)
 		subject,
 		port_pred,
 		NULL);
-	App::instance().engine()->bundle_begin();
+	_app->engine()->bundle_begin();
 	LILV_FOREACH(nodes, i, ports) {
 		const LilvNode* uri = lilv_nodes_get(ports, i);
 		LilvNodes* values = lilv_world_find_nodes(
@@ -189,13 +189,13 @@ NodeMenu::on_preset_activated(const std::string& uri)
 		if (values && symbols) {
 			const LilvNode* val = lilv_nodes_get_first(values);
 			const LilvNode* sym = lilv_nodes_get_first(symbols);
-			App::instance().engine()->set_property(
+			_app->engine()->set_property(
 				node->path().base() + lilv_node_as_string(sym),
-				App::instance().uris().ingen_value,
+				_app->uris().ingen_value,
 				lilv_node_as_float(val));
 		}
 	}
-	App::instance().engine()->bundle_end();
+	_app->engine()->bundle_end();
 	lilv_nodes_free(ports);
 	lilv_node_free(value_pred);
 	lilv_node_free(symbol_pred);

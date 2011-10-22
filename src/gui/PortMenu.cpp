@@ -41,11 +41,11 @@ PortMenu::PortMenu(BaseObjectType*                   cobject,
 }
 
 void
-PortMenu::init(SharedPtr<const PortModel> port, bool patch_port)
+PortMenu::init(App& app, SharedPtr<const PortModel> port, bool patch_port)
 {
-	const URIs& uris = App::instance().uris();
+	const URIs& uris = app.uris();
 
-	ObjectMenu::init(port);
+	ObjectMenu::init(app, port);
 	_patch_port = patch_port;
 
 	_set_min_menuitem->signal_activate().connect(sigc::mem_fun(this,
@@ -66,7 +66,7 @@ PortMenu::init(SharedPtr<const PortModel> port, bool patch_port)
 	if (port->is_a(uris.ev_EventPort))
 		_polyphonic_menuitem->hide();
 
-	const bool is_control = App::instance().can_control(port.get())
+	const bool is_control = app.can_control(port.get())
 		&& port->is_numeric();
 
 	_reset_range_menuitem->set_sensitive(is_control);
@@ -85,10 +85,10 @@ void
 PortMenu::on_menu_disconnect()
 {
 	if (_patch_port) {
-		App::instance().engine()->disconnect_all(
+		_app->engine()->disconnect_all(
 				_object->parent()->path(), _object->path());
 	} else {
-		App::instance().engine()->disconnect_all(
+		_app->engine()->disconnect_all(
 				_object->parent()->path().parent(), _object->path());
 	}
 }
@@ -96,27 +96,27 @@ PortMenu::on_menu_disconnect()
 void
 PortMenu::on_menu_set_min()
 {
-	const URIs&                uris  = App::instance().uris();
+	const URIs&                uris  = _app->uris();
 	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
 	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		App::instance().engine()->set_property(_object->path(), uris.lv2_minimum, value);
+		_app->engine()->set_property(_object->path(), uris.lv2_minimum, value);
 }
 
 void
 PortMenu::on_menu_set_max()
 {
-	const URIs&                uris  = App::instance().uris();
+	const URIs&                uris  = _app->uris();
 	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
 	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		App::instance().engine()->set_property(_object->path(), uris.lv2_maximum, value);
+		_app->engine()->set_property(_object->path(), uris.lv2_maximum, value);
 }
 
 void
 PortMenu::on_menu_reset_range()
 {
-	const URIs&                uris  = App::instance().uris();
+	const URIs&                uris  = _app->uris();
 	SharedPtr<const PortModel> model  = PtrCast<const PortModel>(_object);
 	SharedPtr<const NodeModel> parent = PtrCast<const NodeModel>(_object->parent());
 
@@ -124,10 +124,10 @@ PortMenu::on_menu_reset_range()
 	parent->default_port_value_range(model, min, max);
 
 	if (!std::isnan(min))
-		App::instance().engine()->set_property(_object->path(), uris.lv2_minimum, min);
+		_app->engine()->set_property(_object->path(), uris.lv2_minimum, min);
 
 	if (!std::isnan(max))
-		App::instance().engine()->set_property(_object->path(), uris.lv2_maximum, max);
+		_app->engine()->set_property(_object->path(), uris.lv2_maximum, max);
 }
 
 } // namespace GUI

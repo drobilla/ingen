@@ -29,8 +29,9 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-ThreadedLoader::ThreadedLoader(SharedPtr<ServerInterface> engine)
-	: _engine(engine)
+ThreadedLoader::ThreadedLoader(App& app, SharedPtr<ServerInterface> engine)
+	: _app(app)
+	, _engine(engine)
 {
 	set_name("Loader");
 
@@ -43,7 +44,7 @@ ThreadedLoader::ThreadedLoader(SharedPtr<ServerInterface> engine)
 SharedPtr<Parser>
 ThreadedLoader::parser()
 {
-	Ingen::Shared::World* world = App::instance().world();
+	Ingen::Shared::World* world = _app.world();
 
 	if (!world->parser())
 		world->load_module("serialisation");
@@ -73,7 +74,7 @@ ThreadedLoader::load_patch(bool                              merge,
 {
 	_mutex.lock();
 
-	Ingen::Shared::World* world = App::instance().world();
+	Ingen::Shared::World* world = _app.world();
 
 	Glib::ustring engine_base = "";
 	if (engine_parent) {
@@ -87,8 +88,8 @@ ThreadedLoader::load_patch(bool                              merge,
 		sigc::hide_return(
 			sigc::bind(sigc::mem_fun(world->parser().get(),
 			                         &Ingen::Serialisation::Parser::parse_file),
-			           App::instance().world(),
-			           App::instance().world()->engine().get(),
+			           _app.world(),
+			           _app.world()->engine().get(),
 			           document_uri,
 			           engine_parent,
 			           engine_symbol,
@@ -118,11 +119,11 @@ void
 ThreadedLoader::save_patch_event(SharedPtr<const PatchModel> model,
                                  const string&               filename)
 {
-	if (App::instance().serialiser()) {
+	if (_app.serialiser()) {
 		if (filename.find(".ingen") != string::npos)
-			App::instance().serialiser()->write_bundle(model, filename);
+			_app.serialiser()->write_bundle(model, filename);
 		else
-			App::instance().serialiser()->to_file(model, filename);
+			_app.serialiser()->to_file(model, filename);
 	}
 }
 
