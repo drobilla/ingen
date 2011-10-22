@@ -69,6 +69,10 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool patch_port)
 	const bool is_control = app.can_control(port.get())
 		&& port->is_numeric();
 
+	_reset_range_menuitem->set_visible(true);
+	_set_max_menuitem->set_visible(true);
+	_set_min_menuitem->set_visible(true);
+
 	_reset_range_menuitem->set_sensitive(is_control);
 	_set_max_menuitem->set_sensitive(is_control);
 	_set_min_menuitem->set_sensitive(is_control);
