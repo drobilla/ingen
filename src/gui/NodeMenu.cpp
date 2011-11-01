@@ -73,10 +73,10 @@ NodeMenu::init(App& app, SharedPtr<const NodeModel> node)
 	if (plugin && plugin->type() == PluginModel::LV2) {
 		LilvNode* preset_pred = lilv_new_uri(
 			plugin->lilv_world(),
-			"http://lv2plug.in/ns/dev/presets#hasPreset");
+			"http://lv2plug.in/ns/ext/presets#hasPreset");
 		LilvNode* title_pred = lilv_new_uri(
 			plugin->lilv_world(),
-			"http://dublincore.org/documents/dcmi-namespace/title");
+			"http://www.w3.org/2000/01/rdf-schema#label");
 		LilvNodes* presets = lilv_plugin_get_value(
 			plugin->lilv_plugin(), preset_pred);
 		if (presets) {
