@@ -116,7 +116,6 @@ public:
 		rdf_world->add_prefix("ctx",     "http://lv2plug.in/ns/ext/contexts#");
 		rdf_world->add_prefix("doap",    "http://usefulinc.com/ns/doap#");
 		rdf_world->add_prefix("ingen",   "http://drobilla.net/ns/ingen#");
-		rdf_world->add_prefix("ingenui", "http://drobilla.net/ns/ingenuity#");
 		rdf_world->add_prefix("lv2",     "http://lv2plug.in/ns/lv2core#");
 		rdf_world->add_prefix("lv2ev",   "http://lv2plug.in/ns/ext/event#");
 		rdf_world->add_prefix("lv2midi", "http://lv2plug.in/ns/ext/midi#");

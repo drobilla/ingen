@@ -176,9 +176,9 @@ LoadPatchWindow::ok_clicked()
 		std::list<Glib::ustring> uri_list = get_uris();
 		for (std::list<Glib::ustring>::iterator i = uri_list.begin(); i != uri_list.end(); ++i) {
 			// Cascade
-			Atom& x = _initial_data.find(uris.ingenui_canvas_x)->second;
+			Atom& x = _initial_data.find(uris.ingen_canvas_x)->second;
 			x = Atom(x.get_float() + 20.0f);
-			Atom& y = _initial_data.find(uris.ingenui_canvas_y)->second;
+			Atom& y = _initial_data.find(uris.ingen_canvas_y)->second;
 			y = Atom(y.get_float() + 20.0f);
 
 			Raul::Symbol symbol(symbol_from_filename(*i));

@@ -2,7 +2,6 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix ingen: <http://drobilla.net/ns/ingen#> .
-@prefix ingenui: <http://drobilla.net/ns/ingenuity#> .
 @prefix lv2: <http://lv2plug.in/ns/lv2core#> .
 @prefix lv2ev: <http://lv2plug.in/ns/ext/event#> .
 @prefix ctx: <http://lv2plug.in/ns/ext/contexts#> .
@@ -26,8 +25,8 @@
 
 <audio_out_1>
 	ingen:polyphonic false ;
-	ingenui:canvas-x 154.25000000 ;
-	ingenui:canvas-y 52.50000000 ;
+	ingen:canvas-x 154.25000000 ;
+	ingen:canvas-y 52.50000000 ;
 	lv2:index 3 ;
 	lv2:name "Audio Out 1" ;
 	lv2:symbol "audio_out_1" ;
@@ -36,8 +35,8 @@
 
 <audio_out_2>
 	ingen:polyphonic false ;
-	ingenui:canvas-x 154.25000000 ;
-	ingenui:canvas-y 52.50000000 ;
+	ingen:canvas-x 154.25000000 ;
+	ingen:canvas-y 52.50000000 ;
 	lv2:index 5 ;
 	lv2:name "Audio Out 2" ;
 	lv2:symbol "audio_out_2" ;
@@ -46,8 +45,8 @@
 
 <control_in>
 	ingen:polyphonic false ;
-	ingenui:canvas-x 23.50000000 ;
-	ingenui:canvas-y 180.00000000 ;
+	ingen:canvas-x 23.50000000 ;
+	ingen:canvas-y 180.00000000 ;
 	lv2:index 0 ;
 	lv2:name "Control" ;
 	lv2:portProperty lv2:connectionOptional ;
@@ -57,8 +56,8 @@
 
 <control_out>
 	ingen:polyphonic false ;
-	ingenui:canvas-x 23.50000000 ;
-	ingenui:canvas-y 137.50000000 ;
+	ingen:canvas-x 23.50000000 ;
+	ingen:canvas-y 137.50000000 ;
 	lv2:index 1 ;
 	lv2:name "Control" ;
 	lv2:portProperty lv2:connectionOptional ;

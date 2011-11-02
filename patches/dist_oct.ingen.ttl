@@ -2,7 +2,6 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix ingen: <http://drobilla.net/ns/ingen#> .
-@prefix ingenuity: <http://drobilla.net/ns/ingenuity#> .
 @prefix lv2: <http://lv2plug.in/ns/lv2core#> .
 @prefix lv2_midi: <http://lv2plug.in/ns/ext/midi> .
 @prefix lv2var: <http://lv2plug.in/ns/ext/instance-var#> .
@@ -14,10 +13,10 @@
     ingen:polyphonic true ;
     ingen:port <DubDelay/delay>, <DubDelay/f_x_mix>, <DubDelay/fb_tone>, <DubDelay/feedback>, <DubDelay/in1>, <DubDelay/in2>, <DubDelay/lfo_dep_>, <DubDelay/lfo_rate>, <DubDelay/out1>, <DubDelay/out2>, <DubDelay/output> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1922.0
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1000.75
     ] ;
     lv2:symbol "DubDelay" ;
@@ -90,10 +89,10 @@
     ingen:polyphonic true ;
     ingen:port <adsr_g_t/Attack_Time>, <adsr_g_t/Decay_Time>, <adsr_g_t/Envelope_Out>, <adsr_g_t/Gate>, <adsr_g_t/Release_Time>, <adsr_g_t/Sustain_Level>, <adsr_g_t/Trigger> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1427.25
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1034.75
     ] ;
     lv2:symbol "adsr_g_t" ;
@@ -183,10 +182,10 @@
     ingen:polyphonic true ;
     ingen:port <amp/gain>, <amp/input>, <amp/output> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1820.0
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1068.75
     ] ;
     lv2:symbol "amp" ;
@@ -210,10 +209,10 @@
 
 <audio_output_1>
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 2037.5
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1066.5
     ] ;
     lv2:index 1 ;
@@ -222,10 +221,10 @@
 
 <audio_output_2>
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 2037.5
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1121.5
     ] ;
     lv2:index 2 ;
@@ -237,10 +236,10 @@
     ingen:polyphonic true ;
     ingen:port <detune_0/First_Input>, <detune_0/Second_Input>, <detune_0/Summed_Output> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1418.25
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1188.75
     ] ;
     lv2:symbol "detune_0" ;
@@ -327,10 +326,10 @@
     ingen:polyphony 1 ;
     ingen:port <audio_output_1>, <audio_output_2>, <midi_input_1> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1456.25
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1129.125
     ] ;
     a ingen:Patch .
@@ -340,10 +339,10 @@
     ingen:polyphonic true ;
     ingen:port <foverdrive/drive>, <foverdrive/input>, <foverdrive/output> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1704.75
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1021.25
     ] ;
     lv2:symbol "foverdrive" ;
@@ -367,10 +366,10 @@
 
 <midi_input_1>
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1145.0
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1094.0
     ] ;
     lv2:index 1 ;
@@ -382,10 +381,10 @@
     ingen:polyphonic true ;
     ingen:port <note/frequency>, <note/gate>, <note/input>, <note/trigger>, <note/velocity> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1298.75
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1051.75
     ] ;
     lv2:symbol "note" ;
@@ -436,10 +435,10 @@
     ingen:polyphonic true ;
     ingen:port <product_iaic_oa/First_Input>, <product_iaic_oa/Product_Output>, <product_iaic_oa/Second_Input> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1420.75
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1276.25
     ] ;
     lv2:symbol "product_iaic_oa" ;
@@ -473,10 +472,10 @@
     ingen:polyphonic true ;
     ingen:port <sine_faaa/Amplitude>, <sine_faaa/Frequency>, <sine_faaa/Output> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1579.75
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1021.25
     ] ;
     lv2:symbol "sine_faaa" ;
@@ -502,10 +501,10 @@
     ingen:polyphonic true ;
     ingen:port <sine_faaa_0/Amplitude>, <sine_faaa_0/Frequency>, <sine_faaa_0/Output> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1578.25
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1116.25
     ] ;
     lv2:symbol "sine_faaa_0" ;
@@ -531,10 +530,10 @@
     ingen:polyphonic true ;
     ingen:port <valveRect/dist_p>, <valveRect/input>, <valveRect/output>, <valveRect/sag> ;
     lv2var:variable [
-        rdf:predicate ingenuity:canvas-x ;
+        rdf:predicate ingen:canvas-x ;
         rdf:value 1705.75
     ], [
-        rdf:predicate ingenuity:canvas-y ;
+        rdf:predicate ingen:canvas-y ;
         rdf:value 1107.75
     ] ;
     lv2:symbol "valveRect" ;

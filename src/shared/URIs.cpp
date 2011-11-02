@@ -48,7 +48,6 @@ URIs::Quark::c_str() const
 
 #define NS_CTX     "http://lv2plug.in/ns/ext/contexts#"
 #define NS_INGEN   "http://drobilla.net/ns/ingen#"
-#define NS_INGENUI "http://drobilla.net/ns/ingenuity#"
 #define NS_LV2     "http://lv2plug.in/ns/lv2core#"
 #define NS_MIDI    "http://drobilla.net/ns/ext/midi#"
 #define NS_MIDI    "http://drobilla.net/ns/ext/midi#"
@@ -86,8 +85,8 @@ URIs::URIs()
 	, ingen_sampleRate      (NS_INGEN "sampleRate")
 	, ingen_selected        (NS_INGEN "selected")
 	, ingen_value           (NS_INGEN "value")
-	, ingenui_canvas_x      (NS_INGENUI "canvas-x")
-	, ingenui_canvas_y      (NS_INGENUI "canvas-y")
+	, ingen_canvas_x        (NS_INGEN "canvas-x")
+	, ingen_canvas_y        (NS_INGEN "canvas-y")
 	, lv2_AudioPort         (NS_LV2 "AudioPort")
 	, lv2_ControlPort       (NS_LV2 "ControlPort")
 	, lv2_InputPort         (NS_LV2 "InputPort")

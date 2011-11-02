@@ -118,8 +118,7 @@ HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& v
 	Sord::Node node = AtomRDF::atom_to_node(*_engine.world()->rdf_world(), value);
 	const string msg = string(
 			"@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\n"
-			"@prefix ingen:   <http://drobilla.net/ns/ingen#> .\n"
-			"@prefix ingenui: <http://drobilla.net/ns/ingenuity#> .\n").append(
+			"@prefix ingen:   <http://drobilla.net/ns/ingen#> .\n").append(
 			subject.str()).append("> ingen:property [\n"
 			"rdf:predicate ").append(key.str()).append(" ;\n"
 			"rdf:value     ").append(node.to_string()).append("\n] .\n");

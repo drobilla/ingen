@@ -91,17 +91,17 @@ PatchPortModule::store_location()
 
 	const URIs& uris = app().uris();
 
-	const Atom& existing_x = _model->get_property(uris.ingenui_canvas_x);
-	const Atom& existing_y = _model->get_property(uris.ingenui_canvas_y);
+	const Atom& existing_x = _model->get_property(uris.ingen_canvas_x);
+	const Atom& existing_y = _model->get_property(uris.ingen_canvas_y);
 
 	if (x != existing_x && y != existing_y) {
 		Resource::Properties remove;
-		remove.insert(make_pair(uris.ingenui_canvas_x, uris.wildcard));
-		remove.insert(make_pair(uris.ingenui_canvas_y, uris.wildcard));
+		remove.insert(make_pair(uris.ingen_canvas_x, uris.wildcard));
+		remove.insert(make_pair(uris.ingen_canvas_y, uris.wildcard));
 		Resource::Properties add;
-		add.insert(make_pair(uris.ingenui_canvas_x,
+		add.insert(make_pair(uris.ingen_canvas_x,
 		                     Resource::Property(x, Resource::INTERNAL)));
-		add.insert(make_pair(uris.ingenui_canvas_y,
+		add.insert(make_pair(uris.ingen_canvas_y,
 		                     Resource::Property(y, Resource::INTERNAL)));
 		app().engine()->delta(_model->path(), remove, add);
 	}
@@ -131,9 +131,9 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 	const URIs& uris = app().uris();
 	switch (value.type()) {
 	case Atom::FLOAT:
-		if (key == uris.ingenui_canvas_x) {
+		if (key == uris.ingen_canvas_x) {
 			move_to(value.get_float(), property_y());
-		} else if (key == uris.ingenui_canvas_y) {
+		} else if (key == uris.ingen_canvas_y) {
 			move_to(property_x(), value.get_float());
 		}
 		break;
