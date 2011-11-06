@@ -152,6 +152,7 @@ EventBuffer::get_event(uint32_t* frames,
 	}
 }
 
+#if 0
 /** Get the object currently pointed to, or NULL if invalid.
  */
 LV2_Atom*
@@ -164,6 +165,7 @@ EventBuffer::get_atom() const
 	}
 	return NULL;
 }
+#endif
 
 /** Get the event currently pointed to, or NULL if invalid.
  */

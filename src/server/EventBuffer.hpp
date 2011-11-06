@@ -64,7 +64,7 @@ public:
 	               uint16_t* size,
 	               uint8_t** data) const;
 
-	LV2_Atom*   get_atom() const;
+	//LV2_Atom*   get_atom() const;
 	LV2_Event*  get_event() const;
 
 	bool append(uint32_t       frames,

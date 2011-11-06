@@ -116,6 +116,8 @@ ConnectionImpl::queue(Context& context)
 	}
 
 	for (src_buf->rewind(); src_buf->is_valid(); src_buf->increment()) {
+		error << "Queued connections currently unsupported" << endl;
+		#if 0
 		LV2_Event* ev  = src_buf->get_event();
 		LV2_Atom*  obj = LV2_ATOM_FROM_EVENT(ev);
 		/*debug << _src_port->path() << " -> " << _dst_port->path()
@@ -126,6 +128,7 @@ ConnectionImpl::queue(Context& context)
 
 		_queue->write(sizeof(LV2_Atom) + obj->size, obj);
 		context.engine().message_context()->run(_dst_port->parent_node(), context.start() + ev->frames);
+		#endif
 	}
 }
 
