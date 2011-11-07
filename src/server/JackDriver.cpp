@@ -530,7 +530,8 @@ JackDriver::_session_cb(jack_session_event_t* event)
 		serialiser->write_bundle(root, string("file://") + event->session_dir);
 	}
 
-	event->command_line = strdup(cmd.c_str());
+	event->command_line = (char*)malloc(cmd.size() + 1);
+	memcpy(event->command_line, cmd.c_str(), cmd.size() + 1);
 	jack_session_reply(_client, event);
 
 	switch (event->type) {
