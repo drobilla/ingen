@@ -152,7 +152,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 	uint32_t port_buffer_size = 0;
 	LilvNode* ctx_ext_uri = lilv_new_uri(info->lv2_world(),
-	                                     LV2_CONTEXTS_URI "#MessageContext");
+	                                     LV2_CONTEXTS_URI "#messageContext");
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		(*_instances)[i] = SharedPtr<void>(
@@ -169,7 +169,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			continue;
 
 		const void* ctx_ext = lilv_instance_get_extension_data(
-			instance(i), LV2_CONTEXTS_URI "#MessageContext");
+			instance(i), LV2_CONTEXTS_URI "#messageContext");
 
 		if (i == 0 && ctx_ext) {
 			assert(!_message_funcs);
@@ -321,7 +321,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		LILV_FOREACH(nodes, i, contexts) {
 			const LilvNode* c       = lilv_nodes_get(contexts, i);
 			const char*     context = lilv_node_as_string(c);
-			if (!strcmp(LV2_CONTEXTS_URI "#MessageContext", context)) {
+			if (!strcmp(LV2_CONTEXTS_URI "#messageContext", context)) {
 				if (!_message_funcs) {
 					warn << _lv2_plugin->uri()
 							<< " has a message port, but no context extension data." << endl;

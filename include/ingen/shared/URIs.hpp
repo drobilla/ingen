@@ -47,9 +47,9 @@ public:
 	const Quark atom_ValuePort;
 	const Quark atom_Vector;
 	const Quark atom_supports;
-	const Quark ctx_AudioContext;
-	const Quark ctx_MessageContext;
+	const Quark ctx_audioContext;
 	const Quark ctx_context;
+	const Quark ctx_messageContext;
 	const Quark doap_name;
 	const Quark ev_EventPort;
 	const Quark ingen_Internal;

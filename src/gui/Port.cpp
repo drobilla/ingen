@@ -285,7 +285,7 @@ Port::dash()
 	if (!pm)
 		return NULL;
 
-	if (pm->has_context(uris.ctx_AudioContext))
+	if (pm->has_context(uris.ctx_audioContext))
 		return NULL;
 
 	if (!_dash) {

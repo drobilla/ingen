@@ -246,7 +246,7 @@ PortImpl::set_context(Context::ID c)
 		remove_property(uris.ctx_context, uris.wildcard);
 		break;
 	case Context::MESSAGE:
-		set_property(uris.ctx_context, uris.ctx_MessageContext);
+		set_property(uris.ctx_context, uris.ctx_messageContext);
 		break;
 	}
 }
