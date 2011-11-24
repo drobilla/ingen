@@ -45,7 +45,7 @@
 #include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/runtime_paths.hpp"
-#include "ingen/client/ThreadedSigClientInterface.hpp"
+#include "ingen/client/SigClientInterface.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
@@ -156,9 +156,9 @@ main(int argc, char** argv)
 		ingen_try(world->load_module("http_client"),
 		          "Unable to load HTTP client module");
 		#endif
-
 		const char* const uri = conf.option("connect").get_string();
-		ingen_try((engine_interface = world->interface(uri, SharedPtr<ClientInterface>())),
+		SharedPtr<ClientInterface> client(new Client::SigClientInterface());
+		ingen_try((engine_interface = world->interface(uri, client)),
 		          (string("Unable to create interface to `") + uri + "'").c_str());
 	}
 

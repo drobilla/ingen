@@ -84,14 +84,12 @@ public:
 	virtual void set_serialiser(SharedPtr<Serialisation::Serialiser> s);
 	virtual void set_parser(SharedPtr<Serialisation::Parser> p);
 	virtual void set_store(SharedPtr<Store> s);
-	virtual void set_client(SharedPtr<ClientInterface> c);
 
 	virtual SharedPtr<EngineBase>                local_engine();
 	virtual SharedPtr<ServerInterface>           engine();
 	virtual SharedPtr<Serialisation::Serialiser> serialiser();
 	virtual SharedPtr<Serialisation::Parser>     parser();
 	virtual SharedPtr<Store>                     store();
-	virtual SharedPtr<ClientInterface>           client();
 
 	virtual Sord::World* rdf_world();
 	

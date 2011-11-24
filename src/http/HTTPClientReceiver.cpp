@@ -38,9 +38,6 @@ using namespace Serialisation;
 
 namespace Client {
 
-static SoupSession*        client_session  = NULL;
-static HTTPClientReceiver* client_receiver = NULL;
-
 HTTPClientReceiver::HTTPClientReceiver(
 		Shared::World*             world,
 		const std::string&         url,
@@ -49,15 +46,14 @@ HTTPClientReceiver::HTTPClientReceiver(
 	, _world(world)
 	, _url(url)
 {
+	_client_session = soup_session_sync_new();
 	start(false);
-	client_receiver = this;
+	assert(_client_session);
 }
 
 HTTPClientReceiver::~HTTPClientReceiver()
 {
 	stop();
-	if (client_receiver == this)
-		client_receiver = NULL;
 }
 
 HTTPClientReceiver::Listener::Listener(HTTPClientReceiver* receiver, const std::string& uri)
@@ -106,21 +102,17 @@ HTTPClientReceiver::Listener::~Listener()
 void
 HTTPClientReceiver::send(SoupMessage* msg)
 {
-	if (!client_session) {
-		LOG(debug) << "Starting session" << endl;
-		client_session = soup_session_sync_new();
-	}
-
+	assert(SOUP_IS_SESSION(_client_session));
 	assert(SOUP_IS_MESSAGE(msg));
-	soup_session_queue_message(client_session, msg, message_callback, client_receiver);
+	soup_session_queue_message(_client_session, msg, message_callback, this);
 }
 
 void
 HTTPClientReceiver::close_session()
 {
-	if (client_session) {
-		SoupSession* s = client_session;
-		client_session = NULL;
+	if (_client_session) {
+		SoupSession* s = _client_session;
+		_client_session = NULL;
 		soup_session_abort(s);
 	}
 }
@@ -196,7 +188,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 				me->_world,
 				me->_target.get(),
 				Glib::ustring(msg->response_body->data),
-				path);
+				"");
 		}
 
 	} else if (path == "/stream") {
@@ -226,7 +218,7 @@ HTTPClientReceiver::start(bool dump)
 
 	SoupMessage* msg = soup_message_new("GET", (_url + "/stream").c_str());
 	assert(SOUP_IS_MESSAGE(msg));
-	soup_session_queue_message(client_session, msg, message_callback, this);
+	soup_session_queue_message(_client_session, msg, message_callback, this);
 }
 
 void

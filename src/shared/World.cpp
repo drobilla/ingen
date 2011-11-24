@@ -170,7 +170,6 @@ public:
 	SharedPtr<Serialisation::Serialiser> serialiser;
 	SharedPtr<Serialisation::Parser>     parser;
 	SharedPtr<Store>                     store;
-	SharedPtr<ClientInterface>           client;
 	LilvWorld*                           lilv_world;
 	std::string                          jack_uuid;
 };
@@ -191,7 +190,6 @@ void World::set_engine(SharedPtr<ServerInterface> e)               { _impl->engi
 void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
 void World::set_parser(SharedPtr<Serialisation::Parser> p)         { _impl->parser = p; }
 void World::set_store(SharedPtr<Store> s)                          { _impl->store = s; }
-void World::set_client(SharedPtr<ClientInterface> c)               { _impl->client = c; }
 void World::set_conf(Raul::Configuration* c)                       { _impl->conf = c; }
 
 int&                                 World::argc()         { return _impl->argc; }
@@ -201,7 +199,6 @@ SharedPtr<ServerInterface>           World::engine()       { return _impl->engin
 SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
 SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
 SharedPtr<Store>                     World::store()        { return _impl->store; }
-SharedPtr<ClientInterface>           World::client()       { return _impl->client; }
 Raul::Configuration*                 World::conf()         { return _impl->conf; }
 LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
 

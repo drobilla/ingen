@@ -45,17 +45,17 @@ public:
 
 	~HTTPClientReceiver();
 
-	static void send(SoupMessage* msg);
-	static void close_session();
+	void send(SoupMessage* msg);
+	void close_session();
 
 	std::string uri() const { return _url; }
 
 	void start(bool dump);
 	void stop();
 
-private:
 	static void message_callback(SoupSession* session, SoupMessage* msg, void* ptr);
 
+private:
 	void update(const std::string& str);
 
 	class Listener : public Raul::Thread {
@@ -76,6 +76,7 @@ private:
 	SharedPtr<ClientInterface> _target;
 	Shared::World*             _world;
 	const std::string          _url;
+	SoupSession*               _client_session;
 	bool                       _quit_flag;
 };
 

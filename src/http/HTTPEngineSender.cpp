@@ -39,12 +39,13 @@ namespace Client {
 HTTPEngineSender::HTTPEngineSender(World*                     world,
                                    const URI&                 engine_url,
                                    SharedPtr<Raul::Deletable> receiver)
-	: _receiver(receiver)
+	: _receiver(PtrCast<HTTPClientReceiver>(receiver))
 	, _world(*world->rdf_world())
 	, _engine_url(engine_url)
 	, _id(0)
 	, _enabled(true)
 {
+	assert(_receiver);
 	_session = soup_session_sync_new();
 }
 
@@ -57,8 +58,9 @@ void
 HTTPEngineSender::attach(int32_t ping_id, bool block)
 {
 	LOG(debug) << "Attaching to " << _engine_url << endl;
-	SoupMessage* msg = soup_message_new ("GET", _engine_url.c_str());
-	HTTPClientReceiver::send(msg);
+	SoupMessage* msg = soup_message_new("GET", _engine_url.c_str());
+	soup_session_queue_message(_session, msg,
+	                           HTTPClientReceiver::message_callback, _receiver.get());
 }
 
 /* *** ServerInterface implementation below here *** */
@@ -175,7 +177,7 @@ HTTPEngineSender::ping()
 void
 HTTPEngineSender::get(const URI& uri)
 {
-	if (!Raul::Path::is_path(uri) && uri.scheme() != "http") {
+	if (!Raul::Path::is_path(uri) && uri.scheme() != "http" && uri.scheme() != "ingen") {
 		LOG(warn) << "Ignoring GET of non-HTTP URI " << uri << endl;
 		return;
 	}
@@ -186,7 +188,9 @@ HTTPEngineSender::get(const URI& uri)
 	cout << "Get " << request_uri << endl;
 	LOG(debug) << "Get " << request_uri << endl;
 	SoupMessage* msg = soup_message_new("GET", request_uri.c_str());
-	HTTPClientReceiver::send(msg);
+	soup_session_queue_message(_session, msg,
+	                           HTTPClientReceiver::message_callback, _receiver.get());
+
 }
 
 } // namespace Client

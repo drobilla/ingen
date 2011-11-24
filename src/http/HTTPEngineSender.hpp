@@ -109,7 +109,7 @@ public:
 	void get(const Raul::URI& uri);
 
 protected:
-	SharedPtr<Raul::Deletable> _receiver;
+	SharedPtr<HTTPClientReceiver> _receiver;
 
 	SoupSession*    _session;
 	Sord::World&    _world;
