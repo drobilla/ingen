@@ -49,7 +49,7 @@
 #define LOG(s) s << "[PatchCanvas] "
 
 #define FOREACH_ITEM(iter, coll)                                        \
-	for (Items::iterator (iter) = coll.begin(); \
+	for (Items::const_iterator (iter) = coll.begin(); \
 	     (iter) != coll.end(); ++(iter))
 
 using Ingen::Client::ClientStore;
@@ -643,7 +643,7 @@ PatchCanvas::copy_selection()
 		}
 	}
 
-	for (SelectedConnections::iterator c = selected_connections().begin();
+	for (SelectedConnections::const_iterator c = selected_connections().begin();
 	     c != selected_connections().end(); ++c) {
 		Connection* const connection = dynamic_cast<Connection*>(*c);
 		if (connection) {
