@@ -9,7 +9,7 @@ def build(bld):
               target          = 'ingen_shared',
               vnum            = '0.0.0',
               install_path    = '${LIBDIR}',
-              linkflags       = '-ldl')
+              lib             = ['dl'])
     autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV RAUL SORD')
 
     obj.source = '''
