@@ -241,15 +241,6 @@ App::port_activity(Port* port)
 	if (inserted.second)
 		inserted.first->second = false;
 
-	if (port->is_output()) {
-		for (Port::Connections::const_iterator i = port->connections().begin();
-		     i != port->connections().end(); ++i) {
-			Port* const dst = dynamic_cast<Port*>((*i)->dest());
-			if (dst)
-				port_activity(dst);
-		}
-	}
-
 	port->set_highlighted(true, false, true, false);
 }
 

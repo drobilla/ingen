@@ -35,7 +35,7 @@ Connection::Connection(FlowCanvas::Canvas&                      canvas,
 {
 	Port* const src_port = dynamic_cast<Port*>(src);
 	if (src_port)
-		_bpath.property_dash() = src_port->dash();
+		_bpath->property_dash() = src_port->dash();
 }
 
 }   // namespace GUI
