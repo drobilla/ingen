@@ -62,7 +62,7 @@ public:
 
 	void set_selected(bool b);
 
-	ArtVpathDash* dash();
+	//ArtVpathDash* dash();
 
 private:
 	Port(App&                       app,
@@ -76,7 +76,7 @@ private:
 	bool on_event(GdkEvent* ev);
 	void moved();
 
-	static ArtVpathDash* _dash;
+	//static ArtVpathDash* _dash;
 
 	App&                     _app;
 	WeakPtr<const PortModel> _port_model;

@@ -38,7 +38,7 @@ namespace Ingen {
 using namespace Shared;
 namespace GUI {
 
-ArtVpathDash* Port::_dash;
+//ArtVpathDash* Port::_dash;
 
 Port*
 Port::create(App&                       app,
@@ -275,6 +275,7 @@ Port::property_changed(const URI& key, const Atom& value)
 	}
 }
 
+/*
 ArtVpathDash*
 Port::dash()
 {
@@ -296,6 +297,7 @@ Port::dash()
 
 	return _dash;
 }
+*/
 
 void
 Port::set_selected(bool b)
