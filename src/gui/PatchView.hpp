@@ -80,8 +80,10 @@ private:
 	void on_editable_sig(bool locked);
 	void editable_toggled();
 
+	#if 0
 	void canvas_item_entered(Gnome::Canvas::Item* item);
 	void canvas_item_left(Gnome::Canvas::Item* item);
+	#endif
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 

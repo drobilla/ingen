@@ -111,11 +111,13 @@ PatchView::set_patch(SharedPtr<const PatchModel> patch)
 	_poly_spin->signal_value_changed().connect(
 			sigc::mem_fun(*this, &PatchView::poly_changed));
 
+	#if 0
 	_canvas->signal_item_entered.connect(
 			sigc::mem_fun(*this, &PatchView::canvas_item_entered));
 
 	_canvas->signal_item_left.connect(
 			sigc::mem_fun(*this, &PatchView::canvas_item_left));
+	#endif
 
 	_canvas->grab_focus();
 }
@@ -152,6 +154,7 @@ PatchView::set_editable(bool editable)
 	_canvas->lock(!editable);
 }
 
+#if 0
 void
 PatchView::canvas_item_entered(Gnome::Canvas::Item* item)
 {
@@ -177,6 +180,7 @@ PatchView::canvas_item_left(Gnome::Canvas::Item* item)
 	if (p)
 		signal_object_left.emit(p->model().get());
 }
+#endif
 
 void
 PatchView::process_toggled()
