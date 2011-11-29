@@ -21,7 +21,6 @@
 #include <time.h>
 #include <sys/time.h>
 
-#include <libgnomecanvasmm.h>
 #include <gtk/gtkwindow.h>
 
 #include "flowcanvas/Connection.hpp"
@@ -105,7 +104,6 @@ App::~App()
 SharedPtr<App>
 App::create(Ingen::Shared::World* world)
 {
-	Gnome::Canvas::init();
 	_main = new Gtk::Main(&world->argc(), &world->argv());
 
 	App* app = new App(world);

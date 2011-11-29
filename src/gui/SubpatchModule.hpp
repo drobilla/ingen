@@ -19,7 +19,6 @@
 #define INGEN_GUI_SUBPATCHMODULE_HPP
 
 #include <string>
-#include <libgnomecanvasmm.h>
 #include "raul/SharedPtr.hpp"
 #include "PatchPortModule.hpp"
 #include "NodeModule.hpp"

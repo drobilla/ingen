@@ -20,7 +20,6 @@
 
 #include <string>
 #include <boost/enable_shared_from_this.hpp>
-#include <libgnomecanvasmm.h>
 #include "flowcanvas/Module.hpp"
 #include "raul/URI.hpp"
 #include "Port.hpp"

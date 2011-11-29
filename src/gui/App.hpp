@@ -24,7 +24,6 @@
 #include <utility>
 
 #include <gtkmm.h>
-#include <libgnomecanvasmm.h>
 
 #include "raul/SharedPtr.hpp"
 #include "raul/Deletable.hpp"

@@ -78,7 +78,7 @@ PatchView::set_patch(SharedPtr<const PatchModel> patch)
 	_canvas = SharedPtr<PatchCanvas>(new PatchCanvas(*_app, patch, 1600*2, 1200*2));
 	_canvas->build();
 
-	_canvas_scrolledwindow->add(*_canvas);
+	_canvas_scrolledwindow->add(_canvas->widget());
 
 	_poly_spin->set_value(patch->internal_poly());
 
@@ -119,7 +119,7 @@ PatchView::set_patch(SharedPtr<const PatchModel> patch)
 			sigc::mem_fun(*this, &PatchView::canvas_item_left));
 	#endif
 
-	_canvas->grab_focus();
+	_canvas->widget().grab_focus();
 }
 
 SharedPtr<PatchView>

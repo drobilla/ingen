@@ -14,7 +14,7 @@ def build(bld):
             FLOWCANVAS
             GLADEMM
             GLIBMM
-            GNOMECANVASMM
+            GNOMECANVAS
             GTKMM
             LILV
             LV2CORE

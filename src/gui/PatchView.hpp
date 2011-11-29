@@ -21,7 +21,6 @@
 #include <string>
 
 #include <gtkmm.h>
-#include <libgnomecanvasmm.h>
 
 #include "raul/SharedPtr.hpp"
 
