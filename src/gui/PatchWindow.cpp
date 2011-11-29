@@ -675,7 +675,7 @@ PatchWindow::event_zoom_normal()
 void
 PatchWindow::event_arrange()
 {
-	_view->canvas()->arrange(false, false);
+	_view->canvas()->arrange(false);
 }
 
 void
