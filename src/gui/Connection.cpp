@@ -27,8 +27,8 @@ namespace GUI {
 
 Connection::Connection(FlowCanvas::Canvas&                      canvas,
                        boost::shared_ptr<const ConnectionModel> model,
-                       FlowCanvas::Connectable*                 src,
-                       FlowCanvas::Connectable*                 dst,
+                       FlowCanvas::Joinable*                    src,
+                       FlowCanvas::Joinable*                    dst,
                        uint32_t                                 color)
 	: FlowCanvas::Connection(canvas, src, dst, color)
 	, _connection_model(model)

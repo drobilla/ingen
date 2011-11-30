@@ -492,8 +492,8 @@ PatchCanvas::disconnection(SharedPtr<const ConnectionModel> cm)
 }
 
 void
-PatchCanvas::connect(FlowCanvas::Connectable* src_port,
-                     FlowCanvas::Connectable* dst_port)
+PatchCanvas::connect(FlowCanvas::Joinable* src_port,
+                     FlowCanvas::Joinable* dst_port)
 {
 	const Ingen::GUI::Port* const src
 		= dynamic_cast<Ingen::GUI::Port*>(src_port);
@@ -508,8 +508,8 @@ PatchCanvas::connect(FlowCanvas::Connectable* src_port,
 }
 
 void
-PatchCanvas::disconnect(FlowCanvas::Connectable* src_port,
-                        FlowCanvas::Connectable* dst_port)
+PatchCanvas::disconnect(FlowCanvas::Joinable* src_port,
+                        FlowCanvas::Joinable* dst_port)
 {
 	const Ingen::GUI::Port* const src
 		= dynamic_cast<Ingen::GUI::Port*>(src_port);
