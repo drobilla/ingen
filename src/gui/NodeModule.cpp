@@ -248,9 +248,6 @@ NodeModule::embed_gui(bool embed)
 
 	if (embed && _embed_item) {
 		set_control_values();
-		set_base_color(0x212222FF);
-	} else {
-		set_default_base_color();
 	}
 }
 

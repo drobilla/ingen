@@ -239,7 +239,7 @@ App::port_activity(Port* port)
 	if (inserted.second)
 		inserted.first->second = false;
 
-	port->set_highlighted(true, false, true, false);
+	port->set_highlighted(true);
 }
 
 void
@@ -260,7 +260,7 @@ App::animate()
 		++next;
 
 		if ((*i).second) { // saw it last time, unhighlight and pop
-			(*i).first->set_highlighted(false, false, true, false);
+			(*i).first->set_highlighted(false);
 			_activity_ports.erase(i);
 		} else {
 			(*i).second = true;

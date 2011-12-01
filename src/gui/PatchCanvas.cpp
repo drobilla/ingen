@@ -471,7 +471,7 @@ PatchCanvas::connection(SharedPtr<const ConnectionModel> cm)
 
 	if (src && dst) {
 		new GUI::Connection(*this, cm, src, dst,
-		                    src->color() + 0x22222200);
+		                    src->get_fill_color() + 0x22222200);
 	} else {
 		LOG(error) << "Unable to find ports to connect "
 		           << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
