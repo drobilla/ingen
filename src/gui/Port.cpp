@@ -162,7 +162,7 @@ Port::on_event(GdkEvent* ev)
 		break;
 	}
 
-	return Object::on_event(ev);
+	return FlowCanvas::Port::on_event(ev);
 }
 
 bool
@@ -309,9 +309,9 @@ Port::dash()
 */
 
 void
-Port::set_selected(bool b)
+Port::set_selected(gboolean b)
 {
-	if (b != selected()) {
+	if (b != get_selected()) {
 		FlowCanvas::Port::set_selected(b);
 		SharedPtr<const PortModel> pm = _port_model.lock();
 		if (pm && b) {

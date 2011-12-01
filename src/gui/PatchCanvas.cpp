@@ -620,7 +620,7 @@ PatchCanvas::select_all()
 	unselect_ports();
 	FOREACH_ITEM(m, items())
 		if (dynamic_cast<FlowCanvas::Module*>(*m))
-			if (!(*m)->selected())
+			if (!(*m)->get_selected())
 				select_item(*m);
 }
 

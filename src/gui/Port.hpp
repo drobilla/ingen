@@ -60,7 +60,7 @@ public:
 	void value_changed(const Raul::Atom& value);
 	void activity(const Raul::Atom& value);
 
-	void set_selected(bool b);
+	void set_selected(gboolean b);
 
 	//ArtVpathDash* dash();
 

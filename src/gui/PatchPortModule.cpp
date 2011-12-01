@@ -149,7 +149,7 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 		if (key == uris.ingen_polyphonic) {
 			set_stacked_border(value.get_bool());
 		} else if (key == uris.ingen_selected) {
-			if (value.get_bool() != selected()) {
+			if (value.get_bool() != get_selected()) {
 				if (value.get_bool()) {
 					_canvas->select_item(this);
 				} else {
@@ -162,9 +162,9 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 }
 
 void
-PatchPortModule::set_selected(bool b)
+PatchPortModule::set_selected(gboolean b)
 {
-	if (b != selected()) {
+	if (b != get_selected()) {
 		Module::set_selected(b);
 		if (app().signal())
 			app().engine()->set_property(_model->path(),

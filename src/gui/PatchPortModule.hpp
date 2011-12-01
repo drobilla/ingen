@@ -67,7 +67,7 @@ protected:
 	                SharedPtr<const PortModel> model);
 
 	bool show_menu(GdkEventButton* ev);
-	void set_selected(bool b);
+	void set_selected(gboolean b);
 
 	void set_port(Port* port) { _port = port; }
 

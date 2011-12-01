@@ -405,7 +405,7 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 		if (key == uris.ingen_polyphonic) {
 			set_stacked_border(value.get_bool());
 		} else if (key == uris.ingen_selected) {
-			if (value.get_bool() != selected()) {
+			if (value.get_bool() != get_selected()) {
 				if (value.get_bool())
 					_canvas->select_item(this);
 				else
@@ -423,10 +423,10 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 }
 
 void
-NodeModule::set_selected(bool b)
+NodeModule::set_selected(gboolean b)
 {
 	const URIs& uris = app().uris();
-	if (b != selected()) {
+	if (b != get_selected()) {
 		Module::set_selected(b);
 		if (b) {
 			PatchWindow* win = app().window_factory()->parent_patch_window(node());
