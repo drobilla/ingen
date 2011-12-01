@@ -74,6 +74,7 @@ private:
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 
 	bool on_event(GdkEvent* ev);
+	bool on_click(GdkEventButton* ev);
 	void moved();
 
 	//static ArtVpathDash* _dash;

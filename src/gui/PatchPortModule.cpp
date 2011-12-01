@@ -79,7 +79,6 @@ PatchPortModule::app() const
 bool
 PatchPortModule::show_menu(GdkEventButton* ev)
 {
-	std::cout << "PPM SHOW MENU" << std::endl;
 	return _port->show_menu(ev);
 }
 

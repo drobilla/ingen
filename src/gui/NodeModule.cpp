@@ -78,6 +78,15 @@ NodeModule::~NodeModule()
 }
 
 bool
+NodeModule::on_click(GdkEventButton* ev)
+{
+	if (ev->button == 3) {
+		return show_menu(ev);
+	}
+	return false;
+}
+
+bool
 NodeModule::show_menu(GdkEventButton* ev)
 {
 	WidgetFactory::get_widget_derived("object_menu", _menu);

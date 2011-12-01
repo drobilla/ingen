@@ -162,6 +162,15 @@ Port::on_event(GdkEvent* ev)
 		break;
 	}
 
+	return Object::on_event(ev);
+}
+
+bool
+Port::on_click(GdkEventButton* ev)
+{
+	if (ev->button == 3) {
+		return show_menu(ev);
+	}
 	return false;
 }
 

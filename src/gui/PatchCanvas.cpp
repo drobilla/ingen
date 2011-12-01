@@ -145,7 +145,7 @@ PatchCanvas::PatchCanvas(App&                        app,
 }
 
 void
-PatchCanvas::show_menu(bool position,  unsigned button, uint32_t time)
+PatchCanvas::show_menu(bool position, unsigned button, uint32_t time)
 {
 	if (!_internal_menu)
 		build_menus();
