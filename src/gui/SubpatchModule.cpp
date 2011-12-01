@@ -63,8 +63,8 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 void
 SubpatchModule::store_location()
 {
-	const Atom x(static_cast<float>(property_x()));
-	const Atom y(static_cast<float>(property_y()));
+	const Atom x(static_cast<float>(get_x()));
+	const Atom y(static_cast<float>(get_y()));
 
 	const URIs& uris = app().uris();
 

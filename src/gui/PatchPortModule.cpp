@@ -85,8 +85,8 @@ PatchPortModule::show_menu(GdkEventButton* ev)
 void
 PatchPortModule::store_location()
 {
-	const Atom x(static_cast<float>(property_x()));
-	const Atom y(static_cast<float>(property_y()));
+	const Atom x(static_cast<float>(get_x()));
+	const Atom y(static_cast<float>(get_y()));
 
 	const URIs& uris = app().uris();
 
@@ -131,9 +131,9 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 	switch (value.type()) {
 	case Atom::FLOAT:
 		if (key == uris.ingen_canvas_x) {
-			move_to(value.get_float(), property_y());
+			move_to(value.get_float(), get_y());
 		} else if (key == uris.ingen_canvas_y) {
-			move_to(property_x(), value.get_float());
+			move_to(get_x(), value.get_float());
 		}
 		break;
 	case Atom::STRING:
