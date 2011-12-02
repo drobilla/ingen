@@ -131,11 +131,11 @@ private:
 
 	FlowCanvas::Port* get_port_view(SharedPtr<PortModel> port);
 
-	void connect(FlowCanvas::Joinable* src,
-	             FlowCanvas::Joinable* dst);
+	void connect(FlowCanvas::Node* src,
+	             FlowCanvas::Node* dst);
 
-	void disconnect(FlowCanvas::Joinable* src,
-	                FlowCanvas::Joinable* dst);
+	void disconnect(FlowCanvas::Node* src,
+	                FlowCanvas::Node* dst);
 
 	App&                        _app;
 	SharedPtr<const PatchModel> _patch;

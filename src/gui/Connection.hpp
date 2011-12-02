@@ -39,8 +39,8 @@ class Connection : public FlowCanvas::Edge
 public:
 	Connection(FlowCanvas::Canvas&                      canvas,
 	           boost::shared_ptr<const ConnectionModel> model,
-	           FlowCanvas::Joinable*                    src,
-	           FlowCanvas::Joinable*                    dst,
+	           FlowCanvas::Node*                        src,
+	           FlowCanvas::Node*                        dst,
 	           uint32_t                                 color);
 
 	SharedPtr<const ConnectionModel> model() const { return _connection_model; }
