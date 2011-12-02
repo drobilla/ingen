@@ -21,7 +21,7 @@
 #include <boost/format.hpp>
 #include "raul/log.hpp"
 #include "flowcanvas/Canvas.hpp"
-#include "flowcanvas/Node.hpp"
+#include "flowcanvas/Circle.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/Builder.hpp"
@@ -48,7 +48,7 @@
 
 #define LOG(s) s << "[PatchCanvas] "
 
-#define FOREACH_ITEM(iter, coll)                                        \
+#define FOREACH_ITEM(iter, coll) \
 	for (Items::const_iterator (iter) = coll.begin(); \
 	     (iter) != coll.end(); ++(iter))
 
