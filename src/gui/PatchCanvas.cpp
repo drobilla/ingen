@@ -21,7 +21,7 @@
 #include <boost/format.hpp>
 #include "raul/log.hpp"
 #include "flowcanvas/Canvas.hpp"
-#include "flowcanvas/Ellipse.hpp"
+#include "flowcanvas/Node.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/Builder.hpp"
