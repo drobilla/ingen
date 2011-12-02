@@ -51,6 +51,9 @@ PatchPortModule::PatchPortModule(PatchCanvas&               canvas,
 
 	model->signal_property().connect(
 		sigc::mem_fun(this, &PatchPortModule::property_changed));
+
+	signal_moved.connect(
+		sigc::mem_fun(this, &PatchPortModule::store_location));
 }
 
 PatchPortModule*
