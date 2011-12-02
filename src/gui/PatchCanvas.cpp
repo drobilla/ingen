@@ -485,7 +485,7 @@ PatchCanvas::disconnection(SharedPtr<const ConnectionModel> cm)
 	FlowCanvas::Port* const dst = get_port_view(cm->dst_port());
 
 	if (src && dst)
-		remove_connection(src, dst);
+		remove_edge(src, dst);
 	else
 		LOG(error) << "Unable to find ports to disconnect "
 		           << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
@@ -642,8 +642,8 @@ PatchCanvas::copy_selection()
 		}
 	}
 
-	for (SelectedConnections::const_iterator c = selected_connections().begin();
-	     c != selected_connections().end(); ++c) {
+	for (SelectedEdges::const_iterator c = selected_edges().begin();
+	     c != selected_edges().end(); ++c) {
 		Connection* const connection = dynamic_cast<Connection*>(*c);
 		if (connection) {
 			const Sord::URI subject(*_app.world()->rdf_world(),

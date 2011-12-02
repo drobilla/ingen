@@ -30,7 +30,7 @@ Connection::Connection(FlowCanvas::Canvas&                      canvas,
                        FlowCanvas::Joinable*                    src,
                        FlowCanvas::Joinable*                    dst,
                        uint32_t                                 color)
-	: FlowCanvas::Connection(canvas, src, dst, color)
+	: FlowCanvas::Edge(canvas, src, dst, color)
 	, _connection_model(model)
 {
 }

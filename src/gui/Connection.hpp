@@ -20,7 +20,7 @@
 
 #include <cassert>
 #include <string>
-#include "flowcanvas/Connection.hpp"
+#include "flowcanvas/Edge.hpp"
 #include "raul/SharedPtr.hpp"
 
 namespace Ingen {
@@ -34,7 +34,7 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class Connection : public FlowCanvas::Connection
+class Connection : public FlowCanvas::Edge
 {
 public:
 	Connection(FlowCanvas::Canvas&                      canvas,
