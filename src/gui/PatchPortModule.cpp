@@ -47,7 +47,7 @@ PatchPortModule::PatchPortModule(PatchCanvas&               canvas,
 
 	assert(PtrCast<const PatchModel>(model->parent()));
 
-	set_stacked_border(model->polyphonic());
+	set_stacked(model->polyphonic());
 
 	model->signal_property().connect(
 		sigc::mem_fun(this, &PatchPortModule::property_changed));
@@ -123,7 +123,7 @@ PatchPortModule::show_human_names(bool b)
 void
 PatchPortModule::set_name(const std::string& n)
 {
-	_port->set_name(n);
+	_port->set_label(n.c_str());
 	_must_resize = true;
 }
 
@@ -150,7 +150,7 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 		break;
 	case Atom::BOOL:
 		if (key == uris.ingen_polyphonic) {
-			set_stacked_border(value.get_bool());
+			set_stacked(value.get_bool());
 		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != get_selected()) {
 				if (value.get_bool()) {

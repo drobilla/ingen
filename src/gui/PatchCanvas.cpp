@@ -304,30 +304,40 @@ PatchCanvas::build()
 	}
 }
 
+static void
+show_module_human_names(FlowCanvasNode* node, void* data)
+{
+	bool b = *(bool*)data;
+	if (FLOW_CANVAS_IS_MODULE(node)) {
+		FlowCanvas::Module* module = Glib::wrap(FLOW_CANVAS_MODULE(node));
+		NodeModule* nmod = dynamic_cast<NodeModule*>(module);
+		if (nmod)
+			nmod->show_human_names(b);
+
+		PatchPortModule* pmod = dynamic_cast<PatchPortModule*>(module);
+		if (pmod)
+			pmod->show_human_names(b);
+	}
+}
 void
 PatchCanvas::show_human_names(bool b)
 {
 	_human_names = b;
-	FOREACH_ITEM(m, items()) {
-		NodeModule* mod = dynamic_cast<NodeModule*>(*m);
-		if (mod)
-			mod->show_human_names(b);
-
-		PatchPortModule* pmod = dynamic_cast<PatchPortModule*>(*m);
-		if (pmod)
-			pmod->show_human_names(b);
-	}
+	for_each_node(show_module_human_names, &b);
 }
 
 void
 PatchCanvas::show_port_names(bool b)
 {
+	std::cerr << "FIXME: show port names" << std::endl;
+	#if 0
 	_show_port_names = b;
 	FOREACH_ITEM(i, items()) {
 		FlowCanvas::Module* m = dynamic_cast<FlowCanvas::Module*>(*i);
 		if (m)
 			m->set_show_port_labels(b);
 	}
+	#endif
 }
 
 void
@@ -544,7 +554,7 @@ PatchCanvas::auto_menu_position(int& x, int& y, bool& push_in)
 }
 
 bool
-PatchCanvas::canvas_event(GdkEvent* event)
+PatchCanvas::on_event(GdkEvent* event)
 {
 	assert(event);
 
@@ -585,7 +595,7 @@ PatchCanvas::canvas_event(GdkEvent* event)
 	default: break;
 	}
 
-	return (ret ? true : Canvas::canvas_event(event));
+	return (ret ? true : Canvas::on_event(event));
 }
 
 void
@@ -599,34 +609,38 @@ PatchCanvas::clear_selection()
 	FlowCanvas::Canvas::clear_selection();
 }
 
-void
-PatchCanvas::destroy_selection()
+static void
+destroy_module(FlowCanvasNode* node, void* data)
 {
-	FOREACH_ITEM(m, selected_items()) {
-		NodeModule* module = dynamic_cast<NodeModule*>(*m);
-		if (module) {
-			_app.engine()->del(module->node()->path());
-		} else {
-			PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(*m);
-			if (port_module)
-				_app.engine()->del(port_module->port()->path());
+	if (!FLOW_CANVAS_IS_MODULE(node)) {
+		return;
+	}
+	
+	App*                app         = (App*)data;
+	FlowCanvas::Module* module      = Glib::wrap(FLOW_CANVAS_MODULE(node));
+	NodeModule*         node_module = dynamic_cast<NodeModule*>(module);
+	
+	if (node_module) {
+		app->engine()->del(node_module->node()->path());
+	} else {
+		PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(module);
+		if (port_module) {
+			app->engine()->del(port_module->port()->path());
 		}
 	}
 }
 
 void
-PatchCanvas::select_all()
+PatchCanvas::destroy_selection()
 {
-	unselect_ports();
-	FOREACH_ITEM(m, items())
-		if (dynamic_cast<FlowCanvas::Module*>(*m))
-			if (!(*m)->get_selected())
-				select_item(*m);
+	for_each_selected_node(destroy_module, &_app);
 }
 
 void
 PatchCanvas::copy_selection()
 {
+	std::cerr << "FIXME: copy" << std::endl;
+	#if 0
 	static const char* base_uri = "";
 	Serialiser serialiser(*_app.world(), _app.store());
 	serialiser.start_to_string(_patch->path(), base_uri);
@@ -657,6 +671,7 @@ PatchCanvas::copy_selection()
 
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->set_text(result);
+	#endif
 }
 
 void

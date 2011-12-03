@@ -88,11 +88,10 @@ public:
 	void destroy_selection();
 	void copy_selection();
 	void paste();
-	void select_all();
 
 	void show_menu(bool position, unsigned button, uint32_t time);
 
-	bool canvas_event(GdkEvent* event);
+	bool on_event(GdkEvent* event);
 
 private:
 	enum ControlType { NUMBER, BUTTON };

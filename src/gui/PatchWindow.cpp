@@ -635,7 +635,7 @@ bool
 PatchWindow::on_event(GdkEvent* event)
 {
 	if ((event->type == GDK_KEY_PRESS || event->type == GDK_KEY_RELEASE)
-			&& _view->canvas()->canvas_event(event)) {
+			&& _view->canvas()->on_event(event)) {
 		return true;
 	} else {
 		return Gtk::Window::on_event(event);

@@ -85,7 +85,7 @@ Port::Port(App&                       app,
 	pm->signal_moved().connect(sigc::mem_fun(this, &Port::moved));
 
 	if (app.can_control(pm.get())) {
-		set_toggled(pm->is_toggle());
+		set_control_is_toggle(pm->is_toggle());
 		show_control();
 		pm->signal_property().connect(
 			sigc::mem_fun(this, &Port::property_changed));
@@ -135,7 +135,7 @@ void
 Port::moved()
 {
 	if (_app.configuration()->name_style() == Configuration::PATH)
-		set_name(model()->symbol().c_str());
+		set_label(model()->symbol().c_str());
 }
 
 void
@@ -144,7 +144,7 @@ Port::value_changed(const Atom& value)
 	if (_pressed)
 		return;
 	else if (value.type() == Atom::FLOAT)
-		FlowCanvas::Port::set_control(value.get_float());
+		FlowCanvas::Port::set_control_value(value.get_float());
 }
 
 bool
@@ -249,7 +249,7 @@ Port::set_control(float value, bool signal)
 			pw->show_port_status(model().get(), value);
 	}
 
-	FlowCanvas::Port::set_control(value);
+	FlowCanvas::Port::set_control_value(value);
 }
 
 void
@@ -273,13 +273,13 @@ Port::property_changed(const URI& key, const Atom& value)
 		}
 	} else if (key == uris.lv2_portProperty) {
 		if (value == uris.lv2_toggled)
-			set_toggled(true);
+			set_control_is_toggle(true);
 	} else if (key == uris.ctx_context) {
 		Raul::info << "TODO: Visual indication of port context?" << std::endl;
 	} else if (key == uris.lv2_name) {
 		if (value.type() == Atom::STRING
 				&& _app.configuration()->name_style() == Configuration::HUMAN) {
-			set_name(value.get_string());
+			set_label(value.get_string());
 		}
 	}
 }

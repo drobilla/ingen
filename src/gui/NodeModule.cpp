@@ -123,7 +123,7 @@ NodeModule::create(PatchCanvas&               canvas,
 	     p != node->ports().end(); ++p)
 		ret->new_port_view(*p);
 
-	ret->set_stacked_border(node->polyphonic());
+	ret->set_stacked(node->polyphonic());
 
 	if (human)
 		ret->show_human_names(human); // FIXME: double port iteration
@@ -145,12 +145,12 @@ NodeModule::show_human_names(bool b)
 	if (b && node()->plugin()) {
 		const Raul::Atom& name_property = node()->get_property(uris.lv2_name);
 		if (name_property.type() == Atom::STRING)
-			set_name(name_property.get_string());
+			set_label(name_property.get_string());
 		else
-			set_name(node()->plugin_model()->human_name());
+			set_label(node()->plugin_model()->human_name().c_str());
 	} else {
 		b = false;
-		set_name(node()->symbol().c_str());
+		set_label(node()->symbol().c_str());
 	}
 
 	for (Ports::const_iterator i = ports().begin(); i != ports().end(); ++i) {
@@ -167,7 +167,7 @@ NodeModule::show_human_names(bool b)
 					label = hn;
 			}
 		}
-		(*i)->set_name(label);
+		(*i)->set_label(label.c_str());
 	}
 }
 
@@ -258,7 +258,7 @@ void
 NodeModule::rename()
 {
 	if (app().configuration()->name_style() == Configuration::PATH) {
-		set_name(_node->path().symbol());
+		set_label(_node->path().symbol());
 	}
 }
 
@@ -403,7 +403,7 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 		break;
 	case Atom::BOOL:
 		if (key == uris.ingen_polyphonic) {
-			set_stacked_border(value.get_bool());
+			set_stacked(value.get_bool());
 		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != get_selected()) {
 				if (value.get_bool())
@@ -416,7 +416,7 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 	case Atom::STRING:
 		if (key == uris.lv2_name
 				&& app().configuration()->name_style() == Configuration::HUMAN) {
-			set_name(value.get_string());
+			set_label(value.get_string());
 		}
 	default: break;
 	}
