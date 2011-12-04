@@ -454,13 +454,13 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 	if (module) {
 		PatchPortModule* ppm = dynamic_cast<PatchPortModule*>(module);
 		return ppm
-			? *ppm->ports().begin()
+			? *ppm->begin()
 			: dynamic_cast<FlowCanvas::Port*>(module);
 	} else {
 		module = dynamic_cast<NodeModule*>(_views[port->parent()]);
 		if (module) {
-			for (Module::Ports::const_iterator p = module->ports().begin();
-			     p != module->ports().end(); ++p) {
+			for (Module::iterator p = module->begin();
+			     p != module->end(); ++p) {
 				GUI::Port* pv = dynamic_cast<GUI::Port*>(*p);
 				if (pv && pv->model() == port)
 					return pv;

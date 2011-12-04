@@ -153,7 +153,7 @@ NodeModule::show_human_names(bool b)
 		set_label(node()->symbol().c_str());
 	}
 
-	for (Ports::const_iterator i = ports().begin(); i != ports().end(); ++i) {
+	for (iterator i = begin(); i != end(); ++i) {
 		Ingen::GUI::Port* const port = dynamic_cast<Ingen::GUI::Port*>(*i);
 		Glib::ustring label(port->model()->symbol().c_str());
 		if (b) {
@@ -195,7 +195,7 @@ NodeModule::value_changed(uint32_t index, const Atom& value)
 void
 NodeModule::plugin_changed()
 {
-	for (Ports::const_iterator p = ports().begin(); p != ports().end(); ++p)
+	for (iterator p = begin(); p !=end(); ++p)
 		dynamic_cast<Ingen::GUI::Port*>(*p)->update_metadata();
 }
 
@@ -276,7 +276,7 @@ NodeModule::new_port_view(SharedPtr<const PortModel> port)
 Port*
 NodeModule::port(boost::shared_ptr<const PortModel> model)
 {
-	for (Ports::const_iterator p = ports().begin(); p != ports().end(); ++p) {
+	for (iterator p = begin(); p != end(); ++p) {
 		Port* const port = dynamic_cast<Port*>(*p);
 		if (port->model() == model)
 			return port;
