@@ -407,9 +407,9 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != get_selected()) {
 				if (value.get_bool())
-					_canvas->select_item(this);
+					canvas()->select_item(this);
 				else
-					_canvas->unselect_item(this);
+					canvas()->unselect_item(this);
 			}
 		}
 		break;
