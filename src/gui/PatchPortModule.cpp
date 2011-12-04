@@ -124,7 +124,7 @@ void
 PatchPortModule::set_name(const std::string& n)
 {
 	_port->set_label(n.c_str());
-	_must_resize = true;
+	//_must_resize = true;
 }
 
 void
