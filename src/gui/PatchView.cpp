@@ -137,7 +137,7 @@ void
 PatchView::on_editable_sig(bool editable)
 {
 	_edit_mode_but->set_active(editable);
-	_canvas->lock(!editable);
+	_canvas->set_locked(!editable);
 }
 
 void
@@ -151,7 +151,7 @@ void
 PatchView::set_editable(bool editable)
 {
 	_patch->set_editable(editable);
-	_canvas->lock(!editable);
+	_canvas->set_locked(!editable);
 }
 
 #if 0

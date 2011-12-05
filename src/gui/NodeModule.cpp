@@ -360,11 +360,16 @@ NodeModule::show_control_window()
 	app().window_factory()->present_controls(_node);
 }
 
-void
-NodeModule::on_double_click(GdkEventButton* ev)
+bool
+NodeModule::on_event(GdkEvent* ev)
 {
-	if ( ! popup_gui() )
-		show_control_window();
+	if (ev->type == GDK_2BUTTON_PRESS) {
+		if (!popup_gui()) {
+			show_control_window();
+		}
+		return true;
+	}
+	return false;
 }
 
 void
