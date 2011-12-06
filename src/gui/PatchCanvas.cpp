@@ -401,7 +401,7 @@ PatchCanvas::add_node(SharedPtr<const NodeModel> nm)
 		module = NodeModule::create(*this, nm, _human_names);
 		const PluginModel* plugm = dynamic_cast<const PluginModel*>(nm->plugin());
 		if (plugm && !plugm->icon_path().empty())
-			module->set_icon(_app.icon_from_path(plugm->icon_path(), 100));
+			module->set_icon(_app.icon_from_path(plugm->icon_path(), 100).operator->());
 	}
 
 	module->show();

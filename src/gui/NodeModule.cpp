@@ -81,15 +81,6 @@ NodeModule::~NodeModule()
 }
 
 bool
-NodeModule::on_click(GdkEventButton* ev)
-{
-	if (ev->button == 3) {
-		return show_menu(ev);
-	}
-	return false;
-}
-
-bool
 NodeModule::show_menu(GdkEventButton* ev)
 {
 	WidgetFactory::get_widget_derived("object_menu", _menu);
@@ -221,6 +212,7 @@ NodeModule::embed_gui(bool embed)
 
 			Gtk::Container* container = new Gtk::EventBox();
 			container->set_name("ingen_embedded_node_gui_container");
+			container->set_border_width(2.0);
 			container->add(*_gui_widget);
 			FlowCanvas::Module::embed(container);
 		} else {
@@ -249,7 +241,7 @@ NodeModule::embed_gui(bool embed)
 				                                       false);
 	}
 
-	if (embed && _embed_item) {
+	if (embed) {
 		set_control_values();
 	}
 }
@@ -363,7 +355,9 @@ NodeModule::show_control_window()
 bool
 NodeModule::on_event(GdkEvent* ev)
 {
-	if (ev->type == GDK_2BUTTON_PRESS) {
+	if (ev->type == GDK_BUTTON_PRESS && ev->button.button == 3) {
+		return show_menu(&ev->button);
+	} else if (ev->type == GDK_2BUTTON_PRESS) {
 		if (!popup_gui()) {
 			show_control_window();
 		}
