@@ -20,8 +20,8 @@
 #include <string>
 #include <boost/format.hpp>
 #include "raul/log.hpp"
-#include "flowcanvas/Canvas.hpp"
-#include "flowcanvas/Circle.hpp"
+#include "ganv/Canvas.hpp"
+#include "ganv/Circle.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/Builder.hpp"
@@ -305,11 +305,11 @@ PatchCanvas::build()
 }
 
 static void
-show_module_human_names(FlowCanvasNode* node, void* data)
+show_module_human_names(GanvNode* node, void* data)
 {
 	bool b = *(bool*)data;
-	if (FLOW_CANVAS_IS_MODULE(node)) {
-		FlowCanvas::Module* module = Glib::wrap(FLOW_CANVAS_MODULE(node));
+	if (GANV_IS_MODULE(node)) {
+		Ganv::Module* module = Glib::wrap(GANV_MODULE(node));
 		NodeModule* nmod = dynamic_cast<NodeModule*>(module);
 		if (nmod)
 			nmod->show_human_names(b);
@@ -333,7 +333,7 @@ PatchCanvas::show_port_names(bool b)
 	#if 0
 	_show_port_names = b;
 	FOREACH_ITEM(i, items()) {
-		FlowCanvas::Module* m = dynamic_cast<FlowCanvas::Module*>(*i);
+		Ganv::Module* m = dynamic_cast<Ganv::Module*>(*i);
 		if (m)
 			m->set_show_port_labels(b);
 	}
@@ -445,17 +445,17 @@ PatchCanvas::remove_port(SharedPtr<const PortModel> pm)
 	assert(_views.find(pm) == _views.end());
 }
 
-FlowCanvas::Port*
+Ganv::Port*
 PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 {
-	FlowCanvas::Module* module = _views[port];
+	Ganv::Module* module = _views[port];
 
 	// Port on this patch
 	if (module) {
 		PatchPortModule* ppm = dynamic_cast<PatchPortModule*>(module);
 		return ppm
 			? *ppm->begin()
-			: dynamic_cast<FlowCanvas::Port*>(module);
+			: dynamic_cast<Ganv::Port*>(module);
 	} else {
 		module = dynamic_cast<NodeModule*>(_views[port->parent()]);
 		if (module) {
@@ -476,8 +476,8 @@ PatchCanvas::connection(SharedPtr<const ConnectionModel> cm)
 {
 	assert(cm);
 
-	FlowCanvas::Port* const src = get_port_view(cm->src_port());
-	FlowCanvas::Port* const dst = get_port_view(cm->dst_port());
+	Ganv::Port* const src = get_port_view(cm->src_port());
+	Ganv::Port* const dst = get_port_view(cm->dst_port());
 
 	if (src && dst) {
 		new GUI::Connection(*this, cm, src, dst,
@@ -491,8 +491,8 @@ PatchCanvas::connection(SharedPtr<const ConnectionModel> cm)
 void
 PatchCanvas::disconnection(SharedPtr<const ConnectionModel> cm)
 {
-	FlowCanvas::Port* const src = get_port_view(cm->src_port());
-	FlowCanvas::Port* const dst = get_port_view(cm->dst_port());
+	Ganv::Port* const src = get_port_view(cm->src_port());
+	Ganv::Port* const dst = get_port_view(cm->dst_port());
 
 	if (src && dst)
 		remove_edge(src, dst);
@@ -502,8 +502,8 @@ PatchCanvas::disconnection(SharedPtr<const ConnectionModel> cm)
 }
 
 void
-PatchCanvas::connect(FlowCanvas::Node* src_port,
-                     FlowCanvas::Node* dst_port)
+PatchCanvas::connect(Ganv::Node* src_port,
+                     Ganv::Node* dst_port)
 {
 	const Ingen::GUI::Port* const src
 		= dynamic_cast<Ingen::GUI::Port*>(src_port);
@@ -518,8 +518,8 @@ PatchCanvas::connect(FlowCanvas::Node* src_port,
 }
 
 void
-PatchCanvas::disconnect(FlowCanvas::Node* src_port,
-                        FlowCanvas::Node* dst_port)
+PatchCanvas::disconnect(Ganv::Node* src_port,
+                        Ganv::Node* dst_port)
 {
 	const Ingen::GUI::Port* const src
 		= dynamic_cast<Ingen::GUI::Port*>(src_port);
@@ -606,19 +606,19 @@ PatchCanvas::clear_selection()
 		win->hide_documentation();
 	}
 
-	FlowCanvas::Canvas::clear_selection();
+	Ganv::Canvas::clear_selection();
 }
 
 static void
-destroy_module(FlowCanvasNode* node, void* data)
+destroy_module(GanvNode* node, void* data)
 {
-	if (!FLOW_CANVAS_IS_MODULE(node)) {
+	if (!GANV_IS_MODULE(node)) {
 		return;
 	}
 	
-	App*                app         = (App*)data;
-	FlowCanvas::Module* module      = Glib::wrap(FLOW_CANVAS_MODULE(node));
-	NodeModule*         node_module = dynamic_cast<NodeModule*>(module);
+	App*          app         = (App*)data;
+	Ganv::Module* module      = Glib::wrap(GANV_MODULE(node));
+	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
 	
 	if (node_module) {
 		app->engine()->del(node_module->node()->path());

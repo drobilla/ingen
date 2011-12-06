@@ -25,12 +25,12 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-Connection::Connection(FlowCanvas::Canvas&                      canvas,
+Connection::Connection(Ganv::Canvas&                            canvas,
                        boost::shared_ptr<const ConnectionModel> model,
-                       FlowCanvas::Node*                        src,
-                       FlowCanvas::Node*                        dst,
+                       Ganv::Node*                              src,
+                       Ganv::Node*                              dst,
                        uint32_t                                 color)
-	: FlowCanvas::Edge(canvas, src, dst, color)
+	: Ganv::Edge(canvas, src, dst, color)
 	, _connection_model(model)
 {
 }

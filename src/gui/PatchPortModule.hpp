@@ -20,7 +20,7 @@
 
 #include <string>
 #include <boost/enable_shared_from_this.hpp>
-#include "flowcanvas/Module.hpp"
+#include "ganv/Module.hpp"
 #include "raul/URI.hpp"
 #include "Port.hpp"
 
@@ -45,7 +45,7 @@ class PortMenu;
  *
  * \ingroup GUI
  */
-class PatchPortModule : public FlowCanvas::Module
+class PatchPortModule : public Ganv::Module
 {
 public:
 	static PatchPortModule* create(

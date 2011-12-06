@@ -45,7 +45,7 @@ namespace GUI {
 
 NodeModule::NodeModule(PatchCanvas&               canvas,
                        SharedPtr<const NodeModel> node)
-	: FlowCanvas::Module(canvas, node->path().symbol(), 0, 0, true, canvas.show_port_names())
+	: Ganv::Module(canvas, node->path().symbol(), 0, 0, true, canvas.show_port_names())
 	, _node(node)
 	, _gui_widget(NULL)
 	, _gui_window(NULL)
@@ -214,7 +214,7 @@ NodeModule::embed_gui(bool embed)
 			container->set_name("ingen_embedded_node_gui_container");
 			container->set_border_width(2.0);
 			container->add(*_gui_widget);
-			FlowCanvas::Module::embed(container);
+			Ganv::Module::embed(container);
 		} else {
 			error << "Failed to create LV2 UI" << endl;
 		}
@@ -230,7 +230,7 @@ NodeModule::embed_gui(bool embed)
 
 	} else { // un-embed
 
-		FlowCanvas::Module::embed(NULL);
+		Ganv::Module::embed(NULL);
 		_plugin_ui.reset();
 
 		for (NodeModel::Ports::const_iterator p = _node->ports().begin();

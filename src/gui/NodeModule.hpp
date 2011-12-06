@@ -19,7 +19,7 @@
 #define INGEN_GUI_NODEMODULE_HPP
 
 #include <string>
-#include "flowcanvas/Module.hpp"
+#include "ganv/Module.hpp"
 #include "raul/SharedPtr.hpp"
 #include "Port.hpp"
 
@@ -45,7 +45,7 @@ class NodeMenu;
  *
  * \ingroup GUI
  */
-class NodeModule : public FlowCanvas::Module
+class NodeModule : public Ganv::Module
 {
 public:
 	static NodeModule* create(

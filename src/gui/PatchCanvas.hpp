@@ -26,8 +26,8 @@
 
 #include "lilv/lilv.h"
 
-#include "flowcanvas/Canvas.hpp"
-#include "flowcanvas/Module.hpp"
+#include "ganv/Canvas.hpp"
+#include "ganv/Module.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
 
@@ -35,11 +35,11 @@
 #include "ingen/GraphObject.hpp"
 #include "NodeModule.hpp"
 
-using namespace FlowCanvas;
+using namespace Ganv;
 using namespace Ingen::Shared;
 
 using std::string;
-using FlowCanvas::Port;
+using Ganv::Port;
 using Ingen::Client::ConnectionModel;
 using Ingen::Client::NodeModel;
 using Ingen::Client::PortModel;
@@ -57,7 +57,7 @@ class NodeModule;
  *
  * \ingroup GUI
  */
-class PatchCanvas : public FlowCanvas::Canvas
+class PatchCanvas : public Ganv::Canvas
 {
 public:
 	PatchCanvas(App&                        app,
@@ -128,20 +128,18 @@ private:
 
 	GraphObject::Properties get_initial_data(Resource::Graph ctx=Resource::DEFAULT);
 
-	FlowCanvas::Port* get_port_view(SharedPtr<PortModel> port);
+	Ganv::Port* get_port_view(SharedPtr<PortModel> port);
 
-	void connect(FlowCanvas::Node* src,
-	             FlowCanvas::Node* dst);
+	void connect(Ganv::Node* src,
+	             Ganv::Node* dst);
 
-	void disconnect(FlowCanvas::Node* src,
-	                FlowCanvas::Node* dst);
+	void disconnect(Ganv::Node* src,
+	                Ganv::Node* dst);
 
 	App&                        _app;
 	SharedPtr<const PatchModel> _patch;
 
-	typedef std::map<SharedPtr<const ObjectModel>,
-	                 FlowCanvas::Module*
-	                 > Views;
+	typedef std::map<SharedPtr<const ObjectModel>, Ganv::Module*> Views;
 	Views _views;
 
 	int                _auto_position_count;

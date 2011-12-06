@@ -23,7 +23,7 @@
 
 #include <gtk/gtkwindow.h>
 
-#include "flowcanvas/Edge.hpp"
+#include "ganv/Edge.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/client/ClientStore.hpp"

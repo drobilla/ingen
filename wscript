@@ -65,7 +65,7 @@ def configure(conf):
                           atleast_version='2.14.0', mandatory=False)
         autowaf.check_pkg(conf, 'webkit-1.0', uselib_store='WEBKIT',
                           atleast_version='1.4.0', mandatory=False)
-        autowaf.check_pkg(conf, 'flowcanvas-1', uselib_store='FLOWCANVAS',
+        autowaf.check_pkg(conf, 'ganv-1', uselib_store='GANV',
                           atleast_version='1.0.0', mandatory=False)
     if not Options.options.no_http:
         autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP',
@@ -97,7 +97,7 @@ def configure(conf):
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
-    if not Options.options.no_gui and conf.is_defined('HAVE_FLOWCANVAS'):
+    if not Options.options.no_gui and conf.is_defined('HAVE_GANV'):
         autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
 
     if conf.is_defined('HAVE_JACK'):

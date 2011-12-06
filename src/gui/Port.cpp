@@ -17,7 +17,7 @@
 
 #include <cassert>
 #include "raul/log.hpp"
-#include "flowcanvas/Module.hpp"
+#include "ganv/Module.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/client/PatchModel.hpp"
@@ -42,7 +42,7 @@ namespace GUI {
 
 Port*
 Port::create(App&                       app,
-             FlowCanvas::Module&        module,
+             Ganv::Module&              module,
              SharedPtr<const PortModel> pm,
              bool                       human_name,
              bool                       flip)
@@ -64,11 +64,11 @@ Port::create(App&                       app,
 /** @a flip Make an input port appear as an output port, and vice versa.
  */
 Port::Port(App&                       app,
-           FlowCanvas::Module&        module,
+           Ganv::Module&              module,
            SharedPtr<const PortModel> pm,
            const string&              name,
            bool                       flip)
-	: FlowCanvas::Port(module, name,
+	: Ganv::Port(module, name,
 			flip ? (!pm->is_input()) : pm->is_input(),
 			app.configuration()->get_port_color(pm.get()))
 	, _app(app)
@@ -144,7 +144,7 @@ Port::value_changed(const Atom& value)
 	if (_pressed)
 		return;
 	else if (value.type() == Atom::FLOAT)
-		FlowCanvas::Port::set_control_value(value.get_float());
+		Ganv::Port::set_control_value(value.get_float());
 }
 
 bool
@@ -162,7 +162,7 @@ Port::on_event(GdkEvent* ev)
 		break;
 	}
 
-	return FlowCanvas::Port::on_event(ev);
+	return Ganv::Port::on_event(ev);
 }
 
 bool
@@ -249,7 +249,7 @@ Port::set_control(float value, bool signal)
 			pw->show_port_status(model().get(), value);
 	}
 
-	FlowCanvas::Port::set_control_value(value);
+	Ganv::Port::set_control_value(value);
 }
 
 void
@@ -312,7 +312,7 @@ void
 Port::set_selected(gboolean b)
 {
 	if (b != get_selected()) {
-		FlowCanvas::Port::set_selected(b);
+		Ganv::Port::set_selected(b);
 		SharedPtr<const PortModel> pm = _port_model.lock();
 		if (pm && b) {
 			SharedPtr<const NodeModel> node = PtrCast<NodeModel>(pm->parent());

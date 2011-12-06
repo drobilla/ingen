@@ -40,7 +40,7 @@ namespace GUI {
 
 PatchPortModule::PatchPortModule(PatchCanvas&               canvas,
                                  SharedPtr<const PortModel> model)
-	: FlowCanvas::Module(canvas, "", 0, 0, false) // FIXME: coords?
+	: Ganv::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
 {
 	assert(model);

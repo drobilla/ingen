@@ -20,7 +20,7 @@
 
 #include <cassert>
 #include <string>
-#include "flowcanvas/Edge.hpp"
+#include "ganv/Edge.hpp"
 #include "raul/SharedPtr.hpp"
 
 namespace Ingen {
@@ -34,13 +34,13 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class Connection : public FlowCanvas::Edge
+class Connection : public Ganv::Edge
 {
 public:
-	Connection(FlowCanvas::Canvas&                      canvas,
+	Connection(Ganv::Canvas&                            canvas,
 	           boost::shared_ptr<const ConnectionModel> model,
-	           FlowCanvas::Node*                        src,
-	           FlowCanvas::Node*                        dst,
+	           Ganv::Node*                              src,
+	           Ganv::Node*                              dst,
 	           uint32_t                                 color);
 
 	SharedPtr<const ConnectionModel> model() const { return _connection_model; }

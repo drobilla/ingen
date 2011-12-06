@@ -20,7 +20,7 @@
 
 #include <cassert>
 #include <string>
-#include "flowcanvas/Port.hpp"
+#include "ganv/Port.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/WeakPtr.hpp"
 
@@ -39,12 +39,12 @@ class App;
  *
  * \ingroup GUI
  */
-class Port : public FlowCanvas::Port
+class Port : public Ganv::Port
 {
 public:
 	static Port* create(
 		App&                       app,
-		FlowCanvas::Module&        module,
+		Ganv::Module&              module,
 		SharedPtr<const PortModel> pm,
 		bool                       human_name,
 		bool                       flip = false);
@@ -66,7 +66,7 @@ public:
 
 private:
 	Port(App&                       app,
-	     FlowCanvas::Module&        module,
+	     Ganv::Module&              module,
 	     SharedPtr<const PortModel> pm,
 	     const std::string&         name,
 	     bool                       flip = false);

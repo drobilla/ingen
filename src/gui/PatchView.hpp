@@ -25,7 +25,7 @@
 #include "raul/SharedPtr.hpp"
 
 namespace Raul { class Atom; }
-namespace FlowCanvas { class Port; class Item; }
+namespace Ganv { class Port; class Item; }
 
 namespace Ingen {
 

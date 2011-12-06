@@ -11,7 +11,7 @@ def build(bld):
               install_path    = '${LIBDIR}',
               use             = 'libingen_shared libingen_client libingen_serialisation')
     autowaf.use_lib(bld, obj, '''
-            FLOWCANVAS
+            GANV
             GLADEMM
             GLIBMM
             GNOMECANVAS
