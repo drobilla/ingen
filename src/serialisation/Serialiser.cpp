@@ -200,7 +200,8 @@ void
 Serialiser::Impl::write_bundle(SharedPtr<const Patch> patch,
                                const std::string&     a_path)
 {
-	std::string path(a_path);
+	
+	std::string path = Glib::filename_from_uri(a_path);
 	if (Glib::file_test(path, Glib::FILE_TEST_EXISTS)
 	    && !Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
 		path = Glib::path_get_dirname(path);
