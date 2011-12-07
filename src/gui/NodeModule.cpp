@@ -405,10 +405,7 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 			set_stacked(value.get_bool());
 		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != get_selected()) {
-				if (value.get_bool())
-					canvas()->select_item(this);
-				else
-					canvas()->unselect_item(this);
+				set_selected(value.get_bool());
 			}
 		}
 		break;

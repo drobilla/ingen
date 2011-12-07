@@ -595,7 +595,7 @@ PatchCanvas::on_event(GdkEvent* event)
 	default: break;
 	}
 
-	return (ret ? true : Canvas::on_event(event));
+	return ret;
 }
 
 void
