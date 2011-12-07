@@ -113,6 +113,13 @@ PatchCanvas::PatchCanvas(App&                        app,
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 		           "event_out", "Event Out", "http://lv2plug.in/ns/ext/event#EventPort", true));
 
+	signal_event.connect(
+		sigc::mem_fun(this, &PatchCanvas::on_event));
+	signal_connect.connect(
+		sigc::mem_fun(this, &PatchCanvas::connect));
+	signal_disconnect.connect(
+		sigc::mem_fun(this, &PatchCanvas::disconnect));
+
 	// Connect to model signals to track state
 	_patch->signal_new_node().connect(
 		sigc::mem_fun(this, &PatchCanvas::add_node));
