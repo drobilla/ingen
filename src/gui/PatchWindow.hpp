@@ -70,6 +70,9 @@ public:
 
 	void show_port_status(const PortModel* model, const Raul::Atom& value);
 
+	void object_entered(const ObjectModel* model);
+	void object_left(const ObjectModel* model);
+
 protected:
 	void on_show();
 	void on_hide();
@@ -79,8 +82,6 @@ private:
 	void patch_port_added(SharedPtr<const PortModel> port);
 	void patch_port_removed(SharedPtr<const PortModel> port);
 	void show_status(const ObjectModel* model);
-	void object_entered(const ObjectModel* model);
-	void object_left(const ObjectModel* model);
 	void editable_changed(bool editable);
 
 	void event_import();

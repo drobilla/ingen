@@ -34,6 +34,7 @@ using Ingen::Client::PortModel;
 namespace GUI {
 
 class App;
+class PatchWindow;
 
 /** A Port on an Module.
  *
@@ -70,6 +71,8 @@ private:
 	     SharedPtr<const PortModel> pm,
 	     const std::string&         name,
 	     bool                       flip = false);
+
+	PatchWindow* get_patch_window() const;
 
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 

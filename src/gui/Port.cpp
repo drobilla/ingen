@@ -150,7 +150,20 @@ Port::value_changed(const Atom& value)
 bool
 Port::on_event(GdkEvent* ev)
 {
+	PatchWindow* win = NULL;
 	switch (ev->type) {
+	case GDK_ENTER_NOTIFY:
+		win = get_patch_window();
+		if (win) {
+			win->object_entered(model().get());
+		}
+		break;
+	case GDK_LEAVE_NOTIFY:
+		win = get_patch_window();
+		if (win) {
+			win->object_left(model().get());
+		}
+		break;
 	case GDK_BUTTON_PRESS:
 		if (ev->button.button == 1)
 			_pressed = true;
@@ -233,6 +246,17 @@ Port::activity(const Raul::Atom& value)
 	}
 }
 
+PatchWindow*
+Port::get_patch_window() const
+{
+	SharedPtr<const PatchModel> patch = PtrCast<const PatchModel>(model()->parent());
+	if (!patch) {
+		patch = PtrCast<const PatchModel>(model()->parent()->parent());
+	}
+
+	return _app.window_factory()->patch_window(patch);
+}
+
 void
 Port::set_control(float value, bool signal)
 {
@@ -240,13 +264,11 @@ Port::set_control(float value, bool signal)
 		Ingen::Shared::World* const world = _app.world();
 		_app.engine()->set_property(model()->path(),
 				world->uris()->ingen_value, Atom(value));
-		PatchWindow* pw = _app.window_factory()->patch_window(
-				PtrCast<const PatchModel>(model()->parent()));
-		if (!pw)
-			pw = _app.window_factory()->patch_window(
-					PtrCast<const PatchModel>(model()->parent()->parent()));
-		if (pw)
-			pw->show_port_status(model().get(), value);
+	}
+
+	PatchWindow* pw = get_patch_window();
+	if (pw) {
+		pw->show_port_status(model().get(), value);
 	}
 
 	Ganv::Port::set_control_value(value);
