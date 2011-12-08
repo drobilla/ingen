@@ -61,7 +61,7 @@ public:
 
 	void delete_port_view(SharedPtr<const PortModel> port);
 
-	virtual void store_location();
+	virtual void store_location(double x, double y);
 	void show_human_names(bool b);
 
 	SharedPtr<const NodeModel> node() const { return _node; }

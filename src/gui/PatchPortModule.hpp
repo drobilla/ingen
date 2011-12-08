@@ -55,7 +55,7 @@ public:
 
 	App& app() const;
 
-	virtual void store_location();
+	virtual void store_location(double x, double y);
 	void show_human_names(bool b);
 
 	void set_name(const std::string& n);
