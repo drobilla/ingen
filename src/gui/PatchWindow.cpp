@@ -716,10 +716,10 @@ void
 PatchWindow::event_port_names_toggled()
 {
 	if (_menu_show_port_names->get_active()) {
-		_view->canvas()->set_direction(Canvas::HORIZONTAL);
+		_view->canvas()->set_direction(GANV_DIRECTION_RIGHT);
 		_view->canvas()->show_port_names(true);
 	} else {
-		_view->canvas()->set_direction(Canvas::VERTICAL);
+		_view->canvas()->set_direction(GANV_DIRECTION_DOWN);
 		_view->canvas()->show_port_names(false);
 	}
 }
