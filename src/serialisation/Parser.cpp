@@ -603,7 +603,7 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 
 	if (parsed_path) {
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
-		                     Atom(Atom::URI, path.c_str()));
+		                     Atom(Atom::URI, uri.c_str()));
 	} else {
 		LOG(warn) << "Document URI lost" << endl;
 	}
