@@ -61,7 +61,10 @@ NodeModule::NodeModule(PatchCanvas&               canvas,
 	node->signal_moved().connect(
 		sigc::mem_fun(this, &NodeModule::rename));
 
-	signal_moved.connect(
+	signal_event().connect(
+		sigc::mem_fun(this, &NodeModule::on_event));
+
+	signal_moved().connect(
 		sigc::mem_fun(this, &NodeModule::store_location));
 
 	const PluginModel* plugin = dynamic_cast<const PluginModel*>(node->plugin());
