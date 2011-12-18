@@ -38,14 +38,14 @@ namespace GUI {
 using namespace Ingen::Client;
 
 Configuration::Configuration(App& app)
-	// Colours from  the Tango palette with modified V and alpha
+	// Colours from the Tango palette with modified V
 	: _app(app)
 	, _name_style(HUMAN)
-	, _audio_port_color(  0x4A8A0EC0) // Green
-	, _control_port_color(0x244678C0) // Blue
-	, _event_port_color(  0x960909C0) // Red
-	, _string_port_color( 0x5C3566C0) // Plum
-	, _value_port_color(  0xBABDB6C0) // Aluminum
+	, _audio_port_color(  0x4A8A0EFF) // Green
+	, _control_port_color(0x244678FF) // Blue
+	, _event_port_color(  0x960909FF) // Red
+	, _string_port_color( 0x5C3566FF) // Plum
+	, _value_port_color(  0xBABDB6FF) // Aluminum
 {
 }
 
