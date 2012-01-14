@@ -581,10 +581,21 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 		path = Glib::build_filename(path, get_basename(path) + ".ttl");
 	}
 
-	const std::string uri       = Glib::filename_to_uri(path, "");
-	const uint8_t*    uri_c_str = (const uint8_t*)uri.c_str();
-	SerdNode          base_node = serd_node_from_string(SERD_URI, uri_c_str);
-	SerdEnv*          env       = serd_env_new(&base_node);
+	if (!Glib::path_is_absolute(path)) {
+		path = Glib::build_filename(Glib::get_current_dir(), path);
+	}
+
+	std::string uri;
+	try {
+		uri = Glib::filename_to_uri(path, "");
+	} catch (const Glib::ConvertError& e) { 
+		LOG(error) << "Path to URI conversion error: " << e.what() << endl;
+		return false; 
+	}
+
+	const uint8_t* uri_c_str = (const uint8_t*)uri.c_str();
+	SerdNode       base_node = serd_node_from_string(SERD_URI, uri_c_str);
+	SerdEnv*       env       = serd_env_new(&base_node);
 
 	// Load patch file into model
 	Sord::Model model(*world->rdf_world(), uri);
