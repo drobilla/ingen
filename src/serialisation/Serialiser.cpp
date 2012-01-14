@@ -166,7 +166,7 @@ Serialiser::Impl::write_manifest(const std::string&     bundle_path,
 	                      Sord::Curie(world, "lv2:binary"),
 	                      Sord::URI(world, binary_path));
 
-	symlink(Glib::Module::build_path(INGEN_MODULE_DIR, "ingen_lv2").c_str(),
+	symlink(Glib::Module::build_path(INGEN_BUNDLE_DIR, "ingen_lv2").c_str(),
 	        Glib::Module::build_path(bundle_path, "ingen_lv2").c_str());
 
 	finish();

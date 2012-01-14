@@ -104,8 +104,12 @@ def configure(conf):
     if conf.is_defined('HAVE_JACK'):
         autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
 
-    autowaf.define(conf, 'INGEN_DATA_DIR', os.path.join(conf.env['DATADIR'], 'ingen'))
-    autowaf.define(conf, 'INGEN_MODULE_DIR', conf.env['LIBDIR'])
+    autowaf.define(conf, 'INGEN_DATA_DIR',
+                   os.path.join(conf.env['DATADIR'], 'ingen'))
+    autowaf.define(conf, 'INGEN_MODULE_DIR',
+                   conf.env['LIBDIR'])
+    autowaf.define(conf, 'INGEN_BUNDLE_DIR',
+                   os.path.join(conf.env['LV2DIR'], 'ingen.lv2'))
 
     if Options.options.log_debug:
         autowaf.define(conf, 'RAUL_LOG_DEBUG', 1)
@@ -122,6 +126,7 @@ def configure(conf):
     autowaf.display_msg(conf, "HTTP", conf.is_defined('HAVE_SOUP'))
     autowaf.display_msg(conf, "LV2", conf.is_defined('HAVE_LILV'))
     autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
+    autowaf.display_msg(conf, "LV2 Bundle", conf.env['INGEN_BUNDLE_DIR'])
     autowaf.display_msg(conf, "HTML plugin documentation support",
                         conf.is_defined('HAVE_WEBKIT'))
     print('')

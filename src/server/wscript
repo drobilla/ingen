@@ -76,12 +76,11 @@ def build(bld):
         autowaf.use_lib(bld, obj, core_libs + ' JACK')
 
     # Ingen LV2 wrapper
-    obj = bld(features = 'cxx cxxshlib',
-    source = ' ingen_lv2.cpp ',
-    includes        = ['.', '../..', '../../include'],
-    name            = 'libingen_lv2',
-    target          = 'ingen_lv2',
-    #install_path    = '${LIBDIR}',
-    install_path    = '${LV2DIR}/ingen.lv2/',
-    use             = 'libingen_server libingen_shared')
+    obj = bld(features     = 'cxx cxxshlib',
+              source       = ' ingen_lv2.cpp ',
+              includes     = ['.', '../..', '../../include'],
+              name         = 'libingen_lv2',
+              target       = 'ingen_lv2',
+              install_path = '${LV2DIR}/ingen.lv2/',
+              use          = 'libingen_server libingen_shared')
     autowaf.use_lib(bld, obj, core_libs)
