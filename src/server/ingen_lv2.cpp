@@ -17,7 +17,6 @@
  */
 
 #include <stdlib.h>
-#include <time.h>
 
 #include <string>
 #include <vector>
@@ -25,6 +24,7 @@
 #include <glib.h>
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
+#include <glibmm/timer.h>
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
@@ -234,9 +234,8 @@ public:
 
 private:
 	virtual void _run() {
-		static const timespec main_rate = { 0, 125000000 }; // 1/8 second
 		while (_engine->main_iteration()) {
-			nanosleep(&main_rate, NULL);
+			Glib::usleep(125000);  // 1/8 second
 		}
 	}
 

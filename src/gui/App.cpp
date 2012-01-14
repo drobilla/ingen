@@ -16,10 +16,8 @@
  */
 
 #include <cassert>
-#include <string>
 #include <fstream>
-#include <time.h>
-#include <sys/time.h>
+#include <string>
 
 #include <gtk/gtkwindow.h>
 

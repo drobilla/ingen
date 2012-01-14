@@ -17,9 +17,6 @@
 
 #include <stdlib.h>
 #include <string>
-#include <sys/resource.h>
-#include <sys/time.h>
-#include <time.h>
 
 #include "raul/Process.hpp"
 #include "raul/log.hpp"

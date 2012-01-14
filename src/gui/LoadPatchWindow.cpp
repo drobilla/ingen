@@ -15,8 +15,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <sys/types.h>
-#include <dirent.h>
 #include <cassert>
 #include <boost/optional.hpp>
 #include <glibmm/miscutils.h>
@@ -86,10 +84,8 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType*                   cobject,
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
 	const string examples_dir = Shared::data_file_path("patches");
-	DIR* d = opendir(examples_dir.c_str());
-	if (d != NULL) {
+	if (Glib::file_test(examples_dir, Glib::FILE_TEST_IS_DIR)) {
 		add_shortcut_folder(examples_dir);
-		closedir(d);
 	}
 }
 

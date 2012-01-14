@@ -17,7 +17,6 @@
 
 #include <signal.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include <iostream>
 #include <string>
@@ -27,6 +26,7 @@
 #include <glibmm/convert.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/thread.h>
+#include <glibmm/timer.h>
 
 #include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
@@ -53,8 +53,6 @@
 using namespace std;
 using namespace Raul;
 using namespace Ingen;
-
-static const timespec main_rate = { 0, 125000000 }; // 1/8 second
 
 Ingen::Shared::World* world = NULL;
 
@@ -236,7 +234,7 @@ main(int argc, char** argv)
 
 		// Run engine main loop until interrupt
 		while (world->local_engine()->main_iteration()) {
-			nanosleep(&main_rate, NULL);
+			Glib::usleep(125000);  // 1/8 second
 		}
 		info << "Finished main loop" << endl;
 	}
