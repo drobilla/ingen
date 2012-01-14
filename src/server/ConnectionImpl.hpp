@@ -20,7 +20,7 @@
 
 #include <cstdlib>
 
-#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/slist.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/utility.hpp>
 
@@ -51,12 +51,16 @@ class BufferFactory;
  * multiple connections (oblivious to the polyphonic situation of the
  * connection itself).
  *
+ * This is stored in an intrusive slist in InputPort.
+ *
  * \ingroup engine
  */
-class ConnectionImpl : public  Raul::Deletable
-                     , private Raul::Noncopyable
-                     , public  Connection
-                     , public  boost::intrusive::list_base_hook<>
+class ConnectionImpl
+		: public  Raul::Deletable
+		, private Raul::Noncopyable
+		, public  Connection
+		, public  boost::intrusive::slist_base_hook<
+	boost::intrusive::link_mode<boost::intrusive::auto_unlink> >
 {
 public:
 	ConnectionImpl(PortImpl* src_port, PortImpl* dst_port);

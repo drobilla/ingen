@@ -45,7 +45,7 @@ public:
 	           uint32_t           index,
 	           bool               polyphonic,
 	           uint32_t           poly,
-	           PortType   type,
+	           PortType           type,
 	           const Raul::Atom&  value,
 	           size_t             buffer_size,
 	           bool               is_output);

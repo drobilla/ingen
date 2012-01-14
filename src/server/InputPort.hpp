@@ -22,7 +22,7 @@
 #include <cstdlib>
 #include <string>
 
-#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/slist.hpp>
 
 #include "raul/SharedPtr.hpp"
 
@@ -63,7 +63,9 @@ public:
 
 	virtual ~InputPort() {}
 
-	typedef boost::intrusive::list<ConnectionImpl> Connections;
+	typedef boost::intrusive::slist<ConnectionImpl,
+	                                boost::intrusive::constant_time_size<false>
+	                                > Connections;
 
 	void            add_connection(ConnectionImpl* c);
 	ConnectionImpl* remove_connection(ProcessContext&   context,
