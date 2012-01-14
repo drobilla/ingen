@@ -32,11 +32,11 @@ Configuration::Configuration()
 	"clients, can communicate with the engine via any supported protocol, or host the\n"
 	"engine in the same process.  Many clients can connect to an engine at once.\n\n"
 	"Examples:\n"
-	"  ingen -e                     # Run an engine, listen for OSC\n"
-	"  ingen -g                     # Run a GUI, connect via OSC\n"
-	"  ingen -eg                    # Run an engine and a GUI in one process\n"
-	"  ingen -egl patch.ttl         # Run an engine and a GUI and load a patch file\n"
-	"  ingen -egl patch.ingen       # Run an engine and a GUI and load a patch bundle")
+	"  ingen -e                    # Run an engine, listen for OSC\n"
+	"  ingen -g                    # Run a GUI, connect via OSC\n"
+	"  ingen -eg                   # Run an engine and a GUI in one process\n"
+	"  ingen -eg patch.ttl         # Run an engine and a GUI and load a patch file\n"
+	"  ingen -eg patch.ingen       # Run an engine and a GUI and load a patch bundle")
 {
 	add("client-port", 'C', "Client OSC port", Atom::INT, Atom())
 		.add("connect",     'c', "Connect to engine URI", Atom::STRING, "osc.udp://localhost:16180")

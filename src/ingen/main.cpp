@@ -166,7 +166,7 @@ main(int argc, char** argv)
 
 	// Load necessary modules before activating engine (and Jack driver)
 
-	if (conf.option("load").is_valid()) {
+	if (conf.option("load").is_valid() || !conf.files().empty()) {
 		ingen_try(world->load_module("serialisation"),
 		          "Unable to load serialisation module");
 	}
@@ -184,7 +184,7 @@ main(int argc, char** argv)
 	}
 
 	// Load a patch
-	if (conf.option("load").is_valid()) {
+	if (conf.option("load").is_valid() || !conf.files().empty()) {
 		boost::optional<Path>   parent;
 		boost::optional<Symbol> symbol;
 		const Raul::Atom&       path_option = conf.option("path");
@@ -204,7 +204,9 @@ main(int argc, char** argv)
 		ingen_try(world->parser(),
 		          "Unable to create parser");
 
-		const string path = conf.option("load").get_string();
+		const string path = conf.option("load").is_valid() ?
+		  conf.option("load").get_string() :
+		  conf.files().front();
 
 		engine_interface->get("ingen:plugins");
 		engine_interface->get("path:/");
