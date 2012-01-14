@@ -318,7 +318,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	engine->deactivate();
 
-	plugin->world->load_module("osc");
+	plugin->world->load_module("osc_server");
 
 	return (LV2_Handle)plugin;
 }
