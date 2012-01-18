@@ -31,7 +31,7 @@
 #include "PatchView.hpp"
 #include "PatchWindow.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 using namespace std;
 using namespace Raul;

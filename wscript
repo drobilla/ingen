@@ -117,7 +117,7 @@ def configure(conf):
     if Options.options.liblo_bundles:
         autowaf.define(conf, 'LIBLO_BUNDLES', 1)
 
-    conf.write_config_header('ingen-config.h', remove=False)
+    conf.write_config_header('ingen_config.h', remove=False)
 
     autowaf.display_msg(conf, "Jack", conf.is_defined('HAVE_JACK'))
     autowaf.display_msg(conf, "Jack session support",

@@ -27,7 +27,7 @@
 
 #include "ingen/Resource.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 #include "macros.h"
 
 namespace Ingen {

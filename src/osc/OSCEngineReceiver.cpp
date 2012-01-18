@@ -27,7 +27,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/log.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 #include "ingen/ClientInterface.hpp"
 #include "ingen/ServerInterface.hpp"
 

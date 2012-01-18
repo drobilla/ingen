@@ -44,7 +44,7 @@
 #include "PatchWindow.hpp"
 #include "ThreadedLoader.hpp"
 #include "WindowFactory.hpp"
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 #ifdef HAVE_WEBKIT
 #include <webkit/webkit.h>

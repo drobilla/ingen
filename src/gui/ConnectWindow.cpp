@@ -21,7 +21,7 @@
 #include "raul/Process.hpp"
 #include "raul/log.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 #include "ingen/EngineBase.hpp"
 #include "ingen/ServerInterface.hpp"
 #include "ingen/client/ClientStore.hpp"

@@ -18,7 +18,7 @@
 #ifndef INGEN_ENGINE_JACKAUDIODRIVER_HPP
 #define INGEN_ENGINE_JACKAUDIODRIVER_HPP
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 #include <list>
 #include <string>

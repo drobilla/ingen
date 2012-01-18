@@ -31,7 +31,7 @@
 #include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
 #include "util.hpp"
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 #define LOG(s) s << "[NoteNode] "
 

@@ -24,7 +24,7 @@
 #include "raul/log.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 #include <fenv.h>
 #ifdef __SSE__

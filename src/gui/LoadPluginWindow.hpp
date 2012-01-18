@@ -25,7 +25,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Table.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 #include "ingen/GraphObject.hpp"
 #include "ingen/client/ClientStore.hpp"
 

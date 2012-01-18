@@ -19,7 +19,7 @@
 #include "ingen/shared/World.hpp"
 #include "raul/SharedPtr.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 using namespace Ingen;
 

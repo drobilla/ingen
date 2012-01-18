@@ -23,7 +23,7 @@
 #include "raul/AtomLiblo.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 #include "OSCClientReceiver.hpp"
 
 #define LOG(s) s << "[OSCClientReceiver] "

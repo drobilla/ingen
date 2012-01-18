@@ -22,7 +22,7 @@
 #include "raul/log.hpp"
 
 #include "OSCSender.hpp"
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 using namespace std;
 using namespace Raul;

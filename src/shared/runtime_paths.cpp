@@ -27,7 +27,7 @@
 
 #include "ingen/shared/runtime_paths.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 using namespace std;
 

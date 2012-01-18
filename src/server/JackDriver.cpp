@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 #include <cstdlib>
 #include <string>

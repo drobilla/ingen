@@ -37,7 +37,7 @@
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
 
-#include "ingen-config.h"
+#include "ingen_config.h"
 
 #include "ingen/EngineBase.hpp"
 #include "ingen/ServerInterface.hpp"

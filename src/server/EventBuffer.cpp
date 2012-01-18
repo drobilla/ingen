@@ -20,7 +20,7 @@
 #include "raul/log.hpp"
 #include "lv2/lv2plug.in/ns/ext/event/event.h"
 #include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
-#include "ingen-config.h"
+#include "ingen_config.h"
 #include "EventBuffer.hpp"
 #include "ProcessContext.hpp"
 

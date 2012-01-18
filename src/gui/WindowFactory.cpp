@@ -16,7 +16,7 @@
  */
 
 #include <string>
-#include "ingen-config.h"
+#include "ingen_config.h"
 #include "ingen/client/PatchModel.hpp"
 #include "App.hpp"
 #include "WidgetFactory.hpp"
