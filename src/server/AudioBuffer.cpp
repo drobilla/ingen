@@ -54,7 +54,7 @@ AudioBuffer::AudioBuffer(BufferFactory& bufs, PortType type, size_t size)
 	} else {
 		assert(type == PortType::AUDIO);
 		atom()->type = 0;//map->vector_type;
-		LV2_Atom_Vector* body = (LV2_Atom_Vector*)atom()->body;
+		LV2_Atom_Vector* body = (LV2_Atom_Vector*)LV2_ATOM_BODY(atom());
 		body->elem_count = size / sizeof(Sample);
 		body->elem_type = 0;//map->float_type;
 	}
