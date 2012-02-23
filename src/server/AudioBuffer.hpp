@@ -58,8 +58,8 @@ public:
 
 	inline SampleCount nframes() const {
 		return (is_control())
-				? 1
-				: (_size - sizeof(LV2_Atom) - sizeof(LV2_Atom_Vector)) / sizeof(Sample);
+			? 1
+			: (_size - sizeof(LV2_Atom_Vector)) / sizeof(Sample);
 	}
 
 	inline Sample& value_at(size_t offset) const
