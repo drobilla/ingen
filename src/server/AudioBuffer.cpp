@@ -55,8 +55,8 @@ AudioBuffer::AudioBuffer(BufferFactory& bufs, PortType type, size_t size)
 		assert(type == PortType::AUDIO);
 		atom()->type = 0;//map->vector_type;
 		LV2_Atom_Vector* body = (LV2_Atom_Vector*)atom();
-		body->body.elem_count = size / sizeof(Sample);
-		body->body.elem_type = 0;//map->float_type;
+		body->body.child_size = sizeof(Sample);
+		body->body.child_type = 0;//map->float_type;
 	}
 	/*debug << "Created Audio Buffer" << endl
 		<< "\tobject @ " << (void*)atom() << endl
@@ -74,7 +74,6 @@ AudioBuffer::resize(size_t size)
 {
 	if (_type == PortType::AUDIO) {
 		ObjectBuffer::resize(size + sizeof(LV2_Atom_Vector));
-		vector()->body.elem_count = size / sizeof(Sample);
 	}
 	clear();
 }
