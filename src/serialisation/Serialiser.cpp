@@ -151,7 +151,7 @@ Serialiser::Impl::write_manifest(const std::string&     bundle_path,
 	Sord::World& world = _model->world();
 
 	const string    filename(patch_symbol + ".ttl");
-	const Sord::URI subject(world, filename);
+	const Sord::URI subject(world, filename, _base_uri);
 
 	_model->add_statement(subject,
 	                      Sord::Curie(world, "rdf:type"),
@@ -161,10 +161,10 @@ Serialiser::Impl::write_manifest(const std::string&     bundle_path,
 	                      Sord::Curie(world, "lv2:Plugin"));
 	_model->add_statement(subject,
 	                      Sord::Curie(world, "rdfs:seeAlso"),
-	                      Sord::URI(world, filename));
+	                      Sord::URI(world, filename, _base_uri));
 	_model->add_statement(subject,
 	                      Sord::Curie(world, "lv2:binary"),
-	                      Sord::URI(world, binary_path));
+	                      Sord::URI(world, binary_path, _base_uri));
 
 	symlink(Glib::Module::build_path(INGEN_BUNDLE_DIR, "ingen_lv2").c_str(),
 	        Glib::Module::build_path(bundle_path, "ingen_lv2").c_str());
@@ -220,7 +220,7 @@ Serialiser::Impl::write_bundle(SharedPtr<const Patch> patch,
 	start_to_filename(root_file);
 	const Path old_root_path = _root_path;
 	_root_path = patch->path();
-	serialise_patch(patch, Sord::URI(_model->world(), ""));
+	serialise_patch(patch, Sord::URI(_model->world(), root_file, _base_uri));
 	_root_path = old_root_path;
 	finish();
 
@@ -320,7 +320,9 @@ Serialiser::Impl::path_rdf_node(const Path& path)
 	assert(_model);
 	assert(path == _root_path || path.is_child_of(_root_path));
 	const Path rel_path(path.relative_to_base(_root_path));
-	return Sord::URI(_model->world(), rel_path.chop_scheme().substr(1));
+	return Sord::URI(_model->world(),
+	                 rel_path.chop_scheme().substr(1).c_str(),
+	                 _base_uri);
 }
 
 void
