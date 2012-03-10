@@ -354,9 +354,9 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		}
 
 		// Cascade next node
-		Atom& x = _initial_data.find(uris.ingen_canvas_x)->second;
+		Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
 		x = Atom(x.get_float() + 20.0f);
-		Atom& y = _initial_data.find(uris.ingen_canvas_y)->second;
+		Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
 		y = Atom(y.get_float() + 20.0f);
 	}
 }

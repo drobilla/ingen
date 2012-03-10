@@ -180,9 +180,9 @@ Engine::activate()
 		in_properties.insert(make_pair(uris.lv2_index, 0));
 		in_properties.insert(make_pair(uris.lv2_portProperty,
 		                               uris.lv2_connectionOptional));
-		in_properties.insert(make_pair(uris.ingen_canvas_x,
+		in_properties.insert(make_pair(uris.ingen_canvasX,
 		                               Resource::Property(32.0f, Resource::EXTERNAL)));
-		in_properties.insert(make_pair(uris.ingen_canvas_y,
+		in_properties.insert(make_pair(uris.ingen_canvasY,
 		                               Resource::Property(32.0f, Resource::EXTERNAL)));
 
 		execute_and_delete_event(
@@ -196,9 +196,9 @@ Engine::activate()
 		out_properties.insert(make_pair(uris.lv2_index, 1));
 		in_properties.insert(make_pair(uris.lv2_portProperty,
 		                               uris.lv2_connectionOptional));
-		out_properties.insert(make_pair(uris.ingen_canvas_x,
+		out_properties.insert(make_pair(uris.ingen_canvasX,
 		                                Resource::Property(128.0f, Resource::EXTERNAL)));
-		out_properties.insert(make_pair(uris.ingen_canvas_y,
+		out_properties.insert(make_pair(uris.ingen_canvasY,
 		                                Resource::Property(32.0f, Resource::EXTERNAL)));
 
 		execute_and_delete_event(

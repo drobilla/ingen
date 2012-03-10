@@ -377,16 +377,16 @@ NodeModule::store_location(double ax, double ay)
 
 	const URIs& uris = app().uris();
 
-	const Atom& existing_x = _node->get_property(uris.ingen_canvas_x);
-	const Atom& existing_y = _node->get_property(uris.ingen_canvas_y);
+	const Atom& existing_x = _node->get_property(uris.ingen_canvasX);
+	const Atom& existing_y = _node->get_property(uris.ingen_canvasY);
 
 	if (x != existing_x && y != existing_y) {
 		Resource::Properties remove;
-		remove.insert(make_pair(uris.ingen_canvas_x, uris.wildcard));
-		remove.insert(make_pair(uris.ingen_canvas_y, uris.wildcard));
+		remove.insert(make_pair(uris.ingen_canvasX, uris.wildcard));
+		remove.insert(make_pair(uris.ingen_canvasY, uris.wildcard));
 		Resource::Properties add;
-		add.insert(make_pair(uris.ingen_canvas_x, x));
-		add.insert(make_pair(uris.ingen_canvas_y, y));
+		add.insert(make_pair(uris.ingen_canvasX, x));
+		add.insert(make_pair(uris.ingen_canvasY, y));
 		app().engine()->delta(_node->path(), remove, add);
 	}
 }
@@ -397,9 +397,9 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 	const Shared::URIs& uris = app().uris();
 	switch (value.type()) {
 	case Atom::FLOAT:
-		if (key == uris.ingen_canvas_x) {
+		if (key == uris.ingen_canvasX) {
 			move_to(value.get_float(), get_y());
-		} else if (key == uris.ingen_canvas_y) {
+		} else if (key == uris.ingen_canvasY) {
 			move_to(get_x(), value.get_float());
 		}
 		break;

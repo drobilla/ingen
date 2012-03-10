@@ -13,10 +13,10 @@
     ingen:polyphonic true ;
     ingen:port <amp/gain>, <amp/input>, <amp/output> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1913.75
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1203.75
     ] ;
     lv2:symbol "amp" ;
@@ -43,10 +43,10 @@
     ingen:polyphonic true ;
     ingen:port <amp_env/Attack_Time>, <amp_env/Decay_Time>, <amp_env/Delay_Time>, <amp_env/Envelope_Out>, <amp_env/Gate>, <amp_env/Hold_Time>, <amp_env/Release_Time>, <amp_env/Sustain_Level>, <amp_env/Trigger> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1451.0
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 867.75
     ] ;
     lv2:symbol "amp_env" ;
@@ -165,10 +165,10 @@
 
 <audio_output_1>
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 2013.75
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1229.0
     ] ;
     lv2:index 0 ;
@@ -184,10 +184,10 @@
         rdf:predicate ingen:minimum ;
         rdf:value 100.0
     ], [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1465.5
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1420.25
     ] ;
     lv2:index 1 ;
@@ -199,10 +199,10 @@
     ingen:polyphonic true ;
     ingen:port <detune/First_Input>, <detune/Second_Input>, <detune/Summed_Output> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1442.0
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1053.75
     ] ;
     lv2:symbol "detune" ;
@@ -236,10 +236,10 @@
     ingen:polyphonic true ;
     ingen:port <detune_0/First_Input>, <detune_0/Second_Input>, <detune_0/Summed_Output> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1442.0
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1141.25
     ] ;
     lv2:symbol "detune_0" ;
@@ -338,10 +338,10 @@
     ingen:polyphonic true ;
     ingen:port <filter_env/Attack_Time>, <filter_env/Decay_Time>, <filter_env/Delay_Time>, <filter_env/Envelope_Out>, <filter_env/Gate>, <filter_env/Hold_Time>, <filter_env/Release_Time>, <filter_env/Sustain_Level>, <filter_env/Trigger> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1451.0
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1225.25
     ] ;
     lv2:symbol "filter_env" ;
@@ -463,10 +463,10 @@
     ingen:polyphonic true ;
     ingen:port <lp4pole_faraia_oa/Cutoff_Frequency>, <lp4pole_faraia_oa/Input>, <lp4pole_faraia_oa/Output>, <lp4pole_faraia_oa/Resonance> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1747.0
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1195.25
     ] ;
     lv2:symbol "lp4pole_faraia_oa" ;
@@ -494,10 +494,10 @@
 
 <midi_input_1>
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1168.75
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1079.0
     ] ;
     lv2:index 2 ;
@@ -509,10 +509,10 @@
     ingen:polyphonic true ;
     ingen:port <note/frequency>, <note/gate>, <note/input>, <note/trigger>, <note/velocity> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1322.5
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1036.75
     ] ;
     lv2:symbol "note" ;
@@ -563,10 +563,10 @@
     ingen:polyphonic true ;
     ingen:port <range_trans_cr/Input>, <range_trans_cr/Input_Max>, <range_trans_cr/Input_Min>, <range_trans_cr/Output>, <range_trans_cr/Output_Max>, <range_trans_cr/Output_Min> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1602.0
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1239.5
     ] ;
     lv2:symbol "range_trans_cr" ;
@@ -652,10 +652,10 @@
         rdf:predicate ingen:maximum ;
         rdf:value 4.0
     ], [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1602.5
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1385.25
     ] ;
     lv2:index 3 ;
@@ -667,10 +667,10 @@
     ingen:polyphonic true ;
     ingen:port <sine_faaa/Amplitude>, <sine_faaa/Frequency>, <sine_faaa/Output> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1613.5
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 918.75
     ] ;
     lv2:symbol "sine_faaa" ;
@@ -696,10 +696,10 @@
     ingen:polyphonic true ;
     ingen:port <sine_faaa_0/Amplitude>, <sine_faaa_0/Frequency>, <sine_faaa_0/Output> ;
     lv2var:variable [
-        rdf:predicate ingen:canvas-x ;
+        rdf:predicate ingen:canvasX ;
         rdf:value 1612.0
     ], [
-        rdf:predicate ingen:canvas-y ;
+        rdf:predicate ingen:canvasY ;
         rdf:value 1141.25
     ] ;
     lv2:symbol "sine_faaa_0" ;

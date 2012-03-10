@@ -68,8 +68,8 @@ public:
 	const Quark ingen_sampleRate;
 	const Quark ingen_selected;
 	const Quark ingen_value;
-	const Quark ingen_canvas_x;
-	const Quark ingen_canvas_y;
+	const Quark ingen_canvasX;
+	const Quark ingen_canvasY;
 	const Quark lv2_AudioPort;
 	const Quark lv2_ControlPort;
 	const Quark lv2_InputPort;

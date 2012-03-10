@@ -73,8 +73,8 @@
             ingen:dataType "ingen:audio";
             ingen:connectedTo _:n21, _:n19
         ], _:n13;
-        ingen:canvas-x 1520.5;
-        ingen:canvas-y 1056.6
+        ingen:canvasX 1520.5;
+        ingen:canvasY 1056.6
     ], [
         a ingen:Node;
         ingen:symbol "SmoothDecimator";
@@ -95,22 +95,22 @@
             ingen:dataType "ingen:audio";
             ingen:connectedTo _:n13
         ], _:n18;
-        ingen:canvas-x 1644.5;
-        ingen:canvas-y 1124.1
+        ingen:canvasX 1644.5;
+        ingen:canvasY 1124.1
     ];
     ingen:port _:n19, [
         a ingen:OutputPort;
         ingen:symbol "audio_output_1";
         ingen:dataType "ingen:audio";
-        ingen:canvas-x 1804.5;
-        ingen:canvas-y 1128.1;
+        ingen:canvasX 1804.5;
+        ingen:canvasY 1128.1;
         ingen:connectedTo _:n18
     ], _:n21, [
         a ingen:OutputPort;
         ingen:symbol "audio_output_2";
         ingen:dataType "ingen:audio";
-        ingen:canvas-x 1804.5;
-        ingen:canvas-y 1180.6;
+        ingen:canvasX 1804.5;
+        ingen:canvasY 1180.6;
         ingen:connectedTo _:n18
     ] .
 
@@ -128,13 +128,13 @@ _:n19
     a ingen:InputPort;
     ingen:symbol "audio_input_1";
     ingen:dataType "ingen:audio";
-    ingen:canvas-x 1384.5;
-    ingen:canvas-y 1128.1 .
+    ingen:canvasX 1384.5;
+    ingen:canvasY 1128.1 .
 
 _:n21
     a ingen:InputPort;
     ingen:symbol "audio_input_2";
     ingen:dataType "ingen:audio";
-    ingen:canvas-x 1384.5;
-    ingen:canvas-y 1180.6 .
+    ingen:canvasX 1384.5;
+    ingen:canvasY 1180.6 .
 

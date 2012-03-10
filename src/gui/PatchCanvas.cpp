@@ -737,11 +737,11 @@ PatchCanvas::paste()
 
 		GraphObject::Properties& props = i->second->properties();
 
-		GraphObject::Properties::iterator x = props.find(uris.ingen_canvas_x);
+		GraphObject::Properties::iterator x = props.find(uris.ingen_canvasX);
 		if (x != i->second->properties().end())
 			x->second = x->second.get_float() + (20.0f * _paste_count);
 
-		GraphObject::Properties::iterator y = props.find(uris.ingen_canvas_y);
+		GraphObject::Properties::iterator y = props.find(uris.ingen_canvasY);
 		if (y != i->second->properties().end())
 			y->second = y->second.get_float() + (20.0f * _paste_count);
 
@@ -841,9 +841,9 @@ PatchCanvas::get_initial_data(Resource::Graph ctx)
 {
 	GraphObject::Properties result;
 	const URIs& uris = _app.uris();
-	result.insert(make_pair(uris.ingen_canvas_x,
+	result.insert(make_pair(uris.ingen_canvasX,
 	                        Resource::Property((float)_last_click_x, ctx)));
-	result.insert(make_pair(uris.ingen_canvas_y,
+	result.insert(make_pair(uris.ingen_canvasY,
 	                        Resource::Property((float)_last_click_y, ctx)));
 	return result;
 }

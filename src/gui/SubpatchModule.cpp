@@ -68,17 +68,17 @@ SubpatchModule::store_location(double ax, double ay)
 
 	const URIs& uris = app().uris();
 
-	const Atom& existing_x = _node->get_property(uris.ingen_canvas_x);
-	const Atom& existing_y = _node->get_property(uris.ingen_canvas_y);
+	const Atom& existing_x = _node->get_property(uris.ingen_canvasX);
+	const Atom& existing_y = _node->get_property(uris.ingen_canvasY);
 
 	if (x != existing_x && y != existing_y) {
 		Resource::Properties remove;
-		remove.insert(make_pair(uris.ingen_canvas_x, uris.wildcard));
-		remove.insert(make_pair(uris.ingen_canvas_y, uris.wildcard));
+		remove.insert(make_pair(uris.ingen_canvasX, uris.wildcard));
+		remove.insert(make_pair(uris.ingen_canvasY, uris.wildcard));
 		Resource::Properties add;
-		add.insert(make_pair(uris.ingen_canvas_x,
+		add.insert(make_pair(uris.ingen_canvasX,
 		                     Resource::Property(x, Resource::EXTERNAL)));
-		add.insert(make_pair(uris.ingen_canvas_y,
+		add.insert(make_pair(uris.ingen_canvasY,
 		                     Resource::Property(y, Resource::EXTERNAL)));
 		app().engine()->delta(_node->path(), remove, add);
 	}
