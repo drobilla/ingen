@@ -63,7 +63,7 @@ void
 Connect::pre_process()
 {
 	Glib::RWLock::ReaderLock rlock(_engine.engine_store()->lock());
-	
+
 	PortImpl* src_port = _engine.engine_store()->find_port(_src_port_path);
 	PortImpl* dst_port = _engine.engine_store()->find_port(_dst_port_path);
 	if (!src_port || !dst_port) {

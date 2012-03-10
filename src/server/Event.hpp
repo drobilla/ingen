@@ -81,7 +81,7 @@ public:
 
 	/** Respond to the originating client with an error. */
 	void respond_error(const std::string& msg);
-		
+
 protected:
 	Event(Engine& engine, ClientInterface* client, int32_t id, FrameTime time)
 		: _engine(engine)

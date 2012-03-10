@@ -258,7 +258,7 @@ PluginModel::documentation(bool* html) const
 	}
 	lilv_node_free(rdfs_comment);
 	lilv_node_free(lv2_documentation);
-	
+
 	lilv_nodes_free(vals);
 
 	return doc;

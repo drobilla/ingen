@@ -88,7 +88,7 @@ PostProcessor::process()
 	if (!ev) {
 		return;
 	}
-	
+
 	Event* const tail = _tail.get();
 	_head = (Event*)tail->next();
 	while (ev && ev->time() <= end_time) {

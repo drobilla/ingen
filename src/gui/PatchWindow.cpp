@@ -336,7 +336,7 @@ PatchWindow::hide_documentation()
 	_doc_scrolledwindow->remove();
 	_doc_scrolledwindow->hide();
 }
-	
+
 void
 PatchWindow::show_status(const ObjectModel* model)
 {

@@ -241,7 +241,7 @@ private:
 
 	SharedPtr<Engine> _engine;
 };
-	
+
 struct IngenPlugin {
 	Ingen::Shared::World* world;
 	MainThread*           main;
@@ -292,7 +292,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	// FIXME: fixed (or at least maximum) buffer size
 	LV2Driver* driver = new LV2Driver(*engine.get(), rate, 4096);
 	engine->set_driver(SharedPtr<Ingen::Server::Driver>(driver));
-	
+
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;
 

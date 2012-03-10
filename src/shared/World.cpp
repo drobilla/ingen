@@ -243,7 +243,7 @@ World::run_module(const char* name)
 	i->second->run(this);
 	return true;
 }
-	
+
 /** Unload all loaded Ingen modules.
  */
 void

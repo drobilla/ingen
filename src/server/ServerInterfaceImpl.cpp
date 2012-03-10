@@ -160,7 +160,7 @@ ServerInterfaceImpl::disconnect(const URI& src,
 		std::cerr << "Bad disconnect request " << src << " => " << dst << std::endl;
 		return;
 	}
-		
+
 	push_queued(new Events::Disconnect(_engine, _request_client, _request_id, now(),
 	                                   Path(src.str()), Path(dst.str())));
 }

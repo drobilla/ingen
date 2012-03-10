@@ -621,11 +621,11 @@ destroy_module(GanvNode* node, void* data)
 	if (!GANV_IS_MODULE(node)) {
 		return;
 	}
-	
+
 	App*          app         = (App*)data;
 	Ganv::Module* module      = Glib::wrap(GANV_MODULE(node));
 	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
-	
+
 	if (node_module) {
 		app->engine()->del(node_module->node()->path());
 	} else {

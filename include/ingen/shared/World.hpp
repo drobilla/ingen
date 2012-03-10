@@ -92,7 +92,7 @@ public:
 	virtual SharedPtr<Store>                     store();
 
 	virtual Sord::World* rdf_world();
-	
+
 	virtual SharedPtr<URIs>      uris();
 	virtual SharedPtr<LV2URIMap> lv2_uri_map();
 

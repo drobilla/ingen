@@ -61,21 +61,21 @@ relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 {
 	Glib::ustring ret;
 	if (uri != base) {
-		SerdURI base_uri; 
-		serd_uri_parse((const uint8_t*)base.c_str(), &base_uri); 
-	 	 
-		SerdURI  normal_base_uri; 
-		SerdNode normal_base_uri_node = serd_node_new_uri_from_string( 
-			(const uint8_t*)".", &base_uri, &normal_base_uri); 
-	 	 
-		Glib::ustring normal_base_str((const char*)normal_base_uri_node.buf); 
-	 	 
-		ret = uri; 
-		if (uri.length() >= normal_base_str.length() 
-		    && uri.substr(0, normal_base_str.length()) == normal_base_str) { 
+		SerdURI base_uri;
+		serd_uri_parse((const uint8_t*)base.c_str(), &base_uri);
+
+		SerdURI  normal_base_uri;
+		SerdNode normal_base_uri_node = serd_node_new_uri_from_string(
+			(const uint8_t*)".", &base_uri, &normal_base_uri);
+
+		Glib::ustring normal_base_str((const char*)normal_base_uri_node.buf);
+
+		ret = uri;
+		if (uri.length() >= normal_base_str.length()
+		    && uri.substr(0, normal_base_str.length()) == normal_base_str) {
 			ret = uri.substr(normal_base_str.length());
-			if (leading_slash && ret[0] != '/') 
-				ret = Glib::ustring("/") + ret; 
+			if (leading_slash && ret[0] != '/')
+				ret = Glib::ustring("/") + ret;
 		}
 	}
 
@@ -588,9 +588,9 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 	std::string uri;
 	try {
 		uri = Glib::filename_to_uri(path, "");
-	} catch (const Glib::ConvertError& e) { 
+	} catch (const Glib::ConvertError& e) {
 		LOG(error) << "Path to URI conversion error: " << e.what() << endl;
-		return false; 
+		return false;
 	}
 
 	const uint8_t* uri_c_str = (const uint8_t*)uri.c_str();

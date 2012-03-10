@@ -69,7 +69,7 @@ private:
 	   here refer to it, so the BufferFactory may only be deleted after the
 	   EngineStore is emptied and deleted.
 	*/
-	   
+
 	SharedPtr<BufferFactory> _factory;
 };
 

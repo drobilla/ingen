@@ -121,7 +121,7 @@ public:
 		ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 		_inputs.push_back(port);
 	}
-	
+
 	void add_output(Ports::Node* port) {
 		ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 		_outputs.push_back(port);

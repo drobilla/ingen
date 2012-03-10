@@ -31,7 +31,7 @@ struct IngenJackModule : public Ingen::Shared::Module {
 			Raul::warn << "Engine already has a driver" << std::endl;
 			return;
 		}
-			
+
 		Server::JackDriver* driver = new Server::JackDriver(
 			*(Server::Engine*)world->local_engine().get());
 		driver->attach(world->conf()->option("jack-server").get_string(),

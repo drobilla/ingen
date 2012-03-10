@@ -57,7 +57,7 @@ public:
 	bool is_toggle()      const { return port_property("http://lv2plug.in/ns/lv2core#toggled"); }
 
 	bool has_context(const Raul::URI& context) const;
-	
+
 
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 
