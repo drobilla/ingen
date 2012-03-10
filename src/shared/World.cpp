@@ -112,17 +112,16 @@ public:
 		lilv_world_load_all(lilv_world);
 
 		// Set up RDF namespaces
-		rdf_world->add_prefix("atom",    "http://lv2plug.in/ns/ext/atom#");
-		rdf_world->add_prefix("ctx",     "http://lv2plug.in/ns/ext/contexts#");
-		rdf_world->add_prefix("doap",    "http://usefulinc.com/ns/doap#");
-		rdf_world->add_prefix("ingen",   "http://drobilla.net/ns/ingen#");
-		rdf_world->add_prefix("lv2",     "http://lv2plug.in/ns/lv2core#");
-		rdf_world->add_prefix("lv2ev",   "http://lv2plug.in/ns/ext/event#");
-		rdf_world->add_prefix("lv2midi", "http://lv2plug.in/ns/ext/midi#");
-		rdf_world->add_prefix("midi",    "http://drobilla.net/ns/ext/midi#");
-		rdf_world->add_prefix("owl",     "http://www.w3.org/2002/07/owl#");
-		rdf_world->add_prefix("rdfs",    "http://www.w3.org/2000/01/rdf-schema#");
-		rdf_world->add_prefix("xsd",     "http://www.w3.org/2001/XMLSchema#");
+		rdf_world->add_prefix("atom",  "http://lv2plug.in/ns/ext/atom#");
+		rdf_world->add_prefix("ctx",   "http://lv2plug.in/ns/ext/contexts#");
+		rdf_world->add_prefix("doap",  "http://usefulinc.com/ns/doap#");
+		rdf_world->add_prefix("ingen", "http://drobilla.net/ns/ingen#");
+		rdf_world->add_prefix("lv2",   "http://lv2plug.in/ns/lv2core#");
+		rdf_world->add_prefix("lv2ev", "http://lv2plug.in/ns/ext/event#");
+		rdf_world->add_prefix("midi",  "http://lv2plug.in/ns/ext/midi#");
+		rdf_world->add_prefix("owl",   "http://www.w3.org/2002/07/owl#");
+		rdf_world->add_prefix("rdfs",  "http://www.w3.org/2000/01/rdf-schema#");
+		rdf_world->add_prefix("xsd",   "http://www.w3.org/2001/XMLSchema#");
 	}
 
 	virtual ~Pimpl()

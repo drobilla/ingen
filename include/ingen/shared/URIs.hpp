@@ -90,7 +90,7 @@ public:
 	const Quark midi_ChannelPressure;
 	const Quark midi_Controller;
 	const Quark midi_MidiEvent;
-	const Quark midi_Note;
+	const Quark midi_NoteOn;
 	const Quark midi_controllerNumber;
 	const Quark midi_noteNumber;
 	const Quark rdf_instanceOf;

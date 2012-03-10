@@ -52,7 +52,7 @@ Notification::post_process(Notification& note,
 			dict[uris.rdf_type] = uris.midi_ChannelPressure;
 			break;
 		case ControlBindings::MIDI_NOTE:
-			dict[uris.rdf_type]        = uris.midi_Note;
+			dict[uris.rdf_type]        = uris.midi_NoteOn;
 			dict[uris.midi_noteNumber] = note.value.get_int32();
 			break;
 		case ControlBindings::MIDI_RPN: // TODO

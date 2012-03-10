@@ -79,7 +79,7 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 		} else if (t->second == uris.midi_Controller) {
 			if ((n = dict.find(uris.midi_controllerNumber)) != dict.end())
 				key = Key(MIDI_CC, n->second.get_int32());
-		} else if (t->second == uris.midi_Note) {
+		} else if (t->second == uris.midi_NoteOn) {
 			if ((n = dict.find(uris.midi_noteNumber)) != dict.end())
 				key = Key(MIDI_NOTE, n->second.get_int32());
 		}

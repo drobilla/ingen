@@ -26,6 +26,7 @@
 
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "raul/log.hpp"
 
 using namespace std;
@@ -46,13 +47,11 @@ URIs::Quark::c_str() const
 	return g_quark_to_string(id);
 }
 
-#define NS_CTX     "http://lv2plug.in/ns/ext/contexts#"
-#define NS_INGEN   "http://drobilla.net/ns/ingen#"
-#define NS_LV2     "http://lv2plug.in/ns/lv2core#"
-#define NS_MIDI    "http://drobilla.net/ns/ext/midi#"
-#define NS_MIDI    "http://drobilla.net/ns/ext/midi#"
-#define NS_RDF     "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-#define NS_RDFS    "http://www.w3.org/2000/01/rdf-schema#"
+#define NS_CTX   "http://lv2plug.in/ns/ext/contexts#"
+#define NS_INGEN "http://drobilla.net/ns/ingen#"
+#define NS_LV2   "http://lv2plug.in/ns/lv2core#"
+#define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
 URIs::URIs()
 	: atom_AtomTransfer     (LV2_ATOM_URI "#AtomTransfer")
@@ -103,13 +102,13 @@ URIs::URIs()
 	, lv2_sampleRate        (NS_LV2 "sampleRate")
 	, lv2_symbol            (NS_LV2 "symbol")
 	, lv2_toggled           (NS_LV2 "toggled")
-	, midi_Bender           (NS_MIDI "Bender")
-	, midi_ChannelPressure  (NS_MIDI "ChannelPressure")
-	, midi_Controller       (NS_MIDI "Controller")
-	, midi_MidiEvent        ("http://lv2plug.in/ns/ext/midi#MidiEvent")
-	, midi_Note             (NS_MIDI "Note")
-	, midi_controllerNumber (NS_MIDI "controllerNumber")
-	, midi_noteNumber       (NS_MIDI "noteNumber")
+	, midi_Bender           (LV2_MIDI__Bender)
+	, midi_ChannelPressure  (LV2_MIDI__ChannelPressure)
+	, midi_Controller       (LV2_MIDI__Controller)
+	, midi_MidiEvent        (LV2_MIDI__MidiEvent)
+	, midi_NoteOn           (LV2_MIDI__NoteOn)
+	, midi_controllerNumber (LV2_MIDI__controllerNumber)
+	, midi_noteNumber       (LV2_MIDI__noteNumber)
 	, rdf_instanceOf        (NS_RDF "instanceOf")
 	, rdf_type              (NS_RDF "type")
 	, rdfs_seeAlso          (NS_RDFS "seeAlso")
