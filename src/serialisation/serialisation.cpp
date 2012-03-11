@@ -28,7 +28,7 @@ struct IngenSerialisationModule : public Shared::Module {
 		world->set_parser(SharedPtr<Serialisation::Parser>(
 				new Serialisation::Parser(*world)));
 		world->set_serialiser(SharedPtr<Serialisation::Serialiser>(
-				new Serialisation::Serialiser(*world, world->store())));
+				new Serialisation::Serialiser(*world)));
 	}
 };
 

@@ -27,10 +27,14 @@
 #include <glibmm/timer.h>
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+#include "lv2/lv2plug.in/ns/ext/state/state.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 
 #include "ingen/ServerInterface.hpp"
 #include "ingen/serialisation/Parser.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/shared/Configuration.hpp"
+#include "ingen/shared/Store.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/runtime_paths.hpp"
 #include "raul/SharedPtr.hpp"
@@ -45,6 +49,8 @@
 #include "ProcessContext.hpp"
 #include "ServerInterfaceImpl.hpp"
 #include "ThreadManager.hpp"
+
+#define NS_INGEN "http://drobilla.net/ns/ingen#"
 
 /** Record of a patch in this Ingen LV2 bundle */
 struct LV2Patch {
@@ -245,6 +251,7 @@ private:
 struct IngenPlugin {
 	Ingen::Shared::World* world;
 	MainThread*           main;
+	LV2_URID_Map*         map;
 };
 
 static LV2_Handle
@@ -273,6 +280,13 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	if (!plugin->world->load_module("serialisation")) {
 		delete plugin->world;
 		return NULL;
+	}
+
+	plugin->map = NULL;
+	for (int i = 0; features[i]; ++i) {
+		if (!strcmp(features[i]->URI, LV2_URID_URI "#map")) {
+			plugin->map = (LV2_URID_Map*)features[i]->data;
+		}
 	}
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
@@ -373,9 +387,105 @@ ingen_cleanup(LV2_Handle instance)
 	free(instance);
 }
 
-static const void*
+static void
+get_state_features(const LV2_Feature* const* features,
+                   LV2_State_Map_Path**      map,
+                   LV2_State_Make_Path**     make)
+{
+	for (int i = 0; features[i]; ++i) {
+		if (map && !strcmp(features[i]->URI, LV2_STATE__mapPath)) {
+			*map = (LV2_State_Map_Path*)features[i]->data;
+		} else if (make && !strcmp(features[i]->URI, LV2_STATE__makePath)) {
+			*make = (LV2_State_Make_Path*)features[i]->data;
+		}
+	}
+}
+
+static void
+ingen_save(LV2_Handle                instance,
+           LV2_State_Store_Function  store,
+           LV2_State_Handle          handle,
+           uint32_t                  flags,
+           const LV2_Feature* const* features)
+{
+	IngenPlugin* plugin = (IngenPlugin*)instance;
+
+	LV2_State_Map_Path*  map_path  = NULL;
+	LV2_State_Make_Path* make_path = NULL;
+	get_state_features(features, &map_path, &make_path);
+	if (!map_path || !make_path || !plugin->map) {
+		Raul::error << "Missing state:mapPath, state:makePath, or urid:Map."
+		            << endl;
+		return;
+	}
+
+	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, NS_INGEN "file");
+	LV2_URID atom_Path = plugin->map->map(plugin->map->handle,
+	                                      "http://lv2plug.in/ns/ext/atom#Path");
+
+	char* real_path  = make_path->path(make_path->handle, "patch.ttl");
+	char* state_path = map_path->abstract_path(map_path->handle, real_path);
+
+	Ingen::Shared::Store::iterator root = plugin->world->store()->find("/");
+	plugin->world->serialiser()->to_file(root->second, real_path);
+
+	store(handle,
+	      ingen_file,
+	      state_path,
+	      strlen(state_path) + 1,
+	      atom_Path,
+	      LV2_STATE_IS_POD);
+
+	free(state_path);
+	free(real_path);
+}
+
+static void
+ingen_restore(LV2_Handle                  instance,
+              LV2_State_Retrieve_Function retrieve,
+              LV2_State_Handle            handle,
+              uint32_t                    flags,
+              const LV2_Feature* const*   features)
+{
+	IngenPlugin* plugin = (IngenPlugin*)instance;
+
+	LV2_State_Map_Path* map_path = NULL;
+	get_state_features(features, &map_path, NULL);
+	if (!map_path) {
+		Raul::error << "Missing state:mapPath" << endl;
+		return;
+	}
+
+	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, NS_INGEN "file");
+	size_t   size;
+	uint32_t type;
+	uint32_t valflags;
+
+	const void* path = retrieve(handle,
+	                            ingen_file,
+	                            &size, &type, &valflags);
+
+	if (!path) {
+		Raul::error << "Failed to restore ingen:file" << endl;
+		return;
+	}
+
+	const char* state_path = (const char*)path;
+	char* real_path = map_path->absolute_path(map_path->handle, state_path);
+
+	plugin->world->parser()->parse_file(plugin->world,
+	                                    plugin->world->engine().get(),
+	                                    real_path);
+	free(real_path);
+}
+
+const void*
 ingen_extension_data(const char* uri)
 {
+	static const LV2_State_Interface state = { ingen_save, ingen_restore };
+	if (!strcmp(uri, LV2_STATE__Interface)) {
+		return &state;
+	}
 	return NULL;
 }
 

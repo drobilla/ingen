@@ -70,9 +70,8 @@ namespace Ingen {
 namespace Serialisation {
 
 struct Serialiser::Impl {
-	Impl(Shared::World& world, SharedPtr<Shared::Store> store)
+	Impl(Shared::World& world)
 		: _root_path("/")
-		, _store(store)
 		, _world(world)
 	{}
 
@@ -119,8 +118,8 @@ struct Serialiser::Impl {
 };
 
 
-Serialiser::Serialiser(Shared::World& world, SharedPtr<Shared::Store> store)
-	: me(new Impl(world, store))
+Serialiser::Serialiser(Shared::World& world)
+	: me(new Impl(world))
 {}
 
 Serialiser::~Serialiser()
@@ -332,8 +331,7 @@ Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_err
 
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
-		const Sord::URI patch_id(me->_model->world(), "");
-		me->serialise_patch(patch, patch_id);
+		me->serialise_patch(patch, me->path_rdf_node(patch->path()));
 		return;
 	}
 
@@ -369,6 +367,10 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 	                      Sord::Curie(world, "rdf:type"),
 	                      Sord::Curie(world, "lv2:Plugin"));
 
+	_model->add_statement(patch_id,
+	                      Sord::Curie(world, "lv2:extensionData"),
+	                      Sord::URI(world, "http://lv2plug.in/ns/ext/state#Interface"));
+
 	const URIs& uris = *_world.uris().get();
 
 	// Always write a symbol (required by Ingen)
@@ -395,8 +397,8 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 
 	serialise_properties(patch.get(), Resource::INTERNAL, patch_id);
 
-	for (Store::const_iterator n = _store->children_begin(patch);
-	     n != _store->children_end(patch); ++n) {
+	for (Store::const_iterator n = _world.store()->children_begin(patch);
+	     n != _world.store()->children_end(patch); ++n) {
 
 		if (n->first.parent() != patch->path())
 			continue;

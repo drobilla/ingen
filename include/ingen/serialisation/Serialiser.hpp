@@ -48,7 +48,7 @@ namespace Serialisation {
 class Serialiser
 {
 public:
-	Serialiser(Shared::World& world, SharedPtr<Shared::Store> store);
+	Serialiser(Shared::World& world);
 	virtual ~Serialiser();
 
 	typedef GraphObject::Properties Properties;
@@ -57,7 +57,7 @@ public:
 	                     const std::string&           filename);
 
 	virtual void write_bundle(SharedPtr<const Patch> patch,
-	        	          const std::string&     path);
+	                          const std::string&     path);
 
 	virtual std::string to_string(SharedPtr<const GraphObject> object,
 	                              const std::string&           base_uri,

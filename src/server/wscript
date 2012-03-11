@@ -83,4 +83,4 @@ def build(bld):
               target       = 'ingen_lv2',
               install_path = '${LV2DIR}/ingen.lv2/',
               use          = 'libingen_server libingen_shared')
-    autowaf.use_lib(bld, obj, core_libs)
+    autowaf.use_lib(bld, obj, core_libs + ' LV2_STATE')
