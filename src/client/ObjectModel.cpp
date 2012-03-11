@@ -53,21 +53,10 @@ ObjectModel::is_a(const Raul::URI& type) const
 	return has_property(_uris.rdf_type, type);
 }
 
-const Raul::Atom&
-ObjectModel::set_property(const Raul::URI& key, const Raul::Atom& value,
-                          Resource::Graph ctx)
-{
-	const Raul::Atom& my_value = ResourceImpl::set_property(key, value, ctx);
-	_signal_property.emit(key, my_value);
-	return my_value;
-}
-
 void
-ObjectModel::add_property(const Raul::URI& key, const Raul::Atom& value,
-                          Resource::Graph ctx)
+ObjectModel::on_property(const Raul::URI& uri, const Raul::Atom& value)
 {
-	ResourceImpl::add_property(key, value, ctx);
-	_signal_property.emit(key, value);
+	_signal_property.emit(uri, value);
 }
 
 const Atom&
@@ -77,7 +66,6 @@ ObjectModel::get_property(const Raul::URI& key) const
 	Resource::Properties::const_iterator i = properties().find(key);
 	return (i != properties().end()) ? i->second : null_atom;
 }
-
 
 bool
 ObjectModel::polyphonic() const

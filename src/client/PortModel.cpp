@@ -22,15 +22,12 @@
 namespace Ingen {
 namespace Client {
 
-const Raul::Atom&
-PortModel::set_property(const Raul::URI&  uri,
-                        const Raul::Atom& value,
-                        Resource::Graph   ctx)
+void
+PortModel::on_property(const Raul::URI& uri, const Raul::Atom& value)
 {
-	const Raul::Atom& ret = ObjectModel::set_property(uri, value, ctx);
-	if (uri == _uris.ingen_value)
+	if (uri == _uris.ingen_value) {
 		this->value(value);
-	return ret;
+	}
 }
 
 bool

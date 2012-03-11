@@ -58,12 +58,9 @@ public:
 
 	bool has_context(const Raul::URI& context) const;
 
-
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 
-	const Raul::Atom& set_property(const Raul::URI&  uri,
-	                               const Raul::Atom& value,
-	                               Resource::Graph   ctx);
+	void on_property(const Raul::URI& uri, const Raul::Atom& value);
 
 	inline void value(const Raul::Atom& val) {
 		if (val != _current_val) {

@@ -38,12 +38,14 @@ ResourceImpl::add_property(const Raul::URI&  uri,
 		if (i->second == value && i->second.context() == ctx)
 			return;
 
-	_properties.insert(make_pair(uri, Property(value, ctx)));
+	const Raul::Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
+	on_property(uri, v);
 }
 
 const Raul::Atom&
-ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value,
-                           Resource::Graph ctx)
+ResourceImpl::set_property(const Raul::URI&  uri,
+                           const Raul::Atom& value,
+                           Resource::Graph   ctx)
 {
 	// Erase existing property in this context
 	for (Properties::iterator i = _properties.find(uri);
@@ -57,7 +59,9 @@ ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value,
 	}
 
 	// Insert new property
-	return _properties.insert(make_pair(uri, Property(value, ctx)))->second;
+	const Raul::Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
+	on_property(uri, v);
+	return v;
 }
 
 void
