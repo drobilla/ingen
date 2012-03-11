@@ -47,15 +47,25 @@ public:
 	Properties properties(Resource::Graph ctx) const;
 
 	const Raul::Atom& get_property(const Raul::URI& uri) const;
-	const Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value,
-	                               Resource::Graph ctx=Resource::DEFAULT);
-	void              remove_property(const Raul::URI& uri, const Raul::Atom& value);
-	bool              has_property(const Raul::URI& uri, const Raul::Atom& value) const;
-	void              add_property(const Raul::URI& uri, const Raul::Atom& value,
-	                               Graph ctx=DEFAULT);
-	void              set_properties(const Properties& p);
-	void              add_properties(const Properties& p);
-	void              remove_properties(const Properties& p);
+
+	const Raul::Atom& set_property(const Raul::URI&  uri,
+	                               const Raul::Atom& value,
+	                               Resource::Graph   ctx=Resource::DEFAULT);
+
+	/** Hook called whenever a property is added.
+	 * This can be used by derived classes to implement special behaviour for
+	 * particular properties (e.g. ingen:value for ports).
+	 */
+	virtual void on_property(const Raul::URI& uri, const Raul::Atom& value) {}
+
+	void remove_property(const Raul::URI& uri, const Raul::Atom& value);
+	bool has_property(const Raul::URI& uri, const Raul::Atom& value) const;
+	void add_property(const Raul::URI&  uri,
+	                  const Raul::Atom& value,
+	                  Graph             ctx = DEFAULT);
+	void set_properties(const Properties& p);
+	void add_properties(const Properties& p);
+	void remove_properties(const Properties& p);
 
 	void dump(std::ostream& os) const;
 
