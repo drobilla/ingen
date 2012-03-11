@@ -110,6 +110,7 @@ Control::menu_properties()
 {
 	PortPropertiesWindow* window;
 	WidgetFactory::get_widget_derived("port_properties_win", window);
+	window->init_window(*_app);
 	window->present(_port_model);
 }
 
