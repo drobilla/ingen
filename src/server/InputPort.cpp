@@ -56,7 +56,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 		add_property(uris.rdf_type, uris.lv2_InputPort);
 
 	// Set default control range
-	if (type == PortType::CONTROL) {
+	if (type == PortType::CONTROL || type == PortType::CV) {
 		set_property(uris.lv2_minimum, 0.0f);
 		set_property(uris.lv2_maximum, 1.0f);
 	}

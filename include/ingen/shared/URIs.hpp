@@ -38,18 +38,19 @@ public:
 		uint32_t id;
 	};
 
-	const Quark atom_AtomTransfer;
 	const Quark atom_Bool;
-	const Quark atom_Float32;
+	const Quark atom_Float;
 	const Quark atom_Int32;
 	const Quark atom_MessagePort;
 	const Quark atom_String;
 	const Quark atom_ValuePort;
 	const Quark atom_Vector;
+	const Quark atom_eventTransfer;
 	const Quark atom_supports;
 	const Quark ctx_audioContext;
 	const Quark ctx_context;
 	const Quark ctx_messageContext;
+	const Quark cv_CVPort;
 	const Quark doap_name;
 	const Quark ev_EventPort;
 	const Quark ingen_Internal;

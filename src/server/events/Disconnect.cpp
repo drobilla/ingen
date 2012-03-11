@@ -98,8 +98,9 @@ Disconnect::Impl::Impl(Engine&     e,
 		_dst_input_port->get_buffers(*_engine.buffer_factory(),
 				_buffers, _dst_input_port->poly());
 
-		const bool  is_control = _dst_input_port->is_a(PortType::CONTROL);
-		const float value      = is_control ? _dst_input_port->value().get_float() : 0;
+		const bool is_control = _dst_input_port->is_a(PortType::CONTROL) ||
+			_dst_input_port->is_a(PortType::CV);
+		const float value = is_control ? _dst_input_port->value().get_float() : 0;
 		for (uint32_t i = 0; i < _buffers->size(); ++i) {
 			if (is_control) {
 				PtrCast<AudioBuffer>(_buffers->at(i))->set_value(value, 0, 0);

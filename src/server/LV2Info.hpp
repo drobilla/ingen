@@ -40,6 +40,7 @@ public:
 	LilvNode* input_class;
 	LilvNode* output_class;
 	LilvNode* control_class;
+	LilvNode* cv_class;
 	LilvNode* audio_class;
 	LilvNode* event_class;
 	LilvNode* value_port_class;

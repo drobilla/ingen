@@ -90,7 +90,7 @@ lv2_ui_write(SuilController controller,
 			lv2_event_increment(&iter);
 		}
 
-	} else if (format == uris.atom_AtomTransfer.id) {
+	} else if (format == uris.atom_eventTransfer.id) {
 		LV2_Atom* buf = (LV2_Atom*)buffer;
 		Raul::Atom val;
 		Shared::LV2Atom::to_atom(uris, buf, val);

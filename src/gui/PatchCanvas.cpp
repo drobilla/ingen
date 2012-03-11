@@ -96,16 +96,16 @@ PatchCanvas::PatchCanvas(App&                        app,
 	// Add port menu items
 	_menu_add_audio_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "audio_in", "Audio In", "http://lv2plug.in/ns/lv2core#AudioPort", false));
+		           "audio_in", "Audio In", LV2_CORE__AudioPort, false));
 	_menu_add_audio_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "audio_out", "Audio Out", "http://lv2plug.in/ns/lv2core#AudioPort", true));
+		           "audio_out", "Audio Out", LV2_CORE__AudioPort, true));
 	_menu_add_control_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "control_in", "Control In", "http://lv2plug.in/ns/lv2core#ControlPort", false));
+		           "control_in", "Control In", LV2_CORE__ControlPort, false));
 	_menu_add_control_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "control_out", "Control Out", "http://lv2plug.in/ns/lv2core#ControlPort", true));
+		           "control_out", "Control Out", LV2_CORE__ControlPort, true));
 	_menu_add_event_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
 		           "event_in", "Event In", "http://lv2plug.in/ns/ext/event#EventPort", false));

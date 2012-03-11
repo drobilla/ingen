@@ -38,17 +38,18 @@ mix(Context& context, Buffer* dst, const boost::intrusive_ptr<Buffer>* srcs, uin
 	switch (dst->type().symbol()) {
 	case PortType::AUDIO:
 	case PortType::CONTROL:
+	case PortType::CV:
 		// Copy the first source
 		dst->copy(context, srcs[0].get());
 
 		// Mix in the rest
 		for (uint32_t i = 1; i < num_srcs; ++i) {
-			assert(srcs[i]->type() == PortType::AUDIO || srcs[i]->type() == PortType::CONTROL);
+			assert(srcs[i]->type() == PortType::AUDIO ||
+			       srcs[i]->type() == PortType::CONTROL ||
+			       srcs[i]->type() == PortType::CV);
 			((AudioBuffer*)dst)->accumulate(context, (AudioBuffer*)srcs[i].get());
 		}
-
 		break;
-
 	case PortType::EVENTS:
 		dst->clear();
 		for (uint32_t i = 0; i < num_srcs; ++i) {
@@ -75,10 +76,8 @@ mix(Context& context, Buffer* dst, const boost::intrusive_ptr<Buffer>* srcs, uin
 				break;
 			}
 		}
-
 		dst->rewind();
 		break;
-
 	default:
 		if (num_srcs == 1)
 			dst->copy(context, srcs[0].get());

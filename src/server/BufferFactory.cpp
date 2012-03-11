@@ -78,6 +78,7 @@ BufferFactory::default_buffer_size(PortType type)
 {
 	switch (type.symbol()) {
 		case PortType::AUDIO:
+		case PortType::CV:
 			return audio_buffer_size(_engine.driver()->block_length());
 		case PortType::CONTROL:
 			return sizeof(LV2_Atom) + sizeof(float);
@@ -136,12 +137,12 @@ BufferFactory::create(PortType type, size_t size)
 
 	if (type.is_control()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, audio_buffer_size(size));
-		ret->atom()->type = _uris->atom_Float32.id;
+		ret->atom()->type = _uris->atom_Float.id;
 		buffer = ret;
-	} else if (type.is_audio()) {
+	} else if (type.is_audio() || type.is_cv()) {
 		AudioBuffer* ret = new AudioBuffer(*this, type, audio_buffer_size(size));
 		ret->atom()->type = _uris->atom_Vector.id;
-		((LV2_Atom_Vector*)ret->atom())->body.child_type = _uris->atom_Float32.id;
+		((LV2_Atom_Vector*)ret->atom())->body.child_type = _uris->atom_Float.id;
 		buffer = ret;
 	} else if (type.is_events()) {
 		buffer = new EventBuffer(*this, size);

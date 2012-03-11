@@ -134,7 +134,7 @@ ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bund
 	if (bundle)
 		client->bundle_begin();
 
-	if (port->is_a(PortType::CONTROL)) {
+	if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
 		Resource::Properties props = port->properties();
 		props.erase(port->bufs().uris().ingen_value);
 		props.insert(make_pair(port->bufs().uris().ingen_value,

@@ -42,7 +42,7 @@ to_atom(const Shared::URIs& uris, const LV2_Atom* object, Raul::Atom& atom)
 	} else if (object->type == uris.atom_Int32.id) {
 		atom = Raul::Atom((int32_t*)(object + 1));
 		return true;
-	} else if (object->type == uris.atom_Float32.id) {
+	} else if (object->type == uris.atom_Float.id) {
 		atom = Raul::Atom((float*)(object + 1));
 		return true;
 	}
@@ -58,7 +58,7 @@ from_atom(const Shared::URIs& uris, const Raul::Atom& atom, LV2_Atom* object)
 	char* str;
 	switch (atom.type()) {
 	case Raul::Atom::FLOAT:
-		object->type = uris.atom_Float32.id;
+		object->type = uris.atom_Float.id;
 		object->size = sizeof(float);
 		*(float*)(object + 1) = atom.get_float();
 		break;

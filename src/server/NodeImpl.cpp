@@ -95,7 +95,7 @@ NodeImpl::activate(BufferFactory& bufs)
 		for (uint32_t v = 0; v < _polyphony; ++v) {
 			Buffer* const buf = port->buffer(v).get();
 			if (buf) {
-				if (port->is_a(PortType::CONTROL)) {
+				if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
 					((AudioBuffer*)buf)->set_value(
 						port->value().get_float(), 0, 0);
 				} else {

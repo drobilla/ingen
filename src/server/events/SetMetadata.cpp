@@ -195,7 +195,7 @@ SetMetadata::pre_process()
 					ev->pre_process();
 					_set_events.push_back(ev);
 				} else if (key == uris.ingen_controlBinding) {
-					if (port->is_a(PortType::CONTROL)) {
+					if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
 						if (value == uris.wildcard) {
 							_engine.control_bindings()->learn(port);
 						} else if (value.type() == Atom::DICT) {

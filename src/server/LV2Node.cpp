@@ -96,7 +96,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 			PortImpl* const port   = _ports->at(j);
 			Buffer* const   buffer = port->prepared_buffer(i).get();
 			if (buffer) {
-				if (port->is_a(PortType::CONTROL)) {
+				if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CONTROL)) {
 					((AudioBuffer*)buffer)->set_value(port->value().get_float(), 0, 0);
 				} else {
 					buffer->clear();
@@ -229,6 +229,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 		PortType data_type = PortType::UNKNOWN;
 		if (lilv_port_is_a(plug, id, info->control_class)) {
 			data_type = PortType::CONTROL;
+		} else if (lilv_port_is_a(plug, id, info->cv_class)) {
+			data_type = PortType::CV;
 		} else if (lilv_port_is_a(plug, id, info->audio_class)) {
 			data_type = PortType::AUDIO;
 		} else if (lilv_port_is_a(plug, id, info->event_class)) {
@@ -287,7 +289,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 		else
 			port = new OutputPort(bufs, this, port_name, j, _polyphony, data_type, val);
 
-		if (direction == INPUT && data_type == PortType::CONTROL) {
+		if (direction == INPUT && (data_type == PortType::CONTROL
+		                           || data_type == PortType::CV)) {
 			port->set_value(val);
 			if (!isnan(min_values[j])) {
 				port->set_property(uris.lv2_minimum, min_values[j]);

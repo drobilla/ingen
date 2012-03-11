@@ -69,7 +69,8 @@ private:
 
 	inline Raul::AtomicPtr<Buffer>& free_list(PortType type) {
 		switch (type.symbol()) {
-		case PortType::AUDIO:   return _free_audio;
+		case PortType::AUDIO:
+		case PortType::CV:      return _free_audio;
 		case PortType::CONTROL: return _free_control;
 		case PortType::EVENTS:  return _free_event;
 		case PortType::VALUE:

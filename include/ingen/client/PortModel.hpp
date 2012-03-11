@@ -51,10 +51,13 @@ public:
 
 	bool port_property(const Raul::URI& uri) const;
 
-	bool is_numeric()     const { return ObjectModel::is_a("http://lv2plug.in/ns/lv2core#ControlPort"); }
 	bool is_logarithmic() const { return port_property("http://drobilla.net/ns/ingen#logarithmic"); }
 	bool is_integer()     const { return port_property("http://lv2plug.in/ns/lv2core#integer"); }
 	bool is_toggle()      const { return port_property("http://lv2plug.in/ns/lv2core#toggled"); }
+	bool is_numeric()     const {
+		return ObjectModel::is_a("http://lv2plug.in/ns/lv2core#ControlPort")
+			|| ObjectModel::is_a("http://lv2plug.in/ns/ext/cv-port#CVPort");
+	}
 
 	bool has_context(const Raul::URI& context) const;
 

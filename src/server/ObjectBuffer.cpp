@@ -99,15 +99,17 @@ ObjectBuffer::port_data(PortType port_type, SampleCount offset)
 {
 	switch (port_type.symbol()) {
 	case PortType::CONTROL:
+	case PortType::CV:
 	case PortType::AUDIO:
 		switch (_type.symbol()) {
-			case PortType::CONTROL:
-				return (float*)LV2_ATOM_BODY(atom());
-			case PortType::AUDIO:
-				return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, atom()) + offset;
-			default:
-				warn << "Audio data requested from non-audio buffer" << endl;
-				return NULL;
+		case PortType::CONTROL:
+			return (float*)LV2_ATOM_BODY(atom());
+		case PortType::CV:
+		case PortType::AUDIO:
+			return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, atom()) + offset;
+		default:
+			warn << "Audio data requested from non-audio buffer" << endl;
+			return NULL;
 		}
 		break;
 	default:
@@ -120,15 +122,17 @@ ObjectBuffer::port_data(PortType port_type, SampleCount offset) const
 {
 	switch (port_type.symbol()) {
 	case PortType::CONTROL:
+	case PortType::CV:
 	case PortType::AUDIO:
 		switch (_type.symbol()) {
-			case PortType::CONTROL:
-				return (float*)LV2_ATOM_BODY(atom());
-			case PortType::AUDIO:
-				return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, atom()) + offset;
-			default:
-				warn << "Audio data requested from non-audio buffer" << endl;
-				return NULL;
+		case PortType::CONTROL:
+			return (float*)LV2_ATOM_BODY(atom());
+		case PortType::CV:
+		case PortType::AUDIO:
+			return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, atom()) + offset;
+		default:
+			warn << "Audio data requested from non-audio buffer" << endl;
+			return NULL;
 		}
 		break;
 	default:

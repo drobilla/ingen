@@ -174,14 +174,14 @@ ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 			|| ( (src->is_a(PortType::MESSAGE) || src->is_a(PortType::VALUE))
 			  && (dst->is_a(PortType::MESSAGE) || dst->is_a(PortType::VALUE)))
 
-			// Control => atom:Float32 Value
-			|| (src->is_a(PortType::CONTROL) && dst->supports(uris.atom_Float32))
+			// Control => atom:Float Value
+			|| (src->is_a(PortType::CONTROL) && dst->supports(uris.atom_Float))
 
 			// Audio => atom:Vector Value
 			|| (src->is_a(PortType::AUDIO)   && dst->supports(uris.atom_Vector))
 
-			// atom:Float32 Value => Control
-			|| (src->supports(uris.atom_Float32) && dst->is_a(PortType::CONTROL))
+			// atom:Float Value => Control
+			|| (src->supports(uris.atom_Float) && dst->is_a(PortType::CONTROL))
 
 			// atom:Vector Value => Audio
 			|| (src->supports(uris.atom_Vector)  && dst->is_a(PortType::AUDIO)));

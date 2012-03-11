@@ -25,6 +25,7 @@
 #include <boost/shared_ptr.hpp>
 
 #include "ingen/shared/URIs.hpp"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "raul/log.hpp"
@@ -49,23 +50,23 @@ URIs::Quark::c_str() const
 
 #define NS_CTX   "http://lv2plug.in/ns/ext/contexts#"
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
-#define NS_LV2   "http://lv2plug.in/ns/lv2core#"
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
 URIs::URIs()
-	: atom_AtomTransfer     (LV2_ATOM_URI "#AtomTransfer")
-	, atom_Bool             (LV2_ATOM_URI "#Bool")
-	, atom_Float32          (LV2_ATOM_URI "#Float32")
-	, atom_Int32            (LV2_ATOM_URI "#Int32")
-	, atom_MessagePort      (LV2_ATOM_URI "#MessagePort")
-	, atom_String           (LV2_ATOM_URI "#String")
-	, atom_ValuePort        (LV2_ATOM_URI "#ValuePort")
-	, atom_Vector           (LV2_ATOM_URI "#Vector")
-	, atom_supports         (LV2_ATOM_URI "#supports")
+	: atom_Bool             (LV2_ATOM__Bool)
+	, atom_Float            (LV2_ATOM__Float)
+	, atom_Int32            (LV2_ATOM__Int32)
+	, atom_MessagePort      (LV2_ATOM__MessagePort)
+	, atom_String           (LV2_ATOM__String)
+	, atom_ValuePort        (LV2_ATOM__ValuePort)
+	, atom_Vector           (LV2_ATOM__Vector)
+	, atom_eventTransfer    (LV2_ATOM__eventTransfer)
+	, atom_supports         (LV2_ATOM__supports)
 	, ctx_audioContext      (NS_CTX "audioContext")
 	, ctx_context           (NS_CTX "context")
 	, ctx_messageContext    (NS_CTX "messageContext")
+	, cv_CVPort             ("http://lv2plug.in/ns/ext/cv-port#CVPort")
 	, doap_name             ("http://usefulinc.com/ns/doap#name")
 	, ev_EventPort          ("http://lv2plug.in/ns/ext/event#EventPort")
 	, ingen_Internal        (NS_INGEN "Internal")
@@ -86,22 +87,22 @@ URIs::URIs()
 	, ingen_value           (NS_INGEN "value")
 	, ingen_canvasX         (NS_INGEN "canvasX")
 	, ingen_canvasY         (NS_INGEN "canvasY")
-	, lv2_AudioPort         (NS_LV2 "AudioPort")
-	, lv2_ControlPort       (NS_LV2 "ControlPort")
-	, lv2_InputPort         (NS_LV2 "InputPort")
-	, lv2_OutputPort        (NS_LV2 "OutputPort")
-	, lv2_Plugin            (NS_LV2 "Plugin")
-	, lv2_connectionOptional(NS_LV2 "connectionOptional")
-	, lv2_default           (NS_LV2 "default")
-	, lv2_index             (NS_LV2 "index")
-	, lv2_integer           (NS_LV2 "integer")
-	, lv2_maximum           (NS_LV2 "maximum")
-	, lv2_minimum           (NS_LV2 "minimum")
-	, lv2_name              (NS_LV2 "name")
-	, lv2_portProperty      (NS_LV2 "portProperty")
-	, lv2_sampleRate        (NS_LV2 "sampleRate")
-	, lv2_symbol            (NS_LV2 "symbol")
-	, lv2_toggled           (NS_LV2 "toggled")
+	, lv2_AudioPort         (LV2_CORE__AudioPort)
+	, lv2_ControlPort       (LV2_CORE__ControlPort)
+	, lv2_InputPort         (LV2_CORE__InputPort)
+	, lv2_OutputPort        (LV2_CORE__OutputPort)
+	, lv2_Plugin            (LV2_CORE__Plugin)
+	, lv2_connectionOptional(LV2_CORE__connectionOptional)
+	, lv2_default           (LV2_CORE__default)
+	, lv2_index             (LV2_CORE__index)
+	, lv2_integer           (LV2_CORE__integer)
+	, lv2_maximum           (LV2_CORE__maximum)
+	, lv2_minimum           (LV2_CORE__minimum)
+	, lv2_name              (LV2_CORE__name)
+	, lv2_portProperty      (LV2_CORE__portProperty)
+	, lv2_sampleRate        (LV2_CORE__sampleRate)
+	, lv2_symbol            (LV2_CORE__symbol)
+	, lv2_toggled           (LV2_CORE__toggled)
 	, midi_Bender           (LV2_MIDI__Bender)
 	, midi_ChannelPressure  (LV2_MIDI__ChannelPressure)
 	, midi_Controller       (LV2_MIDI__Controller)

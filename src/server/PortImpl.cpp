@@ -107,11 +107,15 @@ bool
 PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	if (buffer_type() != PortType::CONTROL && buffer_type() != PortType::AUDIO)
+	if (buffer_type() != PortType::CONTROL &&
+	    buffer_type() != PortType::CV &&
+	    buffer_type() != PortType::AUDIO) {
 		return false;
+	}
 
-	if (_poly == poly)
+	if (_poly == poly) {
 		return true;
+	}
 
 	if (_prepared_buffers && _prepared_buffers->size() != poly) {
 		delete _prepared_buffers;
@@ -135,11 +139,15 @@ bool
 PortImpl::apply_poly(Maid& maid, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
-	if (buffer_type() != PortType::CONTROL && buffer_type() != PortType::AUDIO)
+	if (buffer_type() != PortType::CONTROL &&
+	    buffer_type() != PortType::CV &&
+	    buffer_type() != PortType::AUDIO) {
 		return false;
+	}
 
-	if (!_prepared_buffers)
+	if (!_prepared_buffers) {
 		return true;
+	}
 
 	assert(poly == _prepared_buffers->size());
 
@@ -150,7 +158,7 @@ PortImpl::apply_poly(Maid& maid, uint32_t poly)
 	assert(_buffers == _prepared_buffers);
 	_prepared_buffers = NULL;
 
-	if (is_a(PortType::CONTROL))
+	if (is_a(PortType::CONTROL) || is_a(PortType::CV))
 		for (uint32_t v = 0; v < _poly; ++v)
 			if (_buffers->at(v))
 				boost::static_pointer_cast<AudioBuffer>(_buffers->at(v))->set_value(
@@ -211,6 +219,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		}
 		return;
 	case PortType::CONTROL:
+	case PortType::CV:
 		val = ((AudioBuffer*)buffer(0).get())->value_at(0);
 		break;
 	case PortType::EVENTS:
