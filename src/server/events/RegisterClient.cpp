@@ -56,9 +56,10 @@ RegisterClient::post_process()
 	   that to clients.
 	*/
 	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
-	_request_client->set_property(uris.ingen_engine,
-	                              uris.ingen_sampleRate,
-	                              int32_t(_engine.driver()->sample_rate()));
+	_request_client->set_property(
+		uris.ingen_engine,
+		uris.ingen_sampleRate,
+		_engine.world()->forge().make(int32_t(_engine.driver()->sample_rate())));
 }
 
 } // namespace Server

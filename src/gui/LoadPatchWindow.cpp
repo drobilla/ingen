@@ -149,9 +149,9 @@ LoadPatchWindow::ok_clicked()
 	const URIs& uris = _app->uris();
 
 	if (_poly_voices_radio->get_active())
-		_initial_data.insert(make_pair(
-					uris.ingen_polyphony,
-					_poly_spinbutton->get_value_as_int()));
+		_initial_data.insert(
+			make_pair(uris.ingen_polyphony,
+			          _app->forge().make(_poly_spinbutton->get_value_as_int())));
 
 	if (get_uri() == "")
 		return;
@@ -173,9 +173,9 @@ LoadPatchWindow::ok_clicked()
 		for (std::list<Glib::ustring>::iterator i = uri_list.begin(); i != uri_list.end(); ++i) {
 			// Cascade
 			Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
-			x = Atom(x.get_float() + 20.0f);
+			x = _app->forge().make(x.get_float() + 20.0f);
 			Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
-			y = Atom(y.get_float() + 20.0f);
+			y = _app->forge().make(y.get_float() + 20.0f);
 
 			Raul::Symbol symbol(symbol_from_filename(*i));
 			if (uri_list.size() == 1 && _symbol_entry->get_text() != "")

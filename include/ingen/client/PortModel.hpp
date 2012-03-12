@@ -87,14 +87,13 @@ public:
 private:
 	friend class ClientStore;
 
-	PortModel(Shared::URIs& uris,
-	          const Raul::Path&  path,
-	          uint32_t           index,
-	          Direction          dir)
+	PortModel(Shared::URIs&     uris,
+	          const Raul::Path& path,
+	          uint32_t          index,
+	          Direction         dir)
 		: ObjectModel(uris, path)
 		, _index(index)
 		, _direction(dir)
-		, _current_val(0.0f)
 		, _connections(0)
 	{}
 

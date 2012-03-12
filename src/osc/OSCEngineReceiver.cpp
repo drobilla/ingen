@@ -323,8 +323,9 @@ OSCEngineReceiver::_put_cb(const char* path, const char* types, lo_arg** argv, i
 	const char* ctx      = &argv[2]->s;
 	Resource::Properties prop;
 	for (int i = 3; i < argc-1; i += 2)
-		prop.insert(make_pair(&argv[i]->s,
-		                      AtomLiblo::lo_arg_to_atom(types[i+1], argv[i+1])));
+		prop.insert(
+			make_pair(&argv[i]->s,
+			          AtomLiblo::lo_arg_to_atom(_engine.world()->forge(), types[i+1], argv[i+1])));
 	_interface->put(obj_path, prop, Resource::uri_to_graph(ctx));
 	return 0;
 }
@@ -342,16 +343,18 @@ OSCEngineReceiver::_delta_begin_cb(const char* path, const char* types, lo_arg**
 int
 OSCEngineReceiver::_delta_remove_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	_delta_remove.insert(make_pair(&argv[1]->s,
-	                               AtomLiblo::lo_arg_to_atom(types[2], argv[2])));
+	_delta_remove.insert(
+		make_pair(&argv[1]->s,
+		          AtomLiblo::lo_arg_to_atom(_engine.world()->forge(), types[2], argv[2])));
 	return 0;
 }
 
 int
 OSCEngineReceiver::_delta_add_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	_delta_add.insert(make_pair(&argv[1]->s,
-	                            AtomLiblo::lo_arg_to_atom(types[2], argv[2])));
+	_delta_add.insert(
+		make_pair(&argv[1]->s,
+		          AtomLiblo::lo_arg_to_atom(_engine.world()->forge(), types[2], argv[2])));
 	return 0;
 }
 
@@ -541,7 +544,7 @@ OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	const char* object_path = &argv[1]->s;
 	const char* key         = &argv[2]->s;
 
-	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(types[3], argv[3]);
+	Raul::Atom value = Raul::AtomLiblo::lo_arg_to_atom(_engine.world()->forge(), types[3], argv[3]);
 
 	_interface->set_property(object_path, key, value);
 	return 0;

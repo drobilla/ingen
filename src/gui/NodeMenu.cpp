@@ -144,8 +144,10 @@ NodeMenu::on_menu_randomize()
 			float min = 0.0f, max = 1.0f;
 			nm->port_value_range(*i, min, max, _app->sample_rate());
 			const float val = ((rand() / (float)RAND_MAX) * (max - min) + min);
-			_app->engine()->set_property((*i)->path(),
-					_app->uris().ingen_value, val);
+			_app->engine()->set_property(
+				(*i)->path(),
+				_app->uris().ingen_value,
+				_app->forge().make(val));
 		}
 	}
 
@@ -192,7 +194,7 @@ NodeMenu::on_preset_activated(const std::string& uri)
 			_app->engine()->set_property(
 				node->path().base() + lilv_node_as_string(sym),
 				_app->uris().ingen_value,
-				lilv_node_as_float(val));
+				_app->forge().make(lilv_node_as_float(val)));
 		}
 	}
 	_app->engine()->bundle_end();

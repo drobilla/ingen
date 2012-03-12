@@ -267,7 +267,7 @@ SliderControl::update_value_from_spinner()
 		_enable_signal = false;
 		const float value = _value_spinner->get_value();
 
-		set_value(value);
+		set_value(_app->forge().make(value));
 
 		_control_panel->value_changed(_port_model, value);
 
@@ -391,8 +391,9 @@ void
 StringControl::activated()
 {
 	if (_enable_signal)
-		_control_panel->value_changed_atom(_port_model,
-				Raul::Atom(_entry->get_text().c_str()));
+		_control_panel->value_changed_atom(
+			_port_model,
+			_app->forge().make(_entry->get_text().c_str()));
 }
 
 } // namespace GUI

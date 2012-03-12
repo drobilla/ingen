@@ -53,8 +53,9 @@ URIs::Quark::c_str() const
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
-URIs::URIs()
-	: atom_Bool             (LV2_ATOM__Bool)
+URIs::URIs(Raul::Forge& f)
+	: forge(f)
+	, atom_Bool             (LV2_ATOM__Bool)
 	, atom_Float            (LV2_ATOM__Float)
 	, atom_Int32            (LV2_ATOM__Int32)
 	, atom_MessagePort      (LV2_ATOM__MessagePort)

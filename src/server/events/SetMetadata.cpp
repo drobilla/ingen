@@ -230,7 +230,7 @@ SetMetadata::pre_process()
 				if (parent) {
 					if (value.type() == Atom::BOOL) {
 						op = POLYPHONIC;
-						obj->set_property(key, value.get_bool(), value.context());
+						obj->set_property(key, value, value.context());
 						NodeImpl* node = dynamic_cast<NodeImpl*>(obj);
 						if (node)
 							node->set_polyphonic(value.get_bool());

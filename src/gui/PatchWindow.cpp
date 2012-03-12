@@ -533,7 +533,9 @@ more files and/or directories, recursively.  Existing files will be overwritten.
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			_app->loader()->save_patch(_patch, uri);
 			const_cast<PatchModel*>(_patch.get())->set_property(
-				uris.ingen_document, Atom(Atom::URI, uri.c_str()), Resource::EXTERNAL);
+				uris.ingen_document,
+				_app->forge().alloc(Atom::URI, uri.c_str()),
+				Resource::EXTERNAL);
 			_status_bar->push(
 					(boost::format("Saved %1% to %2%") % _patch->path().chop_scheme()
 					 % filename).str(),

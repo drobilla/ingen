@@ -228,7 +228,9 @@ NodeModule::embed_gui(bool embed)
 			for (NodeModel::Ports::const_iterator p = _node->ports().begin();
 					p != _node->ports().end(); ++p)
 				if ((*p)->is_output() && app().can_control(p->get()))
-					app().engine()->set_property((*p)->path(), uris.ingen_broadcast, true);
+					app().engine()->set_property((*p)->path(),
+					                             uris.ingen_broadcast,
+					                             app().forge().make(true));
 		}
 
 	} else { // un-embed
@@ -240,8 +242,8 @@ NodeModule::embed_gui(bool embed)
 		     p != _node->ports().end(); ++p)
 			if ((*p)->is_output() && app().can_control(p->get()))
 				app().engine()->set_property((*p)->path(),
-				                                       uris.ingen_broadcast,
-				                                       false);
+				                             uris.ingen_broadcast,
+				                             app().forge().make(false));
 	}
 
 	if (embed) {
@@ -372,8 +374,8 @@ NodeModule::on_event(GdkEvent* ev)
 void
 NodeModule::store_location(double ax, double ay)
 {
-	const Atom x(static_cast<float>(ax));
-	const Atom y(static_cast<float>(ay));
+	const Atom x(app().forge().make(static_cast<float>(ax)));
+	const Atom y(app().forge().make(static_cast<float>(ay)));
 
 	const URIs& uris = app().uris();
 
@@ -442,8 +444,11 @@ NodeModule::set_selected(gboolean b)
 				}
 			}
 		}
-		if (app().signal())
-			app().engine()->set_property(_node->path(), uris.ingen_selected, b);
+		if (app().signal()) {
+			app().engine()->set_property(_node->path(),
+			                             uris.ingen_selected,
+			                             app().forge().make(b));
+		}
 	}
 }
 

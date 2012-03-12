@@ -131,7 +131,9 @@ RenameWindow::ok_clicked()
 	}
 
 	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.get_string())) {
-		_app->engine()->set_property(path, uris.lv2_name, Atom(label));
+		_app->engine()->set_property(path,
+		                             uris.lv2_name,
+		                             _app->forge().alloc(label));
 	}
 
 	hide();

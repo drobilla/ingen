@@ -28,11 +28,12 @@ void
 Notification::post_process(Notification& note,
                            Engine&       engine)
 {
+	Raul::Forge& forge = engine.world()->forge();
 	switch (note.type) {
 	case PORT_VALUE:
-		engine.broadcaster()->set_property(
-			note.port->path(),
-			engine.world()->uris()->ingen_value, note.value);
+		engine.broadcaster()->set_property(note.port->path(),
+		                                   engine.world()->uris()->ingen_value,
+		                                   note.value);
 		break;
 	case PORT_ACTIVITY:
 		engine.broadcaster()->activity(note.port->path(), note.value);
@@ -43,7 +44,7 @@ Notification::post_process(Notification& note,
 		switch (note.binding_type) {
 		case ControlBindings::MIDI_CC:
 			dict[uris.rdf_type]              = uris.midi_Controller;
-			dict[uris.midi_controllerNumber] = note.value.get_int32();
+			dict[uris.midi_controllerNumber] = forge.make(note.value.get_int32());
 			break;
 		case ControlBindings::MIDI_BENDER:
 			dict[uris.rdf_type] = uris.midi_Bender;
@@ -53,17 +54,19 @@ Notification::post_process(Notification& note,
 			break;
 		case ControlBindings::MIDI_NOTE:
 			dict[uris.rdf_type]        = uris.midi_NoteOn;
-			dict[uris.midi_noteNumber] = note.value.get_int32();
+			dict[uris.midi_noteNumber] = note.value;
 			break;
 		case ControlBindings::MIDI_RPN: // TODO
 		case ControlBindings::MIDI_NRPN: // TODO
 		case ControlBindings::NULL_CONTROL:
 			break;
 		}
-		note.port->set_property(uris.ingen_controlBinding, dict); // FIXME: thread unsafe
+		// FIXME: not thread-safe
+		const Raul::Atom dict_atom = forge.alloc(dict);
+		note.port->set_property(uris.ingen_controlBinding, dict_atom);
 		engine.broadcaster()->set_property(note.port->path(),
 		                                   uris.ingen_controlBinding,
-		                                   dict);
+		                                   dict_atom);
 		break;
 	}
 	case NIL:

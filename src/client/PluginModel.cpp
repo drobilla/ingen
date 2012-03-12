@@ -51,14 +51,16 @@ PluginModel::PluginModel(Shared::URIs&               uris,
 	add_properties(properties);
 
 	assert(_rdf_world);
-	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type", this->type_uri());
+	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+	             this->type_uri());
 	LilvNode* plugin_uri = lilv_new_uri(_lilv_world, uri.c_str());
 	_lilv_plugin = lilv_plugins_get_by_uri(_lilv_plugins, plugin_uri);
 	lilv_node_free(plugin_uri);
 
-	if (_type == Internal)
+	if (_type == Internal) {
 		set_property("http://usefulinc.com/ns/doap#name",
-				Atom(uri.substr(uri.find_last_of('#') + 1).c_str()));
+		             uris.forge.alloc(uri.substr(uri.find_last_of('#') + 1)));
+	}
 }
 
 const Atom&
@@ -93,7 +95,8 @@ PluginModel::get_property(const URI& key) const
 			else
 				symbol = uri.str().substr(first_delim + 1, last_delim - first_delim - 1);
 		}
-		set_property("http://lv2plug.in/ns/lv2core#symbol", symbol);
+		set_property("http://lv2plug.in/ns/lv2core#symbol",
+		             _uris.forge.alloc(symbol));
 		return get_property(key);
 	}
 
@@ -105,16 +108,20 @@ PluginModel::get_property(const URI& key) const
 		LILV_FOREACH(nodes, i, values) {
 			const LilvNode* val = lilv_nodes_get(values, i);
 			if (lilv_node_is_uri(val)) {
-				ret = set_property(key, Atom(Atom::URI, lilv_node_as_uri(val)));
+				ret = set_property(
+					key, _uris.forge.alloc(Atom::URI, lilv_node_as_uri(val)));
 				break;
 			} else if (lilv_node_is_string(val)) {
-				ret = set_property(key, lilv_node_as_string(val));
+				ret = set_property(key,
+				                   _uris.forge.alloc(lilv_node_as_string(val)));
 				break;
 			} else if (lilv_node_is_float(val)) {
-				ret = set_property(key, Atom(lilv_node_as_float(val)));
+				ret = set_property(key,
+				                   _uris.forge.make(lilv_node_as_float(val)));
 				break;
 			} else if (lilv_node_is_int(val)) {
-				ret = set_property(key, Atom(lilv_node_as_int(val)));
+				ret = set_property(key,
+				                   _uris.forge.make(lilv_node_as_int(val)));
 				break;
 			}
 		}

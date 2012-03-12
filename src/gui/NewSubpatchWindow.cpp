@@ -99,8 +99,8 @@ NewSubpatchWindow::ok_clicked()
 	// Create patch
 	Resource::Properties props;
 	props.insert(make_pair(_app->uris().rdf_type,        _app->uris().ingen_Patch));
-	props.insert(make_pair(_app->uris().ingen_polyphony, Atom(int32_t(poly))));
-	props.insert(make_pair(_app->uris().ingen_enabled,   Atom(bool(true))));
+	props.insert(make_pair(_app->uris().ingen_polyphony, _app->forge().make(int32_t(poly))));
+	props.insert(make_pair(_app->uris().ingen_enabled,   _app->forge().make(bool(true))));
 	_app->engine()->put(path, props, Resource::INTERNAL);
 
 	// Set external (node perspective) properties

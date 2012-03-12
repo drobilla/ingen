@@ -25,7 +25,7 @@ namespace Shared {
 
 class Configuration : public Raul::Configuration {
 public:
-	Configuration();
+	Configuration(Raul::Forge* forge);
 };
 
 } // namespace Shared

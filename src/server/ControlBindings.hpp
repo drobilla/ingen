@@ -18,11 +18,14 @@
 #ifndef INGEN_ENGINE_CONTROLBINDINGS_HPP
 #define INGEN_ENGINE_CONTROLBINDINGS_HPP
 
-#include <stdint.h>
 #include <map>
-#include "raul/SharedPtr.hpp"
-#include "raul/Path.hpp"
+#include <stdint.h>
+
 #include "ingen/shared/LV2URIMap.hpp"
+#include "raul/Atom.hpp"
+#include "raul/Path.hpp"
+#include "raul/SharedPtr.hpp"
+
 #include "BufferFactory.hpp"
 
 namespace Ingen {

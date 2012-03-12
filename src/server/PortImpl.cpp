@@ -55,8 +55,8 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _buffer_size(buffer_size)
 	, _type(type)
 	, _value(value)
-	, _min(0.0f)
-	, _max(1.0f)
+	, _min(bufs.forge().make(0.0f))
+	, _max(bufs.forge().make(1.0f))
 	, _last_broadcasted_value(value)
 	, _context(Context::AUDIO)
 	, _buffers(new Array<BufferFactory::Ref>(static_cast<size_t>(poly)))
@@ -72,7 +72,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 	const Ingen::Shared::URIs& uris = bufs.uris();
 	add_property(uris.rdf_type,  type.uri());
-	set_property(uris.lv2_index, Atom((int32_t)index));
+	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
 	set_context(_context);
 }
 
@@ -206,12 +206,13 @@ PortImpl::clear_buffers()
 void
 PortImpl::broadcast_value(Context& context, bool force)
 {
-	Raul::Atom val;
+	Raul::Forge& forge = context.engine().world()->forge();
+	Raul::Atom   val;
 	switch (_type.symbol()) {
 	case PortType::UNKNOWN:
 		break;
 	case PortType::AUDIO:
-		val = ((AudioBuffer*)buffer(0).get())->peak(context);
+		val = forge.make(((AudioBuffer*)buffer(0).get())->peak(context));
 		{
 			const Notification note = Notification::make(
 				Notification::PORT_ACTIVITY, context.start(), this, val);
@@ -220,12 +221,12 @@ PortImpl::broadcast_value(Context& context, bool force)
 		return;
 	case PortType::CONTROL:
 	case PortType::CV:
-		val = ((AudioBuffer*)buffer(0).get())->value_at(0);
+		val = forge.make(((AudioBuffer*)buffer(0).get())->value_at(0));
 		break;
 	case PortType::EVENTS:
 		if (((EventBuffer*)buffer(0).get())->event_count() > 0) {
 			const Notification note = Notification::make(
-				Notification::PORT_ACTIVITY, context.start(), this, Atom(true));
+				Notification::PORT_ACTIVITY, context.start(), this, forge.make(true));
 			context.event_sink().write(sizeof(note), &note);
 		}
 		break;

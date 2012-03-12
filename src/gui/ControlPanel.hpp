@@ -70,7 +70,7 @@ public:
 
 	template <typename T>
 	void value_changed(SharedPtr<const PortModel> port, T val) {
-		this->value_changed_atom(port, Raul::Atom(val));
+		this->value_changed_atom(port, _app->forge().make(val));
 	}
 
 private:

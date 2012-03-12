@@ -128,10 +128,14 @@ PortMenu::on_menu_reset_range()
 	parent->default_port_value_range(model, min, max);
 
 	if (!std::isnan(min))
-		_app->engine()->set_property(_object->path(), uris.lv2_minimum, min);
+		_app->engine()->set_property(_object->path(),
+		                             uris.lv2_minimum,
+		                             _app->forge().make(min));
 
 	if (!std::isnan(max))
-		_app->engine()->set_property(_object->path(), uris.lv2_maximum, max);
+		_app->engine()->set_property(_object->path(),
+		                             uris.lv2_maximum,
+		                             _app->forge().make(max));
 }
 
 } // namespace GUI

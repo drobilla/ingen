@@ -188,17 +188,19 @@ PatchView::process_toggled()
 	if (!_enable_signal)
 		return;
 
-	_app->engine()->set_property(_patch->path(),
-			_app->uris().ingen_enabled,
-			(bool)_process_but->get_active());
+	_app->engine()->set_property(
+		_patch->path(),
+		_app->uris().ingen_enabled,
+		_app->forge().make((bool)_process_but->get_active()));
 }
 
 void
 PatchView::poly_changed()
 {
-	_app->engine()->set_property(_patch->path(),
-			_app->uris().ingen_polyphony,
-			_poly_spin->get_value_as_int());
+	_app->engine()->set_property(
+		_patch->path(),
+		_app->uris().ingen_polyphony,
+		_app->forge().make(_poly_spin->get_value_as_int()));
 }
 
 void

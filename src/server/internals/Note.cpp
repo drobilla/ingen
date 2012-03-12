@@ -61,28 +61,33 @@ NoteNode::NoteNode(
 	const Ingen::Shared::URIs& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());
-	_midi_in_port->set_property(uris.lv2_name, "Input");
+	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, 
+	                              PortType::EVENTS, Raul::Atom());
+	_midi_in_port->set_property(uris.lv2_name, bufs.forge().make("Input"));
 	_ports->at(0) = _midi_in_port;
 
-	_freq_port = new OutputPort(bufs, this, "frequency", 1, _polyphony, PortType::AUDIO, 440.0f);
-	_freq_port->set_property(uris.lv2_name, "Frequency");
+	_freq_port = new OutputPort(bufs, this, "frequency", 1, _polyphony, 
+	                            PortType::AUDIO, bufs.forge().make(440.0f));
+	_freq_port->set_property(uris.lv2_name, bufs.forge().make("Frequency"));
 	_ports->at(1) = _freq_port;
 
-	_vel_port = new OutputPort(bufs, this, "velocity", 2, _polyphony, PortType::AUDIO, 0.0f);
-	_vel_port->set_property(uris.lv2_minimum, 0.0f);
-	_vel_port->set_property(uris.lv2_maximum, 1.0f);
-	_vel_port->set_property(uris.lv2_name, "Velocity");
+	_vel_port = new OutputPort(bufs, this, "velocity", 2, _polyphony, 
+	                           PortType::AUDIO, bufs.forge().make(0.0f));
+	_vel_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
+	_vel_port->set_property(uris.lv2_maximum, bufs.forge().make(1.0f));
+	_vel_port->set_property(uris.lv2_name, bufs.forge().make("Velocity"));
 	_ports->at(2) = _vel_port;
 
-	_gate_port = new OutputPort(bufs, this, "gate", 3, _polyphony, PortType::AUDIO, 0.0f);
+	_gate_port = new OutputPort(bufs, this, "gate", 3, _polyphony, 
+	                            PortType::AUDIO, bufs.forge().make(0.0f));
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
-	_gate_port->set_property(uris.lv2_name, "Gate");
+	_gate_port->set_property(uris.lv2_name, bufs.forge().make("Gate"));
 	_ports->at(3) = _gate_port;
 
-	_trig_port = new OutputPort(bufs, this, "trigger", 4, _polyphony, PortType::AUDIO, 0.0f);
+	_trig_port = new OutputPort(bufs, this, "trigger", 4, _polyphony, 
+	                            PortType::AUDIO, bufs.forge().make(0.0f));
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
-	_trig_port->set_property(uris.lv2_name, "Trigger");
+	_trig_port->set_property(uris.lv2_name, bufs.forge().make("Trigger"));
 	_ports->at(4) = _trig_port;
 }
 

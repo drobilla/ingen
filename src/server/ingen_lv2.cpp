@@ -68,10 +68,10 @@ public:
 
 	typedef std::vector< SharedPtr<const LV2Patch> > Patches;
 
-	Patches                      patches;
-	Ingen::Shared::Configuration conf;
-	int                          argc;
-	char**                       argv;
+	Patches                       patches;
+	Ingen::Shared::Configuration* conf;
+	int                           argc;
+	char**                        argv;
 };
 
 /** Library state (constructed/destructed on library load/unload) */
@@ -276,7 +276,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
-	plugin->world = new Ingen::Shared::World(&lib.conf, lib.argc, lib.argv);
+	plugin->world = new Ingen::Shared::World(lib.conf, lib.argc, lib.argv);
 	if (!plugin->world->load_module("serialisation")) {
 		delete plugin->world;
 		return NULL;
@@ -513,9 +513,12 @@ Lib::Lib()
 
 	using namespace Ingen;
 
+	// FIXME
+	Raul::Forge forge;
+	conf = new Ingen::Shared::Configuration(&forge);
 	Ingen::Shared::set_bundle_path_from_code((void*)&lv2_descriptor);
 
-	Ingen::Shared::World* world = new Ingen::Shared::World(&conf, argc, argv);
+	Ingen::Shared::World* world = new Ingen::Shared::World(conf, argc, argv);
 	if (!world->load_module("serialisation")) {
 		delete world;
 		return;

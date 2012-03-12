@@ -57,8 +57,8 @@ InputPort::InputPort(BufferFactory&      bufs,
 
 	// Set default control range
 	if (type == PortType::CONTROL || type == PortType::CV) {
-		set_property(uris.lv2_minimum, 0.0f);
-		set_property(uris.lv2_maximum, 1.0f);
+		set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
+		set_property(uris.lv2_maximum, bufs.forge().make(1.0f));
 	}
 }
 
@@ -158,7 +158,8 @@ InputPort::remove_connection(ProcessContext& context, const OutputPort* src_port
 		if (is_a(PortType::AUDIO)) {
 			// Send an update peak of 0.0 to reset to silence
 			const Notification note = Notification::make(
-				Notification::PORT_ACTIVITY, context.start(), this, 0.0f);
+				Notification::PORT_ACTIVITY, context.start(), this,
+				context.engine().world()->forge().make(0.0f));
 			context.event_sink().write(sizeof(note), &note);
 		}
 		_broadcast = false;

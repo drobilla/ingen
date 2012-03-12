@@ -138,9 +138,10 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 bool
 LV2Node::instantiate(BufferFactory& bufs)
 {
-	const Ingen::Shared::URIs& uris = bufs.uris();
-	SharedPtr<LV2Info>              info = _lv2_plugin->lv2_info();
-	const LilvPlugin*               plug = _lv2_plugin->lilv_plugin();
+	const Ingen::Shared::URIs& uris  = bufs.uris();
+	SharedPtr<LV2Info>         info  = _lv2_plugin->lv2_info();
+	const LilvPlugin*          plug  = _lv2_plugin->lilv_plugin();
+	Raul::Forge&               forge = bufs.forge();
 
 	uint32_t num_ports = lilv_plugin_get_num_ports(plug);
 	assert(num_ports > 0);
@@ -251,7 +252,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 				if (lilv_node_is_string(d)) {
 					const char*  str_val     = lilv_node_as_string(d);
 					const size_t str_val_len = strlen(str_val);
-					val = str_val;
+					val = forge.make(str_val);
 					port_buffer_size = str_val_len;
 				}
 			}
@@ -281,7 +282,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		if (val.type() == Atom::NIL)
-			val = isnan(def_values[j]) ? 0.0f : def_values[j];
+			val = forge.make(isnan(def_values[j]) ? 0.0f : def_values[j]);
 
 		// TODO: set buffer size when necessary
 		if (direction == INPUT)
@@ -293,12 +294,12 @@ LV2Node::instantiate(BufferFactory& bufs)
 		                           || data_type == PortType::CV)) {
 			port->set_value(val);
 			if (!isnan(min_values[j])) {
-				port->set_property(uris.lv2_minimum, min_values[j]);
-				port->set_minimum(min_values[j]);
+				port->set_property(uris.lv2_minimum, forge.make(min_values[j]));
+				port->set_minimum(forge.make(min_values[j]));
 			}
 			if (!isnan(max_values[j])) {
-				port->set_property(uris.lv2_maximum, max_values[j]);
-				port->set_maximum(max_values[j]);
+				port->set_property(uris.lv2_maximum, forge.make(max_values[j]));
+				port->set_maximum(forge.make(max_values[j]));
 			}
 		}
 

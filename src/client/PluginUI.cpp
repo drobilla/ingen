@@ -63,9 +63,10 @@ lv2_ui_write(SuilController controller,
 		if (*(float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
 
-		ui->world()->engine()->set_property(port->path(),
-		                                    uris.ingen_value,
-		                                    Atom(*(float*)buffer));
+		ui->world()->engine()->set_property(
+			port->path(),
+			uris.ingen_value,
+			ui->world()->forge().make(*(float*)buffer));
 
 	} else if (format == uris.ui_Events.id) {
 		LV2_Event_Buffer*  buf = (LV2_Event_Buffer*)buffer;
@@ -77,11 +78,14 @@ lv2_ui_write(SuilController controller,
 			std::pair<bool, uint16_t> midi_id =
 				uri_map.global_to_event(uris.midi_MidiEvent.id);
 			if (midi_id.first && ev->type == midi_id.second) {
-				// FIXME: bundle multiple events by writing an entire buffer here
+				// FIXME
+				/*
 				ui->world()->engine()->set_property(
 					port->path(),
 					uris.ingen_value,
-					Atom("http://lv2plug.in/ns/ext/midi#MidiEvent", ev->size, data));
+					Atom("http://lv2plug.in/ns/ext/midi#MidiEvent", ev->size,
+					data));
+				*/
 			} else {
 				warn << "Unable to serialise UI event type " << ev->type
 				     << ", event lost" << endl;

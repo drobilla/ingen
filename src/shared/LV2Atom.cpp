@@ -31,19 +31,22 @@ namespace Shared {
 namespace LV2Atom {
 
 bool
-to_atom(const Shared::URIs& uris, const LV2_Atom* object, Raul::Atom& atom)
+to_atom(Raul::Forge*        forge,
+        const Shared::URIs& uris,
+        const LV2_Atom*     object,
+        Raul::Atom&         atom)
 {
 	if (object->type == uris.atom_String.id) {
-		atom = Raul::Atom((char*)(object + 1));
+		atom = forge->make((char*)(object + 1));
 		return true;
 	} else if (object->type == uris.atom_Bool.id) {
-		atom = Raul::Atom((bool)(int32_t*)(object + 1));
+		atom = forge->make((bool)(int32_t*)(object + 1));
 		return true;
 	} else if (object->type == uris.atom_Int32.id) {
-		atom = Raul::Atom((int32_t*)(object + 1));
+		atom = forge->make((int32_t*)(object + 1));
 		return true;
 	} else if (object->type == uris.atom_Float.id) {
-		atom = Raul::Atom((float*)(object + 1));
+		atom = forge->make((float*)(object + 1));
 		return true;
 	}
 	return false;

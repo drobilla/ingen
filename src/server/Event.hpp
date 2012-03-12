@@ -39,7 +39,7 @@ class ProcessContext;
 
 /** An event (command) to perform some action on Ingen.
  *
- * Virtuall all operations on Ingen are implemented as events.  An event has
+ * Virtually all operations on Ingen are implemented as events.  An event has
  * three distinct execution phases:
  *
  * 1) Pre-process: In a non-realtime thread, prepare event for execution

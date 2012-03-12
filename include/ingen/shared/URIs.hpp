@@ -22,12 +22,16 @@
 
 #include "raul/URI.hpp"
 
+namespace Raul {
+	class Forge;
+}
+
 namespace Ingen {
 namespace Shared {
 
 class URIs : public boost::noncopyable {
 public:
-	URIs();
+	URIs(Raul::Forge& forge);
 
 	uint32_t    map_uri(const char* uri);
 	const char* unmap_uri(uint32_t urid);
@@ -37,6 +41,8 @@ public:
 		const char* c_str() const;
 		uint32_t id;
 	};
+
+	Raul::Forge& forge;
 
 	const Quark atom_Bool;
 	const Quark atom_Float;

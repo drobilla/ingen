@@ -152,11 +152,11 @@ Port::on_value_changed(const Glib::VariantBase& value)
 	Ingen::Shared::World* const world = _app.world();
 	_app.engine()->set_property(model()->path(),
 	                            world->uris()->ingen_value,
-	                            Atom(fval));
+	                            _app.forge().make(fval));
 
 	PatchWindow* pw = get_patch_window();
 	if (pw) {
-		pw->show_port_status(model().get(), fval);
+		pw->show_port_status(model().get(), _app.forge().make(fval));
 	}
 }
 

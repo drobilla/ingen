@@ -88,8 +88,8 @@ PatchPortModule::show_menu(GdkEventButton* ev)
 void
 PatchPortModule::store_location(double ax, double ay)
 {
-	const Atom x(static_cast<float>(ax));
-	const Atom y(static_cast<float>(ay));
+	const Atom x(app().forge().make(static_cast<float>(ax)));
+	const Atom y(app().forge().make(static_cast<float>(ay)));
 
 	const URIs& uris = app().uris();
 
@@ -166,8 +166,10 @@ PatchPortModule::set_selected(gboolean b)
 	if (b != get_selected()) {
 		Module::set_selected(b);
 		if (app().signal())
-			app().engine()->set_property(_model->path(),
-			                             app().uris().ingen_selected, b);
+			app().engine()->set_property(
+				_model->path(),
+				app().uris().ingen_selected,
+				app().forge().make(b));
 	}
 }
 

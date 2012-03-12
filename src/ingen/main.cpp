@@ -84,7 +84,8 @@ ingen_try(bool cond, const char* msg)
 int
 main(int argc, char** argv)
 {
-	Shared::Configuration conf;
+	Raul::Forge forge;
+	Shared::Configuration conf(&forge);
 
 	// Parse command line options
 	try {

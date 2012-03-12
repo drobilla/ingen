@@ -104,13 +104,13 @@ ConnectWindow::set_connected_to(SharedPtr<ServerInterface> engine)
 		else
 			_internal_radio->set_sensitive(false);
 
-        _server_radio->set_sensitive(true);
-        _launch_radio->set_sensitive(true);
+		_server_radio->set_sensitive(true);
+		_launch_radio->set_sensitive(true);
 
-        if (_mode == CONNECT_REMOTE )
-            _url_entry->set_sensitive(true);
-        else if (_mode == LAUNCH_REMOTE )
-            _port_spinbutton->set_sensitive(true);
+		if (_mode == CONNECT_REMOTE )
+			_url_entry->set_sensitive(true);
+		else if (_mode == LAUNCH_REMOTE )
+			_port_spinbutton->set_sensitive(true);
 
 		_progress_label->set_text(string("Disconnected"));
 	}
@@ -194,7 +194,7 @@ ConnectWindow::connect(bool existing)
 			_app->register_callbacks();
 
 			Glib::signal_timeout().connect(
-					sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
+				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
 
 		} else {
 			error << "Failed to launch ingen process." << endl;
@@ -205,22 +205,22 @@ ConnectWindow::connect(bool existing)
 
 	} else
 #endif // defined(HAVE_LIBLO) || defined(HAVE_SOUP)
-	if (_mode == INTERNAL) {
-		if (!world->local_engine())
-			world->load_module("server");
+		if (_mode == INTERNAL) {
+			if (!world->local_engine())
+				world->load_module("server");
 
-		SharedPtr<SigClientInterface> client(new SigClientInterface());
+			SharedPtr<SigClientInterface> client(new SigClientInterface());
 
-		world->load_module("jack");
+			world->load_module("jack");
 
-		world->local_engine()->activate();
+			world->local_engine()->activate();
 
-		_app->attach(client);
-		_app->register_callbacks();
+			_app->attach(client);
+			_app->register_callbacks();
 
-		Glib::signal_timeout().connect(
-			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 10);
-	}
+			Glib::signal_timeout().connect(
+				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 10);
+		}
 }
 
 void
@@ -247,16 +247,16 @@ void
 ConnectWindow::activate()
 {
 	_app->engine()->set_property("ingen:driver",
-	                                       "ingen:enabled",
-	                                       true);
+	                             "ingen:enabled",
+	                             _app->forge().make(true));
 }
 
 void
 ConnectWindow::deactivate()
 {
 	_app->engine()->set_property("ingen:driver",
-	                                       "ingen:enabled",
-	                                       false);
+	                             "ingen:enabled",
+	                             _app->forge().make(false));
 }
 
 void
@@ -288,20 +288,27 @@ ConnectWindow::load_widgets()
 	_xml->get_widget("connect_connect_button",       _connect_button);
 	_xml->get_widget("connect_quit_button",          _quit_button);
 
-	_server_radio->signal_toggled().connect(sigc::mem_fun(this, &ConnectWindow::server_toggled));
-	_launch_radio->signal_toggled().connect(sigc::mem_fun(this, &ConnectWindow::launch_toggled));
-	_internal_radio->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::internal_toggled));
-	_activate_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::activate));
-	_deactivate_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::deactivate));
-	_disconnect_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::disconnect));
-	_connect_button->signal_clicked().connect(sigc::bind(
-			sigc::mem_fun(this, &ConnectWindow::connect), false));
-	_quit_button->signal_clicked().connect(sigc::mem_fun(this, &ConnectWindow::quit_clicked));
+	_server_radio->signal_toggled().connect(
+		sigc::mem_fun(this, &ConnectWindow::server_toggled));
+	_launch_radio->signal_toggled().connect(
+		sigc::mem_fun(this, &ConnectWindow::launch_toggled));
+	_internal_radio->signal_clicked().connect(
+		sigc::mem_fun(this, &ConnectWindow::internal_toggled));
+	_activate_button->signal_clicked().connect(
+		sigc::mem_fun(this, &ConnectWindow::activate));
+	_deactivate_button->signal_clicked().connect(
+		sigc::mem_fun(this, &ConnectWindow::deactivate));
+	_disconnect_button->signal_clicked().connect(
+		sigc::mem_fun(this, &ConnectWindow::disconnect));
+	_connect_button->signal_clicked().connect(
+		sigc::bind(sigc::mem_fun(this, &ConnectWindow::connect), false));
+	_quit_button->signal_clicked().connect(
+		sigc::mem_fun(this, &ConnectWindow::quit_clicked));
 
 	_progress_bar->set_pulse_step(0.01);
 	_widgets_loaded = true;
 
-    server_toggled();
+	server_toggled();
 }
 
 void
@@ -360,7 +367,7 @@ ConnectWindow::gtk_callback()
 	// Show if attempted connection goes on for a noticeable amount of time
 	if (!is_visible()) {
 		const float ms_since_start = (now.tv_sec - start.tv_sec) * 1000.0f +
-				(now.tv_usec - start.tv_usec) * 0.001f;
+			(now.tv_usec - start.tv_usec) * 0.001f;
 		if (ms_since_start > 500) {
 			present();
 			set_connecting_widget_states();
@@ -370,7 +377,7 @@ ConnectWindow::gtk_callback()
 	if (_connect_stage == 0) {
 		_attached = false;
 		_app->client()->signal_response().connect(
-				sigc::mem_fun(this, &ConnectWindow::ingen_response));
+			sigc::mem_fun(this, &ConnectWindow::ingen_response));
 
 		_ping_id = abs(rand()) / 2 * 2; // avoid -1
 		_app->engine()->respond_to(_app->client().get(), _ping_id);
@@ -388,7 +395,7 @@ ConnectWindow::gtk_callback()
 			++_connect_stage;
 		} else {
 			const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
-					(now.tv_usec - last.tv_usec) * 0.001f;
+				(now.tv_usec - last.tv_usec) * 0.001f;
 			if (ms_since_last > 1000) {
 				_app->engine()->respond_to(_app->client().get(), _ping_id);
 				_app->engine()->ping();

@@ -51,6 +51,12 @@ BufferFactory::~BufferFactory()
 	free_list(_free_object.get());
 }
 
+Raul::Forge&
+BufferFactory::forge()
+{
+	return _engine.world()->forge();
+}
+
 void
 BufferFactory::free_list(Buffer* head)
 {

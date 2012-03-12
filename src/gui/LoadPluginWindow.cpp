@@ -345,7 +345,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		Resource::Properties props = _initial_data;
 		props.insert(make_pair(uris.rdf_type,         uris.ingen_Node));
 		props.insert(make_pair(uris.rdf_instanceOf,   plugin->uri()));
-		props.insert(make_pair(uris.ingen_polyphonic, polyphonic));
+		props.insert(make_pair(uris.ingen_polyphonic, _app->forge().make(polyphonic)));
 		_app->engine()->put(path, props);
 
 		if (_selection->get_selected_rows().size() == 1) {
@@ -355,9 +355,9 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 
 		// Cascade next node
 		Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
-		x = Atom(x.get_float() + 20.0f);
+		x = _app->forge().make(x.get_float() + 20.0f);
 		Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
-		y = Atom(y.get_float() + 20.0f);
+		y = _app->forge().make(y.get_float() + 20.0f);
 	}
 }
 
@@ -373,7 +373,6 @@ LoadPluginWindow::filter_changed()
 {
 	_rows.clear();
 	_plugins_liststore->clear();
-
 	string search = _search_entry->get_text();
 	transform(search.begin(), search.end(), search.begin(), ::toupper);
 

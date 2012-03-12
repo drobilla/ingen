@@ -18,8 +18,6 @@
 #ifndef INGEN_ENGINE_NOTIFICATION_HPP
 #define INGEN_ENGINE_NOTIFICATION_HPP
 
-#include "raul/Atom.hpp"
-
 #include "ControlBindings.hpp"
 #include "types.hpp"
 

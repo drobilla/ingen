@@ -247,23 +247,23 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 	if (type == Atom::INT) {
 		Gtk::SpinButton* widget = dynamic_cast<Gtk::SpinButton*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
-		record.value = Atom(widget->get_value_as_int());
+		record.value = _app->forge().make(widget->get_value_as_int());
 	} else if (type == Atom::FLOAT) {
 		Gtk::SpinButton* widget = dynamic_cast<Gtk::SpinButton*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
-		record.value = Atom(static_cast<float>(widget->get_value()));
+		record.value = _app->forge().make(static_cast<float>(widget->get_value()));
 	} else if (type == Atom::BOOL) {
 		Gtk::CheckButton* widget = dynamic_cast<Gtk::CheckButton*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
-		record.value = Atom(widget->get_active());
+		record.value = _app->forge().make(widget->get_active());
 	} else if (type == Atom::URI) {
 		Gtk::Entry* widget = dynamic_cast<Gtk::Entry*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
-		record.value = Atom(Atom::URI, widget->get_text());
+		record.value = _app->forge().alloc(Atom::URI, widget->get_text());
 	} else if (type == Atom::STRING) {
 		Gtk::Entry* widget = dynamic_cast<Gtk::Entry*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
-		record.value = Atom(Atom::URI, widget->get_text());
+		record.value = _app->forge().alloc(Atom::URI, widget->get_text());
 	}
 
 	return;

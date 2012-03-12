@@ -706,7 +706,7 @@ PatchCanvas::paste()
 	props.insert(make_pair(uris.rdf_type,
 	                       uris.ingen_Patch));
 	props.insert(make_pair(uris.ingen_polyphony,
-	                       Raul::Atom(int32_t(_patch->internal_poly()))));
+	                       _app.forge().make(int32_t(_patch->internal_poly()))));
 	clipboard.put(Path(), props);
 	size_t first_slash;
 	while (to_create != "/" && !to_create.empty()
@@ -739,14 +739,17 @@ PatchCanvas::paste()
 
 		GraphObject::Properties::iterator x = props.find(uris.ingen_canvasX);
 		if (x != i->second->properties().end())
-			x->second = x->second.get_float() + (20.0f * _paste_count);
+			x->second = _app.forge().make(
+				x->second.get_float() + (20.0f * _paste_count));
 
 		GraphObject::Properties::iterator y = props.find(uris.ingen_canvasY);
 		if (y != i->second->properties().end())
-			y->second = y->second.get_float() + (20.0f * _paste_count);
+			y->second = _app.forge().make(
+				y->second.get_float() + (20.0f * _paste_count));
 
 		if (i->first.parent().is_root())
-			i->second->set_property(uris.ingen_selected, true);
+			i->second->set_property(uris.ingen_selected,
+			                        _app.forge().make(true));
 
 		builder.build(i->second);
 	}
@@ -793,9 +796,9 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	props.insert(make_pair(uris.rdf_type,
 	                       is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
 	props.insert(make_pair(uris.lv2_index,
-	                       Atom(int32_t(_patch->num_ports()))));
+	                       _app.forge().make(int32_t(_patch->num_ports()))));
 	props.insert(make_pair(uris.lv2_name,
-	                       Atom(name.c_str())));
+	                       _app.forge().make(name.c_str())));
 	_app.engine()->put(path, props);
 }
 
@@ -841,10 +844,14 @@ PatchCanvas::get_initial_data(Resource::Graph ctx)
 {
 	GraphObject::Properties result;
 	const URIs& uris = _app.uris();
-	result.insert(make_pair(uris.ingen_canvasX,
-	                        Resource::Property((float)_last_click_x, ctx)));
-	result.insert(make_pair(uris.ingen_canvasY,
-	                        Resource::Property((float)_last_click_y, ctx)));
+	result.insert(
+		make_pair(uris.ingen_canvasX,
+		          Resource::Property(_app.forge().make((float)_last_click_x),
+		                             ctx)));
+	result.insert(
+		make_pair(uris.ingen_canvasY,
+		          Resource::Property(_app.forge().make((float)_last_click_y),
+		                             ctx)));
 	return result;
 }
 

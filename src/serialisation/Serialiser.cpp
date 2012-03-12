@@ -453,7 +453,8 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 
 		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
 		if (p->properties().find(NS_LV2 "name") == p->properties().end())
-			p->set_property(NS_LV2 "name", Atom(p->symbol().c_str()));
+			p->set_property(NS_LV2 "name",
+			                _world.forge().make(p->symbol().c_str()));
 
 		_model->add_statement(patch_id,
 		                      Sord::URI(world, NS_LV2 "port"),
@@ -521,7 +522,7 @@ Serialiser::Impl::serialise_port(const Port*       port,
 		_model->add_statement(
 			port_id,
 			Sord::Curie(world, "lv2:index"),
-			AtomRDF::atom_to_node(*_model, Atom((int)port->index())));
+			AtomRDF::atom_to_node(*_model, _world.forge().make((int)port->index())));
 	}
 }
 

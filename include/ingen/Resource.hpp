@@ -75,24 +75,7 @@ public:
 			, _ctx(ctx)
 		{}
 
-		Property()                       : Raul::Atom(),     _ctx(DEFAULT) {}
-		Property(int32_t val)            : Raul::Atom(val),  _ctx(DEFAULT) {}
-		Property(float val)              : Raul::Atom(val),  _ctx(DEFAULT) {}
-		Property(bool val)               : Raul::Atom(val),  _ctx(DEFAULT) {}
-		Property(const char* val)        : Raul::Atom(val),  _ctx(DEFAULT) {}
-		Property(const std::string& val) : Raul::Atom(val),  _ctx(DEFAULT) {}
-
-		Property(const Raul::Atom::DictValue& dict)
-			: Raul::Atom(dict)
-			, _ctx(DEFAULT)
-		{}
-
-		Property(Type t, const std::string& uri)
-			: Raul::Atom(t, uri)
-			, _ctx(DEFAULT)
-		{}
-
-		Graph context() const          { return _ctx; }
+		Graph context() const        { return _ctx; }
 		void  set_context(Graph ctx) { _ctx = ctx; }
 
 	private:

@@ -151,7 +151,8 @@ Engine::activate()
 
 	_message_context->Thread::start();
 
-	const Ingen::Shared::URIs& uris = *world()->uris().get();
+	const Ingen::Shared::URIs& uris  = *world()->uris().get();
+	Raul::Forge&               forge = world()->forge();
 
 	// Create root patch
 	PatchImpl* root_patch = _driver->root_patch();
@@ -160,7 +161,7 @@ Engine::activate()
 		root_patch->set_property(uris.rdf_type,
 		                         Resource::Property(uris.ingen_Patch, Resource::INTERNAL));
 		root_patch->set_property(uris.ingen_polyphony,
-		                         Resource::Property(Raul::Atom(int32_t(1)),
+		                         Resource::Property(_world->forge().make(int32_t(1)),
 		                                            Resource::INTERNAL));
 		root_patch->activate(*_buffer_factory);
 		_world->store()->add(root_patch);
@@ -170,20 +171,24 @@ Engine::activate()
 		ProcessContext context(*this);
 
 		Resource::Properties control_properties;
-		control_properties.insert(make_pair(uris.lv2_name, "Control"));
-		control_properties.insert(make_pair(uris.rdf_type, uris.ev_EventPort));
+		control_properties.insert(make_pair(uris.lv2_name,
+		                                    forge.make("Control")));
+		control_properties.insert(make_pair(uris.rdf_type,
+		                                    uris.ev_EventPort));
 
 		// Add control input
 		Resource::Properties in_properties(control_properties);
 		in_properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
 		in_properties.insert(make_pair(uris.rdf_type, uris.ev_EventPort));
-		in_properties.insert(make_pair(uris.lv2_index, 0));
+		in_properties.insert(make_pair(uris.lv2_index, forge.make(0)));
 		in_properties.insert(make_pair(uris.lv2_portProperty,
 		                               uris.lv2_connectionOptional));
-		in_properties.insert(make_pair(uris.ingen_canvasX,
-		                               Resource::Property(32.0f, Resource::EXTERNAL)));
-		in_properties.insert(make_pair(uris.ingen_canvasY,
-		                               Resource::Property(32.0f, Resource::EXTERNAL)));
+		in_properties.insert(
+			make_pair(uris.ingen_canvasX,
+			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
+		in_properties.insert(
+			make_pair(uris.ingen_canvasY,
+			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
 
 		execute_and_delete_event(
 			context, new Events::CreatePort(*this, NULL, -1, 0,
@@ -193,13 +198,15 @@ Engine::activate()
 		Resource::Properties out_properties(control_properties);
 		out_properties.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
 		out_properties.insert(make_pair(uris.rdf_type, uris.ev_EventPort));
-		out_properties.insert(make_pair(uris.lv2_index, 1));
+		out_properties.insert(make_pair(uris.lv2_index, forge.make(1)));
 		in_properties.insert(make_pair(uris.lv2_portProperty,
 		                               uris.lv2_connectionOptional));
-		out_properties.insert(make_pair(uris.ingen_canvasX,
-		                                Resource::Property(128.0f, Resource::EXTERNAL)));
-		out_properties.insert(make_pair(uris.ingen_canvasY,
-		                                Resource::Property(32.0f, Resource::EXTERNAL)));
+		out_properties.insert(
+			make_pair(uris.ingen_canvasX,
+			          Resource::Property(forge.make(128.0f), Resource::EXTERNAL)));
+		out_properties.insert(
+			make_pair(uris.ingen_canvasY,
+			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
 
 		execute_and_delete_event(
 			context, new Events::CreatePort(*this, NULL, -1, 0,

@@ -356,7 +356,7 @@ PatchImpl::create_port(BufferFactory& bufs,
 
 	Raul::Atom value;
 	if (type == PortType::CONTROL || type == PortType::CV)
-		value = 0.0f;
+		value = bufs.forge().make(0.0f);
 
 	return new DuplexPort(bufs, this, name, num_ports(), polyphonic, _polyphony,
 			type, value, buffer_size, is_output);

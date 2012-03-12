@@ -102,7 +102,8 @@ skip_property(const Sord::Node& predicate)
 }
 
 static Resource::Properties
-get_properties(Sord::Model&      model,
+get_properties(Raul::Forge&      forge,
+               Sord::Model&      model,
                const Sord::Node& subject)
 {
 	Resource::Properties props;
@@ -110,7 +111,7 @@ get_properties(Sord::Model&      model,
 		if (!skip_property(i.get_predicate())) {
 			props.insert(
 				make_pair(i.get_predicate().to_string(),
-				          AtomRDF::node_to_atom(model, i.get_object())));
+				          AtomRDF::node_to_atom(forge, model, i.get_object())));
 		}
 	}
 	return props;
@@ -128,7 +129,7 @@ get_port(Ingen::Shared::World* world,
 	const URIs& uris = *world->uris().get();
 
 	// Get all properties
-	Resource::Properties props = get_properties(model, subject);
+	Resource::Properties props = get_properties(world->forge(), model, subject);
 
 	// Get index
 	Resource::Properties::const_iterator i = props.find(uris.lv2_index);
@@ -252,7 +253,7 @@ parse_node(Ingen::Shared::World*                    world,
 		parse_patch(world, target, model, subject,
 		            path.parent(), Raul::Symbol(path.symbol()));
 	} else {
-		Resource::Properties props = get_properties(model, subject);
+		Resource::Properties props = get_properties(world->forge(), model, subject);
 		props.insert(make_pair(uris.rdf_type,
 		                       Raul::URI(uris.ingen_Node)));
 		target->put(path, props);
@@ -273,6 +274,7 @@ parse_patch(Ingen::Shared::World*                    world,
 	const Sord::URI ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
 	const Sord::URI lv2_port(*world->rdf_world(),        NS_LV2 "port");
 
+	Raul::Forge&      forge = world->forge();
 	const URIs&       uris  = *world->uris().get();
 	const Sord::Node& patch = subject_node;
 
@@ -321,7 +323,7 @@ parse_patch(Ingen::Shared::World*                    world,
 
 	// Create patch
 	Path patch_path(patch_path_str);
-	Resource::Properties props = get_properties(model, subject_node);
+	Resource::Properties props = get_properties(forge, model, subject_node);
 	target->put(patch_path, props);
 
 	// For each node in this patch
@@ -440,8 +442,9 @@ parse_properties(Ingen::Shared::World*                    world,
 		const Sord::Node& key = i.get_predicate();
 		const Sord::Node& val = i.get_object();
 		if (!skip_property(key)) {
-			properties.insert(make_pair(key.to_string(),
-			                            AtomRDF::node_to_atom(model, val)));
+			properties.insert(
+				make_pair(key.to_string(),
+				          AtomRDF::node_to_atom(world->forge(), model, val)));
 		}
 	}
 
@@ -531,6 +534,7 @@ parse(Ingen::Shared::World*                    world,
 }
 
 Parser::Parser(Ingen::Shared::World& world)
+	: _world(world)
 {
 }
 
@@ -614,7 +618,7 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 
 	if (parsed_path) {
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
-		                     Atom(Atom::URI, uri.c_str()));
+		                     world->forge().alloc(Atom::URI, uri.c_str()));
 	} else {
 		LOG(warn) << "Document URI lost" << endl;
 	}

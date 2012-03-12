@@ -102,6 +102,8 @@ public:
 	virtual Raul::Configuration* conf();
 	virtual void set_conf(Raul::Configuration* c);
 
+	virtual Raul::Forge& forge();
+
 	virtual LV2Features* lv2_features();
 
 	virtual LilvWorld* lilv_world();

@@ -56,30 +56,34 @@ TriggerNode::TriggerNode(
 	_ports = new Raul::Array<PortImpl*>(5);
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1, PortType::EVENTS, Raul::Atom());
-	_midi_in_port->set_property(uris.lv2_name, "Input");
+	_midi_in_port->set_property(uris.lv2_name, bufs.forge().make("Input"));
 	_ports->at(0) = _midi_in_port;
 
-	_note_port = new InputPort(bufs, this, "note", 1, 1, PortType::CONTROL, 60.0f);
-	_note_port->set_property(uris.lv2_minimum, 0.0f);
-	_note_port->set_property(uris.lv2_maximum, 127.0f);
-	_note_port->set_property(uris.lv2_integer, true);
-	_note_port->set_property(uris.lv2_name, "Note");
+	_note_port = new InputPort(bufs, this, "note", 1, 1,
+	                           PortType::CONTROL, bufs.forge().make(60.0f));
+	_note_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
+	_note_port->set_property(uris.lv2_maximum, bufs.forge().make(127.0f));
+	_note_port->set_property(uris.lv2_integer, bufs.forge().make(true));
+	_note_port->set_property(uris.lv2_name, bufs.forge().make("Note"));
 	_ports->at(1) = _note_port;
 
-	_gate_port = new OutputPort(bufs, this, "gate", 2, 1, PortType::AUDIO, 0.0f);
+	_gate_port = new OutputPort(bufs, this, "gate", 2, 1,
+	                            PortType::AUDIO, bufs.forge().make(0.0f));
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
-	_gate_port->set_property(uris.lv2_name, "Gate");
+	_gate_port->set_property(uris.lv2_name, bufs.forge().make("Gate"));
 	_ports->at(2) = _gate_port;
 
-	_trig_port = new OutputPort(bufs, this, "trigger", 3, 1, PortType::AUDIO, 0.0f);
+	_trig_port = new OutputPort(bufs, this, "trigger", 3, 1,
+	                            PortType::AUDIO, bufs.forge().make(0.0f));
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
-	_trig_port->set_property(uris.lv2_name, "Trigger");
+	_trig_port->set_property(uris.lv2_name, bufs.forge().make("Trigger"));
 	_ports->at(3) = _trig_port;
 
-	_vel_port = new OutputPort(bufs, this, "velocity", 4, 1, PortType::AUDIO, 0.0f);
-	_vel_port->set_property(uris.lv2_minimum, 0.0f);
-	_vel_port->set_property(uris.lv2_maximum, 1.0f);
-	_vel_port->set_property(uris.lv2_name, "Velocity");
+	_vel_port = new OutputPort(bufs, this, "velocity", 4, 1,
+	                           PortType::AUDIO, bufs.forge().make(0.0f));
+	_vel_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
+	_vel_port->set_property(uris.lv2_maximum, bufs.forge().make(1.0f));
+	_vel_port->set_property(uris.lv2_name, bufs.forge().make("Velocity"));
 	_ports->at(4) = _vel_port;
 }
 
@@ -133,7 +137,8 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 	assert(time >= context.start() && time <= context.end());
 
 	if (_learning) {
-		_note_port->set_value(note_num);
+		// FIXME
+		//_note_port->set_value(note_num);
 		((AudioBuffer*)_note_port->buffer(0).get())->set_value(
 				(float)note_num, context.start(), context.end());
 		_note_port->broadcast_value(context, true);

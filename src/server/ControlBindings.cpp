@@ -208,7 +208,7 @@ ControlBindings::control_to_port_value(Type              type,
 	//if (toggled)
 	//	scaled_value = (scaled_value < 0.5) ? 0.0 : 1.0;
 
-	return Raul::Atom(scaled_value);
+	return _engine.world()->forge().make(scaled_value);
 }
 
 int16_t
@@ -288,7 +288,8 @@ ControlBindings::bind(ProcessContext& context, Key key)
 	_bindings->insert(make_pair(key, _learn_port));
 
 	const Notification note = Notification::make(
-		Notification::PORT_BINDING, context.start(), _learn_port, key.num, key.type);
+		Notification::PORT_BINDING, context.start(), _learn_port,
+		context.engine().world()->forge().make(key.num), key.type);
 	context.event_sink().write(sizeof(note), &note);
 
 	_learn_port = NULL;

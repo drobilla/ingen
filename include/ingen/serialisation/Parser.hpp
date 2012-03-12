@@ -79,6 +79,9 @@ public:
 	virtual PatchRecords find_patches(Shared::World*       world,
 	                                  SerdEnv*             env,
 	                                  const Glib::ustring& manifest_uri);
+
+private:
+	Shared::World& _world;
 };
 
 } // namespace Serialisation
