@@ -41,6 +41,9 @@ def configure(conf):
     autowaf.configure(conf)
     conf.line_just = 48
 
+    Options.options.no_http = True
+    Options.options.no_osc  = True
+
     autowaf.display_header('Ingen Configuration')
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
                       atleast_version='2.14.0', mandatory=True)

@@ -60,12 +60,13 @@ HTTPClientSender::put(const URI&                  uri,
 		: uri.str();
 
 
-	Sord::Model model(*_engine.world()->rdf_world());
+	const Shared::World& world = _engine.world();
+	Sord::Model model(world.rdf_world());
 	for (Resource::Properties::const_iterator i = properties.begin();
 	     i != properties.end(); ++i)
 		model.add_statement(
-				Sord::URI(*_engine.world()->rdf_world(), request_uri),
-				AtomRDF::atom_to_node(model, i->first.str()),
+				Sord::URI(world.rdf_world(), request_uri),
+				Sord::URI(world.rdf_world(), i->first),
 				AtomRDF::atom_to_node(model, i->second));
 
 	const string str = model.write_to_string("", SERD_TURTLE);
