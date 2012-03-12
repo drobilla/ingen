@@ -51,6 +51,8 @@
 #include "ThreadManager.hpp"
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
+#define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
 /** Record of a patch in this Ingen LV2 bundle */
 struct LV2Patch {
@@ -68,10 +70,7 @@ public:
 
 	typedef std::vector< SharedPtr<const LV2Patch> > Patches;
 
-	Patches                       patches;
-	Ingen::Shared::Configuration* conf;
-	int                           argc;
-	char**                        argv;
+	Patches patches;
 };
 
 /** Library state (constructed/destructed on library load/unload) */
@@ -249,9 +248,13 @@ private:
 };
 
 struct IngenPlugin {
-	Ingen::Shared::World* world;
-	MainThread*           main;
-	LV2_URID_Map*         map;
+	Raul::Forge                   forge;
+	Ingen::Shared::Configuration* conf;
+	Ingen::Shared::World*         world;
+	MainThread*                   main;
+	LV2_URID_Map*                 map;
+	int                           argc;
+	char**                        argv;
 };
 
 static LV2_Handle
@@ -276,13 +279,17 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
-	plugin->world = new Ingen::Shared::World(lib.conf, lib.argc, lib.argv);
+	plugin->conf  = new Ingen::Shared::Configuration(&plugin->forge);
+	plugin->world = new Ingen::Shared::World(plugin->conf,
+	                                         plugin->argc,
+	                                         plugin->argv);
 	if (!plugin->world->load_module("serialisation")) {
 		delete plugin->world;
 		return NULL;
 	}
 
-	plugin->map = NULL;
+	plugin->main  = NULL;
+	plugin->map   = NULL;
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_URID_URI "#map")) {
 			plugin->map = (LV2_URID_Map*)features[i]->data;
@@ -503,52 +510,48 @@ LV2Patch::LV2Patch(const std::string& u, const std::string& f)
 	descriptor.extension_data = ingen_extension_data;
 }
 
+static Lib::Patches
+find_patches(const Glib::ustring& manifest_uri)
+{
+	Sord::World      world;
+	const Sord::URI  base(world, manifest_uri);
+	const Sord::Node nil;
+	const Sord::URI  ingen_Patch (world, NS_INGEN "Patch");
+	const Sord::URI  rdf_type    (world, NS_RDF   "type");
+	const Sord::URI  rdfs_seeAlso(world, NS_RDFS  "seeAlso");
+
+	SerdEnv*    env = serd_env_new(sord_node_to_serd_node(base.c_obj()));
+	Sord::Model model(world, manifest_uri);
+	model.load_file(env, SERD_TURTLE, manifest_uri);
+
+	Lib::Patches patches;
+	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
+		const Sord::Node  patch     = i.get_subject();
+		Sord::Iter        f         = model.find(patch, rdfs_seeAlso, nil);
+		const std::string patch_uri = patch.to_c_string();
+		if (!f.end()) {
+			const uint8_t* file_uri  = f.get_object().to_u_string();
+			uint8_t*       file_path = serd_file_uri_parse(file_uri, NULL);
+			patches.push_back(boost::shared_ptr<const LV2Patch>(
+				                  new LV2Patch(patch_uri, (const char*)file_path)));
+			free(file_path);
+		} else {
+			Raul::error << "[Ingen] Patch has no rdfs:seeAlso" << endl;
+		}
+	}
+
+	serd_env_free(env);
+	return patches;
+}
+
+
 /** Library constructor (called on shared library load) */
 Lib::Lib()
-	: argc(0)
-	, argv(NULL)
 {
-	if (!Glib::thread_supported())
-		Glib::thread_init();
-
-	using namespace Ingen;
-
-	// FIXME
-	Raul::Forge forge;
-	conf = new Ingen::Shared::Configuration(&forge);
 	Ingen::Shared::set_bundle_path_from_code((void*)&lv2_descriptor);
 
-	Ingen::Shared::World* world = new Ingen::Shared::World(conf, argc, argv);
-	if (!world->load_module("serialisation")) {
-		delete world;
-		return;
-	}
-
-	assert(world->parser());
-
-	typedef Serialisation::Parser::PatchRecords Records;
-
-	const std::string manifest_path = Shared::bundle_file_path("manifest.ttl");
-	const std::string manifest_uri  = Glib::filename_to_uri(manifest_path);
-	const SerdNode    base_node     = serd_node_from_string(
-		SERD_URI, (const uint8_t*)manifest_uri.c_str());
-
-	SerdEnv* env = serd_env_new(&base_node);
-	Records records(
-		world->parser()->find_patches(world, env, manifest_uri));
-	serd_env_free(env);
-
-	for (Records::iterator i = records.begin(); i != records.end(); ++i) {
-		uint8_t* path = serd_file_uri_parse((const uint8_t*)i->file_uri.c_str(), NULL);
-		if (path) {
-			patches.push_back(
-				SharedPtr<const LV2Patch>(
-					new LV2Patch(i->patch_uri.str(), (const char*)path)));
-		}
-		free(path);
-	}
-
-	delete world;
+	patches = find_patches(Glib::filename_to_uri(
+		                       Shared::bundle_file_path("manifest.ttl")));
 }
 
 /** Library destructor (called on shared library unload) */

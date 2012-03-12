@@ -538,37 +538,6 @@ Parser::Parser(Ingen::Shared::World& world)
 {
 }
 
-Parser::PatchRecords
-Parser::find_patches(Ingen::Shared::World* world,
-                     SerdEnv*              env,
-                     const Glib::ustring&  manifest_uri)
-{
-	const Sord::URI ingen_Patch (*world->rdf_world(), NS_INGEN "Patch");
-	const Sord::URI rdf_type    (*world->rdf_world(), NS_RDF   "type");
-	const Sord::URI rdfs_seeAlso(*world->rdf_world(), NS_RDFS  "seeAlso");
-
-	Sord::Model model(*world->rdf_world(), manifest_uri);
-	model.load_file(env, SERD_TURTLE, manifest_uri);
-
-	std::list<PatchRecord> records;
-	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
-		const Sord::Node patch         = i.get_subject();
-		Sord::Iter       f             = model.find(patch, rdfs_seeAlso, nil);
-		std::string      patch_uri_str = patch.to_c_string();
-		if (patch_uri_str[0] == '/') {
-			// FIXME: Kludge path to be a proper URI (not sure why this is happening)
-			patch_uri_str = string("file://") + patch_uri_str;
-		}
-		if (!f.end()) {
-			records.push_back(PatchRecord(patch_uri_str,
-			                              f.get_object().to_c_string()));
-		} else {
-			LOG(error) << "Patch has no rdfs:seeAlso" << endl;
-		}
-	}
-	return records;
-}
-
 /** Parse a patch from RDF into a CommonInterface (engine or client).
  * @return whether or not load was successful.
  */

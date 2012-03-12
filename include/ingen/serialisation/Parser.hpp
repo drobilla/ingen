@@ -25,7 +25,6 @@
 #include <glibmm/ustring.h>
 
 #include "raul/Path.hpp"
-#include "serd/serd.h"
 
 #include "ingen/GraphObject.hpp"
 
@@ -65,20 +64,6 @@ public:
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data   = boost::optional<Properties>());
-
-	struct PatchRecord {
-		PatchRecord(const Raul::URI& u, const Glib::ustring& f)
-			: patch_uri(u), file_uri(f)
-		{}
-		const Raul::URI     patch_uri;
-		const Glib::ustring file_uri;
-	};
-
-	typedef std::list<PatchRecord> PatchRecords;
-
-	virtual PatchRecords find_patches(Shared::World*       world,
-	                                  SerdEnv*             env,
-	                                  const Glib::ustring& manifest_uri);
 
 private:
 	Shared::World& _world;
