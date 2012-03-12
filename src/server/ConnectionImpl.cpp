@@ -162,9 +162,13 @@ ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
 	const Ingen::Shared::URIs& uris = src->bufs().uris();
 	return (
-			// (Audio | Control) => (Audio | Control)
-			(   (src->is_a(PortType::CONTROL) || src->is_a(PortType::AUDIO))
-			 && (dst->is_a(PortType::CONTROL) || dst->is_a(PortType::AUDIO)))
+			// (Audio | Control | CV) => (Audio | Control | CV)
+			(   (src->is_a(PortType::CONTROL) ||
+			     src->is_a(PortType::AUDIO) ||
+			     src->is_a(PortType::CV))
+			 && (dst->is_a(PortType::CONTROL)
+			     || dst->is_a(PortType::AUDIO)
+			     || dst->is_a(PortType::CV)))
 
 			// (Events | Message) => (Events | Message)
 			|| ( (src->is_a(PortType::EVENTS) || src->is_a(PortType::MESSAGE))

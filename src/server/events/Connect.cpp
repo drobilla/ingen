@@ -72,7 +72,7 @@ Connect::pre_process()
 		return;
 	}
 
-	_dst_input_port = dynamic_cast<InputPort*>(dst_port);
+	_dst_input_port  = dynamic_cast<InputPort*>(dst_port);
 	_src_output_port = dynamic_cast<OutputPort*>(src_port);
 	if (!_dst_input_port || !_src_output_port) {
 		_error = DIRECTION_MISMATCH;
