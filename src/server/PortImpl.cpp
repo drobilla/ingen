@@ -232,9 +232,12 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::VALUE:
 	case PortType::MESSAGE:
+		std::cerr << "FIXME: Atom value" << std::endl;
+		/*
 		Ingen::Shared::LV2Atom::to_atom(_bufs.uris(),
 		                                ((ObjectBuffer*)buffer(0).get())->atom(),
 		                                val);
+		*/
 		break;
 	}
 
