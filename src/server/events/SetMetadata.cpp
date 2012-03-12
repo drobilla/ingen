@@ -112,7 +112,7 @@ SetMetadata::pre_process()
 		: static_cast<Shared::ResourceImpl*>(_engine.node_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
-		_error = NOT_FOUND;
+		_status = NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
@@ -144,7 +144,7 @@ SetMetadata::pre_process()
 			// Grab the object for applying properties, if the create-event succeeded
 			_object = _engine.engine_store()->find_object(Path(_subject.str()));
 		} else {
-			_error = BAD_OBJECT_TYPE;
+			_status = BAD_OBJECT_TYPE;
 		}
 	}
 
@@ -187,7 +187,7 @@ SetMetadata::pre_process()
 					if (value.type() == Atom::BOOL) {
 						op = ENABLE_BROADCAST;
 					} else {
-						_error = BAD_VALUE_TYPE;
+						_status = BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.ingen_value) {
 					SetPortValue* ev = new SetPortValue(
@@ -201,10 +201,10 @@ SetMetadata::pre_process()
 						} else if (value.type() == Atom::DICT) {
 							op = CONTROL_BINDING;
 						} else {
-							_error = BAD_VALUE_TYPE;
+							_status = BAD_VALUE_TYPE;
 						}
 					} else {
-						_error = BAD_OBJECT_TYPE;
+						_status = BAD_OBJECT_TYPE;
 					}
 				}
 			} else if ((_patch = dynamic_cast<PatchImpl*>(_object))) {
@@ -215,14 +215,14 @@ SetMetadata::pre_process()
 						if (value.get_bool() && !_patch->enabled())
 							_compiled_patch = _patch->compile();
 					} else {
-						_error = BAD_VALUE_TYPE;
+						_status = BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.ingen_polyphony) {
 					if (value.type() == Atom::INT) {
 						op = POLYPHONY;
 						_patch->prepare_internal_poly(*_engine.buffer_factory(), value.get_int32());
 					} else {
-						_error = BAD_VALUE_TYPE;
+						_status = BAD_VALUE_TYPE;
 					}
 				}
 			} else if (key == uris.ingen_polyphonic) {
@@ -240,15 +240,15 @@ SetMetadata::pre_process()
 							obj->prepare_poly(*_engine.buffer_factory(), 1);
 						}
 					} else {
-						_error = BAD_VALUE_TYPE;
+						_status = BAD_VALUE_TYPE;
 					}
 				} else {
-					_error = BAD_OBJECT_TYPE;
+					_status = BAD_OBJECT_TYPE;
 				}
 			}
 		}
 
-		if (_error != NO_ERROR) {
+		if (_status != SUCCESS) {
 			_error_predicate += key.str();
 			break;
 		}
@@ -266,7 +266,7 @@ SetMetadata::pre_process()
 void
 SetMetadata::execute(ProcessContext& context)
 {
-	if (_error != NO_ERROR) {
+	if (_status != SUCCESS) {
 		Event::execute(context);
 		return;
 	}
@@ -318,7 +318,7 @@ SetMetadata::execute(ProcessContext& context)
 					!_patch->apply_internal_poly(_engine.driver()->context(),
 						*_engine.buffer_factory(),
 						*_engine.maid(), value.get_int32())) {
-				_error = INTERNAL;
+				_status = INTERNAL_ERROR;
 			}
 			break;
 		case CONTROL_BINDING:
@@ -351,34 +351,19 @@ SetMetadata::post_process()
 	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
 		(*i)->post_process();
 
-	switch (_error) {
-	case NO_ERROR:
+	if (!_status) {
 		if (_create_event) {
 			_create_event->post_process();
 		} else {
-			respond_ok();
-			if (_create)
+			respond(SUCCESS);
+			if (_create) {
 				_engine.broadcaster()->put(_subject, _properties, _context);
-			else
+			} else {
 				_engine.broadcaster()->delta(_subject, _remove, _properties);
+			}
 		}
-		break;
-	case NOT_FOUND:
-		respond_error((boost::format(
-				"Unable to find object `%1%'") % _subject).str());
-		break;
-	case INTERNAL:
-		respond_error("Internal error");
-		break;
-	case BAD_OBJECT_TYPE:
-		respond_error((boost::format(
-				"Bad type for object `%1%'") % _subject).str());
-		break;
-	case BAD_VALUE_TYPE:
-		respond_error((boost::format(
-				"Bad metadata value type for subject `%1%' predicate `%2%'")
-					% _subject % _error_predicate).str());
-		break;
+	} else {
+		respond(_status);
 	}
 
 	if (_create_event) {

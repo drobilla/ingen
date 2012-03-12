@@ -24,6 +24,8 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 
+#include "ingen/Status.hpp"
+
 #include "types.hpp"
 
 namespace Ingen {
@@ -73,14 +75,11 @@ public:
 	/** Set the next event to be processed after this one. */
 	void next(Event* ev) { _next = ev; }
 
-	/** Return the error status of this event. */
-	int error() const { return _error; }
+	/** Return the status (success or error code) of this event. */
+	Status status() const { return _status; }
 
-	/** Respond to the originating client successfully. */
-	void respond_ok();
-
-	/** Respond to the originating client with an error. */
-	void respond_error(const std::string& msg);
+	/** Respond to the originating client. */
+	void respond(Status status);
 
 protected:
 	Event(Engine& engine, ClientInterface* client, int32_t id, FrameTime time)
@@ -88,7 +87,7 @@ protected:
 		, _request_client(client)
 		, _request_id(id)
 		, _time(time)
-		, _error(0) // success
+		, _status(SUCCESS)
 		, _pre_processed(false)
 		, _executed(false)
 	{}
@@ -99,7 +98,7 @@ protected:
 		, _request_client(NULL)
 		, _request_id(-1)
 		, _time(0)
-		, _error(0) // success
+		, _status(SUCCESS)
 		, _pre_processed(false)
 		, _executed(false)
 	{}
@@ -109,7 +108,7 @@ protected:
 	ClientInterface*       _request_client;
 	int32_t                _request_id;
 	FrameTime              _time;
-	int                    _error;
+	Status                 _status;
 	bool                   _pre_processed;
 	bool                   _executed;
 };

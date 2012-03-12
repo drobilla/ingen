@@ -66,8 +66,7 @@ private:
 	int                        _listen_port;
 
 	LO_HANDLER(OSCClientReceiver, error);
-	LO_HANDLER(OSCClientReceiver, response_ok);
-	LO_HANDLER(OSCClientReceiver, response_error);
+	LO_HANDLER(OSCClientReceiver, response);
 	LO_HANDLER(OSCClientReceiver, plugin);
 	LO_HANDLER(OSCClientReceiver, plugin_list_end);
 	LO_HANDLER(OSCClientReceiver, new_patch);

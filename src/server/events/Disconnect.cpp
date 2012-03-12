@@ -119,7 +119,7 @@ Disconnect::pre_process()
 	if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
 	    && _src_port_path.parent() != _dst_port_path.parent().parent()
 	    && _src_port_path.parent().parent() != _dst_port_path.parent()) {
-		_error = PARENT_PATCH_DIFFERENT;
+		_status = PARENT_DIFFERS;
 		Event::pre_process();
 		return;
 	}
@@ -128,7 +128,7 @@ Disconnect::pre_process()
 	_dst_port = _engine.engine_store()->find_port(_dst_port_path);
 
 	if (_src_port == NULL || _dst_port == NULL) {
-		_error = PORT_NOT_FOUND;
+		_status = PORT_NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
@@ -157,13 +157,13 @@ Disconnect::pre_process()
 	assert(_patch);
 
 	if (!_patch->has_connection(_src_port, _dst_port)) {
-		_error = NOT_CONNECTED;
+		_status = NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
 
 	if (src_node == NULL || dst_node == NULL) {
-		_error = PARENTS_NOT_FOUND;
+		_status = PARENT_NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
@@ -213,9 +213,9 @@ Disconnect::execute(ProcessContext& context)
 {
 	Event::execute(context);
 
-	if (_error == NO_ERROR) {
+	if (_status == SUCCESS) {
 		if (!_impl->execute(context, true)) {
-			_error = CONNECTION_NOT_FOUND;
+			_status = NOT_FOUND;
 			return;
 		}
 
@@ -227,37 +227,9 @@ Disconnect::execute(ProcessContext& context)
 void
 Disconnect::post_process()
 {
-	if (_error == NO_ERROR) {
-		respond_ok();
+	respond(_status);
+	if (!_status) {
 		_engine.broadcaster()->disconnect(_src_port->path(), _dst_port->path());
-	} else {
-		string msg("Unable to disconnect ");
-		msg.append(_src_port_path.str() + " => " + _dst_port_path.str());
-		msg.append(" (");
-		switch (_error) {
-		case PARENT_PATCH_DIFFERENT:
-			msg.append("Ports exist in different patches");
-			break;
-		case PORT_NOT_FOUND:
-			msg.append("Port not found");
-			break;
-		case TYPE_MISMATCH:
-			msg.append("Ports have incompatible types");
-			break;
-		case NOT_CONNECTED:
-			msg.append("Ports are not connected");
-			break;
-		case PARENTS_NOT_FOUND:
-			msg.append("Parent node not found");
-			break;
-		case CONNECTION_NOT_FOUND:
-			msg.append("Connection not found");
-			break;
-		default:
-			break;
-		}
-		msg.append(")");
-		respond_error(msg);
 	}
 
 	delete _impl;

@@ -136,7 +136,7 @@ ServerInterfaceImpl::del(const URI& uri)
 {
 	if (uri == "ingen:engine") {
 		if (_request_client) {
-			_request_client->response_ok(_request_id);
+			_request_client->response(_request_id, SUCCESS);
 		}
 		_engine.quit();
 	} else {

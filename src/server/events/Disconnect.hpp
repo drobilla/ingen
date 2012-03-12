@@ -78,16 +78,6 @@ public:
 	};
 
 private:
-	enum ErrorType {
-		NO_ERROR,
-		PARENT_PATCH_DIFFERENT,
-		PORT_NOT_FOUND,
-		TYPE_MISMATCH,
-		NOT_CONNECTED,
-		PARENTS_NOT_FOUND,
-		CONNECTION_NOT_FOUND
-	};
-
 	const Raul::Path _src_port_path;
 	const Raul::Path _dst_port_path;
 

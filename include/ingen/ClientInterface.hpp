@@ -25,6 +25,7 @@
 #include "raul/URI.hpp"
 
 #include "ingen/CommonInterface.hpp"
+#include "ingen/Status.hpp"
 
 namespace Raul { class Path; }
 
@@ -40,9 +41,7 @@ class ClientInterface : public CommonInterface
 public:
 	virtual ~ClientInterface() {}
 
-	virtual void response_ok(int32_t id) = 0;
-
-	virtual void response_error(int32_t id, const std::string& msg) = 0;
+	virtual void response(int32_t id, Status status) = 0;
 
 	virtual void error(const std::string& msg) = 0;
 

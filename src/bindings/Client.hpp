@@ -13,8 +13,7 @@ public:
 
 	void bundle_begin() {}
 	void bundle_end() {}
-	void response_ok(int32_t id) {}
-	void response_error(int32_t id, const std::string& msg) {}
+	void response(int32_t id, Status status) {}
 	void error(const std::string& msg) {}
 	void put(const Raul::URI& path, const Ingen::Resource::Properties& properties) {}
 	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path) {}

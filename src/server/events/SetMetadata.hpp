@@ -86,14 +86,6 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType {
-		NO_ERROR,
-		NOT_FOUND,
-		INTERNAL,
-		BAD_OBJECT_TYPE,
-		BAD_VALUE_TYPE
-	};
-
 	enum SpecialType {
 		NONE,
 		ENABLE,

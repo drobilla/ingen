@@ -65,13 +65,6 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType {
-		NO_ERROR,
-		PORT_NOT_FOUND,
-		NO_SPACE,
-		TYPE_MISMATCH
-	};
-
 	void apply(Context& context);
 
 	bool                 _queued;
@@ -81,8 +74,8 @@ private:
 	ControlBindings::Key _binding;
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_SETPORTVALUE_HPP

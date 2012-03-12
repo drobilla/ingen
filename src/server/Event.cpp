@@ -63,18 +63,10 @@ Event::post_process()
 }
 
 void
-Event::respond_ok()
+Event::respond(Status status)
 {
 	if (_request_client) {
-		_request_client->response_ok(_request_id);
-	}
-}
-
-void
-Event::respond_error(const std::string& msg)
-{
-	if (_request_client) {
-		_request_client->response_error(_request_id, msg);
+		_request_client->response(_request_id, status);
 	}
 }
 

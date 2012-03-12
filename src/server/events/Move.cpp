@@ -58,19 +58,19 @@ Move::pre_process()
 	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
 
 	if (!_old_path.parent().is_parent_of(_new_path)) {
-		_error = PARENT_DIFFERS;
+		_status = PARENT_DIFFERS;
 		Event::pre_process();
 		return;
 	}
 	_store_iterator = _engine.engine_store()->find(_old_path);
 	if (_store_iterator == _engine.engine_store()->end())  {
-		_error = OBJECT_NOT_FOUND;
+		_status = NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
 
 	if (_engine.engine_store()->find_object(_new_path))  {
-		_error = OBJECT_EXISTS;
+		_status = EXISTS;
 		Event::pre_process();
 		return;
 	}
@@ -115,22 +115,9 @@ Move::execute(ProcessContext& context)
 void
 Move::post_process()
 {
-	string msg = "Unable to rename object - ";
-
-	if (_error == NO_ERROR) {
-		respond_ok();
+	respond(_status);
+	if (!_status) {
 		_engine.broadcaster()->move(_old_path, _new_path);
-	} else {
-		if (_error == OBJECT_EXISTS)
-			msg.append("Object already exists at ").append(_new_path.str());
-		else if (_error == OBJECT_NOT_FOUND)
-			msg.append("Could not find object ").append(_old_path.str());
-		else if (_error == OBJECT_NOT_RENAMABLE)
-			msg.append(_old_path.str()).append(" is not renamable");
-		else if (_error == PARENT_DIFFERS)
-			msg.append(_new_path.str()).append(" is a child of a different patch");
-
-		respond_error(msg);
 	}
 }
 

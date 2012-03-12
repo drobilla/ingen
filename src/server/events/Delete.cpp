@@ -173,15 +173,13 @@ Delete::post_process()
 
 	if (!Raul::Path::is_path(_uri)
 	    || _path.is_root() || _path == "path:/control_in" || _path == "path:/control_out") {
-		// XXX: Just ignore?
-		//respond_error(_path.chop_scheme() + " can not be deleted");
+		// XXX: Report error?  Silently ignore?
 	} else if (!_node && !_port) {
-		string msg = string("Could not find object ") + _path.chop_scheme() + " to delete";
-		respond_error(msg);
+		respond(NOT_FOUND);
 	} else if (_patch_node_listnode) {
 		assert(_node);
 		_node->deactivate();
-		respond_ok();
+		respond(SUCCESS);
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
@@ -190,7 +188,7 @@ Delete::post_process()
 		_engine.maid()->push(_patch_node_listnode);
 	} else if (_patch_port_listnode) {
 		assert(_port);
-		respond_ok();
+		respond(SUCCESS);
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event)
 			_disconnect_event->post_process();
@@ -198,7 +196,7 @@ Delete::post_process()
 		_engine.broadcaster()->bundle_end();
 		_engine.maid()->push(_patch_port_listnode);
 	} else {
-		respond_error("Unable to delete object " + _path.chop_scheme());
+		respond(FAILURE);
 	}
 
 	if (_driver_port)

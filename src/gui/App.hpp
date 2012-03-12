@@ -28,6 +28,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Deletable.hpp"
 
+#include "ingen/Status.hpp"
 #include "ingen/shared/World.hpp"
 
 namespace Ingen {
@@ -135,7 +136,7 @@ protected:
 	App(Ingen::Shared::World* world);
 
 	bool animate();
-	void error_response(int32_t id, const std::string& str);
+	void response(int32_t id, Ingen::Status status);
 
 	void property_change(const Raul::URI&  subject,
 	                     const Raul::URI&  key,

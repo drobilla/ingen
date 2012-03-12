@@ -45,7 +45,7 @@ public:
 
 	void set_connected_to(SharedPtr<ServerInterface> engine);
 	void start(App& app, Ingen::Shared::World* world);
-	void on_response(int32_t id) { _attached = true; }
+	void ingen_response(int32_t id, Status status) { _attached = true; }
 
 	bool attached()  const { return _finished_connecting; }
 	bool quit_flag() const { return _quit_flag; }

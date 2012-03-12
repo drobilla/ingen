@@ -55,13 +55,13 @@ void
 CreatePatch::pre_process()
 {
 	if (_path.is_root() || _engine.engine_store()->find_object(_path) != NULL) {
-		_error = OBJECT_EXISTS;
+		_status = EXISTS;
 		Event::pre_process();
 		return;
 	}
 
 	if (_poly < 1) {
-		_error = INVALID_POLY;
+		_status = INVALID_POLY;
 		Event::pre_process();
 		return;
 	}
@@ -70,7 +70,7 @@ CreatePatch::pre_process()
 
 	_parent = _engine.engine_store()->find_patch(path.parent());
 	if (_parent == NULL) {
-		_error = PARENT_NOT_FOUND;
+		_status = PARENT_NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
@@ -126,32 +126,11 @@ CreatePatch::execute(ProcessContext& context)
 void
 CreatePatch::post_process()
 {
-	string msg;
-	switch (_error) {
-	case NO_ERROR:
-		respond_ok();
+	respond(_status);
+	if (!_status) {
 		// Don't send ports/nodes that have been added since prepare()
 		// (otherwise they would be sent twice)
 		_engine.broadcaster()->send_object(_patch, false);
-		break;
-	case OBJECT_EXISTS:
-		respond_ok();
-		/*string msg = "Unable to create patch: ";
-		  msg.append(_path).append(" already exists.");
-		  respond_error(msg);*/
-		break;
-	case PARENT_NOT_FOUND:
-		msg = "Unable to create patch: Parent ";
-		msg.append(Path(_path).parent().str()).append(" not found.");
-		respond_error(msg);
-		break;
-	case INVALID_POLY:
-		msg = "Unable to create patch ";
-		msg.append(_path.str()).append(": ").append("Invalid polyphony requested.");
-		respond_error(msg);
-		break;
-	default:
-		respond_error("Unable to load patch.");
 	}
 }
 

@@ -67,7 +67,7 @@ Connect::pre_process()
 	PortImpl* src_port = _engine.engine_store()->find_port(_src_port_path);
 	PortImpl* dst_port = _engine.engine_store()->find_port(_dst_port_path);
 	if (!src_port || !dst_port) {
-		_error = PORT_NOT_FOUND;
+		_status = PORT_NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
@@ -75,7 +75,7 @@ Connect::pre_process()
 	_dst_input_port  = dynamic_cast<InputPort*>(dst_port);
 	_src_output_port = dynamic_cast<OutputPort*>(src_port);
 	if (!_dst_input_port || !_src_output_port) {
-		_error = DIRECTION_MISMATCH;
+		_status = DIRECTION_MISMATCH;
 		Event::pre_process();
 		return;
 	}
@@ -83,7 +83,7 @@ Connect::pre_process()
 	NodeImpl* const src_node = src_port->parent_node();
 	NodeImpl* const dst_node = dst_port->parent_node();
 	if (!src_node || !dst_node) {
-		_error = PARENTS_NOT_FOUND;
+		_status = PARENT_NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
@@ -91,13 +91,13 @@ Connect::pre_process()
 	if (src_node->parent() != dst_node->parent()
 			&& src_node != dst_node->parent()
 			&& src_node->parent() != dst_node) {
-		_error = PARENT_PATCH_DIFFERENT;
+		_status = PARENT_DIFFERS;
 		Event::pre_process();
 		return;
 	}
 
 	if (!ConnectionImpl::can_connect(_src_output_port, _dst_input_port)) {
-		_error = TYPE_MISMATCH;
+		_status = TYPE_MISMATCH;
 		Event::pre_process();
 		return;
 	}
@@ -120,7 +120,7 @@ Connect::pre_process()
 	}
 
 	if (_patch->has_connection(_src_output_port, _dst_input_port)) {
-		_error = ALREADY_CONNECTED;
+		_status = EXISTS;
 		Event::pre_process();
 		return;
 	}
@@ -161,7 +161,7 @@ Connect::execute(ProcessContext& context)
 {
 	Event::execute(context);
 
-	if (_error == NO_ERROR) {
+	if (_status == SUCCESS) {
 		// This must be inserted here, since they're actually used by the audio thread
 		_dst_input_port->add_connection(_connection.get());
 		assert(_buffers);
@@ -175,34 +175,10 @@ Connect::execute(ProcessContext& context)
 void
 Connect::post_process()
 {
-	std::ostringstream ss;
-	if (_error == NO_ERROR) {
-		respond_ok();
+	respond(_status);
+	if (!_status) {
 		_engine.broadcaster()->connect(_src_port_path, _dst_port_path);
-		return;
 	}
-
-	ss << boost::format("Unable to make connection %1% -> %2% (")
-		% _src_port_path.chop_scheme() % _dst_port_path.chop_scheme();
-
-	switch (_error) {
-	case PARENT_PATCH_DIFFERENT:
-		ss << "Ports have mismatched parents"; break;
-	case PORT_NOT_FOUND:
-		ss << "Port not found"; break;
-	case TYPE_MISMATCH:
-		ss << "Type mismatch"; break;
-	case DIRECTION_MISMATCH:
-		ss << "Direction mismatch"; break;
-	case ALREADY_CONNECTED:
-		ss << "Already connected"; break;
-	case PARENTS_NOT_FOUND:
-		ss << "Parents not found"; break;
-	default:
-		ss << "Unknown error";
-	}
-	ss << ")";
-	respond_error(ss.str());
 }
 
 } // namespace Events

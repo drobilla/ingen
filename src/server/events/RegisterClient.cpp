@@ -48,7 +48,7 @@ RegisterClient::pre_process()
 void
 RegisterClient::post_process()
 {
-	respond_ok();
+	respond(SUCCESS);
 
 	/* Tell the client the engine's sample rate (which it needs to know to
 	   interpret control bounds for lv2:sampleRate ports).  This is a bit of a

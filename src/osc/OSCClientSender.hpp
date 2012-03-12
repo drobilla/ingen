@@ -66,8 +66,7 @@ public:
 
 	/* *** ClientInterface Implementation Below *** */
 
-	void response_ok(int32_t id);
-	void response_error(int32_t id, const std::string& msg);
+	void response(int32_t id, Status status);
 
 	void error(const std::string& msg);
 

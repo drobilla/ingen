@@ -84,7 +84,7 @@ SetPortValue::pre_process()
 		if (_port == NULL)
 			_port = _engine.engine_store()->find_port(_port_path);
 		if (_port == NULL)
-			_error = PORT_NOT_FOUND;
+			_status = PORT_NOT_FOUND;
 	}
 
 	// Port is a message context port, set its value and
@@ -123,20 +123,20 @@ void
 SetPortValue::apply(Context& context)
 {
 	uint32_t start = context.start();
-	if (_error == NO_ERROR && !_port)
+	if (_status == SUCCESS && !_port)
 		_port = _engine.engine_store()->find_port(_port_path);
 
 	if (!_port) {
-		if (_error == NO_ERROR)
-			_error = PORT_NOT_FOUND;
+		if (_status == SUCCESS)
+			_status = PORT_NOT_FOUND;
 	/*} else if (_port->buffer(0)->capacity() < _data_size) {
-		_error = NO_SPACE;*/
+		_status = NO_SPACE;*/
 	} else {
 		Buffer* const      buf  = _port->buffer(0).get();
 		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 		if (abuf) {
 			if (_value.type() != Atom::FLOAT) {
-				_error = TYPE_MISMATCH;
+				_status = TYPE_MISMATCH;
 				return;
 			}
 
@@ -192,31 +192,12 @@ SetPortValue::apply(Context& context)
 void
 SetPortValue::post_process()
 {
-	string msg;
-	std::ostringstream ss;
-	switch (_error) {
-	case NO_ERROR:
-		assert(_port != NULL);
-		respond_ok();
-		_engine.broadcaster()->set_property(_port_path,
-				_engine.world()->uris()->ingen_value, _value);
-		break;
-	case TYPE_MISMATCH:
-		ss << "Illegal value type " << _value.type()
-			<< " for port " << _port_path << endl;
-		respond_error(ss.str());
-		break;
-	case PORT_NOT_FOUND:
-		msg = "Unable to find port ";
-		msg.append(_port_path.str()).append(" to set value");
-		respond_error(msg);
-		break;
-	case NO_SPACE:
-		ss << "Attempt to write " << _value.data_size() << " bytes to "
-			<< _port_path.str() << ", with capacity "
-			<< _port->buffer_size() << endl;
-		respond_error(ss.str());
-		break;
+	respond(_status);
+	if (!_status) {
+		_engine.broadcaster()->set_property(
+			_port_path,
+			_engine.world()->uris()->ingen_value,
+			_value);
 	}
 }
 

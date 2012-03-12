@@ -39,10 +39,11 @@ UnregisterClient::UnregisterClient(Engine&          engine,
 void
 UnregisterClient::post_process()
 {
-	if (_engine.broadcaster()->unregister_client(_uri))
-		respond_ok();
-	else
-		respond_error("Unable to unregister client");
+	if (_engine.broadcaster()->unregister_client(_uri)) {
+		respond(SUCCESS);
+	} else {
+		respond(FAILURE);
+	}
 }
 
 } // namespace Server

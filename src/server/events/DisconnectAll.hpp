@@ -62,13 +62,6 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType {
-		NO_ERROR,
-		INVALID_PARENT_PATH,
-		PARENT_NOT_FOUND,
-		OBJECT_NOT_FOUND,
-	};
-
 	Raul::Path _parent_path;
 	Raul::Path _path;
 	PatchImpl* _parent;

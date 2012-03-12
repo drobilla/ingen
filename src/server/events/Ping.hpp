@@ -43,7 +43,7 @@ public:
 		: Event(engine, client, id, timestamp)
 	{}
 
-	void post_process() { respond_ok(); }
+	void post_process() { respond(SUCCESS); }
 };
 
 } // namespace Server

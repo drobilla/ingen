@@ -63,14 +63,14 @@ void
 Get::post_process()
 {
 	if (_uri == "ingen:plugins") {
-		respond_ok();
+		respond(SUCCESS);
 		if (_request_client) {
 			_engine.broadcaster()->send_plugins_to(_request_client, _plugins);
 		}
 	} else if (!_object && !_plugin) {
-		respond_error("Unable to find object requested.");
+		respond(NOT_FOUND);
 	} else if (_request_client) {
-		respond_ok();
+		respond(SUCCESS);
 		if (_request_client) {
 			if (_object) {
 				ObjectSender::send_object(_request_client, _object, true);
@@ -79,7 +79,7 @@ Get::post_process()
 			}
 		}
 	} else {
-		respond_error("Unable to find client to send object.");
+		respond(CLIENT_NOT_FOUND);
 	}
 
 	_lock.release();

@@ -39,41 +39,22 @@ namespace Server {
  */
 
 /** @page client_osc_namespace
- * <h2>/ok</h2>
+ * <h2>/response</h2>
  * @arg @p response-id :: Integer
+ * @arg @p status      :: Integer
  *
  * @par
- * Successful response to some command.
+ * Response to some command.
  */
 void
-OSCClientSender::response_ok(int32_t id)
-{
-	if (!_enabled)
-		return;
-	
-	if (lo_send(_address, "/ok", "i", id, LO_ARGS_END) < 0) {
-		Raul::error << "Unable to send OK " << id << "! ("
-			<< lo_address_errstr(_address) << ")" << endl;
-	}
-}
-
-/** @page client_osc_namespace
- * <h2>/error</h2>
- * @arg @p response-id :: Integer
- * @arg @p message :: String
- *
- * @par
- * Unsuccessful response to some command.
- */
-void
-OSCClientSender::response_error(int32_t id, const std::string& msg)
+OSCClientSender::response(int32_t id, Status status)
 {
 	if (!_enabled)
 		return;
 
-	if (lo_send(_address, "/error", "is", id, msg.c_str(), LO_ARGS_END) < 0) {
-		Raul::error << "Unable to send error " << id << "! ("
-			<< lo_address_errstr(_address) << ")" << endl;
+	if (lo_send(_address, "/response", "ii", id, status, LO_ARGS_END) < 0) {
+		Raul::error << "Unable to send response " << id << "! ("
+		            << lo_address_errstr(_address) << ")" << endl;
 	}
 }
 

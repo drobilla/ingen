@@ -40,7 +40,7 @@ public:
 	{}
 
 	void post_process() {
-		respond_ok();
+		respond(SUCCESS);
 		_engine.deactivate();
 	}
 };

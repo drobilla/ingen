@@ -137,8 +137,7 @@ OSCClientReceiver::setup_callbacks()
 	if (!_target)
 		return;
 
-	lo_server_thread_add_method(_st, "/ok", "i", response_ok_cb, this);
-	lo_server_thread_add_method(_st, "/error", "is", response_error_cb, this);
+	lo_server_thread_add_method(_st, "/response", "ii", response_cb, this);
 	lo_server_thread_add_method(_st, "/plugin", "sss", plugin_cb, this);
 	lo_server_thread_add_method(_st, "/put", NULL, put_cb, this);
 	lo_server_thread_add_method(_st, "/delta_begin", NULL, delta_begin_cb, this);
@@ -282,20 +281,10 @@ OSCClientReceiver::_activity_cb(const char* path, const char* types, lo_arg** ar
 }
 
 int
-OSCClientReceiver::_response_ok_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
+OSCClientReceiver::_response_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
 {
-	assert(!strcmp(types, "i"));
-	_target->response_ok(argv[0]->i);
-
-	return 0;
-}
-
-int
-OSCClientReceiver::_response_error_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	assert(!strcmp(types, "is"));
-	_target->response_error(argv[0]->i, &argv[1]->s);
-
+	assert(!strcmp(types, "ii"));
+	_target->response(argv[0]->i, (Status)argv[1]->i);
 	return 0;
 }
 

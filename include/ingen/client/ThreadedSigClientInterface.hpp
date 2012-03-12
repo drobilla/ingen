@@ -53,8 +53,7 @@ class ThreadedSigClientInterface : public SigClientInterface
 public:
 	ThreadedSigClientInterface(uint32_t queue_size)
 		: _sigs(queue_size)
-		, response_ok_slot(_signal_response_ok.make_slot())
-		, response_error_slot(_signal_response_error.make_slot())
+		, response_slot(_signal_response.make_slot())
 		, error_slot(_signal_error.make_slot())
 		, new_port_slot(_signal_new_port.make_slot())
 		, put_slot(_signal_put.make_slot())
@@ -77,11 +76,8 @@ public:
 	void bundle_end()
 		{ push_sig(bundle_end_slot); }
 
-	void response_ok(int32_t id)
-		{ push_sig(sigc::bind(response_ok_slot, id)); }
-
-	void response_error(int32_t id, const std::string& msg)
-		{ push_sig(sigc::bind(response_error_slot, id, msg)); }
+	void response(int32_t id, Status status)
+		{ push_sig(sigc::bind(response_slot, id, status)); }
 
 	void error(const std::string& msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
@@ -130,8 +126,7 @@ private:
 
 	sigc::slot<void>                                              bundle_begin_slot;
 	sigc::slot<void>                                              bundle_end_slot;
-	sigc::slot<void, int32_t>                                     response_ok_slot;
-	sigc::slot<void, int32_t, std::string>                        response_error_slot;
+	sigc::slot<void, int32_t, Status>                             response_slot;
 	sigc::slot<void, std::string>                                 error_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>          new_plugin_slot;
 	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool>       new_port_slot;

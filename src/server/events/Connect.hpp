@@ -61,16 +61,6 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType {
-		NO_ERROR,
-		PARENT_PATCH_DIFFERENT,
-		PORT_NOT_FOUND,
-		TYPE_MISMATCH,
-		DIRECTION_MISMATCH,
-		ALREADY_CONNECTED,
-		PARENTS_NOT_FOUND
-	};
-
 	Raul::Path _src_port_path;
 	Raul::Path _dst_port_path;
 

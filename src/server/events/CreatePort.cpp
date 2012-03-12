@@ -84,14 +84,14 @@ CreatePort::CreatePort(Engine&                     engine,
 	}
 
 	if (_data_type == PortType::UNKNOWN) {
-		_error = UNKNOWN_TYPE;
+		_status = UNKNOWN_TYPE;
 	}
 }
 
 void
 CreatePort::pre_process()
 {
-	if (_error == UNKNOWN_TYPE || _engine.engine_store()->find_object(_path)) {
+	if (_status == UNKNOWN_TYPE || _engine.engine_store()->find_object(_path)) {
 		Event::pre_process();
 		return;
 	}
@@ -115,7 +115,7 @@ CreatePort::pre_process()
 		} else if (index_i->second.type() != Atom::INT
 				|| index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
 			Event::pre_process();
-			_error = BAD_INDEX;
+			_status = BAD_INDEX;
 			return;
 		}
 
@@ -151,7 +151,7 @@ CreatePort::pre_process()
 			assert(_ports_array->size() == _patch->num_ports());
 
 		} else {
-			_error = CREATION_FAILED;
+			_status = CREATION_FAILED;
 		}
 	}
 	Event::pre_process();
@@ -175,24 +175,9 @@ CreatePort::execute(ProcessContext& context)
 void
 CreatePort::post_process()
 {
-	string msg;
-	switch (_error) {
-	case NO_ERROR:
-		respond_ok();
+	respond(_status);
+	if (!_status) {
 		_engine.broadcaster()->send_object(_patch_port, true);
-		break;
-	case BAD_INDEX:
-		msg = string("Could not create port ") + _path.str() + " (Illegal index given)";
-		respond_error(msg);
-		break;
-	case UNKNOWN_TYPE:
-		msg = string("Could not create port ") + _path.str() + " (Unknown type)";
-		respond_error(msg);
-		break;
-	case CREATION_FAILED:
-		msg = string("Could not create port ") + _path.str() + " (Creation failed)";
-		respond_error(msg);
-		break;
 	}
 }
 

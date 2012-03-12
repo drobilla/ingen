@@ -166,14 +166,14 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 	}
 
 	if (path == "/") {
-		me->_target->response_ok(0);
+		me->_target->response(0, SUCCESS);
 
 	} else if (path == "/plugins") {
 		if (msg->response_body->data == NULL) {
 			LOG(error) << "Empty response" << endl;
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
-			me->_target->response_ok(0);
+			me->_target->response(0, SUCCESS);
 			me->_world->parser()->parse_string(me->_world, me->_target.get(),
 					Glib::ustring(msg->response_body->data), me->_url);
 		}
@@ -183,7 +183,7 @@ HTTPClientReceiver::message_callback(SoupSession* session, SoupMessage* msg, voi
 			LOG(error) << "Empty response" << endl;
 		} else {
 			Glib::Mutex::Lock lock(me->_mutex);
-			me->_target->response_ok(0);
+			me->_target->response(0, SUCCESS);
 			me->_world->parser()->parse_string(
 				me->_world,
 				me->_target.get(),

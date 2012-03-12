@@ -369,8 +369,8 @@ ConnectWindow::gtk_callback()
 
 	if (_connect_stage == 0) {
 		_attached = false;
-		_app->client()->signal_response_ok().connect(
-				sigc::mem_fun(this, &ConnectWindow::on_response));
+		_app->client()->signal_response().connect(
+				sigc::mem_fun(this, &ConnectWindow::ingen_response));
 
 		_ping_id = abs(rand()) / 2 * 2; // avoid -1
 		_app->engine()->respond_to(_app->client().get(), _ping_id);

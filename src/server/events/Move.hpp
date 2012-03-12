@@ -59,14 +59,6 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType {
-		NO_ERROR,
-		OBJECT_NOT_FOUND,
-		OBJECT_EXISTS,
-		OBJECT_NOT_RENAMABLE,
-		PARENT_DIFFERS
-	};
-
 	Raul::Path            _old_path;
 	Raul::Path            _new_path;
 	PatchImpl*            _parent_patch;

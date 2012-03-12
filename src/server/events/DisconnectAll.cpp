@@ -94,22 +94,21 @@ DisconnectAll::pre_process()
 		_parent = _engine.engine_store()->find_patch(_parent_path);
 
 		if (_parent == NULL) {
-			_error = PARENT_NOT_FOUND;
+			_status = PARENT_NOT_FOUND;
 			Event::pre_process();
 			return;
 		}
 
 		GraphObjectImpl* object = _engine.engine_store()->find_object(_path);
-
-		if (object == NULL) {
-			_error = OBJECT_NOT_FOUND;
+		if (!object) {
+			_status = NOT_FOUND;
 			Event::pre_process();
 			return;
 		}
 
 		if (object->parent_patch() != _parent
 		    && object->parent()->parent_patch() != _parent) {
-			_error = INVALID_PARENT_PATH;
+			_status = INVALID_PARENT_PATH;
 			Event::pre_process();
 			return;
 		}
@@ -159,7 +158,7 @@ DisconnectAll::execute(ProcessContext& context)
 {
 	Event::execute(context);
 
-	if (_error == NO_ERROR) {
+	if (_status == SUCCESS) {
 		for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i) {
 			(*i)->execute(context,
 			              !_deleting || ((*i)->dst_port()->parent_node() != _node));
@@ -173,25 +172,9 @@ DisconnectAll::execute(ProcessContext& context)
 void
 DisconnectAll::post_process()
 {
-	if (_error == NO_ERROR) {
-		respond_ok();
+	respond(_status);
+	if (!_status) {
 		_engine.broadcaster()->disconnect_all(_parent_path, _path);
-	} else {
-		boost::format fmt("Unable to disconnect %1% (%2%)");
-		fmt % _path;
-		switch (_error) {
-		case INVALID_PARENT_PATH:
-			fmt % string("Invalid parent path: ").append(_parent_path.str());
-			break;
-		case PARENT_NOT_FOUND:
-			fmt % string("Unable to find parent: ").append(_parent_path.str());
-			break;
-		case OBJECT_NOT_FOUND:
-			fmt % string("Unable to find object");
-		default:
-			break;
-		}
-		respond_error(fmt.str());
 	}
 }
 

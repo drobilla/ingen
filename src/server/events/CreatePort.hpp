@@ -55,13 +55,6 @@ public:
 	void post_process();
 
 private:
-	enum ErrorType {
-		NO_ERROR,
-		UNKNOWN_TYPE,
-		BAD_INDEX,
-		CREATION_FAILED
-	};
-
 	Raul::Path              _path;
 	Raul::URI               _type;
 	PortType                _data_type;

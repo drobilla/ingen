@@ -36,14 +36,12 @@ namespace Ingen {
 namespace Server {
 
 void
-HTTPClientSender::response_ok(int32_t id)
+HTTPClientSender::response(int32_t id, Status status)
 {
-}
-
-void
-HTTPClientSender::response_error(int32_t id, const std::string& msg)
-{
-	warn << "HTTP Error " << id << " (" << msg << ")" << endl;
+	if (status) {
+		warn << "HTTP Error " << id
+		     << " (" << ingen_status_string(status) << ")" << endl;
+	}
 }
 
 void

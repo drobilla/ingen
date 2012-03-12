@@ -96,8 +96,9 @@ CreateNode::pre_process()
 		}
 	}
 
-	if (!_node)
-		_error = 1;
+	if (!_node) {
+		_status = FAILURE;
+	}
 
 	Event::pre_process();
 }
@@ -116,22 +117,16 @@ CreateNode::execute(ProcessContext& context)
 void
 CreateNode::post_process()
 {
-	string msg;
 	if (_node_already_exists) {
-		msg = string("Could not create node - ").append(_path.str());// + " already exists.";
-		respond_error(msg);
-	} else if (_patch == NULL) {
-		msg = "Could not find patch '" + _path.parent().str() +"' to add node.";
-		respond_error(msg);
-	} else if (_plugin == NULL) {
-		msg = "Unable to load node ";
-		msg += _path.str() + " (you're missing the plugin " + _plugin_uri.str() + ")";
-		respond_error(msg);
-	} else if (_node == NULL) {
-		msg = "Failed to instantiate plugin " + _plugin_uri.str();
-		respond_error(msg);
+		respond(EXISTS);
+	} else if (!_patch) {
+		respond(PARENT_NOT_FOUND);
+	} else if (!_plugin) {
+		respond(PLUGIN_NOT_FOUND);
+	} else if (!_node) {
+		respond(FAILURE);
 	} else {
-		respond_ok();
+		respond(SUCCESS);
 		_engine.broadcaster()->send_object(_node, true); // yes, send ports
 	}
 }

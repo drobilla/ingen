@@ -167,8 +167,8 @@ App::attach(SharedPtr<SigClientInterface> client)
 
 	_patch_tree_window->init(*this, *_store);
 
-	_client->signal_response_error().connect(
-		sigc::mem_fun(this, &App::error_response));
+	_client->signal_response().connect(
+		sigc::mem_fun(this, &App::response));
 	_client->signal_error().connect(
 		sigc::mem_fun(this, &App::error_message));
 	_client->signal_property_change().connect(
@@ -199,9 +199,11 @@ App::serialiser()
 }
 
 void
-App::error_response(int32_t id, const string& str)
+App::response(int32_t id, Status status)
 {
-	error_message(str);
+	if (status) {
+		error_message(ingen_status_string(status));
+	}
 }
 
 void
