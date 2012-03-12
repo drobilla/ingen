@@ -57,7 +57,6 @@ public:
 	bool show_menu(GdkEventButton* ev);
 	void update_metadata();
 
-	virtual void set_control(float value, bool signal);
 	void value_changed(const Raul::Atom& value);
 	void activity(const Raul::Atom& value);
 
@@ -75,10 +74,10 @@ private:
 	PatchWindow* get_patch_window() const;
 
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
-
-	bool on_event(GdkEvent* ev);
-	bool on_click(GdkEventButton* ev);
 	void moved();
+
+	void on_value_changed(const Glib::VariantBase& value);
+	bool on_event(GdkEvent* ev);
 
 	//static ArtVpathDash* _dash;
 

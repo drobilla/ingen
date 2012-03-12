@@ -82,8 +82,6 @@ Port::Port(App&                       app,
 	//_rect.property_dash() = dash;
 	set_border_width(1.0);
 
-	pm->signal_moved().connect(sigc::mem_fun(this, &Port::moved));
-
 	if (app.can_control(pm.get())) {
 		set_control_is_toggle(pm->is_toggle());
 		show_control();
@@ -94,9 +92,11 @@ Port::Port(App&                       app,
 	}
 
 	pm->signal_activity().connect(sigc::mem_fun(this, &Port::activity));
+	pm->signal_moved().connect(sigc::mem_fun(this, &Port::moved));
+
+	signal_value_changed.connect(sigc::mem_fun(this, &Port::on_value_changed));
 
 	update_metadata();
-
 	value_changed(pm->value());
 }
 
@@ -139,12 +139,33 @@ Port::moved()
 }
 
 void
+Port::on_value_changed(const Glib::VariantBase& value)
+{
+	if (!value.is_of_type(Glib::VARIANT_TYPE_DOUBLE)) {
+		Raul::warn << "TODO: Non-float port value changed." << std::endl;
+		return;
+	}
+
+	const Glib::Variant<double>& fvalue = Glib::VariantBase::cast_dynamic
+		< Glib::Variant<double> >(value);
+	const float fval = fvalue.get();
+	Ingen::Shared::World* const world = _app.world();
+	_app.engine()->set_property(model()->path(),
+	                            world->uris()->ingen_value,
+	                            Atom(fval));
+
+	PatchWindow* pw = get_patch_window();
+	if (pw) {
+		pw->show_port_status(model().get(), fval);
+	}
+}
+
+void
 Port::value_changed(const Atom& value)
 {
-	if (_pressed)
-		return;
-	else if (value.type() == Atom::FLOAT)
+	if (!_pressed && value.type() == Atom::FLOAT) {
 		Ganv::Port::set_control_value(value.get_float());
+	}
 }
 
 bool
@@ -165,12 +186,16 @@ Port::on_event(GdkEvent* ev)
 		}
 		break;
 	case GDK_BUTTON_PRESS:
-		if (ev->button.button == 1)
+		if (ev->button.button == 1) {
 			_pressed = true;
+		} else if (ev->button.button == 3) {
+			return show_menu(&ev->button);
+		}
 		break;
 	case GDK_BUTTON_RELEASE:
-		if (ev->button.button == 1)
+		if (ev->button.button == 1) {
 			_pressed = false;
+		}
 	default:
 		break;
 	}
@@ -178,14 +203,6 @@ Port::on_event(GdkEvent* ev)
 	return Ganv::Port::on_event(ev);
 }
 
-bool
-Port::on_click(GdkEventButton* ev)
-{
-	if (ev->button == 3) {
-		return show_menu(ev);
-	}
-	return false;
-}
 
 /* Peak colour stuff */
 
@@ -258,30 +275,13 @@ Port::get_patch_window() const
 }
 
 void
-Port::set_control(float value, bool signal)
-{
-	if (signal) {
-		Ingen::Shared::World* const world = _app.world();
-		_app.engine()->set_property(model()->path(),
-				world->uris()->ingen_value, Atom(value));
-	}
-
-	PatchWindow* pw = get_patch_window();
-	if (pw) {
-		pw->show_port_status(model().get(), value);
-	}
-
-	Ganv::Port::set_control_value(value);
-}
-
-void
 Port::property_changed(const URI& key, const Atom& value)
 {
 	const URIs& uris = _app.uris();
 	if (value.type() == Atom::FLOAT) {
 		float val = value.get_float();
 		if (key == uris.ingen_value && !_pressed) {
-			set_control(val, false);
+			Ganv::Port::set_control_value(val);
 		} else if (key == uris.lv2_minimum) {
 			if (model()->port_property(uris.lv2_sampleRate)) {
 				val *= _app.sample_rate();
