@@ -20,6 +20,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreatePort.hpp"

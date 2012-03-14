@@ -17,16 +17,15 @@
 
 #include "raul/log.hpp"
 
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "lv2/lv2plug.in/ns/ext/event/event.h"
-#include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
-
-#include "ingen/shared/LV2Atom.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
-
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 #include "ingen/client/PortModel.hpp"
+#include "ingen/shared/LV2Atom.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
+#include "lv2/lv2plug.in/ns/ext/event/event.h"
 
 using namespace std;
 using namespace Raul;

@@ -114,7 +114,7 @@ main(int argc, char** argv)
 	g_type_init();
 #endif
 
-	world = new Ingen::Shared::World(&conf, argc, argv);
+	world = new Ingen::Shared::World(&conf, argc, argv, NULL, NULL);
 
 	if (conf.option("uuid").get_string()) {
 		world->set_jack_uuid(conf.option("uuid").get_string());

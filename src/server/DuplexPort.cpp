@@ -20,6 +20,7 @@
 #include <string>
 
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 
 #include "ConnectionImpl.hpp"
 #include "DuplexPort.hpp"

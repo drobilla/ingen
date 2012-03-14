@@ -33,9 +33,6 @@ class URIs : public boost::noncopyable {
 public:
 	URIs(Raul::Forge& forge);
 
-	uint32_t    map_uri(const char* uri);
-	const char* unmap_uri(uint32_t urid);
-
 	struct Quark : public Raul::URI {
 		Quark(const char* str);
 		const char* c_str() const;

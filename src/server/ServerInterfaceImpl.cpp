@@ -19,6 +19,8 @@
 
 #include "raul/log.hpp"
 
+#include "ingen/shared/URIs.hpp"
+
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EventSource.hpp"

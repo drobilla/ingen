@@ -16,18 +16,21 @@
  */
 
 #include <cmath>
+
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
-#include "ingen/shared/LV2URIMap.hpp"
-#include "internals/Trigger.hpp"
+
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
-#include "util.hpp"
 #include "ingen_config.h"
+#include "internals/Trigger.hpp"
+#include "util.hpp"
 
 #define LOG(s) s << "[TriggerNode] "
 

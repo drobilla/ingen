@@ -35,20 +35,45 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-LV2URIMap::LV2URIMap(URIs& uris)
-	: _uris(uris)
+LV2URIMap::LV2URIMap(LV2_URID_Map* map, LV2_URID_Unmap* unmap)
+	: _uri_map_feature(new URIMapFeature(this))
+	, _urid_map_feature(new URIDMapFeature(this, map))
+	, _urid_unmap_feature(new URIDUnmapFeature(this, unmap))
 {
-	uri_map_feature_data.uri_to_id = &LV2URIMap::uri_map_uri_to_id;
-	uri_map_feature_data.callback_data = this;
-	uri_map_feature.URI = LV2_URI_MAP_URI;
-	uri_map_feature.data = &uri_map_feature_data;
+}
+
+LV2URIMap::URIMapFeature::URIMapFeature(LV2URIMap* map)
+	: Feature(LV2_URI_MAP_URI, &_feature_data)
+{
+	_feature_data.uri_to_id     = &LV2URIMap::uri_map_uri_to_id;
+	_feature_data.callback_data = map;
+}
+
+LV2URIMap::URIDMapFeature::URIDMapFeature(LV2URIMap*    map,
+                                          LV2_URID_Map* urid_map)
+	: Feature(LV2_URID__map, urid_map ? urid_map : &_feature_data)
+{
+	if (!urid_map) {
+		_feature_data.map    = &LV2URIMap::urid_map;
+		_feature_data.handle = map;
+	}
+}
+
+LV2URIMap::URIDUnmapFeature::URIDUnmapFeature(LV2URIMap*      map,
+                                              LV2_URID_Unmap* urid_unmap)
+	: Feature(LV2_URID__unmap, urid_unmap ? urid_unmap : &_feature_data)
+{
+	if (!urid_unmap) {
+		_feature_data.unmap  = &LV2URIMap::urid_unmap;
+		_feature_data.handle = map;
+	}
 }
 
 uint32_t
 LV2URIMap::uri_to_id(const char* map,
                      const char* uri)
 {
-	const uint32_t id = _uris.map_uri(uri);
+	const uint32_t id = map_uri(uri);
 	if (map && !strcmp(map, LV2_EVENT_URI)) {
 		GlobalToEvent::iterator i = _global_to_event.find(id);
 		if (i != _global_to_event.end()) {
@@ -79,9 +104,9 @@ LV2URIMap::id_to_uri(const char*    map,
 			error << "Failed to unmap event URI " << id << endl;
 			return NULL;
 		}
-		return _uris.unmap_uri(i->second);
+		return unmap_uri(i->second);
 	} else {
-		return _uris.unmap_uri(id);
+		return unmap_uri(id);
 	}
 }
 
@@ -112,6 +137,32 @@ LV2URIMap::uri_map_uri_to_id(LV2_URI_Map_Callback_Data callback_data,
 {
 	LV2URIMap* me = (LV2URIMap*)callback_data;
 	return me->uri_to_id(map, uri);
+}
+
+LV2_URID
+LV2URIMap::urid_map(LV2_URID_Map_Handle handle, const char* uri)
+{
+	LV2URIMap* me = (LV2URIMap*)handle;
+	return me->uri_to_id(NULL, uri);
+}
+
+const char*
+LV2URIMap::urid_unmap(LV2_URID_Map_Handle handle, LV2_URID urid)
+{
+	LV2URIMap* me = (LV2URIMap*)handle;
+	return me->id_to_uri(NULL, urid);
+}
+
+uint32_t
+LV2URIMap::map_uri(const char* uri)
+{
+	return static_cast<uint32_t>(g_quark_from_string(uri));
+}
+
+const char*
+LV2URIMap::unmap_uri(uint32_t urid)
+{
+	return g_quark_to_string(urid);
 }
 
 } // namespace Shared

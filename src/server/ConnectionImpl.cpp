@@ -20,6 +20,7 @@
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"

@@ -15,11 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
+
 #include "ClientBroadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "events/RegisterClient.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 
 using namespace Raul;
 

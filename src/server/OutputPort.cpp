@@ -22,6 +22,7 @@
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 
 using namespace std;
 

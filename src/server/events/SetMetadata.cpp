@@ -22,6 +22,9 @@
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
 
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
+
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreateNode.hpp"
@@ -37,7 +40,6 @@
 #include "PortType.hpp"
 #include "SetMetadata.hpp"
 #include "SetPortValue.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 
 #define LOG(s) s << "[SetMetadata] "
 

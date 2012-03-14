@@ -18,6 +18,7 @@
 #include <algorithm>
 #include "raul/log.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"
 #include "ObjectBuffer.hpp"

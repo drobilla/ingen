@@ -16,11 +16,14 @@
  */
 
 #include <cmath>
-#include "raul/log.hpp"
+
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
+#include "raul/log.hpp"
 #include "raul/midi_events.h"
-#include "ingen/shared/LV2URIMap.hpp"
+
 #include "internals/Note.hpp"
 #include "AudioBuffer.hpp"
 #include "Driver.hpp"

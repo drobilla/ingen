@@ -32,6 +32,7 @@
 #include "ThreadManager.hpp"
 #include "mix.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "util.hpp"
 
 using namespace std;

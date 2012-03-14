@@ -36,6 +36,8 @@ namespace Raul { class Atom; }
 
 namespace Ingen {
 
+namespace Shared { class URIs; }
+
 class GraphObject;
 
 namespace Client {

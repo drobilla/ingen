@@ -15,10 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "raul/TableImpl.hpp"
 #include "ingen/GraphObject.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/client/ObjectModel.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
+#include "raul/TableImpl.hpp"
 
 using namespace std;
 using namespace Raul;

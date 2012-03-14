@@ -44,14 +44,15 @@
 #include "sord/sordmm.hpp"
 
 #include "ingen/Connection.hpp"
-#include "ingen/ServerInterface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
+#include "ingen/ServerInterface.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/ResourceImpl.hpp"
 #include "ingen/shared/Store.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 
 #include "ingen/serialisation/Serialiser.hpp"

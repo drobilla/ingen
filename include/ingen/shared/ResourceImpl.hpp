@@ -18,10 +18,10 @@
 #ifndef INGEN_SHARED_RESOURCEIMPL_HPP
 #define INGEN_SHARED_RESOURCEIMPL_HPP
 
-#include "raul/URI.hpp"
-#include "raul/SharedPtr.hpp"
-
 #include "ingen/Resource.hpp"
+#include "ingen/shared/URIs.hpp"
+#include "raul/SharedPtr.hpp"
+#include "raul/URI.hpp"
 
 namespace Ingen {
 namespace Shared {

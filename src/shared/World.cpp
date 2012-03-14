@@ -32,6 +32,7 @@
 #include "ingen/shared/runtime_paths.hpp"
 #include "ingen/shared/LV2Features.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 
 #define LOG(s) s << "[Module] "
 
@@ -98,19 +99,25 @@ ingen_load_module(const string& name)
 
 class World::Pimpl {
 public:
-	Pimpl(Raul::Configuration* conf, int& a_argc, char**& a_argv)
+	Pimpl(Raul::Configuration* conf,
+	      int&                 a_argc,
+	      char**&              a_argv,
+	      LV2_URID_Map*        map,
+	      LV2_URID_Unmap*      unmap)
 		: argc(a_argc)
 		, argv(a_argv)
 		, conf(conf)
 		, lv2_features(NULL)
 		, forge(new Raul::Forge())
 		, rdf_world(new Sord::World())
+		, lv2_uri_map(new Ingen::Shared::LV2URIMap(map, unmap))
 		, uris(new Shared::URIs(*forge))
-		, lv2_uri_map(new Ingen::Shared::LV2URIMap(*uris.get()))
 		, lilv_world(lilv_world_new())
 	{
 		lv2_features = new Ingen::Shared::LV2Features();
-		lv2_features->add_feature(lv2_uri_map);
+		lv2_features->add_feature(lv2_uri_map->uri_map_feature());
+		lv2_features->add_feature(lv2_uri_map->urid_map_feature());
+		lv2_features->add_feature(lv2_uri_map->urid_unmap_feature());
 		lilv_world_load_all(lilv_world);
 
 		// Set up RDF namespaces
@@ -167,8 +174,8 @@ public:
 	LV2Features*                         lv2_features;
 	Raul::Forge*                         forge;
 	Sord::World*                         rdf_world;
-	SharedPtr<URIs>                      uris;
 	SharedPtr<LV2URIMap>                 lv2_uri_map;
+	SharedPtr<URIs>                      uris;
 	SharedPtr<ServerInterface>           engine;
 	SharedPtr<EngineBase>                local_engine;
 	SharedPtr<Serialisation::Serialiser> serialiser;
@@ -178,8 +185,12 @@ public:
 	std::string                          jack_uuid;
 };
 
-World::World(Raul::Configuration* conf, int& argc, char**& argv)
-	: _impl(new Pimpl(conf, argc, argv))
+World::World(Raul::Configuration* conf,
+             int&                 argc,
+             char**&              argv,
+             LV2_URID_Map*        map,
+             LV2_URID_Unmap*      unmap)
+	: _impl(new Pimpl(conf, argc, argv, map, unmap))
 {
 }
 

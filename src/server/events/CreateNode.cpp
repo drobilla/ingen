@@ -15,11 +15,13 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "raul/log.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
+#include "raul/log.hpp"
 #include "sord/sordmm.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
+
 #include "CreateNode.hpp"
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"

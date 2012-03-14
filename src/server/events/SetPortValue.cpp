@@ -16,12 +16,15 @@
  */
 
 #include <sstream>
-#include "raul/log.hpp"
-#include "lv2/lv2plug.in/ns/ext/event/event.h"
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/shared/LV2Features.hpp"
+
 #include "ingen/shared/LV2Atom.hpp"
+#include "ingen/shared/LV2Features.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
+#include "lv2/lv2plug.in/ns/ext/event/event.h"
+#include "raul/log.hpp"
+
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"

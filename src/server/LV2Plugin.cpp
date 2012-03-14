@@ -19,11 +19,11 @@
 #include <string>
 #include <glibmm.h>
 
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "raul/log.hpp"
-
 #include "sord/sordmm.hpp"
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "LV2Node.hpp"

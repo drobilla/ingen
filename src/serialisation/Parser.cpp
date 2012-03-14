@@ -36,6 +36,7 @@
 #include "ingen/ServerInterface.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 
 #include "ingen/serialisation/Parser.hpp"
 

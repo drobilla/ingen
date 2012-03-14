@@ -19,6 +19,9 @@
 #include <cmath>
 #include <string>
 
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
+#include "ingen/shared/World.hpp"
 #include "raul/log.hpp"
 
 #include "ConnectionImpl.hpp"
@@ -31,8 +34,6 @@
 #include "PortImpl.hpp"
 #include "ProcessSlave.hpp"
 #include "ThreadManager.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/shared/World.hpp"
 
 using namespace std;
 using namespace Raul;

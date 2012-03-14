@@ -23,6 +23,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+
 #include "raul/Configuration.hpp"
 #include "raul/SharedPtr.hpp"
 
@@ -56,7 +58,12 @@ class Store;
  */
 class World : public boost::noncopyable {
 public:
-	World(Raul::Configuration* conf, int& argc, char**& argv);
+	World(Raul::Configuration* conf,
+	      int&                 argc,
+	      char**&              argv,
+	      LV2_URID_Map*        map,
+	      LV2_URID_Unmap*      unmap);
+
 	virtual ~World();
 
 	virtual bool load_module(const char* name);

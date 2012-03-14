@@ -19,6 +19,7 @@
 #include "raul/Atom.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/ResourceImpl.hpp"
+#include "ingen/shared/URIs.hpp"
 
 using namespace std;
 using namespace Raul;

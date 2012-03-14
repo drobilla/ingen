@@ -16,9 +16,11 @@
  */
 
 #include <math.h>
-#include "raul/midi_events.h"
+
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "internals/Controller.hpp"
+#include "raul/midi_events.h"
 
 #include "AudioBuffer.hpp"
 #include "EventBuffer.hpp"

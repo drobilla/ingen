@@ -16,6 +16,7 @@
  */
 
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 
 #include "ClientBroadcaster.hpp"
 #include "Notification.hpp"

@@ -29,6 +29,7 @@
 #include "ingen/shared/LV2Features.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/Store.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "BufferFactory.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"

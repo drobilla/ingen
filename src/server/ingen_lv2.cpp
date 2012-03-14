@@ -278,22 +278,25 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		return NULL;
 	}
 
-	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
-	plugin->conf  = new Ingen::Shared::Configuration(&plugin->forge);
-	plugin->world = new Ingen::Shared::World(plugin->conf,
-	                                         plugin->argc,
-	                                         plugin->argv);
-	if (!plugin->world->load_module("serialisation")) {
-		delete plugin->world;
-		return NULL;
-	}
 
-	plugin->main  = NULL;
-	plugin->map   = NULL;
+	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
+	plugin->conf          = new Ingen::Shared::Configuration(&plugin->forge);
+	plugin->main          = NULL;
+	plugin->map           = NULL;
+	LV2_URID_Unmap* unmap = NULL;
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_URID_URI "#map")) {
 			plugin->map = (LV2_URID_Map*)features[i]->data;
+		} else if (!strcmp(features[i]->URI, LV2_URID_URI "#unmap")) {
+			unmap = (LV2_URID_Unmap*)features[i]->data;
 		}
+	}
+
+	plugin->world = new Ingen::Shared::World(
+		plugin->conf, plugin->argc, plugin->argv, plugin->map, unmap);
+	if (!plugin->world->load_module("serialisation")) {
+		delete plugin->world;
+		return NULL;
 	}
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
