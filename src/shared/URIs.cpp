@@ -42,12 +42,6 @@ URIs::Quark::Quark(const char* c_str)
 {
 }
 
-const char*
-URIs::Quark::c_str() const
-{
-	return g_quark_to_string(id);
-}
-
 #define NS_CTX   "http://lv2plug.in/ns/ext/contexts#"
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"

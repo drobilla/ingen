@@ -35,7 +35,6 @@ public:
 
 	struct Quark : public Raul::URI {
 		Quark(const char* str);
-		const char* c_str() const;
 		uint32_t id;
 	};
 
