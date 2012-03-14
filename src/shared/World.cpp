@@ -111,7 +111,7 @@ public:
 		, forge(new Raul::Forge())
 		, rdf_world(new Sord::World())
 		, lv2_uri_map(new Ingen::Shared::LV2URIMap(map, unmap))
-		, uris(new Shared::URIs(*forge))
+		, uris(new Shared::URIs(*forge, lv2_uri_map.get()))
 		, lilv_world(lilv_world_new())
 	{
 		lv2_features = new Ingen::Shared::LV2Features();

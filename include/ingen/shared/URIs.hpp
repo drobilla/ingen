@@ -20,6 +20,7 @@
 
 #include <boost/utility.hpp>
 
+#include "ingen/shared/LV2URIMap.hpp"
 #include "raul/URI.hpp"
 
 namespace Raul {
@@ -31,10 +32,10 @@ namespace Shared {
 
 class URIs : public boost::noncopyable {
 public:
-	URIs(Raul::Forge& forge);
+	URIs(Raul::Forge& forge, LV2URIMap* map);
 
 	struct Quark : public Raul::URI {
-		Quark(const char* str);
+		Quark(LV2URIMap* map, const char* str);
 		uint32_t id;
 	};
 
