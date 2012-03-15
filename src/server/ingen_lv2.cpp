@@ -65,16 +65,12 @@ struct LV2Patch {
 
 class Lib {
 public:
-	Lib();
-	~Lib();
+	Lib(const char* bundle_path);
 
 	typedef std::vector< SharedPtr<const LV2Patch> > Patches;
 
 	Patches patches;
 };
-
-/** Library state (constructed/destructed on library load/unload) */
-Lib lib;
 
 namespace Ingen {
 namespace Server {
@@ -224,14 +220,6 @@ extern "C" {
 using namespace Ingen;
 using namespace Ingen::Server;
 
-/** LV2 plugin library entry point */
-LV2_SYMBOL_EXPORT
-const LV2_Descriptor*
-lv2_descriptor(uint32_t index)
-{
-	return index < lib.patches.size() ? &lib.patches[index]->descriptor : NULL;
-}
-
 class MainThread : public Raul::Thread
 {
 public:
@@ -257,6 +245,40 @@ struct IngenPlugin {
 	char**                        argv;
 };
 
+static Lib::Patches
+find_patches(const Glib::ustring& manifest_uri)
+{
+	Sord::World      world;
+	const Sord::URI  base(world, manifest_uri);
+	const Sord::Node nil;
+	const Sord::URI  ingen_Patch (world, NS_INGEN "Patch");
+	const Sord::URI  rdf_type    (world, NS_RDF   "type");
+	const Sord::URI  rdfs_seeAlso(world, NS_RDFS  "seeAlso");
+
+	SerdEnv*    env = serd_env_new(sord_node_to_serd_node(base.c_obj()));
+	Sord::Model model(world, manifest_uri);
+	model.load_file(env, SERD_TURTLE, manifest_uri);
+
+	Lib::Patches patches;
+	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
+		const Sord::Node  patch     = i.get_subject();
+		Sord::Iter        f         = model.find(patch, rdfs_seeAlso, nil);
+		const std::string patch_uri = patch.to_c_string();
+		if (!f.end()) {
+			const uint8_t* file_uri  = f.get_object().to_u_string();
+			uint8_t*       file_path = serd_file_uri_parse(file_uri, NULL);
+			patches.push_back(boost::shared_ptr<const LV2Patch>(
+				                  new LV2Patch(patch_uri, (const char*)file_path)));
+			free(file_path);
+		} else {
+			Raul::error << "[Ingen] Patch has no rdfs:seeAlso" << endl;
+		}
+	}
+
+	serd_env_free(env);
+	return patches;
+}
+
 static LV2_Handle
 ingen_instantiate(const LV2_Descriptor*    descriptor,
                   double                   rate,
@@ -264,10 +286,13 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
                   const LV2_Feature*const* features)
 {
 	Shared::set_bundle_path(bundle_path);
+	Lib::Patches patches = find_patches(
+		Glib::filename_to_uri(
+			Shared::bundle_file_path("manifest.ttl")));
 
 	const LV2Patch* patch = NULL;
-	for (Lib::Patches::iterator i = lib.patches.begin(); i != lib.patches.end(); ++i) {
-		if (&(*i)->descriptor == descriptor) {
+	for (Lib::Patches::iterator i = patches.begin(); i != patches.end(); ++i) {
+		if ((*i)->uri == descriptor->URI) {
 			patch = (*i).get();
 			break;
 		}
@@ -277,7 +302,6 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		Raul::error << "Could not find patch " << descriptor->URI << std::endl;
 		return NULL;
 	}
-
 
 	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
 	plugin->conf          = new Ingen::Shared::Configuration(&plugin->forge);
@@ -513,53 +537,39 @@ LV2Patch::LV2Patch(const std::string& u, const std::string& f)
 	descriptor.extension_data = ingen_extension_data;
 }
 
-static Lib::Patches
-find_patches(const Glib::ustring& manifest_uri)
+Lib::Lib(const char* bundle_path)
 {
-	Sord::World      world;
-	const Sord::URI  base(world, manifest_uri);
-	const Sord::Node nil;
-	const Sord::URI  ingen_Patch (world, NS_INGEN "Patch");
-	const Sord::URI  rdf_type    (world, NS_RDF   "type");
-	const Sord::URI  rdfs_seeAlso(world, NS_RDFS  "seeAlso");
-
-	SerdEnv*    env = serd_env_new(sord_node_to_serd_node(base.c_obj()));
-	Sord::Model model(world, manifest_uri);
-	model.load_file(env, SERD_TURTLE, manifest_uri);
-
-	Lib::Patches patches;
-	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
-		const Sord::Node  patch     = i.get_subject();
-		Sord::Iter        f         = model.find(patch, rdfs_seeAlso, nil);
-		const std::string patch_uri = patch.to_c_string();
-		if (!f.end()) {
-			const uint8_t* file_uri  = f.get_object().to_u_string();
-			uint8_t*       file_path = serd_file_uri_parse(file_uri, NULL);
-			patches.push_back(boost::shared_ptr<const LV2Patch>(
-				                  new LV2Patch(patch_uri, (const char*)file_path)));
-			free(file_path);
-		} else {
-			Raul::error << "[Ingen] Patch has no rdfs:seeAlso" << endl;
-		}
-	}
-
-	serd_env_free(env);
-	return patches;
+	Ingen::Shared::set_bundle_path(bundle_path);
+	patches = find_patches(
+		Glib::filename_to_uri(
+			Ingen::Shared::bundle_file_path("manifest.ttl")));
 }
 
-
-/** Library constructor (called on shared library load) */
-Lib::Lib()
+static void
+lib_cleanup(LV2_Lib_Handle handle)
 {
-	Ingen::Shared::set_bundle_path_from_code((void*)&lv2_descriptor);
-
-	patches = find_patches(Glib::filename_to_uri(
-		                       Shared::bundle_file_path("manifest.ttl")));
+	Lib* lib = (Lib*)handle;
+	delete lib;
+}
+	
+static const LV2_Descriptor*
+lib_get_plugin(LV2_Lib_Handle handle, uint32_t index)
+{
+	Lib* lib = (Lib*)handle;
+	return index < lib->patches.size() ? &lib->patches[index]->descriptor : NULL;
 }
 
-/** Library destructor (called on shared library unload) */
-Lib::~Lib()
+/** LV2 plugin library entry point */
+LV2_SYMBOL_EXPORT
+const LV2_Lib_Descriptor*
+lv2_lib_descriptor(const char*              bundle_path,
+                   const LV2_Feature*const* features)
 {
+	Lib* lib = new Lib(bundle_path);
+	static LV2_Lib_Descriptor desc = {
+		lib, sizeof(LV2_Lib_Descriptor), lib_cleanup, lib_get_plugin
+	};
+	return &desc;
 }
 
 } // extern "C"
