@@ -66,14 +66,18 @@ public:
 	class URIDMapFeature : public Feature {
 	public:
 		URIDMapFeature(LV2URIMap* map, LV2_URID_Map* urid_map);
+		LV2_URID map(const char* uri);
 	private:
+		static LV2_URID default_map(LV2_URID_Map_Handle h, const char* uri);
 		LV2_URID_Map _feature_data;
 	};
 
 	class URIDUnmapFeature : public Feature {
 	public:
 		URIDUnmapFeature(LV2URIMap* map, LV2_URID_Unmap* urid_unmap);
+		const char* unmap(const LV2_URID urid);
 	private:
+		static const char* default_unmap(LV2_URID_Map_Handle h, LV2_URID uri);
 		LV2_URID_Unmap _feature_data;
 	};
 
@@ -93,7 +97,7 @@ private:
 	                                  const char*               uri);
 
 	static LV2_URID    urid_map(LV2_URID_Map_Handle handle, const char* uri);
-	static const char* urid_unmap(LV2_URID_Map_Handle handle, LV2_URID urid);
+	static const char* urid_unmap(LV2_URID_Unmap_Handle handle, LV2_URID urid);
 
 	typedef std::map<uint16_t, uint32_t> EventToGlobal;
 	typedef std::map<uint32_t, uint16_t> GlobalToEvent;

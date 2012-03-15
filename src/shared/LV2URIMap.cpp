@@ -51,22 +51,53 @@ LV2URIMap::URIMapFeature::URIMapFeature(LV2URIMap* map)
 
 LV2URIMap::URIDMapFeature::URIDMapFeature(LV2URIMap*    map,
                                           LV2_URID_Map* urid_map)
-	: Feature(LV2_URID__map, urid_map ? urid_map : &_feature_data)
+	: Feature(LV2_URID__map, &_feature_data)
 {
-	if (!urid_map) {
-		_feature_data.map    = &LV2URIMap::urid_map;
-		_feature_data.handle = map;
+	if (urid_map) {
+		_feature_data = *urid_map;
+	} else {
+		_feature_data.map    = default_map;
+		_feature_data.handle = NULL;
 	}
 }
 
+LV2_URID
+LV2URIMap::URIDMapFeature::default_map(LV2_URID_Map_Handle handle,
+                                       const char*         uri)
+{
+	return static_cast<LV2_URID>(g_quark_from_string(uri));
+}
+
+LV2_URID
+LV2URIMap::URIDMapFeature::map(const char* uri)
+{
+	return _feature_data.map(_feature_data.handle, uri);
+}
+
+
 LV2URIMap::URIDUnmapFeature::URIDUnmapFeature(LV2URIMap*      map,
                                               LV2_URID_Unmap* urid_unmap)
-	: Feature(LV2_URID__unmap, urid_unmap ? urid_unmap : &_feature_data)
+	: Feature(LV2_URID__unmap, &_feature_data)
 {
-	if (!urid_unmap) {
-		_feature_data.unmap  = &LV2URIMap::urid_unmap;
-		_feature_data.handle = map;
+	if (urid_unmap) {
+		_feature_data = *urid_unmap;
+	} else {
+		_feature_data.unmap  = default_unmap;
+		_feature_data.handle = NULL;
 	}
+}
+
+const char*
+LV2URIMap::URIDUnmapFeature::default_unmap(LV2_URID_Unmap_Handle handle,
+                                           LV2_URID              urid)
+{
+	return g_quark_to_string(urid);
+}
+
+const char*
+LV2URIMap::URIDUnmapFeature::unmap(LV2_URID urid)
+{
+	return _feature_data.unmap(_feature_data.handle, urid);
 }
 
 uint32_t
@@ -146,23 +177,16 @@ LV2URIMap::urid_map(LV2_URID_Map_Handle handle, const char* uri)
 	return me->uri_to_id(NULL, uri);
 }
 
-const char*
-LV2URIMap::urid_unmap(LV2_URID_Map_Handle handle, LV2_URID urid)
-{
-	LV2URIMap* me = (LV2URIMap*)handle;
-	return me->id_to_uri(NULL, urid);
-}
-
 uint32_t
 LV2URIMap::map_uri(const char* uri)
 {
-	return static_cast<uint32_t>(g_quark_from_string(uri));
+	return _urid_map_feature->map(uri);
 }
 
 const char*
 LV2URIMap::unmap_uri(uint32_t urid)
 {
-	return g_quark_to_string(urid);
+	return _urid_unmap_feature->unmap(urid);
 }
 
 } // namespace Shared
