@@ -11,9 +11,9 @@
 
 /*%ignore Ingen::Shared::EngineInterface;*/
 
-%include "../../include/ingen/CommonInterface.hpp"
-%include "../../include/ingen/ClientInterface.hpp"
-%include "../../include/ingen/EngineInterface.hpp"
+%include "../../ingen/CommonInterface.hpp"
+%include "../../ingen/ClientInterface.hpp"
+%include "../../ingen/EngineInterface.hpp"
 %include "../../includemodule/World.hpp"
 //%include "../module/module.h"
 %include "ingen_bindings.hpp"

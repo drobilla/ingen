@@ -3,8 +3,8 @@ from waflib.extras import autowaf as autowaf
 
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',
-              includes        = ['../..', '../../include'],
-              export_includes = ['../../include'],
+              includes        = ['../..'],
+              export_includes = ['../..'],
               name            = 'libingen_client',
               target          = 'ingen_client',
               install_path    = '${LIBDIR}',

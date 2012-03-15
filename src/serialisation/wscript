@@ -4,8 +4,8 @@ from waflib.extras import autowaf as autowaf
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',
               source          = 'Parser.cpp Serialiser.cpp serialisation.cpp',
-              export_includes = ['../../include'],
-              includes        = ['../../include'],
+              export_includes = ['../..'],
+              includes        = ['../..'],
               name            = 'libingen_serialisation',
               target          = 'ingen_serialisation',
               install_path    = '${LIBDIR}',

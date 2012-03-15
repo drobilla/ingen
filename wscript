@@ -146,7 +146,7 @@ def build(bld):
     # Headers
     for i in ['', 'client', 'serialisation', 'shared']:
         bld.install_files('${INCLUDEDIR}/ingen/%s' % i,
-                          bld.path.ant_glob('include/ingen/%s/*' % i))
+                          bld.path.ant_glob('ingen/%s/*' % i))
 
     # Modules
     bld.recurse('src/shared')
@@ -161,9 +161,9 @@ def build(bld):
 
     # Program
     obj = bld(features     = 'c cxx cxxprogram',
-              target       = 'ingen',
               source       = 'src/ingen/main.cpp',
-              includes     = ['.', '../../include'],
+              target       = bld.path.get_bld().make_node('ingen'),
+              includes     = ['.', '../..'],
               defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"',
               use          = 'libingen_shared',
               install_path = '${BINDIR}')

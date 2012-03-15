@@ -8,7 +8,7 @@ def build(bld):
                                        OSCEngineReceiver.cpp
                                        OSCSender.cpp
                                        ingen_osc_server.cpp''',
-                  includes        = ['.', '../..', '../../include'],
+                  includes        = ['.', '../..'],
                   name            = 'libingen_osc_server',
                   target          = 'ingen_osc_server',
                   install_path    = '${LIBDIR}',
@@ -20,7 +20,7 @@ def build(bld):
                                        OSCEngineSender.cpp
                                        OSCSender.cpp
                                        ingen_osc_client.cpp''',
-                  includes        = ['.', '../..', '../../include'],
+                  includes        = ['.', '../..'],
                   name            = 'libingen_osc_client',
                   target          = 'ingen_osc_client',
                   install_path    = '${LIBDIR}',

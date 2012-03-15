@@ -568,7 +568,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @INGEN_SRCDIR@/include \
+INPUT                  = @INGEN_SRCDIR@ \
                          @INGEN_SRCDIR@/src/engine/OSCEngineReceiver.cpp \
                          @INGEN_SRCDIR@/src/engine/OSCClientSender.cpp
 

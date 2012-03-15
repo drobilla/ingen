@@ -8,7 +8,7 @@ def build(bld):
                                        HTTPEngineReceiver.cpp
                                        HTTPSender.cpp
                                        ingen_http_server.cpp''',
-                  includes        = ['../..', '../../include'],
+                  includes        = ['../..'],
                   name            = 'libingen_http_server',
                   target          = 'ingen_http_server',
                   install_path    = '${LIBDIR}',
@@ -20,7 +20,7 @@ def build(bld):
                                        HTTPEngineSender.cpp
                                        HTTPSender.cpp
                                        ingen_http_client.cpp''',
-                  includes        = ['../..', '../../include'],
+                  includes        = ['../..'],
                   name            = 'libingen_http_client',
                   target          = 'ingen_http_client',
                   install_path    = '${LIBDIR}',

@@ -56,8 +56,8 @@ def build(bld):
 
     obj = bld(features        = 'cxx cxxshlib',
               source          = core_source,
-              export_includes = ['../../include'],
-              includes        = ['.', '../..', '../../include'],
+              export_includes = ['../..'],
+              includes        = ['.', '../..'],
               name            = 'libingen_server',
               target          = 'ingen_server',
               install_path    = '${LIBDIR}',
@@ -68,7 +68,7 @@ def build(bld):
     if bld.is_defined('HAVE_JACK'):
         obj = bld(features        = 'cxx cxxshlib',
                   source          = 'JackDriver.cpp ingen_jack.cpp',
-                  includes        = ['.', '../..', '../../include'],
+                  includes        = ['.', '../..'],
                   name            = 'libingen_jack',
                   target          = 'ingen_jack',
                   install_path    = '${LIBDIR}',
@@ -78,7 +78,7 @@ def build(bld):
     # Ingen LV2 wrapper
     obj = bld(features     = 'cxx cxxshlib',
               source       = ' ingen_lv2.cpp ',
-              includes     = ['.', '../..', '../../include'],
+              includes     = ['.', '../..'],
               name         = 'libingen_lv2',
               target       = 'ingen_lv2',
               install_path = '${LV2DIR}/ingen.lv2/',

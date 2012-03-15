@@ -3,8 +3,8 @@ from waflib.extras import autowaf as autowaf
 
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',
-              export_includes = ['../../include'],
-              includes        = ['../..', '../../include'],
+              export_includes = ['../..'],
+              includes        = ['../..'],
               name            = 'libingen_shared',
               target          = 'ingen_shared',
               vnum            = '0.0.0',
