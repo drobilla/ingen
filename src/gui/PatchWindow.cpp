@@ -24,7 +24,7 @@
 
 #include "raul/AtomRDF.hpp"
 
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/shared/LV2URIMap.hpp"

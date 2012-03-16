@@ -45,7 +45,7 @@ class DisconnectAll : public Event
 {
 public:
 	DisconnectAll(Engine&           engine,
-	              ClientInterface*  client,
+	              Interface*        client,
 	              int32_t           id,
 	              SampleCount       timestamp,
 	              const Raul::Path& parent,

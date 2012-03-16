@@ -22,7 +22,7 @@
 
 namespace Ingen {
 
-class ClientInterface;
+class Interface;
 
 /**
    The engine which executes the process graph.
@@ -69,7 +69,7 @@ public:
 	   Register a client to receive updates about engine changes.
 	*/
 	virtual void register_client(const Raul::URI& uri,
-	                             ClientInterface* client) = 0;
+	                             Interface*       client) = 0;
 
 	/**
 	   Unregister a client.

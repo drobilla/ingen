@@ -16,7 +16,7 @@
  */
 
 #include "ObjectSender.hpp"
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "EngineStore.hpp"
@@ -35,7 +35,7 @@ namespace Ingen {
 namespace Server {
 
 void
-ObjectSender::send_object(ClientInterface*       client,
+ObjectSender::send_object(Interface*             client,
                           const GraphObjectImpl* object,
                           bool                   recursive)
 {
@@ -59,7 +59,7 @@ ObjectSender::send_object(ClientInterface*       client,
 }
 
 void
-ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool recursive, bool bundle)
+ObjectSender::send_patch(Interface* client, const PatchImpl* patch, bool recursive, bool bundle)
 {
 	if (bundle)
 		client->bundle_begin();
@@ -98,7 +98,7 @@ ObjectSender::send_patch(ClientInterface* client, const PatchImpl* patch, bool r
 
 /** Sends a node or a patch */
 void
-ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recursive, bool bundle)
+ObjectSender::send_node(Interface* client, const NodeImpl* node, bool recursive, bool bundle)
 {
 	PluginImpl* const plugin = node->plugin_impl();
 
@@ -128,7 +128,7 @@ ObjectSender::send_node(ClientInterface* client, const NodeImpl* node, bool recu
 }
 
 void
-ObjectSender::send_port(ClientInterface* client, const PortImpl* port, bool bundle)
+ObjectSender::send_port(Interface* client, const PortImpl* port, bool bundle)
 {
 	assert(port);
 

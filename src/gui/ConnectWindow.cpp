@@ -23,7 +23,7 @@
 
 #include "ingen_config.h"
 #include "ingen/EngineBase.hpp"
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
@@ -75,7 +75,7 @@ ConnectWindow::start(App& app, Ingen::Shared::World* world)
 }
 
 void
-ConnectWindow::set_connected_to(SharedPtr<ServerInterface> engine)
+ConnectWindow::set_connected_to(SharedPtr<Ingen::Interface> engine)
 {
 	_app->world()->set_engine(engine);
 
@@ -134,8 +134,7 @@ ConnectWindow::set_connecting_widget_states()
 
 /** Launch (if applicable) and connect to the Engine.
  *
- * This will create the ServerInterface and ClientInterface and initialize
- * the App with them.
+ * This will create the required interfaces and initialize the App with them.
  */
 void
 ConnectWindow::connect(bool existing)
@@ -230,7 +229,7 @@ ConnectWindow::disconnect()
 	_attached = false;
 
 	_app->detach();
-	set_connected_to(SharedPtr<Ingen::ServerInterface>());
+	set_connected_to(SharedPtr<Ingen::Interface>());
 
 	if (!_widgets_loaded)
 		return;

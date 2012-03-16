@@ -35,8 +35,7 @@ namespace Sord { class World; }
 namespace Ingen {
 
 class EngineBase;
-class ClientInterface;
-class ServerInterface;
+class Interface;
 
 namespace Serialisation { class Serialiser; class Parser; }
 
@@ -71,29 +70,29 @@ public:
 
 	virtual void unload_modules();
 
-	typedef SharedPtr<ServerInterface> (*InterfaceFactory)(
-			World*                     world,
-			const std::string&         engine_url,
-			SharedPtr<ClientInterface> respond_to);
+	typedef SharedPtr<Interface> (*InterfaceFactory)(
+			World*               world,
+			const std::string&   engine_url,
+			SharedPtr<Interface> respond_to);
 
 	virtual void add_interface_factory(const std::string& scheme,
 	                                   InterfaceFactory   factory);
 
-	virtual SharedPtr<ServerInterface> interface(
-		const std::string&         engine_url,
-		SharedPtr<ClientInterface> respond_to);
+	virtual SharedPtr<Interface> interface(
+		const std::string&   engine_url,
+		SharedPtr<Interface> respond_to);
 
 	virtual bool run(const std::string& mime_type,
 	                 const std::string& filename);
 
 	virtual void set_local_engine(SharedPtr<EngineBase> e);
-	virtual void set_engine(SharedPtr<ServerInterface> e);
+	virtual void set_engine(SharedPtr<Interface> e);
 	virtual void set_serialiser(SharedPtr<Serialisation::Serialiser> s);
 	virtual void set_parser(SharedPtr<Serialisation::Parser> p);
 	virtual void set_store(SharedPtr<Store> s);
 
 	virtual SharedPtr<EngineBase>                local_engine();
-	virtual SharedPtr<ServerInterface>           engine();
+	virtual SharedPtr<Interface>                 engine();
 	virtual SharedPtr<Serialisation::Serialiser> serialiser();
 	virtual SharedPtr<Serialisation::Parser>     parser();
 	virtual SharedPtr<Store>                     store();

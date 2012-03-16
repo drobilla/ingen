@@ -18,7 +18,7 @@
 #include <cassert>
 #include <utility>
 
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/client/PatchModel.hpp"
 
 #include "ingen/shared/LV2URIMap.hpp"

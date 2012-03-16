@@ -30,7 +30,7 @@
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/shared/Configuration.hpp"
@@ -416,7 +416,7 @@ ingen_cleanup(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
 	me->world->set_local_engine(SharedPtr<Ingen::Server::Engine>());
-	me->world->set_engine(SharedPtr<Ingen::ServerInterface>());
+	me->world->set_engine(SharedPtr<Ingen::Interface>());
 	delete me->world;
 	free(instance);
 }

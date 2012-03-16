@@ -22,8 +22,7 @@
 #include <string>
 #include <memory>
 #include "raul/SharedPtr.hpp"
-#include "ingen/ClientInterface.hpp"
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/Resource.hpp"
 #include "EventSource.hpp"
 #include "types.hpp"
@@ -35,7 +34,7 @@ class Engine;
 
 /** A queued (preprocessed) event source / interface.
  *
- * This is the bridge between the ServerInterface presented to the client, and
+ * This is the bridge between the Interface presented to the client, and
  * the EventSource that needs to be presented to the Driver.
  *
  * Responses occur through the event mechanism (which notified clients in
@@ -44,7 +43,7 @@ class Engine;
  * are successful.
  */
 class ServerInterfaceImpl : public EventSource,
-                            public ServerInterface
+                            public Interface
 {
 public:
 	ServerInterfaceImpl(Engine& engine);
@@ -54,11 +53,9 @@ public:
 
 	virtual void set_response_id(int32_t id);
 
-	// Bundles
 	virtual void bundle_begin();
-	virtual void bundle_end();
 
-	// CommonInterface object commands
+	virtual void bundle_end();
 
 	virtual void put(const Raul::URI&            path,
 	                 const Resource::Properties& properties,
@@ -83,20 +80,21 @@ public:
 
 	virtual void del(const Raul::URI& uri);
 
-	// ServerInterface object commands
-
 	virtual void disconnect_all(const Raul::Path& parent_patch_path,
 	                            const Raul::Path& path);
 
-	// Requests
 	virtual void ping();
+
 	virtual void get(const Raul::URI& uri);
 
+	virtual void response(int32_t id, Status status) {}  ///< N/A
+	virtual void error(const std::string& msg) {}  ///< N/A
+
 protected:
-	ClientInterface*   _request_client;
-	int32_t            _request_id;
-	Engine&            _engine;
-	bool               _in_bundle; ///< True iff a bundle is currently being received
+	Interface* _request_client;
+	int32_t    _request_id;
+	Engine&    _engine;
+	bool       _in_bundle;  ///< True iff a bundle is currently being received
 
 private:
 	SampleCount now() const;

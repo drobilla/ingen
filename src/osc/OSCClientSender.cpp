@@ -22,7 +22,7 @@
 #include "raul/AtomLiblo.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 
 #include "OSCClientSender.hpp"
 

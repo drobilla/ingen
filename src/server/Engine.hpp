@@ -26,6 +26,7 @@
 #include "raul/SharedPtr.hpp"
 
 #include "ingen/EngineBase.hpp"
+#include "ingen/Interface.hpp"
 
 namespace Raul { class Maid; }
 
@@ -76,7 +77,7 @@ public:
 
 	virtual void process_events(ProcessContext& context);
 
-	virtual void register_client(const Raul::URI& uri, ClientInterface* client);
+	virtual void register_client(const Raul::URI& uri, Interface* client);
 
 	virtual bool unregister_client(const Raul::URI& uri);
 

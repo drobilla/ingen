@@ -36,10 +36,10 @@ namespace Events {
 class Ping : public Event
 {
 public:
-	Ping(Engine&          engine,
-	     ClientInterface* client,
-	     int32_t          id,
-	     SampleCount      timestamp)
+	Ping(Engine&     engine,
+	     Interface*  client,
+	     int32_t     id,
+	     SampleCount timestamp)
 		: Event(engine, client, id, timestamp)
 	{}
 

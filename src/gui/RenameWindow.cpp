@@ -20,7 +20,7 @@
 
 #include "ingen/shared/LV2URIMap.hpp"
 
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/ClientStore.hpp"
 

@@ -29,7 +29,7 @@
 #include "raul/Atom.hpp"
 #include "raul/SRSWQueue.hpp"
 
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 
 /** Returns nothing and takes no parameters (because they have all been bound) */
@@ -37,7 +37,7 @@ typedef sigc::slot<void> Closure;
 
 namespace Ingen {
 
-class ServerInterface;
+class Interface;
 
 namespace Client {
 

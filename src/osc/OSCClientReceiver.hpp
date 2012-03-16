@@ -23,7 +23,7 @@
 #include <boost/utility.hpp>
 #include <lo/lo.h>
 
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 

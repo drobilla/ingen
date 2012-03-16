@@ -30,7 +30,7 @@
 
 namespace Ingen {
 
-class CommonInterface;
+class Interface;
 
 namespace Shared { class World; }
 
@@ -50,7 +50,7 @@ public:
 
 	virtual bool parse_file(
 		Shared::World*                world,
-		CommonInterface*              target,
+		Interface*                    target,
 		Glib::ustring                 path,
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
@@ -58,7 +58,7 @@ public:
 
 	virtual bool parse_string(
 		Shared::World*                world,
-		CommonInterface*              target,
+		Interface*                    target,
 		const Glib::ustring&          str,
 		const Glib::ustring&          base_uri,
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),

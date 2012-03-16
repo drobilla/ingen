@@ -24,14 +24,12 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 
+#include "ingen/Interface.hpp"
 #include "ingen/Status.hpp"
 
 #include "types.hpp"
 
 namespace Ingen {
-
-class ClientInterface;
-
 namespace Server {
 
 class Engine;
@@ -82,7 +80,7 @@ public:
 	void respond(Status status);
 
 protected:
-	Event(Engine& engine, ClientInterface* client, int32_t id, FrameTime time)
+	Event(Engine& engine, Interface* client, int32_t id, FrameTime time)
 		: _engine(engine)
 		, _request_client(client)
 		, _request_id(id)
@@ -105,7 +103,7 @@ protected:
 
 	Engine&                _engine;
 	Raul::AtomicPtr<Event> _next;
-	ClientInterface*       _request_client;
+	Interface*             _request_client;
 	int32_t                _request_id;
 	FrameTime              _time;
 	Status                 _status;

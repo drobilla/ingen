@@ -59,7 +59,7 @@ class Delete : public Event
 {
 public:
 	Delete(Engine&          engine,
-	       ClientInterface* client,
+	       Interface*       client,
 	       int32_t          id,
 	       FrameTime        timestamp,
 	       const Raul::URI& uri);

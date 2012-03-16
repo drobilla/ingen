@@ -26,7 +26,7 @@
 
 #include "raul/Deletable.hpp"
 
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 
 #include "OSCSender.hpp"
 
@@ -36,12 +36,12 @@ namespace Client {
 
 /* OSC (via liblo) interface to the engine.
  *
- * Clients can use this opaquely as an ServerInterface* to control the engine
+ * Clients can use this opaquely as an Interface* to control the engine
  * over OSC (whether over a network or not, etc).
  *
  * \ingroup IngenClient
  */
-class OSCEngineSender : public ServerInterface, public Shared::OSCSender {
+class OSCEngineSender : public Interface, public Shared::OSCSender {
 public:
 	OSCEngineSender(const Raul::URI&           engine_url,
 	                size_t                     max_packet_size,

@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 
 #include "Driver.hpp"
 #include "Engine.hpp"

@@ -42,7 +42,7 @@ class CreateNode : public Event
 {
 public:
 	CreateNode(Engine&                     engine,
-	           ClientInterface*            client,
+	           Interface*                  client,
 	           int32_t                     id,
 	           SampleCount                 timestamp,
 	           const Raul::Path&           node_path,

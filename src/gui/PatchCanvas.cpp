@@ -22,7 +22,7 @@
 #include "raul/log.hpp"
 #include "ganv/Canvas.hpp"
 #include "ganv/Circle.hpp"
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/Builder.hpp"
 #include "ingen/shared/ClashAvoider.hpp"

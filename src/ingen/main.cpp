@@ -40,7 +40,7 @@
 #include "ingen_config.h"
 
 #include "ingen/EngineBase.hpp"
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/World.hpp"
@@ -107,7 +107,7 @@ main(int argc, char** argv)
 	// Set bundle path from executable location so resources can be found
 	Shared::set_bundle_path_from_code((void*)&main);
 
-	SharedPtr<ServerInterface> engine_interface;
+	SharedPtr<Interface> engine_interface;
 
 	Glib::thread_init();
 #ifdef HAVE_SOUP
@@ -156,7 +156,7 @@ main(int argc, char** argv)
 		          "Unable to load HTTP client module");
 		#endif
 		const char* const uri = conf.option("connect").get_string();
-		SharedPtr<ClientInterface> client(new Client::SigClientInterface());
+		SharedPtr<Interface> client(new Client::SigClientInterface());
 		ingen_try((engine_interface = world->interface(uri, client)),
 		          (string("Unable to create interface to `") + uri + "'").c_str());
 	}

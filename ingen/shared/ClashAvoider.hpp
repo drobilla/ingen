@@ -22,7 +22,7 @@
 
 #include <map>
 
-#include "ingen/CommonInterface.hpp"
+#include "ingen/Interface.hpp"
 
 namespace Raul { class Atom; class Path; }
 
@@ -31,18 +31,18 @@ namespace Shared {
 
 class Store;
 
-/** A wrapper for a CommonInterface that creates objects but possibly maps
+/** A wrapper for an Interface that creates objects but possibly maps
  * symbol names to avoid clashes with the existing objects in a store.
  */
-class ClashAvoider : public CommonInterface
+class ClashAvoider : public Interface
 {
 public:
-	ClashAvoider(Store& store, CommonInterface& target, Store* also_avoid=NULL)
+	ClashAvoider(Store& store, Interface& target, Store* also_avoid=NULL)
 		: _store(store), _target(target), _also_avoid(also_avoid) {}
 
 	Raul::URI uri() const { return "ingen:ClientStore"; }
 
-	void set_target(CommonInterface& target) { _target = target; }
+	void set_target(Interface& target) { _target = target; }
 
 	// Bundles
 	void bundle_begin() { _target.bundle_begin(); }
@@ -76,12 +76,18 @@ public:
 
 	virtual void del(const Raul::URI& uri);
 
+	virtual void set_response_id(int32_t id) {}
+	virtual void ping() {}
+	virtual void get(const Raul::URI& uri) {}
+	virtual void response(int32_t id, Status status) {}
+	virtual void error(const std::string& msg) {}
+
 private:
 	const Raul::URI  map_uri(const Raul::URI& in);
 	const Raul::Path map_path(const Raul::Path& in);
 
-	Store&            _store;
-	CommonInterface&  _target;
+	Store&     _store;
+	Interface& _target;
 
 	Store* _also_avoid;
 	bool exists(const Raul::Path& path) const;

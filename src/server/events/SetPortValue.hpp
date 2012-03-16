@@ -44,7 +44,7 @@ class SetPortValue : public Event
 {
 public:
 	SetPortValue(Engine&           engine,
-	             ClientInterface*  client,
+	             Interface*        client,
 	             int32_t           id,
 	             bool              queued,
 	             SampleCount       timestamp,
@@ -52,7 +52,7 @@ public:
 	             const Raul::Atom& value);
 
 	SetPortValue(Engine&           engine,
-	             ClientInterface*  client,
+	             Interface*        client,
 	             int32_t           id,
 	             SampleCount       timestamp,
 	             PortImpl*         port,

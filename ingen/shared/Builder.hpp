@@ -22,21 +22,21 @@
 
 namespace Ingen {
 
-class CommonInterface;
+class Interface;
 class GraphObject;
 
 namespace Shared {
 
 class URIs;
 
-/** Wrapper for CommonInterface to create existing objects/models.
+/** Wrapper for Interface to create existing objects/models.
  *
  * \ingroup interface
  */
 class Builder
 {
 public:
-	Builder(SharedPtr<Shared::URIs> uris, CommonInterface& interface);
+	Builder(SharedPtr<Shared::URIs> uris, Interface& interface);
 	virtual ~Builder() {}
 
 	void build(SharedPtr<const GraphObject> object);
@@ -46,7 +46,7 @@ private:
 	void build_object(SharedPtr<const GraphObject> object);
 
 	SharedPtr<Shared::URIs> _uris;
-	CommonInterface&        _interface;
+	Interface&              _interface;
 };
 
 } // namespace Shared

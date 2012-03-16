@@ -43,12 +43,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Connect::Connect(Engine&          engine,
-                 ClientInterface* client,
-                 int32_t          id,
-                 SampleCount      timestamp,
-                 const Path&      src_port_path,
-                 const Path&      dst_port_path)
+Connect::Connect(Engine&     engine,
+                 Interface*  client,
+                 int32_t     id,
+                 SampleCount timestamp,
+                 const Path& src_port_path,
+                 const Path& dst_port_path)
 	: Event(engine, client, id, timestamp)
 	, _src_port_path(src_port_path)
 	, _dst_port_path(dst_port_path)

@@ -36,7 +36,7 @@ namespace Server {
 namespace Events {
 
 Delete::Delete(Engine&          engine,
-               ClientInterface* client,
+               Interface*       client,
                int32_t          id,
                FrameTime        time,
                const Raul::URI& uri)

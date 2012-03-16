@@ -46,7 +46,7 @@ class Move : public Event
 {
 public:
 	Move(Engine&           engine,
-	     ClientInterface*  client,
+	     Interface*        client,
 	     int32_t           id,
 	     SampleCount       timestamp,
 	     const Raul::Path& old_path,

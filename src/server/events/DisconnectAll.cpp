@@ -44,12 +44,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-DisconnectAll::DisconnectAll(Engine&          engine,
-                             ClientInterface* client,
-                             int32_t          id,
-                             SampleCount      timestamp,
-                             const Path&      parent_path,
-                             const Path&      node_path)
+DisconnectAll::DisconnectAll(Engine&     engine,
+                             Interface*  client,
+                             int32_t     id,
+                             SampleCount timestamp,
+                             const Path& parent_path,
+                             const Path& node_path)
 	: Event(engine, client, id, timestamp)
 	, _parent_path(parent_path)
 	, _path(node_path)

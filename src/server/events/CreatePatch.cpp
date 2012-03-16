@@ -37,7 +37,7 @@ namespace Server {
 namespace Events {
 
 CreatePatch::CreatePatch(Engine&                     engine,
-                         ClientInterface*            client,
+                         Interface*                  client,
                          int32_t                     id,
                          SampleCount                 timestamp,
                          const Raul::Path&           path,

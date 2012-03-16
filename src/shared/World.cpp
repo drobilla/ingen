@@ -26,6 +26,7 @@
 #include "raul/Atom.hpp"
 #include "sord/sordmm.hpp"
 
+#include "ingen/Interface.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/shared/Module.hpp"
 #include "ingen/shared/World.hpp"
@@ -176,7 +177,7 @@ public:
 	Sord::World*                         rdf_world;
 	SharedPtr<LV2URIMap>                 lv2_uri_map;
 	SharedPtr<URIs>                      uris;
-	SharedPtr<ServerInterface>           engine;
+	SharedPtr<Interface>                 engine;
 	SharedPtr<EngineBase>                local_engine;
 	SharedPtr<Serialisation::Serialiser> serialiser;
 	SharedPtr<Serialisation::Parser>     parser;
@@ -201,7 +202,7 @@ World::~World()
 }
 
 void World::set_local_engine(SharedPtr<EngineBase> e)              { _impl->local_engine = e; }
-void World::set_engine(SharedPtr<ServerInterface> e)               { _impl->engine = e; }
+void World::set_engine(SharedPtr<Interface> e)                     { _impl->engine = e; }
 void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
 void World::set_parser(SharedPtr<Serialisation::Parser> p)         { _impl->parser = p; }
 void World::set_store(SharedPtr<Store> s)                          { _impl->store = s; }
@@ -210,7 +211,7 @@ void World::set_conf(Raul::Configuration* c)                       { _impl->conf
 int&                                 World::argc()         { return _impl->argc; }
 char**&                              World::argv()         { return _impl->argv; }
 SharedPtr<EngineBase>                World::local_engine() { return _impl->local_engine; }
-SharedPtr<ServerInterface>           World::engine()       { return _impl->engine; }
+SharedPtr<Interface>                 World::engine()       { return _impl->engine; }
 SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
 SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
 SharedPtr<Store>                     World::store()        { return _impl->store; }
@@ -271,16 +272,15 @@ World::unload_modules()
 
 /** Get an interface for a remote engine at @a url
  */
-SharedPtr<ServerInterface>
-World::interface(
-	const std::string&         engine_url,
-	SharedPtr<ClientInterface> respond_to)
+SharedPtr<Interface>
+World::interface(const std::string&   engine_url,
+                 SharedPtr<Interface> respond_to)
 {
 	const string scheme = engine_url.substr(0, engine_url.find(":"));
 	const Pimpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
 	if (i == _impl->interface_factories.end()) {
 		warn << "Unknown URI scheme `" << scheme << "'" << endl;
-		return SharedPtr<ServerInterface>();
+		return SharedPtr<Interface>();
 	}
 
 	return i->second(this, engine_url, respond_to);

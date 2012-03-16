@@ -43,7 +43,7 @@ class CreatePort : public Event
 {
 public:
 	CreatePort(Engine&                     engine,
-	           ClientInterface*            client,
+	           Interface*                  client,
 	           int32_t                     id,
 	           SampleCount                 timestamp,
 	           const Raul::Path&           path,

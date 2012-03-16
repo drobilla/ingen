@@ -22,7 +22,7 @@
 #include <gtk/gtkwindow.h>
 
 #include "ganv/Edge.hpp"
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/ObjectModel.hpp"
@@ -187,7 +187,7 @@ App::detach()
 		_loader.reset();
 		_store.reset();
 		_client.reset();
-		_world->set_engine(SharedPtr<ServerInterface>());
+		_world->set_engine(SharedPtr<Interface>());
 	}
 }
 

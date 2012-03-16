@@ -18,7 +18,7 @@
 #include <cassert>
 #include <unistd.h>
 #include "raul/log.hpp"
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ClientBroadcaster.hpp"
 #include "PluginImpl.hpp"
 #include "ConnectionImpl.hpp"
@@ -37,7 +37,7 @@ namespace Server {
 /** Register a client to receive messages over the notification band.
  */
 void
-ClientBroadcaster::register_client(const URI& uri, ClientInterface* client)
+ClientBroadcaster::register_client(const URI& uri, Interface* client)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	Clients::iterator i = _clients.find(uri);
@@ -72,7 +72,7 @@ ClientBroadcaster::unregister_client(const URI& uri)
 /** Looks up the client with the given source @a uri (which is used as the
  * unique identifier for registered clients).
  */
-ClientInterface*
+Interface*
 ClientBroadcaster::client(const URI& uri)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
@@ -94,7 +94,7 @@ ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 }
 
 void
-ClientBroadcaster::send_plugins_to(ClientInterface* client, const NodeFactory::Plugins& plugins)
+ClientBroadcaster::send_plugins_to(Interface* client, const NodeFactory::Plugins& plugins)
 {
 	client->bundle_begin();
 

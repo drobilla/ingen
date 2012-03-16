@@ -28,8 +28,7 @@
 #include "raul/log.hpp"
 
 #include "ingen_config.h"
-#include "ingen/ClientInterface.hpp"
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 
 #include "../server/ClientBroadcaster.hpp"
 #include "../server/Engine.hpp"

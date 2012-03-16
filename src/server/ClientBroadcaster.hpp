@@ -26,7 +26,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 
 #include "NodeFactory.hpp"
 
@@ -44,21 +44,21 @@ class ConnectionImpl;
 
 /** Broadcaster for all clients.
  *
- * This is a ClientInterface that forwards all messages to all registered
+ * This is an Interface that forwards all messages to all registered
  * clients (for updating all clients on state changes in the engine).
  *
  * \ingroup engine
  */
-class ClientBroadcaster : public ClientInterface
+class ClientBroadcaster : public Interface
 {
 public:
-	void register_client(const Raul::URI& uri, ClientInterface* client);
+	void register_client(const Raul::URI& uri, Interface* client);
 	bool unregister_client(const Raul::URI& uri);
 
-	ClientInterface* client(const Raul::URI& uri);
+	Interface* client(const Raul::URI& uri);
 
 	void send_plugins(const NodeFactory::Plugins& plugin_list);
-	void send_plugins_to(ClientInterface*, const NodeFactory::Plugins& plugin_list);
+	void send_plugins_to(Interface*, const NodeFactory::Plugins& plugin_list);
 
 	void send_object(const GraphObjectImpl* p, bool recursive);
 
@@ -66,8 +66,6 @@ public:
 	Glib::Mutex::Lock lock(_clients_mutex); \
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) \
 		(*i).second->msg(__VA_ARGS__)
-
-	// CommonInterface
 
 	void bundle_begin() { BROADCAST(bundle_begin); }
 	void bundle_end()   { BROADCAST(bundle_end); }
@@ -114,16 +112,17 @@ public:
 		BROADCAST(set_property, subject, predicate, value);
 	}
 
-	// ClientInterface
-
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#broadcaster"; } ///< N/A
 
+	void set_response_id(int32_t id) {} ///< N/A
+	void ping() {} ///< N/A
+	void get(const Raul::URI& uri) {} ///< N/A
 	void response(int32_t id, Status status) {} ///< N/A
 
 	void error(const std::string& msg) { BROADCAST(error, msg); }
 
 private:
-	typedef std::map<Raul::URI, ClientInterface*> Clients;
+	typedef std::map<Raul::URI, Interface*> Clients;
 
 	Glib::Mutex _clients_mutex;
 	Clients     _clients;

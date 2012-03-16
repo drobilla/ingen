@@ -53,7 +53,7 @@ namespace Events {
 typedef Resource::Properties Properties;
 
 SetMetadata::SetMetadata(Engine&           engine,
-                         ClientInterface*  client,
+                         Interface*        client,
                          int32_t           id,
                          SampleCount       timestamp,
                          bool              create,

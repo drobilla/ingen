@@ -48,7 +48,7 @@
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/ResourceImpl.hpp"
 #include "ingen/shared/Store.hpp"

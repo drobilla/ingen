@@ -29,7 +29,7 @@ using namespace Raul;
 namespace Ingen {
 namespace GUI {
 
-ThreadedLoader::ThreadedLoader(App& app, SharedPtr<ServerInterface> engine)
+ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
 	: _app(app)
 	, _engine(engine)
 {

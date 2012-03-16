@@ -42,7 +42,7 @@ namespace Server {
 namespace Events {
 
 CreateNode::CreateNode(Engine&                     engine,
-                       ClientInterface*            client,
+                       Interface*                  client,
                        int32_t                     id,
                        SampleCount                 timestamp,
                        const Path&                 path,

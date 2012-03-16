@@ -43,7 +43,7 @@ using namespace Shared;
 namespace Client {
 
 ClientStore::ClientStore(SharedPtr<Shared::URIs>       uris,
-                         SharedPtr<ServerInterface>    engine,
+                         SharedPtr<Interface>          engine,
                          SharedPtr<SigClientInterface> emitter)
 	: _uris(uris)
 	, _engine(engine)
@@ -238,7 +238,7 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 
 	iterator parent = find(old_path);
 	if (parent == end()) {
-		LOG(error) << "Failed to find object " << old_path << " to move." << endl;
+		LOG(Raul::error) << "Failed to find object " << old_path << " to move." << endl;
 		return;
 	}
 
@@ -301,7 +301,7 @@ ClientStore::put(const URI&                  uri,
 	}
 
 	if (!Path::is_valid(uri.str())) {
-		LOG(error) << "Bad path `" << uri.str() << "'" << endl;
+		LOG(Raul::error) << "Bad path `" << uri.str() << "'" << endl;
 		return;
 	}
 
@@ -351,7 +351,7 @@ ClientStore::put(const URI&                  uri,
 			p->set_properties(properties);
 			add_object(p);
 		} else {
-			LOG(error) << "Port " << path << " has no index" << endl;
+			LOG(Raul::error) << "Port " << path << " has no index" << endl;
 		}
 	} else {
 		LOG(warn) << "Ignoring object " << path << " with unknown type "
@@ -377,7 +377,7 @@ ClientStore::delta(const URI&                  uri,
 #endif
 
 	if (!Path::is_valid(uri.str())) {
-		LOG(error) << "Bad path `" << uri.str() << "'" << endl;
+		LOG(Raul::error) << "Bad path `" << uri.str() << "'" << endl;
 		return;
 	}
 
@@ -430,7 +430,7 @@ ClientStore::connection_patch(const Path& src_port_path, const Path& dst_port_pa
 		patch = PtrCast<PatchModel>(_object(src_port_path.parent().parent()));
 
 	if (!patch)
-		LOG(error) << "Unable to find connection patch " << src_port_path
+		LOG(Raul::error) << "Unable to find connection patch " << src_port_path
 			<< " -> " << dst_port_path << endl;
 
 	return patch;

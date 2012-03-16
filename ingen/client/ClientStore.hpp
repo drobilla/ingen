@@ -27,7 +27,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/TableImpl.hpp"
 
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/Store.hpp"
@@ -54,13 +54,13 @@ class SigClientInterface;
  * \ingroup IngenClient
  */
 class ClientStore : public Shared::Store
-                  , public CommonInterface
+                  , public Interface
                   , public INGEN_TRACKABLE {
 public:
 	ClientStore(
 		SharedPtr<Shared::URIs>       uris,
-		SharedPtr<ServerInterface>    engine=SharedPtr<ServerInterface>(),
-		SharedPtr<SigClientInterface> emitter=SharedPtr<SigClientInterface>());
+		SharedPtr<Interface>          engine  = SharedPtr<Interface>(),
+		SharedPtr<SigClientInterface> emitter = SharedPtr<SigClientInterface>());
 
 	Raul::URI uri() const { return "ingen:ClientStore"; }
 
@@ -103,8 +103,14 @@ public:
 
 	void del(const Raul::URI& uri);
 
-	INGEN_SIGNAL(new_object,  void, SharedPtr<ObjectModel>);
-	INGEN_SIGNAL(new_plugin,  void, SharedPtr<PluginModel>);
+	void set_response_id(int32_t id) {}
+	void ping() {}
+	void get(const Raul::URI& uri) {}
+	void response(int32_t id, Status status) {}
+	void error(const std::string& msg) {}
+
+	INGEN_SIGNAL(new_object, void, SharedPtr<ObjectModel>);
+	INGEN_SIGNAL(new_plugin, void, SharedPtr<PluginModel>);
 
 private:
 	void add(GraphObject* o) { throw; }
@@ -129,7 +135,7 @@ private:
 	                        const Raul::Path& dst_port_path);
 
 	SharedPtr<Shared::URIs>       _uris;
-	SharedPtr<ServerInterface>    _engine;
+	SharedPtr<Interface>          _engine;
 	SharedPtr<SigClientInterface> _emitter;
 
 	SharedPtr<Plugins> _plugins; ///< Map, keyed by plugin URI

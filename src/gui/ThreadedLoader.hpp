@@ -25,7 +25,7 @@
 #include "raul/Thread.hpp"
 #include "raul/Slave.hpp"
 #include <glibmm/thread.h>
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/serialisation/Parser.hpp"
 
@@ -54,8 +54,8 @@ namespace GUI {
 class ThreadedLoader : public Raul::Slave
 {
 public:
-	ThreadedLoader(App&                       app,
-	               SharedPtr<ServerInterface> engine);
+	ThreadedLoader(App&                 app,
+	               SharedPtr<Interface> engine);
 
 	void load_patch(bool                              merge,
                     const Glib::ustring&              document_uri,
@@ -75,10 +75,10 @@ private:
 
 	void _whipped();
 
-	App&                       _app;
-	SharedPtr<ServerInterface> _engine;
-	Glib::Mutex                _mutex;
-	list<Closure>              _events;
+	App&                 _app;
+	SharedPtr<Interface> _engine;
+	Glib::Mutex          _mutex;
+	list<Closure>        _events;
 };
 
 } // namespace GUI

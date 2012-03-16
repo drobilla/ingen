@@ -15,7 +15,7 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 
 #include "ClientBroadcaster.hpp"
 #include "Driver.hpp"
@@ -31,11 +31,11 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Get::Get(Engine&          engine,
-         ClientInterface* client,
-         int32_t          id,
-         SampleCount      timestamp,
-         const URI&       uri)
+Get::Get(Engine&     engine,
+         Interface*  client,
+         int32_t     id,
+         SampleCount timestamp,
+         const URI&  uri)
 	: Event(engine, client, id, timestamp)
 	, _uri(uri)
 	, _object(NULL)

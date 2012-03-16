@@ -40,7 +40,7 @@ class Get : public Event
 {
 public:
 	Get(Engine&          engine,
-	    ClientInterface* client,
+	    Interface*       client,
 	    int32_t          id,
 	    SampleCount      timestamp,
 	    const Raul::URI& uri);

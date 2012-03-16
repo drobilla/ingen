@@ -69,7 +69,6 @@ ServerInterfaceImpl::set_response_id(int32_t id)
 	if (!_request_client) {  // Kludge
 		_request_client = _engine.broadcaster()->client(
 			"http://drobilla.net/ns/ingen#internal");
-		std::cerr << "SET REQUEST CLIENT " << (void*)_request_client << std::endl;
 	}
 	_request_id = id;
 }

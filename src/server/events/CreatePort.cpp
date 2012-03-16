@@ -41,7 +41,7 @@ namespace Server {
 namespace Events {
 
 CreatePort::CreatePort(Engine&                     engine,
-                       ClientInterface*            client,
+                       Interface*                  client,
                        int32_t                     id,
                        SampleCount                 timestamp,
                        const Raul::Path&           path,

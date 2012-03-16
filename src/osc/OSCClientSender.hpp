@@ -23,7 +23,7 @@
 
 #include <lo/lo.h>
 
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/GraphObject.hpp"
 
 #include "OSCSender.hpp"

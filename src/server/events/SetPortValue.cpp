@@ -47,7 +47,7 @@ namespace Server {
 namespace Events {
 
 SetPortValue::SetPortValue(Engine&           engine,
-                           ClientInterface*  client,
+                           Interface*        client,
                            int32_t           id,
                            bool              queued,
                            SampleCount       timestamp,
@@ -63,7 +63,7 @@ SetPortValue::SetPortValue(Engine&           engine,
 
 /** Internal */
 SetPortValue::SetPortValue(Engine&           engine,
-                           ClientInterface*  client,
+                           Interface*        client,
                            int32_t           id,
                            SampleCount       timestamp,
                            PortImpl*         port,

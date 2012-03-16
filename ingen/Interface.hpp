@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright 2008-2011 David Robillard <http://drobilla.net>
+ * Copyright 2008-2012 David Robillard <http://drobilla.net>
  *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -15,10 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_INTERFACE_COMMONINTERFACE_HPP
-#define INGEN_INTERFACE_COMMONINTERFACE_HPP
+#ifndef INGEN_INTERFACE_HPP
+#define INGEN_INTERFACE_HPP
 
 #include "ingen/Resource.hpp"
+#include "ingen/Status.hpp"
 
 namespace Raul { class Atom; class Path; class URI; }
 
@@ -29,10 +30,10 @@ namespace Ingen {
  *
  * \ingroup interface
  */
-class CommonInterface
+class Interface
 {
 public:
-	virtual ~CommonInterface() {}
+	virtual ~Interface() {}
 
 	virtual Raul::URI uri() const = 0;
 
@@ -67,9 +68,24 @@ public:
 	virtual void set_property(const Raul::URI&  subject,
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value) = 0;
+
+	/** Set the ID to use to respond to the next message.
+	 * Setting the ID to -1 will disable responses.
+	 */
+	virtual void set_response_id(int32_t id) = 0;
+
+	// Requests
+	virtual void ping() = 0;
+	virtual void get(const Raul::URI& uri) = 0;
+
+	// Response
+	virtual void response(int32_t id, Status status) = 0;
+
+	// Non-response error
+	virtual void error(const std::string& msg) = 0;
 };
 
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_COMMONINTERFACE_HPP
+#endif // INGEN_INTERFACE_HPP
 

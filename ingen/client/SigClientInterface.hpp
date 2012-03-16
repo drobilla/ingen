@@ -22,7 +22,7 @@
 
 #include "raul/Path.hpp"
 
-#include "ingen/ClientInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/client/signal.hpp"
 
 namespace Ingen {
@@ -36,7 +36,7 @@ namespace Client {
  * The signals here match the calls to ClientInterface exactly.  See the
  * documentation for ClientInterface for meanings of signal parameters.
  */
-class SigClientInterface : public Ingen::ClientInterface,
+class SigClientInterface : public Ingen::Interface,
                            public INGEN_TRACKABLE
 {
 public:
@@ -109,6 +109,10 @@ protected:
 
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ EMIT(property_change, subject, key, value); }
+
+	void set_response_id(int32_t id) {}
+	void ping() {}
+	void get(const Raul::URI& uri) {}
 };
 
 } // namespace Client

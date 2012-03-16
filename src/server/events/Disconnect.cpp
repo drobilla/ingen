@@ -43,7 +43,7 @@ namespace Server {
 namespace Events {
 
 Disconnect::Disconnect(Engine&           engine,
-                       ClientInterface*  client,
+                       Interface*        client,
                        int32_t           id,
                        SampleCount       timestamp,
                        const Raul::Path& src_port_path,

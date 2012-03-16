@@ -241,7 +241,7 @@ Engine::process_events(ProcessContext& context)
 }
 
 void
-Engine::register_client(const Raul::URI& uri, ClientInterface* client)
+Engine::register_client(const Raul::URI& uri, Interface* client)
 {
 	_broadcaster->register_client(uri, client);
 }

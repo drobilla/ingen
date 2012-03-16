@@ -20,7 +20,7 @@
 
 namespace Ingen {
 
-class ClientInterface;
+class Interface;
 
 namespace Server {
 
@@ -30,33 +30,33 @@ class NodeImpl;
 class PortImpl;
 class PluginImpl;
 
-/** Utility class for sending GraphObjects to clients through ClientInterface.
+/** Utility class for sending GraphObjects to clients via Interface.
  *
- * While ClientInterface is the direct low level message-based interface
+ * While Interface is the direct low level message-based interface
  * (protocol), this is used from the engine to easily send proper Objects
  * with these messages (which is done in a few different parts of the code).
  *
- * Basically a serialiser, except to calls on ClientInterface rather than
+ * Basically a serialiser, except to calls on Interface rather than
  * eg a byte stream.
  */
 class ObjectSender {
 public:
-	static void send_object(ClientInterface*       client,
+	static void send_object(Interface*             client,
 	                        const GraphObjectImpl* object,
 	                        bool                   recursive);
 
 private:
-	static void send_patch(ClientInterface* client,
+	static void send_patch(Interface*       client,
 	                       const PatchImpl* patch,
 	                       bool             recursive,
-	                       bool             bundle=true);
-	static void send_node(ClientInterface*  client,
+	                       bool             bundle = true);
+	static void send_node(Interface*        client,
 	                      const NodeImpl*   node,
 	                      bool              recursive,
-	                      bool              bundle=true);
-	static void send_port(ClientInterface*  client,
+	                      bool              bundle = true);
+	static void send_port(Interface*        client,
 	                      const PortImpl*   port,
-	                      bool              bundle=true);
+	                      bool              bundle = true);
 };
 
 } // namespace Server

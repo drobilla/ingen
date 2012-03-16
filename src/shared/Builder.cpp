@@ -18,7 +18,7 @@
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen/CommonInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/Connection.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Patch.hpp"
@@ -34,7 +34,7 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-Builder::Builder(SharedPtr<Shared::URIs> uris, CommonInterface& interface)
+Builder::Builder(SharedPtr<Shared::URIs> uris, Interface& interface)
 	: _uris(uris)
 	, _interface(interface)
 {

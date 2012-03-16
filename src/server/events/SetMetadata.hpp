@@ -70,7 +70,7 @@ class SetMetadata : public Event
 {
 public:
 	SetMetadata(Engine&                     engine,
-	            ClientInterface*            client,
+	            Interface*                  client,
 	            int32_t                     id,
 	            SampleCount                 timestamp,
 	            bool                        create,

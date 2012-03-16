@@ -24,7 +24,7 @@
 #include "sord/sordmm.hpp"
 
 #include "ingen/Plugin.hpp"
-#include "ingen/ServerInterface.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/client/signal.hpp"
 #include "ingen/shared/ResourceImpl.hpp"
 #include "ingen/shared/World.hpp"
