@@ -36,13 +36,10 @@ class ServerInterface : public CommonInterface
 public:
 	virtual ~ServerInterface() {}
 
-	// Responses
-	virtual void respond_to(ClientInterface* client, int32_t id) = 0;
-	virtual void disable_responses() = 0;
-
-	// Client registration
-	virtual void register_client(ClientInterface* client) = 0;
-	virtual void unregister_client(const Raul::URI& uri) = 0;
+	/** Set the ID to use to respond to the next message.
+	 * Setting the ID to -1 will disable responses.
+	 */
+	virtual void set_response_id(int32_t id) = 0;
 
 	// Requests
 	virtual void ping() = 0;

@@ -240,5 +240,17 @@ Engine::process_events(ProcessContext& context)
 		(*i)->process(*_post_processor, context);
 }
 
+void
+Engine::register_client(const Raul::URI& uri, ClientInterface* client)
+{
+	_broadcaster->register_client(uri, client);
+}
+
+bool
+Engine::unregister_client(const Raul::URI& uri)
+{
+	return _broadcaster->unregister_client(uri);
+}
+
 } // namespace Server
 } // namespace Ingen

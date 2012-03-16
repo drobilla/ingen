@@ -225,24 +225,5 @@ OSCClientSender::set_property(const URI& path,
 	send_message("/set_property", m);
 }
 
-/** @page client_osc_namespace
- * <h2>/activity</h2>
- * @arg @p path :: String
- *
- * @par
- * Notification of "activity" (e.g. port message blinkenlights).
- */
-void
-OSCClientSender::activity(const Path& path, const Raul::Atom& value)
-{
-	if (!_enabled)
-		return;
-
-	lo_message m = lo_message_new();
-	lo_message_add_string(m, path.c_str());
-	AtomLiblo::lo_message_add_atom(m, value);
-	send_message("/activity", m);
-}
-
 } // namespace Server
 } // namespace Ingen

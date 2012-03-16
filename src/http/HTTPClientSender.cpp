@@ -126,25 +126,6 @@ HTTPClientSender::set_property(const URI& subject, const URI& key, const Atom& v
 }
 
 void
-HTTPClientSender::activity(const Path& path, const Raul::Atom& value)
-{
-	if (value.type() == Atom::BOOL) {
-		const string msg = string(
-			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
-				path.str()).append("> ingen:activity true .\n");
-		send_chunk(msg);
-	} else if (value.type() == Atom::FLOAT) {
-		const string msg = string(
-			"@prefix ingen: <http://drobilla.net/ns/ingen#> .\n\n<").append(
-				path.str()).append("> ingen:activity ").append(
-					value.get_bool() ? "true" : "false").append(" .\n");
-		send_chunk(msg);
-	} else {
-		warn << "Unknown activity type at " << path << endl;
-	}
-}
-
-void
 HTTPClientSender::move(const Path& old_path, const Path& new_path)
 {
 	string msg = string(

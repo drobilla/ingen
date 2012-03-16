@@ -180,7 +180,7 @@ OSCEngineReceiver::set_response_address_cb(const char* path, const char* types, 
 	if (id != -1) {
 		// TODO: Cache client
 		ClientInterface* client = me->_engine.broadcaster()->client(url);
-		me->_interface->respond_to(client, id);
+		me->_interface->set_response_id(id);
 	} else {
 		me->_interface->disable_responses();
 	}

@@ -22,6 +22,8 @@
 #include <map>
 #include <string>
 
+#include <glibmm/thread.h>
+
 #include "raul/SharedPtr.hpp"
 
 #include "ingen/ClientInterface.hpp"
@@ -61,6 +63,7 @@ public:
 	void send_object(const GraphObjectImpl* p, bool recursive);
 
 #define BROADCAST(msg, ...) \
+	Glib::Mutex::Lock lock(_clients_mutex); \
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) \
 		(*i).second->msg(__VA_ARGS__)
 
@@ -121,7 +124,9 @@ public:
 
 private:
 	typedef std::map<Raul::URI, ClientInterface*> Clients;
-	Clients _clients;
+
+	Glib::Mutex _clients_mutex;
+	Clients     _clients;
 };
 
 } // namespace Server

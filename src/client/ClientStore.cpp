@@ -65,7 +65,6 @@ ClientStore::ClientStore(SharedPtr<Shared::URIs>       uris,
 	CONNECT(disconnection, disconnect);
 	CONNECT(disconnect_all, disconnect_all);
 	CONNECT(property_change, set_property);
-	CONNECT(activity, activity);
 }
 
 void
@@ -410,15 +409,6 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 		else
 			LOG(warn) << "Property '" << predicate << "' for unknown object "
 			          << subject_uri << endl;
-	}
-}
-
-void
-ClientStore::activity(const Path& path, const Atom& value)
-{
-	SharedPtr<PortModel> port = PtrCast<PortModel>(_object(path));
-	if (port) {
-		port->signal_activity().emit(value);
 	}
 }
 

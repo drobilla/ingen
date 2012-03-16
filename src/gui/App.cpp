@@ -159,7 +159,9 @@ App::attach(SharedPtr<SigClientInterface> client)
 	assert(!_store);
 	assert(!_loader);
 
-	_world->engine()->register_client(client.get());
+	if (_world->local_engine()) {
+		_world->local_engine()->register_client(client->uri(), client.get());
+	}
 
 	_client = client;
 	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->engine(), client));

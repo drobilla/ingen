@@ -60,6 +60,7 @@ public:
 	const Quark ingen_Node;
 	const Quark ingen_Patch;
 	const Quark ingen_Port;
+	const Quark ingen_activity;
 	const Quark ingen_broadcast;
 	const Quark ingen_controlBinding;
 	const Quark ingen_document;

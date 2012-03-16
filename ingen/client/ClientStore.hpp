@@ -125,8 +125,6 @@ private:
 	void bundle_end()   {}
 
 	// Slots for SigClientInterface signals
-	void activity(const Raul::Path& path, const Raul::Atom& value);
-
 	bool attempt_connection(const Raul::Path& src_port_path,
 	                        const Raul::Path& dst_port_path);
 

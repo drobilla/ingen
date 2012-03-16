@@ -44,9 +44,6 @@ public:
 	virtual void response(int32_t id, Status status) = 0;
 
 	virtual void error(const std::string& msg) = 0;
-
-	virtual void activity(const Raul::Path& path,
-	                      const Raul::Atom& value) = 0;
 };
 
 } // namespace Ingen

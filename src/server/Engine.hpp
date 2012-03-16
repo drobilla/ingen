@@ -76,6 +76,10 @@ public:
 
 	virtual void process_events(ProcessContext& context);
 
+	virtual void register_client(const Raul::URI& uri, ClientInterface* client);
+
+	virtual bool unregister_client(const Raul::URI& uri);
+
 	Ingen::Shared::World* world() const { return _world; }
 
 	ClientBroadcaster*    broadcaster()      const { return _broadcaster; }

@@ -52,12 +52,7 @@ public:
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
-	virtual void respond_to(ClientInterface* client, int32_t id);
-	virtual void disable_responses();
-
-	// Client registration
-	virtual void register_client(ClientInterface* client);
-	virtual void unregister_client(const Raul::URI& uri);
+	virtual void set_response_id(int32_t id);
 
 	// Bundles
 	virtual void bundle_begin();

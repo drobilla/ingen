@@ -29,10 +29,8 @@
 #include "events/Get.hpp"
 #include "events/Move.hpp"
 #include "events/Ping.hpp"
-#include "events/RegisterClient.hpp"
 #include "events/SetMetadata.hpp"
 #include "events/SetPortValue.hpp"
-#include "events/UnregisterClient.hpp"
 
 #endif // INGEN_ENGINE_EVENTS_HPP
 

@@ -43,10 +43,8 @@ def build(bld):
             events/DisconnectAll.cpp
             events/Get.cpp
             events/Move.cpp
-            events/RegisterClient.cpp
             events/SetMetadata.cpp
             events/SetPortValue.cpp
-            events/UnregisterClient.cpp
             ingen_engine.cpp
             internals/Controller.cpp
             internals/Delay.cpp

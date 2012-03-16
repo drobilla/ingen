@@ -380,7 +380,7 @@ ConnectWindow::gtk_callback()
 			sigc::mem_fun(this, &ConnectWindow::ingen_response));
 
 		_ping_id = abs(rand()) / 2 * 2; // avoid -1
-		_app->engine()->respond_to(_app->client().get(), _ping_id);
+		_app->engine()->set_response_id(_ping_id);
 		_app->engine()->ping();
 
 		if (_widgets_loaded) {
@@ -397,12 +397,13 @@ ConnectWindow::gtk_callback()
 			const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
 				(now.tv_usec - last.tv_usec) * 0.001f;
 			if (ms_since_last > 1000) {
-				_app->engine()->respond_to(_app->client().get(), _ping_id);
+				_app->engine()->set_response_id(_ping_id);
 				_app->engine()->ping();
 				last = now;
 			}
 		}
 	} else if (_connect_stage == 2) {
+		_app->engine()->get("ingen:engine");
 		_app->engine()->get(Path("/"));
 		if (_widgets_loaded)
 			_progress_label->set_text(string("Requesting root patch..."));

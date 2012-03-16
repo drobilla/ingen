@@ -7,7 +7,7 @@ class Client : public Ingen::ClientInterface
 {
 public:
     /** Wrapper for engine->register_client to appease SWIG */
-    virtual void subscribe(Ingen::yServerInterface* engine) {
+    virtual void subscribe(Ingen::ServerInterface* engine) {
         engine->register_client(this);
     }
 
@@ -21,5 +21,4 @@ public:
 	void move(const Raul::Path& old_path, const Raul::Path& new_path) {}
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path) {}
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value) {}
-	void activity(const Raul::Path& port_path) {}
 };

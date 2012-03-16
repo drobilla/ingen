@@ -96,9 +96,6 @@ public:
 	                          const Raul::URI&  predicate,
 	                          const Raul::Atom& value);
 
-	virtual void activity(const Raul::Path& path,
-	                      const Raul::Atom& value);
-
 private:
 	Raul::URI _url;
 };

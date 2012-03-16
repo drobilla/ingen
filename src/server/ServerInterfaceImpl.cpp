@@ -21,6 +21,7 @@
 
 #include "ingen/shared/URIs.hpp"
 
+#include "ClientBroadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EventSource.hpp"
@@ -63,36 +64,17 @@ ServerInterfaceImpl::now() const
 }
 
 void
-ServerInterfaceImpl::respond_to(ClientInterface* client, int32_t id)
+ServerInterfaceImpl::set_response_id(int32_t id)
 {
-	_request_client = client;
-	_request_id     = id;
-}
-
-void
-ServerInterfaceImpl::disable_responses()
-{
-	_request_client = NULL;
-	_request_id     = -1;
+	if (!_request_client) {  // Kludge
+		_request_client = _engine.broadcaster()->client(
+			"http://drobilla.net/ns/ingen#internal");
+		std::cerr << "SET REQUEST CLIENT " << (void*)_request_client << std::endl;
+	}
+	_request_id = id;
 }
 
 /* *** ServerInterface implementation below here *** */
-
-void
-ServerInterfaceImpl::register_client(ClientInterface* client)
-{
-	push_queued(new Events::RegisterClient(_engine, client, _request_id, now(), client->uri()));
-	_request_client = client;
-	_request_id     = 1;
-}
-
-void
-ServerInterfaceImpl::unregister_client(const URI& uri)
-{
-	push_queued(new Events::UnregisterClient(_engine, _request_client, _request_id, now(), uri));
-	_request_client = NULL;
-	_request_id     = -1;
-}
 
 // Bundle commands
 

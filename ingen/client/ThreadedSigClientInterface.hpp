@@ -65,7 +65,6 @@ public:
 		, variable_change_slot(_signal_variable_change.make_slot())
 		, property_change_slot(_signal_property_change.make_slot())
 		, port_value_slot(_signal_port_value.make_slot())
-		, activity_slot(_signal_activity.make_slot())
 	{}
 
 	virtual Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
@@ -110,9 +109,6 @@ public:
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(property_change_slot, subject, key, value)); }
 
-	void activity(const Raul::Path& port_path, const Raul::Atom& value)
-		{ push_sig(sigc::bind(activity_slot, port_path, value)); }
-
 	/** Process all queued events - Called from GTK thread to emit signals. */
 	bool emit_signals();
 
@@ -124,25 +120,24 @@ private:
 
 	Raul::SRSWQueue<Closure> _sigs;
 
-	sigc::slot<void>                                              bundle_begin_slot;
-	sigc::slot<void>                                              bundle_end_slot;
-	sigc::slot<void, int32_t, Status>                             response_slot;
-	sigc::slot<void, std::string>                                 error_slot;
-	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>          new_plugin_slot;
-	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool>       new_port_slot;
+	sigc::slot<void>                                        bundle_begin_slot;
+	sigc::slot<void>                                        bundle_end_slot;
+	sigc::slot<void, int32_t, Status>                       response_slot;
+	sigc::slot<void, std::string>                           error_slot;
+	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>    new_plugin_slot;
+	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool> new_port_slot;
 	sigc::slot<void, Raul::URI, Resource::Properties,
-	                            Resource::Graph>                  put_slot;
+	                            Resource::Graph>            put_slot;
 	sigc::slot<void, Raul::URI, Resource::Properties,
-	                            Resource::Properties>             delta_slot;
-	sigc::slot<void, Raul::Path, Raul::Path>                      connection_slot;
-	sigc::slot<void, Raul::URI>                                   object_deleted_slot;
-	sigc::slot<void, Raul::Path, Raul::Path>                      object_moved_slot;
-	sigc::slot<void, Raul::URI, Raul::URI>                        disconnection_slot;
-	sigc::slot<void, Raul::Path, Raul::Path>                      disconnect_all_slot;
-	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            variable_change_slot;
-	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>            property_change_slot;
-	sigc::slot<void, Raul::Path, Raul::Atom>                      port_value_slot;
-	sigc::slot<void, Raul::Path, Raul::Atom>                      activity_slot;
+	                            Resource::Properties>       delta_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>                connection_slot;
+	sigc::slot<void, Raul::URI>                             object_deleted_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>                object_moved_slot;
+	sigc::slot<void, Raul::URI, Raul::URI>                  disconnection_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>                disconnect_all_slot;
+	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>      variable_change_slot;
+	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>      property_change_slot;
+	sigc::slot<void, Raul::Path, Raul::Atom>                port_value_slot;
 };
 
 } // namespace Client

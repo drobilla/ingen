@@ -18,6 +18,7 @@
 #include "ingen/ClientInterface.hpp"
 
 #include "ClientBroadcaster.hpp"
+#include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "Get.hpp"
@@ -66,6 +67,15 @@ Get::post_process()
 		respond(SUCCESS);
 		if (_request_client) {
 			_engine.broadcaster()->send_plugins_to(_request_client, _plugins);
+		}
+	} else if (_uri == "ingen:engine") {
+		// TODO: Keep a proper RDF model of the engine
+		if (_request_client) {
+			Shared::URIs& uris = *_engine.world()->uris().get();
+			_request_client->set_property(
+				uris.ingen_engine,
+				uris.ingen_sampleRate,
+				uris.forge.make(int32_t(_engine.driver()->sample_rate())));
 		}
 	} else if (!_object && !_plugin) {
 		respond(NOT_FOUND);

@@ -39,6 +39,7 @@ namespace Server {
 void
 ClientBroadcaster::register_client(const URI& uri, ClientInterface* client)
 {
+	Glib::Mutex::Lock lock(_clients_mutex);
 	Clients::iterator i = _clients.find(uri);
 
 	if (i == _clients.end()) {
@@ -56,12 +57,14 @@ ClientBroadcaster::register_client(const URI& uri, ClientInterface* client)
 bool
 ClientBroadcaster::unregister_client(const URI& uri)
 {
-	size_t erased = _clients.erase(uri);
+	Glib::Mutex::Lock lock(_clients_mutex);
+	const size_t erased = _clients.erase(uri);
 
-	if (erased > 0)
+	if (erased > 0) {
 		LOG(info) << "Unregistered client: " << uri << endl;
-	else
+	} else {
 		LOG(warn) << "Failed to find client to unregister: " << uri << endl;
+	}
 
 	return (erased > 0);
 }
@@ -72,6 +75,7 @@ ClientBroadcaster::unregister_client(const URI& uri)
 ClientInterface*
 ClientBroadcaster::client(const URI& uri)
 {
+	Glib::Mutex::Lock lock(_clients_mutex);
 	Clients::iterator i = _clients.find(uri);
 	if (i != _clients.end()) {
 		return (*i).second;
@@ -83,8 +87,10 @@ ClientBroadcaster::client(const URI& uri)
 void
 ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 {
-	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c)
+	Glib::Mutex::Lock lock(_clients_mutex);
+	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c) {
 		send_plugins_to((*c).second, plugins);
+	}
 }
 
 void
@@ -108,8 +114,10 @@ ClientBroadcaster::send_plugins_to(ClientInterface* client, const NodeFactory::P
 void
 ClientBroadcaster::send_object(const GraphObjectImpl* o, bool recursive)
 {
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i)
+	Glib::Mutex::Lock lock(_clients_mutex);
+	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) {
 		ObjectSender::send_object((*i).second, o, recursive);
+	}
 }
 
 } // namespace Server

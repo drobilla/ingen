@@ -149,8 +149,6 @@ OSCClientReceiver::setup_callbacks()
 	lo_server_thread_add_method(_st, "/connect", "ss", connection_cb, this);
 	lo_server_thread_add_method(_st, "/disconnect", "ss", disconnection_cb, this);
 	lo_server_thread_add_method(_st, "/set_property", NULL, set_property_cb, this);
-	lo_server_thread_add_method(_st, "/activity", "sT", activity_cb, this);
-	lo_server_thread_add_method(_st, "/activity", "sf", activity_cb, this);
 }
 
 /** Catches errors that aren't a direct result of a client request.
@@ -264,18 +262,6 @@ OSCClientReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	Atom value = AtomLiblo::lo_arg_to_atom(types[2], argv[2]);
 
 	_target->set_property(obj_uri, key, value);
-
-	return 0;
-}
-
-int
-OSCClientReceiver::_activity_cb(const char* path, const char* types, lo_arg** argv, int argc, lo_message msg)
-{
-	const char* const port_path = &argv[0]->s;
-
-	Atom value = AtomLiblo::lo_arg_to_atom(types[1], argv[1]);
-
-	_target->activity(port_path, value);
 
 	return 0;
 }

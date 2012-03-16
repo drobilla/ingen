@@ -80,7 +80,6 @@ private:
 	LO_HANDLER(OSCClientReceiver, delta_add);
 	LO_HANDLER(OSCClientReceiver, delta_end);
 	LO_HANDLER(OSCClientReceiver, set_property);
-	LO_HANDLER(OSCClientReceiver, activity);
 };
 
 } // namespace Client

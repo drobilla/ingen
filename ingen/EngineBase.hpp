@@ -18,7 +18,11 @@
 #ifndef INGEN_ENGINE_BASE_HPP
 #define INGEN_ENGINE_BASE_HPP
 
+#include "raul/URI.hpp"
+
 namespace Ingen {
+
+class ClientInterface;
 
 /**
    The engine which executes the process graph.
@@ -60,6 +64,18 @@ public:
 	   caller should cease calling main_iteration() and stop the engine.
 	*/
 	virtual bool main_iteration() = 0;
+
+	/**
+	   Register a client to receive updates about engine changes.
+	*/
+	virtual void register_client(const Raul::URI& uri,
+	                             ClientInterface* client) = 0;
+
+	/**
+	   Unregister a client.
+	*/
+	virtual bool unregister_client(const Raul::URI& uri) = 0;
+
 };
 
 } // namespace Ingen
