@@ -29,23 +29,25 @@ void
 Notification::post_process(Notification& note,
                            Engine&       engine)
 {
-	Raul::Forge& forge = engine.world()->forge();
+	const Ingen::Shared::URIs& uris  = *engine.world()->uris().get();
+	Raul::Forge&               forge = engine.world()->forge();
 	switch (note.type) {
 	case PORT_VALUE:
 		engine.broadcaster()->set_property(note.port->path(),
-		                                   engine.world()->uris()->ingen_value,
+		                                   uris.ingen_value,
 		                                   note.value);
 		break;
 	case PORT_ACTIVITY:
-		engine.broadcaster()->activity(note.port->path(), note.value);
+		engine.broadcaster()->set_property(note.port->path(),
+		                                   uris.ingen_activity,
+		                                   note.value);
 		break;
 	case PORT_BINDING: {
-		const Ingen::Shared::URIs& uris = *engine.world()->uris().get();
 		Raul::Atom::DictValue dict;
 		switch (note.binding_type) {
 		case ControlBindings::MIDI_CC:
 			dict[uris.rdf_type]              = uris.midi_Controller;
-			dict[uris.midi_controllerNumber] = forge.make(note.value.get_int32());
+			dict[uris.midi_controllerNumber] = note.value;
 			break;
 		case ControlBindings::MIDI_BENDER:
 			dict[uris.rdf_type] = uris.midi_Bender;
