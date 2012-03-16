@@ -75,7 +75,6 @@ public:
 	virtual void set_response_id(int32_t id) = 0;
 
 	// Requests
-	virtual void ping() = 0;
 	virtual void get(const Raul::URI& uri) = 0;
 
 	// Response

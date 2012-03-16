@@ -55,30 +55,23 @@ public:
 		LV2_Feature _feature;
 	};
 
-	class URIMapFeature : public Feature {
-	public:
+	struct URIMapFeature : public Feature {
 		URIMapFeature(LV2URIMap* map);
-
-	private:
-		LV2_URI_Map_Feature _feature_data;
+		LV2_URI_Map_Feature uri_map;
 	};
 
-	class URIDMapFeature : public Feature {
-	public:
+	struct URIDMapFeature : public Feature {
 		URIDMapFeature(LV2URIMap* map, LV2_URID_Map* urid_map);
-		LV2_URID map(const char* uri);
-	private:
+		LV2_URID        map(const char* uri);
 		static LV2_URID default_map(LV2_URID_Map_Handle h, const char* uri);
-		LV2_URID_Map _feature_data;
+		LV2_URID_Map urid_map;
 	};
 
-	class URIDUnmapFeature : public Feature {
-	public:
+	struct URIDUnmapFeature : public Feature {
 		URIDUnmapFeature(LV2URIMap* map, LV2_URID_Unmap* urid_unmap);
-		const char* unmap(const LV2_URID urid);
-	private:
+		const char*        unmap(const LV2_URID urid);
 		static const char* default_unmap(LV2_URID_Map_Handle h, LV2_URID uri);
-		LV2_URID_Unmap _feature_data;
+		LV2_URID_Unmap urid_unmap;
 	};
 
 	SharedPtr<URIMapFeature>    uri_map_feature()    { return _uri_map_feature; }

@@ -92,6 +92,8 @@ def configure(conf):
                       uselib_store='LV2_ATOM')
     autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-midi',
                       uselib_store='LV2_MIDI')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-patch',
+                      uselib_store='LV2_PATCH')
     autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-state',
                       uselib_store='LV2_STATE')
     autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-contexts',

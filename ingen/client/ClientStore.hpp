@@ -104,7 +104,6 @@ public:
 	void del(const Raul::URI& uri);
 
 	void set_response_id(int32_t id) {}
-	void ping() {}
 	void get(const Raul::URI& uri) {}
 	void response(int32_t id, Status status) {}
 	void error(const std::string& msg) {}

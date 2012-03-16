@@ -182,12 +182,6 @@ ServerInterfaceImpl::set_property(const URI&  uri,
 // Requests //
 
 void
-ServerInterfaceImpl::ping()
-{
-	push_queued(new Events::Ping(_engine, _request_client, _request_id, now()));
-}
-
-void
 ServerInterfaceImpl::get(const URI& uri)
 {
 	push_queued(new Events::Get(_engine, _request_client, _request_id, now(), uri));

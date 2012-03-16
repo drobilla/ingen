@@ -36,6 +36,7 @@ public:
 
 	struct Quark : public Raul::URI {
 		Quark(LV2URIMap* map, const char* str);
+		operator LV2_URID() const { return id; }
 		uint32_t id;
 	};
 
@@ -56,13 +57,17 @@ public:
 	const Quark cv_CVPort;
 	const Quark doap_name;
 	const Quark ev_EventPort;
+	const Quark ingen_Connection;
 	const Quark ingen_Internal;
 	const Quark ingen_Node;
 	const Quark ingen_Patch;
 	const Quark ingen_Port;
 	const Quark ingen_activity;
 	const Quark ingen_broadcast;
+	const Quark ingen_canvasX;
+	const Quark ingen_canvasY;
 	const Quark ingen_controlBinding;
+	const Quark ingen_destination;
 	const Quark ingen_document;
 	const Quark ingen_enabled;
 	const Quark ingen_engine;
@@ -72,9 +77,8 @@ public:
 	const Quark ingen_polyphony;
 	const Quark ingen_sampleRate;
 	const Quark ingen_selected;
+	const Quark ingen_source;
 	const Quark ingen_value;
-	const Quark ingen_canvasX;
-	const Quark ingen_canvasY;
 	const Quark lv2_AudioPort;
 	const Quark lv2_ControlPort;
 	const Quark lv2_InputPort;
@@ -98,6 +102,12 @@ public:
 	const Quark midi_NoteOn;
 	const Quark midi_controllerNumber;
 	const Quark midi_noteNumber;
+	const Quark patch_Get;
+	const Quark patch_Put;
+	const Quark patch_Response;
+	const Quark patch_body;
+	const Quark patch_request;
+	const Quark patch_subject;
 	const Quark rdf_instanceOf;
 	const Quark rdf_type;
 	const Quark rdfs_seeAlso;

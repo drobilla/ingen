@@ -115,7 +115,6 @@ public:
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#broadcaster"; } ///< N/A
 
 	void set_response_id(int32_t id) {} ///< N/A
-	void ping() {} ///< N/A
 	void get(const Raul::URI& uri) {} ///< N/A
 	void response(int32_t id, Status status) {} ///< N/A
 

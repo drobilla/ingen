@@ -111,7 +111,6 @@ protected:
 		{ EMIT(property_change, subject, key, value); }
 
 	void set_response_id(int32_t id) {}
-	void ping() {}
 	void get(const Raul::URI& uri) {}
 };
 

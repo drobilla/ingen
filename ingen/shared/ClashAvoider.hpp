@@ -77,7 +77,6 @@ public:
 	virtual void del(const Raul::URI& uri);
 
 	virtual void set_response_id(int32_t id) {}
-	virtual void ping() {}
 	virtual void get(const Raul::URI& uri) {}
 	virtual void response(int32_t id, Status status) {}
 	virtual void error(const std::string& msg) {}

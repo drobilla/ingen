@@ -43,21 +43,21 @@ LV2URIMap::LV2URIMap(LV2_URID_Map* map, LV2_URID_Unmap* unmap)
 }
 
 LV2URIMap::URIMapFeature::URIMapFeature(LV2URIMap* map)
-	: Feature(LV2_URI_MAP_URI, &_feature_data)
+	: Feature(LV2_URI_MAP_URI, &uri_map)
 {
-	_feature_data.uri_to_id     = &LV2URIMap::uri_map_uri_to_id;
-	_feature_data.callback_data = map;
+	uri_map.uri_to_id     = &LV2URIMap::uri_map_uri_to_id;
+	uri_map.callback_data = map;
 }
 
 LV2URIMap::URIDMapFeature::URIDMapFeature(LV2URIMap*    map,
-                                          LV2_URID_Map* urid_map)
-	: Feature(LV2_URID__map, &_feature_data)
+                                          LV2_URID_Map* impl)
+	: Feature(LV2_URID__map, &urid_map)
 {
-	if (urid_map) {
-		_feature_data = *urid_map;
+	if (impl) {
+		urid_map = *impl;
 	} else {
-		_feature_data.map    = default_map;
-		_feature_data.handle = NULL;
+		urid_map.map    = default_map;
+		urid_map.handle = NULL;
 	}
 }
 
@@ -71,19 +71,19 @@ LV2URIMap::URIDMapFeature::default_map(LV2_URID_Map_Handle handle,
 LV2_URID
 LV2URIMap::URIDMapFeature::map(const char* uri)
 {
-	return _feature_data.map(_feature_data.handle, uri);
+	return urid_map.map(urid_map.handle, uri);
 }
 
 
 LV2URIMap::URIDUnmapFeature::URIDUnmapFeature(LV2URIMap*      map,
-                                              LV2_URID_Unmap* urid_unmap)
-	: Feature(LV2_URID__unmap, &_feature_data)
+                                              LV2_URID_Unmap* impl)
+	: Feature(LV2_URID__unmap, &urid_unmap)
 {
-	if (urid_unmap) {
-		_feature_data = *urid_unmap;
+	if (impl) {
+		urid_unmap = *impl;
 	} else {
-		_feature_data.unmap  = default_unmap;
-		_feature_data.handle = NULL;
+		urid_unmap.unmap  = default_unmap;
+		urid_unmap.handle = NULL;
 	}
 }
 
@@ -97,7 +97,7 @@ LV2URIMap::URIDUnmapFeature::default_unmap(LV2_URID_Unmap_Handle handle,
 const char*
 LV2URIMap::URIDUnmapFeature::unmap(LV2_URID urid)
 {
-	return _feature_data.unmap(_feature_data.handle, urid);
+	return urid_unmap.unmap(urid_unmap.handle, urid);
 }
 
 uint32_t
