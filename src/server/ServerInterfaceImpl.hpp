@@ -83,8 +83,6 @@ public:
 	virtual void disconnect_all(const Raul::Path& parent_patch_path,
 	                            const Raul::Path& path);
 
-	virtual void ping();
-
 	virtual void get(const Raul::URI& uri);
 
 	virtual void response(int32_t id, Status status) {}  ///< N/A

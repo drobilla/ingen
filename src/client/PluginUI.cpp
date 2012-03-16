@@ -94,10 +94,13 @@ lv2_ui_write(SuilController controller,
 		}
 
 	} else if (format == uris.atom_eventTransfer.id) {
+		std::cerr << "FIXME: atom event transfer" << std::endl;
+		#if  0
 		LV2_Atom* buf = (LV2_Atom*)buffer;
 		Raul::Atom val;
 		Shared::LV2Atom::to_atom(uris, buf, val);
 		ui->world()->engine()->set_property(port->path(), uris.ingen_value, val);
+		#endif
 
 	} else {
 		warn << "Unknown value format " << format

@@ -22,15 +22,18 @@
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+#include "serd/serd.h"
 
 namespace Ingen {
 namespace Shared {
+
+class AtomSink;
 
 /** An Interface that writes LV2 atoms. */
 class AtomWriter : public Interface
 {
 public:
-	AtomWriter(LV2URIMap& map, URIs& uris);
+	AtomWriter(LV2URIMap& map, URIs& uris, AtomSink& sink);
 	~AtomWriter() {}
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#AtomWriter"; }
@@ -74,10 +77,13 @@ public:
 	void error(const std::string& msg);
 
 private:
+	void    finish_msg();
 	int32_t next_id();
 
 	LV2URIMap&     _map;
 	URIs&          _uris;
+	AtomSink&      _sink;
+	SerdChunk      _out;
 	LV2_Atom_Forge _forge;
 	int32_t        _id;
 };

@@ -154,9 +154,9 @@ Port::on_value_changed(const Glib::VariantBase& value)
 	                            world->uris()->ingen_value,
 	                            _app.forge().make(fval));
 
-	PatchWindow* pw = get_patch_window();
-	if (pw) {
-		pw->show_port_status(model().get(), _app.forge().make(fval));
+	PatchBox* box = get_patch_box();
+	if (box) {
+		box->show_port_status(model().get(), _app.forge().make(fval));
 	}
 }
 
@@ -171,18 +171,18 @@ Port::value_changed(const Atom& value)
 bool
 Port::on_event(GdkEvent* ev)
 {
-	PatchWindow* win = NULL;
+	PatchBox* box = NULL;
 	switch (ev->type) {
 	case GDK_ENTER_NOTIFY:
-		win = get_patch_window();
-		if (win) {
-			win->object_entered(model().get());
+		box = get_patch_box();
+		if (box) {
+			box->object_entered(model().get());
 		}
 		break;
 	case GDK_LEAVE_NOTIFY:
-		win = get_patch_window();
-		if (win) {
-			win->object_left(model().get());
+		box = get_patch_box();
+		if (box) {
+			box->object_left(model().get());
 		}
 		break;
 	case GDK_BUTTON_PRESS:
@@ -263,15 +263,15 @@ Port::activity(const Raul::Atom& value)
 	}
 }
 
-PatchWindow*
-Port::get_patch_window() const
+PatchBox*
+Port::get_patch_box() const
 {
 	SharedPtr<const PatchModel> patch = PtrCast<const PatchModel>(model()->parent());
 	if (!patch) {
 		patch = PtrCast<const PatchModel>(model()->parent()->parent());
 	}
 
-	return _app.window_factory()->patch_window(patch);
+	return _app.window_factory()->patch_box(patch);
 }
 
 void

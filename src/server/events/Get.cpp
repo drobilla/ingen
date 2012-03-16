@@ -69,6 +69,7 @@ Get::post_process()
 			_engine.broadcaster()->send_plugins_to(_request_client, _plugins);
 		}
 	} else if (_uri == "ingen:engine") {
+		respond(SUCCESS);
 		// TODO: Keep a proper RDF model of the engine
 		if (_request_client) {
 			Shared::URIs& uris = *_engine.world()->uris().get();

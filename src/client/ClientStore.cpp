@@ -31,7 +31,7 @@
 
 #define LOG(s) s << "[ClientStore] "
 
-//#define INGEN_CLIENT_STORE_DUMP 1
+// #define INGEN_CLIENT_STORE_DUMP 1
 
 using namespace std;
 using namespace Raul;

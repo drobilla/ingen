@@ -42,6 +42,7 @@ def build(bld):
             NodeMenu.cpp
             NodeModule.cpp
             ObjectMenu.cpp
+            PatchBox.cpp
             PatchCanvas.cpp
             PatchPortModule.cpp
             PatchTreeWindow.cpp
@@ -67,3 +68,13 @@ def build(bld):
         install_path  = '${DATADIR}/ingen',
         chmod         = Utils.O755,
         INGEN_VERSION = bld.env['INGEN_VERSION'])
+
+    # LV2 UI
+    obj = bld(features     = 'cxx cxxshlib',
+              source       = 'ingen_gui_lv2.cpp',
+              includes     = ['.', '../..'],
+              name         = 'ingen_gui_lv2',
+              target       = 'ingen_gui_lv2',
+              install_path = '${LV2DIR}/ingen.lv2/',
+              use          = 'libingen_gui libingen_shared')
+    autowaf.use_lib(bld, obj, 'LV2_UI')

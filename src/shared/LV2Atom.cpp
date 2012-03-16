@@ -43,7 +43,7 @@ to_atom(Raul::Forge*        forge,
 	} else if (object->type == uris.atom_Bool.id) {
 		atom = forge->make((bool)(int32_t*)(object + 1));
 		return true;
-	} else if (object->type == uris.atom_Int32.id) {
+	} else if (object->type == uris.atom_Int.id) {
 		atom = forge->make((int32_t*)(object + 1));
 		return true;
 	} else if (object->type == uris.atom_Float.id) {
@@ -67,7 +67,7 @@ from_atom(const Shared::URIs& uris, const Raul::Atom& atom, LV2_Atom* object)
 		*(float*)(object + 1) = atom.get_float();
 		break;
 	case Raul::Atom::INT:
-		object->type = uris.atom_Int32.id;
+		object->type = uris.atom_Int.id;
 		object->size = sizeof(int32_t);
 		*(int32_t*)(object + 1) = atom.get_int32();
 		break;

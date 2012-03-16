@@ -44,6 +44,7 @@ class LoadPluginWindow;
 class NewSubpatchWindow;
 class NodeControlWindow;
 class PropertiesWindow;
+class PatchBox;
 class PatchView;
 class PatchWindow;
 class RenameWindow;
@@ -62,13 +63,14 @@ public:
 
 	size_t num_open_patch_windows();
 
+	PatchBox*          patch_box(SharedPtr<const PatchModel> patch);
 	PatchWindow*       patch_window(SharedPtr<const PatchModel> patch);
 	PatchWindow*       parent_patch_window(SharedPtr<const NodeModel> node);
 	NodeControlWindow* control_window(SharedPtr<const NodeModel> node);
 
 	void present_patch(SharedPtr<const PatchModel> model,
-	                   PatchWindow*          preferred = NULL,
-	                   SharedPtr<PatchView>  view      = SharedPtr<PatchView>());
+	                   PatchWindow*                preferred = NULL,
+	                   SharedPtr<PatchView>        view      = SharedPtr<PatchView>());
 
 	void present_controls(SharedPtr<const NodeModel> node);
 
@@ -82,6 +84,8 @@ public:
 	void present_properties(SharedPtr<const ObjectModel> object);
 
 	bool remove_patch_window(PatchWindow* win, GdkEventAny* ignored = NULL);
+
+	void set_main_box(PatchBox* box) { _main_box = box; }
 
 	void clear();
 
@@ -97,6 +101,7 @@ private:
 	                                         GdkEventAny*       ignored);
 
 	App&                   _app;
+	PatchBox*              _main_box;
 	PatchWindowMap         _patch_windows;
 	ControlWindowMap       _control_windows;
 	LoadPluginWindow*      _load_plugin_win;

@@ -18,12 +18,14 @@
 #ifndef INGEN_ATOMSINK_HPP
 #define INGEN_ATOMSINK_HPP
 
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+
 namespace Ingen {
 namespace Shared {
 
-class AtomSink
-{
+class AtomSink {
 public:
+	virtual ~AtomSink() {}
 	virtual void write(const LV2_Atom* msg) = 0;
 };
 

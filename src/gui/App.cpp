@@ -317,14 +317,17 @@ App::show_about()
  * @return true iff the application quit.
  */
 bool
-App::quit(Gtk::Window& dialog_parent)
+App::quit(Gtk::Window* dialog_parent)
 {
 	bool quit = true;
 	if (_world->local_engine()) {
-		Gtk::MessageDialog d(dialog_parent,
+		Gtk::MessageDialog d(
 			"The engine is running in this process.  Quitting will terminate Ingen."
 			"\n\n" "Are you sure you want to quit?",
 			true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_NONE, true);
+		if (dialog_parent) {
+			d.set_transient_for(*dialog_parent);
+		}
 		d.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 		d.add_button(Gtk::Stock::QUIT, Gtk::RESPONSE_CLOSE);
 		quit = (d.run() == Gtk::RESPONSE_CLOSE);

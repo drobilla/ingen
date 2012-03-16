@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 
 #include "raul/SharedPtr.hpp"
+#include "raul/URI.hpp"
 
 namespace Raul { class Atom; }
 namespace Ganv { class Port; class Item; }
@@ -39,6 +40,7 @@ using namespace Ingen::Client;
 
 namespace GUI {
 
+class App;
 class LoadPluginWindow;
 class NewSubpatchWindow;
 class NodeControlWindow;

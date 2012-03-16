@@ -15,19 +15,50 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#include "ingen/shared/AtomSink.hpp"
+#include "ingen/shared/AtomWriter.hpp"
 #include "raul/Path.hpp"
-
-#include "AtomWriter.hpp"
+#include "serd/serd.h"
 
 namespace Ingen {
 namespace Shared {
 
-AtomWriter::AtomWriter(LV2URIMap& map, URIs& uris)
+static LV2_Atom_Forge_Ref
+forge_sink(LV2_Atom_Forge_Sink_Handle handle,
+           const void*                buf,
+           uint32_t                   size)
+{
+	SerdChunk*               chunk = (SerdChunk*)handle;
+	const LV2_Atom_Forge_Ref ref   = chunk->len + 1;
+	serd_chunk_sink(buf, size, chunk);
+	return ref;
+}
+
+static LV2_Atom*
+forge_deref(LV2_Atom_Forge_Sink_Handle handle, LV2_Atom_Forge_Ref ref)
+{
+	SerdChunk* chunk = (SerdChunk*)handle;
+	return (LV2_Atom*)(chunk->buf + ref - 1);
+}
+
+
+AtomWriter::AtomWriter(LV2URIMap& map, URIs& uris, AtomSink& sink)
 	: _map(map)
 	, _uris(uris)
-	, _id(-1)
+	, _sink(sink)
+	, _id(1)
 {
+	_out.buf = NULL;
+	_out.len = 0;
 	lv2_atom_forge_init(&_forge, &map.urid_map_feature()->urid_map);
+	lv2_atom_forge_set_sink(&_forge, forge_sink, forge_deref, &_out);
+}
+
+void
+AtomWriter::finish_msg()
+{
+	_sink.write((LV2_Atom*)_out.buf);
+	_out.len = 0;
 }
 
 int32_t
@@ -55,6 +86,11 @@ AtomWriter::put(const Raul::URI&            uri,
                 const Resource::Properties& properties,
                 Resource::Graph             ctx)
 {
+	LV2_Atom_Forge_Frame msg;
+	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Put);
+	// ...
+	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
 }
 
 void
@@ -92,6 +128,8 @@ AtomWriter::connect(const Raul::Path& src,
 	lv2_atom_forge_pop(&_forge, &body);
 
 	lv2_atom_forge_pop(&_forge, &msg);
+
+	finish_msg();
 }
 
 void
@@ -126,6 +164,7 @@ AtomWriter::get(const Raul::URI& uri)
 	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
 	lv2_atom_forge_uri(&_forge, uri.c_str(), uri.length());
 	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
 }
 
 void
@@ -136,6 +175,7 @@ AtomWriter::response(int32_t id, Status status)
 	lv2_atom_forge_property_head(&_forge, _uris.patch_request, 0);
 	lv2_atom_forge_int32(&_forge, id);
 	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
 }
 
 void

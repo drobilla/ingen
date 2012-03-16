@@ -321,7 +321,7 @@ ConnectWindow::on_hide()
 void
 ConnectWindow::quit_clicked()
 {
-	if (_app->quit(*this))
+	if (_app->quit(this))
 		_quit_flag = true;
 }
 

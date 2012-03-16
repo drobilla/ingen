@@ -44,7 +44,7 @@ public:
 
 	const Quark atom_Bool;
 	const Quark atom_Float;
-	const Quark atom_Int32;
+	const Quark atom_Int;
 	const Quark atom_MessagePort;
 	const Quark atom_String;
 	const Quark atom_ValuePort;

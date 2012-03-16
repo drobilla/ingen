@@ -37,6 +37,7 @@ namespace GUI {
 
 WindowFactory::WindowFactory(App& app)
 	: _app(app)
+	, _main_box(NULL)
 	, _load_plugin_win(NULL)
 	, _load_patch_win(NULL)
 	, _new_subpatch_win(NULL)
@@ -98,6 +99,17 @@ WindowFactory::num_open_patch_windows()
 	return ret;
 }
 
+PatchBox*
+WindowFactory::patch_box(SharedPtr<const PatchModel> patch)
+{
+	PatchWindow* window = patch_window(patch);
+	if (window) {
+		return window->box();
+	} else {
+		return _main_box;
+	}
+}
+
 PatchWindow*
 WindowFactory::patch_window(SharedPtr<const PatchModel> patch)
 {
@@ -147,7 +159,7 @@ WindowFactory::present_patch(SharedPtr<const PatchModel> patch,
 		w = _patch_windows.find(preferred->patch()->path());
 		assert((*w).second == preferred);
 
-		preferred->set_patch(patch, view);
+		preferred->box()->set_patch(patch, view);
 		_patch_windows.erase(w);
 		_patch_windows[patch->path()] = preferred;
 		preferred->present();
@@ -168,7 +180,7 @@ WindowFactory::new_patch_window(SharedPtr<const PatchModel> patch,
 	WidgetFactory::get_widget_derived("patch_win", win);
 	win->init_window(_app);
 
-	win->set_patch(patch, view);
+	win->box()->set_patch(patch, view);
 	_patch_windows[patch->path()] = win;
 
 	win->signal_delete_event().connect(sigc::bind<0>(
@@ -181,7 +193,7 @@ bool
 WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 {
 	if (_patch_windows.size() <= 1)
-		return !_app.quit(*win);
+		return !_app.quit(win);
 
 	PatchWindowMap::iterator w = _patch_windows.find(win->patch()->path());
 
