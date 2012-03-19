@@ -24,8 +24,11 @@
 
 #include <boost/utility.hpp>
 
+#include "ingen/shared/URIs.hpp"
+
+#include "Buffer.hpp"
+#include "BufferFactory.hpp"
 #include "Context.hpp"
-#include "ObjectBuffer.hpp"
 #include "types.hpp"
 
 using namespace std;
@@ -33,10 +36,10 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-class AudioBuffer : public ObjectBuffer
+class AudioBuffer : public Buffer
 {
 public:
-	AudioBuffer(BufferFactory& bufs, PortType type, size_t capacity);
+	AudioBuffer(BufferFactory& bufs, LV2_URID type, uint32_t size);
 
 	void clear();
 
@@ -48,7 +51,7 @@ public:
 
 	float peak(Context& context) const;
 
-	inline bool is_control() const { return _type.symbol() == PortType::CONTROL; }
+	inline bool is_control() const { return _type == _factory.uris().atom_Float; }
 
 	inline Sample* data() const {
 		return (is_control())
@@ -59,7 +62,7 @@ public:
 	inline SampleCount nframes() const {
 		return (is_control())
 			? 1
-			: (_size - sizeof(LV2_Atom_Vector)) / sizeof(Sample);
+			: (_capacity - sizeof(LV2_Atom_Vector)) / sizeof(Sample);
 	}
 
 	inline Sample& value_at(size_t offset) const
@@ -68,7 +71,7 @@ public:
 	void prepare_read(Context& context);
 	void prepare_write(Context& context) {}
 
-	void resize(size_t size);
+	void resize(uint32_t size);
 
 private:
 	enum State { OK, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };

@@ -155,8 +155,8 @@ NodeImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 void
 NodeImpl::set_buffer_size(Context&       context,
                           BufferFactory& bufs,
-                          PortType       type,
-                          size_t         size)
+                          LV2_URID       type,
+                          uint32_t       size)
 {
 	if (_ports) {
 		for (size_t i = 0; i < _ports->size(); ++i) {

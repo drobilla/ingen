@@ -30,7 +30,6 @@
 #include "ingen/shared/URIs.hpp"
 
 #include "AudioBuffer.hpp"
-#include "EventBuffer.hpp"
 #include "InputPort.hpp"
 #include "LV2Node.hpp"
 #include "LV2Plugin.hpp"
@@ -142,7 +141,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	const Ingen::Shared::URIs& uris  = bufs.uris();
 	SharedPtr<LV2Info>         info  = _lv2_plugin->lv2_info();
 	const LilvPlugin*          plug  = _lv2_plugin->lilv_plugin();
-	Raul::Forge&               forge = bufs.forge();
+	Ingen::Forge&              forge = bufs.forge();
 
 	uint32_t num_ports = lilv_plugin_get_num_ports(plug);
 	assert(num_ports > 0);
@@ -207,6 +206,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 	LilvNode* supports_pred = lilv_new_uri(info->lv2_world(),
 			"http://lv2plug.in/ns/ext/atom#supports");
 
+	LilvNode* bufferType_pred = lilv_new_uri(info->lv2_world(),
+			"http://lv2plug.in/ns/ext/atom#bufferType");
+
 	//LilvNode as_large_as_pred = lilv_new_uri(info->lv2_world(),
 	//		"http://lv2plug.in/ns/ext/resize-port#asLargeAs");
 
@@ -228,24 +230,40 @@ LV2Node::instantiate(BufferFactory& bufs)
 		port_path = path().child(port_name);
 
 		Raul::Atom val;
-		PortType data_type = PortType::UNKNOWN;
+		PortType port_type   = PortType::UNKNOWN;
+		LV2_URID buffer_type = 0;
 		if (lilv_port_is_a(plug, id, info->control_class)) {
-			data_type = PortType::CONTROL;
+			port_type   = PortType::CONTROL;
+			buffer_type = uris.atom_Float;
 		} else if (lilv_port_is_a(plug, id, info->cv_class)) {
-			data_type = PortType::CV;
+			port_type = PortType::CV;
+			buffer_type = uris.atom_Sound;
 		} else if (lilv_port_is_a(plug, id, info->audio_class)) {
-			data_type = PortType::AUDIO;
-		} else if (lilv_port_is_a(plug, id, info->event_class)) {
-			data_type = PortType::EVENTS;
+			port_type = PortType::AUDIO;
+			buffer_type = uris.atom_Sound;
 		} else if (lilv_port_is_a(plug, id, info->value_port_class)) {
-			data_type = PortType::VALUE;
+			port_type = PortType::VALUE;
 		} else if (lilv_port_is_a(plug, id, info->message_port_class)) {
-			data_type = PortType::MESSAGE;
+			port_type = PortType::MESSAGE;
 		}
 
-		port_buffer_size = bufs.default_buffer_size(data_type);
+		// Get buffer type if necessary (value and message ports)		
+		if (!buffer_type) {
+			LilvNodes* types = lilv_port_get_value(plug, id, bufferType_pred);
+			LILV_FOREACH(nodes, i, types) {
+				const LilvNode* type = lilv_nodes_get(types, i);
+				if (lilv_node_is_uri(type)) {
+					port->add_property(uris.atom_bufferType,
+					                   forge.alloc_uri(lilv_node_as_uri(type)));
+					buffer_type = bufs.engine().world()->lv2_uri_map()->map_uri(
+						lilv_node_as_uri(type));
+				}
+			}
+		}
 
-		if (data_type == PortType::VALUE || data_type == PortType::MESSAGE) {
+		port_buffer_size = bufs.default_buffer_size(buffer_type);
+
+		if (port_type == PortType::VALUE || port_type == PortType::MESSAGE) {
 			// Get default value, and its length
 			LilvNodes* defaults = lilv_port_get_value(plug, id, default_pred);
 			LILV_FOREACH(nodes, i, defaults) {
@@ -253,7 +271,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 				if (lilv_node_is_string(d)) {
 					const char*  str_val     = lilv_node_as_string(d);
 					const size_t str_val_len = strlen(str_val);
-					val = forge.make(str_val);
+					val = forge.alloc(str_val);
 					port_buffer_size = str_val_len;
 				}
 			}
@@ -276,23 +294,23 @@ LV2Node::instantiate(BufferFactory& bufs)
 			direction = OUTPUT;
 		}
 
-		if (data_type == PortType::UNKNOWN || direction == UNKNOWN) {
+		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
 			warn << "Unknown type or direction for port `" << port_name << "'" << endl;
 			ret = false;
 			break;
 		}
 
-		if (val.type() == Atom::NIL)
+		if (!val.type())
 			val = forge.make(isnan(def_values[j]) ? 0.0f : def_values[j]);
 
 		// TODO: set buffer size when necessary
 		if (direction == INPUT)
-			port = new InputPort(bufs, this, port_name, j, _polyphony, data_type, val);
+			port = new InputPort(bufs, this, port_name, j, _polyphony, port_type, buffer_type, val);
 		else
-			port = new OutputPort(bufs, this, port_name, j, _polyphony, data_type, val);
+			port = new OutputPort(bufs, this, port_name, j, _polyphony, port_type, buffer_type, val);
 
-		if (direction == INPUT && (data_type == PortType::CONTROL
-		                           || data_type == PortType::CV)) {
+		if (direction == INPUT && (port_type == PortType::CONTROL
+		                           || port_type == PortType::CV)) {
 			port->set_value(val);
 			if (!isnan(min_values[j])) {
 				port->set_property(uris.lv2_minimum, forge.make(min_values[j]));
@@ -309,7 +327,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 		LILV_FOREACH(nodes, i, properties) {
 			const LilvNode* p = lilv_nodes_get(properties, i);
 			if (lilv_node_is_uri(p)) {
-				port->add_property(uris.lv2_portProperty, Raul::URI(lilv_node_as_uri(p)));
+				port->add_property(uris.lv2_portProperty,
+				                   forge.alloc_uri(lilv_node_as_uri(p)));
 			}
 		}
 
@@ -318,7 +337,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 		LILV_FOREACH(nodes, i, types) {
 			const LilvNode* type = lilv_nodes_get(types, i);
 			if (lilv_node_is_uri(type)) {
-				port->add_property(uris.atom_supports, Raul::URI(lilv_node_as_uri(type)));
+				port->add_property(uris.atom_supports,
+				                   forge.alloc_uri(lilv_node_as_uri(type)));
 			}
 		}
 
@@ -411,7 +431,7 @@ LV2Node::set_port_buffer(uint32_t voice, uint32_t port_num,
 {
 	NodeImpl::set_port_buffer(voice, port_num, buf, offset);
 	lilv_instance_connect_port(instance(voice), port_num,
-			buf ? buf->port_data(_ports->at(port_num)->buffer_type(), offset) : NULL);
+			buf ? buf->port_data(_ports->at(port_num)->type(), offset) : NULL);
 }
 
 } // namespace Server

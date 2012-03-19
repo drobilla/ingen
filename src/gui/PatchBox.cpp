@@ -22,8 +22,6 @@
 #include <glib/gstdio.h>
 #include <glibmm/fileutils.h>
 
-#include "raul/AtomRDF.hpp"
-
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"
@@ -359,7 +357,7 @@ PatchBox::show_port_status(const PortModel* port, const Raul::Atom& value)
 	}
 
 	if (value.is_valid()) {
-		msg << " = " << value;
+		msg << " = " << _app->forge().str(value);
 	}
 
 	_status_bar->pop(STATUS_CONTEXT_HOVER);
@@ -421,7 +419,7 @@ void
 PatchBox::event_save()
 {
 	const Raul::Atom& document = _patch->get_property(_app->uris().ingen_document);
-	if (!document.is_valid() || document.type() != Raul::Atom::URI) {
+	if (!document.is_valid() || document.type() != _app->uris().forge.URI) {
 		event_save_as();
 	} else {
 		_app->loader()->save_patch(_patch, document.get_uri());
@@ -467,7 +465,7 @@ PatchBox::event_save_as()
 
 		// Set current folder to most sensible default
 		const Raul::Atom& document = _patch->get_property(uris.ingen_document);
-		if (document.type() == Raul::Atom::URI)
+		if (document.type() == uris.forge.URI)
 			dialog.set_uri(document.get_uri());
 		else if (_app->configuration()->patch_folder().length() > 0)
 			dialog.set_current_folder(_app->configuration()->patch_folder());
@@ -536,7 +534,7 @@ PatchBox::event_save_as()
 			_app->loader()->save_patch(_patch, uri);
 			const_cast<PatchModel*>(_patch.get())->set_property(
 				uris.ingen_document,
-				_app->forge().alloc(Atom::URI, uri.c_str()),
+				_app->forge().alloc_uri(uri.c_str()),
 				Resource::EXTERNAL);
 			_status_bar->push(
 				(boost::format("Saved %1% to %2%") % _patch->path().chop_scheme()

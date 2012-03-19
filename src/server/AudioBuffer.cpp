@@ -35,46 +35,31 @@ using namespace Raul;
 namespace Ingen {
 namespace Server {
 
-AudioBuffer::AudioBuffer(BufferFactory& bufs, PortType type, size_t size)
-	: ObjectBuffer(bufs, size)
+AudioBuffer::AudioBuffer(BufferFactory& bufs, LV2_URID type, uint32_t size)
+	: Buffer(bufs, type, size)
 	, _state(OK)
 	, _set_value(0)
 	, _set_time(0)
 {
 	assert(size >= sizeof(LV2_Atom) + sizeof(Sample));
-	assert(this->size() >= size);
+	assert(this->capacity() >= size);
 	assert(data());
-	_type = type;
 
-	// Control port / Single float object
-	if (type == PortType::CONTROL) {
-		atom()->type = 0;//map->float_type;
-
-	// Audio port / Vector of float
-	} else {
-		assert(type == PortType::AUDIO || type == PortType::CV);
-		atom()->type = 0;//map->vector_type;
+	if (type == bufs.uris().atom_Sound) {
+		// Audio port (Vector of float)
 		LV2_Atom_Vector* body = (LV2_Atom_Vector*)atom();
-		body->body.child_size = sizeof(Sample);
-		body->body.child_type = 0;//map->float_type;
+		body->body.child_size = sizeof(float);
+		body->body.child_type = bufs.uris().atom_Float;
 	}
-	/*debug << "Created Audio Buffer" << endl
-		<< "\tobject @ " << (void*)atom() << endl
-		<< "\tbody @   " << (void*)atom()->body
-		<< "\t(offset " << (char*)atom()->body - (char*)atom() << ")" << endl
-		<< "\tdata @   " << (void*)data()
-		<< "\t(offset " << (char*)data() - (char*)atom() << ")"
-		<< endl;*/
 
+	_atom->type = type;
 	clear();
 }
 
 void
-AudioBuffer::resize(size_t size)
+AudioBuffer::resize(uint32_t size)
 {
-	if (_type == PortType::AUDIO) {
-		ObjectBuffer::resize(size + sizeof(LV2_Atom_Vector));
-	}
+	Buffer::resize(size);
 	clear();
 }
 
@@ -164,7 +149,7 @@ AudioBuffer::copy(Context& context, const Buffer* src)
 
 	// Control => Control
 	if (src_abuf->is_control() == is_control()) {
-		ObjectBuffer::copy(context, src);
+		Buffer::copy(context, src);
 
 	// Audio => Audio
 	} else if (!src_abuf->is_control() && !is_control()) {

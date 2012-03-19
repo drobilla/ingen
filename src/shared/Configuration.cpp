@@ -22,8 +22,8 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-Configuration::Configuration(Raul::Forge* forge)
-	: Raul::Configuration(forge,
+Configuration::Configuration()
+	: Raul::Configuration(
 	"A realtime modular audio processor.",
 	"Ingen is a flexible modular system that be used in various ways.\n"
 	"The engine can run as a stand-alone server controlled via a network protocol\n"
@@ -37,21 +37,21 @@ Configuration::Configuration(Raul::Forge* forge)
 	"  ingen -eg patch.ttl         # Run an engine and a GUI and load a patch file\n"
 	"  ingen -eg patch.ingen       # Run an engine and a GUI and load a patch bundle")
 {
-	add("client-port", 'C', "Client OSC port", Atom::INT, forge->make());
-	add("connect",     'c', "Connect to engine URI", Atom::STRING, forge->make("osc.udp://localhost:16180"));
-	add("engine",      'e', "Run (JACK) engine", Atom::BOOL, forge->make(false));
-	add("engine-port", 'E', "Engine listen port", Atom::INT, forge->make(16180));
-	add("gui",         'g', "Launch the GTK graphical interface", Atom::BOOL, forge->make(false));
-	add("help",        'h', "Print this help message", Atom::BOOL, forge->make(false));
-	add("jack-client", 'n', "JACK client name", Atom::STRING, forge->make("ingen"));
-	add("jack-server", 's', "JACK server name", Atom::STRING, forge->make(""));
-	add("uuid",        'u', "JACK session UUID", Atom::STRING, forge->make(""));
-	add("load",        'l', "Load patch", Atom::STRING, forge->make());
-	add("packet-size", 'k', "Maximum UDP packet size", Atom::INT, forge->make(4096));
-	add("parallelism", 'p', "Number of concurrent process threads", Atom::INT, forge->make(1));
-	add("path",        'L', "Target path for loaded patch", Atom::STRING, forge->make());
-	add("queue-size",  'q', "Event queue size", Atom::INT, forge->make(4096));
-	add("run",         'r', "Run script", Atom::STRING, forge->make());
+	add("client-port", 'C', "Client OSC port", INT, Value());
+	add("connect",     'c', "Connect to engine URI", STRING, Value("osc.udp://localhost:16180"));
+	add("engine",      'e', "Run (JACK) engine", BOOL, Value(false));
+	add("engine-port", 'E', "Engine listen port", INT, Value(16180));
+	add("gui",         'g', "Launch the GTK graphical interface", BOOL, Value(false));
+	add("help",        'h', "Print this help message", BOOL, Value(false));
+	add("jack-client", 'n', "JACK client name", STRING, Value("ingen"));
+	add("jack-server", 's', "JACK server name", STRING, Value(""));
+	add("uuid",        'u', "JACK session UUID", STRING, Value());
+	add("load",        'l', "Load patch", STRING, Value());
+	add("packet-size", 'k', "Maximum UDP packet size", INT, Value(4096));
+	add("parallelism", 'p', "Number of concurrent process threads", INT, Value(1));
+	add("path",        'L', "Target path for loaded patch", STRING, Value());
+	add("queue-size",  'q', "Event queue size", INT, Value(4096));
+	add("run",         'r', "Run script", STRING, Value());
 }
 
 } // namespace Shared

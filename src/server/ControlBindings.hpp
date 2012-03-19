@@ -33,7 +33,6 @@ namespace Server {
 
 class Engine;
 class ProcessContext;
-class EventBuffer;
 class PortImpl;
 
 class ControlBindings {
@@ -77,8 +76,8 @@ public:
 	                        Key               key,
 	                        const Raul::Atom& value);
 
-	void pre_process(ProcessContext& context, EventBuffer* control_in);
-	void post_process(ProcessContext& context, EventBuffer* control_out);
+	void pre_process(ProcessContext& context, Buffer* control_in);
+	void post_process(ProcessContext& context, Buffer* control_out);
 
 	/** Remove all bindings for @a path or children of @a path.
 	 * The caller must safely drop the returned reference in the
@@ -93,7 +92,7 @@ public:
 	SharedPtr<Bindings> remove(PortImpl* port);
 
 private:
-	Key midi_event_key(uint16_t size, uint8_t* buf, uint16_t& value);
+	Key midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
 
 	void set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value);
 	bool bind(ProcessContext& context, Key key);
@@ -113,7 +112,7 @@ private:
 	PortImpl* _learn_port;
 
 	SharedPtr<Bindings> _bindings;
-	EventBuffer*        _feedback;
+	BufferFactory::Ref  _feedback;
 };
 
 } // namespace Server

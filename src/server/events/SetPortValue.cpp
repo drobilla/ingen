@@ -22,7 +22,6 @@
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
-#include "lv2/lv2plug.in/ns/ext/event/event.h"
 #include "raul/log.hpp"
 
 #include "AudioBuffer.hpp"
@@ -31,10 +30,8 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "EventBuffer.hpp"
 #include "MessageContext.hpp"
 #include "NodeImpl.hpp"
-#include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "SetPortValue.hpp"
@@ -129,6 +126,8 @@ SetPortValue::apply(Context& context)
 	if (_status == SUCCESS && !_port)
 		_port = _engine.engine_store()->find_port(_port_path);
 
+	Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
+
 	if (!_port) {
 		if (_status == SUCCESS)
 			_status = PORT_NOT_FOUND;
@@ -138,7 +137,7 @@ SetPortValue::apply(Context& context)
 		Buffer* const      buf  = _port->buffer(0).get();
 		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 		if (abuf) {
-			if (_value.type() != Atom::FLOAT) {
+			if (_value.type() != uris.forge.Float) {
 				_status = TYPE_MISMATCH;
 				return;
 			}
@@ -148,44 +147,6 @@ SetPortValue::apply(Context& context)
 						_value.get_float(), start, _time);
 			}
 			return;
-		}
-
-		Ingen::Shared::URIs&      uris    = *_engine.world()->uris().get();
-		Ingen::Shared::LV2URIMap& uri_map = *_engine.world()->lv2_uri_map().get();
-
-		EventBuffer* const ebuf = dynamic_cast<EventBuffer*>(buf);
-		if (ebuf && _value.type() == Atom::BLOB) {
-			const uint32_t frames = std::max(uint32_t(_time - start), ebuf->latest_frames());
-
-			// Size 0 event, pass it along to the plugin as a typed but empty event
-			if (_value.data_size() == 0) {
-				const uint32_t type_id = uri_map.uri_to_id(NULL, _value.get_blob_type());
-				ebuf->append(frames, 0, type_id, 0, NULL);
-				_port->raise_set_by_user_flag();
-				return;
-
-			} else if (!strcmp(_value.get_blob_type(),
-			                   "http://lv2plug.in/ns/ext/midi#MidiEvent")) {
-				ebuf->prepare_write(context);
-				ebuf->append(frames, 0,
-				             uri_map.global_to_event(uris.midi_MidiEvent.id).second,
-				             _value.data_size(),
-				             (const uint8_t*)_value.get_blob());
-				_port->raise_set_by_user_flag();
-				return;
-			}
-		}
-
-		ObjectBuffer* const obuf = dynamic_cast<ObjectBuffer*>(buf);
-		if (obuf) {
-			obuf->atom()->size = obuf->size() - sizeof(LV2_Atom);
-			if (Ingen::Shared::LV2Atom::from_atom(uris, _value, obuf->atom())) {
-				debug << "Converted atom " << _value << " :: " << obuf->atom()->type
-					<< " * " << obuf->atom()->size << " @ " << obuf->atom() << endl;
-				return;
-			} else {
-				warn << "Failed to convert atom to LV2 object" << endl;
-			}
 		}
 
 		warn << "Unknown value type " << (int)_value.type() << endl;

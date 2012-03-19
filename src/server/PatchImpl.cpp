@@ -258,8 +258,8 @@ PatchImpl::process_single(ProcessContext& context)
 void
 PatchImpl::set_buffer_size(Context&       context,
                            BufferFactory& bufs,
-                           PortType       type,
-                           size_t         size)
+                           LV2_URID       type,
+                           uint32_t       size)
 {
 	NodeImpl::set_buffer_size(context, bufs, type, size);
 
@@ -346,7 +346,8 @@ PortImpl*
 PatchImpl::create_port(BufferFactory& bufs,
                        const string&  name,
                        PortType       type,
-                       size_t         buffer_size,
+                       LV2_URID       buffer_type,
+                       uint32_t       buffer_size,
                        bool           is_output,
                        bool           polyphonic)
 {
@@ -360,7 +361,7 @@ PatchImpl::create_port(BufferFactory& bufs,
 		value = bufs.forge().make(0.0f);
 
 	return new DuplexPort(bufs, this, name, num_ports(), polyphonic, _polyphony,
-			type, value, buffer_size, is_output);
+	                      type, buffer_type, value, buffer_size, is_output);
 }
 
 /** Remove port from ports list used in pre-processing thread.

@@ -109,14 +109,13 @@ public:
 		, argv(a_argv)
 		, conf(conf)
 		, lv2_features(NULL)
-		, forge(new Raul::Forge())
 		, rdf_world(new Sord::World())
 		, lv2_uri_map(new Ingen::Shared::LV2URIMap(map, unmap))
+		, forge(new Ingen::Forge(*lv2_uri_map))
 		, uris(new Shared::URIs(*forge, lv2_uri_map.get()))
 		, lilv_world(lilv_world_new())
 	{
 		lv2_features = new Ingen::Shared::LV2Features();
-		lv2_features->add_feature(lv2_uri_map->uri_map_feature());
 		lv2_features->add_feature(lv2_uri_map->urid_map_feature());
 		lv2_features->add_feature(lv2_uri_map->urid_unmap_feature());
 		lilv_world_load_all(lilv_world);
@@ -173,9 +172,9 @@ public:
 	char**&                              argv;
 	Raul::Configuration*                 conf;
 	LV2Features*                         lv2_features;
-	Raul::Forge*                         forge;
 	Sord::World*                         rdf_world;
 	SharedPtr<LV2URIMap>                 lv2_uri_map;
+	Ingen::Forge*                        forge;
 	SharedPtr<URIs>                      uris;
 	SharedPtr<Interface>                 engine;
 	SharedPtr<EngineBase>                local_engine;
@@ -216,7 +215,7 @@ SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->seria
 SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
 SharedPtr<Store>                     World::store()        { return _impl->store; }
 Raul::Configuration*                 World::conf()         { return _impl->conf; }
-Raul::Forge&                         World::forge()        { return *_impl->forge; }
+Ingen::Forge&                        World::forge()        { return *_impl->forge; }
 LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
 
 LilvWorld*           World::lilv_world()  { return _impl->lilv_world; }

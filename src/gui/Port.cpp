@@ -50,7 +50,7 @@ Port::create(App&                       app,
 	Glib::ustring label(human_name ? "" : pm->path().symbol());
 	if (human_name) {
 		const Raul::Atom& name = pm->get_property(app.uris().lv2_name);
-		if (name.type() == Raul::Atom::STRING) {
+		if (name.type() == app.forge().String) {
 			label = name.get_string();
 		} else {
 			const SharedPtr<const NodeModel> parent(PtrCast<const NodeModel>(pm->parent()));
@@ -163,7 +163,7 @@ Port::on_value_changed(const Glib::VariantBase& value)
 void
 Port::value_changed(const Atom& value)
 {
-	if (!_pressed && value.type() == Atom::FLOAT) {
+	if (!_pressed && value.type() == _app.forge().Float) {
 		Ganv::Port::set_control_value(value.get_float());
 	}
 }
@@ -278,7 +278,7 @@ void
 Port::property_changed(const URI& key, const Atom& value)
 {
 	const URIs& uris = _app.uris();
-	if (value.type() == Atom::FLOAT) {
+	if (value.type() == uris.forge.Float) {
 		float val = value.get_float();
 		if (key == uris.ingen_value && !_pressed) {
 			Ganv::Port::set_control_value(val);
@@ -299,7 +299,7 @@ Port::property_changed(const URI& key, const Atom& value)
 	} else if (key == uris.ctx_context) {
 		Raul::info << "TODO: Visual indication of port context?" << std::endl;
 	} else if (key == uris.lv2_name) {
-		if (value.type() == Atom::STRING
+		if (value.type() == uris.forge.String
 				&& _app.configuration()->name_style() == Configuration::HUMAN) {
 			set_label(value.get_string());
 		}

@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright 2009-2011 David Robillard <http://drobilla.net>
+ * Copyright 2012 David Robillard <http://drobilla.net>
  *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -15,31 +15,22 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_SHARED_LV2ATOM_HPP
-#define INGEN_SHARED_LV2ATOM_HPP
+#ifndef INGEN_FORGE_HPP
+#define INGEN_FORGE_HPP
 
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-
-namespace Raul { class Atom; }
+#include "ingen/shared/Forge.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "raul/Atom.hpp"
 
 namespace Ingen {
-namespace Shared {
 
-class URIs;
+class Forge : public Raul::Forge {
+public:
+	Forge(Shared::LV2URIMap& map);
 
-namespace LV2Atom {
+	std::string str(const Raul::Atom& atom);
+};
 
-bool to_atom(const URIs&     uris,
-             const LV2_Atom* object,
-             Raul::Atom&     atom);
-
-bool from_atom(const URIs&       uris,
-               const Raul::Atom& atom,
-               LV2_Atom*         object);
-
-} // namespace LV2Atom
-
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_LV2ATOM_HPP
+#endif // INGEN_FORGE_HPP

@@ -69,8 +69,8 @@ public:
 
 	void set_buffer_size(Context&       context,
 	                     BufferFactory& bufs,
-	                     PortType       type,
-	                     size_t         size);
+	                     LV2_URID       type,
+	                     uint32_t       size);
 
 	/** Prepare for a new (internal) polyphony value.
 	 *
@@ -111,7 +111,8 @@ public:
 	PortImpl* create_port(BufferFactory&     bufs,
 	                      const std::string& name,
 	                      PortType           type,
-	                      size_t             buffer_size,
+	                      LV2_URID           buffer_type,
+	                      uint32_t           buffer_size,
 	                      bool               is_output,
 	                      bool               polyphonic);
 

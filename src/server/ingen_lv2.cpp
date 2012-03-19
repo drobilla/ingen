@@ -29,10 +29,13 @@
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
 #include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
+#include "ingen/shared/AtomReader.hpp"
+#include "ingen/shared/AtomWriter.hpp"
 #include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/Store.hpp"
 #include "ingen/shared/World.hpp"
@@ -54,7 +57,7 @@
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
-/** Record of a patch in this Ingen LV2 bundle */
+/** Record of a patch in this bundle. */
 struct LV2Patch {
 	LV2Patch(const std::string& u, const std::string& f);
 
@@ -63,6 +66,7 @@ struct LV2Patch {
 	LV2_Descriptor    descriptor;
 };
 
+/** Ingen LV2 library. */
 class Lib {
 public:
 	Lib(const char* bundle_path);
@@ -76,6 +80,8 @@ namespace Ingen {
 namespace Server {
 
 class LV2Driver;
+
+void handle_message(LV2Driver* driver, const LV2_Atom* msg);
 
 class LV2Port : public DriverPort
 {
@@ -92,26 +98,31 @@ public:
 	void move(const Raul::Path& path) {}
 
 	void pre_process(ProcessContext& context) {
-		if (!is_input() || !_buffer)
+		if (!is_input() || !_buffer) {
 			return;
+		}
 
 		if (_patch_port->is_a(PortType::AUDIO)) {
 			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 			patch_buf->copy((Sample*)_buffer, 0, context.nframes() - 1);
-		} else if (_patch_port->is_a(PortType::EVENTS)) {
-			//Raul::warn << "TODO: LV2 event I/O" << std::endl;
+		} else {
+			LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_buffer;
+			LV2_SEQUENCE_FOREACH(seq, i) {
+				LV2_Atom_Event* ev = lv2_sequence_iter_get(i);
+				// FIXME: Not RT safe, need to send these through a ring
+				handle_message(_driver, &ev->body);
+			}
 		}
 	}
 
 	void post_process(ProcessContext& context) {
-		if (is_input() || !_buffer)
+		if (is_input() || !_buffer) {
 			return;
+		}
 
 		if (_patch_port->is_a(PortType::AUDIO)) {
 			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 			memcpy((Sample*)_buffer, patch_buf->data(), context.nframes() * sizeof(Sample));
-		} else if (_patch_port->is_a(PortType::EVENTS)) {
-			//Raul::warn << "TODO: LV2 event I/O" << std::endl;
 		}
 	}
 
@@ -123,13 +134,23 @@ private:
 	void*      _buffer;
 };
 
-class LV2Driver : public Ingen::Server::Driver {
+class LV2Driver : public Ingen::Server::Driver
+                , public Ingen::Shared::AtomSink
+{
 private:
 	typedef std::vector<LV2Port*> Ports;
 
 public:
 	LV2Driver(Engine& engine, SampleCount buffer_size, SampleCount sample_rate)
 		: _context(engine)
+		, _reader(*engine.world()->lv2_uri_map().get(),
+		          *engine.world()->uris().get(),
+		          engine.world()->forge(),
+		          *engine.world()->engine().get())
+		, _writer(*engine.world()->lv2_uri_map().get(),
+		          *engine.world()->uris().get(),
+		          *this)
+		, _to_ui(8192) // FIXME: size
 		, _root_patch(NULL)
 		, _buffer_size(buffer_size)
 		, _sample_rate(sample_rate)
@@ -146,6 +167,8 @@ public:
 
 		if (_root_patch)
 			_root_patch->process(_context);
+
+		flush_to_ui();
 
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			(*i)->post_process(_context);
@@ -194,23 +217,87 @@ public:
 		return NULL;
 	}
 
+	void write(const LV2_Atom* atom) {
+		// Called from post-processor in main thread
+		if (_to_ui.write(lv2_atom_total_size(atom), atom) == 0) {
+			Raul::error << "To-UI ring overflow" << std::endl;
+		}
+	}
+
+	void flush_to_ui() {
+		assert(ThreadManager::thread_is(THREAD_PROCESS));
+		assert(_ports.size() >= 2);
+
+		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_ports[1]->buffer();
+		if (!seq) {
+			Raul::warn << "Control out port not connected" << std::endl;
+			return;
+		}
+
+		// Output port buffer is a Chunk with size set to the available space
+		const uint32_t capacity = seq->atom.size;
+
+		// Initialise output port buffer to an empty Sequence
+		seq->atom.type = _context.engine().world()->uris()->atom_Sequence;
+		seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
+
+		const uint32_t read_space = _to_ui.read_space();
+		for (uint32_t read = 0; read < read_space;) {
+			LV2_Atom atom;
+			if (!_to_ui.peek(sizeof(LV2_Atom), &atom)) {
+				Raul::error << "Error reading head from to-UI ring" << std::endl;
+				break;
+			}
+
+			if (seq->atom.size + sizeof(LV2_Atom) + atom.size > capacity) {
+				break;  // Output port buffer full, resume next time
+			}
+
+			LV2_Atom_Event* ev = (LV2_Atom_Event*)(
+				(uint8_t*)seq + lv2_atom_total_size(&seq->atom));
+
+			ev->time.frames = 0;  // TODO: Time?
+			ev->body        = atom;
+
+			_to_ui.skip(sizeof(LV2_Atom));
+			if (!_to_ui.read(ev->body.size, LV2_ATOM_BODY(&ev->body))) {
+				Raul::error << "Error reading body from to-UI ring" << std::endl;
+				break;
+			}
+
+			read           += lv2_atom_total_size(&ev->body);
+			seq->atom.size += sizeof(LV2_Atom_Event) + ev->body.size;
+		}
+	}
+
 	virtual SampleCount block_length() const { return _buffer_size; }
 	virtual SampleCount sample_rate()  const { return _sample_rate; }
 	virtual SampleCount frame_time()   const { return _frame_time;}
 
 	virtual bool            is_realtime() const { return true; }
 	virtual ProcessContext& context()           { return _context; }
+	Shared::AtomReader&     reader()            { return _reader; }
+	Shared::AtomWriter&     writer()            { return _writer; }
 
 	Ports& ports() { return _ports; }
 
 private:
-	ProcessContext _context;
-	PatchImpl*     _root_patch;
-	SampleCount    _buffer_size;
-	SampleCount    _sample_rate;
-	SampleCount    _frame_time;
-	Ports          _ports;
+	ProcessContext     _context;
+	Shared::AtomReader _reader;
+	Shared::AtomWriter _writer;
+	Raul::RingBuffer   _to_ui;
+	PatchImpl*         _root_patch;
+	SampleCount        _buffer_size;
+	SampleCount        _sample_rate;
+	SampleCount        _frame_time;
+	Ports              _ports;
 };
+
+void
+handle_message(LV2Driver* driver, const LV2_Atom* msg)
+{
+	driver->reader().write(msg);
+}
 
 } // namespace Server
 } // namespace Ingen
@@ -236,7 +323,7 @@ private:
 };
 
 struct IngenPlugin {
-	Raul::Forge                   forge;
+	Ingen::Forge                  forge;
 	Ingen::Shared::Configuration* conf;
 	Ingen::Shared::World*         world;
 	MainThread*                   main;
@@ -304,7 +391,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
-	plugin->conf          = new Ingen::Shared::Configuration(&plugin->forge);
+	plugin->conf          = new Ingen::Shared::Configuration();
 	plugin->main          = NULL;
 	plugin->map           = NULL;
 	LV2_URID_Unmap* unmap = NULL;
@@ -341,6 +428,10 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	LV2Driver* driver = new LV2Driver(*engine.get(), rate, 4096);
 	engine->set_driver(SharedPtr<Ingen::Server::Driver>(driver));
 
+	interface->set_response_interface(&driver->writer());
+	engine->register_client("http://drobilla.net/ns/ingen#internal",
+	                        &driver->writer());
+
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;
 
@@ -350,7 +441,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->post_processor()->set_end_time(UINT_MAX);
 
 	// TODO: Load only necessary plugins
-	plugin->world->engine()->get("ingen:plugins");
+	//plugin->world->engine()->get("ingen:plugins");
 	interface->process(*engine->post_processor(), context, false);
 	engine->post_processor()->process();
 
@@ -365,7 +456,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	engine->deactivate();
 
-	plugin->world->load_module("osc_server");
+	//plugin->world->load_module("osc_server");
 
 	return (LV2_Handle)plugin;
 }
@@ -381,6 +472,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
 		assert(driver->ports().at(port)->patch_port()->index() == port);
+		assert(driver->ports().at(port)->buffer() == data);
 	} else {
 		Raul::warn << "Connect to non-existent port " << port << std::endl;
 	}
@@ -391,6 +483,7 @@ ingen_activate(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
 	me->world->local_engine()->activate();
+	((ServerInterfaceImpl*)me->world->engine().get())->start();
 	me->main->start();
 }
 

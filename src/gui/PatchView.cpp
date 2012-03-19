@@ -207,6 +207,8 @@ void
 PatchView::refresh_clicked()
 {
 	_app->engine()->get(_patch->path());
+	Raul::warn << "Refresh plugins" << std::endl;
+	_app->engine()->get("ingen:plugins");
 }
 
 void
@@ -214,10 +216,11 @@ PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
 	_enable_signal = false;
 	if (predicate == _app->uris().ingen_enabled) {
-	   if (value.type() == Atom::BOOL)
-		   _process_but->set_active(value.get_bool());
-	   else
-		   warn << "Bad type for ingen:enabled variable: " << value.type() << endl;
+		if (value.type() == _app->uris().forge.Bool) {
+			_process_but->set_active(value.get_bool());
+		} else {
+			warn << "Bad type for ingen:enabled variable: " << value.type() << endl;
+		}
 	}
 	_enable_signal = true;
 }

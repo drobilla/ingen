@@ -35,6 +35,7 @@ namespace GUI {
 PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
                                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
+	, _initialised(false)
 {
 	xml->get_widget("properties_vbox", _vbox);
 	xml->get_widget("properties_scrolledwindow", _scrolledwindow);
@@ -42,15 +43,6 @@ PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
 	xml->get_widget("properties_cancel_button", _cancel_button);
 	xml->get_widget("properties_apply_button", _apply_button);
 	xml->get_widget("properties_ok_button", _ok_button);
-
-	_type_choices = Gtk::ListStore::create(_type_cols);
-	for (int i = Raul::Atom::INT; i <= Raul::Atom::BLOB; ++i) {
-		Gtk::TreeModel::Row row = *_type_choices->append();
-		row[_type_cols.type] = static_cast<Raul::Atom::Type>(i);
-		ostringstream ss;
-		ss << static_cast<Raul::Atom::Type>(i);
-		row[_type_cols.choice] = ss.str();
-	}
 
 	_cancel_button->signal_clicked().connect(
 			sigc::mem_fun(this, &PropertiesWindow::cancel_clicked));
@@ -60,6 +52,33 @@ PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
 
 	_ok_button->signal_clicked().connect(
 			sigc::mem_fun(this, &PropertiesWindow::ok_clicked));
+}
+
+void
+PropertiesWindow::init()
+{
+	Forge& forge = _app->forge();
+	Gtk::TreeModel::Row row = *_type_choices->append();
+	row[_type_cols.type]   = forge.Int;
+	row[_type_cols.choice] = "Int";
+
+	row = *_type_choices->append();
+	row[_type_cols.type]   = forge.Float;
+	row[_type_cols.choice] = "Float";
+
+	row = *_type_choices->append();
+	row[_type_cols.type]   = forge.Bool;
+	row[_type_cols.choice] = "Bool";
+
+	row = *_type_choices->append();
+	row[_type_cols.type]   = forge.URI;
+	row[_type_cols.choice] = "URI";
+
+	row = *_type_choices->append();
+	row[_type_cols.type]   = forge.String;
+	row[_type_cols.choice] = "String";
+
+	_initialised = true;
 }
 
 void
@@ -137,7 +156,8 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 Gtk::Widget*
 PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& value)
 {
-	if (value.type() == Atom::INT) {
+	Ingen::Forge& forge = _app->forge();
+	if (value.type() == forge.Int) {
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 0));
 		widget->property_numeric() = true;
 		widget->set_value(value.get_int32());
@@ -148,7 +168,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));
 		return widget;
-	} else if (value.type() == Atom::FLOAT) {
+	} else if (value.type() == forge.Float) {
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 4));
 		widget->property_numeric() = true;
 		widget->set_snap_to_ticks(false);
@@ -159,21 +179,21 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));
 		return widget;
-	} else if (value.type() == Atom::BOOL) {
+	} else if (value.type() == forge.Bool) {
 		Gtk::CheckButton* widget = manage(new Gtk::CheckButton());
 		widget->set_active(value.get_bool());
 		widget->signal_toggled().connect(sigc::bind(
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));
 		return widget;
-	} else if (value.type() == Atom::URI) {
+	} else if (value.type() == forge.URI) {
 		Gtk::Entry* widget = manage(new Gtk::Entry());
 		widget->set_text(value.get_uri());
 		widget->signal_changed().connect(sigc::bind(
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));
 		return widget;
-	} else if (value.type() == Atom::STRING) {
+	} else if (value.type() == forge.String) {
 		Gtk::Entry* widget = manage(new Gtk::Entry());
 		widget->set_text(value.get_string());
 		widget->signal_changed().connect(sigc::bind(
@@ -182,7 +202,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 		return widget;
 	}
 
-	LOG(error) << "Unable to create widget for value " << value << endl;
+	LOG(error) << "Unable to create widget for value " << forge.str(value) << endl;
 	return NULL;
 }
 
@@ -242,28 +262,29 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 		return;
 	}
 
-	Record& record = r->second;
-	Raul::Atom::Type type = (*record.type_widget->get_active())[_type_cols.type];
-	if (type == Atom::INT) {
+	Forge&             forge  = _app->forge();
+	Record&            record = r->second;
+	Raul::Atom::TypeID type   = (*record.type_widget->get_active())[_type_cols.type];
+	if (type == forge.Int) {
 		Gtk::SpinButton* widget = dynamic_cast<Gtk::SpinButton*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
 		record.value = _app->forge().make(widget->get_value_as_int());
-	} else if (type == Atom::FLOAT) {
+	} else if (type == forge.Float) {
 		Gtk::SpinButton* widget = dynamic_cast<Gtk::SpinButton*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
 		record.value = _app->forge().make(static_cast<float>(widget->get_value()));
-	} else if (type == Atom::BOOL) {
+	} else if (type == forge.Bool) {
 		Gtk::CheckButton* widget = dynamic_cast<Gtk::CheckButton*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
 		record.value = _app->forge().make(widget->get_active());
-	} else if (type == Atom::URI) {
+	} else if (type == forge.URI) {
 		Gtk::Entry* widget = dynamic_cast<Gtk::Entry*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
-		record.value = _app->forge().alloc(Atom::URI, widget->get_text());
-	} else if (type == Atom::STRING) {
+		record.value = _app->forge().alloc_uri(widget->get_text());
+	} else if (type == forge.String) {
 		Gtk::Entry* widget = dynamic_cast<Gtk::Entry*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
-		record.value = _app->forge().alloc(Atom::URI, widget->get_text());
+		record.value = _app->forge().alloc_uri(widget->get_text());
 	}
 
 	return;
@@ -290,8 +311,7 @@ PropertiesWindow::apply_clicked()
 		const Record&    record = r->second;
 		if (!_model->has_property(uri, record.value)) {
 			LOG(debug) << "\t" << uri
-					<< " = " << record.value
-					<< " :: " << record.value.type() << endl;
+			           << " = " << _app->forge().str(record.value) << endl;
 			properties.insert(make_pair(uri, record.value));
 		}
 	}

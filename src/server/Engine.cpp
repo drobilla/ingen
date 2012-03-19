@@ -22,7 +22,6 @@
 #include "raul/Deletable.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
-#include "lv2/lv2plug.in/ns/ext/uri-map/uri-map.h"
 #include "events/CreatePatch.hpp"
 #include "events/CreatePort.hpp"
 #include "ingen/shared/World.hpp"
@@ -57,7 +56,7 @@ bool ThreadManager::single_threaded = true;
 Engine::Engine(Ingen::Shared::World* a_world)
 	: _world(a_world)
 	, _broadcaster(new ClientBroadcaster())
-	, _control_bindings(new ControlBindings(*this))
+	, _control_bindings(NULL)
 	, _maid(new Raul::Maid(event_queue_size()))
 	, _message_context(new MessageContext(*this))
 	, _node_factory(new NodeFactory(a_world))
@@ -73,6 +72,8 @@ Engine::Engine(Ingen::Shared::World* a_world)
 			SharedPtr<Ingen::Shared::Store>(
 				new EngineStore(SharedPtr<BufferFactory>(_buffer_factory))));
 	}
+
+	_control_bindings = new ControlBindings(*this);
 }
 
 Engine::~Engine()
@@ -104,7 +105,7 @@ Engine::engine_store() const
 size_t
 Engine::event_queue_size() const
 {
-	return world()->conf()->option("queue-size").get_int32();
+	return world()->conf()->option("queue-size").get_int();
 }
 
 void
@@ -153,7 +154,7 @@ Engine::activate()
 	_message_context->Thread::start();
 
 	const Ingen::Shared::URIs& uris  = *world()->uris().get();
-	Raul::Forge&               forge = world()->forge();
+	Ingen::Forge&              forge = world()->forge();
 
 	// Create root patch
 	PatchImpl* root_patch = _driver->root_patch();
@@ -173,14 +174,15 @@ Engine::activate()
 
 		Resource::Properties control_properties;
 		control_properties.insert(make_pair(uris.lv2_name,
-		                                    forge.make("Control")));
+		                                    forge.alloc("Control")));
 		control_properties.insert(make_pair(uris.rdf_type,
-		                                    uris.ev_EventPort));
+		                                    uris.atom_MessagePort));
+		control_properties.insert(make_pair(uris.atom_bufferType,
+		                                    uris.atom_Sequence));
 
 		// Add control input
 		Resource::Properties in_properties(control_properties);
 		in_properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
-		in_properties.insert(make_pair(uris.rdf_type, uris.ev_EventPort));
 		in_properties.insert(make_pair(uris.lv2_index, forge.make(0)));
 		in_properties.insert(make_pair(uris.lv2_portProperty,
 		                               uris.lv2_connectionOptional));
@@ -198,7 +200,6 @@ Engine::activate()
 		// Add control out
 		Resource::Properties out_properties(control_properties);
 		out_properties.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
-		out_properties.insert(make_pair(uris.rdf_type, uris.ev_EventPort));
 		out_properties.insert(make_pair(uris.lv2_index, forge.make(1)));
 		in_properties.insert(make_pair(uris.lv2_portProperty,
 		                               uris.lv2_connectionOptional));

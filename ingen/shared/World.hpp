@@ -23,8 +23,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 
+#include "ingen/shared/Forge.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
-
+#include "raul/Atom.hpp"
 #include "raul/Configuration.hpp"
 #include "raul/SharedPtr.hpp"
 
@@ -108,7 +109,7 @@ public:
 	virtual Raul::Configuration* conf();
 	virtual void set_conf(Raul::Configuration* c);
 
-	virtual Raul::Forge& forge();
+	virtual Ingen::Forge& forge();
 
 	virtual LV2Features* lv2_features();
 

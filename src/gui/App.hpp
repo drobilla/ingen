@@ -25,8 +25,9 @@
 
 #include <gtkmm.h>
 
-#include "raul/SharedPtr.hpp"
 #include "raul/Deletable.hpp"
+#include "raul/SharedPtr.hpp"
+#include "raul/URI.hpp"
 
 #include "ingen/Status.hpp"
 #include "ingen/shared/World.hpp"
@@ -101,7 +102,7 @@ public:
 
 	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
 
-	Raul::Forge&                          forge()  const { return _world->forge(); }
+	Ingen::Forge&                         forge()  const { return _world->forge(); }
 	SharedPtr<Ingen::Interface>           engine() const { return _world->engine(); }
 	SharedPtr<Client::SigClientInterface> client() const { return _client; }
 	SharedPtr<Client::ClientStore>        store()  const { return _store; }

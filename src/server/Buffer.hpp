@@ -24,6 +24,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/utility.hpp>
 
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "raul/AtomicInt.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
@@ -42,32 +43,28 @@ class BufferFactory;
 class Buffer : public boost::noncopyable, public Raul::Deletable
 {
 public:
-	Buffer(BufferFactory& bufs, PortType type, size_t size)
-		: _factory(bufs)
-		, _type(type)
-		, _size(size)
-		, _next(NULL)
-		, _refs(0)
-	{}
+	Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity);
 
-	/** Clear contents and reset state */
-	virtual void clear() = 0;
-
-	virtual void resize(size_t size) { _size = size; }
-
-	virtual void*       port_data(PortType port_type, SampleCount offset=0) = 0;
-	virtual const void* port_data(PortType port_type, SampleCount offset=0) const = 0;
-
-	/** Rewind (ie reset read pointer), but leave contents unchanged */
-	virtual void rewind() const {}
-
-	virtual void copy(Context& context, const Buffer* src) = 0;
-
+	virtual void clear();
+	virtual void resize(uint32_t size);
+	virtual void copy(Context& context, const Buffer* src);
 	virtual void prepare_read(Context& context) {}
-	virtual void prepare_write(Context& context) {}
+	virtual void prepare_write(Context& context);
 
-	PortType type() const { return _type; }
-	size_t           size() const { return _size; }
+	void*       port_data(PortType port_type, SampleCount offset);
+	const void* port_data(PortType port_type, SampleCount offset) const;
+
+	LV2_URID type()     const { return _type; }
+	uint32_t capacity() const { return _capacity; }
+
+	/// Sequence buffers only
+	bool append_event(int64_t        frames,
+	                  uint32_t       size,
+	                  uint32_t       type,
+	                  const uint8_t* data);
+
+	LV2_Atom*       atom()       { return _atom; }
+	const LV2_Atom* atom() const { return _atom; }
 
 	inline void ref() { ++_refs; }
 
@@ -78,11 +75,12 @@ public:
 
 protected:
 	BufferFactory& _factory;
-	PortType       _type;
-	size_t         _size;
+	LV2_Atom*      _atom;
+	LV2_URID       _type;
+	uint32_t       _capacity;
 
 	friend class BufferFactory;
-	virtual ~Buffer() {}
+	virtual ~Buffer();
 
 private:
 	Buffer*         _next; ///< Intrusive linked list for BufferFactory

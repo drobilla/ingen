@@ -53,6 +53,7 @@ PatchWindow::init_window(App& app)
 {
 	Window::init_window(app);
 	_box->init_box(app);
+	_box->set_window(this);
 }
 
 void

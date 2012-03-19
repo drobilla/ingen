@@ -226,7 +226,7 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
 {
 	const URIs& uris = _app->uris();
 	const Atom& name = plugin->get_property(uris.doap_name);
-	if (name.is_valid() && name.type() == Atom::STRING)
+	if (name.is_valid() && name.type() == uris.forge.String)
 			row[_plugins_columns._col_name] = name.get_string();
 
 	switch (plugin->type()) {
@@ -344,7 +344,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		Path path = _patch->path().base() + Path::nameify(name);
 		Resource::Properties props = _initial_data;
 		props.insert(make_pair(uris.rdf_type,         uris.ingen_Node));
-		props.insert(make_pair(uris.rdf_instanceOf,   plugin->uri()));
+		props.insert(make_pair(uris.rdf_instanceOf,   _app->forge().alloc_uri(plugin->uri().str())));
 		props.insert(make_pair(uris.ingen_polyphonic, _app->forge().make(polyphonic)));
 		_app->engine()->put(path, props);
 
@@ -395,7 +395,7 @@ LoadPluginWindow::filter_changed()
 
 		switch (criteria) {
 		case CriteriaColumns::NAME:
-			if (name.is_valid() && name.type() == Atom::STRING)
+			if (name.is_valid() && name.type() == uris.forge.String)
 				field = name.get_string();
 			break;
 		case CriteriaColumns::TYPE:
@@ -441,7 +441,7 @@ LoadPluginWindow::plugin_property_changed(const URI&  plugin,
 	const URIs& uris = _app->uris();
 	if (predicate == uris.doap_name) {
 		Rows::const_iterator i = _rows.find(plugin);
-		if (i != _rows.end() && value.type() == Atom::STRING)
+		if (i != _rows.end() && value.type() == uris.forge.String)
 			(*i->second)[_plugins_columns._col_name] = value.get_string();
 	}
 }

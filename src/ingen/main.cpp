@@ -84,8 +84,7 @@ ingen_try(bool cond, const char* msg)
 int
 main(int argc, char** argv)
 {
-	Raul::Forge forge;
-	Shared::Configuration conf(&forge);
+	Shared::Configuration conf;
 
 	// Parse command line options
 	try {
@@ -116,7 +115,7 @@ main(int argc, char** argv)
 
 	world = new Ingen::Shared::World(&conf, argc, argv, NULL, NULL);
 
-	if (conf.option("uuid").get_string()) {
+	if (conf.option("uuid").is_valid()) {
 		world->set_jack_uuid(conf.option("uuid").get_string());
 	}
 
@@ -186,8 +185,8 @@ main(int argc, char** argv)
 	if (conf.option("load").is_valid() || !conf.files().empty()) {
 		boost::optional<Path>   parent;
 		boost::optional<Symbol> symbol;
-		const Raul::Atom&       path_option = conf.option("path");
-
+		
+		const Raul::Configuration::Value& path_option = conf.option("path");
 		if (path_option.is_valid()) {
 			if (Path::is_valid(path_option.get_string())) {
 				const Path p(path_option.get_string());

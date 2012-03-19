@@ -4,6 +4,7 @@ from waflib.extras import autowaf as autowaf
 def build(bld):
     core_source = '''
             AudioBuffer.cpp
+            Buffer.cpp
             BufferFactory.cpp
             ClientBroadcaster.cpp
             ConnectionImpl.cpp
@@ -12,7 +13,6 @@ def build(bld):
             Engine.cpp
             EngineStore.cpp
             Event.cpp
-            EventBuffer.cpp
             EventSource.cpp
             GraphObjectImpl.cpp
             InputPort.cpp
@@ -24,7 +24,6 @@ def build(bld):
             NodeFactory.cpp
             NodeImpl.cpp
             Notification.cpp
-            ObjectBuffer.cpp
             ObjectSender.cpp
             OutputPort.cpp
             PatchImpl.cpp

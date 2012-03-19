@@ -60,8 +60,7 @@ public:
 	                          const std::string&     path);
 
 	virtual std::string to_string(SharedPtr<const GraphObject> object,
-	                              const std::string&           base_uri,
-	                              const Properties&            extra_rdf);
+	                              const std::string&           base_uri);
 
 	virtual void start_to_string(const Raul::Path&  root,
 	                             const std::string& base_uri);

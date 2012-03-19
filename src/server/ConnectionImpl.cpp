@@ -17,15 +17,17 @@
 
 #include <algorithm>
 #include <boost/intrusive_ptr.hpp>
-#include "raul/log.hpp"
-#include "raul/Maid.hpp"
+
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "raul/Maid.hpp"
+#include "raul/log.hpp"
+
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"
 #include "Engine.hpp"
-#include "EventBuffer.hpp"
 #include "InputPort.hpp"
 #include "MessageContext.hpp"
 #include "OutputPort.hpp"
@@ -109,27 +111,21 @@ ConnectionImpl::queue(Context& context)
 	if (!must_queue())
 		return;
 
-	boost::intrusive_ptr<EventBuffer> src_buf =
-			boost::dynamic_pointer_cast<EventBuffer>(_src_port->buffer(0));
-	if (!src_buf) {
-		error << "Queued connection but source is not an EventBuffer" << endl;
+	const Ingen::Shared::URIs& uris = _src_port->bufs().uris();
+
+	boost::intrusive_ptr<Buffer> src_buf = _src_port->buffer(0);
+	if (src_buf->atom()->type != uris.atom_Sequence) {
+		error << "Queued connection but source is not a Sequence" << endl;
 		return;
 	}
 
-	for (src_buf->rewind(); src_buf->is_valid(); src_buf->increment()) {
-		error << "Queued connections currently unsupported" << endl;
-		#if 0
-		LV2_Event* ev  = src_buf->get_event();
-		LV2_Atom*  obj = LV2_ATOM_FROM_EVENT(ev);
-		/*debug << _src_port->path() << " -> " << _dst_port->path()
-			<< " QUEUE OBJECT TYPE " << obj->type << ":";
-		for (size_t i = 0; i < obj->size; ++i)
-			debug << " " << std::hex << (int)obj->body[i];
-		debug << endl;*/
+	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)src_buf->atom();
+	LV2_SEQUENCE_FOREACH(seq, i) {
+		LV2_Atom_Event* const ev = lv2_sequence_iter_get(i);
+		_queue->write(sizeof(LV2_Atom) + ev->body.size, &ev->body);
+		context.engine().message_context()->run(
+			_dst_port->parent_node(), context.start() + ev->time.frames);
 
-		_queue->write(sizeof(LV2_Atom) + obj->size, obj);
-		context.engine().message_context()->run(_dst_port->parent_node(), context.start() + ev->frames);
-		#endif
 	}
 }
 
@@ -171,25 +167,21 @@ ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 			     || dst->is_a(PortType::AUDIO)
 			     || dst->is_a(PortType::CV)))
 
-			// (Events | Message) => (Events | Message)
-			|| ( (src->is_a(PortType::EVENTS) || src->is_a(PortType::MESSAGE))
-			  && (dst->is_a(PortType::EVENTS) || dst->is_a(PortType::MESSAGE)))
-
-			// (Message | Value) => (Message | Value)
-			|| ( (src->is_a(PortType::MESSAGE) || src->is_a(PortType::VALUE))
-			  && (dst->is_a(PortType::MESSAGE) || dst->is_a(PortType::VALUE)))
+			// Equal types
+			|| (src->type() == dst->type() &&
+			    src->buffer_type() == dst->buffer_type())
 
 			// Control => atom:Float Value
 			|| (src->is_a(PortType::CONTROL) && dst->supports(uris.atom_Float))
 
-			// Audio => atom:Vector Value
-			|| (src->is_a(PortType::AUDIO)   && dst->supports(uris.atom_Vector))
+			// Audio => atom:Sound Value
+			|| (src->is_a(PortType::AUDIO) && dst->supports(uris.atom_Sound))
 
 			// atom:Float Value => Control
 			|| (src->supports(uris.atom_Float) && dst->is_a(PortType::CONTROL))
 
-			// atom:Vector Value => Audio
-			|| (src->supports(uris.atom_Vector)  && dst->is_a(PortType::AUDIO)));
+			// atom:Sound Value => Audio
+			|| (src->supports(uris.atom_Sound) && dst->is_a(PortType::AUDIO)));
 }
 
 } // namespace Server

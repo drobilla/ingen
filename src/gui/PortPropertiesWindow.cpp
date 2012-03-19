@@ -98,7 +98,7 @@ PortPropertiesWindow::property_changed(const URI& key, const Atom& value)
 {
 	const Shared::URIs& uris = _app->uris();
 
-	if (value.type() == Atom::FLOAT) {
+	if (value.type() == uris.forge.Float) {
 		if (key == uris.lv2_minimum)
 			_min_spinner->set_value(value.get_float());
 		else if (key == uris.lv2_maximum)

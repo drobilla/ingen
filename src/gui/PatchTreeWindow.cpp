@@ -198,7 +198,7 @@ PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
 {
 	const URIs& uris = _app->uris();
 	_enable_signal = false;
-	if (key == uris.ingen_enabled && value.type() == Atom::BOOL) {
+	if (key == uris.ingen_enabled && value.type() == uris.forge.Bool) {
 		Gtk::TreeModel::iterator i = find_patch(_patch_treestore->children(), patch);
 		if (i != _patch_treestore->children().end()) {
 			Gtk::TreeModel::Row row = *i;

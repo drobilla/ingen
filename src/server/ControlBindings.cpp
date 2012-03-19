@@ -16,16 +16,17 @@
  */
 
 #include <math.h>
+
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
+#include "ingen/shared/World.hpp"
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
-#include "ingen/shared/URIs.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/shared/World.hpp"
 
 #include "AudioBuffer.hpp"
 #include "ControlBindings.hpp"
 #include "Engine.hpp"
-#include "EventBuffer.hpp"
 #include "Notification.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
@@ -43,13 +44,15 @@ ControlBindings::ControlBindings(Engine& engine)
 	: _engine(engine)
 	, _learn_port(NULL)
 	, _bindings(new Bindings())
-	, _feedback(new EventBuffer(*_engine.buffer_factory(), 1024)) // FIXME: size
+	, _feedback(new Buffer(*_engine.buffer_factory(),
+	                       engine.world()->uris()->atom_Sequence,
+	                       4096)) // FIXME: capacity?
 {
 }
 
 ControlBindings::~ControlBindings()
 {
-	delete _feedback;
+	_feedback.reset();
 }
 
 ControlBindings::Key
@@ -66,7 +69,7 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 {
 	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 	Key key;
-	if (binding.type() == Atom::DICT) {
+	if (binding.type() == _engine.world()->forge().Dict) {
 		const Atom::DictValue&          dict = binding.get_dict();
 		Atom::DictValue::const_iterator t    = dict.find(uris.rdf_type);
 		Atom::DictValue::const_iterator n;
@@ -88,7 +91,7 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 }
 
 ControlBindings::Key
-ControlBindings::midi_event_key(uint16_t size, uint8_t* buf, uint16_t& value)
+ControlBindings::midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value)
 {
 	switch (buf[0] & 0xF0) {
 	case MIDI_CMD_CONTROL:
@@ -125,9 +128,8 @@ ControlBindings::port_value_changed(ProcessContext&   context,
                                     Key               key,
                                     const Raul::Atom& value_atom)
 {
-	Ingen::Shared::World*           world   = context.engine().world();
-	const Ingen::Shared::URIs&      uris    = *world->uris().get();
-	const Ingen::Shared::LV2URIMap& uri_map = *world->lv2_uri_map().get();
+	Ingen::Shared::World*      world = context.engine().world();
+	const Ingen::Shared::URIs& uris  = *world->uris().get();
 	if (key) {
 		int16_t value = port_value_to_control(
 			port, key.type, value_atom, port->minimum(), port->maximum());
@@ -164,9 +166,7 @@ ControlBindings::port_value_changed(ProcessContext&   context,
 			break;
 		}
 		if (size > 0) {
-			_feedback->append(0, 0,
-			                  uri_map.global_to_event(uris.midi_MidiEvent.id).second,
-			                  size, buf);
+			_feedback->append_event(0, size, uris.midi_MidiEvent.id, buf);
 		}
 	}
 }
@@ -218,7 +218,7 @@ ControlBindings::port_value_to_control(PortImpl*         port,
                                        const Raul::Atom& min_atom,
                                        const Raul::Atom& max_atom) const
 {
-	if (value_atom.type() != Atom::FLOAT)
+	if (value_atom.type() != port->bufs().forge().Float)
 		return 0;
 
 	const float min    = min_atom.get_float();
@@ -262,7 +262,7 @@ ControlBindings::set_port_value(ProcessContext& context,
 
 	port->set_value(port_value);
 
-	assert(port_value.type() == Atom::FLOAT);
+	assert(port_value.type() == port->bufs().forge().Float);
 	assert(dynamic_cast<AudioBuffer*>(port->buffer(0).get()));
 
 	for (uint32_t v = 0; v < port->poly(); ++v)
@@ -341,71 +341,43 @@ ControlBindings::remove(PortImpl* port)
 }
 
 void
-ControlBindings::pre_process(ProcessContext& context, EventBuffer* buffer)
+ControlBindings::pre_process(ProcessContext& context, Buffer* buffer)
 {
-	uint32_t frames    = 0;
-	uint32_t subframes = 0;
-	uint16_t type      = 0;
-	uint16_t size      = 0;
-	uint8_t* buf       = NULL;
-	uint16_t value     = 0;
-
+	uint16_t            value    = 0;
 	SharedPtr<Bindings> bindings = _bindings;
 	_feedback->clear();
 
-	Ingen::Shared::World*           world   = context.engine().world();
-	const Ingen::Shared::URIs&      uris    = *world->uris().get();
-	const Ingen::Shared::LV2URIMap& uri_map = *world->lv2_uri_map().get();
+	Ingen::Shared::World*      world = context.engine().world();
+	const Ingen::Shared::URIs& uris  = *world->uris().get();
 
-	// TODO: cache
-	const uint32_t midi_event_type = uri_map.global_to_event(
-		uris.midi_MidiEvent.id).second;
-
-	// Learn from input if necessary
-	if (_learn_port) {
-		for (buffer->rewind();
-				buffer->get_event(&frames, &subframes, &type, &size, &buf);
-				buffer->increment()) {
-			if (type != midi_event_type)
-				continue;
-
-			const Key key = midi_event_key(size, buf, value);
-			if (key && bind(context, key))
-				break;
-		}
+	if (!_learn_port && bindings->empty()) {
+		// Don't bother reading input
+		return;
 	}
 
-	// If bindings are empty, no sense reading input
-	if (bindings->empty())
-		return;
+	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)buffer->atom();
+	LV2_SEQUENCE_FOREACH(seq, i) {
+		LV2_Atom_Event* const ev = lv2_sequence_iter_get(i);
+		if (ev->body.type == uris.midi_MidiEvent) {
+			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+			const Key      key = midi_event_key(ev->body.size, buf, value);
+			if (_learn_port && key) {
+				bind(context, key);
+			}
 
-	// Read input and apply control values
-	for (buffer->rewind();
-			buffer->get_event(&frames, &subframes, &type, &size, &buf);
-			buffer->increment()) {
-		if (type != midi_event_type)
-			continue;
-
-		const Key key = midi_event_key(size, buf, value);
-		if (!key)
-			continue;
-
-		Bindings::const_iterator i = bindings->find(key);
-		if (i == bindings->end())
-			continue;
-
-		set_port_value(context, i->second, key.type, value);
+			Bindings::const_iterator i = bindings->find(key);
+			if (i != bindings->end()) {
+				set_port_value(context, i->second, key.type, value);
+			}
+		}
 	}
 }
 
 void
-ControlBindings::post_process(ProcessContext& context, EventBuffer* buffer)
+ControlBindings::post_process(ProcessContext& context, Buffer* buffer)
 {
-	if (_feedback->event_count() > 0) {
-		// TODO: merge buffer's existing contents (anything send to it in the patch)
-		_feedback->rewind();
-		buffer->copy(context, _feedback);
-	}
+	// TODO: merge buffer's existing contents (anything send to it in the patch)
+	buffer->copy(context, _feedback.get());
 }
 
 } // namespace Server

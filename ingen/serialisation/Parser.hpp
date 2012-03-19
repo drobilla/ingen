@@ -24,9 +24,8 @@
 #include <boost/optional.hpp>
 #include <glibmm/ustring.h>
 
-#include "raul/Path.hpp"
-
 #include "ingen/GraphObject.hpp"
+#include "raul/Path.hpp"
 
 namespace Ingen {
 

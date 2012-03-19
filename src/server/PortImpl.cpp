@@ -27,10 +27,8 @@
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
-#include "EventBuffer.hpp"
 #include "NodeImpl.hpp"
 #include "Notification.hpp"
-#include "ObjectBuffer.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 #include "ThreadManager.hpp"
@@ -47,6 +45,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
                    uint32_t            index,
                    uint32_t            poly,
                    PortType            type,
+                   LV2_URID            buffer_type,
                    const Atom&         value,
                    size_t              buffer_size)
 	: GraphObjectImpl(bufs.uris(), node, name)
@@ -55,6 +54,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _poly(poly)
 	, _buffer_size(buffer_size)
 	, _type(type)
+	, _buffer_type(buffer_type)
 	, _value(value)
 	, _min(bufs.forge().make(0.0f))
 	, _max(bufs.forge().make(1.0f))
@@ -68,11 +68,27 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	assert(node != NULL);
 	assert(_poly > 0);
 
-	if (_buffer_size == 0)
-		_buffer_size = bufs.default_buffer_size(type);
-
 	const Ingen::Shared::URIs& uris = bufs.uris();
-	add_property(uris.rdf_type,  type.uri());
+
+	if (_buffer_size == 0) {
+		_buffer_size = bufs.default_buffer_size(buffer_type);
+	}
+
+	if (_buffer_type == 0) {
+		switch (_type.symbol()) {
+		case PortType::CONTROL:
+			_buffer_type = uris.atom_Float;
+			break;
+		case PortType::AUDIO:
+		case PortType::CV:
+			_buffer_type = uris.atom_Sound;
+			break;
+		default:
+			break;
+		}
+	}
+
+	add_property(uris.rdf_type,  bufs.forge().alloc_uri(type.uri().str()));
 	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
 	set_context(_context);
 }
@@ -85,7 +101,8 @@ PortImpl::~PortImpl()
 bool
 PortImpl::supports(const Raul::URI& value_type) const
 {
-	return has_property(_bufs.uris().atom_supports, value_type);
+	return has_property(_bufs.uris().atom_supports,
+	                    _bufs.forge().alloc_uri(value_type.str()));
 }
 
 Raul::Array<BufferFactory::Ref>*
@@ -108,9 +125,9 @@ bool
 PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	if (buffer_type() != PortType::CONTROL &&
-	    buffer_type() != PortType::CV &&
-	    buffer_type() != PortType::AUDIO) {
+	if (_type != PortType::CONTROL &&
+	    _type != PortType::CV &&
+	    _type != PortType::AUDIO) {
 		return false;
 	}
 
@@ -140,9 +157,9 @@ bool
 PortImpl::apply_poly(Maid& maid, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
-	if (buffer_type() != PortType::CONTROL &&
-	    buffer_type() != PortType::CV &&
-	    buffer_type() != PortType::AUDIO) {
+	if (_type != PortType::CONTROL &&
+	    _type != PortType::CV &&
+	    _type != PortType::AUDIO) {
 		return false;
 	}
 
@@ -207,8 +224,8 @@ PortImpl::clear_buffers()
 void
 PortImpl::broadcast_value(Context& context, bool force)
 {
-	Raul::Forge& forge = context.engine().world()->forge();
-	Raul::Atom   val;
+	Ingen::Forge& forge = context.engine().world()->forge();
+	Raul::Atom    val;
 	switch (_type.symbol()) {
 	case PortType::UNKNOWN:
 		break;
@@ -224,21 +241,16 @@ PortImpl::broadcast_value(Context& context, bool force)
 	case PortType::CV:
 		val = forge.make(((AudioBuffer*)buffer(0).get())->value_at(0));
 		break;
-	case PortType::EVENTS:
-		if (((EventBuffer*)buffer(0).get())->event_count() > 0) {
-			const Notification note = Notification::make(
-				Notification::PORT_ACTIVITY, context.start(), this, forge.make(true));
-			context.event_sink().write(sizeof(note), &note);
-		}
-		break;
 	case PortType::VALUE:
 	case PortType::MESSAGE:
-		std::cerr << "FIXME: Atom value" << std::endl;
-		/*
-		Ingen::Shared::LV2Atom::to_atom(_bufs.uris(),
-		                                ((ObjectBuffer*)buffer(0).get())->atom(),
-		                                val);
-		*/
+		if (_buffer_type == _bufs.uris().atom_Sequence) {
+			LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)buffer(0)->atom();
+			if (seq->atom.size > sizeof(LV2_Atom_Sequence_Body)) {
+				const Notification note = Notification::make(
+					Notification::PORT_ACTIVITY, context.start(), this, forge.make(true));
+				context.event_sink().write(sizeof(note), &note);
+			}
+		}
 		break;
 	}
 
@@ -263,12 +275,6 @@ PortImpl::set_context(Context::ID c)
 		set_property(uris.ctx_context, uris.ctx_messageContext);
 		break;
 	}
-}
-
-PortType
-PortImpl::buffer_type() const
-{
-	return _type;
 }
 
 } // namespace Server

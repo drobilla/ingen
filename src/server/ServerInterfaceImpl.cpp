@@ -161,7 +161,7 @@ ServerInterfaceImpl::set_property(const URI&  uri,
                                   const Atom& value)
 {
 	if (uri == "ingen:engine" && predicate == "ingen:enabled"
-	    && value.type() == Atom::BOOL) {
+	    && value.type() == _engine.world()->forge().Bool) {
 		if (value.get_bool()) {
 			_engine.activate();
 			push_queued(new Events::Ping(_engine, _request_client, _request_id, now()));

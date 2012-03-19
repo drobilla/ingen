@@ -25,9 +25,12 @@
 #undef nil
 #include <glibmm/thread.h>
 
+#include "raul/Atom.hpp"
 #include "raul/AtomicPtr.hpp"
 #include "raul/RingBuffer.hpp"
 #include "raul/SharedPtr.hpp"
+#include "ingen/shared/Forge.hpp"
+#include "ingen/shared/URIs.hpp"
 
 #include "PortType.hpp"
 #include "types.hpp"
@@ -50,33 +53,32 @@ public:
 
 	typedef boost::intrusive_ptr<Buffer> Ref;
 
-	static size_t audio_buffer_size(SampleCount nframes);
-	size_t        default_buffer_size(PortType type);
+	static uint32_t audio_buffer_size(SampleCount nframes);
+	uint32_t        default_buffer_size(LV2_URID type);
 
-	Ref get(PortType type, size_t size=0, bool force_create=false);
+	Ref get(LV2_URID type, uint32_t capacity, bool force_create=false);
 
 	Ref silent_buffer();
 
 	void set_block_length(SampleCount block_length);
 
-	Raul::Forge&         forge();
-	Ingen::Shared::URIs& uris() { assert(_uris); return *_uris.get(); }
+	Ingen::Forge&        forge();
+	Ingen::Shared::URIs& uris()   { assert(_uris); return *_uris.get(); }
+	Engine&              engine() { return _engine; }
 
 private:
 	friend class Buffer;
 	void recycle(Buffer* buf);
 
-	Ref create(PortType type, size_t size=0);
+	Ref create(LV2_URID type, uint32_t capacity=0);
 
-	inline Raul::AtomicPtr<Buffer>& free_list(PortType type) {
-		switch (type.symbol()) {
-		case PortType::AUDIO:
-		case PortType::CV:      return _free_audio;
-		case PortType::CONTROL: return _free_control;
-		case PortType::EVENTS:  return _free_event;
-		case PortType::VALUE:
-		case PortType::MESSAGE: return _free_object;
-		default: throw;
+	inline Raul::AtomicPtr<Buffer>& free_list(LV2_URID type) {
+		if (type == _uris->atom_Float) {
+			return _free_control;
+		} else if (type == _uris->atom_Sound) {
+			return _free_audio;
+		} else {
+			return _free_object;
 		}
 	}
 
@@ -84,7 +86,6 @@ private:
 
 	Raul::AtomicPtr<Buffer> _free_audio;
 	Raul::AtomicPtr<Buffer> _free_control;
-	Raul::AtomicPtr<Buffer> _free_event;
 	Raul::AtomicPtr<Buffer> _free_object;
 
 	Glib::Mutex                    _mutex;

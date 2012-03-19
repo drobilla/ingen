@@ -183,8 +183,8 @@ public:
 
 	virtual void set_buffer_size(Context&       context,
 	                             BufferFactory& bufs,
-	                             PortType       type,
-	                             size_t         size);
+	                             LV2_URID       type,
+	                             uint32_t       size);
 
 	/** The Patch this Node belongs to. */
 	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }

@@ -21,6 +21,8 @@
 #include <boost/utility.hpp>
 
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/Forge.hpp"
+#include "raul/Atom.hpp"
 #include "raul/URI.hpp"
 
 namespace Raul {
@@ -32,23 +34,29 @@ namespace Shared {
 
 class URIs : public boost::noncopyable {
 public:
-	URIs(Raul::Forge& forge, LV2URIMap* map);
+	URIs(Ingen::Forge& forge, LV2URIMap* map);
 
 	struct Quark : public Raul::URI {
-		Quark(LV2URIMap* map, const char* str);
-		operator LV2_URID() const { return id; }
-		uint32_t id;
+		Quark(Ingen::Forge& forge, LV2URIMap* map, const char* str);
+		operator LV2_URID()   const { return id; }
+		operator Raul::Atom() const { return atom; }
+		uint32_t   id;
+		Raul::Atom atom;
 	};
 
-	Raul::Forge& forge;
+	Ingen::Forge& forge;
 
+	const Quark atom_Blank;
 	const Quark atom_Bool;
 	const Quark atom_Float;
 	const Quark atom_Int;
 	const Quark atom_MessagePort;
+	const Quark atom_Sequence;
+	const Quark atom_Sound;
 	const Quark atom_String;
 	const Quark atom_ValuePort;
 	const Quark atom_Vector;
+	const Quark atom_bufferType;
 	const Quark atom_eventTransfer;
 	const Quark atom_supports;
 	const Quark ctx_audioContext;
@@ -56,7 +64,6 @@ public:
 	const Quark ctx_messageContext;
 	const Quark cv_CVPort;
 	const Quark doap_name;
-	const Quark ev_EventPort;
 	const Quark ingen_Connection;
 	const Quark ingen_Internal;
 	const Quark ingen_Node;

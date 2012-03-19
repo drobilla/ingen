@@ -20,36 +20,45 @@
 
 #include <boost/intrusive_ptr.hpp>
 
+#include "ingen/shared/URIs.hpp"
 #include "raul/log.hpp"
 
 #include "Buffer.hpp"
 #include "Context.hpp"
-#include "PortType.hpp"
 
 using namespace Raul;
 
 namespace Ingen {
 namespace Server {
 
-inline void
-mix(Context& context, Buffer* dst, const boost::intrusive_ptr<Buffer>* srcs, uint32_t num_srcs)
+inline bool
+is_audio(Shared::URIs& uris, LV2_URID type)
 {
-	using Ingen::PortType;
-	switch (dst->type().symbol()) {
-	case PortType::AUDIO:
-	case PortType::CONTROL:
-	case PortType::CV:
+	return type == uris.atom_Float || type == uris.atom_Sound;
+}
+
+inline void
+mix(Context&                            context,
+    Shared::URIs&                       uris,
+    Buffer*                             dst,
+    const boost::intrusive_ptr<Buffer>* srcs,
+    uint32_t                            num_srcs)
+{
+	if (num_srcs == 1) {
+		dst->copy(context, srcs[0].get());
+	} else if (is_audio(uris, dst->type())) {
 		// Copy the first source
 		dst->copy(context, srcs[0].get());
 
 		// Mix in the rest
 		for (uint32_t i = 1; i < num_srcs; ++i) {
-			assert(srcs[i]->type() == PortType::AUDIO ||
-			       srcs[i]->type() == PortType::CONTROL ||
-			       srcs[i]->type() == PortType::CV);
+			assert(is_audio(uris, srcs[i]->type()));
 			((AudioBuffer*)dst)->accumulate(context, (AudioBuffer*)srcs[i].get());
 		}
-		break;
+	} else {
+		std::cerr << "FIXME: event mix" << std::endl;
+	}
+#if 0
 	case PortType::EVENTS:
 		dst->clear();
 		for (uint32_t i = 0; i < num_srcs; ++i) {
@@ -77,14 +86,7 @@ mix(Context& context, Buffer* dst, const boost::intrusive_ptr<Buffer>* srcs, uin
 			}
 		}
 		dst->rewind();
-		break;
-	default:
-		if (num_srcs == 1)
-			dst->copy(context, srcs[0].get());
-		else
-			error << "Mix of unsupported buffer types" << std::endl;
-		return;
-	}
+#endif
 }
 
 } // namespace Server

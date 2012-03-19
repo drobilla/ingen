@@ -57,14 +57,13 @@ public:
 	static InternalPlugin* internal_plugin(Shared::URIs& uris);
 
 private:
-	bool _learning;
-
 	InputPort*  _midi_in_port;
 	InputPort*  _param_port;
 	InputPort*  _log_port;
 	InputPort*  _min_port;
 	InputPort*  _max_port;
 	OutputPort* _audio_port;
+	bool        _learning;
 };
 
 } // namespace Server

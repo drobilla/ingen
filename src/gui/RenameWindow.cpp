@@ -65,7 +65,7 @@ RenameWindow::set_object(SharedPtr<const ObjectModel> object)
 	_symbol_entry->set_text(object->path().symbol());
 	const Atom& name_atom = object->get_property("http://lv2plug.in/ns/lv2core#name");
 	_label_entry->set_text(
-		(name_atom.type() == Atom::STRING) ? name_atom.get_string() : "");
+		(name_atom.type() == _app->forge().String) ? name_atom.get_string() : "");
 }
 
 void

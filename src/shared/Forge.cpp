@@ -15,44 +15,39 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_ENGINE_LV2INFO_HPP
-#define INGEN_ENGINE_LV2INFO_HPP
+#include <sstream>
 
-#include <map>
-#include <string>
-
-#include "lilv/lilv.h"
-#include "ingen/shared/World.hpp"
+#include "ingen/shared/Forge.hpp"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
 namespace Ingen {
 
-class Node;
+Forge::Forge(Shared::LV2URIMap& map)
+{
+	Int    = map.map_uri(LV2_ATOM__Int);
+	Float  = map.map_uri(LV2_ATOM__Float);
+	Bool   = map.map_uri(LV2_ATOM__Bool);
+	URI    = map.map_uri(LV2_ATOM__URI);
+	String = map.map_uri(LV2_ATOM__String);
+	Dict   = map.map_uri(LV2_ATOM__Object);
+}
 
-namespace Server {
+std::string
+Forge::str(const Raul::Atom& atom)
+{
+	std::ostringstream ss;
+	if (atom.type() == Int) {
+		ss << atom.get_int32();
+	} else if (atom.type() == Float) {
+		ss << atom.get_float();
+	} else if (atom.type() == Bool) {
+		ss << (atom.get_bool() ? "true" : "false");
+	} else if (atom.type() == URI) {
+		ss << "<" << atom.get_uri() << ">";
+	} else if (atom.type() == String) {
+		ss << "\"" << atom.get_string() << "\"";
+	}
+	return ss.str();
+}
 
-/** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
- */
-class LV2Info {
-public:
-	explicit LV2Info(Ingen::Shared::World* world);
-	~LV2Info();
-
-	LilvNode* input_class;
-	LilvNode* output_class;
-	LilvNode* control_class;
-	LilvNode* cv_class;
-	LilvNode* audio_class;
-	LilvNode* value_port_class;
-	LilvNode* message_port_class;
-
-	Ingen::Shared::World& world()     { return *_world; }
-	LilvWorld*            lv2_world() { return _world->lilv_world(); }
-
-private:
-	Ingen::Shared::World* _world;
-};
-
-} // namespace Server
 } // namespace Ingen
-
-#endif // INGEN_ENGINE_LV2INFO_HPP

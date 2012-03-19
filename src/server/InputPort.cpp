@@ -23,16 +23,15 @@
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"
-#include "EventBuffer.hpp"
 #include "InputPort.hpp"
 #include "NodeImpl.hpp"
 #include "Notification.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
-#include "mix.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
+#include "mix.hpp"
 #include "util.hpp"
 
 using namespace std;
@@ -46,9 +45,10 @@ InputPort::InputPort(BufferFactory&      bufs,
                      uint32_t            index,
                      uint32_t            poly,
                      PortType            type,
+                     LV2_URID            buffer_type,
                      const Raul::Atom&   value,
                      size_t              buffer_size)
-	: PortImpl(bufs, parent, symbol, index, poly, type, value, buffer_size)
+	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
 	, _num_connections(0)
 {
 	const Ingen::Shared::URIs& uris = bufs.uris();
@@ -203,7 +203,7 @@ InputPort::pre_process(Context& context)
 				c->get_sources(context, v, srcs, max_num_srcs, num_srcs);
 			}
 
-			mix(context, buffer(v).get(), srcs, num_srcs);
+			mix(context, bufs().uris(), buffer(v).get(), srcs, num_srcs);
 			buffer(v)->prepare_read(context);
 		}
 	}
@@ -216,7 +216,7 @@ void
 InputPort::post_process(Context& context)
 {
 	if (_set_by_user) {
-		if (is_a(PortType::EVENTS)) {
+		if (_buffer_type == _bufs.uris().atom_Sequence) {
 			// Clear events received via a SetPortValue
 			for (uint32_t v = 0; v < _poly; ++v) {
 				buffer(v)->clear();

@@ -129,7 +129,7 @@ SetMetadata::pre_process()
 		if (is_patch) {
 			uint32_t poly = 1;
 			iterator p = _properties.find(uris.ingen_polyphony);
-			if (p != _properties.end() && p->second.is_valid() && p->second.type() == Atom::INT)
+			if (p != _properties.end() && p->second.is_valid() && p->second.type() == uris.forge.Int)
 				poly = p->second.get_int32();
 			_create_event = new CreatePatch(_engine, _request_client, _request_id, _time,
 			                                path, poly, _properties);
@@ -186,7 +186,7 @@ SetMetadata::pre_process()
 			PortImpl* port = dynamic_cast<PortImpl*>(_object);
 			if (port) {
 				if (key == uris.ingen_broadcast) {
-					if (value.type() == Atom::BOOL) {
+					if (value.type() == uris.forge.Bool) {
 						op = ENABLE_BROADCAST;
 					} else {
 						_status = BAD_VALUE_TYPE;
@@ -200,7 +200,7 @@ SetMetadata::pre_process()
 					if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
 						if (value == uris.wildcard) {
 							_engine.control_bindings()->learn(port);
-						} else if (value.type() == Atom::DICT) {
+						} else if (value.type() == uris.forge.Dict) {
 							op = CONTROL_BINDING;
 						} else {
 							_status = BAD_VALUE_TYPE;
@@ -211,7 +211,7 @@ SetMetadata::pre_process()
 				}
 			} else if ((_patch = dynamic_cast<PatchImpl*>(_object))) {
 				if (key == uris.ingen_enabled) {
-					if (value.type() == Atom::BOOL) {
+					if (value.type() == uris.forge.Bool) {
 						op = ENABLE;
 						// FIXME: defer this until all other metadata has been processed
 						if (value.get_bool() && !_patch->enabled())
@@ -220,7 +220,7 @@ SetMetadata::pre_process()
 						_status = BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.ingen_polyphony) {
-					if (value.type() == Atom::INT) {
+					if (value.type() == uris.forge.Int) {
 						op = POLYPHONY;
 						_patch->prepare_internal_poly(*_engine.buffer_factory(), value.get_int32());
 					} else {
@@ -230,7 +230,7 @@ SetMetadata::pre_process()
 			} else if (key == uris.ingen_polyphonic) {
 				PatchImpl* parent = dynamic_cast<PatchImpl*>(obj->parent());
 				if (parent) {
-					if (value.type() == Atom::BOOL) {
+					if (value.type() == uris.forge.Bool) {
 						op = POLYPHONIC;
 						obj->set_property(key, value, value.context());
 						NodeImpl* node = dynamic_cast<NodeImpl*>(obj);
@@ -288,7 +288,7 @@ SetMetadata::execute(ProcessContext& context)
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();
 	for (Properties::const_iterator p = _properties.begin(); p != _properties.end(); ++p, ++t) {
-		const Raul::Atom& key   = p->first;
+		const Raul::URI&  key   = p->first;
 		const Raul::Atom& value = p->second;
 		switch (*t) {
 		case ENABLE_BROADCAST:

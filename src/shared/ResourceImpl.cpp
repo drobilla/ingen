@@ -121,8 +121,8 @@ ResourceImpl::type(const URIs&       uris,
 	patch = node = port = is_output = false;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Atom& atom = i->second;
-		if (atom.type() != Atom::URI) {
-			warn << "[ResourceImpl] Non-URI type " << atom << endl;
+		if (atom.type() != uris.forge.URI) {
+			warn << "[ResourceImpl] Non-URI type " << uris.forge.str(atom) << endl;
 			continue;
 		}
 
@@ -193,17 +193,6 @@ ResourceImpl::remove_properties(const Properties& p)
 			}
 		}
 	}
-}
-
-void
-ResourceImpl::dump(std::ostream& os) const
-{
-	typedef Resource::Properties::const_iterator iterator;
-	os << _uri << " [" << endl;
-	for (iterator i = _properties.begin(); i != _properties.end(); ++i) {
-		os << "\t" << i->first << " " << i->second << " ;" << endl;
-	}
-	os << "]" << endl;
 }
 
 Resource::Properties

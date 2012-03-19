@@ -35,13 +35,15 @@ PortModel::on_property(const Raul::URI& uri, const Raul::Atom& value)
 bool
 PortModel::supports(const Raul::URI& value_type) const
 {
-	return has_property(_uris.atom_supports, value_type);
+	return has_property(_uris.atom_supports,
+	                    _uris.forge.alloc_uri(value_type.str()));
 }
 
 bool
 PortModel::port_property(const Raul::URI& uri) const
 {
-	return has_property(_uris.lv2_portProperty, uri);
+	return has_property(_uris.lv2_portProperty,
+	                    _uris.forge.alloc_uri(uri.str()));
 }
 
 void
@@ -66,7 +68,7 @@ PortModel::has_context(const Raul::URI& uri) const
 	if (uri == _uris.ctx_audioContext && !context.is_valid())
 		return true;
 	else
-		return context == uri;
+		return context == _uris.forge.alloc_uri(uri.str());
 }
 
 } // namespace Client

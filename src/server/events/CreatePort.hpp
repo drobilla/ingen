@@ -18,13 +18,13 @@
 #ifndef INGEN_EVENTS_CREATEPORT_HPP
 #define INGEN_EVENTS_CREATEPORT_HPP
 
+#include "ingen/Resource.hpp"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Array.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen/Resource.hpp"
-
-#include "PortType.hpp"
 #include "Event.hpp"
+#include "PortType.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -57,7 +57,8 @@ public:
 private:
 	Raul::Path              _path;
 	Raul::URI               _type;
-	PortType                _data_type;
+	PortType                _port_type;
+	LV2_URID                _buffer_type;
 	PatchImpl*              _patch;
 	PortImpl*               _patch_port;
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch

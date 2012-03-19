@@ -61,7 +61,7 @@ CreateNode::CreateNode(Engine&                     engine,
 {
 	const Resource::Properties::const_iterator p = properties.find(
 			engine.world()->uris()->ingen_polyphonic);
-	if (p != properties.end() && p->second.type() == Raul::Atom::BOOL
+	if (p != properties.end() && p->second.type() == engine.world()->forge().Bool
 			&& p->second.get_bool())
 		_polyphonic = true;
 }

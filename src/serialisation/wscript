@@ -2,10 +2,13 @@
 from waflib.extras import autowaf as autowaf
 
 def build(bld):
-    obj = bld(features        = 'cxx cxxshlib',
-              source          = 'Parser.cpp Serialiser.cpp serialisation.cpp',
+    obj = bld(features        = 'c cshlib cxx cxxshlib',
+              source          = ['Parser.cpp',
+                                 'Serialiser.cpp',
+                                 'serialisation.cpp',
+                                 'sratom/sratom.c'],
               export_includes = ['../..'],
-              includes        = ['../..'],
+              includes        = ['.', '../..'],
               name            = 'libingen_serialisation',
               target          = 'ingen_serialisation',
               install_path    = '${LIBDIR}',

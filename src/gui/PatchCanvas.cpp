@@ -18,33 +18,37 @@
 #include <cassert>
 #include <map>
 #include <string>
+
 #include <boost/format.hpp>
-#include "raul/log.hpp"
+
 #include "ganv/Canvas.hpp"
 #include "ganv/Circle.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/client/ClientStore.hpp"
+#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/PluginModel.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/shared/Builder.hpp"
 #include "ingen/shared/ClashAvoider.hpp"
-#include "ingen/serialisation/Serialiser.hpp"
-#include "ingen/client/PluginModel.hpp"
-#include "ingen/client/PatchModel.hpp"
-#include "ingen/client/NodeModel.hpp"
-#include "ingen/client/ClientStore.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/World.hpp"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "raul/log.hpp"
+
 #include "App.hpp"
-#include "PatchCanvas.hpp"
-#include "PatchWindow.hpp"
-#include "PatchPortModule.hpp"
+#include "Connection.hpp"
 #include "LoadPluginWindow.hpp"
 #include "NewSubpatchWindow.hpp"
-#include "Port.hpp"
-#include "Connection.hpp"
 #include "NodeModule.hpp"
+#include "PatchCanvas.hpp"
+#include "PatchPortModule.hpp"
+#include "PatchWindow.hpp"
+#include "Port.hpp"
 #include "SubpatchModule.hpp"
+#include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
-#include "ThreadedLoader.hpp"
 
 #define LOG(s) s << "[PatchCanvas] "
 
@@ -108,10 +112,10 @@ PatchCanvas::PatchCanvas(App&                        app,
 		           "control_out", "Control Out", LV2_CORE__ControlPort, true));
 	_menu_add_event_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "event_in", "Event In", "http://lv2plug.in/ns/ext/event#EventPort", false));
+		           "event_in", "Event In", LV2_ATOM__MessagePort, false));
 	_menu_add_event_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "event_out", "Event Out", "http://lv2plug.in/ns/ext/event#EventPort", true));
+		           "event_out", "Event Out", LV2_ATOM__MessagePort, true));
 
 	signal_event.connect(
 		sigc::mem_fun(this, &PatchCanvas::on_event));
@@ -792,13 +796,13 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 
 	Resource::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type,
-	                       type));
+	                       _app.forge().alloc_uri(type.str())));
 	props.insert(make_pair(uris.rdf_type,
 	                       is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
 	props.insert(make_pair(uris.lv2_index,
 	                       _app.forge().make(int32_t(_patch->num_ports()))));
 	props.insert(make_pair(uris.lv2_name,
-	                       _app.forge().make(name.c_str())));
+	                       _app.forge().alloc(name.c_str())));
 	_app.engine()->put(path, props);
 }
 
@@ -818,12 +822,13 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	}
 
 	const URIs& uris = _app.uris();
+	const Path  path = _patch->path().child(symbol);
 
-	const Path path = _patch->path().child(symbol);
 	// FIXME: polyphony?
 	GraphObject::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type, uris.ingen_Node));
-	props.insert(make_pair(uris.rdf_instanceOf, plugin->uri()));
+	props.insert(make_pair(uris.rdf_instanceOf,
+	                       uris.forge.alloc_uri(plugin->uri().str())));
 	_app.engine()->put(path, props);
 }
 

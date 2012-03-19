@@ -35,9 +35,10 @@ OutputPort::OutputPort(BufferFactory&      bufs,
                        uint32_t            index,
                        uint32_t            poly,
                        PortType            type,
+                       LV2_URID            buffer_type,
                        const Raul::Atom&   value,
                        size_t              buffer_size)
-	: PortImpl(bufs, parent, symbol, index, poly, type, value, buffer_size)
+	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
 {
 	if (!dynamic_cast<Patch*>(parent))
 		add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort);

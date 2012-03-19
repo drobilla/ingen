@@ -15,30 +15,23 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <locale.h>
-
 #include <set>
-
-#include <boost/format.hpp>
 
 #include <glibmm/convert.h>
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/ustring.h>
 
-#include "raul/Atom.hpp"
-#include "raul/AtomRDF.hpp"
-#include "raul/log.hpp"
-
-#include "serd/serd.h"
-#include "sord/sordmm.hpp"
-
 #include "ingen/Interface.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/serialisation/Parser.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
-
-#include "ingen/serialisation/Parser.hpp"
+#include "ingen/shared/World.hpp"
+#include "raul/Atom.hpp"
+#include "raul/log.hpp"
+#include "serd/serd.h"
+#include "sord/sordmm.hpp"
+#include "sratom/sratom.h"
 
 #define LOG(s) s << "[Parser] "
 
@@ -103,18 +96,46 @@ skip_property(const Sord::Node& predicate)
 }
 
 static Resource::Properties
-get_properties(Raul::Forge&      forge,
-               Sord::Model&      model,
-               const Sord::Node& subject)
+get_properties(Ingen::Shared::World* world,
+               Sord::Model&          model,
+               const Sord::Node&     subject)
 {
+	SerdChunk       out    = { NULL, 0 };
+	LV2_URID_Map*   map    = &world->lv2_uri_map()->urid_map_feature()->urid_map;
+	LV2_URID_Unmap* unmap  = &world->lv2_uri_map()->urid_unmap_feature()->urid_unmap;
+	Sratom*         sratom = sratom_new(map);
+
+	LV2_Atom_Forge forge;
+	lv2_atom_forge_init(&forge, map);
+	lv2_atom_forge_set_sink(&forge, sratom_forge_sink, sratom_forge_deref, &out);
+
 	Resource::Properties props;
 	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
 		if (!skip_property(i.get_predicate())) {
-			props.insert(
-				make_pair(i.get_predicate().to_string(),
-				          AtomRDF::node_to_atom(forge, model, i.get_object())));
+			out.len = 0;
+			sratom_read(sratom, &forge, world->rdf_world()->c_obj(),
+			            model.c_obj(), i.get_object().c_obj());
+			LV2_Atom* atom = (LV2_Atom*)out.buf;
+			Atom      atomm;
+			// FIXME: Don't bloat out all URIs
+			if (atom->type == forge.URID) {
+				atomm = world->forge().alloc_uri(
+					unmap->unmap(unmap->handle, *(uint32_t*)LV2_ATOM_BODY(atom)));
+			} else {
+				atomm = world->forge().alloc(
+					atom->size, atom->type, LV2_ATOM_BODY(atom));
+			}
+			/*
+			std::cerr << "READ PROPERTY " << i.get_predicate()
+			          << " = " << world->forge().str(atomm)
+			          << " :: " << unmap->unmap(unmap->handle, atom->type)
+			          << std::endl;
+			*/
+			props.insert(make_pair(i.get_predicate().to_string(), atomm));
 		}
 	}
+
+	sratom_free(sratom);
 	return props;
 }
 
@@ -130,12 +151,12 @@ get_port(Ingen::Shared::World* world,
 	const URIs& uris = *world->uris().get();
 
 	// Get all properties
-	Resource::Properties props = get_properties(world->forge(), model, subject);
+	Resource::Properties props = get_properties(world, model, subject);
 
 	// Get index
 	Resource::Properties::const_iterator i = props.find(uris.lv2_index);
 	if (i == props.end()
-	    || i->second.type() != Atom::INT
+	    || i->second.type() != world->forge().Int
 	    || i->second.get_int32() < 0) {
 		LOG(error) << "Port " << subject << " has no valid lv2:index" << endl;
 		return -1;
@@ -254,9 +275,9 @@ parse_node(Ingen::Shared::World*                    world,
 		parse_patch(world, target, model, subject,
 		            path.parent(), Raul::Symbol(path.symbol()));
 	} else {
-		Resource::Properties props = get_properties(world->forge(), model, subject);
+		Resource::Properties props = get_properties(world, model, subject);
 		props.insert(make_pair(uris.rdf_type,
-		                       Raul::URI(uris.ingen_Node)));
+		                       uris.forge.alloc_uri(uris.ingen_Node.str())));
 		target->put(path, props);
 	}
 	return path;
@@ -275,7 +296,6 @@ parse_patch(Ingen::Shared::World*                    world,
 	const Sord::URI ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
 	const Sord::URI lv2_port(*world->rdf_world(),        NS_LV2 "port");
 
-	Raul::Forge&      forge = world->forge();
 	const URIs&       uris  = *world->uris().get();
 	const Sord::Node& patch = subject_node;
 
@@ -284,8 +304,10 @@ parse_patch(Ingen::Shared::World*                    world,
 	// Use parameter overridden polyphony, if given
 	if (data) {
 		GraphObject::Properties::iterator poly_param = data.get().find(uris.ingen_polyphony);
-		if (poly_param != data.get().end() && poly_param->second.type() == Atom::INT)
+		if (poly_param != data.get().end() &&
+		    poly_param->second.type() == world->forge().Int) {
 			patch_poly = poly_param->second.get_int32();
+		}
 	}
 
 	// Load polyphony from file if necessary
@@ -324,7 +346,7 @@ parse_patch(Ingen::Shared::World*                    world,
 
 	// Create patch
 	Path patch_path(patch_path_str);
-	Resource::Properties props = get_properties(forge, model, subject_node);
+	Resource::Properties props = get_properties(world, model, subject_node);
 	target->put(patch_path, props);
 
 	// For each node in this patch
@@ -438,16 +460,7 @@ parse_properties(Ingen::Shared::World*                    world,
                  const Raul::URI&                         uri,
                  boost::optional<GraphObject::Properties> data)
 {
-	Resource::Properties properties;
-	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
-		const Sord::Node& key = i.get_predicate();
-		const Sord::Node& val = i.get_object();
-		if (!skip_property(key)) {
-			properties.insert(
-				make_pair(key.to_string(),
-				          AtomRDF::node_to_atom(world->forge(), model, val)));
-		}
-	}
+	Resource::Properties properties = get_properties(world, model, subject);
 
 	target->put(uri, properties);
 
@@ -588,7 +601,7 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 
 	if (parsed_path) {
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
-		                     world->forge().alloc(Atom::URI, uri.c_str()));
+		                     world->forge().alloc_uri(uri));
 	} else {
 		LOG(warn) << "Document URI lost" << endl;
 	}

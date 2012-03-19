@@ -22,9 +22,9 @@
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 
+#include "Buffer.hpp"
 #include "ConnectionImpl.hpp"
 #include "DuplexPort.hpp"
-#include "EventBuffer.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
@@ -43,12 +43,13 @@ DuplexPort::DuplexPort(
 		bool              polyphonic,
 		uint32_t          poly,
 		PortType          type,
+		LV2_URID          buffer_type,
 		const Raul::Atom& value,
 		size_t            buffer_size,
 		bool              is_output)
-	: PortImpl(bufs, parent, name, index, poly, type, value, buffer_size)
-	, InputPort(bufs, parent, name, index, poly, type, value, buffer_size)
-	, OutputPort(bufs, parent, name, index, poly, type, value, buffer_size)
+	: PortImpl(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
+	, InputPort(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
+	, OutputPort(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
 	, _is_output(is_output)
 {
 	assert(PortImpl::_parent == parent);

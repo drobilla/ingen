@@ -16,15 +16,15 @@
  */
 
 #include <algorithm>
-#include "raul/log.hpp"
+
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
+#include "raul/log.hpp"
+
 #include "AudioBuffer.hpp"
-#include "EventBuffer.hpp"
-#include "ObjectBuffer.hpp"
 #include "BufferFactory.hpp"
-#include "Engine.hpp"
 #include "Driver.hpp"
+#include "Engine.hpp"
 #include "ThreadManager.hpp"
 
 using namespace Raul;
@@ -48,11 +48,10 @@ BufferFactory::~BufferFactory()
 	_silent_buffer.reset();
 	free_list(_free_audio.get());
 	free_list(_free_control.get());
-	free_list(_free_event.get());
 	free_list(_free_object.get());
 }
 
-Raul::Forge&
+Ingen::Forge&
 BufferFactory::forge()
 {
 	return _engine.world()->forge();
@@ -71,33 +70,31 @@ BufferFactory::free_list(Buffer* head)
 void
 BufferFactory::set_block_length(SampleCount block_length)
 {
-	_silent_buffer = create(PortType::AUDIO, audio_buffer_size(block_length));
+	_silent_buffer = create(_uris->atom_Sound, audio_buffer_size(block_length));
 }
 
-size_t
+uint32_t
 BufferFactory::audio_buffer_size(SampleCount nframes)
 {
 	return sizeof(LV2_Atom_Vector) + (nframes * sizeof(float));
 }
 
-size_t
-BufferFactory::default_buffer_size(PortType type)
+uint32_t
+BufferFactory::default_buffer_size(LV2_URID type)
 {
-	switch (type.symbol()) {
-		case PortType::AUDIO:
-		case PortType::CV:
-			return audio_buffer_size(_engine.driver()->block_length());
-		case PortType::CONTROL:
-			return sizeof(LV2_Atom) + sizeof(float);
-		case PortType::EVENTS:
-			return _engine.driver()->block_length() * EVENT_BYTES_PER_FRAME;
-		default:
-			return 1024; // Who knows
+	if (type == _uris->atom_Float) {
+		return sizeof(LV2_Atom_Float);
+	} else if (type == _uris->atom_Sound) {
+		return audio_buffer_size(_engine.driver()->block_length());
+	} else if (type == _uris->atom_Sequence) {
+		return _engine.driver()->block_length() * EVENT_BYTES_PER_FRAME;
+	} else {
+		return 0;
 	}
 }
 
 BufferFactory::Ref
-BufferFactory::get(PortType type, size_t size, bool force_create)
+BufferFactory::get(LV2_URID type, uint32_t capacity, bool force_create)
 {
 	Raul::AtomicPtr<Buffer>& head_ptr = free_list(type);
 	Buffer* try_head = NULL;
@@ -114,7 +111,7 @@ BufferFactory::get(PortType type, size_t size, bool force_create)
 
 	if (!try_head) {
 		if (!ThreadManager::thread_is(THREAD_PROCESS)) {
-			return create(type, size);
+			return create(type, capacity);
 		} else {
 			assert(false);
 			error << "Failed to obtain buffer" << endl;
@@ -133,32 +130,30 @@ BufferFactory::silent_buffer()
 }
 
 BufferFactory::Ref
-BufferFactory::create(PortType type, size_t size)
+BufferFactory::create(LV2_URID type, uint32_t capacity)
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
 
 	Buffer* buffer = NULL;
 
-	if (size == 0)
-		size = default_buffer_size(type);
-
-	if (type.is_control()) {
-		AudioBuffer* ret = new AudioBuffer(*this, type, audio_buffer_size(size));
-		ret->atom()->type = _uris->atom_Float.id;
-		buffer = ret;
-	} else if (type.is_audio() || type.is_cv()) {
-		AudioBuffer* ret = new AudioBuffer(*this, type, audio_buffer_size(size));
-		ret->atom()->type = _uris->atom_Vector.id;
-		((LV2_Atom_Vector*)ret->atom())->body.child_type = _uris->atom_Float.id;
-		buffer = ret;
-	} else if (type.is_events()) {
-		buffer = new EventBuffer(*this, size);
-	} else if (type.is_value() || type.is_message()) {
-		buffer = new ObjectBuffer(*this, std::max(size, sizeof(LV2_Atom) + sizeof(void*)));
-	} else {
-		error << "Failed to create buffer of unknown type" << endl;
-		return Ref();
+	if (capacity == 0) {
+		capacity = default_buffer_size(type);
 	}
+
+	if (type == _uris->atom_Float) {
+		assert(capacity >= sizeof(LV2_Atom_Float));
+		buffer = new AudioBuffer(*this, type, capacity);
+		info << "NEW FLOAT BUFFER " << buffer << " :: " << type << std::endl;
+	} else if (type == _uris->atom_Sound) {
+		assert(capacity >= default_buffer_size(_uris->atom_Sound));
+		buffer = new AudioBuffer(*this, type, capacity);
+		info << "NEW AUDIO BUFFER " << buffer << " :: " << type << std::endl;
+	} else {
+		buffer = new Buffer(*this, type, capacity);
+		info << "NEW ATOM BUFFER " << buffer << " :: " << type << std::endl;
+	}
+
+	buffer->atom()->type = type;
 
 	assert(buffer);
 	return Ref(buffer);

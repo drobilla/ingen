@@ -27,17 +27,16 @@
 #include "ingen/serialisation/Serialiser.hpp"
 #endif
 
-#include "raul/log.hpp"
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/List.hpp"
-
-#include "lv2/lv2plug.in/ns/ext/event/event.h"
+#include "raul/log.hpp"
 
 #include "AudioBuffer.hpp"
 #include "ControlBindings.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "Event.hpp"
-#include "EventBuffer.hpp"
+#include "Event.hpp"
 #include "EventSource.hpp"
 #include "JackDriver.hpp"
 #include "MessageContext.hpp"
@@ -45,11 +44,10 @@
 #include "PortImpl.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessSlave.hpp"
-#include "Event.hpp"
 #include "ThreadManager.hpp"
-#include "ingen/shared/World.hpp"
 #include "ingen/shared/LV2Features.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/World.hpp"
 #include "util.hpp"
 
 #define LOG(s) s << "[JackDriver] "
@@ -126,9 +124,9 @@ JackPort::pre_process(ProcessContext& context)
 
 		patch_buf->copy(jack_buf, 0, nframes - 1);
 
-	} else if (_patch_port->is_a(PortType::EVENTS)) {
-		void*          jack_buf  = jack_port_get_buffer(_jack_port, nframes);
-		EventBuffer*   patch_buf = (EventBuffer*)_patch_port->buffer(0).get();
+	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
+		void*   jack_buf  = jack_port_get_buffer(_jack_port, nframes);
+		Buffer* patch_buf = (Buffer*)_patch_port->buffer(0).get();
 
 		const jack_nframes_t event_count = jack_midi_get_event_count(jack_buf);
 
@@ -139,10 +137,10 @@ JackPort::pre_process(ProcessContext& context)
 			jack_midi_event_t ev;
 			jack_midi_event_get(&ev, jack_buf, i);
 
-			if (!patch_buf->append(ev.time, 0,
-			                       _driver->_midi_event_type,
-			                       ev.size, ev.buffer))
+			if (!patch_buf->append_event(
+				    ev.time, ev.size, _driver->_midi_event_type, ev.buffer)) {
 				LOG(warn) << "Failed to write MIDI to port buffer, event(s) lost!" << endl;
+			}
 		}
 	}
 }
@@ -161,23 +159,20 @@ JackPort::post_process(ProcessContext& context)
 
 		memcpy(jack_buf, patch_buf->data(), nframes * sizeof(Sample));
 
-	} else if (_patch_port->is_a(PortType::EVENTS)) {
-		void*        jack_buf  = jack_port_get_buffer(_jack_port, context.nframes());
-		EventBuffer* patch_buf = (EventBuffer*)_patch_port->buffer(0).get();
+	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
+		void*   jack_buf  = jack_port_get_buffer(_jack_port, context.nframes());
+		Buffer* patch_buf = (Buffer*)_patch_port->buffer(0).get();
 
 		patch_buf->prepare_read(context);
 		jack_midi_clear_buffer(jack_buf);
 
-		uint32_t frames    = 0;
-		uint32_t subframes = 0;
-		uint16_t type      = 0;
-		uint16_t size      = 0;
-		uint8_t* data      = NULL;
-
-		// Copy events from Jack port buffer into patch port buffer
-		for (patch_buf->rewind(); patch_buf->is_valid(); patch_buf->increment()) {
-			patch_buf->get_event(&frames, &subframes, &type, &size, &data);
-			jack_midi_event_write(jack_buf, frames, data, size);
+		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)patch_buf->atom();
+		LV2_SEQUENCE_FOREACH(seq, i) {
+			LV2_Atom_Event* const ev  = lv2_sequence_iter_get(i);
+			const uint8_t*        buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+			if (ev->body.type == _patch_port->bufs().uris().midi_MidiEvent) {
+				jack_midi_event_write(jack_buf, ev->time.frames, buf, ev->body.size);
+			}
 		}
 	}
 }
@@ -195,8 +190,7 @@ JackDriver::JackDriver(Engine& engine)
 	, _process_context(engine)
 	, _root_patch(NULL)
 {
-	_midi_event_type = _engine.world()->lv2_uri_map()->uri_to_id(
-			LV2_EVENT_URI, "http://lv2plug.in/ns/ext/midi#MidiEvent");
+	_midi_event_type = _engine.world()->uris()->midi_MidiEvent;
 }
 
 JackDriver::~JackDriver()
@@ -286,7 +280,7 @@ JackDriver::activate()
 
 	_is_activated = true;
 
-	_process_context.activate(world->conf()->option("parallelism").get_int32(),
+	_process_context.activate(world->conf()->option("parallelism").get_int(),
 	                          is_realtime());
 
 	if (jack_activate(_client)) {
@@ -376,10 +370,12 @@ JackDriver::create_port(DuplexPort* patch_port)
 {
 	try {
 		if (patch_port->is_a(PortType::AUDIO)
-		    || patch_port->is_a(PortType::EVENTS))
+		    || (patch_port->is_a(PortType::MESSAGE) &&
+		        patch_port->buffer_type() == patch_port->bufs().uris().atom_Sequence)) {
 			return new JackPort(this, patch_port);
-		else
+		} else {
 			return NULL;
+		}
 	} catch (...) {
 		return NULL;
 	}
@@ -434,8 +430,8 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 		(*i)->pre_process(_process_context);
 
 	// Apply control bindings to input
-	_engine.control_bindings()->pre_process(_process_context,
-			PtrCast<EventBuffer>(_root_patch->port_impl(0)->buffer(0)).get());
+	_engine.control_bindings()->pre_process(
+		_process_context, _root_patch->port_impl(0)->buffer(0).get());
 
 	_engine.post_processor()->set_end_time(_process_context.end());
 
@@ -459,8 +455,8 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	}
 
 	// Emit control binding feedback
-	_engine.control_bindings()->post_process(_process_context,
-			PtrCast<EventBuffer>(_root_patch->port_impl(1)->buffer(0)).get());
+	_engine.control_bindings()->post_process(
+		_process_context, _root_patch->port_impl(1)->buffer(0).get());
 
 	// Signal message context to run if necessary
 	if (_engine.message_context()->has_requests())

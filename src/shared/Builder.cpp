@@ -48,7 +48,8 @@ Builder::build(SharedPtr<const GraphObject> object)
 	if (patch) {
 		if (!object->path().is_root()) {
 			Resource::Properties props;
-			props.insert(make_pair(uris.rdf_type, uris.ingen_Patch));
+			props.insert(make_pair(uris.rdf_type,
+			                       _uris->forge.alloc_uri(uris.ingen_Patch.str())));
 			props.insert(make_pair(uris.ingen_polyphony,
 			                       _uris->forge.make(int32_t(patch->internal_poly()))));
 			_interface.put(object->path(), props);
@@ -66,7 +67,8 @@ Builder::build(SharedPtr<const GraphObject> object)
 	if (node) {
 		Resource::Properties props;
 		props.insert(make_pair(uris.rdf_type,       uris.ingen_Node));
-		props.insert(make_pair(uris.rdf_instanceOf, node->plugin()->uri()));
+		props.insert(make_pair(uris.rdf_instanceOf,
+		                       _uris->forge.alloc_uri(node->plugin()->uri().str())));
 		_interface.put(node->path(), props);
 		build_object(object);
 		return;

@@ -51,6 +51,8 @@ public:
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
+	void set_response_interface(Interface* iface) { _request_client = iface; }
+
 	virtual void set_response_id(int32_t id);
 
 	virtual void bundle_begin();

@@ -49,7 +49,8 @@ CreatePort::CreatePort(Engine&                     engine,
                        const Resource::Properties& properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
-	, _data_type(PortType::UNKNOWN)
+	, _port_type(PortType::UNKNOWN)
+	, _buffer_type(0)
 	, _patch(NULL)
 	, _patch_port(NULL)
 	, _ports_array(NULL)
@@ -61,30 +62,31 @@ CreatePort::CreatePort(Engine&                     engine,
 
 	typedef Resource::Properties::const_iterator Iterator;
 	typedef std::pair<Iterator, Iterator>        Range;
+
 	const Range types = properties.equal_range(uris.rdf_type);
 	for (Iterator i = types.first; i != types.second; ++i) {
 		const Raul::Atom& type = i->second;
-		if (type.type() != Atom::URI) {
-			warn << "Non-URI port type " << type << endl;
-			continue;
-		}
-
 		if (type == uris.lv2_AudioPort) {
-			_data_type = PortType::AUDIO;
+			_port_type = PortType::AUDIO;
 		} else if (type == uris.lv2_ControlPort) {
-			_data_type = PortType::CONTROL;
+			_port_type = PortType::CONTROL;
 		} else if (type == uris.cv_CVPort) {
-			_data_type = PortType::CV;
-		} else if (type == uris.ev_EventPort) {
-			_data_type = PortType::EVENTS;
+			_port_type = PortType::CV;
 		} else if (type == uris.atom_ValuePort) {
-			_data_type = PortType::VALUE;
+			_port_type = PortType::VALUE;
 		} else if (type == uris.atom_MessagePort) {
-			_data_type = PortType::MESSAGE;
+			_port_type = PortType::MESSAGE;
 		}
 	}
 
-	if (_data_type == PortType::UNKNOWN) {
+	const Range buffer_types = properties.equal_range(uris.atom_bufferType);
+	for (Iterator i = buffer_types.first; i != buffer_types.second; ++i) {
+		if (i->second.type() == _engine.world()->forge().URI) {
+			_buffer_type = _engine.world()->lv2_uri_map()->map_uri(i->second.get_uri());
+		}
+	}
+
+	if (_port_type == PortType::UNKNOWN) {
 		_status = UNKNOWN_TYPE;
 	}
 }
@@ -104,7 +106,7 @@ CreatePort::pre_process()
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());
 
-		size_t buffer_size = _engine.buffer_factory()->default_buffer_size(_data_type);
+		size_t buffer_size = _engine.buffer_factory()->default_buffer_size(_buffer_type);
 
 		const uint32_t old_num_ports = (_patch->external_ports())
 			? _patch->external_ports()->size()
@@ -115,7 +117,7 @@ CreatePort::pre_process()
 			index_i = _properties.insert(
 				make_pair(uris.lv2_index,
 				          _engine.world()->forge().make(int32_t(old_num_ports))));
-		} else if (index_i->second.type() != Atom::INT
+		} else if (index_i->second.type() != uris.forge.Int
 				|| index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
 			Event::pre_process();
 			_status = BAD_INDEX;
@@ -123,10 +125,12 @@ CreatePort::pre_process()
 		}
 
 		Resource::Properties::const_iterator poly_i = _properties.find(uris.ingen_polyphonic);
-		bool polyphonic = (poly_i != _properties.end() && poly_i->second.type() == Atom::BOOL
+		bool polyphonic = (poly_i != _properties.end() && poly_i->second.type() == uris.forge.Bool
 				&& poly_i->second.get_bool());
 
-		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(), _data_type, buffer_size, _is_output, polyphonic);
+		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(),
+		                                  _port_type, _buffer_type, buffer_size,
+		                                  _is_output, polyphonic);
 
 		_patch_port->properties().insert(_properties.begin(), _properties.end());
 

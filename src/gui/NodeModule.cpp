@@ -138,7 +138,7 @@ NodeModule::show_human_names(bool b)
 
 	if (b && node()->plugin()) {
 		const Raul::Atom& name_property = node()->get_property(uris.lv2_name);
-		if (name_property.type() == Atom::STRING)
+		if (name_property.type() == uris.forge.String)
 			set_label(name_property.get_string());
 		else
 			set_label(node()->plugin_model()->human_name().c_str());
@@ -152,7 +152,7 @@ NodeModule::show_human_names(bool b)
 		Glib::ustring label(port->model()->symbol().c_str());
 		if (b) {
 			const Raul::Atom& name_property = port->model()->get_property(uris.lv2_name);
-			if (name_property.type() == Atom::STRING) {
+			if (name_property.type() == uris.forge.String) {
 				label = name_property.get_string();
 			} else {
 				Glib::ustring hn = node()->plugin_model()->port_human_name(
@@ -171,18 +171,15 @@ NodeModule::value_changed(uint32_t index, const Atom& value)
 	if (!_plugin_ui)
 		return;
 
-	float float_val = 0.0f;
+	float       float_val = 0.0f;
+	const URIs& uris      = app().uris();
 
-	switch (value.type()) {
-	case Atom::FLOAT:
+	if (value.type() == uris.forge.Float) {
 		float_val = value.get_float();
 		_plugin_ui->port_event(index, 4, 0, &float_val);
-		break;
-	case Atom::STRING:
-		_plugin_ui->port_event(index, strlen(value.get_string()), 0, value.get_string());
-		break;
-	default:
-		break;
+	} else if (value.type() == uris.forge.String) {
+		_plugin_ui->port_event(
+			index, strlen(value.get_string()), 0, value.get_string());
 	}
 }
 
@@ -397,15 +394,13 @@ void
 NodeModule::property_changed(const URI& key, const Atom& value)
 {
 	const Shared::URIs& uris = app().uris();
-	switch (value.type()) {
-	case Atom::FLOAT:
+	if (value.type() == uris.forge.Float) {
 		if (key == uris.ingen_canvasX) {
 			move_to(value.get_float(), get_y());
 		} else if (key == uris.ingen_canvasY) {
 			move_to(get_x(), value.get_float());
 		}
-		break;
-	case Atom::BOOL:
+	} else if (value.type() == uris.forge.Bool) {
 		if (key == uris.ingen_polyphonic) {
 			set_stacked(value.get_bool());
 		} else if (key == uris.ingen_selected) {
@@ -413,13 +408,11 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 				set_selected(value.get_bool());
 			}
 		}
-		break;
-	case Atom::STRING:
+	} else if (value.type() == uris.forge.String) {
 		if (key == uris.lv2_name
-				&& app().configuration()->name_style() == Configuration::HUMAN) {
+		    && app().configuration()->name_style() == Configuration::HUMAN) {
 			set_label(value.get_string());
 		}
-	default: break;
 	}
 }
 

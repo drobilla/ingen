@@ -24,8 +24,6 @@
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "lv2/lv2plug.in/ns/ext/event/event-helpers.h"
-#include "lv2/lv2plug.in/ns/ext/event/event.h"
 
 using namespace std;
 using namespace Raul;
@@ -53,8 +51,7 @@ lv2_ui_write(SuilController controller,
 
 	SharedPtr<const PortModel> port = ports[port_index];
 
-	const Shared::URIs&      uris    = *ui->world()->uris().get();
-	const Shared::LV2URIMap& uri_map = *ui->world()->lv2_uri_map().get();
+	const Shared::URIs& uris = *ui->world()->uris().get();
 
 	// float (special case, always 0)
 	if (format == 0) {
@@ -67,40 +64,11 @@ lv2_ui_write(SuilController controller,
 			uris.ingen_value,
 			ui->world()->forge().make(*(float*)buffer));
 
-	} else if (format == uris.ui_Events.id) {
-		LV2_Event_Buffer*  buf = (LV2_Event_Buffer*)buffer;
-		LV2_Event_Iterator iter;
-		uint8_t*           data;
-		lv2_event_begin(&iter, buf);
-		while (lv2_event_is_valid(&iter)) {
-			LV2_Event* const ev = lv2_event_get(&iter, &data);
-			std::pair<bool, uint16_t> midi_id =
-				uri_map.global_to_event(uris.midi_MidiEvent.id);
-			if (midi_id.first && ev->type == midi_id.second) {
-				// FIXME
-				/*
-				ui->world()->engine()->set_property(
-					port->path(),
-					uris.ingen_value,
-					Atom("http://lv2plug.in/ns/ext/midi#MidiEvent", ev->size,
-					data));
-				*/
-			} else {
-				warn << "Unable to serialise UI event type " << ev->type
-				     << ", event lost" << endl;
-			}
-
-			lv2_event_increment(&iter);
-		}
-
 	} else if (format == uris.atom_eventTransfer.id) {
-		std::cerr << "FIXME: atom event transfer" << std::endl;
-		#if  0
-		LV2_Atom* buf = (LV2_Atom*)buffer;
-		Raul::Atom val;
-		Shared::LV2Atom::to_atom(uris, buf, val);
+		LV2_Atom*  atom = (LV2_Atom*)buffer;
+		Raul::Atom val  = ui->world()->forge().alloc(
+			atom->size, atom->type, LV2_ATOM_BODY(atom));
 		ui->world()->engine()->set_property(port->path(), uris.ingen_value, val);
-		#endif
 
 	} else {
 		warn << "Unknown value format " << format

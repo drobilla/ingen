@@ -15,19 +15,12 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <locale.h>
-
 #include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <fstream>
-#include <map>
-#include <stdexcept>
 #include <string>
-#include <utility>
-#include <vector>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -36,26 +29,23 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/module.h>
 
-#include "raul/Atom.hpp"
-#include "raul/AtomRDF.hpp"
-#include "raul/Path.hpp"
-#include "raul/log.hpp"
-
-#include "sord/sordmm.hpp"
-
 #include "ingen/Connection.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
-#include "ingen/Interface.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/ResourceImpl.hpp"
 #include "ingen/shared/Store.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
-
-#include "ingen/serialisation/Serialiser.hpp"
+#include "raul/Atom.hpp"
+#include "raul/Path.hpp"
+#include "raul/log.hpp"
+#include "sord/sordmm.hpp"
+#include "sratom/sratom.h"
 
 #define LOG(s) s << "[Serialiser] "
 
@@ -227,21 +217,11 @@ Serialiser::Impl::write_bundle(SharedPtr<const Patch> patch,
 }
 
 string
-Serialiser::to_string(SharedPtr<const GraphObject>   object,
-                      const string&                  base_uri,
-                      const GraphObject::Properties& extra_rdf)
+Serialiser::to_string(SharedPtr<const GraphObject> object,
+                      const string&                base_uri)
 {
 	start_to_string(object->path(), base_uri);
 	serialise(object);
-
-	Sord::URI base_rdf_node(me->_model->world(), base_uri);
-	for (GraphObject::Properties::const_iterator v = extra_rdf.begin();
-	     v != extra_rdf.end(); ++v) {
-		me->_model->add_statement(base_rdf_node,
-		                          AtomRDF::atom_to_node(*me->_model, v->first),
-		                          AtomRDF::atom_to_node(*me->_model, v->second));
-	}
-
 	return finish();
 }
 
@@ -252,8 +232,6 @@ Serialiser::to_string(SharedPtr<const GraphObject>   object,
 void
 Serialiser::Impl::start_to_filename(const string& filename)
 {
-	setlocale(LC_NUMERIC, "C");
-
 	assert(filename.find(":") == string::npos || filename.substr(0, 5) == "file:");
 	if (filename.find(":") == string::npos) {
 		_base_uri = "file://" + filename;
@@ -278,8 +256,6 @@ Serialiser::Impl::start_to_filename(const string& filename)
 void
 Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 {
-	setlocale(LC_NUMERIC, "C");
-
 	me->_root_path = root;
 	me->_base_uri  = base_uri;
 	me->_model     = new Sord::Model(*me->_world.rdf_world(), base_uri);
@@ -328,7 +304,7 @@ void
 Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_error)
 {
 	if (!me->_model)
-		throw std::logic_error("serialise called without serialization in progress");
+		throw std::logic_error("serialise called without serialisation in progress");
 
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
@@ -372,13 +348,17 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 	                      Sord::Curie(world, "lv2:extensionData"),
 	                      Sord::URI(world, "http://lv2plug.in/ns/ext/state#Interface"));
 
+	_model->add_statement(patch_id,
+	                      Sord::URI(world, "http://lv2plug.in/ns/extensions/ui#ui"),
+	                      Sord::URI(world, "http://drobilla.net/ns/ingen#ui"));
+
 	const URIs& uris = *_world.uris().get();
 
 	// Always write a symbol (required by Ingen)
 	string symbol;
 	GraphObject::Properties::const_iterator s = patch->properties().find(uris.lv2_symbol);
 	if (s == patch->properties().end()
-	    || !s->second.type() == Atom::STRING
+	    || !s->second.type() == _world.forge().String
 	    || !Symbol::is_valid(s->second.get_string())) {
 		symbol = Glib::path_get_basename(_model->base_uri().to_c_string());
 		symbol = Symbol::symbolify(symbol.substr(0, symbol.find('.')));
@@ -393,7 +373,7 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 	// If the patch has no doap:name (required by LV2), use the symbol
 	if (patch->properties().find(uris.doap_name) == patch->properties().end())
 		_model->add_statement(patch_id,
-		                      AtomRDF::atom_to_node(*_model, uris.doap_name),
+		                      Sord::URI(world, uris.doap_name.str()),
 		                      Sord::Literal(world, symbol));
 
 	serialise_properties(patch.get(), Resource::INTERNAL, patch_id);
@@ -455,7 +435,7 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
 		if (p->properties().find(NS_LV2 "name") == p->properties().end())
 			p->set_property(NS_LV2 "name",
-			                _world.forge().make(p->symbol().c_str()));
+			                _world.forge().alloc(p->symbol().c_str()));
 
 		_model->add_statement(patch_id,
 		                      Sord::URI(world, NS_LV2 "port"),
@@ -518,13 +498,6 @@ Serialiser::Impl::serialise_port(const Port*       port,
 	                      Sord::Literal(world, port->path().symbol()));
 
 	serialise_properties(port, context, port_id);
-
-	if (context == Resource::INTERNAL) {
-		_model->add_statement(
-			port_id,
-			Sord::Curie(world, "lv2:index"),
-			AtomRDF::atom_to_node(*_model, _world.forge().make((int)port->index())));
-	}
 }
 
 void
@@ -542,7 +515,7 @@ Serialiser::Impl::serialise_connection(const Sord::Node&           parent,
 {
 	if (!_model)
 		throw std::logic_error(
-			"serialise_connection called without serialization in progress");
+			"serialise_connection called without serialisation in progress");
 
 
 	Sord::World& world = _model->world();
@@ -575,19 +548,32 @@ Serialiser::Impl::serialise_properties(const GraphObject*     o,
 {
 	const GraphObject::Properties props = o->properties(context);
 
+	LV2_URID_Map*   map      = &_world.lv2_uri_map()->urid_map_feature()->urid_map;
+	LV2_URID_Unmap* unmap    = &_world.lv2_uri_map()->urid_unmap_feature()->urid_unmap;
+	Sratom*         sratom   = sratom_new(map);
+	SerdNode        base     = serd_node_from_string(SERD_URI,
+	                                                 (const uint8_t*)_base_uri.c_str());
+	SerdEnv*        env      = serd_env_new(&base);
+	SordInserter*   inserter = sord_inserter_new(_model->c_obj(), env);
+
+	sratom_set_sink(sratom, _base_uri.c_str(),
+	                (SerdStatementSink)sord_inserter_write_statement, NULL,
+	                inserter, true);
+
 	typedef GraphObject::Properties::const_iterator iterator;
 	for (iterator v = props.begin(); v != props.end(); ++v) {
-		const Sord::URI  key(_model->world(), v->first.str());
-		const Sord::Node value(AtomRDF::atom_to_node(*_model, v->second));
+		const Sord::URI key(_model->world(), v->first.str());
 		if (!skip_property(key)) {
-			if (value.is_valid()) {
-				_model->add_statement(id, key, value);
-			} else {
-				LOG(warn) << "Can not serialise variable '" << v->first << "' :: "
-				          << (int)v->second.type() << endl;
-			}
+			sratom_write(sratom, unmap, 0,
+			             sord_node_to_serd_node(id.c_obj()),
+			             sord_node_to_serd_node(key.c_obj()),
+			             v->second.type(), v->second.size(), v->second.get_body());
 		}
 	}
+
+	sord_inserter_free(inserter);
+	serd_env_free(env);
+	sratom_free(sratom);
 }
 
 } // namespace Serialisation

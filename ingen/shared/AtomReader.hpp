@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright 2010-2011 David Robillard <http://drobilla.net>
+ * Copyright 2012 David Robillard <http://drobilla.net>
  *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -15,21 +15,41 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef INGEN_SHARED_CONFIGURATION_HPP
-#define INGEN_SHARED_CONFIGURATION_HPP
+#ifndef INGEN_SHARED_ATOM_READER_HPP
+#define INGEN_SHARED_ATOM_READER_HPP
 
-#include "raul/Configuration.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/shared/AtomSink.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
+#include "serd/serd.h"
 
 namespace Ingen {
+
+class Forge;
+
 namespace Shared {
 
-class Configuration : public Raul::Configuration {
+class AtomSink;
+
+/** An AtomSink that calls methods on an Interface. */
+class AtomReader : public AtomSink
+{
 public:
-	Configuration();
+	AtomReader(LV2URIMap& map, URIs& uris, Forge& forge, Interface& iface);
+	~AtomReader() {}
+
+	void write(const LV2_Atom* msg);
+
+private:
+	LV2URIMap& _map;
+	URIs&      _uris;
+	Forge&     _forge;
+	Interface& _iface;
 };
 
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_CONFIGURATION_HPP
+#endif // INGEN_SHARED_ATOM_READER_HPP
 

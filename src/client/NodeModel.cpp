@@ -205,9 +205,9 @@ NodeModel::port_value_range(SharedPtr<const PortModel> port,
 	// Possibly overriden
 	const Atom& min_atom = port->get_property(_uris.lv2_minimum);
 	const Atom& max_atom = port->get_property(_uris.lv2_maximum);
-	if (min_atom.type() == Atom::FLOAT)
+	if (min_atom.type() == _uris.forge.Float)
 		min = min_atom.get_float();
-	if (max_atom.type() == Atom::FLOAT)
+	if (max_atom.type() == _uris.forge.Float)
 		max = max_atom.get_float();
 
 	if (max <= min)

@@ -277,7 +277,7 @@ ClientStore::put(const URI&                  uri,
 #ifdef INGEN_CLIENT_STORE_DUMP
 	LOG(info) << "PUT " << uri << " {" << endl;
 	for (Iterator i = properties.begin(); i != properties.end(); ++i)
-		LOG(info) << '\t' << i->first << " = " << i->second
+		LOG(info) << '\t' << i->first << " = " << _uris->forge.str(i->second)
 		          << " :: " << i->second.type() << endl;
 	LOG(info) << "}" << endl;
 #endif
@@ -288,7 +288,7 @@ ClientStore::put(const URI&                  uri,
 
 	// Check if uri is a plugin
 	const Atom& type = properties.find(_uris->rdf_type)->second;
-	if (type.type() == Atom::URI) {
+	if (type.type() == _uris->forge.URI) {
 		const URI&         type_uri    = type.get_uri();
 		const Plugin::Type plugin_type = Plugin::type_from_uri(type_uri);
 		if (plugin_type == Plugin::Patch) {
@@ -324,7 +324,7 @@ ClientStore::put(const URI&                  uri,
 	} else if (is_node) {
 		const Iterator p = properties.find(_uris->rdf_instanceOf);
 		SharedPtr<PluginModel> plug;
-		if (p->second.is_valid() && p->second.type() == Atom::URI) {
+		if (p->second.is_valid() && p->second.type() == _uris->forge.URI) {
 			if (!(plug = _plugin(p->second.get_uri()))) {
 				LOG(warn) << "Unable to find plugin " << p->second.get_uri() << endl;
 				plug = SharedPtr<PluginModel>(
@@ -344,7 +344,7 @@ ClientStore::put(const URI&                  uri,
 	} else if (is_port) {
 		PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
 		const Iterator i = properties.find(_uris->lv2_index);
-		if (i != properties.end() && i->second.type() == Atom::INT) {
+		if (i != properties.end() && i->second.type() == _uris->forge.Int) {
 			const uint32_t index = i->second.get_int32();
 			SharedPtr<PortModel> p(
 				new PortModel(uris(), path, index, pdir));
@@ -368,10 +368,10 @@ ClientStore::delta(const URI&                  uri,
 #ifdef INGEN_CLIENT_STORE_DUMP
 	LOG(info) << "DELTA " << uri << " {" << endl;
 	for (iterator i = remove.begin(); i != remove.end(); ++i)
-		LOG(info) << "    - " << i->first << " = " << i->second
+		LOG(info) << "    - " << i->first << " = " << _uris->forge.str(i->second)
 		          << " :: " << i->second.type() << endl;
 	for (iterator i = add.begin(); i != add.end(); ++i)
-		LOG(info) << "    + " << i->first << " = " << i->second
+		LOG(info) << "    + " << i->first << " = " << _uris->forge.str(i->second)
 		          << " :: " << i->second.type() << endl;
 	LOG(info) << "}" << endl;
 #endif
@@ -396,7 +396,8 @@ void
 ClientStore::set_property(const URI& subject_uri, const URI& predicate, const Atom& value)
 {
 	if (subject_uri == _uris->ingen_engine) {
-		LOG(info) << "Engine property " << predicate << " = " << value << endl;
+		LOG(info) << "Engine property " << predicate
+		          << " = " << _uris->forge.str(value) << endl;
 		return;
 	}
 	SharedPtr<Resource> subject = _resource(subject_uri);

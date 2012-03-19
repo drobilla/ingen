@@ -52,7 +52,7 @@ PluginModel::PluginModel(Shared::URIs&               uris,
 
 	assert(_rdf_world);
 	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-	             this->type_uri());
+	             uris.forge.alloc_uri(this->type_uri().str()));
 	LilvNode* plugin_uri = lilv_new_uri(_lilv_world, uri.c_str());
 	_lilv_plugin = lilv_plugins_get_by_uri(_lilv_plugins, plugin_uri);
 	lilv_node_free(plugin_uri);
@@ -108,8 +108,7 @@ PluginModel::get_property(const URI& key) const
 		LILV_FOREACH(nodes, i, values) {
 			const LilvNode* val = lilv_nodes_get(values, i);
 			if (lilv_node_is_uri(val)) {
-				ret = set_property(
-					key, _uris.forge.alloc(Atom::URI, lilv_node_as_uri(val)));
+				ret = set_property(key, _uris.forge.alloc_uri(lilv_node_as_uri(val)));
 				break;
 			} else if (lilv_node_is_string(val)) {
 				ret = set_property(key,
@@ -155,7 +154,7 @@ Symbol
 PluginModel::default_node_symbol() const
 {
 	const Atom& name_atom = get_property("http://lv2plug.in/ns/lv2core#symbol");
-	if (name_atom.is_valid() && name_atom.type() == Atom::STRING)
+	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String)
 		return Symbol::symbolify(name_atom.get_string());
 	else
 		return "_";
@@ -165,7 +164,7 @@ string
 PluginModel::human_name() const
 {
 	const Atom& name_atom = get_property("http://usefulinc.com/ns/doap#name");
-	if (name_atom.type() == Atom::STRING)
+	if (name_atom.type() == _uris.forge.String)
 		return name_atom.get_string();
 	else
 		return default_node_symbol().c_str();

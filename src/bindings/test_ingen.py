@@ -26,7 +26,7 @@ e.activate()
 
 c.subscribe(e)
 
-e.create_port("/dynamic_port", "http://lv2plug.in/ns/ext/event#EventPort", False)
+e.create_port("/dynamic_port", "http://lv2plug.in/ns/lv2core#AudioPort", False)
 
 while True:
     world.iteration()

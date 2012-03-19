@@ -63,12 +63,13 @@ private:
 	public:
 		TypeColumns() { add(type); add(choice); }
 
-		Gtk::TreeModelColumn<Raul::Atom::Type> type;
-		Gtk::TreeModelColumn<Glib::ustring>    choice;
+		Gtk::TreeModelColumn<Raul::Atom::TypeID> type;
+		Gtk::TreeModelColumn<Glib::ustring>      choice;
 	};
 
 	Gtk::Widget* create_value_widget(const Raul::URI& uri, const Raul::Atom& value);
 
+	void init();
 	void reset();
 	void on_show();
 
@@ -94,6 +95,7 @@ private:
 	Gtk::Button*                 _cancel_button;
 	Gtk::Button*                 _apply_button;
 	Gtk::Button*                 _ok_button;
+	bool                         _initialised : 1;
 };
 
 } // namespace GUI

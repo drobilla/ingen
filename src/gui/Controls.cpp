@@ -218,9 +218,9 @@ SliderControl::port_property_changed(const URI& key, const Atom& value)
 	_enable_signal = false;
 
 	const Shared::URIs& uris = _app->uris();
-	if (key == uris.lv2_minimum && value.type() == Atom::FLOAT)
+	if (key == uris.lv2_minimum && value.type() == uris.forge.Float)
 		set_range(value.get_float(), _slider->get_adjustment()->get_upper());
-	else if (key == uris.lv2_maximum && value.type() == Atom::FLOAT)
+	else if (key == uris.lv2_maximum && value.type() == uris.forge.Float)
 		set_range(_slider->get_adjustment()->get_lower(), value.get_float());
 
 	_enable_signal = true;
@@ -320,18 +320,15 @@ ToggleControl::init(App& app, ControlPanel* panel, SharedPtr<const PortModel> pm
 void
 ToggleControl::set_value(const Atom& val)
 {
-	bool enable = false;
-	switch (val.type()) {
-	case Atom::FLOAT:
+	const Shared::URIs& uris   = _app->uris();
+	bool                enable = false;
+	if (val.type() == uris.forge.Float) {
 		enable = (val.get_float() != 0.0f);
-		break;
-	case Atom::INT:
+	} else if (val.type() == uris.forge.Int) {
 		enable = (val.get_int32() != 0);
-		break;
-	case Atom::BOOL:
+	} else if (val.type() == uris.forge.Bool) {
 		enable = (val.get_bool());
-		break;
-	default:
+	} else {
 		error << "Unsupported value type for toggle control" << endl;
 	}
 
@@ -380,7 +377,7 @@ void
 StringControl::set_value(const Atom& val)
 {
 	_enable_signal = false;
-	if (val.type() == Atom::STRING)
+	if (val.type() == _app->forge().String)
 		_entry->set_text(val.get_string());
 	else
 		error << "Non-string value for string port " << _port_model->path() << endl;
@@ -393,7 +390,7 @@ StringControl::activated()
 	if (_enable_signal)
 		_control_panel->value_changed_atom(
 			_port_model,
-			_app->forge().make(_entry->get_text().c_str()));
+			_app->forge().alloc(_entry->get_text().c_str()));
 }
 
 } // namespace GUI

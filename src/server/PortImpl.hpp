@@ -124,7 +124,8 @@ public:
 
 	inline bool is_a(PortType type) const { return _type == type; }
 
-	PortType buffer_type() const;
+	PortType type()        const { return _type; }
+	LV2_URID buffer_type() const { return _buffer_type; }
 
 	bool supports(const Raul::URI& value_type) const;
 
@@ -158,6 +159,7 @@ protected:
 	         uint32_t            index,
 	         uint32_t            poly,
 	         PortType            type,
+	         LV2_URID            buffer_type,
 	         const Raul::Atom&   value,
 	         size_t              buffer_size);
 
@@ -166,6 +168,7 @@ protected:
 	uint32_t                         _poly;
 	uint32_t                         _buffer_size;
 	PortType                         _type;
+	LV2_URID                         _buffer_type;
 	Raul::Atom                       _value;
 	Raul::Atom                       _min;
 	Raul::Atom                       _max;

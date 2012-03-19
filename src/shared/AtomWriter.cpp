@@ -88,7 +88,21 @@ AtomWriter::put(const Raul::URI&            uri,
 {
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Put);
-	// ...
+	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	lv2_atom_forge_uri(&_forge, uri.c_str(), uri.length());
+	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
+
+	LV2_Atom_Forge_Frame body;
+	lv2_atom_forge_blank(&_forge, &body, 0, 0);
+
+	for (Resource::Properties::const_iterator i = properties.begin();
+	     i != properties.end(); ++i) {
+		lv2_atom_forge_property_head(&_forge, _map.map_uri(i->first.c_str()), 0);
+		lv2_atom_forge_atom(&_forge, i->second.size(), i->second.type());
+		lv2_atom_forge_write(&_forge, i->second.get_body(), i->second.size());
+	}
+
+	lv2_atom_forge_pop(&_forge, &body);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }
@@ -173,7 +187,7 @@ AtomWriter::response(int32_t id, Status status)
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Response);
 	lv2_atom_forge_property_head(&_forge, _uris.patch_request, 0);
-	lv2_atom_forge_int32(&_forge, id);
+	lv2_atom_forge_int(&_forge, id);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }

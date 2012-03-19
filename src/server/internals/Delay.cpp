@@ -28,7 +28,6 @@
 #include "internals/Delay.hpp"
 #include "AudioBuffer.hpp"
 #include "Driver.hpp"
-#include "EventBuffer.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
@@ -75,22 +74,22 @@ DelayNode::DelayNode(
 	_delay_samples = default_delay;
 
 	_delay_port = new InputPort(bufs, this, "delay", 1, _polyphony,
-	                            PortType::CONTROL, bufs.forge().make(default_delay));
-	_delay_port->set_property(uris.lv2_name, bufs.forge().make("Delay"));
+	                            PortType::CONTROL, 0, bufs.forge().make(default_delay));
+	_delay_port->set_property(uris.lv2_name, bufs.forge().alloc("Delay"));
 	_delay_port->set_property(uris.lv2_default, bufs.forge().make(default_delay));
 	_delay_port->set_property(uris.lv2_minimum, bufs.forge().make((float)(1.0/(double)srate)));
 	_delay_port->set_property(uris.lv2_maximum, bufs.forge().make(MAX_DELAY_SECONDS));
 	_ports->at(0) = _delay_port;
 
 	_in_port = new InputPort(bufs, this, "in", 0, 1,
-	                         PortType::AUDIO, bufs.forge().make(0.0f));
-	_in_port->set_property(uris.lv2_name, bufs.forge().make("Input"));
+	                         PortType::AUDIO, 0, bufs.forge().make(0.0f));
+	_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
 	_ports->at(1) = _in_port;
 
 	_out_port = new OutputPort(bufs, this, "out", 0, 1,
-	                           PortType::AUDIO, bufs.forge().make(0.0f));
+	                           PortType::AUDIO, 0, bufs.forge().make(0.0f));
 	_out_port->set_property(uris.lv2_name,
-	                        bufs.forge().make("Output"));
+	                        bufs.forge().alloc("Output"));
 	_ports->at(2) = _out_port;
 
 	//_buffer = bufs.get(PortType::AUDIO, bufs.audio_buffer_size(buffer_length_frames), true);

@@ -114,7 +114,7 @@ PatchPortModule::show_human_names(bool b)
 {
 	const URIs& uris = app().uris();
 	const Atom& name = _model->get_property(uris.lv2_name);
-	if (b && name.type() == Atom::STRING)
+	if (b && name.type() == uris.forge.String)
 		set_name(name.get_string());
 	else
 		set_name(_model->symbol().c_str());
@@ -131,15 +131,13 @@ void
 PatchPortModule::property_changed(const URI& key, const Atom& value)
 {
 	const URIs& uris = app().uris();
-	switch (value.type()) {
-	case Atom::FLOAT:
+	if (value.type() == uris.forge.Float) {
 		if (key == uris.ingen_canvasX) {
 			move_to(value.get_float(), get_y());
 		} else if (key == uris.ingen_canvasY) {
 			move_to(get_x(), value.get_float());
 		}
-		break;
-	case Atom::STRING:
+	} else if (value.type() == uris.forge.String) {
 		if (key == uris.lv2_name
 		    && app().configuration()->name_style() == Configuration::HUMAN) {
 			set_name(value.get_string());
@@ -147,8 +145,7 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 		           && app().configuration()->name_style() == Configuration::PATH) {
 			set_name(value.get_string());
 		}
-		break;
-	case Atom::BOOL:
+	} else if (value.type() == uris.forge.Bool) {
 		if (key == uris.ingen_polyphonic) {
 			set_stacked(value.get_bool());
 		} else if (key == uris.ingen_selected) {
@@ -156,7 +153,6 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 				set_selected(value.get_bool());
 			}
 		}
-	default: break;
 	}
 }
 

@@ -18,6 +18,7 @@
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
+#include "ingen/shared/AtomReader.hpp"
 #include "ingen/shared/AtomSink.hpp"
 #include "ingen/shared/AtomWriter.hpp"
 #include "ingen/shared/Configuration.hpp"
@@ -55,20 +56,21 @@ struct IngenLV2AtomSink : public Ingen::Shared::AtomSink {
 
 struct IngenLV2UI {
 	IngenLV2UI()
-		: conf(&forge)
+		: conf()
 		, sink(NULL)
 	{
 	}
 	
 	int                                          argc;
 	char**                                       argv;
-	Raul::Forge                                  forge;
+	Ingen::Forge*                                forge;
 	Ingen::Shared::Configuration                 conf;
 	Ingen::Shared::World*                        world;
 	IngenLV2AtomSink*                            sink;
 	SharedPtr<Ingen::GUI::App>                   app;
 	SharedPtr<Ingen::GUI::PatchView>             view;
 	SharedPtr<Ingen::Interface>                  engine;
+	SharedPtr<Ingen::Shared::AtomReader>         reader;
 	SharedPtr<Ingen::Client::SigClientInterface> client;
 };
 
@@ -98,6 +100,8 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->world = new Ingen::Shared::World(
 		&ui->conf, ui->argc, ui->argv, map, unmap);
 
+	ui->forge = new Ingen::Forge(*ui->world->lv2_uri_map().get());
+
 	if (!ui->world->load_module("client")) {
 		delete ui;
 		return NULL;
@@ -119,6 +123,13 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->client = SharedPtr<Ingen::Client::SigClientInterface>(
 		new Ingen::Client::SigClientInterface());
 	ui->app->attach(ui->client);
+
+	ui->reader = SharedPtr<Ingen::Shared::AtomReader>(
+		new Ingen::Shared::AtomReader(*ui->world->lv2_uri_map().get(),
+		                              *ui->world->uris().get(),
+		                              ui->world->forge(),
+		                              *ui->client.get()));
+
 
 	// Create empty root patch model
 	Ingen::Resource::Properties props;
@@ -150,6 +161,9 @@ port_event(LV2UI_Handle handle,
            uint32_t     format,
            const void*  buffer)
 {
+	IngenLV2UI* ui   = (IngenLV2UI*)handle;
+	LV2_Atom*   atom = (LV2_Atom*)buffer;
+	ui->reader->write(atom);
 }
 
 const void*

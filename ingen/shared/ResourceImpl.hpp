@@ -67,8 +67,6 @@ public:
 	void add_properties(const Properties& p);
 	void remove_properties(const Properties& p);
 
-	void dump(std::ostream& os) const;
-
 	/** Get the ingen type from a set of Properties.
 	 * If some coherent ingen type is found, true is returned and the appropriate
 	 * output parameter set to true.  Otherwise false is returned.
