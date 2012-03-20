@@ -57,6 +57,8 @@ def configure(conf):
                       atleast_version='0.0.0', mandatory=True)
     autowaf.check_pkg(conf, 'suil-0', uselib_store='SUIL',
                       atleast_version='0.2.0', mandatory=True)
+    autowaf.check_pkg(conf, 'sratom-0', uselib_store='SRATOM',
+                      atleast_version='0.1.0', mandatory=True)
     autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
                       atleast_version='0.8.0', mandatory=True)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
