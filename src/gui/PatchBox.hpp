@@ -58,6 +58,8 @@ public:
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 	~PatchBox();
 
+	static SharedPtr<PatchBox> create(App& app, SharedPtr<const PatchModel> patch);
+
 	void init_box(App& app);
 	void set_patch(SharedPtr<const PatchModel> pc, SharedPtr<PatchView> view);
 	void set_window(PatchWindow* win) { _window = win; }

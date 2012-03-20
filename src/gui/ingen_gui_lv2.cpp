@@ -27,7 +27,7 @@
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 #include "App.hpp"
-#include "PatchView.hpp"
+#include "PatchBox.hpp"
 
 #define INGEN_LV2_UI_URI "http://drobilla.net/ns/ingen#ui"
 
@@ -68,7 +68,7 @@ struct IngenLV2UI {
 	Ingen::Shared::World*                        world;
 	IngenLV2AtomSink*                            sink;
 	SharedPtr<Ingen::GUI::App>                   app;
-	SharedPtr<Ingen::GUI::PatchView>             view;
+	SharedPtr<Ingen::GUI::PatchBox>              view;
 	SharedPtr<Ingen::Interface>                  engine;
 	SharedPtr<Ingen::Shared::AtomReader>         reader;
 	SharedPtr<Ingen::Client::SigClientInterface> client;
@@ -137,10 +137,10 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	                            ui->app->uris().ingen_Patch));
 	ui->app->store()->put("path:/", props);
 
-	// Create a PatchView for the root and set as the UI widget
+	// Create a PatchBox for the root and set as the UI widget
 	SharedPtr<const Ingen::Client::PatchModel> root = PtrCast<const Ingen::Client::PatchModel>(
 		ui->app->store()->object("path:/"));
-	ui->view = Ingen::GUI::PatchView::create(*ui->app, root);
+	ui->view = Ingen::GUI::PatchBox::create(*ui->app, root);
 	ui->view->unparent();
 	*widget = ui->view->gobj();
 

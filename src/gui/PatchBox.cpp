@@ -41,6 +41,7 @@
 #include "PatchView.hpp"
 #include "PatchWindow.hpp"
 #include "ThreadedLoader.hpp"
+#include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 #include "ingen_config.h"
 
@@ -160,6 +161,17 @@ PatchBox::~PatchBox()
 	delete _breadcrumbs;
 }
 
+SharedPtr<PatchBox>
+PatchBox::create(App& app, SharedPtr<const PatchModel> patch)
+{
+	PatchBox* result = NULL;
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("patch_win");
+	xml->get_widget_derived("patch_win_vbox", result);
+	result->init_box(app);
+	result->set_patch(patch, SharedPtr<PatchView>());
+	return SharedPtr<PatchBox>(result);
+}
+
 void
 PatchBox::init_box(App& app)
 {
@@ -258,6 +270,7 @@ PatchBox::set_patch(SharedPtr<const PatchModel> patch,
 
 	show();
 	_alignment->show_all();
+	hide_documentation();
 
 	_view->signal_object_entered.connect(
 		sigc::mem_fun(this, &PatchBox::object_entered));
@@ -318,6 +331,7 @@ PatchBox::hide_documentation()
 {
 	_doc_scrolledwindow->remove();
 	_doc_scrolledwindow->hide();
+	_doc_paned->set_position(INT_MAX);
 }
 
 void
