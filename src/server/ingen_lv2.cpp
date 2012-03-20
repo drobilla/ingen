@@ -150,7 +150,7 @@ public:
 		, _writer(*engine.world()->lv2_uri_map().get(),
 		          *engine.world()->uris().get(),
 		          *this)
-		, _to_ui(8192) // FIXME: size
+		, _to_ui(32768) // FIXME: size
 		, _root_patch(NULL)
 		, _buffer_size(buffer_size)
 		, _sample_rate(sample_rate)

@@ -45,37 +45,49 @@ AtomReader::write(const LV2_Atom* msg)
 	const LV2_Atom*        subject = NULL;
 
 	lv2_object_get(obj, (LV2_URID)_uris.patch_subject, &subject, NULL);
-	const char* subject_uri = subject ? (const char*)LV2_ATOM_BODY(subject) : NULL;
+	const char* subject_uri = NULL;
+	if (subject && subject->type == _uris.atom_URI) {
+		subject_uri = (const char*)LV2_ATOM_BODY(subject);
+	} else if (subject && subject->type == _uris.atom_URID) {
+		subject_uri = _map.unmap_uri(((LV2_Atom_URID*)subject)->body);
+	}
+
 	if (obj->body.otype == _uris.patch_Get) {
-		Raul::warn << "ATOM GET " << subject_uri << std::endl;
-		_iface.set_response_id(1);
+		_iface.set_response_id(obj->body.id);
 		_iface.get(subject_uri);
 	} else if (obj->body.otype == _uris.patch_Put) {
-		Raul::warn << "PUT" << std::endl;
 		const LV2_Atom_Object* body = NULL;
 		lv2_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 		if (!body) {
-			Raul::warn << "NO BODY" << std::endl;
+			Raul::warn << "Put message has no body" << std::endl;
 			return;
 		}
 
 		Ingen::Resource::Properties props;
 		LV2_OBJECT_FOREACH(body, i) {
 			LV2_Atom_Property_Body* p = lv2_object_iter_get(i);
-			props.insert(std::make_pair(_map.unmap_uri(p->key),
-			                            _forge.alloc(p->value.size,
-			                                         p->value.type,
-			                                         LV2_ATOM_BODY(&p->value))));
+			Raul::Atom val;
+			if (p->value.type == _uris.atom_URID) {
+				const LV2_Atom_URID* urid = (const LV2_Atom_URID*)&p->value;
+				val = _forge.alloc_uri(_map.unmap_uri(urid->body));
+			} else {
+				val = _forge.alloc(p->value.size,
+				                   p->value.type,
+				                   LV2_ATOM_BODY(&p->value));
+			}
+
+			props.insert(std::make_pair(_map.unmap_uri(p->key), val));
 		}
 
 		if (subject_uri) {
+			_iface.set_response_id(obj->body.id);
 			_iface.put(subject_uri, props);
 		} else {
 			Raul::warn << "Put message has no subject, ignored" << std::endl;
 		}
 
 	} else {
-		Raul::warn << "HANDLE MESSAGE TYPE " << obj->body.otype << std::endl;
+		Raul::warn << "Unknown object type " << obj->body.otype << std::endl;
 	}
 }
 

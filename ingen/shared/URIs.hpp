@@ -54,6 +54,8 @@ public:
 	const Quark atom_Sequence;
 	const Quark atom_Sound;
 	const Quark atom_String;
+	const Quark atom_URI;
+	const Quark atom_URID;
 	const Quark atom_ValuePort;
 	const Quark atom_Vector;
 	const Quark atom_bufferType;
@@ -109,10 +111,17 @@ public:
 	const Quark midi_NoteOn;
 	const Quark midi_controllerNumber;
 	const Quark midi_noteNumber;
+	const Quark patch_Delete;
 	const Quark patch_Get;
+	const Quark patch_Move;
+	const Quark patch_Patch;
 	const Quark patch_Put;
 	const Quark patch_Response;
+	const Quark patch_Set;
+	const Quark patch_add;
 	const Quark patch_body;
+	const Quark patch_destination;
+	const Quark patch_remove;
 	const Quark patch_request;
 	const Quark patch_subject;
 	const Quark rdf_instanceOf;

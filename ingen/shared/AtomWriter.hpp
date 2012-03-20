@@ -77,6 +77,9 @@ public:
 	void error(const std::string& msg);
 
 private:
+	void forge_uri(const Raul::URI& uri);
+	void forge_properties(const Resource::Properties& properties);
+
 	void    finish_msg();
 	int32_t next_id();
 
