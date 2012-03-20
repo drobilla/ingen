@@ -143,14 +143,11 @@ BufferFactory::create(LV2_URID type, uint32_t capacity)
 	if (type == _uris->atom_Float) {
 		assert(capacity >= sizeof(LV2_Atom_Float));
 		buffer = new AudioBuffer(*this, type, capacity);
-		info << "NEW FLOAT BUFFER " << buffer << " :: " << type << std::endl;
 	} else if (type == _uris->atom_Sound) {
 		assert(capacity >= default_buffer_size(_uris->atom_Sound));
 		buffer = new AudioBuffer(*this, type, capacity);
-		info << "NEW AUDIO BUFFER " << buffer << " :: " << type << std::endl;
 	} else {
 		buffer = new Buffer(*this, type, capacity);
-		info << "NEW ATOM BUFFER " << buffer << " :: " << type << std::endl;
 	}
 
 	buffer->atom()->type = type;

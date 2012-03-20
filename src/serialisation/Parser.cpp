@@ -125,12 +125,6 @@ get_properties(Ingen::Shared::World* world,
 				atomm = world->forge().alloc(
 					atom->size, atom->type, LV2_ATOM_BODY(atom));
 			}
-			/*
-			std::cerr << "READ PROPERTY " << i.get_predicate()
-			          << " = " << world->forge().str(atomm)
-			          << " :: " << unmap->unmap(unmap->handle, atom->type)
-			          << std::endl;
-			*/
 			props.insert(make_pair(i.get_predicate().to_string(), atomm));
 		}
 	}
