@@ -147,9 +147,6 @@ public:
 
 	void raise_set_by_user_flag() { _set_by_user = true; }
 
-	Context::ID context() const { return _context; }
-	void        set_context(Context::ID c);
-
 	BufferFactory& bufs() const { return _bufs; }
 
 protected:
@@ -173,7 +170,6 @@ protected:
 	Raul::Atom                       _min;
 	Raul::Atom                       _max;
 	Raul::Atom                       _last_broadcasted_value;
-	Context::ID                      _context;
 	Raul::Array<BufferFactory::Ref>* _buffers;
 	Raul::Array<BufferFactory::Ref>* _prepared_buffers;
 	bool                             _broadcast;

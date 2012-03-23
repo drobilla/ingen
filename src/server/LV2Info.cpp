@@ -17,12 +17,10 @@
 
 #define __STDC_LIMIT_MACROS 1
 
+#include <assert.h>
 #include <stdint.h>
 
-#include <cassert>
-
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
 
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/LV2Features.hpp"

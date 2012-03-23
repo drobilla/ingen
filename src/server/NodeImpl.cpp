@@ -15,10 +15,10 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <cassert>
+#include <assert.h>
 #include <stdint.h>
 
-#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
+#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/Array.hpp"
 #include "raul/List.hpp"
 
@@ -45,7 +45,7 @@ NodeImpl::NodeImpl(PluginImpl*         plugin,
 	: GraphObjectImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
 	, _ports(NULL)
-	, _valid_ports(NULL)
+	, _context(Context::AUDIO)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
 	, _srate(srate)
 	, _input_ready(1)
@@ -65,8 +65,6 @@ NodeImpl::~NodeImpl()
 		deactivate();
 
 	delete _ports;
-
-	free(_valid_ports);
 }
 
 Port*
@@ -161,7 +159,7 @@ NodeImpl::set_buffer_size(Context&       context,
 	if (_ports) {
 		for (size_t i = 0; i < _ports->size(); ++i) {
 			PortImpl* const p = _ports->at(i);
-			if (p->buffer_type() == type && p->context() == context.id()) {
+			if (p->buffer_type() == type) {
 				p->set_buffer_size(context, bufs, size);
 			}
 		}
@@ -216,10 +214,8 @@ NodeImpl::pre_process(Context& context)
 	// Mix down input ports
 	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);
-		if (port->context() == Context::AUDIO) {
-			port->pre_process(context);
-			port->connect_buffers(context.offset());
-		}
+		port->pre_process(context);
+		port->connect_buffers(context.offset());
 	}
 }
 
@@ -232,34 +228,8 @@ NodeImpl::post_process(Context& context)
 
 	// Write output ports
 	for (size_t i = 0; _ports && i < _ports->size(); ++i) {
-		PortImpl* const port = _ports->at(i);
-		if (port->context() == Context::AUDIO)
-			_ports->at(i)->post_process(context);
+		_ports->at(i)->post_process(context);
 	}
-}
-
-/** Flag a port as set (for message context)
- */
-void
-NodeImpl::set_port_valid(uint32_t port_index)
-{
-	// Allocate enough space for one bit per port
-	if (!_valid_ports)
-		_valid_ports = calloc(num_ports() / 8, 1);
-	lv2_contexts_set_port_valid(_valid_ports, port_index);
-}
-
-void*
-NodeImpl::valid_ports()
-{
-	return _valid_ports;
-}
-
-void
-NodeImpl::reset_valid_ports()
-{
-	if (_valid_ports)
-		memset(_valid_ports, '\0', num_ports() / 8);
 }
 
 void

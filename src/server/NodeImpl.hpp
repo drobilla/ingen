@@ -28,6 +28,7 @@
 #include "raul/AtomicInt.hpp"
 #include "raul/Semaphore.hpp"
 
+#include "Context.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PortType.hpp"
 #include "types.hpp"
@@ -118,17 +119,10 @@ public:
 	/** Learn the next incoming MIDI event (for internals) */
 	virtual void learn() {}
 
-	/** Run the node for one instant in the message thread. */
-	virtual void message_run(MessageContext& context) {}
-
-	/** Flag a port as valid (for message context) */
-	virtual void set_port_valid(uint32_t index);
-
-	/** Return a bit vector of which ports are valid */
-	virtual void* valid_ports();
-
-	/** Clear all bits in valid_ports() */
-	virtual void reset_valid_ports();
+	/** Run the node for one instant in the non-realtime worker thread. */
+	virtual void work(MessageContext& context,
+	                  uint32_t        size,
+	                  const void*     data) {}
 
 	/** Do whatever needs doing in the process thread before process() is called */
 	virtual void pre_process(Context& context);
@@ -189,6 +183,7 @@ public:
 	/** The Patch this Node belongs to. */
 	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }
 
+	Context::ID        context()     const { return _context; }
 	SampleRate         sample_rate() const { return _srate; }
 	virtual uint32_t   num_ports()   const { return _ports ? _ports->size() : 0; }
 	virtual uint32_t   polyphony()   const { return _polyphony; }
@@ -199,18 +194,18 @@ public:
 
 protected:
 	PluginImpl*             _plugin;
-	Raul::Array<PortImpl*>* _ports;  ///< Access in audio thread only
-	void*                   _valid_ports;  ///< Valid port flags for message context
+	Raul::Array<PortImpl*>* _ports; ///< Access in audio thread only
+	Context::ID             _context; ///< Context this node runs in
 	uint32_t                _polyphony;
 	SampleRate              _srate;
-	Raul::Semaphore         _input_ready;  ///< Parallelism: input ready signal
-	Raul::AtomicInt         _process_lock;  ///< Parallelism: Waiting on inputs 'lock'
-	Raul::AtomicInt         _n_inputs_ready;  ///< Parallelism: # input ready signals this cycle
-	std::list<NodeImpl*>    _providers;  ///< Nodes connected to this one's input ports
-	std::list<NodeImpl*>    _dependants;  ///< Nodes this one's output ports are connected to
+	Raul::Semaphore         _input_ready; ///< Parallelism: input ready signal
+	Raul::AtomicInt         _process_lock; ///< Parallelism: Waiting on inputs 'lock'
+	Raul::AtomicInt         _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
+	std::list<NodeImpl*>    _providers; ///< Nodes connected to this one's input ports
+	std::list<NodeImpl*>    _dependants; ///< Nodes this one's output ports are connected to
 	bool                    _polyphonic;
 	bool                    _activated;
-	bool                    _traversed;  ///< Flag for process order algorithm
+	bool                    _traversed; ///< Flag for process order algorithm
 };
 
 } // namespace Server

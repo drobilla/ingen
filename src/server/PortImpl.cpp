@@ -15,13 +15,11 @@
  * 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
-
-#include "raul/Array.hpp"
-#include "raul/Maid.hpp"
-
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
+#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
+#include "raul/Array.hpp"
+#include "raul/Maid.hpp"
 
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
@@ -58,7 +56,6 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _min(bufs.forge().make(0.0f))
 	, _max(bufs.forge().make(1.0f))
 	, _last_broadcasted_value(value)
-	, _context(Context::AUDIO)
 	, _buffers(new Array<BufferFactory::Ref>(static_cast<size_t>(poly)))
 	, _prepared_buffers(NULL)
 	, _broadcast(false)
@@ -89,7 +86,6 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 	add_property(uris.rdf_type,  bufs.forge().alloc_uri(type.uri().str()));
 	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
-	set_context(_context);
 }
 
 PortImpl::~PortImpl()
@@ -258,21 +254,6 @@ PortImpl::broadcast_value(Context& context, bool force)
 		const Notification note = Notification::make(
 			Notification::PORT_VALUE, context.start(), this, val);
 		context.event_sink().write(sizeof(note), &note);
-	}
-}
-
-void
-PortImpl::set_context(Context::ID c)
-{
-	const Ingen::Shared::URIs& uris = _bufs.uris();
-	_context = c;
-	switch (c) {
-	case Context::AUDIO:
-		remove_property(uris.ctx_context, uris.wildcard);
-		break;
-	case Context::MESSAGE:
-		set_property(uris.ctx_context, uris.ctx_messageContext);
-		break;
 	}
 }
 

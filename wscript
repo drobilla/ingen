@@ -98,10 +98,8 @@ def configure(conf):
                       uselib_store='LV2_PATCH')
     autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-state',
                       uselib_store='LV2_STATE')
-    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-contexts',
-                      uselib_store='LV2_CONTEXTS')
-    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-resize-port',
-                      uselib_store='LV2_RESIZE')
+    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-worker',
+                      uselib_store='LV2_WORKER')
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 

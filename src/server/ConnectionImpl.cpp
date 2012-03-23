@@ -30,6 +30,7 @@
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "MessageContext.hpp"
+#include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
@@ -151,7 +152,8 @@ ConnectionImpl::must_mix() const
 bool
 ConnectionImpl::must_queue() const
 {
-	return _src_port->context() != _dst_port->context();
+	return _src_port->parent_node()->context()
+		!= _dst_port->parent_node()->context();
 }
 
 bool

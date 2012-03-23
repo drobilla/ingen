@@ -23,7 +23,7 @@
 #include <boost/intrusive_ptr.hpp>
 
 #include "lilv/lilv.h"
-#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
+#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 
 #include "NodeImpl.hpp"
 #include "ingen/shared/LV2Features.hpp"
@@ -57,7 +57,7 @@ public:
 	void activate(BufferFactory& bufs);
 	void deactivate();
 
-	void message_run(MessageContext& context);
+	void work(MessageContext& context, uint32_t size, const void* data);
 
 	void process(ProcessContext& context);
 
@@ -74,7 +74,7 @@ protected:
 	LV2Plugin*                                   _lv2_plugin;
 	Instances*                                   _instances;
 	Instances*                                   _prepared_instances;
-	LV2_Contexts_MessageContext*                 _message_funcs;
+	LV2_Worker_Interface*                        _worker_iface;
 	SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
 

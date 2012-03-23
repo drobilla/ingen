@@ -94,7 +94,8 @@ InputPort::get_buffers(BufferFactory&                   bufs,
 
 	} else if (num_connections == 1) {
 		if (ThreadManager::thread_is(THREAD_PROCESS)) {
-			if (!_connections.front().must_mix() && !_connections.front().must_queue()) {
+			if (!_connections.front().must_mix() &&
+			    !_connections.front().must_queue()) {
 				// Single non-mixing conneciton, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v)
 					buffers->at(v) = _connections.front().buffer(v);
@@ -229,8 +230,7 @@ InputPort::post_process(Context& context)
 bool
 InputPort::direct_connect() const
 {
-	return (context() == Context::AUDIO)
-		&& _connections.size() == 1
+	return _connections.size() == 1
 		&& !_connections.front().must_mix()
 		&& !_connections.front().must_queue();
 }

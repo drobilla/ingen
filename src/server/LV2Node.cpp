@@ -57,7 +57,7 @@ LV2Node::LV2Node(LV2Plugin*    plugin,
 	, _lv2_plugin(plugin)
 	, _instances(NULL)
 	, _prepared_instances(NULL)
-	, _message_funcs(NULL)
+	, _worker_iface(NULL)
 {
 	assert(_lv2_plugin);
 }
@@ -149,11 +149,12 @@ LV2Node::instantiate(BufferFactory& bufs)
 	_ports     = new Raul::Array<PortImpl*>(num_ports, NULL);
 	_instances = new Instances(_polyphony, SharedPtr<void>());
 
-	_features = info->world().lv2_features()->lv2_features(&info->world(), this);
+	_features = info->world().lv2_features()->lv2_features(&info->world(),
+	                                                       this);
 
 	uint32_t port_buffer_size = 0;
-	LilvNode* ctx_ext_uri = lilv_new_uri(info->lv2_world(),
-	                                     LV2_CONTEXTS_URI "#messageContext");
+	LilvNode* work_schedule = lilv_new_uri(info->lv2_world(),
+	                                       LV2_WORKER__schedule);
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		(*_instances)[i] = SharedPtr<void>(
@@ -166,19 +167,14 @@ LV2Node::instantiate(BufferFactory& bufs)
 			return false;
 		}
 
-		if (!lilv_plugin_has_feature(plug, ctx_ext_uri))
-			continue;
-
-		const void* ctx_ext = lilv_instance_get_extension_data(
-			instance(i), LV2_CONTEXTS_URI "#messageContext");
-
-		if (i == 0 && ctx_ext) {
-			assert(!_message_funcs);
-			_message_funcs = (LV2_Contexts_MessageContext*)ctx_ext;
+		if (i == 0 && lilv_plugin_has_feature(plug, work_schedule)) {
+			_worker_iface = (LV2_Worker_Interface*)
+				lilv_instance_get_extension_data(instance(i),
+				                                 LV2_WORKER__Interface);
 		}
 	}
 
-	lilv_node_free(ctx_ext_uri);
+	lilv_node_free(work_schedule);
 
 	string port_name;
 	Path   port_path;
@@ -342,23 +338,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 		}
 
-		LilvNodes* contexts = lilv_port_get_value(plug, id, context_pred);
-		LILV_FOREACH(nodes, i, contexts) {
-			const LilvNode* c       = lilv_nodes_get(contexts, i);
-			const char*     context = lilv_node_as_string(c);
-			if (!strcmp(LV2_CONTEXTS_URI "#messageContext", context)) {
-				if (!_message_funcs) {
-					warn << _lv2_plugin->uri()
-							<< " has a message port, but no context extension data." << endl;
-				}
-				port->set_context(Context::MESSAGE);
-			} else {
-				warn << _lv2_plugin->uri() << " port " << i << " has unknown context "
-				     << lilv_node_as_string(c)
-				     << endl;
-			}
-		}
-
 		_ports->at(j) = port;
 	}
 
@@ -399,19 +378,11 @@ LV2Node::deactivate()
 }
 
 void
-LV2Node::message_run(MessageContext& context)
+LV2Node::work(MessageContext& context, uint32_t size, const void* data)
 {
-	for (size_t i = 0; i < num_ports(); ++i) {
-		PortImpl* const port = _ports->at(i);
-		if (port->context() == Context::MESSAGE)
-			port->pre_process(context);
+	if (_worker_iface) {
+		_worker_iface->work(instance(0), NULL, NULL, size, data);
 	}
-
-	if (!_valid_ports)
-		_valid_ports = calloc(num_ports() / 8, 1);
-
-	if (_message_funcs)
-		(*_message_funcs->run)(instance(0)->lv2_handle, _valid_ports, _valid_ports);
 }
 
 void

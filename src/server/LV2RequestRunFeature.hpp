@@ -18,7 +18,7 @@
 #ifndef INGEN_ENGINE_LV2_REQUEST_RUN_FEATURE_HPP
 #define INGEN_ENGINE_LV2_REQUEST_RUN_FEATURE_HPP
 
-#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
+#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 
 #include "raul/log.hpp"
 
@@ -37,22 +37,27 @@ namespace Ingen {
 namespace Server {
 
 struct RequestRunFeature : public Ingen::Shared::LV2Features::Feature {
-	struct Data {
-		inline Data(Shared::World* w, Node* n) : world(w), node(n) {}
+	struct Info {
+		inline Info(Shared::World* w, Node* n) : world(w), node(n) {}
 		Shared::World* world;
 		Node*          node;
 	};
 
-	static void request_run(LV2_Contexts_Request_Run_Data data_ptr,
-	                        uint32_t                      context_uri) {
-		Data* data = reinterpret_cast<Data*>(data_ptr);
-		if (!data->world->local_engine())
-			return;
+	static LV2_Worker_Status
+	schedule_work(LV2_Worker_Schedule_Handle handle,
+	              uint32_t                   size,
+	              const void*                data)
+	{
+		Info* info = reinterpret_cast<Info*>(handle);
+		if (!info->world->local_engine())
+			return LV2_WORKER_ERR_UNKNOWN;
 
-		Engine* engine = (Engine*)data->world->local_engine().get();
+		Engine* engine = (Engine*)info->world->local_engine().get();
 		engine->message_context()->run(
-			dynamic_cast<NodeImpl*>(data->node),
+			dynamic_cast<NodeImpl*>(info->node),
 			engine->driver()->frame_time());
+
+		return LV2_WORKER_SUCCESS;
 	}
 
 	static void delete_feature(LV2_Feature* feature) {
@@ -65,13 +70,13 @@ struct RequestRunFeature : public Ingen::Shared::LV2Features::Feature {
 		if (!node)
 			return SharedPtr<LV2_Feature>();
 
-		typedef LV2_Contexts_Request_Run_Feature Feature;
-		Feature* data = (Feature*)malloc(sizeof(Feature));
-		data->data        = new Data(world, n);
-		data->request_run = &request_run;
+		LV2_Worker_Schedule* data = (LV2_Worker_Schedule*)malloc(
+			sizeof(LV2_Worker_Schedule));
+		data->handle        = new Info(world, n);
+		data->schedule_work = schedule_work;
 
 		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
-		f->URI  = LV2_CONTEXTS_URI "#RequestRunFeature";
+		f->URI  = LV2_WORKER__schedule;
 		f->data = data;
 
 		return SharedPtr<LV2_Feature>(f, &delete_feature);

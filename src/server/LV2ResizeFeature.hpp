@@ -36,15 +36,12 @@ struct ResizeFeature : public Ingen::Shared::LV2Features::Feature {
 	                        size_t                       size) {
 		NodeImpl* node = (NodeImpl*)data;
 		PortImpl* port = node->port_impl(index);
-		switch (port->context()) {
-		case Context::MESSAGE:
+		if (node->context() == Context::MESSAGE) {
 			port->buffer(0)->resize(size);
 			port->connect_buffers();
 			return true;
-		default:
-			// TODO: Implement realtime allocator and support this in audio thread
-			return false;
 		}
+		return false;
 	}
 
 	static void delete_feature(LV2_Feature* feature) {

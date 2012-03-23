@@ -101,8 +101,7 @@ PatchImpl::disable()
 	_process = false;
 
 	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i)
-		if ((*i)->context() == Context::AUDIO)
-			(*i)->clear_buffers();
+		(*i)->clear_buffers();
 }
 
 bool
@@ -476,8 +475,8 @@ PatchImpl::compile() const
 	for (Connections::const_iterator i = _connections.begin();
 	     i != _connections.end(); ++i) {
 		SharedPtr<ConnectionImpl> c = PtrCast<ConnectionImpl>(i->second);
-		if (c->src_port()->context() == Context::AUDIO &&
-				c->dst_port()->context() == Context::MESSAGE) {
+		if (c->src_port()->parent_node()->context() == Context::AUDIO &&
+		    c->dst_port()->parent_node()->context() == Context::MESSAGE) {
 			compiled_patch->queued_connections.push_back(c.get());
 		}
 	}

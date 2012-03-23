@@ -1,5 +1,5 @@
 /* This file is part of Ingen.
- * Copyright 2008-2011 David Robillard <http://drobilla.net>
+ * Copyright 2008-2012 David Robillard <http://drobilla.net>
  *
  * Ingen is free software; you can redistribute it and/or modify it under the
  * terms of the GNU General Public License as published by the Free Software
@@ -16,7 +16,7 @@
  */
 
 #include <algorithm>
-#include "lv2/lv2plug.in/ns/ext/contexts/contexts.h"
+#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/log.hpp"
 #include "ConnectionImpl.hpp"
 #include "Engine.hpp"
@@ -100,26 +100,7 @@ void
 MessageContext::execute(const Request& req)
 {
 	NodeImpl* node = req.node;
-	node->message_run(*this);
-
-	void*      valid_ports = node->valid_ports();
-	PatchImpl* patch       = node->parent_patch();
-
-	for (uint32_t i = 0; i < node->num_ports(); ++i) {
-		PortImpl* p = node->port_impl(i);
-		if (p->is_output() && p->context() == Context::MESSAGE &&
-				lv2_contexts_port_is_valid(valid_ports, i)) {
-			PatchImpl::Connections& wires = patch->connections();
-			for (PatchImpl::Connections::iterator c = wires.begin(); c != wires.end(); ++c) {
-				ConnectionImpl* ci = (ConnectionImpl*)c->second.get();
-				if (ci->src_port() == p && ci->dst_port()->context() == Context::MESSAGE) {
-					_queue.insert(Request(req.time, ci->dst_port()->parent_node()));
-				}
-			}
-		}
-	}
-
-	node->reset_valid_ports();
+	node->work(*this, 0, NULL);
 }
 
 } // namespace Server

@@ -33,7 +33,7 @@ namespace Server {
 
 class NodeImpl;
 
-/** Context of a message_run() call.
+/** Context of a work() call.
  *
  * The message context is a non-hard-realtime thread used to execute things
  * that can take too long to execute in an audio thread, and do sloppy timed
