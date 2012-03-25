@@ -46,17 +46,16 @@ public:
 
 	Ingen::Forge& forge;
 
+	const Quark atom_AtomPort;
 	const Quark atom_Blank;
 	const Quark atom_Bool;
 	const Quark atom_Float;
 	const Quark atom_Int;
-	const Quark atom_MessagePort;
 	const Quark atom_Sequence;
 	const Quark atom_Sound;
 	const Quark atom_String;
 	const Quark atom_URI;
 	const Quark atom_URID;
-	const Quark atom_ValuePort;
 	const Quark atom_Vector;
 	const Quark atom_bufferType;
 	const Quark atom_eventTransfer;

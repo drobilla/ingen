@@ -237,10 +237,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 		} else if (lilv_port_is_a(plug, id, info->audio_class)) {
 			port_type = PortType::AUDIO;
 			buffer_type = uris.atom_Sound;
-		} else if (lilv_port_is_a(plug, id, info->value_port_class)) {
-			port_type = PortType::VALUE;
-		} else if (lilv_port_is_a(plug, id, info->message_port_class)) {
-			port_type = PortType::MESSAGE;
+		} else if (lilv_port_is_a(plug, id, info->atom_port_class)) {
+			port_type = PortType::ATOM;
 		}
 
 		// Get buffer type if necessary (value and message ports)		
@@ -259,7 +257,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		port_buffer_size = bufs.default_buffer_size(buffer_type);
 
-		if (port_type == PortType::VALUE || port_type == PortType::MESSAGE) {
+		if (port_type == PortType::ATOM) {
 			// Get default value, and its length
 			LilvNodes* defaults = lilv_port_get_value(plug, id, default_pred);
 			LILV_FOREACH(nodes, i, defaults) {

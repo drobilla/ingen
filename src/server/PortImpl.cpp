@@ -236,8 +236,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 	case PortType::CV:
 		val = forge.make(((AudioBuffer*)buffer(0).get())->value_at(0));
 		break;
-	case PortType::VALUE:
-	case PortType::MESSAGE:
+	case PortType::ATOM:
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
 			LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)buffer(0)->atom();
 			if (seq->atom.size > sizeof(LV2_Atom_Sequence_Body)) {

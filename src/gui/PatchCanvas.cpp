@@ -112,10 +112,10 @@ PatchCanvas::PatchCanvas(App&                        app,
 		           "control_out", "Control Out", LV2_CORE__ControlPort, true));
 	_menu_add_event_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "event_in", "Event In", LV2_ATOM__MessagePort, false));
+		           "event_in", "Event In", LV2_ATOM__AtomPort, false));
 	_menu_add_event_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "event_out", "Event Out", LV2_ATOM__MessagePort, true));
+		           "event_out", "Event Out", LV2_ATOM__AtomPort, true));
 
 	signal_event.connect(
 		sigc::mem_fun(this, &PatchCanvas::on_event));

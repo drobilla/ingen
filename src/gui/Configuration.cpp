@@ -91,7 +91,7 @@ Configuration::get_port_color(const PortModel* p)
 		return _string_port_color;
 	} else if (_app.can_control(p)) {
 		return _control_port_color;
-	} else if (p->is_a(uris.atom_MessagePort)) {
+	} else if (p->is_a(uris.atom_AtomPort)) {
 		return _event_port_color;
 	}
 

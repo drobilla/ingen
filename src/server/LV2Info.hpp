@@ -42,8 +42,7 @@ public:
 	LilvNode* control_class;
 	LilvNode* cv_class;
 	LilvNode* audio_class;
-	LilvNode* value_port_class;
-	LilvNode* message_port_class;
+	LilvNode* atom_port_class;
 
 	Ingen::Shared::World& world()     { return *_world; }
 	LilvWorld*            lv2_world() { return _world->lilv_world(); }

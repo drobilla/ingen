@@ -40,8 +40,7 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 	, control_class(lilv_new_uri(world->lilv_world(), LV2_CORE__ControlPort))
 	, cv_class(lilv_new_uri(world->lilv_world(), "http://lv2plug.in/ns/ext/cv-port#CVPort"))
 	, audio_class(lilv_new_uri(world->lilv_world(), LV2_CORE__AudioPort))
-	, value_port_class(lilv_new_uri(world->lilv_world(), LV2_ATOM__ValuePort))
-	, message_port_class(lilv_new_uri(world->lilv_world(), LV2_ATOM__MessagePort))
+	, atom_port_class(lilv_new_uri(world->lilv_world(), LV2_ATOM__AtomPort))
 	, _world(world)
 {
 	assert(world);
@@ -59,8 +58,7 @@ LV2Info::~LV2Info()
 	lilv_node_free(control_class);
 	lilv_node_free(cv_class);
 	lilv_node_free(audio_class);
-	lilv_node_free(value_port_class);
-	lilv_node_free(message_port_class);
+	lilv_node_free(atom_port_class);
 }
 
 } // namespace Server

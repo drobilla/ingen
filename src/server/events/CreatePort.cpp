@@ -72,10 +72,8 @@ CreatePort::CreatePort(Engine&                     engine,
 			_port_type = PortType::CONTROL;
 		} else if (type == uris.cv_CVPort) {
 			_port_type = PortType::CV;
-		} else if (type == uris.atom_ValuePort) {
-			_port_type = PortType::VALUE;
-		} else if (type == uris.atom_MessagePort) {
-			_port_type = PortType::MESSAGE;
+		} else if (type == uris.atom_AtomPort) {
+			_port_type = PortType::ATOM;
 		}
 	}
 

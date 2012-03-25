@@ -176,7 +176,7 @@ Engine::activate()
 		control_properties.insert(make_pair(uris.lv2_name,
 		                                    forge.alloc("Control")));
 		control_properties.insert(make_pair(uris.rdf_type,
-		                                    uris.atom_MessagePort));
+		                                    uris.atom_AtomPort));
 		control_properties.insert(make_pair(uris.atom_bufferType,
 		                                    uris.atom_Sequence));
 

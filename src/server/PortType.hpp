@@ -35,8 +35,7 @@ public:
 		AUDIO   = 1,
 		CONTROL = 2,
 		CV      = 3,
-		VALUE   = 4,
-		MESSAGE = 5,
+		ATOM    = 4
 	};
 
 	PortType(const Raul::URI& uri)
@@ -48,10 +47,8 @@ public:
 			_symbol = CONTROL;
 		} else if (uri == type_uri(CV)) {
 			_symbol = CV;
-		} else if (uri == type_uri(VALUE)) {
-			_symbol = VALUE;
-		} else if (uri == type_uri(MESSAGE)) {
-			_symbol = MESSAGE;
+		} else if (uri == type_uri(ATOM)) {
+			_symbol = ATOM;
 		}
 	}
 
@@ -71,19 +68,17 @@ public:
 	inline bool is_audio()   { return _symbol == AUDIO; }
 	inline bool is_control() { return _symbol == CONTROL; }
 	inline bool is_cv()      { return _symbol == CV; }
-	inline bool is_value()   { return _symbol == VALUE; }
-	inline bool is_message() { return _symbol == MESSAGE; }
+	inline bool is_atom()    { return _symbol == ATOM; }
 
 private:
 	static inline const Raul::URI& type_uri(unsigned symbol_num) {
-		assert(symbol_num <= MESSAGE);
+		assert(symbol_num <= ATOM);
 		static const Raul::URI uris[] = {
 			"http://drobilla.net/ns/ingen#nil",
 			"http://lv2plug.in/ns/lv2core#AudioPort",
 			"http://lv2plug.in/ns/lv2core#ControlPort",
 			"http://lv2plug.in/ns/ext/cv-port#CVPort",
-			"http://lv2plug.in/ns/ext/atom#ValuePort",
-			"http://lv2plug.in/ns/ext/atom#MessagePort"
+			"http://lv2plug.in/ns/ext/atom#AtomPort"
 		};
 		return uris[symbol_num];
 	}

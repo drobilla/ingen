@@ -89,7 +89,7 @@ ConnectionImpl::get_sources(Context& context, uint32_t voice,
 		_queue->peek(sizeof(LV2_Atom), &obj);
 		boost::intrusive_ptr<Buffer> buf = context.engine().buffer_factory()->get(
 				dst_port()->buffer_type(), sizeof(LV2_Atom) + obj.size);
-		void* data = buf->port_data(PortType::MESSAGE, context.offset());
+		void* data = buf->port_data(PortType::ATOM, context.offset());
 		_queue->read(sizeof(LV2_Atom) + obj.size, (LV2_Atom*)data);
 		srcs[num_srcs++] = buf;
 	} else if (must_mix()) {

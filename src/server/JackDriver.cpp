@@ -370,7 +370,7 @@ JackDriver::create_port(DuplexPort* patch_port)
 {
 	try {
 		if (patch_port->is_a(PortType::AUDIO)
-		    || (patch_port->is_a(PortType::MESSAGE) &&
+		    || (patch_port->is_a(PortType::ATOM) &&
 		        patch_port->buffer_type() == patch_port->bufs().uris().atom_Sequence)) {
 			return new JackPort(this, patch_port);
 		} else {

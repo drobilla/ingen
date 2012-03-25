@@ -59,7 +59,7 @@ TriggerNode::TriggerNode(
 	_ports = new Raul::Array<PortImpl*>(5);
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1,
-	                              PortType::MESSAGE, uris.atom_Sequence, Raul::Atom());
+	                              PortType::ATOM, uris.atom_Sequence, Raul::Atom());
 	_midi_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
 	_ports->at(0) = _midi_in_port;
 

@@ -63,7 +63,7 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool patch_port)
 		_destroy_menuitem->set_sensitive(false);
 	}
 
-	if (port->is_a(uris.atom_MessagePort))
+	if (port->is_a(uris.atom_AtomPort))
 		_polyphonic_menuitem->hide();
 
 	const bool is_control = app.can_control(port.get())
