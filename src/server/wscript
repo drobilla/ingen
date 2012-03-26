@@ -59,7 +59,7 @@ def build(bld):
               target          = 'ingen_server',
               install_path    = '${LIBDIR}',
               use             = 'libingen_shared')
-    core_libs = 'GLIBMM GTHREAD LV2CORE LILV RAUL SORD'
+    core_libs = 'GLIBMM GTHREAD LV2 LILV RAUL SORD'
     autowaf.use_lib(bld, obj, core_libs)
 
     if bld.is_defined('HAVE_JACK'):
@@ -80,4 +80,4 @@ def build(bld):
               target       = 'ingen_lv2',
               install_path = '${LV2DIR}/ingen.lv2/',
               use          = 'libingen_server libingen_shared')
-    autowaf.use_lib(bld, obj, core_libs + ' LV2_STATE')
+    autowaf.use_lib(bld, obj, core_libs)

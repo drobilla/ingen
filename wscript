@@ -89,17 +89,7 @@ def configure(conf):
                define_name='HAVE_POSIX_MEMALIGN',
                mandatory=False)
 
-    autowaf.check_pkg(conf, 'lv2core', uselib_store='LV2CORE')
-    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-atom',
-                      uselib_store='LV2_ATOM')
-    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-midi',
-                      uselib_store='LV2_MIDI')
-    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-patch',
-                      uselib_store='LV2_PATCH')
-    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-state',
-                      uselib_store='LV2_STATE')
-    autowaf.check_pkg(conf, 'lv2-lv2plug.in-ns-ext-worker',
-                      uselib_store='LV2_WORKER')
+    autowaf.check_pkg(conf, 'lv2', atleast_version='0.1.0', uselib_store='LV2')
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
@@ -165,8 +155,7 @@ def build(bld):
               defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"',
               use          = 'libingen_shared',
               install_path = '${BINDIR}')
-    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN' +
-                    ' LV2CORE LV2_EVENT LV2_URI_MAP LV2_PERSIST')
+    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2')
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
 

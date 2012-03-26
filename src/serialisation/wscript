@@ -12,4 +12,4 @@ def build(bld):
               target          = 'ingen_serialisation',
               install_path    = '${LIBDIR}',
               use             = 'libingen_shared')
-    autowaf.use_lib(bld, obj, 'GLIBMM LV2CORE LILV RAUL SORD SRATOM')
+    autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SORD SRATOM')
