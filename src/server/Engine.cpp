@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <cassert>
 #include <sys/mman.h>
 #include <unistd.h>

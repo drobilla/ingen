@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <algorithm>
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/log.hpp"

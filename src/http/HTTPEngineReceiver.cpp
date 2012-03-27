@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <cstdio>
 #include <cstdlib>
 #include <string>

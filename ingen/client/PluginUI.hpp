@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef INGEN_CLIENT_PLUGINUI_HPP
 #define INGEN_CLIENT_PLUGINUI_HPP
 

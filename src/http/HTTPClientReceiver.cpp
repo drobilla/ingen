@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <assert.h>
 #include <errno.h>
 #include <string.h>

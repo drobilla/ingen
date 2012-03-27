@@ -64,7 +64,6 @@ LV2URIMap::URIDMapFeature::map(const char* uri)
 	return urid_map.map(urid_map.handle, uri);
 }
 
-
 LV2URIMap::URIDUnmapFeature::URIDUnmapFeature(LV2URIMap*      map,
                                               LV2_URID_Unmap* impl)
 	: Feature(LV2_URID__unmap, &urid_unmap)

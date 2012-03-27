@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef INGEN_SHARED_BUILDER_HPP
 #define INGEN_SHARED_BUILDER_HPP
 
@@ -53,5 +52,4 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_SHARED_BUILDER_HPP
-
 

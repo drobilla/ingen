@@ -48,7 +48,6 @@ WindowFactory::WindowFactory(App& app)
 	WidgetFactory::get_widget_derived("properties_win", _properties_win);
 	WidgetFactory::get_widget_derived("rename_win", _rename_win);
 
-
 	_load_plugin_win->init_window(app);
 	_load_patch_win->init(app);
 	_new_subpatch_win->init_window(app);

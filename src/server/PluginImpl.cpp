@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "raul/log.hpp"
 #include "PluginImpl.hpp"
 

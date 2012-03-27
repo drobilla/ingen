@@ -33,7 +33,6 @@ class ServerInterface;
 
 namespace Server {
 
-
 /** Implements ClientInterface for OSC clients (sends OSC messages).
  *
  * \ingroup engine

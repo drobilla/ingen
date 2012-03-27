@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef INGEN_EVENTS_SETPORTVALUE_HPP
 #define INGEN_EVENTS_SETPORTVALUE_HPP
 

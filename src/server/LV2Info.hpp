@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef INGEN_ENGINE_LV2INFO_HPP
 #define INGEN_ENGINE_LV2INFO_HPP
 

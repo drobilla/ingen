@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <utility>
 #include <vector>
 #include "raul/log.hpp"

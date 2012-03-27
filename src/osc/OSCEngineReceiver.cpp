@@ -548,9 +548,7 @@ OSCEngineReceiver::_set_property_cb(const char* path, const char* types, lo_arg*
 	return 0;
 }
 
-
 //  Static Callbacks //
-
 
 // Display incoming OSC messages (for debugging purposes)
 int

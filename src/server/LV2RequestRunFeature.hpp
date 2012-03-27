@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef INGEN_ENGINE_LV2_REQUEST_RUN_FEATURE_HPP
 #define INGEN_ENGINE_LV2_REQUEST_RUN_FEATURE_HPP
 

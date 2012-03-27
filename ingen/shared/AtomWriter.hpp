@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef INGEN_SHARED_ATOM_WRITER_HPP
 #define INGEN_SHARED_ATOM_WRITER_HPP
 

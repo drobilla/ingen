@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "EventSource.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"

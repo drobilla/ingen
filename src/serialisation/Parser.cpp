@@ -189,7 +189,6 @@ parse_patch(
 	boost::optional<Raul::Symbol>         symbol = boost::optional<Raul::Symbol>(),
 	boost::optional<Resource::Properties> data   = boost::optional<Resource::Properties>());
 
-
 static boost::optional<Raul::Path>
 parse_node(
 	Shared::World*                        world,
@@ -198,7 +197,6 @@ parse_node(
 	const Sord::Node&                     subject,
 	const Raul::Path&                     path,
 	boost::optional<Resource::Properties> data = boost::optional<Resource::Properties>());
-
 
 static bool
 parse_properties(

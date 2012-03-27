@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #ifndef INGEN_INTERNALS_DELAY_HPP
 #define INGEN_INTERNALS_DELAY_HPP
 

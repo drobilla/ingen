@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <string>
 
 #include <libsoup/soup.h>
@@ -58,7 +57,6 @@ HTTPClientSender::put(const URI&                  uri,
 	const std::string request_uri = (Raul::Path::is_path(uri))
 		? _url + "/patch" + uri.substr(uri.find("/"))
 		: uri.str();
-
 
 	const Shared::World& world = _engine.world();
 	Sord::Model model(world.rdf_world());

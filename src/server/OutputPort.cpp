@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include "ingen/Patch.hpp"
 
 #include "Buffer.hpp"

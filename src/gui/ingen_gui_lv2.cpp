@@ -129,7 +129,6 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		                              ui->world->forge(),
 		                              *ui->client.get()));
 
-
 	// Create empty root patch model
 	Ingen::Resource::Properties props;
 	props.insert(std::make_pair(ui->app->uris().rdf_type,

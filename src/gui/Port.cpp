@@ -202,7 +202,6 @@ Port::on_event(GdkEvent* ev)
 	return Ganv::Port::on_event(ev);
 }
 
-
 /* Peak colour stuff */
 
 static inline uint32_t

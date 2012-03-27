@@ -107,7 +107,6 @@ struct Serialiser::Impl {
 	Sord::Model*             _model;
 };
 
-
 Serialiser::Serialiser(Shared::World& world)
 	: me(new Impl(world))
 {}
@@ -515,7 +514,6 @@ Serialiser::Impl::serialise_connection(const Sord::Node&           parent,
 	if (!_model)
 		throw std::logic_error(
 			"serialise_connection called without serialisation in progress");
-
 
 	Sord::World& world = _model->world();
 

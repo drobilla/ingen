@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <algorithm>
 
 #include "ingen/shared/LV2URIMap.hpp"

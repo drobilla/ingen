@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <float.h>
 #include <math.h>
 #include <stdlib.h>
