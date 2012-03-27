@@ -355,8 +355,10 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 {
 	typedef ClassMenus::iterator iterator;
 	if (_internal_menu && p->type() == Plugin::Internal) {
-		_internal_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
-		                                                              sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+		_internal_menu->items().push_back(
+			Gtk::Menu_Helpers::MenuElem(
+				p->human_name(),
+				sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
 	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->lilv_plugin()) {
 		if (lilv_plugin_is_replaced(p->lilv_plugin())) {
 			//info << (boost::format("[Menu] LV2 plugin <%s> hidden") % p->uri()) << endl;
@@ -373,8 +375,10 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 		pair<iterator,iterator> range = _class_menus.equal_range(class_uri_str);
 		if (range.first == _class_menus.end() || range.first == range.second
 		    || range.first->second.menu == _plugin_menu) {
-			_classless_menu->items().push_back(Gtk::Menu_Helpers::MenuElem(p->human_name(),
-			                                                               sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+			_classless_menu->items().push_back(
+				Gtk::Menu_Helpers::MenuElem(
+					p->human_name(),
+					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
 			if (!_classless_menu->is_visible())
 				_classless_menu->show();
 		} else {
