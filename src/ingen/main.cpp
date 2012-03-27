@@ -184,7 +184,7 @@ main(int argc, char** argv)
 	if (conf.option("load").is_valid() || !conf.files().empty()) {
 		boost::optional<Path>   parent;
 		boost::optional<Symbol> symbol;
-		
+
 		const Raul::Configuration::Value& path_option = conf.option("path");
 		if (path_option.is_valid()) {
 			if (Path::is_valid(path_option.get_string())) {

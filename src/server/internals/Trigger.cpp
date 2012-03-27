@@ -103,7 +103,7 @@ TriggerNode::process(ProcessContext& context)
 		const uint8_t*        buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3) {
-			const FrameTime time = context.start() + ev->time.frames;			
+			const FrameTime time = context.start() + ev->time.frames;
 			switch (buf[0] & 0xF0) {
 			case MIDI_CMD_NOTE_ON:
 				if (buf[2] == 0) {

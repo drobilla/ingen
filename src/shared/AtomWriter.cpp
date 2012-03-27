@@ -140,7 +140,7 @@ AtomWriter::delta(const Raul::URI&            uri,
 	lv2_atom_forge_blank(&_forge, &remove_obj, 0, 0);
 	forge_properties(remove);
 	lv2_atom_forge_pop(&_forge, &remove_obj);
-	
+
 	lv2_atom_forge_property_head(&_forge, _uris.patch_add, 0);
 	LV2_Atom_Forge_Frame add_obj;
 	lv2_atom_forge_blank(&_forge, &add_obj, 0, 0);

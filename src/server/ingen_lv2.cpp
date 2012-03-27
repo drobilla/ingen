@@ -643,7 +643,7 @@ lib_cleanup(LV2_Lib_Handle handle)
 	Lib* lib = (Lib*)handle;
 	delete lib;
 }
-	
+
 static const LV2_Descriptor*
 lib_get_plugin(LV2_Lib_Handle handle, uint32_t index)
 {

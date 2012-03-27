@@ -59,7 +59,7 @@ struct IngenLV2UI {
 		, sink(NULL)
 	{
 	}
-	
+
 	int                                          argc;
 	char**                                       argv;
 	Ingen::Forge*                                forge;

@@ -241,7 +241,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			port_type = PortType::ATOM;
 		}
 
-		// Get buffer type if necessary (value and message ports)		
+		// Get buffer type if necessary (value and message ports)
 		if (!buffer_type) {
 			LilvNodes* types = lilv_port_get_value(plug, id, bufferType_pred);
 			LILV_FOREACH(nodes, i, types) {
