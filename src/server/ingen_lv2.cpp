@@ -526,7 +526,7 @@ get_state_features(const LV2_Feature* const* features,
 	}
 }
 
-static void
+static LV2_State_Status
 ingen_save(LV2_Handle                instance,
            LV2_State_Store_Function  store,
            LV2_State_Handle          handle,
@@ -541,7 +541,7 @@ ingen_save(LV2_Handle                instance,
 	if (!map_path || !make_path || !plugin->map) {
 		Raul::error << "Missing state:mapPath, state:makePath, or urid:Map."
 		            << endl;
-		return;
+		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
 	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, NS_INGEN "file");
@@ -563,9 +563,10 @@ ingen_save(LV2_Handle                instance,
 
 	free(state_path);
 	free(real_path);
+	return LV2_STATE_SUCCESS;
 }
 
-static void
+static LV2_State_Status
 ingen_restore(LV2_Handle                  instance,
               LV2_State_Retrieve_Function retrieve,
               LV2_State_Handle            handle,
@@ -578,7 +579,7 @@ ingen_restore(LV2_Handle                  instance,
 	get_state_features(features, &map_path, NULL);
 	if (!map_path) {
 		Raul::error << "Missing state:mapPath" << endl;
-		return;
+		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
 	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, NS_INGEN "file");
@@ -592,7 +593,7 @@ ingen_restore(LV2_Handle                  instance,
 
 	if (!path) {
 		Raul::error << "Failed to restore ingen:file" << endl;
-		return;
+		return LV2_STATE_ERR_NO_PROPERTY;
 	}
 
 	const char* state_path = (const char*)path;
@@ -602,13 +603,14 @@ ingen_restore(LV2_Handle                  instance,
 	                                    plugin->world->engine().get(),
 	                                    real_path);
 	free(real_path);
+	return LV2_STATE_SUCCESS;
 }
 
 const void*
 ingen_extension_data(const char* uri)
 {
 	static const LV2_State_Interface state = { ingen_save, ingen_restore };
-	if (!strcmp(uri, LV2_STATE__Interface)) {
+	if (!strcmp(uri, LV2_STATE__interface)) {
 		return &state;
 	}
 	return NULL;
