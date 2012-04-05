@@ -147,15 +147,18 @@ Port::on_value_changed(const Glib::VariantBase& value)
 
 	const Glib::Variant<double>& fvalue = Glib::VariantBase::cast_dynamic
 		< Glib::Variant<double> >(value);
-	const float fval = fvalue.get();
-	Ingen::Shared::World* const world = _app.world();
-	_app.engine()->set_property(model()->path(),
-	                            world->uris()->ingen_value,
-	                            _app.forge().make(fval));
+
+	const Raul::Atom atom = _app.forge().make((float)fvalue.get());
+	if (atom != model()->value()) {
+		Ingen::Shared::World* const world = _app.world();
+		_app.engine()->set_property(model()->path(),
+		                            world->uris()->ingen_value,
+		                            atom);
+	}
 
 	PatchBox* box = get_patch_box();
 	if (box) {
-		box->show_port_status(model().get(), _app.forge().make(fval));
+		box->show_port_status(model().get(), atom);
 	}
 }
 
