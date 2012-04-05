@@ -354,15 +354,21 @@ NodeModule::show_control_window()
 }
 
 bool
+NodeModule::on_double_click(GdkEventButton* event)
+{
+	if (!popup_gui()) {
+		show_control_window();
+	}
+	return true;
+}
+
+bool
 NodeModule::on_event(GdkEvent* ev)
 {
 	if (ev->type == GDK_BUTTON_PRESS && ev->button.button == 3) {
 		return show_menu(&ev->button);
 	} else if (ev->type == GDK_2BUTTON_PRESS) {
-		if (!popup_gui()) {
-			show_control_window();
-		}
-		return true;
+		return on_double_click(&ev->button);
 	}
 	return false;
 }

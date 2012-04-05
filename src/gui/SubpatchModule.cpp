@@ -45,7 +45,7 @@ SubpatchModule::SubpatchModule(PatchCanvas&                canvas,
 	assert(patch);
 }
 
-void
+bool
 SubpatchModule::on_double_click(GdkEventButton* event)
 {
 	assert(_patch);
@@ -57,6 +57,7 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 		: app().window_factory()->patch_window(parent) );
 
 	app().window_factory()->present_patch(_patch, preferred);
+	return true;
 }
 
 void

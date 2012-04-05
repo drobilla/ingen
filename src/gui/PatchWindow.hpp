@@ -50,8 +50,6 @@ public:
 	SharedPtr<const PatchModel> patch() const { return _box->patch(); }
 	PatchBox*                   box()   const { return _box; }
 
-	void set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view);
-
 	void show_documentation(const std::string& doc, bool html) {
 		_box->show_documentation(doc, html);
 	}

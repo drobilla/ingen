@@ -68,6 +68,8 @@ public:
 protected:
 	NodeModule(PatchCanvas& canvas, SharedPtr<const NodeModel> node);
 
+	virtual bool on_double_click(GdkEventButton* ev);
+
 	bool on_event(GdkEvent* ev);
 
 	void show_control_window();

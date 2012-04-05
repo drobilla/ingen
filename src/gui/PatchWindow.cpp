@@ -56,20 +56,6 @@ PatchWindow::init_window(App& app)
 }
 
 void
-PatchWindow::set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view)
-{
-	if (view) {
-		assert(view->patch()->path() == path);
-		_app->window_factory()->present_patch(view->patch(), this, view);
-	} else {
-		SharedPtr<const PatchModel> model = PtrCast<const PatchModel>(
-			_app->store()->object(path));
-		if (model)
-			_app->window_factory()->present_patch(model, this);
-	}
-}
-
-void
 PatchWindow::on_show()
 {
 	if (_position_stored)

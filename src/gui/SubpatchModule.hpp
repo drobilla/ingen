@@ -49,7 +49,7 @@ public:
 
 	virtual ~SubpatchModule() {}
 
-	void on_double_click(GdkEventButton* ev);
+	bool on_double_click(GdkEventButton* ev);
 
 	void store_location(double x, double y);
 

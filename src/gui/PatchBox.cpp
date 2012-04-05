@@ -198,7 +198,16 @@ PatchBox::init_box(App& app)
 void
 PatchBox::set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view)
 {
-	std::cerr << "FIXME: Set patch from path" << std::endl;
+	if (view) {
+		assert(view->patch()->path() == path);
+		_app->window_factory()->present_patch(view->patch(), _window, view);
+	} else {
+		SharedPtr<const PatchModel> model = PtrCast<const PatchModel>(
+			_app->store()->object(path));
+		if (model) {
+			_app->window_factory()->present_patch(model, _window);
+		}
+	}
 }
 
 /** Sets the patch for this box and initializes everything.
