@@ -64,8 +64,8 @@ private:
 	EngineStore::iterator _store_iterator;
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_MOVE_HPP

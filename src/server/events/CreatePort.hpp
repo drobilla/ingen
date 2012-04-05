@@ -66,8 +66,8 @@ private:
 	bool                    _is_output;
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_CREATEPORT_HPP

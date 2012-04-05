@@ -75,8 +75,8 @@ private:
 	bool _deleting;
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_DISCONNECTALL_HPP

@@ -234,7 +234,7 @@ Disconnect::post_process()
 	delete _impl;
 }
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 

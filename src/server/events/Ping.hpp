@@ -45,8 +45,8 @@ public:
 	void post_process() { respond(SUCCESS); }
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_PING_HPP

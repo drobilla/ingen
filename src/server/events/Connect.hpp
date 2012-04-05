@@ -74,8 +74,8 @@ private:
 	Raul::Array<BufferFactory::Ref>* _buffers;
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_CONNECT_HPP

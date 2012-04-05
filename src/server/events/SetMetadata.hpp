@@ -116,8 +116,8 @@ private:
 	Glib::RWLock::WriterLock _lock;
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_SETMETADATA_HPP

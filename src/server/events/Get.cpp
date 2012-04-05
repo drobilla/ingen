@@ -95,7 +95,7 @@ Get::post_process()
 	_lock.release();
 }
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 

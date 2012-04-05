@@ -120,6 +120,6 @@ Move::post_process()
 	}
 }
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events

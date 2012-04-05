@@ -204,6 +204,6 @@ Delete::post_process()
 	_engine.maid()->push(_garbage);
 }
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events

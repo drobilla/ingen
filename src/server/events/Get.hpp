@@ -55,8 +55,8 @@ private:
 	Glib::RWLock::ReaderLock _lock;
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_GET_HPP

@@ -44,8 +44,8 @@ public:
 	}
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_DEACTIVATE_HPP

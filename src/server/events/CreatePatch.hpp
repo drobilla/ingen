@@ -57,8 +57,8 @@ private:
 	Resource::Properties _properties;
 };
 
+} // namespace Events
 } // namespace Server
 } // namespace Ingen
-} // namespace Events
 
 #endif // INGEN_EVENTS_CREATEPATCH_HPP
