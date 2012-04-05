@@ -75,7 +75,7 @@ private:
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 	void moved();
 
-	void on_value_changed(const Glib::VariantBase& value);
+	void on_value_changed(GVariant* value);
 	bool on_event(GdkEvent* ev);
 
 	//static ArtVpathDash* _dash;

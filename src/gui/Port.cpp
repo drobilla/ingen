@@ -138,17 +138,14 @@ Port::moved()
 }
 
 void
-Port::on_value_changed(const Glib::VariantBase& value)
+Port::on_value_changed(GVariant* value)
 {
-	if (!value.is_of_type(Glib::VARIANT_TYPE_DOUBLE)) {
+	if (!g_variant_is_of_type(value, G_VARIANT_TYPE_DOUBLE)) {
 		Raul::warn << "TODO: Non-float port value changed." << std::endl;
 		return;
 	}
 
-	const Glib::Variant<double>& fvalue = Glib::VariantBase::cast_dynamic
-		< Glib::Variant<double> >(value);
-
-	const Raul::Atom atom = _app.forge().make((float)fvalue.get());
+	const Raul::Atom atom = _app.forge().make(float(g_variant_get_double(value)));
 	if (atom != model()->value()) {
 		Ingen::Shared::World* const world = _app.world();
 		_app.engine()->set_property(model()->path(),
