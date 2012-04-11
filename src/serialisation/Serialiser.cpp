@@ -555,7 +555,7 @@ Serialiser::Impl::serialise_properties(const GraphObject*     o,
 
 	sratom_set_sink(sratom, _base_uri.c_str(),
 	                (SerdStatementSink)sord_inserter_write_statement, NULL,
-	                inserter, true);
+	                inserter);
 
 	typedef GraphObject::Properties::const_iterator iterator;
 	for (iterator v = props.begin(); v != props.end(); ++v) {
