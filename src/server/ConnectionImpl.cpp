@@ -120,8 +120,7 @@ ConnectionImpl::queue(Context& context)
 	}
 
 	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)src_buf->atom();
-	LV2_SEQUENCE_FOREACH(seq, i) {
-		LV2_Atom_Event* const ev = lv2_sequence_iter_get(i);
+	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		_queue->write(sizeof(LV2_Atom) + ev->body.size, &ev->body);
 		context.engine().message_context()->run(
 			_dst_port->parent_node(), context.start() + ev->time.frames);

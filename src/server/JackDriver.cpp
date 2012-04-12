@@ -166,9 +166,8 @@ JackPort::post_process(ProcessContext& context)
 		jack_midi_clear_buffer(jack_buf);
 
 		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)patch_buf->atom();
-		LV2_SEQUENCE_FOREACH(seq, i) {
-			LV2_Atom_Event* const ev  = lv2_sequence_iter_get(i);
-			const uint8_t*        buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
 			if (ev->body.type == _patch_port->bufs().uris().midi_MidiEvent) {
 				jack_midi_event_write(jack_buf, ev->time.frames, buf, ev->body.size);
 			}

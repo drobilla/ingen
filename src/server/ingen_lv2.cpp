@@ -105,8 +105,7 @@ public:
 			patch_buf->copy((Sample*)_buffer, 0, context.nframes() - 1);
 		} else {
 			LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_buffer;
-			LV2_SEQUENCE_FOREACH(seq, i) {
-				LV2_Atom_Event* ev = lv2_sequence_iter_get(i);
+			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 				// FIXME: Not RT safe, need to send these through a ring
 				handle_message(_driver, &ev->body);
 			}

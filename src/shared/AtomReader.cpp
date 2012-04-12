@@ -42,7 +42,7 @@ AtomReader::write(const LV2_Atom* msg)
 	const LV2_Atom_Object* obj     = (const LV2_Atom_Object*)msg;
 	const LV2_Atom*        subject = NULL;
 
-	lv2_object_get(obj, (LV2_URID)_uris.patch_subject, &subject, NULL);
+	lv2_atom_object_get(obj, (LV2_URID)_uris.patch_subject, &subject, NULL);
 	const char* subject_uri = NULL;
 	if (subject && subject->type == _uris.atom_URI) {
 		subject_uri = (const char*)LV2_ATOM_BODY(subject);
@@ -55,15 +55,14 @@ AtomReader::write(const LV2_Atom* msg)
 		_iface.get(subject_uri);
 	} else if (obj->body.otype == _uris.patch_Put) {
 		const LV2_Atom_Object* body = NULL;
-		lv2_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
+		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 		if (!body) {
 			Raul::warn << "Put message has no body" << std::endl;
 			return;
 		}
 
 		Ingen::Resource::Properties props;
-		LV2_OBJECT_FOREACH(body, i) {
-			LV2_Atom_Property_Body* p = lv2_object_iter_get(i);
+		LV2_ATOM_OBJECT_FOREACH(body, p) {
 			Raul::Atom val;
 			if (p->value.type == _uris.atom_URID) {
 				const LV2_Atom_URID* urid = (const LV2_Atom_URID*)&p->value;

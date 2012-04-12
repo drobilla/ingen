@@ -97,9 +97,8 @@ TriggerNode::process(ProcessContext& context)
 
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
 	LV2_Atom_Sequence* seq     = (LV2_Atom_Sequence*)midi_in->atom();
-	LV2_SEQUENCE_FOREACH(seq, i) {
-		LV2_Atom_Event* const ev  = lv2_sequence_iter_get(i);
-		const uint8_t*        buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+		const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3) {
 			const FrameTime time = context.start() + ev->time.frames;
