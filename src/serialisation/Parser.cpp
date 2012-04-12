@@ -34,7 +34,6 @@
 
 #define LOG(s) s << "[Parser] "
 
-#define NS_LV2  "http://lv2plug.in/ns/lv2core#"
 #define NS_RDF  "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS "http://www.w3.org/2000/01/rdf-schema#"
 
@@ -285,7 +284,7 @@ parse_patch(Ingen::Shared::World*                    world,
 {
 	const Sord::URI ingen_node(*world->rdf_world(),      NS_INGEN "node");
 	const Sord::URI ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
-	const Sord::URI lv2_port(*world->rdf_world(),        NS_LV2 "port");
+	const Sord::URI lv2_port(*world->rdf_world(),        LV2_CORE__port);
 
 	const URIs&       uris  = *world->uris().get();
 	const Sord::Node& patch = subject_node;
@@ -475,9 +474,9 @@ parse(Ingen::Shared::World*                    world,
 	const Sord::URI node_class    (*world->rdf_world(), NS_INGEN "Node");
 	const Sord::URI port_class    (*world->rdf_world(), NS_INGEN "Port");
 	const Sord::URI internal_class(*world->rdf_world(), NS_INGEN "Internal");
-	const Sord::URI in_port_class (*world->rdf_world(), NS_LV2   "InputPort");
-	const Sord::URI out_port_class(*world->rdf_world(), NS_LV2   "OutputPort");
-	const Sord::URI lv2_class     (*world->rdf_world(), NS_LV2   "Plugin");
+	const Sord::URI in_port_class (*world->rdf_world(), LV2_CORE__InputPort);
+	const Sord::URI out_port_class(*world->rdf_world(), LV2_CORE__OutputPort);
+	const Sord::URI lv2_class     (*world->rdf_world(), LV2_CORE__Plugin);
 	const Sord::URI rdf_type      (*world->rdf_world(), NS_RDF   "type");
 
 	Sord::Node subject = model.base_uri();

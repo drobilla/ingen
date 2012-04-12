@@ -58,8 +58,6 @@ public:
 			|| ObjectModel::is_a("http://lv2plug.in/ns/ext/cv-port#CVPort");
 	}
 
-	bool has_context(const Raul::URI& context) const;
-
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 
 	void on_property(const Raul::URI& uri, const Raul::Atom& value);

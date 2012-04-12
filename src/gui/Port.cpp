@@ -294,8 +294,6 @@ Port::property_changed(const URI& key, const Atom& value)
 	} else if (key == uris.lv2_portProperty) {
 		if (value == uris.lv2_toggled)
 			set_control_is_toggle(true);
-	} else if (key == uris.ctx_context) {
-		Raul::info << "TODO: Visual indication of port context?" << std::endl;
 	} else if (key == uris.lv2_name) {
 		if (value.type() == uris.forge.String
 				&& _app.configuration()->name_style() == Configuration::HUMAN) {
@@ -311,9 +309,6 @@ Port::dash()
 	const URIs& uris = _app.uris();
 	SharedPtr<const PortModel> pm = _port_model.lock();
 	if (!pm)
-		return NULL;
-
-	if (pm->has_context(uris.ctx_audioContext))
 		return NULL;
 
 	if (!_dash) {

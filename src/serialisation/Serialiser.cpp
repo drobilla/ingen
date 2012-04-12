@@ -48,8 +48,6 @@
 
 #define LOG(s) s << "[Serialiser] "
 
-#define NS_LV2 "http://lv2plug.in/ns/lv2core#"
-
 using namespace std;
 using namespace Raul;
 using namespace Sord;
@@ -431,12 +429,12 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 		const Sord::Node port_id = path_rdf_node(p->path());
 
 		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
-		if (p->properties().find(NS_LV2 "name") == p->properties().end())
-			p->set_property(NS_LV2 "name",
+		if (p->properties().find(LV2_CORE__name) == p->properties().end())
+			p->set_property(LV2_CORE__name,
 			                _world.forge().alloc(p->symbol().c_str()));
 
 		_model->add_statement(patch_id,
-		                      Sord::URI(world, NS_LV2 "port"),
+		                      Sord::URI(world, LV2_CORE__port),
 		                      port_id);
 		serialise_port(p, Resource::INTERNAL, port_id);
 	}

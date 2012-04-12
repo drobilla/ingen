@@ -43,7 +43,6 @@ URIs::Quark::Quark(Ingen::Forge& forge, LV2URIMap* map, const char* c_str)
 {
 }
 
-#define NS_CTX   "http://lv2plug.in/ns/ext/contexts#"
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
@@ -64,9 +63,6 @@ URIs::URIs(Ingen::Forge& f, LV2URIMap* map)
 	, atom_bufferType       (forge, map, LV2_ATOM__bufferType)
 	, atom_eventTransfer    (forge, map, LV2_ATOM__eventTransfer)
 	, atom_supports         (forge, map, LV2_ATOM__supports)
-	, ctx_audioContext      (forge, map, NS_CTX "audioContext")
-	, ctx_context           (forge, map, NS_CTX "context")
-	, ctx_messageContext    (forge, map, NS_CTX "messageContext")
 	, cv_CVPort             (forge, map, "http://lv2plug.in/ns/ext/cv-port#CVPort")
 	, doap_name             (forge, map, "http://usefulinc.com/ns/doap#name")
 	, ingen_Connection      (forge, map, NS_INGEN "Connection")

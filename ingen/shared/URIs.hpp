@@ -59,9 +59,6 @@ public:
 	const Quark atom_bufferType;
 	const Quark atom_eventTransfer;
 	const Quark atom_supports;
-	const Quark ctx_audioContext;
-	const Quark ctx_context;
-	const Quark ctx_messageContext;
 	const Quark cv_CVPort;
 	const Quark doap_name;
 	const Quark ingen_Connection;
