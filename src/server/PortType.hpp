@@ -76,7 +76,7 @@ private:
 			"http://drobilla.net/ns/ingen#nil",
 			"http://lv2plug.in/ns/lv2core#AudioPort",
 			"http://lv2plug.in/ns/lv2core#ControlPort",
-			"http://lv2plug.in/ns/ext/cv-port#CVPort",
+			"http://lv2plug.in/ns/lv2core#CVPort",
 			"http://lv2plug.in/ns/ext/atom#AtomPort"
 		};
 		return uris[symbol_num];

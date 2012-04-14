@@ -92,7 +92,7 @@ ControlPanel::add_port(SharedPtr<const PortModel> pm)
 			WidgetFactory::get_widget_derived("toggle_control", tc);
 			control = tc;
 		} else if (pm->is_a(_app->uris().lv2_ControlPort)
-		           || pm->is_a(_app->uris().cv_CVPort)
+		           || pm->is_a(_app->uris().lv2_CVPort)
 		           || pm->supports(_app->uris().atom_Float)) {
 			SliderControl* sc;
 			WidgetFactory::get_widget_derived("control_strip", sc);

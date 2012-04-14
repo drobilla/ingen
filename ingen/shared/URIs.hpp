@@ -59,7 +59,6 @@ public:
 	const Quark atom_bufferType;
 	const Quark atom_eventTransfer;
 	const Quark atom_supports;
-	const Quark cv_CVPort;
 	const Quark doap_name;
 	const Quark ingen_Connection;
 	const Quark ingen_Internal;
@@ -84,6 +83,7 @@ public:
 	const Quark ingen_source;
 	const Quark ingen_value;
 	const Quark lv2_AudioPort;
+	const Quark lv2_CVPort;
 	const Quark lv2_ControlPort;
 	const Quark lv2_InputPort;
 	const Quark lv2_OutputPort;

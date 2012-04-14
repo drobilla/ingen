@@ -23,6 +23,9 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/log.hpp"
 
+#include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+
 #include "ingen/Port.hpp"
 #include "ingen/client/ObjectModel.hpp"
 
@@ -50,12 +53,12 @@ public:
 
 	bool port_property(const Raul::URI& uri) const;
 
-	bool is_logarithmic() const { return port_property("http://drobilla.net/ns/ingen#logarithmic"); }
-	bool is_integer()     const { return port_property("http://lv2plug.in/ns/lv2core#integer"); }
-	bool is_toggle()      const { return port_property("http://lv2plug.in/ns/lv2core#toggled"); }
+	bool is_logarithmic() const { return port_property(LV2_PORT_PROPS__logarithmic); }
+	bool is_integer()     const { return port_property(LV2_CORE__integer); }
+	bool is_toggle()      const { return port_property(LV2_CORE__toggled); }
 	bool is_numeric()     const {
-		return ObjectModel::is_a("http://lv2plug.in/ns/lv2core#ControlPort")
-			|| ObjectModel::is_a("http://lv2plug.in/ns/ext/cv-port#CVPort");
+		return ObjectModel::is_a(LV2_CORE__ControlPort)
+			|| ObjectModel::is_a(LV2_CORE__CVPort);
 	}
 
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }

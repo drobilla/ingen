@@ -69,7 +69,7 @@ CreatePort::CreatePort(Engine&                     engine,
 			_port_type = PortType::AUDIO;
 		} else if (type == uris.lv2_ControlPort) {
 			_port_type = PortType::CONTROL;
-		} else if (type == uris.cv_CVPort) {
+		} else if (type == uris.lv2_CVPort) {
 			_port_type = PortType::CV;
 		} else if (type == uris.atom_AtomPort) {
 			_port_type = PortType::ATOM;
