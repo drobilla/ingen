@@ -30,17 +30,18 @@ namespace Ingen {
 namespace Server {
 
 struct ResizeFeature : public Ingen::Shared::LV2Features::Feature {
-	static bool resize_port(LV2_Resize_Port_Feature_Data data,
-	                        uint32_t                     index,
-	                        size_t                       size) {
+	static LV2_Resize_Port_Status resize_port(
+		LV2_Resize_Port_Feature_Data data,
+	    uint32_t                     index,
+	    size_t                       size) {
 		NodeImpl* node = (NodeImpl*)data;
 		PortImpl* port = node->port_impl(index);
 		if (node->context() == Context::MESSAGE) {
 			port->buffer(0)->resize(size);
 			port->connect_buffers();
-			return true;
+			return LV2_RESIZE_PORT_SUCCESS;
 		}
-		return false;
+		return LV2_RESIZE_PORT_ERR_UNKNOWN;
 	}
 
 	static void delete_feature(LV2_Feature* feature) {
@@ -52,10 +53,10 @@ struct ResizeFeature : public Ingen::Shared::LV2Features::Feature {
 		NodeImpl* node = dynamic_cast<NodeImpl*>(n);
 		if (!node)
 			return SharedPtr<LV2_Feature>();
-		LV2_Resize_Port_Feature* data
-				= (LV2_Resize_Port_Feature*)malloc(sizeof(LV2_Resize_Port_Feature));
-		data->data        = node;
-		data->resize_port = &resize_port;
+		LV2_Resize_Port_Resize* data
+				= (LV2_Resize_Port_Resize*)malloc(sizeof(LV2_Resize_Port_Resize));
+		data->data   = node;
+		data->resize = &resize_port;
 		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
 		f->URI  = LV2_RESIZE_PORT_URI;
 		f->data = data;

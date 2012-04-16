@@ -21,6 +21,8 @@
 #include <cmath>
 #include <string>
 
+#include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
+
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
@@ -186,26 +188,23 @@ LV2Node::instantiate(BufferFactory& bufs)
 	float* def_values = new float[num_ports];
 	lilv_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
 
-	LilvNode* context_pred = lilv_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/ext/contexts#context");
-
 	LilvNode* default_pred = lilv_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/lv2core#default");
+	                                      LV2_CORE__default);
 
 	LilvNode* min_size_pred = lilv_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/ext/resize-port#minimumSize");
+	                                       LV2_RESIZE_PORT__minimumSize);
 
 	LilvNode* port_property_pred = lilv_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/lv2core#portProperty");
+	                                            LV2_CORE__portProperty);
 
 	LilvNode* supports_pred = lilv_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/ext/atom#supports");
+	                                       LV2_ATOM__supports);
 
 	LilvNode* bufferType_pred = lilv_new_uri(info->lv2_world(),
-			"http://lv2plug.in/ns/ext/atom#bufferType");
+	                                         LV2_ATOM__bufferType);
 
 	//LilvNode as_large_as_pred = lilv_new_uri(info->lv2_world(),
-	//		"http://lv2plug.in/ns/ext/resize-port#asLargeAs");
+	//		LV2_RESIZE_PORT__asLargeAs);
 
 	for (uint32_t j = 0; j < num_ports; ++j) {
 		const LilvPort* id = lilv_plugin_get_port_by_index(plug, j);
@@ -348,7 +347,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 	delete[] min_values;
 	delete[] max_values;
 	delete[] def_values;
-	lilv_node_free(context_pred);
 	lilv_node_free(default_pred);
 	lilv_node_free(min_size_pred);
 	lilv_node_free(port_property_pred);
