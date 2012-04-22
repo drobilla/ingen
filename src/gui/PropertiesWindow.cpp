@@ -172,8 +172,8 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 void
 PropertiesWindow::on_show()
 {
-	static const int WIN_PAD  = 32;
-	static const int VBOX_PAD = 12;
+	static const int WIN_PAD  = 64;
+	static const int VBOX_PAD = 16;
 	int width  = 0;
 	int height = 0;
 	Gtk::Requisition req;
