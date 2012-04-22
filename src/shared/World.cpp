@@ -121,7 +121,6 @@ public:
 
 		// Set up RDF namespaces
 		rdf_world->add_prefix("atom",  "http://lv2plug.in/ns/ext/atom#");
-		rdf_world->add_prefix("ctx",   "http://lv2plug.in/ns/ext/contexts#");
 		rdf_world->add_prefix("doap",  "http://usefulinc.com/ns/doap#");
 		rdf_world->add_prefix("ingen", "http://drobilla.net/ns/ingen#");
 		rdf_world->add_prefix("lv2",   "http://lv2plug.in/ns/lv2core#");

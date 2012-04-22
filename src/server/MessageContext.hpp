@@ -36,8 +36,7 @@ class NodeImpl;
  *
  * The message context is a non-hard-realtime thread used to execute things
  * that can take too long to execute in an audio thread, and do sloppy timed
- * event propagation and scheduling.  Interface to plugins via the
- * LV2 contexts extension.
+ * event propagation and scheduling.
  *
  * \ingroup engine
  */
