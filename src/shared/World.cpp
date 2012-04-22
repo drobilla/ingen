@@ -138,6 +138,7 @@ public:
 		parser.reset();
 
 		local_engine.reset();
+		store.reset();
 
 		modules.clear();
 		interface_factories.clear();
