@@ -247,7 +247,7 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 	} else if (type == forge.String) {
 		Gtk::Entry* widget = dynamic_cast<Gtk::Entry*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
-		record.value = _app->forge().alloc_uri(widget->get_text());
+		record.value = _app->forge().alloc(widget->get_text());
 	}
 
 	return;
