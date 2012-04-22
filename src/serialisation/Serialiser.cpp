@@ -408,12 +408,11 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 			_model    = my_model;
 
 			// Serialise reference to patch node
-			const Sord::URI  class_id(world, sub_bundle_path);
 			const Sord::Node node_id(path_rdf_node(subpatch->path()));
 			_model->add_statement(patch_id,
 			                      Sord::Curie(world, "ingen:node"),
 			                      node_id);
-			serialise_node(subpatch, class_id, node_id);
+			serialise_node(subpatch, subpatch_id, node_id);
 		} else if (node) {
 			const Sord::URI  class_id(world, node->plugin()->uri().str());
 			const Sord::Node node_id(path_rdf_node(n->second->path()));
