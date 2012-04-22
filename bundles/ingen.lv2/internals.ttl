@@ -1,0 +1,41 @@
+@prefix ingen: <http://drobilla.net/ns/ingen-internals#> .
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema> .
+
+ingen:Controller
+	a ingen:Plugin ;
+	rdfs:label "Controller" ;
+	rdfs:comment """
+Receives events and outputs signals for some specific controller
+(e.g. MIDI CC).
+""" .
+
+ingen:Trigger
+	a ingen:Plugin ;
+	rdfs:label "Trigger" ;
+	rdfs:comment """
+Receives events and outputs a trigger signal when a specific note is received.
+""" .
+
+ingen:Note
+	a ingen:Plugin ;
+	rdfs:label "Note" ;
+	rdfs:comment """
+Receives events and outputs signals for the individual properties of the
+received notes.  This plugin is special because it is internally aware of
+Ingen's polyphony and controls voice allocation.
+""" .
+
+ingen:Transport
+	a ingen:Plugin ;
+	rdfs:label "Transport" ;
+	rdfs:comment """
+Listens to system transport information  (when available) and outputs signals
+for the various transport properties.  When no system transport information
+is available this plugin outputs "default" values: 4/4, 120bpm.
+""" .
