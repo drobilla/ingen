@@ -63,8 +63,6 @@ public:
 	SharedPtr<const PatchModel>  patch()                const { return _patch; }
 	Gtk::ToolItem*               breadcrumb_container() const { return _breadcrumb_container; }
 
-	void set_editable(bool editable);
-
 	static SharedPtr<PatchView> create(App& app, SharedPtr<const PatchModel> patch);
 
 	sigc::signal<void, const ObjectModel*> signal_object_entered;
@@ -77,8 +75,6 @@ private:
 	void poly_changed();
 	void clear_clicked();
 	void refresh_clicked();
-	void on_editable_sig(bool locked);
-	void editable_toggled();
 
 	#if 0
 	void canvas_item_entered(Gnome::Canvas::Item* item);
@@ -102,7 +98,6 @@ private:
 	Gtk::ToolButton*       _save_but;
 	Gtk::ToolButton*       _zoom_normal_but;
 	Gtk::ToolButton*       _zoom_full_but;
-	Gtk::ToggleToolButton* _edit_mode_but;
 	Gtk::ToolItem*         _breadcrumb_container;
 
 	bool _enable_signal;

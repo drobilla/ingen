@@ -77,7 +77,6 @@ PatchBox::PatchBox(BaseObjectType*                   cobject,
 	xml->get_widget("patch_save_menuitem", _menu_save);
 	xml->get_widget("patch_save_as_menuitem", _menu_save_as);
 	xml->get_widget("patch_draw_menuitem", _menu_draw);
-	xml->get_widget("patch_edit_controls_menuitem", _menu_edit_controls);
 	xml->get_widget("patch_cut_menuitem", _menu_cut);
 	xml->get_widget("patch_copy_menuitem", _menu_copy);
 	xml->get_widget("patch_paste_menuitem", _menu_paste);
@@ -111,8 +110,6 @@ PatchBox::PatchBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &PatchBox::event_save_as));
 	_menu_draw->signal_activate().connect(
 		sigc::mem_fun(this, &PatchBox::event_draw));
-	_menu_edit_controls->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_edit_controls));
 	_menu_copy->signal_activate().connect(
 		sigc::mem_fun(this, &PatchBox::event_copy));
 	_menu_paste->signal_activate().connect(
@@ -273,8 +270,6 @@ PatchBox::set_patch(SharedPtr<const PatchModel> patch,
 		sigc::mem_fun(this, &PatchBox::patch_port_added));
 	removed_port_connection = patch->signal_removed_port().connect(
 		sigc::mem_fun(this, &PatchBox::patch_port_removed));
-	removed_port_connection = patch->signal_editable().connect(
-		sigc::mem_fun(this, &PatchBox::editable_changed));
 
 	show();
 	_alignment->show_all();
@@ -397,12 +392,6 @@ PatchBox::object_left(const ObjectModel* model)
 {
 	_status_bar->pop(STATUS_CONTEXT_PATCH);
 	_status_bar->pop(STATUS_CONTEXT_HOVER);
-}
-
-void
-PatchBox::editable_changed(bool editable)
-{
-	_menu_edit_controls->set_active(editable);
 }
 
 void
@@ -603,13 +592,6 @@ PatchBox::event_draw()
 				STATUS_CONTEXT_PATCH);
 		}
 	}
-}
-
-void
-PatchBox::event_edit_controls()
-{
-	if (_view)
-		_view->set_editable(_menu_edit_controls->get_active());
 }
 
 void

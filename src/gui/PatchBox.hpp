@@ -80,7 +80,6 @@ private:
 	void patch_port_added(SharedPtr<const PortModel> port);
 	void patch_port_removed(SharedPtr<const PortModel> port);
 	void show_status(const ObjectModel* model);
-	void editable_changed(bool editable);
 
 	int message_dialog(const Glib::ustring& message,
 	                   const Glib::ustring& secondary_text,
@@ -91,7 +90,6 @@ private:
 	void event_save();
 	void event_save_as();
 	void event_draw();
-	void event_edit_controls();
 	void event_copy();
 	void event_paste();
 	void event_delete();
@@ -124,7 +122,6 @@ private:
 	Gtk::MenuItem*      _menu_save;
 	Gtk::MenuItem*      _menu_save_as;
 	Gtk::MenuItem*      _menu_draw;
-	Gtk::CheckMenuItem* _menu_edit_controls;
 	Gtk::MenuItem*      _menu_cut;
 	Gtk::MenuItem*      _menu_copy;
 	Gtk::MenuItem*      _menu_paste;

@@ -52,7 +52,6 @@ PatchView::PatchView(BaseObjectType*                   cobject,
 	xml->get_widget("patch_view_save_but", _save_but);
 	xml->get_widget("patch_view_zoom_full_but", _zoom_full_but);
 	xml->get_widget("patch_view_zoom_normal_but", _zoom_normal_but);
-	xml->get_widget("patch_view_edit_mode_but", _edit_mode_but);
 	xml->get_widget("patch_view_scrolledwindow", _canvas_scrolledwindow);
 
 	_toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
@@ -101,12 +100,6 @@ PatchView::set_patch(SharedPtr<const PatchModel> patch)
 	_zoom_full_but->signal_clicked().connect(
 		sigc::mem_fun(_canvas.get(), &PatchCanvas::zoom_full));
 
-	patch->signal_editable().connect(sigc::mem_fun(
-			*this, &PatchView::on_editable_sig));
-
-	_edit_mode_but->signal_toggled().connect(sigc::mem_fun(
-			*this, &PatchView::editable_toggled));
-
 	_poly_spin->signal_value_changed().connect(
 			sigc::mem_fun(*this, &PatchView::poly_changed));
 
@@ -130,27 +123,6 @@ PatchView::create(App& app, SharedPtr<const PatchModel> patch)
 	result->init(app);
 	result->set_patch(patch);
 	return SharedPtr<PatchView>(result);
-}
-
-void
-PatchView::on_editable_sig(bool editable)
-{
-	_edit_mode_but->set_active(editable);
-	_canvas->set_locked(!editable);
-}
-
-void
-PatchView::editable_toggled()
-{
-	const bool editable = _edit_mode_but->get_active();
-	set_editable(editable);
-}
-
-void
-PatchView::set_editable(bool editable)
-{
-	_patch->set_editable(editable);
-	_canvas->set_locked(!editable);
 }
 
 #if 0
