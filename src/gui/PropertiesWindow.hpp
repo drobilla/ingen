@@ -48,25 +48,16 @@ public:
 private:
 	/** Record of a property (row in the table) */
 	struct Record {
-		Record(const Raul::Atom& v, Gtk::ComboBox* tw, Gtk::Alignment* vw, int r)
-			: value(v), type_widget(tw), value_widget(vw), row(r)
+		Record(const Raul::Atom& v, Gtk::Alignment* vw, int r)
+			: value(v), value_widget(vw), row(r)
 		{}
 		Raul::Atom      value;
-		Gtk::ComboBox*  type_widget;
 		Gtk::Alignment* value_widget;
 		int             row;
 	};
 
-	/** Columns for type combo in treeview */
-	class TypeColumns : public Gtk::TreeModel::ColumnRecord {
-	public:
-		TypeColumns() { add(type); add(choice); }
-
-		Gtk::TreeModelColumn<Raul::Atom::TypeID> type;
-		Gtk::TreeModelColumn<Glib::ustring>      choice;
-	};
-
-	Gtk::Widget* create_value_widget(const Raul::URI& uri, const Raul::Atom& value);
+	Gtk::Widget* create_value_widget(const Raul::URI&  uri,
+	                                 const Raul::Atom& value);
 
 	void init();
 	void reset();
@@ -83,9 +74,6 @@ private:
 	typedef std::map<Raul::URI, Record> Records;
 	Records _records;
 
-	TypeColumns                  _type_cols;
-	Glib::RefPtr<Gtk::ListStore> _type_choices;
-
 	SharedPtr<const ObjectModel> _model;
 	sigc::connection             _property_connection;
 	Gtk::VBox*                   _vbox;
@@ -94,7 +82,6 @@ private:
 	Gtk::Button*                 _cancel_button;
 	Gtk::Button*                 _apply_button;
 	Gtk::Button*                 _ok_button;
-	bool                         _initialised : 1;
 };
 
 } // namespace GUI

@@ -34,7 +34,6 @@ namespace GUI {
 PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
                                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
-	, _initialised(false)
 {
 	xml->get_widget("properties_vbox", _vbox);
 	xml->get_widget("properties_scrolledwindow", _scrolledwindow);
@@ -51,33 +50,6 @@ PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
 
 	_ok_button->signal_clicked().connect(
 			sigc::mem_fun(this, &PropertiesWindow::ok_clicked));
-}
-
-void
-PropertiesWindow::init()
-{
-	Forge& forge = _app->forge();
-	Gtk::TreeModel::Row row = *_type_choices->append();
-	row[_type_cols.type]   = forge.Int;
-	row[_type_cols.choice] = "Int";
-
-	row = *_type_choices->append();
-	row[_type_cols.type]   = forge.Float;
-	row[_type_cols.choice] = "Float";
-
-	row = *_type_choices->append();
-	row[_type_cols.type]   = forge.Bool;
-	row[_type_cols.choice] = "Bool";
-
-	row = *_type_choices->append();
-	row[_type_cols.type]   = forge.URI;
-	row[_type_cols.choice] = "URI";
-
-	row = *_type_choices->append();
-	row[_type_cols.type]   = forge.String;
-	row[_type_cols.choice] = "String";
-
-	_initialised = true;
 }
 
 void
@@ -125,25 +97,17 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 		Gtk::Label* lab = manage(
 			new Gtk::Label(world->rdf_world()->prefixes().qualify(i->first.str()),
 			               0.0, 0.5));
-		_table->attach(*lab, 0, 1, n_rows, n_rows + 1, Gtk::FILL|Gtk::SHRINK, Gtk::SHRINK);
+		_table->attach(*lab, 0, 1, n_rows, n_rows + 1,
+		               Gtk::FILL|Gtk::SHRINK, Gtk::SHRINK);
 
-		// Column 1: Type
-		Gtk::ComboBox* combo = manage(new Gtk::ComboBox());
-		combo->set_model(_type_choices);
-		combo->pack_start(_type_cols.choice);
-		const char path[] = { static_cast<int>(value.type()) - 1 + '0', '\0' };
-		combo->set_active(_type_choices->get_iter(path));
-		Gtk::Alignment* align = manage(new Gtk::Alignment(0.0, 0.5, 0.0, 1.0));
-		align->add(*combo);
-		_table->attach(*align, 1, 2, n_rows, n_rows + 1, Gtk::FILL|Gtk::SHRINK, Gtk::SHRINK);
-
-		// Column 2: Value
-		align = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
+		// Column 1: Value
+		Gtk::Alignment* align = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
 		Gtk::Widget* value_widget = create_value_widget(i->first, value);
 		if (value_widget)
 			align->add(*value_widget);
-		_table->attach(*align, 2, 3, n_rows, n_rows + 1, Gtk::FILL|Gtk::EXPAND, Gtk::SHRINK);
-		_records.insert(make_pair(i->first, Record(value, combo, align, n_rows)));
+		_table->attach(*align, 1, 2, n_rows, n_rows + 1,
+		               Gtk::FILL|Gtk::EXPAND, Gtk::SHRINK);
+		_records.insert(make_pair(i->first, Record(value, align, n_rows)));
 	}
 
 	_table->show_all();
@@ -263,7 +227,7 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 
 	Forge&             forge  = _app->forge();
 	Record&            record = r->second;
-	Raul::Atom::TypeID type   = (*record.type_widget->get_active())[_type_cols.type];
+	Raul::Atom::TypeID type   = record.value.type();
 	if (type == forge.Int) {
 		Gtk::SpinButton* widget = dynamic_cast<Gtk::SpinButton*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
