@@ -89,7 +89,7 @@ static bool
 skip_property(const Sord::Node& predicate)
 {
 	return (predicate.to_string() == "http://drobilla.net/ns/ingen#node"
-	        || predicate.to_string() == "http://drobilla.net/ns/ingen#connection"
+	        || predicate.to_string() == "http://drobilla.net/ns/ingen#edge"
 	        || predicate.to_string() == "http://lv2plug.in/ns/lv2core#port");
 }
 
@@ -207,7 +207,7 @@ parse_properties(
 	boost::optional<Resource::Properties> data = boost::optional<Resource::Properties>());
 
 static bool
-parse_connections(
+parse_edges(
 		Shared::World*    world,
 		Interface*        target,
 		Sord::Model&      model,
@@ -388,55 +388,55 @@ parse_patch(Ingen::Shared::World*                    world,
 		target->put(i->second.first, i->second.second);
 	}
 
-	parse_connections(world, target, model, subject_node, patch_path);
+	parse_edges(world, target, model, subject_node, patch_path);
 
 	return patch_path;
 }
 
 static bool
-parse_connections(Ingen::Shared::World* world,
-                  Ingen::Interface*     target,
-                  Sord::Model&          model,
-                  const Sord::Node&     subject,
-                  const Raul::Path&     parent)
+parse_edges(Ingen::Shared::World* world,
+            Ingen::Interface*     target,
+            Sord::Model&          model,
+            const Sord::Node&     subject,
+            const Raul::Path&     parent)
 {
-	Sord::URI ingen_connection(*world->rdf_world(),  NS_INGEN "connection");
-	Sord::URI ingen_source(*world->rdf_world(),      NS_INGEN "source");
-	Sord::URI ingen_destination(*world->rdf_world(), NS_INGEN "destination");
+	Sord::URI ingen_edge(*world->rdf_world(), NS_INGEN "edge");
+	Sord::URI ingen_tail(*world->rdf_world(), NS_INGEN "tail");
+	Sord::URI ingen_head(*world->rdf_world(), NS_INGEN "head");
 
 	const Glib::ustring& base_uri = model.base_uri().to_string();
 
 	RDFNodes connections;
-	for (Sord::Iter i = model.find(subject, ingen_connection, nil); !i.end(); ++i) {
+	for (Sord::Iter i = model.find(subject, ingen_edge, nil); !i.end(); ++i) {
 		connections.insert(i.get_object());
 	}
 
 	for (RDFNodes::const_iterator i = connections.begin(); i != connections.end(); ++i) {
-		Sord::Iter s = model.find(*i, ingen_source, nil);
-		Sord::Iter d = model.find(*i, ingen_destination, nil);
+		Sord::Iter t = model.find(*i, ingen_tail, nil);
+		Sord::Iter h = model.find(*i, ingen_head, nil);
 
-		if (s.end()) {
-			LOG(error) << "Connection has no source" << endl;
+		if (t.end()) {
+			LOG(error) << "Edge has no tail" << endl;
 			return false;
-		} else if (d.end()) {
-			LOG(error) << "Connection has no destination" << endl;
-			return false;
-		}
-
-		const Path src_path(
-			parent.child(relative_uri(base_uri, s.get_object().to_string(), false)));
-		const Path dst_path(
-			parent.child(relative_uri(base_uri, d.get_object().to_string(), false)));
-
-		if (!(++s).end()) {
-			LOG(error) << "Connection has multiple sources" << endl;
-			return false;
-		} else if (!(++d).end()) {
-			LOG(error) << "Connection has multiple destinations" << endl;
+		} else if (h.end()) {
+			LOG(error) << "Edge has no head" << endl;
 			return false;
 		}
 
-		target->connect(src_path, dst_path);
+		const Path tail_path(
+			parent.child(relative_uri(base_uri, t.get_object().to_string(), false)));
+		const Path head_path(
+			parent.child(relative_uri(base_uri, h.get_object().to_string(), false)));
+
+		if (!(++t).end()) {
+			LOG(error) << "Edge has multiple tails" << endl;
+			return false;
+		} else if (!(++h).end()) {
+			LOG(error) << "Edge has multiple heads" << endl;
+			return false;
+		}
+
+		target->connect(tail_path, head_path);
 	}
 
 	return true;
@@ -621,7 +621,7 @@ Parser::parse_string(Ingen::Shared::World*                    world,
 
 	bool ret = parse(world, target, model, base_uri, parent, symbol, data);
 	Sord::URI subject(*world->rdf_world(), base_uri);
-	parse_connections(world, target, model, subject, parent ? *parent : "/");
+	parse_edges(world, target, model, subject, parent ? *parent : "/");
 
 	return ret;
 }

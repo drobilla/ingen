@@ -24,7 +24,7 @@ ingen:Plugin
 	rdfs:label "Plugin" ;
 	rdfs:comment """
 A class which can be instantiated into a ingen:Node.  A plugin has a set of input
-and output "ports".  In practise this class is semantically equivalent to
+and output "ports".  In practice this class is semantically equivalent to
 lv2:Plugin, it only exists to allow the ingen ontology to be useful for
 "plugins" that aren't semantically LV2 plugins.  See the LV2 specification
 for details about the required properties (rdf:type, doap:name, doap:license,
@@ -122,25 +122,33 @@ documentation for details.  Ports inherit properties from the Port on their
 parent's Plugin in the exact way Nodes inherit properties from their Plugin.
 """ .
 
-ingen:Connection
+ingen:Edge
 	a owl:Class ;
-	rdfs:label "Connection" ;
+	rdfs:label "Edge" ;
 	rdfs:comment """
-A connection between two ports.  Patches have a set of connections which
-define how its component nodes and ports are connected.  A Connection MUST
-have exactly one :source property and exactly one :destination property.
+A connection between two ports.  Patches have a set of edges which
+define how its component nodes and ports are connected.  An Edge MUST
+have exactly one ingen:tail and exactly one ingen:head property.
 """ .
 
-ingen:source
+ingen:edge
 	a owl:ObjectProperty ;
-	rdfs:domain ingen:Connection ;
-	rdfs:range ingen:Port ;
-	rdfs:label "Source" ;
-	rdfs:comment "The source/sending port of this connection" .
+	rdfs:domain ingen:Patch ;
+	rdfs:range ingen:Edge ;
+	rdfs:comment "An edge contained in this patch." .
 
-ingen:destination
-	a owl:ObjectProperty ;
-	rdfs:domain ingen:Connection ;
+ingen:tail
+	a owl:ObjectProperty ,
+		owl:FunctionalProperty ;
+	rdfs:domain ingen:Edge ;
 	rdfs:range ingen:Port ;
-	rdfs:label "Destination" ;
-	rdfs:comment "The destination/receiving/sink port of this connection" .
+	rdfs:label "tail" ;
+	rdfs:comment "The source/sending port of this edge" .
+
+ingen:head
+	a owl:ObjectProperty ,
+		owl:FunctionalProperty ;
+	rdfs:domain ingen:Edge ;
+	rdfs:range ingen:Port ;
+	rdfs:label "head" ;
+	rdfs:comment "The destination/receiving/sink port of this edge" .

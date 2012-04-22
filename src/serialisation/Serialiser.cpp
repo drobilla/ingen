@@ -518,14 +518,14 @@ Serialiser::Impl::serialise_connection(const Sord::Node&           parent,
 	const Sord::Node dst           = path_rdf_node(connection->dst_port_path());
 	const Sord::Node connection_id = Sord::Node::blank_id(*_world.rdf_world());
 	_model->add_statement(connection_id,
-	                      Sord::Curie(world, "ingen:source"),
+	                      Sord::Curie(world, "ingen:tail"),
 	                      src);
 	_model->add_statement(connection_id,
-	                      Sord::Curie(world, "ingen:destination"),
+	                      Sord::Curie(world, "ingen:head"),
 	                      dst);
 
 	_model->add_statement(parent,
-	                      Sord::Curie(world, "ingen:connection"),
+	                      Sord::Curie(world, "ingen:edge"),
 	                      connection_id);
 }
 
