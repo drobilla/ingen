@@ -54,16 +54,20 @@ public:
 	                uint32_t    format,
 	                const void* buffer);
 
+	bool is_resizable() const;
+
 	Ingen::Shared::World*       world() const { return _world; }
 	SharedPtr<const NodeModel>  node()  const { return _node; }
 
 private:
-	PluginUI(Ingen::Shared::World*       world,
-	         SharedPtr<const NodeModel>  node);
+	PluginUI(Ingen::Shared::World*      world,
+	         SharedPtr<const NodeModel> node,
+	         const LilvNode*            ui_node);
 
 	Ingen::Shared::World*      _world;
 	SharedPtr<const NodeModel> _node;
 	SuilInstance*              _instance;
+	LilvNode*                  _ui_node;
 
 	static SuilHost* ui_host;
 

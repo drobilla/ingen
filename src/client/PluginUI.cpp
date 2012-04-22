@@ -22,6 +22,7 @@
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 using namespace std;
 using namespace Raul;
@@ -75,16 +76,19 @@ lv2_ui_write(SuilController controller,
 }
 
 PluginUI::PluginUI(Ingen::Shared::World*      world,
-                   SharedPtr<const NodeModel> node)
+                   SharedPtr<const NodeModel> node,
+                   const LilvNode*            ui_node)
 	: _world(world)
 	, _node(node)
 	, _instance(NULL)
+	, _ui_node(lilv_node_duplicate(ui_node))
 {
 }
 
 PluginUI::~PluginUI()
 {
 	suil_instance_free(_instance);
+	lilv_node_free(_ui_node);
 }
 
 SharedPtr<PluginUI>
@@ -120,7 +124,7 @@ PluginUI::create(Ingen::Shared::World*      world,
 		return SharedPtr<PluginUI>();
 	}
 
-	SharedPtr<PluginUI> ret(new PluginUI(world, node));
+	SharedPtr<PluginUI> ret(new PluginUI(world, node, lilv_ui_get_uri(ui)));
 	ret->_features = world->lv2_features()->lv2_features(
 		world, const_cast<NodeModel*>(node.get()));
 
@@ -161,6 +165,26 @@ PluginUI::port_event(uint32_t    port_index,
 {
 	suil_instance_port_event(
 		_instance, port_index, buffer_size, format, buffer);
+}
+
+bool
+PluginUI::is_resizable() const
+{
+	const LilvNode* s   = _ui_node;
+	LilvNode*       p   = lilv_new_uri(_world->lilv_world(), LV2_CORE__optionalFeature);
+	LilvNode*       fs  = lilv_new_uri(_world->lilv_world(), LV2_UI__fixedSize);
+	LilvNode*       nrs = lilv_new_uri(_world->lilv_world(), LV2_UI__noUserResize);
+
+	LilvNodes* fs_matches = lilv_world_find_nodes(_world->lilv_world(), s, p, fs);
+	LilvNodes* nrs_matches = lilv_world_find_nodes(_world->lilv_world(), s, p, nrs);
+
+	lilv_nodes_free(nrs_matches);
+	lilv_nodes_free(fs_matches);
+	lilv_node_free(nrs);
+	lilv_node_free(fs);
+	lilv_node_free(p);
+
+	return !fs_matches && !nrs_matches;
 }
 
 } // namespace Client
