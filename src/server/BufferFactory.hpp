@@ -31,6 +31,7 @@
 #include "ingen/shared/Forge.hpp"
 #include "ingen/shared/URIs.hpp"
 
+#include "Buffer.hpp"
 #include "PortType.hpp"
 #include "types.hpp"
 
@@ -41,7 +42,6 @@ namespace Shared { class URIs; }
 namespace Server {
 
 class Engine;
-class Buffer;
 
 class BufferFactory {
 public:
