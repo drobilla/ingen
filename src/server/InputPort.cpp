@@ -78,9 +78,9 @@ InputPort::apply_poly(Maid& maid, uint32_t poly)
  * @return true iff buffers are locally owned by the port
  */
 bool
-InputPort::get_buffers(BufferFactory&                   bufs,
-                       Raul::Array<BufferFactory::Ref>* buffers,
-                       uint32_t                         poly) const
+InputPort::get_buffers(BufferFactory&          bufs,
+                       Raul::Array<BufferRef>* buffers,
+                       uint32_t                poly) const
 {
 	size_t num_connections = (ThreadManager::thread_is(THREAD_PROCESS))
 			? _connections.size() : _num_connections;

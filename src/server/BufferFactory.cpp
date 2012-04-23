@@ -92,7 +92,7 @@ BufferFactory::default_buffer_size(LV2_URID type)
 	}
 }
 
-BufferFactory::Ref
+BufferRef
 BufferFactory::get(LV2_URID type, uint32_t capacity, bool force_create)
 {
 	Raul::AtomicPtr<Buffer>& head_ptr = free_list(type);
@@ -114,21 +114,21 @@ BufferFactory::get(LV2_URID type, uint32_t capacity, bool force_create)
 		} else {
 			assert(false);
 			error << "Failed to obtain buffer" << endl;
-			return Ref();
+			return BufferRef();
 		}
 	}
 
 	try_head->_next = NULL;
-	return Ref(try_head);
+	return BufferRef(try_head);
 }
 
-BufferFactory::Ref
+BufferRef
 BufferFactory::silent_buffer()
 {
 	return _silent_buffer;
 }
 
-BufferFactory::Ref
+BufferRef
 BufferFactory::create(LV2_URID type, uint32_t capacity)
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
@@ -152,7 +152,7 @@ BufferFactory::create(LV2_URID type, uint32_t capacity)
 	buffer->atom()->type = type;
 
 	assert(buffer);
-	return Ref(buffer);
+	return BufferRef(buffer);
 }
 
 void

@@ -49,9 +49,9 @@ OutputPort::OutputPort(BufferFactory&      bufs,
 }
 
 bool
-OutputPort::get_buffers(BufferFactory&                   bufs,
-                        Raul::Array<BufferFactory::Ref>* buffers,
-                        uint32_t                         poly) const
+OutputPort::get_buffers(BufferFactory&          bufs,
+                        Raul::Array<BufferRef>* buffers,
+                        uint32_t                poly) const
 {
 	for (uint32_t v = 0; v < poly; ++v)
 		buffers->at(v) = bufs.get(buffer_type(), _buffer_size);

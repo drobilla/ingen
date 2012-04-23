@@ -111,7 +111,7 @@ private:
 	PortImpl* _learn_port;
 
 	SharedPtr<Bindings> _bindings;
-	BufferFactory::Ref  _feedback;
+	BufferRef           _feedback;
 };
 
 } // namespace Server

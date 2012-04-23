@@ -145,7 +145,7 @@ Connect::pre_process()
 		_dst_input_port->increment_num_connections();
 	}
 
-	_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
+	_buffers = new Raul::Array<BufferRef>(_dst_input_port->poly());
 	_dst_input_port->get_buffers(*_engine.buffer_factory(),
 	                             _buffers, _dst_input_port->poly());
 

@@ -55,7 +55,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _min(bufs.forge().make(0.0f))
 	, _max(bufs.forge().make(1.0f))
 	, _last_broadcasted_value(value)
-	, _buffers(new Array<BufferFactory::Ref>(static_cast<size_t>(poly)))
+	, _buffers(new Array<BufferRef>(static_cast<size_t>(poly)))
 	, _prepared_buffers(NULL)
 	, _broadcast(false)
 	, _set_by_user(false)
@@ -99,12 +99,12 @@ PortImpl::supports(const Raul::URI& value_type) const
 	                    _bufs.forge().alloc_uri(value_type.str()));
 }
 
-Raul::Array<BufferFactory::Ref>*
-PortImpl::set_buffers(Raul::Array<BufferFactory::Ref>* buffers)
+Raul::Array<BufferRef>*
+PortImpl::set_buffers(Raul::Array<BufferRef>* buffers)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	Raul::Array<BufferFactory::Ref>* ret = NULL;
+	Raul::Array<BufferRef>* ret = NULL;
 	if (buffers != _buffers) {
 		ret = _buffers;
 		_buffers = buffers;
@@ -135,7 +135,7 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	}
 
 	if (!_prepared_buffers)
-		_prepared_buffers = new Array<BufferFactory::Ref>(poly, *_buffers, NULL);
+		_prepared_buffers = new Array<BufferRef>(poly, *_buffers, NULL);
 
 	return true;
 }

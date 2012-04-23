@@ -32,6 +32,7 @@
 #include "ingen/shared/URIs.hpp"
 
 #include "Buffer.hpp"
+#include "BufferRef.hpp"
 #include "PortType.hpp"
 #include "types.hpp"
 
@@ -50,14 +51,12 @@ public:
 
 	~BufferFactory();
 
-	typedef boost::intrusive_ptr<Buffer> Ref;
-
 	static uint32_t audio_buffer_size(SampleCount nframes);
 	uint32_t        default_buffer_size(LV2_URID type);
 
-	Ref get(LV2_URID type, uint32_t capacity, bool force_create=false);
+	BufferRef get(LV2_URID type, uint32_t capacity, bool force_create=false);
 
-	Ref silent_buffer();
+	BufferRef silent_buffer();
 
 	void set_block_length(SampleCount block_length);
 
@@ -69,7 +68,7 @@ private:
 	friend class Buffer;
 	void recycle(Buffer* buf);
 
-	Ref create(LV2_URID type, uint32_t capacity=0);
+	BufferRef create(LV2_URID type, uint32_t capacity=0);
 
 	inline Raul::AtomicPtr<Buffer>& free_list(LV2_URID type) {
 		if (type == _uris->atom_Float) {
@@ -91,7 +90,7 @@ private:
 	Engine&                        _engine;
 	SharedPtr<Ingen::Shared::URIs> _uris;
 
-	Ref _silent_buffer;
+	BufferRef _silent_buffer;
 };
 
 } // namespace Server

@@ -232,10 +232,10 @@ NodeImpl::post_process(Context& context)
 }
 
 void
-NodeImpl::set_port_buffer(uint32_t           voice,
-                          uint32_t           port_num,
-                          BufferFactory::Ref buf,
-                          SampleCount        offset)
+NodeImpl::set_port_buffer(uint32_t    voice,
+                          uint32_t    port_num,
+                          BufferRef   buf,
+                          SampleCount offset)
 {
 	/*std::cout << path() << " set port " << port_num << " voice " << voice
 			<< " buffer " << buf << " offset " << offset << std::endl;*/

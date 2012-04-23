@@ -68,12 +68,12 @@ public:
 		InputPort* dst_port() { return _dst_input_port; }
 
 	private:
-		Engine&                          _engine;
-		OutputPort*                      _src_output_port;
-		InputPort*                       _dst_input_port;
-		PatchImpl*                       _patch;
-		SharedPtr<ConnectionImpl>        _connection;
-		Raul::Array<BufferFactory::Ref>* _buffers;
+		Engine&                   _engine;
+		OutputPort*               _src_output_port;
+		InputPort*                _dst_input_port;
+		PatchImpl*                _patch;
+		SharedPtr<ConnectionImpl> _connection;
+		Raul::Array<BufferRef>*   _buffers;
 	};
 
 private:

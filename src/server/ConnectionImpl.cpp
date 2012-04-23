@@ -128,7 +128,7 @@ ConnectionImpl::queue(Context& context)
 	}
 }
 
-BufferFactory::Ref
+BufferRef
 ConnectionImpl::buffer(uint32_t voice) const
 {
 	assert(!must_mix());

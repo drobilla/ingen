@@ -44,8 +44,6 @@ class Buffer : public boost::noncopyable, public Raul::Deletable
 public:
 	Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity);
 
-	typedef boost::intrusive_ptr<Buffer> Ref;
-
 	virtual void clear();
 	virtual void resize(uint32_t size);
 	virtual void copy(Context& context, const Buffer* src);
@@ -93,10 +91,5 @@ private:
 
 } // namespace Server
 } // namespace Ingen
-
-namespace boost {
-inline void intrusive_ptr_add_ref(Ingen::Server::Buffer* b) { b->ref(); }
-inline void intrusive_ptr_release(Ingen::Server::Buffer* b) { b->deref(); }
-}
 
 #endif // INGEN_ENGINE_BUFFER_HPP

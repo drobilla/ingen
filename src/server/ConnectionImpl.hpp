@@ -83,7 +83,7 @@ public:
 	 * buffer, and will return accordingly (e.g. the same buffer for every
 	 * voice in a mono->poly connection).
 	 */
-	BufferFactory::Ref buffer(uint32_t voice) const;
+	BufferRef buffer(uint32_t voice) const;
 
 	/** Returns true if this connection must mix down voices into a local buffer */
 	bool must_mix() const;

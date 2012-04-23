@@ -93,7 +93,7 @@ Disconnect::Impl::Impl(Engine&     e,
 	_dst_input_port->decrement_num_connections();
 
 	if (_dst_input_port->num_connections() == 0) {
-		_buffers = new Raul::Array<BufferFactory::Ref>(_dst_input_port->poly());
+		_buffers = new Raul::Array<BufferRef>(_dst_input_port->poly());
 		_dst_input_port->get_buffers(*_engine.buffer_factory(),
 				_buffers, _dst_input_port->poly());
 

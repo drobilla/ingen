@@ -71,7 +71,7 @@ private:
 
 	SharedPtr<ConnectionImpl> _connection;
 
-	Raul::Array<BufferFactory::Ref>* _buffers;
+	Raul::Array<BufferRef>* _buffers;
 };
 
 } // namespace Events

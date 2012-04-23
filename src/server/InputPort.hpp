@@ -73,9 +73,9 @@ public:
 
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
-	bool get_buffers(BufferFactory&                   bufs,
-	                 Raul::Array<BufferFactory::Ref>* buffers,
-	                 uint32_t                         poly) const;
+	bool get_buffers(BufferFactory&          bufs,
+	                 Raul::Array<BufferRef>* buffers,
+	                 uint32_t                poly) const;
 
 	void pre_process(Context& context);
 	void post_process(Context& context);

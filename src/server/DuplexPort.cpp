@@ -57,9 +57,9 @@ DuplexPort::DuplexPort(
 }
 
 bool
-DuplexPort::get_buffers(BufferFactory&                   bufs,
-                        Raul::Array<BufferFactory::Ref>* buffers,
-                        uint32_t                         poly) const
+DuplexPort::get_buffers(BufferFactory&          bufs,
+                        Raul::Array<BufferRef>* buffers,
+                        uint32_t                poly) const
 {
 	if (_is_output)
 		return InputPort::get_buffers(bufs, buffers, poly);

@@ -51,9 +51,9 @@ public:
 
 	virtual ~OutputPort() {}
 
-	bool get_buffers(BufferFactory&            bufs,
-	                 Raul::Array<Buffer::Ref>* buffers,
-	                 uint32_t                  poly) const;
+	bool get_buffers(BufferFactory&          bufs,
+	                 Raul::Array<BufferRef>* buffers,
+	                 uint32_t                poly) const;
 
 	void pre_process(Context& context);
 	void post_process(Context& context);
