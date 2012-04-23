@@ -19,6 +19,9 @@
 
 #include "raul/URI.hpp"
 
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+
 namespace Ingen {
 
 /** The type of a port.
@@ -74,10 +77,10 @@ private:
 		assert(symbol_num <= ATOM);
 		static const Raul::URI uris[] = {
 			"http://drobilla.net/ns/ingen#nil",
-			"http://lv2plug.in/ns/lv2core#AudioPort",
-			"http://lv2plug.in/ns/lv2core#ControlPort",
-			"http://lv2plug.in/ns/lv2core#CVPort",
-			"http://lv2plug.in/ns/ext/atom#AtomPort"
+			LV2_CORE__AudioPort,
+			LV2_CORE__ControlPort,
+			LV2_CORE__CVPort,
+			LV2_ATOM__AtomPort
 		};
 		return uris[symbol_num];
 	}

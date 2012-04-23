@@ -40,6 +40,8 @@
 #include "ingen/shared/Store.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
+#include "lv2/lv2plug.in/ns/ext/state/state.h"
+#include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 #include "raul/log.hpp"
@@ -342,10 +344,10 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 
 	_model->add_statement(patch_id,
 	                      Sord::Curie(world, "lv2:extensionData"),
-	                      Sord::URI(world, "http://lv2plug.in/ns/ext/state#Interface"));
+	                      Sord::URI(world, LV2_STATE__interface));
 
 	_model->add_statement(patch_id,
-	                      Sord::URI(world, "http://lv2plug.in/ns/extensions/ui#ui"),
+	                      Sord::URI(world, LV2_UI__ui),
 	                      Sord::URI(world, "http://drobilla.net/ns/ingen#ui"));
 
 	const URIs& uris = *_world.uris().get();

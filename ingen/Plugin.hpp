@@ -21,6 +21,8 @@
 
 #include "ingen/Resource.hpp"
 
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+
 namespace Ingen {
 
 class Plugin : virtual public Resource
@@ -33,7 +35,7 @@ public:
 	static inline const Raul::URI& type_uri(Type type) {
 		static const Raul::URI uris[] = {
 			"http://drobilla.net/ns/ingen#nil",
-			"http://lv2plug.in/ns/lv2core#Plugin",
+			LV2_CORE__Plugin,
 			"http://drobilla.net/ns/ingen#Internal",
 			"http://drobilla.net/ns/ingen#Patch"
 		};

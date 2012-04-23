@@ -100,7 +100,7 @@ PluginUI::create(Ingen::Shared::World*      world,
 		PluginUI::ui_host = suil_host_new(lv2_ui_write, NULL, NULL, NULL);
 	}
 
-	static const char* gtk_ui_uri = "http://lv2plug.in/ns/extensions/ui#GtkUI";
+	static const char* gtk_ui_uri = LV2_UI__GtkUI;
 
 	LilvNode* gtk_ui = lilv_new_uri(world->lilv_world(), gtk_ui_uri);
 

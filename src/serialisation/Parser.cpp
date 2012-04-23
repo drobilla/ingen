@@ -90,7 +90,7 @@ skip_property(const Sord::Node& predicate)
 {
 	return (predicate.to_string() == "http://drobilla.net/ns/ingen#node"
 	        || predicate.to_string() == "http://drobilla.net/ns/ingen#edge"
-	        || predicate.to_string() == "http://lv2plug.in/ns/lv2core#port");
+	        || predicate.to_string() == LV2_CORE__port);
 }
 
 static Resource::Properties

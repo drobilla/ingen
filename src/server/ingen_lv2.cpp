@@ -545,7 +545,7 @@ ingen_save(LV2_Handle                instance,
 
 	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, NS_INGEN "file");
 	LV2_URID atom_Path = plugin->map->map(plugin->map->handle,
-	                                      "http://lv2plug.in/ns/ext/atom#Path");
+	                                      LV2_ATOM__Path);
 
 	char* real_path  = make_path->path(make_path->handle, "patch.ttl");
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);

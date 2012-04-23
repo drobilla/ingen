@@ -94,8 +94,7 @@ PluginModel::get_property(const URI& key) const
 			else
 				symbol = uri.str().substr(first_delim + 1, last_delim - first_delim - 1);
 		}
-		set_property("http://lv2plug.in/ns/lv2core#symbol",
-		             _uris.forge.alloc(symbol));
+		set_property(LV2_CORE__symbol, _uris.forge.alloc(symbol));
 		return get_property(key);
 	}
 
@@ -152,7 +151,7 @@ PluginModel::set(SharedPtr<PluginModel> p)
 Symbol
 PluginModel::default_node_symbol() const
 {
-	const Atom& name_atom = get_property("http://lv2plug.in/ns/lv2core#symbol");
+	const Atom& name_atom = get_property(LV2_CORE__symbol);
 	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String)
 		return Symbol::symbolify(name_atom.get_string());
 	else

@@ -221,7 +221,7 @@ NodeModel::port_value_range(SharedPtr<const PortModel> port,
 std::string
 NodeModel::port_label(SharedPtr<const PortModel> port) const
 {
-	const Raul::Atom& name = port->get_property("http://lv2plug.in/ns/lv2core#name");
+	const Raul::Atom& name = port->get_property(LV2_CORE__name);
 	if (name.is_valid()) {
 		return name.get_string();
 	}

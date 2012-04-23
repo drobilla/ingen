@@ -15,14 +15,17 @@
 */
 
 #include <gtkmm.h>
+
 #include "ingen/Interface.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PluginModel.hpp"
+#include "ingen/shared/LV2URIMap.hpp"
+#include "lv2/lv2plug.in/ns/ext/presets/presets.h"
+
 #include "App.hpp"
 #include "NodeMenu.hpp"
-#include "WindowFactory.hpp"
 #include "WidgetFactory.hpp"
+#include "WindowFactory.hpp"
 
 using namespace std;
 using namespace Ingen::Client;
@@ -165,15 +168,12 @@ NodeMenu::on_preset_activated(const std::string& uri)
 	const NodeModel* const   node   = (NodeModel*)_object.get();
 	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(node->plugin());
 
-	LilvNode* port_pred = lilv_new_uri(
-		plugin->lilv_world(),
-		"http://lv2plug.in/ns/lv2core#port");
-	LilvNode* symbol_pred = lilv_new_uri(
-		plugin->lilv_world(),
-		"http://lv2plug.in/ns/lv2core#symbol");
-	LilvNode* value_pred = lilv_new_uri(
-		plugin->lilv_world(),
-		"http://lv2plug.in/ns/ext/presets#value");
+	LilvNode* port_pred = lilv_new_uri(plugin->lilv_world(),
+	                                   LV2_CORE__port);
+	LilvNode* symbol_pred = lilv_new_uri(plugin->lilv_world(),
+	                                     LV2_CORE__symbol);
+	LilvNode* value_pred = lilv_new_uri(plugin->lilv_world(),
+	                                    LV2_PRESETS__value);
 	LilvNode*  subject = lilv_new_uri(plugin->lilv_world(), uri.c_str());
 	LilvNodes* ports   = lilv_world_find_nodes(
 		plugin->lilv_world(),
