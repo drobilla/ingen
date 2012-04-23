@@ -78,6 +78,8 @@ PatchView::set_patch(SharedPtr<const PatchModel> patch)
 
 	_canvas_scrolledwindow->add(_canvas->widget());
 
+	_poly_spin->set_range(1, 128);
+	_poly_spin->set_increments(1, 4);
 	_poly_spin->set_value(patch->internal_poly());
 
 	for (GraphObject::Properties::const_iterator i = patch->properties().begin();
@@ -190,7 +192,13 @@ PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 		if (value.type() == _app->uris().forge.Bool) {
 			_process_but->set_active(value.get_bool());
 		} else {
-			warn << "Bad type for ingen:enabled variable: " << value.type() << endl;
+			warn << "Bad type for ingen:enabled: " << value.type() << endl;
+		}
+	} else if (predicate == _app->uris().ingen_polyphony) {
+		if (value.type() == _app->uris().forge.Int) {
+			_poly_spin->set_value(value.get_int32());
+		} else {
+			warn << "Bad type for ingen:polyphony: " << value.type() << endl;
 		}
 	}
 	_enable_signal = true;

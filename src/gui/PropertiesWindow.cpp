@@ -123,10 +123,9 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 	if (value.type() == forge.Int) {
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 0));
 		widget->property_numeric() = true;
-		widget->set_value(value.get_int32());
-		widget->set_snap_to_ticks(true);
 		widget->set_range(INT_MIN, INT_MAX);
 		widget->set_increments(1, 10);
+		widget->set_value(value.get_int32());
 		widget->signal_value_changed().connect(sigc::bind(
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));
