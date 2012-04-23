@@ -61,8 +61,6 @@ public:
 
 	void set_selected(gboolean b);
 
-	//ArtVpathDash* dash();
-
 private:
 	Port(App&                       app,
 	     Ganv::Module&              module,
@@ -77,8 +75,6 @@ private:
 
 	void on_value_changed(GVariant* value);
 	bool on_event(GdkEvent* ev);
-
-	//static ArtVpathDash* _dash;
 
 	App&                     _app;
 	WeakPtr<const PortModel> _port_model;

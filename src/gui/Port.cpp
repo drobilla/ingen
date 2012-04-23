@@ -37,8 +37,6 @@ namespace Ingen {
 using namespace Shared;
 namespace GUI {
 
-//ArtVpathDash* Port::_dash;
-
 Port*
 Port::create(App&                       app,
              Ganv::Module&              module,
@@ -77,8 +75,6 @@ Port::Port(App&                       app,
 {
 	assert(pm);
 
-	//ArtVpathDash* dash = this->dash();
-	//_rect.property_dash() = dash;
 	set_border_width(1.0);
 
 	if (app.can_control(pm.get())) {
@@ -301,27 +297,6 @@ Port::property_changed(const URI& key, const Atom& value)
 		}
 	}
 }
-
-/*
-ArtVpathDash*
-Port::dash()
-{
-	const URIs& uris = _app.uris();
-	SharedPtr<const PortModel> pm = _port_model.lock();
-	if (!pm)
-		return NULL;
-
-	if (!_dash) {
-		_dash = new ArtVpathDash();
-		_dash->n_dash = 2;
-		_dash->dash = art_new(double, 2);
-		_dash->dash[0] = 4;
-		_dash->dash[1] = 4;
-	}
-
-	return _dash;
-}
-*/
 
 void
 Port::set_selected(gboolean b)
