@@ -612,7 +612,7 @@ PatchCanvas::clear_selection()
 }
 
 static void
-destroy_module(GanvNode* node, void* data)
+destroy_node(GanvNode* node, void* data)
 {
 	if (!GANV_IS_MODULE(node)) {
 		return;
@@ -632,10 +632,22 @@ destroy_module(GanvNode* node, void* data)
 	}
 }
 
+static void
+destroy_edge(GanvEdge* edge, void* data)
+{
+	App*        app    = (App*)data;
+	Ganv::Edge* edgemm = Glib::wrap(edge);
+
+	Port* tail = dynamic_cast<Port*>(edgemm->get_tail());
+	Port* head = dynamic_cast<Port*>(edgemm->get_head());
+	app->engine()->disconnect(tail->model()->path(), head->model()->path());
+}
+
 void
 PatchCanvas::destroy_selection()
 {
-	for_each_selected_node(destroy_module, &_app);
+	for_each_selected_node(destroy_node, &_app);
+	for_each_selected_edge(destroy_edge, &_app);
 }
 
 void
