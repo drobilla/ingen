@@ -105,8 +105,6 @@ private:
 	void menu_load_plugin();
 	void menu_new_patch();
 	void menu_load_patch();
-	void menu_edit_toggled();
-	void patch_editable_changed(bool editable);
 	void load_plugin(WeakPtr<PluginModel> plugin);
 
 	void build_menus();

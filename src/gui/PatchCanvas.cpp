@@ -147,11 +147,6 @@ PatchCanvas::PatchCanvas(App&                        app,
 		sigc::mem_fun(this, &PatchCanvas::menu_load_patch));
 	_menu_new_patch->signal_activate().connect(
 		sigc::mem_fun(this, &PatchCanvas::menu_new_patch));
-	_menu_edit->signal_activate().connect(
-		sigc::mem_fun(this, &PatchCanvas::menu_edit_toggled));
-
-	_patch->signal_editable().connect(
-		sigc::mem_fun(this, &PatchCanvas::patch_editable_changed));
 }
 
 void
@@ -590,12 +585,6 @@ PatchCanvas::on_event(GdkEvent* event)
 			destroy_selection();
 			ret = true;
 			break;
-		case GDK_e:
-			if (event->key.state == 0) {
-				_patch->set_editable(!_patch->get_editable());
-				ret = true;
-			}
-			break;
 		case GDK_Home:
 			scroll_to(0, 0);
 			break;
@@ -882,19 +871,6 @@ PatchCanvas::menu_new_patch()
 {
 	_app.window_factory()->present_new_subpatch(
 		_patch, get_initial_data(Resource::EXTERNAL));
-}
-
-void
-PatchCanvas::menu_edit_toggled()
-{
-	_patch->set_editable(_menu_edit->get_active());
-}
-
-void
-PatchCanvas::patch_editable_changed(bool editable)
-{
-	if (_menu_edit->get_active() != editable)
-		_menu_edit->set_active(editable);
 }
 
 } // namespace GUI

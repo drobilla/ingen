@@ -49,23 +49,11 @@ public:
 	bool     polyphonic()    const;
 	uint32_t internal_poly() const;
 
-	/** "editable" = arranging,connecting,adding,deleting,etc
-	 * not editable (control mode) you can just change controllers (performing)
-	 */
-	bool get_editable() const { return _editable; }
-	void set_editable(bool e) const {
-		if (_editable != e) {
-			_editable = e;
-			const_cast<PatchModel*>(this)->signal_editable().emit(e);
-		}
-	}
-
 	// Signals
 	INGEN_SIGNAL(new_node, void, SharedPtr<NodeModel>);
 	INGEN_SIGNAL(removed_node, void, SharedPtr<NodeModel>);
 	INGEN_SIGNAL(new_connection, void, SharedPtr<ConnectionModel>);
 	INGEN_SIGNAL(removed_connection, void, SharedPtr<ConnectionModel>);
-	INGEN_SIGNAL(editable, void, bool);
 
 private:
 	friend class ClientStore;
@@ -73,7 +61,6 @@ private:
 	PatchModel(Shared::URIs& uris, const Raul::Path& patch_path)
 		: NodeModel(uris, "http://drobilla.net/ns/ingen#Patch", patch_path)
 		, _connections(new Connections())
-		, _editable(true)
 	{
 	}
 
@@ -86,7 +73,6 @@ private:
 	                       const Ingen::Port* dst_port);
 
 	SharedPtr<Connections> _connections;
-	mutable bool           _editable;
 };
 
 } // namespace Client
