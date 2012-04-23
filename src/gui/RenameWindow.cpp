@@ -86,7 +86,8 @@ RenameWindow::values_changed()
 	} else if (!Path::is_valid_name(symbol)) {
 		_message_label->set_text("Symbol contains invalid characters");
 		_ok_button->property_sensitive() = false;
-	} else if (_app->store()->object(_object->parent()->path().child(symbol))) {
+	} else if (_object->symbol() != symbol &&
+	           _app->store()->object(_object->parent()->path().child(symbol))) {
 		_message_label->set_text("An object already exists with that path");
 		_ok_button->property_sensitive() = false;
 	} else if (label.empty()) {

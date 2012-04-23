@@ -34,9 +34,11 @@ ResourceImpl::add_property(const Raul::URI&  uri,
 	// Ignore duplicate statements
 	typedef Resource::Properties::const_iterator iterator;
 	const std::pair<iterator,iterator> range = _properties.equal_range(uri);
-	for (iterator i = range.first; i != range.second && i != _properties.end(); ++i)
-		if (i->second == value && i->second.context() == ctx)
+	for (iterator i = range.first; i != range.second && i != _properties.end(); ++i) {
+		if (i->second == value && i->second.context() == ctx) {
 			return;
+		}
+	}
 
 	const Raul::Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
 	on_property(uri, v);
