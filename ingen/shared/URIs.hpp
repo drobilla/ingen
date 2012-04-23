@@ -122,7 +122,6 @@ public:
 	const Quark rdf_instanceOf;
 	const Quark rdf_type;
 	const Quark rdfs_seeAlso;
-	const Quark ui_Events;
 	const Quark wildcard;
 };
 

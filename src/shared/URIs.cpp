@@ -126,7 +126,6 @@ URIs::URIs(Ingen::Forge& f, LV2URIMap* map)
 	, rdf_instanceOf        (forge, map, NS_RDF "instanceOf")
 	, rdf_type              (forge, map, NS_RDF "type")
 	, rdfs_seeAlso          (forge, map, NS_RDFS "seeAlso")
-	, ui_Events             (forge, map, "http://lv2plug.in/ns/extensions/ui#Events")
 	, wildcard              (forge, map, NS_INGEN "wildcard")
 {
 }
