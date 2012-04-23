@@ -286,8 +286,9 @@ ClientStore::put(const URI&                  uri,
 	                   is_patch, is_node, is_port, is_output);
 
 	// Check if uri is a plugin
-	const Atom& type = properties.find(_uris->rdf_type)->second;
-	if (type.type() == _uris->forge.URI) {
+	Iterator t = properties.find(_uris->rdf_type);
+	if (t != properties.end() && t->second.type() == _uris->forge.URI) {
+		const Atom& type = t->second;
 		const URI&         type_uri    = type.get_uri();
 		const Plugin::Type plugin_type = Plugin::type_from_uri(type_uri);
 		if (plugin_type == Plugin::Patch) {
