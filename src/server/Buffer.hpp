@@ -24,11 +24,11 @@
 #include <boost/utility.hpp>
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/AtomicInt.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 
-#include "BufferFactory.hpp"
 #include "PortType.hpp"
 #include "types.hpp"
 
@@ -43,6 +43,8 @@ class Buffer : public boost::noncopyable, public Raul::Deletable
 {
 public:
 	Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity);
+
+	typedef boost::intrusive_ptr<Buffer> Ref;
 
 	virtual void clear();
 	virtual void resize(uint32_t size);
@@ -68,8 +70,9 @@ public:
 	inline void ref() { ++_refs; }
 
 	inline void deref() {
-		if ((--_refs) == 0)
-			_factory.recycle(this);
+		if ((--_refs) == 0) {
+			recycle();
+		}
 	}
 
 protected:
@@ -82,6 +85,8 @@ protected:
 	virtual ~Buffer();
 
 private:
+	void recycle();
+
 	Buffer*         _next; ///< Intrusive linked list for BufferFactory
 	Raul::AtomicInt _refs; ///< Intrusive reference count for intrusive_ptr
 };

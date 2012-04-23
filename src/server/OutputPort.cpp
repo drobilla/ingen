@@ -17,6 +17,7 @@
 #include "ingen/Patch.hpp"
 
 #include "Buffer.hpp"
+#include "BufferFactory.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"

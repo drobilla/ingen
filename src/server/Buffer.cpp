@@ -30,6 +30,7 @@
 #include "raul/log.hpp"
 
 #include "Buffer.hpp"
+#include "BufferFactory.hpp"
 #include "Engine.hpp"
 
 namespace Ingen {
@@ -70,6 +71,12 @@ Buffer::Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity)
 Buffer::~Buffer()
 {
 	free(_atom);
+}
+
+void
+Buffer::recycle()
+{
+	_factory.recycle(this);
 }
 
 void

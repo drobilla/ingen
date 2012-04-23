@@ -37,7 +37,6 @@ namespace Ingen {
 namespace Server {
 
 class NodeImpl;
-class Buffer;
 class BufferFactory;
 
 /** A port on a Node.
@@ -61,7 +60,7 @@ public:
 	 * Audio thread.  Returned value must be freed by caller.
 	 * \a buffers must be poly() long
 	 */
-	Raul::Array<BufferFactory::Ref>* set_buffers(Raul::Array<BufferFactory::Ref>* buffers);
+	Raul::Array<Buffer::Ref>* set_buffers(Raul::Array<Buffer::Ref>* buffers);
 
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -91,10 +90,10 @@ public:
 	void set_minimum(const Raul::Atom& min) { _min = min; }
 	void set_maximum(const Raul::Atom& max) { _max = max; }
 
-	inline BufferFactory::Ref buffer(uint32_t voice) const {
+	inline Buffer::Ref buffer(uint32_t voice) const {
 		return _buffers->at((_poly == 1) ? 0 : voice);
 	}
-	inline BufferFactory::Ref prepared_buffer(uint32_t voice) const {
+	inline Buffer::Ref prepared_buffer(uint32_t voice) const {
 		return _prepared_buffers->at(voice);
 	}
 
@@ -105,9 +104,9 @@ public:
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
 
-	virtual bool get_buffers(BufferFactory&                   bufs,
-	                         Raul::Array<BufferFactory::Ref>* buffers,
-	                         uint32_t                         poly) const = 0;
+	virtual bool get_buffers(BufferFactory&            bufs,
+	                         Raul::Array<Buffer::Ref>* buffers,
+	                         uint32_t                  poly) const = 0;
 
 	void setup_buffers(BufferFactory& bufs, uint32_t poly) {
 		get_buffers(bufs, _buffers, poly);
@@ -159,20 +158,20 @@ protected:
 	         const Raul::Atom&   value,
 	         size_t              buffer_size);
 
-	BufferFactory&                   _bufs;
-	uint32_t                         _index;
-	uint32_t                         _poly;
-	uint32_t                         _buffer_size;
-	PortType                         _type;
-	LV2_URID                         _buffer_type;
-	Raul::Atom                       _value;
-	Raul::Atom                       _min;
-	Raul::Atom                       _max;
-	Raul::Atom                       _last_broadcasted_value;
-	Raul::Array<BufferFactory::Ref>* _buffers;
-	Raul::Array<BufferFactory::Ref>* _prepared_buffers;
-	bool                             _broadcast;
-	bool                             _set_by_user;
+	BufferFactory&            _bufs;
+	uint32_t                  _index;
+	uint32_t                  _poly;
+	uint32_t                  _buffer_size;
+	PortType                  _type;
+	LV2_URID                  _buffer_type;
+	Raul::Atom                _value;
+	Raul::Atom                _min;
+	Raul::Atom                _max;
+	Raul::Atom                _last_broadcasted_value;
+	Raul::Array<Buffer::Ref>* _buffers;
+	Raul::Array<Buffer::Ref>* _prepared_buffers;
+	bool                      _broadcast;
+	bool                      _set_by_user;
 };
 
 } // namespace Server
