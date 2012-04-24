@@ -657,7 +657,7 @@ PatchBox::event_zoom_normal()
 void
 PatchBox::event_arrange()
 {
-	_view->canvas()->arrange(false);
+	_view->canvas()->arrange();
 }
 
 void
