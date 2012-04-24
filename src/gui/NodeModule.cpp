@@ -44,7 +44,7 @@ namespace GUI {
 
 NodeModule::NodeModule(PatchCanvas&               canvas,
                        SharedPtr<const NodeModel> node)
-	: Ganv::Module(canvas, node->path().symbol(), 0, 0, true, canvas.show_port_names())
+	: Ganv::Module(canvas, node->path().symbol(), 0, 0, true)
 	, _node(node)
 	, _gui_widget(NULL)
 	, _gui_window(NULL)

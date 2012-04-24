@@ -80,7 +80,6 @@ PatchCanvas::PatchCanvas(App&                        app,
 	, _classless_menu(NULL)
 	, _plugin_menu(NULL)
 	, _human_names(true)
-	, _show_port_names(true)
 {
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("canvas_menu");
 	xml->get_widget("canvas_menu", _menu);
@@ -334,15 +333,7 @@ PatchCanvas::show_human_names(bool b)
 void
 PatchCanvas::show_port_names(bool b)
 {
-	std::cerr << "FIXME: show port names" << std::endl;
-	#if 0
-	_show_port_names = b;
-	FOREACH_ITEM(i, items()) {
-		Ganv::Module* m = dynamic_cast<Ganv::Module*>(*i);
-		if (m)
-			m->set_show_port_labels(b);
-	}
-	#endif
+	ganv_canvas_set_direction(gobj(), b ? GANV_DIRECTION_RIGHT : GANV_DIRECTION_DOWN);
 }
 
 void
