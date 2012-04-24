@@ -63,7 +63,6 @@ public:
 	}
 
 protected:
-	bool on_event(GdkEvent* event);
 	void on_hide();
 	void on_show();
 

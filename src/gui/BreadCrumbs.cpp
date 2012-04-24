@@ -33,6 +33,8 @@ BreadCrumbs::BreadCrumbs(App& app)
 {
 	app.client()->signal_object_deleted().connect(
 			sigc::mem_fun(this, &BreadCrumbs::object_destroyed));
+
+	set_can_focus(false);
 }
 
 SharedPtr<PatchView>

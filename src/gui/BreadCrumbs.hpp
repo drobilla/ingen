@@ -67,6 +67,7 @@ private:
 			assert( !view || view->patch()->path() == path);
 			set_border_width(0);
 			set_path(path);
+			set_can_focus(false);
 			show_all();
 		}
 

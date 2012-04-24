@@ -62,6 +62,8 @@ PatchWindow::on_show()
 		move(_x, _y);
 
 	Gtk::Window::on_show();
+
+	_box->view()->canvas()->widget().grab_focus();
 }
 
 void
@@ -70,17 +72,6 @@ PatchWindow::on_hide()
 	_position_stored = true;
 	get_position(_x, _y);
 	Gtk::Window::on_hide();
-}
-
-bool
-PatchWindow::on_event(GdkEvent* event)
-{
-	if ((event->type == GDK_KEY_PRESS || event->type == GDK_KEY_RELEASE)
-	    && box()->view()->canvas()->on_event(event)) {
-		return true;
-	} else {
-		return Gtk::Window::on_event(event);
-	}
 }
 
 } // namespace GUI
