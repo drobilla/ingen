@@ -586,7 +586,7 @@ PatchBox::event_draw()
 		}
 
 		if (confirm) {
-			_view->canvas()->render_to_dot(filename);
+			_view->canvas()->export_dot(filename.c_str());
 			_status_bar->push(
 				(boost::format("Rendered %1% to %2%") % _patch->path() % filename).str(),
 				STATUS_CONTEXT_PATCH);
@@ -651,7 +651,7 @@ PatchBox::event_zoom_out()
 void
 PatchBox::event_zoom_normal()
 {
-	_view->canvas()->set_zoom_and_font_size(1.0, _view->canvas()->get_default_font_size());
+	_view->canvas()->set_scale(1.0, _view->canvas()->get_default_font_size());
 }
 
 void
