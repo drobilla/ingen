@@ -195,8 +195,9 @@ SharedPtr<PluginUI>
 PluginModel::ui(Ingen::Shared::World*      world,
                 SharedPtr<const NodeModel> node) const
 {
-	if (_type != LV2)
+	if (!_lilv_plugin) {
 		return SharedPtr<PluginUI>();
+	}
 
 	return PluginUI::create(world, node, _lilv_plugin);
 }

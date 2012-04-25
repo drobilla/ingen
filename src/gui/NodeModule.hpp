@@ -73,6 +73,7 @@ protected:
 	bool on_event(GdkEvent* ev);
 
 	void show_control_window();
+	void on_embed_gui_toggled(bool embed);
 	void embed_gui(bool embed);
 	bool popup_gui();
 	void on_gui_window_close();

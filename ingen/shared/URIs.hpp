@@ -81,6 +81,7 @@ public:
 	const Quark ingen_sampleRate;
 	const Quark ingen_selected;
 	const Quark ingen_source;
+	const Quark ingen_uiEmbedded;
 	const Quark ingen_value;
 	const Quark lv2_AudioPort;
 	const Quark lv2_CVPort;

@@ -67,6 +67,10 @@ NodeMenu::init(App& app, SharedPtr<const NodeModel> node)
 	if (plugin && plugin->type() == PluginModel::LV2 && plugin->has_ui()) {
 		_popup_gui_menuitem->show();
 		_embed_gui_menuitem->show();
+		const Raul::Atom& ui_embedded  = node->get_property(
+			_app->uris().ingen_uiEmbedded);
+		_embed_gui_menuitem->set_active(
+			ui_embedded.is_valid() && ui_embedded.get_bool());
 	} else {
 		_popup_gui_menuitem->hide();
 		_embed_gui_menuitem->hide();

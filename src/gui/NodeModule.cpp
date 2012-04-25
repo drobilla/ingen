@@ -88,7 +88,7 @@ NodeModule::show_menu(GdkEventButton* ev)
 	WidgetFactory::get_widget_derived("object_menu", _menu);
 	_menu->init(app(), _node);
 	_menu->signal_embed_gui.connect(
-		sigc::mem_fun(this, &NodeModule::embed_gui));
+		sigc::mem_fun(this, &NodeModule::on_embed_gui_toggled));
 	_menu->signal_popup_gui.connect(
 		sigc::hide_return(sigc::mem_fun(this, &NodeModule::popup_gui)));
 	_menu->popup(ev->button, ev->time);
@@ -190,11 +190,18 @@ NodeModule::plugin_changed()
 }
 
 void
+NodeModule::on_embed_gui_toggled(bool embed)
+{
+	embed_gui(embed);
+	app().engine()->set_property(_node->path(),
+	                             app().uris().ingen_uiEmbedded,
+	                             app().forge().make(embed));
+}
+
+void
 NodeModule::embed_gui(bool embed)
 {
-	const URIs& uris = app().uris();
 	if (embed) {
-
 		if (_gui_window) {
 			warn << "LV2 GUI already popped up, cannot embed" << endl;
 			return;
@@ -220,30 +227,12 @@ NodeModule::embed_gui(bool embed)
 
 		if (_gui_widget) {
 			_gui_widget->show_all();
-
-			for (NodeModel::Ports::const_iterator p = _node->ports().begin();
-					p != _node->ports().end(); ++p)
-				if ((*p)->is_output() && app().can_control(p->get()))
-					app().engine()->set_property((*p)->path(),
-					                             uris.ingen_broadcast,
-					                             app().forge().make(true));
+			set_control_values();
 		}
 
 	} else { // un-embed
-
 		Ganv::Module::embed(NULL);
 		_plugin_ui.reset();
-
-		for (NodeModel::Ports::const_iterator p = _node->ports().begin();
-		     p != _node->ports().end(); ++p)
-			if ((*p)->is_output() && app().can_control(p->get()))
-				app().engine()->set_property((*p)->path(),
-				                             uris.ingen_broadcast,
-				                             app().forge().make(false));
-	}
-
-	if (embed) {
-		set_control_values();
 	}
 }
 
@@ -414,6 +403,12 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 		} else if (key == uris.ingen_selected) {
 			if (value.get_bool() != get_selected()) {
 				set_selected(value.get_bool());
+			}
+		} else if (key == uris.ingen_uiEmbedded) {
+			if (value.get_bool() && !_gui_widget) {
+				embed_gui(true);
+			} else if (!value.get_bool() && _gui_widget) {
+				embed_gui(false);
 			}
 		}
 	} else if (value.type() == uris.forge.String) {
