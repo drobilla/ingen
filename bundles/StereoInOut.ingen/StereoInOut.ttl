@@ -1,0 +1,102 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix lv2ev: <http://lv2plug.in/ns/ext/event#> .
+@prefix midi: <http://lv2plug.in/ns/ext/midi#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<>
+	ingen:edge [
+		ingen:head <control_out> ;
+		ingen:tail <control_in>
+	] , [
+		ingen:head <audio_out_1> ;
+		ingen:tail <audio_in_1>
+	] , [
+		ingen:head <audio_out_2> ;
+		ingen:tail <audio_in_2>
+	] ;
+	ingen:polyphony 1 ;
+	<http://lv2plug.in/ns/extensions/ui#ui> ingen:ui ;
+	lv2:extensionData <http://lv2plug.in/ns/ext/state#interface> ;
+	lv2:port <audio_in_1> ,
+		<audio_in_2> ,
+		<audio_out_1> ,
+		<audio_out_2> ,
+		<control_in> ,
+		<control_out> ;
+	lv2:symbol "StereoInOut" ;
+	doap:name "StereoInOut" ;
+	a ingen:Patch ,
+		lv2:Plugin .
+
+<audio_in_1>
+	ingen:activity 0.0 ;
+	ingen:canvasX 12.0 ;
+	ingen:canvasY 96.69999695 ;
+	ingen:polyphonic false ;
+	lv2:index 2 ;
+	lv2:name "Audio In 1" ;
+	lv2:symbol "audio_in_1" ;
+	a lv2:AudioPort ,
+		lv2:InputPort .
+
+<audio_in_2>
+	ingen:activity 0.0 ;
+	ingen:canvasX 12.0 ;
+	ingen:canvasY 12.0 ;
+	ingen:polyphonic false ;
+	lv2:index 3 ;
+	lv2:name "Audio In 2" ;
+	lv2:symbol "audio_in_2" ;
+	a lv2:AudioPort ,
+		lv2:InputPort .
+
+<audio_out_1>
+	ingen:activity 0.0 ;
+	ingen:canvasX 12.0 ;
+	ingen:canvasY 96.69999695 ;
+	ingen:polyphonic false ;
+	lv2:index 4 ;
+	lv2:name "Audio Out 1" ;
+	lv2:symbol "audio_out_1" ;
+	a lv2:AudioPort ,
+		lv2:OutputPort .
+
+<audio_out_2>
+	ingen:activity 0.0 ;
+	ingen:canvasX 12.0 ;
+	ingen:canvasY 12.0 ;
+	ingen:polyphonic false ;
+	lv2:index 5 ;
+	lv2:name "Audio Out 2" ;
+	lv2:symbol "audio_out_2" ;
+	a lv2:AudioPort ,
+		lv2:OutputPort .
+
+<control_in>
+	ingen:canvasX 23.0 ;
+	ingen:canvasY 181.3999939 ;
+	ingen:polyphonic false ;
+	atom:bufferType atom:Sequence ;
+	lv2:index 0 ;
+	lv2:name "Control" ;
+	lv2:portProperty lv2:connectionOptional ;
+	lv2:symbol "control_in" ;
+	a atom:AtomPort ,
+		lv2:InputPort .
+
+<control_out>
+	ingen:canvasX 148.3999939 ;
+	ingen:canvasY 181.3999939 ;
+	ingen:polyphonic false ;
+	atom:bufferType atom:Sequence ;
+	lv2:index 1 ;
+	lv2:name "Control" ;
+	lv2:symbol "control_out" ;
+	a atom:AtomPort ,
+		lv2:OutputPort .

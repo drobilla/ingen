@@ -348,7 +348,7 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 
 	_model->add_statement(patch_id,
 	                      Sord::URI(world, LV2_UI__ui),
-	                      Sord::URI(world, "http://drobilla.net/ns/ingen#ui"));
+	                      Sord::URI(world, "http://drobilla.net/ns/ingen#PatchUIGtk2"));
 
 	const URIs& uris = *_world.uris().get();
 
@@ -555,6 +555,8 @@ Serialiser::Impl::serialise_properties(const GraphObject*     o,
 	sratom_set_sink(sratom, _base_uri.c_str(),
 	                (SerdStatementSink)sord_inserter_write_statement, NULL,
 	                inserter);
+
+	sratom_set_pretty_numbers(sratom, true);
 
 	typedef GraphObject::Properties::const_iterator iterator;
 	for (iterator v = props.begin(); v != props.end(); ++v) {

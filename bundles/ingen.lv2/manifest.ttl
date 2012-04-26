@@ -1,0 +1,13 @@
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ui: <http://lv2plug.in/ns/extensions/ui#> .
+
+ingen:
+	a owl:Ontology ;
+	rdfs:seeAlso <ingen.ttl> .
+
+ingen:PatchUIGtk2
+	a ui:GtkUI ;
+	ui:binary <libingen_gui_lv2.so> ;
+	rdfs:comment "The Ingen patcher interface." .

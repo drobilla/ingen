@@ -28,7 +28,7 @@
 #include "App.hpp"
 #include "PatchBox.hpp"
 
-#define INGEN_LV2_UI_URI "http://drobilla.net/ns/ingen#ui"
+#define INGEN_LV2_UI_URI "http://drobilla.net/ns/ingen#PatchUIGtk2"
 
 /** A sink that writes atoms to a port via the UI extension. */
 struct IngenLV2AtomSink : public Ingen::Shared::AtomSink {

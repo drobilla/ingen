@@ -169,8 +169,13 @@ def build(bld):
                 os.path.join(bld.env['DATADIR'], 'icons', 'hicolor', s, 'apps', 'ingen.png'),
                 'icons/' + s + '/ingen.png')
 
-    # Template patches/plugins bundle
     bld.install_files('${LV2DIR}/ingen.lv2/',
-                      bld.path.ant_glob('ingen.lv2/*'))
+                      bld.path.ant_glob('bundles/ingen.lv2/*'))
+
+    for i in ['StereoInOut.ingen']:
+        bld.install_files('${LV2DIR}/%s/' % str(i),
+                          bld.path.ant_glob('bundles/%s/*' % str(i)))
+        bld.symlink_as('${LV2DIR}/%s/libingen_lv2.so' % str(i),
+                       bld.env['LV2DIR'] + '/ingen.lv2/libingen_lv2.so')
 
     bld.add_post_fun(autowaf.run_ldconfig)
