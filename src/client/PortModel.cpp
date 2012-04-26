@@ -24,10 +24,12 @@ namespace Client {
 void
 PortModel::on_property(const Raul::URI& uri, const Raul::Atom& value)
 {
-	if (uri == _uris.ingen_value) {
-		this->value(value);
-	} else if (uri == _uris.ingen_activity) {
+	if (uri == _uris.ingen_activity) {
 		signal_activity().emit(value);
+	} else {
+		if (uri == _uris.ingen_value) {
+			this->value(value);
+		}
 	}
 	ObjectModel::on_property(uri, value);
 }
