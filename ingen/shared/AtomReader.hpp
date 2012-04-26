@@ -41,6 +41,9 @@ public:
 	void write(const LV2_Atom* msg);
 
 private:
+	void get_props(const LV2_Atom_Object*       obj,
+	               Ingen::Resource::Properties& props);
+
 	LV2URIMap& _map;
 	URIs&      _uris;
 	Forge&     _forge;

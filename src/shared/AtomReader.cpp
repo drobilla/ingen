@@ -32,6 +32,25 @@ AtomReader::AtomReader(LV2URIMap& map, URIs& uris, Forge& forge, Interface& ifac
 }
 
 void
+AtomReader::get_props(const LV2_Atom_Object*       obj,
+                      Ingen::Resource::Properties& props)
+{
+	LV2_ATOM_OBJECT_FOREACH(obj, p) {
+		Raul::Atom val;
+		if (p->value.type == _uris.atom_URID) {
+			const LV2_Atom_URID* urid = (const LV2_Atom_URID*)&p->value;
+			val = _forge.alloc_uri(_map.unmap_uri(urid->body));
+		} else {
+			val = _forge.alloc(p->value.size,
+			                   p->value.type,
+			                   LV2_ATOM_BODY(&p->value));
+		}
+
+		props.insert(std::make_pair(_map.unmap_uri(p->key), val));
+	}
+}
+
+void
 AtomReader::write(const LV2_Atom* msg)
 {
 	if (msg->type != _uris.atom_Blank) {
@@ -59,32 +78,48 @@ AtomReader::write(const LV2_Atom* msg)
 		if (!body) {
 			Raul::warn << "Put message has no body" << std::endl;
 			return;
+		} else if (!subject_uri) {
+			Raul::warn << "Put message has no subject" << std::endl;
+			return;
 		}
 
 		Ingen::Resource::Properties props;
-		LV2_ATOM_OBJECT_FOREACH(body, p) {
-			Raul::Atom val;
-			if (p->value.type == _uris.atom_URID) {
-				const LV2_Atom_URID* urid = (const LV2_Atom_URID*)&p->value;
-				val = _forge.alloc_uri(_map.unmap_uri(urid->body));
-			} else {
-				val = _forge.alloc(p->value.size,
-				                   p->value.type,
-				                   LV2_ATOM_BODY(&p->value));
-			}
+		get_props(body, props);
 
-			props.insert(std::make_pair(_map.unmap_uri(p->key), val));
+		_iface.set_response_id(obj->body.id);
+		_iface.put(subject_uri, props);
+	} else if (obj->body.otype == _uris.patch_Patch) {
+		if (!subject_uri) {
+			Raul::warn << "Put message has no subject" << std::endl;
+			return;
 		}
 
-		if (subject_uri) {
-			_iface.set_response_id(obj->body.id);
-			_iface.put(subject_uri, props);
-		} else {
-			Raul::warn << "Put message has no subject, ignored" << std::endl;
+		const LV2_Atom_Object* remove = NULL;
+		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_remove, &remove, 0);
+		if (!remove) {
+			Raul::warn << "Patch message has no remove" << std::endl;
+			return;
 		}
 
+		const LV2_Atom_Object* add = NULL;
+		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_add, &add, 0);
+		if (!add) {
+			Raul::warn << "Patch message has no add" << std::endl;
+			return;
+		}
+
+		Ingen::Resource::Properties add_props;
+		get_props(remove, add_props);
+
+		Ingen::Resource::Properties remove_props;
+		get_props(remove, remove_props);
+
+		_iface.delta(subject_uri, remove_props, add_props);
+		
 	} else {
-		Raul::warn << "Unknown object type " << obj->body.otype << std::endl;
+		Raul::warn << "Unknown object type <"
+		           << _map.unmap_uri(obj->body.otype)
+		           << ">" << std::endl;
 	}
 }
 
