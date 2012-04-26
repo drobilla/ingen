@@ -225,7 +225,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::AUDIO:
 		val = forge.make(((AudioBuffer*)buffer(0).get())->peak(context));
-		{
+		if (force || val != _last_broadcasted_value) {
 			const Notification note = Notification::make(
 				Notification::PORT_ACTIVITY, context.start(), this, val);
 			context.event_sink().write(sizeof(note), &note);
