@@ -369,6 +369,10 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
                   const char*              bundle_path,
                   const LV2_Feature*const* features)
 {
+	if (!Glib::thread_supported()) {
+		Glib::thread_init();
+	}
+
 	Shared::set_bundle_path(bundle_path);
 	Lib::Patches patches = find_patches(
 		Glib::filename_to_uri(
