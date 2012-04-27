@@ -35,11 +35,13 @@ AtomReader::AtomReader(LV2URIMap& map, URIs& uris, Forge& forge, Interface& ifac
 void
 AtomReader::get_uri(const LV2_Atom* in, Raul::Atom& out)
 {
-	if (in->type == _uris.atom_URID) {
-		const LV2_Atom_URID* urid = (const LV2_Atom_URID*)in;
-		out = _forge.alloc_uri(_map.unmap_uri(urid->body));
-	} else {
-		out = _forge.alloc(in->size, in->type, LV2_ATOM_BODY(in));
+	if (in) {
+		if (in->type == _uris.atom_URID) {
+			const LV2_Atom_URID* urid = (const LV2_Atom_URID*)in;
+			out = _forge.alloc_uri(_map.unmap_uri(urid->body));
+		} else {
+			out = _forge.alloc(in->size, in->type, LV2_ATOM_BODY(in));
+		}
 	}
 }
 
@@ -76,6 +78,33 @@ AtomReader::write(const LV2_Atom* msg)
 	if (obj->body.otype == _uris.patch_Get) {
 		_iface.set_response_id(obj->body.id);
 		_iface.get(subject_uri);
+	} else if (obj->body.otype == _uris.patch_Delete) {
+		if (subject_uri) {
+			_iface.del(subject_uri);
+			return;
+		}
+
+		const LV2_Atom_Object* body = NULL;
+		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
+		if (body && body->body.otype == _uris.ingen_Edge) {
+			const LV2_Atom* tail = NULL;
+			const LV2_Atom* head = NULL;
+			lv2_atom_object_get(body,
+			                    (LV2_URID)_uris.ingen_tail, &tail,
+			                    (LV2_URID)_uris.ingen_head, &head,
+			                    NULL);
+
+			Raul::Atom tail_atom;
+			Raul::Atom head_atom;
+			get_uri(tail, tail_atom);
+			get_uri(head, head_atom);
+			if (tail_atom.is_valid() && head_atom.is_valid()) {
+				_iface.disconnect(Raul::Path(tail_atom.get_uri()),
+				                  Raul::Path(head_atom.get_uri()));
+			} else {
+				Raul::warn << "Delete of unknown object." << std::endl;
+			}
+		}
 	} else if (obj->body.otype == _uris.patch_Put) {
 		const LV2_Atom_Object* body = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);

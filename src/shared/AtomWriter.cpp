@@ -105,6 +105,18 @@ AtomWriter::forge_properties(const Resource::Properties& properties)
 }
 
 void
+AtomWriter::forge_edge(const Raul::URI& tail, const Raul::URI& head)
+{
+	LV2_Atom_Forge_Frame edge;
+	lv2_atom_forge_blank(&_forge, &edge, 0, _uris.ingen_Edge);
+	lv2_atom_forge_property_head(&_forge, _uris.ingen_tail, 0);
+	forge_uri(tail);
+	lv2_atom_forge_property_head(&_forge, _uris.ingen_head, 0);
+	forge_uri(head);
+	lv2_atom_forge_pop(&_forge, &edge);
+}
+
+void
 AtomWriter::put(const Raul::URI&            uri,
                 const Resource::Properties& properties,
                 Resource::Graph             ctx)
@@ -180,17 +192,8 @@ AtomWriter::connect(const Raul::Path& src,
 	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
 	forge_uri(Raul::Path::lca(src, dst));
 	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
-
-	LV2_Atom_Forge_Frame body;
-	lv2_atom_forge_blank(&_forge, &body, 0, _uris.ingen_Edge);
-	lv2_atom_forge_property_head(&_forge, _uris.ingen_tail, 0);
-	forge_uri(src);
-	lv2_atom_forge_property_head(&_forge, _uris.ingen_head, 0);
-	forge_uri(dst);
-	lv2_atom_forge_pop(&_forge, &body);
-
+	forge_edge(src, dst);
 	lv2_atom_forge_pop(&_forge, &msg);
-
 	finish_msg();
 }
 
@@ -198,6 +201,12 @@ void
 AtomWriter::disconnect(const Raul::URI& src,
                        const Raul::URI& dst)
 {
+	LV2_Atom_Forge_Frame msg;
+	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Delete);
+	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
+	forge_edge(src, dst);
+	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
 }
 
 void

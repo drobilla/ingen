@@ -78,6 +78,7 @@ public:
 private:
 	void forge_uri(const Raul::URI& uri);
 	void forge_properties(const Resource::Properties& properties);
+	void forge_edge(const Raul::URI& tail, const Raul::URI& head);
 
 	void    finish_msg();
 	int32_t next_id();
