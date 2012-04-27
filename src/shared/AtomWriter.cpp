@@ -245,6 +245,10 @@ AtomWriter::get(const Raul::URI& uri)
 void
 AtomWriter::response(int32_t id, Status status)
 {
+	if (id == -1) {
+		return;
+	}
+
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Response);
 	lv2_atom_forge_property_head(&_forge, _uris.patch_request, 0);

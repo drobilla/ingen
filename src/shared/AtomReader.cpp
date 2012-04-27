@@ -115,7 +115,6 @@ AtomReader::write(const LV2_Atom* msg)
 		get_props(remove, remove_props);
 
 		_iface.delta(subject_uri, remove_props, add_props);
-		
 	} else {
 		Raul::warn << "Unknown object type <"
 		           << _map.unmap_uri(obj->body.otype)
