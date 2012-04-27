@@ -60,7 +60,7 @@ public:
 	const Quark atom_eventTransfer;
 	const Quark atom_supports;
 	const Quark doap_name;
-	const Quark ingen_Connection;
+	const Quark ingen_Edge;
 	const Quark ingen_Internal;
 	const Quark ingen_Node;
 	const Quark ingen_Patch;
@@ -70,17 +70,17 @@ public:
 	const Quark ingen_canvasX;
 	const Quark ingen_canvasY;
 	const Quark ingen_controlBinding;
-	const Quark ingen_destination;
 	const Quark ingen_document;
 	const Quark ingen_enabled;
 	const Quark ingen_engine;
+	const Quark ingen_head;
 	const Quark ingen_nil;
 	const Quark ingen_node;
 	const Quark ingen_polyphonic;
 	const Quark ingen_polyphony;
 	const Quark ingen_sampleRate;
 	const Quark ingen_selected;
-	const Quark ingen_source;
+	const Quark ingen_tail;
 	const Quark ingen_uiEmbedded;
 	const Quark ingen_value;
 	const Quark lv2_AudioPort;

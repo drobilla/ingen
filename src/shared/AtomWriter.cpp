@@ -177,13 +177,15 @@ AtomWriter::connect(const Raul::Path& src,
 {
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Put);
+	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	forge_uri(Raul::Path::lca(src, dst));
 	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
 
 	LV2_Atom_Forge_Frame body;
-	lv2_atom_forge_blank(&_forge, &body, 0, _uris.ingen_Connection);
-	lv2_atom_forge_property_head(&_forge, _uris.ingen_source, 0);
+	lv2_atom_forge_blank(&_forge, &body, 0, _uris.ingen_Edge);
+	lv2_atom_forge_property_head(&_forge, _uris.ingen_tail, 0);
 	forge_uri(src);
-	lv2_atom_forge_property_head(&_forge, _uris.ingen_destination, 0);
+	lv2_atom_forge_property_head(&_forge, _uris.ingen_head, 0);
 	forge_uri(dst);
 	lv2_atom_forge_pop(&_forge, &body);
 

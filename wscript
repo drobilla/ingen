@@ -60,7 +60,7 @@ def configure(conf):
     autowaf.check_pkg(conf, 'sratom-0', uselib_store='SRATOM',
                       atleast_version='0.1.0', mandatory=True)
     autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
-                      atleast_version='0.8.3', mandatory=True)
+                      atleast_version='0.8.5', mandatory=True)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
                       atleast_version='0.7.0', mandatory=False)
     if not Options.options.no_gui:

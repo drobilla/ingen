@@ -18,6 +18,7 @@
 
 #include "ingen/shared/AtomReader.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "raul/Path.hpp"
 #include "raul/log.hpp"
 
 namespace Ingen {
@@ -32,20 +33,23 @@ AtomReader::AtomReader(LV2URIMap& map, URIs& uris, Forge& forge, Interface& ifac
 }
 
 void
+AtomReader::get_uri(const LV2_Atom* in, Raul::Atom& out)
+{
+	if (in->type == _uris.atom_URID) {
+		const LV2_Atom_URID* urid = (const LV2_Atom_URID*)in;
+		out = _forge.alloc_uri(_map.unmap_uri(urid->body));
+	} else {
+		out = _forge.alloc(in->size, in->type, LV2_ATOM_BODY(in));
+	}
+}
+
+void
 AtomReader::get_props(const LV2_Atom_Object*       obj,
                       Ingen::Resource::Properties& props)
 {
 	LV2_ATOM_OBJECT_FOREACH(obj, p) {
 		Raul::Atom val;
-		if (p->value.type == _uris.atom_URID) {
-			const LV2_Atom_URID* urid = (const LV2_Atom_URID*)&p->value;
-			val = _forge.alloc_uri(_map.unmap_uri(urid->body));
-		} else {
-			val = _forge.alloc(p->value.size,
-			                   p->value.type,
-			                   LV2_ATOM_BODY(&p->value));
-		}
-
+		get_uri(&p->value, val);
 		props.insert(std::make_pair(_map.unmap_uri(p->key), val));
 	}
 }
@@ -83,11 +87,30 @@ AtomReader::write(const LV2_Atom* msg)
 			return;
 		}
 
-		Ingen::Resource::Properties props;
-		get_props(body, props);
+		if (body->body.otype == _uris.ingen_Edge) {
+			LV2_Atom* tail = NULL;
+			LV2_Atom* head = NULL;
+			lv2_atom_object_get(body,
+			                    (LV2_URID)_uris.ingen_tail, &tail,
+			                    (LV2_URID)_uris.ingen_head, &head,
+			                    NULL);
+			if (!tail || !head) {
+				Raul::warn << "Edge has no tail or head" << std::endl;
+				return;
+			}
 
-		_iface.set_response_id(obj->body.id);
-		_iface.put(subject_uri, props);
+			Raul::Atom tail_atom;
+			Raul::Atom head_atom;
+			get_uri(tail, tail_atom);
+			get_uri(head, head_atom);
+			_iface.connect(Raul::Path(tail_atom.get_uri()),
+			               Raul::Path(head_atom.get_uri()));
+		} else {
+			Ingen::Resource::Properties props;
+			get_props(body, props);
+			_iface.set_response_id(obj->body.id);
+			_iface.put(subject_uri, props);
+		}
 	} else if (obj->body.otype == _uris.patch_Patch) {
 		if (!subject_uri) {
 			Raul::warn << "Put message has no subject" << std::endl;
