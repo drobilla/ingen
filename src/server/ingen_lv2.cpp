@@ -426,7 +426,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	Server::ThreadManager::single_threaded = true;
 
 	// FIXME: fixed (or at least maximum) buffer size
-	LV2Driver* driver = new LV2Driver(*engine.get(), rate, 4096);
+	LV2Driver* driver = new LV2Driver(*engine.get(), 4096, rate);
 	engine->set_driver(SharedPtr<Ingen::Server::Driver>(driver));
 
 	interface->set_response_interface(&driver->writer());
