@@ -147,11 +147,13 @@ public:
 		, _writer(*engine.world()->lv2_uri_map().get(),
 		          *engine.world()->uris().get(),
 		          *this)
-		, _to_ui(32768) // FIXME: size
+		, _to_ui(buffer_size * sizeof(float))  // FIXME: size
 		, _root_patch(NULL)
 		, _buffer_size(buffer_size)
 		, _sample_rate(sample_rate)
 		, _frame_time(0)
+		, _to_ui_overflow_sem(0)
+		, _to_ui_overflow(false)
 	{}
 
 	void run(uint32_t nframes) {
@@ -216,8 +218,11 @@ public:
 
 	void write(const LV2_Atom* atom) {
 		// Called from post-processor in main thread
-		if (_to_ui.write(lv2_atom_total_size(atom), atom) == 0) {
-			Raul::error << "To-UI ring overflow" << std::endl;
+		while (_to_ui.write(lv2_atom_total_size(atom), atom) == 0) {
+			// Overflow, wait until ring is drained next cycle
+			_to_ui_overflow = true;
+			_to_ui_overflow_sem.wait();
+			_to_ui_overflow = false;
 		}
 	}
 
@@ -227,7 +232,7 @@ public:
 
 		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_ports[1]->buffer();
 		if (!seq) {
-			Raul::warn << "Control out port not connected" << std::endl;
+			Raul::error << "Control out port not connected" << std::endl;
 			return;
 		}
 
@@ -265,6 +270,8 @@ public:
 			read           += lv2_atom_total_size(&ev->body);
 			seq->atom.size += sizeof(LV2_Atom_Event) + ev->body.size;
 		}
+
+		_to_ui_overflow_sem.post();
 	}
 
 	virtual SampleCount block_length() const { return _buffer_size; }
@@ -288,6 +295,8 @@ private:
 	SampleCount        _sample_rate;
 	SampleCount        _frame_time;
 	Ports              _ports;
+	Raul::Semaphore    _to_ui_overflow_sem;
+	bool               _to_ui_overflow;
 };
 
 void
