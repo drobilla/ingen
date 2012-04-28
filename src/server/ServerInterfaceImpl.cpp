@@ -126,16 +126,16 @@ ServerInterfaceImpl::del(const URI& uri)
 }
 
 void
-ServerInterfaceImpl::connect(const Path& src_port_path,
-                             const Path& dst_port_path)
+ServerInterfaceImpl::connect(const Path& tail_path,
+                             const Path& head_path)
 {
-	push_queued(new Events::Connect(_engine, _request_client, _request_id, now(), src_port_path, dst_port_path));
+	push_queued(new Events::Connect(_engine, _request_client, _request_id, now(), tail_path, head_path));
 
 }
 
 void
-ServerInterfaceImpl::disconnect(const URI& src,
-                                const URI& dst)
+ServerInterfaceImpl::disconnect(const Path& src,
+                                const Path& dst)
 {
 	if (!Path::is_path(src) && !Path::is_path(dst)) {
 		std::cerr << "Bad disconnect request " << src << " => " << dst << std::endl;

@@ -52,16 +52,16 @@ public:
 	        Interface*        client,
 	        int32_t           id,
 	        SampleCount       timestamp,
-	        const Raul::Path& src_port_path,
-	        const Raul::Path& dst_port_path);
+	        const Raul::Path& tail,
+	        const Raul::Path& head);
 
 	void pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	Raul::Path _src_port_path;
-	Raul::Path _dst_port_path;
+	Raul::Path _tail_path;
+	Raul::Path _head_path;
 
 	PatchImpl*  _patch;
 	OutputPort* _src_output_port;

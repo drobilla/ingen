@@ -88,7 +88,7 @@ Builder::connect(SharedPtr<const GraphObject> object)
 	if (patch) {
 		for (Patch::Connections::const_iterator i = patch->connections().begin();
 				i != patch->connections().end(); ++i) {
-			_interface.connect(i->second->src_port_path(), i->second->dst_port_path());
+			_interface.connect(i->second->tail_path(), i->second->head_path());
 		}
 		return;
 	}

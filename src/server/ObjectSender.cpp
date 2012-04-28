@@ -88,7 +88,7 @@ ObjectSender::send_patch(Interface* client, const PatchImpl* patch, bool recursi
 		// Send connections
 		for (PatchImpl::Connections::const_iterator j = patch->connections().begin();
 				j != patch->connections().end(); ++j)
-			client->connect(j->second->src_port_path(), j->second->dst_port_path());
+			client->connect(j->second->tail_path(), j->second->head_path());
 	}
 
 	if (bundle)

@@ -29,7 +29,7 @@ class Port;
 namespace Client {
 
 class ClientStore;
-class ConnectionModel;
+class EdgeModel;
 
 /** Client's model of a patch.
  *
@@ -42,8 +42,8 @@ public:
 
 	const Connections& connections() const { return *_connections.get(); }
 
-	SharedPtr<ConnectionModel> get_connection(const Ingen::Port* src_port,
-	                                          const Ingen::Port* dst_port);
+	SharedPtr<EdgeModel> get_connection(const Ingen::Port* tail,
+	                                    const Ingen::Port* head);
 
 	bool     enabled()       const;
 	bool     polyphonic()    const;
@@ -52,8 +52,8 @@ public:
 	// Signals
 	INGEN_SIGNAL(new_node, void, SharedPtr<NodeModel>);
 	INGEN_SIGNAL(removed_node, void, SharedPtr<NodeModel>);
-	INGEN_SIGNAL(new_connection, void, SharedPtr<ConnectionModel>);
-	INGEN_SIGNAL(removed_connection, void, SharedPtr<ConnectionModel>);
+	INGEN_SIGNAL(new_connection, void, SharedPtr<EdgeModel>);
+	INGEN_SIGNAL(removed_connection, void, SharedPtr<EdgeModel>);
 
 private:
 	friend class ClientStore;
@@ -68,9 +68,9 @@ private:
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);
 
-	void add_connection(SharedPtr<ConnectionModel> cm);
-	void remove_connection(const Ingen::Port* src_port,
-	                       const Ingen::Port* dst_port);
+	void add_connection(SharedPtr<EdgeModel> cm);
+	void remove_connection(const Ingen::Port* tail,
+	                       const Ingen::Port* head);
 
 	SharedPtr<Connections> _connections;
 };

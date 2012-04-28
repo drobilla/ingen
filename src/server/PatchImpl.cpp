@@ -300,17 +300,17 @@ void
 PatchImpl::add_connection(SharedPtr<ConnectionImpl> c)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	_connections.insert(make_pair(make_pair(c->src_port(), c->dst_port()), c));
+	_connections.insert(make_pair(make_pair(c->tail(), c->head()), c));
 }
 
 /** Remove a connection.
  * Preprocessing thread only.
  */
 SharedPtr<ConnectionImpl>
-PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
+PatchImpl::remove_connection(const PortImpl* tail, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Connections::iterator i = _connections.find(make_pair(src_port, dst_port));
+	Connections::iterator i = _connections.find(make_pair(tail, dst_port));
 	if (i != _connections.end()) {
 		SharedPtr<ConnectionImpl> c = PtrCast<ConnectionImpl>(i->second);
 		_connections.erase(i);
@@ -322,10 +322,10 @@ PatchImpl::remove_connection(const PortImpl* src_port, const PortImpl* dst_port)
 }
 
 bool
-PatchImpl::has_connection(const PortImpl* src_port, const PortImpl* dst_port) const
+PatchImpl::has_connection(const PortImpl* tail, const PortImpl* dst_port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Connections::const_iterator i = _connections.find(make_pair(src_port, dst_port));
+	Connections::const_iterator i = _connections.find(make_pair(tail, dst_port));
 	return (i != _connections.end());
 }
 
@@ -474,8 +474,8 @@ PatchImpl::compile() const
 	for (Connections::const_iterator i = _connections.begin();
 	     i != _connections.end(); ++i) {
 		SharedPtr<ConnectionImpl> c = PtrCast<ConnectionImpl>(i->second);
-		if (c->src_port()->parent_node()->context() == Context::AUDIO &&
-		    c->dst_port()->parent_node()->context() == Context::MESSAGE) {
+		if (c->tail()->parent_node()->context() == Context::AUDIO &&
+		    c->head()->parent_node()->context() == Context::MESSAGE) {
 			compiled_patch->queued_connections.push_back(c.get());
 		}
 	}

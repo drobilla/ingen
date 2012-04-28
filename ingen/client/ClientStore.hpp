@@ -91,13 +91,13 @@ public:
 	                  const Raul::URI&  predicate,
 	                  const Raul::Atom& value);
 
-	void connect(const Raul::Path& src_port_path,
-	             const Raul::Path& dst_port_path);
+	void connect(const Raul::Path& tail,
+	             const Raul::Path& head);
 
-	void disconnect(const Raul::URI& src,
-	                const Raul::URI& dst);
+	void disconnect(const Raul::Path& tail,
+	                const Raul::Path& head);
 
-	void disconnect_all(const Raul::Path& parent_patch_path,
+	void disconnect_all(const Raul::Path& parent_patch,
 	                    const Raul::Path& path);
 
 	void del(const Raul::URI& uri);
@@ -122,15 +122,15 @@ private:
 
 	void add_plugin(SharedPtr<PluginModel> plugin);
 
-	SharedPtr<PatchModel> connection_patch(const Raul::Path& src_port_path,
-	                                       const Raul::Path& dst_port_path);
+	SharedPtr<PatchModel> connection_patch(const Raul::Path& tail_path,
+	                                       const Raul::Path& head_path);
 
 	void bundle_begin() {}
 	void bundle_end()   {}
 
 	// Slots for SigClientInterface signals
-	bool attempt_connection(const Raul::Path& src_port_path,
-	                        const Raul::Path& dst_port_path);
+	bool attempt_connection(const Raul::Path& tail_path,
+	                        const Raul::Path& head_path);
 
 	SharedPtr<Shared::URIs>       _uris;
 	SharedPtr<Interface>          _engine;

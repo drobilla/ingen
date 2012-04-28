@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_CLIENT_CONNECTIONMODEL_HPP
-#define INGEN_CLIENT_CONNECTIONMODEL_HPP
+#ifndef INGEN_CLIENT_EDGE_MODEL_HPP
+#define INGEN_CLIENT_EDGE_MODEL_HPP
 
 #include <cassert>
 
@@ -34,34 +34,34 @@ class ClientStore;
  *
  * \ingroup IngenClient
  */
-class ConnectionModel : public Connection
+class EdgeModel : public Connection
 {
 public:
-	SharedPtr<PortModel> src_port() const { return _src_port; }
-	SharedPtr<PortModel> dst_port() const { return _dst_port; }
+	SharedPtr<PortModel> tail() const { return _tail; }
+	SharedPtr<PortModel> head() const { return _head; }
 
-	const Raul::Path& src_port_path() const { return _src_port->path(); }
-	const Raul::Path& dst_port_path() const { return _dst_port->path(); }
+	const Raul::Path& tail_path() const { return _tail->path(); }
+	const Raul::Path& head_path() const { return _head->path(); }
 
 private:
 	friend class ClientStore;
 
-	ConnectionModel(SharedPtr<PortModel> src, SharedPtr<PortModel> dst)
-		: _src_port(src)
-		, _dst_port(dst)
+	EdgeModel(SharedPtr<PortModel> tail, SharedPtr<PortModel> head)
+		: _tail(tail)
+		, _head(head)
 	{
-		assert(_src_port);
-		assert(_dst_port);
-		assert(_src_port->parent());
-		assert(_dst_port->parent());
-		assert(_src_port->path() != _dst_port->path());
+		assert(_tail);
+		assert(_head);
+		assert(_tail->parent());
+		assert(_head->parent());
+		assert(_tail->path() != _head->path());
 	}
 
-	const SharedPtr<PortModel> _src_port;
-	const SharedPtr<PortModel> _dst_port;
+	const SharedPtr<PortModel> _tail;
+	const SharedPtr<PortModel> _head;
 };
 
 } // namespace Client
 } // namespace Ingen
 
-#endif // INGEN_CLIENT_CONNECTIONMODEL_HPP
+#endif // INGEN_CLIENT_EDGE_MODEL_HPP

@@ -60,13 +60,13 @@ class ConnectionImpl
 	boost::intrusive::link_mode<boost::intrusive::auto_unlink> >
 {
 public:
-	ConnectionImpl(PortImpl* src_port, PortImpl* dst_port);
+	ConnectionImpl(PortImpl* tail, PortImpl* head);
 
-	PortImpl* src_port() const { return _src_port; }
-	PortImpl* dst_port() const { return _dst_port; }
+	PortImpl* tail() const { return _tail; }
+	PortImpl* head() const { return _head; }
 
-	const Raul::Path& src_port_path() const;
-	const Raul::Path& dst_port_path() const;
+	const Raul::Path& tail_path() const;
+	const Raul::Path& head_path() const;
 
 	void queue(Context& context);
 
@@ -94,8 +94,8 @@ public:
 protected:
 	void dump() const;
 
-	PortImpl* const   _src_port;
-	PortImpl* const   _dst_port;
+	PortImpl* const   _tail;
+	PortImpl* const   _head;
 	Raul::RingBuffer* _queue;
 };
 

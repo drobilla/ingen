@@ -516,8 +516,8 @@ Serialiser::Impl::serialise_connection(const Sord::Node&           parent,
 
 	Sord::World& world = _model->world();
 
-	const Sord::Node src           = path_rdf_node(connection->src_port_path());
-	const Sord::Node dst           = path_rdf_node(connection->dst_port_path());
+	const Sord::Node src           = path_rdf_node(connection->tail_path());
+	const Sord::Node dst           = path_rdf_node(connection->head_path());
 	const Sord::Node connection_id = Sord::Node::blank_id(*_world.rdf_world());
 	_model->add_statement(connection_id,
 	                      Sord::Curie(world, "ingen:tail"),

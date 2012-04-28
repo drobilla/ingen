@@ -69,11 +69,11 @@ public:
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path);
 
-	virtual void connect(const Raul::Path& src_port_path,
-	                     const Raul::Path& dst_port_path);
+	virtual void connect(const Raul::Path& tail,
+	                     const Raul::Path& head);
 
-	virtual void disconnect(const Raul::URI& src,
-	                        const Raul::URI& dst);
+	virtual void disconnect(const Raul::Path& tail,
+	                        const Raul::Path& head);
 
 	virtual void set_property(const Raul::URI& subject_path,
 	                          const Raul::URI&  predicate,

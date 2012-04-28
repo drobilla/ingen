@@ -125,13 +125,13 @@ DisconnectAll::pre_process()
 	     i != _parent->connections().end(); ++i) {
 		ConnectionImpl* const c = (ConnectionImpl*)i->second.get();
 		if (_node) {
-			if (c->src_port()->parent_node() == _node
-			    || c->dst_port()->parent_node() == _node) {
+			if (c->tail()->parent_node() == _node
+			    || c->head()->parent_node() == _node) {
 				to_remove.insert(c);
 			}
 		} else {
 			assert(_port);
-			if (c->src_port() == _port || c->dst_port() == _port) {
+			if (c->tail() == _port || c->head() == _port) {
 				to_remove.insert(c);
 			}
 		}
@@ -142,8 +142,8 @@ DisconnectAll::pre_process()
 	     i != to_remove.end(); ++i) {
 		_impls.push_back(new Disconnect::Impl(
 			                 _engine, _parent,
-			                 dynamic_cast<OutputPort*>((*i)->src_port()),
-			                 dynamic_cast<InputPort*>((*i)->dst_port())));
+			                 dynamic_cast<OutputPort*>((*i)->tail()),
+			                 dynamic_cast<InputPort*>((*i)->head())));
 	}
 
 	if (!_deleting && _parent->enabled())
@@ -160,7 +160,7 @@ DisconnectAll::execute(ProcessContext& context)
 	if (_status == SUCCESS) {
 		for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i) {
 			(*i)->execute(context,
-			              !_deleting || ((*i)->dst_port()->parent_node() != _node));
+			              !_deleting || ((*i)->head()->parent_node() != _node));
 		}
 	}
 

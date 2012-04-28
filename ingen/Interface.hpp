@@ -59,13 +59,13 @@ public:
 
 	virtual void del(const Raul::URI& uri) = 0;
 
-	virtual void connect(const Raul::Path& src_port_path,
-	                     const Raul::Path& dst_port_path) = 0;
+	virtual void connect(const Raul::Path& tail,
+	                     const Raul::Path& head) = 0;
 
-	virtual void disconnect(const Raul::URI& src,
-	                        const Raul::URI& dst) = 0;
+	virtual void disconnect(const Raul::Path& tail,
+	                        const Raul::Path& head) = 0;
 
-	virtual void disconnect_all(const Raul::Path& parent_patch_path,
+	virtual void disconnect_all(const Raul::Path& parent_patch,
 	                            const Raul::Path& path) = 0;
 
 	virtual void set_property(const Raul::URI&  subject,

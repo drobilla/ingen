@@ -305,7 +305,7 @@ PatchCanvas::build()
 	// Create connections
 	for (PatchModel::Connections::const_iterator i = _patch->connections().begin();
 	     i != _patch->connections().end(); ++i) {
-		connection(PtrCast<ConnectionModel>(i->second));
+		connection(PtrCast<EdgeModel>(i->second));
 	}
 }
 
@@ -473,43 +473,41 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 }
 
 void
-PatchCanvas::connection(SharedPtr<const ConnectionModel> cm)
+PatchCanvas::connection(SharedPtr<const EdgeModel> cm)
 {
-	assert(cm);
+	Ganv::Port* const tail = get_port_view(cm->tail());
+	Ganv::Port* const head = get_port_view(cm->head());
 
-	Ganv::Port* const src = get_port_view(cm->src_port());
-	Ganv::Port* const dst = get_port_view(cm->dst_port());
-
-	if (src && dst) {
-		new GUI::Connection(*this, cm, src, dst, src->get_fill_color());
+	if (tail && head) {
+		new GUI::Connection(*this, cm, tail, head, tail->get_fill_color());
 	} else {
 		LOG(error) << "Unable to find ports to connect "
-		           << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
+		           << cm->tail_path() << " -> " << cm->head_path() << endl;
 	}
 }
 
 void
-PatchCanvas::disconnection(SharedPtr<const ConnectionModel> cm)
+PatchCanvas::disconnection(SharedPtr<const EdgeModel> cm)
 {
-	Ganv::Port* const src = get_port_view(cm->src_port());
-	Ganv::Port* const dst = get_port_view(cm->dst_port());
+	Ganv::Port* const src = get_port_view(cm->tail());
+	Ganv::Port* const dst = get_port_view(cm->head());
 
 	if (src && dst)
 		remove_edge(src, dst);
 	else
 		LOG(error) << "Unable to find ports to disconnect "
-		           << cm->src_port_path() << " -> " << cm->dst_port_path() << endl;
+		           << cm->tail_path() << " -> " << cm->head_path() << endl;
 }
 
 void
-PatchCanvas::connect(Ganv::Node* src_port,
-                     Ganv::Node* dst_port)
+PatchCanvas::connect(Ganv::Node* tail,
+                     Ganv::Node* head)
 {
 	const Ingen::GUI::Port* const src
-		= dynamic_cast<Ingen::GUI::Port*>(src_port);
+		= dynamic_cast<Ingen::GUI::Port*>(tail);
 
 	const Ingen::GUI::Port* const dst
-		= dynamic_cast<Ingen::GUI::Port*>(dst_port);
+		= dynamic_cast<Ingen::GUI::Port*>(head);
 
 	if (!src || !dst)
 		return;
@@ -518,17 +516,13 @@ PatchCanvas::connect(Ganv::Node* src_port,
 }
 
 void
-PatchCanvas::disconnect(Ganv::Node* src_port,
-                        Ganv::Node* dst_port)
+PatchCanvas::disconnect(Ganv::Node* tail,
+                        Ganv::Node* head)
 {
-	const Ingen::GUI::Port* const src
-		= dynamic_cast<Ingen::GUI::Port*>(src_port);
+	const Ingen::GUI::Port* const t = dynamic_cast<Ingen::GUI::Port*>(tail);
+	const Ingen::GUI::Port* const h = dynamic_cast<Ingen::GUI::Port*>(head);
 
-	const Ingen::GUI::Port* const dst
-		= dynamic_cast<Ingen::GUI::Port*>(dst_port);
-
-	_app.engine()->disconnect(src->model()->path(),
-	                          dst->model()->path());
+	_app.engine()->disconnect(t->model()->path(), h->model()->path());
 }
 
 void

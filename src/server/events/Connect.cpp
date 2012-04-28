@@ -46,11 +46,11 @@ Connect::Connect(Engine&     engine,
                  Interface*  client,
                  int32_t     id,
                  SampleCount timestamp,
-                 const Path& src_port_path,
-                 const Path& dst_port_path)
+                 const Path& tail_path,
+                 const Path& head_path)
 	: Event(engine, client, id, timestamp)
-	, _src_port_path(src_port_path)
-	, _dst_port_path(dst_port_path)
+	, _tail_path(tail_path)
+	, _head_path(head_path)
 	, _patch(NULL)
 	, _src_output_port(NULL)
 	, _dst_input_port(NULL)
@@ -63,24 +63,24 @@ Connect::pre_process()
 {
 	Glib::RWLock::ReaderLock rlock(_engine.engine_store()->lock());
 
-	PortImpl* src_port = _engine.engine_store()->find_port(_src_port_path);
-	PortImpl* dst_port = _engine.engine_store()->find_port(_dst_port_path);
-	if (!src_port || !dst_port) {
+	PortImpl* tail = _engine.engine_store()->find_port(_tail_path);
+	PortImpl* head = _engine.engine_store()->find_port(_head_path);
+	if (!tail || !head) {
 		_status = PORT_NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
 
-	_dst_input_port  = dynamic_cast<InputPort*>(dst_port);
-	_src_output_port = dynamic_cast<OutputPort*>(src_port);
+	_dst_input_port  = dynamic_cast<InputPort*>(head);
+	_src_output_port = dynamic_cast<OutputPort*>(tail);
 	if (!_dst_input_port || !_src_output_port) {
 		_status = DIRECTION_MISMATCH;
 		Event::pre_process();
 		return;
 	}
 
-	NodeImpl* const src_node = src_port->parent_node();
-	NodeImpl* const dst_node = dst_port->parent_node();
+	NodeImpl* const src_node = tail->parent_node();
+	NodeImpl* const dst_node = head->parent_node();
 	if (!src_node || !dst_node) {
 		_status = PARENT_NOT_FOUND;
 		Event::pre_process();
@@ -176,7 +176,7 @@ Connect::post_process()
 {
 	respond(_status);
 	if (!_status) {
-		_engine.broadcaster()->connect(_src_port_path, _dst_port_path);
+		_engine.broadcaster()->connect(_tail_path, _head_path);
 	}
 }
 

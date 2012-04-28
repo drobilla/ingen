@@ -24,7 +24,7 @@
 
 namespace Ingen {
 
-namespace Client { class ConnectionModel; }
+namespace Client { class EdgeModel; }
 
 namespace GUI {
 
@@ -35,16 +35,16 @@ namespace GUI {
 class Connection : public Ganv::Edge
 {
 public:
-	Connection(Ganv::Canvas&                                    canvas,
-	           boost::shared_ptr<const Client::ConnectionModel> model,
-	           Ganv::Node*                                      src,
-	           Ganv::Node*                                      dst,
-	           uint32_t                                         color);
+	Connection(Ganv::Canvas&                              canvas,
+	           boost::shared_ptr<const Client::EdgeModel> model,
+	           Ganv::Node*                                src,
+	           Ganv::Node*                                dst,
+	           uint32_t                                   color);
 
-	SharedPtr<const Client::ConnectionModel> model() const { return _connection_model; }
+	SharedPtr<const Client::EdgeModel> model() const { return _edge_model; }
 
 private:
-	SharedPtr<const Client::ConnectionModel> _connection_model;
+	SharedPtr<const Client::EdgeModel> _edge_model;
 };
 
 } // namespace GUI

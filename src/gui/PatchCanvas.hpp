@@ -30,7 +30,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen/client/ConnectionModel.hpp"
+#include "ingen/client/EdgeModel.hpp"
 #include "ingen/GraphObject.hpp"
 #include "NodeModule.hpp"
 
@@ -68,8 +68,8 @@ public:
 	void remove_node(SharedPtr<const Client::NodeModel> nm);
 	void add_port(SharedPtr<const Client::PortModel> pm);
 	void remove_port(SharedPtr<const Client::PortModel> pm);
-	void connection(SharedPtr<const Client::ConnectionModel> cm);
-	void disconnection(SharedPtr<const Client::ConnectionModel> cm);
+	void connection(SharedPtr<const Client::EdgeModel> cm);
+	void disconnection(SharedPtr<const Client::EdgeModel> cm);
 
 	void get_new_module_location(double& x, double& y);
 

@@ -54,11 +54,11 @@ public:
 
 	void del(const Raul::URI& uri);
 
-	void connect(const Raul::Path& src_port_path,
-	             const Raul::Path& dst_port_path);
+	void connect(const Raul::Path& tail,
+	             const Raul::Path& head);
 
-	void disconnect(const Raul::URI& src,
-	                const Raul::URI& dst);
+	void disconnect(const Raul::Path& tail,
+	                const Raul::Path& head);
 
 	void disconnect_all(const Raul::Path& parent_patch_path,
 	                    const Raul::Path& path);

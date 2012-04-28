@@ -54,7 +54,7 @@ public:
 	INGEN_SIGNAL(object_moved, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(object_deleted, void, Raul::URI)
 	INGEN_SIGNAL(connection, void, Raul::Path, Raul::Path)
-	INGEN_SIGNAL(disconnection, void, Raul::URI, Raul::URI)
+	INGEN_SIGNAL(disconnection, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(disconnect_all, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(variable_change, void, Raul::URI, Raul::URI, Raul::Atom)
 	INGEN_SIGNAL(property_change, void, Raul::URI, Raul::URI, Raul::Atom)
@@ -91,8 +91,8 @@ protected:
 	           const Resource::Properties& add)
 		{ EMIT(delta, uri, remove, add); }
 
-	void connect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path)
-		{ EMIT(connection, src_port_path, dst_port_path); }
+	void connect(const Raul::Path& tail, const Raul::Path& head)
+		{ EMIT(connection, tail, head); }
 
 	void del(const Raul::URI& uri)
 		{ EMIT(object_deleted, uri); }
@@ -100,8 +100,8 @@ protected:
 	void move(const Raul::Path& old_path, const Raul::Path& new_path)
 		{ EMIT(object_moved, old_path, new_path); }
 
-	void disconnect(const Raul::URI& src, const Raul::URI& dst)
-		{ EMIT(disconnection, src, dst); }
+	void disconnect(const Raul::Path& tail, const Raul::Path& head)
+		{ EMIT(disconnection, tail, head); }
 
 	void disconnect_all(const Raul::Path& parent_patch_path, const Raul::Path& path)
 		{ EMIT(disconnect_all, parent_patch_path, path); }

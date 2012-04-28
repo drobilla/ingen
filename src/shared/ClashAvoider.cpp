@@ -166,24 +166,24 @@ ClashAvoider::move(const Raul::Path& old_path,
 }
 
 void
-ClashAvoider::connect(const Raul::Path& src_port_path,
-                      const Raul::Path& dst_port_path)
+ClashAvoider::connect(const Raul::Path& tail,
+                      const Raul::Path& head)
 {
-	_target.connect(map_path(src_port_path), map_path(dst_port_path));
+	_target.connect(map_path(tail), map_path(head));
 }
 
 void
-ClashAvoider::disconnect(const Raul::URI& src,
-                         const Raul::URI& dst)
+ClashAvoider::disconnect(const Raul::Path& tail,
+                         const Raul::Path& head)
 {
-	_target.disconnect(map_uri(src), map_uri(dst));
+	_target.disconnect(map_path(tail), map_path(head));
 }
 
 void
-ClashAvoider::disconnect_all(const Raul::Path& parent_patch_path,
+ClashAvoider::disconnect_all(const Raul::Path& parent_patch,
                              const Raul::Path& path)
 {
-	_target.disconnect_all(map_path(parent_patch_path), map_path(path));
+	_target.disconnect_all(map_path(parent_patch), map_path(path));
 }
 
 void

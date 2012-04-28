@@ -136,13 +136,13 @@ InputPort::add_connection(ConnectionImpl* c)
  * will audibly take effect.
  */
 ConnectionImpl*
-InputPort::remove_connection(ProcessContext& context, const OutputPort* src_port)
+InputPort::remove_connection(ProcessContext& context, const OutputPort* tail)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	ConnectionImpl* connection = NULL;
 	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
-		if (i->src_port() == src_port) {
+		if (i->tail() == tail) {
 			connection = &*i;
 			_connections.erase(i);
 			break;
@@ -192,7 +192,7 @@ InputPort::pre_process(Context& context)
 		uint32_t max_num_srcs = 0;
 		for (Connections::const_iterator c = _connections.begin();
 		     c != _connections.end(); ++c) {
-			max_num_srcs += c->src_port()->poly();
+			max_num_srcs += c->tail()->poly();
 		}
 
 		boost::intrusive_ptr<Buffer> srcs[max_num_srcs];

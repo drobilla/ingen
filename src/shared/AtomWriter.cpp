@@ -184,27 +184,27 @@ AtomWriter::del(const Raul::URI& uri)
 }
 
 void
-AtomWriter::connect(const Raul::Path& src,
-                    const Raul::Path& dst)
+AtomWriter::connect(const Raul::Path& tail,
+                    const Raul::Path& head)
 {
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Put);
 	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
-	forge_uri(Raul::Path::lca(src, dst));
+	forge_uri(Raul::Path::lca(tail, head));
 	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
-	forge_edge(src, dst);
+	forge_edge(tail, head);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }
 
 void
-AtomWriter::disconnect(const Raul::URI& src,
-                       const Raul::URI& dst)
+AtomWriter::disconnect(const Raul::Path& tail,
+                       const Raul::Path& head)
 {
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Delete);
 	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
-	forge_edge(src, dst);
+	forge_edge(tail, head);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }

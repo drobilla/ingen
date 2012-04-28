@@ -45,14 +45,14 @@ Disconnect::Disconnect(Engine&           engine,
                        Interface*        client,
                        int32_t           id,
                        SampleCount       timestamp,
-                       const Raul::Path& src_port_path,
-                       const Raul::Path& dst_port_path)
+                       const Raul::Path& tail_path,
+                       const Raul::Path& head_path)
 	: Event(engine, client, id, timestamp)
-	, _src_port_path(src_port_path)
-	, _dst_port_path(dst_port_path)
+	, _tail_path(tail_path)
+	, _head_path(head_path)
 	, _patch(NULL)
-	, _src_port(NULL)
-	, _dst_port(NULL)
+	, _tail(NULL)
+	, _head(NULL)
 	, _impl(NULL)
 	, _compiled_patch(NULL)
 {
@@ -115,25 +115,25 @@ Disconnect::pre_process()
 {
 	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
 
-	if (_src_port_path.parent().parent() != _dst_port_path.parent().parent()
-	    && _src_port_path.parent() != _dst_port_path.parent().parent()
-	    && _src_port_path.parent().parent() != _dst_port_path.parent()) {
+	if (_tail_path.parent().parent() != _head_path.parent().parent()
+	    && _tail_path.parent() != _head_path.parent().parent()
+	    && _tail_path.parent().parent() != _head_path.parent()) {
 		_status = PARENT_DIFFERS;
 		Event::pre_process();
 		return;
 	}
 
-	_src_port = _engine.engine_store()->find_port(_src_port_path);
-	_dst_port = _engine.engine_store()->find_port(_dst_port_path);
+	_tail = _engine.engine_store()->find_port(_tail_path);
+	_head = _engine.engine_store()->find_port(_head_path);
 
-	if (_src_port == NULL || _dst_port == NULL) {
+	if (_tail == NULL || _head == NULL) {
 		_status = PORT_NOT_FOUND;
 		Event::pre_process();
 		return;
 	}
 
-	NodeImpl* const src_node = _src_port->parent_node();
-	NodeImpl* const dst_node = _dst_port->parent_node();
+	NodeImpl* const src_node = _tail->parent_node();
+	NodeImpl* const dst_node = _head->parent_node();
 
 	// Connection to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
@@ -155,7 +155,7 @@ Disconnect::pre_process()
 
 	assert(_patch);
 
-	if (!_patch->has_connection(_src_port, _dst_port)) {
+	if (!_patch->has_connection(_tail, _head)) {
 		_status = NOT_FOUND;
 		Event::pre_process();
 		return;
@@ -169,8 +169,8 @@ Disconnect::pre_process()
 
 	_impl = new Impl(_engine,
 	                 _patch,
-	                 dynamic_cast<OutputPort*>(_src_port),
-	                 dynamic_cast<InputPort*>(_dst_port));
+	                 dynamic_cast<OutputPort*>(_tail),
+	                 dynamic_cast<InputPort*>(_head));
 
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
@@ -228,7 +228,7 @@ Disconnect::post_process()
 {
 	respond(_status);
 	if (!_status) {
-		_engine.broadcaster()->disconnect(_src_port->path(), _dst_port->path());
+		_engine.broadcaster()->disconnect(_tail->path(), _head->path());
 	}
 
 	delete _impl;

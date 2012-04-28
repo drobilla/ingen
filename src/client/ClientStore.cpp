@@ -20,7 +20,7 @@
 #include "ingen/shared/LV2URIMap.hpp"
 
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/ConnectionModel.hpp"
+#include "ingen/client/EdgeModel.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PatchModel.hpp"
@@ -414,42 +414,42 @@ ClientStore::set_property(const URI& subject_uri, const URI& predicate, const At
 }
 
 SharedPtr<PatchModel>
-ClientStore::connection_patch(const Path& src_port_path, const Path& dst_port_path)
+ClientStore::connection_patch(const Path& tail_path, const Path& head_path)
 {
 	SharedPtr<PatchModel> patch;
 
-	if (src_port_path.parent() == dst_port_path.parent())
-		patch = PtrCast<PatchModel>(_object(src_port_path.parent()));
+	if (tail_path.parent() == head_path.parent())
+		patch = PtrCast<PatchModel>(_object(tail_path.parent()));
 
-	if (!patch && src_port_path.parent() == dst_port_path.parent().parent())
-		patch = PtrCast<PatchModel>(_object(src_port_path.parent()));
+	if (!patch && tail_path.parent() == head_path.parent().parent())
+		patch = PtrCast<PatchModel>(_object(tail_path.parent()));
 
-	if (!patch && src_port_path.parent().parent() == dst_port_path.parent())
-		patch = PtrCast<PatchModel>(_object(dst_port_path.parent()));
-
-	if (!patch)
-		patch = PtrCast<PatchModel>(_object(src_port_path.parent().parent()));
+	if (!patch && tail_path.parent().parent() == head_path.parent())
+		patch = PtrCast<PatchModel>(_object(head_path.parent()));
 
 	if (!patch)
-		LOG(Raul::error) << "Unable to find connection patch " << src_port_path
-			<< " -> " << dst_port_path << endl;
+		patch = PtrCast<PatchModel>(_object(tail_path.parent().parent()));
+
+	if (!patch)
+		LOG(Raul::error) << "Unable to find connection patch " << tail_path
+			<< " -> " << head_path << endl;
 
 	return patch;
 }
 
 bool
-ClientStore::attempt_connection(const Path& src_port_path,
-                                const Path& dst_port_path)
+ClientStore::attempt_connection(const Path& tail_path,
+                                const Path& head_path)
 {
-	SharedPtr<PortModel> src_port = PtrCast<PortModel>(_object(src_port_path));
-	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(_object(dst_port_path));
+	SharedPtr<PortModel> tail = PtrCast<PortModel>(_object(tail_path));
+	SharedPtr<PortModel> head = PtrCast<PortModel>(_object(head_path));
 
-	if (src_port && dst_port) {
-		SharedPtr<PatchModel>      patch = connection_patch(src_port_path, dst_port_path);
-		SharedPtr<ConnectionModel> cm(new ConnectionModel(src_port, dst_port));
+	if (tail && head) {
+		SharedPtr<PatchModel>      patch = connection_patch(tail_path, head_path);
+		SharedPtr<EdgeModel> cm(new EdgeModel(tail, head));
 
-		src_port->connected_to(dst_port);
-		dst_port->connected_to(src_port);
+		tail->connected_to(head);
+		head->connected_to(tail);
 
 		patch->add_connection(cm);
 		return true;
@@ -466,8 +466,8 @@ ClientStore::connect(const Path& src_path,
 }
 
 void
-ClientStore::disconnect(const URI& src,
-                        const URI& dst)
+ClientStore::disconnect(const Path& src,
+                        const Path& dst)
 {
 	if (!Path::is_path(src) && !Path::is_path(dst)) {
 		std::cerr << "Bad disconnect notification " << src << " => " << dst << std::endl;
@@ -477,18 +477,18 @@ ClientStore::disconnect(const URI& src,
 	const Path src_path(src.str());
 	const Path dst_path(dst.str());
 
-	SharedPtr<PortModel> src_port = PtrCast<PortModel>(_object(src_path));
-	SharedPtr<PortModel> dst_port = PtrCast<PortModel>(_object(dst_path));
+	SharedPtr<PortModel> tail = PtrCast<PortModel>(_object(src_path));
+	SharedPtr<PortModel> head = PtrCast<PortModel>(_object(dst_path));
 
-	if (src_port)
-		src_port->disconnected_from(dst_port);
+	if (tail)
+		tail->disconnected_from(head);
 
-	if (dst_port)
-		dst_port->disconnected_from(src_port);
+	if (head)
+		head->disconnected_from(tail);
 
 	SharedPtr<PatchModel> patch = connection_patch(src_path, dst_path);
 	if (patch)
-		patch->remove_connection(src_port.get(), dst_port.get());
+		patch->remove_connection(tail.get(), head.get());
 }
 
 void
@@ -507,14 +507,14 @@ ClientStore::disconnect_all(const Raul::Path& parent_patch_path,
 	const PatchModel::Connections connections = patch->connections();
 	for (PatchModel::Connections::const_iterator i = connections.begin();
 	     i != connections.end(); ++i) {
-		SharedPtr<ConnectionModel> c = PtrCast<ConnectionModel>(i->second);
-		if (c->src_port()->parent() == object
-		    || c->dst_port()->parent() == object
-		    || c->src_port()->path() == path
-		    || c->dst_port()->path() == path) {
-			c->src_port()->disconnected_from(c->dst_port());
-			c->dst_port()->disconnected_from(c->src_port());
-			patch->remove_connection(c->src_port().get(), c->dst_port().get());
+		SharedPtr<EdgeModel> c = PtrCast<EdgeModel>(i->second);
+		if (c->tail()->parent() == object
+		    || c->head()->parent() == object
+		    || c->tail()->path() == path
+		    || c->head()->path() == path) {
+			c->tail()->disconnected_from(c->head());
+			c->head()->disconnected_from(c->tail());
+			patch->remove_connection(c->tail().get(), c->head().get());
 		}
 	}
 }

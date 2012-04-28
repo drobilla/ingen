@@ -132,10 +132,10 @@ public:
 
 	void add_connection(SharedPtr<ConnectionImpl> c);
 
-	SharedPtr<ConnectionImpl> remove_connection(const PortImpl* src_port,
-	                                            const PortImpl* dst_port);
+	SharedPtr<ConnectionImpl> remove_connection(const PortImpl* tail,
+	                                            const PortImpl* head);
 
-	bool has_connection(const PortImpl* src_port, const PortImpl* dst_port) const;
+	bool has_connection(const PortImpl* tail, const PortImpl* head) const;
 
 	CompiledPatch* compiled_patch()                  { return _compiled_patch; }
 	void           compiled_patch(CompiledPatch* cp) { _compiled_patch = cp; }

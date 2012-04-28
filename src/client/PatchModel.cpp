@@ -22,7 +22,7 @@
 
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/NodeModel.hpp"
-#include "ingen/client/ConnectionModel.hpp"
+#include "ingen/client/EdgeModel.hpp"
 #include "ingen/client/ClientStore.hpp"
 
 using namespace std;
@@ -59,13 +59,13 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 		Connections::iterator next = j;
 		++next;
 
-		SharedPtr<ConnectionModel> cm = PtrCast<ConnectionModel>(j->second);
+		SharedPtr<EdgeModel> cm = PtrCast<EdgeModel>(j->second);
 		assert(cm);
 
-		if (cm->src_port_path().parent() == o->path()
-				|| cm->src_port_path() == o->path()
-				|| cm->dst_port_path().parent() == o->path()
-				|| cm->dst_port_path() == o->path()) {
+		if (cm->tail_path().parent() == o->path()
+				|| cm->tail_path() == o->path()
+				|| cm->head_path().parent() == o->path()
+				|| cm->head_path() == o->path()) {
 			_signal_removed_connection.emit(cm);
 			_connections->erase(j); // cuts our reference
 		}
@@ -94,14 +94,14 @@ PatchModel::clear()
 	assert(_ports.empty());
 }
 
-SharedPtr<ConnectionModel>
-PatchModel::get_connection(const Port* src_port, const Ingen::Port* dst_port)
+SharedPtr<EdgeModel>
+PatchModel::get_connection(const Port* tail, const Ingen::Port* head)
 {
-	Connections::iterator i = _connections->find(make_pair(src_port, dst_port));
+	Connections::iterator i = _connections->find(make_pair(tail, head));
 	if (i != _connections->end())
-		return PtrCast<ConnectionModel>(i->second);
+		return PtrCast<EdgeModel>(i->second);
 	else
-		return SharedPtr<ConnectionModel>();
+		return SharedPtr<EdgeModel>();
 }
 
 /** Add a connection to this patch.
@@ -112,43 +112,43 @@ PatchModel::get_connection(const Port* src_port, const Ingen::Port* dst_port)
  * this patch is a fatal error.
  */
 void
-PatchModel::add_connection(SharedPtr<ConnectionModel> cm)
+PatchModel::add_connection(SharedPtr<EdgeModel> cm)
 {
 	// Store should have 'resolved' the connection already
 	assert(cm);
-	assert(cm->src_port());
-	assert(cm->dst_port());
-	assert(cm->src_port()->parent());
-	assert(cm->dst_port()->parent());
-	assert(cm->src_port_path() != cm->dst_port_path());
-	assert(cm->src_port()->parent().get() == this
-	       || cm->src_port()->parent()->parent().get() == this);
-	assert(cm->dst_port()->parent().get() == this
-	       || cm->dst_port()->parent()->parent().get() == this);
+	assert(cm->tail());
+	assert(cm->head());
+	assert(cm->tail()->parent());
+	assert(cm->head()->parent());
+	assert(cm->tail_path() != cm->head_path());
+	assert(cm->tail()->parent().get() == this
+	       || cm->tail()->parent()->parent().get() == this);
+	assert(cm->head()->parent().get() == this
+	       || cm->head()->parent()->parent().get() == this);
 
-	SharedPtr<ConnectionModel> existing = get_connection(
-			cm->src_port().get(), cm->dst_port().get());
+	SharedPtr<EdgeModel> existing = get_connection(
+			cm->tail().get(), cm->head().get());
 
 	if (existing) {
-		assert(cm->src_port() == existing->src_port());
-		assert(cm->dst_port() == existing->dst_port());
+		assert(cm->tail() == existing->tail());
+		assert(cm->head() == existing->head());
 	} else {
-		_connections->insert(make_pair(make_pair(cm->src_port().get(), cm->dst_port().get()), cm));
+		_connections->insert(make_pair(make_pair(cm->tail().get(), cm->head().get()), cm));
 		_signal_new_connection.emit(cm);
 	}
 }
 
 void
-PatchModel::remove_connection(const Port* src_port, const Ingen::Port* dst_port)
+PatchModel::remove_connection(const Port* tail, const Ingen::Port* head)
 {
-	Connections::iterator i = _connections->find(make_pair(src_port, dst_port));
+	Connections::iterator i = _connections->find(make_pair(tail, head));
 	if (i != _connections->end()) {
-		SharedPtr<ConnectionModel> c = PtrCast<ConnectionModel>(i->second);
+		SharedPtr<EdgeModel> c = PtrCast<EdgeModel>(i->second);
 		_signal_removed_connection.emit(c);
 		_connections->erase(i);
 	} else {
 		warn << "[PatchModel::remove_connection] Failed to find connection " <<
-				src_port->path() << " -> " << dst_port->path() << endl;
+				tail->path() << " -> " << head->path() << endl;
 	}
 }
 

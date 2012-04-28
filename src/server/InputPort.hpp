@@ -69,7 +69,7 @@ public:
 
 	void            add_connection(ConnectionImpl* c);
 	ConnectionImpl* remove_connection(ProcessContext&   context,
-	                                  const OutputPort* src_port);
+	                                  const OutputPort* tail);
 
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 

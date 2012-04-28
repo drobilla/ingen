@@ -30,8 +30,8 @@ class Connection
 public:
 	virtual ~Connection() {}
 
-	virtual const Raul::Path& src_port_path() const = 0;
-	virtual const Raul::Path& dst_port_path() const = 0;
+	virtual const Raul::Path& tail_path() const = 0;
+	virtual const Raul::Path& head_path() const = 0;
 };
 
 } // namespace Ingen

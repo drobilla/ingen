@@ -44,40 +44,40 @@ namespace Server {
  * This handles both polyphonic and monophonic nodes, transparently to the
  * user (InputPort).
  */
-ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
-	: _src_port(src_port)
-	, _dst_port(dst_port)
+ConnectionImpl::ConnectionImpl(PortImpl* tail, PortImpl* head)
+	: _tail(tail)
+	, _head(head)
 	, _queue(NULL)
 {
-	assert(src_port);
-	assert(dst_port);
-	assert(src_port != dst_port);
-	assert(src_port->path() != dst_port->path());
+	assert(tail);
+	assert(head);
+	assert(tail != head);
+	assert(tail->path() != head->path());
 
 	if (must_queue())
-		_queue = new Raul::RingBuffer(src_port->buffer_size() * 2);
+		_queue = new Raul::RingBuffer(tail->buffer_size() * 2);
 }
 
 void
 ConnectionImpl::dump() const
 {
-	Raul::debug << _src_port->path() << " -> " << _dst_port->path()
+	Raul::debug << _tail->path() << " -> " << _head->path()
 	            << (must_mix()   ? " (MIX) " : " (DIRECT) ")
 	            << (must_queue() ? " (QUEUE)" : " (NOQUEUE) ")
-	            << "POLY: " << _src_port->poly() << " => " << _dst_port->poly()
+	            << "POLY: " << _tail->poly() << " => " << _head->poly()
 	            << std::endl;
 }
 
 const Raul::Path&
-ConnectionImpl::src_port_path() const
+ConnectionImpl::tail_path() const
 {
-	return _src_port->path();
+	return _tail->path();
 }
 
 const Raul::Path&
-ConnectionImpl::dst_port_path() const
+ConnectionImpl::head_path() const
 {
-	return _dst_port->path();
+	return _head->path();
 }
 
 void
@@ -88,21 +88,21 @@ ConnectionImpl::get_sources(Context& context, uint32_t voice,
 		LV2_Atom obj;
 		_queue->peek(sizeof(LV2_Atom), &obj);
 		boost::intrusive_ptr<Buffer> buf = context.engine().buffer_factory()->get(
-				dst_port()->buffer_type(), sizeof(LV2_Atom) + obj.size);
+				head()->buffer_type(), sizeof(LV2_Atom) + obj.size);
 		void* data = buf->port_data(PortType::ATOM, context.offset());
 		_queue->read(sizeof(LV2_Atom) + obj.size, (LV2_Atom*)data);
 		srcs[num_srcs++] = buf;
 	} else if (must_mix()) {
 		// Mixing down voices: every src voice mixed into every dst voice
-		for (uint32_t v = 0; v < _src_port->poly(); ++v) {
+		for (uint32_t v = 0; v < _tail->poly(); ++v) {
 			assert(num_srcs < max_num_srcs);
-			srcs[num_srcs++] = _src_port->buffer(v).get();
+			srcs[num_srcs++] = _tail->buffer(v).get();
 		}
 	} else {
 		// Matching polyphony: each src voice mixed into corresponding dst voice
-		assert(_src_port->poly() == _dst_port->poly());
+		assert(_tail->poly() == _head->poly());
 		assert(num_srcs < max_num_srcs);
-		srcs[num_srcs++] = _src_port->buffer(voice).get();
+		srcs[num_srcs++] = _tail->buffer(voice).get();
 	}
 }
 
@@ -112,9 +112,9 @@ ConnectionImpl::queue(Context& context)
 	if (!must_queue())
 		return;
 
-	const Ingen::Shared::URIs& uris = _src_port->bufs().uris();
+	const Ingen::Shared::URIs& uris = _tail->bufs().uris();
 
-	boost::intrusive_ptr<Buffer> src_buf = _src_port->buffer(0);
+	boost::intrusive_ptr<Buffer> src_buf = _tail->buffer(0);
 	if (src_buf->atom()->type != uris.atom_Sequence) {
 		Raul::error << "Queued connection but source is not a Sequence" << std::endl;
 		return;
@@ -124,7 +124,7 @@ ConnectionImpl::queue(Context& context)
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		_queue->write(sizeof(LV2_Atom) + ev->body.size, &ev->body);
 		context.engine().message_context()->run(
-			_dst_port->parent_node(), context.start() + ev->time.frames);
+			_head->parent_node(), context.start() + ev->time.frames);
 
 	}
 }
@@ -134,25 +134,25 @@ ConnectionImpl::buffer(uint32_t voice) const
 {
 	assert(!must_mix());
 	assert(!must_queue());
-	assert(_src_port->poly() == 1 || _src_port->poly() > voice);
-	if (_src_port->poly() == 1) {
-		return _src_port->buffer(0);
+	assert(_tail->poly() == 1 || _tail->poly() > voice);
+	if (_tail->poly() == 1) {
+		return _tail->buffer(0);
 	} else {
-		return _src_port->buffer(voice);
+		return _tail->buffer(voice);
 	}
 }
 
 bool
 ConnectionImpl::must_mix() const
 {
-	return _src_port->poly() > _dst_port->poly();
+	return _tail->poly() > _head->poly();
 }
 
 bool
 ConnectionImpl::must_queue() const
 {
-	return _src_port->parent_node()->context()
-		!= _dst_port->parent_node()->context();
+	return _tail->parent_node()->context()
+		!= _head->parent_node()->context();
 }
 
 bool

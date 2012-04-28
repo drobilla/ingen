@@ -88,14 +88,14 @@ public:
 		BROADCAST(del, uri);
 	}
 
-	void connect(const Raul::Path& src_port_path,
-	             const Raul::Path& dst_port_path) {
-		BROADCAST(connect, src_port_path, dst_port_path);
+	void connect(const Raul::Path& tail,
+	             const Raul::Path& head) {
+		BROADCAST(connect, tail, head);
 	}
 
-	void disconnect(const Raul::URI& src,
-	                const Raul::URI& dst) {
-		BROADCAST(disconnect, src, dst);
+	void disconnect(const Raul::Path& tail,
+	                const Raul::Path& head) {
+		BROADCAST(disconnect, tail, head);
 	}
 
 	void disconnect_all(const Raul::Path& parent_patch_path,

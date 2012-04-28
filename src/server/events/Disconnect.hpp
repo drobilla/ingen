@@ -49,8 +49,8 @@ public:
 	           Interface*        client,
 	           int32_t           id,
 	           SampleCount       timestamp,
-	           const Raul::Path& src_port_path,
-	           const Raul::Path& dst_port_path);
+	           const Raul::Path& tail_path,
+	           const Raul::Path& head_path);
 
 	void pre_process();
 	void execute(ProcessContext& context);
@@ -65,7 +65,7 @@ public:
 
 		bool execute(ProcessContext& context, bool set_dst_buffers);
 
-		InputPort* dst_port() { return _dst_input_port; }
+		InputPort* head() { return _dst_input_port; }
 
 	private:
 		Engine&                   _engine;
@@ -77,12 +77,12 @@ public:
 	};
 
 private:
-	const Raul::Path _src_port_path;
-	const Raul::Path _dst_port_path;
+	const Raul::Path _tail_path;
+	const Raul::Path _head_path;
 
 	PatchImpl* _patch;
-	PortImpl*  _src_port;
-	PortImpl*  _dst_port;
+	PortImpl*  _tail;
+	PortImpl*  _head;
 
 	Impl*          _impl;
 	CompiledPatch* _compiled_patch;
