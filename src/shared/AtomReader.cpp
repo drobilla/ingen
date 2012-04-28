@@ -140,6 +140,22 @@ AtomReader::write(const LV2_Atom* msg)
 			_iface.set_response_id(obj->body.id);
 			_iface.put(subject_uri, props);
 		}
+	} else if (obj->body.otype == _uris.patch_Set) {
+		const LV2_Atom_Object* body = NULL;
+		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
+		if (!body) {
+			Raul::warn << "Set message has no body" << std::endl;
+			return;
+		} else if (!subject_uri) {
+			Raul::warn << "Set message has no subject" << std::endl;
+			return;
+		}
+
+		LV2_ATOM_OBJECT_FOREACH(body, p) {
+			Raul::Atom val;
+			get_uri(&p->value, val);
+			_iface.set_property(subject_uri, _map.unmap_uri(p->key), val);
+		}
 	} else if (obj->body.otype == _uris.patch_Patch) {
 		if (!subject_uri) {
 			Raul::warn << "Put message has no subject" << std::endl;
