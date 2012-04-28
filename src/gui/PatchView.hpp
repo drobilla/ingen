@@ -35,7 +35,6 @@ namespace Client {
 	class PatchModel;
 	class ObjectModel;
 }
-using namespace Ingen::Client;
 
 namespace GUI {
 
@@ -59,17 +58,18 @@ public:
 
 	void init(App& app);
 
-	SharedPtr<PatchCanvas>       canvas()               const { return _canvas; }
-	SharedPtr<const PatchModel>  patch()                const { return _patch; }
-	Gtk::ToolItem*               breadcrumb_container() const { return _breadcrumb_container; }
+	SharedPtr<PatchCanvas>              canvas()               const { return _canvas; }
+	SharedPtr<const Client::PatchModel> patch()                const { return _patch; }
+	Gtk::ToolItem*                      breadcrumb_container() const { return _breadcrumb_container; }
 
-	static SharedPtr<PatchView> create(App& app, SharedPtr<const PatchModel> patch);
+	static SharedPtr<PatchView> create(App& app,
+	                                   SharedPtr<const Client::PatchModel> patch);
 
-	sigc::signal<void, const ObjectModel*> signal_object_entered;
-	sigc::signal<void, const ObjectModel*> signal_object_left;
+	sigc::signal<void, const Client::ObjectModel*> signal_object_entered;
+	sigc::signal<void, const Client::ObjectModel*> signal_object_left;
 
 private:
-	void set_patch(SharedPtr<const PatchModel> patch);
+	void set_patch(SharedPtr<const Client::PatchModel> patch);
 
 	void process_toggled();
 	void poly_changed();
@@ -87,8 +87,8 @@ private:
 
 	App* _app;
 
-	SharedPtr<const PatchModel> _patch;
-	SharedPtr<PatchCanvas>      _canvas;
+	SharedPtr<const Client::PatchModel> _patch;
+	SharedPtr<PatchCanvas>              _canvas;
 
 	Gtk::ScrolledWindow*   _canvas_scrolledwindow;
 	Gtk::Toolbar*          _toolbar;

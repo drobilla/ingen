@@ -29,8 +29,6 @@
 
 #include "NodeFactory.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

@@ -355,7 +355,7 @@ find_patches(const Glib::ustring& manifest_uri)
 				                  new LV2Patch(patch_uri, (const char*)file_path)));
 			free(file_path);
 		} else {
-			Raul::error << "[Ingen] Patch has no rdfs:seeAlso" << endl;
+			Raul::error << "[Ingen] Patch has no rdfs:seeAlso" << std::endl;
 		}
 	}
 
@@ -543,7 +543,7 @@ ingen_save(LV2_Handle                instance,
 	get_state_features(features, &map_path, &make_path);
 	if (!map_path || !make_path || !plugin->map) {
 		Raul::error << "Missing state:mapPath, state:makePath, or urid:Map."
-		            << endl;
+		            << std::endl;
 		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
@@ -581,7 +581,7 @@ ingen_restore(LV2_Handle                  instance,
 	LV2_State_Map_Path* map_path = NULL;
 	get_state_features(features, &map_path, NULL);
 	if (!map_path) {
-		Raul::error << "Missing state:mapPath" << endl;
+		Raul::error << "Missing state:mapPath" << std::endl;
 		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
@@ -595,7 +595,7 @@ ingen_restore(LV2_Handle                  instance,
 	                            &size, &type, &valflags);
 
 	if (!path) {
-		Raul::error << "Failed to restore ingen:file" << endl;
+		Raul::error << "Failed to restore ingen:file" << std::endl;
 		return LV2_STATE_ERR_NO_PROPERTY;
 	}
 

@@ -23,8 +23,6 @@
 #include "ingen/client/PortModel.hpp"
 #include "ObjectMenu.hpp"
 
-using Ingen::Client::PortModel;
-
 namespace Ingen {
 namespace GUI {
 
@@ -38,9 +36,9 @@ public:
 	PortMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App&                       app,
-	          SharedPtr<const PortModel> port,
-	          bool                       patch_port=false);
+	void init(App&                               app,
+	          SharedPtr<const Client::PortModel> port,
+	          bool                               patch_port = false);
 
 private:
 	void on_menu_disconnect();

@@ -32,7 +32,6 @@ namespace Client {
 	class PortModel;
 	class ObjectModel;
 }
-using namespace Ingen::Client;
 
 namespace GUI {
 
@@ -57,29 +56,34 @@ public:
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 	~PatchBox();
 
-	static SharedPtr<PatchBox> create(App& app, SharedPtr<const PatchModel> patch);
+	static SharedPtr<PatchBox> create(
+		App& app, SharedPtr<const Client::PatchModel> patch);
 
 	void init_box(App& app);
-	void set_patch(SharedPtr<const PatchModel> pc, SharedPtr<PatchView> view);
+
+	void set_patch(SharedPtr<const Client::PatchModel> pc,
+	               SharedPtr<PatchView>                view);
+
 	void set_window(PatchWindow* win) { _window = win; }
 
 	void show_documentation(const std::string& doc, bool html);
 	void hide_documentation();
 
-	SharedPtr<const PatchModel> patch() const { return _patch; }
-	SharedPtr<PatchView>        view()  const { return _view; }
+	SharedPtr<const Client::PatchModel> patch() const { return _patch; }
+	SharedPtr<PatchView>                view()  const { return _view; }
 
-	void show_port_status(const PortModel* model, const Raul::Atom& value);
+	void show_port_status(const Client::PortModel* model,
+	                      const Raul::Atom&        value);
 
 	void set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view);
 
-	void object_entered(const ObjectModel* model);
-	void object_left(const ObjectModel* model);
+	void object_entered(const Client::ObjectModel* model);
+	void object_left(const Client::ObjectModel* model);
 
 private:
-	void patch_port_added(SharedPtr<const PortModel> port);
-	void patch_port_removed(SharedPtr<const PortModel> port);
-	void show_status(const ObjectModel* model);
+	void patch_port_added(SharedPtr<const Client::PortModel> port);
+	void patch_port_removed(SharedPtr<const Client::PortModel> port);
+	void show_status(const Client::ObjectModel* model);
 
 	int message_dialog(const Glib::ustring& message,
 	                   const Glib::ustring& secondary_text,
@@ -109,10 +113,10 @@ private:
 	void event_show_engine();
 	void event_clipboard_changed(GdkEventOwnerChange* ev);
 
-	App*                        _app;
-	SharedPtr<const PatchModel> _patch;
-	SharedPtr<PatchView>        _view;
-	PatchWindow*                _window;
+	App*                                _app;
+	SharedPtr<const Client::PatchModel> _patch;
+	SharedPtr<PatchView>                _view;
+	PatchWindow*                        _window;
 
 	sigc::connection new_port_connection;
 	sigc::connection removed_port_connection;

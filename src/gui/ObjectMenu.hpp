@@ -25,8 +25,6 @@
 
 #include "ingen/client/ObjectModel.hpp"
 
-using Ingen::Client::ObjectModel;
-
 namespace Ingen {
 namespace GUI {
 
@@ -44,7 +42,7 @@ public:
 	ObjectMenu(BaseObjectType*                   cobject,
 	           const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, SharedPtr<const ObjectModel> object);
+	void init(App& app, SharedPtr<const Client::ObjectModel> object);
 
 protected:
 	void         on_menu_learn();
@@ -56,15 +54,15 @@ protected:
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
-	App*                         _app;
-	SharedPtr<const ObjectModel> _object;
-	Gtk::MenuItem*               _learn_menuitem;
-	Gtk::MenuItem*               _unlearn_menuitem;
-	Gtk::CheckMenuItem*          _polyphonic_menuitem;
-	Gtk::MenuItem*               _disconnect_menuitem;
-	Gtk::MenuItem*               _rename_menuitem;
-	Gtk::MenuItem*               _destroy_menuitem;
-	Gtk::MenuItem*               _properties_menuitem;
+	App*                                 _app;
+	SharedPtr<const Client::ObjectModel> _object;
+	Gtk::MenuItem*                       _learn_menuitem;
+	Gtk::MenuItem*                       _unlearn_menuitem;
+	Gtk::CheckMenuItem*                  _polyphonic_menuitem;
+	Gtk::MenuItem*                       _disconnect_menuitem;
+	Gtk::MenuItem*                       _rename_menuitem;
+	Gtk::MenuItem*                       _destroy_menuitem;
+	Gtk::MenuItem*                       _properties_menuitem;
 
 	bool _enable_signal;
 };

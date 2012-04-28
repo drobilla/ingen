@@ -24,16 +24,11 @@
 #include "ingen/GraphObject.hpp"
 #include "raul/SharedPtr.hpp"
 
-using namespace Ingen::Shared;
-
 namespace Raul { class Path; }
 
 namespace Ingen {
 
 namespace Client { class PatchModel; class NodeModel; class ObjectModel; }
-using Ingen::Client::PatchModel;
-using Ingen::Client::NodeModel;
-using Ingen::Client::ObjectModel;
 
 namespace GUI {
 
@@ -62,25 +57,26 @@ public:
 
 	size_t num_open_patch_windows();
 
-	PatchBox*          patch_box(SharedPtr<const PatchModel> patch);
-	PatchWindow*       patch_window(SharedPtr<const PatchModel> patch);
-	PatchWindow*       parent_patch_window(SharedPtr<const NodeModel> node);
-	NodeControlWindow* control_window(SharedPtr<const NodeModel> node);
+	PatchBox*          patch_box(SharedPtr<const Client::PatchModel> patch);
+	PatchWindow*       patch_window(SharedPtr<const Client::PatchModel> patch);
+	PatchWindow*       parent_patch_window(SharedPtr<const Client::NodeModel> node);
+	NodeControlWindow* control_window(SharedPtr<const Client::NodeModel> node);
 
-	void present_patch(SharedPtr<const PatchModel> model,
-	                   PatchWindow*                preferred = NULL,
-	                   SharedPtr<PatchView>        view      = SharedPtr<PatchView>());
+	void present_patch(
+		SharedPtr<const Client::PatchModel> model,
+		PatchWindow*                        preferred = NULL,
+		SharedPtr<PatchView>                view      = SharedPtr<PatchView>());
 
-	void present_controls(SharedPtr<const NodeModel> node);
+	void present_controls(SharedPtr<const Client::NodeModel> node);
 
 	typedef GraphObject::Properties Properties;
 
-	void present_load_plugin(SharedPtr<const PatchModel> patch, Properties data=Properties());
-	void present_load_patch(SharedPtr<const PatchModel> patch, Properties data=Properties());
-	void present_load_subpatch(SharedPtr<const PatchModel> patch, Properties data=Properties());
-	void present_new_subpatch(SharedPtr<const PatchModel> patch, Properties data=Properties());
-	void present_rename(SharedPtr<const ObjectModel> object);
-	void present_properties(SharedPtr<const ObjectModel> object);
+	void present_load_plugin(SharedPtr<const Client::PatchModel> patch, Properties data=Properties());
+	void present_load_patch(SharedPtr<const Client::PatchModel> patch, Properties data=Properties());
+	void present_load_subpatch(SharedPtr<const Client::PatchModel> patch, Properties data=Properties());
+	void present_new_subpatch(SharedPtr<const Client::PatchModel> patch, Properties data=Properties());
+	void present_rename(SharedPtr<const Client::ObjectModel> object);
+	void present_properties(SharedPtr<const Client::ObjectModel> object);
 
 	bool remove_patch_window(PatchWindow* win, GdkEventAny* ignored = NULL);
 
@@ -92,22 +88,22 @@ private:
 	typedef std::map<Raul::Path, PatchWindow*>       PatchWindowMap;
 	typedef std::map<Raul::Path, NodeControlWindow*> ControlWindowMap;
 
-	PatchWindow* new_patch_window(SharedPtr<const PatchModel> patch,
-	                              SharedPtr<PatchView>        view);
+	PatchWindow* new_patch_window(SharedPtr<const Client::PatchModel> patch,
+	                              SharedPtr<PatchView>                view);
 
-	NodeControlWindow* new_control_window(SharedPtr<const NodeModel> node);
+	NodeControlWindow* new_control_window(SharedPtr<const Client::NodeModel> node);
 	bool               remove_control_window(NodeControlWindow* win,
 	                                         GdkEventAny*       ignored);
 
-	App&                   _app;
-	PatchBox*              _main_box;
-	PatchWindowMap         _patch_windows;
-	ControlWindowMap       _control_windows;
-	LoadPluginWindow*      _load_plugin_win;
-	LoadPatchWindow*       _load_patch_win;
-	NewSubpatchWindow*     _new_subpatch_win;
-	PropertiesWindow*      _properties_win;
-	RenameWindow*          _rename_win;
+	App&               _app;
+	PatchBox*          _main_box;
+	PatchWindowMap     _patch_windows;
+	ControlWindowMap   _control_windows;
+	LoadPluginWindow*  _load_plugin_win;
+	LoadPatchWindow*   _load_patch_win;
+	NewSubpatchWindow* _new_subpatch_win;
+	PropertiesWindow*  _properties_win;
+	RenameWindow*      _rename_win;
 };
 
 } // namespace GUI

@@ -23,8 +23,6 @@
 #include "ingen/client/NodeModel.hpp"
 #include "ObjectMenu.hpp"
 
-using Ingen::Client::NodeModel;
-
 namespace Ingen {
 namespace GUI {
 
@@ -38,7 +36,7 @@ public:
 	NodeMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, SharedPtr<const NodeModel> node);
+	void init(App& app, SharedPtr<const Client::NodeModel> node);
 
 	bool has_control_inputs();
 

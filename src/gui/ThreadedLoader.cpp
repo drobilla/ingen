@@ -22,8 +22,9 @@
 #include "ThreadedLoader.hpp"
 #include "ingen/client/PatchModel.hpp"
 
-using namespace std;
 using namespace Raul;
+using namespace boost;
+using namespace std;
 
 namespace Ingen {
 namespace GUI {
@@ -40,7 +41,7 @@ ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
 		warn << "Failed to load ingen_serialisation module, load disabled." << endl;
 }
 
-SharedPtr<Parser>
+SharedPtr<Serialisation::Parser>
 ThreadedLoader::parser()
 {
 	Ingen::Shared::World* world = _app.world();
@@ -100,8 +101,8 @@ ThreadedLoader::load_patch(bool                              merge,
 }
 
 void
-ThreadedLoader::save_patch(SharedPtr<const PatchModel> model,
-                           const string&               filename)
+ThreadedLoader::save_patch(SharedPtr<const Client::PatchModel> model,
+                           const string&                       filename)
 {
 	_mutex.lock();
 
@@ -115,8 +116,8 @@ ThreadedLoader::save_patch(SharedPtr<const PatchModel> model,
 }
 
 void
-ThreadedLoader::save_patch_event(SharedPtr<const PatchModel> model,
-                                 const string&               filename)
+ThreadedLoader::save_patch_event(SharedPtr<const Client::PatchModel> model,
+                                 const string&                       filename)
 {
 	if (_app.serialiser()) {
 		if (filename.find(".ingen") != string::npos)

@@ -23,9 +23,6 @@
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 

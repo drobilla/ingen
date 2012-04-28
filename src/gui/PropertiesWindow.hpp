@@ -25,9 +25,10 @@
 
 #include "Window.hpp"
 
-using namespace Ingen::Client;
-
 namespace Ingen {
+
+namespace Client { class ObjectModel; }
+
 namespace GUI {
 
 /** Object properties window.
@@ -42,8 +43,8 @@ public:
 	PropertiesWindow(BaseObjectType*                   cobject,
 	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(SharedPtr<const ObjectModel> model);
-	void set_object(SharedPtr<const ObjectModel> model);
+	void present(SharedPtr<const Client::ObjectModel> model);
+	void set_object(SharedPtr<const Client::ObjectModel> model);
 
 private:
 	/** Record of a property (row in the table) */
@@ -74,14 +75,14 @@ private:
 	typedef std::map<Raul::URI, Record> Records;
 	Records _records;
 
-	SharedPtr<const ObjectModel> _model;
-	sigc::connection             _property_connection;
-	Gtk::VBox*                   _vbox;
-	Gtk::ScrolledWindow*         _scrolledwindow;
-	Gtk::Table*                  _table;
-	Gtk::Button*                 _cancel_button;
-	Gtk::Button*                 _apply_button;
-	Gtk::Button*                 _ok_button;
+	SharedPtr<const Client::ObjectModel> _model;
+	sigc::connection                     _property_connection;
+	Gtk::VBox*                           _vbox;
+	Gtk::ScrolledWindow*                 _scrolledwindow;
+	Gtk::Table*                          _table;
+	Gtk::Button*                         _cancel_button;
+	Gtk::Button*                         _apply_button;
+	Gtk::Button*                         _ok_button;
 };
 
 } // namespace GUI

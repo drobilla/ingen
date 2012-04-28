@@ -29,7 +29,6 @@ namespace Ingen {
 namespace Client {
 	class PatchModel;
 }
-using namespace Ingen::Client;
 
 namespace GUI {
 
@@ -47,8 +46,8 @@ public:
 
 	void init_window(App& app);
 
-	SharedPtr<const PatchModel> patch() const { return _box->patch(); }
-	PatchBox*                   box()   const { return _box; }
+	SharedPtr<const Client::PatchModel> patch() const { return _box->patch(); }
+	PatchBox*                           box()   const { return _box; }
 
 	void show_documentation(const std::string& doc, bool html) {
 		_box->show_documentation(doc, html);
@@ -58,7 +57,8 @@ public:
 		_box->hide_documentation();
 	}
 
-	void show_port_status(const PortModel* model, const Raul::Atom& value) {
+	void show_port_status(const Client::PortModel* model,
+	                      const Raul::Atom&        value) {
 		_box->show_port_status(model, value);
 	}
 

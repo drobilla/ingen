@@ -28,9 +28,11 @@
 #include "WindowFactory.hpp"
 
 using namespace std;
-using namespace Ingen::Client;
 
 namespace Ingen {
+
+using namespace Client;
+
 namespace GUI {
 
 NodeMenu::NodeMenu(BaseObjectType*                   cobject,
@@ -46,7 +48,7 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 }
 
 void
-NodeMenu::init(App& app, SharedPtr<const NodeModel> node)
+NodeMenu::init(App& app, SharedPtr<const Client::NodeModel> node)
 {
 	ObjectMenu::init(app, node);
 

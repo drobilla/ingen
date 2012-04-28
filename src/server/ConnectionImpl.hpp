@@ -31,8 +31,6 @@
 #include "BufferFactory.hpp"
 #include "Context.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

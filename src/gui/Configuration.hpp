@@ -24,8 +24,6 @@
 #include "raul/SharedPtr.hpp"
 
 namespace Ingen { namespace Client { class PortModel; } }
-using Ingen::Client::PortModel;
-using std::string;
 
 namespace Ingen {
 namespace GUI {
@@ -46,15 +44,15 @@ public:
 	Configuration(App& app);
 	~Configuration();
 
-	void load_settings(string filename = "");
-	void save_settings(string filename = "");
+	void load_settings(std::string filename = "");
+	void save_settings(std::string filename = "");
 
 	void apply_settings();
 
-	const string& patch_folder()                    { return _patch_folder; }
-	void          set_patch_folder(const string& f) { _patch_folder = f; }
+	const std::string& patch_folder()                         { return _patch_folder; }
+	void               set_patch_folder(const std::string& f) { _patch_folder = f; }
 
-	uint32_t get_port_color(const PortModel* p);
+	uint32_t get_port_color(const Client::PortModel* p);
 
 	enum NameStyle { PATH, HUMAN, NONE };
 
@@ -65,7 +63,7 @@ private:
 	App& _app;
 
 	/** Most recent patch folder shown in open dialog */
-	string _patch_folder;
+	std::string _patch_folder;
 
 	NameStyle _name_style;
 

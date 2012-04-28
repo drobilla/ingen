@@ -63,7 +63,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 }
 
 bool
-InputPort::apply_poly(Maid& maid, uint32_t poly)
+InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	bool ret = PortImpl::apply_poly(maid, poly);
 	if (!ret)
@@ -150,7 +150,8 @@ InputPort::remove_connection(ProcessContext& context, const OutputPort* src_port
 	}
 
 	if (!connection) {
-		error << "[InputPort::remove_connection] Connection not found!" << endl;
+		Raul::error << "[InputPort::remove_connection] Connection not found!"
+		            << std::endl;
 		return NULL;
 	}
 

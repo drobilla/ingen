@@ -28,19 +28,22 @@
 using namespace std;
 
 namespace Ingen {
+
+using namespace Client;
+
 namespace GUI {
 
 /** Create a node control window and load a new ControlPanel for it.
  */
-NodeControlWindow::NodeControlWindow(App&                       app,
-                                     SharedPtr<const NodeModel> node,
-                                     uint32_t                   poly)
+NodeControlWindow::NodeControlWindow(App&                               app,
+                                     SharedPtr<const Client::NodeModel> node,
+                                     uint32_t                           poly)
 	: _node(node)
 	, _position_stored(false)
 	, _x(0)
 	, _y(0)
 {
-	assert(_node != NULL);
+	assert(_node);
 
 	property_resizable() = true;
 	set_border_width(5);

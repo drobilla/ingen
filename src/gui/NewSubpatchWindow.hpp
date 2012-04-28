@@ -27,10 +27,7 @@
 
 namespace Ingen {
 
-using namespace Shared;
-
 namespace Client { class PatchModel; }
-using Ingen::Client::PatchModel;
 
 namespace GUI {
 
@@ -46,18 +43,18 @@ public:
 	NewSubpatchWindow(BaseObjectType*                   cobject,
 	                  const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_patch(SharedPtr<const PatchModel> patch);
+	void set_patch(SharedPtr<const Client::PatchModel> patch);
 
-	void present(SharedPtr<const PatchModel> patch,
-	             GraphObject::Properties     data);
+	void present(SharedPtr<const Client::PatchModel> patch,
+	             GraphObject::Properties             data);
 
 private:
 	void name_changed();
 	void ok_clicked();
 	void cancel_clicked();
 
-	GraphObject::Properties     _initial_data;
-	SharedPtr<const PatchModel> _patch;
+	GraphObject::Properties             _initial_data;
+	SharedPtr<const Client::PatchModel> _patch;
 
 	Gtk::Entry*      _name_entry;
 	Gtk::Label*      _message_label;

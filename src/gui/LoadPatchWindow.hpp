@@ -23,12 +23,9 @@
 
 #include "ingen/GraphObject.hpp"
 
-using namespace Ingen::Shared;
-
 namespace Ingen {
 
 namespace Client { class PatchModel; }
-using Ingen::Client::PatchModel;
 
 namespace GUI {
 
@@ -46,11 +43,11 @@ public:
 
 	void init(App& app) { _app = &app; }
 
-	void set_patch(SharedPtr<const PatchModel> patch);
+	void set_patch(SharedPtr<const Client::PatchModel> patch);
 
-	void present(SharedPtr<const PatchModel> patch,
-	             bool                        import,
-	             GraphObject::Properties     data);
+	void present(SharedPtr<const Client::PatchModel> patch,
+	             bool                                import,
+	             GraphObject::Properties             data);
 
 protected:
 	void on_show();
@@ -70,7 +67,7 @@ private:
 
 	GraphObject::Properties _initial_data;
 
-	SharedPtr<const PatchModel> _patch;
+	SharedPtr<const Client::PatchModel> _patch;
 
 	Gtk::Label*       _symbol_label;
 	Gtk::Entry*       _symbol_entry;

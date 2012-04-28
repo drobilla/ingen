@@ -28,8 +28,6 @@
 #include "LV2RequestRunFeature.hpp"
 #include "LV2ResizeFeature.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

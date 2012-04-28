@@ -61,10 +61,11 @@ ConnectionImpl::ConnectionImpl(PortImpl* src_port, PortImpl* dst_port)
 void
 ConnectionImpl::dump() const
 {
-	debug << _src_port->path() << " -> " << _dst_port->path()
-		<< (must_mix()   ? " (MIX) " : " (DIRECT) ")
-		<< (must_queue() ? " (QUEUE)" : " (NOQUEUE) ")
-		<< "POLY: " << _src_port->poly() << " => " << _dst_port->poly() << endl;
+	Raul::debug << _src_port->path() << " -> " << _dst_port->path()
+	            << (must_mix()   ? " (MIX) " : " (DIRECT) ")
+	            << (must_queue() ? " (QUEUE)" : " (NOQUEUE) ")
+	            << "POLY: " << _src_port->poly() << " => " << _dst_port->poly()
+	            << std::endl;
 }
 
 const Raul::Path&
@@ -115,7 +116,7 @@ ConnectionImpl::queue(Context& context)
 
 	boost::intrusive_ptr<Buffer> src_buf = _src_port->buffer(0);
 	if (src_buf->atom()->type != uris.atom_Sequence) {
-		error << "Queued connection but source is not a Sequence" << endl;
+		Raul::error << "Queued connection but source is not a Sequence" << std::endl;
 		return;
 	}
 

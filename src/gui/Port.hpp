@@ -28,7 +28,6 @@ namespace Raul { class Atom; class URI; }
 namespace Ingen {
 
 namespace Client { class PortModel; }
-using Ingen::Client::PortModel;
 
 namespace GUI {
 
@@ -43,15 +42,15 @@ class Port : public Ganv::Port
 {
 public:
 	static Port* create(
-		App&                       app,
-		Ganv::Module&              module,
-		SharedPtr<const PortModel> pm,
-		bool                       human_name,
-		bool                       flip = false);
+		App&                               app,
+		Ganv::Module&                      module,
+		SharedPtr<const Client::PortModel> pm,
+		bool                               human_name,
+		bool                               flip = false);
 
 	~Port();
 
-	SharedPtr<const PortModel> model() const { return _port_model.lock(); }
+	SharedPtr<const Client::PortModel> model() const { return _port_model.lock(); }
 
 	bool show_menu(GdkEventButton* ev);
 	void update_metadata();
@@ -62,11 +61,11 @@ public:
 	void set_selected(gboolean b);
 
 private:
-	Port(App&                       app,
-	     Ganv::Module&              module,
-	     SharedPtr<const PortModel> pm,
-	     const std::string&         name,
-	     bool                       flip = false);
+	Port(App&                               app,
+	     Ganv::Module&                      module,
+	     SharedPtr<const Client::PortModel> pm,
+	     const std::string&                 name,
+	     bool                               flip = false);
 
 	PatchBox* get_patch_box() const;
 
@@ -76,10 +75,10 @@ private:
 	void on_value_changed(GVariant* value);
 	bool on_event(GdkEvent* ev);
 
-	App&                     _app;
-	WeakPtr<const PortModel> _port_model;
-	bool                     _pressed : 1;
-	bool                     _flipped : 1;
+	App&                             _app;
+	WeakPtr<const Client::PortModel> _port_model;
+	bool                             _pressed : 1;
+	bool                             _flipped : 1;
 };
 
 } // namespace GUI

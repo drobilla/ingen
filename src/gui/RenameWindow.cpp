@@ -30,6 +30,9 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Client;
+
 namespace GUI {
 
 RenameWindow::RenameWindow(BaseObjectType*                   cobject,

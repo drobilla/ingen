@@ -34,19 +34,9 @@
 #include "ingen/GraphObject.hpp"
 #include "NodeModule.hpp"
 
-using namespace Ganv;
-using namespace Ingen::Shared;
-
-using std::string;
-using Ganv::Port;
-using Ingen::Client::ConnectionModel;
-using Ingen::Client::NodeModel;
-using Ingen::Client::PortModel;
-
 namespace Ingen {
 
 namespace Client { class PatchModel; }
-using Ingen::Client::PatchModel;
 
 namespace GUI {
 
@@ -59,10 +49,10 @@ class NodeModule;
 class PatchCanvas : public Ganv::Canvas
 {
 public:
-	PatchCanvas(App&                        app,
-	            SharedPtr<const PatchModel> patch,
-	            int                         width,
-	            int                         height);
+	PatchCanvas(App&                                app,
+	            SharedPtr<const Client::PatchModel> patch,
+	            int                                 width,
+	            int                                 height);
 
 	virtual ~PatchCanvas() {}
 
@@ -73,13 +63,13 @@ public:
 	void show_port_names(bool show);
 	bool show_port_names() const { return _show_port_names; }
 
-	void add_plugin(SharedPtr<PluginModel> pm);
-	void add_node(SharedPtr<const NodeModel> nm);
-	void remove_node(SharedPtr<const NodeModel> nm);
-	void add_port(SharedPtr<const PortModel> pm);
-	void remove_port(SharedPtr<const PortModel> pm);
-	void connection(SharedPtr<const ConnectionModel> cm);
-	void disconnection(SharedPtr<const ConnectionModel> cm);
+	void add_plugin(SharedPtr<Client::PluginModel> pm);
+	void add_node(SharedPtr<const Client::NodeModel> nm);
+	void remove_node(SharedPtr<const Client::NodeModel> nm);
+	void add_port(SharedPtr<const Client::PortModel> pm);
+	void remove_port(SharedPtr<const Client::PortModel> pm);
+	void connection(SharedPtr<const Client::ConnectionModel> cm);
+	void disconnection(SharedPtr<const Client::ConnectionModel> cm);
 
 	void get_new_module_location(double& x, double& y);
 
@@ -95,17 +85,17 @@ public:
 private:
 	enum ControlType { NUMBER, BUTTON };
 	void generate_port_name(
-			const string& sym_base,  string& sym,
-			const string& name_base, string& name);
+		const std::string& sym_base,  std::string& sym,
+		const std::string& name_base, std::string& name);
 
 	void menu_add_port(
-			const string& sym_base, const string& name_base,
+			const std::string& sym_base, const std::string& name_base,
 			const Raul::URI& type, bool is_output);
 
 	void menu_load_plugin();
 	void menu_new_patch();
 	void menu_load_patch();
-	void load_plugin(WeakPtr<PluginModel> plugin);
+	void load_plugin(WeakPtr<Client::PluginModel> plugin);
 
 	void build_menus();
 
@@ -125,7 +115,7 @@ private:
 
 	GraphObject::Properties get_initial_data(Resource::Graph ctx=Resource::DEFAULT);
 
-	Ganv::Port* get_port_view(SharedPtr<PortModel> port);
+	Ganv::Port* get_port_view(SharedPtr<Client::PortModel> port);
 
 	void connect(Ganv::Node* src,
 	             Ganv::Node* dst);
@@ -133,10 +123,10 @@ private:
 	void disconnect(Ganv::Node* src,
 	                Ganv::Node* dst);
 
-	App&                        _app;
-	SharedPtr<const PatchModel> _patch;
+	App&                                _app;
+	SharedPtr<const Client::PatchModel> _patch;
 
-	typedef std::map<SharedPtr<const ObjectModel>, Ganv::Module*> Views;
+	typedef std::map<SharedPtr<const Client::ObjectModel>, Ganv::Module*> Views;
 	Views _views;
 
 	int                _auto_position_count;

@@ -48,8 +48,8 @@ NewSubpatchWindow::NewSubpatchWindow(BaseObjectType*                   cobject,
 }
 
 void
-NewSubpatchWindow::present(SharedPtr<const PatchModel> patch,
-                           GraphObject::Properties     data)
+NewSubpatchWindow::present(SharedPtr<const Client::PatchModel> patch,
+                           GraphObject::Properties             data)
 {
 	set_patch(patch);
 	_initial_data = data;
@@ -61,7 +61,7 @@ NewSubpatchWindow::present(SharedPtr<const PatchModel> patch,
  * This function MUST be called before using the window in any way!
  */
 void
-NewSubpatchWindow::set_patch(SharedPtr<const PatchModel> patch)
+NewSubpatchWindow::set_patch(SharedPtr<const Client::PatchModel> patch)
 {
 	_patch = patch;
 }

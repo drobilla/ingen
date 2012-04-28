@@ -32,6 +32,9 @@
 using namespace std;
 
 namespace Ingen {
+
+using namespace Client;
+
 namespace GUI {
 
 WindowFactory::WindowFactory(App& app)

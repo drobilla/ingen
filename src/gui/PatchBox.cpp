@@ -51,6 +51,9 @@
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Client;
+
 namespace GUI {
 
 static const int STATUS_CONTEXT_ENGINE = 0;
@@ -173,11 +176,11 @@ PatchBox::init_box(App& app)
 {
 	_app = &app;
 
-	string engine_name = _app->engine()->uri().str();
+	std::string engine_name = _app->engine()->uri().str();
 	if (engine_name == "http://drobilla.net/ns/ingen#internal") {
 		engine_name = "internal engine";
 	}
-	_status_bar->push(string("Connected to ") + engine_name, STATUS_CONTEXT_ENGINE);
+	_status_bar->push(std::string("Connected to ") + engine_name, STATUS_CONTEXT_ENGINE);
 
 	_menu_view_messages_window->signal_activate().connect(
 		sigc::mem_fun<void>(_app->messages_dialog(), &MessagesWindow::present));
@@ -367,7 +370,7 @@ PatchBox::show_port_status(const PortModel* port, const Raul::Atom& value)
 	if (parent) {
 		const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
 		if (plugin) {
-			const string& human_name = plugin->port_human_name(port->index());
+			const std::string& human_name = plugin->port_human_name(port->index());
 			if (!human_name.empty())
 				msg << " (" << human_name << ")";
 		}
@@ -487,7 +490,7 @@ PatchBox::event_save_as()
 		std::string filename = dialog.get_filename();
 		std::string basename = Glib::path_get_basename(filename);
 
-		if (basename.find('.') == string::npos) {
+		if (basename.find('.') == std::string::npos) {
 			filename += ".ingen";
 			basename += ".ingen";
 		} else if (filename.substr(filename.length() - 10) != ".ingen") {
@@ -573,8 +576,8 @@ PatchBox::event_draw()
 	int result = dialog.run();
 
 	if (result == Gtk::RESPONSE_OK) {
-		string filename = dialog.get_filename();
-		if (filename.find(".") == string::npos)
+		std::string filename = dialog.get_filename();
+		if (filename.find(".") == std::string::npos)
 			filename += ".dot";
 
 		bool confirm = true;

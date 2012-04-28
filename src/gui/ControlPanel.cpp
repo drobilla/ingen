@@ -28,6 +28,9 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Client;
+
 namespace GUI {
 
 ControlPanel::ControlPanel(BaseObjectType*                   cobject,

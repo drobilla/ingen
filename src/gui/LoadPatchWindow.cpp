@@ -34,6 +34,10 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Client;
+using namespace Shared;
+
 namespace GUI {
 
 LoadPatchWindow::LoadPatchWindow(BaseObjectType*                   cobject,

@@ -113,7 +113,7 @@ BufferFactory::get(LV2_URID type, uint32_t capacity, bool force_create)
 			return create(type, capacity);
 		} else {
 			assert(false);
-			error << "Failed to obtain buffer" << endl;
+			Raul::error << "Failed to obtain buffer" << std::endl;
 			return BufferRef();
 		}
 	}

@@ -25,8 +25,6 @@
 #include "Buffer.hpp"
 #include "Context.hpp"
 
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 

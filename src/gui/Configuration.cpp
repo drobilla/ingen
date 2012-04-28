@@ -80,7 +80,7 @@ Configuration::apply_settings()
 }
 
 uint32_t
-Configuration::get_port_color(const PortModel* p)
+Configuration::get_port_color(const Client::PortModel* p)
 {
 	assert(p != NULL);
 	const Shared::URIs& uris = _app.uris();

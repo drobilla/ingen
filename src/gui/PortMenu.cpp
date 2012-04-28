@@ -26,6 +26,10 @@
 #include "WindowFactory.hpp"
 
 namespace Ingen {
+
+using namespace Client;
+using namespace Shared;
+
 namespace GUI {
 
 PortMenu::PortMenu(BaseObjectType*                   cobject,

@@ -30,8 +30,6 @@
 #include "Context.hpp"
 #include "types.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

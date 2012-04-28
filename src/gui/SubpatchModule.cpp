@@ -35,6 +35,9 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Client;
+
 namespace GUI {
 
 SubpatchModule::SubpatchModule(PatchCanvas&                canvas,
@@ -66,7 +69,7 @@ SubpatchModule::store_location(double ax, double ay)
 	const Atom x(app().forge().make(static_cast<float>(ax)));
 	const Atom y(app().forge().make(static_cast<float>(ay)));
 
-	const URIs& uris = app().uris();
+	const Shared::URIs& uris = app().uris();
 
 	const Atom& existing_x = _node->get_property(uris.ingen_canvasX);
 	const Atom& existing_y = _node->get_property(uris.ingen_canvasY);

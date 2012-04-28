@@ -35,10 +35,14 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Client;
+using namespace Shared;
+
 namespace GUI {
 
-PatchPortModule::PatchPortModule(PatchCanvas&               canvas,
-                                 SharedPtr<const PortModel> model)
+PatchPortModule::PatchPortModule(PatchCanvas&                       canvas,
+                                 SharedPtr<const Client::PortModel> model)
 	: Ganv::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
 {

@@ -21,7 +21,6 @@
 #include "raul/SharedPtr.hpp"
 #include "PatchPortModule.hpp"
 #include "NodeModule.hpp"
-using std::string; using std::list;
 
 namespace Ingen { namespace Client {
 	class PatchModel;
@@ -29,7 +28,6 @@ namespace Ingen { namespace Client {
 	class PortModel;
 	class PatchWindow;
 } }
-using namespace Ingen::Client;
 
 namespace Ingen {
 namespace GUI {
@@ -44,8 +42,8 @@ class NodeControlWindow;
 class SubpatchModule : public NodeModule
 {
 public:
-	SubpatchModule(PatchCanvas&                canvas,
-	               SharedPtr<const PatchModel> controller);
+	SubpatchModule(PatchCanvas&                        canvas,
+	               SharedPtr<const Client::PatchModel> controller);
 
 	virtual ~SubpatchModule() {}
 
@@ -56,10 +54,10 @@ public:
 	void browse_to_patch();
 	void menu_remove();
 
-	SharedPtr<const PatchModel> patch() const { return _patch; }
+	SharedPtr<const Client::PatchModel> patch() const { return _patch; }
 
 protected:
-	SharedPtr<const PatchModel> _patch;
+	SharedPtr<const Client::PatchModel> _patch;
 };
 
 } // namespace GUI

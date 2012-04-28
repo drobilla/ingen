@@ -55,13 +55,14 @@
 	for (Items::const_iterator (iter) = coll.begin(); \
 	     (iter) != coll.end(); ++(iter))
 
-using Ingen::Client::ClientStore;
-using Ingen::Serialisation::Serialiser;
-using Ingen::Client::PluginModel;
 using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Client;
+using namespace Shared;
+
 namespace GUI {
 
 PatchCanvas::PatchCanvas(App&                        app,
@@ -459,7 +460,7 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 	} else {
 		module = dynamic_cast<NodeModule*>(_views[port->parent()]);
 		if (module) {
-			for (Module::iterator p = module->begin();
+			for (Ganv::Module::iterator p = module->begin();
 			     p != module->end(); ++p) {
 				GUI::Port* pv = dynamic_cast<GUI::Port*>(*p);
 				if (pv && pv->model() == port)
@@ -683,7 +684,7 @@ void
 PatchCanvas::paste()
 {
 	Glib::ustring str = Gtk::Clipboard::get()->wait_for_text();
-	SharedPtr<Parser> parser = _app.loader()->parser();
+	SharedPtr<Serialisation::Parser> parser = _app.loader()->parser();
 	if (!parser) {
 		LOG(error) << "Unable to load parser, paste unavailable" << endl;
 		return;

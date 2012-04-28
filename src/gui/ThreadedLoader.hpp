@@ -28,15 +28,7 @@
 #include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/serialisation/Parser.hpp"
 
-using std::string;
-using std::list;
-using boost::optional;
-
 namespace Ingen {
-using namespace Shared;
-using namespace Client;
-using namespace Serialisation;
-
 namespace GUI {
 
 /** Thread for loading patch files.
@@ -56,18 +48,20 @@ public:
 	ThreadedLoader(App&                 app,
 	               SharedPtr<Interface> engine);
 
-	void load_patch(bool                              merge,
-                    const Glib::ustring&              document_uri,
-                    optional<Raul::Path>              engine_parent,
-                    optional<Raul::Symbol>            engine_symbol,
-                    optional<GraphObject::Properties> engine_data);
+	void load_patch(bool                                     merge,
+                    const Glib::ustring&                     document_uri,
+	                boost::optional<Raul::Path>              engine_parent,
+                    boost::optional<Raul::Symbol>            engine_symbol,
+                    boost::optional<GraphObject::Properties> engine_data);
 
-	void save_patch(SharedPtr<const PatchModel> model, const string& filename);
+	void save_patch(SharedPtr<const Client::PatchModel> model,
+	                const std::string&                  filename);
 
-	SharedPtr<Parser> parser();
+	SharedPtr<Serialisation::Parser> parser();
 
 private:
-	void save_patch_event(SharedPtr<const PatchModel> model, const string& filename);
+	void save_patch_event(SharedPtr<const Client::PatchModel> model,
+	                      const std::string&                  filename);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	typedef sigc::slot<void> Closure;
@@ -77,7 +71,7 @@ private:
 	App&                 _app;
 	SharedPtr<Interface> _engine;
 	Glib::Mutex          _mutex;
-	list<Closure>        _events;
+	std::list<Closure>   _events;
 };
 
 } // namespace GUI

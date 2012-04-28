@@ -29,7 +29,6 @@ namespace Ingen { namespace Client {
 	class PortModel;
 	class NodeModel;
 } }
-using namespace Ingen::Client;
 
 namespace Ingen {
 namespace GUI {
@@ -48,9 +47,9 @@ class PatchPortModule : public Ganv::Module
 {
 public:
 	static PatchPortModule* create(
-		PatchCanvas&               canvas,
-		SharedPtr<const PortModel> model,
-		bool                       human);
+		PatchCanvas&                       canvas,
+		SharedPtr<const Client::PortModel> model,
+		bool                               human);
 
 	App& app() const;
 
@@ -59,11 +58,11 @@ public:
 
 	void set_name(const std::string& n);
 
-	SharedPtr<const PortModel> port() const { return _model; }
+	SharedPtr<const Client::PortModel> port() const { return _model; }
 
 protected:
-	PatchPortModule(PatchCanvas&               canvas,
-	                SharedPtr<const PortModel> model);
+	PatchPortModule(PatchCanvas&                       canvas,
+	                SharedPtr<const Client::PortModel> model);
 
 	bool show_menu(GdkEventButton* ev);
 	void set_selected(gboolean b);
@@ -72,8 +71,8 @@ protected:
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
-	SharedPtr<const PortModel> _model;
-	Port*                      _port;
+	SharedPtr<const Client::PortModel> _model;
+	Port*                              _port;
 };
 
 } // namespace GUI

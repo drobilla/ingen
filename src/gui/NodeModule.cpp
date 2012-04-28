@@ -40,6 +40,10 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
+
+using namespace Client;
+using namespace Shared;
+
 namespace GUI {
 
 NodeModule::NodeModule(PatchCanvas&               canvas,

@@ -27,7 +27,6 @@
 namespace Ingen { namespace Client {
 	class NodeModel;
 } }
-using Ingen::Client::NodeModel;
 
 namespace Ingen {
 namespace GUI {
@@ -42,12 +41,12 @@ class ControlPanel;
 class NodeControlWindow : public Window
 {
 public:
-	NodeControlWindow(App& app, SharedPtr<const NodeModel> node, uint32_t poly);
-	NodeControlWindow(App& app, SharedPtr<const NodeModel> node, ControlPanel* panel);
+	NodeControlWindow(App& app, SharedPtr<const Client::NodeModel> node, uint32_t poly);
+	NodeControlWindow(App& app, SharedPtr<const Client::NodeModel> node, ControlPanel* panel);
 
 	virtual ~NodeControlWindow();
 
-	SharedPtr<const NodeModel> node() const { return _node; }
+	SharedPtr<const Client::NodeModel> node() const { return _node; }
 
 	ControlPanel* control_panel() const { return _control_panel; }
 
@@ -58,9 +57,9 @@ protected:
 	void on_hide();
 
 private:
-	SharedPtr<const NodeModel> _node;
-	ControlPanel*              _control_panel;
-	bool                       _callback_enabled;
+	SharedPtr<const Client::NodeModel> _node;
+	ControlPanel*                      _control_panel;
+	bool                               _callback_enabled;
 
 	bool _position_stored;
 	int  _x;

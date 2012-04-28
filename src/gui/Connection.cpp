@@ -24,11 +24,11 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-Connection::Connection(Ganv::Canvas&                            canvas,
-                       boost::shared_ptr<const ConnectionModel> model,
-                       Ganv::Node*                              src,
-                       Ganv::Node*                              dst,
-                       uint32_t                                 color)
+Connection::Connection(Ganv::Canvas&                                    canvas,
+                       boost::shared_ptr<const Client::ConnectionModel> model,
+                       Ganv::Node*                                      src,
+                       Ganv::Node*                                      dst,
+                       uint32_t                                         color)
 	: Ganv::Edge(canvas, src, dst, color)
 	, _connection_model(model)
 {

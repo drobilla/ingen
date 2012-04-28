@@ -25,8 +25,6 @@
 
 #include "Window.hpp"
 
-using Ingen::Client::ObjectModel;
-
 namespace Ingen {
 namespace GUI {
 
@@ -40,16 +38,16 @@ public:
 	RenameWindow(BaseObjectType*                   cobject,
 	             const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(SharedPtr<const ObjectModel> object);
+	void present(SharedPtr<const Client::ObjectModel> object);
 
 private:
-	void set_object(SharedPtr<const ObjectModel> object);
+	void set_object(SharedPtr<const Client::ObjectModel> object);
 
 	void values_changed();
 	void cancel_clicked();
 	void ok_clicked();
 
-	SharedPtr<const ObjectModel> _object;
+	SharedPtr<const Client::ObjectModel> _object;
 
 	Gtk::Entry*  _symbol_entry;
 	Gtk::Entry*  _label_entry;

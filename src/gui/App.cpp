@@ -58,9 +58,13 @@ using namespace Ingen::Client;
 
 namespace Raul { class Deletable; }
 
-namespace Ingen { namespace Client { class PluginModel; } }
-
 namespace Ingen {
+
+namespace Client { class PluginModel; }
+
+using namespace Client;
+using namespace Shared;
+
 namespace GUI {
 
 class Port;
@@ -190,7 +194,7 @@ App::detach()
 	}
 }
 
-SharedPtr<Serialiser>
+SharedPtr<Serialisation::Serialiser>
 App::serialiser()
 {
 	if (!_world->serialiser())
