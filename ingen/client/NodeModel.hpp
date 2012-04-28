@@ -92,8 +92,6 @@ protected:
 	void add_port(SharedPtr<PortModel> pm);
 	void remove_port(SharedPtr<PortModel> pm);
 	void remove_port(const Raul::Path& port_path);
-	void add_program(int bank, int program, const std::string& name);
-	void remove_program(int bank, int program);
 	void set(SharedPtr<ObjectModel> model);
 
 	virtual void clear();
