@@ -11,14 +11,14 @@
 
 <>
 	ingen:edge [
-		ingen:head <control_out> ;
-		ingen:tail <control_in>
-	] , [
 		ingen:head <audio_out_1> ;
 		ingen:tail <audio_in_1>
 	] , [
 		ingen:head <audio_out_2> ;
 		ingen:tail <audio_in_2>
+	] , [
+		ingen:head <control_out> ;
+		ingen:tail <control_in>
 	] ;
 	ingen:polyphony 1 ;
 	<http://lv2plug.in/ns/extensions/ui#ui> ingen:PatchUIGtk2 ;
@@ -58,8 +58,8 @@
 
 <audio_out_1>
 	ingen:activity 0.0 ;
-	ingen:canvasX 130.3999939 ;
-	ingen:canvasY 96.69999695 ;
+	ingen:canvasX 142.0 ;
+	ingen:canvasY 104.0 ;
 	ingen:polyphonic false ;
 	lv2:index 4 ;
 	lv2:name "Audio Out 1" ;
@@ -80,7 +80,7 @@
 
 <control_in>
 	ingen:canvasX 23.0 ;
-	ingen:canvasY 181.3999939 ;
+	ingen:canvasY 197.0 ;
 	ingen:polyphonic false ;
 	atom:bufferType atom:Sequence ;
 	lv2:index 0 ;
@@ -91,8 +91,8 @@
 		lv2:InputPort .
 
 <control_out>
-	ingen:canvasX 148.3999939 ;
-	ingen:canvasY 181.3999939 ;
+	ingen:canvasX 160.0 ;
+	ingen:canvasY 197.0 ;
 	ingen:polyphonic false ;
 	atom:bufferType atom:Sequence ;
 	lv2:index 1 ;
