@@ -512,8 +512,8 @@ ClientStore::disconnect_all(const Raul::Path& parent_patch,
 	SharedPtr<ObjectModel> object = _object(path);
 
 	if (!patch || !object) {
-		std::cerr << "Bad disconnect all notification " << path
-		          << " in " << parent_patch << std::endl;
+		LOG(Raul::error) << "Bad disconnect all notification " << path
+		                 << " in " << parent_patch << std::endl;
 		return;
 	}
 

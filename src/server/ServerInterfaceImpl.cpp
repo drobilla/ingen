@@ -138,7 +138,8 @@ ServerInterfaceImpl::disconnect(const Path& src,
                                 const Path& dst)
 {
 	if (!Path::is_path(src) && !Path::is_path(dst)) {
-		std::cerr << "Bad disconnect request " << src << " => " << dst << std::endl;
+		LOG(Raul::error) << "Bad disconnect request " << src
+		                 << " => " << dst << std::endl;
 		return;
 	}
 
