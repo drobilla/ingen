@@ -218,19 +218,16 @@ PortImpl::clear_buffers()
 void
 PortImpl::broadcast_value(Context& context, bool force)
 {
-	Ingen::Forge& forge = context.engine().world()->forge();
-	Raul::Atom    val;
+	Ingen::Forge&      forge = context.engine().world()->forge();
+	Notification::Type ntype = Notification::PORT_VALUE;
+	Raul::Atom         val;
 	switch (_type.symbol()) {
 	case PortType::UNKNOWN:
 		break;
 	case PortType::AUDIO:
-		val = forge.make(((AudioBuffer*)buffer(0).get())->peak(context));
-		if (force || val != _last_broadcasted_value) {
-			const Notification note = Notification::make(
-				Notification::PORT_ACTIVITY, context.start(), this, val);
-			context.event_sink().write(sizeof(note), &note);
-		}
-		return;
+		val   = forge.make(((AudioBuffer*)buffer(0).get())->peak(context));
+		ntype = Notification::PORT_ACTIVITY;
+		break;
 	case PortType::CONTROL:
 	case PortType::CV:
 		val = forge.make(((AudioBuffer*)buffer(0).get())->value_at(0));
@@ -250,7 +247,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 	if (val.is_valid() && (force || val != _last_broadcasted_value)) {
 		_last_broadcasted_value = val;
 		const Notification note = Notification::make(
-			Notification::PORT_VALUE, context.start(), this, val);
+			ntype, context.start(), this, val);
 		context.event_sink().write(sizeof(note), &note);
 	}
 }
