@@ -195,8 +195,8 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(time >= context.start() && time <= context.end());
 	assert(note_num <= 127);
 
-	Key*   key         = &_keys[note_num];
-	Voice* voice       = NULL;
+	Key*     key       = &_keys[note_num];
+	Voice*   voice     = NULL;
 	uint32_t voice_num = 0;
 
 	if (key->state != Key::OFF) {

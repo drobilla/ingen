@@ -139,7 +139,9 @@ Buffer::port_data(PortType port_type, SampleCount offset) const
 void
 Buffer::prepare_write(Context& context)
 {
-	_atom->size = 0;
+	if (_type == _factory.uris().atom_Sequence) {
+		_atom->size = sizeof(LV2_Atom_Sequence_Body);
+	}
 }
 
 bool
@@ -154,14 +156,14 @@ Buffer::append_event(int64_t        frames,
 
 	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_atom;
 	LV2_Atom_Event*    ev  = (LV2_Atom_Event*)(
-		(uint8_t*)seq + sizeof(LV2_Atom) + lv2_atom_pad_size(seq->atom.size));
+		(uint8_t*)seq + lv2_atom_total_size(&seq->atom));
 
 	ev->time.frames = frames;
 	ev->body.size   = size;
 	ev->body.type   = type;
-	memcpy(LV2_ATOM_BODY(&ev->body), data, size);
+	memcpy(ev + 1, data, size);
 
-	_atom->size += lv2_atom_pad_size(size);
+	_atom->size += sizeof(LV2_Atom_Event) + lv2_atom_pad_size(size);
 
 	return true;
 }
