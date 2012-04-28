@@ -71,19 +71,19 @@ TriggerNode::TriggerNode(
 	_ports->at(1) = _note_port;
 
 	_gate_port = new OutputPort(bufs, this, "gate", 2, 1,
-	                            PortType::AUDIO, 0, bufs.forge().make(0.0f));
+	                            PortType::CV, 0, bufs.forge().make(0.0f));
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_gate_port->set_property(uris.lv2_name, bufs.forge().alloc("Gate"));
 	_ports->at(2) = _gate_port;
 
 	_trig_port = new OutputPort(bufs, this, "trigger", 3, 1,
-	                            PortType::AUDIO, 0, bufs.forge().make(0.0f));
+	                            PortType::CV, 0, bufs.forge().make(0.0f));
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_trig_port->set_property(uris.lv2_name, bufs.forge().alloc("Trigger"));
 	_ports->at(3) = _trig_port;
 
 	_vel_port = new OutputPort(bufs, this, "velocity", 4, 1,
-	                           PortType::AUDIO, 0, bufs.forge().make(0.0f));
+	                           PortType::CV, 0, bufs.forge().make(0.0f));
 	_vel_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
 	_vel_port->set_property(uris.lv2_maximum, bufs.forge().make(1.0f));
 	_vel_port->set_property(uris.lv2_name, bufs.forge().alloc("Velocity"));

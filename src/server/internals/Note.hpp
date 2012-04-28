@@ -82,7 +82,7 @@ private:
 		SampleCount time;
 	};
 
-	float note_to_freq(int num);
+	float note_to_freq(uint8_t num);
 	void free_voice(ProcessContext& context, uint32_t voice, FrameTime time);
 
 	Raul::Array<Voice>* _voices;

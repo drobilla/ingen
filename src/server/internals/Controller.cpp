@@ -82,8 +82,8 @@ ControllerNode::ControllerNode(InternalPlugin* plugin,
 	_max_port->set_property(uris.lv2_name, bufs.forge().alloc("Maximum"));
 	_ports->at(4) = _max_port;
 
-	_audio_port = new OutputPort(bufs, this, "ar_output", 5, 1,
-	                             PortType::AUDIO, 0, bufs.forge().make(0.0f));
+	_audio_port = new OutputPort(bufs, this, "output", 5, 1,
+	                             PortType::CV, 0, bufs.forge().make(0.0f));
 	_audio_port->set_property(uris.lv2_name, bufs.forge().alloc("Output"));
 	_ports->at(5) = _audio_port;
 }

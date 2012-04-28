@@ -69,25 +69,27 @@ NoteNode::NoteNode(
 	_ports->at(0) = _midi_in_port;
 
 	_freq_port = new OutputPort(bufs, this, "frequency", 1, _polyphony,
-	                            PortType::AUDIO, 0, bufs.forge().make(440.0f));
+	                            PortType::CV, 0, bufs.forge().make(440.0f));
 	_freq_port->set_property(uris.lv2_name, bufs.forge().alloc("Frequency"));
+	_freq_port->set_property(uris.lv2_minimum, bufs.forge().make(16.0f));
+	_freq_port->set_property(uris.lv2_maximum, bufs.forge().make(25088.0f));
 	_ports->at(1) = _freq_port;
 
 	_vel_port = new OutputPort(bufs, this, "velocity", 2, _polyphony,
-	                           PortType::AUDIO, 0, bufs.forge().make(0.0f));
+	                           PortType::CV, 0, bufs.forge().make(0.0f));
 	_vel_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
 	_vel_port->set_property(uris.lv2_maximum, bufs.forge().make(1.0f));
 	_vel_port->set_property(uris.lv2_name, bufs.forge().alloc("Velocity"));
 	_ports->at(2) = _vel_port;
 
 	_gate_port = new OutputPort(bufs, this, "gate", 3, _polyphony,
-	                            PortType::AUDIO, 0, bufs.forge().make(0.0f));
+	                            PortType::CV, 0, bufs.forge().make(0.0f));
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_gate_port->set_property(uris.lv2_name, bufs.forge().alloc("Gate"));
 	_ports->at(3) = _gate_port;
 
 	_trig_port = new OutputPort(bufs, this, "trigger", 4, _polyphony,
-	                            PortType::AUDIO, 0, bufs.forge().make(0.0f));
+	                            PortType::CV, 0, bufs.forge().make(0.0f));
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_trig_port->set_property(uris.lv2_name, bufs.forge().alloc("Trigger"));
 	_ports->at(4) = _trig_port;
@@ -372,12 +374,10 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 }
 
 float
-NoteNode::note_to_freq(int num)
+NoteNode::note_to_freq(uint8_t num)
 {
 	static const float A4 = 440.0f;
-	if (num >= 0 && num <= 119)
-		return A4 * powf(2.0f, (float)(num - 57.0f) / 12.0f);
-	return 1.0f;  // Frequency of zero causes numerical problems...
+	return A4 * powf(2.0f, (float)(num - 57.0f) / 12.0f);
 }
 
 void
