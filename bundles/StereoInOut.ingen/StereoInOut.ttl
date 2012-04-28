@@ -21,7 +21,7 @@
 		ingen:tail <audio_in_2>
 	] ;
 	ingen:polyphony 1 ;
-	<http://lv2plug.in/ns/extensions/ui#ui> ingen:ui ;
+	<http://lv2plug.in/ns/extensions/ui#ui> ingen:PatchUIGtk2 ;
 	lv2:extensionData <http://lv2plug.in/ns/ext/state#interface> ;
 	lv2:port <audio_in_1> ,
 		<audio_in_2> ,
@@ -58,7 +58,7 @@
 
 <audio_out_1>
 	ingen:activity 0.0 ;
-	ingen:canvasX 12.0 ;
+	ingen:canvasX 130.3999939 ;
 	ingen:canvasY 96.69999695 ;
 	ingen:polyphonic false ;
 	lv2:index 4 ;
@@ -69,7 +69,7 @@
 
 <audio_out_2>
 	ingen:activity 0.0 ;
-	ingen:canvasX 12.0 ;
+	ingen:canvasX 130.3999939 ;
 	ingen:canvasY 12.0 ;
 	ingen:polyphonic false ;
 	lv2:index 5 ;
