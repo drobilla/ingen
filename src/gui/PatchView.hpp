@@ -25,7 +25,6 @@
 #include "raul/URI.hpp"
 
 namespace Raul { class Atom; }
-namespace Ganv { class Port; class Item; }
 
 namespace Ingen {
 

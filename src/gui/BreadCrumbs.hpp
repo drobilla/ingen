@@ -39,7 +39,7 @@ namespace GUI {
 class BreadCrumbs : public Gtk::HBox
 {
 public:
-	BreadCrumbs(App& app);
+	explicit BreadCrumbs(App& app);
 
 	SharedPtr<PatchView> view(const Raul::Path& path);
 
@@ -64,7 +64,7 @@ private:
 			: _path(path)
 			, _view(view)
 		{
-			assert( !view || view->patch()->path() == path);
+			assert(!view || view->patch()->path() == path);
 			set_border_width(0);
 			set_path(path);
 			set_can_focus(false);
@@ -72,7 +72,7 @@ private:
 		}
 
 		void set_view(SharedPtr<PatchView> view) {
-			assert( !view || view->patch()->path() == _path);
+			assert(!view || view->patch()->path() == _path);
 			_view = view;
 		}
 

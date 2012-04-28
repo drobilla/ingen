@@ -41,7 +41,7 @@ class Port;
 class Configuration
 {
 public:
-	Configuration(App& app);
+	explicit Configuration(App& app);
 	~Configuration();
 
 	void load_settings(std::string filename = "");

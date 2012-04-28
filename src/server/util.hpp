@@ -32,9 +32,9 @@
 
 #ifdef USE_ASSEMBLY
 # if SIZEOF_VOID_P==8
-#  define cpuid(a,b,c,d,n) asm("xchgq %%rbx, %1; cpuid; xchgq %%rbx, %1": "=a" (a), "=r" (b), "=c" (c), "=d" (d) : "a" (n));
+#  define cpuid(a, b, c, d, n) asm("xchgq %%rbx, %1; cpuid; xchgq %%rbx, %1": "=a" (a), "=r" (b), "=c" (c), "=d" (d) : "a" (n));
 # else
-#  define cpuid(a,b,c,d,n) asm("xchgl %%ebx, %1; cpuid; xchgl %%ebx, %1": "=a" (a), "=r" (b), "=c" (c), "=d" (d) : "a" (n));
+#  define cpuid(a, b, c, d, n) asm("xchgl %%ebx, %1; cpuid; xchgl %%ebx, %1": "=a" (a), "=r" (b), "=c" (c), "=d" (d) : "a" (n));
 # endif
 #endif
 
@@ -51,14 +51,14 @@ set_denormal_flags()
 	unsigned long a, b, c, d0, d1;
 	int stepping, model, family, extfamily;
 
-	cpuid(a,b,c,d1,1);
+	cpuid(a, b, c, d1, 1);
 	if (d1 & 1<<25) { /* It has SSE support */
 		_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-		family = (a >> 8) & 0xf;
-		extfamily = (a >> 20) & 0xff;
-		model = (a >> 4) & 0xf;
-		stepping = a & 0xf;
-		cpuid(a,b,c,d0,0);
+		family = (a >> 8) & 0xF;
+		extfamily = (a >> 20) & 0xFF;
+		model = (a >> 4) & 0xF;
+		stepping = a & 0xF;
+		cpuid(a, b, c, d0, 0);
 		if (b == 0x756e6547) { /* It's an Intel */
 			if (family == 15 && extfamily == 0 && model == 0 && stepping < 7) {
 				return;

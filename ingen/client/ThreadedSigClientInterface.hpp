@@ -50,7 +50,7 @@ namespace Client {
 class ThreadedSigClientInterface : public SigClientInterface
 {
 public:
-	ThreadedSigClientInterface(uint32_t queue_size)
+	explicit ThreadedSigClientInterface(uint32_t queue_size)
 		: _sigs(queue_size)
 		, response_slot(_signal_response.make_slot())
 		, error_slot(_signal_error.make_slot())

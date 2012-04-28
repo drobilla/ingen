@@ -21,7 +21,11 @@
 
 #include "ingen/Resource.hpp"
 
-namespace Raul { class Atom; class Path; class Symbol; }
+namespace Raul {
+class Atom;
+class Path;
+class Symbol;
+}
 
 namespace Ingen {
 

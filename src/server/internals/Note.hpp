@@ -68,14 +68,18 @@ private:
 	struct Key {
 		enum State { OFF, ON_ASSIGNED, ON_UNASSIGNED };
 		Key() : state(OFF), voice(0), time(0) {}
-		State state; uint32_t voice; SampleCount time;
+		State       state;
+		uint32_t    voice;
+		SampleCount time;
 	};
 
 	/** Voice, one of these always exists for each voice */
 	struct Voice {
 		enum State { FREE, ACTIVE, HOLDING };
 		Voice() : state(FREE), note(0), time(0) {}
-		State state; uint8_t note; SampleCount time;
+		State       state;
+		uint8_t     note;
+		SampleCount time;
 	};
 
 	float note_to_freq(int num);

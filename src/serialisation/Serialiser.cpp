@@ -60,7 +60,7 @@ namespace Ingen {
 namespace Serialisation {
 
 struct Serialiser::Impl {
-	Impl(Shared::World& world)
+	explicit Impl(Shared::World& world)
 		: _root_path("/")
 		, _world(world)
 	{}

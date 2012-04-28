@@ -60,7 +60,7 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool patch_port)
 	_reset_range_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &PortMenu::on_menu_reset_range));
 
-	if ( ! PtrCast<PatchModel>(port->parent()) ) {
+	if (!PtrCast<PatchModel>(port->parent())) {
 		_polyphonic_menuitem->set_sensitive(false);
 		_rename_menuitem->set_sensitive(false);
 		_destroy_menuitem->set_sensitive(false);

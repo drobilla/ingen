@@ -85,7 +85,7 @@ protected:
 	NodeModel(Shared::URIs&          uris,
 	          SharedPtr<PluginModel> plugin,
 	          const Raul::Path&      path);
-	NodeModel(const Raul::Path& path);
+	explicit NodeModel(const Raul::Path& path);
 
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);

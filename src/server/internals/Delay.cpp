@@ -156,7 +156,7 @@ DelayNode::process(ProcessContext& context)
 	const uint32_t     buffer_mask   = plugin_data->_buffer_mask;
 	const unsigned int sample_rate   = plugin_data->_srate;
 	float              delay_samples = plugin_data->_delay_samples;
-	long               write_phase   = plugin_data->_write_phase;
+	int64_t            write_phase   = plugin_data->_write_phase;
 	const uint32_t     sample_count  = context.nframes();
 
 	if (write_phase == 0) {
@@ -165,11 +165,11 @@ DelayNode::process(ProcessContext& context)
 	}
 
 	if (delay_time == _last_delay_time) {
-		const long  idelay_samples = (long)delay_samples;
-		const float frac           = delay_samples - idelay_samples;
+		const int64_t idelay_samples = (int64_t)delay_samples;
+		const float   frac           = delay_samples - idelay_samples;
 
 		for (uint32_t i = 0; i < sample_count; i++) {
-			long read_phase = write_phase - (long)delay_samples;
+			int64_t read_phase = write_phase - (int64_t)delay_samples;
 			const float read = cube_interp(frac,
 					buffer_at(read_phase - 1),
 					buffer_at(read_phase),
@@ -185,10 +185,10 @@ DelayNode::process(ProcessContext& context)
 		for (uint32_t i = 0; i < sample_count; i++) {
 			delay_samples += delay_samples_slope;
 			write_phase++;
-			const long  read_phase     = write_phase - (long)delay_samples;
-			const long  idelay_samples = (long)delay_samples;
-			const float frac           = delay_samples - idelay_samples;
-			const float read           = cube_interp(frac,
+			const int64_t read_phase     = write_phase - (int64_t)delay_samples;
+			const int64_t idelay_samples = (int64_t)delay_samples;
+			const float   frac           = delay_samples - idelay_samples;
+			const float   read           = cube_interp(frac,
 					buffer_at(read_phase - 1),
 					buffer_at(read_phase),
 					buffer_at(read_phase + 1),

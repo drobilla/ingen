@@ -32,7 +32,10 @@
 #include "PortType.hpp"
 #include "types.hpp"
 
-namespace Raul { template <typename T> class List; class Maid; }
+namespace Raul {
+template <typename T> class List;
+class Maid;
+}
 
 namespace Ingen {
 

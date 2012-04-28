@@ -62,8 +62,10 @@ public:
 			: (_capacity - sizeof(LV2_Atom_Vector)) / sizeof(Sample);
 	}
 
-	inline Sample& value_at(size_t offset) const
-		{ assert(offset < nframes()); return data()[offset]; }
+	inline Sample& value_at(size_t offset) const {
+		assert(offset < nframes());
+		return data()[offset];
+	}
 
 	void prepare_read(Context& context);
 	void prepare_write(Context& context) {}

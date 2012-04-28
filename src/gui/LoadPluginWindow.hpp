@@ -32,7 +32,10 @@
 
 namespace Ingen {
 
-namespace Client { class PatchModel; class PluginModel; }
+namespace Client {
+class PatchModel;
+class PluginModel;
+}
 
 namespace GUI {
 
@@ -86,7 +89,10 @@ private:
 	public:
 		enum Criteria { NAME, TYPE, URI, };
 
-		CriteriaColumns() { add(_col_label); add(_col_criteria); }
+		CriteriaColumns() {
+			add(_col_label);
+			add(_col_criteria);
+		}
 
 		Gtk::TreeModelColumn<Glib::ustring> _col_label;
 		Gtk::TreeModelColumn<Criteria>      _col_criteria;

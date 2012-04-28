@@ -109,7 +109,7 @@ NodeImpl::deactivate()
 	assert(_activated);
 	_activated = false;
 	for (uint32_t i = 0; i < _polyphony; ++i) {
-		for (unsigned long j = 0; j < num_ports(); ++j) {
+		for (uint32_t j = 0; j < num_ports(); ++j) {
 			PortImpl* const port = _ports->at(j);
 			if (port->is_output() && port->buffer(i))
 				port->buffer(i)->clear();

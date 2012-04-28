@@ -33,7 +33,7 @@ ResourceImpl::add_property(const Raul::URI&  uri,
 {
 	// Ignore duplicate statements
 	typedef Resource::Properties::const_iterator iterator;
-	const std::pair<iterator,iterator> range = _properties.equal_range(uri);
+	const std::pair<iterator, iterator> range = _properties.equal_range(uri);
 	for (iterator i = range.first; i != range.second && i != _properties.end(); ++i) {
 		if (i->second == value && i->second.context() == ctx) {
 			return;
@@ -117,7 +117,7 @@ ResourceImpl::type(const URIs&       uris,
                    bool&             is_output)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	const std::pair<iterator,iterator> types_range = properties.equal_range(uris.rdf_type);
+	const std::pair<iterator, iterator> types_range = properties.equal_range(uris.rdf_type);
 
 	patch = node = port = is_output = false;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {

@@ -67,8 +67,11 @@ protected:
 
 	struct PatchTreeModelColumns : public Gtk::TreeModel::ColumnRecord
 	{
-		PatchTreeModelColumns()
-		{ add(name_col); add(enabled_col); add(patch_model_col); }
+		PatchTreeModelColumns() {
+			add(name_col);
+			add(enabled_col);
+			add(patch_model_col);
+		}
 
 		Gtk::TreeModelColumn<Glib::ustring>                  name_col;
 		Gtk::TreeModelColumn<bool>                           enabled_col;

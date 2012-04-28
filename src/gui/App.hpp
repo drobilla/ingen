@@ -88,8 +88,12 @@ public:
 	bool can_control(const Client::PortModel* port) const;
 
 	bool signal() const { return _enable_signal; }
-	bool disable_signals()  { bool old = _enable_signal; _enable_signal = false; return old; }
 	void enable_signals(bool b) { _enable_signal = b; }
+	bool disable_signals() {
+		bool old = _enable_signal;
+		_enable_signal = false;
+		return old;
+	}
 
 	uint32_t sample_rate() const;
 
@@ -108,8 +112,6 @@ public:
 	SharedPtr<ThreadedLoader>             loader() const { return _loader; }
 
 	SharedPtr<Serialisation::Serialiser> serialiser();
-
-	static inline App& instance() { assert(_instance); return *_instance; }
 
 	static SharedPtr<App> create(Ingen::Shared::World* world);
 	void run();
@@ -133,7 +135,7 @@ protected:
 	                  LexicalCompare<std::string, int> > Icons;
 	Icons _icons;
 
-	App(Ingen::Shared::World* world);
+	explicit App(Ingen::Shared::World* world);
 
 	bool animate();
 	void response(int32_t id, Ingen::Status status);
@@ -145,7 +147,6 @@ protected:
 	static void* icon_destroyed(void* data);
 
 	static Gtk::Main* _main;
-	static App*       _instance;
 
 	SharedPtr<Client::SigClientInterface> _client;
 	SharedPtr<Client::ClientStore>        _store;

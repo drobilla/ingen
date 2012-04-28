@@ -60,7 +60,7 @@ OSCClientReceiver::start(bool dump_osc)
 	// Attempt preferred port
 	if (_listen_port != 0) {
 		char port_str[8];
-		snprintf(port_str, 8, "%d", _listen_port);
+		snprintf(port_str, sizeof(port_str), "%d", _listen_port);
 		_st = lo_server_thread_new(port_str, lo_error_cb);
 	}
 

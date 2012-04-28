@@ -40,11 +40,11 @@ Configuration::Configuration(App& app)
 	// Colours from the Tango palette with modified V
 	: _app(app)
 	, _name_style(HUMAN)
-	, _audio_port_color(  0x4A8A0EFF) // Green
+	, _audio_port_color(0x4A8A0EFF) // Green
 	, _control_port_color(0x244678FF) // Blue
-	, _event_port_color(  0x960909FF) // Red
-	, _string_port_color( 0x5C3566FF) // Plum
-	, _value_port_color(  0xBABDB6FF) // Aluminum
+	, _event_port_color(0x960909FF) // Red
+	, _string_port_color(0x5C3566FF) // Plum
+	, _value_port_color(0xBABDB6FF) // Aluminum
 {
 }
 

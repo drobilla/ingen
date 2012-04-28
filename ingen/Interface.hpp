@@ -20,7 +20,11 @@
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 
-namespace Raul { class Atom; class Path; class URI; }
+namespace Raul {
+class Atom;
+class Path;
+class URI;
+}
 
 namespace Ingen {
 

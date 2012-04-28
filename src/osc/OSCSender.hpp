@@ -26,7 +26,7 @@ namespace Shared {
 
 class OSCSender {
 public:
-	OSCSender(size_t max_packet_size);
+	explicit OSCSender(size_t max_packet_size);
 	virtual ~OSCSender() {}
 
 	lo_address address() const { return _address; }

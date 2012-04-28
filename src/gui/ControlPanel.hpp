@@ -60,8 +60,8 @@ public:
 	void enable_port(const Raul::Path& path);
 	void disable_port(const Raul::Path& path);
 
-	size_t             num_controls() const { return _controls.size(); }
-	std::pair<int,int> ideal_size()   const { return _ideal_size; }
+	size_t              num_controls() const { return _controls.size(); }
+	std::pair<int, int> ideal_size()   const { return _ideal_size; }
 
 	// Callback for Control
 	void value_changed_atom(SharedPtr<const Client::PortModel> port,
@@ -74,7 +74,7 @@ public:
 
 private:
 	App*                  _app;
-	std::pair<int,int>    _ideal_size;
+	std::pair<int, int>   _ideal_size;
 	std::vector<Control*> _controls;
 	Gtk::VBox*            _control_box;
 	bool                  _callback_enabled;

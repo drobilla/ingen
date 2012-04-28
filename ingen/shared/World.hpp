@@ -37,7 +37,10 @@ namespace Ingen {
 class EngineBase;
 class Interface;
 
-namespace Serialisation { class Serialiser; class Parser; }
+namespace Serialisation {
+class Serialiser;
+class Parser;
+}
 
 namespace Shared {
 

@@ -359,7 +359,7 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 		Glib::RefPtr<Gdk::Pixbuf> icon = _app.icon_from_path(
 			PluginModel::get_lv2_icon_path(p->lilv_plugin()), 16);
 
-		pair<iterator,iterator> range = _class_menus.equal_range(class_uri_str);
+		pair<iterator, iterator> range = _class_menus.equal_range(class_uri_str);
 		if (range.first == _class_menus.end() || range.first == range.second
 		    || range.first->second.menu == _plugin_menu) {
 			_classless_menu->items().push_back(
@@ -534,7 +534,7 @@ PatchCanvas::disconnect(Ganv::Node* src_port,
 void
 PatchCanvas::auto_menu_position(int& x, int& y, bool& push_in)
 {
-	std::pair<int,int> scroll_offsets;
+	std::pair<int, int> scroll_offsets;
 	get_scroll_offsets(scroll_offsets.first, scroll_offsets.second);
 
 	if (_auto_position_count > 0 && scroll_offsets != _auto_position_scroll_offsets)
@@ -768,7 +768,7 @@ PatchCanvas::generate_port_name(
 	char num_buf[5];
 	uint32_t i = 1;
 	for ( ; i < 9999; ++i) {
-		snprintf(num_buf, 5, "%u", i);
+		snprintf(num_buf, sizeof(num_buf), "%u", i);
 		symbol = sym_base + "_";
 		symbol += num_buf;
 		if (!_patch->get_port(symbol))

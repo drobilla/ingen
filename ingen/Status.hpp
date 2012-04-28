@@ -58,7 +58,7 @@ ingen_status_string(Status st)
 	case CREATION_FAILED:     return "Creation failed";
 	case DIRECTION_MISMATCH:  return "Direction mismatch";
 	case EXISTS:              return "Object exists";
-	case INTERNAL_ERROR:      return "Internal error" ;
+	case INTERNAL_ERROR:      return "Internal error";
 	case INVALID_PARENT_PATH: return "Invalid parent path";
 	case INVALID_POLY:        return "Invalid polyphony";
 	case NOT_FOUND:           return "Object not found";

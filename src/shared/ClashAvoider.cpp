@@ -84,7 +84,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 		if (!exists(in) && _symbol_map.find(in) == _symbol_map.end()) {
 			InsertRecord i = _symbol_map.insert(make_pair(in, in));
 			assert(i.second);
-			debug << " (3) " << i.first->second << endl;;
+			debug << " (3) " << i.first->second << endl;
 			return i.first->second;
 
 		// Append _2 _3 etc until an unused symbol is found
@@ -115,7 +115,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 					debug << "HIT: offset = " << offset << ", str = " << str << endl;
 					offset = _store.child_name_offset(in.parent(), name, false);
 					_offsets.insert(make_pair(base_path, offset));
-					debug << " (4) " << i.first->second << endl;;
+					debug << " (4) " << i.first->second << endl;
 					return i.first->second;
 				} else {
 					debug << "MISSED OFFSET: " << in << " => " << ss.str() << endl;

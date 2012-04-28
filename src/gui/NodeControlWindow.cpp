@@ -95,7 +95,8 @@ NodeControlWindow::~NodeControlWindow()
 void
 NodeControlWindow::resize()
 {
-	pair<int,int> controls_size = _control_panel->ideal_size();
+	pair<int, int> controls_size = _control_panel->ideal_size();
+
 	int width  = controls_size.first;
 	int height = controls_size.second;
 

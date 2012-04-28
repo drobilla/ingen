@@ -81,10 +81,10 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 	row[_criteria_columns._col_label] = "Name contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::NAME;
 	_filter_combo->set_active(iter);
-	iter = _criteria_liststore->append(); row = *iter;
+	row = *(iter = _criteria_liststore->append());
 	row[_criteria_columns._col_label] = "Type contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::TYPE;
-	iter = _criteria_liststore->append(); row = *iter;
+	row = *(iter = _criteria_liststore->append());
 	row[_criteria_columns._col_label] = "URI contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::URI;
 	_filter_combo->pack_start(_criteria_columns._col_label);
@@ -406,9 +406,11 @@ LoadPluginWindow::filter_changed()
 				field = name.get_string();
 			break;
 		case CriteriaColumns::TYPE:
-			field = plugin->type_uri().str(); break;
+			field = plugin->type_uri().str();
+			break;
 		case CriteriaColumns::URI:
-			field = plugin->uri().str(); break;
+			field = plugin->uri().str();
+			break;
 		default:
 			throw;
 		}

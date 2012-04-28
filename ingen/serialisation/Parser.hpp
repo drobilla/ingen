@@ -40,7 +40,7 @@ namespace Serialisation {
  */
 class Parser {
 public:
-	Parser(Shared::World& world);
+	explicit Parser(Shared::World& world);
 
 	virtual ~Parser() {}
 

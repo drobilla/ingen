@@ -54,20 +54,17 @@ public:
 	float delay_samples() const { return _delay_samples; }
 
 private:
-	inline float& buffer_at(long phase) const { return _buffer[phase & _buffer_mask]; }
+	inline float& buffer_at(int64_t phase) const { return _buffer[phase & _buffer_mask]; }
 
 	InputPort*  _delay_port;
 	InputPort*  _in_port;
 	OutputPort* _out_port;
-
-	typedef long Phase;
-
-	float*   _buffer;
-	uint32_t _buffer_length;
-	uint32_t _buffer_mask;
-	Phase    _write_phase;
-	float    _last_delay_time;
-	float    _delay_samples;
+	float*      _buffer;
+	uint32_t    _buffer_length;
+	uint32_t    _buffer_mask;
+	uint64_t    _write_phase;
+	float       _last_delay_time;
+	float       _delay_samples;
 };
 
 } // namespace Server

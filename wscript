@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import subprocess
 
 import waflib.Options as Options
 from waflib.extras import autowaf as autowaf
@@ -179,3 +180,6 @@ def build(bld):
                        bld.env['LV2DIR'] + '/ingen.lv2/libingen_lv2.so')
 
     bld.add_post_fun(autowaf.run_ldconfig)
+
+def lint(ctx):
+    subprocess.call('cpplint.py --filter=-whitespace/comments,-whitespace/tab,-whitespace/braces,-whitespace/labels,-build/header_guard,-readability/casting,-readability/todo,-build/include,-build/namespaces,-whitespace/line_length,-runtime/rtti,-runtime/references,-whitespace/blank_line,-runtime/sizeof,-readability/streams,-whitespace/operators,-whitespace/parens `find -name *.cpp -or -name *.hpp`', shell=True)

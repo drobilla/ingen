@@ -50,8 +50,7 @@ public:
 
 	Raul::URI uri() const { return _engine_url; }
 
-	inline int32_t next_id()
-	{ int32_t ret = (_id == -1) ? -1 : _id++; return ret; }
+	inline int32_t next_id() { return (_id == -1) ? -1 : _id++; }
 
 	void set_response_id(int32_t id) { _id = id; }
 

@@ -45,7 +45,7 @@ class PortImpl;
 class EngineStore : public Ingen::Shared::Store
 {
 public:
-	EngineStore(SharedPtr<BufferFactory> f) : _factory(f) {}
+	explicit EngineStore(SharedPtr<BufferFactory> f) : _factory(f) {}
 	~EngineStore();
 
 	SharedPtr<BufferFactory> buffer_factory() const { return _factory; }

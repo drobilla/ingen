@@ -97,9 +97,9 @@ SubpatchModule::browse_to_patch()
 
 	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(_patch->parent());
 
-	PatchWindow* const preferred = ( (parent)
+	PatchWindow* const preferred = (parent)
 		? app().window_factory()->patch_window(parent)
-		: NULL );
+		: NULL;
 
 	app().window_factory()->present_patch(_patch, preferred);
 }

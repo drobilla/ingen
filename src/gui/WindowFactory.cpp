@@ -150,7 +150,7 @@ WindowFactory::present_patch(SharedPtr<const PatchModel> patch,
                              PatchWindow*                preferred,
                              SharedPtr<PatchView>        view)
 {
-	assert( !view || view->patch() == patch);
+	assert(!view || view->patch() == patch);
 
 	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
 
@@ -175,7 +175,7 @@ PatchWindow*
 WindowFactory::new_patch_window(SharedPtr<const PatchModel> patch,
                                 SharedPtr<PatchView>        view)
 {
-	assert( !view || view->patch() == patch);
+	assert(!view || view->patch() == patch);
 
 	PatchWindow* win = NULL;
 	WidgetFactory::get_widget_derived("patch_win", win);

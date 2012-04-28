@@ -25,7 +25,7 @@ namespace Ingen {
 
 class Forge : public Raul::Forge {
 public:
-	Forge(Shared::LV2URIMap& map);
+	explicit Forge(Shared::LV2URIMap& map);
 
 	std::string str(const Raul::Atom& atom);
 };

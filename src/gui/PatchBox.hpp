@@ -23,14 +23,17 @@
 
 #include "Window.hpp"
 
-namespace Raul { class Atom; class Path; }
+namespace Raul {
+class Atom;
+class Path;
+}
 
 namespace Ingen {
 
 namespace Client {
-	class PatchModel;
-	class PortModel;
-	class ObjectModel;
+class PatchModel;
+class PortModel;
+class ObjectModel;
 }
 
 namespace GUI {

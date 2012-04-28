@@ -61,7 +61,7 @@ public:
 	void set_block_length(SampleCount block_length);
 
 	Ingen::Forge&        forge();
-	Ingen::Shared::URIs& uris()   { assert(_uris); return *_uris.get(); }
+	Ingen::Shared::URIs& uris()   { return *_uris.get(); }
 	Engine&              engine() { return _engine; }
 
 private:

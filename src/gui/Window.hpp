@@ -31,8 +31,8 @@ class App;
 class Window : public Gtk::Window
 {
 public:
-	Window()                        : Gtk::Window(), _app(NULL)        {}
-	Window(BaseObjectType* cobject) : Gtk::Window(cobject), _app(NULL) {}
+	Window()                                 : Gtk::Window(), _app(NULL)        {}
+	explicit Window(BaseObjectType* cobject) : Gtk::Window(cobject), _app(NULL) {}
 
 	virtual void init_window(App& app) { _app = &app; }
 
@@ -54,8 +54,8 @@ public:
 class Dialog : public Gtk::Dialog
 {
 public:
-	Dialog()                        : Gtk::Dialog(), _app(NULL)        {}
-	Dialog(BaseObjectType* cobject) : Gtk::Dialog(cobject), _app(NULL) {}
+	Dialog()                                 : Gtk::Dialog(), _app(NULL)        {}
+	explicit Dialog(BaseObjectType* cobject) : Gtk::Dialog(cobject), _app(NULL) {}
 
 	virtual void init_dialog(App& app) { _app = &app; }
 

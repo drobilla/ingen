@@ -23,7 +23,10 @@
 
 #include "ingen/Interface.hpp"
 
-namespace Raul { class Atom; class Path; }
+namespace Raul {
+class Atom;
+class Path;
+}
 
 namespace Ingen {
 namespace Shared {

@@ -28,7 +28,11 @@ namespace Raul { class Path; }
 
 namespace Ingen {
 
-namespace Client { class PatchModel; class NodeModel; class ObjectModel; }
+namespace Client {
+class PatchModel;
+class NodeModel;
+class ObjectModel;
+}
 
 namespace GUI {
 
@@ -52,7 +56,7 @@ class UploadPatchWindow;
  */
 class WindowFactory {
 public:
-	WindowFactory(App& app);
+	explicit WindowFactory(App& app);
 	~WindowFactory();
 
 	size_t num_open_patch_windows();

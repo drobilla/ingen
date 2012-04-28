@@ -42,7 +42,7 @@ class Engine;
 class PostProcessor
 {
 public:
-	PostProcessor(Engine& engine);
+	explicit PostProcessor(Engine& engine);
 	~PostProcessor();
 
 	/** Push a list of events on to the process queue.

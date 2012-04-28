@@ -67,7 +67,7 @@ struct LV2Patch {
 /** Ingen LV2 library. */
 class Lib {
 public:
-	Lib(const char* bundle_path);
+	explicit Lib(const char* bundle_path);
 
 	typedef std::vector< SharedPtr<const LV2Patch> > Patches;
 
@@ -307,7 +307,7 @@ using namespace Ingen::Server;
 class MainThread : public Raul::Thread
 {
 public:
-	MainThread(SharedPtr<Engine> engine) : _engine(engine) {}
+	explicit MainThread(SharedPtr<Engine> engine) : _engine(engine) {}
 
 private:
 	virtual void _run() {

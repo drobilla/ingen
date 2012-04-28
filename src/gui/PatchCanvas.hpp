@@ -129,8 +129,8 @@ private:
 	typedef std::map<SharedPtr<const Client::ObjectModel>, Ganv::Module*> Views;
 	Views _views;
 
-	int                _auto_position_count;
-	std::pair<int,int> _auto_position_scroll_offsets;
+	int                 _auto_position_count;
+	std::pair<int, int> _auto_position_scroll_offsets;
 
 	int _last_click_x;
 	int _last_click_y;

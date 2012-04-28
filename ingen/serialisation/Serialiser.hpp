@@ -36,7 +36,10 @@ class Node;
 class Port;
 class Connection;
 
-namespace Shared { class World; class Store; }
+namespace Shared {
+class World;
+class Store;
+}
 
 namespace Serialisation {
 
@@ -47,7 +50,7 @@ namespace Serialisation {
 class Serialiser
 {
 public:
-	Serialiser(Shared::World& world);
+	explicit Serialiser(Shared::World& world);
 	virtual ~Serialiser();
 
 	typedef GraphObject::Properties Properties;

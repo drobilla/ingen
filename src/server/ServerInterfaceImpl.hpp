@@ -45,7 +45,7 @@ class ServerInterfaceImpl : public EventSource,
                             public Interface
 {
 public:
-	ServerInterfaceImpl(Engine& engine);
+	explicit ServerInterfaceImpl(Engine& engine);
 	virtual ~ServerInterfaceImpl();
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }

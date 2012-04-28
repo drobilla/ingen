@@ -425,10 +425,10 @@ PatchImpl::build_ports_array() const
 
 	size_t i = 0;
 
-	for (Ports::const_iterator p = _inputs.begin(); p != _inputs.end(); ++p,++i)
+	for (Ports::const_iterator p = _inputs.begin(); p != _inputs.end(); ++p, ++i)
 		result->at(i) = *p;
 
-	for (Ports::const_iterator p = _outputs.begin(); p != _outputs.end(); ++p,++i)
+	for (Ports::const_iterator p = _outputs.begin(); p != _outputs.end(); ++p, ++i)
 		result->at(i) = *p;
 
 	assert(i == n);

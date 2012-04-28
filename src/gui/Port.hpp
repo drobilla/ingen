@@ -23,7 +23,10 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/WeakPtr.hpp"
 
-namespace Raul { class Atom; class URI; }
+namespace Raul {
+class Atom;
+class URI;
+}
 
 namespace Ingen {
 
