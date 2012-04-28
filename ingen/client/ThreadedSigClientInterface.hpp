@@ -54,16 +54,13 @@ public:
 		: _sigs(queue_size)
 		, response_slot(_signal_response.make_slot())
 		, error_slot(_signal_error.make_slot())
-		, new_port_slot(_signal_new_port.make_slot())
 		, put_slot(_signal_put.make_slot())
 		, connection_slot(_signal_connection.make_slot())
 		, object_deleted_slot(_signal_object_deleted.make_slot())
 		, object_moved_slot(_signal_object_moved.make_slot())
 		, disconnection_slot(_signal_disconnection.make_slot())
 		, disconnect_all_slot(_signal_disconnect_all.make_slot())
-		, variable_change_slot(_signal_variable_change.make_slot())
 		, property_change_slot(_signal_property_change.make_slot())
-		, port_value_slot(_signal_port_value.make_slot())
 	{}
 
 	virtual Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
@@ -124,7 +121,6 @@ private:
 	sigc::slot<void, int32_t, Status>                       response_slot;
 	sigc::slot<void, std::string>                           error_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>    new_plugin_slot;
-	sigc::slot<void, Raul::Path, Raul::URI, uint32_t, bool> new_port_slot;
 	sigc::slot<void, Raul::URI, Resource::Properties,
 	                            Resource::Graph>            put_slot;
 	sigc::slot<void, Raul::URI, Resource::Properties,
@@ -134,9 +130,7 @@ private:
 	sigc::slot<void, Raul::Path, Raul::Path>                object_moved_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                disconnection_slot;
 	sigc::slot<void, Raul::Path, Raul::Path>                disconnect_all_slot;
-	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>      variable_change_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>      property_change_slot;
-	sigc::slot<void, Raul::Path, Raul::Atom>                port_value_slot;
 };
 
 } // namespace Client

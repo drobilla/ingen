@@ -47,8 +47,6 @@ public:
 	INGEN_SIGNAL(bundle_begin, void)
 	INGEN_SIGNAL(bundle_end, void)
 	INGEN_SIGNAL(error, void, std::string)
-	INGEN_SIGNAL(new_patch, void, Raul::Path, uint32_t)
-	INGEN_SIGNAL(new_port, void, Raul::Path, Raul::URI, uint32_t, bool)
 	INGEN_SIGNAL(put, void, Raul::URI, Resource::Properties, Resource::Graph)
 	INGEN_SIGNAL(delta, void, Raul::URI, Resource::Properties, Resource::Properties)
 	INGEN_SIGNAL(object_moved, void, Raul::Path, Raul::Path)
@@ -56,9 +54,7 @@ public:
 	INGEN_SIGNAL(connection, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(disconnection, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(disconnect_all, void, Raul::Path, Raul::Path)
-	INGEN_SIGNAL(variable_change, void, Raul::URI, Raul::URI, Raul::Atom)
 	INGEN_SIGNAL(property_change, void, Raul::URI, Raul::URI, Raul::Atom)
-	INGEN_SIGNAL(port_value, void, Raul::Path, Raul::Atom)
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
