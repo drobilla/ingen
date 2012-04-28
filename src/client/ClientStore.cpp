@@ -226,7 +226,8 @@ ClientStore::del(const URI& uri)
 	const Raul::Path path(uri.str());
 	SharedPtr<ObjectModel> removed = remove_object(path);
 	removed.reset();
-	LOG(debug) << "Removed object " << path << ", count: " << removed.use_count();
+	LOG(debug) << "Removed object " << path
+	           << ", count: " << removed.use_count();
 }
 
 void
@@ -237,7 +238,8 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 
 	iterator parent = find(old_path);
 	if (parent == end()) {
-		LOG(Raul::error) << "Failed to find object " << old_path << " to move." << endl;
+		LOG(Raul::error) << "Failed to find object " << old_path
+		                 << " to move." << endl;
 		return;
 	}
 
@@ -257,9 +259,11 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 		if (child_old_path == old_path)
 			child_new_path = new_path;
 		else
-			child_new_path = new_path.base() + child_old_path.substr(old_path.length()+1);
+			child_new_path = new_path.base()
+				+ child_old_path.substr(old_path.length() + 1);
 
-		LOG(info) << "Renamed " << child_old_path << " -> " << child_new_path << endl;
+		LOG(info) << "Renamed " << child_old_path
+		          << " -> " << child_new_path << endl;
 		PtrCast<ObjectModel>(i->second)->set_path(child_new_path);
 		i->first = child_new_path;
 	}
@@ -294,7 +298,8 @@ ClientStore::put(const URI&                  uri,
 		if (plugin_type == Plugin::Patch) {
 			is_patch = true;
 		} else if (plugin_type != Plugin::NIL) {
-			SharedPtr<PluginModel> p(new PluginModel(uris(), uri, type_uri, properties));
+			SharedPtr<PluginModel> p(
+				new PluginModel(uris(), uri, type_uri, properties));
 			add_plugin(p);
 			return;
 		}
@@ -326,7 +331,8 @@ ClientStore::put(const URI&                  uri,
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == _uris->forge.URI) {
 			if (!(plug = _plugin(p->second.get_uri()))) {
-				LOG(warn) << "Unable to find plugin " << p->second.get_uri() << endl;
+				LOG(warn) << "Unable to find plugin "
+				          << p->second.get_uri() << endl;
 				plug = SharedPtr<PluginModel>(
 					new PluginModel(uris(),
 					                p->second.get_uri(),
@@ -342,7 +348,9 @@ ClientStore::put(const URI&                  uri,
 			LOG(warn) << "Node " << path << " has no plugin" << endl;
 		}
 	} else if (is_port) {
-		PortModel::Direction pdir = is_output ? PortModel::OUTPUT : PortModel::INPUT;
+		PortModel::Direction pdir = (is_output)
+			? PortModel::OUTPUT
+			: PortModel::INPUT;
 		const Iterator i = properties.find(_uris->lv2_index);
 		if (i != properties.end() && i->second.type() == _uris->forge.Int) {
 			const uint32_t index = i->second.get_int32();
@@ -368,10 +376,12 @@ ClientStore::delta(const URI&                  uri,
 #ifdef INGEN_CLIENT_STORE_DUMP
 	LOG(info) << "DELTA " << uri << " {" << endl;
 	for (iterator i = remove.begin(); i != remove.end(); ++i)
-		LOG(info) << "    - " << i->first << " = " << _uris->forge.str(i->second)
+		LOG(info) << "    - " << i->first
+		          << " = " << _uris->forge.str(i->second)
 		          << " :: " << i->second.type() << endl;
 	for (iterator i = add.begin(); i != add.end(); ++i)
-		LOG(info) << "    + " << i->first << " = " << _uris->forge.str(i->second)
+		LOG(info) << "    + " << i->first
+		          << " = " << _uris->forge.str(i->second)
 		          << " :: " << i->second.type() << endl;
 	LOG(info) << "}" << endl;
 #endif
@@ -393,7 +403,9 @@ ClientStore::delta(const URI&                  uri,
 }
 
 void
-ClientStore::set_property(const URI& subject_uri, const URI& predicate, const Atom& value)
+ClientStore::set_property(const URI&  subject_uri,
+                          const URI&  predicate,
+                          const Atom& value)
 {
 	if (subject_uri == _uris->ingen_engine) {
 		LOG(info) << "Engine property " << predicate
@@ -445,8 +457,8 @@ ClientStore::attempt_connection(const Path& tail_path,
 	SharedPtr<PortModel> head = PtrCast<PortModel>(_object(head_path));
 
 	if (tail && head) {
-		SharedPtr<PatchModel>      patch = connection_patch(tail_path, head_path);
-		SharedPtr<EdgeModel> cm(new EdgeModel(tail, head));
+		SharedPtr<PatchModel> patch = connection_patch(tail_path, head_path);
+		SharedPtr<EdgeModel>  cm(new EdgeModel(tail, head));
 
 		tail->connected_to(head);
 		head->connected_to(tail);
@@ -470,7 +482,8 @@ ClientStore::disconnect(const Path& src,
                         const Path& dst)
 {
 	if (!Path::is_path(src) && !Path::is_path(dst)) {
-		std::cerr << "Bad disconnect notification " << src << " => " << dst << std::endl;
+		std::cerr << "Bad disconnect notification " << src
+		          << " => " << dst << std::endl;
 		return;
 	}
 
@@ -492,15 +505,15 @@ ClientStore::disconnect(const Path& src,
 }
 
 void
-ClientStore::disconnect_all(const Raul::Path& parent_patch_path,
+ClientStore::disconnect_all(const Raul::Path& parent_patch,
                             const Raul::Path& path)
 {
-	SharedPtr<PatchModel>  patch  = PtrCast<PatchModel>(_object(parent_patch_path));
+	SharedPtr<PatchModel>  patch  = PtrCast<PatchModel>(_object(parent_patch));
 	SharedPtr<ObjectModel> object = _object(path);
 
 	if (!patch || !object) {
 		std::cerr << "Bad disconnect all notification " << path
-		          << " in " << parent_patch_path << std::endl;
+		          << " in " << parent_patch << std::endl;
 		return;
 	}
 

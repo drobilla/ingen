@@ -83,10 +83,10 @@ public:
 	 */
 	BufferRef buffer(uint32_t voice) const;
 
-	/** Returns true if this connection must mix down voices into a local buffer */
+	/** Whether this connection must mix down voices into a local buffer */
 	bool must_mix() const;
 
-	/** Returns true if this connection crosses contexts and must buffer */
+	/** Whether this connection crosses contexts and must buffer */
 	bool must_queue() const;
 
 	static bool can_connect(const OutputPort* src, const InputPort* dst);

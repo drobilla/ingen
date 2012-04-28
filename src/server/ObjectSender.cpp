@@ -58,7 +58,10 @@ ObjectSender::send_object(Interface*             client,
 }
 
 void
-ObjectSender::send_patch(Interface* client, const PatchImpl* patch, bool recursive, bool bundle)
+ObjectSender::send_patch(Interface*       client,
+                         const PatchImpl* patch,
+                         bool             recursive,
+                         bool             bundle)
 {
 	if (bundle)
 		client->bundle_begin();

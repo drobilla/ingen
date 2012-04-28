@@ -29,8 +29,8 @@ namespace Server {
 struct ResizeFeature : public Ingen::Shared::LV2Features::Feature {
 	static LV2_Resize_Port_Status resize_port(
 		LV2_Resize_Port_Feature_Data data,
-	    uint32_t                     index,
-	    size_t                       size) {
+		uint32_t                     index,
+		size_t                       size) {
 		NodeImpl* node = (NodeImpl*)data;
 		PortImpl* port = node->port_impl(index);
 		if (node->context() == Context::MESSAGE) {
@@ -51,7 +51,7 @@ struct ResizeFeature : public Ingen::Shared::LV2Features::Feature {
 		if (!node)
 			return SharedPtr<LV2_Feature>();
 		LV2_Resize_Port_Resize* data
-				= (LV2_Resize_Port_Resize*)malloc(sizeof(LV2_Resize_Port_Resize));
+			= (LV2_Resize_Port_Resize*)malloc(sizeof(LV2_Resize_Port_Resize));
 		data->data   = node;
 		data->resize = &resize_port;
 		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));

@@ -92,7 +92,8 @@ PluginModel::get_property(const URI& key) const
 			if (isalpha(uri.str()[last_delim + 1]))
 				symbol = uri.str().substr(last_delim + 1);
 			else
-				symbol = uri.str().substr(first_delim + 1, last_delim - first_delim - 1);
+				symbol = uri.str().substr(first_delim + 1,
+				                          last_delim - first_delim - 1);
 		}
 		set_property(LV2_CORE__symbol, _uris.forge.alloc(symbol));
 		return get_property(key);
@@ -106,19 +107,20 @@ PluginModel::get_property(const URI& key) const
 		LILV_FOREACH(nodes, i, values) {
 			const LilvNode* val = lilv_nodes_get(values, i);
 			if (lilv_node_is_uri(val)) {
-				ret = set_property(key, _uris.forge.alloc_uri(lilv_node_as_uri(val)));
+				ret = set_property(
+					key, _uris.forge.alloc_uri(lilv_node_as_uri(val)));
 				break;
 			} else if (lilv_node_is_string(val)) {
-				ret = set_property(key,
-				                   _uris.forge.alloc(lilv_node_as_string(val)));
+				ret = set_property(
+					key, _uris.forge.alloc(lilv_node_as_string(val)));
 				break;
 			} else if (lilv_node_is_float(val)) {
-				ret = set_property(key,
-				                   _uris.forge.make(lilv_node_as_float(val)));
+				ret = set_property(
+					key, _uris.forge.make(lilv_node_as_float(val)));
 				break;
 			} else if (lilv_node_is_int(val)) {
-				ret = set_property(key,
-				                   _uris.forge.make(lilv_node_as_int(val)));
+				ret = set_property(
+					key, _uris.forge.make(lilv_node_as_int(val)));
 				break;
 			}
 		}
@@ -140,7 +142,9 @@ PluginModel::set(SharedPtr<PluginModel> p)
 	if (p->_lilv_plugin)
 		_lilv_plugin = p->_lilv_plugin;
 
-	for (Properties::const_iterator v = p->properties().begin(); v != p->properties().end(); ++v) {
+	for (Properties::const_iterator v = p->properties().begin();
+	     v != p->properties().end();
+	     ++v) {
 		ResourceImpl::set_property(v->first, v->second);
 		_signal_property.emit(v->first, v->second);
 	}
@@ -169,11 +173,11 @@ PluginModel::human_name() const
 }
 
 string
-PluginModel::port_human_name(uint32_t index) const
+PluginModel::port_human_name(uint32_t i) const
 {
 	if (_lilv_plugin) {
-		const LilvPort* port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
-		LilvNode*      name = lilv_port_get_name(_lilv_plugin, port);
+		const LilvPort* port = lilv_plugin_get_port_by_index(_lilv_plugin, i);
+		LilvNode*       name = lilv_port_get_name(_lilv_plugin, port);
 		const string    ret(lilv_node_as_string(name));
 		lilv_node_free(name);
 		return ret;

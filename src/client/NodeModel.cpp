@@ -160,12 +160,15 @@ Ingen::Port*
 NodeModel::port(uint32_t index) const
 {
 	assert(index < num_ports());
-	return const_cast<Ingen::Port*>(dynamic_cast<const Ingen::Port*>(_ports[index].get()));
+	return const_cast<Ingen::Port*>(
+		dynamic_cast<const Ingen::Port*>(_ports[index].get()));
 }
 
 void
 NodeModel::default_port_value_range(SharedPtr<const PortModel> port,
-                                    float& min, float& max, uint32_t srate) const
+                                    float&                     min,
+                                    float&                     max,
+                                    uint32_t                   srate) const
 {
 	// Default control values
 	min = 0.0;
@@ -227,18 +230,18 @@ NodeModel::port_label(SharedPtr<const PortModel> port) const
 	}
 
 	if (_plugin && _plugin->type() == PluginModel::LV2) {
-		LilvWorld*        c_world  = _plugin->lilv_world();
-		const LilvPlugin* c_plugin = _plugin->lilv_plugin();
-		LilvNode*         c_sym    = lilv_new_string(c_world, port->symbol().c_str());
-		const LilvPort*   c_port   = lilv_plugin_get_port_by_symbol(c_plugin, c_sym);
-		if (c_port) {
-			LilvNode* c_name = lilv_port_get_name(c_plugin, c_port);
-			if (c_name && lilv_node_is_string(c_name)) {
-				std::string ret(lilv_node_as_string(c_name));
-				lilv_node_free(c_name);
+		LilvWorld*        w     = _plugin->lilv_world();
+		const LilvPlugin* plug  = _plugin->lilv_plugin();
+		LilvNode*         sym   = lilv_new_string(w, port->symbol().c_str());
+		const LilvPort*   lport = lilv_plugin_get_port_by_symbol(plug, sym);
+		if (lport) {
+			LilvNode* lname = lilv_port_get_name(plug, lport);
+			if (lname && lilv_node_is_string(lname)) {
+				std::string ret(lilv_node_as_string(lname));
+				lilv_node_free(lname);
 				return ret;
 			}
-			lilv_node_free(c_name);
+			lilv_node_free(lname);
 		}
 	}
 

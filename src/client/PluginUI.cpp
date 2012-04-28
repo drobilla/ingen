@@ -67,7 +67,9 @@ lv2_ui_write(SuilController controller,
 		LV2_Atom*  atom = (LV2_Atom*)buffer;
 		Raul::Atom val  = ui->world()->forge().alloc(
 			atom->size, atom->type, LV2_ATOM_BODY(atom));
-		ui->world()->engine()->set_property(port->path(), uris.ingen_value, val);
+		ui->world()->engine()->set_property(port->path(),
+		                                    uris.ingen_value,
+		                                    val);
 
 	} else {
 		warn << "Unknown value format " << format
@@ -170,13 +172,14 @@ PluginUI::port_event(uint32_t    port_index,
 bool
 PluginUI::is_resizable() const
 {
+	LilvWorld*      w   = _world->lilv_world();
 	const LilvNode* s   = _ui_node;
-	LilvNode*       p   = lilv_new_uri(_world->lilv_world(), LV2_CORE__optionalFeature);
-	LilvNode*       fs  = lilv_new_uri(_world->lilv_world(), LV2_UI__fixedSize);
-	LilvNode*       nrs = lilv_new_uri(_world->lilv_world(), LV2_UI__noUserResize);
+	LilvNode*       p   = lilv_new_uri(w, LV2_CORE__optionalFeature);
+	LilvNode*       fs  = lilv_new_uri(w, LV2_UI__fixedSize);
+	LilvNode*       nrs = lilv_new_uri(w, LV2_UI__noUserResize);
 
-	LilvNodes* fs_matches = lilv_world_find_nodes(_world->lilv_world(), s, p, fs);
-	LilvNodes* nrs_matches = lilv_world_find_nodes(_world->lilv_world(), s, p, nrs);
+	LilvNodes* fs_matches = lilv_world_find_nodes(w, s, p, fs);
+	LilvNodes* nrs_matches = lilv_world_find_nodes(w, s, p, nrs);
 
 	lilv_nodes_free(nrs_matches);
 	lilv_nodes_free(fs_matches);

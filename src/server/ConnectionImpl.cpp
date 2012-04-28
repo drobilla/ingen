@@ -81,14 +81,17 @@ ConnectionImpl::head_path() const
 }
 
 void
-ConnectionImpl::get_sources(Context& context, uint32_t voice,
-		boost::intrusive_ptr<Buffer>* srcs, uint32_t max_num_srcs, uint32_t& num_srcs)
+ConnectionImpl::get_sources(Context&                      context,
+                            uint32_t                      voice,
+                            boost::intrusive_ptr<Buffer>* srcs,
+                            uint32_t                      max_num_srcs,
+                            uint32_t&                     num_srcs)
 {
 	if (must_queue() && _queue->read_space() > 0) {
 		LV2_Atom obj;
 		_queue->peek(sizeof(LV2_Atom), &obj);
-		boost::intrusive_ptr<Buffer> buf = context.engine().buffer_factory()->get(
-				head()->buffer_type(), sizeof(LV2_Atom) + obj.size);
+		BufferRef buf = context.engine().buffer_factory()->get(
+			head()->buffer_type(), sizeof(LV2_Atom) + obj.size);
 		void* data = buf->port_data(PortType::ATOM, context.offset());
 		_queue->read(sizeof(LV2_Atom) + obj.size, (LV2_Atom*)data);
 		srcs[num_srcs++] = buf;
@@ -116,7 +119,7 @@ ConnectionImpl::queue(Context& context)
 
 	boost::intrusive_ptr<Buffer> src_buf = _tail->buffer(0);
 	if (src_buf->atom()->type != uris.atom_Sequence) {
-		Raul::error << "Queued connection but source is not a Sequence" << std::endl;
+		Raul::error << "Queued edge source is not a Sequence" << std::endl;
 		return;
 	}
 
@@ -160,29 +163,29 @@ ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
 	const Ingen::Shared::URIs& uris = src->bufs().uris();
 	return (
-			// (Audio | Control | CV) => (Audio | Control | CV)
-			(   (src->is_a(PortType::CONTROL) ||
-			     src->is_a(PortType::AUDIO) ||
-			     src->is_a(PortType::CV))
-			 && (dst->is_a(PortType::CONTROL)
-			     || dst->is_a(PortType::AUDIO)
-			     || dst->is_a(PortType::CV)))
+		// (Audio | Control | CV) => (Audio | Control | CV)
+		(   (src->is_a(PortType::CONTROL) ||
+		     src->is_a(PortType::AUDIO) ||
+		     src->is_a(PortType::CV))
+		    && (dst->is_a(PortType::CONTROL)
+		        || dst->is_a(PortType::AUDIO)
+		        || dst->is_a(PortType::CV)))
 
-			// Equal types
-			|| (src->type() == dst->type() &&
-			    src->buffer_type() == dst->buffer_type())
+		// Equal types
+		|| (src->type() == dst->type() &&
+		    src->buffer_type() == dst->buffer_type())
 
-			// Control => atom:Float Value
-			|| (src->is_a(PortType::CONTROL) && dst->supports(uris.atom_Float))
+		// Control => atom:Float Value
+		|| (src->is_a(PortType::CONTROL) && dst->supports(uris.atom_Float))
 
-			// Audio => atom:Sound Value
-			|| (src->is_a(PortType::AUDIO) && dst->supports(uris.atom_Sound))
+		// Audio => atom:Sound Value
+		|| (src->is_a(PortType::AUDIO) && dst->supports(uris.atom_Sound))
 
-			// atom:Float Value => Control
-			|| (src->supports(uris.atom_Float) && dst->is_a(PortType::CONTROL))
+		// atom:Float Value => Control
+		|| (src->supports(uris.atom_Float) && dst->is_a(PortType::CONTROL))
 
-			// atom:Sound Value => Audio
-			|| (src->supports(uris.atom_Sound) && dst->is_a(PortType::AUDIO)));
+		// atom:Sound Value => Audio
+		|| (src->supports(uris.atom_Sound) && dst->is_a(PortType::AUDIO)));
 }
 
 } // namespace Server

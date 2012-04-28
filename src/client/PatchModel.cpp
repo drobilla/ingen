@@ -55,7 +55,8 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
-	for (Connections::iterator j = _connections->begin(); j != _connections->end(); ) {
+	for (Connections::iterator j = _connections->begin();
+	     j != _connections->end();) {
 		Connections::iterator next = j;
 		++next;
 
@@ -133,7 +134,8 @@ PatchModel::add_connection(SharedPtr<EdgeModel> cm)
 		assert(cm->tail() == existing->tail());
 		assert(cm->head() == existing->head());
 	} else {
-		_connections->insert(make_pair(make_pair(cm->tail().get(), cm->head().get()), cm));
+		_connections->insert(make_pair(make_pair(cm->tail().get(),
+		                                         cm->head().get()), cm));
 		_signal_new_connection.emit(cm);
 	}
 }
