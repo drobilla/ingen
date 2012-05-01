@@ -23,7 +23,6 @@
 #include "ingen/shared/LV2URIMap.hpp"
 
 #include "App.hpp"
-#include "NodeControlWindow.hpp"
 #include "NodeModule.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"

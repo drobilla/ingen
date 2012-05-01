@@ -44,16 +44,12 @@ public:
 	sigc::signal<void, bool> signal_embed_gui;
 
 protected:
-	virtual void enable_controls_menuitem();
-	virtual void disable_controls_menuitem();
-
 	void on_menu_disconnect();
 	void on_menu_embed_gui();
 	void on_menu_randomize();
 	void on_preset_activated(const std::string& uri);
 	bool on_preset_clicked(const std::string& uri, GdkEventButton* ev);
 
-	Gtk::MenuItem*      _controls_menuitem;
 	Gtk::MenuItem*      _popup_gui_menuitem;
 	Gtk::CheckMenuItem* _embed_gui_menuitem;
 	Gtk::MenuItem*      _randomize_menuitem;

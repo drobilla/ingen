@@ -38,7 +38,6 @@
 #include "App.hpp"
 #include "Configuration.hpp"
 #include "ConnectWindow.hpp"
-#include "ControlPanel.hpp"
 #include "LoadPluginWindow.hpp"
 #include "MessagesWindow.hpp"
 #include "NodeModule.hpp"

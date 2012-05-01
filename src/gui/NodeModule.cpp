@@ -25,7 +25,6 @@
 #include "ingen/client/PluginUI.hpp"
 #include "App.hpp"
 #include "WidgetFactory.hpp"
-#include "NodeControlWindow.hpp"
 #include "NodeModule.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"
@@ -81,9 +80,6 @@ NodeModule::~NodeModule()
 {
 	delete _gui_widget;
 	delete _gui_window;
-
-	NodeControlWindow* win = app().window_factory()->control_window(_node);
-	delete win; // Will be removed from window factory via signal
 }
 
 bool
@@ -343,18 +339,10 @@ NodeModule::set_control_values()
 	}
 }
 
-void
-NodeModule::show_control_window()
-{
-	app().window_factory()->present_controls(_node);
-}
-
 bool
 NodeModule::on_double_click(GdkEventButton* event)
 {
-	if (!popup_gui()) {
-		show_control_window();
-	}
+	popup_gui();
 	return true;
 }
 

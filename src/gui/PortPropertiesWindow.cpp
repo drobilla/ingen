@@ -21,7 +21,6 @@
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "App.hpp"
-#include "Controls.hpp"
 #include "PortPropertiesWindow.hpp"
 
 using namespace std;

@@ -38,10 +38,8 @@ namespace GUI {
 NodeMenu::NodeMenu(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: ObjectMenu(cobject, xml)
-	, _controls_menuitem(NULL)
 	, _presets_menu(NULL)
 {
-	xml->get_widget("node_controls_menuitem", _controls_menuitem);
 	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
 	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
 	xml->get_widget("node_randomize_menuitem", _randomize_menuitem);
@@ -54,10 +52,6 @@ NodeMenu::init(App& app, SharedPtr<const Client::NodeModel> node)
 
 	_learn_menuitem->signal_activate().connect(sigc::mem_fun(this,
 			&NodeMenu::on_menu_learn));
-	_controls_menuitem->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(_app->window_factory(),
-		                         &WindowFactory::present_controls),
-		           node));
 	_popup_gui_menuitem->signal_activate().connect(
 		sigc::mem_fun(signal_popup_gui, &sigc::signal<void>::emit));
 	_embed_gui_menuitem->signal_toggled().connect(
@@ -232,18 +226,6 @@ NodeMenu::has_control_inputs()
 			return true;
 
 	return false;
-}
-
-void
-NodeMenu::enable_controls_menuitem()
-{
-	_controls_menuitem->property_sensitive() = true;
-}
-
-void
-NodeMenu::disable_controls_menuitem()
-{
-	_controls_menuitem->property_sensitive() = false;
 }
 
 } // namespace GUI

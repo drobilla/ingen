@@ -22,7 +22,6 @@
 #include "LoadPatchWindow.hpp"
 #include "LoadPluginWindow.hpp"
 #include "NewSubpatchWindow.hpp"
-#include "NodeControlWindow.hpp"
 #include "PropertiesWindow.hpp"
 #include "PatchView.hpp"
 #include "PatchWindow.hpp"
@@ -63,11 +62,6 @@ WindowFactory::~WindowFactory()
 	for (PatchWindowMap::iterator i = _patch_windows.begin();
 	     i != _patch_windows.end(); ++i)
 		delete i->second;
-
-	for (ControlWindowMap::iterator i = _control_windows.begin();
-	     i != _control_windows.end(); ++i)
-		delete i->second;
-
 }
 
 void
@@ -78,12 +72,6 @@ WindowFactory::clear()
 		delete i->second;
 
 	_patch_windows.clear();
-
-	for (ControlWindowMap::iterator i = _control_windows.begin();
-	     i != _control_windows.end(); ++i)
-		delete i->second;
-
-	_control_windows.clear();
 }
 
 /** Returns the number of Patch windows currently visible.
@@ -129,14 +117,6 @@ WindowFactory::parent_patch_window(SharedPtr<const NodeModel> node)
 		return NULL;
 
 	return patch_window(PtrCast<PatchModel>(node->parent()));
-}
-
-NodeControlWindow*
-WindowFactory::control_window(SharedPtr<const NodeModel> node)
-{
-	ControlWindowMap::iterator w = _control_windows.find(node->path());
-
-	return (w == _control_windows.end()) ? NULL : w->second;
 }
 
 /** Present a PatchWindow for a Patch.
@@ -204,49 +184,6 @@ WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 	delete win;
 
 	return false;
-}
-
-void
-WindowFactory::present_controls(SharedPtr<const NodeModel> node)
-{
-	NodeControlWindow* win = control_window(node);
-
-	if (win) {
-		win->present();
-	} else {
-		win = new_control_window(node);
-		win->present();
-	}
-}
-
-NodeControlWindow*
-WindowFactory::new_control_window(SharedPtr<const NodeModel> node)
-{
-	uint32_t poly = 1;
-	if (node->polyphonic() && node->parent())
-		poly = ((PatchModel*)node->parent().get())->internal_poly();
-
-	NodeControlWindow* win = new NodeControlWindow(_app, node, poly);
-
-	_control_windows[node->path()] = win;
-
-	win->signal_delete_event().connect(sigc::bind<0>(
-		sigc::mem_fun(this, &WindowFactory::remove_control_window), win));
-
-	return win;
-}
-
-bool
-WindowFactory::remove_control_window(NodeControlWindow* win, GdkEventAny* ignored)
-{
-	ControlWindowMap::iterator w = _control_windows.find(win->node()->path());
-
-	assert((*w).second == win);
-	_control_windows.erase(w);
-
-	delete win;
-
-	return true;
 }
 
 void

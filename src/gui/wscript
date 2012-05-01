@@ -32,13 +32,10 @@ def build(bld):
             Configuration.cpp
             ConnectWindow.cpp
             Connection.cpp
-            ControlPanel.cpp
-            Controls.cpp
             LoadPatchWindow.cpp
             LoadPluginWindow.cpp
             MessagesWindow.cpp
             NewSubpatchWindow.cpp
-            NodeControlWindow.cpp
             NodeMenu.cpp
             NodeModule.cpp
             ObjectMenu.cpp

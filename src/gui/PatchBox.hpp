@@ -42,7 +42,6 @@ class BreadCrumbs;
 class LoadPatchBox;
 class LoadPluginWindow;
 class NewSubpatchWindow;
-class NodeControlWindow;
 class PatchDescriptionWindow;
 class PatchView;
 class PatchWindow;
@@ -112,7 +111,6 @@ private:
 	void event_zoom_normal();
 	void event_arrange();
 	void event_show_properties();
-	void event_show_controls();
 	void event_show_engine();
 	void event_clipboard_changed(GdkEventOwnerChange* ev);
 

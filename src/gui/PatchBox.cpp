@@ -34,7 +34,6 @@
 #include "LoadPluginWindow.hpp"
 #include "MessagesWindow.hpp"
 #include "NewSubpatchWindow.hpp"
-#include "NodeControlWindow.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchTreeWindow.hpp"
 #include "PatchView.hpp"
@@ -145,8 +144,6 @@ PatchBox::PatchBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &PatchBox::event_zoom_normal));
 	_menu_view_engine_window->signal_activate().connect(
 		sigc::mem_fun(this, &PatchBox::event_show_engine));
-	_menu_view_control_window->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_show_controls));
 	_menu_view_patch_properties->signal_activate().connect(
 		sigc::mem_fun(this, &PatchBox::event_show_properties));
 
@@ -409,12 +406,6 @@ PatchBox::event_clipboard_changed(GdkEventOwnerChange* ev)
 {
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	_menu_paste->set_sensitive(clipboard->wait_is_text_available());
-}
-
-void
-PatchBox::event_show_controls()
-{
-	_app->window_factory()->present_controls(_patch);
 }
 
 void

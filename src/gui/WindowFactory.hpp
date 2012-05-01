@@ -40,7 +40,6 @@ class App;
 class LoadPatchWindow;
 class LoadPluginWindow;
 class NewSubpatchWindow;
-class NodeControlWindow;
 class PropertiesWindow;
 class PatchBox;
 class PatchView;
@@ -61,17 +60,14 @@ public:
 
 	size_t num_open_patch_windows();
 
-	PatchBox*          patch_box(SharedPtr<const Client::PatchModel> patch);
-	PatchWindow*       patch_window(SharedPtr<const Client::PatchModel> patch);
-	PatchWindow*       parent_patch_window(SharedPtr<const Client::NodeModel> node);
-	NodeControlWindow* control_window(SharedPtr<const Client::NodeModel> node);
+	PatchBox*    patch_box(SharedPtr<const Client::PatchModel> patch);
+	PatchWindow* patch_window(SharedPtr<const Client::PatchModel> patch);
+	PatchWindow* parent_patch_window(SharedPtr<const Client::NodeModel> node);
 
 	void present_patch(
 		SharedPtr<const Client::PatchModel> model,
 		PatchWindow*                        preferred = NULL,
 		SharedPtr<PatchView>                view      = SharedPtr<PatchView>());
-
-	void present_controls(SharedPtr<const Client::NodeModel> node);
 
 	typedef GraphObject::Properties Properties;
 
@@ -89,20 +85,14 @@ public:
 	void clear();
 
 private:
-	typedef std::map<Raul::Path, PatchWindow*>       PatchWindowMap;
-	typedef std::map<Raul::Path, NodeControlWindow*> ControlWindowMap;
+	typedef std::map<Raul::Path, PatchWindow*> PatchWindowMap;
 
 	PatchWindow* new_patch_window(SharedPtr<const Client::PatchModel> patch,
 	                              SharedPtr<PatchView>                view);
 
-	NodeControlWindow* new_control_window(SharedPtr<const Client::NodeModel> node);
-	bool               remove_control_window(NodeControlWindow* win,
-	                                         GdkEventAny*       ignored);
-
 	App&               _app;
 	PatchBox*          _main_box;
 	PatchWindowMap     _patch_windows;
-	ControlWindowMap   _control_windows;
 	LoadPluginWindow*  _load_plugin_win;
 	LoadPatchWindow*   _load_patch_win;
 	NewSubpatchWindow* _new_subpatch_win;

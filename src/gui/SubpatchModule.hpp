@@ -33,7 +33,6 @@ namespace Ingen {
 namespace GUI {
 
 class PatchCanvas;
-class NodeControlWindow;
 
 /** A module to represent a subpatch
  *
