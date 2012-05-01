@@ -54,6 +54,7 @@ public:
 	bool port_property(const Raul::URI& uri) const;
 
 	bool is_logarithmic() const { return port_property(LV2_PORT_PROPS__logarithmic); }
+	bool is_enumeration() const { return port_property(LV2_CORE__enumeration); }
 	bool is_integer()     const { return port_property(LV2_CORE__integer); }
 	bool is_toggle()      const { return port_property(LV2_CORE__toggled); }
 	bool is_numeric()     const {

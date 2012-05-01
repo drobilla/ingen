@@ -185,6 +185,25 @@ PluginModel::port_human_name(uint32_t i) const
 	return "";
 }
 
+PluginModel::ScalePoints
+PluginModel::port_scale_points(uint32_t i) const
+{
+	// TODO: Non-float scale points
+	ScalePoints points;
+	if (_lilv_plugin) {
+		const LilvPort*  port = lilv_plugin_get_port_by_index(_lilv_plugin, i);
+		LilvScalePoints* sp   = lilv_port_get_scale_points(_lilv_plugin, port);
+		LILV_FOREACH(scale_points, i, sp) {
+			const LilvScalePoint* p = lilv_scale_points_get(sp, i);
+			points.push_back(
+				std::make_pair(
+					lilv_node_as_float(lilv_scale_point_get_value(p)),
+					lilv_node_as_string(lilv_scale_point_get_label(p))));
+		}
+	}
+	return points;
+}
+
 bool
 PluginModel::has_ui() const
 {

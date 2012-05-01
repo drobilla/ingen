@@ -163,6 +163,34 @@ Port::value_changed(const Atom& value)
 	}
 }
 
+void
+Port::on_scale_point_activated(float f)
+{
+	_app.engine()->set_property(model()->path(),
+	                            _app.world()->uris()->ingen_value,
+	                            _app.world()->forge().make(f));
+}
+
+Gtk::Menu*
+Port::build_enum_menu()
+{
+	SharedPtr<const NodeModel> node = PtrCast<NodeModel>(model()->parent());
+	Gtk::Menu*                 menu = Gtk::manage(new Gtk::Menu());
+
+	PluginModel::ScalePoints points = node->plugin_model()->port_scale_points(
+		model()->index());
+	for (PluginModel::ScalePoints::iterator i = points.begin();
+	     i != points.end(); ++i) {
+		menu->items().push_back(Gtk::Menu_Helpers::MenuElem(i->second));
+		Gtk::MenuItem* menu_item = &(menu->items().back());
+		menu_item->signal_activate().connect(
+			sigc::bind(sigc::mem_fun(this, &Port::on_scale_point_activated),
+			           i->first));
+	}
+
+	return menu;
+}
+
 bool
 Port::on_event(GdkEvent* ev)
 {
@@ -182,6 +210,11 @@ Port::on_event(GdkEvent* ev)
 		break;
 	case GDK_BUTTON_PRESS:
 		if (ev->button.button == 1) {
+			if (model()->is_enumeration()) {
+				Gtk::Menu* menu = build_enum_menu();
+				menu->popup(ev->button.button, ev->button.time);
+				return true;
+			}
 			_pressed = true;
 		} else if (ev->button.button == 3) {
 			return show_menu(&ev->button);

@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <string>
+#include <gtkmm/menu.h>
 #include "ganv/Port.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/WeakPtr.hpp"
@@ -70,12 +71,14 @@ private:
 	     const std::string&                 name,
 	     bool                               flip = false);
 
+	Gtk::Menu* build_enum_menu();
 	PatchBox* get_patch_box() const;
 
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 	void moved();
 
 	void on_value_changed(GVariant* value);
+	void on_scale_point_activated(float f);
 	bool on_event(GdkEvent* ev);
 
 	App&                             _app;

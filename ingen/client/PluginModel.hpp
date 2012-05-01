@@ -17,6 +17,9 @@
 #ifndef INGEN_CLIENT_PLUGINMODEL_HPP
 #define INGEN_CLIENT_PLUGINMODEL_HPP
 
+#include <list>
+#include <utility>
+
 #include "lilv/lilv.h"
 #include "raul/SharedPtr.hpp"
 #include "raul/Symbol.hpp"
@@ -58,6 +61,10 @@ public:
 	Raul::Symbol default_node_symbol() const;
 	std::string  human_name() const;
 	std::string  port_human_name(uint32_t index) const;
+
+	typedef std::pair<float, std::string> ScalePoint;
+	typedef std::list<ScalePoint>         ScalePoints;
+	ScalePoints port_scale_points(uint32_t i) const;
 
 	static LilvWorld* lilv_world()        { return _lilv_world; }
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }

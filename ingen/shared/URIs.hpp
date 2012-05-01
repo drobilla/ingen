@@ -98,6 +98,7 @@ public:
 	const Quark lv2_name;
 	const Quark lv2_portProperty;
 	const Quark lv2_sampleRate;
+	const Quark lv2_scalePoint;
 	const Quark lv2_symbol;
 	const Quark lv2_toggled;
 	const Quark midi_Bender;
