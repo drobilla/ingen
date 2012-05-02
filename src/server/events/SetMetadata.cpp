@@ -77,16 +77,19 @@ SetMetadata::SetMetadata(Engine&           engine,
 	}
 
 	/*
-	LOG(info) << "Set " << subject << " : " << context << " {" << endl;
+	LOG(info) << "Patch " << subject << " : " << context << " {" << endl;
 	typedef Resource::Properties::const_iterator iterator;
-	for (iterator i = properties.begin(); i != properties.end(); ++i)
-		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
-	LOG(info) << "}" << endl;
-
-	LOG(info) << "Unset " << subject << " {" << endl;
+	for (iterator i = properties.begin(); i != properties.end(); ++i) {
+		LOG(info) << "    + " << i->first
+		          << " = " << engine.world()->forge().str(i->second)
+		          << " :: " << engine.world()->lv2_uri_map()->unmap_uri(i->second.type()) << endl;
+	}
 	typedef Resource::Properties::const_iterator iterator;
-	for (iterator i = remove.begin(); i != remove.end(); ++i)
-		LOG(info) << "    " << i->first << " = " << i->second << " :: " << i->second.type() << endl;
+	for (iterator i = remove.begin(); i != remove.end(); ++i) {
+		LOG(info) << "    - " << i->first
+		          << " = " << engine.world()->forge().str(i->second)
+		          << " :: " << engine.world()->lv2_uri_map()->unmap_uri(i->second.type()) << endl;
+	}
 	LOG(info) << "}" << endl;
 	*/
 }
@@ -133,7 +136,7 @@ SetMetadata::pre_process()
 			_create_event = new CreatePatch(_engine, _request_client, _request_id, _time,
 			                                path, poly, _properties);
 		} else if (is_node) {
-			const iterator p = _properties.find(uris.rdf_instanceOf);
+			const iterator p = _properties.find(uris.ingen_prototype);
 			_create_event = new CreateNode(_engine, _request_client, _request_id, _time,
 			                               path, p->second.get_uri(), _properties);
 		} else if (is_port) {

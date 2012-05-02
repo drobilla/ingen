@@ -66,7 +66,7 @@ Builder::build(SharedPtr<const GraphObject> object)
 	if (node) {
 		Resource::Properties props;
 		props.insert(make_pair(uris.rdf_type,       uris.ingen_Node));
-		props.insert(make_pair(uris.rdf_instanceOf,
+		props.insert(make_pair(uris.ingen_prototype,
 		                       _uris->forge.alloc_uri(node->plugin()->uri().str())));
 		_interface.put(node->path(), props);
 		build_object(object);

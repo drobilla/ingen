@@ -327,7 +327,7 @@ ClientStore::put(const URI&                  uri,
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_node) {
-		const Iterator p = properties.find(_uris->rdf_instanceOf);
+		const Iterator p = properties.find(_uris->ingen_prototype);
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == _uris->forge.URI) {
 			if (!(plug = _plugin(p->second.get_uri()))) {

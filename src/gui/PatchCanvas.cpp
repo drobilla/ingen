@@ -817,7 +817,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	// FIXME: polyphony?
 	GraphObject::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type, uris.ingen_Node));
-	props.insert(make_pair(uris.rdf_instanceOf,
+	props.insert(make_pair(uris.ingen_prototype,
 	                       uris.forge.alloc_uri(plugin->uri().str())));
 	_app.engine()->put(path, props);
 }

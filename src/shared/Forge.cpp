@@ -27,6 +27,7 @@ Forge::Forge(Shared::LV2URIMap& map)
 	Float  = map.map_uri(LV2_ATOM__Float);
 	Bool   = map.map_uri(LV2_ATOM__Bool);
 	URI    = map.map_uri(LV2_ATOM__URI);
+	URID   = map.map_uri(LV2_ATOM__URID);
 	String = map.map_uri(LV2_ATOM__String);
 	Dict   = map.map_uri(LV2_ATOM__Object);
 }

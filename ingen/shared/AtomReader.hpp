@@ -41,7 +41,7 @@ public:
 	void write(const LV2_Atom* msg);
 
 private:
-	void get_uri(const LV2_Atom* in, Raul::Atom& out);
+	void get_atom(const LV2_Atom* in, Raul::Atom& out);
 
 	void get_props(const LV2_Atom_Object*       obj,
 	               Ingen::Resource::Properties& props);

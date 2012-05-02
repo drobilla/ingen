@@ -40,6 +40,7 @@ Configuration::Configuration()
 	add("connect",     'c', "Connect to engine URI", STRING, Value("osc.udp://localhost:16180"));
 	add("engine",      'e', "Run (JACK) engine", BOOL, Value(false));
 	add("engine-port", 'E', "Engine listen port", INT, Value(16180));
+	add("socket",      'S', "Engine socket path", STRING, Value("/tmp/ingen.sock"));
 	add("gui",         'g', "Launch the GTK graphical interface", BOOL, Value(false));
 	add("help",        'h', "Print this help message", BOOL, Value(false));
 	add("jack-client", 'n', "JACK client name", STRING, Value("ingen"));

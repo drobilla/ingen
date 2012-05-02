@@ -1,0 +1,148 @@
+#!/usr/bin/env python
+# Ingen Command-Line Interface
+# Copyright 2011-2012 David Robillard <http://drobilla.net>
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+import os.path
+import socket
+import sys
+import time
+
+class Client:
+    def __init__(self, path='/tmp/ingen.sock'):
+        self.path = path
+
+    def send(self, msg):
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.sock.connect(self.path)
+        print "SENDING:\n%s\n" % msg
+        self.sock.send(msg)
+        response = self.sock.recv(1024)
+        self.sock.close()
+        if response != 'OK':
+            print 'Error: %s' % response
+            return False
+        else:
+            return True
+        
+    def put(self, path, body):
+        return self.send('''
+[]
+ 	a patch:Put ;
+ 	patch:subject <%s> ;
+ 	patch:body [
+%s
+] .
+''' % (path, body))
+
+    def set(self, path, body):
+        return self.send('''
+[]
+	a patch:Set ;
+	patch:subject <%s> ;
+	patch:body [
+%s
+	] .
+''' % (path, body))
+
+    def connect(self, tail, head):
+        return self.send('''
+[]
+	a patch:Put ;
+	patch:subject <%s> ;
+	patch:body [
+		a ingen:Edge ;
+		ingen:tail <%s> ;
+		ingen:head <%s> ;
+	] .
+''' % (os.path.commonprefix([tail, head]), tail, head))
+
+    def disconnect(self, tail, head):
+        return self.send('''
+[]
+	a patch:Delete ;
+	patch:body [
+		a ingen:Edge ;
+		ingen:tail <%s> ;
+		ingen:head <%s> ;
+	] .
+''' % (tail, head))
+
+    def delete(self, path):
+        return self.send('''
+[]
+	a patch:Delete ;
+	patch:subject <%s> .
+''' % (path))
+
+def print_usage():
+    print '''Usage: %s COMMAND [ARGUMENT]...
+A command line interface to an Ingen server.
+
+Commands:
+    put PATH TURTLE_FRAGMENT
+    set PATH TURTLE_FRAGMENT
+    connect TAIL_PATH HEAD_PATH
+    disconnect TAIL_PATH HEAD_PATH
+    delete PATH
+
+Paths are UNIX-style paths with strict LV2 symbol components, e.g. /foo/bar_2.
+Turtle fragments are used verbatim as the body of blank nodes, the syntax is
+identical to the descriptions in Ingen patch files.
+
+Example:
+    ingen_cmd put /left_in 'a lv2:InputPort ; a lv2:AudioPort'
+    ingen_cmd put /left_out 'a lv2:OutputPort ; a lv2:AudioPort'
+
+    ingen_cmd put /tone 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Shepard>'
+    ingen_cmd put /combo 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Combo>'
+    ingen_cmd connect /left_in /tone/left_in
+    ingen_cmd connect /tone/left_out /combo/left_in
+    ingen_cmd connect /combo/left_out /left_out
+    ingen_cmd set /tone/output 'ingen:value 0.7'
+'''
+
+def abort_if_num_args_less_than(num):
+    if len(sys.argv) < num:
+        print_usage()
+        sys.exit(1)
+
+abort_if_num_args_less_than(3)
+ingen = Client()
+
+cmd     = sys.argv[1]
+success = 0
+if cmd == 'put':
+    abort_if_num_args_less_than(3)
+    success = ingen.put(sys.argv[2], sys.argv[3])
+elif cmd == 'set':
+    abort_if_num_args_less_than(3)
+    success = ingen.set(sys.argv[2], sys.argv[3])
+elif cmd == 'connect':
+    abort_if_num_args_less_than(4)
+    success = ingen.connect(sys.argv[2], sys.argv[3])
+elif cmd == 'disconnect':
+    abort_if_num_args_less_than(4)
+    success = ingen.disconnect(sys.argv[2], sys.argv[3])
+elif cmd == 'delete':
+    success = ingen.delete(sys.argv[2])
+else:
+    print "error: Unknown command `%s'" % cmd
+    print_usage()
+    sys.exit(1)
+
+if success:
+    sys.exit(0)
+else:
+    sys.exit(1)

@@ -33,7 +33,7 @@ AtomReader::AtomReader(LV2URIMap& map, URIs& uris, Forge& forge, Interface& ifac
 }
 
 void
-AtomReader::get_uri(const LV2_Atom* in, Raul::Atom& out)
+AtomReader::get_atom(const LV2_Atom* in, Raul::Atom& out)
 {
 	if (in) {
 		if (in->type == _uris.atom_URID) {
@@ -49,9 +49,14 @@ void
 AtomReader::get_props(const LV2_Atom_Object*       obj,
                       Ingen::Resource::Properties& props)
 {
+	if (obj->body.otype) {
+		props.insert(
+			std::make_pair(_uris.rdf_type,
+			               _forge.alloc_uri(_map.unmap_uri(obj->body.otype))));
+	}
 	LV2_ATOM_OBJECT_FOREACH(obj, p) {
 		Raul::Atom val;
-		get_uri(&p->value, val);
+		get_atom(&p->value, val);
 		props.insert(std::make_pair(_map.unmap_uri(p->key), val));
 	}
 }
@@ -96,8 +101,8 @@ AtomReader::write(const LV2_Atom* msg)
 
 			Raul::Atom tail_atom;
 			Raul::Atom head_atom;
-			get_uri(tail, tail_atom);
-			get_uri(head, head_atom);
+			get_atom(tail, tail_atom);
+			get_atom(head, head_atom);
 			if (tail_atom.is_valid() && head_atom.is_valid()) {
 				_iface.disconnect(Raul::Path(tail_atom.get_uri()),
 				                  Raul::Path(head_atom.get_uri()));
@@ -130,8 +135,8 @@ AtomReader::write(const LV2_Atom* msg)
 
 			Raul::Atom tail_atom;
 			Raul::Atom head_atom;
-			get_uri(tail, tail_atom);
-			get_uri(head, head_atom);
+			get_atom(tail, tail_atom);
+			get_atom(head, head_atom);
 			_iface.connect(Raul::Path(tail_atom.get_uri()),
 			               Raul::Path(head_atom.get_uri()));
 		} else {
@@ -153,7 +158,7 @@ AtomReader::write(const LV2_Atom* msg)
 
 		LV2_ATOM_OBJECT_FOREACH(body, p) {
 			Raul::Atom val;
-			get_uri(&p->value, val);
+			get_atom(&p->value, val);
 			_iface.set_property(subject_uri, _map.unmap_uri(p->key), val);
 		}
 	} else if (obj->body.otype == _uris.patch_Patch) {

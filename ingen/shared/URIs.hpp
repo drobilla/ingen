@@ -78,6 +78,7 @@ public:
 	const Quark ingen_node;
 	const Quark ingen_polyphonic;
 	const Quark ingen_polyphony;
+	const Quark ingen_prototype;
 	const Quark ingen_sampleRate;
 	const Quark ingen_selected;
 	const Quark ingen_tail;
@@ -121,7 +122,6 @@ public:
 	const Quark patch_remove;
 	const Quark patch_request;
 	const Quark patch_subject;
-	const Quark rdf_instanceOf;
 	const Quark rdf_type;
 	const Quark rdfs_seeAlso;
 	const Quark wildcard;

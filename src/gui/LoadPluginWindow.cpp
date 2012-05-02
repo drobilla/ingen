@@ -348,7 +348,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		Resource::Properties props = _initial_data;
 		props.insert(make_pair(uris.rdf_type,
 		                       uris.ingen_Node));
-		props.insert(make_pair(uris.rdf_instanceOf,
+		props.insert(make_pair(uris.ingen_prototype,
 		                       _app->forge().alloc_uri(plugin->uri().str())));
 		Raul::warn << "FIXME: polyphonic" << std::endl;
 		//props.insert(make_pair(uris.ingen_polyphonic,

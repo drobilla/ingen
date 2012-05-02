@@ -139,6 +139,10 @@ main(int argc, char** argv)
 			          "Unable to load HTTP server module");
 			#endif
 		}
+		#ifdef HAVE_SOCKET
+		ingen_try(world->load_module("socket_server"),
+		          "Unable to load socket server module");
+		#endif
 	}
 
 	// If we don't have a local engine interface (for GUI), use network

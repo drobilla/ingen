@@ -224,11 +224,11 @@ parse_node(Ingen::Shared::World*                    world,
 {
 	const URIs& uris = *world->uris().get();
 
-	Sord::URI rdf_instanceOf(*world->rdf_world(), NS_RDF "instanceOf");
+	Sord::URI ingen_prototype(*world->rdf_world(), NS_INGEN "prototype");
 
-	Sord::Iter i = model.find(subject, rdf_instanceOf, nil);
+	Sord::Iter i = model.find(subject, ingen_prototype, nil);
 	if (i.end() || i.get_object().type() != Sord::Node::URI) {
-		LOG(error) << "Node missing mandatory rdf:instanceOf" << endl;
+		LOG(error) << "Node missing mandatory ingen:prototype" << endl;
 		return boost::optional<Path>();
 	}
 

@@ -99,7 +99,7 @@ the node take precedence over properties of the node's plugin.  This way a
 node can be expressed as a lightweight set of changes (e.g. input values)
 from its plugin or patch which may be defined elsewhere.
 
-A node MUST have at least one rdf:instanceOf property which is a subclass
+A node MUST have at least one ingen:prototype property which is a subclass
 of :Plugin.  When there are many such properties, an applications SHOULD
 use the most specific class it understands.
 """ .
@@ -117,7 +117,7 @@ ingen:Port
 	rdfs:label "Port" ;
 	rdfs:comment """
 A Port is an input or output on a Node.  It is implicitly an instance of the
-corresponding port on that Node's plugin (specified with rdf:instanceOf).
+corresponding port on that Node's plugin (specified with ingen:prototype).
 A Port MUST have a legal lv2:symbol in the exact way a Node must, see :Node
 documentation for details.  Ports inherit properties from the Port on their
 parent's Plugin in the exact way Nodes inherit properties from their Plugin.

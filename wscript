@@ -3,6 +3,7 @@ import os
 import subprocess
 
 import waflib.Options as Options
+import waflib.Utils as Utils
 from waflib.extras import autowaf as autowaf
 
 # Version of this package (even if built as a child)
@@ -32,6 +33,8 @@ def options(opt):
                    help="Do not build OSC via liblo support, even if liblo exists")
     opt.add_option('--no-http', action='store_true', default=False, dest='no_http',
                    help="Do not build HTTP via libsoup support, even if libsoup exists")
+    opt.add_option('--no-socket', action='store_true', default=False, dest='no_socket',
+                   help="Do not build Socket interface")
     opt.add_option('--log-debug', action='store_true', default=False, dest='log_debug',
                    help="Print debugging output")
     opt.add_option('--liblo-bundles', action='store_true', default=False, dest='liblo_bundles',
@@ -79,6 +82,11 @@ def configure(conf):
     if not Options.options.no_osc:
         autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO',
                           atleast_version='0.25', mandatory=False)
+    if not Options.options.no_socket:
+        conf.check_cc(function_name='socket',
+                      header_name='sys/socket.h',
+                      define_name='HAVE_SOCKET',
+                      mandatory=False)
     if not Options.options.no_jack_session:
         if conf.is_defined('HAVE_NEW_JACK'):
             autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
@@ -120,6 +128,7 @@ def configure(conf):
                         conf.is_defined('INGEN_JACK_SESSION'))
     autowaf.display_msg(conf, "OSC", conf.is_defined('HAVE_LIBLO'))
     autowaf.display_msg(conf, "HTTP", conf.is_defined('HAVE_SOUP'))
+    autowaf.display_msg(conf, "SOCKET", conf.is_defined('HAVE_SOCKET'))
     autowaf.display_msg(conf, "LV2", conf.is_defined('HAVE_LILV'))
     autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
     autowaf.display_msg(conf, "LV2 Bundle", conf.env['INGEN_BUNDLE_DIR'])
@@ -144,6 +153,7 @@ def build(bld):
     bld.recurse('src/client')
     bld.recurse('src/http')
     bld.recurse('src/osc')
+    bld.recurse('src/socket')
 
     if bld.is_defined('INGEN_BUILD_GUI'):
         bld.recurse('src/gui')
@@ -159,6 +169,7 @@ def build(bld):
     autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2')
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
+    bld.install_files('${BINDIR}', 'scripts/ingen_cmd', chmod=Utils.O755)
 
     # Documentation
     autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, top, out)

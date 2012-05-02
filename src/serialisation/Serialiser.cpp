@@ -455,7 +455,7 @@ Serialiser::Impl::serialise_node(SharedPtr<const Node> node,
 	                      Sord::Curie(_model->world(), "rdf:type"),
 	                      Sord::Curie(_model->world(), "ingen:Node"));
 	_model->add_statement(node_id,
-	                      Sord::Curie(_model->world(), "rdf:instanceOf"),
+	                      Sord::Curie(_model->world(), "ingen:prototype"),
 	                      class_id);
 	_model->add_statement(node_id,
 	                      Sord::Curie(_model->world(), "lv2:symbol"),
