@@ -169,7 +169,7 @@ def build(bld):
     autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2')
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
-    bld.install_files('${BINDIR}', 'scripts/ingen_cmd', chmod=Utils.O755)
+    bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)
 
     # Documentation
     autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, top, out)

@@ -92,7 +92,7 @@ class Client:
 ''' % (path))
 
 def print_usage():
-    print('''Usage: %s COMMAND [ARGUMENT]...
+    print('''Usage: ingenish COMMAND [ARGUMENT]...
 A command line interface to an Ingen server.
 
 Commands:
@@ -107,15 +107,14 @@ Turtle fragments are used verbatim as the body of blank nodes, the syntax is
 identical to the descriptions in Ingen patch files.
 
 Example:
-    ingen_cmd put /left_in 'a lv2:InputPort ; a lv2:AudioPort'
-    ingen_cmd put /left_out 'a lv2:OutputPort ; a lv2:AudioPort'
-
-    ingen_cmd put /tone 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Shepard>'
-    ingen_cmd put /combo 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Combo>'
-    ingen_cmd connect /left_in /tone/left_in
-    ingen_cmd connect /tone/left_out /combo/left_in
-    ingen_cmd connect /combo/left_out /left_out
-    ingen_cmd set /tone/output 'ingen:value 0.7'
+    ingenish put /left_in 'a lv2:InputPort ; a lv2:AudioPort'
+    ingenish put /left_out 'a lv2:OutputPort ; a lv2:AudioPort'
+    ingenish put /tone 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Shepard>'
+    ingenish put /combo 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Combo>'
+    ingenish connect /left_in /tone/left_in
+    ingenish connect /tone/left_out /combo/left_in
+    ingenish connect /combo/left_out /left_out
+    ingenish set /tone/output 'ingen:value 0.7'
 ''')
 
 def abort_if_num_args_less_than(num):
