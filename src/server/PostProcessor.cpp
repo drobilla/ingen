@@ -20,10 +20,11 @@
 
 #include "Driver.hpp"
 #include "Engine.hpp"
+#include "Event.hpp"
 #include "Notification.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
-#include "Event.hpp"
+#include "ThreadManager.hpp"
 
 using namespace std;
 using namespace Raul;
@@ -44,6 +45,7 @@ PostProcessor::~PostProcessor()
 void
 PostProcessor::append(Event* first, Event* last)
 {
+	ThreadManager::assert_thread(THREAD_PROCESS);
 	assert(first);
 	assert(last);
 	assert(!last->next());

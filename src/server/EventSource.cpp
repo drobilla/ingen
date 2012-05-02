@@ -98,6 +98,7 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 	if (num_events_processed > 0) {
 		Event* next = (Event*)last->next();
 		last->next(NULL);
+		assert(!last->next());
 		dest.append(_head.get(), last);
 		_head = next;
 		if (!next)
