@@ -23,15 +23,20 @@ class Client:
     def __init__(self, path='/tmp/ingen.sock'):
         self.path = path
 
+    def msgencode(self, msg):
+        if sys.version_info[0] == 3:
+            return bytes(msg, 'utf-8')
+        else:
+            return msg
+
     def send(self, msg):
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.sock.connect(self.path)
-        print "SENDING:\n%s\n" % msg
-        self.sock.send(msg)
+        self.sock.send(self.msgencode(msg))
         response = self.sock.recv(1024)
         self.sock.close()
-        if response != 'OK':
-            print 'Error: %s' % response
+        if response != self.msgencode('OK'):
+            print('Error: %s' % response)
             return False
         else:
             return True
@@ -87,7 +92,7 @@ class Client:
 ''' % (path))
 
 def print_usage():
-    print '''Usage: %s COMMAND [ARGUMENT]...
+    print('''Usage: %s COMMAND [ARGUMENT]...
 A command line interface to an Ingen server.
 
 Commands:
@@ -111,7 +116,7 @@ Example:
     ingen_cmd connect /tone/left_out /combo/left_in
     ingen_cmd connect /combo/left_out /left_out
     ingen_cmd set /tone/output 'ingen:value 0.7'
-'''
+''')
 
 def abort_if_num_args_less_than(num):
     if len(sys.argv) < num:
@@ -138,7 +143,7 @@ elif cmd == 'disconnect':
 elif cmd == 'delete':
     success = ingen.delete(sys.argv[2])
 else:
-    print "error: Unknown command `%s'" % cmd
+    print("error: Unknown command `%s'" % cmd)
     print_usage()
     sys.exit(1)
 
