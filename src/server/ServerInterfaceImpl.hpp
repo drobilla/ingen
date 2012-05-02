@@ -23,7 +23,7 @@
 #include "raul/SharedPtr.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Resource.hpp"
-#include "EventSource.hpp"
+#include "EventQueue.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -33,15 +33,15 @@ class Engine;
 
 /** A queued (preprocessed) event source / interface.
  *
- * This is the bridge between the Interface presented to the client, and
- * the EventSource that needs to be presented to the Driver.
+ * This is both an Interface and an EventSource, calling Interface methods
+ * will result in events in the EventSource.
  *
  * Responses occur through the event mechanism (which notified clients in
  * event post_process methods) and are related to an event by an integer ID.
  * If you do not register a request, you have no way of knowing if your calls
  * are successful.
  */
-class ServerInterfaceImpl : public EventSource,
+class ServerInterfaceImpl : public EventQueue,
                             public Interface
 {
 public:

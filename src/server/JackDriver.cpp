@@ -36,7 +36,6 @@
 #include "Engine.hpp"
 #include "Event.hpp"
 #include "Event.hpp"
-#include "EventSource.hpp"
 #include "JackDriver.hpp"
 #include "MessageContext.hpp"
 #include "PatchImpl.hpp"

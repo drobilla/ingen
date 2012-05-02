@@ -14,10 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "EventSource.hpp"
+#include "Event.hpp"
+#include "EventQueue.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
-#include "Event.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -25,13 +25,13 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-EventSource::EventSource()
+EventQueue::EventQueue()
 {
 	Thread::set_context(THREAD_PRE_PROCESS);
-	set_name("EventSource");
+	set_name("EventQueue");
 }
 
-EventSource::~EventSource()
+EventQueue::~EventQueue()
 {
 	Thread::stop();
 }
@@ -39,7 +39,7 @@ EventSource::~EventSource()
 /** Push an unprepared event onto the queue.
  */
 void
-EventSource::push_queued(Event* const ev)
+EventQueue::push_queued(Event* const ev)
 {
 	assert(!ev->is_prepared());
 	assert(!ev->next());
@@ -67,7 +67,7 @@ EventSource::push_queued(Event* const ev)
  * Executed events will be pushed to @a dest.
  */
 void
-EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
+EventQueue::process(PostProcessor& dest, ProcessContext& context, bool limit)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
@@ -108,7 +108,7 @@ EventSource::process(PostProcessor& dest, ProcessContext& context, bool limit)
 
 /** Pre-process a single event */
 void
-EventSource::_whipped()
+EventQueue::_whipped()
 {
 	Event* ev = _prepared_back.get();
 	if (!ev)

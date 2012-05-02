@@ -14,31 +14,29 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_EVENTSOURCE_HPP
-#define INGEN_ENGINE_EVENTSOURCE_HPP
+#ifndef INGEN_ENGINE_EVENTQUEUE_HPP
+#define INGEN_ENGINE_EVENTQUEUE_HPP
 
 #include "raul/AtomicPtr.hpp"
 #include "raul/Slave.hpp"
+
+#include "EventSource.hpp"
 
 namespace Ingen {
 namespace Server {
 
 class Event;
-class Event;
 class PostProcessor;
 class ProcessContext;
 
-/** Source for events to run in the audio thread.
- *
- * The Driver gets events from an EventSource in the process callback
- * (realtime audio thread) and executes them, then they are sent to the
- * PostProcessor and finalised (post-processing thread).
+/** An EventSource which prepares events in its own thread.
  */
-class EventSource : public Raul::Slave
+class EventQueue : public EventSource
+                 , public Raul::Slave
 {
 public:
-	explicit EventSource();
-	virtual ~EventSource();
+	explicit EventQueue();
+	virtual ~EventQueue();
 
 	void process(PostProcessor& dest, ProcessContext& context, bool limit=true);
 
@@ -59,5 +57,5 @@ private:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_EVENTSOURCE_HPP
+#endif // INGEN_ENGINE_EVENTQUEUE_HPP
 

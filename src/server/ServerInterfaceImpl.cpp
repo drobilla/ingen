@@ -23,7 +23,7 @@
 #include "ClientBroadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "EventSource.hpp"
+#include "EventQueue.hpp"
 #include "ServerInterfaceImpl.hpp"
 #include "events.hpp"
 
@@ -36,7 +36,7 @@ namespace Ingen {
 namespace Server {
 
 ServerInterfaceImpl::ServerInterfaceImpl(Engine& engine)
-	: EventSource()
+	: EventQueue()
 	, _request_client(NULL)
 	, _request_id(-1)
 	, _engine(engine)
