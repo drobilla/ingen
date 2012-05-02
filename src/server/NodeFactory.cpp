@@ -50,8 +50,8 @@ using namespace Internals;
 
 NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	: _world(world)
-	, _has_loaded(false)
 	, _lv2_info(new LV2Info(world))
+	, _has_loaded(false)
 {
 }
 
@@ -76,6 +76,7 @@ NodeFactory::plugins()
 PluginImpl*
 NodeFactory::plugin(const Raul::URI& uri)
 {
+	load_plugin(uri);
 	const Plugins::const_iterator i = _plugins.find(uri);
 	return ((i != _plugins.end()) ? i->second : NULL);
 }
@@ -113,13 +114,29 @@ NodeFactory::load_internal_plugins()
 	_plugins.insert(make_pair(trigger_plug->uri(), trigger_plug));
 }
 
+void
+NodeFactory::load_plugin(const Raul::URI& uri)
+{
+	if (_has_loaded || _plugins.find(uri) != _plugins.end()) {
+		return;
+	}
+
+	LilvNode*          node  = lilv_new_uri(_world->lilv_world(), uri.c_str());
+	const LilvPlugins* plugs = lilv_world_get_all_plugins(_world->lilv_world());
+	const LilvPlugin*  plug  = lilv_plugins_get_by_uri(plugs, node);
+	if (plug) {
+		LV2Plugin* const ingen_plugin = new LV2Plugin(_lv2_info, uri.str());
+		ingen_plugin->lilv_plugin(plug);
+		_plugins.insert(make_pair(uri, ingen_plugin));
+	}
+}
+
 /** Loads information about all LV2 plugins into internal plugin database.
  */
 void
 NodeFactory::load_lv2_plugins()
 {
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());
-
 	LILV_FOREACH(plugins, i, plugins) {
 		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);
 

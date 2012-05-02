@@ -42,6 +42,7 @@ public:
 	explicit NodeFactory(Ingen::Shared::World* world);
 	~NodeFactory();
 
+	void load_plugin(const Raul::URI& uri);
 	void load_plugins();
 
 	typedef std::map<Raul::URI, PluginImpl*> Plugins;
@@ -55,10 +56,8 @@ private:
 
 	Plugins               _plugins;
 	Ingen::Shared::World* _world;
-	bool                  _has_loaded;
-
 	SharedPtr<LV2Info>    _lv2_info;
-
+	bool                  _has_loaded;
 };
 
 } // namespace Server
