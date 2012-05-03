@@ -62,7 +62,7 @@ SocketListener::SocketListener(Ingen::Shared::World& world,
 		LOG(Raul::error) << "Failed to listen on socket" << std::endl;
 	}
 
-	LOG(Raul::info) << "Opened socket at " << _sock_path << std::endl;
+	LOG(Raul::info) << "Listening on socket at " << _sock_path << std::endl;
 	start();
 }
 

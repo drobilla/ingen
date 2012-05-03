@@ -39,7 +39,7 @@ EventQueue::~EventQueue()
 /** Push an unprepared event onto the queue.
  */
 void
-EventQueue::push_queued(Event* const ev)
+EventQueue::event(Event* const ev)
 {
 	assert(!ev->is_prepared());
 	assert(!ev->next());

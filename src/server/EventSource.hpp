@@ -14,14 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_EVENTQUEUE_HPP
-#define INGEN_ENGINE_EVENTQUEUE_HPP
-
-#include "raul/AtomicPtr.hpp"
-#include "raul/Slave.hpp"
-
-#include "EventSink.hpp"
-#include "EventSource.hpp"
+#ifndef INGEN_ENGINE_EVENTSOURCE_HPP
+#define INGEN_ENGINE_EVENTSOURCE_HPP
 
 namespace Ingen {
 namespace Server {
@@ -30,34 +24,24 @@ class Event;
 class PostProcessor;
 class ProcessContext;
 
-/** An EventSource which prepares events in its own thread.
+/** Source for events to run in the audio thread.
+ *
+ * The Driver gets events from an EventQueue in the process callback and
+ * executes them, then they are sent to the PostProcessor and finalised
+ * (post-processing thread).
  */
-class EventQueue : public EventSource
-                 , public EventSink
-                 , public Raul::Slave
+class EventSource
 {
 public:
-	explicit EventQueue();
-	virtual ~EventQueue();
+	virtual ~EventSource() {}
 
-	void process(PostProcessor& dest, ProcessContext& context, bool limit=true);
-
-	inline bool unprepared_events() const { return _prepared_back.get(); }
-	inline bool empty()             const { return !_head.get(); }
-
-protected:
-	void event(Event* ev);
-
-	virtual void _whipped(); ///< Prepare 1 event
-
-private:
-	Raul::AtomicPtr<Event> _head;
-	Raul::AtomicPtr<Event> _prepared_back;
-	Raul::AtomicPtr<Event> _tail;
+	virtual void process(PostProcessor&  dest,
+	                     ProcessContext& context,
+	                     bool            limit = true) = 0;
 };
 
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_EVENTQUEUE_HPP
+#endif // INGEN_ENGINE_EVENTSOURCE_HPP
 
