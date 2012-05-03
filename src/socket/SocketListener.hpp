@@ -27,13 +27,13 @@ namespace Shared { class World; }
 
 namespace Socket {
 
-class SocketReceiver : public Raul::Thread
+class SocketListener : public Raul::Thread
 {
 public:
-	SocketReceiver(Ingen::Shared::World& world,
+	SocketListener(Ingen::Shared::World& world,
 	               SharedPtr<Interface>  iface);
 
-	~SocketReceiver();
+	~SocketListener();
 
 private:
 	virtual void _run();

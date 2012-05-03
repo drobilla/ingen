@@ -23,14 +23,14 @@
 #include "ingen/shared/AtomReader.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
-#include "SocketReceiver.hpp"
+#include "SocketListener.hpp"
 
-#define LOG(s) s << "[SocketReceiver] "
+#define LOG(s) s << "[SocketListener] "
 
 namespace Ingen {
 namespace Socket {
 
-SocketReceiver::SocketReceiver(Ingen::Shared::World& world,
+SocketListener::SocketListener(Ingen::Shared::World& world,
                                SharedPtr<Interface>  iface)
 	: _world(world)
 	, _iface(iface)
@@ -66,7 +66,7 @@ SocketReceiver::SocketReceiver(Ingen::Shared::World& world,
 	start();
 }
 
-SocketReceiver::~SocketReceiver()
+SocketListener::~SocketListener()
 {
 	stop();
 	join();
@@ -75,7 +75,7 @@ SocketReceiver::~SocketReceiver()
 }
 
 void
-SocketReceiver::_run()
+SocketListener::_run()
 {
 	while (!_exit_flag) {
 		// Accept connection from client

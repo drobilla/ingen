@@ -22,7 +22,7 @@
 #include "../server/Engine.hpp"
 #include "../server/ServerInterfaceImpl.hpp"
 
-#include "SocketReceiver.hpp"
+#include "SocketListener.hpp"
 
 using namespace Ingen;
 
@@ -31,13 +31,13 @@ struct IngenSocketServerModule : public Ingen::Shared::Module {
 		Server::Engine* engine = (Server::Engine*)world->local_engine().get();
 		SharedPtr<Server::ServerInterfaceImpl> interface(
 			new Server::ServerInterfaceImpl(*engine));
-		receiver = SharedPtr<Ingen::Socket::SocketReceiver>(
-			new Ingen::Socket::SocketReceiver(*world, interface));
+		receiver = SharedPtr<Ingen::Socket::SocketListener>(
+			new Ingen::Socket::SocketListener(*world, interface));
 
 		engine->add_event_source(interface);
 	}
 
-	SharedPtr<Ingen::Socket::SocketReceiver> receiver;
+	SharedPtr<Ingen::Socket::SocketListener> receiver;
 };
 
 extern "C" {
