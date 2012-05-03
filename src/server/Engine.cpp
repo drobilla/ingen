@@ -125,7 +125,10 @@ Engine::main_iteration()
 void
 Engine::add_event_source(SharedPtr<EventSource> source)
 {
-	_event_sources.insert(source);
+	// FIXME: Not thread-safe
+	_maid->manage(source);
+	source->_next = _event_sources;
+	_event_sources = source;
 }
 
 void
@@ -237,14 +240,18 @@ Engine::process_events(ProcessContext& context)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	EventSources::iterator i = _event_sources.begin();
-	while (i != _event_sources.end()) {
-		EventSources::iterator next = i;
-		++next;
-		if (!(*i)->process(*_post_processor, context)) {
-			_event_sources.erase(i);
+	SharedPtr<EventSource> src  = _event_sources;
+	SharedPtr<EventSource> prev = src;
+	for (; src; src = src->_next) {
+		if (!src->process(*_post_processor, context)) {
+			// Source is finished, remove
+			if (src == _event_sources) {
+				_event_sources = src->_next;
+			} else {
+				prev->_next = src->_next;
+			}
 		}
-		i = next;
+		prev = src;
 	}
 }
 

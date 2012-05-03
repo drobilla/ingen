@@ -17,6 +17,9 @@
 #ifndef INGEN_ENGINE_EVENTSOURCE_HPP
 #define INGEN_ENGINE_EVENTSOURCE_HPP
 
+#include <raul/SharedPtr.hpp>
+#include <raul/Deletable.hpp>
+
 namespace Ingen {
 namespace Server {
 
@@ -30,9 +33,10 @@ class ProcessContext;
  * executes them, then they are sent to the PostProcessor and finalised
  * (post-processing thread).
  */
-class EventSource
+class EventSource : public Raul::Deletable
 {
 public:
+	EventSource() {}
 	virtual ~EventSource() {}
 
 	/** Process events for a cycle.
@@ -41,6 +45,10 @@ public:
 	virtual bool process(PostProcessor&  dest,
 	                     ProcessContext& context,
 	                     bool            limit = true) = 0;
+
+private:
+	friend class Engine;
+	SharedPtr<EventSource> _next;  ///< Intrusive linked list for Engine
 };
 
 } // namespace Server

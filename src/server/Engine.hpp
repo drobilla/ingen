@@ -17,15 +17,13 @@
 #ifndef INGEN_ENGINE_ENGINE_HPP
 #define INGEN_ENGINE_ENGINE_HPP
 
-#include <set>
 #include <vector>
 
 #include <boost/utility.hpp>
 
-#include "raul/SharedPtr.hpp"
-
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
+#include "raul/SharedPtr.hpp"
 
 namespace Raul { class Maid; }
 
@@ -101,8 +99,7 @@ private:
 	NodeFactory*       _node_factory;
 	PostProcessor*     _post_processor;
 
-	typedef std::set< SharedPtr<EventSource> > EventSources;
-	EventSources _event_sources;
+	SharedPtr<EventSource> _event_sources;  ///< Intrusive linked list
 
 	bool _quit_flag;
 };
