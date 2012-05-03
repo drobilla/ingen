@@ -24,10 +24,10 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EventQueue.hpp"
-#include "ServerInterfaceImpl.hpp"
+#include "EventWriter.hpp"
 #include "events.hpp"
 
-#define LOG(s) s << "[ServerInterfaceImpl] "
+#define LOG(s) s << "[EventWriter] "
 
 using namespace std;
 using namespace Raul;
@@ -35,23 +35,21 @@ using namespace Raul;
 namespace Ingen {
 namespace Server {
 
-ServerInterfaceImpl::ServerInterfaceImpl(Engine& engine)
-	: EventQueue()
-	, _request_client(NULL)
+EventWriter::EventWriter(Engine& engine, EventSink& sink)
+	: _request_client(NULL)
+	, _sink(sink)
 	, _request_id(-1)
 	, _engine(engine)
 	, _in_bundle(false)
 {
-	start();
 }
 
-ServerInterfaceImpl::~ServerInterfaceImpl()
+EventWriter::~EventWriter()
 {
-	stop();
 }
 
 SampleCount
-ServerInterfaceImpl::now() const
+EventWriter::now() const
 {
 	// Exactly one cycle latency (some could run ASAP if we get lucky, but not always, and a slight
 	// constant latency is far better than jittery lower (average) latency
@@ -62,7 +60,7 @@ ServerInterfaceImpl::now() const
 }
 
 void
-ServerInterfaceImpl::set_response_id(int32_t id)
+EventWriter::set_response_id(int32_t id)
 {
 	if (!_request_client) {  // Kludge
 		_request_client = _engine.broadcaster()->client(
@@ -76,13 +74,13 @@ ServerInterfaceImpl::set_response_id(int32_t id)
 // Bundle commands
 
 void
-ServerInterfaceImpl::bundle_begin()
+EventWriter::bundle_begin()
 {
 	_in_bundle = true;
 }
 
 void
-ServerInterfaceImpl::bundle_end()
+EventWriter::bundle_end()
 {
 	_in_bundle = false;
 }
@@ -90,30 +88,30 @@ ServerInterfaceImpl::bundle_end()
 // Object commands
 
 void
-ServerInterfaceImpl::put(const URI&                  uri,
-                         const Resource::Properties& properties,
-                         const Resource::Graph       ctx)
+EventWriter::put(const URI&                  uri,
+                 const Resource::Properties& properties,
+                 const Resource::Graph       ctx)
 {
-	event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), true, ctx, uri, properties));
+	_sink.event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), true, ctx, uri, properties));
 }
 
 void
-ServerInterfaceImpl::delta(const URI&                  uri,
-                           const Resource::Properties& remove,
-                           const Resource::Properties& add)
+EventWriter::delta(const URI&                  uri,
+                   const Resource::Properties& remove,
+                   const Resource::Properties& add)
 {
-	event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), false, Resource::DEFAULT, uri, add, remove));
+	_sink.event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), false, Resource::DEFAULT, uri, add, remove));
 }
 
 void
-ServerInterfaceImpl::move(const Path& old_path,
-                          const Path& new_path)
+EventWriter::move(const Path& old_path,
+                  const Path& new_path)
 {
-	event(new Events::Move(_engine, _request_client, _request_id, now(), old_path, new_path));
+	_sink.event(new Events::Move(_engine, _request_client, _request_id, now(), old_path, new_path));
 }
 
 void
-ServerInterfaceImpl::del(const URI& uri)
+EventWriter::del(const URI& uri)
 {
 	if (uri == "ingen:engine") {
 		if (_request_client) {
@@ -121,21 +119,21 @@ ServerInterfaceImpl::del(const URI& uri)
 		}
 		_engine.quit();
 	} else {
-		event(new Events::Delete(_engine, _request_client, _request_id, now(), uri));
+		_sink.event(new Events::Delete(_engine, _request_client, _request_id, now(), uri));
 	}
 }
 
 void
-ServerInterfaceImpl::connect(const Path& tail_path,
-                             const Path& head_path)
+EventWriter::connect(const Path& tail_path,
+                     const Path& head_path)
 {
-	event(new Events::Connect(_engine, _request_client, _request_id, now(), tail_path, head_path));
+	_sink.event(new Events::Connect(_engine, _request_client, _request_id, now(), tail_path, head_path));
 
 }
 
 void
-ServerInterfaceImpl::disconnect(const Path& src,
-                                const Path& dst)
+EventWriter::disconnect(const Path& src,
+                        const Path& dst)
 {
 	if (!Path::is_path(src) && !Path::is_path(dst)) {
 		LOG(Raul::error) << "Bad disconnect request " << src
@@ -143,36 +141,36 @@ ServerInterfaceImpl::disconnect(const Path& src,
 		return;
 	}
 
-	event(new Events::Disconnect(_engine, _request_client, _request_id, now(),
+	_sink.event(new Events::Disconnect(_engine, _request_client, _request_id, now(),
 	                                   Path(src.str()), Path(dst.str())));
 }
 
 void
-ServerInterfaceImpl::disconnect_all(const Path& patch_path,
-                                    const Path& path)
+EventWriter::disconnect_all(const Path& patch_path,
+                            const Path& path)
 {
-	event(new Events::DisconnectAll(_engine, _request_client, _request_id, now(), patch_path, path));
+	_sink.event(new Events::DisconnectAll(_engine, _request_client, _request_id, now(), patch_path, path));
 }
 
 void
-ServerInterfaceImpl::set_property(const URI&  uri,
-                                  const URI&  predicate,
-                                  const Atom& value)
+EventWriter::set_property(const URI&  uri,
+                          const URI&  predicate,
+                          const Atom& value)
 {
 	if (uri == "ingen:engine" && predicate == "ingen:enabled"
 	    && value.type() == _engine.world()->forge().Bool) {
 		if (value.get_bool()) {
 			_engine.activate();
-			event(new Events::Ping(_engine, _request_client, _request_id, now()));
+			_sink.event(new Events::Ping(_engine, _request_client, _request_id, now()));
 		} else {
-			event(new Events::Deactivate(_engine, _request_client, _request_id, now()));
+			_sink.event(new Events::Deactivate(_engine, _request_client, _request_id, now()));
 		}
 	} else {
 		Resource::Properties remove;
 		remove.insert(make_pair(predicate, _engine.world()->uris()->wildcard));
 		Resource::Properties add;
 		add.insert(make_pair(predicate, value));
-		event(new Events::SetMetadata(
+		_sink.event(new Events::SetMetadata(
 			            _engine, _request_client, _request_id, now(), false, Resource::DEFAULT,
 			            uri, add, remove));
 	}
@@ -181,9 +179,9 @@ ServerInterfaceImpl::set_property(const URI&  uri,
 // Requests //
 
 void
-ServerInterfaceImpl::get(const URI& uri)
+EventWriter::get(const URI& uri)
 {
-	event(new Events::Get(_engine, _request_client, _request_id, now(), uri));
+	_sink.event(new Events::Get(_engine, _request_client, _request_id, now(), uri));
 }
 
 } // namespace Server

@@ -45,10 +45,11 @@
 #include "AudioBuffer.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
+#include "EventQueue.hpp"
+#include "EventWriter.hpp"
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
-#include "ServerInterfaceImpl.hpp"
 #include "ThreadManager.hpp"
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
@@ -425,11 +426,12 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->main = new MainThread(engine);
 	plugin->main->set_name("Main");
 
-	SharedPtr<Server::ServerInterfaceImpl> interface(
-		new Server::ServerInterfaceImpl(*engine.get()));
+	SharedPtr<Server::EventQueue> queue(new Server::EventQueue());
+	SharedPtr<Server::EventWriter> interface(
+		new Server::EventWriter(*engine.get(), *queue.get()));
 
 	plugin->world->set_engine(interface);
-	engine->add_event_source(interface);
+	engine->add_event_source(queue);
 
 	Raul::Thread::get().set_context(Server::THREAD_PRE_PROCESS);
 	Server::ThreadManager::single_threaded = true;
@@ -450,17 +452,15 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	engine->post_processor()->set_end_time(UINT_MAX);
 
-	// TODO: Load only necessary plugins
-	//plugin->world->engine()->get("ingen:plugins");
-	interface->process(*engine->post_processor(), context, false);
+	queue->process(*engine->post_processor(), context, false);
 	engine->post_processor()->process();
 
 	plugin->world->parser()->parse_file(plugin->world,
 	                                    plugin->world->engine().get(),
 	                                    patch->filename);
 
-	while (!interface->empty()) {
-		interface->process(*engine->post_processor(), context, false);
+	while (!queue->empty()) {
+		queue->process(*engine->post_processor(), context, false);
 		engine->post_processor()->process();
 	}
 
@@ -493,7 +493,7 @@ ingen_activate(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
 	me->world->local_engine()->activate();
-	((ServerInterfaceImpl*)me->world->engine().get())->start();
+	//((EventWriter*)me->world->engine().get())->start();
 	me->main->start();
 }
 

@@ -14,39 +14,35 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_QUEUEDENGINEINTERFACE_HPP
-#define INGEN_ENGINE_QUEUEDENGINEINTERFACE_HPP
+#ifndef INGEN_ENGINE_EVENTWRITER_HPP
+#define INGEN_ENGINE_EVENTWRITER_HPP
 
 #include <inttypes.h>
-#include <string>
 #include <memory>
-#include "raul/SharedPtr.hpp"
+#include <string>
+
 #include "ingen/Interface.hpp"
 #include "ingen/Resource.hpp"
-#include "EventQueue.hpp"
+#include "raul/SharedPtr.hpp"
+
 #include "types.hpp"
 
 namespace Ingen {
 namespace Server {
 
 class Engine;
+class EventSink;
 
-/** A queued (preprocessed) event source / interface.
+/** An Interface that creates and writes Events to an EventSink.
  *
- * This is both an Interface and an EventSource, calling Interface methods
- * will result in events in the EventSource.
- *
- * Responses occur through the event mechanism (which notified clients in
- * event post_process methods) and are related to an event by an integer ID.
- * If you do not register a request, you have no way of knowing if your calls
- * are successful.
+ * This is where Interface calls get turned into Events which are actually
+ * processed by the engine to do things.
  */
-class ServerInterfaceImpl : public EventQueue,
-                            public Interface
+class EventWriter : public Interface
 {
 public:
-	explicit ServerInterfaceImpl(Engine& engine);
-	virtual ~ServerInterfaceImpl();
+	explicit EventWriter(Engine& engine, EventSink& sink);
+	virtual ~EventWriter();
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
@@ -91,6 +87,7 @@ public:
 
 protected:
 	Interface* _request_client;
+	EventSink& _sink;
 	int32_t    _request_id;
 	Engine&    _engine;
 	bool       _in_bundle;  ///< True iff a bundle is currently being received

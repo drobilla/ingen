@@ -29,11 +29,12 @@ EventQueue::EventQueue()
 {
 	Thread::set_context(THREAD_PRE_PROCESS);
 	set_name("EventQueue");
+	start();
 }
 
 EventQueue::~EventQueue()
 {
-	Thread::stop();
+	stop();
 }
 
 /** Push an unprepared event onto the queue.

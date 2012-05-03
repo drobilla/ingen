@@ -20,7 +20,8 @@
 #include "ingen/shared/World.hpp"
 
 #include "../server/Engine.hpp"
-#include "../server/ServerInterfaceImpl.hpp"
+#include "../server/EventWriter.hpp"
+#include "../server/EventQueue.hpp"
 
 #include "SocketListener.hpp"
 
@@ -29,15 +30,16 @@ using namespace Ingen;
 struct IngenSocketServerModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
 		Server::Engine* engine = (Server::Engine*)world->local_engine().get();
-		SharedPtr<Server::ServerInterfaceImpl> interface(
-			new Server::ServerInterfaceImpl(*engine));
-		receiver = SharedPtr<Ingen::Socket::SocketListener>(
+		SharedPtr<Server::EventQueue> queue(new Server::EventQueue());
+		SharedPtr<Server::EventWriter> interface(
+			new Server::EventWriter(*engine, *queue.get()));
+		listener = SharedPtr<Ingen::Socket::SocketListener>(
 			new Ingen::Socket::SocketListener(*world, interface));
 
-		engine->add_event_source(interface);
+		engine->add_event_source(queue);
 	}
 
-	SharedPtr<Ingen::Socket::SocketListener> receiver;
+	SharedPtr<Ingen::Socket::SocketListener> listener;
 };
 
 extern "C" {

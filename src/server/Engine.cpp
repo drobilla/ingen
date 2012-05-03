@@ -28,6 +28,7 @@
 #include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/Store.hpp"
 #include "ingen/shared/URIs.hpp"
+
 #include "BufferFactory.hpp"
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"
@@ -36,12 +37,12 @@
 #include "EngineStore.hpp"
 #include "Event.hpp"
 #include "EventSource.hpp"
+#include "EventWriter.hpp"
 #include "MessageContext.hpp"
 #include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
-#include "ServerInterfaceImpl.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
