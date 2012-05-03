@@ -4,7 +4,8 @@ from waflib.extras import autowaf as autowaf
 def build(bld):
     if bld.is_defined('HAVE_SOCKET'):
         obj = bld(features        = 'cxx cxxshlib',
-                  source          = ['SocketListener.cpp',
+                  source          = ['SocketInterface.cpp',
+                                     'SocketListener.cpp',
                                      'ingen_socket_server.cpp'],
                   includes        = ['.', '../..'],
                   name            = 'libingen_socket_server',

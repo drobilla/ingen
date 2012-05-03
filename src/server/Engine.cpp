@@ -237,8 +237,15 @@ Engine::process_events(ProcessContext& context)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	for (EventSources::iterator i = _event_sources.begin(); i != _event_sources.end(); ++i)
-		(*i)->process(*_post_processor, context);
+	EventSources::iterator i = _event_sources.begin();
+	while (i != _event_sources.end()) {
+		EventSources::iterator next = i;
+		++next;
+		if (!(*i)->process(*_post_processor, context)) {
+			_event_sources.erase(i);
+		}
+		i = next;
+	}
 }
 
 void

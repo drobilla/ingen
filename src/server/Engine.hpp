@@ -62,23 +62,17 @@ public:
 
 	virtual ~Engine();
 
+	// EngineBase methods
 	virtual bool activate();
-
 	virtual void deactivate();
-
 	virtual void quit();
-
 	virtual bool main_iteration();
-
-	virtual void set_driver(SharedPtr<Driver> driver);
-
-	virtual void add_event_source(SharedPtr<EventSource> source);
-
-	virtual void process_events(ProcessContext& context);
-
 	virtual void register_client(const Raul::URI& uri, Interface* client);
-
 	virtual bool unregister_client(const Raul::URI& uri);
+
+	void set_driver(SharedPtr<Driver> driver);
+	void add_event_source(SharedPtr<EventSource> source);
+	void process_events(ProcessContext& context);
 
 	Ingen::Shared::World* world() const { return _world; }
 

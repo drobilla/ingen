@@ -23,17 +23,18 @@
 #include "ingen/shared/AtomReader.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
+
+#include "../server/Engine.hpp"
 #include "SocketListener.hpp"
+#include "SocketInterface.hpp"
 
 #define LOG(s) s << "[SocketListener] "
 
 namespace Ingen {
 namespace Socket {
 
-SocketListener::SocketListener(Ingen::Shared::World& world,
-                               SharedPtr<Interface>  iface)
+SocketListener::SocketListener(Ingen::Shared::World& world)
 	: _world(world)
-	, _iface(iface)
 {
 	// Create server socket
 	_sock = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -88,60 +89,10 @@ SocketListener::_run()
 			continue;
 		}
 
-		// Set connection to non-blocking so parser can read until EOF
-		// and not block indefinitely waiting for more input
-		fcntl(conn, F_SETFL, fcntl(conn, F_GETFL, 0) | O_NONBLOCK);
-
-		// Set up a reader to parse the Turtle message into a model
-		Sord::World* world  = _world.rdf_world();
-		SerdEnv*     env    = world->prefixes().c_obj();
-		SordModel*   model  = sord_new(world->c_obj(), SORD_SPO, false);
-		SerdReader*  reader = sord_new_reader(model, env, SERD_TURTLE, NULL);
-
-		// Set base URI to path: so e.g. </foo/bar> will be a path
-		SordNode* base_uri = sord_new_uri(
-			world->c_obj(), (const uint8_t*)"path:");
-		serd_env_set_base_uri(env, sord_node_to_serd_node(base_uri));
-
-		LV2_URID_Map* map = &_world.lv2_uri_map()->urid_map_feature()->urid_map;
-
-		// Set up sratom to build an LV2_Atom from the model
-		Sratom*        sratom = sratom_new(map);
-		SerdChunk      chunk  = { NULL, 0 };
-		LV2_Atom_Forge forge;
-		lv2_atom_forge_init(&forge, map);
-		lv2_atom_forge_set_sink(
-			&forge, sratom_forge_sink, sratom_forge_deref, &chunk);
-
-		// Read directly from the connection with serd
-		FILE* f = fdopen(conn, "r");
-		serd_reader_read_file_handle(reader, f, (const uint8_t*)"(socket)");
-
-		// FIXME: Sratom needs work to be able to read resources
-		SordNode* msg_node = sord_new_blank(
-			world->c_obj(), (const uint8_t*)"genid1");
-
-		// Build an LV2_Atom at chunk.buf from the message
-		sratom_read(sratom, &forge, world->c_obj(), model, msg_node);
-
-		// Make an AtomReader to read that atom and do Ingen things
-		Shared::AtomReader ar(*_world.lv2_uri_map().get(),
-		                      *_world.uris().get(),
-		                      _world.forge(),
-		                      *_iface.get());
-
-		// Call _iface methods based on atom content
-		ar.write((LV2_Atom*)chunk.buf);
-
-		// Respond and close connection
-		write(conn, "OK", 2);
-		fclose(f);
-		close(conn);
-
-		sratom_free(sratom);
-		sord_node_free(world->c_obj(), msg_node);
-		serd_reader_free(reader);
-		sord_free(model);
+		// Make an new interface/thread to handle the connection
+		Server::Engine* engine = (Server::Engine*)_world.local_engine().get();
+		SharedPtr<SocketInterface> iface(new SocketInterface(_world, conn));
+		engine->add_event_source(iface);
 	}
 }
 

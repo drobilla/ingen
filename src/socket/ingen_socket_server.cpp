@@ -29,14 +29,8 @@ using namespace Ingen;
 
 struct IngenSocketServerModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
-		Server::Engine* engine = (Server::Engine*)world->local_engine().get();
-		SharedPtr<Server::EventQueue> queue(new Server::EventQueue());
-		SharedPtr<Server::EventWriter> interface(
-			new Server::EventWriter(*engine, *queue.get()));
 		listener = SharedPtr<Ingen::Socket::SocketListener>(
-			new Ingen::Socket::SocketListener(*world, interface));
-
-		engine->add_event_source(queue);
+			new Ingen::Socket::SocketListener(*world));
 	}
 
 	SharedPtr<Ingen::Socket::SocketListener> listener;

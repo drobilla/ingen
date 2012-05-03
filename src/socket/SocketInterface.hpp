@@ -18,27 +18,40 @@
 
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
+#include "ingen/Interface.hpp"
+
+#include "../server/EventSink.hpp"
+#include "../server/EventSource.hpp"
+#include "../server/EventWriter.hpp"
 
 namespace Ingen {
-
-class Interface;
 
 namespace Shared { class World; }
 
 namespace Socket {
 
-class SocketListener : public Raul::Thread
+class SocketInterface : public Raul::Thread
+                      , public Server::EventSink
+                      , public Server::EventSource
 {
 public:
-	SocketListener(Ingen::Shared::World& world);
-	~SocketListener();
+	SocketInterface(Shared::World& world, int conn);
+
+	void event(Server::Event* ev);
+
+	bool process(Server::PostProcessor&  dest,
+	             Server::ProcessContext& context,
+	             bool                    limit = true);
+
+	~SocketInterface();
 
 private:
 	virtual void _run();
 
-	Ingen::Shared::World& _world;
-	std::string           _sock_path;
-	int                   _sock;
+	Shared::World&      _world;
+	Server::EventWriter _iface;
+	Server::Event*      _event;
+	int                 _conn;
 };
 
 }  // namespace Ingen

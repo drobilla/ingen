@@ -35,7 +35,10 @@ class EventSource
 public:
 	virtual ~EventSource() {}
 
-	virtual void process(PostProcessor&  dest,
+	/** Process events for a cycle.
+	 * @return False iff this source is finished and should be removed.
+	 */
+	virtual bool process(PostProcessor&  dest,
 	                     ProcessContext& context,
 	                     bool            limit = true) = 0;
 };

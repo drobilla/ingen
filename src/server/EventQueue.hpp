@@ -40,7 +40,7 @@ public:
 	explicit EventQueue();
 	virtual ~EventQueue();
 
-	void process(PostProcessor& dest, ProcessContext& context, bool limit=true);
+	bool process(PostProcessor& dest, ProcessContext& context, bool limit=true);
 
 	inline bool unprepared_events() const { return _prepared_back.get(); }
 	inline bool empty()             const { return !_head.get(); }

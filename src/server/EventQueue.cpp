@@ -67,13 +67,13 @@ EventQueue::event(Event* const ev)
  *
  * Executed events will be pushed to @a dest.
  */
-void
+bool
 EventQueue::process(PostProcessor& dest, ProcessContext& context, bool limit)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
 	if (!_head.get())
-		return;
+		return true;
 
 	/* Limit the maximum number of queued events to process per cycle.  This
 	   makes the process callback (more) realtime-safe by preventing being
@@ -105,6 +105,8 @@ EventQueue::process(PostProcessor& dest, ProcessContext& context, bool limit)
 		if (!next)
 			_tail = NULL;
 	}
+
+	return true;
 }
 
 /** Pre-process a single event */

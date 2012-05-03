@@ -96,7 +96,7 @@ private:
 
 	typedef std::vector<SetPortValue*> SetEvents;
 
-	Event*                 _create_event;
+	Event*                       _create_event;
 	SetEvents                    _set_events;
 	std::vector<SpecialType>     _types;
 	std::vector<SpecialType>     _remove_types;
