@@ -14,12 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <sys/socket.h>
-
 #include <string>
 
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
+
+#include "Socket.hpp"
 
 namespace Ingen {
 
@@ -34,25 +34,6 @@ class SocketListener : public Raul::Thread
 public:
 	SocketListener(Ingen::Shared::World& world);
 	~SocketListener();
-
-	struct Socket {
-		Socket() : addr(NULL), addr_len(0), sock(-1) {}
-		~Socket() { close(); }
-
-		bool open(const std::string& uri,
-		          int                domain,
-		          struct sockaddr*   addr,
-		          socklen_t          addr_len);
-
-		int accept();
-
-		void close();
-
-		std::string      uri;
-		struct sockaddr* addr;
-		socklen_t        addr_len;
-		int              sock;
-	};
 
 private:
 	virtual void _run();

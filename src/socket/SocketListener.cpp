@@ -15,14 +15,10 @@
 */
 
 #include <errno.h>
-#include <netinet/in.h>
 #include <poll.h>
-#include <sys/fcntl.h>
-#include <sys/socket.h>
-#include <sys/un.h>
 
-#include <string>
 #include <sstream>
+#include <string>
 
 #include "ingen/Interface.hpp"
 #include "ingen/shared/World.hpp"
@@ -40,91 +36,27 @@
 namespace Ingen {
 namespace Socket {
 
-bool
-SocketListener::Socket::open(const std::string& uri,
-                             int                domain,
-                             struct sockaddr*   a,
-                             socklen_t          s)
-{
-	addr     = a;
-	addr_len = s;
-	sock     = socket(domain, SOCK_STREAM, 0);
-	if (sock == -1) {
-		return false;
-	}
-
-	if (bind(sock, addr, addr_len) == -1) {
-		LOG(Raul::error) << "Failed to bind " << uri << std::endl;
-		return false;
-	}
-
-	if (listen(sock, 64) == -1) {
-		LOG(Raul::error) << "Failed to listen on " << uri << std::endl;
-		return false;
-	} else {
-		LOG(Raul::info) << "Listening on " << uri << std::endl;
-	}
-
-	return true;
-}
-
-int
-SocketListener::Socket::accept()
-{
-	// Accept connection from client
-	socklen_t        client_addr_len = addr_len;
-	struct sockaddr* client_addr     = (struct sockaddr*)calloc(
-		1, client_addr_len);
-
-	int conn = ::accept(sock, client_addr, &client_addr_len);
-	if (conn == -1) {
-		LOG(Raul::error) << "Error accepting connection: "
-		                 << strerror(errno) << std::endl;
-	}
-
-	return conn;
-}
-
-void
-SocketListener::Socket::close()
-{
-	if (sock != -1) {
-		::close(sock);
-		sock = -1;
-	}
-}
-
 SocketListener::SocketListener(Ingen::Shared::World& world)
 	: _world(world)
 {
 	set_name("SocketListener");
 
 	// Create UNIX socket
-	_unix_path                = world.conf()->option("socket").get_string();
-	std::string         unix_uri = "turtle+unix://" + _unix_path;
-	struct sockaddr_un* uaddr    = (struct sockaddr_un*)calloc(
-		1, sizeof(struct sockaddr_un));
-	uaddr->sun_family = AF_UNIX;
-	strncpy(uaddr->sun_path, _unix_path.c_str(), sizeof(uaddr->sun_path) - 1);
-	if (!_unix_sock.open(unix_uri, AF_UNIX,
-	                     (struct sockaddr*)uaddr,
-	                     sizeof(struct sockaddr_un))) {
+	_unix_path = world.conf()->option("socket").get_string();
+	const std::string unix_uri = "unix://" + _unix_path;
+	if (!_unix_sock.open_unix(unix_uri, _unix_path) || !_unix_sock.listen()) {
 		LOG(Raul::error) << "Failed to create UNIX socket" << std::endl;
+		_unix_sock.close();
 	}
 
 	// Create TCP socket
 	int port = world.conf()->option("engine-port").get_int();
 	std::ostringstream ss;
-	ss << "turtle+tcp:///localhost:";
+	ss << "tcp:///localhost:";
 	ss << port;
-	struct sockaddr_in* naddr = (struct sockaddr_in*)calloc(
-		1, sizeof(struct sockaddr_in));
-	naddr->sin_family = AF_INET;
-	naddr->sin_port   = htons(port);
-	if (!_net_sock.open(ss.str(), AF_INET,
-	                    (struct sockaddr*)naddr,
-	                    sizeof(struct sockaddr_in))) {
+	if (!_net_sock.open_tcp(ss.str(), port) || !_net_sock.listen()) {
 		LOG(Raul::error) << "Failed to create TCP socket" << std::endl;
+		_net_sock.close();
 	}
 
 	start();
@@ -146,14 +78,14 @@ SocketListener::_run()
 
 	struct pollfd pfds[2];
 	int           nfds = 0;
-	if (_unix_sock.sock != -1) {
-		pfds[nfds].fd      = _unix_sock.sock;
+	if (_unix_sock.fd() != -1) {
+		pfds[nfds].fd      = _unix_sock.fd();
 		pfds[nfds].events  = POLLIN;
 		pfds[nfds].revents = 0;
 		++nfds;
 	}
-	if (_net_sock.sock != -1) {
-		pfds[nfds].fd      = _net_sock.sock;
+	if (_net_sock.fd() != -1) {
+		pfds[nfds].fd      = _net_sock.fd();
 		pfds[nfds].events  = POLLIN;
 		pfds[nfds].revents = 0;
 		++nfds;
