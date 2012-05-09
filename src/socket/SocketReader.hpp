@@ -14,33 +14,38 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Interface.hpp"
+#ifndef INGEN_SOCKET_SOCKET_READER_HPP
+#define INGEN_SOCKET_SOCKET_READER_HPP
+
 #include "raul/Thread.hpp"
 #include "sord/sord.h"
 
 namespace Ingen {
 
-namespace Shared { class World; }
+namespace Shared {
+class World;
+class Interface;
+}
 
 namespace Socket {
 
-class SocketInterface : public Raul::Thread
+class SocketReader : public Raul::Thread
 {
 public:
-	SocketInterface(Shared::World& world, Interface& iface, int conn);
-	~SocketInterface();
+	SocketReader(Shared::World& world, Interface& iface, int conn);
+	~SocketReader();
 
 private:
 	virtual void _run();
 
-	static SerdStatus set_base_uri(SocketInterface* iface,
-	                               const SerdNode*  uri_node);
+	static SerdStatus set_base_uri(SocketReader*   iface,
+	                               const SerdNode* uri_node);
 
-	static SerdStatus set_prefix(SocketInterface* iface,
-	                             const SerdNode*  name,
-	                             const SerdNode*  uri_node);
+	static SerdStatus set_prefix(SocketReader*   iface,
+	                             const SerdNode* name,
+	                             const SerdNode* uri_node);
 
-	static SerdStatus write_statement(SocketInterface*   iface,
+	static SerdStatus write_statement(SocketReader*      iface,
 	                                  SerdStatementFlags flags,
 	                                  const SerdNode*    graph,
 	                                  const SerdNode*    subject,
@@ -59,3 +64,5 @@ private:
 
 }  // namespace Ingen
 }  // namespace Socket
+
+#endif  // INGEN_SOCKET_SOCKET_READER_HPP

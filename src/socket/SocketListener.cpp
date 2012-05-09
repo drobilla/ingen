@@ -27,7 +27,7 @@
 #include "../server/Engine.hpp"
 #include "../server/EventWriter.hpp"
 #include "SocketListener.hpp"
-#include "SocketInterface.hpp"
+#include "SocketReader.hpp"
 
 #define LOG(s) s << "[SocketListener] "
 
@@ -94,7 +94,7 @@ SocketListener::_run()
 
 		// Make an new interface/thread to handle the connection
 		Server::Engine* engine = (Server::Engine*)_world.local_engine().get();
-		new SocketInterface(_world, *engine->interface(), conn);
+		new SocketReader(_world, *engine->interface(), conn);
 	}
 }
 

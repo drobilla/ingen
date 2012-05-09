@@ -22,27 +22,27 @@
 #include "ingen/shared/AtomReader.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
-#include "SocketInterface.hpp"
+#include "SocketReader.hpp"
 
-#define LOG(s) s << "[SocketInterface] "
+#define LOG(s) s << "[SocketReader] "
 
 namespace Ingen {
 namespace Socket {
 
-SocketInterface::SocketInterface(Ingen::Shared::World& world,
-                                 Interface&            iface,
-                                 int                   conn)
+SocketReader::SocketReader(Ingen::Shared::World& world,
+                           Interface&            iface,
+                           int                   conn)
 	: _world(world)
 	, _iface(iface)
 	, _inserter(NULL)
 	, _msg_node(NULL)
 	, _conn(conn)
 {
-	set_name("SocketInterface");
+	set_name("SocketReader");
 	start();
 }
 
-SocketInterface::~SocketInterface()
+SocketReader::~SocketReader()
 {
 	stop();
 	join();
@@ -50,29 +50,29 @@ SocketInterface::~SocketInterface()
 }
 
 SerdStatus
-SocketInterface::set_base_uri(SocketInterface* iface,
-                              const SerdNode*  uri_node)
+SocketReader::set_base_uri(SocketReader*   iface,
+                           const SerdNode* uri_node)
 {
 	return sord_inserter_set_base_uri(iface->_inserter, uri_node);
 }
 
 SerdStatus
-SocketInterface::set_prefix(SocketInterface* iface,
-                            const SerdNode*  name,
-                            const SerdNode*  uri_node)
+SocketReader::set_prefix(SocketReader*   iface,
+                         const SerdNode* name,
+                         const SerdNode* uri_node)
 {
 	return sord_inserter_set_prefix(iface->_inserter, name, uri_node);
 }
 
 SerdStatus
-SocketInterface::write_statement(SocketInterface*   iface,
-                                 SerdStatementFlags flags,
-                                 const SerdNode*    graph,
-                                 const SerdNode*    subject,
-                                 const SerdNode*    predicate,
-                                 const SerdNode*    object,
-                                 const SerdNode*    object_datatype,
-                                 const SerdNode*    object_lang)
+SocketReader::write_statement(SocketReader*      iface,
+                              SerdStatementFlags flags,
+                              const SerdNode*    graph,
+                              const SerdNode*    subject,
+                              const SerdNode*    predicate,
+                              const SerdNode*    object,
+                              const SerdNode*    object_datatype,
+                              const SerdNode*    object_lang)
 {
 	if (!iface->_msg_node) {
 		iface->_msg_node = sord_node_from_serd_node(
@@ -86,7 +86,7 @@ SocketInterface::write_statement(SocketInterface*   iface,
 }
 
 void
-SocketInterface::_run()
+SocketReader::_run()
 {
 	Sord::World*  world = _world.rdf_world();
 	LV2_URID_Map* map   = &_world.lv2_uri_map()->urid_map_feature()->urid_map;
