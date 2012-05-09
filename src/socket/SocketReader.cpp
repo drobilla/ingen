@@ -142,9 +142,13 @@ SocketReader::_run()
 	pfd.revents = 0;
 
 	while (!_exit_flag) {
+		if (feof(f)) {
+			break;  // Lost connection
+		}
+
 		// Wait for input to arrive at socket
 		int ret = poll(&pfd, 1, -1);
-		if (ret == -1 || (pfd.revents & (POLLHUP | POLLNVAL))) {
+		if (ret == -1 || (pfd.revents & (POLLERR|POLLHUP|POLLNVAL))) {
 			break;  // Hangup
 		} else if (!ret) {
 			continue;  // No data, shouldn't happen
@@ -156,6 +160,10 @@ SocketReader::_run()
 			continue;  // Read nothing, e.g. just whitespace
 		} else if (st) {
 			fprintf(stderr, "Read error: %s\n", serd_strerror(st));
+			continue;
+		} else if (!_msg_node) {
+			LOG(Raul::error) << "Received empty message" << std::endl;
+			continue;
 		}
 
 		// Build an LV2_Atom at chunk.buf from the message

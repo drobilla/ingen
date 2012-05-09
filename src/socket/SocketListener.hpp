@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <sys/socket.h>
+
 #include <string>
 
 #include "raul/SharedPtr.hpp"
@@ -33,12 +35,32 @@ public:
 	SocketListener(Ingen::Shared::World& world);
 	~SocketListener();
 
+	struct Socket {
+		Socket() : addr(NULL), addr_len(0), sock(-1) {}
+		~Socket() { close(); }
+
+		bool open(const std::string& uri,
+		          int                domain,
+		          struct sockaddr*   addr,
+		          socklen_t          addr_len);
+
+		int accept();
+
+		void close();
+
+		std::string      uri;
+		struct sockaddr* addr;
+		socklen_t        addr_len;
+		int              sock;
+	};
+
 private:
 	virtual void _run();
 
 	Ingen::Shared::World& _world;
-	std::string           _sock_path;
-	int                   _sock;
+	std::string           _unix_path;
+	Socket                _unix_sock;
+	Socket                _net_sock;
 };
 
 }  // namespace Ingen

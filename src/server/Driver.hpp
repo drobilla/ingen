@@ -75,6 +75,7 @@ public:
 	/** Return the current frame time (running counter) */
 	virtual SampleCount frame_time()  const = 0;
 
+	/** Return true iff the driver is running in real-time mode */
 	virtual bool is_realtime() const = 0;
 };
 

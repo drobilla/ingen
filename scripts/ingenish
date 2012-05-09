@@ -19,16 +19,24 @@ import shlex
 import socket
 import sys
 import time
-
+import re
 try:
     import readline
 except:
     pass
 
 class Client:
-    def __init__(self, path='/tmp/ingen.sock'):
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.sock.connect(path)
+    def __init__(self, uri='unix:///tmp/ingen.sock'):
+        print 'Connecting to server %s' % uri
+        if uri.startswith('unix://'):
+            self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            self.sock.connect(uri[len('unix://'):])
+        elif uri.startswith('tcp://'):
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            parsed = re.split('[:/]', uri[len('tcp://'):])
+            addr = (parsed[0], int(parsed[1]))
+            print addr
+            self.sock.connect(addr)
 
     def __del__(self):
         self.sock.close()
@@ -99,12 +107,16 @@ class Client:
 ''' % (path))
 
 def print_usage():
-    print('''Usage: ingenish COMMAND [ARGUMENT]...
-       ingenish
+    print('''Usage: ingenish [OPTION]... [COMMAND [ARGUMENT]...]
 
 A command line interface to an Ingen server.  A command can be given directly
 on the command line, or when run with no arguments an interactive shell is
 launched.
+
+Options:
+    -s ADDRESS    The address of the Ingen server.  Default is the local server
+                  at unix:///tmp/ingen.sock but remote servers can be used with
+                  an address like tcp:///my-ingen-server-host:16180
 
 Commands:
     put PATH TURTLE_FRAGMENT
@@ -130,8 +142,6 @@ Example:
     ingenish set /tone/output 'ingen:value 0.7'
 ''')
 
-ingen = Client()
-
 def run(cmd):
     if cmd[0] == 'help':
         print_usage()
@@ -150,7 +160,19 @@ def run(cmd):
     else:
         return False
 
-if len(sys.argv) == 1:
+a = 1
+server = 'unix:///tmp/ingen.sock'
+if len(sys.argv) > 1:
+    if sys.argv[a] == '-s':
+        server = sys.argv[a + 1]
+        a = a + 2
+    elif sys.argv[a][0] == '-':
+        print_usage()
+        sys.exit(1)
+
+ingen = Client(server)
+
+if len(sys.argv) - a == 0:
     while True:
         try:
             run(shlex.split(raw_input('> ')))
@@ -159,8 +181,7 @@ if len(sys.argv) == 1:
             break
         except:
             print('error: %s' % sys.exc_info()[0])
-elif run(sys.argv[1:]):
-    sys.exit(0)
 else:
-    print_usage()
-    sys.exit(1)
+    if not run(sys.argv[1:]):
+        print_usage()
+        sys.exit(1)
