@@ -16,9 +16,10 @@
 
 #include <string>
 
+#include "ingen/Interface.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
-#include "ingen/Interface.hpp"
+#include "sord/sord.h"
 
 #include "../server/EventSink.hpp"
 #include "../server/EventSource.hpp"
@@ -45,11 +46,32 @@ public:
 
 	~SocketInterface();
 
+	SordInserter* inserter() { return _inserter; }
+
 private:
 	virtual void _run();
 
+	static SerdStatus set_base_uri(SocketInterface* iface,
+	                               const SerdNode*  uri_node);
+
+	static SerdStatus set_prefix(SocketInterface* iface,
+	                             const SerdNode*  name,
+	                             const SerdNode*  uri_node);
+
+	static SerdStatus write_statement(SocketInterface*   iface,
+	                                  SerdStatementFlags flags,
+	                                  const SerdNode*    graph,
+	                                  const SerdNode*    subject,
+	                                  const SerdNode*    predicate,
+	                                  const SerdNode*    object,
+	                                  const SerdNode*    object_datatype,
+	                                  const SerdNode*    object_lang);
+
 	Shared::World&      _world;
 	Server::EventWriter _iface;
+	SerdEnv*            _env;
+	SordInserter*       _inserter;
+	SordNode*           _msg_node;
 	Server::Event*      _event;
 	int                 _conn;
 };
