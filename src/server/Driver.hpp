@@ -96,9 +96,6 @@ public:
 	virtual Raul::Deletable* remove_port(const Raul::Path& path,
 	                                     DriverPort**      port=NULL) = 0;
 
-	virtual void       set_root_patch(PatchImpl* patch) = 0;
-	virtual PatchImpl* root_patch()                     = 0;
-
 	/** Return the audio buffer size in frames */
 	virtual SampleCount block_length() const = 0;
 
@@ -109,8 +106,6 @@ public:
 	virtual SampleCount frame_time()  const = 0;
 
 	virtual bool is_realtime() const = 0;
-
-	virtual ProcessContext& context() = 0;
 };
 
 } // namespace Server

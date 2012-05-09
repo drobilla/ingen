@@ -184,8 +184,6 @@ JackDriver::JackDriver(Engine& engine)
 	, _block_length(0)
 	, _sample_rate(0)
 	, _is_activated(false)
-	, _process_context(engine)
-	, _root_patch(NULL)
 {
 	_midi_event_type = _engine.world()->uris()->midi_MidiEvent;
 }
@@ -277,8 +275,9 @@ JackDriver::activate()
 
 	_is_activated = true;
 
-	_process_context.activate(world->conf()->option("parallelism").get_int(),
-	                          is_realtime());
+	_engine.process_context().activate(
+		world->conf()->option("parallelism").get_int(),
+		is_realtime());
 
 	if (jack_activate(_client)) {
 		LOG(error) << "Could not activate Jack client, aborting" << endl;
@@ -400,68 +399,29 @@ int
 JackDriver::_process_cb(jack_nframes_t nframes)
 {
 	if (nframes == 0 || ! _is_activated) {
-		if (_flag == 1)
+		if (_flag == 1) {
 			_sem.post();
+		}
 		return 0;
 	}
 
-	// FIXME: all of this time stuff is screwy
-
-	// FIXME: support nframes != buffer_size, even though that never damn well happens
-	//assert(nframes == _block_length);
-
-	// Note that Jack can not call this function for a cycle, if overloaded
+	/* Note that Jack can not call this function for a cycle, if overloaded,
+	   so a rolling counter here would not always be correct. */
 	const jack_nframes_t start_of_current_cycle = jack_last_frame_time(_client);
 
 	_transport_state = jack_transport_query(_client, &_position);
 
-	_process_context.locate(start_of_current_cycle, nframes, 0);
-
-	for (ProcessContext::Slaves::iterator i = _process_context.slaves().begin();
-			i != _process_context.slaves().end(); ++i) {
-		(*i)->context().locate(start_of_current_cycle, nframes, 0);
-	}
+	_engine.process_context().locate(start_of_current_cycle, nframes, 0);
 
 	// Read input
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		(*i)->pre_process(_process_context);
+		(*i)->pre_process(_engine.process_context());
 
-	// Apply control bindings to input
-	_engine.control_bindings()->pre_process(
-		_process_context, _root_patch->port_impl(0)->buffer(0).get());
-
-	_engine.post_processor()->set_end_time(_process_context.end());
-
-	// Process events that came in during the last cycle
-	// (Aiming for jitter-free 1 block event latency, ideally)
-	_engine.process_events(_process_context);
-
-	// Run root patch
-	if (_root_patch) {
-		_root_patch->process(_process_context);
-#if 0
-		static const SampleCount control_block_size = nframes / 2;
-		for (jack_nframes_t i = 0; i < nframes; i += control_block_size) {
-			const SampleCount block_size = (i + control_block_size < nframes)
-					? control_block_size
-					: nframes - i;
-			_process_context.locate(start_of_current_cycle + i, block_size, i);
-			_root_patch->process(_process_context);
-		}
-#endif
-	}
-
-	// Emit control binding feedback
-	_engine.control_bindings()->post_process(
-		_process_context, _root_patch->port_impl(1)->buffer(0).get());
-
-	// Signal message context to run if necessary
-	if (_engine.message_context()->has_requests())
-		_engine.message_context()->signal(_process_context);
+	_engine.run(nframes);
 
 	// Write output
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		(*i)->post_process(_process_context);
+		(*i)->post_process(_engine.process_context());
 
 	return 0;
 }
@@ -499,10 +459,11 @@ JackDriver::_sample_rate_cb(jack_nframes_t nframes)
 int
 JackDriver::_block_length_cb(jack_nframes_t nframes)
 {
-	if (_root_patch) {
+	if (_engine.root_patch()) {
 		_block_length = nframes;
-		_root_patch->set_buffer_size(context(), *_engine.buffer_factory(), PortType::AUDIO,
-				_engine.buffer_factory()->audio_buffer_size(nframes));
+		_engine.root_patch()->set_buffer_size(
+			_engine.process_context(), *_engine.buffer_factory(), PortType::AUDIO,
+			_engine.buffer_factory()->audio_buffer_size(nframes));
 	}
 	return 0;
 }
@@ -519,7 +480,7 @@ JackDriver::_session_cb(jack_session_event_t* event)
 
 	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser();
 	if (serialiser) {
-		SharedPtr<Patch> root(_engine.driver()->root_patch(), NullDeleter<Patch>);
+		SharedPtr<Patch> root(_engine.root_patch(), NullDeleter<Patch>);
 		serialiser->write_bundle(root, string("file://") + event->session_dir);
 	}
 

@@ -99,7 +99,6 @@ CreatePatch::pre_process()
 	_patch->activate(*_engine.buffer_factory());
 
 	// Insert into EngineStore
-	//_patch->add_to_store(_engine.engine_store());
 	_engine.engine_store()->add(_patch);
 
 	Event::pre_process();
@@ -111,16 +110,10 @@ CreatePatch::execute(ProcessContext& context)
 	Event::execute(context);
 
 	if (_patch) {
-		if (!_parent) {
-			assert(_path.is_root());
-			assert(_patch->parent_patch() == NULL);
-			_engine.driver()->set_root_patch(_patch);
-		} else {
-			assert(_parent);
-			assert(!_path.is_root());
-			_engine.maid()->push(_parent->compiled_patch());
-			_parent->compiled_patch(_compiled_patch);
-		}
+		assert(_parent);
+		assert(!_path.is_root());
+		_engine.maid()->push(_parent->compiled_patch());
+		_parent->compiled_patch(_compiled_patch);
 	}
 }
 

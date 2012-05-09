@@ -23,6 +23,8 @@
 #include "ingen/Interface.hpp"
 #include "raul/SharedPtr.hpp"
 
+#include "ProcessContext.hpp"
+
 namespace Raul { class Maid; }
 
 namespace Ingen {
@@ -43,6 +45,7 @@ class NodeFactory;
 class PostProcessor;
 class PreProcessor;
 class ProcessContext;
+class PatchImpl;
 
 /**
    The engine which executes the process graph.
@@ -63,6 +66,7 @@ public:
 	// EngineBase methods
 	virtual bool activate();
 	virtual void deactivate();
+	virtual void run(uint32_t sample_count);
 	virtual void quit();
 	virtual bool main_iteration();
 	virtual void register_client(const Raul::URI& uri, Interface* client);
@@ -85,6 +89,8 @@ public:
 	MessageContext*       message_context()  const { return _message_context; }
 	NodeFactory*          node_factory()     const { return _node_factory; }
 	PostProcessor*        post_processor()   const { return _post_processor; }
+	PatchImpl*            root_patch()       const { return _root_patch; }
+	ProcessContext&       process_context()        { return _process_context; }
 
 	SharedPtr<EngineStore> engine_store() const;
 
@@ -103,6 +109,9 @@ private:
 	PreProcessor*      _pre_processor;
 	PostProcessor*     _post_processor;
 	EventWriter*       _event_writer;
+
+	PatchImpl*     _root_patch;
+	ProcessContext _process_context;
 
 	bool _quit_flag;
 };

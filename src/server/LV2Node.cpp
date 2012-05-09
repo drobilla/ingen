@@ -31,6 +31,7 @@
 #include "ingen/shared/URIs.hpp"
 
 #include "AudioBuffer.hpp"
+#include "Engine.hpp"
 #include "InputPort.hpp"
 #include "LV2Node.hpp"
 #include "LV2Plugin.hpp"

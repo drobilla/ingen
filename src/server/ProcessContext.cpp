@@ -20,6 +20,10 @@
 namespace Ingen {
 namespace Server {
 
+ProcessContext::ProcessContext(Engine& engine)
+	: Context(engine, engine.event_queue_size(), AUDIO)
+{}
+
 void
 ProcessContext::activate(uint32_t parallelism, bool sched_rt)
 {

@@ -33,7 +33,7 @@ class ProcessSlave;
 class ProcessContext : public Context
 {
 public:
-	explicit ProcessContext(Engine& engine) : Context(engine, AUDIO) {}
+	explicit ProcessContext(Engine& engine);
 
 	typedef std::vector<ProcessSlave*> Slaves;
 

@@ -23,6 +23,7 @@
 #include "raul/midi_events.h"
 
 #include "AudioBuffer.hpp"
+#include "Engine.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "Notification.hpp"

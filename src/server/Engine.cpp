@@ -21,7 +21,6 @@
 #include "raul/Deletable.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
-#include "events/CreatePatch.hpp"
 #include "events/CreatePort.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/LV2Features.hpp"
@@ -63,6 +62,7 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _pre_processor(new PreProcessor())
 	, _post_processor(new PostProcessor(*this))
 	, _event_writer(new EventWriter(*this))
+	, _process_context(*this)
 	, _quit_flag(false)
 {
 	if (a_world->store()) {
@@ -101,7 +101,7 @@ Engine::~Engine()
 SharedPtr<EngineStore>
 Engine::engine_store() const
 {
-	 return PtrCast<EngineStore>(_world->store());
+	return PtrCast<EngineStore>(_world->store());
 }
 
 size_t
@@ -153,18 +153,19 @@ Engine::activate()
 	Ingen::Forge&              forge = world()->forge();
 
 	// Create root patch
-	PatchImpl* root_patch = _driver->root_patch();
-	if (!root_patch) {
-		root_patch = new PatchImpl(*this, "root", 1, NULL, _driver->sample_rate(), 1);
-		root_patch->set_property(uris.rdf_type,
-		                         Resource::Property(uris.ingen_Patch, Resource::INTERNAL));
-		root_patch->set_property(uris.ingen_polyphony,
-		                         Resource::Property(_world->forge().make(int32_t(1)),
-		                                            Resource::INTERNAL));
-		root_patch->activate(*_buffer_factory);
-		_world->store()->add(root_patch);
-		root_patch->compiled_patch(root_patch->compile());
-		_driver->set_root_patch(root_patch);
+	if (!_root_patch) {
+		_root_patch = new PatchImpl(
+			*this, "root", 1, NULL, _driver->sample_rate(), 1);
+		_root_patch->set_property(
+			uris.rdf_type,
+			Resource::Property(uris.ingen_Patch, Resource::INTERNAL));
+		_root_patch->set_property(
+			uris.ingen_polyphony,
+			Resource::Property(_world->forge().make(int32_t(1)),
+			                   Resource::INTERNAL));
+		_root_patch->activate(*_buffer_factory);
+		_world->store()->add(_root_patch);
+		_root_patch->compiled_patch(_root_patch->compile());
 
 		ProcessContext context(*this);
 
@@ -212,7 +213,7 @@ Engine::activate()
 	}
 
 	_driver->activate();
-	root_patch->enable();
+	_root_patch->enable();
 
 	ThreadManager::single_threaded = false;
 
@@ -223,9 +224,37 @@ void
 Engine::deactivate()
 {
 	_driver->deactivate();
-	_driver->root_patch()->deactivate();
+	_root_patch->deactivate();
 
 	ThreadManager::single_threaded = true;
+}
+
+void
+Engine::run(uint32_t sample_count)
+{
+	// Apply control bindings to input
+	control_bindings()->pre_process(
+		_process_context, _root_patch->port_impl(0)->buffer(0).get());
+
+	post_processor()->set_end_time(_process_context.end());
+
+	// Process events that came in during the last cycle
+	// (Aiming for jitter-free 1 block event latency, ideally)
+	process_events(_process_context);
+
+	// Run root patch
+	if (_root_patch) {
+		_root_patch->process(_process_context);
+	}
+
+	// Emit control binding feedback
+	control_bindings()->post_process(
+		_process_context, _root_patch->port_impl(1)->buffer(0).get());
+
+	// Signal message context to run if necessary
+	if (message_context()->has_requests()) {
+		message_context()->signal(_process_context);
+	}
 }
 
 bool

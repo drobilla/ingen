@@ -32,6 +32,16 @@ using namespace Raul;
 namespace Ingen {
 namespace Server {
 
+MessageContext::MessageContext(Engine& engine)
+	: Context(engine, engine.event_queue_size(), MESSAGE)
+	, Raul::Thread("MessageContext")
+	, _sem(0)
+	, _requests(engine.event_queue_size())
+	, _end_time(0)
+{
+	Thread::set_context(THREAD_MESSAGE);
+}
+
 void
 MessageContext::run(NodeImpl* node, FrameTime time)
 {

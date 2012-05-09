@@ -42,7 +42,6 @@ public:
 		, _index(0)
 		, _state(STATE_FINISHED)
 		, _compiled_patch(NULL)
-		, _context(NULL)
 	{
 		std::stringstream ss;
 		ss << "Process Slave ";
@@ -69,7 +68,6 @@ public:
 		_index          = start_index;
 		_state          = STATE_RUNNING;
 		_compiled_patch = compiled_patch;
-		_context        = &context;
 
 		Raul::Slave::whip();
 	}
@@ -79,9 +77,7 @@ public:
 			_state.compare_and_exchange(STATE_RUNNING, STATE_FINISH_SIGNALLED);
 	}
 
-	inline uint32_t              id()      const { return _id; }
-	inline const ProcessContext& context() const { return _engine.driver()->context(); }
-	inline       ProcessContext& context()       { return _engine.driver()->context(); }
+	inline uint32_t id() const { return _id; }
 
 private:
 	void _whipped();
@@ -97,7 +93,6 @@ private:
 	uint32_t        _index;
 	Raul::AtomicInt _state;
 	CompiledPatch*  _compiled_patch;
-	ProcessContext* _context;
 };
 
 } // namespace Server

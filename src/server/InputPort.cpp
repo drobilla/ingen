@@ -22,6 +22,7 @@
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "ConnectionImpl.hpp"
+#include "Engine.hpp"
 #include "InputPort.hpp"
 #include "NodeImpl.hpp"
 #include "Notification.hpp"

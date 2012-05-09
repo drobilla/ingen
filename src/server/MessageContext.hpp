@@ -43,15 +43,7 @@ class NodeImpl;
 class MessageContext : public Context, public Raul::Thread
 {
 public:
-	explicit MessageContext(Engine& engine)
-		: Context(engine, MESSAGE)
-		, Raul::Thread("MessageContext")
-		, _sem(0)
-		, _requests(engine.event_queue_size())
-		, _end_time(0)
-	{
-		Thread::set_context(THREAD_MESSAGE);
-	}
+	explicit MessageContext(Engine& engine);
 
 	/** Schedule a message context run at a certain time.
 	 * Safe to call from either process thread or pre-process thread.

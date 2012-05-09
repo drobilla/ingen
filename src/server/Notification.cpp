@@ -18,6 +18,7 @@
 #include "ingen/shared/URIs.hpp"
 
 #include "ClientBroadcaster.hpp"
+#include "Engine.hpp"
 #include "Notification.hpp"
 #include "PortImpl.hpp"
 

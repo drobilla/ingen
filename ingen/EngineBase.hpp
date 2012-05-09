@@ -17,6 +17,8 @@
 #ifndef INGEN_ENGINE_BASE_HPP
 #define INGEN_ENGINE_BASE_HPP
 
+#include <stdint.h>
+
 #include "raul/URI.hpp"
 
 namespace Ingen {
@@ -42,6 +44,11 @@ public:
 	   Deactivate the engine.
 	*/
 	virtual void deactivate() = 0;
+
+	/**
+	   Process audio for @p sample_count frames.
+	*/
+	virtual void run(uint32_t sample_count) = 0;
 
 	/**
 	   Indicate that a quit is desired.

@@ -21,7 +21,6 @@
 
 #include "ingen/shared/World.hpp"
 
-#include "Engine.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -49,10 +48,10 @@ public:
 		MESSAGE
 	};
 
-	Context(Engine& engine, ID id)
+	Context(Engine& engine, size_t event_sink_size, ID id)
 		: _engine(engine)
 		, _id(id)
-		, _event_sink(engine.event_queue_size())
+		, _event_sink(event_sink_size)
 		, _start(0)
 		, _end(0)
 		, _nframes(0)

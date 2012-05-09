@@ -35,7 +35,6 @@
 
 #include "Buffer.hpp"
 #include "Driver.hpp"
-#include "ProcessContext.hpp"
 
 namespace Raul { class Path; }
 
@@ -104,11 +103,6 @@ public:
 
 	Raul::Deletable* remove_port(const Raul::Path& path, DriverPort** port=NULL);
 
-	PatchImpl* root_patch()                     { return _root_patch; }
-	void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
-
-	ProcessContext& context() { return _process_context; }
-
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */
 	inline const jack_position_t* position()        { return &_position; }
@@ -171,8 +165,6 @@ private:
 	jack_position_t                      _position;
 	jack_transport_state_t               _transport_state;
 	Raul::List<JackPort*>                _ports;
-	ProcessContext                       _process_context;
-	PatchImpl*                           _root_patch;
 };
 
 } // namespace Server
