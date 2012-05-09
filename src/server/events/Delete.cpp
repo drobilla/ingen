@@ -16,12 +16,14 @@
 
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
+
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "Delete.hpp"
 #include "DisconnectAll.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
+#include "EnginePort.hpp"
 #include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
@@ -43,7 +45,7 @@ Delete::Delete(Engine&          engine,
 	, _uri(uri)
 	, _store_iterator(engine.engine_store()->end())
 	, _garbage(NULL)
-	, _driver_port(NULL)
+	, _engine_port(NULL)
 	, _patch_node_listnode(NULL)
 	, _patch_port_listnode(NULL)
 	, _ports_array(NULL)
@@ -155,7 +157,7 @@ Delete::execute(ProcessContext& context)
 		_port->parent_patch()->external_ports(_ports_array);
 
 		if ( ! _port->parent_patch()->parent())
-			_garbage = _engine.driver()->remove_port(_port->path(), &_driver_port);
+			_garbage = _engine.driver()->remove_port(_port->path(), &_engine_port);
 	}
 
 	if (parent_patch) {
@@ -198,8 +200,9 @@ Delete::post_process()
 		respond(FAILURE);
 	}
 
-	if (_driver_port)
-		_driver_port->destroy();
+	if (_engine_port) {
+		_engine_port->destroy();
+	}
 
 	_engine.maid()->push(_garbage);
 }

@@ -43,6 +43,7 @@
 #include "raul/log.hpp"
 
 #include "AudioBuffer.hpp"
+#include "EnginePort.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EventWriter.hpp"
@@ -81,11 +82,11 @@ class LV2Driver;
 
 void handle_message(LV2Driver* driver, const LV2_Atom* msg);
 
-class LV2Port : public DriverPort
+class LV2Port : public EnginePort
 {
 public:
 	LV2Port(LV2Driver* driver, DuplexPort* patch_port)
-		: DriverPort(patch_port)
+		: EnginePort(patch_port)
 		, _driver(driver)
 		, _buffer(NULL)
 	{}
@@ -178,7 +179,7 @@ public:
 	virtual void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
 	virtual PatchImpl* root_patch()                     { return _root_patch; }
 
-	virtual void add_port(DriverPort* port) {
+	virtual void add_port(EnginePort* port) {
 		// Note this doesn't have to be realtime safe since there's no dynamic LV2 ports
 		ThreadManager::assert_thread(THREAD_PROCESS);
 		assert(dynamic_cast<LV2Port*>(port));
@@ -187,7 +188,7 @@ public:
 	}
 
 	virtual Raul::Deletable* remove_port(const Raul::Path& path,
-	                                     DriverPort** port=NULL) {
+	                                     EnginePort** port=NULL) {
 		// Note this doesn't have to be realtime safe since there's no dynamic LV2 ports
 		ThreadManager::assert_thread(THREAD_PROCESS);
 
@@ -202,11 +203,11 @@ public:
 		return NULL;
 	}
 
-	virtual DriverPort* create_port(DuplexPort* patch_port) {
+	virtual EnginePort* create_port(DuplexPort* patch_port) {
 		return new LV2Port(this, patch_port);
 	}
 
-	virtual DriverPort* driver_port(const Raul::Path& path) {
+	virtual EnginePort* engine_port(const Raul::Path& path) {
 		ThreadManager::assert_thread(THREAD_PROCESS);
 
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)

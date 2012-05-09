@@ -31,37 +31,7 @@ namespace Ingen {
 namespace Server {
 
 class DuplexPort;
-class ProcessContext;
-
-/** Representation of a "system" (eg outside Ingen) port.
- *
- * This is the class through which the rest of the engine manages everything
- * related to driver ports.  Derived classes are expected to have a pointer to
- * their driver (to be able to perform the operation necessary).
- *
- * \ingroup engine
- */
-class DriverPort : boost::noncopyable, public Raul::Deletable {
-public:
-	virtual ~DriverPort() {}
-
-	/** Set the name of the system port according to new path */
-	virtual void move(const Raul::Path& path) = 0;
-
-	/** Create system port */
-	virtual void create()  = 0;
-
-	/** Destroy system port */
-	virtual void destroy() = 0;
-
-	bool        is_input()   const { return _patch_port->is_input(); }
-	DuplexPort* patch_port() const { return _patch_port; }
-
-protected:
-	explicit DriverPort(DuplexPort* port) : _patch_port(port) {}
-
-	DuplexPort* _patch_port;
-};
+class EnginePort;
 
 /** Driver abstract base class.
  *
@@ -84,17 +54,17 @@ public:
 	/** Create a port ready to be inserted with add_input (non realtime).
 	 * May return NULL if the Driver can not create the port for some reason.
 	 */
-	virtual DriverPort* create_port(DuplexPort* patch_port) = 0;
+	virtual EnginePort* create_port(DuplexPort* patch_port) = 0;
 
 	/** Return the DriverPort for a particular path, iff one exists. */
-	virtual DriverPort* driver_port(const Raul::Path& path) = 0;
+	virtual EnginePort* engine_port(const Raul::Path& path) = 0;
 
 	/** Add a system visible port (e.g. a port on the root patch). */
-	virtual void add_port(DriverPort* port) = 0;
+	virtual void add_port(EnginePort* port) = 0;
 
 	/** Remove a system visible port. */
 	virtual Raul::Deletable* remove_port(const Raul::Path& path,
-	                                     DriverPort**      port=NULL) = 0;
+	                                     EnginePort**      port=NULL) = 0;
 
 	/** Return the audio buffer size in frames */
 	virtual SampleCount block_length() const = 0;

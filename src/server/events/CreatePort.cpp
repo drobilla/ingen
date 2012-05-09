@@ -53,7 +53,7 @@ CreatePort::CreatePort(Engine&                     engine,
 	, _patch(NULL)
 	, _patch_port(NULL)
 	, _ports_array(NULL)
-	, _driver_port(NULL)
+	, _engine_port(NULL)
 	, _properties(properties)
 	, _is_output(is_output)
 {
@@ -148,9 +148,10 @@ CreatePort::pre_process()
 			_ports_array->at(old_num_ports) = _patch_port;
 			_engine.engine_store()->add(_patch_port);
 
-			if (!_patch->parent())
-				_driver_port = _engine.driver()->create_port(
+			if (!_patch->parent()) {
+				_engine_port = _engine.driver()->create_port(
 						dynamic_cast<DuplexPort*>(_patch_port));
+			}
 
 			assert(_ports_array->size() == _patch->num_ports());
 
@@ -171,8 +172,8 @@ CreatePort::execute(ProcessContext& context)
 		_patch->external_ports(_ports_array);
 	}
 
-	if (_driver_port) {
-		_engine.driver()->add_port(_driver_port);
+	if (_engine_port) {
+		_engine.driver()->add_port(_engine_port);
 	}
 }
 

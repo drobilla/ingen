@@ -35,6 +35,7 @@
 
 #include "Buffer.hpp"
 #include "Driver.hpp"
+#include "EnginePort.hpp"
 
 namespace Raul { class Path; }
 
@@ -51,7 +52,7 @@ class JackDriver;
  *
  * A Jack port always has a one-to-one association with a Patch port.
  */
-class JackPort : public DriverPort, public Raul::List<JackPort*>::Node
+class JackPort : public EnginePort, public Raul::List<JackPort*>::Node
 {
 public:
 	JackPort(JackDriver* driver, DuplexPort* patch_port);
@@ -95,13 +96,13 @@ public:
 	void enable();
 	void disable();
 
-	DriverPort* port(const Raul::Path& path);
-	DriverPort* create_port(DuplexPort* patch_port);
+	EnginePort* port(const Raul::Path& path);
+	EnginePort* create_port(DuplexPort* patch_port);
 
-	void        add_port(DriverPort* port);
-	DriverPort* driver_port(const Raul::Path& path);
+	void        add_port(EnginePort* port);
+	EnginePort* engine_port(const Raul::Path& path);
 
-	Raul::Deletable* remove_port(const Raul::Path& path, DriverPort** port=NULL);
+	Raul::Deletable* remove_port(const Raul::Path& path, EnginePort** port=NULL);
 
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */

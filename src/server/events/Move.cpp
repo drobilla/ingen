@@ -21,6 +21,7 @@
 #include "ClientBroadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
+#include "EnginePort.hpp"
 #include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
@@ -105,9 +106,10 @@ Move::execute(ProcessContext& context)
 
 	SharedPtr<PortImpl> port = PtrCast<PortImpl>(_store_iterator->second);
 	if (port && port->parent()->parent() == NULL) {
-		DriverPort* driver_port = _engine.driver()->driver_port(_new_path);
-		if (driver_port)
-			driver_port->move(_new_path);
+		EnginePort* engine_port = _engine.driver()->engine_port(_new_path);
+		if (engine_port) {
+			engine_port->move(_new_path);
+		}
 	}
 }
 

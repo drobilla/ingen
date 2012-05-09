@@ -33,7 +33,7 @@ namespace Server {
 class GraphObjectImpl;
 class NodeImpl;
 class PortImpl;
-class DriverPort;
+class EnginePort;
 class CompiledPatch;
 
 namespace Events {
@@ -76,7 +76,7 @@ private:
 	SharedPtr<NodeImpl>            _node;                ///< Non-NULL iff a node
 	SharedPtr<PortImpl>            _port;                ///< Non-NULL iff a port
 	Raul::Deletable*               _garbage;
-	DriverPort*                    _driver_port;
+	EnginePort*                    _engine_port;
 	PatchImpl::Nodes::Node*        _patch_node_listnode;
 	Raul::List<PortImpl*>::Node*   _patch_port_listnode;
 	Raul::Array<PortImpl*>*        _ports_array;         ///< New (external) ports for Patch

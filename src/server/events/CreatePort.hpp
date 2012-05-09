@@ -30,7 +30,7 @@ namespace Server {
 
 class PatchImpl;
 class PortImpl;
-class DriverPort;
+class EnginePort;
 
 namespace Events {
 
@@ -61,7 +61,7 @@ private:
 	PatchImpl*              _patch;
 	PortImpl*               _patch_port;
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch
-	DriverPort*             _driver_port; ///< Driver (eg Jack) port if this is a toplevel port
+	EnginePort*             _engine_port; ///< Driver (eg Jack) port if this is a toplevel port
 	Resource::Properties    _properties;
 	bool                    _is_output;
 };
