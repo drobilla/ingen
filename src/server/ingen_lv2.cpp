@@ -45,7 +45,6 @@
 #include "AudioBuffer.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "EventQueue.hpp"
 #include "EventWriter.hpp"
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
@@ -426,12 +425,10 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->main = new MainThread(engine);
 	plugin->main->set_name("Main");
 
-	SharedPtr<Server::EventQueue> queue(new Server::EventQueue());
-	SharedPtr<Server::EventWriter> interface(
-		new Server::EventWriter(*engine.get(), *queue.get()));
+	SharedPtr<EventWriter> interface =
+		SharedPtr<EventWriter>(engine->interface(), NullDeleter<EventWriter>);
 
 	plugin->world->set_engine(interface);
-	engine->add_event_source(queue);
 
 	Raul::Thread::get().set_context(Server::THREAD_PRE_PROCESS);
 	Server::ThreadManager::single_threaded = true;
@@ -451,22 +448,19 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	context.locate(0, UINT_MAX, 0);
 
 	engine->post_processor()->set_end_time(UINT_MAX);
-
-	queue->process(*engine->post_processor(), context, false);
+	engine->process_events(context);
 	engine->post_processor()->process();
 
 	plugin->world->parser()->parse_file(plugin->world,
 	                                    plugin->world->engine().get(),
 	                                    patch->filename);
 
-	while (!queue->empty()) {
-		queue->process(*engine->post_processor(), context, false);
+	while (engine->pending_events()) {
+		engine->process_events(context);
 		engine->post_processor()->process();
 	}
 
 	engine->deactivate();
-
-	//plugin->world->load_module("osc_server");
 
 	return (LV2_Handle)plugin;
 }

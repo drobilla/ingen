@@ -17,8 +17,6 @@
 #ifndef INGEN_ENGINE_ENGINE_HPP
 #define INGEN_ENGINE_ENGINE_HPP
 
-#include <vector>
-
 #include <boost/utility.hpp>
 
 #include "ingen/EngineBase.hpp"
@@ -38,10 +36,12 @@ class ClientBroadcaster;
 class ControlBindings;
 class Driver;
 class EngineStore;
-class EventSource;
+class Event;
+class EventWriter;
 class MessageContext;
 class NodeFactory;
 class PostProcessor;
+class PreProcessor;
 class ProcessContext;
 
 /**
@@ -69,11 +69,14 @@ public:
 	virtual bool unregister_client(const Raul::URI& uri);
 
 	void set_driver(SharedPtr<Driver> driver);
-	void add_event_source(SharedPtr<EventSource> source);
+
+	bool pending_events();
+	void enqueue_event(Event* ev);
 	void process_events(ProcessContext& context);
 
 	Ingen::Shared::World* world() const { return _world; }
 
+	EventWriter*          interface()        const { return _event_writer; }
 	ClientBroadcaster*    broadcaster()      const { return _broadcaster; }
 	BufferFactory*        buffer_factory()   const { return _buffer_factory; }
 	ControlBindings*      control_bindings() const { return _control_bindings; }
@@ -97,9 +100,9 @@ private:
 	Raul::Maid*        _maid;
 	MessageContext*    _message_context;
 	NodeFactory*       _node_factory;
+	PreProcessor*      _pre_processor;
 	PostProcessor*     _post_processor;
-
-	SharedPtr<EventSource> _event_sources;  ///< Intrusive linked list
+	EventWriter*       _event_writer;
 
 	bool _quit_flag;
 };

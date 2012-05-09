@@ -15,8 +15,8 @@
 */
 
 #include "Event.hpp"
-#include "EventQueue.hpp"
 #include "PostProcessor.hpp"
+#include "PreProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 
@@ -25,23 +25,24 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-EventQueue::EventQueue()
+PreProcessor::PreProcessor()
 {
 	Thread::set_context(THREAD_PRE_PROCESS);
-	set_name("EventQueue");
+	set_name("PreProcessor");
 	start();
 }
 
-EventQueue::~EventQueue()
+PreProcessor::~PreProcessor()
 {
 	stop();
 }
 
-/** Push an unprepared event onto the queue.
- */
 void
-EventQueue::event(Event* const ev)
+PreProcessor::event(Event* const ev)
 {
+	// TODO: Probably possible to make this lock-free with CAS
+	Glib::Mutex::Lock lock(_mutex);
+
 	assert(!ev->is_prepared());
 	assert(!ev->next());
 
@@ -63,12 +64,8 @@ EventQueue::event(Event* const ev)
 	whip();
 }
 
-/** Process all events for a cycle.
- *
- * Executed events will be pushed to @a dest.
- */
 bool
-EventQueue::process(PostProcessor& dest, ProcessContext& context, bool limit)
+PreProcessor::process(PostProcessor& dest, ProcessContext& context, bool limit)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
@@ -111,7 +108,7 @@ EventQueue::process(PostProcessor& dest, ProcessContext& context, bool limit)
 
 /** Pre-process a single event */
 void
-EventQueue::_whipped()
+PreProcessor::_whipped()
 {
 	Event* ev = _prepared_back.get();
 	if (!ev)
@@ -126,4 +123,3 @@ EventQueue::_whipped()
 
 } // namespace Server
 } // namespace Ingen
-

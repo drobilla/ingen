@@ -25,6 +25,7 @@
 #include "sratom/sratom.h"
 
 #include "../server/Engine.hpp"
+#include "../server/EventWriter.hpp"
 #include "SocketListener.hpp"
 #include "SocketInterface.hpp"
 
@@ -36,6 +37,8 @@ namespace Socket {
 SocketListener::SocketListener(Ingen::Shared::World& world)
 	: _world(world)
 {
+	set_name("SocketListener");
+
 	// Create server socket
 	_sock = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (_sock == -1) {
@@ -91,8 +94,7 @@ SocketListener::_run()
 
 		// Make an new interface/thread to handle the connection
 		Server::Engine* engine = (Server::Engine*)_world.local_engine().get();
-		SharedPtr<SocketInterface> iface(new SocketInterface(_world, conn));
-		engine->add_event_source(iface);
+		new SocketInterface(_world, *engine->interface(), conn);
 	}
 }
 

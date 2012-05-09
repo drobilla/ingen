@@ -36,12 +36,12 @@
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "Event.hpp"
-#include "EventSource.hpp"
 #include "EventWriter.hpp"
 #include "MessageContext.hpp"
 #include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
+#include "PreProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 
@@ -60,7 +60,9 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _maid(new Raul::Maid(event_queue_size()))
 	, _message_context(new MessageContext(*this))
 	, _node_factory(new NodeFactory(a_world))
+	, _pre_processor(new PreProcessor())
 	, _post_processor(new PostProcessor(*this))
+	, _event_writer(new EventWriter(*this))
 	, _quit_flag(false)
 {
 	if (a_world->store()) {
@@ -120,15 +122,6 @@ Engine::main_iteration()
 	_post_processor->process();
 	_maid->cleanup();
 	return !_quit_flag;
-}
-
-void
-Engine::add_event_source(SharedPtr<EventSource> source)
-{
-	// FIXME: Not thread-safe
-	_maid->manage(source);
-	source->_next = _event_sources;
-	_event_sources = source;
 }
 
 void
@@ -235,24 +228,24 @@ Engine::deactivate()
 	ThreadManager::single_threaded = true;
 }
 
+bool
+Engine::pending_events()
+{
+	return !_pre_processor->empty();
+}
+
+void
+Engine::enqueue_event(Event* ev)
+{
+	ThreadManager::assert_not_thread(THREAD_PROCESS);
+	_pre_processor->event(ev);
+}
+
 void
 Engine::process_events(ProcessContext& context)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
-
-	SharedPtr<EventSource> src  = _event_sources;
-	SharedPtr<EventSource> prev = src;
-	for (; src; src = src->_next) {
-		if (!src->process(*_post_processor, context)) {
-			// Source is finished, remove
-			if (src == _event_sources) {
-				_event_sources = src->_next;
-			} else {
-				prev->_next = src->_next;
-			}
-		}
-		prev = src;
-	}
+	_pre_processor->process(*_post_processor, context);
 }
 
 void

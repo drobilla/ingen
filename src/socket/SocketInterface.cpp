@@ -24,21 +24,18 @@
 #include "sratom/sratom.h"
 #include "SocketInterface.hpp"
 
-#include "../server/Event.hpp"
-#include "../server/PostProcessor.hpp"
-#include "../server/ThreadManager.hpp"
-
 #define LOG(s) s << "[SocketInterface] "
 
 namespace Ingen {
 namespace Socket {
 
-SocketInterface::SocketInterface(Ingen::Shared::World& world, int conn)
+SocketInterface::SocketInterface(Ingen::Shared::World& world,
+                                 Interface&            iface,
+                                 int                   conn)
 	: _world(world)
-	, _iface(*(Server::Engine*)world.local_engine().get(), *this)
+	, _iface(iface)
 	, _inserter(NULL)
 	, _msg_node(NULL)
-	, _event(NULL)
 	, _conn(conn)
 {
 	set_name("SocketInterface");
@@ -47,36 +44,9 @@ SocketInterface::SocketInterface(Ingen::Shared::World& world, int conn)
 
 SocketInterface::~SocketInterface()
 {
-	std::cerr << "SOCKET INTERFACE EXITING" << std::endl;
 	stop();
 	join();
 	close(_conn);
-}
-
-void
-SocketInterface::event(Server::Event* ev)
-{
-	if (_event) {
-		std::cerr << "DUAL EVENTS" << std::endl;
-		return;
-	}
-	assert(!_event);
-	ev->pre_process();
-	_event = ev;
-	_event->next(NULL);
-}
-
-bool
-SocketInterface::process(Server::PostProcessor&  dest,
-                         Server::ProcessContext& context,
-                         bool                    limit)
-{
-	if (_event) {
-		_event->execute(context);
-		dest.append(_event, _event);
-		_event = NULL;
-	}
-	return (_conn != -1);
 }
 
 SerdStatus
@@ -118,8 +88,6 @@ SocketInterface::write_statement(SocketInterface*   iface,
 void
 SocketInterface::_run()
 {
-	Thread::set_context(Server::THREAD_PRE_PROCESS);
-
 	Sord::World*  world = _world.rdf_world();
 	LV2_URID_Map* map   = &_world.lv2_uri_map()->urid_map_feature()->urid_map;
 		
@@ -206,14 +174,13 @@ SocketInterface::_run()
 	}
 
 	fclose(f);
-
 	sord_inserter_free(_inserter);
 	serd_reader_end_stream(reader);
 	sratom_free(sratom);
 	serd_reader_free(reader);
 	sord_free(model);
 
-	_conn = -1;
+	delete this;
 }
 
 }  // namespace Ingen

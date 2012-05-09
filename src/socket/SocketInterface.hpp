@@ -14,16 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
-
 #include "ingen/Interface.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 #include "sord/sord.h"
-
-#include "../server/EventSink.hpp"
-#include "../server/EventSource.hpp"
-#include "../server/EventWriter.hpp"
 
 namespace Ingen {
 
@@ -32,18 +25,9 @@ namespace Shared { class World; }
 namespace Socket {
 
 class SocketInterface : public Raul::Thread
-                      , public Server::EventSink
-                      , public Server::EventSource
 {
 public:
-	SocketInterface(Shared::World& world, int conn);
-
-	void event(Server::Event* ev);
-
-	bool process(Server::PostProcessor&  dest,
-	             Server::ProcessContext& context,
-	             bool                    limit = true);
-
+	SocketInterface(Shared::World& world, Interface& iface, int conn);
 	~SocketInterface();
 
 	SordInserter* inserter() { return _inserter; }
@@ -67,13 +51,12 @@ private:
 	                                  const SerdNode*    object_datatype,
 	                                  const SerdNode*    object_lang);
 
-	Shared::World&      _world;
-	Server::EventWriter _iface;
-	SerdEnv*            _env;
-	SordInserter*       _inserter;
-	SordNode*           _msg_node;
-	Server::Event*      _event;
-	int                 _conn;
+	Shared::World& _world;
+	Interface&     _iface;
+	SerdEnv*       _env;
+	SordInserter*  _inserter;
+	SordNode*      _msg_node;
+	int            _conn;
 };
 
 }  // namespace Ingen

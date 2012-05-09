@@ -31,17 +31,13 @@ namespace Ingen {
 namespace Server {
 
 class Engine;
-class EventSink;
 
-/** An Interface that creates and writes Events to an EventSink.
- *
- * This is where Interface calls get turned into Events which are actually
- * processed by the engine to do things.
+/** An Interface that creates and enqueues Events for the Engine to execute.
  */
 class EventWriter : public Interface
 {
 public:
-	explicit EventWriter(Engine& engine, EventSink& sink);
+	explicit EventWriter(Engine& engine);
 	virtual ~EventWriter();
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
@@ -87,7 +83,6 @@ public:
 
 protected:
 	Interface* _request_client;
-	EventSink& _sink;
 	int32_t    _request_id;
 	Engine&    _engine;
 	bool       _in_bundle;  ///< True iff a bundle is currently being received
@@ -99,4 +94,4 @@ private:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_QUEUEDENGINEINTERFACE_HPP
+#endif // INGEN_ENGINE_EVENTWRITER_HPP

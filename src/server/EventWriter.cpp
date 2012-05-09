@@ -23,7 +23,6 @@
 #include "ClientBroadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "EventQueue.hpp"
 #include "EventWriter.hpp"
 #include "events.hpp"
 
@@ -35,9 +34,8 @@ using namespace Raul;
 namespace Ingen {
 namespace Server {
 
-EventWriter::EventWriter(Engine& engine, EventSink& sink)
+EventWriter::EventWriter(Engine& engine)
 	: _request_client(NULL)
-	, _sink(sink)
 	, _request_id(-1)
 	, _engine(engine)
 	, _in_bundle(false)
@@ -92,7 +90,7 @@ EventWriter::put(const URI&                  uri,
                  const Resource::Properties& properties,
                  const Resource::Graph       ctx)
 {
-	_sink.event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), true, ctx, uri, properties));
+	_engine.enqueue_event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), true, ctx, uri, properties));
 }
 
 void
@@ -100,14 +98,14 @@ EventWriter::delta(const URI&                  uri,
                    const Resource::Properties& remove,
                    const Resource::Properties& add)
 {
-	_sink.event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), false, Resource::DEFAULT, uri, add, remove));
+	_engine.enqueue_event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), false, Resource::DEFAULT, uri, add, remove));
 }
 
 void
 EventWriter::move(const Path& old_path,
                   const Path& new_path)
 {
-	_sink.event(new Events::Move(_engine, _request_client, _request_id, now(), old_path, new_path));
+	_engine.enqueue_event(new Events::Move(_engine, _request_client, _request_id, now(), old_path, new_path));
 }
 
 void
@@ -119,7 +117,7 @@ EventWriter::del(const URI& uri)
 		}
 		_engine.quit();
 	} else {
-		_sink.event(new Events::Delete(_engine, _request_client, _request_id, now(), uri));
+		_engine.enqueue_event(new Events::Delete(_engine, _request_client, _request_id, now(), uri));
 	}
 }
 
@@ -127,7 +125,7 @@ void
 EventWriter::connect(const Path& tail_path,
                      const Path& head_path)
 {
-	_sink.event(new Events::Connect(_engine, _request_client, _request_id, now(), tail_path, head_path));
+	_engine.enqueue_event(new Events::Connect(_engine, _request_client, _request_id, now(), tail_path, head_path));
 
 }
 
@@ -141,7 +139,7 @@ EventWriter::disconnect(const Path& src,
 		return;
 	}
 
-	_sink.event(new Events::Disconnect(_engine, _request_client, _request_id, now(),
+	_engine.enqueue_event(new Events::Disconnect(_engine, _request_client, _request_id, now(),
 	                                   Path(src.str()), Path(dst.str())));
 }
 
@@ -149,7 +147,7 @@ void
 EventWriter::disconnect_all(const Path& patch_path,
                             const Path& path)
 {
-	_sink.event(new Events::DisconnectAll(_engine, _request_client, _request_id, now(), patch_path, path));
+	_engine.enqueue_event(new Events::DisconnectAll(_engine, _request_client, _request_id, now(), patch_path, path));
 }
 
 void
@@ -161,16 +159,16 @@ EventWriter::set_property(const URI&  uri,
 	    && value.type() == _engine.world()->forge().Bool) {
 		if (value.get_bool()) {
 			_engine.activate();
-			_sink.event(new Events::Ping(_engine, _request_client, _request_id, now()));
+			_engine.enqueue_event(new Events::Ping(_engine, _request_client, _request_id, now()));
 		} else {
-			_sink.event(new Events::Deactivate(_engine, _request_client, _request_id, now()));
+			_engine.enqueue_event(new Events::Deactivate(_engine, _request_client, _request_id, now()));
 		}
 	} else {
 		Resource::Properties remove;
 		remove.insert(make_pair(predicate, _engine.world()->uris()->wildcard));
 		Resource::Properties add;
 		add.insert(make_pair(predicate, value));
-		_sink.event(new Events::SetMetadata(
+		_engine.enqueue_event(new Events::SetMetadata(
 			            _engine, _request_client, _request_id, now(), false, Resource::DEFAULT,
 			            uri, add, remove));
 	}
@@ -181,7 +179,7 @@ EventWriter::set_property(const URI&  uri,
 void
 EventWriter::get(const URI& uri)
 {
-	_sink.event(new Events::Get(_engine, _request_client, _request_id, now(), uri));
+	_engine.enqueue_event(new Events::Get(_engine, _request_client, _request_id, now(), uri));
 }
 
 } // namespace Server

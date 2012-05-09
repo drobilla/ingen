@@ -21,7 +21,6 @@
 
 #include "../server/Engine.hpp"
 #include "../server/EventWriter.hpp"
-#include "../server/EventQueue.hpp"
 
 #include "SocketListener.hpp"
 

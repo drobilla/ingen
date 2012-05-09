@@ -13,7 +13,6 @@ def build(bld):
             Engine.cpp
             EngineStore.cpp
             Event.cpp
-            EventQueue.cpp
             EventWriter.cpp
             GraphObjectImpl.cpp
             InputPort.cpp
@@ -31,6 +30,7 @@ def build(bld):
             PluginImpl.cpp
             PortImpl.cpp
             PostProcessor.cpp
+            PreProcessor.cpp
             ProcessContext.cpp
             ProcessSlave.cpp
             events/Connect.cpp
