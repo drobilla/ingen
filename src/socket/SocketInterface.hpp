@@ -30,8 +30,6 @@ public:
 	SocketInterface(Shared::World& world, Interface& iface, int conn);
 	~SocketInterface();
 
-	SordInserter* inserter() { return _inserter; }
-
 private:
 	virtual void _run();
 
