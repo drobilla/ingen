@@ -29,10 +29,6 @@ def options(opt):
     opt.add_option('--no-jack-session', action='store_true', default=False,
                     dest='no_jack_session',
                     help="Do not build JACK session support")
-    opt.add_option('--no-osc', action='store_true', default=False, dest='no_osc',
-                   help="Do not build OSC via liblo support, even if liblo exists")
-    opt.add_option('--no-http', action='store_true', default=False, dest='no_http',
-                   help="Do not build HTTP via libsoup support, even if libsoup exists")
     opt.add_option('--no-socket', action='store_true', default=False, dest='no_socket',
                    help="Do not build Socket interface")
     opt.add_option('--log-debug', action='store_true', default=False, dest='log_debug',
@@ -44,9 +40,6 @@ def configure(conf):
     conf.load('compiler_cxx')
     autowaf.configure(conf)
     conf.line_just = 48
-
-    Options.options.no_http = True
-    Options.options.no_osc  = True
 
     autowaf.display_header('Ingen Configuration')
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
@@ -78,12 +71,6 @@ def configure(conf):
                           atleast_version='1.4.0', mandatory=False)
         autowaf.check_pkg(conf, 'ganv-1', uselib_store='GANV',
                           atleast_version='1.0.0', mandatory=False)
-    if not Options.options.no_http:
-        autowaf.check_pkg(conf, 'libsoup-2.4', uselib_store='SOUP',
-                          atleast_version='2.4.0', mandatory=False)
-    if not Options.options.no_osc:
-        autowaf.check_pkg(conf, 'liblo', uselib_store='LIBLO',
-                          atleast_version='0.25', mandatory=False)
     if not Options.options.no_socket:
         conf.check_cc(function_name='socket',
                       header_name='sys/socket.h',
@@ -128,8 +115,6 @@ def configure(conf):
     autowaf.display_msg(conf, "Jack", conf.is_defined('HAVE_JACK'))
     autowaf.display_msg(conf, "Jack session support",
                         conf.is_defined('INGEN_JACK_SESSION'))
-    autowaf.display_msg(conf, "OSC", conf.is_defined('HAVE_LIBLO'))
-    autowaf.display_msg(conf, "HTTP", conf.is_defined('HAVE_SOUP'))
     autowaf.display_msg(conf, "SOCKET", conf.is_defined('HAVE_SOCKET'))
     autowaf.display_msg(conf, "LV2", conf.is_defined('HAVE_LILV'))
     autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
@@ -153,8 +138,6 @@ def build(bld):
     bld.recurse('src/serialisation')
     bld.recurse('src/server')
     bld.recurse('src/client')
-    bld.recurse('src/http')
-    bld.recurse('src/osc')
     bld.recurse('src/socket')
 
     if bld.is_defined('INGEN_BUILD_GUI'):

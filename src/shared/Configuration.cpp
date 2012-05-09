@@ -25,18 +25,18 @@ Configuration::Configuration()
 	: Raul::Configuration(
 	"A realtime modular audio processor.",
 	"Ingen is a flexible modular system that be used in various ways.\n"
-	"The engine can run as a stand-alone server controlled via a network protocol\n"
-	"(e.g. OSC), or internal to another process (e.g. the GUI).  The GUI, or other\n"
+	"The engine can run as a stand-alone server controlled via network protocol,\n"
+	"or internal to another process (e.g. the GUI).  The GUI, or other\n"
 	"clients, can communicate with the engine via any supported protocol, or host the\n"
 	"engine in the same process.  Many clients can connect to an engine at once.\n\n"
 	"Examples:\n"
-	"  ingen -e                    # Run an engine, listen for OSC\n"
-	"  ingen -g                    # Run a GUI, connect via OSC\n"
-	"  ingen -eg                   # Run an engine and a GUI in one process\n"
-	"  ingen -eg patch.ttl         # Run an engine and a GUI and load a patch file\n"
-	"  ingen -eg patch.ingen       # Run an engine and a GUI and load a patch bundle")
+	"  ingen -e                  # Run an engine, listen for connections\n"
+	"  ingen -g                  # Run a GUI, connect to running engine\n"
+	"  ingen -eg                 # Run an engine and a GUI in one process\n"
+	"  ingen -egl patch.ttl      # Run an engine and a GUI and load a patch file\n"
+	"  ingen -egl patch.ingen    # Run an engine and a GUI and load a patch bundle")
 {
-	add("client-port", 'C', "Client OSC port", INT, Value());
+	add("client-port", 'C', "Client port", INT, Value());
 	add("connect",     'c', "Connect to engine URI", STRING, Value("osc.udp://localhost:16180"));
 	add("engine",      'e', "Run (JACK) engine", BOOL, Value(false));
 	add("engine-port", 'E', "Engine listen port", INT, Value(16180));

@@ -108,9 +108,6 @@ main(int argc, char** argv)
 	SharedPtr<Interface> engine_interface;
 
 	Glib::thread_init();
-#ifdef HAVE_SOUP
-	g_type_init();
-#endif
 
 	world = new Ingen::Shared::World(&conf, argc, argv, NULL, NULL);
 
@@ -128,17 +125,6 @@ main(int argc, char** argv)
 
 		engine_interface = world->engine();
 
-		// Not loading a GUI, load network engine interfaces
-		if (!conf.option("gui").get_bool()) {
-			#ifdef HAVE_LIBLO
-			ingen_try(world->load_module("osc_server"),
-			          "Unable to load OSC server module");
-			#endif
-			#ifdef HAVE_SOUP
-			ingen_try(world->load_module("http_server"),
-			          "Unable to load HTTP server module");
-			#endif
-		}
 		#ifdef HAVE_SOCKET
 		ingen_try(world->load_module("socket_server"),
 		          "Unable to load socket server module");
@@ -149,14 +135,6 @@ main(int argc, char** argv)
 	if (!engine_interface) {
 		ingen_try(world->load_module("client"),
 		          "Unable to load client module");
-		#ifdef HAVE_LIBLO
-		ingen_try(world->load_module("osc_client"),
-		          "Unable to load OSC client module");
-		#endif
-		#ifdef HAVE_SOUP
-		ingen_try(world->load_module("http_client"),
-		          "Unable to load HTTP client module");
-		#endif
 		const char* const uri = conf.option("connect").get_string();
 		SharedPtr<Interface> client(new Client::SigClientInterface());
 		ingen_try((engine_interface = world->interface(uri, client)),

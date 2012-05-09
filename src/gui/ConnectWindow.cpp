@@ -148,13 +148,9 @@ ConnectWindow::connect(bool existing)
 
 	Ingen::Shared::World* world = _app->world();
 
-#if defined(HAVE_LIBLO) || defined(HAVE_SOUP)
+#ifdef HAVE_SOCKET
 	if (_mode == CONNECT_REMOTE) {
-#ifdef HAVE_LIBLO
-		string uri = "osc.udp://localhost:16180";
-#else
-		string uri = "http://localhost:16180";
-#endif
+		string uri = "unix:///tmp/ingen.sock";
 		if (_widgets_loaded) {
 			const std::string& user_uri = _url_entry->get_text();
 			if (Raul::URI::is_valid(user_uri))
@@ -176,14 +172,13 @@ ConnectWindow::connect(bool existing)
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
 
 	} else if (_mode == LAUNCH_REMOTE) {
-#ifdef HAVE_LIBLO
 		int port = _port_spinbutton->get_value_as_int();
 		char port_str[8];
 		snprintf(port_str, sizeof(port_str), "%u", port);
 		const string cmd = string("ingen -e -E ").append(port_str);
 
 		if (Raul::Process::launch(cmd)) {
-			const std::string engine_uri = string("osc.udp://localhost:").append(port_str);
+			const std::string engine_uri = string("tcp://localhost:").append(port_str);
 
 			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 			world->set_engine(world->interface(engine_uri, tsci));
@@ -197,12 +192,8 @@ ConnectWindow::connect(bool existing)
 		} else {
 			error << "Failed to launch ingen process." << endl;
 		}
-#else
-		error << "No OSC support" << endl;
-#endif
-
 	} else
-#endif // defined(HAVE_LIBLO) || defined(HAVE_SOUP)
+#endif
 		if (_mode == INTERNAL) {
 			if (!world->local_engine())
 				world->load_module("server");
