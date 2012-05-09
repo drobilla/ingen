@@ -33,8 +33,6 @@ def options(opt):
                    help="Do not build Socket interface")
     opt.add_option('--log-debug', action='store_true', default=False, dest='log_debug',
                    help="Print debugging output")
-    opt.add_option('--liblo-bundles', action='store_true', default=False, dest='liblo_bundles',
-                   help="Use liblo bundle support (experimental, requires patched liblo)")
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -106,9 +104,6 @@ def configure(conf):
 
     if Options.options.log_debug:
         autowaf.define(conf, 'RAUL_LOG_DEBUG', 1)
-
-    if Options.options.liblo_bundles:
-        autowaf.define(conf, 'LIBLO_BUNDLES', 1)
 
     conf.write_config_header('ingen_config.h', remove=False)
 
