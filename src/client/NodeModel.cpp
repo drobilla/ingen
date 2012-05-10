@@ -22,15 +22,12 @@
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Client {
 
 NodeModel::NodeModel(Shared::URIs&          uris,
                      SharedPtr<PluginModel> plugin,
-                     const Path&            path)
+                     const Raul::Path&      path)
 	: Node()
 	, ObjectModel(uris, path)
 	, _plugin_uri(plugin->uri())
@@ -41,9 +38,9 @@ NodeModel::NodeModel(Shared::URIs&          uris,
 {
 }
 
-NodeModel::NodeModel(Shared::URIs& uris,
-                     const URI&         plugin_uri,
-                     const Path&        path)
+NodeModel::NodeModel(Shared::URIs&     uris,
+                     const Raul::URI&  plugin_uri,
+                     const Raul::Path& path)
 	: Node()
 	, ObjectModel(uris, path)
 	, _plugin_uri(plugin_uri)
@@ -83,7 +80,7 @@ NodeModel::remove_port(SharedPtr<PortModel> port)
 }
 
 void
-NodeModel::remove_port(const Path& port_path)
+NodeModel::remove_port(const Raul::Path& port_path)
 {
 	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i)->path() == port_path) {
@@ -204,8 +201,8 @@ NodeModel::port_value_range(SharedPtr<const PortModel> port,
 	default_port_value_range(port, min, max);
 
 	// Possibly overriden
-	const Atom& min_atom = port->get_property(_uris.lv2_minimum);
-	const Atom& max_atom = port->get_property(_uris.lv2_maximum);
+	const Raul::Atom& min_atom = port->get_property(_uris.lv2_minimum);
+	const Raul::Atom& max_atom = port->get_property(_uris.lv2_maximum);
 	if (min_atom.type() == _uris.forge.Float)
 		min = min_atom.get_float();
 	if (max_atom.type() == _uris.forge.Float)

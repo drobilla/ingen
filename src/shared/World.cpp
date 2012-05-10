@@ -34,10 +34,9 @@
 #include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 
-#define LOG(s) s << "[Module] "
+#define LOG(s) (s("[World] "))
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
@@ -66,11 +65,11 @@ ingen_load_module(const string& name)
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
 				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY);
 				if (*module) {
-					LOG(info) << "Loading " << filename << endl;
+					LOG(Raul::info)(Raul::fmt("Loading %1%\n") % filename);
 					return SharedPtr<Glib::Module>(module);
 				} else {
 					delete module;
-					error << Glib::Module::get_last_error() << endl;
+					Raul::error << Glib::Module::get_last_error() << endl;
 				}
 			}
 		}
@@ -83,16 +82,16 @@ ingen_load_module(const string& name)
 	module->make_resident();
 
 	if (*module) {
-		LOG(info) << "Loading " << Shared::module_path(name) << endl;
+		LOG(Raul::info)(Raul::fmt("Loading %1%\n") % Shared::module_path(name));
 		return SharedPtr<Glib::Module>(module);
 	} else if (!module_path_found) {
-		LOG(error) << "Unable to find " << name
-			<< " (" << Glib::Module::get_last_error() << ")" << endl;
+		LOG(Raul::error)(Raul::fmt("Unable to find %1% (%2%)\n")
+		                 % name % Glib::Module::get_last_error());
 		return SharedPtr<Glib::Module>();
 	} else {
-		LOG(error) << "Unable to load " << name << " from " << module_path
-			<< " (" << Glib::Module::get_last_error() << ")" << endl;
-		LOG(error) << "Is Ingen installed?" << endl;
+		LOG(Raul::error)(Raul::fmt("Unable to load %1% from %2% (%3%)\n")
+		                 % name % module_path % Glib::Module::get_last_error());
+		LOG(Raul::error)("Is Ingen installed?\n");
 		return SharedPtr<Glib::Module>();
 	}
 }
@@ -231,7 +230,7 @@ World::load_module(const char* name)
 {
 	Pimpl::Modules::iterator i = _impl->modules.find(name);
 	if (i != _impl->modules.end()) {
-		LOG(info) << "Module `" << name << "' already loaded" << endl;
+		LOG(Raul::info)(Raul::fmt("Module `%1%' already loaded\n") % name);
 		return true;
 	}
 	SharedPtr<Glib::Module> lib = ingen_load_module(name);
@@ -243,7 +242,7 @@ World::load_module(const char* name)
 		_impl->modules.insert(make_pair(string(name), module));
 		return true;
 	} else {
-		LOG(error) << "Failed to load module `" << name << "'" << endl;
+		LOG(Raul::error)(Raul::fmt("Failed to load module `%1%'\n") % name);
 		return false;
 	}
 }
@@ -253,7 +252,7 @@ World::run_module(const char* name)
 {
 	Pimpl::Modules::iterator i = _impl->modules.find(name);
 	if (i == _impl->modules.end()) {
-		LOG(error) << "Attempt to run unloaded module `" << name << "'" << endl;
+		LOG(Raul::error) << "Attempt to run unloaded module `" << name << "'" << endl;
 		return false;
 	}
 
@@ -278,7 +277,7 @@ World::interface(const std::string&   engine_url,
 	const string scheme = engine_url.substr(0, engine_url.find(":"));
 	const Pimpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
 	if (i == _impl->interface_factories.end()) {
-		warn << "Unknown URI scheme `" << scheme << "'" << endl;
+		Raul::warn << "Unknown URI scheme `" << scheme << "'" << endl;
 		return SharedPtr<Interface>();
 	}
 
@@ -291,7 +290,7 @@ World::run(const std::string& mime_type, const std::string& filename)
 {
 	const Pimpl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
 	if (i == _impl->script_runners.end()) {
-		warn << "Unknown script MIME type `" << mime_type << "'" << endl;
+		Raul::warn << "Unknown script MIME type `" << mime_type << "'" << endl;
 		return false;
 	}
 

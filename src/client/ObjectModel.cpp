@@ -19,9 +19,6 @@
 #include "ingen/shared/URIs.hpp"
 #include "raul/TableImpl.hpp"
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Client {
 
@@ -29,7 +26,7 @@ ObjectModel::ObjectModel(Shared::URIs& uris, const Raul::Path& path)
 	: ResourceImpl(uris, path)
 	, _meta(uris, Raul::URI("http://example.org/FIXME"))
 	, _path(path)
-	, _symbol((path == Path::root()) ? "root" : path.symbol())
+	, _symbol((path == Raul::Path::root()) ? "root" : path.symbol())
 {
 }
 
@@ -58,10 +55,10 @@ ObjectModel::on_property(const Raul::URI& uri, const Raul::Atom& value)
 	_signal_property.emit(uri, value);
 }
 
-const Atom&
+const Raul::Atom&
 ObjectModel::get_property(const Raul::URI& key) const
 {
-	static const Atom null_atom;
+	static const Raul::Atom null_atom;
 	Resource::Properties::const_iterator i = properties().find(key);
 	return (i != properties().end()) ? i->second : null_atom;
 }

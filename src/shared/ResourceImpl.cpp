@@ -20,7 +20,6 @@
 #include "raul/log.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
@@ -120,9 +119,9 @@ ResourceImpl::type(const URIs&       uris,
 
 	patch = node = port = is_output = false;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
-		const Atom& atom = i->second;
+		const Raul::Atom& atom = i->second;
 		if (atom.type() != uris.forge.URI) {
-			warn << "[ResourceImpl] Non-URI type " << uris.forge.str(atom) << endl;
+			Raul::warn << "[ResourceImpl] Non-URI type " << uris.forge.str(atom) << endl;
 			continue;
 		}
 

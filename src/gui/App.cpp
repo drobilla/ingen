@@ -47,7 +47,7 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-#define LOG(s) s << "[GUI] "
+#define LOG(s) (s("[GUI] "))
 
 using namespace std;
 using namespace Raul;
@@ -149,7 +149,7 @@ App::run()
 			break;
 
 	_main->run();
-	LOG(info) << "Exiting" << endl;
+	LOG(info)("Exiting\n");
 }
 
 void
@@ -226,7 +226,7 @@ App::property_change(const Raul::URI&  subject,
 {
 	if (subject == uris().ingen_engine && key == uris().ingen_sampleRate) {
 		if (value.type() == forge().Int) {
-			LOG(info) << "Sample rate: " << uris().forge.str(value) << std::endl;
+			LOG(info)(Raul::fmt("Sample rate: %1%\n") % uris().forge.str(value));
 			_sample_rate = value.get_int32();
 		} else {
 			error << "Engine sample rate property is not an integer" << std::endl;

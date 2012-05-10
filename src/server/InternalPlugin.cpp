@@ -26,7 +26,6 @@
 #include "InternalPlugin.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {

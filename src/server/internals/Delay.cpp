@@ -39,7 +39,6 @@
         (f_clamp (delaytime * (float)sample_rate, 1.0f, (float)(buffer_mask + 1)))
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {

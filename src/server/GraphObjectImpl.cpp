@@ -22,14 +22,13 @@
 #include "ThreadManager.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
 
 GraphObjectImpl::GraphObjectImpl(Ingen::Shared::URIs& uris,
-                                 GraphObjectImpl*          parent,
-                                 const Symbol&             symbol)
+                                 GraphObjectImpl*     parent,
+                                 const Raul::Symbol&  symbol)
 	: ResourceImpl(uris, parent ? parent->path().child(symbol) : Raul::Path::root())
 	, _parent(parent)
 	, _path(parent ? parent->path().child(symbol) : "/")
@@ -37,11 +36,11 @@ GraphObjectImpl::GraphObjectImpl(Ingen::Shared::URIs& uris,
 {
 }
 
-const Atom&
+const Raul::Atom&
 GraphObjectImpl::get_property(const Raul::URI& key) const
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
-	static const Atom null_atom;
+	static const Raul::Atom null_atom;
 	Resource::Properties::const_iterator i = properties().find(key);
 	return (i != properties().end()) ? i->second : null_atom;
 }

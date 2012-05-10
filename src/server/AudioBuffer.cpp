@@ -26,7 +26,6 @@
 #include "ProcessContext.hpp"
 
 using namespace std;
-using namespace Raul;
 
 /* TODO: Be sure these functions are vectorized by GCC when its vectorizer
  * stops sucking.  Probably a good idea to inline them as well */

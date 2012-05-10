@@ -32,7 +32,7 @@
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
-#define LOG(s) s << "[Parser] "
+#define LOG(s) (s("[Parser] "))
 
 #define NS_RDF  "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS "http://www.w3.org/2000/01/rdf-schema#"
@@ -375,7 +375,7 @@ parse_patch(Ingen::Shared::World*                    world,
 		PortRecord port_record;
 		const int  index = get_port(world, model, port, patch_path, port_record);
 		if (index < 0) {
-			LOG(error) << "Invalid port " << port << endl;
+			LOG(Raul::error) << "Invalid port " << port << endl;
 			return boost::optional<Path>();
 		}
 
@@ -580,11 +580,11 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 
 	serd_env_free(env);
 
-	LOG(info) << "Parsing " << path << endl;
+	LOG(Raul::info)(Raul::fmt("Parsing %1%\n") % path);
 	if (parent)
-		LOG(info) << "Parent: " << *parent << endl;
+		LOG(Raul::info)(Raul::fmt("Parent: %1%\n") % *parent);
 	if (symbol)
-		LOG(info) << "Symbol: " << *symbol << endl;
+		LOG(Raul::info)(Raul::fmt("Symbol: %1%\n") % symbol->c_str());
 
 	boost::optional<Path> parsed_path
 		= parse(world, target, model, path, parent, symbol, data);
@@ -593,7 +593,7 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
 		                     world->forge().alloc_uri(uri));
 	} else {
-		LOG(warn) << "Document URI lost" << endl;
+		LOG(Raul::warn)("Document URI lost\n");
 	}
 
 	return parsed_path;
@@ -614,7 +614,7 @@ Parser::parse_string(Ingen::Shared::World*                    world,
 	model.load_string(env, SERD_TURTLE, str.c_str(), str.length(), base_uri);
 	serd_env_free(env);
 
-	LOG(info) << "Parsing string";
+	LOG(Raul::info) << "Parsing string";
 	if (!base_uri.empty())
 		info << " (base " << base_uri << ")";
 	info << endl;

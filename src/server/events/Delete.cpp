@@ -30,8 +30,6 @@
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 namespace Events {

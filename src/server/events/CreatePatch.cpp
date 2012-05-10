@@ -27,9 +27,6 @@
 #include "Driver.hpp"
 #include "EngineStore.hpp"
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 namespace Events {
@@ -66,7 +63,7 @@ CreatePatch::pre_process()
 		return;
 	}
 
-	const Path& path = (const Path&)_path;
+	const Raul::Path& path = (const Raul::Path&)_path;
 
 	_parent = _engine.engine_store()->find_patch(path.parent());
 	if (_parent == NULL) {

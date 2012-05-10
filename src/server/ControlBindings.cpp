@@ -33,7 +33,6 @@
 #define LOG(s) s << "[ControlBindings] "
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
@@ -68,9 +67,9 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 	Key key;
 	if (binding.type() == _engine.world()->forge().Dict) {
-		const Atom::DictValue&          dict = binding.get_dict();
-		Atom::DictValue::const_iterator t    = dict.find(uris.rdf_type);
-		Atom::DictValue::const_iterator n;
+		const Raul::Atom::DictValue&          dict = binding.get_dict();
+		Raul::Atom::DictValue::const_iterator t    = dict.find(uris.rdf_type);
+		Raul::Atom::DictValue::const_iterator n;
 		if (t == dict.end()) {
 			return key;
 		} else if (t->second == uris.midi_Bender) {
@@ -225,14 +224,14 @@ ControlBindings::port_value_to_control(PortImpl*         port,
 	float       normal = (value - min) / (max - min);
 
 	if (normal < 0.0f) {
-		warn << "Value " << value << " (normal " << normal << ") for "
+		LOG(Raul::warn) << "Value " << value << " (normal " << normal << ") for "
 			<< port->path() << " out of range" << endl;
 		normal = 0.0f;
 	}
 
 	if (normal > 1.0f) {
-		warn << "Value " << value << " (normal " << normal << ") for "
-			<< port->path() << " out of range" << endl;
+		LOG(Raul::warn) << "Value " << value << " (normal " << normal << ") for "
+		                << port->path() << " out of range" << endl;
 		normal = 1.0f;
 	}
 

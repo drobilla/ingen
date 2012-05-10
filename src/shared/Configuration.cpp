@@ -16,8 +16,6 @@
 
 #include "ingen/shared/Configuration.hpp"
 
-using namespace Raul;
-
 namespace Ingen {
 namespace Shared {
 

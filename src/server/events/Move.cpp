@@ -27,19 +27,16 @@
 #include "PatchImpl.hpp"
 #include "events/Move.hpp"
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 namespace Events {
 
-Move::Move(Engine&     engine,
-           Interface*  client,
-           int32_t     id,
-           SampleCount timestamp,
-           const Path& path,
-           const Path& new_path)
+Move::Move(Engine&           engine,
+           Interface*        client,
+           int32_t           id,
+           SampleCount       timestamp,
+           const Raul::Path& path,
+           const Raul::Path& new_path)
 	: Event(engine, client, id, timestamp)
 	, _old_path(path)
 	, _new_path(new_path)
@@ -75,20 +72,20 @@ Move::pre_process()
 		return;
 	}
 
-	SharedPtr< Table<Path, SharedPtr<GraphObject> > > removed
+	SharedPtr< Raul::Table< Raul::Path, SharedPtr<GraphObject> > > removed
 			= _engine.engine_store()->remove(_store_iterator);
 
 	assert(removed->size() > 0);
 
-	for (Table<Path, SharedPtr<GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
-		const Path& child_old_path = i->first;
-		assert(Path::descendant_comparator(_old_path, child_old_path));
+	for (Raul::Table< Raul::Path, SharedPtr<GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
+		const Raul::Path& child_old_path = i->first;
+		assert(Raul::Path::descendant_comparator(_old_path, child_old_path));
 
-		Path child_new_path;
+		Raul::Path child_new_path;
 		if (child_old_path == _old_path)
 			child_new_path = _new_path;
 		else
-			child_new_path = Path(_new_path).base() + child_old_path.substr(_old_path.length()+1);
+			child_new_path = Raul::Path(_new_path).base() + child_old_path.substr(_old_path.length()+1);
 
 		PtrCast<GraphObjectImpl>(i->second)->set_path(child_new_path);
 		i->first = child_new_path;

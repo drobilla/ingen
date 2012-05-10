@@ -136,7 +136,7 @@ void
 Port::on_value_changed(GVariant* value)
 {
 	if (!g_variant_is_of_type(value, G_VARIANT_TYPE_DOUBLE)) {
-		Raul::warn << "TODO: Non-float port value changed." << std::endl;
+		Raul::warn("TODO: Non-float port value changed\n");
 		return;
 	}
 

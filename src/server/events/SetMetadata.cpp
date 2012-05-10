@@ -42,9 +42,6 @@
 
 #define LOG(s) s << "[SetMetadata] "
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 namespace Events {
@@ -57,7 +54,7 @@ SetMetadata::SetMetadata(Engine&           engine,
                          SampleCount       timestamp,
                          bool              create,
                          Resource::Graph   context,
-                         const URI&        subject,
+                         const Raul::URI&  subject,
                          const Properties& properties,
                          const Properties& remove)
 	: Event(engine, client, id, timestamp)
@@ -107,12 +104,12 @@ SetMetadata::pre_process()
 {
 	typedef Properties::const_iterator iterator;
 
-	const bool is_graph_object = Path::is_path(_subject);
+	const bool is_graph_object = Raul::Path::is_path(_subject);
 
 	_lock.acquire();
 
 	_object = is_graph_object
-		? _engine.engine_store()->find_object(Path(_subject.str()))
+		? _engine.engine_store()->find_object(Raul::Path(_subject.str()))
 		: static_cast<Shared::ResourceImpl*>(_engine.node_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
@@ -124,7 +121,7 @@ SetMetadata::pre_process()
 	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
 
 	if (is_graph_object && !_object) {
-		Path path(_subject.str());
+		Raul::Path path(_subject.str());
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
 		Shared::ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output);
 
@@ -146,7 +143,7 @@ SetMetadata::pre_process()
 		if (_create_event) {
 			_create_event->pre_process();
 			// Grab the object for applying properties, if the create-event succeeded
-			_object = _engine.engine_store()->find_object(Path(_subject.str()));
+			_object = _engine.engine_store()->find_object(Raul::Path(_subject.str()));
 		} else {
 			_status = BAD_OBJECT_TYPE;
 		}

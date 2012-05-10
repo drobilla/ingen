@@ -23,7 +23,6 @@
 #include "ingen/shared/Store.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Shared {
@@ -32,7 +31,7 @@ void
 Store::add(GraphObject* o)
 {
 	if (find(o->path()) != end()) {
-		error << "[Store] Attempt to add duplicate object " << o->path() << endl;
+		Raul::error << "[Store] Attempt to add duplicate object " << o->path() << endl;
 		return;
 	}
 

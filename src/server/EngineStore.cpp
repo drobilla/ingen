@@ -29,7 +29,6 @@
 #define LOG(s) s << "[EngineStore] "
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
@@ -42,7 +41,7 @@ EngineStore::~EngineStore()
 /** Find the Patch at the given path.
  */
 PatchImpl*
-EngineStore::find_patch(const Path& path)
+EngineStore::find_patch(const Raul::Path& path)
 {
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<PatchImpl*>(object);
@@ -51,7 +50,7 @@ EngineStore::find_patch(const Path& path)
 /** Find the Node at the given path.
  */
 NodeImpl*
-EngineStore::find_node(const Path& path)
+EngineStore::find_node(const Raul::Path& path)
 {
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<NodeImpl*>(object);
@@ -60,7 +59,7 @@ EngineStore::find_node(const Path& path)
 /** Find the Port at the given path.
  */
 PortImpl*
-EngineStore::find_port(const Path& path)
+EngineStore::find_port(const Raul::Path& path)
 {
 	GraphObjectImpl* const object = find_object(path);
 	return dynamic_cast<PortImpl*>(object);
@@ -69,7 +68,7 @@ EngineStore::find_port(const Path& path)
 /** Find the Object at the given path.
  */
 GraphObjectImpl*
-EngineStore::find_object(const Path& path)
+EngineStore::find_object(const Raul::Path& path)
 {
 	iterator i = find(path);
 	return ((i == end()) ? NULL : dynamic_cast<GraphObjectImpl*>(i->second.get()));
@@ -99,7 +98,7 @@ EngineStore::add(const Objects& table)
  * including the object itself, in lexicographically sorted order by Path.
  */
 SharedPtr<EngineStore::Objects>
-EngineStore::remove(const Path& path)
+EngineStore::remove(const Raul::Path& path)
 {
 	return remove(find(path));
 }
@@ -121,7 +120,7 @@ EngineStore::remove(iterator object)
 		return removed;
 
 	} else {
-		LOG(warn) << "Removing " << object->first << " failed." << endl;
+		LOG(Raul::warn) << "Removing " << object->first << " failed." << endl;
 		return SharedPtr<EngineStore>();
 	}
 }
@@ -132,7 +131,7 @@ EngineStore::remove(iterator object)
  * in lexicographically sorted order by Path.
  */
 SharedPtr<EngineStore::Objects>
-EngineStore::remove_children(const Path& path)
+EngineStore::remove_children(const Raul::Path& path)
 {
 	return remove_children(find(path));
 }
@@ -153,7 +152,7 @@ EngineStore::remove_children(iterator object)
 			return yank(first_child, descendants_end);
 		}
 	} else {
-		LOG(warn) << "Removing children of " << object->first << " failed." << endl;
+		LOG(Raul::warn) << "Removing children of " << object->first << " failed." << endl;
 		return SharedPtr<EngineStore::Objects>();
 	}
 

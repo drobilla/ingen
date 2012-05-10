@@ -33,9 +33,6 @@
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 namespace Events {
@@ -113,8 +110,8 @@ CreatePort::pre_process()
 		Resource::Properties::const_iterator index_i = _properties.find(uris.lv2_index);
 		if (index_i == _properties.end()) {
 			index_i = _properties.insert(
-				make_pair(uris.lv2_index,
-				          _engine.world()->forge().make(int32_t(old_num_ports))));
+				std::make_pair(uris.lv2_index,
+				               _engine.world()->forge().make(int32_t(old_num_ports))));
 		} else if (index_i->second.type() != uris.forge.Int
 				|| index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
 			Event::pre_process();

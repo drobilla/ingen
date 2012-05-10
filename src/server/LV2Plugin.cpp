@@ -29,7 +29,6 @@
 #include "NodeImpl.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
@@ -54,7 +53,7 @@ LV2Plugin::symbol() const
 		const string symbol = working.substr(last_slash+1);
 		if ( (symbol[0] >= 'a' && symbol[0] <= 'z')
 				|| (symbol[0] >= 'A' && symbol[0] <= 'Z') )
-			return Path::nameify(symbol);
+			return Raul::Path::nameify(symbol);
 		else
 			working = working.substr(0, last_slash);
 	}

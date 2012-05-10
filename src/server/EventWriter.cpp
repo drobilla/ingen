@@ -29,7 +29,6 @@
 #define LOG(s) s << "[EventWriter] "
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
@@ -62,7 +61,7 @@ EventWriter::set_response_id(int32_t id)
 }
 
 void
-EventWriter::put(const URI&                  uri,
+EventWriter::put(const Raul::URI&            uri,
                  const Resource::Properties& properties,
                  const Resource::Graph       ctx)
 {
@@ -72,7 +71,7 @@ EventWriter::put(const URI&                  uri,
 }
 
 void
-EventWriter::delta(const URI&                  uri,
+EventWriter::delta(const Raul::URI&            uri,
                    const Resource::Properties& remove,
                    const Resource::Properties& add)
 {
@@ -82,8 +81,8 @@ EventWriter::delta(const URI&                  uri,
 }
 
 void
-EventWriter::move(const Path& old_path,
-                  const Path& new_path)
+EventWriter::move(const Raul::Path& old_path,
+                  const Raul::Path& new_path)
 {
 	_engine.enqueue_event(
 		new Events::Move(_engine, _respondee.get(), _request_id, now(),
@@ -91,7 +90,7 @@ EventWriter::move(const Path& old_path,
 }
 
 void
-EventWriter::del(const URI& uri)
+EventWriter::del(const Raul::URI& uri)
 {
 	if (uri == "ingen:engine") {
 		if (_respondee) {
@@ -105,8 +104,8 @@ EventWriter::del(const URI& uri)
 }
 
 void
-EventWriter::connect(const Path& tail_path,
-                     const Path& head_path)
+EventWriter::connect(const Raul::Path& tail_path,
+                     const Raul::Path& head_path)
 {
 	_engine.enqueue_event(
 		new Events::Connect(_engine, _respondee.get(), _request_id, now(),
@@ -115,23 +114,17 @@ EventWriter::connect(const Path& tail_path,
 }
 
 void
-EventWriter::disconnect(const Path& src,
-                        const Path& dst)
+EventWriter::disconnect(const Raul::Path& src,
+                        const Raul::Path& dst)
 {
-	if (!Path::is_path(src) && !Path::is_path(dst)) {
-		LOG(Raul::error) << "Bad disconnect request " << src
-		                 << " => " << dst << std::endl;
-		return;
-	}
-
 	_engine.enqueue_event(
 		new Events::Disconnect(_engine, _respondee.get(), _request_id, now(),
 		                       src, dst));
 }
 
 void
-EventWriter::disconnect_all(const Path& patch_path,
-                            const Path& path)
+EventWriter::disconnect_all(const Raul::Path& patch_path,
+                            const Raul::Path& path)
 {
 	_engine.enqueue_event(
 		new Events::DisconnectAll(_engine, _respondee.get(), _request_id, now(),
@@ -139,9 +132,9 @@ EventWriter::disconnect_all(const Path& patch_path,
 }
 
 void
-EventWriter::set_property(const URI&  uri,
-                          const URI&  predicate,
-                          const Atom& value)
+EventWriter::set_property(const Raul::URI&  uri,
+                          const Raul::URI&  predicate,
+                          const Raul::Atom& value)
 {
 	if (uri == "ingen:engine" && predicate == "ingen:enabled"
 	    && value.type() == _engine.world()->forge().Bool) {
@@ -165,7 +158,7 @@ EventWriter::set_property(const URI&  uri,
 }
 
 void
-EventWriter::get(const URI& uri)
+EventWriter::get(const Raul::URI& uri)
 {
 	_engine.enqueue_event(
 		new Events::Get(_engine, _respondee.get(), _request_id, now(), uri));

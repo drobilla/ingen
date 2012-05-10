@@ -33,7 +33,6 @@
 #define LOG(s) s << "[TriggerNode] "
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {

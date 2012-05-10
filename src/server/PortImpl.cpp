@@ -29,7 +29,6 @@
 #include "ThreadManager.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
@@ -41,7 +40,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
                    uint32_t            poly,
                    PortType            type,
                    LV2_URID            buffer_type,
-                   const Atom&         value,
+                   const Raul::Atom&   value,
                    size_t              buffer_size)
 	: GraphObjectImpl(bufs.uris(), node, name)
 	, _bufs(bufs)
@@ -54,7 +53,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _min(bufs.forge().make(0.0f))
 	, _max(bufs.forge().make(1.0f))
 	, _last_broadcasted_value(value)
-	, _buffers(new Array<BufferRef>(static_cast<size_t>(poly)))
+	, _buffers(new Raul::Array<BufferRef>(static_cast<size_t>(poly)))
 	, _prepared_buffers(NULL)
 	, _broadcast(false)
 	, _set_by_user(false)
@@ -134,7 +133,7 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	}
 
 	if (!_prepared_buffers)
-		_prepared_buffers = new Array<BufferRef>(poly, *_buffers, NULL);
+		_prepared_buffers = new Raul::Array<BufferRef>(poly, *_buffers, NULL);
 
 	return true;
 }
@@ -147,7 +146,7 @@ PortImpl::prepare_poly_buffers(BufferFactory& bufs)
 }
 
 bool
-PortImpl::apply_poly(Maid& maid, uint32_t poly)
+PortImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 	if (_type != PortType::CONTROL &&

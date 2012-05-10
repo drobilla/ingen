@@ -16,19 +16,18 @@
 
 #include <cassert>
 #include <unistd.h>
-#include "raul/log.hpp"
+
 #include "ingen/Interface.hpp"
+#include "raul/log.hpp"
+
 #include "ClientBroadcaster.hpp"
-#include "PluginImpl.hpp"
 #include "ConnectionImpl.hpp"
 #include "EngineStore.hpp"
 #include "ObjectSender.hpp"
+#include "PluginImpl.hpp"
 #include "util.hpp"
 
-#define LOG(s) s << "[ClientBroadcaster] "
-
-using namespace std;
-using namespace Raul;
+#define LOG(s) (s("[ClientBroadcaster] "))
 
 namespace Ingen {
 namespace Server {
@@ -36,10 +35,11 @@ namespace Server {
 /** Register a client to receive messages over the notification band.
  */
 void
-ClientBroadcaster::register_client(const URI& uri, SharedPtr<Interface> client)
+ClientBroadcaster::register_client(const Raul::URI&     uri,
+                                   SharedPtr<Interface> client)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
-	LOG(info) << "Registered client: " << uri << endl;
+	LOG(Raul::info)(Raul::fmt("Registered client <%1%>\n") % uri);
 	_clients[uri] = client;
 }
 
@@ -48,15 +48,13 @@ ClientBroadcaster::register_client(const URI& uri, SharedPtr<Interface> client)
  * @return true if client was found and removed.
  */
 bool
-ClientBroadcaster::unregister_client(const URI& uri)
+ClientBroadcaster::unregister_client(const Raul::URI& uri)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	const size_t erased = _clients.erase(uri);
 
 	if (erased > 0) {
-		LOG(info) << "Unregistered client: " << uri << endl;
-	} else {
-		LOG(warn) << "Failed to find client to unregister: " << uri << endl;
+		LOG(Raul::info)(Raul::fmt("Unregistered client <%1%>\n") % uri);
 	}
 
 	return (erased > 0);
@@ -66,7 +64,7 @@ ClientBroadcaster::unregister_client(const URI& uri)
  * unique identifier for registered clients).
  */
 SharedPtr<Interface>
-ClientBroadcaster::client(const URI& uri)
+ClientBroadcaster::client(const Raul::URI& uri)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	Clients::iterator i = _clients.find(uri);
@@ -87,7 +85,8 @@ ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 }
 
 void
-ClientBroadcaster::send_plugins_to(Interface* client, const NodeFactory::Plugins& plugins)
+ClientBroadcaster::send_plugins_to(Interface*                  client,
+                                   const NodeFactory::Plugins& plugins)
 {
 	client->bundle_begin();
 

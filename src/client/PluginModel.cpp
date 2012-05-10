@@ -28,7 +28,6 @@
 #include "ingen_config.h"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Client {
@@ -39,8 +38,8 @@ const LilvPlugins* PluginModel::_lilv_plugins = NULL;
 Sord::World* PluginModel::_rdf_world = NULL;
 
 PluginModel::PluginModel(Shared::URIs&               uris,
-                         const URI&                  uri,
-                         const URI&                  type_uri,
+                         const Raul::URI&            uri,
+                         const Raul::URI&            type_uri,
                          const Resource::Properties& properties)
 	: ResourceImpl(uris, uri)
 	, _type(type_from_uri(type_uri.str()))
@@ -60,17 +59,17 @@ PluginModel::PluginModel(Shared::URIs&               uris,
 	}
 }
 
-const Atom&
-PluginModel::get_property(const URI& key) const
+const Raul::Atom&
+PluginModel::get_property(const Raul::URI& key) const
 {
-	static const Atom nil;
-	const Atom& val = ResourceImpl::get_property(key);
+	static const Raul::Atom nil;
+	const Raul::Atom& val = ResourceImpl::get_property(key);
 	if (val.is_valid())
 		return val;
 
 	// No lv2:symbol from data or engine, invent one
 	if (key == _uris.lv2_symbol) {
-		const URI& uri = this->uri();
+		const Raul::URI& uri = this->uri();
 		size_t last_slash = uri.find_last_of('/');
 		size_t last_hash  = uri.find_last_of('#');
 		string symbol;
@@ -150,12 +149,12 @@ PluginModel::set(SharedPtr<PluginModel> p)
 	_signal_changed.emit();
 }
 
-Symbol
+Raul::Symbol
 PluginModel::default_node_symbol() const
 {
-	const Atom& name_atom = get_property(LV2_CORE__symbol);
+	const Raul::Atom& name_atom = get_property(LV2_CORE__symbol);
 	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String)
-		return Symbol::symbolify(name_atom.get_string());
+		return Raul::Symbol::symbolify(name_atom.get_string());
 	else
 		return "_";
 }
@@ -163,7 +162,7 @@ PluginModel::default_node_symbol() const
 string
 PluginModel::human_name() const
 {
-	const Atom& name_atom = get_property("http://usefulinc.com/ns/doap#name");
+	const Raul::Atom& name_atom = get_property("http://usefulinc.com/ns/doap#name");
 	if (name_atom.type() == _uris.forge.String)
 		return name_atom.get_string();
 	else

@@ -26,7 +26,7 @@ namespace Shared {
 
 Module::~Module()
 {
-	Raul::info << "[Module] Unloading " << library->get_name() << std::endl;
+	Raul::info("[Module] ")(Raul::fmt("Unloading %1%\n") % library->get_name());
 }
 
 } // namespace Shared

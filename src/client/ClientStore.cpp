@@ -25,12 +25,11 @@
 #include "raul/PathTable.hpp"
 #include "raul/log.hpp"
 
-#define LOG(s) s << "[ClientStore] "
+#define LOG(s) (s("[ClientStore] "))
 
 // #define INGEN_CLIENT_STORE_DUMP 1
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -102,15 +101,15 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 	     i != object->properties().end(); ++i)
 		object->signal_property().emit(i->first, i->second);
 
-	LOG(debug) << "Added " << object->path() << " {" << endl;
+	LOG(Raul::debug) << "Added " << object->path() << " {" << endl;
 	for (iterator i = begin(); i != end(); ++i) {
-		LOG(debug) << "\t" << i->first << endl;
+		LOG(Raul::debug) << "\t" << i->first << endl;
 	}
-	LOG(debug) << "}" << endl;
+	LOG(Raul::debug) << "}" << endl;
 }
 
 SharedPtr<ObjectModel>
-ClientStore::remove_object(const Path& path)
+ClientStore::remove_object(const Raul::Path& path)
 {
 	iterator i = find(path);
 
@@ -120,11 +119,11 @@ ClientStore::remove_object(const Path& path)
 		iterator                  end     = find_descendants_end(i);
 		SharedPtr<Store::Objects> removed = yank(i, end);
 
-		LOG(debug) << "Removing " << i->first << " {" << endl;
+		LOG(Raul::debug) << "Removing " << i->first << " {" << endl;
 		for (iterator i = removed->begin(); i != removed->end(); ++i) {
-			LOG(debug) << "\t" << i->first << endl;
+			LOG(Raul::debug) << "\t" << i->first << endl;
 		}
-		LOG(debug) << "}" << endl;
+		LOG(Raul::debug) << "}" << endl;
 
 		if (result)
 			result->signal_destroyed().emit();
@@ -148,7 +147,7 @@ ClientStore::remove_object(const Path& path)
 }
 
 SharedPtr<PluginModel>
-ClientStore::_plugin(const URI& uri)
+ClientStore::_plugin(const Raul::URI& uri)
 {
 	assert(uri.length() > 0);
 	Plugins::iterator i = _plugins->find(uri);
@@ -165,7 +164,7 @@ ClientStore::plugin(const Raul::URI& uri) const
 }
 
 SharedPtr<ObjectModel>
-ClientStore::_object(const Path& path)
+ClientStore::_object(const Raul::Path& path)
 {
 	assert(path.length() > 0);
 	iterator i = find(path);
@@ -180,15 +179,15 @@ ClientStore::_object(const Path& path)
 }
 
 SharedPtr<const ObjectModel>
-ClientStore::object(const Path& path) const
+ClientStore::object(const Raul::Path& path) const
 {
 	return const_cast<ClientStore*>(this)->_object(path);
 }
 
 SharedPtr<Resource>
-ClientStore::_resource(const URI& uri)
+ClientStore::_resource(const Raul::URI& uri)
 {
-	if (Path::is_path(uri))
+	if (Raul::Path::is_path(uri))
 		return _object(uri.str());
 	else
 		return _plugin(uri);
@@ -215,7 +214,7 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 /* ****** Signal Handlers ******** */
 
 void
-ClientStore::del(const URI& uri)
+ClientStore::del(const Raul::URI& uri)
 {
 	if (!Raul::Path::is_path(uri))
 		return;
@@ -223,16 +222,13 @@ ClientStore::del(const URI& uri)
 	const Raul::Path path(uri.str());
 	SharedPtr<ObjectModel> removed = remove_object(path);
 	removed.reset();
-	LOG(debug) << "Removed object " << path
-	           << ", count: " << removed.use_count();
+	LOG(Raul::debug) << "Removed object " << path
+	                 << ", count: " << removed.use_count();
 }
 
 void
-ClientStore::move(const Path& old_path_str, const Path& new_path_str)
+ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
 {
-	Path old_path(old_path_str);
-	Path new_path(new_path_str);
-
 	iterator parent = find(old_path);
 	if (parent == end()) {
 		LOG(Raul::error) << "Failed to find object " << old_path
@@ -240,27 +236,27 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 		return;
 	}
 
-	typedef Table<Path, SharedPtr<GraphObject> > Removed;
+	typedef Table<Raul::Path, SharedPtr<GraphObject> > Removed;
 
 	iterator           end     = find_descendants_end(parent);
 	SharedPtr<Removed> removed = yank(parent, end);
 
 	assert(removed->size() > 0);
 
-	typedef Table<Path, SharedPtr<GraphObject> > PathTable;
+	typedef Table<Raul::Path, SharedPtr<GraphObject> > PathTable;
 	for (PathTable::iterator i = removed->begin(); i != removed->end(); ++i) {
-		const Path& child_old_path = i->first;
-		assert(Path::descendant_comparator(old_path, child_old_path));
+		const Raul::Path& child_old_path = i->first;
+		assert(Raul::Path::descendant_comparator(old_path, child_old_path));
 
-		Path child_new_path;
+		Raul::Path child_new_path;
 		if (child_old_path == old_path)
 			child_new_path = new_path;
 		else
 			child_new_path = new_path.base()
 				+ child_old_path.substr(old_path.length() + 1);
 
-		LOG(info) << "Renamed " << child_old_path
-		          << " -> " << child_new_path << endl;
+		LOG(Raul::info)(Raul::fmt("Renamed %1% to %2%\n")
+		                % child_old_path % child_new_path);
 		PtrCast<ObjectModel>(i->second)->set_path(child_new_path);
 		i->first = child_new_path;
 	}
@@ -269,17 +265,17 @@ ClientStore::move(const Path& old_path_str, const Path& new_path_str)
 }
 
 void
-ClientStore::put(const URI&                  uri,
+ClientStore::put(const Raul::URI&            uri,
                  const Resource::Properties& properties,
                  Resource::Graph             ctx)
 {
 	typedef Resource::Properties::const_iterator Iterator;
 #ifdef INGEN_CLIENT_STORE_DUMP
-	LOG(info) << "PUT " << uri << " {" << endl;
+	LOG(Raul::info) << "PUT " << uri << " {" << endl;
 	for (Iterator i = properties.begin(); i != properties.end(); ++i)
-		LOG(info) << '\t' << i->first << " = " << _uris->forge.str(i->second)
+		LOG(Raul::info) << '\t' << i->first << " = " << _uris->forge.str(i->second)
 		          << " :: " << i->second.type() << endl;
-	LOG(info) << "}" << endl;
+	LOG(Raul::info) << "}" << endl;
 #endif
 
 	bool is_patch, is_node, is_port, is_output;
@@ -289,8 +285,8 @@ ClientStore::put(const URI&                  uri,
 	// Check if uri is a plugin
 	Iterator t = properties.find(_uris->rdf_type);
 	if (t != properties.end() && t->second.type() == _uris->forge.URI) {
-		const Atom& type = t->second;
-		const URI&         type_uri    = type.get_uri();
+		const Raul::Atom&  type        = t->second;
+		const Raul::URI&   type_uri    = type.get_uri();
 		const Plugin::Type plugin_type = Plugin::type_from_uri(type_uri);
 		if (plugin_type == Plugin::Patch) {
 			is_patch = true;
@@ -302,12 +298,12 @@ ClientStore::put(const URI&                  uri,
 		}
 	}
 
-	if (!Path::is_valid(uri.str())) {
+	if (!Raul::Path::is_valid(uri.str())) {
 		LOG(Raul::error) << "Bad path `" << uri.str() << "'" << endl;
 		return;
 	}
 
-	const Path path(uri.str());
+	const Raul::Path path(uri.str());
 
 	SharedPtr<ObjectModel> obj = PtrCast<ObjectModel>(_object(path));
 	if (obj) {
@@ -328,8 +324,8 @@ ClientStore::put(const URI&                  uri,
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == _uris->forge.URI) {
 			if (!(plug = _plugin(p->second.get_uri()))) {
-				LOG(warn) << "Unable to find plugin "
-				          << p->second.get_uri() << endl;
+				LOG(Raul::warn)(Raul::fmt("Unable to find plugin <%1%>\n")
+				                % p->second.get_uri());
 				plug = SharedPtr<PluginModel>(
 					new PluginModel(uris(),
 					                p->second.get_uri(),
@@ -342,7 +338,7 @@ ClientStore::put(const URI&                  uri,
 			n->set_properties(properties);
 			add_object(n);
 		} else {
-			LOG(warn) << "Node " << path << " has no plugin" << endl;
+			LOG(Raul::warn)(Raul::fmt("Node %1% has no plugin\n") % path);
 		}
 	} else if (is_port) {
 		PortModel::Direction pdir = (is_output)
@@ -359,54 +355,54 @@ ClientStore::put(const URI&                  uri,
 			LOG(Raul::error) << "Port " << path << " has no index" << endl;
 		}
 	} else {
-		LOG(warn) << "Ignoring object " << path << " with unknown type "
-			<< is_patch << " " << is_node << " " << is_port << endl;
+		LOG(Raul::warn)(Raul::fmt("Ignoring object %1% with unknown type\n")
+		                % path);
 	}
 }
 
 void
-ClientStore::delta(const URI&                  uri,
+ClientStore::delta(const Raul::URI&            uri,
                    const Resource::Properties& remove,
                    const Resource::Properties& add)
 {
 	typedef Resource::Properties::const_iterator iterator;
 #ifdef INGEN_CLIENT_STORE_DUMP
-	LOG(info) << "DELTA " << uri << " {" << endl;
+	LOG(Raul::info) << "DELTA " << uri << " {" << endl;
 	for (iterator i = remove.begin(); i != remove.end(); ++i)
-		LOG(info) << "    - " << i->first
-		          << " = " << _uris->forge.str(i->second)
-		          << " :: " << i->second.type() << endl;
+		LOG(Raul::info) << "    - " << i->first
+		                << " = " << _uris->forge.str(i->second)
+		                << " :: " << i->second.type() << endl;
 	for (iterator i = add.begin(); i != add.end(); ++i)
-		LOG(info) << "    + " << i->first
-		          << " = " << _uris->forge.str(i->second)
-		          << " :: " << i->second.type() << endl;
-	LOG(info) << "}" << endl;
+		LOG(Raul::info) << "    + " << i->first
+		                << " = " << _uris->forge.str(i->second)
+		                << " :: " << i->second.type() << endl;
+	LOG(Raul::info) << "}" << endl;
 #endif
 
-	if (!Path::is_valid(uri.str())) {
+	if (!Raul::Path::is_valid(uri.str())) {
 		LOG(Raul::error) << "Bad path `" << uri.str() << "'" << endl;
 		return;
 	}
 
-	const Path path(uri.str());
+	const Raul::Path path(uri.str());
 
 	SharedPtr<ObjectModel> obj = _object(path);
 	if (obj) {
 		obj->remove_properties(remove);
 		obj->add_properties(add);
 	} else {
-		LOG(warn) << "Failed to find object `" << path << "'" << endl;
+		LOG(Raul::warn)(Raul::fmt("Failed to find object `%1%'\n") % path);
 	}
 }
 
 void
-ClientStore::set_property(const URI&  subject_uri,
-                          const URI&  predicate,
-                          const Atom& value)
+ClientStore::set_property(const Raul::URI&  subject_uri,
+                          const Raul::URI&  predicate,
+                          const Raul::Atom& value)
 {
 	if (subject_uri == _uris->ingen_engine) {
-		LOG(info) << "Engine property " << predicate
-		          << " = " << _uris->forge.str(value) << endl;
+		LOG(Raul::info)(Raul::fmt("Engine property <%1%> = %2%\n")
+		                % predicate % _uris->forge.str(value));
 		return;
 	}
 	SharedPtr<Resource> subject = _resource(subject_uri);
@@ -417,13 +413,14 @@ ClientStore::set_property(const URI&  subject_uri,
 		if (plugin)
 			plugin->set_property(predicate, value);
 		else
-			LOG(warn) << "Property '" << predicate << "' for unknown object "
-			          << subject_uri << endl;
+			LOG(Raul::warn)(Raul::fmt("Property <%1%> for unknown object %2%\n")
+			                % predicate % subject_uri);
 	}
 }
 
 SharedPtr<PatchModel>
-ClientStore::connection_patch(const Path& tail_path, const Path& head_path)
+ClientStore::connection_patch(const Raul::Path& tail_path,
+                              const Raul::Path& head_path)
 {
 	SharedPtr<PatchModel> patch;
 
@@ -447,8 +444,8 @@ ClientStore::connection_patch(const Path& tail_path, const Path& head_path)
 }
 
 bool
-ClientStore::attempt_connection(const Path& tail_path,
-                                const Path& head_path)
+ClientStore::attempt_connection(const Raul::Path& tail_path,
+                                const Raul::Path& head_path)
 {
 	SharedPtr<PortModel> tail = PtrCast<PortModel>(_object(tail_path));
 	SharedPtr<PortModel> head = PtrCast<PortModel>(_object(head_path));
@@ -468,24 +465,24 @@ ClientStore::attempt_connection(const Path& tail_path,
 }
 
 void
-ClientStore::connect(const Path& src_path,
-                     const Path& dst_path)
+ClientStore::connect(const Raul::Path& src_path,
+                     const Raul::Path& dst_path)
 {
 	attempt_connection(src_path, dst_path);
 }
 
 void
-ClientStore::disconnect(const Path& src,
-                        const Path& dst)
+ClientStore::disconnect(const Raul::Path& src,
+                        const Raul::Path& dst)
 {
-	if (!Path::is_path(src) && !Path::is_path(dst)) {
+	if (!Raul::Path::is_path(src) && !Raul::Path::is_path(dst)) {
 		std::cerr << "Bad disconnect notification " << src
 		          << " => " << dst << std::endl;
 		return;
 	}
 
-	const Path src_path(src.str());
-	const Path dst_path(dst.str());
+	const Raul::Path src_path(src.str());
+	const Raul::Path dst_path(dst.str());
 
 	SharedPtr<PortModel> tail = PtrCast<PortModel>(_object(src_path));
 	SharedPtr<PortModel> head = PtrCast<PortModel>(_object(dst_path));

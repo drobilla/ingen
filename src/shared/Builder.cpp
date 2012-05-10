@@ -26,7 +26,6 @@
 #include "raul/Path.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Shared {

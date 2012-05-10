@@ -25,8 +25,6 @@
 #include "Engine.hpp"
 #include "ThreadManager.hpp"
 
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 

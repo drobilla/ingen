@@ -52,7 +52,7 @@ set_bundle_path_from_code(void* function)
 	const char* bin_loc = dli.dli_fname;
 #endif
 
-	Raul::info << "[Module] Binary location: " << bin_loc << std::endl;
+	Raul::info(Raul::fmt("Binary location: %1%\n") % bin_loc);
 
 	string bundle = bin_loc;
 	bundle = bundle.substr(0, bundle.find_last_of(G_DIR_SEPARATOR));

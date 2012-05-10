@@ -33,9 +33,6 @@
 #include "ProcessContext.hpp"
 #include "SetPortValue.hpp"
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 namespace Events {
@@ -145,7 +142,7 @@ SetPortValue::apply(Context& context)
 			return;
 		}
 
-		warn << "Unknown value type " << (int)_value.type() << endl;
+		Raul::warn(Raul::fmt("Unknown value type %1%\n") % _value.type());
 	}
 }
 

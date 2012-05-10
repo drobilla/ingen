@@ -18,7 +18,6 @@
 #include "PluginImpl.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
@@ -27,7 +26,7 @@ void
 PluginImpl::load()
 {
 	if (!_module) {
-		debug << "Loading plugin library " << _library_path << endl;
+		Raul::debug << "Loading plugin library " << _library_path << endl;
 		_module = new Glib::Module(_library_path, Glib::MODULE_BIND_LOCAL);
 		if (!(*_module))
 			delete _module;
@@ -38,7 +37,7 @@ void
 PluginImpl::unload()
 {
 	if (_module) {
-		debug << "Unloading plugin library " << _library_path << endl;
+		Raul::debug << "Unloading plugin library " << _library_path << endl;
 		delete _module;
 		_module = NULL;
 	}

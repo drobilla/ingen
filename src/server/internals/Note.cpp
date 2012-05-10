@@ -37,7 +37,6 @@
 #define LOG(s) s << "[NoteNode] "
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {

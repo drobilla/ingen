@@ -50,7 +50,6 @@
 #endif
 
 using namespace std;
-using namespace Raul;
 using namespace Ingen;
 
 Ingen::Shared::World* world = NULL;
@@ -168,13 +167,13 @@ main(int argc, char** argv)
 
 	// Load a patch
 	if (conf.option("load").is_valid() || !conf.files().empty()) {
-		boost::optional<Path>   parent;
-		boost::optional<Symbol> symbol;
+		boost::optional<Raul::Path>   parent;
+		boost::optional<Raul::Symbol> symbol;
 
 		const Raul::Configuration::Value& path_option = conf.option("path");
 		if (path_option.is_valid()) {
-			if (Path::is_valid(path_option.get_string())) {
-				const Path p(path_option.get_string());
+			if (Raul::Path::is_valid(path_option.get_string())) {
+				const Raul::Path p(path_option.get_string());
 				if (!p.is_root()) {
 					parent = p.parent();
 					symbol = p.symbol();
@@ -221,7 +220,7 @@ main(int argc, char** argv)
 		while (world->local_engine()->main_iteration()) {
 			Glib::usleep(125000);  // 1/8 second
 		}
-		info << "Finished main loop" << endl;
+		Raul::info("Finished main loop\n");
 	}
 
 	// Shut down

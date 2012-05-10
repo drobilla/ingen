@@ -27,7 +27,6 @@
 #include "ThreadManager.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {

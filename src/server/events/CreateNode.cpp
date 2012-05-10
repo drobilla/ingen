@@ -32,9 +32,6 @@
 #include "PortImpl.hpp"
 #include "Driver.hpp"
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 namespace Events {
@@ -43,8 +40,8 @@ CreateNode::CreateNode(Engine&                     engine,
                        Interface*                  client,
                        int32_t                     id,
                        SampleCount                 timestamp,
-                       const Path&                 path,
-                       const URI&                  plugin_uri,
+                       const Raul::Path&           path,
+                       const Raul::URI&            plugin_uri,
                        const Resource::Properties& properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)

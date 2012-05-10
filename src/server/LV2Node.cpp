@@ -40,7 +40,6 @@
 #include "ProcessContext.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
@@ -89,7 +88,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 				lilv_instance_free);
 
 		if (!_prepared_instances->at(i)) {
-			error << "Failed to instantiate plugin" << endl;
+			Raul::error << "Failed to instantiate plugin" << endl;
 			return false;
 		}
 
@@ -164,8 +163,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 				lilv_instance_free);
 
 		if (!instance(i)) {
-			error << "Failed to instantiate plugin " << _lv2_plugin->uri()
-			      << " voice " << i << endl;
+			Raul::error << "Failed to instantiate plugin " << _lv2_plugin->uri()
+			            << " voice " << i << endl;
 			return false;
 		}
 
@@ -178,8 +177,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 	lilv_node_free(work_schedule);
 
-	string port_name;
-	Path   port_path;
+	string     port_name;
+	Raul::Path port_path;
 
 	PortImpl* port = NULL;
 	bool      ret  = true;
@@ -213,9 +212,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 		// LV2 port symbols are guaranteed to be unique, valid C identifiers
 		port_name = lilv_node_as_string(lilv_port_get_symbol(plug, id));
 
-		if (!Symbol::is_valid(port_name)) {
-			error << "Plugin " << _lv2_plugin->uri() << " port " << j
-				<< " has illegal symbol `" << port_name << "'" << endl;
+		if (!Raul::Symbol::is_valid(port_name)) {
+			Raul::error << "Plugin " << _lv2_plugin->uri() << " port " << j
+			            << " has illegal symbol `" << port_name << "'" << endl;
 			ret = false;
 			break;
 		}
@@ -288,7 +287,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
-			warn << "Unknown type or direction for port `" << port_name << "'" << endl;
+			Raul::warn << "Unknown type or direction for port `" << port_name << "'" << endl;
 			ret = false;
 			break;
 		}

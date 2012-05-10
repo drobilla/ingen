@@ -24,7 +24,6 @@
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Client {
@@ -42,8 +41,8 @@ lv2_ui_write(SuilController controller,
 
 	const NodeModel::Ports& ports = ui->node()->ports();
 	if (port_index >= ports.size()) {
-		error << "UI for " << ui->node()->plugin()->uri()
-		      << " tried to write to non-existent port " << port_index << endl;
+		Raul::error << (Raul::fmt("%1% UI tried to write to invalid port %2%")
+		                % ui->node()->plugin()->uri() % port_index) << endl;
 		return;
 	}
 
@@ -71,8 +70,8 @@ lv2_ui_write(SuilController controller,
 		                                    val);
 
 	} else {
-		warn << "Unknown value format " << format
-		     << " from LV2 UI " << ui->node()->plugin()->uri() << endl;
+		Raul::warn(Raul::fmt("Unknown value format %1% from LV2 UI\n")
+		           % format % ui->node()->plugin()->uri());
 	}
 }
 
@@ -145,7 +144,7 @@ PluginUI::create(Ingen::Shared::World*      world,
 	if (instance) {
 		ret->_instance = instance;
 	} else {
-		error << "Failed to instantiate LV2 UI" << endl;
+		Raul::error << "Failed to instantiate LV2 UI" << endl;
 		ret.reset();
 	}
 

@@ -47,10 +47,9 @@
 #include "ingen/shared/World.hpp"
 #include "util.hpp"
 
-#define LOG(s) s << "[JackDriver] "
+#define LOG(s) (s("[JackDriver] "))
 
 using namespace std;
-using namespace Raul;
 
 typedef jack_default_audio_sample_t jack_sample_t;
 
@@ -87,7 +86,8 @@ JackPort::create()
 			0);
 
 	if (_jack_port == NULL) {
-		error << "[JackPort] Failed to register port " << _patch_port->path() << endl;
+		LOG(Raul::error)(Raul::fmt("Failed to register port %1%\n")
+		                 % _patch_port->path());
 		throw JackDriver::PortRegistrationFailedException();
 	}
 }
@@ -97,7 +97,7 @@ JackPort::destroy()
 {
 	assert(_jack_port);
 	if (jack_port_unregister(_driver->jack_client(), _jack_port))
-		error << "[JackPort] Unable to unregister port" << endl;
+		LOG(Raul::error)("Unable to unregister port\n");
 	_jack_port = NULL;
 }
 
@@ -136,7 +136,7 @@ JackPort::pre_process(ProcessContext& context)
 
 			if (!patch_buf->append_event(
 				    ev.time, ev.size, _driver->_midi_event_type, ev.buffer)) {
-				LOG(warn) << "Failed to write MIDI to port buffer, event(s) lost!" << endl;
+				LOG(Raul::warn)("Failed to write to MIDI buffer, events lost!\n");
 			}
 		}
 	}
@@ -208,8 +208,8 @@ JackDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(),
 			                           JackSessionID, NULL,
 			                           uuid.c_str());
-			LOG(info) << "Connected to JACK server as client `"
-			          << client_name.c_str() << "' UUID `" << uuid << "'" << endl;
+			LOG(Raul::info)(Raul::fmt("Connected to JACK as `%1%' (UUID `%2%')\n")
+			                % client_name.c_str() % uuid);
 		}
 		#endif
 
@@ -218,7 +218,8 @@ JackDriver::attach(const std::string& server_name,
 			if ((_client = jack_client_open(client_name.c_str(),
 			                               JackServerName, NULL,
 			                                server_name.c_str()))) {
-				LOG(info) << "Connected to JACK server `" << server_name << "'" << endl;
+				LOG(Raul::info)(Raul::fmt("Connected to JACK server `%1%'\n")
+				          % server_name);
 			}
 		}
 
@@ -226,12 +227,12 @@ JackDriver::attach(const std::string& server_name,
 		// Connect to default server
 		if (!_client) {
 			if ((_client = jack_client_open(client_name.c_str(), JackNullOption, NULL)))
-				LOG(info) << "Connected to default JACK server" << endl;
+				LOG(Raul::info)("Connected to default JACK server\n");
 		}
 
 		// Still failed
 		if (!_client) {
-			LOG(error) << "Unable to connect to Jack" << endl;
+			LOG(Raul::error)("Unable to connect to Jack\n");
 			return false;
 		}
 	} else {
@@ -244,7 +245,6 @@ JackDriver::attach(const std::string& server_name,
 	jack_on_shutdown(_client, shutdown_cb, this);
 
 	jack_set_thread_init_callback(_client, thread_init_cb, this);
-	jack_set_sample_rate_callback(_client, sample_rate_cb, this);
 	jack_set_buffer_size_callback(_client, block_length_cb, this);
 #ifdef INGEN_JACK_SESSION
 	jack_set_session_callback(_client, session_cb, this);
@@ -262,7 +262,7 @@ JackDriver::activate()
 	Shared::World* world = _engine.world();
 
 	if (_is_activated) {
-		LOG(warn) << "Jack driver already activated" << endl;
+		LOG(Raul::warn)("Jack driver already activated\n");
 		return;
 	}
 
@@ -279,10 +279,10 @@ JackDriver::activate()
 		is_realtime());
 
 	if (jack_activate(_client)) {
-		LOG(error) << "Could not activate Jack client, aborting" << endl;
+		LOG(Raul::error)("Could not activate Jack client, aborting\n");
 		exit(EXIT_FAILURE);
 	} else {
-		LOG(info) << "Activated Jack client" << endl;
+		LOG(Raul::info)("Activated Jack client\n");
 	}
 }
 
@@ -305,7 +305,7 @@ JackDriver::deactivate()
 
 		_jack_threads.clear();
 
-		LOG(info) << "Deactivated Jack client" << endl;
+		LOG(Raul::info)("Deactivated Jack client\n");
 	}
 }
 
@@ -333,7 +333,7 @@ JackDriver::add_port(EnginePort* port)
  * It is the callers responsibility to delete the returned port.
  */
 Raul::Deletable*
-JackDriver::remove_port(const Path& path, EnginePort** port)
+JackDriver::remove_port(const Raul::Path& path, EnginePort** port)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
@@ -346,12 +346,12 @@ JackDriver::remove_port(const Path& path, EnginePort** port)
 		}
 	}
 
-	LOG(warn) << "Unable to find port " << path << endl;
+	LOG(Raul::warn)(Raul::fmt("Unable to find port %1%\n") % path);
 	return NULL;
 }
 
 EnginePort*
-JackDriver::port(const Path& path)
+JackDriver::port(const Raul::Path& path)
 {
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
@@ -377,7 +377,7 @@ JackDriver::create_port(DuplexPort* patch_port)
 }
 
 EnginePort*
-JackDriver::engine_port(const Path& path)
+JackDriver::engine_port(const Raul::Path& path)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
@@ -428,7 +428,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 void
 JackDriver::_thread_init_cb()
 {
-	Raul::Thread* thread = &Thread::get();
+	Raul::Thread* thread = &Raul::Thread::get();
 	thread->set_name("Jack");
 	thread->set_context(THREAD_PROCESS);
 	_jack_threads.push_back(SharedPtr<Raul::Thread>(thread));
@@ -437,22 +437,10 @@ JackDriver::_thread_init_cb()
 void
 JackDriver::_shutdown_cb()
 {
-	LOG(info) << "Jack shutdown.  Exiting." << endl;
+	LOG(Raul::info)("Jack shutdown, exiting\n");
 	_is_activated = false;
 	_jack_threads.clear();
 	_client = NULL;
-}
-
-int
-JackDriver::_sample_rate_cb(jack_nframes_t nframes)
-{
-	if (_is_activated) {
-		LOG(error) << "On-the-fly sample rate changing not supported (yet).  Aborting." << endl;
-		exit(EXIT_FAILURE);
-	} else {
-		_sample_rate = nframes;
-	}
-	return 0;
 }
 
 int
@@ -471,7 +459,7 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 void
 JackDriver::_session_cb(jack_session_event_t* event)
 {
-	LOG(info) << "Jack session save to " << event->session_dir << endl;
+	LOG(Raul::info)(Raul::fmt("Jack session save to %1%\n") % event->session_dir);
 
 	const string cmd = (boost::format("ingen -eg -n %1% -u %2% -l ${SESSION_DIR}")
 	                    % jack_get_client_name(_client)
@@ -491,7 +479,7 @@ JackDriver::_session_cb(jack_session_event_t* event)
 	case JackSessionSave:
 		break;
 	case JackSessionSaveAndQuit:
-		LOG(warn) << "Jack session quit" << endl;
+		LOG(Raul::warn)("Jack session quit\n");
 		_engine.quit();
 		break;
 	case JackSessionSaveTemplate:

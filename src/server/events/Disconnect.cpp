@@ -34,9 +34,6 @@
 #include "ThreadManager.hpp"
 #include "events/Disconnect.hpp"
 
-using namespace std;
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 namespace Events {

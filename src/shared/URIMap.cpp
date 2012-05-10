@@ -28,7 +28,6 @@
 #include "raul/log.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Shared {

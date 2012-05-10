@@ -25,7 +25,6 @@
 #include "ingen/shared/URIs.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Client {
@@ -148,8 +147,8 @@ PatchModel::remove_connection(const Port* tail, const Ingen::Port* head)
 		_signal_removed_connection.emit(c);
 		_connections->erase(i);
 	} else {
-		warn << "[PatchModel::remove_connection] Failed to find connection " <<
-				tail->path() << " -> " << head->path() << endl;
+		Raul::warn(Raul::fmt("Failed to remove patch connection %1% => %2%\n")
+		           % tail->path() % head->path());
 	}
 }
 

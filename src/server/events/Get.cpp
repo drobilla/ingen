@@ -24,17 +24,15 @@
 #include "ObjectSender.hpp"
 #include "PluginImpl.hpp"
 
-using namespace Raul;
-
 namespace Ingen {
 namespace Server {
 namespace Events {
 
-Get::Get(Engine&     engine,
-         Interface*  client,
-         int32_t     id,
-         SampleCount timestamp,
-         const URI&  uri)
+Get::Get(Engine&          engine,
+         Interface*       client,
+         int32_t          id,
+         SampleCount      timestamp,
+         const Raul::URI& uri)
 	: Event(engine, client, id, timestamp)
 	, _uri(uri)
 	, _object(NULL)
@@ -50,8 +48,8 @@ Get::pre_process()
 
 	if (_uri == "ingen:plugins") {
 		_plugins = _engine.node_factory()->plugins();
-	} else if (Path::is_valid(_uri.str())) {
-		_object = _engine.engine_store()->find_object(Path(_uri.str()));
+	} else if (Raul::Path::is_valid(_uri.str())) {
+		_object = _engine.engine_store()->find_object(Raul::Path(_uri.str()));
 	} else {
 		_plugin = _engine.node_factory()->plugin(_uri);
 	}

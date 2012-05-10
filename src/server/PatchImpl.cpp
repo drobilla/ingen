@@ -34,7 +34,6 @@
 #include "ThreadManager.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
@@ -315,7 +314,7 @@ PatchImpl::remove_connection(const PortImpl* tail, const PortImpl* dst_port)
 		_connections.erase(i);
 		return c;
 	} else {
-		error << "[PatchImpl::remove_connection] Connection not found" << endl;
+		Raul::error << "[PatchImpl::remove_connection] Connection not found" << endl;
 		return SharedPtr<ConnectionImpl>();
 	}
 }
@@ -349,7 +348,7 @@ PatchImpl::create_port(BufferFactory& bufs,
                        bool           polyphonic)
 {
 	if (type == PortType::UNKNOWN) {
-		error << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
+		Raul::error << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
 		return NULL;
 	}
 
@@ -393,7 +392,7 @@ PatchImpl::remove_port(const string& symbol)
 	}
 
 	if ( ! found)
-		error << "[PatchImpl::remove_port] Port not found!" << endl;
+		Raul::error << "[PatchImpl::remove_port] Port not found!" << endl;
 
 	return ret;
 }

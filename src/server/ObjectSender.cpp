@@ -27,7 +27,6 @@
 #include "AudioBuffer.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace Server {
@@ -75,8 +74,8 @@ ObjectSender::send_patch(Interface*       client,
 
 	if (recursive) {
 		// Send nodes
-		for (List<NodeImpl*>::const_iterator j = patch->nodes().begin();
-				j != patch->nodes().end(); ++j) {
+		for (Raul::List<NodeImpl*>::const_iterator j = patch->nodes().begin();
+		     j != patch->nodes().end(); ++j) {
 			const NodeImpl* const node = (*j);
 			send_node(client, node, true, false);
 		}
@@ -109,7 +108,7 @@ ObjectSender::send_node(Interface* client, const NodeImpl* node, bool recursive,
 	}
 
 	if (plugin->uri().length() == 0) {
-		error << "Node " << node->path() << "'s plugin has no URI!  Not sending." << endl;
+		Raul::error << "Node " << node->path() << "'s plugin has no URI!  Not sending." << endl;
 		return;
 	}
 
