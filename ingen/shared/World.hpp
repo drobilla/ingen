@@ -76,14 +76,14 @@ public:
 	typedef SharedPtr<Interface> (*InterfaceFactory)(
 			World*               world,
 			const std::string&   engine_url,
-			SharedPtr<Interface> respond_to);
+			SharedPtr<Interface> respondee);
 
 	virtual void add_interface_factory(const std::string& scheme,
 	                                   InterfaceFactory   factory);
 
 	virtual SharedPtr<Interface> interface(
 		const std::string&   engine_url,
-		SharedPtr<Interface> respond_to);
+		SharedPtr<Interface> respondee);
 
 	virtual bool run(const std::string& mime_type,
 	                 const std::string& filename);

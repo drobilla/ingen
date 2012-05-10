@@ -4,12 +4,26 @@ from waflib.extras import autowaf as autowaf
 def build(bld):
     if bld.is_defined('HAVE_SOCKET'):
         obj = bld(features        = 'cxx cxxshlib',
-                  source          = ['SocketReader.cpp',
+                  source          = ['Socket.cpp',
                                      'SocketListener.cpp',
+                                     'SocketReader.cpp',
+                                     'SocketWriter.cpp',
                                      'ingen_socket_server.cpp'],
                   includes        = ['.', '../..'],
                   name            = 'libingen_socket_server',
                   target          = 'ingen_socket_server',
                   install_path    = '${LIBDIR}',
                   use             = 'libingen_server')
-        autowaf.use_lib(bld, obj, 'RAUL LIBLO')
+        autowaf.use_lib(bld, obj, 'RAUL')
+
+        obj = bld(features        = 'cxx cxxshlib',
+                  source          = ['Socket.cpp',
+                                     'SocketReader.cpp',
+                                     'SocketWriter.cpp',
+                                     'ingen_socket_client.cpp'],
+                  includes        = ['.', '../..'],
+                  name            = 'libingen_socket_client',
+                  target          = 'ingen_socket_client',
+                  install_path    = '${LIBDIR}',
+                  use             = 'libingen_server')
+        autowaf.use_lib(bld, obj, 'RAUL')

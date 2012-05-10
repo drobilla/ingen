@@ -35,10 +35,9 @@ namespace Ingen {
 namespace Server {
 
 EventWriter::EventWriter(Engine& engine)
-	: _request_client(NULL)
+	: _engine(engine)
+	, _respondee(NULL)
 	, _request_id(-1)
-	, _engine(engine)
-	, _in_bundle(false)
 {
 }
 
@@ -49,48 +48,32 @@ EventWriter::~EventWriter()
 SampleCount
 EventWriter::now() const
 {
-	// Exactly one cycle latency (some could run ASAP if we get lucky, but not always, and a slight
-	// constant latency is far better than jittery lower (average) latency
-	if (_engine.driver())
-		return _engine.driver()->frame_time() + _engine.driver()->block_length();
-	else
-		return 0;
+	/* Exactly one cycle latency (some could run ASAP if we get lucky, but not
+	   always, and a slight constant latency is far better than jittery lower
+	   (average) latency */
+	return (_engine.driver())
+		? _engine.driver()->frame_time() + _engine.driver()->block_length()
+		: 0;
 }
 
 void
 EventWriter::set_response_id(int32_t id)
 {
-	if (!_request_client) {  // Kludge
-		_request_client = _engine.broadcaster()->client(
+	if (!_respondee) {  // Kludge
+		_respondee = _engine.broadcaster()->client(
 			"http://drobilla.net/ns/ingen#internal");
 	}
 	_request_id = id;
 }
-
-/* *** ServerInterface implementation below here *** */
-
-// Bundle commands
-
-void
-EventWriter::bundle_begin()
-{
-	_in_bundle = true;
-}
-
-void
-EventWriter::bundle_end()
-{
-	_in_bundle = false;
-}
-
-// Object commands
 
 void
 EventWriter::put(const URI&                  uri,
                  const Resource::Properties& properties,
                  const Resource::Graph       ctx)
 {
-	_engine.enqueue_event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), true, ctx, uri, properties));
+	_engine.enqueue_event(
+		new Events::SetMetadata(_engine, _respondee, _request_id, now(),
+		                        true, ctx, uri, properties));
 }
 
 void
@@ -98,26 +81,31 @@ EventWriter::delta(const URI&                  uri,
                    const Resource::Properties& remove,
                    const Resource::Properties& add)
 {
-	_engine.enqueue_event(new Events::SetMetadata(_engine, _request_client, _request_id, now(), false, Resource::DEFAULT, uri, add, remove));
+	_engine.enqueue_event(
+		new Events::SetMetadata(_engine, _respondee, _request_id, now(),
+		                        false, Resource::DEFAULT, uri, add, remove));
 }
 
 void
 EventWriter::move(const Path& old_path,
                   const Path& new_path)
 {
-	_engine.enqueue_event(new Events::Move(_engine, _request_client, _request_id, now(), old_path, new_path));
+	_engine.enqueue_event(
+		new Events::Move(_engine, _respondee, _request_id, now(),
+		                 old_path, new_path));
 }
 
 void
 EventWriter::del(const URI& uri)
 {
 	if (uri == "ingen:engine") {
-		if (_request_client) {
-			_request_client->response(_request_id, SUCCESS);
+		if (_respondee) {
+			_respondee->response(_request_id, SUCCESS);
 		}
 		_engine.quit();
 	} else {
-		_engine.enqueue_event(new Events::Delete(_engine, _request_client, _request_id, now(), uri));
+		_engine.enqueue_event(
+			new Events::Delete(_engine, _respondee, _request_id, now(), uri));
 	}
 }
 
@@ -125,7 +113,9 @@ void
 EventWriter::connect(const Path& tail_path,
                      const Path& head_path)
 {
-	_engine.enqueue_event(new Events::Connect(_engine, _request_client, _request_id, now(), tail_path, head_path));
+	_engine.enqueue_event(
+		new Events::Connect(_engine, _respondee, _request_id, now(),
+		                    tail_path, head_path));
 
 }
 
@@ -139,15 +129,18 @@ EventWriter::disconnect(const Path& src,
 		return;
 	}
 
-	_engine.enqueue_event(new Events::Disconnect(_engine, _request_client, _request_id, now(),
-	                                   Path(src.str()), Path(dst.str())));
+	_engine.enqueue_event(
+		new Events::Disconnect(_engine, _respondee, _request_id, now(),
+		                       src, dst));
 }
 
 void
 EventWriter::disconnect_all(const Path& patch_path,
                             const Path& path)
 {
-	_engine.enqueue_event(new Events::DisconnectAll(_engine, _request_client, _request_id, now(), patch_path, path));
+	_engine.enqueue_event(
+		new Events::DisconnectAll(_engine, _respondee, _request_id, now(),
+		                          patch_path, path));
 }
 
 void
@@ -159,27 +152,28 @@ EventWriter::set_property(const URI&  uri,
 	    && value.type() == _engine.world()->forge().Bool) {
 		if (value.get_bool()) {
 			_engine.activate();
-			_engine.enqueue_event(new Events::Ping(_engine, _request_client, _request_id, now()));
+			_engine.enqueue_event(
+				new Events::Ping(_engine, _respondee, _request_id, now()));
 		} else {
-			_engine.enqueue_event(new Events::Deactivate(_engine, _request_client, _request_id, now()));
+			_engine.enqueue_event(
+				new Events::Deactivate(_engine, _respondee, _request_id, now()));
 		}
 	} else {
 		Resource::Properties remove;
 		remove.insert(make_pair(predicate, _engine.world()->uris()->wildcard));
 		Resource::Properties add;
 		add.insert(make_pair(predicate, value));
-		_engine.enqueue_event(new Events::SetMetadata(
-			            _engine, _request_client, _request_id, now(), false, Resource::DEFAULT,
-			            uri, add, remove));
+		_engine.enqueue_event(
+			new Events::SetMetadata(_engine, _respondee, _request_id, now(),
+			                        false, Resource::DEFAULT, uri, add, remove));
 	}
 }
-
-// Requests //
 
 void
 EventWriter::get(const URI& uri)
 {
-	_engine.enqueue_event(new Events::Get(_engine, _request_client, _request_id, now(), uri));
+	_engine.enqueue_event(
+		new Events::Get(_engine, _respondee, _request_id, now(), uri));
 }
 
 } // namespace Server

@@ -523,7 +523,7 @@ Contributors:
                         <property name="can_focus">True</property>
                         <property name="activates_default">True</property>
                         <property name="width_chars">28</property>
-                        <property name="text" translatable="yes">osc.udp://localhost:16180</property>
+                        <property name="text" translatable="yes">unix:///tmp/ingen.sock</property>
                       </object>
                       <packing>
                         <property name="expand">True</property>

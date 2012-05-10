@@ -264,6 +264,8 @@ AtomWriter::response(int32_t id, Status status)
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Response);
 	lv2_atom_forge_property_head(&_forge, _uris.patch_request, 0);
 	lv2_atom_forge_int(&_forge, id);
+	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
+	lv2_atom_forge_int(&_forge, status);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }

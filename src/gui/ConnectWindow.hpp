@@ -32,7 +32,7 @@ class App;
 /** The initially visible "Connect to engine" window.
  *
  * This handles actually connecting to the engine and making sure everything
- * is ready before really launching the app (eg wait for the root patch).
+ * is ready before really launching the app.
  *
  * \ingroup GUI
  */

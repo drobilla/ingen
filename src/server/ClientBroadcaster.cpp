@@ -39,14 +39,8 @@ void
 ClientBroadcaster::register_client(const URI& uri, Interface* client)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
-	Clients::iterator i = _clients.find(uri);
-
-	if (i == _clients.end()) {
-		_clients[uri] = client;
-		LOG(info) << "Registered client: " << uri << endl;
-	} else {
-		LOG(warn) << "Client already registered: " << uri << endl;
-	}
+	LOG(info) << "Registered client: " << uri << endl;
+	_clients[uri] = client;
 }
 
 /** Remove a client from the list of registered clients.

@@ -35,7 +35,6 @@ class Client:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             parsed = re.split('[:/]', uri[len('tcp://'):])
             addr = (parsed[0], int(parsed[1]))
-            print addr
             self.sock.connect(addr)
 
     def __del__(self):
@@ -49,12 +48,12 @@ class Client:
 
     def send(self, msg):
         self.sock.send(self.msgencode(msg))
-        response = self.sock.recv(1024)
-        if response != self.msgencode('OK'):
-            print('Error: %s' % response)
-            return False
-        else:
-            return True
+        #response = self.sock.recv(1024)
+        # if response != self.msgencode('OK'):
+        #     print('Error: %s' % response)
+        #     return False
+        # else:
+        #     return True
         
     def put(self, path, body):
         return self.send('''

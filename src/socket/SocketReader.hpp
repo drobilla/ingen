@@ -20,19 +20,24 @@
 #include "raul/Thread.hpp"
 #include "sord/sord.h"
 
+#include "Socket.hpp"
+
 namespace Ingen {
 
-namespace Shared {
-class World;
 class Interface;
-}
+
+namespace Shared { class World; }
 
 namespace Socket {
 
+/** Calls Interface methods based on Turtle messages received via socket. */
 class SocketReader : public Raul::Thread
 {
 public:
-	SocketReader(Shared::World& world, Interface& iface, int conn);
+	SocketReader(Shared::World&    world,
+	             Interface&        iface,
+	             SharedPtr<Socket> sock);
+
 	~SocketReader();
 
 private:
@@ -54,12 +59,12 @@ private:
 	                                  const SerdNode*    object_datatype,
 	                                  const SerdNode*    object_lang);
 
-	Shared::World& _world;
-	Interface&     _iface;
-	SerdEnv*       _env;
-	SordInserter*  _inserter;
-	SordNode*      _msg_node;
-	int            _conn;
+	Shared::World&    _world;
+	Interface&        _iface;
+	SerdEnv*          _env;
+	SordInserter*     _inserter;
+	SordNode*         _msg_node;
+	SharedPtr<Socket> _socket;
 };
 
 }  // namespace Ingen

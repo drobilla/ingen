@@ -188,6 +188,22 @@ AtomReader::write(const LV2_Atom* msg)
 		get_props(remove, remove_props);
 
 		_iface.delta(subject_uri, remove_props, add_props);
+	} else if (obj->body.otype == _uris.patch_Response) {
+		const LV2_Atom* request = NULL;
+		const LV2_Atom* body    = NULL;
+		lv2_atom_object_get(obj,
+		                    (LV2_URID)_uris.patch_request, &request,
+		                    (LV2_URID)_uris.patch_body, &body,
+		                    0);
+		if (!request || request->type != _uris.atom_Int) {
+			Raul::warn << "Response message has no request" << std::endl;
+			return;
+		} else if (!body || body->type != _uris.atom_Int) {
+			Raul::warn << "Response message body is not integer" << std::endl;
+			return;
+		}
+		_iface.response(((LV2_Atom_Int*)request)->body,
+		                (Ingen::Status)((LV2_Atom_Int*)body)->body);
 	} else {
 		Raul::warn << "Unknown object type <"
 		           << _map.unmap_uri(obj->body.otype)

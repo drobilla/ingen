@@ -42,13 +42,13 @@ public:
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
-	void set_response_interface(Interface* iface) { _request_client = iface; }
+	void set_respondee(Interface* iface) { _respondee = iface; }
 
 	virtual void set_response_id(int32_t id);
 
-	virtual void bundle_begin();
+	virtual void bundle_begin() {}
 
-	virtual void bundle_end();
+	virtual void bundle_end() {}
 
 	virtual void put(const Raul::URI&            path,
 	                 const Resource::Properties& properties,
@@ -79,13 +79,13 @@ public:
 	virtual void get(const Raul::URI& uri);
 
 	virtual void response(int32_t id, Status status) {}  ///< N/A
+
 	virtual void error(const std::string& msg) {}  ///< N/A
 
 protected:
-	Interface* _request_client;
-	int32_t    _request_id;
 	Engine&    _engine;
-	bool       _in_bundle;  ///< True iff a bundle is currently being received
+	Interface* _respondee;
+	int32_t    _request_id;
 
 private:
 	SampleCount now() const;

@@ -31,12 +31,12 @@ namespace Socket {
 
 SocketReader::SocketReader(Ingen::Shared::World& world,
                            Interface&            iface,
-                           int                   conn)
+                           SharedPtr<Socket>     sock)
 	: _world(world)
 	, _iface(iface)
 	, _inserter(NULL)
 	, _msg_node(NULL)
-	, _conn(conn)
+	, _socket(sock)
 {
 	set_name("SocketReader");
 	start();
@@ -46,7 +46,6 @@ SocketReader::~SocketReader()
 {
 	stop();
 	join();
-	close(_conn);
 }
 
 SerdStatus
@@ -119,12 +118,12 @@ SocketReader::_run()
 	serd_env_set_base_uri(_env, sord_node_to_serd_node(base_uri));
 
 	// Read directly from the connection with serd
-	FILE* f = fdopen(_conn, "r");
+	FILE* f = fdopen(_socket->fd(), "r");
 	if (!f) {
-		LOG(Raul::error) << "Failed to open connection " << _conn
+		LOG(Raul::error) << "Failed to open connection "
 		                 << "(" << strerror(errno) << ")" << std::endl;
 		// Connection gone, exit
-		_conn = -1;
+		_socket.reset();
 		return;
 	}
 
@@ -137,7 +136,7 @@ SocketReader::_run()
 	                      _iface);
 
 	struct pollfd pfd;
-	pfd.fd      = _conn;
+	pfd.fd      = _socket->fd();
 	pfd.events  = POLLIN;
 	pfd.revents = 0;
 
@@ -159,7 +158,7 @@ SocketReader::_run()
 		if (st == SERD_FAILURE) {
 			continue;  // Read nothing, e.g. just whitespace
 		} else if (st) {
-			fprintf(stderr, "Read error: %s\n", serd_strerror(st));
+			LOG(Raul::error) << "Read error: " << serd_strerror(st) << std::endl;
 			continue;
 		} else if (!_msg_node) {
 			LOG(Raul::error) << "Received empty message" << std::endl;
@@ -171,9 +170,6 @@ SocketReader::_run()
 
 		// Call _iface methods based on atom content
 		ar.write((LV2_Atom*)chunk.buf);
-
-		// Respond and close connection
-		write(_conn, "OK", 2);
 
 		// Reset everything for the next iteration
 		chunk.len = 0;

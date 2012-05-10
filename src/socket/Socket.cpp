@@ -15,11 +15,12 @@
 */
 
 #include <errno.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <poll.h>
+#include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/un.h>
-#include <stdlib.h>
 
 #include <string>
 #include <sstream>
@@ -33,51 +34,104 @@
 namespace Ingen {
 namespace Socket {
 
-bool
-Socket::open_unix(const std::string& uri, const std::string& path)
+#ifndef NI_MAXHOST
+#    define NI_MAXHOST 1025
+#endif
+#ifndef NI_MAXSERV
+#    define NI_MAXSERV 32
+#endif
+
+Socket::Socket(Type t)
+	: _type(t)
+	, _addr(NULL)
+	, _addr_len(0)
+	, _sock(-1)
 {
-	if ((_sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
-		return false;
+	switch (t) {
+	case UNIX:
+		_sock = socket(AF_UNIX, SOCK_STREAM, 0);
+		break;
+	case TCP:
+		_sock = socket(AF_INET, SOCK_STREAM, 0);
+		break;
 	}
+}
 
-	struct sockaddr_un* uaddr = (struct sockaddr_un*)calloc(
-		1, sizeof(struct sockaddr_un));
-	uaddr->sun_family = AF_UNIX;
-	strncpy(uaddr->sun_path, path.c_str(), sizeof(uaddr->sun_path) - 1);
-	_uri      = uri;
-	_addr     = (sockaddr*)uaddr;
-	_addr_len = sizeof(struct sockaddr_un);
-
-	return bind();
+Socket::Socket(Type               t,
+               const std::string& uri,
+               struct sockaddr*   addr,
+               socklen_t          addr_len,
+               int                fd)
+	: _type(t)
+	, _uri(uri)
+	, _addr(addr)
+	, _addr_len(addr_len)
+	, _sock(fd)
+{
 }
 
 bool
-Socket::open_tcp(const std::string& uri, uint16_t port)
+Socket::set_addr(const std::string& uri)
 {
-	if ((_sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-		return false;
+	if (_type == UNIX && uri.substr(0, strlen("unix://")) == "unix://") {
+		const std::string   path  = uri.substr(strlen("unix://"));
+		struct sockaddr_un* uaddr = (struct sockaddr_un*)calloc(
+			1, sizeof(struct sockaddr_un));
+		uaddr->sun_family = AF_UNIX;
+		strncpy(uaddr->sun_path, path.c_str(), sizeof(uaddr->sun_path) - 1);
+		_uri      = uri;
+		_addr     = (sockaddr*)uaddr;
+		_addr_len = sizeof(struct sockaddr_un);
+		return true;
+	} else if (_type == TCP && uri.find("://") != std::string::npos) {
+		const std::string no_scheme = uri.substr(uri.find("://") + 4);
+		const size_t      port_sep  = no_scheme.find(':');
+		if (port_sep == std::string::npos) {
+			return false;
+		}
+
+		const std::string host = no_scheme.substr(0, port_sep);
+		const std::string port = no_scheme.substr(port_sep + 1).c_str();
+
+		struct addrinfo* ainfo;
+		int              st = 0;
+		if ((st = getaddrinfo(host.c_str(), port.c_str(), NULL, &ainfo))) {
+			LOG(Raul::error) << "Error in getaddrinfo: "
+			                 << gai_strerror(st) << std::endl;
+			return false;
+		}
+
+		_uri      = uri;
+		_addr     = (struct sockaddr*)malloc(ainfo->ai_addrlen);
+		_addr_len = ainfo->ai_addrlen;
+		memcpy(_addr, ainfo->ai_addr, ainfo->ai_addrlen);
+		return true;
 	}
-
-	struct sockaddr_in* naddr = (struct sockaddr_in*)calloc(
-		1, sizeof(struct sockaddr_in));
-	naddr->sin_family = AF_INET;
-	naddr->sin_port   = htons(port);
-	_uri      = uri;
-	_addr     = (sockaddr*)naddr;
-	_addr_len = sizeof(struct sockaddr_in);
-
-	return bind();
+	return false;
 }
 
 bool
-Socket::bind()
+Socket::bind(const std::string& uri)
 {
-	if (::bind(_sock, _addr, _addr_len) == -1) {
-		LOG(Raul::error) << "Failed to bind " << _uri
-		                 << ": " << strerror(errno) << std::endl;
-		return false;
+	if (set_addr(uri) && ::bind(_sock, _addr, _addr_len) != -1) {
+		return true;
 	}
-	return true;
+	
+	LOG(Raul::error) << "Failed to bind " << _uri
+	                 << ": " << strerror(errno) << std::endl;
+	return false;
+}
+
+bool
+Socket::connect(const std::string& uri)
+{
+	if (set_addr(uri) && ::connect(_sock, _addr, _addr_len) != -1) {
+		return true;
+	}
+	
+	LOG(Raul::error) << "Failed to connect " << _uri
+	                 << ": " << strerror(errno) << std::endl;
+	return false;
 }
 
 bool
@@ -92,10 +146,9 @@ Socket::listen()
 	}
 }
 
-int
+SharedPtr<Socket>
 Socket::accept()
 {
-	// Accept connection from client
 	socklen_t        client_addr_len = _addr_len;
 	struct sockaddr* client_addr     = (struct sockaddr*)calloc(
 		1, client_addr_len);
@@ -104,9 +157,18 @@ Socket::accept()
 	if (conn == -1) {
 		LOG(Raul::error) << "Error accepting connection: "
 		                 << strerror(errno) << std::endl;
+		return SharedPtr<Socket>();
 	}
 
-	return conn;
+	std::string client_uri = _uri;
+	char        host[NI_MAXHOST];
+	if (getnameinfo(client_addr, client_addr_len,
+	                host, sizeof(host), NULL, 0, 0)) {
+		client_uri = _uri.substr(0, _uri.find(":") + 1) + host;
+	}
+	
+	return SharedPtr<Socket>(
+		new Socket(_type, client_uri, client_addr, client_addr_len, conn));
 }
 
 void

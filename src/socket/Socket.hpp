@@ -14,32 +14,59 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef INGEN_SOCKET_SOCKET_HPP
+#define INGEN_SOCKET_SOCKET_HPP
+
 #include <stdint.h>
 #include <sys/socket.h>
 
 #include <string>
 
+#include "raul/SharedPtr.hpp"
+#include "raul/Noncopyable.hpp"
+
 namespace Ingen {
 namespace Socket {
 
-class Socket {
+/** A safe and simple interface for UNIX or TCP sockets. */
+class Socket : public Raul::Noncopyable {
 public:
-	Socket() : _addr(NULL), _addr_len(0), _sock(-1) {}
+	enum Type {
+		UNIX,
+		TCP
+	};
+
+	static Type type_from_uri(const std::string& uri) {
+		if (uri.substr(0, strlen("unix://")) == "unix://") {
+			return UNIX;
+		} else {
+			return TCP;
+		}
+	}
+
+	/** Create a new unbound/unconnected socket of a given type. */
+	Socket(Type t);
+
+	/** Wrap an existing open socket. */
+	Socket(Type               t,
+	       const std::string& uri,
+	       struct sockaddr*   addr,
+	       socklen_t          addr_len,
+	       int                fd);
+
 	~Socket() { close(); }
 
-	/** Open UNIX socket and bind to address.
-	 * @param uri URI used for identification and log output.
-	 * @param path Socket path.
-	 * @return True on success
+	/** Bind a server socket to an address.
+	 * @param uri Address URI, e.g. unix:///tmp/foo or tcp://somehost:1234
+	 * @return True on success.
 	 */
-	bool open_unix(const std::string& uri, const std::string& path);
+	bool bind(const std::string& uri);
 
-	/** Open TCP socket and bind to address.
-	 * @param uri URI used for identification and log output.
-	 * @param port Port number.
-	 * @return True on success
+	/** Connect a client socket to a server address.
+	 * @param uri Address URI, e.g. unix:///tmp/foo or tcp://somehost:1234
+	 * @return True on success.
 	 */
-	bool open_tcp(const std::string& uri, uint16_t port);
+	bool connect(const std::string& uri);
 
 	/** Mark server socket as passive to listen for incoming connections.
 	 * @return True on success.
@@ -47,19 +74,22 @@ public:
 	bool listen();
 
 	/** Accept a connection.
-	 * @return The socket file descriptor, or -1 on error.
+	 * @return An new open socket for the connection.
 	 */
-	int accept();
+	SharedPtr<Socket> accept();
 
 	/** Return the file descriptor for the socket. */
 	int fd() { return _sock; }
+
+	const std::string& uri() const { return _uri; }
 
 	/** Close the socket. */
 	void close();
 
 private:
-	bool bind();
+	bool set_addr(const std::string& uri);
 
+	Type             _type;
 	std::string      _uri;
 	struct sockaddr* _addr;
 	socklen_t        _addr_len;
@@ -68,3 +98,5 @@ private:
 
 }  // namespace Socket
 }  // namespace Ingen
+
+#endif  // INGEN_SOCKET_SOCKET_HPP

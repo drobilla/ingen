@@ -29,7 +29,7 @@
 #include "../server/Engine.hpp"
 #include "../server/EventWriter.hpp"
 #include "SocketListener.hpp"
-#include "SocketReader.hpp"
+#include "SocketServer.hpp"
 
 #define LOG(s) s << "[SocketListener] "
 
@@ -38,13 +38,15 @@ namespace Socket {
 
 SocketListener::SocketListener(Ingen::Shared::World& world)
 	: _world(world)
+	, _unix_sock(Socket::UNIX)
+	, _net_sock(Socket::TCP)
 {
 	set_name("SocketListener");
 
 	// Create UNIX socket
 	_unix_path = world.conf()->option("socket").get_string();
 	const std::string unix_uri = "unix://" + _unix_path;
-	if (!_unix_sock.open_unix(unix_uri, _unix_path) || !_unix_sock.listen()) {
+	if (!_unix_sock.bind(unix_uri) || !_unix_sock.listen()) {
 		LOG(Raul::error) << "Failed to create UNIX socket" << std::endl;
 		_unix_sock.close();
 	}
@@ -54,7 +56,7 @@ SocketListener::SocketListener(Ingen::Shared::World& world)
 	std::ostringstream ss;
 	ss << "tcp:///localhost:";
 	ss << port;
-	if (!_net_sock.open_tcp(ss.str(), port) || !_net_sock.listen()) {
+	if (!_net_sock.bind(ss.str()) || !_net_sock.listen()) {
 		LOG(Raul::error) << "Failed to create TCP socket" << std::endl;
 		_net_sock.close();
 	}
@@ -103,18 +105,16 @@ SocketListener::_run()
 		}
 
 		if (pfds[0].revents & POLLIN) {
-			int conn = _unix_sock.accept();
-			if (conn != -1) {
-				// Make an new interface/thread to handle the connection
-				new SocketReader(_world, *engine->interface(), conn);
+			SharedPtr<Socket> conn = _unix_sock.accept();
+			if (conn) {
+				new SocketServer(_world, *engine, conn);
 			}
 		}
 
 		if (pfds[1].revents & POLLIN) {
-			int conn = _net_sock.accept();
-			if (conn != -1) {
-				// Make an new interface/thread to handle the connection
-				new SocketReader(_world, *engine->interface(), conn);
+			SharedPtr<Socket> conn = _net_sock.accept();
+			if (conn) {
+				new SocketServer(_world, *engine, conn);
 			}
 		}
 	}

@@ -273,7 +273,7 @@ World::unload_modules()
  */
 SharedPtr<Interface>
 World::interface(const std::string&   engine_url,
-                 SharedPtr<Interface> respond_to)
+                 SharedPtr<Interface> respondee)
 {
 	const string scheme = engine_url.substr(0, engine_url.find(":"));
 	const Pimpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
@@ -282,7 +282,7 @@ World::interface(const std::string&   engine_url,
 		return SharedPtr<Interface>();
 	}
 
-	return i->second(this, engine_url, respond_to);
+	return i->second(this, engine_url, respondee);
 }
 
 /** Run a script of type @a mime_type at filename @a filename */

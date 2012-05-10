@@ -135,6 +135,10 @@ main(int argc, char** argv)
 	if (!engine_interface) {
 		ingen_try(world->load_module("client"),
 		          "Unable to load client module");
+		#ifdef HAVE_SOCKET
+		ingen_try(world->load_module("socket_client"),
+		          "Unable to load socket client module");
+		#endif
 		const char* const uri = conf.option("connect").get_string();
 		SharedPtr<Interface> client(new Client::SigClientInterface());
 		ingen_try((engine_interface = world->interface(uri, client)),

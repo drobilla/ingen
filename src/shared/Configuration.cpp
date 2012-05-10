@@ -37,7 +37,7 @@ Configuration::Configuration()
 	"  ingen -egl patch.ingen    # Run an engine and a GUI and load a patch bundle")
 {
 	add("client-port", 'C', "Client port", INT, Value());
-	add("connect",     'c', "Connect to engine URI", STRING, Value("osc.udp://localhost:16180"));
+	add("connect",     'c', "Connect to engine URI", STRING, Value("unix:///tmp/ingen.sock"));
 	add("engine",      'e', "Run (JACK) engine", BOOL, Value(false));
 	add("engine-port", 'E', "Engine listen port", INT, Value(16180));
 	add("socket",      'S', "Engine socket path", STRING, Value("/tmp/ingen.sock"));
