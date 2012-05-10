@@ -35,9 +35,9 @@
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/ResourceImpl.hpp"
 #include "ingen/shared/Store.hpp"
+#include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
@@ -544,8 +544,8 @@ Serialiser::Impl::serialise_properties(const GraphObject*     o,
 {
 	const GraphObject::Properties props = o->properties(context);
 
-	LV2_URID_Map*   map      = &_world.lv2_uri_map()->urid_map_feature()->urid_map;
-	LV2_URID_Unmap* unmap    = &_world.lv2_uri_map()->urid_unmap_feature()->urid_unmap;
+	LV2_URID_Map*   map      = &_world.uri_map()->urid_map_feature()->urid_map;
+	LV2_URID_Unmap* unmap    = &_world.uri_map()->urid_unmap_feature()->urid_unmap;
 	Sratom*         sratom   = sratom_new(map);
 	SerdNode        base     = serd_node_from_string(SERD_URI,
 	                                                 (const uint8_t*)_base_uri.c_str());

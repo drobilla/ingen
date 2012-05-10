@@ -17,7 +17,6 @@
 #include <sstream>
 
 #include "ingen/shared/LV2Features.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 #include "raul/log.hpp"

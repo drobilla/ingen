@@ -21,7 +21,7 @@
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
 
-#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 
 #include "ClientBroadcaster.hpp"
@@ -82,13 +82,13 @@ SetMetadata::SetMetadata(Engine&           engine,
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
 		LOG(info) << "    + " << i->first
 		          << " = " << engine.world()->forge().str(i->second)
-		          << " :: " << engine.world()->lv2_uri_map()->unmap_uri(i->second.type()) << endl;
+		          << " :: " << engine.world()->uri_map()->unmap_uri(i->second.type()) << endl;
 	}
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = remove.begin(); i != remove.end(); ++i) {
 		LOG(info) << "    - " << i->first
 		          << " = " << engine.world()->forge().str(i->second)
-		          << " :: " << engine.world()->lv2_uri_map()->unmap_uri(i->second.type()) << endl;
+		          << " :: " << engine.world()->uri_map()->unmap_uri(i->second.type()) << endl;
 	}
 	LOG(info) << "}" << endl;
 	*/

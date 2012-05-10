@@ -22,7 +22,7 @@
 #include <algorithm>
 
 #include "ingen/shared/LV2Features.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen_config.h"
@@ -118,7 +118,7 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 		} else {
 			Raul::warn << "Audio data requested from non-audio buffer " << this << " :: "
 			           << _atom->type << " - "
-			           << _factory.engine().world()->lv2_uri_map()->unmap_uri(_atom->type)
+			           << _factory.engine().world()->uri_map()->unmap_uri(_atom->type)
 			           << std::endl;
 			assert(false);
 			return NULL;

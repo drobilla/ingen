@@ -17,7 +17,6 @@
 #include <cmath>
 #include <limits.h>
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"

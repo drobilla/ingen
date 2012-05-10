@@ -16,11 +16,12 @@
 
 #include <math.h>
 #include <gtkmm.h>
-#include "raul/SharedPtr.hpp"
+
 #include "ingen/Interface.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PortModel.hpp"
+#include "raul/SharedPtr.hpp"
+
 #include "App.hpp"
 #include "PortMenu.hpp"
 #include "WindowFactory.hpp"

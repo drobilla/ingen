@@ -23,7 +23,7 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 #include "raul/Atom.hpp"
@@ -99,8 +99,8 @@ get_properties(Ingen::Shared::World* world,
                const Sord::Node&     subject)
 {
 	SerdChunk       out    = { NULL, 0 };
-	LV2_URID_Map*   map    = &world->lv2_uri_map()->urid_map_feature()->urid_map;
-	LV2_URID_Unmap* unmap  = &world->lv2_uri_map()->urid_unmap_feature()->urid_unmap;
+	LV2_URID_Map*   map    = &world->uri_map()->urid_map_feature()->urid_map;
+	LV2_URID_Unmap* unmap  = &world->uri_map()->urid_unmap_feature()->urid_unmap;
 	Sratom*         sratom = sratom_new(map);
 
 	LV2_Atom_Forge forge;

@@ -14,18 +14,19 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Configuration.hpp"
 #include <cstdlib>
 #include <cassert>
 #include <fstream>
 #include <map>
-#include "raul/log.hpp"
-#include "ingen/client/PortModel.hpp"
-#include "ingen/client/PluginModel.hpp"
-#include "ingen/serialisation/Parser.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
+
 #include "ganv/Port.hpp"
+#include "ingen/client/PluginModel.hpp"
+#include "ingen/client/PortModel.hpp"
+#include "ingen/serialisation/Parser.hpp"
+#include "raul/log.hpp"
+
 #include "App.hpp"
+#include "Configuration.hpp"
 #include "Port.hpp"
 
 using namespace std;

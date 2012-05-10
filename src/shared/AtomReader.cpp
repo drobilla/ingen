@@ -17,6 +17,7 @@
 #include <utility>
 
 #include "ingen/shared/AtomReader.hpp"
+#include "ingen/shared/URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Path.hpp"
 #include "raul/log.hpp"
@@ -24,7 +25,7 @@
 namespace Ingen {
 namespace Shared {
 
-AtomReader::AtomReader(LV2URIMap& map, URIs& uris, Forge& forge, Interface& iface)
+AtomReader::AtomReader(URIMap& map, URIs& uris, Forge& forge, Interface& iface)
 	: _map(map)
 	, _uris(uris)
 	, _forge(forge)

@@ -19,7 +19,6 @@
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 #include "ingen/client/PortModel.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"

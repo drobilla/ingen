@@ -20,8 +20,6 @@
 #include "ingen/Interface.hpp"
 #include "ingen/client/PatchModel.hpp"
 
-#include "ingen/shared/LV2URIMap.hpp"
-
 #include "App.hpp"
 #include "NodeModule.hpp"
 #include "PatchCanvas.hpp"

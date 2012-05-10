@@ -18,6 +18,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#include "ingen/shared/URIMap.hpp"
+
 #include "SocketWriter.hpp"
 
 namespace Ingen {
@@ -34,10 +36,10 @@ socket_sink(const void* buf, size_t len, void* stream)
 	return ret;
 }
 
-SocketWriter::SocketWriter(Shared::LV2URIMap& map,
-                           Shared::URIs&      uris,
-                           const Raul::URI&   uri,
-                           SharedPtr<Socket>  sock)
+SocketWriter::SocketWriter(Shared::URIMap&   map,
+                           Shared::URIs&     uris,
+                           const Raul::URI&  uri,
+                           SharedPtr<Socket> sock)
 	: AtomWriter(map, uris, *this)
 	, _map(map)
 	, _sratom(sratom_new(&map.urid_map_feature()->urid_map))

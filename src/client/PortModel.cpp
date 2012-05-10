@@ -14,9 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/client/PortModel.hpp"
 #include "ingen/client/NodeModel.hpp"
+#include "ingen/client/PortModel.hpp"
 
 namespace Ingen {
 namespace Client {

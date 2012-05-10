@@ -35,7 +35,7 @@ public:
 		: Server::EventWriter(engine)
 		, SocketReader(world, *this, sock)
 		, _engine(engine)
-		, _writer(new SocketWriter(*world.lv2_uri_map().get(),
+		, _writer(new SocketWriter(*world.uri_map().get(),
 		                           *world.uris().get(),
 		                           sock->uri(),
 		                           sock))

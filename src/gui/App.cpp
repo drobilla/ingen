@@ -21,19 +21,17 @@
 #include <gtk/gtkwindow.h>
 
 #include "ganv/Edge.hpp"
-#include "ingen/Interface.hpp"
 #include "ingen/EngineBase.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
+#include "ingen/shared/World.hpp"
 #include "ingen/shared/runtime_paths.hpp"
 #include "lilv/lilv.h"
 #include "raul/Path.hpp"
 #include "raul/log.hpp"
-
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/shared/World.hpp"
 
 #include "App.hpp"
 #include "Configuration.hpp"

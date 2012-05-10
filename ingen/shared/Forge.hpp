@@ -18,14 +18,15 @@
 #define INGEN_FORGE_HPP
 
 #include "ingen/shared/Forge.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "raul/Atom.hpp"
 
 namespace Ingen {
 
+namespace Shared { class URIMap; }
+
 class Forge : public Raul::Forge {
 public:
-	explicit Forge(Shared::LV2URIMap& map);
+	explicit Forge(Shared::URIMap& map);
 
 	std::string str(const Raul::Atom& atom);
 };

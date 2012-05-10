@@ -19,7 +19,6 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/shared/AtomSink.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "serd/serd.h"
 
@@ -30,12 +29,13 @@ class Forge;
 namespace Shared {
 
 class AtomSink;
+class URIMap;
 
 /** An AtomSink that calls methods on an Interface. */
 class AtomReader : public AtomSink
 {
 public:
-	AtomReader(LV2URIMap& map, URIs& uris, Forge& forge, Interface& iface);
+	AtomReader(URIMap& map, URIs& uris, Forge& forge, Interface& iface);
 	~AtomReader() {}
 
 	void write(const LV2_Atom* msg);
@@ -46,7 +46,7 @@ private:
 	void get_props(const LV2_Atom_Object*       obj,
 	               Ingen::Resource::Properties& props);
 
-	LV2URIMap& _map;
+	URIMap&    _map;
 	URIs&      _uris;
 	Forge&     _forge;
 	Interface& _iface;

@@ -19,8 +19,8 @@
 
 #include <boost/utility.hpp>
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/Forge.hpp"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Atom.hpp"
 #include "raul/URI.hpp"
 
@@ -31,12 +31,14 @@ namespace Raul {
 namespace Ingen {
 namespace Shared {
 
+class URIMap;
+
 class URIs : public boost::noncopyable {
 public:
-	URIs(Ingen::Forge& forge, LV2URIMap* map);
+	URIs(Ingen::Forge& forge, URIMap* map);
 
 	struct Quark : public Raul::URI {
-		Quark(Ingen::Forge& forge, LV2URIMap* map, const char* str);
+		Quark(Ingen::Forge& forge, URIMap* map, const char* str);
 		operator LV2_URID()   const { return id; }
 		operator Raul::Atom() const { return atom; }
 		uint32_t   id;

@@ -15,25 +15,26 @@
 */
 
 #include <cassert>
-#include "raul/log.hpp"
-#include "raul/Atom.hpp"
+
 #include "ingen/Interface.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/client/PatchModel.hpp"
 #include "ingen/client/NodeModel.hpp"
+#include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
+#include "raul/Atom.hpp"
+#include "raul/log.hpp"
+
 #include "App.hpp"
-#include "WidgetFactory.hpp"
+#include "Configuration.hpp"
+#include "NodeMenu.hpp"
 #include "NodeModule.hpp"
 #include "PatchCanvas.hpp"
 #include "PatchWindow.hpp"
 #include "Port.hpp"
 #include "RenameWindow.hpp"
 #include "SubpatchModule.hpp"
+#include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
-#include "Configuration.hpp"
-#include "NodeMenu.hpp"
 
 using namespace std;
 using namespace Raul;

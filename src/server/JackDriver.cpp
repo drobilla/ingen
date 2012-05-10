@@ -44,7 +44,6 @@
 #include "ProcessSlave.hpp"
 #include "ThreadManager.hpp"
 #include "ingen/shared/LV2Features.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/World.hpp"
 #include "util.hpp"
 

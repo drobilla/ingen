@@ -20,10 +20,10 @@ def build(bld):
             Configuration.cpp
             Forge.cpp
             LV2Features.cpp
-            LV2URIMap.cpp
             Module.cpp
             ResourceImpl.cpp
             Store.cpp
+            URIMap.cpp
             URIs.cpp
             World.cpp
             runtime_paths.cpp

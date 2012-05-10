@@ -14,11 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "raul/log.hpp"
-#include "raul/PathTable.hpp"
-
-#include "ingen/shared/LV2URIMap.hpp"
-
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/EdgeModel.hpp"
 #include "ingen/client/NodeModel.hpp"
@@ -27,6 +22,8 @@
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
+#include "raul/PathTable.hpp"
+#include "raul/log.hpp"
 
 #define LOG(s) s << "[ClientStore] "
 

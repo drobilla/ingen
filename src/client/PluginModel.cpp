@@ -21,8 +21,6 @@
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen/shared/LV2URIMap.hpp"
-
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"

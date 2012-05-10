@@ -30,10 +30,10 @@ namespace Ingen {
 namespace Shared {
 
 /** URI to Integer Map */
-class LV2URIMap : public boost::noncopyable {
+class URIMap : public boost::noncopyable {
 public:
-	LV2URIMap(LV2_URID_Map* map, LV2_URID_Unmap* unmap);
-	virtual ~LV2URIMap() {}
+	URIMap(LV2_URID_Map* map, LV2_URID_Unmap* unmap);
+	virtual ~URIMap() {}
 
 	uint32_t    map_uri(const char* uri);
 	const char* unmap_uri(uint32_t urid);
@@ -54,14 +54,14 @@ public:
 	};
 
 	struct URIDMapFeature : public Feature {
-		URIDMapFeature(LV2URIMap* map, LV2_URID_Map* urid_map);
+		URIDMapFeature(URIMap* map, LV2_URID_Map* urid_map);
 		LV2_URID        map(const char* uri);
 		static LV2_URID default_map(LV2_URID_Map_Handle h, const char* uri);
 		LV2_URID_Map urid_map;
 	};
 
 	struct URIDUnmapFeature : public Feature {
-		URIDUnmapFeature(LV2URIMap* map, LV2_URID_Unmap* urid_unmap);
+		URIDUnmapFeature(URIMap* map, LV2_URID_Unmap* urid_unmap);
 		const char*        unmap(const LV2_URID urid);
 		static const char* default_unmap(LV2_URID_Map_Handle h, LV2_URID uri);
 		LV2_URID_Unmap urid_unmap;

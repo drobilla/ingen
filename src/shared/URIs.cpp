@@ -23,11 +23,12 @@
 
 #include <boost/shared_ptr.hpp>
 
+#include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
-#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "lv2/lv2plug.in/ns/ext/patch/patch.h"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "raul/log.hpp"
 
 using namespace std;
@@ -36,7 +37,7 @@ using namespace Raul;
 namespace Ingen {
 namespace Shared {
 
-URIs::Quark::Quark(Ingen::Forge& forge, LV2URIMap* map, const char* c_str)
+URIs::Quark::Quark(Ingen::Forge& forge, URIMap* map, const char* c_str)
 	: Raul::URI(c_str)
 	, id(map->map_uri(c_str))
 	, atom(forge.alloc_uri(c_str))
@@ -47,7 +48,7 @@ URIs::Quark::Quark(Ingen::Forge& forge, LV2URIMap* map, const char* c_str)
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
-URIs::URIs(Ingen::Forge& f, LV2URIMap* map)
+URIs::URIs(Ingen::Forge& f, URIMap* map)
 	: forge(f)
 	, atom_AtomPort         (forge, map, LV2_ATOM__AtomPort)
 	, atom_Blank            (forge, map, LV2_ATOM__Blank)

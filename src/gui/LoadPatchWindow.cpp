@@ -15,21 +15,22 @@
 */
 
 #include <cassert>
+
 #include <boost/optional.hpp>
 #include <glibmm/miscutils.h>
+
 #include "ingen/Interface.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/client/ClientStore.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PatchModel.hpp"
-#include "ingen/client/ClientStore.hpp"
 #include "ingen/shared/runtime_paths.hpp"
+
 #include "App.hpp"
+#include "Configuration.hpp"
 #include "LoadPatchWindow.hpp"
 #include "PatchView.hpp"
-#include "Configuration.hpp"
 #include "ThreadedLoader.hpp"
 
-using boost::optional;
 using namespace std;
 using namespace Raul;
 
@@ -161,8 +162,8 @@ LoadPatchWindow::ok_clicked()
 
 	if (_import) {
 		// If unset load_patch will load value
-		optional<Path>   parent;
-		optional<Symbol> symbol;
+		boost::optional<Path>   parent;
+		boost::optional<Symbol> symbol;
 		if (!_patch->path().is_root()) {
 			parent = _patch->path().parent();
 			symbol = _patch->symbol();

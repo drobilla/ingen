@@ -36,10 +36,10 @@ namespace Socket {
 class SocketWriter : public Shared::AtomWriter, public Shared::AtomSink
 {
 public:
-	SocketWriter(Shared::LV2URIMap& map,
-	             Shared::URIs&      uris,
-	             const Raul::URI&   uri,
-	             SharedPtr<Socket>  sock);
+	SocketWriter(Shared::URIMap&   map,
+	             Shared::URIs&     uris,
+	             const Raul::URI&  uri,
+	             SharedPtr<Socket> sock);
 
 	~SocketWriter();
 
@@ -49,14 +49,14 @@ public:
 	Raul::URI uri() const { return _uri; }
 
 protected:
-	Shared::LV2URIMap& _map;
-	Sratom*            _sratom;
-	SerdNode           _base;
-	SerdURI            _base_uri;
-	SerdEnv*           _env;
-	SerdWriter*        _writer;
-	Raul::URI          _uri;
-	SharedPtr<Socket>  _socket;
+	Shared::URIMap&   _map;
+	Sratom*           _sratom;
+	SerdNode          _base;
+	SerdURI           _base_uri;
+	SerdEnv*          _env;
+	SerdWriter*       _writer;
+	Raul::URI         _uri;
+	SharedPtr<Socket> _socket;
 };
 
 }  // namespace Socket

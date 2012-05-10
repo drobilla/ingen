@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/Array.hpp"

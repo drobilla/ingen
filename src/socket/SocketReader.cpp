@@ -18,10 +18,12 @@
 #include <poll.h>
 
 #include "ingen/Interface.hpp"
-#include "ingen/shared/World.hpp"
 #include "ingen/shared/AtomReader.hpp"
+#include "ingen/shared/URIMap.hpp"
+#include "ingen/shared/World.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
+
 #include "SocketReader.hpp"
 
 #define LOG(s) s << "[SocketReader] "
@@ -88,7 +90,7 @@ void
 SocketReader::_run()
 {
 	Sord::World*  world = _world.rdf_world();
-	LV2_URID_Map* map   = &_world.lv2_uri_map()->urid_map_feature()->urid_map;
+	LV2_URID_Map* map   = &_world.uri_map()->urid_map_feature()->urid_map;
 		
 	// Use <path:> as base URI so e.g. </foo/bar> will be a path
 	SordNode* base_uri = sord_new_uri(
@@ -130,7 +132,7 @@ SocketReader::_run()
 	serd_reader_start_stream(reader, f, (const uint8_t*)"(socket)", false);
 		
 	// Make an AtomReader to call Ingen Interface methods based on Atom
-	Shared::AtomReader ar(*_world.lv2_uri_map().get(),
+	Shared::AtomReader ar(*_world.uri_map().get(),
 	                      *_world.uris().get(),
 	                      _world.forge(),
 	                      _iface);

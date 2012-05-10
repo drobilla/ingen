@@ -16,6 +16,7 @@
 
 #include "ingen/shared/AtomSink.hpp"
 #include "ingen/shared/AtomWriter.hpp"
+#include "ingen/shared/URIMap.hpp"
 #include "raul/Path.hpp"
 #include "serd/serd.h"
 
@@ -40,7 +41,7 @@ forge_deref(LV2_Atom_Forge_Sink_Handle handle, LV2_Atom_Forge_Ref ref)
 	return (LV2_Atom*)(chunk->buf + ref - 1);
 }
 
-AtomWriter::AtomWriter(LV2URIMap& map, URIs& uris, AtomSink& sink)
+AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	: _map(map)
 	, _uris(uris)
 	, _sink(sink)

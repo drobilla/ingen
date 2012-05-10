@@ -27,7 +27,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
 
-#include "ingen/shared/LV2URIMap.hpp"
+#include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 
 #include "AudioBuffer.hpp"
@@ -248,7 +248,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 				if (lilv_node_is_uri(type)) {
 					port->add_property(uris.atom_bufferType,
 					                   forge.alloc_uri(lilv_node_as_uri(type)));
-					buffer_type = bufs.engine().world()->lv2_uri_map()->map_uri(
+					buffer_type = bufs.engine().world()->uri_map()->map_uri(
 						lilv_node_as_uri(type));
 				}
 			}

@@ -141,11 +141,11 @@ private:
 public:
 	LV2Driver(Engine& engine, SampleCount buffer_size, SampleCount sample_rate)
 		: _context(engine)
-		, _reader(*engine.world()->lv2_uri_map().get(),
+		, _reader(*engine.world()->uri_map().get(),
 		          *engine.world()->uris().get(),
 		          engine.world()->forge(),
 		          *engine.world()->engine().get())
-		, _writer(*engine.world()->lv2_uri_map().get(),
+		, _writer(*engine.world()->uri_map().get(),
 		          *engine.world()->uris().get(),
 		          *this)
 		, _to_ui(buffer_size * sizeof(float))  // FIXME: size

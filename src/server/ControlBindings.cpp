@@ -16,7 +16,6 @@
 
 #include <math.h>
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"

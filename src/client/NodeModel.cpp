@@ -18,10 +18,9 @@
 #include <cmath>
 
 #include "ingen/Port.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/shared/URIs.hpp"
 #include "ingen/client/NodeModel.hpp"
+#include "ingen/shared/URIs.hpp"
+#include "ingen/shared/World.hpp"
 
 using namespace std;
 using namespace Raul;

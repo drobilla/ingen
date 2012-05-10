@@ -46,7 +46,7 @@ namespace Shared {
 
 class LV2Features;
 class URIs;
-class LV2URIMap;
+class URIMap;
 class Store;
 
 /** The "world" all Ingen modules may share.
@@ -102,8 +102,8 @@ public:
 
 	virtual Sord::World* rdf_world();
 
-	virtual SharedPtr<URIs>      uris();
-	virtual SharedPtr<LV2URIMap> lv2_uri_map();
+	virtual SharedPtr<URIs>   uris();
+	virtual SharedPtr<URIMap> uri_map();
 
 	virtual int&    argc();
 	virtual char**& argv();

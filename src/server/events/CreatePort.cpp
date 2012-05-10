@@ -14,12 +14,13 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/shared/URIMap.hpp"
+#include "ingen/shared/URIs.hpp"
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/shared/URIs.hpp"
+
 #include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreatePort.hpp"
@@ -79,7 +80,7 @@ CreatePort::CreatePort(Engine&                     engine,
 	const Range buffer_types = properties.equal_range(uris.atom_bufferType);
 	for (Iterator i = buffer_types.first; i != buffer_types.second; ++i) {
 		if (i->second.type() == _engine.world()->forge().URI) {
-			_buffer_type = _engine.world()->lv2_uri_map()->map_uri(i->second.get_uri());
+			_buffer_type = _engine.world()->uri_map()->map_uri(i->second.get_uri());
 		}
 	}
 

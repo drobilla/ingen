@@ -16,19 +16,20 @@
 
 #include <cassert>
 #include <utility>
-#include "PatchPortModule.hpp"
+
 #include "ingen/Interface.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/client/PatchModel.hpp"
 #include "ingen/client/NodeModel.hpp"
+#include "ingen/client/PatchModel.hpp"
+
 #include "App.hpp"
 #include "Configuration.hpp"
-#include "WidgetFactory.hpp"
 #include "PatchCanvas.hpp"
+#include "PatchPortModule.hpp"
 #include "PatchWindow.hpp"
 #include "Port.hpp"
 #include "PortMenu.hpp"
 #include "RenameWindow.hpp"
+#include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
 using namespace std;

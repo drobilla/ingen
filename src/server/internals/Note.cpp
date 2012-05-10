@@ -16,7 +16,6 @@
 
 #include <cmath>
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Array.hpp"

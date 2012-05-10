@@ -29,7 +29,6 @@
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "mix.hpp"
 #include "util.hpp"

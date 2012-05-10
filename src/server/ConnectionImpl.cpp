@@ -17,7 +17,6 @@
 #include <algorithm>
 #include <boost/intrusive_ptr.hpp>
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Maid.hpp"

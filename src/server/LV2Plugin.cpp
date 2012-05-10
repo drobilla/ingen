@@ -18,7 +18,6 @@
 #include <string>
 #include <glibmm.h>
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"

@@ -99,7 +99,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->world = new Ingen::Shared::World(
 		&ui->conf, ui->argc, ui->argv, map, unmap);
 
-	ui->forge = new Ingen::Forge(*ui->world->lv2_uri_map().get());
+	ui->forge = new Ingen::Forge(*ui->world->uri_map().get());
 
 	if (!ui->world->load_module("client")) {
 		delete ui;
@@ -111,7 +111,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	// Set up an engine interface that writes LV2 atoms
 	ui->engine = SharedPtr<Ingen::Interface>(
-		new Ingen::Shared::AtomWriter(*ui->world->lv2_uri_map().get(),
+		new Ingen::Shared::AtomWriter(*ui->world->uri_map().get(),
 		                              *ui->world->uris().get(),
 		                              *ui->sink));
 
@@ -124,7 +124,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->app->attach(ui->client);
 
 	ui->reader = SharedPtr<Ingen::Shared::AtomReader>(
-		new Ingen::Shared::AtomReader(*ui->world->lv2_uri_map().get(),
+		new Ingen::Shared::AtomReader(*ui->world->uri_map().get(),
 		                              *ui->world->uris().get(),
 		                              ui->world->forge(),
 		                              *ui->client.get()));

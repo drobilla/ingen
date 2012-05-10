@@ -14,11 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "App.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
-#include "ingen/client/PatchModel.hpp"
 #include "ingen/client/ClientStore.hpp"
+#include "ingen/client/PatchModel.hpp"
+
+#include "App.hpp"
 #include "NewSubpatchWindow.hpp"
 #include "PatchView.hpp"
 

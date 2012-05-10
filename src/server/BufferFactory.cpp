@@ -16,7 +16,6 @@
 
 #include <algorithm>
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "raul/log.hpp"
 

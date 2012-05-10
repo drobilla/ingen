@@ -14,18 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "raul/Atom.hpp"
-#include "raul/Path.hpp"
-
-#include "ingen/Interface.hpp"
 #include "ingen/Connection.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
 #include "ingen/shared/Builder.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
+#include "raul/Atom.hpp"
+#include "raul/Path.hpp"
 
 using namespace std;
 using namespace Raul;

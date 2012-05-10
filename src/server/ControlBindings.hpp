@@ -20,7 +20,6 @@
 #include <map>
 #include <stdint.h>
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"

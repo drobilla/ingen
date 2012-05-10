@@ -24,7 +24,6 @@
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 
 #include "App.hpp"
 #include "BreadCrumbs.hpp"

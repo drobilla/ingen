@@ -20,7 +20,6 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/ObjectModel.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 
 #include "App.hpp"
 #include "ObjectMenu.hpp"

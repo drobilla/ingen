@@ -30,7 +30,6 @@
 #include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/shared/Builder.hpp"
 #include "ingen/shared/ClashAvoider.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "raul/log.hpp"

@@ -16,7 +16,6 @@
 
 #include "ingen/GraphObject.hpp"
 #include "ingen/client/ObjectModel.hpp"
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "raul/TableImpl.hpp"
 

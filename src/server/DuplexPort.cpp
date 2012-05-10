@@ -18,7 +18,6 @@
 #include <cassert>
 #include <string>
 
-#include "ingen/shared/LV2URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 
 #include "Buffer.hpp"
