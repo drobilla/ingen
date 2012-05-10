@@ -236,14 +236,14 @@ ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
 		return;
 	}
 
-	typedef Table<Raul::Path, SharedPtr<GraphObject> > Removed;
+	typedef Raul::Table<Raul::Path, SharedPtr<GraphObject> > Removed;
 
 	iterator           end     = find_descendants_end(parent);
 	SharedPtr<Removed> removed = yank(parent, end);
 
 	assert(removed->size() > 0);
 
-	typedef Table<Raul::Path, SharedPtr<GraphObject> > PathTable;
+	typedef Raul::Table<Raul::Path, SharedPtr<GraphObject> > PathTable;
 	for (PathTable::iterator i = removed->begin(); i != removed->end(); ++i) {
 		const Raul::Path& child_old_path = i->first;
 		assert(Raul::Path::descendant_comparator(old_path, child_old_path));

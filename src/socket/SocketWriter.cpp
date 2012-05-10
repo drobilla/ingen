@@ -22,6 +22,10 @@
 
 #include "SocketWriter.hpp"
 
+#ifndef MSG_NOSIGNAL
+#    define MSG_NOSIGNAL 0
+#endif
+
 namespace Ingen {
 namespace Socket {
 
