@@ -41,6 +41,14 @@ public:
 		_reader.start();
 	}
 
+	virtual SharedPtr<Interface> respondee() const {
+		return _respondee;
+	}
+
+	virtual void set_respondee(SharedPtr<Interface> respondee) {
+		_respondee = respondee;
+	}
+
 private:
 	SharedPtr<Interface> _respondee;
 	SocketReader         _reader;

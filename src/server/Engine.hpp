@@ -69,7 +69,8 @@ public:
 	virtual void run(uint32_t sample_count);
 	virtual void quit();
 	virtual bool main_iteration();
-	virtual void register_client(const Raul::URI& uri, Interface* client);
+	virtual void register_client(const Raul::URI& uri,
+	                             SharedPtr<Interface> client);
 	virtual bool unregister_client(const Raul::URI& uri);
 
 	void set_driver(SharedPtr<Driver> driver);

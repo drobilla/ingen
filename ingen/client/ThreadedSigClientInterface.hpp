@@ -106,10 +106,39 @@ public:
 		{ push_sig(sigc::bind(property_change_slot, subject, key, value)); }
 
 	/** Process all queued events - Called from GTK thread to emit signals. */
-	bool emit_signals();
+	bool emit_signals() {
+		// Process a limited number of events, to prevent locking the GTK
+		// thread indefinitely while processing continually arriving events
+
+		size_t num_processed = 0;
+		while (!_sigs.empty() && num_processed++ < (_sigs.capacity() * 3 / 4)) {
+			Closure& ev = _sigs.front();
+			ev();
+			ev.disconnect();
+			_sigs.pop();
+		}
+
+		_mutex.lock();
+		_cond.broadcast();
+		_mutex.unlock();
+
+		return true;
+	}
 
 private:
-	void push_sig(Closure ev);
+	void push_sig(Closure ev) {
+		bool success = false;
+		while (!success) {
+			success = _sigs.push(ev);
+			if (!success) {
+				Raul::warn << "Client event queue full.  Waiting..." << std::endl;
+				_mutex.lock();
+				_cond.wait(_mutex);
+				_mutex.unlock();
+				Raul::warn << "Queue drained, continuing" << std::endl;
+			}
+		}
+	}
 
 	Glib::Mutex _mutex;
 	Glib::Cond  _cond;

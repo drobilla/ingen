@@ -438,9 +438,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	LV2Driver* driver = new LV2Driver(*engine.get(), 4096, rate);
 	engine->set_driver(SharedPtr<Ingen::Server::Driver>(driver));
 
-	interface->set_respondee(&driver->writer());
-	engine->register_client("http://drobilla.net/ns/ingen#internal",
-	                        &driver->writer());
+	SharedPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
+	interface->set_respondee(client);
+	engine->register_client("http://drobilla.net/ns/ingen#internal", client);
 
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;

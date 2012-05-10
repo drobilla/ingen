@@ -14,6 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+
 #include "SocketWriter.hpp"
 
 namespace Ingen {
@@ -23,7 +27,11 @@ static size_t
 socket_sink(const void* buf, size_t len, void* stream)
 {
 	SocketWriter* writer = (SocketWriter*)stream;
-	return write(writer->fd(), buf, len);
+	ssize_t       ret    = send(writer->fd(), buf, len, MSG_NOSIGNAL);
+	if (ret < 0) {
+		return 0;
+	}
+	return ret;
 }
 
 SocketWriter::SocketWriter(Shared::LV2URIMap& map,

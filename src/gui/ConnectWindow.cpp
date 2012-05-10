@@ -157,13 +157,19 @@ ConnectWindow::connect(bool existing)
 				uri = user_uri;
 		}
 
-		if (existing)
+		if (existing) {
 			uri = world->engine()->uri().str();
+		}
 
-		// Create client-side listener
-		SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
+		SharedPtr<ThreadedSigClientInterface> tsci;
+		if (world->engine()) {
+			tsci = PtrCast<ThreadedSigClientInterface>(
+				world->engine()->respondee());
+		}
 
-		world->set_engine(world->interface(uri, tsci));
+		if (!tsci) {
+			world->set_engine(world->interface(uri, tsci));
+		}
 
 		_app->attach(tsci);
 		_app->register_callbacks();
@@ -203,6 +209,7 @@ ConnectWindow::connect(bool existing)
 
 			SharedPtr<SigClientInterface> client(new SigClientInterface());
 
+			world->engine()->set_respondee(client);
 			_app->attach(client);
 			_app->register_callbacks();
 

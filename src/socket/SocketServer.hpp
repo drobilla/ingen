@@ -34,17 +34,23 @@ public:
 	             SharedPtr<Socket> sock)
 		: Server::EventWriter(engine)
 		, SocketReader(world, *this, sock)
-		, _writer(*world.lv2_uri_map().get(),
-		          *world.uris().get(),
-		          sock->uri(),
-		          sock)
+		, _engine(engine)
+		, _writer(new SocketWriter(*world.lv2_uri_map().get(),
+		                           *world.uris().get(),
+		                           sock->uri(),
+		                           sock))
 	{
-		set_respondee(&_writer);
-		engine.register_client(sock->uri(), &_writer);
+		set_respondee(_writer);
+		engine.register_client(_writer->uri(), _writer);
+	}
+
+	~SocketServer() {
+		_engine.unregister_client(_writer->uri());
 	}
 
 private:
-	SocketWriter _writer;
+	Server::Engine&         _engine;
+	SharedPtr<SocketWriter> _writer;
 };
 
 }  // namespace Ingen

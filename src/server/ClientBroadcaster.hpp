@@ -49,10 +49,10 @@ class ConnectionImpl;
 class ClientBroadcaster : public Interface
 {
 public:
-	void register_client(const Raul::URI& uri, Interface* client);
+	void register_client(const Raul::URI& uri, SharedPtr<Interface> client);
 	bool unregister_client(const Raul::URI& uri);
 
-	Interface* client(const Raul::URI& uri);
+	SharedPtr<Interface> client(const Raul::URI& uri);
 
 	void send_plugins(const NodeFactory::Plugins& plugin_list);
 	void send_plugins_to(Interface*, const NodeFactory::Plugins& plugin_list);
@@ -118,7 +118,7 @@ public:
 	void error(const std::string& msg) { BROADCAST(error, msg); }
 
 private:
-	typedef std::map<Raul::URI, Interface*> Clients;
+	typedef std::map< Raul::URI, SharedPtr<Interface> > Clients;
 
 	Glib::Mutex _clients_mutex;
 	Clients     _clients;

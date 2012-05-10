@@ -36,7 +36,7 @@ namespace Server {
 /** Register a client to receive messages over the notification band.
  */
 void
-ClientBroadcaster::register_client(const URI& uri, Interface* client)
+ClientBroadcaster::register_client(const URI& uri, SharedPtr<Interface> client)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	LOG(info) << "Registered client: " << uri << endl;
@@ -65,7 +65,7 @@ ClientBroadcaster::unregister_client(const URI& uri)
 /** Looks up the client with the given source @a uri (which is used as the
  * unique identifier for registered clients).
  */
-Interface*
+SharedPtr<Interface>
 ClientBroadcaster::client(const URI& uri)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
@@ -73,7 +73,7 @@ ClientBroadcaster::client(const URI& uri)
 	if (i != _clients.end()) {
 		return (*i).second;
 	} else {
-		return NULL;
+		return SharedPtr<Interface>();
 	}
 }
 
@@ -82,7 +82,7 @@ ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c) {
-		send_plugins_to((*c).second, plugins);
+		send_plugins_to((*c).second.get(), plugins);
 	}
 }
 
@@ -109,7 +109,7 @@ ClientBroadcaster::send_object(const GraphObjectImpl* o, bool recursive)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) {
-		ObjectSender::send_object((*i).second, o, recursive);
+		ObjectSender::send_object((*i).second.get(), o, recursive);
 	}
 }
 

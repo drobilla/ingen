@@ -44,7 +44,7 @@
 #include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/runtime_paths.hpp"
-#include "ingen/client/SigClientInterface.hpp"
+#include "ingen/client/ThreadedSigClientInterface.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
@@ -140,7 +140,7 @@ main(int argc, char** argv)
 		          "Unable to load socket client module");
 		#endif
 		const char* const uri = conf.option("connect").get_string();
-		SharedPtr<Interface> client(new Client::SigClientInterface());
+		SharedPtr<Interface> client(new Client::ThreadedSigClientInterface(1024));
 		ingen_try((engine_interface = world->interface(uri, client)),
 		          (string("Unable to create interface to `") + uri + "'").c_str());
 	}

@@ -42,7 +42,13 @@ public:
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
-	void set_respondee(Interface* iface) { _respondee = iface; }
+	virtual SharedPtr<Interface> respondee() const {
+		return _respondee;
+	}
+
+	virtual void set_respondee(SharedPtr<Interface> respondee) {
+		_respondee = respondee;
+	}
 
 	virtual void set_response_id(int32_t id);
 
@@ -83,9 +89,9 @@ public:
 	virtual void error(const std::string& msg) {}  ///< N/A
 
 protected:
-	Engine&    _engine;
-	Interface* _respondee;
-	int32_t    _request_id;
+	Engine&              _engine;
+	SharedPtr<Interface> _respondee;
+	int32_t              _request_id;
 
 private:
 	SampleCount now() const;
