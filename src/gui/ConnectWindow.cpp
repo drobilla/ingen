@@ -195,14 +195,13 @@ ConnectWindow::connect(bool existing)
 	} else
 #endif
 		if (_mode == INTERNAL) {
-			if (!world->local_engine())
+			if (!world->local_engine()) {
 				world->load_module("server");
+				world->load_module("jack");
+				world->local_engine()->activate();
+			}
 
 			SharedPtr<SigClientInterface> client(new SigClientInterface());
-
-			world->load_module("jack");
-
-			world->local_engine()->activate();
 
 			_app->attach(client);
 			_app->register_callbacks();
