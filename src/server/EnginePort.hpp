@@ -32,7 +32,7 @@ namespace Server {
 class DuplexPort;
 class ProcessContext;
 
-/** Representation of a "system" port (a port outside Ingen).
+/** Representation of a "system" port (e.g. a Jack port).
  *
  * This is the class through which the rest of the engine manages everything
  * related to driver ports.  Derived classes are expected to have a pointer to
@@ -42,17 +42,21 @@ class ProcessContext;
  */
 class EnginePort : public Raul::Noncopyable, public Raul::Deletable {
 public:
-	EnginePort() : _patch_port(NULL), _buffer(NULL) {}
+	explicit EnginePort(DuplexPort* port)
+		: _patch_port(port)
+		, _buffer(NULL)
+	{}
+
 	virtual ~EnginePort() {}
 
 	/** Set the name of the system port according to new path */
-	virtual void move(const Raul::Path& path) = 0;
+	virtual void move(const Raul::Path& path) {}
 
 	/** Create system port */
-	virtual void create()  = 0;
+	virtual void create() {}
 
 	/** Destroy system port */
-	virtual void destroy() = 0;
+	virtual void destroy() {}
 
 	void* buffer() const        { return _buffer; }
 	void  set_buffer(void* buf) { _buffer = buf; }
@@ -61,8 +65,6 @@ public:
 	DuplexPort* patch_port() const { return _patch_port; }
 
 protected:
-	explicit EnginePort(DuplexPort* port) : _patch_port(port) {}
-
 	DuplexPort* _patch_port;
 	void*       _buffer;
 };

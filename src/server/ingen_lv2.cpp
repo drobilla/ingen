@@ -89,11 +89,6 @@ public:
 		, _driver(driver)
 	{}
 
-	// TODO: LV2 dynamic ports
-	void create() {}
-	void destroy() {}
-	void move(const Raul::Path& path) {}
-
 	void pre_process(ProcessContext& context) {
 		if (!is_input() || !_buffer) {
 			return;
