@@ -62,6 +62,7 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _pre_processor(new PreProcessor())
 	, _post_processor(new PostProcessor(*this))
 	, _event_writer(new EventWriter(*this))
+	, _root_patch(NULL)
 	, _process_context(*this)
 	, _quit_flag(false)
 {
