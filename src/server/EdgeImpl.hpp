@@ -20,7 +20,6 @@
 #include <cstdlib>
 
 #include <boost/intrusive/slist.hpp>
-#include <boost/intrusive_ptr.hpp>
 #include <boost/utility.hpp>
 
 #include "ingen/Edge.hpp"
@@ -70,11 +69,11 @@ public:
 
 	void queue(Context& context);
 
-	void get_sources(Context&                      context,
-	                 uint32_t                      voice,
-	                 boost::intrusive_ptr<Buffer>* srcs,
-	                 uint32_t                      max_num_srcs,
-	                 uint32_t&                     num_srcs);
+	void get_sources(Context&  context,
+	                 uint32_t  voice,
+	                 Buffer**  srcs,
+	                 uint32_t  max_num_srcs,
+	                 uint32_t& num_srcs);
 
 	/** Get the buffer for a particular voice.
 	 * An Edge is smart - it knows the destination port requesting the

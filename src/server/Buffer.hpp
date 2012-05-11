@@ -20,7 +20,6 @@
 #include <cassert>
 #include <cstddef>
 
-#include <boost/intrusive_ptr.hpp>
 #include <boost/utility.hpp>
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
@@ -86,7 +85,7 @@ private:
 	void recycle();
 
 	Buffer*         _next; ///< Intrusive linked list for BufferFactory
-	Raul::AtomicInt _refs; ///< Intrusive reference count for intrusive_ptr
+	Raul::AtomicInt _refs; ///< Intrusive reference count
 };
 
 } // namespace Server

@@ -20,13 +20,12 @@
 #include <list>
 #include <string>
 
-#include <boost/intrusive_ptr.hpp>
-
 #include "ingen/Node.hpp"
 #include "raul/Array.hpp"
 #include "raul/AtomicInt.hpp"
 #include "raul/Semaphore.hpp"
 
+#include "BufferRef.hpp"
 #include "Context.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PortType.hpp"
@@ -140,10 +139,10 @@ public:
 	virtual void post_process(Context& context);
 
 	/** Set the buffer of a port to a given buffer (e.g. connect plugin to buffer) */
-	virtual void set_port_buffer(uint32_t                      voice,
-	                             uint32_t                      port_num,
-	                             boost::intrusive_ptr<Buffer>  buf,
-	                             SampleCount                   offset);
+	virtual void set_port_buffer(uint32_t    voice,
+	                             uint32_t    port_num,
+	                             BufferRef   buf,
+	                             SampleCount offset);
 
 	virtual Port*     port(uint32_t index)      const;
 	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }

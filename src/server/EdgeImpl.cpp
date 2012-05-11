@@ -15,7 +15,6 @@
 */
 
 #include <algorithm>
-#include <boost/intrusive_ptr.hpp>
 
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
@@ -80,11 +79,11 @@ EdgeImpl::head_path() const
 }
 
 void
-EdgeImpl::get_sources(Context&                      context,
-                      uint32_t                      voice,
-                      boost::intrusive_ptr<Buffer>* srcs,
-                      uint32_t                      max_num_srcs,
-                      uint32_t&                     num_srcs)
+EdgeImpl::get_sources(Context&  context,
+                      uint32_t  voice,
+                      Buffer**  srcs,
+                      uint32_t  max_num_srcs,
+                      uint32_t& num_srcs)
 {
 	if (must_queue() && _queue->read_space() > 0) {
 		LV2_Atom obj;
@@ -93,7 +92,7 @@ EdgeImpl::get_sources(Context&                      context,
 			head()->buffer_type(), sizeof(LV2_Atom) + obj.size);
 		void* data = buf->port_data(PortType::ATOM, context.offset());
 		_queue->read(sizeof(LV2_Atom) + obj.size, (LV2_Atom*)data);
-		srcs[num_srcs++] = buf;
+		srcs[num_srcs++] = buf.get();
 	} else if (must_mix()) {
 		// Mixing down voices: every src voice mixed into every dst voice
 		for (uint32_t v = 0; v < _tail->poly(); ++v) {
@@ -116,7 +115,7 @@ EdgeImpl::queue(Context& context)
 
 	const Ingen::Shared::URIs& uris = _tail->bufs().uris();
 
-	boost::intrusive_ptr<Buffer> src_buf = _tail->buffer(0);
+	BufferRef src_buf = _tail->buffer(0);
 	if (src_buf->atom()->type != uris.atom_Sequence) {
 		Raul::error << "Queued edge source is not a Sequence" << std::endl;
 		return;

@@ -19,11 +19,10 @@
 
 #include <string>
 
-#include <boost/intrusive_ptr.hpp>
-
 #include "lilv/lilv.h"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 
+#include "BufferRef.hpp"
 #include "NodeImpl.hpp"
 #include "ingen/shared/LV2Features.hpp"
 #include "types.hpp"
@@ -60,8 +59,10 @@ public:
 
 	void process(ProcessContext& context);
 
-	void set_port_buffer(uint32_t voice, uint32_t port_num,
-			boost::intrusive_ptr<Buffer> buf, SampleCount offset);
+	void set_port_buffer(uint32_t    voice,
+	                     uint32_t    port_num,
+	                     BufferRef   buf,
+	                     SampleCount offset);
 
 protected:
 	inline LilvInstance* instance(uint32_t voice) {

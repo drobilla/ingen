@@ -19,8 +19,6 @@
 
 #include <map>
 
-#include <boost/intrusive_ptr.hpp>
-
 #undef nil
 #include <glibmm/thread.h>
 

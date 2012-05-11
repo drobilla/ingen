@@ -19,6 +19,8 @@
 
 #include <boost/intrusive_ptr.hpp>
 
+#include "Buffer.hpp"
+
 namespace Ingen {
 namespace Server {
 

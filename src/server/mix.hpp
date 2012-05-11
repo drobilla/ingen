@@ -17,8 +17,6 @@
 #ifndef INGEN_ENGINE_MIX_HPP
 #define INGEN_ENGINE_MIX_HPP
 
-#include <boost/intrusive_ptr.hpp>
-
 #include "ingen/shared/URIs.hpp"
 #include "raul/log.hpp"
 
@@ -35,22 +33,22 @@ is_audio(Shared::URIs& uris, LV2_URID type)
 }
 
 inline void
-mix(Context&                            context,
-    Shared::URIs&                       uris,
-    Buffer*                             dst,
-    const boost::intrusive_ptr<Buffer>* srcs,
-    uint32_t                            num_srcs)
+mix(Context&      context,
+    Shared::URIs& uris,
+    Buffer*       dst,
+    Buffer**      srcs,
+    uint32_t      num_srcs)
 {
 	if (num_srcs == 1) {
-		dst->copy(context, srcs[0].get());
+		dst->copy(context, srcs[0]);
 	} else if (is_audio(uris, dst->type())) {
 		// Copy the first source
-		dst->copy(context, srcs[0].get());
+		dst->copy(context, srcs[0]);
 
 		// Mix in the rest
 		for (uint32_t i = 1; i < num_srcs; ++i) {
 			assert(is_audio(uris, srcs[i]->type()));
-			((AudioBuffer*)dst)->accumulate(context, (AudioBuffer*)srcs[i].get());
+			((AudioBuffer*)dst)->accumulate(context, (AudioBuffer*)srcs[i]);
 		}
 	} else {
 		std::cerr << "FIXME: event mix" << std::endl;
@@ -66,7 +64,7 @@ mix(Context&                            context,
 		while (true) {
 			const EventBuffer* first = NULL;
 			for (uint32_t i = 0; i < num_srcs; ++i) {
-				const EventBuffer* const src = (const EventBuffer*)srcs[i].get();
+				const EventBuffer* const src = (const EventBuffer*)srcs[i];
 				if (src->is_valid()) {
 					if (!first || src->get_event()->frames < first->get_event()->frames)
 						first = src;

@@ -190,18 +190,15 @@ InputPort::pre_process(Context& context)
 		}
 	} else {
 		uint32_t max_num_srcs = 0;
-		for (Edges::const_iterator c = _edges.begin();
-		     c != _edges.end(); ++c) {
-			max_num_srcs += c->tail()->poly();
+		for (Edges::const_iterator e = _edges.begin(); e != _edges.end(); ++e) {
+			max_num_srcs += e->tail()->poly();
 		}
 
-		boost::intrusive_ptr<Buffer> srcs[max_num_srcs];
-
+		Buffer* srcs[max_num_srcs];
 		for (uint32_t v = 0; v < _poly; ++v) {
 			uint32_t num_srcs = 0;
-			for (Edges::iterator c = _edges.begin();
-			     c != _edges.end(); ++c) {
-				c->get_sources(context, v, srcs, max_num_srcs, num_srcs);
+			for (Edges::iterator e = _edges.begin(); e != _edges.end(); ++e) {
+				e->get_sources(context, v, srcs, max_num_srcs, num_srcs);
 			}
 
 			mix(context, bufs().uris(), buffer(v).get(), srcs, num_srcs);
