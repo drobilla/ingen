@@ -22,6 +22,7 @@
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 #include "raul/SharedPtr.hpp"
+#include "raul/Noncopyable.hpp"
 
 namespace Ingen {
 
@@ -46,7 +47,7 @@ public:
 		                                       Node*          node) = 0;
 	};
 
-	class FeatureArray {
+	class FeatureArray : public Raul::Noncopyable {
 	public:
 		typedef std::vector< SharedPtr<LV2_Feature> > FeatureVector;
 
