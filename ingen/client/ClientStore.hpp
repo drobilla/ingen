@@ -55,7 +55,7 @@ class ClientStore : public Shared::Store
                   , public INGEN_TRACKABLE {
 public:
 	ClientStore(
-		SharedPtr<Shared::URIs>       uris,
+		Shared::URIs&                 uris,
 		SharedPtr<Interface>          engine  = SharedPtr<Interface>(),
 		SharedPtr<SigClientInterface> emitter = SharedPtr<SigClientInterface>());
 
@@ -72,7 +72,7 @@ public:
 	SharedPtr<Plugins>       plugins()                         { return _plugins; }
 	void                     set_plugins(SharedPtr<Plugins> p) { _plugins = p; }
 
-	Shared::URIs& uris() { return *_uris.get(); }
+	Shared::URIs& uris() { return _uris; }
 
 	void put(const Raul::URI&            uri,
 	         const Resource::Properties& properties,
@@ -130,7 +130,7 @@ private:
 	bool attempt_connection(const Raul::Path& tail_path,
 	                        const Raul::Path& head_path);
 
-	SharedPtr<Shared::URIs>       _uris;
+	Shared::URIs&                 _uris;
 	SharedPtr<Interface>          _engine;
 	SharedPtr<SigClientInterface> _emitter;
 

@@ -14,25 +14,23 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/utility.hpp>
-
-#include <glibmm/module.h>
-#include <glibmm/miscutils.h>
 #include <glibmm/fileutils.h>
+#include <glibmm/miscutils.h>
+#include <glibmm/module.h>
 
-#include "lilv/lilv.h"
-#include "raul/log.hpp"
-#include "raul/Atom.hpp"
-#include "sord/sordmm.hpp"
-
-#include "ingen/Interface.hpp"
 #include "ingen/EngineBase.hpp"
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/LV2Features.hpp"
+#include "ingen/shared/Module.hpp"
 #include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
+#include "ingen/shared/World.hpp"
+#include "ingen/shared/runtime_paths.hpp"
+#include "lilv/lilv.h"
+#include "raul/Atom.hpp"
+#include "raul/log.hpp"
+#include "sord/sordmm.hpp"
 
 #define LOG(s) (s("[World] "))
 
@@ -96,19 +94,19 @@ ingen_load_module(const string& name)
 	}
 }
 
-class World::Pimpl {
+class World::Impl {
 public:
-	Pimpl(int&                 a_argc,
-	      char**&              a_argv,
-	      LV2_URID_Map*        map,
-	      LV2_URID_Unmap*      unmap)
+	Impl(int&            a_argc,
+	     char**&         a_argv,
+	     LV2_URID_Map*   map,
+	     LV2_URID_Unmap* unmap)
 		: argc(a_argc)
 		, argv(a_argv)
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
-		, uri_map(new Ingen::Shared::URIMap(map, unmap))
 		, forge(new Ingen::Forge(*uri_map))
-		, uris(new Shared::URIs(*forge, uri_map.get()))
+		, uri_map(new Ingen::Shared::URIMap(map, unmap))
+		, uris(new Shared::URIs(*forge, uri_map))
 		, lilv_world(lilv_world_new())
 	{
 		conf.parse(argc, argv);
@@ -130,7 +128,7 @@ public:
 		rdf_world->add_prefix("xsd",   "http://www.w3.org/2001/XMLSchema#");
 	}
 
-	virtual ~Pimpl()
+	virtual ~Impl()
 	{
 		serialiser.reset();
 		parser.reset();
@@ -143,17 +141,12 @@ public:
 		script_runners.clear();
 
 		lilv_world_free(lilv_world);
-		lilv_world = NULL;
 
 		delete rdf_world;
-		rdf_world = NULL;
-
 		delete lv2_features;
-		lv2_features = NULL;
-
 		delete forge;
-
-		uris.reset();
+		delete uri_map;
+		delete uris;
 	}
 
 	typedef std::map< const std::string, SharedPtr<Module> > Modules;
@@ -171,9 +164,9 @@ public:
 	Shared::Configuration                conf;
 	LV2Features*                         lv2_features;
 	Sord::World*                         rdf_world;
-	SharedPtr<URIMap>                    uri_map;
 	Ingen::Forge*                        forge;
-	SharedPtr<URIs>                      uris;
+	URIMap*                              uri_map;
+	URIs*                                uris;
 	SharedPtr<Interface>                 interface;
 	SharedPtr<EngineBase>                engine;
 	SharedPtr<Serialisation::Serialiser> serialiser;
@@ -187,7 +180,7 @@ World::World(int&                 argc,
              char**&              argv,
              LV2_URID_Map*        map,
              LV2_URID_Unmap*      unmap)
-	: _impl(new Pimpl(argc, argv, map, unmap))
+	: _impl(new Impl(argc, argv, map, unmap))
 {
 }
 
@@ -199,33 +192,32 @@ World::~World()
 
 void World::set_engine(SharedPtr<EngineBase> e)                    { _impl->engine = e; }
 void World::set_interface(SharedPtr<Interface> i)                  { _impl->interface = i; }
-void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
 void World::set_parser(SharedPtr<Serialisation::Parser> p)         { _impl->parser = p; }
+void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
 void World::set_store(SharedPtr<Store> s)                          { _impl->store = s; }
 
-int&                                 World::argc()         { return _impl->argc; }
-char**&                              World::argv()         { return _impl->argv; }
 SharedPtr<EngineBase>                World::engine()       { return _impl->engine; }
 SharedPtr<Interface>                 World::interface()    { return _impl->interface; }
-SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
 SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
+SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
 SharedPtr<Store>                     World::store()        { return _impl->store; }
-Shared::Configuration&               World::conf()         { return _impl->conf; }
-Ingen::Forge&                        World::forge()        { return *_impl->forge; }
-LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
 
-LilvWorld*        World::lilv_world()  { return _impl->lilv_world; }
-Sord::World*      World::rdf_world()   { return _impl->rdf_world; }
-SharedPtr<URIs>   World::uris()        { return _impl->uris; }
-SharedPtr<URIMap> World::uri_map()     { return _impl->uri_map; }
+int&                   World::argc() { return _impl->argc; }
+char**&                World::argv() { return _impl->argv; }
+Shared::Configuration& World::conf() { return _impl->conf; }
 
-/** Load an Ingen module.
- * @return true on success, false on failure
- */
+Sord::World* World::rdf_world()  { return _impl->rdf_world; }
+LilvWorld*   World::lilv_world() { return _impl->lilv_world; }
+
+LV2Features&  World::lv2_features() { return *_impl->lv2_features; }
+Ingen::Forge& World::forge()        { return *_impl->forge; }
+URIs&         World::uris()         { return *_impl->uris; }
+URIMap&       World::uri_map()      { return *_impl->uri_map; }
+
 bool
 World::load_module(const char* name)
 {
-	Pimpl::Modules::iterator i = _impl->modules.find(name);
+	Impl::Modules::iterator i = _impl->modules.find(name);
 	if (i != _impl->modules.end()) {
 		LOG(Raul::info)(Raul::fmt("Module `%1%' already loaded\n") % name);
 		return true;
@@ -247,7 +239,7 @@ World::load_module(const char* name)
 bool
 World::run_module(const char* name)
 {
-	Pimpl::Modules::iterator i = _impl->modules.find(name);
+	Impl::Modules::iterator i = _impl->modules.find(name);
 	if (i == _impl->modules.end()) {
 		LOG(Raul::error) << "Attempt to run unloaded module `" << name << "'" << endl;
 		return false;
@@ -257,8 +249,6 @@ World::run_module(const char* name)
 	return true;
 }
 
-/** Unload all loaded Ingen modules.
- */
 void
 World::unload_modules()
 {
@@ -272,7 +262,7 @@ World::new_interface(const std::string&   engine_url,
                      SharedPtr<Interface> respondee)
 {
 	const string scheme = engine_url.substr(0, engine_url.find(":"));
-	const Pimpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
+	const Impl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
 	if (i == _impl->interface_factories.end()) {
 		Raul::warn << "Unknown URI scheme `" << scheme << "'" << endl;
 		return SharedPtr<Interface>();
@@ -285,7 +275,7 @@ World::new_interface(const std::string&   engine_url,
 bool
 World::run(const std::string& mime_type, const std::string& filename)
 {
-	const Pimpl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
+	const Impl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
 	if (i == _impl->script_runners.end()) {
 		Raul::warn << "Unknown script MIME type `" << mime_type << "'" << endl;
 		return false;

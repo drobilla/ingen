@@ -140,12 +140,12 @@ private:
 public:
 	LV2Driver(Engine& engine, SampleCount buffer_size, SampleCount sample_rate)
 		: _context(engine)
-		, _reader(*engine.world()->uri_map().get(),
-		          *engine.world()->uris().get(),
+		, _reader(engine.world()->uri_map(),
+		          engine.world()->uris(),
 		          engine.world()->forge(),
 		          *engine.world()->interface().get())
-		, _writer(*engine.world()->uri_map().get(),
-		          *engine.world()->uris().get(),
+		, _writer(engine.world()->uri_map(),
+		          engine.world()->uris(),
 		          *this)
 		, _to_ui(buffer_size * sizeof(float))  // FIXME: size
 		, _root_patch(NULL)
@@ -240,7 +240,7 @@ public:
 		const uint32_t capacity = seq->atom.size;
 
 		// Initialise output port buffer to an empty Sequence
-		seq->atom.type = _context.engine().world()->uris()->atom_Sequence;
+		seq->atom.type = _context.engine().world()->uris().atom_Sequence;
 		seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
 
 		const uint32_t read_space = _to_ui.read_space();

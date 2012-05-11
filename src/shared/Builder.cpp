@@ -30,7 +30,7 @@ using namespace std;
 namespace Ingen {
 namespace Shared {
 
-Builder::Builder(SharedPtr<Shared::URIs> uris, Interface& interface)
+Builder::Builder(Shared::URIs& uris, Interface& interface)
 	: _uris(uris)
 	, _interface(interface)
 {
@@ -39,15 +39,14 @@ Builder::Builder(SharedPtr<Shared::URIs> uris, Interface& interface)
 void
 Builder::build(SharedPtr<const GraphObject> object)
 {
-	const URIs& uris = *_uris.get();
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
 		if (!object->path().is_root()) {
 			Resource::Properties props;
-			props.insert(make_pair(uris.rdf_type,
-			                       _uris->forge.alloc_uri(uris.ingen_Patch.str())));
-			props.insert(make_pair(uris.ingen_polyphony,
-			                       _uris->forge.make(int32_t(patch->internal_poly()))));
+			props.insert(make_pair(_uris.rdf_type,
+			                       _uris.forge.alloc_uri(_uris.ingen_Patch.str())));
+			props.insert(make_pair(_uris.ingen_polyphony,
+			                       _uris.forge.make(int32_t(patch->internal_poly()))));
 			_interface.put(object->path(), props);
 		}
 
@@ -62,9 +61,9 @@ Builder::build(SharedPtr<const GraphObject> object)
 	SharedPtr<const Node> node = PtrCast<const Node>(object);
 	if (node) {
 		Resource::Properties props;
-		props.insert(make_pair(uris.rdf_type,       uris.ingen_Node));
-		props.insert(make_pair(uris.ingen_prototype,
-		                       _uris->forge.alloc_uri(node->plugin()->uri().str())));
+		props.insert(make_pair(_uris.rdf_type, _uris.ingen_Node));
+		props.insert(make_pair(_uris.ingen_prototype,
+		                       _uris.forge.alloc_uri(node->plugin()->uri().str())));
 		_interface.put(node->path(), props);
 		build_object(object);
 		return;

@@ -17,8 +17,6 @@
 #ifndef INGEN_SHARED_BUILDER_HPP
 #define INGEN_SHARED_BUILDER_HPP
 
-#include "raul/SharedPtr.hpp"
-
 namespace Ingen {
 
 class Interface;
@@ -35,7 +33,7 @@ class URIs;
 class Builder
 {
 public:
-	Builder(SharedPtr<Shared::URIs> uris, Interface& interface);
+	Builder(Shared::URIs& uris, Interface& interface);
 	virtual ~Builder() {}
 
 	void build(SharedPtr<const GraphObject> object);
@@ -44,8 +42,8 @@ public:
 private:
 	void build_object(SharedPtr<const GraphObject> object);
 
-	SharedPtr<Shared::URIs> _uris;
-	Interface&              _interface;
+	Shared::URIs& _uris;
+	Interface&    _interface;
 };
 
 } // namespace Shared

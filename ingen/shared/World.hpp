@@ -14,17 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_MODULE_WORLD_HPP
-#define INGEN_MODULE_WORLD_HPP
+#ifndef INGEN_SHARED_WORLD_HPP
+#define INGEN_SHARED_WORLD_HPP
 
 #include <string>
 
-#include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/Forge.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
-#include "raul/Atom.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/Noncopyable.hpp"
+#include "raul/SharedPtr.hpp"
 
 typedef struct LilvWorldImpl LilvWorld;
 
@@ -33,31 +30,46 @@ namespace Sord { class World; }
 namespace Ingen {
 
 class EngineBase;
+class Forge;
 class Interface;
 
 namespace Serialisation {
-class Serialiser;
 class Parser;
+class Serialiser;
 }
 
 namespace Shared {
 
+class Configuration;
 class LV2Features;
-class URIs;
-class URIMap;
 class Store;
+class URIMap;
+class URIs;
 
-/** The "world" all Ingen modules may share.
+/** The "world" all Ingen modules share.
  *
- * All loaded components of Ingen, as well as things requiring shared access
- * and/or locking (e.g. Sord, Lilv).
+ * This is the root to which all components of Ingen are connected.  It
+ * contains all necessary shared data (including the world for libraries like
+ * Sord and Lilv) and holds references to components.
  *
- * Ingen modules are shared libraries which modify the World when loaded
- * using World::load, e.g. loading the "ingen_serialisation" module will
- * set World::serialiser and World::parser to valid objects.
+ * Most functionality in Ingen is implemented in dynamically loaded modules,
+ * which are loaded using this interface.  When loaded, those modules add
+ * facilities to the World which can then be used throughout the code.  For
+ * example loading the "ingen_serialisation" module will set World::serialiser
+ * and World::parser to valid objects.
+ *
+ * The world is used in any process which uses the Ingen as a library, both
+ * client and server (e.g. the world may not actually contain an Engine, since
+ * it maybe running in another process or even on a different machine).
  */
 class World : public Raul::Noncopyable {
 public:
+	/** Construct a new Ingen world.
+	 * @param argc Argument count (as in C main())
+	 * @param argv Argument vector (as in C main())
+	 * @param map LV2 URID map implementation, or NULL to use internal.
+	 * @param unmap LV2 URID unmap implementation, or NULL to use internal.
+	 */
 	World(int&            argc,
 	      char**&         argv,
 	      LV2_URID_Map*   map,
@@ -65,64 +77,75 @@ public:
 
 	virtual ~World();
 
+	/** Load an Ingen module by name (e.g. "server", "gui", etc.)
+	 * @return True on success.
+	 */
 	virtual bool load_module(const char* name);
+
+	/** Run a loaded module (modules that "run" only, e.g. gui).
+	 * @return True on success.
+	 */
 	virtual bool run_module(const char* name);
 
+	/** Unload all loaded Ingen modules. */
 	virtual void unload_modules();
 
+	/** A function to create a new remote Interface. */
 	typedef SharedPtr<Interface> (*InterfaceFactory)(
-			World*               world,
-			const std::string&   engine_url,
-			SharedPtr<Interface> respondee);
+		World*               world,
+		const std::string&   engine_url,
+		SharedPtr<Interface> respondee);
 
+	/** Register an InterfaceFactory (for module implementations). */
 	virtual void add_interface_factory(const std::string& scheme,
 	                                   InterfaceFactory   factory);
 
+	/** Return a new Interface to control the server at @p engine_url.
+	 * @param respondee The Interface that will receive responses to commands
+	 *                  and broadcasts, if applicable.
+	 */
 	virtual SharedPtr<Interface> new_interface(
 		const std::string&   engine_url,
 		SharedPtr<Interface> respondee);
 
+	/** Run a script. */
 	virtual bool run(const std::string& mime_type,
 	                 const std::string& filename);
 
 	virtual void set_engine(SharedPtr<EngineBase> e);
 	virtual void set_interface(SharedPtr<Interface> e);
-	virtual void set_serialiser(SharedPtr<Serialisation::Serialiser> s);
 	virtual void set_parser(SharedPtr<Serialisation::Parser> p);
+	virtual void set_serialiser(SharedPtr<Serialisation::Serialiser> s);
 	virtual void set_store(SharedPtr<Store> s);
 
 	virtual SharedPtr<EngineBase>                engine();
 	virtual SharedPtr<Interface>                 interface();
-	virtual SharedPtr<Serialisation::Serialiser> serialiser();
 	virtual SharedPtr<Serialisation::Parser>     parser();
+	virtual SharedPtr<Serialisation::Serialiser> serialiser();
 	virtual SharedPtr<Store>                     store();
 
-	virtual Sord::World* rdf_world();
-
-	virtual SharedPtr<URIs>   uris();
-	virtual SharedPtr<URIMap> uri_map();
-
-	virtual int&    argc();
-	virtual char**& argv();
-
+	virtual int&           argc();
+	virtual char**&        argv();
 	virtual Configuration& conf();
 
+	virtual Sord::World* rdf_world();
+	virtual LilvWorld*   lilv_world();
+
+	virtual LV2Features&  lv2_features();
 	virtual Ingen::Forge& forge();
-
-	virtual LV2Features* lv2_features();
-
-	virtual LilvWorld* lilv_world();
+	virtual URIMap&       uri_map();
+	virtual URIs&         uris();
 
 	virtual void        set_jack_uuid(const std::string& uuid);
 	virtual std::string jack_uuid();
 
 private:
-	class Pimpl;
+	class Impl;
 
-	Pimpl* _impl;
+	Impl* _impl;
 };
 
-} // namespace Shared
-} // namespace Ingen
+}  // namespace Shared
+}  // namespace Ingen
 
-#endif // INGEN_MODULE_WORLD_HPP
+#endif  // INGEN_SHARED_WORLD_HPP

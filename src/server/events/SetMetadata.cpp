@@ -79,13 +79,13 @@ SetMetadata::SetMetadata(Engine&           engine,
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
 		LOG(info) << "    + " << i->first
 		          << " = " << engine.world()->forge().str(i->second)
-		          << " :: " << engine.world()->uri_map()->unmap_uri(i->second.type()) << endl;
+		          << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << endl;
 	}
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = remove.begin(); i != remove.end(); ++i) {
 		LOG(info) << "    - " << i->first
 		          << " = " << engine.world()->forge().str(i->second)
-		          << " :: " << engine.world()->uri_map()->unmap_uri(i->second.type()) << endl;
+		          << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << endl;
 	}
 	LOG(info) << "}" << endl;
 	*/
@@ -118,7 +118,7 @@ SetMetadata::pre_process()
 		return;
 	}
 
-	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 
 	if (is_graph_object && !_object) {
 		Raul::Path path(_subject.str());
@@ -272,7 +272,7 @@ SetMetadata::execute(ProcessContext& context)
 		return;
 	}
 
-	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 
 	if (_create_event) {
 		_create_event->execute(context);

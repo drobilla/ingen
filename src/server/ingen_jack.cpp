@@ -14,8 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/Module.hpp"
 #include "ingen/shared/World.hpp"
+#include "raul/Configuration.hpp"
 #include "raul/log.hpp"
 
 #include "JackDriver.hpp"

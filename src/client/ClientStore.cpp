@@ -37,7 +37,7 @@ using namespace Shared;
 
 namespace Client {
 
-ClientStore::ClientStore(SharedPtr<Shared::URIs>       uris,
+ClientStore::ClientStore(Shared::URIs&                 uris,
                          SharedPtr<Interface>          engine,
                          SharedPtr<SigClientInterface> emitter)
 	: _uris(uris)
@@ -273,7 +273,7 @@ ClientStore::put(const Raul::URI&            uri,
 #ifdef INGEN_CLIENT_STORE_DUMP
 	LOG(Raul::info) << "PUT " << uri << " {" << endl;
 	for (Iterator i = properties.begin(); i != properties.end(); ++i)
-		LOG(Raul::info) << '\t' << i->first << " = " << _uris->forge.str(i->second)
+		LOG(Raul::info) << '\t' << i->first << " = " << _uris.forge.str(i->second)
 		          << " :: " << i->second.type() << endl;
 	LOG(Raul::info) << "}" << endl;
 #endif
@@ -283,8 +283,8 @@ ClientStore::put(const Raul::URI&            uri,
 	                   is_patch, is_node, is_port, is_output);
 
 	// Check if uri is a plugin
-	Iterator t = properties.find(_uris->rdf_type);
-	if (t != properties.end() && t->second.type() == _uris->forge.URI) {
+	Iterator t = properties.find(_uris.rdf_type);
+	if (t != properties.end() && t->second.type() == _uris.forge.URI) {
 		const Raul::Atom&  type        = t->second;
 		const Raul::URI&   type_uri    = type.get_uri();
 		const Plugin::Type plugin_type = Plugin::type_from_uri(type_uri);
@@ -320,16 +320,16 @@ ClientStore::put(const Raul::URI&            uri,
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_node) {
-		const Iterator p = properties.find(_uris->ingen_prototype);
+		const Iterator p = properties.find(_uris.ingen_prototype);
 		SharedPtr<PluginModel> plug;
-		if (p->second.is_valid() && p->second.type() == _uris->forge.URI) {
+		if (p->second.is_valid() && p->second.type() == _uris.forge.URI) {
 			if (!(plug = _plugin(p->second.get_uri()))) {
 				LOG(Raul::warn)(Raul::fmt("Unable to find plugin <%1%>\n")
 				                % p->second.get_uri());
 				plug = SharedPtr<PluginModel>(
 					new PluginModel(uris(),
 					                p->second.get_uri(),
-					                _uris->ingen_nil,
+					                _uris.ingen_nil,
 					                Resource::Properties()));
 				add_plugin(plug);
 			}
@@ -344,8 +344,8 @@ ClientStore::put(const Raul::URI&            uri,
 		PortModel::Direction pdir = (is_output)
 			? PortModel::OUTPUT
 			: PortModel::INPUT;
-		const Iterator i = properties.find(_uris->lv2_index);
-		if (i != properties.end() && i->second.type() == _uris->forge.Int) {
+		const Iterator i = properties.find(_uris.lv2_index);
+		if (i != properties.end() && i->second.type() == _uris.forge.Int) {
 			const uint32_t index = i->second.get_int32();
 			SharedPtr<PortModel> p(
 				new PortModel(uris(), path, index, pdir));
@@ -370,11 +370,11 @@ ClientStore::delta(const Raul::URI&            uri,
 	LOG(Raul::info) << "DELTA " << uri << " {" << endl;
 	for (iterator i = remove.begin(); i != remove.end(); ++i)
 		LOG(Raul::info) << "    - " << i->first
-		                << " = " << _uris->forge.str(i->second)
+		                << " = " << _uris.forge.str(i->second)
 		                << " :: " << i->second.type() << endl;
 	for (iterator i = add.begin(); i != add.end(); ++i)
 		LOG(Raul::info) << "    + " << i->first
-		                << " = " << _uris->forge.str(i->second)
+		                << " = " << _uris.forge.str(i->second)
 		                << " :: " << i->second.type() << endl;
 	LOG(Raul::info) << "}" << endl;
 #endif
@@ -400,9 +400,9 @@ ClientStore::set_property(const Raul::URI&  subject_uri,
                           const Raul::URI&  predicate,
                           const Raul::Atom& value)
 {
-	if (subject_uri == _uris->ingen_engine) {
+	if (subject_uri == _uris.ingen_engine) {
 		LOG(Raul::info)(Raul::fmt("Engine property <%1%> = %2%\n")
-		                % predicate % _uris->forge.str(value));
+		                % predicate % _uris.forge.str(value));
 		return;
 	}
 	SharedPtr<Resource> subject = _resource(subject_uri);

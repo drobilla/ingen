@@ -26,6 +26,9 @@
 #include "ingen/serialisation/Serialiser.hpp"
 #endif
 
+#include "ingen/shared/Configuration.hpp"
+#include "ingen/shared/LV2Features.hpp"
+#include "ingen/shared/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/List.hpp"
 #include "raul/log.hpp"
@@ -43,8 +46,6 @@
 #include "PostProcessor.hpp"
 #include "ProcessSlave.hpp"
 #include "ThreadManager.hpp"
-#include "ingen/shared/LV2Features.hpp"
-#include "ingen/shared/World.hpp"
 #include "util.hpp"
 
 #define LOG(s) (s("[JackDriver] "))
@@ -184,7 +185,7 @@ JackDriver::JackDriver(Engine& engine)
 	, _sample_rate(0)
 	, _is_activated(false)
 {
-	_midi_event_type = _engine.world()->uris()->midi_MidiEvent;
+	_midi_event_type = _engine.world()->uris().midi_MidiEvent;
 }
 
 JackDriver::~JackDriver()

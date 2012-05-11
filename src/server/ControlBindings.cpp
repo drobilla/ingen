@@ -42,7 +42,7 @@ ControlBindings::ControlBindings(Engine& engine)
 	, _learn_port(NULL)
 	, _bindings(new Bindings())
 	, _feedback(new Buffer(*_engine.buffer_factory(),
-	                       engine.world()->uris()->atom_Sequence,
+	                       engine.world()->uris().atom_Sequence,
 	                       4096)) // FIXME: capacity?
 {
 }
@@ -56,7 +56,7 @@ ControlBindings::Key
 ControlBindings::port_binding(PortImpl* port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 	const Raul::Atom& binding = port->get_property(uris.ingen_controlBinding);
 	return binding_key(binding);
 }
@@ -64,7 +64,7 @@ ControlBindings::port_binding(PortImpl* port) const
 ControlBindings::Key
 ControlBindings::binding_key(const Raul::Atom& binding) const
 {
-	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 	Key key;
 	if (binding.type() == _engine.world()->forge().Dict) {
 		const Raul::Atom::DictValue&          dict = binding.get_dict();
@@ -126,7 +126,7 @@ ControlBindings::port_value_changed(ProcessContext&   context,
                                     const Raul::Atom& value_atom)
 {
 	Ingen::Shared::World*      world = context.engine().world();
-	const Ingen::Shared::URIs& uris  = *world->uris().get();
+	const Ingen::Shared::URIs& uris  = world->uris();
 	if (key) {
 		int16_t value = port_value_to_control(
 			port, key.type, value_atom, port->minimum(), port->maximum());
@@ -274,7 +274,7 @@ ControlBindings::set_port_value(ProcessContext& context,
 bool
 ControlBindings::bind(ProcessContext& context, Key key)
 {
-	const Ingen::Shared::URIs& uris = *context.engine().world()->uris().get();
+	const Ingen::Shared::URIs& uris = context.engine().world()->uris();
 	assert(_learn_port);
 	if (key.type == MIDI_NOTE) {
 		bool toggled = _learn_port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
@@ -345,7 +345,7 @@ ControlBindings::pre_process(ProcessContext& context, Buffer* buffer)
 	_feedback->clear();
 
 	Ingen::Shared::World*      world = context.engine().world();
-	const Ingen::Shared::URIs& uris  = *world->uris().get();
+	const Ingen::Shared::URIs& uris  = world->uris();
 
 	if (!_learn_port && bindings->empty()) {
 		// Don't bother reading input

@@ -42,9 +42,9 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 {
 	assert(world);
 
-	world->lv2_features()->add_feature(
+	world->lv2_features().add_feature(
 			SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
-	world->lv2_features()->add_feature(
+	world->lv2_features().add_feature(
 			SharedPtr<Shared::LV2Features::Feature>(new RequestRunFeature()));
 }
 

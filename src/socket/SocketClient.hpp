@@ -31,10 +31,7 @@ public:
 	             const std::string&   uri,
 	             SharedPtr<Socket>    sock,
 	             SharedPtr<Interface> respondee)
-		: SocketWriter(*world.uri_map().get(),
-		               *world.uris().get(),
-		               uri,
-		               sock)
+		: SocketWriter(world.uri_map(), world.uris(), uri, sock)
 		, _respondee(respondee)
 		, _reader(world, *respondee.get(), sock)
 	{

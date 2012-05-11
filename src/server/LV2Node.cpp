@@ -150,8 +150,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	_ports     = new Raul::Array<PortImpl*>(num_ports, NULL);
 	_instances = new Instances(_polyphony, SharedPtr<void>());
 
-	_features = info->world().lv2_features()->lv2_features(&info->world(),
-	                                                       this);
+	_features = info->world().lv2_features().lv2_features(&info->world(), this);
 
 	uint32_t port_buffer_size = 0;
 	LilvNode* work_schedule = lilv_new_uri(info->lv2_world(),
@@ -247,7 +246,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 				if (lilv_node_is_uri(type)) {
 					port->add_property(uris.atom_bufferType,
 					                   forge.alloc_uri(lilv_node_as_uri(type)));
-					buffer_type = bufs.engine().world()->uri_map()->map_uri(
+					buffer_type = bufs.engine().world()->uri_map().map_uri(
 						lilv_node_as_uri(type));
 				}
 			}

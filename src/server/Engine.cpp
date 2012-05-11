@@ -19,6 +19,7 @@
 #include <unistd.h>
 
 #include "events/CreatePort.hpp"
+#include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/LV2Features.hpp"
 #include "ingen/shared/Store.hpp"
 #include "ingen/shared/URIs.hpp"
@@ -148,7 +149,7 @@ Engine::activate()
 
 	_message_context->Thread::start();
 
-	const Ingen::Shared::URIs& uris  = *world()->uris().get();
+	const Ingen::Shared::URIs& uris  = world()->uris();
 	Ingen::Forge&              forge = world()->forge();
 
 	// Create root patch

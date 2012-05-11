@@ -30,13 +30,11 @@ namespace Server {
 
 static const size_t EVENT_BYTES_PER_FRAME = 4; // FIXME
 
-BufferFactory::BufferFactory(Engine&                        engine,
-                             SharedPtr<Ingen::Shared::URIs> uris)
+BufferFactory::BufferFactory(Engine& engine, Shared::URIs& uris)
 	: _engine(engine)
 	, _uris(uris)
 	, _silent_buffer(NULL)
 {
-	assert(_uris);
 }
 
 BufferFactory::~BufferFactory()
@@ -66,7 +64,7 @@ BufferFactory::free_list(Buffer* head)
 void
 BufferFactory::set_block_length(SampleCount block_length)
 {
-	_silent_buffer = create(_uris->atom_Sound, audio_buffer_size(block_length));
+	_silent_buffer = create(_uris.atom_Sound, audio_buffer_size(block_length));
 }
 
 uint32_t
@@ -78,11 +76,11 @@ BufferFactory::audio_buffer_size(SampleCount nframes)
 uint32_t
 BufferFactory::default_buffer_size(LV2_URID type)
 {
-	if (type == _uris->atom_Float) {
+	if (type == _uris.atom_Float) {
 		return sizeof(LV2_Atom_Float);
-	} else if (type == _uris->atom_Sound) {
+	} else if (type == _uris.atom_Sound) {
 		return audio_buffer_size(_engine.driver()->block_length());
-	} else if (type == _uris->atom_Sequence) {
+	} else if (type == _uris.atom_Sequence) {
 		return _engine.driver()->block_length() * EVENT_BYTES_PER_FRAME;
 	} else {
 		return 0;
@@ -136,11 +134,11 @@ BufferFactory::create(LV2_URID type, uint32_t capacity)
 		capacity = default_buffer_size(type);
 	}
 
-	if (type == _uris->atom_Float) {
+	if (type == _uris.atom_Float) {
 		assert(capacity >= sizeof(LV2_Atom_Float));
 		buffer = new AudioBuffer(*this, type, capacity);
-	} else if (type == _uris->atom_Sound) {
-		assert(capacity >= default_buffer_size(_uris->atom_Sound));
+	} else if (type == _uris.atom_Sound) {
+		assert(capacity >= default_buffer_size(_uris.atom_Sound));
 		buffer = new AudioBuffer(*this, type, capacity);
 	} else {
 		buffer = new Buffer(*this, type, capacity);

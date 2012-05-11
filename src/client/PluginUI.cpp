@@ -48,7 +48,7 @@ lv2_ui_write(SuilController controller,
 
 	SharedPtr<const PortModel> port = ports[port_index];
 
-	const Shared::URIs& uris = *ui->world()->uris().get();
+	const Shared::URIs& uris = ui->world()->uris();
 
 	// float (special case, always 0)
 	if (format == 0) {
@@ -125,7 +125,7 @@ PluginUI::create(Ingen::Shared::World*      world,
 	}
 
 	SharedPtr<PluginUI> ret(new PluginUI(world, node, lilv_ui_get_uri(ui)));
-	ret->_features = world->lv2_features()->lv2_features(
+	ret->_features = world->lv2_features().lv2_features(
 		world, const_cast<NodeModel*>(node.get()));
 
 	SuilInstance* instance = suil_instance_new(

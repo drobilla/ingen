@@ -34,7 +34,7 @@ namespace Ingen {
 namespace Server {
 
 LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
-	: PluginImpl(*lv2_info->world().uris().get(), Plugin::LV2, uri)
+	: PluginImpl(lv2_info->world().uris(), Plugin::LV2, uri)
 	, _lilv_plugin(NULL)
 	, _lv2_info(lv2_info)
 {

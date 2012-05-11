@@ -55,7 +55,7 @@ CreatePort::CreatePort(Engine&                     engine,
 	, _properties(properties)
 	, _is_output(is_output)
 {
-	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 
 	typedef Resource::Properties::const_iterator Iterator;
 	typedef std::pair<Iterator, Iterator>        Range;
@@ -77,7 +77,7 @@ CreatePort::CreatePort(Engine&                     engine,
 	const Range buffer_types = properties.equal_range(uris.atom_bufferType);
 	for (Iterator i = buffer_types.first; i != buffer_types.second; ++i) {
 		if (i->second.type() == _engine.world()->forge().URI) {
-			_buffer_type = _engine.world()->uri_map()->map_uri(i->second.get_uri());
+			_buffer_type = _engine.world()->uri_map().map_uri(i->second.get_uri());
 		}
 	}
 
@@ -96,7 +96,7 @@ CreatePort::pre_process()
 
 	_patch = _engine.engine_store()->find_patch(_path.parent());
 
-	const Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
+	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 
 	if (_patch != NULL) {
 		assert(_patch->path() == _path.parent());

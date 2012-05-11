@@ -350,7 +350,7 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 	                      Sord::URI(world, LV2_UI__ui),
 	                      Sord::URI(world, "http://drobilla.net/ns/ingen#PatchUIGtk2"));
 
-	const URIs& uris = *_world.uris().get();
+	const URIs& uris = _world.uris();
 
 	// Always write a symbol (required by Ingen)
 	string symbol;
@@ -544,8 +544,8 @@ Serialiser::Impl::serialise_properties(const GraphObject*     o,
 {
 	const GraphObject::Properties props = o->properties(context);
 
-	LV2_URID_Map*   map      = &_world.uri_map()->urid_map_feature()->urid_map;
-	LV2_URID_Unmap* unmap    = &_world.uri_map()->urid_unmap_feature()->urid_unmap;
+	LV2_URID_Map*   map      = &_world.uri_map().urid_map_feature()->urid_map;
+	LV2_URID_Unmap* unmap    = &_world.uri_map().urid_unmap_feature()->urid_unmap;
 	Sratom*         sratom   = sratom_new(map);
 	SerdNode        base     = serd_node_from_string(SERD_URI,
 	                                                 (const uint8_t*)_base_uri.c_str());

@@ -144,7 +144,7 @@ Port::on_value_changed(GVariant* value)
 	if (atom != model()->value()) {
 		Ingen::Shared::World* const world = _app.world();
 		_app.interface()->set_property(model()->path(),
-		                               world->uris()->ingen_value,
+		                               world->uris().ingen_value,
 		                               atom);
 	}
 
@@ -166,7 +166,7 @@ void
 Port::on_scale_point_activated(float f)
 {
 	_app.interface()->set_property(model()->path(),
-	                               _app.world()->uris()->ingen_value,
+	                               _app.world()->uris().ingen_value,
 	                               _app.world()->forge().make(f));
 }
 

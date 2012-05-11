@@ -91,7 +91,7 @@ SetPortValue::pre_process()
 
 	if (_port) {
 		_port->set_value(_value);
-		_port->set_property(_engine.world()->uris()->ingen_value, _value);
+		_port->set_property(_engine.world()->uris().ingen_value, _value);
 	}
 
 	_binding = _engine.control_bindings()->port_binding(_port);
@@ -119,7 +119,7 @@ SetPortValue::apply(Context& context)
 	if (_status == SUCCESS && !_port)
 		_port = _engine.engine_store()->find_port(_port_path);
 
-	Ingen::Shared::URIs& uris = *_engine.world()->uris().get();
+	Ingen::Shared::URIs& uris = _engine.world()->uris();
 
 	if (!_port) {
 		if (_status == SUCCESS)
@@ -153,7 +153,7 @@ SetPortValue::post_process()
 	if (!_status) {
 		_engine.broadcaster()->set_property(
 			_port_path,
-			_engine.world()->uris()->ingen_value,
+			_engine.world()->uris().ingen_value,
 			_value);
 	}
 }

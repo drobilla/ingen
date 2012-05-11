@@ -24,12 +24,12 @@
 
 #include <gtkmm.h>
 
+#include "ingen/Status.hpp"
+#include "ingen/shared/World.hpp"
+#include "raul/Atom.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
-
-#include "ingen/Status.hpp"
-#include "ingen/shared/World.hpp"
 
 namespace Ingen {
 	class Interface;
@@ -117,7 +117,7 @@ public:
 	void run();
 
 	inline Ingen::Shared::World* world() const { return _world; }
-	inline Ingen::Shared::URIs&  uris()  const { return *_world->uris(); }
+	inline Ingen::Shared::URIs&  uris()  const { return _world->uris(); }
 
 protected:
 

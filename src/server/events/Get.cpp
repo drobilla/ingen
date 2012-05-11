@@ -69,7 +69,7 @@ Get::post_process()
 		respond(SUCCESS);
 		// TODO: Keep a proper RDF model of the engine
 		if (_request_client) {
-			Shared::URIs& uris = *_engine.world()->uris().get();
+			Shared::URIs& uris = _engine.world()->uris();
 			_request_client->set_property(
 				uris.ingen_engine,
 				uris.ingen_sampleRate,

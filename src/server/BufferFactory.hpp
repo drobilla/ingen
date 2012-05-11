@@ -46,9 +46,7 @@ class Engine;
 
 class BufferFactory {
 public:
-	BufferFactory(Engine&                        engine,
-	              SharedPtr<Ingen::Shared::URIs> uris);
-
+	BufferFactory(Engine& engine, Shared::URIs& uris);
 	~BufferFactory();
 
 	static uint32_t audio_buffer_size(SampleCount nframes);
@@ -60,9 +58,9 @@ public:
 
 	void set_block_length(SampleCount block_length);
 
-	Ingen::Forge&        forge();
-	Ingen::Shared::URIs& uris()   { return *_uris.get(); }
-	Engine&              engine() { return _engine; }
+	Forge&        forge();
+	Shared::URIs& uris()   { return _uris; }
+	Engine&       engine() { return _engine; }
 
 private:
 	friend class Buffer;
@@ -71,9 +69,9 @@ private:
 	BufferRef create(LV2_URID type, uint32_t capacity=0);
 
 	inline Raul::AtomicPtr<Buffer>& free_list(LV2_URID type) {
-		if (type == _uris->atom_Float) {
+		if (type == _uris.atom_Float) {
 			return _free_control;
-		} else if (type == _uris->atom_Sound) {
+		} else if (type == _uris.atom_Sound) {
 			return _free_audio;
 		} else {
 			return _free_object;
@@ -86,9 +84,9 @@ private:
 	Raul::AtomicPtr<Buffer> _free_control;
 	Raul::AtomicPtr<Buffer> _free_object;
 
-	Glib::Mutex                    _mutex;
-	Engine&                        _engine;
-	SharedPtr<Ingen::Shared::URIs> _uris;
+	Glib::Mutex   _mutex;
+	Engine&       _engine;
+	Shared::URIs& _uris;
 
 	BufferRef _silent_buffer;
 };

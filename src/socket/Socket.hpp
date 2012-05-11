@@ -18,6 +18,7 @@
 #define INGEN_SOCKET_SOCKET_HPP
 
 #include <stdint.h>
+#include <string.h>
 #include <sys/socket.h>
 
 #include <string>

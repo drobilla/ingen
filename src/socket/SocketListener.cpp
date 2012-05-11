@@ -21,8 +21,9 @@
 #include <string>
 
 #include "ingen/Interface.hpp"
-#include "ingen/shared/World.hpp"
 #include "ingen/shared/AtomReader.hpp"
+#include "ingen/shared/Configuration.hpp"
+#include "ingen/shared/World.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 

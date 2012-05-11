@@ -99,7 +99,7 @@ NodeFactory::load_plugins()
 void
 NodeFactory::load_internal_plugins()
 {
-	Ingen::Shared::URIs& uris = *_world->uris().get();
+	Ingen::Shared::URIs& uris = _world->uris();
 	InternalPlugin* controller_plug = ControllerNode::internal_plugin(uris);
 	_plugins.insert(make_pair(controller_plug->uri(), controller_plug));
 

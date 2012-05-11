@@ -44,8 +44,8 @@ PatchImpl::PatchImpl(Engine&             engine,
                      PatchImpl*          parent,
                      SampleRate          srate,
                      uint32_t            internal_poly)
-	: NodeImpl(new PatchPlugin(*engine.world()->uris().get(),
-	                           engine.world()->uris()->ingen_Patch.c_str(),
+	: NodeImpl(new PatchPlugin(engine.world()->uris(),
+	                           engine.world()->uris().ingen_Patch.c_str(),
 	                           "patch", "Ingen Patch"),
 	           symbol, poly, parent, srate)
 	, _engine(engine)
