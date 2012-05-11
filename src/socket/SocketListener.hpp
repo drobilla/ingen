@@ -32,7 +32,7 @@ namespace Socket {
 class SocketListener : public Raul::Thread
 {
 public:
-	SocketListener(Ingen::Shared::World& world);
+	explicit SocketListener(Ingen::Shared::World& world);
 	~SocketListener();
 
 private:

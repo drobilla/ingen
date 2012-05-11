@@ -151,7 +151,7 @@ NodeMenu::on_menu_randomize()
 		if ((*i)->is_input() && _app->can_control(i->get())) {
 			float min = 0.0f, max = 1.0f;
 			nm->port_value_range(*i, min, max, _app->sample_rate());
-			const float val = ((rand() / (float)RAND_MAX) * (max - min) + min);
+			const float val = g_random_double_range(0.0, 1.0) * (max - min) + min;
 			_app->interface()->set_property(
 				(*i)->path(),
 				_app->uris().ingen_value,

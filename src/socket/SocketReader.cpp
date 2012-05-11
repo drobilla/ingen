@@ -91,7 +91,7 @@ SocketReader::_run()
 {
 	Sord::World*  world = _world.rdf_world();
 	LV2_URID_Map* map   = &_world.uri_map().urid_map_feature()->urid_map;
-		
+
 	// Use <path:> as base URI so e.g. </foo/bar> will be a path
 	SordNode* base_uri = sord_new_uri(
 		world->c_obj(), (const uint8_t*)"path:");
@@ -130,7 +130,7 @@ SocketReader::_run()
 	}
 
 	serd_reader_start_stream(reader, f, (const uint8_t*)"(socket)", false);
-		
+
 	// Make an AtomReader to call Ingen Interface methods based on Atom
 	Shared::AtomReader ar(
 		_world.uri_map(), _world.uris(), _world.forge(), _iface);

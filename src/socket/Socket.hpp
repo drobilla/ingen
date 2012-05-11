@@ -46,7 +46,7 @@ public:
 	}
 
 	/** Create a new unbound/unconnected socket of a given type. */
-	Socket(Type t);
+	explicit Socket(Type t);
 
 	/** Wrap an existing open socket. */
 	Socket(Type               t,

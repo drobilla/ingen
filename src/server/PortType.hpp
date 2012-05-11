@@ -40,7 +40,7 @@ public:
 		ATOM    = 4
 	};
 
-	PortType(const Raul::URI& uri)
+	explicit PortType(const Raul::URI& uri)
 		: _symbol(UNKNOWN)
 	{
 		if (uri == type_uri(AUDIO)) {

@@ -116,7 +116,7 @@ Socket::bind(const std::string& uri)
 	if (set_addr(uri) && ::bind(_sock, _addr, _addr_len) != -1) {
 		return true;
 	}
-	
+
 	LOG(Raul::error)(Raul::fmt("Failed to bind <%1%> (%2%)\n")
 	                 % _uri % strerror(errno));
 	return false;
@@ -128,7 +128,7 @@ Socket::connect(const std::string& uri)
 	if (set_addr(uri) && ::connect(_sock, _addr, _addr_len) != -1) {
 		return true;
 	}
-	
+
 	LOG(Raul::error)(Raul::fmt("Failed to connect <%1%> (%2%)\n")
 	                 % _uri % strerror(errno));
 	return false;
@@ -166,7 +166,7 @@ Socket::accept()
 	                host, sizeof(host), NULL, 0, 0)) {
 		client_uri = _uri.substr(0, _uri.find(":") + 1) + host;
 	}
-	
+
 	return SharedPtr<Socket>(
 		new Socket(_type, client_uri, client_addr, client_addr_len, conn));
 }

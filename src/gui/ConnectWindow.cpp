@@ -175,7 +175,7 @@ ConnectWindow::connect(bool existing)
 
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
-
+		return;
 	} else if (_mode == LAUNCH_REMOTE) {
 		int port = _port_spinbutton->get_value_as_int();
 		char port_str[8];
@@ -193,28 +193,28 @@ ConnectWindow::connect(bool existing)
 
 			Glib::signal_timeout().connect(
 				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
-
 		} else {
 			error << "Failed to launch ingen process." << endl;
 		}
-	} else
+		return;
+	}
 #endif
-		if (_mode == INTERNAL) {
-			if (!world->engine()) {
-				world->load_module("server");
-				world->load_module("jack");
-				world->engine()->activate();
-			}
-
-			SharedPtr<SigClientInterface> client(new SigClientInterface());
-
-			world->interface()->set_respondee(client);
-			_app->attach(client);
-			_app->register_callbacks();
-
-			Glib::signal_timeout().connect(
-				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 10);
+	if (_mode == INTERNAL) {
+		if (!world->engine()) {
+			world->load_module("server");
+			world->load_module("jack");
+			world->engine()->activate();
 		}
+
+		SharedPtr<SigClientInterface> client(new SigClientInterface());
+
+		world->interface()->set_respondee(client);
+		_app->attach(client);
+		_app->register_callbacks();
+
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 10);
+	}
 }
 
 void
@@ -373,7 +373,7 @@ ConnectWindow::gtk_callback()
 		_app->client()->signal_response().connect(
 			sigc::mem_fun(this, &ConnectWindow::ingen_response));
 
-		_ping_id = abs(rand()) / 2 * 2; // avoid -1
+		_ping_id = abs(g_random_int());
 		_app->interface()->set_response_id(_ping_id);
 		_app->interface()->get("ingen:engine");
 
