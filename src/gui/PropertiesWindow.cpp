@@ -18,6 +18,9 @@
 #include <cassert>
 #include <string>
 
+#include <gtkmm/label.h>
+#include <gtkmm/spinbutton.h>
+
 #include "raul/log.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/client/NodeModel.hpp"

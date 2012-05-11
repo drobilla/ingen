@@ -16,8 +16,6 @@
 
 #include <utility>
 
-#include <gtkmm.h>
-
 #include "ingen/Interface.hpp"
 #include "ingen/client/ObjectModel.hpp"
 

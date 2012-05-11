@@ -19,7 +19,9 @@
 
 #include <list>
 
-#include <gtkmm.h>
+#include <gtkmm/box.h>
+#include <gtkmm/label.h>
+#include <gtkmm/togglebutton.h>
 
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"

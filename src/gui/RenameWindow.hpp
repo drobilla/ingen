@@ -17,7 +17,10 @@
 #ifndef INGEN_GUI_RENAMEWINDOW_HPP
 #define INGEN_GUI_RENAMEWINDOW_HPP
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/label.h>
 
 #include "raul/SharedPtr.hpp"
 

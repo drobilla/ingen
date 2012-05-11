@@ -16,7 +16,8 @@
 
 #include <string>
 
-#include <gtkmm.h>
+#include <gtkmm/image.h>
+#include <gtkmm/stock.h>
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/NodeModel.hpp"

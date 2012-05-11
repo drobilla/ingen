@@ -17,7 +17,13 @@
 #ifndef INGEN_GUI_LOADSUBPATCHWINDOW_HPP
 #define INGEN_GUI_LOADSUBPATCHWINDOW_HPP
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/filechooserdialog.h>
+#include <gtkmm/label.h>
+#include <gtkmm/radiobutton.h>
+#include <gtkmm/spinbutton.h>
 
 #include "raul/SharedPtr.hpp"
 

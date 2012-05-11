@@ -19,7 +19,9 @@
 
 #include <string>
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/menushell.h>
 
 #include "ingen/client/PortModel.hpp"
 #include "raul/SharedPtr.hpp"

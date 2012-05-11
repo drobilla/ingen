@@ -17,7 +17,8 @@
 #ifndef INGEN_GUI_WINDOW_HPP
 #define INGEN_GUI_WINDOW_HPP
 
-#include <gtkmm.h>
+#include <gtkmm/dialog.h>
+#include <gtkmm/window.h>
 
 namespace Ingen {
 

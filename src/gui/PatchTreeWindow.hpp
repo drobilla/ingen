@@ -17,7 +17,10 @@
 #ifndef INGEN_GUI_PATCHTREEWINDOW_HPP
 #define INGEN_GUI_PATCHTREEWINDOW_HPP
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/treemodel.h>
+#include <gtkmm/treestore.h>
+#include <gtkmm/treeview.h>
 
 #include "Window.hpp"
 

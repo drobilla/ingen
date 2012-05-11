@@ -15,7 +15,6 @@
 */
 
 #include <math.h>
-#include <gtkmm.h>
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/PatchModel.hpp"

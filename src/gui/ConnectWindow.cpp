@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <string>
 
+#include <gtkmm/stock.h>
+
 #include "raul/Process.hpp"
 #include "raul/log.hpp"
 

@@ -18,10 +18,14 @@
 #define INGEN_GUI_NODEMENU_HPP
 
 #include <string>
-#include <gtkmm.h>
-#include "raul/SharedPtr.hpp"
-#include "ingen/client/NodeModel.hpp"
+
+#include <gtkmm/builder.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/menushell.h>
+
 #include "ObjectMenu.hpp"
+#include "ingen/client/NodeModel.hpp"
+#include "raul/SharedPtr.hpp"
 
 namespace Ingen {
 namespace GUI {

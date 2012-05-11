@@ -19,8 +19,6 @@
 
 #include <map>
 
-#include <gtkmm.h>
-
 #include "ingen/GraphObject.hpp"
 #include "raul/SharedPtr.hpp"
 

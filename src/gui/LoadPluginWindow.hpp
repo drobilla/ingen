@@ -20,7 +20,11 @@
 #include <map>
 #include <string>
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/combobox.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/treemodel.h>
+#include <gtkmm/treeview.h>
 
 #include "raul/SharedPtr.hpp"
 #include "raul/Table.hpp"

@@ -19,7 +19,14 @@
 
 #include <string>
 
-#include <gtkmm.h>
+#include <gtkmm/box.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/toggletoolbutton.h>
+#include <gtkmm/toolbar.h>
+#include <gtkmm/toolitem.h>
+#include <gtkmm/toolitem.h>
 
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"

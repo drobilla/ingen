@@ -22,7 +22,9 @@
 #include <map>
 #include <utility>
 
-#include <gtkmm.h>
+#include <gtkmm/aboutdialog.h>
+#include <gtkmm/main.h>
+#include <gtkmm/window.h>
 
 #include "ingen/Status.hpp"
 #include "ingen/shared/World.hpp"

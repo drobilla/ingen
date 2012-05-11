@@ -19,7 +19,7 @@
 
 #include <string>
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
 
 #include "raul/SharedPtr.hpp"
 

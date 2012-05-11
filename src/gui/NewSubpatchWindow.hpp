@@ -17,7 +17,11 @@
 #ifndef INGEN_GUI_NEWSUBPATCHWINDOW_HPP
 #define INGEN_GUI_NEWSUBPATCHWINDOW_HPP
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/label.h>
+#include <gtkmm/spinbutton.h>
 
 #include "raul/SharedPtr.hpp"
 

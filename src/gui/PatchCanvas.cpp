@@ -20,6 +20,7 @@
 #include <string>
 
 #include <boost/format.hpp>
+#include <gtkmm/stock.h>
 
 #include "ganv/Canvas.hpp"
 #include "ganv/Circle.hpp"

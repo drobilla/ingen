@@ -19,7 +19,8 @@
 
 #include <list>
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/spinbutton.h>
 
 #include "raul/SharedPtr.hpp"
 

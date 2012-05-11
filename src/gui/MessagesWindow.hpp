@@ -19,7 +19,9 @@
 
 #include <string>
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/textview.h>
 
 #include "Window.hpp"
 

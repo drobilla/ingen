@@ -17,6 +17,8 @@
 #include <cassert>
 #include <string>
 
+#include <gtkmm/eventbox.h>
+
 #include "ingen/Interface.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PatchModel.hpp"

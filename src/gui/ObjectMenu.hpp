@@ -19,7 +19,10 @@
 
 #include <string>
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/checkmenuitem.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/menuitem.h>
 
 #include "raul/SharedPtr.hpp"
 

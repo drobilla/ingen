@@ -20,6 +20,7 @@
 #include <utility>
 
 #include <gtk/gtkwindow.h>
+#include <gtkmm/stock.h>
 
 #include "ganv/Edge.hpp"
 #include "ingen/EngineBase.hpp"

@@ -19,7 +19,12 @@
 
 #include <map>
 
-#include <gtkmm.h>
+#include <gtkmm/alignment.h>
+#include <gtkmm/box.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/table.h>
 
 #include "raul/SharedPtr.hpp"
 

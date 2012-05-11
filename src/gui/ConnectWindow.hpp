@@ -17,7 +17,14 @@
 #ifndef INGEN_GUI_CONNECTWINDOW_HPP
 #define INGEN_GUI_CONNECTWINDOW_HPP
 
-#include <gtkmm.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/image.h>
+#include <gtkmm/label.h>
+#include <gtkmm/progressbar.h>
+#include <gtkmm/radiobutton.h>
+#include <gtkmm/spinbutton.h>
 
 #include "lilv/lilv.h"
 #include "raul/SharedPtr.hpp"

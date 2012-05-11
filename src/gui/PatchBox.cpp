@@ -21,6 +21,7 @@
 #include <boost/format.hpp>
 #include <glib/gstdio.h>
 #include <glibmm/fileutils.h>
+#include <gtkmm/stock.h>
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"

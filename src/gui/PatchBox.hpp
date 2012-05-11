@@ -19,7 +19,14 @@
 
 #include <string>
 
-#include <gtkmm.h>
+#include <gtkmm/alignment.h>
+#include <gtkmm/box.h>
+#include <gtkmm/builder.h>
+#include <gtkmm/menushell.h>
+#include <gtkmm/messagedialog.h>
+#include <gtkmm/paned.h>
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/statusbar.h>
 
 #include "raul/SharedPtr.hpp"
 

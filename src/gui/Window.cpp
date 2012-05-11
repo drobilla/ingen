@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <gdk/gdkkeysyms.h>
+
 #include "Window.hpp"
 
 namespace Ingen {
