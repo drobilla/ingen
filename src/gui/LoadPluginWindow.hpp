@@ -18,6 +18,7 @@
 #define INGEN_GUI_LOADPLUGINWINDOW_HPP
 
 #include <map>
+#include <string>
 
 #include <gtkmm.h>
 

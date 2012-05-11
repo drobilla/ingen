@@ -19,6 +19,8 @@
 
 #include <stdint.h>
 
+#include <string>
+
 #include "raul/Path.hpp"
 
 #include "ingen/Interface.hpp"

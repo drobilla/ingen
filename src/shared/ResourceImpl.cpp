@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <utility>
+
 #include "ingen/shared/ResourceImpl.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "raul/Atom.hpp"

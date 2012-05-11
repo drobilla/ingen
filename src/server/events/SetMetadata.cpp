@@ -15,6 +15,7 @@
 */
 
 #include <string>
+#include <vector>
 
 #include <boost/format.hpp>
 

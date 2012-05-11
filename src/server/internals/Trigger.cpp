@@ -15,6 +15,7 @@
 */
 
 #include <cmath>
+#include <string>
 
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"

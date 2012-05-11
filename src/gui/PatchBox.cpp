@@ -16,6 +16,7 @@
 
 #include <cassert>
 #include <sstream>
+#include <string>
 
 #include <boost/format.hpp>
 #include <glib/gstdio.h>

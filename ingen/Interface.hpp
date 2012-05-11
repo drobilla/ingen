@@ -17,6 +17,8 @@
 #ifndef INGEN_INTERFACE_HPP
 #define INGEN_INTERFACE_HPP
 
+#include <string>
+
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 #include "raul/SharedPtr.hpp"

@@ -17,6 +17,8 @@
 #ifndef INGEN_GUI_PATCH_WINDOW_HPP
 #define INGEN_GUI_PATCH_WINDOW_HPP
 
+#include <string>
+
 #include <gtkmm.h>
 
 #include "raul/SharedPtr.hpp"

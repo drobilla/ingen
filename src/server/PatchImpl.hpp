@@ -18,6 +18,7 @@
 #define INGEN_ENGINE_PATCHIMPL_HPP
 
 #include <cstdlib>
+#include <list>
 #include <string>
 
 #include "ingen/Patch.hpp"

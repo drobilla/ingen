@@ -15,6 +15,7 @@
 */
 
 #include <cassert>
+#include <string>
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/NodeModel.hpp"

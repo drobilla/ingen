@@ -15,18 +15,20 @@
 */
 
 #include <string>
-#include "ingen_config.h"
+
 #include "ingen/client/PatchModel.hpp"
+
 #include "App.hpp"
-#include "WidgetFactory.hpp"
 #include "LoadPatchWindow.hpp"
 #include "LoadPluginWindow.hpp"
 #include "NewSubpatchWindow.hpp"
-#include "PropertiesWindow.hpp"
 #include "PatchView.hpp"
 #include "PatchWindow.hpp"
+#include "PropertiesWindow.hpp"
 #include "RenameWindow.hpp"
+#include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
+#include "ingen_config.h"
 
 using namespace std;
 

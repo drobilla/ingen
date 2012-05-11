@@ -15,6 +15,7 @@
 */
 
 #include <fstream>
+#include <string>
 
 #include "raul/log.hpp"
 

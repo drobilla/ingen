@@ -18,6 +18,7 @@
 #define INGEN_CLIENT_PLUGINMODEL_HPP
 
 #include <list>
+#include <string>
 #include <utility>
 
 #include "lilv/lilv.h"

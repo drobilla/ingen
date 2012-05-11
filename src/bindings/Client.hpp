@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string>
+
 #include "ingen/Resource.hpp"
 
 /** Need a stub ClientInterface without pure virtual methods

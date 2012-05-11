@@ -15,6 +15,7 @@
 */
 
 #include <sstream>
+#include <string>
 
 #include "ingen/shared/Forge.hpp"
 #include "ingen/shared/URIMap.hpp"

@@ -15,17 +15,20 @@
 */
 
 #include <cassert>
-#include "raul/log.hpp"
+#include <string>
+
 #include "ganv/Module.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PortModel.hpp"
+#include "raul/log.hpp"
+
 #include "App.hpp"
 #include "Configuration.hpp"
-#include "WidgetFactory.hpp"
 #include "PatchWindow.hpp"
 #include "Port.hpp"
 #include "PortMenu.hpp"
+#include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
 using namespace Ingen::Client;

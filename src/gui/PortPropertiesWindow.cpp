@@ -15,6 +15,7 @@
 */
 
 #include <cassert>
+#include <list>
 #include <string>
 
 #include "ingen/Interface.hpp"

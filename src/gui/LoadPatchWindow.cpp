@@ -15,6 +15,8 @@
 */
 
 #include <cassert>
+#include <list>
+#include <string>
 
 #include <boost/optional.hpp>
 #include <glibmm/miscutils.h>

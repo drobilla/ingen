@@ -14,6 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <map>
+#include <string>
+
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
 #include <glibmm/module.h>

@@ -17,6 +17,8 @@
 #ifndef INGEN_SOCKET_SOCKET_CLIENT_HPP
 #define INGEN_SOCKET_SOCKET_CLIENT_HPP
 
+#include <string>
+
 #include "SocketReader.hpp"
 #include "SocketWriter.hpp"
 

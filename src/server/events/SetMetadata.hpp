@@ -17,6 +17,8 @@
 #ifndef INGEN_EVENTS_SETMETADATA_HPP
 #define INGEN_EVENTS_SETMETADATA_HPP
 
+#include <string>
+
 #include <glibmm/thread.h>
 
 #include <vector>

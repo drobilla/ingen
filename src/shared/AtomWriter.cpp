@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string>
+
 #include "ingen/shared/AtomSink.hpp"
 #include "ingen/shared/AtomWriter.hpp"
 #include "ingen/shared/URIMap.hpp"

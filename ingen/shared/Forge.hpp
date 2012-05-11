@@ -17,6 +17,8 @@
 #ifndef INGEN_FORGE_HPP
 #define INGEN_FORGE_HPP
 
+#include <string>
+
 #include "ingen/shared/Forge.hpp"
 #include "raul/Atom.hpp"
 

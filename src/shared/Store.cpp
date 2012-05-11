@@ -15,12 +15,14 @@
 */
 
 #include <sstream>
-#include "raul/log.hpp"
-#include "raul/PathTable.hpp"
-#include "raul/TableImpl.hpp"
+#include <string>
+
 #include "ingen/Node.hpp"
 #include "ingen/Port.hpp"
 #include "ingen/shared/Store.hpp"
+#include "raul/PathTable.hpp"
+#include "raul/TableImpl.hpp"
+#include "raul/log.hpp"
 
 using namespace std;
 

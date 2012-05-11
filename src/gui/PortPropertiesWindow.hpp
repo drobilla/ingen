@@ -17,6 +17,8 @@
 #ifndef INGEN_GUI_PORTPROPERTIESWINDOW_HPP
 #define INGEN_GUI_PORTPROPERTIESWINDOW_HPP
 
+#include <list>
+
 #include <gtkmm.h>
 
 #include "raul/SharedPtr.hpp"

@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <utility>
+
 #include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "raul/Array.hpp"
@@ -28,7 +30,6 @@
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "PatchImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"

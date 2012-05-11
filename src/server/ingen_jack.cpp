@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string>
+
 #include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/Module.hpp"
 #include "ingen/shared/World.hpp"

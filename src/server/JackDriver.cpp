@@ -38,7 +38,6 @@
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "Event.hpp"
-#include "Event.hpp"
 #include "JackDriver.hpp"
 #include "MessageContext.hpp"
 #include "PatchImpl.hpp"

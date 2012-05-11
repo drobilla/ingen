@@ -16,6 +16,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <string>
 
 #include "ingen/Port.hpp"
 #include "ingen/client/NodeModel.hpp"

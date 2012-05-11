@@ -16,6 +16,8 @@
 
 #include <cstdio>
 #include <sstream>
+#include <string>
+#include <utility>
 
 #include "raul/log.hpp"
 

@@ -14,8 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cmath>
 #include <limits.h>
+
+#include <cmath>
+#include <string>
 
 #include "ingen/shared/URIs.hpp"
 #include "raul/Array.hpp"

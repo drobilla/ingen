@@ -14,8 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include <cassert>
 #include <string>
+
 #include "raul/log.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/client/NodeModel.hpp"

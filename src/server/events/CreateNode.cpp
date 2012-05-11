@@ -20,17 +20,16 @@
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"
 
-#include "CreateNode.hpp"
-#include "PatchImpl.hpp"
-#include "NodeImpl.hpp"
-#include "PluginImpl.hpp"
-#include "Engine.hpp"
-#include "PatchImpl.hpp"
-#include "NodeFactory.hpp"
 #include "ClientBroadcaster.hpp"
-#include "EngineStore.hpp"
-#include "PortImpl.hpp"
+#include "CreateNode.hpp"
 #include "Driver.hpp"
+#include "Engine.hpp"
+#include "EngineStore.hpp"
+#include "NodeFactory.hpp"
+#include "NodeImpl.hpp"
+#include "PatchImpl.hpp"
+#include "PluginImpl.hpp"
+#include "PortImpl.hpp"
 
 namespace Ingen {
 namespace Server {

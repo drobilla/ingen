@@ -18,9 +18,12 @@
 #define INGEN_GUI_PORTMENU_HPP
 
 #include <string>
+
 #include <gtkmm.h>
-#include "raul/SharedPtr.hpp"
+
 #include "ingen/client/PortModel.hpp"
+#include "raul/SharedPtr.hpp"
+
 #include "ObjectMenu.hpp"
 
 namespace Ingen {

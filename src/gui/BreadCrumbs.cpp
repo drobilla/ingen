@@ -14,6 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <list>
+#include <string>
+
 #include "ingen/client/SigClientInterface.hpp"
 
 #include "App.hpp"

@@ -17,6 +17,8 @@
 #ifndef INGEN_GUI_PROPERTIES_WINDOW_HPP
 #define INGEN_GUI_PROPERTIES_WINDOW_HPP
 
+#include <map>
+
 #include <gtkmm.h>
 
 #include "raul/SharedPtr.hpp"

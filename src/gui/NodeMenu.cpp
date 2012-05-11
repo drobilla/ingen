@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string>
+
 #include <gtkmm.h>
 
 #include "ingen/Interface.hpp"

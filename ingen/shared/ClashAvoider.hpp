@@ -20,6 +20,7 @@
 #include <inttypes.h>
 
 #include <map>
+#include <string>
 
 #include "ingen/Interface.hpp"
 

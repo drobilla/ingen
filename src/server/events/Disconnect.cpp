@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <list>
+
 #include <glibmm/thread.h>
 
 #include "raul/Maid.hpp"

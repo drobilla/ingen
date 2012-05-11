@@ -14,10 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
 #include <cassert>
+#include <cstdlib>
 #include <fstream>
 #include <map>
+#include <string>
 
 #include "ganv/Port.hpp"
 #include "ingen/client/PluginModel.hpp"

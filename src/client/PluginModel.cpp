@@ -14,8 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <sstream>
 #include <ctype.h>
+
+#include <sstream>
+#include <string>
+#include <algorithm>
+
 #include <boost/optional.hpp>
 
 #include "raul/Atom.hpp"

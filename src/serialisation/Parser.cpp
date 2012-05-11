@@ -14,7 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <map>
 #include <set>
+#include <string>
+#include <utility>
 
 #include <glibmm/convert.h>
 #include <glibmm/fileutils.h>

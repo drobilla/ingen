@@ -17,6 +17,8 @@
 #ifndef INGEN_SHARED_ATOM_WRITER_HPP
 #define INGEN_SHARED_ATOM_WRITER_HPP
 
+#include <string>
+
 #include "ingen/Interface.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
