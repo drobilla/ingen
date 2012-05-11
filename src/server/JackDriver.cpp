@@ -110,29 +110,28 @@ JackPort::move(const Raul::Path& path)
 void
 JackPort::pre_process(ProcessContext& context)
 {
-	if (!is_input())
-		return;
-
 	const SampleCount nframes = context.nframes();
+	_buffer = jack_port_get_buffer(_jack_port, nframes);
+
+	if (!is_input()) {
+		return;
+	}
 
 	if (_patch_port->is_a(PortType::AUDIO)) {
-		jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
-		AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
-
-		patch_buf->copy(jack_buf, 0, nframes - 1);
+		AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
+		patch_buf->copy((jack_sample_t*)_buffer, 0, nframes - 1);
 
 	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
-		void*   jack_buf  = jack_port_get_buffer(_jack_port, nframes);
 		Buffer* patch_buf = (Buffer*)_patch_port->buffer(0).get();
 
-		const jack_nframes_t event_count = jack_midi_get_event_count(jack_buf);
+		const jack_nframes_t event_count = jack_midi_get_event_count(_buffer);
 
 		patch_buf->prepare_write(context);
 
 		// Copy events from Jack port buffer into patch port buffer
 		for (jack_nframes_t i = 0; i < event_count; ++i) {
 			jack_midi_event_t ev;
-			jack_midi_event_get(&ev, jack_buf, i);
+			jack_midi_event_get(&ev, _buffer, i);
 
 			if (!patch_buf->append_event(
 				    ev.time, ev.size, _driver->_midi_event_type, ev.buffer)) {
@@ -145,29 +144,32 @@ JackPort::pre_process(ProcessContext& context)
 void
 JackPort::post_process(ProcessContext& context)
 {
-	if (is_input())
-		return;
-
 	const SampleCount nframes = context.nframes();
+	if (is_input()) {
+		return;
+	}
+
+	if (!_buffer) {
+		// First cycle for a new outputs, so pre_process wasn't called
+		_buffer = jack_port_get_buffer(_jack_port, nframes);
+	}
 
 	if (_patch_port->is_a(PortType::AUDIO)) {
-		jack_sample_t* jack_buf  = (jack_sample_t*)jack_port_get_buffer(_jack_port, nframes);
-		AudioBuffer*   patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
+		AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 
-		memcpy(jack_buf, patch_buf->data(), nframes * sizeof(Sample));
+		memcpy(_buffer, patch_buf->data(), nframes * sizeof(Sample));
 
 	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
-		void*   jack_buf  = jack_port_get_buffer(_jack_port, context.nframes());
 		Buffer* patch_buf = (Buffer*)_patch_port->buffer(0).get();
 
 		patch_buf->prepare_read(context);
-		jack_midi_clear_buffer(jack_buf);
+		jack_midi_clear_buffer(_buffer);
 
 		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)patch_buf->atom();
 		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
 			if (ev->body.type == _patch_port->bufs().uris().midi_MidiEvent) {
-				jack_midi_event_write(jack_buf, ev->time.frames, buf, ev->body.size);
+				jack_midi_event_write(_buffer, ev->time.frames, buf, ev->body.size);
 			}
 		}
 	}

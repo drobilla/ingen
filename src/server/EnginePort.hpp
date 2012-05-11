@@ -19,9 +19,8 @@
 
 #include <string>
 
-#include <boost/utility.hpp>
-
 #include "raul/Deletable.hpp"
+#include "raul/Noncopyable.hpp"
 
 #include "DuplexPort.hpp"
 
@@ -33,7 +32,7 @@ namespace Server {
 class DuplexPort;
 class ProcessContext;
 
-/** Representation of a "system" (eg outside Ingen) port.
+/** Representation of a "system" port (a port outside Ingen).
  *
  * This is the class through which the rest of the engine manages everything
  * related to driver ports.  Derived classes are expected to have a pointer to
@@ -41,8 +40,9 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class EnginePort : boost::noncopyable, public Raul::Deletable {
+class EnginePort : public Raul::Noncopyable, public Raul::Deletable {
 public:
+	EnginePort() : _patch_port(NULL), _buffer(NULL) {}
 	virtual ~EnginePort() {}
 
 	/** Set the name of the system port according to new path */
@@ -54,6 +54,9 @@ public:
 	/** Destroy system port */
 	virtual void destroy() = 0;
 
+	void* buffer() const        { return _buffer; }
+	void  set_buffer(void* buf) { _buffer = buf; }
+
 	bool        is_input()   const { return _patch_port->is_input(); }
 	DuplexPort* patch_port() const { return _patch_port; }
 
@@ -61,6 +64,7 @@ protected:
 	explicit EnginePort(DuplexPort* port) : _patch_port(port) {}
 
 	DuplexPort* _patch_port;
+	void*       _buffer;
 };
 
 } // namespace Server

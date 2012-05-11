@@ -87,7 +87,6 @@ public:
 	LV2Port(LV2Driver* driver, DuplexPort* patch_port)
 		: EnginePort(patch_port)
 		, _driver(driver)
-		, _buffer(NULL)
 	{}
 
 	// TODO: LV2 dynamic ports
@@ -123,12 +122,8 @@ public:
 		}
 	}
 
-	void* buffer() const        { return _buffer; }
-	void  set_buffer(void* buf) { _buffer = buf; }
-
 private:
 	LV2Driver* _driver;
-	void*      _buffer;
 };
 
 class LV2Driver : public Ingen::Server::Driver
