@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERFACE_RESOURCE_HPP
-#define INGEN_INTERFACE_RESOURCE_HPP
+#ifndef INGEN_RESOURCE_HPP
+#define INGEN_RESOURCE_HPP
 
 #include <map>
 #include <string>
@@ -110,5 +110,5 @@ public:
 
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_RESOURCE_HPP
+#endif // INGEN_RESOURCE_HPP
 

@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERFACE_NODE_HPP
-#define INGEN_INTERFACE_NODE_HPP
+#ifndef INGEN_NODE_HPP
+#define INGEN_NODE_HPP
 
 #include <stdint.h>
 
@@ -45,4 +45,4 @@ public:
 
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_NODE_HPP
+#endif // INGEN_NODE_HPP

@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_LV2URIMAP_HPP
-#define INGEN_SHARED_LV2URIMAP_HPP
+#ifndef INGEN_SHARED_URIMAP_HPP
+#define INGEN_SHARED_URIMAP_HPP
 
 #include <map>
 #include <utility>
@@ -78,4 +78,4 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_LV2URIMAP_HPP
+#endif // INGEN_SHARED_URIMAP_HPP

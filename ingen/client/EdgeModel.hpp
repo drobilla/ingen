@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_CLIENT_EDGE_MODEL_HPP
-#define INGEN_CLIENT_EDGE_MODEL_HPP
+#ifndef INGEN_CLIENT_EDGEMODEL_HPP
+#define INGEN_CLIENT_EDGEMODEL_HPP
 
 #include <cassert>
 
@@ -64,4 +64,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // INGEN_CLIENT_EDGE_MODEL_HPP
+#endif // INGEN_CLIENT_EDGEMODEL_HPP

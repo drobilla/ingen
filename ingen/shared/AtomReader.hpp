@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_ATOM_READER_HPP
-#define INGEN_SHARED_ATOM_READER_HPP
+#ifndef INGEN_SHARED_ATOMREADER_HPP
+#define INGEN_SHARED_ATOMREADER_HPP
 
 #include "ingen/Interface.hpp"
 #include "ingen/shared/AtomSink.hpp"
@@ -55,5 +55,5 @@ private:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_ATOM_READER_HPP
+#endif // INGEN_SHARED_ATOMREADER_HPP
 

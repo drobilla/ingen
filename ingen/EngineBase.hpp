@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_BASE_HPP
-#define INGEN_ENGINE_BASE_HPP
+#ifndef INGEN_ENGINEBASE_HPP
+#define INGEN_ENGINEBASE_HPP
 
 #include <stdint.h>
 
@@ -87,4 +87,4 @@ public:
 
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_BASE_HPP
+#endif // INGEN_ENGINEBASE_HPP

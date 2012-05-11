@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERFACE_GRAPHOBJECT_HPP
-#define INGEN_INTERFACE_GRAPHOBJECT_HPP
+#ifndef INGEN_GRAPHOBJECT_HPP
+#define INGEN_GRAPHOBJECT_HPP
 
 #include "raul/Deletable.hpp"
 
@@ -48,4 +48,4 @@ public:
 
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_GRAPHOBJECT_HPP
+#endif // INGEN_GRAPHOBJECT_HPP

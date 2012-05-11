@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_FORGE_HPP
-#define INGEN_FORGE_HPP
+#ifndef INGEN_SHARED_FORGE_HPP
+#define INGEN_SHARED_FORGE_HPP
 
 #include <string>
 
@@ -35,4 +35,4 @@ public:
 
 } // namespace Ingen
 
-#endif // INGEN_FORGE_HPP
+#endif // INGEN_SHARED_FORGE_HPP

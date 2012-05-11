@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERFACE_PATCH_HPP
-#define INGEN_INTERFACE_PATCH_HPP
+#ifndef INGEN_PATCH_HPP
+#define INGEN_PATCH_HPP
 
 #include <map>
 #include <utility>
@@ -46,4 +46,4 @@ public:
 
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_PATCH_HPP
+#endif // INGEN_PATCH_HPP

@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERFACE_EDGE_HPP
-#define INGEN_INTERFACE_EDGE_HPP
+#ifndef INGEN_EDGE_HPP
+#define INGEN_EDGE_HPP
 
 namespace Raul { class Path; }
 
@@ -36,4 +36,4 @@ public:
 
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_EDGE_HPP
+#endif // INGEN_EDGE_HPP

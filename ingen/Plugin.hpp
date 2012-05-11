@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERFACE_PLUGIN_HPP
-#define INGEN_INTERFACE_PLUGIN_HPP
+#ifndef INGEN_PLUGIN_HPP
+#define INGEN_PLUGIN_HPP
 
 #include "raul/URI.hpp"
 
@@ -59,4 +59,4 @@ public:
 
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_PLUGIN_HPP
+#endif // INGEN_PLUGIN_HPP

@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERFACE_PORT_HPP
-#define INGEN_INTERFACE_PORT_HPP
+#ifndef INGEN_PORT_HPP
+#define INGEN_PORT_HPP
 
 #include <stdint.h>
 
@@ -43,4 +43,4 @@ public:
 
 } // namespace Ingen
 
-#endif // INGEN_INTERFACE_PORT_HPP
+#endif // INGEN_PORT_HPP

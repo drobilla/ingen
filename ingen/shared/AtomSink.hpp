@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ATOMSINK_HPP
-#define INGEN_ATOMSINK_HPP
+#ifndef INGEN_SHARED_ATOMSINK_HPP
+#define INGEN_SHARED_ATOMSINK_HPP
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
@@ -31,5 +31,5 @@ public:
 } // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_ATOMSINK_HPP
+#endif // INGEN_SHARED_ATOMSINK_HPP
 
