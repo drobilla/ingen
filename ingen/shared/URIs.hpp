@@ -17,11 +17,10 @@
 #ifndef INGEN_SHARED_URIS_HPP
 #define INGEN_SHARED_URIS_HPP
 
-#include <boost/utility.hpp>
-
 #include "ingen/shared/Forge.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Atom.hpp"
+#include "raul/Noncopyable.hpp"
 #include "raul/URI.hpp"
 
 namespace Raul {
@@ -33,7 +32,15 @@ namespace Shared {
 
 class URIMap;
 
-class URIs : public boost::noncopyable {
+/** Frequently used interned URIs.
+ *
+ * This class initially maps all the special URIs used throughout the code
+ * using the URIMap so they can be used quickly with the performance of
+ * integers, but still be dynamic.
+ *
+ * @ingroup IngenShared
+ */
+class URIs : public Raul::Noncopyable {
 public:
 	URIs(Ingen::Shared::Forge& forge, URIMap* map);
 

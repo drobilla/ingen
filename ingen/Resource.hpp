@@ -28,6 +28,9 @@
 
 namespace Ingen {
 
+/** An object with a URI described by properties.
+ * @ingroup Ingen
+ */
 class Resource
 {
 public:

@@ -30,7 +30,7 @@ namespace Shared {
 class AtomSink;
 class URIMap;
 
-/** An Interface that writes LV2 atoms. */
+/** An Interface that writes LV2 atoms to an AtomSink. */
 class AtomWriter : public Interface
 {
 public:

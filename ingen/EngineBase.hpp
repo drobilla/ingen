@@ -29,7 +29,7 @@ class Interface;
 /**
    The engine which executes the process graph.
 
-   @ingroup interface
+   @ingroup Ingen
 */
 class EngineBase
 {

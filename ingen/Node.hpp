@@ -33,7 +33,7 @@ class Plugin;
  *
  * Purely virtual (except for the destructor).
  *
- * \ingroup interface
+ * @ingroup Ingen
  */
 class Node : public virtual GraphObject
 {

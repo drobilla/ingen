@@ -27,6 +27,9 @@ namespace Shared {
 
 class URIs;
 
+/** Implementation of a Resource.
+ * @ingroup IngenShared
+ */
 class ResourceImpl : virtual public Resource
 {
 public:

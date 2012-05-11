@@ -23,7 +23,7 @@ namespace Ingen {
 
 /** A connection between two ports.
  *
- * \ingroup interface
+ * @ingroup Ingen
  */
 class Edge
 {

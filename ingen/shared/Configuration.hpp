@@ -22,6 +22,9 @@
 namespace Ingen {
 namespace Shared {
 
+/** Ingen configuration (command line options).
+ * @ingroup IngenShared
+ */
 class Configuration : public Raul::Configuration {
 public:
 	Configuration();

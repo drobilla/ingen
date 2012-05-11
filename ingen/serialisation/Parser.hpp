@@ -14,6 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+   @defgroup IngenSerialisation Turtle Serialisation
+*/
+
 #ifndef INGEN_SERIALISATION_PARSER_HPP
 #define INGEN_SERIALISATION_PARSER_HPP
 
@@ -34,10 +38,11 @@ namespace Shared { class World; }
 
 namespace Serialisation {
 
-/** Parse Ingen objects from RDF.
- *
- * \ingroup IngenSerialisation
- */
+/**
+   Read Ingen objects from Turtle files or strings.
+
+   @ingroup IngenSerialisation
+*/
 class Parser {
 public:
 	explicit Parser(Shared::World& world);

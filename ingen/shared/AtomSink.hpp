@@ -22,6 +22,9 @@
 namespace Ingen {
 namespace Shared {
 
+/** A sink for LV2 Atoms.
+ * @ingroup IngenShared
+ */
 class AtomSink {
 public:
 	virtual ~AtomSink() {}

@@ -20,17 +20,18 @@
 #include <map>
 #include <utility>
 
-#include <boost/utility.hpp>
-
 #include "ingen/shared/LV2Features.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/URI.hpp"
+#include "raul/Noncopyable.hpp"
 
 namespace Ingen {
 namespace Shared {
 
-/** URI to Integer Map */
-class URIMap : public boost::noncopyable {
+/** URI to integer map and implementation of LV2 URID extension.
+ * @ingroup IngenShared
+ */
+class URIMap : public Raul::Noncopyable {
 public:
 	URIMap(LV2_URID_Map* map, LV2_URID_Unmap* unmap);
 	virtual ~URIMap() {}

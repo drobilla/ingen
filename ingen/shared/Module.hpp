@@ -29,6 +29,7 @@ class World;
 /** A dynamically loaded Ingen module.
  *
  * All components of Ingen reside in one of these.
+ * @ingroup IngenShared
  */
 struct Module {
 	virtual ~Module();

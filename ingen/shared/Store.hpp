@@ -29,6 +29,9 @@
 namespace Ingen {
 namespace Shared {
 
+/** Store of objects in the patch hierarchy.
+ * @ingroup IngenShared
+ */
 class Store : public Raul::PathTable< SharedPtr<GraphObject> > {
 public:
 	virtual ~Store() {}

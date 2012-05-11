@@ -42,7 +42,7 @@ class ClientStore;
 
 /** Node model class, used by the client to store engine's state.
  *
- * \ingroup IngenClient
+ * @ingroup IngenClient
  */
 class NodeModel : public ObjectModel,
                   virtual public Ingen::Node

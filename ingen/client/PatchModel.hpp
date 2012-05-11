@@ -33,7 +33,7 @@ class EdgeModel;
 
 /** Client's model of a patch.
  *
- * \ingroup IngenClient
+ * @ingroup IngenClient
  */
 class PatchModel : public NodeModel, public Ingen::Patch
 {

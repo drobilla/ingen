@@ -29,7 +29,9 @@ class AtomSink;
 class Forge;
 class URIMap;
 
-/** An AtomSink that calls methods on an Interface. */
+/** An AtomSink that calls methods on an Interface.
+ * @ingroup IngenShared
+ */
 class AtomReader : public AtomSink
 {
 public:

@@ -37,7 +37,7 @@ class NodeModel;
 
 /** Model for a plugin available for loading.
  *
- * \ingroup IngenClient
+ * @ingroup IngenClient
  */
 class PluginUI {
 public:

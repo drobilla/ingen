@@ -26,6 +26,9 @@ namespace Shared {
 
 class URIMap;
 
+/** Forge for Raul Atoms.
+ * @ingroup IngenShared
+ */
 class Forge : public Raul::Forge {
 public:
 	explicit Forge(Shared::URIMap& map);

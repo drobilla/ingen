@@ -44,7 +44,7 @@ class PluginUI;
 
 /** Model for a plugin available for loading.
  *
- * \ingroup IngenClient
+ * @ingroup IngenClient
  */
 class PluginModel : public Ingen::Plugin
                   , public Ingen::Shared::ResourceImpl

@@ -61,6 +61,8 @@ class URIs;
  * The world is used in any process which uses the Ingen as a library, both
  * client and server (e.g. the world may not actually contain an Engine, since
  * it maybe running in another process or even on a different machine).
+ *
+ * @ingroup IngenShared
  */
 class World : public Raul::Noncopyable {
 public:
@@ -100,7 +102,8 @@ public:
 	virtual void add_interface_factory(const std::string& scheme,
 	                                   InterfaceFactory   factory);
 
-	/** Return a new Interface to control the server at @p engine_url.
+	/** Return a new Interface to control a server.
+	 * @param engine_url The URL of the possibly remote server to control.
 	 * @param respondee The Interface that will receive responses to commands
 	 *                  and broadcasts, if applicable.
 	 */

@@ -48,7 +48,7 @@ class SigClientInterface;
 
 /** Automatically manages models of objects in the engine.
  *
- * \ingroup IngenClient
+ * @ingroup IngenClient
  */
 class ClientStore : public Shared::Store
                   , public Interface

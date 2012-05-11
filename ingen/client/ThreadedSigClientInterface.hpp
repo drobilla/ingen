@@ -46,6 +46,8 @@ namespace Client {
  * functions are called.  It must be explicitly driven with the emit_signals()
  * function, which fires all enqueued signals up until the present.  You can
  * use this in a GTK idle callback for receiving thread safe engine signals.
+ *
+ * @ingroup IngenClient
  */
 class ThreadedSigClientInterface : public SigClientInterface
 {

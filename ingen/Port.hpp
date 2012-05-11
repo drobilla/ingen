@@ -29,7 +29,7 @@ namespace Ingen {
  *
  * Purely virtual (except for the destructor).
  *
- * \ingroup interface
+ * @ingroup Ingen
  */
 class Port : public virtual GraphObject
 {

@@ -43,10 +43,11 @@ class Store;
 
 namespace Serialisation {
 
-/** Serialises Ingen objects (patches, nodes, etc) to RDF.
- *
- * \ingroup IngenSerialisation
- */
+/**
+   Write Ingen objects to Turtle files or strings.
+
+   @ingroup IngenSerialisation
+*/
 class Serialiser
 {
 public:
@@ -67,10 +68,12 @@ public:
 	virtual void start_to_string(const Raul::Path&  root,
 	                             const std::string& base_uri);
 
-	virtual void serialise(SharedPtr<const GraphObject> object) throw (std::logic_error);
+	virtual void serialise(SharedPtr<const GraphObject> object)
+			throw (std::logic_error);
 
-	virtual void serialise_edge(const Sord::Node& parent,
-	                            SharedPtr<const Edge> c) throw (std::logic_error);
+	virtual void serialise_edge(const Sord::Node&     parent,
+	                            SharedPtr<const Edge> c)
+			throw (std::logic_error);
 
 	virtual std::string finish();
 

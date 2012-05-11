@@ -36,6 +36,8 @@ namespace Client {
  *
  * The signals here match the calls to ClientInterface exactly.  See the
  * documentation for ClientInterface for meanings of signal parameters.
+ *
+ * @ingroup IngenClient
  */
 class SigClientInterface : public Ingen::Interface,
                            public INGEN_TRACKABLE

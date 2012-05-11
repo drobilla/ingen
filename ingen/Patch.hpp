@@ -28,9 +28,9 @@ namespace Ingen {
 
 class Edge;
 
-/** A Path (graph of Nodes/Edges)
+/** A Patch (graph of Nodes/Edges)
  *
- * \ingroup interface
+ * @ingroup Ingen
  */
 class Patch : virtual public Node
 {

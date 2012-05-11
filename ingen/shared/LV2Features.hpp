@@ -31,7 +31,8 @@ namespace Shared {
 
 class World;
 
-/** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
+/** Features for use by LV2 plugins.
+ * @ingroup IngenShared
  */
 class LV2Features {
 public:

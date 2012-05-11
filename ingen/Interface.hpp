@@ -14,6 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+   @defgroup Ingen Core Interfaces
+*/
+
 #ifndef INGEN_INTERFACE_HPP
 #define INGEN_INTERFACE_HPP
 
@@ -34,7 +38,7 @@ namespace Ingen {
 /** Abstract interface common to both engine and clients.
  * Purely virtual (except for the destructor).
  *
- * \ingroup interface
+ * @ingroup Ingen
  */
 class Interface
 {

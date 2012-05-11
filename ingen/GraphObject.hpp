@@ -33,7 +33,7 @@ namespace Ingen {
  *
  * Purely virtual (except for the destructor).
  *
- * \ingroup interface
+ * @ingroup Ingen
  */
 class GraphObject : public Raul::Deletable
                   , public virtual Resource

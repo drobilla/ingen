@@ -36,7 +36,7 @@ namespace Client {
 
 /** Model of a port.
  *
- * \ingroup IngenClient
+ * @ingroup IngenClient
  */
 class PortModel : public ObjectModel, public Ingen::Port
 {

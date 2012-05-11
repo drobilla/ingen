@@ -36,6 +36,8 @@ class Store;
 
 /** A wrapper for an Interface that creates objects but possibly maps
  * symbol names to avoid clashes with the existing objects in a store.
+ *
+ * @ingroup IngenShared
  */
 class ClashAvoider : public Interface
 {

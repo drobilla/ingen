@@ -14,6 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+   @defgroup IngenClient Client-Side Models and Utilities
+*/
+
 #ifndef INGEN_CLIENT_OBJECTMODEL_HPP
 #define INGEN_CLIENT_OBJECTMODEL_HPP
 
@@ -46,7 +50,7 @@ class ClientStore;
  * well, it reduces Collection Hell) and wait for the result (as a signal
  * from this Model).
  *
- * \ingroup IngenClient
+ * @ingroup IngenClient
  */
 class ObjectModel : virtual public GraphObject
                   , public Ingen::Shared::ResourceImpl

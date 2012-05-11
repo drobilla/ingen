@@ -28,7 +28,7 @@ class URIs;
 
 /** Wrapper for Interface to create existing objects/models.
  *
- * \ingroup interface
+ * @ingroup IngenShared
  */
 class Builder
 {

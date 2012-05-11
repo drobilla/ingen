@@ -32,7 +32,7 @@ class ClientStore;
 
 /** Class to represent a port->port connections in the engine.
  *
- * \ingroup IngenClient
+ * @ingroup IngenClient
  */
 class EdgeModel : public Edge
 {
