@@ -21,7 +21,7 @@
 #include "raul/log.hpp"
 
 #include "ClientBroadcaster.hpp"
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 #include "EngineStore.hpp"
 #include "ObjectSender.hpp"
 #include "PluginImpl.hpp"

@@ -38,7 +38,7 @@ class PortImpl;
 
 namespace Events {
 
-/** Make a Connection between two Ports.
+/** Remove an Edge between two Ports.
  *
  * \ingroup engine
  */
@@ -68,12 +68,12 @@ public:
 		InputPort* head() { return _dst_input_port; }
 
 	private:
-		Engine&                   _engine;
-		OutputPort*               _src_output_port;
-		InputPort*                _dst_input_port;
-		PatchImpl*                _patch;
-		SharedPtr<ConnectionImpl> _connection;
-		Raul::Array<BufferRef>*   _buffers;
+		Engine&                 _engine;
+		OutputPort*             _src_output_port;
+		InputPort*              _dst_input_port;
+		PatchImpl*              _patch;
+		SharedPtr<EdgeImpl>     _edge;
+		Raul::Array<BufferRef>* _buffers;
 	};
 
 private:

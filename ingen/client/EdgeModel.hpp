@@ -22,7 +22,7 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/Connection.hpp"
+#include "ingen/Edge.hpp"
 #include "ingen/client/PortModel.hpp"
 
 namespace Ingen {
@@ -34,7 +34,7 @@ class ClientStore;
  *
  * \ingroup IngenClient
  */
-class EdgeModel : public Connection
+class EdgeModel : public Edge
 {
 public:
 	SharedPtr<PortModel> tail() const { return _tail; }

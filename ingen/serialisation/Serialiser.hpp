@@ -34,7 +34,7 @@ class GraphObject;
 class Patch;
 class Node;
 class Port;
-class Connection;
+class Edge;
 
 namespace Shared {
 class World;
@@ -69,8 +69,8 @@ public:
 
 	virtual void serialise(SharedPtr<const GraphObject> object) throw (std::logic_error);
 
-	virtual void serialise_connection(const Sord::Node& parent,
-	                                  SharedPtr<const Connection> c) throw (std::logic_error);
+	virtual void serialise_edge(const Sord::Node& parent,
+	                            SharedPtr<const Edge> c) throw (std::logic_error);
 
 	virtual std::string finish();
 

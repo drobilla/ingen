@@ -24,7 +24,7 @@
 #include "raul/Path.hpp"
 
 #include "ClientBroadcaster.hpp"
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "InputPort.hpp"
@@ -116,11 +116,11 @@ DisconnectAll::pre_process()
 		assert((_node || _port) && !(_node && _port));
 	}
 
-	// Find set of connections to remove
-	std::set<ConnectionImpl*> to_remove;
-	for (Patch::Connections::const_iterator i = _parent->connections().begin();
-	     i != _parent->connections().end(); ++i) {
-		ConnectionImpl* const c = (ConnectionImpl*)i->second.get();
+	// Find set of edges to remove
+	std::set<EdgeImpl*> to_remove;
+	for (Patch::Edges::const_iterator i = _parent->edges().begin();
+	     i != _parent->edges().end(); ++i) {
+		EdgeImpl* const c = (EdgeImpl*)i->second.get();
 		if (_node) {
 			if (c->tail()->parent_node() == _node
 			    || c->head()->parent_node() == _node) {
@@ -134,8 +134,8 @@ DisconnectAll::pre_process()
 		}
 	}
 
-	// Create disconnect events (which erases from _parent->connections())
-	for (std::set<ConnectionImpl*>::const_iterator i = to_remove.begin();
+	// Create disconnect events (which erases from _parent->edges())
+	for (std::set<EdgeImpl*>::const_iterator i = to_remove.begin();
 	     i != to_remove.end(); ++i) {
 		_impls.push_back(new Disconnect::Impl(
 			                 _engine, _parent,

@@ -17,7 +17,7 @@
 #include <algorithm>
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/log.hpp"
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "MessageContext.hpp"
 #include "NodeImpl.hpp"

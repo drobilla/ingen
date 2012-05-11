@@ -104,8 +104,8 @@ public:
 		, argv(a_argv)
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
-		, forge(new Ingen::Forge(*uri_map))
 		, uri_map(new Ingen::Shared::URIMap(map, unmap))
+		, forge(new Ingen::Forge(*uri_map))
 		, uris(new Shared::URIs(*forge, uri_map))
 		, lilv_world(lilv_world_new())
 	{
@@ -144,9 +144,9 @@ public:
 
 		delete rdf_world;
 		delete lv2_features;
+		delete uris;
 		delete forge;
 		delete uri_map;
-		delete uris;
 	}
 
 	typedef std::map< const std::string, SharedPtr<Module> > Modules;
@@ -164,8 +164,8 @@ public:
 	Shared::Configuration                conf;
 	LV2Features*                         lv2_features;
 	Sord::World*                         rdf_world;
-	Ingen::Forge*                        forge;
 	URIMap*                              uri_map;
+	Ingen::Forge*                        forge;
 	URIs*                                uris;
 	SharedPtr<Interface>                 interface;
 	SharedPtr<EngineBase>                engine;

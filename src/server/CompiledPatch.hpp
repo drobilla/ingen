@@ -28,7 +28,7 @@
 namespace Ingen {
 namespace Server {
 
-class ConnectionImpl;
+class EdgeImpl;
 class NodeImpl;
 
 /** All information required about a node to execute it in an audio thread.
@@ -69,10 +69,10 @@ class CompiledPatch : public std::vector<CompiledNode>
                     , public boost::noncopyable
 {
 public:
-	typedef std::vector<ConnectionImpl*> QueuedConnections;
+	typedef std::vector<EdgeImpl*> QueuedEdges;
 
-	/** All (audio context => other context) connections */
-	std::vector<ConnectionImpl*> queued_connections;
+	/** All (audio context => other context) edges */
+	std::vector<EdgeImpl*> queued_edges;
 };
 
 } // namespace Server

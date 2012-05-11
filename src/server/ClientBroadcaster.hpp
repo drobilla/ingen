@@ -33,11 +33,6 @@ namespace Ingen {
 namespace Server {
 
 class GraphObjectImpl;
-class NodeImpl;
-class PortImpl;
-class PluginImpl;
-class PatchImpl;
-class ConnectionImpl;
 
 /** Broadcaster for all clients.
  *

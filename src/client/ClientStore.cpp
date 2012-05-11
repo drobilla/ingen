@@ -457,7 +457,7 @@ ClientStore::attempt_connection(const Raul::Path& tail_path,
 		tail->connected_to(head);
 		head->connected_to(tail);
 
-		patch->add_connection(cm);
+		patch->add_edge(cm);
 		return true;
 	}
 
@@ -495,7 +495,7 @@ ClientStore::disconnect(const Raul::Path& src,
 
 	SharedPtr<PatchModel> patch = connection_patch(src_path, dst_path);
 	if (patch)
-		patch->remove_connection(tail.get(), head.get());
+		patch->remove_edge(tail.get(), head.get());
 }
 
 void
@@ -511,9 +511,9 @@ ClientStore::disconnect_all(const Raul::Path& parent_patch,
 		return;
 	}
 
-	const PatchModel::Connections connections = patch->connections();
-	for (PatchModel::Connections::const_iterator i = connections.begin();
-	     i != connections.end(); ++i) {
+	const PatchModel::Edges edges = patch->edges();
+	for (PatchModel::Edges::const_iterator i = edges.begin();
+	     i != edges.end(); ++i) {
 		SharedPtr<EdgeModel> c = PtrCast<EdgeModel>(i->second);
 		if (c->tail()->parent() == object
 		    || c->head()->parent() == object
@@ -521,7 +521,7 @@ ClientStore::disconnect_all(const Raul::Path& parent_patch,
 		    || c->head()->path() == path) {
 			c->tail()->disconnected_from(c->head());
 			c->head()->disconnected_from(c->tail());
-			patch->remove_connection(c->tail().get(), c->head().get());
+			patch->remove_edge(c->tail().get(), c->head().get());
 		}
 	}
 }

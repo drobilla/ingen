@@ -40,10 +40,10 @@ class PatchModel : public NodeModel, public Ingen::Patch
 public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */
 
-	const Connections& connections() const { return *_connections.get(); }
+	const Edges& edges() const { return *_edges.get(); }
 
-	SharedPtr<EdgeModel> get_connection(const Ingen::Port* tail,
-	                                    const Ingen::Port* head);
+	SharedPtr<EdgeModel> get_edge(const Ingen::Port* tail,
+	                              const Ingen::Port* head);
 
 	bool     enabled()       const;
 	bool     polyphonic()    const;
@@ -52,15 +52,15 @@ public:
 	// Signals
 	INGEN_SIGNAL(new_node, void, SharedPtr<NodeModel>);
 	INGEN_SIGNAL(removed_node, void, SharedPtr<NodeModel>);
-	INGEN_SIGNAL(new_connection, void, SharedPtr<EdgeModel>);
-	INGEN_SIGNAL(removed_connection, void, SharedPtr<EdgeModel>);
+	INGEN_SIGNAL(new_edge, void, SharedPtr<EdgeModel>);
+	INGEN_SIGNAL(removed_edge, void, SharedPtr<EdgeModel>);
 
 private:
 	friend class ClientStore;
 
 	PatchModel(Shared::URIs& uris, const Raul::Path& patch_path)
 		: NodeModel(uris, "http://drobilla.net/ns/ingen#Patch", patch_path)
-		, _connections(new Connections())
+		, _edges(new Edges())
 	{
 	}
 
@@ -68,11 +68,11 @@ private:
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);
 
-	void add_connection(SharedPtr<EdgeModel> cm);
-	void remove_connection(const Ingen::Port* tail,
+	void add_edge(SharedPtr<EdgeModel> cm);
+	void remove_edge(const Ingen::Port* tail,
 	                       const Ingen::Port* head);
 
-	SharedPtr<Connections> _connections;
+	SharedPtr<Edges> _edges;
 };
 
 } // namespace Client

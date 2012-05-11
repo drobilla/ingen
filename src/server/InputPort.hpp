@@ -26,12 +26,12 @@
 #include "raul/SharedPtr.hpp"
 
 #include "PortImpl.hpp"
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 
 namespace Ingen {
 namespace Server {
 
-class ConnectionImpl;
+class EdgeImpl;
 class Context;
 class NodeImpl;
 class OutputPort;
@@ -40,10 +40,10 @@ class ProcessContext;
 /** An input port on a Node or Patch.
  *
  * All ports have a Buffer, but the actual contents (data) of that buffer may be
- * set directly to the incoming connection's buffer if there's only one inbound
- * connection, to eliminate the need to copy/mix.
+ * set directly to the incoming edge's buffer if there's only one inbound
+ * edge, to eliminate the need to copy/mix.
  *
- * If a port has multiple connections, they will be mixed down into the local
+ * If a port has multiple edges, they will be mixed down into the local
  * buffer and it will be used.
  *
  * \ingroup engine
@@ -63,13 +63,13 @@ public:
 
 	virtual ~InputPort() {}
 
-	typedef boost::intrusive::slist<ConnectionImpl,
+	typedef boost::intrusive::slist<EdgeImpl,
 	                                boost::intrusive::constant_time_size<false>
-	                                > Connections;
+	                                > Edges;
 
-	void            add_connection(ConnectionImpl* c);
-	ConnectionImpl* remove_connection(ProcessContext&   context,
-	                                  const OutputPort* tail);
+	void      add_edge(EdgeImpl* c);
+	EdgeImpl* remove_edge(ProcessContext&   context,
+	                      const OutputPort* tail);
 
 	bool apply_poly(Raul::Maid& maid, uint32_t poly);
 
@@ -80,9 +80,9 @@ public:
 	void pre_process(Context& context);
 	void post_process(Context& context);
 
-	size_t num_connections() const { return _num_connections; } ///< Pre-process thread
-	void increment_num_connections() { ++_num_connections; }
-	void decrement_num_connections() { --_num_connections; }
+	size_t num_edges() const { return _num_edges; } ///< Pre-process thread
+	void increment_num_edges() { ++_num_edges; }
+	void decrement_num_edges() { --_num_edges; }
 
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
@@ -90,8 +90,8 @@ public:
 	bool direct_connect() const;
 
 protected:
-	size_t      _num_connections; ///< Pre-process thread
-	Connections _connections;
+	size_t _num_edges;  ///< Pre-process thread
+	Edges  _edges;
 };
 
 } // namespace Server

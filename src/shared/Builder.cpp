@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Connection.hpp"
+#include "ingen/Edge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Patch.hpp"
@@ -51,10 +51,10 @@ Builder::build(SharedPtr<const GraphObject> object)
 		}
 
 		build_object(object);
-		/*for (Patch::Connections::const_iterator i = patch->connections().begin();
-				i != patch->connections().end(); ++i) {
-			_interface.connect((*i)->src_port_path(), (*i)->dst_port_path());
-		}*/
+		/*for (Patch::Edges::const_iterator i = patch->edges().begin();
+		  i != patch->edges().end(); ++i) {
+		  _interface.connect((*i)->src_port_path(), (*i)->dst_port_path());
+		  }*/
 		return;
 	}
 
@@ -82,8 +82,8 @@ Builder::connect(SharedPtr<const GraphObject> object)
 {
 	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
 	if (patch) {
-		for (Patch::Connections::const_iterator i = patch->connections().begin();
-				i != patch->connections().end(); ++i) {
+		for (Patch::Edges::const_iterator i = patch->edges().begin();
+		     i != patch->edges().end(); ++i) {
 			_interface.connect(i->second->tail_path(), i->second->head_path());
 		}
 		return;

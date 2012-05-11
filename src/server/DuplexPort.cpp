@@ -21,7 +21,6 @@
 #include "ingen/shared/URIs.hpp"
 
 #include "Buffer.hpp"
-#include "ConnectionImpl.hpp"
 #include "DuplexPort.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"

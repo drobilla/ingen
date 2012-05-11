@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_CONNECTIONIMPL_HPP
-#define INGEN_ENGINE_CONNECTIONIMPL_HPP
+#ifndef INGEN_ENGINE_EDGE_IMPL_HPP
+#define INGEN_ENGINE_EDGE_IMPL_HPP
 
 #include <cstdlib>
 
@@ -23,7 +23,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/utility.hpp>
 
-#include "ingen/Connection.hpp"
+#include "ingen/Edge.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "raul/Deletable.hpp"
 #include "raul/log.hpp"
@@ -52,15 +52,15 @@ class BufferFactory;
  *
  * \ingroup engine
  */
-class ConnectionImpl
+class EdgeImpl
 		: public  Raul::Deletable
 		, private Raul::Noncopyable
-		, public  Connection
+		, public  Edge
 		, public  boost::intrusive::slist_base_hook<
 	boost::intrusive::link_mode<boost::intrusive::auto_unlink> >
 {
 public:
-	ConnectionImpl(PortImpl* tail, PortImpl* head);
+	EdgeImpl(PortImpl* tail, PortImpl* head);
 
 	PortImpl* tail() const { return _tail; }
 	PortImpl* head() const { return _head; }
@@ -77,16 +77,16 @@ public:
 	                 uint32_t&                     num_srcs);
 
 	/** Get the buffer for a particular voice.
-	 * A Connection is smart - it knows the destination port requesting the
+	 * An Edge is smart - it knows the destination port requesting the
 	 * buffer, and will return accordingly (e.g. the same buffer for every
-	 * voice in a mono->poly connection).
+	 * voice in a mono->poly edge).
 	 */
 	BufferRef buffer(uint32_t voice) const;
 
-	/** Whether this connection must mix down voices into a local buffer */
+	/** Whether this edge must mix down voices into a local buffer */
 	bool must_mix() const;
 
-	/** Whether this connection crosses contexts and must buffer */
+	/** Whether this edge crosses contexts and must buffer */
 	bool must_queue() const;
 
 	static bool can_connect(const OutputPort* src, const InputPort* dst);
@@ -102,4 +102,4 @@ protected:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_CONNECTIONIMPL_HPP
+#endif // INGEN_ENGINE_EDGEIMPL_HPP

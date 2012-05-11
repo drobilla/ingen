@@ -21,7 +21,7 @@
 
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "NodeImpl.hpp"
@@ -48,7 +48,7 @@ InputPort::InputPort(BufferFactory&      bufs,
                      const Raul::Atom&   value,
                      size_t              buffer_size)
 	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
-	, _num_connections(0)
+	, _num_edges(0)
 {
 	const Ingen::Shared::URIs& uris = bufs.uris();
 
@@ -82,22 +82,22 @@ InputPort::get_buffers(BufferFactory&          bufs,
                        Raul::Array<BufferRef>* buffers,
                        uint32_t                poly) const
 {
-	size_t num_connections = (ThreadManager::thread_is(THREAD_PROCESS))
-			? _connections.size() : _num_connections;
+	size_t num_edges = (ThreadManager::thread_is(THREAD_PROCESS))
+			? _edges.size() : _num_edges;
 
-	if (is_a(PortType::AUDIO) && num_connections == 0) {
-		// Audio input with no connections, use shared zero buffer
+	if (is_a(PortType::AUDIO) && num_edges == 0) {
+		// Audio input with no edges, use shared zero buffer
 		for (uint32_t v = 0; v < poly; ++v)
 			buffers->at(v) = bufs.silent_buffer();
 		return false;
 
-	} else if (num_connections == 1) {
+	} else if (num_edges == 1) {
 		if (ThreadManager::thread_is(THREAD_PROCESS)) {
-			if (!_connections.front().must_mix() &&
-			    !_connections.front().must_queue()) {
+			if (!_edges.front().must_mix() &&
+			    !_edges.front().must_queue()) {
 				// Single non-mixing conneciton, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v)
-					buffers->at(v) = _connections.front().buffer(v);
+					buffers->at(v) = _edges.front().buffer(v);
 				return false;
 			}
 		}
@@ -111,52 +111,52 @@ InputPort::get_buffers(BufferFactory&          bufs,
 	return true;
 }
 
-/** Add a connection.  Realtime safe.
+/** Add a edge.  Realtime safe.
  *
- * The buffer of this port will be set directly to the connection's buffer
- * if there is only one connection, since no copying/mixing needs to take place.
+ * The buffer of this port will be set directly to the edge's buffer
+ * if there is only one edge, since no copying/mixing needs to take place.
  *
  * Note that setup_buffers must be called after this before the change
  * will audibly take effect.
  */
 void
-InputPort::add_connection(ConnectionImpl* c)
+InputPort::add_edge(EdgeImpl* c)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	_connections.push_front(*c);
+	_edges.push_front(*c);
 
 	// Broadcast value/activity of connected input
 	_broadcast = true;
 }
 
-/** Remove a connection.  Realtime safe.
+/** Remove a edge.  Realtime safe.
  *
  * Note that setup_buffers must be called after this before the change
  * will audibly take effect.
  */
-ConnectionImpl*
-InputPort::remove_connection(ProcessContext& context, const OutputPort* tail)
+EdgeImpl*
+InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	ConnectionImpl* connection = NULL;
-	for (Connections::iterator i = _connections.begin(); i != _connections.end(); ++i) {
+	EdgeImpl* edge = NULL;
+	for (Edges::iterator i = _edges.begin(); i != _edges.end(); ++i) {
 		if (i->tail() == tail) {
-			connection = &*i;
-			_connections.erase(i);
+			edge = &*i;
+			_edges.erase(i);
 			break;
 		}
 	}
 
-	if (!connection) {
-		Raul::error << "[InputPort::remove_connection] Connection not found!"
+	if (!edge) {
+		Raul::error << "[InputPort::remove_edge] Edge not found!"
 		            << std::endl;
 		return NULL;
 	}
 
 	// Turn off broadcasting if we're no longer connected
-	if (_connections.empty()) {
+	if (_edges.empty()) {
 		if (is_a(PortType::AUDIO)) {
 			// Send an update peak of 0.0 to reset to silence
 			const Notification note = Notification::make(
@@ -167,7 +167,7 @@ InputPort::remove_connection(ProcessContext& context, const OutputPort* tail)
 		_broadcast = false;
 	}
 
-	return connection;
+	return edge;
 }
 
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.
@@ -179,19 +179,19 @@ InputPort::pre_process(Context& context)
 	if (_set_by_user)
 		return;
 
-	if (_connections.empty()) {
+	if (_edges.empty()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
 			buffer(v)->prepare_read(context);
 		}
 	} else if (direct_connect()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
-			_buffers->at(v) = _connections.front().buffer(v);
+			_buffers->at(v) = _edges.front().buffer(v);
 			_buffers->at(v)->prepare_read(context);
 		}
 	} else {
 		uint32_t max_num_srcs = 0;
-		for (Connections::const_iterator c = _connections.begin();
-		     c != _connections.end(); ++c) {
+		for (Edges::const_iterator c = _edges.begin();
+		     c != _edges.end(); ++c) {
 			max_num_srcs += c->tail()->poly();
 		}
 
@@ -199,8 +199,8 @@ InputPort::pre_process(Context& context)
 
 		for (uint32_t v = 0; v < _poly; ++v) {
 			uint32_t num_srcs = 0;
-			for (Connections::iterator c = _connections.begin();
-			     c != _connections.end(); ++c) {
+			for (Edges::iterator c = _edges.begin();
+			     c != _edges.end(); ++c) {
 				c->get_sources(context, v, srcs, max_num_srcs, num_srcs);
 			}
 
@@ -230,9 +230,9 @@ InputPort::post_process(Context& context)
 bool
 InputPort::direct_connect() const
 {
-	return _connections.size() == 1
-		&& !_connections.front().must_mix()
-		&& !_connections.front().must_queue();
+	return _edges.size() == 1
+		&& !_edges.front().must_mix()
+		&& !_edges.front().must_queue();
 }
 
 } // namespace Server

@@ -14,11 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_CONNECTION_HPP
-#define INGEN_GUI_CONNECTION_HPP
+#ifndef INGEN_GUI_EDGE_HPP
+#define INGEN_GUI_EDGE_HPP
 
 #include <cassert>
 #include <string>
+
 #include "ganv/Edge.hpp"
 #include "raul/SharedPtr.hpp"
 
@@ -28,18 +29,18 @@ namespace Client { class EdgeModel; }
 
 namespace GUI {
 
-/** A Connection in a Patch.
+/** An Edge in a Patch.
  *
  * \ingroup GUI
  */
-class Connection : public Ganv::Edge
+class Edge : public Ganv::Edge
 {
 public:
-	Connection(Ganv::Canvas&                              canvas,
-	           boost::shared_ptr<const Client::EdgeModel> model,
-	           Ganv::Node*                                src,
-	           Ganv::Node*                                dst,
-	           uint32_t                                   color);
+	Edge(Ganv::Canvas&                              canvas,
+	     boost::shared_ptr<const Client::EdgeModel> model,
+	     Ganv::Node*                                src,
+	     Ganv::Node*                                dst,
+	     uint32_t                                   color);
 
 	SharedPtr<const Client::EdgeModel> model() const { return _edge_model; }
 
@@ -50,4 +51,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_CONNECTION_HPP
+#endif // INGEN_GUI_EDGE_HPP

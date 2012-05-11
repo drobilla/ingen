@@ -7,9 +7,9 @@ def build(bld):
             Buffer.cpp
             BufferFactory.cpp
             ClientBroadcaster.cpp
-            ConnectionImpl.cpp
             ControlBindings.cpp
             DuplexPort.cpp
+            EdgeImpl.cpp
             Engine.cpp
             EngineStore.cpp
             Event.cpp

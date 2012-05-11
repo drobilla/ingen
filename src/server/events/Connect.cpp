@@ -24,7 +24,7 @@
 
 #include "ClientBroadcaster.hpp"
 #include "Connect.hpp"
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
@@ -92,13 +92,13 @@ Connect::pre_process()
 		return;
 	}
 
-	if (!ConnectionImpl::can_connect(_src_output_port, _dst_input_port)) {
+	if (!EdgeImpl::can_connect(_src_output_port, _dst_input_port)) {
 		_status = TYPE_MISMATCH;
 		Event::pre_process();
 		return;
 	}
 
-	// Connection to a patch port from inside the patch
+	// Edge to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
 		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
 		if (src_node->parent() == dst_node)
@@ -106,30 +106,30 @@ Connect::pre_process()
 		else
 			_patch = dynamic_cast<PatchImpl*>(src_node);
 
-	// Connection from a patch input to a patch output (pass through)
+	// Edge from a patch input to a patch output (pass through)
 	} else if (src_node == dst_node && dynamic_cast<PatchImpl*>(src_node)) {
 		_patch = dynamic_cast<PatchImpl*>(src_node);
 
-	// Normal connection between nodes with the same parent
+	// Normal edge between nodes with the same parent
 	} else {
 		_patch = src_node->parent_patch();
 	}
 
-	if (_patch->has_connection(_src_output_port, _dst_input_port)) {
+	if (_patch->has_edge(_src_output_port, _dst_input_port)) {
 		_status = EXISTS;
 		Event::pre_process();
 		return;
 	}
 
-	_connection = SharedPtr<ConnectionImpl>(
-		new ConnectionImpl(_src_output_port, _dst_input_port));
+	_edge = SharedPtr<EdgeImpl>(
+		new EdgeImpl(_src_output_port, _dst_input_port));
 
 	rlock.release();
 
 	{
 		Glib::RWLock::ReaderLock wlock(_engine.engine_store()->lock());
 
-		/* Need to be careful about patch port connections here and adding a
+		/* Need to be careful about patch port edges here and adding a
 		   node's parent as a dependant/provider, or adding a patch as its own
 		   provider...
 		*/
@@ -138,8 +138,8 @@ Connect::pre_process()
 			src_node->dependants().push_back(dst_node);
 		}
 
-		_patch->add_connection(_connection);
-		_dst_input_port->increment_num_connections();
+		_patch->add_edge(_edge);
+		_dst_input_port->increment_num_edges();
 	}
 
 	_buffers = new Raul::Array<BufferRef>(_dst_input_port->poly());
@@ -159,7 +159,7 @@ Connect::execute(ProcessContext& context)
 
 	if (_status == SUCCESS) {
 		// This must be inserted here, since they're actually used by the audio thread
-		_dst_input_port->add_connection(_connection.get());
+		_dst_input_port->add_edge(_edge.get());
 		assert(_buffers);
 		_engine.maid()->push(_dst_input_port->set_buffers(_buffers));
 		_dst_input_port->connect_buffers();

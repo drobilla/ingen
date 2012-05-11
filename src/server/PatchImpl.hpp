@@ -31,12 +31,12 @@
 
 namespace Ingen {
 
-class Connection;
+class Edge;
 
 namespace Server {
 
 class CompiledPatch;
-class ConnectionImpl;
+class EdgeImpl;
 class Context;
 class Engine;
 class ProcessContext;
@@ -99,11 +99,11 @@ public:
 	void         add_node(Nodes::Node* tn);
 	Nodes::Node* remove_node(const Raul::Symbol& symbol);
 
-	Nodes&       nodes()       { return _nodes; }
-	Connections& connections() { return _connections; }
+	Nodes& nodes() { return _nodes; }
+	Edges& edges() { return _edges; }
 
-	const Nodes&       nodes()       const { return _nodes; }
-	const Connections& connections() const { return _connections; }
+	const Nodes& nodes() const { return _nodes; }
+	const Edges& edges() const { return _edges; }
 
 	uint32_t num_ports() const;
 
@@ -130,12 +130,12 @@ public:
 	Ports::Node* remove_port(const std::string& name);
 	void         clear_ports();
 
-	void add_connection(SharedPtr<ConnectionImpl> c);
+	void add_edge(SharedPtr<EdgeImpl> c);
 
-	SharedPtr<ConnectionImpl> remove_connection(const PortImpl* tail,
-	                                            const PortImpl* head);
+	SharedPtr<EdgeImpl> remove_edge(const PortImpl* tail,
+	                                const PortImpl* head);
 
-	bool has_connection(const PortImpl* tail, const PortImpl* head) const;
+	bool has_edge(const PortImpl* tail, const PortImpl* head) const;
 
 	CompiledPatch* compiled_patch()                  { return _compiled_patch; }
 	void           compiled_patch(CompiledPatch* cp) { _compiled_patch = cp; }
@@ -161,7 +161,7 @@ private:
 	Engine&        _engine;
 	uint32_t       _internal_poly;
 	CompiledPatch* _compiled_patch;  ///< Process thread only
-	Connections    _connections;     ///< Pre-process thread only
+	Edges          _edges;           ///< Pre-process thread only
 	Ports          _inputs;          ///< Pre-process thread only
 	Ports          _outputs;         ///< Pre-process thread only
 	Nodes          _nodes;           ///< Pre-process thread only

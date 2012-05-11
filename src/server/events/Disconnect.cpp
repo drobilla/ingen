@@ -22,7 +22,7 @@
 
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
@@ -63,7 +63,7 @@ Disconnect::Impl::Impl(Engine&     e,
 	, _src_output_port(s)
 	, _dst_input_port(d)
 	, _patch(patch)
-	, _connection(patch->remove_connection(_src_output_port, _dst_input_port))
+	, _edge(patch->remove_edge(_src_output_port, _dst_input_port))
 	, _buffers(NULL)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
@@ -87,9 +87,9 @@ Disconnect::Impl::Impl(Engine&     e,
 		}
 	}
 
-	_dst_input_port->decrement_num_connections();
+	_dst_input_port->decrement_num_edges();
 
-	if (_dst_input_port->num_connections() == 0) {
+	if (_dst_input_port->num_edges() == 0) {
 		_buffers = new Raul::Array<BufferRef>(_dst_input_port->poly());
 		_dst_input_port->get_buffers(*_engine.buffer_factory(),
 				_buffers, _dst_input_port->poly());
@@ -132,27 +132,25 @@ Disconnect::pre_process()
 	NodeImpl* const src_node = _tail->parent_node();
 	NodeImpl* const dst_node = _head->parent_node();
 
-	// Connection to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
-
+		// Edge to a patch port from inside the patch
 		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
-		if (src_node->parent() == dst_node)
+		if (src_node->parent() == dst_node) {
 			_patch = dynamic_cast<PatchImpl*>(dst_node);
-		else
+		} else {
 			_patch = dynamic_cast<PatchImpl*>(src_node);
-
-	// Connection from a patch input to a patch output (pass through)
+		}
 	} else if (src_node == dst_node && dynamic_cast<PatchImpl*>(src_node)) {
+		// Edge from a patch input to a patch output (pass through)
 		_patch = dynamic_cast<PatchImpl*>(src_node);
-
-	// Normal connection between nodes with the same parent
 	} else {
+		// Normal edge between nodes with the same parent
 		_patch = src_node->parent_patch();
 	}
 
 	assert(_patch);
 
-	if (!_patch->has_connection(_tail, _head)) {
+	if (!_patch->has_edge(_tail, _head)) {
 		_status = NOT_FOUND;
 		Event::pre_process();
 		return;
@@ -180,9 +178,9 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 {
 	ThreadManager::assert_thread(THREAD_PROCESS);
 
-	ConnectionImpl* const port_connection
-		= _dst_input_port->remove_connection(context, _src_output_port);
-	if (!port_connection) {
+	EdgeImpl* const port_edge =
+		_dst_input_port->remove_edge(context, _src_output_port);
+	if (!port_edge) {
 		return false;
 	}
 
@@ -198,8 +196,8 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 		_dst_input_port->recycle_buffers();
 	}
 
-	assert(_connection);
-	assert(port_connection == _connection.get());
+	assert(_edge);
+	assert(port_edge == _edge.get());
 
 	return true;
 }

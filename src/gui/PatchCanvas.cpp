@@ -35,7 +35,7 @@
 #include "raul/log.hpp"
 
 #include "App.hpp"
-#include "Connection.hpp"
+#include "Edge.hpp"
 #include "LoadPluginWindow.hpp"
 #include "NewSubpatchWindow.hpp"
 #include "NodeModule.hpp"
@@ -131,9 +131,9 @@ PatchCanvas::PatchCanvas(App&                        app,
 		sigc::mem_fun(this, &PatchCanvas::add_port));
 	_patch->signal_removed_port().connect(
 		sigc::mem_fun(this, &PatchCanvas::remove_port));
-	_patch->signal_new_connection().connect(
+	_patch->signal_new_edge().connect(
 		sigc::mem_fun(this, &PatchCanvas::connection));
-	_patch->signal_removed_connection().connect(
+	_patch->signal_removed_edge().connect(
 		sigc::mem_fun(this, &PatchCanvas::disconnection));
 
 	_app.store()->signal_new_plugin().connect(
@@ -301,9 +301,9 @@ PatchCanvas::build()
 		add_port(*i);
 	}
 
-	// Create connections
-	for (PatchModel::Connections::const_iterator i = _patch->connections().begin();
-	     i != _patch->connections().end(); ++i) {
+	// Create edges
+	for (PatchModel::Edges::const_iterator i = _patch->edges().begin();
+	     i != _patch->edges().end(); ++i) {
 		connection(PtrCast<EdgeModel>(i->second));
 	}
 }
@@ -478,7 +478,7 @@ PatchCanvas::connection(SharedPtr<const EdgeModel> cm)
 	Ganv::Port* const head = get_port_view(cm->head());
 
 	if (tail && head) {
-		new GUI::Connection(*this, cm, tail, head, tail->get_fill_color());
+		new GUI::Edge(*this, cm, tail, head, tail->get_fill_color());
 	} else {
 		LOG(error) << "Unable to find ports to connect "
 		           << cm->tail_path() << " -> " << cm->head_path() << endl;
@@ -657,11 +657,11 @@ PatchCanvas::copy_selection()
 
 	for (SelectedEdges::const_iterator c = selected_edges().begin();
 	     c != selected_edges().end(); ++c) {
-		Connection* const connection = dynamic_cast<Connection*>(*c);
-		if (connection) {
+		Edge* const edge = dynamic_cast<Edge*>(*c);
+		if (edge) {
 			const Sord::URI subject(*_app.world()->rdf_world(),
 			                        base_uri);
-			serialiser.serialise_connection(subject, connection->model());
+			serialiser.serialise_edge(subject, edge->model());
 		}
 	}
 

@@ -26,19 +26,19 @@
 
 namespace Ingen {
 
-class Connection;
+class Edge;
 
-/** A Path (graph of Nodes/Connections)
+/** A Path (graph of Nodes/Edges)
  *
  * \ingroup interface
  */
 class Patch : virtual public Node
 {
 public:
-	typedef std::pair<const Port*, const Port*> ConnectionsKey;
-	typedef std::map< ConnectionsKey, SharedPtr<Connection> > Connections;
+	typedef std::pair<const Port*, const Port*> EdgesKey;
+	typedef std::map< EdgesKey, SharedPtr<Edge> > Edges;
 
-	virtual const Connections& connections() const = 0;
+	virtual const Edges& edges() const = 0;
 
 	virtual bool     enabled()       const = 0;
 	virtual uint32_t internal_poly() const = 0;

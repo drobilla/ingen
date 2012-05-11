@@ -24,7 +24,7 @@
 
 #include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "MessageContext.hpp"
@@ -38,12 +38,12 @@
 namespace Ingen {
 namespace Server {
 
-/** Constructor for a connection from a node's output port.
+/** Constructor for a edge from a node's output port.
  *
  * This handles both polyphonic and monophonic nodes, transparently to the
  * user (InputPort).
  */
-ConnectionImpl::ConnectionImpl(PortImpl* tail, PortImpl* head)
+EdgeImpl::EdgeImpl(PortImpl* tail, PortImpl* head)
 	: _tail(tail)
 	, _head(head)
 	, _queue(NULL)
@@ -58,7 +58,7 @@ ConnectionImpl::ConnectionImpl(PortImpl* tail, PortImpl* head)
 }
 
 void
-ConnectionImpl::dump() const
+EdgeImpl::dump() const
 {
 	Raul::debug << _tail->path() << " -> " << _head->path()
 	            << (must_mix()   ? " (MIX) " : " (DIRECT) ")
@@ -68,23 +68,23 @@ ConnectionImpl::dump() const
 }
 
 const Raul::Path&
-ConnectionImpl::tail_path() const
+EdgeImpl::tail_path() const
 {
 	return _tail->path();
 }
 
 const Raul::Path&
-ConnectionImpl::head_path() const
+EdgeImpl::head_path() const
 {
 	return _head->path();
 }
 
 void
-ConnectionImpl::get_sources(Context&                      context,
-                            uint32_t                      voice,
-                            boost::intrusive_ptr<Buffer>* srcs,
-                            uint32_t                      max_num_srcs,
-                            uint32_t&                     num_srcs)
+EdgeImpl::get_sources(Context&                      context,
+                      uint32_t                      voice,
+                      boost::intrusive_ptr<Buffer>* srcs,
+                      uint32_t                      max_num_srcs,
+                      uint32_t&                     num_srcs)
 {
 	if (must_queue() && _queue->read_space() > 0) {
 		LV2_Atom obj;
@@ -109,7 +109,7 @@ ConnectionImpl::get_sources(Context&                      context,
 }
 
 void
-ConnectionImpl::queue(Context& context)
+EdgeImpl::queue(Context& context)
 {
 	if (!must_queue())
 		return;
@@ -132,7 +132,7 @@ ConnectionImpl::queue(Context& context)
 }
 
 BufferRef
-ConnectionImpl::buffer(uint32_t voice) const
+EdgeImpl::buffer(uint32_t voice) const
 {
 	assert(!must_mix());
 	assert(!must_queue());
@@ -145,20 +145,20 @@ ConnectionImpl::buffer(uint32_t voice) const
 }
 
 bool
-ConnectionImpl::must_mix() const
+EdgeImpl::must_mix() const
 {
 	return _tail->poly() > _head->poly();
 }
 
 bool
-ConnectionImpl::must_queue() const
+EdgeImpl::must_queue() const
 {
 	return _tail->parent_node()->context()
 		!= _head->parent_node()->context();
 }
 
 bool
-ConnectionImpl::can_connect(const OutputPort* src, const InputPort* dst)
+EdgeImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
 	const Ingen::Shared::URIs& uris = src->bufs().uris();
 	return (

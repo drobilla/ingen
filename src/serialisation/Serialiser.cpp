@@ -28,7 +28,7 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/module.h>
 
-#include "ingen/Connection.hpp"
+#include "ingen/Edge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Patch.hpp"
@@ -93,8 +93,8 @@ struct Serialiser::Impl {
 	                    SharedPtr<const Patch> patch,
 	                    const std::string&     patch_symbol);
 
-	void serialise_connection(const Sord::Node& parent,
-	                          SharedPtr<const Connection> c)
+	void serialise_edge(const Sord::Node& parent,
+	                    SharedPtr<const Edge> c)
 			throw (std::logic_error);
 
 	std::string finish();
@@ -440,9 +440,9 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 		serialise_port(p, Resource::INTERNAL, port_id);
 	}
 
-	for (Patch::Connections::const_iterator c = patch->connections().begin();
-	     c != patch->connections().end(); ++c) {
-		serialise_connection(patch_id, c->second);
+	for (Patch::Edges::const_iterator c = patch->edges().begin();
+	     c != patch->edges().end(); ++c) {
+		serialise_edge(patch_id, c->second);
 	}
 }
 
@@ -498,37 +498,37 @@ Serialiser::Impl::serialise_port(const Port*       port,
 }
 
 void
-Serialiser::serialise_connection(const Sord::Node&           parent,
-                                 SharedPtr<const Connection> connection)
+Serialiser::serialise_edge(const Sord::Node&     parent,
+                           SharedPtr<const Edge> edge)
 		throw (std::logic_error)
 {
-	return me->serialise_connection(parent, connection);
+	return me->serialise_edge(parent, edge);
 }
 
 void
-Serialiser::Impl::serialise_connection(const Sord::Node&           parent,
-                                       SharedPtr<const Connection> connection)
+Serialiser::Impl::serialise_edge(const Sord::Node&     parent,
+                                 SharedPtr<const Edge> edge)
 		throw (std::logic_error)
 {
 	if (!_model)
 		throw std::logic_error(
-			"serialise_connection called without serialisation in progress");
+			"serialise_edge called without serialisation in progress");
 
 	Sord::World& world = _model->world();
 
-	const Sord::Node src           = path_rdf_node(connection->tail_path());
-	const Sord::Node dst           = path_rdf_node(connection->head_path());
-	const Sord::Node connection_id = Sord::Node::blank_id(*_world.rdf_world());
-	_model->add_statement(connection_id,
+	const Sord::Node src           = path_rdf_node(edge->tail_path());
+	const Sord::Node dst           = path_rdf_node(edge->head_path());
+	const Sord::Node edge_id = Sord::Node::blank_id(*_world.rdf_world());
+	_model->add_statement(edge_id,
 	                      Sord::Curie(world, "ingen:tail"),
 	                      src);
-	_model->add_statement(connection_id,
+	_model->add_statement(edge_id,
 	                      Sord::Curie(world, "ingen:head"),
 	                      dst);
 
 	_model->add_statement(parent,
 	                      Sord::Curie(world, "ingen:edge"),
-	                      connection_id);
+	                      edge_id);
 }
 
 static bool

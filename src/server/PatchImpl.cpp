@@ -22,7 +22,7 @@
 #include "ingen/shared/World.hpp"
 #include "raul/log.hpp"
 
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 #include "Driver.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
@@ -170,9 +170,9 @@ PatchImpl::process(ProcessContext& context)
 		}
 	}
 
-	// Queue any cross-context connections
-	for (CompiledPatch::QueuedConnections::iterator i = _compiled_patch->queued_connections.begin();
-			i != _compiled_patch->queued_connections.end(); ++i) {
+	// Queue any cross-context edges
+	for (CompiledPatch::QueuedEdges::iterator i = _compiled_patch->queued_edges.begin();
+			i != _compiled_patch->queued_edges.end(); ++i) {
 		(*i)->queue(context);
 	}
 
@@ -295,36 +295,36 @@ PatchImpl::remove_node(const Raul::Symbol& symbol)
 }
 
 void
-PatchImpl::add_connection(SharedPtr<ConnectionImpl> c)
+PatchImpl::add_edge(SharedPtr<EdgeImpl> c)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	_connections.insert(make_pair(make_pair(c->tail(), c->head()), c));
+	_edges.insert(make_pair(make_pair(c->tail(), c->head()), c));
 }
 
-/** Remove a connection.
+/** Remove a edge.
  * Preprocessing thread only.
  */
-SharedPtr<ConnectionImpl>
-PatchImpl::remove_connection(const PortImpl* tail, const PortImpl* dst_port)
+SharedPtr<EdgeImpl>
+PatchImpl::remove_edge(const PortImpl* tail, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Connections::iterator i = _connections.find(make_pair(tail, dst_port));
-	if (i != _connections.end()) {
-		SharedPtr<ConnectionImpl> c = PtrCast<ConnectionImpl>(i->second);
-		_connections.erase(i);
+	Edges::iterator i = _edges.find(make_pair(tail, dst_port));
+	if (i != _edges.end()) {
+		SharedPtr<EdgeImpl> c = PtrCast<EdgeImpl>(i->second);
+		_edges.erase(i);
 		return c;
 	} else {
-		Raul::error << "[PatchImpl::remove_connection] Connection not found" << endl;
-		return SharedPtr<ConnectionImpl>();
+		Raul::error << "[PatchImpl::remove_edge] Edge not found" << endl;
+		return SharedPtr<EdgeImpl>();
 	}
 }
 
 bool
-PatchImpl::has_connection(const PortImpl* tail, const PortImpl* dst_port) const
+PatchImpl::has_edge(const PortImpl* tail, const PortImpl* dst_port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Connections::const_iterator i = _connections.find(make_pair(tail, dst_port));
-	return (i != _connections.end());
+	Edges::const_iterator i = _edges.find(make_pair(tail, dst_port));
+	return (i != _edges.end());
 }
 
 uint32_t
@@ -468,13 +468,13 @@ PatchImpl::compile() const
 			compile_recursive(node, compiled_patch);
 	}
 
-	// Add any queued connections that must be run after a cycle
-	for (Connections::const_iterator i = _connections.begin();
-	     i != _connections.end(); ++i) {
-		SharedPtr<ConnectionImpl> c = PtrCast<ConnectionImpl>(i->second);
+	// Add any queued edges that must be run after a cycle
+	for (Edges::const_iterator i = _edges.begin();
+	     i != _edges.end(); ++i) {
+		SharedPtr<EdgeImpl> c = PtrCast<EdgeImpl>(i->second);
 		if (c->tail()->parent_node()->context() == Context::AUDIO &&
 		    c->head()->parent_node()->context() == Context::MESSAGE) {
-			compiled_patch->queued_connections.push_back(c.get());
+			compiled_patch->queued_edges.push_back(c.get());
 		}
 	}
 

@@ -31,7 +31,7 @@ def build(bld):
             BreadCrumbs.cpp
             Configuration.cpp
             ConnectWindow.cpp
-            Connection.cpp
+            Edge.cpp
             LoadPatchWindow.cpp
             LoadPluginWindow.cpp
             MessagesWindow.cpp

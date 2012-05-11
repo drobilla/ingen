@@ -14,26 +14,20 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERFACE_CONNECTION_HPP
-#define INGEN_INTERFACE_CONNECTION_HPP
-
-namespace Raul { class Path; }
+#include "Edge.hpp"
 
 namespace Ingen {
+namespace GUI {
 
-/** A connection between two ports.
- *
- * \ingroup interface
- */
-class Connection
+Edge::Edge(Ganv::Canvas&                              canvas,
+           boost::shared_ptr<const Client::EdgeModel> model,
+           Ganv::Node*                                src,
+           Ganv::Node*                                dst,
+           uint32_t                                   color)
+	: Ganv::Edge(canvas, src, dst, color)
+	, _edge_model(model)
 {
-public:
-	virtual ~Connection() {}
+}
 
-	virtual const Raul::Path& tail_path() const = 0;
-	virtual const Raul::Path& head_path() const = 0;
-};
-
-} // namespace Ingen
-
-#endif // INGEN_INTERFACE_CONNECTION_HPP
+}   // namespace GUI
+}   // namespace Ingen

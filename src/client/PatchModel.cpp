@@ -53,9 +53,8 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
-	for (Connections::iterator j = _connections->begin();
-	     j != _connections->end();) {
-		Connections::iterator next = j;
+	for (Edges::iterator j = _edges->begin(); j != _edges->end();) {
+		Edges::iterator next = j;
 		++next;
 
 		SharedPtr<EdgeModel> cm = PtrCast<EdgeModel>(j->second);
@@ -65,8 +64,8 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 				|| cm->tail_path() == o->path()
 				|| cm->head_path().parent() == o->path()
 				|| cm->head_path() == o->path()) {
-			_signal_removed_connection.emit(cm);
-			_connections->erase(j); // cuts our reference
+			_signal_removed_edge.emit(cm);
+			_edges->erase(j); // cuts our reference
 		}
 		j = next;
 	}
@@ -85,19 +84,19 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 void
 PatchModel::clear()
 {
-	_connections->clear();
+	_edges->clear();
 
 	NodeModel::clear();
 
-	assert(_connections->empty());
+	assert(_edges->empty());
 	assert(_ports.empty());
 }
 
 SharedPtr<EdgeModel>
-PatchModel::get_connection(const Port* tail, const Ingen::Port* head)
+PatchModel::get_edge(const Port* tail, const Ingen::Port* head)
 {
-	Connections::iterator i = _connections->find(make_pair(tail, head));
-	if (i != _connections->end())
+	Edges::iterator i = _edges->find(make_pair(tail, head));
+	if (i != _edges->end())
 		return PtrCast<EdgeModel>(i->second);
 	else
 		return SharedPtr<EdgeModel>();
@@ -111,7 +110,7 @@ PatchModel::get_connection(const Port* tail, const Ingen::Port* head)
  * this patch is a fatal error.
  */
 void
-PatchModel::add_connection(SharedPtr<EdgeModel> cm)
+PatchModel::add_edge(SharedPtr<EdgeModel> cm)
 {
 	// Store should have 'resolved' the connection already
 	assert(cm);
@@ -125,27 +124,27 @@ PatchModel::add_connection(SharedPtr<EdgeModel> cm)
 	assert(cm->head()->parent().get() == this
 	       || cm->head()->parent()->parent().get() == this);
 
-	SharedPtr<EdgeModel> existing = get_connection(
+	SharedPtr<EdgeModel> existing = get_edge(
 			cm->tail().get(), cm->head().get());
 
 	if (existing) {
 		assert(cm->tail() == existing->tail());
 		assert(cm->head() == existing->head());
 	} else {
-		_connections->insert(make_pair(make_pair(cm->tail().get(),
+		_edges->insert(make_pair(make_pair(cm->tail().get(),
 		                                         cm->head().get()), cm));
-		_signal_new_connection.emit(cm);
+		_signal_new_edge.emit(cm);
 	}
 }
 
 void
-PatchModel::remove_connection(const Port* tail, const Ingen::Port* head)
+PatchModel::remove_edge(const Port* tail, const Ingen::Port* head)
 {
-	Connections::iterator i = _connections->find(make_pair(tail, head));
-	if (i != _connections->end()) {
+	Edges::iterator i = _edges->find(make_pair(tail, head));
+	if (i != _edges->end()) {
 		SharedPtr<EdgeModel> c = PtrCast<EdgeModel>(i->second);
-		_signal_removed_connection.emit(c);
-		_connections->erase(i);
+		_signal_removed_edge.emit(c);
+		_edges->erase(i);
 	} else {
 		Raul::warn(Raul::fmt("Failed to remove patch connection %1% => %2%\n")
 		           % tail->path() % head->path());

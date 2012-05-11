@@ -21,7 +21,7 @@
 #include "PatchImpl.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
-#include "ConnectionImpl.hpp"
+#include "EdgeImpl.hpp"
 #include "NodeFactory.hpp"
 #include "PortType.hpp"
 #include "AudioBuffer.hpp"
@@ -86,9 +86,9 @@ ObjectSender::send_patch(Interface*       client,
 			send_port(client, port, false);
 		}
 
-		// Send connections
-		for (PatchImpl::Connections::const_iterator j = patch->connections().begin();
-				j != patch->connections().end(); ++j)
+		// Send edges
+		for (PatchImpl::Edges::const_iterator j = patch->edges().begin();
+				j != patch->edges().end(); ++j)
 			client->connect(j->second->tail_path(), j->second->head_path());
 	}
 

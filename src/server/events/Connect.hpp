@@ -33,7 +33,7 @@ namespace Server {
 
 class PatchImpl;
 class NodeImpl;
-class ConnectionImpl;
+class EdgeImpl;
 class PortImpl;
 class InputPort;
 class OutputPort;
@@ -41,7 +41,7 @@ class CompiledPatch;
 
 namespace Events {
 
-/** Make a Connection between two Ports.
+/** Make an Edge between two Ports.
  *
  * \ingroup engine
  */
@@ -69,7 +69,7 @@ private:
 
 	CompiledPatch* _compiled_patch; ///< New process order for Patch
 
-	SharedPtr<ConnectionImpl> _connection;
+	SharedPtr<EdgeImpl> _edge;
 
 	Raul::Array<BufferRef>* _buffers;
 };
