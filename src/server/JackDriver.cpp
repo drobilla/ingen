@@ -267,15 +267,15 @@ JackDriver::activate()
 	}
 
 	if (!_client)
-		attach(world->conf()->option("jack-server").get_string(),
-		       world->conf()->option("jack-client").get_string(), NULL);
+		attach(world->conf().option("jack-server").get_string(),
+		       world->conf().option("jack-client").get_string(), NULL);
 
 	jack_set_process_callback(_client, process_cb, this);
 
 	_is_activated = true;
 
 	_engine.process_context().activate(
-		world->conf()->option("parallelism").get_int(),
+		world->conf().option("parallelism").get_int(),
 		is_realtime());
 
 	if (jack_activate(_client)) {

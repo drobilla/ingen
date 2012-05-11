@@ -128,12 +128,12 @@ RenameWindow::ok_clicked()
 		const Symbol& symbol(symbol_str);
 		if (symbol != _object->symbol()) {
 			path = _object->path().parent().child(symbol);
-			_app->engine()->move(_object->path(), path);
+			_app->interface()->move(_object->path(), path);
 		}
 	}
 
 	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.get_string())) {
-		_app->engine()->set_property(path,
+		_app->interface()->set_property(path,
 		                             uris.lv2_name,
 		                             _app->forge().alloc(label));
 	}

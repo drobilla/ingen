@@ -26,11 +26,11 @@ struct IngenEngineModule : public Ingen::Shared::Module {
 	virtual void load(Ingen::Shared::World* world) {
 		Server::set_denormal_flags();
 		SharedPtr<Server::Engine> engine(new Server::Engine(world));
-		world->set_local_engine(engine);
-		if (!world->engine()) {
-			world->set_engine(SharedPtr<Interface>(engine->interface(), NullDeleter<Interface>));
+		world->set_engine(engine);
+		if (!world->interface()) {
+			world->set_interface(SharedPtr<Interface>(engine->interface(), NullDeleter<Interface>));
 		}
-		assert(world->local_engine() == engine);
+		assert(world->engine() == engine);
 	}
 };
 

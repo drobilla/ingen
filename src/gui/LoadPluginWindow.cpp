@@ -352,7 +352,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		Raul::warn << "FIXME: polyphonic" << std::endl;
 		//props.insert(make_pair(uris.ingen_polyphonic,
 		//                       _app->forge().make(polyphonic)));
-		_app->engine()->put(path, props);
+		_app->interface()->put(path, props);
 
 		if (_selection->get_selected_rows().size() == 1) {
 			_name_offset = (_name_offset == 0) ? 2 : _name_offset + 1;

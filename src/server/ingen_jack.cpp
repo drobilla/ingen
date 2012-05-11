@@ -26,19 +26,19 @@ using namespace Ingen;
 
 struct IngenJackModule : public Ingen::Shared::Module {
 	void load(Ingen::Shared::World* world) {
-		if (((Server::Engine*)world->local_engine().get())->driver()) {
+		if (((Server::Engine*)world->engine().get())->driver()) {
 			Raul::warn << "Engine already has a driver" << std::endl;
 			return;
 		}
 
 		Server::JackDriver* driver = new Server::JackDriver(
-			*(Server::Engine*)world->local_engine().get());
-		const Raul::Configuration::Value& s = world->conf()->option("jack-server");
+			*(Server::Engine*)world->engine().get());
+		const Raul::Configuration::Value& s = world->conf().option("jack-server");
 		const std::string server_name = s.is_valid() ? s.get_string() : "";
 		driver->attach(server_name,
-		               world->conf()->option("jack-client").get_string(),
+		               world->conf().option("jack-client").get_string(),
 		               NULL);
-		((Server::Engine*)world->local_engine().get())->set_driver(
+		((Server::Engine*)world->engine().get())->set_driver(
 			SharedPtr<Server::Driver>(driver));
 	}
 };

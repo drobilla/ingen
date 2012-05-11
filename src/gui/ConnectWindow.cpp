@@ -61,22 +61,21 @@ ConnectWindow::start(App& app, Ingen::Shared::World* world)
 {
 	_app = &app;
 
-	if (world->local_engine()) {
+	if (world->engine()) {
 		_mode = INTERNAL;
 		if (_widgets_loaded) {
 			_internal_radio->set_active(true);
 		}
 	}
 
-	set_connected_to(world->engine());
-
-	connect(world->engine());
+	set_connected_to(world->interface());
+	connect(world->interface());
 }
 
 void
 ConnectWindow::set_connected_to(SharedPtr<Ingen::Interface> engine)
 {
-	_app->world()->set_engine(engine);
+	_app->world()->set_interface(engine);
 
 	if (!_widgets_loaded)
 		return;
@@ -98,7 +97,7 @@ ConnectWindow::set_connected_to(SharedPtr<Ingen::Interface> engine)
 		_connect_button->set_sensitive(true);
 		_disconnect_button->set_sensitive(false);
 
-		if (_app->world()->local_engine())
+		if (_app->world()->engine())
 			_internal_radio->set_sensitive(true);
 		else
 			_internal_radio->set_sensitive(false);
@@ -158,17 +157,17 @@ ConnectWindow::connect(bool existing)
 		}
 
 		if (existing) {
-			uri = world->engine()->uri().str();
+			uri = world->interface()->uri().str();
 		}
 
 		SharedPtr<ThreadedSigClientInterface> tsci;
-		if (world->engine()) {
+		if (world->interface()) {
 			tsci = PtrCast<ThreadedSigClientInterface>(
-				world->engine()->respondee());
+				world->interface()->respondee());
 		}
 
 		if (!tsci) {
-			world->set_engine(world->interface(uri, tsci));
+			world->set_interface(world->new_interface(uri, tsci));
 		}
 
 		_app->attach(tsci);
@@ -187,7 +186,7 @@ ConnectWindow::connect(bool existing)
 			const std::string engine_uri = string("tcp://localhost:").append(port_str);
 
 			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
-			world->set_engine(world->interface(engine_uri, tsci));
+			world->set_interface(world->new_interface(engine_uri, tsci));
 
 			_app->attach(tsci);
 			_app->register_callbacks();
@@ -201,15 +200,15 @@ ConnectWindow::connect(bool existing)
 	} else
 #endif
 		if (_mode == INTERNAL) {
-			if (!world->local_engine()) {
+			if (!world->engine()) {
 				world->load_module("server");
 				world->load_module("jack");
-				world->local_engine()->activate();
+				world->engine()->activate();
 			}
 
 			SharedPtr<SigClientInterface> client(new SigClientInterface());
 
-			world->engine()->set_respondee(client);
+			world->interface()->set_respondee(client);
 			_app->attach(client);
 			_app->register_callbacks();
 
@@ -241,17 +240,17 @@ ConnectWindow::disconnect()
 void
 ConnectWindow::activate()
 {
-	_app->engine()->set_property("ingen:driver",
-	                             "ingen:enabled",
-	                             _app->forge().make(true));
+	_app->interface()->set_property("ingen:driver",
+	                                "ingen:enabled",
+	                                _app->forge().make(true));
 }
 
 void
 ConnectWindow::deactivate()
 {
-	_app->engine()->set_property("ingen:driver",
-	                             "ingen:enabled",
-	                             _app->forge().make(false));
+	_app->interface()->set_property("ingen:driver",
+	                                "ingen:enabled",
+	                                _app->forge().make(false));
 }
 
 void
@@ -260,7 +259,7 @@ ConnectWindow::on_show()
 	if (!_widgets_loaded) {
 		load_widgets();
 		if (_attached)
-			set_connected_to(_app->engine());
+			set_connected_to(_app->interface());
 	}
 
 	Gtk::Dialog::on_show();
@@ -375,8 +374,8 @@ ConnectWindow::gtk_callback()
 			sigc::mem_fun(this, &ConnectWindow::ingen_response));
 
 		_ping_id = abs(rand()) / 2 * 2; // avoid -1
-		_app->engine()->set_response_id(_ping_id);
-		_app->engine()->get("ingen:engine");
+		_app->interface()->set_response_id(_ping_id);
+		_app->interface()->get("ingen:engine");
 
 		if (_widgets_loaded) {
 			_progress_label->set_text("Connecting to engine...");
@@ -392,13 +391,13 @@ ConnectWindow::gtk_callback()
 			const float ms_since_last = (now.tv_sec - last.tv_sec) * 1000.0f +
 				(now.tv_usec - last.tv_usec) * 0.001f;
 			if (ms_since_last > 1000) {
-				_app->engine()->set_response_id(_ping_id);
-				_app->engine()->get("ingen:engine");
+				_app->interface()->set_response_id(_ping_id);
+				_app->interface()->get("ingen:engine");
 				last = now;
 			}
 		}
 	} else if (_connect_stage == 2) {
-		_app->engine()->get(Path("/"));
+		_app->interface()->get(Path("/"));
 		if (_widgets_loaded)
 			_progress_label->set_text(string("Requesting root patch..."));
 		++_connect_stage;
@@ -407,16 +406,16 @@ ConnectWindow::gtk_callback()
 			SharedPtr<const PatchModel> root = PtrCast<const PatchModel>(
 				_app->store()->object("/"));
 			if (root) {
-				set_connected_to(_app->engine());
+				set_connected_to(_app->interface());
 				_app->window_factory()->present_patch(root);
-				_app->engine()->get("ingen:plugins");
+				_app->interface()->get("ingen:plugins");
 				if (_widgets_loaded)
 					_progress_label->set_text(string("Loading plugins..."));
 				++_connect_stage;
 			}
 		}
 	} else if (_connect_stage == 4) {
-		_app->engine()->get("ingen:plugins");
+		_app->interface()->get("ingen:plugins");
 		hide();
 		if (_widgets_loaded)
 			_progress_label->set_text("Connected to engine");

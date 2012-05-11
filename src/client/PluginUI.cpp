@@ -41,8 +41,8 @@ lv2_ui_write(SuilController controller,
 
 	const NodeModel::Ports& ports = ui->node()->ports();
 	if (port_index >= ports.size()) {
-		Raul::error << (Raul::fmt("%1% UI tried to write to invalid port %2%")
-		                % ui->node()->plugin()->uri() % port_index) << endl;
+		Raul::error(Raul::fmt("%1% UI tried to write to invalid port %2%\n")
+		            % ui->node()->plugin()->uri() % port_index);
 		return;
 	}
 
@@ -56,7 +56,7 @@ lv2_ui_write(SuilController controller,
 		if (*(float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
 
-		ui->world()->engine()->set_property(
+		ui->world()->interface()->set_property(
 			port->path(),
 			uris.ingen_value,
 			ui->world()->forge().make(*(float*)buffer));
@@ -65,9 +65,9 @@ lv2_ui_write(SuilController controller,
 		LV2_Atom*  atom = (LV2_Atom*)buffer;
 		Raul::Atom val  = ui->world()->forge().alloc(
 			atom->size, atom->type, LV2_ATOM_BODY(atom));
-		ui->world()->engine()->set_property(port->path(),
-		                                    uris.ingen_value,
-		                                    val);
+		ui->world()->interface()->set_property(port->path(),
+		                                       uris.ingen_value,
+		                                       val);
 
 	} else {
 		Raul::warn(Raul::fmt("Unknown value format %1% from LV2 UI\n")
@@ -144,7 +144,7 @@ PluginUI::create(Ingen::Shared::World*      world,
 	if (instance) {
 		ret->_instance = instance;
 	} else {
-		Raul::error << "Failed to instantiate LV2 UI" << endl;
+		Raul::error("Failed to instantiate LV2 UI\n");
 		ret.reset();
 	}
 

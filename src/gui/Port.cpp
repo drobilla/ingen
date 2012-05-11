@@ -143,9 +143,9 @@ Port::on_value_changed(GVariant* value)
 	const Raul::Atom atom = _app.forge().make(float(g_variant_get_double(value)));
 	if (atom != model()->value()) {
 		Ingen::Shared::World* const world = _app.world();
-		_app.engine()->set_property(model()->path(),
-		                            world->uris()->ingen_value,
-		                            atom);
+		_app.interface()->set_property(model()->path(),
+		                               world->uris()->ingen_value,
+		                               atom);
 	}
 
 	PatchBox* box = get_patch_box();
@@ -165,9 +165,9 @@ Port::value_changed(const Atom& value)
 void
 Port::on_scale_point_activated(float f)
 {
-	_app.engine()->set_property(model()->path(),
-	                            _app.world()->uris()->ingen_value,
-	                            _app.world()->forge().make(f));
+	_app.interface()->set_property(model()->path(),
+	                               _app.world()->uris()->ingen_value,
+	                               _app.world()->forge().make(f));
 }
 
 Gtk::Menu*

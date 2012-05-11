@@ -511,7 +511,7 @@ PatchCanvas::connect(Ganv::Node* tail,
 	if (!src || !dst)
 		return;
 
-	_app.engine()->connect(src->model()->path(), dst->model()->path());
+	_app.interface()->connect(src->model()->path(), dst->model()->path());
 }
 
 void
@@ -521,7 +521,7 @@ PatchCanvas::disconnect(Ganv::Node* tail,
 	const Ingen::GUI::Port* const t = dynamic_cast<Ingen::GUI::Port*>(tail);
 	const Ingen::GUI::Port* const h = dynamic_cast<Ingen::GUI::Port*>(head);
 
-	_app.engine()->disconnect(t->model()->path(), h->model()->path());
+	_app.interface()->disconnect(t->model()->path(), h->model()->path());
 }
 
 void
@@ -608,11 +608,11 @@ destroy_node(GanvNode* node, void* data)
 	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
 
 	if (node_module) {
-		app->engine()->del(node_module->node()->path());
+		app->interface()->del(node_module->node()->path());
 	} else {
 		PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(module);
 		if (port_module) {
-			app->engine()->del(port_module->port()->path());
+			app->interface()->del(port_module->port()->path());
 		}
 	}
 }
@@ -625,7 +625,7 @@ destroy_edge(GanvEdge* edge, void* data)
 
 	Port* tail = dynamic_cast<Port*>(edgemm->get_tail());
 	Port* head = dynamic_cast<Port*>(edgemm->get_head());
-	app->engine()->disconnect(tail->model()->path(), head->model()->path());
+	app->interface()->disconnect(tail->model()->path(), head->model()->path());
 }
 
 void
@@ -688,7 +688,7 @@ PatchCanvas::paste()
 
 	const URIs& uris = _app.uris();
 
-	Builder builder(_app.world()->uris(), *_app.engine());
+	Builder builder(_app.world()->uris(), *_app.interface());
 	ClientStore clipboard(_app.world()->uris());
 	clipboard.set_plugins(_app.store()->plugins());
 
@@ -792,7 +792,7 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	                       _app.forge().make(int32_t(_patch->num_ports()))));
 	props.insert(make_pair(uris.lv2_name,
 	                       _app.forge().alloc(name.c_str())));
-	_app.engine()->put(path, props);
+	_app.interface()->put(path, props);
 }
 
 void
@@ -818,7 +818,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	props.insert(make_pair(uris.rdf_type, uris.ingen_Node));
 	props.insert(make_pair(uris.ingen_prototype,
 	                       uris.forge.alloc_uri(plugin->uri().str())));
-	_app.engine()->put(path, props);
+	_app.interface()->put(path, props);
 }
 
 /** Try to guess a suitable location for a new module.

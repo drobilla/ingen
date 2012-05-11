@@ -106,7 +106,7 @@ Engine::engine_store() const
 size_t
 Engine::event_queue_size() const
 {
-	return world()->conf()->option("queue-size").get_int();
+	return world()->conf().option("queue-size").get_int();
 }
 
 void

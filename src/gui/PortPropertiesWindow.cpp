@@ -158,7 +158,7 @@ PortPropertiesWindow::ok()
 	props.insert(
 		make_pair(uris.lv2_maximum,
 		          _app->forge().make(float(_max_spinner->get_value()))));
-	_app->engine()->put(_port_model->path(), props);
+	_app->interface()->put(_port_model->path(), props);
 	hide();
 }
 

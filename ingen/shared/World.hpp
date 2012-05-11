@@ -19,14 +19,12 @@
 
 #include <string>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/utility.hpp>
-
+#include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/Forge.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Atom.hpp"
-#include "raul/Configuration.hpp"
 #include "raul/SharedPtr.hpp"
+#include "raul/Noncopyable.hpp"
 
 typedef struct LilvWorldImpl LilvWorld;
 
@@ -58,13 +56,12 @@ class Store;
  * using World::load, e.g. loading the "ingen_serialisation" module will
  * set World::serialiser and World::parser to valid objects.
  */
-class World : public boost::noncopyable {
+class World : public Raul::Noncopyable {
 public:
-	World(Raul::Configuration* conf,
-	      int&                 argc,
-	      char**&              argv,
-	      LV2_URID_Map*        map,
-	      LV2_URID_Unmap*      unmap);
+	World(int&            argc,
+	      char**&         argv,
+	      LV2_URID_Map*   map,
+	      LV2_URID_Unmap* unmap);
 
 	virtual ~World();
 
@@ -81,21 +78,21 @@ public:
 	virtual void add_interface_factory(const std::string& scheme,
 	                                   InterfaceFactory   factory);
 
-	virtual SharedPtr<Interface> interface(
+	virtual SharedPtr<Interface> new_interface(
 		const std::string&   engine_url,
 		SharedPtr<Interface> respondee);
 
 	virtual bool run(const std::string& mime_type,
 	                 const std::string& filename);
 
-	virtual void set_local_engine(SharedPtr<EngineBase> e);
-	virtual void set_engine(SharedPtr<Interface> e);
+	virtual void set_engine(SharedPtr<EngineBase> e);
+	virtual void set_interface(SharedPtr<Interface> e);
 	virtual void set_serialiser(SharedPtr<Serialisation::Serialiser> s);
 	virtual void set_parser(SharedPtr<Serialisation::Parser> p);
 	virtual void set_store(SharedPtr<Store> s);
 
-	virtual SharedPtr<EngineBase>                local_engine();
-	virtual SharedPtr<Interface>                 engine();
+	virtual SharedPtr<EngineBase>                engine();
+	virtual SharedPtr<Interface>                 interface();
 	virtual SharedPtr<Serialisation::Serialiser> serialiser();
 	virtual SharedPtr<Serialisation::Parser>     parser();
 	virtual SharedPtr<Store>                     store();
@@ -108,8 +105,7 @@ public:
 	virtual int&    argc();
 	virtual char**& argv();
 
-	virtual Raul::Configuration* conf();
-	virtual void set_conf(Raul::Configuration* c);
+	virtual Configuration& conf();
 
 	virtual Ingen::Forge& forge();
 

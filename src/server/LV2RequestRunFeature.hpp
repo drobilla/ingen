@@ -45,10 +45,10 @@ struct RequestRunFeature : public Ingen::Shared::LV2Features::Feature {
 	              const void*                data)
 	{
 		Info* info = reinterpret_cast<Info*>(handle);
-		if (!info->world->local_engine())
+		if (!info->world->engine())
 			return LV2_WORKER_ERR_UNKNOWN;
 
-		Engine* engine = (Engine*)info->world->local_engine().get();
+		Engine* engine = (Engine*)info->world->engine().get();
 		engine->message_context()->run(
 			dynamic_cast<NodeImpl*>(info->node),
 			engine->driver()->frame_time());

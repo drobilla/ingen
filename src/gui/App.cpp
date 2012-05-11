@@ -159,13 +159,13 @@ App::attach(SharedPtr<SigClientInterface> client)
 	assert(!_store);
 	assert(!_loader);
 
-	if (_world->local_engine()) {
-		_world->local_engine()->register_client(client->uri(), client);
+	if (_world->engine()) {
+		_world->engine()->register_client(client->uri(), client);
 	}
 
 	_client = client;
-	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->engine(), client));
-	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->engine()));
+	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->interface(), client));
+	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->interface()));
 
 	_patch_tree_window->init(*this, *_store);
 
@@ -180,14 +180,14 @@ App::attach(SharedPtr<SigClientInterface> client)
 void
 App::detach()
 {
-	if (_world->engine()) {
+	if (_world->interface()) {
 		_window_factory->clear();
 		_store->clear();
 
 		_loader.reset();
 		_store.reset();
 		_client.reset();
-		_world->set_engine(SharedPtr<Interface>());
+		_world->set_interface(SharedPtr<Interface>());
 	}
 }
 
@@ -292,8 +292,8 @@ App::gtk_main_iteration()
 	if (!_client)
 		return false;
 
-	if (_world->local_engine()) {
-		if (!_world->local_engine()->main_iteration()) {
+	if (_world->engine()) {
+		if (!_world->engine()->main_iteration()) {
 			Gtk::Main::quit();
 			return false;
 		}
@@ -320,7 +320,7 @@ bool
 App::quit(Gtk::Window* dialog_parent)
 {
 	bool quit = true;
-	if (_world->local_engine()) {
+	if (_world->engine()) {
 		Gtk::MessageDialog d(
 			"The engine is running in this process.  Quitting will terminate Ingen."
 			"\n\n" "Are you sure you want to quit?",

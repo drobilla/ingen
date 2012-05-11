@@ -93,7 +93,7 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		Gtk::TreeModel::iterator iter = _patch_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
 		if (pm->path().is_root()) {
-			row[_patch_tree_columns.name_col] = _app->engine()->uri().str();
+			row[_patch_tree_columns.name_col] = _app->interface()->uri().str();
 		} else {
 			row[_patch_tree_columns.name_col] = pm->symbol().c_str();
 		}
@@ -188,7 +188,7 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 	assert(pm);
 
 	if (_enable_signal)
-		_app->engine()->set_property(
+		_app->interface()->set_property(
 			pm->path(),
 			_app->uris().ingen_enabled,
 			_app->forge().make((bool)!pm->enabled()));

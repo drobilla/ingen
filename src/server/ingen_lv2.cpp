@@ -34,7 +34,6 @@
 #include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/shared/AtomReader.hpp"
 #include "ingen/shared/AtomWriter.hpp"
-#include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/Store.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/runtime_paths.hpp"
@@ -144,7 +143,7 @@ public:
 		, _reader(*engine.world()->uri_map().get(),
 		          *engine.world()->uris().get(),
 		          engine.world()->forge(),
-		          *engine.world()->engine().get())
+		          *engine.world()->interface().get())
 		, _writer(*engine.world()->uri_map().get(),
 		          *engine.world()->uris().get(),
 		          *this)
@@ -330,13 +329,12 @@ private:
 };
 
 struct IngenPlugin {
-	Ingen::Forge                  forge;
-	Ingen::Shared::Configuration* conf;
-	Ingen::Shared::World*         world;
-	MainThread*                   main;
-	LV2_URID_Map*                 map;
-	int                           argc;
-	char**                        argv;
+	Ingen::Forge          forge;
+	Ingen::Shared::World* world;
+	MainThread*           main;
+	LV2_URID_Map*         map;
+	int                   argc;
+	char**                argv;
 };
 
 static Lib::Patches
@@ -402,7 +400,6 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
-	plugin->conf          = new Ingen::Shared::Configuration();
 	plugin->main          = NULL;
 	plugin->map           = NULL;
 	LV2_URID_Unmap* unmap = NULL;
@@ -415,21 +412,21 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	plugin->world = new Ingen::Shared::World(
-		plugin->conf, plugin->argc, plugin->argv, plugin->map, unmap);
+		plugin->argc, plugin->argv, plugin->map, unmap);
 	if (!plugin->world->load_module("serialisation")) {
 		delete plugin->world;
 		return NULL;
 	}
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
-	plugin->world->set_local_engine(engine);
+	plugin->world->set_engine(engine);
 	plugin->main = new MainThread(engine);
 	plugin->main->set_name("Main");
 
 	SharedPtr<EventWriter> interface =
 		SharedPtr<EventWriter>(engine->interface(), NullDeleter<EventWriter>);
 
-	plugin->world->set_engine(interface);
+	plugin->world->set_interface(interface);
 
 	Raul::Thread::get().set_context(Server::THREAD_PRE_PROCESS);
 	Server::ThreadManager::single_threaded = true;
@@ -453,7 +450,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->post_processor()->process();
 
 	plugin->world->parser()->parse_file(plugin->world,
-	                                    plugin->world->engine().get(),
+	                                    plugin->world->interface().get(),
 	                                    patch->filename);
 
 	while (engine->pending_events()) {
@@ -472,7 +469,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 	using namespace Ingen::Server;
 
 	IngenPlugin*    me     = (IngenPlugin*)instance;
-	Server::Engine* engine = (Server::Engine*)me->world->local_engine().get();
+	Server::Engine* engine = (Server::Engine*)me->world->engine().get();
 	LV2Driver*      driver = (LV2Driver*)engine->driver();
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
@@ -487,7 +484,7 @@ static void
 ingen_activate(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
-	me->world->local_engine()->activate();
+	me->world->engine()->activate();
 	//((EventWriter*)me->world->engine().get())->start();
 	me->main->start();
 }
@@ -496,7 +493,7 @@ static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
 	IngenPlugin*    me     = (IngenPlugin*)instance;
-	Server::Engine* engine = (Server::Engine*)me->world->local_engine().get();
+	Server::Engine* engine = (Server::Engine*)me->world->engine().get();
 	// FIXME: don't do this every call
 	Raul::Thread::get().set_context(Ingen::Server::THREAD_PROCESS);
 	((LV2Driver*)engine->driver())->run(sample_count);
@@ -506,15 +503,15 @@ static void
 ingen_deactivate(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
-	me->world->local_engine()->deactivate();
+	me->world->engine()->deactivate();
 }
 
 static void
 ingen_cleanup(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
-	me->world->set_local_engine(SharedPtr<Ingen::Server::Engine>());
-	me->world->set_engine(SharedPtr<Ingen::Interface>());
+	me->world->set_engine(SharedPtr<Ingen::Server::Engine>());
+	me->world->set_interface(SharedPtr<Ingen::Interface>());
 	delete me->world;
 	free(instance);
 }
@@ -607,7 +604,7 @@ ingen_restore(LV2_Handle                  instance,
 	char* real_path = map_path->absolute_path(map_path->handle, state_path);
 
 	plugin->world->parser()->parse_file(plugin->world,
-	                                    plugin->world->engine().get(),
+	                                    plugin->world->interface().get(),
 	                                    real_path);
 	free(real_path);
 	return LV2_STATE_SUCCESS;

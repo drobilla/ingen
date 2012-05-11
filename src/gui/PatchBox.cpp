@@ -172,7 +172,7 @@ PatchBox::init_box(App& app)
 {
 	_app = &app;
 
-	std::string engine_name = _app->engine()->uri().str();
+	std::string engine_name = _app->interface()->uri().str();
 	if (engine_name == "http://drobilla.net/ns/ingen#internal") {
 		engine_name = "internal engine";
 	}

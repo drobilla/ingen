@@ -98,14 +98,12 @@ ingen_load_module(const string& name)
 
 class World::Pimpl {
 public:
-	Pimpl(Raul::Configuration* conf,
-	      int&                 a_argc,
+	Pimpl(int&                 a_argc,
 	      char**&              a_argv,
 	      LV2_URID_Map*        map,
 	      LV2_URID_Unmap*      unmap)
 		: argc(a_argc)
 		, argv(a_argv)
-		, conf(conf)
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
 		, uri_map(new Ingen::Shared::URIMap(map, unmap))
@@ -113,6 +111,7 @@ public:
 		, uris(new Shared::URIs(*forge, uri_map.get()))
 		, lilv_world(lilv_world_new())
 	{
+		conf.parse(argc, argv);
 		lv2_features = new Ingen::Shared::LV2Features();
 		lv2_features->add_feature(uri_map->urid_map_feature());
 		lv2_features->add_feature(uri_map->urid_unmap_feature());
@@ -136,7 +135,7 @@ public:
 		serialiser.reset();
 		parser.reset();
 
-		local_engine.reset();
+		engine.reset();
 		store.reset();
 
 		modules.clear();
@@ -169,14 +168,14 @@ public:
 
 	int&                                 argc;
 	char**&                              argv;
-	Raul::Configuration*                 conf;
+	Shared::Configuration                conf;
 	LV2Features*                         lv2_features;
 	Sord::World*                         rdf_world;
 	SharedPtr<URIMap>                    uri_map;
 	Ingen::Forge*                        forge;
 	SharedPtr<URIs>                      uris;
-	SharedPtr<Interface>                 engine;
-	SharedPtr<EngineBase>                local_engine;
+	SharedPtr<Interface>                 interface;
+	SharedPtr<EngineBase>                engine;
 	SharedPtr<Serialisation::Serialiser> serialiser;
 	SharedPtr<Serialisation::Parser>     parser;
 	SharedPtr<Store>                     store;
@@ -184,12 +183,11 @@ public:
 	std::string                          jack_uuid;
 };
 
-World::World(Raul::Configuration* conf,
-             int&                 argc,
+World::World(int&                 argc,
              char**&              argv,
              LV2_URID_Map*        map,
              LV2_URID_Unmap*      unmap)
-	: _impl(new Pimpl(conf, argc, argv, map, unmap))
+	: _impl(new Pimpl(argc, argv, map, unmap))
 {
 }
 
@@ -199,21 +197,20 @@ World::~World()
 	delete _impl;
 }
 
-void World::set_local_engine(SharedPtr<EngineBase> e)              { _impl->local_engine = e; }
-void World::set_engine(SharedPtr<Interface> e)                     { _impl->engine = e; }
+void World::set_engine(SharedPtr<EngineBase> e)                    { _impl->engine = e; }
+void World::set_interface(SharedPtr<Interface> i)                  { _impl->interface = i; }
 void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
 void World::set_parser(SharedPtr<Serialisation::Parser> p)         { _impl->parser = p; }
 void World::set_store(SharedPtr<Store> s)                          { _impl->store = s; }
-void World::set_conf(Raul::Configuration* c)                       { _impl->conf = c; }
 
 int&                                 World::argc()         { return _impl->argc; }
 char**&                              World::argv()         { return _impl->argv; }
-SharedPtr<EngineBase>                World::local_engine() { return _impl->local_engine; }
-SharedPtr<Interface>                 World::engine()       { return _impl->engine; }
+SharedPtr<EngineBase>                World::engine()       { return _impl->engine; }
+SharedPtr<Interface>                 World::interface()    { return _impl->interface; }
 SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
 SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
 SharedPtr<Store>                     World::store()        { return _impl->store; }
-Raul::Configuration*                 World::conf()         { return _impl->conf; }
+Shared::Configuration&               World::conf()         { return _impl->conf; }
 Ingen::Forge&                        World::forge()        { return *_impl->forge; }
 LV2Features*                         World::lv2_features() { return _impl->lv2_features; }
 
@@ -271,8 +268,8 @@ World::unload_modules()
 /** Get an interface for a remote engine at @a url
  */
 SharedPtr<Interface>
-World::interface(const std::string&   engine_url,
-                 SharedPtr<Interface> respondee)
+World::new_interface(const std::string&   engine_url,
+                     SharedPtr<Interface> respondee)
 {
 	const string scheme = engine_url.substr(0, engine_url.find(":"));
 	const Pimpl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);

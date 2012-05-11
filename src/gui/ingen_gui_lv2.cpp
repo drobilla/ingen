@@ -55,15 +55,12 @@ struct IngenLV2AtomSink : public Ingen::Shared::AtomSink {
 
 struct IngenLV2UI {
 	IngenLV2UI()
-		: conf()
-		, sink(NULL)
-	{
-	}
+		: sink(NULL)
+	{}
 
 	int                                          argc;
 	char**                                       argv;
 	Ingen::Forge*                                forge;
-	Ingen::Shared::Configuration                 conf;
 	Ingen::Shared::World*                        world;
 	IngenLV2AtomSink*                            sink;
 	SharedPtr<Ingen::GUI::App>                   app;
@@ -97,7 +94,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	}
 
 	ui->world = new Ingen::Shared::World(
-		&ui->conf, ui->argc, ui->argv, map, unmap);
+		ui->argc, ui->argv, map, unmap);
 
 	ui->forge = new Ingen::Forge(*ui->world->uri_map().get());
 
@@ -115,7 +112,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		                              *ui->world->uris().get(),
 		                              *ui->sink));
 
-	ui->world->set_engine(ui->engine);
+	ui->world->set_interface(ui->engine);
 
 	// Create App and client
 	ui->app = Ingen::GUI::App::create(ui->world);

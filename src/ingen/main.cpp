@@ -63,8 +63,8 @@ ingen_interrupt(int signal)
 		exit(EXIT_FAILURE);
 	} else {
 		cout << "ingen: Interrupted" << endl;
-		if (world && world->local_engine()) {
-			world->local_engine()->quit();
+		if (world && world->engine()) {
+			world->engine()->quit();
 		}
 	}
 }
@@ -82,47 +82,39 @@ ingen_try(bool cond, const char* msg)
 int
 main(int argc, char** argv)
 {
-	Shared::Configuration conf;
+	Glib::thread_init();
+	Shared::set_bundle_path_from_code((void*)&main);
 
-	// Parse command line options
+	// Create world
 	try {
-		conf.parse(argc, argv);
+		world = new Ingen::Shared::World(argc, argv, NULL, NULL);
+		if (argc <= 1) {
+			world->conf().print_usage("ingen", cout);
+			return EXIT_FAILURE;
+		} else if (world->conf().option("help").get_bool()) {
+			world->conf().print_usage("ingen", cout);
+			return EXIT_SUCCESS;
+		}
 	} catch (std::exception& e) {
 		cout << "ingen: " << e.what() << endl;
 		return EXIT_FAILURE;
 	}
 
-	// Verify option sanity
-	if (argc <= 1) {
-		conf.print_usage("ingen", cout);
-		return EXIT_FAILURE;
-	} else if (conf.option("help").get_bool()) {
-		conf.print_usage("ingen", cout);
-		return EXIT_SUCCESS;
-	}
-
-	// Set bundle path from executable location so resources can be found
-	Shared::set_bundle_path_from_code((void*)&main);
-
-	SharedPtr<Interface> engine_interface;
-
-	Glib::thread_init();
-
-	world = new Ingen::Shared::World(&conf, argc, argv, NULL, NULL);
-
+	Shared::Configuration& conf = world->conf();
 	if (conf.option("uuid").is_valid()) {
 		world->set_jack_uuid(conf.option("uuid").get_string());
 	}
 
 	// Run engine
+	SharedPtr<Interface> engine_interface;
 	if (conf.option("engine").get_bool()) {
 		ingen_try(world->load_module("server"),
 		          "Unable to load server module");
 
-		ingen_try(world->local_engine(),
+		ingen_try(world->engine(),
 		          "Unable to create engine");
 
-		engine_interface = world->engine();
+		engine_interface = world->interface();
 
 		#ifdef HAVE_SOCKET
 		ingen_try(world->load_module("socket_server"),
@@ -140,11 +132,11 @@ main(int argc, char** argv)
 		#endif
 		const char* const uri = conf.option("connect").get_string();
 		SharedPtr<Interface> client(new Client::ThreadedSigClientInterface(1024));
-		ingen_try((engine_interface = world->interface(uri, client)),
+		ingen_try((engine_interface = world->new_interface(uri, client)),
 		          (string("Unable to create interface to `") + uri + "'").c_str());
 	}
 
-	world->set_engine(engine_interface);
+	world->set_interface(engine_interface);
 
 	// Load necessary modules before activating engine (and Jack driver)
 
@@ -159,10 +151,10 @@ main(int argc, char** argv)
 	}
 
 	// Activate the engine, if we have one
-	if (world->local_engine()) {
+	if (world->engine()) {
 		ingen_try(world->load_module("jack"),
 		          "Unable to load jack module");
-		world->local_engine()->activate();
+		world->engine()->activate();
 	}
 
 	// Load a patch
@@ -209,7 +201,7 @@ main(int argc, char** argv)
 		cerr << "This build of ingen does not support scripting." << endl;
 #endif
 
-	} else if (world->local_engine() && !conf.option("gui").get_bool()) {
+	} else if (world->engine() && !conf.option("gui").get_bool()) {
 		// Run main loop
 
 		// Set up signal handlers that will set quit_flag on interrupt
@@ -217,15 +209,15 @@ main(int argc, char** argv)
 		signal(SIGTERM, ingen_interrupt);
 
 		// Run engine main loop until interrupt
-		while (world->local_engine()->main_iteration()) {
+		while (world->engine()->main_iteration()) {
 			Glib::usleep(125000);  // 1/8 second
 		}
 		Raul::info("Finished main loop\n");
 	}
 
 	// Shut down
-	if (world->local_engine())
-		world->local_engine()->deactivate();
+	if (world->engine())
+		world->engine()->deactivate();
 
 	delete world;
 

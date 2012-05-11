@@ -162,7 +162,7 @@ PatchView::process_toggled()
 	if (!_enable_signal)
 		return;
 
-	_app->engine()->set_property(
+	_app->interface()->set_property(
 		_patch->path(),
 		_app->uris().ingen_enabled,
 		_app->forge().make((bool)_process_but->get_active()));
@@ -171,7 +171,7 @@ PatchView::process_toggled()
 void
 PatchView::poly_changed()
 {
-	_app->engine()->set_property(
+	_app->interface()->set_property(
 		_patch->path(),
 		_app->uris().ingen_polyphony,
 		_app->forge().make(_poly_spin->get_value_as_int()));
@@ -180,9 +180,9 @@ PatchView::poly_changed()
 void
 PatchView::refresh_clicked()
 {
-	_app->engine()->get(_patch->path());
+	_app->interface()->get(_patch->path());
 	Raul::warn("Refreshing plugins\n");
-	_app->engine()->get("ingen:plugins");
+	_app->interface()->get("ingen:plugins");
 }
 
 void

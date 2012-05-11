@@ -44,7 +44,7 @@ SocketListener::SocketListener(Ingen::Shared::World& world)
 	set_name("SocketListener");
 
 	// Create UNIX socket
-	_unix_path = world.conf()->option("socket").get_string();
+	_unix_path = world.conf().option("socket").get_string();
 	const std::string unix_uri = "unix://" + _unix_path;
 	if (!_unix_sock.bind(unix_uri) || !_unix_sock.listen()) {
 		LOG(Raul::error) << "Failed to create UNIX socket" << std::endl;
@@ -52,7 +52,7 @@ SocketListener::SocketListener(Ingen::Shared::World& world)
 	}
 
 	// Create TCP socket
-	int port = world.conf()->option("engine-port").get_int();
+	int port = world.conf().option("engine-port").get_int();
 	std::ostringstream ss;
 	ss << "tcp:///localhost:";
 	ss << port;
@@ -76,7 +76,7 @@ SocketListener::~SocketListener()
 void
 SocketListener::_run()
 {
-	Server::Engine* engine = (Server::Engine*)_world.local_engine().get();
+	Server::Engine* engine = (Server::Engine*)_world.engine().get();
 
 	struct pollfd pfds[2];
 	int           nfds = 0;

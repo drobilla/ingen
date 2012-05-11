@@ -194,7 +194,7 @@ void
 NodeModule::on_embed_gui_toggled(bool embed)
 {
 	embed_gui(embed);
-	app().engine()->set_property(_node->path(),
+	app().interface()->set_property(_node->path(),
 	                             app().uris().ingen_uiEmbedded,
 	                             app().forge().make(embed));
 }
@@ -376,7 +376,7 @@ NodeModule::store_location(double ax, double ay)
 		Resource::Properties add;
 		add.insert(make_pair(uris.ingen_canvasX, x));
 		add.insert(make_pair(uris.ingen_canvasY, y));
-		app().engine()->delta(_node->path(), remove, add);
+		app().interface()->delta(_node->path(), remove, add);
 	}
 }
 
@@ -434,9 +434,9 @@ NodeModule::set_selected(gboolean b)
 			}
 		}
 		if (app().signal()) {
-			app().engine()->set_property(_node->path(),
-			                             uris.ingen_selected,
-			                             app().forge().make(b));
+			app().interface()->set_property(_node->path(),
+			                                uris.ingen_selected,
+			                                app().forge().make(b));
 		}
 	}
 }

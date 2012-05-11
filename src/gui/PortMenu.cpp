@@ -93,10 +93,10 @@ void
 PortMenu::on_menu_disconnect()
 {
 	if (_patch_port) {
-		_app->engine()->disconnect_all(
+		_app->interface()->disconnect_all(
 				_object->parent()->path(), _object->path());
 	} else {
-		_app->engine()->disconnect_all(
+		_app->interface()->disconnect_all(
 				_object->parent()->path().parent(), _object->path());
 	}
 }
@@ -108,7 +108,7 @@ PortMenu::on_menu_set_min()
 	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
 	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		_app->engine()->set_property(_object->path(), uris.lv2_minimum, value);
+		_app->interface()->set_property(_object->path(), uris.lv2_minimum, value);
 }
 
 void
@@ -118,7 +118,7 @@ PortMenu::on_menu_set_max()
 	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
 	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		_app->engine()->set_property(_object->path(), uris.lv2_maximum, value);
+		_app->interface()->set_property(_object->path(), uris.lv2_maximum, value);
 }
 
 void
@@ -132,14 +132,14 @@ PortMenu::on_menu_reset_range()
 	parent->default_port_value_range(model, min, max);
 
 	if (!std::isnan(min))
-		_app->engine()->set_property(_object->path(),
-		                             uris.lv2_minimum,
-		                             _app->forge().make(min));
+		_app->interface()->set_property(_object->path(),
+		                                uris.lv2_minimum,
+		                                _app->forge().make(min));
 
 	if (!std::isnan(max))
-		_app->engine()->set_property(_object->path(),
-		                             uris.lv2_maximum,
-		                             _app->forge().make(max));
+		_app->interface()->set_property(_object->path(),
+		                                uris.lv2_maximum,
+		                                _app->forge().make(max));
 }
 
 } // namespace GUI

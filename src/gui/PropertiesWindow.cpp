@@ -282,7 +282,7 @@ PropertiesWindow::apply_clicked()
 		}
 	}
 
-	_app->engine()->put(_model->path(), properties);
+	_app->interface()->put(_model->path(), properties);
 
 	LOG(debug) << "}" << endl;
 }

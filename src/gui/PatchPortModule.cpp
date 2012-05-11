@@ -109,7 +109,7 @@ PatchPortModule::store_location(double ax, double ay)
 		                     Resource::Property(x, Resource::INTERNAL)));
 		add.insert(make_pair(uris.ingen_canvasY,
 		                     Resource::Property(y, Resource::INTERNAL)));
-		app().engine()->delta(_model->path(), remove, add);
+		app().interface()->delta(_model->path(), remove, add);
 	}
 }
 
@@ -165,7 +165,7 @@ PatchPortModule::set_selected(gboolean b)
 	if (b != get_selected()) {
 		Module::set_selected(b);
 		if (app().signal())
-			app().engine()->set_property(
+			app().interface()->set_property(
 				_model->path(),
 				app().uris().ingen_selected,
 				app().forge().make(b));

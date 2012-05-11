@@ -96,7 +96,7 @@ ObjectMenu::init(App& app, SharedPtr<const ObjectModel> object)
 void
 ObjectMenu::on_menu_learn()
 {
-	_app->engine()->set_property(_object->path(),
+	_app->interface()->set_property(_object->path(),
 			_app->uris().ingen_controlBinding,
 			_app->uris().wildcard);
 }
@@ -108,14 +108,14 @@ ObjectMenu::on_menu_unlearn()
 	remove.insert(std::make_pair(
 			_app->uris().ingen_controlBinding,
 			_app->uris().wildcard));
-	_app->engine()->delta(_object->path(), remove, Resource::Properties());
+	_app->interface()->delta(_object->path(), remove, Resource::Properties());
 }
 
 void
 ObjectMenu::on_menu_polyphonic()
 {
 	if (_enable_signal)
-		_app->engine()->set_property(
+		_app->interface()->set_property(
 			_object->path(),
 			_app->uris().ingen_polyphonic,
 			_app->forge().make(bool(_polyphonic_menuitem->get_active())));
@@ -134,7 +134,7 @@ ObjectMenu::property_changed(const URI& predicate, const Atom& value)
 void
 ObjectMenu::on_menu_destroy()
 {
-	_app->engine()->del(_object->path());
+	_app->interface()->del(_object->path());
 }
 
 void
