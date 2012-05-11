@@ -329,7 +329,7 @@ private:
 };
 
 struct IngenPlugin {
-	Ingen::Forge          forge;
+	Ingen::Shared::Forge  forge;
 	Ingen::Shared::World* world;
 	MainThread*           main;
 	LV2_URID_Map*         map;

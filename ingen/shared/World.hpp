@@ -30,7 +30,6 @@ namespace Sord { class World; }
 namespace Ingen {
 
 class EngineBase;
-class Forge;
 class Interface;
 
 namespace Serialisation {
@@ -41,6 +40,7 @@ class Serialiser;
 namespace Shared {
 
 class Configuration;
+class Forge;
 class LV2Features;
 class Store;
 class URIMap;
@@ -131,10 +131,10 @@ public:
 	virtual Sord::World* rdf_world();
 	virtual LilvWorld*   lilv_world();
 
-	virtual LV2Features&  lv2_features();
-	virtual Ingen::Forge& forge();
-	virtual URIMap&       uri_map();
-	virtual URIs&         uris();
+	virtual LV2Features&          lv2_features();
+	virtual Ingen::Shared::Forge& forge();
+	virtual URIMap&               uri_map();
+	virtual URIs&                 uris();
 
 	virtual void        set_jack_uuid(const std::string& uuid);
 	virtual std::string jack_uuid();

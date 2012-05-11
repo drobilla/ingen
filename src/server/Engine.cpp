@@ -150,7 +150,7 @@ Engine::activate()
 	_message_context->Thread::start();
 
 	const Ingen::Shared::URIs& uris  = world()->uris();
-	Ingen::Forge&              forge = world()->forge();
+	Shared::Forge&             forge = world()->forge();
 
 	// Create root patch
 	if (!_root_patch) {

@@ -216,7 +216,7 @@ PortImpl::clear_buffers()
 void
 PortImpl::broadcast_value(Context& context, bool force)
 {
-	Ingen::Forge&      forge = context.engine().world()->forge();
+	Shared::Forge&     forge = context.engine().world()->forge();
 	Notification::Type ntype = Notification::PORT_VALUE;
 	Raul::Atom         val;
 	switch (_type.symbol()) {

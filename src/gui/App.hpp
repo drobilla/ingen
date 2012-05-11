@@ -105,7 +105,7 @@ public:
 
 	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
 
-	Ingen::Forge&                         forge()     const { return _world->forge(); }
+	Ingen::Shared::Forge&                 forge()     const { return _world->forge(); }
 	SharedPtr<Ingen::Interface>           interface() const { return _world->interface(); }
 	SharedPtr<Client::SigClientInterface> client()    const { return _client; }
 	SharedPtr<Client::ClientStore>        store()     const { return _store; }

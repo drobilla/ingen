@@ -29,7 +29,7 @@ Notification::post_process(Notification& note,
                            Engine&       engine)
 {
 	const Ingen::Shared::URIs& uris  = engine.world()->uris();
-	Ingen::Forge&              forge = engine.world()->forge();
+	Ingen::Shared::Forge&      forge = engine.world()->forge();
 	switch (note.type) {
 	case PORT_VALUE:
 		engine.broadcaster()->set_property(note.port->path(),

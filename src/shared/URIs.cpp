@@ -36,7 +36,7 @@ using namespace std;
 namespace Ingen {
 namespace Shared {
 
-URIs::Quark::Quark(Ingen::Forge& forge, URIMap* map, const char* c_str)
+URIs::Quark::Quark(Shared::Forge& forge, URIMap* map, const char* c_str)
 	: Raul::URI(c_str)
 	, id(map->map_uri(c_str))
 	, atom(forge.alloc_uri(c_str))
@@ -47,7 +47,7 @@ URIs::Quark::Quark(Ingen::Forge& forge, URIMap* map, const char* c_str)
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
-URIs::URIs(Ingen::Forge& f, URIMap* map)
+URIs::URIs(Shared::Forge& f, URIMap* map)
 	: forge(f)
 	, atom_AtomPort         (forge, map, LV2_ATOM__AtomPort)
 	, atom_Blank            (forge, map, LV2_ATOM__Blank)

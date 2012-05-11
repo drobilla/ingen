@@ -35,17 +35,17 @@ class URIMap;
 
 class URIs : public boost::noncopyable {
 public:
-	URIs(Ingen::Forge& forge, URIMap* map);
+	URIs(Ingen::Shared::Forge& forge, URIMap* map);
 
 	struct Quark : public Raul::URI {
-		Quark(Ingen::Forge& forge, URIMap* map, const char* str);
+		Quark(Ingen::Shared::Forge& forge, URIMap* map, const char* str);
 		operator LV2_URID()   const { return id; }
 		operator Raul::Atom() const { return atom; }
 		uint32_t   id;
 		Raul::Atom atom;
 	};
 
-	Ingen::Forge& forge;
+	Ingen::Shared::Forge& forge;
 
 	const Quark atom_AtomPort;
 	const Quark atom_Blank;

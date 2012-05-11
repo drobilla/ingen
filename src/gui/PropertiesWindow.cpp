@@ -125,7 +125,7 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 Gtk::Widget*
 PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& value)
 {
-	Ingen::Forge& forge = _app->forge();
+	Ingen::Shared::Forge& forge = _app->forge();
 	if (value.type() == forge.Int) {
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 0));
 		widget->property_numeric() = true;

@@ -142,7 +142,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	const Ingen::Shared::URIs& uris  = bufs.uris();
 	SharedPtr<LV2Info>         info  = _lv2_plugin->lv2_info();
 	const LilvPlugin*          plug  = _lv2_plugin->lilv_plugin();
-	Ingen::Forge&              forge = bufs.forge();
+	Ingen::Shared::Forge&      forge = bufs.forge();
 
 	uint32_t num_ports = lilv_plugin_get_num_ports(plug);
 	assert(num_ports > 0);

@@ -58,9 +58,9 @@ public:
 
 	void set_block_length(SampleCount block_length);
 
-	Forge&        forge();
-	Shared::URIs& uris()   { return _uris; }
-	Engine&       engine() { return _engine; }
+	Shared::Forge& forge();
+	Shared::URIs&  uris()   { return _uris; }
+	Engine&        engine() { return _engine; }
 
 private:
 	friend class Buffer;

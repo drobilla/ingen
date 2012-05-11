@@ -22,6 +22,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
 namespace Ingen {
+namespace Shared {
 
 Forge::Forge(Shared::URIMap& map)
 {
@@ -52,4 +53,5 @@ Forge::str(const Raul::Atom& atom)
 	return ss.str();
 }
 
+} // namespace Shared
 } // namespace Ingen

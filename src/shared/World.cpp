@@ -108,7 +108,7 @@ public:
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
 		, uri_map(new Ingen::Shared::URIMap(map, unmap))
-		, forge(new Ingen::Forge(*uri_map))
+		, forge(new Ingen::Shared::Forge(*uri_map))
 		, uris(new Shared::URIs(*forge, uri_map))
 		, lilv_world(lilv_world_new())
 	{
@@ -168,7 +168,7 @@ public:
 	LV2Features*                         lv2_features;
 	Sord::World*                         rdf_world;
 	URIMap*                              uri_map;
-	Ingen::Forge*                        forge;
+	Shared::Forge*                       forge;
 	URIs*                                uris;
 	SharedPtr<Interface>                 interface;
 	SharedPtr<EngineBase>                engine;
@@ -212,10 +212,10 @@ Shared::Configuration& World::conf() { return _impl->conf; }
 Sord::World* World::rdf_world()  { return _impl->rdf_world; }
 LilvWorld*   World::lilv_world() { return _impl->lilv_world; }
 
-LV2Features&  World::lv2_features() { return *_impl->lv2_features; }
-Ingen::Forge& World::forge()        { return *_impl->forge; }
-URIs&         World::uris()         { return *_impl->uris; }
-URIMap&       World::uri_map()      { return *_impl->uri_map; }
+LV2Features&   World::lv2_features() { return *_impl->lv2_features; }
+Shared::Forge& World::forge()        { return *_impl->forge; }
+URIs&          World::uris()         { return *_impl->uris; }
+URIMap&        World::uri_map()      { return *_impl->uri_map; }
 
 bool
 World::load_module(const char* name)

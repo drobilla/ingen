@@ -60,7 +60,7 @@ struct IngenLV2UI {
 
 	int                                          argc;
 	char**                                       argv;
-	Ingen::Forge*                                forge;
+	Ingen::Shared::Forge*                        forge;
 	Ingen::Shared::World*                        world;
 	IngenLV2AtomSink*                            sink;
 	SharedPtr<Ingen::GUI::App>                   app;
@@ -96,7 +96,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->world = new Ingen::Shared::World(
 		ui->argc, ui->argv, map, unmap);
 
-	ui->forge = new Ingen::Forge(ui->world->uri_map());
+	ui->forge = new Ingen::Shared::Forge(ui->world->uri_map());
 
 	if (!ui->world->load_module("client")) {
 		delete ui;

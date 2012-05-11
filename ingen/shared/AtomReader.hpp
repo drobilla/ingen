@@ -23,12 +23,10 @@
 #include "serd/serd.h"
 
 namespace Ingen {
-
-class Forge;
-
 namespace Shared {
 
 class AtomSink;
+class Forge;
 class URIMap;
 
 /** An AtomSink that calls methods on an Interface. */

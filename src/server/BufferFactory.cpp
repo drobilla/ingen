@@ -45,7 +45,7 @@ BufferFactory::~BufferFactory()
 	free_list(_free_object.get());
 }
 
-Ingen::Forge&
+Shared::Forge&
 BufferFactory::forge()
 {
 	return _engine.world()->forge();

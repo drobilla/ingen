@@ -19,12 +19,12 @@
 
 #include <string>
 
-#include "ingen/shared/Forge.hpp"
 #include "raul/Atom.hpp"
 
 namespace Ingen {
+namespace Shared {
 
-namespace Shared { class URIMap; }
+class URIMap;
 
 class Forge : public Raul::Forge {
 public:
@@ -33,6 +33,7 @@ public:
 	std::string str(const Raul::Atom& atom);
 };
 
+} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_SHARED_FORGE_HPP
