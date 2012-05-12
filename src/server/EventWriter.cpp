@@ -92,15 +92,8 @@ EventWriter::move(const Raul::Path& old_path,
 void
 EventWriter::del(const Raul::URI& uri)
 {
-	if (uri == "ingen:engine") {
-		if (_respondee) {
-			_respondee->response(_request_id, SUCCESS);
-		}
-		_engine.quit();
-	} else {
-		_engine.enqueue_event(
-			new Events::Delete(_engine, _respondee.get(), _request_id, now(), uri));
-	}
+	_engine.enqueue_event(
+		new Events::Delete(_engine, _respondee.get(), _request_id, now(), uri));
 }
 
 void
@@ -136,25 +129,13 @@ EventWriter::set_property(const Raul::URI&  uri,
                           const Raul::URI&  predicate,
                           const Raul::Atom& value)
 {
-	if (uri == "ingen:engine" && predicate == "ingen:enabled"
-	    && value.type() == _engine.world()->forge().Bool) {
-		if (value.get_bool()) {
-			_engine.activate();
-			_engine.enqueue_event(
-				new Events::Ping(_engine, _respondee.get(), _request_id, now()));
-		} else {
-			_engine.enqueue_event(
-				new Events::Deactivate(_engine, _respondee.get(), _request_id, now()));
-		}
-	} else {
-		Resource::Properties remove;
-		remove.insert(make_pair(predicate, _engine.world()->uris().wildcard));
-		Resource::Properties add;
-		add.insert(make_pair(predicate, value));
-		_engine.enqueue_event(
-			new Events::SetMetadata(_engine, _respondee.get(), _request_id, now(),
-			                        false, Resource::DEFAULT, uri, add, remove));
-	}
+	Resource::Properties remove;
+	remove.insert(make_pair(predicate, _engine.world()->uris().wildcard));
+	Resource::Properties add;
+	add.insert(make_pair(predicate, value));
+	_engine.enqueue_event(
+		new Events::SetMetadata(_engine, _respondee.get(), _request_id, now(),
+		                        false, Resource::DEFAULT, uri, add, remove));
 }
 
 void

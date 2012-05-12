@@ -27,7 +27,6 @@
 #include "events/DisconnectAll.hpp"
 #include "events/Get.hpp"
 #include "events/Move.hpp"
-#include "events/Ping.hpp"
 #include "events/SetMetadata.hpp"
 #include "events/SetPortValue.hpp"
 
