@@ -67,10 +67,8 @@ PreProcessor::event(Event* const ev)
 }
 
 bool
-PreProcessor::process(PostProcessor& dest, ProcessContext& context, bool limit)
+PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	if (!_head.get())
 		return true;
 

@@ -46,8 +46,8 @@ public:
 	/** Process events for a cycle.
 	 * @return False iff this source is finished and should be removed.
 	 */
-	bool process(PostProcessor&  dest,
-	             ProcessContext& context,
+	bool process(ProcessContext& context,
+	             PostProcessor&  dest,
 	             bool            limit = true);
 
 protected:

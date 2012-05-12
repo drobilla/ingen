@@ -124,8 +124,6 @@ PatchImpl::apply_internal_poly(ProcessContext& context,
                                Raul::Maid&     maid,
                                uint32_t        poly)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
 
 	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)

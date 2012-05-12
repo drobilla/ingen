@@ -178,8 +178,6 @@ Disconnect::pre_process()
 bool
 Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	EdgeImpl* const port_edge =
 		_dst_input_port->remove_edge(context, _src_output_port);
 	if (!port_edge) {

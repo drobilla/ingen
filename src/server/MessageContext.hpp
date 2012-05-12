@@ -62,7 +62,6 @@ public:
 	 * AUDIO THREAD ONLY.
 	 */
 	inline void signal(ProcessContext& context) {
-		ThreadManager::assert_thread(THREAD_PROCESS);
 		const Request cycle_end_request(context.end(), NULL);
 		_requests.write(sizeof(Request), &cycle_end_request);
 		_sem.post();

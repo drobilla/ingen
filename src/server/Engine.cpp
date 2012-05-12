@@ -276,8 +276,7 @@ Engine::enqueue_event(Event* ev)
 void
 Engine::process_events(ProcessContext& context)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-	_pre_processor->process(*_post_processor, context);
+	_pre_processor->process(context, *_post_processor);
 }
 
 void

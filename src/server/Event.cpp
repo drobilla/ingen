@@ -43,7 +43,6 @@ Event::pre_process()
 void
 Event::execute(ProcessContext& context)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
 	assert(_pre_processed);
 	assert(!_executed);
 	assert(_time <= context.end());

@@ -138,8 +138,6 @@ InputPort::add_edge(EdgeImpl* c)
 EdgeImpl*
 InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	EdgeImpl* edge = NULL;
 	for (Edges::iterator i = _edges.begin(); i != _edges.end(); ++i) {
 		if (i->tail() == tail) {
