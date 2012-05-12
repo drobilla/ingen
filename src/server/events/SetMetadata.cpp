@@ -317,9 +317,9 @@ SetMetadata::execute(ProcessContext& context)
 			break;
 		case POLYPHONY:
 			if (_patch->internal_poly() != static_cast<uint32_t>(value.get_int32()) &&
-					!_patch->apply_internal_poly(_engine.process_context(),
-						*_engine.buffer_factory(),
-						*_engine.maid(), value.get_int32())) {
+			    !_patch->apply_internal_poly(context,
+			                                 *_engine.buffer_factory(),
+			                                 *_engine.maid(), value.get_int32())) {
 				_status = INTERNAL_ERROR;
 			}
 			break;

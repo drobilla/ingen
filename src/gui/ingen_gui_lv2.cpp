@@ -55,7 +55,11 @@ struct IngenLV2AtomSink : public Ingen::Shared::AtomSink {
 
 struct IngenLV2UI {
 	IngenLV2UI()
-		: sink(NULL)
+		: argc(0)
+		, argv(NULL)
+		, forge(NULL)
+		, world(NULL)
+		, sink(NULL)
 	{}
 
 	int                                          argc;

@@ -316,7 +316,14 @@ private:
 };
 
 struct IngenPlugin {
-	Ingen::Shared::Forge  forge;
+	IngenPlugin()
+		: world(NULL)
+		, main(NULL)
+		, map(NULL)
+		, argc(0)
+		, argv(NULL)
+	{}
+
 	Ingen::Shared::World* world;
 	MainThread*           main;
 	LV2_URID_Map*         map;
@@ -386,10 +393,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		return NULL;
 	}
 
-	IngenPlugin* plugin = (IngenPlugin*)malloc(sizeof(IngenPlugin));
-	plugin->main          = NULL;
-	plugin->map           = NULL;
-	LV2_URID_Unmap* unmap = NULL;
+	IngenPlugin*    plugin = new IngenPlugin();
+	LV2_URID_Unmap* unmap  = NULL;
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_URID_URI "#map")) {
 			plugin->map = (LV2_URID_Map*)features[i]->data;
@@ -499,7 +504,7 @@ ingen_cleanup(LV2_Handle instance)
 	me->world->set_engine(SharedPtr<Ingen::Server::Engine>());
 	me->world->set_interface(SharedPtr<Ingen::Interface>());
 	delete me->world;
-	free(instance);
+	delete me;
 }
 
 static void
