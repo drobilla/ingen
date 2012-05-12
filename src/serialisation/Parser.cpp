@@ -177,6 +177,7 @@ parse(
 	Interface*                            target,
 	Sord::Model&                          model,
 	Glib::ustring                         document_uri,
+	Sord::Node&                           subject,
 	boost::optional<Raul::Path>           parent = boost::optional<Raul::Path>(),
 	boost::optional<Raul::Symbol>         symbol = boost::optional<Raul::Symbol>(),
 	boost::optional<Resource::Properties> data   = boost::optional<Resource::Properties>());
@@ -397,6 +398,47 @@ parse_patch(Ingen::Shared::World*                    world,
 }
 
 static bool
+parse_edge(Ingen::Shared::World* world,
+           Ingen::Interface*     target,
+           Sord::Model&          model,
+           const Sord::Node&     subject,
+           const Raul::Path&     parent)
+{
+	Sord::URI ingen_tail(*world->rdf_world(), NS_INGEN "tail");
+	Sord::URI ingen_head(*world->rdf_world(), NS_INGEN "head");
+
+	Sord::Iter t = model.find(subject, ingen_tail, nil);
+	Sord::Iter h = model.find(subject, ingen_head, nil);
+
+	const Glib::ustring& base_uri = model.base_uri().to_string();
+
+	if (t.end()) {
+		LOG(error) << "Edge has no tail" << endl;
+		return false;
+	} else if (h.end()) {
+		LOG(error) << "Edge has no head" << endl;
+		return false;
+	}
+
+	const Path tail_path(
+		parent.child(relative_uri(base_uri, t.get_object().to_string(), false)));
+	const Path head_path(
+		parent.child(relative_uri(base_uri, h.get_object().to_string(), false)));
+
+	if (!(++t).end()) {
+		LOG(error) << "Edge has multiple tails" << endl;
+		return false;
+	} else if (!(++h).end()) {
+		LOG(error) << "Edge has multiple heads" << endl;
+		return false;
+	}
+
+	target->connect(tail_path, head_path);
+
+	return true;
+}
+
+static bool
 parse_edges(Ingen::Shared::World* world,
             Ingen::Interface*     target,
             Sord::Model&          model,
@@ -404,42 +446,9 @@ parse_edges(Ingen::Shared::World* world,
             const Raul::Path&     parent)
 {
 	Sord::URI ingen_edge(*world->rdf_world(), NS_INGEN "edge");
-	Sord::URI ingen_tail(*world->rdf_world(), NS_INGEN "tail");
-	Sord::URI ingen_head(*world->rdf_world(), NS_INGEN "head");
 
-	const Glib::ustring& base_uri = model.base_uri().to_string();
-
-	RDFNodes connections;
 	for (Sord::Iter i = model.find(subject, ingen_edge, nil); !i.end(); ++i) {
-		connections.insert(i.get_object());
-	}
-
-	for (RDFNodes::const_iterator i = connections.begin(); i != connections.end(); ++i) {
-		Sord::Iter t = model.find(*i, ingen_tail, nil);
-		Sord::Iter h = model.find(*i, ingen_head, nil);
-
-		if (t.end()) {
-			LOG(error) << "Edge has no tail" << endl;
-			return false;
-		} else if (h.end()) {
-			LOG(error) << "Edge has no head" << endl;
-			return false;
-		}
-
-		const Path tail_path(
-			parent.child(relative_uri(base_uri, t.get_object().to_string(), false)));
-		const Path head_path(
-			parent.child(relative_uri(base_uri, h.get_object().to_string(), false)));
-
-		if (!(++t).end()) {
-			LOG(error) << "Edge has multiple tails" << endl;
-			return false;
-		} else if (!(++h).end()) {
-			LOG(error) << "Edge has multiple heads" << endl;
-			return false;
-		}
-
-		target->connect(tail_path, head_path);
+		parse_edge(world, target, model, i.get_object(), parent);
 	}
 
 	return true;
@@ -469,24 +478,23 @@ parse(Ingen::Shared::World*                    world,
       Ingen::Interface*                        target,
       Sord::Model&                             model,
       Glib::ustring                            document_uri,
+      Sord::Node&                              subject,
       boost::optional<Raul::Path>              parent,
       boost::optional<Raul::Symbol>            symbol,
       boost::optional<GraphObject::Properties> data)
 {
 	const Sord::URI patch_class   (*world->rdf_world(), NS_INGEN "Patch");
 	const Sord::URI node_class    (*world->rdf_world(), NS_INGEN "Node");
-	const Sord::URI port_class    (*world->rdf_world(), NS_INGEN "Port");
+	const Sord::URI edge_class    (*world->rdf_world(), NS_INGEN "Edge");
 	const Sord::URI internal_class(*world->rdf_world(), NS_INGEN "Internal");
 	const Sord::URI in_port_class (*world->rdf_world(), LV2_CORE__InputPort);
 	const Sord::URI out_port_class(*world->rdf_world(), LV2_CORE__OutputPort);
 	const Sord::URI lv2_class     (*world->rdf_world(), LV2_CORE__Plugin);
-	const Sord::URI rdf_type      (*world->rdf_world(), NS_RDF   "type");
+	const Sord::URI rdf_type      (*world->rdf_world(), NS_RDF "type");
 
-	Sord::Node subject = model.base_uri();
-
-	Raul::Path path("/");
-	if (parent && symbol) {
-		path = parent->child(*symbol);
+	// Parse explicit subject patch
+	if (subject.is_valid()) {
+		return parse_patch(world, target, model, subject, parent, symbol, data);
 	}
 
 	// Get all subjects and their types (?subject a ?type)
@@ -508,19 +516,23 @@ parse(Ingen::Shared::World*                    world,
 	}
 
 	// Parse and create each subject
-	boost::optional<Path> ret;
 	for (Subjects::const_iterator i = subjects.begin(); i != subjects.end(); ++i) {
-		const Sord::Node&           subject = i->first;
-		const std::set<Sord::Node>& types   = i->second;
+		const Sord::Node&           s     = i->first;
+		const std::set<Sord::Node>& types = i->second;
+		boost::optional<Path>       ret;
+		const Raul::Path path(
+			relative_uri( model.base_uri().to_string(), s.to_string(), true));
 		if (types.find(patch_class) != types.end()) {
-			ret = parse_patch(world, target, model, subject, parent, symbol, data);
+			ret = parse_patch(world, target, model, s, parent, symbol, data);
 		} else if (types.find(node_class) != types.end()) {
-			ret = parse_node(world, target, model,
-			                 subject, path.child(subject.to_string()),
-			                 data);
-		} else if (types.find(port_class) != types.end()) {
-			parse_properties(world, target, model, subject, path, data);
+			ret = parse_node(world, target, model, s, path, data);
+		} else if (types.find(in_port_class) != types.end() ||
+		           types.find(out_port_class) != types.end()) {
+			parse_properties(world, target, model, s, path, data);
 			ret = path;
+		} else if (types.find(edge_class) != types.end()) {
+			Path parent_path(parent ? parent.get() : Path("/"));
+			parse_edge(world, target, model, s, parent_path);
 		} else {
 			LOG(error) << "Subject has no known types" << endl;
 		}
@@ -533,11 +545,10 @@ parse(Ingen::Shared::World*                    world,
 				LOG(error) << " :: " << *t << endl;
 				assert((*t).is_uri());
 			}
-			return boost::optional<Path>();
 		}
 	}
 
-	return path;
+	return boost::optional<Path>();
 }
 
 Parser::Parser(Ingen::Shared::World& world)
@@ -578,7 +589,7 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 	SerdEnv*       env       = serd_env_new(&base_node);
 
 	// Load patch file into model
-	Sord::Model model(*world->rdf_world(), uri);
+	Sord::Model model(*world->rdf_world(), uri, SORD_SPO|SORD_PSO, false);
 	model.load_file(env, SERD_TURTLE, uri);
 
 	serd_env_free(env);
@@ -589,8 +600,9 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 	if (symbol)
 		LOG(Raul::info)(Raul::fmt("Symbol: %1%\n") % symbol->c_str());
 
+	Sord::Node subject(*world->rdf_world(), Sord::Node::URI, uri);
 	boost::optional<Path> parsed_path
-		= parse(world, target, model, path, parent, symbol, data);
+		= parse(world, target, model, path, subject, parent, symbol, data);
 
 	if (parsed_path) {
 		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
@@ -612,8 +624,10 @@ Parser::parse_string(Ingen::Shared::World*                    world,
                      boost::optional<GraphObject::Properties> data)
 {
 	// Load string into model
-	Sord::Model model(*world->rdf_world(), base_uri);
-	SerdEnv* env = serd_env_new(NULL);
+	Sord::Model model(*world->rdf_world(), base_uri, SORD_SPO|SORD_PSO, false);
+	const SerdNode base = serd_node_from_string(
+		SERD_URI, (const uint8_t*)base_uri.c_str());
+	SerdEnv* env = serd_env_new(&base);
 	model.load_string(env, SERD_TURTLE, str.c_str(), str.length(), base_uri);
 	serd_env_free(env);
 
@@ -622,11 +636,8 @@ Parser::parse_string(Ingen::Shared::World*                    world,
 		info << " (base " << base_uri << ")";
 	info << endl;
 
-	bool ret = parse(world, target, model, base_uri, parent, symbol, data);
-	Sord::URI subject(*world->rdf_world(), base_uri);
-	parse_edges(world, target, model, subject, parent ? *parent : "/");
-
-	return ret;
+	Sord::Node subject;
+	return parse(world, target, model, base_uri, subject, parent, symbol, data);
 }
 
 } // namespace Serialisation

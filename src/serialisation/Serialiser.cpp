@@ -526,9 +526,15 @@ Serialiser::Impl::serialise_edge(const Sord::Node&     parent,
 	                      Sord::Curie(world, "ingen:head"),
 	                      dst);
 
-	_model->add_statement(parent,
-	                      Sord::Curie(world, "ingen:edge"),
-	                      edge_id);
+	if (parent.is_valid()) {
+		_model->add_statement(parent,
+		                      Sord::Curie(world, "ingen:edge"),
+		                      edge_id);
+	} else {
+		_model->add_statement(edge_id,
+		                      Sord::Curie(world, "rdf:type"),
+		                      Sord::Curie(world, "ingen:Edge"));
+	}
 }
 
 static bool

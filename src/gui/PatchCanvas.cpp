@@ -637,42 +637,56 @@ PatchCanvas::destroy_selection()
 	for_each_selected_edge(destroy_edge, &_app);
 }
 
+static void
+serialise_node(GanvNode* node, void* data)
+{
+	Serialisation::Serialiser* serialiser = (Serialisation::Serialiser*)data;
+	if (!GANV_IS_MODULE(node)) {
+		return;
+	}
+
+	Ganv::Module* module      = Glib::wrap(GANV_MODULE(node));
+	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
+
+	if (node_module) {
+		serialiser->serialise(node_module->node());
+	} else {
+		PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(module);
+		if (port_module) {
+			serialiser->serialise(port_module->port());
+		}
+	}
+}
+
+static void
+serialise_edge(GanvEdge* edge, void* data)
+{
+	Serialisation::Serialiser* serialiser = (Serialisation::Serialiser*)data;
+	if (!GANV_IS_EDGE(edge)) {
+		return;
+	}
+
+	GUI::Edge* gedge = dynamic_cast<GUI::Edge*>(Glib::wrap(GANV_EDGE(edge)));
+	if (gedge) {
+		serialiser->serialise_edge(Sord::Node(), gedge->model());
+	}
+}
+
 void
 PatchCanvas::copy_selection()
 {
-	std::cerr << "FIXME: copy" << std::endl;
-	#if 0
-	static const char* base_uri = "";
-	Serialiser serialiser(*_app.world(), _app.store());
+	static const char* base_uri = "http://drobilla.net/ns/ingen/selection/";
+	Serialisation::Serialiser serialiser(*_app.world());
 	serialiser.start_to_string(_patch->path(), base_uri);
 
-	FOREACH_ITEM(m, selected_items()) {
-		NodeModule* module = dynamic_cast<NodeModule*>(*m);
-		if (module) {
-			serialiser.serialise(module->node());
-		} else {
-			PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(*m);
-			if (port_module)
-				serialiser.serialise(port_module->port());
-		}
-	}
+	for_each_selected_node(serialise_node, &serialiser);
+	for_each_selected_edge(serialise_edge, &serialiser);
 
-	for (SelectedEdges::const_iterator c = selected_edges().begin();
-	     c != selected_edges().end(); ++c) {
-		Edge* const edge = dynamic_cast<Edge*>(*c);
-		if (edge) {
-			const Sord::URI subject(*_app.world()->rdf_world(),
-			                        base_uri);
-			serialiser.serialise_edge(subject, edge->model());
-		}
-	}
-
-	string result = serialiser.finish();
+	const std::string result = serialiser.finish();
 	_paste_count = 0;
 
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->set_text(result);
-	#endif
 }
 
 void
@@ -702,7 +716,7 @@ PatchCanvas::paste()
 	                       uris.ingen_Patch));
 	props.insert(make_pair(uris.ingen_polyphony,
 	                       _app.forge().make(int32_t(_patch->internal_poly()))));
-	clipboard.put(Path(), props);
+	clipboard.put(Path("/"), props);
 	size_t first_slash;
 	while (to_create != "/" && !to_create.empty()
 	       && (first_slash = to_create.find("/")) != string::npos) {
@@ -723,7 +737,8 @@ PatchCanvas::paste()
 	}
 
 	ClashAvoider avoider(*_app.store().get(), clipboard, &clipboard);
-	parser->parse_string(_app.world(), &avoider, str, "",
+	static const char* base_uri = "http://drobilla.net/ns/ingen/selection/";
+	parser->parse_string(_app.world(), &avoider, str, base_uri,
 	                     parent, symbol);
 
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {

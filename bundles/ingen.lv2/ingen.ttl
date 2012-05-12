@@ -111,18 +111,6 @@ ingen:enabled
 	rdfs:label "Enabled" ;
 	rdfs:comment "Signifies the node is or should be running." .
 
-ingen:Port
-	a owl:Class ;
-	rdfs:subClassOf ingen:Object ;
-	rdfs:label "Port" ;
-	rdfs:comment """
-A Port is an input or output on a Node.  It is implicitly an instance of the
-corresponding port on that Node's plugin (specified with ingen:prototype).
-A Port MUST have a legal lv2:symbol in the exact way a Node must, see :Node
-documentation for details.  Ports inherit properties from the Port on their
-parent's Plugin in the exact way Nodes inherit properties from their Plugin.
-""" .
-
 ingen:Edge
 	a owl:Class ;
 	rdfs:label "Edge" ;

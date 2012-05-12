@@ -459,9 +459,11 @@ ClientStore::attempt_connection(const Raul::Path& tail_path,
 
 		patch->add_edge(cm);
 		return true;
+	} else {
+		LOG(Raul::warn) << "Failed to connect " << tail_path
+		                << " => " << head_path << std::endl;
+		return false;
 	}
-
-	return false;
 }
 
 void
