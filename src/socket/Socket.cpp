@@ -70,9 +70,16 @@ Socket::Socket(Type               t,
 {
 }
 
+Socket::~Socket()
+{
+	free(_addr);
+	close();
+}
+
 bool
 Socket::set_addr(const std::string& uri)
 {
+	free(_addr);
 	if (_type == UNIX && uri.substr(0, strlen("unix://")) == "unix://") {
 		const std::string   path  = uri.substr(strlen("unix://"));
 		struct sockaddr_un* uaddr = (struct sockaddr_un*)calloc(
@@ -105,6 +112,7 @@ Socket::set_addr(const std::string& uri)
 		_addr     = (struct sockaddr*)malloc(ainfo->ai_addrlen);
 		_addr_len = ainfo->ai_addrlen;
 		memcpy(_addr, ainfo->ai_addr, ainfo->ai_addrlen);
+		freeaddrinfo(ainfo);
 		return true;
 	}
 	return false;

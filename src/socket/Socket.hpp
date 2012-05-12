@@ -55,7 +55,7 @@ public:
 	       socklen_t          addr_len,
 	       int                fd);
 
-	~Socket() { close(); }
+	~Socket();
 
 	/** Bind a server socket to an address.
 	 * @param uri Address URI, e.g. unix:///tmp/foo or tcp://somehost:1234

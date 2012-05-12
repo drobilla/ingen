@@ -90,11 +90,13 @@ Engine::~Engine()
 				i->second.reset();
 
 	delete _maid;
+	delete _pre_processor;
 	delete _post_processor;
 	delete _node_factory;
 	delete _message_context;
 	delete _control_bindings;
 	delete _broadcaster;
+	delete _event_writer;
 
 	munlockall();
 }

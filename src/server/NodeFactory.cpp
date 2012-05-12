@@ -128,6 +128,7 @@ NodeFactory::load_plugin(const Raul::URI& uri)
 		ingen_plugin->lilv_plugin(plug);
 		_plugins.insert(make_pair(uri, ingen_plugin));
 	}
+	lilv_node_free(node);
 }
 
 /** Loads information about all LV2 plugins into internal plugin database.
