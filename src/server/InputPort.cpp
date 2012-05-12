@@ -96,7 +96,7 @@ InputPort::get_buffers(Context&                context,
 		if (is_process_context) {
 			if (!_edges.front().must_mix() &&
 			    !_edges.front().must_queue()) {
-				// Single non-mixing conneciton, use buffers directly
+				// Single non-mixing connection, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v)
 					buffers->at(v) = _edges.front().buffer(v);
 				return false;
