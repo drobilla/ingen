@@ -136,6 +136,9 @@ private:
 	int _last_click_y;
 	int _paste_count;
 
+	// Track pasted objects so they can be selected when they arrive
+	std::set<Raul::Path> _pastees;
+
 	struct MenuRecord {
 		MenuRecord(Gtk::MenuItem* i, Gtk::Menu* m) : item(i), menu(m) {}
 		Gtk::MenuItem* item;

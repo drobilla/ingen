@@ -408,6 +408,9 @@ PatchCanvas::add_node(SharedPtr<const NodeModel> nm)
 
 	module->show();
 	_views.insert(std::make_pair(nm, module));
+	if (_pastees.find(nm->path()) != _pastees.end()) {
+		module->set_selected(true);
+	}
 }
 
 void
@@ -700,6 +703,7 @@ PatchCanvas::paste()
 	}
 
 	clear_selection();
+	_pastees.clear();
 	++_paste_count;
 
 	const URIs& uris = _app.uris();
@@ -758,6 +762,7 @@ PatchCanvas::paste()
 				y->second.get_float() + (20.0f * _paste_count));
 
 		builder.build(i->second);
+		_pastees.insert(i->first);
 	}
 
 	builder.connect(PtrCast<const PatchModel>(clipboard.object(_patch->path())));

@@ -414,9 +414,9 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 void
 NodeModule::set_selected(gboolean b)
 {
-	const URIs& uris = app().uris();
 	if (b != get_selected()) {
-		Module::set_selected(b);
+		Ganv::Module::set_selected(b);
+		#if 0
 		if (b) {
 			PatchWindow* win = app().window_factory()->parent_patch_window(node());
 			if (win) {
@@ -432,6 +432,7 @@ NodeModule::set_selected(gboolean b)
 				}
 			}
 		}
+		#endif
 	}
 }
 
