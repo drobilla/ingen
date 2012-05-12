@@ -67,11 +67,11 @@ public:
 	                                boost::intrusive::constant_time_size<false>
 	                                > Edges;
 
-	void      add_edge(EdgeImpl* c);
+	void      add_edge(ProcessContext& context, EdgeImpl* c);
 	EdgeImpl* remove_edge(ProcessContext&   context,
 	                      const OutputPort* tail);
 
-	bool apply_poly(Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 
 	bool get_buffers(BufferFactory&          bufs,
 	                 Raul::Array<BufferRef>* buffers,

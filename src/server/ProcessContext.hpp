@@ -33,8 +33,6 @@ class ProcessSlave;
 class ProcessContext : public Context
 {
 public:
-	explicit ProcessContext(Engine& engine);
-
 	typedef std::vector<ProcessSlave*> Slaves;
 
 	const Slaves& slaves() const { return _slaves; }
@@ -43,6 +41,9 @@ public:
 	void activate(uint32_t parallelism, bool sched_rt);
 
 private:
+	friend class Engine;
+	explicit ProcessContext(Engine& engine);
+
 	Slaves _slaves;
 };
 

@@ -61,7 +61,8 @@ public:
 	 * Audio thread.  Returned value must be freed by caller.
 	 * \a buffers must be poly() long
 	 */
-	Raul::Array<BufferRef>* set_buffers(Raul::Array<BufferRef>* buffers);
+	Raul::Array<BufferRef>* set_buffers(ProcessContext&         context,
+	                                    Raul::Array<BufferRef>* buffers);
 
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -76,7 +77,8 @@ public:
 	 * Audio thread.
 	 * \a poly Must be < the most recent value passed to prepare_poly.
 	 */
-	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
+	virtual bool apply_poly(
+		ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 
 	const Raul::Atom& value() const { return _value; }
 	void              set_value(const Raul::Atom& v) { _value = v; }

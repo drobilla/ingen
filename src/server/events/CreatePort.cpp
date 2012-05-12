@@ -172,7 +172,7 @@ CreatePort::execute(ProcessContext& context)
 	}
 
 	if (_engine_port) {
-		_engine.driver()->add_port(_engine_port);
+		_engine.driver()->add_port(context, _engine_port);
 	}
 }
 

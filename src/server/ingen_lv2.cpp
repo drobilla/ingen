@@ -129,7 +129,7 @@ private:
 
 public:
 	LV2Driver(Engine& engine, SampleCount buffer_size, SampleCount sample_rate)
-		: _context(engine)
+		: _engine(engine)
 		, _reader(engine.world()->uri_map(),
 		          engine.world()->uris(),
 		          engine.world()->forge(),
@@ -147,20 +147,20 @@ public:
 	{}
 
 	void run(uint32_t nframes) {
-		_context.locate(_frame_time, nframes, 0);
+		_engine.process_context().locate(_frame_time, nframes, 0);
 
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
-			(*i)->pre_process(_context);
+			(*i)->pre_process(_engine.process_context());
 
-		_context.engine().process_events(_context);
+		_engine.process_events();
 
 		if (_root_patch)
-			_root_patch->process(_context);
+			_root_patch->process(_engine.process_context());
 
 		flush_to_ui();
 
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
-			(*i)->post_process(_context);
+			(*i)->post_process(_engine.process_context());
 
 		_frame_time += nframes;
 	}
@@ -168,19 +168,17 @@ public:
 	virtual void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
 	virtual PatchImpl* root_patch()                     { return _root_patch; }
 
-	virtual void add_port(EnginePort* port) {
+	virtual void add_port(ProcessContext& context, EnginePort* port) {
 		// Note this doesn't have to be realtime safe since there's no dynamic LV2 ports
-		ThreadManager::assert_thread(THREAD_PROCESS);
 		assert(dynamic_cast<LV2Port*>(port));
 		assert(port->patch_port()->index() == _ports.size());
 		_ports.push_back((LV2Port*)port);
 	}
 
-	virtual Raul::Deletable* remove_port(const Raul::Path& path,
-	                                     EnginePort** port=NULL) {
+	virtual Raul::Deletable* remove_port(ProcessContext&   context,
+	                                     const Raul::Path& path,
+	                                     EnginePort**      port = NULL) {
 		// Note this doesn't have to be realtime safe since there's no dynamic LV2 ports
-		ThreadManager::assert_thread(THREAD_PROCESS);
-
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 			if ((*i)->patch_port()->path() == path) {
 				_ports.erase(i);
@@ -196,9 +194,8 @@ public:
 		return new LV2Port(this, patch_port);
 	}
 
-	virtual EnginePort* engine_port(const Raul::Path& path) {
-		ThreadManager::assert_thread(THREAD_PROCESS);
-
+	virtual EnginePort* engine_port(ProcessContext&   context,
+	                                const Raul::Path& path) {
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			if ((*i)->patch_port()->path() == path)
 				return (*i);
@@ -230,7 +227,7 @@ public:
 		const uint32_t capacity = seq->atom.size;
 
 		// Initialise output port buffer to an empty Sequence
-		seq->atom.type = _context.engine().world()->uris().atom_Sequence;
+		seq->atom.type = _engine.world()->uris().atom_Sequence;
 		seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
 
 		const uint32_t read_space = _to_ui.read_space();
@@ -269,14 +266,14 @@ public:
 	virtual SampleCount frame_time()   const { return _frame_time;}
 
 	virtual bool            is_realtime() const { return true; }
-	virtual ProcessContext& context()           { return _context; }
+	//virtual ProcessContext& context()           { return _context; }
 	Shared::AtomReader&     reader()            { return _reader; }
 	Shared::AtomWriter&     writer()            { return _writer; }
 
 	Ports& ports() { return _ports; }
 
 private:
-	ProcessContext     _context;
+	Engine&            _engine;
 	Shared::AtomReader _reader;
 	Shared::AtomWriter _writer;
 	Raul::RingBuffer   _to_ui;
@@ -432,11 +429,10 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;
 
-	ProcessContext context(*engine.get());
-	context.locate(0, UINT_MAX, 0);
+	engine->process_context().locate(0, UINT_MAX, 0);
 
 	engine->post_processor()->set_end_time(UINT_MAX);
-	engine->process_events(context);
+	engine->process_events();
 	engine->post_processor()->process();
 
 	plugin->world->parser()->parse_file(plugin->world,
@@ -444,7 +440,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	                                    patch->filename);
 
 	while (engine->pending_events()) {
-		engine->process_events(context);
+		engine->process_events();
 		engine->post_processor()->process();
 	}
 

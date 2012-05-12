@@ -77,7 +77,7 @@ public:
 
 	bool pending_events();
 	void enqueue_event(Event* ev);
-	void process_events(ProcessContext& context);
+	void process_events();
 
 	Ingen::Shared::World* world() const { return _world; }
 

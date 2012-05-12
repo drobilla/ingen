@@ -155,7 +155,7 @@ Delete::execute(ProcessContext& context)
 		_port->parent_patch()->external_ports(_ports_array);
 
 		if ( ! _port->parent_patch()->parent())
-			_garbage = _engine.driver()->remove_port(_port->path(), &_engine_port);
+			_garbage = _engine.driver()->remove_port(context, _port->path(), &_engine_port);
 	}
 
 	if (parent_patch) {

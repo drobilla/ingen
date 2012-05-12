@@ -243,7 +243,7 @@ Engine::run(uint32_t sample_count)
 
 	// Process events that came in during the last cycle
 	// (Aiming for jitter-free 1 block event latency, ideally)
-	process_events(_process_context);
+	process_events();
 
 	// Run root patch
 	if (_root_patch) {
@@ -274,9 +274,9 @@ Engine::enqueue_event(Event* ev)
 }
 
 void
-Engine::process_events(ProcessContext& context)
+Engine::process_events()
 {
-	_pre_processor->process(context, *_post_processor);
+	_pre_processor->process(_process_context, *_post_processor);
 }
 
 void

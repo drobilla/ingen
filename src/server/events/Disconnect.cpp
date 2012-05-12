@@ -186,7 +186,7 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 
 	if (set_dst_buffers) {
 		if (_buffers) {
-			_engine.maid()->push(_dst_input_port->set_buffers(_buffers));
+			_engine.maid()->push(_dst_input_port->set_buffers(context, _buffers));
 		} else {
 			_dst_input_port->setup_buffers(*_engine.buffer_factory(),
 			                               _dst_input_port->poly());

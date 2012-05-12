@@ -99,10 +99,12 @@ public:
 	EnginePort* port(const Raul::Path& path);
 	EnginePort* create_port(DuplexPort* patch_port);
 
-	void        add_port(EnginePort* port);
-	EnginePort* engine_port(const Raul::Path& path);
+	void        add_port(ProcessContext& context, EnginePort* port);
+	EnginePort* engine_port(ProcessContext& context, const Raul::Path& path);
 
-	Raul::Deletable* remove_port(const Raul::Path& path, EnginePort** port=NULL);
+	Raul::Deletable* remove_port(ProcessContext&   context,
+	                             const Raul::Path& path,
+	                             EnginePort**      port = NULL);
 
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */

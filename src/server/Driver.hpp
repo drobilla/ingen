@@ -57,14 +57,16 @@ public:
 	virtual EnginePort* create_port(DuplexPort* patch_port) = 0;
 
 	/** Return the DriverPort for a particular path, iff one exists. */
-	virtual EnginePort* engine_port(const Raul::Path& path) = 0;
+	virtual EnginePort* engine_port(ProcessContext&   context,
+	                                const Raul::Path& path) = 0;
 
 	/** Add a system visible port (e.g. a port on the root patch). */
-	virtual void add_port(EnginePort* port) = 0;
+	virtual void add_port(ProcessContext& context, EnginePort* port) = 0;
 
 	/** Remove a system visible port. */
-	virtual Raul::Deletable* remove_port(const Raul::Path& path,
-	                                     EnginePort**      port=NULL) = 0;
+	virtual Raul::Deletable* remove_port(ProcessContext&   context,
+	                                     const Raul::Path& path,
+	                                     EnginePort**      port = NULL) = 0;
 
 	/** Return the audio buffer size in frames */
 	virtual SampleCount block_length() const = 0;

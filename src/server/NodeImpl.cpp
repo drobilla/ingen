@@ -28,6 +28,7 @@
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
+#include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 #include "util.hpp"
 
@@ -133,10 +134,8 @@ NodeImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-NodeImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
+NodeImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	if (!_polyphonic)
 		poly = 1;
 
@@ -144,7 +143,7 @@ NodeImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 
 	if (_ports)
 		for (size_t i = 0; i < num_ports(); ++i)
-			_ports->at(i)->apply_poly(maid, poly);
+			_ports->at(i)->apply_poly(context, maid, poly);
 
 	return true;
 }
@@ -186,9 +185,8 @@ NodeImpl::process_unlock()
 }
 
 void
-NodeImpl::wait_for_input(size_t num_providers)
+NodeImpl::wait_for_input(ProcessContext& context, size_t num_providers)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
 	assert(_process_lock.get() == 1);
 
 	while ((unsigned)_n_inputs_ready.get() < num_providers)
@@ -196,9 +194,8 @@ NodeImpl::wait_for_input(size_t num_providers)
 }
 
 void
-NodeImpl::signal_input_ready()
+NodeImpl::signal_input_ready(ProcessContext& context)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
 	++_n_inputs_ready;
 	_input_ready.post();
 }
@@ -206,10 +203,8 @@ NodeImpl::signal_input_ready()
 /** Prepare to run a cycle (in the audio thread)
  */
 void
-NodeImpl::pre_process(Context& context)
+NodeImpl::pre_process(ProcessContext& context)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	// Mix down input ports
 	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);
@@ -221,10 +216,8 @@ NodeImpl::pre_process(Context& context)
 /** Prepare to run a cycle (in the audio thread)
  */
 void
-NodeImpl::post_process(Context& context)
+NodeImpl::post_process(ProcessContext& context)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	// Write output ports
 	for (size_t i = 0; _ports && i < _ports->size(); ++i) {
 		_ports->at(i)->post_process(context);

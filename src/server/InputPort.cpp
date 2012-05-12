@@ -63,9 +63,9 @@ InputPort::InputPort(BufferFactory&      bufs,
 }
 
 bool
-InputPort::apply_poly(Raul::Maid& maid, uint32_t poly)
+InputPort::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 {
-	bool ret = PortImpl::apply_poly(maid, poly);
+	bool ret = PortImpl::apply_poly(context, maid, poly);
 	if (!ret)
 		poly = 1;
 
@@ -120,14 +120,10 @@ InputPort::get_buffers(BufferFactory&          bufs,
  * will audibly take effect.
  */
 void
-InputPort::add_edge(EdgeImpl* c)
+InputPort::add_edge(ProcessContext& context, EdgeImpl* c)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	_edges.push_front(*c);
-
-	// Broadcast value/activity of connected input
-	_broadcast = true;
+	_broadcast = true;	// Broadcast value/activity of connected input
 }
 
 /** Remove a edge.  Realtime safe.

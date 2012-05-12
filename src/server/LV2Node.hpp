@@ -50,7 +50,7 @@ public:
 	bool instantiate(BufferFactory& bufs);
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	bool apply_poly(Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 
 	void activate(BufferFactory& bufs);
 	void deactivate();

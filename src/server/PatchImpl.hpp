@@ -150,7 +150,7 @@ public:
 	/** Whether to run this patch's DSP bits in the audio thread */
 	bool enabled() const { return _process; }
 	void enable() { _process = true; }
-	void disable();
+	void disable(ProcessContext& context);
 
 	uint32_t internal_poly() const { return _internal_poly; }
 

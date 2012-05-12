@@ -105,14 +105,14 @@ public:
 	/** Parallelism: Wait for signal that input is ready.
 	 * Only a thread which successfully called process_lock may call this.
 	 */
-	virtual void wait_for_input(size_t num_providers);
+	virtual void wait_for_input(ProcessContext& context, size_t num_providers);
 
 	/** Parallelism: Signal that input is ready.  Realtime safe.
 	 * Calling this will wake up the thread which blocked on wait_for_input
 	 * if there is one, and otherwise cause it to return true the next call.
 	 * \return true if lock was aquired and input is ready, false otherwise
 	 */
-	virtual void signal_input_ready();
+	virtual void signal_input_ready(ProcessContext& context);
 
 	/** Parallelism: Return the number of providers that have signalled. */
 	virtual unsigned n_inputs_ready() const { return _n_inputs_ready.get(); }
@@ -126,7 +126,7 @@ public:
 	                  const void*     data) {}
 
 	/** Do whatever needs doing in the process thread before process() is called */
-	virtual void pre_process(Context& context);
+	virtual void pre_process(ProcessContext& context);
 
 	/** Run the node for @a nframes input/output.
 	 *
@@ -136,7 +136,7 @@ public:
 	virtual void process(ProcessContext& context) = 0;
 
 	/** Do whatever needs doing in the process thread after process() is called */
-	virtual void post_process(Context& context);
+	virtual void post_process(ProcessContext& context);
 
 	/** Set the buffer of a port to a given buffer (e.g. connect plugin to buffer) */
 	virtual void set_port_buffer(uint32_t    voice,
@@ -162,7 +162,8 @@ public:
 	virtual void set_polyphonic(bool p) { _polyphonic = p; }
 
 	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly);
+	virtual bool apply_poly(
+		ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 
 	/** Information about the Plugin this Node is an instance of.
 	 * Not the best name - not all nodes come from plugins (e.g. Patch)

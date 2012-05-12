@@ -42,9 +42,8 @@ PostProcessor::~PostProcessor()
 }
 
 void
-PostProcessor::append(Event* first, Event* last)
+PostProcessor::append(ProcessContext& context, Event* first, Event* last)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
 	assert(first);
 	assert(last);
 	assert(!last->next());

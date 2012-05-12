@@ -91,14 +91,12 @@ PatchImpl::deactivate()
 }
 
 void
-PatchImpl::disable()
+PatchImpl::disable(ProcessContext& context)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	_process = false;
-
-	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i)
+	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i) {
 		(*i)->clear_buffers();
+	}
 }
 
 bool
@@ -127,7 +125,7 @@ PatchImpl::apply_internal_poly(ProcessContext& context,
 	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
 
 	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
-		(*i)->apply_poly(maid, poly);
+		(*i)->apply_poly(context, maid, poly);
 
 	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
 		for (uint32_t j = 0; j < (*i)->num_ports(); ++j) {
@@ -216,7 +214,7 @@ PatchImpl::process_parallel(ProcessContext& context)
 
 				/* Signal dependants their input is ready */
 				for (uint32_t i = 0; i < n.dependants().size(); ++i)
-					n.dependants()[i]->signal_input_ready();
+					n.dependants()[i]->signal_input_ready(context);
 
 				++num_finished;
 			} else {

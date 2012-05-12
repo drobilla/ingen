@@ -319,9 +319,8 @@ JackDriver::deactivate()
  * See create_port() and remove_port().
  */
 void
-JackDriver::add_port(EnginePort* port)
+JackDriver::add_port(ProcessContext& context, EnginePort* port)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
 	assert(dynamic_cast<JackPort*>(port));
 	_ports.push_back((JackPort*)port);
 }
@@ -335,10 +334,10 @@ JackDriver::add_port(EnginePort* port)
  * It is the callers responsibility to delete the returned port.
  */
 Raul::Deletable*
-JackDriver::remove_port(const Raul::Path& path, EnginePort** port)
+JackDriver::remove_port(ProcessContext&   context,
+                        const Raul::Path& path,
+                        EnginePort**      port)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i)->patch_port()->path() == path) {
 			Raul::List<JackPort*>::Node* node = _ports.erase(i);
@@ -379,10 +378,9 @@ JackDriver::create_port(DuplexPort* patch_port)
 }
 
 EnginePort*
-JackDriver::engine_port(const Raul::Path& path)
+JackDriver::engine_port(ProcessContext&   context,
+                        const Raul::Path& path)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->patch_port()->path() == path)
 			return (*i);

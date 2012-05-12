@@ -97,7 +97,7 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 		Event* next = (Event*)last->next();
 		last->next(NULL);
 		assert(!last->next());
-		dest.append(_head.get(), last);
+		dest.append(context, _head.get(), last);
 		_head = next;
 		if (!next)
 			_tail = NULL;

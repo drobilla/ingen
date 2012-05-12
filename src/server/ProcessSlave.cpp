@@ -44,13 +44,13 @@ ProcessSlave::_whipped()
 
 		if (n.node()->process_lock()) {
 
-			n.node()->wait_for_input(n.n_providers());
+			n.node()->wait_for_input(*_context, n.n_providers());
 
-			n.node()->process(_engine.process_context());
+			n.node()->process(*_context);
 
 			/* Signal dependants their input is ready */
 			for (size_t i=0; i < n.dependants().size(); ++i)
-				n.dependants()[i]->signal_input_ready();
+				n.dependants()[i]->signal_input_ready(*_context);
 
 			num_finished = 1;
 		} else {

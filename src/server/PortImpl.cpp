@@ -98,10 +98,8 @@ PortImpl::supports(const Raul::URI& value_type) const
 }
 
 Raul::Array<BufferRef>*
-PortImpl::set_buffers(Raul::Array<BufferRef>* buffers)
+PortImpl::set_buffers(ProcessContext& context, Raul::Array<BufferRef>* buffers)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
-
 	Raul::Array<BufferRef>* ret = NULL;
 	if (buffers != _buffers) {
 		ret = _buffers;
@@ -146,9 +144,8 @@ PortImpl::prepare_poly_buffers(BufferFactory& bufs)
 }
 
 bool
-PortImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
+PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 {
-	ThreadManager::assert_thread(THREAD_PROCESS);
 	if (_type != PortType::CONTROL &&
 	    _type != PortType::CV &&
 	    _type != PortType::AUDIO) {
@@ -164,7 +161,7 @@ PortImpl::apply_poly(Raul::Maid& maid, uint32_t poly)
 	_poly = poly;
 
 	// Apply a new set of buffers from a preceding call to prepare_poly
-	maid.push(set_buffers(_prepared_buffers));
+	maid.push(set_buffers(context, _prepared_buffers));
 	assert(_buffers == _prepared_buffers);
 	_prepared_buffers = NULL;
 

@@ -38,6 +38,7 @@ class ProcessSlave : protected Raul::Slave {
 public:
 	ProcessSlave(Engine& engine, bool realtime)
 		: _engine(engine)
+		, _context(NULL)
 		, _id(_next_id++)
 		, _index(0)
 		, _state(STATE_FINISHED)
@@ -65,6 +66,7 @@ public:
 	                 ProcessContext& context)
 	{
 		assert(_state == STATE_FINISHED);
+		_context        = &context;
 		_index          = start_index;
 		_state          = STATE_RUNNING;
 		_compiled_patch = compiled_patch;
@@ -89,6 +91,7 @@ private:
 	static const int STATE_FINISHED         = 2;
 
 	Engine&         _engine;
+	ProcessContext* _context;
 	uint32_t        _id;
 	uint32_t        _index;
 	Raul::AtomicInt _state;

@@ -113,7 +113,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
+LV2Node::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic)
 		poly = 1;
@@ -125,7 +125,7 @@ LV2Node::apply_poly(Raul::Maid& maid, uint32_t poly)
 	}
 	assert(poly <= _instances->size());
 
-	return NodeImpl::apply_poly(maid, poly);
+	return NodeImpl::apply_poly(context, maid, poly);
 }
 
 /** Instantiate self from LV2 plugin descriptor.
@@ -274,6 +274,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 				if (lilv_node_is_int(d)) {
 					size_t size_val = lilv_node_as_int(d);
 					port_buffer_size = size_val;
+					Raul::info << "Atom port " << path() << " buffer size "
+					           << port_buffer_size << std::endl;
 				}
 			}
 		}

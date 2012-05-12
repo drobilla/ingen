@@ -103,9 +103,9 @@ Move::execute(ProcessContext& context)
 
 	SharedPtr<PortImpl> port = PtrCast<PortImpl>(_store_iterator->second);
 	if (port && port->parent()->parent() == NULL) {
-		EnginePort* engine_port = _engine.driver()->engine_port(_new_path);
-		if (engine_port) {
-			engine_port->move(_new_path);
+		EnginePort* eport = _engine.driver()->engine_port(context, _new_path);
+		if (eport) {
+			eport->move(_new_path);
 		}
 	}
 }

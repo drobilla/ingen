@@ -60,8 +60,6 @@ public:
 	GraphObject*     graph_parent() const { return _parent; }
 	GraphObjectImpl* parent()       const { return _parent; }
 
-	//virtual void process(ProcessContext& context) = 0;
-
 	/** Rename */
 	virtual void set_path(const Raul::Path& new_path) {
 		_path   = new_path;
@@ -91,7 +89,8 @@ public:
 	 * \param poly Must be <= the most recent value passed to prepare_poly.
 	 * \param maid Any objects no longer needed will be pushed to this
 	 */
-	virtual bool apply_poly(Raul::Maid& maid, uint32_t poly) = 0;
+	virtual bool apply_poly(
+		ProcessContext& context, Raul::Maid& maid, uint32_t poly) = 0;
 
 protected:
 	GraphObjectImpl(Ingen::Shared::URIs& uris,

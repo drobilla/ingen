@@ -159,9 +159,9 @@ Connect::execute(ProcessContext& context)
 
 	if (_status == SUCCESS) {
 		// This must be inserted here, since they're actually used by the audio thread
-		_dst_input_port->add_edge(_edge.get());
+		_dst_input_port->add_edge(context, _edge.get());
 		assert(_buffers);
-		_engine.maid()->push(_dst_input_port->set_buffers(_buffers));
+		_engine.maid()->push(_dst_input_port->set_buffers(context, _buffers));
 		_dst_input_port->connect_buffers();
 		_engine.maid()->push(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);

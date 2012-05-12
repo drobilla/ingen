@@ -116,9 +116,9 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-NoteNode::apply_poly(Raul::Maid& maid, uint32_t poly)
+NoteNode::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 {
-	if (!NodeImpl::apply_poly(maid, poly))
+	if (!NodeImpl::apply_poly(context, maid, poly))
 		return false;
 
 	if (_prepared_voices) {
