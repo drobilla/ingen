@@ -140,7 +140,10 @@ void
 PortImpl::prepare_poly_buffers(BufferFactory& bufs)
 {
 	if (_prepared_buffers)
-		get_buffers(bufs, _prepared_buffers, _prepared_buffers->size());
+		get_buffers(bufs.engine().message_context(),
+		            bufs,
+		            _prepared_buffers,
+		            _prepared_buffers->size());
 }
 
 bool

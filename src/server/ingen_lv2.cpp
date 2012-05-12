@@ -214,7 +214,6 @@ public:
 	}
 
 	void flush_to_ui() {
-		assert(ThreadManager::thread_is(THREAD_PROCESS));
 		assert(_ports.size() >= 2);
 
 		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_ports[1]->buffer();

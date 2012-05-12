@@ -42,9 +42,9 @@ MessageContext::MessageContext(Engine& engine)
 }
 
 void
-MessageContext::run(NodeImpl* node, FrameTime time)
+MessageContext::run(Context& context, NodeImpl* node, FrameTime time)
 {
-	if (ThreadManager::thread_is(THREAD_PROCESS)) {
+	if (_engine.is_process_context(context)) {
 		const Request r(time, node);
 		_requests.write(sizeof(Request), &r);
 		// signal() will be called at the end of this process cycle

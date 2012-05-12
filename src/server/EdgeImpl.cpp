@@ -89,7 +89,7 @@ EdgeImpl::get_sources(Context&  context,
 		LV2_Atom obj;
 		_queue->peek(sizeof(LV2_Atom), &obj);
 		BufferRef buf = context.engine().buffer_factory()->get(
-			head()->buffer_type(), sizeof(LV2_Atom) + obj.size);
+			context, head()->buffer_type(), sizeof(LV2_Atom) + obj.size);
 		void* data = buf->port_data(PortType::ATOM, context.offset());
 		_queue->read(sizeof(LV2_Atom) + obj.size, (LV2_Atom*)data);
 		srcs[num_srcs++] = buf.get();
@@ -124,8 +124,8 @@ EdgeImpl::queue(Context& context)
 	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)src_buf->atom();
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		_queue->write(sizeof(LV2_Atom) + ev->body.size, &ev->body);
-		context.engine().message_context()->run(
-			_head->parent_node(), context.start() + ev->time.frames);
+		context.engine().message_context().run(
+			context, _head->parent_node(), context.start() + ev->time.frames);
 
 	}
 }

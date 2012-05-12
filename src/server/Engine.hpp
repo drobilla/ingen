@@ -24,6 +24,7 @@
 #include "raul/SharedPtr.hpp"
 
 #include "ProcessContext.hpp"
+#include "MessageContext.hpp"
 
 namespace Raul { class Maid; }
 
@@ -75,9 +76,18 @@ public:
 
 	void set_driver(SharedPtr<Driver> driver);
 
+	/** Return true iff any events are pending. */
 	bool pending_events();
+
+	/** Enqueue an event to be processed (non-realtime threads only). */
 	void enqueue_event(Event* ev);
+
+	/** Process events (process thread only). */
 	void process_events();
+
+	bool is_process_context(const Context& context) const {
+		return &context == &_process_context;
+	}
 
 	Ingen::Shared::World* world() const { return _world; }
 
@@ -87,11 +97,12 @@ public:
 	ControlBindings*      control_bindings() const { return _control_bindings; }
 	Driver*               driver()           const { return _driver.get(); }
 	Raul::Maid*           maid()             const { return _maid; }
-	MessageContext*       message_context()  const { return _message_context; }
 	NodeFactory*          node_factory()     const { return _node_factory; }
 	PostProcessor*        post_processor()   const { return _post_processor; }
 	PatchImpl*            root_patch()       const { return _root_patch; }
-	ProcessContext&       process_context()        { return _process_context; }
+
+	MessageContext& message_context() { return _message_context; }
+	ProcessContext& process_context() { return _process_context; }
 
 	SharedPtr<EngineStore> engine_store() const;
 
@@ -105,13 +116,14 @@ private:
 	ControlBindings*   _control_bindings;
 	SharedPtr<Driver>  _driver;
 	Raul::Maid*        _maid;
-	MessageContext*    _message_context;
 	NodeFactory*       _node_factory;
 	PreProcessor*      _pre_processor;
 	PostProcessor*     _post_processor;
 	EventWriter*       _event_writer;
 
-	PatchImpl*     _root_patch;
+	PatchImpl* _root_patch;
+
+	MessageContext _message_context;
 	ProcessContext _process_context;
 
 	bool _quit_flag;

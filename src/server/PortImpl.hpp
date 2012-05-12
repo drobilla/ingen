@@ -107,12 +107,13 @@ public:
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
 
-	virtual bool get_buffers(BufferFactory&          bufs,
+	virtual bool get_buffers(Context&                context,
+	                         BufferFactory&          bufs,
 	                         Raul::Array<BufferRef>* buffers,
 	                         uint32_t                poly) const = 0;
 
-	void setup_buffers(BufferFactory& bufs, uint32_t poly) {
-		get_buffers(bufs, _buffers, poly);
+	void setup_buffers(Context& context, BufferFactory& bufs, uint32_t poly) {
+		get_buffers(context, bufs, _buffers, poly);
 	}
 
 	virtual void connect_buffers(SampleCount offset=0);

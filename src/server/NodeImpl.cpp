@@ -23,6 +23,7 @@
 
 #include "AudioBuffer.hpp"
 #include "ClientBroadcaster.hpp"
+#include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
@@ -88,7 +89,7 @@ NodeImpl::activate(BufferFactory& bufs)
 
 	for (uint32_t p = 0; p < num_ports(); ++p) {
 		PortImpl* const port = _ports->at(p);
-		port->setup_buffers(bufs, port->poly());
+		port->setup_buffers(bufs.engine().message_context(), bufs, port->poly());
 		port->connect_buffers();
 		for (uint32_t v = 0; v < _polyphony; ++v) {
 			Buffer* const buf = port->buffer(v).get();

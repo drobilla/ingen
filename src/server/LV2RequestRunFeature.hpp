@@ -49,7 +49,8 @@ struct RequestRunFeature : public Ingen::Shared::LV2Features::Feature {
 			return LV2_WORKER_ERR_UNKNOWN;
 
 		Engine* engine = (Engine*)info->world->engine().get();
-		engine->message_context()->run(
+		engine->message_context().run(
+			engine->process_context(),
 			dynamic_cast<NodeImpl*>(info->node),
 			engine->driver()->frame_time());
 

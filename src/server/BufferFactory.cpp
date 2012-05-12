@@ -88,7 +88,10 @@ BufferFactory::default_buffer_size(LV2_URID type)
 }
 
 BufferRef
-BufferFactory::get(LV2_URID type, uint32_t capacity, bool force_create)
+BufferFactory::get(Context& context,
+                   LV2_URID type,
+                   uint32_t capacity,
+                   bool     force_create)
 {
 	Raul::AtomicPtr<Buffer>& head_ptr = free_list(type);
 	Buffer* try_head = NULL;
@@ -104,7 +107,7 @@ BufferFactory::get(LV2_URID type, uint32_t capacity, bool force_create)
 	}
 
 	if (!try_head) {
-		if (!ThreadManager::thread_is(THREAD_PROCESS)) {
+		if (!_engine.is_process_context(context)) {
 			return create(type, capacity);
 		} else {
 			assert(false);
@@ -126,8 +129,6 @@ BufferFactory::silent_buffer()
 BufferRef
 BufferFactory::create(LV2_URID type, uint32_t capacity)
 {
-	ThreadManager::assert_not_thread(THREAD_PROCESS);
-
 	Buffer* buffer = NULL;
 
 	if (capacity == 0) {

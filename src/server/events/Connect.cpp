@@ -143,7 +143,8 @@ Connect::pre_process()
 	}
 
 	_buffers = new Raul::Array<BufferRef>(_dst_input_port->poly());
-	_dst_input_port->get_buffers(*_engine.buffer_factory(),
+	_dst_input_port->get_buffers(_engine.message_context(),
+	                             *_engine.buffer_factory(),
 	                             _buffers, _dst_input_port->poly());
 
 	if (_patch->enabled())

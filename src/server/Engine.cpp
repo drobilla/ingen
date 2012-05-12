@@ -57,12 +57,12 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _broadcaster(new ClientBroadcaster())
 	, _control_bindings(NULL)
 	, _maid(new Raul::Maid(event_queue_size()))
-	, _message_context(new MessageContext(*this))
 	, _node_factory(new NodeFactory(a_world))
 	, _pre_processor(new PreProcessor())
 	, _post_processor(new PostProcessor(*this))
 	, _event_writer(new EventWriter(*this))
 	, _root_patch(NULL)
+	, _message_context(*this)
 	, _process_context(*this)
 	, _quit_flag(false)
 {
@@ -93,7 +93,6 @@ Engine::~Engine()
 	delete _pre_processor;
 	delete _post_processor;
 	delete _node_factory;
-	delete _message_context;
 	delete _control_bindings;
 	delete _broadcaster;
 	delete _event_writer;
@@ -150,7 +149,7 @@ Engine::activate()
 
 	_buffer_factory->set_block_length(_driver->block_length());
 
-	_message_context->Thread::start();
+	_message_context.Thread::start();
 
 	const Ingen::Shared::URIs& uris  = world()->uris();
 	Shared::Forge&             forge = world()->forge();
@@ -255,8 +254,8 @@ Engine::run(uint32_t sample_count)
 		_process_context, _root_patch->port_impl(1)->buffer(0).get());
 
 	// Signal message context to run if necessary
-	if (message_context()->has_requests()) {
-		message_context()->signal(_process_context);
+	if (_message_context.has_requests()) {
+		_message_context.signal(_process_context);
 	}
 }
 

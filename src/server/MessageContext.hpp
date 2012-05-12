@@ -48,7 +48,7 @@ public:
 	/** Schedule a message context run at a certain time.
 	 * Safe to call from either process thread or pre-process thread.
 	 */
-	void run(NodeImpl* node, FrameTime time);
+	void run(Context& context, NodeImpl* node, FrameTime time);
 
 protected:
 	struct Request {

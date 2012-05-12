@@ -84,9 +84,11 @@ SetPortValue::pre_process()
 	// Port is a message context port, set its value and
 	// call the plugin's message run function once
 	if (_port && _port->parent_node()->context() == Context::MESSAGE) {
-		apply(*_engine.message_context());
-		_engine.message_context()->run(_port->parent_node(),
-				_engine.driver()->frame_time() + _engine.driver()->block_length());
+		apply(_engine.message_context());
+		_engine.message_context().run(
+			_engine.message_context(),
+			_port->parent_node(),
+			_engine.driver()->frame_time() + _engine.driver()->block_length());
 	}
 
 	if (_port) {
