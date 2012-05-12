@@ -40,6 +40,8 @@ PreProcessor::~PreProcessor()
 void
 PreProcessor::event(Event* const ev)
 {
+	ThreadManager::assert_not_thread(THREAD_PROCESS);
+
 	// TODO: Probably possible to make this lock-free with CAS
 	Glib::Mutex::Lock lock(_mutex);
 
