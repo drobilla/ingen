@@ -396,10 +396,6 @@ NodeModule::property_changed(const URI& key, const Atom& value)
 	} else if (value.type() == uris.forge.Bool) {
 		if (key == uris.ingen_polyphonic) {
 			set_stacked(value.get_bool());
-		} else if (key == uris.ingen_selected) {
-			if (value.get_bool() != get_selected()) {
-				set_selected(value.get_bool());
-			}
 		} else if (key == uris.ingen_uiEmbedded) {
 			if (value.get_bool() && !_gui_widget) {
 				embed_gui(true);
@@ -435,11 +431,6 @@ NodeModule::set_selected(gboolean b)
 					win->hide_documentation();
 				}
 			}
-		}
-		if (app().signal()) {
-			app().interface()->set_property(_node->path(),
-			                                uris.ingen_selected,
-			                                app().forge().make(b));
 		}
 	}
 }

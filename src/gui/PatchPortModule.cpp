@@ -152,10 +152,6 @@ PatchPortModule::property_changed(const URI& key, const Atom& value)
 	} else if (value.type() == uris.forge.Bool) {
 		if (key == uris.ingen_polyphonic) {
 			set_stacked(value.get_bool());
-		} else if (key == uris.ingen_selected) {
-			if (value.get_bool() != get_selected()) {
-				set_selected(value.get_bool());
-			}
 		}
 	}
 }
@@ -165,11 +161,6 @@ PatchPortModule::set_selected(gboolean b)
 {
 	if (b != get_selected()) {
 		Module::set_selected(b);
-		if (app().signal())
-			app().interface()->set_property(
-				_model->path(),
-				app().uris().ingen_selected,
-				app().forge().make(b));
 	}
 }
 

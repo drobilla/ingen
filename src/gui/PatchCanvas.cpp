@@ -757,10 +757,6 @@ PatchCanvas::paste()
 			y->second = _app.forge().make(
 				y->second.get_float() + (20.0f * _paste_count));
 
-		if (i->first.parent().is_root())
-			i->second->set_property(uris.ingen_selected,
-			                        _app.forge().make(true));
-
 		builder.build(i->second);
 	}
 
