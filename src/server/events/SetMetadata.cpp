@@ -75,20 +75,20 @@ SetMetadata::SetMetadata(Engine&           engine,
 	}
 
 	/*
-	LOG(info) << "Patch " << subject << " : " << context << " {" << endl;
+	LOG(Raul::info) << "Patch " << subject << " : " << context << " {" << std::endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
-		LOG(info) << "    + " << i->first
-		          << " = " << engine.world()->forge().str(i->second)
-		          << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << endl;
+		LOG(Raul::info) << "    + " << i->first
+		                << " = " << engine.world()->forge().str(i->second)
+		                << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << std::endl;
 	}
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = remove.begin(); i != remove.end(); ++i) {
-		LOG(info) << "    - " << i->first
+		LOG(Raul::info) << "    - " << i->first
 		          << " = " << engine.world()->forge().str(i->second)
-		          << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << endl;
+		                << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << std::endl;
 	}
-	LOG(info) << "}" << endl;
+	LOG(Raul::info) << "}" << std::endl;
 	*/
 }
 
