@@ -96,7 +96,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 			PortImpl* const port   = _ports->at(j);
 			Buffer* const   buffer = port->prepared_buffer(i).get();
 			if (buffer) {
-				if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CONTROL)) {
+				if (port->is_a(PortType::CV) || port->is_a(PortType::CONTROL)) {
 					((AudioBuffer*)buffer)->set_value(port->value().get_float(), 0, 0);
 				} else {
 					buffer->clear();
