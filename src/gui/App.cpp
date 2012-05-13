@@ -376,7 +376,7 @@ App::icon_from_path(const string& path, int size)
 		buf->add_destroy_notify_callback(
 			new IconDestroyNotification(*this, make_pair(path, size)),
 			&App::icon_destroyed);
-	} catch (Glib::Error e) {
+	} catch (const Glib::Error& e) {
 		warn << "Error loading icon: " << e.what() << endl;
 	}
 	return buf;

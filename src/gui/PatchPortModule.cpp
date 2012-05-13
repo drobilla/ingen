@@ -119,10 +119,11 @@ PatchPortModule::show_human_names(bool b)
 {
 	const URIs& uris = app().uris();
 	const Atom& name = _model->get_property(uris.lv2_name);
-	if (b && name.type() == uris.forge.String)
+	if (b && name.type() == uris.forge.String) {
 		set_name(name.get_string());
-	else
+	} else {
 		set_name(_model->symbol().c_str());
+	}
 }
 
 void

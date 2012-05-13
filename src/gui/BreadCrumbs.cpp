@@ -62,8 +62,7 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 	_enable_signal = false;
 
 	// Moving to a path we already contain, just switch the active button
-	if (_breadcrumbs.size() > 0 && (path.is_parent_of(_full_path) || path == _full_path)) {
-
+	if (!_breadcrumbs.empty() && (path.is_parent_of(_full_path) || path == _full_path)) {
 		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 			if ((*i)->path() == path) {
 				(*i)->set_active(true);
@@ -82,7 +81,7 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 		_enable_signal = old_enable_signal;
 
 	// Moving to a child of the full path, just append crumbs (preserve view cache)
-	} else if (_breadcrumbs.size() > 0 && (path.is_child_of(_full_path))) {
+	} else if (!_breadcrumbs.empty() && path.is_child_of(_full_path)) {
 
 		string suffix = path.substr(_full_path.length());
 		while (suffix.length() > 0) {
