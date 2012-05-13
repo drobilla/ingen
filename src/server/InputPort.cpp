@@ -184,7 +184,7 @@ InputPort::pre_process(Context& context)
 			_buffers->at(v)->prepare_read(context);
 		}
 	} else {
-		uint32_t max_num_srcs = 0;
+		uint32_t max_num_srcs = 1;
 		for (Edges::const_iterator e = _edges.begin(); e != _edges.end(); ++e) {
 			max_num_srcs += e->tail()->poly();
 		}
