@@ -79,7 +79,6 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (_polyphony == poly)
 		return true;
 
-	SharedPtr<LV2Info> info = _lv2_plugin->lv2_info();
 	_prepared_instances = new Instances(poly, *_instances, SharedPtr<void>());
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		_prepared_instances->at(i) = SharedPtr<void>(
