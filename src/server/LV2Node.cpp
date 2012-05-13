@@ -259,10 +259,10 @@ LV2Node::instantiate(BufferFactory& bufs)
 			LILV_FOREACH(nodes, i, defaults) {
 				const LilvNode* d = lilv_nodes_get(defaults, i);
 				if (lilv_node_is_string(d)) {
-					const char*  str_val     = lilv_node_as_string(d);
-					const size_t str_val_len = strlen(str_val);
+					const char*    str_val     = lilv_node_as_string(d);
+					const uint32_t str_val_len = strlen(str_val);
 					val = forge.alloc(str_val);
-					port_buffer_size = str_val_len;
+					port_buffer_size = std::max(port_buffer_size, str_val_len);
 				}
 			}
 
@@ -271,12 +271,13 @@ LV2Node::instantiate(BufferFactory& bufs)
 			LILV_FOREACH(nodes, i, sizes) {
 				const LilvNode* d = lilv_nodes_get(sizes, i);
 				if (lilv_node_is_int(d)) {
-					size_t size_val = lilv_node_as_int(d);
-					port_buffer_size = size_val;
-					Raul::info << "Atom port " << path() << " buffer size "
-					           << port_buffer_size << std::endl;
+					uint32_t size_val = lilv_node_as_int(d);
+					port_buffer_size = std::max(port_buffer_size, size_val);
 				}
 			}
+
+			Raul::info << "Atom port " << path() << " buffer size "
+			           << port_buffer_size << std::endl;
 		}
 
 		enum { UNKNOWN, INPUT, OUTPUT } direction = UNKNOWN;
