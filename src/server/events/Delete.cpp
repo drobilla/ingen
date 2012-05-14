@@ -182,7 +182,7 @@ Delete::post_process()
 		} else if (_patch_port_listnode) {
 			delete _patch_port_listnode;
 		}
-		
+
 		respond(SUCCESS);
 		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event) {
