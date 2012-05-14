@@ -178,9 +178,9 @@ Delete::post_process()
 	} else if (_patch_node_listnode || _patch_port_listnode) {
 		if (_patch_node_listnode) {
 			_node->deactivate();
-			_engine.maid()->push(_patch_node_listnode);
+			delete _patch_node_listnode;
 		} else if (_patch_port_listnode) {
-			_engine.maid()->push(_patch_port_listnode);
+			delete _patch_port_listnode;
 		}
 		
 		respond(SUCCESS);
@@ -198,7 +198,7 @@ Delete::post_process()
 		_engine_port->destroy();
 	}
 
-	_engine.maid()->push(_garbage);
+	delete _garbage;
 }
 
 } // namespace Events
