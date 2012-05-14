@@ -50,10 +50,10 @@ namespace Server {
  * (It _will_ crash!)
  */
 LV2Node::LV2Node(LV2Plugin*    plugin,
-				 const string& name,
-				 bool          polyphonic,
-				 PatchImpl*    parent,
-				 SampleRate    srate)
+                 const string& name,
+                 bool          polyphonic,
+                 PatchImpl*    parent,
+                 SampleRate    srate)
 	: NodeImpl(plugin, name, polyphonic, parent, srate)
 	, _lv2_plugin(plugin)
 	, _instances(NULL)
@@ -82,9 +82,9 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	_prepared_instances = new Instances(poly, *_instances, SharedPtr<void>());
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		_prepared_instances->at(i) = SharedPtr<void>(
-				lilv_plugin_instantiate(
-					_lv2_plugin->lilv_plugin(), _srate, _features->array()),
-				lilv_instance_free);
+			lilv_plugin_instantiate(
+				_lv2_plugin->lilv_plugin(), _srate, _features->array()),
+			lilv_instance_free);
 
 		if (!_prepared_instances->at(i)) {
 			Raul::error << "Failed to instantiate plugin" << endl;
@@ -157,8 +157,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		(*_instances)[i] = SharedPtr<void>(
-				lilv_plugin_instantiate(plug, _srate, _features->array()),
-				lilv_instance_free);
+			lilv_plugin_instantiate(plug, _srate, _features->array()),
+			lilv_instance_free);
 
 		if (!instance(i)) {
 			Raul::error << "Failed to instantiate plugin " << _lv2_plugin->uri()
@@ -399,8 +399,9 @@ LV2Node::set_port_buffer(uint32_t    voice,
                          SampleCount offset)
 {
 	NodeImpl::set_port_buffer(voice, port_num, buf, offset);
-	lilv_instance_connect_port(instance(voice), port_num,
-			buf ? buf->port_data(_ports->at(port_num)->type(), offset) : NULL);
+	lilv_instance_connect_port(
+		instance(voice), port_num,
+	    buf ? buf->port_data(_ports->at(port_num)->type(), offset) : NULL);
 }
 
 } // namespace Server

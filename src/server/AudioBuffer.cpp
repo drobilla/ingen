@@ -145,25 +145,21 @@ AudioBuffer::copy(Context& context, const Buffer* src)
 		return;
 	}
 
-	// Control => Control
 	if (src_abuf->is_control() == is_control()) {
+		// Control => Control
 		Buffer::copy(context, src);
-
-	// Audio => Audio
 	} else if (!src_abuf->is_control() && !is_control()) {
+		// Audio => Audio
 		copy(src_abuf->data(),
-				context.offset(), context.offset() + context.nframes() - 1);
-
-	// Audio => Control
+		     context.offset(), context.offset() + context.nframes() - 1);
 	} else if (!src_abuf->is_control() && is_control()) {
+		// Audio => Control
 		data()[0] = src_abuf->data()[context.offset()];
-
-	// Control => Audio
 	} else if (src_abuf->is_control() && !is_control()) {
+		// Control => Audio
 		data()[context.offset()] = src_abuf->data()[0];
-
-	// Control => Audio or Audio => Control
 	} else {
+		// Control => Audio or Audio => Control
 		set_block(src_abuf->data()[0], 0, nframes());
 	}
 }

@@ -76,13 +76,13 @@ void
 JackPort::create()
 {
 	_jack_port = jack_port_register(
-			_driver->jack_client(),
-			ingen_jack_port_name(_patch_port->path()).c_str(),
-			(_patch_port->is_a(PortType::AUDIO))
-				? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE,
-			(_patch_port->is_input())
-				? JackPortIsInput : JackPortIsOutput,
-			0);
+		_driver->jack_client(),
+		ingen_jack_port_name(_patch_port->path()).c_str(),
+		(_patch_port->is_a(PortType::AUDIO))
+		? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE,
+		(_patch_port->is_input())
+		? JackPortIsInput : JackPortIsOutput,
+		0);
 
 	if (_jack_port == NULL) {
 		LOG(Raul::error)(Raul::fmt("Failed to register port %1%\n")
@@ -203,7 +203,7 @@ JackDriver::attach(const std::string& server_name,
 {
 	assert(!_client);
 	if (!jack_client) {
-		#ifdef INGEN_JACK_SESSION
+#ifdef INGEN_JACK_SESSION
 		const std::string uuid = _engine.world()->jack_uuid();
 		if (!uuid.empty()) {
 			_client = jack_client_open(client_name.c_str(),
@@ -212,15 +212,15 @@ JackDriver::attach(const std::string& server_name,
 			LOG(Raul::info)(Raul::fmt("Connected to JACK as `%1%' (UUID `%2%')\n")
 			                % client_name.c_str() % uuid);
 		}
-		#endif
+#endif
 
 		// Try supplied server name
 		if (!_client && !server_name.empty()) {
 			if ((_client = jack_client_open(client_name.c_str(),
-			                               JackServerName, NULL,
+			                                JackServerName, NULL,
 			                                server_name.c_str()))) {
 				LOG(Raul::info)(Raul::fmt("Connected to JACK server `%1%'\n")
-				          % server_name);
+				                % server_name);
 			}
 		}
 

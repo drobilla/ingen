@@ -73,7 +73,7 @@ Move::pre_process()
 	}
 
 	SharedPtr< Raul::Table< Raul::Path, SharedPtr<GraphObject> > > removed
-			= _engine.engine_store()->remove(_store_iterator);
+		= _engine.engine_store()->remove(_store_iterator);
 
 	assert(removed->size() > 0);
 

@@ -119,7 +119,7 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 		// FIXME: not thread safe
 		_param_port->set_value(context.engine().world()->forge().make(control_num));
 		((AudioBuffer*)_param_port->buffer(0).get())->set_value(
-				(float)control_num, context.start(), context.end());
+			(float)control_num, context.start(), context.end());
 		_param_port->broadcast_value(context, true);
 		_learning = false;
 	}

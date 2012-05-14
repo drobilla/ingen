@@ -39,13 +39,12 @@ namespace Internals {
 class ControllerNode : public NodeImpl
 {
 public:
-	ControllerNode(
-			InternalPlugin*    plugin,
-			BufferFactory&     bufs,
-			const std::string& path,
-			bool               polyphonic,
-			PatchImpl*         parent,
-			SampleRate         srate);
+	ControllerNode(InternalPlugin*    plugin,
+	               BufferFactory&     bufs,
+	               const std::string& path,
+	               bool               polyphonic,
+	               PatchImpl*         parent,
+	               SampleRate         srate);
 
 	void process(ProcessContext& context);
 

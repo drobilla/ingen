@@ -168,7 +168,7 @@ PatchImpl::process(ProcessContext& context)
 
 	// Queue any cross-context edges
 	for (CompiledPatch::QueuedEdges::iterator i = _compiled_patch->queued_edges.begin();
-			i != _compiled_patch->queued_edges.end(); ++i) {
+	     i != _compiled_patch->queued_edges.end(); ++i) {
 		(*i)->queue(context);
 	}
 
@@ -376,17 +376,19 @@ PatchImpl::remove_port(const string& symbol)
 		}
 	}
 
-	if (!found)
-	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i) {
-		if ((*i)->symbol() == symbol) {
-			ret = _outputs.erase(i);
-			found = true;
-			break;
+	if (!found) {
+		for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i) {
+			if ((*i)->symbol() == symbol) {
+				ret = _outputs.erase(i);
+				found = true;
+				break;
+			}
 		}
 	}
 
-	if ( ! found)
+	if (!found) {
 		Raul::error << "[PatchImpl::remove_port] Port not found!" << endl;
+	}
 
 	return ret;
 }

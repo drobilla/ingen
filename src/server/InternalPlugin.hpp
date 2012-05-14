@@ -38,8 +38,9 @@ class BufferFactory;
 class InternalPlugin : public PluginImpl
 {
 public:
-	InternalPlugin(Shared::URIs& uris,
-			const std::string& uri, const std::string& symbol);
+	InternalPlugin(Shared::URIs&      uris,
+	               const std::string& uri,
+	               const std::string& symbol);
 
 	NodeImpl* instantiate(BufferFactory&     bufs,
 	                      const std::string& name,

@@ -47,13 +47,12 @@ InternalPlugin* NoteNode::internal_plugin(Shared::URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Note", "note");
 }
 
-NoteNode::NoteNode(
-		InternalPlugin*    plugin,
-		BufferFactory&     bufs,
-		const std::string& path,
-		bool               polyphonic,
-		PatchImpl*         parent,
-		SampleRate         srate)
+NoteNode::NoteNode(InternalPlugin*    plugin,
+                   BufferFactory&     bufs,
+                   const std::string& path,
+                   bool               polyphonic,
+                   PatchImpl*         parent,
+                   SampleRate         srate)
 	: NodeImpl(plugin, path, polyphonic, parent, srate)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)
@@ -232,7 +231,7 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 
 #ifdef RAUL_LOG_DEBUG
 	LOG(debug) << "Note " << (int)note_num << " on @ " << time
-		<< ". Voice " << voice_num << " / " << _polyphony << endl;
+	           << ". Voice " << voice_num << " / " << _polyphony << endl;
 #endif
 
 	// Update stolen key, if applicable
@@ -259,17 +258,17 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(_keys[voice->note].voice == voice_num);
 
 	((AudioBuffer*)_freq_port->buffer(voice_num).get())->set_value(
-			note_to_freq(note_num), context.start(), time);
+		note_to_freq(note_num), context.start(), time);
 	((AudioBuffer*)_vel_port->buffer(voice_num).get())->set_value(
-			velocity/127.0, context.start(), time);
+		velocity/127.0, context.start(), time);
 	((AudioBuffer*)_gate_port->buffer(voice_num).get())->set_value(
-			1.0f, context.start(), time);
+		1.0f, context.start(), time);
 
 	// trigger (one sample)
 	((AudioBuffer*)_trig_port->buffer(voice_num).get())->set_value(
-			1.0f, context.start(), time);
+		1.0f, context.start(), time);
 	((AudioBuffer*)_trig_port->buffer(voice_num).get())->set_value(
-			0.0f, context.start(), time + 1);
+		0.0f, context.start(), time + 1);
 
 	assert(key->state == Key::Key::ON_ASSIGNED);
 	assert(voice->state == Voice::Voice::ACTIVE);

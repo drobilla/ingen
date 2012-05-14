@@ -32,18 +32,17 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-DuplexPort::DuplexPort(
-		BufferFactory&    bufs,
-		NodeImpl*         parent,
-		const string&     name,
-		uint32_t          index,
-		bool              polyphonic,
-		uint32_t          poly,
-		PortType          type,
-		LV2_URID          buffer_type,
-		const Raul::Atom& value,
-		size_t            buffer_size,
-		bool              is_output)
+DuplexPort::DuplexPort(BufferFactory&    bufs,
+                       NodeImpl*         parent,
+                       const string&     name,
+                       uint32_t          index,
+                       bool              polyphonic,
+                       uint32_t          poly,
+                       PortType          type,
+                       LV2_URID          buffer_type,
+                       const Raul::Atom& value,
+                       size_t            buffer_size,
+                       bool              is_output)
 	: PortImpl(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
 	, InputPort(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
 	, OutputPort(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
@@ -71,15 +70,17 @@ DuplexPort::get_buffers(Context&                context,
 void
 DuplexPort::pre_process(Context& context)
 {
-	// If we're a patch output, we're an input from the internal perspective.
-	// Prepare buffers for write (so plugins can deliver to them)
 	if (_is_output) {
-		for (uint32_t v = 0; v < _poly; ++v)
+		/* This is a patch output, which is an input from the internal
+		   perspective.  Prepare buffers for write so plugins can deliver to
+		   them */
+		for (uint32_t v = 0; v < _poly; ++v) {
 			_buffers->at(v)->prepare_write(context);
-
-	// If we're a patch input, were an output from the internal perspective.
-	// Do whatever a normal node's input port does to prepare input for reading.
+		}
 	} else {
+		/* This is a a patch input, which is an output from the internal
+		   perspective.  Do whatever a normal node's input port does to prepare
+		   input for reading. */
 		InputPort::pre_process(context);
 	}
 }
@@ -88,9 +89,10 @@ DuplexPort::pre_process(Context& context)
 void
 DuplexPort::post_process(Context& context)
 {
-	// If we're a patch output, we're an input from the internal perspective.
-	// Mix down input delivered by plugins so output (external perspective) is ready.
 	if (_is_output) {
+		/* This is a patch output, which is an input from the internal
+		   perspective.  Mix down input delivered by plugins so output
+		   (external perspective) is ready. */
 		InputPort::pre_process(context);
 
 		if (_broadcast)
@@ -100,4 +102,3 @@ DuplexPort::post_process(Context& context)
 
 } // namespace Server
 } // namespace Ingen
-

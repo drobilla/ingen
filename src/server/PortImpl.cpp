@@ -171,8 +171,8 @@ PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	if (is_a(PortType::CONTROL) || is_a(PortType::CV))
 		for (uint32_t v = 0; v < _poly; ++v)
 			if (_buffers->at(v))
-				boost::static_pointer_cast<AudioBuffer>(_buffers->at(v))->set_value(
-						_value.get_float(), 0, 0);
+				boost::static_pointer_cast<AudioBuffer>(
+					_buffers->at(v))->set_value(_value.get_float(), 0, 0);
 
 	assert(_buffers->size() >= poly);
 	assert(this->poly() == poly);

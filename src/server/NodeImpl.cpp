@@ -231,7 +231,7 @@ NodeImpl::set_port_buffer(uint32_t    voice,
                           SampleCount offset)
 {
 	/*std::cout << path() << " set port " << port_num << " voice " << voice
-			<< " buffer " << buf << " offset " << offset << std::endl;*/
+	  << " buffer " << buf << " offset " << offset << std::endl;*/
 }
 
 } // namespace Server

@@ -32,7 +32,7 @@ namespace Ingen {
 namespace Server {
 
 PostProcessor::PostProcessor(Engine& engine)
-    : _engine(engine)
+	: _engine(engine)
 	, _max_time(0)
 {
 }

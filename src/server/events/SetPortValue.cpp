@@ -139,7 +139,7 @@ SetPortValue::apply(Context& context)
 
 			for (uint32_t v = 0; v < _port->poly(); ++v) {
 				((AudioBuffer*)_port->buffer(v).get())->set_value(
-						_value.get_float(), start, _time);
+					_value.get_float(), start, _time);
 			}
 			return;
 		}

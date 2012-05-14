@@ -227,7 +227,7 @@ ControlBindings::port_value_to_control(PortImpl*         port,
 
 	if (normal < 0.0f) {
 		LOG(Raul::warn) << "Value " << value << " (normal " << normal << ") for "
-			<< port->path() << " out of range" << endl;
+		                << port->path() << " out of range" << endl;
 		normal = 0.0f;
 	}
 
@@ -266,7 +266,7 @@ ControlBindings::set_port_value(ProcessContext& context,
 
 	for (uint32_t v = 0; v < port->poly(); ++v)
 		reinterpret_cast<AudioBuffer*>(port->buffer(v).get())->set_value(
-				port_value.get_float(), context.start(), context.start());
+			port_value.get_float(), context.start(), context.start());
 
 	const Notification note = Notification::make(
 		Notification::PORT_VALUE, context.start(), port, port_value);

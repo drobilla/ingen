@@ -79,7 +79,7 @@ CreatePatch::pre_process()
 	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 
 	_patch = new PatchImpl(_engine, path.symbol(), poly, _parent,
-			_engine.driver()->sample_rate(), _poly);
+	                       _engine.driver()->sample_rate(), _poly);
 	_patch->properties().insert(_properties.begin(), _properties.end());
 	_patch->add_property(uris.rdf_type, uris.ingen_Patch);
 	_patch->add_property(uris.rdf_type,

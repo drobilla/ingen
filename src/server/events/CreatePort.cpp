@@ -114,15 +114,16 @@ CreatePort::pre_process()
 				std::make_pair(uris.lv2_index,
 				               _engine.world()->forge().make(int32_t(old_num_ports))));
 		} else if (index_i->second.type() != uris.forge.Int
-				|| index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
+		           || index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
 			Event::pre_process();
 			_status = BAD_INDEX;
 			return;
 		}
 
 		Resource::Properties::const_iterator poly_i = _properties.find(uris.ingen_polyphonic);
-		bool polyphonic = (poly_i != _properties.end() && poly_i->second.type() == uris.forge.Bool
-				&& poly_i->second.get_bool());
+		bool polyphonic = (poly_i != _properties.end() &&
+		                   poly_i->second.type() == uris.forge.Bool &&
+		                   poly_i->second.get_bool());
 
 		_patch_port = _patch->create_port(*_engine.buffer_factory(), _path.symbol(),
 		                                  _port_type, _buffer_type, buffer_size,
@@ -149,7 +150,7 @@ CreatePort::pre_process()
 
 			if (!_patch->parent()) {
 				_engine_port = _engine.driver()->create_port(
-						dynamic_cast<DuplexPort*>(_patch_port));
+					dynamic_cast<DuplexPort*>(_patch_port));
 			}
 
 			assert(_ports_array->size() == _patch->num_ports_non_rt());

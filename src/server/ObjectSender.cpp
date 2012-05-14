@@ -88,7 +88,7 @@ ObjectSender::send_patch(Interface*       client,
 
 		// Send edges
 		for (PatchImpl::Edges::const_iterator j = patch->edges().begin();
-				j != patch->edges().end(); ++j)
+		     j != patch->edges().end(); ++j)
 			client->connect(j->second->tail_path(), j->second->head_path());
 	}
 

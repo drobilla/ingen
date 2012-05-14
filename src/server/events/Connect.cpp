@@ -85,8 +85,8 @@ Connect::pre_process()
 	}
 
 	if (src_node->parent() != dst_node->parent()
-			&& src_node != dst_node->parent()
-			&& src_node->parent() != dst_node) {
+	    && src_node != dst_node->parent()
+	    && src_node->parent() != dst_node) {
 		_status = PARENT_DIFFERS;
 		Event::pre_process();
 		return;
@@ -98,20 +98,19 @@ Connect::pre_process()
 		return;
 	}
 
-	// Edge to a patch port from inside the patch
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
+		// Edge to a patch port from inside the patch
 		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
-		if (src_node->parent() == dst_node)
+		if (src_node->parent() == dst_node) {
 			_patch = dynamic_cast<PatchImpl*>(dst_node);
-		else
+		} else {
 			_patch = dynamic_cast<PatchImpl*>(src_node);
-
-	// Edge from a patch input to a patch output (pass through)
+		}
 	} else if (src_node == dst_node && dynamic_cast<PatchImpl*>(src_node)) {
+		// Edge from a patch input to a patch output (pass through)
 		_patch = dynamic_cast<PatchImpl*>(src_node);
-
-	// Normal edge between nodes with the same parent
 	} else {
+		// Normal edge between nodes with the same parent
 		_patch = src_node->parent_patch();
 	}
 

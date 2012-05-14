@@ -32,8 +32,9 @@ namespace Server {
 
 using namespace Internals;
 
-InternalPlugin::InternalPlugin(Shared::URIs& uris,
-		const std::string& uri, const std::string& symbol)
+InternalPlugin::InternalPlugin(Shared::URIs&      uris,
+                               const std::string& uri,
+                               const std::string& symbol)
 	: PluginImpl(uris, Plugin::Internal, uri)
 	, _symbol(symbol)
 {

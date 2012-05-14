@@ -70,7 +70,7 @@ set_denormal_flags()
 		}
 	} else {
 		Raul::warn << "This code has been built with SSE support, but your processor does"
-			<< " not support the SSE instruction set, exiting." << std::endl;
+		           << " not support the SSE instruction set, exiting." << std::endl;
 		exit(EXIT_FAILURE);
 	}
 #endif

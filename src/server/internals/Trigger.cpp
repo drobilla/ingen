@@ -43,13 +43,12 @@ InternalPlugin* TriggerNode::internal_plugin(Shared::URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Trigger", "trigger");
 }
 
-TriggerNode::TriggerNode(
-		InternalPlugin*    plugin,
-		BufferFactory&     bufs,
-		const std::string& path,
-		bool               polyphonic,
-		PatchImpl*         parent,
-		SampleRate         srate)
+TriggerNode::TriggerNode(InternalPlugin*    plugin,
+                         BufferFactory&     bufs,
+                         const std::string& path,
+                         bool               polyphonic,
+                         PatchImpl*         parent,
+                         SampleRate         srate)
 	: NodeImpl(plugin, path, false, parent, srate)
 	, _learning(false)
 {
@@ -136,7 +135,7 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 		// FIXME
 		//_note_port->set_value(note_num);
 		((AudioBuffer*)_note_port->buffer(0).get())->set_value(
-				(float)note_num, context.start(), context.end());
+			(float)note_num, context.start(), context.end());
 		_note_port->broadcast_value(context, true);
 		_learning = false;
 	}

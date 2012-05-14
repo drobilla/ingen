@@ -38,7 +38,7 @@
 #define LOG(s) s << "[DelayNode] "
 
 #define CALC_DELAY(delaytime) \
-        (f_clamp (delaytime * (float)sample_rate, 1.0f, (float)(buffer_mask + 1)))
+	(f_clamp (delaytime * (float)sample_rate, 1.0f, (float)(buffer_mask + 1)))
 
 using namespace std;
 
@@ -52,13 +52,12 @@ InternalPlugin* DelayNode::internal_plugin(Shared::URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Delay", "delay");
 }
 
-DelayNode::DelayNode(
-		InternalPlugin*    plugin,
-		BufferFactory&     bufs,
-		const std::string& path,
-		bool               polyphonic,
-		PatchImpl*         parent,
-		SampleRate         srate)
+DelayNode::DelayNode(InternalPlugin*    plugin,
+                     BufferFactory&     bufs,
+                     const std::string& path,
+                     bool               polyphonic,
+                     PatchImpl*         parent,
+                     SampleRate         srate)
 	: NodeImpl(plugin, path, polyphonic, parent, srate)
 	, _buffer(0)
 	, _buffer_length(0)
@@ -134,9 +133,10 @@ static inline float f_clamp(float x, float a, float b)
 static inline float cube_interp(const float fr, const float inm1, const float
                                 in, const float inp1, const float inp2)
 {
-	return in + 0.5f * fr * (inp1 - inm1 +
-	 fr * (4.0f * inp1 + 2.0f * inm1 - 5.0f * in - inp2 +
-	 fr * (3.0f * (in - inp1) - inm1 + inp2)));
+	return in + 0.5f * fr * (
+		inp1 - inm1 + fr * (
+			4.0f * inp1 + 2.0f * inm1 - 5.0f * in - inp2 + fr * (
+				3.0f * (in - inp1) - inm1 + inp2)));
 }
 
 void
@@ -171,10 +171,10 @@ DelayNode::process(ProcessContext& context)
 		for (uint32_t i = 0; i < sample_count; i++) {
 			int64_t read_phase = write_phase - (int64_t)delay_samples;
 			const float read = cube_interp(frac,
-					buffer_at(read_phase - 1),
-					buffer_at(read_phase),
-					buffer_at(read_phase + 1),
-					buffer_at(read_phase + 2));
+			                               buffer_at(read_phase - 1),
+			                               buffer_at(read_phase),
+			                               buffer_at(read_phase + 1),
+			                               buffer_at(read_phase + 2));
 			buffer_at(write_phase++) = in[i];
 			out[i] = read;
 		}
@@ -189,10 +189,10 @@ DelayNode::process(ProcessContext& context)
 			const int64_t idelay_samples = (int64_t)delay_samples;
 			const float   frac           = delay_samples - idelay_samples;
 			const float   read           = cube_interp(frac,
-					buffer_at(read_phase - 1),
-					buffer_at(read_phase),
-					buffer_at(read_phase + 1),
-					buffer_at(read_phase + 2));
+			                                           buffer_at(read_phase - 1),
+			                                           buffer_at(read_phase),
+			                                           buffer_at(read_phase + 1),
+			                                           buffer_at(read_phase + 2));
 			buffer_at(write_phase) = in[i];
 			out[i] = read;
 		}
