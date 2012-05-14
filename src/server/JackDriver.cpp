@@ -427,8 +427,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 void
 JackDriver::_thread_init_cb()
 {
-	Raul::Thread* thread = &Raul::Thread::get();
-	thread->set_name("Jack");
+	Raul::Thread* thread = &Raul::Thread::get("Jack");
 	ThreadManager::set_flag(THREAD_PROCESS);
 	ThreadManager::set_flag(THREAD_IS_REAL_TIME);
 	_jack_threads.push_back(SharedPtr<Raul::Thread>(thread));

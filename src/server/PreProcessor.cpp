@@ -26,8 +26,8 @@ namespace Ingen {
 namespace Server {
 
 PreProcessor::PreProcessor()
+	: Raul::Slave("PreProcessor")
 {
-	set_name("PreProcessor");
 	start();
 }
 

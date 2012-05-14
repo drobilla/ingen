@@ -34,13 +34,13 @@ namespace Socket {
 SocketReader::SocketReader(Ingen::Shared::World& world,
                            Interface&            iface,
                            SharedPtr<Socket>     sock)
-	: _world(world)
+	: Raul::Thread("SocketReader")
+	, _world(world)
 	, _iface(iface)
 	, _inserter(NULL)
 	, _msg_node(NULL)
 	, _socket(sock)
 {
-	set_name("SocketReader");
 	start();
 }
 

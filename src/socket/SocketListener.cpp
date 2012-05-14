@@ -38,12 +38,11 @@ namespace Ingen {
 namespace Socket {
 
 SocketListener::SocketListener(Ingen::Shared::World& world)
-	: _world(world)
+	: Raul::Thread("SocketListener")
+	, _world(world)
 	, _unix_sock(Socket::UNIX)
 	, _net_sock(Socket::TCP)
 {
-	set_name("SocketListener");
-
 	// Create UNIX socket
 	_unix_path = world.conf().option("socket").get_string();
 	const std::string unix_uri = "unix://" + _unix_path;

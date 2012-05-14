@@ -17,8 +17,6 @@
 #ifndef INGEN_ENGINE_PROCESSSLAVE_HPP
 #define INGEN_ENGINE_PROCESSSLAVE_HPP
 
-#include <sstream>
-
 #include "raul/Array.hpp"
 #include "raul/AtomicInt.hpp"
 #include "raul/Slave.hpp"
@@ -37,22 +35,19 @@ class CompiledPatch;
 class ProcessSlave : protected Raul::Slave {
 public:
 	ProcessSlave(Engine& engine, bool realtime)
-		: _engine(engine)
+		: Raul::Slave((Raul::fmt("Process Slave %1%") % _next_id).str())
+		, _engine(engine)
 		, _context(NULL)
 		, _id(_next_id++)
 		, _index(0)
 		, _state(STATE_FINISHED)
 		, _compiled_patch(NULL)
 	{
-		std::stringstream ss;
-		ss << "Process Slave ";
-		ss << _id;
-		set_name(ss.str());
-
 		start();
 
-		if (realtime)
-			set_scheduling(SCHED_FIFO, 40);
+		if (realtime) {
+			set_scheduling(true, 40);
+		}
 	}
 
 	~ProcessSlave() {

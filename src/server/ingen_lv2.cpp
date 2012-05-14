@@ -364,7 +364,8 @@ class MainThread : public Raul::Thread
 public:
 	explicit MainThread(SharedPtr<Engine> engine,
 	                    LV2Driver*        driver)
-		: _engine(engine)
+		: Raul::Thread("Main")
+		, _engine(engine)
 		, _driver(driver)
 	{}
 
@@ -499,7 +500,6 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->set_driver(SharedPtr<Ingen::Server::Driver>(driver));
 
 	plugin->main = new MainThread(engine, driver);
-	plugin->main->set_name("Main");
 
 	SharedPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
 	interface->set_respondee(client);

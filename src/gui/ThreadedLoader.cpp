@@ -30,11 +30,10 @@ namespace Ingen {
 namespace GUI {
 
 ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
-	: _app(app)
+	: Raul::Slave("Loader")
+	, _app(app)
 	, _engine(engine)
 {
-	set_name("Loader");
-
 	if (parser())
 		start();
 	else
