@@ -79,7 +79,10 @@ namespace Server {
 
 class LV2Driver;
 
-void handle_message(LV2Driver* driver, const LV2_Atom* msg);
+void enqueue_message(
+	ProcessContext& context, LV2Driver* driver, const LV2_Atom* msg);
+
+void signal_main(ProcessContext& context, LV2Driver* driver);
 
 class LV2Port : public EnginePort
 {
@@ -98,10 +101,16 @@ public:
 			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 			patch_buf->copy((Sample*)_buffer, 0, context.nframes() - 1);
 		} else {
-			LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_buffer;
+			LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)_buffer;
+			bool               enqueued = false;
 			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-				// FIXME: Not RT safe, need to send these through a ring
-				handle_message(_driver, &ev->body);
+				// TODO: Only enqueue appropriate atoms
+				enqueue_message(context, _driver, &ev->body);
+				enqueued = true;
+			}
+
+			if (enqueued) {
+				signal_main(context, _driver);
 			}
 		}
 	}
@@ -130,6 +139,7 @@ private:
 public:
 	LV2Driver(Engine& engine, SampleCount buffer_size, SampleCount sample_rate)
 		: _engine(engine)
+		, _main_sem(0)
 		, _reader(engine.world()->uri_map(),
 		          engine.world()->uris(),
 		          engine.world()->forge(),
@@ -137,6 +147,7 @@ public:
 		, _writer(engine.world()->uri_map(),
 		          engine.world()->uris(),
 		          *this)
+		, _from_ui(buffer_size * sizeof(float))  // FIXME: size
 		, _to_ui(buffer_size * sizeof(float))  // FIXME: size
 		, _root_patch(NULL)
 		, _buffer_size(buffer_size)
@@ -152,10 +163,9 @@ public:
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			(*i)->pre_process(_engine.process_context());
 
-		_engine.process_events();
-
-		if (_root_patch)
-			_root_patch->process(_engine.process_context());
+		if (_engine.run(nframes) > 0) {
+			_main_sem.post();
+		}
 
 		flush_to_ui();
 
@@ -163,6 +173,11 @@ public:
 			(*i)->post_process(_engine.process_context());
 
 		_frame_time += nframes;
+	}
+
+	virtual void deactivate() {
+		_engine.quit();
+		_main_sem.post();
 	}
 
 	virtual void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
@@ -203,6 +218,20 @@ public:
 		return NULL;
 	}
 
+	/** Called in run thread for events received at control input port. */
+	void enqueue_message(const LV2_Atom* atom) {
+		if (_from_ui.write(lv2_atom_total_size(atom), atom) == 0) {
+#ifndef NDEBUG
+			Raul::error << "Control input buffer overflow" << std::endl;
+#endif
+		}
+	}
+
+	Raul::Semaphore& main_sem() { return _main_sem; }
+
+	/** AtomSink::write implementation called by the PostProcessor in the main
+	 * thread to write responses to the UI.
+	 */
 	void write(const LV2_Atom* atom) {
 		// Called from post-processor in main thread
 		while (_to_ui.write(lv2_atom_total_size(atom), atom) == 0) {
@@ -211,6 +240,30 @@ public:
 			_to_ui_overflow_sem.wait();
 			_to_ui_overflow = false;
 		}
+	}
+
+	void consume_from_ui() {
+		const uint32_t read_space = _from_ui.read_space();
+		void*          buf        = NULL;
+		for (uint32_t read = 0; read < read_space;) {
+			LV2_Atom atom;
+			if (!_from_ui.read(sizeof(LV2_Atom), &atom)) {
+				Raul::error << "Error reading head from from-UI ring" << std::endl;
+				break;
+			}
+
+			buf = realloc(buf, sizeof(LV2_Atom) + atom.size);
+			memcpy(buf, &atom, sizeof(LV2_Atom));
+
+			if (!_from_ui.read(atom.size, (char*)buf + sizeof(LV2_Atom))) {
+				Raul::error << "Error reading body from from-UI ring" << std::endl;
+				break;
+			}
+
+			_reader.write((LV2_Atom*)buf);
+			read += sizeof(LV2_Atom) + atom.size;
+		}
+		free(buf);
 	}
 
 	void flush_to_ui() {
@@ -264,17 +317,18 @@ public:
 	virtual SampleCount sample_rate()  const { return _sample_rate; }
 	virtual SampleCount frame_time()   const { return _frame_time;}
 
-	virtual bool            is_realtime() const { return true; }
-	//virtual ProcessContext& context()           { return _context; }
-	Shared::AtomReader&     reader()            { return _reader; }
-	Shared::AtomWriter&     writer()            { return _writer; }
+	virtual bool        is_realtime() const { return true; }
+	Shared::AtomReader& reader()            { return _reader; }
+	Shared::AtomWriter& writer()            { return _writer; }
 
 	Ports& ports() { return _ports; }
 
 private:
 	Engine&            _engine;
+	Raul::Semaphore    _main_sem;
 	Shared::AtomReader _reader;
 	Shared::AtomWriter _writer;
+	Raul::RingBuffer   _from_ui;
 	Raul::RingBuffer   _to_ui;
 	PatchImpl*         _root_patch;
 	SampleCount        _buffer_size;
@@ -286,9 +340,15 @@ private:
 };
 
 void
-handle_message(LV2Driver* driver, const LV2_Atom* msg)
+enqueue_message(ProcessContext& context, LV2Driver* driver, const LV2_Atom* msg)
 {
-	driver->reader().write(msg);
+	driver->enqueue_message(msg);
+}
+
+void
+signal_main(ProcessContext& context, LV2Driver* driver)
+{
+	driver->main_sem().post();
 }
 
 } // namespace Server
@@ -302,16 +362,30 @@ using namespace Ingen::Server;
 class MainThread : public Raul::Thread
 {
 public:
-	explicit MainThread(SharedPtr<Engine> engine) : _engine(engine) {}
+	explicit MainThread(SharedPtr<Engine> engine,
+	                    LV2Driver*        driver)
+		: _engine(engine)
+		, _driver(driver)
+	{}
 
 private:
 	virtual void _run() {
-		while (_engine->main_iteration()) {
-			Glib::usleep(125000);  // 1/8 second
+		while (true) {
+			// Wait until there is work to be done
+			_driver->main_sem().wait();
+
+			// Convert pending messages to events and push to pre processor
+			_driver->consume_from_ui();
+
+			// Run post processor and maid to finalise events from last time
+			if (!_engine->main_iteration()) {
+				return;
+			}
 		}
 	}
 
 	SharedPtr<Engine> _engine;
+	LV2Driver*        _driver;
 };
 
 struct IngenPlugin {
@@ -411,8 +485,6 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
 	plugin->world->set_engine(engine);
-	plugin->main = new MainThread(engine);
-	plugin->main->set_name("Main");
 
 	SharedPtr<EventWriter> interface =
 		SharedPtr<EventWriter>(engine->interface(), NullDeleter<EventWriter>);
@@ -425,6 +497,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	// FIXME: fixed (or at least maximum) buffer size
 	LV2Driver* driver = new LV2Driver(*engine.get(), 4096, rate);
 	engine->set_driver(SharedPtr<Ingen::Server::Driver>(driver));
+
+	plugin->main = new MainThread(engine, driver);
+	plugin->main->set_name("Main");
 
 	SharedPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
 	interface->set_respondee(client);
@@ -447,8 +522,6 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		engine->process_events();
 		engine->post_processor()->process();
 	}
-
-	engine->deactivate();
 
 	return (LV2_Handle)plugin;
 }
@@ -484,9 +557,12 @@ ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
 	IngenPlugin*    me     = (IngenPlugin*)instance;
 	Server::Engine* engine = (Server::Engine*)me->world->engine().get();
+	LV2Driver*      driver = (LV2Driver*)engine->driver();
+
 	// FIXME: don't do this every call
 	Raul::Thread::get().set_context(Ingen::Server::THREAD_PROCESS);
-	((LV2Driver*)engine->driver())->run(sample_count);
+
+	driver->run(sample_count);
 }
 
 static void

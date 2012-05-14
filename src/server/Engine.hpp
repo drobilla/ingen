@@ -67,7 +67,7 @@ public:
 	// EngineBase methods
 	virtual bool activate();
 	virtual void deactivate();
-	virtual void run(uint32_t sample_count);
+	virtual unsigned run(uint32_t sample_count);
 	virtual void quit();
 	virtual bool main_iteration();
 	virtual void register_client(const Raul::URI& uri,
@@ -83,7 +83,7 @@ public:
 	void enqueue_event(Event* ev);
 
 	/** Process events (process thread only). */
-	void process_events();
+	unsigned process_events();
 
 	bool is_process_context(const Context& context) const {
 		return &context == &_process_context;

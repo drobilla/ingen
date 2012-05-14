@@ -64,11 +64,11 @@ PreProcessor::event(Event* const ev)
 	whip();
 }
 
-bool
+unsigned
 PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 {
 	if (!_head.get())
-		return true;
+		return 0;
 
 	/* Limit the maximum number of queued events to process per cycle.  This
 	   makes the process callback (more) realtime-safe by preventing being
@@ -101,7 +101,7 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 			_tail = NULL;
 	}
 
-	return true;
+	return num_events_processed;
 }
 
 /** Pre-process a single event */

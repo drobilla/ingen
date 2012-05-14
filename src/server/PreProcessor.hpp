@@ -44,11 +44,11 @@ public:
 	void event(Event* ev);
 
 	/** Process events for a cycle.
-	 * @return False iff this source is finished and should be removed.
+	 * @return The number of events processed.
 	 */
-	bool process(ProcessContext& context,
-	             PostProcessor&  dest,
-	             bool            limit = true);
+	unsigned process(ProcessContext& context,
+	                 PostProcessor&  dest,
+	                 bool            limit = true);
 
 protected:
 	virtual void _whipped();  ///< Prepare 1 event

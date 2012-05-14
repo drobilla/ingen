@@ -231,7 +231,7 @@ Engine::deactivate()
 	ThreadManager::single_threaded = true;
 }
 
-void
+unsigned
 Engine::run(uint32_t sample_count)
 {
 	// Apply control bindings to input
@@ -242,7 +242,7 @@ Engine::run(uint32_t sample_count)
 
 	// Process events that came in during the last cycle
 	// (Aiming for jitter-free 1 block event latency, ideally)
-	process_events();
+	unsigned n_processed_events = process_events();
 
 	// Run root patch
 	if (_root_patch) {
@@ -257,6 +257,8 @@ Engine::run(uint32_t sample_count)
 	if (_message_context.has_requests()) {
 		_message_context.signal(_process_context);
 	}
+
+	return n_processed_events;
 }
 
 bool
@@ -272,10 +274,10 @@ Engine::enqueue_event(Event* ev)
 	_pre_processor->event(ev);
 }
 
-void
+unsigned
 Engine::process_events()
 {
-	_pre_processor->process(_process_context, *_post_processor);
+	return _pre_processor->process(_process_context, *_post_processor);
 }
 
 void

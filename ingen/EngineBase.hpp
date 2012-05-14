@@ -48,8 +48,14 @@ public:
 
 	/**
 	   Process audio for @p sample_count frames.
+
+	   If the return value is non-zero, events have been processed and are
+	   awaiting to be finalised (including responding and announcing any changes
+	   to clients) via a call to main_iteration().
+
+	   @return The number of events processed.
 	*/
-	virtual void run(uint32_t sample_count) = 0;
+	virtual unsigned run(uint32_t sample_count) = 0;
 
 	/**
 	   Indicate that a quit is desired.
