@@ -52,7 +52,7 @@ Buffer::Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity)
 #ifdef HAVE_POSIX_MEMALIGN
 	int ret = posix_memalign((void**)&_atom, 16, capacity);
 #else
-	_atom = (LV2_Atom_Sequence*)malloc(capacity);
+	_atom = (LV2_Atom*)malloc(capacity);
 	int ret = (_atom != NULL) ? 0 : -1;
 #endif
 
