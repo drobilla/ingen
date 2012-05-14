@@ -25,8 +25,9 @@
 namespace Ingen {
 namespace Server {
 
-class Event;
 class Engine;
+class Event;
+class ProcessContext;
 
 /** Processor for Events after leaving the audio thread.
  *

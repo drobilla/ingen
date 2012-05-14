@@ -109,7 +109,7 @@ EngineStore::remove(const Raul::Path& path)
  * including the object itself, in lexicographically sorted order by Path.
  */
 SharedPtr<EngineStore::Objects>
-EngineStore::remove(iterator object)
+EngineStore::remove(Objects::iterator object)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
@@ -142,7 +142,7 @@ EngineStore::remove_children(const Raul::Path& path)
  * in lexicographically sorted order by Path.
  */
 SharedPtr<EngineStore::Objects>
-EngineStore::remove_children(iterator object)
+EngineStore::remove_children(Objects::iterator object)
 {
 	if (object != end()) {
 		iterator descendants_end = find_descendants_end(object);

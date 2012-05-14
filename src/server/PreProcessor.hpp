@@ -19,6 +19,7 @@
 
 #include <glibmm/thread.h>
 
+#include "raul/AtomicPtr.hpp"
 #include "raul/Slave.hpp"
 
 namespace Ingen {

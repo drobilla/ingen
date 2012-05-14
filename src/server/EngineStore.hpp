@@ -55,7 +55,7 @@ public:
 	PortImpl*        find_port(const Raul::Path& path);
 	GraphObjectImpl* find_object(const Raul::Path& path);
 
-	void add(Ingen::GraphObject* o);
+	void add(GraphObject* o);
 	void add(const Objects& family);
 
 	SharedPtr<Objects> remove(const Raul::Path& path);

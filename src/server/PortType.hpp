@@ -17,6 +17,8 @@
 #ifndef INGEN_INTERFACE_PORTTYPE_HPP
 #define INGEN_INTERFACE_PORTTYPE_HPP
 
+#include <cassert>
+
 #include "raul/URI.hpp"
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"

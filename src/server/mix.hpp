@@ -20,6 +20,7 @@
 #include "ingen/shared/URIs.hpp"
 #include "raul/log.hpp"
 
+#include "AudioBuffer.hpp"
 #include "Buffer.hpp"
 #include "Context.hpp"
 
