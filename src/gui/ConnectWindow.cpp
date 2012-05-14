@@ -388,7 +388,7 @@ ConnectWindow::gtk_callback()
 		_app->client()->signal_response().connect(
 			sigc::mem_fun(this, &ConnectWindow::ingen_response));
 
-		_ping_id = abs(g_random_int());
+		_ping_id = g_random_int();
 		_app->interface()->set_response_id(_ping_id);
 		_app->interface()->get("ingen:engine");
 
