@@ -33,7 +33,6 @@
 #include "raul/Semaphore.hpp"
 #include "raul/Thread.hpp"
 
-#include "Buffer.hpp"
 #include "Driver.hpp"
 #include "EnginePort.hpp"
 
