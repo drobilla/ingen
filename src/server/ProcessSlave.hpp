@@ -53,8 +53,6 @@ public:
 
 		if (realtime)
 			set_scheduling(SCHED_FIFO, 40);
-
-		set_context(THREAD_PROCESS);
 	}
 
 	~ProcessSlave() {

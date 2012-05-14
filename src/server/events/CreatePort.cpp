@@ -23,7 +23,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreatePort.hpp"
 #include "Driver.hpp"
@@ -152,7 +152,7 @@ CreatePort::pre_process()
 						dynamic_cast<DuplexPort*>(_patch_port));
 			}
 
-			assert(_ports_array->size() == _patch->num_ports());
+			assert(_ports_array->size() == _patch->num_ports_non_rt());
 
 		} else {
 			_status = CREATION_FAILED;

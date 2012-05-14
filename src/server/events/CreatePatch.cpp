@@ -19,13 +19,13 @@
 #include "raul/Path.hpp"
 
 #include "events/CreatePatch.hpp"
-#include "PatchImpl.hpp"
-#include "NodeImpl.hpp"
-#include "PluginImpl.hpp"
-#include "Engine.hpp"
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "Driver.hpp"
+#include "Engine.hpp"
 #include "EngineStore.hpp"
+#include "NodeImpl.hpp"
+#include "PatchImpl.hpp"
+#include "PluginImpl.hpp"
 
 namespace Ingen {
 namespace Server {

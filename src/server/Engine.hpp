@@ -34,8 +34,8 @@ namespace Shared { class World; }
 
 namespace Server {
 
+class Broadcaster;
 class BufferFactory;
-class ClientBroadcaster;
 class ControlBindings;
 class Driver;
 class EngineStore;
@@ -91,15 +91,15 @@ public:
 
 	Ingen::Shared::World* world() const { return _world; }
 
-	EventWriter*          interface()        const { return _event_writer; }
-	ClientBroadcaster*    broadcaster()      const { return _broadcaster; }
-	BufferFactory*        buffer_factory()   const { return _buffer_factory; }
-	ControlBindings*      control_bindings() const { return _control_bindings; }
-	Driver*               driver()           const { return _driver.get(); }
-	Raul::Maid*           maid()             const { return _maid; }
-	NodeFactory*          node_factory()     const { return _node_factory; }
-	PostProcessor*        post_processor()   const { return _post_processor; }
-	PatchImpl*            root_patch()       const { return _root_patch; }
+	EventWriter*     interface()        const { return _event_writer; }
+	Broadcaster*     broadcaster()      const { return _broadcaster; }
+	BufferFactory*   buffer_factory()   const { return _buffer_factory; }
+	ControlBindings* control_bindings() const { return _control_bindings; }
+	Driver*          driver()           const { return _driver.get(); }
+	Raul::Maid*      maid()             const { return _maid; }
+	NodeFactory*     node_factory()     const { return _node_factory; }
+	PostProcessor*   post_processor()   const { return _post_processor; }
+	PatchImpl*       root_patch()       const { return _root_patch; }
 
 	MessageContext& message_context() { return _message_context; }
 	ProcessContext& process_context() { return _process_context; }
@@ -111,15 +111,15 @@ public:
 private:
 	Ingen::Shared::World* _world;
 
-	ClientBroadcaster* _broadcaster;
-	BufferFactory*     _buffer_factory;
-	ControlBindings*   _control_bindings;
-	SharedPtr<Driver>  _driver;
-	Raul::Maid*        _maid;
-	NodeFactory*       _node_factory;
-	PreProcessor*      _pre_processor;
-	PostProcessor*     _post_processor;
-	EventWriter*       _event_writer;
+	Broadcaster*      _broadcaster;
+	BufferFactory*    _buffer_factory;
+	ControlBindings*  _control_bindings;
+	SharedPtr<Driver> _driver;
+	Raul::Maid*       _maid;
+	NodeFactory*      _node_factory;
+	PreProcessor*     _pre_processor;
+	PostProcessor*    _post_processor;
+	EventWriter*      _event_writer;
 
 	PatchImpl* _root_patch;
 

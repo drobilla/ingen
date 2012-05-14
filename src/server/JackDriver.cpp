@@ -432,7 +432,8 @@ JackDriver::_thread_init_cb()
 {
 	Raul::Thread* thread = &Raul::Thread::get();
 	thread->set_name("Jack");
-	thread->set_context(THREAD_PROCESS);
+	ThreadManager::set_flag(THREAD_PROCESS);
+	ThreadManager::set_flag(THREAD_IS_REAL_TIME);
 	_jack_threads.push_back(SharedPtr<Raul::Thread>(thread));
 }
 

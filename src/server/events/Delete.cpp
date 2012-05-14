@@ -17,7 +17,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "Delete.hpp"
 #include "DisconnectAll.hpp"
@@ -118,8 +118,8 @@ Delete::pre_process()
 			if (_port->parent_patch()->enabled()) {
 				// FIXME: is this called multiple times?
 				_compiled_patch = _port->parent_patch()->compile();
-				_ports_array   = _port->parent_patch()->build_ports_array();
-				assert(_ports_array->size() == _port->parent_patch()->num_ports());
+				_ports_array    = _port->parent_patch()->build_ports_array();
+				assert(_ports_array->size() == _port->parent_patch()->num_ports_non_rt());
 			}
 		}
 

@@ -491,7 +491,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	plugin->world->set_interface(interface);
 
-	Raul::Thread::get().set_context(Server::THREAD_PRE_PROCESS);
+	Server::ThreadManager::set_flag(Server::THREAD_PRE_PROCESS);
 	Server::ThreadManager::single_threaded = true;
 
 	// FIXME: fixed (or at least maximum) buffer size
@@ -559,8 +559,8 @@ ingen_run(LV2_Handle instance, uint32_t sample_count)
 	Server::Engine* engine = (Server::Engine*)me->world->engine().get();
 	LV2Driver*      driver = (LV2Driver*)engine->driver();
 
-	// FIXME: don't do this every call
-	Raul::Thread::get().set_context(Ingen::Server::THREAD_PROCESS);
+	Server::ThreadManager::set_flag(Ingen::Server::THREAD_PROCESS);
+	Server::ThreadManager::set_flag(Ingen::Server::THREAD_IS_REAL_TIME);
 
 	driver->run(sample_count);
 }

@@ -22,7 +22,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "Connect.hpp"
 #include "EdgeImpl.hpp"
 #include "DuplexPort.hpp"

@@ -29,8 +29,8 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/log.hpp"
 
+#include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
-#include "ClientBroadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
@@ -50,11 +50,12 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-bool ThreadManager::single_threaded = true;
+Raul::ThreadVar<unsigned> ThreadManager::flags(0);
+bool                      ThreadManager::single_threaded(true);
 
 Engine::Engine(Ingen::Shared::World* a_world)
 	: _world(a_world)
-	, _broadcaster(new ClientBroadcaster())
+	, _broadcaster(new Broadcaster())
 	, _control_bindings(NULL)
 	, _maid(new Raul::Maid(event_queue_size()))
 	, _node_factory(new NodeFactory(a_world))
@@ -270,7 +271,6 @@ Engine::pending_events()
 void
 Engine::enqueue_event(Event* ev)
 {
-	ThreadManager::assert_not_thread(THREAD_PROCESS);
 	_pre_processor->event(ev);
 }
 

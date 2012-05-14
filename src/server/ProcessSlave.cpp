@@ -28,6 +28,8 @@ uint32_t ProcessSlave::_next_id = 0;
 void
 ProcessSlave::_whipped()
 {
+	ThreadManager::set_flag(THREAD_PROCESS);
+
 	assert(_compiled_patch);
 	CompiledPatch* const cp = _compiled_patch;
 

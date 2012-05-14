@@ -324,12 +324,10 @@ PatchImpl::has_edge(const PortImpl* tail, const PortImpl* dst_port) const
 }
 
 uint32_t
-PatchImpl::num_ports() const
+PatchImpl::num_ports_non_rt() const
 {
-	if (ThreadManager::thread_is(THREAD_PROCESS))
-		return NodeImpl::num_ports();
-	else
-		return _inputs.size() + _outputs.size();
+	ThreadManager::assert_not_thread(THREAD_PROCESS);
+	return _inputs.size() + _outputs.size();
 }
 
 /** Create a port.  Not realtime safe.
@@ -352,7 +350,7 @@ PatchImpl::create_port(BufferFactory& bufs,
 	if (type == PortType::CONTROL || type == PortType::CV)
 		value = bufs.forge().make(0.0f);
 
-	return new DuplexPort(bufs, this, name, num_ports(), polyphonic, _polyphony,
+	return new DuplexPort(bufs, this, name, num_ports_non_rt(), polyphonic, _polyphony,
 	                      type, buffer_type, value, buffer_size, is_output);
 }
 

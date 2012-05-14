@@ -20,7 +20,7 @@
 
 #include "ingen/shared/URIs.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EventWriter.hpp"

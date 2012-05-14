@@ -106,7 +106,7 @@ public:
 	const Nodes& nodes() const { return _nodes; }
 	const Edges& edges() const { return _edges; }
 
-	uint32_t num_ports() const;
+	uint32_t num_ports_non_rt() const;
 
 	PortImpl* create_port(BufferFactory&     bufs,
 	                      const std::string& name,

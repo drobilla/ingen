@@ -38,7 +38,6 @@ MessageContext::MessageContext(Engine& engine)
 	, _requests(engine.event_queue_size())
 	, _end_time(0)
 {
-	Thread::set_context(THREAD_MESSAGE);
 }
 
 void
@@ -60,8 +59,9 @@ MessageContext::run(Context& context, NodeImpl* node, FrameTime time)
 void
 MessageContext::_run()
 {
-	Request req;
+	ThreadManager::set_flag(THREAD_MESSAGE);
 
+	Request req;
 	while (true) {
 		_sem.wait();
 

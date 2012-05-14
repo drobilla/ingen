@@ -16,7 +16,7 @@
 
 #include "ingen/Interface.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"

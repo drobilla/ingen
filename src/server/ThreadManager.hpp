@@ -19,34 +19,45 @@
 
 #include <cassert>
 #include "raul/Thread.hpp"
+#include "raul/ThreadVar.hpp"
 
 namespace Ingen {
 namespace Server {
 
-enum ThreadID {
-	THREAD_PRE_PROCESS,
-	THREAD_PROCESS,
-	THREAD_MESSAGE,
+enum ThreadFlag {
+	THREAD_IS_REAL_TIME = 1,
+	THREAD_PRE_PROCESS  = 1 << 1,
+	THREAD_PROCESS      = 1 << 2,
+	THREAD_MESSAGE      = 1 << 3,
 };
 
 class ThreadManager {
 public:
-	inline static bool thread_is(ThreadID id) {
-		return Raul::Thread::get().is_context(id);
+	static inline void set_flag(ThreadFlag f) {
+#ifndef NDEBUG
+		flags = ((unsigned)flags | f);
+#endif
 	}
 
-	inline static void assert_thread(ThreadID id) {
-		assert(single_threaded || Raul::Thread::get().is_context(id));
+	static inline void unset_flag(ThreadFlag f) {
+#ifndef NDEBUG
+		flags = ((unsigned)flags & (~f));
+#endif
 	}
 
-	inline static void assert_not_thread(ThreadID id) {
-		assert(single_threaded || !Raul::Thread::get().is_context(id));
+	static inline void assert_thread(ThreadFlag f) {
+		assert(single_threaded || (flags & f));
+	}
+
+	static inline void assert_not_thread(ThreadFlag f) {
+		assert(single_threaded || !(flags & f));
 	}
 
 	/** Set to true during initialisation so ensure_thread doesn't fail.
 	 * Defined in Engine.cpp
 	 */
-	static bool single_threaded;
+	static bool                      single_threaded;
+	static Raul::ThreadVar<unsigned> flags;
 };
 
 } // namespace Server

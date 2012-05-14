@@ -18,7 +18,7 @@
 
 #include "raul/Path.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EnginePort.hpp"

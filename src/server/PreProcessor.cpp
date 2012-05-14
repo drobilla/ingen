@@ -27,7 +27,6 @@ namespace Server {
 
 PreProcessor::PreProcessor()
 {
-	Thread::set_context(THREAD_PRE_PROCESS);
 	set_name("PreProcessor");
 	start();
 }
@@ -41,6 +40,7 @@ void
 PreProcessor::event(Event* const ev)
 {
 	// TODO: Probably possible to make this lock-free with CAS
+	ThreadManager::assert_not_thread(THREAD_IS_REAL_TIME);
 	Glib::Mutex::Lock lock(_mutex);
 
 	assert(!ev->is_prepared());
@@ -108,6 +108,7 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 void
 PreProcessor::_whipped()
 {
+	ThreadManager::set_flag(THREAD_PRE_PROCESS);
 	Event* ev = _prepared_back.get();
 	if (!ev)
 		return;

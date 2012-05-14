@@ -23,7 +23,7 @@
 #include "raul/log.hpp"
 
 #include "AudioBuffer.hpp"
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "EdgeImpl.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"

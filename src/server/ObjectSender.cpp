@@ -81,7 +81,7 @@ ObjectSender::send_patch(Interface*       client,
 		}
 
 		// Send ports
-		for (uint32_t i=0; i < patch->num_ports(); ++i) {
+		for (uint32_t i=0; i < patch->num_ports_non_rt(); ++i) {
 			PortImpl* const port = patch->port_impl(i);
 			send_port(client, port, false);
 		}

@@ -20,14 +20,14 @@
 #include "ingen/Interface.hpp"
 #include "raul/log.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "EdgeImpl.hpp"
 #include "EngineStore.hpp"
 #include "ObjectSender.hpp"
 #include "PluginImpl.hpp"
 #include "util.hpp"
 
-#define LOG(s) (s("[ClientBroadcaster] "))
+#define LOG(s) (s("[Broadcaster] "))
 
 namespace Ingen {
 namespace Server {
@@ -35,8 +35,8 @@ namespace Server {
 /** Register a client to receive messages over the notification band.
  */
 void
-ClientBroadcaster::register_client(const Raul::URI&     uri,
-                                   SharedPtr<Interface> client)
+Broadcaster::register_client(const Raul::URI&     uri,
+                             SharedPtr<Interface> client)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	LOG(Raul::info)(Raul::fmt("Registered client <%1%>\n") % uri);
@@ -48,7 +48,7 @@ ClientBroadcaster::register_client(const Raul::URI&     uri,
  * @return true if client was found and removed.
  */
 bool
-ClientBroadcaster::unregister_client(const Raul::URI& uri)
+Broadcaster::unregister_client(const Raul::URI& uri)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	const size_t erased = _clients.erase(uri);
@@ -64,7 +64,7 @@ ClientBroadcaster::unregister_client(const Raul::URI& uri)
  * unique identifier for registered clients).
  */
 SharedPtr<Interface>
-ClientBroadcaster::client(const Raul::URI& uri)
+Broadcaster::client(const Raul::URI& uri)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	Clients::iterator i = _clients.find(uri);
@@ -76,7 +76,7 @@ ClientBroadcaster::client(const Raul::URI& uri)
 }
 
 void
-ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
+Broadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c) {
@@ -85,8 +85,8 @@ ClientBroadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 }
 
 void
-ClientBroadcaster::send_plugins_to(Interface*                  client,
-                                   const NodeFactory::Plugins& plugins)
+Broadcaster::send_plugins_to(Interface*                  client,
+                             const NodeFactory::Plugins& plugins)
 {
 	client->bundle_begin();
 
@@ -104,7 +104,7 @@ ClientBroadcaster::send_plugins_to(Interface*                  client,
  * @param recursive If true send all children of object
  */
 void
-ClientBroadcaster::send_object(const GraphObjectImpl* o, bool recursive)
+Broadcaster::send_object(const GraphObjectImpl* o, bool recursive)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) {

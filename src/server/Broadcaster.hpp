@@ -41,7 +41,7 @@ class GraphObjectImpl;
  *
  * \ingroup engine
  */
-class ClientBroadcaster : public Interface
+class Broadcaster : public Interface
 {
 public:
 	void register_client(const Raul::URI& uri, SharedPtr<Interface> client);

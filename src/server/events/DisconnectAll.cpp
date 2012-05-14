@@ -23,7 +23,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"

@@ -25,7 +25,7 @@
 #include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreateNode.hpp"
 #include "CreatePatch.hpp"

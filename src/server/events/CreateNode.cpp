@@ -20,7 +20,7 @@
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"
 
-#include "ClientBroadcaster.hpp"
+#include "Broadcaster.hpp"
 #include "CreateNode.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"

@@ -185,10 +185,10 @@ public:
 	/** The Patch this Node belongs to. */
 	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }
 
-	Context::ID        context()     const { return _context; }
-	SampleRate         sample_rate() const { return _srate; }
-	virtual uint32_t   num_ports()   const { return _ports ? _ports->size() : 0; }
-	virtual uint32_t   polyphony()   const { return _polyphony; }
+	Context::ID      context()     const { return _context; }
+	SampleRate       sample_rate() const { return _srate; }
+	uint32_t         num_ports()   const { return _ports ? _ports->size() : 0; }
+	virtual uint32_t polyphony()   const { return _polyphony; }
 
 	/** Used by the process order finding algorithm (ie during connections) */
 	bool               traversed()   const { return _traversed; }
