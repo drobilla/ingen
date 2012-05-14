@@ -175,25 +175,21 @@ Delete::post_process()
 		// XXX: Report error?  Silently ignore?
 	} else if (!_node && !_port) {
 		respond(NOT_FOUND);
-	} else if (_patch_node_listnode) {
-		assert(_node);
-		_node->deactivate();
+	} else if (_patch_node_listnode || _patch_port_listnode) {
+		if (_patch_node_listnode) {
+			_node->deactivate();
+			_engine.maid()->push(_patch_node_listnode);
+		} else if (_patch_port_listnode) {
+			_engine.maid()->push(_patch_port_listnode);
+		}
+		
 		respond(SUCCESS);
 		_engine.broadcaster()->bundle_begin();
-		if (_disconnect_event)
+		if (_disconnect_event) {
 			_disconnect_event->post_process();
+		}
 		_engine.broadcaster()->del(_path);
 		_engine.broadcaster()->bundle_end();
-		_engine.maid()->push(_patch_node_listnode);
-	} else if (_patch_port_listnode) {
-		assert(_port);
-		respond(SUCCESS);
-		_engine.broadcaster()->bundle_begin();
-		if (_disconnect_event)
-			_disconnect_event->post_process();
-		_engine.broadcaster()->del(_path);
-		_engine.broadcaster()->bundle_end();
-		_engine.maid()->push(_patch_port_listnode);
 	} else {
 		respond(FAILURE);
 	}
