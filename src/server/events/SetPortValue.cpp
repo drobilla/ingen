@@ -14,8 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <sstream>
-
 #include "ingen/shared/LV2Features.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"

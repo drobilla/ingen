@@ -16,7 +16,6 @@
 
 #include <ctype.h>
 
-#include <sstream>
 #include <string>
 #include <algorithm>
 

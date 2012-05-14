@@ -23,7 +23,6 @@
 #include <sys/un.h>
 
 #include <string>
-#include <sstream>
 
 #include "raul/log.hpp"
 
