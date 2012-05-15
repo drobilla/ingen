@@ -79,17 +79,15 @@ Get::post_process()
 		respond(NOT_FOUND);
 	} else if (!_request_client) {
 		respond(CLIENT_NOT_FOUND);
+	} else {
+		respond(SUCCESS);
+		if (_object) {
+			ObjectSender::send_object(_request_client, _object, true);
+		} else if (_plugin) {
+			_request_client->put(_uri, _plugin->properties());
+		}
+		_lock.release();
 	}
-	
-	respond(SUCCESS);
-
-	if (_object) {
-		ObjectSender::send_object(_request_client, _object, true);
-	} else if (_plugin) {
-		_request_client->put(_uri, _plugin->properties());
-	}
-
-	_lock.release();
 }
 
 } // namespace Events

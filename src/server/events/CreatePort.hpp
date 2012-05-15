@@ -55,7 +55,6 @@ public:
 
 private:
 	Raul::Path              _path;
-	Raul::URI               _type;
 	PortType                _port_type;
 	LV2_URID                _buffer_type;
 	PatchImpl*              _patch;

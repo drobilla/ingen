@@ -22,7 +22,6 @@
 
 #include "Broadcaster.hpp"
 #include "CreateNode.hpp"
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "NodeFactory.hpp"
@@ -47,63 +46,73 @@ CreateNode::CreateNode(Engine&                     engine,
 	, _plugin_uri(plugin_uri)
 	, _properties(properties)
 	, _patch(NULL)
-	, _plugin(NULL)
 	, _node(NULL)
 	, _compiled_patch(NULL)
-	, _node_already_exists(false)
-	, _polyphonic(false)
-{
-	const Resource::Properties::const_iterator p = properties.find(
-		engine.world()->uris().ingen_polyphonic);
-	if (p != properties.end() && p->second.type() == engine.world()->forge().Bool
-	    && p->second.get_bool())
-		_polyphonic = true;
-}
+{}
 
 void
 CreateNode::pre_process()
 {
-	if (_engine.engine_store()->find_object(_path) != NULL) {
-		_node_already_exists = true;
+	Ingen::Shared::URIs& uris = _engine.world()->uris();
+
+	if (_engine.engine_store()->find_object(_path)) {
+		_status = EXISTS;
 		Event::pre_process();
 		return;
 	}
 
-	_patch  = _engine.engine_store()->find_patch(_path.parent());
-	_plugin = _engine.node_factory()->plugin(_plugin_uri.str());
-
-	if (_patch && _plugin) {
-
-		_node = _plugin->instantiate(*_engine.buffer_factory(), _path.symbol(), _polyphonic, _patch, _engine);
-
-		if (_node != NULL) {
-			_node->properties().insert(_properties.begin(), _properties.end());
-			_node->activate(*_engine.buffer_factory());
-
-			// This can be done here because the audio thread doesn't touch the
-			// node tree - just the process order array
-			_patch->add_node(new PatchImpl::Nodes::Node(_node));
-			_engine.engine_store()->add(_node);
-
-			// FIXME: not really necessary to build process order since it's not connected,
-			// just append to the list
-			if (_patch->enabled())
-				_compiled_patch = _patch->compile();
-		}
+	if (!(_patch = _engine.engine_store()->find_patch(_path.parent()))) {
+		_status = PARENT_NOT_FOUND;
+		Event::pre_process();
+		return;
 	}
 
-	if (_node) {
-		Ingen::Shared::URIs& uris = _engine.world()->uris();
-		_update.push_back(make_pair(_node->path(), _node->properties()));
-		for (uint32_t i = 0; i < _node->num_ports(); ++i) {
-			const PortImpl*      port   = _node->port_impl(i);
-			Resource::Properties pprops = port->properties();
-			pprops.erase(uris.ingen_value);
-			pprops.insert(std::make_pair(uris.ingen_value, port->value()));
-			_update.push_back(std::make_pair(port->path(), pprops));
-		}
-	} else {
-		_status = FAILURE;
+	PluginImpl* plugin = _engine.node_factory()->plugin(_plugin_uri.str());
+	if (!plugin) {
+		_status = PLUGIN_NOT_FOUND;
+		Event::pre_process();
+		return;
+	}
+
+	const Resource::Properties::const_iterator p = _properties.find(
+		_engine.world()->uris().ingen_polyphonic);
+	const bool polyphonic = (
+		p != _properties.end() &&
+		p->second.type() == _engine.world()->forge().Bool &&
+		p->second.get_bool());
+	
+	if (!(_node = plugin->instantiate(*_engine.buffer_factory(),
+	                                  _path.symbol(),
+	                                  polyphonic,
+	                                  _patch,
+	                                  _engine))) {
+		_status = CREATION_FAILED;
+		Event::pre_process();
+		return;
+	}
+
+	_node->properties().insert(_properties.begin(), _properties.end());
+	_node->activate(*_engine.buffer_factory());
+
+	// Add node to the store and the  patch's pre-processor only node list
+	_patch->add_node(new PatchImpl::Nodes::Node(_node));
+	_engine.engine_store()->add(_node);
+
+	/* Compile patch with new node added for insertion in audio thread
+	   TODO: Since the node is not connected at this point, a full compilation
+	   could be avoided and the node simply appended. */
+	if (_patch->enabled()) {
+		_compiled_patch = _patch->compile();
+		assert(_compiled_patch);
+	}
+
+	_update.push_back(make_pair(_node->path(), _node->properties()));
+	for (uint32_t i = 0; i < _node->num_ports(); ++i) {
+		const PortImpl*      port   = _node->port_impl(i);
+		Resource::Properties pprops = port->properties();
+		pprops.erase(uris.ingen_value);
+		pprops.insert(std::make_pair(uris.ingen_value, port->value()));
+		_update.push_back(std::make_pair(port->path(), pprops));
 	}
 
 	Event::pre_process();
@@ -123,14 +132,8 @@ CreateNode::execute(ProcessContext& context)
 void
 CreateNode::post_process()
 {
-	if (_node_already_exists) {
-		respond(EXISTS);
-	} else if (!_patch) {
-		respond(PARENT_NOT_FOUND);
-	} else if (!_plugin) {
-		respond(PLUGIN_NOT_FOUND);
-	} else if (!_node) {
-		respond(FAILURE);
+	if (_status) {
+		respond(_status);
 	} else {
 		respond(SUCCESS);
 		for (Update::const_iterator i = _update.begin(); i != _update.end(); ++i) {
@@ -142,4 +145,3 @@ CreateNode::post_process()
 } // namespace Events
 } // namespace Server
 } // namespace Ingen
-

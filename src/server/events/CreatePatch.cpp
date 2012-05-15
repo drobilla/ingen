@@ -85,11 +85,12 @@ CreatePatch::pre_process()
 	_patch->add_property(uris.rdf_type,
 	                     Resource::Property(uris.ingen_Node, Resource::EXTERNAL));
 
-	if (_parent != NULL) {
+	if (_parent) {
 		_parent->add_node(new PatchImpl::Nodes::Node(_patch));
-
-		if (_parent->enabled())
+		if (_parent->enabled()) {
+			_patch->enable();
 			_compiled_patch = _parent->compile();
+		}
 	}
 
 	_patch->activate(*_engine.buffer_factory());

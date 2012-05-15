@@ -157,19 +157,19 @@ PatchImpl::process(ProcessContext& context)
 
 	NodeImpl::pre_process(context);
 
-	// Run all nodes
 	if (_compiled_patch && _compiled_patch->size() > 0) {
+		// Run all nodes
 		if (context.slaves().size() > 0) {
 			process_parallel(context);
 		} else {
 			process_single(context);
 		}
-	}
 
-	// Queue any cross-context edges
-	for (CompiledPatch::QueuedEdges::iterator i = _compiled_patch->queued_edges.begin();
-	     i != _compiled_patch->queued_edges.end(); ++i) {
-		(*i)->queue(context);
+		// Queue any cross-context edges
+		for (CompiledPatch::QueuedEdges::iterator i = _compiled_patch->queued_edges.begin();
+		     i != _compiled_patch->queued_edges.end(); ++i) {
+			(*i)->queue(context);
+		}
 	}
 
 	NodeImpl::post_process(context);
