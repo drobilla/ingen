@@ -52,8 +52,6 @@ public:
 	void send_plugins(const NodeFactory::Plugins& plugin_list);
 	void send_plugins_to(Interface*, const NodeFactory::Plugins& plugin_list);
 
-	void send_object(const GraphObjectImpl* p, bool recursive);
-
 #define BROADCAST(msg, ...) \
 	Glib::Mutex::Lock lock(_clients_mutex); \
 	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) \

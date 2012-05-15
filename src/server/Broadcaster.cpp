@@ -98,19 +98,5 @@ Broadcaster::send_plugins_to(Interface*                  client,
 	client->bundle_end();
 }
 
-/** Send an object to all clients.
- *
- * @param o         Object to send
- * @param recursive If true send all children of object
- */
-void
-Broadcaster::send_object(const GraphObjectImpl* o, bool recursive)
-{
-	Glib::Mutex::Lock lock(_clients_mutex);
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) {
-		ObjectSender::send_object((*i).second.get(), o, recursive);
-	}
-}
-
 } // namespace Server
 } // namespace Ingen
