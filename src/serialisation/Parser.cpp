@@ -257,8 +257,11 @@ parse_node(Ingen::Shared::World*                    world,
 		const std::string sub_file =
 			string((const char*)sub_uri.buf) + "/" + basename + ".ttl";
 
+		const SerdNode sub_base = serd_node_from_string(
+			SERD_URI, (const uint8_t*)sub_file.c_str());
+
 		Sord::Model sub_model(*world->rdf_world(), sub_file);
-		SerdEnv* env = serd_env_new(NULL);
+		SerdEnv* env = serd_env_new(&sub_base);
 		sub_model.load_file(env, SERD_TURTLE, sub_file);
 		serd_env_free(env);
 
