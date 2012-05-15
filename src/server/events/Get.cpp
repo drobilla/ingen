@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <utility>
+
 #include "ingen/Interface.hpp"
 
 #include "Broadcaster.hpp"
@@ -21,12 +23,17 @@
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "Get.hpp"
-#include "ObjectSender.hpp"
+#include "NodeImpl.hpp"
+#include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
+#include "PortImpl.hpp"
 
 namespace Ingen {
 namespace Server {
 namespace Events {
+
+static void
+send_patch(Interface* client, const PatchImpl* patch);
 
 Get::Get(Engine&          engine,
          Interface*       client,
@@ -57,6 +64,68 @@ Get::pre_process()
 	Event::pre_process();
 }
 
+static void
+send_port(Interface* client, const PortImpl* port)
+{
+	if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
+		Resource::Properties props = port->properties();
+		props.erase(port->bufs().uris().ingen_value);
+		props.insert(std::make_pair(port->bufs().uris().ingen_value,
+		                            port->value()));
+		client->put(port->path(), props);
+	} else {
+		client->put(port->path(), port->properties());
+	}
+}
+
+static void
+send_node(Interface* client, const NodeImpl* node)
+{
+	PluginImpl* const plugin = node->plugin_impl();
+	if (plugin->type() == Plugin::Patch) {
+		send_patch(client, (PatchImpl*)node);
+	} else if (plugin->uri().length() == 0) {
+		Raul::error((Raul::fmt("Node %1%'s plugin has no URI\n")
+		             % node->path()));
+	} else {
+		client->put(node->path(), node->properties());
+		for (size_t j=0; j < node->num_ports(); ++j) {
+			send_port(client, node->port_impl(j));
+		}
+	}
+}
+
+static void
+send_patch(Interface* client, const PatchImpl* patch)
+{
+	client->put(patch->path(),
+	            patch->properties(Resource::INTERNAL),
+	            Resource::INTERNAL);
+
+	client->put(patch->path(),
+	            patch->properties(Resource::EXTERNAL),
+	            Resource::EXTERNAL);
+
+	// Send nodes
+	for (Raul::List<NodeImpl*>::const_iterator j = patch->nodes().begin();
+	     j != patch->nodes().end(); ++j) {
+		const NodeImpl* const node = (*j);
+		send_node(client, node);
+	}
+
+	// Send ports
+	for (uint32_t i = 0; i < patch->num_ports_non_rt(); ++i) {
+		PortImpl* const port = patch->port_impl(i);
+		send_port(client, port);
+	}
+
+	// Send edges
+	for (PatchImpl::Edges::const_iterator j = patch->edges().begin();
+	     j != patch->edges().end(); ++j) {
+		client->connect(j->second->tail_path(), j->second->head_path());
+	}
+}
+
 void
 Get::post_process()
 {
@@ -82,7 +151,18 @@ Get::post_process()
 	} else {
 		respond(SUCCESS);
 		if (_object) {
-			ObjectSender::send_object(_request_client, _object, true);
+			_request_client->bundle_begin();
+			const NodeImpl*  node  = NULL;
+			const PatchImpl* patch = NULL;
+			const PortImpl*  port  = NULL;
+			if ((patch = dynamic_cast<const PatchImpl*>(_object))) {
+				send_patch(_request_client, patch);
+			} else if ((node = dynamic_cast<const NodeImpl*>(_object))) {
+				send_node(_request_client, node);
+			} else if ((port = dynamic_cast<const PortImpl*>(_object))) {
+				send_port(_request_client, port);
+			}
+			_request_client->bundle_end();
 		} else if (_plugin) {
 			_request_client->put(_uri, _plugin->properties());
 		}

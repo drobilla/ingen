@@ -23,7 +23,6 @@
 #include "Broadcaster.hpp"
 #include "EdgeImpl.hpp"
 #include "EngineStore.hpp"
-#include "ObjectSender.hpp"
 #include "PluginImpl.hpp"
 #include "util.hpp"
 

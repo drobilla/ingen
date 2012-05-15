@@ -24,7 +24,6 @@ def build(bld):
             NodeFactory.cpp
             NodeImpl.cpp
             Notification.cpp
-            ObjectSender.cpp
             OutputPort.cpp
             PatchImpl.cpp
             PluginImpl.cpp
