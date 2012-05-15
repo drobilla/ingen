@@ -40,11 +40,11 @@ CreatePatch::CreatePatch(Engine&                     engine,
                          const Resource::Properties& properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
+	, _properties(properties)
 	, _patch(NULL)
 	, _parent(NULL)
 	, _compiled_patch(NULL)
 	, _poly(poly)
-	, _properties(properties)
 {
 }
 
@@ -97,6 +97,8 @@ CreatePatch::pre_process()
 	// Insert into EngineStore
 	_engine.engine_store()->add(_patch);
 
+	_update = _patch->properties();
+
 	Event::pre_process();
 }
 
@@ -118,9 +120,7 @@ CreatePatch::post_process()
 {
 	respond(_status);
 	if (!_status) {
-		// Don't send ports/nodes that have been added since prepare()
-		// (otherwise they would be sent twice)
-		_engine.broadcaster()->send_object(_patch, false);
+		_engine.broadcaster()->put(_path, _update);
 	}
 }
 

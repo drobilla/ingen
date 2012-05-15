@@ -77,17 +77,16 @@ Get::post_process()
 		}
 	} else if (!_object && !_plugin) {
 		respond(NOT_FOUND);
-	} else if (_request_client) {
-		respond(SUCCESS);
-		if (_request_client) {
-			if (_object) {
-				ObjectSender::send_object(_request_client, _object, true);
-			} else if (_plugin) {
-				_request_client->put(_uri, _plugin->properties());
-			}
-		}
-	} else {
+	} else if (!_request_client) {
 		respond(CLIENT_NOT_FOUND);
+	}
+	
+	respond(SUCCESS);
+
+	if (_object) {
+		ObjectSender::send_object(_request_client, _object, true);
+	} else if (_plugin) {
+		_request_client->put(_uri, _plugin->properties());
 	}
 
 	_lock.release();

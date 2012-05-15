@@ -48,13 +48,13 @@ public:
 	void post_process();
 
 private:
-	const Raul::Path _path;
-	PatchImpl*       _patch;
-	PatchImpl*       _parent;
-	CompiledPatch*   _compiled_patch;
-	int              _poly;
-
+	const Raul::Path     _path;
 	Resource::Properties _properties;
+	Resource::Properties _update;
+	PatchImpl*           _patch;
+	PatchImpl*           _parent;
+	CompiledPatch*       _compiled_patch;
+	int                  _poly;
 };
 
 } // namespace Events

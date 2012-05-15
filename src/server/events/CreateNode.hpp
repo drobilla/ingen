@@ -17,7 +17,8 @@
 #ifndef INGEN_EVENTS_CREATENODE_HPP
 #define INGEN_EVENTS_CREATENODE_HPP
 
-#include <string>
+#include <list>
+#include <utility>
 
 #include "ingen/Resource.hpp"
 
@@ -53,16 +54,19 @@ public:
 	void post_process();
 
 private:
-	Raul::Path     _path;
-	Raul::URI      _plugin_uri;
-	PatchImpl*     _patch;
-	PluginImpl*    _plugin;
-	NodeImpl*      _node;
-	CompiledPatch* _compiled_patch; ///< Patch's new process order
-	bool           _node_already_exists;
-	bool           _polyphonic;
+	/// Update put message to broadcast to clients
+	typedef std::list< std::pair<Raul::URI, Resource::Properties> > Update;
 
+	Raul::Path           _path;
+	Raul::URI            _plugin_uri;
 	Resource::Properties _properties;
+	Update               _update;
+	PatchImpl*           _patch;
+	PluginImpl*          _plugin;
+	NodeImpl*            _node;
+	CompiledPatch*       _compiled_patch; ///< Patch's new process order
+	bool                 _node_already_exists;
+	bool                 _polyphonic;
 };
 
 } // namespace Events

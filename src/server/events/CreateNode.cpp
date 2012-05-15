@@ -45,13 +45,13 @@ CreateNode::CreateNode(Engine&                     engine,
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _plugin_uri(plugin_uri)
+	, _properties(properties)
 	, _patch(NULL)
 	, _plugin(NULL)
 	, _node(NULL)
 	, _compiled_patch(NULL)
 	, _node_already_exists(false)
 	, _polyphonic(false)
-	, _properties(properties)
 {
 	const Resource::Properties::const_iterator p = properties.find(
 		engine.world()->uris().ingen_polyphonic);
@@ -92,7 +92,17 @@ CreateNode::pre_process()
 		}
 	}
 
-	if (!_node) {
+	if (_node) {
+		Ingen::Shared::URIs& uris = _engine.world()->uris();
+		_update.push_back(make_pair(_node->path(), _node->properties()));
+		for (uint32_t i = 0; i < _node->num_ports(); ++i) {
+			const PortImpl*      port   = _node->port_impl(i);
+			Resource::Properties pprops = port->properties();
+			pprops.erase(uris.ingen_value);
+			pprops.insert(std::make_pair(uris.ingen_value, port->value()));
+			_update.push_back(std::make_pair(port->path(), pprops));
+		}
+	} else {
 		_status = FAILURE;
 	}
 
@@ -123,7 +133,9 @@ CreateNode::post_process()
 		respond(FAILURE);
 	} else {
 		respond(SUCCESS);
-		_engine.broadcaster()->send_object(_node, true); // yes, send ports
+		for (Update::const_iterator i = _update.begin(); i != _update.end(); ++i) {
+			_engine.broadcaster()->put(i->first, i->second);
+		}
 	}
 }
 

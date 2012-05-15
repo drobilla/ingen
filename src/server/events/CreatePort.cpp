@@ -134,7 +134,6 @@ CreatePort::pre_process()
 		assert(index_i->second == _engine.world()->forge().make((int)_patch_port->index()));
 
 		if (_patch_port) {
-
 			if (_is_output)
 				_patch->add_output(new Raul::List<PortImpl*>::Node(_patch_port));
 			else
@@ -159,6 +158,9 @@ CreatePort::pre_process()
 			_status = CREATION_FAILED;
 		}
 	}
+
+	_update = _patch_port->properties();
+
 	Event::pre_process();
 }
 
@@ -182,7 +184,7 @@ CreatePort::post_process()
 {
 	respond(_status);
 	if (!_status) {
-		_engine.broadcaster()->send_object(_patch_port, true);
+		_engine.broadcaster()->put(_path, _update);
 	}
 }
 

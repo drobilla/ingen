@@ -17,6 +17,8 @@
 #include <string>
 #include <vector>
 
+#include <glibmm/thread.h>
+
 #include <boost/format.hpp>
 
 #include "raul/log.hpp"
@@ -68,7 +70,6 @@ SetMetadata::SetMetadata(Engine&           engine,
 	, _compiled_patch(NULL)
 	, _create(create)
 	, _context(context)
-	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
 	if (context != Resource::DEFAULT) {
 		Resource::set_context(_properties, context);
@@ -107,7 +108,8 @@ SetMetadata::pre_process()
 
 	const bool is_graph_object = Raul::Path::is_path(_subject);
 
-	_lock.acquire();
+	// Take a writer lock while we modify the store
+	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
 
 	_object = is_graph_object
 		? _engine.engine_store()->find_object(Raul::Path(_subject.str()))
@@ -251,15 +253,10 @@ SetMetadata::pre_process()
 		}
 
 		if (_status != SUCCESS) {
-			_error_predicate += key.str();
 			break;
 		}
 
 		_types.push_back(op);
-	}
-
-	if (!_create_event) {
-		_lock.release();
 	}
 
 	Event::pre_process();
@@ -366,10 +363,6 @@ SetMetadata::post_process()
 		}
 	} else {
 		respond(_status);
-	}
-
-	if (_create_event) {
-		_lock.release();
 	}
 }
 

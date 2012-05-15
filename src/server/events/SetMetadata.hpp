@@ -17,10 +17,6 @@
 #ifndef INGEN_EVENTS_SETMETADATA_HPP
 #define INGEN_EVENTS_SETMETADATA_HPP
 
-#include <string>
-
-#include <glibmm/thread.h>
-
 #include <vector>
 
 #include "raul/URI.hpp"
@@ -108,14 +104,11 @@ private:
 	Ingen::Shared::ResourceImpl* _object;
 	PatchImpl*                   _patch;
 	CompiledPatch*               _compiled_patch;
-	std::string                  _error_predicate;
 	bool                         _create;
 	Resource::Graph              _context;
 	ControlBindings::Key         _binding;
 
 	SharedPtr<ControlBindings::Bindings> _old_bindings;
-
-	Glib::RWLock::WriterLock _lock;
 };
 
 } // namespace Events

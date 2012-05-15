@@ -63,6 +63,7 @@ private:
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch
 	EnginePort*             _engine_port; ///< Driver (eg Jack) port if this is a toplevel port
 	Resource::Properties    _properties;
+	Resource::Properties    _update;
 	bool                    _is_output;
 };
 
