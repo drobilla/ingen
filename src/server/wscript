@@ -26,7 +26,6 @@ def build(bld):
             Notification.cpp
             OutputPort.cpp
             PatchImpl.cpp
-            PluginImpl.cpp
             PortImpl.cpp
             PostProcessor.cpp
             PreProcessor.cpp

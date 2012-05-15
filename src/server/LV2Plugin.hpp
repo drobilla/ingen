@@ -52,8 +52,6 @@ public:
 
 	SharedPtr<LV2Info> lv2_info() const { return _lv2_info; }
 
-	const std::string& library_path() const;
-
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
 	void              lilv_plugin(const LilvPlugin* p);
 

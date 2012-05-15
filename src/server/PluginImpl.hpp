@@ -21,7 +21,6 @@
 #include <string>
 
 #include <boost/utility.hpp>
-#include <glibmm/module.h>
 
 #include "ingen/Plugin.hpp"
 #include "ingen/shared/ResourceImpl.hpp"
@@ -47,13 +46,10 @@ class PluginImpl : public Plugin
 {
 public:
 	PluginImpl(Ingen::Shared::URIs& uris,
-	           Type                      type,
-	           const std::string&        uri,
-	           const std::string         library_path = "")
+	           Type                 type,
+	           const std::string&   uri)
 		: ResourceImpl(uris, uri)
 		, _type(type)
-		, _library_path(library_path)
-		, _module(NULL)
 	{}
 
 	virtual NodeImpl* instantiate(BufferFactory&     bufs,
@@ -64,20 +60,11 @@ public:
 
 	virtual const std::string symbol() const = 0;
 
-	virtual const std::string& library_path() const { return _library_path; }
-
-	void load();
-	void unload();
-
-	Plugin::Type  type() const                 { return _type; }
-	void          type(Plugin::Type t)         { _type = t; }
-	Glib::Module* module() const               { return _module; }
-	void          module(Glib::Module* module) { _module = module; }
+	Plugin::Type  type() const         { return _type; }
+	void          type(Plugin::Type t) { _type = t; }
 
 protected:
-	Plugin::Type        _type;
-	mutable std::string _library_path;
-	Glib::Module*       _module;
+	Plugin::Type _type;
 };
 
 } // namespace Server

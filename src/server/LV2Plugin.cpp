@@ -68,41 +68,21 @@ LV2Plugin::instantiate(BufferFactory& bufs,
                        PatchImpl*     parent,
                        Engine&        engine)
 {
-	const SampleCount srate = engine.driver()->sample_rate();
+	LV2Node* n = new LV2Node(
+		this, name, polyphonic, parent, engine.driver()->sample_rate());
 
-	load(); // FIXME: unload at some point
-
-	LV2Node* n = new LV2Node(this, name, polyphonic, parent, srate);
-
-	if ( ! n->instantiate(bufs) ) {
+	if (!n->instantiate(bufs)) {
 		delete n;
-		n = NULL;
+		return NULL;
+	} else {
+		return n;
 	}
-
-	return n;
 }
 
 void
 LV2Plugin::lilv_plugin(const LilvPlugin* p)
 {
 	_lilv_plugin = p;
-}
-
-const std::string&
-LV2Plugin::library_path() const
-{
-	static const std::string empty_string;
-	if (_library_path.empty()) {
-		const LilvNode* n = lilv_plugin_get_library_uri(_lilv_plugin);
-		if (n) {
-			_library_path = lilv_uri_to_path(lilv_node_as_uri(n));
-		} else {
-			Raul::warn << uri() << " has no library path" << std::endl;
-			return empty_string;
-		}
-	}
-
-	return _library_path;
 }
 
 } // namespace Server
