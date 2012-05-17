@@ -45,7 +45,7 @@ namespace Serialisation {
 */
 class Parser {
 public:
-	explicit Parser(Shared::World& world);
+	explicit Parser() {}
 
 	virtual ~Parser() {}
 
@@ -67,9 +67,6 @@ public:
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data   = boost::optional<Properties>());
-
-private:
-	Shared::World& _world;
 };
 
 } // namespace Serialisation

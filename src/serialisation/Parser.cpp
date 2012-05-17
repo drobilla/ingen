@@ -558,11 +558,6 @@ parse(Ingen::Shared::World*                    world,
 	return boost::optional<Path>();
 }
 
-Parser::Parser(Ingen::Shared::World& world)
-	: _world(world)
-{
-}
-
 /** Parse a patch from RDF into a Interface (engine or client).
  * @return whether or not load was successful.
  */
