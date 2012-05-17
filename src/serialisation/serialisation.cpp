@@ -22,8 +22,8 @@
 
 using namespace Ingen;
 
-struct IngenSerialisationModule : public Shared::Module {
-	void load(Shared::World* world) {
+struct IngenSerialisationModule : public Ingen::Shared::Module {
+	virtual void load(Ingen::Shared::World* world) {
 		world->set_parser(SharedPtr<Serialisation::Parser>(
 				new Serialisation::Parser(*world)));
 		world->set_serialiser(SharedPtr<Serialisation::Serialiser>(
@@ -33,7 +33,7 @@ struct IngenSerialisationModule : public Shared::Module {
 
 extern "C" {
 
-Shared::Module*
+Ingen::Shared::Module*
 ingen_module_load() {
 	return new IngenSerialisationModule();
 }

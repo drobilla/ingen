@@ -44,8 +44,6 @@ using namespace std;
 using namespace Raul;
 using namespace Ingen::Shared;
 
-static const Sord::Node nil;
-
 typedef set<Sord::Node> RDFNodes;
 
 namespace Ingen {
@@ -110,6 +108,7 @@ get_properties(Ingen::Shared::World* world,
 	lv2_atom_forge_init(&forge, map);
 	lv2_atom_forge_set_sink(&forge, sratom_forge_sink, sratom_forge_deref, &out);
 
+	const Sord::Node nil;
 	Resource::Properties props;
 	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
 		if (!skip_property(i.get_predicate())) {
@@ -228,7 +227,8 @@ parse_node(Ingen::Shared::World*                    world,
 {
 	const URIs& uris = world->uris();
 
-	Sord::URI ingen_prototype(*world->rdf_world(), NS_INGEN "prototype");
+	const Sord::URI  ingen_prototype(*world->rdf_world(), NS_INGEN "prototype");
+	const Sord::Node nil;
 
 	Sord::Iter i = model.find(subject, ingen_prototype, nil);
 	if (i.end() || i.get_object().type() != Sord::Node::URI) {
@@ -295,6 +295,7 @@ parse_patch(Ingen::Shared::World*                    world,
 
 	const URIs&       uris  = world->uris();
 	const Sord::Node& patch = subject_node;
+	const Sord::Node  nil;
 
 	uint32_t patch_poly = 0;
 
@@ -407,8 +408,9 @@ parse_edge(Ingen::Shared::World* world,
            const Sord::Node&     subject,
            const Raul::Path&     parent)
 {
-	Sord::URI ingen_tail(*world->rdf_world(), NS_INGEN "tail");
-	Sord::URI ingen_head(*world->rdf_world(), NS_INGEN "head");
+	const Sord::URI  ingen_tail(*world->rdf_world(), NS_INGEN "tail");
+	const Sord::URI  ingen_head(*world->rdf_world(), NS_INGEN "head");
+	const Sord::Node nil;
 
 	Sord::Iter t = model.find(subject, ingen_tail, nil);
 	Sord::Iter h = model.find(subject, ingen_head, nil);
@@ -448,7 +450,8 @@ parse_edges(Ingen::Shared::World* world,
             const Sord::Node&     subject,
             const Raul::Path&     parent)
 {
-	Sord::URI ingen_edge(*world->rdf_world(), NS_INGEN "edge");
+	const Sord::URI  ingen_edge(*world->rdf_world(), NS_INGEN "edge");
+	const Sord::Node nil;
 
 	for (Sord::Iter i = model.find(subject, ingen_edge, nil); !i.end(); ++i) {
 		parse_edge(world, target, model, i.get_object(), parent);
@@ -486,14 +489,15 @@ parse(Ingen::Shared::World*                    world,
       boost::optional<Raul::Symbol>            symbol,
       boost::optional<GraphObject::Properties> data)
 {
-	const Sord::URI patch_class   (*world->rdf_world(), NS_INGEN "Patch");
-	const Sord::URI node_class    (*world->rdf_world(), NS_INGEN "Node");
-	const Sord::URI edge_class    (*world->rdf_world(), NS_INGEN "Edge");
-	const Sord::URI internal_class(*world->rdf_world(), NS_INGEN "Internal");
-	const Sord::URI in_port_class (*world->rdf_world(), LV2_CORE__InputPort);
-	const Sord::URI out_port_class(*world->rdf_world(), LV2_CORE__OutputPort);
-	const Sord::URI lv2_class     (*world->rdf_world(), LV2_CORE__Plugin);
-	const Sord::URI rdf_type      (*world->rdf_world(), NS_RDF "type");
+	const Sord::URI  patch_class   (*world->rdf_world(), NS_INGEN "Patch");
+	const Sord::URI  node_class    (*world->rdf_world(), NS_INGEN "Node");
+	const Sord::URI  edge_class    (*world->rdf_world(), NS_INGEN "Edge");
+	const Sord::URI  internal_class(*world->rdf_world(), NS_INGEN "Internal");
+	const Sord::URI  in_port_class (*world->rdf_world(), LV2_CORE__InputPort);
+	const Sord::URI  out_port_class(*world->rdf_world(), LV2_CORE__OutputPort);
+	const Sord::URI  lv2_class     (*world->rdf_world(), LV2_CORE__Plugin);
+	const Sord::URI  rdf_type      (*world->rdf_world(), NS_RDF "type");
+	const Sord::Node nil;
 
 	// Parse explicit subject patch
 	if (subject.is_valid()) {
