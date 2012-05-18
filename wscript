@@ -31,6 +31,8 @@ def options(opt):
                     help="Do not build JACK session support")
     opt.add_option('--no-socket', action='store_true', default=False, dest='no_socket',
                    help="Do not build Socket interface")
+    opt.add_option('--test', action='store_true', default=False, dest='build_tests',
+                   help="Build unit tests")
     opt.add_option('--log-debug', action='store_true', default=False, dest='log_debug',
                    help="Print debugging output")
 
@@ -77,6 +79,19 @@ def configure(conf):
     if not Options.options.no_jack_session:
         if conf.is_defined('HAVE_NEW_JACK'):
             autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
+
+    conf.env['BUILD_TESTS'] = Options.options.build_tests
+    if conf.env['BUILD_TESTS']:
+        conf.check_cxx(lib='gcov',
+                       define_name='HAVE_GCOV',
+                       mandatory=False)
+
+        if conf.is_defined('HAVE_GCOV'):
+            conf.env['INGEN_TEST_LIBS']     = ['gcov']
+            conf.env['INGEN_TEST_CXXFLAGS'] = ['-fprofile-arcs', '-ftest-coverage']
+        else:
+            conf.env['INGEN_TEST_LIBS']     = []
+            conf.env['INGEN_TEST_CXXFLAGS'] = []
 
     # Check for posix_memalign (OSX, amazingly, doesn't have it)
     conf.check(function_name='posix_memalign',
@@ -142,12 +157,23 @@ def build(bld):
     obj = bld(features     = 'c cxx cxxprogram',
               source       = 'src/ingen/main.cpp',
               target       = bld.path.get_bld().make_node('ingen'),
-              includes     = ['.', '../..'],
-              defines      = 'VERSION="' + bld.env['INGEN_VERSION'] + '"',
+              includes     = ['.'],
               use          = 'libingen_shared',
               install_path = '${BINDIR}')
     autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2')
 
+    # Test program
+    if bld.env['BUILD_TESTS']:
+        obj = bld(features     = 'cxx cxxprogram',
+                  source       = 'tests/ingen_test.cpp',
+                  target       = 'tests/ingen_test',
+                  includes     = ['.'],
+                  use          = 'libingen_shared_profiled',
+                  install_path = '',
+                  lib          = bld.env['INGEN_TEST_LIBS'],
+                  cxxflags     = bld.env['INGEN_TEST_CXXFLAGS'])
+    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2')
+        
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
     bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)
 
@@ -174,3 +200,14 @@ def build(bld):
 
 def lint(ctx):
     subprocess.call('cpplint.py --filter=-whitespace/comments,-whitespace/tab,-whitespace/braces,-whitespace/labels,-build/header_guard,-readability/casting,-readability/todo,-build/namespaces,-whitespace/line_length,-runtime/rtti,-runtime/references,-whitespace/blank_line,-runtime/sizeof,-readability/streams,-whitespace/operators,-whitespace/parens,-build/include `find -name *.cpp -or -name *.hpp`', shell=True)
+
+def test(ctx):
+    os.environ['PATH'] = 'tests' + os.pathsep + os.getenv('PATH')
+    os.environ['LD_LIBRARY_PATH'] = os.path.join('src', 'shared') 
+    os.environ['INGEN_MODULE_PATH'] = os.pathsep.join([
+            os.path.join('src', 'server') ,
+            os.path.join('src', 'serialisation')])
+
+    autowaf.pre_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])
+    autowaf.run_tests(ctx, APPNAME, ['ingen_test ../tests/empty.ingen'], dirs=['.', 'src', 'tests'])
+    autowaf.post_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])

@@ -1,0 +1,41 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix lv2ev: <http://lv2plug.in/ns/ext/event#> .
+@prefix midi: <http://lv2plug.in/ns/ext/midi#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<control_in>
+	ingen:polyphonic false ;
+	atom:bufferType atom:Sequence ;
+	lv2:index 0 ;
+	lv2:name "Control" ;
+	lv2:portProperty lv2:connectionOptional ;
+	lv2:symbol "control_in" ;
+	a atom:AtomPort ,
+		lv2:InputPort .
+
+<control_out>
+	ingen:polyphonic false ;
+	atom:bufferType atom:Sequence ;
+	lv2:index 1 ;
+	lv2:name "Control" ;
+	lv2:symbol "control_out" ;
+	a atom:AtomPort ,
+		lv2:OutputPort .
+
+<>
+	ingen:polyphony 1 ;
+	<http://lv2plug.in/ns/extensions/ui#ui> ingen:PatchUIGtk2 ;
+	lv2:extensionData <http://lv2plug.in/ns/ext/state#interface> ;
+	lv2:port <control_in> ,
+		<control_out> ;
+	lv2:symbol "empty" ;
+	doap:name "empty" ;
+	a ingen:Patch ,
+		lv2:Plugin .

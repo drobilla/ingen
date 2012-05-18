@@ -50,7 +50,7 @@ namespace Shared {
  *
  * \param name The base name of the module, e.g. "ingen_serialisation"
  */
-static SharedPtr<Glib::Module>
+Glib::Module*
 ingen_load_module(const string& name)
 {
 	Glib::Module* module = NULL;
@@ -61,15 +61,14 @@ ingen_load_module(const string& name)
 	if (module_path_found) {
 		string dir;
 		istringstream iss(module_path);
-		while (getline(iss, dir, ':')) {
+		while (getline(iss, dir, G_SEARCHPATH_SEPARATOR)) {
 			string filename = Shared::module_path(name, dir);
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-				module = new Glib::Module(filename, Glib::MODULE_BIND_LAZY);
+				module = new Glib::Module(filename);
 				if (*module) {
 					LOG(Raul::info)(Raul::fmt("Loading %1%\n") % filename);
-					return SharedPtr<Glib::Module>(module);
+					return module;
 				} else {
-					delete module;
 					Raul::error << Glib::Module::get_last_error() << endl;
 				}
 			}
@@ -77,23 +76,20 @@ ingen_load_module(const string& name)
 	}
 
 	// Try default directory if not found
-	module = new Glib::Module(Shared::module_path(name), Glib::MODULE_BIND_LAZY);
+	module = new Glib::Module(Shared::module_path(name));
 
-	// FIXME: SEGV on exit without this
-	module->make_resident();
-
-	if (*module) {
+	if (module) {
 		LOG(Raul::info)(Raul::fmt("Loading %1%\n") % Shared::module_path(name));
-		return SharedPtr<Glib::Module>(module);
+		return module;
 	} else if (!module_path_found) {
 		LOG(Raul::error)(Raul::fmt("Unable to find %1% (%2%)\n")
 		                 % name % Glib::Module::get_last_error());
-		return SharedPtr<Glib::Module>();
+		return NULL;
 	} else {
 		LOG(Raul::error)(Raul::fmt("Unable to load %1% from %2% (%3%)\n")
 		                 % name % module_path % Glib::Module::get_last_error());
 		LOG(Raul::error)("Is Ingen installed?\n");
-		return SharedPtr<Glib::Module>();
+		return NULL;
 	}
 }
 
@@ -131,28 +127,39 @@ public:
 		rdf_world->add_prefix("xsd",   "http://www.w3.org/2001/XMLSchema#");
 	}
 
-	virtual ~Impl()
+	~Impl()
 	{
 		serialiser.reset();
 		parser.reset();
-
+		interface.reset();
 		engine.reset();
 		store.reset();
 
-		modules.clear();
 		interface_factories.clear();
 		script_runners.clear();
-
-		lilv_world_free(lilv_world);
 
 		delete rdf_world;
 		delete lv2_features;
 		delete uris;
 		delete forge;
 		delete uri_map;
+
+		lilv_world_free(lilv_world);
+
+
+		for (Modules::iterator i = modules.begin(); i != modules.end(); ++i) {
+			// Keep a reference to the library
+			Glib::Module* lib = i->second->library;
+
+			// Destroy the Ingen module
+			delete i->second;
+
+			// Now all references to library code should be done, close it
+			delete lib;
+		}
 	}
 
-	typedef std::map< const std::string, SharedPtr<Module> > Modules;
+	typedef std::map<const std::string, Module*> Modules;
 	Modules modules;
 
 	typedef std::map<const std::string, World::InterfaceFactory> InterfaceFactories;
@@ -189,7 +196,6 @@ World::World(int&                 argc,
 
 World::~World()
 {
-	unload_modules();
 	delete _impl;
 }
 
@@ -225,18 +231,21 @@ World::load_module(const char* name)
 		LOG(Raul::info)(Raul::fmt("Module `%1%' already loaded\n") % name);
 		return true;
 	}
-	SharedPtr<Glib::Module> lib = ingen_load_module(name);
+	Glib::Module* lib = ingen_load_module(name);
 	Ingen::Shared::Module* (*module_load)() = NULL;
 	if (lib && lib->get_symbol("ingen_module_load", (void*&)module_load)) {
 		Module* module = module_load();
-		module->library = lib;
-		module->load(this);
-		_impl->modules.insert(make_pair(string(name), module));
-		return true;
-	} else {
-		LOG(Raul::error)(Raul::fmt("Failed to load module `%1%'\n") % name);
-		return false;
+		if (module) {
+			module->library = lib;
+			module->load(this);
+			_impl->modules.insert(make_pair(string(name), module));
+			return true;
+		}
 	}
+
+	LOG(Raul::error)(Raul::fmt("Failed to load module `%1%'\n") % name);
+	delete lib;
+	return false;
 }
 
 bool

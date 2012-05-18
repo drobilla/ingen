@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -31,6 +30,7 @@
 
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
+#include "DirectDriver.hpp"
 #include "ControlBindings.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
@@ -142,14 +142,24 @@ execute_and_delete_event(ProcessContext& context, Event* ev)
 	delete ev;
 }
 
+void
+Engine::init(double sample_rate, uint32_t block_length)
+{
+	set_driver(SharedPtr<Driver>(new DirectDriver(sample_rate, block_length)));
+}
+
 bool
 Engine::activate()
 {
-	assert(_driver);
+	if (!_driver) {
+		return false;
+	}
+
 	ThreadManager::single_threaded = true;
 
 	_buffer_factory->set_block_length(_driver->block_length());
 
+	_pre_processor->start();
 	_message_context.Thread::start();
 
 	const Ingen::Shared::URIs& uris  = world()->uris();
@@ -226,8 +236,15 @@ Engine::activate()
 void
 Engine::deactivate()
 {
-	_driver->deactivate();
-	_root_patch->deactivate();
+	_pre_processor->stop();
+
+	if (_driver) {
+		_driver->deactivate();
+	}
+
+	if (_root_patch) {
+		_root_patch->deactivate();
+	}
 
 	ThreadManager::single_threaded = true;
 }

@@ -19,8 +19,6 @@
 
 #include <glibmm/module.h>
 
-#include "raul/SharedPtr.hpp"
-
 namespace Ingen {
 namespace Shared {
 
@@ -32,12 +30,23 @@ class World;
  * @ingroup IngenShared
  */
 struct Module {
-	virtual ~Module();
+	Module() : library(NULL) {}
+	virtual ~Module() {}
 
 	virtual void load(Ingen::Shared::World* world) = 0;
 	virtual void run(Ingen::Shared::World* world) {}
 
-	SharedPtr<Glib::Module> library;
+	/** Library implementing this module.
+	 *
+	 * This is managed by the World and not this class, since closing the library
+	 * in this destructor could possibly reference code from the library
+	 * afterwards and cause a segfault on exit.
+	 */
+	Glib::Module* library;
+
+private:
+	Module(const Module& noncopyable);
+	Module& operator=(const Module& noncopyable);
 };
 
 } // namespace Shared

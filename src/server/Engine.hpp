@@ -65,6 +65,7 @@ public:
 	virtual ~Engine();
 
 	// EngineBase methods
+	virtual void init(double sample_rate, uint32_t block_length);
 	virtual bool activate();
 	virtual void deactivate();
 	virtual unsigned run(uint32_t sample_count);
