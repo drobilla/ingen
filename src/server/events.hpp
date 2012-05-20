@@ -21,7 +21,6 @@
 #include "events/CreateNode.hpp"
 #include "events/CreatePatch.hpp"
 #include "events/CreatePort.hpp"
-#include "events/Deactivate.hpp"
 #include "events/Delete.hpp"
 #include "events/Disconnect.hpp"
 #include "events/DisconnectAll.hpp"
