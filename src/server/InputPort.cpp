@@ -226,6 +226,7 @@ bool
 InputPort::direct_connect() const
 {
 	return _edges.size() == 1
+		&& !_parent->path().is_root()
 		&& !_edges.front().must_mix()
 		&& !_edges.front().must_queue();
 }
