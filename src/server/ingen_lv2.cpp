@@ -232,7 +232,7 @@ public:
 	/** AtomSink::write implementation called by the PostProcessor in the main
 	 * thread to write responses to the UI.
 	 */
-	void write(const LV2_Atom* atom) {
+	bool write(const LV2_Atom* atom) {
 		// Called from post-processor in main thread
 		while (_to_ui.write(lv2_atom_total_size(atom), atom) == 0) {
 			// Overflow, wait until ring is drained next cycle
@@ -240,6 +240,7 @@ public:
 			_to_ui_overflow_sem.wait();
 			_to_ui_overflow = false;
 		}
+		return true;
 	}
 
 	void consume_from_ui() {

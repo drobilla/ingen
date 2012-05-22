@@ -79,7 +79,7 @@ DisconnectAll::~DisconnectAll()
 		delete (*i);
 }
 
-void
+bool
 DisconnectAll::pre_process()
 {
 	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock(), Glib::NOT_LOCK);
@@ -88,25 +88,18 @@ DisconnectAll::pre_process()
 		lock.acquire();
 
 		_parent = _engine.engine_store()->find_patch(_parent_path);
-
-		if (_parent == NULL) {
-			_status = PARENT_NOT_FOUND;
-			Event::pre_process();
-			return;
+		if (!_parent) {
+			return Event::pre_process_done(PARENT_NOT_FOUND);
 		}
 
 		GraphObjectImpl* object = _engine.engine_store()->find_object(_path);
 		if (!object) {
-			_status = NOT_FOUND;
-			Event::pre_process();
-			return;
+			return Event::pre_process_done(NOT_FOUND);
 		}
 
 		if (object->parent_patch() != _parent
 		    && object->parent()->parent_patch() != _parent) {
-			_status = INVALID_PARENT_PATH;
-			Event::pre_process();
-			return;
+			return Event::pre_process_done(INVALID_PARENT_PATH);
 		}
 
 		// Only one of these will succeed
@@ -146,14 +139,12 @@ DisconnectAll::pre_process()
 	if (!_deleting && _parent->enabled())
 		_compiled_patch = _parent->compile();
 
-	Event::pre_process();
+	return Event::pre_process_done(SUCCESS);
 }
 
 void
 DisconnectAll::execute(ProcessContext& context)
 {
-	Event::execute(context);
-
 	if (_status == SUCCESS) {
 		for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i) {
 			(*i)->execute(context,

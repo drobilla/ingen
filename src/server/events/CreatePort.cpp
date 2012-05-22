@@ -81,30 +81,21 @@ CreatePort::CreatePort(Engine&                     engine,
 			_buffer_type = _engine.world()->uri_map().map_uri(i->second.get_uri());
 		}
 	}
-
-	if (_port_type == PortType::UNKNOWN) {
-		_status = UNKNOWN_TYPE;
-	}
 }
 
-void
+bool
 CreatePort::pre_process()
 {
-	if (_status) {
-		Event::pre_process();
-		return;
+	if (_port_type == PortType::UNKNOWN) {
+		return Event::pre_process_done(UNKNOWN_TYPE);
 	}
 
 	if (_engine.engine_store()->find_object(_path)) {
-		_status = EXISTS;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(_status);
 	}
 
 	if (!(_patch = _engine.engine_store()->find_patch(_path.parent()))) {
-		_status = PARENT_NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PARENT_NOT_FOUND);
 	}
 
 	const Ingen::Shared::URIs& uris = _engine.world()->uris();
@@ -124,9 +115,7 @@ CreatePort::pre_process()
 			               _engine.world()->forge().make(int32_t(old_num_ports))));
 	} else if (index_i->second.type() != uris.forge.Int
 	           || index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
-		_status = BAD_INDEX;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(BAD_INDEX);
 	}
 
 	Resource::Properties::const_iterator poly_i = _properties.find(uris.ingen_polyphonic);
@@ -137,9 +126,7 @@ CreatePort::pre_process()
 	if (!(_patch_port = _patch->create_port(
 		      *_engine.buffer_factory(), _path.symbol(),
 		      _port_type, _buffer_type, buffer_size, _is_output, polyphonic))) {
-		_status = CREATION_FAILED;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(CREATION_FAILED);
 	}	
 
 	_patch_port->properties().insert(_properties.begin(), _properties.end());
@@ -168,19 +155,17 @@ CreatePort::pre_process()
 		assert(_ports_array->size() == _patch->num_ports_non_rt());
 
 	} else {
-		_status = CREATION_FAILED;
+		return Event::pre_process_done(CREATION_FAILED);
 	}
 
 	_update = _patch_port->properties();
 
-	Event::pre_process();
+	return Event::pre_process_done(SUCCESS);
 }
 
 void
 CreatePort::execute(ProcessContext& context)
 {
-	Event::execute(context);
-
 	if (_patch_port) {
 		_engine.maid()->push(_patch->external_ports());
 		_patch->external_ports(_ports_array);

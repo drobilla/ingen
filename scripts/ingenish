@@ -28,6 +28,7 @@ except:
 class Client:
     def __init__(self, uri='unix:///tmp/ingen.sock'):
         print 'Connecting to server %s' % uri
+        self.msg_id = 1
         if uri.startswith('unix://'):
             self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             self.sock.connect(uri[len('unix://'):])
@@ -46,8 +47,14 @@ class Client:
         else:
             return msg
 
+    def msg_subject(self):
+        #self.msg_id += 1
+        #return '_:msg%d' % self.msg_id
+        return '[]'
+
     def send(self, msg):
         self.sock.send(self.msgencode(msg))
+        return True
         #response = self.sock.recv(1024)
         # if response != self.msgencode('OK'):
         #     print('Error: %s' % response)
@@ -57,27 +64,27 @@ class Client:
         
     def put(self, path, body):
         return self.send('''
-[]
+%s
  	a patch:Put ;
  	patch:subject <%s> ;
  	patch:body [
 %s
 ] .
-''' % (path, body))
+''' % (self.msg_subject(), path, body))
 
     def set(self, path, body):
         return self.send('''
-[]
+%s
 	a patch:Set ;
 	patch:subject <%s> ;
 	patch:body [
 %s
 	] .
-''' % (path, body))
+''' % (self.msg_subject(), path, body))
 
     def connect(self, tail, head):
         return self.send('''
-[]
+%s
 	a patch:Put ;
 	patch:subject <%s> ;
 	patch:body [
@@ -85,25 +92,25 @@ class Client:
 		ingen:tail <%s> ;
 		ingen:head <%s> ;
 	] .
-''' % (os.path.commonprefix([tail, head]), tail, head))
+''' % (self.msg_subject(), os.path.commonprefix([tail, head]), tail, head))
 
     def disconnect(self, tail, head):
         return self.send('''
-[]
+%s
 	a patch:Delete ;
 	patch:body [
 		a ingen:Edge ;
 		ingen:tail <%s> ;
 		ingen:head <%s> ;
 	] .
-''' % (tail, head))
+''' % (self.msg_subject(), tail, head))
 
     def delete(self, path):
         return self.send('''
-[]
+%s
 	a patch:Delete ;
 	patch:subject <%s> .
-''' % (path))
+''' % (self.msg_subject(), path))
 
 def print_usage():
     print('''Usage: ingenish [OPTION]... [COMMAND [ARGUMENT]...]

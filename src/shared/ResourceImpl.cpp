@@ -122,7 +122,7 @@ ResourceImpl::type(const URIs&       uris,
 	patch = node = port = is_output = false;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Raul::Atom& atom = i->second;
-		if (atom.type() != uris.forge.URI) {
+		if (atom.type() != uris.forge.URI && atom.type() != uris.forge.URID) {
 			Raul::warn << "[ResourceImpl] Non-URI type " << uris.forge.str(atom) << endl;
 			continue;
 		}

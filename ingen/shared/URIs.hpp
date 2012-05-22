@@ -59,6 +59,7 @@ public:
 	const Quark atom_Bool;
 	const Quark atom_Float;
 	const Quark atom_Int;
+	const Quark atom_Resource;
 	const Quark atom_Sequence;
 	const Quark atom_Sound;
 	const Quark atom_String;
@@ -82,6 +83,7 @@ public:
 	const Quark ingen_enabled;
 	const Quark ingen_engine;
 	const Quark ingen_head;
+	const Quark ingen_incidentTo;
 	const Quark ingen_nil;
 	const Quark ingen_node;
 	const Quark ingen_polyphonic;

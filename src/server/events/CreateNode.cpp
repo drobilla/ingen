@@ -39,43 +39,43 @@ CreateNode::CreateNode(Engine&                     engine,
                        int32_t                     id,
                        SampleCount                 timestamp,
                        const Raul::Path&           path,
-                       const Raul::URI&            plugin_uri,
                        const Resource::Properties& properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
-	, _plugin_uri(plugin_uri)
 	, _properties(properties)
 	, _patch(NULL)
 	, _node(NULL)
 	, _compiled_patch(NULL)
 {}
 
-void
+bool
 CreateNode::pre_process()
 {
 	Ingen::Shared::URIs& uris = _engine.world()->uris();
 
+	typedef Resource::Properties::const_iterator iterator;
+
+	const iterator t = _properties.find(uris.ingen_prototype);
+	if (t != _properties.end() && t->second.type() == uris.forge.URI) {
+		_plugin_uri = t->second.get_uri();
+	} else {
+		return Event::pre_process_done(BAD_REQUEST);
+	}
+
 	if (_engine.engine_store()->find_object(_path)) {
-		_status = EXISTS;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(EXISTS);
 	}
 
 	if (!(_patch = _engine.engine_store()->find_patch(_path.parent()))) {
-		_status = PARENT_NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PARENT_NOT_FOUND);
 	}
 
-	PluginImpl* plugin = _engine.node_factory()->plugin(_plugin_uri.str());
+	PluginImpl* plugin = _engine.node_factory()->plugin(_plugin_uri);
 	if (!plugin) {
-		_status = PLUGIN_NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PLUGIN_NOT_FOUND);
 	}
 
-	const Resource::Properties::const_iterator p = _properties.find(
-		_engine.world()->uris().ingen_polyphonic);
+	const iterator p = _properties.find(uris.ingen_polyphonic);
 	const bool polyphonic = (
 		p != _properties.end() &&
 		p->second.type() == _engine.world()->forge().Bool &&
@@ -86,9 +86,7 @@ CreateNode::pre_process()
 	                                  polyphonic,
 	                                  _patch,
 	                                  _engine))) {
-		_status = CREATION_FAILED;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(CREATION_FAILED);
 	}
 
 	_node->properties().insert(_properties.begin(), _properties.end());
@@ -115,14 +113,12 @@ CreateNode::pre_process()
 		_update.push_back(std::make_pair(port->path(), pprops));
 	}
 
-	Event::pre_process();
+	return Event::pre_process_done(SUCCESS);
 }
 
 void
 CreateNode::execute(ProcessContext& context)
 {
-	Event::execute(context);
-
 	if (_node) {
 		_engine.maid()->push(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);
@@ -132,10 +128,8 @@ CreateNode::execute(ProcessContext& context)
 void
 CreateNode::post_process()
 {
-	if (_status) {
-		respond(_status);
-	} else {
-		respond(SUCCESS);
+	respond(_status);
+	if (!_status) {
 		for (Update::const_iterator i = _update.begin(); i != _update.end(); ++i) {
 			_engine.broadcaster()->put(i->first, i->second);
 		}

@@ -66,6 +66,7 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _message_context(*this)
 	, _process_context(*this)
 	, _quit_flag(false)
+	, _direct_driver(true)
 {
 	if (a_world->store()) {
 		SharedPtr<EngineStore> estore = PtrCast<EngineStore>(a_world->store());
@@ -133,10 +134,27 @@ Engine::set_driver(SharedPtr<Driver> driver)
 	_driver = driver;
 }
 
+SampleCount
+Engine::event_time()
+{
+	const SampleCount start = _direct_driver
+		? _process_context.start()
+		: _driver->frame_time();
+
+	/* Exactly one cycle latency (some could run ASAP if we get lucky, but not
+	   always, and a slight constant latency is far better than jittery lower
+	   (average) latency */
+	return start + _driver->block_length();
+}
+
 static void
 execute_and_delete_event(ProcessContext& context, Event* ev)
 {
 	ev->pre_process();
+	if (ev->time() < context.start()) {
+		// Didn't get around to executing in time, oh well...
+		ev->set_time(context.start());
+	}
 	ev->execute(context);
 	ev->post_process();
 	delete ev;
@@ -146,6 +164,7 @@ void
 Engine::init(double sample_rate, uint32_t block_length)
 {
 	set_driver(SharedPtr<Driver>(new DirectDriver(sample_rate, block_length)));
+	_direct_driver = true;
 }
 
 bool
@@ -252,6 +271,8 @@ Engine::deactivate()
 unsigned
 Engine::run(uint32_t sample_count)
 {
+	_process_context.locate(_process_context.end(), sample_count, 0);
+
 	// Apply control bindings to input
 	control_bindings()->pre_process(
 		_process_context, _root_patch->port_impl(0)->buffer(0).get());

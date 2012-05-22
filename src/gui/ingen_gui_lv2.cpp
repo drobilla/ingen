@@ -40,12 +40,13 @@ struct IngenLV2AtomSink : public Ingen::Shared::AtomSink {
 		, _ui_controller(ui_controller)
 	{}
 
-	void write(const LV2_Atom* atom) {
+	bool write(const LV2_Atom* atom) {
 		_ui_write(_ui_controller,
 		          0,
 		          lv2_atom_total_size(atom),
 		          _uris.atom_eventTransfer,
 		          atom);
+		return true;
 	}
 
 	Ingen::Shared::URIs& _uris;

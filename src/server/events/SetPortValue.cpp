@@ -69,19 +69,20 @@ SetPortValue::~SetPortValue()
 {
 }
 
-void
+bool
 SetPortValue::pre_process()
 {
-	if (_queued) {
-		if (_port == NULL)
-			_port = _engine.engine_store()->find_port(_port_path);
-		if (_port == NULL)
-			_status = PORT_NOT_FOUND;
+	if (_queued && !_port) {
+		_port = _engine.engine_store()->find_port(_port_path);
+	}
+
+	if (!_port) {
+		return Event::pre_process_done(PORT_NOT_FOUND);
 	}
 
 	// Port is a message context port, set its value and
 	// call the plugin's message run function once
-	if (_port && _port->parent_node()->context() == Context::MESSAGE) {
+	if (_port->parent_node()->context() == Context::MESSAGE) {
 		apply(_engine.message_context());
 		_engine.message_context().run(
 			_engine.message_context(),
@@ -89,20 +90,18 @@ SetPortValue::pre_process()
 			_engine.driver()->frame_time() + _engine.driver()->block_length());
 	}
 
-	if (_port) {
-		_port->set_value(_value);
-		_port->set_property(_engine.world()->uris().ingen_value, _value);
-	}
+	// Set value metadata (does not affect buffers)
+	_port->set_value(_value);
+	_port->set_property(_engine.world()->uris().ingen_value, _value);
 
 	_binding = _engine.control_bindings()->port_binding(_port);
 
-	Event::pre_process();
+	return Event::pre_process_done(SUCCESS);
 }
 
 void
 SetPortValue::execute(ProcessContext& context)
 {
-	Event::execute(context);
 	assert(_time >= context.start() && _time <= context.end());
 
 	if (_port && _port->parent_node()->context() == Context::MESSAGE)

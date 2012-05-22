@@ -111,7 +111,7 @@ Disconnect::Impl::Impl(Engine&     e,
 	}
 }
 
-void
+bool
 Disconnect::pre_process()
 {
 	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
@@ -119,18 +119,14 @@ Disconnect::pre_process()
 	if (_tail_path.parent().parent() != _head_path.parent().parent()
 	    && _tail_path.parent() != _head_path.parent().parent()
 	    && _tail_path.parent().parent() != _head_path.parent()) {
-		_status = PARENT_DIFFERS;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PARENT_DIFFERS);
 	}
 
 	_tail = _engine.engine_store()->find_port(_tail_path);
 	_head = _engine.engine_store()->find_port(_head_path);
 
 	if (_tail == NULL || _head == NULL) {
-		_status = PORT_NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PORT_NOT_FOUND);
 	}
 
 	NodeImpl* const src_node = _tail->parent_node();
@@ -155,15 +151,11 @@ Disconnect::pre_process()
 	assert(_patch);
 
 	if (!_patch->has_edge(_tail, _head)) {
-		_status = NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(NOT_FOUND);
 	}
 
 	if (src_node == NULL || dst_node == NULL) {
-		_status = PARENT_NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PARENT_NOT_FOUND);
 	}
 
 	_impl = new Impl(_engine,
@@ -174,7 +166,7 @@ Disconnect::pre_process()
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
 
-	Event::pre_process();
+	return Event::pre_process_done(SUCCESS);
 }
 
 bool
@@ -208,8 +200,6 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 void
 Disconnect::execute(ProcessContext& context)
 {
-	Event::execute(context);
-
 	if (_status == SUCCESS) {
 		if (!_impl->execute(context, true)) {
 			_status = NOT_FOUND;

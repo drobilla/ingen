@@ -216,6 +216,21 @@ void
 AtomWriter::disconnect_all(const Raul::Path& parent_patch_path,
                            const Raul::Path& path)
 {
+	LV2_Atom_Forge_Frame msg;
+	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Delete);
+
+	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	forge_uri(parent_patch_path);
+
+	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
+	LV2_Atom_Forge_Frame edge;
+	lv2_atom_forge_blank(&_forge, &edge, 0, _uris.ingen_Edge);
+	lv2_atom_forge_property_head(&_forge, _uris.ingen_incidentTo, 0);
+	forge_uri(path);
+	lv2_atom_forge_pop(&_forge, &edge);
+
+	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
 }
 
 void

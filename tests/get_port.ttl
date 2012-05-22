@@ -1,0 +1,15 @@
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+
+<msg0>
+	a patch:Put ;
+	patch:subject <path:/in> ;
+	patch:body [
+		a lv2:InputPort ,
+			lv2:AudioPort
+	] .
+
+<msg1>
+	a patch:Get ;
+	patch:subject <path:/in> .

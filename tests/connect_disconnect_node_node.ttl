@@ -1,0 +1,36 @@
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+
+<msg0>
+	a patch:Put ;
+	patch:subject <path:/node1> ;
+	patch:body [
+		a ingen:Node ;
+		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
+	] .
+
+<msg1>
+	a patch:Put ;
+	patch:subject <path:/node2> ;
+	patch:body [
+		a ingen:Node ;
+		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
+	] .
+
+<msg2>
+	a patch:Put ;
+	patch:subject <path:/> ;
+	patch:body [
+		a ingen:Edge ;
+		ingen:tail <path:/node1/left_out> ;
+		ingen:head <path:/node2/left_in>
+	] .
+
+<msg3>
+	a patch:Delete ;
+	patch:body [
+		a ingen:Edge ;
+		ingen:tail <path:/node1/left_out> ;
+		ingen:head <path:/node2/left_in>
+	] .

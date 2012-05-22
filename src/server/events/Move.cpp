@@ -49,27 +49,22 @@ Move::~Move()
 {
 }
 
-void
+bool
 Move::pre_process()
 {
 	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
 
 	if (!_old_path.parent().is_parent_of(_new_path)) {
-		_status = PARENT_DIFFERS;
-		Event::pre_process();
-		return;
-	}
-	_store_iterator = _engine.engine_store()->find(_old_path);
-	if (_store_iterator == _engine.engine_store()->end())  {
-		_status = NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PARENT_DIFFERS);
 	}
 
-	if (_engine.engine_store()->find_object(_new_path))  {
-		_status = EXISTS;
-		Event::pre_process();
-		return;
+	_store_iterator = _engine.engine_store()->find(_old_path);
+	if (_store_iterator == _engine.engine_store()->end()) {
+		return Event::pre_process_done(NOT_FOUND);
+	}
+
+	if (_engine.engine_store()->find_object(_new_path)) {
+		return Event::pre_process_done(EXISTS);
 	}
 
 	SharedPtr< Raul::Table< Raul::Path, SharedPtr<GraphObject> > > removed
@@ -93,14 +88,12 @@ Move::pre_process()
 
 	_engine.engine_store()->add(*removed.get());
 
-	Event::pre_process();
+	return Event::pre_process_done(SUCCESS);
 }
 
 void
 Move::execute(ProcessContext& context)
 {
-	Event::execute(context);
-
 	SharedPtr<PortImpl> port = PtrCast<PortImpl>(_store_iterator->second);
 	if (port && port->parent()->parent() == NULL) {
 		EnginePort* eport = _engine.driver()->engine_port(context, _new_path);

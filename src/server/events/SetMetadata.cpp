@@ -101,7 +101,7 @@ SetMetadata::~SetMetadata()
 	delete _create_event;
 }
 
-void
+bool
 SetMetadata::pre_process()
 {
 	typedef Properties::const_iterator iterator;
@@ -116,9 +116,7 @@ SetMetadata::pre_process()
 		: static_cast<Shared::ResourceImpl*>(_engine.node_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
-		_status = NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(NOT_FOUND);
 	}
 
 	const Ingen::Shared::URIs& uris = _engine.world()->uris();
@@ -129,19 +127,15 @@ SetMetadata::pre_process()
 		Shared::ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output);
 
 		if (is_patch) {
-			uint32_t poly = 1;
-			iterator p = _properties.find(uris.ingen_polyphony);
-			if (p != _properties.end() && p->second.is_valid() && p->second.type() == uris.forge.Int)
-				poly = p->second.get_int32();
-			_create_event = new CreatePatch(_engine, _request_client, _request_id, _time,
-			                                path, poly, _properties);
+			_create_event = new CreatePatch(
+				_engine, _request_client, _request_id, _time, path, _properties);
 		} else if (is_node) {
-			const iterator p = _properties.find(uris.ingen_prototype);
-			_create_event = new CreateNode(_engine, _request_client, _request_id, _time,
-			                               path, p->second.get_uri(), _properties);
+			_create_event = new CreateNode(
+				_engine, _request_client, _request_id, _time, path, _properties);
 		} else if (is_port) {
-			_create_event = new CreatePort(_engine, _request_client, _request_id, _time,
-			                               path, is_output, _properties);
+			_create_event = new CreatePort(
+				_engine, _request_client, _request_id, _time,
+				path, is_output, _properties);
 		}
 		if (_create_event) {
 			_create_event->pre_process();
@@ -177,7 +171,7 @@ SetMetadata::pre_process()
 		_object->remove_property(key, value);
 	}
 
-	for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p) {
+	for (Properties::const_iterator p = _properties.begin(); p != _properties.end(); ++p) {
 		const Raul::URI&          key   = p->first;
 		const Resource::Property& value = p->second;
 		SpecialType               op    = NONE;
@@ -252,32 +246,34 @@ SetMetadata::pre_process()
 			}
 		}
 
-		if (_status != SUCCESS) {
+		if (_status != NOT_PREPARED) {
 			break;
 		}
 
 		_types.push_back(op);
 	}
 
-	Event::pre_process();
+	return Event::pre_process_done(_status == NOT_PREPARED ? SUCCESS : _status);
 }
 
 void
 SetMetadata::execute(ProcessContext& context)
 {
-	if (_status != SUCCESS) {
-		Event::execute(context);
+	if (_status) {
 		return;
 	}
 
 	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 
 	if (_create_event) {
+		_create_event->set_time(_time);
 		_create_event->execute(context);
 	}
 
-	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
+	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i) {
+		(*i)->set_time(_time);
 		(*i)->execute(context);
+	}
 
 	GraphObjectImpl* const object = dynamic_cast<GraphObjectImpl*>(_object);
 	NodeImpl* const        node   = dynamic_cast<NodeImpl*>(_object);
@@ -289,8 +285,9 @@ SetMetadata::execute(ProcessContext& context)
 		const Raul::Atom& value = p->second;
 		switch (*t) {
 		case ENABLE_BROADCAST:
-			if (port)
+			if (port) {
 				port->broadcast(value.get_bool());
+			}
 			break;
 		case ENABLE:
 			if (value.get_bool()) {
@@ -303,15 +300,14 @@ SetMetadata::execute(ProcessContext& context)
 				_patch->disable(context);
 			}
 			break;
-		case POLYPHONIC:
-			{
-				PatchImpl* parent = reinterpret_cast<PatchImpl*>(object->parent());
-				if (value.get_bool())
-					object->apply_poly(context, *_engine.maid(), parent->internal_poly());
-				else
-					object->apply_poly(context, *_engine.maid(), 1);
+		case POLYPHONIC: {
+			PatchImpl* parent = reinterpret_cast<PatchImpl*>(object->parent());
+			if (value.get_bool()) {
+				object->apply_poly(context, *_engine.maid(), parent->internal_poly());
+			} else {
+				object->apply_poly(context, *_engine.maid(), 1);
 			}
-			break;
+		} break;
 		case POLYPHONY:
 			if (_patch->internal_poly() != static_cast<uint32_t>(value.get_int32()) &&
 			    !_patch->apply_internal_poly(context,
@@ -340,8 +336,6 @@ SetMetadata::execute(ProcessContext& context)
 			break;
 		}
 	}
-
-	Event::execute(context);
 }
 
 void

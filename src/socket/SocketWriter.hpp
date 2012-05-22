@@ -43,7 +43,7 @@ public:
 
 	~SocketWriter();
 
-	void write(const LV2_Atom* msg);
+	bool write(const LV2_Atom* msg);
 
 	int       fd()        { return _socket->fd(); }
 	Raul::URI uri() const { return _uri; }

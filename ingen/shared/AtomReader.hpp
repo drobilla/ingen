@@ -38,10 +38,11 @@ public:
 	AtomReader(URIMap& map, URIs& uris, Forge& forge, Interface& iface);
 	~AtomReader() {}
 
-	void write(const LV2_Atom* msg);
+	bool write(const LV2_Atom* msg);
 
 private:
 	void get_atom(const LV2_Atom* in, Raul::Atom& out);
+	const char* atom_to_uri(const LV2_Atom* atom);
 
 	void get_props(const LV2_Atom_Object*       obj,
 	               Ingen::Resource::Properties& props);

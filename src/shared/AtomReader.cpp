@@ -62,53 +62,68 @@ AtomReader::get_props(const LV2_Atom_Object*       obj,
 	}
 }
 
-void
+const char*
+AtomReader::atom_to_uri(const LV2_Atom* atom)
+{
+	if (atom && atom->type == _uris.atom_URI) {
+		return (const char*)LV2_ATOM_BODY(atom);
+	} else if (atom && atom->type == _uris.atom_URID) {
+		return _map.unmap_uri(((LV2_Atom_URID*)atom)->body);
+	} else {
+		return NULL;
+	}
+}
+
+bool
 AtomReader::write(const LV2_Atom* msg)
 {
-	if (msg->type != _uris.atom_Blank) {
-		Raul::warn << "Unknown message type " << msg->type << std::endl;
-		return;
+	if (msg->type != _uris.atom_Blank && msg->type != _uris.atom_Resource) {
+		Raul::warn << (Raul::fmt("Unknown message type <%1%>\n")
+		               % _map.unmap_uri(msg->type)).str();
+		return false;
 	}
 
 	const LV2_Atom_Object* obj     = (const LV2_Atom_Object*)msg;
 	const LV2_Atom*        subject = NULL;
 
 	lv2_atom_object_get(obj, (LV2_URID)_uris.patch_subject, &subject, NULL);
-	const char* subject_uri = NULL;
-	if (subject && subject->type == _uris.atom_URI) {
-		subject_uri = (const char*)LV2_ATOM_BODY(subject);
-	} else if (subject && subject->type == _uris.atom_URID) {
-		subject_uri = _map.unmap_uri(((LV2_Atom_URID*)subject)->body);
-	}
+	const char* subject_uri = atom_to_uri(subject);
 
 	if (obj->body.otype == _uris.patch_Get) {
 		_iface.set_response_id(obj->body.id);
 		_iface.get(subject_uri);
 	} else if (obj->body.otype == _uris.patch_Delete) {
-		if (subject_uri) {
-			_iface.del(subject_uri);
-			return;
-		}
-
 		const LV2_Atom_Object* body = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
-		if (body && body->body.otype == _uris.ingen_Edge) {
-			const LV2_Atom* tail = NULL;
-			const LV2_Atom* head = NULL;
+
+		if (subject_uri && !body) {
+			_iface.del(subject_uri);
+			return true;
+		} else if (body && body->body.otype == _uris.ingen_Edge) {
+			const LV2_Atom* tail       = NULL;
+			const LV2_Atom* head       = NULL;
+			const LV2_Atom* incidentTo = NULL;
 			lv2_atom_object_get(body,
 			                    (LV2_URID)_uris.ingen_tail, &tail,
 			                    (LV2_URID)_uris.ingen_head, &head,
+			                    (LV2_URID)_uris.ingen_incidentTo, &incidentTo,
 			                    NULL);
 
 			Raul::Atom tail_atom;
 			Raul::Atom head_atom;
+			Raul::Atom incidentTo_atom;
 			get_atom(tail, tail_atom);
 			get_atom(head, head_atom);
+			get_atom(incidentTo, incidentTo_atom);
 			if (tail_atom.is_valid() && head_atom.is_valid()) {
 				_iface.disconnect(Raul::Path(tail_atom.get_uri()),
 				                  Raul::Path(head_atom.get_uri()));
+			} else if (incidentTo_atom.is_valid()) {
+				_iface.disconnect_all(subject_uri,
+				                      Raul::Path(incidentTo_atom.get_uri()));
 			} else {
 				Raul::warn << "Delete of unknown object." << std::endl;
+				return false;
 			}
 		}
 	} else if (obj->body.otype == _uris.patch_Put) {
@@ -116,10 +131,10 @@ AtomReader::write(const LV2_Atom* msg)
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 		if (!body) {
 			Raul::warn << "Put message has no body" << std::endl;
-			return;
+			return false;
 		} else if (!subject_uri) {
 			Raul::warn << "Put message has no subject" << std::endl;
-			return;
+			return false;
 		}
 
 		if (body->body.otype == _uris.ingen_Edge) {
@@ -131,7 +146,7 @@ AtomReader::write(const LV2_Atom* msg)
 			                    NULL);
 			if (!tail || !head) {
 				Raul::warn << "Edge has no tail or head" << std::endl;
-				return;
+				return false;
 			}
 
 			Raul::Atom tail_atom;
@@ -151,10 +166,10 @@ AtomReader::write(const LV2_Atom* msg)
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 		if (!body) {
 			Raul::warn << "Set message has no body" << std::endl;
-			return;
+			return false;
 		} else if (!subject_uri) {
 			Raul::warn << "Set message has no subject" << std::endl;
-			return;
+			return false;
 		}
 
 		LV2_ATOM_OBJECT_FOREACH(body, p) {
@@ -165,21 +180,21 @@ AtomReader::write(const LV2_Atom* msg)
 	} else if (obj->body.otype == _uris.patch_Patch) {
 		if (!subject_uri) {
 			Raul::warn << "Put message has no subject" << std::endl;
-			return;
+			return false;
 		}
 
 		const LV2_Atom_Object* remove = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_remove, &remove, 0);
 		if (!remove) {
 			Raul::warn << "Patch message has no remove" << std::endl;
-			return;
+			return false;
 		}
 
 		const LV2_Atom_Object* add = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_add, &add, 0);
 		if (!add) {
 			Raul::warn << "Patch message has no add" << std::endl;
-			return;
+			return false;
 		}
 
 		Ingen::Resource::Properties add_props;
@@ -189,6 +204,26 @@ AtomReader::write(const LV2_Atom* msg)
 		get_props(remove, remove_props);
 
 		_iface.delta(subject_uri, remove_props, add_props);
+	} else if (obj->body.otype == _uris.patch_Move) {
+		if (!subject_uri) {
+			Raul::warn << "Move message has no subject" << std::endl;
+			return false;
+		}
+
+		const LV2_Atom* dest = NULL;
+		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_destination, &dest, 0);
+		if (!dest) {
+			Raul::warn << "Move message has no destination" << std::endl;
+			return false;
+		}
+
+		const char* dest_uri = atom_to_uri(dest);
+		if (!dest_uri) {
+			Raul::warn << "Move message destination is not a URI" << std::endl;
+			return false;
+		}
+
+		_iface.move(subject_uri, dest_uri);
 	} else if (obj->body.otype == _uris.patch_Response) {
 		const LV2_Atom* request = NULL;
 		const LV2_Atom* body    = NULL;
@@ -198,10 +233,10 @@ AtomReader::write(const LV2_Atom* msg)
 		                    0);
 		if (!request || request->type != _uris.atom_Int) {
 			Raul::warn << "Response message has no request" << std::endl;
-			return;
+			return false;
 		} else if (!body || body->type != _uris.atom_Int) {
 			Raul::warn << "Response message body is not integer" << std::endl;
-			return;
+			return false;
 		}
 		_iface.response(((LV2_Atom_Int*)request)->body,
 		                (Ingen::Status)((LV2_Atom_Int*)body)->body);
@@ -210,6 +245,8 @@ AtomReader::write(const LV2_Atom* msg)
 		           << _map.unmap_uri(obj->body.otype)
 		           << ">" << std::endl;
 	}
+
+	return true;
 }
 
 } // namespace Shared

@@ -36,7 +36,6 @@ CreatePatch::CreatePatch(Engine&                     engine,
                          int32_t                     id,
                          SampleCount                 timestamp,
                          const Raul::Path&           path,
-                         int                         poly,
                          const Resource::Properties& properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
@@ -44,37 +43,38 @@ CreatePatch::CreatePatch(Engine&                     engine,
 	, _patch(NULL)
 	, _parent(NULL)
 	, _compiled_patch(NULL)
-	, _poly(poly)
+	, _poly(1)
 {
+	Ingen::Shared::URIs& uris = _engine.world()->uris();
+	typedef Resource::Properties::const_iterator iterator;
+	iterator p = _properties.find(uris.ingen_polyphony);
+	if (p != _properties.end() && p->second.type() == uris.forge.Int) {
+		_poly = p->second.get_int32();
+	}
 }
 
-void
+bool
 CreatePatch::pre_process()
 {
 	if (_path.is_root() || _engine.engine_store()->find_object(_path) != NULL) {
-		_status = EXISTS;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(EXISTS);
 	}
 
 	if (_poly < 1) {
-		_status = INVALID_POLY;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(INVALID_POLY);
 	}
 
 	const Raul::Path& path = (const Raul::Path&)_path;
 
 	_parent = _engine.engine_store()->find_patch(path.parent());
-	if (_parent == NULL) {
-		_status = PARENT_NOT_FOUND;
-		Event::pre_process();
-		return;
+	if (!_parent) {
+		return Event::pre_process_done(PARENT_NOT_FOUND);
 	}
 
 	uint32_t poly = 1;
-	if (_parent != NULL && _poly > 1 && _poly == static_cast<int>(_parent->internal_poly()))
+	if (_poly > 1 && _poly == static_cast<int>(_parent->internal_poly())) {
 		poly = _poly;
+	}
 
 	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 
@@ -85,12 +85,10 @@ CreatePatch::pre_process()
 	_patch->add_property(uris.rdf_type,
 	                     Resource::Property(uris.ingen_Node, Resource::EXTERNAL));
 
-	if (_parent) {
-		_parent->add_node(new PatchImpl::Nodes::Node(_patch));
-		if (_parent->enabled()) {
-			_patch->enable();
-			_compiled_patch = _parent->compile();
-		}
+	_parent->add_node(new PatchImpl::Nodes::Node(_patch));
+	if (_parent->enabled()) {
+		_patch->enable();
+		_compiled_patch = _parent->compile();
 	}
 
 	_patch->activate(*_engine.buffer_factory());
@@ -100,14 +98,12 @@ CreatePatch::pre_process()
 
 	_update = _patch->properties();
 
-	Event::pre_process();
+	return Event::pre_process_done(SUCCESS);
 }
 
 void
 CreatePatch::execute(ProcessContext& context)
 {
-	Event::execute(context);
-
 	if (_patch) {
 		assert(_parent);
 		assert(!_path.is_root());

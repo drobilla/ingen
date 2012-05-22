@@ -48,20 +48,21 @@ Get::Get(Engine&          engine,
 {
 }
 
-void
+bool
 Get::pre_process()
 {
 	_lock.acquire();
 
 	if (_uri == "ingen:plugins") {
 		_plugins = _engine.node_factory()->plugins();
+		return Event::pre_process_done(SUCCESS);
 	} else if (Raul::Path::is_valid(_uri.str())) {
 		_object = _engine.engine_store()->find_object(Raul::Path(_uri.str()));
+		return Event::pre_process_done(_object ? SUCCESS : NOT_FOUND);
 	} else {
 		_plugin = _engine.node_factory()->plugin(_uri);
+		return Event::pre_process_done(_plugin ? SUCCESS : NOT_FOUND);
 	}
-
-	Event::pre_process();
 }
 
 static void
@@ -84,12 +85,9 @@ send_node(Interface* client, const NodeImpl* node)
 	PluginImpl* const plugin = node->plugin_impl();
 	if (plugin->type() == Plugin::Patch) {
 		send_patch(client, (PatchImpl*)node);
-	} else if (plugin->uri().length() == 0) {
-		Raul::error((Raul::fmt("Node %1%'s plugin has no URI\n")
-		             % node->path()));
 	} else {
 		client->put(node->path(), node->properties());
-		for (size_t j=0; j < node->num_ports(); ++j) {
+		for (size_t j = 0; j < node->num_ports(); ++j) {
 			send_port(client, node->port_impl(j));
 		}
 	}

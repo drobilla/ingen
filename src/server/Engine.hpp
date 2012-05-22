@@ -68,6 +68,7 @@ public:
 	virtual void init(double sample_rate, uint32_t block_length);
 	virtual bool activate();
 	virtual void deactivate();
+	virtual bool pending_events();
 	virtual unsigned run(uint32_t sample_count);
 	virtual void quit();
 	virtual bool main_iteration();
@@ -77,8 +78,7 @@ public:
 
 	void set_driver(SharedPtr<Driver> driver);
 
-	/** Return true iff any events are pending. */
-	bool pending_events();
+	SampleCount event_time();
 
 	/** Enqueue an event to be processed (non-realtime threads only). */
 	void enqueue_event(Event* ev);
@@ -128,6 +128,7 @@ private:
 	ProcessContext _process_context;
 
 	bool _quit_flag;
+	bool _direct_driver;
 };
 
 } // namespace Server

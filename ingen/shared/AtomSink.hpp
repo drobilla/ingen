@@ -28,7 +28,11 @@ namespace Shared {
 class AtomSink {
 public:
 	virtual ~AtomSink() {}
-	virtual void write(const LV2_Atom* msg) = 0;
+
+	/** Write an Atom to the sink.
+	 * @return True on success.
+	 */
+	virtual bool write(const LV2_Atom* msg) = 0;
 };
 
 } // namespace Shared

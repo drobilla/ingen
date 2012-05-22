@@ -52,19 +52,22 @@ public:
 	virtual ~Event() {}
 
 	/** Pre-process event before execution (non-realtime). */
-	virtual void pre_process();
+	virtual bool pre_process() = 0;
 
 	/** Execute this event in the audio thread (realtime). */
-	virtual void execute(ProcessContext& context);
+	virtual void execute(ProcessContext& context) = 0;
 
 	/** Post-process event after execution (non-realtime). */
-	virtual void post_process();
+	virtual void post_process() = 0;
 
 	/** Return true iff this event has been pre-processed. */
-	inline bool is_prepared() const { return _pre_processed; }
+	inline bool is_prepared() const { return _status != NOT_PREPARED; }
 
 	/** Return the time stamp of this event. */
 	inline SampleCount time() const { return _time; }
+
+	/** Set the time stamp of this event. */
+	inline void set_time(SampleCount time) { _time = time; }
 
 	/** Get the next event to be processed after this one. */
 	Event* next() const { return _next.get(); }
@@ -76,7 +79,11 @@ public:
 	Status status() const { return _status; }
 
 	/** Respond to the originating client. */
-	void respond(Status status);
+	void respond(Status status) {
+		if (_request_client) {
+			_request_client->response(_request_id, status);
+		}
+	}
 
 protected:
 	Event(Engine& engine, Interface* client, int32_t id, FrameTime time)
@@ -84,9 +91,7 @@ protected:
 		, _request_client(client)
 		, _request_id(id)
 		, _time(time)
-		, _status(SUCCESS)
-		, _pre_processed(false)
-		, _executed(false)
+		, _status(NOT_PREPARED)
 	{}
 
 	/** Constructor for internal events only */
@@ -95,10 +100,13 @@ protected:
 		, _request_client(NULL)
 		, _request_id(-1)
 		, _time(0)
-		, _status(SUCCESS)
-		, _pre_processed(false)
-		, _executed(false)
+		, _status(NOT_PREPARED)
 	{}
+
+	inline bool pre_process_done(Status st) {
+		_status = st;
+		return !st;
+	}
 
 	Engine&                _engine;
 	Raul::AtomicPtr<Event> _next;
@@ -106,8 +114,6 @@ protected:
 	int32_t                _request_id;
 	FrameTime              _time;
 	Status                 _status;
-	bool                   _pre_processed;
-	bool                   _executed;
 };
 
 } // namespace Server

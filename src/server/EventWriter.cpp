@@ -46,12 +46,7 @@ EventWriter::~EventWriter()
 SampleCount
 EventWriter::now() const
 {
-	/* Exactly one cycle latency (some could run ASAP if we get lucky, but not
-	   always, and a slight constant latency is far better than jittery lower
-	   (average) latency */
-	return (_engine.driver())
-		? _engine.driver()->frame_time() + _engine.driver()->block_length()
-		: 0;
+	return _engine.event_time();
 }
 
 void

@@ -55,7 +55,7 @@ Connect::Connect(Engine&           engine,
 	, _buffers(NULL)
 {}
 
-void
+bool
 Connect::pre_process()
 {
 	Glib::RWLock::ReaderLock rlock(_engine.engine_store()->lock());
@@ -63,39 +63,29 @@ Connect::pre_process()
 	PortImpl* tail = _engine.engine_store()->find_port(_tail_path);
 	PortImpl* head = _engine.engine_store()->find_port(_head_path);
 	if (!tail || !head) {
-		_status = PORT_NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PORT_NOT_FOUND);
 	}
 
 	_dst_input_port  = dynamic_cast<InputPort*>(head);
 	_src_output_port = dynamic_cast<OutputPort*>(tail);
 	if (!_dst_input_port || !_src_output_port) {
-		_status = DIRECTION_MISMATCH;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(DIRECTION_MISMATCH);
 	}
 
 	NodeImpl* const src_node = tail->parent_node();
 	NodeImpl* const dst_node = head->parent_node();
 	if (!src_node || !dst_node) {
-		_status = PARENT_NOT_FOUND;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PARENT_NOT_FOUND);
 	}
 
 	if (src_node->parent() != dst_node->parent()
 	    && src_node != dst_node->parent()
 	    && src_node->parent() != dst_node) {
-		_status = PARENT_DIFFERS;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(PARENT_DIFFERS);
 	}
 
 	if (!EdgeImpl::can_connect(_src_output_port, _dst_input_port)) {
-		_status = TYPE_MISMATCH;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(TYPE_MISMATCH);
 	}
 
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
@@ -115,9 +105,7 @@ Connect::pre_process()
 	}
 
 	if (_patch->has_edge(_src_output_port, _dst_input_port)) {
-		_status = EXISTS;
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(EXISTS);
 	}
 
 	_edge = SharedPtr<EdgeImpl>(
@@ -149,14 +137,12 @@ Connect::pre_process()
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
 
-	Event::pre_process();
+	return Event::pre_process_done(SUCCESS);
 }
 
 void
 Connect::execute(ProcessContext& context)
 {
-	Event::execute(context);
-
 	if (_status == SUCCESS) {
 		// This must be inserted here, since they're actually used by the audio thread
 		_dst_input_port->add_edge(context, _edge.get());

@@ -12,7 +12,6 @@ def build(bld):
             EdgeImpl.cpp
             Engine.cpp
             EngineStore.cpp
-            Event.cpp
             EventWriter.cpp
             GraphObjectImpl.cpp
             InputPort.cpp

@@ -141,3 +141,10 @@ ingen:head
 	rdfs:range ingen:Port ;
 	rdfs:label "head" ;
 	rdfs:comment "The destination/receiving/sink port of this edge" .
+
+ingen:incidentTo
+	a owl:ObjectProperty ,
+		owl:FunctionalProperty ;
+	rdfs:domain ingen:Edge ;
+	rdfs:label "incident to" ;
+	rdfs:comment "A special property used to describe any edge incident to a port or node.  This is never saved in patch files, but is used in the control protocol to completely disconnect a Node or Port." .

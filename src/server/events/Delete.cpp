@@ -60,12 +60,11 @@ Delete::~Delete()
 	delete _disconnect_event;
 }
 
-void
+bool
 Delete::pre_process()
 {
 	if (_path.is_root() || _path == "path:/control_in" || _path == "path:/control_out") {
-		Event::pre_process();
-		return;
+		return Event::pre_process_done(NOT_DELETABLE);
 	}
 
 	_lock.acquire();
@@ -125,14 +124,12 @@ Delete::pre_process()
 
 	}
 
-	Event::pre_process();
+	return Event::pre_process_done(SUCCESS);
 }
 
 void
 Delete::execute(ProcessContext& context)
 {
-	Event::execute(context);
-
 	PatchImpl* parent_patch = NULL;
 
 	if (_patch_node_listnode) {

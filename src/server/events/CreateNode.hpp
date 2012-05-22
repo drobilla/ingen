@@ -45,10 +45,9 @@ public:
 	           int32_t                     id,
 	           SampleCount                 timestamp,
 	           const Raul::Path&           node_path,
-	           const Raul::URI&            plugin_uri,
 	           const Resource::Properties& properties);
 
-	void pre_process();
+	bool pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
@@ -57,7 +56,7 @@ private:
 	typedef std::list< std::pair<Raul::URI, Resource::Properties> > Update;
 
 	Raul::Path           _path;
-	Raul::URI            _plugin_uri;
+	std::string          _plugin_uri;
 	Resource::Properties _properties;
 	Update               _update;
 	PatchImpl*           _patch;

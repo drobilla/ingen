@@ -83,6 +83,10 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 	Event* last = ev;
 
 	while (ev && ev->is_prepared() && ev->time() < context.end()) {
+		if (ev->time() < context.start()) {
+			// Didn't get around to executing in time, oh well...
+			ev->set_time(context.start());
+		}
 		ev->execute(context);
 		last = ev;
 		ev = (Event*)ev->next();

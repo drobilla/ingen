@@ -25,6 +25,7 @@ enum Status {
 
 	BAD_INDEX,
 	BAD_OBJECT_TYPE,
+	BAD_REQUEST,
 	BAD_VALUE_TYPE,
 	CLIENT_NOT_FOUND,
 	CREATION_FAILED,
@@ -33,8 +34,10 @@ enum Status {
 	INTERNAL_ERROR,
 	INVALID_PARENT_PATH,
 	INVALID_POLY,
+	NOT_DELETABLE,
 	NOT_FOUND,
 	NOT_MOVABLE,
+	NOT_PREPARED,
 	NO_SPACE,
 	PARENT_DIFFERS,
 	PARENT_NOT_FOUND,
@@ -53,6 +56,7 @@ ingen_status_string(Status st)
 
 	case BAD_INDEX:           return "Invalid index";
 	case BAD_OBJECT_TYPE:     return "Invalid object type";
+	case BAD_REQUEST:         return "Bad request";
 	case BAD_VALUE_TYPE:      return "Invalid value type";
 	case CLIENT_NOT_FOUND:    return "Client not found";
 	case CREATION_FAILED:     return "Creation failed";
@@ -61,13 +65,15 @@ ingen_status_string(Status st)
 	case INTERNAL_ERROR:      return "Internal error";
 	case INVALID_PARENT_PATH: return "Invalid parent path";
 	case INVALID_POLY:        return "Invalid polyphony";
+	case NOT_DELETABLE:       return "Object not deletable";
 	case NOT_FOUND:           return "Object not found";
 	case NOT_MOVABLE:         return "Object not movable";
+	case NOT_PREPARED:        return "Not prepared";
 	case NO_SPACE:            return "Insufficient space";
 	case PARENT_DIFFERS:      return "Parent differs";
 	case PARENT_NOT_FOUND:    return "Parent not found";
-	case PORT_NOT_FOUND:      return "Port not found";
 	case PLUGIN_NOT_FOUND:    return "Plugin not found";
+	case PORT_NOT_FOUND:      return "Port not found";
 	case TYPE_MISMATCH:       return "Type mismatch";
 	case UNKNOWN_TYPE:        return "Unknown type";
 	}

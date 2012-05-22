@@ -54,6 +54,11 @@ public:
 	virtual void deactivate() = 0;
 
 	/**
+	   Return true iff events are waiting to be processed.
+	*/
+	virtual bool pending_events() = 0;
+
+	/**
 	   Process audio for @p sample_count frames.
 
 	   If the return value is non-zero, events have been processed and are

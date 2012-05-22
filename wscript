@@ -172,7 +172,7 @@ def build(bld):
                   install_path = '',
                   lib          = bld.env['INGEN_TEST_LIBS'],
                   cxxflags     = bld.env['INGEN_TEST_CXXFLAGS'])
-    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2')
+    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2 SRATOM')
         
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
     bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)
@@ -209,5 +209,9 @@ def test(ctx):
             os.path.join('src', 'serialisation')])
 
     autowaf.pre_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])
-    autowaf.run_tests(ctx, APPNAME, ['ingen_test ../tests/empty.ingen'], dirs=['.', 'src', 'tests'])
-    autowaf.post_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])
+    for i in ctx.path.ant_glob('tests/*.ttl'):
+        autowaf.run_tests(ctx, APPNAME,
+                          ['ingen_test ../tests/empty.ingen %s' % i.abspath()],
+                          dirs=['.', 'src', 'tests'])
+    autowaf.post_test(ctx, APPNAME, dirs=['.', 'src', 'tests'],
+                      remove=['/usr*'])
