@@ -54,13 +54,6 @@ AudioBuffer::AudioBuffer(BufferFactory& bufs, LV2_URID type, uint32_t size)
 	clear();
 }
 
-void
-AudioBuffer::resize(uint32_t size)
-{
-	Buffer::resize(size);
-	clear();
-}
-
 /** Empty (ie zero) the buffer.
  */
 void

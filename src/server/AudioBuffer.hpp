@@ -70,8 +70,6 @@ public:
 	void prepare_read(Context& context);
 	void prepare_write(Context& context) {}
 
-	void resize(uint32_t size);
-
 private:
 	enum State { OK, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
 
