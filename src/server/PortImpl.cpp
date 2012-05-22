@@ -133,17 +133,12 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (!_prepared_buffers)
 		_prepared_buffers = new Raul::Array<BufferRef>(poly, *_buffers, NULL);
 
-	return true;
-}
+	get_buffers(bufs.engine().message_context(),
+	            bufs,
+	            _prepared_buffers,
+	            _prepared_buffers->size());
 
-void
-PortImpl::prepare_poly_buffers(BufferFactory& bufs)
-{
-	if (_prepared_buffers)
-		get_buffers(bufs.engine().message_context(),
-		            bufs,
-		            _prepared_buffers,
-		            _prepared_buffers->size());
+	return true;
 }
 
 bool

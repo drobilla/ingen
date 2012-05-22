@@ -88,8 +88,9 @@ InputPort::get_buffers(Context&                context,
 
 	if (is_a(PortType::AUDIO) && num_edges == 0) {
 		// Audio input with no edges, use shared zero buffer
-		for (uint32_t v = 0; v < poly; ++v)
+		for (uint32_t v = 0; v < poly; ++v) {
 			buffers->at(v) = bufs.silent_buffer();
+		}
 		return false;
 
 	} else if (num_edges == 1) {
@@ -97,8 +98,9 @@ InputPort::get_buffers(Context&                context,
 			if (!_edges.front().must_mix() &&
 			    !_edges.front().must_queue()) {
 				// Single non-mixing connection, use buffers directly
-				for (uint32_t v = 0; v < poly; ++v)
+				for (uint32_t v = 0; v < poly; ++v) {
 					buffers->at(v) = _edges.front().buffer(v);
+				}
 				return false;
 			}
 		}
@@ -106,7 +108,8 @@ InputPort::get_buffers(Context&                context,
 
 	// Otherwise, allocate local buffers
 	for (uint32_t v = 0; v < poly; ++v) {
-		buffers->at(v) = _bufs.get(context, buffer_type(), _buffer_size);
+		buffers->at(v).reset();
+		buffers->at(v) = bufs.get(context, buffer_type(), _buffer_size);
 		buffers->at(v)->clear();
 	}
 	return true;

@@ -142,7 +142,7 @@ SetMetadata::pre_process()
 			// Grab the object for applying properties, if the create-event succeeded
 			_object = _engine.engine_store()->find_object(Raul::Path(_subject.str()));
 		} else {
-			_status = BAD_OBJECT_TYPE;
+			return Event::pre_process_done(BAD_OBJECT_TYPE);
 		}
 	}
 

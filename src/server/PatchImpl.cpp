@@ -109,10 +109,6 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(bufs, poly);
 
-	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
-		for (uint32_t j = 0; j < (*i)->num_ports(); ++j)
-			(*i)->port_impl(j)->prepare_poly_buffers(bufs);
-
 	return true;
 }
 
@@ -433,7 +429,7 @@ PatchImpl::build_ports_array() const
 /** Find the process order for this Patch.
  *
  * The process order is a flat list that the patch will execute in order
- * when it's run() method is called.  Return value is a newly allocated list
+ * when its run() method is called.  Return value is a newly allocated list
  * which the caller is reponsible to delete.  Note that this function does
  * NOT actually set the process order, it is returned so it can be inserted
  * at the beginning of an audio cycle (by various Events).

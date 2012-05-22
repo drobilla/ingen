@@ -70,8 +70,6 @@ public:
 	 */
 	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 
-	virtual void prepare_poly_buffers(BufferFactory& bufs);
-
 	/** Apply a new polyphony value.
 	 *
 	 * Audio thread.
