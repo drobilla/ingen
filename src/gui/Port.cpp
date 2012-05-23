@@ -73,6 +73,7 @@ Port::Port(App&                       app,
 	, _app(app)
 	, _port_model(pm)
 	, _pressed(false)
+	, _entered(false)
 	, _flipped(flip)
 {
 	assert(pm);
@@ -151,9 +152,11 @@ Port::on_value_changed(GVariant* value)
 		                               atom);
 	}
 
-	PatchBox* box = get_patch_box();
-	if (box) {
-		box->show_port_status(model().get(), atom);
+	if (_entered) {
+		PatchBox* box = get_patch_box();
+		if (box) {
+			box->show_port_status(model().get(), atom);
+		}
 	}
 }
 
@@ -199,14 +202,14 @@ Port::on_event(GdkEvent* ev)
 	PatchBox* box = NULL;
 	switch (ev->type) {
 	case GDK_ENTER_NOTIFY:
-		box = get_patch_box();
-		if (box) {
+		_entered = true;
+		if ((box = get_patch_box())) {
 			box->object_entered(model().get());
 		}
 		break;
 	case GDK_LEAVE_NOTIFY:
-		box = get_patch_box();
-		if (box) {
+		_entered = false;
+		if ((box = get_patch_box())) {
 			box->object_left(model().get());
 		}
 		break;
