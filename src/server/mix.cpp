@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+
 #include "ingen/shared/URIs.hpp"
 #include "raul/log.hpp"
 
@@ -23,12 +25,6 @@
 
 namespace Ingen {
 namespace Server {
-
-static inline bool
-is_audio(Shared::URIs& uris, LV2_URID type)
-{
-	return type == uris.atom_Float || type == uris.atom_Sound;
-}
 
 static inline void
 audio_accumulate(Context& context, AudioBuffer* dst, const AudioBuffer* src)
@@ -56,6 +52,21 @@ audio_accumulate(Context& context, AudioBuffer* dst, const AudioBuffer* src)
 	}
 }
 
+static inline bool
+is_audio(Shared::URIs& uris, LV2_URID type)
+{
+	return type == uris.atom_Float || type == uris.atom_Sound;
+}
+
+static inline bool
+is_end(const Buffer* buf, LV2_Atom_Event* ev)
+{
+	return lv2_atom_sequence_is_end(
+		(LV2_Atom_Sequence_Body*)LV2_ATOM_BODY(buf->atom()),
+		buf->atom()->size,
+		ev);
+}
+
 void
 mix(Context&            context,
     Shared::URIs&       uris,
@@ -77,37 +88,42 @@ mix(Context&            context,
 			                 (const AudioBuffer*)srcs[i]);
 		}
 	} else {
-		std::cerr << "FIXME: event mix" << std::endl;
-	}
-#if 0
-	case PortType::EVENTS:
-		dst->clear();
+		assert(dst->type() == uris.atom_Sequence);
+		LV2_Atom_Event* iters[num_srcs];
 		for (uint32_t i = 0; i < num_srcs; ++i) {
-			assert(srcs[i]->type() == PortType::EVENTS);
-			srcs[i]->rewind();
+			assert(srcs[i]->type() == uris.atom_Sequence);
+			iters[i] = lv2_atom_sequence_begin(
+				(LV2_Atom_Sequence_Body*)LV2_ATOM_BODY(srcs[i]->atom()));
+			if (is_end(srcs[i], iters[i])) {
+				iters[i] = NULL;
+			}
 		}
 
 		while (true) {
-			const EventBuffer* first = NULL;
+			const LV2_Atom_Event* first   = NULL;
+			uint32_t              first_i = 0;
 			for (uint32_t i = 0; i < num_srcs; ++i) {
-				const EventBuffer* const src = (const EventBuffer*)srcs[i];
-				if (src->is_valid()) {
-					if (!first || src->get_event()->frames < first->get_event()->frames)
-						first = src;
+				const LV2_Atom_Event* const ev = iters[i];
+				if (!first || (ev && ev->time.frames < first->time.frames)) {
+					first   = ev;
+					first_i = i;
 				}
 			}
+
 			if (first) {
-				const LV2_Event* const ev = first->get_event();
-				((EventBuffer*)dst)->append(
-					ev->frames, ev->subframes, ev->type, ev->size,
-					(const uint8_t*)ev + sizeof(LV2_Event));
-				first->increment();
+				dst->append_event(
+					first->time.frames, first->body.size, first->body.type,
+					(const uint8_t*)LV2_ATOM_BODY(&first->body));
+
+				iters[first_i] = lv2_atom_sequence_next(first);
+				if (is_end(srcs[first_i], iters[first_i])) {
+					iters[first_i] = NULL;
+				}
 			} else {
 				break;
 			}
 		}
-		dst->rewind();
-#endif
+	}
 }
 
 } // namespace Server
