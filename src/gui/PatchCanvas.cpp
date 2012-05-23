@@ -804,6 +804,10 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	Resource::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type,
 	                       _app.forge().alloc_uri(type.str())));
+	if (type == uris.atom_AtomPort) {
+		props.insert(make_pair(uris.atom_bufferType,
+		                       uris.atom_Sequence));
+	}
 	props.insert(make_pair(uris.rdf_type,
 	                       is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
 	props.insert(make_pair(uris.lv2_index,
