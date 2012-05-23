@@ -35,21 +35,6 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-SetPortValue::SetPortValue(Engine&           engine,
-                           Interface*        client,
-                           int32_t           id,
-                           bool              queued,
-                           SampleCount       timestamp,
-                           const Raul::Path& port_path,
-                           const Raul::Atom& value)
-	: Event(engine, client, id, timestamp)
-	, _queued(queued)
-	, _port_path(port_path)
-	, _value(value)
-	, _port(NULL)
-{
-}
-
 /** Internal */
 SetPortValue::SetPortValue(Engine&           engine,
                            Interface*        client,

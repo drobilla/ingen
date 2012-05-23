@@ -17,9 +17,6 @@
 #ifndef INGEN_ENGINE_LV2INFO_HPP
 #define INGEN_ENGINE_LV2INFO_HPP
 
-#include <map>
-#include <string>
-
 #include "lilv/lilv.h"
 #include "ingen/shared/World.hpp"
 

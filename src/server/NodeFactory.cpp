@@ -89,7 +89,7 @@ NodeFactory::load_plugins()
 	// this (expensive!) stuff to happen.  Not the best solution - would be nice
 	// if clients could refresh plugins list for whatever reason :/
 	if (!_has_loaded) {
-		_plugins.clear(); // FIXME: assert empty?
+		_plugins.clear();
 		load_internal_plugins();
 		load_lv2_plugins();
 		_has_loaded = true;

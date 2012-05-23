@@ -94,15 +94,7 @@ Delete::pre_process()
 			_disconnect_event->pre_process();
 
 			if (_node->parent_patch()->enabled()) {
-				// FIXME: is this called multiple times?
 				_compiled_patch = _node->parent_patch()->compile();
-#ifndef NDEBUG
-				// Be sure node is removed from process order, so it can be deleted
-				for (size_t i=0; i < _compiled_patch->size(); ++i) {
-					assert(_compiled_patch->at(i).node() != _node.get());
-					// FIXME: check providers/dependants too
-				}
-#endif
 			}
 		}
 	} else if (_port) {
@@ -115,7 +107,6 @@ Delete::pre_process()
 			_disconnect_event->pre_process();
 
 			if (_port->parent_patch()->enabled()) {
-				// FIXME: is this called multiple times?
 				_compiled_patch = _port->parent_patch()->compile();
 				_ports_array    = _port->parent_patch()->build_ports_array();
 				assert(_ports_array->size() == _port->parent_patch()->num_ports_non_rt());
