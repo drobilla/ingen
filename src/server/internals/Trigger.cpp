@@ -141,7 +141,7 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 	}
 
 #ifdef RAUL_LOG_DEBUG
-	LOG(debug) << path() << " note " << (int)note_num << " on @ " << time << endl;
+	LOG(Raul::debug) << path() << " note " << (int)note_num << " on @ " << time << endl;
 #endif
 
 	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0).get())->value_at(0);

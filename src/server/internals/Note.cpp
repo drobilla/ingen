@@ -349,7 +349,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 	} else {
 		// No new note for voice, deactivate (set gate low)
 #ifdef NOTE_DEBUG
-		LOG(Raul::debug) << "Note off: key " << (*_voices)[voice].note << " voice " << voice << endl;
+		LOG(Raul::debug) << "Note off: key " << (int)(*_voices)[voice].note << " voice " << voice << endl;
 #endif
 		((AudioBuffer*)_gate_port->buffer(voice).get())->set_value(0.0f, context.start(), time);
 		(*_voices)[voice].state = Voice::FREE;
