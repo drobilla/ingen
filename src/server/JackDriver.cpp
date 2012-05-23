@@ -113,6 +113,7 @@ JackPort::pre_process(ProcessContext& context)
 	_buffer = jack_port_get_buffer(_jack_port, nframes);
 
 	if (!is_input()) {
+		((AudioBuffer*)_patch_port->buffer(0).get())->clear();
 		return;
 	}
 
@@ -149,10 +150,11 @@ JackPort::post_process(ProcessContext& context)
 	}
 
 	if (!_buffer) {
-		// First cycle for a new outputs, so pre_process wasn't called
+		// First cycle for a new output, so pre_process wasn't called
 		_buffer = jack_port_get_buffer(_jack_port, nframes);
 	}
 
+	_patch_port->post_process(context);
 	if (_patch_port->is_a(PortType::AUDIO)) {
 		AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 

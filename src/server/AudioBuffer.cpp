@@ -45,9 +45,12 @@ AudioBuffer::AudioBuffer(BufferFactory& bufs, LV2_URID type, uint32_t size)
 
 	if (type == bufs.uris().atom_Sound) {
 		// Audio port (Vector of float)
-		LV2_Atom_Vector* body = (LV2_Atom_Vector*)atom();
-		body->body.child_size = sizeof(float);
-		body->body.child_type = bufs.uris().atom_Float;
+		LV2_Atom_Vector* vec = (LV2_Atom_Vector*)_atom;
+		vec->body.child_size = sizeof(float);
+		vec->body.child_type = bufs.uris().atom_Float;
+		_atom->size = size - sizeof(LV2_Atom_Vector);
+	} else {
+		_atom->size = size - sizeof(LV2_Atom);
 	}
 
 	_atom->type = type;

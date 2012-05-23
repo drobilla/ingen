@@ -89,7 +89,7 @@ void
 Buffer::copy(Context& context, const Buffer* src)
 {
 	// Copy only if src is a POD object that fits
-	if (src->_atom->type != 0 &&  sizeof(LV2_Atom) + src->_atom->size <= capacity()) {
+	if (src->_atom->type != 0 && sizeof(LV2_Atom) + src->_atom->size <= capacity()) {
 		memcpy(_atom, src->_atom, sizeof(LV2_Atom) + src->_atom->size);
 	}
 	assert(_atom->type != 1);
