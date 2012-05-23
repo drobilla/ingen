@@ -22,11 +22,11 @@
 #include "events/CreatePatch.hpp"
 #include "events/CreatePort.hpp"
 #include "events/Delete.hpp"
+#include "events/Delta.hpp"
 #include "events/Disconnect.hpp"
 #include "events/DisconnectAll.hpp"
 #include "events/Get.hpp"
 #include "events/Move.hpp"
-#include "events/SetMetadata.hpp"
 #include "events/SetPortValue.hpp"
 
 #endif // INGEN_ENGINE_EVENTS_HPP

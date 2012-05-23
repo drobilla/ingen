@@ -35,11 +35,11 @@ def build(bld):
             events/CreatePatch.cpp
             events/CreatePort.cpp
             events/Delete.cpp
+            events/Delta.cpp
             events/Disconnect.cpp
             events/DisconnectAll.cpp
             events/Get.cpp
             events/Move.cpp
-            events/SetMetadata.cpp
             events/SetPortValue.cpp
             ingen_engine.cpp
             internals/Controller.cpp

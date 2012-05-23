@@ -63,20 +63,20 @@ class SetPortValue;
 /** Set properties of a graph object.
  * \ingroup engine
  */
-class SetMetadata : public Event
+class Delta : public Event
 {
 public:
-	SetMetadata(Engine&                     engine,
-	            Interface*                  client,
-	            int32_t                     id,
-	            SampleCount                 timestamp,
-	            bool                        create,
-	            Resource::Graph             context,
-	            const Raul::URI&            subject,
-	            const Resource::Properties& properties,
-	            const Resource::Properties& remove = Resource::Properties());
+	Delta(Engine&                     engine,
+	      Interface*                  client,
+	      int32_t                     id,
+	      SampleCount                 timestamp,
+	      bool                        create,
+	      Resource::Graph             context,
+	      const Raul::URI&            subject,
+	      const Resource::Properties& properties,
+	      const Resource::Properties& remove = Resource::Properties());
 
-	~SetMetadata();
+	~Delta();
 
 	bool pre_process();
 	void execute(ProcessContext& context);

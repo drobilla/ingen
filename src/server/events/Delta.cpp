@@ -32,6 +32,7 @@
 #include "CreateNode.hpp"
 #include "CreatePatch.hpp"
 #include "CreatePort.hpp"
+#include "Delta.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
@@ -40,10 +41,9 @@
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
-#include "SetMetadata.hpp"
 #include "SetPortValue.hpp"
 
-#define LOG(s) s << "[SetMetadata] "
+#define LOG(s) s << "[Delta] "
 
 namespace Ingen {
 namespace Server {
@@ -51,15 +51,15 @@ namespace Events {
 
 typedef Resource::Properties Properties;
 
-SetMetadata::SetMetadata(Engine&           engine,
-                         Interface*        client,
-                         int32_t           id,
-                         SampleCount       timestamp,
-                         bool              create,
-                         Resource::Graph   context,
-                         const Raul::URI&  subject,
-                         const Properties& properties,
-                         const Properties& remove)
+Delta::Delta(Engine&           engine,
+             Interface*        client,
+             int32_t           id,
+             SampleCount       timestamp,
+             bool              create,
+             Resource::Graph   context,
+             const Raul::URI&  subject,
+             const Properties& properties,
+             const Properties& remove)
 	: Event(engine, client, id, timestamp)
 	, _create_event(NULL)
 	, _subject(subject)
@@ -76,7 +76,7 @@ SetMetadata::SetMetadata(Engine&           engine,
 	}
 
 	/*
-	LOG(Raul::info) << "Patch " << subject << " : " << context << " {" << std::endl;
+	LOG(Raul::info) << "Delta " << subject << " : " << context << " {" << std::endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
 		LOG(Raul::info) << "    + " << i->first
@@ -86,14 +86,14 @@ SetMetadata::SetMetadata(Engine&           engine,
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = remove.begin(); i != remove.end(); ++i) {
 		LOG(Raul::info) << "    - " << i->first
-		          << " = " << engine.world()->forge().str(i->second)
+		                << " = " << engine.world()->forge().str(i->second)
 		                << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << std::endl;
 	}
 	LOG(Raul::info) << "}" << std::endl;
 	*/
 }
 
-SetMetadata::~SetMetadata()
+Delta::~Delta()
 {
 	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
 		delete *i;
@@ -102,7 +102,7 @@ SetMetadata::~SetMetadata()
 }
 
 bool
-SetMetadata::pre_process()
+Delta::pre_process()
 {
 	typedef Properties::const_iterator iterator;
 
@@ -257,7 +257,7 @@ SetMetadata::pre_process()
 }
 
 void
-SetMetadata::execute(ProcessContext& context)
+Delta::execute(ProcessContext& context)
 {
 	if (_status) {
 		return;
@@ -340,7 +340,7 @@ SetMetadata::execute(ProcessContext& context)
 }
 
 void
-SetMetadata::post_process()
+Delta::post_process()
 {
 	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
 		(*i)->post_process();
