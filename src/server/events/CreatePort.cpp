@@ -20,18 +20,15 @@
 #include "ingen/shared/URIs.hpp"
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
-#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include "Broadcaster.hpp"
-#include "ControlBindings.hpp"
 #include "CreatePort.hpp"
 #include "Driver.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "PatchImpl.hpp"
-#include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 
 namespace Ingen {
@@ -48,7 +45,7 @@ CreatePort::CreatePort(Engine&                     engine,
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _port_type(PortType::UNKNOWN)
-	, _buffer_type(0)
+	, _buf_type(0)
 	, _patch(NULL)
 	, _patch_port(NULL)
 	, _ports_array(NULL)
@@ -78,7 +75,7 @@ CreatePort::CreatePort(Engine&                     engine,
 	const Range buffer_types = properties.equal_range(uris.atom_bufferType);
 	for (Iterator i = buffer_types.first; i != buffer_types.second; ++i) {
 		if (i->second.type() == _engine.world()->forge().URI) {
-			_buffer_type = _engine.world()->uri_map().map_uri(i->second.get_uri());
+			_buf_type = _engine.world()->uri_map().map_uri(i->second.get_uri());
 		}
 	}
 }
@@ -98,81 +95,78 @@ CreatePort::pre_process()
 		return Event::pre_process_done(PARENT_NOT_FOUND);
 	}
 
-	const Ingen::Shared::URIs& uris = _engine.world()->uris();
+	const Shared::URIs&  uris           = _engine.world()->uris();
+	const BufferFactory& buffer_factory = *_engine.buffer_factory();
 
-	assert(_patch->path() == _path.parent());
+	const uint32_t buf_size    = buffer_factory.default_size(_buf_type);
+	const int32_t  old_n_ports = _patch->num_ports_non_rt();
 
-	size_t buffer_size = _engine.buffer_factory()->default_buffer_size(_buffer_type);
+	typedef Resource::Properties::const_iterator PropIter;
 
-	const uint32_t old_num_ports = (_patch->external_ports())
-		? _patch->external_ports()->size()
-		: 0;
-
-	Resource::Properties::const_iterator index_i = _properties.find(uris.lv2_index);
+	PropIter index_i = _properties.find(uris.lv2_index);
 	if (index_i == _properties.end()) {
+		// No index given, append
 		index_i = _properties.insert(
 			std::make_pair(uris.lv2_index,
-			               _engine.world()->forge().make(int32_t(old_num_ports))));
-	} else if (index_i->second.type() != uris.forge.Int
-	           || index_i->second.get_int32() != static_cast<int32_t>(old_num_ports)) {
+			               _engine.world()->forge().make(old_n_ports)));
+	} else if (index_i->second.type() != uris.forge.Int ||
+	           index_i->second.get_int32() != old_n_ports) {
 		return Event::pre_process_done(BAD_INDEX);
 	}
 
-	Resource::Properties::const_iterator poly_i = _properties.find(uris.ingen_polyphonic);
-	bool polyphonic = (poly_i != _properties.end() &&
-	                   poly_i->second.type() == uris.forge.Bool &&
-	                   poly_i->second.get_bool());
+	const PropIter poly_i = _properties.find(uris.ingen_polyphonic);
+	const bool polyphonic = (poly_i != _properties.end() &&
+	                         poly_i->second.type() == uris.forge.Bool &&
+	                         poly_i->second.get_bool());
 
 	if (!(_patch_port = _patch->create_port(
 		      *_engine.buffer_factory(), _path.symbol(),
-		      _port_type, _buffer_type, buffer_size, _is_output, polyphonic))) {
+		      _port_type, _buf_type, buf_size, _is_output, polyphonic))) {
 		return Event::pre_process_done(CREATION_FAILED);
 	}	
 
 	_patch_port->properties().insert(_properties.begin(), _properties.end());
 
-	assert(index_i->second == _engine.world()->forge().make((int)_patch_port->index()));
-
-	if (_patch_port) {
-		if (_is_output)
-			_patch->add_output(new Raul::List<PortImpl*>::Node(_patch_port));
-		else
-			_patch->add_input(new Raul::List<PortImpl*>::Node(_patch_port));
-
-		if (_patch->external_ports())
-			_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, *_patch->external_ports(), NULL);
-		else
-			_ports_array = new Raul::Array<PortImpl*>(old_num_ports + 1, NULL);
-
-		_ports_array->at(old_num_ports) = _patch_port;
-		_engine.engine_store()->add(_patch_port);
-
-		if (!_patch->parent()) {
-			_engine_port = _engine.driver()->create_port(
-				dynamic_cast<DuplexPort*>(_patch_port));
-		}
-
-		assert(_ports_array->size() == _patch->num_ports_non_rt());
-
+	_engine.engine_store()->add(_patch_port);
+	if (_is_output) {
+		_patch->add_output(new Raul::List<PortImpl*>::Node(_patch_port));
 	} else {
-		return Event::pre_process_done(CREATION_FAILED);
+		_patch->add_input(new Raul::List<PortImpl*>::Node(_patch_port));
 	}
 
-	_update = _patch_port->properties();
+	if (!_patch->parent()) {
+		_engine_port = _engine.driver()->create_port(
+			dynamic_cast<DuplexPort*>(_patch_port));
+	}
 
+	_ports_array = new Raul::Array<PortImpl*>(old_n_ports + 1, NULL);
+	_update      = _patch_port->properties();
+
+	assert(_patch_port->index() == (uint32_t)index_i->second.get_int32());
+	assert(_patch->num_ports_non_rt() == (uint32_t)old_n_ports + 1);
+	assert(_patch_port->index() == (uint32_t)old_n_ports);
+	assert(_ports_array->size() == _patch->num_ports_non_rt());
+	assert(_patch_port->index() < _ports_array->size());
 	return Event::pre_process_done(SUCCESS);
 }
 
 void
 CreatePort::execute(ProcessContext& context)
 {
-	if (_patch_port) {
-		_engine.maid()->push(_patch->external_ports());
+	if (!_status) {
+		_old_ports_array = _patch->external_ports();
+		if (_old_ports_array) {
+			for (uint32_t i = 0; i < _old_ports_array->size(); ++i) {
+				(*_ports_array)[i] = (*_old_ports_array)[i];
+			}
+		}
+		assert(!(*_ports_array)[_patch_port->index()]);
+		(*_ports_array)[_patch_port->index()] = _patch_port;
 		_patch->external_ports(_ports_array);
-	}
 
-	if (_engine_port) {
-		_engine.driver()->add_port(context, _engine_port);
+		if (_engine_port) {
+			_engine.driver()->add_port(context, _engine_port);
+		}
 	}
 }
 
@@ -183,6 +177,8 @@ CreatePort::post_process()
 	if (!_status) {
 		_engine.broadcaster()->put(_path, _update);
 	}
+
+	delete _old_ports_array;
 }
 
 } // namespace Events

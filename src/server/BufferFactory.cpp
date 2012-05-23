@@ -74,7 +74,7 @@ BufferFactory::audio_buffer_size(SampleCount nframes)
 }
 
 uint32_t
-BufferFactory::default_buffer_size(LV2_URID type)
+BufferFactory::default_size(LV2_URID type) const
 {
 	if (type == _uris.atom_Float) {
 		return sizeof(LV2_Atom_Float);
@@ -132,14 +132,14 @@ BufferFactory::create(LV2_URID type, uint32_t capacity)
 	Buffer* buffer = NULL;
 
 	if (capacity == 0) {
-		capacity = default_buffer_size(type);
+		capacity = default_size(type);
 	}
 
 	if (type == _uris.atom_Float) {
 		assert(capacity >= sizeof(LV2_Atom_Float));
 		buffer = new AudioBuffer(*this, type, capacity);
 	} else if (type == _uris.atom_Sound) {
-		assert(capacity >= default_buffer_size(_uris.atom_Sound));
+		assert(capacity >= default_size(_uris.atom_Sound));
 		buffer = new AudioBuffer(*this, type, capacity);
 	} else {
 		buffer = new Buffer(*this, type, capacity);

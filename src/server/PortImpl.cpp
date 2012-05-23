@@ -64,7 +64,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	const Ingen::Shared::URIs& uris = bufs.uris();
 
 	if (_buffer_size == 0) {
-		_buffer_size = bufs.default_buffer_size(buffer_type);
+		_buffer_size = bufs.default_size(buffer_type);
 	}
 
 	if (_buffer_type == 0) {

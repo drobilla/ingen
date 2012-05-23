@@ -56,11 +56,12 @@ public:
 private:
 	Raul::Path              _path;
 	PortType                _port_type;
-	LV2_URID                _buffer_type;
+	LV2_URID                _buf_type;
 	PatchImpl*              _patch;
 	PortImpl*               _patch_port;
-	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports array for Patch
-	EnginePort*             _engine_port; ///< Driver (eg Jack) port if this is a toplevel port
+	Raul::Array<PortImpl*>* _ports_array; ///< New external port array for Patch
+	Raul::Array<PortImpl*>* _old_ports_array;
+	EnginePort*             _engine_port; ///< Driver port if on the root
 	Resource::Properties    _properties;
 	Resource::Properties    _update;
 	bool                    _is_output;

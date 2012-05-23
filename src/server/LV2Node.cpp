@@ -251,7 +251,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 		}
 
-		port_buffer_size = bufs.default_buffer_size(buffer_type);
+		port_buffer_size = bufs.default_size(buffer_type);
 
 		if (port_type == PortType::ATOM) {
 			// Get default value, and its length
