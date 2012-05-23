@@ -14,9 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ProcessSlave.hpp"
-#include "NodeImpl.hpp"
 #include "CompiledPatch.hpp"
+#include "NodeImpl.hpp"
+#include "ProcessSlave.hpp"
+#include "ThreadManager.hpp"
 
 using namespace std;
 

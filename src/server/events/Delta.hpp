@@ -23,14 +23,17 @@
 
 #include "ControlBindings.hpp"
 #include "Event.hpp"
-#include "ingen/shared/ResourceImpl.hpp"
 
 namespace Ingen {
+
+namespace Shared { class ResourceImpl; }
+
 namespace Server {
 
-class GraphObjectImpl;
-class PatchImpl;
 class CompiledPatch;
+class Engine;
+class PatchImpl;
+class ProcessContext;
 
 namespace Events {
 

@@ -15,15 +15,12 @@
 */
 
 #include <algorithm>
-#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
+
 #include "raul/log.hpp"
-#include "EdgeImpl.hpp"
+
 #include "Engine.hpp"
 #include "MessageContext.hpp"
 #include "NodeImpl.hpp"
-#include "PatchImpl.hpp"
-#include "PortImpl.hpp"
-#include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;

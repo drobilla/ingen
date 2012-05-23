@@ -14,17 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
 #include <vector>
 
 #include <glibmm/thread.h>
 
-#include <boost/format.hpp>
-
-#include "raul/log.hpp"
 #include "raul/Maid.hpp"
 
-#include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 
 #include "Broadcaster.hpp"
@@ -33,7 +28,6 @@
 #include "CreatePatch.hpp"
 #include "CreatePort.hpp"
 #include "Delta.hpp"
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "GraphObjectImpl.hpp"

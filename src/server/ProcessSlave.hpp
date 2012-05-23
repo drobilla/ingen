@@ -17,20 +17,18 @@
 #ifndef INGEN_ENGINE_PROCESSSLAVE_HPP
 #define INGEN_ENGINE_PROCESSSLAVE_HPP
 
-#include "raul/Array.hpp"
+#include <stdint.h>
+
 #include "raul/AtomicInt.hpp"
 #include "raul/Slave.hpp"
-
-#include "Driver.hpp"
-#include "Engine.hpp"
-#include "ProcessContext.hpp"
-#include "ThreadManager.hpp"
+#include "raul/log.hpp"
 
 namespace Ingen {
 namespace Server {
 
-class NodeImpl;
 class CompiledPatch;
+class Engine;
+class ProcessContext;
 
 class ProcessSlave : protected Raul::Slave {
 public:

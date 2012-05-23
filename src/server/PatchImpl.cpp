@@ -15,7 +15,6 @@
 */
 
 #include <cassert>
-#include <cmath>
 #include <string>
 
 #include "ingen/shared/URIs.hpp"
@@ -23,7 +22,6 @@
 #include "raul/log.hpp"
 
 #include "EdgeImpl.hpp"
-#include "Driver.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"

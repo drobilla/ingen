@@ -14,8 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <algorithm>
-
 #include "ingen/shared/URIs.hpp"
 #include "raul/log.hpp"
 
@@ -23,7 +21,6 @@
 #include "BufferFactory.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "ThreadManager.hpp"
 
 namespace Ingen {
 namespace Server {

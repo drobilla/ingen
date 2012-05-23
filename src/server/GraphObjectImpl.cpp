@@ -18,7 +18,6 @@
 
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
-#include "EngineStore.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;

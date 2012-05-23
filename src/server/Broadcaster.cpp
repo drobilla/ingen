@@ -14,17 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-#include <unistd.h>
+#include <utility>
+#include <glibmm/thread.h>
 
 #include "ingen/Interface.hpp"
 #include "raul/log.hpp"
 
 #include "Broadcaster.hpp"
-#include "EdgeImpl.hpp"
-#include "EngineStore.hpp"
 #include "PluginImpl.hpp"
-#include "util.hpp"
+#include "NodeFactory.hpp"
 
 #define LOG(s) (s("[Broadcaster] "))
 

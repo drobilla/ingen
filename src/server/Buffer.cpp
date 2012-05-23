@@ -16,12 +16,12 @@
 
 #define __STDC_LIMIT_MACROS 1
 
+#include <assert.h>
 #include <stdint.h>
 #include <string.h>
 
-#include <algorithm>
+#include <new>
 
-#include "ingen/shared/LV2Features.hpp"
 #include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"

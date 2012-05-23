@@ -14,12 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <algorithm>
 #include <cassert>
-#include <cmath>
 #include <cstdlib>
-#include <cstring>
 #include <string>
+#include <utility>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -34,15 +32,14 @@
 #include "ingen/Patch.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Port.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
-#include "ingen/shared/ResourceImpl.hpp"
 #include "ingen/shared/Store.hpp"
 #include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
-#include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"

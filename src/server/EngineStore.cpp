@@ -15,9 +15,7 @@
 */
 
 #include <utility>
-#include <vector>
 #include "raul/log.hpp"
-#include "raul/List.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
 #include "EngineStore.hpp"

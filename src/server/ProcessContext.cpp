@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Engine.hpp"
 #include "ProcessContext.hpp"
 #include "ProcessSlave.hpp"
 

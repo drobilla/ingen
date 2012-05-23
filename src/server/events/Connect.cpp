@@ -14,9 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
-
-#include <boost/format.hpp>
 #include <glibmm/thread.h>
 
 #include "raul/Maid.hpp"
@@ -25,14 +22,12 @@
 #include "Broadcaster.hpp"
 #include "Connect.hpp"
 #include "EdgeImpl.hpp"
-#include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
-#include "ProcessContext.hpp"
 #include "types.hpp"
 
 namespace Ingen {

@@ -20,7 +20,6 @@
 #include "ingen/shared/AtomReader.hpp"
 #include "ingen/shared/AtomSink.hpp"
 #include "ingen/shared/AtomWriter.hpp"
-#include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/runtime_paths.hpp"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"

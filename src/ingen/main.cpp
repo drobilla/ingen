@@ -20,21 +20,13 @@
 #include <iostream>
 #include <string>
 
-#include <boost/optional.hpp>
-
-#include <glibmm/convert.h>
-#include <glibmm/miscutils.h>
 #include <glibmm/thread.h>
 #include <glibmm/timer.h>
 
 #include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
-#include "raul/Thread.hpp"
 #include "raul/log.hpp"
-
-#include "serd/serd.h"
-#include "sord/sordmm.hpp"
 
 #include "ingen_config.h"
 

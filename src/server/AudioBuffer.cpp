@@ -14,16 +14,13 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
 #include <assert.h>
+#include <stddef.h>
+#include <stdint.h>
 
-#include "ingen/shared/LV2Features.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "raul/SharedPtr.hpp"
-#include "raul/log.hpp"
 
 #include "AudioBuffer.hpp"
-#include "ProcessContext.hpp"
 
 using namespace std;
 

@@ -17,20 +17,16 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/Array.hpp"
-#include "raul/List.hpp"
 
 #include "AudioBuffer.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
-#include "util.hpp"
 
 using namespace std;
 

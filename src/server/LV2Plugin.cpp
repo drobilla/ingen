@@ -14,19 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
 #include <string>
-#include <glibmm.h>
 
 #include "ingen/shared/URIs.hpp"
-#include "raul/log.hpp"
-#include "sord/sordmm.hpp"
 
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "LV2Node.hpp"
 #include "LV2Plugin.hpp"
-#include "NodeImpl.hpp"
 
 using namespace std;
 

@@ -14,7 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <float.h>
 #include <stdint.h>
 
 #include <cassert>
@@ -35,7 +34,6 @@
 #include "InputPort.hpp"
 #include "LV2Node.hpp"
 #include "LV2Plugin.hpp"
-#include "MessageContext.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 

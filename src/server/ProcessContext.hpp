@@ -20,7 +20,6 @@
 #include <vector>
 
 #include "Context.hpp"
-#include "types.hpp"
 
 namespace Ingen {
 namespace Server {

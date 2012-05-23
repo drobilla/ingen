@@ -14,14 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <algorithm>
-
 #include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
-#include "raul/Maid.hpp"
 #include "raul/log.hpp"
 
-#include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
@@ -30,9 +26,6 @@
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
-#include "ProcessContext.hpp"
-#include "mix.hpp"
-#include "util.hpp"
 
 namespace Ingen {
 namespace Server {

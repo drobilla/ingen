@@ -28,7 +28,6 @@
 #include "RenameWindow.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
-#include "ingen_config.h"
 
 using namespace std;
 

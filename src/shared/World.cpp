@@ -21,8 +21,6 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/module.h>
 
-#include "ingen/EngineBase.hpp"
-#include "ingen/Interface.hpp"
 #include "ingen/shared/Configuration.hpp"
 #include "ingen/shared/LV2Features.hpp"
 #include "ingen/shared/Module.hpp"
@@ -31,7 +29,6 @@
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/runtime_paths.hpp"
 #include "lilv/lilv.h"
-#include "raul/Atom.hpp"
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"
 
@@ -40,7 +37,15 @@
 using namespace std;
 
 namespace Ingen {
+
+class EngineBase;
+class Interface;
+
+namespace Serialisation { class Parser; class Serialiser; }
+
 namespace Shared {
+
+class Store;
 
 /** Load a dynamic module from the default path.
  *

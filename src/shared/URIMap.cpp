@@ -14,18 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define __STDC_LIMIT_MACROS 1
-
-#include <assert.h>
 #include <stdint.h>
 
 #include <glib.h>
 
-#include <boost/shared_ptr.hpp>
-
 #include "ingen/shared/URIMap.hpp"
-#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "raul/log.hpp"
 
 using namespace std;
 

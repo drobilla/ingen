@@ -24,13 +24,11 @@
 
 namespace Raul {
 template<typename T> class Array;
-template<typename T> class ListNode;
 }
 
 namespace Ingen {
 namespace Server {
 
-class GraphObjectImpl;
 class NodeImpl;
 class PortImpl;
 class EnginePort;

@@ -17,8 +17,6 @@
 #include "ingen/shared/URIs.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "raul/log.hpp"
-#include "sord/sordmm.hpp"
 
 #include "Broadcaster.hpp"
 #include "CreateNode.hpp"

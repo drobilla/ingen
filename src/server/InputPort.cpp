@@ -19,7 +19,6 @@
 
 #include "ingen/Patch.hpp"
 
-#include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
@@ -28,10 +27,8 @@
 #include "Notification.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
-#include "ThreadManager.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "mix.hpp"
-#include "util.hpp"
 
 using namespace std;
 

@@ -14,18 +14,13 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cstdlib>
-#include <cassert>
 #include <string>
 
 #include "ingen/shared/URIs.hpp"
 
 #include "Buffer.hpp"
 #include "DuplexPort.hpp"
-#include "NodeImpl.hpp"
 #include "OutputPort.hpp"
-#include "ProcessContext.hpp"
-#include "util.hpp"
 
 using namespace std;
 
@@ -48,7 +43,6 @@ DuplexPort::DuplexPort(BufferFactory&    bufs,
 	, OutputPort(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
 	, _is_output(is_output)
 {
-	assert(PortImpl::_parent == parent);
 	set_property(bufs.uris().ingen_polyphonic,
 	             bufs.forge().make(polyphonic));
 }

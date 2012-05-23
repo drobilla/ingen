@@ -15,18 +15,14 @@
 */
 
 #include <sys/mman.h>
-#include <unistd.h>
 
 #include "events/CreatePort.hpp"
 #include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/LV2Features.hpp"
 #include "ingen/shared/Store.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
-#include "raul/Deletable.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
-#include "raul/log.hpp"
 
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"

@@ -23,9 +23,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
-#include "PluginImpl.hpp"
 
 namespace Ingen {
 namespace Server {

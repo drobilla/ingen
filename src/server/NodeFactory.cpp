@@ -14,17 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <float.h>
-#include <math.h>
 #include <stdlib.h>
 
 #include <string>
 
-#include <glibmm/miscutils.h>
-
 #include "lilv/lilv.h"
-#include "raul/log.hpp"
-#include "sord/sordmm.hpp"
 
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
@@ -32,12 +26,9 @@
 #include "internals/Trigger.hpp"
 #include "ingen/shared/World.hpp"
 
-#include "Engine.hpp"
 #include "InternalPlugin.hpp"
-#include "LV2Node.hpp"
 #include "LV2Plugin.hpp"
 #include "NodeFactory.hpp"
-#include "PatchImpl.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;

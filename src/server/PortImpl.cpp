@@ -15,7 +15,6 @@
 */
 
 #include "ingen/shared/URIs.hpp"
-#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 

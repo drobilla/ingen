@@ -22,8 +22,6 @@
 #include "ingen/GraphObject.hpp"
 #include "raul/SharedPtr.hpp"
 
-namespace Raul { class Path; }
-
 namespace Ingen {
 
 namespace Client {
@@ -43,7 +41,6 @@ class PatchBox;
 class PatchView;
 class PatchWindow;
 class RenameWindow;
-class UploadPatchWindow;
 
 /** Manager/Factory for all windows.
  *

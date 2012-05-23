@@ -20,9 +20,8 @@
 #include "raul/Path.hpp"
 
 #include "Event.hpp"
-#include "InputPort.hpp"
-#include "PatchImpl.hpp"
 #include "types.hpp"
+#include "BufferRef.hpp"
 
 namespace Raul {
 template <typename T> class Array;

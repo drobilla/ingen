@@ -14,14 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
-
-#include "raul/log.hpp"
-
 #include "ingen/shared/URIs.hpp"
 
-#include "Broadcaster.hpp"
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "EventWriter.hpp"
 #include "events.hpp"
