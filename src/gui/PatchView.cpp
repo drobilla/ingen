@@ -171,10 +171,15 @@ PatchView::process_toggled()
 void
 PatchView::poly_changed()
 {
-	_app->interface()->set_property(
-		_patch->path(),
-		_app->uris().ingen_polyphony,
-		_app->forge().make(_poly_spin->get_value_as_int()));
+	const int poly = _poly_spin->get_value_as_int();
+	if (_enable_signal && poly != (int)_patch->internal_poly()) {
+		std::cerr << "POLY SPIN CHANGE " << _patch->internal_poly()
+		          << " => " << poly << std::endl;
+		_app->interface()->set_property(
+			_patch->path(),
+			_app->uris().ingen_polyphony,
+			_app->forge().make(poly));
+	}
 }
 
 void

@@ -49,7 +49,8 @@ PatchImpl::PatchImpl(Engine&             engine,
 	                           "patch", "Ingen Patch"),
 	           symbol, poly, parent, srate)
 	, _engine(engine)
-	, _internal_poly(internal_poly)
+	, _poly_pre(internal_poly)
+	, _poly_process(internal_poly)
 	, _compiled_patch(NULL)
 	, _process(false)
 {
@@ -109,6 +110,7 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i)
 		(*i)->prepare_poly(bufs, poly);
 
+	_poly_pre = poly;
 	return true;
 }
 
@@ -132,12 +134,11 @@ PatchImpl::apply_internal_poly(ProcessContext& context,
 		}
 	}
 
-	const bool polyphonic = parent_patch() && (poly == parent_patch()->internal_poly());
+	const bool polyphonic = parent_patch() && (poly == parent_patch()->internal_poly_process());
 	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i)
 		(*i)->setup_buffers(context, bufs, polyphonic ? poly : 1);
 
-	_internal_poly = poly;
-
+	_poly_process = poly;
 	return true;
 }
 
@@ -267,7 +268,6 @@ PatchImpl::add_node(Nodes::Node* ln)
 	assert(ln != NULL);
 	assert(ln->elem() != NULL);
 	assert(ln->elem()->parent_patch() == this);
-	//assert(ln->elem()->polyphony() == _internal_poly);
 
 	_nodes.push_back(ln);
 }

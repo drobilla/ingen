@@ -303,16 +303,17 @@ SetMetadata::execute(ProcessContext& context)
 		case POLYPHONIC: {
 			PatchImpl* parent = reinterpret_cast<PatchImpl*>(object->parent());
 			if (value.get_bool()) {
-				object->apply_poly(context, *_engine.maid(), parent->internal_poly());
+				object->apply_poly(
+					context, *_engine.maid(), parent->internal_poly_process());
 			} else {
 				object->apply_poly(context, *_engine.maid(), 1);
 			}
 		} break;
 		case POLYPHONY:
-			if (_patch->internal_poly() != static_cast<uint32_t>(value.get_int32()) &&
-			    !_patch->apply_internal_poly(context,
+			if (!_patch->apply_internal_poly(context,
 			                                 *_engine.buffer_factory(),
-			                                 *_engine.maid(), value.get_int32())) {
+			                                 *_engine.maid(),
+			                                 value.get_int32())) {
 				_status = INTERNAL_ERROR;
 			}
 			break;

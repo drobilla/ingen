@@ -152,7 +152,8 @@ public:
 	void enable() { _process = true; }
 	void disable(ProcessContext& context);
 
-	uint32_t internal_poly() const { return _internal_poly; }
+	uint32_t internal_poly()         const { return _poly_pre; }
+	uint32_t internal_poly_process() const { return _poly_process; }
 
 private:
 	inline void compile_recursive(NodeImpl* n, CompiledPatch* output) const;
@@ -160,7 +161,8 @@ private:
 	void process_single(ProcessContext& context);
 
 	Engine&        _engine;
-	uint32_t       _internal_poly;
+	uint32_t       _poly_pre;        ///< Pre-process thread only
+	uint32_t       _poly_process;    ///< Process thread only
 	CompiledPatch* _compiled_patch;  ///< Process thread only
 	Edges          _edges;           ///< Pre-process thread only
 	Ports          _inputs;          ///< Pre-process thread only
