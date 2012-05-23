@@ -101,7 +101,6 @@ CreateNode::pre_process()
 	   could be avoided and the node simply appended. */
 	if (_patch->enabled()) {
 		_compiled_patch = _patch->compile();
-		assert(_compiled_patch);
 	}
 
 	_update.push_back(make_pair(_node->path(), _node->properties()));

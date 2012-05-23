@@ -53,7 +53,6 @@ private:
 	PatchImpl*           _patch;
 	PatchImpl*           _parent;
 	CompiledPatch*       _compiled_patch;
-	int                  _poly;
 };
 
 } // namespace Events

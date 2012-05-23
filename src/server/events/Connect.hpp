@@ -18,26 +18,24 @@
 #define INGEN_EVENTS_CONNECT_HPP
 
 #include "raul/Path.hpp"
+
 #include "Event.hpp"
-#include "PatchImpl.hpp"
 #include "InputPort.hpp"
+#include "PatchImpl.hpp"
 #include "types.hpp"
 
 namespace Raul {
-template <typename T> class ListNode;
 template <typename T> class Array;
 }
 
 namespace Ingen {
 namespace Server {
 
-class PatchImpl;
-class NodeImpl;
+class CompiledPatch;
 class EdgeImpl;
-class PortImpl;
 class InputPort;
 class OutputPort;
-class CompiledPatch;
+class PatchImpl;
 
 namespace Events {
 

@@ -134,8 +134,9 @@ Connect::pre_process()
 	                             *_engine.buffer_factory(),
 	                             _buffers, _dst_input_port->poly());
 
-	if (_patch->enabled())
+	if (_patch->enabled()) {
 		_compiled_patch = _patch->compile();
+	}
 
 	return Event::pre_process_done(SUCCESS);
 }
@@ -143,10 +144,8 @@ Connect::pre_process()
 void
 Connect::execute(ProcessContext& context)
 {
-	if (_status == SUCCESS) {
-		// This must be inserted here, since they're actually used by the audio thread
+	if (!_status) {
 		_dst_input_port->add_edge(context, _edge.get());
-		assert(_buffers);
 		_engine.maid()->push(_dst_input_port->set_buffers(context, _buffers));
 		_dst_input_port->connect_buffers();
 		_engine.maid()->push(_patch->compiled_patch());

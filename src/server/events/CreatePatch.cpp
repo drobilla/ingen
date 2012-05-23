@@ -43,14 +43,7 @@ CreatePatch::CreatePatch(Engine&                     engine,
 	, _patch(NULL)
 	, _parent(NULL)
 	, _compiled_patch(NULL)
-	, _poly(1)
 {
-	Ingen::Shared::URIs& uris = _engine.world()->uris();
-	typedef Resource::Properties::const_iterator iterator;
-	iterator p = _properties.find(uris.ingen_polyphony);
-	if (p != _properties.end() && p->second.type() == uris.forge.Int) {
-		_poly = p->second.get_int32();
-	}
 }
 
 bool
@@ -60,10 +53,6 @@ CreatePatch::pre_process()
 		return Event::pre_process_done(EXISTS);
 	}
 
-	if (_poly < 1) {
-		return Event::pre_process_done(INVALID_POLY);
-	}
-
 	const Raul::Path& path = (const Raul::Path&)_path;
 
 	_parent = _engine.engine_store()->find_patch(path.parent());
@@ -71,15 +60,27 @@ CreatePatch::pre_process()
 		return Event::pre_process_done(PARENT_NOT_FOUND);
 	}
 
-	uint32_t poly = 1;
-	if (_poly > 1 && _poly == static_cast<int>(_parent->internal_poly())) {
-		poly = _poly;
-	}
-
 	const Ingen::Shared::URIs& uris = _engine.world()->uris();
 
-	_patch = new PatchImpl(_engine, path.symbol(), poly, _parent,
-	                       _engine.driver()->sample_rate(), _poly);
+	typedef Resource::Properties::const_iterator iterator;
+
+	uint32_t ext_poly = 1;
+	uint32_t int_poly = 1;
+	iterator p        = _properties.find(uris.ingen_polyphony);
+	if (p != _properties.end() && p->second.type() == uris.forge.Int) {
+		int_poly = p->second.get_int32();
+	}
+
+	if (int_poly < 1) {
+		return Event::pre_process_done(INVALID_POLY);
+	}
+
+	if (int_poly == _parent->internal_poly()) {
+		ext_poly = int_poly;
+	}
+
+	_patch = new PatchImpl(_engine, path.symbol(), ext_poly, _parent,
+	                       _engine.driver()->sample_rate(), int_poly);
 	_patch->properties().insert(_properties.begin(), _properties.end());
 	_patch->add_property(uris.rdf_type, uris.ingen_Patch);
 	_patch->add_property(uris.rdf_type,
