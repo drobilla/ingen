@@ -46,6 +46,7 @@ def build(bld):
             internals/Delay.cpp
             internals/Note.cpp
             internals/Trigger.cpp
+            mix.cpp
     '''
 
     obj = bld(features        = 'cxx cxxshlib',

@@ -17,73 +17,23 @@
 #ifndef INGEN_ENGINE_MIX_HPP
 #define INGEN_ENGINE_MIX_HPP
 
-#include "ingen/shared/URIs.hpp"
-#include "raul/log.hpp"
-
-#include "AudioBuffer.hpp"
-#include "Buffer.hpp"
-#include "Context.hpp"
+#include <stdint.h>
 
 namespace Ingen {
+
+namespace Shared { class URIs; }
+
 namespace Server {
 
-inline bool
-is_audio(Shared::URIs& uris, LV2_URID type)
-{
-	return type == uris.atom_Float || type == uris.atom_Sound;
-}
+class Context;
+class Buffer;
 
-inline void
-mix(Context&      context,
-    Shared::URIs& uris,
-    Buffer*       dst,
-    Buffer**      srcs,
-    uint32_t      num_srcs)
-{
-	if (num_srcs == 1) {
-		dst->copy(context, srcs[0]);
-	} else if (is_audio(uris, dst->type())) {
-		// Copy the first source
-		dst->copy(context, srcs[0]);
-
-		// Mix in the rest
-		for (uint32_t i = 1; i < num_srcs; ++i) {
-			assert(is_audio(uris, srcs[i]->type()));
-			((AudioBuffer*)dst)->accumulate(context, (AudioBuffer*)srcs[i]);
-		}
-	} else {
-		std::cerr << "FIXME: event mix" << std::endl;
-	}
-#if 0
-	case PortType::EVENTS:
-		dst->clear();
-		for (uint32_t i = 0; i < num_srcs; ++i) {
-			assert(srcs[i]->type() == PortType::EVENTS);
-			srcs[i]->rewind();
-		}
-
-		while (true) {
-			const EventBuffer* first = NULL;
-			for (uint32_t i = 0; i < num_srcs; ++i) {
-				const EventBuffer* const src = (const EventBuffer*)srcs[i];
-				if (src->is_valid()) {
-					if (!first || src->get_event()->frames < first->get_event()->frames)
-						first = src;
-				}
-			}
-			if (first) {
-				const LV2_Event* const ev = first->get_event();
-				((EventBuffer*)dst)->append(
-					ev->frames, ev->subframes, ev->type, ev->size,
-					(const uint8_t*)ev + sizeof(LV2_Event));
-				first->increment();
-			} else {
-				break;
-			}
-		}
-		dst->rewind();
-#endif
-}
+void
+mix(Context&            context,
+    Shared::URIs&       uris,
+    Buffer*             dst,
+    const Buffer*const* srcs,
+    uint32_t            num_srcs);
 
 } // namespace Server
 } // namespace Ingen
