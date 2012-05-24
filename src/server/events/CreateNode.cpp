@@ -78,7 +78,7 @@ CreateNode::pre_process()
 		p != _properties.end() &&
 		p->second.type() == _engine.world()->forge().Bool &&
 		p->second.get_bool());
-	
+
 	if (!(_node = plugin->instantiate(*_engine.buffer_factory(),
 	                                  _path.symbol(),
 	                                  polyphonic,

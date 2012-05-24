@@ -123,7 +123,7 @@ CreatePort::pre_process()
 		      *_engine.buffer_factory(), _path.symbol(),
 		      _port_type, _buf_type, buf_size, _is_output, polyphonic))) {
 		return Event::pre_process_done(CREATION_FAILED);
-	}	
+	}
 
 	_patch_port->properties().insert(_properties.begin(), _properties.end());
 
