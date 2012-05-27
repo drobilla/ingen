@@ -55,15 +55,13 @@ set_denormal_flags()
 #ifdef USE_ASSEMBLY
 #ifdef __SSE__
 	unsigned long a, b, c, d0, d1;
-	int stepping, model, family, extfamily;
-
 	cpuid(a, b, c, d1, 1);
 	if (d1 & 1<<25) { /* It has SSE support */
 		_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
-		family = (a >> 8) & 0xF;
-		extfamily = (a >> 20) & 0xFF;
-		model = (a >> 4) & 0xF;
-		stepping = a & 0xF;
+		const int family    = (a >> 8)  & 0xF;
+		const int extfamily = (a >> 20) & 0xFF;
+		const int model     = (a >> 4)  & 0xF;
+		const int stepping  = a         & 0xF;
 		cpuid(a, b, c, d0, 0);
 		if (b == 0x756e6547) { /* It's an Intel */
 			if (family == 15 && extfamily == 0 && model == 0 && stepping < 7) {
