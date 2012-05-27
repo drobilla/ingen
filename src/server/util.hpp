@@ -30,6 +30,12 @@
 #include <xmmintrin.h>
 #endif
 
+#ifdef __clang__
+#    define REALTIME __attribute__((annotate("realtime")))
+#else
+#    define REALTIME
+#endif
+
 #ifdef USE_ASSEMBLY
 # if SIZEOF_VOID_P==8
 #  define cpuid(a, b, c, d, n) asm("xchgq %%rbx, %1; cpuid; xchgq %%rbx, %1": "=a" (a), "=r" (b), "=c" (c), "=d" (d) : "a" (n));

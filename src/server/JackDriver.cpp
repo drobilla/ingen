@@ -395,7 +395,7 @@ JackDriver::engine_port(ProcessContext&   context,
  *
  * \callgraph
  */
-int
+REALTIME int
 JackDriver::_process_cb(jack_nframes_t nframes)
 {
 	if (nframes == 0 || ! _is_activated) {
