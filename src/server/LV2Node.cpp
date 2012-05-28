@@ -21,7 +21,6 @@
 #include <string>
 
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
-#include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
