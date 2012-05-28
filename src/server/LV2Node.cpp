@@ -150,9 +150,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 	_features = info->world().lv2_features().lv2_features(&info->world(), this);
 
 	uint32_t port_buffer_size = 0;
-	LilvNode* work_schedule = lilv_new_uri(info->lv2_world(),
-	                                       LV2_WORKER__schedule);
-
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		(*_instances)[i] = SharedPtr<void>(
 			lilv_plugin_instantiate(plug, _srate, _features->array()),
@@ -164,14 +161,12 @@ LV2Node::instantiate(BufferFactory& bufs)
 			return false;
 		}
 
-		if (i == 0 && lilv_plugin_has_feature(plug, work_schedule)) {
+		if (i == 0 && lilv_plugin_has_feature(plug, info->work_schedule)) {
 			_worker_iface = (LV2_Worker_Interface*)
 				lilv_instance_get_extension_data(instance(i),
 				                                 LV2_WORKER__interface);
 		}
 	}
-
-	lilv_node_free(work_schedule);
 
 	string     port_name;
 	Raul::Path port_path;

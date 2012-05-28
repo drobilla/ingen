@@ -20,6 +20,7 @@
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
+#include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/LV2Features.hpp"
@@ -43,6 +44,7 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 	, lv2_default(lilv_new_uri(world->lilv_world(), LV2_CORE__default))
 	, lv2_portProperty(lilv_new_uri(world->lilv_world(), LV2_CORE__portProperty))
 	, rsz_minimumSize(lilv_new_uri(world->lilv_world(), LV2_RESIZE_PORT__minimumSize))
+	, work_schedule(lilv_new_uri(world->lilv_world(), LV2_WORKER__schedule))
 	, _world(world)
 {
 	assert(world);

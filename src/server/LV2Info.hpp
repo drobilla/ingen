@@ -44,6 +44,7 @@ public:
 	LilvNode* lv2_default;
 	LilvNode* lv2_portProperty;
 	LilvNode* rsz_minimumSize;
+	LilvNode* work_schedule;
 
 	Ingen::Shared::World& world()     { return *_world; }
 	LilvWorld*            lv2_world() { return _world->lilv_world(); }
