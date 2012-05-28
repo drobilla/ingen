@@ -19,6 +19,7 @@
 #include <assert.h>
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 
 #include "ingen/shared/World.hpp"
 #include "ingen/shared/LV2Features.hpp"
@@ -31,12 +32,17 @@ namespace Ingen {
 namespace Server {
 
 LV2Info::LV2Info(Ingen::Shared::World* world)
-	: input_class(lilv_new_uri(world->lilv_world(), LV2_CORE__InputPort))
-	, output_class(lilv_new_uri(world->lilv_world(), LV2_CORE__OutputPort))
-	, control_class(lilv_new_uri(world->lilv_world(), LV2_CORE__ControlPort))
-	, cv_class(lilv_new_uri(world->lilv_world(), LV2_CORE__CVPort))
-	, audio_class(lilv_new_uri(world->lilv_world(), LV2_CORE__AudioPort))
-	, atom_port_class(lilv_new_uri(world->lilv_world(), LV2_ATOM__AtomPort))
+	: atom_AtomPort(lilv_new_uri(world->lilv_world(), LV2_ATOM__AtomPort))
+	, atom_bufferType(lilv_new_uri(world->lilv_world(), LV2_ATOM__bufferType))
+	, atom_supports(lilv_new_uri(world->lilv_world(), LV2_ATOM__supports))
+	, lv2_AudioPort(lilv_new_uri(world->lilv_world(), LV2_CORE__AudioPort))
+	, lv2_CVPort(lilv_new_uri(world->lilv_world(), LV2_CORE__CVPort))
+	, lv2_ControlPort(lilv_new_uri(world->lilv_world(), LV2_CORE__ControlPort))
+	, lv2_InputPort(lilv_new_uri(world->lilv_world(), LV2_CORE__InputPort))
+	, lv2_OutputPort(lilv_new_uri(world->lilv_world(), LV2_CORE__OutputPort))
+	, lv2_default(lilv_new_uri(world->lilv_world(), LV2_CORE__default))
+	, lv2_portProperty(lilv_new_uri(world->lilv_world(), LV2_CORE__portProperty))
+	, rsz_minimumSize(lilv_new_uri(world->lilv_world(), LV2_RESIZE_PORT__minimumSize))
 	, _world(world)
 {
 	assert(world);
@@ -49,12 +55,17 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 
 LV2Info::~LV2Info()
 {
-	lilv_node_free(input_class);
-	lilv_node_free(output_class);
-	lilv_node_free(control_class);
-	lilv_node_free(cv_class);
-	lilv_node_free(audio_class);
-	lilv_node_free(atom_port_class);
+	lilv_node_free(rsz_minimumSize);
+	lilv_node_free(lv2_portProperty);
+	lilv_node_free(lv2_default);
+	lilv_node_free(lv2_OutputPort);
+	lilv_node_free(lv2_InputPort);
+	lilv_node_free(lv2_ControlPort);
+	lilv_node_free(lv2_CVPort);
+	lilv_node_free(lv2_AudioPort);
+	lilv_node_free(atom_supports);
+	lilv_node_free(atom_bufferType);
+	lilv_node_free(atom_AtomPort);
 }
 
 } // namespace Server

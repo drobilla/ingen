@@ -21,6 +21,7 @@
 #include <string>
 
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
+#include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
@@ -184,24 +185,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 	float* def_values = new float[num_ports];
 	lilv_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
 
-	LilvNode* default_pred = lilv_new_uri(info->lv2_world(),
-	                                      LV2_CORE__default);
-
-	LilvNode* min_size_pred = lilv_new_uri(info->lv2_world(),
-	                                       LV2_RESIZE_PORT__minimumSize);
-
-	LilvNode* port_property_pred = lilv_new_uri(info->lv2_world(),
-	                                            LV2_CORE__portProperty);
-
-	LilvNode* supports_pred = lilv_new_uri(info->lv2_world(),
-	                                       LV2_ATOM__supports);
-
-	LilvNode* bufferType_pred = lilv_new_uri(info->lv2_world(),
-	                                         LV2_ATOM__bufferType);
-
-	//LilvNode as_large_as_pred = lilv_new_uri(info->lv2_world(),
-	//		LV2_RESIZE_PORT__asLargeAs);
-
 	for (uint32_t j = 0; j < num_ports; ++j) {
 		const LilvPort* id = lilv_plugin_get_port_by_index(plug, j);
 
@@ -222,22 +205,22 @@ LV2Node::instantiate(BufferFactory& bufs)
 		Raul::Atom val;
 		PortType port_type   = PortType::UNKNOWN;
 		LV2_URID buffer_type = 0;
-		if (lilv_port_is_a(plug, id, info->control_class)) {
+		if (lilv_port_is_a(plug, id, info->lv2_ControlPort)) {
 			port_type   = PortType::CONTROL;
 			buffer_type = uris.atom_Float;
-		} else if (lilv_port_is_a(plug, id, info->cv_class)) {
+		} else if (lilv_port_is_a(plug, id, info->lv2_CVPort)) {
 			port_type = PortType::CV;
 			buffer_type = uris.atom_Sound;
-		} else if (lilv_port_is_a(plug, id, info->audio_class)) {
+		} else if (lilv_port_is_a(plug, id, info->lv2_AudioPort)) {
 			port_type = PortType::AUDIO;
 			buffer_type = uris.atom_Sound;
-		} else if (lilv_port_is_a(plug, id, info->atom_port_class)) {
+		} else if (lilv_port_is_a(plug, id, info->atom_AtomPort)) {
 			port_type = PortType::ATOM;
 		}
 
 		// Get buffer type if necessary (value and message ports)
 		if (!buffer_type) {
-			LilvNodes* types = lilv_port_get_value(plug, id, bufferType_pred);
+			LilvNodes* types = lilv_port_get_value(plug, id, info->atom_bufferType);
 			LILV_FOREACH(nodes, i, types) {
 				const LilvNode* type = lilv_nodes_get(types, i);
 				if (lilv_node_is_uri(type)) {
@@ -253,7 +236,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		if (port_type == PortType::ATOM) {
 			// Get default value, and its length
-			LilvNodes* defaults = lilv_port_get_value(plug, id, default_pred);
+			LilvNodes* defaults = lilv_port_get_value(plug, id, info->lv2_default);
 			LILV_FOREACH(nodes, i, defaults) {
 				const LilvNode* d = lilv_nodes_get(defaults, i);
 				if (lilv_node_is_string(d)) {
@@ -265,7 +248,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 
 			// Get minimum size, if set in data
-			LilvNodes* sizes = lilv_port_get_value(plug, id, min_size_pred);
+			LilvNodes* sizes = lilv_port_get_value(plug, id, info->rsz_minimumSize);
 			LILV_FOREACH(nodes, i, sizes) {
 				const LilvNode* d = lilv_nodes_get(sizes, i);
 				if (lilv_node_is_int(d)) {
@@ -279,9 +262,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		enum { UNKNOWN, INPUT, OUTPUT } direction = UNKNOWN;
-		if (lilv_port_is_a(plug, id, info->input_class)) {
+		if (lilv_port_is_a(plug, id, info->lv2_InputPort)) {
 			direction = INPUT;
-		} else if (lilv_port_is_a(plug, id, info->output_class)) {
+		} else if (lilv_port_is_a(plug, id, info->lv2_OutputPort)) {
 			direction = OUTPUT;
 		}
 
@@ -314,7 +297,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		// Set lv2:portProperty properties
-		LilvNodes* properties = lilv_port_get_value(plug, id, port_property_pred);
+		LilvNodes* properties = lilv_port_get_value(plug, id, info->lv2_portProperty);
 		LILV_FOREACH(nodes, i, properties) {
 			const LilvNode* p = lilv_nodes_get(properties, i);
 			if (lilv_node_is_uri(p)) {
@@ -324,7 +307,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		// Set atom:supports properties
-		LilvNodes* types = lilv_port_get_value(plug, id, supports_pred);
+		LilvNodes* types = lilv_port_get_value(plug, id, info->atom_supports);
 		LILV_FOREACH(nodes, i, types) {
 			const LilvNode* type = lilv_nodes_get(types, i);
 			if (lilv_node_is_uri(type)) {
@@ -346,9 +329,6 @@ LV2Node::instantiate(BufferFactory& bufs)
 	delete[] min_values;
 	delete[] max_values;
 	delete[] def_values;
-	lilv_node_free(default_pred);
-	lilv_node_free(min_size_pred);
-	lilv_node_free(port_property_pred);
 
 	return ret;
 }

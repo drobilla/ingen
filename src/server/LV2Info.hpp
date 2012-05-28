@@ -33,12 +33,17 @@ public:
 	explicit LV2Info(Ingen::Shared::World* world);
 	~LV2Info();
 
-	LilvNode* input_class;
-	LilvNode* output_class;
-	LilvNode* control_class;
-	LilvNode* cv_class;
-	LilvNode* audio_class;
-	LilvNode* atom_port_class;
+	LilvNode* atom_AtomPort;
+	LilvNode* atom_bufferType;
+	LilvNode* atom_supports;
+	LilvNode* lv2_AudioPort;
+	LilvNode* lv2_CVPort;
+	LilvNode* lv2_ControlPort;
+	LilvNode* lv2_InputPort;
+	LilvNode* lv2_OutputPort;
+	LilvNode* lv2_default;
+	LilvNode* lv2_portProperty;
+	LilvNode* rsz_minimumSize;
 
 	Ingen::Shared::World& world()     { return *_world; }
 	LilvWorld*            lv2_world() { return _world->lilv_world(); }
