@@ -123,7 +123,7 @@ NodeImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		poly = 1;
 
 	if (_ports)
-		for (size_t i = 0; i < _ports->size(); ++i)
+		for (uint32_t i = 0; i < _ports->size(); ++i)
 			_ports->at(i)->prepare_poly(bufs, poly);
 
 	return true;
@@ -138,7 +138,7 @@ NodeImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	_polyphony = poly;
 
 	if (_ports)
-		for (size_t i = 0; i < num_ports(); ++i)
+		for (uint32_t i = 0; i < num_ports(); ++i)
 			_ports->at(i)->apply_poly(context, maid, poly);
 
 	return true;
@@ -151,7 +151,7 @@ NodeImpl::set_buffer_size(Context&       context,
                           uint32_t       size)
 {
 	if (_ports) {
-		for (size_t i = 0; i < _ports->size(); ++i) {
+		for (uint32_t i = 0; i < _ports->size(); ++i) {
 			PortImpl* const p = _ports->at(i);
 			if (p->buffer_type() == type) {
 				p->set_buffer_size(context, bufs, size);
@@ -215,7 +215,7 @@ void
 NodeImpl::post_process(ProcessContext& context)
 {
 	// Write output ports
-	for (size_t i = 0; _ports && i < _ports->size(); ++i) {
+	for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
 		_ports->at(i)->post_process(context);
 	}
 }
