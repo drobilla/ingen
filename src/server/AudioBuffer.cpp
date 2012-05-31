@@ -45,12 +45,11 @@ AudioBuffer::AudioBuffer(BufferFactory& bufs, LV2_URID type, uint32_t size)
 		LV2_Atom_Vector* vec = (LV2_Atom_Vector*)_atom;
 		vec->body.child_size = sizeof(float);
 		vec->body.child_type = bufs.uris().atom_Float;
-		_atom->size = size - sizeof(LV2_Atom_Vector);
-	} else {
-		_atom->size = size - sizeof(LV2_Atom);
 	}
 
+	_atom->size = size - sizeof(LV2_Atom);
 	_atom->type = type;
+
 	clear();
 }
 
@@ -139,21 +138,14 @@ AudioBuffer::copy(Context& context, const Buffer* src)
 	}
 
 	if (src_abuf->is_control() == is_control()) {
-		// Control => Control
+		// Rates match, direct copy
 		Buffer::copy(context, src);
-	} else if (!src_abuf->is_control() && !is_control()) {
-		// Audio => Audio
-		copy(src_abuf->data(),
-		     context.offset(), context.offset() + context.nframes() - 1);
 	} else if (!src_abuf->is_control() && is_control()) {
 		// Audio => Control
 		data()[0] = src_abuf->data()[context.offset()];
 	} else if (src_abuf->is_control() && !is_control()) {
 		// Control => Audio
 		data()[context.offset()] = src_abuf->data()[0];
-	} else {
-		// Control => Audio or Audio => Control
-		set_block(src_abuf->data()[0], 0, nframes());
 	}
 }
 
