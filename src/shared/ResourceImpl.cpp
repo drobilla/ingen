@@ -103,7 +103,7 @@ ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value) const
 const Raul::Atom&
 ResourceImpl::get_property(const Raul::URI& uri) const
 {
-	const Raul::Atom nil;
+	static const Raul::Atom nil;
 	Properties::const_iterator i = _properties.find(uri);
 	return (i != _properties.end()) ? i->second : nil;
 }
