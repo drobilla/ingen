@@ -149,6 +149,16 @@ public:
 
 	BufferFactory& bufs() const { return _bufs; }
 
+	void set_morphable(bool is_morph, bool is_auto_morph) {
+		_is_morph      = is_morph;
+		_is_auto_morph = is_auto_morph;
+	}
+
+	void set_type(PortType port_type, LV2_URID buffer_type);
+
+	bool is_morph()      const { return _is_morph; }
+	bool is_auto_morph() const { return _is_auto_morph; }
+
 protected:
 	PortImpl(BufferFactory&      bufs,
 	         NodeImpl*           node,
@@ -174,6 +184,8 @@ protected:
 	Raul::Array<BufferRef>* _prepared_buffers;
 	bool                    _broadcast;
 	bool                    _set_by_user;
+	bool                    _is_morph;
+	bool                    _is_auto_morph;
 };
 
 } // namespace Server

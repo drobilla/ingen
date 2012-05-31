@@ -65,6 +65,9 @@ public:
 	                     SampleCount offset);
 
 protected:
+	SharedPtr<LilvInstance> make_instance(
+		Shared::URIs& uris, uint32_t voice, bool preparing);
+
 	inline LilvInstance* instance(uint32_t voice) {
 		return (LilvInstance*)(*_instances)[voice].get();
 	}

@@ -56,32 +56,40 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _prepared_buffers(NULL)
 	, _broadcast(false)
 	, _set_by_user(false)
+	, _is_morph(false)
+	, _is_auto_morph(false)
 {
 	assert(node != NULL);
 	assert(_poly > 0);
 
 	const Ingen::Shared::URIs& uris = bufs.uris();
 
-	if (_buffer_size == 0) {
-		_buffer_size = bufs.default_size(buffer_type);
-	}
+	set_type(type, buffer_type);
 
-	if (_buffer_type == 0) {
+	add_property(uris.atom_bufferType, bufs.forge().make_urid(buffer_type));
+	add_property(uris.rdf_type, bufs.forge().alloc_uri(type.uri().str()));
+	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
+}
+
+void
+PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
+{
+	_type        = port_type;
+	_buffer_type = buffer_type;
+	if (!_buffer_type) {
 		switch (_type.symbol()) {
 		case PortType::CONTROL:
-			_buffer_type = uris.atom_Float;
+			_buffer_type = _bufs.uris().atom_Float;
 			break;
 		case PortType::AUDIO:
 		case PortType::CV:
-			_buffer_type = uris.atom_Sound;
+			_buffer_type = _bufs.uris().atom_Sound;
 			break;
 		default:
 			break;
 		}
 	}
-
-	add_property(uris.rdf_type,  bufs.forge().alloc_uri(type.uri().str()));
-	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
+	_buffer_size = _bufs.default_size(_buffer_type);
 }
 
 PortImpl::~PortImpl()

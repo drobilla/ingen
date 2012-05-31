@@ -21,6 +21,7 @@
 #include <string>
 
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
+#include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 
 #include "raul/log.hpp"
 #include "raul/Maid.hpp"
@@ -66,6 +67,70 @@ LV2Node::~LV2Node()
 	delete _instances;
 }
 
+SharedPtr<LilvInstance>
+LV2Node::make_instance(Shared::URIs& uris, uint32_t voice, bool preparing)
+{
+	LilvInstance* inst = lilv_plugin_instantiate(
+		_lv2_plugin->lilv_plugin(), _srate, _features->array());
+
+	if (!inst) {
+		Raul::error(Raul::fmt("Failed to instantiate <%1%>\n")
+		            % _lv2_plugin->uri());
+		return SharedPtr<LilvInstance>();
+	}
+
+	LV2_Morph_Interface* morph_iface = (LV2_Morph_Interface*)
+		lilv_instance_get_extension_data(inst, LV2_MORPH__interface);
+
+	for (uint32_t p = 0; p < num_ports(); ++p) {
+		PortImpl* const port   = _ports->at(p);
+		Buffer* const   buffer = (preparing)
+			? port->prepared_buffer(voice).get()
+			: port->buffer(voice).get();
+		if (port->is_morph() && port->is_a(PortType::CV)) {
+			Raul::info(Raul::fmt("Morphing %1% to CV\n") % port->path());
+			if (morph_iface) {
+				morph_iface->morph_port(
+					inst->lv2_handle, p, uris.lv2_CVPort, NULL);
+			}
+		}
+
+		if (buffer) {
+			if (port->is_a(PortType::CV) || port->is_a(PortType::CONTROL)) {
+				((AudioBuffer*)buffer)->set_value(
+					port->value().get_float(), 0, 0);
+			} else {
+				buffer->clear();
+			}
+		}
+	}
+
+	if (morph_iface) {
+		for (uint32_t p = 0; p < num_ports(); ++p) {
+			PortImpl* const port = _ports->at(p);
+			if (port->is_auto_morph()) {
+				LV2_URID type = morph_iface->port_type(
+					inst->lv2_handle, p, NULL);
+				if (type == _uris.lv2_ControlPort) {
+					port->set_type(PortType::CONTROL, 0);
+					Raul::info(Raul::fmt("Auto-morphed %1% to control\n")
+					           % port->path());
+				} else if (type == _uris.lv2_CVPort) {
+					port->set_type(PortType::CV, 0);
+					Raul::info(Raul::fmt("Auto-morphed %1% to CV\n")
+					           % port->path());
+				} else {
+					Raul::error(Raul::fmt("%1% auto-morphed to unknown type %2%\n")
+					            % port->path() % type);
+					return SharedPtr<LilvInstance>();
+				}
+			}
+		}
+	}
+
+	return SharedPtr<LilvInstance>(inst, lilv_instance_free);
+}
+
 bool
 LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
@@ -77,33 +142,19 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (_polyphony == poly)
 		return true;
 
+	assert(!_prepared_instances);
 	_prepared_instances = new Instances(poly, *_instances, SharedPtr<void>());
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
-		_prepared_instances->at(i) = SharedPtr<void>(
-			lilv_plugin_instantiate(
-				_lv2_plugin->lilv_plugin(), _srate, _features->array()),
-			lilv_instance_free);
-
-		if (!_prepared_instances->at(i)) {
-			Raul::error << "Failed to instantiate plugin" << endl;
+		SharedPtr<LilvInstance> inst = make_instance(bufs.uris(), i, true);
+		if (!inst) {
 			return false;
 		}
 
-		// Initialize the values of new ports
-		for (uint32_t j = 0; j < num_ports(); ++j) {
-			PortImpl* const port   = _ports->at(j);
-			Buffer* const   buffer = port->prepared_buffer(i).get();
-			if (buffer) {
-				if (port->is_a(PortType::CV) || port->is_a(PortType::CONTROL)) {
-					((AudioBuffer*)buffer)->set_value(port->value().get_float(), 0, 0);
-				} else {
-					buffer->clear();
-				}
-			}
-		}
+		_prepared_instances->at(i) = inst;
 
-		if (_activated)
-			lilv_instance_activate((LilvInstance*)(*_prepared_instances)[i].get());
+		if (_activated) {
+			lilv_instance_activate(inst.get());
+		}
 	}
 
 	return true;
@@ -136,97 +187,89 @@ LV2Node::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 bool
 LV2Node::instantiate(BufferFactory& bufs)
 {
-	const Ingen::Shared::URIs& uris  = bufs.uris();
-	SharedPtr<LV2Info>         info  = _lv2_plugin->lv2_info();
-	const LilvPlugin*          plug  = _lv2_plugin->lilv_plugin();
-	Ingen::Shared::Forge&      forge = bufs.forge();
+	const Ingen::Shared::URIs& uris      = bufs.uris();
+	SharedPtr<LV2Info>         info      = _lv2_plugin->lv2_info();
+	const LilvPlugin*          plug      = _lv2_plugin->lilv_plugin();
+	Ingen::Shared::Forge&      forge     = bufs.forge();
+	const uint32_t             num_ports = lilv_plugin_get_num_ports(plug);
 
-	uint32_t num_ports = lilv_plugin_get_num_ports(plug);
-	assert(num_ports > 0);
+	_ports = new Raul::Array<PortImpl*>(num_ports, NULL);
 
-	_ports     = new Raul::Array<PortImpl*>(num_ports, NULL);
-	_instances = new Instances(_polyphony, SharedPtr<void>());
-
-	_features = info->world().lv2_features().lv2_features(&info->world(), this);
-
-	uint32_t port_buffer_size = 0;
-	for (uint32_t i = 0; i < _polyphony; ++i) {
-		(*_instances)[i] = SharedPtr<void>(
-			lilv_plugin_instantiate(plug, _srate, _features->array()),
-			lilv_instance_free);
-
-		if (!instance(i)) {
-			Raul::error << "Failed to instantiate plugin " << _lv2_plugin->uri()
-			            << " voice " << i << endl;
-			return false;
-		}
-
-		if (i == 0 && lilv_plugin_has_feature(plug, info->work_schedule)) {
-			_worker_iface = (LV2_Worker_Interface*)
-				lilv_instance_get_extension_data(instance(i),
-				                                 LV2_WORKER__interface);
-		}
-	}
-
-	string     port_name;
-	Raul::Path port_path;
-
-	PortImpl* port = NULL;
-	bool      ret  = true;
+	bool ret = true;
 
 	float* min_values = new float[num_ports];
 	float* max_values = new float[num_ports];
 	float* def_values = new float[num_ports];
 	lilv_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
 
+	// Get all the necessary information about ports
 	for (uint32_t j = 0; j < num_ports; ++j) {
 		const LilvPort* id = lilv_plugin_get_port_by_index(plug, j);
 
 		// LV2 port symbols are guaranteed to be unique, valid C identifiers
-		port_name = lilv_node_as_string(lilv_port_get_symbol(plug, id));
+		const std::string port_sym = lilv_node_as_string(
+			lilv_port_get_symbol(plug, id));
 
-		if (!Raul::Symbol::is_valid(port_name)) {
-			Raul::error << "Plugin " << _lv2_plugin->uri() << " port " << j
-			            << " has illegal symbol `" << port_name << "'" << endl;
+		if (!Raul::Symbol::is_valid(port_sym)) {
+			Raul::error(Raul::fmt("<%1%> port %2% has invalid symbol `%3'\n")
+			            % _lv2_plugin->uri() % j % port_sym);
 			ret = false;
 			break;
 		}
 
-		assert(port_name.find('/') == string::npos);
-
-		port_path = path().child(port_name);
-
+		// Get port type
 		Raul::Atom val;
-		PortType port_type   = PortType::UNKNOWN;
-		LV2_URID buffer_type = 0;
+		PortType   port_type     = PortType::UNKNOWN;
+		LV2_URID   buffer_type   = 0;
+		bool       is_morph      = false;
+		bool       is_auto_morph = false;
 		if (lilv_port_is_a(plug, id, info->lv2_ControlPort)) {
-			port_type   = PortType::CONTROL;
-			buffer_type = uris.atom_Float;
+			if (lilv_port_is_a(plug, id, info->morph_MorphPort)) {
+				is_morph = true;
+				LilvNodes* types = lilv_port_get_value(
+					plug, id, info->morph_supportsType);
+				LILV_FOREACH(nodes, i, types) {
+					const LilvNode* type = lilv_nodes_get(types, i);
+					if (lilv_node_equals(type, info->lv2_CVPort)) {
+						port_type   = PortType::CV;
+						buffer_type = uris.atom_Sound;
+					}
+				}
+				lilv_nodes_free(types);
+			}
+			if (port_type == PortType::UNKNOWN) {
+				port_type   = PortType::CONTROL;
+				buffer_type = uris.atom_Float;
+			}
 		} else if (lilv_port_is_a(plug, id, info->lv2_CVPort)) {
-			port_type = PortType::CV;
+			port_type   = PortType::CV;
 			buffer_type = uris.atom_Sound;
 		} else if (lilv_port_is_a(plug, id, info->lv2_AudioPort)) {
-			port_type = PortType::AUDIO;
+			port_type   = PortType::AUDIO;
 			buffer_type = uris.atom_Sound;
 		} else if (lilv_port_is_a(plug, id, info->atom_AtomPort)) {
 			port_type = PortType::ATOM;
 		}
 
-		// Get buffer type if necessary (value and message ports)
+		if (lilv_port_is_a(plug, id, info->morph_AutoMorphPort)) {
+			is_auto_morph = true;
+		}
+
+		// Get buffer type if necessary (atom ports)
 		if (!buffer_type) {
-			LilvNodes* types = lilv_port_get_value(plug, id, info->atom_bufferType);
+			LilvNodes* types = lilv_port_get_value(
+				plug, id, info->atom_bufferType);
 			LILV_FOREACH(nodes, i, types) {
 				const LilvNode* type = lilv_nodes_get(types, i);
 				if (lilv_node_is_uri(type)) {
-					port->add_property(uris.atom_bufferType,
-					                   forge.alloc_uri(lilv_node_as_uri(type)));
 					buffer_type = bufs.engine().world()->uri_map().map_uri(
 						lilv_node_as_uri(type));
 				}
 			}
+			lilv_nodes_free(types);
 		}
 
-		port_buffer_size = bufs.default_size(buffer_type);
+		uint32_t port_buffer_size = bufs.default_size(buffer_type);
 
 		if (port_type == PortType::ATOM) {
 			// Get default value, and its length
@@ -240,6 +283,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 					port_buffer_size = std::max(port_buffer_size, str_val_len);
 				}
 			}
+			lilv_nodes_free(defaults);
 
 			// Get minimum size, if set in data
 			LilvNodes* sizes = lilv_port_get_value(plug, id, info->rsz_minimumSize);
@@ -250,9 +294,10 @@ LV2Node::instantiate(BufferFactory& bufs)
 					port_buffer_size = std::max(port_buffer_size, size_val);
 				}
 			}
+			lilv_nodes_free(sizes);
 
-			Raul::info << "Atom port " << path() << " buffer size "
-			           << port_buffer_size << std::endl;
+			Raul::info(Raul::fmt("Atom port %1% buffer size %2%\n")
+			           % path() % port_buffer_size);
 		}
 
 		enum { UNKNOWN, INPUT, OUTPUT } direction = UNKNOWN;
@@ -263,7 +308,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
-			Raul::warn << "Unknown type or direction for port `" << port_name << "'" << endl;
+			Raul::warn << "Unknown type or direction for port `" << port_sym << "'" << endl;
 			ret = false;
 			break;
 		}
@@ -271,12 +316,15 @@ LV2Node::instantiate(BufferFactory& bufs)
 		if (!val.type())
 			val = forge.make(isnan(def_values[j]) ? 0.0f : def_values[j]);
 
-		// TODO: set buffer size when necessary
-		if (direction == INPUT)
-			port = new InputPort(bufs, this, port_name, j, _polyphony, port_type, buffer_type, val);
-		else
-			port = new OutputPort(bufs, this, port_name, j, _polyphony, port_type, buffer_type, val);
+		PortImpl* port = (direction == INPUT)
+			? static_cast<PortImpl*>(
+				new InputPort(bufs, this, port_sym, j, _polyphony,
+				              port_type, buffer_type, val))
+			: static_cast<PortImpl*>(
+				new OutputPort(bufs, this, port_sym, j, _polyphony,
+				               port_type, buffer_type, val));
 
+		port->set_morphable(is_morph, is_auto_morph);
 		if (direction == INPUT && (port_type == PortType::CONTROL
 		                           || port_type == PortType::CV)) {
 			port->set_value(val);
@@ -299,6 +347,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 				                   forge.alloc_uri(lilv_node_as_uri(p)));
 			}
 		}
+		lilv_nodes_free(properties);
 
 		// Set atom:supports properties
 		LilvNodes* types = lilv_port_get_value(plug, id, info->atom_supports);
@@ -309,20 +358,39 @@ LV2Node::instantiate(BufferFactory& bufs)
 				                   forge.alloc_uri(lilv_node_as_uri(type)));
 			}
 		}
+		lilv_nodes_free(types);
 
 		_ports->at(j) = port;
-	}
-
-	if (!ret) {
-		delete _ports;
-		_ports = NULL;
-		delete _instances;
-		_instances = NULL;
 	}
 
 	delete[] min_values;
 	delete[] max_values;
 	delete[] def_values;
+
+	if (!ret) {
+		delete _ports;
+		_ports = NULL;
+		return ret;
+	}
+
+	_features = info->world().lv2_features().lv2_features(&info->world(), this);
+
+	// Actually create plugin instances and port buffers.
+	_instances = new Instances(_polyphony, SharedPtr<void>());
+	for (uint32_t i = 0; i < _polyphony; ++i) {
+		_instances->at(i) = make_instance(bufs.uris(), i, false);
+		if (!_instances->at(i)) {
+			return false;
+		}
+	}
+
+	// FIXME: Polyphony + worker?
+	if (lilv_plugin_has_feature(plug, info->work_schedule)) {
+		_worker_iface = (LV2_Worker_Interface*)
+			lilv_instance_get_extension_data(
+				(LilvInstance*)(*_prepared_instances)[0].get(),
+				LV2_WORKER__interface);
+	}
 
 	return ret;
 }
