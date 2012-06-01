@@ -43,6 +43,7 @@ NodeFactory::NodeFactory(Ingen::Shared::World* world)
 	, _lv2_info(new LV2Info(world))
 	, _has_loaded(false)
 {
+	load_internal_plugins();
 }
 
 NodeFactory::~NodeFactory()

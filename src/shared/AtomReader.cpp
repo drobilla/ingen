@@ -39,7 +39,13 @@ AtomReader::get_atom(const LV2_Atom* in, Raul::Atom& out)
 	if (in) {
 		if (in->type == _uris.atom_URID) {
 			const LV2_Atom_URID* urid = (const LV2_Atom_URID*)in;
-			out = _forge.alloc_uri(_map.unmap_uri(urid->body));
+			const char* uri           = _map.unmap_uri(urid->body);
+			if (uri) {
+				out = _forge.alloc_uri(_map.unmap_uri(urid->body));
+			} else {
+				Raul::error(Raul::fmt("Unable to unmap URID %1%\n")
+				            % urid->body);
+			}
 		} else {
 			out = _forge.alloc(in->size, in->type, LV2_ATOM_BODY(in));
 		}

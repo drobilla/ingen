@@ -101,9 +101,17 @@ public:
 			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
 			patch_buf->copy((Sample*)_buffer, 0, context.nframes() - 1);
 		} else {
-			LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)_buffer;
-			bool               enqueued = false;
+			LV2_Atom_Sequence* seq       = (LV2_Atom_Sequence*)_buffer;
+			bool               enqueued  = false;
+			Buffer*            patch_buf = _patch_port->buffer(0).get();
+			patch_buf->prepare_write(context);
 			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+				if (!patch_buf->append_event(
+					    ev->time.frames, ev->body.size, ev->body.type,
+					    (const uint8_t*)LV2_ATOM_BODY(&ev->body))) {
+					Raul::warn("Failed to write to MIDI buffer, events lost!\n");
+				}
+
 				// TODO: Only enqueue appropriate atoms
 				enqueue_message(context, _driver, &ev->body);
 				enqueued = true;

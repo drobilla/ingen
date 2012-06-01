@@ -49,6 +49,7 @@ CreatePort::CreatePort(Engine&                     engine,
 	, _patch(NULL)
 	, _patch_port(NULL)
 	, _ports_array(NULL)
+	, _old_ports_array(NULL)
 	, _engine_port(NULL)
 	, _properties(properties)
 	, _is_output(is_output)
