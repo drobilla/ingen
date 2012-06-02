@@ -479,9 +479,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	IngenPlugin*    plugin = new IngenPlugin();
 	LV2_URID_Unmap* unmap  = NULL;
 	for (int i = 0; features[i]; ++i) {
-		if (!strcmp(features[i]->URI, LV2_URID_URI "#map")) {
+		if (!strcmp(features[i]->URI, LV2_URID__map)) {
 			plugin->map = (LV2_URID_Map*)features[i]->data;
-		} else if (!strcmp(features[i]->URI, LV2_URID_URI "#unmap")) {
+		} else if (!strcmp(features[i]->URI, LV2_URID__unmap)) {
 			unmap = (LV2_URID_Unmap*)features[i]->data;
 		}
 	}
