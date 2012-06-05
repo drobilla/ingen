@@ -38,6 +38,8 @@ public:
 	AtomReader(URIMap& map, URIs& uris, Forge& forge, Interface& iface);
 	~AtomReader() {}
 
+	static bool is_message(URIs& uris, const LV2_Atom* msg);
+
 	bool write(const LV2_Atom* msg);
 
 private:

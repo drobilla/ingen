@@ -81,6 +81,22 @@ AtomReader::atom_to_uri(const LV2_Atom* atom)
 }
 
 bool
+AtomReader::is_message(URIs& uris, const LV2_Atom* msg)
+{
+	if (msg->type != uris.atom_Blank && msg->type != uris.atom_Resource) {
+		return false;
+	}
+
+	const LV2_Atom_Object* obj = (const LV2_Atom_Object*)msg;
+	return (obj->body.otype == uris.patch_Get ||
+	        obj->body.otype == uris.patch_Delete ||
+	        obj->body.otype == uris.patch_Put ||
+	        obj->body.otype == uris.patch_Patch ||
+	        obj->body.otype == uris.patch_Move ||
+	        obj->body.otype == uris.patch_Response);
+}
+
+bool
 AtomReader::write(const LV2_Atom* msg)
 {
 	if (msg->type != _uris.atom_Blank && msg->type != _uris.atom_Resource) {

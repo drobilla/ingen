@@ -24,10 +24,11 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/timer.h>
 
-#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
-#include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 #include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
@@ -104,17 +105,19 @@ public:
 			LV2_Atom_Sequence* seq       = (LV2_Atom_Sequence*)_buffer;
 			bool               enqueued  = false;
 			Buffer*            patch_buf = _patch_port->buffer(0).get();
+			Shared::URIs&      uris      = _patch_port->bufs().uris();
 			patch_buf->prepare_write(context);
 			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 				if (!patch_buf->append_event(
 					    ev->time.frames, ev->body.size, ev->body.type,
 					    (const uint8_t*)LV2_ATOM_BODY(&ev->body))) {
-					Raul::warn("Failed to write to MIDI buffer, events lost!\n");
+					Raul::warn("Failed to write to buffer, event lost!\n");
 				}
 
-				// TODO: Only enqueue appropriate atoms
-				enqueue_message(context, _driver, &ev->body);
-				enqueued = true;
+				if (Shared::AtomReader::is_message(uris, &ev->body)) {
+					enqueue_message(context, _driver, &ev->body);
+					enqueued = true;
+				}
 			}
 
 			if (enqueued) {
@@ -145,7 +148,7 @@ private:
 	typedef std::vector<LV2Port*> Ports;
 
 public:
-	LV2Driver(Engine& engine, SampleCount buffer_size, SampleCount sample_rate)
+	LV2Driver(Engine& engine, SampleCount block_length, SampleCount sample_rate)
 		: _engine(engine)
 		, _main_sem(0)
 		, _reader(engine.world()->uri_map(),
@@ -155,10 +158,10 @@ public:
 		, _writer(engine.world()->uri_map(),
 		          engine.world()->uris(),
 		          *this)
-		, _from_ui(buffer_size * sizeof(float))  // FIXME: size
-		, _to_ui(buffer_size * sizeof(float))  // FIXME: size
+		, _from_ui(block_length * sizeof(float))  // FIXME: size
+		, _to_ui(block_length * sizeof(float))  // FIXME: size
 		, _root_patch(NULL)
-		, _buffer_size(buffer_size)
+		, _block_length(block_length)
 		, _sample_rate(sample_rate)
 		, _frame_time(0)
 		, _to_ui_overflow_sem(0)
@@ -322,9 +325,9 @@ public:
 		_to_ui_overflow_sem.post();
 	}
 
-	virtual SampleCount block_length() const { return _buffer_size; }
+	virtual SampleCount block_length() const { return _block_length; }
 	virtual SampleCount sample_rate()  const { return _sample_rate; }
-	virtual SampleCount frame_time()   const { return _frame_time;}
+	virtual SampleCount frame_time()   const { return _frame_time; }
 
 	virtual bool        is_realtime() const { return true; }
 	Shared::AtomReader& reader()            { return _reader; }
@@ -340,7 +343,7 @@ private:
 	Raul::RingBuffer   _from_ui;
 	Raul::RingBuffer   _to_ui;
 	PatchImpl*         _root_patch;
-	SampleCount        _buffer_size;
+	SampleCount        _block_length;
 	SampleCount        _sample_rate;
 	SampleCount        _frame_time;
 	Ports              _ports;
@@ -476,14 +479,27 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		return NULL;
 	}
 
-	IngenPlugin*    plugin = new IngenPlugin();
-	LV2_URID_Unmap* unmap  = NULL;
+	IngenPlugin*         plugin = new IngenPlugin();
+	LV2_URID_Unmap*      unmap  = NULL;
+	LV2_Buf_Size_Access* access = NULL;
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_URID__map)) {
 			plugin->map = (LV2_URID_Map*)features[i]->data;
 		} else if (!strcmp(features[i]->URI, LV2_URID__unmap)) {
 			unmap = (LV2_URID_Unmap*)features[i]->data;
+		} else if (!strcmp(features[i]->URI, LV2_BUF_SIZE__access)) {
+			access = (LV2_Buf_Size_Access*)features[i]->data;
 		}
+	}
+
+	uint32_t block_length = 4096;
+	if (access) {
+		uint32_t min, multiple_of, power_of;
+		access->get_sample_count(
+			access->handle, &min, &block_length, &multiple_of, &power_of);
+		Raul::info(Raul::fmt("Block length: %1% frames\n") % block_length);
+	} else {
+		Raul::warn("Warning: No buffer size access, guessing 4096 frames.\n");
 	}
 
 	plugin->world = new Ingen::Shared::World(
