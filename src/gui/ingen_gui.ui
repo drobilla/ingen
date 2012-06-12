@@ -1507,6 +1507,14 @@ Contributors:
         <property name="label" translatable="yes">Reset Range</property>
       </object>
     </child>
+    <child>
+      <object class="GtkMenuItem" id="port_expose_menuitem">
+        <property name="can_focus">False</property>
+        <property name="use_action_appearance">False</property>
+        <property name="label" translatable="yes">_Expose</property>
+        <property name="use_underline">True</property>
+      </object>
+    </child>
   </object>
   <object class="GtkWindow" id="patch_tree_win">
     <property name="width_request">320</property>

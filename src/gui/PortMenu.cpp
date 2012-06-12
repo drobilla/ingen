@@ -35,21 +35,22 @@ namespace GUI {
 PortMenu::PortMenu(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: ObjectMenu(cobject, xml)
-	, _patch_port(NULL)
+	, _is_patch_port(false)
 {
 	xml->get_widget("object_menu", _port_menu);
 	xml->get_widget("port_set_min_menuitem", _set_min_menuitem);
 	xml->get_widget("port_set_max_menuitem", _set_max_menuitem);
 	xml->get_widget("port_reset_range_menuitem", _reset_range_menuitem);
+	xml->get_widget("port_expose_menuitem", _expose_menuitem);
 }
 
 void
-PortMenu::init(App& app, SharedPtr<const PortModel> port, bool patch_port)
+PortMenu::init(App& app, SharedPtr<const PortModel> port, bool is_patch_port)
 {
 	const URIs& uris = app.uris();
 
 	ObjectMenu::init(app, port);
-	_patch_port = patch_port;
+	_is_patch_port = is_patch_port;
 
 	_set_min_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &PortMenu::on_menu_set_min));
@@ -60,30 +61,28 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool patch_port)
 	_reset_range_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &PortMenu::on_menu_reset_range));
 
-	if (!PtrCast<PatchModel>(port->parent())) {
+	_expose_menuitem->signal_activate().connect(
+		sigc::mem_fun(this, &PortMenu::on_menu_expose));
+
+	const bool is_control  = app.can_control(port.get()) && port->is_numeric();
+	const bool is_on_patch = PtrCast<PatchModel>(port->parent());
+
+	if (!_is_patch_port) {
 		_polyphonic_menuitem->set_sensitive(false);
 		_rename_menuitem->set_sensitive(false);
 		_destroy_menuitem->set_sensitive(false);
 	}
 
-	if (port->is_a(uris.atom_AtomPort))
+	if (port->is_a(uris.atom_AtomPort)) {
 		_polyphonic_menuitem->hide();
-
-	const bool is_control = app.can_control(port.get())
-		&& port->is_numeric();
-
-	_reset_range_menuitem->set_visible(true);
-	_set_max_menuitem->set_visible(true);
-	_set_min_menuitem->set_visible(true);
-
-	_reset_range_menuitem->set_sensitive(is_control);
-	_set_max_menuitem->set_sensitive(is_control);
-	_set_min_menuitem->set_sensitive(is_control);
-
-	if (is_control) {
-		_learn_menuitem->show();
-		_unlearn_menuitem->show();
 	}
+
+	_reset_range_menuitem->set_visible(is_control && !is_on_patch);
+	_set_max_menuitem->set_visible(is_control);
+	_set_min_menuitem->set_visible(is_control);
+	_expose_menuitem->set_visible(!is_on_patch);
+	_learn_menuitem->set_visible(is_control);
+	_unlearn_menuitem->set_visible(is_control);
 
 	_enable_signal = true;
 }
@@ -91,7 +90,7 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool patch_port)
 void
 PortMenu::on_menu_disconnect()
 {
-	if (_patch_port) {
+	if (_is_patch_port) {
 		_app->interface()->disconnect_all(
 				_object->parent()->path(), _object->path());
 	} else {
@@ -139,6 +138,41 @@ PortMenu::on_menu_reset_range()
 		_app->interface()->set_property(_object->path(),
 		                                uris.lv2_maximum,
 		                                _app->forge().make(max));
+}
+
+void
+PortMenu::on_menu_expose()
+{
+	const URIs&                 uris  = _app->uris();
+	SharedPtr<const PortModel>  port  = PtrCast<const PortModel>(_object);
+	SharedPtr<const NodeModel>  node  = PtrCast<const NodeModel>(_object->parent());
+
+	std::string label  = node->label() + " " + node->port_label(port);
+	Raul::Path  path   = node->path().str() + "_" + _object->symbol().c_str();
+	Raul::Atom  symbol = _app->forge().alloc(path.symbol());
+	Raul::Atom  name   = _app->forge().alloc(label.c_str());
+
+	Shared::ResourceImpl r(*_object.get());
+	r.remove_property(uris.lv2_index, uris.wildcard);
+	r.set_property(uris.lv2_symbol, symbol);
+	r.set_property(uris.lv2_name, name);
+
+	// TODO: Pretty kludgey coordinates
+	const float node_x = node->get_property(uris.ingen_canvasX).get_float();
+	const float node_y = node->get_property(uris.ingen_canvasY).get_float();
+	r.set_property(uris.ingen_canvasX,
+	               _app->forge().make(node_x + ((label.length() * 16.0f)
+	                                            * (port->is_input() ? -1 : 1))));
+	r.set_property(uris.ingen_canvasY,
+	               _app->forge().make(node_y + port->index() * 32.0f));
+
+	_app->interface()->put(path, r.properties());
+
+	if (port->is_input()) {
+		_app->interface()->connect(path, _object->path());
+	} else {
+		_app->interface()->connect(_object->path(), path);
+	}
 }
 
 } // namespace GUI

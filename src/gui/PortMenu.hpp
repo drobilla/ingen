@@ -43,20 +43,22 @@ public:
 
 	void init(App&                               app,
 	          SharedPtr<const Client::PortModel> port,
-	          bool                               patch_port = false);
+	          bool                               is_patch_port = false);
 
 private:
 	void on_menu_disconnect();
 	void on_menu_set_min();
 	void on_menu_set_max();
 	void on_menu_reset_range();
-
-	bool _patch_port;
+	void on_menu_expose();
 
 	Gtk::Menu*     _port_menu;
 	Gtk::MenuItem* _set_min_menuitem;
 	Gtk::MenuItem* _set_max_menuitem;
 	Gtk::MenuItem* _reset_range_menuitem;
+	Gtk::MenuItem* _expose_menuitem;
+
+	bool _is_patch_port;
 };
 
 } // namespace GUI

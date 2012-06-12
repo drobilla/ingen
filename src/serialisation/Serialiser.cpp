@@ -77,9 +77,8 @@ struct Serialiser::Impl {
 	                    Resource::Graph   context,
 	                    const Sord::Node& id);
 
-	void serialise_properties(const GraphObject* o,
-	                          Resource::Graph    context,
-	                          Sord::Node         id);
+	void serialise_properties(Sord::Node                  id,
+	                          const Resource::Properties& props);
 
 	void write_bundle(SharedPtr<const Patch> patch,
 	                  const std::string&     uri);
@@ -371,7 +370,8 @@ Serialiser::Impl::serialise_patch(SharedPtr<const Patch> patch,
 		                      Sord::URI(world, uris.doap_name.str()),
 		                      Sord::Literal(world, symbol));
 
-	serialise_properties(patch.get(), Resource::INTERNAL, patch_id);
+	const GraphObject::Properties props = patch->properties(Resource::INTERNAL);
+	serialise_properties(patch_id, props);
 
 	for (Store::const_iterator n = _world.store()->children_begin(patch);
 	     n != _world.store()->children_end(patch); ++n) {
@@ -458,7 +458,8 @@ Serialiser::Impl::serialise_node(SharedPtr<const Node> node,
 	                      Sord::Curie(_model->world(), "lv2:symbol"),
 	                      Sord::Literal(_model->world(), node->path().symbol()));
 
-	serialise_properties(node.get(), Resource::EXTERNAL, node_id);
+	const GraphObject::Properties props = node->properties(Resource::EXTERNAL);
+	serialise_properties(node_id, props);
 
 	for (uint32_t i = 0; i < node->num_ports(); ++i) {
 		Port* const      p       = node->port(i);
@@ -491,7 +492,12 @@ Serialiser::Impl::serialise_port(const Port*       port,
 	                      Sord::Curie(world, "lv2:symbol"),
 	                      Sord::Literal(world, port->path().symbol()));
 
-	serialise_properties(port, context, port_id);
+	GraphObject::Properties props = port->properties(context);
+	if (context == Resource::INTERNAL) {
+		props.insert(make_pair(_world.uris().lv2_default, port->value()));
+	}
+
+	serialise_properties(port_id, props);
 }
 
 void
@@ -541,12 +547,9 @@ skip_property(const Sord::Node& predicate)
 }
 
 void
-Serialiser::Impl::serialise_properties(const GraphObject*     o,
-                                       Ingen::Resource::Graph context,
-                                       Sord::Node             id)
+Serialiser::Impl::serialise_properties(Sord::Node                     id,
+                                       const GraphObject::Properties& props)
 {
-	const GraphObject::Properties props = o->properties(context);
-
 	LV2_URID_Map*   map      = &_world.uri_map().urid_map_feature()->urid_map;
 	LV2_URID_Unmap* unmap    = &_world.uri_map().urid_unmap_feature()->urid_unmap;
 	Sratom*         sratom   = sratom_new(map);

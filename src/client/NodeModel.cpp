@@ -219,6 +219,19 @@ NodeModel::port_value_range(SharedPtr<const PortModel> port,
 }
 
 std::string
+NodeModel::label() const
+{
+	const Raul::Atom& name_property = get_property(_uris.lv2_name);
+	if (name_property.type() == _uris.forge.String) {
+		return name_property.get_string();
+	} else if (plugin_model()) {
+		return plugin_model()->human_name();
+	} else {
+		return symbol().c_str();
+	}
+}
+
+std::string
 NodeModel::port_label(SharedPtr<const PortModel> port) const
 {
 	const Raul::Atom& name = port->get_property(LV2_CORE__name);

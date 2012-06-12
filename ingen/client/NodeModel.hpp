@@ -70,6 +70,7 @@ public:
 	void port_value_range(SharedPtr<const PortModel> port,
 	                      float& min, float& max, uint32_t srate=1) const;
 
+	std::string label() const;
 	std::string port_label(SharedPtr<const PortModel> port) const;
 
 	// Signals

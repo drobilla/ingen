@@ -139,14 +139,9 @@ NodeModule::show_human_names(bool b)
 {
 	const URIs& uris = app().uris();
 
-	if (b && node()->plugin()) {
-		const Raul::Atom& name_property = node()->get_property(uris.lv2_name);
-		if (name_property.type() == uris.forge.String)
-			set_label(name_property.get_string());
-		else
-			set_label(node()->plugin_model()->human_name().c_str());
+	if (b) {
+		set_label(node()->label().c_str());
 	} else {
-		b = false;
 		set_label(node()->symbol().c_str());
 	}
 
