@@ -143,28 +143,25 @@ PortMenu::on_menu_reset_range()
 void
 PortMenu::on_menu_expose()
 {
-	const URIs&                 uris  = _app->uris();
-	SharedPtr<const PortModel>  port  = PtrCast<const PortModel>(_object);
-	SharedPtr<const NodeModel>  node  = PtrCast<const NodeModel>(_object->parent());
+	const URIs&                uris = _app->uris();
+	SharedPtr<const PortModel> port = PtrCast<const PortModel>(_object);
+	SharedPtr<const NodeModel> node = PtrCast<const NodeModel>(port->parent());
 
-	std::string label  = node->label() + " " + node->port_label(port);
-	Raul::Path  path   = node->path().str() + "_" + _object->symbol().c_str();
-	Raul::Atom  symbol = _app->forge().alloc(path.symbol());
-	Raul::Atom  name   = _app->forge().alloc(label.c_str());
+	const std::string label = node->label() + " " + node->port_label(port);
+	const Raul::Path  path  = node->path().str() + "_" + port->symbol().c_str();
 
 	Shared::ResourceImpl r(*_object.get());
 	r.remove_property(uris.lv2_index, uris.wildcard);
-	r.set_property(uris.lv2_symbol, symbol);
-	r.set_property(uris.lv2_name, name);
+	r.set_property(uris.lv2_symbol, _app->forge().alloc(path.symbol()));
+	r.set_property(uris.lv2_name, _app->forge().alloc(label.c_str()));
 
 	// TODO: Pretty kludgey coordinates
 	const float node_x = node->get_property(uris.ingen_canvasX).get_float();
 	const float node_y = node->get_property(uris.ingen_canvasY).get_float();
-	r.set_property(uris.ingen_canvasX,
-	               _app->forge().make(node_x + ((label.length() * 16.0f)
-	                                            * (port->is_input() ? -1 : 1))));
-	r.set_property(uris.ingen_canvasY,
-	               _app->forge().make(node_y + port->index() * 32.0f));
+	const float x_off  = (label.length() * 16.0f) * (port->is_input() ? -1 : 1);
+	const float y_off  = port->index() * 32.0f;
+	r.set_property(uris.ingen_canvasX, _app->forge().make(node_x + x_off));
+	r.set_property(uris.ingen_canvasY, _app->forge().make(node_y + y_off));
 
 	_app->interface()->put(path, r.properties());
 
