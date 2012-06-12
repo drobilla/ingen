@@ -180,6 +180,10 @@ main(int argc, char** argv)
 			world, engine_interface.get(), path, parent, symbol);
 	}
 
+	// Set up signal handlers that will set quit_flag on interrupt
+	signal(SIGINT, ingen_interrupt);
+	signal(SIGTERM, ingen_interrupt);
+
 	if (conf.option("gui").get_bool()) {
 		world->run_module("gui");
 	} else if (conf.option("run").is_valid()) {
@@ -194,12 +198,6 @@ main(int argc, char** argv)
 #endif
 
 	} else if (world->engine() && !conf.option("gui").get_bool()) {
-		// Run main loop
-
-		// Set up signal handlers that will set quit_flag on interrupt
-		signal(SIGINT, ingen_interrupt);
-		signal(SIGTERM, ingen_interrupt);
-
 		// Run engine main loop until interrupt
 		while (world->engine()->main_iteration()) {
 			Glib::usleep(125000);  // 1/8 second
