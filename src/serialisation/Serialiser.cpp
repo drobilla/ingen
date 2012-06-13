@@ -60,7 +60,13 @@ struct Serialiser::Impl {
 	explicit Impl(Shared::World& world)
 		: _root_path("/")
 		, _world(world)
+		, _model(NULL)
+		, _sratom(sratom_new(&_world.uri_map().urid_map_feature()->urid_map))
 	{}
+
+	~Impl() {
+		sratom_free(_sratom);
+	}
 
 	enum Mode { TO_FILE, TO_STRING };
 
@@ -101,6 +107,7 @@ struct Serialiser::Impl {
 	std::string              _base_uri;
 	Shared::World&           _world;
 	Sord::Model*             _model;
+	Sratom*                  _sratom;
 };
 
 Serialiser::Serialiser(Shared::World& world)
@@ -550,25 +557,23 @@ void
 Serialiser::Impl::serialise_properties(Sord::Node                     id,
                                        const GraphObject::Properties& props)
 {
-	LV2_URID_Map*   map      = &_world.uri_map().urid_map_feature()->urid_map;
 	LV2_URID_Unmap* unmap    = &_world.uri_map().urid_unmap_feature()->urid_unmap;
-	Sratom*         sratom   = sratom_new(map);
 	SerdNode        base     = serd_node_from_string(SERD_URI,
 	                                                 (const uint8_t*)_base_uri.c_str());
 	SerdEnv*        env      = serd_env_new(&base);
 	SordInserter*   inserter = sord_inserter_new(_model->c_obj(), env);
 
-	sratom_set_sink(sratom, _base_uri.c_str(),
+	sratom_set_sink(_sratom, _base_uri.c_str(),
 	                (SerdStatementSink)sord_inserter_write_statement, NULL,
 	                inserter);
 
-	sratom_set_pretty_numbers(sratom, true);
+	sratom_set_pretty_numbers(_sratom, true);
 
 	typedef GraphObject::Properties::const_iterator iterator;
 	for (iterator v = props.begin(); v != props.end(); ++v) {
 		const Sord::URI key(_model->world(), v->first.str());
 		if (!skip_property(key)) {
-			sratom_write(sratom, unmap, 0,
+			sratom_write(_sratom, unmap, 0,
 			             sord_node_to_serd_node(id.c_obj()),
 			             sord_node_to_serd_node(key.c_obj()),
 			             v->second.type(), v->second.size(), v->second.get_body());
@@ -577,7 +582,6 @@ Serialiser::Impl::serialise_properties(Sord::Node                     id,
 
 	sord_inserter_free(inserter);
 	serd_env_free(env);
-	sratom_free(sratom);
 }
 
 } // namespace Serialisation

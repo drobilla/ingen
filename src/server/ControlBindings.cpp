@@ -65,24 +65,37 @@ ControlBindings::Key
 ControlBindings::binding_key(const Raul::Atom& binding) const
 {
 	const Ingen::Shared::URIs& uris = _engine.world()->uris();
-	Key key;
-	if (binding.type() == _engine.world()->forge().Dict) {
-		const Raul::Atom::DictValue&          dict = binding.get_dict();
-		Raul::Atom::DictValue::const_iterator t    = dict.find(uris.rdf_type);
-		Raul::Atom::DictValue::const_iterator n;
-		if (t == dict.end()) {
-			return key;
-		} else if (t->second == uris.midi_Bender) {
+	Key       key;
+	LV2_Atom* num = NULL;
+	if (binding.type() == uris.atom_Blank) {
+		LV2_Atom_Object* obj = (LV2_Atom_Object*)binding.get_body();
+		if (obj->body.otype == uris.midi_Bender) {
 			key = Key(MIDI_BENDER);
-		} else if (t->second == uris.midi_ChannelPressure) {
+		} else if (obj->body.otype == uris.midi_ChannelPressure) {
 			key = Key(MIDI_CHANNEL_PRESSURE);
-		} else if (t->second == uris.midi_Controller) {
-			if ((n = dict.find(uris.midi_controllerNumber)) != dict.end())
-				key = Key(MIDI_CC, n->second.get_int32());
-		} else if (t->second == uris.midi_NoteOn) {
-			if ((n = dict.find(uris.midi_noteNumber)) != dict.end())
-				key = Key(MIDI_NOTE, n->second.get_int32());
+		} else if (obj->body.otype == uris.midi_Controller) {
+			lv2_atom_object_get(
+				obj, (LV2_URID)uris.midi_controllerNumber, &num, NULL);
+			if (!num) {
+				Raul::error << "Controller binding missing number" << std::endl;
+			} else if (num->type != uris.atom_Int) {
+				Raul::error << "Controller number not an integer" << std::endl;
+			} else {
+				key = Key(MIDI_CC, ((LV2_Atom_Int*)num)->body);
+			}
+		} else if (obj->body.otype == uris.midi_NoteOn) {
+			lv2_atom_object_get(
+				obj, (LV2_URID)uris.midi_noteNumber, &num, NULL);
+			if (!num) {
+				Raul::error << "Note binding missing number" << std::endl;
+			} else if (num->type != uris.atom_Int) {
+				Raul::error << "Note number not an integer" << std::endl;
+			} else {
+				key = Key(MIDI_NOTE, ((LV2_Atom_Int*)num)->body);
+			}
 		}
+	} else {
+		Raul::error << "Unknown binding type " << binding.type() << std::endl;
 	}
 	return key;
 }

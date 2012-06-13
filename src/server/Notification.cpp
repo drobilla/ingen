@@ -14,6 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+
+#include "ingen/shared/URIMap.hpp"
 #include "ingen/shared/URIs.hpp"
 
 #include "Broadcaster.hpp"
@@ -28,8 +31,9 @@ void
 Notification::post_process(Notification& note,
                            Engine&       engine)
 {
-	const Ingen::Shared::URIs& uris  = engine.world()->uris();
-	Ingen::Shared::Forge&      forge = engine.world()->forge();
+	const Ingen::Shared::URIs& uris = engine.world()->uris();
+	LV2_Atom_Forge             forge;
+	uint8_t                    buf[128];
 	switch (note.type) {
 	case PORT_VALUE:
 		engine.broadcaster()->set_property(note.port->path(),
@@ -42,29 +46,36 @@ Notification::post_process(Notification& note,
 		                                   note.value);
 		break;
 	case PORT_BINDING: {
-		Raul::Atom::DictValue dict;
+		lv2_atom_forge_init(
+			&forge, &engine.world()->uri_map().urid_map_feature()->urid_map);
+		lv2_atom_forge_set_buffer(&forge, buf, sizeof(buf));
+		LV2_Atom_Forge_Frame frame;
 		switch (note.binding_type) {
 		case ControlBindings::MIDI_CC:
-			dict[uris.rdf_type]              = uris.midi_Controller;
-			dict[uris.midi_controllerNumber] = note.value;
+			lv2_atom_forge_blank(&forge, &frame, 0, uris.midi_Controller);
+			lv2_atom_forge_property_head(&forge, uris.midi_controllerNumber, 0);
+			lv2_atom_forge_int(&forge, note.value.get_int32());
 			break;
 		case ControlBindings::MIDI_BENDER:
-			dict[uris.rdf_type] = uris.midi_Bender;
+			lv2_atom_forge_blank(&forge, &frame, 0, uris.midi_Bender);
 			break;
 		case ControlBindings::MIDI_CHANNEL_PRESSURE:
-			dict[uris.rdf_type] = uris.midi_ChannelPressure;
+			lv2_atom_forge_blank(&forge, &frame, 0, uris.midi_ChannelPressure);
 			break;
 		case ControlBindings::MIDI_NOTE:
-			dict[uris.rdf_type]        = uris.midi_NoteOn;
-			dict[uris.midi_noteNumber] = note.value;
+			lv2_atom_forge_blank(&forge, &frame, 0, uris.midi_NoteOn);
+			lv2_atom_forge_property_head(&forge, uris.midi_noteNumber, 0);
+			lv2_atom_forge_int(&forge, note.value.get_int32());
 			break;
 		case ControlBindings::MIDI_RPN: // TODO
 		case ControlBindings::MIDI_NRPN: // TODO
 		case ControlBindings::NULL_CONTROL:
 			break;
 		}
+		LV2_Atom* atom = (LV2_Atom*)buf;
 		// FIXME: not thread-safe
-		const Raul::Atom dict_atom = forge.alloc(dict);
+		const Raul::Atom dict_atom = engine.world()->forge().alloc(
+			atom->size, atom->type, LV2_ATOM_BODY(atom));
 		note.port->set_property(uris.ingen_controlBinding, dict_atom);
 		engine.broadcaster()->set_property(note.port->path(),
 		                                   uris.ingen_controlBinding,

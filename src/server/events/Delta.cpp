@@ -190,7 +190,7 @@ Delta::pre_process()
 					if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
 						if (value == uris.wildcard) {
 							_engine.control_bindings()->learn(port);
-						} else if (value.type() == uris.forge.Dict) {
+						} else if (value.type() == uris.atom_Blank) {
 							op = CONTROL_BINDING;
 						} else {
 							_status = BAD_VALUE_TYPE;

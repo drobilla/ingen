@@ -32,7 +32,6 @@ Forge::Forge(Shared::URIMap& map)
 	URI    = map.map_uri(LV2_ATOM__URI);
 	URID   = map.map_uri(LV2_ATOM__URID);
 	String = map.map_uri(LV2_ATOM__String);
-	Dict   = map.map_uri(LV2_ATOM__Object);
 }
 
 std::string
