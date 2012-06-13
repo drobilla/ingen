@@ -39,6 +39,9 @@
 
 #define LOG(s) s << "[Delta] "
 
+// #define DUMP 1
+// #include "ingen/shared/URIMap.hpp"
+
 namespace Ingen {
 namespace Server {
 namespace Events {
@@ -69,7 +72,7 @@ Delta::Delta(Engine&           engine,
 		Resource::set_context(_properties, context);
 	}
 
-	/*
+#ifdef DUMP
 	LOG(Raul::info) << "Delta " << subject << " : " << context << " {" << std::endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
@@ -84,7 +87,7 @@ Delta::Delta(Engine&           engine,
 		                << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << std::endl;
 	}
 	LOG(Raul::info) << "}" << std::endl;
-	*/
+#endif
 }
 
 Delta::~Delta()

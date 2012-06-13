@@ -16,6 +16,8 @@
 
 #include <math.h>
 
+#include "ingen/shared/URIMap.hpp"
+
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
@@ -68,14 +70,14 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 	Key       key;
 	LV2_Atom* num = NULL;
 	if (binding.type() == uris.atom_Blank) {
-		LV2_Atom_Object* obj = (LV2_Atom_Object*)binding.get_body();
-		if (obj->body.otype == uris.midi_Bender) {
+		LV2_Atom_Object_Body* obj = (LV2_Atom_Object_Body*)binding.get_body();
+		if (obj->otype == uris.midi_Bender) {
 			key = Key(MIDI_BENDER);
-		} else if (obj->body.otype == uris.midi_ChannelPressure) {
+		} else if (obj->otype == uris.midi_ChannelPressure) {
 			key = Key(MIDI_CHANNEL_PRESSURE);
-		} else if (obj->body.otype == uris.midi_Controller) {
-			lv2_atom_object_get(
-				obj, (LV2_URID)uris.midi_controllerNumber, &num, NULL);
+		} else if (obj->otype == uris.midi_Controller) {
+			lv2_atom_object_body_get(
+				binding.size(), obj, (LV2_URID)uris.midi_controllerNumber, &num, NULL);
 			if (!num) {
 				Raul::error << "Controller binding missing number" << std::endl;
 			} else if (num->type != uris.atom_Int) {
@@ -83,9 +85,9 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 			} else {
 				key = Key(MIDI_CC, ((LV2_Atom_Int*)num)->body);
 			}
-		} else if (obj->body.otype == uris.midi_NoteOn) {
-			lv2_atom_object_get(
-				obj, (LV2_URID)uris.midi_noteNumber, &num, NULL);
+		} else if (obj->otype == uris.midi_NoteOn) {
+			lv2_atom_object_body_get(
+				binding.size(), obj, (LV2_URID)uris.midi_noteNumber, &num, NULL);
 			if (!num) {
 				Raul::error << "Note binding missing number" << std::endl;
 			} else if (num->type != uris.atom_Int) {
