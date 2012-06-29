@@ -42,12 +42,12 @@ namespace Events {
 class SetPortValue : public Event
 {
 public:
-	SetPortValue(Engine&           engine,
-	             Interface*        client,
-	             int32_t           id,
-	             SampleCount       timestamp,
-	             PortImpl*         port,
-	             const Raul::Atom& value);
+	SetPortValue(Engine&              engine,
+	             SharedPtr<Interface> client,
+	             int32_t              id,
+	             SampleCount          timestamp,
+	             PortImpl*            port,
+	             const Raul::Atom&    value);
 
 	~SetPortValue();
 

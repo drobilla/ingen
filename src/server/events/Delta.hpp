@@ -70,7 +70,7 @@ class Delta : public Event
 {
 public:
 	Delta(Engine&                     engine,
-	      Interface*                  client,
+	      SharedPtr<Interface>        client,
 	      int32_t                     id,
 	      SampleCount                 timestamp,
 	      bool                        create,

@@ -35,11 +35,11 @@ namespace Events {
 static void
 send_patch(Interface* client, const PatchImpl* patch);
 
-Get::Get(Engine&          engine,
-         Interface*       client,
-         int32_t          id,
-         SampleCount      timestamp,
-         const Raul::URI& uri)
+Get::Get(Engine&              engine,
+         SharedPtr<Interface> client,
+         int32_t              id,
+         SampleCount          timestamp,
+         const Raul::URI&     uri)
 	: Event(engine, client, id, timestamp)
 	, _uri(uri)
 	, _object(NULL)
@@ -130,7 +130,7 @@ Get::post_process()
 	if (_uri == "ingen:plugins") {
 		respond(SUCCESS);
 		if (_request_client) {
-			_engine.broadcaster()->send_plugins_to(_request_client, _plugins);
+			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);
 		}
 	} else if (_uri == "ingen:engine") {
 		respond(SUCCESS);
@@ -154,11 +154,11 @@ Get::post_process()
 			const PatchImpl* patch = NULL;
 			const PortImpl*  port  = NULL;
 			if ((patch = dynamic_cast<const PatchImpl*>(_object))) {
-				send_patch(_request_client, patch);
+				send_patch(_request_client.get(), patch);
 			} else if ((node = dynamic_cast<const NodeImpl*>(_object))) {
-				send_node(_request_client, node);
+				send_node(_request_client.get(), node);
 			} else if ((port = dynamic_cast<const PortImpl*>(_object))) {
-				send_port(_request_client, port);
+				send_port(_request_client.get(), port);
 			}
 			_request_client->bundle_end();
 		} else if (_plugin) {

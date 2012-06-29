@@ -55,11 +55,11 @@ class DisconnectAll;
 class Delete : public Event
 {
 public:
-	Delete(Engine&          engine,
-	       Interface*       client,
-	       int32_t          id,
-	       FrameTime        timestamp,
-	       const Raul::URI& uri);
+	Delete(Engine&              engine,
+	       SharedPtr<Interface> client,
+	       int32_t              id,
+	       FrameTime            timestamp,
+	       const Raul::URI&     uri);
 
 	~Delete();
 

@@ -55,7 +55,7 @@ EventWriter::put(const Raul::URI&            uri,
                  const Resource::Graph       ctx)
 {
 	_engine.enqueue_event(
-		new Events::Delta(_engine, _respondee.get(), _request_id, now(),
+		new Events::Delta(_engine, _respondee, _request_id, now(),
 		                  true, ctx, uri, properties));
 }
 
@@ -65,7 +65,7 @@ EventWriter::delta(const Raul::URI&            uri,
                    const Resource::Properties& add)
 {
 	_engine.enqueue_event(
-		new Events::Delta(_engine, _respondee.get(), _request_id, now(),
+		new Events::Delta(_engine, _respondee, _request_id, now(),
 		                  false, Resource::DEFAULT, uri, add, remove));
 }
 
@@ -74,7 +74,7 @@ EventWriter::move(const Raul::Path& old_path,
                   const Raul::Path& new_path)
 {
 	_engine.enqueue_event(
-		new Events::Move(_engine, _respondee.get(), _request_id, now(),
+		new Events::Move(_engine, _respondee, _request_id, now(),
 		                 old_path, new_path));
 }
 
@@ -82,7 +82,7 @@ void
 EventWriter::del(const Raul::URI& uri)
 {
 	_engine.enqueue_event(
-		new Events::Delete(_engine, _respondee.get(), _request_id, now(), uri));
+		new Events::Delete(_engine, _respondee, _request_id, now(), uri));
 }
 
 void
@@ -90,7 +90,7 @@ EventWriter::connect(const Raul::Path& tail_path,
                      const Raul::Path& head_path)
 {
 	_engine.enqueue_event(
-		new Events::Connect(_engine, _respondee.get(), _request_id, now(),
+		new Events::Connect(_engine, _respondee, _request_id, now(),
 		                    tail_path, head_path));
 
 }
@@ -100,7 +100,7 @@ EventWriter::disconnect(const Raul::Path& src,
                         const Raul::Path& dst)
 {
 	_engine.enqueue_event(
-		new Events::Disconnect(_engine, _respondee.get(), _request_id, now(),
+		new Events::Disconnect(_engine, _respondee, _request_id, now(),
 		                       src, dst));
 }
 
@@ -109,7 +109,7 @@ EventWriter::disconnect_all(const Raul::Path& patch_path,
                             const Raul::Path& path)
 {
 	_engine.enqueue_event(
-		new Events::DisconnectAll(_engine, _respondee.get(), _request_id, now(),
+		new Events::DisconnectAll(_engine, _respondee, _request_id, now(),
 		                          patch_path, path));
 }
 
@@ -123,7 +123,7 @@ EventWriter::set_property(const Raul::URI&  uri,
 	Resource::Properties add;
 	add.insert(make_pair(predicate, value));
 	_engine.enqueue_event(
-		new Events::Delta(_engine, _respondee.get(), _request_id, now(),
+		new Events::Delta(_engine, _respondee, _request_id, now(),
 		                  false, Resource::DEFAULT, uri, add, remove));
 }
 
@@ -131,7 +131,7 @@ void
 EventWriter::get(const Raul::URI& uri)
 {
 	_engine.enqueue_event(
-		new Events::Get(_engine, _respondee.get(), _request_id, now(), uri));
+		new Events::Get(_engine, _respondee, _request_id, now(), uri));
 }
 
 } // namespace Server

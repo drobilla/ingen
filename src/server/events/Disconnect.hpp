@@ -45,12 +45,12 @@ namespace Events {
 class Disconnect : public Event
 {
 public:
-	Disconnect(Engine&           engine,
-	           Interface*        client,
-	           int32_t           id,
-	           SampleCount       timestamp,
-	           const Raul::Path& tail_path,
-	           const Raul::Path& head_path);
+	Disconnect(Engine&              engine,
+	           SharedPtr<Interface> client,
+	           int32_t              id,
+	           SampleCount          timestamp,
+	           const Raul::Path&    tail_path,
+	           const Raul::Path&    head_path);
 
 	bool pre_process();
 	void execute(ProcessContext& context);

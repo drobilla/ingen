@@ -43,12 +43,12 @@ class Disconnect;
 class DisconnectAll : public Event
 {
 public:
-	DisconnectAll(Engine&           engine,
-	              Interface*        client,
-	              int32_t           id,
-	              SampleCount       timestamp,
-	              const Raul::Path& parent,
-	              const Raul::Path& object);
+	DisconnectAll(Engine&              engine,
+	              SharedPtr<Interface> client,
+	              int32_t              id,
+	              SampleCount          timestamp,
+	              const Raul::Path&    parent,
+	              const Raul::Path&    object);
 
 	DisconnectAll(Engine&          engine,
 	              PatchImpl*       parent,

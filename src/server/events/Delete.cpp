@@ -34,11 +34,11 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Delete::Delete(Engine&          engine,
-               Interface*       client,
-               int32_t          id,
-               FrameTime        time,
-               const Raul::URI& uri)
+Delete::Delete(Engine&              engine,
+               SharedPtr<Interface> client,
+               int32_t              id,
+               FrameTime            time,
+               const Raul::URI&     uri)
 	: Event(engine, client, id, time)
 	, _uri(uri)
 	, _store_iterator(engine.engine_store()->end())

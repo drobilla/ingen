@@ -218,8 +218,9 @@ Engine::activate()
 			make_pair(uris.ingen_canvasY,
 			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
 
+		SharedPtr<Interface> respondee;
 		execute_and_delete_event(
-			context, new Events::CreatePort(*this, NULL, -1, 0,
+			context, new Events::CreatePort(*this, respondee, -1, 0,
 			                                "/control_in", false, in_properties));
 
 		// Add control out
@@ -236,7 +237,7 @@ Engine::activate()
 			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
 
 		execute_and_delete_event(
-			context, new Events::CreatePort(*this, NULL, -1, 0,
+			context, new Events::CreatePort(*this, respondee, -1, 0,
 			                                "/control_out", true, out_properties));
 	}
 

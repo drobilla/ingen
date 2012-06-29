@@ -45,12 +45,12 @@ namespace Events {
 class Connect : public Event
 {
 public:
-	Connect(Engine&           engine,
-	        Interface*        client,
-	        int32_t           id,
-	        SampleCount       timestamp,
-	        const Raul::Path& tail,
-	        const Raul::Path& head);
+	Connect(Engine&              engine,
+	        SharedPtr<Interface> client,
+	        int32_t              id,
+	        SampleCount          timestamp,
+	        const Raul::Path&    tail,
+	        const Raul::Path&    head);
 
 	bool pre_process();
 	void execute(ProcessContext& context);

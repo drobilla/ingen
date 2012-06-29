@@ -86,7 +86,7 @@ public:
 	}
 
 protected:
-	Event(Engine& engine, Interface* client, int32_t id, FrameTime time)
+	Event(Engine& engine, SharedPtr<Interface> client, int32_t id, FrameTime time)
 		: _engine(engine)
 		, _request_client(client)
 		, _request_id(id)
@@ -97,7 +97,6 @@ protected:
 	/** Constructor for internal events only */
 	explicit Event(Engine& engine)
 		: _engine(engine)
-		, _request_client(NULL)
 		, _request_id(-1)
 		, _time(0)
 		, _status(NOT_PREPARED)
@@ -110,7 +109,7 @@ protected:
 
 	Engine&                _engine;
 	Raul::AtomicPtr<Event> _next;
-	Interface*             _request_client;
+	SharedPtr<Interface>   _request_client;
 	int32_t                _request_id;
 	FrameTime              _time;
 	Status                 _status;

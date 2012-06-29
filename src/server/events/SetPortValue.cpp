@@ -36,12 +36,12 @@ namespace Server {
 namespace Events {
 
 /** Internal */
-SetPortValue::SetPortValue(Engine&           engine,
-                           Interface*        client,
-                           int32_t           id,
-                           SampleCount       timestamp,
-                           PortImpl*         port,
-                           const Raul::Atom& value)
+SetPortValue::SetPortValue(Engine&              engine,
+                           SharedPtr<Interface> client,
+                           int32_t              id,
+                           SampleCount          timestamp,
+                           PortImpl*            port,
+                           const Raul::Atom&    value)
 	: Event(engine, client, id, timestamp)
 	, _queued(false)
 	, _port_path(port->path())

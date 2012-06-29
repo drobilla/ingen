@@ -36,7 +36,7 @@ class CreatePatch : public Event
 {
 public:
 	CreatePatch(Engine&                     engine,
-	            Interface*                  client,
+	            SharedPtr<Interface>        client,
 	            int32_t                     id,
 	            SampleCount                 timestamp,
 	            const Raul::Path&           path,

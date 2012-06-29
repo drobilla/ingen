@@ -48,15 +48,15 @@ namespace Events {
 
 typedef Resource::Properties Properties;
 
-Delta::Delta(Engine&           engine,
-             Interface*        client,
-             int32_t           id,
-             SampleCount       timestamp,
-             bool              create,
-             Resource::Graph   context,
-             const Raul::URI&  subject,
-             const Properties& properties,
-             const Properties& remove)
+Delta::Delta(Engine&              engine,
+             SharedPtr<Interface> client,
+             int32_t              id,
+             SampleCount          timestamp,
+             bool                 create,
+             Resource::Graph      context,
+             const Raul::URI&     subject,
+             const Properties&    properties,
+             const Properties&    remove)
 	: Event(engine, client, id, timestamp)
 	, _create_event(NULL)
 	, _subject(subject)

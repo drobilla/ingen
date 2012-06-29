@@ -38,11 +38,11 @@ namespace Events {
 class Get : public Event
 {
 public:
-	Get(Engine&          engine,
-	    Interface*       client,
-	    int32_t          id,
-	    SampleCount      timestamp,
-	    const Raul::URI& uri);
+	Get(Engine&              engine,
+	    SharedPtr<Interface> client,
+	    int32_t              id,
+	    SampleCount          timestamp,
+	    const Raul::URI&     uri);
 
 	bool pre_process();
 	void execute(ProcessContext& context) {}
