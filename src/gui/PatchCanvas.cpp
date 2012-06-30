@@ -419,6 +419,10 @@ PatchCanvas::remove_node(SharedPtr<const NodeModel> nm)
 	Views::iterator i = _views.find(nm);
 
 	if (i != _views.end()) {
+		const guint n_ports = i->second->num_ports();
+		for (gint p = n_ports - 1; p >= 0; --p) {
+			delete i->second->get_port(p);
+		}
 		delete i->second;
 		_views.erase(i);
 	}
