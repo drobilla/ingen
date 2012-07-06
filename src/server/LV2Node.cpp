@@ -388,7 +388,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 	if (lilv_plugin_has_feature(plug, info->work_schedule)) {
 		_worker_iface = (LV2_Worker_Interface*)
 			lilv_instance_get_extension_data(
-				(LilvInstance*)(*_prepared_instances)[0].get(),
+				(LilvInstance*)(*_instances)[0].get(),
 				LV2_WORKER__interface);
 	}
 
