@@ -2,9 +2,8 @@
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix hi:   <http://lv2plug.in/ns/ext/host-info#> .
 
-<http://drobilla.net/software/ingen> a doap:Project, hi:Host ;
+<http://drobilla.net/software/ingen> a doap:Project ;
     doap:name "Ingen" ;
     doap:shortdesc "A modular audio processing environment." ;
     doap:homepage <http://drobilla.net/software/ingen/> ;
@@ -22,15 +21,6 @@
         a doap:SVNRepository ;
         doap:browse <http://dev.drobilla.net/browser/trunk/ingen> ;
         doap:location <http://svn.drobilla.net/lad/trunk/ingen>
-    ] ;
-    hi:supportsExtension [
-        hi:extension <http://lv2plug.in/ns/extensions/ui> ;
-    ] , [
-        hi:extension <http://lv2plug.in/ns/ext/midi> ;
-    ] , [
-        hi:extension <http://lv2plug.in/ns/ext/presets> ;
-    ] , [
-        hi:extension <http://lv2plug.in/ns/ext/event> ;
     ] ;
     doap:description """
 A modular audio processing environment, where most functionality is provided
