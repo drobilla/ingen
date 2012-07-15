@@ -61,7 +61,7 @@ def configure(conf):
     autowaf.check_pkg(conf, 'serd-0', uselib_store='SERD',
                       atleast_version='0.15.0', mandatory=False)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
-                      atleast_version='0.7.0', mandatory=False)
+                      atleast_version='0.9.0', mandatory=False)
     if not Options.options.no_gui:
         autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
                           atleast_version='2.12.0', mandatory=False)
