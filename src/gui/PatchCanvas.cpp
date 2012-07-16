@@ -277,7 +277,7 @@ PatchCanvas::build_plugin_menu()
 	LV2Children children;
 	LILV_FOREACH(plugin_classes, i, classes) {
 		const LilvPluginClass* c = lilv_plugin_classes_get(classes, i);
-		const LilvNode*       p = lilv_plugin_class_get_parent_uri(c);
+		const LilvNode*        p = lilv_plugin_class_get_parent_uri(c);
 		if (!p)
 			p = lilv_plugin_class_get_uri(lv2_plugin);
 		children.insert(make_pair(lilv_node_as_string(p), c));
