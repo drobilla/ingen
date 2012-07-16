@@ -43,7 +43,6 @@ SetPortValue::SetPortValue(Engine&              engine,
                            PortImpl*            port,
                            const Raul::Atom&    value)
 	: Event(engine, client, id, timestamp)
-	, _queued(false)
 	, _port_path(port->path())
 	, _value(value)
 	, _port(port)
@@ -57,16 +56,11 @@ SetPortValue::~SetPortValue()
 bool
 SetPortValue::pre_process()
 {
-	if (_queued && !_port) {
-		_port = _engine.engine_store()->find_port(_port_path);
+	if (_port->is_output()) {
+		return Event::pre_process_done(DIRECTION_MISMATCH);
 	}
 
-	if (!_port) {
-		return Event::pre_process_done(PORT_NOT_FOUND);
-	}
-
-	// Port is a message context port, set its value and
-	// call the plugin's message run function once
+	// Port is on a message context node, set value and run
 	if (_port->parent_node()->context() == Context::MESSAGE) {
 		apply(_engine.message_context());
 		_engine.message_context().run(
@@ -89,7 +83,7 @@ SetPortValue::execute(ProcessContext& context)
 {
 	assert(_time >= context.start() && _time <= context.end());
 
-	if (_port && _port->parent_node()->context() == Context::MESSAGE)
+	if (_port->parent_node()->context() == Context::MESSAGE)
 		return;
 
 	apply(context);
@@ -99,33 +93,33 @@ SetPortValue::execute(ProcessContext& context)
 void
 SetPortValue::apply(Context& context)
 {
-	uint32_t start = context.start();
-	if (_status == SUCCESS && !_port)
-		_port = _engine.engine_store()->find_port(_port_path);
+	if (_status) {
+		return;
+	}
 
 	Ingen::Shared::URIs& uris = _engine.world()->uris();
+	Buffer* const        buf  = _port->buffer(0).get();
 
-	if (!_port) {
-		if (_status == SUCCESS)
-			_status = PORT_NOT_FOUND;
-	/*} else if (_port->buffer(0)->capacity() < _data_size) {
-		_status = NO_SPACE;*/
-	} else {
-		Buffer* const      buf  = _port->buffer(0).get();
-		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
-		if (abuf) {
-			if (_value.type() != uris.forge.Float) {
-				_status = TYPE_MISMATCH;
-				return;
-			}
-
-			for (uint32_t v = 0; v < _port->poly(); ++v) {
-				((AudioBuffer*)_port->buffer(v).get())->set_value(
-					_value.get_float(), start, _time);
-			}
+	AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
+	if (abuf) {
+		if (_value.type() != uris.forge.Float) {
+			_status = TYPE_MISMATCH;
 			return;
 		}
 
+		for (uint32_t v = 0; v < _port->poly(); ++v) {
+			((AudioBuffer*)_port->buffer(v).get())->set_value(
+				_value.get_float(), context.start(), _time);
+		}
+	} else if (buf->type() == uris.atom_Sequence) {
+		buf->prepare_write(context);  // FIXME: incorrect
+		if (!buf->append_event(_time - context.start(),
+		                       _value.size(),
+		                       _value.type(),
+		                       (const uint8_t*)_value.get_body())) {
+			Raul::warn(Raul::fmt("Error writing to port %1%\n") % _port_path);
+		}
+	} else {
 		Raul::warn(Raul::fmt("Unknown value type %1%\n") % _value.type());
 	}
 }
