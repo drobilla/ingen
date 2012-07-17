@@ -31,7 +31,7 @@ URIMap::URIMap(LV2_URID_Map* map, LV2_URID_Unmap* unmap)
 {
 }
 
-URIMap::URIDMapFeature::URIDMapFeature(URIMap*    map,
+URIMap::URIDMapFeature::URIDMapFeature(URIMap*       map,
                                        LV2_URID_Map* impl)
 	: Feature(LV2_URID__map, &urid_map)
 {
