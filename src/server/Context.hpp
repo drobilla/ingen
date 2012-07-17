@@ -22,6 +22,7 @@
 #include "ingen/shared/World.hpp"
 
 #include "types.hpp"
+#include "Notification.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -61,20 +62,31 @@ public:
 
 	virtual ~Context() {}
 
-	ID id() const { return _id; }
+	/** Send a notification from this run context. */
+	void notify(
+		Notification::Type          type  = Notification::NIL,
+		FrameTime                   time  = 0,
+		PortImpl*                   port  = 0,
+		const Raul::Atom&           value = Raul::Atom(),
+		const ControlBindings::Type btype = ControlBindings::NULL_CONTROL);
 
-	void locate(FrameTime s, SampleCount nframes, SampleCount offset) {
-		_start = s;
-		_end = s + nframes;
+	/** Emit pending notifications in some other non-realtime thread. */
+	void emit_notifications();
+
+	inline ID id() const { return _id; }
+
+	inline void locate(FrameTime s, SampleCount nframes, SampleCount offset) {
+		_start   = s;
+		_end     = s + nframes;
 		_nframes = nframes;
-		_offset = offset;
+		_offset  = offset;
 	}
 
-	void locate(const Context& other) {
-		_start = other._start;
-		_end = other._end;
+	inline void locate(const Context& other) {
+		_start   = other._start;
+		_end     = other._end;
 		_nframes = other._nframes;
-		_offset = other._offset;
+		_offset  = other._offset;
 	}
 
 	inline Engine&     engine()   const { return _engine; }
@@ -83,9 +95,6 @@ public:
 	inline SampleCount nframes()  const { return _nframes; }
 	inline SampleCount offset()   const { return _offset; }
 	inline bool        realtime() const { return _realtime; }
-
-	inline const Raul::RingBuffer &  event_sink() const { return _event_sink; }
-	inline Raul::RingBuffer&         event_sink()       { return _event_sink; }
 
 protected:
 	Engine& _engine;  ///< Engine we're running in

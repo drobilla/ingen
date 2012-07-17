@@ -7,6 +7,7 @@ def build(bld):
             Broadcaster.cpp
             Buffer.cpp
             BufferFactory.cpp
+            Context.cpp
             ControlBindings.cpp
             DuplexPort.cpp
             EdgeImpl.cpp

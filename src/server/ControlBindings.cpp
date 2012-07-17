@@ -281,9 +281,7 @@ ControlBindings::set_port_value(ProcessContext& context,
 		reinterpret_cast<AudioBuffer*>(port->buffer(v).get())->set_value(
 			port_value.get_float(), context.start(), context.start());
 
-	const Notification note = Notification::make(
-		Notification::PORT_VALUE, context.start(), port, port_value);
-	context.event_sink().write(sizeof(note), &note);
+	context.notify(Notification::PORT_VALUE, context.start(), port, port_value);
 }
 
 bool
@@ -299,10 +297,11 @@ ControlBindings::bind(ProcessContext& context, Key key)
 
 	_bindings->insert(make_pair(key, _learn_port));
 
-	const Notification note = Notification::make(
-		Notification::PORT_BINDING, context.start(), _learn_port,
-		context.engine().world()->forge().make(key.num), key.type);
-	context.event_sink().write(sizeof(note), &note);
+	context.notify(Notification::PORT_BINDING,
+	               context.start(),
+	               _learn_port,
+	               context.engine().world()->forge().make(key.num),
+	               key.type);
 
 	_learn_port = NULL;
 	return true;

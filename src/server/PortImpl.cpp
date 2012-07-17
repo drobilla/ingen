@@ -236,9 +236,10 @@ PortImpl::broadcast_value(Context& context, bool force)
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
 			LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)buffer(0)->atom();
 			if (seq->atom.size > sizeof(LV2_Atom_Sequence_Body)) {
-				const Notification note = Notification::make(
-					Notification::PORT_ACTIVITY, context.start(), this, forge.make(true));
-				context.event_sink().write(sizeof(note), &note);
+				context.notify(Notification::PORT_ACTIVITY,
+				               context.start(),
+				               this,
+				               forge.make(true));
 			}
 		}
 		break;
@@ -246,9 +247,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 
 	if (val.is_valid() && (force || val != _last_broadcasted_value)) {
 		_last_broadcasted_value = val;
-		const Notification note = Notification::make(
-			ntype, context.start(), this, val);
-		context.event_sink().write(sizeof(note), &note);
+		context.notify(ntype, context.start(), this, val);
 	}
 }
 

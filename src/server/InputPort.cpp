@@ -154,10 +154,10 @@ InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 	if (_edges.empty()) {
 		if (is_a(PortType::AUDIO)) {
 			// Send an update peak of 0.0 to reset to silence
-			const Notification note = Notification::make(
-				Notification::PORT_ACTIVITY, context.start(), this,
-				context.engine().world()->forge().make(0.0f));
-			context.event_sink().write(sizeof(note), &note);
+			context.notify(Notification::PORT_ACTIVITY,
+			               context.start(),
+			               this,
+			               context.engine().world()->forge().make(0.0f));
 		}
 		_broadcast = false;
 	}

@@ -66,14 +66,7 @@ PostProcessor::process()
 	/* FIXME: process events from all threads if parallel */
 
 	/* Process audio thread generated events */
-	Raul::RingBuffer& event_sink = _engine.process_context().event_sink();
-	const uint32_t    read_space = event_sink.read_space();
-	Notification      note;
-	for (uint32_t i = 0; i < read_space; i += sizeof(note)) {
-		if (event_sink.read(sizeof(note), &note) == sizeof(note)) {
-			Notification::post_process(note, _engine);
-		}
-	}
+	_engine.process_context().emit_notifications();
 
 	/* Process normal events */
 	Event* ev = _head.get();
