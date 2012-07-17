@@ -27,7 +27,6 @@
 #include "ingen/shared/LV2Features.hpp"
 
 #include "LV2Info.hpp"
-#include "LV2RequestRunFeature.hpp"
 #include "LV2ResizeFeature.hpp"
 
 namespace Ingen {
@@ -55,8 +54,6 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 
 	world->lv2_features().add_feature(
 		SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
-	world->lv2_features().add_feature(
-		SharedPtr<Shared::LV2Features::Feature>(new RequestRunFeature()));
 }
 
 LV2Info::~LV2Info()

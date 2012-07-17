@@ -40,6 +40,7 @@
 #include "PreProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
+#include "Worker.hpp"
 
 using namespace std;
 
@@ -59,6 +60,7 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	, _post_processor(new PostProcessor(*this))
 	, _event_writer(new EventWriter(*this))
 	, _root_patch(NULL)
+	, _worker(new Worker(event_queue_size()))
 	, _message_context(*this)
 	, _process_context(*this)
 	, _quit_flag(false)
@@ -75,6 +77,8 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	}
 
 	_control_bindings = new ControlBindings(*this);
+
+	_world->lv2_features().add_feature(_worker->schedule_feature());
 }
 
 Engine::~Engine()

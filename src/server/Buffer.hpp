@@ -56,6 +56,9 @@ public:
 	uint32_t capacity() const { return _capacity; }
 
 	/// Sequence buffers only
+	void prepare_output_write(Context& context);
+
+	/// Sequence buffers only
 	bool append_event(int64_t        frames,
 	                  uint32_t       size,
 	                  uint32_t       type,

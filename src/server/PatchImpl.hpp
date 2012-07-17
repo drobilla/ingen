@@ -155,6 +155,8 @@ public:
 	uint32_t internal_poly()         const { return _poly_pre; }
 	uint32_t internal_poly_process() const { return _poly_process; }
 
+	Engine& engine() { return _engine; }
+
 private:
 	inline void compile_recursive(NodeImpl* n, CompiledPatch* output) const;
 	void process_parallel(ProcessContext& context);

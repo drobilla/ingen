@@ -63,7 +63,7 @@ void
 OutputPort::pre_process(Context& context)
 {
 	for (uint32_t v = 0; v < _poly; ++v)
-		_buffers->at(v)->prepare_write(context);
+		_buffers->at(v)->prepare_output_write(context);
 }
 
 void

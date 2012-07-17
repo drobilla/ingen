@@ -30,6 +30,7 @@ def build(bld):
             PreProcessor.cpp
             ProcessContext.cpp
             ProcessSlave.cpp
+            Worker.cpp
             events/Connect.cpp
             events/CreateNode.cpp
             events/CreatePatch.cpp

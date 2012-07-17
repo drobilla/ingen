@@ -57,6 +57,7 @@ public:
 	const Quark atom_AtomPort;
 	const Quark atom_Blank;
 	const Quark atom_Bool;
+	const Quark atom_Chunk;
 	const Quark atom_Float;
 	const Quark atom_Int;
 	const Quark atom_Resource;

@@ -121,9 +121,7 @@ public:
 	virtual void learn() {}
 
 	/** Run the node for one instant in the non-realtime worker thread. */
-	virtual void work(MessageContext& context,
-	                  uint32_t        size,
-	                  const void*     data) {}
+	virtual void message_process(MessageContext& context) {}
 
 	/** Do whatever needs doing in the process thread before process() is called */
 	virtual void pre_process(ProcessContext& context);

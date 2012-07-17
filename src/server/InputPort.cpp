@@ -212,7 +212,7 @@ InputPort::post_process(Context& context)
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
 			// Clear events received via a SetPortValue
 			for (uint32_t v = 0; v < _poly; ++v) {
-				buffer(v)->clear();
+				buffer(v)->prepare_write(context);
 			}
 		}
 		_set_by_user = false;

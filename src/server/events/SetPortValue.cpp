@@ -113,10 +113,12 @@ SetPortValue::apply(Context& context)
 		}
 	} else if (buf->type() == uris.atom_Sequence) {
 		buf->prepare_write(context);  // FIXME: incorrect
-		if (!buf->append_event(_time - context.start(),
-		                       _value.size(),
-		                       _value.type(),
-		                       (const uint8_t*)_value.get_body())) {
+		if (buf->append_event(_time - context.start(),
+		                      _value.size(),
+		                      _value.type(),
+		                      (const uint8_t*)_value.get_body())) {
+			_port->raise_set_by_user_flag();
+		} else {
 			Raul::warn(Raul::fmt("Error writing to port %1%\n") % _port_path);
 		}
 	} else {

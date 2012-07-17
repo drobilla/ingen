@@ -47,6 +47,7 @@ class PostProcessor;
 class PreProcessor;
 class ProcessContext;
 class PatchImpl;
+class Worker;
 
 /**
    The engine which executes the process graph.
@@ -101,6 +102,7 @@ public:
 	NodeFactory*     node_factory()     const { return _node_factory; }
 	PostProcessor*   post_processor()   const { return _post_processor; }
 	PatchImpl*       root_patch()       const { return _root_patch; }
+	Worker*          worker()           const { return _worker; }
 
 	MessageContext& message_context() { return _message_context; }
 	ProcessContext& process_context() { return _process_context; }
@@ -121,8 +123,8 @@ private:
 	PreProcessor*     _pre_processor;
 	PostProcessor*    _post_processor;
 	EventWriter*      _event_writer;
-
-	PatchImpl* _root_patch;
+	PatchImpl*        _root_patch;
+	Worker*           _worker;
 
 	MessageContext _message_context;
 	ProcessContext _process_context;

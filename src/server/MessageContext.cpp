@@ -105,7 +105,7 @@ void
 MessageContext::execute(const Request& req)
 {
 	NodeImpl* node = req.node;
-	node->work(*this, 0, NULL);
+	node->message_process(*this);
 }
 
 } // namespace Server

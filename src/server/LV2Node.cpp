@@ -387,9 +387,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 	// FIXME: Polyphony + worker?
 	if (lilv_plugin_has_feature(plug, info->work_schedule)) {
 		_worker_iface = (LV2_Worker_Interface*)
-			lilv_instance_get_extension_data(
-				(LilvInstance*)(*_instances)[0].get(),
-				LV2_WORKER__interface);
+			lilv_instance_get_extension_data(instance(0),
+			                                 LV2_WORKER__interface);
 	}
 
 	return ret;
@@ -413,11 +412,25 @@ LV2Node::deactivate()
 		lilv_instance_deactivate(instance(i));
 }
 
+LV2_Worker_Status
+LV2Node::work_respond(LV2_Worker_Respond_Handle handle,
+                      uint32_t                  size,
+                      const void*               data)
+{
+	LV2Node* node = (LV2Node*)handle;
+	LV2Node::Response* r = new LV2Node::Response(size, data);
+	node->_responses.push_back(*r);
+	return LV2_WORKER_SUCCESS;
+}
+
 void
-LV2Node::work(MessageContext& context, uint32_t size, const void* data)
+LV2Node::work(uint32_t size, const void* data)
 {
 	if (_worker_iface) {
-		_worker_iface->work(instance(0), NULL, NULL, size, data);
+		LV2_Handle inst = lilv_instance_get_handle(instance(0));
+		if (_worker_iface->work(inst, work_respond, this, size, data)) {
+			Raul::error(Raul::fmt("Error calling %1% work method\n") % _path);
+		}
 	}
 }
 
@@ -428,6 +441,20 @@ LV2Node::process(ProcessContext& context)
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		lilv_instance_run(instance(i), context.nframes());
+
+	if (_worker_iface) {
+		LV2_Handle inst = lilv_instance_get_handle(instance(0));
+		while (!_responses.empty()) {
+			Response& r = _responses.front();
+			_worker_iface->work_response(inst, r.size, r.data);
+			_responses.pop_front();
+			context.engine().maid()->push(&r);
+		}
+
+		if (_worker_iface->end_run) {
+			_worker_iface->end_run(inst);
+		}
+	}
 
 	NodeImpl::post_process(context);
 }

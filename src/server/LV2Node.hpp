@@ -55,7 +55,7 @@ public:
 	void activate(BufferFactory& bufs);
 	void deactivate();
 
-	void work(MessageContext& context, uint32_t size, const void* data);
+	void work(uint32_t size, const void* data);
 
 	void process(ProcessContext& context);
 
@@ -74,10 +74,38 @@ protected:
 
 	typedef Raul::Array< SharedPtr<void> > Instances;
 
+	struct Response : public Raul::Deletable
+	                , public Raul::Noncopyable
+	                , public boost::intrusive::slist_base_hook<>
+	{
+		inline Response(uint32_t s, const void* d)
+			: size(s)
+			, data(malloc(s))
+		{
+			memcpy(data, d, s);
+		}
+
+		~Response() {
+			free(data);
+		}
+		
+		const uint32_t size;
+		void* const    data;
+	};
+
+	typedef boost::intrusive::slist<Response,
+	                                boost::intrusive::cache_last<true>,
+	                                boost::intrusive::constant_time_size<false>
+	                                > Responses;
+
+	static LV2_Worker_Status work_respond(
+		LV2_Worker_Respond_Handle handle, uint32_t size, const void* data);
+
 	LV2Plugin*                                   _lv2_plugin;
 	Instances*                                   _instances;
 	Instances*                                   _prepared_instances;
 	LV2_Worker_Interface*                        _worker_iface;
+	Responses                                    _responses;
 	SharedPtr<Shared::LV2Features::FeatureArray> _features;
 };
 

@@ -43,12 +43,6 @@ Buffer::Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity)
 	, _next(NULL)
 	, _refs(0)
 {
-	if (capacity > UINT32_MAX) {
-		Raul::error << "Event buffer size " << capacity << " too large, aborting."
-		            << std::endl;
-		throw std::bad_alloc();
-	}
-
 #ifdef HAVE_POSIX_MEMALIGN
 	int ret = posix_memalign((void**)&_atom, 16, capacity);
 #else
@@ -56,7 +50,7 @@ Buffer::Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity)
 	int ret = (_atom != NULL) ? 0 : -1;
 #endif
 
-	if (ret != 0) {
+	if (ret) {
 		Raul::error << "Failed to allocate event buffer." << std::endl;
 		throw std::bad_alloc();
 	}
@@ -141,6 +135,15 @@ Buffer::prepare_write(Context& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
 		_atom->size = sizeof(LV2_Atom_Sequence_Body);
+	}
+}
+
+void
+Buffer::prepare_output_write(Context& context)
+{
+	if (_type == _factory.uris().atom_Sequence) {
+		_atom->type = (LV2_URID)_factory.uris().atom_Chunk;
+		_atom->size = _capacity - sizeof(LV2_Atom_Sequence);
 	}
 }
 
