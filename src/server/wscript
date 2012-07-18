@@ -23,7 +23,6 @@ def build(bld):
             MessageContext.cpp
             NodeFactory.cpp
             NodeImpl.cpp
-            Notification.cpp
             OutputPort.cpp
             PatchImpl.cpp
             PortImpl.cpp

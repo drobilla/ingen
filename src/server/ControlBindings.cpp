@@ -17,7 +17,6 @@
 #include <math.h>
 
 #include "ingen/shared/URIMap.hpp"
-
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
@@ -27,7 +26,6 @@
 #include "AudioBuffer.hpp"
 #include "ControlBindings.hpp"
 #include "Engine.hpp"
-#include "Notification.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
@@ -47,6 +45,8 @@ ControlBindings::ControlBindings(Engine& engine)
 	                       engine.world()->uris().atom_Sequence,
 	                       4096)) // FIXME: capacity?
 {
+	lv2_atom_forge_init(
+		&_forge, &engine.world()->uri_map().urid_map_feature()->urid_map);
 }
 
 ControlBindings::~ControlBindings()
@@ -263,6 +263,37 @@ ControlBindings::port_value_to_control(PortImpl*         port,
 	}
 }
 
+static void
+forge_binding(const Shared::URIs&   uris,
+              LV2_Atom_Forge*       forge,
+              ControlBindings::Type binding_type,
+              int32_t               value)
+{
+	LV2_Atom_Forge_Frame frame;
+	switch (binding_type) {
+	case ControlBindings::MIDI_CC:
+		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_Controller);
+		lv2_atom_forge_property_head(forge, uris.midi_controllerNumber, 0);
+		lv2_atom_forge_int(forge, value);
+		break;
+	case ControlBindings::MIDI_BENDER:
+		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_Bender);
+		break;
+	case ControlBindings::MIDI_CHANNEL_PRESSURE:
+		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_ChannelPressure);
+		break;
+	case ControlBindings::MIDI_NOTE:
+		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_NoteOn);
+		lv2_atom_forge_property_head(forge, uris.midi_noteNumber, 0);
+		lv2_atom_forge_int(forge, value);
+		break;
+	case ControlBindings::MIDI_RPN: // TODO
+	case ControlBindings::MIDI_NRPN: // TODO
+	case ControlBindings::NULL_CONTROL:
+		break;
+	}
+}
+
 void
 ControlBindings::set_port_value(ProcessContext& context,
                                 PortImpl*       port,
@@ -281,7 +312,9 @@ ControlBindings::set_port_value(ProcessContext& context,
 		reinterpret_cast<AudioBuffer*>(port->buffer(v).get())->set_value(
 			port_value.get_float(), context.start(), context.start());
 
-	context.notify(Notification::PORT_VALUE, context.start(), port, port_value);
+	Shared::URIs& uris = context.engine().world()->uris();
+	context.notify(uris.ingen_value, context.start(), port,
+	               port_value.size(), port_value.type(), port_value.get_body());
 }
 
 bool
@@ -297,11 +330,14 @@ ControlBindings::bind(ProcessContext& context, Key key)
 
 	_bindings->insert(make_pair(key, _learn_port));
 
-	context.notify(Notification::PORT_BINDING,
+	uint8_t buf[128];
+	lv2_atom_forge_set_buffer(&_forge, buf, sizeof(buf));
+	forge_binding(uris, &_forge, key.type, key.num);
+	const LV2_Atom* atom = (const LV2_Atom*)buf;
+	context.notify(uris.ingen_controlBinding,
 	               context.start(),
 	               _learn_port,
-	               context.engine().world()->forge().make(key.num),
-	               key.type);
+	               atom->size, atom->type, LV2_ATOM_BODY(atom));
 
 	_learn_port = NULL;
 	return true;

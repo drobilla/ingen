@@ -20,6 +20,7 @@
 #include <map>
 #include <stdint.h>
 
+#include "lv2/lv2plug.in/ns/ext/atom/forge.h"
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
@@ -106,11 +107,11 @@ private:
 	                              const Raul::Atom& min,
 	                              const Raul::Atom& max) const;
 
-	Engine&   _engine;
-	PortImpl* _learn_port;
-
+	Engine&             _engine;
+	PortImpl*           _learn_port;
 	SharedPtr<Bindings> _bindings;
 	BufferRef           _feedback;
+	LV2_Atom_Forge      _forge;
 };
 
 } // namespace Server

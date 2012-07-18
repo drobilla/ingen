@@ -22,12 +22,12 @@
 #include "ingen/shared/World.hpp"
 
 #include "types.hpp"
-#include "Notification.hpp"
 
 namespace Ingen {
 namespace Server {
 
 class Engine;
+class PortImpl;
 
 /** Graph execution context.
  *
@@ -63,12 +63,12 @@ public:
 	virtual ~Context() {}
 
 	/** Send a notification from this run context. */
-	void notify(
-		Notification::Type          type  = Notification::NIL,
-		FrameTime                   time  = 0,
-		PortImpl*                   port  = 0,
-		const Raul::Atom&           value = Raul::Atom(),
-		const ControlBindings::Type btype = ControlBindings::NULL_CONTROL);
+	void notify(LV2_URID           key  = 0,
+	            FrameTime          time = 0,
+	            PortImpl*          port = 0,
+	            uint32_t           size = 0,
+	            Raul::Atom::TypeID type = 0,
+	            const void*        body = NULL);
 
 	/** Emit pending notifications in some other non-realtime thread. */
 	void emit_notifications();

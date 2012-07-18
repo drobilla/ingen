@@ -14,20 +14,45 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/shared/Forge.hpp"
+#include "ingen/shared/URIMap.hpp"
+#include "raul/log.hpp"
+
 #include "Context.hpp"
+#include "Engine.hpp"
+#include "Broadcaster.hpp"
+#include "PortImpl.hpp"
 
 namespace Ingen {
 namespace Server {
 
-void
-Context::notify(Notification::Type          type,
-                FrameTime                   time,
-                PortImpl*                   port,
-                const Raul::Atom&           value,
-                const ControlBindings::Type btype)
+struct Notification
 {
-	const Notification n = Notification::make(type, time, port, value, btype);
+	inline Notification(PortImpl*          p = 0,
+	                    FrameTime          f = 0,
+	                    LV2_URID           k = 0,
+	                    uint32_t           s = 0,
+	                    Raul::Atom::TypeID t = 0)
+		: port(p), key(k), size(s), type(t)
+	{}
+
+	PortImpl*          port;
+	LV2_URID           key;
+	uint32_t           size;
+	Raul::Atom::TypeID type;
+};
+
+void
+Context::notify(LV2_URID           key,
+                FrameTime          time,
+                PortImpl*          port,
+                uint32_t           size,
+                Raul::Atom::TypeID type,
+                const void*        body)
+{
+	const Notification n(port, time, key, size, type);
 	_event_sink.write(sizeof(n), &n);
+	_event_sink.write(size, body);
 }
 
 void
@@ -37,7 +62,20 @@ Context::emit_notifications()
 	Notification   note;
 	for (uint32_t i = 0; i < read_space; i += sizeof(note)) {
 		if (_event_sink.read(sizeof(note), &note) == sizeof(note)) {
-			Notification::post_process(note, _engine);
+			Raul::Atom value = _engine.world()->forge().alloc(
+				note.size, note.type, NULL);
+			if (_event_sink.read(note.size, value.get_body()) == note.size) {
+				i += note.size;
+				const char* key = _engine.world()->uri_map().unmap_uri(note.key);
+				if (key) {
+					_engine.broadcaster()->set_property(
+						note.port->path(), key, value);
+				} else {
+					Raul::error("Error unmapping notification key URI\n");
+				}
+			} else {
+				Raul::error("Error reading from notification ring\n");
+			}
 		}
 	}
 }

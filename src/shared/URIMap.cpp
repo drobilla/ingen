@@ -88,7 +88,7 @@ URIMap::map_uri(const char* uri)
 }
 
 const char*
-URIMap::unmap_uri(uint32_t urid)
+URIMap::unmap_uri(uint32_t urid) const
 {
 	return _urid_unmap_feature->unmap(urid);
 }

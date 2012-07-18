@@ -24,7 +24,6 @@
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "NodeImpl.hpp"
-#include "Notification.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
 #include "ingen/shared/URIs.hpp"
@@ -154,10 +153,11 @@ InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 	if (_edges.empty()) {
 		if (is_a(PortType::AUDIO)) {
 			// Send an update peak of 0.0 to reset to silence
-			context.notify(Notification::PORT_ACTIVITY,
+			const Raul::Atom z = context.engine().world()->forge().make(0.0f);
+			context.notify(context.engine().world()->uris().ingen_activity,
 			               context.start(),
 			               this,
-			               context.engine().world()->forge().make(0.0f));
+			               z.size(), z.type(), z.get_body());
 		}
 		_broadcast = false;
 	}

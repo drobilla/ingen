@@ -88,7 +88,7 @@ protected:
 		~Response() {
 			free(data);
 		}
-		
+
 		const uint32_t size;
 		void* const    data;
 	};

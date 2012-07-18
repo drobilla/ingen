@@ -66,7 +66,7 @@ Worker::request(LV2Node*    node,
 		Raul::error("Error writing body to work request ring\n");
 		return LV2_WORKER_ERR_UNKNOWN;
 	}
-		
+
 	_sem.post();
 
 	return LV2_WORKER_SUCCESS;

@@ -15,6 +15,7 @@
 */
 
 #include "ingen/shared/URIs.hpp"
+#include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 
@@ -22,7 +23,6 @@
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
-#include "Notification.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 #include "ThreadManager.hpp"
@@ -218,28 +218,33 @@ PortImpl::clear_buffers()
 void
 PortImpl::broadcast_value(Context& context, bool force)
 {
-	Shared::Forge&     forge = context.engine().world()->forge();
-	Notification::Type ntype = Notification::PORT_VALUE;
-	Raul::Atom         val;
+	Shared::Forge& forge = context.engine().world()->forge();
+	Shared::URIs&  uris  = context.engine().world()->uris();
+	LV2_URID       key   = 0;
+	Raul::Atom     val;
 	switch (_type.symbol()) {
 	case PortType::UNKNOWN:
 		break;
 	case PortType::AUDIO:
-		val   = forge.make(((AudioBuffer*)buffer(0).get())->peak(context));
-		ntype = Notification::PORT_ACTIVITY;
+		key = uris.ingen_activity;
+		val = forge.make(((AudioBuffer*)buffer(0).get())->peak(context));
 		break;
 	case PortType::CONTROL:
 	case PortType::CV:
+		key = uris.ingen_value;
 		val = forge.make(((AudioBuffer*)buffer(0).get())->value_at(0));
 		break;
 	case PortType::ATOM:
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
 			LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)buffer(0)->atom();
-			if (seq->atom.size > sizeof(LV2_Atom_Sequence_Body)) {
-				context.notify(Notification::PORT_ACTIVITY,
-				               context.start(),
+			// TODO: Filter events, or only send one activity for blinkenlights
+			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+				context.notify(uris.ingen_activity,
+				               context.start() + ev->time.frames,
 				               this,
-				               forge.make(true));
+				               ev->body.size,
+				               ev->body.type,
+				               LV2_ATOM_BODY(&ev->body));
 			}
 		}
 		break;
@@ -247,7 +252,8 @@ PortImpl::broadcast_value(Context& context, bool force)
 
 	if (val.is_valid() && (force || val != _last_broadcasted_value)) {
 		_last_broadcasted_value = val;
-		context.notify(ntype, context.start(), this, val);
+		context.notify(key, context.start(), this,
+		               val.size(), val.type(), val.get_body());
 	}
 }
 

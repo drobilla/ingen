@@ -27,7 +27,6 @@
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
-#include "Notification.hpp"
 #include "OutputPort.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
