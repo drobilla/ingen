@@ -338,27 +338,19 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 		}
 
-		// Set lv2:portProperty properties
-		LilvNodes* properties = lilv_port_get_value(plug, id, info->lv2_portProperty);
-		LILV_FOREACH(nodes, i, properties) {
-			const LilvNode* p = lilv_nodes_get(properties, i);
-			if (lilv_node_is_uri(p)) {
-				port->add_property(uris.lv2_portProperty,
-				                   forge.alloc_uri(lilv_node_as_uri(p)));
+		// Inherit certain properties from plugin port
+		LilvNode* preds[] = { info->lv2_portProperty, info->atom_supports, 0 };
+		for (int p = 0; preds[p]; ++p) {
+			LilvNodes* values = lilv_port_get_value(plug, id, preds[p]);
+			LILV_FOREACH(nodes, v, values) {
+				const LilvNode* val = lilv_nodes_get(values, v);
+				if (lilv_node_is_uri(val)) {
+					port->add_property(lilv_node_as_uri(preds[p]),
+					                   forge.alloc_uri(lilv_node_as_uri(val)));
+				}
 			}
+			lilv_nodes_free(values);
 		}
-		lilv_nodes_free(properties);
-
-		// Set atom:supports properties
-		LilvNodes* types = lilv_port_get_value(plug, id, info->atom_supports);
-		LILV_FOREACH(nodes, i, types) {
-			const LilvNode* type = lilv_nodes_get(types, i);
-			if (lilv_node_is_uri(type)) {
-				port->add_property(uris.atom_supports,
-				                   forge.alloc_uri(lilv_node_as_uri(type)));
-			}
-		}
-		lilv_nodes_free(types);
 
 		_ports->at(j) = port;
 	}
