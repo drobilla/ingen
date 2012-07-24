@@ -39,7 +39,6 @@ def options(opt):
 def configure(conf):
     conf.load('compiler_cxx')
     autowaf.configure(conf)
-    conf.line_just = 48
 
     autowaf.display_header('Ingen Configuration')
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
