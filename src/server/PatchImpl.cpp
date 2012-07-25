@@ -424,6 +424,23 @@ PatchImpl::build_ports_array() const
 	return result;
 }
 
+static inline void
+compile_recursive(NodeImpl* n, CompiledPatch* output)
+{
+	if (n == NULL || n->traversed())
+		return;
+
+	n->traversed(true);
+	assert(output != NULL);
+
+	for (std::list<NodeImpl*>::iterator i = n->providers().begin();
+	     i != n->providers().end(); ++i)
+		if (!(*i)->traversed())
+			compile_recursive(*i, output);
+
+	output->push_back(CompiledNode(n, n->providers().size(), n->dependants()));
+}
+
 /** Find the process order for this Patch.
  *
  * The process order is a flat list that the patch will execute in order

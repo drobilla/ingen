@@ -158,7 +158,6 @@ public:
 	Engine& engine() { return _engine; }
 
 private:
-	inline void compile_recursive(NodeImpl* n, CompiledPatch* output) const;
 	void process_parallel(ProcessContext& context);
 	void process_single(ProcessContext& context);
 
@@ -172,24 +171,6 @@ private:
 	Nodes          _nodes;           ///< Pre-process thread only
 	bool           _process;
 };
-
-/** Private helper for compile */
-inline void
-PatchImpl::compile_recursive(NodeImpl* n, CompiledPatch* output) const
-{
-	if (n == NULL || n->traversed())
-		return;
-
-	n->traversed(true);
-	assert(output != NULL);
-
-	for (std::list<NodeImpl*>::iterator i = n->providers().begin();
-	     i != n->providers().end(); ++i)
-		if (!(*i)->traversed())
-			compile_recursive(*i, output);
-
-	output->push_back(CompiledNode(n, n->providers().size(), n->dependants()));
-}
 
 } // namespace Server
 } // namespace Ingen
