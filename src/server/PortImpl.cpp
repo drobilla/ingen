@@ -58,6 +58,9 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _set_by_user(false)
 	, _is_morph(false)
 	, _is_auto_morph(false)
+	, _is_logarithmic(false)
+	, _is_sample_rate(false)
+	, _is_toggled(false)
 {
 	assert(node != NULL);
 	assert(_poly > 0);
@@ -116,6 +119,17 @@ PortImpl::set_buffers(ProcessContext& context, Raul::Array<BufferRef>* buffers)
 	connect_buffers();
 
 	return ret;
+}
+
+void
+PortImpl::cache_properties()
+{
+	_is_logarithmic = has_property(_bufs.uris().lv2_portProperty,
+	                               _bufs.uris().pprops_logarithmic);
+	_is_sample_rate = has_property(_bufs.uris().lv2_portProperty,
+	                               _bufs.uris().lv2_sampleRate);
+	_is_toggled = has_property(_bufs.uris().lv2_portProperty,
+	                           _bufs.uris().lv2_toggled);
 }
 
 bool

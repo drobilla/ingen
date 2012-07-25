@@ -43,6 +43,7 @@ public:
 	LilvNode* lv2_OutputPort;
 	LilvNode* lv2_default;
 	LilvNode* lv2_portProperty;
+	LilvNode* lv2_sampleRate;
 	LilvNode* morph_AutoMorphPort;
 	LilvNode* morph_MorphPort;
 	LilvNode* morph_supportsType;

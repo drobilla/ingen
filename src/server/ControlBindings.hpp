@@ -96,16 +96,15 @@ private:
 	void set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value);
 	bool bind(ProcessContext& context, Key key);
 
-	Raul::Atom control_to_port_value(Type              type,
-	                                 int16_t           value,
-	                                 const Raul::Atom& min,
-	                                 const Raul::Atom& max) const;
+	Raul::Atom control_to_port_value(ProcessContext& context,
+	                                 const PortImpl* port,
+	                                 Type            type,
+	                                 int16_t         value) const;
 
-	int16_t port_value_to_control(PortImpl*         port,
+	int16_t port_value_to_control(ProcessContext&   context,
+	                              PortImpl*         port,
 	                              Type              type,
-	                              const Raul::Atom& value,
-	                              const Raul::Atom& min,
-	                              const Raul::Atom& max) const;
+	                              const Raul::Atom& value) const;
 
 	Engine&             _engine;
 	PortImpl*           _learn_port;

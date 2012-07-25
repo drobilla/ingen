@@ -19,6 +19,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "lv2/lv2plug.in/ns/ext/patch/patch.h"
+#include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 namespace Ingen {
@@ -115,6 +116,7 @@ URIs::URIs(Shared::Forge& f, URIMap* map)
 	, patch_remove          (forge, map, LV2_PATCH__remove)
 	, patch_request         (forge, map, LV2_PATCH__request)
 	, patch_subject         (forge, map, LV2_PATCH__subject)
+	, pprops_logarithmic    (forge, map, LV2_PORT_PROPS__logarithmic)
 	, rdf_type              (forge, map, NS_RDF "type")
 	, rdfs_seeAlso          (forge, map, NS_RDFS "seeAlso")
 	, wildcard              (forge, map, NS_INGEN "wildcard")

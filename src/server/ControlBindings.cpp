@@ -29,6 +29,7 @@
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
+#include "Driver.hpp"
 
 #define LOG(s) s << "[ControlBindings] "
 
@@ -143,8 +144,8 @@ ControlBindings::port_value_changed(ProcessContext&   context,
 	Ingen::Shared::World*      world = context.engine().world();
 	const Ingen::Shared::URIs& uris  = world->uris();
 	if (key) {
-		int16_t value = port_value_to_control(
-			port, key.type, value_atom, port->minimum(), port->maximum());
+		int16_t  value = port_value_to_control(
+			context, port, key.type, value_atom);
 		uint16_t size  = 0;
 		uint8_t  buf[4];
 		switch (key.type) {
@@ -190,16 +191,23 @@ ControlBindings::learn(PortImpl* port)
 	_learn_port = port;
 }
 
-Raul::Atom
-ControlBindings::control_to_port_value(Type              type,
-                                       int16_t           value,
-                                       const Raul::Atom& min_atom,
-                                       const Raul::Atom& max_atom) const
+static void
+get_range(ProcessContext& context, const PortImpl* port, float* min, float* max)
 {
-	float min = min_atom.get_float();
-	float max = max_atom.get_float();
-	//bool  toggled = port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
+	*min = port->minimum().get_float();
+	*max = port->maximum().get_float();
+	if (port->is_sample_rate()) {
+		*min *= context.engine().driver()->sample_rate();
+		*max *= context.engine().driver()->sample_rate();
+	}
+}
 
+Raul::Atom
+ControlBindings::control_to_port_value(ProcessContext& context,
+                                       const PortImpl* port,
+                                       Type            type,
+                                       int16_t         value) const
+{
 	float normal = 0.0f;
 	switch (type) {
 	case MIDI_CC:
@@ -216,25 +224,28 @@ ControlBindings::control_to_port_value(Type              type,
 		break;
 	}
 
-	float scaled_value = normal * (max - min) + min;
-	//if (toggled)
-	//	scaled_value = (scaled_value < 0.5) ? 0.0 : 1.0;
+	if (port->is_logarithmic()) {
+		normal = (expf(normal) - 1.0f) / ((float)M_E - 1.0f);
+	}
 
-	return _engine.world()->forge().make(scaled_value);
+	float min, max;
+	get_range(context, port, &min, &max);
+
+	return _engine.world()->forge().make(normal * (max - min) + min);
 }
 
 int16_t
-ControlBindings::port_value_to_control(PortImpl*         port,
+ControlBindings::port_value_to_control(ProcessContext&   context,
+                                       PortImpl*         port,
                                        Type              type,
-                                       const Raul::Atom& value_atom,
-                                       const Raul::Atom& min_atom,
-                                       const Raul::Atom& max_atom) const
+                                       const Raul::Atom& value_atom) const
 {
 	if (value_atom.type() != port->bufs().forge().Float)
 		return 0;
 
-	const float min    = min_atom.get_float();
-	const float max    = max_atom.get_float();
+	float min, max;
+	get_range(context, port, &min, &max);
+
 	const float value  = value_atom.get_float();
 	float       normal = (value - min) / (max - min);
 
@@ -248,6 +259,10 @@ ControlBindings::port_value_to_control(PortImpl*         port,
 		LOG(Raul::warn) << "Value " << value << " (normal " << normal << ") for "
 		                << port->path() << " out of range" << endl;
 		normal = 1.0f;
+	}
+
+	if (port->is_logarithmic()) {
+		normal = logf(normal * ((float)M_E - 1.0f) + 1.0);
 	}
 
 	switch (type) {
@@ -300,8 +315,10 @@ ControlBindings::set_port_value(ProcessContext& context,
                                 Type            type,
                                 int16_t         value)
 {
-	const Raul::Atom port_value(
-		control_to_port_value(type, value, port->minimum(), port->maximum()));
+	float min, max;
+	get_range(context, port, &min, &max);
+
+	const Raul::Atom port_value(control_to_port_value(context, port, type, value));
 
 	port->set_value(port_value);
 
@@ -323,8 +340,7 @@ ControlBindings::bind(ProcessContext& context, Key key)
 	const Ingen::Shared::URIs& uris = context.engine().world()->uris();
 	assert(_learn_port);
 	if (key.type == MIDI_NOTE) {
-		bool toggled = _learn_port->has_property(uris.lv2_portProperty, uris.lv2_toggled);
-		if (!toggled)
+		if (!_learn_port->is_toggled())
 			return false;
 	}
 

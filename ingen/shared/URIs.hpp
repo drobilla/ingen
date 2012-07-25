@@ -132,6 +132,7 @@ public:
 	const Quark patch_remove;
 	const Quark patch_request;
 	const Quark patch_subject;
+	const Quark pprops_logarithmic;
 	const Quark rdf_type;
 	const Quark rdfs_seeAlso;
 	const Quark wildcard;

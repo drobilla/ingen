@@ -352,6 +352,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 			lilv_nodes_free(values);
 		}
 
+		port->cache_properties();
+
 		_ports->at(j) = port;
 	}
 

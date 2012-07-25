@@ -156,8 +156,13 @@ public:
 
 	void set_type(PortType port_type, LV2_URID buffer_type);
 
-	bool is_morph()      const { return _is_morph; }
-	bool is_auto_morph() const { return _is_auto_morph; }
+	void cache_properties();
+
+	bool is_morph()       const { return _is_morph; }
+	bool is_auto_morph()  const { return _is_auto_morph; }
+	bool is_logarithmic() const { return _is_logarithmic; }
+	bool is_sample_rate() const { return _is_sample_rate; }
+	bool is_toggled()     const { return _is_toggled; }
 
 protected:
 	PortImpl(BufferFactory&      bufs,
@@ -186,6 +191,9 @@ protected:
 	bool                    _set_by_user;
 	bool                    _is_morph;
 	bool                    _is_auto_morph;
+	bool                    _is_logarithmic;
+	bool                    _is_sample_rate;
+	bool                    _is_toggled;
 };
 
 } // namespace Server
