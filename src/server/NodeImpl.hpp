@@ -183,10 +183,9 @@ public:
 	/** The Patch this Node belongs to. */
 	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }
 
-	Context::ID      context()     const { return _context; }
-	SampleRate       sample_rate() const { return _srate; }
-	uint32_t         num_ports()   const { return _ports ? _ports->size() : 0; }
-	virtual uint32_t polyphony()   const { return _polyphony; }
+	Context::ID      context()   const { return _context; }
+	uint32_t         num_ports() const { return _ports ? _ports->size() : 0; }
+	virtual uint32_t polyphony() const { return _polyphony; }
 
 	/** Used by the process order finding algorithm (ie during connections) */
 	bool               traversed()   const { return _traversed; }
@@ -197,7 +196,6 @@ protected:
 	Raul::Array<PortImpl*>* _ports; ///< Access in audio thread only
 	Context::ID             _context; ///< Context this node runs in
 	uint32_t                _polyphony;
-	SampleRate              _srate;
 	Raul::Semaphore         _input_ready; ///< Parallelism: input ready signal
 	Raul::AtomicInt         _process_lock; ///< Parallelism: Waiting on inputs 'lock'
 	Raul::AtomicInt         _n_inputs_ready; ///< Parallelism: # input ready signals this cycle

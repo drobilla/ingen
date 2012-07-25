@@ -43,7 +43,6 @@ NodeImpl::NodeImpl(PluginImpl*         plugin,
 	, _ports(NULL)
 	, _context(Context::AUDIO)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
-	, _srate(srate)
 	, _input_ready(1)
 	, _process_lock(0)
 	, _n_inputs_ready(0)

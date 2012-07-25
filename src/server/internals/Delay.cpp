@@ -25,14 +25,15 @@
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
 
-#include "internals/Delay.hpp"
 #include "AudioBuffer.hpp"
 #include "Driver.hpp"
+#include "Engine.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
+#include "internals/Delay.hpp"
 #include "util.hpp"
 
 #define LOG(s) s << "[DelayNode] "
@@ -104,7 +105,8 @@ void
 DelayNode::activate(BufferFactory& bufs)
 {
 	NodeImpl::activate(bufs);
-	const SampleCount min_size = MAX_DELAY_SECONDS * _srate;
+	const SampleRate  rate     = bufs.engine().driver()->sample_rate();
+	const SampleCount min_size = MAX_DELAY_SECONDS * rate;
 
 	// Smallest power of two larger than min_size
 	SampleCount size = 1;
@@ -154,7 +156,7 @@ DelayNode::process(ProcessContext& context)
 	float* const       out           = out_buf->data();
 	const float        delay_time    = delay_buf->data()[0];
 	const uint32_t     buffer_mask   = plugin_data->_buffer_mask;
-	const unsigned int sample_rate   = plugin_data->_srate;
+	const SampleRate   sample_rate   = context.engine().driver()->sample_rate();
 	float              delay_samples = plugin_data->_delay_samples;
 	int64_t            write_phase   = plugin_data->_write_phase;
 	const uint32_t     sample_count  = context.nframes();

@@ -31,6 +31,7 @@
 #include "ingen/shared/URIs.hpp"
 
 #include "AudioBuffer.hpp"
+#include "Driver.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "LV2Node.hpp"
@@ -68,10 +69,13 @@ LV2Node::~LV2Node()
 }
 
 SharedPtr<LilvInstance>
-LV2Node::make_instance(Shared::URIs& uris, uint32_t voice, bool preparing)
+LV2Node::make_instance(Shared::URIs& uris,
+                       SampleRate    rate,
+                       uint32_t      voice,
+                       bool          preparing)
 {
 	LilvInstance* inst = lilv_plugin_instantiate(
-		_lv2_plugin->lilv_plugin(), _srate, _features->array());
+		_lv2_plugin->lilv_plugin(), rate, _features->array());
 
 	if (!inst) {
 		Raul::error(Raul::fmt("Failed to instantiate <%1%>\n")
@@ -142,10 +146,11 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (_polyphony == poly)
 		return true;
 
+	const SampleRate rate = bufs.engine().driver()->sample_rate();
 	assert(!_prepared_instances);
 	_prepared_instances = new Instances(poly, *_instances, SharedPtr<void>());
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
-		SharedPtr<LilvInstance> inst = make_instance(bufs.uris(), i, true);
+		SharedPtr<LilvInstance> inst = make_instance(bufs.uris(), rate, i, true);
 		if (!inst) {
 			return false;
 		}
@@ -370,9 +375,10 @@ LV2Node::instantiate(BufferFactory& bufs)
 	_features = info->world().lv2_features().lv2_features(&info->world(), this);
 
 	// Actually create plugin instances and port buffers.
+	const SampleRate rate = bufs.engine().driver()->sample_rate();
 	_instances = new Instances(_polyphony, SharedPtr<void>());
 	for (uint32_t i = 0; i < _polyphony; ++i) {
-		_instances->at(i) = make_instance(bufs.uris(), i, false);
+		_instances->at(i) = make_instance(bufs.uris(), rate, i, false);
 		if (!_instances->at(i)) {
 			return false;
 		}
