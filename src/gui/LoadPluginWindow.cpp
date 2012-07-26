@@ -332,7 +332,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	const URIs&                  uris       = _app->uris();
 	Gtk::TreeModel::Row          row        = *iter;
 	SharedPtr<const PluginModel> plugin     = row.get_value(_plugins_columns._col_plugin);
-	//bool                         polyphonic = _polyphonic_checkbutton->get_active();
+	bool                         polyphonic = _polyphonic_checkbutton->get_active();
 	string                       name       = _node_name_entry->get_text();
 
 	if (name.empty())
@@ -351,9 +351,8 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		                       uris.ingen_Node));
 		props.insert(make_pair(uris.ingen_prototype,
 		                       _app->forge().alloc_uri(plugin->uri().str())));
-		Raul::warn << "FIXME: polyphonic" << std::endl;
-		//props.insert(make_pair(uris.ingen_polyphonic,
-		//                       _app->forge().make(polyphonic)));
+		props.insert(make_pair(uris.ingen_polyphonic,
+		                       _app->forge().make(polyphonic)));
 		_app->interface()->put(path, props);
 
 		if (_selection->get_selected_rows().size() == 1) {
