@@ -51,8 +51,15 @@ Context::notify(LV2_URID           key,
                 const void*        body)
 {
 	const Notification n(port, time, key, size, type);
-	_event_sink.write(sizeof(n), &n);
-	_event_sink.write(size, body);
+	if (_event_sink.write_space() < sizeof(n) + size) {
+		Raul::warn("Notification ring overflow\n");
+	} else {
+		if (_event_sink.write(sizeof(n), &n) != sizeof(n)) {
+			Raul::error("Error writing header to notification ring\n");
+		} else if (_event_sink.write(size, body) != size) {
+			Raul::error("Error writing body to notification ring\n");
+		}
+	}
 }
 
 void
