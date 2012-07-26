@@ -203,10 +203,14 @@ App::serialiser()
 }
 
 void
-App::response(int32_t id, Status status)
+App::response(int32_t id, Status status, const std::string& subject)
 {
 	if (status) {
-		error_message(ingen_status_string(status));
+		std::string msg = ingen_status_string(status);
+		if (!subject.empty()) {
+			msg += ": " + subject;
+		}
+		error_message(msg);
 	}
 }
 

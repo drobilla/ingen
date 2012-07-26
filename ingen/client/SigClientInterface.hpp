@@ -47,7 +47,7 @@ public:
 
 	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
 
-	INGEN_SIGNAL(response, void, int32_t, Status)
+	INGEN_SIGNAL(response, void, int32_t, Status, std::string)
 	INGEN_SIGNAL(bundle_begin, void)
 	INGEN_SIGNAL(bundle_end, void)
 	INGEN_SIGNAL(error, void, std::string)
@@ -75,8 +75,8 @@ protected:
 	void bundle_end()
 		{ EMIT(bundle_end); }
 
-	void response(int32_t id, Status status)
-		{ EMIT(response, id, status); }
+	void response(int32_t id, Status status, const std::string& subject)
+		{ EMIT(response, id, status, subject); }
 
 	void error(const std::string& msg)
 		{ EMIT(error, msg); }

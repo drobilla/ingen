@@ -83,7 +83,7 @@ public:
 
 	virtual void set_response_id(int32_t id) {}
 	virtual void get(const Raul::URI& uri) {}
-	virtual void response(int32_t id, Status status) {}
+	virtual void response(int32_t id, Status status, const std::string& subject) {}
 	virtual void error(const std::string& msg) {}
 
 private:

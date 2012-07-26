@@ -57,7 +57,7 @@ bool
 SetPortValue::pre_process()
 {
 	if (_port->is_output()) {
-		return Event::pre_process_done(DIRECTION_MISMATCH);
+		return Event::pre_process_done(DIRECTION_MISMATCH, _port_path);
 	}
 
 	// Port is on a message context node, set value and run
@@ -129,8 +129,7 @@ SetPortValue::apply(Context& context)
 void
 SetPortValue::post_process()
 {
-	respond(_status);
-	if (!_status) {
+	if (!respond()) {
 		_engine.broadcaster()->set_property(
 			_port_path,
 			_engine.world()->uris().ingen_value,

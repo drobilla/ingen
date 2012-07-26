@@ -89,17 +89,17 @@ DisconnectAll::pre_process()
 
 		_parent = _engine.engine_store()->find_patch(_parent_path);
 		if (!_parent) {
-			return Event::pre_process_done(PARENT_NOT_FOUND);
+			return Event::pre_process_done(PARENT_NOT_FOUND, _parent_path);
 		}
 
 		GraphObjectImpl* object = _engine.engine_store()->find_object(_path);
 		if (!object) {
-			return Event::pre_process_done(NOT_FOUND);
+			return Event::pre_process_done(NOT_FOUND, _path);
 		}
 
 		if (object->parent_patch() != _parent
 		    && object->parent()->parent_patch() != _parent) {
-			return Event::pre_process_done(INVALID_PARENT_PATH);
+			return Event::pre_process_done(INVALID_PARENT_PATH, _parent_path);
 		}
 
 		// Only one of these will succeed
@@ -159,8 +159,7 @@ DisconnectAll::execute(ProcessContext& context)
 void
 DisconnectAll::post_process()
 {
-	respond(_status);
-	if (!_status) {
+	if (!respond()) {
 		_engine.broadcaster()->disconnect_all(_parent_path, _path);
 	}
 }

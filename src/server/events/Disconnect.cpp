@@ -119,14 +119,16 @@ Disconnect::pre_process()
 	if (_tail_path.parent().parent() != _head_path.parent().parent()
 	    && _tail_path.parent() != _head_path.parent().parent()
 	    && _tail_path.parent().parent() != _head_path.parent()) {
-		return Event::pre_process_done(PARENT_DIFFERS);
+		return Event::pre_process_done(PARENT_DIFFERS, _head_path);
 	}
 
 	_tail = _engine.engine_store()->find_port(_tail_path);
 	_head = _engine.engine_store()->find_port(_head_path);
 
-	if (_tail == NULL || _head == NULL) {
-		return Event::pre_process_done(PORT_NOT_FOUND);
+	if (!_tail) {
+		return Event::pre_process_done(PORT_NOT_FOUND, _tail_path);
+	} else if (!_head) {
+		return Event::pre_process_done(PORT_NOT_FOUND, _head_path);
 	}
 
 	NodeImpl* const src_node = _tail->parent_node();
@@ -151,11 +153,11 @@ Disconnect::pre_process()
 	assert(_patch);
 
 	if (!_patch->has_edge(_tail, _head)) {
-		return Event::pre_process_done(NOT_FOUND);
+		return Event::pre_process_done(NOT_FOUND, _head_path);
 	}
 
 	if (src_node == NULL || dst_node == NULL) {
-		return Event::pre_process_done(PARENT_NOT_FOUND);
+		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path);
 	}
 
 	_impl = new Impl(_engine,
@@ -214,8 +216,7 @@ Disconnect::execute(ProcessContext& context)
 void
 Disconnect::post_process()
 {
-	respond(_status);
-	if (!_status) {
+	if (!respond()) {
 		_engine.broadcaster()->disconnect(_tail->path(), _head->path());
 	}
 

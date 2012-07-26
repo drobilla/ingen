@@ -106,10 +106,10 @@ public:
 
 	void get(const Raul::URI& uri) {}
 
-	void response(int32_t id, Status status) {
+	void response(int32_t id, Status status, const std::string& subject) {
 		if (status) {
-			Raul::error(Raul::fmt("error on message %1%: %2%\n")
-			            % id % ingen_status_string(status));
+			Raul::error(Raul::fmt("error on message %1%: %2% (%3)\n")
+			            % id % ingen_status_string(status) % subject);
 			exit(EXIT_FAILURE);
 		}
 	}

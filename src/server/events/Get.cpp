@@ -56,12 +56,14 @@ Get::pre_process()
 	if (_uri == "ingen:plugins") {
 		_plugins = _engine.node_factory()->plugins();
 		return Event::pre_process_done(SUCCESS);
+	} else if (_uri == "ingen:engine") {
+		return Event::pre_process_done(SUCCESS);
 	} else if (Raul::Path::is_valid(_uri.str())) {
 		_object = _engine.engine_store()->find_object(Raul::Path(_uri.str()));
-		return Event::pre_process_done(_object ? SUCCESS : NOT_FOUND);
+		return Event::pre_process_done(_object ? SUCCESS : NOT_FOUND, _uri);
 	} else {
 		_plugin = _engine.node_factory()->plugin(_uri);
-		return Event::pre_process_done(_plugin ? SUCCESS : NOT_FOUND);
+		return Event::pre_process_done(_plugin ? SUCCESS : NOT_FOUND, _uri);
 	}
 }
 
@@ -127,28 +129,17 @@ send_patch(Interface* client, const PatchImpl* patch)
 void
 Get::post_process()
 {
-	if (_uri == "ingen:plugins") {
-		respond(SUCCESS);
-		if (_request_client) {
+	if (!respond() && _request_client) {
+		if (_uri == "ingen:plugins") {
 			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);
-		}
-	} else if (_uri == "ingen:engine") {
-		respond(SUCCESS);
-		// TODO: Keep a proper RDF model of the engine
-		if (_request_client) {
+		} else if (_uri == "ingen:engine") {
+			// TODO: Keep a proper RDF model of the engine
 			Shared::URIs& uris = _engine.world()->uris();
 			_request_client->set_property(
 				uris.ingen_engine,
 				uris.ingen_sampleRate,
 				uris.forge.make(int32_t(_engine.driver()->sample_rate())));
-		}
-	} else if (!_object && !_plugin) {
-		respond(NOT_FOUND);
-	} else if (!_request_client) {
-		respond(CLIENT_NOT_FOUND);
-	} else {
-		respond(SUCCESS);
-		if (_object) {
+		} else if (_object) {
 			_request_client->bundle_begin();
 			const NodeImpl*  node  = NULL;
 			const PatchImpl* patch = NULL;
@@ -164,8 +155,8 @@ Get::post_process()
 		} else if (_plugin) {
 			_request_client->put(_uri, _plugin->properties());
 		}
-		_lock.release();
 	}
+	_lock.release();
 }
 
 } // namespace Events

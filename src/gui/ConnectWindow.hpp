@@ -51,7 +51,9 @@ public:
 
 	void set_connected_to(SharedPtr<Ingen::Interface> engine);
 	void start(App& app, Ingen::Shared::World* world);
-	void ingen_response(int32_t id, Status status) { _attached = true; }
+	void ingen_response(int32_t id, Status status, const std::string& subject) {
+		_attached = true;
+	}
 
 	bool attached()  const { return _finished_connecting; }
 	bool quit_flag() const { return _quit_flag; }

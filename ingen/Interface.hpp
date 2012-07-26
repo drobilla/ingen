@@ -94,7 +94,9 @@ public:
 	virtual void get(const Raul::URI& uri) = 0;
 
 	// Response
-	virtual void response(int32_t id, Status status) = 0;
+	virtual void response(int32_t            id,
+	                      Status             status,
+	                      const std::string& subject) = 0;
 
 	// Non-response error
 	virtual void error(const std::string& msg) = 0;

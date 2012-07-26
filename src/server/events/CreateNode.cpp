@@ -61,16 +61,16 @@ CreateNode::pre_process()
 	}
 
 	if (_engine.engine_store()->find_object(_path)) {
-		return Event::pre_process_done(EXISTS);
+		return Event::pre_process_done(EXISTS, _path.str());
 	}
 
 	if (!(_patch = _engine.engine_store()->find_patch(_path.parent()))) {
-		return Event::pre_process_done(PARENT_NOT_FOUND);
+		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent().str());
 	}
 
 	PluginImpl* plugin = _engine.node_factory()->plugin(_plugin_uri);
 	if (!plugin) {
-		return Event::pre_process_done(PLUGIN_NOT_FOUND);
+		return Event::pre_process_done(PLUGIN_NOT_FOUND, _plugin_uri);
 	}
 
 	const iterator p = _properties.find(uris.ingen_polyphonic);
@@ -84,7 +84,7 @@ CreateNode::pre_process()
 	                                  polyphonic,
 	                                  _patch,
 	                                  _engine))) {
-		return Event::pre_process_done(CREATION_FAILED);
+		return Event::pre_process_done(CREATION_FAILED, _path.str());
 	}
 
 	_node->properties().insert(_properties.begin(), _properties.end());
@@ -125,8 +125,7 @@ CreateNode::execute(ProcessContext& context)
 void
 CreateNode::post_process()
 {
-	respond(_status);
-	if (!_status) {
+	if (!respond()) {
 		for (Update::const_iterator i = _update.begin(); i != _update.end(); ++i) {
 			_engine.broadcaster()->put(i->first, i->second);
 		}

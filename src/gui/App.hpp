@@ -140,7 +140,7 @@ protected:
 	explicit App(Ingen::Shared::World* world);
 
 	bool animate();
-	void response(int32_t id, Ingen::Status status);
+	void response(int32_t id, Ingen::Status status, const std::string& subject);
 
 	void property_change(const Raul::URI&  subject,
 	                     const Raul::URI&  key,

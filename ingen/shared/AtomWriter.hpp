@@ -73,7 +73,7 @@ public:
 
 	void get(const Raul::URI& uri);
 
-	void response(int32_t id, Status status);
+	void response(int32_t id, Status status, const std::string& subject);
 
 	void error(const std::string& msg);
 

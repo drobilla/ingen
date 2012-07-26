@@ -55,16 +55,16 @@ Move::pre_process()
 	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
 
 	if (!_old_path.parent().is_parent_of(_new_path)) {
-		return Event::pre_process_done(PARENT_DIFFERS);
+		return Event::pre_process_done(PARENT_DIFFERS, _new_path);
 	}
 
 	_store_iterator = _engine.engine_store()->find(_old_path);
 	if (_store_iterator == _engine.engine_store()->end()) {
-		return Event::pre_process_done(NOT_FOUND);
+		return Event::pre_process_done(NOT_FOUND, _old_path);
 	}
 
 	if (_engine.engine_store()->find_object(_new_path)) {
-		return Event::pre_process_done(EXISTS);
+		return Event::pre_process_done(EXISTS, _new_path);
 	}
 
 	SharedPtr< Raul::Table< Raul::Path, SharedPtr<GraphObject> > > removed
@@ -106,8 +106,7 @@ Move::execute(ProcessContext& context)
 void
 Move::post_process()
 {
-	respond(_status);
-	if (!_status) {
+	if (!respond()) {
 		_engine.broadcaster()->move(_old_path, _new_path);
 	}
 }

@@ -106,7 +106,7 @@ public:
 
 	void set_response_id(int32_t id) {} ///< N/A
 	void get(const Raul::URI& uri) {} ///< N/A
-	void response(int32_t id, Status status) {} ///< N/A
+	void response(int32_t id, Status status, const std::string& subject) {} ///< N/A
 
 	void error(const std::string& msg) { BROADCAST(error, msg); }
 

@@ -102,7 +102,7 @@ public:
 
 	void set_response_id(int32_t id) {}
 	void get(const Raul::URI& uri) {}
-	void response(int32_t id, Status status) {}
+	void response(int32_t id, Status status, const std::string& subject) {}
 	void error(const std::string& msg) {}
 
 	INGEN_SIGNAL(new_object, void, SharedPtr<ObjectModel>);

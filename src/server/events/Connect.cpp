@@ -57,30 +57,32 @@ Connect::pre_process()
 
 	PortImpl* tail = _engine.engine_store()->find_port(_tail_path);
 	PortImpl* head = _engine.engine_store()->find_port(_head_path);
-	if (!tail || !head) {
-		return Event::pre_process_done(PORT_NOT_FOUND);
+	if (!tail) {
+		return Event::pre_process_done(PORT_NOT_FOUND, _tail_path.str());
+	} else if (!head) {
+		return Event::pre_process_done(PORT_NOT_FOUND, _head_path.str());
 	}
 
 	_dst_input_port  = dynamic_cast<InputPort*>(head);
 	_src_output_port = dynamic_cast<OutputPort*>(tail);
 	if (!_dst_input_port || !_src_output_port) {
-		return Event::pre_process_done(DIRECTION_MISMATCH);
+		return Event::pre_process_done(DIRECTION_MISMATCH, _head_path.str());
 	}
 
 	NodeImpl* const src_node = tail->parent_node();
 	NodeImpl* const dst_node = head->parent_node();
 	if (!src_node || !dst_node) {
-		return Event::pre_process_done(PARENT_NOT_FOUND);
+		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path.str());
 	}
 
 	if (src_node->parent() != dst_node->parent()
 	    && src_node != dst_node->parent()
 	    && src_node->parent() != dst_node) {
-		return Event::pre_process_done(PARENT_DIFFERS);
+		return Event::pre_process_done(PARENT_DIFFERS, _head_path.str());
 	}
 
 	if (!EdgeImpl::can_connect(_src_output_port, _dst_input_port)) {
-		return Event::pre_process_done(TYPE_MISMATCH);
+		return Event::pre_process_done(TYPE_MISMATCH, _head_path);
 	}
 
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
@@ -100,7 +102,7 @@ Connect::pre_process()
 	}
 
 	if (_patch->has_edge(_src_output_port, _dst_input_port)) {
-		return Event::pre_process_done(EXISTS);
+		return Event::pre_process_done(EXISTS, _head_path);
 	}
 
 	_edge = SharedPtr<EdgeImpl>(
@@ -151,8 +153,7 @@ Connect::execute(ProcessContext& context)
 void
 Connect::post_process()
 {
-	respond(_status);
-	if (!_status) {
+	if (!respond()) {
 		_engine.broadcaster()->connect(_tail_path, _head_path);
 	}
 }

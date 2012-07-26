@@ -113,7 +113,7 @@ Delta::pre_process()
 		: static_cast<Shared::ResourceImpl*>(_engine.node_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
-		return Event::pre_process_done(NOT_FOUND);
+		return Event::pre_process_done(NOT_FOUND, _subject);
 	}
 
 	const Ingen::Shared::URIs& uris = _engine.world()->uris();
@@ -139,7 +139,7 @@ Delta::pre_process()
 			// Grab the object for applying properties, if the create-event succeeded
 			_object = _engine.engine_store()->find_object(Raul::Path(_subject.str()));
 		} else {
-			return Event::pre_process_done(BAD_OBJECT_TYPE);
+			return Event::pre_process_done(BAD_OBJECT_TYPE, _subject);
 		}
 	}
 
@@ -250,7 +250,8 @@ Delta::pre_process()
 		_types.push_back(op);
 	}
 
-	return Event::pre_process_done(_status == NOT_PREPARED ? SUCCESS : _status);
+	return Event::pre_process_done(_status == NOT_PREPARED ? SUCCESS : _status,
+	                               _subject);
 }
 
 void
@@ -346,7 +347,7 @@ Delta::post_process()
 		if (_create_event) {
 			_create_event->post_process();
 		} else {
-			respond(SUCCESS);
+			respond();
 			if (_create) {
 				_engine.broadcaster()->put(_subject, _properties, _context);
 			} else {
@@ -354,7 +355,7 @@ Delta::post_process()
 			}
 		}
 	} else {
-		respond(_status);
+		respond();
 	}
 }
 

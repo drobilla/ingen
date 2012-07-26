@@ -73,8 +73,8 @@ public:
 	void bundle_end()
 		{ push_sig(bundle_end_slot); }
 
-	void response(int32_t id, Status status)
-		{ push_sig(sigc::bind(response_slot, id, status)); }
+	void response(int32_t id, Status status, const std::string& subject)
+		{ push_sig(sigc::bind(response_slot, id, status, subject)); }
 
 	void error(const std::string& msg)
 		{ push_sig(sigc::bind(error_slot, msg)); }
@@ -149,7 +149,7 @@ private:
 
 	sigc::slot<void>                                        bundle_begin_slot;
 	sigc::slot<void>                                        bundle_end_slot;
-	sigc::slot<void, int32_t, Status>                       response_slot;
+	sigc::slot<void, int32_t, Status, std::string>          response_slot;
 	sigc::slot<void, std::string>                           error_slot;
 	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>    new_plugin_slot;
 	sigc::slot<void, Raul::URI, Resource::Properties,

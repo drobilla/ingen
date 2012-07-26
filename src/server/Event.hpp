@@ -78,13 +78,6 @@ public:
 	/** Return the status (success or error code) of this event. */
 	Status status() const { return _status; }
 
-	/** Respond to the originating client. */
-	void respond(Status status) {
-		if (_request_client) {
-			_request_client->response(_request_id, status);
-		}
-	}
-
 protected:
 	Event(Engine& engine, SharedPtr<Interface> client, int32_t id, FrameTime time)
 		: _engine(engine)
@@ -107,12 +100,27 @@ protected:
 		return !st;
 	}
 
+	inline bool pre_process_done(Status st, const Raul::URI& subject) {
+		_status      = st;
+		_err_subject = subject.str();
+		return !st;
+	}
+
+	/** Respond to the originating client. */
+	inline Status respond() {
+		if (_request_client) {
+			_request_client->response(_request_id, _status, _err_subject);
+		}
+		return _status;
+	}
+
 	Engine&                _engine;
 	Raul::AtomicPtr<Event> _next;
 	SharedPtr<Interface>   _request_client;
 	int32_t                _request_id;
 	FrameTime              _time;
 	Status                 _status;
+	std::string            _err_subject;
 };
 
 } // namespace Server

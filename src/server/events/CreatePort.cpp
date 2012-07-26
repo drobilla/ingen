@@ -85,15 +85,15 @@ bool
 CreatePort::pre_process()
 {
 	if (_port_type == PortType::UNKNOWN) {
-		return Event::pre_process_done(UNKNOWN_TYPE);
+		return Event::pre_process_done(UNKNOWN_TYPE, _path);
 	}
 
 	if (_engine.engine_store()->find_object(_path)) {
-		return Event::pre_process_done(_status);
+		return Event::pre_process_done(_status, _path);
 	}
 
 	if (!(_patch = _engine.engine_store()->find_patch(_path.parent()))) {
-		return Event::pre_process_done(PARENT_NOT_FOUND);
+		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
 
 	const Shared::URIs&  uris           = _engine.world()->uris();
@@ -112,7 +112,7 @@ CreatePort::pre_process()
 			               _engine.world()->forge().make(old_n_ports)));
 	} else if (index_i->second.type() != uris.forge.Int ||
 	           index_i->second.get_int32() != old_n_ports) {
-		return Event::pre_process_done(BAD_INDEX);
+		return Event::pre_process_done(BAD_INDEX, _path);
 	}
 
 	const PropIter poly_i = _properties.find(uris.ingen_polyphonic);
@@ -123,7 +123,7 @@ CreatePort::pre_process()
 	if (!(_patch_port = _patch->create_port(
 		      *_engine.buffer_factory(), _path.symbol(),
 		      _port_type, _buf_type, buf_size, _is_output, polyphonic))) {
-		return Event::pre_process_done(CREATION_FAILED);
+		return Event::pre_process_done(CREATION_FAILED, _path);
 	}
 
 	_patch_port->properties().insert(_properties.begin(), _properties.end());
@@ -174,8 +174,7 @@ CreatePort::execute(ProcessContext& context)
 void
 CreatePort::post_process()
 {
-	respond(_status);
-	if (!_status) {
+	if (!respond()) {
 		_engine.broadcaster()->put(_path, _update);
 	}
 

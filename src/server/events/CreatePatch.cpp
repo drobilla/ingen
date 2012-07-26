@@ -48,14 +48,14 @@ bool
 CreatePatch::pre_process()
 {
 	if (_path.is_root() || _engine.engine_store()->find_object(_path) != NULL) {
-		return Event::pre_process_done(EXISTS);
+		return Event::pre_process_done(EXISTS, _path);
 	}
 
 	const Raul::Path& path = (const Raul::Path&)_path;
 
 	_parent = _engine.engine_store()->find_patch(path.parent());
 	if (!_parent) {
-		return Event::pre_process_done(PARENT_NOT_FOUND);
+		return Event::pre_process_done(PARENT_NOT_FOUND, path.parent());
 	}
 
 	const Ingen::Shared::URIs& uris = _engine.world()->uris();
@@ -70,7 +70,7 @@ CreatePatch::pre_process()
 	}
 
 	if (int_poly < 1) {
-		return Event::pre_process_done(INVALID_POLY);
+		return Event::pre_process_done(INVALID_POLY, path);
 	}
 
 	if (int_poly == _parent->internal_poly()) {
@@ -114,8 +114,7 @@ CreatePatch::execute(ProcessContext& context)
 void
 CreatePatch::post_process()
 {
-	respond(_status);
-	if (!_status) {
+	if (!respond()) {
 		_engine.broadcaster()->put(_path, _update);
 	}
 }
