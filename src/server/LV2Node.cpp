@@ -313,7 +313,8 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
-			Raul::warn << "Unknown type or direction for port `" << port_sym << "'" << endl;
+			Raul::error(Raul::fmt("<%1%> port %2% has unknown type or direction\n")
+			            % _lv2_plugin->uri() % port_sym);
 			ret = false;
 			break;
 		}
