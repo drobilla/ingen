@@ -42,6 +42,17 @@ struct Notification
 	Raul::Atom::TypeID type;
 };
 
+Context::Context(Engine& engine, size_t event_sink_size, ID id)
+	: _engine(engine)
+	, _id(id)
+	, _event_sink(event_sink_size * sizeof(Notification))
+	, _start(0)
+	, _end(0)
+	, _nframes(0)
+	, _offset(0)
+	, _realtime(true)
+{}
+
 void
 Context::notify(LV2_URID           key,
                 FrameTime          time,

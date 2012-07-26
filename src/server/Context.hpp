@@ -49,16 +49,7 @@ public:
 		MESSAGE
 	};
 
-	Context(Engine& engine, size_t event_sink_size, ID id)
-		: _engine(engine)
-		, _id(id)
-		, _event_sink(event_sink_size)
-		, _start(0)
-		, _end(0)
-		, _nframes(0)
-		, _offset(0)
-		, _realtime(true)
-	{}
+	Context(Engine& engine, size_t event_sink_size, ID id);
 
 	virtual ~Context() {}
 
