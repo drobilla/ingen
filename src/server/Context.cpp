@@ -97,8 +97,10 @@ Context::emit_notifications(FrameTime end)
 					Raul::error("Error unmapping notification key URI\n");
 				}
 			} else {
-				Raul::error("Error reading from notification ring\n");
+				Raul::error("Error reading body from notification ring\n");
 			}
+		} else {
+			Raul::error("Error reading header from notification ring\n");
 		}
 	}
 }

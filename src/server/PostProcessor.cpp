@@ -61,6 +61,8 @@ PostProcessor::process()
 
 	Event* ev = _head.get();
 	if (!ev) {
+		// Process audio thread notifications up until end
+		_engine.process_context().emit_notifications(end_time);
 		return;
 	}
 
