@@ -54,34 +54,32 @@ PostProcessor::append(ProcessContext& context, Event* first, Event* last)
 void
 PostProcessor::process()
 {
-	const FrameTime end_time = _max_time.get();
+	const FrameTime end_time = _max_time.get() + 1;
 
-	/* FIXME: The order here is a bit tricky: if the normal events are
-	 * processed first, then a deleted port may still have a pending
-	 * broadcast event which will segfault if executed afterwards.
-	 * If it's the other way around, broadcasts will be sent for
-	 * ports the client doesn't even know about yet... */
+	// To avoid a race, we only process up to tail and never write to _tail
+	Event* const tail = _tail.get();
 
-	/* FIXME: process events from all threads if parallel */
-
-	/* Process audio thread generated events */
-	_engine.process_context().emit_notifications();
-
-	/* Process normal events */
 	Event* ev = _head.get();
 	if (!ev) {
 		return;
 	}
 
-	Event* const tail = _tail.get();
-	_head = (Event*)tail->next();
-	while (ev && ev->time() <= end_time) {
+	while (ev->time() < end_time) {
 		Event* const next = (Event*)ev->next();
+
+		// Process audio thread notifications up until this event's time
+		_engine.process_context().emit_notifications(ev->time());
+
+		// Process and delete this event
 		ev->post_process();
 		delete ev;
-		if (ev == tail) {
+
+		if (ev == tail || next->time() >= end_time) {
+			// Reached end, update _head
+			_head = next;
 			break;
 		}
+
 		ev = next;
 	}
 }

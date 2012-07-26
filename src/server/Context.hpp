@@ -62,7 +62,7 @@ public:
 	            const void*        body = NULL);
 
 	/** Emit pending notifications in some other non-realtime thread. */
-	void emit_notifications();
+	void emit_notifications(FrameTime end);
 
 	inline ID id() const { return _id; }
 

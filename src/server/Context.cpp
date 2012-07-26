@@ -33,10 +33,11 @@ struct Notification
 	                    LV2_URID           k = 0,
 	                    uint32_t           s = 0,
 	                    Raul::Atom::TypeID t = 0)
-		: port(p), key(k), size(s), type(t)
+		: port(p), time(f), key(k), size(s), type(t)
 	{}
 
 	PortImpl*          port;
+	FrameTime          time;
 	LV2_URID           key;
 	uint32_t           size;
 	Raul::Atom::TypeID type;
@@ -74,11 +75,15 @@ Context::notify(LV2_URID           key,
 }
 
 void
-Context::emit_notifications()
+Context::emit_notifications(FrameTime end)
 {
 	const uint32_t read_space = _event_sink.read_space();
 	Notification   note;
 	for (uint32_t i = 0; i < read_space; i += sizeof(note)) {
+		if (_event_sink.peek(sizeof(note), &note) != sizeof(note) ||
+		    note.time >= end) {
+			return;
+		}
 		if (_event_sink.read(sizeof(note), &note) == sizeof(note)) {
 			Raul::Atom value = _engine.world()->forge().alloc(
 				note.size, note.type, NULL);
