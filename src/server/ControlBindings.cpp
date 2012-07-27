@@ -97,7 +97,7 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 				key = Key(MIDI_NOTE, ((LV2_Atom_Int*)num)->body);
 			}
 		}
-	} else {
+	} else if (binding.type()) {
 		Raul::error << "Unknown binding type " << binding.type() << std::endl;
 	}
 	return key;
