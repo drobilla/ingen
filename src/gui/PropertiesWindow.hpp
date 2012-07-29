@@ -23,6 +23,8 @@
 #include <gtkmm/box.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/combobox.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/table.h>
 
@@ -64,6 +66,18 @@ private:
 		int             row;
 	};
 
+	struct ComboColumns : public Gtk::TreeModel::ColumnRecord {
+		ComboColumns() {
+			add(label_col);
+			add(uri_col);
+		}
+		Gtk::TreeModelColumn<Glib::ustring> label_col;
+		Gtk::TreeModelColumn<Glib::ustring> uri_col;
+	};
+
+	void add_property(const Raul::URI&  uri,
+	                  const Raul::Atom& value);
+
 	Gtk::Widget* create_value_widget(const Raul::URI&  uri,
 	                                 const Raul::Atom& value);
 
@@ -72,9 +86,9 @@ private:
 	void on_show();
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
-
 	void value_edited(const Raul::URI& predicate);
-
+	void key_changed();
+	void add_clicked();
 	void cancel_clicked();
 	void apply_clicked();
 	void ok_clicked();
@@ -83,10 +97,16 @@ private:
 	Records _records;
 
 	SharedPtr<const Client::ObjectModel> _model;
+	ComboColumns                         _combo_columns;
+	Glib::RefPtr<Gtk::ListStore>         _key_store;
+	Glib::RefPtr<Gtk::ListStore>         _value_store;
 	sigc::connection                     _property_connection;
 	Gtk::VBox*                           _vbox;
 	Gtk::ScrolledWindow*                 _scrolledwindow;
 	Gtk::Table*                          _table;
+	Gtk::ComboBox*                       _key_combo;
+	Gtk::ComboBox*                       _value_combo;
+	Gtk::Button*                         _add_button;
 	Gtk::Button*                         _cancel_button;
 	Gtk::Button*                         _apply_button;
 	Gtk::Button*                         _ok_button;
