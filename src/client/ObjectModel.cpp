@@ -24,7 +24,6 @@ namespace Client {
 
 ObjectModel::ObjectModel(Shared::URIs& uris, const Raul::Path& path)
 	: ResourceImpl(uris, path)
-	, _meta(uris, Raul::URI("http://example.org/FIXME"))
 	, _path(path)
 	, _symbol((path == Raul::Path::root()) ? "root" : path.symbol())
 {
@@ -32,7 +31,6 @@ ObjectModel::ObjectModel(Shared::URIs& uris, const Raul::Path& path)
 
 ObjectModel::ObjectModel(const ObjectModel& copy)
 	: ResourceImpl(copy)
-	, _meta(copy._meta)
 	, _parent(copy._parent)
 	, _path(copy._path)
 	, _symbol(copy._symbol)

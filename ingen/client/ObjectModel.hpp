@@ -91,7 +91,6 @@ protected:
 
 	virtual void set(SharedPtr<ObjectModel> model);
 
-	ResourceImpl           _meta;
 	SharedPtr<ObjectModel> _parent;
 
 private:
