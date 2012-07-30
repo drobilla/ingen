@@ -40,8 +40,6 @@ public:
 	void connect(SharedPtr<const GraphObject> object);
 
 private:
-	void build_object(SharedPtr<const GraphObject> object);
-
 	Shared::URIs& _uris;
 	Interface&    _interface;
 };

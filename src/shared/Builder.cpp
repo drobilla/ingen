@@ -16,10 +16,6 @@
 
 #include "ingen/Edge.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/Patch.hpp"
-#include "ingen/Plugin.hpp"
-#include "ingen/Port.hpp"
 #include "ingen/shared/Builder.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "raul/Atom.hpp"
@@ -39,42 +35,7 @@ Builder::Builder(Shared::URIs& uris, Interface& interface)
 void
 Builder::build(SharedPtr<const GraphObject> object)
 {
-	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
-	if (patch) {
-		if (!object->path().is_root()) {
-			Resource::Properties props;
-			props.insert(make_pair(_uris.rdf_type,
-			                       _uris.forge.alloc_uri(_uris.ingen_Patch.str())));
-			props.insert(make_pair(_uris.ingen_polyphony,
-			                       _uris.forge.make(int32_t(patch->internal_poly()))));
-			_interface.put(object->path(), props);
-		}
-
-		build_object(object);
-		/*for (Patch::Edges::const_iterator i = patch->edges().begin();
-		  i != patch->edges().end(); ++i) {
-		  _interface.connect((*i)->src_port_path(), (*i)->dst_port_path());
-		  }*/
-		return;
-	}
-
-	SharedPtr<const Node> node = PtrCast<const Node>(object);
-	if (node) {
-		Resource::Properties props;
-		props.insert(make_pair(_uris.rdf_type, _uris.ingen_Node));
-		props.insert(make_pair(_uris.ingen_prototype,
-		                       _uris.forge.alloc_uri(node->plugin()->uri().str())));
-		_interface.put(node->path(), props);
-		build_object(object);
-		return;
-	}
-
-	SharedPtr<const Port> port = PtrCast<const Port>(object);
-	if (port) {
-		_interface.put(port->path(), port->properties());
-		build_object(object);
-		return;
-	}
+	_interface.put(object->path(), object->properties());
 }
 
 void
@@ -88,13 +49,6 @@ Builder::connect(SharedPtr<const GraphObject> object)
 		}
 		return;
 	}
-}
-
-void
-Builder::build_object(SharedPtr<const GraphObject> object)
-{
-	typedef GraphObject::Properties::const_iterator iterator;
-	_interface.put(object->uri(), object->properties());
 }
 
 } // namespace Shared
