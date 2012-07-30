@@ -26,10 +26,10 @@
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"
 
-#include "ingen/Plugin.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Plugin.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/client/signal.hpp"
-#include "ingen/shared/ResourceImpl.hpp"
 #include "ingen/shared/World.hpp"
 
 namespace Ingen {
@@ -47,7 +47,6 @@ class PluginUI;
  * @ingroup IngenClient
  */
 class PluginModel : public Ingen::Plugin
-                  , public Ingen::Shared::ResourceImpl
 {
 public:
 	PluginModel(Shared::URIs&                      uris,

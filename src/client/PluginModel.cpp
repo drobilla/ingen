@@ -44,7 +44,7 @@ PluginModel::PluginModel(Shared::URIs&               uris,
                          const Raul::URI&            uri,
                          const Raul::URI&            type_uri,
                          const Resource::Properties& properties)
-	: ResourceImpl(uris, uri)
+	: Plugin(uris, uri)
 	, _type(type_from_uri(type_uri.str()))
 {
 	add_properties(properties);
@@ -66,7 +66,7 @@ const Raul::Atom&
 PluginModel::get_property(const Raul::URI& key) const
 {
 	static const Raul::Atom nil;
-	const Raul::Atom& val = ResourceImpl::get_property(key);
+	const Raul::Atom& val = Resource::get_property(key);
 	if (val.is_valid())
 		return val;
 
@@ -145,7 +145,7 @@ PluginModel::set(SharedPtr<PluginModel> p)
 	for (Properties::const_iterator v = p->properties().begin();
 	     v != p->properties().end();
 	     ++v) {
-		ResourceImpl::set_property(v->first, v->second);
+		Resource::set_property(v->first, v->second);
 		_signal_property.emit(v->first, v->second);
 	}
 

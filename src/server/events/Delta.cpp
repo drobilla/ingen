@@ -109,7 +109,7 @@ Delta::pre_process()
 
 	_object = is_graph_object
 		? _engine.engine_store()->find_object(Raul::Path(_subject.str()))
-		: static_cast<Shared::ResourceImpl*>(_engine.node_factory()->plugin(_subject));
+		: static_cast<Ingen::Resource*>(_engine.node_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
 		return Event::pre_process_done(NOT_FOUND, _subject);
@@ -120,7 +120,7 @@ Delta::pre_process()
 	if (is_graph_object && !_object) {
 		Raul::Path path(_subject.str());
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
-		Shared::ResourceImpl::type(uris, _properties, is_patch, is_node, is_port, is_output);
+		Ingen::Resource::type(uris, _properties, is_patch, is_node, is_port, is_output);
 
 		if (is_patch) {
 			_create_event = new CreatePatch(

@@ -143,6 +143,7 @@ def build(bld):
                           bld.path.ant_glob('ingen/%s/*' % i))
 
     # Modules
+    bld.recurse('src')
     bld.recurse('src/shared')
     bld.recurse('src/serialisation')
     bld.recurse('src/server')

@@ -23,7 +23,7 @@
 #include <boost/utility.hpp>
 
 #include "ingen/Plugin.hpp"
-#include "ingen/shared/ResourceImpl.hpp"
+#include "ingen/Resource.hpp"
 
 namespace Ingen {
 
@@ -41,14 +41,13 @@ class BufferFactory;
  * Conceptually, a Node is an instance of this.
  */
 class PluginImpl : public Plugin
-                 , public Ingen::Shared::ResourceImpl
                  , public boost::noncopyable
 {
 public:
 	PluginImpl(Ingen::Shared::URIs& uris,
 	           Type                 type,
 	           const std::string&   uri)
-		: ResourceImpl(uris, uri)
+		: Plugin(uris, uri)
 		, _type(type)
 	{}
 

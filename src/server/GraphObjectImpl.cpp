@@ -28,7 +28,7 @@ namespace Server {
 GraphObjectImpl::GraphObjectImpl(Ingen::Shared::URIs& uris,
                                  GraphObjectImpl*     parent,
                                  const Raul::Symbol&  symbol)
-	: ResourceImpl(uris, parent ? parent->path().child(symbol) : Raul::Path::root())
+	: GraphObject(uris, parent ? parent->path().child(symbol) : "/")
 	, _parent(parent)
 	, _path(parent ? parent->path().child(symbol) : "/")
 	, _symbol(symbol)

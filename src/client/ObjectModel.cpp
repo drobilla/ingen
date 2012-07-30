@@ -23,14 +23,14 @@ namespace Ingen {
 namespace Client {
 
 ObjectModel::ObjectModel(Shared::URIs& uris, const Raul::Path& path)
-	: ResourceImpl(uris, path)
+	: GraphObject(uris, path)
 	, _path(path)
 	, _symbol((path == Raul::Path::root()) ? "root" : path.symbol())
 {
 }
 
 ObjectModel::ObjectModel(const ObjectModel& copy)
-	: ResourceImpl(copy)
+	: GraphObject(copy)
 	, _parent(copy._parent)
 	, _path(copy._path)
 	, _symbol(copy._symbol)
@@ -82,7 +82,7 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 
 	for (Properties::const_iterator v = o->properties().begin();
 	     v != o->properties().end(); ++v) {
-		ResourceImpl::set_property(v->first, v->second);
+		Resource::set_property(v->first, v->second);
 		_signal_property.emit(v->first, v->second);
 	}
 }

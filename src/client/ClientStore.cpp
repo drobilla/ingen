@@ -279,8 +279,8 @@ ClientStore::put(const Raul::URI&            uri,
 #endif
 
 	bool is_patch, is_node, is_port, is_output;
-	ResourceImpl::type(uris(), properties,
-	                   is_patch, is_node, is_port, is_output);
+	Resource::type(uris(), properties,
+	               is_patch, is_node, is_port, is_output);
 
 	// Check if uri is a plugin
 	Iterator t = properties.find(_uris.rdf_type);

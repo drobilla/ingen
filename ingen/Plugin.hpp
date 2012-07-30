@@ -28,9 +28,13 @@ namespace Ingen {
 /** A plugin which instantiates to a Node.
  * @ingroup Ingen
  */
-class Plugin : virtual public Resource
+class Plugin : public Resource
 {
 public:
+	Plugin(Shared::URIs& uris, const Raul::URI& uri)
+		: Resource(uris, uri)
+	{}
+
 	enum Type { NIL, LV2, Internal, Patch };
 
 	virtual Type type() const = 0;

@@ -19,6 +19,7 @@
 
 #include "ingen/Resource.hpp"
 #include "raul/Deletable.hpp"
+#include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 
 namespace Raul {
@@ -36,8 +37,7 @@ class Plugin;
  *
  * @ingroup Ingen
  */
-class GraphObject : public Raul::Deletable
-                  , public virtual Resource
+class GraphObject : public Resource
 {
 public:
 	virtual void set_path(const Raul::Path& path) = 0;
@@ -67,6 +67,10 @@ public:
 	virtual GraphObject*        graph_parent() const = 0;
 
 protected:
+	GraphObject(Shared::URIs& uris, const Raul::Path& path)
+		: Resource(uris, path)
+	{}
+
 	Edges _edges;  ///< Patches only
 };
 

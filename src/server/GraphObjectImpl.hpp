@@ -17,15 +17,16 @@
 #ifndef INGEN_ENGINE_GRAPHOBJECTIMPL_HPP
 #define INGEN_ENGINE_GRAPHOBJECTIMPL_HPP
 
-#include <string>
-#include <map>
-#include <cstddef>
 #include <cassert>
+#include <cstddef>
+#include <map>
+#include <string>
+
+#include "ingen/GraphObject.hpp"
+#include "ingen/Resource.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
-#include "ingen/GraphObject.hpp"
-#include "ingen/shared/ResourceImpl.hpp"
 
 namespace Raul { class Maid; }
 
@@ -48,8 +49,7 @@ class BufferFactory;
  *
  * \ingroup engine
  */
-class GraphObjectImpl : virtual public GraphObject
-                      , public Ingen::Shared::ResourceImpl
+class GraphObjectImpl : public GraphObject
 {
 public:
 	virtual ~GraphObjectImpl() {}

@@ -26,7 +26,7 @@
 
 namespace Ingen {
 
-namespace Shared { class ResourceImpl; }
+class Resource;
 
 namespace Server {
 
@@ -97,19 +97,19 @@ private:
 
 	typedef std::vector<SetPortValue*> SetEvents;
 
-	Event*                       _create_event;
-	SetEvents                    _set_events;
-	std::vector<SpecialType>     _types;
-	std::vector<SpecialType>     _remove_types;
-	Raul::URI                    _subject;
-	Resource::Properties         _properties;
-	Resource::Properties         _remove;
-	Ingen::Shared::ResourceImpl* _object;
-	PatchImpl*                   _patch;
-	CompiledPatch*               _compiled_patch;
-	Resource::Graph              _context;
-	ControlBindings::Key         _binding;
-	bool                         _create;
+	Event*                   _create_event;
+	SetEvents                _set_events;
+	std::vector<SpecialType> _types;
+	std::vector<SpecialType> _remove_types;
+	Raul::URI                _subject;
+	Resource::Properties     _properties;
+	Resource::Properties     _remove;
+	Ingen::Resource*         _object;
+	PatchImpl*               _patch;
+	CompiledPatch*           _compiled_patch;
+	Resource::Graph          _context;
+	ControlBindings::Key     _binding;
+	bool                     _create;
 
 	SharedPtr<ControlBindings::Bindings> _old_bindings;
 };

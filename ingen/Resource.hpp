@@ -21,8 +21,11 @@
 #include <string>
 
 #include "raul/Atom.hpp"
+#include "raul/Deletable.hpp"
 #include "raul/URI.hpp"
 #include "raul/log.hpp"
+
+#include "ingen/shared/URIs.hpp"
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
 
@@ -31,9 +34,14 @@ namespace Ingen {
 /** An object with a URI described by properties.
  * @ingroup Ingen
  */
-class Resource
+class Resource : public Raul::Deletable
 {
 public:
+	Resource(Shared::URIs& uris, const Raul::URI& uri)
+		: _uris(uris)
+		, _uri(uri)
+	{}
+
 	enum Graph {
 		DEFAULT,
 		EXTERNAL,
@@ -86,7 +94,10 @@ public:
 
 	virtual ~Resource() {}
 
-	virtual const Raul::URI& uri() const = 0;
+	Shared::URIs& uris() const { return _uris; }
+
+	virtual void             set_uri(const Raul::URI& uri) { _uri = uri; }
+	virtual const Raul::URI& uri()  const { return _uri; }
 
 	typedef std::multimap<Raul::URI, Property> Properties;
 
@@ -96,22 +107,53 @@ public:
 		}
 	}
 
-	virtual Properties properties(Resource::Graph ctx) const = 0;
+	Properties properties(Resource::Graph ctx) const;
 
-	virtual const Properties& properties() const = 0;
-	virtual Properties&       properties()       = 0;
-	virtual const Raul::Atom& get_property(const Raul::URI&  uri) const   = 0;
+	virtual const Properties& properties() const { return _properties; }
+	virtual Properties&       properties()       { return _properties; }
+	virtual const Raul::Atom& get_property(const Raul::URI&  uri) const;
 	virtual const Raul::Atom& set_property(const Raul::URI&  uri,
 	                                       const Raul::Atom& value,
-	                                       Graph             ctx=DEFAULT) = 0;
+	                                       Graph             ctx=DEFAULT);
 	virtual void              add_property(const Raul::URI&  uri,
 	                                       const Raul::Atom& value,
-	                                       Graph             ctx=DEFAULT) = 0;
+	                                       Graph             ctx=DEFAULT);
+	virtual void              remove_property(const Raul::URI& uri,
+	                                          const Raul::Atom& value);
 	virtual bool              has_property(const Raul::URI&  uri,
-	                                       const Raul::Atom& value) const = 0;
+	                                       const Raul::Atom& value) const;
+
+	void set_properties(const Properties& p);
+	void add_properties(const Properties& p);
+	void remove_properties(const Properties& p);
+
+	/** Hook called whenever a property is added.
+	 * This can be used by derived classes to implement special behaviour for
+	 * particular properties (e.g. ingen:value for ports).
+	 */
+	virtual void on_property(const Raul::URI& uri, const Raul::Atom& value) {}
+
+	/** Get the ingen type from a set of Properties.
+	 * If some coherent ingen type is found, true is returned and the appropriate
+	 * output parameter set to true.  Otherwise false is returned.
+	 */
+	static bool type(const Shared::URIs& uris,
+	                 const Properties&   properties,
+	                 bool&               patch,
+	                 bool&               node,
+	                 bool&               port,
+	                 bool&               is_output);
+
+protected:
+	const Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;
+
+	Shared::URIs& _uris;
+
+private:
+	Raul::URI          _uri;
+	mutable Properties _properties;
 };
 
 } // namespace Ingen
 
 #endif // INGEN_RESOURCE_HPP
-

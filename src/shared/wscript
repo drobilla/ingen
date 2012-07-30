@@ -9,7 +9,6 @@ sources = [
     'Configuration.cpp',
     'Forge.cpp',
     'LV2Features.cpp',
-    'ResourceImpl.cpp',
     'Store.cpp',
     'URIMap.cpp',
     'URIs.cpp',
@@ -24,6 +23,7 @@ def build(bld):
               includes        = ['../..'],
               name            = 'libingen_shared',
               target          = 'ingen_shared',
+              use             = 'libingen',
               vnum            = '0.0.0',
               install_path    = '${LIBDIR}',
               lib             = ['dl'])
@@ -36,6 +36,7 @@ def build(bld):
                   includes        = ['../..'],
                   name            = 'libingen_shared_profiled',
                   target          = 'ingen_shared_profiled',
+                  use             = 'libingen',
                   install_path    = '',
                   lib             = ['dl'] + bld.env['INGEN_TEST_LIBS'],
                   cxxflags        = bld.env['INGEN_TEST_CXXFLAGS'])

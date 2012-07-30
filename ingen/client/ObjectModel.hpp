@@ -30,8 +30,8 @@
 #include "raul/URI.hpp"
 
 #include "ingen/GraphObject.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/client/signal.hpp"
-#include "ingen/shared/ResourceImpl.hpp"
 
 namespace Ingen {
 
@@ -52,8 +52,7 @@ class ClientStore;
  *
  * @ingroup IngenClient
  */
-class ObjectModel : virtual public GraphObject
-                  , public Ingen::Shared::ResourceImpl
+class ObjectModel : public GraphObject
 {
 public:
 	virtual ~ObjectModel();

@@ -16,7 +16,7 @@
 
 #include <utility>
 
-#include "ingen/shared/ResourceImpl.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "raul/Atom.hpp"
 #include "raul/log.hpp"
@@ -24,12 +24,11 @@
 using namespace std;
 
 namespace Ingen {
-namespace Shared {
 
 void
-ResourceImpl::add_property(const Raul::URI&  uri,
-                           const Raul::Atom& value,
-                           Graph             ctx)
+Resource::add_property(const Raul::URI&  uri,
+                       const Raul::Atom& value,
+                       Graph             ctx)
 {
 	// Ignore duplicate statements
 	typedef Resource::Properties::const_iterator iterator;
@@ -45,9 +44,9 @@ ResourceImpl::add_property(const Raul::URI&  uri,
 }
 
 const Raul::Atom&
-ResourceImpl::set_property(const Raul::URI&  uri,
-                           const Raul::Atom& value,
-                           Resource::Graph   ctx)
+Resource::set_property(const Raul::URI&  uri,
+                       const Raul::Atom& value,
+                       Resource::Graph   ctx)
 {
 	// Erase existing property in this context
 	for (Properties::iterator i = _properties.find(uri);
@@ -67,7 +66,7 @@ ResourceImpl::set_property(const Raul::URI&  uri,
 }
 
 void
-ResourceImpl::remove_property(const Raul::URI& uri, const Raul::Atom& value)
+Resource::remove_property(const Raul::URI& uri, const Raul::Atom& value)
 {
 	if (value == _uris.wildcard) {
 		_properties.erase(uri);
@@ -83,7 +82,7 @@ ResourceImpl::remove_property(const Raul::URI& uri, const Raul::Atom& value)
 }
 
 bool
-ResourceImpl::has_property(const Raul::URI& uri, const Raul::Atom& value) const
+Resource::has_property(const Raul::URI& uri, const Raul::Atom& value) const
 {
 	Properties::const_iterator i = _properties.find(uri);
 	for (; (i != _properties.end()) && (i->first == uri); ++i) {
@@ -95,13 +94,13 @@ ResourceImpl::has_property(const Raul::URI& uri, const Raul::Atom& value) const
 }
 
 const Raul::Atom&
-ResourceImpl::set_property(const Raul::URI& uri, const Raul::Atom& value) const
+Resource::set_property(const Raul::URI& uri, const Raul::Atom& value) const
 {
-	return const_cast<ResourceImpl*>(this)->set_property(uri, value);
+	return const_cast<Resource*>(this)->set_property(uri, value);
 }
 
 const Raul::Atom&
-ResourceImpl::get_property(const Raul::URI& uri) const
+Resource::get_property(const Raul::URI& uri) const
 {
 	static const Raul::Atom nil;
 	Properties::const_iterator i = _properties.find(uri);
@@ -109,12 +108,12 @@ ResourceImpl::get_property(const Raul::URI& uri) const
 }
 
 bool
-ResourceImpl::type(const URIs&       uris,
-                   const Properties& properties,
-                   bool&             patch,
-                   bool&             node,
-                   bool&             port,
-                   bool&             is_output)
+Resource::type(const Shared::URIs& uris,
+               const Properties&   properties,
+               bool&               patch,
+               bool&               node,
+               bool&               port,
+               bool&               is_output)
 {
 	typedef Resource::Properties::const_iterator iterator;
 	const std::pair<iterator, iterator> types_range = properties.equal_range(uris.rdf_type);
@@ -123,7 +122,7 @@ ResourceImpl::type(const URIs&       uris,
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Raul::Atom& atom = i->second;
 		if (atom.type() != uris.forge.URI && atom.type() != uris.forge.URID) {
-			Raul::warn << "[ResourceImpl] Non-URI type " << uris.forge.str(atom) << endl;
+			Raul::warn << "[Resource] Non-URI type " << uris.forge.str(atom) << endl;
 			continue;
 		}
 
@@ -154,7 +153,7 @@ ResourceImpl::type(const URIs&       uris,
 }
 
 void
-ResourceImpl::set_properties(const Properties& p)
+Resource::set_properties(const Properties& p)
 {
 	/* Note a simple loop that calls set_property is inappropriate here since
 	   it will not correctly set multiple properties in p (notably rdf:type)
@@ -170,7 +169,7 @@ ResourceImpl::set_properties(const Properties& p)
 }
 
 void
-ResourceImpl::add_properties(const Properties& p)
+Resource::add_properties(const Properties& p)
 {
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = p.begin(); i != p.end(); ++i)
@@ -178,7 +177,7 @@ ResourceImpl::add_properties(const Properties& p)
 }
 
 void
-ResourceImpl::remove_properties(const Properties& p)
+Resource::remove_properties(const Properties& p)
 {
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = p.begin(); i != p.end(); ++i) {
@@ -186,7 +185,7 @@ ResourceImpl::remove_properties(const Properties& p)
 			_properties.erase(i->first);
 		} else {
 			for (Properties::iterator j = _properties.find(i->first);
-					(j != _properties.end()) && (j->first == i->first); ++j) {
+			     (j != _properties.end()) && (j->first == i->first); ++j) {
 				if (j->second == i->second) {
 					_properties.erase(j);
 					break;
@@ -197,7 +196,7 @@ ResourceImpl::remove_properties(const Properties& p)
 }
 
 Resource::Properties
-ResourceImpl::properties(Resource::Graph ctx) const
+Resource::properties(Resource::Graph ctx) const
 {
 	if (ctx == Resource::DEFAULT) {
 		return properties();
@@ -216,5 +215,4 @@ ResourceImpl::properties(Resource::Graph ctx) const
 	return props;
 }
 
-} // namespace Shared
 } // namespace Ingen
