@@ -43,9 +43,8 @@ SetPortValue::SetPortValue(Engine&              engine,
                            PortImpl*            port,
                            const Raul::Atom&    value)
 	: Event(engine, client, id, timestamp)
-	, _port_path(port->path())
-	, _value(value)
 	, _port(port)
+	, _value(value)
 {
 }
 
@@ -57,7 +56,7 @@ bool
 SetPortValue::pre_process()
 {
 	if (_port->is_output()) {
-		return Event::pre_process_done(DIRECTION_MISMATCH, _port_path);
+		return Event::pre_process_done(DIRECTION_MISMATCH, _port->path());
 	}
 
 	// Port is on a message context node, set value and run
@@ -119,7 +118,7 @@ SetPortValue::apply(Context& context)
 		                      (const uint8_t*)_value.get_body())) {
 			_port->raise_set_by_user_flag();
 		} else {
-			Raul::warn(Raul::fmt("Error writing to port %1%\n") % _port_path);
+			Raul::warn(Raul::fmt("Error writing to port %1%\n") % _port->path());
 		}
 	} else {
 		Raul::warn(Raul::fmt("Unknown value type %1%\n") % _value.type());
@@ -131,7 +130,7 @@ SetPortValue::post_process()
 {
 	if (!respond()) {
 		_engine.broadcaster()->set_property(
-			_port_path,
+			_port->path(),
 			_engine.world()->uris().ingen_value,
 			_value);
 	}

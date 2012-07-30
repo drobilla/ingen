@@ -61,18 +61,16 @@ public:
 	void post_process();
 
 private:
-	Raul::Path _parent_path;
-	Raul::Path _path;
-	PatchImpl* _parent;
-	NodeImpl*  _node;
-	PortImpl*  _port;
-
 	typedef std::list<Disconnect::Impl*> Impls;
-	Impls _impls;
 
-	CompiledPatch* _compiled_patch; ///< New process order for Patch
-
-	bool _deleting;
+	Raul::Path     _parent_path;
+	Raul::Path     _path;
+	PatchImpl*     _parent;
+	NodeImpl*      _node;
+	PortImpl*      _port;
+	Impls          _impls;
+	CompiledPatch* _compiled_patch;
+	bool           _deleting;
 };
 
 } // namespace Events

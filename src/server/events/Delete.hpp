@@ -70,7 +70,6 @@ public:
 private:
 	Raul::URI                      _uri;
 	Raul::Path                     _path;
-	EngineStore::iterator          _store_iterator;
 	SharedPtr<NodeImpl>            _node;                ///< Non-NULL iff a node
 	SharedPtr<PortImpl>            _port;                ///< Non-NULL iff a port
 	Raul::Deletable*               _garbage;

@@ -56,12 +56,11 @@ private:
 	typedef std::list< std::pair<Raul::URI, Resource::Properties> > Update;
 
 	Raul::Path           _path;
-	std::string          _plugin_uri;
 	Resource::Properties _properties;
 	Update               _update;
 	PatchImpl*           _patch;
 	NodeImpl*            _node;
-	CompiledPatch*       _compiled_patch; ///< Patch's new process order
+	CompiledPatch*       _compiled_patch;
 };
 
 } // namespace Events

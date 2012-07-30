@@ -58,9 +58,8 @@ public:
 private:
 	void apply(Context& context);
 
-	const Raul::Path     _port_path;
-	const Raul::Atom     _value;
 	PortImpl*            _port;
+	const Raul::Atom     _value;
 	ControlBindings::Key _binding;
 };
 

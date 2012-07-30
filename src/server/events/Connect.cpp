@@ -44,8 +44,7 @@ Connect::Connect(Engine&              engine,
 	, _tail_path(tail_path)
 	, _head_path(head_path)
 	, _patch(NULL)
-	, _src_output_port(NULL)
-	, _dst_input_port(NULL)
+	, _head(NULL)
 	, _compiled_patch(NULL)
 	, _buffers(NULL)
 {}
@@ -63,50 +62,49 @@ Connect::pre_process()
 		return Event::pre_process_done(PORT_NOT_FOUND, _head_path.str());
 	}
 
-	_dst_input_port  = dynamic_cast<InputPort*>(head);
-	_src_output_port = dynamic_cast<OutputPort*>(tail);
-	if (!_dst_input_port || !_src_output_port) {
+	OutputPort* tail_output = dynamic_cast<OutputPort*>(tail);
+	_head                   = dynamic_cast<InputPort*>(head);
+	if (!tail_output || !_head) {
 		return Event::pre_process_done(DIRECTION_MISMATCH, _head_path.str());
 	}
 
-	NodeImpl* const src_node = tail->parent_node();
-	NodeImpl* const dst_node = head->parent_node();
-	if (!src_node || !dst_node) {
+	NodeImpl* const tail_node = tail->parent_node();
+	NodeImpl* const head_node = head->parent_node();
+	if (!tail_node || !head_node) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path.str());
 	}
 
-	if (src_node->parent() != dst_node->parent()
-	    && src_node != dst_node->parent()
-	    && src_node->parent() != dst_node) {
+	if (tail_node->parent() != head_node->parent()
+	    && tail_node != head_node->parent()
+	    && tail_node->parent() != head_node) {
 		return Event::pre_process_done(PARENT_DIFFERS, _head_path.str());
 	}
 
-	if (!EdgeImpl::can_connect(_src_output_port, _dst_input_port)) {
+	if (!EdgeImpl::can_connect(tail_output, _head)) {
 		return Event::pre_process_done(TYPE_MISMATCH, _head_path);
 	}
 
-	if (src_node->parent_patch() != dst_node->parent_patch()) {
+	if (tail_node->parent_patch() != head_node->parent_patch()) {
 		// Edge to a patch port from inside the patch
-		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
-		if (src_node->parent() == dst_node) {
-			_patch = dynamic_cast<PatchImpl*>(dst_node);
+		assert(tail_node->parent() == head_node || head_node->parent() == tail_node);
+		if (tail_node->parent() == head_node) {
+			_patch = dynamic_cast<PatchImpl*>(head_node);
 		} else {
-			_patch = dynamic_cast<PatchImpl*>(src_node);
+			_patch = dynamic_cast<PatchImpl*>(tail_node);
 		}
-	} else if (src_node == dst_node && dynamic_cast<PatchImpl*>(src_node)) {
+	} else if (tail_node == head_node && dynamic_cast<PatchImpl*>(tail_node)) {
 		// Edge from a patch input to a patch output (pass through)
-		_patch = dynamic_cast<PatchImpl*>(src_node);
+		_patch = dynamic_cast<PatchImpl*>(tail_node);
 	} else {
 		// Normal edge between nodes with the same parent
-		_patch = src_node->parent_patch();
+		_patch = tail_node->parent_patch();
 	}
 
-	if (_patch->has_edge(_src_output_port, _dst_input_port)) {
+	if (_patch->has_edge(tail_output, _head)) {
 		return Event::pre_process_done(EXISTS, _head_path);
 	}
 
-	_edge = SharedPtr<EdgeImpl>(
-		new EdgeImpl(_src_output_port, _dst_input_port));
+	_edge = SharedPtr<EdgeImpl>(new EdgeImpl(tail_output, _head));
 
 	rlock.release();
 
@@ -117,19 +115,19 @@ Connect::pre_process()
 		   node's parent as a dependant/provider, or adding a patch as its own
 		   provider...
 		*/
-		if (src_node != dst_node && src_node->parent() == dst_node->parent()) {
-			dst_node->providers().push_back(src_node);
-			src_node->dependants().push_back(dst_node);
+		if (tail_node != head_node && tail_node->parent() == head_node->parent()) {
+			head_node->providers().push_back(tail_node);
+			tail_node->dependants().push_back(head_node);
 		}
 
 		_patch->add_edge(_edge);
-		_dst_input_port->increment_num_edges();
+		_head->increment_num_edges();
 	}
 
-	_buffers = new Raul::Array<BufferRef>(_dst_input_port->poly());
-	_dst_input_port->get_buffers(_engine.message_context(),
-	                             *_engine.buffer_factory(),
-	                             _buffers, _dst_input_port->poly());
+	_buffers = new Raul::Array<BufferRef>(_head->poly());
+	_head->get_buffers(_engine.message_context(),
+	                   *_engine.buffer_factory(),
+	                   _buffers, _head->poly());
 
 	if (_patch->enabled()) {
 		_compiled_patch = _patch->compile();
@@ -142,9 +140,9 @@ void
 Connect::execute(ProcessContext& context)
 {
 	if (!_status) {
-		_dst_input_port->add_edge(context, _edge.get());
-		_engine.maid()->push(_dst_input_port->set_buffers(context, _buffers));
-		_dst_input_port->connect_buffers();
+		_head->add_edge(context, _edge.get());
+		_engine.maid()->push(_head->set_buffers(context, _buffers));
+		_head->connect_buffers();
 		_engine.maid()->push(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);
 	}

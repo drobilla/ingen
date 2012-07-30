@@ -107,9 +107,9 @@ private:
 	Ingen::Shared::ResourceImpl* _object;
 	PatchImpl*                   _patch;
 	CompiledPatch*               _compiled_patch;
-	bool                         _create;
 	Resource::Graph              _context;
 	ControlBindings::Key         _binding;
+	bool                         _create;
 
 	SharedPtr<ControlBindings::Bindings> _old_bindings;
 };

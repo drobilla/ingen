@@ -18,9 +18,8 @@
 
 #include <glibmm/thread.h>
 
-#include "raul/Maid.hpp"
-
 #include "ingen/shared/URIs.hpp"
+#include "raul/Maid.hpp"
 
 #include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
@@ -65,8 +64,8 @@ Delta::Delta(Engine&              engine,
 	, _object(NULL)
 	, _patch(NULL)
 	, _compiled_patch(NULL)
-	, _create(create)
 	, _context(context)
+	, _create(create)
 {
 	if (context != Resource::DEFAULT) {
 		Resource::set_context(_properties, context);

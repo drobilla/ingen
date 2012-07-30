@@ -50,8 +50,6 @@ Disconnect::Disconnect(Engine&              engine,
 	, _tail_path(tail_path)
 	, _head_path(head_path)
 	, _patch(NULL)
-	, _tail(NULL)
-	, _head(NULL)
 	, _impl(NULL)
 	, _compiled_patch(NULL)
 {
@@ -122,17 +120,17 @@ Disconnect::pre_process()
 		return Event::pre_process_done(PARENT_DIFFERS, _head_path);
 	}
 
-	_tail = _engine.engine_store()->find_port(_tail_path);
-	_head = _engine.engine_store()->find_port(_head_path);
+	PortImpl* tail = _engine.engine_store()->find_port(_tail_path);
+	PortImpl* head = _engine.engine_store()->find_port(_head_path);
 
-	if (!_tail) {
+	if (!tail) {
 		return Event::pre_process_done(PORT_NOT_FOUND, _tail_path);
-	} else if (!_head) {
+	} else if (!head) {
 		return Event::pre_process_done(PORT_NOT_FOUND, _head_path);
 	}
 
-	NodeImpl* const src_node = _tail->parent_node();
-	NodeImpl* const dst_node = _head->parent_node();
+	NodeImpl* const src_node = tail->parent_node();
+	NodeImpl* const dst_node = head->parent_node();
 
 	if (src_node->parent_patch() != dst_node->parent_patch()) {
 		// Edge to a patch port from inside the patch
@@ -152,7 +150,7 @@ Disconnect::pre_process()
 
 	assert(_patch);
 
-	if (!_patch->has_edge(_tail, _head)) {
+	if (!_patch->has_edge(tail, head)) {
 		return Event::pre_process_done(NOT_FOUND, _head_path);
 	}
 
@@ -162,8 +160,8 @@ Disconnect::pre_process()
 
 	_impl = new Impl(_engine,
 	                 _patch,
-	                 dynamic_cast<OutputPort*>(_tail),
-	                 dynamic_cast<InputPort*>(_head));
+	                 dynamic_cast<OutputPort*>(tail),
+	                 dynamic_cast<InputPort*>(head));
 
 	if (_patch->enabled())
 		_compiled_patch = _patch->compile();
@@ -217,7 +215,7 @@ void
 Disconnect::post_process()
 {
 	if (!respond()) {
-		_engine.broadcaster()->disconnect(_tail->path(), _head->path());
+		_engine.broadcaster()->disconnect(_tail_path, _head_path);
 	}
 
 	delete _impl;

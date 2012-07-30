@@ -41,7 +41,6 @@ Delete::Delete(Engine&              engine,
                const Raul::URI&     uri)
 	: Event(engine, client, id, time)
 	, _uri(uri)
-	, _store_iterator(engine.engine_store()->end())
 	, _garbage(NULL)
 	, _engine_port(NULL)
 	, _patch_node_listnode(NULL)
@@ -73,17 +72,17 @@ Delete::pre_process()
 
 	_removed_bindings = _engine.control_bindings()->remove(_path);
 
-	_store_iterator = _engine.engine_store()->find(_path);
+	EngineStore::iterator iter = _engine.engine_store()->find(_path);
 
-	if (_store_iterator != _engine.engine_store()->end())  {
-		_node = PtrCast<NodeImpl>(_store_iterator->second);
+	if (iter != _engine.engine_store()->end())  {
+		_node = PtrCast<NodeImpl>(iter->second);
 
 		if (!_node)
-			_port = PtrCast<PortImpl>(_store_iterator->second);
+			_port = PtrCast<PortImpl>(iter->second);
 	}
 
-	if (_store_iterator != _engine.engine_store()->end()) {
-		_removed_table = _engine.engine_store()->remove(_store_iterator);
+	if (iter != _engine.engine_store()->end()) {
+		_removed_table = _engine.engine_store()->remove(iter);
 	}
 
 	if (_node && !_path.is_root()) {

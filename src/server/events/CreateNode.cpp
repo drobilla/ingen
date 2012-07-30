@@ -53,9 +53,10 @@ CreateNode::pre_process()
 
 	typedef Resource::Properties::const_iterator iterator;
 
+	std::string plugin_uri;
 	const iterator t = _properties.find(uris.ingen_prototype);
 	if (t != _properties.end() && t->second.type() == uris.forge.URI) {
-		_plugin_uri = t->second.get_uri();
+		plugin_uri = t->second.get_uri();
 	} else {
 		return Event::pre_process_done(BAD_REQUEST);
 	}
@@ -68,9 +69,9 @@ CreateNode::pre_process()
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent().str());
 	}
 
-	PluginImpl* plugin = _engine.node_factory()->plugin(_plugin_uri);
+	PluginImpl* plugin = _engine.node_factory()->plugin(plugin_uri);
 	if (!plugin) {
-		return Event::pre_process_done(PLUGIN_NOT_FOUND, _plugin_uri);
+		return Event::pre_process_done(PLUGIN_NOT_FOUND, plugin_uri);
 	}
 
 	const iterator p = _properties.find(uris.ingen_polyphonic);

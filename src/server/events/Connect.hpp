@@ -57,17 +57,12 @@ public:
 	void post_process();
 
 private:
-	Raul::Path _tail_path;
-	Raul::Path _head_path;
-
-	PatchImpl*  _patch;
-	OutputPort* _src_output_port;
-	InputPort*  _dst_input_port;
-
-	CompiledPatch* _compiled_patch; ///< New process order for Patch
-
-	SharedPtr<EdgeImpl> _edge;
-
+	const Raul::Path        _tail_path;
+	const Raul::Path        _head_path;
+	PatchImpl*              _patch;
+	InputPort*              _head;
+	CompiledPatch*          _compiled_patch;
+	SharedPtr<EdgeImpl>     _edge;
 	Raul::Array<BufferRef>* _buffers;
 };
 

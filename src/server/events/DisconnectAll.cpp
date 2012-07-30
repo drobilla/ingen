@@ -45,10 +45,10 @@ DisconnectAll::DisconnectAll(Engine&              engine,
                              int32_t              id,
                              SampleCount          timestamp,
                              const Raul::Path&    parent_path,
-                             const Raul::Path&    node_path)
+                             const Raul::Path&    path)
 	: Event(engine, client, id, timestamp)
 	, _parent_path(parent_path)
-	, _path(node_path)
+	, _path(path)
 	, _parent(NULL)
 	, _node(NULL)
 	, _port(NULL)

@@ -79,13 +79,9 @@ public:
 private:
 	const Raul::Path _tail_path;
 	const Raul::Path _head_path;
-
-	PatchImpl* _patch;
-	PortImpl*  _tail;
-	PortImpl*  _head;
-
-	Impl*          _impl;
-	CompiledPatch* _compiled_patch;
+	PatchImpl*       _patch;
+	Impl*            _impl;
+	CompiledPatch*   _compiled_patch;
 };
 
 } // namespace Events
