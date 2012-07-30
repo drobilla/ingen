@@ -17,15 +17,10 @@
 #ifndef INGEN_CLIENT_PATCHMODEL_HPP
 #define INGEN_CLIENT_PATCHMODEL_HPP
 
+#include "ingen/client/NodeModel.hpp"
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/Patch.hpp"
-#include "ingen/client/NodeModel.hpp"
-
 namespace Ingen {
-
-class Port;
-
 namespace Client {
 
 class ClientStore;
@@ -35,15 +30,15 @@ class EdgeModel;
  *
  * @ingroup IngenClient
  */
-class PatchModel : public NodeModel, public Ingen::Patch
+class PatchModel : public NodeModel
 {
 public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */
 
-	const Edges& edges() const { return *_edges.get(); }
+	GraphType graph_type() const { return GraphObject::PATCH; }
 
-	SharedPtr<EdgeModel> get_edge(const Ingen::Port* tail,
-	                              const Ingen::Port* head);
+	SharedPtr<EdgeModel> get_edge(const Ingen::GraphObject* tail,
+	                              const Ingen::GraphObject* head);
 
 	bool     enabled()       const;
 	bool     polyphonic()    const;
@@ -60,7 +55,6 @@ private:
 
 	PatchModel(Shared::URIs& uris, const Raul::Path& patch_path)
 		: NodeModel(uris, "http://drobilla.net/ns/ingen#Patch", patch_path)
-		, _edges(new Edges())
 	{
 	}
 
@@ -69,10 +63,8 @@ private:
 	bool remove_child(SharedPtr<ObjectModel> c);
 
 	void add_edge(SharedPtr<EdgeModel> cm);
-	void remove_edge(const Ingen::Port* tail,
-	                       const Ingen::Port* head);
-
-	SharedPtr<Edges> _edges;
+	void remove_edge(const Ingen::GraphObject* tail,
+	                 const Ingen::GraphObject* head);
 };
 
 } // namespace Client

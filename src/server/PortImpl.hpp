@@ -23,8 +23,6 @@
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
 
-#include "ingen/Port.hpp"
-
 #include "Buffer.hpp"
 #include "BufferRef.hpp"
 #include "Context.hpp"
@@ -48,10 +46,12 @@ class BufferFactory;
  *
  * \ingroup engine
  */
-class PortImpl : public GraphObjectImpl, public Port
+class PortImpl : public GraphObjectImpl
 {
 public:
 	~PortImpl();
+
+	virtual GraphType graph_type() const { return PORT; }
 
 	/** A port's parent is always a node, so static cast should be safe */
 	NodeImpl* parent_node() const { return (NodeImpl*)_parent; }

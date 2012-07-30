@@ -26,7 +26,7 @@
 
 namespace Ingen {
 
-class Node;
+class GraphObject;
 
 namespace Shared {
 
@@ -44,7 +44,7 @@ public:
 		virtual ~Feature() {}
 
 		virtual SharedPtr<LV2_Feature> feature(Shared::World* world,
-		                                       Node*          node) = 0;
+		                                       GraphObject*   node) = 0;
 	};
 
 	class FeatureArray : public Raul::Noncopyable {
@@ -65,7 +65,7 @@ public:
 	void add_feature(SharedPtr<Feature> feature);
 
 	SharedPtr<FeatureArray> lv2_features(Shared::World* world,
-	                                     Node*          node) const;
+	                                     GraphObject*   node) const;
 
 private:
 	typedef std::vector< SharedPtr<Feature> > Features;

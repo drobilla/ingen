@@ -26,7 +26,6 @@
 #include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
-#include "ingen/Port.hpp"
 #include "ingen/client/ObjectModel.hpp"
 
 namespace Raul { class Path; }
@@ -38,10 +37,12 @@ namespace Client {
  *
  * @ingroup IngenClient
  */
-class PortModel : public ObjectModel, public Ingen::Port
+class PortModel : public ObjectModel
 {
 public:
 	enum Direction { INPUT, OUTPUT };
+
+	GraphType graph_type() const { return GraphObject::PORT; }
 
 	bool supports(const Raul::URI& value_type) const;
 

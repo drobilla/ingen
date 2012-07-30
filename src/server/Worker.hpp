@@ -34,7 +34,7 @@ public:
 	Worker(uint32_t buffer_size);
 
 	struct Schedule : public Shared::LV2Features::Feature {
-		SharedPtr<LV2_Feature> feature(Shared::World* world, Node* n);
+		SharedPtr<LV2_Feature> feature(Shared::World* world, GraphObject* n);
 	};
 
 	LV2_Worker_Status request(LV2Node*    node,

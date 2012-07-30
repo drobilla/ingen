@@ -17,9 +17,9 @@
 #ifndef INGEN_GRAPHOBJECT_HPP
 #define INGEN_GRAPHOBJECT_HPP
 
-#include "raul/Deletable.hpp"
-
 #include "ingen/Resource.hpp"
+#include "raul/Deletable.hpp"
+#include "raul/SharedPtr.hpp"
 
 namespace Raul {
 class Atom;
@@ -29,9 +29,10 @@ class Symbol;
 
 namespace Ingen {
 
+class Edge;
+class Plugin;
+
 /** An object on the audio graph - Patch, Node, Port, etc.
- *
- * Purely virtual (except for the destructor).
  *
  * @ingroup Ingen
  */
@@ -41,9 +42,32 @@ class GraphObject : public Raul::Deletable
 public:
 	virtual void set_path(const Raul::Path& path) = 0;
 
+	enum GraphType {
+		PATCH,
+		NODE,
+		PORT
+	};
+
+	typedef std::pair<const GraphObject*, const GraphObject*> EdgesKey;
+	typedef std::map< EdgesKey, SharedPtr<Edge> > Edges;
+
+	// Patches only
+	Edges&       edges()       { return _edges; }
+	const Edges& edges() const { return _edges; }
+
+	// Nodes and patches only
+	virtual uint32_t      num_ports()          const { return 0; }
+	virtual GraphObject*  port(uint32_t index) const { return NULL; }
+	virtual const Plugin* plugin()             const { return NULL; }
+
+	// All objects
+	virtual GraphType           graph_type()   const = 0;
 	virtual const Raul::Path&   path()         const = 0;
 	virtual const Raul::Symbol& symbol()       const = 0;
 	virtual GraphObject*        graph_parent() const = 0;
+
+protected:
+	Edges _edges;  ///< Patches only
 };
 
 } // namespace Ingen

@@ -62,7 +62,7 @@ NodeImpl::~NodeImpl()
 	delete _ports;
 }
 
-Port*
+GraphObject*
 NodeImpl::port(uint32_t index) const
 {
 	return (*_ports)[index];

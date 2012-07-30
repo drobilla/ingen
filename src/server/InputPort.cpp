@@ -17,8 +17,6 @@
 #include <cstdlib>
 #include <cassert>
 
-#include "ingen/Patch.hpp"
-
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
@@ -48,8 +46,9 @@ InputPort::InputPort(BufferFactory&      bufs,
 {
 	const Ingen::Shared::URIs& uris = bufs.uris();
 
-	if (!dynamic_cast<Patch*>(parent))
+	if (parent->graph_type() != GraphObject::PATCH) {
 		add_property(uris.rdf_type, uris.lv2_InputPort);
+	}
 
 	// Set default control range
 	if (type == PortType::CONTROL || type == PortType::CV) {

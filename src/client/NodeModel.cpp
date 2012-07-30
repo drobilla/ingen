@@ -18,7 +18,6 @@
 #include <cmath>
 #include <string>
 
-#include "ingen/Port.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/shared/URIs.hpp"
 #include "ingen/shared/World.hpp"
@@ -29,8 +28,7 @@ namespace Client {
 NodeModel::NodeModel(Shared::URIs&          uris,
                      SharedPtr<PluginModel> plugin,
                      const Raul::Path&      path)
-	: Node()
-	, ObjectModel(uris, path)
+	: ObjectModel(uris, path)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
 	, _num_values(0)
@@ -42,8 +40,7 @@ NodeModel::NodeModel(Shared::URIs&          uris,
 NodeModel::NodeModel(Shared::URIs&     uris,
                      const Raul::URI&  plugin_uri,
                      const Raul::Path& path)
-	: Node()
-	, ObjectModel(uris, path)
+	: ObjectModel(uris, path)
 	, _plugin_uri(plugin_uri)
 	, _num_values(0)
 	, _min_values(0)
@@ -52,8 +49,7 @@ NodeModel::NodeModel(Shared::URIs&     uris,
 }
 
 NodeModel::NodeModel(const NodeModel& copy)
-	: Node(copy)
-	, ObjectModel(copy)
+	: ObjectModel(copy)
 	, _plugin_uri(copy._plugin_uri)
 	, _num_values(copy._num_values)
 	, _min_values((float*)malloc(sizeof(float) * _num_values))
@@ -153,12 +149,12 @@ NodeModel::get_port(const Raul::Symbol& symbol) const
 	return SharedPtr<PortModel>();
 }
 
-Ingen::Port*
+Ingen::GraphObject*
 NodeModel::port(uint32_t index) const
 {
 	assert(index < num_ports());
-	return const_cast<Ingen::Port*>(
-		dynamic_cast<const Ingen::Port*>(_ports[index].get()));
+	return const_cast<Ingen::GraphObject*>(
+		dynamic_cast<const Ingen::GraphObject*>(_ports[index].get()));
 }
 
 void

@@ -17,6 +17,8 @@
 #ifndef INGEN_EDGE_HPP
 #define INGEN_EDGE_HPP
 
+#include "raul/Deletable.hpp"
+
 namespace Raul { class Path; }
 
 namespace Ingen {
@@ -25,11 +27,9 @@ namespace Ingen {
  *
  * @ingroup Ingen
  */
-class Edge
+class Edge : public Raul::Deletable
 {
 public:
-	virtual ~Edge() {}
-
 	virtual const Raul::Path& tail_path() const = 0;
 	virtual const Raul::Path& head_path() const = 0;
 };

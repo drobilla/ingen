@@ -20,7 +20,6 @@
 #include <list>
 #include <string>
 
-#include "ingen/Node.hpp"
 #include "raul/Array.hpp"
 #include "raul/AtomicInt.hpp"
 #include "raul/Semaphore.hpp"
@@ -39,7 +38,6 @@ class Maid;
 namespace Ingen {
 
 class Plugin;
-class Port;
 
 namespace Server {
 
@@ -59,7 +57,7 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class NodeImpl : public GraphObjectImpl, virtual public Node
+class NodeImpl : public GraphObjectImpl
 {
 public:
 	NodeImpl(PluginImpl*         plugin,
@@ -69,6 +67,8 @@ public:
 	         SampleRate          rate);
 
 	virtual ~NodeImpl();
+
+	virtual GraphType graph_type() const { return NODE; }
 
 	/** Activate this Node.
 	 *
@@ -142,8 +142,8 @@ public:
 	                             BufferRef   buf,
 	                             SampleCount offset);
 
-	virtual Port*     port(uint32_t index)      const;
-	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
+	virtual GraphObject* port(uint32_t index)      const;
+	virtual PortImpl*    port_impl(uint32_t index) const { return (*_ports)[index]; }
 
 	/** Nodes that are connected to this Node's inputs. */
 	std::list<NodeImpl*>& providers() { return _providers; }

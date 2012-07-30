@@ -22,9 +22,7 @@
 #include <vector>
 
 #include "raul/SharedPtr.hpp"
-
-#include "ingen/Node.hpp"
-#include "ingen/Port.hpp"
+#include "ingen/GraphObject.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/PluginModel.hpp"
@@ -44,18 +42,19 @@ class ClientStore;
  *
  * @ingroup IngenClient
  */
-class NodeModel : public ObjectModel,
-                  virtual public Ingen::Node
+class NodeModel : public ObjectModel
 {
 public:
 	NodeModel(const NodeModel& copy);
 	virtual ~NodeModel();
 
+	GraphType graph_type() const { return GraphObject::PATCH; }
+
 	typedef std::vector< SharedPtr<const PortModel> > Ports;
 
 	SharedPtr<const PortModel> get_port(const Raul::Symbol& symbol) const;
 
-	Port* port(uint32_t index) const;
+	GraphObject* port(uint32_t index) const;
 
 	const Raul::URI&       plugin_uri()   const { return _plugin_uri; }
 	const Plugin*          plugin()       const { return _plugin.get(); }

@@ -111,7 +111,7 @@ DisconnectAll::pre_process()
 
 	// Find set of edges to remove
 	std::set<EdgeImpl*> to_remove;
-	for (Patch::Edges::const_iterator i = _parent->edges().begin();
+	for (GraphObject::Edges::const_iterator i = _parent->edges().begin();
 	     i != _parent->edges().end(); ++i) {
 		EdgeImpl* const c = (EdgeImpl*)i->second.get();
 		if (_node) {

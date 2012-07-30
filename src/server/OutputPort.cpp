@@ -14,14 +14,13 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/Patch.hpp"
+#include "ingen/shared/URIs.hpp"
 
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
-#include "ingen/shared/URIs.hpp"
 
 using namespace std;
 
@@ -39,8 +38,9 @@ OutputPort::OutputPort(BufferFactory&      bufs,
                        size_t              buffer_size)
 	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
 {
-	if (!dynamic_cast<Patch*>(parent))
+	if (parent->graph_type() != GraphObject::PATCH) {
 		add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort);
+	}
 
 	_broadcast = true;
 

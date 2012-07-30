@@ -17,9 +17,9 @@
 #ifndef INGEN_ENGINE_CONTEXT_HPP
 #define INGEN_ENGINE_CONTEXT_HPP
 
-#include "raul/RingBuffer.hpp"
-
 #include "ingen/shared/World.hpp"
+#include "raul/Atom.hpp"
+#include "raul/RingBuffer.hpp"
 
 #include "types.hpp"
 

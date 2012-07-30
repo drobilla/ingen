@@ -31,9 +31,6 @@ namespace Ingen {
 
 class Plugin;
 class GraphObject;
-class Patch;
-class Node;
-class Port;
 class Edge;
 
 namespace Shared {
@@ -59,8 +56,8 @@ public:
 	virtual void to_file(SharedPtr<const GraphObject> object,
 	                     const std::string&           filename);
 
-	virtual void write_bundle(SharedPtr<const Patch> patch,
-	                          const std::string&     path);
+	virtual void write_bundle(SharedPtr<const GraphObject> patch,
+	                          const std::string&           path);
 
 	virtual std::string to_string(SharedPtr<const GraphObject> object,
 	                              const std::string&           base_uri);

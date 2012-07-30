@@ -46,7 +46,7 @@ struct ResizeFeature : public Ingen::Shared::LV2Features::Feature {
 		free(feature);
 	}
 
-	SharedPtr<LV2_Feature> feature(Shared::World* w, Node* n) {
+	SharedPtr<LV2_Feature> feature(Shared::World* w, GraphObject* n) {
 		NodeImpl* node = dynamic_cast<NodeImpl*>(n);
 		if (!node)
 			return SharedPtr<LV2_Feature>();

@@ -21,7 +21,6 @@
 #include <list>
 #include <string>
 
-#include "ingen/Patch.hpp"
 #include "raul/List.hpp"
 
 #include "CompiledPatch.hpp"
@@ -50,7 +49,7 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class PatchImpl : public NodeImpl, public Patch
+class PatchImpl : public NodeImpl
 {
 public:
 	PatchImpl(Engine&             engine,
@@ -61,6 +60,8 @@ public:
 	          uint32_t            local_poly);
 
 	virtual ~PatchImpl();
+
+	virtual GraphType graph_type() const { return PATCH; }
 
 	void activate(BufferFactory& bufs);
 	void deactivate();
@@ -100,11 +101,8 @@ public:
 	void         add_node(Nodes::Node* tn);
 	Nodes::Node* remove_node(const Raul::Symbol& symbol);
 
-	Nodes& nodes() { return _nodes; }
-	Edges& edges() { return _edges; }
-
+	Nodes&       nodes()       { return _nodes; }
 	const Nodes& nodes() const { return _nodes; }
-	const Edges& edges() const { return _edges; }
 
 	uint32_t num_ports_non_rt() const;
 
@@ -165,7 +163,6 @@ private:
 	uint32_t       _poly_pre;        ///< Pre-process thread only
 	uint32_t       _poly_process;    ///< Process thread only
 	CompiledPatch* _compiled_patch;  ///< Process thread only
-	Edges          _edges;           ///< Pre-process thread only
 	Ports          _inputs;          ///< Pre-process thread only
 	Ports          _outputs;         ///< Pre-process thread only
 	Nodes          _nodes;           ///< Pre-process thread only

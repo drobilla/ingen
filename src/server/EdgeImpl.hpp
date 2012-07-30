@@ -52,8 +52,7 @@ class BufferFactory;
  * \ingroup engine
  */
 class EdgeImpl
-		: public  Raul::Deletable
-		, private Raul::Noncopyable
+		: private Raul::Noncopyable
 		, public  Edge
 		, public  boost::intrusive::slist_base_hook<
 	boost::intrusive::link_mode<boost::intrusive::auto_unlink> >

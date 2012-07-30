@@ -17,8 +17,7 @@
 #include <sstream>
 #include <string>
 
-#include "ingen/Node.hpp"
-#include "ingen/Port.hpp"
+#include "ingen/GraphObject.hpp"
 #include "ingen/shared/Store.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
@@ -39,11 +38,8 @@ Store::add(GraphObject* o)
 
 	insert(make_pair(o->path(), o));
 
-	Node* node = dynamic_cast<Node*>(o);
-	if (node) {
-		for (uint32_t i=0; i < node->num_ports(); ++i) {
-			add(node->port(i));
-		}
+	for (uint32_t i = 0; i < o->num_ports(); ++i) {
+		add(o->port(i));
 	}
 }
 

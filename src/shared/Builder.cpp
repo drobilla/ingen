@@ -15,6 +15,7 @@
 */
 
 #include "ingen/Edge.hpp"
+#include "ingen/GraphObject.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/shared/Builder.hpp"
 #include "ingen/shared/URIs.hpp"
@@ -41,10 +42,9 @@ Builder::build(SharedPtr<const GraphObject> object)
 void
 Builder::connect(SharedPtr<const GraphObject> object)
 {
-	SharedPtr<const Patch> patch = PtrCast<const Patch>(object);
-	if (patch) {
-		for (Patch::Edges::const_iterator i = patch->edges().begin();
-		     i != patch->edges().end(); ++i) {
+	if (object->graph_type() == GraphObject::PATCH) {
+		for (GraphObject::Edges::const_iterator i = object->edges().begin();
+		     i != object->edges().end(); ++i) {
 			_interface.connect(i->second->tail_path(), i->second->head_path());
 		}
 		return;
