@@ -124,10 +124,10 @@ def configure(conf):
     autowaf.display_msg(conf, "Jack", conf.is_defined('HAVE_JACK'))
     autowaf.display_msg(conf, "Jack session support",
                         conf.is_defined('INGEN_JACK_SESSION'))
-    autowaf.display_msg(conf, "SOCKET", conf.is_defined('HAVE_SOCKET'))
+    autowaf.display_msg(conf, "Socket interface", conf.is_defined('HAVE_SOCKET'))
     autowaf.display_msg(conf, "LV2", conf.is_defined('HAVE_LILV'))
     autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
-    autowaf.display_msg(conf, "LV2 Bundle", conf.env['INGEN_BUNDLE_DIR'])
+    autowaf.display_msg(conf, "LV2 bundle", conf.env['INGEN_BUNDLE_DIR'])
     autowaf.display_msg(conf, "HTML plugin documentation support",
                         conf.is_defined('HAVE_WEBKIT'))
     print('')
