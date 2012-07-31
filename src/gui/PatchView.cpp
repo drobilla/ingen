@@ -184,8 +184,6 @@ void
 PatchView::refresh_clicked()
 {
 	_app->interface()->get(_patch->path());
-	Raul::warn("Refreshing plugins\n");
-	_app->interface()->get("ingen:plugins");
 }
 
 void

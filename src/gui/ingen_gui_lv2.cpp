@@ -128,6 +128,9 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		                      ui->world->forge(),
 		                      *ui->client.get()));
 
+	// Request plugins
+	ui->world->interface()->get("ingen:plugins");
+
 	// Create empty root patch model
 	Ingen::Resource::Properties props;
 	props.insert(std::make_pair(ui->app->uris().rdf_type,
@@ -140,6 +143,9 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->view = Ingen::GUI::PatchBox::create(*ui->app, root);
 	ui->view->unparent();
 	*widget = ui->view->gobj();
+
+	// Request the actual root patch
+	ui->world->interface()->get("path:/");
 
 	return ui;
 }
