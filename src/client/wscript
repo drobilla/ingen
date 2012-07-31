@@ -8,7 +8,7 @@ def build(bld):
               name            = 'libingen_client',
               target          = 'ingen_client',
               install_path    = '${LIBDIR}',
-              use             = 'libingen_shared')
+              use             = 'libingen')
     autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV SUIL RAUL SORD SIGCPP')
 
     obj.source = '''

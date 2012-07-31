@@ -17,8 +17,8 @@
 #include <cassert>
 #include <string>
 
-#include "ingen/shared/URIs.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "raul/log.hpp"
 
 #include "EdgeImpl.hpp"

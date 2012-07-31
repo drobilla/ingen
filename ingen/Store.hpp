@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_STORE_HPP
-#define INGEN_SHARED_STORE_HPP
+#ifndef INGEN_STORE_HPP
+#define INGEN_STORE_HPP
 
 #include <string>
 
@@ -27,7 +27,6 @@
 #include "ingen/GraphObject.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 /** Store of objects in the patch hierarchy.
  * @ingroup IngenShared
@@ -56,7 +55,6 @@ private:
 	Glib::RWLock _lock;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_STORE_HPP
+#endif // INGEN_STORE_HPP

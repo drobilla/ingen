@@ -16,14 +16,13 @@
 
 #include <utility>
 
-#include "ingen/shared/AtomReader.hpp"
-#include "ingen/shared/URIMap.hpp"
+#include "ingen/AtomReader.hpp"
+#include "ingen/URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Path.hpp"
 #include "raul/log.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 AtomReader::AtomReader(URIMap& map, URIs& uris, Forge& forge, Interface& iface)
 	: _map(map)
@@ -272,5 +271,4 @@ AtomReader::write(const LV2_Atom* msg)
 	return true;
 }
 
-} // namespace Shared
 } // namespace Ingen

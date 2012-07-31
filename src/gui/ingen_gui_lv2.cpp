@@ -17,11 +17,11 @@
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
-#include "ingen/shared/AtomReader.hpp"
-#include "ingen/shared/AtomSink.hpp"
-#include "ingen/shared/AtomWriter.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/AtomReader.hpp"
+#include "ingen/AtomSink.hpp"
+#include "ingen/AtomWriter.hpp"
+#include "ingen/World.hpp"
+#include "ingen/runtime_paths.hpp"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 #include "App.hpp"
@@ -30,8 +30,8 @@
 #define INGEN_LV2_UI_URI "http://drobilla.net/ns/ingen#PatchUIGtk2"
 
 /** A sink that writes atoms to a port via the UI extension. */
-struct IngenLV2AtomSink : public Ingen::Shared::AtomSink {
-	IngenLV2AtomSink(Ingen::Shared::URIs& uris,
+struct IngenLV2AtomSink : public Ingen::AtomSink {
+	IngenLV2AtomSink(Ingen::URIs&         uris,
 	                 LV2UI_Write_Function ui_write,
 	                 LV2UI_Controller     ui_controller)
 		: _uris(uris)
@@ -48,7 +48,7 @@ struct IngenLV2AtomSink : public Ingen::Shared::AtomSink {
 		return true;
 	}
 
-	Ingen::Shared::URIs& _uris;
+	Ingen::URIs&         _uris;
 	LV2UI_Write_Function _ui_write;
 	LV2UI_Controller     _ui_controller;
 };
@@ -64,13 +64,13 @@ struct IngenLV2UI {
 
 	int                                          argc;
 	char**                                       argv;
-	Ingen::Shared::Forge*                        forge;
-	Ingen::Shared::World*                        world;
+	Ingen::Forge*                                forge;
+	Ingen::World*                                world;
 	IngenLV2AtomSink*                            sink;
 	SharedPtr<Ingen::GUI::App>                   app;
 	SharedPtr<Ingen::GUI::PatchBox>              view;
 	SharedPtr<Ingen::Interface>                  engine;
-	SharedPtr<Ingen::Shared::AtomReader>         reader;
+	SharedPtr<Ingen::AtomReader>                 reader;
 	SharedPtr<Ingen::Client::SigClientInterface> client;
 };
 
@@ -83,7 +83,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
             LV2UI_Widget*             widget,
             const LV2_Feature* const* features)
 {
-	Ingen::Shared::set_bundle_path(bundle_path);
+	Ingen::set_bundle_path(bundle_path);
 
 	IngenLV2UI* ui = new IngenLV2UI();
 
@@ -97,10 +97,9 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		}
 	}
 
-	ui->world = new Ingen::Shared::World(
-		ui->argc, ui->argv, map, unmap);
+	ui->world = new Ingen::World(ui->argc, ui->argv, map, unmap);
 
-	ui->forge = new Ingen::Shared::Forge(ui->world->uri_map());
+	ui->forge = new Ingen::Forge(ui->world->uri_map());
 
 	if (!ui->world->load_module("client")) {
 		delete ui;
@@ -112,7 +111,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	// Set up an engine interface that writes LV2 atoms
 	ui->engine = SharedPtr<Ingen::Interface>(
-		new Ingen::Shared::AtomWriter(
+		new Ingen::AtomWriter(
 			ui->world->uri_map(), ui->world->uris(), *ui->sink));
 
 	ui->world->set_interface(ui->engine);
@@ -123,11 +122,11 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		new Ingen::Client::SigClientInterface());
 	ui->app->attach(ui->client);
 
-	ui->reader = SharedPtr<Ingen::Shared::AtomReader>(
-		new Ingen::Shared::AtomReader(ui->world->uri_map(),
-		                              ui->world->uris(),
-		                              ui->world->forge(),
-		                              *ui->client.get()));
+	ui->reader = SharedPtr<Ingen::AtomReader>(
+		new Ingen::AtomReader(ui->world->uri_map(),
+		                      ui->world->uris(),
+		                      ui->world->forge(),
+		                      *ui->client.get()));
 
 	// Create empty root patch model
 	Ingen::Resource::Properties props;

@@ -18,9 +18,9 @@
 #include <poll.h>
 
 #include "ingen/Interface.hpp"
-#include "ingen/shared/AtomReader.hpp"
-#include "ingen/shared/URIMap.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/AtomReader.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/World.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
@@ -31,9 +31,9 @@
 namespace Ingen {
 namespace Socket {
 
-SocketReader::SocketReader(Ingen::Shared::World& world,
-                           Interface&            iface,
-                           SharedPtr<Socket>     sock)
+SocketReader::SocketReader(Ingen::World&     world,
+                           Interface&        iface,
+                           SharedPtr<Socket> sock)
 	: Raul::Thread("SocketReader")
 	, _world(world)
 	, _iface(iface)
@@ -132,8 +132,7 @@ SocketReader::_run()
 	serd_reader_start_stream(reader, f, (const uint8_t*)"(socket)", false);
 
 	// Make an AtomReader to call Ingen Interface methods based on Atom
-	Shared::AtomReader ar(
-		_world.uri_map(), _world.uris(), _world.forge(), _iface);
+	AtomReader ar(_world.uri_map(), _world.uris(), _world.forge(), _iface);
 
 	struct pollfd pfd;
 	pfd.fd      = _socket->fd();

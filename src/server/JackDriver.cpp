@@ -26,9 +26,9 @@
 #include "ingen/serialisation/Serialiser.hpp"
 #endif
 
-#include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/LV2Features.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/LV2Features.hpp"
+#include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/List.hpp"
 #include "raul/log.hpp"
@@ -262,7 +262,7 @@ JackDriver::attach(const std::string& server_name,
 void
 JackDriver::activate()
 {
-	Shared::World* world = _engine.world();
+	World* world = _engine.world();
 
 	if (_is_activated) {
 		LOG(Raul::warn)("Jack driver already activated\n");

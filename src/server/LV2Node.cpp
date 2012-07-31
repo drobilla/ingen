@@ -27,8 +27,8 @@
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
 
-#include "ingen/shared/URIMap.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
 
 #include "AudioBuffer.hpp"
 #include "Driver.hpp"
@@ -69,10 +69,10 @@ LV2Node::~LV2Node()
 }
 
 SharedPtr<LilvInstance>
-LV2Node::make_instance(Shared::URIs& uris,
-                       SampleRate    rate,
-                       uint32_t      voice,
-                       bool          preparing)
+LV2Node::make_instance(URIs&      uris,
+                       SampleRate rate,
+                       uint32_t   voice,
+                       bool       preparing)
 {
 	LilvInstance* inst = lilv_plugin_instantiate(
 		_lv2_plugin->lilv_plugin(), rate, _features->array());
@@ -192,11 +192,11 @@ LV2Node::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 bool
 LV2Node::instantiate(BufferFactory& bufs)
 {
-	const Ingen::Shared::URIs& uris      = bufs.uris();
-	SharedPtr<LV2Info>         info      = _lv2_plugin->lv2_info();
-	const LilvPlugin*          plug      = _lv2_plugin->lilv_plugin();
-	Ingen::Shared::Forge&      forge     = bufs.forge();
-	const uint32_t             num_ports = lilv_plugin_get_num_ports(plug);
+	const Ingen::URIs& uris      = bufs.uris();
+	SharedPtr<LV2Info> info      = _lv2_plugin->lv2_info();
+	const LilvPlugin*  plug      = _lv2_plugin->lilv_plugin();
+	Ingen::Forge&      forge     = bufs.forge();
+	const uint32_t     num_ports = lilv_plugin_get_num_ports(plug);
 
 	_ports = new Raul::Array<PortImpl*>(num_ports, NULL);
 

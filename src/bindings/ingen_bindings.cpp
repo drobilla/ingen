@@ -18,10 +18,10 @@
 #include "raul/log.hpp"
 #include "ingen_bindings.hpp"
 #include "server/Engine.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/World.hpp"
 
 bool
-run(Ingen::Shared::World* world, const char* filename)
+run(Ingen::World* world, const char* filename)
 {
 	ingen_world = world;
 
@@ -38,22 +38,22 @@ run(Ingen::Shared::World* world, const char* filename)
 	}
 }
 
-struct IngenBindingsModule : public Ingen::Shared::Module {
-	void load(Ingen::Shared::World* world) {
+struct IngenBindingsModule : public Ingen::Module {
+	void load(Ingen::World* world) {
 		world->script_runners.insert(make_pair("application/x-python", &run));
 	}
 };
 
 extern "C" {
 
-Ingen::Shared::Module*
+Ingen::Module*
 ingen_module_load()
 {
 	return new IngenBindingsModule();
 }
 
 void
-script_iteration(Ingen::Shared::World* world)
+script_iteration(Ingen::World* world)
 {
 	if (world->engine())
 		world->engine()->main_iteration();

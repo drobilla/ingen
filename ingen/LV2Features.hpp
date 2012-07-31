@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_LV2FEATURES_HPP
-#define INGEN_SHARED_LV2FEATURES_HPP
+#ifndef INGEN_LV2FEATURES_HPP
+#define INGEN_LV2FEATURES_HPP
 
 #include <vector>
 
@@ -27,9 +27,6 @@
 namespace Ingen {
 
 class GraphObject;
-
-namespace Shared {
-
 class World;
 
 /** Features for use by LV2 plugins.
@@ -43,8 +40,8 @@ public:
 	public:
 		virtual ~Feature() {}
 
-		virtual SharedPtr<LV2_Feature> feature(Shared::World* world,
-		                                       GraphObject*   node) = 0;
+		virtual SharedPtr<LV2_Feature> feature(World*       world,
+		                                       GraphObject* node) = 0;
 	};
 
 	class FeatureArray : public Raul::Noncopyable {
@@ -64,15 +61,14 @@ public:
 
 	void add_feature(SharedPtr<Feature> feature);
 
-	SharedPtr<FeatureArray> lv2_features(Shared::World* world,
-	                                     GraphObject*   node) const;
+	SharedPtr<FeatureArray> lv2_features(World*       world,
+	                                     GraphObject* node) const;
 
 private:
 	typedef std::vector< SharedPtr<Feature> > Features;
 	Features _features;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_LV2FEATURES_HPP
+#endif // INGEN_LV2FEATURES_HPP

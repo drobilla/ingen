@@ -14,16 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Module.hpp"
+#include "ingen/World.hpp"
 
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
 
 using namespace Ingen;
 
-struct IngenSerialisationModule : public Ingen::Shared::Module {
-	virtual void load(Ingen::Shared::World* world) {
+struct IngenSerialisationModule : public Ingen::Module {
+	virtual void load(Ingen::World* world) {
 		world->set_parser(SharedPtr<Serialisation::Parser>(
 				new Serialisation::Parser()));
 		world->set_serialiser(SharedPtr<Serialisation::Serialiser>(
@@ -33,7 +33,7 @@ struct IngenSerialisationModule : public Ingen::Shared::Module {
 
 extern "C" {
 
-Ingen::Shared::Module*
+Ingen::Module*
 ingen_module_load() {
 	return new IngenSerialisationModule();
 }

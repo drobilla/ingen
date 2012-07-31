@@ -19,7 +19,7 @@
 #include <cmath>
 #include <string>
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/log.hpp"
@@ -49,7 +49,7 @@ namespace Internals {
 
 static const float MAX_DELAY_SECONDS = 8.0f;
 
-InternalPlugin* DelayNode::internal_plugin(Shared::URIs& uris) {
+InternalPlugin* DelayNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Delay", "delay");
 }
 
@@ -65,7 +65,7 @@ DelayNode::DelayNode(InternalPlugin*    plugin,
 	, _buffer_mask(0)
 	, _write_phase(0)
 {
-	const Ingen::Shared::URIs& uris = bufs.uris();
+	const Ingen::URIs& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(3);
 
 	const float default_delay = 1.0f;

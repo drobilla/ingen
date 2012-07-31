@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
@@ -58,7 +58,7 @@ CreatePatch::pre_process()
 		return Event::pre_process_done(PARENT_NOT_FOUND, path.parent());
 	}
 
-	const Ingen::Shared::URIs& uris = _engine.world()->uris();
+	const Ingen::URIs& uris = _engine.world()->uris();
 
 	typedef Resource::Properties::const_iterator iterator;
 

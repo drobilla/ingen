@@ -22,7 +22,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
-#include "ingen/shared/World.hpp"
+#include "ingen/World.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -39,7 +39,7 @@ class LV2Info;
 class NodeFactory
 {
 public:
-	explicit NodeFactory(Ingen::Shared::World* world);
+	explicit NodeFactory(Ingen::World* world);
 	~NodeFactory();
 
 	void load_plugin(const Raul::URI& uri);
@@ -54,10 +54,10 @@ private:
 	void load_lv2_plugins();
 	void load_internal_plugins();
 
-	Plugins               _plugins;
-	Ingen::Shared::World* _world;
-	SharedPtr<LV2Info>    _lv2_info;
-	bool                  _has_loaded;
+	Plugins            _plugins;
+	Ingen::World*      _world;
+	SharedPtr<LV2Info> _lv2_info;
+	bool               _has_loaded;
 };
 
 } // namespace Server

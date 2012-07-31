@@ -42,12 +42,12 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
-#include "ingen/shared/AtomReader.hpp"
-#include "ingen/shared/AtomWriter.hpp"
-#include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/URIMap.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/AtomReader.hpp"
+#include "ingen/AtomWriter.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/World.hpp"
+#include "ingen/runtime_paths.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
@@ -56,10 +56,10 @@
 using namespace std;
 using namespace Ingen;
 
-Shared::World* world = NULL;
+World* world = NULL;
 
 /*
-class TestClient : public Shared::AtomSink {
+class TestClient : public AtomSink {
 	void write(const LV2_Atom* msg) {
 	}
 };
@@ -135,7 +135,7 @@ int
 main(int argc, char** argv)
 {
 	Glib::thread_init();
-	Shared::set_bundle_path_from_code((void*)&main);
+	set_bundle_path_from_code((void*)&main);
 
 	if (argc != 3) {
 		cerr << "Usage: ingen_test START_PATCH COMMANDS_FILE" << endl;
@@ -144,7 +144,7 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = new Shared::World(argc, argv, NULL, NULL);
+		world = new World(argc, argv, NULL, NULL);
 	} catch (std::exception& e) {
 		cout << "ingen: " << e.what() << endl;
 		return EXIT_FAILURE;
@@ -186,14 +186,14 @@ main(int argc, char** argv)
 	const std::string cmds_file_path = argv[2];
 
 	// AtomReader to read commands from a file and send them to engine
-	Shared::AtomReader atom_reader(
+	AtomReader atom_reader(
 		world->uri_map(), world->uris(), world->forge(), *world->interface().get());
 
 	// AtomWriter to serialise responses from the engine
 	/*
 	TestClient client;
-	SharedPtr<Shared::AtomWriter> atom_writer(
-		new Shared::AtomWriter(world->uri_map(), world->uris(), client));
+	SharedPtr<AtomWriter> atom_writer(
+		new AtomWriter(world->uri_map(), world->uris(), client));
 	*/
 	SharedPtr<Interface> client(new TestClient());
 

@@ -32,8 +32,6 @@
 namespace Ingen {
 namespace Server {
 
-class GraphObjectImpl;
-
 /** Broadcaster for all clients.
  *
  * This is an Interface that forwards all messages to all registered

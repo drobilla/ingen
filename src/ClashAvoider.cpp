@@ -21,13 +21,12 @@
 
 #include "raul/log.hpp"
 
-#include "ingen/shared/ClashAvoider.hpp"
-#include "ingen/shared/Store.hpp"
+#include "ingen/ClashAvoider.hpp"
+#include "ingen/Store.hpp"
 
 using namespace std;
 
 namespace Ingen {
-namespace Shared {
 
 const Raul::URI
 ClashAvoider::map_uri(const Raul::URI& in)
@@ -202,5 +201,4 @@ ClashAvoider::del(const Raul::URI& uri)
 		_target.del(map_path(Raul::Path(uri.str())));
 }
 
-} // namespace Shared
 } // namespace Ingen

@@ -18,7 +18,7 @@
 
 #include <string>
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "internals/Controller.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/midi_events.h"
@@ -38,7 +38,7 @@ namespace Ingen {
 namespace Server {
 namespace Internals {
 
-InternalPlugin* ControllerNode::internal_plugin(Shared::URIs& uris) {
+InternalPlugin* ControllerNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Controller", "controller");
 }
 
@@ -51,7 +51,7 @@ ControllerNode::ControllerNode(InternalPlugin* plugin,
 	: NodeImpl(plugin, path, false, parent, srate)
 	, _learning(false)
 {
-	const Ingen::Shared::URIs& uris = bufs.uris();
+	const Ingen::URIs& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(6);
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1,

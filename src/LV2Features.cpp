@@ -16,12 +16,11 @@
 
 #include <cstdlib>
 
-#include "ingen/shared/LV2Features.hpp"
+#include "ingen/LV2Features.hpp"
 
 using namespace std;
 
 namespace Ingen {
-namespace Shared {
 
 LV2Features::LV2Features()
 {
@@ -49,7 +48,7 @@ LV2Features::FeatureArray::~FeatureArray()
 }
 
 SharedPtr<LV2Features::FeatureArray>
-LV2Features::lv2_features(Shared::World* world, GraphObject* node) const
+LV2Features::lv2_features(World* world, GraphObject* node) const
 {
 	FeatureArray::FeatureVector vec;
 	for (Features::const_iterator f = _features.begin(); f != _features.end(); ++f) {
@@ -61,5 +60,4 @@ LV2Features::lv2_features(Shared::World* world, GraphObject* node) const
 	return SharedPtr<FeatureArray>(new FeatureArray(vec));
 }
 
-} // namespace Shared
 } // namespace Ingen

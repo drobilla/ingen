@@ -14,16 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_ATOMREADER_HPP
-#define INGEN_SHARED_ATOMREADER_HPP
+#ifndef INGEN_ATOMREADER_HPP
+#define INGEN_ATOMREADER_HPP
 
 #include "ingen/Interface.hpp"
-#include "ingen/shared/AtomSink.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/AtomSink.hpp"
+#include "ingen/URIs.hpp"
 #include "serd/serd.h"
 
 namespace Ingen {
-namespace Shared {
 
 class AtomSink;
 class Forge;
@@ -55,8 +54,7 @@ private:
 	Interface& _iface;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_ATOMREADER_HPP
+#endif // INGEN_ATOMREADER_HPP
 

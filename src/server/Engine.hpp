@@ -30,7 +30,7 @@ namespace Raul { class Maid; }
 
 namespace Ingen {
 
-namespace Shared { class World; }
+class World;
 
 namespace Server {
 
@@ -54,14 +54,14 @@ class Worker;
 
    This is a simple class that provides pointers to the various components
    that make up the engine implementation.  In processes with a local engine,
-   it can be accessed via the Ingen::Shared::World.
+   it can be accessed via the Ingen::World.
 
    @ingroup engine
 */
 class Engine : public boost::noncopyable, public EngineBase
 {
 public:
-	explicit Engine(Ingen::Shared::World* world);
+	explicit Engine(Ingen::World* world);
 
 	virtual ~Engine();
 
@@ -91,7 +91,7 @@ public:
 		return &context == &_process_context;
 	}
 
-	Ingen::Shared::World* world() const { return _world; }
+	Ingen::World* world() const { return _world; }
 
 	EventWriter*     interface()        const { return _event_writer; }
 	Broadcaster*     broadcaster()      const { return _broadcaster; }
@@ -112,7 +112,7 @@ public:
 	size_t event_queue_size() const;
 
 private:
-	Ingen::Shared::World* _world;
+	Ingen::World* _world;
 
 	Broadcaster*      _broadcaster;
 	BufferFactory*    _buffer_factory;

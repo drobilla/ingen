@@ -23,13 +23,12 @@
 
 #include "suil/suil.h"
 
-#include "ingen/shared/LV2Features.hpp"
+#include "ingen/LV2Features.hpp"
 
 namespace Ingen {
 
 class Interface;
-
-namespace Shared { class World; }
+class World;
 
 namespace Client {
 
@@ -43,7 +42,7 @@ class PluginUI {
 public:
 	~PluginUI();
 
-	static SharedPtr<PluginUI> create(Ingen::Shared::World*      world,
+	static SharedPtr<PluginUI> create(Ingen::World*              world,
 	                                  SharedPtr<const NodeModel> node,
 	                                  const LilvPlugin*          plugin);
 
@@ -56,22 +55,22 @@ public:
 
 	bool is_resizable() const;
 
-	Ingen::Shared::World*       world() const { return _world; }
-	SharedPtr<const NodeModel>  node()  const { return _node; }
+	Ingen::World*              world() const { return _world; }
+	SharedPtr<const NodeModel> node()  const { return _node; }
 
 private:
-	PluginUI(Ingen::Shared::World*      world,
+	PluginUI(Ingen::World*              world,
 	         SharedPtr<const NodeModel> node,
 	         const LilvNode*            ui_node);
 
-	Ingen::Shared::World*      _world;
+	Ingen::World*              _world;
 	SharedPtr<const NodeModel> _node;
 	SuilInstance*              _instance;
 	LilvNode*                  _ui_node;
 
 	static SuilHost* ui_host;
 
-	SharedPtr<Shared::LV2Features::FeatureArray> _features;
+	SharedPtr<LV2Features::FeatureArray> _features;
 };
 
 } // namespace Client

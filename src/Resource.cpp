@@ -17,7 +17,7 @@
 #include <utility>
 
 #include "ingen/Resource.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/Atom.hpp"
 #include "raul/log.hpp"
 
@@ -108,12 +108,12 @@ Resource::get_property(const Raul::URI& uri) const
 }
 
 bool
-Resource::type(const Shared::URIs& uris,
-               const Properties&   properties,
-               bool&               patch,
-               bool&               node,
-               bool&               port,
-               bool&               is_output)
+Resource::type(const URIs&       uris,
+               const Properties& properties,
+               bool&             patch,
+               bool&             node,
+               bool&             port,
+               bool&             is_output)
 {
 	typedef Resource::Properties::const_iterator iterator;
 	const std::pair<iterator, iterator> types_range = properties.equal_range(uris.rdf_type);

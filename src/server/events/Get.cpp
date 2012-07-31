@@ -134,7 +134,7 @@ Get::post_process()
 			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);
 		} else if (_uri == "ingen:engine") {
 			// TODO: Keep a proper RDF model of the engine
-			Shared::URIs& uris = _engine.world()->uris();
+			URIs& uris = _engine.world()->uris();
 			_request_client->set_property(
 				uris.ingen_engine,
 				uris.ingen_sampleRate,

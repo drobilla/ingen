@@ -14,16 +14,16 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Module.hpp"
+#include "ingen/World.hpp"
 #include "Engine.hpp"
 #include "EventWriter.hpp"
 #include "util.hpp"
 
 using namespace Ingen;
 
-struct IngenEngineModule : public Ingen::Shared::Module {
-	virtual void load(Ingen::Shared::World* world) {
+struct IngenEngineModule : public Ingen::Module {
+	virtual void load(Ingen::World* world) {
 		Server::set_denormal_flags();
 		SharedPtr<Server::Engine> engine(new Server::Engine(world));
 		world->set_engine(engine);
@@ -36,7 +36,7 @@ struct IngenEngineModule : public Ingen::Shared::Module {
 
 extern "C" {
 
-Ingen::Shared::Module*
+Ingen::Module*
 ingen_module_load()
 {
 	return new IngenEngineModule();

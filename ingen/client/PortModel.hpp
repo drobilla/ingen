@@ -89,7 +89,7 @@ public:
 private:
 	friend class ClientStore;
 
-	PortModel(Shared::URIs&     uris,
+	PortModel(URIs&             uris,
 	          const Raul::Path& path,
 	          uint32_t          index,
 	          Direction         dir)

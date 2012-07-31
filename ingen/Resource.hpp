@@ -20,12 +20,11 @@
 #include <map>
 #include <string>
 
+#include "ingen/URIs.hpp"
 #include "raul/Atom.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/URI.hpp"
 #include "raul/log.hpp"
-
-#include "ingen/shared/URIs.hpp"
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
 
@@ -37,7 +36,7 @@ namespace Ingen {
 class Resource : public Raul::Deletable
 {
 public:
-	Resource(Shared::URIs& uris, const Raul::URI& uri)
+	Resource(URIs& uris, const Raul::URI& uri)
 		: _uris(uris)
 		, _uri(uri)
 	{}
@@ -94,7 +93,7 @@ public:
 
 	virtual ~Resource() {}
 
-	Shared::URIs& uris() const { return _uris; }
+	URIs& uris() const { return _uris; }
 
 	virtual void             set_uri(const Raul::URI& uri) { _uri = uri; }
 	virtual const Raul::URI& uri()  const { return _uri; }
@@ -137,17 +136,17 @@ public:
 	 * If some coherent ingen type is found, true is returned and the appropriate
 	 * output parameter set to true.  Otherwise false is returned.
 	 */
-	static bool type(const Shared::URIs& uris,
-	                 const Properties&   properties,
-	                 bool&               patch,
-	                 bool&               node,
-	                 bool&               port,
-	                 bool&               is_output);
+	static bool type(const URIs&       uris,
+	                 const Properties& properties,
+	                 bool&             patch,
+	                 bool&             node,
+	                 bool&             port,
+	                 bool&             is_output);
 
 protected:
 	const Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;
 
-	Shared::URIs& _uris;
+	URIs& _uris;
 
 private:
 	Raul::URI          _uri;

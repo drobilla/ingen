@@ -26,14 +26,13 @@
 
 #include "raul/log.hpp"
 
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/runtime_paths.hpp"
 
 #include "ingen_config.h"
 
 using namespace std;
 
 namespace Ingen {
-namespace Shared {
 
 static std::string bundle_path;
 
@@ -112,5 +111,4 @@ module_path(const std::string& name, std::string dir)
 }
 
 } // namespace Ingen
-} // namespace Shared
 

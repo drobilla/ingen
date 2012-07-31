@@ -31,7 +31,7 @@ namespace Raul { class Path; }
 
 namespace Ingen {
 
-namespace Shared { class URIs; }
+class URIs;
 
 namespace Client {
 
@@ -79,10 +79,10 @@ public:
 protected:
 	friend class ClientStore;
 
-	NodeModel(Shared::URIs&          uris,
-	          const Raul::URI&       plugin_uri,
-	          const Raul::Path&      path);
-	NodeModel(Shared::URIs&          uris,
+	NodeModel(URIs&             uris,
+	          const Raul::URI&  plugin_uri,
+	          const Raul::Path& path);
+	NodeModel(URIs&                  uris,
 	          SharedPtr<PluginModel> plugin,
 	          const Raul::Path&      path);
 	explicit NodeModel(const Raul::Path& path);

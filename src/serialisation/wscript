@@ -11,7 +11,7 @@ def build(bld):
               name            = 'libingen_serialisation',
               target          = 'ingen_serialisation',
               install_path    = '${LIBDIR}',
-              use             = 'libingen_shared')
+              use             = 'libingen')
     autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SORD SRATOM')
 
     if bld.env['BUILD_TESTS']:
@@ -24,7 +24,7 @@ def build(bld):
                   name            = 'libingen_serialisation_profiled',
                   target          = 'ingen_serialisation_profiled',
                   install_path    = '',
-                  use             = 'libingen_shared_profiled',
+                  use             = 'libingen_profiled',
                   lib             = bld.env['INGEN_TEST_LIBS'],
                   cxxflags        = bld.env['INGEN_TEST_CXXFLAGS'])
         autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SORD SRATOM')

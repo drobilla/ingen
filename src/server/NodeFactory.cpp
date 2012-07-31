@@ -24,7 +24,7 @@
 #include "internals/Delay.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/World.hpp"
 
 #include "InternalPlugin.hpp"
 #include "LV2Plugin.hpp"
@@ -38,7 +38,7 @@ namespace Server {
 
 using namespace Internals;
 
-NodeFactory::NodeFactory(Ingen::Shared::World* world)
+NodeFactory::NodeFactory(Ingen::World* world)
 	: _world(world)
 	, _lv2_info(new LV2Info(world))
 	, _has_loaded(false)
@@ -91,7 +91,7 @@ NodeFactory::load_plugins()
 void
 NodeFactory::load_internal_plugins()
 {
-	Ingen::Shared::URIs& uris = _world->uris();
+	Ingen::URIs& uris = _world->uris();
 	InternalPlugin* controller_plug = ControllerNode::internal_plugin(uris);
 	_plugins.insert(make_pair(controller_plug->uri(), controller_plug));
 

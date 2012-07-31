@@ -33,11 +33,11 @@
 #include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
-#include "ingen/shared/AtomReader.hpp"
-#include "ingen/shared/AtomWriter.hpp"
-#include "ingen/shared/Store.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/AtomReader.hpp"
+#include "ingen/AtomWriter.hpp"
+#include "ingen/Store.hpp"
+#include "ingen/World.hpp"
+#include "ingen/runtime_paths.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 #include "raul/log.hpp"
@@ -109,7 +109,7 @@ public:
 			LV2_Atom_Sequence* seq       = (LV2_Atom_Sequence*)_buffer;
 			bool               enqueued  = false;
 			Buffer*            patch_buf = _patch_port->buffer(0).get();
-			Shared::URIs&      uris      = _patch_port->bufs().uris();
+			URIs&              uris      = _patch_port->bufs().uris();
 			patch_buf->prepare_write(context);
 			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 				if (!patch_buf->append_event(
@@ -118,7 +118,7 @@ public:
 					Raul::warn("Failed to write to buffer, event lost!\n");
 				}
 
-				if (Shared::AtomReader::is_message(uris, &ev->body)) {
+				if (AtomReader::is_message(uris, &ev->body)) {
 					enqueue_message(context, _driver, &ev->body);
 					enqueued = true;
 				}
@@ -146,7 +146,7 @@ private:
 };
 
 class LV2Driver : public Ingen::Server::Driver
-                , public Ingen::Shared::AtomSink
+                , public Ingen::AtomSink
 {
 private:
 	typedef std::vector<LV2Port*> Ports;
@@ -333,26 +333,26 @@ public:
 	virtual SampleCount sample_rate()  const { return _sample_rate; }
 	virtual SampleCount frame_time()   const { return _frame_time; }
 
-	virtual bool        is_realtime() const { return true; }
-	Shared::AtomReader& reader()            { return _reader; }
-	Shared::AtomWriter& writer()            { return _writer; }
+	virtual bool is_realtime() const { return true; }
+	AtomReader&  reader()            { return _reader; }
+	AtomWriter&  writer()            { return _writer; }
 
 	Ports& ports() { return _ports; }
 
 private:
-	Engine&            _engine;
-	Raul::Semaphore    _main_sem;
-	Shared::AtomReader _reader;
-	Shared::AtomWriter _writer;
-	Raul::RingBuffer   _from_ui;
-	Raul::RingBuffer   _to_ui;
-	PatchImpl*         _root_patch;
-	SampleCount        _block_length;
-	SampleCount        _sample_rate;
-	SampleCount        _frame_time;
-	Ports              _ports;
-	Raul::Semaphore    _to_ui_overflow_sem;
-	bool               _to_ui_overflow;
+	Engine&          _engine;
+	Raul::Semaphore  _main_sem;
+	AtomReader       _reader;
+	AtomWriter       _writer;
+	Raul::RingBuffer _from_ui;
+	Raul::RingBuffer _to_ui;
+	PatchImpl*       _root_patch;
+	SampleCount      _block_length;
+	SampleCount      _sample_rate;
+	SampleCount      _frame_time;
+	Ports            _ports;
+	Raul::Semaphore  _to_ui_overflow_sem;
+	bool             _to_ui_overflow;
 };
 
 void
@@ -414,11 +414,11 @@ struct IngenPlugin {
 		, argv(NULL)
 	{}
 
-	Ingen::Shared::World* world;
-	MainThread*           main;
-	LV2_URID_Map*         map;
-	int                   argc;
-	char**                argv;
+	Ingen::World* world;
+	MainThread*   main;
+	LV2_URID_Map* map;
+	int           argc;
+	char**        argv;
 };
 
 static Lib::Patches
@@ -465,10 +465,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		Glib::thread_init();
 	}
 
-	Shared::set_bundle_path(bundle_path);
+	set_bundle_path(bundle_path);
 	Lib::Patches patches = find_patches(
-		Glib::filename_to_uri(
-			Shared::bundle_file_path("manifest.ttl")));
+		Glib::filename_to_uri(Ingen::bundle_file_path("manifest.ttl")));
 
 	const LV2Patch* patch = NULL;
 	for (Lib::Patches::iterator i = patches.begin(); i != patches.end(); ++i) {
@@ -506,7 +505,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		Raul::warn("Warning: No buffer size access, guessing 4096 frames.\n");
 	}
 
-	plugin->world = new Ingen::Shared::World(
+	plugin->world = new Ingen::World(
 		plugin->argc, plugin->argv, plugin->map, unmap);
 	if (!plugin->world->load_module("serialisation")) {
 		delete plugin->world;
@@ -650,7 +649,7 @@ ingen_save(LV2_Handle                instance,
 	char* real_path  = make_path->path(make_path->handle, "patch.ttl");
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);
 
-	Ingen::Shared::Store::iterator root = plugin->world->store()->find("/");
+	Ingen::Store::iterator root = plugin->world->store()->find("/");
 	plugin->world->serialiser()->to_file(root->second, real_path);
 
 	store(handle,
@@ -731,10 +730,9 @@ LV2Patch::LV2Patch(const std::string& u, const std::string& f)
 
 Lib::Lib(const char* bundle_path)
 {
-	Ingen::Shared::set_bundle_path(bundle_path);
+	Ingen::set_bundle_path(bundle_path);
 	patches = find_patches(
-		Glib::filename_to_uri(
-			Ingen::Shared::bundle_file_path("manifest.ttl")));
+		Glib::filename_to_uri(Ingen::bundle_file_path("manifest.ttl")));
 }
 
 static void

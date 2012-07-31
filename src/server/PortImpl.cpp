@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
@@ -65,7 +65,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	assert(node != NULL);
 	assert(_poly > 0);
 
-	const Ingen::Shared::URIs& uris = bufs.uris();
+	const Ingen::URIs& uris = bufs.uris();
 
 	set_type(type, buffer_type);
 
@@ -232,8 +232,8 @@ PortImpl::clear_buffers()
 void
 PortImpl::broadcast_value(Context& context, bool force)
 {
-	Shared::Forge& forge = context.engine().world()->forge();
-	Shared::URIs&  uris  = context.engine().world()->uris();
+	Forge& forge = context.engine().world()->forge();
+	URIs&  uris  = context.engine().world()->uris();
 	LV2_URID       key   = 0;
 	Raul::Atom     val;
 	switch (_type.symbol()) {

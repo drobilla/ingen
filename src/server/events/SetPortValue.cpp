@@ -14,9 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/LV2Features.hpp"
-#include "ingen/shared/URIs.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/LV2Features.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "raul/log.hpp"
 
 #include "AudioBuffer.hpp"
@@ -96,8 +96,8 @@ SetPortValue::apply(Context& context)
 		return;
 	}
 
-	Ingen::Shared::URIs& uris = _engine.world()->uris();
-	Buffer* const        buf  = _port->buffer(0).get();
+	Ingen::URIs&  uris = _engine.world()->uris();
+	Buffer* const buf  = _port->buffer(0).get();
 
 	AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
 	if (abuf) {

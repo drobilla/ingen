@@ -29,7 +29,7 @@ namespace Socket {
 class SocketServer : public Server::EventWriter, public SocketReader
 {
 public:
-	SocketServer(Shared::World&    world,
+	SocketServer(World&            world,
 	             Server::Engine&   engine,
 	             SharedPtr<Socket> sock)
 		: Server::EventWriter(engine)

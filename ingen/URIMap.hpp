@@ -14,19 +14,18 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_URIMAP_HPP
-#define INGEN_SHARED_URIMAP_HPP
+#ifndef INGEN_URIMAP_HPP
+#define INGEN_URIMAP_HPP
 
 #include <map>
 #include <utility>
 
-#include "ingen/shared/LV2Features.hpp"
+#include "ingen/LV2Features.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/URI.hpp"
 #include "raul/Noncopyable.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 /** URI to integer map and implementation of LV2 URID extension.
  * @ingroup IngenShared
@@ -46,7 +45,7 @@ public:
 			_feature.data = data;
 		}
 
-		SharedPtr<LV2_Feature> feature(Shared::World*, GraphObject*) {
+		SharedPtr<LV2_Feature> feature(World*, GraphObject*) {
 			return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 		}
 
@@ -76,7 +75,6 @@ private:
 	SharedPtr<URIDUnmapFeature> _urid_unmap_feature;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_URIMAP_HPP
+#endif // INGEN_URIMAP_HPP

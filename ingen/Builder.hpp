@@ -14,16 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_BUILDER_HPP
-#define INGEN_SHARED_BUILDER_HPP
+#ifndef INGEN_BUILDER_HPP
+#define INGEN_BUILDER_HPP
+
+#include "raul/SharedPtr.hpp"
 
 namespace Ingen {
 
-class Interface;
 class GraphObject;
-
-namespace Shared {
-
+class Interface;
 class URIs;
 
 /** Wrapper for Interface to create existing objects/models.
@@ -33,19 +32,18 @@ class URIs;
 class Builder
 {
 public:
-	Builder(Shared::URIs& uris, Interface& interface);
+	Builder(URIs& uris, Interface& interface);
 	virtual ~Builder() {}
 
 	void build(SharedPtr<const GraphObject> object);
 	void connect(SharedPtr<const GraphObject> object);
 
 private:
-	Shared::URIs& _uris;
-	Interface&    _interface;
+	URIs&      _uris;
+	Interface& _interface;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_BUILDER_HPP
+#endif // INGEN_BUILDER_HPP
 

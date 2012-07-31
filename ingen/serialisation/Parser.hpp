@@ -33,8 +33,7 @@
 namespace Ingen {
 
 class Interface;
-
-namespace Shared { class World; }
+class World;
 
 namespace Serialisation {
 
@@ -52,7 +51,7 @@ public:
 	typedef GraphObject::Properties Properties;
 
 	virtual bool parse_file(
-		Shared::World*                world,
+		World*                        world,
 		Interface*                    target,
 		Glib::ustring                 path,
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
@@ -60,7 +59,7 @@ public:
 		boost::optional<Properties>   data   = boost::optional<Properties>());
 
 	virtual bool parse_string(
-		Shared::World*                world,
+		World*                        world,
 		Interface*                    target,
 		const Glib::ustring&          str,
 		const Glib::ustring&          base_uri,

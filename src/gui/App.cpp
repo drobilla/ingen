@@ -29,8 +29,8 @@
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/World.hpp"
+#include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
 #include "raul/Path.hpp"
 #include "raul/log.hpp"
@@ -62,7 +62,6 @@ namespace Ingen {
 namespace Client { class PluginModel; }
 
 using namespace Client;
-using namespace Shared;
 
 namespace GUI {
 
@@ -70,7 +69,7 @@ class Port;
 
 Gtk::Main* App::_main = 0;
 
-App::App(Ingen::Shared::World* world)
+App::App(Ingen::World* world)
 	: _configuration(new Configuration(*this))
 	, _about_dialog(NULL)
 	, _window_factory(new WindowFactory(*this))
@@ -102,7 +101,7 @@ App::~App()
 }
 
 SharedPtr<App>
-App::create(Ingen::Shared::World* world)
+App::create(Ingen::World* world)
 {
 	_main = new Gtk::Main(&world->argc(), &world->argv());
 

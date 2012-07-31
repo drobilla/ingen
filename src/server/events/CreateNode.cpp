@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
@@ -49,7 +49,7 @@ CreateNode::CreateNode(Engine&                     engine,
 bool
 CreateNode::pre_process()
 {
-	Ingen::Shared::URIs& uris = _engine.world()->uris();
+	Ingen::URIs& uris = _engine.world()->uris();
 
 	typedef Resource::Properties::const_iterator iterator;
 

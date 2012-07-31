@@ -23,7 +23,7 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/signal.hpp"
-#include "ingen/shared/Store.hpp"
+#include "ingen/Store.hpp"
 #include "raul/Path.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/SharedPtr.hpp"
@@ -33,7 +33,7 @@ namespace Raul { class Atom; }
 
 namespace Ingen {
 
-namespace Shared { class URIs; }
+class URIs;
 
 class GraphObject;
 
@@ -50,12 +50,12 @@ class SigClientInterface;
  *
  * @ingroup IngenClient
  */
-class ClientStore : public Shared::Store
+class ClientStore : public Store
                   , public Interface
                   , public INGEN_TRACKABLE {
 public:
 	ClientStore(
-		Shared::URIs&                 uris,
+		URIs&                         uris,
 		SharedPtr<Interface>          engine  = SharedPtr<Interface>(),
 		SharedPtr<SigClientInterface> emitter = SharedPtr<SigClientInterface>());
 
@@ -72,7 +72,7 @@ public:
 	SharedPtr<Plugins>       plugins()                         { return _plugins; }
 	void                     set_plugins(SharedPtr<Plugins> p) { _plugins = p; }
 
-	Shared::URIs& uris() { return _uris; }
+	URIs& uris() { return _uris; }
 
 	void put(const Raul::URI&            uri,
 	         const Resource::Properties& properties,
@@ -130,7 +130,7 @@ private:
 	bool attempt_connection(const Raul::Path& tail_path,
 	                        const Raul::Path& head_path);
 
-	Shared::URIs&                 _uris;
+	URIs&                         _uris;
 	SharedPtr<Interface>          _engine;
 	SharedPtr<SigClientInterface> _emitter;
 

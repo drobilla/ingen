@@ -14,10 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/Configuration.hpp"
+#include "ingen/Configuration.hpp"
 
 namespace Ingen {
-namespace Shared {
 
 Configuration::Configuration()
 	: Raul::Configuration(
@@ -52,5 +51,4 @@ Configuration::Configuration()
 	add("run",         'r', "Run script", STRING, Value());
 }
 
-} // namespace Shared
 } // namespace Ingen

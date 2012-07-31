@@ -26,9 +26,9 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
-#include "ingen/shared/URIMap.hpp"
-#include "ingen/shared/URIs.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "raul/Atom.hpp"
 #include "raul/log.hpp"
 #include "serd/serd.h"
@@ -42,7 +42,6 @@
 
 using namespace std;
 using namespace Raul;
-using namespace Ingen::Shared;
 
 typedef set<Sord::Node> RDFNodes;
 
@@ -95,9 +94,9 @@ skip_property(const Sord::Node& predicate)
 }
 
 static Resource::Properties
-get_properties(Ingen::Shared::World* world,
-               Sord::Model&          model,
-               const Sord::Node&     subject)
+get_properties(Ingen::World*     world,
+               Sord::Model&      model,
+               const Sord::Node& subject)
 {
 	SerdChunk       out    = { NULL, 0 };
 	LV2_URID_Map*   map    = &world->uri_map().urid_map_feature()->urid_map;
@@ -136,11 +135,11 @@ get_properties(Ingen::Shared::World* world,
 typedef std::pair<Path, Resource::Properties> PortRecord;
 
 static int
-get_port(Ingen::Shared::World* world,
-         Sord::Model&          model,
-         const Sord::Node&     subject,
-         const Raul::Path&     parent,
-         PortRecord&           record)
+get_port(Ingen::World*     world,
+         Sord::Model&      model,
+         const Sord::Node& subject,
+         const Raul::Path& parent,
+         PortRecord&       record)
 {
 	const URIs& uris = world->uris();
 
@@ -172,7 +171,7 @@ get_port(Ingen::Shared::World* world,
 
 static boost::optional<Raul::Path>
 parse(
-	Shared::World*                        world,
+	World*                                world,
 	Interface*                            target,
 	Sord::Model&                          model,
 	Glib::ustring                         document_uri,
@@ -183,7 +182,7 @@ parse(
 
 static boost::optional<Raul::Path>
 parse_patch(
-	Shared::World*                        world,
+	World*                                world,
 	Interface*                            target,
 	Sord::Model&                          model,
 	const Sord::Node&                     subject,
@@ -193,7 +192,7 @@ parse_patch(
 
 static boost::optional<Raul::Path>
 parse_node(
-	Shared::World*                        world,
+	World*                                world,
 	Interface*                            target,
 	Sord::Model&                          model,
 	const Sord::Node&                     subject,
@@ -202,7 +201,7 @@ parse_node(
 
 static bool
 parse_properties(
-	Shared::World*                        world,
+	World*                                world,
 	Interface*                            target,
 	Sord::Model&                          model,
 	const Sord::Node&                     subject,
@@ -211,14 +210,14 @@ parse_properties(
 
 static bool
 parse_edges(
-		Shared::World*    world,
+		World*            world,
 		Interface*        target,
 		Sord::Model&      model,
 		const Sord::Node& subject,
 		const Raul::Path& patch);
 
 static boost::optional<Path>
-parse_node(Ingen::Shared::World*                    world,
+parse_node(Ingen::World*                            world,
            Ingen::Interface*                        target,
            Sord::Model&                             model,
            const Sord::Node&                        subject,
@@ -281,7 +280,7 @@ parse_node(Ingen::Shared::World*                    world,
 }
 
 static boost::optional<Path>
-parse_patch(Ingen::Shared::World*                    world,
+parse_patch(Ingen::World*                            world,
             Ingen::Interface*                        target,
             Sord::Model&                             model,
             const Sord::Node&                        subject_node,
@@ -402,11 +401,11 @@ parse_patch(Ingen::Shared::World*                    world,
 }
 
 static bool
-parse_edge(Ingen::Shared::World* world,
-           Ingen::Interface*     target,
-           Sord::Model&          model,
-           const Sord::Node&     subject,
-           const Raul::Path&     parent)
+parse_edge(Ingen::World*     world,
+           Ingen::Interface* target,
+           Sord::Model&      model,
+           const Sord::Node& subject,
+           const Raul::Path& parent)
 {
 	const Sord::URI  ingen_tail(*world->rdf_world(), NS_INGEN "tail");
 	const Sord::URI  ingen_head(*world->rdf_world(), NS_INGEN "head");
@@ -444,11 +443,11 @@ parse_edge(Ingen::Shared::World* world,
 }
 
 static bool
-parse_edges(Ingen::Shared::World* world,
-            Ingen::Interface*     target,
-            Sord::Model&          model,
-            const Sord::Node&     subject,
-            const Raul::Path&     parent)
+parse_edges(Ingen::World*     world,
+            Ingen::Interface* target,
+            Sord::Model&      model,
+            const Sord::Node& subject,
+            const Raul::Path& parent)
 {
 	const Sord::URI  ingen_edge(*world->rdf_world(), NS_INGEN "edge");
 	const Sord::Node nil;
@@ -461,7 +460,7 @@ parse_edges(Ingen::Shared::World* world,
 }
 
 static bool
-parse_properties(Ingen::Shared::World*                    world,
+parse_properties(Ingen::World*                            world,
                  Ingen::Interface*                        target,
                  Sord::Model&                             model,
                  const Sord::Node&                        subject,
@@ -480,7 +479,7 @@ parse_properties(Ingen::Shared::World*                    world,
 }
 
 static boost::optional<Path>
-parse(Ingen::Shared::World*                    world,
+parse(Ingen::World*                            world,
       Ingen::Interface*                        target,
       Sord::Model&                             model,
       Glib::ustring                            document_uri,
@@ -562,7 +561,7 @@ parse(Ingen::Shared::World*                    world,
  * @return whether or not load was successful.
  */
 bool
-Parser::parse_file(Ingen::Shared::World*                    world,
+Parser::parse_file(Ingen::World*                            world,
                    Ingen::Interface*                        target,
                    Glib::ustring                            path,
                    boost::optional<Raul::Path>              parent,
@@ -617,7 +616,7 @@ Parser::parse_file(Ingen::Shared::World*                    world,
 }
 
 bool
-Parser::parse_string(Ingen::Shared::World*                    world,
+Parser::parse_string(Ingen::World*                            world,
                      Ingen::Interface*                        target,
                      const Glib::ustring&                     str,
                      const Glib::ustring&                     base_uri,

@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/log.hpp"
 
@@ -106,7 +106,7 @@ EdgeImpl::queue(Context& context)
 	if (!must_queue())
 		return;
 
-	const Ingen::Shared::URIs& uris = _tail->bufs().uris();
+	const Ingen::URIs& uris = _tail->bufs().uris();
 
 	BufferRef src_buf = _tail->buffer(0);
 	if (src_buf->atom()->type != uris.atom_Sequence) {
@@ -152,7 +152,7 @@ EdgeImpl::must_queue() const
 bool
 EdgeImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
-	const Ingen::Shared::URIs& uris = src->bufs().uris();
+	const Ingen::URIs& uris = src->bufs().uris();
 	return (
 		// (Audio | Control | CV) => (Audio | Control | CV)
 		(   (src->is_a(PortType::CONTROL) ||

@@ -16,14 +16,13 @@
 
 #include <string>
 
-#include "ingen/shared/AtomSink.hpp"
-#include "ingen/shared/AtomWriter.hpp"
-#include "ingen/shared/URIMap.hpp"
+#include "ingen/AtomSink.hpp"
+#include "ingen/AtomWriter.hpp"
+#include "ingen/URIMap.hpp"
 #include "raul/Path.hpp"
 #include "serd/serd.h"
 
 namespace Ingen {
-namespace Shared {
 
 static LV2_Atom_Forge_Ref
 forge_sink(LV2_Atom_Forge_Sink_Handle handle,
@@ -297,5 +296,4 @@ AtomWriter::error(const std::string& msg)
 {
 }
 
-} // namespace Shared
 } // namespace Ingen

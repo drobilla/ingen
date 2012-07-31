@@ -24,7 +24,7 @@
 
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
-#include "ingen/shared/LV2Features.hpp"
+#include "ingen/LV2Features.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -65,10 +65,10 @@ public:
 	                     SampleCount offset);
 
 protected:
-	SharedPtr<LilvInstance> make_instance(Shared::URIs& uris,
-	                                      SampleRate    rate,
-	                                      uint32_t      voice,
-	                                      bool          preparing);
+	SharedPtr<LilvInstance> make_instance(URIs&      uris,
+	                                      SampleRate rate,
+	                                      uint32_t   voice,
+	                                      bool       preparing);
 
 	inline LilvInstance* instance(uint32_t voice) {
 		return (LilvInstance*)(*_instances)[voice].get();
@@ -103,12 +103,12 @@ protected:
 	static LV2_Worker_Status work_respond(
 		LV2_Worker_Respond_Handle handle, uint32_t size, const void* data);
 
-	LV2Plugin*                                   _lv2_plugin;
-	Instances*                                   _instances;
-	Instances*                                   _prepared_instances;
-	LV2_Worker_Interface*                        _worker_iface;
-	Responses                                    _responses;
-	SharedPtr<Shared::LV2Features::FeatureArray> _features;
+	LV2Plugin*                           _lv2_plugin;
+	Instances*                           _instances;
+	Instances*                           _prepared_instances;
+	LV2_Worker_Interface*                _worker_iface;
+	Responses                            _responses;
+	SharedPtr<LV2Features::FeatureArray> _features;
 };
 
 } // namespace Server

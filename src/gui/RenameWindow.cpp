@@ -117,8 +117,7 @@ RenameWindow::cancel_clicked()
 void
 RenameWindow::ok_clicked()
 {
-	const Shared::URIs& uris = _app->uris();
-
+	const URIs&   uris       = _app->uris();
 	const string& symbol_str = _symbol_entry->get_text();
 	const string& label      = _label_entry->get_text();
 	Path          path       = _object->path();

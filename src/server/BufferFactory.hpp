@@ -26,8 +26,8 @@
 #include "raul/AtomicPtr.hpp"
 #include "raul/RingBuffer.hpp"
 #include "raul/SharedPtr.hpp"
-#include "ingen/shared/Forge.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/URIs.hpp"
 
 #include "Buffer.hpp"
 #include "BufferRef.hpp"
@@ -36,7 +36,7 @@
 
 namespace Ingen {
 
-namespace Shared { class URIs; }
+class URIs;
 
 namespace Server {
 
@@ -45,7 +45,7 @@ class Engine;
 
 class BufferFactory {
 public:
-	BufferFactory(Engine& engine, Shared::URIs& uris);
+	BufferFactory(Engine& engine, URIs& uris);
 	~BufferFactory();
 
 	static uint32_t audio_buffer_size(SampleCount nframes);
@@ -60,9 +60,9 @@ public:
 
 	void set_block_length(SampleCount block_length);
 
-	Shared::Forge& forge();
-	Shared::URIs&  uris()   { return _uris; }
-	Engine&        engine() { return _engine; }
+	Forge&  forge();
+	URIs&   uris()   { return _uris; }
+	Engine& engine() { return _engine; }
 
 private:
 	friend class Buffer;
@@ -86,9 +86,9 @@ private:
 	Raul::AtomicPtr<Buffer> _free_control;
 	Raul::AtomicPtr<Buffer> _free_object;
 
-	Glib::Mutex   _mutex;
-	Engine&       _engine;
-	Shared::URIs& _uris;
+	Glib::Mutex _mutex;
+	Engine&     _engine;
+	URIs&       _uris;
 
 	BufferRef _silent_buffer;
 };

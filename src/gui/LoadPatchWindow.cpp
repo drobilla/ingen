@@ -25,7 +25,7 @@
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PatchModel.hpp"
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/runtime_paths.hpp"
 
 #include "App.hpp"
 #include "Configuration.hpp"
@@ -39,7 +39,6 @@ using namespace Raul;
 namespace Ingen {
 
 using namespace Client;
-using namespace Shared;
 
 namespace GUI {
 
@@ -89,7 +88,7 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType*                   cobject,
 	property_select_multiple() = true;
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
-	const string examples_dir = Shared::data_file_path("patches");
+	const string examples_dir = Ingen::data_file_path("patches");
 	if (Glib::file_test(examples_dir, Glib::FILE_TEST_IS_DIR)) {
 		add_shortcut_folder(examples_dir);
 	}

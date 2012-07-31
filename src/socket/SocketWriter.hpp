@@ -20,8 +20,8 @@
 #include <stdint.h>
 
 #include "ingen/Interface.hpp"
-#include "ingen/shared/AtomSink.hpp"
-#include "ingen/shared/AtomWriter.hpp"
+#include "ingen/AtomSink.hpp"
+#include "ingen/AtomWriter.hpp"
 #include "raul/URI.hpp"
 #include "raul/SharedPtr.hpp"
 #include "sratom/sratom.h"
@@ -33,11 +33,11 @@ namespace Socket {
 
 /** An Interface that writes Turtle messages to a socket.
  */
-class SocketWriter : public Shared::AtomWriter, public Shared::AtomSink
+class SocketWriter : public AtomWriter, public AtomSink
 {
 public:
-	SocketWriter(Shared::URIMap&   map,
-	             Shared::URIs&     uris,
+	SocketWriter(URIMap&           map,
+	             URIs&             uris,
 	             const Raul::URI&  uri,
 	             SharedPtr<Socket> sock);
 
@@ -49,7 +49,7 @@ public:
 	Raul::URI uri() const { return _uri; }
 
 protected:
-	Shared::URIMap&   _map;
+	URIMap&           _map;
 	Sratom*           _sratom;
 	SerdNode          _base;
 	SerdURI           _base_uri;

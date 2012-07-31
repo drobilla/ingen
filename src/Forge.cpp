@@ -17,14 +17,13 @@
 #include <sstream>
 #include <string>
 
-#include "ingen/shared/Forge.hpp"
-#include "ingen/shared/URIMap.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
 namespace Ingen {
-namespace Shared {
 
-Forge::Forge(Shared::URIMap& map)
+Forge::Forge(URIMap& map)
 {
 	Int    = map.map_uri(LV2_ATOM__Int);
 	Float  = map.map_uri(LV2_ATOM__Float);
@@ -52,5 +51,4 @@ Forge::str(const Raul::Atom& atom)
 	return ss.str();
 }
 
-} // namespace Shared
 } // namespace Ingen

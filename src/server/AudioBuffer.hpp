@@ -23,7 +23,7 @@
 
 #include <boost/utility.hpp>
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"

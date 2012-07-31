@@ -453,7 +453,7 @@ PatchBox::message_dialog(const Glib::ustring& message,
 void
 PatchBox::event_save_as()
 {
-	const Shared::URIs& uris = _app->uris();
+	const URIs& uris = _app->uris();
 	while (true) {
 		Gtk::FileChooserDialog dialog("Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
 		if (_window) {

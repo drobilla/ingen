@@ -16,7 +16,7 @@
 
 #include <cassert>
 #include <string>
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
 #include "internals/Note.hpp"
@@ -32,7 +32,7 @@ namespace Server {
 
 using namespace Internals;
 
-InternalPlugin::InternalPlugin(Shared::URIs&      uris,
+InternalPlugin::InternalPlugin(URIs&              uris,
                                const std::string& uri,
                                const std::string& symbol)
 	: PluginImpl(uris, Plugin::Internal, uri)

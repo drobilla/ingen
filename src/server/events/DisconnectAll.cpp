@@ -59,9 +59,9 @@ DisconnectAll::DisconnectAll(Engine&              engine,
 
 /** Internal version for use by other events.
  */
-DisconnectAll::DisconnectAll(Engine&          engine,
-                             PatchImpl*       parent,
-                             GraphObjectImpl* object)
+DisconnectAll::DisconnectAll(Engine&      engine,
+                             PatchImpl*   parent,
+                             GraphObject* object)
 	: Event(engine)
 	, _parent_path(parent->path())
 	, _path(object->path())

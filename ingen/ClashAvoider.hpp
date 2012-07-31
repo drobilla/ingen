@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_CLASHAVOIDER_HPP
-#define INGEN_SHARED_CLASHAVOIDER_HPP
+#ifndef INGEN_CLASHAVOIDER_HPP
+#define INGEN_CLASHAVOIDER_HPP
 
 #include <inttypes.h>
 
@@ -30,7 +30,6 @@ class Path;
 }
 
 namespace Ingen {
-namespace Shared {
 
 class Store;
 
@@ -103,8 +102,7 @@ private:
 	SymbolMap _symbol_map;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_CLASHAVOIDER_HPP
+#endif // INGEN_CLASHAVOIDER_HPP
 

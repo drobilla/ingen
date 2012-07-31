@@ -16,8 +16,8 @@
 
 #include <utility>
 
-#include "ingen/shared/URIMap.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
@@ -54,7 +54,7 @@ CreatePort::CreatePort(Engine&                     engine,
 	, _properties(properties)
 	, _is_output(is_output)
 {
-	const Ingen::Shared::URIs& uris = _engine.world()->uris();
+	const Ingen::URIs& uris = _engine.world()->uris();
 
 	typedef Resource::Properties::const_iterator Iterator;
 	typedef std::pair<Iterator, Iterator>        Range;
@@ -96,7 +96,7 @@ CreatePort::pre_process()
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
 
-	const Shared::URIs&  uris           = _engine.world()->uris();
+	const URIs&          uris           = _engine.world()->uris();
 	const BufferFactory& buffer_factory = *_engine.buffer_factory();
 
 	const uint32_t buf_size    = buffer_factory.default_size(_buf_type);

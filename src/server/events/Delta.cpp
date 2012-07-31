@@ -18,7 +18,7 @@
 
 #include <glibmm/thread.h>
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/Maid.hpp"
 
 #include "Broadcaster.hpp"
@@ -29,7 +29,6 @@
 #include "Delta.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
@@ -39,7 +38,7 @@
 #define LOG(s) s << "[Delta] "
 
 // #define DUMP 1
-// #include "ingen/shared/URIMap.hpp"
+// #include "ingen/URIMap.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -115,7 +114,7 @@ Delta::pre_process()
 		return Event::pre_process_done(NOT_FOUND, _subject);
 	}
 
-	const Ingen::Shared::URIs& uris = _engine.world()->uris();
+	const Ingen::URIs& uris = _engine.world()->uris();
 
 	if (is_graph_object && !_object) {
 		Raul::Path path(_subject.str());
@@ -145,16 +144,6 @@ Delta::pre_process()
 	_types.reserve(_properties.size());
 
 	GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_object);
-
-#if 0
-	// If we're replacing (i.e. this is a PUT, not a POST), first remove all properties
-	// with keys we will later set.  This must be done first so a PUT with several properties
-	// of the same predicate (e.g. rdf:type) retains the multiple values.  Only previously
-	// existing properties should be replaced
-	if (_replace)
-		for (Properties::iterator p = _properties.begin(); p != _properties.end(); ++p)
-			obj->properties().erase(p->first);
-#endif
 
 	for (Properties::const_iterator p = _remove.begin(); p != _remove.end(); ++p) {
 		const Raul::URI&  key   = p->first;
@@ -260,7 +249,7 @@ Delta::execute(ProcessContext& context)
 		return;
 	}
 
-	const Ingen::Shared::URIs& uris = _engine.world()->uris();
+	const Ingen::URIs& uris = _engine.world()->uris();
 
 	if (_create_event) {
 		_create_event->set_time(_time);

@@ -17,10 +17,10 @@
 #include <sys/mman.h>
 
 #include "events/CreatePort.hpp"
-#include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/Store.hpp"
-#include "ingen/shared/URIs.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/Store.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
 
@@ -50,7 +50,7 @@ namespace Server {
 Raul::ThreadVar<unsigned> ThreadManager::flags(0);
 bool                      ThreadManager::single_threaded(true);
 
-Engine::Engine(Ingen::Shared::World* a_world)
+Engine::Engine(Ingen::World* a_world)
 	: _world(a_world)
 	, _broadcaster(new Broadcaster())
 	, _control_bindings(NULL)
@@ -72,7 +72,7 @@ Engine::Engine(Ingen::Shared::World* a_world)
 	} else {
 		_buffer_factory = new BufferFactory(*this, a_world->uris());
 		a_world->set_store(
-			SharedPtr<Ingen::Shared::Store>(
+			SharedPtr<Ingen::Store>(
 				new EngineStore(SharedPtr<BufferFactory>(_buffer_factory))));
 	}
 
@@ -88,7 +88,7 @@ Engine::~Engine()
 	SharedPtr<EngineStore> store = engine_store();
 	if (store)
 		for (EngineStore::iterator i = store->begin(); i != store->end(); ++i)
-			if ( ! PtrCast<GraphObjectImpl>(i->second)->parent() )
+			if (!PtrCast<GraphObjectImpl>(i->second)->parent())
 				i->second.reset();
 
 	delete _maid;
@@ -181,8 +181,8 @@ Engine::activate()
 	_pre_processor->start();
 	_message_context.Thread::start();
 
-	const Ingen::Shared::URIs& uris  = world()->uris();
-	Shared::Forge&             forge = world()->forge();
+	const Ingen::URIs& uris  = world()->uris();
+	Forge&             forge = world()->forge();
 
 	// Create root patch
 	if (!_root_patch) {

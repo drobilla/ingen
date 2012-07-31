@@ -93,9 +93,9 @@ public:
 		ProcessContext& context, Raul::Maid& maid, uint32_t poly) = 0;
 
 protected:
-	GraphObjectImpl(Ingen::Shared::URIs& uris,
-	                GraphObjectImpl*          parent,
-	                const Raul::Symbol&       symbol);
+	GraphObjectImpl(Ingen::URIs&        uris,
+	                GraphObjectImpl*    parent,
+	                const Raul::Symbol& symbol);
 
 	GraphObjectImpl* _parent;
 	Raul::Path       _path;

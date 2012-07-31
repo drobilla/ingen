@@ -27,7 +27,7 @@
 
 namespace Ingen {
 
-namespace Shared { class URIs; }
+class URIs;
 
 namespace Server {
 
@@ -44,9 +44,9 @@ class PluginImpl : public Plugin
                  , public boost::noncopyable
 {
 public:
-	PluginImpl(Ingen::Shared::URIs& uris,
-	           Type                 type,
-	           const std::string&   uri)
+	PluginImpl(Ingen::URIs&       uris,
+	           Type               type,
+	           const std::string& uri)
 		: Plugin(uris, uri)
 		, _type(type)
 	{}

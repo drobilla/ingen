@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/LV2Features.hpp"
+#include "ingen/LV2Features.hpp"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/log.hpp"
 
@@ -80,7 +80,7 @@ delete_feature(LV2_Feature* feature)
 }
 
 SharedPtr<LV2_Feature>
-Worker::Schedule::feature(Shared::World* world, GraphObject* n)
+Worker::Schedule::feature(World* world, GraphObject* n)
 {
 	LV2Node* node = dynamic_cast<LV2Node*>(n);
 	if (!node) {

@@ -96,8 +96,7 @@ PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
 void
 PortPropertiesWindow::property_changed(const URI& key, const Atom& value)
 {
-	const Shared::URIs& uris = _app->uris();
-
+	const URIs& uris = _app->uris();
 	if (value.type() == uris.forge.Float) {
 		if (key == uris.lv2_minimum)
 			_min_spinner->set_value(value.get_float());
@@ -151,7 +150,7 @@ PortPropertiesWindow::cancel()
 void
 PortPropertiesWindow::ok()
 {
-	const Shared::URIs& uris = _app->uris();
+	const URIs& uris = _app->uris();
 	Resource::Properties props;
 	props.insert(
 		make_pair(uris.lv2_minimum,

@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/Forge.hpp"
-#include "ingen/shared/URIMap.hpp"
+#include "ingen/Forge.hpp"
+#include "ingen/URIMap.hpp"
 #include "raul/log.hpp"
 
 #include "Context.hpp"

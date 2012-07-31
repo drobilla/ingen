@@ -17,8 +17,7 @@
 #include <sstream>
 #include <string>
 
-#include "ingen/GraphObject.hpp"
-#include "ingen/shared/Store.hpp"
+#include "ingen/Store.hpp"
 #include "raul/PathTable.hpp"
 #include "raul/TableImpl.hpp"
 #include "raul/log.hpp"
@@ -26,7 +25,6 @@
 using namespace std;
 
 namespace Ingen {
-namespace Shared {
 
 void
 Store::add(GraphObject* o)
@@ -97,5 +95,4 @@ Store::child_name_offset(const Raul::Path&   parent,
 	return offset;
 }
 
-} // namespace Shared
 } // namespace Ingen

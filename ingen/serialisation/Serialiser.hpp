@@ -29,14 +29,10 @@
 
 namespace Ingen {
 
-class Plugin;
-class GraphObject;
 class Edge;
-
-namespace Shared {
-class World;
+class GraphObject;
 class Store;
-}
+class World;
 
 namespace Serialisation {
 
@@ -48,7 +44,7 @@ namespace Serialisation {
 class Serialiser
 {
 public:
-	explicit Serialiser(Shared::World& world);
+	explicit Serialiser(World& world);
 	virtual ~Serialiser();
 
 	typedef GraphObject::Properties Properties;

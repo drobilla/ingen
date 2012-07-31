@@ -14,10 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_URIS_HPP
-#define INGEN_SHARED_URIS_HPP
+#ifndef INGEN_URIS_HPP
+#define INGEN_URIS_HPP
 
-#include "ingen/shared/Forge.hpp"
+#include "ingen/Forge.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Atom.hpp"
 #include "raul/Noncopyable.hpp"
@@ -28,7 +28,6 @@ namespace Raul {
 }
 
 namespace Ingen {
-namespace Shared {
 
 class URIMap;
 
@@ -38,21 +37,21 @@ class URIMap;
  * using the URIMap so they can be used quickly with the performance of
  * integers, but still be dynamic.
  *
- * @ingroup IngenShared
+ * @ingroup ingen
  */
 class URIs : public Raul::Noncopyable {
 public:
-	URIs(Ingen::Shared::Forge& forge, URIMap* map);
+	URIs(Ingen::Forge& forge, URIMap* map);
 
 	struct Quark : public Raul::URI {
-		Quark(Ingen::Shared::Forge& forge, URIMap* map, const char* str);
+		Quark(Ingen::Forge& forge, URIMap* map, const char* str);
 		operator LV2_URID()   const { return id; }
 		operator Raul::Atom() const { return atom; }
 		uint32_t   id;
 		Raul::Atom atom;
 	};
 
-	Ingen::Shared::Forge& forge;
+	Ingen::Forge& forge;
 
 	const Quark atom_AtomPort;
 	const Quark atom_Blank;
@@ -139,7 +138,6 @@ public:
 	const Quark wildcard;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_LV2URIMAP_HPP
+#endif // INGEN_LV2URIMAP_HPP

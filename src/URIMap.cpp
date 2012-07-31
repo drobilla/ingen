@@ -18,12 +18,11 @@
 
 #include <glib.h>
 
-#include "ingen/shared/URIMap.hpp"
+#include "ingen/URIMap.hpp"
 
 using namespace std;
 
 namespace Ingen {
-namespace Shared {
 
 URIMap::URIMap(LV2_URID_Map* map, LV2_URID_Unmap* unmap)
 	: _urid_map_feature(new URIDMapFeature(this, map))
@@ -93,5 +92,4 @@ URIMap::unmap_uri(uint32_t urid) const
 	return _urid_unmap_feature->unmap(urid);
 }
 
-} // namespace Shared
 } // namespace Ingen

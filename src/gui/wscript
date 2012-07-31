@@ -9,7 +9,7 @@ def build(bld):
               name            = 'libingen_gui',
               target          = 'ingen_gui',
               install_path    = '${LIBDIR}',
-              use             = 'libingen_shared libingen_client libingen_serialisation')
+              use             = 'libingen libingen_client libingen_serialisation')
     autowaf.use_lib(bld, obj, '''
             GANV
             GLADEMM
@@ -73,5 +73,5 @@ def build(bld):
               name         = 'ingen_gui_lv2',
               target       = 'ingen_gui_lv2',
               install_path = '${LV2DIR}/ingen.lv2/',
-              use          = 'libingen_gui libingen_shared')
+              use          = 'libingen libingen_gui')
     autowaf.use_lib(bld, obj, 'LV2')

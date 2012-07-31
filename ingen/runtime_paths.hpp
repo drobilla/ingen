@@ -14,29 +14,20 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_FORGE_HPP
-#define INGEN_SHARED_FORGE_HPP
+#ifndef INGEN_RUNTIME_PATHS_HPP
+#define INGEN_RUNTIME_PATHS_HPP
 
 #include <string>
 
-#include "raul/Atom.hpp"
-
 namespace Ingen {
-namespace Shared {
 
-class URIMap;
+void set_bundle_path(const char* path);
+void set_bundle_path_from_code(void* function);
 
-/** Forge for Raul Atoms.
- * @ingroup IngenShared
- */
-class Forge : public Raul::Forge {
-public:
-	explicit Forge(Shared::URIMap& map);
+std::string bundle_file_path(const std::string& name);
+std::string data_file_path(const std::string& name);
+std::string module_path(const std::string& name, std::string dir="");
 
-	std::string str(const Raul::Atom& atom);
-};
-
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_FORGE_HPP
+#endif // INGEN_RUNTIME_PATHS_HPP

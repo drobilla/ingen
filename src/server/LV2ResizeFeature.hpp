@@ -19,14 +19,14 @@
 
 #include "raul/log.hpp"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
-#include "ingen/shared/LV2Features.hpp"
+#include "ingen/LV2Features.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 
 namespace Ingen {
 namespace Server {
 
-struct ResizeFeature : public Ingen::Shared::LV2Features::Feature {
+struct ResizeFeature : public Ingen::LV2Features::Feature {
 	static LV2_Resize_Port_Status resize_port(
 		LV2_Resize_Port_Feature_Data data,
 		uint32_t                     index,
@@ -46,7 +46,7 @@ struct ResizeFeature : public Ingen::Shared::LV2Features::Feature {
 		free(feature);
 	}
 
-	SharedPtr<LV2_Feature> feature(Shared::World* w, GraphObject* n) {
+	SharedPtr<LV2_Feature> feature(World* w, GraphObject* n) {
 		NodeImpl* node = dynamic_cast<NodeImpl*>(n);
 		if (!node)
 			return SharedPtr<LV2_Feature>();

@@ -16,7 +16,7 @@
 
 #include <string>
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 
 #include "Driver.hpp"
 #include "Engine.hpp"

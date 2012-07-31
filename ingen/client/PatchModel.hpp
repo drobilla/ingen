@@ -53,7 +53,7 @@ public:
 private:
 	friend class ClientStore;
 
-	PatchModel(Shared::URIs& uris, const Raul::Path& patch_path)
+	PatchModel(URIs& uris, const Raul::Path& patch_path)
 		: NodeModel(uris, "http://drobilla.net/ns/ingen#Patch", patch_path)
 	{
 	}

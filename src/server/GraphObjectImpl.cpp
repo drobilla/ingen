@@ -25,9 +25,9 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-GraphObjectImpl::GraphObjectImpl(Ingen::Shared::URIs& uris,
-                                 GraphObjectImpl*     parent,
-                                 const Raul::Symbol&  symbol)
+GraphObjectImpl::GraphObjectImpl(Ingen::URIs&        uris,
+                                 GraphObjectImpl*    parent,
+                                 const Raul::Symbol& symbol)
 	: GraphObject(uris, parent ? parent->path().child(symbol) : "/")
 	, _parent(parent)
 	, _path(parent ? parent->path().child(symbol) : "/")

@@ -21,9 +21,9 @@
 #include <string>
 
 #include "ingen/Interface.hpp"
-#include "ingen/shared/AtomReader.hpp"
-#include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/AtomReader.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/World.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
@@ -37,7 +37,7 @@
 namespace Ingen {
 namespace Socket {
 
-SocketListener::SocketListener(Ingen::Shared::World& world)
+SocketListener::SocketListener(Ingen::World& world)
 	: Raul::Thread("SocketListener")
 	, _world(world)
 	, _unix_sock(Socket::UNIX)

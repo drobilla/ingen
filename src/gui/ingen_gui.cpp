@@ -14,14 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/Module.hpp"
+#include "ingen/Module.hpp"
 #include "App.hpp"
 
-struct IngenGUIModule : public Ingen::Shared::Module {
-	void load(Ingen::Shared::World* world) {
+struct IngenGUIModule : public Ingen::Module {
+	void load(Ingen::World* world) {
 		app = Ingen::GUI::App::create(world);
 	}
-	void run(Ingen::Shared::World* world) {
+	void run(Ingen::World* world) {
 		app->run();
 	}
 
@@ -30,7 +30,7 @@ struct IngenGUIModule : public Ingen::Shared::Module {
 
 extern "C" {
 
-Ingen::Shared::Module*
+Ingen::Module*
 ingen_module_load()
 {
 	return new IngenGUIModule();

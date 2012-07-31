@@ -17,10 +17,9 @@
 #ifndef INGEN_GRAPHOBJECT_HPP
 #define INGEN_GRAPHOBJECT_HPP
 
-#include "ingen/Resource.hpp"
-#include "raul/Deletable.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
+#include "ingen/Resource.hpp"
 
 namespace Raul {
 class Atom;
@@ -40,8 +39,6 @@ class Plugin;
 class GraphObject : public Resource
 {
 public:
-	virtual void set_path(const Raul::Path& path) = 0;
-
 	enum GraphType {
 		PATCH,
 		NODE,
@@ -67,7 +64,7 @@ public:
 	virtual GraphObject*        graph_parent() const = 0;
 
 protected:
-	GraphObject(Shared::URIs& uris, const Raul::Path& path)
+	GraphObject(URIs& uris, const Raul::Path& path)
 		: Resource(uris, path)
 	{}
 

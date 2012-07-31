@@ -16,15 +16,15 @@
 
 #include <string>
 
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Module.hpp"
+#include "ingen/World.hpp"
 #include "raul/log.hpp"
 
 #include "Socket.hpp"
 #include "SocketClient.hpp"
 
 static SharedPtr<Ingen::Interface>
-new_socket_interface(Ingen::Shared::World*       world,
+new_socket_interface(Ingen::World*               world,
                      const std::string&          url,
                      SharedPtr<Ingen::Interface> respondee)
 {
@@ -41,8 +41,8 @@ new_socket_interface(Ingen::Shared::World*       world,
 	return SharedPtr<Ingen::Interface>(client);
 }
 
-struct IngenSocketClientModule : public Ingen::Shared::Module {
-	void load(Ingen::Shared::World* world) {
+struct IngenSocketClientModule : public Ingen::Module {
+	void load(Ingen::World* world) {
 		world->add_interface_factory("unix", &new_socket_interface);
 		world->add_interface_factory("tcp", &new_socket_interface);
 	}
@@ -50,7 +50,7 @@ struct IngenSocketClientModule : public Ingen::Shared::Module {
 
 extern "C" {
 
-Ingen::Shared::Module*
+Ingen::Module*
 ingen_module_load()
 {
 	return new IngenSocketClientModule();

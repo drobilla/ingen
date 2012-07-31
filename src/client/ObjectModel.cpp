@@ -16,13 +16,13 @@
 
 #include "ingen/GraphObject.hpp"
 #include "ingen/client/ObjectModel.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/TableImpl.hpp"
 
 namespace Ingen {
 namespace Client {
 
-ObjectModel::ObjectModel(Shared::URIs& uris, const Raul::Path& path)
+ObjectModel::ObjectModel(URIs& uris, const Raul::Path& path)
 	: GraphObject(uris, path)
 	, _path(path)
 	, _symbol((path == Raul::Path::root()) ? "root" : path.symbol())

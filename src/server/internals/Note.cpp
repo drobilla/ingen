@@ -17,7 +17,7 @@
 #include <cmath>
 #include <string>
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
@@ -45,7 +45,7 @@ namespace Ingen {
 namespace Server {
 namespace Internals {
 
-InternalPlugin* NoteNode::internal_plugin(Shared::URIs& uris) {
+InternalPlugin* NoteNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Note", "note");
 }
 
@@ -60,7 +60,7 @@ NoteNode::NoteNode(InternalPlugin*    plugin,
 	, _prepared_voices(NULL)
 	, _sustain(false)
 {
-	const Ingen::Shared::URIs& uris = bufs.uris();
+	const Ingen::URIs& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(5);
 
 	_midi_in_port = new InputPort(bufs, this, "input", 0, 1,

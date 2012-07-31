@@ -40,7 +40,7 @@ const LilvPlugins* PluginModel::_lilv_plugins = NULL;
 
 Sord::World* PluginModel::_rdf_world = NULL;
 
-PluginModel::PluginModel(Shared::URIs&               uris,
+PluginModel::PluginModel(URIs&                       uris,
                          const Raul::URI&            uri,
                          const Raul::URI&            type_uri,
                          const Resource::Properties& properties)
@@ -215,7 +215,7 @@ PluginModel::has_ui() const
 }
 
 SharedPtr<PluginUI>
-PluginModel::ui(Ingen::Shared::World*      world,
+PluginModel::ui(Ingen::World*              world,
                 SharedPtr<const NodeModel> node) const
 {
 	if (!_lilv_plugin) {

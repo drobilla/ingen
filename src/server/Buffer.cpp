@@ -22,9 +22,9 @@
 
 #include <new>
 
-#include "ingen/shared/URIMap.hpp"
-#include "ingen/shared/URIs.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "ingen_config.h"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/log.hpp"

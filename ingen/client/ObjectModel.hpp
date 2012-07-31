@@ -35,7 +35,7 @@
 
 namespace Ingen {
 
-namespace Shared { class URIs; }
+class URIs;
 
 namespace Client {
 
@@ -80,7 +80,7 @@ public:
 protected:
 	friend class ClientStore;
 
-	ObjectModel(Shared::URIs& uris, const Raul::Path& path);
+	ObjectModel(URIs& uris, const Raul::Path& path);
 	ObjectModel(const ObjectModel& copy);
 
 	virtual void set_path(const Raul::Path& p);

@@ -32,12 +32,9 @@
 using namespace std;
 
 namespace Ingen {
-
-using namespace Shared;
-
 namespace Client {
 
-ClientStore::ClientStore(Shared::URIs&                 uris,
+ClientStore::ClientStore(URIs&                         uris,
                          SharedPtr<Interface>          engine,
                          SharedPtr<SigClientInterface> emitter)
 	: _uris(uris)

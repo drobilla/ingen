@@ -14,28 +14,22 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_MIX_HPP
-#define INGEN_ENGINE_MIX_HPP
+#ifndef INGEN_CONFIGURATION_HPP
+#define INGEN_CONFIGURATION_HPP
 
-#include <stdint.h>
+#include "raul/Configuration.hpp"
 
 namespace Ingen {
 
-class URIs;
+/** Ingen configuration (command line options).
+ * @ingroup IngenShared
+ */
+class Configuration : public Raul::Configuration {
+public:
+	Configuration();
+};
 
-namespace Server {
-
-class Context;
-class Buffer;
-
-void
-mix(Context&            context,
-    URIs&               uris,
-    Buffer*             dst,
-    const Buffer*const* srcs,
-    uint32_t            num_srcs);
-
-} // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_MIX_HPP
+#endif // INGEN_CONFIGURATION_HPP
+

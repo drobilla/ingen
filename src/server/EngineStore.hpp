@@ -19,7 +19,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/shared/Store.hpp"
+#include "ingen/Store.hpp"
 
 namespace Ingen {
 
@@ -28,10 +28,10 @@ class GraphObject;
 namespace Server {
 
 class BufferFactory;
-class GraphObjectImpl;
 class NodeImpl;
 class PatchImpl;
 class PortImpl;
+class GraphObjectImpl;
 
 /** Storage for all GraphObjects (tree of GraphObject's sorted by path).
  *
@@ -42,7 +42,7 @@ class PortImpl;
  * Searching with find*() is fast (O(log(n)) binary search on contiguous
  * memory) and realtime safe, but modification (add or remove) are neither.
  */
-class EngineStore : public Ingen::Shared::Store
+class EngineStore : public Ingen::Store
 {
 public:
 	explicit EngineStore(SharedPtr<BufferFactory> f) : _factory(f) {}

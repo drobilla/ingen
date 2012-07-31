@@ -31,7 +31,7 @@ namespace Ingen {
 class Plugin : public Resource
 {
 public:
-	Plugin(Shared::URIs& uris, const Raul::URI& uri)
+	Plugin(URIs& uris, const Raul::URI& uri)
 		: Resource(uris, uri)
 	{}
 

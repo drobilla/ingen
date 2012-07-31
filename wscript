@@ -138,13 +138,12 @@ def build(bld):
     opts.moduledir = opts.moduledir or bld.env['PREFIX'] + 'lib/ingen'
 
     # Headers
-    for i in ['', 'client', 'serialisation', 'shared']:
+    for i in ['', 'client', 'serialisation']:
         bld.install_files('${INCLUDEDIR}/ingen/%s' % i,
                           bld.path.ant_glob('ingen/%s/*' % i))
 
     # Modules
     bld.recurse('src')
-    bld.recurse('src/shared')
     bld.recurse('src/serialisation')
     bld.recurse('src/server')
     bld.recurse('src/client')
@@ -158,7 +157,7 @@ def build(bld):
               source       = 'src/ingen/main.cpp',
               target       = bld.path.get_bld().make_node('ingen'),
               includes     = ['.'],
-              use          = 'libingen_shared',
+              use          = 'libingen',
               install_path = '${BINDIR}')
     autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2')
 
@@ -168,7 +167,7 @@ def build(bld):
                   source       = 'tests/ingen_test.cpp',
                   target       = 'tests/ingen_test',
                   includes     = ['.'],
-                  use          = 'libingen_shared_profiled',
+                  use          = 'libingen_profiled',
                   install_path = '',
                   lib          = bld.env['INGEN_TEST_LIBS'],
                   cxxflags     = bld.env['INGEN_TEST_CXXFLAGS'])
@@ -203,7 +202,7 @@ def lint(ctx):
 
 def test(ctx):
     os.environ['PATH'] = 'tests' + os.pathsep + os.getenv('PATH')
-    os.environ['LD_LIBRARY_PATH'] = os.path.join('src', 'shared') 
+    os.environ['LD_LIBRARY_PATH'] = os.path.join('src')
     os.environ['INGEN_MODULE_PATH'] = os.pathsep.join([
             os.path.join('src', 'server') ,
             os.path.join('src', 'serialisation')])

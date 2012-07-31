@@ -14,18 +14,17 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_ATOMWRITER_HPP
-#define INGEN_SHARED_ATOMWRITER_HPP
+#ifndef INGEN_ATOMWRITER_HPP
+#define INGEN_ATOMWRITER_HPP
 
 #include <string>
 
 #include "ingen/Interface.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
 #include "serd/serd.h"
 
 namespace Ingen {
-namespace Shared {
 
 class AtomSink;
 class URIMap;
@@ -93,8 +92,7 @@ private:
 	int32_t        _id;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_ATOMWRITER_HPP
+#endif // INGEN_ATOMWRITER_HPP
 

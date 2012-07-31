@@ -22,7 +22,7 @@
 #include "ingen/client/EdgeModel.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PatchModel.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 
 using namespace std;
 

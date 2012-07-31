@@ -32,10 +32,10 @@
 #include "ingen/Plugin.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
-#include "ingen/shared/Store.hpp"
-#include "ingen/shared/URIMap.hpp"
-#include "ingen/shared/URIs.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Store.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 #include "raul/Path.hpp"
@@ -49,13 +49,12 @@ using namespace std;
 using namespace Raul;
 using namespace Sord;
 using namespace Ingen;
-using namespace Ingen::Shared;
 
 namespace Ingen {
 namespace Serialisation {
 
 struct Serialiser::Impl {
-	explicit Impl(Shared::World& world)
+	explicit Impl(World& world)
 		: _root_path("/")
 		, _world(world)
 		, _model(NULL)
@@ -99,16 +98,16 @@ struct Serialiser::Impl {
 
 	std::string finish();
 
-	Raul::Path               _root_path;
-	SharedPtr<Shared::Store> _store;
-	Mode                     _mode;
-	std::string              _base_uri;
-	Shared::World&           _world;
-	Sord::Model*             _model;
-	Sratom*                  _sratom;
+	Raul::Path       _root_path;
+	SharedPtr<Store> _store;
+	Mode             _mode;
+	std::string      _base_uri;
+	World&           _world;
+	Sord::Model*     _model;
+	Sratom*          _sratom;
 };
 
-Serialiser::Serialiser(Shared::World& world)
+Serialiser::Serialiser(World& world)
 	: me(new Impl(world))
 {}
 

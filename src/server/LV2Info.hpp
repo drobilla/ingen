@@ -18,19 +18,16 @@
 #define INGEN_ENGINE_LV2INFO_HPP
 
 #include "lilv/lilv.h"
-#include "ingen/shared/World.hpp"
+#include "ingen/World.hpp"
 
 namespace Ingen {
-
-class Node;
-
 namespace Server {
 
 /** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
  */
 class LV2Info {
 public:
-	explicit LV2Info(Ingen::Shared::World* world);
+	explicit LV2Info(Ingen::World* world);
 	~LV2Info();
 
 	LilvNode* atom_AtomPort;
@@ -50,11 +47,11 @@ public:
 	LilvNode* rsz_minimumSize;
 	LilvNode* work_schedule;
 
-	Ingen::Shared::World& world()     { return *_world; }
-	LilvWorld*            lv2_world() { return _world->lilv_world(); }
+	Ingen::World& world()     { return *_world; }
+	LilvWorld*    lv2_world() { return _world->lilv_world(); }
 
 private:
-	Ingen::Shared::World* _world;
+	Ingen::World* _world;
 };
 
 } // namespace Server

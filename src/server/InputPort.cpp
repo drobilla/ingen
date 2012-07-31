@@ -24,7 +24,7 @@
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "mix.hpp"
 
 using namespace std;
@@ -44,7 +44,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
 	, _num_edges(0)
 {
-	const Ingen::Shared::URIs& uris = bufs.uris();
+	const Ingen::URIs& uris = bufs.uris();
 
 	if (parent->graph_type() != GraphObject::PATCH) {
 		add_property(uris.rdf_type, uris.lv2_InputPort);

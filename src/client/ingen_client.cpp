@@ -14,22 +14,22 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Module.hpp"
+#include "ingen/World.hpp"
 #include "raul/SharedPtr.hpp"
 
 #include "ingen_config.h"
 
 using namespace Ingen;
 
-struct IngenClientModule : public Ingen::Shared::Module {
-	void load(Ingen::Shared::World* world) {
+struct IngenClientModule : public Ingen::Module {
+	void load(Ingen::World* world) {
 	}
 };
 
 extern "C" {
 
-Ingen::Shared::Module*
+Ingen::Module*
 ingen_module_load()
 {
 	return new IngenClientModule();

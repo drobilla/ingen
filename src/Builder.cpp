@@ -14,20 +14,19 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Builder.hpp"
 #include "ingen/Edge.hpp"
 #include "ingen/GraphObject.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/shared/Builder.hpp"
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
 using namespace std;
 
 namespace Ingen {
-namespace Shared {
 
-Builder::Builder(Shared::URIs& uris, Interface& interface)
+Builder::Builder(URIs& uris, Interface& interface)
 	: _uris(uris)
 	, _interface(interface)
 {
@@ -51,5 +50,4 @@ Builder::connect(SharedPtr<const GraphObject> object)
 	}
 }
 
-} // namespace Shared
 } // namespace Ingen

@@ -18,7 +18,6 @@
 #define INGEN_BINDINGS_HPP
 
 namespace Ingen {
-namespace Shared {
 
 class World;
 extern World* ingen_world;
@@ -28,7 +27,6 @@ extern "C" {
 	void script_iteration(World* world);
 }
 
-} // namespace Shared
 } // namespace Ingen
 
 #endif // INGEN_BINDINGS_HPP

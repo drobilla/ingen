@@ -21,20 +21,19 @@
 #include <string>
 #include <utility>
 
+#include "ingen/Plugin.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/Resource.hpp"
+#include "ingen/World.hpp"
+#include "ingen/client/signal.hpp"
 #include "lilv/lilv.h"
 #include "raul/SharedPtr.hpp"
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"
 
-#include "ingen/Interface.hpp"
-#include "ingen/Plugin.hpp"
-#include "ingen/Resource.hpp"
-#include "ingen/client/signal.hpp"
-#include "ingen/shared/World.hpp"
-
 namespace Ingen {
 
-namespace Shared { class URIs; }
+class URIs;
 
 namespace Client {
 
@@ -49,7 +48,7 @@ class PluginUI;
 class PluginModel : public Ingen::Plugin
 {
 public:
-	PluginModel(Shared::URIs&                      uris,
+	PluginModel(URIs&                              uris,
 	            const Raul::URI&                   uri,
 	            const Raul::URI&                   type_uri,
 	            const Ingen::Resource::Properties& properties);
@@ -75,8 +74,8 @@ public:
 
 	bool has_ui() const;
 
-	SharedPtr<PluginUI> ui(Ingen::Shared::World*       world,
-	                       SharedPtr<const NodeModel>  node) const;
+	SharedPtr<PluginUI> ui(Ingen::World*              world,
+	                       SharedPtr<const NodeModel> node) const;
 
 	const std::string& icon_path() const;
 	static std::string get_lv2_icon_path(const LilvPlugin* plugin);

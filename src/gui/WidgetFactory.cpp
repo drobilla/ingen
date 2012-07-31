@@ -19,7 +19,7 @@
 
 #include "raul/log.hpp"
 
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/runtime_paths.hpp"
 
 #include "WidgetFactory.hpp"
 
@@ -44,7 +44,7 @@ void
 WidgetFactory::find_ui_file()
 {
 	// Try file in bundle (directory where executable resides)
-	ui_filename = Shared::bundle_file_path("ingen_gui.ui");
+	ui_filename = Ingen::bundle_file_path("ingen_gui.ui");
 	if (is_readable(ui_filename))
 		return;
 
@@ -56,7 +56,7 @@ WidgetFactory::find_ui_file()
 	}
 
 	// Try the default system installed path
-	ui_filename = Shared::data_file_path("ingen_gui.ui");
+	ui_filename = Ingen::data_file_path("ingen_gui.ui");
 	if (is_readable(ui_filename))
 		return;
 

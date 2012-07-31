@@ -16,8 +16,8 @@
 
 #include "raul/log.hpp"
 
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Module.hpp"
+#include "ingen/World.hpp"
 
 #include "../server/Engine.hpp"
 #include "../server/EventWriter.hpp"
@@ -26,8 +26,8 @@
 
 using namespace Ingen;
 
-struct IngenSocketServerModule : public Ingen::Shared::Module {
-	void load(Ingen::Shared::World* world) {
+struct IngenSocketServerModule : public Ingen::Module {
+	void load(Ingen::World* world) {
 		listener = SharedPtr<Ingen::Socket::SocketListener>(
 			new Ingen::Socket::SocketListener(*world));
 	}
@@ -37,7 +37,7 @@ struct IngenSocketServerModule : public Ingen::Shared::Module {
 
 extern "C" {
 
-Ingen::Shared::Module*
+Ingen::Module*
 ingen_module_load()
 {
 	return new IngenSocketServerModule();

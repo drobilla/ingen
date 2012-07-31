@@ -19,13 +19,13 @@
 #include <string>
 
 #include "ingen/client/NodeModel.hpp"
-#include "ingen/shared/URIs.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 
 namespace Ingen {
 namespace Client {
 
-NodeModel::NodeModel(Shared::URIs&          uris,
+NodeModel::NodeModel(URIs&                  uris,
                      SharedPtr<PluginModel> plugin,
                      const Raul::Path&      path)
 	: ObjectModel(uris, path)
@@ -37,7 +37,7 @@ NodeModel::NodeModel(Shared::URIs&          uris,
 {
 }
 
-NodeModel::NodeModel(Shared::URIs&     uris,
+NodeModel::NodeModel(URIs&             uris,
                      const Raul::URI&  plugin_uri,
                      const Raul::Path& path)
 	: ObjectModel(uris, path)

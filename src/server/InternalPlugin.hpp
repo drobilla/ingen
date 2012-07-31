@@ -38,7 +38,7 @@ class BufferFactory;
 class InternalPlugin : public PluginImpl
 {
 public:
-	InternalPlugin(Shared::URIs&      uris,
+	InternalPlugin(URIs&              uris,
 	               const std::string& uri,
 	               const std::string& symbol);
 

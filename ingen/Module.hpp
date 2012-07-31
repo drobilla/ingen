@@ -14,24 +14,40 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_CONFIGURATION_HPP
-#define INGEN_SHARED_CONFIGURATION_HPP
+#ifndef INGEN_MODULE_HPP
+#define INGEN_MODULE_HPP
 
-#include "raul/Configuration.hpp"
+#include <glibmm/module.h>
 
 namespace Ingen {
-namespace Shared {
 
-/** Ingen configuration (command line options).
+class World;
+
+/** A dynamically loaded Ingen module.
+ *
+ * All components of Ingen reside in one of these.
  * @ingroup IngenShared
  */
-class Configuration : public Raul::Configuration {
-public:
-	Configuration();
+struct Module {
+	Module() : library(NULL) {}
+	virtual ~Module() {}
+
+	virtual void load(Ingen::World* world) = 0;
+	virtual void run(Ingen::World* world) {}
+
+	/** Library implementing this module.
+	 *
+	 * This is managed by the World and not this class, since closing the library
+	 * in this destructor could possibly reference code from the library
+	 * afterwards and cause a segfault on exit.
+	 */
+	Glib::Module* library;
+
+private:
+	Module(const Module& noncopyable);
+	Module& operator=(const Module& noncopyable);
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_CONFIGURATION_HPP
-
+#endif // INGEN_MODULE_HPP

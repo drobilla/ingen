@@ -25,8 +25,7 @@
 namespace Ingen {
 
 class Interface;
-
-namespace Shared { class World; }
+class World;
 
 namespace Socket {
 
@@ -34,7 +33,7 @@ namespace Socket {
 class SocketReader : public Raul::Thread
 {
 public:
-	SocketReader(Shared::World&    world,
+	SocketReader(World&            world,
 	             Interface&        iface,
 	             SharedPtr<Socket> sock);
 
@@ -59,7 +58,7 @@ private:
 	                                  const SerdNode*    object_datatype,
 	                                  const SerdNode*    object_lang);
 
-	Shared::World&    _world;
+	World&            _world;
 	Interface&        _iface;
 	SerdEnv*          _env;
 	SordInserter*     _inserter;

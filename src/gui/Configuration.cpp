@@ -85,7 +85,7 @@ uint32_t
 Configuration::get_port_color(const Client::PortModel* p)
 {
 	assert(p != NULL);
-	const Shared::URIs& uris = _app.uris();
+	const URIs& uris = _app.uris();
 	if (p->is_a(uris.lv2_AudioPort)) {
 		return _audio_port_color;
 	} else if (p->supports(uris.atom_String)) {

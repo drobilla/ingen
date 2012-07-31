@@ -57,7 +57,7 @@ def build(bld):
               name            = 'libingen_server',
               target          = 'ingen_server',
               install_path    = '${LIBDIR}',
-              use             = 'libingen_shared')
+              use             = 'libingen')
     core_libs = 'GLIBMM GTHREAD LV2 LILV RAUL SORD'
     autowaf.use_lib(bld, obj, core_libs)
 
@@ -69,7 +69,7 @@ def build(bld):
                   name            = 'libingen_server_profiled',
                   target          = 'ingen_server_profiled',
                   install_path    = '${LIBDIR}',
-                  use             = 'libingen_shared_profiled',
+                  use             = 'libingen_profiled',
                   lib             = bld.env['INGEN_TEST_LIBS'],
                   cxxflags        = bld.env['INGEN_TEST_CXXFLAGS'])
         autowaf.use_lib(bld, obj, core_libs)
@@ -91,5 +91,5 @@ def build(bld):
               name         = 'libingen_lv2',
               target       = 'ingen_lv2',
               install_path = '${LV2DIR}/ingen.lv2/',
-              use          = 'libingen_server libingen_shared')
+              use          = 'libingen libingen_server')
     autowaf.use_lib(bld, obj, core_libs)

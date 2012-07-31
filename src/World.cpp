@@ -21,13 +21,13 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/module.h>
 
-#include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/LV2Features.hpp"
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/URIMap.hpp"
-#include "ingen/shared/URIs.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/LV2Features.hpp"
+#include "ingen/Module.hpp"
+#include "ingen/URIMap.hpp"
+#include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
+#include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
 #include "raul/log.hpp"
 #include "sord/sordmm.hpp"
@@ -40,12 +40,10 @@ namespace Ingen {
 
 class EngineBase;
 class Interface;
+class Store;
 
 namespace Serialisation { class Parser; class Serialiser; }
 
-namespace Shared {
-
-class Store;
 
 /** Load a dynamic module from the default path.
  *
@@ -67,7 +65,7 @@ ingen_load_module(const string& name)
 		string dir;
 		istringstream iss(module_path);
 		while (getline(iss, dir, G_SEARCHPATH_SEPARATOR)) {
-			string filename = Shared::module_path(name, dir);
+			string filename = Ingen::module_path(name, dir);
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
 				module = new Glib::Module(filename);
 				if (*module) {
@@ -81,10 +79,10 @@ ingen_load_module(const string& name)
 	}
 
 	// Try default directory if not found
-	module = new Glib::Module(Shared::module_path(name));
+	module = new Glib::Module(Ingen::module_path(name));
 
-	if (module) {
-		LOG(Raul::info)(Raul::fmt("Loading %1%\n") % Shared::module_path(name));
+	if (*module) {
+		LOG(Raul::info)(Raul::fmt("Loading %1%\n") % Ingen::module_path(name));
 		return module;
 	} else if (!module_path_found) {
 		LOG(Raul::error)(Raul::fmt("Unable to find %1% (%2%)\n")
@@ -108,13 +106,13 @@ public:
 		, argv(a_argv)
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
-		, uri_map(new Ingen::Shared::URIMap(map, unmap))
-		, forge(new Ingen::Shared::Forge(*uri_map))
-		, uris(new Shared::URIs(*forge, uri_map))
+		, uri_map(new URIMap(map, unmap))
+		, forge(new Forge(*uri_map))
+		, uris(new URIs(*forge, uri_map))
 		, lilv_world(lilv_world_new())
 	{
 		conf.parse(argc, argv);
-		lv2_features = new Ingen::Shared::LV2Features();
+		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map->urid_map_feature());
 		lv2_features->add_feature(uri_map->urid_unmap_feature());
 		lilv_world_load_all(lilv_world);
@@ -176,11 +174,11 @@ public:
 
 	int&                                 argc;
 	char**&                              argv;
-	Shared::Configuration                conf;
+	Configuration                        conf;
 	LV2Features*                         lv2_features;
 	Sord::World*                         rdf_world;
 	URIMap*                              uri_map;
-	Shared::Forge*                       forge;
+	Forge*                               forge;
 	URIs*                                uris;
 	SharedPtr<Interface>                 interface;
 	SharedPtr<EngineBase>                engine;
@@ -216,17 +214,17 @@ SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parse
 SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
 SharedPtr<Store>                     World::store()        { return _impl->store; }
 
-int&                   World::argc() { return _impl->argc; }
-char**&                World::argv() { return _impl->argv; }
-Shared::Configuration& World::conf() { return _impl->conf; }
+int&           World::argc() { return _impl->argc; }
+char**&        World::argv() { return _impl->argv; }
+Configuration& World::conf() { return _impl->conf; }
 
 Sord::World* World::rdf_world()  { return _impl->rdf_world; }
 LilvWorld*   World::lilv_world() { return _impl->lilv_world; }
 
-LV2Features&   World::lv2_features() { return *_impl->lv2_features; }
-Shared::Forge& World::forge()        { return *_impl->forge; }
-URIs&          World::uris()         { return *_impl->uris; }
-URIMap&        World::uri_map()      { return *_impl->uri_map; }
+LV2Features& World::lv2_features() { return *_impl->lv2_features; }
+Forge&       World::forge()        { return *_impl->forge; }
+URIs&        World::uris()         { return *_impl->uris; }
+URIMap&      World::uri_map()      { return *_impl->uri_map; }
 
 bool
 World::load_module(const char* name)
@@ -237,7 +235,7 @@ World::load_module(const char* name)
 		return true;
 	}
 	Glib::Module* lib = ingen_load_module(name);
-	Ingen::Shared::Module* (*module_load)() = NULL;
+	Ingen::Module* (*module_load)() = NULL;
 	if (lib && lib->get_symbol("ingen_module_load", (void*&)module_load)) {
 		Module* module = module_load();
 		if (module) {
@@ -319,5 +317,4 @@ World::jack_uuid()
 	return _impl->jack_uuid;
 }
 
-} // namespace Shared
 } // namespace Ingen

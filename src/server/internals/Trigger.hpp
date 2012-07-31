@@ -56,7 +56,7 @@ public:
 
 	void learn() { _learning = true; }
 
-	static InternalPlugin* internal_plugin(Shared::URIs& uris);
+	static InternalPlugin* internal_plugin(URIs& uris);
 
 private:
 	bool _learning;

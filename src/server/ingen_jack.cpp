@@ -16,9 +16,9 @@
 
 #include <string>
 
-#include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/Module.hpp"
+#include "ingen/World.hpp"
 #include "raul/Configuration.hpp"
 #include "raul/log.hpp"
 
@@ -28,8 +28,8 @@
 using namespace std;
 using namespace Ingen;
 
-struct IngenJackModule : public Ingen::Shared::Module {
-	void load(Ingen::Shared::World* world) {
+struct IngenJackModule : public Ingen::Module {
+	void load(Ingen::World* world) {
 		if (((Server::Engine*)world->engine().get())->driver()) {
 			Raul::warn << "Engine already has a driver" << std::endl;
 			return;
@@ -49,7 +49,7 @@ struct IngenJackModule : public Ingen::Shared::Module {
 
 extern "C" {
 
-Ingen::Shared::Module*
+Ingen::Module*
 ingen_module_load()
 {
 	return new IngenJackModule();

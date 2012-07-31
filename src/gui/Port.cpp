@@ -36,7 +36,6 @@ using namespace std;
 using namespace Raul;
 
 namespace Ingen {
-using namespace Shared;
 namespace GUI {
 
 Port*
@@ -146,7 +145,7 @@ Port::on_value_changed(GVariant* value)
 
 	const Raul::Atom atom = _app.forge().make(float(g_variant_get_double(value)));
 	if (atom != model()->value()) {
-		Ingen::Shared::World* const world = _app.world();
+		Ingen::World* const world = _app.world();
 		_app.interface()->set_property(model()->path(),
 		                               world->uris().ingen_value,
 		                               atom);

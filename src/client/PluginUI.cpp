@@ -14,14 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "raul/log.hpp"
-
+#include "ingen/Interface.hpp"
+#include "ingen/URIs.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 #include "ingen/client/PortModel.hpp"
-#include "ingen/shared/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
+#include "raul/log.hpp"
 
 using namespace std;
 
@@ -48,7 +48,7 @@ lv2_ui_write(SuilController controller,
 
 	SharedPtr<const PortModel> port = ports[port_index];
 
-	const Shared::URIs& uris = ui->world()->uris();
+	const URIs& uris = ui->world()->uris();
 
 	// float (special case, always 0)
 	if (format == 0) {
@@ -75,7 +75,7 @@ lv2_ui_write(SuilController controller,
 	}
 }
 
-PluginUI::PluginUI(Ingen::Shared::World*      world,
+PluginUI::PluginUI(Ingen::World*              world,
                    SharedPtr<const NodeModel> node,
                    const LilvNode*            ui_node)
 	: _world(world)
@@ -92,7 +92,7 @@ PluginUI::~PluginUI()
 }
 
 SharedPtr<PluginUI>
-PluginUI::create(Ingen::Shared::World*      world,
+PluginUI::create(Ingen::World*              world,
                  SharedPtr<const NodeModel> node,
                  const LilvPlugin*          plugin)
 {

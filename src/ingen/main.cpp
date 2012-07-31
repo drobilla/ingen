@@ -33,9 +33,9 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
-#include "ingen/shared/Configuration.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/runtime_paths.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/World.hpp"
+#include "ingen/runtime_paths.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
@@ -44,7 +44,7 @@
 using namespace std;
 using namespace Ingen;
 
-Ingen::Shared::World* world = NULL;
+Ingen::World* world = NULL;
 
 void
 ingen_interrupt(int signal)
@@ -75,11 +75,11 @@ int
 main(int argc, char** argv)
 {
 	Glib::thread_init();
-	Shared::set_bundle_path_from_code((void*)&main);
+	Ingen::set_bundle_path_from_code((void*)&main);
 
 	// Create world
 	try {
-		world = new Ingen::Shared::World(argc, argv, NULL, NULL);
+		world = new Ingen::World(argc, argv, NULL, NULL);
 		if (argc <= 1) {
 			world->conf().print_usage("ingen", cout);
 			return EXIT_FAILURE;
@@ -92,7 +92,7 @@ main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
-	Shared::Configuration& conf = world->conf();
+	Configuration& conf = world->conf();
 	if (conf.option("uuid").is_valid()) {
 		world->set_jack_uuid(conf.option("uuid").get_string());
 	}

@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_WORLD_HPP
-#define INGEN_SHARED_WORLD_HPP
+#ifndef INGEN_WORLD_HPP
+#define INGEN_WORLD_HPP
 
 #include <string>
 
@@ -36,8 +36,6 @@ namespace Serialisation {
 class Parser;
 class Serialiser;
 }
-
-namespace Shared {
 
 class Configuration;
 class Forge;
@@ -134,10 +132,10 @@ public:
 	virtual Sord::World* rdf_world();
 	virtual LilvWorld*   lilv_world();
 
-	virtual LV2Features&          lv2_features();
-	virtual Ingen::Shared::Forge& forge();
-	virtual URIMap&               uri_map();
-	virtual URIs&                 uris();
+	virtual LV2Features&  lv2_features();
+	virtual Ingen::Forge& forge();
+	virtual URIMap&       uri_map();
+	virtual URIs&         uris();
 
 	virtual void        set_jack_uuid(const std::string& uuid);
 	virtual std::string jack_uuid();
@@ -148,7 +146,6 @@ private:
 	Impl* _impl;
 };
 
-}  // namespace Shared
 }  // namespace Ingen
 
-#endif  // INGEN_SHARED_WORLD_HPP
+#endif  // INGEN_WORLD_HPP

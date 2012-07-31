@@ -18,7 +18,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "ingen/shared/URIMap.hpp"
+#include "ingen/URIMap.hpp"
 
 #include "SocketWriter.hpp"
 
@@ -40,8 +40,8 @@ socket_sink(const void* buf, size_t len, void* stream)
 	return ret;
 }
 
-SocketWriter::SocketWriter(Shared::URIMap&   map,
-                           Shared::URIs&     uris,
+SocketWriter::SocketWriter(URIMap&           map,
+                           URIs&             uris,
                            const Raul::URI&  uri,
                            SharedPtr<Socket> sock)
 	: AtomWriter(map, uris, *this)

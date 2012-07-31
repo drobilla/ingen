@@ -22,12 +22,13 @@
 #include <gtkmm/label.h>
 #include <gtkmm/spinbutton.h>
 
-#include "raul/log.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/client/NodeModel.hpp"
-#include "ingen/client/PluginModel.hpp"
 #include "App.hpp"
 #include "PropertiesWindow.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/World.hpp"
+#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/PluginModel.hpp"
+#include "raul/log.hpp"
 
 #define LOG(s) s << "[PropertiesWindow] "
 
@@ -37,7 +38,6 @@ using namespace Raul;
 namespace Ingen {
 
 using namespace Client;
-using namespace Shared;
 
 namespace GUI {
 
@@ -105,7 +105,7 @@ PropertiesWindow::present(SharedPtr<const ObjectModel> model)
 
 /** Get all the types which this model is an instance of */
 static URISet
-get_types(Shared::World* world, SharedPtr<const ObjectModel> model)
+get_types(World* world, SharedPtr<const ObjectModel> model)
 {
 	typedef Resource::Properties::const_iterator PropIter;
 	typedef std::pair<PropIter, PropIter>        PropRange;
@@ -152,7 +152,7 @@ get_types(Shared::World* world, SharedPtr<const ObjectModel> model)
 
 /** Get all the properties with domains appropriate to this model */
 static URISet
-get_properties(Shared::World* world, SharedPtr<const ObjectModel> model)
+get_properties(World* world, SharedPtr<const ObjectModel> model)
 {
 	URISet properties;
 	URISet types = get_types(world, model);
@@ -197,7 +197,7 @@ get_properties(Shared::World* world, SharedPtr<const ObjectModel> model)
 }
 
 static Glib::ustring
-get_label(Shared::World* world, const LilvNode* node)
+get_label(World* world, const LilvNode* node)
 {
 	LilvNode* rdfs_label = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDFS "label");
@@ -215,7 +215,7 @@ get_label(Shared::World* world, const LilvNode* node)
 void
 PropertiesWindow::add_property(const Raul::URI& uri, const Raul::Atom& value)
 {
-	Shared::World* world = _app->world();
+	World* world = _app->world();
 
 	const unsigned n_rows = _table->property_n_rows() + 1;
 	_table->property_n_rows() = n_rows;
@@ -256,7 +256,7 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 
 	set_title(model->path().chop_scheme() + " Properties - Ingen");
 
-	Shared::World* world = _app->world();
+	World* world = _app->world();
 
 	LilvNode* rdfs_range = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDFS "range");
@@ -308,7 +308,7 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 Gtk::Widget*
 PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& value)
 {
-	Ingen::Shared::Forge& forge = _app->forge();
+	Ingen::Forge& forge = _app->forge();
 	if (value.type() == forge.Int) {
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 0));
 		widget->property_numeric() = true;
@@ -449,7 +449,7 @@ bad_type:
 void
 PropertiesWindow::key_changed()
 {
-	Shared::World* world = _app->world();
+	World* world = _app->world();
 
 	const Gtk::ListStore::Row row      = *(_key_combo->get_active());
 	Glib::ustring             prop_uri = row[_combo_columns.uri_col];

@@ -29,7 +29,7 @@ namespace Socket {
 class SocketClient : public SocketWriter
 {
 public:
-	SocketClient(Shared::World&       world,
+	SocketClient(World&               world,
 	             const std::string&   uri,
 	             SharedPtr<Socket>    sock,
 	             SharedPtr<Interface> respondee)

@@ -25,9 +25,9 @@
 
 #include "Buffer.hpp"
 #include "BufferRef.hpp"
-#include "Context.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PortType.hpp"
+#include "ProcessContext.hpp"
 #include "types.hpp"
 
 namespace Raul { class Maid; }

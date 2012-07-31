@@ -16,7 +16,7 @@
 
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/log.hpp"
 
 #include "AudioBuffer.hpp"
@@ -53,7 +53,7 @@ audio_accumulate(Context& context, AudioBuffer* dst, const AudioBuffer* src)
 }
 
 static inline bool
-is_audio(Shared::URIs& uris, LV2_URID type)
+is_audio(URIs& uris, LV2_URID type)
 {
 	return type == uris.atom_Float || type == uris.atom_Sound;
 }
@@ -69,7 +69,7 @@ is_end(const Buffer* buf, LV2_Atom_Event* ev)
 
 void
 mix(Context&            context,
-    Shared::URIs&       uris,
+    URIs&               uris,
     Buffer*             dst,
     const Buffer*const* srcs,
     uint32_t            num_srcs)

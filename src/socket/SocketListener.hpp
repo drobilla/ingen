@@ -24,24 +24,23 @@
 namespace Ingen {
 
 class Interface;
-
-namespace Shared { class World; }
+class World;
 
 namespace Socket {
 
 class SocketListener : public Raul::Thread
 {
 public:
-	explicit SocketListener(Ingen::Shared::World& world);
+	explicit SocketListener(Ingen::World& world);
 	~SocketListener();
 
 private:
 	virtual void _run();
 
-	Ingen::Shared::World& _world;
-	std::string           _unix_path;
-	Socket                _unix_sock;
-	Socket                _net_sock;
+	Ingen::World& _world;
+	std::string   _unix_path;
+	Socket        _unix_sock;
+	Socket        _net_sock;
 };
 
 }  // namespace Ingen

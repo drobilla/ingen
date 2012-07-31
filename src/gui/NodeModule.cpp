@@ -47,7 +47,6 @@ using namespace Raul;
 namespace Ingen {
 
 using namespace Client;
-using namespace Shared;
 
 namespace GUI {
 
@@ -405,7 +404,7 @@ NodeModule::store_location(double ax, double ay)
 void
 NodeModule::property_changed(const URI& key, const Atom& value)
 {
-	const Shared::URIs& uris = app().uris();
+	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {
 		if (key == uris.ingen_canvasX) {
 			move_to(value.get_float(), get_y());

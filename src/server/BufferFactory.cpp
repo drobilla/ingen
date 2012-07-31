@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 #include "raul/log.hpp"
 
 #include "AudioBuffer.hpp"
@@ -27,7 +27,7 @@ namespace Server {
 
 static const size_t EVENT_BYTES_PER_FRAME = 4; // FIXME
 
-BufferFactory::BufferFactory(Engine& engine, Shared::URIs& uris)
+BufferFactory::BufferFactory(Engine& engine, URIs& uris)
 	: _engine(engine)
 	, _uris(uris)
 	, _silent_buffer(NULL)
@@ -42,7 +42,7 @@ BufferFactory::~BufferFactory()
 	free_list(_free_object.get());
 }
 
-Shared::Forge&
+Forge&
 BufferFactory::forge()
 {
 	return _engine.world()->forge();

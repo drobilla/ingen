@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_WORKER_HPP
 #define INGEN_ENGINE_WORKER_HPP
 
-#include "ingen/shared/LV2Features.hpp"
+#include "ingen/LV2Features.hpp"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/RingBuffer.hpp"
 #include "raul/Semaphore.hpp"
@@ -33,8 +33,8 @@ class Worker : public Raul::Thread
 public:
 	Worker(uint32_t buffer_size);
 
-	struct Schedule : public Shared::LV2Features::Feature {
-		SharedPtr<LV2_Feature> feature(Shared::World* world, GraphObject* n);
+	struct Schedule : public LV2Features::Feature {
+		SharedPtr<LV2_Feature> feature(World* world, GraphObject* n);
 	};
 
 	LV2_Worker_Status request(LV2Node*    node,

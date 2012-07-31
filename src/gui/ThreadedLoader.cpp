@@ -16,8 +16,8 @@
 
 #include <string>
 #include "raul/log.hpp"
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/Module.hpp"
+#include "ingen/World.hpp"
+#include "ingen/Module.hpp"
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
 #include "ingen/client/PatchModel.hpp"
@@ -43,7 +43,7 @@ ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
 SharedPtr<Serialisation::Parser>
 ThreadedLoader::parser()
 {
-	Ingen::Shared::World* world = _app.world();
+	Ingen::World* world = _app.world();
 
 	if (!world->parser())
 		world->load_module("serialisation");
@@ -73,7 +73,7 @@ ThreadedLoader::load_patch(bool                              merge,
 {
 	_mutex.lock();
 
-	Ingen::Shared::World* world = _app.world();
+	Ingen::World* world = _app.world();
 
 	Glib::ustring engine_base = "";
 	if (engine_parent) {

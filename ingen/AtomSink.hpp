@@ -14,13 +14,12 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SHARED_ATOMSINK_HPP
-#define INGEN_SHARED_ATOMSINK_HPP
+#ifndef INGEN_ATOMSINK_HPP
+#define INGEN_ATOMSINK_HPP
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
 namespace Ingen {
-namespace Shared {
 
 /** A sink for LV2 Atoms.
  * @ingroup IngenShared
@@ -35,8 +34,7 @@ public:
 	virtual bool write(const LV2_Atom* msg) = 0;
 };
 
-} // namespace Shared
 } // namespace Ingen
 
-#endif // INGEN_SHARED_ATOMSINK_HPP
+#endif // INGEN_ATOMSINK_HPP
 

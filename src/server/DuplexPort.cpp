@@ -16,7 +16,7 @@
 
 #include <string>
 
-#include "ingen/shared/URIs.hpp"
+#include "ingen/URIs.hpp"
 
 #include "Buffer.hpp"
 #include "DuplexPort.hpp"

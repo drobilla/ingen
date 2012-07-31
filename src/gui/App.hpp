@@ -27,7 +27,7 @@
 #include <gtkmm/window.h>
 
 #include "ingen/Status.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/World.hpp"
 #include "raul/Atom.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
@@ -36,9 +36,7 @@
 namespace Ingen {
 	class Interface;
 	class Port;
-	namespace Shared {
-		class World;
-	}
+	class World;
 	namespace Client {
 		class ClientStore;
 		class PatchModel;
@@ -107,7 +105,7 @@ public:
 
 	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
 
-	Ingen::Shared::Forge&                 forge()     const { return _world->forge(); }
+	Ingen::Forge&                         forge()     const { return _world->forge(); }
 	SharedPtr<Ingen::Interface>           interface() const { return _world->interface(); }
 	SharedPtr<Client::SigClientInterface> client()    const { return _client; }
 	SharedPtr<Client::ClientStore>        store()     const { return _store; }
@@ -115,11 +113,11 @@ public:
 
 	SharedPtr<Serialisation::Serialiser> serialiser();
 
-	static SharedPtr<App> create(Ingen::Shared::World* world);
+	static SharedPtr<App> create(Ingen::World* world);
 	void run();
 
-	inline Ingen::Shared::World* world() const { return _world; }
-	inline Ingen::Shared::URIs&  uris()  const { return _world->uris(); }
+	inline Ingen::World* world() const { return _world; }
+	inline Ingen::URIs&  uris()  const { return _world->uris(); }
 
 protected:
 
@@ -137,7 +135,7 @@ protected:
 	                  LexicalCompare<std::string, int> > Icons;
 	Icons _icons;
 
-	explicit App(Ingen::Shared::World* world);
+	explicit App(Ingen::World* world);
 
 	bool animate();
 	void response(int32_t id, Ingen::Status status, const std::string& subject);
@@ -162,7 +160,7 @@ protected:
 	Gtk::AboutDialog* _about_dialog;
 	WindowFactory*    _window_factory;
 
-	Ingen::Shared::World* _world;
+	Ingen::World* _world;
 
 	uint32_t _sample_rate;
 

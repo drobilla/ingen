@@ -23,8 +23,8 @@
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 
-#include "ingen/shared/World.hpp"
-#include "ingen/shared/LV2Features.hpp"
+#include "ingen/World.hpp"
+#include "ingen/LV2Features.hpp"
 
 #include "LV2Info.hpp"
 #include "LV2ResizeFeature.hpp"
@@ -32,7 +32,7 @@
 namespace Ingen {
 namespace Server {
 
-LV2Info::LV2Info(Ingen::Shared::World* world)
+LV2Info::LV2Info(Ingen::World* world)
 	: atom_AtomPort(lilv_new_uri(world->lilv_world(), LV2_ATOM__AtomPort))
 	, atom_bufferType(lilv_new_uri(world->lilv_world(), LV2_ATOM__bufferType))
 	, atom_supports(lilv_new_uri(world->lilv_world(), LV2_ATOM__supports))
@@ -54,7 +54,7 @@ LV2Info::LV2Info(Ingen::Shared::World* world)
 	assert(world);
 
 	world->lv2_features().add_feature(
-		SharedPtr<Shared::LV2Features::Feature>(new ResizeFeature()));
+		SharedPtr<LV2Features::Feature>(new ResizeFeature()));
 }
 
 LV2Info::~LV2Info()

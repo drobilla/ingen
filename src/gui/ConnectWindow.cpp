@@ -28,8 +28,8 @@
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
-#include "ingen/shared/Module.hpp"
-#include "ingen/shared/World.hpp"
+#include "ingen/Module.hpp"
+#include "ingen/World.hpp"
 
 #include "App.hpp"
 #include "ConnectWindow.hpp"
@@ -72,7 +72,7 @@ ConnectWindow::ConnectWindow(BaseObjectType*                   cobject,
 }
 
 void
-ConnectWindow::start(App& app, Ingen::Shared::World* world)
+ConnectWindow::start(App& app, Ingen::World* world)
 {
 	_app = &app;
 
@@ -160,7 +160,7 @@ ConnectWindow::connect(bool existing)
 	_connect_stage = 0;
 	set_connecting_widget_states();
 
-	Ingen::Shared::World* world = _app->world();
+	Ingen::World* world = _app->world();
 
 #ifdef HAVE_SOCKET
 	if (_mode == CONNECT_REMOTE) {
