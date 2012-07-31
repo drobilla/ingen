@@ -69,8 +69,9 @@ OutputPort::pre_process(Context& context)
 void
 OutputPort::post_process(Context& context)
 {
-	for (uint32_t v = 0; v < _poly; ++v)
-		_buffers->at(v)->prepare_read(context);
+	for (uint32_t v = 0; v < _poly; ++v) {
+		update_set_state(context, v);
+	}
 
 	if (_broadcast)
 		broadcast_value(context, false);

@@ -101,7 +101,8 @@ Disconnect::Impl::Impl(Engine&     e,
 		const float value = is_control ? _dst_input_port->value().get_float() : 0;
 		for (uint32_t i = 0; i < _buffers->size(); ++i) {
 			if (is_control) {
-				PtrCast<AudioBuffer>(_buffers->at(i))->set_value(value, 0, 0);
+				AudioBuffer* abuf = dynamic_cast<AudioBuffer*>(_buffers->at(i).get());
+				abuf->set_block(value, 0, abuf->nframes() - 1);
 			} else {
 				_buffers->at(i)->clear();
 			}

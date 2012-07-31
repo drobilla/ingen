@@ -175,12 +175,11 @@ InputPort::pre_process(Context& context)
 
 	if (_edges.empty()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
-			buffer(v)->prepare_read(context);
+			update_set_state(context, v);
 		}
 	} else if (direct_connect()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
 			_buffers->at(v) = _edges.front().buffer(v);
-			_buffers->at(v)->prepare_read(context);
 		}
 	} else {
 		uint32_t max_num_srcs = 1;
@@ -196,7 +195,6 @@ InputPort::pre_process(Context& context)
 			}
 
 			mix(context, bufs().uris(), buffer(v).get(), srcs, num_srcs);
-			buffer(v)->prepare_read(context);
 		}
 	}
 

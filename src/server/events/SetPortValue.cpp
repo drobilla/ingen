@@ -99,17 +99,13 @@ SetPortValue::apply(Context& context)
 	Ingen::URIs&  uris = _engine.world()->uris();
 	Buffer* const buf  = _port->buffer(0).get();
 
-	AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buf);
-	if (abuf) {
+	if (buf->type() == uris.atom_Sound || buf->type() == uris.atom_Float) {
 		if (_value.type() != uris.forge.Float) {
 			_status = TYPE_MISMATCH;
 			return;
 		}
 
-		for (uint32_t v = 0; v < _port->poly(); ++v) {
-			((AudioBuffer*)_port->buffer(v).get())->set_value(
-				_value.get_float(), context.start(), _time);
-		}
+		_port->set_control_value(context, _time, _value.get_float());
 	} else if (buf->type() == uris.atom_Sequence) {
 		buf->prepare_write(context);  // FIXME: incorrect
 		if (buf->append_event(_time - context.start(),

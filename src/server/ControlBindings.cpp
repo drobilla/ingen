@@ -320,14 +320,9 @@ ControlBindings::set_port_value(ProcessContext& context,
 
 	const Raul::Atom port_value(control_to_port_value(context, port, type, value));
 
-	port->set_value(port_value);
-
 	assert(port_value.type() == port->bufs().forge().Float);
-	assert(dynamic_cast<AudioBuffer*>(port->buffer(0).get()));
-
-	for (uint32_t v = 0; v < port->poly(); ++v)
-		reinterpret_cast<AudioBuffer*>(port->buffer(v).get())->set_value(
-			port_value.get_float(), context.start(), context.start());
+	port->set_value(port_value);  // FIXME: not thread safe
+	port->set_control_value(context, context.start(), port_value.get_float());
 
 	URIs& uris = context.engine().world()->uris();
 	context.notify(uris.ingen_value, context.start(), port,

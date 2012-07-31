@@ -46,7 +46,6 @@ public:
 	virtual void clear();
 	virtual void resize(uint32_t size);
 	virtual void copy(Context& context, const Buffer* src);
-	virtual void prepare_read(Context& context) {}
 	virtual void prepare_write(Context& context);
 
 	void*       port_data(PortType port_type, SampleCount offset);

@@ -92,7 +92,7 @@ public:
 
 protected:
 	size_t _num_edges;  ///< Pre-process thread
-	Edges  _edges;
+	Edges  _edges;      ///< Audio thread
 };
 
 } // namespace Server

@@ -162,7 +162,6 @@ JackPort::post_process(ProcessContext& context)
 	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
 		Buffer* patch_buf = (Buffer*)_patch_port->buffer(0).get();
 
-		patch_buf->prepare_read(context);
 		jack_midi_clear_buffer(_buffer);
 
 		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)patch_buf->atom();

@@ -40,7 +40,6 @@ public:
 
 	void clear();
 
-	void set_value(Sample val, FrameTime cycle_start, FrameTime time);
 	void set_block(Sample val, size_t start_offset, size_t end_offset);
 	void copy(const Sample* src, size_t start_sample, size_t end_sample);
 	void copy(Context& context, const Buffer* src);
@@ -66,17 +65,10 @@ public:
 		return data()[offset];
 	}
 
-	void prepare_read(Context& context);
 	void prepare_write(Context& context) {}
 
 private:
-	enum State { OK, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
-
 	LV2_Atom_Vector* vector() { return (LV2_Atom_Vector*)atom(); }
-
-	State     _state;     ///< State of buffer for setting values next cycle
-	Sample    _set_value; ///< Value set by set_value (for completing the set next cycle)
-	FrameTime _set_time;  ///< Time _set_value was set (to reset next cycle)
 };
 
 } // namespace Server

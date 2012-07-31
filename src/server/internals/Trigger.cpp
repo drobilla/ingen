@@ -23,6 +23,7 @@
 #include "raul/midi_events.h"
 
 #include "AudioBuffer.hpp"
+#include "Engine.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
@@ -114,8 +115,7 @@ TriggerNode::process(ProcessContext& context)
 			case MIDI_CMD_CONTROL:
 				if (buf[1] == MIDI_CTL_ALL_NOTES_OFF ||
 				    buf[1] == MIDI_CTL_ALL_SOUNDS_OFF) {
-					((AudioBuffer*)_gate_port->buffer(0).get())->set_value(
-						0.0f, context.start(), time);
+					_gate_port->set_control_value(context, time, 0.0f);
 				}
 			default:
 				break;
@@ -132,10 +132,9 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 	assert(time >= context.start() && time <= context.end());
 
 	if (_learning) {
-		// FIXME
-		//_note_port->set_value(note_num);
-		((AudioBuffer*)_note_port->buffer(0).get())->set_value(
-			(float)note_num, context.start(), context.end());
+		// FIXME: not thread safe
+		_note_port->set_value(context.engine().world()->forge().make(note_num));
+		_note_port->set_control_value(context, time, note_num);
 		_note_port->broadcast_value(context, true);
 		_learning = false;
 	}
@@ -146,10 +145,10 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 
 	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0).get())->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uint8_t)filter_note)) {
-		((AudioBuffer*)_gate_port->buffer(0).get())->set_value(1.0f, context.start(), time);
-		((AudioBuffer*)_trig_port->buffer(0).get())->set_value(1.0f, context.start(), time);
-		((AudioBuffer*)_trig_port->buffer(0).get())->set_value(0.0f, context.start(), time + 1);
-		((AudioBuffer*)_vel_port->buffer(0).get())->set_value(velocity / 127.0f, context.start(), time);
+		_gate_port->set_control_value(context, time, 1.0f);
+		_trig_port->set_control_value(context, time, 1.0f);
+		_trig_port->set_control_value(context, time + 1, 0.0f);
+		_vel_port->set_control_value(context, time, velocity / 127.0f);
 		assert(((AudioBuffer*)_trig_port->buffer(0).get())->data()[time - context.start()] == 1.0f);
 	}
 }
@@ -160,7 +159,7 @@ TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 	assert(time >= context.start() && time <= context.end());
 
 	if (note_num == lrintf(((AudioBuffer*)_note_port->buffer(0).get())->value_at(0)))
-		((AudioBuffer*)_gate_port->buffer(0).get())->set_value(0.0f, context.start(), time);
+		_gate_port->set_control_value(context, time, 0.0f);
 }
 
 } // namespace Internals

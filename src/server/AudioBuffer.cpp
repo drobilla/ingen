@@ -32,9 +32,6 @@ namespace Server {
 
 AudioBuffer::AudioBuffer(BufferFactory& bufs, LV2_URID type, uint32_t size)
 	: Buffer(bufs, type, size)
-	, _state(OK)
-	, _set_value(0)
-	, _set_time(0)
 {
 	assert(size >= sizeof(LV2_Atom) + sizeof(Sample));
 	assert(this->capacity() >= size);
@@ -60,36 +57,6 @@ AudioBuffer::clear()
 {
 	assert(nframes() != 0);
 	set_block(0, 0, nframes() - 1);
-	_state = OK;
-}
-
-/** Set value of buffer to @a val after @a start_sample.
- *
- * The Buffer will handle setting the intial portion of the buffer to the
- * value on the next cycle automatically (if @a start_sample is > 0), as
- * long as pre_process() is called every cycle.
- */
-void
-AudioBuffer::set_value(Sample val, FrameTime cycle_start, FrameTime time)
-{
-	if (is_control())
-		time = cycle_start;
-
-	const FrameTime offset = time - cycle_start;
-	assert(nframes() != 0);
-	assert(offset <= nframes());
-
-	if (offset < nframes()) {
-		set_block(val, offset, nframes() - 1);
-
-		if (offset == 0)
-			_state = OK;
-		else
-			_state = HALF_SET_CYCLE_1;
-	} // else trigger at very end of block
-
-	_set_time = time;
-	_set_value = val;
 }
 
 /** Set a block of buffer to @a val.
@@ -158,24 +125,6 @@ AudioBuffer::peak(Context& context) const
 		peak = fmaxf(peak, value_at(i));
 	}
 	return peak;
-}
-
-void
-AudioBuffer::prepare_read(Context& context)
-{
-	assert(nframes() != 0);
-	switch (_state) {
-	case HALF_SET_CYCLE_1:
-		if (context.start() > _set_time)
-			_state = HALF_SET_CYCLE_2;
-		break;
-	case HALF_SET_CYCLE_2:
-		set_block(_set_value, 0, nframes() - 1);
-		_state = OK;
-		break;
-	default:
-		break;
-	}
 }
 
 } // namespace Server

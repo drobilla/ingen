@@ -101,8 +101,8 @@ LV2Node::make_instance(URIs&      uris,
 
 		if (buffer) {
 			if (port->is_a(PortType::CV) || port->is_a(PortType::CONTROL)) {
-				((AudioBuffer*)buffer)->set_value(
-					port->value().get_float(), 0, 0);
+				AudioBuffer* abuf = (AudioBuffer*)buffer;
+				abuf->set_block(port->value().get_float(), 0, abuf->nframes() - 1);
 			} else {
 				buffer->clear();
 			}

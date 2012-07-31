@@ -117,8 +117,7 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 	if (_learning) {
 		// FIXME: not thread safe
 		_param_port->set_value(context.engine().world()->forge().make(control_num));
-		((AudioBuffer*)_param_port->buffer(0).get())->set_value(
-			(float)control_num, context.start(), context.end());
+		_param_port->set_control_value(context, time, control_num);
 		_param_port->broadcast_value(context, true);
 		_learning = false;
 	}
@@ -139,8 +138,9 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
 	}
 
-	if (control_num == ((AudioBuffer*)_param_port->buffer(0).get())->value_at(0))
-		((AudioBuffer*)_audio_port->buffer(0).get())->set_value(scaled_value, context.start(), time);
+	if (control_num == ((AudioBuffer*)_param_port->buffer(0).get())->value_at(0)) {
+		_audio_port->set_control_value(context, time, scaled_value);
+	}
 }
 
 } // namespace Internals

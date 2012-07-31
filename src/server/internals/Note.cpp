@@ -259,18 +259,11 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(_keys[voice->note].state == Key::Key::ON_ASSIGNED);
 	assert(_keys[voice->note].voice == voice_num);
 
-	((AudioBuffer*)_freq_port->buffer(voice_num).get())->set_value(
-		note_to_freq(note_num), context.start(), time);
-	((AudioBuffer*)_vel_port->buffer(voice_num).get())->set_value(
-		velocity/127.0, context.start(), time);
-	((AudioBuffer*)_gate_port->buffer(voice_num).get())->set_value(
-		1.0f, context.start(), time);
-
-	// trigger (one sample)
-	((AudioBuffer*)_trig_port->buffer(voice_num).get())->set_value(
-		1.0f, context.start(), time);
-	((AudioBuffer*)_trig_port->buffer(voice_num).get())->set_value(
-		0.0f, context.start(), time + 1);
+	_freq_port->set_voice_value(context, voice_num, time, note_to_freq(note_num));
+	_vel_port->set_voice_value(context, voice_num, time, velocity / 127.0f);
+	_gate_port->set_voice_value(context, voice_num, time, 1.0f);
+	_trig_port->set_voice_value(context, voice_num, time, 1.0f);
+	_trig_port->set_voice_value(context, voice_num, time + 1, 0.0f);
 
 	assert(key->state == Key::Key::ON_ASSIGNED);
 	assert(voice->state == Voice::Voice::ACTIVE);
@@ -339,7 +332,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 		assert(replace_key->state == Key::ON_UNASSIGNED);
 
 		// Change the freq but leave the gate high and don't retrigger
-		((AudioBuffer*)_freq_port->buffer(voice).get())->set_value(note_to_freq(replace_key_num), context.start(), time);
+		_freq_port->set_voice_value(context, voice, time, note_to_freq(replace_key_num));
 
 		replace_key->state = Key::ON_ASSIGNED;
 		replace_key->voice = voice;
@@ -351,7 +344,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 #ifdef NOTE_DEBUG
 		LOG(Raul::debug) << "Note off: key " << (int)(*_voices)[voice].note << " voice " << voice << endl;
 #endif
-		((AudioBuffer*)_gate_port->buffer(voice).get())->set_value(0.0f, context.start(), time);
+		_gate_port->set_voice_value(context, voice, time, 0.0f);
 		(*_voices)[voice].state = Voice::FREE;
 	}
 }
@@ -368,7 +361,7 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 	// FIXME: set all keys to Key::OFF?
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
-		((AudioBuffer*)_gate_port->buffer(i).get())->set_value(0.0f, context.start(), time);
+		_gate_port->set_voice_value(context, i, time, 0.0f);
 		(*_voices)[i].state = Voice::FREE;
 	}
 }

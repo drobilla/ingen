@@ -38,7 +38,7 @@
 #define LOG(s) s << "[Delta] "
 
 // #define DUMP 1
-// #include "ingen/URIMap.hpp"
+#include "ingen/URIMap.hpp"
 
 namespace Ingen {
 namespace Server {

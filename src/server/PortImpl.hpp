@@ -98,6 +98,15 @@ public:
 		return _prepared_buffers->at(voice);
 	}
 
+	void update_set_state(Context& context, uint32_t voice);
+
+	void set_voice_value(Context&  context,
+	                     uint32_t  voice,
+	                     FrameTime time,
+	                     Sample    value);
+
+	void set_control_value(Context& context, FrameTime time, Sample value);
+
 	/** Called once per process cycle */
 	virtual void pre_process(Context& context) = 0;
 	virtual void post_process(Context& context) = 0;
@@ -175,6 +184,16 @@ protected:
 	         const Raul::Atom&   value,
 	         size_t              buffer_size);
 
+	struct SetState {
+		enum State { SET, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
+
+		SetState() : state(SET), value(0), time(0) {}
+
+		State     state;  ///< State of buffer for setting control value
+		Sample    value;  ///< Value currently being set
+		FrameTime time;   ///< Time value was set
+	};
+
 	BufferFactory&          _bufs;
 	uint32_t                _index;
 	uint32_t                _poly;
@@ -185,6 +204,8 @@ protected:
 	Raul::Atom              _min;
 	Raul::Atom              _max;
 	Raul::Atom              _last_broadcasted_value;
+	Raul::Array<SetState>*  _set_states;
+	Raul::Array<SetState>*  _prepared_set_states;
 	Raul::Array<BufferRef>* _buffers;
 	Raul::Array<BufferRef>* _prepared_buffers;
 	bool                    _broadcast;

@@ -52,6 +52,8 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _min(bufs.forge().make(0.0f))
 	, _max(bufs.forge().make(1.0f))
 	, _last_broadcasted_value(value)
+	, _set_states(new Raul::Array<SetState>(static_cast<size_t>(poly)))
+	, _prepared_set_states(NULL)
 	, _buffers(new Raul::Array<BufferRef>(static_cast<size_t>(poly)))
 	, _prepared_buffers(NULL)
 	, _broadcast(false)
@@ -132,6 +134,62 @@ PortImpl::cache_properties()
 	                           _bufs.uris().lv2_toggled);
 }
 
+void
+PortImpl::set_control_value(Context& context, FrameTime time, Sample value)
+{
+	for (uint32_t v = 0; v < poly(); ++v) {
+		set_voice_value(context, v, time, value);
+	}
+}
+
+void
+PortImpl::set_voice_value(Context& context, uint32_t voice, FrameTime time, Sample value)
+{
+	// Time may be at end so internal nodes can set single sample triggers
+	assert(time >= context.start());
+	assert(time <= context.start() + context.nframes());
+
+	if (_type == PortType::CONTROL) {
+		time = context.start();
+	}
+
+	FrameTime offset = time - context.start();
+	FrameTime last   = (_type == PortType::CONTROL) ? 0 : context.nframes() - 1;
+	if (offset < context.nframes()) {
+		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buffer(voice).get());
+		abuf->set_block(value, offset, last);
+	} // else trigger at very end of block, and set to 0 at start of next block
+
+	SetState& state = _set_states->at(voice);
+	state.state = (offset == 0) ? SetState::SET : SetState::HALF_SET_CYCLE_1;
+	state.time  = time;
+	state.value = value;
+}
+
+void
+PortImpl::update_set_state(Context& context, uint32_t voice)
+{
+	SetState& state = _set_states->at(voice);
+	switch (state.state) {
+	case SetState::HALF_SET_CYCLE_1:
+		if (context.start() > state.time) {
+			state.state = SetState::HALF_SET_CYCLE_2;
+		}
+		break;
+	case SetState::HALF_SET_CYCLE_2: {
+		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buffer(voice).get());
+		abuf->set_block(state.value, 0, context.nframes() - 1);
+		for (unsigned i = 0; i < context.nframes(); ++i) {
+			assert(abuf->data()[i] == state.value);
+		}
+		state.state = SetState::SET;
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 bool
 PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
@@ -150,9 +208,17 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		delete _prepared_buffers;
 		_prepared_buffers = NULL;
 	}
+	
+	if (_prepared_set_states && _prepared_set_states->size() != poly) {
+		delete _prepared_set_states;
+		_prepared_set_states = NULL;
+	}
 
 	if (!_prepared_buffers)
 		_prepared_buffers = new Raul::Array<BufferRef>(poly, *_buffers, NULL);
+
+	if (!_prepared_set_states)
+		_prepared_set_states = new Raul::Array<SetState>(poly, *_set_states, SetState());
 
 	get_buffers(bufs.engine().message_context(),
 	            bufs,
@@ -176,6 +242,7 @@ PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	}
 
 	assert(poly == _prepared_buffers->size());
+	assert(poly == _prepared_set_states->size());
 
 	_poly = poly;
 
@@ -184,15 +251,19 @@ PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	assert(_buffers == _prepared_buffers);
 	_prepared_buffers = NULL;
 
-	if (is_a(PortType::CONTROL) || is_a(PortType::CV))
-		for (uint32_t v = 0; v < _poly; ++v)
-			if (_buffers->at(v))
-				boost::static_pointer_cast<AudioBuffer>(
-					_buffers->at(v))->set_value(_value.get_float(), 0, 0);
+	maid.push(_set_states);
+	_set_states          = _prepared_set_states;
+	_prepared_set_states = NULL;
+
+	if (is_a(PortType::CONTROL) || is_a(PortType::CV)) {
+		set_control_value(context, context.start(), _value.get_float());
+	}
 
 	assert(_buffers->size() >= poly);
+	assert(_set_states->size() >= poly);
 	assert(this->poly() == poly);
 	assert(!_prepared_buffers);
+	assert(!_prepared_set_states);
 
 	return true;
 }
@@ -225,8 +296,24 @@ PortImpl::recycle_buffers()
 void
 PortImpl::clear_buffers()
 {
-	for (uint32_t v = 0; v < _poly; ++v)
-		buffer(v)->clear();
+	switch (_type.symbol()) {
+	case PortType::AUDIO:
+	case PortType::CONTROL:
+	case PortType::CV:
+		for (uint32_t v = 0; v < _poly; ++v) {
+			AudioBuffer* abuf = (AudioBuffer*)buffer(0).get();
+			abuf->set_block(_value.get_float(), 0, abuf->nframes() - 1);
+			SetState& state = _set_states->at(v);
+			state.state = SetState::SET;
+			state.value = _value.get_float();
+			state.time  = 0;
+		}
+		break;
+	default:
+		for (uint32_t v = 0; v < _poly; ++v) {
+			buffer(v)->clear();
+		}
+	}
 }
 
 void
