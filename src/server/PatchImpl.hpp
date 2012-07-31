@@ -156,9 +156,6 @@ public:
 	Engine& engine() { return _engine; }
 
 private:
-	void process_parallel(ProcessContext& context);
-	void process_single(ProcessContext& context);
-
 	Engine&        _engine;
 	uint32_t       _poly_pre;        ///< Pre-process thread only
 	uint32_t       _poly_process;    ///< Process thread only

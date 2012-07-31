@@ -49,7 +49,7 @@ public:
 		MESSAGE
 	};
 
-	Context(Engine& engine, size_t event_sink_size, ID id);
+	Context(Engine& engine, ID id);
 
 	virtual ~Context() {}
 

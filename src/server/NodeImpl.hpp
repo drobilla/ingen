@@ -22,7 +22,6 @@
 
 #include "raul/Array.hpp"
 #include "raul/AtomicInt.hpp"
-#include "raul/Semaphore.hpp"
 
 #include "BufferRef.hpp"
 #include "Context.hpp"
@@ -87,35 +86,6 @@ public:
 
 	/** Return true iff this node is activated */
 	bool activated() { return _activated; }
-
-	/** Parallelism: Reset flags for start of a new cycle. */
-	virtual void reset_input_ready();
-
-	/** Parallelism: Claim this node (to wait on its input).
-	 * Only one thread will ever take this lock on a particular Node.
-	 * \return true if lock was aquired, false otherwise
-	 */
-	virtual bool process_lock();
-
-	/** Parallelism: Unclaim this node (let someone else wait on its input).
-	 * Only a thread which successfully called process_lock may call this.
-	 */
-	virtual void process_unlock();
-
-	/** Parallelism: Wait for signal that input is ready.
-	 * Only a thread which successfully called process_lock may call this.
-	 */
-	virtual void wait_for_input(ProcessContext& context, size_t num_providers);
-
-	/** Parallelism: Signal that input is ready.  Realtime safe.
-	 * Calling this will wake up the thread which blocked on wait_for_input
-	 * if there is one, and otherwise cause it to return true the next call.
-	 * \return true if lock was aquired and input is ready, false otherwise
-	 */
-	virtual void signal_input_ready(ProcessContext& context);
-
-	/** Parallelism: Return the number of providers that have signalled. */
-	virtual unsigned n_inputs_ready() const { return _n_inputs_ready.get(); }
 
 	/** Learn the next incoming MIDI event (for internals) */
 	virtual void learn() {}
@@ -196,9 +166,6 @@ protected:
 	Raul::Array<PortImpl*>* _ports; ///< Access in audio thread only
 	Context::ID             _context; ///< Context this node runs in
 	uint32_t                _polyphony;
-	Raul::Semaphore         _input_ready; ///< Parallelism: input ready signal
-	Raul::AtomicInt         _process_lock; ///< Parallelism: Waiting on inputs 'lock'
-	Raul::AtomicInt         _n_inputs_ready; ///< Parallelism: # input ready signals this cycle
 	std::list<NodeImpl*>    _providers; ///< Nodes connected to this one's input ports
 	std::list<NodeImpl*>    _dependants; ///< Nodes this one's output ports are connected to
 	bool                    _polyphonic;

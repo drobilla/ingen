@@ -28,8 +28,6 @@ def build(bld):
             PortImpl.cpp
             PostProcessor.cpp
             PreProcessor.cpp
-            ProcessContext.cpp
-            ProcessSlave.cpp
             Worker.cpp
             events/Connect.cpp
             events/CreateNode.cpp

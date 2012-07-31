@@ -17,33 +17,24 @@
 #ifndef INGEN_ENGINE_PROCESSCONTEXT_HPP
 #define INGEN_ENGINE_PROCESSCONTEXT_HPP
 
-#include <vector>
-
 #include "Context.hpp"
 
 namespace Ingen {
 namespace Server {
 
-class ProcessSlave;
-
 /** Context of a process() call (the audio context).
+ *
+ * Currently this class has no implementation to speak of, but the type is used
+ * as a parameter for audio context methods to make their context clear.
+ *
  * \ingroup engine
  */
 class ProcessContext : public Context
 {
 public:
-	typedef std::vector<ProcessSlave*> Slaves;
-
-	const Slaves& slaves() const { return _slaves; }
-	Slaves&       slaves()       { return _slaves; }
-
-	void activate(uint32_t parallelism, bool sched_rt);
-
-private:
-	friend class Engine;
-	explicit ProcessContext(Engine& engine);
-
-	Slaves _slaves;
+	ProcessContext(Engine& engine)
+		: Context(engine, AUDIO)
+	{}
 };
 
 } // namespace Server

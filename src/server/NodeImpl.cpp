@@ -43,9 +43,6 @@ NodeImpl::NodeImpl(PluginImpl*         plugin,
 	, _ports(NULL)
 	, _context(Context::AUDIO)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
-	, _input_ready(1)
-	, _process_lock(0)
-	, _n_inputs_ready(0)
 	, _polyphonic(polyphonic)
 	, _activated(false)
 	, _traversed(false)
@@ -157,42 +154,6 @@ NodeImpl::set_buffer_size(Context&       context,
 			}
 		}
 	}
-}
-
-void
-NodeImpl::reset_input_ready()
-{
-	_n_inputs_ready = 0;
-	_process_lock = 0;
-	_input_ready.reset(0);
-}
-
-bool
-NodeImpl::process_lock()
-{
-	return _process_lock.compare_and_exchange(0, 1);
-}
-
-void
-NodeImpl::process_unlock()
-{
-	_process_lock = 0;
-}
-
-void
-NodeImpl::wait_for_input(ProcessContext& context, size_t num_providers)
-{
-	assert(_process_lock.get() == 1);
-
-	while ((unsigned)_n_inputs_ready.get() < num_providers)
-		_input_ready.wait();
-}
-
-void
-NodeImpl::signal_input_ready(ProcessContext& context)
-{
-	++_n_inputs_ready;
-	_input_ready.post();
 }
 
 /** Prepare to run a cycle (in the audio thread)

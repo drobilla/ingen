@@ -40,7 +40,6 @@
 #include "MessageContext.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
-#include "ProcessSlave.hpp"
 #include "ThreadManager.hpp"
 #include "util.hpp"
 
@@ -276,10 +275,6 @@ JackDriver::activate()
 	jack_set_process_callback(_client, process_cb, this);
 
 	_is_activated = true;
-
-	_engine.process_context().activate(
-		world->conf().option("parallelism").get_int(),
-		is_realtime());
 
 	if (jack_activate(_client)) {
 		LOG(Raul::error)("Could not activate Jack client, aborting\n");

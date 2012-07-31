@@ -28,7 +28,6 @@
 #include "PatchImpl.hpp"
 #include "PatchPlugin.hpp"
 #include "PortImpl.hpp"
-#include "ProcessSlave.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -154,10 +153,8 @@ PatchImpl::process(ProcessContext& context)
 
 	if (_compiled_patch && _compiled_patch->size() > 0) {
 		// Run all nodes
-		if (context.slaves().size() > 0) {
-			process_parallel(context);
-		} else {
-			process_single(context);
+		for (size_t i = 0; i < _compiled_patch->size(); ++i) {
+			(*_compiled_patch)[i].node()->process(context);
 		}
 
 		// Queue any cross-context edges
@@ -168,78 +165,6 @@ PatchImpl::process(ProcessContext& context)
 	}
 
 	NodeImpl::post_process(context);
-}
-
-void
-PatchImpl::process_parallel(ProcessContext& context)
-{
-	size_t n_slaves = context.slaves().size();
-
-	CompiledPatch* const cp = _compiled_patch;
-
-	/* Start p-1 slaves */
-
-	if (n_slaves >= cp->size())
-		n_slaves = cp->size()-1;
-
-	if (n_slaves > 0) {
-		for (size_t i = 0; i < cp->size(); ++i)
-			(*cp)[i].node()->reset_input_ready();
-
-		for (size_t i = 0; i < n_slaves; ++i)
-			context.slaves()[i]->whip(cp, i+1, context);
-	}
-
-	/* Process ourself until everything is done
-	 * This is analogous to ProcessSlave::_whipped(), but this is the master
-	 * (i.e. what the main Jack process thread calls).  Where ProcessSlave
-	 * waits on input, this just skips the node and tries the next, to avoid
-	 * waiting in the Jack thread which pisses Jack off.
-	 */
-
-	size_t index        = 0;
-	size_t num_finished = 0; // Number of consecutive finished nodes hit
-
-	while (num_finished < cp->size()) {
-		CompiledNode& n = (*cp)[index];
-
-		if (n.node()->process_lock()) {
-			if (n.node()->n_inputs_ready() == n.n_providers()) {
-				n.node()->process(context);
-
-				/* Signal dependants their input is ready */
-				for (uint32_t i = 0; i < n.dependants().size(); ++i)
-					n.dependants()[i]->signal_input_ready(context);
-
-				++num_finished;
-			} else {
-				n.node()->process_unlock();
-				num_finished = 0;
-			}
-		} else {
-			if (n.node()->n_inputs_ready() == n.n_providers())
-				++num_finished;
-			else
-				num_finished = 0;
-		}
-
-		index = (index + 1) % cp->size();
-	}
-
-	/* Tell slaves we're done in case we beat them, and pray they're
-	 * really done by the start of next cycle.
-	 * FIXME: This probably breaks (race) at extremely small nframes where
-	 * ingen is the majority of the DSP load.
-	 */
-	for (uint32_t i = 0; i < n_slaves; ++i)
-		context.slaves()[i]->finish();
-}
-
-void
-PatchImpl::process_single(ProcessContext& context)
-{
-	for (size_t i = 0; i < _compiled_patch->size(); ++i)
-		(*_compiled_patch)[i].node()->process(context);
 }
 
 void

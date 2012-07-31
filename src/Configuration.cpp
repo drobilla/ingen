@@ -45,7 +45,6 @@ Configuration::Configuration()
 	add("uuid",        'u', "JACK session UUID", STRING, Value());
 	add("load",        'l', "Load patch", STRING, Value());
 	add("packet-size", 'k', "Maximum UDP packet size", INT, Value(4096));
-	add("parallelism", 'p', "Number of concurrent process threads", INT, Value(1));
 	add("path",        'L', "Target path for loaded patch", STRING, Value());
 	add("queue-size",  'q', "Event queue size", INT, Value(4096));
 	add("run",         'r', "Run script", STRING, Value());

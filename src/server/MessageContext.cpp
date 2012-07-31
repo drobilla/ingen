@@ -29,7 +29,7 @@ namespace Ingen {
 namespace Server {
 
 MessageContext::MessageContext(Engine& engine)
-	: Context(engine, engine.event_queue_size(), MESSAGE)
+	: Context(engine, MESSAGE)
 	, Raul::Thread("MessageContext")
 	, _sem(0)
 	, _requests(engine.event_queue_size())
