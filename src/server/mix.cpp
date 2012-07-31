@@ -19,7 +19,6 @@
 #include "ingen/URIs.hpp"
 #include "raul/log.hpp"
 
-#include "AudioBuffer.hpp"
 #include "Buffer.hpp"
 #include "Context.hpp"
 
@@ -27,10 +26,10 @@ namespace Ingen {
 namespace Server {
 
 static inline void
-audio_accumulate(Context& context, AudioBuffer* dst, const AudioBuffer* src)
+audio_accumulate(Context& context, Buffer* dst, const Buffer* src)
 {
-	Sample* const       dst_buf = dst->data();
-	const Sample* const src_buf = src->data();
+	Sample* const       dst_buf = dst->samples();
+	const Sample* const src_buf = src->samples();
 
 	if (dst->is_control()) {
 		if (src->is_control()) {  // control => control
@@ -83,9 +82,7 @@ mix(Context&            context,
 		// Mix in the rest
 		for (uint32_t i = 1; i < num_srcs; ++i) {
 			assert(is_audio(uris, srcs[i]->type()));
-			audio_accumulate(context,
-			                 (AudioBuffer*)dst,
-			                 (const AudioBuffer*)srcs[i]);
+			audio_accumulate(context, dst, srcs[i]);
 		}
 	} else {
 		assert(dst->type() == uris.atom_Sequence);

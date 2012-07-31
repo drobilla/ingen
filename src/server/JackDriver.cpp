@@ -33,7 +33,6 @@
 #include "raul/List.hpp"
 #include "raul/log.hpp"
 
-#include "AudioBuffer.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "JackDriver.hpp"
@@ -112,13 +111,13 @@ JackPort::pre_process(ProcessContext& context)
 	_buffer = jack_port_get_buffer(_jack_port, nframes);
 
 	if (!is_input()) {
-		((AudioBuffer*)_patch_port->buffer(0).get())->clear();
+		_patch_port->buffer(0)->clear();
 		return;
 	}
 
 	if (_patch_port->is_a(PortType::AUDIO)) {
-		AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
-		memcpy(patch_buf->data(), _buffer, nframes * sizeof(float));
+		Buffer* patch_buf = _patch_port->buffer(0).get();
+		memcpy(patch_buf->samples(), _buffer, nframes * sizeof(float));
 
 	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
 		Buffer* patch_buf = (Buffer*)_patch_port->buffer(0).get();
@@ -155,12 +154,11 @@ JackPort::post_process(ProcessContext& context)
 
 	_patch_port->post_process(context);
 	if (_patch_port->is_a(PortType::AUDIO)) {
-		AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
-
-		memcpy(_buffer, patch_buf->data(), nframes * sizeof(Sample));
+		Buffer* patch_buf = _patch_port->buffer(0).get();
+		memcpy(_buffer, patch_buf->samples(), nframes * sizeof(Sample));
 
 	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
-		Buffer* patch_buf = (Buffer*)_patch_port->buffer(0).get();
+		Buffer* patch_buf = _patch_port->buffer(0).get();
 
 		jack_midi_clear_buffer(_buffer);
 

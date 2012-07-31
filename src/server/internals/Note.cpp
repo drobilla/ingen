@@ -24,7 +24,6 @@
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
 
-#include "AudioBuffer.hpp"
 #include "Driver.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"

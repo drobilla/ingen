@@ -17,6 +17,7 @@
 #define __STDC_LIMIT_MACROS 1
 
 #include <assert.h>
+#include <math.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -56,8 +57,15 @@ Buffer::Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity)
 	}
 
 	memset(_atom, 0, capacity);
+	_atom->size = capacity - sizeof(LV2_Atom);
 	_atom->type = type;
-	assert(_atom->type != 1);
+
+	if (type == bufs.uris().atom_Sound) {
+		// Audio port (Vector of float)
+		LV2_Atom_Vector* vec = (LV2_Atom_Vector*)_atom;
+		vec->body.child_size = sizeof(float);
+		vec->body.child_type = bufs.uris().atom_Float;
+	}
 
 	clear();
 }
@@ -65,6 +73,24 @@ Buffer::Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity)
 Buffer::~Buffer()
 {
 	free(_atom);
+}
+
+bool
+Buffer::is_audio() const
+{
+	return _type == _factory.uris().atom_Sound;
+}
+
+bool
+Buffer::is_control() const
+{
+	return _type == _factory.uris().atom_Float;
+}
+
+bool
+Buffer::is_sequence() const
+{
+	return _type == _factory.uris().atom_Sequence;
 }
 
 void
@@ -76,17 +102,38 @@ Buffer::recycle()
 void
 Buffer::clear()
 {
-	_atom->size = 0;
+	if (is_audio() || is_control()) {
+		_atom->size = _capacity - sizeof(LV2_Atom);
+		set_block(0, 0, nframes() - 1);
+	} else if (is_sequence()) {
+		_atom->size = sizeof(LV2_Atom_Sequence_Body);
+	}
 }
 
 void
 Buffer::copy(Context& context, const Buffer* src)
 {
-	// Copy only if src is a POD object that fits
-	if (src->_atom->type != 0 && sizeof(LV2_Atom) + src->_atom->size <= capacity()) {
+	if (_type == src->type() && src->_atom->size + sizeof(LV2_Atom) <= _capacity) {
 		memcpy(_atom, src->_atom, sizeof(LV2_Atom) + src->_atom->size);
+	} else if (src->is_audio() && is_control()) {
+		samples()[0] = src->samples()[context.offset()];
+	} else if (src->is_control() && is_audio()) {
+		samples()[context.offset()] = src->samples()[0];
+	} else {
+		clear();
 	}
-	assert(_atom->type != 1);
+}
+
+void
+Buffer::set_block(Sample val, size_t start_offset, size_t end_offset)
+{
+	assert(end_offset >= start_offset);
+	assert(end_offset < nframes());
+
+	Sample* const buf = samples();
+	for (size_t i = start_offset; i <= end_offset; ++i) {
+		buf[i] = val;
+	}
 }
 
 void
@@ -128,6 +175,17 @@ Buffer::port_data(PortType port_type, SampleCount offset) const
 {
 	return const_cast<void*>(
 		const_cast<Buffer*>(this)->port_data(port_type, offset));
+}
+
+float
+Buffer::peak(const Context& context) const
+{
+	float               peak = 0.0f;
+	const Sample* const buf  = samples();
+	for (FrameTime i = 0; i < context.nframes(); ++i) {
+		peak = fmaxf(peak, buf[i]);
+	}
+	return peak;
 }
 
 void

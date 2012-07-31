@@ -42,7 +42,6 @@
 #include "raul/Thread.hpp"
 #include "raul/log.hpp"
 
-#include "AudioBuffer.hpp"
 #include "EnginePort.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
@@ -100,11 +99,11 @@ public:
 
 		if (_patch_port->is_a(PortType::AUDIO) ||
 		    _patch_port->is_a(PortType::CV)) {
-			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
-			memcpy(patch_buf->data(), _buffer, context.nframes() * sizeof(float));
+			Buffer* patch_buf = _patch_port->buffer(0).get();
+			memcpy(patch_buf->samples(), _buffer, context.nframes() * sizeof(float));
 		} else if (_patch_port->is_a(PortType::CONTROL)) {
-			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
-			memcpy(patch_buf->data(), _buffer, sizeof(float));
+			Buffer* patch_buf = _patch_port->buffer(0).get();
+			memcpy(patch_buf->samples(), _buffer, sizeof(float));
 		} else {
 			LV2_Atom_Sequence* seq       = (LV2_Atom_Sequence*)_buffer;
 			bool               enqueued  = false;
@@ -136,8 +135,8 @@ public:
 		}
 
 		if (_patch_port->is_a(PortType::AUDIO)) {
-			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
-			memcpy((Sample*)_buffer, patch_buf->data(), context.nframes() * sizeof(Sample));
+			Buffer* patch_buf = _patch_port->buffer(0).get();
+			memcpy((Sample*)_buffer, patch_buf->samples(), context.nframes() * sizeof(Sample));
 		}
 	}
 

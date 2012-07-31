@@ -19,7 +19,6 @@
 #include "ingen/World.hpp"
 #include "raul/log.hpp"
 
-#include "AudioBuffer.hpp"
 #include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "Driver.hpp"

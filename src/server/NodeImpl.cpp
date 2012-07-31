@@ -19,7 +19,7 @@
 
 #include "raul/Array.hpp"
 
-#include "AudioBuffer.hpp"
+#include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"

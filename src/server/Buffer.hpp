@@ -43,9 +43,14 @@ class Buffer : public boost::noncopyable, public Raul::Deletable
 public:
 	Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity);
 
+	bool is_audio() const;
+	bool is_control() const;
+	bool is_sequence() const;
+
 	virtual void clear();
 	virtual void resize(uint32_t size);
 	virtual void copy(Context& context, const Buffer* src);
+	virtual void set_block(Sample val, size_t start_offset, size_t end_offset);
 	virtual void prepare_write(Context& context);
 
 	void*       port_data(PortType port_type, SampleCount offset);
@@ -53,6 +58,35 @@ public:
 
 	LV2_URID type()     const { return _type; }
 	uint32_t capacity() const { return _capacity; }
+
+	/// Audio buffers only
+	inline Sample* samples() const {
+		if (is_control()) {
+			return (Sample*)LV2_ATOM_BODY(atom());
+		} else if (is_audio()) {
+			return (Sample*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, atom());
+		}
+		return NULL;
+	}
+
+	/// Audio buffers only
+	inline SampleCount nframes() const {
+		if (is_control()) {
+			return 1;
+		} else if (is_audio()) {
+			return (_capacity - sizeof(LV2_Atom_Vector)) / sizeof(Sample);
+		}
+		return 0;
+	}
+
+	/// Audio buffers only
+	inline Sample& value_at(size_t offset) const {
+		assert(offset < nframes());
+		return samples()[offset];
+	}
+
+	/// Audio buffers only
+	float peak(const Context& context) const;
 
 	/// Sequence buffers only
 	void prepare_output_write(Context& context);

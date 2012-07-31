@@ -23,7 +23,6 @@
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/midi_events.h"
 
-#include "AudioBuffer.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
@@ -122,9 +121,9 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 		_learning = false;
 	}
 
-	const Sample min_port_val = ((AudioBuffer*)_min_port->buffer(0).get())->value_at(0);
-	const Sample max_port_val = ((AudioBuffer*)_max_port->buffer(0).get())->value_at(0);
-	const Sample log_port_val = ((AudioBuffer*)_log_port->buffer(0).get())->value_at(0);
+	const Sample min_port_val = _min_port->buffer(0)->value_at(0);
+	const Sample max_port_val = _max_port->buffer(0)->value_at(0);
+	const Sample log_port_val = _log_port->buffer(0)->value_at(0);
 
 	if (log_port_val > 0.0f) {
 		// haaaaack, stupid negatives and logarithms
@@ -138,7 +137,7 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
 	}
 
-	if (control_num == ((AudioBuffer*)_param_port->buffer(0).get())->value_at(0)) {
+	if (control_num == _param_port->buffer(0)->value_at(0)) {
 		_audio_port->set_control_value(context, time, scaled_value);
 	}
 }

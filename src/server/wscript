@@ -3,7 +3,6 @@ from waflib.extras import autowaf as autowaf
 
 def build(bld):
     core_source = '''
-            AudioBuffer.cpp
             Broadcaster.cpp
             Buffer.cpp
             BufferFactory.cpp

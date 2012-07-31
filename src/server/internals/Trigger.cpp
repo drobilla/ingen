@@ -22,7 +22,6 @@
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
 
-#include "AudioBuffer.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
@@ -143,13 +142,13 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 	LOG(Raul::debug) << path() << " note " << (int)note_num << " on @ " << time << endl;
 #endif
 
-	Sample filter_note = ((AudioBuffer*)_note_port->buffer(0).get())->value_at(0);
+	Sample filter_note = _note_port->buffer(0)->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uint8_t)filter_note)) {
 		_gate_port->set_control_value(context, time, 1.0f);
 		_trig_port->set_control_value(context, time, 1.0f);
 		_trig_port->set_control_value(context, time + 1, 0.0f);
 		_vel_port->set_control_value(context, time, velocity / 127.0f);
-		assert(((AudioBuffer*)_trig_port->buffer(0).get())->data()[time - context.start()] == 1.0f);
+		assert(_trig_port->buffer(0)->samples()[time - context.start()] == 1.0f);
 	}
 }
 
@@ -158,7 +157,7 @@ TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 
-	if (note_num == lrintf(((AudioBuffer*)_note_port->buffer(0).get())->value_at(0)))
+	if (note_num == lrintf(_note_port->buffer(0)->value_at(0)))
 		_gate_port->set_control_value(context, time, 0.0f);
 }
 

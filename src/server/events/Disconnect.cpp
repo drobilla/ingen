@@ -22,7 +22,6 @@
 #include "raul/Path.hpp"
 #include "raul/log.hpp"
 
-#include "AudioBuffer.hpp"
 #include "Broadcaster.hpp"
 #include "EdgeImpl.hpp"
 #include "DuplexPort.hpp"
@@ -101,8 +100,8 @@ Disconnect::Impl::Impl(Engine&     e,
 		const float value = is_control ? _dst_input_port->value().get_float() : 0;
 		for (uint32_t i = 0; i < _buffers->size(); ++i) {
 			if (is_control) {
-				AudioBuffer* abuf = dynamic_cast<AudioBuffer*>(_buffers->at(i).get());
-				abuf->set_block(value, 0, abuf->nframes() - 1);
+				Buffer* buf = _buffers->at(i).get();
+				buf->set_block(value, 0, buf->nframes() - 1);
 			} else {
 				_buffers->at(i)->clear();
 			}

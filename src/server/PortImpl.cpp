@@ -19,7 +19,6 @@
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 
-#include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
@@ -156,8 +155,7 @@ PortImpl::set_voice_value(Context& context, uint32_t voice, FrameTime time, Samp
 	FrameTime offset = time - context.start();
 	FrameTime last   = (_type == PortType::CONTROL) ? 0 : context.nframes() - 1;
 	if (offset < context.nframes()) {
-		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buffer(voice).get());
-		abuf->set_block(value, offset, last);
+		buffer(voice)->set_block(value, offset, last);
 	} // else trigger at very end of block, and set to 0 at start of next block
 
 	SetState& state = _set_states->at(voice);
@@ -177,11 +175,7 @@ PortImpl::update_set_state(Context& context, uint32_t voice)
 		}
 		break;
 	case SetState::HALF_SET_CYCLE_2: {
-		AudioBuffer* const abuf = dynamic_cast<AudioBuffer*>(buffer(voice).get());
-		abuf->set_block(state.value, 0, context.nframes() - 1);
-		for (unsigned i = 0; i < context.nframes(); ++i) {
-			assert(abuf->data()[i] == state.value);
-		}
+		buffer(voice)->set_block(state.value, 0, context.nframes() - 1);
 		state.state = SetState::SET;
 		break;
 	}
@@ -301,8 +295,8 @@ PortImpl::clear_buffers()
 	case PortType::CONTROL:
 	case PortType::CV:
 		for (uint32_t v = 0; v < _poly; ++v) {
-			AudioBuffer* abuf = (AudioBuffer*)buffer(0).get();
-			abuf->set_block(_value.get_float(), 0, abuf->nframes() - 1);
+			Buffer* buf = buffer(v).get();
+			buf->set_block(_value.get_float(), 0, buf->nframes() - 1);
 			SetState& state = _set_states->at(v);
 			state.state = SetState::SET;
 			state.value = _value.get_float();
@@ -328,12 +322,12 @@ PortImpl::broadcast_value(Context& context, bool force)
 		break;
 	case PortType::AUDIO:
 		key = uris.ingen_activity;
-		val = forge.make(((AudioBuffer*)buffer(0).get())->peak(context));
+		val = forge.make(buffer(0)->peak(context));
 		break;
 	case PortType::CONTROL:
 	case PortType::CV:
 		key = uris.ingen_value;
-		val = forge.make(((AudioBuffer*)buffer(0).get())->value_at(0));
+		val = forge.make(buffer(0)->value_at(0));
 		break;
 	case PortType::ATOM:
 		if (_buffer_type == _bufs.uris().atom_Sequence) {

@@ -25,7 +25,6 @@
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
 
-#include "AudioBuffer.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
@@ -144,17 +143,17 @@ static inline float cube_interp(const float fr, const float inm1, const float
 void
 DelayNode::process(ProcessContext& context)
 {
-	AudioBuffer* const delay_buf = (AudioBuffer*)_delay_port->buffer(0).get();
-	AudioBuffer* const in_buf    = (AudioBuffer*)_in_port->buffer(0).get();
-	AudioBuffer* const out_buf   = (AudioBuffer*)_out_port->buffer(0).get();
+	Buffer* const delay_buf = _delay_port->buffer(0).get();
+	Buffer* const in_buf    = _in_port->buffer(0).get();
+	Buffer* const out_buf   = _out_port->buffer(0).get();
 
 	NodeImpl::pre_process(context);
 
 	DelayNode* plugin_data = this;
 
-	const float* const in            = in_buf->data();
-	float* const       out           = out_buf->data();
-	const float        delay_time    = delay_buf->data()[0];
+	const float* const in            = in_buf->samples();
+	float* const       out           = out_buf->samples();
+	const float        delay_time    = delay_buf->samples()[0];
 	const uint32_t     buffer_mask   = plugin_data->_buffer_mask;
 	const SampleRate   sample_rate   = context.engine().driver()->sample_rate();
 	float              delay_samples = plugin_data->_delay_samples;

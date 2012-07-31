@@ -17,7 +17,6 @@
 #include "ingen/URIs.hpp"
 #include "raul/log.hpp"
 
-#include "AudioBuffer.hpp"
 #include "BufferFactory.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
@@ -126,26 +125,16 @@ BufferFactory::silent_buffer()
 BufferRef
 BufferFactory::create(LV2_URID type, uint32_t capacity)
 {
-	Buffer* buffer = NULL;
-
 	if (capacity == 0) {
 		capacity = default_size(type);
 	}
 
-	if (type == _uris.atom_Float) {
-		assert(capacity >= sizeof(LV2_Atom_Float));
-		buffer = new AudioBuffer(*this, type, capacity);
-	} else if (type == _uris.atom_Sound) {
-		assert(capacity >= default_size(_uris.atom_Sound));
-		buffer = new AudioBuffer(*this, type, capacity);
-	} else {
-		buffer = new Buffer(*this, type, capacity);
-	}
+	assert(type != _uris.atom_Float ||
+	       capacity >= sizeof(LV2_Atom_Float));
+	assert(type != _uris.atom_Sound ||
+	       capacity >= default_size(_uris.atom_Sound));
 
-	buffer->atom()->type = type;
-
-	assert(buffer);
-	return BufferRef(buffer);
+	return BufferRef(new Buffer(*this, type, capacity));
 }
 
 void
