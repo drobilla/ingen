@@ -101,10 +101,10 @@ public:
 		if (_patch_port->is_a(PortType::AUDIO) ||
 		    _patch_port->is_a(PortType::CV)) {
 			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
-			patch_buf->copy((Sample*)_buffer, 0, context.nframes() - 1);
+			memcpy(patch_buf->data(), _buffer, context.nframes() * sizeof(float));
 		} else if (_patch_port->is_a(PortType::CONTROL)) {
 			AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
-			patch_buf->copy((Sample*)_buffer, 0, 0);
+			memcpy(patch_buf->data(), _buffer, sizeof(float));
 		} else {
 			LV2_Atom_Sequence* seq       = (LV2_Atom_Sequence*)_buffer;
 			bool               enqueued  = false;

@@ -118,7 +118,7 @@ JackPort::pre_process(ProcessContext& context)
 
 	if (_patch_port->is_a(PortType::AUDIO)) {
 		AudioBuffer* patch_buf = (AudioBuffer*)_patch_port->buffer(0).get();
-		patch_buf->copy((jack_sample_t*)_buffer, 0, nframes - 1);
+		memcpy(patch_buf->data(), _buffer, nframes * sizeof(float));
 
 	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
 		Buffer* patch_buf = (Buffer*)_patch_port->buffer(0).get();

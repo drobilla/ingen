@@ -41,7 +41,6 @@ public:
 	void clear();
 
 	void set_block(Sample val, size_t start_offset, size_t end_offset);
-	void copy(const Sample* src, size_t start_sample, size_t end_sample);
 	void copy(Context& context, const Buffer* src);
 
 	float peak(Context& context) const;

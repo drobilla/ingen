@@ -76,25 +76,6 @@ AudioBuffer::set_block(Sample val, size_t start_offset, size_t end_offset)
 		buf[i] = val;
 }
 
-/** Copy a block of @a src into buffer.
- *
- * @a start_sample and @a end_sample define the inclusive range to be set.
- * This function only copies the same range in one buffer to another.
- */
-void
-AudioBuffer::copy(const Sample* src, size_t start_sample, size_t end_sample)
-{
-	assert(end_sample >= start_sample);
-	assert(nframes() != 0);
-
-	Sample* const buf = data();
-	assert(buf);
-
-	const size_t copy_end = std::min(end_sample, (size_t)nframes() - 1);
-	for (size_t i = start_sample; i <= copy_end; ++i)
-		buf[i] = src[i];
-}
-
 void
 AudioBuffer::copy(Context& context, const Buffer* src)
 {
