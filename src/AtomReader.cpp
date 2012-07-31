@@ -261,7 +261,7 @@ AtomReader::write(const LV2_Atom* msg)
 		}
 		_iface.response(((LV2_Atom_Int*)request)->body,
 		                (Ingen::Status)((LV2_Atom_Int*)body)->body,
-		                subject_uri);
+		                subject_uri ? subject_uri : "");
 	} else {
 		Raul::warn << "Unknown object type <"
 		           << _map.unmap_uri(obj->body.otype)

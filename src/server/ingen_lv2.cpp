@@ -522,22 +522,17 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	Server::ThreadManager::set_flag(Server::THREAD_PRE_PROCESS);
 	Server::ThreadManager::single_threaded = true;
 
-	// FIXME: fixed (or at least maximum) buffer size
-	LV2Driver* driver = new LV2Driver(*engine.get(), 4096, rate);
+	LV2Driver* driver = new LV2Driver(*engine.get(), block_length, rate);
 	engine->set_driver(SharedPtr<Ingen::Server::Driver>(driver));
 
 	plugin->main = new MainThread(engine, driver);
 
-	SharedPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
-	interface->set_respondee(client);
-	engine->register_client("http://drobilla.net/ns/ingen#internal", client);
-
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;
 
-	engine->process_context().locate(0, UINT_MAX, 0);
+	engine->process_context().locate(0, block_length, 0);
 
-	engine->post_processor()->set_end_time(UINT_MAX);
+	engine->post_processor()->set_end_time(block_length);
 	engine->process_events();
 	engine->post_processor()->process();
 
@@ -549,6 +544,12 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		engine->process_events();
 		engine->post_processor()->process();
 	}
+
+	/* Register client after loading patch so the to-ui ring does not overflow.
+	   Since we are not yet rolling, it won't be drained, causing a deadlock. */
+	SharedPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
+	interface->set_respondee(client);
+	engine->register_client("http://drobilla.net/ns/ingen#internal", client);
 
 	return (LV2_Handle)plugin;
 }

@@ -137,6 +137,10 @@ Engine::set_driver(SharedPtr<Driver> driver)
 SampleCount
 Engine::event_time()
 {
+	if (ThreadManager::single_threaded) {
+		return 0;
+	}
+
 	const SampleCount start = _direct_driver
 		? _process_context.start()
 		: _driver->frame_time();
