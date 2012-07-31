@@ -67,7 +67,11 @@ Delta::Delta(Engine&              engine,
 	, _create(create)
 {
 	if (context != Resource::DEFAULT) {
-		Resource::set_context(_properties, context);
+		for (Properties::iterator i = _properties.begin();
+		     i != _properties.end();
+		     ++i) {
+			i->second.set_context(context);
+		}
 	}
 
 #ifdef DUMP

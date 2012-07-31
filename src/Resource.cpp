@@ -71,8 +71,9 @@ Resource::remove_property(const Raul::URI& uri, const Raul::Atom& value)
 	if (value == _uris.wildcard) {
 		_properties.erase(uri);
 	} else {
-		Properties::iterator i = _properties.find(uri);
-		for (; (i != _properties.end()) && (i->first == uri); ++i) {
+		for (Properties::iterator i = _properties.find(uri);
+		     i != _properties.end() && (i->first == uri);
+		     ++i) {
 			if (i->second == value) {
 				_properties.erase(i);
 				return;
@@ -180,19 +181,8 @@ void
 Resource::remove_properties(const Properties& p)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	for (iterator i = p.begin(); i != p.end(); ++i) {
-		if (i->second == _uris.wildcard) {
-			_properties.erase(i->first);
-		} else {
-			for (Properties::iterator j = _properties.find(i->first);
-			     (j != _properties.end()) && (j->first == i->first); ++j) {
-				if (j->second == i->second) {
-					_properties.erase(j);
-					break;
-				}
-			}
-		}
-	}
+	for (iterator i = p.begin(); i != p.end(); ++i)
+		remove_property(i->first, i->second);
 }
 
 Resource::Properties
