@@ -494,21 +494,26 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		}
 	}
 
-	uint32_t block_length = 4096;
-	if (access) {
-		uint32_t min, multiple_of, power_of;
-		access->get_sample_count(
-			access->handle, &min, &block_length, &multiple_of, &power_of);
-		Raul::info(Raul::fmt("Block length: %1% frames\n") % block_length);
-	} else {
-		Raul::warn("Warning: No buffer size access, guessing 4096 frames.\n");
-	}
-
 	plugin->world = new Ingen::World(
 		plugin->argc, plugin->argv, plugin->map, unmap);
 	if (!plugin->world->load_module("serialisation")) {
 		delete plugin->world;
 		return NULL;
+	}
+
+	uint32_t block_length = 4096;
+	uint32_t seq_size     = 0;
+	if (access) {
+		uint32_t min, multiple_of, power_of;
+		access->get_sample_count(
+			access->handle, &min, &block_length, &multiple_of, &power_of);
+		access->get_buf_size(
+			access->handle, &seq_size,
+			plugin->world->uris().atom_Sequence, block_length);
+		Raul::info(Raul::fmt("Block length: %1% frames\n") % block_length);
+		Raul::info(Raul::fmt("Sequence size: %1% bytes\n") % seq_size);
+	} else {
+		Raul::warn("Warning: No buffer size access, guessing 4096 frames.\n");
 	}
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));

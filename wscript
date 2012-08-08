@@ -99,7 +99,7 @@ def configure(conf):
                define_name='HAVE_POSIX_MEMALIGN',
                mandatory=False)
 
-    autowaf.check_pkg(conf, 'lv2', atleast_version='1.0.5', uselib_store='LV2')
+    autowaf.check_pkg(conf, 'lv2', atleast_version='1.0.7', uselib_store='LV2')
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 

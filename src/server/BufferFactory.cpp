@@ -24,11 +24,10 @@
 namespace Ingen {
 namespace Server {
 
-static const size_t EVENT_BYTES_PER_FRAME = 4; // FIXME
-
 BufferFactory::BufferFactory(Engine& engine, URIs& uris)
 	: _engine(engine)
 	, _uris(uris)
+	, _seq_size(0)
 	, _silent_buffer(NULL)
 {
 }
@@ -72,12 +71,17 @@ BufferFactory::audio_buffer_size(SampleCount nframes)
 uint32_t
 BufferFactory::default_size(LV2_URID type) const
 {
+	static const uint32_t SEQ_BYTES_PER_FRAME = 4;
 	if (type == _uris.atom_Float) {
 		return sizeof(LV2_Atom_Float);
 	} else if (type == _uris.atom_Sound) {
 		return audio_buffer_size(_engine.driver()->block_length());
 	} else if (type == _uris.atom_Sequence) {
-		return _engine.driver()->block_length() * EVENT_BYTES_PER_FRAME;
+		if (_seq_size == 0) {
+			return _engine.driver()->block_length() * SEQ_BYTES_PER_FRAME;
+		} else {
+			return _seq_size;
+		}
 	} else {
 		return 0;
 	}

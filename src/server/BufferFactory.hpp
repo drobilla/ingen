@@ -59,6 +59,7 @@ public:
 	BufferRef silent_buffer();
 
 	void set_block_length(SampleCount block_length);
+	void set_seq_size(uint32_t seq_size);
 
 	Forge&  forge();
 	URIs&   uris()   { return _uris; }
@@ -89,6 +90,7 @@ private:
 	Glib::Mutex _mutex;
 	Engine&     _engine;
 	URIs&       _uris;
+	uint32_t    _seq_size;
 
 	BufferRef _silent_buffer;
 };
