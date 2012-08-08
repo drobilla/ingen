@@ -58,7 +58,7 @@ def build(bld):
     core_libs = 'GLIBMM GTHREAD LV2 LILV RAUL SORD'
     autowaf.use_lib(bld, obj, core_libs)
 
-    if bld.env['BUILD_TESTS']:
+    if bld.env.BUILD_TESTS:
         obj = bld(features        = 'cxx cxxshlib',
                   source          = core_source,
                   export_includes = ['../..'],
@@ -67,8 +67,8 @@ def build(bld):
                   target          = 'ingen_server_profiled',
                   install_path    = '${LIBDIR}',
                   use             = 'libingen_profiled',
-                  lib             = bld.env['INGEN_TEST_LIBS'],
-                  cxxflags        = bld.env['INGEN_TEST_CXXFLAGS'])
+                  lib             = bld.env.INGEN_TEST_LIBS,
+                  cxxflags        = bld.env.INGEN_TEST_CXXFLAGS)
         autowaf.use_lib(bld, obj, core_libs)
 
     if bld.is_defined('HAVE_JACK'):

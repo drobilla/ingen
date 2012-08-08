@@ -29,7 +29,7 @@ def build(bld):
               lib             = ['dl'])
     autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SORD LV2_MIDI')
 
-    if bld.env['BUILD_TESTS']:
+    if bld.env.BUILD_TESTS:
         obj = bld(features        = 'cxx cxxshlib',
                   source          = sources,
                   export_includes = ['..'],
@@ -37,7 +37,7 @@ def build(bld):
                   name            = 'libingen_profiled',
                   target          = 'ingen_profiled',
                   install_path    = '',
-                  lib             = ['dl'] + bld.env['INGEN_TEST_LIBS'],
-                  cxxflags        = bld.env['INGEN_TEST_CXXFLAGS'])
+                  lib             = ['dl'] + bld.env.INGEN_TEST_LIBS,
+                  cxxflags        = bld.env.INGEN_TEST_CXXFLAGS)
         autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SORD LV2_MIDI')
 

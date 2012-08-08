@@ -64,7 +64,7 @@ def build(bld):
         target        = '../../ingen_gui.ui',
         install_path  = '${DATADIR}/ingen',
         chmod         = Utils.O755,
-        INGEN_VERSION = bld.env['INGEN_VERSION'])
+        INGEN_VERSION = bld.env.INGEN_VERSION)
 
     # LV2 UI
     obj = bld(features     = 'cxx cxxshlib',

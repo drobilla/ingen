@@ -79,18 +79,18 @@ def configure(conf):
         if conf.is_defined('HAVE_NEW_JACK'):
             autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
 
-    conf.env['BUILD_TESTS'] = Options.options.build_tests
-    if conf.env['BUILD_TESTS']:
+    conf.env.BUILD_TESTS = Options.options.build_tests
+    if conf.env.BUILD_TESTS:
         conf.check_cxx(lib='gcov',
                        define_name='HAVE_GCOV',
                        mandatory=False)
 
         if conf.is_defined('HAVE_GCOV'):
-            conf.env['INGEN_TEST_LIBS']     = ['gcov']
-            conf.env['INGEN_TEST_CXXFLAGS'] = ['-fprofile-arcs', '-ftest-coverage']
+            conf.env.INGEN_TEST_LIBS     = ['gcov']
+            conf.env.INGEN_TEST_CXXFLAGS = ['-fprofile-arcs', '-ftest-coverage']
         else:
-            conf.env['INGEN_TEST_LIBS']     = []
-            conf.env['INGEN_TEST_CXXFLAGS'] = []
+            conf.env.INGEN_TEST_LIBS     = []
+            conf.env.INGEN_TEST_CXXFLAGS = []
 
     # Check for posix_memalign (OSX, amazingly, doesn't have it)
     conf.check(function_name='posix_memalign',
@@ -110,11 +110,11 @@ def configure(conf):
         autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
 
     autowaf.define(conf, 'INGEN_DATA_DIR',
-                   os.path.join(conf.env['DATADIR'], 'ingen'))
+                   os.path.join(conf.env.DATADIR, 'ingen'))
     autowaf.define(conf, 'INGEN_MODULE_DIR',
-                   conf.env['LIBDIR'])
+                   conf.env.LIBDIR)
     autowaf.define(conf, 'INGEN_BUNDLE_DIR',
-                   os.path.join(conf.env['LV2DIR'], 'ingen.lv2'))
+                   os.path.join(conf.env.LV2DIR, 'ingen.lv2'))
 
     if Options.options.log_debug:
         autowaf.define(conf, 'RAUL_LOG_DEBUG', 1)
@@ -126,16 +126,16 @@ def configure(conf):
                         conf.is_defined('INGEN_JACK_SESSION'))
     autowaf.display_msg(conf, "Socket interface", conf.is_defined('HAVE_SOCKET'))
     autowaf.display_msg(conf, "LV2", conf.is_defined('HAVE_LILV'))
-    autowaf.display_msg(conf, "GUI", str(conf.env['INGEN_BUILD_GUI'] == 1))
-    autowaf.display_msg(conf, "LV2 bundle", conf.env['INGEN_BUNDLE_DIR'])
+    autowaf.display_msg(conf, "GUI", str(conf.env.INGEN_BUILD_GUI == 1))
+    autowaf.display_msg(conf, "LV2 bundle", conf.env.INGEN_BUNDLE_DIR)
     autowaf.display_msg(conf, "HTML plugin documentation support",
                         conf.is_defined('HAVE_WEBKIT'))
     print('')
 
 def build(bld):
     opts           = Options.options
-    opts.datadir   = opts.datadir   or bld.env['PREFIX'] + 'share'
-    opts.moduledir = opts.moduledir or bld.env['PREFIX'] + 'lib/ingen'
+    opts.datadir   = opts.datadir   or bld.env.PREFIX + 'share'
+    opts.moduledir = opts.moduledir or bld.env.PREFIX + 'lib/ingen'
 
     # Headers
     for i in ['', 'client', 'serialisation']:
@@ -162,15 +162,15 @@ def build(bld):
     autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2')
 
     # Test program
-    if bld.env['BUILD_TESTS']:
+    if bld.env.BUILD_TESTS:
         obj = bld(features     = 'cxx cxxprogram',
                   source       = 'tests/ingen_test.cpp',
                   target       = 'tests/ingen_test',
                   includes     = ['.'],
                   use          = 'libingen_profiled',
                   install_path = '',
-                  lib          = bld.env['INGEN_TEST_LIBS'],
-                  cxxflags     = bld.env['INGEN_TEST_CXXFLAGS'])
+                  lib          = bld.env.INGEN_TEST_LIBS,
+                  cxxflags     = bld.env.INGEN_TEST_CXXFLAGS)
     autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2 SRATOM')
         
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
@@ -183,7 +183,7 @@ def build(bld):
     icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
     for s in icon_sizes:
         bld.install_as(
-                os.path.join(bld.env['DATADIR'], 'icons', 'hicolor', s, 'apps', 'ingen.png'),
+                os.path.join(bld.env.DATADIR, 'icons', 'hicolor', s, 'apps', 'ingen.png'),
                 'icons/' + s + '/ingen.png')
 
     bld.install_files('${LV2DIR}/ingen.lv2/',
@@ -193,7 +193,7 @@ def build(bld):
         bld.install_files('${LV2DIR}/%s/' % str(i),
                           bld.path.ant_glob('bundles/%s/*' % str(i)))
         bld.symlink_as('${LV2DIR}/%s/libingen_lv2.so' % str(i),
-                       bld.env['LV2DIR'] + '/ingen.lv2/libingen_lv2.so')
+                       bld.env.LV2DIR + '/ingen.lv2/libingen_lv2.so')
 
     bld.add_post_fun(autowaf.run_ldconfig)
 
