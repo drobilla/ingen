@@ -153,9 +153,9 @@ PortImpl::set_voice_value(Context& context, uint32_t voice, FrameTime time, Samp
 	}
 
 	FrameTime offset = time - context.start();
-	FrameTime last   = (_type == PortType::CONTROL) ? 0 : context.nframes() - 1;
+	FrameTime end    = (_type == PortType::CONTROL) ? 1 : context.nframes();
 	if (offset < context.nframes()) {
-		buffer(voice)->set_block(value, offset, last);
+		buffer(voice)->set_block(value, offset, end);
 	} // else trigger at very end of block, and set to 0 at start of next block
 
 	SetState& state = _set_states->at(voice);
@@ -175,7 +175,7 @@ PortImpl::update_set_state(Context& context, uint32_t voice)
 		}
 		break;
 	case SetState::HALF_SET_CYCLE_2: {
-		buffer(voice)->set_block(state.value, 0, context.nframes() - 1);
+		buffer(voice)->set_block(state.value, 0, context.nframes());
 		state.state = SetState::SET;
 		break;
 	}
@@ -296,7 +296,7 @@ PortImpl::clear_buffers()
 	case PortType::CV:
 		for (uint32_t v = 0; v < _poly; ++v) {
 			Buffer* buf = buffer(v).get();
-			buf->set_block(_value.get_float(), 0, buf->nframes() - 1);
+			buf->set_block(_value.get_float(), 0, buf->nframes());
 			SetState& state = _set_states->at(v);
 			state.state = SetState::SET;
 			state.value = _value.get_float();

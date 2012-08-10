@@ -100,7 +100,7 @@ LV2Node::make_instance(URIs&      uris,
 
 		if (buffer) {
 			if (port->is_a(PortType::CV) || port->is_a(PortType::CONTROL)) {
-				buffer->set_block(port->value().get_float(), 0, buffer->nframes() - 1);
+				buffer->set_block(port->value().get_float(), 0, buffer->nframes());
 			} else {
 				buffer->clear();
 			}

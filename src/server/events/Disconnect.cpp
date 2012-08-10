@@ -101,7 +101,7 @@ Disconnect::Impl::Impl(Engine&     e,
 		for (uint32_t i = 0; i < _buffers->size(); ++i) {
 			if (is_control) {
 				Buffer* buf = _buffers->at(i).get();
-				buf->set_block(value, 0, buf->nframes() - 1);
+				buf->set_block(value, 0, buf->nframes());
 			} else {
 				_buffers->at(i)->clear();
 			}

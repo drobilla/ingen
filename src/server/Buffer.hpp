@@ -18,7 +18,6 @@
 #define INGEN_ENGINE_BUFFER_HPP
 
 #include <cassert>
-#include <cstddef>
 
 #include <boost/utility.hpp>
 
@@ -50,7 +49,7 @@ public:
 	virtual void clear();
 	virtual void resize(uint32_t size);
 	virtual void copy(Context& context, const Buffer* src);
-	virtual void set_block(Sample val, size_t start_offset, size_t end_offset);
+	virtual void set_block(Sample val, SampleCount start, SampleCount end);
 	virtual void prepare_write(Context& context);
 
 	void*       port_data(PortType port_type, SampleCount offset);

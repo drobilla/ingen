@@ -104,7 +104,7 @@ Buffer::clear()
 {
 	if (is_audio() || is_control()) {
 		_atom->size = _capacity - sizeof(LV2_Atom);
-		set_block(0, 0, nframes() - 1);
+		set_block(0, 0, nframes());
 	} else if (is_sequence()) {
 		_atom->size = sizeof(LV2_Atom_Sequence_Body);
 	}
@@ -125,13 +125,12 @@ Buffer::copy(Context& context, const Buffer* src)
 }
 
 void
-Buffer::set_block(Sample val, size_t start_offset, size_t end_offset)
+Buffer::set_block(Sample val, const SampleCount start, const SampleCount end)
 {
-	assert(end_offset >= start_offset);
-	assert(end_offset < nframes());
+	assert(end <= nframes());
 
 	Sample* const buf = samples();
-	for (size_t i = start_offset; i <= end_offset; ++i) {
+	for (SampleCount i = start; i < end; ++i) {
 		buf[i] = val;
 	}
 }
