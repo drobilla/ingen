@@ -23,7 +23,6 @@
 #include <boost/utility.hpp>
 
 #include "raul/Deletable.hpp"
-#include "raul/List.hpp"
 
 namespace Ingen {
 namespace Server {
