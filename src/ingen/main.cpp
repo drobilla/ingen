@@ -46,7 +46,7 @@ using namespace Ingen;
 
 Ingen::World* world = NULL;
 
-void
+static void
 ingen_interrupt(int signal)
 {
 	if (signal == SIGTERM) {
@@ -61,7 +61,7 @@ ingen_interrupt(int signal)
 	}
 }
 
-void
+static void
 ingen_try(bool cond, const char* msg)
 {
 	if (!cond) {

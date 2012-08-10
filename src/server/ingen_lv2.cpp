@@ -709,7 +709,7 @@ ingen_restore(LV2_Handle                  instance,
 	return LV2_STATE_SUCCESS;
 }
 
-const void*
+static const void*
 ingen_extension_data(const char* uri)
 {
 	static const LV2_State_Interface state = { ingen_save, ingen_restore };

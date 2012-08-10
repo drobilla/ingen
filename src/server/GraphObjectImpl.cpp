@@ -16,6 +16,8 @@
 
 #include <string>
 
+#include "raul/log.hpp"
+
 #include "GraphObjectImpl.hpp"
 #include "PatchImpl.hpp"
 #include "ThreadManager.hpp"
@@ -53,7 +55,8 @@ GraphObjectImpl::parent_patch() const
 SharedPtr<GraphObject>
 GraphObjectImpl::find_child(const std::string& name) const
 {
-	throw;
+	Raul::error("GraphObjectImpl::find_child called\n");
+	return SharedPtr<GraphObject>();
 }
 
 } // namespace Server

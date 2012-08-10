@@ -53,7 +53,7 @@ namespace Serialisation { class Parser; class Serialiser; }
  *
  * \param name The base name of the module, e.g. "ingen_serialisation"
  */
-Glib::Module*
+static Glib::Module*
 ingen_load_module(const string& name)
 {
 	Glib::Module* module = NULL;

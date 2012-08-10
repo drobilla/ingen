@@ -21,6 +21,7 @@
 
 #include "Buffer.hpp"
 #include "Context.hpp"
+#include "mix.hpp"
 
 namespace Ingen {
 namespace Server {

@@ -50,4 +50,11 @@ private:
 
 } // namespace Ingen
 
+extern "C" {
+
+/** Prototype for the ingen_module_load() entry point in an ingen module. */
+Ingen::Module* ingen_module_load();
+
+}
+
 #endif // INGEN_MODULE_HPP

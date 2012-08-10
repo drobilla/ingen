@@ -160,23 +160,6 @@ Serialiser::Impl::write_manifest(const std::string&           bundle_path,
 	finish();
 }
 
-std::string
-normal_bundle_uri(const std::string& uri)
-{
-	std::string ret = uri;
-	size_t i;
-	while ((i = ret.find("/./")) != std::string::npos) {
-		ret = ret.substr(0, i) + ret.substr(i + 2);
-	}
-	const size_t last_slash = ret.find_last_of("/");
-	if (last_slash != std::string::npos) {
-		return ret.substr(0, last_slash);
-	} else {
-		return ret + "/";
-	}
-	return ret;
-}
-
 void
 Serialiser::write_bundle(SharedPtr<const GraphObject> patch,
                          const std::string&           path)
