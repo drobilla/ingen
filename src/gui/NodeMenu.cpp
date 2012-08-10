@@ -149,7 +149,7 @@ NodeMenu::on_menu_randomize()
 {
 	_app->interface()->bundle_begin();
 
-	const NodeModel* const nm = (NodeModel*)_object.get();
+	const NodeModel* const nm = (const NodeModel*)_object.get();
 	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
 		if ((*i)->is_input() && _app->can_control(i->get())) {
 			float min = 0.0f, max = 1.0f;
@@ -174,7 +174,7 @@ NodeMenu::on_menu_disconnect()
 void
 NodeMenu::on_preset_activated(const std::string& uri)
 {
-	const NodeModel* const   node   = (NodeModel*)_object.get();
+	const NodeModel* const   node   = (const NodeModel*)_object.get();
 	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(node->plugin());
 
 	LilvNode* port_pred = lilv_new_uri(plugin->lilv_world(),
@@ -222,7 +222,7 @@ NodeMenu::on_preset_clicked(const std::string& uri, GdkEventButton* ev)
 bool
 NodeMenu::has_control_inputs()
 {
-	const NodeModel* const nm = (NodeModel*)_object.get();
+	const NodeModel* const nm = (const NodeModel*)_object.get();
 	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i)
 		if ((*i)->is_input() && (*i)->is_numeric())
 			return true;

@@ -106,7 +106,7 @@ protected:
 	LV2Plugin*                           _lv2_plugin;
 	Instances*                           _instances;
 	Instances*                           _prepared_instances;
-	LV2_Worker_Interface*                _worker_iface;
+	const LV2_Worker_Interface*          _worker_iface;
 	Responses                            _responses;
 	SharedPtr<LV2Features::FeatureArray> _features;
 };

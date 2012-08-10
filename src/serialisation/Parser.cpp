@@ -25,10 +25,11 @@
 #include <glibmm/ustring.h>
 
 #include "ingen/Interface.hpp"
-#include "ingen/serialisation/Parser.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/serialisation/Parser.hpp"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "raul/Atom.hpp"
 #include "raul/log.hpp"
 #include "serd/serd.h"
@@ -114,15 +115,16 @@ get_properties(Ingen::World*     world,
 			out.len = 0;
 			sratom_read(sratom, &forge, world->rdf_world()->c_obj(),
 			            model.c_obj(), i.get_object().c_obj());
-			LV2_Atom* atom = (LV2_Atom*)out.buf;
-			Atom      atomm;
+			const LV2_Atom* atom = (const LV2_Atom*)out.buf;
+			Atom            atomm;
 			// FIXME: Don't bloat out all URIs
 			if (atom->type == forge.URID) {
 				atomm = world->forge().alloc_uri(
-					unmap->unmap(unmap->handle, *(uint32_t*)LV2_ATOM_BODY(atom)));
+					unmap->unmap(unmap->handle,
+					             ((const LV2_Atom_URID*)atom)->body));
 			} else {
 				atomm = world->forge().alloc(
-					atom->size, atom->type, LV2_ATOM_BODY(atom));
+					atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 			}
 			props.insert(make_pair(i.get_predicate().to_string(), atomm));
 		}

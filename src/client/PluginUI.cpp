@@ -53,18 +53,18 @@ lv2_ui_write(SuilController controller,
 	// float (special case, always 0)
 	if (format == 0) {
 		assert(buffer_size == 4);
-		if (*(float*)buffer == port->value().get_float())
+		if (*(const float*)buffer == port->value().get_float())
 			return; // do nothing (handle stupid plugin UIs that feed back)
 
 		ui->world()->interface()->set_property(
 			port->path(),
 			uris.ingen_value,
-			ui->world()->forge().make(*(float*)buffer));
+			ui->world()->forge().make(*(const float*)buffer));
 
 	} else if (format == uris.atom_eventTransfer.id) {
-		LV2_Atom*  atom = (LV2_Atom*)buffer;
+		const LV2_Atom*  atom = (const LV2_Atom*)buffer;
 		Raul::Atom val  = ui->world()->forge().alloc(
-			atom->size, atom->type, LV2_ATOM_BODY(atom));
+			atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 		ui->world()->interface()->set_property(port->path(),
 		                                       uris.ingen_value,
 		                                       val);

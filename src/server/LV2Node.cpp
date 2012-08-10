@@ -82,7 +82,7 @@ LV2Node::make_instance(URIs&      uris,
 		return SharedPtr<LilvInstance>();
 	}
 
-	LV2_Morph_Interface* morph_iface = (LV2_Morph_Interface*)
+	const LV2_Morph_Interface* morph_iface = (const LV2_Morph_Interface*)
 		lilv_instance_get_extension_data(inst, LV2_MORPH__interface);
 
 	for (uint32_t p = 0; p < num_ports(); ++p) {
@@ -385,7 +385,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 	// FIXME: Polyphony + worker?
 	if (lilv_plugin_has_feature(plug, info->work_schedule)) {
-		_worker_iface = (LV2_Worker_Interface*)
+		_worker_iface = (const LV2_Worker_Interface*)
 			lilv_instance_get_extension_data(instance(0),
 			                                 LV2_WORKER__interface);
 	}

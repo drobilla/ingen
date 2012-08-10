@@ -70,7 +70,8 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 	Key       key;
 	LV2_Atom* num = NULL;
 	if (binding.type() == uris.atom_Blank) {
-		LV2_Atom_Object_Body* obj = (LV2_Atom_Object_Body*)binding.get_body();
+		const LV2_Atom_Object_Body* obj = (const LV2_Atom_Object_Body*)
+			binding.get_body();
 		if (obj->otype == uris.midi_Bender) {
 			key = Key(MIDI_BENDER);
 		} else if (obj->otype == uris.midi_ChannelPressure) {
@@ -347,7 +348,7 @@ ControlBindings::bind(ProcessContext& context, Key key)
 	context.notify(uris.ingen_controlBinding,
 	               context.start(),
 	               _learn_port,
-	               atom->size, atom->type, LV2_ATOM_BODY(atom));
+	               atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 
 	_learn_port = NULL;
 	return true;

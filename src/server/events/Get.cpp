@@ -86,7 +86,7 @@ send_node(Interface* client, const NodeImpl* node)
 {
 	PluginImpl* const plugin = node->plugin_impl();
 	if (plugin->type() == Plugin::Patch) {
-		send_patch(client, (PatchImpl*)node);
+		send_patch(client, (const PatchImpl*)node);
 	} else {
 		client->put(node->path(), node->properties());
 		for (size_t j = 0; j < node->num_ports(); ++j) {

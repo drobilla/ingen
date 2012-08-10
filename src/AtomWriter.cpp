@@ -57,7 +57,7 @@ AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 void
 AtomWriter::finish_msg()
 {
-	_sink.write((LV2_Atom*)_out.buf);
+	_sink.write((const LV2_Atom*)_out.buf);
 	_out.len = 0;
 }
 

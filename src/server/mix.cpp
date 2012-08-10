@@ -61,7 +61,7 @@ static inline bool
 is_end(const Buffer* buf, LV2_Atom_Event* ev)
 {
 	return lv2_atom_sequence_is_end(
-		(LV2_Atom_Sequence_Body*)LV2_ATOM_BODY(buf->atom()),
+		(const LV2_Atom_Sequence_Body*)LV2_ATOM_BODY_CONST(buf->atom()),
 		buf->atom()->size,
 		ev);
 }
@@ -90,7 +90,7 @@ mix(Context&            context,
 		for (uint32_t i = 0; i < num_srcs; ++i) {
 			assert(srcs[i]->type() == uris.atom_Sequence);
 			iters[i] = lv2_atom_sequence_begin(
-				(LV2_Atom_Sequence_Body*)LV2_ATOM_BODY(srcs[i]->atom()));
+				(const LV2_Atom_Sequence_Body*)LV2_ATOM_BODY_CONST(srcs[i]->atom()));
 			if (is_end(srcs[i], iters[i])) {
 				iters[i] = NULL;
 			}
@@ -110,7 +110,7 @@ mix(Context&            context,
 			if (first) {
 				dst->append_event(
 					first->time.frames, first->body.size, first->body.type,
-					(const uint8_t*)LV2_ATOM_BODY(&first->body));
+					(const uint8_t*)LV2_ATOM_BODY_CONST(&first->body));
 
 				iters[first_i] = lv2_atom_sequence_next(first);
 				if (is_end(srcs[first_i], iters[first_i])) {

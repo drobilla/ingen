@@ -164,8 +164,8 @@ port_event(LV2UI_Handle handle,
            uint32_t     format,
            const void*  buffer)
 {
-	IngenLV2UI* ui   = (IngenLV2UI*)handle;
-	LV2_Atom*   atom = (LV2_Atom*)buffer;
+	IngenLV2UI*     ui   = (IngenLV2UI*)handle;
+	const LV2_Atom* atom = (const LV2_Atom*)buffer;
 	ui->reader->write(atom);
 }
 

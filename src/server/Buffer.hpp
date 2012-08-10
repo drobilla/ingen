@@ -60,7 +60,17 @@ public:
 	uint32_t capacity() const { return _capacity; }
 
 	/// Audio buffers only
-	inline Sample* samples() const {
+	inline const Sample* samples() const {
+		if (is_control()) {
+			return (const Sample*)LV2_ATOM_BODY_CONST(atom());
+		} else if (is_audio()) {
+			return (const Sample*)LV2_ATOM_CONTENTS_CONST(LV2_Atom_Vector, atom());
+		}
+		return NULL;
+	}
+
+	/// Audio buffers only
+	inline Sample* samples() {
 		if (is_control()) {
 			return (Sample*)LV2_ATOM_BODY(atom());
 		} else if (is_audio()) {
@@ -80,7 +90,7 @@ public:
 	}
 
 	/// Audio buffers only
-	inline Sample& value_at(size_t offset) const {
+	inline const Sample& value_at(size_t offset) const {
 		assert(offset < nframes());
 		return samples()[offset];
 	}

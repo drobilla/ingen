@@ -168,7 +168,7 @@ SocketReader::_run()
 		sratom_read(sratom, &forge, world->c_obj(), model, _msg_node);
 
 		// Call _iface methods based on atom content
-		ar.write((LV2_Atom*)chunk.buf);
+		ar.write((const LV2_Atom*)chunk.buf);
 
 		// Reset everything for the next iteration
 		chunk.len = 0;

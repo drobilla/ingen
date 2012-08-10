@@ -80,7 +80,7 @@ bool
 SocketWriter::write(const LV2_Atom* msg)
 {
 	sratom_write(_sratom, &_map.urid_unmap_feature()->urid_unmap, 0,
-	             NULL, NULL, msg->type, msg->size, LV2_ATOM_BODY(msg));
+	             NULL, NULL, msg->type, msg->size, LV2_ATOM_BODY_CONST(msg));
 	serd_writer_finish(_writer);
 	return true;
 }

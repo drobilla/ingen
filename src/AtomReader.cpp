@@ -46,7 +46,7 @@ AtomReader::get_atom(const LV2_Atom* in, Raul::Atom& out)
 				            % urid->body);
 			}
 		} else {
-			out = _forge.alloc(in->size, in->type, LV2_ATOM_BODY(in));
+			out = _forge.alloc(in->size, in->type, LV2_ATOM_BODY_CONST(in));
 		}
 	}
 }
@@ -71,9 +71,9 @@ const char*
 AtomReader::atom_to_uri(const LV2_Atom* atom)
 {
 	if (atom && atom->type == _uris.atom_URI) {
-		return (const char*)LV2_ATOM_BODY(atom);
+		return (const char*)LV2_ATOM_BODY_CONST(atom);
 	} else if (atom && atom->type == _uris.atom_URID) {
-		return _map.unmap_uri(((LV2_Atom_URID*)atom)->body);
+		return _map.unmap_uri(((const LV2_Atom_URID*)atom)->body);
 	} else {
 		return NULL;
 	}
@@ -259,8 +259,8 @@ AtomReader::write(const LV2_Atom* msg)
 			Raul::warn << "Response message body is not integer" << std::endl;
 			return false;
 		}
-		_iface.response(((LV2_Atom_Int*)request)->body,
-		                (Ingen::Status)((LV2_Atom_Int*)body)->body,
+		_iface.response(((const LV2_Atom_Int*)request)->body,
+		                (Ingen::Status)((const LV2_Atom_Int*)body)->body,
 		                subject_uri ? subject_uri : "");
 	} else {
 		Raul::warn << "Unknown object type <"
