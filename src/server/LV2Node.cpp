@@ -92,7 +92,7 @@ LV2Node::make_instance(URIs&      uris,
 			? port->prepared_buffer(voice).get()
 			: port->buffer(voice).get();
 		if (port->is_morph() && port->is_a(PortType::CV)) {
-			Raul::info(Raul::fmt("Morphing %1% to CV\n") % port->path());
+			//Raul::info(Raul::fmt("Morphing %1% to CV\n") % port->path());
 			if (morph_iface) {
 				morph_iface->morph_port(
 					inst->lv2_handle, p, uris.lv2_CVPort, NULL);
@@ -116,12 +116,12 @@ LV2Node::make_instance(URIs&      uris,
 					inst->lv2_handle, p, NULL);
 				if (type == _uris.lv2_ControlPort) {
 					port->set_type(PortType::CONTROL, 0);
-					Raul::info(Raul::fmt("Auto-morphed %1% to control\n")
-					           % port->path());
+					/*Raul::info(Raul::fmt("Auto-morphed %1% to control\n")
+					  % port->path());*/
 				} else if (type == _uris.lv2_CVPort) {
 					port->set_type(PortType::CV, 0);
-					Raul::info(Raul::fmt("Auto-morphed %1% to CV\n")
-					           % port->path());
+					/*Raul::info(Raul::fmt("Auto-morphed %1% to CV\n")
+					  % port->path());*/
 				} else {
 					Raul::error(Raul::fmt("%1% auto-morphed to unknown type %2%\n")
 					            % port->path() % type);
