@@ -207,7 +207,7 @@ Delta::pre_process()
 				} else if (key == uris.ingen_polyphony) {
 					if (value.type() == uris.forge.Int) {
 						if (value.get_int32() < 1 || value.get_int32() > 128) {
-							_status == INVALID_POLY;
+							_status = INVALID_POLY;
 						} else {
 							op = POLYPHONY;
 							_patch->prepare_internal_poly(
