@@ -286,7 +286,7 @@ Engine::run(uint32_t sample_count)
 
 	// Process events that came in during the last cycle
 	// (Aiming for jitter-free 1 block event latency, ideally)
-	unsigned n_processed_events = process_events();
+	const unsigned n_processed_events = process_events();
 
 	// Run root patch
 	if (_root_patch) {
