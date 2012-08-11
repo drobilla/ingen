@@ -18,10 +18,13 @@
 
 #include <assert.h>
 #include <math.h>
+#include <new>
 #include <stdint.h>
 #include <string.h>
 
-#include <new>
+#ifdef __SSE__
+#    include <xmmintrin.h>
+#endif
 
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
@@ -75,24 +78,6 @@ Buffer::~Buffer()
 	free(_atom);
 }
 
-bool
-Buffer::is_audio() const
-{
-	return _type == _factory.uris().atom_Sound;
-}
-
-bool
-Buffer::is_control() const
-{
-	return _type == _factory.uris().atom_Float;
-}
-
-bool
-Buffer::is_sequence() const
-{
-	return _type == _factory.uris().atom_Sequence;
-}
-
 void
 Buffer::recycle()
 {
@@ -111,14 +96,14 @@ Buffer::clear()
 }
 
 void
-Buffer::copy(Context& context, const Buffer* src)
+Buffer::copy(const Context& context, const Buffer* src)
 {
 	if (_type == src->type() && src->_atom->size + sizeof(LV2_Atom) <= _capacity) {
 		memcpy(_atom, src->_atom, sizeof(LV2_Atom) + src->_atom->size);
 	} else if (src->is_audio() && is_control()) {
-		samples()[0] = src->samples()[context.offset()];
+		samples()[0] = src->samples()[0];
 	} else if (src->is_control() && is_audio()) {
-		samples()[context.offset()] = src->samples()[0];
+		set_block(src->samples()[0], 0, context.nframes());
 	} else {
 		clear();
 	}
@@ -129,8 +114,9 @@ Buffer::set_block(Sample val, const SampleCount start, const SampleCount end)
 {
 	assert(end <= nframes());
 
-	Sample* const buf = samples();
-	for (SampleCount i = start; i < end; ++i) {
+	// Note: This is done in this particular way so GCC can vectorize it
+	Sample* const buf = samples() + start;
+	for (SampleCount i = 0; i < (end - start); ++i) {
 		buf[i] = val;
 	}
 }
@@ -144,7 +130,7 @@ Buffer::resize(uint32_t capacity)
 }
 
 void*
-Buffer::port_data(PortType port_type, SampleCount offset)
+Buffer::port_data(PortType port_type)
 {
 	switch (port_type.symbol()) {
 	case PortType::CONTROL:
@@ -154,7 +140,7 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 		if (_atom->type == _factory.uris().atom_Float) {
 			return (float*)LV2_ATOM_BODY(_atom);
 		} else if (_atom->type == _factory.uris().atom_Sound) {
-			return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, _atom) + offset;
+			return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, _atom);
 		} else {
 			Raul::warn << "Audio data requested from non-audio buffer " << this << " :: "
 			           << _atom->type << " - "
@@ -170,21 +156,53 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 }
 
 const void*
-Buffer::port_data(PortType port_type, SampleCount offset) const
+Buffer::port_data(PortType port_type) const
 {
 	return const_cast<void*>(
-		const_cast<Buffer*>(this)->port_data(port_type, offset));
+		const_cast<Buffer*>(this)->port_data(port_type));
 }
 
 float
 Buffer::peak(const Context& context) const
 {
-	float               peak = 0.0f;
-	const Sample* const buf  = samples();
-	for (FrameTime i = 0; i < context.nframes(); ++i) {
+#ifdef __SSE__
+	const __m128* const vbuf    = (const __m128* const)samples();
+	__m128              vpeak   = vbuf[0];
+	const SampleCount   nblocks = context.nframes() / 4;
+
+	// First, find the vector max of the buffer
+	for (SampleCount i = 1; i < nblocks; ++i) {
+		vpeak = _mm_max_ps(vpeak, vbuf[i]);
+	}
+
+	// Now we need the single max of vpeak
+	// vpeak = ABCD
+	// tmp   = CDAB
+	__m128 tmp = _mm_shuffle_ps(vpeak, vpeak, _MM_SHUFFLE(2, 3, 0, 1));
+
+	// vpeak = MAX(A,C) MAX(B,D) MAX(C,A) MAX(D,B)
+	vpeak = _mm_max_ps(vpeak, tmp);
+
+	// tmp = BADC of the new vpeak
+	// tmp = MAX(B,D) MAX(A,C) MAX(D,B) MAX(C,A)
+	tmp = _mm_shuffle_ps(vpeak, vpeak, _MM_SHUFFLE(1, 0, 3, 2));
+
+	// vpeak = MAX(MAX(A,C), MAX(B,D)), ...
+	vpeak = _mm_max_ps(vpeak, tmp);
+
+	// peak = vpeak[0]
+	float peak;
+	_mm_store_ss(&peak, vpeak);
+
+	return peak;
+#else
+	const Sample* const buf = samples();
+	float peak = 0.0f;
+	for (SampleCount i = 0; i < context.nframes(); ++i) {
 		peak = fmaxf(peak, buf[i]);
 	}
 	return peak;
+#endif
 }
 
 void
@@ -226,6 +244,18 @@ Buffer::append_event(int64_t        frames,
 	_atom->size += sizeof(LV2_Atom_Event) + lv2_atom_pad_size(size);
 
 	return true;
+}
+
+void
+intrusive_ptr_add_ref(Buffer* b)
+{
+	b->ref();
+}
+
+void
+intrusive_ptr_release(Buffer* b)
+{
+	b->deref();
 }
 
 } // namespace Server

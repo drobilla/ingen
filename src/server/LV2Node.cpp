@@ -30,6 +30,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 
+#include "Buffer.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
@@ -461,13 +462,12 @@ LV2Node::process(ProcessContext& context)
 void
 LV2Node::set_port_buffer(uint32_t    voice,
                          uint32_t    port_num,
-                         BufferRef   buf,
-                         SampleCount offset)
+                         BufferRef   buf)
 {
-	NodeImpl::set_port_buffer(voice, port_num, buf, offset);
+	NodeImpl::set_port_buffer(voice, port_num, buf);
 	lilv_instance_connect_port(
 		instance(voice), port_num,
-	    buf ? buf->port_data(_ports->at(port_num)->type(), offset) : NULL);
+	    buf ? buf->port_data(_ports->at(port_num)->type()) : NULL);
 }
 
 } // namespace Server

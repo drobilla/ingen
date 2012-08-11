@@ -18,7 +18,8 @@
 #define INGEN_ENGINE_DUPLEXPORT_HPP
 
 #include <string>
-#include "Buffer.hpp"
+
+#include "BufferRef.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 

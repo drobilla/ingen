@@ -42,9 +42,10 @@
 #include "raul/Thread.hpp"
 #include "raul/log.hpp"
 
-#include "EnginePort.hpp"
+#include "Buffer.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
+#include "EnginePort.hpp"
 #include "EventWriter.hpp"
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
@@ -172,7 +173,7 @@ public:
 	{}
 
 	void run(uint32_t nframes) {
-		_engine.process_context().locate(_frame_time, nframes, 0);
+		_engine.process_context().locate(_frame_time, nframes);
 
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			(*i)->pre_process(_engine.process_context());
@@ -535,7 +536,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;
 
-	engine->process_context().locate(0, block_length, 0);
+	engine->process_context().locate(0, block_length);
 
 	engine->post_processor()->set_end_time(block_length);
 	engine->process_events();

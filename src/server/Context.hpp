@@ -66,25 +66,22 @@ public:
 
 	inline ID id() const { return _id; }
 
-	inline void locate(FrameTime s, SampleCount nframes, SampleCount offset) {
+	inline void locate(FrameTime s, SampleCount nframes) {
 		_start   = s;
 		_end     = s + nframes;
 		_nframes = nframes;
-		_offset  = offset;
 	}
 
 	inline void locate(const Context& other) {
 		_start   = other._start;
 		_end     = other._end;
 		_nframes = other._nframes;
-		_offset  = other._offset;
 	}
 
 	inline Engine&     engine()   const { return _engine; }
 	inline FrameTime   start()    const { return _start; }
 	inline FrameTime   end()      const { return _end; }
 	inline SampleCount nframes()  const { return _nframes; }
-	inline SampleCount offset()   const { return _offset; }
 	inline bool        realtime() const { return _realtime; }
 
 protected:
@@ -96,7 +93,6 @@ protected:
 	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
 	FrameTime   _end;        ///< End frame of this cycle, timeline relative
 	SampleCount _nframes;    ///< Length of this cycle in frames
-	SampleCount _offset;     ///< Start offset relative to start of driver buffers
 	bool        _realtime;   ///< True iff context is hard realtime
 };
 

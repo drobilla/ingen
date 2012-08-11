@@ -17,11 +17,13 @@
 #ifndef INGEN_ENGINE_LV2RESIZEFEATURE_HPP
 #define INGEN_ENGINE_LV2RESIZEFEATURE_HPP
 
-#include "raul/log.hpp"
-#include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 #include "ingen/LV2Features.hpp"
+#include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
+#include "raul/log.hpp"
+
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
+#include "Buffer.hpp"
 
 namespace Ingen {
 namespace Server {

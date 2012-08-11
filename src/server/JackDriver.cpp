@@ -33,6 +33,7 @@
 #include "raul/List.hpp"
 #include "raul/log.hpp"
 
+#include "Buffer.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "JackDriver.hpp"
@@ -403,7 +404,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 
 	_transport_state = jack_transport_query(_client, &_position);
 
-	_engine.process_context().locate(start_of_current_cycle, nframes, 0);
+	_engine.process_context().locate(start_of_current_cycle, nframes);
 
 	// Read input
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)

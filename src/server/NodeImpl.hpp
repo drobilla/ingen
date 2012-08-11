@@ -107,10 +107,9 @@ public:
 	virtual void post_process(ProcessContext& context);
 
 	/** Set the buffer of a port to a given buffer (e.g. connect plugin to buffer) */
-	virtual void set_port_buffer(uint32_t    voice,
-	                             uint32_t    port_num,
-	                             BufferRef   buf,
-	                             SampleCount offset);
+	virtual void set_port_buffer(uint32_t  voice,
+	                             uint32_t  port_num,
+	                             BufferRef buf);
 
 	virtual GraphObject* port(uint32_t index)      const;
 	virtual PortImpl*    port_impl(uint32_t index) const { return (*_ports)[index]; }

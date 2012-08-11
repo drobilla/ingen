@@ -19,7 +19,7 @@
 
 #include "raul/Array.hpp"
 
-#include "BufferFactory.hpp"
+#include "Buffer.hpp"
 #include "Engine.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
@@ -155,7 +155,7 @@ NodeImpl::pre_process(ProcessContext& context)
 	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);
 		port->pre_process(context);
-		port->connect_buffers(context.offset());
+		port->connect_buffers();
 	}
 }
 
@@ -171,10 +171,9 @@ NodeImpl::post_process(ProcessContext& context)
 }
 
 void
-NodeImpl::set_port_buffer(uint32_t    voice,
-                          uint32_t    port_num,
-                          BufferRef   buf,
-                          SampleCount offset)
+NodeImpl::set_port_buffer(uint32_t  voice,
+                          uint32_t  port_num,
+                          BufferRef buf)
 {
 	/*std::cout << path() << " set port " << port_num << " voice " << voice
 	  << " buffer " << buf << " offset " << offset << std::endl;*/

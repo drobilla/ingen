@@ -27,6 +27,7 @@
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 
+#include "BufferFactory.hpp"
 #include "PortType.hpp"
 #include "types.hpp"
 
@@ -37,26 +38,34 @@ class Context;
 class Engine;
 class BufferFactory;
 
-class Buffer : public boost::noncopyable, public Raul::Deletable
+class Buffer : public boost::noncopyable
 {
 public:
 	Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity);
 
-	bool is_audio() const;
-	bool is_control() const;
-	bool is_sequence() const;
+	void clear();
+	void resize(uint32_t size);
+	void copy(const Context& context, const Buffer* src);
+	void set_block(Sample val, SampleCount start, SampleCount end);
+	void prepare_write(Context& context);
 
-	virtual void clear();
-	virtual void resize(uint32_t size);
-	virtual void copy(Context& context, const Buffer* src);
-	virtual void set_block(Sample val, SampleCount start, SampleCount end);
-	virtual void prepare_write(Context& context);
+	void*       port_data(PortType port_type);
+	const void* port_data(PortType port_type) const;
 
-	void*       port_data(PortType port_type, SampleCount offset);
-	const void* port_data(PortType port_type, SampleCount offset) const;
+	inline LV2_URID type()     const { return _type; }
+	inline uint32_t capacity() const { return _capacity; }
 
-	LV2_URID type()     const { return _type; }
-	uint32_t capacity() const { return _capacity; }
+	inline bool is_audio() const {
+		return _type == _factory.uris().atom_Sound;
+	}
+
+	inline bool is_control() const {
+		return _type == _factory.uris().atom_Float;
+	}
+
+	inline bool is_sequence() const {
+		return _type == _factory.uris().atom_Sequence;
+	}
 
 	/// Audio buffers only
 	inline const Sample* samples() const {
@@ -89,7 +98,8 @@ public:
 	}
 
 	/// Audio buffers only
-	inline const Sample& value_at(size_t offset) const {
+	inline const Sample& value_at(SampleCount offset) const {
+		assert(is_audio() || is_control());
 		assert(offset < nframes());
 		return samples()[offset];
 	}
@@ -124,7 +134,7 @@ protected:
 	uint32_t       _capacity;
 
 	friend class BufferFactory;
-	virtual ~Buffer();
+	~Buffer();
 
 private:
 	void recycle();

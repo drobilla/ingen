@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cassert>
 
+#include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
@@ -194,7 +195,7 @@ InputPort::pre_process(Context& context)
 				e->get_sources(context, v, srcs, max_num_srcs, num_srcs);
 			}
 
-			mix(context, bufs().uris(), buffer(v).get(), srcs, num_srcs);
+			mix(context, buffer(v).get(), srcs, num_srcs);
 		}
 	}
 

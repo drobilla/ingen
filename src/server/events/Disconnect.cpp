@@ -23,8 +23,9 @@
 #include "raul/log.hpp"
 
 #include "Broadcaster.hpp"
-#include "EdgeImpl.hpp"
+#include "Buffer.hpp"
 #include "DuplexPort.hpp"
+#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
 #include "InputPort.hpp"

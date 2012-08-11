@@ -127,7 +127,7 @@ PatchImpl::apply_internal_poly(ProcessContext& context,
 			PortImpl* const port = (*i)->port_impl(j);
 			if (port->is_input() && dynamic_cast<InputPort*>(port)->direct_connect())
 				port->setup_buffers(context, bufs, port->poly());
-			port->connect_buffers(context.offset());
+			port->connect_buffers();
 		}
 	}
 

@@ -23,12 +23,13 @@
 #include "raul/log.hpp"
 #include "raul/midi_events.h"
 
+#include "Buffer.hpp"
 #include "ControlBindings.hpp"
+#include "Driver.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
-#include "Driver.hpp"
 
 #define LOG(s) s << "[ControlBindings] "
 

@@ -276,7 +276,7 @@ Engine::deactivate()
 unsigned
 Engine::run(uint32_t sample_count)
 {
-	_process_context.locate(_process_context.end(), sample_count, 0);
+	_process_context.locate(_process_context.end(), sample_count);
 
 	// Apply control bindings to input
 	control_bindings()->pre_process(

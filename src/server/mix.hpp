@@ -29,8 +29,7 @@ class Context;
 class Buffer;
 
 void
-mix(Context&            context,
-    URIs&               uris,
+mix(const Context&      context,
     Buffer*             dst,
     const Buffer*const* srcs,
     uint32_t            num_srcs);

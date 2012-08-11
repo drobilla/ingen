@@ -20,6 +20,7 @@
 #include "raul/log.hpp"
 
 #include "Broadcaster.hpp"
+#include "Buffer.hpp"
 #include "ControlBindings.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"

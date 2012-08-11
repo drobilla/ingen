@@ -16,7 +16,6 @@
 
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
-#include "ingen/URIs.hpp"
 #include "raul/log.hpp"
 
 #include "Buffer.hpp"
@@ -25,38 +24,6 @@
 
 namespace Ingen {
 namespace Server {
-
-static inline void
-audio_accumulate(Context& context, Buffer* dst, const Buffer* src)
-{
-	Sample* const       dst_buf = dst->samples();
-	const Sample* const src_buf = src->samples();
-
-	if (dst->is_control()) {
-		if (src->is_control()) {  // control => control
-			dst_buf[0] += src_buf[0];
-		} else {  // audio => control
-			dst_buf[0] += src_buf[context.offset()];
-		}
-	} else {
-		const SampleCount end = context.offset() + context.nframes();
-		if (src->is_control()) {  // control => audio
-			for (SampleCount i = context.offset(); i < end; ++i) {
-				dst_buf[i] += src_buf[0];
-			}
-		} else {  // audio => audio
-			for (SampleCount i = context.offset(); i < end; ++i) {
-				dst_buf[i] += src_buf[i];
-			}
-		}
-	}
-}
-
-static inline bool
-is_audio(URIs& uris, LV2_URID type)
-{
-	return type == uris.atom_Float || type == uris.atom_Sound;
-}
 
 static inline bool
 is_end(const Buffer* buf, LV2_Atom_Event* ev)
@@ -68,28 +35,44 @@ is_end(const Buffer* buf, LV2_Atom_Event* ev)
 }
 
 void
-mix(Context&            context,
-    URIs&               uris,
+mix(const Context&      context,
     Buffer*             dst,
     const Buffer*const* srcs,
     uint32_t            num_srcs)
 {
 	if (num_srcs == 1) {
 		dst->copy(context, srcs[0]);
-	} else if (is_audio(uris, dst->type())) {
+	} else if (dst->is_control()) {
+		Sample* const out = dst->samples();
+		out[0] = srcs[0]->value_at(0);
+		for (uint32_t i = 1; i < num_srcs; ++i) {
+			out[0] += srcs[i]->value_at(0);
+		}
+	} else if (dst->is_audio()) {
 		// Copy the first source
 		dst->copy(context, srcs[0]);
 
 		// Mix in the rest
+		Sample* __restrict const out = dst->samples();
+		const SampleCount        end = context.nframes();
 		for (uint32_t i = 1; i < num_srcs; ++i) {
-			assert(is_audio(uris, srcs[i]->type()));
-			audio_accumulate(context, dst, srcs[i]);
+			const Sample* __restrict const in = srcs[i]->samples();
+			if (srcs[i]->is_control()) {  // control => audio
+				for (SampleCount i = 0; i < end; ++i) {
+					out[i] += in[0];
+				}
+			} else {  // audio => audio
+				assert(srcs[i]->is_audio());
+				for (SampleCount i = 0; i < end; ++i) {
+					out[i] += in[i];
+				}
+			}
 		}
 	} else {
-		assert(dst->type() == uris.atom_Sequence);
+		assert(dst->is_sequence());
 		LV2_Atom_Event* iters[num_srcs];
 		for (uint32_t i = 0; i < num_srcs; ++i) {
-			assert(srcs[i]->type() == uris.atom_Sequence);
+			assert(srcs[i]->is_sequence());
 			iters[i] = lv2_atom_sequence_begin(
 				(const LV2_Atom_Sequence_Body*)LV2_ATOM_BODY_CONST(srcs[i]->atom()));
 			if (is_end(srcs[i], iters[i])) {

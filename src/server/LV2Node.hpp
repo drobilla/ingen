@@ -59,10 +59,9 @@ public:
 
 	void process(ProcessContext& context);
 
-	void set_port_buffer(uint32_t    voice,
-	                     uint32_t    port_num,
-	                     BufferRef   buf,
-	                     SampleCount offset);
+	void set_port_buffer(uint32_t  voice,
+	                     uint32_t  port_num,
+	                     BufferRef buf);
 
 protected:
 	SharedPtr<LilvInstance> make_instance(URIs&      uris,

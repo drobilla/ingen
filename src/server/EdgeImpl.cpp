@@ -18,6 +18,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/log.hpp"
 
+#include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
@@ -83,7 +84,7 @@ EdgeImpl::get_sources(Context&  context,
 		_queue->peek(sizeof(LV2_Atom), &obj);
 		BufferRef buf = context.engine().buffer_factory()->get(
 			context, head()->buffer_type(), sizeof(LV2_Atom) + obj.size);
-		void* data = buf->port_data(PortType::ATOM, context.offset());
+		void* data = buf->port_data(PortType::ATOM);
 		_queue->read(sizeof(LV2_Atom) + obj.size, (LV2_Atom*)data);
 		srcs[num_srcs++] = buf.get();
 	} else if (must_mix()) {

@@ -17,6 +17,7 @@
 #include "ingen/URIs.hpp"
 #include "raul/log.hpp"
 
+#include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"

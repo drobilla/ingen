@@ -50,7 +50,6 @@ Context::Context(Engine& engine, ID id)
 	, _start(0)
 	, _end(0)
 	, _nframes(0)
-	, _offset(0)
 	, _realtime(true)
 {}
 

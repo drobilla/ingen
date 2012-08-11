@@ -29,7 +29,6 @@
 #include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
 
-#include "Buffer.hpp"
 #include "BufferRef.hpp"
 #include "PortType.hpp"
 #include "types.hpp"

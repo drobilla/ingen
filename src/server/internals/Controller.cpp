@@ -23,6 +23,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/midi_events.h"
 
+#include "Buffer.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"

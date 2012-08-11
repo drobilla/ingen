@@ -23,7 +23,6 @@
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"
 
-#include "Buffer.hpp"
 #include "BufferRef.hpp"
 #include "GraphObjectImpl.hpp"
 #include "PortType.hpp"
@@ -123,7 +122,7 @@ public:
 		get_buffers(context, bufs, _buffers, poly);
 	}
 
-	virtual void connect_buffers(SampleCount offset=0);
+	virtual void connect_buffers();
 	virtual void recycle_buffers();
 
 	virtual bool is_input()  const = 0;
