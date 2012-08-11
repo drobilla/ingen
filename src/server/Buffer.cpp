@@ -162,17 +162,25 @@ Buffer::port_data(PortType port_type) const
 		const_cast<Buffer*>(this)->port_data(port_type));
 }
 
+/** Vector fabsf */
+static inline __m128
+mm_abs_ps(__m128 x)
+{
+    const __m128 sign_mask = _mm_set1_ps(-0.0f);  // -0.0f = 1 << 31
+    return _mm_andnot_ps(sign_mask, x);
+}
+
 float
 Buffer::peak(const Context& context) const
 {
 #ifdef __SSE__
 	const __m128* const vbuf    = (const __m128* const)samples();
-	__m128              vpeak   = vbuf[0];
+	__m128              vpeak   = mm_abs_ps(vbuf[0]);
 	const SampleCount   nblocks = context.nframes() / 4;
 
-	// First, find the vector max of the buffer
+	// First, find the vector absolute max of the buffer
 	for (SampleCount i = 1; i < nblocks; ++i) {
-		vpeak = _mm_max_ps(vpeak, vbuf[i]);
+		vpeak = _mm_max_ps(vpeak, mm_abs_ps(vbuf[i]));
 	}
 
 	// Now we need the single max of vpeak
@@ -199,7 +207,7 @@ Buffer::peak(const Context& context) const
 	const Sample* const buf = samples();
 	float peak = 0.0f;
 	for (SampleCount i = 0; i < context.nframes(); ++i) {
-		peak = fmaxf(peak, buf[i]);
+		peak = fmaxf(peak, fabsf(buf[i]));
 	}
 	return peak;
 #endif
