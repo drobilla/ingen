@@ -149,17 +149,8 @@ InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 		return NULL;
 	}
 
-	// Turn off broadcasting if we're no longer connected
 	if (_edges.empty()) {
-		if (is_a(PortType::AUDIO)) {
-			// Send an update peak of 0.0 to reset to silence
-			const Raul::Atom z = context.engine().world()->forge().make(0.0f);
-			context.notify(context.engine().world()->uris().ingen_activity,
-			               context.start(),
-			               this,
-			               z.size(), z.type(), z.get_body());
-		}
-		_broadcast = false;
+		_broadcast = false;	 // Turn off broadcasting if no longer connected
 	}
 
 	return edge;

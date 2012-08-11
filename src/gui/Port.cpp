@@ -88,10 +88,15 @@ Port::Port(App&                       app,
 			sigc::mem_fun(this, &Port::value_changed));
 	}
 
-	pm->signal_activity().connect(sigc::mem_fun(this, &Port::activity));
-	pm->signal_moved().connect(sigc::mem_fun(this, &Port::moved));
+	pm->signal_activity().connect(
+		sigc::mem_fun(this, &Port::activity));
+	pm->signal_disconnection().connect(
+		sigc::mem_fun(this, &Port::disconnected_from));
+	pm->signal_moved().connect(
+		sigc::mem_fun(this, &Port::moved));
 
-	signal_value_changed.connect(sigc::mem_fun(this, &Port::on_value_changed));
+	signal_value_changed.connect(
+		sigc::mem_fun(this, &Port::on_value_changed));
 
 	update_metadata();
 	value_changed(pm->value());
@@ -291,6 +296,14 @@ Port::activity(const Raul::Atom& value)
 		set_fill_color(peak_color(value.get_float()));
 	} else {
 		_app.port_activity(this);
+	}
+}
+
+void
+Port::disconnected_from(SharedPtr<PortModel> port)
+{
+	if (!model()->connected() && model()->is_a(_app.uris().lv2_AudioPort)) {
+		set_fill_color(peak_color(0.0f));
 	}
 }
 

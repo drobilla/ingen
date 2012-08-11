@@ -61,6 +61,7 @@ public:
 
 	void value_changed(const Raul::Atom& value);
 	void activity(const Raul::Atom& value);
+	void disconnected_from(SharedPtr<Client::PortModel> port);
 
 	void set_selected(gboolean b);
 
