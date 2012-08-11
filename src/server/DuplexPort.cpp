@@ -21,6 +21,7 @@
 #include "Buffer.hpp"
 #include "DuplexPort.hpp"
 #include "OutputPort.hpp"
+#include "PatchImpl.hpp"
 
 using namespace std;
 
@@ -58,6 +59,12 @@ DuplexPort::get_buffers(Context&                context,
 	} else {
 		return OutputPort::get_buffers(context, bufs, buffers, poly);
 	}
+}
+
+uint32_t
+DuplexPort::max_tail_poly(Context& context) const
+{
+	return parent_patch()->internal_poly_process();
 }
 
 /** Prepare for the execution of parent patch */

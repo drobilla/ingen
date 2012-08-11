@@ -206,8 +206,13 @@ Delta::pre_process()
 					}
 				} else if (key == uris.ingen_polyphony) {
 					if (value.type() == uris.forge.Int) {
-						op = POLYPHONY;
-						_patch->prepare_internal_poly(*_engine.buffer_factory(), value.get_int32());
+						if (value.get_int32() < 1 || value.get_int32() > 128) {
+							_status == INVALID_POLY;
+						} else {
+							op = POLYPHONY;
+							_patch->prepare_internal_poly(
+								*_engine.buffer_factory(), value.get_int32());
+						}
 					} else {
 						_status = BAD_VALUE_TYPE;
 					}

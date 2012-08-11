@@ -110,18 +110,6 @@ Buffer::copy(const Context& context, const Buffer* src)
 }
 
 void
-Buffer::set_block(Sample val, const SampleCount start, const SampleCount end)
-{
-	assert(end <= nframes());
-
-	// Note: This is done in this particular way so GCC can vectorize it
-	Sample* const buf = samples() + start;
-	for (SampleCount i = 0; i < (end - start); ++i) {
-		buf[i] = val;
-	}
-}
-
-void
 Buffer::resize(uint32_t capacity)
 {
 	_atom     = (LV2_Atom*)realloc(_atom, capacity);

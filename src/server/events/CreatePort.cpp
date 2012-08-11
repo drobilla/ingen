@@ -23,6 +23,7 @@
 #include "raul/Path.hpp"
 
 #include "Broadcaster.hpp"
+#include "BufferFactory.hpp"
 #include "CreatePort.hpp"
 #include "Driver.hpp"
 #include "DuplexPort.hpp"

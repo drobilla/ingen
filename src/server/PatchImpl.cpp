@@ -21,6 +21,7 @@
 #include "ingen/World.hpp"
 #include "raul/log.hpp"
 
+#include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
@@ -52,6 +53,7 @@ PatchImpl::PatchImpl(Engine&             engine,
 	, _process(false)
 {
 	assert(internal_poly >= 1);
+	assert(internal_poly <= 128);
 }
 
 PatchImpl::~PatchImpl()
@@ -155,12 +157,6 @@ PatchImpl::process(ProcessContext& context)
 		// Run all nodes
 		for (size_t i = 0; i < _compiled_patch->size(); ++i) {
 			(*_compiled_patch)[i].node()->process(context);
-		}
-
-		// Queue any cross-context edges
-		for (CompiledPatch::QueuedEdges::iterator i = _compiled_patch->queued_edges.begin();
-		     i != _compiled_patch->queued_edges.end(); ++i) {
-			(*i)->queue(context);
 		}
 	}
 
@@ -398,16 +394,6 @@ PatchImpl::compile() const
 		NodeImpl* const node = (*i);
 		if ( ! node->traversed())
 			compile_recursive(node, compiled_patch);
-	}
-
-	// Add any queued edges that must be run after a cycle
-	for (Edges::const_iterator i = _edges.begin();
-	     i != _edges.end(); ++i) {
-		SharedPtr<EdgeImpl> c = PtrCast<EdgeImpl>(i->second);
-		if (c->tail()->parent_node()->context() == Context::AUDIO &&
-		    c->head()->parent_node()->context() == Context::MESSAGE) {
-			compiled_patch->queued_edges.push_back(c.get());
-		}
 	}
 
 	assert(compiled_patch->size() == _nodes.size());

@@ -27,7 +27,7 @@
 #include "raul/Deletable.hpp"
 #include "raul/log.hpp"
 
-#include "BufferFactory.hpp"
+#include "BufferRef.hpp"
 #include "Context.hpp"
 
 namespace Ingen {
@@ -36,8 +36,6 @@ namespace Server {
 class PortImpl;
 class OutputPort;
 class InputPort;
-class Buffer;
-class BufferFactory;
 
 /** Represents a single inbound connection for an InputPort.
  *
@@ -60,19 +58,11 @@ class EdgeImpl
 public:
 	EdgeImpl(PortImpl* tail, PortImpl* head);
 
-	PortImpl* tail() const { return _tail; }
-	PortImpl* head() const { return _head; }
+	inline PortImpl* tail() const { return _tail; }
+	inline PortImpl* head() const { return _head; }
 
 	const Raul::Path& tail_path() const;
 	const Raul::Path& head_path() const;
-
-	void queue(Context& context);
-
-	void get_sources(Context&  context,
-	                 uint32_t  voice,
-	                 Buffer**  srcs,
-	                 uint32_t  max_num_srcs,
-	                 uint32_t& num_srcs);
 
 	/** Get the buffer for a particular voice.
 	 * An Edge is smart - it knows the destination port requesting the
@@ -84,17 +74,11 @@ public:
 	/** Whether this edge must mix down voices into a local buffer */
 	bool must_mix() const;
 
-	/** Whether this edge crosses contexts and must buffer */
-	bool must_queue() const;
-
 	static bool can_connect(const OutputPort* src, const InputPort* dst);
 
 protected:
-	void dump() const;
-
-	PortImpl* const   _tail;
-	PortImpl* const   _head;
-	Raul::RingBuffer* _queue;
+	PortImpl* const _tail;
+	PortImpl* const _head;
 };
 
 } // namespace Server

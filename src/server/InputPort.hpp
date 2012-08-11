@@ -67,6 +67,9 @@ public:
 	                                boost::intrusive::constant_time_size<false>
 	                                > Edges;
 
+	/** Return the maximum polyphony of an output connected to this input. */
+	virtual uint32_t max_tail_poly(Context& context) const;
+
 	void      add_edge(ProcessContext& context, EdgeImpl* c);
 	EdgeImpl* remove_edge(ProcessContext&   context,
 	                      const OutputPort* tail);

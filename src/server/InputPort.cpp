@@ -24,6 +24,7 @@
 #include "InputPort.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
+#include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ingen/URIs.hpp"
 #include "mix.hpp"
@@ -91,8 +92,7 @@ InputPort::get_buffers(Context&                context,
 
 	} else if (num_edges == 1) {
 		if (is_process_context) {
-			if (!_edges.front().must_mix() &&
-			    !_edges.front().must_queue()) {
+			if (!_edges.front().must_mix()) {
 				// Single non-mixing connection, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v) {
 					buffers->at(v) = _edges.front().buffer(v);
@@ -156,6 +156,34 @@ InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 	return edge;
 }
 
+uint32_t
+InputPort::max_tail_poly(Context& context) const
+{
+	return parent_node()->parent_patch()->internal_poly_process();
+}
+
+static void
+get_sources(const Context&  context,
+            const EdgeImpl& edge,
+            uint32_t        voice,
+            const Buffer**  srcs,
+            uint32_t        max_num_srcs,
+            uint32_t&       num_srcs)
+{
+	if (edge.must_mix()) {
+		// Mixing down voices: all tail voices => one head voice
+		for (uint32_t v = 0; v < edge.tail()->poly(); ++v) {
+			assert(num_srcs < max_num_srcs);
+			srcs[num_srcs++] = edge.tail()->buffer(v).get();
+		}
+	} else {
+		// Matching polyphony: each tail voice => corresponding head voice
+		assert(edge.tail()->poly() == edge.head()->poly());
+		assert(num_srcs < max_num_srcs);
+		srcs[num_srcs++] = edge.tail()->buffer(voice).get();
+	}
+}
+
 /** Prepare buffer for access, mixing if necessary.  Realtime safe.
  */
 void
@@ -174,18 +202,18 @@ InputPort::pre_process(Context& context)
 			_buffers->at(v) = _edges.front().buffer(v);
 		}
 	} else {
-		uint32_t max_num_srcs = 1;
-		for (Edges::const_iterator e = _edges.begin(); e != _edges.end(); ++e) {
-			max_num_srcs += e->tail()->poly();
-		}
+		const uint32_t src_poly     = max_tail_poly(context);
+		const uint32_t max_num_srcs = _edges.size() * src_poly;
 
-		Buffer* srcs[max_num_srcs];
+		const Buffer* srcs[max_num_srcs];
 		for (uint32_t v = 0; v < _poly; ++v) {
+			// Get all the sources for this voice
 			uint32_t num_srcs = 0;
 			for (Edges::iterator e = _edges.begin(); e != _edges.end(); ++e) {
-				e->get_sources(context, v, srcs, max_num_srcs, num_srcs);
+				get_sources(context, *e, v, srcs, max_num_srcs, num_srcs);
 			}
 
+			// Then mix them into out buffer for this voice
 			mix(context, buffer(v).get(), srcs, num_srcs);
 		}
 	}
@@ -213,8 +241,7 @@ InputPort::direct_connect() const
 {
 	return _edges.size() == 1
 		&& !_parent->path().is_root()
-		&& !_edges.front().must_mix()
-		&& !_edges.front().must_queue();
+		&& !_edges.front().must_mix();
 }
 
 } // namespace Server

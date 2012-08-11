@@ -39,25 +39,11 @@ namespace Server {
 EdgeImpl::EdgeImpl(PortImpl* tail, PortImpl* head)
 	: _tail(tail)
 	, _head(head)
-	, _queue(NULL)
 {
 	assert(tail);
 	assert(head);
 	assert(tail != head);
 	assert(tail->path() != head->path());
-
-	if (must_queue())
-		_queue = new Raul::RingBuffer(tail->buffer_size() * 2);
-}
-
-void
-EdgeImpl::dump() const
-{
-	Raul::debug << _tail->path() << " -> " << _head->path()
-	            << (must_mix()   ? " (MIX) " : " (DIRECT) ")
-	            << (must_queue() ? " (QUEUE)" : " (NOQUEUE) ")
-	            << "POLY: " << _tail->poly() << " => " << _head->poly()
-	            << std::endl;
 }
 
 const Raul::Path&
@@ -72,63 +58,10 @@ EdgeImpl::head_path() const
 	return _head->path();
 }
 
-void
-EdgeImpl::get_sources(Context&  context,
-                      uint32_t  voice,
-                      Buffer**  srcs,
-                      uint32_t  max_num_srcs,
-                      uint32_t& num_srcs)
-{
-	if (must_queue() && _queue->read_space() > 0) {
-		LV2_Atom obj;
-		_queue->peek(sizeof(LV2_Atom), &obj);
-		BufferRef buf = context.engine().buffer_factory()->get(
-			context, head()->buffer_type(), sizeof(LV2_Atom) + obj.size);
-		void* data = buf->port_data(PortType::ATOM);
-		_queue->read(sizeof(LV2_Atom) + obj.size, (LV2_Atom*)data);
-		srcs[num_srcs++] = buf.get();
-	} else if (must_mix()) {
-		// Mixing down voices: every src voice mixed into every dst voice
-		for (uint32_t v = 0; v < _tail->poly(); ++v) {
-			assert(num_srcs < max_num_srcs);
-			srcs[num_srcs++] = _tail->buffer(v).get();
-		}
-	} else {
-		// Matching polyphony: each src voice mixed into corresponding dst voice
-		assert(_tail->poly() == _head->poly());
-		assert(num_srcs < max_num_srcs);
-		srcs[num_srcs++] = _tail->buffer(voice).get();
-	}
-}
-
-void
-EdgeImpl::queue(Context& context)
-{
-	if (!must_queue())
-		return;
-
-	const Ingen::URIs& uris = _tail->bufs().uris();
-
-	BufferRef src_buf = _tail->buffer(0);
-	if (src_buf->atom()->type != uris.atom_Sequence) {
-		Raul::error << "Queued edge source is not a Sequence" << std::endl;
-		return;
-	}
-
-	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)src_buf->atom();
-	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-		_queue->write(sizeof(LV2_Atom) + ev->body.size, &ev->body);
-		context.engine().message_context().run(
-			context, _head->parent_node(), context.start() + ev->time.frames);
-
-	}
-}
-
 BufferRef
 EdgeImpl::buffer(uint32_t voice) const
 {
 	assert(!must_mix());
-	assert(!must_queue());
 	assert(_tail->poly() == 1 || _tail->poly() > voice);
 	if (_tail->poly() == 1) {
 		return _tail->buffer(0);
@@ -141,13 +74,6 @@ bool
 EdgeImpl::must_mix() const
 {
 	return _tail->poly() > _head->poly();
-}
-
-bool
-EdgeImpl::must_queue() const
-{
-	return _tail->parent_node()->context()
-		!= _head->parent_node()->context();
 }
 
 bool

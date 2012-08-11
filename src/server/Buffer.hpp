@@ -46,7 +46,6 @@ public:
 	void clear();
 	void resize(uint32_t size);
 	void copy(const Context& context, const Buffer* src);
-	void set_block(Sample val, SampleCount start, SampleCount end);
 	void prepare_write(Context& context);
 
 	void*       port_data(PortType port_type);
@@ -102,6 +101,18 @@ public:
 		assert(is_audio() || is_control());
 		assert(offset < nframes());
 		return samples()[offset];
+	}
+
+	inline void set_block(Sample            val,
+	                      const SampleCount start,
+	                      const SampleCount end)
+	{
+		assert(end <= nframes());
+		// Note: Do not change this without ensuring GCC can still vectorize it
+		Sample* const buf = samples() + start;
+		for (SampleCount i = 0; i < (end - start); ++i) {
+			buf[i] = val;
+		}
 	}
 
 	/// Audio buffers only

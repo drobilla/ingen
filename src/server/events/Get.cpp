@@ -19,6 +19,7 @@
 #include "ingen/Interface.hpp"
 
 #include "Broadcaster.hpp"
+#include "BufferFactory.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"

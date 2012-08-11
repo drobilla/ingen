@@ -53,6 +53,8 @@ public:
 
 	virtual ~DuplexPort() {}
 
+	uint32_t max_tail_poly(Context& context) const;
+
 	bool get_buffers(Context&                context,
 	                 BufferFactory&          bufs,
 	                 Raul::Array<BufferRef>* buffers,

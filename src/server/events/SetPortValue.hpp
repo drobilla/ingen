@@ -32,11 +32,6 @@ namespace Events {
 
 /** An event to change the value of a port.
  *
- * This event can either be queued or immediate, depending on the queued
- * parameter passed to the constructor.  It must be passed to the appropriate
- * place (ie queued event passed to the event queue and non-queued event
- * processed in the audio thread) or nasty things will happen.
- *
  * \ingroup engine
  */
 class SetPortValue : public Event

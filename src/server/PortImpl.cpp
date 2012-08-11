@@ -135,34 +135,48 @@ PortImpl::cache_properties()
 }
 
 void
-PortImpl::set_control_value(Context& context, FrameTime time, Sample value)
+PortImpl::set_control_value(const Context& context,
+                            FrameTime      time,
+                            Sample         value)
 {
-	for (uint32_t v = 0; v < poly(); ++v) {
+	for (uint32_t v = 0; v < _poly; ++v) {
 		set_voice_value(context, v, time, value);
 	}
 }
 
 void
-PortImpl::set_voice_value(Context& context, uint32_t voice, FrameTime time, Sample value)
+PortImpl::set_voice_value(const Context& context,
+                          uint32_t       voice,
+                          FrameTime      time,
+                          Sample         value)
 {
-	// Time may be at end so internal nodes can set single sample triggers
-	assert(time >= context.start());
-	assert(time <= context.start() + context.nframes());
+	switch (_type.symbol()) {
+	case PortType::CONTROL:
+		buffer(voice)->samples()[0] = value;
+		_set_states->at(voice).state = SetState::SET;
+		break;
+	case PortType::AUDIO:
+	case PortType::CV: {
+		// Time may be at end so internal nodes can set triggers
+		assert(time >= context.start());
+		assert(time <= context.start() + context.nframes());
 
-	if (_type == PortType::CONTROL) {
-		time = context.start();
+		const FrameTime offset = time - context.start();
+		if (offset < context.nframes()) {
+			buffer(voice)->set_block(value, offset, context.nframes());
+		}
+		/* else, this is a set at context.nframes(), used to reset a CV port's
+		   value for the next block, particularly for triggers on the last
+		   frame of a block (set nframes-1 to 1, then nframes to 0). */
+
+		SetState& state = _set_states->at(voice);
+		state.state = (offset == 0) ? SetState::SET : SetState::HALF_SET_CYCLE_1;
+		state.time  = time;
+		state.value = value;
 	}
-
-	FrameTime offset = time - context.start();
-	FrameTime end    = (_type == PortType::CONTROL) ? 1 : context.nframes();
-	if (offset < context.nframes()) {
-		buffer(voice)->set_block(value, offset, end);
-	} // else trigger at very end of block, and set to 0 at start of next block
-
-	SetState& state = _set_states->at(voice);
-	state.state = (offset == 0) ? SetState::SET : SetState::HALF_SET_CYCLE_1;
-	state.time  = time;
-	state.value = value;
+	default:
+		break;
+	}
 }
 
 void

@@ -99,12 +99,14 @@ public:
 
 	void update_set_state(Context& context, uint32_t voice);
 
-	void set_voice_value(Context&  context,
-	                     uint32_t  voice,
-	                     FrameTime time,
-	                     Sample    value);
+	void set_voice_value(const Context& context,
+	                     uint32_t       voice,
+	                     FrameTime      time,
+	                     Sample         value);
 
-	void set_control_value(Context& context, FrameTime time, Sample value);
+	void set_control_value(const Context& context,
+	                       FrameTime      time,
+	                       Sample         value);
 
 	/** Called once per process cycle */
 	virtual void pre_process(Context& context) = 0;

@@ -69,7 +69,7 @@ CreatePatch::pre_process()
 		int_poly = p->second.get_int32();
 	}
 
-	if (int_poly < 1) {
+	if (int_poly < 1 || int_poly > 128) {
 		return Event::pre_process_done(INVALID_POLY, path);
 	}
 

@@ -67,11 +67,6 @@ class CompiledPatch : public std::vector<CompiledNode>
                     , public Raul::Deletable
                     , public boost::noncopyable
 {
-public:
-	typedef std::vector<EdgeImpl*> QueuedEdges;
-
-	/** All (audio context => other context) edges */
-	std::vector<EdgeImpl*> queued_edges;
 };
 
 } // namespace Server
