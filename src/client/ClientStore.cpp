@@ -184,10 +184,11 @@ ClientStore::object(const Raul::Path& path) const
 SharedPtr<Resource>
 ClientStore::_resource(const Raul::URI& uri)
 {
-	if (Raul::Path::is_path(uri))
-		return _object(uri.str());
-	else
+	if (GraphObject::uri_is_path(uri)) {
+		return _object(GraphObject::uri_to_path(uri));
+	} else {
 		return _plugin(uri);
+	}
 }
 
 SharedPtr<const Resource>
@@ -213,8 +214,9 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 void
 ClientStore::del(const Raul::URI& uri)
 {
-	if (!Raul::Path::is_path(uri))
+	if (!GraphObject::uri_is_path(uri)) {
 		return;
+	}
 
 	const Raul::Path path(uri.str());
 	SharedPtr<ObjectModel> removed = remove_object(path);
@@ -253,7 +255,7 @@ ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
 				+ child_old_path.substr(old_path.length() + 1);
 
 		LOG(Raul::info)(Raul::fmt("Renamed %1% to %2%\n")
-		                % child_old_path % child_new_path);
+		                % child_old_path.c_str() % child_new_path.c_str());
 		PtrCast<ObjectModel>(i->second)->set_path(child_new_path);
 		i->first = child_new_path;
 	}
@@ -295,12 +297,13 @@ ClientStore::put(const Raul::URI&            uri,
 		}
 	}
 
-	if (!Raul::Path::is_valid(uri.str())) {
-		LOG(Raul::error) << "Bad path `" << uri.str() << "'" << endl;
+	if (!GraphObject::uri_is_path(uri)) {
+		LOG(Raul::error)(Raul::fmt("Put for unknown subject <%1%>\n")
+		                 % uri.c_str());
 		return;
 	}
 
-	const Raul::Path path(uri.str());
+	const Raul::Path path(GraphObject::uri_to_path(uri));
 
 	SharedPtr<ObjectModel> obj = PtrCast<ObjectModel>(_object(path));
 	if (obj) {
@@ -335,7 +338,8 @@ ClientStore::put(const Raul::URI&            uri,
 			n->set_properties(properties);
 			add_object(n);
 		} else {
-			LOG(Raul::warn)(Raul::fmt("Node %1% has no plugin\n") % path);
+			LOG(Raul::warn)(Raul::fmt("Node %1% has no plugin\n")
+			                % path.c_str());
 		}
 	} else if (is_port) {
 		PortModel::Direction pdir = (is_output)
@@ -353,7 +357,7 @@ ClientStore::put(const Raul::URI&            uri,
 		}
 	} else {
 		LOG(Raul::warn)(Raul::fmt("Ignoring object %1% with unknown type\n")
-		                % path);
+		                % path.c_str());
 	}
 }
 
@@ -376,19 +380,21 @@ ClientStore::delta(const Raul::URI&            uri,
 	LOG(Raul::info) << "}" << endl;
 #endif
 
-	if (!Raul::Path::is_valid(uri.str())) {
-		LOG(Raul::error) << "Bad path `" << uri.str() << "'" << endl;
+	if (!GraphObject::uri_is_path(uri)) {
+		LOG(Raul::error)(Raul::fmt("Delta for unknown subject <%1%>\n")
+		                 % uri.c_str());
 		return;
 	}
 
-	const Raul::Path path(uri.str());
+	const Raul::Path path(GraphObject::uri_to_path(uri));
 
 	SharedPtr<ObjectModel> obj = _object(path);
 	if (obj) {
 		obj->remove_properties(remove);
 		obj->add_properties(add);
 	} else {
-		LOG(Raul::warn)(Raul::fmt("Failed to find object `%1%'\n") % path);
+		LOG(Raul::warn)(Raul::fmt("Failed to find object `%1%'\n")
+		                % path.c_str());
 	}
 }
 
@@ -399,7 +405,7 @@ ClientStore::set_property(const Raul::URI&  subject_uri,
 {
 	if (subject_uri == _uris.ingen_engine) {
 		LOG(Raul::info)(Raul::fmt("Engine property <%1%> = %2%\n")
-		                % predicate % _uris.forge.str(value));
+		                % predicate.c_str() % _uris.forge.str(value));
 		return;
 	}
 	SharedPtr<Resource> subject = _resource(subject_uri);
@@ -411,7 +417,7 @@ ClientStore::set_property(const Raul::URI&  subject_uri,
 			plugin->set_property(predicate, value);
 		else
 			LOG(Raul::warn)(Raul::fmt("Property <%1%> for unknown object %2%\n")
-			                % predicate % subject_uri);
+			                % predicate.c_str() % subject_uri.c_str());
 	}
 }
 
@@ -471,18 +477,9 @@ ClientStore::connect(const Raul::Path& src_path,
 }
 
 void
-ClientStore::disconnect(const Raul::Path& src,
-                        const Raul::Path& dst)
+ClientStore::disconnect(const Raul::Path& src_path,
+                        const Raul::Path& dst_path)
 {
-	if (!Raul::Path::is_path(src) && !Raul::Path::is_path(dst)) {
-		std::cerr << "Bad disconnect notification " << src
-		          << " => " << dst << std::endl;
-		return;
-	}
-
-	const Raul::Path src_path(src.str());
-	const Raul::Path dst_path(dst.str());
-
 	SharedPtr<PortModel> tail = PtrCast<PortModel>(_object(src_path));
 	SharedPtr<PortModel> head = PtrCast<PortModel>(_object(dst_path));
 

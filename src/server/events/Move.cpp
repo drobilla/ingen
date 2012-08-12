@@ -80,7 +80,8 @@ Move::pre_process()
 		if (child_old_path == _old_path)
 			child_new_path = _new_path;
 		else
-			child_new_path = Raul::Path(_new_path).base() + child_old_path.substr(_old_path.length()+1);
+			child_new_path = Raul::Path(_new_path).base()
+				+ child_old_path.substr(_old_path.length() + 1);
 
 		PtrCast<GraphObjectImpl>(i->second)->set_path(child_new_path);
 		i->first = child_new_path;

@@ -57,27 +57,27 @@ Connect::pre_process()
 	PortImpl* tail = _engine.engine_store()->find_port(_tail_path);
 	PortImpl* head = _engine.engine_store()->find_port(_head_path);
 	if (!tail) {
-		return Event::pre_process_done(PORT_NOT_FOUND, _tail_path.str());
+		return Event::pre_process_done(PORT_NOT_FOUND, _tail_path);
 	} else if (!head) {
-		return Event::pre_process_done(PORT_NOT_FOUND, _head_path.str());
+		return Event::pre_process_done(PORT_NOT_FOUND, _head_path);
 	}
 
 	OutputPort* tail_output = dynamic_cast<OutputPort*>(tail);
 	_head                   = dynamic_cast<InputPort*>(head);
 	if (!tail_output || !_head) {
-		return Event::pre_process_done(DIRECTION_MISMATCH, _head_path.str());
+		return Event::pre_process_done(DIRECTION_MISMATCH, _head_path);
 	}
 
 	NodeImpl* const tail_node = tail->parent_node();
 	NodeImpl* const head_node = head->parent_node();
 	if (!tail_node || !head_node) {
-		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path.str());
+		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path);
 	}
 
 	if (tail_node->parent() != head_node->parent()
 	    && tail_node != head_node->parent()
 	    && tail_node->parent() != head_node) {
-		return Event::pre_process_done(PARENT_DIFFERS, _head_path.str());
+		return Event::pre_process_done(PARENT_DIFFERS, _head_path);
 	}
 
 	if (!EdgeImpl::can_connect(tail_output, _head)) {

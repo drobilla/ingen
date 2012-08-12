@@ -26,7 +26,6 @@
 namespace Ingen {
 namespace Server {
 
-class GraphObject;
 class PluginImpl;
 
 namespace Events {

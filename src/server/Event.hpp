@@ -23,6 +23,7 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 
+#include "ingen/GraphObject.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Status.hpp"
 
@@ -104,6 +105,10 @@ protected:
 		_status      = st;
 		_err_subject = subject.str();
 		return !st;
+	}
+
+	inline bool pre_process_done(Status st, const Raul::Path& subject) {
+		return pre_process_done(st, GraphObject::path_to_uri(subject));
 	}
 
 	/** Respond to the originating client. */

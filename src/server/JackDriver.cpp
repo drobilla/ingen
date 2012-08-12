@@ -84,7 +84,7 @@ JackPort::create()
 
 	if (_jack_port == NULL) {
 		LOG(Raul::error)(Raul::fmt("Failed to register port %1%\n")
-		                 % _patch_port->path());
+		                 % _patch_port->path().c_str());
 		throw JackDriver::PortRegistrationFailedException();
 	}
 }
@@ -340,7 +340,7 @@ JackDriver::remove_port(ProcessContext&   context,
 		}
 	}
 
-	LOG(Raul::warn)(Raul::fmt("Unable to find port %1%\n") % path);
+	LOG(Raul::warn)(Raul::fmt("Unable to find port %1%\n") % path.c_str());
 	return NULL;
 }
 

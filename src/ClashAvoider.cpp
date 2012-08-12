@@ -31,10 +31,11 @@ namespace Ingen {
 const Raul::URI
 ClashAvoider::map_uri(const Raul::URI& in)
 {
-	if (Raul::Path::is_path(in))
-		return map_path(in.str());
-	else
+	if (GraphObject::uri_is_path(in)) {
+		return GraphObject::path_to_uri(map_path(GraphObject::uri_to_path(in)));
+	} else {
 		return in;
+	}
 }
 
 const Raul::Path
@@ -44,7 +45,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 
 	unsigned offset = 0;
 	bool has_offset = false;
-	const size_t pos = in.find_last_of('_');
+	const size_t pos = in.str().find_last_of('_');
 	if (pos != string::npos && pos != (in.length()-1)) {
 		const std::string trailing = in.substr(pos + 1);
 		has_offset = (sscanf(trailing.c_str(), "%u", &offset) > 0);
@@ -53,10 +54,12 @@ ClashAvoider::map_path(const Raul::Path& in)
 	Raul::debug << "OFFSET: " << offset << endl;
 
 	// Path without _n suffix
-	Raul::Path base_path = in;
-	if (has_offset)
-		base_path = base_path.substr(0, base_path.find_last_of('_'));
+	std::string base_path_str = in.str();
+	if (has_offset) {
+		base_path_str = base_path_str.substr(0, base_path_str.find_last_of('_'));
+	}
 
+	Raul::Path base_path(base_path_str);
 	Raul::debug << "BASE: " << base_path << endl;
 
 	SymbolMap::iterator m = _symbol_map.find(in);
@@ -72,7 +75,8 @@ ClashAvoider::map_path(const Raul::Path& in)
 			Raul::debug << "CHECK: " << parent << endl;
 			SymbolMap::iterator p = _symbol_map.find(parent);
 			if (p != _symbol_map.end()) {
-				const Raul::Path mapped = p->second.base() + in.substr(parent.base().length());
+				const Raul::Path mapped = p->second.base()
+					+ in.substr(parent.base().length());
 				InsertRecord i = _symbol_map.insert(make_pair(in, mapped));
 				Raul::debug << " (2) " << i.first->second << endl;
 				return i.first->second;
@@ -198,8 +202,7 @@ ClashAvoider::set_property(const Raul::URI&  subject,
 void
 ClashAvoider::del(const Raul::URI& uri)
 {
-	if (Raul::Path::is_path(uri))
-		_target.del(map_path(Raul::Path(uri.str())));
+	_target.del(map_uri(uri));
 }
 
 } // namespace Ingen

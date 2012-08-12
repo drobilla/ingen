@@ -156,7 +156,7 @@ NodeMenu::on_menu_randomize()
 			nm->port_value_range(*i, min, max, _app->sample_rate());
 			const float val = g_random_double_range(0.0, 1.0) * (max - min) + min;
 			_app->interface()->set_property(
-				(*i)->path(),
+				(*i)->uri(),
 				_app->uris().ingen_value,
 				_app->forge().make(val));
 		}

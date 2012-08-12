@@ -17,6 +17,7 @@
 #include <utility>
 
 #include "ingen/AtomReader.hpp"
+#include "ingen/GraphObject.hpp"
 #include "ingen/URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Path.hpp"
@@ -79,6 +80,17 @@ AtomReader::atom_to_uri(const LV2_Atom* atom)
 	}
 }
 
+boost::optional<Raul::Path>
+AtomReader::atom_to_path(const LV2_Atom* atom)
+{
+	const char* uri_str = atom_to_uri(atom);
+	if (uri_str && Raul::URI::is_valid(uri_str) &&
+	    GraphObject::uri_is_path(uri_str)) {
+		return GraphObject::uri_to_path(uri_str);
+	}
+	return boost::optional<Raul::Path>();
+}
+
 bool
 AtomReader::is_message(URIs& uris, const LV2_Atom* msg)
 {
@@ -130,18 +142,14 @@ AtomReader::write(const LV2_Atom* msg)
 			                    (LV2_URID)_uris.ingen_incidentTo, &incidentTo,
 			                    NULL);
 
-			Raul::Atom tail_atom;
-			Raul::Atom head_atom;
-			Raul::Atom incidentTo_atom;
-			get_atom(tail, tail_atom);
-			get_atom(head, head_atom);
-			get_atom(incidentTo, incidentTo_atom);
-			if (tail_atom.is_valid() && head_atom.is_valid()) {
-				_iface.disconnect(Raul::Path(tail_atom.get_uri()),
-				                  Raul::Path(head_atom.get_uri()));
-			} else if (incidentTo_atom.is_valid()) {
-				_iface.disconnect_all(subject_uri,
-				                      Raul::Path(incidentTo_atom.get_uri()));
+			boost::optional<Raul::Path> subject_path(atom_to_path(subject));
+			boost::optional<Raul::Path> tail_path(atom_to_path(tail));
+			boost::optional<Raul::Path> head_path(atom_to_path(head));
+			boost::optional<Raul::Path> other_path(atom_to_path(incidentTo));
+			if (tail_path && head_path) {
+				_iface.disconnect(*tail_path, *head_path);
+			} else if (subject_path && other_path) {
+				_iface.disconnect_all(*subject_path, *other_path);
 			} else {
 				Raul::warn << "Delete of unknown object." << std::endl;
 				return false;
@@ -170,12 +178,13 @@ AtomReader::write(const LV2_Atom* msg)
 				return false;
 			}
 
-			Raul::Atom tail_atom;
-			Raul::Atom head_atom;
-			get_atom(tail, tail_atom);
-			get_atom(head, head_atom);
-			_iface.connect(Raul::Path(tail_atom.get_uri()),
-			               Raul::Path(head_atom.get_uri()));
+			boost::optional<Raul::Path> tail_path(atom_to_path(tail));
+			boost::optional<Raul::Path> head_path(atom_to_path(head));
+			if (tail_path && head_path) {
+				_iface.connect(*tail_path, *head_path);
+			} else {
+				Raul::warn << "Edge has non-path tail or head" << std::endl;
+			}
 		} else {
 			Ingen::Resource::Properties props;
 			get_props(body, props);
@@ -199,8 +208,8 @@ AtomReader::write(const LV2_Atom* msg)
 			_iface.set_property(subject_uri, _map.unmap_uri(p->key), val);
 		}
 	} else if (obj->body.otype == _uris.patch_Patch) {
-		if (!subject_uri) {
-			Raul::warn << "Put message has no subject" << std::endl;
+		if (!subject) {
+			Raul::warn << "Patch message has no subject" << std::endl;
 			return false;
 		}
 
@@ -226,7 +235,7 @@ AtomReader::write(const LV2_Atom* msg)
 
 		_iface.delta(subject_uri, remove_props, add_props);
 	} else if (obj->body.otype == _uris.patch_Move) {
-		if (!subject_uri) {
+		if (!subject) {
 			Raul::warn << "Move message has no subject" << std::endl;
 			return false;
 		}
@@ -238,13 +247,19 @@ AtomReader::write(const LV2_Atom* msg)
 			return false;
 		}
 
-		const char* dest_uri = atom_to_uri(dest);
-		if (!dest_uri) {
-			Raul::warn << "Move message destination is not a URI" << std::endl;
+		boost::optional<Raul::Path> subject_path(atom_to_path(subject));
+		if (!subject_path) {
+			Raul::warn << "Move message has non-path subject" << std::endl;
 			return false;
 		}
 
-		_iface.move(subject_uri, dest_uri);
+		boost::optional<Raul::Path> dest_path(atom_to_path(dest));
+		if (!dest_path) {
+			Raul::warn << "Move message has non-path destination" << std::endl;
+			return false;
+		}
+
+		_iface.move(*subject_path, *dest_path);
 	} else if (obj->body.otype == _uris.patch_Response) {
 		const LV2_Atom* request = NULL;
 		const LV2_Atom* body    = NULL;

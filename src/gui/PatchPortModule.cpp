@@ -109,7 +109,7 @@ PatchPortModule::store_location(double ax, double ay)
 		                     Resource::Property(x, Resource::INTERNAL)));
 		add.insert(make_pair(uris.ingen_canvasY,
 		                     Resource::Property(y, Resource::INTERNAL)));
-		app().interface()->delta(_model->path(), remove, add);
+		app().interface()->delta(_model->uri(), remove, add);
 	}
 }
 

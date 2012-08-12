@@ -151,7 +151,7 @@ Port::on_value_changed(GVariant* value)
 	const Raul::Atom atom = _app.forge().make(float(g_variant_get_double(value)));
 	if (atom != model()->value()) {
 		Ingen::World* const world = _app.world();
-		_app.interface()->set_property(model()->path(),
+		_app.interface()->set_property(model()->uri(),
 		                               world->uris().ingen_value,
 		                               atom);
 	}
@@ -175,7 +175,7 @@ Port::value_changed(const Atom& value)
 void
 Port::on_scale_point_activated(float f)
 {
-	_app.interface()->set_property(model()->path(),
+	_app.interface()->set_property(model()->uri(),
 	                               _app.world()->uris().ingen_value,
 	                               _app.world()->forge().make(f));
 }

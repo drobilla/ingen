@@ -50,8 +50,8 @@ SocketWriter::SocketWriter(URIMap&           map,
 	, _uri(uri)
 	, _socket(sock)
 {
-	// Use <path:> as base URI so e.g. </foo/bar> will be a path
-	_base = serd_node_from_string(SERD_URI, (const uint8_t*)"path:");
+	// Use <ingen:root/> as base URI so e.g. </foo/bar> will be a path
+	_base = serd_node_from_string(SERD_URI, (const uint8_t*)"ingen:root/");
 
 	serd_uri_parse(_base.buf, &_base_uri);
 

@@ -188,7 +188,7 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 
 	if (_enable_signal)
 		_app->interface()->set_property(
-			pm->path(),
+			pm->uri(),
 			_app->uris().ingen_enabled,
 			_app->forge().make((bool)!pm->enabled()));
 }

@@ -147,7 +147,7 @@ PatchModel::remove_edge(const GraphObject* tail, const GraphObject* head)
 		_edges.erase(i);
 	} else {
 		Raul::warn(Raul::fmt("Failed to remove patch connection %1% => %2%\n")
-		           % tail->path() % head->path());
+		           % tail->path().c_str() % head->path().c_str());
 	}
 }
 

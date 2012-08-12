@@ -204,7 +204,7 @@ WindowFactory::present_load_plugin(SharedPtr<const PatchModel> patch,
 		_load_plugin_win->set_default_size(width - width / 8, height / 2);
 	}
 	_load_plugin_win->set_title(
-		string("Load Plugin - ") + patch->path().chop_scheme() + " - Ingen");
+		string("Load Plugin - ") + patch->path().str() + " - Ingen");
 	_load_plugin_win->present(patch, data);
 }
 

@@ -80,7 +80,7 @@ SubpatchModule::store_location(double ax, double ay)
 		                     Resource::Property(x, Resource::EXTERNAL)));
 		add.insert(make_pair(uris.ingen_canvasY,
 		                     Resource::Property(y, Resource::EXTERNAL)));
-		app().interface()->delta(_node->path(), remove, add);
+		app().interface()->delta(_node->uri(), remove, add);
 	}
 }
 
@@ -104,7 +104,7 @@ SubpatchModule::browse_to_patch()
 void
 SubpatchModule::menu_remove()
 {
-	app().interface()->del(_patch->path());
+	app().interface()->del(_patch->uri());
 }
 
 } // namespace GUI

@@ -277,7 +277,7 @@ Serialiser::Impl::path_rdf_node(const Path& path)
 	assert(path == _root_path || path.is_child_of(_root_path));
 	const Path rel_path(path.relative_to_base(_root_path));
 	return Sord::URI(_model->world(),
-	                 rel_path.chop_scheme().substr(1).c_str(),
+	                 rel_path.substr(1).c_str(),
 	                 _base_uri);
 }
 
@@ -365,7 +365,7 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 			SerdURI base_uri;
 			serd_uri_parse((const uint8_t*)_base_uri.c_str(), &base_uri);
 
-			const string sub_bundle_path = subpatch->path().chop_start("/") + ".ingen";
+			const string sub_bundle_path = subpatch->path().substr(1) + ".ingen";
 
 			SerdURI  subpatch_uri;
 			SerdNode subpatch_node = serd_node_new_uri_from_string(

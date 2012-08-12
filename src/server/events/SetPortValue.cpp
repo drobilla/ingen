@@ -104,7 +104,8 @@ SetPortValue::apply(Context& context)
 		                      (const uint8_t*)_value.get_body())) {
 			_port->raise_set_by_user_flag();
 		} else {
-			Raul::warn(Raul::fmt("Error writing to port %1%\n") % _port->path());
+			Raul::warn(Raul::fmt("Error writing to port %1%\n")
+			           % _port->path().c_str());
 		}
 	} else {
 		Raul::warn(Raul::fmt("Unknown value type %1%\n") % _value.type());
@@ -116,7 +117,7 @@ SetPortValue::post_process()
 {
 	if (!respond()) {
 		_engine.broadcaster()->set_property(
-			_port->path(),
+			_port->uri(),
 			_engine.world()->uris().ingen_value,
 			_value);
 	}

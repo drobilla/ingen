@@ -66,16 +66,16 @@ CreateNode::pre_process()
 	}
 
 	if (_engine.engine_store()->find_object(_path)) {
-		return Event::pre_process_done(EXISTS, _path.str());
+		return Event::pre_process_done(EXISTS, _path);
 	}
 
 	if (!(_patch = _engine.engine_store()->find_patch(_path.parent()))) {
-		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent().str());
+		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
 
 	PluginImpl* plugin = _engine.node_factory()->plugin(plugin_uri);
 	if (!plugin) {
-		return Event::pre_process_done(PLUGIN_NOT_FOUND, plugin_uri);
+		return Event::pre_process_done(PLUGIN_NOT_FOUND, Raul::URI(plugin_uri));
 	}
 
 	const iterator p = _properties.find(uris.ingen_polyphonic);
@@ -89,7 +89,7 @@ CreateNode::pre_process()
 	                                  polyphonic,
 	                                  _patch,
 	                                  _engine))) {
-		return Event::pre_process_done(CREATION_FAILED, _path.str());
+		return Event::pre_process_done(CREATION_FAILED, _path);
 	}
 
 	_node->properties().insert(_properties.begin(), _properties.end());
@@ -106,13 +106,13 @@ CreateNode::pre_process()
 		_compiled_patch = _patch->compile();
 	}
 
-	_update.push_back(make_pair(_node->path(), _node->properties()));
+	_update.push_back(make_pair(_node->uri(), _node->properties()));
 	for (uint32_t i = 0; i < _node->num_ports(); ++i) {
 		const PortImpl*      port   = _node->port_impl(i);
 		Resource::Properties pprops = port->properties();
 		pprops.erase(uris.ingen_value);
 		pprops.insert(std::make_pair(uris.ingen_value, port->value()));
-		_update.push_back(std::make_pair(port->path(), pprops));
+		_update.push_back(std::make_pair(port->uri(), pprops));
 	}
 
 	return Event::pre_process_done(SUCCESS);

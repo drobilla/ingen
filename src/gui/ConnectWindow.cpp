@@ -412,7 +412,7 @@ ConnectWindow::gtk_callback()
 			}
 		}
 	} else if (_connect_stage == 2) {
-		_app->interface()->get(Path("/"));
+		_app->interface()->get(GraphObject::root_uri());
 		if (_widgets_loaded)
 			_progress_label->set_text(string("Requesting root patch..."));
 		++_connect_stage;

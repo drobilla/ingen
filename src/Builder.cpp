@@ -35,7 +35,7 @@ Builder::Builder(URIs& uris, Interface& interface)
 void
 Builder::build(SharedPtr<const GraphObject> object)
 {
-	_interface.put(object->path(), object->properties());
+	_interface.put(object->uri(), object->properties());
 }
 
 void

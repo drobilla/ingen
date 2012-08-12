@@ -84,7 +84,7 @@ set_denormal_flags()
 static inline std::string
 ingen_jack_port_name(const Raul::Path& path)
 {
-	return path.chop_start("/");
+	return path.substr(1);
 }
 
 } // namespace Server

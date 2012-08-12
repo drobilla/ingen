@@ -38,7 +38,6 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 
 	xml->get_widget_derived("patch_win_vbox", _box);
 
-	//set_title(_patch->path().chop_scheme() + " - Ingen");
 	set_title("Ingen");
 }
 

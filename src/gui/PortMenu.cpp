@@ -105,7 +105,7 @@ PortMenu::on_menu_set_min()
 	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
 	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		_app->interface()->set_property(_object->path(), uris.lv2_minimum, value);
+		_app->interface()->set_property(_object->uri(), uris.lv2_minimum, value);
 }
 
 void
@@ -115,7 +115,7 @@ PortMenu::on_menu_set_max()
 	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
 	const Raul::Atom&          value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		_app->interface()->set_property(_object->path(), uris.lv2_maximum, value);
+		_app->interface()->set_property(_object->uri(), uris.lv2_maximum, value);
 }
 
 void
@@ -129,12 +129,12 @@ PortMenu::on_menu_reset_range()
 	parent->default_port_value_range(model, min, max);
 
 	if (!std::isnan(min))
-		_app->interface()->set_property(_object->path(),
+		_app->interface()->set_property(_object->uri(),
 		                                uris.lv2_minimum,
 		                                _app->forge().make(min));
 
 	if (!std::isnan(max))
-		_app->interface()->set_property(_object->path(),
+		_app->interface()->set_property(_object->uri(),
 		                                uris.lv2_maximum,
 		                                _app->forge().make(max));
 }
@@ -162,7 +162,7 @@ PortMenu::on_menu_expose()
 	r.set_property(uris.ingen_canvasX, _app->forge().make(node_x + x_off));
 	r.set_property(uris.ingen_canvasY, _app->forge().make(node_y + y_off));
 
-	_app->interface()->put(path, r.properties());
+	_app->interface()->put(GraphObject::path_to_uri(path), r.properties());
 
 	if (port->is_input()) {
 		_app->interface()->connect(path, _object->path());

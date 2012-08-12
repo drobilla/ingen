@@ -92,9 +92,9 @@ SocketReader::_run()
 	Sord::World*  world = _world.rdf_world();
 	LV2_URID_Map* map   = &_world.uri_map().urid_map_feature()->urid_map;
 
-	// Use <path:> as base URI so e.g. </foo/bar> will be a path
+	// Use <ingen:root/> as base URI so e.g. </foo/bar> will be a path
 	SordNode* base_uri = sord_new_uri(
-		world->c_obj(), (const uint8_t*)"path:");
+		world->c_obj(), (const uint8_t*)"ingen:root/");
 
 	// Set up sratom and a forge to build LV2 atoms from model
 	Sratom*        sratom = sratom_new(map);

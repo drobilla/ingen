@@ -180,7 +180,7 @@ void
 CreatePort::post_process()
 {
 	if (!respond()) {
-		_engine.broadcaster()->put(_path, _update);
+		_engine.broadcaster()->put(GraphObject::path_to_uri(_path), _update);
 	}
 
 	delete _old_ports_array;

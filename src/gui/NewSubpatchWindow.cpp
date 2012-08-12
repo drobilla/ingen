@@ -102,12 +102,12 @@ NewSubpatchWindow::ok_clicked()
 	props.insert(make_pair(_app->uris().rdf_type,        _app->uris().ingen_Patch));
 	props.insert(make_pair(_app->uris().ingen_polyphony, _app->forge().make(int32_t(poly))));
 	props.insert(make_pair(_app->uris().ingen_enabled,   _app->forge().make(bool(true))));
-	_app->interface()->put(path, props, Resource::INTERNAL);
+	_app->interface()->put(GraphObject::path_to_uri(path), props, Resource::INTERNAL);
 
 	// Set external (node perspective) properties
 	props = _initial_data;
 	props.insert(make_pair(_app->uris().rdf_type, _app->uris().ingen_Patch));
-	_app->interface()->put(path, _initial_data, Resource::EXTERNAL);
+	_app->interface()->put(GraphObject::path_to_uri(path), _initial_data, Resource::EXTERNAL);
 
 	hide();
 }

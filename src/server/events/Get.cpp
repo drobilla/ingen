@@ -16,6 +16,7 @@
 
 #include <utility>
 
+#include "ingen/GraphObject.hpp"
 #include "ingen/Interface.hpp"
 
 #include "Broadcaster.hpp"
@@ -59,8 +60,8 @@ Get::pre_process()
 		return Event::pre_process_done(SUCCESS);
 	} else if (_uri == "ingen:engine") {
 		return Event::pre_process_done(SUCCESS);
-	} else if (Raul::Path::is_valid(_uri.str())) {
-		_object = _engine.engine_store()->find_object(Raul::Path(_uri.str()));
+	} else if (GraphObject::uri_is_path(_uri)) {
+		_object = _engine.engine_store()->find_object(GraphObject::uri_to_path(_uri));
 		return Event::pre_process_done(_object ? SUCCESS : NOT_FOUND, _uri);
 	} else {
 		_plugin = _engine.node_factory()->plugin(_uri);
@@ -76,9 +77,9 @@ send_port(Interface* client, const PortImpl* port)
 		props.erase(port->bufs().uris().ingen_value);
 		props.insert(std::make_pair(port->bufs().uris().ingen_value,
 		                            port->value()));
-		client->put(port->path(), props);
+		client->put(port->uri(), props);
 	} else {
-		client->put(port->path(), port->properties());
+		client->put(port->uri(), port->properties());
 	}
 }
 
@@ -89,7 +90,7 @@ send_node(Interface* client, const NodeImpl* node)
 	if (plugin->type() == Plugin::Patch) {
 		send_patch(client, (const PatchImpl*)node);
 	} else {
-		client->put(node->path(), node->properties());
+		client->put(node->uri(), node->properties());
 		for (size_t j = 0; j < node->num_ports(); ++j) {
 			send_port(client, node->port_impl(j));
 		}
@@ -99,11 +100,11 @@ send_node(Interface* client, const NodeImpl* node)
 static void
 send_patch(Interface* client, const PatchImpl* patch)
 {
-	client->put(patch->path(),
+	client->put(patch->uri(),
 	            patch->properties(Resource::INTERNAL),
 	            Resource::INTERNAL);
 
-	client->put(patch->path(),
+	client->put(patch->uri(),
 	            patch->properties(Resource::EXTERNAL),
 	            Resource::EXTERNAL);
 

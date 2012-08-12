@@ -211,9 +211,9 @@ void
 NodeModule::on_embed_gui_toggled(bool embed)
 {
 	embed_gui(embed);
-	app().interface()->set_property(_node->path(),
-	                             app().uris().ingen_uiEmbedded,
-	                             app().forge().make(embed));
+	app().interface()->set_property(_node->uri(),
+	                                app().uris().ingen_uiEmbedded,
+	                                app().forge().make(embed));
 }
 
 void
@@ -321,7 +321,7 @@ NodeModule::popup_gui()
 			if (!_plugin_ui->is_resizable()) {
 				_gui_window->set_resizable(false);
 			}
-			_gui_window->set_title(_node->path().chop_scheme() + " UI - Ingen");
+			_gui_window->set_title(_node->path().str() + " UI - Ingen");
 			_gui_window->set_role("plugin_ui");
 			_gui_window->add(*_gui_widget);
 			_gui_widget->show_all();
@@ -333,7 +333,7 @@ NodeModule::popup_gui()
 
 			return true;
 		} else {
-			warn << "No LV2 GUI for " << _node->path().chop_scheme() << endl;
+			warn << "No LV2 GUI for " << _node->path() << endl;
 		}
 	}
 
@@ -397,7 +397,7 @@ NodeModule::store_location(double ax, double ay)
 		Resource::Properties add;
 		add.insert(make_pair(uris.ingen_canvasX, x));
 		add.insert(make_pair(uris.ingen_canvasY, y));
-		app().interface()->delta(_node->path(), remove, add);
+		app().interface()->delta(_node->uri(), remove, add);
 	}
 }
 

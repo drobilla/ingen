@@ -163,7 +163,7 @@ PatchView::process_toggled()
 		return;
 
 	_app->interface()->set_property(
-		_patch->path(),
+		_patch->uri(),
 		_app->uris().ingen_enabled,
 		_app->forge().make((bool)_process_but->get_active()));
 }
@@ -174,7 +174,7 @@ PatchView::poly_changed()
 	const int poly = _poly_spin->get_value_as_int();
 	if (_enable_signal && poly != (int)_patch->internal_poly()) {
 		_app->interface()->set_property(
-			_patch->path(),
+			_patch->uri(),
 			_app->uris().ingen_polyphony,
 			_app->forge().make(poly));
 	}
@@ -183,7 +183,7 @@ PatchView::poly_changed()
 void
 PatchView::refresh_clicked()
 {
-	_app->interface()->get(_patch->path());
+	_app->interface()->get(_patch->uri());
 }
 
 void

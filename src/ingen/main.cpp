@@ -175,7 +175,7 @@ main(int argc, char** argv)
 		  conf.files().front();
 
 		engine_interface->get("ingen:plugins");
-		engine_interface->get("path:/");
+		engine_interface->get(GraphObject::root_uri());
 		world->parser()->parse_file(
 			world, engine_interface.get(), path, parent, symbol);
 	}

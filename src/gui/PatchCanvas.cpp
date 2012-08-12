@@ -616,11 +616,11 @@ destroy_node(GanvNode* node, void* data)
 	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
 
 	if (node_module) {
-		app->interface()->del(node_module->node()->path());
+		app->interface()->del(node_module->node()->uri());
 	} else {
 		PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(module);
 		if (port_module) {
-			app->interface()->del(port_module->port()->path());
+			app->interface()->del(port_module->port()->uri());
 		}
 	}
 }
@@ -716,14 +716,14 @@ PatchCanvas::paste()
 	clipboard.set_plugins(_app.store()->plugins());
 
 	// mkdir -p
-	string to_create = _patch->path().chop_scheme().substr(1);
+	string to_create = _patch->path().substr(1);
 	string created = "/";
 	Resource::Properties props;
 	props.insert(make_pair(uris.rdf_type,
 	                       uris.ingen_Patch));
 	props.insert(make_pair(uris.ingen_polyphony,
 	                       _app.forge().make(int32_t(_patch->internal_poly()))));
-	clipboard.put(Path("/"), props);
+	clipboard.put(GraphObject::root_uri(), props);
 	size_t first_slash;
 	while (to_create != "/" && !to_create.empty()
 	       && (first_slash = to_create.find("/")) != string::npos) {
@@ -734,7 +734,7 @@ PatchCanvas::paste()
 	}
 
 	if (!_patch->path().is_root())
-		clipboard.put(_patch->path(), props);
+		clipboard.put(_patch->uri(), props);
 
 	boost::optional<Raul::Path>   parent;
 	boost::optional<Raul::Symbol> symbol;
@@ -817,7 +817,7 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	                       _app.forge().make(int32_t(_patch->num_ports()))));
 	props.insert(make_pair(uris.lv2_name,
 	                       _app.forge().alloc(name.c_str())));
-	_app.interface()->put(path, props);
+	_app.interface()->put(GraphObject::path_to_uri(path), props);
 }
 
 void
@@ -843,7 +843,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	props.insert(make_pair(uris.rdf_type, uris.ingen_Node));
 	props.insert(make_pair(uris.ingen_prototype,
 	                       uris.forge.alloc_uri(plugin->uri().str())));
-	_app.interface()->put(path, props);
+	_app.interface()->put(GraphObject::path_to_uri(path), props);
 }
 
 /** Try to guess a suitable location for a new module.

@@ -63,9 +63,23 @@ public:
 	virtual const Raul::Symbol& symbol()       const = 0;
 	virtual GraphObject*        graph_parent() const = 0;
 
+	static Raul::URI root_uri() { return Raul::URI("ingen:root"); }
+
+	static bool uri_is_path(const Raul::URI& uri) {
+		return uri.substr(0, root_uri().length()) == root_uri().str();
+	}
+
+	static Raul::Path uri_to_path(const Raul::URI& uri) {
+		return (uri == root_uri()) ? "/" : uri.substr(root_uri().length());
+	}
+
+	static Raul::URI path_to_uri(const Raul::Path& path) {
+		return Raul::URI(root_uri().str() + path.c_str());
+	}
+
 protected:
 	GraphObject(URIs& uris, const Raul::Path& path)
-		: Resource(uris, path)
+		: Resource(uris, path_to_uri(path))
 	{}
 
 	Edges _edges;  ///< Patches only

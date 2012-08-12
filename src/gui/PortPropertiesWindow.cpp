@@ -65,7 +65,7 @@ PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
 
 	_port_model = pm;
 
-	set_title(pm->path().chop_scheme() + " Properties - Ingen");
+	set_title(pm->path().str() + " Properties - Ingen");
 
 	float min = 0.0f, max = 1.0f;
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
@@ -158,7 +158,7 @@ PortPropertiesWindow::ok()
 	props.insert(
 		make_pair(uris.lv2_maximum,
 		          _app->forge().make(float(_max_spinner->get_value()))));
-	_app->interface()->put(_port_model->path(), props);
+	_app->interface()->put(_port_model->uri(), props);
 	hide();
 }
 

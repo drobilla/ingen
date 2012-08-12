@@ -54,7 +54,6 @@ class GraphObjectImpl : public GraphObject
 public:
 	virtual ~GraphObjectImpl() {}
 
-	const Raul::URI&    uri()    const { return _path; }
 	const Raul::Symbol& symbol() const { return _symbol; }
 
 	GraphObject*     graph_parent() const { return _parent; }
@@ -67,6 +66,7 @@ public:
 		if (new_sym[0] != '\0') {
 			_symbol = Raul::Symbol(new_sym);
 		}
+		set_uri(GraphObject::path_to_uri(new_path));
 	}
 
 	const Raul::Atom& get_property(const Raul::URI& key) const;

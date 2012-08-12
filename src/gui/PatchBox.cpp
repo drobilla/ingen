@@ -342,7 +342,7 @@ void
 PatchBox::show_status(const ObjectModel* model)
 {
 	std::stringstream msg;
-	msg << model->path().chop_scheme();
+	msg << model->path();
 
 	const PortModel* port = 0;
 	const NodeModel* node = 0;
@@ -362,7 +362,7 @@ void
 PatchBox::show_port_status(const PortModel* port, const Raul::Atom& value)
 {
 	std::stringstream msg;
-	msg << port->path().chop_scheme();
+	msg << port->path();
 
 	const NodeModel* parent = dynamic_cast<const NodeModel*>(port->parent().get());
 	if (parent) {
@@ -430,7 +430,7 @@ PatchBox::event_save()
 	} else {
 		_app->loader()->save_patch(_patch, document.get_uri());
 		_status_bar->push(
-			(boost::format("Saved %1% to %2%") % _patch->path().chop_scheme()
+			(boost::format("Saved %1% to %2%") % _patch->path().c_str()
 			 % document.get_uri()).str(),
 			STATUS_CONTEXT_PATCH);
 	}
@@ -543,7 +543,7 @@ PatchBox::event_save_as()
 				_app->forge().alloc_uri(uri.c_str()),
 				Resource::EXTERNAL);
 			_status_bar->push(
-				(boost::format("Saved %1% to %2%") % _patch->path().chop_scheme()
+				(boost::format("Saved %1% to %2%") % _patch->path().c_str()
 				 % filename).str(),
 				STATUS_CONTEXT_PATCH);
 		}
@@ -583,7 +583,8 @@ PatchBox::event_draw()
 		if (confirm) {
 			_view->canvas()->export_dot(filename.c_str());
 			_status_bar->push(
-				(boost::format("Rendered %1% to %2%") % _patch->path() % filename).str(),
+				(boost::format("Rendered %1% to %2%")
+				 % _patch->path().str() % filename).str(),
 				STATUS_CONTEXT_PATCH);
 		}
 	}

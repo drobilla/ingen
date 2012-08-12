@@ -122,7 +122,7 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 		root_but->set_active(root_but->path() == _active_path);
 
 		Path working_path = "/";
-		string suffix = path.chop_scheme().substr(1);
+		string suffix = path.substr(1);
 		while (suffix.length() > 0) {
 			if (suffix[0] == '/')
 				suffix = suffix.substr(1);
@@ -181,7 +181,7 @@ void
 BreadCrumbs::object_destroyed(const URI& uri)
 {
 	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
-		if ((*i)->path() == uri) {
+		if ((*i)->path() == uri.c_str()) {
 			// Remove all crumbs after the removed one (inclusive)
 			for (std::list<BreadCrumb*>::iterator j = i; j != _breadcrumbs.end(); ) {
 				BreadCrumb* bc = *j;

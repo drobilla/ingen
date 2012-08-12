@@ -279,7 +279,7 @@ parse_node(Ingen::World*                            world,
 		Resource::Properties props = get_properties(world, model, subject);
 		props.insert(make_pair(uris.rdf_type,
 		                       uris.forge.alloc_uri(uris.ingen_Node.str())));
-		target->put(path, props);
+		target->put(GraphObject::path_to_uri(path), props);
 	}
 	return path;
 }
@@ -349,12 +349,13 @@ parse_patch(Ingen::World*                            world,
 	// Create patch
 	Path patch_path(patch_path_str);
 	Resource::Properties props = get_properties(world, model, subject_node);
-	target->put(patch_path, props);
+	target->put(GraphObject::path_to_uri(patch_path), props);
 
 	// For each node in this patch
 	for (Sord::Iter n = model.find(subject_node, ingen_node, nil); !n.end(); ++n) {
 		Sord::Node node      = n.get_object();
-		const Path node_path = patch_path.child(get_basename(node.to_string()));
+		const Path node_path = patch_path.child(
+			Raul::Symbol(get_basename(node.to_string())));
 
 		// Parse and create node
 		parse_node(world, target, model, node, node_path,
@@ -373,7 +374,8 @@ parse_patch(Ingen::World*                            world,
 			}
 
 			// Create port and/or set all port properties
-			target->put(port_record.first, port_record.second);
+			target->put(GraphObject::path_to_uri(port_record.first),
+			            port_record.second);
 		}
 	}
 
@@ -397,7 +399,8 @@ parse_patch(Ingen::World*                            world,
 
 	// Create ports in order by index
 	for (PortRecords::const_iterator i = ports.begin(); i != ports.end(); ++i) {
-		target->put(i->second.first, i->second.second);
+		target->put(GraphObject::path_to_uri(i->second.first),
+		            i->second.second);
 	}
 
 	parse_edges(world, target, model, subject_node, patch_path);
@@ -429,10 +432,19 @@ parse_edge(Ingen::World*     world,
 		return false;
 	}
 
-	const Path tail_path(
-		parent.child(relative_uri(base_uri, t.get_object().to_string(), false)));
-	const Path head_path(
-		parent.child(relative_uri(base_uri, h.get_object().to_string(), false)));
+	const std::string tail_str = relative_uri(
+		base_uri, t.get_object().to_string(), true);
+	if (!Path::is_valid(tail_str)) {
+		LOG(error) << "Edge tail has invalid URI" << endl;
+		return false;
+	}
+
+	const std::string head_str = relative_uri(
+		base_uri, h.get_object().to_string(), true);
+	if (!Path::is_valid(head_str)) {
+		LOG(error) << "Edge head has invalid URI" << endl;
+		return false;
+	}
 
 	if (!(++t).end()) {
 		LOG(error) << "Edge has multiple tails" << endl;
@@ -442,7 +454,7 @@ parse_edge(Ingen::World*     world,
 		return false;
 	}
 
-	target->connect(tail_path, head_path);
+	target->connect(Path(tail_str), Path(head_str));
 
 	return true;
 }
@@ -539,7 +551,8 @@ parse(Ingen::World*                            world,
 			ret = parse_node(world, target, model, s, path, data);
 		} else if (types.find(in_port_class) != types.end() ||
 		           types.find(out_port_class) != types.end()) {
-			parse_properties(world, target, model, s, path, data);
+			parse_properties(
+				world, target, model, s, GraphObject::path_to_uri(path), data);
 			ret = path;
 		} else if (types.find(edge_class) != types.end()) {
 			Path parent_path(parent ? parent.get() : Path("/"));
@@ -602,7 +615,7 @@ Parser::parse_file(Ingen::World*                            world,
 
 	LOG(Raul::info)(Raul::fmt("Parsing %1%\n") % path);
 	if (parent)
-		LOG(Raul::info)(Raul::fmt("Parent: %1%\n") % *parent);
+		LOG(Raul::info)(Raul::fmt("Parent: %1%\n") % parent->c_str());
 	if (symbol)
 		LOG(Raul::info)(Raul::fmt("Symbol: %1%\n") % symbol->c_str());
 
@@ -611,7 +624,8 @@ Parser::parse_file(Ingen::World*                            world,
 		= parse(world, target, model, path, subject, parent, symbol, data);
 
 	if (parsed_path) {
-		target->set_property(*parsed_path, "http://drobilla.net/ns/ingen#document",
+		target->set_property(GraphObject::path_to_uri(*parsed_path),
+		                     "http://drobilla.net/ns/ingen#document",
 		                     world->forge().alloc_uri(uri));
 	} else {
 		LOG(Raul::warn)("Document URI lost\n");

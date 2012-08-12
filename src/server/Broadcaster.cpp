@@ -36,7 +36,7 @@ Broadcaster::register_client(const Raul::URI&     uri,
                              SharedPtr<Interface> client)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
-	LOG(Raul::info)(Raul::fmt("Registered client <%1%>\n") % uri);
+	LOG(Raul::info)(Raul::fmt("Registered client <%1%>\n") % uri.c_str());
 	_clients[uri] = client;
 }
 
@@ -51,7 +51,7 @@ Broadcaster::unregister_client(const Raul::URI& uri)
 	const size_t erased = _clients.erase(uri);
 
 	if (erased > 0) {
-		LOG(Raul::info)(Raul::fmt("Unregistered client <%1%>\n") % uri);
+		LOG(Raul::info)(Raul::fmt("Unregistered client <%1%>\n") % uri.c_str());
 	}
 
 	return (erased > 0);

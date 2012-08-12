@@ -254,7 +254,7 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 	reset();
 	_model = model;
 
-	set_title(model->path().chop_scheme() + " Properties - Ingen");
+	set_title(model->path().str() + " Properties - Ingen");
 
 	World* world = _app->world();
 
@@ -506,7 +506,7 @@ PropertiesWindow::add_clicked()
 
 	Resource::Properties properties;
 	properties.insert(make_pair(key_uri.c_str(), value));
-	_app->interface()->put(_model->path(), properties);
+	_app->interface()->put(_model->uri(), properties);
 }
 	
 void
@@ -531,7 +531,7 @@ PropertiesWindow::apply_clicked()
 		}
 	}
 
-	_app->interface()->put(_model->path(), properties);
+	_app->interface()->put(_model->uri(), properties);
 
 	LOG(debug) << "}" << endl;
 }

@@ -122,7 +122,7 @@ NodeFactory::load_lv2_plugins()
 		const string uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
 
 		if (_plugins.find(uri) != _plugins.end()) {
-			Raul::warn(Raul::fmt("Already discovered <%s>\n") % uri);
+			Raul::warn(Raul::fmt("Already discovered <%s>\n") % uri.c_str());
 			continue;
 		}
 

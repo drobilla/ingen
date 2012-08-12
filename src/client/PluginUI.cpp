@@ -42,7 +42,7 @@ lv2_ui_write(SuilController controller,
 	const NodeModel::Ports& ports = ui->node()->ports();
 	if (port_index >= ports.size()) {
 		Raul::error(Raul::fmt("%1% UI tried to write to invalid port %2%\n")
-		            % ui->node()->plugin()->uri() % port_index);
+		            % ui->node()->plugin()->uri().c_str() % port_index);
 		return;
 	}
 
@@ -57,7 +57,7 @@ lv2_ui_write(SuilController controller,
 			return; // do nothing (handle stupid plugin UIs that feed back)
 
 		ui->world()->interface()->set_property(
-			port->path(),
+			port->uri(),
 			uris.ingen_value,
 			ui->world()->forge().make(*(const float*)buffer));
 
@@ -65,13 +65,13 @@ lv2_ui_write(SuilController controller,
 		const LV2_Atom*  atom = (const LV2_Atom*)buffer;
 		Raul::Atom val  = ui->world()->forge().alloc(
 			atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
-		ui->world()->interface()->set_property(port->path(),
+		ui->world()->interface()->set_property(port->uri(),
 		                                       uris.ingen_value,
 		                                       val);
 
 	} else {
 		Raul::warn(Raul::fmt("Unknown value format %1% from LV2 UI\n")
-		           % format % ui->node()->plugin()->uri());
+		           % format % ui->node()->plugin()->uri().c_str());
 	}
 }
 

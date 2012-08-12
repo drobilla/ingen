@@ -105,13 +105,13 @@ Delta::pre_process()
 {
 	typedef Properties::const_iterator iterator;
 
-	const bool is_graph_object = Raul::Path::is_path(_subject);
+	const bool is_graph_object = GraphObject::uri_is_path(_subject);
 
 	// Take a writer lock while we modify the store
 	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
 
 	_object = is_graph_object
-		? _engine.engine_store()->find_object(Raul::Path(_subject.str()))
+		? _engine.engine_store()->find_object(GraphObject::uri_to_path(_subject))
 		: static_cast<Ingen::Resource*>(_engine.node_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
@@ -121,7 +121,7 @@ Delta::pre_process()
 	const Ingen::URIs& uris = _engine.world()->uris();
 
 	if (is_graph_object && !_object) {
-		Raul::Path path(_subject.str());
+		Raul::Path path(GraphObject::uri_to_path(_subject));
 		bool is_patch = false, is_node = false, is_port = false, is_output = false;
 		Ingen::Resource::type(uris, _properties, is_patch, is_node, is_port, is_output);
 
@@ -139,7 +139,7 @@ Delta::pre_process()
 		if (_create_event) {
 			_create_event->pre_process();
 			// Grab the object for applying properties, if the create-event succeeded
-			_object = _engine.engine_store()->find_object(Raul::Path(_subject.str()));
+			_object = _engine.engine_store()->find_object(path);
 		} else {
 			return Event::pre_process_done(BAD_OBJECT_TYPE, _subject);
 		}

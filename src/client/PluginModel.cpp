@@ -90,10 +90,10 @@ PluginModel::get_property(const Raul::URI& key) const
 			size_t first_delim = std::min(last_slash, last_hash);
 			size_t last_delim  = std::max(last_slash, last_hash);
 			if (isalpha(uri.str()[last_delim + 1]))
-				symbol = uri.str().substr(last_delim + 1);
+				symbol = uri.substr(last_delim + 1);
 			else
-				symbol = uri.str().substr(first_delim + 1,
-				                          last_delim - first_delim - 1);
+				symbol = uri.substr(first_delim + 1,
+				                    last_delim - first_delim - 1);
 		}
 		set_property(LV2_CORE__symbol, _uris.forge.alloc(symbol));
 		return get_property(key);

@@ -25,7 +25,7 @@ namespace Client {
 ObjectModel::ObjectModel(URIs& uris, const Raul::Path& path)
 	: GraphObject(uris, path)
 	, _path(path)
-	, _symbol((path == Raul::Path::root()) ? "root" : path.symbol())
+	, _symbol((path == "/") ? "root" : path.symbol())
 {
 }
 

@@ -30,7 +30,8 @@ void
 Store::add(GraphObject* o)
 {
 	if (find(o->path()) != end()) {
-		Raul::error << "[Store] Attempt to add duplicate object " << o->path() << endl;
+		Raul::error << "[Store] Attempt to add duplicate object "
+		            << o->path() << endl;
 		return;
 	}
 

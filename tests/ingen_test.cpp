@@ -108,7 +108,7 @@ public:
 
 	void response(int32_t id, Status status, const std::string& subject) {
 		if (status) {
-			Raul::error(Raul::fmt("error on message %1%: %2% (%3)\n")
+			Raul::error(Raul::fmt("error on message %1%: %2% (%3%)\n")
 			            % id % ingen_status_string(status) % subject);
 			exit(EXIT_FAILURE);
 		}
@@ -121,7 +121,7 @@ public:
 };
 
 
-void
+static void
 ingen_try(bool cond, const char* msg)
 {
 	if (!cond) {

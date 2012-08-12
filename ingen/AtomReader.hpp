@@ -17,6 +17,8 @@
 #ifndef INGEN_ATOMREADER_HPP
 #define INGEN_ATOMREADER_HPP
 
+#include <boost/optional.hpp>
+
 #include "ingen/Interface.hpp"
 #include "ingen/AtomSink.hpp"
 #include "ingen/URIs.hpp"
@@ -43,7 +45,9 @@ public:
 
 private:
 	void get_atom(const LV2_Atom* in, Raul::Atom& out);
-	const char* atom_to_uri(const LV2_Atom* atom);
+
+	const char*                 atom_to_uri(const LV2_Atom* atom);
+	boost::optional<Raul::Path> atom_to_path(const LV2_Atom* atom);
 
 	void get_props(const LV2_Atom_Object*       obj,
 	               Ingen::Resource::Properties& props);

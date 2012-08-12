@@ -50,8 +50,9 @@ Delete::Delete(Engine&              engine,
 	, _disconnect_event(NULL)
 	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
 {
-	if (Raul::Path::is_path(uri))
-		_path = Raul::Path(uri.str());
+	if (GraphObject::uri_is_path(uri)) {
+		_path = GraphObject::uri_to_path(uri);
+	}
 }
 
 Delete::~Delete()
@@ -62,9 +63,7 @@ Delete::~Delete()
 bool
 Delete::pre_process()
 {
-	if (_path.is_root() ||
-	    _path == "path:/control_in" ||
-	    _path == "path:/control_out") {
+	if (_path == "/" || _path == "/control_in" || _path == "/control_out") {
 		return Event::pre_process_done(NOT_DELETABLE, _path);
 	}
 
@@ -170,7 +169,7 @@ Delete::post_process()
 		if (_disconnect_event) {
 			_disconnect_event->post_process();
 		}
-		_engine.broadcaster()->del(_path);
+		_engine.broadcaster()->del(_uri);
 		_engine.broadcaster()->bundle_end();
 	}
 

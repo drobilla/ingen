@@ -4,7 +4,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <path:/node1> ;
+	patch:subject <ingen:root/node1> ;
 	patch:body [
 		a ingen:Node ;
 		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
@@ -12,7 +12,7 @@
 
 <msg1>
 	a patch:Put ;
-	patch:subject <path:/node2> ;
+	patch:subject <ingen:root/node2> ;
 	patch:body [
 		a ingen:Node ;
 		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
@@ -20,17 +20,17 @@
 
 <msg2>
 	a patch:Put ;
-	patch:subject <path:/> ;
+	patch:subject <ingen:root/> ;
 	patch:body [
 		a ingen:Edge ;
-		ingen:tail <path:/node1/left_out> ;
-		ingen:head <path:/node2/left_in>
+		ingen:tail <ingen:root/node1/left_out> ;
+		ingen:head <ingen:root/node2/left_in>
 	] .
 
 <msg3>
 	a patch:Delete ;
 	patch:body [
 		a ingen:Edge ;
-		ingen:tail <path:/node1/left_out> ;
-		ingen:head <path:/node2/left_in>
+		ingen:tail <ingen:root/node1/left_out> ;
+		ingen:head <ingen:root/node2/left_in>
 	] .

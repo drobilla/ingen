@@ -4,7 +4,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <path:/node> ;
+	patch:subject <ingen:root/node> ;
 	patch:body [
 		a ingen:Node ;
 		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
@@ -12,4 +12,4 @@
 
 <msg1>
 	a patch:Get ;
-	patch:subject <path:/node> .
+	patch:subject <ingen:root/node> .
