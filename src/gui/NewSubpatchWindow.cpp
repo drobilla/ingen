@@ -75,7 +75,7 @@ void
 NewSubpatchWindow::name_changed()
 {
 	string name = _name_entry->get_text();
-	if (!Path::is_valid_name(name)) {
+	if (!Symbol::is_valid(name)) {
 		_message_label->set_text("Name contains invalid characters.");
 		_ok_button->property_sensitive() = false;
 	} else if (_app->store()->find(_patch->path().base() + name)
@@ -94,7 +94,7 @@ NewSubpatchWindow::name_changed()
 void
 NewSubpatchWindow::ok_clicked()
 {
-	const Path     path = _patch->path().base() + Path::nameify(_name_entry->get_text());
+	const Path     path = _patch->path().child(Symbol::symbolify(_name_entry->get_text()));
 	const uint32_t poly = _poly_spinbutton->get_value_as_int();
 
 	// Create patch

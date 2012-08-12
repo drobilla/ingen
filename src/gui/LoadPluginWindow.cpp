@@ -133,7 +133,7 @@ LoadPluginWindow::name_changed()
 	// Toggle add button sensitivity according name legality
 	if (_selection->get_selected_rows().size() == 1) {
 		string name = _node_name_entry->get_text();
-		if (!Path::is_valid_name(name)) {
+		if (!Symbol::is_valid(name)) {
 			_add_button->property_sensitive() = false;
 		} else if (_app->store()->find_child(_patch, name)) {
 			_add_button->property_sensitive() = false;
@@ -344,7 +344,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 
 		dialog.run();
 	} else {
-		Path path = _patch->path().base() + Path::nameify(name);
+		Path path = _patch->path().child(Symbol::symbolify(name));
 		Resource::Properties props = _initial_data;
 		props.insert(make_pair(uris.rdf_type,
 		                       uris.ingen_Node));
