@@ -98,18 +98,18 @@ public:
 			return;
 		}
 
+		Buffer* const patch_buf = _patch_port->buffer(0).get();
 		if (_patch_port->is_a(PortType::AUDIO) ||
 		    _patch_port->is_a(PortType::CV)) {
-			Buffer* patch_buf = _patch_port->buffer(0).get();
-			memcpy(patch_buf->samples(), _buffer, context.nframes() * sizeof(float));
+			memcpy(patch_buf->samples(),
+			       _buffer,
+			       context.nframes() * sizeof(float));
 		} else if (_patch_port->is_a(PortType::CONTROL)) {
-			Buffer* patch_buf = _patch_port->buffer(0).get();
-			memcpy(patch_buf->samples(), _buffer, sizeof(float));
+			patch_buf->samples()[0] = ((float*)_buffer)[0];
 		} else {
-			LV2_Atom_Sequence* seq       = (LV2_Atom_Sequence*)_buffer;
-			bool               enqueued  = false;
-			Buffer*            patch_buf = _patch_port->buffer(0).get();
-			URIs&              uris      = _patch_port->bufs().uris();
+			LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)_buffer;
+			bool               enqueued = false;
+			URIs&              uris     = _patch_port->bufs().uris();
 			patch_buf->prepare_write(context);
 			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 				if (!patch_buf->append_event(
@@ -135,9 +135,18 @@ public:
 			return;
 		}
 
-		if (_patch_port->is_a(PortType::AUDIO)) {
-			Buffer* patch_buf = _patch_port->buffer(0).get();
-			memcpy((Sample*)_buffer, patch_buf->samples(), context.nframes() * sizeof(Sample));
+		Buffer* patch_buf = _patch_port->buffer(0).get();
+		if (_patch_port->is_a(PortType::AUDIO) ||
+		    _patch_port->is_a(PortType::CV)) {
+			memcpy(_buffer,
+			       patch_buf->samples(),
+			       context.nframes() * sizeof(float));
+		} else if (_patch_port->is_a(PortType::CONTROL)) {
+			((float*)_buffer)[0] = patch_buf->samples()[0];
+		} else {
+			memcpy(patch_buf->atom(),
+			       _buffer,
+			       sizeof(LV2_Atom) + ((LV2_Atom*)_buffer)->size);
 		}
 	}
 
