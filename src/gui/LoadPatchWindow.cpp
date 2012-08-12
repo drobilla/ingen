@@ -170,11 +170,11 @@ LoadPatchWindow::ok_clicked()
 			symbol = _patch->symbol();
 		}
 
-		_app->loader()->load_patch(true, get_uri(),
+		_app->loader()->load_patch(true, get_filename(),
 				parent, symbol, _initial_data);
 
 	} else {
-		std::list<Glib::ustring> uri_list = get_uris();
+		std::list<Glib::ustring> uri_list = get_filenames();
 		for (std::list<Glib::ustring>::iterator i = uri_list.begin(); i != uri_list.end(); ++i) {
 			// Cascade
 			Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
