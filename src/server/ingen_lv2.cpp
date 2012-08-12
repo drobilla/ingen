@@ -187,7 +187,8 @@ public:
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
 			(*i)->pre_process(_engine.process_context());
 
-		if (_engine.run(nframes) > 0) {
+		_engine.run(nframes);
+		if (_engine.post_processor()->pending()) {
 			_main_sem.post();
 		}
 

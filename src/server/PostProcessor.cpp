@@ -51,10 +51,16 @@ PostProcessor::append(ProcessContext& context, Event* first, Event* last)
 	}
 }
 
+bool
+PostProcessor::pending() const
+{
+	return _head.get() || _engine.process_context().pending_notifications();
+}
+
 void
 PostProcessor::process()
 {
-	const FrameTime end_time = _max_time.get() + 1;
+	const FrameTime end_time = _max_time.get();
 
 	// To avoid a race, we only process up to tail and never write to _tail
 	Event* const tail = _tail.get();

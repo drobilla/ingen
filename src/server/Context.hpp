@@ -64,6 +64,9 @@ public:
 	/** Emit pending notifications in some other non-realtime thread. */
 	void emit_notifications(FrameTime end);
 
+	/** Return true iff any notifications are pending. */
+	bool pending_notifications() const { return _event_sink.read_space(); }
+
 	inline ID id() const { return _id; }
 
 	inline void locate(FrameTime s, SampleCount nframes) {

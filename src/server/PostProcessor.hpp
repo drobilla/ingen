@@ -54,6 +54,9 @@ public:
 	/** Post-process and delete all pending events */
 	void process();
 
+	/** Return true iff any events are pending */
+	bool pending() const;
+
 	/** Set the latest event time that should be post-processed */
 	void set_end_time(FrameTime time) { _max_time = time; }
 
