@@ -75,13 +75,12 @@ InputPort::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
  * @return true iff buffers are locally owned by the port
  */
 bool
-InputPort::get_buffers(Context&                context,
-                       BufferFactory&          bufs,
+InputPort::get_buffers(BufferFactory&          bufs,
                        Raul::Array<BufferRef>* buffers,
-                       uint32_t                poly) const
+                       uint32_t                poly,
+                       bool                    real_time) const
 {
-	const bool is_process_context = bufs.engine().is_process_context(context);
-	size_t num_edges = is_process_context ? _edges.size() : _num_edges;
+	const size_t num_edges = real_time ? _edges.size() : _num_edges;
 
 	if (is_a(PortType::AUDIO) && num_edges == 0) {
 		// Audio input with no edges, use shared zero buffer
@@ -91,7 +90,7 @@ InputPort::get_buffers(Context&                context,
 		return false;
 
 	} else if (num_edges == 1) {
-		if (is_process_context) {
+		if (real_time) {
 			if (!_edges.front().must_mix()) {
 				// Single non-mixing connection, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v) {
@@ -105,7 +104,7 @@ InputPort::get_buffers(Context&                context,
 	// Otherwise, allocate local buffers
 	for (uint32_t v = 0; v < poly; ++v) {
 		buffers->at(v).reset();
-		buffers->at(v) = bufs.get(context, buffer_type(), _buffer_size);
+		buffers->at(v) = bufs.get(buffer_type(), _buffer_size, real_time);
 		buffers->at(v)->clear();
 	}
 	return true;

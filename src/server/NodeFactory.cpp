@@ -59,6 +59,7 @@ NodeFactory::plugins()
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	if (!_has_loaded) {
+		_has_loaded = true;
 		// TODO: Plugin list refreshing
 		load_lv2_plugins();
 		_has_loaded = true;
@@ -120,7 +121,10 @@ NodeFactory::load_lv2_plugins()
 
 		const string uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
 
-		assert(_plugins.find(uri) == _plugins.end());
+		if (_plugins.find(uri) != _plugins.end()) {
+			Raul::warn(Raul::fmt("Already discovered <%s>\n") % uri);
+			continue;
+		}
 
 		LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
 

@@ -89,9 +89,9 @@ BufferFactory::default_size(LV2_URID type) const
 }
 
 BufferRef
-BufferFactory::get(Context& context,
-                   LV2_URID type,
+BufferFactory::get(LV2_URID type,
                    uint32_t capacity,
+                   bool     real_time,
                    bool     force_create)
 {
 	Raul::AtomicPtr<Buffer>& head_ptr = free_list(type);
@@ -108,7 +108,7 @@ BufferFactory::get(Context& context,
 	}
 
 	if (!try_head) {
-		if (!_engine.is_process_context(context)) {
+		if (!real_time) {
 			return create(type, capacity);
 		} else {
 			assert(false);

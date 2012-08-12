@@ -25,7 +25,6 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EngineStore.hpp"
-#include "MessageContext.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
@@ -57,15 +56,6 @@ SetPortValue::pre_process()
 {
 	if (_port->is_output()) {
 		return Event::pre_process_done(DIRECTION_MISMATCH, _port->path());
-	}
-
-	// Port is on a message context node, set value and run
-	if (_port->parent_node()->context() == Context::MESSAGE) {
-		apply(_engine.message_context());
-		_engine.message_context().run(
-			_engine.message_context(),
-			_port->parent_node(),
-			_engine.driver()->frame_time() + _engine.driver()->block_length());
 	}
 
 	// Set value metadata (does not affect buffers)

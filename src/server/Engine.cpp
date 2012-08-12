@@ -33,7 +33,6 @@
 #include "EngineStore.hpp"
 #include "Event.hpp"
 #include "EventWriter.hpp"
-#include "MessageContext.hpp"
 #include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
@@ -61,7 +60,6 @@ Engine::Engine(Ingen::World* a_world)
 	, _event_writer(new EventWriter(*this))
 	, _root_patch(NULL)
 	, _worker(new Worker(event_queue_size()))
-	, _message_context(*this)
 	, _process_context(*this)
 	, _quit_flag(false)
 	, _direct_driver(true)
@@ -183,7 +181,6 @@ Engine::activate()
 	_buffer_factory->set_block_length(_driver->block_length());
 
 	_pre_processor->start();
-	_message_context.Thread::start();
 
 	const Ingen::URIs& uris  = world()->uris();
 	Forge&             forge = world()->forge();
@@ -296,11 +293,6 @@ Engine::run(uint32_t sample_count)
 	// Emit control binding feedback
 	control_bindings()->post_process(
 		_process_context, _root_patch->port_impl(1)->buffer(0).get());
-
-	// Signal message context to run if necessary
-	if (_message_context.has_requests()) {
-		_message_context.signal(_process_context);
-	}
 
 	return n_processed_events;
 }

@@ -43,7 +43,6 @@ namespace Server {
 class Buffer;
 class BufferFactory;
 class Context;
-class MessageContext;
 class PatchImpl;
 class PluginImpl;
 class PortImpl;
@@ -89,9 +88,6 @@ public:
 
 	/** Learn the next incoming MIDI event (for internals) */
 	virtual void learn() {}
-
-	/** Run the node for one instant in the non-realtime worker thread. */
-	virtual void message_process(MessageContext& context) {}
 
 	/** Do whatever needs doing in the process thread before process() is called */
 	virtual void pre_process(ProcessContext& context);

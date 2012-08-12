@@ -20,7 +20,6 @@
 
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "MessageContext.hpp"
 #include "LV2Node.hpp"
 #include "PatchImpl.hpp"
 #include "Worker.hpp"

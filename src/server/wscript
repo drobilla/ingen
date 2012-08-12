@@ -19,7 +19,6 @@ def build(bld):
             LV2Info.cpp
             LV2Node.cpp
             LV2Plugin.cpp
-            MessageContext.cpp
             NodeFactory.cpp
             NodeImpl.cpp
             OutputPort.cpp

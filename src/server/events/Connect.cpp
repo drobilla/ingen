@@ -125,9 +125,10 @@ Connect::pre_process()
 	}
 
 	_buffers = new Raul::Array<BufferRef>(_head->poly());
-	_head->get_buffers(_engine.message_context(),
-	                   *_engine.buffer_factory(),
-	                   _buffers, _head->poly());
+	_head->get_buffers(*_engine.buffer_factory(),
+	                   _buffers,
+	                   _head->poly(),
+	                   false);
 
 	if (_patch->enabled()) {
 		_compiled_patch = _patch->compile();

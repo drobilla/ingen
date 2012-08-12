@@ -37,7 +37,6 @@
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "JackDriver.hpp"
-#include "MessageContext.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
@@ -60,9 +59,9 @@ JackPort::JackPort(JackDriver* driver, DuplexPort* patch_port)
 	, _driver(driver)
 	, _jack_port(NULL)
 {
-	patch_port->setup_buffers(driver->_engine.message_context(),
-	                          *driver->_engine.buffer_factory(),
-	                          patch_port->poly());
+	patch_port->setup_buffers(*driver->_engine.buffer_factory(),
+	                          patch_port->poly(),
+	                          false);
 	create();
 }
 

@@ -38,6 +38,7 @@
 #include "ingen/Store.hpp"
 #include "ingen/World.hpp"
 #include "ingen/runtime_paths.hpp"
+#include "raul/Semaphore.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 #include "raul/log.hpp"

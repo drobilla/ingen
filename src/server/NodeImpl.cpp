@@ -80,7 +80,7 @@ NodeImpl::activate(BufferFactory& bufs)
 
 	for (uint32_t p = 0; p < num_ports(); ++p) {
 		PortImpl* const port = _ports->at(p);
-		port->setup_buffers(bufs.engine().message_context(), bufs, port->poly());
+		port->setup_buffers(bufs, port->poly(), false);
 		port->connect_buffers();
 		port->clear_buffers();
 	}

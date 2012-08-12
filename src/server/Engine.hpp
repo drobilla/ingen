@@ -24,7 +24,6 @@
 #include "raul/SharedPtr.hpp"
 
 #include "ProcessContext.hpp"
-#include "MessageContext.hpp"
 
 namespace Raul { class Maid; }
 
@@ -41,7 +40,6 @@ class Driver;
 class EngineStore;
 class Event;
 class EventWriter;
-class MessageContext;
 class NodeFactory;
 class PostProcessor;
 class PreProcessor;
@@ -104,7 +102,6 @@ public:
 	PatchImpl*       root_patch()       const { return _root_patch; }
 	Worker*          worker()           const { return _worker; }
 
-	MessageContext& message_context() { return _message_context; }
 	ProcessContext& process_context() { return _process_context; }
 
 	SharedPtr<EngineStore> engine_store() const;
@@ -126,7 +123,6 @@ private:
 	PatchImpl*        _root_patch;
 	Worker*           _worker;
 
-	MessageContext _message_context;
 	ProcessContext _process_context;
 
 	bool _quit_flag;

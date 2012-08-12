@@ -230,10 +230,10 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (!_prepared_set_states)
 		_prepared_set_states = new Raul::Array<SetState>(poly, *_set_states, SetState());
 
-	get_buffers(bufs.engine().message_context(),
-	            bufs,
+	get_buffers(bufs,
 	            _prepared_buffers,
-	            _prepared_buffers->size());
+	            _prepared_buffers->size(),
+	            false);
 
 	return true;
 }

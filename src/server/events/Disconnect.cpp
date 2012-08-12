@@ -91,10 +91,10 @@ Disconnect::Impl::Impl(Engine&     e,
 
 	if (_dst_input_port->num_edges() == 0) {
 		_buffers = new Raul::Array<BufferRef>(_dst_input_port->poly());
-		_dst_input_port->get_buffers(_engine.message_context(),
-		                             *_engine.buffer_factory(),
+		_dst_input_port->get_buffers(*_engine.buffer_factory(),
 		                             _buffers,
-		                             _dst_input_port->poly());
+		                             _dst_input_port->poly(),
+		                             false);
 
 		const bool is_control = _dst_input_port->is_a(PortType::CONTROL) ||
 			_dst_input_port->is_a(PortType::CV);
@@ -183,9 +183,9 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 		if (_buffers) {
 			_engine.maid()->push(_dst_input_port->set_buffers(context, _buffers));
 		} else {
-			_dst_input_port->setup_buffers(context,
-			                               *_engine.buffer_factory(),
-			                               _dst_input_port->poly());
+			_dst_input_port->setup_buffers(*_engine.buffer_factory(),
+			                               _dst_input_port->poly(),
+			                               true);
 		}
 		_dst_input_port->connect_buffers();
 	} else {

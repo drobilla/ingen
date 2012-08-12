@@ -126,14 +126,14 @@ PatchImpl::apply_internal_poly(ProcessContext& context,
 		for (uint32_t j = 0; j < (*i)->num_ports(); ++j) {
 			PortImpl* const port = (*i)->port_impl(j);
 			if (port->is_input() && dynamic_cast<InputPort*>(port)->direct_connect())
-				port->setup_buffers(context, bufs, port->poly());
+				port->setup_buffers(bufs, port->poly(), true);
 			port->connect_buffers();
 		}
 	}
 
 	const bool polyphonic = parent_patch() && (poly == parent_patch()->internal_poly_process());
 	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i)
-		(*i)->setup_buffers(context, bufs, polyphonic ? poly : 1);
+		(*i)->setup_buffers(bufs, polyphonic ? poly : 1, true);
 
 	_poly_process = poly;
 	return true;

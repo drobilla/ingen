@@ -23,7 +23,6 @@
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
-#include "MessageContext.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
