@@ -70,6 +70,8 @@ relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 			if (leading_slash && ret[0] != '/')
 				ret = Glib::ustring("/") + ret;
 		}
+
+		serd_node_free(&normal_base_uri_node);
 	}
 
 	if (leading_slash && ret[0] != '/') {
@@ -130,6 +132,7 @@ get_properties(Ingen::World*     world,
 		}
 	}
 
+	free((uint8_t*)out.buf);
 	sratom_free(sratom);
 	return props;
 }

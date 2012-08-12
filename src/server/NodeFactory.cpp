@@ -57,9 +57,11 @@ NodeFactory::~NodeFactory()
 const NodeFactory::Plugins&
 NodeFactory::plugins()
 {
+	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	if (!_has_loaded) {
 		// TODO: Plugin list refreshing
-		load_plugins();
+		load_lv2_plugins();
+		_has_loaded = true;
 	}
 	return _plugins;
 }
@@ -70,22 +72,6 @@ NodeFactory::plugin(const Raul::URI& uri)
 	load_plugin(uri);
 	const Plugins::const_iterator i = _plugins.find(uri);
 	return ((i != _plugins.end()) ? i->second : NULL);
-}
-
-void
-NodeFactory::load_plugins()
-{
-	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-
-	// Only load if we havn't already, so every client connecting doesn't cause
-	// this (expensive!) stuff to happen.  Not the best solution - would be nice
-	// if clients could refresh plugins list for whatever reason :/
-	if (!_has_loaded) {
-		_plugins.clear();
-		load_internal_plugins();
-		load_lv2_plugins();
-		_has_loaded = true;
-	}
 }
 
 void

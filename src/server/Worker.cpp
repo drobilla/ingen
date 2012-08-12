@@ -112,6 +112,11 @@ Worker::Worker(uint32_t buffer_size)
 	start();
 }
 
+Worker::~Worker()
+{
+	free(_buffer);
+}
+
 void
 Worker::_run()
 {

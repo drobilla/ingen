@@ -17,35 +17,36 @@
 #ifndef INGEN_ENGINE_LV2INFO_HPP
 #define INGEN_ENGINE_LV2INFO_HPP
 
-#include "lilv/lilv.h"
 #include "ingen/World.hpp"
+#include "lilv/lilv.h"
+#include "raul/Noncopyable.hpp"
 
 namespace Ingen {
 namespace Server {
 
 /** Stuff that may need to be passed to an LV2 plugin (i.e. LV2 features).
  */
-class LV2Info {
+class LV2Info : public Raul::Noncopyable {
 public:
 	explicit LV2Info(Ingen::World* world);
 	~LV2Info();
 
-	LilvNode* atom_AtomPort;
-	LilvNode* atom_bufferType;
-	LilvNode* atom_supports;
-	LilvNode* lv2_AudioPort;
-	LilvNode* lv2_CVPort;
-	LilvNode* lv2_ControlPort;
-	LilvNode* lv2_InputPort;
-	LilvNode* lv2_OutputPort;
-	LilvNode* lv2_default;
-	LilvNode* lv2_portProperty;
-	LilvNode* lv2_sampleRate;
-	LilvNode* morph_AutoMorphPort;
-	LilvNode* morph_MorphPort;
-	LilvNode* morph_supportsType;
-	LilvNode* rsz_minimumSize;
-	LilvNode* work_schedule;
+	LilvNode* const atom_AtomPort;
+	LilvNode* const atom_bufferType;
+	LilvNode* const atom_supports;
+	LilvNode* const lv2_AudioPort;
+	LilvNode* const lv2_CVPort;
+	LilvNode* const lv2_ControlPort;
+	LilvNode* const lv2_InputPort;
+	LilvNode* const lv2_OutputPort;
+	LilvNode* const lv2_default;
+	LilvNode* const lv2_portProperty;
+	LilvNode* const lv2_sampleRate;
+	LilvNode* const morph_AutoMorphPort;
+	LilvNode* const morph_MorphPort;
+	LilvNode* const morph_supportsType;
+	LilvNode* const rsz_minimumSize;
+	LilvNode* const work_schedule;
 
 	Ingen::World& world()     { return *_world; }
 	LilvWorld*    lv2_world() { return _world->lilv_world(); }

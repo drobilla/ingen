@@ -19,10 +19,10 @@
 
 #include <map>
 
+#include "ingen/World.hpp"
+#include "raul/Noncopyable.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
-
-#include "ingen/World.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -36,14 +36,13 @@ class LV2Info;
  *
  * \ingroup engine
  */
-class NodeFactory
+class NodeFactory : public Raul::Noncopyable
 {
 public:
 	explicit NodeFactory(Ingen::World* world);
 	~NodeFactory();
 
 	void load_plugin(const Raul::URI& uri);
-	void load_plugins();
 
 	typedef std::map<Raul::URI, PluginImpl*> Plugins;
 	const Plugins& plugins();

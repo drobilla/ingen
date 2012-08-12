@@ -59,17 +59,22 @@ LV2Info::LV2Info(Ingen::World* world)
 
 LV2Info::~LV2Info()
 {
-	lilv_node_free(rsz_minimumSize);
-	lilv_node_free(lv2_portProperty);
-	lilv_node_free(lv2_default);
-	lilv_node_free(lv2_OutputPort);
-	lilv_node_free(lv2_InputPort);
-	lilv_node_free(lv2_ControlPort);
-	lilv_node_free(lv2_CVPort);
-	lilv_node_free(lv2_AudioPort);
-	lilv_node_free(atom_supports);
-	lilv_node_free(atom_bufferType);
 	lilv_node_free(atom_AtomPort);
+	lilv_node_free(atom_bufferType);
+	lilv_node_free(atom_supports);
+	lilv_node_free(lv2_AudioPort);
+	lilv_node_free(lv2_CVPort);
+	lilv_node_free(lv2_ControlPort);
+	lilv_node_free(lv2_InputPort);
+	lilv_node_free(lv2_OutputPort);
+	lilv_node_free(lv2_default);
+	lilv_node_free(lv2_portProperty);
+	lilv_node_free(lv2_sampleRate);
+	lilv_node_free(morph_AutoMorphPort);
+	lilv_node_free(morph_MorphPort);
+	lilv_node_free(morph_supportsType);
+	lilv_node_free(rsz_minimumSize);
+	lilv_node_free(work_schedule);
 }
 
 } // namespace Server

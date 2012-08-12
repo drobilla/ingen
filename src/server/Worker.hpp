@@ -32,6 +32,7 @@ class Worker : public Raul::Thread
 {
 public:
 	Worker(uint32_t buffer_size);
+	~Worker();
 
 	struct Schedule : public LV2Features::Feature {
 		SharedPtr<LV2_Feature> feature(World* world, GraphObject* n);
@@ -49,8 +50,8 @@ private:
 	Raul::Semaphore  _sem;
 	Raul::RingBuffer _requests;
 	Raul::RingBuffer _responses;
-	uint8_t*         _buffer;
-	uint32_t         _buffer_size;
+	uint8_t* const   _buffer;
+	const uint32_t   _buffer_size;
 
 	virtual void _run();
 };

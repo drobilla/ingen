@@ -76,6 +76,12 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
 }
 
+PortImpl::~PortImpl()
+{
+	delete _set_states;
+	delete _buffers;
+}
+
 void
 PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 {
@@ -95,11 +101,6 @@ PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 		}
 	}
 	_buffer_size = _bufs.default_size(_buffer_type);
-}
-
-PortImpl::~PortImpl()
-{
-	delete _buffers;
 }
 
 bool
