@@ -144,9 +144,9 @@ public:
 		} else if (_patch_port->is_a(PortType::CONTROL)) {
 			((float*)_buffer)[0] = patch_buf->samples()[0];
 		} else {
-			memcpy(patch_buf->atom(),
-			       _buffer,
-			       sizeof(LV2_Atom) + ((LV2_Atom*)_buffer)->size);
+			memcpy(_buffer,
+			       patch_buf->atom(),
+			       sizeof(LV2_Atom) + patch_buf->atom()->size);
 		}
 	}
 
