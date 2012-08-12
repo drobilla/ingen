@@ -188,7 +188,7 @@ Engine::activate()
 	// Create root patch
 	if (!_root_patch) {
 		_root_patch = new PatchImpl(
-			*this, "root", 1, NULL, _driver->sample_rate(), 1);
+			*this, Raul::Symbol("root"), 1, NULL, _driver->sample_rate(), 1);
 		_root_patch->set_property(
 			uris.rdf_type,
 			Resource::Property(uris.ingen_Patch, Resource::INTERNAL));

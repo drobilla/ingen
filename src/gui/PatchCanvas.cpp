@@ -785,7 +785,7 @@ PatchCanvas::generate_port_name(
 		snprintf(num_buf, sizeof(num_buf), "%u", i);
 		symbol = sym_base + "_";
 		symbol += num_buf;
-		if (!_patch->get_port(symbol))
+		if (!_patch->get_port(Raul::Symbol::symbolify(symbol)))
 			break;
 	}
 
@@ -832,7 +832,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	if (offset != 0) {
 		std::stringstream ss;
 		ss << symbol << "_" << offset;
-		symbol = ss.str();
+		symbol = Raul::Symbol(ss.str());
 	}
 
 	const URIs& uris = _app.uris();

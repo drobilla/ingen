@@ -53,6 +53,10 @@ CreateNode::pre_process()
 
 	typedef Resource::Properties::const_iterator iterator;
 
+	if (_path.is_root()) {
+		return Event::pre_process_done(BAD_URI, _path);
+	}
+		
 	std::string plugin_uri;
 	const iterator t = _properties.find(uris.ingen_prototype);
 	if (t != _properties.end() && t->second.type() == uris.forge.URI) {
@@ -81,7 +85,7 @@ CreateNode::pre_process()
 		p->second.get_bool());
 
 	if (!(_node = plugin->instantiate(*_engine.buffer_factory(),
-	                                  _path.symbol(),
+	                                  Raul::Symbol(_path.symbol()),
 	                                  polyphonic,
 	                                  _patch,
 	                                  _engine))) {

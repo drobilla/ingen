@@ -85,10 +85,10 @@ RenameWindow::values_changed()
 	if (symbol.length() == 0) {
 		_message_label->set_text("Symbol must be at least 1 character");
 		_ok_button->property_sensitive() = false;
-	} else if (!Path::is_valid_name(symbol)) {
+	} else if (!Symbol::is_valid(symbol)) {
 		_message_label->set_text("Symbol contains invalid characters");
 		_ok_button->property_sensitive() = false;
-	} else if (_object->symbol() != symbol &&
+	} else if (_object->symbol().c_str() != symbol &&
 	           _app->store()->object(_object->parent()->path().child(symbol))) {
 		_message_label->set_text("An object already exists with that path");
 		_ok_button->property_sensitive() = false;
@@ -124,7 +124,7 @@ RenameWindow::ok_clicked()
 	const Atom&   name_atom  = _object->get_property(uris.lv2_name);
 
 	if (Symbol::is_valid(symbol_str)) {
-		const Symbol& symbol(symbol_str);
+		const Symbol symbol(symbol_str);
 		if (symbol != _object->symbol()) {
 			path = _object->path().parent().child(symbol);
 			_app->interface()->move(_object->path(), path);

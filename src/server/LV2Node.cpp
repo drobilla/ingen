@@ -49,12 +49,12 @@ namespace Server {
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LV2Node::LV2Node(LV2Plugin*    plugin,
-                 const string& name,
-                 bool          polyphonic,
-                 PatchImpl*    parent,
-                 SampleRate    srate)
-	: NodeImpl(plugin, name, polyphonic, parent, srate)
+LV2Node::LV2Node(LV2Plugin*          plugin,
+                 const Raul::Symbol& symbol,
+                 bool                polyphonic,
+                 PatchImpl*          parent,
+                 SampleRate          srate)
+	: NodeImpl(plugin, symbol, polyphonic, parent, srate)
 	, _lv2_plugin(plugin)
 	, _instances(NULL)
 	, _prepared_instances(NULL)
@@ -210,16 +210,10 @@ LV2Node::instantiate(BufferFactory& bufs)
 	for (uint32_t j = 0; j < num_ports; ++j) {
 		const LilvPort* id = lilv_plugin_get_port_by_index(plug, j);
 
-		// LV2 port symbols are guaranteed to be unique, valid C identifiers
-		const std::string port_sym = lilv_node_as_string(
-			lilv_port_get_symbol(plug, id));
-
-		if (!Raul::Symbol::is_valid(port_sym)) {
-			Raul::error(Raul::fmt("<%1%> port %2% has invalid symbol `%3'\n")
-			            % _lv2_plugin->uri() % j % port_sym);
-			ret = false;
-			break;
-		}
+		/* LV2 port symbols are guaranteed to be unique, valid C identifiers,
+		   and Lilv guarantees that lilv_port_get_symbol() is valid. */
+		const Raul::Symbol port_sym(
+			lilv_node_as_string(lilv_port_get_symbol(plug, id)));
 
 		// Get port type
 		Raul::Atom val;
@@ -313,7 +307,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 
 		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
 			Raul::error(Raul::fmt("<%1%> port %2% has unknown type or direction\n")
-			            % _lv2_plugin->uri() % port_sym);
+			            % _lv2_plugin->uri() % port_sym.c_str());
 			ret = false;
 			break;
 		}

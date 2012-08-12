@@ -36,35 +36,35 @@ LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
 	set_property(_uris.rdf_type, _uris.lv2_Plugin);
 }
 
-const string
+const Raul::Symbol
 LV2Plugin::symbol() const
 {
 	string working = uri().str();
-	if (working[working.length()-1] == '/')
-		working = working.substr(0, working.length()-1);
+	if (working[working.length() - 1] == '/')
+		working = working.substr(0, working.length() - 1);
 
 	while (working.length() > 0) {
 		size_t last_slash = working.find_last_of("/");
 		const string symbol = working.substr(last_slash+1);
 		if ( (symbol[0] >= 'a' && symbol[0] <= 'z')
 		     || (symbol[0] >= 'A' && symbol[0] <= 'Z') )
-			return Raul::Path::nameify(symbol);
+			return Raul::Symbol::symbolify(symbol);
 		else
 			working = working.substr(0, last_slash);
 	}
 
-	return "lv2_symbol";
+	return Raul::Symbol("lv2_symbol");
 }
 
 NodeImpl*
-LV2Plugin::instantiate(BufferFactory& bufs,
-                       const string&  name,
-                       bool           polyphonic,
-                       PatchImpl*     parent,
-                       Engine&        engine)
+LV2Plugin::instantiate(BufferFactory&      bufs,
+                       const Raul::Symbol& symbol,
+                       bool                polyphonic,
+                       PatchImpl*          parent,
+                       Engine&             engine)
 {
 	LV2Node* n = new LV2Node(
-		this, name, polyphonic, parent, engine.driver()->sample_rate());
+		this, symbol, polyphonic, parent, engine.driver()->sample_rate());
 
 	if (!n->instantiate(bufs)) {
 		delete n;

@@ -167,7 +167,7 @@ get_port(Ingen::World*     world,
 		LOG(error) << "Port " << subject << " has no symbol" << endl;
 		return -1;
 	}
-	const Symbol port_sym  = s->second.get_string();
+	const Symbol port_sym(s->second.get_string());
 	const Path   port_path = parent.child(port_sym);
 
 	record = make_pair(port_path, props);
@@ -330,7 +330,7 @@ parse_patch(Ingen::World*                            world,
 
 	const Glib::ustring base_uri = model.base_uri().to_string();
 
-	Raul::Symbol symbol = "_";
+	Raul::Symbol symbol("_");
 	if (a_symbol) {
 		symbol = *a_symbol;
 	} else {

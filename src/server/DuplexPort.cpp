@@ -28,20 +28,20 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-DuplexPort::DuplexPort(BufferFactory&    bufs,
-                       NodeImpl*         parent,
-                       const string&     name,
-                       uint32_t          index,
-                       bool              polyphonic,
-                       uint32_t          poly,
-                       PortType          type,
-                       LV2_URID          buffer_type,
-                       const Raul::Atom& value,
-                       size_t            buffer_size,
-                       bool              is_output)
-	: PortImpl(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
-	, InputPort(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
-	, OutputPort(bufs, parent, name, index, poly, type, buffer_type, value, buffer_size)
+DuplexPort::DuplexPort(BufferFactory&      bufs,
+                       NodeImpl*           parent,
+                       const Raul::Symbol& symbol,
+                       uint32_t            index,
+                       bool                polyphonic,
+                       uint32_t            poly,
+                       PortType            type,
+                       LV2_URID            buffer_type,
+                       const Raul::Atom&   value,
+                       size_t              buffer_size,
+                       bool                is_output)
+	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
+	, InputPort(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
+	, OutputPort(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
 	, _is_output(is_output)
 {
 	set_property(bufs.uris().ingen_polyphonic,

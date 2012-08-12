@@ -39,17 +39,17 @@ class NodeImpl;
 class DuplexPort : public InputPort, public OutputPort
 {
 public:
-	DuplexPort(BufferFactory&     bufs,
-	           NodeImpl*          parent,
-	           const std::string& name,
-	           uint32_t           index,
-	           bool               polyphonic,
-	           uint32_t           poly,
-	           PortType           type,
-	           LV2_URID           buffer_type,
-	           const Raul::Atom&  value,
-	           size_t             buffer_size,
-	           bool               is_output);
+	DuplexPort(BufferFactory&      bufs,
+	           NodeImpl*           parent,
+	           const Raul::Symbol& symbol,
+	           uint32_t            index,
+	           bool                polyphonic,
+	           uint32_t            poly,
+	           PortType            type,
+	           LV2_URID            buffer_type,
+	           const Raul::Atom&   value,
+	           size_t              buffer_size,
+	           bool                is_output);
 
 	virtual ~DuplexPort() {}
 

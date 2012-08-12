@@ -51,11 +51,9 @@ CreatePatch::pre_process()
 		return Event::pre_process_done(EXISTS, _path);
 	}
 
-	const Raul::Path& path = (const Raul::Path&)_path;
-
-	_parent = _engine.engine_store()->find_patch(path.parent());
+	_parent = _engine.engine_store()->find_patch(_path.parent());
 	if (!_parent) {
-		return Event::pre_process_done(PARENT_NOT_FOUND, path.parent());
+		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
 
 	const Ingen::URIs& uris = _engine.world()->uris();
@@ -70,14 +68,15 @@ CreatePatch::pre_process()
 	}
 
 	if (int_poly < 1 || int_poly > 128) {
-		return Event::pre_process_done(INVALID_POLY, path);
+		return Event::pre_process_done(INVALID_POLY, _path);
 	}
 
 	if (int_poly == _parent->internal_poly()) {
 		ext_poly = int_poly;
 	}
 
-	_patch = new PatchImpl(_engine, path.symbol(), ext_poly, _parent,
+	const Raul::Symbol symbol((_path.is_root()) ? "root" : _path.symbol());
+	_patch = new PatchImpl(_engine, symbol, ext_poly, _parent,
 	                       _engine.driver()->sample_rate(), int_poly);
 	_patch->properties().insert(_properties.begin(), _properties.end());
 	_patch->add_property(uris.rdf_type, uris.ingen_Patch);

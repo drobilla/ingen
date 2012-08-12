@@ -160,7 +160,7 @@ main(int argc, char** argv)
 				const Raul::Path p(path_option.get_string());
 				if (!p.is_root()) {
 					parent = p.parent();
-					symbol = p.symbol();
+					symbol = Raul::Symbol(p.symbol());
 				}
 			} else {
 				cerr << "Invalid path given: '" << path_option << endl;

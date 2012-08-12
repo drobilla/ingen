@@ -328,26 +328,27 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 	const URIs& uris = _world.uris();
 
 	// Always write a symbol (required by Ingen)
-	string symbol;
+	Raul::Symbol symbol("_");
 	GraphObject::Properties::const_iterator s = patch->properties().find(uris.lv2_symbol);
 	if (s == patch->properties().end()
 	    || !s->second.type() == _world.forge().String
 	    || !Symbol::is_valid(s->second.get_string())) {
-		symbol = Glib::path_get_basename(_model->base_uri().to_c_string());
-		symbol = Symbol::symbolify(symbol.substr(0, symbol.find('.')));
+		const std::string base = Glib::path_get_basename(
+			_model->base_uri().to_c_string());
+		symbol = Symbol::symbolify(base.substr(0, base.find('.')));
 		_model->add_statement(
 			patch_id,
 			Sord::Curie(world, "lv2:symbol"),
-			Sord::Literal(world, symbol));
+			Sord::Literal(world, symbol.c_str()));
 	} else {
-		symbol = s->second.get_string();
+		symbol = Raul::Symbol::symbolify(s->second.get_string());
 	}
 
 	// If the patch has no doap:name (required by LV2), use the symbol
 	if (patch->properties().find(uris.doap_name) == patch->properties().end())
 		_model->add_statement(patch_id,
 		                      Sord::URI(world, uris.doap_name.str()),
-		                      Sord::Literal(world, symbol));
+		                      Sord::Literal(world, symbol.c_str()));
 
 	const GraphObject::Properties props = patch->properties(Resource::INTERNAL);
 	serialise_properties(patch_id, props);

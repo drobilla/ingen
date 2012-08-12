@@ -42,24 +42,24 @@ InternalPlugin* ControllerNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Controller", "controller");
 }
 
-ControllerNode::ControllerNode(InternalPlugin* plugin,
-                               BufferFactory&  bufs,
-                               const string&   path,
-                               bool            polyphonic,
-                               PatchImpl*      parent,
-                               SampleRate      srate)
-	: NodeImpl(plugin, path, false, parent, srate)
+ControllerNode::ControllerNode(InternalPlugin*     plugin,
+                               BufferFactory&      bufs,
+                               const Raul::Symbol& symbol,
+                               bool                polyphonic,
+                               PatchImpl*          parent,
+                               SampleRate          srate)
+	: NodeImpl(plugin, symbol, false, parent, srate)
 	, _learning(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(6);
 
-	_midi_in_port = new InputPort(bufs, this, "input", 0, 1,
+	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Raul::Atom());
 	_midi_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
 	_ports->at(0) = _midi_in_port;
 
-	_param_port = new InputPort(bufs, this, "controller", 1, 1,
+	_param_port = new InputPort(bufs, this, Raul::Symbol("controller"), 1, 1,
 	                            PortType::CONTROL, 0, bufs.forge().make(0.0f));
 	_param_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
 	_param_port->set_property(uris.lv2_maximum, bufs.forge().make(127.0f));
@@ -67,23 +67,23 @@ ControllerNode::ControllerNode(InternalPlugin* plugin,
 	_param_port->set_property(uris.lv2_name, bufs.forge().alloc("Controller"));
 	_ports->at(1) = _param_port;
 
-	_log_port = new InputPort(bufs, this, "logarithmic", 2, 1,
+	_log_port = new InputPort(bufs, this, Raul::Symbol("logarithmic"), 2, 1,
 	                          PortType::CONTROL, 0, bufs.forge().make(0.0f));
 	_log_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_log_port->set_property(uris.lv2_name, bufs.forge().alloc("Logarithmic"));
 	_ports->at(2) = _log_port;
 
-	_min_port = new InputPort(bufs, this, "minimum", 3, 1,
+	_min_port = new InputPort(bufs, this, Raul::Symbol("minimum"), 3, 1,
 	                          PortType::CONTROL, 0, bufs.forge().make(0.0f));
 	_min_port->set_property(uris.lv2_name, bufs.forge().alloc("Minimum"));
 	_ports->at(3) = _min_port;
 
-	_max_port = new InputPort(bufs, this, "maximum", 4, 1,
+	_max_port = new InputPort(bufs, this, Raul::Symbol("maximum"), 4, 1,
 	                          PortType::CONTROL, 0, bufs.forge().make(1.0f));
 	_max_port->set_property(uris.lv2_name, bufs.forge().alloc("Maximum"));
 	_ports->at(4) = _max_port;
 
-	_audio_port = new OutputPort(bufs, this, "output", 5, 1,
+	_audio_port = new OutputPort(bufs, this, Raul::Symbol("output"), 5, 1,
 	                             PortType::CV, 0, bufs.forge().make(0.0f));
 	_audio_port->set_property(uris.lv2_name, bufs.forge().alloc("Output"));
 	_ports->at(5) = _audio_port;

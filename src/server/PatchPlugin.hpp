@@ -39,17 +39,17 @@ public:
 		: PluginImpl(uris, Plugin::Patch, uri)
 	{}
 
-	NodeImpl* instantiate(BufferFactory&     bufs,
-	                      const std::string& name,
-	                      bool               polyphonic,
-	                      PatchImpl*         parent,
-	                      Engine&            engine)
+	NodeImpl* instantiate(BufferFactory&      bufs,
+	                      const Raul::Symbol& symbol,
+	                      bool                polyphonic,
+	                      PatchImpl*          parent,
+	                      Engine&             engine)
 	{
 		return NULL;
 	}
 
-	const std::string symbol() const { return "patch"; }
-	const std::string name()   const { return "Ingen Patch"; }
+	const Raul::Symbol symbol() const { return Raul::Symbol("patch"); }
+	const std::string name()    const { return "Ingen Patch"; }
 
 private:
 	const std::string _symbol;

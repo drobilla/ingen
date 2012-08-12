@@ -62,8 +62,11 @@ public:
 
 	/** Rename */
 	virtual void set_path(const Raul::Path& new_path) {
-		_path   = new_path;
-		_symbol = new_path.symbol();
+		_path = new_path;
+		const char* const new_sym = new_path.symbol();
+		if (new_sym[0] != '\0') {
+			_symbol = Raul::Symbol(new_sym);
+		}
 	}
 
 	const Raul::Atom& get_property(const Raul::URI& key) const;

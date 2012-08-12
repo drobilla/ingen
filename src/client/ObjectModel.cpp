@@ -91,7 +91,7 @@ void
 ObjectModel::set_path(const Raul::Path& p)
 {
 	_path   = p;
-	_symbol = p.symbol();
+	_symbol = Raul::Symbol(p.is_root() ? "root" : p.symbol());
 	_signal_moved.emit();
 }
 

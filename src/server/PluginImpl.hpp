@@ -24,6 +24,7 @@
 
 #include "ingen/Plugin.hpp"
 #include "ingen/Resource.hpp"
+#include "raul/Symbol.hpp"
 
 namespace Ingen {
 
@@ -51,16 +52,16 @@ public:
 		, _type(type)
 	{}
 
-	virtual NodeImpl* instantiate(BufferFactory&     bufs,
-	                              const std::string& name,
-	                              bool               polyphonic,
-	                              PatchImpl*         parent,
+	virtual NodeImpl* instantiate(BufferFactory&      bufs,
+	                              const Raul::Symbol& symbol,
+	                              bool                polyphonic,
+	                              PatchImpl*          parent,
 	                              Engine&            engine) = 0;
 
-	virtual const std::string symbol() const = 0;
+	virtual const Raul::Symbol symbol() const = 0;
 
-	Plugin::Type  type() const         { return _type; }
-	void          type(Plugin::Type t) { _type = t; }
+	Plugin::Type type() const         { return _type; }
+	void         type(Plugin::Type t) { _type = t; }
 
 protected:
 	Plugin::Type _type;

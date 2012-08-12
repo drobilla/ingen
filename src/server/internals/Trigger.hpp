@@ -42,12 +42,12 @@ namespace Internals {
 class TriggerNode : public NodeImpl
 {
 public:
-	TriggerNode(InternalPlugin*    plugin,
-	            BufferFactory&     bufs,
-	            const std::string& path,
-	            bool               polyphonic,
-	            PatchImpl*         parent,
-	            SampleRate         srate);
+	TriggerNode(InternalPlugin*     plugin,
+	            BufferFactory&      bufs,
+	            const Raul::Symbol& symbol,
+	            bool                polyphonic,
+	            PatchImpl*          parent,
+	            SampleRate          srate);
 
 	void process(ProcessContext& context);
 

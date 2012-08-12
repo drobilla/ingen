@@ -26,6 +26,7 @@ enum Status {
 	BAD_INDEX,
 	BAD_OBJECT_TYPE,
 	BAD_REQUEST,
+	BAD_URI,
 	BAD_VALUE_TYPE,
 	CLIENT_NOT_FOUND,
 	CREATION_FAILED,
@@ -56,7 +57,8 @@ ingen_status_string(Status st)
 
 	case BAD_INDEX:           return "Invalid index";
 	case BAD_OBJECT_TYPE:     return "Invalid object type";
-	case BAD_REQUEST:         return "Bad request";
+	case BAD_REQUEST:         return "Invalid request";
+	case BAD_URI:             return "Invalid URI";
 	case BAD_VALUE_TYPE:      return "Invalid value type";
 	case CLIENT_NOT_FOUND:    return "Client not found";
 	case CREATION_FAILED:     return "Creation failed";

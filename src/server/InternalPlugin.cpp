@@ -42,11 +42,11 @@ InternalPlugin::InternalPlugin(URIs&              uris,
 }
 
 NodeImpl*
-InternalPlugin::instantiate(BufferFactory& bufs,
-                            const string&  name,
-                            bool           polyphonic,
-                            PatchImpl*     parent,
-                            Engine&        engine)
+InternalPlugin::instantiate(BufferFactory&      bufs,
+                            const Raul::Symbol& symbol,
+                            bool                polyphonic,
+                            PatchImpl*          parent,
+                            Engine&             engine)
 {
 	assert(_type == Internal);
 
@@ -55,13 +55,13 @@ InternalPlugin::instantiate(BufferFactory& bufs,
 	const string uri_str = uri().str();
 
 	if (uri_str == NS_INTERNALS "Controller") {
-		return new ControllerNode(this, bufs, name, polyphonic, parent, srate);
+		return new ControllerNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else if (uri_str == NS_INTERNALS "Delay") {
-		return new DelayNode(this, bufs, name, polyphonic, parent, srate);
+		return new DelayNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else if (uri_str == NS_INTERNALS "Note") {
-		return new NoteNode(this, bufs, name, polyphonic, parent, srate);
+		return new NoteNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else if (uri_str == NS_INTERNALS "Trigger") {
-		return new TriggerNode(this, bufs, name, polyphonic, parent, srate);
+		return new TriggerNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else {
 		return NULL;
 	}

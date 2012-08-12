@@ -42,16 +42,16 @@ public:
 	               const std::string& uri,
 	               const std::string& symbol);
 
-	NodeImpl* instantiate(BufferFactory&     bufs,
-	                      const std::string& name,
-	                      bool               polyphonic,
-	                      PatchImpl*         parent,
-	                      Engine&            engine);
+	NodeImpl* instantiate(BufferFactory&      bufs,
+	                      const Raul::Symbol& symbol,
+	                      bool                polyphonic,
+	                      PatchImpl*          parent,
+	                      Engine&             engine);
 
-	const std::string symbol() const { return _symbol; }
+	const Raul::Symbol symbol() const { return _symbol; }
 
 private:
-	const std::string _symbol;
+	const Raul::Symbol _symbol;
 };
 
 } // namespace Server

@@ -246,13 +246,13 @@ PatchImpl::num_ports_non_rt() const
 /** Create a port.  Not realtime safe.
  */
 PortImpl*
-PatchImpl::create_port(BufferFactory& bufs,
-                       const string&  name,
-                       PortType       type,
-                       LV2_URID       buffer_type,
-                       uint32_t       buffer_size,
-                       bool           is_output,
-                       bool           polyphonic)
+PatchImpl::create_port(BufferFactory&      bufs,
+                       const Raul::Symbol& symbol,
+                       PortType            type,
+                       LV2_URID            buffer_type,
+                       uint32_t            buffer_size,
+                       bool                is_output,
+                       bool                polyphonic)
 {
 	if (type == PortType::UNKNOWN) {
 		Raul::error << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
@@ -263,7 +263,7 @@ PatchImpl::create_port(BufferFactory& bufs,
 	if (type == PortType::CONTROL || type == PortType::CV)
 		value = bufs.forge().make(0.0f);
 
-	return new DuplexPort(bufs, this, name, num_ports_non_rt(), polyphonic, _polyphony,
+	return new DuplexPort(bufs, this, symbol, num_ports_non_rt(), polyphonic, _polyphony,
 	                      type, buffer_type, value, buffer_size, is_output);
 }
 
@@ -275,7 +275,7 @@ PatchImpl::create_port(BufferFactory& bufs,
  * Realtime safe.  Preprocessing thread only.
  */
 PatchImpl::Ports::Node*
-PatchImpl::remove_port(const string& symbol)
+PatchImpl::remove_port(const Raul::Symbol& symbol)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 

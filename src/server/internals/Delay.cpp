@@ -53,13 +53,13 @@ InternalPlugin* DelayNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Delay", "delay");
 }
 
-DelayNode::DelayNode(InternalPlugin*    plugin,
-                     BufferFactory&     bufs,
-                     const std::string& path,
-                     bool               polyphonic,
-                     PatchImpl*         parent,
-                     SampleRate         srate)
-	: NodeImpl(plugin, path, polyphonic, parent, srate)
+DelayNode::DelayNode(InternalPlugin*     plugin,
+                     BufferFactory&      bufs,
+                     const Raul::Symbol& symbol,
+                     bool                polyphonic,
+                     PatchImpl*          parent,
+                     SampleRate          srate)
+	: NodeImpl(plugin, symbol, polyphonic, parent, srate)
 	, _buffer(0)
 	, _buffer_length(0)
 	, _buffer_mask(0)
@@ -72,7 +72,7 @@ DelayNode::DelayNode(InternalPlugin*    plugin,
 	_last_delay_time = default_delay;
 	_delay_samples = default_delay;
 
-	_delay_port = new InputPort(bufs, this, "delay", 1, _polyphony,
+	_delay_port = new InputPort(bufs, this, Raul::Symbol("delay"), 1, _polyphony,
 	                            PortType::CONTROL, 0, bufs.forge().make(default_delay));
 	_delay_port->set_property(uris.lv2_name, bufs.forge().alloc("Delay"));
 	_delay_port->set_property(uris.lv2_default, bufs.forge().make(default_delay));
@@ -80,12 +80,12 @@ DelayNode::DelayNode(InternalPlugin*    plugin,
 	_delay_port->set_property(uris.lv2_maximum, bufs.forge().make(MAX_DELAY_SECONDS));
 	_ports->at(0) = _delay_port;
 
-	_in_port = new InputPort(bufs, this, "in", 0, 1,
+	_in_port = new InputPort(bufs, this, Raul::Symbol("in"), 0, 1,
 	                         PortType::AUDIO, 0, bufs.forge().make(0.0f));
 	_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
 	_ports->at(1) = _in_port;
 
-	_out_port = new OutputPort(bufs, this, "out", 0, 1,
+	_out_port = new OutputPort(bufs, this, Raul::Symbol("out"), 0, 1,
 	                           PortType::AUDIO, 0, bufs.forge().make(0.0f));
 	_out_port->set_property(uris.lv2_name,
 	                        bufs.forge().alloc("Output"));

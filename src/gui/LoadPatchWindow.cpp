@@ -221,7 +221,7 @@ LoadPatchWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
 	if (offset != 0) {
 		std::stringstream ss;
 		ss << symbol << "_" << offset;
-		return ss.str();
+		return Raul::Symbol(ss.str());
 	} else {
 		return symbol;
 	}
@@ -238,7 +238,7 @@ LoadPatchWindow::selection_changed()
 		_symbol_entry->set_sensitive(false);
 	} else {
 		_symbol_entry->set_text(avoid_symbol_clash(
-				symbol_from_filename(get_filename()).c_str()).c_str());
+				symbol_from_filename(get_filename())).c_str());
 		_symbol_entry->set_sensitive(true);
 	}
 }

@@ -35,12 +35,12 @@ namespace Internals {
 class DelayNode : public NodeImpl
 {
 public:
-	DelayNode(InternalPlugin*    plugin,
-	          BufferFactory&     bufs,
-	          const std::string& path,
-	          bool               polyphonic,
-	          PatchImpl*         parent,
-	          SampleRate         srate);
+	DelayNode(InternalPlugin*     plugin,
+	          BufferFactory&      bufs,
+	          const Raul::Symbol& symbol,
+	          bool                polyphonic,
+	          PatchImpl*          parent,
+	          SampleRate          srate);
 
 	~DelayNode();
 

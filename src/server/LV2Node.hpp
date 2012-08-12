@@ -39,11 +39,11 @@ class LV2Plugin;
 class LV2Node : public NodeImpl
 {
 public:
-	LV2Node(LV2Plugin*         plugin,
-	        const std::string& name,
-	        bool               polyphonic,
-	        PatchImpl*         parent,
-	        SampleRate         srate);
+	LV2Node(LV2Plugin*          plugin,
+	        const Raul::Symbol& symbol,
+	        bool                polyphonic,
+	        PatchImpl*          parent,
+	        SampleRate          srate);
 
 	~LV2Node();
 

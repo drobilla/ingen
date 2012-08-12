@@ -88,6 +88,10 @@ CreatePort::pre_process()
 	if (_port_type == PortType::UNKNOWN) {
 		return Event::pre_process_done(UNKNOWN_TYPE, _path);
 	}
+	
+	if (_path.is_root()) {
+		return Event::pre_process_done(BAD_URI, _path);
+	}
 
 	if (_engine.engine_store()->find_object(_path)) {
 		return Event::pre_process_done(_status, _path);
@@ -122,7 +126,7 @@ CreatePort::pre_process()
 	                         poly_i->second.get_bool());
 
 	if (!(_patch_port = _patch->create_port(
-		      *_engine.buffer_factory(), _path.symbol(),
+		      *_engine.buffer_factory(), Raul::Symbol(_path.symbol()),
 		      _port_type, _buf_type, buf_size, _is_output, polyphonic))) {
 		return Event::pre_process_done(CREATION_FAILED, _path);
 	}

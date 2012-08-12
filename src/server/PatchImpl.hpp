@@ -106,13 +106,13 @@ public:
 
 	uint32_t num_ports_non_rt() const;
 
-	PortImpl* create_port(BufferFactory&     bufs,
-	                      const std::string& name,
-	                      PortType           type,
-	                      LV2_URID           buffer_type,
-	                      uint32_t           buffer_size,
-	                      bool               is_output,
-	                      bool               polyphonic);
+	PortImpl* create_port(BufferFactory&      bufs,
+	                      const Raul::Symbol& symbol,
+	                      PortType            type,
+	                      LV2_URID            buffer_type,
+	                      uint32_t            buffer_size,
+	                      bool                is_output,
+	                      bool                polyphonic);
 
 	typedef Raul::List<PortImpl*> Ports;
 
@@ -126,7 +126,7 @@ public:
 		_outputs.push_back(port);
 	}
 
-	Ports::Node* remove_port(const std::string& name);
+	Ports::Node* remove_port(const Raul::Symbol& symbol);
 	void         clear_ports();
 
 	void add_edge(SharedPtr<EdgeImpl> c);

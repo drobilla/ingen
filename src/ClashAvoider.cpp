@@ -107,13 +107,14 @@ ClashAvoider::map_path(const Raul::Path& in)
 				std::stringstream ss;
 				ss << base_path << "_" << offset;
 				if (!exists(ss.str())) {
-					string name = base_path.symbol();
+					std::string name = base_path.symbol();
 					if (name == "")
 						name = "_";
+					Raul::Symbol sym(name);
 					string str = ss.str();
 					InsertRecord i = _symbol_map.insert(make_pair(in, str));
 					Raul::debug << "HIT: offset = " << offset << ", str = " << str << endl;
-					offset = _store.child_name_offset(in.parent(), name, false);
+					offset = _store.child_name_offset(in.parent(), sym, false);
 					_offsets.insert(make_pair(base_path, offset));
 					Raul::debug << " (4) " << i.first->second << endl;
 					return i.first->second;

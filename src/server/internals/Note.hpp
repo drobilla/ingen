@@ -39,12 +39,12 @@ namespace Internals {
 class NoteNode : public NodeImpl
 {
 public:
-	NoteNode(InternalPlugin*    plugin,
-	         BufferFactory&     bufs,
-	         const std::string& path,
-	         bool               polyphonic,
-	         PatchImpl*         parent,
-	         SampleRate         srate);
+	NoteNode(InternalPlugin*     plugin,
+	         BufferFactory&      bufs,
+	         const Raul::Symbol& symbol,
+	         bool                polyphonic,
+	         PatchImpl*          parent,
+	         SampleRate          srate);
 
 	~NoteNode();
 

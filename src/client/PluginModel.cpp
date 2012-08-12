@@ -159,7 +159,7 @@ PluginModel::default_node_symbol() const
 	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String)
 		return Raul::Symbol::symbolify(name_atom.get_string());
 	else
-		return "_";
+		return Raul::Symbol("_");
 }
 
 string

@@ -44,24 +44,24 @@ InternalPlugin* TriggerNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(uris, NS_INTERNALS "Trigger", "trigger");
 }
 
-TriggerNode::TriggerNode(InternalPlugin*    plugin,
-                         BufferFactory&     bufs,
-                         const std::string& path,
-                         bool               polyphonic,
-                         PatchImpl*         parent,
-                         SampleRate         srate)
-	: NodeImpl(plugin, path, false, parent, srate)
+TriggerNode::TriggerNode(InternalPlugin*     plugin,
+                         BufferFactory&      bufs,
+                         const Raul::Symbol& symbol,
+                         bool                polyphonic,
+                         PatchImpl*          parent,
+                         SampleRate          srate)
+	: NodeImpl(plugin, symbol, false, parent, srate)
 	, _learning(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(5);
 
-	_midi_in_port = new InputPort(bufs, this, "input", 0, 1,
+	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Raul::Atom());
 	_midi_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
 	_ports->at(0) = _midi_in_port;
 
-	_note_port = new InputPort(bufs, this, "note", 1, 1,
+	_note_port = new InputPort(bufs, this, Raul::Symbol("note"), 1, 1,
 	                           PortType::CONTROL, 0, bufs.forge().make(60.0f));
 	_note_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
 	_note_port->set_property(uris.lv2_maximum, bufs.forge().make(127.0f));
@@ -69,19 +69,19 @@ TriggerNode::TriggerNode(InternalPlugin*    plugin,
 	_note_port->set_property(uris.lv2_name, bufs.forge().alloc("Note"));
 	_ports->at(1) = _note_port;
 
-	_gate_port = new OutputPort(bufs, this, "gate", 2, 1,
+	_gate_port = new OutputPort(bufs, this, Raul::Symbol("gate"), 2, 1,
 	                            PortType::CV, 0, bufs.forge().make(0.0f));
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_gate_port->set_property(uris.lv2_name, bufs.forge().alloc("Gate"));
 	_ports->at(2) = _gate_port;
 
-	_trig_port = new OutputPort(bufs, this, "trigger", 3, 1,
+	_trig_port = new OutputPort(bufs, this, Raul::Symbol("trigger"), 3, 1,
 	                            PortType::CV, 0, bufs.forge().make(0.0f));
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_trig_port->set_property(uris.lv2_name, bufs.forge().alloc("Trigger"));
 	_ports->at(3) = _trig_port;
 
-	_vel_port = new OutputPort(bufs, this, "velocity", 4, 1,
+	_vel_port = new OutputPort(bufs, this, Raul::Symbol("velocity"), 4, 1,
 	                           PortType::CV, 0, bufs.forge().make(0.0f));
 	_vel_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
 	_vel_port->set_property(uris.lv2_maximum, bufs.forge().make(1.0f));

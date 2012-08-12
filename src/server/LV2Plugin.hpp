@@ -42,13 +42,13 @@ class LV2Plugin : public PluginImpl
 public:
 	LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri);
 
-	NodeImpl* instantiate(BufferFactory&     bufs,
-	                      const std::string& name,
-	                      bool               polyphonic,
-	                      PatchImpl*         parent,
-	                      Engine&            engine);
+	NodeImpl* instantiate(BufferFactory&      bufs,
+	                      const Raul::Symbol& symbol,
+	                      bool                polyphonic,
+	                      PatchImpl*          parent,
+	                      Engine&             engine);
 
-	const std::string symbol() const;
+	const Raul::Symbol symbol() const;
 
 	SharedPtr<LV2Info> lv2_info() const { return _lv2_info; }
 
