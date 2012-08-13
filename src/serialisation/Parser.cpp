@@ -297,36 +297,8 @@ parse_patch(Ingen::World*                            world,
 	const Sord::URI ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
 	const Sord::URI lv2_port(*world->rdf_world(),        LV2_CORE__port);
 
-	const URIs&       uris  = world->uris();
 	const Sord::Node& patch = subject_node;
 	const Sord::Node  nil;
-
-	uint32_t patch_poly = 0;
-
-	// Use parameter overridden polyphony, if given
-	if (data) {
-		GraphObject::Properties::iterator poly_param = data.get().find(uris.ingen_polyphony);
-		if (poly_param != data.get().end() &&
-		    poly_param->second.type() == world->forge().Int) {
-			patch_poly = poly_param->second.get_int32();
-		}
-	}
-
-	// Load polyphony from file if necessary
-	if (patch_poly == 0) {
-		Sord::Iter i = model.find(subject_node, ingen_polyphony, nil);
-		if (!i.end()) {
-			const Sord::Node& poly_node = i.get_object();
-			if (poly_node.is_int())
-				patch_poly = poly_node.to_int();
-			else
-				LOG(warn) << "Patch has non-integer polyphony, assuming 1" << endl;
-		}
-	}
-
-	// No polyphony found anywhere, use 1
-	if (patch_poly == 0)
-		patch_poly = 1;
 
 	const Glib::ustring base_uri = model.base_uri().to_string();
 
