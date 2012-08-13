@@ -90,12 +90,11 @@ SetPortValue::apply(Context& context)
 	Buffer* const buf  = _port->buffer(0).get();
 
 	if (buf->type() == uris.atom_Sound || buf->type() == uris.atom_Float) {
-		if (_value.type() != uris.forge.Float) {
+		if (_value.type() == uris.forge.Float) {
+			_port->set_control_value(context, _time, _value.get_float());
+		} else {
 			_status = TYPE_MISMATCH;
-			return;
 		}
-
-		_port->set_control_value(context, _time, _value.get_float());
 	} else if (buf->type() == uris.atom_Sequence) {
 		buf->prepare_write(context);  // FIXME: incorrect
 		if (buf->append_event(_time - context.start(),
@@ -104,11 +103,10 @@ SetPortValue::apply(Context& context)
 		                      (const uint8_t*)_value.get_body())) {
 			_port->raise_set_by_user_flag();
 		} else {
-			Raul::warn(Raul::fmt("Error writing to port %1%\n")
-			           % _port->path().c_str());
+			_status = NO_SPACE;
 		}
 	} else {
-		Raul::warn(Raul::fmt("Unknown value type %1%\n") % _value.type());
+		_status = BAD_VALUE_TYPE;
 	}
 }
 
