@@ -98,13 +98,12 @@ struct Serialiser::Impl {
 
 	std::string finish();
 
-	Raul::Path       _root_path;
-	SharedPtr<Store> _store;
-	Mode             _mode;
-	std::string      _base_uri;
-	World&           _world;
-	Sord::Model*     _model;
-	Sratom*          _sratom;
+	Raul::Path   _root_path;
+	Mode         _mode;
+	std::string  _base_uri;
+	World&       _world;
+	Sord::Model* _model;
+	Sratom*      _sratom;
 };
 
 Serialiser::Serialiser(World& world)
@@ -353,9 +352,8 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 	const GraphObject::Properties props = patch->properties(Resource::INTERNAL);
 	serialise_properties(patch_id, props);
 
-	for (Store::const_iterator n = _world.store()->children_begin(patch);
-	     n != _world.store()->children_end(patch); ++n) {
-
+	const Store::const_range kids = _world.store()->children_range(patch);
+	for (Store::const_iterator n = kids.first; n != kids.second; ++n) {
 		if (n->first.parent() != patch->path())
 			continue;
 

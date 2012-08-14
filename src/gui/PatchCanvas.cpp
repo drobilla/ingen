@@ -290,9 +290,10 @@ PatchCanvas::build_plugin_menu()
 void
 PatchCanvas::build()
 {
+	const Store::const_range kids = _app.store()->children_range(_patch);
+
 	// Create modules for nodes
-	for (Store::const_iterator i = _app.store()->children_begin(_patch);
-	     i != _app.store()->children_end(_patch); ++i) {
+	for (Store::const_iterator i = kids.first; i != kids.second; ++i) {
 		SharedPtr<NodeModel> node = PtrCast<NodeModel>(i->second);
 		if (node && node->parent() == _patch)
 			add_node(node);

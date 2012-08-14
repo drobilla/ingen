@@ -135,7 +135,8 @@ LoadPluginWindow::name_changed()
 		const string sym = _node_name_entry->get_text();
 		if (!Symbol::is_valid(sym)) {
 			_add_button->property_sensitive() = false;
-		} else if (_app->store()->find_child(_patch, Symbol(sym))) {
+		} else if (_app->store()->find(_patch->path().child(Symbol(sym)))
+		           != _app->store()->end()) {
 			_add_button->property_sensitive() = false;
 		} else {
 			_add_button->property_sensitive() = true;

@@ -42,35 +42,16 @@ Store::add(GraphObject* o)
 	}
 }
 
-Store::const_iterator
-Store::children_begin(SharedPtr<const GraphObject> o) const
+Store::const_range
+Store::children_range(SharedPtr<const GraphObject> o) const
 {
-	const_iterator parent = find(o->path());
-	assert(parent != end());
-	++parent;
-	return parent;
-}
-
-Store::const_iterator
-Store::children_end(SharedPtr<const GraphObject> o) const
-{
-	const_iterator parent = find(o->path());
-	assert(parent != end());
-	return find_descendants_end(parent);
-}
-
-SharedPtr<GraphObject>
-Store::find_child(SharedPtr<const GraphObject> parent,
-                  const Raul::Symbol&          symbol) const
-{
-	const_iterator pi = find(parent->path());
-	assert(pi != end());
-	const_iterator children_end = find_descendants_end(pi);
-	const_iterator child = find(pi, children_end, parent->path().child(symbol));
-	if (child != end())
-		return child->second;
-	else
-		return SharedPtr<GraphObject>();
+	const const_iterator parent = find(o->path());
+	if (parent != end()) {
+		const_iterator first_child = parent;
+		++first_child;
+		return std::make_pair(first_child, find_descendants_end(parent));
+	}
+	return make_pair(end(), end());
 }
 
 unsigned
