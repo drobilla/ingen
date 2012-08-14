@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
@@ -22,7 +23,6 @@
 #include "Broadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 
 namespace Ingen {
@@ -47,11 +47,11 @@ CreatePatch::CreatePatch(Engine&                     engine,
 bool
 CreatePatch::pre_process()
 {
-	if (_path.is_root() || _engine.engine_store()->find_object(_path) != NULL) {
+	if (_path.is_root() || _engine.store()->get(_path)) {
 		return Event::pre_process_done(EXISTS, _path);
 	}
 
-	_parent = _engine.engine_store()->find_patch(_path.parent());
+	_parent = dynamic_cast<PatchImpl*>(_engine.store()->get(_path.parent()));
 	if (!_parent) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
@@ -91,8 +91,8 @@ CreatePatch::pre_process()
 
 	_patch->activate(*_engine.buffer_factory());
 
-	// Insert into EngineStore
-	_engine.engine_store()->add(_patch);
+	// Insert into Store
+	_engine.store()->add(_patch);
 
 	_update = _patch->properties();
 

@@ -17,32 +17,52 @@
 #ifndef INGEN_STORE_HPP
 #define INGEN_STORE_HPP
 
-#include <string>
+#include <map>
 
 #undef nil
 #include <glibmm/thread.h>
 
-#include "raul/PathTable.hpp"
-
 #include "ingen/GraphObject.hpp"
+#include "raul/Deletable.hpp"
+#include "raul/Noncopyable.hpp"
 
 namespace Ingen {
 
 /** Store of objects in the patch hierarchy.
  * @ingroup IngenShared
  */
-class Store : public Raul::PathTable< SharedPtr<GraphObject> > {
+class Store : public Raul::Noncopyable
+            , public Raul::Deletable
+            , public std::map< const Raul::Path, SharedPtr<GraphObject> > {
 public:
-	virtual ~Store() {}
+	void add(GraphObject* o);
 
-	virtual void add(GraphObject* o);
-
-	typedef Raul::Table< Raul::Path, SharedPtr<GraphObject> > Objects;
+	GraphObject* get(const Raul::Path& path) {
+		const iterator i = find(path);
+		return (i == end()) ? NULL : i->second.get();
+	}
 
 	typedef std::pair<const_iterator, const_iterator> const_range;
 
-	const_range
-	children_range(SharedPtr<const GraphObject> o) const;
+	typedef std::map< Raul::Path, SharedPtr<GraphObject> > Objects;
+
+	iterator       find_descendants_end(Store::iterator parent);
+	const_iterator find_descendants_end(Store::const_iterator parent) const;
+
+	const_range children_range(SharedPtr<const GraphObject> o) const;
+
+	/** Remove the object at @p top and all its children from the store.
+	 *
+	 * @param removed Filled with all the removed objects.  Note this may be
+	 * many objects since any children will be removed as well.
+	 */
+	void remove(iterator top, Objects& removed);
+
+	/** Rename (move) the object at @p top to @p new_path.
+	 *
+	 * Note this invalidates @p i.
+	 */
+	void rename(iterator i, const Raul::Path& new_path);
 
 	unsigned child_name_offset(const Raul::Path&   parent,
 	                           const Raul::Symbol& symbol,

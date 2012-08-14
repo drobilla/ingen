@@ -18,12 +18,12 @@
 
 #include "ingen/GraphObject.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Store.hpp"
 
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "Get.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
@@ -46,7 +46,7 @@ Get::Get(Engine&              engine,
 	, _uri(uri)
 	, _object(NULL)
 	, _plugin(NULL)
-	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
+	, _lock(engine.store()->lock(), Glib::NOT_LOCK)
 {
 }
 
@@ -61,7 +61,7 @@ Get::pre_process()
 	} else if (_uri == "ingen:engine") {
 		return Event::pre_process_done(SUCCESS);
 	} else if (GraphObject::uri_is_path(_uri)) {
-		_object = _engine.engine_store()->find_object(GraphObject::uri_to_path(_uri));
+		_object = _engine.store()->get(GraphObject::uri_to_path(_uri));
 		return Event::pre_process_done(_object ? SUCCESS : NOT_FOUND, _uri);
 	} else {
 		_plugin = _engine.node_factory()->plugin(_uri);

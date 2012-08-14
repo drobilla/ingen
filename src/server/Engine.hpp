@@ -29,6 +29,7 @@ namespace Raul { class Maid; }
 
 namespace Ingen {
 
+class Store;
 class World;
 
 namespace Server {
@@ -37,7 +38,6 @@ class Broadcaster;
 class BufferFactory;
 class ControlBindings;
 class Driver;
-class EngineStore;
 class Event;
 class EventWriter;
 class NodeFactory;
@@ -104,7 +104,7 @@ public:
 
 	ProcessContext& process_context() { return _process_context; }
 
-	SharedPtr<EngineStore> engine_store() const;
+	SharedPtr<Store> store() const;
 
 	size_t event_queue_size() const;
 

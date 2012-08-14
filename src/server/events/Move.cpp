@@ -16,13 +16,13 @@
 
 #include <glibmm/thread.h>
 
+#include "ingen/Store.hpp"
 #include "raul/Path.hpp"
 
 #include "Broadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EnginePort.hpp"
-#include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "events/Move.hpp"
@@ -41,7 +41,7 @@ Move::Move(Engine&              engine,
 	, _old_path(path)
 	, _new_path(new_path)
 	, _parent_patch(NULL)
-	, _store_iterator(engine.engine_store()->end())
+	, _port(NULL)
 {
 }
 
@@ -52,43 +52,23 @@ Move::~Move()
 bool
 Move::pre_process()
 {
-	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
+	Glib::RWLock::WriterLock lock(_engine.store()->lock());
 
 	if (!_old_path.parent().is_parent_of(_new_path)) {
 		return Event::pre_process_done(PARENT_DIFFERS, _new_path);
 	}
 
-	_store_iterator = _engine.engine_store()->find(_old_path);
-	if (_store_iterator == _engine.engine_store()->end()) {
+	const Store::iterator i = _engine.store()->find(_old_path);
+	if (i == _engine.store()->end()) {
 		return Event::pre_process_done(NOT_FOUND, _old_path);
 	}
 
-	if (_engine.engine_store()->find_object(_new_path)) {
+	if (_engine.store()->find(_new_path) != _engine.store()->end()) {
 		return Event::pre_process_done(EXISTS, _new_path);
 	}
 
-	SharedPtr< Raul::Table< Raul::Path, SharedPtr<GraphObject> > > removed
-		= _engine.engine_store()->remove(_store_iterator);
-
-	assert(removed->size() > 0);
-
-	for (Raul::Table< Raul::Path, SharedPtr<GraphObject> >::iterator i = removed->begin(); i != removed->end(); ++i) {
-		const Raul::Path& child_old_path = i->first;
-		assert(Raul::Path::descendant_comparator(_old_path, child_old_path));
-
-		Raul::Path child_new_path;
-		if (child_old_path == _old_path) {
-			child_new_path = _new_path;
-		} else {
-			child_new_path = Raul::Path(
-				_new_path.base() + child_old_path.substr(_old_path.length() + 1));
-		}
-
-		PtrCast<GraphObjectImpl>(i->second)->set_path(child_new_path);
-		i->first = child_new_path;
-	}
-
-	_engine.engine_store()->add(*removed.get());
+	_port = dynamic_cast<PortImpl*>(i->second.get());
+	_engine.store()->rename(i, _new_path);
 
 	return Event::pre_process_done(SUCCESS);
 }
@@ -96,8 +76,7 @@ Move::pre_process()
 void
 Move::execute(ProcessContext& context)
 {
-	SharedPtr<PortImpl> port = PtrCast<PortImpl>(_store_iterator->second);
-	if (port && port->parent()->parent() == NULL) {
+	if (_port && !_port->parent()->parent()) {
 		EnginePort* eport = _engine.driver()->engine_port(context, _new_path);
 		if (eport) {
 			eport->move(_new_path);

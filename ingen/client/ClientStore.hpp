@@ -25,9 +25,7 @@
 #include "ingen/client/signal.hpp"
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
-#include "raul/PathTable.hpp"
 #include "raul/SharedPtr.hpp"
-#include "raul/TableImpl.hpp"
 
 namespace Raul { class Atom; }
 
@@ -67,7 +65,7 @@ public:
 
 	void clear();
 
-	typedef Raul::Table<Raul::URI, SharedPtr<PluginModel> > Plugins;
+	typedef std::map< const Raul::URI, SharedPtr<PluginModel> > Plugins;
 	SharedPtr<const Plugins> plugins() const                   { return _plugins; }
 	SharedPtr<Plugins>       plugins()                         { return _plugins; }
 	void                     set_plugins(SharedPtr<Plugins> p) { _plugins = p; }
@@ -109,8 +107,6 @@ public:
 	INGEN_SIGNAL(new_plugin, void, SharedPtr<PluginModel>);
 
 private:
-	void add(GraphObject* o) { throw; }
-
 	SharedPtr<ObjectModel> _object(const Raul::Path& path);
 	SharedPtr<PluginModel> _plugin(const Raul::URI& uri);
 	SharedPtr<Resource>    _resource(const Raul::URI& uri);

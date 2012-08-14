@@ -22,7 +22,6 @@
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
-#include "raul/PathTable.hpp"
 #include "raul/log.hpp"
 
 #define LOG(s) (s("[ClientStore] "))
@@ -108,45 +107,34 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 SharedPtr<ObjectModel>
 ClientStore::remove_object(const Raul::Path& path)
 {
-	iterator i = find(path);
-
-	if (i != end()) {
-		assert((*i).second->path() == path);
-		SharedPtr<ObjectModel>    result  = PtrCast<ObjectModel>((*i).second);
-		iterator                  end     = find_descendants_end(i);
-		SharedPtr<Store::Objects> removed = yank(i, end);
-
-		LOG(Raul::debug) << "Removing " << i->first << " {" << endl;
-		for (iterator i = removed->begin(); i != removed->end(); ++i) {
-			LOG(Raul::debug) << "\t" << i->first << endl;
-		}
-		LOG(Raul::debug) << "}" << endl;
-
-		if (result)
-			result->signal_destroyed().emit();
-
-		if (!result->path().is_root()) {
-			assert(result->parent());
-
-			SharedPtr<ObjectModel> parent = _object(result->path().parent());
-			if (parent) {
-				parent->remove_child(result);
-			}
-		}
-
-		assert(!object(path));
-
-		return result;
-
-	} else {
+	// Find the object, the "top" of the tree to remove
+	const iterator top = find(path);
+	if (top == end()) {
 		return SharedPtr<ObjectModel>();
 	}
+
+	// Remove the object and all its descendants
+	Objects removed;
+	remove(top, removed);
+
+	// Notify everything that needs to know this object is going away
+	SharedPtr<ObjectModel> object = PtrCast<ObjectModel>(top->second);
+	if (object) {
+		// Notify the program this object is going away
+		object->signal_destroyed().emit();
+
+		// Remove object from parent model if applicable
+		if (object->parent()) {
+			object->parent()->remove_child(object);
+		}
+	}
+
+	return object;
 }
 
 SharedPtr<PluginModel>
 ClientStore::_plugin(const Raul::URI& uri)
 {
-	assert(uri.length() > 0);
 	Plugins::iterator i = _plugins->find(uri);
 	if (i == _plugins->end())
 		return SharedPtr<PluginModel>();
@@ -163,8 +151,7 @@ ClientStore::plugin(const Raul::URI& uri) const
 SharedPtr<ObjectModel>
 ClientStore::_object(const Raul::Path& path)
 {
-	assert(path.length() > 0);
-	iterator i = find(path);
+	const iterator i = find(path);
 	if (i == end()) {
 		return SharedPtr<ObjectModel>();
 	} else {
@@ -214,54 +201,18 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 void
 ClientStore::del(const Raul::URI& uri)
 {
-	if (!GraphObject::uri_is_path(uri)) {
-		return;
+	if (GraphObject::uri_is_path(uri)) {
+		remove_object(GraphObject::uri_to_path(uri));
 	}
-
-	const Raul::Path path(GraphObject::uri_to_path(uri));
-	SharedPtr<ObjectModel> removed = remove_object(path);
-	removed.reset();
-	LOG(Raul::debug) << "Removed object " << path
-	                 << ", count: " << removed.use_count();
 }
 
 void
 ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
 {
-	iterator parent = find(old_path);
-	if (parent == end()) {
-		LOG(Raul::error) << "Failed to find object " << old_path
-		                 << " to move." << endl;
-		return;
+	const iterator top = find(old_path);
+	if (top != end()) {
+		rename(top, new_path);
 	}
-
-	typedef Raul::Table<Raul::Path, SharedPtr<GraphObject> > Removed;
-
-	iterator           end     = find_descendants_end(parent);
-	SharedPtr<Removed> removed = yank(parent, end);
-
-	assert(removed->size() > 0);
-
-	typedef Raul::Table<Raul::Path, SharedPtr<GraphObject> > PathTable;
-	for (PathTable::iterator i = removed->begin(); i != removed->end(); ++i) {
-		const Raul::Path& child_old_path = i->first;
-		assert(Raul::Path::descendant_comparator(old_path, child_old_path));
-
-		Raul::Path child_new_path;
-		if (child_old_path == old_path) {
-			child_new_path = new_path;
-		} else {
-			child_new_path = Raul::Path(
-				new_path.base() + child_old_path.substr(old_path.length() + 1));
-		}
-
-		LOG(Raul::info)(Raul::fmt("Renamed %1% to %2%\n")
-		                % child_old_path.c_str() % child_new_path.c_str());
-		PtrCast<ObjectModel>(i->second)->set_path(child_new_path);
-		i->first = child_new_path;
-	}
-
-	cram(*removed.get());
 }
 
 void

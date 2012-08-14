@@ -17,7 +17,6 @@
 #include "ingen/GraphObject.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/URIs.hpp"
-#include "raul/TableImpl.hpp"
 
 namespace Ingen {
 namespace Client {

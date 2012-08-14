@@ -18,6 +18,7 @@
 
 #include <glibmm/thread.h>
 
+#include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "raul/Maid.hpp"
 
@@ -28,7 +29,6 @@
 #include "CreatePort.hpp"
 #include "Delta.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
@@ -108,10 +108,10 @@ Delta::pre_process()
 	const bool is_graph_object = GraphObject::uri_is_path(_subject);
 
 	// Take a writer lock while we modify the store
-	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
+	Glib::RWLock::WriterLock lock(_engine.store()->lock());
 
 	_object = is_graph_object
-		? _engine.engine_store()->find_object(GraphObject::uri_to_path(_subject))
+		? static_cast<Ingen::Resource*>(_engine.store()->get(GraphObject::uri_to_path(_subject)))
 		: static_cast<Ingen::Resource*>(_engine.node_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
@@ -139,7 +139,7 @@ Delta::pre_process()
 		if (_create_event) {
 			_create_event->pre_process();
 			// Grab the object for applying properties, if the create-event succeeded
-			_object = _engine.engine_store()->find_object(path);
+			_object = _engine.store()->get(path);
 		} else {
 			return Event::pre_process_done(BAD_OBJECT_TYPE, _subject);
 		}

@@ -90,9 +90,6 @@ RenameWindow::values_changed()
 		           _object->parent()->path().child(Raul::Symbol(symbol)))) {
 		_message_label->set_text("An object already exists with that path");
 		_ok_button->property_sensitive() = false;
-	} else if (label.empty()) {
-		_message_label->set_text("Label must be at least 1 character");
-		_ok_button->property_sensitive() = false;
 	} else {
 		_message_label->set_text("");
 		_ok_button->property_sensitive() = true;

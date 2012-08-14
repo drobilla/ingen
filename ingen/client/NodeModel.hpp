@@ -96,7 +96,7 @@ protected:
 
 	virtual void clear();
 
-	Ports                  _ports; ///< Vector of ports (not a Table to preserve order)
+	Ports                  _ports; ///< Vector of ports
 	Raul::URI              _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
 	SharedPtr<PluginModel> _plugin; ///< The plugin this node is an instance of
 

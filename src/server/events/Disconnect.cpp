@@ -18,6 +18,7 @@
 
 #include <glibmm/thread.h>
 
+#include "ingen/Store.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 #include "raul/log.hpp"
@@ -27,7 +28,6 @@
 #include "DuplexPort.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
@@ -113,7 +113,7 @@ Disconnect::Impl::Impl(Engine&     e,
 bool
 Disconnect::pre_process()
 {
-	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock());
+	Glib::RWLock::WriterLock lock(_engine.store()->lock());
 
 	if (_tail_path.parent().parent() != _head_path.parent().parent()
 	    && _tail_path.parent() != _head_path.parent().parent()
@@ -121,15 +121,16 @@ Disconnect::pre_process()
 		return Event::pre_process_done(PARENT_DIFFERS, _head_path);
 	}
 
-	PortImpl* tail = _engine.engine_store()->find_port(_tail_path);
-	PortImpl* head = _engine.engine_store()->find_port(_head_path);
-
+	PortImpl* tail = dynamic_cast<PortImpl*>(_engine.store()->get(_tail_path));
 	if (!tail) {
 		return Event::pre_process_done(PORT_NOT_FOUND, _tail_path);
-	} else if (!head) {
-		return Event::pre_process_done(PORT_NOT_FOUND, _head_path);
 	}
 
+	PortImpl* head = dynamic_cast<PortImpl*>(_engine.store()->get(_head_path));
+	if (!head) {
+		return Event::pre_process_done(PORT_NOT_FOUND, _head_path);
+	}
+	
 	NodeImpl* const src_node = tail->parent_node();
 	NodeImpl* const dst_node = head->parent_node();
 

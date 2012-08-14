@@ -15,6 +15,7 @@
 */
 
 #include "ingen/LV2Features.hpp"
+#include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "raul/log.hpp"
@@ -24,7 +25,6 @@
 #include "ControlBindings.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"

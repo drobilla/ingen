@@ -16,6 +16,7 @@
 
 #include <utility>
 
+#include "ingen/Store.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "raul/Array.hpp"
@@ -28,7 +29,6 @@
 #include "Driver.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 
@@ -93,12 +93,17 @@ CreatePort::pre_process()
 		return Event::pre_process_done(BAD_URI, _path);
 	}
 
-	if (_engine.engine_store()->find_object(_path)) {
+	if (_engine.store()->get(_path)) {
 		return Event::pre_process_done(_status, _path);
 	}
 
-	if (!(_patch = _engine.engine_store()->find_patch(_path.parent()))) {
+	GraphObject* parent = _engine.store()->get(_path.parent());
+	if (!parent) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
+	}
+
+	if (!(_patch = dynamic_cast<PatchImpl*>(parent))) {
+		return Event::pre_process_done(INVALID_PARENT_PATH, _path.parent());
 	}
 
 	const URIs&          uris           = _engine.world()->uris();
@@ -133,7 +138,7 @@ CreatePort::pre_process()
 
 	_patch_port->properties().insert(_properties.begin(), _properties.end());
 
-	_engine.engine_store()->add(_patch_port);
+	_engine.store()->add(_patch_port);
 	if (_is_output) {
 		_patch->add_output(new Raul::List<PortImpl*>::Node(_patch_port));
 	} else {

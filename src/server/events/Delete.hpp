@@ -17,8 +17,9 @@
 #ifndef INGEN_EVENTS_DELETE_HPP
 #define INGEN_EVENTS_DELETE_HPP
 
+#include "ingen/Store.hpp"
+
 #include "Event.hpp"
-#include "EngineStore.hpp"
 #include "PatchImpl.hpp"
 #include "ControlBindings.hpp"
 
@@ -81,8 +82,7 @@ private:
 	DisconnectAll*                 _disconnect_event;
 
 	SharedPtr<ControlBindings::Bindings> _removed_bindings;
-
-	SharedPtr< Raul::Table<Raul::Path, SharedPtr<GraphObject> > > _removed_table;
+	Store::Objects                       _removed_objects;
 
 	Glib::RWLock::WriterLock _lock;
 };

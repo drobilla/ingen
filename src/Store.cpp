@@ -18,8 +18,6 @@
 #include <string>
 
 #include "ingen/Store.hpp"
-#include "raul/PathTable.hpp"
-#include "raul/TableImpl.hpp"
 #include "raul/log.hpp"
 
 using namespace std;
@@ -42,6 +40,41 @@ Store::add(GraphObject* o)
 	}
 }
 
+/*
+  TODO: These methods are currently O(n_children) but should logarithmic.  The
+  std::map methods do not allow passing a comparator, but std::upper_bound
+  does.  This should be achievable by making a rooted comparator that is a
+  normal ordering except compares a special sentinel value as the greatest
+  element that is a child of the parent.  Searching for this sentinel should
+  then find the end of the descendants in logarithmic time.
+*/
+
+Store::iterator
+Store::find_descendants_end(const iterator parent)
+{
+	iterator descendants_end = parent;
+	++descendants_end;
+	while (descendants_end != end() &&
+	       descendants_end->first.is_child_of(parent->first)) {
+		++descendants_end;
+	}
+
+	return descendants_end;
+}
+
+Store::const_iterator
+Store::find_descendants_end(const const_iterator parent) const
+{
+	const_iterator descendants_end = parent;
+	++descendants_end;
+	while (descendants_end != end() &&
+	       descendants_end->first.is_child_of(parent->first)) {
+		++descendants_end;
+	}
+
+	return descendants_end;
+}
+
 Store::const_range
 Store::children_range(SharedPtr<const GraphObject> o) const
 {
@@ -52,6 +85,38 @@ Store::children_range(SharedPtr<const GraphObject> o) const
 		return std::make_pair(first_child, find_descendants_end(parent));
 	}
 	return make_pair(end(), end());
+}
+
+void
+Store::remove(const iterator top, Objects& removed)
+{
+	if (top != end()) {
+		const iterator descendants_end = find_descendants_end(top);
+		removed.insert(top, descendants_end);
+		erase(top, descendants_end);
+	}
+}
+
+void
+Store::rename(const iterator top, const Raul::Path& new_path)
+{
+	const Raul::Path old_path = top->first;
+
+	// Remove the object and all its descendants
+	Objects removed;
+	remove(top, removed);
+
+	// Rename all the removed objects
+	for (Objects::const_iterator i = removed.begin(); i != removed.end(); ++i) {
+		const Raul::Path path = (i->first == old_path)
+			? new_path
+			: new_path.child(
+				Raul::Path(i->first.substr(old_path.base().length() - 1)));
+
+		i->second->set_path(path);
+		assert(find(path) == end());  // Shouldn't be dropping objects!
+		insert(make_pair(path, i->second));
+	}
 }
 
 unsigned

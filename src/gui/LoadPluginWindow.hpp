@@ -27,7 +27,6 @@
 #include <gtkmm/treeview.h>
 
 #include "raul/SharedPtr.hpp"
-#include "raul/Table.hpp"
 
 #include "ingen_config.h"
 #include "ingen/GraphObject.hpp"

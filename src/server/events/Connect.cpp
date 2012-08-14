@@ -16,6 +16,7 @@
 
 #include <glibmm/thread.h>
 
+#include "ingen/Store.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
@@ -23,7 +24,6 @@
 #include "Connect.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
@@ -52,24 +52,26 @@ Connect::Connect(Engine&              engine,
 bool
 Connect::pre_process()
 {
-	Glib::RWLock::ReaderLock rlock(_engine.engine_store()->lock());
+	Glib::RWLock::ReaderLock rlock(_engine.store()->lock());
 
-	PortImpl* tail = _engine.engine_store()->find_port(_tail_path);
-	PortImpl* head = _engine.engine_store()->find_port(_head_path);
+	GraphObject* tail = _engine.store()->get(_tail_path);
 	if (!tail) {
-		return Event::pre_process_done(PORT_NOT_FOUND, _tail_path);
-	} else if (!head) {
-		return Event::pre_process_done(PORT_NOT_FOUND, _head_path);
+		return Event::pre_process_done(NOT_FOUND, _tail_path);
+	}
+		
+	GraphObject* head = _engine.store()->get(_head_path);
+	if (!head) {
+		return Event::pre_process_done(NOT_FOUND, _head_path);
 	}
 
 	OutputPort* tail_output = dynamic_cast<OutputPort*>(tail);
 	_head                   = dynamic_cast<InputPort*>(head);
 	if (!tail_output || !_head) {
-		return Event::pre_process_done(DIRECTION_MISMATCH, _head_path);
+		return Event::pre_process_done(BAD_REQUEST, _head_path);
 	}
 
-	NodeImpl* const tail_node = tail->parent_node();
-	NodeImpl* const head_node = head->parent_node();
+	NodeImpl* const tail_node = tail_output->parent_node();
+	NodeImpl* const head_node = _head->parent_node();
 	if (!tail_node || !head_node) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path);
 	}
@@ -109,7 +111,7 @@ Connect::pre_process()
 	rlock.release();
 
 	{
-		Glib::RWLock::ReaderLock wlock(_engine.engine_store()->lock());
+		Glib::RWLock::ReaderLock wlock(_engine.store()->lock());
 
 		/* Need to be careful about patch port edges here and adding a
 		   node's parent as a dependant/provider, or adding a patch as its own

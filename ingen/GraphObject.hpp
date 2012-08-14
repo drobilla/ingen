@@ -31,6 +31,7 @@ namespace Ingen {
 
 class Edge;
 class Plugin;
+class Store;
 
 /** An object on the audio graph - Patch, Node, Port, etc.
  *
@@ -80,6 +81,9 @@ public:
 	}
 
 protected:
+	friend class Store;
+	virtual void set_path(const Raul::Path& p) = 0;
+
 	GraphObject(URIs& uris, const Raul::Path& path)
 		: Resource(uris, path_to_uri(path))
 	{}

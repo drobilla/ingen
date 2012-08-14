@@ -19,6 +19,7 @@
 #include <boost/format.hpp>
 #include <glibmm/thread.h>
 
+#include "ingen/Store.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
@@ -26,7 +27,6 @@
 #include "Broadcaster.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "InputPort.hpp"
 #include "NodeImpl.hpp"
 #include "OutputPort.hpp"
@@ -82,17 +82,18 @@ DisconnectAll::~DisconnectAll()
 bool
 DisconnectAll::pre_process()
 {
-	Glib::RWLock::WriterLock lock(_engine.engine_store()->lock(), Glib::NOT_LOCK);
+	Glib::RWLock::WriterLock lock(_engine.store()->lock(), Glib::NOT_LOCK);
 
 	if (!_deleting) {
 		lock.acquire();
 
-		_parent = _engine.engine_store()->find_patch(_parent_path);
+		_parent = dynamic_cast<PatchImpl*>(_engine.store()->get(_parent_path));
 		if (!_parent) {
 			return Event::pre_process_done(PARENT_NOT_FOUND, _parent_path);
 		}
 
-		GraphObjectImpl* object = _engine.engine_store()->find_object(_path);
+		GraphObjectImpl* const object = dynamic_cast<GraphObjectImpl*>(
+			_engine.store()->get(_path));
 		if (!object) {
 			return Event::pre_process_done(NOT_FOUND, _path);
 		}

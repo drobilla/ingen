@@ -30,7 +30,6 @@
 #include "ControlBindings.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "Event.hpp"
 #include "EventWriter.hpp"
 #include "NodeFactory.hpp"
@@ -49,12 +48,13 @@ namespace Server {
 Raul::ThreadVar<unsigned> ThreadManager::flags(0);
 bool                      ThreadManager::single_threaded(true);
 
-Engine::Engine(Ingen::World* a_world)
-	: _world(a_world)
+Engine::Engine(Ingen::World* world)
+	: _world(world)
 	, _broadcaster(new Broadcaster())
+	, _buffer_factory(new BufferFactory(*this, world->uris()))
 	, _control_bindings(NULL)
 	, _maid(new Raul::Maid(event_queue_size()))
-	, _node_factory(new NodeFactory(a_world))
+	, _node_factory(new NodeFactory(world))
 	, _pre_processor(new PreProcessor())
 	, _post_processor(new PostProcessor(*this))
 	, _event_writer(new EventWriter(*this))
@@ -64,14 +64,8 @@ Engine::Engine(Ingen::World* a_world)
 	, _quit_flag(false)
 	, _direct_driver(true)
 {
-	if (a_world->store()) {
-		SharedPtr<EngineStore> estore = PtrCast<EngineStore>(a_world->store());
-		_buffer_factory = estore->buffer_factory().get();
-	} else {
-		_buffer_factory = new BufferFactory(*this, a_world->uris());
-		a_world->set_store(
-			SharedPtr<Ingen::Store>(
-				new EngineStore(SharedPtr<BufferFactory>(_buffer_factory))));
+	if (!world->store()) {
+		world->set_store(SharedPtr<Ingen::Store>(new Store()));
 	}
 
 	_control_bindings = new ControlBindings(*this);
@@ -83,11 +77,16 @@ Engine::~Engine()
 {
 	deactivate();
 
-	SharedPtr<EngineStore> store = engine_store();
-	if (store)
-		for (EngineStore::iterator i = store->begin(); i != store->end(); ++i)
-			if (!PtrCast<GraphObjectImpl>(i->second)->parent())
+	const SharedPtr<Store> s = this->store();
+	if (s) {
+		for (Store::iterator i = s->begin(); i != s->end(); ++i) {
+			if (!PtrCast<GraphObjectImpl>(i->second)->parent()) {
 				i->second.reset();
+			}
+		}
+	}
+
+	_world->set_store(SharedPtr<Ingen::Store>());
 
 	delete _maid;
 	delete _pre_processor;
@@ -100,10 +99,10 @@ Engine::~Engine()
 	munlockall();
 }
 
-SharedPtr<EngineStore>
-Engine::engine_store() const
+SharedPtr<Store>
+Engine::store() const
 {
-	return PtrCast<EngineStore>(_world->store());
+	return _world->store();
 }
 
 size_t

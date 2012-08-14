@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Store.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
@@ -24,7 +25,6 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EnginePort.hpp"
-#include "EngineStore.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
@@ -48,7 +48,7 @@ Delete::Delete(Engine&              engine,
 	, _ports_array(NULL)
 	, _compiled_patch(NULL)
 	, _disconnect_event(NULL)
-	, _lock(engine.engine_store()->lock(), Glib::NOT_LOCK)
+	, _lock(engine.store()->lock(), Glib::NOT_LOCK)
 {
 	if (GraphObject::uri_is_path(uri)) {
 		_path = GraphObject::uri_to_path(uri);
@@ -71,17 +71,15 @@ Delete::pre_process()
 
 	_removed_bindings = _engine.control_bindings()->remove(_path);
 
-	EngineStore::iterator iter = _engine.engine_store()->find(_path);
-
-	if (iter != _engine.engine_store()->end())  {
-		_node = PtrCast<NodeImpl>(iter->second);
-
-		if (!_node)
+	Store::iterator iter = _engine.store()->find(_path);
+	if (iter != _engine.store()->end())  {
+		if (!(_node = PtrCast<NodeImpl>(iter->second))) {
 			_port = PtrCast<PortImpl>(iter->second);
+		}
 	}
 
-	if (iter != _engine.engine_store()->end()) {
-		_removed_table = _engine.engine_store()->remove(iter);
+	if (iter != _engine.store()->end()) {
+		_engine.store()->remove(iter, _removed_objects);
 	}
 
 	if (_node && !_path.is_root()) {

@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
@@ -21,7 +22,6 @@
 #include "Broadcaster.hpp"
 #include "CreateNode.hpp"
 #include "Engine.hpp"
-#include "EngineStore.hpp"
 #include "NodeFactory.hpp"
 #include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
@@ -65,11 +65,12 @@ CreateNode::pre_process()
 		return Event::pre_process_done(BAD_REQUEST);
 	}
 
-	if (_engine.engine_store()->find_object(_path)) {
+	if (_engine.store()->get(_path)) {
 		return Event::pre_process_done(EXISTS, _path);
 	}
 
-	if (!(_patch = _engine.engine_store()->find_patch(_path.parent()))) {
+	_patch = dynamic_cast<PatchImpl*>(_engine.store()->get(_path.parent()));
+	if (!_patch) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
 
@@ -98,7 +99,7 @@ CreateNode::pre_process()
 
 	// Add node to the store and the  patch's pre-processor only node list
 	_patch->add_node(new PatchImpl::Nodes::Node(_node));
-	_engine.engine_store()->add(_node);
+	_engine.store()->add(_node);
 
 	/* Compile patch with new node added for insertion in audio thread
 	   TODO: Since the node is not connected at this point, a full compilation

@@ -17,14 +17,16 @@
 #ifndef INGEN_EVENTS_MOVE_HPP
 #define INGEN_EVENTS_MOVE_HPP
 
+#include "ingen/Store.hpp"
 #include "raul/Path.hpp"
+
 #include "Event.hpp"
-#include "EngineStore.hpp"
 
 namespace Ingen {
 namespace Server {
 
 class PatchImpl;
+class PortImpl;
 
 namespace Events {
 
@@ -58,10 +60,10 @@ public:
 	void post_process();
 
 private:
-	Raul::Path            _old_path;
-	Raul::Path            _new_path;
-	PatchImpl*            _parent_patch;
-	EngineStore::iterator _store_iterator;
+	const Raul::Path _old_path;
+	const Raul::Path _new_path;
+	PatchImpl*       _parent_patch;
+	PortImpl*        _port;
 };
 
 } // namespace Events
