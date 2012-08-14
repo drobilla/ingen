@@ -23,7 +23,6 @@
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/log.hpp"
-#include "raul/midi_events.h"
 
 #include "Buffer.hpp"
 #include "Driver.hpp"

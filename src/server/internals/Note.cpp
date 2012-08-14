@@ -19,10 +19,10 @@
 
 #include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 #include "raul/log.hpp"
-#include "raul/midi_events.h"
 
 #include "Buffer.hpp"
 #include "Driver.hpp"
@@ -142,48 +142,38 @@ NoteNode::process(ProcessContext& context)
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
 	LV2_Atom_Sequence* seq     = (LV2_Atom_Sequence*)midi_in->atom();
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-		const uint8_t*  buf  = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+		const uint8_t*  buf  = (const uint8_t*)LV2_ATOM_BODY_CONST(&ev->body);
 		const FrameTime time = context.start() + (FrameTime)ev->time.frames;
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3) {
-			switch (buf[0] & 0xF0) {
-			case MIDI_CMD_NOTE_ON:
+			switch (lv2_midi_message_type(buf)) {
+			case LV2_MIDI_MSG_NOTE_ON:
 				if (buf[2] == 0) {
 					note_off(context, buf[1], time);
 				} else {
 					note_on(context, buf[1], buf[2], time);
 				}
 				break;
-			case MIDI_CMD_NOTE_OFF:
+			case LV2_MIDI_MSG_NOTE_OFF:
 				note_off(context, buf[1], time);
 				break;
-			case MIDI_CMD_CONTROL:
+			case LV2_MIDI_MSG_CONTROLLER:
 				switch (buf[1]) {
-				case MIDI_CTL_ALL_NOTES_OFF:
-				case MIDI_CTL_ALL_SOUNDS_OFF:
+				case LV2_MIDI_CTL_ALL_NOTES_OFF:
+				case LV2_MIDI_CTL_ALL_SOUNDS_OFF:
 					all_notes_off(context, time);
 					break;
-				case MIDI_CTL_SUSTAIN:
+				case LV2_MIDI_CTL_SUSTAIN:
 					if (buf[2] > 63) {
 						sustain_on(context, time);
 					} else {
 						sustain_off(context, time);
 					}
 					break;
-				case MIDI_CMD_BENDER:
-					// ?
-					break;
-				default:
-					//warn << "Ignored controller " << buf[1] << endl;
-					break;
 				}
-				break;
 			default:
-				//fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buf[0]);
 				break;
 			}
-		} else {
-			//fprintf(stderr, "Unknown (size %d) MIDI event %X\n", size, buf[0]);
 		}
 	}
 

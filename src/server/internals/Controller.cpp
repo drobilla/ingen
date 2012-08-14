@@ -21,7 +21,7 @@
 #include "ingen/URIs.hpp"
 #include "internals/Controller.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
-#include "raul/midi_events.h"
+#include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 
 #include "Buffer.hpp"
 #include "Engine.hpp"
@@ -100,7 +100,8 @@ ControllerNode::process(ProcessContext& context)
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
-		    ev->body.size >= 3 && (buf[0] & 0xF0) == MIDI_CMD_CONTROL) {
+		    ev->body.size >= 3 &&
+		    lv2_midi_message_type(buf) == LV2_MIDI_MSG_CONTROLLER) {
 			control(context, buf[1], buf[2], ev->time.frames + context.start());
 		}
 	}

@@ -19,8 +19,8 @@
 
 #include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "raul/log.hpp"
-#include "raul/midi_events.h"
 
 #include "Buffer.hpp"
 #include "Engine.hpp"
@@ -102,20 +102,21 @@ TriggerNode::process(ProcessContext& context)
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3) {
 			const FrameTime time = context.start() + ev->time.frames;
-			switch (buf[0] & 0xF0) {
-			case MIDI_CMD_NOTE_ON:
+			switch (lv2_midi_message_type(buf)) {
+			case LV2_MIDI_MSG_NOTE_ON:
 				if (buf[2] == 0) {
 					note_off(context, buf[1], time);
 				} else {
 					note_on(context, buf[1], buf[2], time);
 				}
 				break;
-			case MIDI_CMD_NOTE_OFF:
+			case LV2_MIDI_MSG_NOTE_OFF:
 				note_off(context, buf[1], time);
 				break;
-			case MIDI_CMD_CONTROL:
-				if (buf[1] == MIDI_CTL_ALL_NOTES_OFF ||
-				    buf[1] == MIDI_CTL_ALL_SOUNDS_OFF) {
+			case LV2_MIDI_MSG_CONTROLLER:
+				switch (buf[1]) {
+				case LV2_MIDI_CTL_ALL_NOTES_OFF:
+				case LV2_MIDI_CTL_ALL_SOUNDS_OFF:
 					_gate_port->set_control_value(context, time, 0.0f);
 				}
 			default:

@@ -20,8 +20,8 @@
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
+#include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "raul/log.hpp"
-#include "raul/midi_events.h"
 
 #include "Buffer.hpp"
 #include "ControlBindings.hpp"
@@ -107,17 +107,17 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 ControlBindings::Key
 ControlBindings::midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value)
 {
-	switch (buf[0] & 0xF0) {
-	case MIDI_CMD_CONTROL:
+	switch (lv2_midi_message_type(buf)) {
+	case LV2_MIDI_MSG_CONTROLLER:
 		value = static_cast<const int8_t>(buf[2]);
 		return Key(MIDI_CC, static_cast<const int8_t>(buf[1]));
-	case MIDI_CMD_BENDER:
+	case LV2_MIDI_MSG_BENDER:
 		value = (static_cast<int8_t>(buf[2]) << 7) + static_cast<int8_t>(buf[1]);
 		return Key(MIDI_BENDER);
-	case MIDI_CMD_CHANNEL_PRESSURE:
+	case LV2_MIDI_MSG_CHANNEL_PRESSURE:
 		value = static_cast<const int8_t>(buf[1]);
 		return Key(MIDI_CHANNEL_PRESSURE);
-	case MIDI_CMD_NOTE_ON:
+	case LV2_MIDI_MSG_NOTE_ON:
 		value = 1.0f;
 		return Key(MIDI_NOTE, static_cast<const int8_t>(buf[1]));
 	default:
@@ -152,27 +152,28 @@ ControlBindings::port_value_changed(ProcessContext&   context,
 		switch (key.type) {
 		case MIDI_CC:
 			size = 3;
-			buf[0] = MIDI_CMD_CONTROL;
+			buf[0] = LV2_MIDI_MSG_CONTROLLER;
 			buf[1] = key.num;
 			buf[2] = static_cast<int8_t>(value);
 			break;
 		case MIDI_CHANNEL_PRESSURE:
 			size = 2;
-			buf[0] = MIDI_CMD_CHANNEL_PRESSURE;
+			buf[0] = LV2_MIDI_MSG_CHANNEL_PRESSURE;
 			buf[1] = static_cast<int8_t>(value);
 			break;
 		case MIDI_BENDER:
 			size = 3;
-			buf[0] = MIDI_CMD_BENDER;
+			buf[0] = LV2_MIDI_MSG_BENDER;
 			buf[1] = (value & 0x007F);
 			buf[2] = (value & 0x7F00) >> 7;
 			break;
 		case MIDI_NOTE:
 			size = 3;
-			if (value == 1)
-				buf[0] = MIDI_CMD_NOTE_ON;
-			else if (value == 0)
-				buf[0] = MIDI_CMD_NOTE_OFF;
+			if (value == 1) {
+				buf[0] = LV2_MIDI_MSG_NOTE_ON;
+			} else if (value == 0) {
+				buf[0] = LV2_MIDI_MSG_NOTE_OFF;
+			}
 			buf[1] = key.num;
 			buf[2] = 0x64; // MIDI spec default
 			break;
