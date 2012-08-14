@@ -209,25 +209,26 @@ public:
 	virtual void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
 	virtual PatchImpl* root_patch()                     { return _root_patch; }
 
+	/** Unused since LV2 has no dynamic ports. */
+	EnginePort* port(const Raul::Path& path) { return NULL; }
+
+	/** Doesn't have to be real-time safe since LV2 has no dynamic ports. */
 	virtual void add_port(ProcessContext& context, EnginePort* port) {
-		// Note this doesn't have to be realtime safe since there's no dynamic LV2 ports
 		assert(dynamic_cast<LV2Port*>(port));
 		assert(port->patch_port()->index() == _ports.size());
 		_ports.push_back((LV2Port*)port);
 	}
 
-	virtual Raul::Deletable* remove_port(ProcessContext&   context,
-	                                     const Raul::Path& path,
-	                                     EnginePort**      port = NULL) {
-		// Note this doesn't have to be realtime safe since there's no dynamic LV2 ports
+	/** Doesn't have to be real-time safe since LV2 has no dynamic ports. */
+	virtual Raul::Deletable* remove_port(ProcessContext& context,
+	                                     EnginePort*     port) {
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-			if ((*i)->patch_port()->path() == path) {
+			if (*i == port) {
 				_ports.erase(i);
 				return NULL;
 			}
 		}
 
-		Raul::warn << "Unable to find port " << path << std::endl;
 		return NULL;
 	}
 

@@ -60,13 +60,15 @@ public:
 	virtual EnginePort* engine_port(ProcessContext&   context,
 	                                const Raul::Path& path) = 0;
 
+	/** Find a system port by path. */
+	virtual EnginePort* port(const Raul::Path& path) = 0;
+
 	/** Add a system visible port (e.g. a port on the root patch). */
 	virtual void add_port(ProcessContext& context, EnginePort* port) = 0;
 
 	/** Remove a system visible port. */
-	virtual Raul::Deletable* remove_port(ProcessContext&   context,
-	                                     const Raul::Path& path,
-	                                     EnginePort**      port = NULL) = 0;
+	virtual Raul::Deletable* remove_port(ProcessContext& context,
+	                                     EnginePort*     port) = 0;
 
 	/** Return the audio buffer size in frames */
 	virtual SampleCount block_length() const = 0;

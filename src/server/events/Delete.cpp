@@ -109,6 +109,10 @@ Delete::pre_process()
 				_ports_array    = _port->parent_patch()->build_ports_array();
 				assert(_ports_array->size() == _port->parent_patch()->num_ports_non_rt());
 			}
+
+			if (!_port->parent_patch()->parent()) {
+				_engine_port = _engine.driver()->port(_port->path());
+			}
 		}
 
 	}
@@ -140,8 +144,9 @@ Delete::execute(ProcessContext& context)
 		_engine.maid()->push(_port->parent_patch()->external_ports());
 		_port->parent_patch()->external_ports(_ports_array);
 
-		if ( ! _port->parent_patch()->parent())
-			_garbage = _engine.driver()->remove_port(context, _port->path(), &_engine_port);
+		if (_engine_port) {
+			_garbage = _engine.driver()->remove_port(context, _engine_port);
+		}
 	}
 
 	if (parent_patch) {

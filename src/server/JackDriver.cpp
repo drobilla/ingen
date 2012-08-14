@@ -327,20 +327,15 @@ JackDriver::add_port(ProcessContext& context, EnginePort* port)
  * It is the callers responsibility to delete the returned port.
  */
 Raul::Deletable*
-JackDriver::remove_port(ProcessContext&   context,
-                        const Raul::Path& path,
-                        EnginePort**      port)
+JackDriver::remove_port(ProcessContext& context,
+                        EnginePort*     port)
 {
 	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-		if ((*i)->patch_port()->path() == path) {
-			Raul::List<JackPort*>::Node* node = _ports.erase(i);
-			if (port)
-				*port = node->elem();
-			return node;
+		if (*i == port) {
+			return _ports.erase(i);
 		}
 	}
 
-	LOG(Raul::warn)(Raul::fmt("Unable to find port %1%\n") % path.c_str());
 	return NULL;
 }
 
