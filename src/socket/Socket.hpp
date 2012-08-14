@@ -18,13 +18,11 @@
 #define INGEN_SOCKET_SOCKET_HPP
 
 #include <stdint.h>
-#include <string.h>
 #include <sys/socket.h>
 
-#include <string>
-
-#include "raul/SharedPtr.hpp"
 #include "raul/Noncopyable.hpp"
+#include "raul/SharedPtr.hpp"
+#include "raul/URI.hpp"
 
 namespace Ingen {
 namespace Socket {
@@ -37,23 +35,19 @@ public:
 		TCP
 	};
 
-	static Type type_from_uri(const std::string& uri) {
-		if (uri.substr(0, strlen("unix://")) == "unix://") {
-			return UNIX;
-		} else {
-			return TCP;
-		}
+	static Type type_from_uri(const Raul::URI uri) {
+		return (uri.scheme() == "unix") ? UNIX : TCP;
 	}
 
 	/** Create a new unbound/unconnected socket of a given type. */
 	explicit Socket(Type t);
 
 	/** Wrap an existing open socket. */
-	Socket(Type               t,
-	       const std::string& uri,
-	       struct sockaddr*   addr,
-	       socklen_t          addr_len,
-	       int                fd);
+	Socket(Type             t,
+	       const Raul::URI& uri,
+	       struct sockaddr* addr,
+	       socklen_t        addr_len,
+	       int              fd);
 
 	~Socket();
 
@@ -61,13 +55,13 @@ public:
 	 * @param uri Address URI, e.g. unix:///tmp/foo or tcp://somehost:1234
 	 * @return True on success.
 	 */
-	bool bind(const std::string& uri);
+	bool bind(const Raul::URI& uri);
 
 	/** Connect a client socket to a server address.
 	 * @param uri Address URI, e.g. unix:///tmp/foo or tcp://somehost:1234
 	 * @return True on success.
 	 */
-	bool connect(const std::string& uri);
+	bool connect(const Raul::URI& uri);
 
 	/** Mark server socket as passive to listen for incoming connections.
 	 * @return True on success.
@@ -82,16 +76,16 @@ public:
 	/** Return the file descriptor for the socket. */
 	int fd() { return _sock; }
 
-	const std::string& uri() const { return _uri; }
+	const Raul::URI& uri() const { return _uri; }
 
 	/** Close the socket. */
 	void close();
 
 private:
-	bool set_addr(const std::string& uri);
+	bool set_addr(const Raul::URI& uri);
 
 	Type             _type;
-	std::string      _uri;
+	Raul::URI        _uri;
 	struct sockaddr* _addr;
 	socklen_t        _addr_len;
 	int              _sock;

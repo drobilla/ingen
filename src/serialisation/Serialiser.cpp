@@ -275,9 +275,9 @@ Serialiser::Impl::path_rdf_node(const Path& path)
 {
 	assert(_model);
 	assert(path == _root_path || path.is_child_of(_root_path));
-	const Path rel_path(path.relative_to_base(_root_path));
+	// FIXME: if path == root_path() then "/" ?
 	return Sord::URI(_model->world(),
-	                 rel_path.substr(1).c_str(),
+	                 path.substr(_root_path.base().length()),
 	                 _base_uri);
 }
 
@@ -290,7 +290,7 @@ Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_err
 	if (object->graph_type() == GraphObject::PATCH) {
 		me->serialise_patch(object, me->path_rdf_node(object->path()));
 	} else if (object->graph_type() == GraphObject::NODE) {
-		const Sord::URI plugin_id(me->_model->world(), object->plugin()->uri().str());
+		const Sord::URI plugin_id(me->_model->world(), object->plugin()->uri());
 		me->serialise_node(object, plugin_id, me->path_rdf_node(object->path()));
 	} else if (object->graph_type() == GraphObject::PORT) {
 		me->serialise_port(object.get(),
@@ -347,7 +347,7 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 	// If the patch has no doap:name (required by LV2), use the symbol
 	if (patch->properties().find(uris.doap_name) == patch->properties().end())
 		_model->add_statement(patch_id,
-		                      Sord::URI(world, uris.doap_name.str()),
+		                      Sord::URI(world, uris.doap_name),
 		                      Sord::Literal(world, symbol.c_str()));
 
 	const GraphObject::Properties props = patch->properties(Resource::INTERNAL);
@@ -395,7 +395,7 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 		} else if (n->second->graph_type() == GraphObject::NODE) {
 			SharedPtr<const GraphObject> node = n->second;
 
-			const Sord::URI  class_id(world, node->plugin()->uri().str());
+			const Sord::URI  class_id(world, node->plugin()->uri());
 			const Sord::Node node_id(path_rdf_node(n->second->path()));
 			_model->add_statement(patch_id,
 			                      Sord::Curie(world, "ingen:node"),
@@ -409,8 +409,8 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 		const Sord::Node port_id = path_rdf_node(p->path());
 
 		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
-		if (p->properties().find(LV2_CORE__name) == p->properties().end())
-			p->set_property(LV2_CORE__name,
+		if (p->properties().find(uris.lv2_name) == p->properties().end())
+			p->set_property(uris.lv2_name,
 			                _world.forge().alloc(p->symbol().c_str()));
 
 		_model->add_statement(patch_id,
@@ -537,7 +537,7 @@ Serialiser::Impl::serialise_properties(Sord::Node                     id,
 
 	typedef GraphObject::Properties::const_iterator iterator;
 	for (iterator v = props.begin(); v != props.end(); ++v) {
-		const Sord::URI key(_model->world(), v->first.str());
+		const Sord::URI key(_model->world(), v->first);
 		if (!skip_property(key)) {
 			sratom_write(_sratom, unmap, 0,
 			             sord_node_to_serd_node(id.c_obj()),

@@ -273,17 +273,16 @@ World::unload_modules()
 /** Get an interface for a remote engine at @a url
  */
 SharedPtr<Interface>
-World::new_interface(const std::string&   engine_url,
+World::new_interface(const Raul::URI&     engine_uri,
                      SharedPtr<Interface> respondee)
 {
-	const string scheme = engine_url.substr(0, engine_url.find(":"));
-	const Impl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(scheme);
+	const Impl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(engine_uri.scheme());
 	if (i == _impl->interface_factories.end()) {
-		Raul::warn << "Unknown URI scheme `" << scheme << "'" << endl;
+		Raul::warn << "Unknown URI scheme `" << engine_uri.scheme() << "'" << endl;
 		return SharedPtr<Interface>();
 	}
 
-	return i->second(this, engine_url, respondee);
+	return i->second(this, engine_uri, respondee);
 }
 
 /** Run a script of type @a mime_type at filename @a filename */

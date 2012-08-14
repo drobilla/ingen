@@ -218,7 +218,7 @@ ClientStore::del(const Raul::URI& uri)
 		return;
 	}
 
-	const Raul::Path path(uri.str());
+	const Raul::Path path(GraphObject::uri_to_path(uri));
 	SharedPtr<ObjectModel> removed = remove_object(path);
 	removed.reset();
 	LOG(Raul::debug) << "Removed object " << path
@@ -248,11 +248,12 @@ ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
 		assert(Raul::Path::descendant_comparator(old_path, child_old_path));
 
 		Raul::Path child_new_path;
-		if (child_old_path == old_path)
+		if (child_old_path == old_path) {
 			child_new_path = new_path;
-		else
-			child_new_path = new_path.base()
-				+ child_old_path.substr(old_path.length() + 1);
+		} else {
+			child_new_path = Raul::Path(
+				new_path.base() + child_old_path.substr(old_path.length() + 1));
+		}
 
 		LOG(Raul::info)(Raul::fmt("Renamed %1% to %2%\n")
 		                % child_old_path.c_str() % child_new_path.c_str());
@@ -284,9 +285,9 @@ ClientStore::put(const Raul::URI&            uri,
 	// Check if uri is a plugin
 	Iterator t = properties.find(_uris.rdf_type);
 	if (t != properties.end() && t->second.type() == _uris.forge.URI) {
-		const Raul::Atom&  type        = t->second;
-		const Raul::URI&   type_uri    = type.get_uri();
-		const Plugin::Type plugin_type = Plugin::type_from_uri(type_uri);
+		const Raul::Atom&  type(t->second);
+		const Raul::URI    type_uri(type.get_uri());
+		const Plugin::Type plugin_type(Plugin::type_from_uri(type_uri));
 		if (plugin_type == Plugin::Patch) {
 			is_patch = true;
 		} else if (plugin_type != Plugin::NIL) {
@@ -323,12 +324,12 @@ ClientStore::put(const Raul::URI&            uri,
 		const Iterator p = properties.find(_uris.ingen_prototype);
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == _uris.forge.URI) {
-			if (!(plug = _plugin(p->second.get_uri()))) {
+			if (!(plug = _plugin(Raul::URI(p->second.get_uri())))) {
 				LOG(Raul::warn)(Raul::fmt("Unable to find plugin <%1%>\n")
 				                % p->second.get_uri());
 				plug = SharedPtr<PluginModel>(
 					new PluginModel(uris(),
-					                p->second.get_uri(),
+					                Raul::URI(p->second.get_uri()),
 					                _uris.ingen_nil,
 					                Resource::Properties()));
 				add_plugin(plug);

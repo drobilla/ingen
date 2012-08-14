@@ -174,7 +174,7 @@ PatchBox::init_box(App& app)
 {
 	_app = &app;
 
-	std::string engine_name = _app->interface()->uri().str();
+	std::string engine_name = _app->interface()->uri();
 	if (engine_name == "http://drobilla.net/ns/ingen#internal") {
 		engine_name = "internal engine";
 	}
@@ -584,7 +584,7 @@ PatchBox::event_draw()
 			_view->canvas()->export_dot(filename.c_str());
 			_status_bar->push(
 				(boost::format("Rendered %1% to %2%")
-				 % _patch->path().str() % filename).str(),
+				 % _patch->path() % filename).str(),
 				STATUS_CONTEXT_PATCH);
 		}
 	}

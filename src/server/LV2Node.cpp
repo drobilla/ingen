@@ -344,7 +344,7 @@ LV2Node::instantiate(BufferFactory& bufs)
 			LILV_FOREACH(nodes, v, values) {
 				const LilvNode* val = lilv_nodes_get(values, v);
 				if (lilv_node_is_uri(val)) {
-					port->add_property(lilv_node_as_uri(preds[p]),
+					port->add_property(Raul::URI(lilv_node_as_uri(preds[p])),
 					                   forge.alloc_uri(lilv_node_as_uri(val)));
 				}
 			}

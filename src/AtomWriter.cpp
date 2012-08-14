@@ -99,7 +99,7 @@ AtomWriter::forge_properties(const Resource::Properties& properties)
 	     i != properties.end(); ++i) {
 		lv2_atom_forge_property_head(&_forge, _map.map_uri(i->first.c_str()), 0);
 		if (i->second.type() == _forge.URI) {
-			forge_uri(i->second.get_uri());
+			forge_uri(Raul::URI(i->second.get_uri()));
 		} else {
 			lv2_atom_forge_atom(&_forge, i->second.size(), i->second.type());
 			lv2_atom_forge_write(&_forge, i->second.get_body(), i->second.size());

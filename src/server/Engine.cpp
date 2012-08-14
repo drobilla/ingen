@@ -225,8 +225,9 @@ Engine::activate()
 
 		SharedPtr<Interface> respondee;
 		execute_and_delete_event(
-			context, new Events::CreatePort(*this, respondee, -1, 0,
-			                                "/control_in", false, in_properties));
+			context, new Events::CreatePort(
+				*this, respondee, -1, 0, Raul::Path("/control_in"),
+				false, in_properties));
 
 		// Add control out
 		Resource::Properties out_properties(control_properties);
@@ -242,8 +243,9 @@ Engine::activate()
 			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
 
 		execute_and_delete_event(
-			context, new Events::CreatePort(*this, respondee, -1, 0,
-			                                "/control_out", true, out_properties));
+			context, new Events::CreatePort(
+				*this, respondee, -1, 0, Raul::Path("/control_out"),
+				true, out_properties));
 	}
 
 	_driver->activate();

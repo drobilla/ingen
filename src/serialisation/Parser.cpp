@@ -139,12 +139,12 @@ get_properties(Ingen::World*     world,
 
 typedef std::pair<Path, Resource::Properties> PortRecord;
 
-static int
+static boost::optional<PortRecord>
 get_port(Ingen::World*     world,
          Sord::Model&      model,
          const Sord::Node& subject,
          const Raul::Path& parent,
-         PortRecord&       record)
+         uint32_t&         index)
 {
 	const URIs& uris = world->uris();
 
@@ -156,22 +156,21 @@ get_port(Ingen::World*     world,
 	if (i == props.end()
 	    || i->second.type() != world->forge().Int
 	    || i->second.get_int32() < 0) {
-		LOG(error) << "Port " << subject << " has no valid lv2:index" << endl;
-		return -1;
+		LOG(error) << "Port " << subject << " has no valid index" << endl;
+		return boost::optional<PortRecord>();
 	}
-	const uint32_t index = i->second.get_int32();
+	index = i->second.get_int32();
 
 	// Get symbol
 	Resource::Properties::const_iterator s = props.find(uris.lv2_symbol);
 	if (s == props.end()) {
 		LOG(error) << "Port " << subject << " has no symbol" << endl;
-		return -1;
+		return boost::optional<PortRecord>();
 	}
 	const Symbol port_sym(s->second.get_string());
 	const Path   port_path = parent.child(port_sym);
 
-	record = make_pair(port_path, props);
-	return index;
+	return make_pair(port_path, props);
 }
 
 static boost::optional<Raul::Path>
@@ -278,7 +277,7 @@ parse_node(Ingen::World*                            world,
 	} else {
 		Resource::Properties props = get_properties(world, model, subject);
 		props.insert(make_pair(uris.rdf_type,
-		                       uris.forge.alloc_uri(uris.ingen_Node.str())));
+		                       uris.forge.alloc_uri(uris.ingen_Node)));
 		target->put(GraphObject::path_to_uri(path), props);
 	}
 	return path;
@@ -311,7 +310,7 @@ parse_patch(Ingen::World*                            world,
 
 	string patch_path_str = relative_uri(base_uri, subject_node.to_string(), true);
 	if (parent && a_symbol)
-		patch_path_str = parent->child(*a_symbol).str();
+		patch_path_str = parent->child(*a_symbol);
 
 	if (!Path::is_valid(patch_path_str)) {
 		LOG(error) << "Patch has invalid path: " << patch_path_str << endl;
@@ -338,16 +337,17 @@ parse_patch(Ingen::World*                            world,
 			Sord::Node port = p.get_object();
 
 			// Get all properties
-			PortRecord port_record;
-			const int  index = get_port(world, model, port, node_path, port_record);
-			if (index < 0) {
+			uint32_t index = 0;
+			boost::optional<PortRecord> port_record = get_port(
+				world, model, port, node_path, index);
+			if (!port_record) {
 				LOG(error) << "Invalid port " << port << endl;
 				return boost::optional<Path>();
 			}
 
 			// Create port and/or set all port properties
-			target->put(GraphObject::path_to_uri(port_record.first),
-			            port_record.second);
+			target->put(GraphObject::path_to_uri(port_record->first),
+			            port_record->second);
 		}
 	}
 
@@ -358,15 +358,16 @@ parse_patch(Ingen::World*                            world,
 		Sord::Node port = p.get_object();
 
 		// Get all properties
-		PortRecord port_record;
-		const int  index = get_port(world, model, port, patch_path, port_record);
-		if (index < 0) {
+		uint32_t index = 0;
+		boost::optional<PortRecord> port_record = get_port(
+			world, model, port, patch_path, index);
+		if (!port_record) {
 			LOG(Raul::error) << "Invalid port " << port << endl;
 			return boost::optional<Path>();
 		}
 
 		// Store port information in ports map
-		ports[index] = port_record;
+		ports[index] = *port_record;
 	}
 
 	// Create ports in order by index
@@ -597,7 +598,7 @@ Parser::parse_file(Ingen::World*                            world,
 
 	if (parsed_path) {
 		target->set_property(GraphObject::path_to_uri(*parsed_path),
-		                     "http://drobilla.net/ns/ingen#document",
+		                     Raul::URI("http://drobilla.net/ns/ingen#document"),
 		                     world->forge().alloc_uri(uri));
 	} else {
 		LOG(Raul::warn)("Document URI lost\n");

@@ -85,8 +85,8 @@ AtomReader::atom_to_path(const LV2_Atom* atom)
 {
 	const char* uri_str = atom_to_uri(atom);
 	if (uri_str && Raul::URI::is_valid(uri_str) &&
-	    GraphObject::uri_is_path(uri_str)) {
-		return GraphObject::uri_to_path(uri_str);
+	    GraphObject::uri_is_path(Raul::URI(uri_str))) {
+		return GraphObject::uri_to_path(Raul::URI(uri_str));
 	}
 	return boost::optional<Raul::Path>();
 }
@@ -111,8 +111,8 @@ bool
 AtomReader::write(const LV2_Atom* msg)
 {
 	if (msg->type != _uris.atom_Blank && msg->type != _uris.atom_Resource) {
-		Raul::warn << (Raul::fmt("Unknown message type <%1%>\n")
-		               % _map.unmap_uri(msg->type)).str();
+		Raul::warn(Raul::fmt("Unknown message type <%1%>\n")
+		           % _map.unmap_uri(msg->type));
 		return false;
 	}
 
@@ -124,13 +124,13 @@ AtomReader::write(const LV2_Atom* msg)
 
 	if (obj->body.otype == _uris.patch_Get) {
 		_iface.set_response_id(obj->body.id);
-		_iface.get(subject_uri);
+		_iface.get(Raul::URI(subject_uri));
 	} else if (obj->body.otype == _uris.patch_Delete) {
 		const LV2_Atom_Object* body = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 
 		if (subject_uri && !body) {
-			_iface.del(subject_uri);
+			_iface.del(Raul::URI(subject_uri));
 			return true;
 		} else if (body && body->body.otype == _uris.ingen_Edge) {
 			const LV2_Atom* tail       = NULL;
@@ -189,7 +189,7 @@ AtomReader::write(const LV2_Atom* msg)
 			Ingen::Resource::Properties props;
 			get_props(body, props);
 			_iface.set_response_id(obj->body.id);
-			_iface.put(subject_uri, props);
+			_iface.put(Raul::URI(subject_uri), props);
 		}
 	} else if (obj->body.otype == _uris.patch_Set) {
 		const LV2_Atom_Object* body = NULL;
@@ -205,7 +205,8 @@ AtomReader::write(const LV2_Atom* msg)
 		LV2_ATOM_OBJECT_FOREACH(body, p) {
 			Raul::Atom val;
 			get_atom(&p->value, val);
-			_iface.set_property(subject_uri, _map.unmap_uri(p->key), val);
+			_iface.set_property(Raul::URI(subject_uri),
+			                    Raul::URI(_map.unmap_uri(p->key)), val);
 		}
 	} else if (obj->body.otype == _uris.patch_Patch) {
 		if (!subject) {
@@ -233,7 +234,7 @@ AtomReader::write(const LV2_Atom* msg)
 		Ingen::Resource::Properties remove_props;
 		get_props(remove, remove_props);
 
-		_iface.delta(subject_uri, remove_props, add_props);
+		_iface.delta(Raul::URI(subject_uri), remove_props, add_props);
 	} else if (obj->body.otype == _uris.patch_Move) {
 		if (!subject) {
 			Raul::warn << "Move message has no subject" << std::endl;

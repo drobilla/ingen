@@ -91,7 +91,7 @@ Context::emit_notifications(FrameTime end)
 				const char* key = _engine.world()->uri_map().unmap_uri(note.key);
 				if (key) {
 					_engine.broadcaster()->set_property(
-						note.port->uri(), key, value);
+						note.port->uri(), Raul::URI(key), value);
 				} else {
 					Raul::error("Error unmapping notification key URI\n");
 				}

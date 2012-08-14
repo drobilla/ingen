@@ -42,6 +42,7 @@ namespace Socket {
 
 Socket::Socket(Type t)
 	: _type(t)
+	, _uri(t == UNIX ? "unix:" : "tcp:")
 	, _addr(NULL)
 	, _addr_len(0)
 	, _sock(-1)
@@ -56,11 +57,11 @@ Socket::Socket(Type t)
 	}
 }
 
-Socket::Socket(Type               t,
-               const std::string& uri,
-               struct sockaddr*   addr,
-               socklen_t          addr_len,
-               int                fd)
+Socket::Socket(Type             t,
+               const Raul::URI& uri,
+               struct sockaddr* addr,
+               socklen_t        addr_len,
+               int              fd)
 	: _type(t)
 	, _uri(uri)
 	, _addr(addr)
@@ -76,7 +77,7 @@ Socket::~Socket()
 }
 
 bool
-Socket::set_addr(const std::string& uri)
+Socket::set_addr(const Raul::URI& uri)
 {
 	free(_addr);
 	if (_type == UNIX && uri.substr(0, strlen("unix://")) == "unix://") {
@@ -90,14 +91,14 @@ Socket::set_addr(const std::string& uri)
 		_addr_len = sizeof(struct sockaddr_un);
 		return true;
 	} else if (_type == TCP && uri.find("://") != std::string::npos) {
-		const std::string no_scheme = uri.substr(uri.find("://") + 4);
-		const size_t      port_sep  = no_scheme.find(':');
+		const std::string authority = uri.substr(uri.find("://") + 3);
+		const size_t      port_sep  = authority.find(':');
 		if (port_sep == std::string::npos) {
 			return false;
 		}
 
-		const std::string host = no_scheme.substr(0, port_sep);
-		const std::string port = no_scheme.substr(port_sep + 1).c_str();
+		const std::string host = authority.substr(0, port_sep);
+		const std::string port = authority.substr(port_sep + 1).c_str();
 
 		struct addrinfo* ainfo;
 		int              st = 0;
@@ -118,7 +119,7 @@ Socket::set_addr(const std::string& uri)
 }
 
 bool
-Socket::bind(const std::string& uri)
+Socket::bind(const Raul::URI& uri)
 {
 	if (set_addr(uri) && ::bind(_sock, _addr, _addr_len) != -1) {
 		return true;
@@ -130,7 +131,7 @@ Socket::bind(const std::string& uri)
 }
 
 bool
-Socket::connect(const std::string& uri)
+Socket::connect(const Raul::URI& uri)
 {
 	if (set_addr(uri) && ::connect(_sock, _addr, _addr_len) != -1) {
 		return true;
@@ -167,11 +168,11 @@ Socket::accept()
 		return SharedPtr<Socket>();
 	}
 
-	std::string client_uri = _uri;
-	char        host[NI_MAXHOST];
+	Raul::URI client_uri = _uri;
+	char      host[NI_MAXHOST];
 	if (getnameinfo(client_addr, client_addr_len,
 	                host, sizeof(host), NULL, 0, 0)) {
-		client_uri = _uri.substr(0, _uri.find(":") + 1) + host;
+		client_uri = Raul::URI(_uri.scheme() + "://" + host);
 	}
 
 	return SharedPtr<Socket>(

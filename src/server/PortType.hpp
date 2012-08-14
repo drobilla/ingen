@@ -78,11 +78,11 @@ private:
 	static inline const Raul::URI& type_uri(unsigned symbol_num) {
 		assert(symbol_num <= ATOM);
 		static const Raul::URI uris[] = {
-			"http://drobilla.net/ns/ingen#nil",
-			LV2_CORE__AudioPort,
-			LV2_CORE__ControlPort,
-			LV2_CORE__CVPort,
-			LV2_ATOM__AtomPort
+			Raul::URI("http://drobilla.net/ns/ingen#nil"),
+			Raul::URI(LV2_CORE__AudioPort),
+			Raul::URI(LV2_CORE__ControlPort),
+			Raul::URI(LV2_CORE__CVPort),
+			Raul::URI(LV2_ATOM__AtomPort)
 		};
 		return uris[symbol_num];
 	}

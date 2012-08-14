@@ -54,13 +54,13 @@ public:
 
 	bool port_property(const Raul::URI& uri) const;
 
-	bool is_logarithmic() const { return port_property(LV2_PORT_PROPS__logarithmic); }
-	bool is_enumeration() const { return port_property(LV2_CORE__enumeration); }
-	bool is_integer()     const { return port_property(LV2_CORE__integer); }
-	bool is_toggle()      const { return port_property(LV2_CORE__toggled); }
+	bool is_logarithmic() const { return port_property(Raul::URI(LV2_PORT_PROPS__logarithmic)); }
+	bool is_enumeration() const { return port_property(Raul::URI(LV2_CORE__enumeration)); }
+	bool is_integer()     const { return port_property(Raul::URI(LV2_CORE__integer)); }
+	bool is_toggle()      const { return port_property(Raul::URI(LV2_CORE__toggled)); }
 	bool is_numeric()     const {
-		return ObjectModel::is_a(LV2_CORE__ControlPort)
-			|| ObjectModel::is_a(LV2_CORE__CVPort);
+		return ObjectModel::is_a(Raul::URI(LV2_CORE__ControlPort))
+			|| ObjectModel::is_a(Raul::URI(LV2_CORE__CVPort));
 	}
 
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }

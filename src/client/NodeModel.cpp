@@ -230,7 +230,7 @@ NodeModel::label() const
 std::string
 NodeModel::port_label(SharedPtr<const PortModel> port) const
 {
-	const Raul::Atom& name = port->get_property(LV2_CORE__name);
+	const Raul::Atom& name = port->get_property(Raul::URI(LV2_CORE__name));
 	if (name.is_valid()) {
 		return name.get_string();
 	}

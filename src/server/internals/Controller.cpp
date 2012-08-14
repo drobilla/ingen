@@ -39,7 +39,8 @@ namespace Server {
 namespace Internals {
 
 InternalPlugin* ControllerNode::internal_plugin(URIs& uris) {
-	return new InternalPlugin(uris, NS_INTERNALS "Controller", "controller");
+	return new InternalPlugin(
+		uris, Raul::URI(NS_INTERNALS "Controller"), Raul::Symbol("controller"));
 }
 
 ControllerNode::ControllerNode(InternalPlugin*     plugin,

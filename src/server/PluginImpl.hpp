@@ -25,6 +25,7 @@
 #include "ingen/Plugin.hpp"
 #include "ingen/Resource.hpp"
 #include "raul/Symbol.hpp"
+#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -45,9 +46,9 @@ class PluginImpl : public Plugin
                  , public boost::noncopyable
 {
 public:
-	PluginImpl(Ingen::URIs&       uris,
-	           Type               type,
-	           const std::string& uri)
+	PluginImpl(Ingen::URIs&     uris,
+	           Type             type,
+	           const Raul::URI& uri)
 		: Plugin(uris, uri)
 		, _type(type)
 	{}

@@ -32,10 +32,10 @@ class NodeImpl;
 class PatchPlugin : public PluginImpl
 {
 public:
-	PatchPlugin(URIs&              uris,
-	            const std::string& uri,
-	            const std::string& symbol,
-	            const std::string& name)
+	PatchPlugin(URIs&               uris,
+	            const Raul::URI&    uri,
+	            const Raul::Symbol& symbol,
+	            const std::string&  name)
 		: PluginImpl(uris, Plugin::Patch, uri)
 	{}
 

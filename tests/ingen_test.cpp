@@ -70,7 +70,7 @@ public:
 	TestClient() {}
 	~TestClient() {}
 
-	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#AtomWriter"; }
+	Raul::URI uri() const { return Raul::URI("ingen:testClient"); }
 
 	void bundle_begin() {}
 
@@ -198,9 +198,8 @@ main(int argc, char** argv)
 	SharedPtr<Interface> client(new TestClient());
 
 	world->interface()->set_respondee(client);
-	world->engine()->register_client(
-		"http://drobilla.net/ns/ingen#AtomWriter",
-		client);
+	world->engine()->register_client(Raul::URI("ingen:testClient"),
+	                                 client);
 
 	SerdURI cmds_base;
 	const SerdNode cmds_file_uri = serd_node_new_file_uri(

@@ -65,7 +65,7 @@ PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
 
 	_port_model = pm;
 
-	set_title(pm->path().str() + " Properties - Ingen");
+	set_title(pm->path() + " Properties - Ingen");
 
 	float min = 0.0f, max = 1.0f;
 	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());

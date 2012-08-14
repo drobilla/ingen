@@ -46,7 +46,8 @@ namespace Server {
 namespace Internals {
 
 InternalPlugin* NoteNode::internal_plugin(URIs& uris) {
-	return new InternalPlugin(uris, NS_INTERNALS "Note", "note");
+	return new InternalPlugin(
+		uris, Raul::URI(NS_INTERNALS "Note"), Raul::Symbol("note"));
 }
 
 NoteNode::NoteNode(InternalPlugin*     plugin,

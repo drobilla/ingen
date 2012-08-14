@@ -103,7 +103,7 @@ protected:
 
 	inline bool pre_process_done(Status st, const Raul::URI& subject) {
 		_status      = st;
-		_err_subject = subject.str();
+		_err_subject = subject;
 		return !st;
 	}
 

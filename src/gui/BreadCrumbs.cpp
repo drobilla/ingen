@@ -88,7 +88,7 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 			if (suffix[0] == '/')
 				suffix = suffix.substr(1);
 			const string name = suffix.substr(0, suffix.find("/"));
-			_full_path = _full_path.base() + name;
+			_full_path = _full_path.child(Raul::Symbol(name));
 			BreadCrumb* but = create_crumb(_full_path, view);
 			pack_start(*but, false, false, 1);
 			_breadcrumbs.push_back(but);
@@ -116,18 +116,18 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 		_breadcrumbs.clear();
 
 		// Add root
-		BreadCrumb* root_but = create_crumb("/", view);
+		BreadCrumb* root_but = create_crumb(Raul::Path("/"), view);
 		pack_start(*root_but, false, false, 1);
 		_breadcrumbs.push_front(root_but);
 		root_but->set_active(root_but->path() == _active_path);
 
-		Path working_path = "/";
+		Path working_path("/");
 		string suffix = path.substr(1);
 		while (suffix.length() > 0) {
 			if (suffix[0] == '/')
 				suffix = suffix.substr(1);
 			const string name = suffix.substr(0, suffix.find("/"));
-			working_path = working_path.base() + name;
+			working_path = working_path.child(Raul::Symbol(name));
 			BreadCrumb* but = create_crumb(working_path, view);
 			pack_start(*but, false, false, 1);
 			_breadcrumbs.push_back(but);

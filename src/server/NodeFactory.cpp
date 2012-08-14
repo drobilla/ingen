@@ -103,7 +103,7 @@ NodeFactory::load_plugin(const Raul::URI& uri)
 	const LilvPlugins* plugs = lilv_world_get_all_plugins(_world->lilv_world());
 	const LilvPlugin*  plug  = lilv_plugins_get_by_uri(plugs, node);
 	if (plug) {
-		LV2Plugin* const ingen_plugin = new LV2Plugin(_lv2_info, uri.str());
+		LV2Plugin* const ingen_plugin = new LV2Plugin(_lv2_info, uri);
 		ingen_plugin->lilv_plugin(plug);
 		_plugins.insert(make_pair(uri, ingen_plugin));
 	}
@@ -119,10 +119,10 @@ NodeFactory::load_lv2_plugins()
 	LILV_FOREACH(plugins, i, plugins) {
 		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);
 
-		const string uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
+		const Raul::URI uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
 
 		if (_plugins.find(uri) != _plugins.end()) {
-			Raul::warn(Raul::fmt("Already discovered <%s>\n") % uri.c_str());
+			Raul::warn(Raul::fmt("Already discovered <%s>\n") % uri);
 			continue;
 		}
 

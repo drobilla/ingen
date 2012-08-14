@@ -32,9 +32,9 @@ namespace Server {
 
 using namespace Internals;
 
-InternalPlugin::InternalPlugin(URIs&              uris,
-                               const std::string& uri,
-                               const std::string& symbol)
+InternalPlugin::InternalPlugin(URIs&               uris,
+                               const Raul::URI&    uri,
+                               const Raul::Symbol& symbol)
 	: PluginImpl(uris, Plugin::Internal, uri)
 	, _symbol(symbol)
 {
@@ -52,15 +52,13 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
 
 	const SampleCount srate = engine.driver()->sample_rate();
 
-	const string uri_str = uri().str();
-
-	if (uri_str == NS_INTERNALS "Controller") {
+	if (uri() == NS_INTERNALS "Controller") {
 		return new ControllerNode(this, bufs, symbol, polyphonic, parent, srate);
-	} else if (uri_str == NS_INTERNALS "Delay") {
+	} else if (uri() == NS_INTERNALS "Delay") {
 		return new DelayNode(this, bufs, symbol, polyphonic, parent, srate);
-	} else if (uri_str == NS_INTERNALS "Note") {
+	} else if (uri() == NS_INTERNALS "Note") {
 		return new NoteNode(this, bufs, symbol, polyphonic, parent, srate);
-	} else if (uri_str == NS_INTERNALS "Trigger") {
+	} else if (uri() == NS_INTERNALS "Trigger") {
 		return new TriggerNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else {
 		return NULL;

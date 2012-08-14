@@ -147,7 +147,7 @@ PortMenu::on_menu_expose()
 	SharedPtr<const NodeModel> node = PtrCast<const NodeModel>(port->parent());
 
 	const std::string label = node->label() + " " + node->port_label(port);
-	const Raul::Path  path  = node->path().str() + "_" + port->symbol().c_str();
+	const Raul::Path  path  = Raul::Path(node->path() + Raul::Symbol("_" + port->symbol()));
 
 	Ingen::Resource r(*_object.get());
 	r.remove_property(uris.lv2_index, uris.wildcard);

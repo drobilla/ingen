@@ -57,10 +57,10 @@ CreateNode::pre_process()
 		return Event::pre_process_done(BAD_URI, _path);
 	}
 		
-	std::string plugin_uri;
+	std::string plugin_uri_str;
 	const iterator t = _properties.find(uris.ingen_prototype);
 	if (t != _properties.end() && t->second.type() == uris.forge.URI) {
-		plugin_uri = t->second.get_uri();
+		plugin_uri_str = t->second.get_uri();
 	} else {
 		return Event::pre_process_done(BAD_REQUEST);
 	}
@@ -73,6 +73,7 @@ CreateNode::pre_process()
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
 
+	const Raul::URI plugin_uri(plugin_uri_str);
 	PluginImpl* plugin = _engine.node_factory()->plugin(plugin_uri);
 	if (!plugin) {
 		return Event::pre_process_done(PLUGIN_NOT_FOUND, Raul::URI(plugin_uri));

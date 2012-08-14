@@ -72,7 +72,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	set_type(type, buffer_type);
 
 	add_property(uris.atom_bufferType, bufs.forge().make_urid(buffer_type));
-	add_property(uris.rdf_type, bufs.forge().alloc_uri(type.uri().str()));
+	add_property(uris.rdf_type, bufs.forge().alloc_uri(type.uri()));
 	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
 }
 
@@ -107,7 +107,7 @@ bool
 PortImpl::supports(const Raul::URI& value_type) const
 {
 	return has_property(_bufs.uris().atom_supports,
-	                    _bufs.forge().alloc_uri(value_type.str()));
+	                    _bufs.forge().alloc_uri(value_type));
 }
 
 Raul::Array<BufferRef>*

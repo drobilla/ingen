@@ -18,6 +18,7 @@
 
 #include <glib.h>
 
+#include "raul/log.hpp"
 #include "ingen/URIMap.hpp"
 
 using namespace std;
@@ -52,10 +53,14 @@ URIMap::URIDMapFeature::default_map(LV2_URID_Map_Handle handle,
 LV2_URID
 URIMap::URIDMapFeature::map(const char* uri)
 {
+	if (!Raul::URI::is_valid(uri)) {
+		Raul::warn(Raul::fmt("Attempt to map invalid URI <%1%>\n") % uri);
+		return 0;
+	}
 	return urid_map.map(urid_map.handle, uri);
 }
 
-URIMap::URIDUnmapFeature::URIDUnmapFeature(URIMap*      map,
+URIMap::URIDUnmapFeature::URIDUnmapFeature(URIMap*         map,
                                            LV2_URID_Unmap* impl)
 	: Feature(LV2_URID__unmap, &urid_unmap)
 {

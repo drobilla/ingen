@@ -30,9 +30,9 @@ namespace Server {
 GraphObjectImpl::GraphObjectImpl(Ingen::URIs&        uris,
                                  GraphObjectImpl*    parent,
                                  const Raul::Symbol& symbol)
-	: GraphObject(uris, parent ? parent->path().child(symbol) : "/")
+	: GraphObject(uris, parent ? parent->path().child(symbol) : Raul::Path("/"))
 	, _parent(parent)
-	, _path(parent ? parent->path().child(symbol) : "/")
+	, _path(parent ? parent->path().child(symbol) : Raul::Path("/"))
 	, _symbol(symbol)
 {
 }
@@ -50,13 +50,6 @@ PatchImpl*
 GraphObjectImpl::parent_patch() const
 {
 	return dynamic_cast<PatchImpl*>((NodeImpl*)_parent);
-}
-
-SharedPtr<GraphObject>
-GraphObjectImpl::find_child(const std::string& name) const
-{
-	Raul::error("GraphObjectImpl::find_child called\n");
-	return SharedPtr<GraphObject>();
 }
 
 } // namespace Server

@@ -38,14 +38,14 @@ bool
 PortModel::supports(const Raul::URI& value_type) const
 {
 	return has_property(_uris.atom_supports,
-	                    _uris.forge.alloc_uri(value_type.str()));
+	                    _uris.forge.alloc_uri(value_type));
 }
 
 bool
 PortModel::port_property(const Raul::URI& uri) const
 {
 	return has_property(_uris.lv2_portProperty,
-	                    _uris.forge.alloc_uri(uri.str()));
+	                    _uris.forge.alloc_uri(uri));
 }
 
 void

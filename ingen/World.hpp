@@ -22,6 +22,7 @@
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Noncopyable.hpp"
 #include "raul/SharedPtr.hpp"
+#include "raul/URI.hpp"
 
 typedef struct LilvWorldImpl LilvWorld;
 
@@ -93,7 +94,7 @@ public:
 	/** A function to create a new remote Interface. */
 	typedef SharedPtr<Interface> (*InterfaceFactory)(
 		World*               world,
-		const std::string&   engine_url,
+		const Raul::URI&     engine_uri,
 		SharedPtr<Interface> respondee);
 
 	/** Register an InterfaceFactory (for module implementations). */
@@ -106,7 +107,7 @@ public:
 	 *                  and broadcasts, if applicable.
 	 */
 	virtual SharedPtr<Interface> new_interface(
-		const std::string&   engine_url,
+		const Raul::URI&     engine_uri,
 		SharedPtr<Interface> respondee);
 
 	/** Run a script. */

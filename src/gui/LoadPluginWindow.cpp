@@ -132,12 +132,10 @@ LoadPluginWindow::name_changed()
 {
 	// Toggle add button sensitivity according name legality
 	if (_selection->get_selected_rows().size() == 1) {
-		string name = _node_name_entry->get_text();
-		if (!Symbol::is_valid(name)) {
+		const string sym = _node_name_entry->get_text();
+		if (!Symbol::is_valid(sym)) {
 			_add_button->property_sensitive() = false;
-		} else if (_app->store()->find_child(_patch, name)) {
-			_add_button->property_sensitive() = false;
-		} else if (name.length() == 0) {
+		} else if (_app->store()->find_child(_patch, Symbol(sym))) {
 			_add_button->property_sensitive() = false;
 		} else {
 			_add_button->property_sensitive() = true;
@@ -247,7 +245,7 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
 		break;
 	}
 
-	row[_plugins_columns._col_uri] = plugin->uri().str();
+	row[_plugins_columns._col_uri] = plugin->uri();
 	row[_plugins_columns._col_plugin] = plugin;
 }
 
@@ -349,7 +347,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		props.insert(make_pair(uris.rdf_type,
 		                       uris.ingen_Node));
 		props.insert(make_pair(uris.ingen_prototype,
-		                       _app->forge().alloc_uri(plugin->uri().str())));
+		                       _app->forge().alloc_uri(plugin->uri())));
 		props.insert(make_pair(uris.ingen_polyphonic,
 		                       _app->forge().make(polyphonic)));
 		_app->interface()->put(GraphObject::path_to_uri(path), props);
@@ -405,10 +403,10 @@ LoadPluginWindow::filter_changed()
 				field = name.get_string();
 			break;
 		case CriteriaColumns::TYPE:
-			field = plugin->type_uri().str();
+			field = plugin->type_uri();
 			break;
 		case CriteriaColumns::URI:
-			field = plugin->uri().str();
+			field = plugin->uri();
 			break;
 		default:
 			throw;

@@ -96,25 +96,27 @@ PatchCanvas::PatchCanvas(App&                        app,
 	xml->get_widget("canvas_menu_new_patch", _menu_new_patch);
 	xml->get_widget("canvas_menu_edit", _menu_edit);
 
+	const URIs& uris = _app.uris();
+
 	// Add port menu items
 	_menu_add_audio_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "audio_in", "Audio In", LV2_CORE__AudioPort, false));
+		           "audio_in", "Audio In", uris.lv2_AudioPort, false));
 	_menu_add_audio_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "audio_out", "Audio Out", LV2_CORE__AudioPort, true));
+		           "audio_out", "Audio Out", uris.lv2_AudioPort, true));
 	_menu_add_control_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "control_in", "Control In", LV2_CORE__ControlPort, false));
+		           "control_in", "Control In", uris.lv2_ControlPort, false));
 	_menu_add_control_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "control_out", "Control Out", LV2_CORE__ControlPort, true));
+		           "control_out", "Control Out", uris.lv2_ControlPort, true));
 	_menu_add_event_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "event_in", "Event In", LV2_ATOM__AtomPort, false));
+		           "event_in", "Event In", uris.atom_AtomPort, false));
 	_menu_add_event_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
-		           "event_out", "Event Out", LV2_ATOM__AtomPort, true));
+		           "event_out", "Event Out", uris.atom_AtomPort, true));
 
 	signal_event.connect(
 		sigc::mem_fun(this, &PatchCanvas::on_event));
@@ -729,7 +731,7 @@ PatchCanvas::paste()
 	       && (first_slash = to_create.find("/")) != string::npos) {
 		created += to_create.substr(0, first_slash);
 		assert(Path::is_valid(created));
-		clipboard.put(created, props);
+		clipboard.put(GraphObject::path_to_uri(Path(created)), props);
 		to_create = to_create.substr(first_slash + 1);
 	}
 
@@ -800,13 +802,13 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 {
 	string sym, name;
 	generate_port_name(sym_base, sym, name_base, name);
-	const Path& path = _patch->path().base() + sym;
+	const Path& path = _patch->path().child(Raul::Symbol(sym));
 
 	const URIs& uris = _app.uris();
 
 	Resource::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type,
-	                       _app.forge().alloc_uri(type.str())));
+	                       _app.forge().alloc_uri(type)));
 	if (type == uris.atom_AtomPort) {
 		props.insert(make_pair(uris.atom_bufferType,
 		                       uris.atom_Sequence));
@@ -842,7 +844,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	GraphObject::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type, uris.ingen_Node));
 	props.insert(make_pair(uris.ingen_prototype,
-	                       uris.forge.alloc_uri(plugin->uri().str())));
+	                       uris.forge.alloc_uri(plugin->uri())));
 	_app.interface()->put(GraphObject::path_to_uri(path), props);
 }
 

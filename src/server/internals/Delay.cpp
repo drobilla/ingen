@@ -50,7 +50,8 @@ namespace Internals {
 static const float MAX_DELAY_SECONDS = 8.0f;
 
 InternalPlugin* DelayNode::internal_plugin(URIs& uris) {
-	return new InternalPlugin(uris, NS_INTERNALS "Delay", "delay");
+	return new InternalPlugin(
+		uris, Raul::URI(NS_INTERNALS "Delay"), Raul::Symbol("delay"));
 }
 
 DelayNode::DelayNode(InternalPlugin*     plugin,

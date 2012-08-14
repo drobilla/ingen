@@ -100,7 +100,7 @@ public:
 		BROADCAST(set_property, subject, predicate, value);
 	}
 
-	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#broadcaster"; } ///< N/A
+	Raul::URI uri() const { return Raul::URI("ingen:broadcaster"); }
 
 	void set_response_id(int32_t id) {} ///< N/A
 	void get(const Raul::URI& uri) {} ///< N/A

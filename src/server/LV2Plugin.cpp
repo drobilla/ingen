@@ -28,7 +28,7 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
+LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const Raul::URI& uri)
 	: PluginImpl(lv2_info->world().uris(), Plugin::LV2, uri)
 	, _lilv_plugin(NULL)
 	, _lv2_info(lv2_info)
@@ -39,7 +39,7 @@ LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri)
 const Raul::Symbol
 LV2Plugin::symbol() const
 {
-	string working = uri().str();
+	string working = uri();
 	if (working[working.length() - 1] == '/')
 		working = working.substr(0, working.length() - 1);
 

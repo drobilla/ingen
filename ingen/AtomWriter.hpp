@@ -36,7 +36,9 @@ public:
 	AtomWriter(URIMap& map, URIs& uris, AtomSink& sink);
 	~AtomWriter() {}
 
-	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#AtomWriter"; }
+	Raul::URI uri() const {
+		return Raul::URI("http://drobilla.net/ns/ingen#AtomWriter");
+	}
 
 	void bundle_begin();
 

@@ -20,11 +20,9 @@
 #include <cstdlib>
 #include <string>
 
-#include <glibmm/module.h>
-#include <boost/utility.hpp>
-
 #include "lilv/lilv.h"
 #include "raul/SharedPtr.hpp"
+#include "raul/URI.hpp"
 
 #include "PluginImpl.hpp"
 #include "LV2Info.hpp"
@@ -40,7 +38,7 @@ class NodeImpl;
 class LV2Plugin : public PluginImpl
 {
 public:
-	LV2Plugin(SharedPtr<LV2Info> lv2_info, const std::string& uri);
+	LV2Plugin(SharedPtr<LV2Info> lv2_info, const Raul::URI& uri);
 
 	NodeImpl* instantiate(BufferFactory&      bufs,
 	                      const Raul::Symbol& symbol,

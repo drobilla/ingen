@@ -129,8 +129,8 @@ NodeMenu::init(App& app, SharedPtr<const Client::NodeModel> node)
 	else
 		_randomize_menuitem->hide();
 
-	if (plugin && (plugin->uri().str() == "http://drobilla.net/ns/ingen-internals#Controller"
-			|| plugin->uri().str() == "http://drobilla.net/ns/ingen-internals#Trigger"))
+	if (plugin && (plugin->uri() == "http://drobilla.net/ns/ingen-internals#Controller"
+			|| plugin->uri() == "http://drobilla.net/ns/ingen-internals#Trigger"))
 		_learn_menuitem->show();
 	else
 		_learn_menuitem->hide();
@@ -200,7 +200,8 @@ NodeMenu::on_preset_activated(const std::string& uri)
 			const LilvNode* val = lilv_nodes_get_first(values);
 			const LilvNode* sym = lilv_nodes_get_first(symbols);
 			_app->interface()->set_property(
-				node->path().base() + lilv_node_as_string(sym),
+				GraphObject::path_to_uri(
+					node->path().child(Raul::Symbol(lilv_node_as_string(sym)))),
 				_app->uris().ingen_value,
 				_app->forge().make(lilv_node_as_float(val)));
 		}

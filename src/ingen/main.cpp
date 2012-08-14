@@ -123,8 +123,10 @@ main(int argc, char** argv)
 		          "Unable to load socket client module");
 		#endif
 		const char* const uri = conf.option("connect").get_string();
+		ingen_try(Raul::URI::is_valid(uri),
+		          (Raul::fmt("Invalid URI <%1%>") % uri).str().c_str());
 		SharedPtr<Interface> client(new Client::ThreadedSigClientInterface(1024));
-		ingen_try((engine_interface = world->new_interface(uri, client)),
+		ingen_try((engine_interface = world->new_interface(Raul::URI(uri), client)),
 		          (string("Unable to create interface to `") + uri + "'").c_str());
 	}
 
@@ -174,7 +176,7 @@ main(int argc, char** argv)
 		  conf.option("load").get_string() :
 		  conf.files().front();
 
-		engine_interface->get("ingen:plugins");
+		engine_interface->get(Raul::URI("ingen:plugins"));
 		engine_interface->get(GraphObject::root_uri());
 		world->parser()->parse_file(
 			world, engine_interface.get(), path, parent, symbol);

@@ -129,7 +129,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		                      *ui->client.get()));
 
 	// Request plugins
-	ui->world->interface()->get("ingen:plugins");
+	ui->world->interface()->get(Raul::URI("ingen:plugins"));
 
 	// Create empty root patch model
 	Ingen::Resource::Properties props;
@@ -139,7 +139,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	// Create a PatchBox for the root and set as the UI widget
 	SharedPtr<const Ingen::Client::PatchModel> root = PtrCast<const Ingen::Client::PatchModel>(
-		ui->app->store()->object("/"));
+		ui->app->store()->object(Raul::Path("/")));
 	ui->view = Ingen::GUI::PatchBox::create(*ui->app, root);
 	ui->view->unparent();
 	*widget = ui->view->gobj();

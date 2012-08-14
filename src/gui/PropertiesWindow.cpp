@@ -114,7 +114,7 @@ get_types(World* world, SharedPtr<const ObjectModel> model)
 	URISet types;
 	PropRange range = model->properties().equal_range(world->uris().rdf_type);
 	for (PropIter t = range.first; t != range.second; ++t) {
-		types.insert(t->second.get_uri());
+		types.insert(Raul::URI(t->second.get_uri()));
 	}
 
 	LilvNode* rdfs_subClassOf = lilv_new_uri(
@@ -133,7 +133,7 @@ get_types(World* world, SharedPtr<const ObjectModel> model)
 			LILV_FOREACH(nodes, s, sups) {
 				const LilvNode* super_node = lilv_nodes_get(sups, s);
 				if (lilv_node_is_uri(super_node)) {
-					Raul::URI super = lilv_node_as_uri(super_node);
+					Raul::URI super(lilv_node_as_uri(super_node));
 					if (!types.count(super)) {
 						++added;
 						supers.insert(super);
@@ -182,7 +182,7 @@ get_properties(World* world, SharedPtr<const ObjectModel> model)
 
 			if (n_matching_domains > 0 &&
 			    n_matching_domains == lilv_nodes_size(domains)) {
-				properties.insert(lilv_node_as_uri(prop));
+				properties.insert(Raul::URI(lilv_node_as_uri(prop)));
 			}
 
 			lilv_nodes_free(domains);
@@ -224,9 +224,9 @@ PropertiesWindow::add_property(const Raul::URI& uri, const Raul::Atom& value)
 	LilvNode* prop = lilv_new_uri(world->lilv_world(), uri.c_str());
 	Glib::ustring lab_text = get_label(world, prop);
 	if (lab_text.empty()) {
-		lab_text = world->rdf_world()->prefixes().qualify(uri.str());
+		lab_text = world->rdf_world()->prefixes().qualify(uri);
 	}
-	lab_text = Glib::ustring("<a href=\"") + uri.str() + "\">"
+	lab_text = Glib::ustring("<a href=\"") + uri + "\">"
 		+ lab_text + "</a>";
 	Gtk::Label* lab = manage(new Gtk::Label(lab_text, 1.0, 0.5));
 	lab->set_use_markup(true);
@@ -254,7 +254,7 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 	reset();
 	_model = model;
 
-	set_title(model->path().str() + " Properties - Ingen");
+	set_title(model->path() + " Properties - Ingen");
 
 	World* world = _app->world();
 
@@ -282,7 +282,7 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 				// At least one applicable object, add property to key combo
 				Gtk::ListStore::iterator ki  = _key_store->append();
 				Gtk::ListStore::Row      row = *ki;
-				row[_combo_columns.uri_col]   = p->str();
+				row[_combo_columns.uri_col]   = *p;
 				row[_combo_columns.label_col] = label;
 				break;
 			}

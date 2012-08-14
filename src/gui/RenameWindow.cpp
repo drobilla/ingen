@@ -64,7 +64,7 @@ RenameWindow::set_object(SharedPtr<const ObjectModel> object)
 {
 	_object = object;
 	_symbol_entry->set_text(object->path().symbol());
-	const Atom& name_atom = object->get_property(LV2_CORE__name);
+	const Atom& name_atom = object->get_property(_app->uris().lv2_name);
 	_label_entry->set_text(
 		(name_atom.type() == _app->forge().String) ? name_atom.get_string() : "");
 }
@@ -82,14 +82,12 @@ RenameWindow::values_changed()
 {
 	const string& symbol = _symbol_entry->get_text();
 	const string& label  = _label_entry->get_text();
-	if (symbol.length() == 0) {
-		_message_label->set_text("Symbol must be at least 1 character");
+	if (!Symbol::is_valid(symbol)) {
+		_message_label->set_text("Invalid symbol");
 		_ok_button->property_sensitive() = false;
-	} else if (!Symbol::is_valid(symbol)) {
-		_message_label->set_text("Symbol contains invalid characters");
-		_ok_button->property_sensitive() = false;
-	} else if (_object->symbol().c_str() != symbol &&
-	           _app->store()->object(_object->parent()->path().child(symbol))) {
+	} else if (_object->symbol() != symbol &&
+	           _app->store()->object(
+		           _object->parent()->path().child(Raul::Symbol(symbol)))) {
 		_message_label->set_text("An object already exists with that path");
 		_ok_button->property_sensitive() = false;
 	} else if (label.empty()) {

@@ -38,9 +38,9 @@ class BufferFactory;
 class InternalPlugin : public PluginImpl
 {
 public:
-	InternalPlugin(URIs&              uris,
-	               const std::string& uri,
-	               const std::string& symbol);
+	InternalPlugin(URIs&               uris,
+	               const Raul::URI&    uri,
+	               const Raul::Symbol& symbol);
 
 	NodeImpl* instantiate(BufferFactory&      bufs,
 	                      const Raul::Symbol& symbol,

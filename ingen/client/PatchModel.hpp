@@ -54,7 +54,8 @@ private:
 	friend class ClientStore;
 
 	PatchModel(URIs& uris, const Raul::Path& patch_path)
-		: NodeModel(uris, "http://drobilla.net/ns/ingen#Patch", patch_path)
+		: NodeModel(
+			uris, Raul::URI("http://drobilla.net/ns/ingen#Patch"), patch_path)
 	{
 	}
 

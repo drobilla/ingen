@@ -76,8 +76,6 @@ public:
 
 	const Raul::Path& path() const { return _path; }
 
-	SharedPtr<GraphObject> find_child(const std::string& name) const;
-
 	/** Prepare for a new (external) polyphony value.
 	 *
 	 * Preprocessor thread, poly is actually applied by apply_poly.

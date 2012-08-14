@@ -41,10 +41,10 @@ public:
 
 	static inline const Raul::URI& type_uri(Type type) {
 		static const Raul::URI uris[] = {
-			"http://drobilla.net/ns/ingen#nil",
-			LV2_CORE__Plugin,
-			"http://drobilla.net/ns/ingen#Internal",
-			"http://drobilla.net/ns/ingen#Patch"
+			Raul::URI("http://drobilla.net/ns/ingen#nil"),
+			Raul::URI(LV2_CORE__Plugin),
+			Raul::URI("http://drobilla.net/ns/ingen#Internal"),
+			Raul::URI("http://drobilla.net/ns/ingen#Patch")
 		};
 
 		return uris[type];

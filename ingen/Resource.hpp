@@ -49,9 +49,9 @@ public:
 
 	static Raul::URI graph_to_uri(Graph g) {
 		switch (g) {
-		case DEFAULT:  return NS_INGEN "defaultContext";
-		case EXTERNAL: return NS_INGEN "externalContext";
-		case INTERNAL: return NS_INGEN "internalContext";
+		case DEFAULT:  return Raul::URI(NS_INGEN "defaultContext");
+		case EXTERNAL: return Raul::URI(NS_INGEN "externalContext");
+		case INTERNAL: return Raul::URI(NS_INGEN "internalContext");
 		}
 	}
 

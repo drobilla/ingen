@@ -45,19 +45,19 @@ PluginModel::PluginModel(URIs&                       uris,
                          const Raul::URI&            type_uri,
                          const Resource::Properties& properties)
 	: Plugin(uris, uri)
-	, _type(type_from_uri(type_uri.str()))
+	, _type(type_from_uri(type_uri))
 {
 	add_properties(properties);
 
 	assert(_rdf_world);
-	add_property("http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-	             uris.forge.alloc_uri(this->type_uri().str()));
+	add_property(uris.rdf_type,
+	             uris.forge.alloc_uri(this->type_uri()));
 	LilvNode* plugin_uri = lilv_new_uri(_lilv_world, uri.c_str());
 	_lilv_plugin = lilv_plugins_get_by_uri(_lilv_plugins, plugin_uri);
 	lilv_node_free(plugin_uri);
 
 	if (_type == Internal) {
-		set_property("http://usefulinc.com/ns/doap#name",
+		set_property(uris.doap_name,
 		             uris.forge.alloc(uri.substr(uri.find_last_of('#') + 1)));
 	}
 }
@@ -81,7 +81,7 @@ PluginModel::get_property(const Raul::URI& key) const
 			if (last_colon != string::npos)
 				symbol = uri.substr(last_colon + 1);
 			else
-				symbol = uri.str();
+				symbol = uri;
 		} else if (last_slash == string::npos) {
 			symbol = uri.substr(last_hash + 1);
 		} else if (last_hash == string::npos) {
@@ -89,19 +89,19 @@ PluginModel::get_property(const Raul::URI& key) const
 		} else {
 			size_t first_delim = std::min(last_slash, last_hash);
 			size_t last_delim  = std::max(last_slash, last_hash);
-			if (isalpha(uri.str()[last_delim + 1]))
+			if (isalpha(uri[last_delim + 1]))
 				symbol = uri.substr(last_delim + 1);
 			else
 				symbol = uri.substr(first_delim + 1,
 				                    last_delim - first_delim - 1);
 		}
-		set_property(LV2_CORE__symbol, _uris.forge.alloc(symbol));
+		set_property(_uris.lv2_symbol, _uris.forge.alloc(symbol));
 		return get_property(key);
 	}
 
 	if (_lilv_plugin) {
 		boost::optional<const Raul::Atom&> ret;
-		LilvNode*  lv2_pred = lilv_new_uri(_lilv_world, key.str().c_str());
+		LilvNode*  lv2_pred = lilv_new_uri(_lilv_world, key.c_str());
 		LilvNodes* values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
 		lilv_node_free(lv2_pred);
 		LILV_FOREACH(nodes, i, values) {
@@ -155,7 +155,7 @@ PluginModel::set(SharedPtr<PluginModel> p)
 Raul::Symbol
 PluginModel::default_node_symbol() const
 {
-	const Raul::Atom& name_atom = get_property(LV2_CORE__symbol);
+	const Raul::Atom& name_atom = get_property(_uris.lv2_symbol);
 	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String)
 		return Raul::Symbol::symbolify(name_atom.get_string());
 	else
@@ -165,7 +165,7 @@ PluginModel::default_node_symbol() const
 string
 PluginModel::human_name() const
 {
-	const Raul::Atom& name_atom = get_property("http://usefulinc.com/ns/doap#name");
+	const Raul::Atom& name_atom = get_property(_uris.doap_name);
 	if (name_atom.type() == _uris.forge.String)
 		return name_atom.get_string();
 	else

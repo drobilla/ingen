@@ -566,7 +566,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	   Since we are not yet rolling, it won't be drained, causing a deadlock. */
 	SharedPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
 	interface->set_respondee(client);
-	engine->register_client("http://drobilla.net/ns/ingen#internal", client);
+	engine->register_client(Raul::URI("ingen:lv2"), client);
 
 	return (LV2_Handle)plugin;
 }
@@ -666,7 +666,7 @@ ingen_save(LV2_Handle                instance,
 	char* real_path  = make_path->path(make_path->handle, "patch.ttl");
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);
 
-	Ingen::Store::iterator root = plugin->world->store()->find("/");
+	Ingen::Store::iterator root = plugin->world->store()->find(Raul::Path("/"));
 	plugin->world->serialiser()->to_file(root->second, real_path);
 
 	store(handle,

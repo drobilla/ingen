@@ -40,7 +40,7 @@ public:
 	explicit EventWriter(Engine& engine);
 	virtual ~EventWriter();
 
-	Raul::URI uri() const { return "http://drobilla.net/ns/ingen#internal"; }
+	Raul::URI uri() const { return Raul::URI("ingen:eventWriter"); }
 
 	virtual SharedPtr<Interface> respondee() const {
 		return _respondee;

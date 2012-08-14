@@ -17,8 +17,6 @@
 #ifndef INGEN_SOCKET_SOCKET_CLIENT_HPP
 #define INGEN_SOCKET_SOCKET_CLIENT_HPP
 
-#include <string>
-
 #include "SocketReader.hpp"
 #include "SocketWriter.hpp"
 
@@ -30,7 +28,7 @@ class SocketClient : public SocketWriter
 {
 public:
 	SocketClient(World&               world,
-	             const std::string&   uri,
+	             const Raul::URI&     uri,
 	             SharedPtr<Socket>    sock,
 	             SharedPtr<Interface> respondee)
 		: SocketWriter(world.uri_map(), world.uris(), uri, sock)

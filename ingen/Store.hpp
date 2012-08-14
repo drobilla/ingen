@@ -43,7 +43,7 @@ public:
 	const_iterator children_end(SharedPtr<const GraphObject> o) const;
 
 	SharedPtr<GraphObject> find_child(SharedPtr<const GraphObject> parent,
-	                                  const std::string&           child_name) const;
+	                                  const Raul::Symbol&          symbol) const;
 
 	unsigned child_name_offset(const Raul::Path&   parent,
 	                           const Raul::Symbol& symbol,

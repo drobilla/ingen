@@ -25,19 +25,16 @@
 
 static SharedPtr<Ingen::Interface>
 new_socket_interface(Ingen::World*               world,
-                     const std::string&          url,
+                     const Raul::URI&            uri,
                      SharedPtr<Ingen::Interface> respondee)
 {
 	SharedPtr<Ingen::Socket::Socket> sock(
-		new Ingen::Socket::Socket(Ingen::Socket::Socket::type_from_uri(url)));
-	if (!sock->connect(url)) {
+		new Ingen::Socket::Socket(Ingen::Socket::Socket::type_from_uri(uri)));
+	if (!sock->connect(uri)) {
 		return SharedPtr<Ingen::Interface>();
 	}
 	Ingen::Socket::SocketClient* client = new Ingen::Socket::SocketClient(
-		*world,
-		url,
-		sock,
-		respondee);
+		*world, uri, sock, respondee);
 	return SharedPtr<Ingen::Interface>(client);
 }
 

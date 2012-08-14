@@ -61,12 +61,12 @@ Store::children_end(SharedPtr<const GraphObject> o) const
 
 SharedPtr<GraphObject>
 Store::find_child(SharedPtr<const GraphObject> parent,
-                  const string&                child_name) const
+                  const Raul::Symbol&          symbol) const
 {
 	const_iterator pi = find(parent->path());
 	assert(pi != end());
 	const_iterator children_end = find_descendants_end(pi);
-	const_iterator child = find(pi, children_end, parent->path().base() + child_name);
+	const_iterator child = find(pi, children_end, parent->path().child(symbol));
 	if (child != end())
 		return child->second;
 	else
@@ -83,14 +83,17 @@ Store::child_name_offset(const Raul::Path&   parent,
 	while (true) {
 		std::stringstream ss;
 		ss << symbol;
-		if (offset > 0)
+		if (offset > 0) {
 			ss << "_" << offset;
-		if (find(parent.base() + ss.str()) == end() && (allow_zero || offset > 0))
+		}
+		if (find(parent.child(Raul::Symbol(ss.str()))) == end() &&
+		    (allow_zero || offset > 0)) {
 			break;
-		else if (offset == 0)
+		} else if (offset == 0) {
 			offset = 2;
-		else
+		} else {
 			++offset;
+		}
 	}
 
 	return offset;

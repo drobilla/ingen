@@ -66,15 +66,17 @@ public:
 	static Raul::URI root_uri() { return Raul::URI("ingen:root"); }
 
 	static bool uri_is_path(const Raul::URI& uri) {
-		return uri.substr(0, root_uri().length()) == root_uri().str();
+		return uri.substr(0, root_uri().length()) == root_uri();
 	}
 
 	static Raul::Path uri_to_path(const Raul::URI& uri) {
-		return (uri == root_uri()) ? "/" : uri.substr(root_uri().length());
+		return (uri == root_uri())
+			? Raul::Path("/")
+			: Raul::Path(uri.substr(root_uri().length()));
 	}
 
 	static Raul::URI path_to_uri(const Raul::Path& path) {
-		return Raul::URI(root_uri().str() + path.c_str());
+		return Raul::URI(root_uri() + path.c_str());
 	}
 
 protected:

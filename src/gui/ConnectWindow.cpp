@@ -16,6 +16,7 @@
 
 #include <stdlib.h>
 #include <string>
+#include <sstream>
 
 #include <gtkmm/stock.h>
 
@@ -38,8 +39,6 @@
 using namespace Ingen::Client;
 using namespace std;
 using namespace Raul;
-
-namespace Raul { class Deletable; }
 
 namespace Ingen {
 namespace GUI {
@@ -164,15 +163,16 @@ ConnectWindow::connect(bool existing)
 
 #ifdef HAVE_SOCKET
 	if (_mode == CONNECT_REMOTE) {
-		string uri = "unix:///tmp/ingen.sock";
+		Raul::URI uri("unix:///tmp/ingen.sock");
 		if (_widgets_loaded) {
 			const std::string& user_uri = _url_entry->get_text();
-			if (Raul::URI::is_valid(user_uri))
-				uri = user_uri;
+			if (Raul::URI::is_valid(user_uri)) {
+				uri = Raul::URI(user_uri);
+			}
 		}
 
 		if (existing) {
-			uri = world->interface()->uri().str();
+			uri = world->interface()->uri();
 		}
 
 		SharedPtr<ThreadedSigClientInterface> tsci;
@@ -193,12 +193,13 @@ ConnectWindow::connect(bool existing)
 		return;
 	} else if (_mode == LAUNCH_REMOTE) {
 		int port = _port_spinbutton->get_value_as_int();
-		char port_str[8];
-		snprintf(port_str, sizeof(port_str), "%u", port);
+		std::stringstream ss;
+		ss << port;
+		const std::string port_str = ss.str();
 		const string cmd = string("ingen -e -E ").append(port_str);
 
 		if (Raul::Process::launch(cmd)) {
-			const std::string engine_uri = string("tcp://localhost:").append(port_str);
+			const Raul::URI engine_uri(string("tcp://localhost:") + port_str);
 
 			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 			world->set_interface(world->new_interface(engine_uri, tsci));
@@ -255,16 +256,16 @@ ConnectWindow::disconnect()
 void
 ConnectWindow::activate()
 {
-	_app->interface()->set_property("ingen:driver",
-	                                "ingen:enabled",
+	_app->interface()->set_property(Raul::URI("ingen:driver"),
+	                                _app->uris().ingen_enabled,
 	                                _app->forge().make(true));
 }
 
 void
 ConnectWindow::deactivate()
 {
-	_app->interface()->set_property("ingen:driver",
-	                                "ingen:enabled",
+	_app->interface()->set_property(Raul::URI("ingen:driver"),
+	                                _app->uris().ingen_enabled,
 	                                _app->forge().make(false));
 }
 
@@ -390,7 +391,7 @@ ConnectWindow::gtk_callback()
 
 		_ping_id = g_random_int();
 		_app->interface()->set_response_id(_ping_id);
-		_app->interface()->get("ingen:engine");
+		_app->interface()->get(Raul::URI("ingen:engine"));
 
 		if (_widgets_loaded) {
 			_progress_label->set_text("Connecting to engine...");
@@ -407,7 +408,7 @@ ConnectWindow::gtk_callback()
 				(now.tv_usec - last.tv_usec) * 0.001f;
 			if (ms_since_last > 1000) {
 				_app->interface()->set_response_id(_ping_id);
-				_app->interface()->get("ingen:engine");
+				_app->interface()->get(Raul::URI("ingen:engine"));
 				last = now;
 			}
 		}
@@ -419,18 +420,18 @@ ConnectWindow::gtk_callback()
 	} else if (_connect_stage == 3) {
 		if (_app->store()->size() > 0) {
 			SharedPtr<const PatchModel> root = PtrCast<const PatchModel>(
-				_app->store()->object("/"));
+				_app->store()->object(Raul::Path("/")));
 			if (root) {
 				set_connected_to(_app->interface());
 				_app->window_factory()->present_patch(root);
-				_app->interface()->get("ingen:plugins");
+				_app->interface()->get(Raul::URI("ingen:plugins"));
 				if (_widgets_loaded)
 					_progress_label->set_text(string("Loading plugins..."));
 				++_connect_stage;
 			}
 		}
 	} else if (_connect_stage == 4) {
-		_app->interface()->get("ingen:plugins");
+		_app->interface()->get(Raul::URI("ingen:plugins"));
 		hide();
 		if (_widgets_loaded)
 			_progress_label->set_text("Connected to engine");

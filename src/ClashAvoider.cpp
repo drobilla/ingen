@@ -45,7 +45,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 
 	unsigned offset = 0;
 	bool has_offset = false;
-	const size_t pos = in.str().find_last_of('_');
+	const size_t pos = in.find_last_of('_');
 	if (pos != string::npos && pos != (in.length()-1)) {
 		const std::string trailing = in.substr(pos + 1);
 		has_offset = (sscanf(trailing.c_str(), "%u", &offset) > 0);
@@ -54,7 +54,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 	Raul::debug << "OFFSET: " << offset << endl;
 
 	// Path without _n suffix
-	std::string base_path_str = in.str();
+	std::string base_path_str = in;
 	if (has_offset) {
 		base_path_str = base_path_str.substr(0, base_path_str.find_last_of('_'));
 	}
@@ -75,8 +75,8 @@ ClashAvoider::map_path(const Raul::Path& in)
 			Raul::debug << "CHECK: " << parent << endl;
 			SymbolMap::iterator p = _symbol_map.find(parent);
 			if (p != _symbol_map.end()) {
-				const Raul::Path mapped = p->second.base()
-					+ in.substr(parent.base().length());
+				const Raul::Path mapped = Raul::Path(
+					p->second.base() + in.substr(parent.base().length()));
 				InsertRecord i = _symbol_map.insert(make_pair(in, mapped));
 				Raul::debug << " (2) " << i.first->second << endl;
 				return i.first->second;
@@ -110,7 +110,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 
 				std::stringstream ss;
 				ss << base_path << "_" << offset;
-				if (!exists(ss.str())) {
+				if (!exists(Raul::Path(ss.str()))) {
 					std::string name = base_path.symbol();
 					if (name == "")
 						name = "_";

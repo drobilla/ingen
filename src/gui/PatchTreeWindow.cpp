@@ -92,7 +92,7 @@ PatchTreeWindow::add_patch(SharedPtr<PatchModel> pm)
 		Gtk::TreeModel::iterator iter = _patch_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
 		if (pm->path().is_root()) {
-			row[_patch_tree_columns.name_col] = _app->interface()->uri().str();
+			row[_patch_tree_columns.name_col] = _app->interface()->uri();
 		} else {
 			row[_patch_tree_columns.name_col] = pm->symbol().c_str();
 		}
