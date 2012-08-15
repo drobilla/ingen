@@ -287,7 +287,7 @@ Delta::execute(ProcessContext& context)
 		case ENABLE:
 			if (value.get_bool()) {
 				if (_compiled_patch) {
-					_engine.maid()->push(_patch->compiled_patch());
+					_engine.maid()->dispose(_patch->compiled_patch());
 					_patch->compiled_patch(_compiled_patch);
 				}
 				_patch->enable();

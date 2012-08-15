@@ -124,7 +124,7 @@ void
 CreateNode::execute(ProcessContext& context)
 {
 	if (_node) {
-		_engine.maid()->push(_patch->compiled_patch());
+		_engine.maid()->dispose(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);
 	}
 }

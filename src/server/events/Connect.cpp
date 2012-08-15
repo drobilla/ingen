@@ -144,9 +144,9 @@ Connect::execute(ProcessContext& context)
 {
 	if (!_status) {
 		_head->add_edge(context, _edge.get());
-		_engine.maid()->push(_head->set_buffers(context, _buffers));
+		_engine.maid()->dispose(_head->set_buffers(context, _buffers));
 		_head->connect_buffers();
-		_engine.maid()->push(_patch->compiled_patch());
+		_engine.maid()->dispose(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);
 	}
 }

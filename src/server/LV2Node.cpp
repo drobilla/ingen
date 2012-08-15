@@ -171,7 +171,7 @@ LV2Node::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 		poly = 1;
 
 	if (_prepared_instances) {
-		maid.push(_instances);
+		maid.dispose(_instances);
 		_instances = _prepared_instances;
 		_prepared_instances = NULL;
 	}
@@ -443,7 +443,7 @@ LV2Node::process(ProcessContext& context)
 			Response& r = _responses.front();
 			_worker_iface->work_response(inst, r.size, r.data);
 			_responses.pop_front();
-			context.engine().maid()->push(&r);
+			context.engine().maid()->dispose(&r);
 		}
 
 		if (_worker_iface->end_run) {

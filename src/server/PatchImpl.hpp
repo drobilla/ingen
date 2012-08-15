@@ -19,8 +19,6 @@
 
 #include <cstdlib>
 
-#include "raul/List.hpp"
-
 #include "CompiledPatch.hpp"
 #include "DuplexPort.hpp"
 #include "NodeImpl.hpp"

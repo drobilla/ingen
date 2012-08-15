@@ -153,7 +153,7 @@ DisconnectAll::execute(ProcessContext& context)
 		}
 	}
 
-	_engine.maid()->push(_parent->compiled_patch());
+	_engine.maid()->dispose(_parent->compiled_patch());
 	_parent->compiled_patch(_compiled_patch);
 }
 

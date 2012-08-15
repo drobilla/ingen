@@ -182,7 +182,7 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 
 	if (set_dst_buffers) {
 		if (_buffers) {
-			_engine.maid()->push(_dst_input_port->set_buffers(context, _buffers));
+			_engine.maid()->dispose(_dst_input_port->set_buffers(context, _buffers));
 		} else {
 			_dst_input_port->setup_buffers(*_engine.buffer_factory(),
 			                               _dst_input_port->poly(),
@@ -208,7 +208,7 @@ Disconnect::execute(ProcessContext& context)
 			return;
 		}
 
-		_engine.maid()->push(_patch->compiled_patch());
+		_engine.maid()->dispose(_patch->compiled_patch());
 		_patch->compiled_patch(_compiled_patch);
 	}
 }

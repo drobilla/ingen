@@ -125,7 +125,7 @@ NoteNode::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 
 	if (_prepared_voices) {
 		assert(_polyphony <= _prepared_voices->size());
-		maid.push(_voices);
+		maid.dispose(_voices);
 		_voices = _prepared_voices;
 		_prepared_voices = NULL;
 	}

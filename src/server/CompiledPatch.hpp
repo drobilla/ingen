@@ -20,9 +20,8 @@
 #include <vector>
 #include <list>
 
-#include <boost/utility.hpp>
-
-#include "raul/Deletable.hpp"
+#include "raul/Disposable.hpp"
+#include "raul/Noncopyable.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -64,8 +63,8 @@ private:
  * before its providers, using this order as well as semaphores.
  */
 class CompiledPatch : public std::vector<CompiledNode>
-                    , public Raul::Deletable
-                    , public boost::noncopyable
+                    , public Raul::Disposable
+                    , public Raul::Noncopyable
 {
 };
 

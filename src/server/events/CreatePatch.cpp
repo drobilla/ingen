@@ -105,7 +105,7 @@ CreatePatch::execute(ProcessContext& context)
 	if (_patch) {
 		assert(_parent);
 		assert(!_path.is_root());
-		_engine.maid()->push(_parent->compiled_patch());
+		_engine.maid()->dispose(_parent->compiled_patch());
 		_parent->compiled_patch(_compiled_patch);
 	}
 }

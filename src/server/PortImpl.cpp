@@ -257,11 +257,11 @@ PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	_poly = poly;
 
 	// Apply a new set of buffers from a preceding call to prepare_poly
-	maid.push(set_buffers(context, _prepared_buffers));
+	maid.dispose(set_buffers(context, _prepared_buffers));
 	assert(_buffers == _prepared_buffers);
 	_prepared_buffers = NULL;
 
-	maid.push(_set_states);
+	maid.dispose(_set_states);
 	_set_states          = _prepared_set_states;
 	_prepared_set_states = NULL;
 

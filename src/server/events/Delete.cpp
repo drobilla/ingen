@@ -124,7 +124,7 @@ Delete::execute(ProcessContext& context)
 
 	PatchImpl* parent = _node ? _node->parent_patch() : _port->parent_patch();
 	if (_port) {
-		_engine.maid()->push(parent->external_ports());
+		_engine.maid()->dispose(parent->external_ports());
 		parent->external_ports(_ports_array);
 
 		if (_engine_port) {
@@ -133,7 +133,7 @@ Delete::execute(ProcessContext& context)
 	}
 
 	if (parent) {
-		_engine.maid()->push(parent->compiled_patch());
+		_engine.maid()->dispose(parent->compiled_patch());
 		parent->compiled_patch(_compiled_patch);
 	}
 }

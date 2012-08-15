@@ -17,10 +17,9 @@
 #ifndef INGEN_ENGINE_LV2NODE_HPP
 #define INGEN_ENGINE_LV2NODE_HPP
 
-#include <string>
-
 #include "lilv/lilv.h"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
+#include "raul/Disposable.hpp"
 
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
@@ -75,7 +74,7 @@ protected:
 
 	typedef Raul::Array< SharedPtr<void> > Instances;
 
-	struct Response : public Raul::Deletable
+	struct Response : public Raul::Disposable
 	                , public Raul::Noncopyable
 	                , public boost::intrusive::slist_base_hook<>
 	{
