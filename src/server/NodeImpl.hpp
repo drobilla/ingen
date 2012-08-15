@@ -18,7 +18,8 @@
 #define INGEN_ENGINE_NODEIMPL_HPP
 
 #include <list>
-#include <string>
+
+#include <boost/intrusive/slist.hpp>
 
 #include "raul/Array.hpp"
 #include "raul/AtomicInt.hpp"
@@ -30,7 +31,6 @@
 #include "types.hpp"
 
 namespace Raul {
-template <typename T> class List;
 class Maid;
 }
 
@@ -56,6 +56,7 @@ class ProcessContext;
  * \ingroup engine
  */
 class NodeImpl : public GraphObjectImpl
+               , public boost::intrusive::slist_base_hook<>  // In PatchImpl
 {
 public:
 	NodeImpl(PluginImpl*         plugin,
@@ -153,8 +154,8 @@ public:
 	virtual uint32_t polyphony() const { return _polyphony; }
 
 	/** Used by the process order finding algorithm (ie during connections) */
-	bool               traversed()   const { return _traversed; }
-	void               traversed(bool b)   { _traversed = b; }
+	bool traversed() const { return _traversed; }
+	void traversed(bool b) { _traversed = b; }
 
 protected:
 	PluginImpl*             _plugin;

@@ -53,8 +53,13 @@ NodeImpl::NodeImpl(PluginImpl*         plugin,
 
 NodeImpl::~NodeImpl()
 {
-	if (_activated)
+	if (_activated) {
 		deactivate();
+	}
+
+	if (is_linked()) {
+		parent_patch()->remove_node(*this);
+	}
 
 	delete _ports;
 }
@@ -75,9 +80,8 @@ void
 NodeImpl::activate(BufferFactory& bufs)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	assert(!_activated);
-	_activated = true;
 
+	_activated = true;
 	for (uint32_t p = 0; p < num_ports(); ++p) {
 		PortImpl* const port = _ports->at(p);
 		port->setup_buffers(bufs, port->poly(), false);
@@ -89,7 +93,6 @@ NodeImpl::activate(BufferFactory& bufs)
 void
 NodeImpl::deactivate()
 {
-	assert(_activated);
 	_activated = false;
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		for (uint32_t j = 0; j < num_ports(); ++j) {

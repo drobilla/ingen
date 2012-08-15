@@ -140,9 +140,9 @@ CreatePort::pre_process()
 
 	_engine.store()->add(_patch_port);
 	if (_is_output) {
-		_patch->add_output(new Raul::List<PortImpl*>::Node(_patch_port));
+		_patch->add_output(*_patch_port);
 	} else {
-		_patch->add_input(new Raul::List<PortImpl*>::Node(_patch_port));
+		_patch->add_input(*_patch_port);
 	}
 
 	if (!_patch->parent()) {

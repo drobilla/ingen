@@ -28,9 +28,10 @@
 namespace Ingen {
 namespace Server {
 
+class DuplexPort;
+class EnginePort;
 class PatchImpl;
 class PortImpl;
-class EnginePort;
 
 namespace Events {
 
@@ -58,7 +59,7 @@ private:
 	PortType                _port_type;
 	LV2_URID                _buf_type;
 	PatchImpl*              _patch;
-	PortImpl*               _patch_port;
+	DuplexPort*             _patch_port;
 	Raul::Array<PortImpl*>* _ports_array; ///< New external port array for Patch
 	Raul::Array<PortImpl*>* _old_ports_array;
 	EnginePort*             _engine_port; ///< Driver port if on the root

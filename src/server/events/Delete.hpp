@@ -32,6 +32,7 @@ namespace Server {
 
 class NodeImpl;
 class PortImpl;
+class DuplexPort;
 class EnginePort;
 class CompiledPatch;
 
@@ -69,16 +70,14 @@ public:
 	void post_process();
 
 private:
-	Raul::URI                      _uri;
-	Raul::Path                     _path;
-	SharedPtr<NodeImpl>            _node;                ///< Non-NULL iff a node
-	SharedPtr<PortImpl>            _port;                ///< Non-NULL iff a port
-	EnginePort*                    _engine_port;
-	PatchImpl::Nodes::Node*        _patch_node_listnode;
-	Raul::List<PortImpl*>::Node*   _patch_port_listnode;
-	Raul::Array<PortImpl*>*        _ports_array;         ///< New (external) ports for Patch
-	CompiledPatch*                 _compiled_patch;      ///< Patch's new process order
-	DisconnectAll*                 _disconnect_event;
+	Raul::URI                _uri;
+	Raul::Path               _path;
+	SharedPtr<NodeImpl>      _node;                ///< Non-NULL iff a node
+	SharedPtr<DuplexPort>    _port;                ///< Non-NULL iff a port
+	EnginePort*              _engine_port;
+	Raul::Array<PortImpl*>*  _ports_array;         ///< New (external) ports for Patch
+	CompiledPatch*           _compiled_patch;      ///< Patch's new process order
+	DisconnectAll*           _disconnect_event;
 
 	SharedPtr<ControlBindings::Bindings> _removed_bindings;
 	Store::Objects                       _removed_objects;

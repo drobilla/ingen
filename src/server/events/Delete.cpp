@@ -42,8 +42,6 @@ Delete::Delete(Engine&              engine,
 	: Event(engine, client, id, time)
 	, _uri(uri)
 	, _engine_port(NULL)
-	, _patch_node_listnode(NULL)
-	, _patch_port_listnode(NULL)
 	, _ports_array(NULL)
 	, _compiled_patch(NULL)
 	, _disconnect_event(NULL)
@@ -62,7 +60,7 @@ Delete::~Delete()
 bool
 Delete::pre_process()
 {
-	if (_path == "/" || _path == "/control_in" || _path == "/control_out") {
+	if (_path.is_root() || _path == "/control_in" || _path == "/control_out") {
 		return Event::pre_process_done(NOT_DELETABLE, _path);
 	}
 
@@ -71,49 +69,47 @@ Delete::pre_process()
 	_removed_bindings = _engine.control_bindings()->remove(_path);
 
 	Store::iterator iter = _engine.store()->find(_path);
-	if (iter != _engine.store()->end())  {
-		if (!(_node = PtrCast<NodeImpl>(iter->second))) {
-			_port = PtrCast<PortImpl>(iter->second);
-		}
+	if (iter == _engine.store()->end()) {
+		return Event::pre_process_done(NOT_FOUND, _path);
 	}
 
-	if (iter != _engine.store()->end()) {
-		_engine.store()->remove(iter, _removed_objects);
+	if (!(_node = PtrCast<NodeImpl>(iter->second))) {
+		_port = PtrCast<DuplexPort>(iter->second);
 	}
 
-	if (_node && !_path.is_root()) {
-		assert(_node->parent_patch());
-		_patch_node_listnode = _node->parent_patch()->remove_node(Raul::Symbol(_path.symbol()));
-		if (_patch_node_listnode) {
-			assert(_patch_node_listnode->elem() == _node.get());
+	if (!_node && !_port) {
+		return Event::pre_process_done(NOT_DELETABLE, _path);
+	}
 
-			_disconnect_event = new DisconnectAll(_engine, _node->parent_patch(), _node.get());
-			_disconnect_event->pre_process();
+	PatchImpl* parent = _node ? _node->parent_patch() : _port->parent_patch();
+	if (!parent) {
+		return Event::pre_process_done(INTERNAL_ERROR, _path);
+	}
 
-			if (_node->parent_patch()->enabled()) {
-				_compiled_patch = _node->parent_patch()->compile();
-			}
+	_engine.store()->remove(iter, _removed_objects);
+
+	if (_node) {
+		parent->remove_node(*_node);
+		_disconnect_event = new DisconnectAll(_engine, parent, _node.get());
+		_disconnect_event->pre_process();
+		
+		if (parent->enabled()) {
+			_compiled_patch = parent->compile();
 		}
 	} else if (_port) {
-		assert(_port->parent_patch());
-		_patch_port_listnode = _port->parent_patch()->remove_port(Raul::Symbol(_path.symbol()));
-		if (_patch_port_listnode) {
-			assert(_patch_port_listnode->elem() == _port.get());
+		parent->remove_port(*_port);
+		_disconnect_event = new DisconnectAll(_engine, parent, _port.get());
+		_disconnect_event->pre_process();
 
-			_disconnect_event = new DisconnectAll(_engine, _port->parent_patch(), _port.get());
-			_disconnect_event->pre_process();
-
-			if (_port->parent_patch()->enabled()) {
-				_compiled_patch = _port->parent_patch()->compile();
-				_ports_array    = _port->parent_patch()->build_ports_array();
-				assert(_ports_array->size() == _port->parent_patch()->num_ports_non_rt());
-			}
-
-			if (!_port->parent_patch()->parent()) {
-				_engine_port = _engine.driver()->get_port(_port->path());
-			}
+		if (parent->enabled()) {
+			_compiled_patch = parent->compile();
+			_ports_array    = parent->build_ports_array();
+			assert(_ports_array->size() == parent->num_ports_non_rt());
 		}
 
+		if (!parent->parent()) {
+			_engine_port = _engine.driver()->get_port(_port->path());
+		}
 	}
 
 	return Event::pre_process_done(SUCCESS);
@@ -122,35 +118,23 @@ Delete::pre_process()
 void
 Delete::execute(ProcessContext& context)
 {
-	PatchImpl* parent_patch = NULL;
+	if (_disconnect_event) {
+		_disconnect_event->execute(context);
+	}
 
-	if (_patch_node_listnode) {
-		assert(_node);
-
-		if (_disconnect_event)
-			_disconnect_event->execute(context);
-
-		parent_patch = _node->parent_patch();
-
-	} else if (_patch_port_listnode) {
-		assert(_port);
-
-		if (_disconnect_event)
-			_disconnect_event->execute(context);
-
-		parent_patch = _port->parent_patch();
-
-		_engine.maid()->push(_port->parent_patch()->external_ports());
-		_port->parent_patch()->external_ports(_ports_array);
+	PatchImpl* parent = _node ? _node->parent_patch() : _port->parent_patch();
+	if (_port) {
+		_engine.maid()->push(parent->external_ports());
+		parent->external_ports(_ports_array);
 
 		if (_engine_port) {
 			_engine.driver()->remove_port(context, _engine_port);
 		}
 	}
 
-	if (parent_patch) {
-		_engine.maid()->push(parent_patch->compiled_patch());
-		parent_patch->compiled_patch(_compiled_patch);
+	if (parent) {
+		_engine.maid()->push(parent->compiled_patch());
+		parent->compiled_patch(_compiled_patch);
 	}
 }
 
@@ -159,12 +143,9 @@ Delete::post_process()
 {
 	_lock.release();
 	_removed_bindings.reset();
-	if (!respond() && (_patch_node_listnode || _patch_port_listnode)) {
-		if (_patch_node_listnode) {
+	if (!respond() && (_node || _port)) {
+		if (_node) {
 			_node->deactivate();
-			delete _patch_node_listnode;
-		} else if (_patch_port_listnode) {
-			delete _patch_port_listnode;
 		}
 
 		_engine.broadcaster()->bundle_begin();

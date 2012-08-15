@@ -18,12 +18,11 @@
 #define INGEN_ENGINE_PATCHIMPL_HPP
 
 #include <cstdlib>
-#include <list>
-#include <string>
 
 #include "raul/List.hpp"
 
 #include "CompiledPatch.hpp"
+#include "DuplexPort.hpp"
 #include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortType.hpp"
@@ -96,38 +95,40 @@ public:
 
 	// Patch specific stuff not inherited from Node
 
-	typedef Raul::List<NodeImpl*> Nodes;
+	typedef boost::intrusive::slist<
+		NodeImpl, boost::intrusive::constant_time_size<true> > Nodes;
 
-	void         add_node(Nodes::Node* tn);
-	Nodes::Node* remove_node(const Raul::Symbol& symbol);
+	void add_node(NodeImpl& node);
+	void remove_node(NodeImpl& node);
 
 	Nodes&       nodes()       { return _nodes; }
 	const Nodes& nodes() const { return _nodes; }
 
 	uint32_t num_ports_non_rt() const;
 
-	PortImpl* create_port(BufferFactory&      bufs,
-	                      const Raul::Symbol& symbol,
-	                      PortType            type,
-	                      LV2_URID            buffer_type,
-	                      uint32_t            buffer_size,
-	                      bool                is_output,
-	                      bool                polyphonic);
+	DuplexPort* create_port(BufferFactory&      bufs,
+	                        const Raul::Symbol& symbol,
+	                        PortType            type,
+	                        LV2_URID            buffer_type,
+	                        uint32_t            buffer_size,
+	                        bool                is_output,
+	                        bool                polyphonic);
 
-	typedef Raul::List<PortImpl*> Ports;
+	typedef boost::intrusive::slist<
+		DuplexPort, boost::intrusive::constant_time_size<true> > Ports;
 
-	void add_input(Ports::Node* port) {
+	void add_input(DuplexPort& port) {
 		ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-		_inputs.push_back(port);
+		_inputs.push_front(port);
 	}
 
-	void add_output(Ports::Node* port) {
+	void add_output(DuplexPort& port) {
 		ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-		_outputs.push_back(port);
+		_outputs.push_front(port);
 	}
 
-	Ports::Node* remove_port(const Raul::Symbol& symbol);
-	void         clear_ports();
+	void remove_port(DuplexPort& port);
+	void clear_ports();
 
 	void add_edge(SharedPtr<EdgeImpl> c);
 
@@ -142,8 +143,8 @@ public:
 	Raul::Array<PortImpl*>* external_ports()                           { return _ports; }
 	void                    external_ports(Raul::Array<PortImpl*>* pa) { _ports = pa; }
 
-	CompiledPatch*          compile() const;
-	Raul::Array<PortImpl*>* build_ports_array() const;
+	CompiledPatch*          compile();
+	Raul::Array<PortImpl*>* build_ports_array();
 
 	/** Whether to run this patch's DSP bits in the audio thread */
 	bool enabled() const { return _process; }

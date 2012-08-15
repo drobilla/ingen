@@ -97,8 +97,8 @@ CreateNode::pre_process()
 	_node->properties().insert(_properties.begin(), _properties.end());
 	_node->activate(*_engine.buffer_factory());
 
-	// Add node to the store and the  patch's pre-processor only node list
-	_patch->add_node(new PatchImpl::Nodes::Node(_node));
+	// Add node to the store and the patch's pre-processor only node list
+	_patch->add_node(*_node);
 	_engine.store()->add(_node);
 
 	/* Compile patch with new node added for insertion in audio thread

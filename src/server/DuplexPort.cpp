@@ -48,6 +48,13 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
 	             bufs.forge().make(polyphonic));
 }
 
+DuplexPort::~DuplexPort()
+{
+	if (is_linked()) {
+		parent_patch()->remove_port(*this);
+	}
+}
+
 bool
 DuplexPort::get_buffers(BufferFactory&          bufs,
                         Raul::Array<BufferRef>* buffers,

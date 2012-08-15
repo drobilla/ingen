@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_DUPLEXPORT_HPP
 #define INGEN_ENGINE_DUPLEXPORT_HPP
 
-#include <string>
+#include <boost/intrusive/slist.hpp>
 
 #include "BufferRef.hpp"
 #include "InputPort.hpp"
@@ -28,15 +28,18 @@ namespace Server {
 
 class NodeImpl;
 
-/** A duplex port (which is both an InputPort and an OutputPort)
+/** A duplex Port (both an InputPort and an OutputPort on a Patch)
  *
- * This is used for Patch ports, since they need to appear as both an input
- * and an output port based on context.  Eg. a patch output appears as an
- * input inside the patch, so nodes inside the patch can feed it data.
+ * This is used for Patch ports, since they need to appear as both an input and
+ * an output port based on context.  There are no actual duplex ports in Ingen,
+ * a Port is either an Input or Output.  This class only exists to allow Patch
+ * outputs to appear as inputs to Nodes inside that patch, and vice versa.
  *
  * \ingroup engine
  */
-class DuplexPort : public InputPort, public OutputPort
+class DuplexPort : public InputPort
+                 , public OutputPort
+                 , public boost::intrusive::slist_base_hook<>  // In PatchImpl
 {
 public:
 	DuplexPort(BufferFactory&      bufs,
@@ -51,7 +54,7 @@ public:
 	           size_t              buffer_size,
 	           bool                is_output);
 
-	virtual ~DuplexPort() {}
+	virtual ~DuplexPort();
 
 	uint32_t max_tail_poly(Context& context) const;
 

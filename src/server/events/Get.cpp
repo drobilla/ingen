@@ -109,16 +109,14 @@ send_patch(Interface* client, const PatchImpl* patch)
 	            Resource::EXTERNAL);
 
 	// Send nodes
-	for (Raul::List<NodeImpl*>::const_iterator j = patch->nodes().begin();
+	for (PatchImpl::Nodes::const_iterator j = patch->nodes().begin();
 	     j != patch->nodes().end(); ++j) {
-		const NodeImpl* const node = (*j);
-		send_node(client, node);
+		send_node(client, &*j);
 	}
 
 	// Send ports
 	for (uint32_t i = 0; i < patch->num_ports_non_rt(); ++i) {
-		PortImpl* const port = patch->port_impl(i);
-		send_port(client, port);
+		send_port(client, patch->port_impl(i));
 	}
 
 	// Send edges
