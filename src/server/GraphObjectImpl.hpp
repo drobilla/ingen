@@ -20,7 +20,6 @@
 #include <cassert>
 #include <cstddef>
 #include <map>
-#include <string>
 
 #include "ingen/GraphObject.hpp"
 #include "ingen/Resource.hpp"

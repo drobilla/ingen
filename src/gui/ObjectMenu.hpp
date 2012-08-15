@@ -17,8 +17,6 @@
 #ifndef INGEN_GUI_OBJECTMENU_HPP
 #define INGEN_GUI_OBJECTMENU_HPP
 
-#include <string>
-
 #include <gtkmm/builder.h>
 #include <gtkmm/checkmenuitem.h>
 #include <gtkmm/menu.h>

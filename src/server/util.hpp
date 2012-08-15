@@ -18,7 +18,6 @@
 #define INGEN_ENGINE_UTIL_HPP
 
 #include <cstdlib>
-#include <string>
 
 #include "raul/log.hpp"
 #include "raul/Path.hpp"

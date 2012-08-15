@@ -18,7 +18,6 @@
 
 #include <cassert>
 #include <cmath>
-#include <string>
 
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"

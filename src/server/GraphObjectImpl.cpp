@@ -14,8 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
-
 #include "raul/log.hpp"
 
 #include "GraphObjectImpl.hpp"

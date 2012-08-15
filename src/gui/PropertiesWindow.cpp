@@ -17,7 +17,6 @@
 #include <algorithm>
 #include <cassert>
 #include <set>
-#include <string>
 
 #include <gtkmm/label.h>
 #include <gtkmm/spinbutton.h>

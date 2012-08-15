@@ -16,8 +16,6 @@
 
 #include <math.h>
 
-#include <string>
-
 #include "ingen/URIs.hpp"
 #include "internals/Controller.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"

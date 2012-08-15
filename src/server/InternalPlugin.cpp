@@ -15,12 +15,13 @@
 */
 
 #include <cassert>
-#include <string>
+
 #include "ingen/URIs.hpp"
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
 #include "internals/Note.hpp"
 #include "internals/Trigger.hpp"
+
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"

@@ -16,8 +16,6 @@
 
 #include <stdlib.h>
 
-#include <string>
-
 #include "lilv/lilv.h"
 
 #include "internals/Controller.hpp"

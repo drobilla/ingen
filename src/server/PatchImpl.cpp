@@ -15,7 +15,6 @@
 */
 
 #include <cassert>
-#include <string>
 
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"

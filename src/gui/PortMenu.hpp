@@ -17,8 +17,6 @@
 #ifndef INGEN_GUI_PORTMENU_HPP
 #define INGEN_GUI_PORTMENU_HPP
 
-#include <string>
-
 #include <gtkmm/builder.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/menushell.h>

@@ -18,7 +18,6 @@
 #include <poll.h>
 
 #include <sstream>
-#include <string>
 
 #include "ingen/Interface.hpp"
 #include "ingen/AtomReader.hpp"

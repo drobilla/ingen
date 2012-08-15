@@ -17,10 +17,10 @@
 #ifndef INGEN_GUI_SUBPATCHMODULE_HPP
 #define INGEN_GUI_SUBPATCHMODULE_HPP
 
-#include <string>
 #include "raul/SharedPtr.hpp"
-#include "PatchPortModule.hpp"
+
 #include "NodeModule.hpp"
+#include "PatchPortModule.hpp"
 
 namespace Ingen { namespace Client {
 	class PatchModel;

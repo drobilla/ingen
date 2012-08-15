@@ -17,7 +17,6 @@
 #include <limits.h>
 
 #include <cmath>
-#include <string>
 
 #include "ingen/URIs.hpp"
 #include "raul/Array.hpp"

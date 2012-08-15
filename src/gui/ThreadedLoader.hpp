@@ -17,16 +17,18 @@
 #ifndef INGEN_GUI_THREADEDLOADER_HPP
 #define INGEN_GUI_THREADEDLOADER_HPP
 
-#include <string>
-#include <list>
 #include <cassert>
+#include <list>
+#include <string>
+
 #include <boost/optional/optional.hpp>
-#include "raul/Thread.hpp"
-#include "raul/Slave.hpp"
 #include <glibmm/thread.h>
+
 #include "ingen/Interface.hpp"
-#include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/serialisation/Parser.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
+#include "raul/Slave.hpp"
+#include "raul/Thread.hpp"
 
 namespace Ingen {
 namespace GUI {

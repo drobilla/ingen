@@ -18,7 +18,6 @@
 #define INGEN_ENGINE_LV2PLUGIN_HPP
 
 #include <cstdlib>
-#include <string>
 
 #include "lilv/lilv.h"
 #include "raul/SharedPtr.hpp"

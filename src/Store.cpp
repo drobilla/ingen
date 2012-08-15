@@ -15,7 +15,6 @@
 */
 
 #include <sstream>
-#include <string>
 
 #include "ingen/Store.hpp"
 #include "raul/log.hpp"

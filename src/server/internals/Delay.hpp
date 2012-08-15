@@ -17,10 +17,10 @@
 #ifndef INGEN_INTERNALS_DELAY_HPP
 #define INGEN_INTERNALS_DELAY_HPP
 
-#include <string>
 #include <math.h>
-#include "types.hpp"
+
 #include "NodeImpl.hpp"
+#include "types.hpp"
 
 namespace Ingen {
 namespace Server {

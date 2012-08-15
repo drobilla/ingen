@@ -17,8 +17,6 @@
 #ifndef INGEN_GUI_PATCHVIEW_HPP
 #define INGEN_GUI_PATCHVIEW_HPP
 
-#include <string>
-
 #include <gtkmm/box.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/scrolledwindow.h>

@@ -18,7 +18,6 @@
 #define INGEN_ENGINE_PORTIMPL_HPP
 
 #include <cstdlib>
-#include <string>
 
 #include "raul/Array.hpp"
 #include "raul/Atom.hpp"

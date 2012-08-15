@@ -17,7 +17,6 @@
 #ifndef INGEN_INTERNALS_CONTROLLER_HPP
 #define INGEN_INTERNALS_CONTROLLER_HPP
 
-#include <string>
 #include "NodeImpl.hpp"
 
 namespace Ingen {

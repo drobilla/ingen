@@ -18,7 +18,6 @@
 #define INGEN_GUI_EDGE_HPP
 
 #include <cassert>
-#include <string>
 
 #include "ganv/Edge.hpp"
 #include "raul/SharedPtr.hpp"

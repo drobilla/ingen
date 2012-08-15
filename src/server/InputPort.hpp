@@ -19,7 +19,6 @@
 
 #include <cassert>
 #include <cstdlib>
-#include <string>
 
 #include <boost/intrusive/slist.hpp>
 

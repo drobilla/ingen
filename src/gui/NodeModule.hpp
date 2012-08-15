@@ -17,9 +17,9 @@
 #ifndef INGEN_GUI_NODEMODULE_HPP
 #define INGEN_GUI_NODEMODULE_HPP
 
-#include <string>
 #include "ganv/Module.hpp"
 #include "raul/SharedPtr.hpp"
+
 #include "Port.hpp"
 
 namespace Raul { class Atom; }

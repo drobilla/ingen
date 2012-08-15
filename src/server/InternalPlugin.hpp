@@ -18,7 +18,6 @@
 #define INGEN_ENGINE_INTERNALPLUGIN_HPP
 
 #include <cstdlib>
-#include <string>
 
 #include <boost/utility.hpp>
 #include <glibmm/module.h>

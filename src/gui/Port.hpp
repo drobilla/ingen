@@ -19,7 +19,9 @@
 
 #include <cassert>
 #include <string>
+
 #include <gtkmm/menu.h>
+
 #include "ganv/Port.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/WeakPtr.hpp"

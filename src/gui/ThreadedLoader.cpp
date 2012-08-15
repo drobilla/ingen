@@ -15,12 +15,14 @@
 */
 
 #include <string>
-#include "raul/log.hpp"
-#include "ingen/World.hpp"
+
 #include "ingen/Module.hpp"
+#include "ingen/World.hpp"
+#include "ingen/client/PatchModel.hpp"
+#include "raul/log.hpp"
+
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
-#include "ingen/client/PatchModel.hpp"
 
 using namespace Raul;
 using namespace boost;

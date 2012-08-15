@@ -18,7 +18,6 @@
 #define INGEN_ENGINE_OUTPUTPORT_HPP
 
 #include <cstdlib>
-#include <string>
 
 #include "PortImpl.hpp"
 
