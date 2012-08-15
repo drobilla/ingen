@@ -176,8 +176,6 @@ JackDriver::deactivate()
 			_client = NULL;
 		}
 
-		_jack_threads.clear();
-
 		LOG(Raul::info)("Deactivated Jack client\n");
 	}
 }
@@ -377,10 +375,8 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 void
 JackDriver::_thread_init_cb()
 {
-	Raul::Thread* thread = &Raul::Thread::get("Jack");
 	ThreadManager::set_flag(THREAD_PROCESS);
 	ThreadManager::set_flag(THREAD_IS_REAL_TIME);
-	_jack_threads.push_back(SharedPtr<Raul::Thread>(thread));
 }
 
 void
@@ -388,7 +384,6 @@ JackDriver::_shutdown_cb()
 {
 	LOG(Raul::info)("Jack shutdown, exiting\n");
 	_is_activated = false;
-	_jack_threads.clear();
 	_client = NULL;
 }
 

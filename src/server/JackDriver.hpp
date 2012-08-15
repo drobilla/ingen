@@ -19,7 +19,6 @@
 
 #include "ingen_config.h"
 
-#include <list>
 #include <string>
 
 #include <jack/jack.h>
@@ -30,7 +29,6 @@
 
 #include "raul/AtomicInt.hpp"
 #include "raul/Semaphore.hpp"
-#include "raul/Thread.hpp"
 
 #include "Driver.hpp"
 #include "EnginePort.hpp"
@@ -130,18 +128,17 @@ private:
 protected:
 	typedef boost::intrusive::list<EnginePort> Ports;
 
-	Engine&                              _engine;
-	Ports                                _ports;
-	std::list< SharedPtr<Raul::Thread> > _jack_threads;
-	Raul::Semaphore                      _sem;
-	Raul::AtomicInt                      _flag;
-	jack_client_t*                       _client;
-	jack_nframes_t                       _block_length;
-	jack_nframes_t                       _sample_rate;
-	uint32_t                             _midi_event_type;
-	bool                                 _is_activated;
-	jack_position_t                      _position;
-	jack_transport_state_t               _transport_state;
+	Engine&                _engine;
+	Ports                  _ports;
+	Raul::Semaphore        _sem;
+	Raul::AtomicInt        _flag;
+	jack_client_t*         _client;
+	jack_nframes_t         _block_length;
+	jack_nframes_t         _sample_rate;
+	uint32_t               _midi_event_type;
+	bool                   _is_activated;
+	jack_position_t        _position;
+	jack_transport_state_t _transport_state;
 };
 
 } // namespace Server
