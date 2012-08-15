@@ -41,7 +41,6 @@ Delete::Delete(Engine&              engine,
                const Raul::URI&     uri)
 	: Event(engine, client, id, time)
 	, _uri(uri)
-	, _garbage(NULL)
 	, _engine_port(NULL)
 	, _patch_node_listnode(NULL)
 	, _patch_port_listnode(NULL)
@@ -111,7 +110,7 @@ Delete::pre_process()
 			}
 
 			if (!_port->parent_patch()->parent()) {
-				_engine_port = _engine.driver()->port(_port->path());
+				_engine_port = _engine.driver()->get_port(_port->path());
 			}
 		}
 
@@ -145,7 +144,7 @@ Delete::execute(ProcessContext& context)
 		_port->parent_patch()->external_ports(_ports_array);
 
 		if (_engine_port) {
-			_garbage = _engine.driver()->remove_port(context, _engine_port);
+			_engine.driver()->remove_port(context, _engine_port);
 		}
 	}
 
@@ -177,10 +176,9 @@ Delete::post_process()
 	}
 
 	if (_engine_port) {
-		_engine_port->destroy();
+		_engine.driver()->unregister_port(*_engine_port);
+		delete _engine_port;
 	}
-
-	delete _garbage;
 }
 
 } // namespace Events

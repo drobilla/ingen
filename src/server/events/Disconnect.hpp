@@ -24,7 +24,6 @@
 #include "BufferFactory.hpp"
 
 namespace Raul {
-template <typename T> class ListNode;
 template <typename T> class Array;
 }
 

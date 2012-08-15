@@ -17,13 +17,12 @@
 #ifndef INGEN_ENGINE_DRIVER_HPP
 #define INGEN_ENGINE_DRIVER_HPP
 
-#include <string>
+#include <boost/intrusive/list.hpp>
 
-#include <boost/utility.hpp>
-
-#include "raul/Deletable.hpp"
+#include "raul/Noncopyable.hpp"
 
 #include "DuplexPort.hpp"
+#include "EnginePort.hpp"
 
 namespace Raul { class Path; }
 
@@ -33,15 +32,15 @@ namespace Server {
 class DuplexPort;
 class EnginePort;
 
-/** Driver abstract base class.
+/** Engine driver base class.
  *
  * A Driver is, from the perspective of GraphObjects (nodes, patches, ports) an
  * interface for managing system ports.  An implementation of Driver basically
- * needs to manage DriverPorts, and handle writing/reading data to/from them.
+ * needs to manage EnginePorts, and handle writing/reading data to/from them.
  *
  * \ingroup engine
  */
-class Driver : boost::noncopyable {
+class Driver : public Raul::Noncopyable {
 public:
 	virtual ~Driver() {}
 
@@ -57,14 +56,24 @@ public:
 	virtual EnginePort* create_port(DuplexPort* patch_port) = 0;
 
 	/** Find a system port by path. */
-	virtual EnginePort* port(const Raul::Path& path) = 0;
+	virtual EnginePort* get_port(const Raul::Path& path) = 0;
 
 	/** Add a system visible port (e.g. a port on the root patch). */
 	virtual void add_port(ProcessContext& context, EnginePort* port) = 0;
 
-	/** Remove a system visible port. */
-	virtual Raul::Deletable* remove_port(ProcessContext& context,
-	                                     EnginePort*     port) = 0;
+	/** Remove a system visible port.
+	 *
+	 * This removes the port from the driver in the process thread but does not
+	 * destroy the port.  To actually remove the system port, unregister_port()
+	 * must be called later in another thread.
+	 */
+	virtual void remove_port(ProcessContext& context, EnginePort* port) = 0;
+
+	/** Register a system visible port. */
+	virtual void register_port(EnginePort& port) = 0;
+
+	/** Register a system visible port. */
+	virtual void unregister_port(EnginePort& port) = 0;
 
 	/** Rename a system visible port. */
 	virtual void rename_port(const Raul::Path& old_path,

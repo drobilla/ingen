@@ -65,7 +65,7 @@ Move::pre_process()
 		return Event::pre_process_done(EXISTS, _new_path);
 	}
 
-	EnginePort* eport = _engine.driver()->port(_old_path);
+	EnginePort* eport = _engine.driver()->get_port(_old_path);
 	if (eport) {
 		_engine.driver()->rename_port(_old_path, _new_path);
 	}

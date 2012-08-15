@@ -73,7 +73,6 @@ private:
 	Raul::Path                     _path;
 	SharedPtr<NodeImpl>            _node;                ///< Non-NULL iff a node
 	SharedPtr<PortImpl>            _port;                ///< Non-NULL iff a port
-	Raul::Deletable*               _garbage;
 	EnginePort*                    _engine_port;
 	PatchImpl::Nodes::Node*        _patch_node_listnode;
 	Raul::List<PortImpl*>::Node*   _patch_port_listnode;

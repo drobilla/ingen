@@ -17,53 +17,43 @@
 #ifndef INGEN_ENGINE_ENGINE_PORT_HPP
 #define INGEN_ENGINE_ENGINE_PORT_HPP
 
-#include <string>
-
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 
-#include "DuplexPort.hpp"
+#include <boost/intrusive/list.hpp>
 
-namespace Raul { class Path; }
+#include "DuplexPort.hpp"
 
 namespace Ingen {
 namespace Server {
 
-class DuplexPort;
-class ProcessContext;
-
-/** Representation of a "system" port (e.g. a Jack port).
+/** A "system" port (e.g. a Jack port, an external port on Ingen).
  *
- * This is the class through which the rest of the engine manages everything
- * related to driver ports.  Derived classes are expected to have a pointer to
- * their driver (to be able to perform the operation necessary).
- *
- * \ingroup engine
+ * @ingroup engine
  */
-class EnginePort : public Raul::Noncopyable, public Raul::Deletable {
+class EnginePort : public Raul::Noncopyable
+                 , public Raul::Deletable
+                 , public boost::intrusive::list_base_hook<>
+{
 public:
 	explicit EnginePort(DuplexPort* port)
 		: _patch_port(port)
 		, _buffer(NULL)
+		, _handle(NULL)
 	{}
 
-	virtual ~EnginePort() {}
+	void set_buffer(void* buf) { _buffer = buf; }
+	void set_handle(void* buf) { _handle = buf; }
 
-	/** Create system port */
-	virtual void create() {}
-
-	/** Destroy system port */
-	virtual void destroy() {}
-
-	void* buffer() const        { return _buffer; }
-	void  set_buffer(void* buf) { _buffer = buf; }
-
-	bool        is_input()   const { return _patch_port->is_input(); }
+	void*       buffer()     const { return _buffer; }
+	void*       handle()     const { return _handle; }
 	DuplexPort* patch_port() const { return _patch_port; }
+	bool        is_input()   const { return _patch_port->is_input(); }
 
 protected:
 	DuplexPort* _patch_port;
 	void*       _buffer;
+	void*       _handle;
 };
 
 } // namespace Server

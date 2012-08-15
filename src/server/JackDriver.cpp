@@ -30,7 +30,6 @@
 #include "ingen/LV2Features.hpp"
 #include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
-#include "raul/List.hpp"
 #include "raul/log.hpp"
 
 #include "Buffer.hpp"
@@ -50,123 +49,6 @@ typedef jack_default_audio_sample_t jack_sample_t;
 
 namespace Ingen {
 namespace Server {
-
-//// JackPort ////
-
-JackPort::JackPort(JackDriver* driver, DuplexPort* patch_port)
-	: EnginePort(patch_port)
-	, Raul::List<JackPort*>::Node(this)
-	, _driver(driver)
-	, _jack_port(NULL)
-{
-	patch_port->setup_buffers(*driver->_engine.buffer_factory(),
-	                          patch_port->poly(),
-	                          false);
-	create();
-}
-
-JackPort::~JackPort()
-{
-	assert(_jack_port == NULL);
-}
-
-void
-JackPort::create()
-{
-	_jack_port = jack_port_register(
-		_driver->jack_client(),
-		_patch_port->path().substr(1).c_str(),
-		(_patch_port->is_a(PortType::AUDIO))
-		? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE,
-		(_patch_port->is_input())
-		? JackPortIsInput : JackPortIsOutput,
-		0);
-
-	if (_jack_port == NULL) {
-		LOG(Raul::error)(Raul::fmt("Failed to register port %1%\n")
-		                 % _patch_port->path().c_str());
-		throw JackDriver::PortRegistrationFailedException();
-	}
-}
-
-void
-JackPort::destroy()
-{
-	assert(_jack_port);
-	if (jack_port_unregister(_driver->jack_client(), _jack_port))
-		LOG(Raul::error)("Unable to unregister port\n");
-	_jack_port = NULL;
-}
-
-void
-JackPort::pre_process(ProcessContext& context)
-{
-	const SampleCount nframes = context.nframes();
-	_buffer = jack_port_get_buffer(_jack_port, nframes);
-
-	if (!is_input()) {
-		_patch_port->buffer(0)->clear();
-		return;
-	}
-
-	if (_patch_port->is_a(PortType::AUDIO)) {
-		Buffer* patch_buf = _patch_port->buffer(0).get();
-		memcpy(patch_buf->samples(), _buffer, nframes * sizeof(float));
-
-	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
-		Buffer* patch_buf = (Buffer*)_patch_port->buffer(0).get();
-
-		const jack_nframes_t event_count = jack_midi_get_event_count(_buffer);
-
-		patch_buf->prepare_write(context);
-
-		// Copy events from Jack port buffer into patch port buffer
-		for (jack_nframes_t i = 0; i < event_count; ++i) {
-			jack_midi_event_t ev;
-			jack_midi_event_get(&ev, _buffer, i);
-
-			if (!patch_buf->append_event(
-				    ev.time, ev.size, _driver->_midi_event_type, ev.buffer)) {
-				LOG(Raul::warn)("Failed to write to MIDI buffer, events lost!\n");
-			}
-		}
-	}
-}
-
-void
-JackPort::post_process(ProcessContext& context)
-{
-	const SampleCount nframes = context.nframes();
-	if (is_input()) {
-		return;
-	}
-
-	if (!_buffer) {
-		// First cycle for a new output, so pre_process wasn't called
-		_buffer = jack_port_get_buffer(_jack_port, nframes);
-	}
-
-	_patch_port->post_process(context);
-	if (_patch_port->is_a(PortType::AUDIO)) {
-		Buffer* patch_buf = _patch_port->buffer(0).get();
-		memcpy(_buffer, patch_buf->samples(), nframes * sizeof(Sample));
-
-	} else if (_patch_port->buffer_type() == _patch_port->bufs().uris().atom_Sequence) {
-		Buffer* patch_buf = _patch_port->buffer(0).get();
-
-		jack_midi_clear_buffer(_buffer);
-
-		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)patch_buf->atom();
-		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
-			if (ev->body.type == _patch_port->bufs().uris().midi_MidiEvent) {
-				jack_midi_event_write(_buffer, ev->time.frames, buf, ev->body.size);
-			}
-		}
-	}
-}
-
-//// JackDriver ////
 
 JackDriver::JackDriver(Engine& engine)
 	: _engine(engine)
@@ -243,8 +125,9 @@ JackDriver::attach(const std::string& server_name,
 	jack_set_session_callback(_client, session_cb, this);
 #endif
 
-	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		(*i)->create();
+	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+		register_port(*i);
+	}
 
 	return true;
 }
@@ -283,8 +166,9 @@ JackDriver::deactivate()
 		_is_activated = false;
 		_sem.wait();
 
-		for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-			(*i)->destroy();
+		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+			unregister_port(*i);
+		}
 
 		if (_client) {
 			jack_deactivate(_client);
@@ -298,74 +182,156 @@ JackDriver::deactivate()
 	}
 }
 
-/** Add a Jack port.
- *
- * Realtime safe, this is to be called at the beginning of a process cycle to
- * insert (and actually begin using) a new port.
- *
- * See create_port() and remove_port().
- */
-void
-JackDriver::add_port(ProcessContext& context, EnginePort* port)
+EnginePort*
+JackDriver::get_port(const Raul::Path& path)
 {
-	assert(dynamic_cast<JackPort*>(port));
-	_ports.push_back((JackPort*)port);
-}
-
-/** Remove a Jack port.
- *
- * Realtime safe.  This is to be called at the beginning of a process cycle to
- * remove the port from the lists read by the audio thread, so the port
- * will no longer be used and can be removed afterwards.
- *
- * It is the callers responsibility to delete the returned port.
- */
-Raul::Deletable*
-JackDriver::remove_port(ProcessContext& context,
-                        EnginePort*     port)
-{
-	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-		if (*i == port) {
-			return _ports.erase(i);
+	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+		if (i->patch_port()->path() == path) {
+			return &*i;
 		}
 	}
 
 	return NULL;
+}
+
+void
+JackDriver::add_port(ProcessContext& context, EnginePort* port)
+{
+	_ports.push_back(*port);
+}
+
+void
+JackDriver::remove_port(ProcessContext& context, EnginePort* port)
+{
+	_ports.erase(_ports.iterator_to(*port));
+}
+
+void
+JackDriver::register_port(EnginePort& port)
+{
+	jack_port_t* jack_port = jack_port_register(
+		_client,
+		port.patch_port()->path().substr(1).c_str(),
+		(port.patch_port()->is_a(PortType::AUDIO)
+		 ? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE),
+		(port.patch_port()->is_input()
+		 ? JackPortIsInput : JackPortIsOutput),
+		0);
+
+	if (!jack_port) {
+		throw JackDriver::PortRegistrationFailedException();
+	}
+
+	port.set_handle(jack_port);
+}
+
+void
+JackDriver::unregister_port(EnginePort& port)
+{
+	if (jack_port_unregister(_client, (jack_port_t*)port.handle())) {
+		LOG(Raul::error)("Failed to unregister Jack port\n");
+	}
 }
 
 void
 JackDriver::rename_port(const Raul::Path& old_path,
                         const Raul::Path& new_path)
 {
-	JackPort* jport = dynamic_cast<JackPort*>(port(old_path));
-	if (jport) {
-		jack_port_set_name(jport->jack_port(), new_path.substr(1).c_str());
+	EnginePort* eport = get_port(old_path);
+	if (eport) {
+		jack_port_set_name((jack_port_t*)eport->handle(),
+		                   new_path.substr(1).c_str());
 	}
-}
-
-EnginePort*
-JackDriver::port(const Raul::Path& path)
-{
-	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		if ((*i)->patch_port()->path() == path)
-			return (*i);
-
-	return NULL;
 }
 
 EnginePort*
 JackDriver::create_port(DuplexPort* patch_port)
 {
-	try {
-		if (patch_port->is_a(PortType::AUDIO)
-		    || (patch_port->is_a(PortType::ATOM) &&
-		        patch_port->buffer_type() == patch_port->bufs().uris().atom_Sequence)) {
-			return new JackPort(this, patch_port);
-		} else {
-			return NULL;
-		}
-	} catch (...) {
+	if (patch_port &&
+	    (patch_port->is_a(PortType::AUDIO) ||
+	     (patch_port->is_a(PortType::ATOM) &&
+	      patch_port->buffer_type() == _engine.world()->uris().atom_Sequence))) {
+		EnginePort* eport = new EnginePort(patch_port);
+		register_port(*eport);
+		patch_port->setup_buffers(*_engine.buffer_factory(),
+		                          patch_port->poly(),
+		                          false);
+		return eport;
+	} else {
 		return NULL;
+	}
+}
+
+void
+JackDriver::pre_process_port(ProcessContext& context, EnginePort* port)
+{
+	const SampleCount nframes    = context.nframes();
+	jack_port_t*      jack_port  = (jack_port_t*)port->handle();
+	PortImpl*         patch_port = port->patch_port();
+	void*             buffer     = jack_port_get_buffer(jack_port, nframes);
+
+	port->set_buffer(buffer);
+
+	if (!patch_port->is_input()) {
+		patch_port->buffer(0)->clear();
+		return;
+	}
+
+	if (patch_port->is_a(PortType::AUDIO)) {
+		Buffer* patch_buf = patch_port->buffer(0).get();
+		memcpy(patch_buf->samples(), buffer, nframes * sizeof(float));
+
+	} else if (patch_port->buffer_type() == patch_port->bufs().uris().atom_Sequence) {
+		Buffer* patch_buf = (Buffer*)patch_port->buffer(0).get();
+
+		const jack_nframes_t event_count = jack_midi_get_event_count(buffer);
+
+		patch_buf->prepare_write(context);
+
+		// Copy events from Jack port buffer into patch port buffer
+		for (jack_nframes_t i = 0; i < event_count; ++i) {
+			jack_midi_event_t ev;
+			jack_midi_event_get(&ev, buffer, i);
+
+			if (!patch_buf->append_event(
+				    ev.time, ev.size, _midi_event_type, ev.buffer)) {
+				LOG(Raul::warn)("Failed to write to MIDI buffer, events lost!\n");
+			}
+		}
+	}
+}
+
+void
+JackDriver::post_process_port(ProcessContext& context, EnginePort* port)
+{
+	const SampleCount nframes    = context.nframes();
+	jack_port_t*      jack_port  = (jack_port_t*)port->handle();
+	PortImpl*         patch_port = port->patch_port();
+	void*             buffer     = port->buffer();
+
+	if (patch_port->is_input()) {
+		return;
+	}
+
+	if (!buffer) {
+		// First cycle for a new output, so pre_process wasn't called
+		buffer = jack_port_get_buffer(jack_port, nframes);
+		port->set_buffer(buffer);
+	}
+
+	patch_port->post_process(context);
+	Buffer* const patch_buf = patch_port->buffer(0).get();
+	if (patch_port->is_a(PortType::AUDIO)) {
+		memcpy(buffer, patch_buf->samples(), nframes * sizeof(Sample));
+	} else if (patch_port->buffer_type() == patch_port->bufs().uris().atom_Sequence) {
+		jack_midi_clear_buffer(buffer);
+		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)patch_buf->atom();
+		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+			if (ev->body.type == patch_port->bufs().uris().midi_MidiEvent) {
+				jack_midi_event_write(buffer, ev->time.frames, buf, ev->body.size);
+			}
+		}
 	}
 }
 
@@ -394,14 +360,16 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	_engine.process_context().locate(start_of_current_cycle, nframes);
 
 	// Read input
-	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		(*i)->pre_process(_engine.process_context());
+	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+		pre_process_port(_engine.process_context(), &*i);
+	}
 
 	_engine.run(nframes);
 
 	// Write output
-	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		(*i)->post_process(_engine.process_context());
+	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+		post_process_port(_engine.process_context(), &*i);
+	}
 
 	return 0;
 }

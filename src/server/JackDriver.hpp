@@ -29,7 +29,6 @@
 #endif
 
 #include "raul/AtomicInt.hpp"
-#include "raul/List.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/Thread.hpp"
 
@@ -46,29 +45,6 @@ class PatchImpl;
 class PortImpl;
 class DuplexPort;
 class JackDriver;
-
-/** Used internally by JackDriver to represent a Jack port.
- *
- * A Jack port always has a one-to-one association with a Patch port.
- */
-class JackPort : public EnginePort, public Raul::List<JackPort*>::Node
-{
-public:
-	JackPort(JackDriver* driver, DuplexPort* patch_port);
-	~JackPort();
-
-	void create();
-	void destroy();
-
-	void pre_process(ProcessContext& context);
-	void post_process(ProcessContext& context);
-
-	jack_port_t* jack_port() const { return _jack_port; }
-
-private:
-	JackDriver*  _driver;
-	jack_port_t* _jack_port;
-};
 
 /** The Jack Driver.
  *
@@ -93,16 +69,14 @@ public:
 	void enable();
 	void disable();
 
-	EnginePort* port(const Raul::Path& path);
 	EnginePort* create_port(DuplexPort* patch_port);
+	EnginePort* get_port(const Raul::Path& path);
 
+	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path);
 	void add_port(ProcessContext& context, EnginePort* port);
-
-	void rename_port(const Raul::Path& old_path,
-	                 const Raul::Path& new_path);
-
-	Raul::Deletable* remove_port(ProcessContext& context,
-	                             EnginePort*     port);
+	void remove_port(ProcessContext& context, EnginePort* port);
+	void register_port(EnginePort& port);
+	void unregister_port(EnginePort& port);
 
 	/** Transport state for this frame.
 	 * Intended to only be called from the audio thread. */
@@ -141,6 +115,9 @@ private:
 	}
 #endif
 
+	void pre_process_port(ProcessContext& context, EnginePort* port);
+	void post_process_port(ProcessContext& context, EnginePort* port);
+
 	// Non static callbacks (methods)
 	void _thread_init_cb();
 	void _shutdown_cb();
@@ -150,7 +127,11 @@ private:
 	void _session_cb(jack_session_event_t* event);
 #endif
 
+protected:
+	typedef boost::intrusive::list<EnginePort> Ports;
+
 	Engine&                              _engine;
+	Ports                                _ports;
 	std::list< SharedPtr<Raul::Thread> > _jack_threads;
 	Raul::Semaphore                      _sem;
 	Raul::AtomicInt                      _flag;
@@ -161,7 +142,6 @@ private:
 	bool                                 _is_activated;
 	jack_position_t                      _position;
 	jack_transport_state_t               _transport_state;
-	Raul::List<JackPort*>                _ports;
 };
 
 } // namespace Server

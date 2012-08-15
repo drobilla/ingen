@@ -81,86 +81,11 @@ namespace Server {
 
 class LV2Driver;
 
-void enqueue_message(
-	ProcessContext& context, LV2Driver* driver, const LV2_Atom* msg);
-
 void signal_main(ProcessContext& context, LV2Driver* driver);
-
-class LV2Port : public EnginePort
-{
-public:
-	LV2Port(LV2Driver* driver, DuplexPort* patch_port)
-		: EnginePort(patch_port)
-		, _driver(driver)
-	{}
-
-	void pre_process(ProcessContext& context) {
-		if (!is_input() || !_buffer) {
-			return;
-		}
-
-		Buffer* const patch_buf = _patch_port->buffer(0).get();
-		if (_patch_port->is_a(PortType::AUDIO) ||
-		    _patch_port->is_a(PortType::CV)) {
-			memcpy(patch_buf->samples(),
-			       _buffer,
-			       context.nframes() * sizeof(float));
-		} else if (_patch_port->is_a(PortType::CONTROL)) {
-			patch_buf->samples()[0] = ((float*)_buffer)[0];
-		} else {
-			LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)_buffer;
-			bool               enqueued = false;
-			URIs&              uris     = _patch_port->bufs().uris();
-			patch_buf->prepare_write(context);
-			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-				if (!patch_buf->append_event(
-					    ev->time.frames, ev->body.size, ev->body.type,
-					    (const uint8_t*)LV2_ATOM_BODY(&ev->body))) {
-					Raul::warn("Failed to write to buffer, event lost!\n");
-				}
-
-				if (AtomReader::is_message(uris, &ev->body)) {
-					enqueue_message(context, _driver, &ev->body);
-					enqueued = true;
-				}
-			}
-
-			if (enqueued) {
-				signal_main(context, _driver);
-			}
-		}
-	}
-
-	void post_process(ProcessContext& context) {
-		if (is_input() || !_buffer) {
-			return;
-		}
-
-		Buffer* patch_buf = _patch_port->buffer(0).get();
-		if (_patch_port->is_a(PortType::AUDIO) ||
-		    _patch_port->is_a(PortType::CV)) {
-			memcpy(_buffer,
-			       patch_buf->samples(),
-			       context.nframes() * sizeof(float));
-		} else if (_patch_port->is_a(PortType::CONTROL)) {
-			((float*)_buffer)[0] = patch_buf->samples()[0];
-		} else {
-			memcpy(_buffer,
-			       patch_buf->atom(),
-			       sizeof(LV2_Atom) + patch_buf->atom()->size);
-		}
-	}
-
-private:
-	LV2Driver* _driver;
-};
 
 class LV2Driver : public Ingen::Server::Driver
                 , public Ingen::AtomSink
 {
-private:
-	typedef std::vector<LV2Port*> Ports;
-
 public:
 	LV2Driver(Engine& engine, SampleCount block_length, SampleCount sample_rate)
 		: _engine(engine)
@@ -182,11 +107,75 @@ public:
 		, _to_ui_overflow(false)
 	{}
 
+	void pre_process_port(ProcessContext& context, EnginePort* port) {
+		PortImpl* patch_port = port->patch_port();
+		void*     buffer     = port->buffer();
+
+		if (!patch_port->is_input() || !buffer) {
+			return;
+		}
+
+		Buffer* const patch_buf = patch_port->buffer(0).get();
+		if (patch_port->is_a(PortType::AUDIO) ||
+		    patch_port->is_a(PortType::CV)) {
+			memcpy(patch_buf->samples(),
+			       buffer,
+			       context.nframes() * sizeof(float));
+		} else if (patch_port->is_a(PortType::CONTROL)) {
+			patch_buf->samples()[0] = ((float*)buffer)[0];
+		} else {
+			LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)buffer;
+			bool               enqueued = false;
+			URIs&              uris     = patch_port->bufs().uris();
+			patch_buf->prepare_write(context);
+			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+				if (!patch_buf->append_event(
+					    ev->time.frames, ev->body.size, ev->body.type,
+					    (const uint8_t*)LV2_ATOM_BODY(&ev->body))) {
+					Raul::warn("Failed to write to buffer, event lost!\n");
+				}
+
+				if (AtomReader::is_message(uris, &ev->body)) {
+					enqueue_message(&ev->body);
+					enqueued = true;
+				}
+			}
+
+			if (enqueued) {
+				_main_sem.post();
+			}
+		}
+	}
+
+	void post_process_port(ProcessContext& context, EnginePort* port) {
+		PortImpl* patch_port = port->patch_port();
+		void*     buffer     = port->buffer();
+
+		if (patch_port->is_input() || !buffer) {
+			return;
+		}
+
+		Buffer* patch_buf = patch_port->buffer(0).get();
+		if (patch_port->is_a(PortType::AUDIO) ||
+		    patch_port->is_a(PortType::CV)) {
+			memcpy(buffer,
+			       patch_buf->samples(),
+			       context.nframes() * sizeof(float));
+		} else if (patch_port->is_a(PortType::CONTROL)) {
+			((float*)buffer)[0] = patch_buf->samples()[0];
+		} else {
+			memcpy(buffer,
+			       patch_buf->atom(),
+			       sizeof(LV2_Atom) + patch_buf->atom()->size);
+		}
+	}
+
 	void run(uint32_t nframes) {
 		_engine.process_context().locate(_frame_time, nframes);
 
-		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
-			(*i)->pre_process(_engine.process_context());
+		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+			pre_process_port(_engine.process_context(), *i);
+		}
 
 		_engine.run(nframes);
 		if (_engine.post_processor()->pending()) {
@@ -195,8 +184,9 @@ public:
 
 		flush_to_ui();
 
-		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
-			(*i)->post_process(_engine.process_context());
+		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+			post_process_port(_engine.process_context(), *i);
+		}
 
 		_frame_time += nframes;
 	}
@@ -209,45 +199,34 @@ public:
 	virtual void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
 	virtual PatchImpl* root_patch()                     { return _root_patch; }
 
-	virtual EnginePort* engine_port(ProcessContext&   context,
-	                                const Raul::Path& path) {
+	virtual EnginePort* get_port(const Raul::Path& path) {
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 			if ((*i)->patch_port()->path() == path) {
-				return (*i);
+				return *i;
 			}
 		}
 
 		return NULL;
 	}
 
-	EnginePort* port(const Raul::Path& path) { return NULL; }
+	/** Unused since LV2 has no dynamic ports. */
+	virtual void add_port(ProcessContext& context, EnginePort* port) {}
 
-	/** Doesn't have to be real-time safe since LV2 has no dynamic ports. */
-	virtual void add_port(ProcessContext& context, EnginePort* port) {
-		assert(dynamic_cast<LV2Port*>(port));
-		assert(port->patch_port()->index() == _ports.size());
-		_ports.push_back((LV2Port*)port);
-	}
+	/** Unused since LV2 has no dynamic ports. */
+	virtual void remove_port(ProcessContext& context, EnginePort* port) {}
 
-	/** Doesn't have to be real-time safe since LV2 has no dynamic ports. */
-	virtual Raul::Deletable* remove_port(ProcessContext& context,
-	                                     EnginePort*     port) {
-		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-			if (*i == port) {
-				_ports.erase(i);
-				return NULL;
-			}
-		}
+	/** Unused since LV2 has no dynamic ports. */
+	virtual void register_port(EnginePort& port) {}
 
-		return NULL;
-	}
+	/** Unused since LV2 has no dynamic ports. */
+	virtual void unregister_port(EnginePort& port) {}
 
-	/** UNused since LV2 has no dynamic ports. */
+	/** Unused since LV2 has no dynamic ports. */
 	virtual void rename_port(const Raul::Path& old_path,
 	                         const Raul::Path& new_path) {}
 
 	virtual EnginePort* create_port(DuplexPort* patch_port) {
-		return new LV2Port(this, patch_port);
+		return new EnginePort(patch_port);
 	}
 
 	/** Called in run thread for events received at control input port. */
@@ -354,10 +333,13 @@ public:
 	AtomReader&  reader()            { return _reader; }
 	AtomWriter&  writer()            { return _writer; }
 
+	typedef std::vector<EnginePort*> Ports;
+
 	Ports& ports() { return _ports; }
 
 private:
 	Engine&          _engine;
+	Ports            _ports;
 	Raul::Semaphore  _main_sem;
 	AtomReader       _reader;
 	AtomWriter       _writer;
@@ -367,22 +349,9 @@ private:
 	SampleCount      _block_length;
 	SampleCount      _sample_rate;
 	SampleCount      _frame_time;
-	Ports            _ports;
 	Raul::Semaphore  _to_ui_overflow_sem;
 	bool             _to_ui_overflow;
 };
-
-void
-enqueue_message(ProcessContext& context, LV2Driver* driver, const LV2_Atom* msg)
-{
-	driver->enqueue_message(msg);
-}
-
-void
-signal_main(ProcessContext& context, LV2Driver* driver)
-{
-	driver->main_sem().post();
-}
 
 } // namespace Server
 } // namespace Ingen
