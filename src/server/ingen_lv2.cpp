@@ -209,7 +209,17 @@ public:
 	virtual void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
 	virtual PatchImpl* root_patch()                     { return _root_patch; }
 
-	/** Unused since LV2 has no dynamic ports. */
+	virtual EnginePort* engine_port(ProcessContext&   context,
+	                                const Raul::Path& path) {
+		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+			if ((*i)->patch_port()->path() == path) {
+				return (*i);
+			}
+		}
+
+		return NULL;
+	}
+
 	EnginePort* port(const Raul::Path& path) { return NULL; }
 
 	/** Doesn't have to be real-time safe since LV2 has no dynamic ports. */
@@ -232,17 +242,12 @@ public:
 		return NULL;
 	}
 
+	/** UNused since LV2 has no dynamic ports. */
+	virtual void rename_port(const Raul::Path& old_path,
+	                         const Raul::Path& new_path) {}
+
 	virtual EnginePort* create_port(DuplexPort* patch_port) {
 		return new LV2Port(this, patch_port);
-	}
-
-	virtual EnginePort* engine_port(ProcessContext&   context,
-	                                const Raul::Path& path) {
-		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i)
-			if ((*i)->patch_port()->path() == path)
-				return (*i);
-
-		return NULL;
 	}
 
 	/** Called in run thread for events received at control input port. */

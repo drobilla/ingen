@@ -75,7 +75,7 @@ JackPort::create()
 {
 	_jack_port = jack_port_register(
 		_driver->jack_client(),
-		ingen_jack_port_name(_patch_port->path()).c_str(),
+		_patch_port->path().substr(1).c_str(),
 		(_patch_port->is_a(PortType::AUDIO))
 		? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE,
 		(_patch_port->is_input())
@@ -96,12 +96,6 @@ JackPort::destroy()
 	if (jack_port_unregister(_driver->jack_client(), _jack_port))
 		LOG(Raul::error)("Unable to unregister port\n");
 	_jack_port = NULL;
-}
-
-void
-JackPort::move(const Raul::Path& path)
-{
-	jack_port_set_name(_jack_port, ingen_jack_port_name(path).c_str());
 }
 
 void
@@ -339,6 +333,16 @@ JackDriver::remove_port(ProcessContext& context,
 	return NULL;
 }
 
+void
+JackDriver::rename_port(const Raul::Path& old_path,
+                        const Raul::Path& new_path)
+{
+	JackPort* jport = dynamic_cast<JackPort*>(port(old_path));
+	if (jport) {
+		jack_port_set_name(jport->jack_port(), new_path.substr(1).c_str());
+	}
+}
+
 EnginePort*
 JackDriver::port(const Raul::Path& path)
 {
@@ -363,17 +367,6 @@ JackDriver::create_port(DuplexPort* patch_port)
 	} catch (...) {
 		return NULL;
 	}
-}
-
-EnginePort*
-JackDriver::engine_port(ProcessContext&   context,
-                        const Raul::Path& path)
-{
-	for (Raul::List<JackPort*>::iterator i = _ports.begin(); i != _ports.end(); ++i)
-		if ((*i)->patch_port()->path() == path)
-			return (*i);
-
-	return NULL;
 }
 
 /**** Jack Callbacks ****/

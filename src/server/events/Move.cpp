@@ -40,8 +40,6 @@ Move::Move(Engine&              engine,
 	: Event(engine, client, id, timestamp)
 	, _old_path(path)
 	, _new_path(new_path)
-	, _parent_patch(NULL)
-	, _port(NULL)
 {
 }
 
@@ -67,7 +65,11 @@ Move::pre_process()
 		return Event::pre_process_done(EXISTS, _new_path);
 	}
 
-	_port = dynamic_cast<PortImpl*>(i->second.get());
+	EnginePort* eport = _engine.driver()->port(_old_path);
+	if (eport) {
+		_engine.driver()->rename_port(_old_path, _new_path);
+	}
+
 	_engine.store()->rename(i, _new_path);
 
 	return Event::pre_process_done(SUCCESS);
@@ -76,12 +78,6 @@ Move::pre_process()
 void
 Move::execute(ProcessContext& context)
 {
-	if (_port && !_port->parent()->parent()) {
-		EnginePort* eport = _engine.driver()->engine_port(context, _new_path);
-		if (eport) {
-			eport->move(_new_path);
-		}
-	}
 }
 
 void

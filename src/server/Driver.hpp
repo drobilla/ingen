@@ -56,10 +56,6 @@ public:
 	 */
 	virtual EnginePort* create_port(DuplexPort* patch_port) = 0;
 
-	/** Return the DriverPort for a particular path, iff one exists. */
-	virtual EnginePort* engine_port(ProcessContext&   context,
-	                                const Raul::Path& path) = 0;
-
 	/** Find a system port by path. */
 	virtual EnginePort* port(const Raul::Path& path) = 0;
 
@@ -69,6 +65,10 @@ public:
 	/** Remove a system visible port. */
 	virtual Raul::Deletable* remove_port(ProcessContext& context,
 	                                     EnginePort*     port) = 0;
+
+	/** Rename a system visible port. */
+	virtual void rename_port(const Raul::Path& old_path,
+	                         const Raul::Path& new_path) = 0;
 
 	/** Return the audio buffer size in frames */
 	virtual SampleCount block_length() const = 0;

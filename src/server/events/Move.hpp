@@ -63,7 +63,6 @@ private:
 	const Raul::Path _old_path;
 	const Raul::Path _new_path;
 	PatchImpl*       _parent_patch;
-	PortImpl*        _port;
 };
 
 } // namespace Events

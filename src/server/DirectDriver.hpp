@@ -42,14 +42,12 @@ public:
 		return NULL;
 	}
 
-	virtual EnginePort* engine_port(ProcessContext&   context,
-	                                const Raul::Path& path) {
-		return NULL;
-	}
-
 	virtual EnginePort* port(const Raul::Path& path) { return NULL; }
 
 	virtual void add_port(ProcessContext& context, EnginePort* port) {}
+
+	virtual void rename_port(const Raul::Path& old_path,
+	                         const Raul::Path& new_path) {}
 
 	virtual Raul::Deletable* remove_port(ProcessContext& context,
 	                                     EnginePort*     port) {

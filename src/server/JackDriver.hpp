@@ -60,8 +60,6 @@ public:
 	void create();
 	void destroy();
 
-	void move(const Raul::Path& path);
-
 	void pre_process(ProcessContext& context);
 	void post_process(ProcessContext& context);
 
@@ -98,8 +96,10 @@ public:
 	EnginePort* port(const Raul::Path& path);
 	EnginePort* create_port(DuplexPort* patch_port);
 
-	void        add_port(ProcessContext& context, EnginePort* port);
-	EnginePort* engine_port(ProcessContext& context, const Raul::Path& path);
+	void add_port(ProcessContext& context, EnginePort* port);
+
+	void rename_port(const Raul::Path& old_path,
+	                 const Raul::Path& new_path);
 
 	Raul::Deletable* remove_port(ProcessContext& context,
 	                             EnginePort*     port);

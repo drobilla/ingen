@@ -49,9 +49,6 @@ public:
 
 	virtual ~EnginePort() {}
 
-	/** Set the name of the system port according to new path */
-	virtual void move(const Raul::Path& path) {}
-
 	/** Create system port */
 	virtual void create() {}
 

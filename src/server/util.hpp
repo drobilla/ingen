@@ -81,12 +81,6 @@ set_denormal_flags()
 #endif
 }
 
-static inline std::string
-ingen_jack_port_name(const Raul::Path& path)
-{
-	return path.substr(1);
-}
-
 } // namespace Server
 } // namespace Ingen
 
