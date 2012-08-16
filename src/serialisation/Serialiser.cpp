@@ -46,7 +46,6 @@
 #define LOG(s) s << "[Serialiser] "
 
 using namespace std;
-using namespace Raul;
 using namespace Sord;
 using namespace Ingen;
 
@@ -187,7 +186,7 @@ Serialiser::Impl::write_bundle(SharedPtr<const GraphObject> patch,
 	const string root_file = Glib::build_filename(path, symbol + ".ttl");
 
 	start_to_filename(root_file);
-	const Path old_root_path = _root_path;
+	const Raul::Path old_root_path = _root_path;
 	_root_path = patch->path();
 	serialise_patch(patch, Sord::URI(_model->world(), root_file, _base_uri));
 	_root_path = old_root_path;
@@ -255,8 +254,8 @@ Serialiser::Impl::finish()
 	if (_mode == TO_FILE) {
 		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
 		if (st) {
-			LOG(error) << "Error writing file `" << _base_uri << "' ("
-			           << serd_strerror(st) << ")" << std::endl;
+			LOG(Raul::error) << "Error writing file `" << _base_uri << "' ("
+			                 << serd_strerror(st) << ")" << std::endl;
 		}
 	} else {
 		ret = _model->write_to_string(_base_uri, SERD_TURTLE);
@@ -270,7 +269,7 @@ Serialiser::Impl::finish()
 }
 
 Sord::Node
-Serialiser::Impl::path_rdf_node(const Path& path)
+Serialiser::Impl::path_rdf_node(const Raul::Path& path)
 {
 	assert(_model);
 	assert(path == _root_path || path.is_child_of(_root_path));
@@ -296,8 +295,8 @@ Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_err
 		                   Resource::DEFAULT,
 		                   me->path_rdf_node(object->path()));
 	} else {
-		LOG(warn) << "Unsupported object type, "
-		          << object->path() << " not serialised." << endl;
+		LOG(Raul::warn) << "Unsupported object type, "
+		                << object->path() << " not serialised." << endl;
 	}
 }
 
@@ -331,10 +330,10 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 	GraphObject::Properties::const_iterator s = patch->properties().find(uris.lv2_symbol);
 	if (s == patch->properties().end()
 	    || !s->second.type() == _world.forge().String
-	    || !Symbol::is_valid(s->second.get_string())) {
+	    || !Raul::Symbol::is_valid(s->second.get_string())) {
 		const std::string base = Glib::path_get_basename(
 			_model->base_uri().to_c_string());
-		symbol = Symbol::symbolify(base.substr(0, base.find('.')));
+		symbol = Raul::Symbol::symbolify(base.substr(0, base.find('.')));
 		_model->add_statement(
 			patch_id,
 			Sord::Curie(world, "lv2:symbol"),

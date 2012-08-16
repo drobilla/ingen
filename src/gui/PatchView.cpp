@@ -28,7 +28,6 @@
 #include "WidgetFactory.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -194,13 +193,13 @@ PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 		if (value.type() == _app->uris().forge.Bool) {
 			_process_but->set_active(value.get_bool());
 		} else {
-			warn << "Bad type for ingen:enabled: " << value.type() << endl;
+			Raul::warn << "Bad type for ingen:enabled: " << value.type() << endl;
 		}
 	} else if (predicate == _app->uris().ingen_polyphony) {
 		if (value.type() == _app->uris().forge.Int) {
 			_poly_spin->set_value(value.get_int32());
 		} else {
-			warn << "Bad type for ingen:polyphony: " << value.type() << endl;
+			Raul::warn << "Bad type for ingen:polyphony: " << value.type() << endl;
 		}
 	}
 	_enable_signal = true;

@@ -24,7 +24,6 @@
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
 
-using namespace Raul;
 using namespace boost;
 using namespace std;
 
@@ -40,7 +39,7 @@ ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
 	if (parser())
 		start();
 	else
-		warn << "Failed to load ingen_serialisation module, load disabled." << endl;
+		Raul::warn << "Failed to load ingen_serialisation module, load disabled." << endl;
 }
 
 ThreadedLoader::~ThreadedLoader()
@@ -76,8 +75,8 @@ ThreadedLoader::_run()
 void
 ThreadedLoader::load_patch(bool                              merge,
                            const Glib::ustring&              document_uri,
-                           optional<Path>                    engine_parent,
-                           optional<Symbol>                  engine_symbol,
+                           optional<Raul::Path>              engine_parent,
+                           optional<Raul::Symbol>            engine_symbol,
                            optional<GraphObject::Properties> engine_data)
 {
 	_mutex.lock();

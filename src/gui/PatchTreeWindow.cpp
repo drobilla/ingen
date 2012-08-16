@@ -27,7 +27,6 @@
 #define LOG(s) s << "[PatchTreeWindow] "
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -162,7 +161,7 @@ PatchTreeWindow::show_patch_menu(GdkEventButton* ev)
 		Gtk::TreeModel::Row row = *active;
 		SharedPtr<PatchModel> pm = row[_patch_tree_columns.patch_model_col];
 		if (pm)
-			warn << "TODO: patch menu from tree window" << endl;
+			Raul::warn << "TODO: patch menu from tree window" << endl;
 	}
 }
 
@@ -194,8 +193,9 @@ PatchTreeWindow::event_patch_enabled_toggled(const Glib::ustring& path_str)
 }
 
 void
-PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
-		SharedPtr<PatchModel> patch)
+PatchTreeWindow::patch_property_changed(const Raul::URI&      key,
+                                        const Raul::Atom&     value,
+                                        SharedPtr<PatchModel> patch)
 {
 	const URIs& uris = _app->uris();
 	_enable_signal = false;
@@ -205,7 +205,7 @@ PatchTreeWindow::patch_property_changed(const URI& key, const Atom& value,
 			Gtk::TreeModel::Row row = *i;
 			row[_patch_tree_columns.enabled_col] = value.get_bool();
 		} else {
-			LOG(error) << "Unable to find patch " << patch->path() << endl;
+			LOG(Raul::error) << "Unable to find patch " << patch->path() << endl;
 		}
 	}
 	_enable_signal = true;
@@ -223,7 +223,7 @@ PatchTreeWindow::patch_moved(SharedPtr<PatchModel> patch)
 		Gtk::TreeModel::Row row = *i;
 		row[_patch_tree_columns.name_col] = patch->symbol().c_str();
 	} else {
-		LOG(error) << "Unable to find patch " << patch->path() << endl;
+		LOG(Raul::error) << "Unable to find patch " << patch->path() << endl;
 	}
 
 	_enable_signal = true;

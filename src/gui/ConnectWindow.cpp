@@ -38,7 +38,6 @@
 
 using namespace Ingen::Client;
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -210,7 +209,7 @@ ConnectWindow::connect(bool existing)
 			Glib::signal_timeout().connect(
 				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
 		} else {
-			error << "Failed to launch ingen process." << endl;
+			Raul::error << "Failed to launch ingen process." << endl;
 		}
 		return;
 	}

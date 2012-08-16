@@ -24,8 +24,6 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-using namespace Raul;
-
 namespace Ingen {
 
 using namespace Client;
@@ -119,7 +117,7 @@ ObjectMenu::on_menu_polyphonic()
 }
 
 void
-ObjectMenu::property_changed(const URI& predicate, const Atom& value)
+ObjectMenu::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
 	const URIs& uris = _app->uris();
 	_enable_signal = false;

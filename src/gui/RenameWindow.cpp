@@ -26,7 +26,6 @@
 #include "RenameWindow.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -64,7 +63,7 @@ RenameWindow::set_object(SharedPtr<const ObjectModel> object)
 {
 	_object = object;
 	_symbol_entry->set_text(object->path().symbol());
-	const Atom& name_atom = object->get_property(_app->uris().lv2_name);
+	const Raul::Atom& name_atom = object->get_property(_app->uris().lv2_name);
 	_label_entry->set_text(
 		(name_atom.type() == _app->forge().String) ? name_atom.get_string() : "");
 }
@@ -82,7 +81,7 @@ RenameWindow::values_changed()
 {
 	const string& symbol = _symbol_entry->get_text();
 	const string& label  = _label_entry->get_text();
-	if (!Symbol::is_valid(symbol)) {
+	if (!Raul::Symbol::is_valid(symbol)) {
 		_message_label->set_text("Invalid symbol");
 		_ok_button->property_sensitive() = false;
 	} else if (_object->symbol() != symbol &&
@@ -112,14 +111,14 @@ RenameWindow::cancel_clicked()
 void
 RenameWindow::ok_clicked()
 {
-	const URIs&   uris       = _app->uris();
-	const string& symbol_str = _symbol_entry->get_text();
-	const string& label      = _label_entry->get_text();
-	Path          path       = _object->path();
-	const Atom&   name_atom  = _object->get_property(uris.lv2_name);
+	const URIs&       uris       = _app->uris();
+	const string&     symbol_str = _symbol_entry->get_text();
+	const string&     label      = _label_entry->get_text();
+	Raul::Path        path       = _object->path();
+	const Raul::Atom& name_atom  = _object->get_property(uris.lv2_name);
 
-	if (Symbol::is_valid(symbol_str)) {
-		const Symbol symbol(symbol_str);
+	if (Raul::Symbol::is_valid(symbol_str)) {
+		const Raul::Symbol symbol(symbol_str);
 		if (symbol != _object->symbol()) {
 			path = _object->path().parent().child(symbol);
 			_app->interface()->move(_object->path(), path);

@@ -34,7 +34,6 @@
 #include "WindowFactory.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -92,15 +91,14 @@ PatchPortModule::show_menu(GdkEventButton* ev)
 void
 PatchPortModule::store_location(double ax, double ay)
 {
-	const Atom x(app().forge().make(static_cast<float>(ax)));
-	const Atom y(app().forge().make(static_cast<float>(ay)));
-
 	const URIs& uris = app().uris();
 
-	const Atom& existing_x = _model->get_property(uris.ingen_canvasX);
-	const Atom& existing_y = _model->get_property(uris.ingen_canvasY);
+	const Raul::Atom x(app().forge().make(static_cast<float>(ax)));
+	const Raul::Atom y(app().forge().make(static_cast<float>(ay)));
 
-	if (x != existing_x && y != existing_y) {
+	if (x != _model->get_property(uris.ingen_canvasX) ||
+	    y != _model->get_property(uris.ingen_canvasY))
+	{
 		Resource::Properties remove;
 		remove.insert(make_pair(uris.ingen_canvasX, uris.wildcard));
 		remove.insert(make_pair(uris.ingen_canvasY, uris.wildcard));
@@ -116,8 +114,8 @@ PatchPortModule::store_location(double ax, double ay)
 void
 PatchPortModule::show_human_names(bool b)
 {
-	const URIs& uris = app().uris();
-	const Atom& name = _model->get_property(uris.lv2_name);
+	const URIs&       uris = app().uris();
+	const Raul::Atom& name = _model->get_property(uris.lv2_name);
 	if (b && name.type() == uris.forge.String) {
 		set_name(name.get_string());
 	} else {
@@ -132,7 +130,7 @@ PatchPortModule::set_name(const std::string& n)
 }
 
 void
-PatchPortModule::property_changed(const URI& key, const Atom& value)
+PatchPortModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
 {
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {

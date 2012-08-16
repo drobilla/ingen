@@ -42,7 +42,6 @@
 #define NS_RDFS "http://www.w3.org/2000/01/rdf-schema#"
 
 using namespace std;
-using namespace Raul;
 
 typedef set<Sord::Node> RDFNodes;
 
@@ -118,7 +117,7 @@ get_properties(Ingen::World*     world,
 			sratom_read(sratom, &forge, world->rdf_world()->c_obj(),
 			            model.c_obj(), i.get_object().c_obj());
 			const LV2_Atom* atom = (const LV2_Atom*)out.buf;
-			Atom            atomm;
+			Raul::Atom      atomm;
 			// FIXME: Don't bloat out all URIs
 			if (atom->type == forge.URID) {
 				atomm = world->forge().alloc_uri(
@@ -137,7 +136,7 @@ get_properties(Ingen::World*     world,
 	return props;
 }
 
-typedef std::pair<Path, Resource::Properties> PortRecord;
+typedef std::pair<Raul::Path, Resource::Properties> PortRecord;
 
 static boost::optional<PortRecord>
 get_port(Ingen::World*     world,
@@ -156,7 +155,7 @@ get_port(Ingen::World*     world,
 	if (i == props.end()
 	    || i->second.type() != world->forge().Int
 	    || i->second.get_int32() < 0) {
-		LOG(error) << "Port " << subject << " has no valid index" << endl;
+		LOG(Raul::error) << "Port " << subject << " has no valid index" << endl;
 		return boost::optional<PortRecord>();
 	}
 	index = i->second.get_int32();
@@ -164,11 +163,11 @@ get_port(Ingen::World*     world,
 	// Get symbol
 	Resource::Properties::const_iterator s = props.find(uris.lv2_symbol);
 	if (s == props.end()) {
-		LOG(error) << "Port " << subject << " has no symbol" << endl;
+		LOG(Raul::error) << "Port " << subject << " has no symbol" << endl;
 		return boost::optional<PortRecord>();
 	}
-	const Symbol port_sym(s->second.get_string());
-	const Path   port_path = parent.child(port_sym);
+	const Raul::Symbol port_sym(s->second.get_string());
+	const Raul::Path   port_path = parent.child(port_sym);
 
 	return make_pair(port_path, props);
 }
@@ -220,7 +219,7 @@ parse_edges(
 		const Sord::Node& subject,
 		const Raul::Path& patch);
 
-static boost::optional<Path>
+static boost::optional<Raul::Path>
 parse_node(Ingen::World*                            world,
            Ingen::Interface*                        target,
            Sord::Model&                             model,
@@ -235,8 +234,8 @@ parse_node(Ingen::World*                            world,
 
 	Sord::Iter i = model.find(subject, ingen_prototype, nil);
 	if (i.end() || i.get_object().type() != Sord::Node::URI) {
-		LOG(error) << "Node missing mandatory ingen:prototype" << endl;
-		return boost::optional<Path>();
+		LOG(Raul::error) << "Node missing mandatory ingen:prototype" << endl;
+		return boost::optional<Raul::Path>();
 	}
 
 	const std::string type_uri = relative_uri(
@@ -283,7 +282,7 @@ parse_node(Ingen::World*                            world,
 	return path;
 }
 
-static boost::optional<Path>
+static boost::optional<Raul::Path>
 parse_patch(Ingen::World*                            world,
             Ingen::Interface*                        target,
             Sord::Model&                             model,
@@ -312,20 +311,20 @@ parse_patch(Ingen::World*                            world,
 	if (parent && a_symbol)
 		patch_path_str = parent->child(*a_symbol);
 
-	if (!Path::is_valid(patch_path_str)) {
-		LOG(error) << "Patch has invalid path: " << patch_path_str << endl;
+	if (!Raul::Path::is_valid(patch_path_str)) {
+		LOG(Raul::error) << "Patch has invalid path: " << patch_path_str << endl;
 		return boost::optional<Raul::Path>();
 	}
 
 	// Create patch
-	Path patch_path(patch_path_str);
+	Raul::Path patch_path(patch_path_str);
 	Resource::Properties props = get_properties(world, model, subject_node);
 	target->put(GraphObject::path_to_uri(patch_path), props);
 
 	// For each node in this patch
 	for (Sord::Iter n = model.find(subject_node, ingen_node, nil); !n.end(); ++n) {
-		Sord::Node node      = n.get_object();
-		const Path node_path = patch_path.child(
+		Sord::Node node            = n.get_object();
+		const Raul::Path node_path = patch_path.child(
 			Raul::Symbol(get_basename(node.to_string())));
 
 		// Parse and create node
@@ -341,8 +340,8 @@ parse_patch(Ingen::World*                            world,
 			boost::optional<PortRecord> port_record = get_port(
 				world, model, port, node_path, index);
 			if (!port_record) {
-				LOG(error) << "Invalid port " << port << endl;
-				return boost::optional<Path>();
+				LOG(Raul::error) << "Invalid port " << port << endl;
+				return boost::optional<Raul::Path>();
 			}
 
 			// Create port and/or set all port properties
@@ -363,7 +362,7 @@ parse_patch(Ingen::World*                            world,
 			world, model, port, patch_path, index);
 		if (!port_record) {
 			LOG(Raul::error) << "Invalid port " << port << endl;
-			return boost::optional<Path>();
+			return boost::optional<Raul::Path>();
 		}
 
 		// Store port information in ports map
@@ -398,36 +397,36 @@ parse_edge(Ingen::World*     world,
 	const Glib::ustring& base_uri = model.base_uri().to_string();
 
 	if (t.end()) {
-		LOG(error) << "Edge has no tail" << endl;
+		LOG(Raul::error) << "Edge has no tail" << endl;
 		return false;
 	} else if (h.end()) {
-		LOG(error) << "Edge has no head" << endl;
+		LOG(Raul::error) << "Edge has no head" << endl;
 		return false;
 	}
 
 	const std::string tail_str = relative_uri(
 		base_uri, t.get_object().to_string(), true);
-	if (!Path::is_valid(tail_str)) {
-		LOG(error) << "Edge tail has invalid URI" << endl;
+	if (!Raul::Path::is_valid(tail_str)) {
+		LOG(Raul::error) << "Edge tail has invalid URI" << endl;
 		return false;
 	}
 
 	const std::string head_str = relative_uri(
 		base_uri, h.get_object().to_string(), true);
-	if (!Path::is_valid(head_str)) {
-		LOG(error) << "Edge head has invalid URI" << endl;
+	if (!Raul::Path::is_valid(head_str)) {
+		LOG(Raul::error) << "Edge head has invalid URI" << endl;
 		return false;
 	}
 
 	if (!(++t).end()) {
-		LOG(error) << "Edge has multiple tails" << endl;
+		LOG(Raul::error) << "Edge has multiple tails" << endl;
 		return false;
 	} else if (!(++h).end()) {
-		LOG(error) << "Edge has multiple heads" << endl;
+		LOG(Raul::error) << "Edge has multiple heads" << endl;
 		return false;
 	}
 
-	target->connect(Path(tail_str), Path(head_str));
+	target->connect(Raul::Path(tail_str), Raul::Path(head_str));
 
 	return true;
 }
@@ -468,7 +467,7 @@ parse_properties(Ingen::World*                            world,
 	return true;
 }
 
-static boost::optional<Path>
+static boost::optional<Raul::Path>
 parse(Ingen::World*                            world,
       Ingen::Interface*                        target,
       Sord::Model&                             model,
@@ -515,7 +514,7 @@ parse(Ingen::World*                            world,
 	for (Subjects::const_iterator i = subjects.begin(); i != subjects.end(); ++i) {
 		const Sord::Node&           s     = i->first;
 		const std::set<Sord::Node>& types = i->second;
-		boost::optional<Path>       ret;
+		boost::optional<Raul::Path> ret;
 		const Raul::Path path(
 			relative_uri( model.base_uri().to_string(), s.to_string(), true));
 		if (types.find(patch_class) != types.end()) {
@@ -528,24 +527,24 @@ parse(Ingen::World*                            world,
 				world, target, model, s, GraphObject::path_to_uri(path), data);
 			ret = path;
 		} else if (types.find(edge_class) != types.end()) {
-			Path parent_path(parent ? parent.get() : Path("/"));
+			Raul::Path parent_path(parent ? parent.get() : Raul::Path("/"));
 			parse_edge(world, target, model, s, parent_path);
 		} else {
-			LOG(error) << "Subject has no known types" << endl;
+			LOG(Raul::error) << "Subject has no known types" << endl;
 		}
 
 		if (!ret) {
-			LOG(error) << "Failed to parse " << path << endl;
-			LOG(error) << "Types:" << endl;
+			LOG(Raul::error) << "Failed to parse " << path << endl;
+			LOG(Raul::error) << "Types:" << endl;
 			for (std::set<Sord::Node>::const_iterator t = types.begin();
 			     t != types.end(); ++t) {
-				LOG(error) << " :: " << *t << endl;
+				LOG(Raul::error) << " :: " << *t << endl;
 				assert((*t).is_uri());
 			}
 		}
 	}
 
-	return boost::optional<Path>();
+	return boost::optional<Raul::Path>();
 }
 
 /** Parse a patch from RDF into a Interface (engine or client).
@@ -572,7 +571,7 @@ Parser::parse_file(Ingen::World*                            world,
 	try {
 		uri = Glib::filename_to_uri(path, "");
 	} catch (const Glib::ConvertError& e) {
-		LOG(error) << "Path to URI conversion error: " << e.what() << endl;
+		LOG(Raul::error) << "Path to URI conversion error: " << e.what() << endl;
 		return false;
 	}
 
@@ -593,7 +592,7 @@ Parser::parse_file(Ingen::World*                            world,
 		LOG(Raul::info)(Raul::fmt("Symbol: %1%\n") % symbol->c_str());
 
 	Sord::Node subject(*world->rdf_world(), Sord::Node::URI, uri);
-	boost::optional<Path> parsed_path
+	boost::optional<Raul::Path> parsed_path
 		= parse(world, target, model, path, subject, parent, symbol, data);
 
 	if (parsed_path) {
@@ -625,9 +624,10 @@ Parser::parse_string(Ingen::World*                            world,
 	serd_env_free(env);
 
 	LOG(Raul::info) << "Parsing string";
-	if (!base_uri.empty())
-		info << " (base " << base_uri << ")";
-	info << endl;
+	if (!base_uri.empty()) {
+		Raul::info << " (base " << base_uri << ")";
+	}
+	Raul::info << endl;
 
 	Sord::Node subject;
 	return parse(world, target, model, base_uri, subject, parent, symbol, data);

@@ -26,7 +26,6 @@ namespace Ingen {
 namespace GUI {
 
 using namespace std;
-using namespace Raul;
 
 BreadCrumbs::BreadCrumbs(App& app)
 	: Gtk::HBox()
@@ -41,7 +40,7 @@ BreadCrumbs::BreadCrumbs(App& app)
 }
 
 SharedPtr<PatchView>
-BreadCrumbs::view(const Path& path)
+BreadCrumbs::view(const Raul::Path& path)
 {
 	for (std::list<BreadCrumb*>::const_iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
 		if ((*i)->path() == path)
@@ -56,7 +55,7 @@ BreadCrumbs::view(const Path& path)
  * children preserved.
  */
 void
-BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
+BreadCrumbs::build(Raul::Path path, SharedPtr<PatchView> view)
 {
 	bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
@@ -121,7 +120,7 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
 		_breadcrumbs.push_front(root_but);
 		root_but->set_active(root_but->path() == _active_path);
 
-		Path working_path("/");
+		Raul::Path working_path("/");
 		string suffix = path.substr(1);
 		while (suffix.length() > 0) {
 			if (suffix[0] == '/')
@@ -147,7 +146,7 @@ BreadCrumbs::build(Path path, SharedPtr<PatchView> view)
  * match, otherwise ignoring @a view.
  */
 BreadCrumbs::BreadCrumb*
-BreadCrumbs::create_crumb(const Path&          path,
+BreadCrumbs::create_crumb(const Raul::Path&    path,
                           SharedPtr<PatchView> view)
 {
 	BreadCrumb* but = manage(new BreadCrumb(path,
@@ -178,7 +177,7 @@ BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
 }
 
 void
-BreadCrumbs::object_destroyed(const URI& uri)
+BreadCrumbs::object_destroyed(const Raul::URI& uri)
 {
 	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 		if ((*i)->path() == uri.c_str()) {
@@ -194,7 +193,7 @@ BreadCrumbs::object_destroyed(const URI& uri)
 }
 
 void
-BreadCrumbs::object_moved(const Path& old_path, const Path& new_path)
+BreadCrumbs::object_moved(const Raul::Path& old_path, const Raul::Path& new_path)
 {
 	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 		if ((*i)->path() == old_path)

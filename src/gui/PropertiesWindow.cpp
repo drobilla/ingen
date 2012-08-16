@@ -32,7 +32,6 @@
 #define LOG(s) s << "[PropertiesWindow] "
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -352,7 +351,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 		return widget;
 	}
 
-	LOG(error) << "Unable to create widget for value " << forge.str(value) << endl;
+	LOG(Raul::error) << "Unable to create widget for value " << forge.str(value) << endl;
 	return NULL;
 }
 
@@ -409,7 +408,7 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 {
 	Records::iterator r = _records.find(predicate);
 	if (r == _records.end()) {
-		LOG(error) << "Unknown property `" << predicate << "' edited" << endl;
+		LOG(Raul::error) << "Unknown property `" << predicate << "' edited" << endl;
 		return;
 	}
 
@@ -441,7 +440,7 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 	return;
 
 bad_type:
-	LOG(error) << "Property `" << predicate << "' value widget has wrong type" << endl;
+	LOG(Raul::error) << "Property `" << predicate << "' value widget has wrong type" << endl;
 	return;
 }
 
@@ -518,21 +517,21 @@ PropertiesWindow::cancel_clicked()
 void
 PropertiesWindow::apply_clicked()
 {
-	LOG(debug) << "apply {" << endl;
+	LOG(Raul::debug) << "apply {" << endl;
 	Resource::Properties properties;
 	for (Records::const_iterator r = _records.begin(); r != _records.end(); ++r) {
 		const Raul::URI& uri    = r->first;
 		const Record&    record = r->second;
 		if (!_model->has_property(uri, record.value)) {
-			LOG(debug) << "\t" << uri
-			           << " = " << _app->forge().str(record.value) << endl;
+			LOG(Raul::debug) << "\t" << uri
+			                 << " = " << _app->forge().str(record.value) << endl;
 			properties.insert(make_pair(uri, record.value));
 		}
 	}
 
 	_app->interface()->put(_model->uri(), properties);
 
-	LOG(debug) << "}" << endl;
+	LOG(Raul::debug) << "}" << endl;
 }
 
 void

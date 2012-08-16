@@ -42,7 +42,6 @@
 #include "WindowFactory.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -165,7 +164,7 @@ NodeModule::show_human_names(bool b)
 }
 
 void
-NodeModule::value_changed(uint32_t index, const Atom& value)
+NodeModule::value_changed(uint32_t index, const Raul::Atom& value)
 {
 	if (!_plugin_ui)
 		return;
@@ -183,7 +182,7 @@ NodeModule::value_changed(uint32_t index, const Atom& value)
 }
 
 void
-NodeModule::port_activity(uint32_t index, const Atom& value)
+NodeModule::port_activity(uint32_t index, const Raul::Atom& value)
 {
 	if (!_plugin_ui)
 		return;
@@ -221,7 +220,7 @@ NodeModule::embed_gui(bool embed)
 {
 	if (embed) {
 		if (_gui_window) {
-			warn << "LV2 GUI already popped up, cannot embed" << endl;
+			Raul::warn << "LV2 GUI already popped up, cannot embed" << endl;
 			return;
 		}
 
@@ -240,7 +239,7 @@ NodeModule::embed_gui(bool embed)
 			container->add(*_gui_widget);
 			Ganv::Module::embed(container);
 		} else {
-			error << "Failed to create LV2 UI" << endl;
+			Raul::error << "Failed to create LV2 UI" << endl;
 		}
 
 		if (_gui_widget) {
@@ -295,7 +294,7 @@ NodeModule::delete_port_view(SharedPtr<const PortModel> model)
 	if (p) {
 		delete p;
 	} else {
-		warn << "Failed to find port on module " << model->path() << endl;
+		Raul::warn << "Failed to find port on module " << model->path() << endl;
 	}
 }
 
@@ -304,7 +303,7 @@ NodeModule::popup_gui()
 {
 	if (_node->plugin() && _node->plugin()->type() == PluginModel::LV2) {
 		if (_plugin_ui) {
-			warn << "LV2 GUI already embedded, cannot pop up" << endl;
+			Raul::warn << "LV2 GUI already embedded, cannot pop up" << endl;
 			return false;
 		}
 
@@ -333,7 +332,7 @@ NodeModule::popup_gui()
 
 			return true;
 		} else {
-			warn << "No LV2 GUI for " << _node->path() << endl;
+			Raul::warn << "No LV2 GUI for " << _node->path() << endl;
 		}
 	}
 
@@ -382,15 +381,14 @@ NodeModule::on_event(GdkEvent* ev)
 void
 NodeModule::store_location(double ax, double ay)
 {
-	const Atom x(app().forge().make(static_cast<float>(ax)));
-	const Atom y(app().forge().make(static_cast<float>(ay)));
-
 	const URIs& uris = app().uris();
 
-	const Atom& existing_x = _node->get_property(uris.ingen_canvasX);
-	const Atom& existing_y = _node->get_property(uris.ingen_canvasY);
+	const Raul::Atom x(app().forge().make(static_cast<float>(ax)));
+	const Raul::Atom y(app().forge().make(static_cast<float>(ay)));
 
-	if (x != existing_x && y != existing_y) {
+	if (x != _node->get_property(uris.ingen_canvasX) ||
+	    y != _node->get_property(uris.ingen_canvasY))
+	{
 		Resource::Properties remove;
 		remove.insert(make_pair(uris.ingen_canvasX, uris.wildcard));
 		remove.insert(make_pair(uris.ingen_canvasY, uris.wildcard));
@@ -402,7 +400,7 @@ NodeModule::store_location(double ax, double ay)
 }
 
 void
-NodeModule::property_changed(const URI& key, const Atom& value)
+NodeModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
 {
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {

@@ -25,7 +25,6 @@
 #include "PortPropertiesWindow.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 using namespace Client;
@@ -93,7 +92,8 @@ PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
 }
 
 void
-PortPropertiesWindow::property_changed(const URI& key, const Atom& value)
+PortPropertiesWindow::property_changed(const Raul::URI&  key,
+                                       const Raul::Atom& value)
 {
 	const URIs& uris = _app->uris();
 	if (value.type() == uris.forge.Float) {

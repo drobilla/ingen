@@ -57,7 +57,6 @@
 	     (iter) != coll.end(); ++(iter))
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -229,8 +228,8 @@ PatchCanvas::build_plugin_class_menu(
 		const char* sub_label_str = lilv_node_as_string(lilv_plugin_class_get_label(c));
 		const char* sub_uri_str   = lilv_node_as_string(lilv_plugin_class_get_uri(c));
 		if (ancestors.find(sub_uri_str) != ancestors.end()) {
-			LOG(warn) << "Infinite LV2 class recursion: " << class_uri_str
-			          << " <: " << sub_uri_str << endl;
+			LOG(Raul::warn) << "Infinite LV2 class recursion: " << class_uri_str
+			                << " <: " << sub_uri_str << endl;
 			return 0;
 		}
 
@@ -491,8 +490,8 @@ PatchCanvas::connection(SharedPtr<const EdgeModel> cm)
 	if (tail && head) {
 		new GUI::Edge(*this, cm, tail, head, tail->get_fill_color());
 	} else {
-		LOG(error) << "Unable to find ports to connect "
-		           << cm->tail_path() << " -> " << cm->head_path() << endl;
+		LOG(Raul::error) << "Unable to find ports to connect "
+		                 << cm->tail_path() << " -> " << cm->head_path() << endl;
 	}
 }
 
@@ -505,8 +504,8 @@ PatchCanvas::disconnection(SharedPtr<const EdgeModel> cm)
 	if (src && dst)
 		remove_edge(src, dst);
 	else
-		LOG(error) << "Unable to find ports to disconnect "
-		           << cm->tail_path() << " -> " << cm->head_path() << endl;
+		LOG(Raul::error) << "Unable to find ports to disconnect "
+		                 << cm->tail_path() << " -> " << cm->head_path() << endl;
 }
 
 void
@@ -704,7 +703,7 @@ PatchCanvas::paste()
 	Glib::ustring str = Gtk::Clipboard::get()->wait_for_text();
 	SharedPtr<Serialisation::Parser> parser = _app.loader()->parser();
 	if (!parser) {
-		LOG(error) << "Unable to load parser, paste unavailable" << endl;
+		LOG(Raul::error) << "Unable to load parser, paste unavailable" << endl;
 		return;
 	}
 
@@ -731,8 +730,8 @@ PatchCanvas::paste()
 	while (to_create != "/" && !to_create.empty()
 	       && (first_slash = to_create.find("/")) != string::npos) {
 		created += to_create.substr(0, first_slash);
-		assert(Path::is_valid(created));
-		clipboard.put(GraphObject::path_to_uri(Path(created)), props);
+		assert(Raul::Path::is_valid(created));
+		clipboard.put(GraphObject::path_to_uri(Raul::Path(created)), props);
 		to_create = to_create.substr(first_slash + 1);
 	}
 
@@ -792,7 +791,7 @@ PatchCanvas::generate_port_name(
 			break;
 	}
 
-	assert(Path::is_valid(string("/") + symbol));
+	assert(Raul::Path::is_valid(string("/") + symbol));
 
 	name.append(" ").append(num_buf);
 }
@@ -803,7 +802,7 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 {
 	string sym, name;
 	generate_port_name(sym_base, sym, name_base, name);
-	const Path& path = _patch->path().child(Raul::Symbol(sym));
+	const Raul::Path& path = _patch->path().child(Raul::Symbol(sym));
 
 	const URIs& uris = _app.uris();
 
@@ -838,8 +837,8 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 		symbol = Raul::Symbol(ss.str());
 	}
 
-	const URIs& uris = _app.uris();
-	const Path  path = _patch->path().child(symbol);
+	const URIs&      uris = _app.uris();
+	const Raul::Path path = _patch->path().child(symbol);
 
 	// FIXME: polyphony?
 	GraphObject::Properties props = get_initial_data();

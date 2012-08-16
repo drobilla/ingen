@@ -29,7 +29,6 @@
 #include "WindowFactory.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -63,15 +62,14 @@ SubpatchModule::on_double_click(GdkEventButton* event)
 void
 SubpatchModule::store_location(double ax, double ay)
 {
-	const Atom x(app().forge().make(static_cast<float>(ax)));
-	const Atom y(app().forge().make(static_cast<float>(ay)));
-
 	const URIs& uris = app().uris();
 
-	const Atom& existing_x = _node->get_property(uris.ingen_canvasX);
-	const Atom& existing_y = _node->get_property(uris.ingen_canvasY);
+	const Raul::Atom x(app().forge().make(static_cast<float>(ax)));
+	const Raul::Atom y(app().forge().make(static_cast<float>(ay)));
 
-	if (x != existing_x && y != existing_y) {
+	if (x != _node->get_property(uris.ingen_canvasX) ||
+	    y != _node->get_property(uris.ingen_canvasY))
+	{
 		Resource::Properties remove;
 		remove.insert(make_pair(uris.ingen_canvasX, uris.wildcard));
 		remove.insert(make_pair(uris.ingen_canvasY, uris.wildcard));

@@ -24,7 +24,6 @@
 #include "WidgetFactory.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -60,8 +59,8 @@ WidgetFactory::find_ui_file()
 	if (is_readable(ui_filename))
 		return;
 
-	error << "[WidgetFactory] Unable to find ingen_gui.ui in "
-	      << INGEN_DATA_DIR << endl;
+	Raul::error << "[WidgetFactory] Unable to find ingen_gui.ui in "
+	            << INGEN_DATA_DIR << endl;
 	throw std::runtime_error("Unable to find UI file");
 }
 
@@ -77,7 +76,7 @@ WidgetFactory::create(const string& toplevel_widget)
 		else
 			return Gtk::Builder::create_from_file(ui_filename, toplevel_widget.c_str());
 	} catch (const Gtk::BuilderError& ex) {
-		error << "[WidgetFactory] " << ex.what() << endl;
+		Raul::error << "[WidgetFactory] " << ex.what() << endl;
 		throw ex;
 	}
 }

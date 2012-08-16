@@ -48,8 +48,6 @@
 #include <webkit/webkit.h>
 #endif
 
-using namespace Raul;
-
 namespace Ingen {
 
 using namespace Client;
@@ -494,7 +492,7 @@ PatchBox::event_save_as()
 
 		const std::string symbol(basename.substr(0, basename.find('.')));
 
-		if (!Symbol::is_valid(symbol)) {
+		if (!Raul::Symbol::is_valid(symbol)) {
 			message_dialog(
 				"<b>Ingen bundle names must be valid symbols.</b>",
 				"All characters must be _, a-z, A-Z, or 0-9, but the first may not be 0-9.",

@@ -31,7 +31,6 @@
 #include "Port.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -96,7 +95,7 @@ Configuration::get_port_color(const Client::PortModel* p)
 		return _event_port_color;
 	}
 
-	warn << "[Configuration] No known port type for " << p->path() << endl;
+	Raul::warn << "[Configuration] No known port type for " << p->path() << endl;
 	return 0x666666FF;
 }
 

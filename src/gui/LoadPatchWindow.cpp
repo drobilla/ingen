@@ -34,7 +34,6 @@
 #include "ThreadedLoader.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -163,8 +162,8 @@ LoadPatchWindow::ok_clicked()
 
 	if (_import) {
 		// If unset load_patch will load value
-		boost::optional<Path>   parent;
-		boost::optional<Symbol> symbol;
+		boost::optional<Raul::Path>   parent;
+		boost::optional<Raul::Symbol> symbol;
 		if (!_patch->path().is_root()) {
 			parent = _patch->path().parent();
 			symbol = _patch->symbol();
@@ -177,14 +176,14 @@ LoadPatchWindow::ok_clicked()
 		std::list<Glib::ustring> uri_list = get_filenames();
 		for (std::list<Glib::ustring>::iterator i = uri_list.begin(); i != uri_list.end(); ++i) {
 			// Cascade
-			Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
+			Raul::Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
 			x = _app->forge().make(x.get_float() + 20.0f);
-			Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
+			Raul::Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
 			y = _app->forge().make(y.get_float() + 20.0f);
 
 			Raul::Symbol symbol(symbol_from_filename(*i));
 			if (uri_list.size() == 1 && _symbol_entry->get_text() != "")
-				symbol = Symbol::symbolify(_symbol_entry->get_text());
+				symbol = Raul::Symbol::symbolify(_symbol_entry->get_text());
 
 			symbol = avoid_symbol_clash(symbol);
 

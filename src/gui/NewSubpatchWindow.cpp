@@ -25,7 +25,6 @@
 #include "PatchView.hpp"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -75,10 +74,10 @@ void
 NewSubpatchWindow::name_changed()
 {
 	string name = _name_entry->get_text();
-	if (!Symbol::is_valid(name)) {
+	if (!Raul::Symbol::is_valid(name)) {
 		_message_label->set_text("Name contains invalid characters.");
 		_ok_button->property_sensitive() = false;
-	} else if (_app->store()->find(_patch->path().child(Symbol(name)))
+	} else if (_app->store()->find(_patch->path().child(Raul::Symbol(name)))
 	           != _app->store()->end()) {
 		_message_label->set_text("An object already exists with that name.");
 		_ok_button->property_sensitive() = false;
@@ -91,8 +90,9 @@ NewSubpatchWindow::name_changed()
 void
 NewSubpatchWindow::ok_clicked()
 {
-	const Path     path = _patch->path().child(Symbol::symbolify(_name_entry->get_text()));
-	const uint32_t poly = _poly_spinbutton->get_value_as_int();
+	const uint32_t   poly = _poly_spinbutton->get_value_as_int();
+	const Raul::Path path = _patch->path().child(
+		Raul::Symbol::symbolify(_name_entry->get_text()));
 
 	// Create patch
 	Resource::Properties props;

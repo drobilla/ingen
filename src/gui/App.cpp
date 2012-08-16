@@ -52,8 +52,6 @@
 #define LOG(s) (s("[GUI] "))
 
 using namespace std;
-using namespace Raul;
-using namespace Ingen::Client;
 
 namespace Raul { class Deletable; }
 
@@ -150,7 +148,7 @@ App::run()
 			break;
 
 	_main->run();
-	LOG(info)("Exiting\n");
+	LOG(Raul::info)("Exiting\n");
 }
 
 void
@@ -231,10 +229,10 @@ App::property_change(const Raul::URI&  subject,
 {
 	if (subject == uris().ingen_engine && key == uris().ingen_sampleRate) {
 		if (value.type() == forge().Int) {
-			LOG(info)(Raul::fmt("Sample rate: %1%\n") % uris().forge.str(value));
+			LOG(Raul::info)(Raul::fmt("Sample rate: %1%\n") % uris().forge.str(value));
 			_sample_rate = value.get_int32();
 		} else {
-			error << "Engine sample rate property is not an integer" << std::endl;
+			Raul::error << "Engine sample rate property is not an integer" << std::endl;
 		}
 	}
 }
@@ -380,7 +378,7 @@ App::icon_from_path(const string& path, int size)
 			new IconDestroyNotification(*this, make_pair(path, size)),
 			&App::icon_destroyed);
 	} catch (const Glib::Error& e) {
-		warn << "Error loading icon: " << e.what() << endl;
+		Raul::warn << "Error loading icon: " << e.what() << endl;
 	}
 	return buf;
 }

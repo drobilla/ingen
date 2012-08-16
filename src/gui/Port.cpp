@@ -33,7 +33,6 @@
 
 using namespace Ingen::Client;
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 namespace GUI {
@@ -165,7 +164,7 @@ Port::on_value_changed(GVariant* value)
 }
 
 void
-Port::value_changed(const Atom& value)
+Port::value_changed(const Raul::Atom& value)
 {
 	if (!_pressed && value.type() == _app.forge().Float) {
 		Ganv::Port::set_control_value(value.get_float());
@@ -319,7 +318,7 @@ Port::get_patch_box() const
 }
 
 void
-Port::property_changed(const URI& key, const Atom& value)
+Port::property_changed(const Raul::URI& key, const Raul::Atom& value)
 {
 	const URIs& uris = _app.uris();
 	if (value.type() == uris.forge.Float) {

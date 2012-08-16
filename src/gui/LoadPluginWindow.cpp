@@ -34,7 +34,6 @@
 #include "ingen_config.h"
 
 using namespace std;
-using namespace Raul;
 
 namespace Ingen {
 
@@ -133,9 +132,9 @@ LoadPluginWindow::name_changed()
 	// Toggle add button sensitivity according name legality
 	if (_selection->get_selected_rows().size() == 1) {
 		const string sym = _node_name_entry->get_text();
-		if (!Symbol::is_valid(sym)) {
+		if (!Raul::Symbol::is_valid(sym)) {
 			_add_button->property_sensitive() = false;
-		} else if (_app->store()->find(_patch->path().child(Symbol(sym)))
+		} else if (_app->store()->find(_patch->path().child(Raul::Symbol(sym)))
 		           != _app->store()->end()) {
 			_add_button->property_sensitive() = false;
 		} else {
@@ -226,8 +225,8 @@ void
 LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
                           SharedPtr<const PluginModel> plugin)
 {
-	const URIs& uris = _app->uris();
-	const Atom& name = plugin->get_property(uris.doap_name);
+	const URIs&       uris = _app->uris();
+	const Raul::Atom& name = plugin->get_property(uris.doap_name);
 	if (name.is_valid() && name.type() == uris.forge.String)
 			row[_plugins_columns._col_name] = name.get_string();
 
@@ -336,14 +335,14 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	if (name.empty())
 		name = generate_module_name(plugin, _name_offset);
 
-	if (name.empty() || !Symbol::is_valid(name)) {
+	if (name.empty() || !Raul::Symbol::is_valid(name)) {
 		Gtk::MessageDialog dialog(*this,
 				"Unable to chose a default name for this node.  Please enter a name.",
 				false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 
 		dialog.run();
 	} else {
-		Path path = _patch->path().child(Symbol::symbolify(name));
+		Raul::Path path = _patch->path().child(Raul::Symbol::symbolify(name));
 		Resource::Properties props = _initial_data;
 		props.insert(make_pair(uris.rdf_type,
 		                       uris.ingen_Node));
@@ -359,9 +358,9 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		}
 
 		// Cascade next node
-		Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
+		Raul::Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
 		x = _app->forge().make(x.get_float() + 20.0f);
-		Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
+		Raul::Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
 		y = _app->forge().make(y.get_float() + 20.0f);
 	}
 }
@@ -396,7 +395,7 @@ LoadPluginWindow::filter_changed()
 			i != _app->store()->plugins()->end(); ++i) {
 
 		const SharedPtr<PluginModel> plugin = (*i).second;
-		const Atom& name = plugin->get_property(uris.doap_name);
+		const Raul::Atom& name = plugin->get_property(uris.doap_name);
 
 		switch (criteria) {
 		case CriteriaColumns::NAME:
@@ -441,9 +440,9 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 }
 
 void
-LoadPluginWindow::plugin_property_changed(const URI&  plugin,
-	                                      const URI&  predicate,
-	                                      const Atom& value)
+LoadPluginWindow::plugin_property_changed(const Raul::URI&  plugin,
+	                                      const Raul::URI&  predicate,
+	                                      const Raul::Atom& value)
 {
 	const URIs& uris = _app->uris();
 	if (predicate == uris.doap_name) {
