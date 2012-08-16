@@ -8,17 +8,13 @@
 @prefix ui: <http://lv2plug.in/ns/extensions/ui#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<http://drobilla.net/drobilla#me>
-	a foaf:Person ;
-	foaf:name "David Robillard" ;
-	foaf:mbox <mailto:d@drobilla.net> ;
-	rdfs:seeAlso <http://drobilla.net/drobilla> .
-
 ingen:
 	a owl:Ontology ;
-	doap:name "Ingen" ;
-	doap:homepage <http://drobilla.net/software/ingen> ;
-	doap:maintainer <http://drobilla.net/drobilla#me> .
+	owl:imports <http://lv2plug.in/ns/lv2core> ;
+	rdfs:label "Ingen Ontology" ;
+	rdfs:comment """
+Describes "patches" of connected "nodes" (instances of plugins) which process
+audio, MIDI, and other signals or messages.""" .
 
 ingen:Plugin
 	a owl:Class ;
@@ -41,6 +37,18 @@ A collection of Nodes connected together form a Patch, which is itself
 a :Plugin (and thus can be part of another patch, and so on)
 """ .
 
+ingen:canvasX
+	a owl:DatatypeProperty ;
+	rdfs:range xsd:decimal ;
+	rdfs:label "canvas X" ;
+	rdfs:comment "The X coordinate of an item on a canvas." .
+
+ingen:canvasY
+	a owl:DatatypeProperty ;
+	rdfs:range xsd:decimal ;
+	rdfs:label "canvas Y" ;
+	rdfs:comment "The Y coordinate of an item on a canvas." .
+
 ingen:node
 	a owl:ObjectProperty ;
 	rdfs:domain ingen:Patch ;
@@ -49,7 +57,7 @@ ingen:node
 	rdfs:comment "Signifies a patch contains some node." .
 
 ingen:polyphony
-	a owl:ObjectProperty ;
+	a owl:DatatypeProperty ;
 	rdfs:domain ingen:Patch ;
 	rdfs:range xsd:integer ;
 	rdfs:label "Polyphony" ;
@@ -62,6 +70,12 @@ of the Patch's children, and :polyphonic specifies whether the patch is
 seen as polyphonic to the Patch's parent.
 """ .
 
+ingen:value
+	a owl:DatatypeProperty ;
+	rdfs:domain lv2:Port ;
+	rdfs:label "Value" ;
+	rdfs:comment "The current value of a port." .
+
 ingen:Object
 	a owl:Class ;
 	rdfs:label "Ingen Object" ;
@@ -73,7 +87,7 @@ such that the parent can be 'chopped' to get a legal symbol).
 """ .
 
 ingen:polyphonic
-	a owl:ObjectProperty ;
+	a owl:DatatypeProperty ;
 	rdfs:domain ingen:Object ;
 	rdfs:range xsd:boolean ;
 	rdfs:label "Polyphonic" ;
@@ -89,7 +103,8 @@ polyphonic according to this property, if those voices are mixed down.
 
 ingen:Node
 	a owl:Class ;
-	rdfs:subClassOf ingen:Object ;
+	rdfs:subClassOf ingen:Object ,
+		lv2:PluginBase ;
 	rdfs:label "Node" ;
 	rdfs:comment """
 An instance of a Plugin.  Since a Patch is a Plugin, an instance of a Patch
@@ -105,11 +120,19 @@ use the most specific class it understands.
 """ .
 
 ingen:enabled
-	a owl:ObjectProperty ;
+	a owl:DatatypeProperty ;
 	rdfs:domain ingen:Node ;
 	rdfs:range xsd:boolean ;
-	rdfs:label "Enabled" ;
+	rdfs:label "enabled" ;
 	rdfs:comment "Signifies the node is or should be running." .
+
+ingen:prototype
+	a owl:ObjectProperty ;
+	rdfs:domain ingen:Node ;
+	rdfs:label "prototype" ;
+	rdfs:comment """
+The object which this node is an instance of, or derived from.
+""" .
 
 ingen:Edge
 	a owl:Class ;
@@ -130,7 +153,7 @@ ingen:tail
 	a owl:ObjectProperty ,
 		owl:FunctionalProperty ;
 	rdfs:domain ingen:Edge ;
-	rdfs:range ingen:Port ;
+	rdfs:range lv2:Port ;
 	rdfs:label "tail" ;
 	rdfs:comment "The source/sending port of this edge" .
 
@@ -138,7 +161,7 @@ ingen:head
 	a owl:ObjectProperty ,
 		owl:FunctionalProperty ;
 	rdfs:domain ingen:Edge ;
-	rdfs:range ingen:Port ;
+	rdfs:range lv2:Port ;
 	rdfs:label "head" ;
 	rdfs:comment "The destination/receiving/sink port of this edge" .
 

@@ -1,28 +1,30 @@
 @prefix doap: <http://usefulinc.com/ns/doap#> .
-@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
-<http://drobilla.net/software/ingen> a doap:Project ;
-    doap:name "Ingen" ;
-    doap:shortdesc "A modular audio processing environment." ;
-    doap:homepage <http://drobilla.net/software/ingen/> ;
-    doap:bug-database <http://dev.drobilla.net/> ;
-    doap:license <http://usefulinc.com/doap/licenses/gpl> ;
-    doap:developer [
-        a foaf:Person ;
-        foaf:name "David Robillard" ;
-        foaf:homepage <http://drobilla.net/> ;
-        foaf:mbox_sha1sum "253b3c58086250260bac1232d744d150274ad308" ;
-        rdfs:seeAlso <http://drobilla.net/drobilla.rdf>
-    ] ;
-    doap:programming-language "C", "C++" ;
-    doap:repository [
-        a doap:SVNRepository ;
-        doap:browse <http://dev.drobilla.net/browser/trunk/ingen> ;
-        doap:location <http://svn.drobilla.net/lad/trunk/ingen>
-    ] ;
-    doap:description """
+<http://drobilla.net/drobilla#me>
+	a foaf:Person ;
+	foaf:name "David Robillard" ;
+	foaf:mbox <mailto:d@drobilla.net> ;
+	rdfs:seeAlso <http://drobilla.net/drobilla> .
+
+<http://drobilla.net/software/ingen>
+	a doap:Project ;
+	doap:name "Ingen" ;
+	doap:shortdesc "A modular audio processing environment." ;
+	doap:homepage <http://drobilla.net/software/ingen/> ;
+	doap:bug-database <http://dev.drobilla.net/> ;
+	doap:license <http://usefulinc.com/doap/licenses/gpl> ;
+	doap:developer <http://drobilla.net/drobilla#me> ;
+	doap:programming-language "C" ,
+		"C++" ;
+	doap:repository [
+		a doap:SVNRepository ;
+		doap:browse <http://dev.drobilla.net/browser/trunk/ingen> ;
+		doap:location <http://svn.drobilla.net/lad/trunk/ingen>
+	] ;
+	doap:description """
 A modular audio processing environment, where most functionality is provided
 by generic plugins.  Patching of audio, MIDI, and control data is supported.
 The engine and UI are completely separated in a network transparent way, making
