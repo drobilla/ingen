@@ -46,7 +46,6 @@ SocketReader::SocketReader(Ingen::World&     world,
 
 SocketReader::~SocketReader()
 {
-	stop();
 	join();
 }
 

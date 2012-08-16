@@ -27,7 +27,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
-#include "raul/Slave.hpp"
+#include "raul/Semaphore.hpp"
 #include "raul/Thread.hpp"
 
 namespace Ingen {
@@ -44,11 +44,13 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class ThreadedLoader : public Raul::Slave
+class ThreadedLoader : public Raul::Thread
 {
 public:
 	ThreadedLoader(App&                 app,
 	               SharedPtr<Interface> engine);
+
+	~ThreadedLoader();
 
 	void load_patch(bool                                     merge,
                     const Glib::ustring&                     document_uri,
@@ -68,9 +70,10 @@ private:
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	typedef sigc::slot<void> Closure;
 
-	void _whipped();
+	void _run();
 
 	App&                 _app;
+	Raul::Semaphore      _sem;
 	SharedPtr<Interface> _engine;
 	Glib::Mutex          _mutex;
 	std::list<Closure>   _events;

@@ -258,7 +258,7 @@ Engine::activate()
 void
 Engine::deactivate()
 {
-	_pre_processor->stop();
+	_pre_processor->join();
 
 	if (_driver) {
 		_driver->deactivate();

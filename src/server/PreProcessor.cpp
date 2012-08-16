@@ -26,14 +26,14 @@ namespace Ingen {
 namespace Server {
 
 PreProcessor::PreProcessor()
-	: Raul::Slave("PreProcessor")
+	: Raul::Thread("PreProcessor")
+	, _sem(0)
 {
 	start();
 }
 
 PreProcessor::~PreProcessor()
 {
-	stop();
 }
 
 void
@@ -61,7 +61,7 @@ PreProcessor::event(Event* const ev)
 		_prepared_back = ev;
 	}
 
-	whip();
+	_sem.post();
 }
 
 unsigned
@@ -110,18 +110,21 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 
 /** Pre-process a single event */
 void
-PreProcessor::_whipped()
+PreProcessor::_run()
 {
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
-	Event* ev = _prepared_back.get();
-	if (!ev)
-		return;
+	while (_sem.wait() && !_exit_flag) {
+		Event* const ev = _prepared_back.get();
+		if (!ev) {
+			return;
+		}
 
-	assert(!ev->is_prepared());
-	ev->pre_process();
-	assert(ev->is_prepared());
+		assert(!ev->is_prepared());
+		ev->pre_process();
+		assert(ev->is_prepared());
 
-	_prepared_back = (Event*)ev->next();
+		_prepared_back = (Event*)ev->next();
+	}
 }
 
 } // namespace Server

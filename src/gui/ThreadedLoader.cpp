@@ -32,14 +32,21 @@ namespace Ingen {
 namespace GUI {
 
 ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
-	: Raul::Slave("Loader")
+	: Raul::Thread("Loader")
 	, _app(app)
+	, _sem(0)
 	, _engine(engine)
 {
 	if (parser())
 		start();
 	else
 		warn << "Failed to load ingen_serialisation module, load disabled." << endl;
+}
+
+ThreadedLoader::~ThreadedLoader()
+{
+	_exit_flag = true;
+	_sem.post();
 }
 
 SharedPtr<Serialisation::Parser>
@@ -54,16 +61,16 @@ ThreadedLoader::parser()
 }
 
 void
-ThreadedLoader::_whipped()
+ThreadedLoader::_run()
 {
-	_mutex.lock();
-
-	while ( ! _events.empty() ) {
-		_events.front()();
-		_events.pop_front();
+	while (_sem.wait() && !_exit_flag) {
+		_mutex.lock();
+		while (!_events.empty()) {
+			_events.front()();
+			_events.pop_front();
+		}
+		_mutex.unlock();
 	}
-
-	_mutex.unlock();
 }
 
 void
@@ -96,9 +103,8 @@ ThreadedLoader::load_patch(bool                              merge,
 			           engine_symbol,
 			           engine_data)));
 
-	whip();
-
 	_mutex.unlock();
+	_sem.post();
 }
 
 void
@@ -112,8 +118,7 @@ ThreadedLoader::save_patch(SharedPtr<const Client::PatchModel> model,
 		model, filename)));
 
 	_mutex.unlock();
-
-	whip();
+	_sem.post();
 }
 
 void

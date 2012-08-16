@@ -20,7 +20,8 @@
 #include <glibmm/thread.h>
 
 #include "raul/AtomicPtr.hpp"
-#include "raul/Slave.hpp"
+#include "raul/Semaphore.hpp"
+#include "raul/Thread.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -29,12 +30,17 @@ class Event;
 class PostProcessor;
 class ProcessContext;
 
-class PreProcessor : public Raul::Slave
+class PreProcessor : public Raul::Thread
 {
 public:
 	explicit PreProcessor();
 
 	~PreProcessor();
+
+	virtual void join() {
+		_exit_flag = true;
+		_sem.post();
+	}
 
 	/** Return true iff no events are enqueued. */
 	inline bool empty() const { return !_head.get(); }
@@ -52,10 +58,11 @@ public:
 	                 bool            limit = true);
 
 protected:
-	virtual void _whipped();  ///< Prepare 1 event
+	virtual void _run();
 
 private:
 	Glib::Mutex            _mutex;
+	Raul::Semaphore        _sem;
 	Raul::AtomicPtr<Event> _head;
 	Raul::AtomicPtr<Event> _prepared_back;
 	Raul::AtomicPtr<Event> _tail;

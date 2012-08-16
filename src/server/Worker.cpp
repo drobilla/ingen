@@ -119,8 +119,7 @@ Worker::~Worker()
 void
 Worker::_run()
 {
-	while (!_exit_flag) {
-		_sem.wait();
+	while (_sem.wait() && !_exit_flag) {
 		MessageHeader msg;
 		if (_requests.read_space() > sizeof(msg)) {
 			if (_requests.read(sizeof(msg), &msg) != sizeof(msg)) {

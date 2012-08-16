@@ -81,6 +81,12 @@ public:
 	/** Close the socket. */
 	void close();
 
+	/** Shut down the socket.
+	 * This terminates any connections associated with the sockets, and will
+	 * (unlike close()) cause a poll on the socket to return.
+	 */
+	void shutdown();
+
 private:
 	bool set_addr(const Raul::URI& uri);
 

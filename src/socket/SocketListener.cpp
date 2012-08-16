@@ -65,7 +65,9 @@ SocketListener::SocketListener(Ingen::World& world)
 
 SocketListener::~SocketListener()
 {
-	stop();
+	_exit_flag = true;
+	_unix_sock.shutdown();
+	_net_sock.shutdown();
 	join();
 	_unix_sock.close();
 	_net_sock.close();
@@ -92,10 +94,12 @@ SocketListener::_run()
 		++nfds;
 	}
 
-	while (!_exit_flag) {
+	while (true) {
 		// Wait for input to arrive at a socket
 		int ret = poll(pfds, nfds, -1);
-		if (ret == -1) {
+		if (_exit_flag) {
+			break;
+		} else if (ret == -1) {
 			LOG(Raul::error) << "Poll error: " << strerror(errno) << std::endl;
 			break;
 		} else if (ret == 0) {
