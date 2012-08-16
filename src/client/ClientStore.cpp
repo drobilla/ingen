@@ -362,7 +362,13 @@ ClientStore::set_property(const Raul::URI&  subject_uri,
 	}
 	SharedPtr<Resource> subject = _resource(subject_uri);
 	if (subject) {
-		subject->set_property(predicate, value);
+		if (predicate == _uris.ingen_activity) {
+			/* Activity is transient, trigger any live actions (like GUI
+			   blinkenlights) but do not store the property. */
+			subject->on_property(predicate, value);
+		} else {
+			subject->set_property(predicate, value);
+		}
 	} else {
 		SharedPtr<PluginModel> plugin = _plugin(subject_uri);
 		if (plugin)
