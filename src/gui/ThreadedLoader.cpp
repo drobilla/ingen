@@ -32,7 +32,7 @@ namespace Ingen {
 namespace GUI {
 
 ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
-	: Raul::Thread("Loader")
+	: Raul::Thread()
 	, _app(app)
 	, _sem(0)
 	, _engine(engine)

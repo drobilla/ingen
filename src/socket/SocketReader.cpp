@@ -34,7 +34,7 @@ namespace Socket {
 SocketReader::SocketReader(Ingen::World&     world,
                            Interface&        iface,
                            SharedPtr<Socket> sock)
-	: Raul::Thread("SocketReader")
+	: Raul::Thread()
 	, _world(world)
 	, _iface(iface)
 	, _inserter(NULL)

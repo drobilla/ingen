@@ -100,7 +100,7 @@ Worker::Schedule::feature(World* world, GraphObject* n)
 }
 
 Worker::Worker(uint32_t buffer_size)
-	: Raul::Thread("Worker")
+	: Raul::Thread()
 	, _schedule(new Schedule())
 	, _sem(0)
 	, _requests(buffer_size)

@@ -26,7 +26,7 @@ namespace Ingen {
 namespace Server {
 
 PreProcessor::PreProcessor()
-	: Raul::Thread("PreProcessor")
+	: Raul::Thread()
 	, _sem(0)
 {
 	start();

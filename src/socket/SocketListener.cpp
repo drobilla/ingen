@@ -37,7 +37,7 @@ namespace Ingen {
 namespace Socket {
 
 SocketListener::SocketListener(Ingen::World& world)
-	: Raul::Thread("SocketListener")
+	: Raul::Thread()
 	, _world(world)
 	, _unix_sock(Socket::UNIX)
 	, _net_sock(Socket::TCP)

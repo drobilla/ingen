@@ -366,7 +366,7 @@ class MainThread : public Raul::Thread
 public:
 	explicit MainThread(SharedPtr<Engine> engine,
 	                    LV2Driver*        driver)
-		: Raul::Thread("Main")
+		: Raul::Thread()
 		, _engine(engine)
 		, _driver(driver)
 	{}
