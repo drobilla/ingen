@@ -456,6 +456,7 @@ Serialiser::Impl::serialise_port(const GraphObject* port,
                                  Resource::Graph    context,
                                  const Sord::Node&  port_id)
 {
+	URIs&        uris  = _world.uris();
 	Sord::World& world = _model->world();
 
 	_model->add_statement(port_id,
@@ -463,9 +464,16 @@ Serialiser::Impl::serialise_port(const GraphObject* port,
 	                      Sord::Literal(world, port->path().symbol()));
 
 	GraphObject::Properties props = port->properties(context);
-	if (context == Resource::INTERNAL) {
-		props.insert(make_pair(_world.uris().lv2_default,
-		                       _world.uris().ingen_value));
+	if (context == Resource::INTERNAL &&
+	    port->has_property(uris.rdf_type, uris.lv2_ControlPort) &&
+	    port->has_property(uris.rdf_type, uris.lv2_InputPort))
+	{
+		const Raul::Atom& val = port->get_property(uris.ingen_value);
+		if (val.is_valid()) {
+			props.insert(make_pair(uris.lv2_default, val));
+		} else {
+			Raul::warn("Control input has no value, lv2:default omitted.\n");
+		}
 	}
 
 	serialise_properties(port_id, props);
