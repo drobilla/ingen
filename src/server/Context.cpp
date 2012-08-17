@@ -15,8 +15,8 @@
 */
 
 #include "ingen/Forge.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
-#include "raul/log.hpp"
 
 #include "Context.hpp"
 #include "Engine.hpp"
@@ -63,12 +63,12 @@ Context::notify(LV2_URID           key,
 {
 	const Notification n(port, time, key, size, type);
 	if (_event_sink.write_space() < sizeof(n) + size) {
-		Raul::warn("Notification ring overflow\n");
+		_engine.log().warn("Notification ring overflow\n");
 	} else {
 		if (_event_sink.write(sizeof(n), &n) != sizeof(n)) {
-			Raul::error("Error writing header to notification ring\n");
+			_engine.log().error("Error writing header to notification ring\n");
 		} else if (_event_sink.write(size, body) != size) {
-			Raul::error("Error writing body to notification ring\n");
+			_engine.log().error("Error writing body to notification ring\n");
 		}
 	}
 }
@@ -93,13 +93,13 @@ Context::emit_notifications(FrameTime end)
 					_engine.broadcaster()->set_property(
 						note.port->uri(), Raul::URI(key), value);
 				} else {
-					Raul::error("Error unmapping notification key URI\n");
+					_engine.log().error("Error unmapping notification key URI\n");
 				}
 			} else {
-				Raul::error("Error reading body from notification ring\n");
+				_engine.log().error("Error reading body from notification ring\n");
 			}
 		} else {
-			Raul::error("Error reading header from notification ring\n");
+			_engine.log().error("Error reading header from notification ring\n");
 		}
 	}
 }

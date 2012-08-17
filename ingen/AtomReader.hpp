@@ -28,6 +28,7 @@ namespace Ingen {
 
 class AtomSink;
 class Forge;
+class Log;
 class URIMap;
 
 /** An AtomSink that calls methods on an Interface.
@@ -36,7 +37,11 @@ class URIMap;
 class AtomReader : public AtomSink
 {
 public:
-	AtomReader(URIMap& map, URIs& uris, Forge& forge, Interface& iface);
+	AtomReader(URIMap&    map,
+	           URIs&      uris,
+	           Log&       log,
+	           Forge&     forge,
+	           Interface& iface);
 	~AtomReader() {}
 
 	static bool is_message(URIs& uris, const LV2_Atom* msg);
@@ -54,6 +59,7 @@ private:
 
 	URIMap&    _map;
 	URIs&      _uris;
+	Log&       _log;
 	Forge&     _forge;
 	Interface& _iface;
 };

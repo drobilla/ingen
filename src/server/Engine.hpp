@@ -96,10 +96,11 @@ public:
 	BufferFactory*   buffer_factory()   const { return _buffer_factory; }
 	ControlBindings* control_bindings() const { return _control_bindings; }
 	Driver*          driver()           const { return _driver.get(); }
-	Raul::Maid*      maid()             const { return _maid; }
+	Log&             log()              const { return _world->log(); }
 	NodeFactory*     node_factory()     const { return _node_factory; }
-	PostProcessor*   post_processor()   const { return _post_processor; }
 	PatchImpl*       root_patch()       const { return _root_patch; }
+	PostProcessor*   post_processor()   const { return _post_processor; }
+	Raul::Maid*      maid()             const { return _maid; }
 	Worker*          worker()           const { return _worker; }
 
 	ProcessContext& process_context() { return _process_context; }

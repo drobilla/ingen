@@ -14,9 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <errno.h>
+
+#include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
-#include "raul/log.hpp"
 
 #include "Socket.hpp"
 #include "SocketClient.hpp"
@@ -29,6 +31,8 @@ new_socket_interface(Ingen::World*               world,
 	SharedPtr<Ingen::Socket::Socket> sock(
 		new Ingen::Socket::Socket(Ingen::Socket::Socket::type_from_uri(uri)));
 	if (!sock->connect(uri)) {
+		world->log().error(Raul::fmt("Failed to connect <%1%> (%2%)\n")
+		                   % sock->uri() % strerror(errno));
 		return SharedPtr<Ingen::Interface>();
 	}
 	Ingen::Socket::SocketClient* client = new Ingen::Socket::SocketClient(

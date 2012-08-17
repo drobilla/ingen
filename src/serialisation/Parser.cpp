@@ -25,18 +25,16 @@
 #include <glibmm/ustring.h>
 
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "raul/Atom.hpp"
-#include "raul/log.hpp"
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
-
-#define LOG(s) (s("[Parser] "))
 
 #define NS_RDF  "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS "http://www.w3.org/2000/01/rdf-schema#"
@@ -155,7 +153,7 @@ get_port(Ingen::World*     world,
 	if (i == props.end()
 	    || i->second.type() != world->forge().Int
 	    || i->second.get_int32() < 0) {
-		LOG(Raul::error) << "Port " << subject << " has no valid index" << endl;
+		world->log().warn(Raul::fmt("Port %1% has no valid index\n") % subject);
 		return boost::optional<PortRecord>();
 	}
 	index = i->second.get_int32();
@@ -163,7 +161,7 @@ get_port(Ingen::World*     world,
 	// Get symbol
 	Resource::Properties::const_iterator s = props.find(uris.lv2_symbol);
 	if (s == props.end()) {
-		LOG(Raul::error) << "Port " << subject << " has no symbol" << endl;
+		world->log().warn(Raul::fmt("Port %1% has no symbol\n") % subject);
 		return boost::optional<PortRecord>();
 	}
 	const Raul::Symbol port_sym(s->second.get_string());
@@ -234,7 +232,7 @@ parse_node(Ingen::World*                            world,
 
 	Sord::Iter i = model.find(subject, ingen_prototype, nil);
 	if (i.end() || i.get_object().type() != Sord::Node::URI) {
-		LOG(Raul::error) << "Node missing mandatory ingen:prototype" << endl;
+		world->log().error("Node missing mandatory ingen:prototype\n");
 		return boost::optional<Raul::Path>();
 	}
 
@@ -312,7 +310,8 @@ parse_patch(Ingen::World*                            world,
 		patch_path_str = parent->child(*a_symbol);
 
 	if (!Raul::Path::is_valid(patch_path_str)) {
-		LOG(Raul::error) << "Patch has invalid path: " << patch_path_str << endl;
+		world->log().error(Raul::fmt("Patch %1% has invalid path\n")
+		                   %  patch_path_str);
 		return boost::optional<Raul::Path>();
 	}
 
@@ -340,7 +339,7 @@ parse_patch(Ingen::World*                            world,
 			boost::optional<PortRecord> port_record = get_port(
 				world, model, port, node_path, index);
 			if (!port_record) {
-				LOG(Raul::error) << "Invalid port " << port << endl;
+				world->log().error(Raul::fmt("Invalid port %1%\n") % port);
 				return boost::optional<Raul::Path>();
 			}
 
@@ -361,7 +360,7 @@ parse_patch(Ingen::World*                            world,
 		boost::optional<PortRecord> port_record = get_port(
 			world, model, port, patch_path, index);
 		if (!port_record) {
-			LOG(Raul::error) << "Invalid port " << port << endl;
+			world->log().error(Raul::fmt("Invalid port %1%\n") % port);
 			return boost::optional<Raul::Path>();
 		}
 
@@ -397,32 +396,32 @@ parse_edge(Ingen::World*     world,
 	const Glib::ustring& base_uri = model.base_uri().to_string();
 
 	if (t.end()) {
-		LOG(Raul::error) << "Edge has no tail" << endl;
+		world->log().error("Edge has no tail");
 		return false;
 	} else if (h.end()) {
-		LOG(Raul::error) << "Edge has no head" << endl;
+		world->log().error("Edge has no head");
 		return false;
 	}
 
 	const std::string tail_str = relative_uri(
 		base_uri, t.get_object().to_string(), true);
 	if (!Raul::Path::is_valid(tail_str)) {
-		LOG(Raul::error) << "Edge tail has invalid URI" << endl;
+		world->log().error("Edge tail has invalid URI");
 		return false;
 	}
 
 	const std::string head_str = relative_uri(
 		base_uri, h.get_object().to_string(), true);
 	if (!Raul::Path::is_valid(head_str)) {
-		LOG(Raul::error) << "Edge head has invalid URI" << endl;
+		world->log().error("Edge head has invalid URI");
 		return false;
 	}
 
 	if (!(++t).end()) {
-		LOG(Raul::error) << "Edge has multiple tails" << endl;
+		world->log().error("Edge has multiple tails");
 		return false;
 	} else if (!(++h).end()) {
-		LOG(Raul::error) << "Edge has multiple heads" << endl;
+		world->log().error("Edge has multiple heads");
 		return false;
 	}
 
@@ -530,17 +529,7 @@ parse(Ingen::World*                            world,
 			Raul::Path parent_path(parent ? parent.get() : Raul::Path("/"));
 			parse_edge(world, target, model, s, parent_path);
 		} else {
-			LOG(Raul::error) << "Subject has no known types" << endl;
-		}
-
-		if (!ret) {
-			LOG(Raul::error) << "Failed to parse " << path << endl;
-			LOG(Raul::error) << "Types:" << endl;
-			for (std::set<Sord::Node>::const_iterator t = types.begin();
-			     t != types.end(); ++t) {
-				LOG(Raul::error) << " :: " << *t << endl;
-				assert((*t).is_uri());
-			}
+			world->log().error("Subject has no known types\n");
 		}
 	}
 
@@ -571,7 +560,8 @@ Parser::parse_file(Ingen::World*                            world,
 	try {
 		uri = Glib::filename_to_uri(path, "");
 	} catch (const Glib::ConvertError& e) {
-		LOG(Raul::error) << "Path to URI conversion error: " << e.what() << endl;
+		world->log().error(Raul::fmt("Path to URI conversion error: %1%\n")
+		                   % e.what());
 		return false;
 	}
 
@@ -585,11 +575,11 @@ Parser::parse_file(Ingen::World*                            world,
 
 	serd_env_free(env);
 
-	LOG(Raul::info)(Raul::fmt("Parsing %1%\n") % path);
+	world->log().info(Raul::fmt("Parsing %1%\n") % path);
 	if (parent)
-		LOG(Raul::info)(Raul::fmt("Parent: %1%\n") % parent->c_str());
+		world->log().info(Raul::fmt("Parent: %1%\n") % parent->c_str());
 	if (symbol)
-		LOG(Raul::info)(Raul::fmt("Symbol: %1%\n") % symbol->c_str());
+		world->log().info(Raul::fmt("Symbol: %1%\n") % symbol->c_str());
 
 	Sord::Node subject(*world->rdf_world(), Sord::Node::URI, uri);
 	boost::optional<Raul::Path> parsed_path
@@ -600,7 +590,7 @@ Parser::parse_file(Ingen::World*                            world,
 		                     Raul::URI("http://drobilla.net/ns/ingen#document"),
 		                     world->forge().alloc_uri(uri));
 	} else {
-		LOG(Raul::warn)("Document URI lost\n");
+		world->log().warn("Document URI lost\n");
 	}
 
 	return parsed_path;
@@ -623,11 +613,7 @@ Parser::parse_string(Ingen::World*                            world,
 	model.load_string(env, SERD_TURTLE, str.c_str(), str.length(), base_uri);
 	serd_env_free(env);
 
-	LOG(Raul::info) << "Parsing string";
-	if (!base_uri.empty()) {
-		Raul::info << " (base " << base_uri << ")";
-	}
-	Raul::info << endl;
+	world->log().info(Raul::fmt("Parsing string (base %1%)\n") % base_uri);
 
 	Sord::Node subject;
 	return parse(world, target, model, base_uri, subject, parent, symbol, data);

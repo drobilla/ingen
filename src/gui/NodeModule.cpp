@@ -22,12 +22,12 @@
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 #include "raul/Atom.hpp"
-#include "raul/log.hpp"
 
 #include "App.hpp"
 #include "Configuration.hpp"
@@ -220,7 +220,7 @@ NodeModule::embed_gui(bool embed)
 {
 	if (embed) {
 		if (_gui_window) {
-			Raul::warn << "LV2 GUI already popped up, cannot embed" << endl;
+			app().log().warn("LV2 GUI already popped up, cannot embed\n");
 			return;
 		}
 
@@ -239,7 +239,7 @@ NodeModule::embed_gui(bool embed)
 			container->add(*_gui_widget);
 			Ganv::Module::embed(container);
 		} else {
-			Raul::error << "Failed to create LV2 UI" << endl;
+			app().log().error("Failed to create LV2 UI\n");
 		}
 
 		if (_gui_widget) {
@@ -294,7 +294,8 @@ NodeModule::delete_port_view(SharedPtr<const PortModel> model)
 	if (p) {
 		delete p;
 	} else {
-		Raul::warn << "Failed to find port on module " << model->path() << endl;
+		app().log().warn(Raul::fmt("Failed to find port %1% on module %2%\n")
+		                 % model->path() % _node->path());
 	}
 }
 
@@ -303,7 +304,7 @@ NodeModule::popup_gui()
 {
 	if (_node->plugin() && _node->plugin()->type() == PluginModel::LV2) {
 		if (_plugin_ui) {
-			Raul::warn << "LV2 GUI already embedded, cannot pop up" << endl;
+			app().log().warn("LV2 GUI already embedded, cannot pop up\n");
 			return false;
 		}
 
@@ -332,7 +333,7 @@ NodeModule::popup_gui()
 
 			return true;
 		} else {
-			Raul::warn << "No LV2 GUI for " << _node->path() << endl;
+			app().log().warn(Raul::fmt("No LV2 GUI for %1%\n") % _node->path());
 		}
 	}
 

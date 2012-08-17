@@ -21,7 +21,6 @@
 #include "ingen/Store.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
-#include "raul/log.hpp"
 
 #include "Broadcaster.hpp"
 #include "Buffer.hpp"

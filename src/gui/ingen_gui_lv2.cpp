@@ -89,15 +89,18 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	LV2_URID_Map*   map   = NULL;
 	LV2_URID_Unmap* unmap = NULL;
+	LV2_Log_Log*    log   = NULL;
 	for (int i = 0; features[i]; ++i) {
-		if (!strcmp(features[i]->URI, LV2_URID_URI "#map")) {
+		if (!strcmp(features[i]->URI, LV2_URID__map)) {
 			map = (LV2_URID_Map*)features[i]->data;
-		} else if (!strcmp(features[i]->URI, LV2_URID_URI "#unmap")) {
+		} else if (!strcmp(features[i]->URI, LV2_URID__unmap)) {
 			unmap = (LV2_URID_Unmap*)features[i]->data;
+		} else if (!strcmp(features[i]->URI, LV2_LOG__log)) {
+			log = (LV2_Log_Log*)features[i]->data;
 		}
 	}
 
-	ui->world = new Ingen::World(ui->argc, ui->argv, map, unmap);
+	ui->world = new Ingen::World(ui->argc, ui->argv, map, unmap, log);
 
 	ui->forge = new Ingen::Forge(ui->world->uri_map());
 
@@ -125,6 +128,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->reader = SharedPtr<Ingen::AtomReader>(
 		new Ingen::AtomReader(ui->world->uri_map(),
 		                      ui->world->uris(),
+		                      ui->world->log(),
 		                      ui->world->forge(),
 		                      *ui->client.get()));
 

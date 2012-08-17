@@ -80,7 +80,6 @@ void
 RenameWindow::values_changed()
 {
 	const string& symbol = _symbol_entry->get_text();
-	const string& label  = _label_entry->get_text();
 	if (!Raul::Symbol::is_valid(symbol)) {
 		_message_label->set_text("Invalid symbol");
 		_ok_button->property_sensitive() = false;

@@ -20,8 +20,6 @@
 #include "EventWriter.hpp"
 #include "events.hpp"
 
-#define LOG(s) s << "[EventWriter] "
-
 using namespace std;
 
 namespace Ingen {

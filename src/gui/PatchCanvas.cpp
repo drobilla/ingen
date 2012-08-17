@@ -24,17 +24,17 @@
 
 #include "ganv/Canvas.hpp"
 #include "ganv/Circle.hpp"
+#include "ingen/Builder.hpp"
+#include "ingen/ClashAvoider.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
-#include "ingen/Builder.hpp"
-#include "ingen/ClashAvoider.hpp"
-#include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "raul/log.hpp"
 
 #include "App.hpp"
 #include "Edge.hpp"
@@ -49,8 +49,6 @@
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
-
-#define LOG(s) s << "[PatchCanvas] "
 
 #define FOREACH_ITEM(iter, coll) \
 	for (Items::const_iterator (iter) = coll.begin(); \
@@ -228,8 +226,8 @@ PatchCanvas::build_plugin_class_menu(
 		const char* sub_label_str = lilv_node_as_string(lilv_plugin_class_get_label(c));
 		const char* sub_uri_str   = lilv_node_as_string(lilv_plugin_class_get_uri(c));
 		if (ancestors.find(sub_uri_str) != ancestors.end()) {
-			LOG(Raul::warn) << "Infinite LV2 class recursion: " << class_uri_str
-			                << " <: " << sub_uri_str << endl;
+			_app.log().warn(Raul::fmt("Infinite LV2 class recursion: %1% <: %2%\n")
+			                % class_uri_str % sub_uri_str);
 			return 0;
 		}
 
@@ -490,8 +488,8 @@ PatchCanvas::connection(SharedPtr<const EdgeModel> cm)
 	if (tail && head) {
 		new GUI::Edge(*this, cm, tail, head, tail->get_fill_color());
 	} else {
-		LOG(Raul::error) << "Unable to find ports to connect "
-		                 << cm->tail_path() << " -> " << cm->head_path() << endl;
+		_app.log().error(Raul::fmt("Unable to find ports to connect %1% => %2%\n")
+		                 % cm->tail_path() % cm->head_path());
 	}
 }
 
@@ -501,11 +499,12 @@ PatchCanvas::disconnection(SharedPtr<const EdgeModel> cm)
 	Ganv::Port* const src = get_port_view(cm->tail());
 	Ganv::Port* const dst = get_port_view(cm->head());
 
-	if (src && dst)
+	if (src && dst) {
 		remove_edge(src, dst);
-	else
-		LOG(Raul::error) << "Unable to find ports to disconnect "
-		                 << cm->tail_path() << " -> " << cm->head_path() << endl;
+	} else {
+		_app.log().error(Raul::fmt("Unable to find ports to disconnect %1% => %2%\n")
+		                 % cm->tail_path() % cm->head_path());
+	}
 }
 
 void
@@ -703,7 +702,7 @@ PatchCanvas::paste()
 	Glib::ustring str = Gtk::Clipboard::get()->wait_for_text();
 	SharedPtr<Serialisation::Parser> parser = _app.loader()->parser();
 	if (!parser) {
-		LOG(Raul::error) << "Unable to load parser, paste unavailable" << endl;
+		_app.log().error("Unable to load parser, paste unavailable\n");
 		return;
 	}
 
@@ -714,7 +713,7 @@ PatchCanvas::paste()
 	const URIs& uris = _app.uris();
 
 	Builder builder(_app.world()->uris(), *_app.interface());
-	ClientStore clipboard(_app.world()->uris());
+	ClientStore clipboard(_app.world()->uris(), _app.log());
 	clipboard.set_plugins(_app.store()->plugins());
 
 	// mkdir -p

@@ -24,6 +24,9 @@
 #include "raul/Thread.hpp"
 
 namespace Ingen {
+
+class Log;
+
 namespace Server {
 
 class LV2Node;
@@ -31,7 +34,7 @@ class LV2Node;
 class Worker : public Raul::Thread
 {
 public:
-	Worker(uint32_t buffer_size);
+	Worker(Log& log, uint32_t buffer_size);
 	~Worker();
 
 	struct Schedule : public LV2Features::Feature {
@@ -47,6 +50,7 @@ public:
 private:
 	SharedPtr<Schedule> _schedule;
 
+	Log&             _log;
 	Raul::Semaphore  _sem;
 	Raul::RingBuffer _requests;
 	Raul::RingBuffer _responses;

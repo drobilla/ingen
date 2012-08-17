@@ -16,8 +16,6 @@
 
 #include <cassert>
 
-#include "raul/log.hpp"
-
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/EdgeModel.hpp"
 #include "ingen/client/NodeModel.hpp"
@@ -145,9 +143,6 @@ PatchModel::remove_edge(const GraphObject* tail, const GraphObject* head)
 		SharedPtr<EdgeModel> c = PtrCast<EdgeModel>(i->second);
 		_signal_removed_edge.emit(c);
 		_edges.erase(i);
-	} else {
-		Raul::warn(Raul::fmt("Failed to remove patch connection %1% => %2%\n")
-		           % tail->path().c_str() % head->path().c_str());
 	}
 }
 

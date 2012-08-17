@@ -9,6 +9,7 @@ sources = [
     'Configuration.cpp',
     'Forge.cpp',
     'LV2Features.cpp',
+    'Log.cpp',
     'Resource.cpp',
     'Store.cpp',
     'URIMap.cpp',

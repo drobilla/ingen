@@ -16,12 +16,12 @@
 
 #include <math.h>
 
+#include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
-#include "raul/log.hpp"
 
 #include "Buffer.hpp"
 #include "ControlBindings.hpp"
@@ -30,8 +30,6 @@
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
-
-#define LOG(s) s << "[ControlBindings] "
 
 using namespace std;
 
@@ -81,9 +79,9 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 			lv2_atom_object_body_get(
 				binding.size(), obj, (LV2_URID)uris.midi_controllerNumber, &num, NULL);
 			if (!num) {
-				Raul::error << "Controller binding missing number" << std::endl;
+				_engine.log().error("Controller binding missing number\n");
 			} else if (num->type != uris.atom_Int) {
-				Raul::error << "Controller number not an integer" << std::endl;
+				_engine.log().error("Controller number not an integer\n");
 			} else {
 				key = Key(MIDI_CC, ((LV2_Atom_Int*)num)->body);
 			}
@@ -91,15 +89,15 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 			lv2_atom_object_body_get(
 				binding.size(), obj, (LV2_URID)uris.midi_noteNumber, &num, NULL);
 			if (!num) {
-				Raul::error << "Note binding missing number" << std::endl;
+				_engine.log().error("Note binding missing number\n");
 			} else if (num->type != uris.atom_Int) {
-				Raul::error << "Note number not an integer" << std::endl;
+				_engine.log().error("Note number not an integer\n");
 			} else {
 				key = Key(MIDI_NOTE, ((LV2_Atom_Int*)num)->body);
 			}
 		}
 	} else if (binding.type()) {
-		Raul::error << "Unknown binding type " << binding.type() << std::endl;
+		_engine.log().error(Raul::fmt("Unknown binding type %1%\n") % binding.type());
 	}
 	return key;
 }
@@ -252,14 +250,10 @@ ControlBindings::port_value_to_control(ProcessContext&   context,
 	float       normal = (value - min) / (max - min);
 
 	if (normal < 0.0f) {
-		LOG(Raul::warn) << "Value " << value << " (normal " << normal << ") for "
-		                << port->path() << " out of range" << endl;
 		normal = 0.0f;
 	}
 
 	if (normal > 1.0f) {
-		LOG(Raul::warn) << "Value " << value << " (normal " << normal << ") for "
-		                << port->path() << " out of range" << endl;
 		normal = 1.0f;
 	}
 

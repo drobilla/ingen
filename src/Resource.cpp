@@ -19,7 +19,6 @@
 #include "ingen/Resource.hpp"
 #include "ingen/URIs.hpp"
 #include "raul/Atom.hpp"
-#include "raul/log.hpp"
 
 using namespace std;
 
@@ -123,8 +122,7 @@ Resource::type(const URIs&       uris,
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Raul::Atom& atom = i->second;
 		if (atom.type() != uris.forge.URI && atom.type() != uris.forge.URID) {
-			Raul::warn << "[Resource] Non-URI type " << uris.forge.str(atom) << endl;
-			continue;
+			continue; // Non-URI type, ignore garbage data
 		}
 
 		if (atom == uris.ingen_Patch) {

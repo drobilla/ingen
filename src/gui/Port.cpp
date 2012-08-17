@@ -19,9 +19,9 @@
 
 #include "ganv/Module.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PortModel.hpp"
-#include "raul/log.hpp"
 
 #include "App.hpp"
 #include "Configuration.hpp"
@@ -143,7 +143,7 @@ void
 Port::on_value_changed(GVariant* value)
 {
 	if (!g_variant_is_of_type(value, G_VARIANT_TYPE_DOUBLE)) {
-		Raul::warn("TODO: Non-float port value changed\n");
+		_app.log().warn("TODO: Non-float port value changed\n");
 		return;
 	}
 

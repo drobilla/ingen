@@ -35,6 +35,7 @@
 
 namespace Ingen {
 	class Interface;
+	class Log;
 	class Port;
 	class World;
 	namespace Client {
@@ -118,6 +119,7 @@ public:
 
 	inline Ingen::World* world() const { return _world; }
 	inline Ingen::URIs&  uris()  const { return _world->uris(); }
+	inline Ingen::Log&   log()   const { return _world->log(); }
 
 protected:
 

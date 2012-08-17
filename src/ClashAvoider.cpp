@@ -19,8 +19,6 @@
 #include <string>
 #include <utility>
 
-#include "raul/log.hpp"
-
 #include "ingen/ClashAvoider.hpp"
 #include "ingen/Store.hpp"
 
@@ -41,8 +39,6 @@ ClashAvoider::map_uri(const Raul::URI& in)
 const Raul::Path
 ClashAvoider::map_path(const Raul::Path& in)
 {
-	Raul::debug << "MAP PATH: " << in;
-
 	unsigned offset = 0;
 	bool has_offset = false;
 	const size_t pos = in.find_last_of('_');
@@ -51,8 +47,6 @@ ClashAvoider::map_path(const Raul::Path& in)
 		has_offset = (sscanf(trailing.c_str(), "%u", &offset) > 0);
 	}
 
-	Raul::debug << "OFFSET: " << offset << endl;
-
 	// Path without _n suffix
 	std::string base_path_str = in;
 	if (has_offset) {
@@ -60,11 +54,9 @@ ClashAvoider::map_path(const Raul::Path& in)
 	}
 
 	Raul::Path base_path(base_path_str);
-	Raul::debug << "BASE: " << base_path << endl;
 
 	SymbolMap::iterator m = _symbol_map.find(in);
 	if (m != _symbol_map.end()) {
-		Raul::debug << " (1) " << m->second << endl;
 		return m->second;
 	} else {
 		typedef std::pair<SymbolMap::iterator, bool> InsertRecord;
@@ -72,13 +64,11 @@ ClashAvoider::map_path(const Raul::Path& in)
 		// See if parent is mapped
 		Raul::Path parent = in.parent();
 		do {
-			Raul::debug << "CHECK: " << parent << endl;
 			SymbolMap::iterator p = _symbol_map.find(parent);
 			if (p != _symbol_map.end()) {
 				const Raul::Path mapped = Raul::Path(
 					p->second.base() + in.substr(parent.base().length()));
 				InsertRecord i = _symbol_map.insert(make_pair(in, mapped));
-				Raul::debug << " (2) " << i.first->second << endl;
 				return i.first->second;
 			}
 			parent = parent.parent();
@@ -88,7 +78,6 @@ ClashAvoider::map_path(const Raul::Path& in)
 		if (!exists(in) && _symbol_map.find(in) == _symbol_map.end()) {
 			InsertRecord i = _symbol_map.insert(make_pair(in, in));
 			assert(i.second);
-			Raul::debug << " (3) " << i.first->second << endl;
 			return i.first->second;
 
 		// Append _2 _3 etc until an unused symbol is found
@@ -102,7 +91,6 @@ ClashAvoider::map_path(const Raul::Path& in)
 					parent_str = parent_str.substr(0, parent_str.find_last_of("/"));
 					if (parent_str.empty())
 						parent_str = "/";
-					Raul::debug << "PARENT: " << parent_str << endl;
 				}
 
 				if (offset == 0)
@@ -117,13 +105,10 @@ ClashAvoider::map_path(const Raul::Path& in)
 					Raul::Symbol sym(name);
 					string str = ss.str();
 					InsertRecord i = _symbol_map.insert(make_pair(in, str));
-					Raul::debug << "HIT: offset = " << offset << ", str = " << str << endl;
 					offset = _store.child_name_offset(in.parent(), sym, false);
 					_offsets.insert(make_pair(base_path, offset));
-					Raul::debug << " (4) " << i.first->second << endl;
 					return i.first->second;
 				} else {
-					Raul::debug << "MISSED OFFSET: " << in << " => " << ss.str() << endl;
 					if (o != _offsets.end())
 						offset = ++o->second;
 					else

@@ -31,7 +31,7 @@
 #include "ingen/World.hpp"
 #include "ingen_config.h"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
-#include "raul/log.hpp"
+#include "ingen/Log.hpp"
 
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
@@ -55,7 +55,7 @@ Buffer::Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity)
 #endif
 
 	if (ret) {
-		Raul::error << "Failed to allocate event buffer." << std::endl;
+		bufs.engine().log().error("Failed to allocate event buffer\n");
 		throw std::bad_alloc();
 	}
 
@@ -129,18 +129,12 @@ Buffer::port_data(PortType port_type)
 			return (float*)LV2_ATOM_BODY(_atom);
 		} else if (_atom->type == _factory.uris().atom_Sound) {
 			return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, _atom);
-		} else {
-			Raul::warn << "Audio data requested from non-audio buffer " << this << " :: "
-			           << _atom->type << " - "
-			           << _factory.engine().world()->uri_map().unmap_uri(_atom->type)
-			           << std::endl;
-			assert(false);
-			return NULL;
 		}
 		break;
 	default:
 		return _atom;
 	}
+	return NULL;
 }
 
 const void*

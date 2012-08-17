@@ -14,42 +14,35 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_UTIL_HPP
-#define INGEN_ENGINE_UTIL_HPP
+#ifndef INGEN_LOG_HPP
+#define INGEN_LOG_HPP
 
-#include <cstdlib>
+#include <string>
 
-#include "ingen/Log.hpp"
-#include "raul/Path.hpp"
-
-#include "ingen_config.h"
-
-#include <fenv.h>
-#ifdef __SSE__
-#include <xmmintrin.h>
-#endif
-
-#ifdef __clang__
-#    define REALTIME __attribute__((annotate("realtime")))
-#else
-#    define REALTIME
-#endif
+#include "lv2/lv2plug.in/ns/ext/log/log.h"
+#include "raul/fmt.hpp"
 
 namespace Ingen {
-namespace Server {
 
-/** Set flags to disable denormal processing.
- */
-inline void
-set_denormal_flags(Ingen::Log& log)
-{
-#ifdef __SSE__
-	_mm_setcsr(_mm_getcsr() | 0x8040);
-	log.info("Set SSE denormal-are-zero and flush-to-zero flags\n");
-#endif
-}
+class URIs;
 
-} // namespace Server
-} // namespace Ingen
+class Log {
+public:
+	Log(LV2_Log_Log* log, URIs& uris);
 
-#endif // INGEN_ENGINE_UTIL_HPP
+	void error(const std::string& msg);
+	void info(const std::string& msg);
+	void warn(const std::string& msg);
+
+	inline void error(const Raul::fmt& fmt) { error(fmt.str()); }
+	inline void info(const Raul::fmt& fmt)  { info(fmt.str()); }
+	inline void warn(const Raul::fmt& fmt)  { warn(fmt.str()); }
+
+private:
+	LV2_Log_Log* _log;
+	URIs&        _uris;
+};
+
+}  // namespace Ingen
+
+#endif  // INGEN_LOG_HPP

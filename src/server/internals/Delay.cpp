@@ -21,7 +21,6 @@
 #include "ingen/URIs.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
-#include "raul/log.hpp"
 
 #include "Buffer.hpp"
 #include "Driver.hpp"
@@ -33,8 +32,6 @@
 #include "ProcessContext.hpp"
 #include "internals/Delay.hpp"
 #include "util.hpp"
-
-#define LOG(s) s << "[DelayNode] "
 
 #define CALC_DELAY(delaytime) \
 	(f_clamp (delaytime * (float)sample_rate, 1.0f, (float)(buffer_mask + 1)))

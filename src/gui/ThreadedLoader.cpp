@@ -16,10 +16,10 @@
 
 #include <string>
 
+#include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/PatchModel.hpp"
-#include "raul/log.hpp"
 
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
@@ -36,10 +36,11 @@ ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
 	, _sem(0)
 	, _engine(engine)
 {
-	if (parser())
+	if (parser()) {
 		start();
-	else
-		Raul::warn << "Failed to load ingen_serialisation module, load disabled." << endl;
+	} else {
+		app.log().warn("Parser unavailable, patch loading disabled\n");
+	}
 }
 
 ThreadedLoader::~ThreadedLoader()

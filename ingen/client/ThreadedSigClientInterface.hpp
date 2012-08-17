@@ -133,11 +133,9 @@ private:
 		while (!success) {
 			success = _sigs.push(ev);
 			if (!success) {
-				Raul::warn << "Client event queue full.  Waiting..." << std::endl;
 				_mutex.lock();
 				_cond.wait(_mutex);
 				_mutex.unlock();
-				Raul::warn << "Queue drained, continuing" << std::endl;
 			}
 		}
 	}

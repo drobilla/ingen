@@ -35,10 +35,8 @@
 #include "PortType.hpp"
 #include "SetPortValue.hpp"
 
-#define LOG(s) s << "[Delta] "
-
 // #define DUMP 1
-#include "ingen/URIMap.hpp"
+// #include "ingen/URIMap.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -75,20 +73,22 @@ Delta::Delta(Engine&              engine,
 	}
 
 #ifdef DUMP
-	LOG(Raul::info) << "Delta " << subject << " : " << context << " {" << std::endl;
+	std::cerr << "Delta " << subject << " : " << context << " {" << std::endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
-		LOG(Raul::info) << "    + " << i->first
-		                << " = " << engine.world()->forge().str(i->second)
-		                << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << std::endl;
+		std::cerr << "    + " << i->first
+		          << " = " << engine.world()->forge().str(i->second)
+		          << " :: " << engine.world()->uri_map().unmap_uri(i->second.type())
+		          << std::endl;
 	}
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = remove.begin(); i != remove.end(); ++i) {
-		LOG(Raul::info) << "    - " << i->first
-		                << " = " << engine.world()->forge().str(i->second)
-		                << " :: " << engine.world()->uri_map().unmap_uri(i->second.type()) << std::endl;
+		std::cerr << "    - " << i->first
+		          << " = " << engine.world()->forge().str(i->second)
+		          << " :: " << engine.world()->uri_map().unmap_uri(i->second.type())
+		          << std::endl;
 	}
-	LOG(Raul::info) << "}" << std::endl;
+	std::cerr << "}" << std::endl;
 #endif
 }
 

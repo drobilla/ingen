@@ -24,7 +24,6 @@
 #include "raul/Atom.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/URI.hpp"
-#include "raul/log.hpp"
 
 #define NS_INGEN "http://drobilla.net/ns/ingen#"
 
@@ -66,7 +65,6 @@ public:
 		} else if (!strcmp(suffix, "internalContext")) {
 			return INTERNAL;
 		} else {
-			Raul::error << "Unknown context URI " << uri << std::endl;
 			return DEFAULT;
 		}
 	}

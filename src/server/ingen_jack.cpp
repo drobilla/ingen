@@ -19,8 +19,8 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
+#include "ingen/Log.hpp"
 #include "raul/Configuration.hpp"
-#include "raul/log.hpp"
 
 #include "JackDriver.hpp"
 #include "Engine.hpp"
@@ -31,7 +31,7 @@ using namespace Ingen;
 struct IngenJackModule : public Ingen::Module {
 	void load(Ingen::World* world) {
 		if (((Server::Engine*)world->engine().get())->driver()) {
-			Raul::warn << "Engine already has a driver" << std::endl;
+			world->log().warn("Engine already has a driver\n");
 			return;
 		}
 

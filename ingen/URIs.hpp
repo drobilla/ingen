@@ -94,6 +94,9 @@ public:
 	const Quark ingen_tail;
 	const Quark ingen_uiEmbedded;
 	const Quark ingen_value;
+	const Quark log_Error;
+	const Quark log_Note;
+	const Quark log_Warning;
 	const Quark lv2_AudioPort;
 	const Quark lv2_CVPort;
 	const Quark lv2_ControlPort;

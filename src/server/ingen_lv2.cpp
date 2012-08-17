@@ -26,11 +26,13 @@
 
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
+#include "lv2/lv2plug.in/ns/ext/log/log.h"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/AtomReader.hpp"
@@ -41,7 +43,6 @@
 #include "raul/Semaphore.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
-#include "raul/log.hpp"
 
 #include "Buffer.hpp"
 #include "Driver.hpp"
@@ -92,6 +93,7 @@ public:
 		, _main_sem(0)
 		, _reader(engine.world()->uri_map(),
 		          engine.world()->uris(),
+		          engine.world()->log(),
 		          engine.world()->forge(),
 		          *engine.world()->interface().get())
 		, _writer(engine.world()->uri_map(),
@@ -132,7 +134,7 @@ public:
 				if (!patch_buf->append_event(
 					    ev->time.frames, ev->body.size, ev->body.type,
 					    (const uint8_t*)LV2_ATOM_BODY(&ev->body))) {
-					Raul::warn("Failed to write to buffer, event lost!\n");
+					_engine.log().warn("Failed to write to buffer, event lost!\n");
 				}
 
 				if (AtomReader::is_message(uris, &ev->body)) {
@@ -233,7 +235,7 @@ public:
 	void enqueue_message(const LV2_Atom* atom) {
 		if (_from_ui.write(lv2_atom_total_size(atom), atom) == 0) {
 #ifndef NDEBUG
-			Raul::error << "Control input buffer overflow" << std::endl;
+			_engine.log().error("Control input buffer overflow\n");
 #endif
 		}
 	}
@@ -260,7 +262,7 @@ public:
 		for (uint32_t read = 0; read < read_space;) {
 			LV2_Atom atom;
 			if (!_from_ui.read(sizeof(LV2_Atom), &atom)) {
-				Raul::error << "Error reading head from from-UI ring" << std::endl;
+				_engine.log().error("Error reading head from from-UI ring\n");
 				break;
 			}
 
@@ -268,7 +270,7 @@ public:
 			memcpy(buf, &atom, sizeof(LV2_Atom));
 
 			if (!_from_ui.read(atom.size, (char*)buf + sizeof(LV2_Atom))) {
-				Raul::error << "Error reading body from from-UI ring" << std::endl;
+				_engine.log().error("Error reading body from from-UI ring\n");
 				break;
 			}
 
@@ -283,7 +285,7 @@ public:
 
 		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_ports[1]->buffer();
 		if (!seq) {
-			Raul::error << "Control out port not connected" << std::endl;
+			_engine.log().error("Control out port not connected\n");
 			return;
 		}
 
@@ -298,7 +300,7 @@ public:
 		for (uint32_t read = 0; read < read_space;) {
 			LV2_Atom atom;
 			if (!_to_ui.peek(sizeof(LV2_Atom), &atom)) {
-				Raul::error << "Error reading head from to-UI ring" << std::endl;
+				_engine.log().error("Error reading head from to-UI ring\n");
 				break;
 			}
 
@@ -314,7 +316,7 @@ public:
 
 			_to_ui.skip(sizeof(LV2_Atom));
 			if (!_to_ui.read(ev->body.size, LV2_ATOM_BODY(&ev->body))) {
-				Raul::error << "Error reading body from to-UI ring" << std::endl;
+				_engine.log().error("Error reading body from to-UI ring\n");
 				break;
 			}
 
@@ -432,8 +434,6 @@ find_patches(const Glib::ustring& manifest_uri)
 			patches.push_back(boost::shared_ptr<const LV2Patch>(
 				                  new LV2Patch(patch_uri, (const char*)file_path)));
 			free(file_path);
-		} else {
-			Raul::error << "[Ingen] Patch has no rdfs:seeAlso" << std::endl;
 		}
 	}
 
@@ -447,6 +447,23 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
                   const char*              bundle_path,
                   const LV2_Feature*const* features)
 {
+	// Get features from features array
+	LV2_URID_Map*        map    = NULL;
+	LV2_URID_Unmap*      unmap  = NULL;
+	LV2_Buf_Size_Access* access = NULL;
+	LV2_Log_Log*         log    = NULL;
+	for (int i = 0; features[i]; ++i) {
+		if (!strcmp(features[i]->URI, LV2_URID__map)) {
+			map = (LV2_URID_Map*)features[i]->data;
+		} else if (!strcmp(features[i]->URI, LV2_URID__unmap)) {
+			unmap = (LV2_URID_Unmap*)features[i]->data;
+		} else if (!strcmp(features[i]->URI, LV2_BUF_SIZE__access)) {
+			access = (LV2_Buf_Size_Access*)features[i]->data;
+		} else if (!strcmp(features[i]->URI, LV2_LOG__log)) {
+			log = (LV2_Log_Log*)features[i]->data;
+		}
+	}
+
 	if (!Glib::thread_supported()) {
 		Glib::thread_init();
 	}
@@ -464,25 +481,23 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	if (!patch) {
-		Raul::error << "Could not find patch " << descriptor->URI << std::endl;
+		const std::string msg((Raul::fmt("Could not find patch %1%\n")
+		                       % descriptor->URI).str());
+		if (log) {
+			log->vprintf(log->handle,
+			             map->map(map->handle, LV2_LOG__Error),
+			             msg.c_str(),
+			             NULL);
+		} else {
+			std::cerr << msg.c_str() << std::endl;
+		}
 		return NULL;
 	}
 
-	IngenPlugin*         plugin = new IngenPlugin();
-	LV2_URID_Unmap*      unmap  = NULL;
-	LV2_Buf_Size_Access* access = NULL;
-	for (int i = 0; features[i]; ++i) {
-		if (!strcmp(features[i]->URI, LV2_URID__map)) {
-			plugin->map = (LV2_URID_Map*)features[i]->data;
-		} else if (!strcmp(features[i]->URI, LV2_URID__unmap)) {
-			unmap = (LV2_URID_Unmap*)features[i]->data;
-		} else if (!strcmp(features[i]->URI, LV2_BUF_SIZE__access)) {
-			access = (LV2_Buf_Size_Access*)features[i]->data;
-		}
-	}
-
+	IngenPlugin* plugin = new IngenPlugin();
+	plugin->map = map;
 	plugin->world = new Ingen::World(
-		plugin->argc, plugin->argv, plugin->map, unmap);
+		plugin->argc, plugin->argv, map, unmap, log);
 	if (!plugin->world->load_module("serialisation")) {
 		delete plugin->world;
 		return NULL;
@@ -497,10 +512,12 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		access->get_buf_size(
 			access->handle, &seq_size,
 			plugin->world->uris().atom_Sequence, block_length);
-		Raul::info(Raul::fmt("Block length: %1% frames\n") % block_length);
-		Raul::info(Raul::fmt("Sequence size: %1% bytes\n") % seq_size);
+		plugin->world->log().info(
+			Raul::fmt("Block: %1% frames, Sequence: %2% bytes\n")
+			% block_length % seq_size);
 	} else {
-		Raul::warn("Warning: No buffer size access, guessing 4096 frames.\n");
+		plugin->world->log().warn(
+			"No buffer size access, guessing 4096 frames\n");
 	}
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
@@ -559,7 +576,8 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 		assert(driver->ports().at(port)->patch_port()->index() == port);
 		assert(driver->ports().at(port)->buffer() == data);
 	} else {
-		Raul::warn << "Connect to non-existent port " << port << std::endl;
+		engine->log().warn(Raul::fmt("Connect to non-existent port %1%\n")
+		                   % port);
 	}
 }
 
@@ -629,8 +647,7 @@ ingen_save(LV2_Handle                instance,
 	LV2_State_Make_Path* make_path = NULL;
 	get_state_features(features, &map_path, &make_path);
 	if (!map_path || !make_path || !plugin->map) {
-		Raul::error << "Missing state:mapPath, state:makePath, or urid:Map."
-		            << std::endl;
+		plugin->world->log().error("Missing state:mapPath, state:makePath, or urid:Map\n");
 		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
@@ -668,7 +685,7 @@ ingen_restore(LV2_Handle                  instance,
 	LV2_State_Map_Path* map_path = NULL;
 	get_state_features(features, &map_path, NULL);
 	if (!map_path) {
-		Raul::error << "Missing state:mapPath" << std::endl;
+		plugin->world->log().error("Missing state:mapPath\n");
 		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
@@ -682,7 +699,7 @@ ingen_restore(LV2_Handle                  instance,
 	                            &size, &type, &valflags);
 
 	if (!path) {
-		Raul::error << "Failed to restore ingen:file" << std::endl;
+		plugin->world->log().error("Failed to restore ingen:file\n");
 		return LV2_STATE_ERR_NO_PROPERTY;
 	}
 

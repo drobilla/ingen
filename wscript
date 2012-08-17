@@ -33,8 +33,6 @@ def options(opt):
                    help="Do not build Socket interface")
     opt.add_option('--test', action='store_true', default=False, dest='build_tests',
                    help="Build unit tests")
-    opt.add_option('--log-debug', action='store_true', default=False, dest='log_debug',
-                   help="Print debugging output")
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -115,9 +113,6 @@ def configure(conf):
                    conf.env.LIBDIR)
     autowaf.define(conf, 'INGEN_BUNDLE_DIR',
                    os.path.join(conf.env.LV2DIR, 'ingen.lv2'))
-
-    if Options.options.log_debug:
-        autowaf.define(conf, 'RAUL_LOG_DEBUG', 1)
 
     conf.write_config_header('ingen_config.h', remove=False)
 

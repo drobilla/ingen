@@ -19,7 +19,6 @@
 #include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
-#include "raul/log.hpp"
 
 #include "Buffer.hpp"
 #include "Engine.hpp"
@@ -30,8 +29,6 @@
 #include "ingen_config.h"
 #include "internals/Trigger.hpp"
 #include "util.hpp"
-
-#define LOG(s) s << "[TriggerNode] "
 
 using namespace std;
 
@@ -139,10 +136,6 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 		_note_port->broadcast_value(context, true);
 		_learning = false;
 	}
-
-#ifdef RAUL_LOG_DEBUG
-	LOG(Raul::debug) << path() << " note " << (int)note_num << " on @ " << time << endl;
-#endif
 
 	Sample filter_note = _note_port->buffer(0)->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uint8_t)filter_note)) {

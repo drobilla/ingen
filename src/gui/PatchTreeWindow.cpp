@@ -14,17 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "raul/log.hpp"
-#include "raul/Path.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/client/ClientStore.hpp"
-#include "ingen/client/PatchModel.hpp"
 #include "App.hpp"
 #include "PatchTreeWindow.hpp"
 #include "SubpatchModule.hpp"
 #include "WindowFactory.hpp"
-
-#define LOG(s) s << "[PatchTreeWindow] "
+#include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/client/ClientStore.hpp"
+#include "ingen/client/PatchModel.hpp"
+#include "raul/Path.hpp"
 
 using namespace std;
 
@@ -160,8 +158,9 @@ PatchTreeWindow::show_patch_menu(GdkEventButton* ev)
 	if (active) {
 		Gtk::TreeModel::Row row = *active;
 		SharedPtr<PatchModel> pm = row[_patch_tree_columns.patch_model_col];
-		if (pm)
-			Raul::warn << "TODO: patch menu from tree window" << endl;
+		if (pm) {
+			_app->log().warn("TODO: patch menu from tree window");
+		}
 	}
 }
 
@@ -205,7 +204,8 @@ PatchTreeWindow::patch_property_changed(const Raul::URI&      key,
 			Gtk::TreeModel::Row row = *i;
 			row[_patch_tree_columns.enabled_col] = value.get_bool();
 		} else {
-			LOG(Raul::error) << "Unable to find patch " << patch->path() << endl;
+			_app->log().error(Raul::fmt("Unable to find patch %1%\n")
+			                  % patch->path());
 		}
 	}
 	_enable_signal = true;
@@ -223,7 +223,8 @@ PatchTreeWindow::patch_moved(SharedPtr<PatchModel> patch)
 		Gtk::TreeModel::Row row = *i;
 		row[_patch_tree_columns.name_col] = patch->symbol().c_str();
 	} else {
-		LOG(Raul::error) << "Unable to find patch " << patch->path() << endl;
+		_app->log().error(Raul::fmt("Unable to find patch %1%\n")
+		                  % patch->path());
 	}
 
 	_enable_signal = true;

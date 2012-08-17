@@ -20,6 +20,7 @@
 #include <string>
 
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/lv2plug.in/ns/ext/log/log.h"
 #include "raul/Noncopyable.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
@@ -32,6 +33,7 @@ namespace Ingen {
 
 class EngineBase;
 class Interface;
+class Log;
 
 namespace Serialisation {
 class Parser;
@@ -70,11 +72,13 @@ public:
 	 * @param argv Argument vector (as in C main())
 	 * @param map LV2 URID map implementation, or NULL to use internal.
 	 * @param unmap LV2 URID unmap implementation, or NULL to use internal.
+	 * @param log LV2 log implementation, or NULL to use internal.
 	 */
 	World(int&            argc,
 	      char**&         argv,
 	      LV2_URID_Map*   map,
-	      LV2_URID_Unmap* unmap);
+	      LV2_URID_Unmap* unmap,
+	      LV2_Log_Log*    log);
 
 	virtual ~World();
 
@@ -140,6 +144,8 @@ public:
 
 	virtual void        set_jack_uuid(const std::string& uuid);
 	virtual std::string jack_uuid();
+
+	virtual Log& log();
 
 private:
 	class Impl;

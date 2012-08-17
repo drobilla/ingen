@@ -15,8 +15,8 @@
 */
 
 #include "ingen/LV2Features.hpp"
+#include "ingen/Log.hpp"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
-#include "raul/log.hpp"
 
 #include "Driver.hpp"
 #include "Engine.hpp"
@@ -51,18 +51,19 @@ Worker::request(LV2Node*    node,
                 uint32_t    size,
                 const void* data)
 {
+	Engine& engine = node->parent_patch()->engine();
 	if (_requests.write_space() < sizeof(MessageHeader) + size) {
-		Raul::error("Work request ring overflow\n");
+		engine.log().error("Work request ring overflow\n");
 		return LV2_WORKER_ERR_NO_SPACE;
 	}
 
 	const MessageHeader msg = { node, size };
 	if (_requests.write(sizeof(msg), &msg) != sizeof(msg)) {
-		Raul::error("Error writing header to work request ring\n");
+		engine.log().error("Error writing header to work request ring\n");
 		return LV2_WORKER_ERR_UNKNOWN;
 	}
 	if (_requests.write(size, data) != size) {
-		Raul::error("Error writing body to work request ring\n");
+		engine.log().error("Error writing body to work request ring\n");
 		return LV2_WORKER_ERR_UNKNOWN;
 	}
 
@@ -99,9 +100,10 @@ Worker::Schedule::feature(World* world, GraphObject* n)
 
 }
 
-Worker::Worker(uint32_t buffer_size)
+Worker::Worker(Log& log, uint32_t buffer_size)
 	: Raul::Thread()
 	, _schedule(new Schedule())
+	, _log(log)
 	, _sem(0)
 	, _requests(buffer_size)
 	, _responses(buffer_size)
@@ -123,17 +125,17 @@ Worker::_run()
 		MessageHeader msg;
 		if (_requests.read_space() > sizeof(msg)) {
 			if (_requests.read(sizeof(msg), &msg) != sizeof(msg)) {
-				Raul::error("Error reading header from work request ring\n");
+				_log.error("Error reading header from work request ring\n");
 				continue;
 			}
 
 			if (msg.size >= _buffer_size - sizeof(msg)) {
-				Raul::error("Corrupt work request ring\n");
+				_log.error("Corrupt work request ring\n");
 				return;
 			}
 
 			if (_requests.read(msg.size, _buffer) != msg.size) {
-				Raul::error("Error reading body from work request ring\n");
+				_log.error("Error reading body from work request ring\n");
 				continue;
 			}
 

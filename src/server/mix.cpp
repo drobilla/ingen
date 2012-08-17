@@ -16,8 +16,6 @@
 
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
-#include "raul/log.hpp"
-
 #include "Buffer.hpp"
 #include "Context.hpp"
 #include "mix.hpp"

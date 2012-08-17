@@ -17,6 +17,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/log/log.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "lv2/lv2plug.in/ns/ext/patch/patch.h"
 #include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
@@ -78,6 +79,9 @@ URIs::URIs(Forge& f, URIMap* map)
 	, ingen_tail            (forge, map, NS_INGEN "tail")
 	, ingen_uiEmbedded      (forge, map, NS_INGEN "uiEmbedded")
 	, ingen_value           (forge, map, NS_INGEN "value")
+	, log_Error             (forge, map, LV2_LOG__Error)
+	, log_Note              (forge, map, LV2_LOG__Note)
+	, log_Warning           (forge, map, LV2_LOG__Warning)
 	, lv2_AudioPort         (forge, map, LV2_CORE__AudioPort)
 	, lv2_CVPort            (forge, map, LV2_CORE__CVPort)
 	, lv2_ControlPort       (forge, map, LV2_CORE__ControlPort)

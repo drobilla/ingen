@@ -21,7 +21,6 @@
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
-#include "raul/log.hpp"
 
 #include "Buffer.hpp"
 #include "Driver.hpp"
@@ -33,8 +32,6 @@
 #include "ingen_config.h"
 #include "internals/Note.hpp"
 #include "util.hpp"
-
-#define LOG(s) s << "[NoteNode] "
 
 // #define NOTE_DEBUG 1
 
@@ -190,9 +187,6 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	uint32_t voice_num = 0;
 
 	if (key->state != Key::OFF) {
-#ifdef NOTE_DEBUG
-		LOG(Raul::debug) << "Double midi note received" << endl;
-#endif
 		return;
 	}
 
@@ -221,19 +215,11 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(voice != NULL);
 	assert(voice == &(*_voices)[voice_num]);
 
-#ifdef NOTE_DEBUG
-	LOG(Raul::debug) << "Note " << (int)note_num << " on @ " << time
-	                 << ". Voice " << voice_num << " / " << _polyphony << endl;
-#endif
-
 	// Update stolen key, if applicable
 	if (voice->state == Voice::Voice::ACTIVE) {
 		assert(_keys[voice->note].state == Key::ON_ASSIGNED);
 		assert(_keys[voice->note].voice == voice_num);
 		_keys[voice->note].state = Key::Key::ON_UNASSIGNED;
-#ifdef NOTE_DEBUG
-		LOG(Raul::debug) << "Stole voice " << voice_num << endl;
-#endif
 	}
 
 	// Store key information for later reallocation on note off
@@ -268,31 +254,15 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 
 	Key* key = &_keys[note_num];
 
-#ifdef NOTE_DEBUG
-	LOG(Raul::debug) << "Note " << (int)note_num << " off @ " << time << endl;
-#endif
-
 	if (key->state == Key::ON_ASSIGNED) {
 		// Assigned key, turn off voice and key
 		if ((*_voices)[key->voice].state == Voice::ACTIVE) {
 			assert((*_voices)[key->voice].note == note_num);
-
 			if ( ! _sustain) {
-#ifdef NOTE_DEBUG
-				LOG(Raul::debug) << "Free voice " << key->voice << endl;
-#endif
 				free_voice(context, key->voice, time);
 			} else {
-#ifdef NOTE_DEBUG
-				LOG(Raul::debug) << "Hold voice " << key->voice << endl;
-#endif
 				(*_voices)[key->voice].state = Voice::HOLDING;
 			}
-
-		} else {
-#ifdef NOTE_DEBUG
-			LOG(Raul::debug) << "WARNING: Assigned key, but voice not active" << endl;
-#endif
 		}
 	}
 
@@ -331,9 +301,6 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 		(*_voices)[voice].state = Voice::ACTIVE;
 	} else {
 		// No new note for voice, deactivate (set gate low)
-#ifdef NOTE_DEBUG
-		LOG(Raul::debug) << "Note off: key " << (int)(*_voices)[voice].note << " voice " << voice << endl;
-#endif
 		_gate_port->set_voice_value(context, voice, time, 0.0f);
 		(*_voices)[voice].state = Voice::FREE;
 	}
@@ -343,10 +310,6 @@ void
 NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
-
-#ifdef NOTE_DEBUG
-	LOG(Raul::debug) << "All notes off @ " << time << endl;
-#endif
 
 	// FIXME: set all keys to Key::OFF?
 

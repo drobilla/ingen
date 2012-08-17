@@ -17,16 +17,15 @@
 #include <errno.h>
 #include <poll.h>
 
-#include "ingen/Interface.hpp"
 #include "ingen/AtomReader.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
 #include "SocketReader.hpp"
-
-#define LOG(s) s << "[SocketReader] "
 
 namespace Ingen {
 namespace Socket {
@@ -121,8 +120,8 @@ SocketReader::_run()
 	// Read directly from the connection with serd
 	FILE* f = fdopen(_socket->fd(), "r");
 	if (!f) {
-		LOG(Raul::error) << "Failed to open connection "
-		                 << "(" << strerror(errno) << ")" << std::endl;
+		_world.log().error(Raul::fmt("Failed to open connection (%1%)\n")
+		                   % strerror(errno));
 		// Connection gone, exit
 		_socket.reset();
 		return;
@@ -131,7 +130,11 @@ SocketReader::_run()
 	serd_reader_start_stream(reader, f, (const uint8_t*)"(socket)", false);
 
 	// Make an AtomReader to call Ingen Interface methods based on Atom
-	AtomReader ar(_world.uri_map(), _world.uris(), _world.forge(), _iface);
+	AtomReader ar(_world.uri_map(),
+	              _world.uris(),
+	              _world.log(),
+	              _world.forge(),
+	              _iface);
 
 	struct pollfd pfd;
 	pfd.fd      = _socket->fd();
@@ -156,10 +159,11 @@ SocketReader::_run()
 		if (st == SERD_FAILURE) {
 			continue;  // Read nothing, e.g. just whitespace
 		} else if (st) {
-			LOG(Raul::error) << "Read error: " << serd_strerror(st) << std::endl;
+			_world.log().error(Raul::fmt("Read error: %1%\n")
+			                   % serd_strerror(st));
 			continue;
 		} else if (!_msg_node) {
-			LOG(Raul::error) << "Received empty message" << std::endl;
+			_world.log().error("Received empty message\n");
 			continue;
 		}
 

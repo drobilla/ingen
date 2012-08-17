@@ -20,6 +20,7 @@
 #include <gtkmm/stock.h>
 
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "lv2/lv2plug.in/ns/ext/presets/presets.h"
@@ -108,9 +109,9 @@ NodeMenu::init(App& app, SharedPtr<const Client::NodeModel> node)
 
 					lilv_nodes_free(labels);
 				} else {
-					Raul::error << "Preset <"
-					            << lilv_node_as_string(lilv_nodes_get(presets, i))
-					            << "> has no rdfs:label" << std::endl;
+					app.log().error(
+						Raul::fmt("Preset <%1> has no rdfs:label\n")
+						% lilv_node_as_string(lilv_nodes_get(presets, i)));
 				}
 			}
 

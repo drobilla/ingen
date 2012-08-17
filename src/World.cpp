@@ -23,16 +23,14 @@
 
 #include "ingen/Configuration.hpp"
 #include "ingen/LV2Features.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
-#include "raul/log.hpp"
 #include "sord/sordmm.hpp"
-
-#define LOG(s) (s("[World] "))
 
 using namespace std;
 
@@ -54,7 +52,7 @@ namespace Serialisation { class Parser; class Serialiser; }
  * \param name The base name of the module, e.g. "ingen_serialisation"
  */
 static Glib::Module*
-ingen_load_module(const string& name)
+ingen_load_module(Log& log, const string& name)
 {
 	Glib::Module* module = NULL;
 
@@ -69,10 +67,9 @@ ingen_load_module(const string& name)
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
 				module = new Glib::Module(filename);
 				if (*module) {
-					LOG(Raul::info)(Raul::fmt("Loading %1%\n") % filename);
 					return module;
 				} else {
-					Raul::error << Glib::Module::get_last_error() << endl;
+					log.error(Glib::Module::get_last_error());
 				}
 			}
 		}
@@ -82,16 +79,14 @@ ingen_load_module(const string& name)
 	module = new Glib::Module(Ingen::module_path(name));
 
 	if (*module) {
-		LOG(Raul::info)(Raul::fmt("Loading %1%\n") % Ingen::module_path(name));
 		return module;
 	} else if (!module_path_found) {
-		LOG(Raul::error)(Raul::fmt("Unable to find %1% (%2%)\n")
-		                 % name % Glib::Module::get_last_error());
+		log.error(Raul::fmt("Unable to find %1% (%2%)\n")
+		          % name % Glib::Module::get_last_error());
 		return NULL;
 	} else {
-		LOG(Raul::error)(Raul::fmt("Unable to load %1% from %2% (%3%)\n")
-		                 % name % module_path % Glib::Module::get_last_error());
-		LOG(Raul::error)("Is Ingen installed?\n");
+		log.error(Raul::fmt("Unable to load %1% from %2% (%3%)\n")
+		          % name % module_path % Glib::Module::get_last_error());
 		return NULL;
 	}
 }
@@ -101,14 +96,16 @@ public:
 	Impl(int&            a_argc,
 	     char**&         a_argv,
 	     LV2_URID_Map*   map,
-	     LV2_URID_Unmap* unmap)
+	     LV2_URID_Unmap* unmap,
+	     LV2_Log_Log*    lv2_log)
 		: argc(a_argc)
 		, argv(a_argv)
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
-		, uri_map(new URIMap(map, unmap))
+		, uri_map(new URIMap(log, map, unmap))
 		, forge(new Forge(*uri_map))
 		, uris(new URIs(*forge, uri_map))
+		, log(lv2_log, *uris)
 		, lilv_world(lilv_world_new())
 	{
 		conf.parse(argc, argv);
@@ -180,6 +177,8 @@ public:
 	URIMap*                              uri_map;
 	Forge*                               forge;
 	URIs*                                uris;
+	LV2_Log_Log*                         lv2_log;
+	Log                                  log;
 	SharedPtr<Interface>                 interface;
 	SharedPtr<EngineBase>                engine;
 	SharedPtr<Serialisation::Serialiser> serialiser;
@@ -192,8 +191,9 @@ public:
 World::World(int&                 argc,
              char**&              argv,
              LV2_URID_Map*        map,
-             LV2_URID_Unmap*      unmap)
-	: _impl(new Impl(argc, argv, map, unmap))
+             LV2_URID_Unmap*      unmap,
+             LV2_Log_Log*         log)
+	: _impl(new Impl(argc, argv, map, unmap, log))
 {
 }
 
@@ -217,6 +217,7 @@ SharedPtr<Store>                     World::store()        { return _impl->store
 int&           World::argc() { return _impl->argc; }
 char**&        World::argv() { return _impl->argv; }
 Configuration& World::conf() { return _impl->conf; }
+Log&           World::log()  { return _impl->log; }
 
 Sord::World* World::rdf_world()  { return _impl->rdf_world; }
 LilvWorld*   World::lilv_world() { return _impl->lilv_world; }
@@ -231,10 +232,9 @@ World::load_module(const char* name)
 {
 	Impl::Modules::iterator i = _impl->modules.find(name);
 	if (i != _impl->modules.end()) {
-		LOG(Raul::info)(Raul::fmt("Module `%1%' already loaded\n") % name);
 		return true;
 	}
-	Glib::Module* lib = ingen_load_module(name);
+	Glib::Module* lib = ingen_load_module(log(), name);
 	Ingen::Module* (*module_load)() = NULL;
 	if (lib && lib->get_symbol("ingen_module_load", (void*&)module_load)) {
 		Module* module = module_load();
@@ -246,7 +246,7 @@ World::load_module(const char* name)
 		}
 	}
 
-	LOG(Raul::error)(Raul::fmt("Failed to load module `%1%'\n") % name);
+	log().error(Raul::fmt("Failed to load module `%1%'\n") % name);
 	delete lib;
 	return false;
 }
@@ -256,7 +256,7 @@ World::run_module(const char* name)
 {
 	Impl::Modules::iterator i = _impl->modules.find(name);
 	if (i == _impl->modules.end()) {
-		LOG(Raul::error) << "Attempt to run unloaded module `" << name << "'" << endl;
+		log().error(Raul::fmt("Attempt to run unloaded module `%1%'\n") % name);
 		return false;
 	}
 
@@ -278,7 +278,7 @@ World::new_interface(const Raul::URI&     engine_uri,
 {
 	const Impl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(engine_uri.scheme());
 	if (i == _impl->interface_factories.end()) {
-		Raul::warn << "Unknown URI scheme `" << engine_uri.scheme() << "'" << endl;
+		log().warn(Raul::fmt("Unknown URI scheme `%1%'\n") % engine_uri.scheme());
 		return SharedPtr<Interface>();
 	}
 
@@ -291,7 +291,7 @@ World::run(const std::string& mime_type, const std::string& filename)
 {
 	const Impl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
 	if (i == _impl->script_runners.end()) {
-		Raul::warn << "Unknown script MIME type `" << mime_type << "'" << endl;
+		log().warn(Raul::fmt("Unknown script MIME type `%1%'\n") % mime_type);
 		return false;
 	}
 

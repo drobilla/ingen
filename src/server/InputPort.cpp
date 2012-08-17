@@ -17,6 +17,9 @@
 #include <cstdlib>
 #include <cassert>
 
+#include "ingen/Log.hpp"
+#include "ingen/URIs.hpp"
+
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
@@ -26,7 +29,6 @@
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
-#include "ingen/URIs.hpp"
 #include "mix.hpp"
 
 using namespace std;
@@ -143,8 +145,7 @@ InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 	}
 
 	if (!edge) {
-		Raul::error << "[InputPort::remove_edge] Edge not found!"
-		            << std::endl;
+		context.engine().log().error("Attempt to remove non-existent edge\n");
 		return NULL;
 	}
 

@@ -21,10 +21,10 @@
 #include <string>
 
 #include "ganv/Port.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/serialisation/Parser.hpp"
-#include "raul/log.hpp"
 
 #include "App.hpp"
 #include "Configuration.hpp"
@@ -95,7 +95,7 @@ Configuration::get_port_color(const Client::PortModel* p)
 		return _event_port_color;
 	}
 
-	Raul::warn << "[Configuration] No known port type for " << p->path() << endl;
+	_app.log().warn(Raul::fmt("No known port type for %1%\n") % p->path());
 	return 0x666666FF;
 }
 

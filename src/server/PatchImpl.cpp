@@ -16,9 +16,9 @@
 
 #include <cassert>
 
+#include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "raul/log.hpp"
 
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
@@ -216,7 +216,6 @@ PatchImpl::remove_edge(const PortImpl* tail, const PortImpl* dst_port)
 		_edges.erase(i);
 		return c;
 	} else {
-		Raul::error << "[PatchImpl::remove_edge] Edge not found" << endl;
 		return SharedPtr<EdgeImpl>();
 	}
 }
@@ -248,7 +247,8 @@ PatchImpl::create_port(BufferFactory&      bufs,
                        bool                polyphonic)
 {
 	if (type == PortType::UNKNOWN) {
-		Raul::error << "[PatchImpl::create_port] Unknown port type " << type.uri() << endl;
+		bufs.engine().log().error(Raul::fmt("Unknown port type %1%\n")
+		                          % type.uri());
 		return NULL;
 	}
 
@@ -369,7 +369,7 @@ PatchImpl::compile()
 	}
 
 	if (compiled_patch->size() != _nodes.size()) {
-		Raul::error(Raul::fmt("Failed to compile patch %1%\n") % _path);
+		_engine.log().error(Raul::fmt("Failed to compile patch %1%\n") % _path);
 		delete compiled_patch;
 		return NULL;
 	}

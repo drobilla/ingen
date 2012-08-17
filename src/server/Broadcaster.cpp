@@ -18,13 +18,10 @@
 #include <glibmm/thread.h>
 
 #include "ingen/Interface.hpp"
-#include "raul/log.hpp"
 
 #include "Broadcaster.hpp"
 #include "PluginImpl.hpp"
 #include "NodeFactory.hpp"
-
-#define LOG(s) (s("[Broadcaster] "))
 
 namespace Ingen {
 namespace Server {
@@ -36,7 +33,6 @@ Broadcaster::register_client(const Raul::URI&     uri,
                              SharedPtr<Interface> client)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
-	LOG(Raul::info)(Raul::fmt("Registered client <%1%>\n") % uri.c_str());
 	_clients[uri] = client;
 }
 
@@ -49,11 +45,6 @@ Broadcaster::unregister_client(const Raul::URI& uri)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	const size_t erased = _clients.erase(uri);
-
-	if (erased > 0) {
-		LOG(Raul::info)(Raul::fmt("Unregistered client <%1%>\n") % uri.c_str());
-	}
-
 	return (erased > 0);
 }
 

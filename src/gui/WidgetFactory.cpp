@@ -17,8 +17,7 @@
 #include <fstream>
 #include <string>
 
-#include "raul/log.hpp"
-
+#include "raul/fmt.hpp"
 #include "ingen/runtime_paths.hpp"
 
 #include "WidgetFactory.hpp"
@@ -59,25 +58,21 @@ WidgetFactory::find_ui_file()
 	if (is_readable(ui_filename))
 		return;
 
-	Raul::error << "[WidgetFactory] Unable to find ingen_gui.ui in "
-	            << INGEN_DATA_DIR << endl;
-	throw std::runtime_error("Unable to find UI file");
+	throw std::runtime_error((Raul::fmt("Unable to find ingen_gui.ui in %1%\n")
+	                          % INGEN_DATA_DIR).str());
 }
 
 Glib::RefPtr<Gtk::Builder>
 WidgetFactory::create(const string& toplevel_widget)
 {
-	if (ui_filename.empty())
+	if (ui_filename.empty()) {
 		find_ui_file();
+	}
 
-	try {
-		if (toplevel_widget.empty())
-			return Gtk::Builder::create_from_file(ui_filename);
-		else
-			return Gtk::Builder::create_from_file(ui_filename, toplevel_widget.c_str());
-	} catch (const Gtk::BuilderError& ex) {
-		Raul::error << "[WidgetFactory] " << ex.what() << endl;
-		throw ex;
+	if (toplevel_widget.empty()) {
+		return Gtk::Builder::create_from_file(ui_filename);
+	} else {
+		return Gtk::Builder::create_from_file(ui_filename, toplevel_widget.c_str());
 	}
 }
 

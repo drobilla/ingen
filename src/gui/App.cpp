@@ -25,15 +25,15 @@
 #include "ganv/Edge.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
-#include "ingen/World.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
 #include "raul/Path.hpp"
-#include "raul/log.hpp"
 
 #include "App.hpp"
 #include "Configuration.hpp"
@@ -48,8 +48,6 @@
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
-
-#define LOG(s) (s("[GUI] "))
 
 using namespace std;
 
@@ -148,7 +146,6 @@ App::run()
 			break;
 
 	_main->run();
-	LOG(Raul::info)("Exiting\n");
 }
 
 void
@@ -163,7 +160,7 @@ App::attach(SharedPtr<SigClientInterface> client)
 	}
 
 	_client = client;
-	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->interface(), client));
+	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->log(), _world->interface(), client));
 	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->interface()));
 
 	_patch_tree_window->init(*this, *_store);
@@ -229,10 +226,10 @@ App::property_change(const Raul::URI&  subject,
 {
 	if (subject == uris().ingen_engine && key == uris().ingen_sampleRate) {
 		if (value.type() == forge().Int) {
-			LOG(Raul::info)(Raul::fmt("Sample rate: %1%\n") % uris().forge.str(value));
+			log().info(Raul::fmt("Sample rate: %1%\n") % uris().forge.str(value));
 			_sample_rate = value.get_int32();
 		} else {
-			Raul::error << "Engine sample rate property is not an integer" << std::endl;
+			log().error("Engine sample rate property is not an integer\n");
 		}
 	}
 }
@@ -378,7 +375,8 @@ App::icon_from_path(const string& path, int size)
 			new IconDestroyNotification(*this, make_pair(path, size)),
 			&App::icon_destroyed);
 	} catch (const Glib::Error& e) {
-		Raul::warn << "Error loading icon: " << e.what() << endl;
+		log().warn(Raul::fmt("Error loading icon %1%: %2%\n")
+		           % path % e.what());
 	}
 	return buf;
 }

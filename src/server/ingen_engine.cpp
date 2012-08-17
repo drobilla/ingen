@@ -24,7 +24,7 @@ using namespace Ingen;
 
 struct IngenEngineModule : public Ingen::Module {
 	virtual void load(Ingen::World* world) {
-		Server::set_denormal_flags();
+		Server::set_denormal_flags(world->log());
 		SharedPtr<Server::Engine> engine(new Server::Engine(world));
 		world->set_engine(engine);
 		if (!world->interface()) {

@@ -24,11 +24,7 @@
 
 #include <string>
 
-#include "raul/log.hpp"
-
 #include "Socket.hpp"
-
-#define LOG(s) (s("[Socket] "))
 
 namespace Ingen {
 namespace Socket {
@@ -103,8 +99,6 @@ Socket::set_addr(const Raul::URI& uri)
 		struct addrinfo* ainfo;
 		int              st = 0;
 		if ((st = getaddrinfo(host.c_str(), port.c_str(), NULL, &ainfo))) {
-			LOG(Raul::error)(Raul::fmt("Error in getaddrinfo: %1%\n")
-			                           % gai_strerror(st));
 			return false;
 		}
 
@@ -125,8 +119,6 @@ Socket::bind(const Raul::URI& uri)
 		return true;
 	}
 
-	LOG(Raul::error)(Raul::fmt("Failed to bind <%1%> (%2%)\n")
-	                 % _uri % strerror(errno));
 	return false;
 }
 
@@ -137,8 +129,6 @@ Socket::connect(const Raul::URI& uri)
 		return true;
 	}
 
-	LOG(Raul::error)(Raul::fmt("Failed to connect <%1%> (%2%)\n")
-	                 % _uri % strerror(errno));
 	return false;
 }
 
@@ -146,10 +136,8 @@ bool
 Socket::listen()
 {
 	if (::listen(_sock, 64) == -1) {
-		LOG(Raul::error)(Raul::fmt("Failed to listen on %1%\n") % _uri);
 		return false;
 	} else {
-		LOG(Raul::info)(Raul::fmt("Listening on %1%\n") % _uri);
 		return true;
 	}
 }
@@ -163,8 +151,6 @@ Socket::accept()
 
 	int conn = ::accept(_sock, client_addr, &client_addr_len);
 	if (conn == -1) {
-		LOG(Raul::error)(Raul::fmt("Error accepting connection: %1%\n")
-		                 % strerror(errno));
 		return SharedPtr<Socket>();
 	}
 

@@ -21,15 +21,14 @@
 #include <gtkmm/label.h>
 #include <gtkmm/spinbutton.h>
 
-#include "App.hpp"
-#include "PropertiesWindow.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PluginModel.hpp"
-#include "raul/log.hpp"
 
-#define LOG(s) s << "[PropertiesWindow] "
+#include "App.hpp"
+#include "PropertiesWindow.hpp"
 
 using namespace std;
 
@@ -351,7 +350,8 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 		return widget;
 	}
 
-	LOG(Raul::error) << "Unable to create widget for value " << forge.str(value) << endl;
+	_app->log().error(Raul::fmt("Unable to create widget for value %1%\n")
+	                  % forge.str(value));
 	return NULL;
 }
 
@@ -408,7 +408,8 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 {
 	Records::iterator r = _records.find(predicate);
 	if (r == _records.end()) {
-		LOG(Raul::error) << "Unknown property `" << predicate << "' edited" << endl;
+		_app->log().error(Raul::fmt("Unknown property `%1%' edited\n")
+		                  % predicate);
 		return;
 	}
 
@@ -440,7 +441,8 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 	return;
 
 bad_type:
-	LOG(Raul::error) << "Property `" << predicate << "' value widget has wrong type" << endl;
+	_app->log().error(Raul::fmt("Property `%1%' value widget has wrong type\n")
+	                  % predicate);
 	return;
 }
 
@@ -517,21 +519,16 @@ PropertiesWindow::cancel_clicked()
 void
 PropertiesWindow::apply_clicked()
 {
-	LOG(Raul::debug) << "apply {" << endl;
 	Resource::Properties properties;
 	for (Records::const_iterator r = _records.begin(); r != _records.end(); ++r) {
 		const Raul::URI& uri    = r->first;
 		const Record&    record = r->second;
 		if (!_model->has_property(uri, record.value)) {
-			LOG(Raul::debug) << "\t" << uri
-			                 << " = " << _app->forge().str(record.value) << endl;
 			properties.insert(make_pair(uri, record.value));
 		}
 	}
 
 	_app->interface()->put(_model->uri(), properties);
-
-	LOG(Raul::debug) << "}" << endl;
 }
 
 void

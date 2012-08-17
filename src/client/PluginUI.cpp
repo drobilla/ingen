@@ -15,13 +15,13 @@
 */
 
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
-#include "raul/log.hpp"
 
 using namespace std;
 
@@ -41,8 +41,9 @@ lv2_ui_write(SuilController controller,
 
 	const NodeModel::Ports& ports = ui->node()->ports();
 	if (port_index >= ports.size()) {
-		Raul::error(Raul::fmt("%1% UI tried to write to invalid port %2%\n")
-		            % ui->node()->plugin()->uri().c_str() % port_index);
+		ui->world()->log().error(
+			Raul::fmt("%1% UI tried to write to invalid port %2%\n")
+			% ui->node()->plugin()->uri().c_str() % port_index);
 		return;
 	}
 
@@ -70,8 +71,9 @@ lv2_ui_write(SuilController controller,
 		                                       val);
 
 	} else {
-		Raul::warn(Raul::fmt("Unknown value format %1% from LV2 UI\n")
-		           % format % ui->node()->plugin()->uri().c_str());
+		ui->world()->log().warn(
+			Raul::fmt("Unknown value format %1% from LV2 UI\n")
+			% format % ui->node()->plugin()->uri().c_str());
 	}
 }
 
@@ -144,7 +146,7 @@ PluginUI::create(Ingen::World*              world,
 	if (instance) {
 		ret->_instance = instance;
 	} else {
-		Raul::error("Failed to instantiate LV2 UI\n");
+		world->log().error("Failed to instantiate LV2 UI\n");
 		ret.reset();
 	}
 

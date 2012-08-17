@@ -21,6 +21,7 @@
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/Log.hpp"
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
 
@@ -59,7 +60,7 @@ Engine::Engine(Ingen::World* world)
 	, _post_processor(new PostProcessor(*this))
 	, _event_writer(new EventWriter(*this))
 	, _root_patch(NULL)
-	, _worker(new Worker(event_queue_size()))
+	, _worker(new Worker(world->log(), event_queue_size()))
 	, _process_context(*this)
 	, _quit_flag(false)
 	, _direct_driver(true)
@@ -319,12 +320,14 @@ Engine::process_events()
 void
 Engine::register_client(const Raul::URI& uri, SharedPtr<Interface> client)
 {
+	log().info(Raul::fmt("Registering client <%1%>\n") % uri.c_str());
 	_broadcaster->register_client(uri, client);
 }
 
 bool
 Engine::unregister_client(const Raul::URI& uri)
 {
+	log().info(Raul::fmt("Unregistering client <%1%>\n") % uri.c_str());
 	return _broadcaster->unregister_client(uri);
 }
 

@@ -18,16 +18,21 @@
 
 #include "ingen/AtomReader.hpp"
 #include "ingen/GraphObject.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Path.hpp"
-#include "raul/log.hpp"
 
 namespace Ingen {
 
-AtomReader::AtomReader(URIMap& map, URIs& uris, Forge& forge, Interface& iface)
+AtomReader::AtomReader(URIMap&    map,
+                       URIs&      uris,
+                       Log&       log,
+                       Forge&     forge,
+                       Interface& iface)
 	: _map(map)
 	, _uris(uris)
+	, _log(log)
 	, _forge(forge)
 	, _iface(iface)
 {
@@ -43,8 +48,8 @@ AtomReader::get_atom(const LV2_Atom* in, Raul::Atom& out)
 			if (uri) {
 				out = _forge.alloc_uri(_map.unmap_uri(urid->body));
 			} else {
-				Raul::error(Raul::fmt("Unable to unmap URID %1%\n")
-				            % urid->body);
+				_log.error(Raul::fmt("Unable to unmap URID %1%\n")
+				           % urid->body);
 			}
 		} else {
 			out = _forge.alloc(in->size, in->type, LV2_ATOM_BODY_CONST(in));
@@ -111,8 +116,8 @@ bool
 AtomReader::write(const LV2_Atom* msg)
 {
 	if (msg->type != _uris.atom_Blank && msg->type != _uris.atom_Resource) {
-		Raul::warn(Raul::fmt("Unknown message type <%1%>\n")
-		           % _map.unmap_uri(msg->type));
+		_log.warn(Raul::fmt("Unknown message type <%1%>\n")
+		          % _map.unmap_uri(msg->type));
 		return false;
 	}
 
@@ -151,7 +156,7 @@ AtomReader::write(const LV2_Atom* msg)
 			} else if (subject_path && other_path) {
 				_iface.disconnect_all(*subject_path, *other_path);
 			} else {
-				Raul::warn << "Delete of unknown object." << std::endl;
+				_log.warn("Delete of unknown object\n");
 				return false;
 			}
 		}
@@ -159,10 +164,10 @@ AtomReader::write(const LV2_Atom* msg)
 		const LV2_Atom_Object* body = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 		if (!body) {
-			Raul::warn << "Put message has no body" << std::endl;
+			_log.warn("Put message has no body\n");
 			return false;
 		} else if (!subject_uri) {
-			Raul::warn << "Put message has no subject" << std::endl;
+			_log.warn("Put message has no subject\n");
 			return false;
 		}
 
@@ -174,7 +179,7 @@ AtomReader::write(const LV2_Atom* msg)
 			                    (LV2_URID)_uris.ingen_head, &head,
 			                    NULL);
 			if (!tail || !head) {
-				Raul::warn << "Edge has no tail or head" << std::endl;
+				_log.warn("Edge has no tail or head\n");
 				return false;
 			}
 
@@ -183,7 +188,7 @@ AtomReader::write(const LV2_Atom* msg)
 			if (tail_path && head_path) {
 				_iface.connect(*tail_path, *head_path);
 			} else {
-				Raul::warn << "Edge has non-path tail or head" << std::endl;
+				_log.warn("Edge has non-path tail or head\n");
 			}
 		} else {
 			Ingen::Resource::Properties props;
@@ -195,10 +200,10 @@ AtomReader::write(const LV2_Atom* msg)
 		const LV2_Atom_Object* body = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 		if (!body) {
-			Raul::warn << "Set message has no body" << std::endl;
+			_log.warn("Set message has no body\n");
 			return false;
 		} else if (!subject_uri) {
-			Raul::warn << "Set message has no subject" << std::endl;
+			_log.warn("Set message has no subject\n");
 			return false;
 		}
 
@@ -210,21 +215,21 @@ AtomReader::write(const LV2_Atom* msg)
 		}
 	} else if (obj->body.otype == _uris.patch_Patch) {
 		if (!subject) {
-			Raul::warn << "Patch message has no subject" << std::endl;
+			_log.warn("Patch message has no subject\n");
 			return false;
 		}
 
 		const LV2_Atom_Object* remove = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_remove, &remove, 0);
 		if (!remove) {
-			Raul::warn << "Patch message has no remove" << std::endl;
+			_log.warn("Patch message has no remove\n");
 			return false;
 		}
 
 		const LV2_Atom_Object* add = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_add, &add, 0);
 		if (!add) {
-			Raul::warn << "Patch message has no add" << std::endl;
+			_log.warn("Patch message has no add\n");
 			return false;
 		}
 
@@ -237,26 +242,26 @@ AtomReader::write(const LV2_Atom* msg)
 		_iface.delta(Raul::URI(subject_uri), remove_props, add_props);
 	} else if (obj->body.otype == _uris.patch_Move) {
 		if (!subject) {
-			Raul::warn << "Move message has no subject" << std::endl;
+			_log.warn("Move message has no subject\n");
 			return false;
 		}
 
 		const LV2_Atom* dest = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_destination, &dest, 0);
 		if (!dest) {
-			Raul::warn << "Move message has no destination" << std::endl;
+			_log.warn("Move message has no destination\n");
 			return false;
 		}
 
 		boost::optional<Raul::Path> subject_path(atom_to_path(subject));
 		if (!subject_path) {
-			Raul::warn << "Move message has non-path subject" << std::endl;
+			_log.warn("Move message has non-path subject\n");
 			return false;
 		}
 
 		boost::optional<Raul::Path> dest_path(atom_to_path(dest));
 		if (!dest_path) {
-			Raul::warn << "Move message has non-path destination" << std::endl;
+			_log.warn("Move message has non-path destination\n");
 			return false;
 		}
 
@@ -269,19 +274,18 @@ AtomReader::write(const LV2_Atom* msg)
 		                    (LV2_URID)_uris.patch_body, &body,
 		                    0);
 		if (!request || request->type != _uris.atom_Int) {
-			Raul::warn << "Response message has no request" << std::endl;
+			_log.warn("Response message has no request\n");
 			return false;
 		} else if (!body || body->type != _uris.atom_Int) {
-			Raul::warn << "Response message body is not integer" << std::endl;
+			_log.warn("Response message body is not integer\n");
 			return false;
 		}
 		_iface.response(((const LV2_Atom_Int*)request)->body,
 		                (Ingen::Status)((const LV2_Atom_Int*)body)->body,
 		                subject_uri ? subject_uri : "");
 	} else {
-		Raul::warn << "Unknown object type <"
-		           << _map.unmap_uri(obj->body.otype)
-		           << ">" << std::endl;
+		_log.warn(Raul::fmt("Unknown object type <%1%>\n")
+		          % _map.unmap_uri(obj->body.otype));
 	}
 
 	return true;

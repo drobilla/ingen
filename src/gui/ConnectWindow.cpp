@@ -21,16 +21,16 @@
 #include <gtkmm/stock.h>
 
 #include "raul/Process.hpp"
-#include "raul/log.hpp"
 
-#include "ingen_config.h"
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
+#include "ingen/Module.hpp"
+#include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
-#include "ingen/Module.hpp"
-#include "ingen/World.hpp"
+#include "ingen_config.h"
 
 #include "App.hpp"
 #include "ConnectWindow.hpp"
@@ -209,7 +209,7 @@ ConnectWindow::connect(bool existing)
 			Glib::signal_timeout().connect(
 				sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
 		} else {
-			Raul::error << "Failed to launch ingen process." << endl;
+			world->log().error("Failed to launch ingen process\n");
 		}
 		return;
 	}

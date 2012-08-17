@@ -25,7 +25,6 @@
 #include "ingen/Edge.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "raul/Deletable.hpp"
-#include "raul/log.hpp"
 
 #include "BufferRef.hpp"
 #include "Context.hpp"

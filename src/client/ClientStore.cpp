@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Log.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/EdgeModel.hpp"
 #include "ingen/client/NodeModel.hpp"
@@ -22,9 +23,6 @@
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
-#include "raul/log.hpp"
-
-#define LOG(s) (s("[ClientStore] "))
 
 // #define INGEN_CLIENT_STORE_DUMP 1
 
@@ -34,9 +32,11 @@ namespace Ingen {
 namespace Client {
 
 ClientStore::ClientStore(URIs&                         uris,
+                         Log&                          log,
                          SharedPtr<Interface>          engine,
                          SharedPtr<SigClientInterface> emitter)
 	: _uris(uris)
+	, _log(log)
 	, _engine(engine)
 	, _emitter(emitter)
 	, _plugins(new Plugins())
@@ -96,12 +96,6 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 	for (Iterator i = object->properties().begin();
 	     i != object->properties().end(); ++i)
 		object->signal_property().emit(i->first, i->second);
-
-	LOG(Raul::debug) << "Added " << object->path() << " {" << endl;
-	for (iterator i = begin(); i != end(); ++i) {
-		LOG(Raul::debug) << "\t" << i->first << endl;
-	}
-	LOG(Raul::debug) << "}" << endl;
 }
 
 SharedPtr<ObjectModel>
@@ -222,11 +216,11 @@ ClientStore::put(const Raul::URI&            uri,
 {
 	typedef Resource::Properties::const_iterator Iterator;
 #ifdef INGEN_CLIENT_STORE_DUMP
-	LOG(Raul::info) << "PUT " << uri << " {" << endl;
+	std::cerr << "Put " << uri << " {" << endl;
 	for (Iterator i = properties.begin(); i != properties.end(); ++i)
-		LOG(Raul::info) << '\t' << i->first << " = " << _uris.forge.str(i->second)
+		std::cerr << '\t' << i->first << " = " << _uris.forge.str(i->second)
 		          << " :: " << i->second.type() << endl;
-	LOG(Raul::info) << "}" << endl;
+	std::cerr << "}" << endl;
 #endif
 
 	bool is_patch, is_node, is_port, is_output;
@@ -250,8 +244,8 @@ ClientStore::put(const Raul::URI&            uri,
 	}
 
 	if (!GraphObject::uri_is_path(uri)) {
-		LOG(Raul::error)(Raul::fmt("Put for unknown subject <%1%>\n")
-		                 % uri.c_str());
+		_log.error(Raul::fmt("Put for unknown subject <%1%>\n")
+		           % uri.c_str());
 		return;
 	}
 
@@ -276,8 +270,8 @@ ClientStore::put(const Raul::URI&            uri,
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == _uris.forge.URI) {
 			if (!(plug = _plugin(Raul::URI(p->second.get_uri())))) {
-				LOG(Raul::warn)(Raul::fmt("Unable to find plugin <%1%>\n")
-				                % p->second.get_uri());
+				_log.warn(Raul::fmt("Unable to find plugin <%1%>\n")
+				          % p->second.get_uri());
 				plug = SharedPtr<PluginModel>(
 					new PluginModel(uris(),
 					                Raul::URI(p->second.get_uri()),
@@ -290,8 +284,8 @@ ClientStore::put(const Raul::URI&            uri,
 			n->set_properties(properties);
 			add_object(n);
 		} else {
-			LOG(Raul::warn)(Raul::fmt("Node %1% has no plugin\n")
-			                % path.c_str());
+			_log.warn(Raul::fmt("Node %1% has no plugin\n")
+			          % path.c_str());
 		}
 	} else if (is_port) {
 		PortModel::Direction pdir = (is_output)
@@ -305,11 +299,11 @@ ClientStore::put(const Raul::URI&            uri,
 			p->set_properties(properties);
 			add_object(p);
 		} else {
-			LOG(Raul::error) << "Port " << path << " has no index" << endl;
+			_log.error(Raul::fmt("Port %1% has no index\n") % path);
 		}
 	} else {
-		LOG(Raul::warn)(Raul::fmt("Ignoring object %1% with unknown type\n")
-		                % path.c_str());
+		_log.warn(Raul::fmt("Ignoring object %1% with unknown type\n")
+		          % path.c_str());
 	}
 }
 
@@ -320,21 +314,21 @@ ClientStore::delta(const Raul::URI&            uri,
 {
 	typedef Resource::Properties::const_iterator iterator;
 #ifdef INGEN_CLIENT_STORE_DUMP
-	LOG(Raul::info) << "DELTA " << uri << " {" << endl;
+	std::cerr << "Delta " << uri << " {" << endl;
 	for (iterator i = remove.begin(); i != remove.end(); ++i)
-		LOG(Raul::info) << "    - " << i->first
-		                << " = " << _uris.forge.str(i->second)
-		                << " :: " << i->second.type() << endl;
+		std::cerr << "    - " << i->first
+		          << " = " << _uris.forge.str(i->second)
+		          << " :: " << i->second.type() << endl;
 	for (iterator i = add.begin(); i != add.end(); ++i)
-		LOG(Raul::info) << "    + " << i->first
-		                << " = " << _uris.forge.str(i->second)
-		                << " :: " << i->second.type() << endl;
-	LOG(Raul::info) << "}" << endl;
+		std::cerr << "    + " << i->first
+		          << " = " << _uris.forge.str(i->second)
+		          << " :: " << i->second.type() << endl;
+	std::cerr << "}" << endl;
 #endif
 
 	if (!GraphObject::uri_is_path(uri)) {
-		LOG(Raul::error)(Raul::fmt("Delta for unknown subject <%1%>\n")
-		                 % uri.c_str());
+		_log.error(Raul::fmt("Delta for unknown subject <%1%>\n")
+		           % uri.c_str());
 		return;
 	}
 
@@ -345,8 +339,8 @@ ClientStore::delta(const Raul::URI&            uri,
 		obj->remove_properties(remove);
 		obj->add_properties(add);
 	} else {
-		LOG(Raul::warn)(Raul::fmt("Failed to find object `%1%'\n")
-		                % path.c_str());
+		_log.warn(Raul::fmt("Failed to find object `%1%'\n")
+		          % path.c_str());
 	}
 }
 
@@ -356,8 +350,8 @@ ClientStore::set_property(const Raul::URI&  subject_uri,
                           const Raul::Atom& value)
 {
 	if (subject_uri == _uris.ingen_engine) {
-		LOG(Raul::info)(Raul::fmt("Engine property <%1%> = %2%\n")
-		                % predicate.c_str() % _uris.forge.str(value));
+		_log.info(Raul::fmt("Engine property <%1%> = %2%\n")
+		          % predicate.c_str() % _uris.forge.str(value));
 		return;
 	}
 	SharedPtr<Resource> subject = _resource(subject_uri);
@@ -374,8 +368,8 @@ ClientStore::set_property(const Raul::URI&  subject_uri,
 		if (plugin)
 			plugin->set_property(predicate, value);
 		else
-			LOG(Raul::warn)(Raul::fmt("Property <%1%> for unknown object %2%\n")
-			                % predicate.c_str() % subject_uri.c_str());
+			_log.warn(Raul::fmt("Property <%1%> for unknown object %2%\n")
+			          % predicate.c_str() % subject_uri.c_str());
 	}
 }
 
@@ -398,8 +392,8 @@ ClientStore::connection_patch(const Raul::Path& tail_path,
 		patch = PtrCast<PatchModel>(_object(tail_path.parent().parent()));
 
 	if (!patch)
-		LOG(Raul::error) << "Unable to find connection patch " << tail_path
-			<< " -> " << head_path << endl;
+		_log.error(Raul::fmt("Unable to find path for edge %1% => %2%\n")
+		           % tail_path % head_path);
 
 	return patch;
 }
@@ -421,8 +415,8 @@ ClientStore::attempt_connection(const Raul::Path& tail_path,
 		patch->add_edge(cm);
 		return true;
 	} else {
-		LOG(Raul::warn) << "Failed to connect " << tail_path
-		                << " => " << head_path << std::endl;
+		_log.warn(Raul::fmt("Failed to connect %1% => %2%\n")
+		          % tail_path % head_path);
 		return false;
 	}
 }
@@ -460,8 +454,8 @@ ClientStore::disconnect_all(const Raul::Path& parent_patch,
 	SharedPtr<ObjectModel> object = _object(path);
 
 	if (!patch || !object) {
-		LOG(Raul::error) << "Bad disconnect all notification " << path
-		                 << " in " << parent_patch << std::endl;
+		_log.error(Raul::fmt("Bad disconnect all notification %1% in %2%\n")
+		           % path % parent_patch);
 		return;
 	}
 

@@ -31,9 +31,9 @@ namespace Raul { class Atom; }
 
 namespace Ingen {
 
-class URIs;
-
 class GraphObject;
+class Log;
+class URIs;
 
 namespace Client {
 
@@ -54,6 +54,7 @@ class ClientStore : public Store
 public:
 	ClientStore(
 		URIs&                         uris,
+		Log&                          log,
 		SharedPtr<Interface>          engine  = SharedPtr<Interface>(),
 		SharedPtr<SigClientInterface> emitter = SharedPtr<SigClientInterface>());
 
@@ -127,6 +128,7 @@ private:
 	                        const Raul::Path& head_path);
 
 	URIs&                         _uris;
+	Log&                          _log;
 	SharedPtr<Interface>          _engine;
 	SharedPtr<SigClientInterface> _emitter;
 

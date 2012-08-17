@@ -28,9 +28,9 @@
 
 #include "ingen/Configuration.hpp"
 #include "ingen/LV2Features.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
-#include "raul/log.hpp"
 
 #include "Buffer.hpp"
 #include "DuplexPort.hpp"
@@ -40,8 +40,6 @@
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
 #include "util.hpp"
-
-#define LOG(s) (s("[JackDriver] "))
 
 using namespace std;
 
@@ -83,7 +81,7 @@ JackDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(),
 			                           JackSessionID, NULL,
 			                           uuid.c_str());
-			LOG(Raul::info)(Raul::fmt("Connected to JACK as `%1%' (UUID `%2%')\n")
+			_engine.log().info(Raul::fmt("Connected to JACK as `%1%' (UUID `%2%')\n")
 			                % client_name.c_str() % uuid);
 		}
 #endif
@@ -93,7 +91,7 @@ JackDriver::attach(const std::string& server_name,
 			if ((_client = jack_client_open(client_name.c_str(),
 			                                JackServerName, NULL,
 			                                server_name.c_str()))) {
-				LOG(Raul::info)(Raul::fmt("Connected to JACK server `%1%'\n")
+				_engine.log().info(Raul::fmt("Connected to JACK server `%1%'\n")
 				                % server_name);
 			}
 		}
@@ -102,12 +100,12 @@ JackDriver::attach(const std::string& server_name,
 		// Connect to default server
 		if (!_client) {
 			if ((_client = jack_client_open(client_name.c_str(), JackNullOption, NULL)))
-				LOG(Raul::info)("Connected to default JACK server\n");
+				_engine.log().info("Connected to default JACK server\n");
 		}
 
 		// Still failed
 		if (!_client) {
-			LOG(Raul::error)("Unable to connect to Jack\n");
+			_engine.log().error("Unable to connect to Jack\n");
 			return false;
 		}
 	} else {
@@ -138,7 +136,7 @@ JackDriver::activate()
 	World* world = _engine.world();
 
 	if (_is_activated) {
-		LOG(Raul::warn)("Jack driver already activated\n");
+		_engine.log().warn("Jack driver already activated\n");
 		return;
 	}
 
@@ -151,10 +149,10 @@ JackDriver::activate()
 	_is_activated = true;
 
 	if (jack_activate(_client)) {
-		LOG(Raul::error)("Could not activate Jack client, aborting\n");
+		_engine.log().error("Could not activate Jack client, aborting\n");
 		exit(EXIT_FAILURE);
 	} else {
-		LOG(Raul::info)("Activated Jack client\n");
+		_engine.log().info("Activated Jack client\n");
 	}
 }
 
@@ -176,7 +174,7 @@ JackDriver::deactivate()
 			_client = NULL;
 		}
 
-		LOG(Raul::info)("Deactivated Jack client\n");
+		_engine.log().info("Deactivated Jack client\n");
 	}
 }
 
@@ -227,7 +225,7 @@ void
 JackDriver::unregister_port(EnginePort& port)
 {
 	if (jack_port_unregister(_client, (jack_port_t*)port.handle())) {
-		LOG(Raul::error)("Failed to unregister Jack port\n");
+		_engine.log().error("Failed to unregister Jack port\n");
 	}
 }
 
@@ -293,7 +291,7 @@ JackDriver::pre_process_port(ProcessContext& context, EnginePort* port)
 
 			if (!patch_buf->append_event(
 				    ev.time, ev.size, _midi_event_type, ev.buffer)) {
-				LOG(Raul::warn)("Failed to write to MIDI buffer, events lost!\n");
+				_engine.log().warn("Failed to write to MIDI buffer, events lost!\n");
 			}
 		}
 	}
@@ -382,7 +380,7 @@ JackDriver::_thread_init_cb()
 void
 JackDriver::_shutdown_cb()
 {
-	LOG(Raul::info)("Jack shutdown, exiting\n");
+	_engine.log().info("Jack shutdown, exiting\n");
 	_is_activated = false;
 	_client = NULL;
 }
@@ -403,7 +401,7 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 void
 JackDriver::_session_cb(jack_session_event_t* event)
 {
-	LOG(Raul::info)(Raul::fmt("Jack session save to %1%\n") % event->session_dir);
+	_engine.log().info(Raul::fmt("Jack session save to %1%\n") % event->session_dir);
 
 	const string cmd = (boost::format("ingen -eg -n %1% -u %2% -l ${SESSION_DIR}")
 	                    % jack_get_client_name(_client)
@@ -423,7 +421,7 @@ JackDriver::_session_cb(jack_session_event_t* event)
 	case JackSessionSave:
 		break;
 	case JackSessionSaveAndQuit:
-		LOG(Raul::warn)("Jack session quit\n");
+		_engine.log().warn("Jack session quit\n");
 		_engine.quit();
 		break;
 	case JackSessionSaveTemplate:

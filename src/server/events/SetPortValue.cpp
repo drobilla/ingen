@@ -18,7 +18,6 @@
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "raul/log.hpp"
 
 #include "Broadcaster.hpp"
 #include "Buffer.hpp"

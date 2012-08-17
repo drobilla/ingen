@@ -16,15 +16,16 @@
 
 #include <cassert>
 #include <fstream>
-#include "raul/log.hpp"
+
 #include "ingen/Interface.hpp"
 #include "ingen/client/PatchModel.hpp"
+
 #include "App.hpp"
-#include "PatchView.hpp"
-#include "PatchCanvas.hpp"
 #include "LoadPluginWindow.hpp"
 #include "NewSubpatchWindow.hpp"
+#include "PatchCanvas.hpp"
 #include "PatchTreeWindow.hpp"
+#include "PatchView.hpp"
 #include "WidgetFactory.hpp"
 
 using namespace std;
@@ -192,14 +193,10 @@ PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 	if (predicate == _app->uris().ingen_enabled) {
 		if (value.type() == _app->uris().forge.Bool) {
 			_process_but->set_active(value.get_bool());
-		} else {
-			Raul::warn << "Bad type for ingen:enabled: " << value.type() << endl;
 		}
 	} else if (predicate == _app->uris().ingen_polyphony) {
 		if (value.type() == _app->uris().forge.Int) {
 			_poly_spin->set_value(value.get_int32());
-		} else {
-			Raul::warn << "Bad type for ingen:polyphony: " << value.type() << endl;
 		}
 	}
 	_enable_signal = true;

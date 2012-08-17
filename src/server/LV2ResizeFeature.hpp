@@ -19,7 +19,6 @@
 
 #include "ingen/LV2Features.hpp"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
-#include "raul/log.hpp"
 
 #include "NodeImpl.hpp"
 #include "PortImpl.hpp"

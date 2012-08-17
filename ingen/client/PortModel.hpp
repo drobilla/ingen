@@ -21,7 +21,6 @@
 #include <string>
 
 #include "raul/SharedPtr.hpp"
-#include "raul/log.hpp"
 
 #include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"

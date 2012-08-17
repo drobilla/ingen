@@ -28,7 +28,7 @@ namespace Raul { class Path; }
 
 namespace Ingen {
 
-namespace Client { class ClientStore; }
+namespace Client { class ClientStore; class ObjectModel; }
 
 namespace GUI {
 

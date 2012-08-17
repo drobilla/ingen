@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
-#include "raul/log.hpp"
 
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
@@ -112,7 +112,7 @@ BufferFactory::get(LV2_URID type,
 			return create(type, capacity);
 		} else {
 			assert(false);
-			Raul::error << "Failed to obtain buffer" << std::endl;
+			_engine.world()->log().error("Failed to obtain buffer");
 			return BufferRef();
 		}
 	}

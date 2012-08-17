@@ -19,9 +19,10 @@
 
 #include <sstream>
 
-#include "ingen/Interface.hpp"
 #include "ingen/AtomReader.hpp"
 #include "ingen/Configuration.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
@@ -30,8 +31,6 @@
 #include "../server/EventWriter.hpp"
 #include "SocketListener.hpp"
 #include "SocketServer.hpp"
-
-#define LOG(s) s << "[SocketListener] "
 
 namespace Ingen {
 namespace Socket {
@@ -46,7 +45,7 @@ SocketListener::SocketListener(Ingen::World& world)
 	_unix_path = world.conf().option("socket").get_string();
 	const Raul::URI unix_uri("unix://" + _unix_path);
 	if (!_unix_sock.bind(unix_uri) || !_unix_sock.listen()) {
-		LOG(Raul::error) << "Failed to create UNIX socket" << std::endl;
+		_world.log().error("Failed to create UNIX socket\n");
 		_unix_sock.close();
 	}
 
@@ -56,7 +55,7 @@ SocketListener::SocketListener(Ingen::World& world)
 	ss << "tcp://localhost:";
 	ss << port;
 	if (!_net_sock.bind(Raul::URI(ss.str())) || !_net_sock.listen()) {
-		LOG(Raul::error) << "Failed to create TCP socket" << std::endl;
+		_world.log().error("Failed to create TCP socket\n");
 		_net_sock.close();
 	}
 
@@ -100,10 +99,10 @@ SocketListener::_run()
 		if (_exit_flag) {
 			break;
 		} else if (ret == -1) {
-			LOG(Raul::error) << "Poll error: " << strerror(errno) << std::endl;
+			_world.log().error(Raul::fmt("Poll error: %1%\n") % strerror(errno));
 			break;
 		} else if (ret == 0) {
-			LOG(Raul::error) << "Poll returned with no data" << std::endl;
+			_world.log().error("Poll returned with no data\n");
 			continue;
 		}
 

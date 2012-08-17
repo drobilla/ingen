@@ -24,8 +24,6 @@
 #include <glibmm/module.h>
 #include <glibmm/miscutils.h>
 
-#include "raul/log.hpp"
-
 #include "ingen/runtime_paths.hpp"
 
 #include "ingen_config.h"
@@ -52,8 +50,6 @@ set_bundle_path_from_code(void* function)
 #else
 	const char* bin_loc = dli.dli_fname;
 #endif
-
-	Raul::info(Raul::fmt("Binary location: %1%\n") % bin_loc);
 
 	string bundle = bin_loc;
 	bundle = bundle.substr(0, bundle.find_last_of(G_DIR_SEPARATOR));

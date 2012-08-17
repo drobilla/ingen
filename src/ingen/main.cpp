@@ -26,7 +26,7 @@
 #include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
-#include "raul/log.hpp"
+#include "raul/fmt.hpp"
 
 #include "ingen_config.h"
 
@@ -79,7 +79,7 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = new Ingen::World(argc, argv, NULL, NULL);
+		world = new Ingen::World(argc, argv, NULL, NULL, NULL);
 		if (argc <= 1) {
 			world->conf().print_usage("ingen", cout);
 			return EXIT_FAILURE;
@@ -204,7 +204,6 @@ main(int argc, char** argv)
 		while (world->engine()->main_iteration()) {
 			Glib::usleep(125000);  // 1/8 second
 		}
-		Raul::info("Finished main loop\n");
 	}
 
 	// Shut down

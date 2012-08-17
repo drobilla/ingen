@@ -22,10 +22,10 @@
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 
-#include "raul/log.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
 
+#include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 
@@ -36,6 +36,7 @@
 #include "LV2Node.hpp"
 #include "LV2Plugin.hpp"
 #include "OutputPort.hpp"
+#include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
 
 using namespace std;
@@ -77,8 +78,9 @@ LV2Node::make_instance(URIs&      uris,
 		_lv2_plugin->lilv_plugin(), rate, _features->array());
 
 	if (!inst) {
-		Raul::error(Raul::fmt("Failed to instantiate <%1%>\n")
-		            % _lv2_plugin->uri().c_str());
+		parent_patch()->engine().log().error(
+			Raul::fmt("Failed to instantiate <%1%>\n")
+			% _lv2_plugin->uri().c_str());
 		return SharedPtr<LilvInstance>();
 	}
 
@@ -91,7 +93,6 @@ LV2Node::make_instance(URIs&      uris,
 			? port->prepared_buffer(voice).get()
 			: port->buffer(voice).get();
 		if (port->is_morph() && port->is_a(PortType::CV)) {
-			//Raul::info(Raul::fmt("Morphing %1% to CV\n") % port->path());
 			if (morph_iface) {
 				morph_iface->morph_port(
 					inst->lv2_handle, p, uris.lv2_CVPort, NULL);
@@ -115,15 +116,12 @@ LV2Node::make_instance(URIs&      uris,
 					inst->lv2_handle, p, NULL);
 				if (type == _uris.lv2_ControlPort) {
 					port->set_type(PortType::CONTROL, 0);
-					/*Raul::info(Raul::fmt("Auto-morphed %1% to control\n")
-					  % port->path());*/
 				} else if (type == _uris.lv2_CVPort) {
 					port->set_type(PortType::CV, 0);
-					/*Raul::info(Raul::fmt("Auto-morphed %1% to CV\n")
-					  % port->path());*/
 				} else {
-					Raul::error(Raul::fmt("%1% auto-morphed to unknown type %2%\n")
-					            % port->path().c_str() % type);
+					parent_patch()->engine().log().error(
+						Raul::fmt("%1% auto-morphed to unknown type %2%\n")
+						% port->path().c_str() % type);
 					return SharedPtr<LilvInstance>();
 				}
 			}
@@ -293,8 +291,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 			}
 			lilv_nodes_free(sizes);
 
-			Raul::info(Raul::fmt("Atom port %1% buffer size %2%\n")
-			           % path().c_str() % port_buffer_size);
+			bufs.engine().log().info(
+				Raul::fmt("Atom port %1% buffer size %2%\n")
+				% path().c_str() % port_buffer_size);
 		}
 
 		enum { UNKNOWN, INPUT, OUTPUT } direction = UNKNOWN;
@@ -305,8 +304,9 @@ LV2Node::instantiate(BufferFactory& bufs)
 		}
 
 		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
-			Raul::error(Raul::fmt("<%1%> port %2% has unknown type or direction\n")
-			            % _lv2_plugin->uri().c_str() % port_sym.c_str());
+			parent_patch()->engine().log().error(
+				Raul::fmt("<%1%> port %2% has unknown type or direction\n")
+				% _lv2_plugin->uri().c_str() % port_sym.c_str());
 			ret = false;
 			break;
 		}
@@ -422,8 +422,8 @@ LV2Node::work(uint32_t size, const void* data)
 	if (_worker_iface) {
 		LV2_Handle inst = lilv_instance_get_handle(instance(0));
 		if (_worker_iface->work(inst, work_respond, this, size, data)) {
-			Raul::error(Raul::fmt("Error calling %1% work method\n")
-			            % _path.c_str());
+			parent_patch()->engine().log().error(
+				Raul::fmt("Error calling %1% work method\n") % _path);
 		}
 	}
 }

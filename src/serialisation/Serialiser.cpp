@@ -29,21 +29,19 @@
 #include "ingen/Edge.hpp"
 #include "ingen/GraphObject.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Resource.hpp"
-#include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 #include "raul/Path.hpp"
-#include "raul/log.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
-
-#define LOG(s) s << "[Serialiser] "
 
 using namespace std;
 using namespace Sord;
@@ -254,8 +252,8 @@ Serialiser::Impl::finish()
 	if (_mode == TO_FILE) {
 		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
 		if (st) {
-			LOG(Raul::error) << "Error writing file `" << _base_uri << "' ("
-			                 << serd_strerror(st) << ")" << std::endl;
+			_world.log().error(Raul::fmt("Error writing file %1% (%2%)\n")
+			                   % _base_uri % serd_strerror(st));
 		}
 	} else {
 		ret = _model->write_to_string(_base_uri, SERD_TURTLE);
@@ -295,8 +293,8 @@ Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_err
 		                   Resource::DEFAULT,
 		                   me->path_rdf_node(object->path()));
 	} else {
-		LOG(Raul::warn) << "Unsupported object type, "
-		                << object->path() << " not serialised." << endl;
+		me->serialise_properties(me->path_rdf_node(object->path()),
+		                         object->properties());
 	}
 }
 
@@ -471,7 +469,7 @@ Serialiser::Impl::serialise_port(const GraphObject* port,
 		if (val.is_valid()) {
 			props.insert(make_pair(uris.lv2_default, val));
 		} else {
-			Raul::warn("Control input has no value, lv2:default omitted.\n");
+			_world.log().warn("Control input has no value, lv2:default omitted.\n");
 		}
 	}
 
