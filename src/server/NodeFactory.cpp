@@ -18,7 +18,6 @@
 
 #include "lilv/lilv.h"
 
-#include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
@@ -121,7 +120,6 @@ NodeFactory::load_lv2_plugins()
 		const Raul::URI uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
 
 		if (_plugins.find(uri) != _plugins.end()) {
-			_world->log().warn(Raul::fmt("Already discovered <%s>\n") % uri);
 			continue;
 		}
 

@@ -130,6 +130,8 @@ public:
 	LV2_Atom*       atom()       { return _atom; }
 	const LV2_Atom* atom() const { return _atom; }
 
+	void set_capacity(uint32_t capacity) { _capacity = capacity; }
+
 	inline void ref() { ++_refs; }
 
 	inline void deref() {

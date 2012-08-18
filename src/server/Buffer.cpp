@@ -91,7 +91,11 @@ Buffer::clear()
 		_atom->size = _capacity - sizeof(LV2_Atom);
 		set_block(0, 0, nframes());
 	} else if (is_sequence()) {
-		_atom->size = sizeof(LV2_Atom_Sequence_Body);
+		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_atom;
+		_atom->type    = _factory.uris().atom_Sequence;
+		_atom->size    = sizeof(LV2_Atom_Sequence_Body);
+		seq->body.unit = 0;
+		seq->body.pad  = 0;
 	}
 }
 

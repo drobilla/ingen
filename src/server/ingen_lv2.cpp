@@ -102,6 +102,7 @@ public:
 		, _from_ui(block_length * sizeof(float))  // FIXME: size
 		, _to_ui(block_length * sizeof(float))  // FIXME: size
 		, _root_patch(NULL)
+		, _notify_capacity(0)
 		, _block_length(block_length)
 		, _sample_rate(sample_rate)
 		, _frame_time(0)
@@ -165,7 +166,9 @@ public:
 			       context.nframes() * sizeof(float));
 		} else if (patch_port->is_a(PortType::CONTROL)) {
 			((float*)buffer)[0] = patch_buf->samples()[0];
-		} else {
+		} else if (patch_port->index() != 1) {
+			/* Copy Sequence output to LV2 buffer, except notify output which
+			   is written by flush_to_ui() (TODO: merge) */
 			memcpy(buffer,
 			       patch_buf->atom(),
 			       sizeof(LV2_Atom) + patch_buf->atom()->size);
@@ -174,6 +177,9 @@ public:
 
 	void run(uint32_t nframes) {
 		_engine.process_context().locate(_frame_time, nframes);
+
+		// Notify buffer is a Chunk with size set to the available space
+		_notify_capacity = ((LV2_Atom_Sequence*)_ports[1]->buffer())->atom.size;
 
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 			pre_process_port(_engine.process_context(), *i);
@@ -184,7 +190,7 @@ public:
 			_main_sem.post();
 		}
 
-		flush_to_ui();
+		flush_to_ui(_engine.process_context());
 
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 			post_process_port(_engine.process_context(), *i);
@@ -211,8 +217,16 @@ public:
 		return NULL;
 	}
 
-	/** Unused since LV2 has no dynamic ports. */
-	virtual void add_port(ProcessContext& context, EnginePort* port) {}
+	/** This does not have to be real-time since LV2 has no dynamic ports.
+	 * It is only called on initial load.
+	 */
+	virtual void add_port(ProcessContext& context, EnginePort* port) {
+		const uint32_t index = port->patch_port()->index();
+		if (_ports.size() <= index) {
+			_ports.resize(index + 1);
+		}
+		_ports[index] = port;
+	}
 
 	/** Unused since LV2 has no dynamic ports. */
 	virtual void remove_port(ProcessContext& context, EnginePort* port) {}
@@ -280,17 +294,14 @@ public:
 		free(buf);
 	}
 
-	void flush_to_ui() {
+	void flush_to_ui(ProcessContext& context) {
 		assert(_ports.size() >= 2);
 
 		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_ports[1]->buffer();
 		if (!seq) {
-			_engine.log().error("Control out port not connected\n");
+			_engine.log().error("Notify output not connected\n");
 			return;
 		}
-
-		// Output port buffer is a Chunk with size set to the available space
-		const uint32_t capacity = seq->atom.size;
 
 		// Initialise output port buffer to an empty Sequence
 		seq->atom.type = _engine.world()->uris().atom_Sequence;
@@ -304,7 +315,8 @@ public:
 				break;
 			}
 
-			if (seq->atom.size + sizeof(LV2_Atom) + atom.size > capacity) {
+			if (seq->atom.size + sizeof(LV2_Atom) + atom.size > _notify_capacity) {
+				std::cerr << "Notify overflow" << std::endl;
 				break;  // Output port buffer full, resume next time
 			}
 
@@ -348,6 +360,7 @@ private:
 	Raul::RingBuffer _from_ui;
 	Raul::RingBuffer _to_ui;
 	PatchImpl*       _root_patch;
+	uint32_t         _notify_capacity;
 	SampleCount      _block_length;
 	SampleCount      _sample_rate;
 	SampleCount      _frame_time;
@@ -576,8 +589,8 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 		assert(driver->ports().at(port)->patch_port()->index() == port);
 		assert(driver->ports().at(port)->buffer() == data);
 	} else {
-		engine->log().warn(Raul::fmt("Connect to non-existent port %1%\n")
-		                   % port);
+		engine->log().error(Raul::fmt("Connect to non-existent port %1%\n")
+		                    % port);
 	}
 }
 
