@@ -22,8 +22,8 @@
 #include <glibmm/miscutils.h>
 
 #include "ingen/Interface.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/NodeModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/runtime_paths.hpp"
 

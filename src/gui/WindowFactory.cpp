@@ -112,12 +112,12 @@ WindowFactory::patch_window(SharedPtr<const PatchModel> patch)
 }
 
 PatchWindow*
-WindowFactory::parent_patch_window(SharedPtr<const NodeModel> node)
+WindowFactory::parent_patch_window(SharedPtr<const BlockModel> block)
 {
-	if (!node)
+	if (!block)
 		return NULL;
 
-	return patch_window(PtrCast<PatchModel>(node->parent()));
+	return patch_window(PtrCast<PatchModel>(block->parent()));
 }
 
 /** Present a PatchWindow for a Patch.

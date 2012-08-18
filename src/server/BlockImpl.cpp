@@ -21,7 +21,7 @@
 
 #include "Buffer.hpp"
 #include "Engine.hpp"
-#include "NodeImpl.hpp"
+#include "BlockImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
@@ -33,11 +33,11 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-NodeImpl::NodeImpl(PluginImpl*         plugin,
-                   const Raul::Symbol& symbol,
-                   bool                polyphonic,
-                   PatchImpl*          parent,
-                   SampleRate          srate)
+BlockImpl::BlockImpl(PluginImpl*         plugin,
+                     const Raul::Symbol& symbol,
+                     bool                polyphonic,
+                     PatchImpl*          parent,
+                     SampleRate          srate)
 	: GraphObjectImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
 	, _ports(NULL)
@@ -51,33 +51,33 @@ NodeImpl::NodeImpl(PluginImpl*         plugin,
 	assert(_polyphony > 0);
 }
 
-NodeImpl::~NodeImpl()
+BlockImpl::~BlockImpl()
 {
 	if (_activated) {
 		deactivate();
 	}
 
 	if (is_linked()) {
-		parent_patch()->remove_node(*this);
+		parent_patch()->remove_block(*this);
 	}
 
 	delete _ports;
 }
 
 GraphObject*
-NodeImpl::port(uint32_t index) const
+BlockImpl::port(uint32_t index) const
 {
 	return (*_ports)[index];
 }
 
 const Plugin*
-NodeImpl::plugin() const
+BlockImpl::plugin() const
 {
 	return _plugin;
 }
 
 void
-NodeImpl::activate(BufferFactory& bufs)
+BlockImpl::activate(BufferFactory& bufs)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
@@ -91,7 +91,7 @@ NodeImpl::activate(BufferFactory& bufs)
 }
 
 void
-NodeImpl::deactivate()
+BlockImpl::deactivate()
 {
 	_activated = false;
 	for (uint32_t i = 0; i < _polyphony; ++i) {
@@ -104,7 +104,7 @@ NodeImpl::deactivate()
 }
 
 bool
-NodeImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
+BlockImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
@@ -119,7 +119,7 @@ NodeImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-NodeImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
+BlockImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic)
 		poly = 1;
@@ -134,10 +134,10 @@ NodeImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 }
 
 void
-NodeImpl::set_buffer_size(Context&       context,
-                          BufferFactory& bufs,
-                          LV2_URID       type,
-                          uint32_t       size)
+BlockImpl::set_buffer_size(Context&       context,
+                           BufferFactory& bufs,
+                           LV2_URID       type,
+                           uint32_t       size)
 {
 	if (_ports) {
 		for (uint32_t i = 0; i < _ports->size(); ++i) {
@@ -152,7 +152,7 @@ NodeImpl::set_buffer_size(Context&       context,
 /** Prepare to run a cycle (in the audio thread)
  */
 void
-NodeImpl::pre_process(ProcessContext& context)
+BlockImpl::pre_process(ProcessContext& context)
 {
 	// Mix down input ports
 	for (uint32_t i = 0; i < num_ports(); ++i) {
@@ -165,7 +165,7 @@ NodeImpl::pre_process(ProcessContext& context)
 /** Prepare to run a cycle (in the audio thread)
  */
 void
-NodeImpl::post_process(ProcessContext& context)
+BlockImpl::post_process(ProcessContext& context)
 {
 	// Write output ports
 	for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
@@ -174,9 +174,9 @@ NodeImpl::post_process(ProcessContext& context)
 }
 
 void
-NodeImpl::set_port_buffer(uint32_t  voice,
-                          uint32_t  port_num,
-                          BufferRef buf)
+BlockImpl::set_port_buffer(uint32_t  voice,
+                           uint32_t  port_num,
+                           BufferRef buf)
 {
 	/*std::cout << path() << " set port " << port_num << " voice " << voice
 	  << " buffer " << buf << " offset " << offset << std::endl;*/

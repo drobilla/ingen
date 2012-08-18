@@ -26,7 +26,7 @@
 
 #include "InternalPlugin.hpp"
 #include "LV2Plugin.hpp"
-#include "NodeFactory.hpp"
+#include "BlockFactory.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -36,7 +36,7 @@ namespace Server {
 
 using namespace Internals;
 
-NodeFactory::NodeFactory(Ingen::World* world)
+BlockFactory::BlockFactory(Ingen::World* world)
 	: _world(world)
 	, _lv2_info(new LV2Info(world))
 	, _has_loaded(false)
@@ -44,7 +44,7 @@ NodeFactory::NodeFactory(Ingen::World* world)
 	load_internal_plugins();
 }
 
-NodeFactory::~NodeFactory()
+BlockFactory::~BlockFactory()
 {
 	for (Plugins::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
 		delete i->second;
@@ -52,8 +52,8 @@ NodeFactory::~NodeFactory()
 	_plugins.clear();
 }
 
-const NodeFactory::Plugins&
-NodeFactory::plugins()
+const BlockFactory::Plugins&
+BlockFactory::plugins()
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	if (!_has_loaded) {
@@ -66,7 +66,7 @@ NodeFactory::plugins()
 }
 
 PluginImpl*
-NodeFactory::plugin(const Raul::URI& uri)
+BlockFactory::plugin(const Raul::URI& uri)
 {
 	load_plugin(uri);
 	const Plugins::const_iterator i = _plugins.find(uri);
@@ -74,7 +74,7 @@ NodeFactory::plugin(const Raul::URI& uri)
 }
 
 void
-NodeFactory::load_internal_plugins()
+BlockFactory::load_internal_plugins()
 {
 	Ingen::URIs& uris = _world->uris();
 	InternalPlugin* controller_plug = ControllerNode::internal_plugin(uris);
@@ -91,7 +91,7 @@ NodeFactory::load_internal_plugins()
 }
 
 void
-NodeFactory::load_plugin(const Raul::URI& uri)
+BlockFactory::load_plugin(const Raul::URI& uri)
 {
 	if (_has_loaded || _plugins.find(uri) != _plugins.end()) {
 		return;
@@ -111,7 +111,7 @@ NodeFactory::load_plugin(const Raul::URI& uri)
 /** Loads information about all LV2 plugins into internal plugin database.
  */
 void
-NodeFactory::load_lv2_plugins()
+BlockFactory::load_lv2_plugins()
 {
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());
 	LILV_FOREACH(plugins, i, plugins) {

@@ -70,15 +70,15 @@ Connect::pre_process()
 		return Event::pre_process_done(BAD_REQUEST, _head_path);
 	}
 
-	NodeImpl* const tail_node = tail_output->parent_node();
-	NodeImpl* const head_node = _head->parent_node();
-	if (!tail_node || !head_node) {
+	BlockImpl* const tail_block = tail_output->parent_block();
+	BlockImpl* const head_block = _head->parent_block();
+	if (!tail_block || !head_block) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path);
 	}
 
-	if (tail_node->parent() != head_node->parent()
-	    && tail_node != head_node->parent()
-	    && tail_node->parent() != head_node) {
+	if (tail_block->parent() != head_block->parent()
+	    && tail_block != head_block->parent()
+	    && tail_block->parent() != head_block) {
 		return Event::pre_process_done(PARENT_DIFFERS, _head_path);
 	}
 
@@ -86,20 +86,20 @@ Connect::pre_process()
 		return Event::pre_process_done(TYPE_MISMATCH, _head_path);
 	}
 
-	if (tail_node->parent_patch() != head_node->parent_patch()) {
+	if (tail_block->parent_patch() != head_block->parent_patch()) {
 		// Edge to a patch port from inside the patch
-		assert(tail_node->parent() == head_node || head_node->parent() == tail_node);
-		if (tail_node->parent() == head_node) {
-			_patch = dynamic_cast<PatchImpl*>(head_node);
+		assert(tail_block->parent() == head_block || head_block->parent() == tail_block);
+		if (tail_block->parent() == head_block) {
+			_patch = dynamic_cast<PatchImpl*>(head_block);
 		} else {
-			_patch = dynamic_cast<PatchImpl*>(tail_node);
+			_patch = dynamic_cast<PatchImpl*>(tail_block);
 		}
-	} else if (tail_node == head_node && dynamic_cast<PatchImpl*>(tail_node)) {
+	} else if (tail_block == head_block && dynamic_cast<PatchImpl*>(tail_block)) {
 		// Edge from a patch input to a patch output (pass through)
-		_patch = dynamic_cast<PatchImpl*>(tail_node);
+		_patch = dynamic_cast<PatchImpl*>(tail_block);
 	} else {
-		// Normal edge between nodes with the same parent
-		_patch = tail_node->parent_patch();
+		// Normal edge between blocks with the same parent
+		_patch = tail_block->parent_patch();
 	}
 
 	if (_patch->has_edge(tail_output, _head)) {
@@ -114,12 +114,12 @@ Connect::pre_process()
 		Glib::RWLock::ReaderLock wlock(_engine.store()->lock());
 
 		/* Need to be careful about patch port edges here and adding a
-		   node's parent as a dependant/provider, or adding a patch as its own
+		   block's parent as a dependant/provider, or adding a patch as its own
 		   provider...
 		*/
-		if (tail_node != head_node && tail_node->parent() == head_node->parent()) {
-			head_node->providers().push_back(tail_node);
-			tail_node->dependants().push_back(head_node);
+		if (tail_block != head_block && tail_block->parent() == head_block->parent()) {
+			head_block->providers().push_back(tail_block);
+			tail_block->dependants().push_back(head_block);
 		}
 
 		_patch->add_edge(_edge);

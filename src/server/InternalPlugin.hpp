@@ -29,7 +29,7 @@
 namespace Ingen {
 namespace Server {
 
-class NodeImpl;
+class BlockImpl;
 class BufferFactory;
 
 /** Implementation of an Internal plugin.
@@ -41,11 +41,11 @@ public:
 	               const Raul::URI&    uri,
 	               const Raul::Symbol& symbol);
 
-	NodeImpl* instantiate(BufferFactory&      bufs,
-	                      const Raul::Symbol& symbol,
-	                      bool                polyphonic,
-	                      PatchImpl*          parent,
-	                      Engine&             engine);
+	BlockImpl* instantiate(BufferFactory&      bufs,
+	                       const Raul::Symbol& symbol,
+	                       bool                polyphonic,
+	                       PatchImpl*          parent,
+	                       Engine&             engine);
 
 	const Raul::Symbol symbol() const { return _symbol; }
 

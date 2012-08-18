@@ -432,7 +432,7 @@ find_patches(const Glib::ustring& manifest_uri)
 	const Sord::URI  rdf_type    (world, NS_RDF   "type");
 	const Sord::URI  rdfs_seeAlso(world, NS_RDFS  "seeAlso");
 
-	SerdEnv*    env = serd_env_new(sord_node_to_serd_node(base.c_obj()));
+	SerdEnv* env = serd_env_new(sord_node_to_serd_node(base.c_obj()));
 	Sord::Model model(world, manifest_uri);
 	model.load_file(env, SERD_TURTLE, manifest_uri);
 

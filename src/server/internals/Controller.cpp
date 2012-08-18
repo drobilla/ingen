@@ -47,7 +47,7 @@ ControllerNode::ControllerNode(InternalPlugin*     plugin,
                                bool                polyphonic,
                                PatchImpl*          parent,
                                SampleRate          srate)
-	: NodeImpl(plugin, symbol, false, parent, srate)
+	: BlockImpl(plugin, symbol, false, parent, srate)
 	, _learning(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
@@ -91,7 +91,7 @@ ControllerNode::ControllerNode(InternalPlugin*     plugin,
 void
 ControllerNode::process(ProcessContext& context)
 {
-	NodeImpl::pre_process(context);
+	BlockImpl::pre_process(context);
 
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
 	LV2_Atom_Sequence* seq     = (LV2_Atom_Sequence*)midi_in->atom();
@@ -104,7 +104,7 @@ ControllerNode::process(ProcessContext& context)
 		}
 	}
 
-	NodeImpl::post_process(context);
+	BlockImpl::post_process(context);
 }
 
 void

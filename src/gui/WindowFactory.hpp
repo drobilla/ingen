@@ -25,9 +25,9 @@
 namespace Ingen {
 
 namespace Client {
-class PatchModel;
-class NodeModel;
+class BlockModel;
 class ObjectModel;
+class PatchModel;
 }
 
 namespace GUI {
@@ -57,7 +57,7 @@ public:
 
 	PatchBox*    patch_box(SharedPtr<const Client::PatchModel> patch);
 	PatchWindow* patch_window(SharedPtr<const Client::PatchModel> patch);
-	PatchWindow* parent_patch_window(SharedPtr<const Client::NodeModel> node);
+	PatchWindow* parent_patch_window(SharedPtr<const Client::BlockModel> block);
 
 	void present_patch(
 		SharedPtr<const Client::PatchModel> model,

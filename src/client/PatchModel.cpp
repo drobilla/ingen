@@ -18,7 +18,7 @@
 
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/EdgeModel.hpp"
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/URIs.hpp"
 
@@ -38,9 +38,10 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 		return;
 	}
 
-	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(c);
-	if (nm)
-		_signal_new_node.emit(nm);
+	SharedPtr<BlockModel> bm = PtrCast<BlockModel>(c);
+	if (bm) {
+		_signal_new_block.emit(bm);
+	}
 }
 
 bool
@@ -72,9 +73,10 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 	if (pm)
 		remove_port(pm);
 
-	SharedPtr<NodeModel> nm = PtrCast<NodeModel>(o);
-	if (nm)
-		_signal_removed_node.emit(nm);
+	SharedPtr<BlockModel> bm = PtrCast<BlockModel>(o);
+	if (bm) {
+		_signal_removed_block.emit(bm);
+	}
 
 	return true;
 }
@@ -84,7 +86,7 @@ PatchModel::clear()
 {
 	_edges.clear();
 
-	NodeModel::clear();
+	BlockModel::clear();
 
 	assert(_edges.empty());
 	assert(_ports.empty());

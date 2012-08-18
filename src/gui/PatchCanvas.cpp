@@ -30,7 +30,7 @@
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
@@ -123,10 +123,10 @@ PatchCanvas::PatchCanvas(App&                        app,
 		sigc::mem_fun(this, &PatchCanvas::disconnect));
 
 	// Connect to model signals to track state
-	_patch->signal_new_node().connect(
-		sigc::mem_fun(this, &PatchCanvas::add_node));
-	_patch->signal_removed_node().connect(
-		sigc::mem_fun(this, &PatchCanvas::remove_node));
+	_patch->signal_new_block().connect(
+		sigc::mem_fun(this, &PatchCanvas::add_block));
+	_patch->signal_removed_block().connect(
+		sigc::mem_fun(this, &PatchCanvas::remove_block));
 	_patch->signal_new_port().connect(
 		sigc::mem_fun(this, &PatchCanvas::add_port));
 	_patch->signal_removed_port().connect(
@@ -289,15 +289,15 @@ PatchCanvas::build()
 {
 	const Store::const_range kids = _app.store()->children_range(_patch);
 
-	// Create modules for nodes
+	// Create modules for blocks
 	for (Store::const_iterator i = kids.first; i != kids.second; ++i) {
-		SharedPtr<NodeModel> node = PtrCast<NodeModel>(i->second);
-		if (node && node->parent() == _patch)
-			add_node(node);
+		SharedPtr<BlockModel> block = PtrCast<BlockModel>(i->second);
+		if (block && block->parent() == _patch)
+			add_block(block);
 	}
 
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
-	for (NodeModel::Ports::const_iterator i = _patch->ports().begin();
+	for (BlockModel::Ports::const_iterator i = _patch->ports().begin();
 	     i != _patch->ports().end(); ++i) {
 		add_port(*i);
 	}
@@ -392,30 +392,30 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 }
 
 void
-PatchCanvas::add_node(SharedPtr<const NodeModel> nm)
+PatchCanvas::add_block(SharedPtr<const BlockModel> bm)
 {
-	SharedPtr<const PatchModel> pm = PtrCast<const PatchModel>(nm);
+	SharedPtr<const PatchModel> pm = PtrCast<const PatchModel>(bm);
 	NodeModule*                 module;
 	if (pm) {
 		module = SubpatchModule::create(*this, pm, _human_names);
 	} else {
-		module = NodeModule::create(*this, nm, _human_names);
+		module = NodeModule::create(*this, bm, _human_names);
 		//const PluginModel* plugm = dynamic_cast<const PluginModel*>(nm->plugin());
 		//if (plugm && !plugm->icon_path().empty())
 		//	module->set_icon(_app.icon_from_path(plugm->icon_path(), 100).operator->());
 	}
 
 	module->show();
-	_views.insert(std::make_pair(nm, module));
-	if (_pastees.find(nm->path()) != _pastees.end()) {
+	_views.insert(std::make_pair(bm, module));
+	if (_pastees.find(bm->path()) != _pastees.end()) {
 		module->set_selected(true);
 	}
 }
 
 void
-PatchCanvas::remove_node(SharedPtr<const NodeModel> nm)
+PatchCanvas::remove_block(SharedPtr<const BlockModel> bm)
 {
-	Views::iterator i = _views.find(nm);
+	Views::iterator i = _views.find(bm);
 
 	if (i != _views.end()) {
 		const guint n_ports = i->second->num_ports();
@@ -617,7 +617,7 @@ destroy_node(GanvNode* node, void* data)
 	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
 
 	if (node_module) {
-		app->interface()->del(node_module->node()->uri());
+		app->interface()->del(node_module->block()->uri());
 	} else {
 		PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(module);
 		if (port_module) {
@@ -656,7 +656,7 @@ serialise_node(GanvNode* node, void* data)
 	NodeModule*   node_module = dynamic_cast<NodeModule*>(module);
 
 	if (node_module) {
-		serialiser->serialise(node_module->node());
+		serialiser->serialise(node_module->block());
 	} else {
 		PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(module);
 		if (port_module) {
@@ -828,7 +828,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	if (!plugin)
 		return;
 
-	Raul::Symbol symbol = plugin->default_node_symbol();
+	Raul::Symbol symbol = plugin->default_block_symbol();
 	unsigned offset = _app.store()->child_name_offset(_patch->path(), symbol);
 	if (offset != 0) {
 		std::stringstream ss;
@@ -841,7 +841,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 
 	// FIXME: polyphony?
 	GraphObject::Properties props = get_initial_data();
-	props.insert(make_pair(uris.rdf_type, uris.ingen_Node));
+	props.insert(make_pair(uris.rdf_type, uris.ingen_Block));
 	props.insert(make_pair(uris.ingen_prototype,
 	                       uris.forge.alloc_uri(plugin->uri())));
 	_app.interface()->put(GraphObject::path_to_uri(path), props);

@@ -24,9 +24,8 @@
 
 namespace Ingen { namespace Client {
 	class PatchModel;
-	class NodeModel;
-	class PortModel;
 	class PatchWindow;
+	class PortModel;
 } }
 
 namespace Ingen {

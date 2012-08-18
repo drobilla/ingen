@@ -27,42 +27,42 @@ namespace Ingen {
 namespace Server {
 
 class EdgeImpl;
-class NodeImpl;
+class BlockImpl;
 
-/** All information required about a node to execute it in an audio thread.
+/** All information required about a block to execute it in an audio thread.
  */
-class CompiledNode {
+class CompiledBlock {
 public:
-	CompiledNode(NodeImpl* n, size_t np, const std::list<NodeImpl*>& d)
-		: _node(n), _n_providers(np)
+	CompiledBlock(BlockImpl* b, size_t np, const std::list<BlockImpl*>& d)
+		: _block(b), _n_providers(np)
 	{
 		// Copy to a vector for maximum iteration speed and cache optimization
 		// (Need to take a copy anyway)
 
 		_dependants.reserve(d.size());
-		for (std::list<NodeImpl*>::const_iterator i = d.begin(); i != d.end(); ++i)
+		for (std::list<BlockImpl*>::const_iterator i = d.begin(); i != d.end(); ++i)
 			_dependants.push_back(*i);
 	}
 
-	NodeImpl*                     node()        const { return _node; }
-	size_t                        n_providers() const { return _n_providers; }
-	const std::vector<NodeImpl*>& dependants()  const { return _dependants; }
+	BlockImpl*                     block()       const { return _block; }
+	size_t                         n_providers() const { return _n_providers; }
+	const std::vector<BlockImpl*>& dependants()  const { return _dependants; }
 
 private:
-	NodeImpl*              _node;
-	size_t                 _n_providers; ///< Number of input ready signals to trigger run
-	std::vector<NodeImpl*> _dependants; ///< Nodes this one's output ports are connected to
+	BlockImpl*              _block;
+	size_t                  _n_providers; ///< Number of input ready signals to trigger run
+	std::vector<BlockImpl*> _dependants; ///< Blocks this one's output ports are connected to
 };
 
 /** A patch ``compiled'' into a flat structure with the correct order so
  * the audio thread(s) can execute it without threading problems (since
  * the preprocessor thread modifies the graph).
  *
- * The nodes contained here are sorted in the order they must be executed.
- * The parallel processing algorithm guarantees no node will be executed
+ * The blocks contained here are sorted in the order they must be executed.
+ * The parallel processing algorithm guarantees no block will be executed
  * before its providers, using this order as well as semaphores.
  */
-class CompiledPatch : public std::vector<CompiledNode>
+class CompiledPatch : public std::vector<CompiledBlock>
                     , public Raul::Disposable
                     , public Raul::Noncopyable
 {

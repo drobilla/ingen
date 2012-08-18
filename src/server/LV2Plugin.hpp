@@ -30,7 +30,7 @@ namespace Ingen {
 namespace Server {
 
 class PatchImpl;
-class NodeImpl;
+class BlockImpl;
 
 /** Implementation of an LV2 plugin (loaded shared library).
  */
@@ -39,11 +39,11 @@ class LV2Plugin : public PluginImpl
 public:
 	LV2Plugin(SharedPtr<LV2Info> lv2_info, const Raul::URI& uri);
 
-	NodeImpl* instantiate(BufferFactory&      bufs,
-	                      const Raul::Symbol& symbol,
-	                      bool                polyphonic,
-	                      PatchImpl*          parent,
-	                      Engine&             engine);
+	BlockImpl* instantiate(BufferFactory&      bufs,
+	                       const Raul::Symbol& symbol,
+	                       bool                polyphonic,
+	                       PatchImpl*          parent,
+	                       Engine&             engine);
 
 	const Raul::Symbol symbol() const;
 

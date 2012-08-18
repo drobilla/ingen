@@ -19,12 +19,12 @@
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 
+#include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "Buffer.hpp"
 #include "ControlBindings.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "SetPortValue.hpp"
@@ -71,7 +71,7 @@ SetPortValue::execute(ProcessContext& context)
 {
 	assert(_time >= context.start() && _time <= context.end());
 
-	if (_port->parent_node()->context() == Context::MESSAGE)
+	if (_port->parent_block()->context() == Context::MESSAGE)
 		return;
 
 	apply(context);

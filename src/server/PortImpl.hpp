@@ -33,14 +33,10 @@ namespace Raul { class Maid; }
 namespace Ingen {
 namespace Server {
 
-class NodeImpl;
+class BlockImpl;
 class BufferFactory;
 
-/** A port on a Node.
- *
- * This is a non-template abstract base class, which basically exists so
- * things can pass around Port pointers and not have to worry about type,
- * templates, etc.
+/** A port (input or output) on a Block.
  *
  * \ingroup engine
  */
@@ -51,8 +47,8 @@ public:
 
 	virtual GraphType graph_type() const { return PORT; }
 
-	/** A port's parent is always a node, so static cast should be safe */
-	NodeImpl* parent_node() const { return (NodeImpl*)_parent; }
+	/** A port's parent is always a block, so static cast should be safe */
+	BlockImpl* parent_block() const { return (BlockImpl*)_parent; }
 
 	/** Set the buffers array for this port.
 	 *
@@ -175,7 +171,7 @@ public:
 
 protected:
 	PortImpl(BufferFactory&      bufs,
-	         NodeImpl*           node,
+	         BlockImpl*          block,
 	         const Raul::Symbol& name,
 	         uint32_t            index,
 	         uint32_t            poly,

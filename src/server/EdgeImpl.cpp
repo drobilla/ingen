@@ -17,29 +17,27 @@
 #include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
+#include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
-#include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
 
 namespace Ingen {
 namespace Server {
 
-/** Constructor for a edge from a node's output port.
+/** Constructor for a edge from a block's output port.
  *
- * This handles both polyphonic and monophonic nodes, transparently to the
+ * This handles both polyphonic and monophonic blocks, transparently to the
  * user (InputPort).
  */
 EdgeImpl::EdgeImpl(PortImpl* tail, PortImpl* head)
 	: _tail(tail)
 	, _head(head)
 {
-	assert(tail);
-	assert(head);
 	assert(tail != head);
 	assert(tail->path() != head->path());
 }

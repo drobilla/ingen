@@ -32,11 +32,11 @@ namespace Server {
 
 class EdgeImpl;
 class Context;
-class NodeImpl;
+class BlockImpl;
 class OutputPort;
 class ProcessContext;
 
-/** An input port on a Node or Patch.
+/** An input port on a Block or Patch.
  *
  * All ports have a Buffer, but the actual contents (data) of that buffer may be
  * set directly to the incoming edge's buffer if there's only one inbound
@@ -51,7 +51,7 @@ class InputPort : virtual public PortImpl
 {
 public:
 	InputPort(BufferFactory&      bufs,
-	          NodeImpl*           parent,
+	          BlockImpl*          parent,
 	          const Raul::Symbol& symbol,
 	          uint32_t            index,
 	          uint32_t            poly,

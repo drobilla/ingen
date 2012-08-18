@@ -147,7 +147,7 @@ private:
 	bool              _refresh_list;
 	Gtk::TreeView*    _plugins_treeview;
 	Gtk::CheckButton* _polyphonic_checkbutton;
-	Gtk::Entry*       _node_name_entry;
+	Gtk::Entry*       _name_entry;
 	Gtk::Button*      _close_button;
 	Gtk::Button*      _add_button;
 	Gtk::ComboBox*    _filter_combo;

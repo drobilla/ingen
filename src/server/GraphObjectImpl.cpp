@@ -45,7 +45,7 @@ GraphObjectImpl::get_property(const Raul::URI& key) const
 PatchImpl*
 GraphObjectImpl::parent_patch() const
 {
-	return dynamic_cast<PatchImpl*>((NodeImpl*)_parent);
+	return dynamic_cast<PatchImpl*>((BlockImpl*)_parent);
 }
 
 } // namespace Server

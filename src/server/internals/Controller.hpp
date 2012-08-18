@@ -17,7 +17,7 @@
 #ifndef INGEN_INTERNALS_CONTROLLER_HPP
 #define INGEN_INTERNALS_CONTROLLER_HPP
 
-#include "NodeImpl.hpp"
+#include "BlockImpl.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -28,14 +28,14 @@ class InternalPlugin;
 
 namespace Internals {
 
-/** MIDI control input node.
+/** MIDI control input block.
  *
  * Creating one of these nodes is how a user makes "MIDI Bindings".  Note that
  * this node will always be monophonic, the poly parameter is ignored.
  *
  * \ingroup engine
  */
-class ControllerNode : public NodeImpl
+class ControllerNode : public BlockImpl
 {
 public:
 	ControllerNode(InternalPlugin*     plugin,

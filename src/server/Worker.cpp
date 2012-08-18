@@ -20,7 +20,7 @@
 
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "LV2Node.hpp"
+#include "LV2Block.hpp"
 #include "PatchImpl.hpp"
 #include "Worker.hpp"
 
@@ -29,8 +29,8 @@ namespace Server {
 
 /// A message in the Worker::_requests ring
 struct MessageHeader {
-	LV2Node* node;  ///< Node this message is from
-	uint32_t size;  ///< Size of following data
+	LV2Block* block;  ///< Node this message is from
+	uint32_t  size;  ///< Size of following data
 	// `size' bytes of data follow here
 };
 
@@ -39,25 +39,25 @@ schedule(LV2_Worker_Schedule_Handle handle,
          uint32_t                   size,
          const void*                data)
 {
-	LV2Node* node   = (LV2Node*)handle;
-	Engine&  engine = node->parent_patch()->engine();
-	Worker*  worker = engine.worker();
+	LV2Block* block  = (LV2Block*)handle;
+	Engine&   engine = block->parent_patch()->engine();
+	Worker*   worker = engine.worker();
 
-	return worker->request(node, size, data);
+	return worker->request(block, size, data);
 }
 
 LV2_Worker_Status
-Worker::request(LV2Node*    node,
+Worker::request(LV2Block*   block,
                 uint32_t    size,
                 const void* data)
 {
-	Engine& engine = node->parent_patch()->engine();
+	Engine& engine = block->parent_patch()->engine();
 	if (_requests.write_space() < sizeof(MessageHeader) + size) {
 		engine.log().error("Work request ring overflow\n");
 		return LV2_WORKER_ERR_NO_SPACE;
 	}
 
-	const MessageHeader msg = { node, size };
+	const MessageHeader msg = { block, size };
 	if (_requests.write(sizeof(msg), &msg) != sizeof(msg)) {
 		engine.log().error("Error writing header to work request ring\n");
 		return LV2_WORKER_ERR_UNKNOWN;
@@ -82,14 +82,14 @@ delete_feature(LV2_Feature* feature)
 SharedPtr<LV2_Feature>
 Worker::Schedule::feature(World* world, GraphObject* n)
 {
-	LV2Node* node = dynamic_cast<LV2Node*>(n);
-	if (!node) {
+	LV2Block* block = dynamic_cast<LV2Block*>(n);
+	if (!block) {
 		return SharedPtr<LV2_Feature>();
 	}
 
 	LV2_Worker_Schedule* data = (LV2_Worker_Schedule*)malloc(
 		sizeof(LV2_Worker_Schedule));
-	data->handle        = node;
+	data->handle        = block;
 	data->schedule_work = schedule;
 
 	LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
@@ -139,7 +139,7 @@ Worker::_run()
 				continue;
 			}
 
-			msg.node->work(msg.size, _buffer);
+			msg.block->work(msg.size, _buffer);
 		}
 	}
 }

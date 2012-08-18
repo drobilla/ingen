@@ -19,11 +19,11 @@
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
 
+#include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EnginePort.hpp"
-#include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "events/Move.hpp"
 

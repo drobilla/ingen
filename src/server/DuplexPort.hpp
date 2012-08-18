@@ -26,14 +26,14 @@
 namespace Ingen {
 namespace Server {
 
-class NodeImpl;
+class BlockImpl;
 
 /** A duplex Port (both an InputPort and an OutputPort on a Patch)
  *
  * This is used for Patch ports, since they need to appear as both an input and
  * an output port based on context.  There are no actual duplex ports in Ingen,
  * a Port is either an Input or Output.  This class only exists to allow Patch
- * outputs to appear as inputs to Nodes inside that patch, and vice versa.
+ * outputs to appear as inputs from within that Patch, and vice versa.
  *
  * \ingroup engine
  */
@@ -43,7 +43,7 @@ class DuplexPort : public InputPort
 {
 public:
 	DuplexPort(BufferFactory&      bufs,
-	           NodeImpl*           parent,
+	           BlockImpl*          parent,
 	           const Raul::Symbol& symbol,
 	           uint32_t            index,
 	           bool                polyphonic,

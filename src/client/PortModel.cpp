@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PortModel.hpp"
 
 namespace Ingen {

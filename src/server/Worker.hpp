@@ -29,7 +29,7 @@ class Log;
 
 namespace Server {
 
-class LV2Node;
+class LV2Block;
 
 class Worker : public Raul::Thread
 {
@@ -41,7 +41,7 @@ public:
 		SharedPtr<LV2_Feature> feature(World* world, GraphObject* n);
 	};
 
-	LV2_Worker_Status request(LV2Node*    node,
+	LV2_Worker_Status request(LV2Block*   block,
 	                          uint32_t    size,
 	                          const void* data);
 

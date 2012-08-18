@@ -64,8 +64,8 @@ public:
 	bool show_port_names() const { return _show_port_names; }
 
 	void add_plugin(SharedPtr<Client::PluginModel> pm);
-	void add_node(SharedPtr<const Client::NodeModel> nm);
-	void remove_node(SharedPtr<const Client::NodeModel> nm);
+	void add_block(SharedPtr<const Client::BlockModel> bm);
+	void remove_block(SharedPtr<const Client::BlockModel> bm);
 	void add_port(SharedPtr<const Client::PortModel> pm);
 	void remove_port(SharedPtr<const Client::PortModel> pm);
 	void connection(SharedPtr<const Client::EdgeModel> cm);

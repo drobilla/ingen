@@ -17,7 +17,7 @@
 #include "ingen/Log.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/EdgeModel.hpp"
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PluginModel.hpp"
@@ -223,9 +223,9 @@ ClientStore::put(const Raul::URI&            uri,
 	std::cerr << "}" << endl;
 #endif
 
-	bool is_patch, is_node, is_port, is_output;
+	bool is_patch, is_block, is_port, is_output;
 	Resource::type(uris(), properties,
-	               is_patch, is_node, is_port, is_output);
+	               is_patch, is_block, is_port, is_output);
 
 	// Check if uri is a plugin
 	Iterator t = properties.find(_uris.rdf_type);
@@ -265,7 +265,7 @@ ClientStore::put(const Raul::URI&            uri,
 		SharedPtr<PatchModel> model(new PatchModel(uris(), path));
 		model->set_properties(properties);
 		add_object(model);
-	} else if (is_node) {
+	} else if (is_block) {
 		const Iterator p = properties.find(_uris.ingen_prototype);
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == _uris.forge.URI) {
@@ -280,11 +280,11 @@ ClientStore::put(const Raul::URI&            uri,
 				add_plugin(plug);
 			}
 
-			SharedPtr<NodeModel> n(new NodeModel(uris(), plug, path));
-			n->set_properties(properties);
-			add_object(n);
+			SharedPtr<BlockModel> bm(new BlockModel(uris(), plug, path));
+			bm->set_properties(properties);
+			add_object(bm);
 		} else {
-			_log.warn(Raul::fmt("Node %1% has no plugin\n")
+			_log.warn(Raul::fmt("Block %1% has no plugin\n")
 			          % path.c_str());
 		}
 	} else if (is_port) {

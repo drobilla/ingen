@@ -20,7 +20,7 @@
 
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "LV2Node.hpp"
+#include "LV2Block.hpp"
 #include "LV2Plugin.hpp"
 
 using namespace std;
@@ -56,21 +56,21 @@ LV2Plugin::symbol() const
 	return Raul::Symbol("lv2_symbol");
 }
 
-NodeImpl*
+BlockImpl*
 LV2Plugin::instantiate(BufferFactory&      bufs,
                        const Raul::Symbol& symbol,
                        bool                polyphonic,
                        PatchImpl*          parent,
                        Engine&             engine)
 {
-	LV2Node* n = new LV2Node(
+	LV2Block* b = new LV2Block(
 		this, symbol, polyphonic, parent, engine.driver()->sample_rate());
 
-	if (!n->instantiate(bufs)) {
-		delete n;
+	if (!b->instantiate(bufs)) {
+		delete b;
 		return NULL;
 	} else {
-		return n;
+		return b;
 	}
 }
 

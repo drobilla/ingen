@@ -20,12 +20,12 @@
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 
+#include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
-#include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
@@ -37,7 +37,7 @@ namespace Ingen {
 namespace Server {
 
 InputPort::InputPort(BufferFactory&      bufs,
-                     NodeImpl*           parent,
+                     BlockImpl*          parent,
                      const Raul::Symbol& symbol,
                      uint32_t            index,
                      uint32_t            poly,
@@ -159,7 +159,7 @@ InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 uint32_t
 InputPort::max_tail_poly(Context& context) const
 {
-	return parent_node()->parent_patch()->internal_poly_process();
+	return parent_block()->parent_patch()->internal_poly_process();
 }
 
 static void

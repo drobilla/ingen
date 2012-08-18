@@ -23,7 +23,7 @@
 namespace Ingen {
 namespace Server {
 
-class NodeImpl;
+class BlockImpl;
 
 /** Implementation of a Patch plugin.
  *
@@ -39,11 +39,11 @@ public:
 		: PluginImpl(uris, Plugin::Patch, uri)
 	{}
 
-	NodeImpl* instantiate(BufferFactory&      bufs,
-	                      const Raul::Symbol& symbol,
-	                      bool                polyphonic,
-	                      PatchImpl*          parent,
-	                      Engine&             engine)
+	BlockImpl* instantiate(BufferFactory&      bufs,
+	                       const Raul::Symbol& symbol,
+	                       bool                polyphonic,
+	                       PatchImpl*          parent,
+	                       Engine&             engine)
 	{
 		return NULL;
 	}

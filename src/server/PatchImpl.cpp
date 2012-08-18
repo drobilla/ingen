@@ -20,11 +20,11 @@
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 
+#include "BlockImpl.hpp"
 #include "BufferFactory.hpp"
-#include "EdgeImpl.hpp"
 #include "DuplexPort.hpp"
+#include "EdgeImpl.hpp"
 #include "Engine.hpp"
-#include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PatchPlugin.hpp"
 #include "PortImpl.hpp"
@@ -41,10 +41,10 @@ PatchImpl::PatchImpl(Engine&             engine,
                      PatchImpl*          parent,
                      SampleRate          srate,
                      uint32_t            internal_poly)
-	: NodeImpl(new PatchPlugin(engine.world()->uris(),
-	                           engine.world()->uris().ingen_Patch,
-	                           Raul::Symbol("patch"),
-	                           "Ingen Patch"),
+	: BlockImpl(new PatchPlugin(engine.world()->uris(),
+	                            engine.world()->uris().ingen_Patch,
+	                            Raul::Symbol("patch"),
+	                            "Ingen Patch"),
 	           symbol, poly, parent, srate)
 	, _engine(engine)
 	, _poly_pre(internal_poly)
@@ -65,9 +65,9 @@ PatchImpl::~PatchImpl()
 void
 PatchImpl::activate(BufferFactory& bufs)
 {
-	NodeImpl::activate(bufs);
+	BlockImpl::activate(bufs);
 
-	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		i->activate(bufs);
 	}
 
@@ -78,9 +78,9 @@ void
 PatchImpl::deactivate()
 {
 	if (_activated) {
-		NodeImpl::deactivate();
+		BlockImpl::deactivate();
 
-		for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+		for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 			if (i->activated()) {
 				i->deactivate();
 			}
@@ -104,7 +104,7 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 
 	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
 
-	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		i->prepare_poly(bufs, poly);
 	}
 
@@ -120,11 +120,11 @@ PatchImpl::apply_internal_poly(ProcessContext& context,
 {
 	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
 
-	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		i->apply_poly(context, maid, poly);
 	}
 
-	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		for (uint32_t j = 0; j < i->num_ports(); ++j) {
 			PortImpl* const port = i->port_impl(j);
 			if (port->is_input() && dynamic_cast<InputPort*>(port)->direct_connect())
@@ -143,7 +143,7 @@ PatchImpl::apply_internal_poly(ProcessContext& context,
 
 /** Run the patch for the specified number of frames.
  *
- * Calls all Nodes in (roughly, if parallel) the order _compiled_patch specifies.
+ * Calls all Blocks in (roughly, if parallel) the order _compiled_patch specifies.
  */
 void
 PatchImpl::process(ProcessContext& context)
@@ -151,16 +151,16 @@ PatchImpl::process(ProcessContext& context)
 	if (!_process)
 		return;
 
-	NodeImpl::pre_process(context);
+	BlockImpl::pre_process(context);
 
 	if (_compiled_patch && _compiled_patch->size() > 0) {
-		// Run all nodes
+		// Run all blocks
 		for (size_t i = 0; i < _compiled_patch->size(); ++i) {
-			(*_compiled_patch)[i].node()->process(context);
+			(*_compiled_patch)[i].block()->process(context);
 		}
 	}
 
-	NodeImpl::post_process(context);
+	BlockImpl::post_process(context);
 }
 
 void
@@ -169,31 +169,31 @@ PatchImpl::set_buffer_size(Context&       context,
                            LV2_URID       type,
                            uint32_t       size)
 {
-	NodeImpl::set_buffer_size(context, bufs, type, size);
+	BlockImpl::set_buffer_size(context, bufs, type, size);
 
 	for (size_t i = 0; i < _compiled_patch->size(); ++i)
-		(*_compiled_patch)[i].node()->set_buffer_size(context, bufs, type, size);
+		(*_compiled_patch)[i].block()->set_buffer_size(context, bufs, type, size);
 }
 
 // Patch specific stuff
 
-/** Add a node.
+/** Add a block.
  * Preprocessing thread only.
  */
 void
-PatchImpl::add_node(NodeImpl& node)
+PatchImpl::add_block(BlockImpl& block)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	_nodes.push_front(node);
+	_blocks.push_front(block);
 }
 
-/** Remove a node.
+/** Remove a block.
  * Preprocessing thread only.
  */
 void
-PatchImpl::remove_node(NodeImpl& node)
+PatchImpl::remove_block(BlockImpl& block)
 {
-	_nodes.erase(_nodes.iterator_to(node));
+	_blocks.erase(_blocks.iterator_to(block));
 }
 
 void
@@ -317,7 +317,7 @@ PatchImpl::build_ports_array()
 }
 
 static inline void
-compile_recursive(NodeImpl* n, CompiledPatch* output)
+compile_recursive(BlockImpl* n, CompiledPatch* output)
 {
 	if (n == NULL || n->traversed())
 		return;
@@ -325,12 +325,12 @@ compile_recursive(NodeImpl* n, CompiledPatch* output)
 	n->traversed(true);
 	assert(output != NULL);
 
-	for (std::list<NodeImpl*>::iterator i = n->providers().begin();
+	for (std::list<BlockImpl*>::iterator i = n->providers().begin();
 	     i != n->providers().end(); ++i)
 		if (!(*i)->traversed())
 			compile_recursive(*i, output);
 
-	output->push_back(CompiledNode(n, n->providers().size(), n->dependants()));
+	output->push_back(CompiledBlock(n, n->providers().size(), n->dependants()));
 }
 
 /** Find the process order for this Patch.
@@ -350,25 +350,25 @@ PatchImpl::compile()
 
 	CompiledPatch* const compiled_patch = new CompiledPatch();
 
-	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		i->traversed(false);
 	}
 
-	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		// Either a sink or connected to our output ports:
 		if (!i->traversed() && i->dependants().empty()) {
 			compile_recursive(&*i, compiled_patch);
 		}
 	}
 
-	// Traverse any nodes we didn't hit yet
-	for (Nodes::iterator i = _nodes.begin(); i != _nodes.end(); ++i) {
+	// Traverse any blocks we didn't hit yet
+	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		if (!i->traversed()) {
 			compile_recursive(&*i, compiled_patch);
 		}
 	}
 
-	if (compiled_patch->size() != _nodes.size()) {
+	if (compiled_patch->size() != _blocks.size()) {
 		_engine.log().error(Raul::fmt("Failed to compile patch %1%\n") % _path);
 		delete compiled_patch;
 		return NULL;

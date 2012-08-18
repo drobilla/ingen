@@ -21,7 +21,7 @@
 
 #include "Broadcaster.hpp"
 #include "PluginImpl.hpp"
-#include "NodeFactory.hpp"
+#include "BlockFactory.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -64,7 +64,7 @@ Broadcaster::client(const Raul::URI& uri)
 }
 
 void
-Broadcaster::send_plugins(const NodeFactory::Plugins& plugins)
+Broadcaster::send_plugins(const BlockFactory::Plugins& plugins)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c) {
@@ -73,12 +73,12 @@ Broadcaster::send_plugins(const NodeFactory::Plugins& plugins)
 }
 
 void
-Broadcaster::send_plugins_to(Interface*                  client,
-                             const NodeFactory::Plugins& plugins)
+Broadcaster::send_plugins_to(Interface*                   client,
+                             const BlockFactory::Plugins& plugins)
 {
 	client->bundle_begin();
 
-	for (NodeFactory::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
+	for (BlockFactory::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
 		const PluginImpl* const plugin = i->second;
 		client->put(plugin->uri(), plugin->properties());
 	}

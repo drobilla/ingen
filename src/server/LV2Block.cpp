@@ -33,7 +33,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
-#include "LV2Node.hpp"
+#include "LV2Block.hpp"
 #include "LV2Plugin.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
@@ -44,17 +44,17 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-/** Partially construct a LV2Node.
+/** Partially construct a LV2Block.
  *
  * Object is not usable until instantiate() is called with success.
  * (It _will_ crash!)
  */
-LV2Node::LV2Node(LV2Plugin*          plugin,
-                 const Raul::Symbol& symbol,
-                 bool                polyphonic,
-                 PatchImpl*          parent,
-                 SampleRate          srate)
-	: NodeImpl(plugin, symbol, polyphonic, parent, srate)
+LV2Block::LV2Block(LV2Plugin*          plugin,
+                   const Raul::Symbol& symbol,
+                   bool                polyphonic,
+                   PatchImpl*          parent,
+                   SampleRate          srate)
+: BlockImpl(plugin, symbol, polyphonic, parent, srate)
 	, _lv2_plugin(plugin)
 	, _instances(NULL)
 	, _prepared_instances(NULL)
@@ -63,16 +63,16 @@ LV2Node::LV2Node(LV2Plugin*          plugin,
 	assert(_lv2_plugin);
 }
 
-LV2Node::~LV2Node()
+LV2Block::~LV2Block()
 {
 	delete _instances;
 }
 
 SharedPtr<LilvInstance>
-LV2Node::make_instance(URIs&      uris,
-                       SampleRate rate,
-                       uint32_t   voice,
-                       bool       preparing)
+LV2Block::make_instance(URIs&      uris,
+                        SampleRate rate,
+                        uint32_t   voice,
+                        bool       preparing)
 {
 	LilvInstance* inst = lilv_plugin_instantiate(
 		_lv2_plugin->lilv_plugin(), rate, _features->array());
@@ -132,12 +132,12 @@ LV2Node::make_instance(URIs&      uris,
 }
 
 bool
-LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
+LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	if (!_polyphonic)
 		poly = 1;
 
-	NodeImpl::prepare_poly(bufs, poly);
+	BlockImpl::prepare_poly(bufs, poly);
 
 	if (_polyphony == poly)
 		return true;
@@ -162,7 +162,7 @@ LV2Node::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-LV2Node::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
+LV2Block::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic)
 		poly = 1;
@@ -174,7 +174,7 @@ LV2Node::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	}
 	assert(poly <= _instances->size());
 
-	return NodeImpl::apply_poly(context, maid, poly);
+	return BlockImpl::apply_poly(context, maid, poly);
 }
 
 /** Instantiate self from LV2 plugin descriptor.
@@ -186,7 +186,7 @@ LV2Node::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
  * value is false, this object may not be used.
  */
 bool
-LV2Node::instantiate(BufferFactory& bufs)
+LV2Block::instantiate(BufferFactory& bufs)
 {
 	const Ingen::URIs& uris      = bufs.uris();
 	SharedPtr<LV2Info> info      = _lv2_plugin->lv2_info();
@@ -388,36 +388,36 @@ LV2Node::instantiate(BufferFactory& bufs)
 }
 
 void
-LV2Node::activate(BufferFactory& bufs)
+LV2Block::activate(BufferFactory& bufs)
 {
-	NodeImpl::activate(bufs);
+	BlockImpl::activate(bufs);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		lilv_instance_activate(instance(i));
 }
 
 void
-LV2Node::deactivate()
+LV2Block::deactivate()
 {
-	NodeImpl::deactivate();
+	BlockImpl::deactivate();
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		lilv_instance_deactivate(instance(i));
 }
 
 LV2_Worker_Status
-LV2Node::work_respond(LV2_Worker_Respond_Handle handle,
-                      uint32_t                  size,
-                      const void*               data)
+LV2Block::work_respond(LV2_Worker_Respond_Handle handle,
+                       uint32_t                  size,
+                       const void*               data)
 {
-	LV2Node* node = (LV2Node*)handle;
-	LV2Node::Response* r = new LV2Node::Response(size, data);
-	node->_responses.push_back(*r);
+	LV2Block* block = (LV2Block*)handle;
+	LV2Block::Response* r = new LV2Block::Response(size, data);
+	block->_responses.push_back(*r);
 	return LV2_WORKER_SUCCESS;
 }
 
 void
-LV2Node::work(uint32_t size, const void* data)
+LV2Block::work(uint32_t size, const void* data)
 {
 	if (_worker_iface) {
 		LV2_Handle inst = lilv_instance_get_handle(instance(0));
@@ -429,9 +429,9 @@ LV2Node::work(uint32_t size, const void* data)
 }
 
 void
-LV2Node::process(ProcessContext& context)
+LV2Block::process(ProcessContext& context)
 {
-	NodeImpl::pre_process(context);
+	BlockImpl::pre_process(context);
 
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		lilv_instance_run(instance(i), context.nframes());
@@ -450,18 +450,18 @@ LV2Node::process(ProcessContext& context)
 		}
 	}
 
-	NodeImpl::post_process(context);
+	BlockImpl::post_process(context);
 }
 
 void
-LV2Node::set_port_buffer(uint32_t    voice,
-                         uint32_t    port_num,
-                         BufferRef   buf)
+LV2Block::set_port_buffer(uint32_t    voice,
+                          uint32_t    port_num,
+                          BufferRef   buf)
 {
-	NodeImpl::set_port_buffer(voice, port_num, buf);
+	BlockImpl::set_port_buffer(voice, port_num, buf);
 	lilv_instance_connect_port(
 		instance(voice), port_num,
-	    buf ? buf->port_data(_ports->at(port_num)->type()) : NULL);
+		buf ? buf->port_data(_ports->at(port_num)->type()) : NULL);
 }
 
 } // namespace Server

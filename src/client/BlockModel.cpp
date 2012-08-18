@@ -18,16 +18,16 @@
 #include <cmath>
 #include <string>
 
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 
 namespace Ingen {
 namespace Client {
 
-NodeModel::NodeModel(URIs&                  uris,
-                     SharedPtr<PluginModel> plugin,
-                     const Raul::Path&      path)
+BlockModel::BlockModel(URIs&                  uris,
+                       SharedPtr<PluginModel> plugin,
+                       const Raul::Path&      path)
 	: ObjectModel(uris, path)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
@@ -37,9 +37,9 @@ NodeModel::NodeModel(URIs&                  uris,
 {
 }
 
-NodeModel::NodeModel(URIs&             uris,
-                     const Raul::URI&  plugin_uri,
-                     const Raul::Path& path)
+BlockModel::BlockModel(URIs&             uris,
+                       const Raul::URI&  plugin_uri,
+                       const Raul::Path& path)
 	: ObjectModel(uris, path)
 	, _plugin_uri(plugin_uri)
 	, _num_values(0)
@@ -48,7 +48,7 @@ NodeModel::NodeModel(URIs&             uris,
 {
 }
 
-NodeModel::NodeModel(const NodeModel& copy)
+BlockModel::BlockModel(const BlockModel& copy)
 	: ObjectModel(copy)
 	, _plugin_uri(copy._plugin_uri)
 	, _num_values(copy._num_values)
@@ -59,13 +59,13 @@ NodeModel::NodeModel(const NodeModel& copy)
 	memcpy(_max_values, copy._max_values, sizeof(float) * _num_values);
 }
 
-NodeModel::~NodeModel()
+BlockModel::~BlockModel()
 {
 	clear();
 }
 
 void
-NodeModel::remove_port(SharedPtr<PortModel> port)
+BlockModel::remove_port(SharedPtr<PortModel> port)
 {
 	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i) == port) {
@@ -77,7 +77,7 @@ NodeModel::remove_port(SharedPtr<PortModel> port)
 }
 
 void
-NodeModel::remove_port(const Raul::Path& port_path)
+BlockModel::remove_port(const Raul::Path& port_path)
 {
 	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i)->path() == port_path) {
@@ -88,7 +88,7 @@ NodeModel::remove_port(const Raul::Path& port_path)
 }
 
 void
-NodeModel::clear()
+BlockModel::clear()
 {
 	_ports.clear();
 	assert(_ports.empty());
@@ -99,7 +99,7 @@ NodeModel::clear()
 }
 
 void
-NodeModel::add_child(SharedPtr<ObjectModel> c)
+BlockModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
 
@@ -111,7 +111,7 @@ NodeModel::add_child(SharedPtr<ObjectModel> c)
 }
 
 bool
-NodeModel::remove_child(SharedPtr<ObjectModel> c)
+BlockModel::remove_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->path().is_child_of(path()));
 	assert(c->parent().get() == this);
@@ -127,7 +127,7 @@ NodeModel::remove_child(SharedPtr<ObjectModel> c)
 }
 
 void
-NodeModel::add_port(SharedPtr<PortModel> pm)
+BlockModel::add_port(SharedPtr<PortModel> pm)
 {
 	assert(pm);
 	assert(pm->path().is_child_of(path()));
@@ -141,7 +141,7 @@ NodeModel::add_port(SharedPtr<PortModel> pm)
 }
 
 SharedPtr<const PortModel>
-NodeModel::get_port(const Raul::Symbol& symbol) const
+BlockModel::get_port(const Raul::Symbol& symbol) const
 {
 	for (Ports::const_iterator i = _ports.begin(); i != _ports.end(); ++i)
 		if ((*i)->symbol() == symbol)
@@ -150,7 +150,7 @@ NodeModel::get_port(const Raul::Symbol& symbol) const
 }
 
 Ingen::GraphObject*
-NodeModel::port(uint32_t index) const
+BlockModel::port(uint32_t index) const
 {
 	assert(index < num_ports());
 	return const_cast<Ingen::GraphObject*>(
@@ -158,10 +158,10 @@ NodeModel::port(uint32_t index) const
 }
 
 void
-NodeModel::default_port_value_range(SharedPtr<const PortModel> port,
-                                    float&                     min,
-                                    float&                     max,
-                                    uint32_t                   srate) const
+BlockModel::default_port_value_range(SharedPtr<const PortModel> port,
+                                     float&                     min,
+                                     float&                     max,
+                                     uint32_t                   srate) const
 {
 	// Default control values
 	min = 0.0;
@@ -174,7 +174,7 @@ NodeModel::default_port_value_range(SharedPtr<const PortModel> port,
 			_min_values = new float[_num_values];
 			_max_values = new float[_num_values];
 			lilv_plugin_get_port_ranges_float(_plugin->lilv_plugin(),
-					_min_values, _max_values, 0);
+			                                  _min_values, _max_values, 0);
 		}
 
 		if (!std::isnan(_min_values[port->index()]))
@@ -190,8 +190,8 @@ NodeModel::default_port_value_range(SharedPtr<const PortModel> port,
 }
 
 void
-NodeModel::port_value_range(SharedPtr<const PortModel> port,
-                            float& min, float& max, uint32_t srate) const
+BlockModel::port_value_range(SharedPtr<const PortModel> port,
+                             float& min, float& max, uint32_t srate) const
 {
 	assert(port->parent().get() == this);
 
@@ -215,7 +215,7 @@ NodeModel::port_value_range(SharedPtr<const PortModel> port,
 }
 
 std::string
-NodeModel::label() const
+BlockModel::label() const
 {
 	const Raul::Atom& name_property = get_property(_uris.lv2_name);
 	if (name_property.type() == _uris.forge.String) {
@@ -228,7 +228,7 @@ NodeModel::label() const
 }
 
 std::string
-NodeModel::port_label(SharedPtr<const PortModel> port) const
+BlockModel::port_label(SharedPtr<const PortModel> port) const
 {
 	const Raul::Atom& name = port->get_property(Raul::URI(LV2_CORE__name));
 	if (name.is_valid()) {
@@ -255,12 +255,12 @@ NodeModel::port_label(SharedPtr<const PortModel> port) const
 }
 
 void
-NodeModel::set(SharedPtr<ObjectModel> model)
+BlockModel::set(SharedPtr<ObjectModel> model)
 {
-	SharedPtr<NodeModel> node = PtrCast<NodeModel>(model);
-	if (node) {
-		_plugin_uri = node->_plugin_uri;
-		_plugin     = node->_plugin;
+	SharedPtr<BlockModel> block = PtrCast<BlockModel>(model);
+	if (block) {
+		_plugin_uri = block->_plugin_uri;
+		_plugin     = block->_plugin;
 	}
 
 	ObjectModel::set(model);

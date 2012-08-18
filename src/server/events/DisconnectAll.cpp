@@ -24,11 +24,11 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
+#include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
-#include "NodeImpl.hpp"
 #include "OutputPort.hpp"
 #include "PatchImpl.hpp"
 #include "PortImpl.hpp"
@@ -50,7 +50,7 @@ DisconnectAll::DisconnectAll(Engine&              engine,
 	, _parent_path(parent_path)
 	, _path(path)
 	, _parent(NULL)
-	, _node(NULL)
+	, _block(NULL)
 	, _port(NULL)
 	, _compiled_patch(NULL)
 	, _deleting(false)
@@ -66,7 +66,7 @@ DisconnectAll::DisconnectAll(Engine&      engine,
 	, _parent_path(parent->path())
 	, _path(object->path())
 	, _parent(parent)
-	, _node(dynamic_cast<NodeImpl*>(object))
+	, _block(dynamic_cast<BlockImpl*>(object))
 	, _port(dynamic_cast<PortImpl*>(object))
 	, _compiled_patch(NULL)
 	, _deleting(true)
@@ -104,10 +104,10 @@ DisconnectAll::pre_process()
 		}
 
 		// Only one of these will succeed
-		_node = dynamic_cast<NodeImpl*>(object);
-		_port = dynamic_cast<PortImpl*>(object);
+		_block = dynamic_cast<BlockImpl*>(object);
+		_port  = dynamic_cast<PortImpl*>(object);
 
-		assert((_node || _port) && !(_node && _port));
+		assert((_block || _port) && !(_block && _port));
 	}
 
 	// Find set of edges to remove
@@ -115,9 +115,9 @@ DisconnectAll::pre_process()
 	for (GraphObject::Edges::const_iterator i = _parent->edges().begin();
 	     i != _parent->edges().end(); ++i) {
 		EdgeImpl* const c = (EdgeImpl*)i->second.get();
-		if (_node) {
-			if (c->tail()->parent_node() == _node
-			    || c->head()->parent_node() == _node) {
+		if (_block) {
+			if (c->tail()->parent_block() == _block
+			    || c->head()->parent_block() == _block) {
 				to_remove.insert(c);
 			}
 		} else {
@@ -149,7 +149,7 @@ DisconnectAll::execute(ProcessContext& context)
 	if (_status == SUCCESS) {
 		for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i) {
 			(*i)->execute(context,
-			              !_deleting || ((*i)->head()->parent_node() != _node));
+			              !_deleting || ((*i)->head()->parent_block() != _block));
 		}
 	}
 

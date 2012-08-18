@@ -40,7 +40,7 @@ class ControlBindings;
 class Driver;
 class Event;
 class EventWriter;
-class NodeFactory;
+class BlockFactory;
 class PostProcessor;
 class PreProcessor;
 class ProcessContext;
@@ -92,12 +92,12 @@ public:
 	Ingen::World* world() const { return _world; }
 
 	EventWriter*     interface()        const { return _event_writer; }
+	BlockFactory*    block_factory()     const { return _block_factory; }
 	Broadcaster*     broadcaster()      const { return _broadcaster; }
 	BufferFactory*   buffer_factory()   const { return _buffer_factory; }
 	ControlBindings* control_bindings() const { return _control_bindings; }
 	Driver*          driver()           const { return _driver.get(); }
 	Log&             log()              const { return _world->log(); }
-	NodeFactory*     node_factory()     const { return _node_factory; }
 	PatchImpl*       root_patch()       const { return _root_patch; }
 	PostProcessor*   post_processor()   const { return _post_processor; }
 	Raul::Maid*      maid()             const { return _maid; }
@@ -112,12 +112,12 @@ public:
 private:
 	Ingen::World* _world;
 
+	BlockFactory*     _block_factory;
 	Broadcaster*      _broadcaster;
 	BufferFactory*    _buffer_factory;
 	ControlBindings*  _control_bindings;
 	SharedPtr<Driver> _driver;
 	Raul::Maid*       _maid;
-	NodeFactory*      _node_factory;
 	PreProcessor*     _pre_processor;
 	PostProcessor*    _post_processor;
 	EventWriter*      _event_writer;

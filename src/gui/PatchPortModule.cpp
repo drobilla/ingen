@@ -19,7 +19,7 @@
 #include <utility>
 
 #include "ingen/Interface.hpp"
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 
 #include "App.hpp"

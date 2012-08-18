@@ -32,14 +32,14 @@ class URIs;
 
 namespace Server {
 
-class PatchImpl;
-class NodeImpl;
-class Engine;
+class BlockImpl;
 class BufferFactory;
+class Engine;
+class PatchImpl;
 
 /** Implementation of a plugin (internal code, or a loaded shared library).
  *
- * Conceptually, a Node is an instance of this.
+ * Conceptually, a Block is an instance of this.
  */
 class PluginImpl : public Plugin
                  , public boost::noncopyable
@@ -52,11 +52,11 @@ public:
 		, _type(type)
 	{}
 
-	virtual NodeImpl* instantiate(BufferFactory&      bufs,
-	                              const Raul::Symbol& symbol,
-	                              bool                polyphonic,
-	                              PatchImpl*          parent,
-	                              Engine&            engine) = 0;
+	virtual BlockImpl* instantiate(BufferFactory&      bufs,
+	                               const Raul::Symbol& symbol,
+	                               bool                polyphonic,
+	                               PatchImpl*          parent,
+	                               Engine&            engine) = 0;
 
 	virtual const Raul::Symbol symbol() const = 0;
 

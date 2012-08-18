@@ -153,7 +153,7 @@ PluginModel::set(SharedPtr<PluginModel> p)
 }
 
 Raul::Symbol
-PluginModel::default_node_symbol() const
+PluginModel::default_block_symbol() const
 {
 	const Raul::Atom& name_atom = get_property(_uris.lv2_symbol);
 	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String)
@@ -169,7 +169,7 @@ PluginModel::human_name() const
 	if (name_atom.type() == _uris.forge.String)
 		return name_atom.get_string();
 	else
-		return default_node_symbol().c_str();
+		return default_block_symbol().c_str();
 }
 
 string
@@ -215,14 +215,14 @@ PluginModel::has_ui() const
 }
 
 SharedPtr<PluginUI>
-PluginModel::ui(Ingen::World*              world,
-                SharedPtr<const NodeModel> node) const
+PluginModel::ui(Ingen::World*               world,
+                SharedPtr<const BlockModel> block) const
 {
 	if (!_lilv_plugin) {
 		return SharedPtr<PluginUI>();
 	}
 
-	return PluginUI::create(world, node, _lilv_plugin);
+	return PluginUI::create(world, block, _lilv_plugin);
 }
 
 const string&

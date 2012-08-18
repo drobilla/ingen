@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_EVENTS_CREATENODE_HPP
-#define INGEN_EVENTS_CREATENODE_HPP
+#ifndef INGEN_EVENTS_CREATEBLOCK_HPP
+#define INGEN_EVENTS_CREATEBLOCK_HPP
 
 #include <list>
 #include <utility>
@@ -27,25 +27,25 @@
 namespace Ingen {
 namespace Server {
 
-class PatchImpl;
-class NodeImpl;
+class BlockImpl;
 class CompiledPatch;
+class PatchImpl;
 
 namespace Events {
 
-/** An event to load a Node and insert it into a Patch.
+/** An event to load a Block and insert it into a Patch.
  *
  * \ingroup engine
  */
-class CreateNode : public Event
+class CreateBlock : public Event
 {
 public:
-	CreateNode(Engine&                     engine,
-	           SharedPtr<Interface>        client,
-	           int32_t                     id,
-	           SampleCount                 timestamp,
-	           const Raul::Path&           node_path,
-	           const Resource::Properties& properties);
+	CreateBlock(Engine&                     engine,
+	            SharedPtr<Interface>        client,
+	            int32_t                     id,
+	            SampleCount                 timestamp,
+	            const Raul::Path&           block_path,
+	            const Resource::Properties& properties);
 
 	bool pre_process();
 	void execute(ProcessContext& context);
@@ -59,7 +59,7 @@ private:
 	Resource::Properties _properties;
 	Update               _update;
 	PatchImpl*           _patch;
-	NodeImpl*            _node;
+	BlockImpl*           _block;
 	CompiledPatch*       _compiled_patch;
 };
 
@@ -67,4 +67,4 @@ private:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_EVENTS_CREATENODE_HPP
+#endif // INGEN_EVENTS_CREATEBLOCK_HPP

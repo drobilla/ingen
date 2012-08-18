@@ -27,7 +27,7 @@ namespace Ingen {
 namespace Server {
 
 DuplexPort::DuplexPort(BufferFactory&      bufs,
-                       NodeImpl*           parent,
+                       BlockImpl*          parent,
                        const Raul::Symbol& symbol,
                        uint32_t            index,
                        bool                polyphonic,
@@ -85,8 +85,8 @@ DuplexPort::pre_process(Context& context)
 		}
 	} else {
 		/* This is a a patch input, which is an output from the internal
-		   perspective.  Do whatever a normal node's input port does to prepare
-		   input for reading. */
+		   perspective.  Do whatever a normal block's input port does to
+		   prepare input for reading. */
 		InputPort::pre_process(context);
 	}
 }

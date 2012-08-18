@@ -20,12 +20,12 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Store.hpp"
 
+#include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "Get.hpp"
-#include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
@@ -56,7 +56,7 @@ Get::pre_process()
 	_lock.acquire();
 
 	if (_uri == "ingen:plugins") {
-		_plugins = _engine.node_factory()->plugins();
+		_plugins = _engine.block_factory()->plugins();
 		return Event::pre_process_done(SUCCESS);
 	} else if (_uri == "ingen:engine") {
 		return Event::pre_process_done(SUCCESS);
@@ -64,7 +64,7 @@ Get::pre_process()
 		_object = _engine.store()->get(GraphObject::uri_to_path(_uri));
 		return Event::pre_process_done(_object ? SUCCESS : NOT_FOUND, _uri);
 	} else {
-		_plugin = _engine.node_factory()->plugin(_uri);
+		_plugin = _engine.block_factory()->plugin(_uri);
 		return Event::pre_process_done(_plugin ? SUCCESS : NOT_FOUND, _uri);
 	}
 }
@@ -84,15 +84,15 @@ send_port(Interface* client, const PortImpl* port)
 }
 
 static void
-send_node(Interface* client, const NodeImpl* node)
+send_block(Interface* client, const BlockImpl* block)
 {
-	PluginImpl* const plugin = node->plugin_impl();
+	PluginImpl* const plugin = block->plugin_impl();
 	if (plugin->type() == Plugin::Patch) {
-		send_patch(client, (const PatchImpl*)node);
+		send_patch(client, (const PatchImpl*)block);
 	} else {
-		client->put(node->uri(), node->properties());
-		for (size_t j = 0; j < node->num_ports(); ++j) {
-			send_port(client, node->port_impl(j));
+		client->put(block->uri(), block->properties());
+		for (size_t j = 0; j < block->num_ports(); ++j) {
+			send_port(client, block->port_impl(j));
 		}
 	}
 }
@@ -108,10 +108,10 @@ send_patch(Interface* client, const PatchImpl* patch)
 	            patch->properties(Resource::EXTERNAL),
 	            Resource::EXTERNAL);
 
-	// Send nodes
-	for (PatchImpl::Nodes::const_iterator j = patch->nodes().begin();
-	     j != patch->nodes().end(); ++j) {
-		send_node(client, &*j);
+	// Send blocks
+	for (PatchImpl::Blocks::const_iterator j = patch->blocks().begin();
+	     j != patch->blocks().end(); ++j) {
+		send_block(client, &*j);
 	}
 
 	// Send ports
@@ -141,13 +141,13 @@ Get::post_process()
 				uris.forge.make(int32_t(_engine.driver()->sample_rate())));
 		} else if (_object) {
 			_request_client->bundle_begin();
-			const NodeImpl*  node  = NULL;
+			const BlockImpl* block = NULL;
 			const PatchImpl* patch = NULL;
 			const PortImpl*  port  = NULL;
 			if ((patch = dynamic_cast<const PatchImpl*>(_object))) {
 				send_patch(_request_client.get(), patch);
-			} else if ((node = dynamic_cast<const NodeImpl*>(_object))) {
-				send_node(_request_client.get(), node);
+			} else if ((block = dynamic_cast<const BlockImpl*>(_object))) {
+				send_block(_request_client.get(), block);
 			} else if ((port = dynamic_cast<const PortImpl*>(_object))) {
 				send_port(_request_client.get(), port);
 			}

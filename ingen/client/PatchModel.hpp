@@ -17,7 +17,7 @@
 #ifndef INGEN_CLIENT_PATCHMODEL_HPP
 #define INGEN_CLIENT_PATCHMODEL_HPP
 
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "raul/SharedPtr.hpp"
 
 namespace Ingen {
@@ -30,7 +30,7 @@ class EdgeModel;
  *
  * @ingroup IngenClient
  */
-class PatchModel : public NodeModel
+class PatchModel : public BlockModel
 {
 public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */
@@ -45,8 +45,8 @@ public:
 	uint32_t internal_poly() const;
 
 	// Signals
-	INGEN_SIGNAL(new_node, void, SharedPtr<NodeModel>);
-	INGEN_SIGNAL(removed_node, void, SharedPtr<NodeModel>);
+	INGEN_SIGNAL(new_block, void, SharedPtr<BlockModel>);
+	INGEN_SIGNAL(removed_block, void, SharedPtr<BlockModel>);
 	INGEN_SIGNAL(new_edge, void, SharedPtr<EdgeModel>);
 	INGEN_SIGNAL(removed_edge, void, SharedPtr<EdgeModel>);
 
@@ -54,7 +54,7 @@ private:
 	friend class ClientStore;
 
 	PatchModel(URIs& uris, const Raul::Path& patch_path)
-		: NodeModel(
+		: BlockModel(
 			uris, Raul::URI("http://drobilla.net/ns/ingen#Patch"), patch_path)
 	{
 	}

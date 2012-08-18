@@ -20,7 +20,7 @@
 #include <glibmm/thread.h>
 
 #include "Event.hpp"
-#include "NodeFactory.hpp"
+#include "BlockFactory.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -51,7 +51,7 @@ private:
 	const Raul::URI          _uri;
 	const GraphObject*       _object;
 	const PluginImpl*        _plugin;
-	NodeFactory::Plugins     _plugins;
+	BlockFactory::Plugins    _plugins;
 	Glib::RWLock::ReaderLock _lock;
 };
 

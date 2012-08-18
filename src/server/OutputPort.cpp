@@ -19,7 +19,7 @@
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
-#include "NodeImpl.hpp"
+#include "BlockImpl.hpp"
 #include "OutputPort.hpp"
 
 using namespace std;
@@ -28,7 +28,7 @@ namespace Ingen {
 namespace Server {
 
 OutputPort::OutputPort(BufferFactory&      bufs,
-                       NodeImpl*           parent,
+                       BlockImpl*          parent,
                        const Raul::Symbol& symbol,
                        uint32_t            index,
                        uint32_t            poly,

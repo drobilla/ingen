@@ -18,7 +18,7 @@
 #define INGEN_ENGINE_EVENTS_HPP
 
 #include "events/Connect.hpp"
-#include "events/CreateNode.hpp"
+#include "events/CreateBlock.hpp"
 #include "events/CreatePatch.hpp"
 #include "events/CreatePort.hpp"
 #include "events/Delete.hpp"

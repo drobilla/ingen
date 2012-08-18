@@ -19,10 +19,10 @@
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"
 
+#include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
-#include "NodeImpl.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 #include "ThreadManager.hpp"
@@ -33,7 +33,7 @@ namespace Ingen {
 namespace Server {
 
 PortImpl::PortImpl(BufferFactory&      bufs,
-                   NodeImpl* const     node,
+                   BlockImpl* const    block,
                    const Raul::Symbol& name,
                    uint32_t            index,
                    uint32_t            poly,
@@ -41,7 +41,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
                    LV2_URID            buffer_type,
                    const Raul::Atom&   value,
                    size_t              buffer_size)
-	: GraphObjectImpl(bufs.uris(), node, name)
+	: GraphObjectImpl(bufs.uris(), block, name)
 	, _bufs(bufs)
 	, _index(index)
 	, _poly(poly)
@@ -64,7 +64,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _is_sample_rate(false)
 	, _is_toggled(false)
 {
-	assert(node != NULL);
+	assert(block != NULL);
 	assert(_poly > 0);
 
 	const Ingen::URIs& uris = bufs.uris();
@@ -163,7 +163,7 @@ PortImpl::set_voice_value(const Context& context,
 		break;
 	case PortType::AUDIO:
 	case PortType::CV: {
-		// Time may be at end so internal nodes can set triggers
+		// Time may be at end so internal blocks can set triggers
 		assert(time >= context.start());
 		assert(time <= context.start() + context.nframes());
 
@@ -298,7 +298,7 @@ void
 PortImpl::connect_buffers()
 {
 	for (uint32_t v = 0; v < _poly; ++v)
-		PortImpl::parent_node()->set_port_buffer(v, _index, buffer(v));
+		PortImpl::parent_block()->set_port_buffer(v, _index, buffer(v));
 }
 
 void

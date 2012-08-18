@@ -50,7 +50,7 @@ Port::create(App&                       app,
 		if (name.type() == app.forge().String) {
 			label = name.get_string();
 		} else {
-			const SharedPtr<const NodeModel> parent(PtrCast<const NodeModel>(pm->parent()));
+			const SharedPtr<const BlockModel> parent(PtrCast<const BlockModel>(pm->parent()));
 			if (parent && parent->plugin_model())
 				label = parent->plugin_model()->port_human_name(pm->index());
 		}
@@ -111,7 +111,7 @@ Port::update_metadata()
 {
 	SharedPtr<const PortModel> pm = _port_model.lock();
 	if (_app.can_control(pm.get()) && pm->is_numeric()) {
-		boost::shared_ptr<const NodeModel> parent = PtrCast<const NodeModel>(pm->parent());
+		boost::shared_ptr<const BlockModel> parent = PtrCast<const BlockModel>(pm->parent());
 		if (parent) {
 			float min = 0.0f;
 			float max = 1.0f;
@@ -182,10 +182,10 @@ Port::on_scale_point_activated(float f)
 Gtk::Menu*
 Port::build_enum_menu()
 {
-	SharedPtr<const NodeModel> node = PtrCast<NodeModel>(model()->parent());
-	Gtk::Menu*                 menu = Gtk::manage(new Gtk::Menu());
+	SharedPtr<const BlockModel> block = PtrCast<BlockModel>(model()->parent());
+	Gtk::Menu*                  menu  = Gtk::manage(new Gtk::Menu());
 
-	PluginModel::ScalePoints points = node->plugin_model()->port_scale_points(
+	PluginModel::ScalePoints points = block->plugin_model()->port_scale_points(
 		model()->index());
 	for (PluginModel::ScalePoints::iterator i = points.begin();
 	     i != points.end(); ++i) {
@@ -354,10 +354,10 @@ Port::set_selected(gboolean b)
 		Ganv::Port::set_selected(b);
 		SharedPtr<const PortModel> pm = _port_model.lock();
 		if (pm && b) {
-			SharedPtr<const NodeModel> node = PtrCast<NodeModel>(pm->parent());
-			PatchWindow*               win  = _app.window_factory()->parent_patch_window(node);
-			if (win && node->plugin_model()) {
-				const std::string& doc = node->plugin_model()->port_documentation(
+			SharedPtr<const BlockModel> block = PtrCast<BlockModel>(pm->parent());
+			PatchWindow* win = _app.window_factory()->parent_patch_window(block);
+			if (win && block->plugin_model()) {
+				const std::string& doc = block->plugin_model()->port_documentation(
 					pm->index());
 				if (!doc.empty()) {
 					win->show_documentation(doc, false);

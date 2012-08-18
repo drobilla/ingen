@@ -25,15 +25,15 @@
 #include "raul/Maid.hpp"
 #include "raul/SharedPtr.hpp"
 
+#include "BlockFactory.hpp"
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
-#include "DirectDriver.hpp"
 #include "ControlBindings.hpp"
+#include "DirectDriver.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "Event.hpp"
 #include "EventWriter.hpp"
-#include "NodeFactory.hpp"
 #include "PatchImpl.hpp"
 #include "PostProcessor.hpp"
 #include "PreProcessor.hpp"
@@ -51,11 +51,11 @@ bool                      ThreadManager::single_threaded(true);
 
 Engine::Engine(Ingen::World* world)
 	: _world(world)
+	, _block_factory(new BlockFactory(world))
 	, _broadcaster(new Broadcaster())
 	, _buffer_factory(new BufferFactory(*this, world->uris()))
 	, _control_bindings(NULL)
 	, _maid(new Raul::Maid())
-	, _node_factory(new NodeFactory(world))
 	, _pre_processor(new PreProcessor())
 	, _post_processor(new PostProcessor(*this))
 	, _event_writer(new EventWriter(*this))
@@ -92,7 +92,7 @@ Engine::~Engine()
 	delete _maid;
 	delete _pre_processor;
 	delete _post_processor;
-	delete _node_factory;
+	delete _block_factory;
 	delete _control_bindings;
 	delete _broadcaster;
 	delete _event_writer;

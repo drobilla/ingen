@@ -37,7 +37,7 @@ class URIs;
 
 namespace Client {
 
-class NodeModel;
+class BlockModel;
 class ObjectModel;
 class PatchModel;
 class PluginModel;

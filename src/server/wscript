@@ -3,6 +3,8 @@ from waflib.extras import autowaf as autowaf
 
 def build(bld):
     core_source = '''
+            BlockFactory.cpp
+            BlockImpl.cpp
             Broadcaster.cpp
             Buffer.cpp
             BufferFactory.cpp
@@ -15,11 +17,9 @@ def build(bld):
             GraphObjectImpl.cpp
             InputPort.cpp
             InternalPlugin.cpp
+            LV2Block.cpp
             LV2Info.cpp
-            LV2Node.cpp
             LV2Plugin.cpp
-            NodeFactory.cpp
-            NodeImpl.cpp
             OutputPort.cpp
             PatchImpl.cpp
             PortImpl.cpp
@@ -27,7 +27,7 @@ def build(bld):
             PreProcessor.cpp
             Worker.cpp
             events/Connect.cpp
-            events/CreateNode.cpp
+            events/CreateBlock.cpp
             events/CreatePatch.cpp
             events/CreatePort.cpp
             events/Delete.cpp

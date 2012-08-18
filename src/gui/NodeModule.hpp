@@ -25,7 +25,7 @@
 namespace Raul { class Atom; }
 
 namespace Ingen { namespace Client {
-	class NodeModel;
+	class BlockModel;
 	class PluginUI;
 	class PortModel;
 } }
@@ -47,9 +47,9 @@ class NodeModule : public Ganv::Module
 {
 public:
 	static NodeModule* create(
-		PatchCanvas&                       canvas,
-		SharedPtr<const Client::NodeModel> node,
-		bool                               human_names);
+		PatchCanvas&                        canvas,
+		SharedPtr<const Client::BlockModel> block,
+		bool                                human_names);
 
 	virtual ~NodeModule();
 
@@ -63,10 +63,10 @@ public:
 	void show_human_names(bool b);
 	void set_selected(gboolean b);
 
-	SharedPtr<const Client::NodeModel> node() const { return _node; }
+	SharedPtr<const Client::BlockModel> block() const { return _block; }
 
 protected:
-	NodeModule(PatchCanvas& canvas, SharedPtr<const Client::NodeModel> node);
+	NodeModule(PatchCanvas& canvas, SharedPtr<const Client::BlockModel> block);
 
 	virtual bool on_double_click(GdkEventButton* ev);
 
@@ -89,11 +89,11 @@ protected:
 
 	bool show_menu(GdkEventButton* ev);
 
-	SharedPtr<const Client::NodeModel> _node;
-	NodeMenu*                          _menu;
-	SharedPtr<Client::PluginUI>        _plugin_ui;
-	Gtk::Widget*                       _gui_widget;
-	Gtk::Window*                       _gui_window; ///< iff popped up
+	SharedPtr<const Client::BlockModel> _block;
+	NodeMenu*                           _menu;
+	SharedPtr<Client::PluginUI>         _plugin_ui;
+	Gtk::Widget*                        _gui_widget;
+	Gtk::Window*                        _gui_window; ///< iff popped up
 };
 
 } // namespace GUI

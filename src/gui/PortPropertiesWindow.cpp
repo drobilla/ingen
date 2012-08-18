@@ -18,7 +18,7 @@
 #include <list>
 
 #include "ingen/Interface.hpp"
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 
 #include "App.hpp"
@@ -66,7 +66,7 @@ PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
 	set_title(pm->path() + " Properties - Ingen");
 
 	float min = 0.0f, max = 1.0f;
-	boost::shared_ptr<NodeModel> parent = PtrCast<NodeModel>(_port_model->parent());
+	boost::shared_ptr<BlockModel> parent = PtrCast<BlockModel>(_port_model->parent());
 	if (parent)
 		parent->port_value_range(_port_model, min, max,
 		                         _app->sample_rate());

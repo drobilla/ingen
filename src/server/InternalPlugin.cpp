@@ -42,7 +42,7 @@ InternalPlugin::InternalPlugin(URIs&               uris,
 	set_property(uris.rdf_type, uris.ingen_Internal);
 }
 
-NodeImpl*
+BlockImpl*
 InternalPlugin::instantiate(BufferFactory&      bufs,
                             const Raul::Symbol& symbol,
                             bool                polyphonic,

@@ -14,15 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_LV2NODE_HPP
-#define INGEN_ENGINE_LV2NODE_HPP
+#ifndef INGEN_ENGINE_LV2BLOCK_HPP
+#define INGEN_ENGINE_LV2BLOCK_HPP
 
 #include "lilv/lilv.h"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/Disposable.hpp"
 
 #include "BufferRef.hpp"
-#include "NodeImpl.hpp"
+#include "BlockImpl.hpp"
 #include "ingen/LV2Features.hpp"
 #include "types.hpp"
 
@@ -35,16 +35,16 @@ class LV2Plugin;
  *
  * \ingroup engine
  */
-class LV2Node : public NodeImpl
+class LV2Block : public BlockImpl
 {
 public:
-	LV2Node(LV2Plugin*          plugin,
+	LV2Block(LV2Plugin*          plugin,
 	        const Raul::Symbol& symbol,
 	        bool                polyphonic,
 	        PatchImpl*          parent,
 	        SampleRate          srate);
 
-	~LV2Node();
+	~LV2Block();
 
 	bool instantiate(BufferFactory& bufs);
 
@@ -112,5 +112,5 @@ protected:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_LV2NODE_HPP
+#endif // INGEN_ENGINE_LV2BLOCK_HPP
 

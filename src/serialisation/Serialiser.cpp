@@ -69,9 +69,9 @@ struct Serialiser::Impl {
 	void serialise_patch(SharedPtr<const GraphObject> p,
 	                     const Sord::Node&            id);
 
-	void serialise_node(SharedPtr<const GraphObject> n,
-	                    const Sord::Node&            class_id,
-	                    const Sord::Node&            id);
+	void serialise_block(SharedPtr<const GraphObject> n,
+	                     const Sord::Node&            class_id,
+	                     const Sord::Node&            id);
 
 	void serialise_port(const GraphObject* p,
 	                    Resource::Graph    context,
@@ -133,21 +133,22 @@ Serialiser::Impl::write_manifest(const std::string&           bundle_path,
 	start_to_filename(manifest_path);
 
 	Sord::World& world = _model->world();
+	const URIs&  uris  = _world.uris();
 
 	const string    filename(patch_symbol + ".ttl");
 	const Sord::URI subject(world, filename, _base_uri);
 
 	_model->add_statement(subject,
-	                      Sord::Curie(world, "rdf:type"),
-	                      Sord::Curie(world, "ingen:Patch"));
+	                      Sord::URI(world, uris.rdf_type),
+	                      Sord::URI(world, uris.ingen_Patch));
 	_model->add_statement(subject,
-	                      Sord::Curie(world, "rdf:type"),
-	                      Sord::Curie(world, "lv2:Plugin"));
+	                      Sord::URI(world, uris.rdf_type),
+	                      Sord::URI(world, uris.lv2_Plugin));
 	_model->add_statement(subject,
-	                      Sord::Curie(world, "rdfs:seeAlso"),
+	                      Sord::URI(world, uris.rdfs_seeAlso),
 	                      Sord::URI(world, filename, _base_uri));
 	_model->add_statement(subject,
-	                      Sord::Curie(world, "lv2:binary"),
+	                      Sord::URI(world, uris.lv2_binary),
 	                      Sord::URI(world, binary_path, _base_uri));
 
 	symlink(Glib::Module::build_path(INGEN_BUNDLE_DIR, "ingen_lv2").c_str(),
@@ -285,9 +286,9 @@ Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_err
 
 	if (object->graph_type() == GraphObject::PATCH) {
 		me->serialise_patch(object, me->path_rdf_node(object->path()));
-	} else if (object->graph_type() == GraphObject::NODE) {
+	} else if (object->graph_type() == GraphObject::BLOCK) {
 		const Sord::URI plugin_id(me->_model->world(), object->plugin()->uri());
-		me->serialise_node(object, plugin_id, me->path_rdf_node(object->path()));
+		me->serialise_block(object, plugin_id, me->path_rdf_node(object->path()));
 	} else if (object->graph_type() == GraphObject::PORT) {
 		me->serialise_port(object.get(),
 		                   Resource::DEFAULT,
@@ -302,26 +303,24 @@ void
 Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
                                   const Sord::Node&            patch_id)
 {
-	assert(_model);
 	Sord::World& world = _model->world();
+	const URIs&  uris  = _world.uris();
 
 	_model->add_statement(patch_id,
-	                      Sord::Curie(world, "rdf:type"),
-	                      Sord::Curie(world, "ingen:Patch"));
+	                      Sord::URI(world, uris.rdf_type),
+	                      Sord::URI(world, uris.ingen_Patch));
 
 	_model->add_statement(patch_id,
-	                      Sord::Curie(world, "rdf:type"),
-	                      Sord::Curie(world, "lv2:Plugin"));
+	                      Sord::URI(world, uris.rdf_type),
+	                      Sord::URI(world, uris.lv2_Plugin));
 
 	_model->add_statement(patch_id,
-	                      Sord::Curie(world, "lv2:extensionData"),
+	                      Sord::URI(world, uris.lv2_extensionData),
 	                      Sord::URI(world, LV2_STATE__interface));
 
 	_model->add_statement(patch_id,
 	                      Sord::URI(world, LV2_UI__ui),
 	                      Sord::URI(world, "http://drobilla.net/ns/ingen#PatchUIGtk2"));
-
-	const URIs& uris = _world.uris();
 
 	// Always write a symbol (required by Ingen)
 	Raul::Symbol symbol("_");
@@ -334,7 +333,7 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 		symbol = Raul::Symbol::symbolify(base.substr(0, base.find('.')));
 		_model->add_statement(
 			patch_id,
-			Sord::Curie(world, "lv2:symbol"),
+			Sord::URI(world, uris.lv2_symbol),
 			Sord::Literal(world, symbol.c_str()));
 	} else {
 		symbol = Raul::Symbol::symbolify(s->second.get_string());
@@ -381,21 +380,21 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 			_base_uri = my_base_uri;
 			_model    = my_model;
 
-			// Serialise reference to patch node
-			const Sord::Node node_id(path_rdf_node(subpatch->path()));
+			// Serialise reference to patch block
+			const Sord::Node block_id(path_rdf_node(subpatch->path()));
 			_model->add_statement(patch_id,
-			                      Sord::Curie(world, "ingen:node"),
-			                      node_id);
-			serialise_node(subpatch, subpatch_id, node_id);
-		} else if (n->second->graph_type() == GraphObject::NODE) {
-			SharedPtr<const GraphObject> node = n->second;
+			                      Sord::URI(world, uris.ingen_block),
+			                      block_id);
+			serialise_block(subpatch, subpatch_id, block_id);
+		} else if (n->second->graph_type() == GraphObject::BLOCK) {
+			SharedPtr<const GraphObject> block = n->second;
 
-			const Sord::URI  class_id(world, node->plugin()->uri());
-			const Sord::Node node_id(path_rdf_node(n->second->path()));
+			const Sord::URI  class_id(world, block->plugin()->uri());
+			const Sord::Node block_id(path_rdf_node(n->second->path()));
 			_model->add_statement(patch_id,
-			                      Sord::Curie(world, "ingen:node"),
-			                      node_id);
-			serialise_node(node, class_id, node_id);
+			                      Sord::URI(world, uris.ingen_block),
+			                      block_id);
+			serialise_block(block, class_id, block_id);
 		}
 	}
 
@@ -421,29 +420,31 @@ Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
 }
 
 void
-Serialiser::Impl::serialise_node(SharedPtr<const GraphObject> node,
-                                 const Sord::Node&            class_id,
-                                 const Sord::Node&            node_id)
+Serialiser::Impl::serialise_block(SharedPtr<const GraphObject> block,
+                                  const Sord::Node&            class_id,
+                                  const Sord::Node&            block_id)
 {
-	_model->add_statement(node_id,
-	                      Sord::Curie(_model->world(), "rdf:type"),
-	                      Sord::Curie(_model->world(), "ingen:Node"));
-	_model->add_statement(node_id,
-	                      Sord::Curie(_model->world(), "ingen:prototype"),
+	const URIs& uris = _world.uris();
+
+	_model->add_statement(block_id,
+	                      Sord::URI(_model->world(), uris.rdf_type),
+	                      Sord::URI(_model->world(), uris.ingen_Block));
+	_model->add_statement(block_id,
+	                      Sord::URI(_model->world(), uris.ingen_prototype),
 	                      class_id);
-	_model->add_statement(node_id,
-	                      Sord::Curie(_model->world(), "lv2:symbol"),
-	                      Sord::Literal(_model->world(), node->path().symbol()));
+	_model->add_statement(block_id,
+	                      Sord::URI(_model->world(), uris.lv2_symbol),
+	                      Sord::Literal(_model->world(), block->path().symbol()));
 
-	const GraphObject::Properties props = node->properties(Resource::EXTERNAL);
-	serialise_properties(node_id, props);
+	const GraphObject::Properties props = block->properties(Resource::EXTERNAL);
+	serialise_properties(block_id, props);
 
-	for (uint32_t i = 0; i < node->num_ports(); ++i) {
-		GraphObject* const p       = node->port(i);
+	for (uint32_t i = 0; i < block->num_ports(); ++i) {
+		GraphObject* const p       = block->port(i);
 		const Sord::Node   port_id = path_rdf_node(p->path());
 		serialise_port(p, Resource::EXTERNAL, port_id);
-		_model->add_statement(node_id,
-		                      Sord::Curie(_model->world(), "lv2:port"),
+		_model->add_statement(block_id,
+		                      Sord::URI(_model->world(), uris.lv2_port),
 		                      port_id);
 	}
 }
@@ -457,7 +458,7 @@ Serialiser::Impl::serialise_port(const GraphObject* port,
 	Sord::World& world = _model->world();
 
 	_model->add_statement(port_id,
-	                      Sord::Curie(world, "lv2:symbol"),
+	                      Sord::URI(world, uris.lv2_symbol),
 	                      Sord::Literal(world, port->path().symbol()));
 
 	GraphObject::Properties props = port->properties(context);
@@ -494,25 +495,26 @@ Serialiser::Impl::serialise_edge(const Sord::Node&     parent,
 			"serialise_edge called without serialisation in progress");
 
 	Sord::World& world = _model->world();
+	const URIs&  uris  = _world.uris();
 
-	const Sord::Node src           = path_rdf_node(edge->tail_path());
-	const Sord::Node dst           = path_rdf_node(edge->head_path());
+	const Sord::Node src     = path_rdf_node(edge->tail_path());
+	const Sord::Node dst     = path_rdf_node(edge->head_path());
 	const Sord::Node edge_id = Sord::Node::blank_id(*_world.rdf_world());
 	_model->add_statement(edge_id,
-	                      Sord::Curie(world, "ingen:tail"),
+	                      Sord::URI(world, uris.ingen_tail),
 	                      src);
 	_model->add_statement(edge_id,
-	                      Sord::Curie(world, "ingen:head"),
+	                      Sord::URI(world, uris.ingen_head),
 	                      dst);
 
 	if (parent.is_valid()) {
 		_model->add_statement(parent,
-		                      Sord::Curie(world, "ingen:edge"),
+		                      Sord::URI(world, uris.ingen_edge),
 		                      edge_id);
 	} else {
 		_model->add_statement(edge_id,
-		                      Sord::Curie(world, "rdf:type"),
-		                      Sord::Curie(world, "ingen:Edge"));
+		                      Sord::URI(world, uris.rdf_type),
+		                      Sord::URI(world, uris.ingen_Edge));
 	}
 }
 

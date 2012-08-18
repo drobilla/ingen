@@ -19,9 +19,9 @@
 
 #include <cstdlib>
 
+#include "BlockImpl.hpp"
 #include "CompiledPatch.hpp"
 #include "DuplexPort.hpp"
-#include "NodeImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortType.hpp"
 #include "ThreadManager.hpp"
@@ -38,15 +38,15 @@ class Context;
 class Engine;
 class ProcessContext;
 
-/** A group of nodes in a graph, possibly polyphonic.
+/** A group of blocks in a graph, possibly polyphonic.
  *
- * Note that this is also a Node, just one which contains Nodes.
+ * Note that this is also a Block, just one which contains Blocks.
  * Therefore infinite subpatching is possible, of polyphonic
- * patches of polyphonic nodes etc. etc.
+ * patches of polyphonic blocks etc. etc.
  *
  * \ingroup engine
  */
-class PatchImpl : public NodeImpl
+class PatchImpl : public BlockImpl
 {
 public:
 	PatchImpl(Engine&             engine,
@@ -91,16 +91,16 @@ public:
 	                         Raul::Maid&     maid,
 	                         uint32_t        poly);
 
-	// Patch specific stuff not inherited from Node
+	// Patch specific stuff not inherited from Block
 
 	typedef boost::intrusive::slist<
-		NodeImpl, boost::intrusive::constant_time_size<true> > Nodes;
+		BlockImpl, boost::intrusive::constant_time_size<true> > Blocks;
 
-	void add_node(NodeImpl& node);
-	void remove_node(NodeImpl& node);
+	void add_block(BlockImpl& block);
+	void remove_block(BlockImpl& block);
 
-	Nodes&       nodes()       { return _nodes; }
-	const Nodes& nodes() const { return _nodes; }
+	Blocks&       blocks()       { return _blocks; }
+	const Blocks& blocks() const { return _blocks; }
 
 	uint32_t num_ports_non_rt() const;
 
@@ -161,7 +161,7 @@ private:
 	CompiledPatch* _compiled_patch;  ///< Process thread only
 	Ports          _inputs;          ///< Pre-process thread only
 	Ports          _outputs;         ///< Pre-process thread only
-	Nodes          _nodes;           ///< Pre-process thread only
+	Blocks          _blocks;           ///< Pre-process thread only
 	bool           _process;
 };
 

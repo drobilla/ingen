@@ -50,7 +50,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 {
 	xml->get_widget("load_plugin_plugins_treeview", _plugins_treeview);
 	xml->get_widget("load_plugin_polyphonic_checkbutton", _polyphonic_checkbutton);
-	xml->get_widget("load_plugin_name_entry", _node_name_entry);
+	xml->get_widget("load_plugin_name_entry", _name_entry);
 	xml->get_widget("load_plugin_add_button", _add_button);
 	xml->get_widget("load_plugin_close_button", _close_button);
 
@@ -98,7 +98,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 			sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
 	_search_entry->signal_changed().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::filter_changed));
-	_node_name_entry->signal_changed().connect(
+	_name_entry->signal_changed().connect(
 			sigc::mem_fun(this, &LoadPluginWindow::name_changed));
 
 #ifdef HAVE_NEW_GTKMM
@@ -131,7 +131,7 @@ LoadPluginWindow::name_changed()
 {
 	// Toggle add button sensitivity according name legality
 	if (_selection->get_selected_rows().size() == 1) {
-		const string sym = _node_name_entry->get_text();
+		const string sym = _name_entry->get_text();
 		if (!Raul::Symbol::is_valid(sym)) {
 			_add_button->property_sensitive() = false;
 		} else if (_app->store()->find(_patch->path().child(Raul::Symbol(sym)))
@@ -282,8 +282,8 @@ LoadPluginWindow::plugin_selection_changed()
 	size_t n_selected = _selection->get_selected_rows().size();
 	if (n_selected == 0) {
 		_name_offset = 0;
-		_node_name_entry->set_text("");
-		_node_name_entry->set_sensitive(false);
+		_name_entry->set_text("");
+		_name_entry->set_sensitive(false);
 	} else if (n_selected == 1) {
 		Gtk::TreeModel::iterator iter = _plugins_liststore->get_iter(
 				*_selection->get_selected_rows().begin());
@@ -292,17 +292,17 @@ LoadPluginWindow::plugin_selection_changed()
 			boost::shared_ptr<const PluginModel> p = row.get_value(
 				_plugins_columns._col_plugin);
 			_name_offset = _app->store()->child_name_offset(
-					_patch->path(), p->default_node_symbol());
-			_node_name_entry->set_text(generate_module_name(p, _name_offset));
-			_node_name_entry->set_sensitive(true);
+					_patch->path(), p->default_block_symbol());
+			_name_entry->set_text(generate_module_name(p, _name_offset));
+			_name_entry->set_sensitive(true);
 		} else {
 			_name_offset = 0;
-			_node_name_entry->set_text("");
-			_node_name_entry->set_sensitive(false);
+			_name_entry->set_text("");
+			_name_entry->set_sensitive(false);
 		}
 	} else {
-		_node_name_entry->set_text("");
-		_node_name_entry->set_sensitive(false);
+		_name_entry->set_text("");
+		_name_entry->set_sensitive(false);
 	}
 }
 
@@ -317,7 +317,7 @@ LoadPluginWindow::generate_module_name(SharedPtr<const PluginModel> plugin,
                                        int                          offset)
 {
 	std::stringstream ss;
-	ss << plugin->default_node_symbol();
+	ss << plugin->default_block_symbol();
 	if (offset != 0)
 		ss << "_" << offset;
 	return ss.str();
@@ -330,14 +330,14 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	Gtk::TreeModel::Row          row        = *iter;
 	SharedPtr<const PluginModel> plugin     = row.get_value(_plugins_columns._col_plugin);
 	bool                         polyphonic = _polyphonic_checkbutton->get_active();
-	string                       name       = _node_name_entry->get_text();
+	string                       name       = _name_entry->get_text();
 
 	if (name.empty())
 		name = generate_module_name(plugin, _name_offset);
 
 	if (name.empty() || !Raul::Symbol::is_valid(name)) {
 		Gtk::MessageDialog dialog(*this,
-				"Unable to chose a default name for this node.  Please enter a name.",
+				"Unable to choose a default name, please provide one",
 				false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 
 		dialog.run();
@@ -345,7 +345,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		Raul::Path path = _patch->path().child(Raul::Symbol::symbolify(name));
 		Resource::Properties props = _initial_data;
 		props.insert(make_pair(uris.rdf_type,
-		                       uris.ingen_Node));
+		                       uris.ingen_Block));
 		props.insert(make_pair(uris.ingen_prototype,
 		                       _app->forge().alloc_uri(plugin->uri())));
 		props.insert(make_pair(uris.ingen_polyphonic,
@@ -354,10 +354,10 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 
 		if (_selection->get_selected_rows().size() == 1) {
 			_name_offset = (_name_offset == 0) ? 2 : _name_offset + 1;
-			_node_name_entry->set_text(generate_module_name(plugin, _name_offset));
+			_name_entry->set_text(generate_module_name(plugin, _name_offset));
 		}
 
-		// Cascade next node
+		// Cascade next block
 		Raul::Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
 		x = _app->forge().make(x.get_float() + 20.0f);
 		Raul::Atom& y = _initial_data.find(uris.ingen_canvasY)->second;

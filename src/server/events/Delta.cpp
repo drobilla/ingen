@@ -24,7 +24,7 @@
 
 #include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
-#include "CreateNode.hpp"
+#include "CreateBlock.hpp"
 #include "CreatePatch.hpp"
 #include "CreatePort.hpp"
 #include "Delta.hpp"
@@ -112,7 +112,7 @@ Delta::pre_process()
 
 	_object = is_graph_object
 		? static_cast<Ingen::Resource*>(_engine.store()->get(GraphObject::uri_to_path(_subject)))
-		: static_cast<Ingen::Resource*>(_engine.node_factory()->plugin(_subject));
+		: static_cast<Ingen::Resource*>(_engine.block_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
 		return Event::pre_process_done(NOT_FOUND, _subject);
@@ -122,14 +122,14 @@ Delta::pre_process()
 
 	if (is_graph_object && !_object) {
 		Raul::Path path(GraphObject::uri_to_path(_subject));
-		bool is_patch = false, is_node = false, is_port = false, is_output = false;
-		Ingen::Resource::type(uris, _properties, is_patch, is_node, is_port, is_output);
+		bool is_patch = false, is_block = false, is_port = false, is_output = false;
+		Ingen::Resource::type(uris, _properties, is_patch, is_block, is_port, is_output);
 
 		if (is_patch) {
 			_create_event = new CreatePatch(
 				_engine, _request_client, _request_id, _time, path, _properties);
-		} else if (is_node) {
-			_create_event = new CreateNode(
+		} else if (is_block) {
+			_create_event = new CreateBlock(
 				_engine, _request_client, _request_id, _time, path, _properties);
 		} else if (is_port) {
 			_create_event = new CreatePort(
@@ -223,9 +223,9 @@ Delta::pre_process()
 					if (value.type() == uris.forge.Bool) {
 						op = POLYPHONIC;
 						obj->set_property(key, value, value.context());
-						NodeImpl* node = dynamic_cast<NodeImpl*>(obj);
-						if (node)
-							node->set_polyphonic(value.get_bool());
+						BlockImpl* block = dynamic_cast<BlockImpl*>(obj);
+						if (block)
+							block->set_polyphonic(value.get_bool());
 						if (value.get_bool()) {
 							obj->prepare_poly(*_engine.buffer_factory(), parent->internal_poly());
 						} else {
@@ -271,7 +271,7 @@ Delta::execute(ProcessContext& context)
 	}
 
 	GraphObjectImpl* const object = dynamic_cast<GraphObjectImpl*>(_object);
-	NodeImpl* const        node   = dynamic_cast<NodeImpl*>(_object);
+	BlockImpl* const       block  = dynamic_cast<BlockImpl*>(_object);
 	PortImpl* const        port   = dynamic_cast<PortImpl*>(_object);
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();
@@ -315,9 +315,9 @@ Delta::execute(ProcessContext& context)
 		case CONTROL_BINDING:
 			if (port) {
 				_engine.control_bindings()->port_binding_changed(context, port, value);
-			} else if (node) {
-				if (node->plugin_impl()->type() == Plugin::Internal) {
-					node->learn();
+			} else if (block) {
+				if (block->plugin_impl()->type() == Plugin::Internal) {
+					block->learn();
 				}
 			}
 			break;

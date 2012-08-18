@@ -30,7 +30,6 @@ namespace Raul { class Atom; }
 
 namespace Ingen { namespace Client {
 	class PortModel;
-	class NodeModel;
 } }
 
 namespace Ingen {

@@ -30,11 +30,11 @@ template<typename T> class Array;
 namespace Ingen {
 namespace Server {
 
-class NodeImpl;
-class PortImpl;
+class BlockImpl;
+class CompiledPatch;
 class DuplexPort;
 class EnginePort;
-class CompiledPatch;
+class PortImpl;
 
 namespace Events {
 
@@ -72,7 +72,7 @@ public:
 private:
 	Raul::URI                _uri;
 	Raul::Path               _path;
-	SharedPtr<NodeImpl>      _node;                ///< Non-NULL iff a node
+	SharedPtr<BlockImpl>     _block;               ///< Non-NULL iff a block
 	SharedPtr<DuplexPort>    _port;                ///< Non-NULL iff a port
 	EnginePort*              _engine_port;
 	Raul::Array<PortImpl*>*  _ports_array;         ///< New (external) ports for Patch

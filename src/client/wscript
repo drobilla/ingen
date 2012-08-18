@@ -12,8 +12,8 @@ def build(bld):
     autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV SUIL RAUL SORD SIGCPP')
 
     obj.source = '''
+        BlockModel.cpp
         ClientStore.cpp
-        NodeModel.cpp
         ObjectModel.cpp
         PatchModel.cpp
         PluginModel.cpp

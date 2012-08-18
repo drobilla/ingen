@@ -25,7 +25,7 @@
 
 namespace Ingen {
 
-/** A plugin which instantiates to a Node.
+/** A plugin which instantiates to a Block.
  * @ingroup Ingen
  */
 class Plugin : public Resource

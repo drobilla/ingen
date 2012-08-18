@@ -111,14 +111,14 @@ bool
 Resource::type(const URIs&       uris,
                const Properties& properties,
                bool&             patch,
-               bool&             node,
+               bool&             block,
                bool&             port,
                bool&             is_output)
 {
 	typedef Resource::Properties::const_iterator iterator;
 	const std::pair<iterator, iterator> types_range = properties.equal_range(uris.rdf_type);
 
-	patch = node = port = is_output = false;
+	patch = block = port = is_output = false;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Raul::Atom& atom = i->second;
 		if (atom.type() != uris.forge.URI && atom.type() != uris.forge.URID) {
@@ -127,8 +127,8 @@ Resource::type(const URIs&       uris,
 
 		if (atom == uris.ingen_Patch) {
 			patch = true;
-		} else if (atom == uris.ingen_Node) {
-			node = true;
+		} else if (atom == uris.ingen_Block) {
+			block = true;
 		} else if (atom == uris.lv2_InputPort) {
 			port = true;
 			is_output = false;
@@ -138,13 +138,13 @@ Resource::type(const URIs&       uris,
 		}
 	}
 
-	if (patch && node && !port) { // => patch
-		node = false;
+	if (patch && block && !port) { // => patch
+		block = false;
 		return true;
-	} else if (port && (patch || node)) { // nonsense
+	} else if (port && (patch || block)) { // nonsense
 		port = false;
 		return false;
-	} else if (patch || node || port) { // recognized type
+	} else if (patch || block || port) { // recognized type
 		return true;
 	} else { // unknown
 		return false;

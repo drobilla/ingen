@@ -17,7 +17,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
@@ -39,11 +39,11 @@ lv2_ui_write(SuilController controller,
 {
 	PluginUI* const ui = (PluginUI*)controller;
 
-	const NodeModel::Ports& ports = ui->node()->ports();
+	const BlockModel::Ports& ports = ui->block()->ports();
 	if (port_index >= ports.size()) {
 		ui->world()->log().error(
 			Raul::fmt("%1% UI tried to write to invalid port %2%\n")
-			% ui->node()->plugin()->uri().c_str() % port_index);
+			% ui->block()->plugin()->uri().c_str() % port_index);
 		return;
 	}
 
@@ -73,15 +73,15 @@ lv2_ui_write(SuilController controller,
 	} else {
 		ui->world()->log().warn(
 			Raul::fmt("Unknown value format %1% from LV2 UI\n")
-			% format % ui->node()->plugin()->uri().c_str());
+			% format % ui->block()->plugin()->uri().c_str());
 	}
 }
 
-PluginUI::PluginUI(Ingen::World*              world,
-                   SharedPtr<const NodeModel> node,
-                   const LilvNode*            ui_node)
+PluginUI::PluginUI(Ingen::World*               world,
+                   SharedPtr<const BlockModel> block,
+                   const LilvNode*             ui_node)
 	: _world(world)
-	, _node(node)
+	, _block(block)
 	, _instance(NULL)
 	, _ui_node(lilv_node_duplicate(ui_node))
 {
@@ -94,9 +94,9 @@ PluginUI::~PluginUI()
 }
 
 SharedPtr<PluginUI>
-PluginUI::create(Ingen::World*              world,
-                 SharedPtr<const NodeModel> node,
-                 const LilvPlugin*          plugin)
+PluginUI::create(Ingen::World*               world,
+                 SharedPtr<const BlockModel> block,
+                 const LilvPlugin*           plugin)
 {
 	if (!PluginUI::ui_host) {
 		PluginUI::ui_host = suil_host_new(lv2_ui_write, NULL, NULL, NULL);
@@ -126,9 +126,9 @@ PluginUI::create(Ingen::World*              world,
 		return SharedPtr<PluginUI>();
 	}
 
-	SharedPtr<PluginUI> ret(new PluginUI(world, node, lilv_ui_get_uri(ui)));
+	SharedPtr<PluginUI> ret(new PluginUI(world, block, lilv_ui_get_uri(ui)));
 	ret->_features = world->lv2_features().lv2_features(
-		world, const_cast<NodeModel*>(node.get()));
+		world, const_cast<BlockModel*>(block.get()));
 
 	SuilInstance* instance = suil_instance_new(
 		PluginUI::ui_host,

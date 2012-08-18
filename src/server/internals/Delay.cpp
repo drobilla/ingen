@@ -55,7 +55,7 @@ DelayNode::DelayNode(InternalPlugin*     plugin,
                      bool                polyphonic,
                      PatchImpl*          parent,
                      SampleRate          srate)
-	: NodeImpl(plugin, symbol, polyphonic, parent, srate)
+	: BlockImpl(plugin, symbol, polyphonic, parent, srate)
 	, _buffer(0)
 	, _buffer_length(0)
 	, _buffer_mask(0)
@@ -100,7 +100,7 @@ DelayNode::~DelayNode()
 void
 DelayNode::activate(BufferFactory& bufs)
 {
-	NodeImpl::activate(bufs);
+	BlockImpl::activate(bufs);
 	const SampleRate  rate     = bufs.engine().driver()->sample_rate();
 	const SampleCount min_size = MAX_DELAY_SECONDS * rate;
 
@@ -144,7 +144,7 @@ DelayNode::process(ProcessContext& context)
 	Buffer* const in_buf    = _in_port->buffer(0).get();
 	Buffer* const out_buf   = _out_port->buffer(0).get();
 
-	NodeImpl::pre_process(context);
+	BlockImpl::pre_process(context);
 
 	DelayNode* plugin_data = this;
 
@@ -201,7 +201,7 @@ DelayNode::process(ProcessContext& context)
 
 	_write_phase = write_phase;
 
-	NodeImpl::post_process(context);
+	BlockImpl::post_process(context);
 }
 
 } // namespace Internals

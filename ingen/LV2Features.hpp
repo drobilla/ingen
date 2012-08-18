@@ -41,7 +41,7 @@ public:
 		virtual ~Feature() {}
 
 		virtual SharedPtr<LV2_Feature> feature(World*       world,
-		                                       GraphObject* node) = 0;
+		                                       GraphObject* block) = 0;
 	};
 
 	class FeatureArray : public Raul::Noncopyable {
@@ -62,7 +62,7 @@ public:
 	void add_feature(SharedPtr<Feature> feature);
 
 	SharedPtr<FeatureArray> lv2_features(World*       world,
-	                                     GraphObject* node) const;
+	                                     GraphObject* block) const;
 
 private:
 	typedef std::vector< SharedPtr<Feature> > Features;

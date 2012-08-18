@@ -27,7 +27,7 @@
 
 #include "ingen/Interface.hpp"
 
-#include "NodeFactory.hpp"
+#include "BlockFactory.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -47,8 +47,8 @@ public:
 
 	SharedPtr<Interface> client(const Raul::URI& uri);
 
-	void send_plugins(const NodeFactory::Plugins& plugin_list);
-	void send_plugins_to(Interface*, const NodeFactory::Plugins& plugin_list);
+	void send_plugins(const BlockFactory::Plugins& plugin_list);
+	void send_plugins_to(Interface*, const BlockFactory::Plugins& plugin_list);
 
 #define BROADCAST(msg, ...) \
 	Glib::Mutex::Lock lock(_clients_mutex); \

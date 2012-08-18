@@ -17,7 +17,7 @@
 #ifndef INGEN_INTERNALS_TRIGGER_HPP
 #define INGEN_INTERNALS_TRIGGER_HPP
 
-#include "NodeImpl.hpp"
+#include "BlockImpl.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -28,17 +28,17 @@ class InternalPlugin;
 
 namespace Internals {
 
-/** MIDI trigger input node.
+/** MIDI trigger input block.
  *
- * Just has a gate,  for drums etc.  A control port is used to select
+ * Just has a gate, for drums etc.  A control port is used to select
  * which note number is responded to.
  *
- * Note that this node is always monophonic, the poly parameter is ignored.
+ * Note that this block is always monophonic, the poly parameter is ignored.
  * (Should that change?)
  *
  * \ingroup engine
  */
-class TriggerNode : public NodeImpl
+class TriggerNode : public BlockImpl
 {
 public:
 	TriggerNode(InternalPlugin*     plugin,

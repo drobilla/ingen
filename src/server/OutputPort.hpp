@@ -39,7 +39,7 @@ class OutputPort : virtual public PortImpl
 {
 public:
 	OutputPort(BufferFactory&      bufs,
-	           NodeImpl*           parent,
+	           BlockImpl*          parent,
 	           const Raul::Symbol& symbol,
 	           uint32_t            index,
 	           uint32_t            poly,

@@ -52,7 +52,7 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
                    bool                polyphonic,
                    PatchImpl*          parent,
                    SampleRate          srate)
-	: NodeImpl(plugin, symbol, polyphonic, parent, srate)
+	: BlockImpl(plugin, symbol, polyphonic, parent, srate)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)
 	, _sustain(false)
@@ -103,7 +103,7 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (!_polyphonic)
 		return true;
 
-	NodeImpl::prepare_poly(bufs, poly);
+	BlockImpl::prepare_poly(bufs, poly);
 
 	if (_prepared_voices && poly <= _prepared_voices->size())
 		return true;
@@ -116,7 +116,7 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 NoteNode::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 {
-	if (!NodeImpl::apply_poly(context, maid, poly))
+	if (!BlockImpl::apply_poly(context, maid, poly))
 		return false;
 
 	if (_prepared_voices) {
@@ -133,7 +133,7 @@ NoteNode::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 void
 NoteNode::process(ProcessContext& context)
 {
-	NodeImpl::pre_process(context);
+	BlockImpl::pre_process(context);
 
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
 	LV2_Atom_Sequence* seq     = (LV2_Atom_Sequence*)midi_in->atom();
@@ -173,7 +173,7 @@ NoteNode::process(ProcessContext& context)
 		}
 	}
 
-	NodeImpl::post_process(context);
+	BlockImpl::post_process(context);
 }
 
 void

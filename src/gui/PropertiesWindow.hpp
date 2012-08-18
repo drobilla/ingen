@@ -30,7 +30,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 
 #include "Window.hpp"
 

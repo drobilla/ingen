@@ -112,7 +112,7 @@ App::create(Ingen::World* world)
 	app->_about_dialog->property_logo_icon_name() = "ingen";
 	gtk_window_set_default_icon_name("ingen");
 
-	// Set style for embedded node GUIs
+	// Set style for embedded block GUIs
 	const string rc_style =
 		"style \"ingen_embedded_node_gui_style\" {\n"
 		"bg[NORMAL]      = \"#212222\"\n"

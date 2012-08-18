@@ -27,8 +27,8 @@
 namespace Ingen {
 namespace Server {
 
+class BlockImpl;
 class CompiledPatch;
-class NodeImpl;
 class PatchImpl;
 class PortImpl;
 
@@ -36,7 +36,7 @@ namespace Events {
 
 class Disconnect;
 
-/** An event to disconnect all connections to a Node.
+/** An event to disconnect all connections to a Block.
  *
  * \ingroup engine
  */
@@ -66,7 +66,7 @@ private:
 	Raul::Path     _parent_path;
 	Raul::Path     _path;
 	PatchImpl*     _parent;
-	NodeImpl*      _node;
+	BlockImpl*     _block;
 	PortImpl*      _port;
 	Impls          _impls;
 	CompiledPatch* _compiled_patch;

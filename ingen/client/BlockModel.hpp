@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_CLIENT_NODEMODEL_HPP
-#define INGEN_CLIENT_NODEMODEL_HPP
+#ifndef INGEN_CLIENT_BLOCKMODEL_HPP
+#define INGEN_CLIENT_BLOCKMODEL_HPP
 
 #include <cstdlib>
 #include <string>
@@ -38,15 +38,15 @@ namespace Client {
 class PluginModel;
 class ClientStore;
 
-/** Node model class, used by the client to store engine's state.
+/** Block model class, used by the client to store engine's state.
  *
  * @ingroup IngenClient
  */
-class NodeModel : public ObjectModel
+class BlockModel : public ObjectModel
 {
 public:
-	NodeModel(const NodeModel& copy);
-	virtual ~NodeModel();
+	BlockModel(const BlockModel& copy);
+	virtual ~BlockModel();
 
 	GraphType graph_type() const { return GraphObject::PATCH; }
 
@@ -79,13 +79,13 @@ public:
 protected:
 	friend class ClientStore;
 
-	NodeModel(URIs&             uris,
-	          const Raul::URI&  plugin_uri,
-	          const Raul::Path& path);
-	NodeModel(URIs&                  uris,
-	          SharedPtr<PluginModel> plugin,
-	          const Raul::Path&      path);
-	explicit NodeModel(const Raul::Path& path);
+	BlockModel(URIs&             uris,
+	           const Raul::URI&  plugin_uri,
+	           const Raul::Path& path);
+	BlockModel(URIs&                  uris,
+	           SharedPtr<PluginModel> plugin,
+	           const Raul::Path&      path);
+	explicit BlockModel(const Raul::Path& path);
 
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);
@@ -98,7 +98,7 @@ protected:
 
 	Ports                  _ports; ///< Vector of ports
 	Raul::URI              _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
-	SharedPtr<PluginModel> _plugin; ///< The plugin this node is an instance of
+	SharedPtr<PluginModel> _plugin; ///< The plugin this block is an instance of
 
 private:
 	mutable uint32_t _num_values; ///< Size of _min_values and _max_values
@@ -109,4 +109,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // INGEN_CLIENT_NODEMODEL_HPP
+#endif // INGEN_CLIENT_BLOCKMODEL_HPP

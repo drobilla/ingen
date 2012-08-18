@@ -40,7 +40,7 @@ class Context;
 class ProcessContext;
 class BufferFactory;
 
-/** An object on the audio graph - Patch, Node, Port, etc.
+/** An object on the audio graph (a Patch, Block, or Port).
  *
  * Each of these is a Raul::Deletable and so can be deleted in a realtime safe
  * way from anywhere, and they all have a map of variable for clients to store

@@ -18,6 +18,7 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
+#include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "Delete.hpp"
@@ -25,7 +26,6 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EnginePort.hpp"
-#include "NodeImpl.hpp"
 #include "PatchImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
@@ -73,24 +73,24 @@ Delete::pre_process()
 		return Event::pre_process_done(NOT_FOUND, _path);
 	}
 
-	if (!(_node = PtrCast<NodeImpl>(iter->second))) {
+	if (!(_block = PtrCast<BlockImpl>(iter->second))) {
 		_port = PtrCast<DuplexPort>(iter->second);
 	}
 
-	if (!_node && !_port) {
+	if (!_block && !_port) {
 		return Event::pre_process_done(NOT_DELETABLE, _path);
 	}
 
-	PatchImpl* parent = _node ? _node->parent_patch() : _port->parent_patch();
+	PatchImpl* parent = _block ? _block->parent_patch() : _port->parent_patch();
 	if (!parent) {
 		return Event::pre_process_done(INTERNAL_ERROR, _path);
 	}
 
 	_engine.store()->remove(iter, _removed_objects);
 
-	if (_node) {
-		parent->remove_node(*_node);
-		_disconnect_event = new DisconnectAll(_engine, parent, _node.get());
+	if (_block) {
+		parent->remove_block(*_block);
+		_disconnect_event = new DisconnectAll(_engine, parent, _block.get());
 		_disconnect_event->pre_process();
 		
 		if (parent->enabled()) {
@@ -122,7 +122,7 @@ Delete::execute(ProcessContext& context)
 		_disconnect_event->execute(context);
 	}
 
-	PatchImpl* parent = _node ? _node->parent_patch() : _port->parent_patch();
+	PatchImpl* parent = _block ? _block->parent_patch() : _port->parent_patch();
 	if (_port) {
 		_engine.maid()->dispose(parent->external_ports());
 		parent->external_ports(_ports_array);
@@ -143,9 +143,9 @@ Delete::post_process()
 {
 	_lock.release();
 	_removed_bindings.reset();
-	if (!respond() && (_node || _port)) {
-		if (_node) {
-			_node->deactivate();
+	if (!respond() && (_block || _port)) {
+		if (_block) {
+			_block->deactivate();
 		}
 
 		_engine.broadcaster()->bundle_begin();

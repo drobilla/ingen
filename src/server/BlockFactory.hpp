@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_NODEFACTORY_HPP
-#define INGEN_ENGINE_NODEFACTORY_HPP
+#ifndef INGEN_ENGINE_BLOCKFACTORY_HPP
+#define INGEN_ENGINE_BLOCKFACTORY_HPP
 
 #include <map>
 
@@ -27,8 +27,6 @@
 namespace Ingen {
 namespace Server {
 
-class NodeImpl;
-class PatchImpl;
 class PluginImpl;
 class LV2Info;
 
@@ -36,11 +34,11 @@ class LV2Info;
  *
  * \ingroup engine
  */
-class NodeFactory : public Raul::Noncopyable
+class BlockFactory : public Raul::Noncopyable
 {
 public:
-	explicit NodeFactory(Ingen::World* world);
-	~NodeFactory();
+	explicit BlockFactory(Ingen::World* world);
+	~BlockFactory();
 
 	void load_plugin(const Raul::URI& uri);
 
@@ -62,4 +60,4 @@ private:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_NODEFACTORY_HPP
+#endif // INGEN_ENGINE_BLOCKFACTORY_HPP

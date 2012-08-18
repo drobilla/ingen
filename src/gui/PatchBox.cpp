@@ -257,7 +257,7 @@ PatchBox::set_patch(SharedPtr<const PatchModel> patch,
 
 	_menu_view_control_window->property_sensitive() = false;
 
-	for (NodeModel::Ports::const_iterator p = patch->ports().begin();
+	for (BlockModel::Ports::const_iterator p = patch->ports().begin();
 	     p != patch->ports().end(); ++p) {
 		if (_app->can_control(p->get())) {
 			_menu_view_control_window->property_sensitive() = true;
@@ -296,7 +296,7 @@ PatchBox::patch_port_removed(SharedPtr<const PortModel> port)
 	if (!(port->is_input() && _app->can_control(port.get())))
 		return;
 
-	for (NodeModel::Ports::const_iterator i = _patch->ports().begin();
+	for (BlockModel::Ports::const_iterator i = _patch->ports().begin();
 	     i != _patch->ports().end(); ++i) {
 		if ((*i)->is_input() && _app->can_control(i->get())) {
 			_menu_view_control_window->property_sensitive() = true;
@@ -342,14 +342,14 @@ PatchBox::show_status(const ObjectModel* model)
 	std::stringstream msg;
 	msg << model->path();
 
-	const PortModel* port = 0;
-	const NodeModel* node = 0;
+	const PortModel*  port = 0;
+	const BlockModel* block = 0;
 
 	if ((port = dynamic_cast<const PortModel*>(model))) {
 		show_port_status(port, port->value());
 
-	} else if ((node = dynamic_cast<const NodeModel*>(model))) {
-		const PluginModel* plugin = dynamic_cast<const PluginModel*>(node->plugin());
+	} else if ((block = dynamic_cast<const BlockModel*>(model))) {
+		const PluginModel* plugin = dynamic_cast<const PluginModel*>(block->plugin());
 		if (plugin)
 			msg << ((boost::format(" (%1%)") % plugin->human_name()).str());
 		_status_bar->push(msg.str(), STATUS_CONTEXT_HOVER);
@@ -362,7 +362,7 @@ PatchBox::show_port_status(const PortModel* port, const Raul::Atom& value)
 	std::stringstream msg;
 	msg << port->path();
 
-	const NodeModel* parent = dynamic_cast<const NodeModel*>(port->parent().get());
+	const BlockModel* parent = dynamic_cast<const BlockModel*>(port->parent().get());
 	if (parent) {
 		const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
 		if (plugin) {

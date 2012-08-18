@@ -23,7 +23,7 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PatchModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
@@ -49,22 +49,20 @@ using namespace Client;
 
 namespace GUI {
 
-NodeModule::NodeModule(PatchCanvas&               canvas,
-                       SharedPtr<const NodeModel> node)
-	: Ganv::Module(canvas, node->path().symbol(), 0, 0, true)
-	, _node(node)
+NodeModule::NodeModule(PatchCanvas&                canvas,
+                       SharedPtr<const BlockModel> block)
+	: Ganv::Module(canvas, block->path().symbol(), 0, 0, true)
+	, _block(block)
 	, _gui_widget(NULL)
 	, _gui_window(NULL)
 {
-	assert(_node);
-
-	node->signal_new_port().connect(
+	block->signal_new_port().connect(
 		sigc::mem_fun(this, &NodeModule::new_port_view));
-	node->signal_removed_port().connect(
+	block->signal_removed_port().connect(
 		sigc::hide_return(sigc::mem_fun(this, &NodeModule::delete_port_view)));
-	node->signal_property().connect(
+	block->signal_property().connect(
 		sigc::mem_fun(this, &NodeModule::property_changed));
-	node->signal_moved().connect(
+	block->signal_moved().connect(
 		sigc::mem_fun(this, &NodeModule::rename));
 
 	signal_event().connect(
@@ -73,7 +71,7 @@ NodeModule::NodeModule(PatchCanvas&               canvas,
 	signal_moved().connect(
 		sigc::mem_fun(this, &NodeModule::store_location));
 
-	const PluginModel* plugin = dynamic_cast<const PluginModel*>(node->plugin());
+	const PluginModel* plugin = dynamic_cast<const PluginModel*>(block->plugin());
 	if (plugin) {
 		plugin->signal_changed().connect(
 			sigc::mem_fun(this, &NodeModule::plugin_changed));
@@ -90,7 +88,7 @@ bool
 NodeModule::show_menu(GdkEventButton* ev)
 {
 	WidgetFactory::get_widget_derived("object_menu", _menu);
-	_menu->init(app(), _node);
+	_menu->init(app(), _block);
 	_menu->signal_embed_gui.connect(
 		sigc::mem_fun(this, &NodeModule::on_embed_gui_toggled));
 	_menu->signal_popup_gui.connect(
@@ -100,27 +98,25 @@ NodeModule::show_menu(GdkEventButton* ev)
 }
 
 NodeModule*
-NodeModule::create(PatchCanvas&               canvas,
-                   SharedPtr<const NodeModel> node,
-                   bool                       human)
+NodeModule::create(PatchCanvas&                canvas,
+                   SharedPtr<const BlockModel> block,
+                   bool                        human)
 {
-	NodeModule* ret;
+	SharedPtr<const PatchModel> patch = PtrCast<const PatchModel>(block);
+	
+	NodeModule* ret = (patch)
+		? new SubpatchModule(canvas, patch)
+		: new NodeModule(canvas, block);
 
-	SharedPtr<const PatchModel> patch = PtrCast<const PatchModel>(node);
-	if (patch)
-		ret = new SubpatchModule(canvas, patch);
-	else
-		ret = new NodeModule(canvas, node);
-
-	for (GraphObject::Properties::const_iterator m = node->properties().begin();
-	     m != node->properties().end(); ++m)
+	for (GraphObject::Properties::const_iterator m = block->properties().begin();
+	     m != block->properties().end(); ++m)
 		ret->property_changed(m->first, m->second);
 
-	for (NodeModel::Ports::const_iterator p = node->ports().begin();
-	     p != node->ports().end(); ++p)
+	for (BlockModel::Ports::const_iterator p = block->ports().begin();
+	     p != block->ports().end(); ++p)
 		ret->new_port_view(*p);
 
-	ret->set_stacked(node->polyphonic());
+	ret->set_stacked(block->polyphonic());
 
 	if (human)
 		ret->show_human_names(human); // FIXME: double port iteration
@@ -140,9 +136,9 @@ NodeModule::show_human_names(bool b)
 	const URIs& uris = app().uris();
 
 	if (b) {
-		set_label(node()->label().c_str());
+		set_label(block()->label().c_str());
 	} else {
-		set_label(node()->symbol().c_str());
+		set_label(block()->symbol().c_str());
 	}
 
 	for (iterator i = begin(); i != end(); ++i) {
@@ -153,7 +149,7 @@ NodeModule::show_human_names(bool b)
 			if (name_property.type() == uris.forge.String) {
 				label = name_property.get_string();
 			} else {
-				Glib::ustring hn = node()->plugin_model()->port_human_name(
+				Glib::ustring hn = block()->plugin_model()->port_human_name(
 						port->model()->index());
 				if (!hn.empty())
 					label = hn;
@@ -210,7 +206,7 @@ void
 NodeModule::on_embed_gui_toggled(bool embed)
 {
 	embed_gui(embed);
-	app().interface()->set_property(_node->uri(),
+	app().interface()->set_property(_block->uri(),
 	                                app().uris().ingen_uiEmbedded,
 	                                app().forge().make(embed));
 }
@@ -225,8 +221,8 @@ NodeModule::embed_gui(bool embed)
 		}
 
 		if (!_plugin_ui) {
-			const PluginModel* const pm = dynamic_cast<const PluginModel*>(_node->plugin());
-			_plugin_ui = pm->ui(app().world(), _node);
+			const PluginModel* const pm = dynamic_cast<const PluginModel*>(_block->plugin());
+			_plugin_ui = pm->ui(app().world(), _block);
 		}
 
 		if (_plugin_ui) {
@@ -257,7 +253,7 @@ void
 NodeModule::rename()
 {
 	if (app().configuration()->name_style() == Configuration::PATH) {
-		set_label(_node->path().symbol());
+		set_label(_block->path().symbol());
 	}
 }
 
@@ -295,23 +291,23 @@ NodeModule::delete_port_view(SharedPtr<const PortModel> model)
 		delete p;
 	} else {
 		app().log().warn(Raul::fmt("Failed to find port %1% on module %2%\n")
-		                 % model->path() % _node->path());
+		                 % model->path() % _block->path());
 	}
 }
 
 bool
 NodeModule::popup_gui()
 {
-	if (_node->plugin() && _node->plugin()->type() == PluginModel::LV2) {
+	if (_block->plugin() && _block->plugin()->type() == PluginModel::LV2) {
 		if (_plugin_ui) {
 			app().log().warn("LV2 GUI already embedded, cannot pop up\n");
 			return false;
 		}
 
-		const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_node->plugin());
+		const PluginModel* const plugin = dynamic_cast<const PluginModel*>(_block->plugin());
 		assert(plugin);
 
-		_plugin_ui = plugin->ui(app().world(), _node);
+		_plugin_ui = plugin->ui(app().world(), _block);
 
 		if (_plugin_ui) {
 			GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
@@ -321,7 +317,7 @@ NodeModule::popup_gui()
 			if (!_plugin_ui->is_resizable()) {
 				_gui_window->set_resizable(false);
 			}
-			_gui_window->set_title(_node->path() + " UI - Ingen");
+			_gui_window->set_title(_block->path() + " UI - Ingen");
 			_gui_window->set_role("plugin_ui");
 			_gui_window->add(*_gui_widget);
 			_gui_widget->show_all();
@@ -333,7 +329,7 @@ NodeModule::popup_gui()
 
 			return true;
 		} else {
-			app().log().warn(Raul::fmt("No LV2 GUI for %1%\n") % _node->path());
+			app().log().warn(Raul::fmt("No LV2 GUI for %1%\n") % _block->path());
 		}
 	}
 
@@ -353,10 +349,11 @@ void
 NodeModule::set_control_values()
 {
 	uint32_t index = 0;
-	for (NodeModel::Ports::const_iterator p = _node->ports().begin();
-	     p != _node->ports().end(); ++p) {
-		if (app().can_control(p->get()))
+	for (BlockModel::Ports::const_iterator p = _block->ports().begin();
+	     p != _block->ports().end(); ++p) {
+		if (app().can_control(p->get())) {
 			value_changed(index, (*p)->value());
+		}
 		++index;
 	}
 }
@@ -387,8 +384,8 @@ NodeModule::store_location(double ax, double ay)
 	const Raul::Atom x(app().forge().make(static_cast<float>(ax)));
 	const Raul::Atom y(app().forge().make(static_cast<float>(ay)));
 
-	if (x != _node->get_property(uris.ingen_canvasX) ||
-	    y != _node->get_property(uris.ingen_canvasY))
+	if (x != _block->get_property(uris.ingen_canvasX) ||
+	    y != _block->get_property(uris.ingen_canvasY))
 	{
 		Resource::Properties remove;
 		remove.insert(make_pair(uris.ingen_canvasX, uris.wildcard));
@@ -396,7 +393,7 @@ NodeModule::store_location(double ax, double ay)
 		Resource::Properties add;
 		add.insert(make_pair(uris.ingen_canvasX, x));
 		add.insert(make_pair(uris.ingen_canvasY, y));
-		app().interface()->delta(_node->uri(), remove, add);
+		app().interface()->delta(_block->uri(), remove, add);
 	}
 }
 
@@ -435,12 +432,12 @@ NodeModule::set_selected(gboolean b)
 		Ganv::Module::set_selected(b);
 		#if 0
 		if (b) {
-			PatchWindow* win = app().window_factory()->parent_patch_window(node());
+			PatchWindow* win = app().window_factory()->parent_patch_window(block());
 			if (win) {
 				std::string doc;
 				bool        html = false;
-				if (node()->plugin_model()) {
-					doc = node()->plugin_model()->documentation(&html);
+				if (block()->plugin_model()) {
+					doc = block()->plugin_model()->documentation(&html);
 				}
 				if (!doc.empty()) {
 					win->show_documentation(doc, html);

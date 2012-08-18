@@ -20,9 +20,9 @@
 #include "ingen/LV2Features.hpp"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 
-#include "NodeImpl.hpp"
-#include "PortImpl.hpp"
+#include "BlockImpl.hpp"
 #include "Buffer.hpp"
+#include "PortImpl.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -32,9 +32,9 @@ struct ResizeFeature : public Ingen::LV2Features::Feature {
 		LV2_Resize_Port_Feature_Data data,
 		uint32_t                     index,
 		size_t                       size) {
-		NodeImpl* node = (NodeImpl*)data;
-		PortImpl* port = node->port_impl(index);
-		if (node->context() == Context::MESSAGE) {
+		BlockImpl* block = (BlockImpl*)data;
+		PortImpl*  port = block->port_impl(index);
+		if (block->context() == Context::MESSAGE) {
 			port->buffer(0)->resize(size);
 			port->connect_buffers();
 			return LV2_RESIZE_PORT_SUCCESS;
@@ -48,12 +48,12 @@ struct ResizeFeature : public Ingen::LV2Features::Feature {
 	}
 
 	SharedPtr<LV2_Feature> feature(World* w, GraphObject* n) {
-		NodeImpl* node = dynamic_cast<NodeImpl*>(n);
-		if (!node)
+		BlockImpl* block = dynamic_cast<BlockImpl*>(n);
+		if (!block)
 			return SharedPtr<LV2_Feature>();
 		LV2_Resize_Port_Resize* data
 			= (LV2_Resize_Port_Resize*)malloc(sizeof(LV2_Resize_Port_Resize));
-		data->data   = node;
+		data->data   = block;
 		data->resize = &resize_port;
 		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
 		f->URI  = LV2_RESIZE_PORT_URI;

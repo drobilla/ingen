@@ -21,7 +21,7 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
-#include "ingen/client/NodeModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "lv2/lv2plug.in/ns/ext/presets/presets.h"
 
@@ -49,9 +49,9 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 }
 
 void
-NodeMenu::init(App& app, SharedPtr<const Client::NodeModel> node)
+NodeMenu::init(App& app, SharedPtr<const Client::BlockModel> block)
 {
-	ObjectMenu::init(app, node);
+	ObjectMenu::init(app, block);
 
 	_learn_menuitem->signal_activate().connect(sigc::mem_fun(this,
 			&NodeMenu::on_menu_learn));
@@ -62,11 +62,11 @@ NodeMenu::init(App& app, SharedPtr<const Client::NodeModel> node)
 	_randomize_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &NodeMenu::on_menu_randomize));
 
-	const PluginModel* plugin = dynamic_cast<const PluginModel*>(node->plugin());
+	const PluginModel* plugin = dynamic_cast<const PluginModel*>(block->plugin());
 	if (plugin && plugin->type() == PluginModel::LV2 && plugin->has_ui()) {
 		_popup_gui_menuitem->show();
 		_embed_gui_menuitem->show();
-		const Raul::Atom& ui_embedded  = node->get_property(
+		const Raul::Atom& ui_embedded = block->get_property(
 			_app->uris().ingen_uiEmbedded);
 		_embed_gui_menuitem->set_active(
 			ui_embedded.is_valid() && ui_embedded.get_bool());
@@ -150,11 +150,11 @@ NodeMenu::on_menu_randomize()
 {
 	_app->interface()->bundle_begin();
 
-	const NodeModel* const nm = (const NodeModel*)_object.get();
-	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i) {
+	const BlockModel* const bm = (const BlockModel*)_object.get();
+	for (BlockModel::Ports::const_iterator i = bm->ports().begin(); i != bm->ports().end(); ++i) {
 		if ((*i)->is_input() && _app->can_control(i->get())) {
 			float min = 0.0f, max = 1.0f;
-			nm->port_value_range(*i, min, max, _app->sample_rate());
+			bm->port_value_range(*i, min, max, _app->sample_rate());
 			const float val = g_random_double_range(0.0, 1.0) * (max - min) + min;
 			_app->interface()->set_property(
 				(*i)->uri(),
@@ -175,8 +175,8 @@ NodeMenu::on_menu_disconnect()
 void
 NodeMenu::on_preset_activated(const std::string& uri)
 {
-	const NodeModel* const   node   = (const NodeModel*)_object.get();
-	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(node->plugin());
+	const BlockModel* const  block  = (const BlockModel*)_object.get();
+	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(block->plugin());
 
 	LilvNode* port_pred = lilv_new_uri(plugin->lilv_world(),
 	                                   LV2_CORE__port);
@@ -202,7 +202,7 @@ NodeMenu::on_preset_activated(const std::string& uri)
 			const LilvNode* sym = lilv_nodes_get_first(symbols);
 			_app->interface()->set_property(
 				GraphObject::path_to_uri(
-					node->path().child(Raul::Symbol(lilv_node_as_string(sym)))),
+					block->path().child(Raul::Symbol(lilv_node_as_string(sym)))),
 				_app->uris().ingen_value,
 				_app->forge().make(lilv_node_as_float(val)));
 		}
@@ -224,8 +224,8 @@ NodeMenu::on_preset_clicked(const std::string& uri, GdkEventButton* ev)
 bool
 NodeMenu::has_control_inputs()
 {
-	const NodeModel* const nm = (const NodeModel*)_object.get();
-	for (NodeModel::Ports::const_iterator i = nm->ports().begin(); i != nm->ports().end(); ++i)
+	const BlockModel* const bm = (const BlockModel*)_object.get();
+	for (BlockModel::Ports::const_iterator i = bm->ports().begin(); i != bm->ports().end(); ++i)
 		if ((*i)->is_input() && (*i)->is_numeric())
 			return true;
 

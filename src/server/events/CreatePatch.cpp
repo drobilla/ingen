@@ -81,9 +81,9 @@ CreatePatch::pre_process()
 	_patch->properties().insert(_properties.begin(), _properties.end());
 	_patch->add_property(uris.rdf_type, uris.ingen_Patch);
 	_patch->add_property(uris.rdf_type,
-	                     Resource::Property(uris.ingen_Node, Resource::EXTERNAL));
+	                     Resource::Property(uris.ingen_Block, Resource::EXTERNAL));
 
-	_parent->add_node(*_patch);
+	_parent->add_block(*_patch);
 	if (_parent->enabled()) {
 		_patch->enable();
 		_compiled_patch = _parent->compile();

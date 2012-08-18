@@ -38,7 +38,7 @@ class InputPort;
 
 /** Represents a single inbound connection for an InputPort.
  *
- * This can be a group of ports (ie coming from a polyphonic Node) or
+ * This can be a group of ports (coming from a polyphonic Block) or
  * a single Port.  This class exists basically as an abstraction of mixing
  * down polyphonic inputs, so InputPort can just deal with mixing down
  * multiple connections (oblivious to the polyphonic situation of the

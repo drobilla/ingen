@@ -33,7 +33,7 @@ class Edge;
 class Plugin;
 class Store;
 
-/** An object on the audio graph - Patch, Node, Port, etc.
+/** An object on the audio graph - Patch, Block, Port, etc.
  *
  * @ingroup Ingen
  */
@@ -42,7 +42,7 @@ class GraphObject : public Resource
 public:
 	enum GraphType {
 		PATCH,
-		NODE,
+		BLOCK,
 		PORT
 	};
 
@@ -53,7 +53,7 @@ public:
 	Edges&       edges()       { return _edges; }
 	const Edges& edges() const { return _edges; }
 
-	// Nodes and patches only
+	// Blocks and patches only
 	virtual uint32_t      num_ports()          const { return 0; }
 	virtual GraphObject*  port(uint32_t index) const { return NULL; }
 	virtual const Plugin* plugin()             const { return NULL; }

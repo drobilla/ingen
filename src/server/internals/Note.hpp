@@ -17,7 +17,7 @@
 #ifndef INGEN_INTERNALS_NOTE_HPP
 #define INGEN_INTERNALS_NOTE_HPP
 
-#include "NodeImpl.hpp"
+#include "BlockImpl.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -29,13 +29,13 @@ class InternalPlugin;
 
 namespace Internals {
 
-/** MIDI note input node.
+/** MIDI note input block.
  *
  * For pitched instruments like keyboard, etc.
  *
  * \ingroup engine
  */
-class NoteNode : public NodeImpl
+class NoteNode : public BlockImpl
 {
 public:
 	NoteNode(InternalPlugin*     plugin,

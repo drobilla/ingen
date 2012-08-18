@@ -19,7 +19,7 @@
 
 #include <math.h>
 
-#include "NodeImpl.hpp"
+#include "BlockImpl.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -32,7 +32,7 @@ class BufferFactory;
 
 namespace Internals {
 
-class DelayNode : public NodeImpl
+class DelayNode : public BlockImpl
 {
 public:
 	DelayNode(InternalPlugin*     plugin,

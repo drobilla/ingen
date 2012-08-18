@@ -38,7 +38,7 @@ class URIs;
 namespace Client {
 
 class PatchModel;
-class NodeModel;
+class BlockModel;
 class PluginUI;
 
 /** Model for a plugin available for loading.
@@ -57,7 +57,7 @@ public:
 
 	virtual const Raul::Atom& get_property(const Raul::URI& key) const;
 
-	Raul::Symbol default_node_symbol() const;
+	Raul::Symbol default_block_symbol() const;
 	std::string  human_name() const;
 	std::string  port_human_name(uint32_t index) const;
 
@@ -74,8 +74,8 @@ public:
 
 	bool has_ui() const;
 
-	SharedPtr<PluginUI> ui(Ingen::World*              world,
-	                       SharedPtr<const NodeModel> node) const;
+	SharedPtr<PluginUI> ui(Ingen::World*               world,
+	                       SharedPtr<const BlockModel> block) const;
 
 	const std::string& icon_path() const;
 	static std::string get_lv2_icon_path(const LilvPlugin* plugin);

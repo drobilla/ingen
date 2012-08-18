@@ -67,21 +67,21 @@ Disconnect::Impl::Impl(Engine&     e,
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	NodeImpl* const src_node = _src_output_port->parent_node();
-	NodeImpl* const dst_node = _dst_input_port->parent_node();
+	BlockImpl* const src_block = _src_output_port->parent_block();
+	BlockImpl* const dst_block = _dst_input_port->parent_block();
 
-	for (std::list<NodeImpl*>::iterator i = dst_node->providers().begin();
-	     i != dst_node->providers().end(); ++i) {
-		if ((*i) == src_node) {
-			dst_node->providers().erase(i);
+	for (std::list<BlockImpl*>::iterator i = dst_block->providers().begin();
+	     i != dst_block->providers().end(); ++i) {
+		if ((*i) == src_block) {
+			dst_block->providers().erase(i);
 			break;
 		}
 	}
 
-	for (std::list<NodeImpl*>::iterator i = src_node->dependants().begin();
-	     i != src_node->dependants().end(); ++i) {
-		if ((*i) == dst_node) {
-			src_node->dependants().erase(i);
+	for (std::list<BlockImpl*>::iterator i = src_block->dependants().begin();
+	     i != src_block->dependants().end(); ++i) {
+		if ((*i) == dst_block) {
+			src_block->dependants().erase(i);
 			break;
 		}
 	}
@@ -130,23 +130,23 @@ Disconnect::pre_process()
 		return Event::pre_process_done(PORT_NOT_FOUND, _head_path);
 	}
 	
-	NodeImpl* const src_node = tail->parent_node();
-	NodeImpl* const dst_node = head->parent_node();
+	BlockImpl* const src_block = tail->parent_block();
+	BlockImpl* const dst_block = head->parent_block();
 
-	if (src_node->parent_patch() != dst_node->parent_patch()) {
+	if (src_block->parent_patch() != dst_block->parent_patch()) {
 		// Edge to a patch port from inside the patch
-		assert(src_node->parent() == dst_node || dst_node->parent() == src_node);
-		if (src_node->parent() == dst_node) {
-			_patch = dynamic_cast<PatchImpl*>(dst_node);
+		assert(src_block->parent() == dst_block || dst_block->parent() == src_block);
+		if (src_block->parent() == dst_block) {
+			_patch = dynamic_cast<PatchImpl*>(dst_block);
 		} else {
-			_patch = dynamic_cast<PatchImpl*>(src_node);
+			_patch = dynamic_cast<PatchImpl*>(src_block);
 		}
-	} else if (src_node == dst_node && dynamic_cast<PatchImpl*>(src_node)) {
+	} else if (src_block == dst_block && dynamic_cast<PatchImpl*>(src_block)) {
 		// Edge from a patch input to a patch output (pass through)
-		_patch = dynamic_cast<PatchImpl*>(src_node);
+		_patch = dynamic_cast<PatchImpl*>(src_block);
 	} else {
-		// Normal edge between nodes with the same parent
-		_patch = src_node->parent_patch();
+		// Normal edge between blocks with the same parent
+		_patch = src_block->parent_patch();
 	}
 
 	assert(_patch);
@@ -155,7 +155,7 @@ Disconnect::pre_process()
 		return Event::pre_process_done(NOT_FOUND, _head_path);
 	}
 
-	if (src_node == NULL || dst_node == NULL) {
+	if (src_block == NULL || dst_block == NULL) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path);
 	}
 

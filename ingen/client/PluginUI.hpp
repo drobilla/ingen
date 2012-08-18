@@ -32,7 +32,7 @@ class World;
 
 namespace Client {
 
-class NodeModel;
+class BlockModel;
 
 /** Model for a plugin available for loading.
  *
@@ -42,9 +42,9 @@ class PluginUI {
 public:
 	~PluginUI();
 
-	static SharedPtr<PluginUI> create(Ingen::World*              world,
-	                                  SharedPtr<const NodeModel> node,
-	                                  const LilvPlugin*          plugin);
+	static SharedPtr<PluginUI> create(Ingen::World*               world,
+	                                  SharedPtr<const BlockModel> block,
+	                                  const LilvPlugin*           plugin);
 
 	SuilWidget get_widget();
 
@@ -55,18 +55,18 @@ public:
 
 	bool is_resizable() const;
 
-	Ingen::World*              world() const { return _world; }
-	SharedPtr<const NodeModel> node()  const { return _node; }
+	Ingen::World*               world() const { return _world; }
+	SharedPtr<const BlockModel> block() const { return _block; }
 
 private:
-	PluginUI(Ingen::World*              world,
-	         SharedPtr<const NodeModel> node,
-	         const LilvNode*            ui_node);
+	PluginUI(Ingen::World*               world,
+	         SharedPtr<const BlockModel> block,
+	         const LilvNode*             ui_node);
 
-	Ingen::World*              _world;
-	SharedPtr<const NodeModel> _node;
-	SuilInstance*              _instance;
-	LilvNode*                  _ui_node;
+	Ingen::World*               _world;
+	SharedPtr<const BlockModel> _block;
+	SuilInstance*               _instance;
+	LilvNode*                   _ui_node;
 
 	static SuilHost* ui_host;
 

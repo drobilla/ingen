@@ -67,8 +67,8 @@ SubpatchModule::store_location(double ax, double ay)
 	const Raul::Atom x(app().forge().make(static_cast<float>(ax)));
 	const Raul::Atom y(app().forge().make(static_cast<float>(ay)));
 
-	if (x != _node->get_property(uris.ingen_canvasX) ||
-	    y != _node->get_property(uris.ingen_canvasY))
+	if (x != _block->get_property(uris.ingen_canvasX) ||
+	    y != _block->get_property(uris.ingen_canvasY))
 	{
 		Resource::Properties remove;
 		remove.insert(make_pair(uris.ingen_canvasX, uris.wildcard));
@@ -78,7 +78,7 @@ SubpatchModule::store_location(double ax, double ay)
 		                     Resource::Property(x, Resource::EXTERNAL)));
 		add.insert(make_pair(uris.ingen_canvasY,
 		                     Resource::Property(y, Resource::EXTERNAL)));
-		app().interface()->delta(_node->uri(), remove, add);
+		app().interface()->delta(_block->uri(), remove, add);
 	}
 }
 

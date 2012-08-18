@@ -36,9 +36,6 @@
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
-#define NS_RDF  "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-#define NS_RDFS "http://www.w3.org/2000/01/rdf-schema#"
-
 using namespace std;
 
 typedef set<Sord::Node> RDFNodes;
@@ -192,7 +189,7 @@ parse_patch(
 	boost::optional<Resource::Properties> data   = boost::optional<Resource::Properties>());
 
 static boost::optional<Raul::Path>
-parse_node(
+parse_block(
 	World*                                world,
 	Interface*                            target,
 	Sord::Model&                          model,
@@ -218,21 +215,21 @@ parse_edges(
 		const Raul::Path& patch);
 
 static boost::optional<Raul::Path>
-parse_node(Ingen::World*                            world,
-           Ingen::Interface*                        target,
-           Sord::Model&                             model,
-           const Sord::Node&                        subject,
-           const Raul::Path&                        path,
-           boost::optional<GraphObject::Properties> data)
+parse_block(Ingen::World*                            world,
+            Ingen::Interface*                        target,
+            Sord::Model&                             model,
+            const Sord::Node&                        subject,
+            const Raul::Path&                        path,
+            boost::optional<GraphObject::Properties> data)
 {
 	const URIs& uris = world->uris();
 
-	const Sord::URI  ingen_prototype(*world->rdf_world(), NS_INGEN "prototype");
+	const Sord::URI  ingen_prototype(*world->rdf_world(), uris.ingen_prototype);
 	const Sord::Node nil;
 
 	Sord::Iter i = model.find(subject, ingen_prototype, nil);
 	if (i.end() || i.get_object().type() != Sord::Node::URI) {
-		world->log().error("Node missing mandatory ingen:prototype\n");
+		world->log().error("BLock missing mandatory ingen:prototype\n");
 		return boost::optional<Raul::Path>();
 	}
 
@@ -274,7 +271,7 @@ parse_node(Ingen::World*                            world,
 	} else {
 		Resource::Properties props = get_properties(world, model, subject);
 		props.insert(make_pair(uris.rdf_type,
-		                       uris.forge.alloc_uri(uris.ingen_Node)));
+		                       uris.forge.alloc_uri(uris.ingen_Block)));
 		target->put(GraphObject::path_to_uri(path), props);
 	}
 	return path;
@@ -289,8 +286,10 @@ parse_patch(Ingen::World*                            world,
             boost::optional<Raul::Symbol>            a_symbol,
             boost::optional<GraphObject::Properties> data)
 {
-	const Sord::URI ingen_node(*world->rdf_world(),      NS_INGEN "node");
-	const Sord::URI ingen_polyphony(*world->rdf_world(), NS_INGEN "polyphony");
+	URIs& uris = world->uris();
+
+	const Sord::URI ingen_block(*world->rdf_world(),     uris.ingen_block);
+	const Sord::URI ingen_polyphony(*world->rdf_world(), uris.ingen_polyphony);
 	const Sord::URI lv2_port(*world->rdf_world(),        LV2_CORE__port);
 
 	const Sord::Node& patch = subject_node;
@@ -320,24 +319,24 @@ parse_patch(Ingen::World*                            world,
 	Resource::Properties props = get_properties(world, model, subject_node);
 	target->put(GraphObject::path_to_uri(patch_path), props);
 
-	// For each node in this patch
-	for (Sord::Iter n = model.find(subject_node, ingen_node, nil); !n.end(); ++n) {
-		Sord::Node node            = n.get_object();
-		const Raul::Path node_path = patch_path.child(
+	// For each block in this patch
+	for (Sord::Iter n = model.find(subject_node, ingen_block, nil); !n.end(); ++n) {
+		Sord::Node       node       = n.get_object();
+		const Raul::Path block_path = patch_path.child(
 			Raul::Symbol(get_basename(node.to_string())));
 
-		// Parse and create node
-		parse_node(world, target, model, node, node_path,
-		           boost::optional<GraphObject::Properties>());
+		// Parse and create block
+		parse_block(world, target, model, node, block_path,
+		            boost::optional<GraphObject::Properties>());
 
-		// For each port on this node
+		// For each port on this block
 		for (Sord::Iter p = model.find(node, lv2_port, nil); !p.end(); ++p) {
 			Sord::Node port = p.get_object();
 
 			// Get all properties
 			uint32_t index = 0;
 			boost::optional<PortRecord> port_record = get_port(
-				world, model, port, node_path, index);
+				world, model, port, block_path, index);
 			if (!port_record) {
 				world->log().error(Raul::fmt("Invalid port %1%\n") % port);
 				return boost::optional<Raul::Path>();
@@ -386,8 +385,10 @@ parse_edge(Ingen::World*     world,
            const Sord::Node& subject,
            const Raul::Path& parent)
 {
-	const Sord::URI  ingen_tail(*world->rdf_world(), NS_INGEN "tail");
-	const Sord::URI  ingen_head(*world->rdf_world(), NS_INGEN "head");
+	URIs& uris = world->uris();
+
+	const Sord::URI  ingen_tail(*world->rdf_world(), uris.ingen_tail);
+	const Sord::URI  ingen_head(*world->rdf_world(), uris.ingen_head);
 	const Sord::Node nil;
 
 	Sord::Iter t = model.find(subject, ingen_tail, nil);
@@ -437,7 +438,7 @@ parse_edges(Ingen::World*     world,
             const Sord::Node& subject,
             const Raul::Path& parent)
 {
-	const Sord::URI  ingen_edge(*world->rdf_world(), NS_INGEN "edge");
+	const Sord::URI  ingen_edge(*world->rdf_world(), world->uris().ingen_edge);
 	const Sord::Node nil;
 
 	for (Sord::Iter i = model.find(subject, ingen_edge, nil); !i.end(); ++i) {
@@ -476,14 +477,16 @@ parse(Ingen::World*                            world,
       boost::optional<Raul::Symbol>            symbol,
       boost::optional<GraphObject::Properties> data)
 {
-	const Sord::URI  patch_class   (*world->rdf_world(), NS_INGEN "Patch");
-	const Sord::URI  node_class    (*world->rdf_world(), NS_INGEN "Node");
-	const Sord::URI  edge_class    (*world->rdf_world(), NS_INGEN "Edge");
-	const Sord::URI  internal_class(*world->rdf_world(), NS_INGEN "Internal");
+	URIs& uris = world->uris();
+
+	const Sord::URI  patch_class   (*world->rdf_world(), uris.ingen_Patch);
+	const Sord::URI  block_class   (*world->rdf_world(), uris.ingen_Block);
+	const Sord::URI  edge_class    (*world->rdf_world(), uris.ingen_Edge);
+	const Sord::URI  internal_class(*world->rdf_world(), uris.ingen_Internal);
 	const Sord::URI  in_port_class (*world->rdf_world(), LV2_CORE__InputPort);
 	const Sord::URI  out_port_class(*world->rdf_world(), LV2_CORE__OutputPort);
 	const Sord::URI  lv2_class     (*world->rdf_world(), LV2_CORE__Plugin);
-	const Sord::URI  rdf_type      (*world->rdf_world(), NS_RDF "type");
+	const Sord::URI  rdf_type      (*world->rdf_world(), uris.rdf_type);
 	const Sord::Node nil;
 
 	// Parse explicit subject patch
@@ -518,8 +521,8 @@ parse(Ingen::World*                            world,
 			relative_uri( model.base_uri().to_string(), s.to_string(), true));
 		if (types.find(patch_class) != types.end()) {
 			ret = parse_patch(world, target, model, s, parent, symbol, data);
-		} else if (types.find(node_class) != types.end()) {
-			ret = parse_node(world, target, model, s, path, data);
+		} else if (types.find(block_class) != types.end()) {
+			ret = parse_block(world, target, model, s, path, data);
 		} else if (types.find(in_port_class) != types.end() ||
 		           types.find(out_port_class) != types.end()) {
 			parse_properties(
