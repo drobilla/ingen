@@ -28,7 +28,7 @@
 
 namespace Ingen {
 
-/** Store of objects in the patch hierarchy.
+/** Store of objects in the graph hierarchy.
  * @ingroup IngenShared
  */
 class Store : public Raul::Noncopyable

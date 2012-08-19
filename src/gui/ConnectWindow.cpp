@@ -28,7 +28,7 @@
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen_config.h"
 
@@ -324,7 +324,7 @@ void
 ConnectWindow::on_hide()
 {
 	Gtk::Dialog::on_hide();
-	if (_app->window_factory()->num_open_patch_windows() == 0)
+	if (_app->window_factory()->num_open_graph_windows() == 0)
 		quit();
 }
 
@@ -414,15 +414,15 @@ ConnectWindow::gtk_callback()
 	} else if (_connect_stage == 2) {
 		_app->interface()->get(GraphObject::root_uri());
 		if (_widgets_loaded)
-			_progress_label->set_text(string("Requesting root patch..."));
+			_progress_label->set_text(string("Requesting root graph..."));
 		++_connect_stage;
 	} else if (_connect_stage == 3) {
 		if (_app->store()->size() > 0) {
-			SharedPtr<const PatchModel> root = PtrCast<const PatchModel>(
+			SharedPtr<const GraphModel> root = PtrCast<const GraphModel>(
 				_app->store()->object(Raul::Path("/")));
 			if (root) {
 				set_connected_to(_app->interface());
-				_app->window_factory()->present_patch(root);
+				_app->window_factory()->present_graph(root);
 				_app->interface()->get(Raul::URI("ingen:plugins"));
 				if (_widgets_loaded)
 					_progress_label->set_text(string("Loading plugins..."));

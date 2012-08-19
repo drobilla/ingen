@@ -28,16 +28,16 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "ingen_config.h"
 #include "ingen/GraphObject.hpp"
 #include "ingen/client/ClientStore.hpp"
+#include "ingen_config.h"
 
 #include "Window.hpp"
 
 namespace Ingen {
 
 namespace Client {
-class PatchModel;
+class GraphModel;
 class PluginModel;
 }
 
@@ -55,12 +55,12 @@ public:
 	LoadPluginWindow(BaseObjectType*                   cobject,
 	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_patch(SharedPtr<const Client::PatchModel> patch);
+	void set_graph(SharedPtr<const Client::GraphModel> graph);
 	void set_plugins(SharedPtr<const Client::ClientStore::Plugins> plugins);
 
 	void add_plugin(SharedPtr<const Client::PluginModel> plugin);
 
-	void present(SharedPtr<const Client::PatchModel> patch,
+	void present(SharedPtr<const Client::GraphModel> graph,
 	             GraphObject::Properties             data);
 
 protected:
@@ -128,7 +128,7 @@ private:
 
 	GraphObject::Properties _initial_data;
 
-	SharedPtr<const Client::PatchModel> _patch;
+	SharedPtr<const Client::GraphModel> _graph;
 
 	typedef std::map<Raul::URI, Gtk::TreeModel::iterator> Rows;
 	Rows _rows;

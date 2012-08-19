@@ -72,8 +72,8 @@ public:
 	const Quark doap_name;
 	const Quark ingen_Block;
 	const Quark ingen_Edge;
+	const Quark ingen_Graph;
 	const Quark ingen_Internal;
-	const Quark ingen_Patch;
 	const Quark ingen_activity;
 	const Quark ingen_block;
 	const Quark ingen_broadcast;

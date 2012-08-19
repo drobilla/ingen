@@ -40,7 +40,7 @@ namespace Ingen {
 	class World;
 	namespace Client {
 		class ClientStore;
-		class PatchModel;
+		class GraphModel;
 		class PluginModel;
 		class PortModel;
 		class SigClientInterface;
@@ -55,9 +55,9 @@ namespace Ingen {
 namespace GUI {
 
 class MessagesWindow;
-class PatchCanvas;
-class PatchTreeView;
-class PatchTreeWindow;
+class GraphCanvas;
+class GraphTreeView;
+class GraphTreeWindow;
 class ConnectWindow;
 class Configuration;
 class ThreadedLoader;
@@ -100,7 +100,7 @@ public:
 
 	ConnectWindow*   connect_window()  const { return _connect_window; }
 	MessagesWindow*  messages_dialog() const { return _messages_window; }
-	PatchTreeWindow* patch_tree()      const { return _patch_tree_window; }
+	GraphTreeWindow* graph_tree()      const { return _graph_tree_window; }
 	Configuration*   configuration()   const { return _configuration; }
 	WindowFactory*   window_factory()  const { return _window_factory; }
 
@@ -158,7 +158,7 @@ protected:
 
 	ConnectWindow*    _connect_window;
 	MessagesWindow*   _messages_window;
-	PatchTreeWindow*  _patch_tree_window;
+	GraphTreeWindow*  _graph_tree_window;
 	Gtk::AboutDialog* _about_dialog;
 	WindowFactory*    _window_factory;
 

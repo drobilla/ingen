@@ -34,7 +34,7 @@ class EnginePort;
 
 /** Engine driver base class.
  *
- * A Driver is, from the perspective of GraphObjects (blocks, patches, ports)
+ * A Driver is, from the perspective of GraphObjects (blocks, graphs, ports)
  * an interface for managing system ports.  An implementation of Driver
  * basically needs to manage EnginePorts, and handle writing/reading data
  * to/from them.
@@ -54,12 +54,12 @@ public:
 	/** Create a port ready to be inserted with add_input (non realtime).
 	 * May return NULL if the Driver can not create the port for some reason.
 	 */
-	virtual EnginePort* create_port(DuplexPort* patch_port) = 0;
+	virtual EnginePort* create_port(DuplexPort* graph_port) = 0;
 
 	/** Find a system port by path. */
 	virtual EnginePort* get_port(const Raul::Path& path) = 0;
 
-	/** Add a system visible port (e.g. a port on the root patch). */
+	/** Add a system visible port (e.g. a port on the root graph). */
 	virtual void add_port(ProcessContext& context, EnginePort* port) = 0;
 
 	/** Remove a system visible port.

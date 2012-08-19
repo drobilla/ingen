@@ -31,21 +31,21 @@
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
 #include "App.hpp"
 #include "Edge.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphPortModule.hpp"
+#include "GraphWindow.hpp"
 #include "LoadPluginWindow.hpp"
-#include "NewSubpatchWindow.hpp"
+#include "NewSubgraphWindow.hpp"
 #include "NodeModule.hpp"
-#include "PatchCanvas.hpp"
-#include "PatchPortModule.hpp"
-#include "PatchWindow.hpp"
 #include "Port.hpp"
-#include "SubpatchModule.hpp"
+#include "SubgraphModule.hpp"
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
@@ -62,13 +62,13 @@ using namespace Client;
 
 namespace GUI {
 
-PatchCanvas::PatchCanvas(App&                        app,
-                         SharedPtr<const PatchModel> patch,
+GraphCanvas::GraphCanvas(App&                        app,
+                         SharedPtr<const GraphModel> graph,
                          int                         width,
                          int                         height)
 	: Canvas(width, height)
 	, _app(app)
-	, _patch(patch)
+	, _graph(graph)
 	, _auto_position_count(0)
 	, _last_click_x(0)
 	, _last_click_y(0)
@@ -89,79 +89,79 @@ PatchCanvas::PatchCanvas(App&                        app,
 	xml->get_widget("canvas_menu_add_event_input", _menu_add_event_input);
 	xml->get_widget("canvas_menu_add_event_output", _menu_add_event_output);
 	xml->get_widget("canvas_menu_load_plugin", _menu_load_plugin);
-	xml->get_widget("canvas_menu_load_patch", _menu_load_patch);
-	xml->get_widget("canvas_menu_new_patch", _menu_new_patch);
+	xml->get_widget("canvas_menu_load_graph", _menu_load_graph);
+	xml->get_widget("canvas_menu_new_graph", _menu_new_graph);
 	xml->get_widget("canvas_menu_edit", _menu_edit);
 
 	const URIs& uris = _app.uris();
 
 	// Add port menu items
 	_menu_add_audio_input->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
 		           "audio_in", "Audio In", uris.lv2_AudioPort, false));
 	_menu_add_audio_output->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
 		           "audio_out", "Audio Out", uris.lv2_AudioPort, true));
 	_menu_add_control_input->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
 		           "control_in", "Control In", uris.lv2_ControlPort, false));
 	_menu_add_control_output->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
 		           "control_out", "Control Out", uris.lv2_ControlPort, true));
 	_menu_add_event_input->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
 		           "event_in", "Event In", uris.atom_AtomPort, false));
 	_menu_add_event_output->signal_activate().connect(
-		sigc::bind(sigc::mem_fun(this, &PatchCanvas::menu_add_port),
+		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
 		           "event_out", "Event Out", uris.atom_AtomPort, true));
 
 	signal_event.connect(
-		sigc::mem_fun(this, &PatchCanvas::on_event));
+		sigc::mem_fun(this, &GraphCanvas::on_event));
 	signal_connect.connect(
-		sigc::mem_fun(this, &PatchCanvas::connect));
+		sigc::mem_fun(this, &GraphCanvas::connect));
 	signal_disconnect.connect(
-		sigc::mem_fun(this, &PatchCanvas::disconnect));
+		sigc::mem_fun(this, &GraphCanvas::disconnect));
 
 	// Connect to model signals to track state
-	_patch->signal_new_block().connect(
-		sigc::mem_fun(this, &PatchCanvas::add_block));
-	_patch->signal_removed_block().connect(
-		sigc::mem_fun(this, &PatchCanvas::remove_block));
-	_patch->signal_new_port().connect(
-		sigc::mem_fun(this, &PatchCanvas::add_port));
-	_patch->signal_removed_port().connect(
-		sigc::mem_fun(this, &PatchCanvas::remove_port));
-	_patch->signal_new_edge().connect(
-		sigc::mem_fun(this, &PatchCanvas::connection));
-	_patch->signal_removed_edge().connect(
-		sigc::mem_fun(this, &PatchCanvas::disconnection));
+	_graph->signal_new_block().connect(
+		sigc::mem_fun(this, &GraphCanvas::add_block));
+	_graph->signal_removed_block().connect(
+		sigc::mem_fun(this, &GraphCanvas::remove_block));
+	_graph->signal_new_port().connect(
+		sigc::mem_fun(this, &GraphCanvas::add_port));
+	_graph->signal_removed_port().connect(
+		sigc::mem_fun(this, &GraphCanvas::remove_port));
+	_graph->signal_new_edge().connect(
+		sigc::mem_fun(this, &GraphCanvas::connection));
+	_graph->signal_removed_edge().connect(
+		sigc::mem_fun(this, &GraphCanvas::disconnection));
 
 	_app.store()->signal_new_plugin().connect(
-		sigc::mem_fun(this, &PatchCanvas::add_plugin));
+		sigc::mem_fun(this, &GraphCanvas::add_plugin));
 
 	// Connect widget signals to do things
 	_menu_load_plugin->signal_activate().connect(
-		sigc::mem_fun(this, &PatchCanvas::menu_load_plugin));
-	_menu_load_patch->signal_activate().connect(
-		sigc::mem_fun(this, &PatchCanvas::menu_load_patch));
-	_menu_new_patch->signal_activate().connect(
-		sigc::mem_fun(this, &PatchCanvas::menu_new_patch));
+		sigc::mem_fun(this, &GraphCanvas::menu_load_plugin));
+	_menu_load_graph->signal_activate().connect(
+		sigc::mem_fun(this, &GraphCanvas::menu_load_graph));
+	_menu_new_graph->signal_activate().connect(
+		sigc::mem_fun(this, &GraphCanvas::menu_new_graph));
 }
 
 void
-PatchCanvas::show_menu(bool position, unsigned button, uint32_t time)
+GraphCanvas::show_menu(bool position, unsigned button, uint32_t time)
 {
 	if (!_internal_menu)
 		build_menus();
 
 	if (position)
-		_menu->popup(sigc::mem_fun(this, &PatchCanvas::auto_menu_position), button, time);
+		_menu->popup(sigc::mem_fun(this, &GraphCanvas::auto_menu_position), button, time);
 	else
 		_menu->popup(button, time);
 }
 
 void
-PatchCanvas::build_menus()
+GraphCanvas::build_menus()
 {
 	// Build (or clear existing) internal plugin menu
 	if (_internal_menu) {
@@ -202,7 +202,7 @@ PatchCanvas::build_menus()
  * @a plugin class into @a menu
  */
 size_t
-PatchCanvas::build_plugin_class_menu(
+GraphCanvas::build_plugin_class_menu(
 	Gtk::Menu*               menu,
 	const LilvPluginClass*   plugin_class,
 	const LilvPluginClasses* classes,
@@ -253,7 +253,7 @@ PatchCanvas::build_plugin_class_menu(
 }
 
 void
-PatchCanvas::build_plugin_menu()
+GraphCanvas::build_plugin_menu()
 {
 	if (_plugin_menu) {
 		_plugin_menu->items().clear();
@@ -285,26 +285,26 @@ PatchCanvas::build_plugin_menu()
 }
 
 void
-PatchCanvas::build()
+GraphCanvas::build()
 {
-	const Store::const_range kids = _app.store()->children_range(_patch);
+	const Store::const_range kids = _app.store()->children_range(_graph);
 
 	// Create modules for blocks
 	for (Store::const_iterator i = kids.first; i != kids.second; ++i) {
 		SharedPtr<BlockModel> block = PtrCast<BlockModel>(i->second);
-		if (block && block->parent() == _patch)
+		if (block && block->parent() == _graph)
 			add_block(block);
 	}
 
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
-	for (BlockModel::Ports::const_iterator i = _patch->ports().begin();
-	     i != _patch->ports().end(); ++i) {
+	for (BlockModel::Ports::const_iterator i = _graph->ports().begin();
+	     i != _graph->ports().end(); ++i) {
 		add_port(*i);
 	}
 
 	// Create edges
-	for (PatchModel::Edges::const_iterator i = _patch->edges().begin();
-	     i != _patch->edges().end(); ++i) {
+	for (GraphModel::Edges::const_iterator i = _graph->edges().begin();
+	     i != _graph->edges().end(); ++i) {
 		connection(PtrCast<EdgeModel>(i->second));
 	}
 }
@@ -319,33 +319,33 @@ show_module_human_names(GanvNode* node, void* data)
 		if (nmod)
 			nmod->show_human_names(b);
 
-		PatchPortModule* pmod = dynamic_cast<PatchPortModule*>(module);
+		GraphPortModule* pmod = dynamic_cast<GraphPortModule*>(module);
 		if (pmod)
 			pmod->show_human_names(b);
 	}
 }
 void
-PatchCanvas::show_human_names(bool b)
+GraphCanvas::show_human_names(bool b)
 {
 	_human_names = b;
 	for_each_node(show_module_human_names, &b);
 }
 
 void
-PatchCanvas::show_port_names(bool b)
+GraphCanvas::show_port_names(bool b)
 {
 	ganv_canvas_set_direction(gobj(), b ? GANV_DIRECTION_RIGHT : GANV_DIRECTION_DOWN);
 }
 
 void
-PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
+GraphCanvas::add_plugin(SharedPtr<PluginModel> p)
 {
 	typedef ClassMenus::iterator iterator;
 	if (_internal_menu && p->type() == Plugin::Internal) {
 		_internal_menu->items().push_back(
 			Gtk::Menu_Helpers::MenuElem(
 				p->human_name(),
-				sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+				sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
 	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->lilv_plugin()) {
 		if (lilv_plugin_is_replaced(p->lilv_plugin())) {
 			//info << (boost::format("[Menu] LV2 plugin <%s> hidden") % p->uri()) << endl;
@@ -365,7 +365,7 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 			_classless_menu->items().push_back(
 				Gtk::Menu_Helpers::MenuElem(
 					p->human_name(),
-					sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+					sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
 			if (!_classless_menu->is_visible())
 				_classless_menu->show();
 		} else {
@@ -377,12 +377,12 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 					menu->items().push_back(
 						Gtk::Menu_Helpers::ImageMenuElem(
 							p->human_name(), *image,
-							sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+							sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
 				} else {
 					menu->items().push_back(
 						Gtk::Menu_Helpers::MenuElem(
 							p->human_name(),
-							sigc::bind(sigc::mem_fun(this, &PatchCanvas::load_plugin), p)));
+							sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
 				}
 				if (!i->second.item->is_visible())
 					i->second.item->show();
@@ -392,12 +392,12 @@ PatchCanvas::add_plugin(SharedPtr<PluginModel> p)
 }
 
 void
-PatchCanvas::add_block(SharedPtr<const BlockModel> bm)
+GraphCanvas::add_block(SharedPtr<const BlockModel> bm)
 {
-	SharedPtr<const PatchModel> pm = PtrCast<const PatchModel>(bm);
+	SharedPtr<const GraphModel> pm = PtrCast<const GraphModel>(bm);
 	NodeModule*                 module;
 	if (pm) {
-		module = SubpatchModule::create(*this, pm, _human_names);
+		module = SubgraphModule::create(*this, pm, _human_names);
 	} else {
 		module = NodeModule::create(*this, bm, _human_names);
 		//const PluginModel* plugm = dynamic_cast<const PluginModel*>(nm->plugin());
@@ -413,7 +413,7 @@ PatchCanvas::add_block(SharedPtr<const BlockModel> bm)
 }
 
 void
-PatchCanvas::remove_block(SharedPtr<const BlockModel> bm)
+GraphCanvas::remove_block(SharedPtr<const BlockModel> bm)
 {
 	Views::iterator i = _views.find(bm);
 
@@ -428,19 +428,19 @@ PatchCanvas::remove_block(SharedPtr<const BlockModel> bm)
 }
 
 void
-PatchCanvas::add_port(SharedPtr<const PortModel> pm)
+GraphCanvas::add_port(SharedPtr<const PortModel> pm)
 {
-	PatchPortModule* view = PatchPortModule::create(*this, pm, _human_names);
+	GraphPortModule* view = GraphPortModule::create(*this, pm, _human_names);
 	_views.insert(std::make_pair(pm, view));
 	view->show();
 }
 
 void
-PatchCanvas::remove_port(SharedPtr<const PortModel> pm)
+GraphCanvas::remove_port(SharedPtr<const PortModel> pm)
 {
 	Views::iterator i = _views.find(pm);
 
-	// Port on this patch
+	// Port on this graph
 	if (i != _views.end()) {
 		delete i->second;
 		_views.erase(i);
@@ -454,13 +454,13 @@ PatchCanvas::remove_port(SharedPtr<const PortModel> pm)
 }
 
 Ganv::Port*
-PatchCanvas::get_port_view(SharedPtr<PortModel> port)
+GraphCanvas::get_port_view(SharedPtr<PortModel> port)
 {
 	Ganv::Module* module = _views[port];
 
-	// Port on this patch
+	// Port on this graph
 	if (module) {
-		PatchPortModule* ppm = dynamic_cast<PatchPortModule*>(module);
+		GraphPortModule* ppm = dynamic_cast<GraphPortModule*>(module);
 		return ppm
 			? *ppm->begin()
 			: dynamic_cast<Ganv::Port*>(module);
@@ -480,7 +480,7 @@ PatchCanvas::get_port_view(SharedPtr<PortModel> port)
 }
 
 void
-PatchCanvas::connection(SharedPtr<const EdgeModel> cm)
+GraphCanvas::connection(SharedPtr<const EdgeModel> cm)
 {
 	Ganv::Port* const tail = get_port_view(cm->tail());
 	Ganv::Port* const head = get_port_view(cm->head());
@@ -494,7 +494,7 @@ PatchCanvas::connection(SharedPtr<const EdgeModel> cm)
 }
 
 void
-PatchCanvas::disconnection(SharedPtr<const EdgeModel> cm)
+GraphCanvas::disconnection(SharedPtr<const EdgeModel> cm)
 {
 	Ganv::Port* const src = get_port_view(cm->tail());
 	Ganv::Port* const dst = get_port_view(cm->head());
@@ -508,7 +508,7 @@ PatchCanvas::disconnection(SharedPtr<const EdgeModel> cm)
 }
 
 void
-PatchCanvas::connect(Ganv::Node* tail,
+GraphCanvas::connect(Ganv::Node* tail,
                      Ganv::Node* head)
 {
 	const Ingen::GUI::Port* const src
@@ -524,7 +524,7 @@ PatchCanvas::connect(Ganv::Node* tail,
 }
 
 void
-PatchCanvas::disconnect(Ganv::Node* tail,
+GraphCanvas::disconnect(Ganv::Node* tail,
                         Ganv::Node* head)
 {
 	const Ingen::GUI::Port* const t = dynamic_cast<Ingen::GUI::Port*>(tail);
@@ -534,7 +534,7 @@ PatchCanvas::disconnect(Ganv::Node* tail,
 }
 
 void
-PatchCanvas::auto_menu_position(int& x, int& y, bool& push_in)
+GraphCanvas::auto_menu_position(int& x, int& y, bool& push_in)
 {
 	std::pair<int, int> scroll_offsets;
 	get_scroll_offsets(scroll_offsets.first, scroll_offsets.second);
@@ -556,7 +556,7 @@ PatchCanvas::auto_menu_position(int& x, int& y, bool& push_in)
 }
 
 bool
-PatchCanvas::on_event(GdkEvent* event)
+GraphCanvas::on_event(GdkEvent* event)
 {
 	assert(event);
 
@@ -595,9 +595,9 @@ PatchCanvas::on_event(GdkEvent* event)
 }
 
 void
-PatchCanvas::clear_selection()
+GraphCanvas::clear_selection()
 {
-	PatchWindow* win = _app.window_factory()->patch_window(_patch);
+	GraphWindow* win = _app.window_factory()->graph_window(_graph);
 	if (win) {
 		win->hide_documentation();
 	}
@@ -619,7 +619,7 @@ destroy_node(GanvNode* node, void* data)
 	if (node_module) {
 		app->interface()->del(node_module->block()->uri());
 	} else {
-		PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(module);
+		GraphPortModule* port_module = dynamic_cast<GraphPortModule*>(module);
 		if (port_module) {
 			app->interface()->del(port_module->port()->uri());
 		}
@@ -638,7 +638,7 @@ destroy_edge(GanvEdge* edge, void* data)
 }
 
 void
-PatchCanvas::destroy_selection()
+GraphCanvas::destroy_selection()
 {
 	for_each_selected_node(destroy_node, &_app);
 	for_each_selected_edge(destroy_edge, &_app);
@@ -658,7 +658,7 @@ serialise_node(GanvNode* node, void* data)
 	if (node_module) {
 		serialiser->serialise(node_module->block());
 	} else {
-		PatchPortModule* port_module = dynamic_cast<PatchPortModule*>(module);
+		GraphPortModule* port_module = dynamic_cast<GraphPortModule*>(module);
 		if (port_module) {
 			serialiser->serialise(port_module->port());
 		}
@@ -680,11 +680,11 @@ serialise_edge(GanvEdge* edge, void* data)
 }
 
 void
-PatchCanvas::copy_selection()
+GraphCanvas::copy_selection()
 {
 	static const char* base_uri = "http://drobilla.net/ns/ingen/selection/";
 	Serialisation::Serialiser serialiser(*_app.world());
-	serialiser.start_to_string(_patch->path(), base_uri);
+	serialiser.start_to_string(_graph->path(), base_uri);
 
 	for_each_selected_node(serialise_node, &serialiser);
 	for_each_selected_edge(serialise_edge, &serialiser);
@@ -697,7 +697,7 @@ PatchCanvas::copy_selection()
 }
 
 void
-PatchCanvas::paste()
+GraphCanvas::paste()
 {
 	Glib::ustring str = Gtk::Clipboard::get()->wait_for_text();
 	SharedPtr<Serialisation::Parser> parser = _app.loader()->parser();
@@ -717,13 +717,13 @@ PatchCanvas::paste()
 	clipboard.set_plugins(_app.store()->plugins());
 
 	// mkdir -p
-	string to_create = _patch->path().substr(1);
+	string to_create = _graph->path().substr(1);
 	string created = "/";
 	Resource::Properties props;
 	props.insert(make_pair(uris.rdf_type,
-	                       uris.ingen_Patch));
+	                       uris.ingen_Graph));
 	props.insert(make_pair(uris.ingen_polyphony,
-	                       _app.forge().make(int32_t(_patch->internal_poly()))));
+	                       _app.forge().make(int32_t(_graph->internal_poly()))));
 	clipboard.put(GraphObject::root_uri(), props);
 	size_t first_slash;
 	while (to_create != "/" && !to_create.empty()
@@ -734,14 +734,14 @@ PatchCanvas::paste()
 		to_create = to_create.substr(first_slash + 1);
 	}
 
-	if (!_patch->path().is_root())
-		clipboard.put(_patch->uri(), props);
+	if (!_graph->path().is_root())
+		clipboard.put(_graph->uri(), props);
 
 	boost::optional<Raul::Path>   parent;
 	boost::optional<Raul::Symbol> symbol;
 
-	if (!_patch->path().is_root()) {
-		parent = _patch->path();
+	if (!_graph->path().is_root()) {
+		parent = _graph->path();
 	}
 
 	ClashAvoider avoider(*_app.store().get(), clipboard, &clipboard);
@@ -750,7 +750,7 @@ PatchCanvas::paste()
 	                     parent, symbol);
 
 	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
-		if (_patch->path().is_root() && i->first.is_root())
+		if (_graph->path().is_root() && i->first.is_root())
 			continue;
 
 		GraphObject::Properties& props = i->second->properties();
@@ -769,11 +769,11 @@ PatchCanvas::paste()
 		_pastees.insert(i->first);
 	}
 
-	builder.connect(PtrCast<const PatchModel>(clipboard.object(_patch->path())));
+	builder.connect(PtrCast<const GraphModel>(clipboard.object(_graph->path())));
 }
 
 void
-PatchCanvas::generate_port_name(
+GraphCanvas::generate_port_name(
 	const string& sym_base,  string& symbol,
 	const string& name_base, string& name)
 {
@@ -786,7 +786,7 @@ PatchCanvas::generate_port_name(
 		snprintf(num_buf, sizeof(num_buf), "%u", i);
 		symbol = sym_base + "_";
 		symbol += num_buf;
-		if (!_patch->get_port(Raul::Symbol::symbolify(symbol)))
+		if (!_graph->get_port(Raul::Symbol::symbolify(symbol)))
 			break;
 	}
 
@@ -796,12 +796,12 @@ PatchCanvas::generate_port_name(
 }
 
 void
-PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
+GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
                            const Raul::URI& type, bool is_output)
 {
 	string sym, name;
 	generate_port_name(sym_base, sym, name_base, name);
-	const Raul::Path& path = _patch->path().child(Raul::Symbol(sym));
+	const Raul::Path& path = _graph->path().child(Raul::Symbol(sym));
 
 	const URIs& uris = _app.uris();
 
@@ -815,21 +815,21 @@ PatchCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	props.insert(make_pair(uris.rdf_type,
 	                       is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
 	props.insert(make_pair(uris.lv2_index,
-	                       _app.forge().make(int32_t(_patch->num_ports()))));
+	                       _app.forge().make(int32_t(_graph->num_ports()))));
 	props.insert(make_pair(uris.lv2_name,
 	                       _app.forge().alloc(name.c_str())));
 	_app.interface()->put(GraphObject::path_to_uri(path), props);
 }
 
 void
-PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
+GraphCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 {
 	SharedPtr<PluginModel> plugin = weak_plugin.lock();
 	if (!plugin)
 		return;
 
 	Raul::Symbol symbol = plugin->default_block_symbol();
-	unsigned offset = _app.store()->child_name_offset(_patch->path(), symbol);
+	unsigned offset = _app.store()->child_name_offset(_graph->path(), symbol);
 	if (offset != 0) {
 		std::stringstream ss;
 		ss << symbol << "_" << offset;
@@ -837,7 +837,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	}
 
 	const URIs&      uris = _app.uris();
-	const Raul::Path path = _patch->path().child(symbol);
+	const Raul::Path path = _graph->path().child(symbol);
 
 	// FIXME: polyphony?
 	GraphObject::Properties props = get_initial_data();
@@ -850,7 +850,7 @@ PatchCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 /** Try to guess a suitable location for a new module.
  */
 void
-PatchCanvas::get_new_module_location(double& x, double& y)
+GraphCanvas::get_new_module_location(double& x, double& y)
 {
 	int scroll_x;
 	int scroll_y;
@@ -860,7 +860,7 @@ PatchCanvas::get_new_module_location(double& x, double& y)
 }
 
 GraphObject::Properties
-PatchCanvas::get_initial_data(Resource::Graph ctx)
+GraphCanvas::get_initial_data(Resource::Graph ctx)
 {
 	GraphObject::Properties result;
 	const URIs& uris = _app.uris();
@@ -876,24 +876,24 @@ PatchCanvas::get_initial_data(Resource::Graph ctx)
 }
 
 void
-PatchCanvas::menu_load_plugin()
+GraphCanvas::menu_load_plugin()
 {
 	_app.window_factory()->present_load_plugin(
-		_patch, get_initial_data());
+		_graph, get_initial_data());
 }
 
 void
-PatchCanvas::menu_load_patch()
+GraphCanvas::menu_load_graph()
 {
-	_app.window_factory()->present_load_subpatch(
-		_patch, get_initial_data(Resource::EXTERNAL));
+	_app.window_factory()->present_load_subgraph(
+		_graph, get_initial_data(Resource::EXTERNAL));
 }
 
 void
-PatchCanvas::menu_new_patch()
+GraphCanvas::menu_new_graph()
 {
-	_app.window_factory()->present_new_subpatch(
-		_patch, get_initial_data(Resource::EXTERNAL));
+	_app.window_factory()->present_new_subgraph(
+		_graph, get_initial_data(Resource::EXTERNAL));
 }
 
 } // namespace GUI

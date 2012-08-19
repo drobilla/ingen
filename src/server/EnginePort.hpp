@@ -37,7 +37,7 @@ class EnginePort : public Raul::Noncopyable
 {
 public:
 	explicit EnginePort(DuplexPort* port)
-		: _patch_port(port)
+		: _graph_port(port)
 		, _buffer(NULL)
 		, _handle(NULL)
 	{}
@@ -47,11 +47,11 @@ public:
 
 	void*       buffer()     const { return _buffer; }
 	void*       handle()     const { return _handle; }
-	DuplexPort* patch_port() const { return _patch_port; }
-	bool        is_input()   const { return _patch_port->is_input(); }
+	DuplexPort* graph_port() const { return _graph_port; }
+	bool        is_input()   const { return _graph_port->is_input(); }
 
 protected:
-	DuplexPort* _patch_port;
+	DuplexPort* _graph_port;
 	void*       _buffer;
 	void*       _handle;
 };

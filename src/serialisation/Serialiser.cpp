@@ -66,7 +66,7 @@ struct Serialiser::Impl {
 
 	void start_to_filename(const std::string& filename);
 
-	void serialise_patch(SharedPtr<const GraphObject> p,
+	void serialise_graph(SharedPtr<const GraphObject> p,
 	                     const Sord::Node&            id);
 
 	void serialise_block(SharedPtr<const GraphObject> n,
@@ -80,14 +80,14 @@ struct Serialiser::Impl {
 	void serialise_properties(Sord::Node                  id,
 	                          const Resource::Properties& props);
 
-	void write_bundle(SharedPtr<const GraphObject> patch,
+	void write_bundle(SharedPtr<const GraphObject> graph,
 	                  const std::string&           uri);
 
 	Sord::Node path_rdf_node(const Raul::Path& path);
 
 	void write_manifest(const std::string&           bundle_path,
-	                    SharedPtr<const GraphObject> patch,
-	                    const std::string&           patch_symbol);
+	                    SharedPtr<const GraphObject> graph,
+	                    const std::string&           graph_symbol);
 
 	void serialise_edge(const Sord::Node& parent,
 	                    SharedPtr<const Edge> c)
@@ -124,8 +124,8 @@ Serialiser::to_file(SharedPtr<const GraphObject> object,
 
 void
 Serialiser::Impl::write_manifest(const std::string&           bundle_path,
-                                 SharedPtr<const GraphObject> patch,
-                                 const std::string&           patch_symbol)
+                                 SharedPtr<const GraphObject> graph,
+                                 const std::string&           graph_symbol)
 {
 	const string manifest_path(Glib::build_filename(bundle_path, "manifest.ttl"));
 	const string binary_path(Glib::Module::build_path("", "ingen_lv2"));
@@ -135,12 +135,12 @@ Serialiser::Impl::write_manifest(const std::string&           bundle_path,
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();
 
-	const string    filename(patch_symbol + ".ttl");
+	const string    filename(graph_symbol + ".ttl");
 	const Sord::URI subject(world, filename, _base_uri);
 
 	_model->add_statement(subject,
 	                      Sord::URI(world, uris.rdf_type),
-	                      Sord::URI(world, uris.ingen_Patch));
+	                      Sord::URI(world, uris.ingen_Graph));
 	_model->add_statement(subject,
 	                      Sord::URI(world, uris.rdf_type),
 	                      Sord::URI(world, uris.lv2_Plugin));
@@ -158,14 +158,14 @@ Serialiser::Impl::write_manifest(const std::string&           bundle_path,
 }
 
 void
-Serialiser::write_bundle(SharedPtr<const GraphObject> patch,
+Serialiser::write_bundle(SharedPtr<const GraphObject> graph,
                          const std::string&           path)
 {
-	me->write_bundle(patch, path);
+	me->write_bundle(graph, path);
 }
 
 void
-Serialiser::Impl::write_bundle(SharedPtr<const GraphObject> patch,
+Serialiser::Impl::write_bundle(SharedPtr<const GraphObject> graph,
                                const std::string&           a_path)
 {
 	std::string path = Glib::filename_from_uri(a_path);
@@ -186,12 +186,12 @@ Serialiser::Impl::write_bundle(SharedPtr<const GraphObject> patch,
 
 	start_to_filename(root_file);
 	const Raul::Path old_root_path = _root_path;
-	_root_path = patch->path();
-	serialise_patch(patch, Sord::URI(_model->world(), root_file, _base_uri));
+	_root_path = graph->path();
+	serialise_graph(graph, Sord::URI(_model->world(), root_file, _base_uri));
 	_root_path = old_root_path;
 	finish();
 
-	write_manifest(path, patch, symbol);
+	write_manifest(path, graph, symbol);
 }
 
 string
@@ -284,8 +284,8 @@ Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_err
 	if (!me->_model)
 		throw std::logic_error("serialise called without serialisation in progress");
 
-	if (object->graph_type() == GraphObject::PATCH) {
-		me->serialise_patch(object, me->path_rdf_node(object->path()));
+	if (object->graph_type() == GraphObject::GRAPH) {
+		me->serialise_graph(object, me->path_rdf_node(object->path()));
 	} else if (object->graph_type() == GraphObject::BLOCK) {
 		const Sord::URI plugin_id(me->_model->world(), object->plugin()->uri());
 		me->serialise_block(object, plugin_id, me->path_rdf_node(object->path()));
@@ -300,122 +300,122 @@ Serialiser::serialise(SharedPtr<const GraphObject> object) throw (std::logic_err
 }
 
 void
-Serialiser::Impl::serialise_patch(SharedPtr<const GraphObject> patch,
-                                  const Sord::Node&            patch_id)
+Serialiser::Impl::serialise_graph(SharedPtr<const GraphObject> graph,
+                                  const Sord::Node&            graph_id)
 {
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();
 
-	_model->add_statement(patch_id,
+	_model->add_statement(graph_id,
 	                      Sord::URI(world, uris.rdf_type),
-	                      Sord::URI(world, uris.ingen_Patch));
+	                      Sord::URI(world, uris.ingen_Graph));
 
-	_model->add_statement(patch_id,
+	_model->add_statement(graph_id,
 	                      Sord::URI(world, uris.rdf_type),
 	                      Sord::URI(world, uris.lv2_Plugin));
 
-	_model->add_statement(patch_id,
+	_model->add_statement(graph_id,
 	                      Sord::URI(world, uris.lv2_extensionData),
 	                      Sord::URI(world, LV2_STATE__interface));
 
-	_model->add_statement(patch_id,
+	_model->add_statement(graph_id,
 	                      Sord::URI(world, LV2_UI__ui),
-	                      Sord::URI(world, "http://drobilla.net/ns/ingen#PatchUIGtk2"));
+	                      Sord::URI(world, "http://drobilla.net/ns/ingen#GraphUIGtk2"));
 
 	// Always write a symbol (required by Ingen)
 	Raul::Symbol symbol("_");
-	GraphObject::Properties::const_iterator s = patch->properties().find(uris.lv2_symbol);
-	if (s == patch->properties().end()
+	GraphObject::Properties::const_iterator s = graph->properties().find(uris.lv2_symbol);
+	if (s == graph->properties().end()
 	    || !s->second.type() == _world.forge().String
 	    || !Raul::Symbol::is_valid(s->second.get_string())) {
 		const std::string base = Glib::path_get_basename(
 			_model->base_uri().to_c_string());
 		symbol = Raul::Symbol::symbolify(base.substr(0, base.find('.')));
 		_model->add_statement(
-			patch_id,
+			graph_id,
 			Sord::URI(world, uris.lv2_symbol),
 			Sord::Literal(world, symbol.c_str()));
 	} else {
 		symbol = Raul::Symbol::symbolify(s->second.get_string());
 	}
 
-	// If the patch has no doap:name (required by LV2), use the symbol
-	if (patch->properties().find(uris.doap_name) == patch->properties().end())
-		_model->add_statement(patch_id,
+	// If the graph has no doap:name (required by LV2), use the symbol
+	if (graph->properties().find(uris.doap_name) == graph->properties().end())
+		_model->add_statement(graph_id,
 		                      Sord::URI(world, uris.doap_name),
 		                      Sord::Literal(world, symbol.c_str()));
 
-	const GraphObject::Properties props = patch->properties(Resource::INTERNAL);
-	serialise_properties(patch_id, props);
+	const GraphObject::Properties props = graph->properties(Resource::INTERNAL);
+	serialise_properties(graph_id, props);
 
-	const Store::const_range kids = _world.store()->children_range(patch);
+	const Store::const_range kids = _world.store()->children_range(graph);
 	for (Store::const_iterator n = kids.first; n != kids.second; ++n) {
-		if (n->first.parent() != patch->path())
+		if (n->first.parent() != graph->path())
 			continue;
 
-		if (n->second->graph_type() == GraphObject::PATCH) {
-			SharedPtr<GraphObject> subpatch = n->second;
+		if (n->second->graph_type() == GraphObject::GRAPH) {
+			SharedPtr<GraphObject> subgraph = n->second;
 
 			SerdURI base_uri;
 			serd_uri_parse((const uint8_t*)_base_uri.c_str(), &base_uri);
 
-			const string sub_bundle_path = subpatch->path().substr(1) + ".ingen";
+			const string sub_bundle_path = subgraph->path().substr(1) + ".ingen";
 
-			SerdURI  subpatch_uri;
-			SerdNode subpatch_node = serd_node_new_uri_from_string(
+			SerdURI  subgraph_uri;
+			SerdNode subgraph_node = serd_node_new_uri_from_string(
 				(const uint8_t*)sub_bundle_path.c_str(),
 				&base_uri,
-				&subpatch_uri);
+				&subgraph_uri);
 
-			const Sord::URI subpatch_id(world, (const char*)subpatch_node.buf);
+			const Sord::URI subgraph_id(world, (const char*)subgraph_node.buf);
 
 			// Save our state
 			std::string  my_base_uri = _base_uri;
 			Sord::Model* my_model    = _model;
 
 			// Write child bundle within this bundle
-			write_bundle(subpatch, subpatch_id.to_string());
+			write_bundle(subgraph, subgraph_id.to_string());
 
 			// Restore our state
 			_base_uri = my_base_uri;
 			_model    = my_model;
 
-			// Serialise reference to patch block
-			const Sord::Node block_id(path_rdf_node(subpatch->path()));
-			_model->add_statement(patch_id,
+			// Serialise reference to graph block
+			const Sord::Node block_id(path_rdf_node(subgraph->path()));
+			_model->add_statement(graph_id,
 			                      Sord::URI(world, uris.ingen_block),
 			                      block_id);
-			serialise_block(subpatch, subpatch_id, block_id);
+			serialise_block(subgraph, subgraph_id, block_id);
 		} else if (n->second->graph_type() == GraphObject::BLOCK) {
 			SharedPtr<const GraphObject> block = n->second;
 
 			const Sord::URI  class_id(world, block->plugin()->uri());
 			const Sord::Node block_id(path_rdf_node(n->second->path()));
-			_model->add_statement(patch_id,
+			_model->add_statement(graph_id,
 			                      Sord::URI(world, uris.ingen_block),
 			                      block_id);
 			serialise_block(block, class_id, block_id);
 		}
 	}
 
-	for (uint32_t i = 0; i < patch->num_ports(); ++i) {
-		GraphObject* p = patch->port(i);
+	for (uint32_t i = 0; i < graph->num_ports(); ++i) {
+		GraphObject* p = graph->port(i);
 		const Sord::Node port_id = path_rdf_node(p->path());
 
-		// Ensure lv2:name always exists so Patch is a valid LV2 plugin
+		// Ensure lv2:name always exists so Graph is a valid LV2 plugin
 		if (p->properties().find(uris.lv2_name) == p->properties().end())
 			p->set_property(uris.lv2_name,
 			                _world.forge().alloc(p->symbol().c_str()));
 
-		_model->add_statement(patch_id,
+		_model->add_statement(graph_id,
 		                      Sord::URI(world, LV2_CORE__port),
 		                      port_id);
 		serialise_port(p, Resource::INTERNAL, port_id);
 	}
 
-	for (GraphObject::Edges::const_iterator c = patch->edges().begin();
-	     c != patch->edges().end(); ++c) {
-		serialise_edge(patch_id, c->second);
+	for (GraphObject::Edges::const_iterator c = graph->edges().begin();
+	     c != graph->edges().end(); ++c) {
+		serialise_edge(graph_id, c->second);
 	}
 }
 

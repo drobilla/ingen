@@ -20,8 +20,8 @@
 
 #include "Driver.hpp"
 #include "Engine.hpp"
+#include "GraphImpl.hpp"
 #include "LV2Block.hpp"
-#include "PatchImpl.hpp"
 #include "Worker.hpp"
 
 namespace Ingen {
@@ -40,7 +40,7 @@ schedule(LV2_Worker_Schedule_Handle handle,
          const void*                data)
 {
 	LV2Block* block  = (LV2Block*)handle;
-	Engine&   engine = block->parent_patch()->engine();
+	Engine&   engine = block->parent_graph()->engine();
 	Worker*   worker = engine.worker();
 
 	return worker->request(block, size, data);
@@ -51,7 +51,7 @@ Worker::request(LV2Block*   block,
                 uint32_t    size,
                 const void* data)
 {
-	Engine& engine = block->parent_patch()->engine();
+	Engine& engine = block->parent_graph()->engine();
 	if (_requests.write_space() < sizeof(MessageHeader) + size) {
 		engine.log().error("Work request ring overflow\n");
 		return LV2_WORKER_ERR_NO_SPACE;

@@ -19,17 +19,17 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
-#include "events/CreatePatch.hpp"
 #include "Broadcaster.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
+#include "events/CreateGraph.hpp"
 
 namespace Ingen {
 namespace Server {
 namespace Events {
 
-CreatePatch::CreatePatch(Engine&                     engine,
+CreateGraph::CreateGraph(Engine&                     engine,
                          SharedPtr<Interface>        client,
                          int32_t                     id,
                          SampleCount                 timestamp,
@@ -38,20 +38,20 @@ CreatePatch::CreatePatch(Engine&                     engine,
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _properties(properties)
-	, _patch(NULL)
+	, _graph(NULL)
 	, _parent(NULL)
-	, _compiled_patch(NULL)
+	, _compiled_graph(NULL)
 {
 }
 
 bool
-CreatePatch::pre_process()
+CreateGraph::pre_process()
 {
 	if (_path.is_root() || _engine.store()->get(_path)) {
 		return Event::pre_process_done(EXISTS, _path);
 	}
 
-	_parent = dynamic_cast<PatchImpl*>(_engine.store()->get(_path.parent()));
+	_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(_path.parent()));
 	if (!_parent) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
@@ -76,42 +76,42 @@ CreatePatch::pre_process()
 	}
 
 	const Raul::Symbol symbol((_path.is_root()) ? "root" : _path.symbol());
-	_patch = new PatchImpl(_engine, symbol, ext_poly, _parent,
+	_graph = new GraphImpl(_engine, symbol, ext_poly, _parent,
 	                       _engine.driver()->sample_rate(), int_poly);
-	_patch->properties().insert(_properties.begin(), _properties.end());
-	_patch->add_property(uris.rdf_type, uris.ingen_Patch);
-	_patch->add_property(uris.rdf_type,
+	_graph->properties().insert(_properties.begin(), _properties.end());
+	_graph->add_property(uris.rdf_type, uris.ingen_Graph);
+	_graph->add_property(uris.rdf_type,
 	                     Resource::Property(uris.ingen_Block, Resource::EXTERNAL));
 
-	_parent->add_block(*_patch);
+	_parent->add_block(*_graph);
 	if (_parent->enabled()) {
-		_patch->enable();
-		_compiled_patch = _parent->compile();
+		_graph->enable();
+		_compiled_graph = _parent->compile();
 	}
 
-	_patch->activate(*_engine.buffer_factory());
+	_graph->activate(*_engine.buffer_factory());
 
 	// Insert into Store
-	_engine.store()->add(_patch);
+	_engine.store()->add(_graph);
 
-	_update = _patch->properties();
+	_update = _graph->properties();
 
 	return Event::pre_process_done(SUCCESS);
 }
 
 void
-CreatePatch::execute(ProcessContext& context)
+CreateGraph::execute(ProcessContext& context)
 {
-	if (_patch) {
+	if (_graph) {
 		assert(_parent);
 		assert(!_path.is_root());
-		_engine.maid()->dispose(_parent->compiled_patch());
-		_parent->compiled_patch(_compiled_patch);
+		_engine.maid()->dispose(_parent->compiled_graph());
+		_parent->compiled_graph(_compiled_graph);
 	}
 }
 
 void
-CreatePatch::post_process()
+CreateGraph::post_process()
 {
 	if (!respond()) {
 		_engine.broadcaster()->put(GraphObject::path_to_uri(_path), _update);

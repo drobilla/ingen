@@ -27,19 +27,19 @@ namespace Ingen {
 namespace Client {
 class BlockModel;
 class ObjectModel;
-class PatchModel;
+class GraphModel;
 }
 
 namespace GUI {
 
 class App;
-class LoadPatchWindow;
+class GraphBox;
+class GraphView;
+class GraphWindow;
+class LoadGraphWindow;
 class LoadPluginWindow;
-class NewSubpatchWindow;
+class NewSubgraphWindow;
 class PropertiesWindow;
-class PatchBox;
-class PatchView;
-class PatchWindow;
 class RenameWindow;
 
 /** Manager/Factory for all windows.
@@ -53,44 +53,44 @@ public:
 	explicit WindowFactory(App& app);
 	~WindowFactory();
 
-	size_t num_open_patch_windows();
+	size_t num_open_graph_windows();
 
-	PatchBox*    patch_box(SharedPtr<const Client::PatchModel> patch);
-	PatchWindow* patch_window(SharedPtr<const Client::PatchModel> patch);
-	PatchWindow* parent_patch_window(SharedPtr<const Client::BlockModel> block);
+	GraphBox*    graph_box(SharedPtr<const Client::GraphModel> graph);
+	GraphWindow* graph_window(SharedPtr<const Client::GraphModel> graph);
+	GraphWindow* parent_graph_window(SharedPtr<const Client::BlockModel> block);
 
-	void present_patch(
-		SharedPtr<const Client::PatchModel> model,
-		PatchWindow*                        preferred = NULL,
-		SharedPtr<PatchView>                view      = SharedPtr<PatchView>());
+	void present_graph(
+		SharedPtr<const Client::GraphModel> model,
+		GraphWindow*                        preferred = NULL,
+		SharedPtr<GraphView>                view      = SharedPtr<GraphView>());
 
 	typedef GraphObject::Properties Properties;
 
-	void present_load_plugin(SharedPtr<const Client::PatchModel> patch, Properties data=Properties());
-	void present_load_patch(SharedPtr<const Client::PatchModel> patch, Properties data=Properties());
-	void present_load_subpatch(SharedPtr<const Client::PatchModel> patch, Properties data=Properties());
-	void present_new_subpatch(SharedPtr<const Client::PatchModel> patch, Properties data=Properties());
+	void present_load_plugin(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());
+	void present_load_graph(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());
+	void present_load_subgraph(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());
+	void present_new_subgraph(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());
 	void present_rename(SharedPtr<const Client::ObjectModel> object);
 	void present_properties(SharedPtr<const Client::ObjectModel> object);
 
-	bool remove_patch_window(PatchWindow* win, GdkEventAny* ignored = NULL);
+	bool remove_graph_window(GraphWindow* win, GdkEventAny* ignored = NULL);
 
-	void set_main_box(PatchBox* box) { _main_box = box; }
+	void set_main_box(GraphBox* box) { _main_box = box; }
 
 	void clear();
 
 private:
-	typedef std::map<Raul::Path, PatchWindow*> PatchWindowMap;
+	typedef std::map<Raul::Path, GraphWindow*> GraphWindowMap;
 
-	PatchWindow* new_patch_window(SharedPtr<const Client::PatchModel> patch,
-	                              SharedPtr<PatchView>                view);
+	GraphWindow* new_graph_window(SharedPtr<const Client::GraphModel> graph,
+	                              SharedPtr<GraphView>                view);
 
 	App&               _app;
-	PatchBox*          _main_box;
-	PatchWindowMap     _patch_windows;
+	GraphBox*          _main_box;
+	GraphWindowMap     _graph_windows;
 	LoadPluginWindow*  _load_plugin_win;
-	LoadPatchWindow*   _load_patch_win;
-	NewSubpatchWindow* _new_subpatch_win;
+	LoadGraphWindow*   _load_graph_win;
+	NewSubgraphWindow* _new_subgraph_win;
 	PropertiesWindow*  _properties_win;
 	RenameWindow*      _rename_win;
 };

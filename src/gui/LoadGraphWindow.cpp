@@ -24,13 +24,13 @@
 #include "ingen/Interface.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 #include "ingen/runtime_paths.hpp"
 
 #include "App.hpp"
 #include "Configuration.hpp"
-#include "LoadPatchWindow.hpp"
-#include "PatchView.hpp"
+#include "LoadGraphWindow.hpp"
+#include "GraphView.hpp"
 #include "ThreadedLoader.hpp"
 
 using namespace std;
@@ -41,31 +41,31 @@ using namespace Client;
 
 namespace GUI {
 
-LoadPatchWindow::LoadPatchWindow(BaseObjectType*                   cobject,
+LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
                                  const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::FileChooserDialog(cobject)
 	, _app(NULL)
 	, _merge_ports(false)
 {
-	xml->get_widget("load_patch_symbol_label", _symbol_label);
-	xml->get_widget("load_patch_symbol_entry", _symbol_entry);
-	xml->get_widget("load_patch_ports_label", _ports_label);
-	xml->get_widget("load_patch_merge_ports_radio", _merge_ports_radio);
-	xml->get_widget("load_patch_insert_ports_radio", _insert_ports_radio);
-	xml->get_widget("load_patch_poly_voices_radio", _poly_voices_radio);
-	xml->get_widget("load_patch_poly_from_file_radio", _poly_from_file_radio);
-	xml->get_widget("load_patch_poly_spinbutton", _poly_spinbutton);
-	xml->get_widget("load_patch_ok_button", _ok_button);
-	xml->get_widget("load_patch_cancel_button", _cancel_button);
+	xml->get_widget("load_graph_symbol_label", _symbol_label);
+	xml->get_widget("load_graph_symbol_entry", _symbol_entry);
+	xml->get_widget("load_graph_ports_label", _ports_label);
+	xml->get_widget("load_graph_merge_ports_radio", _merge_ports_radio);
+	xml->get_widget("load_graph_insert_ports_radio", _insert_ports_radio);
+	xml->get_widget("load_graph_poly_voices_radio", _poly_voices_radio);
+	xml->get_widget("load_graph_poly_from_file_radio", _poly_from_file_radio);
+	xml->get_widget("load_graph_poly_spinbutton", _poly_spinbutton);
+	xml->get_widget("load_graph_ok_button", _ok_button);
+	xml->get_widget("load_graph_cancel_button", _cancel_button);
 
 	_cancel_button->signal_clicked().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::cancel_clicked));
+			sigc::mem_fun(this, &LoadGraphWindow::cancel_clicked));
 	_ok_button->signal_clicked().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::ok_clicked));
+			sigc::mem_fun(this, &LoadGraphWindow::ok_clicked));
 	_merge_ports_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::merge_ports_selected));
+			sigc::mem_fun(this, &LoadGraphWindow::merge_ports_selected));
 	_insert_ports_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::insert_ports_selected));
+			sigc::mem_fun(this, &LoadGraphWindow::insert_ports_selected));
 	_poly_from_file_radio->signal_toggled().connect(sigc::bind(
 			sigc::mem_fun(_poly_spinbutton, &Gtk::SpinButton::set_sensitive),
 			false));
@@ -74,11 +74,11 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType*                   cobject,
 			true));
 
 	signal_selection_changed().connect(
-			sigc::mem_fun(this, &LoadPatchWindow::selection_changed));
+			sigc::mem_fun(this, &LoadGraphWindow::selection_changed));
 
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.ttl");
-	filt.set_name("Ingen patch files (*.ttl)");
+	filt.set_name("Ingen graph files (*.ttl)");
 	filt.add_pattern("*.ingen");
 	filt.set_name("Ingen bundles (*.ingen)");
 
@@ -87,19 +87,19 @@ LoadPatchWindow::LoadPatchWindow(BaseObjectType*                   cobject,
 	property_select_multiple() = true;
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
-	const string examples_dir = Ingen::data_file_path("patches");
+	const string examples_dir = Ingen::data_file_path("graphs");
 	if (Glib::file_test(examples_dir, Glib::FILE_TEST_IS_DIR)) {
 		add_shortcut_folder(examples_dir);
 	}
 }
 
 void
-LoadPatchWindow::present(SharedPtr<const PatchModel> patch,
+LoadGraphWindow::present(SharedPtr<const GraphModel> graph,
                          bool                        import,
                          GraphObject::Properties     data)
 {
 	_import = import;
-	set_patch(patch);
+	set_graph(graph);
 	_symbol_label->property_visible() = !import;
 	_symbol_entry->property_visible() = !import;
 	_ports_label->property_visible() = _import;
@@ -109,43 +109,43 @@ LoadPatchWindow::present(SharedPtr<const PatchModel> patch,
 	Gtk::Window::present();
 }
 
-/** Sets the patch model for this window and initializes everything.
+/** Sets the graph model for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPatchWindow::set_patch(SharedPtr<const PatchModel> patch)
+LoadGraphWindow::set_graph(SharedPtr<const GraphModel> graph)
 {
-	_patch = patch;
+	_graph = graph;
 	_symbol_entry->set_text("");
 	_symbol_entry->set_sensitive(!_import);
-	_poly_spinbutton->set_value(patch->internal_poly());
+	_poly_spinbutton->set_value(graph->internal_poly());
 }
 
 void
-LoadPatchWindow::on_show()
+LoadGraphWindow::on_show()
 {
-	if (_app->configuration()->patch_folder().length() > 0)
-		set_current_folder(_app->configuration()->patch_folder());
+	if (_app->configuration()->graph_folder().length() > 0)
+		set_current_folder(_app->configuration()->graph_folder());
 	Gtk::FileChooserDialog::on_show();
 }
 
 void
-LoadPatchWindow::merge_ports_selected()
+LoadGraphWindow::merge_ports_selected()
 {
 	_merge_ports = true;
 }
 
 void
-LoadPatchWindow::insert_ports_selected()
+LoadGraphWindow::insert_ports_selected()
 {
 	_merge_ports = false;
 }
 
 void
-LoadPatchWindow::ok_clicked()
+LoadGraphWindow::ok_clicked()
 {
-	if (!_patch) {
+	if (!_graph) {
 		hide();
 		return;
 	}
@@ -161,15 +161,15 @@ LoadPatchWindow::ok_clicked()
 		return;
 
 	if (_import) {
-		// If unset load_patch will load value
+		// If unset load_graph will load value
 		boost::optional<Raul::Path>   parent;
 		boost::optional<Raul::Symbol> symbol;
-		if (!_patch->path().is_root()) {
-			parent = _patch->path().parent();
-			symbol = _patch->symbol();
+		if (!_graph->path().is_root()) {
+			parent = _graph->path().parent();
+			symbol = _graph->symbol();
 		}
 
-		_app->loader()->load_patch(true, get_filename(),
+		_app->loader()->load_graph(true, get_filename(),
 				parent, symbol, _initial_data);
 
 	} else {
@@ -187,24 +187,24 @@ LoadPatchWindow::ok_clicked()
 
 			symbol = avoid_symbol_clash(symbol);
 
-			_app->loader()->load_patch(false, *i,
-					_patch->path(), symbol, _initial_data);
+			_app->loader()->load_graph(false, *i,
+					_graph->path(), symbol, _initial_data);
 		}
 	}
 
-	_patch.reset();
+	_graph.reset();
 	hide();
 }
 
 void
-LoadPatchWindow::cancel_clicked()
+LoadGraphWindow::cancel_clicked()
 {
-	_patch.reset();
+	_graph.reset();
 	hide();
 }
 
 Raul::Symbol
-LoadPatchWindow::symbol_from_filename(const Glib::ustring& filename)
+LoadGraphWindow::symbol_from_filename(const Glib::ustring& filename)
 {
 	std::string symbol_str = Glib::path_get_basename(get_filename());
 	symbol_str = symbol_str.substr(0, symbol_str.find('.'));
@@ -212,10 +212,10 @@ LoadPatchWindow::symbol_from_filename(const Glib::ustring& filename)
 }
 
 Raul::Symbol
-LoadPatchWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
+LoadGraphWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
 {
 	unsigned offset = _app->store()->child_name_offset(
-			_patch->path(), symbol);
+			_graph->path(), symbol);
 
 	if (offset != 0) {
 		std::stringstream ss;
@@ -227,7 +227,7 @@ LoadPatchWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
 }
 
 void
-LoadPatchWindow::selection_changed()
+LoadGraphWindow::selection_changed()
 {
 	if (_import)
 		return;

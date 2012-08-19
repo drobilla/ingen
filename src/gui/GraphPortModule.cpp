@@ -20,13 +20,13 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
 #include "Configuration.hpp"
-#include "PatchCanvas.hpp"
-#include "PatchPortModule.hpp"
-#include "PatchWindow.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphPortModule.hpp"
+#include "GraphWindow.hpp"
 #include "Port.hpp"
 #include "PortMenu.hpp"
 #include "RenameWindow.hpp"
@@ -41,30 +41,30 @@ using namespace Client;
 
 namespace GUI {
 
-PatchPortModule::PatchPortModule(PatchCanvas&                       canvas,
+GraphPortModule::GraphPortModule(GraphCanvas&                       canvas,
                                  SharedPtr<const Client::PortModel> model)
 	: Ganv::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
 {
 	assert(model);
 
-	assert(PtrCast<const PatchModel>(model->parent()));
+	assert(PtrCast<const GraphModel>(model->parent()));
 
 	set_stacked(model->polyphonic());
 
 	model->signal_property().connect(
-		sigc::mem_fun(this, &PatchPortModule::property_changed));
+		sigc::mem_fun(this, &GraphPortModule::property_changed));
 
 	signal_moved().connect(
-		sigc::mem_fun(this, &PatchPortModule::store_location));
+		sigc::mem_fun(this, &GraphPortModule::store_location));
 }
 
-PatchPortModule*
-PatchPortModule::create(PatchCanvas&               canvas,
+GraphPortModule*
+GraphPortModule::create(GraphCanvas&               canvas,
                         SharedPtr<const PortModel> model,
                         bool                       human)
 {
-	PatchPortModule* ret  = new PatchPortModule(canvas, model);
+	GraphPortModule* ret  = new GraphPortModule(canvas, model);
 	Port*            port = Port::create(canvas.app(), *ret, model, human, true);
 
 	ret->set_port(port);
@@ -77,19 +77,19 @@ PatchPortModule::create(PatchCanvas&               canvas,
 }
 
 App&
-PatchPortModule::app() const
+GraphPortModule::app() const
 {
-	return ((PatchCanvas*)canvas())->app();
+	return ((GraphCanvas*)canvas())->app();
 }
 
 bool
-PatchPortModule::show_menu(GdkEventButton* ev)
+GraphPortModule::show_menu(GdkEventButton* ev)
 {
 	return _port->show_menu(ev);
 }
 
 void
-PatchPortModule::store_location(double ax, double ay)
+GraphPortModule::store_location(double ax, double ay)
 {
 	const URIs& uris = app().uris();
 
@@ -112,7 +112,7 @@ PatchPortModule::store_location(double ax, double ay)
 }
 
 void
-PatchPortModule::show_human_names(bool b)
+GraphPortModule::show_human_names(bool b)
 {
 	const URIs&       uris = app().uris();
 	const Raul::Atom& name = _model->get_property(uris.lv2_name);
@@ -124,13 +124,13 @@ PatchPortModule::show_human_names(bool b)
 }
 
 void
-PatchPortModule::set_name(const std::string& n)
+GraphPortModule::set_name(const std::string& n)
 {
 	_port->set_label(n.c_str());
 }
 
 void
-PatchPortModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
+GraphPortModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
 {
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {
@@ -155,7 +155,7 @@ PatchPortModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
 }
 
 void
-PatchPortModule::set_selected(gboolean b)
+GraphPortModule::set_selected(gboolean b)
 {
 	if (b != get_selected()) {
 		Module::set_selected(b);

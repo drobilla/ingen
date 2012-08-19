@@ -49,7 +49,7 @@
 #include "Engine.hpp"
 #include "EnginePort.hpp"
 #include "EventWriter.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
@@ -58,9 +58,9 @@
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
-/** Record of a patch in this bundle. */
-struct LV2Patch {
-	LV2Patch(const std::string& u, const std::string& f);
+/** Record of a graph in this bundle. */
+struct LV2Graph {
+	LV2Graph(const std::string& u, const std::string& f);
 
 	const std::string uri;
 	const std::string filename;
@@ -72,9 +72,9 @@ class Lib {
 public:
 	explicit Lib(const char* bundle_path);
 
-	typedef std::vector< SharedPtr<const LV2Patch> > Patches;
+	typedef std::vector< SharedPtr<const LV2Graph> > Graphes;
 
-	Patches patches;
+	Graphes graphes;
 };
 
 namespace Ingen {
@@ -101,7 +101,7 @@ public:
 		          *this)
 		, _from_ui(block_length * sizeof(float))  // FIXME: size
 		, _to_ui(block_length * sizeof(float))  // FIXME: size
-		, _root_patch(NULL)
+		, _root_graph(NULL)
 		, _notify_capacity(0)
 		, _block_length(block_length)
 		, _sample_rate(sample_rate)
@@ -111,28 +111,28 @@ public:
 	{}
 
 	void pre_process_port(ProcessContext& context, EnginePort* port) {
-		PortImpl* patch_port = port->patch_port();
+		PortImpl* graph_port = port->graph_port();
 		void*     buffer     = port->buffer();
 
-		if (!patch_port->is_input() || !buffer) {
+		if (!graph_port->is_input() || !buffer) {
 			return;
 		}
 
-		Buffer* const patch_buf = patch_port->buffer(0).get();
-		if (patch_port->is_a(PortType::AUDIO) ||
-		    patch_port->is_a(PortType::CV)) {
-			memcpy(patch_buf->samples(),
+		Buffer* const graph_buf = graph_port->buffer(0).get();
+		if (graph_port->is_a(PortType::AUDIO) ||
+		    graph_port->is_a(PortType::CV)) {
+			memcpy(graph_buf->samples(),
 			       buffer,
 			       context.nframes() * sizeof(float));
-		} else if (patch_port->is_a(PortType::CONTROL)) {
-			patch_buf->samples()[0] = ((float*)buffer)[0];
+		} else if (graph_port->is_a(PortType::CONTROL)) {
+			graph_buf->samples()[0] = ((float*)buffer)[0];
 		} else {
 			LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)buffer;
 			bool               enqueued = false;
-			URIs&              uris     = patch_port->bufs().uris();
-			patch_buf->prepare_write(context);
+			URIs&              uris     = graph_port->bufs().uris();
+			graph_buf->prepare_write(context);
 			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-				if (!patch_buf->append_event(
+				if (!graph_buf->append_event(
 					    ev->time.frames, ev->body.size, ev->body.type,
 					    (const uint8_t*)LV2_ATOM_BODY(&ev->body))) {
 					_engine.log().warn("Failed to write to buffer, event lost!\n");
@@ -151,27 +151,27 @@ public:
 	}
 
 	void post_process_port(ProcessContext& context, EnginePort* port) {
-		PortImpl* patch_port = port->patch_port();
+		PortImpl* graph_port = port->graph_port();
 		void*     buffer     = port->buffer();
 
-		if (patch_port->is_input() || !buffer) {
+		if (graph_port->is_input() || !buffer) {
 			return;
 		}
 
-		Buffer* patch_buf = patch_port->buffer(0).get();
-		if (patch_port->is_a(PortType::AUDIO) ||
-		    patch_port->is_a(PortType::CV)) {
+		Buffer* graph_buf = graph_port->buffer(0).get();
+		if (graph_port->is_a(PortType::AUDIO) ||
+		    graph_port->is_a(PortType::CV)) {
 			memcpy(buffer,
-			       patch_buf->samples(),
+			       graph_buf->samples(),
 			       context.nframes() * sizeof(float));
-		} else if (patch_port->is_a(PortType::CONTROL)) {
-			((float*)buffer)[0] = patch_buf->samples()[0];
-		} else if (patch_port->index() != 1) {
+		} else if (graph_port->is_a(PortType::CONTROL)) {
+			((float*)buffer)[0] = graph_buf->samples()[0];
+		} else if (graph_port->index() != 1) {
 			/* Copy Sequence output to LV2 buffer, except notify output which
 			   is written by flush_to_ui() (TODO: merge) */
 			memcpy(buffer,
-			       patch_buf->atom(),
-			       sizeof(LV2_Atom) + patch_buf->atom()->size);
+			       graph_buf->atom(),
+			       sizeof(LV2_Atom) + graph_buf->atom()->size);
 		}
 	}
 
@@ -204,12 +204,12 @@ public:
 		_main_sem.post();
 	}
 
-	virtual void       set_root_patch(PatchImpl* patch) { _root_patch = patch; }
-	virtual PatchImpl* root_patch()                     { return _root_patch; }
+	virtual void       set_root_graph(GraphImpl* graph) { _root_graph = graph; }
+	virtual GraphImpl* root_graph()                     { return _root_graph; }
 
 	virtual EnginePort* get_port(const Raul::Path& path) {
 		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-			if ((*i)->patch_port()->path() == path) {
+			if ((*i)->graph_port()->path() == path) {
 				return *i;
 			}
 		}
@@ -221,7 +221,7 @@ public:
 	 * It is only called on initial load.
 	 */
 	virtual void add_port(ProcessContext& context, EnginePort* port) {
-		const uint32_t index = port->patch_port()->index();
+		const uint32_t index = port->graph_port()->index();
 		if (_ports.size() <= index) {
 			_ports.resize(index + 1);
 		}
@@ -241,8 +241,8 @@ public:
 	virtual void rename_port(const Raul::Path& old_path,
 	                         const Raul::Path& new_path) {}
 
-	virtual EnginePort* create_port(DuplexPort* patch_port) {
-		return new EnginePort(patch_port);
+	virtual EnginePort* create_port(DuplexPort* graph_port) {
+		return new EnginePort(graph_port);
 	}
 
 	/** Called in run thread for events received at control input port. */
@@ -359,7 +359,7 @@ private:
 	AtomWriter       _writer;
 	Raul::RingBuffer _from_ui;
 	Raul::RingBuffer _to_ui;
-	PatchImpl*       _root_patch;
+	GraphImpl*       _root_graph;
 	uint32_t         _notify_capacity;
 	SampleCount      _block_length;
 	SampleCount      _sample_rate;
@@ -422,13 +422,13 @@ struct IngenPlugin {
 	char**        argv;
 };
 
-static Lib::Patches
-find_patches(const Glib::ustring& manifest_uri)
+static Lib::Graphes
+find_graphes(const Glib::ustring& manifest_uri)
 {
 	Sord::World      world;
 	const Sord::URI  base(world, manifest_uri);
 	const Sord::Node nil;
-	const Sord::URI  ingen_Patch (world, NS_INGEN "Patch");
+	const Sord::URI  ingen_Graph (world, NS_INGEN "Graph");
 	const Sord::URI  rdf_type    (world, NS_RDF   "type");
 	const Sord::URI  rdfs_seeAlso(world, NS_RDFS  "seeAlso");
 
@@ -436,22 +436,22 @@ find_patches(const Glib::ustring& manifest_uri)
 	Sord::Model model(world, manifest_uri);
 	model.load_file(env, SERD_TURTLE, manifest_uri);
 
-	Lib::Patches patches;
-	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Patch); !i.end(); ++i) {
-		const Sord::Node  patch     = i.get_subject();
-		Sord::Iter        f         = model.find(patch, rdfs_seeAlso, nil);
-		const std::string patch_uri = patch.to_c_string();
+	Lib::Graphes graphes;
+	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Graph); !i.end(); ++i) {
+		const Sord::Node  graph     = i.get_subject();
+		Sord::Iter        f         = model.find(graph, rdfs_seeAlso, nil);
+		const std::string graph_uri = graph.to_c_string();
 		if (!f.end()) {
 			const uint8_t* file_uri  = f.get_object().to_u_string();
 			uint8_t*       file_path = serd_file_uri_parse(file_uri, NULL);
-			patches.push_back(boost::shared_ptr<const LV2Patch>(
-				                  new LV2Patch(patch_uri, (const char*)file_path)));
+			graphes.push_back(boost::shared_ptr<const LV2Graph>(
+				                  new LV2Graph(graph_uri, (const char*)file_path)));
 			free(file_path);
 		}
 	}
 
 	serd_env_free(env);
-	return patches;
+	return graphes;
 }
 
 static LV2_Handle
@@ -482,19 +482,19 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	set_bundle_path(bundle_path);
-	Lib::Patches patches = find_patches(
+	Lib::Graphes graphes = find_graphes(
 		Glib::filename_to_uri(Ingen::bundle_file_path("manifest.ttl")));
 
-	const LV2Patch* patch = NULL;
-	for (Lib::Patches::iterator i = patches.begin(); i != patches.end(); ++i) {
+	const LV2Graph* graph = NULL;
+	for (Lib::Graphes::iterator i = graphes.begin(); i != graphes.end(); ++i) {
 		if ((*i)->uri == descriptor->URI) {
-			patch = (*i).get();
+			graph = (*i).get();
 			break;
 		}
 	}
 
-	if (!patch) {
-		const std::string msg((Raul::fmt("Could not find patch %1%\n")
+	if (!graph) {
+		const std::string msg((Raul::fmt("Could not find graph %1%\n")
 		                       % descriptor->URI).str());
 		if (log) {
 			log->vprintf(log->handle,
@@ -560,14 +560,14 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	plugin->world->parser()->parse_file(plugin->world,
 	                                    plugin->world->interface().get(),
-	                                    patch->filename);
+	                                    graph->filename);
 
 	while (engine->pending_events()) {
 		engine->process_events();
 		engine->post_processor()->process();
 	}
 
-	/* Register client after loading patch so the to-ui ring does not overflow.
+	/* Register client after loading graph so the to-ui ring does not overflow.
 	   Since we are not yet rolling, it won't be drained, causing a deadlock. */
 	SharedPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
 	interface->set_respondee(client);
@@ -586,7 +586,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 	LV2Driver*      driver = (LV2Driver*)engine->driver();
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
-		assert(driver->ports().at(port)->patch_port()->index() == port);
+		assert(driver->ports().at(port)->graph_port()->index() == port);
 		assert(driver->ports().at(port)->buffer() == data);
 	} else {
 		engine->log().error(Raul::fmt("Connect to non-existent port %1%\n")
@@ -668,7 +668,7 @@ ingen_save(LV2_Handle                instance,
 	LV2_URID atom_Path = plugin->map->map(plugin->map->handle,
 	                                      LV2_ATOM__Path);
 
-	char* real_path  = make_path->path(make_path->handle, "patch.ttl");
+	char* real_path  = make_path->path(make_path->handle, "graph.ttl");
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);
 
 	Ingen::Store::iterator root = plugin->world->store()->find(Raul::Path("/"));
@@ -736,7 +736,7 @@ ingen_extension_data(const char* uri)
 	return NULL;
 }
 
-LV2Patch::LV2Patch(const std::string& u, const std::string& f)
+LV2Graph::LV2Graph(const std::string& u, const std::string& f)
 	: uri(u)
 	, filename(f)
 {
@@ -753,7 +753,7 @@ LV2Patch::LV2Patch(const std::string& u, const std::string& f)
 Lib::Lib(const char* bundle_path)
 {
 	Ingen::set_bundle_path(bundle_path);
-	patches = find_patches(
+	graphes = find_graphes(
 		Glib::filename_to_uri(Ingen::bundle_file_path("manifest.ttl")));
 }
 
@@ -768,7 +768,7 @@ static const LV2_Descriptor*
 lib_get_plugin(LV2_Lib_Handle handle, uint32_t index)
 {
 	Lib* lib = (Lib*)handle;
-	return index < lib->patches.size() ? &lib->patches[index]->descriptor : NULL;
+	return index < lib->graphes.size() ? &lib->graphes[index]->descriptor : NULL;
 }
 
 /** LV2 plugin library entry point */

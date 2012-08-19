@@ -32,25 +32,25 @@ def build(bld):
             Configuration.cpp
             ConnectWindow.cpp
             Edge.cpp
-            LoadPatchWindow.cpp
+            GraphBox.cpp
+            GraphCanvas.cpp
+            GraphPortModule.cpp
+            GraphTreeWindow.cpp
+            GraphView.cpp
+            GraphWindow.cpp
+            LoadGraphWindow.cpp
             LoadPluginWindow.cpp
             MessagesWindow.cpp
-            NewSubpatchWindow.cpp
+            NewSubgraphWindow.cpp
             NodeMenu.cpp
             NodeModule.cpp
             ObjectMenu.cpp
-            PatchBox.cpp
-            PatchCanvas.cpp
-            PatchPortModule.cpp
-            PatchTreeWindow.cpp
-            PatchView.cpp
-            PatchWindow.cpp
             Port.cpp
             PortMenu.cpp
             PortPropertiesWindow.cpp
             PropertiesWindow.cpp
             RenameWindow.cpp
-            SubpatchModule.cpp
+            SubgraphModule.cpp
             ThreadedLoader.cpp
             WidgetFactory.cpp
             Window.cpp

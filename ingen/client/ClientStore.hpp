@@ -38,8 +38,8 @@ class URIs;
 namespace Client {
 
 class BlockModel;
+class GraphModel;
 class ObjectModel;
-class PatchModel;
 class PluginModel;
 class PortModel;
 class SigClientInterface;
@@ -94,7 +94,7 @@ public:
 	void disconnect(const Raul::Path& tail,
 	                const Raul::Path& head);
 
-	void disconnect_all(const Raul::Path& parent_patch,
+	void disconnect_all(const Raul::Path& graph,
 	                    const Raul::Path& path);
 
 	void del(const Raul::URI& uri);
@@ -117,7 +117,7 @@ private:
 
 	void add_plugin(SharedPtr<PluginModel> plugin);
 
-	SharedPtr<PatchModel> connection_patch(const Raul::Path& tail_path,
+	SharedPtr<GraphModel> connection_graph(const Raul::Path& tail_path,
 	                                       const Raul::Path& head_path);
 
 	void bundle_begin() {}

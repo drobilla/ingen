@@ -30,11 +30,11 @@ template <typename T> class Array;
 namespace Ingen {
 namespace Server {
 
-class CompiledPatch;
+class CompiledGraph;
 class EdgeImpl;
 class InputPort;
 class OutputPort;
-class PatchImpl;
+class GraphImpl;
 
 namespace Events {
 
@@ -59,9 +59,9 @@ public:
 private:
 	const Raul::Path        _tail_path;
 	const Raul::Path        _head_path;
-	PatchImpl*              _patch;
+	GraphImpl*              _graph;
 	InputPort*              _head;
-	CompiledPatch*          _compiled_patch;
+	CompiledGraph*          _compiled_graph;
 	SharedPtr<EdgeImpl>     _edge;
 	Raul::Array<BufferRef>* _buffers;
 };

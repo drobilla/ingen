@@ -103,12 +103,12 @@ EventWriter::disconnect(const Raul::Path& src,
 }
 
 void
-EventWriter::disconnect_all(const Raul::Path& patch_path,
+EventWriter::disconnect_all(const Raul::Path& graph,
                             const Raul::Path& path)
 {
 	_engine.enqueue_event(
 		new Events::DisconnectAll(_engine, _respondee, _request_id, now(),
-		                          patch_path, path));
+		                          graph, path));
 }
 
 void

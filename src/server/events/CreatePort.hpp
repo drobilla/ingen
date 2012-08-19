@@ -30,12 +30,12 @@ namespace Server {
 
 class DuplexPort;
 class EnginePort;
-class PatchImpl;
+class GraphImpl;
 class PortImpl;
 
 namespace Events {
 
-/** An event to add a Port to a Patch.
+/** An event to add a Port to a Graph.
  *
  * \ingroup engine
  */
@@ -58,9 +58,9 @@ private:
 	Raul::Path              _path;
 	PortType                _port_type;
 	LV2_URID                _buf_type;
-	PatchImpl*              _patch;
-	DuplexPort*             _patch_port;
-	Raul::Array<PortImpl*>* _ports_array; ///< New external port array for Patch
+	GraphImpl*              _graph;
+	DuplexPort*             _graph_port;
+	Raul::Array<PortImpl*>* _ports_array; ///< New external port array for Graph
 	Raul::Array<PortImpl*>* _old_ports_array;
 	EnginePort*             _engine_port; ///< Driver port if on the root
 	Resource::Properties    _properties;

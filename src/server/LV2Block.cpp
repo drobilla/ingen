@@ -32,11 +32,11 @@
 #include "Buffer.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
+#include "GraphImpl.hpp"
 #include "InputPort.hpp"
 #include "LV2Block.hpp"
 #include "LV2Plugin.hpp"
 #include "OutputPort.hpp"
-#include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
 
 using namespace std;
@@ -52,7 +52,7 @@ namespace Server {
 LV2Block::LV2Block(LV2Plugin*          plugin,
                    const Raul::Symbol& symbol,
                    bool                polyphonic,
-                   PatchImpl*          parent,
+                   GraphImpl*          parent,
                    SampleRate          srate)
 : BlockImpl(plugin, symbol, polyphonic, parent, srate)
 	, _lv2_plugin(plugin)
@@ -78,7 +78,7 @@ LV2Block::make_instance(URIs&      uris,
 		_lv2_plugin->lilv_plugin(), rate, _features->array());
 
 	if (!inst) {
-		parent_patch()->engine().log().error(
+		parent_graph()->engine().log().error(
 			Raul::fmt("Failed to instantiate <%1%>\n")
 			% _lv2_plugin->uri().c_str());
 		return SharedPtr<LilvInstance>();
@@ -119,7 +119,7 @@ LV2Block::make_instance(URIs&      uris,
 				} else if (type == _uris.lv2_CVPort) {
 					port->set_type(PortType::CV, 0);
 				} else {
-					parent_patch()->engine().log().error(
+					parent_graph()->engine().log().error(
 						Raul::fmt("%1% auto-morphed to unknown type %2%\n")
 						% port->path().c_str() % type);
 					return SharedPtr<LilvInstance>();
@@ -304,7 +304,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 		}
 
 		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
-			parent_patch()->engine().log().error(
+			parent_graph()->engine().log().error(
 				Raul::fmt("<%1%> port %2% has unknown type or direction\n")
 				% _lv2_plugin->uri().c_str() % port_sym.c_str());
 			ret = false;
@@ -422,7 +422,7 @@ LV2Block::work(uint32_t size, const void* data)
 	if (_worker_iface) {
 		LV2_Handle inst = lilv_instance_get_handle(instance(0));
 		if (_worker_iface->work(inst, work_respond, this, size, data)) {
-			parent_patch()->engine().log().error(
+			parent_graph()->engine().log().error(
 				Raul::fmt("Error calling %1% work method\n") % _path);
 		}
 	}

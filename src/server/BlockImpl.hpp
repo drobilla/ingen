@@ -43,12 +43,12 @@ namespace Server {
 class Buffer;
 class BufferFactory;
 class Context;
-class PatchImpl;
+class GraphImpl;
 class PluginImpl;
 class PortImpl;
 class ProcessContext;
 
-/** A Block in a Patch (which is also a Block).
+/** A Block in a Graph (which is also a Block).
  *
  * This is what is often called a "Module" in modular synthesizers.  A Block is
  * a unit with input/output ports, a process() method, and some other things.
@@ -56,13 +56,13 @@ class ProcessContext;
  * \ingroup engine
  */
 class BlockImpl : public GraphObjectImpl
-                , public boost::intrusive::slist_base_hook<>  // In PatchImpl
+                , public boost::intrusive::slist_base_hook<>  // In GraphImpl
 {
 public:
 	BlockImpl(PluginImpl*         plugin,
 	          const Raul::Symbol& symbol,
 	          bool                poly,
-	          PatchImpl*          parent,
+	          GraphImpl*          parent,
 	          SampleRate          rate);
 
 	virtual ~BlockImpl();
@@ -72,7 +72,7 @@ public:
 	/** Activate this Block.
 	 *
 	 * This function must be called in a non-realtime thread before it is
-	 * inserted in to a patch.  Any non-realtime actions that need to be
+	 * inserted in to a graph.  Any non-realtime actions that need to be
 	 * done before the Block is ready for use should be done here.
 	 */
 	virtual void activate(BufferFactory& bufs);
@@ -80,7 +80,7 @@ public:
 	/** Deactivate this Block.
 	 *
 	 * This function must be called in a non-realtime thread after the
-	 * block has been removed from its patch (i.e. processing is finished).
+	 * block has been removed from its graph (i.e. processing is finished).
 	 */
 	virtual void deactivate();
 
@@ -130,12 +130,12 @@ public:
 		ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 
 	/** Information about the Plugin this Block is an instance of.
-	 * Not the best name - not all blocks come from plugins (e.g. Patch)
+	 * Not the best name - not all blocks come from plugins (e.g. Graph)
 	 */
 	virtual PluginImpl* plugin_impl() const { return _plugin; }
 
 	/** Information about the Plugin this Block is an instance of.
-	 * Not the best name - not all blocks come from plugins (ie Patch)
+	 * Not the best name - not all blocks come from plugins (ie Graph)
 	 */
 	virtual const Plugin* plugin() const;
 
@@ -146,8 +146,8 @@ public:
 	                             LV2_URID       type,
 	                             uint32_t       size);
 
-	/** The Patch this Block belongs to. */
-	inline PatchImpl* parent_patch() const { return (PatchImpl*)_parent; }
+	/** The Graph this Block belongs to. */
+	inline GraphImpl* parent_graph() const { return (GraphImpl*)_parent; }
 
 	Context::ID      context()   const { return _context; }
 	uint32_t         num_ports() const { return _ports ? _ports->size() : 0; }

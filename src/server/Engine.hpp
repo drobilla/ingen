@@ -34,17 +34,17 @@ class World;
 
 namespace Server {
 
+class BlockFactory;
 class Broadcaster;
 class BufferFactory;
 class ControlBindings;
 class Driver;
 class Event;
 class EventWriter;
-class BlockFactory;
+class GraphImpl;
 class PostProcessor;
 class PreProcessor;
 class ProcessContext;
-class PatchImpl;
 class Worker;
 
 /**
@@ -98,7 +98,7 @@ public:
 	ControlBindings* control_bindings() const { return _control_bindings; }
 	Driver*          driver()           const { return _driver.get(); }
 	Log&             log()              const { return _world->log(); }
-	PatchImpl*       root_patch()       const { return _root_patch; }
+	GraphImpl*       root_graph()       const { return _root_graph; }
 	PostProcessor*   post_processor()   const { return _post_processor; }
 	Raul::Maid*      maid()             const { return _maid; }
 	Worker*          worker()           const { return _worker; }
@@ -121,7 +121,7 @@ private:
 	PreProcessor*     _pre_processor;
 	PostProcessor*    _post_processor;
 	EventWriter*      _event_writer;
-	PatchImpl*        _root_patch;
+	GraphImpl*        _root_graph;
 	Worker*           _worker;
 
 	ProcessContext _process_context;

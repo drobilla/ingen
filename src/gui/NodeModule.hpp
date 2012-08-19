@@ -33,11 +33,11 @@ namespace Ingen { namespace Client {
 namespace Ingen {
 namespace GUI {
 
-class PatchCanvas;
+class GraphCanvas;
 class Port;
 class NodeMenu;
 
-/** A module in a patch.
+/** A module in a graphn.
  *
  * This base class is extended for various types of modules.
  *
@@ -47,7 +47,7 @@ class NodeModule : public Ganv::Module
 {
 public:
 	static NodeModule* create(
-		PatchCanvas&                        canvas,
+		GraphCanvas&                        canvas,
 		SharedPtr<const Client::BlockModel> block,
 		bool                                human_names);
 
@@ -66,7 +66,7 @@ public:
 	SharedPtr<const Client::BlockModel> block() const { return _block; }
 
 protected:
-	NodeModule(PatchCanvas& canvas, SharedPtr<const Client::BlockModel> block);
+	NodeModule(GraphCanvas& canvas, SharedPtr<const Client::BlockModel> block);
 
 	virtual bool on_double_click(GdkEventButton* ev);
 

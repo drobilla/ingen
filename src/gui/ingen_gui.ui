@@ -168,25 +168,25 @@ Contributors:
       </object>
     </child>
     <child>
-      <object class="GtkImageMenuItem" id="canvas_menu_load_patch">
-        <property name="label">_Load Patch...</property>
+      <object class="GtkImageMenuItem" id="canvas_menu_load_graph">
+        <property name="label">_Load Graph...</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="use_action_appearance">False</property>
         <property name="use_underline">True</property>
         <property name="use_stock">False</property>
-        <signal name="activate" handler="on_canvas_menu_load_patch_activate" swapped="no"/>
+        <signal name="activate" handler="on_canvas_menu_load_graph_activate" swapped="no"/>
       </object>
     </child>
     <child>
-      <object class="GtkImageMenuItem" id="canvas_menu_new_patch">
-        <property name="label">_New Patch...</property>
+      <object class="GtkImageMenuItem" id="canvas_menu_new_graph">
+        <property name="label">_New Graph...</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="use_action_appearance">False</property>
         <property name="use_underline">True</property>
         <property name="use_stock">False</property>
-        <signal name="activate" handler="on_canvas_menu_new_patch_activate" swapped="no"/>
+        <signal name="activate" handler="on_canvas_menu_new_graph_activate" swapped="no"/>
       </object>
     </child>
   </object>
@@ -209,7 +209,7 @@ Contributors:
               <object class="GtkLabel" id="label90">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">&lt;b&gt;Patch Search Path: &lt;/b&gt;</property>
+                <property name="label" translatable="yes">&lt;b&gt;Graph Search Path: &lt;/b&gt;</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -232,7 +232,7 @@ Contributors:
               <object class="GtkLabel" id="label91">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">&lt;i&gt;Example:  /foo/bar:/home/john/patches:/usr/share/om/patches&lt;/i&gt;</property>
+                <property name="label" translatable="yes">&lt;i&gt;Example:  /foo/bar:/home/user/graphs&lt;/i&gt;</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -684,9 +684,9 @@ Contributors:
       <action-widget response="-6">connect_connect_button</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkFileChooserDialog" id="load_patch_win">
+  <object class="GtkFileChooserDialog" id="load_graph_win">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Load Patch - Ingen</property>
+    <property name="title" translatable="yes">Load Graph - Ingen</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
@@ -699,7 +699,7 @@ Contributors:
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="load_patch_cancel_button">
+              <object class="GtkButton" id="load_graph_cancel_button">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -715,7 +715,7 @@ Contributors:
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="load_patch_ok_button">
+              <object class="GtkButton" id="load_graph_ok_button">
                 <property name="label">gtk-open</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -754,7 +754,7 @@ Contributors:
                 <property name="column_spacing">12</property>
                 <property name="row_spacing">12</property>
                 <child>
-                  <object class="GtkLabel" id="load_patch_poly_label">
+                  <object class="GtkLabel" id="load_graph_poly_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="xalign">0</property>
@@ -769,7 +769,7 @@ Contributors:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="load_patch_poly_from_file_radio">
+                  <object class="GtkRadioButton" id="load_graph_poly_from_file_radio">
                     <property name="label" translatable="yes">Load from _File</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -778,7 +778,7 @@ Contributors:
                     <property name="use_action_appearance">False</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">load_patch_poly_voices_radio</property>
+                    <property name="group">load_graph_poly_voices_radio</property>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -790,7 +790,7 @@ Contributors:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="load_patch_ports_label">
+                  <object class="GtkLabel" id="load_graph_ports_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="xalign">0</property>
@@ -804,7 +804,7 @@ Contributors:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="load_patch_insert_ports_radio">
+                  <object class="GtkRadioButton" id="load_graph_insert_ports_radio">
                     <property name="label" translatable="yes">_Insert new ports</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -813,7 +813,7 @@ Contributors:
                     <property name="use_action_appearance">False</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">load_patch_merge_ports_radio</property>
+                    <property name="group">load_graph_merge_ports_radio</property>
                   </object>
                   <packing>
                     <property name="left_attach">2</property>
@@ -824,7 +824,7 @@ Contributors:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="load_patch_merge_ports_radio">
+                  <object class="GtkRadioButton" id="load_graph_merge_ports_radio">
                     <property name="label" translatable="yes">_Merge with existing ports</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -849,7 +849,7 @@ Contributors:
                     <property name="can_focus">False</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkRadioButton" id="load_patch_poly_voices_radio">
+                      <object class="GtkRadioButton" id="load_graph_poly_voices_radio">
                         <property name="label" translatable="yes">_Voices:</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -867,7 +867,7 @@ Contributors:
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSpinButton" id="load_patch_poly_spinbutton">
+                      <object class="GtkSpinButton" id="load_graph_poly_spinbutton">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="invisible_char">●</property>
@@ -890,14 +890,14 @@ Contributors:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="load_patch_symbol_label">
+                  <object class="GtkLabel" id="load_graph_symbol_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="xalign">0</property>
                     <property name="label" translatable="yes">_Symbol: </property>
                     <property name="use_markup">True</property>
                     <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">load_patch_symbol_entry</property>
+                    <property name="mnemonic_widget">load_graph_symbol_entry</property>
                   </object>
                   <packing>
                     <property name="x_options">GTK_FILL</property>
@@ -905,7 +905,7 @@ Contributors:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEntry" id="load_patch_symbol_entry">
+                  <object class="GtkEntry" id="load_graph_symbol_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="invisible_char">●</property>
@@ -929,8 +929,8 @@ Contributors:
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-6">load_patch_cancel_button</action-widget>
-      <action-widget response="-5">load_patch_ok_button</action-widget>
+      <action-widget response="-6">load_graph_cancel_button</action-widget>
+      <action-widget response="-5">load_graph_ok_button</action-widget>
     </action-widgets>
   </object>
   <object class="GtkWindow" id="load_plugin_win">
@@ -1236,11 +1236,11 @@ Contributors:
       </object>
     </child>
   </object>
-  <object class="GtkWindow" id="new_subpatch_win">
+  <object class="GtkWindow" id="new_subgraph_win">
     <property name="width_request">320</property>
     <property name="can_focus">False</property>
     <property name="border_width">8</property>
-    <property name="title" translatable="yes">Create Subpatch - Ingen</property>
+    <property name="title" translatable="yes">Create Subgraph - Ingen</property>
     <property name="resizable">False</property>
     <property name="window_position">center-on-parent</property>
     <property name="type_hint">dialog</property>
@@ -1261,7 +1261,7 @@ Contributors:
                 <property name="xalign">0</property>
                 <property name="label" translatable="yes">_Symbol: </property>
                 <property name="use_underline">True</property>
-                <property name="mnemonic_widget">new_subpatch_name_entry</property>
+                <property name="mnemonic_widget">new_subgraph_name_entry</property>
               </object>
               <packing>
                 <property name="x_options">GTK_FILL</property>
@@ -1276,7 +1276,7 @@ Contributors:
                 <property name="xalign">0</property>
                 <property name="label" translatable="yes">_Polyphony: </property>
                 <property name="use_underline">True</property>
-                <property name="mnemonic_widget">new_subpatch_polyphony_spinbutton</property>
+                <property name="mnemonic_widget">new_subgraph_polyphony_spinbutton</property>
               </object>
               <packing>
                 <property name="top_attach">1</property>
@@ -1287,7 +1287,7 @@ Contributors:
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="new_subpatch_polyphony_spinbutton">
+              <object class="GtkSpinButton" id="new_subgraph_polyphony_spinbutton">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
@@ -1305,7 +1305,7 @@ Contributors:
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="new_subpatch_name_entry">
+              <object class="GtkEntry" id="new_subgraph_name_entry">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">●</property>
@@ -1326,7 +1326,7 @@ Contributors:
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="new_subpatch_message_label">
+          <object class="GtkLabel" id="new_subgraph_message_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="wrap">True</property>
@@ -1344,7 +1344,7 @@ Contributors:
             <property name="spacing">4</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="new_subpatch_cancel_button">
+              <object class="GtkButton" id="new_subgraph_cancel_button">
                 <property name="label">gtk-cancel</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -1359,7 +1359,7 @@ Contributors:
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="new_subpatch_ok_button">
+              <object class="GtkButton" id="new_subgraph_ok_button">
                 <property name="label">gtk-ok</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -1516,12 +1516,12 @@ Contributors:
       </object>
     </child>
   </object>
-  <object class="GtkWindow" id="patch_tree_win">
+  <object class="GtkWindow" id="graph_tree_win">
     <property name="width_request">320</property>
     <property name="height_request">340</property>
     <property name="can_focus">False</property>
     <property name="border_width">8</property>
-    <property name="title" translatable="yes">Patches - Ingen</property>
+    <property name="title" translatable="yes">Graphs - Ingen</property>
     <child>
       <object class="GtkScrolledWindow" id="scrolledwindow8">
         <property name="visible">True</property>
@@ -1529,7 +1529,7 @@ Contributors:
         <property name="border_width">3</property>
         <property name="shadow_type">in</property>
         <child>
-          <object class="GtkTreeView" id="patches_treeview">
+          <object class="GtkTreeView" id="graphs_treeview">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="rules_hint">True</property>
@@ -1538,13 +1538,13 @@ Contributors:
       </object>
     </child>
   </object>
-  <object class="GtkWindow" id="patch_win">
+  <object class="GtkWindow" id="graph_win">
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Ingen</property>
     <property name="default_width">776</property>
     <property name="default_height">480</property>
     <child>
-      <object class="GtkVBox" id="patch_win_vbox">
+      <object class="GtkVBox" id="graph_win_vbox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
@@ -1552,17 +1552,17 @@ Contributors:
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkMenuItem" id="patch_file_menu">
+              <object class="GtkMenuItem" id="graph_file_menu">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_File</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
-                  <object class="GtkMenu" id="patch_file_menu_menu">
+                  <object class="GtkMenu" id="graph_file_menu_menu">
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_import_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_import_menuitem">
                         <property name="label">_Import...</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1570,7 +1570,7 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <accelerator key="I" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_import_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_import_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -1580,7 +1580,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_save_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_save_menuitem">
                         <property name="label">gtk-save</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1588,11 +1588,11 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <accelerator key="S" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_file_save_patch_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_file_save_graph_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_save_as_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_save_as_menuitem">
                         <property name="label">Save _As...</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1600,11 +1600,11 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <accelerator key="S" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_save_as_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_save_as_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_draw_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_draw_menuitem">
                         <property name="label">_Draw...</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1612,7 +1612,7 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <accelerator key="D" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_draw_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_draw_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -1622,14 +1622,14 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_close_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_close_menuitem">
                         <property name="label">gtk-close</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_patch_file_close_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_file_close_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -1639,14 +1639,14 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_quit_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_quit_menuitem">
                         <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_patch_file_quit_nokill_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_file_quit_nokill_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -1670,7 +1670,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_cut_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_cut_menuitem">
                         <property name="label">gtk-cut</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
@@ -1678,11 +1678,11 @@ Contributors:
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_patch_cut_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_cut_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_copy_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_copy_menuitem">
                         <property name="label">gtk-copy</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1690,11 +1690,11 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <accelerator key="C" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_copy_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_copy_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_paste_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_paste_menuitem">
                         <property name="label">gtk-paste</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
@@ -1703,11 +1703,11 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <accelerator key="V" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_paste_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_paste_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_delete_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_delete_menuitem">
                         <property name="label">gtk-delete</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1715,11 +1715,11 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <accelerator key="Delete" signal="activate"/>
-                        <signal name="activate" handler="on_patch_delete_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_delete_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_select_all_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_select_all_menuitem">
                         <property name="label">gtk-select-all</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1727,7 +1727,7 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <accelerator key="A" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_select_all_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_select_all_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -1737,7 +1737,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_arrange_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_arrange_menuitem">
                         <property name="label">Arrange</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1754,7 +1754,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_view_control_window_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_view_control_window_menuitem">
                         <property name="label">C_ontrols...</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1762,11 +1762,11 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <accelerator key="O" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_view_control_window_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_view_control_window_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_properties_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_properties_menuitem">
                         <property name="label">gtk-properties</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1774,7 +1774,7 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <accelerator key="P" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_properties_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_properties_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -1782,17 +1782,17 @@ Contributors:
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="patch_patch_menu">
+              <object class="GtkMenuItem" id="graph_graph_menu">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="use_action_appearance">False</property>
                 <property name="label" translatable="yes">_View</property>
                 <property name="use_underline">True</property>
                 <child type="submenu">
-                  <object class="GtkMenu" id="patch_patch_menu_menu">
+                  <object class="GtkMenu" id="graph_graph_menu_menu">
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkCheckMenuItem" id="patch_human_names_menuitem">
+                      <object class="GtkCheckMenuItem" id="graph_human_names_menuitem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -1803,7 +1803,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkCheckMenuItem" id="patch_show_port_names_menuitem">
+                      <object class="GtkCheckMenuItem" id="graph_show_port_names_menuitem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -1814,7 +1814,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkCheckMenuItem" id="patch_status_bar_menuitem">
+                      <object class="GtkCheckMenuItem" id="graph_status_bar_menuitem">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -1831,7 +1831,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_zoom_in_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_zoom_in_menuitem">
                         <property name="label">gtk-zoom-in</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1842,7 +1842,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_zoom_out_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_zoom_out_menuitem">
                         <property name="label">gtk-zoom-out</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1853,7 +1853,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_zoom_normal_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_zoom_normal_menuitem">
                         <property name="label">gtk-zoom-100</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1870,7 +1870,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_fullscreen_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_fullscreen_menuitem">
                         <property name="label">gtk-fullscreen</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1878,7 +1878,7 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <accelerator key="F11" signal="activate"/>
-                        <signal name="activate" handler="patch_fullscreen_menuitem" swapped="no"/>
+                        <signal name="activate" handler="graph_fullscreen_menuitem" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -1897,7 +1897,7 @@ Contributors:
                   <object class="GtkMenu" id="view1_menu">
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_view_engine_window_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_view_engine_window_menuitem">
                         <property name="label">_Engine</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1905,23 +1905,23 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <accelerator key="E" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_view_engine_window_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_view_engine_window_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_view_patch_tree_window_menuitem">
-                        <property name="label">_Patch Tree</property>
+                      <object class="GtkImageMenuItem" id="graph_view_graph_tree_window_menuitem">
+                        <property name="label">_Graph Tree</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <accelerator key="T" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_view_tree_window_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_view_tree_window_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_view_messages_window_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_view_messages_window_menuitem">
                         <property name="label">_Messages</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1929,7 +1929,7 @@ Contributors:
                         <property name="use_underline">True</property>
                         <property name="use_stock">False</property>
                         <accelerator key="M" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                        <signal name="activate" handler="on_patch_view_messages_window_menuitem_activate" swapped="no"/>
+                        <signal name="activate" handler="on_graph_view_messages_window_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -1964,7 +1964,7 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="patch_help_about_menuitem">
+                      <object class="GtkImageMenuItem" id="graph_help_about_menuitem">
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
@@ -1986,11 +1986,11 @@ Contributors:
           </packing>
         </child>
         <child>
-          <object class="GtkHPaned" id="patch_documentation_paned">
+          <object class="GtkHPaned" id="graph_documentation_paned">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkAlignment" id="patch_win_alignment">
+              <object class="GtkAlignment" id="graph_win_alignment">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
@@ -2003,7 +2003,7 @@ Contributors:
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow" id="patch_documentation_scrolledwindow">
+              <object class="GtkScrolledWindow" id="graph_documentation_scrolledwindow">
                 <property name="can_focus">False</property>
                 <property name="shadow_type">in</property>
                 <child>
@@ -2023,7 +2023,7 @@ Contributors:
           </packing>
         </child>
         <child>
-          <object class="GtkStatusbar" id="patch_win_status_bar">
+          <object class="GtkStatusbar" id="graph_win_status_bar">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="spacing">2</property>
@@ -2610,7 +2610,7 @@ Contributors:
           </object>
         </child>
         <child>
-          <object class="GtkVBox" id="patch_view_box">
+          <object class="GtkVBox" id="graph_view_box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
@@ -2624,7 +2624,7 @@ Contributors:
                     <property name="toolbar_style">icons</property>
                     <property name="icon_size">1</property>
                     <child>
-                      <object class="GtkToolItem" id="patch_view_breadcrumb_container">
+                      <object class="GtkToolItem" id="graph_view_breadcrumb_container">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -2644,14 +2644,14 @@ Contributors:
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkToolbar" id="patch_view_toolbar">
+                  <object class="GtkToolbar" id="graph_view_toolbar">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="toolbar_style">icons</property>
                     <property name="show_arrow">False</property>
                     <property name="icon_size">1</property>
                     <child>
-                      <object class="GtkToggleToolButton" id="patch_view_process_but">
+                      <object class="GtkToggleToolButton" id="graph_view_process_but">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -2688,7 +2688,7 @@ Contributors:
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
                         <child>
-                          <object class="GtkSpinButton" id="patch_view_poly_spin">
+                          <object class="GtkSpinButton" id="graph_view_poly_spin">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="climb_rate">1</property>
@@ -2710,7 +2710,7 @@ Contributors:
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolButton" id="patch_view_save_but">
+                      <object class="GtkToolButton" id="graph_view_save_but">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -2731,7 +2731,7 @@ Contributors:
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolButton" id="patch_view_refresh_but">
+                      <object class="GtkToolButton" id="graph_view_refresh_but">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -2743,7 +2743,7 @@ Contributors:
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolButton" id="patch_view_zoom_normal_but">
+                      <object class="GtkToolButton" id="graph_view_zoom_normal_but">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -2756,7 +2756,7 @@ Contributors:
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkToolButton" id="patch_view_zoom_full_but">
+                      <object class="GtkToolButton" id="graph_view_zoom_full_but">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="use_action_appearance">False</property>
@@ -2783,7 +2783,7 @@ Contributors:
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow" id="patch_view_scrolledwindow">
+              <object class="GtkScrolledWindow" id="graph_view_scrolledwindow">
                 <property name="visible">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>

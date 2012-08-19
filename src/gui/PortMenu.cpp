@@ -17,7 +17,7 @@
 #include <math.h>
 
 #include "ingen/Interface.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "raul/SharedPtr.hpp"
 
@@ -34,7 +34,7 @@ namespace GUI {
 PortMenu::PortMenu(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: ObjectMenu(cobject, xml)
-	, _is_patch_port(false)
+	, _is_graph_port(false)
 {
 	xml->get_widget("object_menu", _port_menu);
 	xml->get_widget("port_set_min_menuitem", _set_min_menuitem);
@@ -44,12 +44,12 @@ PortMenu::PortMenu(BaseObjectType*                   cobject,
 }
 
 void
-PortMenu::init(App& app, SharedPtr<const PortModel> port, bool is_patch_port)
+PortMenu::init(App& app, SharedPtr<const PortModel> port, bool is_graph_port)
 {
 	const URIs& uris = app.uris();
 
 	ObjectMenu::init(app, port);
-	_is_patch_port = is_patch_port;
+	_is_graph_port = is_graph_port;
 
 	_set_min_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &PortMenu::on_menu_set_min));
@@ -64,9 +64,9 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool is_patch_port)
 		sigc::mem_fun(this, &PortMenu::on_menu_expose));
 
 	const bool is_control  = app.can_control(port.get()) && port->is_numeric();
-	const bool is_on_patch = PtrCast<PatchModel>(port->parent());
+	const bool is_on_graph = PtrCast<GraphModel>(port->parent());
 
-	if (!_is_patch_port) {
+	if (!_is_graph_port) {
 		_polyphonic_menuitem->set_sensitive(false);
 		_rename_menuitem->set_sensitive(false);
 		_destroy_menuitem->set_sensitive(false);
@@ -76,10 +76,10 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool is_patch_port)
 		_polyphonic_menuitem->hide();
 	}
 
-	_reset_range_menuitem->set_visible(is_control && !is_on_patch);
+	_reset_range_menuitem->set_visible(is_control && !is_on_graph);
 	_set_max_menuitem->set_visible(is_control);
 	_set_min_menuitem->set_visible(is_control);
-	_expose_menuitem->set_visible(!is_on_patch);
+	_expose_menuitem->set_visible(!is_on_graph);
 	_learn_menuitem->set_visible(is_control);
 	_unlearn_menuitem->set_visible(is_control);
 
@@ -89,7 +89,7 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool is_patch_port)
 void
 PortMenu::on_menu_disconnect()
 {
-	if (_is_patch_port) {
+	if (_is_graph_port) {
 		_app->interface()->disconnect_all(
 				_object->parent()->path(), _object->path());
 	} else {

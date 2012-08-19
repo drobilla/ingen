@@ -60,7 +60,7 @@ BlockImpl*
 LV2Plugin::instantiate(BufferFactory&      bufs,
                        const Raul::Symbol& symbol,
                        bool                polyphonic,
-                       PatchImpl*          parent,
+                       GraphImpl*          parent,
                        Engine&             engine)
 {
 	LV2Block* b = new LV2Block(

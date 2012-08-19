@@ -6,7 +6,7 @@
 	a patch:Put ;
 	patch:subject <ingen:root/sub> ;
 	patch:body [
-		a ingen:Patch ;
+		a ingen:Graph ;
 	] .
 
 <msg1>

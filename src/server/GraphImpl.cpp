@@ -25,8 +25,8 @@
 #include "DuplexPort.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
-#include "PatchImpl.hpp"
-#include "PatchPlugin.hpp"
+#include "GraphImpl.hpp"
+#include "GraphPlugin.hpp"
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
 
@@ -35,35 +35,35 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-PatchImpl::PatchImpl(Engine&             engine,
+GraphImpl::GraphImpl(Engine&             engine,
                      const Raul::Symbol& symbol,
                      uint32_t            poly,
-                     PatchImpl*          parent,
+                     GraphImpl*          parent,
                      SampleRate          srate,
                      uint32_t            internal_poly)
-	: BlockImpl(new PatchPlugin(engine.world()->uris(),
-	                            engine.world()->uris().ingen_Patch,
-	                            Raul::Symbol("patch"),
-	                            "Ingen Patch"),
+	: BlockImpl(new GraphPlugin(engine.world()->uris(),
+	                            engine.world()->uris().ingen_Graph,
+	                            Raul::Symbol("graph"),
+	                            "Ingen Graph"),
 	           symbol, poly, parent, srate)
 	, _engine(engine)
 	, _poly_pre(internal_poly)
 	, _poly_process(internal_poly)
-	, _compiled_patch(NULL)
+	, _compiled_graph(NULL)
 	, _process(false)
 {
 	assert(internal_poly >= 1);
 	assert(internal_poly <= 128);
 }
 
-PatchImpl::~PatchImpl()
+GraphImpl::~GraphImpl()
 {
-	delete _compiled_patch;
+	delete _compiled_graph;
 	delete _plugin;
 }
 
 void
-PatchImpl::activate(BufferFactory& bufs)
+GraphImpl::activate(BufferFactory& bufs)
 {
 	BlockImpl::activate(bufs);
 
@@ -75,7 +75,7 @@ PatchImpl::activate(BufferFactory& bufs)
 }
 
 void
-PatchImpl::deactivate()
+GraphImpl::deactivate()
 {
 	if (_activated) {
 		BlockImpl::deactivate();
@@ -89,7 +89,7 @@ PatchImpl::deactivate()
 }
 
 void
-PatchImpl::disable(ProcessContext& context)
+GraphImpl::disable(ProcessContext& context)
 {
 	_process = false;
 	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i) {
@@ -98,11 +98,11 @@ PatchImpl::disable(ProcessContext& context)
 }
 
 bool
-PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
+GraphImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
+	// TODO: Subgraph dynamic polyphony (i.e. changing port polyphony)
 
 	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		i->prepare_poly(bufs, poly);
@@ -113,12 +113,12 @@ PatchImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-PatchImpl::apply_internal_poly(ProcessContext& context,
+GraphImpl::apply_internal_poly(ProcessContext& context,
                                BufferFactory&  bufs,
                                Raul::Maid&     maid,
                                uint32_t        poly)
 {
-	// TODO: Subpatch dynamic polyphony (i.e. changing port polyphony)
+	// TODO: Subgraph dynamic polyphony (i.e. changing port polyphony)
 
 	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		i->apply_poly(context, maid, poly);
@@ -133,7 +133,7 @@ PatchImpl::apply_internal_poly(ProcessContext& context,
 		}
 	}
 
-	const bool polyphonic = parent_patch() && (poly == parent_patch()->internal_poly_process());
+	const bool polyphonic = parent_graph() && (poly == parent_graph()->internal_poly_process());
 	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i)
 		i->setup_buffers(bufs, polyphonic ? poly : 1, true);
 
@@ -141,22 +141,22 @@ PatchImpl::apply_internal_poly(ProcessContext& context,
 	return true;
 }
 
-/** Run the patch for the specified number of frames.
+/** Run the graph for the specified number of frames.
  *
- * Calls all Blocks in (roughly, if parallel) the order _compiled_patch specifies.
+ * Calls all Blocks in (roughly, if parallel) the order _compiled_graph specifies.
  */
 void
-PatchImpl::process(ProcessContext& context)
+GraphImpl::process(ProcessContext& context)
 {
 	if (!_process)
 		return;
 
 	BlockImpl::pre_process(context);
 
-	if (_compiled_patch && _compiled_patch->size() > 0) {
+	if (_compiled_graph && _compiled_graph->size() > 0) {
 		// Run all blocks
-		for (size_t i = 0; i < _compiled_patch->size(); ++i) {
-			(*_compiled_patch)[i].block()->process(context);
+		for (size_t i = 0; i < _compiled_graph->size(); ++i) {
+			(*_compiled_graph)[i].block()->process(context);
 		}
 	}
 
@@ -164,24 +164,24 @@ PatchImpl::process(ProcessContext& context)
 }
 
 void
-PatchImpl::set_buffer_size(Context&       context,
+GraphImpl::set_buffer_size(Context&       context,
                            BufferFactory& bufs,
                            LV2_URID       type,
                            uint32_t       size)
 {
 	BlockImpl::set_buffer_size(context, bufs, type, size);
 
-	for (size_t i = 0; i < _compiled_patch->size(); ++i)
-		(*_compiled_patch)[i].block()->set_buffer_size(context, bufs, type, size);
+	for (size_t i = 0; i < _compiled_graph->size(); ++i)
+		(*_compiled_graph)[i].block()->set_buffer_size(context, bufs, type, size);
 }
 
-// Patch specific stuff
+// Graph specific stuff
 
 /** Add a block.
  * Preprocessing thread only.
  */
 void
-PatchImpl::add_block(BlockImpl& block)
+GraphImpl::add_block(BlockImpl& block)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	_blocks.push_front(block);
@@ -191,13 +191,13 @@ PatchImpl::add_block(BlockImpl& block)
  * Preprocessing thread only.
  */
 void
-PatchImpl::remove_block(BlockImpl& block)
+GraphImpl::remove_block(BlockImpl& block)
 {
 	_blocks.erase(_blocks.iterator_to(block));
 }
 
 void
-PatchImpl::add_edge(SharedPtr<EdgeImpl> c)
+GraphImpl::add_edge(SharedPtr<EdgeImpl> c)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	_edges.insert(make_pair(make_pair(c->tail(), c->head()), c));
@@ -207,7 +207,7 @@ PatchImpl::add_edge(SharedPtr<EdgeImpl> c)
  * Preprocessing thread only.
  */
 SharedPtr<EdgeImpl>
-PatchImpl::remove_edge(const PortImpl* tail, const PortImpl* dst_port)
+GraphImpl::remove_edge(const PortImpl* tail, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	Edges::iterator i = _edges.find(make_pair(tail, dst_port));
@@ -221,7 +221,7 @@ PatchImpl::remove_edge(const PortImpl* tail, const PortImpl* dst_port)
 }
 
 bool
-PatchImpl::has_edge(const PortImpl* tail, const PortImpl* dst_port) const
+GraphImpl::has_edge(const PortImpl* tail, const PortImpl* dst_port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	Edges::const_iterator i = _edges.find(make_pair(tail, dst_port));
@@ -229,7 +229,7 @@ PatchImpl::has_edge(const PortImpl* tail, const PortImpl* dst_port) const
 }
 
 uint32_t
-PatchImpl::num_ports_non_rt() const
+GraphImpl::num_ports_non_rt() const
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
 	return _inputs.size() + _outputs.size();
@@ -238,7 +238,7 @@ PatchImpl::num_ports_non_rt() const
 /** Create a port.  Not realtime safe.
  */
 DuplexPort*
-PatchImpl::create_port(BufferFactory&      bufs,
+GraphImpl::create_port(BufferFactory&      bufs,
                        const Raul::Symbol& symbol,
                        PortType            type,
                        LV2_URID            buffer_type,
@@ -268,7 +268,7 @@ PatchImpl::create_port(BufferFactory&      bufs,
  * Realtime safe.  Preprocessing thread only.
  */
 void
-PatchImpl::remove_port(DuplexPort& port)
+GraphImpl::remove_port(DuplexPort& port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
@@ -287,7 +287,7 @@ PatchImpl::remove_port(DuplexPort& port)
  * Realtime safe.  Preprocessing thread only.
  */
 void
-PatchImpl::clear_ports()
+GraphImpl::clear_ports()
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
@@ -296,7 +296,7 @@ PatchImpl::clear_ports()
 }
 
 Raul::Array<PortImpl*>*
-PatchImpl::build_ports_array()
+GraphImpl::build_ports_array()
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
@@ -317,7 +317,7 @@ PatchImpl::build_ports_array()
 }
 
 static inline void
-compile_recursive(BlockImpl* n, CompiledPatch* output)
+compile_recursive(BlockImpl* n, CompiledGraph* output)
 {
 	if (n == NULL || n->traversed())
 		return;
@@ -333,9 +333,9 @@ compile_recursive(BlockImpl* n, CompiledPatch* output)
 	output->push_back(CompiledBlock(n, n->providers().size(), n->dependants()));
 }
 
-/** Find the process order for this Patch.
+/** Find the process order for this Graph.
  *
- * The process order is a flat list that the patch will execute in order
+ * The process order is a flat list that the graph will execute in order
  * when its run() method is called.  Return value is a newly allocated list
  * which the caller is reponsible to delete.  Note that this function does
  * NOT actually set the process order, it is returned so it can be inserted
@@ -343,12 +343,12 @@ compile_recursive(BlockImpl* n, CompiledPatch* output)
  *
  * Not realtime safe.
  */
-CompiledPatch*
-PatchImpl::compile()
+CompiledGraph*
+GraphImpl::compile()
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	CompiledPatch* const compiled_patch = new CompiledPatch();
+	CompiledGraph* const compiled_graph = new CompiledGraph();
 
 	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		i->traversed(false);
@@ -357,24 +357,24 @@ PatchImpl::compile()
 	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		// Either a sink or connected to our output ports:
 		if (!i->traversed() && i->dependants().empty()) {
-			compile_recursive(&*i, compiled_patch);
+			compile_recursive(&*i, compiled_graph);
 		}
 	}
 
 	// Traverse any blocks we didn't hit yet
 	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
 		if (!i->traversed()) {
-			compile_recursive(&*i, compiled_patch);
+			compile_recursive(&*i, compiled_graph);
 		}
 	}
 
-	if (compiled_patch->size() != _blocks.size()) {
-		_engine.log().error(Raul::fmt("Failed to compile patch %1%\n") % _path);
-		delete compiled_patch;
+	if (compiled_graph->size() != _blocks.size()) {
+		_engine.log().error(Raul::fmt("Failed to compile graph %1%\n") % _path);
+		delete compiled_graph;
 		return NULL;
 	}
 
-	return compiled_patch;
+	return compiled_graph;
 }
 
 } // namespace Server

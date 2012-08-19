@@ -16,11 +16,11 @@
 
 #include <cassert>
 
+#include "ingen/URIs.hpp"
+#include "ingen/client/BlockModel.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/EdgeModel.hpp"
-#include "ingen/client/BlockModel.hpp"
-#include "ingen/client/PatchModel.hpp"
-#include "ingen/URIs.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ namespace Ingen {
 namespace Client {
 
 void
-PatchModel::add_child(SharedPtr<ObjectModel> c)
+GraphModel::add_child(SharedPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
 
@@ -45,7 +45,7 @@ PatchModel::add_child(SharedPtr<ObjectModel> c)
 }
 
 bool
-PatchModel::remove_child(SharedPtr<ObjectModel> o)
+GraphModel::remove_child(SharedPtr<ObjectModel> o)
 {
 	assert(o->path().is_child_of(path()));
 	assert(o->parent().get() == this);
@@ -82,7 +82,7 @@ PatchModel::remove_child(SharedPtr<ObjectModel> o)
 }
 
 void
-PatchModel::clear()
+GraphModel::clear()
 {
 	_edges.clear();
 
@@ -93,7 +93,7 @@ PatchModel::clear()
 }
 
 SharedPtr<EdgeModel>
-PatchModel::get_edge(const GraphObject* tail, const GraphObject* head)
+GraphModel::get_edge(const GraphObject* tail, const GraphObject* head)
 {
 	Edges::iterator i = _edges.find(make_pair(tail, head));
 	if (i != _edges.end())
@@ -102,15 +102,15 @@ PatchModel::get_edge(const GraphObject* tail, const GraphObject* head)
 		return SharedPtr<EdgeModel>();
 }
 
-/** Add a connection to this patch.
+/** Add a connection to this graph.
  *
  * A reference to  @a cm is taken, released on deletion or removal.
  * If @a cm only contains paths (not pointers to the actual ports), the ports
  * will be found and set.  The ports referred to not existing as children of
- * this patch is a fatal error.
+ * this graph is a fatal error.
  */
 void
-PatchModel::add_edge(SharedPtr<EdgeModel> cm)
+GraphModel::add_edge(SharedPtr<EdgeModel> cm)
 {
 	// Store should have 'resolved' the connection already
 	assert(cm);
@@ -138,7 +138,7 @@ PatchModel::add_edge(SharedPtr<EdgeModel> cm)
 }
 
 void
-PatchModel::remove_edge(const GraphObject* tail, const GraphObject* head)
+GraphModel::remove_edge(const GraphObject* tail, const GraphObject* head)
 {
 	Edges::iterator i = _edges.find(make_pair(tail, head));
 	if (i != _edges.end()) {
@@ -149,21 +149,21 @@ PatchModel::remove_edge(const GraphObject* tail, const GraphObject* head)
 }
 
 bool
-PatchModel::enabled() const
+GraphModel::enabled() const
 {
 	const Raul::Atom& enabled = get_property(_uris.ingen_enabled);
 	return (enabled.is_valid() && enabled.get_bool());
 }
 
 uint32_t
-PatchModel::internal_poly() const
+GraphModel::internal_poly() const
 {
 	const Raul::Atom& poly = get_property(_uris.ingen_polyphony);
 	return poly.is_valid() ? poly.get_int32() : 1;
 }
 
 bool
-PatchModel::polyphonic() const
+GraphModel::polyphonic() const
 {
 	const Raul::Atom& poly = get_property(_uris.ingen_polyphonic);
 	return poly.is_valid() && poly.get_bool();

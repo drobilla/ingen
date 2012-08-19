@@ -25,7 +25,7 @@
 namespace Ingen {
 namespace Server {
 
-class PatchImpl;
+class GraphImpl;
 class PortImpl;
 
 namespace Events {
@@ -62,7 +62,7 @@ public:
 private:
 	const Raul::Path _old_path;
 	const Raul::Path _new_path;
-	PatchImpl*       _parent_patch;
+	GraphImpl*       _parent_graph;
 };
 
 } // namespace Events

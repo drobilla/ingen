@@ -20,7 +20,7 @@
 #include "ingen/Store.hpp"
 
 #include "Event.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "ControlBindings.hpp"
 
 namespace Raul {
@@ -31,7 +31,7 @@ namespace Ingen {
 namespace Server {
 
 class BlockImpl;
-class CompiledPatch;
+class CompiledGraph;
 class DuplexPort;
 class EnginePort;
 class PortImpl;
@@ -75,8 +75,8 @@ private:
 	SharedPtr<BlockImpl>     _block;               ///< Non-NULL iff a block
 	SharedPtr<DuplexPort>    _port;                ///< Non-NULL iff a port
 	EnginePort*              _engine_port;
-	Raul::Array<PortImpl*>*  _ports_array;         ///< New (external) ports for Patch
-	CompiledPatch*           _compiled_patch;      ///< Patch's new process order
+	Raul::Array<PortImpl*>*  _ports_array;         ///< New (external) ports for Graph
+	CompiledGraph*           _compiled_graph;      ///< Graph's new process order
 	DisconnectAll*           _disconnect_event;
 
 	SharedPtr<ControlBindings::Bindings> _removed_bindings;

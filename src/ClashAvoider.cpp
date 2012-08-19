@@ -170,10 +170,10 @@ ClashAvoider::disconnect(const Raul::Path& tail,
 }
 
 void
-ClashAvoider::disconnect_all(const Raul::Path& parent_patch,
+ClashAvoider::disconnect_all(const Raul::Path& graph,
                              const Raul::Path& path)
 {
-	_target.disconnect_all(map_path(parent_patch), map_path(path));
+	_target.disconnect_all(map_path(graph), map_path(path));
 }
 
 void

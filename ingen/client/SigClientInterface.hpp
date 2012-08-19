@@ -103,8 +103,8 @@ protected:
 	void disconnect(const Raul::Path& tail, const Raul::Path& head)
 		{ EMIT(disconnection, tail, head); }
 
-	void disconnect_all(const Raul::Path& parent_patch_path, const Raul::Path& path)
-		{ EMIT(disconnect_all, parent_patch_path, path); }
+	void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
+		{ EMIT(disconnect_all, graph, path); }
 
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ EMIT(property_change, subject, key, value); }

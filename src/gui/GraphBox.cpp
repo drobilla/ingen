@@ -25,20 +25,20 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
 #include "BreadCrumbs.hpp"
 #include "Configuration.hpp"
 #include "ConnectWindow.hpp"
-#include "LoadPatchWindow.hpp"
+#include "LoadGraphWindow.hpp"
 #include "LoadPluginWindow.hpp"
 #include "MessagesWindow.hpp"
-#include "NewSubpatchWindow.hpp"
-#include "PatchCanvas.hpp"
-#include "PatchTreeWindow.hpp"
-#include "PatchView.hpp"
-#include "PatchWindow.hpp"
+#include "NewSubgraphWindow.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphTreeWindow.hpp"
+#include "GraphView.hpp"
+#include "GraphWindow.hpp"
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
@@ -55,10 +55,10 @@ using namespace Client;
 namespace GUI {
 
 static const int STATUS_CONTEXT_ENGINE = 0;
-static const int STATUS_CONTEXT_PATCH  = 1;
+static const int STATUS_CONTEXT_GRAPH  = 1;
 static const int STATUS_CONTEXT_HOVER  = 2;
 
-PatchBox::PatchBox(BaseObjectType*                   cobject,
+GraphBox::GraphBox(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::VBox(cobject)
 	, _app(NULL)
@@ -69,106 +69,106 @@ PatchBox::PatchBox(BaseObjectType*                   cobject,
 {
 	property_visible() = false;
 
-	xml->get_widget("patch_win_alignment", _alignment);
-	xml->get_widget("patch_win_status_bar", _status_bar);
-	//xml->get_widget("patch_win_status_bar", _status_bar);
-	//xml->get_widget("patch_open_menuitem", _menu_open);
-	xml->get_widget("patch_import_menuitem", _menu_import);
-	//xml->get_widget("patch_open_into_menuitem", _menu_open_into);
-	xml->get_widget("patch_save_menuitem", _menu_save);
-	xml->get_widget("patch_save_as_menuitem", _menu_save_as);
-	xml->get_widget("patch_draw_menuitem", _menu_draw);
-	xml->get_widget("patch_cut_menuitem", _menu_cut);
-	xml->get_widget("patch_copy_menuitem", _menu_copy);
-	xml->get_widget("patch_paste_menuitem", _menu_paste);
-	xml->get_widget("patch_delete_menuitem", _menu_delete);
-	xml->get_widget("patch_select_all_menuitem", _menu_select_all);
-	xml->get_widget("patch_close_menuitem", _menu_close);
-	xml->get_widget("patch_quit_menuitem", _menu_quit);
-	xml->get_widget("patch_view_control_window_menuitem", _menu_view_control_window);
-	xml->get_widget("patch_view_engine_window_menuitem", _menu_view_engine_window);
-	xml->get_widget("patch_properties_menuitem", _menu_view_patch_properties);
-	xml->get_widget("patch_fullscreen_menuitem", _menu_fullscreen);
-	xml->get_widget("patch_human_names_menuitem", _menu_human_names);
-	xml->get_widget("patch_show_port_names_menuitem", _menu_show_port_names);
-	xml->get_widget("patch_zoom_in_menuitem", _menu_zoom_in);
-	xml->get_widget("patch_zoom_out_menuitem", _menu_zoom_out);
-	xml->get_widget("patch_zoom_normal_menuitem", _menu_zoom_normal);
-	xml->get_widget("patch_status_bar_menuitem", _menu_show_status_bar);
-	xml->get_widget("patch_arrange_menuitem", _menu_arrange);
-	xml->get_widget("patch_view_messages_window_menuitem", _menu_view_messages_window);
-	xml->get_widget("patch_view_patch_tree_window_menuitem", _menu_view_patch_tree_window);
-	xml->get_widget("patch_help_about_menuitem", _menu_help_about);
-	xml->get_widget("patch_documentation_paned", _doc_paned);
-	xml->get_widget("patch_documentation_scrolledwindow", _doc_scrolledwindow);
+	xml->get_widget("graph_win_alignment", _alignment);
+	xml->get_widget("graph_win_status_bar", _status_bar);
+	//xml->get_widget("graph_win_status_bar", _status_bar);
+	//xml->get_widget("graph_open_menuitem", _menu_open);
+	xml->get_widget("graph_import_menuitem", _menu_import);
+	//xml->get_widget("graph_open_into_menuitem", _menu_open_into);
+	xml->get_widget("graph_save_menuitem", _menu_save);
+	xml->get_widget("graph_save_as_menuitem", _menu_save_as);
+	xml->get_widget("graph_draw_menuitem", _menu_draw);
+	xml->get_widget("graph_cut_menuitem", _menu_cut);
+	xml->get_widget("graph_copy_menuitem", _menu_copy);
+	xml->get_widget("graph_paste_menuitem", _menu_paste);
+	xml->get_widget("graph_delete_menuitem", _menu_delete);
+	xml->get_widget("graph_select_all_menuitem", _menu_select_all);
+	xml->get_widget("graph_close_menuitem", _menu_close);
+	xml->get_widget("graph_quit_menuitem", _menu_quit);
+	xml->get_widget("graph_view_control_window_menuitem", _menu_view_control_window);
+	xml->get_widget("graph_view_engine_window_menuitem", _menu_view_engine_window);
+	xml->get_widget("graph_properties_menuitem", _menu_view_graph_properties);
+	xml->get_widget("graph_fullscreen_menuitem", _menu_fullscreen);
+	xml->get_widget("graph_human_names_menuitem", _menu_human_names);
+	xml->get_widget("graph_show_port_names_menuitem", _menu_show_port_names);
+	xml->get_widget("graph_zoom_in_menuitem", _menu_zoom_in);
+	xml->get_widget("graph_zoom_out_menuitem", _menu_zoom_out);
+	xml->get_widget("graph_zoom_normal_menuitem", _menu_zoom_normal);
+	xml->get_widget("graph_status_bar_menuitem", _menu_show_status_bar);
+	xml->get_widget("graph_arrange_menuitem", _menu_arrange);
+	xml->get_widget("graph_view_messages_window_menuitem", _menu_view_messages_window);
+	xml->get_widget("graph_view_graph_tree_window_menuitem", _menu_view_graph_tree_window);
+	xml->get_widget("graph_help_about_menuitem", _menu_help_about);
+	xml->get_widget("graph_documentation_paned", _doc_paned);
+	xml->get_widget("graph_documentation_scrolledwindow", _doc_scrolledwindow);
 
 	_menu_view_control_window->property_sensitive() = false;
 	_menu_import->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_import));
+		sigc::mem_fun(this, &GraphBox::event_import));
 	_menu_save->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_save));
+		sigc::mem_fun(this, &GraphBox::event_save));
 	_menu_save_as->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_save_as));
+		sigc::mem_fun(this, &GraphBox::event_save_as));
 	_menu_draw->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_draw));
+		sigc::mem_fun(this, &GraphBox::event_draw));
 	_menu_copy->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_copy));
+		sigc::mem_fun(this, &GraphBox::event_copy));
 	_menu_paste->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_paste));
+		sigc::mem_fun(this, &GraphBox::event_paste));
 	_menu_delete->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_delete));
+		sigc::mem_fun(this, &GraphBox::event_delete));
 	_menu_select_all->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_select_all));
+		sigc::mem_fun(this, &GraphBox::event_select_all));
 	_menu_close->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_close));
+		sigc::mem_fun(this, &GraphBox::event_close));
 	_menu_quit->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_quit));
+		sigc::mem_fun(this, &GraphBox::event_quit));
 	_menu_fullscreen->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_fullscreen_toggled));
+		sigc::mem_fun(this, &GraphBox::event_fullscreen_toggled));
 	_menu_human_names->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_human_names_toggled));
+		sigc::mem_fun(this, &GraphBox::event_human_names_toggled));
 	_menu_show_status_bar->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_status_bar_toggled));
+		sigc::mem_fun(this, &GraphBox::event_status_bar_toggled));
 	_menu_show_port_names->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_port_names_toggled));
+		sigc::mem_fun(this, &GraphBox::event_port_names_toggled));
 	_menu_arrange->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_arrange));
+		sigc::mem_fun(this, &GraphBox::event_arrange));
 	_menu_quit->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_quit));
+		sigc::mem_fun(this, &GraphBox::event_quit));
 	_menu_zoom_in->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_zoom_in));
+		sigc::mem_fun(this, &GraphBox::event_zoom_in));
 	_menu_zoom_out->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_zoom_out));
+		sigc::mem_fun(this, &GraphBox::event_zoom_out));
 	_menu_zoom_normal->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_zoom_normal));
+		sigc::mem_fun(this, &GraphBox::event_zoom_normal));
 	_menu_view_engine_window->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_show_engine));
-	_menu_view_patch_properties->signal_activate().connect(
-		sigc::mem_fun(this, &PatchBox::event_show_properties));
+		sigc::mem_fun(this, &GraphBox::event_show_engine));
+	_menu_view_graph_properties->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_show_properties));
 
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->signal_owner_change().connect(
-		sigc::mem_fun(this, &PatchBox::event_clipboard_changed));
+		sigc::mem_fun(this, &GraphBox::event_clipboard_changed));
 }
 
-PatchBox::~PatchBox()
+GraphBox::~GraphBox()
 {
 	delete _breadcrumbs;
 }
 
-SharedPtr<PatchBox>
-PatchBox::create(App& app, SharedPtr<const PatchModel> patch)
+SharedPtr<GraphBox>
+GraphBox::create(App& app, SharedPtr<const GraphModel> graph)
 {
-	PatchBox* result = NULL;
-	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("patch_win");
-	xml->get_widget_derived("patch_win_vbox", result);
+	GraphBox* result = NULL;
+	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("graph_win");
+	xml->get_widget_derived("graph_win_vbox", result);
 	result->init_box(app);
-	result->set_patch(patch, SharedPtr<PatchView>());
-	return SharedPtr<PatchBox>(result);
+	result->set_graph(graph, SharedPtr<GraphView>());
+	return SharedPtr<GraphBox>(result);
 }
 
 void
-PatchBox::init_box(App& app)
+GraphBox::init_box(App& app)
 {
 	_app = &app;
 
@@ -180,41 +180,41 @@ PatchBox::init_box(App& app)
 
 	_menu_view_messages_window->signal_activate().connect(
 		sigc::mem_fun<void>(_app->messages_dialog(), &MessagesWindow::present));
-	_menu_view_patch_tree_window->signal_activate().connect(
-		sigc::mem_fun<void>(_app->patch_tree(), &PatchTreeWindow::present));
+	_menu_view_graph_tree_window->signal_activate().connect(
+		sigc::mem_fun<void>(_app->graph_tree(), &GraphTreeWindow::present));
 
 	_menu_help_about->signal_activate().connect(sigc::hide_return(
 		                                            sigc::mem_fun(_app, &App::show_about)));
 
 	_breadcrumbs = new BreadCrumbs(*_app);
-	_breadcrumbs->signal_patch_selected.connect(
-		sigc::mem_fun(this, &PatchBox::set_patch_from_path));
+	_breadcrumbs->signal_graph_selected.connect(
+		sigc::mem_fun(this, &GraphBox::set_graph_from_path));
 }
 
 void
-PatchBox::set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view)
+GraphBox::set_graph_from_path(const Raul::Path& path, SharedPtr<GraphView> view)
 {
 	if (view) {
-		assert(view->patch()->path() == path);
-		_app->window_factory()->present_patch(view->patch(), _window, view);
+		assert(view->graph()->path() == path);
+		_app->window_factory()->present_graph(view->graph(), _window, view);
 	} else {
-		SharedPtr<const PatchModel> model = PtrCast<const PatchModel>(
+		SharedPtr<const GraphModel> model = PtrCast<const GraphModel>(
 			_app->store()->object(path));
 		if (model) {
-			_app->window_factory()->present_patch(model, _window);
+			_app->window_factory()->present_graph(model, _window);
 		}
 	}
 }
 
-/** Sets the patch for this box and initializes everything.
+/** Sets the graph for this box and initializes everything.
  *
  * If @a view is NULL, a new view will be created.
  */
 void
-PatchBox::set_patch(SharedPtr<const PatchModel> patch,
-                    SharedPtr<PatchView>        view)
+GraphBox::set_graph(SharedPtr<const GraphModel> graph,
+                    SharedPtr<GraphView>        view)
 {
-	if (!patch || patch == _patch)
+	if (!graph || graph == _graph)
 		return;
 
 	_enable_signal = false;
@@ -225,16 +225,16 @@ PatchBox::set_patch(SharedPtr<const PatchModel> patch,
 	_entered_connection.disconnect();
 	_left_connection.disconnect();
 
-	_status_bar->pop(STATUS_CONTEXT_PATCH);
+	_status_bar->pop(STATUS_CONTEXT_GRAPH);
 
-	_patch = patch;
+	_graph = graph;
 	_view  = view;
 
 	if (!_view)
-		_view = _breadcrumbs->view(patch->path());
+		_view = _breadcrumbs->view(graph->path());
 
 	if (!_view)
-		_view = PatchView::create(*_app, patch);
+		_view = GraphView::create(*_app, graph);
 
 	assert(_view);
 
@@ -252,38 +252,38 @@ PatchBox::set_patch(SharedPtr<const PatchModel> patch,
 	_view->breadcrumb_container()->add(*_breadcrumbs);
 	_view->breadcrumb_container()->show();
 
-	_breadcrumbs->build(patch->path(), _view);
+	_breadcrumbs->build(graph->path(), _view);
 	_breadcrumbs->show();
 
 	_menu_view_control_window->property_sensitive() = false;
 
-	for (BlockModel::Ports::const_iterator p = patch->ports().begin();
-	     p != patch->ports().end(); ++p) {
+	for (BlockModel::Ports::const_iterator p = graph->ports().begin();
+	     p != graph->ports().end(); ++p) {
 		if (_app->can_control(p->get())) {
 			_menu_view_control_window->property_sensitive() = true;
 			break;
 		}
 	}
 
-	new_port_connection = patch->signal_new_port().connect(
-		sigc::mem_fun(this, &PatchBox::patch_port_added));
-	removed_port_connection = patch->signal_removed_port().connect(
-		sigc::mem_fun(this, &PatchBox::patch_port_removed));
+	new_port_connection = graph->signal_new_port().connect(
+		sigc::mem_fun(this, &GraphBox::graph_port_added));
+	removed_port_connection = graph->signal_removed_port().connect(
+		sigc::mem_fun(this, &GraphBox::graph_port_removed));
 
 	show();
 	_alignment->show_all();
 	hide_documentation();
 
 	_view->signal_object_entered.connect(
-		sigc::mem_fun(this, &PatchBox::object_entered));
+		sigc::mem_fun(this, &GraphBox::object_entered));
 	_view->signal_object_left.connect(
-		sigc::mem_fun(this, &PatchBox::object_left));
+		sigc::mem_fun(this, &GraphBox::object_left));
 
 	_enable_signal = true;
 }
 
 void
-PatchBox::patch_port_added(SharedPtr<const PortModel> port)
+GraphBox::graph_port_added(SharedPtr<const PortModel> port)
 {
 	if (port->is_input() && _app->can_control(port.get())) {
 		_menu_view_control_window->property_sensitive() = true;
@@ -291,13 +291,13 @@ PatchBox::patch_port_added(SharedPtr<const PortModel> port)
 }
 
 void
-PatchBox::patch_port_removed(SharedPtr<const PortModel> port)
+GraphBox::graph_port_removed(SharedPtr<const PortModel> port)
 {
 	if (!(port->is_input() && _app->can_control(port.get())))
 		return;
 
-	for (BlockModel::Ports::const_iterator i = _patch->ports().begin();
-	     i != _patch->ports().end(); ++i) {
+	for (BlockModel::Ports::const_iterator i = _graph->ports().begin();
+	     i != _graph->ports().end(); ++i) {
 		if ((*i)->is_input() && _app->can_control(i->get())) {
 			_menu_view_control_window->property_sensitive() = true;
 			return;
@@ -308,7 +308,7 @@ PatchBox::patch_port_removed(SharedPtr<const PortModel> port)
 }
 
 void
-PatchBox::show_documentation(const std::string& doc, bool html)
+GraphBox::show_documentation(const std::string& doc, bool html)
 {
 #ifdef HAVE_WEBKIT
 	WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
@@ -329,7 +329,7 @@ PatchBox::show_documentation(const std::string& doc, bool html)
 }
 
 void
-PatchBox::hide_documentation()
+GraphBox::hide_documentation()
 {
 	_doc_scrolledwindow->remove();
 	_doc_scrolledwindow->hide();
@@ -337,7 +337,7 @@ PatchBox::hide_documentation()
 }
 
 void
-PatchBox::show_status(const ObjectModel* model)
+GraphBox::show_status(const ObjectModel* model)
 {
 	std::stringstream msg;
 	msg << model->path();
@@ -357,7 +357,7 @@ PatchBox::show_status(const ObjectModel* model)
 }
 
 void
-PatchBox::show_port_status(const PortModel* port, const Raul::Atom& value)
+GraphBox::show_port_status(const PortModel* port, const Raul::Atom& value)
 {
 	std::stringstream msg;
 	msg << port->path();
@@ -381,61 +381,61 @@ PatchBox::show_port_status(const PortModel* port, const Raul::Atom& value)
 }
 
 void
-PatchBox::object_entered(const ObjectModel* model)
+GraphBox::object_entered(const ObjectModel* model)
 {
 	show_status(model);
 }
 
 void
-PatchBox::object_left(const ObjectModel* model)
+GraphBox::object_left(const ObjectModel* model)
 {
-	_status_bar->pop(STATUS_CONTEXT_PATCH);
+	_status_bar->pop(STATUS_CONTEXT_GRAPH);
 	_status_bar->pop(STATUS_CONTEXT_HOVER);
 }
 
 void
-PatchBox::event_show_engine()
+GraphBox::event_show_engine()
 {
-	if (_patch)
+	if (_graph)
 		_app->connect_window()->show();
 }
 
 void
-PatchBox::event_clipboard_changed(GdkEventOwnerChange* ev)
+GraphBox::event_clipboard_changed(GdkEventOwnerChange* ev)
 {
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	_menu_paste->set_sensitive(clipboard->wait_is_text_available());
 }
 
 void
-PatchBox::event_show_properties()
+GraphBox::event_show_properties()
 {
-	_app->window_factory()->present_properties(_patch);
+	_app->window_factory()->present_properties(_graph);
 }
 
 void
-PatchBox::event_import()
+GraphBox::event_import()
 {
-	_app->window_factory()->present_load_patch(_patch);
+	_app->window_factory()->present_load_graph(_graph);
 }
 
 void
-PatchBox::event_save()
+GraphBox::event_save()
 {
-	const Raul::Atom& document = _patch->get_property(_app->uris().ingen_document);
+	const Raul::Atom& document = _graph->get_property(_app->uris().ingen_document);
 	if (!document.is_valid() || document.type() != _app->uris().forge.URI) {
 		event_save_as();
 	} else {
-		_app->loader()->save_patch(_patch, document.get_uri());
+		_app->loader()->save_graph(_graph, document.get_uri());
 		_status_bar->push(
-			(boost::format("Saved %1% to %2%") % _patch->path().c_str()
+			(boost::format("Saved %1% to %2%") % _graph->path().c_str()
 			 % document.get_uri()).str(),
-			STATUS_CONTEXT_PATCH);
+			STATUS_CONTEXT_GRAPH);
 	}
 }
 
 int
-PatchBox::message_dialog(const Glib::ustring& message,
+GraphBox::message_dialog(const Glib::ustring& message,
                          const Glib::ustring& secondary_text,
                          Gtk::MessageType     type,
                          Gtk::ButtonsType     buttons)
@@ -449,11 +449,11 @@ PatchBox::message_dialog(const Glib::ustring& message,
 }
 
 void
-PatchBox::event_save_as()
+GraphBox::event_save_as()
 {
 	const URIs& uris = _app->uris();
 	while (true) {
-		Gtk::FileChooserDialog dialog("Save Patch", Gtk::FILE_CHOOSER_ACTION_SAVE);
+		Gtk::FileChooserDialog dialog("Save Graph", Gtk::FILE_CHOOSER_ACTION_SAVE);
 		if (_window) {
 			dialog.set_transient_for(*_window);
 		}
@@ -468,11 +468,11 @@ PatchBox::event_save_as()
 		dialog.set_filter(filt);
 
 		// Set current folder to most sensible default
-		const Raul::Atom& document = _patch->get_property(uris.ingen_document);
+		const Raul::Atom& document = _graph->get_property(uris.ingen_document);
 		if (document.type() == uris.forge.URI)
 			dialog.set_uri(document.get_uri());
-		else if (_app->configuration()->patch_folder().length() > 0)
-			dialog.set_current_folder(_app->configuration()->patch_folder());
+		else if (_app->configuration()->graph_folder().length() > 0)
+			dialog.set_current_folder(_app->configuration()->graph_folder());
 
 		if (dialog.run() != Gtk::RESPONSE_OK)
 			break;
@@ -485,7 +485,7 @@ PatchBox::event_save_as()
 			basename += ".ingen";
 		} else if (filename.substr(filename.length() - 10) != ".ingen") {
 			message_dialog(
-				"<b>Ingen patches must be saved to Ingen bundles (*.ingen).</b>",
+				"<b>Ingen graphs must be saved to Ingen bundles (*.ingen).</b>",
 				"", Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
 			continue;
 		}
@@ -500,7 +500,7 @@ PatchBox::event_save_as()
 			continue;
 		}
 
-		//_patch->set_property(uris.lv2_symbol, Atom(symbol.c_str()));
+		//_graph->set_property(uris.lv2_symbol, Atom(symbol.c_str()));
 
 		bool confirm = true;
 		if (Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
@@ -535,24 +535,24 @@ PatchBox::event_save_as()
 
 		if (confirm) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
-			_app->loader()->save_patch(_patch, uri);
-			const_cast<PatchModel*>(_patch.get())->set_property(
+			_app->loader()->save_graph(_graph, uri);
+			const_cast<GraphModel*>(_graph.get())->set_property(
 				uris.ingen_document,
 				_app->forge().alloc_uri(uri.c_str()),
 				Resource::EXTERNAL);
 			_status_bar->push(
-				(boost::format("Saved %1% to %2%") % _patch->path().c_str()
+				(boost::format("Saved %1% to %2%") % _graph->path().c_str()
 				 % filename).str(),
-				STATUS_CONTEXT_PATCH);
+				STATUS_CONTEXT_GRAPH);
 		}
 
-		_app->configuration()->set_patch_folder(dialog.get_current_folder());
+		_app->configuration()->set_graph_folder(dialog.get_current_folder());
 		break;
 	}
 }
 
 void
-PatchBox::event_draw()
+GraphBox::event_draw()
 {
 	Gtk::FileChooserDialog dialog("Draw to DOT", Gtk::FILE_CHOOSER_ACTION_SAVE);
 	if (_window) {
@@ -582,80 +582,80 @@ PatchBox::event_draw()
 			_view->canvas()->export_dot(filename.c_str());
 			_status_bar->push(
 				(boost::format("Rendered %1% to %2%")
-				 % _patch->path() % filename).str(),
-				STATUS_CONTEXT_PATCH);
+				 % _graph->path() % filename).str(),
+				STATUS_CONTEXT_GRAPH);
 		}
 	}
 }
 
 void
-PatchBox::event_copy()
+GraphBox::event_copy()
 {
 	if (_view)
 		_view->canvas()->copy_selection();
 }
 
 void
-PatchBox::event_paste()
+GraphBox::event_paste()
 {
 	if (_view)
 		_view->canvas()->paste();
 }
 
 void
-PatchBox::event_delete()
+GraphBox::event_delete()
 {
 	if (_view)
 		_view->canvas()->destroy_selection();
 }
 
 void
-PatchBox::event_select_all()
+GraphBox::event_select_all()
 {
 	if (_view)
 		_view->canvas()->select_all();
 }
 
 void
-PatchBox::event_close()
+GraphBox::event_close()
 {
 	if (_window) {
-		_app->window_factory()->remove_patch_window(_window);
+		_app->window_factory()->remove_graph_window(_window);
 	}
 }
 
 void
-PatchBox::event_quit()
+GraphBox::event_quit()
 {
 	_app->quit(_window);
 }
 
 void
-PatchBox::event_zoom_in()
+GraphBox::event_zoom_in()
 {
 	_view->canvas()->set_font_size(_view->canvas()->get_font_size() + 1.0);
 }
 
 void
-PatchBox::event_zoom_out()
+GraphBox::event_zoom_out()
 {
 	_view->canvas()->set_font_size(_view->canvas()->get_font_size() - 1.0);
 }
 
 void
-PatchBox::event_zoom_normal()
+GraphBox::event_zoom_normal()
 {
 	_view->canvas()->set_scale(1.0, _view->canvas()->get_default_font_size());
 }
 
 void
-PatchBox::event_arrange()
+GraphBox::event_arrange()
 {
 	_view->canvas()->arrange();
 }
 
 void
-PatchBox::event_fullscreen_toggled()
+GraphBox::event_fullscreen_toggled()
 {
 	// FIXME: ugh, use GTK signals to track state and know for sure
 	static bool is_fullscreen = false;
@@ -672,7 +672,7 @@ PatchBox::event_fullscreen_toggled()
 }
 
 void
-PatchBox::event_status_bar_toggled()
+GraphBox::event_status_bar_toggled()
 {
 	if (_menu_show_status_bar->get_active())
 		_status_bar->show();
@@ -681,7 +681,7 @@ PatchBox::event_status_bar_toggled()
 }
 
 void
-PatchBox::event_human_names_toggled()
+GraphBox::event_human_names_toggled()
 {
 	_view->canvas()->show_human_names(_menu_human_names->get_active());
 	if (_menu_human_names->get_active())
@@ -691,7 +691,7 @@ PatchBox::event_human_names_toggled()
 }
 
 void
-PatchBox::event_port_names_toggled()
+GraphBox::event_port_names_toggled()
 {
 	if (_menu_show_port_names->get_active()) {
 		_view->canvas()->set_direction(GANV_DIRECTION_RIGHT);

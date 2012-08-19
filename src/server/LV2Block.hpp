@@ -39,10 +39,10 @@ class LV2Block : public BlockImpl
 {
 public:
 	LV2Block(LV2Plugin*          plugin,
-	        const Raul::Symbol& symbol,
-	        bool                polyphonic,
-	        PatchImpl*          parent,
-	        SampleRate          srate);
+	         const Raul::Symbol& symbol,
+	         bool                polyphonic,
+	         GraphImpl*          parent,
+	         SampleRate          srate);
 
 	~LV2Block();
 

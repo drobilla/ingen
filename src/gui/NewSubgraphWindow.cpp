@@ -18,30 +18,30 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
-#include "NewSubpatchWindow.hpp"
-#include "PatchView.hpp"
+#include "NewSubgraphWindow.hpp"
+#include "GraphView.hpp"
 
 using namespace std;
 
 namespace Ingen {
 namespace GUI {
 
-NewSubpatchWindow::NewSubpatchWindow(BaseObjectType*                   cobject,
+NewSubgraphWindow::NewSubgraphWindow(BaseObjectType*                   cobject,
                                      const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 {
-	xml->get_widget("new_subpatch_name_entry", _name_entry);
-	xml->get_widget("new_subpatch_message_label", _message_label);
-	xml->get_widget("new_subpatch_polyphony_spinbutton", _poly_spinbutton);
-	xml->get_widget("new_subpatch_ok_button", _ok_button);
-	xml->get_widget("new_subpatch_cancel_button", _cancel_button);
+	xml->get_widget("new_subgraph_name_entry", _name_entry);
+	xml->get_widget("new_subgraph_message_label", _message_label);
+	xml->get_widget("new_subgraph_polyphony_spinbutton", _poly_spinbutton);
+	xml->get_widget("new_subgraph_ok_button", _ok_button);
+	xml->get_widget("new_subgraph_cancel_button", _cancel_button);
 
-	_name_entry->signal_changed().connect(sigc::mem_fun(this, &NewSubpatchWindow::name_changed));
-	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &NewSubpatchWindow::ok_clicked));
-	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &NewSubpatchWindow::cancel_clicked));
+	_name_entry->signal_changed().connect(sigc::mem_fun(this, &NewSubgraphWindow::name_changed));
+	_ok_button->signal_clicked().connect(sigc::mem_fun(this, &NewSubgraphWindow::ok_clicked));
+	_cancel_button->signal_clicked().connect(sigc::mem_fun(this, &NewSubgraphWindow::cancel_clicked));
 
 	_ok_button->property_sensitive() = false;
 
@@ -49,35 +49,35 @@ NewSubpatchWindow::NewSubpatchWindow(BaseObjectType*                   cobject,
 }
 
 void
-NewSubpatchWindow::present(SharedPtr<const Client::PatchModel> patch,
+NewSubgraphWindow::present(SharedPtr<const Client::GraphModel> graph,
                            GraphObject::Properties             data)
 {
-	set_patch(patch);
+	set_graph(graph);
 	_initial_data = data;
 	Gtk::Window::present();
 }
 
-/** Sets the patch controller for this window and initializes everything.
+/** Sets the graph controller for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
  */
 void
-NewSubpatchWindow::set_patch(SharedPtr<const Client::PatchModel> patch)
+NewSubgraphWindow::set_graph(SharedPtr<const Client::GraphModel> graph)
 {
-	_patch = patch;
+	_graph = graph;
 }
 
 /** Called every time the user types into the name input box.
  * Used to display warning messages, and enable/disable the OK button.
  */
 void
-NewSubpatchWindow::name_changed()
+NewSubgraphWindow::name_changed()
 {
 	string name = _name_entry->get_text();
 	if (!Raul::Symbol::is_valid(name)) {
 		_message_label->set_text("Name contains invalid characters.");
 		_ok_button->property_sensitive() = false;
-	} else if (_app->store()->find(_patch->path().child(Raul::Symbol(name)))
+	} else if (_app->store()->find(_graph->path().child(Raul::Symbol(name)))
 	           != _app->store()->end()) {
 		_message_label->set_text("An object already exists with that name.");
 		_ok_button->property_sensitive() = false;
@@ -86,31 +86,30 @@ NewSubpatchWindow::name_changed()
 		_ok_button->property_sensitive() = true;
 	}
 }
-
 void
-NewSubpatchWindow::ok_clicked()
+NewSubgraphWindow::ok_clicked()
 {
 	const uint32_t   poly = _poly_spinbutton->get_value_as_int();
-	const Raul::Path path = _patch->path().child(
+	const Raul::Path path = _graph->path().child(
 		Raul::Symbol::symbolify(_name_entry->get_text()));
 
-	// Create patch
+	// Create graph
 	Resource::Properties props;
-	props.insert(make_pair(_app->uris().rdf_type,        _app->uris().ingen_Patch));
+	props.insert(make_pair(_app->uris().rdf_type,        _app->uris().ingen_Graph));
 	props.insert(make_pair(_app->uris().ingen_polyphony, _app->forge().make(int32_t(poly))));
 	props.insert(make_pair(_app->uris().ingen_enabled,   _app->forge().make(bool(true))));
 	_app->interface()->put(GraphObject::path_to_uri(path), props, Resource::INTERNAL);
 
 	// Set external (block perspective) properties
 	props = _initial_data;
-	props.insert(make_pair(_app->uris().rdf_type, _app->uris().ingen_Patch));
+	props.insert(make_pair(_app->uris().rdf_type, _app->uris().ingen_Graph));
 	_app->interface()->put(GraphObject::path_to_uri(path), _initial_data, Resource::EXTERNAL);
 
 	hide();
 }
 
 void
-NewSubpatchWindow::cancel_clicked()
+NewSubgraphWindow::cancel_clicked()
 {
 	hide();
 }

@@ -79,7 +79,7 @@ public:
 
 	virtual void del(const Raul::URI& uri);
 
-	virtual void disconnect_all(const Raul::Path& parent_patch_path,
+	virtual void disconnect_all(const Raul::Path& graph,
 	                            const Raul::Path& path);
 
 	virtual void get(const Raul::URI& uri);

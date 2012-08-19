@@ -18,8 +18,8 @@
 
 #include "Buffer.hpp"
 #include "DuplexPort.hpp"
+#include "GraphImpl.hpp"
 #include "OutputPort.hpp"
-#include "PatchImpl.hpp"
 
 using namespace std;
 
@@ -49,7 +49,7 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
 DuplexPort::~DuplexPort()
 {
 	if (is_linked()) {
-		parent_patch()->remove_port(*this);
+		parent_graph()->remove_port(*this);
 	}
 }
 
@@ -69,34 +69,34 @@ DuplexPort::get_buffers(BufferFactory&          bufs,
 uint32_t
 DuplexPort::max_tail_poly(Context& context) const
 {
-	return parent_patch()->internal_poly_process();
+	return parent_graph()->internal_poly_process();
 }
 
-/** Prepare for the execution of parent patch */
+/** Prepare for the execution of parent graph */
 void
 DuplexPort::pre_process(Context& context)
 {
 	if (_is_output) {
-		/* This is a patch output, which is an input from the internal
+		/* This is a graph output, which is an input from the internal
 		   perspective.  Prepare buffers for write so plugins can deliver to
 		   them */
 		for (uint32_t v = 0; v < _poly; ++v) {
 			_buffers->at(v)->prepare_write(context);
 		}
 	} else {
-		/* This is a a patch input, which is an output from the internal
+		/* This is a a graph input, which is an output from the internal
 		   perspective.  Do whatever a normal block's input port does to
 		   prepare input for reading. */
 		InputPort::pre_process(context);
 	}
 }
 
-/** Finalize after the execution of parent patch (deliver outputs) */
+/** Finalize after the execution of parent graph (deliver outputs) */
 void
 DuplexPort::post_process(Context& context)
 {
 	if (_is_output) {
-		/* This is a patch output, which is an input from the internal
+		/* This is a graph output, which is an input from the internal
 		   perspective.  Mix down input delivered by plugins so output
 		   (external perspective) is ready. */
 		InputPort::pre_process(context);

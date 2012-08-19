@@ -158,7 +158,7 @@ public:
 	 */
 	static bool type(const URIs&       uris,
 	                 const Properties& properties,
-	                 bool&             patch,
+	                 bool&             graph,
 	                 bool&             block,
 	                 bool&             port,
 	                 bool&             is_output);

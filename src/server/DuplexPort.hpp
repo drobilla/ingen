@@ -28,18 +28,18 @@ namespace Server {
 
 class BlockImpl;
 
-/** A duplex Port (both an InputPort and an OutputPort on a Patch)
+/** A duplex Port (both an InputPort and an OutputPort on a Graph)
  *
- * This is used for Patch ports, since they need to appear as both an input and
+ * This is used for Graph ports, since they need to appear as both an input and
  * an output port based on context.  There are no actual duplex ports in Ingen,
- * a Port is either an Input or Output.  This class only exists to allow Patch
- * outputs to appear as inputs from within that Patch, and vice versa.
+ * a Port is either an Input or Output.  This class only exists to allow Graph
+ * outputs to appear as inputs from within that Graph, and vice versa.
  *
  * \ingroup engine
  */
 class DuplexPort : public InputPort
                  , public OutputPort
-                 , public boost::intrusive::slist_base_hook<>  // In PatchImpl
+                 , public boost::intrusive::slist_base_hook<>  // In GraphImpl
 {
 public:
 	DuplexPort(BufferFactory&      bufs,

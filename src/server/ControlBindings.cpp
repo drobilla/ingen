@@ -429,7 +429,7 @@ ControlBindings::pre_process(ProcessContext& context, Buffer* buffer)
 void
 ControlBindings::post_process(ProcessContext& context, Buffer* buffer)
 {
-	// TODO: merge buffer's existing contents (anything send to it in the patch)
+	// TODO: merge buffer's existing contents (anything send to it in the graph)
 	buffer->copy(context, _feedback.get());
 }
 

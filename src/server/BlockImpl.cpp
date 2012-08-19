@@ -22,7 +22,7 @@
 #include "Buffer.hpp"
 #include "Engine.hpp"
 #include "BlockImpl.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
@@ -36,7 +36,7 @@ namespace Server {
 BlockImpl::BlockImpl(PluginImpl*         plugin,
                      const Raul::Symbol& symbol,
                      bool                polyphonic,
-                     PatchImpl*          parent,
+                     GraphImpl*          parent,
                      SampleRate          srate)
 	: GraphObjectImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
@@ -58,7 +58,7 @@ BlockImpl::~BlockImpl()
 	}
 
 	if (is_linked()) {
-		parent_patch()->remove_block(*this);
+		parent_graph()->remove_block(*this);
 	}
 
 	delete _ports;

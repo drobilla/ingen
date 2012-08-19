@@ -28,9 +28,9 @@
 #include "Broadcaster.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
+#include "GraphImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "events/Disconnect.hpp"
 #include "events/DisconnectAll.hpp"
@@ -52,7 +52,7 @@ DisconnectAll::DisconnectAll(Engine&              engine,
 	, _parent(NULL)
 	, _block(NULL)
 	, _port(NULL)
-	, _compiled_patch(NULL)
+	, _compiled_graph(NULL)
 	, _deleting(false)
 {
 }
@@ -60,7 +60,7 @@ DisconnectAll::DisconnectAll(Engine&              engine,
 /** Internal version for use by other events.
  */
 DisconnectAll::DisconnectAll(Engine&      engine,
-                             PatchImpl*   parent,
+                             GraphImpl*   parent,
                              GraphObject* object)
 	: Event(engine)
 	, _parent_path(parent->path())
@@ -68,7 +68,7 @@ DisconnectAll::DisconnectAll(Engine&      engine,
 	, _parent(parent)
 	, _block(dynamic_cast<BlockImpl*>(object))
 	, _port(dynamic_cast<PortImpl*>(object))
-	, _compiled_patch(NULL)
+	, _compiled_graph(NULL)
 	, _deleting(true)
 {
 }
@@ -87,7 +87,7 @@ DisconnectAll::pre_process()
 	if (!_deleting) {
 		lock.acquire();
 
-		_parent = dynamic_cast<PatchImpl*>(_engine.store()->get(_parent_path));
+		_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(_parent_path));
 		if (!_parent) {
 			return Event::pre_process_done(PARENT_NOT_FOUND, _parent_path);
 		}
@@ -98,8 +98,8 @@ DisconnectAll::pre_process()
 			return Event::pre_process_done(NOT_FOUND, _path);
 		}
 
-		if (object->parent_patch() != _parent
-		    && object->parent()->parent_patch() != _parent) {
+		if (object->parent_graph() != _parent
+		    && object->parent()->parent_graph() != _parent) {
 			return Event::pre_process_done(INVALID_PARENT_PATH, _parent_path);
 		}
 
@@ -138,7 +138,7 @@ DisconnectAll::pre_process()
 	}
 
 	if (!_deleting && _parent->enabled())
-		_compiled_patch = _parent->compile();
+		_compiled_graph = _parent->compile();
 
 	return Event::pre_process_done(SUCCESS);
 }
@@ -153,8 +153,8 @@ DisconnectAll::execute(ProcessContext& context)
 		}
 	}
 
-	_engine.maid()->dispose(_parent->compiled_patch());
-	_parent->compiled_patch(_compiled_patch);
+	_engine.maid()->dispose(_parent->compiled_graph());
+	_parent->compiled_graph(_compiled_graph);
 }
 
 void

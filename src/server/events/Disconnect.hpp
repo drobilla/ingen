@@ -18,10 +18,11 @@
 #define INGEN_EVENTS_DISCONNECT_HPP
 
 #include "raul/Path.hpp"
-#include "Event.hpp"
-#include "types.hpp"
-#include "PatchImpl.hpp"
+
 #include "BufferFactory.hpp"
+#include "Event.hpp"
+#include "GraphImpl.hpp"
+#include "types.hpp"
 
 namespace Raul {
 template <typename T> class Array;
@@ -30,7 +31,7 @@ template <typename T> class Array;
 namespace Ingen {
 namespace Server {
 
-class CompiledPatch;
+class CompiledGraph;
 class InputPort;
 class OutputPort;
 class PortImpl;
@@ -58,7 +59,7 @@ public:
 	class Impl {
 	public:
 		Impl(Engine&     e,
-		     PatchImpl*  patch,
+		     GraphImpl*  graph,
 		     OutputPort* s,
 		     InputPort*  d);
 
@@ -70,7 +71,7 @@ public:
 		Engine&                 _engine;
 		OutputPort*             _src_output_port;
 		InputPort*              _dst_input_port;
-		PatchImpl*              _patch;
+		GraphImpl*              _graph;
 		SharedPtr<EdgeImpl>     _edge;
 		Raul::Array<BufferRef>* _buffers;
 	};
@@ -78,9 +79,9 @@ public:
 private:
 	const Raul::Path _tail_path;
 	const Raul::Path _head_path;
-	PatchImpl*       _patch;
+	GraphImpl*       _graph;
 	Impl*            _impl;
-	CompiledPatch*   _compiled_patch;
+	CompiledGraph*   _compiled_graph;
 };
 
 } // namespace Events

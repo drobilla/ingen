@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_PATCHCANVAS_HPP
-#define INGEN_GUI_PATCHCANVAS_HPP
+#ifndef INGEN_GUI_GRAPHCANVAS_HPP
+#define INGEN_GUI_GRAPHCANVAS_HPP
 
 #include <string>
 #include <map>
@@ -30,31 +30,31 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen/client/EdgeModel.hpp"
-#include "ingen/GraphObject.hpp"
 #include "NodeModule.hpp"
+#include "ingen/GraphObject.hpp"
+#include "ingen/client/EdgeModel.hpp"
 
 namespace Ingen {
 
-namespace Client { class PatchModel; }
+namespace Client { class GraphModel; }
 
 namespace GUI {
 
 class NodeModule;
 
-/** Patch canvas widget.
+/** Graph canvas widget.
  *
  * \ingroup GUI
  */
-class PatchCanvas : public Ganv::Canvas
+class GraphCanvas : public Ganv::Canvas
 {
 public:
-	PatchCanvas(App&                                app,
-	            SharedPtr<const Client::PatchModel> patch,
+	GraphCanvas(App&                                app,
+	            SharedPtr<const Client::GraphModel> graph,
 	            int                                 width,
 	            int                                 height);
 
-	virtual ~PatchCanvas() {}
+	virtual ~GraphCanvas() {}
 
 	App& app() { return _app; }
 
@@ -93,8 +93,8 @@ private:
 			const Raul::URI& type, bool is_output);
 
 	void menu_load_plugin();
-	void menu_new_patch();
-	void menu_load_patch();
+	void menu_new_graph();
+	void menu_load_graph();
 	void load_plugin(WeakPtr<Client::PluginModel> plugin);
 
 	void build_menus();
@@ -124,7 +124,7 @@ private:
 	                Ganv::Node* dst);
 
 	App&                                _app;
-	SharedPtr<const Client::PatchModel> _patch;
+	SharedPtr<const Client::GraphModel> _graph;
 
 	typedef std::map<SharedPtr<const Client::ObjectModel>, Ganv::Module*> Views;
 	Views _views;
@@ -160,8 +160,8 @@ private:
 	Gtk::MenuItem*      _menu_add_event_input;
 	Gtk::MenuItem*      _menu_add_event_output;
 	Gtk::MenuItem*      _menu_load_plugin;
-	Gtk::MenuItem*      _menu_load_patch;
-	Gtk::MenuItem*      _menu_new_patch;
+	Gtk::MenuItem*      _menu_load_graph;
+	Gtk::MenuItem*      _menu_new_graph;
 	Gtk::CheckMenuItem* _menu_edit;
 
 	bool _human_names;
@@ -171,4 +171,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_PATCHCANVAS_HPP
+#endif // INGEN_GUI_GRAPHCANVAS_HPP

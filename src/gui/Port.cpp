@@ -20,12 +20,12 @@
 #include "ganv/Module.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PortModel.hpp"
 
 #include "App.hpp"
 #include "Configuration.hpp"
-#include "PatchWindow.hpp"
+#include "GraphWindow.hpp"
 #include "Port.hpp"
 #include "PortMenu.hpp"
 #include "WidgetFactory.hpp"
@@ -156,7 +156,7 @@ Port::on_value_changed(GVariant* value)
 	}
 
 	if (_entered) {
-		PatchBox* box = get_patch_box();
+		GraphBox* box = get_graph_box();
 		if (box) {
 			box->show_port_status(model().get(), atom);
 		}
@@ -202,17 +202,17 @@ Port::build_enum_menu()
 bool
 Port::on_event(GdkEvent* ev)
 {
-	PatchBox* box = NULL;
+	GraphBox* box = NULL;
 	switch (ev->type) {
 	case GDK_ENTER_NOTIFY:
 		_entered = true;
-		if ((box = get_patch_box())) {
+		if ((box = get_graph_box())) {
 			box->object_entered(model().get());
 		}
 		break;
 	case GDK_LEAVE_NOTIFY:
 		_entered = false;
-		if ((box = get_patch_box())) {
+		if ((box = get_graph_box())) {
 			box->object_left(model().get());
 		}
 		break;
@@ -306,15 +306,15 @@ Port::disconnected_from(SharedPtr<PortModel> port)
 	}
 }
 
-PatchBox*
-Port::get_patch_box() const
+GraphBox*
+Port::get_graph_box() const
 {
-	SharedPtr<const PatchModel> patch = PtrCast<const PatchModel>(model()->parent());
-	if (!patch) {
-		patch = PtrCast<const PatchModel>(model()->parent()->parent());
+	SharedPtr<const GraphModel> graph = PtrCast<const GraphModel>(model()->parent());
+	if (!graph) {
+		graph = PtrCast<const GraphModel>(model()->parent()->parent());
 	}
 
-	return _app.window_factory()->patch_box(patch);
+	return _app.window_factory()->graph_box(graph);
 }
 
 void
@@ -355,7 +355,7 @@ Port::set_selected(gboolean b)
 		SharedPtr<const PortModel> pm = _port_model.lock();
 		if (pm && b) {
 			SharedPtr<const BlockModel> block = PtrCast<BlockModel>(pm->parent());
-			PatchWindow* win = _app.window_factory()->parent_patch_window(block);
+			GraphWindow* win = _app.window_factory()->parent_graph_window(block);
 			if (win && block->plugin_model()) {
 				const std::string& doc = block->plugin_model()->port_documentation(
 					pm->index());

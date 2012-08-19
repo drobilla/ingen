@@ -18,14 +18,14 @@
 #include <utility>
 
 #include "ingen/Interface.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
 #include "NodeModule.hpp"
-#include "PatchCanvas.hpp"
-#include "PatchWindow.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphWindow.hpp"
 #include "Port.hpp"
-#include "SubpatchModule.hpp"
+#include "SubgraphModule.hpp"
 #include "WindowFactory.hpp"
 
 using namespace std;
@@ -36,31 +36,31 @@ using namespace Client;
 
 namespace GUI {
 
-SubpatchModule::SubpatchModule(PatchCanvas&                canvas,
-                               SharedPtr<const PatchModel> patch)
-	: NodeModule(canvas, patch)
-	, _patch(patch)
+SubgraphModule::SubgraphModule(GraphCanvas&                canvas,
+                               SharedPtr<const GraphModel> graph)
+	: NodeModule(canvas, graph)
+	, _graph(graph)
 {
-	assert(patch);
+	assert(graph);
 }
 
 bool
-SubpatchModule::on_double_click(GdkEventButton* event)
+SubgraphModule::on_double_click(GdkEventButton* event)
 {
-	assert(_patch);
+	assert(_graph);
 
-	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(_patch->parent());
+	SharedPtr<GraphModel> parent = PtrCast<GraphModel>(_graph->parent());
 
-	PatchWindow* const preferred = ( (parent && (event->state & GDK_SHIFT_MASK))
+	GraphWindow* const preferred = ( (parent && (event->state & GDK_SHIFT_MASK))
 		? NULL
-		: app().window_factory()->patch_window(parent) );
+		: app().window_factory()->graph_window(parent) );
 
-	app().window_factory()->present_patch(_patch, preferred);
+	app().window_factory()->present_graph(_graph, preferred);
 	return true;
 }
 
 void
-SubpatchModule::store_location(double ax, double ay)
+SubgraphModule::store_location(double ax, double ay)
 {
 	const URIs& uris = app().uris();
 
@@ -82,27 +82,27 @@ SubpatchModule::store_location(double ax, double ay)
 	}
 }
 
-/** Browse to this patch in current (parent's) window
+/** Browse to this graph in current (parent's) window
  * (unless an existing window is displaying it)
  */
 void
-SubpatchModule::browse_to_patch()
+SubgraphModule::browse_to_graph()
 {
-	assert(_patch->parent());
+	assert(_graph->parent());
 
-	SharedPtr<PatchModel> parent = PtrCast<PatchModel>(_patch->parent());
+	SharedPtr<GraphModel> parent = PtrCast<GraphModel>(_graph->parent());
 
-	PatchWindow* const preferred = (parent)
-		? app().window_factory()->patch_window(parent)
+	GraphWindow* const preferred = (parent)
+		? app().window_factory()->graph_window(parent)
 		: NULL;
 
-	app().window_factory()->present_patch(_patch, preferred);
+	app().window_factory()->present_graph(_graph, preferred);
 }
 
 void
-SubpatchModule::menu_remove()
+SubgraphModule::menu_remove()
 {
-	app().interface()->del(_patch->uri());
+	app().interface()->del(_graph->uri());
 }
 
 } // namespace GUI

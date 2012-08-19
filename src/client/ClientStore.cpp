@@ -19,7 +19,7 @@
 #include "ingen/client/EdgeModel.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
@@ -223,9 +223,9 @@ ClientStore::put(const Raul::URI&            uri,
 	std::cerr << "}" << endl;
 #endif
 
-	bool is_patch, is_block, is_port, is_output;
+	bool is_graph, is_block, is_port, is_output;
 	Resource::type(uris(), properties,
-	               is_patch, is_block, is_port, is_output);
+	               is_graph, is_block, is_port, is_output);
 
 	// Check if uri is a plugin
 	Iterator t = properties.find(_uris.rdf_type);
@@ -233,8 +233,8 @@ ClientStore::put(const Raul::URI&            uri,
 		const Raul::Atom&  type(t->second);
 		const Raul::URI    type_uri(type.get_uri());
 		const Plugin::Type plugin_type(Plugin::type_from_uri(type_uri));
-		if (plugin_type == Plugin::Patch) {
-			is_patch = true;
+		if (plugin_type == Plugin::Graph) {
+			is_graph = true;
 		} else if (plugin_type != Plugin::NIL) {
 			SharedPtr<PluginModel> p(
 				new PluginModel(uris(), uri, type_uri, properties));
@@ -258,11 +258,11 @@ ClientStore::put(const Raul::URI&            uri,
 	}
 
 	if (path.is_root()) {
-		is_patch = true;
+		is_graph = true;
 	}
 
-	if (is_patch) {
-		SharedPtr<PatchModel> model(new PatchModel(uris(), path));
+	if (is_graph) {
+		SharedPtr<GraphModel> model(new GraphModel(uris(), path));
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_block) {
@@ -373,29 +373,29 @@ ClientStore::set_property(const Raul::URI&  subject_uri,
 	}
 }
 
-SharedPtr<PatchModel>
-ClientStore::connection_patch(const Raul::Path& tail_path,
+SharedPtr<GraphModel>
+ClientStore::connection_graph(const Raul::Path& tail_path,
                               const Raul::Path& head_path)
 {
-	SharedPtr<PatchModel> patch;
+	SharedPtr<GraphModel> graph;
 
 	if (tail_path.parent() == head_path.parent())
-		patch = PtrCast<PatchModel>(_object(tail_path.parent()));
+		graph = PtrCast<GraphModel>(_object(tail_path.parent()));
 
-	if (!patch && tail_path.parent() == head_path.parent().parent())
-		patch = PtrCast<PatchModel>(_object(tail_path.parent()));
+	if (!graph && tail_path.parent() == head_path.parent().parent())
+		graph = PtrCast<GraphModel>(_object(tail_path.parent()));
 
-	if (!patch && tail_path.parent().parent() == head_path.parent())
-		patch = PtrCast<PatchModel>(_object(head_path.parent()));
+	if (!graph && tail_path.parent().parent() == head_path.parent())
+		graph = PtrCast<GraphModel>(_object(head_path.parent()));
 
-	if (!patch)
-		patch = PtrCast<PatchModel>(_object(tail_path.parent().parent()));
+	if (!graph)
+		graph = PtrCast<GraphModel>(_object(tail_path.parent().parent()));
 
-	if (!patch)
-		_log.error(Raul::fmt("Unable to find path for edge %1% => %2%\n")
+	if (!graph)
+		_log.error(Raul::fmt("Unable to find graph for edge %1% => %2%\n")
 		           % tail_path % head_path);
 
-	return patch;
+	return graph;
 }
 
 bool
@@ -406,13 +406,13 @@ ClientStore::attempt_connection(const Raul::Path& tail_path,
 	SharedPtr<PortModel> head = PtrCast<PortModel>(_object(head_path));
 
 	if (tail && head) {
-		SharedPtr<PatchModel> patch = connection_patch(tail_path, head_path);
+		SharedPtr<GraphModel> graph = connection_graph(tail_path, head_path);
 		SharedPtr<EdgeModel>  cm(new EdgeModel(tail, head));
 
 		tail->connected_to(head);
 		head->connected_to(tail);
 
-		patch->add_edge(cm);
+		graph->add_edge(cm);
 		return true;
 	} else {
 		_log.warn(Raul::fmt("Failed to connect %1% => %2%\n")
@@ -441,26 +441,26 @@ ClientStore::disconnect(const Raul::Path& src_path,
 	if (head)
 		head->disconnected_from(tail);
 
-	SharedPtr<PatchModel> patch = connection_patch(src_path, dst_path);
-	if (patch)
-		patch->remove_edge(tail.get(), head.get());
+	SharedPtr<GraphModel> graph = connection_graph(src_path, dst_path);
+	if (graph)
+		graph->remove_edge(tail.get(), head.get());
 }
 
 void
-ClientStore::disconnect_all(const Raul::Path& parent_patch,
+ClientStore::disconnect_all(const Raul::Path& parent_graph,
                             const Raul::Path& path)
 {
-	SharedPtr<PatchModel>  patch  = PtrCast<PatchModel>(_object(parent_patch));
+	SharedPtr<GraphModel>  graph  = PtrCast<GraphModel>(_object(parent_graph));
 	SharedPtr<ObjectModel> object = _object(path);
 
-	if (!patch || !object) {
+	if (!graph || !object) {
 		_log.error(Raul::fmt("Bad disconnect all notification %1% in %2%\n")
-		           % path % parent_patch);
+		           % path % parent_graph);
 		return;
 	}
 
-	const PatchModel::Edges edges = patch->edges();
-	for (PatchModel::Edges::const_iterator i = edges.begin();
+	const GraphModel::Edges edges = graph->edges();
+	for (GraphModel::Edges::const_iterator i = edges.begin();
 	     i != edges.end(); ++i) {
 		SharedPtr<EdgeModel> c = PtrCast<EdgeModel>(i->second);
 		if (c->tail()->parent() == object
@@ -469,7 +469,7 @@ ClientStore::disconnect_all(const Raul::Path& parent_patch,
 		    || c->head()->path() == path) {
 			c->tail()->disconnected_from(c->head());
 			c->head()->disconnected_from(c->tail());
-			patch->remove_edge(c->tail().get(), c->head().get());
+			graph->remove_edge(c->tail().get(), c->head().get());
 		}
 	}
 }

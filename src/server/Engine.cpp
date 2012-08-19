@@ -34,7 +34,7 @@
 #include "Engine.hpp"
 #include "Event.hpp"
 #include "EventWriter.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "PostProcessor.hpp"
 #include "PreProcessor.hpp"
 #include "ProcessContext.hpp"
@@ -59,7 +59,7 @@ Engine::Engine(Ingen::World* world)
 	, _pre_processor(new PreProcessor())
 	, _post_processor(new PostProcessor(*this))
 	, _event_writer(new EventWriter(*this))
-	, _root_patch(NULL)
+	, _root_graph(NULL)
 	, _worker(new Worker(world->log(), event_queue_size()))
 	, _process_context(*this)
 	, _quit_flag(false)
@@ -185,20 +185,20 @@ Engine::activate()
 	const Ingen::URIs& uris  = world()->uris();
 	Forge&             forge = world()->forge();
 
-	// Create root patch
-	if (!_root_patch) {
-		_root_patch = new PatchImpl(
+	// Create root graph
+	if (!_root_graph) {
+		_root_graph = new GraphImpl(
 			*this, Raul::Symbol("root"), 1, NULL, _driver->sample_rate(), 1);
-		_root_patch->set_property(
+		_root_graph->set_property(
 			uris.rdf_type,
-			Resource::Property(uris.ingen_Patch, Resource::INTERNAL));
-		_root_patch->set_property(
+			Resource::Property(uris.ingen_Graph, Resource::INTERNAL));
+		_root_graph->set_property(
 			uris.ingen_polyphony,
 			Resource::Property(_world->forge().make(int32_t(1)),
 			                   Resource::INTERNAL));
-		_root_patch->activate(*_buffer_factory);
-		_world->store()->add(_root_patch);
-		_root_patch->compiled_patch(_root_patch->compile());
+		_root_graph->activate(*_buffer_factory);
+		_world->store()->add(_root_graph);
+		_root_graph->compiled_graph(_root_graph->compile());
 
 		ProcessContext context(*this);
 
@@ -249,7 +249,7 @@ Engine::activate()
 	}
 
 	_driver->activate();
-	_root_patch->enable();
+	_root_graph->enable();
 
 	ThreadManager::single_threaded = false;
 
@@ -265,8 +265,8 @@ Engine::deactivate()
 		_driver->deactivate();
 	}
 
-	if (_root_patch) {
-		_root_patch->deactivate();
+	if (_root_graph) {
+		_root_graph->deactivate();
 	}
 
 	ThreadManager::single_threaded = true;
@@ -279,7 +279,7 @@ Engine::run(uint32_t sample_count)
 
 	// Apply control bindings to input
 	control_bindings()->pre_process(
-		_process_context, _root_patch->port_impl(0)->buffer(0).get());
+		_process_context, _root_graph->port_impl(0)->buffer(0).get());
 
 	post_processor()->set_end_time(_process_context.end());
 
@@ -287,14 +287,14 @@ Engine::run(uint32_t sample_count)
 	// (Aiming for jitter-free 1 block event latency, ideally)
 	const unsigned n_processed_events = process_events();
 
-	// Run root patch
-	if (_root_patch) {
-		_root_patch->process(_process_context);
+	// Run root graph
+	if (_root_graph) {
+		_root_graph->process(_process_context);
 	}
 
 	// Emit control binding feedback
 	control_bindings()->post_process(
-		_process_context, _root_patch->port_impl(1)->buffer(0).get());
+		_process_context, _root_graph->port_impl(1)->buffer(0).get());
 
 	return n_processed_events;
 }

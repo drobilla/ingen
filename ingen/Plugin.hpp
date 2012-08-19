@@ -35,7 +35,7 @@ public:
 		: Resource(uris, uri)
 	{}
 
-	enum Type { NIL, LV2, Internal, Patch };
+	enum Type { NIL, LV2, Internal, Graph };
 
 	virtual Type type() const = 0;
 
@@ -44,7 +44,7 @@ public:
 			Raul::URI("http://drobilla.net/ns/ingen#nil"),
 			Raul::URI(LV2_CORE__Plugin),
 			Raul::URI("http://drobilla.net/ns/ingen#Internal"),
-			Raul::URI("http://drobilla.net/ns/ingen#Patch")
+			Raul::URI("http://drobilla.net/ns/ingen#Graph")
 		};
 
 		return uris[type];
@@ -57,8 +57,8 @@ public:
 			return LV2;
 		else if (uri == type_uri(Internal))
 			return Internal;
-		else if (uri == type_uri(Patch))
-			return Patch;
+		else if (uri == type_uri(Graph))
+			return Graph;
 		else
 			return NIL;
 	}

@@ -28,7 +28,7 @@ namespace Client { class EdgeModel; }
 
 namespace GUI {
 
-/** An Edge in a Patch.
+/** An Edge in a Graph.
  *
  * \ingroup GUI
  */

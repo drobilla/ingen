@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "GraphImpl.hpp"
 #include "GraphObjectImpl.hpp"
-#include "PatchImpl.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -42,10 +42,10 @@ GraphObjectImpl::get_property(const Raul::URI& key) const
 	return (i != properties().end()) ? i->second : null_atom;
 }
 
-PatchImpl*
-GraphObjectImpl::parent_patch() const
+GraphImpl*
+GraphObjectImpl::parent_graph() const
 {
-	return dynamic_cast<PatchImpl*>((BlockImpl*)_parent);
+	return dynamic_cast<GraphImpl*>((BlockImpl*)_parent);
 }
 
 } // namespace Server

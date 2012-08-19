@@ -35,8 +35,8 @@
 #include "Buffer.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
+#include "GraphImpl.hpp"
 #include "JackDriver.hpp"
-#include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
 #include "util.hpp"
@@ -182,7 +182,7 @@ EnginePort*
 JackDriver::get_port(const Raul::Path& path)
 {
 	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-		if (i->patch_port()->path() == path) {
+		if (i->graph_port()->path() == path) {
 			return &*i;
 		}
 	}
@@ -207,10 +207,10 @@ JackDriver::register_port(EnginePort& port)
 {
 	jack_port_t* jack_port = jack_port_register(
 		_client,
-		port.patch_port()->path().substr(1).c_str(),
-		(port.patch_port()->is_a(PortType::AUDIO)
+		port.graph_port()->path().substr(1).c_str(),
+		(port.graph_port()->is_a(PortType::AUDIO)
 		 ? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE),
-		(port.patch_port()->is_input()
+		(port.graph_port()->is_input()
 		 ? JackPortIsInput : JackPortIsOutput),
 		0);
 
@@ -241,16 +241,16 @@ JackDriver::rename_port(const Raul::Path& old_path,
 }
 
 EnginePort*
-JackDriver::create_port(DuplexPort* patch_port)
+JackDriver::create_port(DuplexPort* graph_port)
 {
-	if (patch_port &&
-	    (patch_port->is_a(PortType::AUDIO) ||
-	     (patch_port->is_a(PortType::ATOM) &&
-	      patch_port->buffer_type() == _engine.world()->uris().atom_Sequence))) {
-		EnginePort* eport = new EnginePort(patch_port);
+	if (graph_port &&
+	    (graph_port->is_a(PortType::AUDIO) ||
+	     (graph_port->is_a(PortType::ATOM) &&
+	      graph_port->buffer_type() == _engine.world()->uris().atom_Sequence))) {
+		EnginePort* eport = new EnginePort(graph_port);
 		register_port(*eport);
-		patch_port->setup_buffers(*_engine.buffer_factory(),
-		                          patch_port->poly(),
+		graph_port->setup_buffers(*_engine.buffer_factory(),
+		                          graph_port->poly(),
 		                          false);
 		return eport;
 	} else {
@@ -263,33 +263,33 @@ JackDriver::pre_process_port(ProcessContext& context, EnginePort* port)
 {
 	const SampleCount nframes    = context.nframes();
 	jack_port_t*      jack_port  = (jack_port_t*)port->handle();
-	PortImpl*         patch_port = port->patch_port();
+	PortImpl*         graph_port = port->graph_port();
 	void*             buffer     = jack_port_get_buffer(jack_port, nframes);
 
 	port->set_buffer(buffer);
 
-	if (!patch_port->is_input()) {
-		patch_port->buffer(0)->clear();
+	if (!graph_port->is_input()) {
+		graph_port->buffer(0)->clear();
 		return;
 	}
 
-	if (patch_port->is_a(PortType::AUDIO)) {
-		Buffer* patch_buf = patch_port->buffer(0).get();
-		memcpy(patch_buf->samples(), buffer, nframes * sizeof(float));
+	if (graph_port->is_a(PortType::AUDIO)) {
+		Buffer* graph_buf = graph_port->buffer(0).get();
+		memcpy(graph_buf->samples(), buffer, nframes * sizeof(float));
 
-	} else if (patch_port->buffer_type() == patch_port->bufs().uris().atom_Sequence) {
-		Buffer* patch_buf = (Buffer*)patch_port->buffer(0).get();
+	} else if (graph_port->buffer_type() == graph_port->bufs().uris().atom_Sequence) {
+		Buffer* graph_buf = (Buffer*)graph_port->buffer(0).get();
 
 		const jack_nframes_t event_count = jack_midi_get_event_count(buffer);
 
-		patch_buf->prepare_write(context);
+		graph_buf->prepare_write(context);
 
-		// Copy events from Jack port buffer into patch port buffer
+		// Copy events from Jack port buffer into graph port buffer
 		for (jack_nframes_t i = 0; i < event_count; ++i) {
 			jack_midi_event_t ev;
 			jack_midi_event_get(&ev, buffer, i);
 
-			if (!patch_buf->append_event(
+			if (!graph_buf->append_event(
 				    ev.time, ev.size, _midi_event_type, ev.buffer)) {
 				_engine.log().warn("Failed to write to MIDI buffer, events lost!\n");
 			}
@@ -302,10 +302,10 @@ JackDriver::post_process_port(ProcessContext& context, EnginePort* port)
 {
 	const SampleCount nframes    = context.nframes();
 	jack_port_t*      jack_port  = (jack_port_t*)port->handle();
-	PortImpl*         patch_port = port->patch_port();
+	PortImpl*         graph_port = port->graph_port();
 	void*             buffer     = port->buffer();
 
-	if (patch_port->is_input()) {
+	if (graph_port->is_input()) {
 		return;
 	}
 
@@ -315,16 +315,16 @@ JackDriver::post_process_port(ProcessContext& context, EnginePort* port)
 		port->set_buffer(buffer);
 	}
 
-	patch_port->post_process(context);
-	Buffer* const patch_buf = patch_port->buffer(0).get();
-	if (patch_port->is_a(PortType::AUDIO)) {
-		memcpy(buffer, patch_buf->samples(), nframes * sizeof(Sample));
-	} else if (patch_port->buffer_type() == patch_port->bufs().uris().atom_Sequence) {
+	graph_port->post_process(context);
+	Buffer* const graph_buf = graph_port->buffer(0).get();
+	if (graph_port->is_a(PortType::AUDIO)) {
+		memcpy(buffer, graph_buf->samples(), nframes * sizeof(Sample));
+	} else if (graph_port->buffer_type() == graph_port->bufs().uris().atom_Sequence) {
 		jack_midi_clear_buffer(buffer);
-		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)patch_buf->atom();
+		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)graph_buf->atom();
 		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
-			if (ev->body.type == patch_port->bufs().uris().midi_MidiEvent) {
+			if (ev->body.type == graph_port->bufs().uris().midi_MidiEvent) {
 				jack_midi_event_write(buffer, ev->time.frames, buf, ev->body.size);
 			}
 		}
@@ -388,9 +388,9 @@ JackDriver::_shutdown_cb()
 int
 JackDriver::_block_length_cb(jack_nframes_t nframes)
 {
-	if (_engine.root_patch()) {
+	if (_engine.root_graph()) {
 		_block_length = nframes;
-		_engine.root_patch()->set_buffer_size(
+		_engine.root_graph()->set_buffer_size(
 			_engine.process_context(), *_engine.buffer_factory(), PortType::AUDIO,
 			_engine.buffer_factory()->audio_buffer_size(nframes));
 	}
@@ -409,7 +409,7 @@ JackDriver::_session_cb(jack_session_event_t* event)
 
 	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser();
 	if (serialiser) {
-		SharedPtr<GraphObject> root(_engine.root_patch(), NullDeleter<GraphObject>);
+		SharedPtr<GraphObject> root(_engine.root_graph(), NullDeleter<GraphObject>);
 		serialiser->write_bundle(root, string("file://") + event->session_dir);
 	}
 

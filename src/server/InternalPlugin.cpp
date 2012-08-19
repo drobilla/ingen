@@ -46,7 +46,7 @@ BlockImpl*
 InternalPlugin::instantiate(BufferFactory&      bufs,
                             const Raul::Symbol& symbol,
                             bool                polyphonic,
-                            PatchImpl*          parent,
+                            GraphImpl*          parent,
                             Engine&             engine)
 {
 	assert(_type == Internal);

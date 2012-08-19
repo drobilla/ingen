@@ -15,18 +15,18 @@
 */
 
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
-#include "PatchCanvas.hpp"
-#include "PatchView.hpp"
-#include "PatchWindow.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphView.hpp"
+#include "GraphWindow.hpp"
 #include "WindowFactory.hpp"
 
 namespace Ingen {
 namespace GUI {
 
-PatchWindow::PatchWindow(BaseObjectType*                   cobject,
+GraphWindow::GraphWindow(BaseObjectType*                   cobject,
                          const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
 	, _box(NULL)
@@ -36,18 +36,18 @@ PatchWindow::PatchWindow(BaseObjectType*                   cobject,
 {
 	property_visible() = false;
 
-	xml->get_widget_derived("patch_win_vbox", _box);
+	xml->get_widget_derived("graph_win_vbox", _box);
 
 	set_title("Ingen");
 }
 
-PatchWindow::~PatchWindow()
+GraphWindow::~GraphWindow()
 {
 	delete _box;
 }
 
 void
-PatchWindow::init_window(App& app)
+GraphWindow::init_window(App& app)
 {
 	Window::init_window(app);
 	_box->init_box(app);
@@ -55,7 +55,7 @@ PatchWindow::init_window(App& app)
 }
 
 void
-PatchWindow::on_show()
+GraphWindow::on_show()
 {
 	if (_position_stored)
 		move(_x, _y);
@@ -66,7 +66,7 @@ PatchWindow::on_show()
 }
 
 void
-PatchWindow::on_hide()
+GraphWindow::on_hide()
 {
 	_position_stored = true;
 	get_position(_x, _y);

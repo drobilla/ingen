@@ -41,7 +41,7 @@ Builder::build(SharedPtr<const GraphObject> object)
 void
 Builder::connect(SharedPtr<const GraphObject> object)
 {
-	if (object->graph_type() == GraphObject::PATCH) {
+	if (object->graph_type() == GraphObject::GRAPH) {
 		for (GraphObject::Edges::const_iterator i = object->edges().begin();
 		     i != object->edges().end(); ++i) {
 			_interface.connect(i->second->tail_path(), i->second->head_path());

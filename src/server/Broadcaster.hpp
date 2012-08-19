@@ -89,9 +89,9 @@ public:
 		BROADCAST(disconnect, tail, head);
 	}
 
-	void disconnect_all(const Raul::Path& parent_patch_path,
+	void disconnect_all(const Raul::Path& graph,
 	                    const Raul::Path& path) {
-		BROADCAST(disconnect_all, parent_patch_path, path);
+		BROADCAST(disconnect_all, graph, path);
 	}
 
 	void set_property(const Raul::URI&  subject,

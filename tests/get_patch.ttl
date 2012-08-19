@@ -6,14 +6,14 @@
 	a patch:Put ;
 	patch:subject <ingen:root/sub> ;
 	patch:body [
-		a ingen:Patch
+		a ingen:Graph
 	] .
 
 <msg1>
 	a patch:Put ;
 	patch:subject <ingen:root/sub/node1> ;
 	patch:body [
-		a ingen:Node ;
+		a ingen:Block ;
 		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
 	] .
 
@@ -21,7 +21,7 @@
 	a patch:Put ;
 	patch:subject <ingen:root/sub/node2> ;
 	patch:body [
-		a ingen:Node ;
+		a ingen:Block ;
 		ingen:prototype <http://drobilla.net/plugins/mda/Combo>
 	] .
 

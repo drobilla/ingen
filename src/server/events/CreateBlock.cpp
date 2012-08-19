@@ -24,7 +24,7 @@
 #include "Broadcaster.hpp"
 #include "CreateBlock.hpp"
 #include "Engine.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 
@@ -41,9 +41,9 @@ CreateBlock::CreateBlock(Engine&                     engine,
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _properties(properties)
-	, _patch(NULL)
+	, _graph(NULL)
 	, _block(NULL)
-	, _compiled_patch(NULL)
+	, _compiled_graph(NULL)
 {}
 
 bool
@@ -69,8 +69,8 @@ CreateBlock::pre_process()
 		return Event::pre_process_done(EXISTS, _path);
 	}
 
-	_patch = dynamic_cast<PatchImpl*>(_engine.store()->get(_path.parent()));
-	if (!_patch) {
+	_graph = dynamic_cast<GraphImpl*>(_engine.store()->get(_path.parent()));
+	if (!_graph) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
 
@@ -89,7 +89,7 @@ CreateBlock::pre_process()
 	if (!(_block = plugin->instantiate(*_engine.buffer_factory(),
 	                                  Raul::Symbol(_path.symbol()),
 	                                  polyphonic,
-	                                  _patch,
+	                                  _graph,
 	                                  _engine))) {
 		return Event::pre_process_done(CREATION_FAILED, _path);
 	}
@@ -97,15 +97,15 @@ CreateBlock::pre_process()
 	_block->properties().insert(_properties.begin(), _properties.end());
 	_block->activate(*_engine.buffer_factory());
 
-	// Add block to the store and the patch's pre-processor only block list
-	_patch->add_block(*_block);
+	// Add block to the store and the graph's pre-processor only block list
+	_graph->add_block(*_block);
 	_engine.store()->add(_block);
 
-	/* Compile patch with new block added for insertion in audio thread
+	/* Compile graph with new block added for insertion in audio thread
 	   TODO: Since the block is not connected at this point, a full compilation
 	   could be avoided and the block simply appended. */
-	if (_patch->enabled()) {
-		_compiled_patch = _patch->compile();
+	if (_graph->enabled()) {
+		_compiled_graph = _graph->compile();
 	}
 
 	_update.push_back(make_pair(_block->uri(), _block->properties()));
@@ -124,8 +124,8 @@ void
 CreateBlock::execute(ProcessContext& context)
 {
 	if (_block) {
-		_engine.maid()->dispose(_patch->compiled_patch());
-		_patch->compiled_patch(_compiled_patch);
+		_engine.maid()->dispose(_graph->compiled_graph());
+		_graph->compiled_graph(_compiled_graph);
 	}
 }
 

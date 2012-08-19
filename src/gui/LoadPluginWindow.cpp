@@ -23,13 +23,13 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
 #include "LoadPluginWindow.hpp"
-#include "PatchCanvas.hpp"
-#include "PatchView.hpp"
-#include "PatchWindow.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphView.hpp"
+#include "GraphWindow.hpp"
 
 #include "ingen_config.h"
 
@@ -115,10 +115,10 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 }
 
 void
-LoadPluginWindow::present(SharedPtr<const PatchModel> patch,
+LoadPluginWindow::present(SharedPtr<const GraphModel> graph,
                           GraphObject::Properties     data)
 {
-	set_patch(patch);
+	set_graph(graph);
 	_initial_data = data;
 	Gtk::Window::present();
 }
@@ -134,7 +134,7 @@ LoadPluginWindow::name_changed()
 		const string sym = _name_entry->get_text();
 		if (!Raul::Symbol::is_valid(sym)) {
 			_add_button->property_sensitive() = false;
-		} else if (_app->store()->find(_patch->path().child(Raul::Symbol(sym)))
+		} else if (_app->store()->find(_graph->path().child(Raul::Symbol(sym)))
 		           != _app->store()->end()) {
 			_add_button->property_sensitive() = false;
 		} else {
@@ -151,21 +151,21 @@ LoadPluginWindow::name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton*
 }
 #endif // HAVE_NEW_GTKMM
 
-/** Sets the patch controller for this window and initializes everything.
+/** Sets the graph controller for this window and initializes everything.
  *
  * This function MUST be called before using the window in any way!
  */
 void
-LoadPluginWindow::set_patch(SharedPtr<const PatchModel> patch)
+LoadPluginWindow::set_graph(SharedPtr<const GraphModel> graph)
 {
-	if (_patch) {
-		_patch = patch;
+	if (_graph) {
+		_graph = graph;
 		plugin_selection_changed();
 	} else {
-		_patch = patch;
+		_graph = graph;
 	}
 
-	/*if (patch->poly() <= 1)
+	/*if (graph->poly() <= 1)
 		_polyphonic_checkbutton->property_sensitive() = false;
 	else
 		_polyphonic_checkbutton->property_sensitive() = true;*/
@@ -174,8 +174,8 @@ LoadPluginWindow::set_patch(SharedPtr<const PatchModel> patch)
 /** Populates the plugin list on the first show.
  *
  * This is done here instead of construction time as the list population is
- * really expensive and bogs down creation of a patch.  This is especially
- * important when many patch notifications are sent at one time from the
+ * really expensive and bogs down creation of a graph.  This is especially
+ * important when many graph notifications are sent at one time from the
  * engine.
  */
 void
@@ -237,8 +237,8 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
 	case Plugin::Internal:
 		row[_plugins_columns._col_type] = "Internal";
 		break;
-	case Plugin::Patch:
-		row[_plugins_columns._col_type] = "Patch";
+	case Plugin::Graph:
+		row[_plugins_columns._col_type] = "Graph";
 		break;
 	case Plugin::NIL:
 		row[_plugins_columns._col_type] = "?";
@@ -292,7 +292,7 @@ LoadPluginWindow::plugin_selection_changed()
 			boost::shared_ptr<const PluginModel> p = row.get_value(
 				_plugins_columns._col_plugin);
 			_name_offset = _app->store()->child_name_offset(
-					_patch->path(), p->default_block_symbol());
+					_graph->path(), p->default_block_symbol());
 			_name_entry->set_text(generate_module_name(p, _name_offset));
 			_name_entry->set_sensitive(true);
 		} else {
@@ -342,7 +342,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 
 		dialog.run();
 	} else {
-		Raul::Path path = _patch->path().child(Raul::Symbol::symbolify(name));
+		Raul::Path path = _graph->path().child(Raul::Symbol::symbolify(name));
 		Resource::Properties props = _initial_data;
 		props.insert(make_pair(uris.rdf_type,
 		                       uris.ingen_Block));

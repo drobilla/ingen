@@ -26,15 +26,15 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
-#include "PatchView.hpp"
+#include "GraphView.hpp"
 
 namespace Ingen {
 namespace GUI {
 
 /** Collection of breadcrumb buttons forming a path.
- * This doubles as a cache for PatchViews.
+ * This doubles as a cache for GraphViews.
  *
  * \ingroup GUI
  */
@@ -43,17 +43,17 @@ class BreadCrumbs : public Gtk::HBox
 public:
 	explicit BreadCrumbs(App& app);
 
-	SharedPtr<PatchView> view(const Raul::Path& path);
+	SharedPtr<GraphView> view(const Raul::Path& path);
 
-	void build(Raul::Path path, SharedPtr<PatchView> view);
+	void build(Raul::Path path, SharedPtr<GraphView> view);
 
-	sigc::signal<void, const Raul::Path&, SharedPtr<PatchView> > signal_patch_selected;
+	sigc::signal<void, const Raul::Path&, SharedPtr<GraphView> > signal_graph_selected;
 
 private:
 	/** Breadcrumb button.
 	 *
-	 * Each Breadcrumb stores a reference to a PatchView for quick switching.
-	 * So, the amount of allocated PatchViews at a given time is equal to the
+	 * Each Breadcrumb stores a reference to a GraphView for quick switching.
+	 * So, the amount of allocated GraphViews at a given time is equal to the
 	 * number of visible breadcrumbs (which is the perfect cache for GUI
 	 * responsiveness balanced with mem consumption).
 	 *
@@ -62,24 +62,24 @@ private:
 	class BreadCrumb : public Gtk::ToggleButton
 	{
 	public:
-		BreadCrumb(const Raul::Path& path, SharedPtr<PatchView> view = SharedPtr<PatchView>())
+		BreadCrumb(const Raul::Path& path, SharedPtr<GraphView> view = SharedPtr<GraphView>())
 			: _path(path)
 			, _view(view)
 		{
-			assert(!view || view->patch()->path() == path);
+			assert(!view || view->graph()->path() == path);
 			set_border_width(0);
 			set_path(path);
 			set_can_focus(false);
 			show_all();
 		}
 
-		void set_view(SharedPtr<PatchView> view) {
-			assert(!view || view->patch()->path() == _path);
+		void set_view(SharedPtr<GraphView> view) {
+			assert(!view || view->graph()->path() == _path);
 			_view = view;
 		}
 
 		const Raul::Path&    path() const { return _path; }
-		SharedPtr<PatchView> view() const { return _view; }
+		SharedPtr<GraphView> view() const { return _view; }
 
 		void set_path(const Raul::Path& path) {
 			remove();
@@ -89,17 +89,17 @@ private:
 			lab->show();
 			add(*lab);
 
-			if (_view && _view->patch()->path() != path)
+			if (_view && _view->graph()->path() != path)
 				_view.reset();
 		}
 
 	private:
 		Raul::Path           _path;
-		SharedPtr<PatchView> _view;
+		SharedPtr<GraphView> _view;
 	};
 
 	BreadCrumb* create_crumb(const Raul::Path&    path,
-                             SharedPtr<PatchView> view = SharedPtr<PatchView>());
+                             SharedPtr<GraphView> view = SharedPtr<GraphView>());
 
 	void breadcrumb_clicked(BreadCrumb* crumb);
 

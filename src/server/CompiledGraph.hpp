@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_COMPILEDPATCH_HPP
-#define INGEN_ENGINE_COMPILEDPATCH_HPP
+#ifndef INGEN_ENGINE_COMPILEDGRAPH_HPP
+#define INGEN_ENGINE_COMPILEDGRAPH_HPP
 
 #include <vector>
 #include <list>
@@ -54,7 +54,7 @@ private:
 	std::vector<BlockImpl*> _dependants; ///< Blocks this one's output ports are connected to
 };
 
-/** A patch ``compiled'' into a flat structure with the correct order so
+/** A graph ``compiled'' into a flat structure with the correct order so
  * the audio thread(s) can execute it without threading problems (since
  * the preprocessor thread modifies the graph).
  *
@@ -62,7 +62,7 @@ private:
  * The parallel processing algorithm guarantees no block will be executed
  * before its providers, using this order as well as semaphores.
  */
-class CompiledPatch : public std::vector<CompiledBlock>
+class CompiledGraph : public std::vector<CompiledBlock>
                     , public Raul::Disposable
                     , public Raul::Noncopyable
 {
@@ -71,4 +71,4 @@ class CompiledPatch : public std::vector<CompiledBlock>
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_COMPILEDPATCH_HPP
+#endif // INGEN_ENGINE_COMPILEDGRAPH_HPP

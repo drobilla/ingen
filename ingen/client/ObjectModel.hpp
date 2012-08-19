@@ -41,7 +41,7 @@ namespace Client {
 
 class ClientStore;
 
-/** Base class for all GraphObject models (BlockModel, PatchModel, PortModel).
+/** Base class for all GraphObject models (BlockModel, GraphModel, PortModel).
  *
  * There are no non-const public methods intentionally, models are not allowed
  * to be manipulated directly by anything (but the Store) because of the

@@ -25,10 +25,10 @@
 #include "Buffer.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
+#include "GraphImpl.hpp"
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
-#include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
 #include "internals/Delay.hpp"
 #include "util.hpp"
@@ -53,7 +53,7 @@ DelayNode::DelayNode(InternalPlugin*     plugin,
                      BufferFactory&      bufs,
                      const Raul::Symbol& symbol,
                      bool                polyphonic,
-                     PatchImpl*          parent,
+                     GraphImpl*          parent,
                      SampleRate          srate)
 	: BlockImpl(plugin, symbol, polyphonic, parent, srate)
 	, _buffer(0)

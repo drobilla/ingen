@@ -78,7 +78,7 @@ public:
 	virtual void disconnect(const Raul::Path& tail,
 	                        const Raul::Path& head) = 0;
 
-	virtual void disconnect_all(const Raul::Path& parent_patch,
+	virtual void disconnect_all(const Raul::Path& graph,
 	                            const Raul::Path& path) = 0;
 
 	virtual void set_property(const Raul::URI&  subject,

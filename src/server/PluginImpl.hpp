@@ -35,7 +35,7 @@ namespace Server {
 class BlockImpl;
 class BufferFactory;
 class Engine;
-class PatchImpl;
+class GraphImpl;
 
 /** Implementation of a plugin (internal code, or a loaded shared library).
  *
@@ -55,8 +55,8 @@ public:
 	virtual BlockImpl* instantiate(BufferFactory&      bufs,
 	                               const Raul::Symbol& symbol,
 	                               bool                polyphonic,
-	                               PatchImpl*          parent,
-	                               Engine&            engine) = 0;
+	                               GraphImpl*          parent,
+	                               Engine&             engine) = 0;
 
 	virtual const Raul::Symbol symbol() const = 0;
 

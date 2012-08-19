@@ -101,8 +101,8 @@ public:
 	void disconnect(const Raul::Path& tail, const Raul::Path& head)
 		{ push_sig(sigc::bind(disconnection_slot, tail, head)); }
 
-	void disconnect_all(const Raul::Path& parent_patch_path, const Raul::Path& path)
-		{ push_sig(sigc::bind(disconnect_all_slot, parent_patch_path, path)); }
+	void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
+		{ push_sig(sigc::bind(disconnect_all_slot, graph, path)); }
 
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
 		{ push_sig(sigc::bind(property_change_slot, subject, key, value)); }

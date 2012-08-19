@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_PATCH_BOX_HPP
-#define INGEN_GUI_PATCH_BOX_HPP
+#ifndef INGEN_GUI_GRAPH_BOX_HPP
+#define INGEN_GUI_GRAPH_BOX_HPP
 
 #include <string>
 
@@ -40,7 +40,7 @@ class Path;
 namespace Ingen {
 
 namespace Client {
-class PatchModel;
+class GraphModel;
 class PortModel;
 class ObjectModel;
 }
@@ -48,52 +48,52 @@ class ObjectModel;
 namespace GUI {
 
 class BreadCrumbs;
-class LoadPatchBox;
+class LoadGraphBox;
 class LoadPluginWindow;
-class NewSubpatchWindow;
-class PatchDescriptionWindow;
-class PatchView;
-class PatchWindow;
-class SubpatchModule;
+class NewSubgraphWindow;
+class GraphDescriptionWindow;
+class GraphView;
+class GraphWindow;
+class SubgraphModule;
 
-/** A window for a patch.
+/** A window for a graph.
  *
  * \ingroup GUI
  */
-class PatchBox : public Gtk::VBox
+class GraphBox : public Gtk::VBox
 {
 public:
-	PatchBox(BaseObjectType*                   cobject,
+	GraphBox(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
-	~PatchBox();
+	~GraphBox();
 
-	static SharedPtr<PatchBox> create(
-		App& app, SharedPtr<const Client::PatchModel> patch);
+	static SharedPtr<GraphBox> create(
+		App& app, SharedPtr<const Client::GraphModel> graph);
 
 	void init_box(App& app);
 
-	void set_patch(SharedPtr<const Client::PatchModel> pc,
-	               SharedPtr<PatchView>                view);
+	void set_graph(SharedPtr<const Client::GraphModel> graph,
+	               SharedPtr<GraphView>                view);
 
-	void set_window(PatchWindow* win) { _window = win; }
+	void set_window(GraphWindow* win) { _window = win; }
 
 	void show_documentation(const std::string& doc, bool html);
 	void hide_documentation();
 
-	SharedPtr<const Client::PatchModel> patch() const { return _patch; }
-	SharedPtr<PatchView>                view()  const { return _view; }
+	SharedPtr<const Client::GraphModel> graph() const { return _graph; }
+	SharedPtr<GraphView>                view()  const { return _view; }
 
 	void show_port_status(const Client::PortModel* model,
 	                      const Raul::Atom&        value);
 
-	void set_patch_from_path(const Raul::Path& path, SharedPtr<PatchView> view);
+	void set_graph_from_path(const Raul::Path& path, SharedPtr<GraphView> view);
 
 	void object_entered(const Client::ObjectModel* model);
 	void object_left(const Client::ObjectModel* model);
 
 private:
-	void patch_port_added(SharedPtr<const Client::PortModel> port);
-	void patch_port_removed(SharedPtr<const Client::PortModel> port);
+	void graph_port_added(SharedPtr<const Client::PortModel> port);
+	void graph_port_removed(SharedPtr<const Client::PortModel> port);
 	void show_status(const Client::ObjectModel* model);
 
 	int message_dialog(const Glib::ustring& message,
@@ -124,9 +124,9 @@ private:
 	void event_clipboard_changed(GdkEventOwnerChange* ev);
 
 	App*                                _app;
-	SharedPtr<const Client::PatchModel> _patch;
-	SharedPtr<PatchView>                _view;
-	PatchWindow*                        _window;
+	SharedPtr<const Client::GraphModel> _graph;
+	SharedPtr<GraphView>                _view;
+	GraphWindow*                        _window;
 
 	sigc::connection new_port_connection;
 	sigc::connection removed_port_connection;
@@ -153,9 +153,9 @@ private:
 	Gtk::MenuItem*      _menu_arrange;
 	Gtk::MenuItem*      _menu_view_engine_window;
 	Gtk::MenuItem*      _menu_view_control_window;
-	Gtk::MenuItem*      _menu_view_patch_properties;
+	Gtk::MenuItem*      _menu_view_graph_properties;
 	Gtk::MenuItem*      _menu_view_messages_window;
-	Gtk::MenuItem*      _menu_view_patch_tree_window;
+	Gtk::MenuItem*      _menu_view_graph_tree_window;
 	Gtk::MenuItem*      _menu_help_about;
 
 	Gtk::VBox*          _vbox;
@@ -179,4 +179,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_PATCH_BOX_HPP
+#endif // INGEN_GUI_GRAPH_BOX_HPP

@@ -39,14 +39,14 @@ BreadCrumbs::BreadCrumbs(App& app)
 	set_can_focus(false);
 }
 
-SharedPtr<PatchView>
+SharedPtr<GraphView>
 BreadCrumbs::view(const Raul::Path& path)
 {
 	for (std::list<BreadCrumb*>::const_iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
 		if ((*i)->path() == path)
 			return (*i)->view();
 
-	return SharedPtr<PatchView>();
+	return SharedPtr<GraphView>();
 }
 
 /** Sets up the crumbs to display @a path.
@@ -55,7 +55,7 @@ BreadCrumbs::view(const Raul::Path& path)
  * children preserved.
  */
 void
-BreadCrumbs::build(Raul::Path path, SharedPtr<PatchView> view)
+BreadCrumbs::build(Raul::Path path, SharedPtr<GraphView> view)
 {
 	bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
@@ -68,7 +68,7 @@ BreadCrumbs::build(Raul::Path path, SharedPtr<PatchView> view)
 				if (!(*i)->view())
 					(*i)->set_view(view);
 
-				// views are expensive, having two around for the same patch is a bug
+				// views are expensive, having two around for the same graph is a bug
 				assert((*i)->view() == view);
 
 			} else {
@@ -103,7 +103,7 @@ BreadCrumbs::build(Raul::Path path, SharedPtr<PatchView> view)
 		_breadcrumbs.back()->set_active(true);
 
 	// Rebuild from scratch
-	// Getting here is bad unless absolutely necessary, since the PatchView cache is lost
+	// Getting here is bad unless absolutely necessary, since the GraphView cache is lost
 	} else {
 
 		_full_path = path;
@@ -147,10 +147,10 @@ BreadCrumbs::build(Raul::Path path, SharedPtr<PatchView> view)
  */
 BreadCrumbs::BreadCrumb*
 BreadCrumbs::create_crumb(const Raul::Path&    path,
-                          SharedPtr<PatchView> view)
+                          SharedPtr<GraphView> view)
 {
 	BreadCrumb* but = manage(new BreadCrumb(path,
-			(view && path == view->patch()->path()) ? view : SharedPtr<PatchView>()));
+			(view && path == view->graph()->path()) ? view : SharedPtr<GraphView>()));
 
 	but->signal_toggled().connect(sigc::bind(sigc::mem_fun(
 				this, &BreadCrumbs::breadcrumb_clicked), but));
@@ -168,7 +168,7 @@ BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
 			// Tried to turn off the current active button, bad user, no cookie
 			crumb->set_active(true);
 		} else {
-			signal_patch_selected.emit(crumb->path(), crumb->view());
+			signal_graph_selected.emit(crumb->path(), crumb->view());
 			if (crumb->path() != _active_path)
 				crumb->set_active(false);
 		}

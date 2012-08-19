@@ -213,14 +213,14 @@ AtomWriter::disconnect(const Raul::Path& tail,
 }
 
 void
-AtomWriter::disconnect_all(const Raul::Path& parent_patch_path,
+AtomWriter::disconnect_all(const Raul::Path& graph,
                            const Raul::Path& path)
 {
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Delete);
 
 	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
-	forge_uri(GraphObject::path_to_uri(parent_patch_path));
+	forge_uri(GraphObject::path_to_uri(graph));
 
 	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
 	LV2_Atom_Forge_Frame edge;

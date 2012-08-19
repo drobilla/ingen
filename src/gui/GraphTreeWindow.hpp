@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_PATCHTREEWINDOW_HPP
-#define INGEN_GUI_PATCHTREEWINDOW_HPP
+#ifndef INGEN_GUI_GRAPHTREEWINDOW_HPP
+#define INGEN_GUI_GRAPHTREEWINDOW_HPP
 
 #include <gtkmm/builder.h>
 #include <gtkmm/treemodel.h>
@@ -32,89 +32,92 @@ namespace Client { class ClientStore; class ObjectModel; }
 
 namespace GUI {
 
-class PatchWindow;
-class PatchTreeView;
+class GraphWindow;
+class GraphTreeView;
 
-/** Window with a TreeView of all loaded patches.
+/** Window with a TreeView of all loaded graphs.
  *
  * \ingroup GUI
  */
-class PatchTreeWindow : public Window
+class GraphTreeWindow : public Window
 {
 public:
-	PatchTreeWindow(BaseObjectType*                   cobject,
+	GraphTreeWindow(BaseObjectType*                   cobject,
 	                const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void init(App& app, Client::ClientStore& store);
 
 	void new_object(SharedPtr<Client::ObjectModel> object);
 
-	void patch_property_changed(const Raul::URI& key, const Raul::Atom& value,
-			SharedPtr<Client::PatchModel> pm);
+	void graph_property_changed(const Raul::URI&              key,
+	                            const Raul::Atom&             value,
+	                            SharedPtr<Client::GraphModel> gm);
 
-	void patch_moved(SharedPtr<Client::PatchModel> patch);
+	void graph_moved(SharedPtr<Client::GraphModel> graph);
 
-	void add_patch(SharedPtr<Client::PatchModel> pm);
-	void remove_patch(SharedPtr<Client::PatchModel> pm);
-	void show_patch_menu(GdkEventButton* ev);
+	void add_graph(SharedPtr<Client::GraphModel> gm);
+	void remove_graph(SharedPtr<Client::GraphModel> gm);
+	void show_graph_menu(GdkEventButton* ev);
 
 protected:
-	void event_patch_activated(const Gtk::TreeModel::Path& path, Gtk::TreeView::Column* col);
-	void event_patch_enabled_toggled(const Glib::ustring& path_str);
+	void event_graph_activated(const Gtk::TreeModel::Path& path,
+	                           Gtk::TreeView::Column*      col);
 
-	Gtk::TreeModel::iterator find_patch(
+	void event_graph_enabled_toggled(const Glib::ustring& path_str);
+
+	Gtk::TreeModel::iterator find_graph(
 			Gtk::TreeModel::Children       root,
-			SharedPtr<Client::ObjectModel> patch);
+			SharedPtr<Client::ObjectModel> graph);
 
-	PatchTreeView* _patches_treeview;
+	GraphTreeView* _graphs_treeview;
 
-	struct PatchTreeModelColumns : public Gtk::TreeModel::ColumnRecord
+	struct GraphTreeModelColumns : public Gtk::TreeModel::ColumnRecord
 	{
-		PatchTreeModelColumns() {
+		GraphTreeModelColumns() {
 			add(name_col);
 			add(enabled_col);
-			add(patch_model_col);
+			add(graph_model_col);
 		}
 
 		Gtk::TreeModelColumn<Glib::ustring>                  name_col;
 		Gtk::TreeModelColumn<bool>                           enabled_col;
-		Gtk::TreeModelColumn<SharedPtr<Client::PatchModel> > patch_model_col;
+		Gtk::TreeModelColumn<SharedPtr<Client::GraphModel> > graph_model_col;
 	};
 
 	App*                             _app;
-	PatchTreeModelColumns            _patch_tree_columns;
-	Glib::RefPtr<Gtk::TreeStore>     _patch_treestore;
-	Glib::RefPtr<Gtk::TreeSelection> _patch_tree_selection;
+	GraphTreeModelColumns            _graph_tree_columns;
+	Glib::RefPtr<Gtk::TreeStore>     _graph_treestore;
+	Glib::RefPtr<Gtk::TreeSelection> _graph_tree_selection;
 	bool                             _enable_signal;
 };
 
-/** Derived TreeView class to support context menus for patches */
-class PatchTreeView : public Gtk::TreeView
+/** Derived TreeView class to support context menus for graphs */
+class GraphTreeView : public Gtk::TreeView
 {
 public:
-	PatchTreeView(BaseObjectType*                   cobject,
+	GraphTreeView(BaseObjectType*                   cobject,
 	              const Glib::RefPtr<Gtk::Builder>& xml)
 		: Gtk::TreeView(cobject)
 		, _window(NULL)
 	{}
 
-	void set_window(PatchTreeWindow* win) { _window = win; }
+	void set_window(GraphTreeWindow* win) { _window = win; }
 
 	bool on_button_press_event(GdkEventButton* ev) {
 		bool ret = Gtk::TreeView::on_button_press_event(ev);
 
 		if ((ev->type == GDK_BUTTON_PRESS) && (ev->button == 3))
-			_window->show_patch_menu(ev);
+			_window->show_graph_menu(ev);
 
 		return ret;
 	}
 
 private:
-	PatchTreeWindow* _window;
+	GraphTreeWindow* _window;
 
-}; // struct PatchTreeView
+}; // struct GraphTreeView
 
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_PATCHTREEWINDOW_HPP
+#endif // INGEN_GUI_GRAPHTREEWINDOW_HPP

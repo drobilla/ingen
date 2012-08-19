@@ -38,7 +38,7 @@ OutputPort::OutputPort(BufferFactory&      bufs,
                        size_t              buffer_size)
 	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
 {
-	if (parent->graph_type() != GraphObject::PATCH) {
+	if (parent->graph_type() != GraphObject::GRAPH) {
 		add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort);
 	}
 

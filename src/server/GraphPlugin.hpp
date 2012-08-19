@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_PATCHPLUGIN_HPP
-#define INGEN_ENGINE_PATCHPLUGIN_HPP
+#ifndef INGEN_ENGINE_GRAPHPLUGIN_HPP
+#define INGEN_ENGINE_GRAPHPLUGIN_HPP
 
 #include <string>
 #include "PluginImpl.hpp"
@@ -25,31 +25,31 @@ namespace Server {
 
 class BlockImpl;
 
-/** Implementation of a Patch plugin.
+/** Implementation of a Graph plugin.
  *
- * Patches don't actually work like this yet...
+ * Graphs don't actually work like this yet...
  */
-class PatchPlugin : public PluginImpl
+class GraphPlugin : public PluginImpl
 {
 public:
-	PatchPlugin(URIs&               uris,
+	GraphPlugin(URIs&               uris,
 	            const Raul::URI&    uri,
 	            const Raul::Symbol& symbol,
 	            const std::string&  name)
-		: PluginImpl(uris, Plugin::Patch, uri)
+		: PluginImpl(uris, Plugin::Graph, uri)
 	{}
 
 	BlockImpl* instantiate(BufferFactory&      bufs,
 	                       const Raul::Symbol& symbol,
 	                       bool                polyphonic,
-	                       PatchImpl*          parent,
+	                       GraphImpl*          parent,
 	                       Engine&             engine)
 	{
 		return NULL;
 	}
 
-	const Raul::Symbol symbol() const { return Raul::Symbol("patch"); }
-	const std::string name()    const { return "Ingen Patch"; }
+	const Raul::Symbol symbol() const { return Raul::Symbol("graph"); }
+	const std::string name()    const { return "Ingen Graph"; }
 
 private:
 	const std::string _symbol;
@@ -59,5 +59,5 @@ private:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_PATCHPLUGIN_HPP
+#endif // INGEN_ENGINE_GRAPHPLUGIN_HPP
 

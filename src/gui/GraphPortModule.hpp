@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_PATCHPORTMODULE_HPP
-#define INGEN_GUI_PATCHPORTMODULE_HPP
+#ifndef INGEN_GUI_GRAPHPORTMODULE_HPP
+#define INGEN_GUI_GRAPHPORTMODULE_HPP
 
 #include <string>
 
@@ -35,21 +35,21 @@ namespace Ingen { namespace Client {
 namespace Ingen {
 namespace GUI {
 
-class PatchCanvas;
+class GraphCanvas;
 class Port;
 class PortMenu;
 
-/** A "module" to represent a patch's port on its own canvas.
+/** A "module" to represent a graph's port on its own canvas.
  *
  * Translation: This is the nameless single port pseudo module thingy.
  *
  * \ingroup GUI
  */
-class PatchPortModule : public Ganv::Module
+class GraphPortModule : public Ganv::Module
 {
 public:
-	static PatchPortModule* create(
-		PatchCanvas&                       canvas,
+	static GraphPortModule* create(
+		GraphCanvas&                       canvas,
 		SharedPtr<const Client::PortModel> model,
 		bool                               human);
 
@@ -63,7 +63,7 @@ public:
 	SharedPtr<const Client::PortModel> port() const { return _model; }
 
 protected:
-	PatchPortModule(PatchCanvas&                       canvas,
+	GraphPortModule(GraphCanvas&                       canvas,
 	                SharedPtr<const Client::PortModel> model);
 
 	bool show_menu(GdkEventButton* ev);
@@ -80,4 +80,4 @@ protected:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_PATCHPORTMODULE_HPP
+#endif // INGEN_GUI_GRAPHPORTMODULE_HPP

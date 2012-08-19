@@ -19,7 +19,7 @@
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
@@ -39,7 +39,7 @@ ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
 	if (parser()) {
 		start();
 	} else {
-		app.log().warn("Parser unavailable, patch loading disabled\n");
+		app.log().warn("Parser unavailable, graph loading disabled\n");
 	}
 }
 
@@ -74,7 +74,7 @@ ThreadedLoader::_run()
 }
 
 void
-ThreadedLoader::load_patch(bool                              merge,
+ThreadedLoader::load_graph(bool                              merge,
                            const Glib::ustring&              document_uri,
                            optional<Raul::Path>              engine_parent,
                            optional<Raul::Symbol>            engine_symbol,
@@ -108,13 +108,13 @@ ThreadedLoader::load_patch(bool                              merge,
 }
 
 void
-ThreadedLoader::save_patch(SharedPtr<const Client::PatchModel> model,
+ThreadedLoader::save_graph(SharedPtr<const Client::GraphModel> model,
                            const string&                       filename)
 {
 	_mutex.lock();
 
 	_events.push_back(sigc::hide_return(sigc::bind(
-		sigc::mem_fun(this, &ThreadedLoader::save_patch_event),
+		sigc::mem_fun(this, &ThreadedLoader::save_graph_event),
 		model, filename)));
 
 	_mutex.unlock();
@@ -122,7 +122,7 @@ ThreadedLoader::save_patch(SharedPtr<const Client::PatchModel> model,
 }
 
 void
-ThreadedLoader::save_patch_event(SharedPtr<const Client::PatchModel> model,
+ThreadedLoader::save_graph_event(SharedPtr<const Client::GraphModel> model,
                                  const string&                       filename)
 {
 	if (_app.serialiser()) {

@@ -151,7 +151,7 @@ main(int argc, char** argv)
 		world->engine()->activate();
 	}
 
-	// Load a patch
+	// Load a graph
 	if (conf.option("load").is_valid() || !conf.files().empty()) {
 		boost::optional<Raul::Path>   parent;
 		boost::optional<Raul::Symbol> symbol;

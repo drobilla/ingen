@@ -38,7 +38,7 @@ public:
 
 	virtual void deactivate() {}
 
-	virtual EnginePort* create_port(DuplexPort* patch_port) {
+	virtual EnginePort* create_port(DuplexPort* graph_port) {
 		return NULL;
 	}
 

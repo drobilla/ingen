@@ -31,7 +31,7 @@ namespace GUI {
 /** Messages Window.
  *
  * Loaded from XML as a derived object.
- * This is shown when errors occur (e.g. during patch loading).
+ * This is shown when errors occur (e.g. during graph loading).
  *
  * \ingroup GUI
  */

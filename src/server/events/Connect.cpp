@@ -24,9 +24,9 @@
 #include "Connect.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
+#include "GraphImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "types.hpp"
 
@@ -43,9 +43,9 @@ Connect::Connect(Engine&              engine,
 	: Event(engine, client, id, timestamp)
 	, _tail_path(tail_path)
 	, _head_path(head_path)
-	, _patch(NULL)
+	, _graph(NULL)
 	, _head(NULL)
-	, _compiled_patch(NULL)
+	, _compiled_graph(NULL)
 	, _buffers(NULL)
 {}
 
@@ -86,23 +86,23 @@ Connect::pre_process()
 		return Event::pre_process_done(TYPE_MISMATCH, _head_path);
 	}
 
-	if (tail_block->parent_patch() != head_block->parent_patch()) {
-		// Edge to a patch port from inside the patch
+	if (tail_block->parent_graph() != head_block->parent_graph()) {
+		// Edge to a graph port from inside the graph
 		assert(tail_block->parent() == head_block || head_block->parent() == tail_block);
 		if (tail_block->parent() == head_block) {
-			_patch = dynamic_cast<PatchImpl*>(head_block);
+			_graph = dynamic_cast<GraphImpl*>(head_block);
 		} else {
-			_patch = dynamic_cast<PatchImpl*>(tail_block);
+			_graph = dynamic_cast<GraphImpl*>(tail_block);
 		}
-	} else if (tail_block == head_block && dynamic_cast<PatchImpl*>(tail_block)) {
-		// Edge from a patch input to a patch output (pass through)
-		_patch = dynamic_cast<PatchImpl*>(tail_block);
+	} else if (tail_block == head_block && dynamic_cast<GraphImpl*>(tail_block)) {
+		// Edge from a graph input to a graph output (pass through)
+		_graph = dynamic_cast<GraphImpl*>(tail_block);
 	} else {
 		// Normal edge between blocks with the same parent
-		_patch = tail_block->parent_patch();
+		_graph = tail_block->parent_graph();
 	}
 
-	if (_patch->has_edge(tail_output, _head)) {
+	if (_graph->has_edge(tail_output, _head)) {
 		return Event::pre_process_done(EXISTS, _head_path);
 	}
 
@@ -113,8 +113,8 @@ Connect::pre_process()
 	{
 		Glib::RWLock::ReaderLock wlock(_engine.store()->lock());
 
-		/* Need to be careful about patch port edges here and adding a
-		   block's parent as a dependant/provider, or adding a patch as its own
+		/* Need to be careful about graph port edges here and adding a
+		   block's parent as a dependant/provider, or adding a graph as its own
 		   provider...
 		*/
 		if (tail_block != head_block && tail_block->parent() == head_block->parent()) {
@@ -122,7 +122,7 @@ Connect::pre_process()
 			tail_block->dependants().push_back(head_block);
 		}
 
-		_patch->add_edge(_edge);
+		_graph->add_edge(_edge);
 		_head->increment_num_edges();
 	}
 
@@ -132,8 +132,8 @@ Connect::pre_process()
 	                   _head->poly(),
 	                   false);
 
-	if (_patch->enabled()) {
-		_compiled_patch = _patch->compile();
+	if (_graph->enabled()) {
+		_compiled_graph = _graph->compile();
 	}
 
 	return Event::pre_process_done(SUCCESS);
@@ -146,8 +146,8 @@ Connect::execute(ProcessContext& context)
 		_head->add_edge(context, _edge.get());
 		_engine.maid()->dispose(_head->set_buffers(context, _buffers));
 		_head->connect_buffers();
-		_engine.maid()->dispose(_patch->compiled_patch());
-		_patch->compiled_patch(_compiled_patch);
+		_engine.maid()->dispose(_graph->compiled_graph());
+		_graph->compiled_graph(_compiled_graph);
 	}
 }
 

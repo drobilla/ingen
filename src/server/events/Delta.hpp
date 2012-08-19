@@ -30,9 +30,9 @@ class Resource;
 
 namespace Server {
 
-class CompiledPatch;
+class CompiledGraph;
 class Engine;
-class PatchImpl;
+class GraphImpl;
 class ProcessContext;
 
 namespace Events {
@@ -105,8 +105,8 @@ private:
 	Resource::Properties     _properties;
 	Resource::Properties     _remove;
 	Ingen::Resource*         _object;
-	PatchImpl*               _patch;
-	CompiledPatch*           _compiled_patch;
+	GraphImpl*               _graph;
+	CompiledGraph*           _compiled_graph;
 	Resource::Graph          _context;
 	ControlBindings::Key     _binding;
 	bool                     _create;

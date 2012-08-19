@@ -25,11 +25,11 @@
 #include "Broadcaster.hpp"
 #include "ControlBindings.hpp"
 #include "CreateBlock.hpp"
-#include "CreatePatch.hpp"
+#include "CreateGraph.hpp"
 #include "CreatePort.hpp"
 #include "Delta.hpp"
 #include "Engine.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
@@ -59,8 +59,8 @@ Delta::Delta(Engine&              engine,
 	, _properties(properties)
 	, _remove(remove)
 	, _object(NULL)
-	, _patch(NULL)
-	, _compiled_patch(NULL)
+	, _graph(NULL)
+	, _compiled_graph(NULL)
 	, _context(context)
 	, _create(create)
 {
@@ -122,11 +122,11 @@ Delta::pre_process()
 
 	if (is_graph_object && !_object) {
 		Raul::Path path(GraphObject::uri_to_path(_subject));
-		bool is_patch = false, is_block = false, is_port = false, is_output = false;
-		Ingen::Resource::type(uris, _properties, is_patch, is_block, is_port, is_output);
+		bool is_graph = false, is_block = false, is_port = false, is_output = false;
+		Ingen::Resource::type(uris, _properties, is_graph, is_block, is_port, is_output);
 
-		if (is_patch) {
-			_create_event = new CreatePatch(
+		if (is_graph) {
+			_create_event = new CreateGraph(
 				_engine, _request_client, _request_id, _time, path, _properties);
 		} else if (is_block) {
 			_create_event = new CreateBlock(
@@ -194,13 +194,13 @@ Delta::pre_process()
 						_status = BAD_OBJECT_TYPE;
 					}
 				}
-			} else if ((_patch = dynamic_cast<PatchImpl*>(_object))) {
+			} else if ((_graph = dynamic_cast<GraphImpl*>(_object))) {
 				if (key == uris.ingen_enabled) {
 					if (value.type() == uris.forge.Bool) {
 						op = ENABLE;
 						// FIXME: defer this until all other metadata has been processed
-						if (value.get_bool() && !_patch->enabled())
-							_compiled_patch = _patch->compile();
+						if (value.get_bool() && !_graph->enabled())
+							_compiled_graph = _graph->compile();
 					} else {
 						_status = BAD_VALUE_TYPE;
 					}
@@ -210,7 +210,7 @@ Delta::pre_process()
 							_status = INVALID_POLY;
 						} else {
 							op = POLYPHONY;
-							_patch->prepare_internal_poly(
+							_graph->prepare_internal_poly(
 								*_engine.buffer_factory(), value.get_int32());
 						}
 					} else {
@@ -218,7 +218,7 @@ Delta::pre_process()
 					}
 				}
 			} else if (key == uris.ingen_polyphonic) {
-				PatchImpl* parent = dynamic_cast<PatchImpl*>(obj->parent());
+				GraphImpl* parent = dynamic_cast<GraphImpl*>(obj->parent());
 				if (parent) {
 					if (value.type() == uris.forge.Bool) {
 						op = POLYPHONIC;
@@ -286,17 +286,17 @@ Delta::execute(ProcessContext& context)
 			break;
 		case ENABLE:
 			if (value.get_bool()) {
-				if (_compiled_patch) {
-					_engine.maid()->dispose(_patch->compiled_patch());
-					_patch->compiled_patch(_compiled_patch);
+				if (_compiled_graph) {
+					_engine.maid()->dispose(_graph->compiled_graph());
+					_graph->compiled_graph(_compiled_graph);
 				}
-				_patch->enable();
+				_graph->enable();
 			} else {
-				_patch->disable(context);
+				_graph->disable(context);
 			}
 			break;
 		case POLYPHONIC: {
-			PatchImpl* parent = reinterpret_cast<PatchImpl*>(object->parent());
+			GraphImpl* parent = reinterpret_cast<GraphImpl*>(object->parent());
 			if (value.get_bool()) {
 				object->apply_poly(
 					context, *_engine.maid(), parent->internal_poly_process());
@@ -305,7 +305,7 @@ Delta::execute(ProcessContext& context)
 			}
 		} break;
 		case POLYPHONY:
-			if (!_patch->apply_internal_poly(context,
+			if (!_graph->apply_internal_poly(context,
 			                                 *_engine.buffer_factory(),
 			                                 *_engine.maid(),
 			                                 value.get_int32())) {

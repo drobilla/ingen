@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_PATCHVIEW_HPP
-#define INGEN_GUI_PATCHVIEW_HPP
+#ifndef INGEN_GUI_GRAPHVIEW_HPP
+#define INGEN_GUI_GRAPHVIEW_HPP
 
 #include <gtkmm/box.h>
 #include <gtkmm/builder.h>
@@ -36,7 +36,7 @@ namespace Ingen {
 namespace Client {
 	class PortModel;
 	class MetadataModel;
-	class PatchModel;
+	class GraphModel;
 	class ObjectModel;
 }
 
@@ -44,35 +44,35 @@ namespace GUI {
 
 class App;
 class LoadPluginWindow;
-class NewSubpatchWindow;
-class PatchCanvas;
-class PatchDescriptionWindow;
-class SubpatchModule;
+class NewSubgraphWindow;
+class GraphCanvas;
+class GraphDescriptionWindow;
+class SubgraphModule;
 
-/** The patch specific contents of a PatchWindow (ie the canvas and whatever else).
+/** The graph specific contents of a GraphWindow (ie the canvas and whatever else).
  *
  * \ingroup GUI
  */
-class PatchView : public Gtk::Box
+class GraphView : public Gtk::Box
 {
 public:
-	PatchView(BaseObjectType*                   cobject,
+	GraphView(BaseObjectType*                   cobject,
 	          const Glib::RefPtr<Gtk::Builder>& xml);
 
 	void init(App& app);
 
-	SharedPtr<PatchCanvas>              canvas()               const { return _canvas; }
-	SharedPtr<const Client::PatchModel> patch()                const { return _patch; }
+	SharedPtr<GraphCanvas>              canvas()               const { return _canvas; }
+	SharedPtr<const Client::GraphModel> graph()                const { return _graph; }
 	Gtk::ToolItem*                      breadcrumb_container() const { return _breadcrumb_container; }
 
-	static SharedPtr<PatchView> create(App& app,
-	                                   SharedPtr<const Client::PatchModel> patch);
+	static SharedPtr<GraphView> create(App& app,
+	                                   SharedPtr<const Client::GraphModel> graph);
 
 	sigc::signal<void, const Client::ObjectModel*> signal_object_entered;
 	sigc::signal<void, const Client::ObjectModel*> signal_object_left;
 
 private:
-	void set_patch(SharedPtr<const Client::PatchModel> patch);
+	void set_graph(SharedPtr<const Client::GraphModel> graph);
 
 	void process_toggled();
 	void poly_changed();
@@ -90,8 +90,8 @@ private:
 
 	App* _app;
 
-	SharedPtr<const Client::PatchModel> _patch;
-	SharedPtr<PatchCanvas>              _canvas;
+	SharedPtr<const Client::GraphModel> _graph;
+	SharedPtr<GraphCanvas>              _canvas;
 
 	Gtk::ScrolledWindow*   _canvas_scrolledwindow;
 	Gtk::Toolbar*          _toolbar;
@@ -109,4 +109,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_PATCHVIEW_HPP
+#endif // INGEN_GUI_GRAPHVIEW_HPP

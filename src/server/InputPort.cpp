@@ -25,9 +25,9 @@
 #include "BufferFactory.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
+#include "GraphImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "PatchImpl.hpp"
 #include "ProcessContext.hpp"
 #include "mix.hpp"
 
@@ -50,7 +50,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 {
 	const Ingen::URIs& uris = bufs.uris();
 
-	if (parent->graph_type() != GraphObject::PATCH) {
+	if (parent->graph_type() != GraphObject::GRAPH) {
 		add_property(uris.rdf_type, uris.lv2_InputPort);
 	}
 
@@ -159,7 +159,7 @@ InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 uint32_t
 InputPort::max_tail_poly(Context& context) const
 {
-	return parent_block()->parent_patch()->internal_poly_process();
+	return parent_block()->parent_graph()->internal_poly_process();
 }
 
 static void

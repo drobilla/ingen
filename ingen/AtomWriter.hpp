@@ -63,7 +63,7 @@ public:
 	void disconnect(const Raul::Path& tail,
 	                const Raul::Path& head);
 
-	void disconnect_all(const Raul::Path& parent_patch_path,
+	void disconnect_all(const Raul::Path& graph,
 	                    const Raul::Path& path);
 
 	void set_property(const Raul::URI&  subject,

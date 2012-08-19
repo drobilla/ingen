@@ -31,7 +31,7 @@ namespace GUI {
 
 class ObjectControlWindow;
 class ObjectPropertiesWindow;
-class PatchCanvas;
+class GraphCanvas;
 
 /** Menu for a Object.
  *

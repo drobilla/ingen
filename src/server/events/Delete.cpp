@@ -26,7 +26,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EnginePort.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 
@@ -43,7 +43,7 @@ Delete::Delete(Engine&              engine,
 	, _uri(uri)
 	, _engine_port(NULL)
 	, _ports_array(NULL)
-	, _compiled_patch(NULL)
+	, _compiled_graph(NULL)
 	, _disconnect_event(NULL)
 	, _lock(engine.store()->lock(), Glib::NOT_LOCK)
 {
@@ -81,7 +81,7 @@ Delete::pre_process()
 		return Event::pre_process_done(NOT_DELETABLE, _path);
 	}
 
-	PatchImpl* parent = _block ? _block->parent_patch() : _port->parent_patch();
+	GraphImpl* parent = _block ? _block->parent_graph() : _port->parent_graph();
 	if (!parent) {
 		return Event::pre_process_done(INTERNAL_ERROR, _path);
 	}
@@ -94,7 +94,7 @@ Delete::pre_process()
 		_disconnect_event->pre_process();
 		
 		if (parent->enabled()) {
-			_compiled_patch = parent->compile();
+			_compiled_graph = parent->compile();
 		}
 	} else if (_port) {
 		parent->remove_port(*_port);
@@ -102,7 +102,7 @@ Delete::pre_process()
 		_disconnect_event->pre_process();
 
 		if (parent->enabled()) {
-			_compiled_patch = parent->compile();
+			_compiled_graph = parent->compile();
 			_ports_array    = parent->build_ports_array();
 			assert(_ports_array->size() == parent->num_ports_non_rt());
 		}
@@ -122,7 +122,7 @@ Delete::execute(ProcessContext& context)
 		_disconnect_event->execute(context);
 	}
 
-	PatchImpl* parent = _block ? _block->parent_patch() : _port->parent_patch();
+	GraphImpl* parent = _block ? _block->parent_graph() : _port->parent_graph();
 	if (_port) {
 		_engine.maid()->dispose(parent->external_ports());
 		parent->external_ports(_ports_array);
@@ -133,8 +133,8 @@ Delete::execute(ProcessContext& context)
 	}
 
 	if (parent) {
-		_engine.maid()->dispose(parent->compiled_patch());
-		parent->compiled_patch(_compiled_patch);
+		_engine.maid()->dispose(parent->compiled_graph());
+		parent->compiled_graph(_compiled_graph);
 	}
 }
 

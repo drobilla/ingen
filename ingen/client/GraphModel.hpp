@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_CLIENT_PATCHMODEL_HPP
-#define INGEN_CLIENT_PATCHMODEL_HPP
+#ifndef INGEN_CLIENT_GRAPHMODEL_HPP
+#define INGEN_CLIENT_GRAPHMODEL_HPP
 
 #include "ingen/client/BlockModel.hpp"
 #include "raul/SharedPtr.hpp"
@@ -26,16 +26,16 @@ namespace Client {
 class ClientStore;
 class EdgeModel;
 
-/** Client's model of a patch.
+/** Client's model of a graph.
  *
  * @ingroup IngenClient
  */
-class PatchModel : public BlockModel
+class GraphModel : public BlockModel
 {
 public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */
 
-	GraphType graph_type() const { return GraphObject::PATCH; }
+	GraphType graph_type() const { return GraphObject::GRAPH; }
 
 	SharedPtr<EdgeModel> get_edge(const Ingen::GraphObject* tail,
 	                              const Ingen::GraphObject* head);
@@ -53,11 +53,9 @@ public:
 private:
 	friend class ClientStore;
 
-	PatchModel(URIs& uris, const Raul::Path& patch_path)
-		: BlockModel(
-			uris, Raul::URI("http://drobilla.net/ns/ingen#Patch"), patch_path)
-	{
-	}
+	GraphModel(URIs& uris, const Raul::Path& graph_path)
+		: BlockModel(uris, uris.ingen_Graph, graph_path)
+	{}
 
 	void clear();
 	void add_child(SharedPtr<ObjectModel> c);
@@ -71,4 +69,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // INGEN_CLIENT_PATCHMODEL_HPP
+#endif // INGEN_CLIENT_GRAPHMODEL_HPP

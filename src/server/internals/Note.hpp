@@ -42,7 +42,7 @@ public:
 	         BufferFactory&      bufs,
 	         const Raul::Symbol& symbol,
 	         bool                polyphonic,
-	         PatchImpl*          parent,
+	         GraphImpl*          parent,
 	         SampleRate          srate);
 
 	~NoteNode();

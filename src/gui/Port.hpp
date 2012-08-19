@@ -38,7 +38,7 @@ namespace Client { class PortModel; }
 namespace GUI {
 
 class App;
-class PatchBox;
+class GraphBox;
 
 /** A Port on an Module.
  *
@@ -75,7 +75,7 @@ private:
 	     bool                               flip = false);
 
 	Gtk::Menu* build_enum_menu();
-	PatchBox* get_patch_box() const;
+	GraphBox* get_graph_box() const;
 
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 	void moved();

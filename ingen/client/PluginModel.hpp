@@ -37,7 +37,7 @@ class URIs;
 
 namespace Client {
 
-class PatchModel;
+class GraphModel;
 class BlockModel;
 class PluginUI;
 

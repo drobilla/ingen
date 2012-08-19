@@ -48,7 +48,7 @@ public:
 	BlockModel(const BlockModel& copy);
 	virtual ~BlockModel();
 
-	GraphType graph_type() const { return GraphObject::PATCH; }
+	GraphType graph_type() const { return GraphObject::GRAPH; }
 
 	typedef std::vector< SharedPtr<const PortModel> > Ports;
 

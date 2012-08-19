@@ -29,7 +29,7 @@
 #include "Driver.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "PortImpl.hpp"
 
 namespace Ingen {
@@ -47,8 +47,8 @@ CreatePort::CreatePort(Engine&                     engine,
 	, _path(path)
 	, _port_type(PortType::UNKNOWN)
 	, _buf_type(0)
-	, _patch(NULL)
-	, _patch_port(NULL)
+	, _graph(NULL)
+	, _graph_port(NULL)
 	, _ports_array(NULL)
 	, _old_ports_array(NULL)
 	, _engine_port(NULL)
@@ -102,7 +102,7 @@ CreatePort::pre_process()
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
 
-	if (!(_patch = dynamic_cast<PatchImpl*>(parent))) {
+	if (!(_graph = dynamic_cast<GraphImpl*>(parent))) {
 		return Event::pre_process_done(INVALID_PARENT_PATH, _path.parent());
 	}
 
@@ -110,7 +110,7 @@ CreatePort::pre_process()
 	const BufferFactory& buffer_factory = *_engine.buffer_factory();
 
 	const uint32_t buf_size    = buffer_factory.default_size(_buf_type);
-	const int32_t  old_n_ports = _patch->num_ports_non_rt();
+	const int32_t  old_n_ports = _graph->num_ports_non_rt();
 
 	typedef Resource::Properties::const_iterator PropIter;
 
@@ -130,34 +130,34 @@ CreatePort::pre_process()
 	                         poly_i->second.type() == uris.forge.Bool &&
 	                         poly_i->second.get_bool());
 
-	if (!(_patch_port = _patch->create_port(
+	if (!(_graph_port = _graph->create_port(
 		      *_engine.buffer_factory(), Raul::Symbol(_path.symbol()),
 		      _port_type, _buf_type, buf_size, _is_output, polyphonic))) {
 		return Event::pre_process_done(CREATION_FAILED, _path);
 	}
 
-	_patch_port->properties().insert(_properties.begin(), _properties.end());
+	_graph_port->properties().insert(_properties.begin(), _properties.end());
 
-	_engine.store()->add(_patch_port);
+	_engine.store()->add(_graph_port);
 	if (_is_output) {
-		_patch->add_output(*_patch_port);
+		_graph->add_output(*_graph_port);
 	} else {
-		_patch->add_input(*_patch_port);
+		_graph->add_input(*_graph_port);
 	}
 
-	if (!_patch->parent()) {
+	if (!_graph->parent()) {
 		_engine_port = _engine.driver()->create_port(
-			dynamic_cast<DuplexPort*>(_patch_port));
+			dynamic_cast<DuplexPort*>(_graph_port));
 	}
 
 	_ports_array = new Raul::Array<PortImpl*>(old_n_ports + 1, NULL);
-	_update      = _patch_port->properties();
+	_update      = _graph_port->properties();
 
-	assert(_patch_port->index() == (uint32_t)index_i->second.get_int32());
-	assert(_patch->num_ports_non_rt() == (uint32_t)old_n_ports + 1);
-	assert(_patch_port->index() == (uint32_t)old_n_ports);
-	assert(_ports_array->size() == _patch->num_ports_non_rt());
-	assert(_patch_port->index() < _ports_array->size());
+	assert(_graph_port->index() == (uint32_t)index_i->second.get_int32());
+	assert(_graph->num_ports_non_rt() == (uint32_t)old_n_ports + 1);
+	assert(_graph_port->index() == (uint32_t)old_n_ports);
+	assert(_ports_array->size() == _graph->num_ports_non_rt());
+	assert(_graph_port->index() < _ports_array->size());
 	return Event::pre_process_done(SUCCESS);
 }
 
@@ -165,15 +165,15 @@ void
 CreatePort::execute(ProcessContext& context)
 {
 	if (!_status) {
-		_old_ports_array = _patch->external_ports();
+		_old_ports_array = _graph->external_ports();
 		if (_old_ports_array) {
 			for (uint32_t i = 0; i < _old_ports_array->size(); ++i) {
 				(*_ports_array)[i] = (*_old_ports_array)[i];
 			}
 		}
-		assert(!(*_ports_array)[_patch_port->index()]);
-		(*_ports_array)[_patch_port->index()] = _patch_port;
-		_patch->external_ports(_ports_array);
+		assert(!(*_ports_array)[_graph_port->index()]);
+		(*_ports_array)[_graph_port->index()] = _graph_port;
+		_graph->external_ports(_ports_array);
 
 		if (_engine_port) {
 			_engine.driver()->add_port(context, _engine_port);

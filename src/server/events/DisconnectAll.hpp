@@ -28,8 +28,8 @@ namespace Ingen {
 namespace Server {
 
 class BlockImpl;
-class CompiledPatch;
-class PatchImpl;
+class CompiledGraph;
+class GraphImpl;
 class PortImpl;
 
 namespace Events {
@@ -51,7 +51,7 @@ public:
 	              const Raul::Path&    object);
 
 	DisconnectAll(Engine&      engine,
-	              PatchImpl*   parent,
+	              GraphImpl*   parent,
 	              GraphObject* object);
 
 	~DisconnectAll();
@@ -65,11 +65,11 @@ private:
 
 	Raul::Path     _parent_path;
 	Raul::Path     _path;
-	PatchImpl*     _parent;
+	GraphImpl*     _parent;
 	BlockImpl*     _block;
 	PortImpl*      _port;
 	Impls          _impls;
-	CompiledPatch* _compiled_patch;
+	CompiledGraph* _compiled_graph;
 	bool           _deleting;
 };
 

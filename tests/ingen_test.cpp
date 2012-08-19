@@ -31,7 +31,6 @@
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
-#include "raul/log.hpp"
 
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
@@ -67,7 +66,7 @@ class TestClient : public AtomSink {
 class TestClient : public Interface
 {
 public:
-	TestClient() {}
+	TestClient(Log& log) : _log(log) {}
 	~TestClient() {}
 
 	Raul::URI uri() const { return Raul::URI("ingen:testClient"); }
@@ -108,16 +107,19 @@ public:
 
 	void response(int32_t id, Status status, const std::string& subject) {
 		if (status) {
-			Raul::error(Raul::fmt("error on message %1%: %2% (%3%)\n")
-			            % id % ingen_status_string(status) % subject);
+			_log.error(Raul::fmt("error on message %1%: %2% (%3%)\n")
+			           % id % ingen_status_string(status) % subject);
 			exit(EXIT_FAILURE);
 		}
 	}
 
 	void error(const std::string& msg) {
-		Raul::error(Raul::fmt("error: %1%\n") % msg);
+		_log.error(Raul::fmt("error: %1%\n") % msg);
 		exit(EXIT_FAILURE);
 	}
+
+private:
+	Log& _log;
 };
 
 
@@ -144,7 +146,7 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = new World(argc, argv, NULL, NULL);
+		world = new World(argc, argv, NULL, NULL, NULL);
 	} catch (std::exception& e) {
 		cout << "ingen: " << e.what() << endl;
 		return EXIT_FAILURE;
@@ -186,8 +188,11 @@ main(int argc, char** argv)
 	const std::string cmds_file_path = argv[2];
 
 	// AtomReader to read commands from a file and send them to engine
-	AtomReader atom_reader(
-		world->uri_map(), world->uris(), world->forge(), *world->interface().get());
+	AtomReader atom_reader(world->uri_map(),
+	                       world->uris(),
+	                       world->log(),
+	                       world->forge(),
+	                       *world->interface().get());
 
 	// AtomWriter to serialise responses from the engine
 	/*
@@ -195,7 +200,7 @@ main(int argc, char** argv)
 	SharedPtr<AtomWriter> atom_writer(
 		new AtomWriter(world->uri_map(), world->uris(), client));
 	*/
-	SharedPtr<Interface> client(new TestClient());
+	SharedPtr<Interface> client(new TestClient(world->log()));
 
 	world->interface()->set_respondee(client);
 	world->engine()->register_client(Raul::URI("ingen:testClient"),

@@ -41,7 +41,7 @@ public:
 
 	void init(App&                               app,
 	          SharedPtr<const Client::PortModel> port,
-	          bool                               is_patch_port = false);
+	          bool                               is_graph_port = false);
 
 private:
 	void on_menu_disconnect();
@@ -56,7 +56,7 @@ private:
 	Gtk::MenuItem* _reset_range_menuitem;
 	Gtk::MenuItem* _expose_menuitem;
 
-	bool _is_patch_port;
+	bool _is_graph_port;
 };
 
 } // namespace GUI

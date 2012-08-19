@@ -27,9 +27,9 @@
 #include "DuplexPort.hpp"
 #include "EdgeImpl.hpp"
 #include "Engine.hpp"
+#include "GraphImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "PatchImpl.hpp"
 #include "PortImpl.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
@@ -48,21 +48,21 @@ Disconnect::Disconnect(Engine&              engine,
 	: Event(engine, client, id, timestamp)
 	, _tail_path(tail_path)
 	, _head_path(head_path)
-	, _patch(NULL)
+	, _graph(NULL)
 	, _impl(NULL)
-	, _compiled_patch(NULL)
+	, _compiled_graph(NULL)
 {
 }
 
 Disconnect::Impl::Impl(Engine&     e,
-                       PatchImpl*  patch,
+                       GraphImpl*  graph,
                        OutputPort* s,
                        InputPort*  d)
 	: _engine(e)
 	, _src_output_port(s)
 	, _dst_input_port(d)
-	, _patch(patch)
-	, _edge(patch->remove_edge(_src_output_port, _dst_input_port))
+	, _graph(graph)
+	, _edge(graph->remove_edge(_src_output_port, _dst_input_port))
 	, _buffers(NULL)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
@@ -133,25 +133,25 @@ Disconnect::pre_process()
 	BlockImpl* const src_block = tail->parent_block();
 	BlockImpl* const dst_block = head->parent_block();
 
-	if (src_block->parent_patch() != dst_block->parent_patch()) {
-		// Edge to a patch port from inside the patch
+	if (src_block->parent_graph() != dst_block->parent_graph()) {
+		// Edge to a graph port from inside the graph
 		assert(src_block->parent() == dst_block || dst_block->parent() == src_block);
 		if (src_block->parent() == dst_block) {
-			_patch = dynamic_cast<PatchImpl*>(dst_block);
+			_graph = dynamic_cast<GraphImpl*>(dst_block);
 		} else {
-			_patch = dynamic_cast<PatchImpl*>(src_block);
+			_graph = dynamic_cast<GraphImpl*>(src_block);
 		}
-	} else if (src_block == dst_block && dynamic_cast<PatchImpl*>(src_block)) {
-		// Edge from a patch input to a patch output (pass through)
-		_patch = dynamic_cast<PatchImpl*>(src_block);
+	} else if (src_block == dst_block && dynamic_cast<GraphImpl*>(src_block)) {
+		// Edge from a graph input to a graph output (pass through)
+		_graph = dynamic_cast<GraphImpl*>(src_block);
 	} else {
 		// Normal edge between blocks with the same parent
-		_patch = src_block->parent_patch();
+		_graph = src_block->parent_graph();
 	}
 
-	assert(_patch);
+	assert(_graph);
 
-	if (!_patch->has_edge(tail, head)) {
+	if (!_graph->has_edge(tail, head)) {
 		return Event::pre_process_done(NOT_FOUND, _head_path);
 	}
 
@@ -160,12 +160,12 @@ Disconnect::pre_process()
 	}
 
 	_impl = new Impl(_engine,
-	                 _patch,
+	                 _graph,
 	                 dynamic_cast<OutputPort*>(tail),
 	                 dynamic_cast<InputPort*>(head));
 
-	if (_patch->enabled())
-		_compiled_patch = _patch->compile();
+	if (_graph->enabled())
+		_compiled_graph = _graph->compile();
 
 	return Event::pre_process_done(SUCCESS);
 }
@@ -207,8 +207,8 @@ Disconnect::execute(ProcessContext& context)
 			return;
 		}
 
-		_engine.maid()->dispose(_patch->compiled_patch());
-		_patch->compiled_patch(_compiled_patch);
+		_engine.maid()->dispose(_graph->compiled_graph());
+		_graph->compiled_graph(_compiled_graph);
 	}
 }
 

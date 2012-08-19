@@ -14,8 +14,8 @@ def build(bld):
     obj.source = '''
         BlockModel.cpp
         ClientStore.cpp
+        GraphModel.cpp
         ObjectModel.cpp
-        PatchModel.cpp
         PluginModel.cpp
         PluginUI.cpp
         PortModel.cpp

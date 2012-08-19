@@ -16,14 +16,14 @@
 
 #include <string>
 
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
-#include "LoadPatchWindow.hpp"
+#include "LoadGraphWindow.hpp"
 #include "LoadPluginWindow.hpp"
-#include "NewSubpatchWindow.hpp"
-#include "PatchView.hpp"
-#include "PatchWindow.hpp"
+#include "NewSubgraphWindow.hpp"
+#include "GraphView.hpp"
+#include "GraphWindow.hpp"
 #include "PropertiesWindow.hpp"
 #include "RenameWindow.hpp"
 #include "WidgetFactory.hpp"
@@ -41,58 +41,58 @@ WindowFactory::WindowFactory(App& app)
 	: _app(app)
 	, _main_box(NULL)
 	, _load_plugin_win(NULL)
-	, _load_patch_win(NULL)
-	, _new_subpatch_win(NULL)
+	, _load_graph_win(NULL)
+	, _new_subgraph_win(NULL)
 	, _properties_win(NULL)
 {
 	WidgetFactory::get_widget_derived("load_plugin_win", _load_plugin_win);
-	WidgetFactory::get_widget_derived("load_patch_win", _load_patch_win);
-	WidgetFactory::get_widget_derived("new_subpatch_win", _new_subpatch_win);
+	WidgetFactory::get_widget_derived("load_graph_win", _load_graph_win);
+	WidgetFactory::get_widget_derived("new_subgraph_win", _new_subgraph_win);
 	WidgetFactory::get_widget_derived("properties_win", _properties_win);
 	WidgetFactory::get_widget_derived("rename_win", _rename_win);
 
 	_load_plugin_win->init_window(app);
-	_load_patch_win->init(app);
-	_new_subpatch_win->init_window(app);
+	_load_graph_win->init(app);
+	_new_subgraph_win->init_window(app);
 	_properties_win->init_window(app);
 	_rename_win->init_window(app);
 }
 
 WindowFactory::~WindowFactory()
 {
-	for (PatchWindowMap::iterator i = _patch_windows.begin();
-	     i != _patch_windows.end(); ++i)
+	for (GraphWindowMap::iterator i = _graph_windows.begin();
+	     i != _graph_windows.end(); ++i)
 		delete i->second;
 }
 
 void
 WindowFactory::clear()
 {
-	for (PatchWindowMap::iterator i = _patch_windows.begin();
-	     i != _patch_windows.end(); ++i)
+	for (GraphWindowMap::iterator i = _graph_windows.begin();
+	     i != _graph_windows.end(); ++i)
 		delete i->second;
 
-	_patch_windows.clear();
+	_graph_windows.clear();
 }
 
-/** Returns the number of Patch windows currently visible.
+/** Returns the number of Graph windows currently visible.
  */
 size_t
-WindowFactory::num_open_patch_windows()
+WindowFactory::num_open_graph_windows()
 {
 	size_t ret = 0;
-	for (PatchWindowMap::iterator i = _patch_windows.begin();
-	     i != _patch_windows.end(); ++i)
+	for (GraphWindowMap::iterator i = _graph_windows.begin();
+	     i != _graph_windows.end(); ++i)
 		if (i->second->is_visible())
 			++ret;
 
 	return ret;
 }
 
-PatchBox*
-WindowFactory::patch_box(SharedPtr<const PatchModel> patch)
+GraphBox*
+WindowFactory::graph_box(SharedPtr<const GraphModel> graph)
 {
-	PatchWindow* window = patch_window(patch);
+	GraphWindow* window = graph_window(graph);
 	if (window) {
 		return window->box();
 	} else {
@@ -100,87 +100,87 @@ WindowFactory::patch_box(SharedPtr<const PatchModel> patch)
 	}
 }
 
-PatchWindow*
-WindowFactory::patch_window(SharedPtr<const PatchModel> patch)
+GraphWindow*
+WindowFactory::graph_window(SharedPtr<const GraphModel> graph)
 {
-	if (!patch)
+	if (!graph)
 		return NULL;
 
-	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
+	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
-	return (w == _patch_windows.end()) ? NULL : w->second;
+	return (w == _graph_windows.end()) ? NULL : w->second;
 }
 
-PatchWindow*
-WindowFactory::parent_patch_window(SharedPtr<const BlockModel> block)
+GraphWindow*
+WindowFactory::parent_graph_window(SharedPtr<const BlockModel> block)
 {
 	if (!block)
 		return NULL;
 
-	return patch_window(PtrCast<PatchModel>(block->parent()));
+	return graph_window(PtrCast<GraphModel>(block->parent()));
 }
 
-/** Present a PatchWindow for a Patch.
+/** Present a GraphWindow for a Graph.
  *
- * If @a preferred is not NULL, it will be set to display @a patch if the patch
+ * If @a preferred is not NULL, it will be set to display @a graph if the graph
  * does not already have a visible window, otherwise that window will be
  * presented and @a preferred left unmodified.
  */
 void
-WindowFactory::present_patch(SharedPtr<const PatchModel> patch,
-                             PatchWindow*                preferred,
-                             SharedPtr<PatchView>        view)
+WindowFactory::present_graph(SharedPtr<const GraphModel> graph,
+                             GraphWindow*                preferred,
+                             SharedPtr<GraphView>        view)
 {
-	assert(!view || view->patch() == patch);
+	assert(!view || view->graph() == graph);
 
-	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
+	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
-	if (w != _patch_windows.end()) {
+	if (w != _graph_windows.end()) {
 		(*w).second->present();
 	} else if (preferred) {
-		w = _patch_windows.find(preferred->patch()->path());
+		w = _graph_windows.find(preferred->graph()->path());
 		assert((*w).second == preferred);
 
-		preferred->box()->set_patch(patch, view);
-		_patch_windows.erase(w);
-		_patch_windows[patch->path()] = preferred;
+		preferred->box()->set_graph(graph, view);
+		_graph_windows.erase(w);
+		_graph_windows[graph->path()] = preferred;
 		preferred->present();
 
 	} else {
-		PatchWindow* win = new_patch_window(patch, view);
+		GraphWindow* win = new_graph_window(graph, view);
 		win->present();
 	}
 }
 
-PatchWindow*
-WindowFactory::new_patch_window(SharedPtr<const PatchModel> patch,
-                                SharedPtr<PatchView>        view)
+GraphWindow*
+WindowFactory::new_graph_window(SharedPtr<const GraphModel> graph,
+                                SharedPtr<GraphView>        view)
 {
-	assert(!view || view->patch() == patch);
+	assert(!view || view->graph() == graph);
 
-	PatchWindow* win = NULL;
-	WidgetFactory::get_widget_derived("patch_win", win);
+	GraphWindow* win = NULL;
+	WidgetFactory::get_widget_derived("graph_win", win);
 	win->init_window(_app);
 
-	win->box()->set_patch(patch, view);
-	_patch_windows[patch->path()] = win;
+	win->box()->set_graph(graph, view);
+	_graph_windows[graph->path()] = win;
 
 	win->signal_delete_event().connect(sigc::bind<0>(
-		sigc::mem_fun(this, &WindowFactory::remove_patch_window), win));
+		sigc::mem_fun(this, &WindowFactory::remove_graph_window), win));
 
 	return win;
 }
 
 bool
-WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
+WindowFactory::remove_graph_window(GraphWindow* win, GdkEventAny* ignored)
 {
-	if (_patch_windows.size() <= 1)
+	if (_graph_windows.size() <= 1)
 		return !_app.quit(win);
 
-	PatchWindowMap::iterator w = _patch_windows.find(win->patch()->path());
+	GraphWindowMap::iterator w = _graph_windows.find(win->graph()->path());
 
 	assert((*w).second == win);
-	_patch_windows.erase(w);
+	_graph_windows.erase(w);
 
 	delete win;
 
@@ -188,12 +188,12 @@ WindowFactory::remove_patch_window(PatchWindow* win, GdkEventAny* ignored)
 }
 
 void
-WindowFactory::present_load_plugin(SharedPtr<const PatchModel> patch,
+WindowFactory::present_load_plugin(SharedPtr<const GraphModel> graph,
                                    GraphObject::Properties     data)
 {
-	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
+	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
-	if (w != _patch_windows.end())
+	if (w != _graph_windows.end())
 		_load_plugin_win->set_transient_for(*w->second);
 
 	_load_plugin_win->set_modal(false);
@@ -204,54 +204,54 @@ WindowFactory::present_load_plugin(SharedPtr<const PatchModel> patch,
 		_load_plugin_win->set_default_size(width - width / 8, height / 2);
 	}
 	_load_plugin_win->set_title(
-		string("Load Plugin - ") + patch->path() + " - Ingen");
-	_load_plugin_win->present(patch, data);
+		string("Load Plugin - ") + graph->path() + " - Ingen");
+	_load_plugin_win->present(graph, data);
 }
 
 void
-WindowFactory::present_load_patch(SharedPtr<const PatchModel> patch,
+WindowFactory::present_load_graph(SharedPtr<const GraphModel> graph,
                                   GraphObject::Properties     data)
 {
-	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
+	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
-	if (w != _patch_windows.end())
-		_load_patch_win->set_transient_for(*w->second);
+	if (w != _graph_windows.end())
+		_load_graph_win->set_transient_for(*w->second);
 
-	_load_patch_win->present(patch, true, data);
+	_load_graph_win->present(graph, true, data);
 }
 
 void
-WindowFactory::present_load_subpatch(SharedPtr<const PatchModel> patch,
+WindowFactory::present_load_subgraph(SharedPtr<const GraphModel> graph,
                                      GraphObject::Properties     data)
 {
-	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
+	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
-	if (w != _patch_windows.end())
-		_load_patch_win->set_transient_for(*w->second);
+	if (w != _graph_windows.end())
+		_load_graph_win->set_transient_for(*w->second);
 
-	_load_patch_win->present(patch, false, data);
+	_load_graph_win->present(graph, false, data);
 }
 
 void
-WindowFactory::present_new_subpatch(SharedPtr<const PatchModel> patch,
+WindowFactory::present_new_subgraph(SharedPtr<const GraphModel> graph,
                                     GraphObject::Properties     data)
 {
-	PatchWindowMap::iterator w = _patch_windows.find(patch->path());
+	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
-	if (w != _patch_windows.end())
-		_new_subpatch_win->set_transient_for(*w->second);
+	if (w != _graph_windows.end())
+		_new_subgraph_win->set_transient_for(*w->second);
 
-	_new_subpatch_win->present(patch, data);
+	_new_subgraph_win->present(graph, data);
 }
 
 void
 WindowFactory::present_rename(SharedPtr<const ObjectModel> object)
 {
-	PatchWindowMap::iterator w = _patch_windows.find(object->path());
-	if (w == _patch_windows.end())
-		w = _patch_windows.find(object->path().parent());
+	GraphWindowMap::iterator w = _graph_windows.find(object->path());
+	if (w == _graph_windows.end())
+		w = _graph_windows.find(object->path().parent());
 
-	if (w != _patch_windows.end())
+	if (w != _graph_windows.end())
 		_rename_win->set_transient_for(*w->second);
 
 	_rename_win->present(object);
@@ -260,13 +260,13 @@ WindowFactory::present_rename(SharedPtr<const ObjectModel> object)
 void
 WindowFactory::present_properties(SharedPtr<const ObjectModel> object)
 {
-	PatchWindowMap::iterator w = _patch_windows.find(object->path());
-	if (w == _patch_windows.end())
-		w = _patch_windows.find(object->path().parent());
-	if (w == _patch_windows.end())
-		w = _patch_windows.find(object->path().parent().parent());
+	GraphWindowMap::iterator w = _graph_windows.find(object->path());
+	if (w == _graph_windows.end())
+		w = _graph_windows.find(object->path().parent());
+	if (w == _graph_windows.end())
+		w = _graph_windows.find(object->path().parent().parent());
 
-	if (w != _patch_windows.end())
+	if (w != _graph_windows.end())
 		_properties_win->set_transient_for(*w->second);
 
 	_properties_win->present(object);

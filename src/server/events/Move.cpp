@@ -24,7 +24,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "EnginePort.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "events/Move.hpp"
 
 namespace Ingen {

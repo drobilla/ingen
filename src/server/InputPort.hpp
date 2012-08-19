@@ -36,7 +36,7 @@ class BlockImpl;
 class OutputPort;
 class ProcessContext;
 
-/** An input port on a Block or Patch.
+/** An input port on a Block or Graph.
  *
  * All ports have a Buffer, but the actual contents (data) of that buffer may be
  * set directly to the incoming edge's buffer if there's only one inbound

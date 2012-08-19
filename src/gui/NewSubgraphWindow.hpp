@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_NEWSUBPATCHWINDOW_HPP
-#define INGEN_GUI_NEWSUBPATCHWINDOW_HPP
+#ifndef INGEN_GUI_NEWSUBGRAPHWINDOW_HPP
+#define INGEN_GUI_NEWSUBGRAPHWINDOW_HPP
 
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
@@ -31,25 +31,25 @@
 
 namespace Ingen {
 
-namespace Client { class PatchModel; }
+namespace Client { class GraphModel; }
 
 namespace GUI {
 
-/** 'New Subpatch' window.
+/** 'New Subgraph' window.
  *
  * Loaded from XML as a derived object.
  *
  * \ingroup GUI
  */
-class NewSubpatchWindow : public Window
+class NewSubgraphWindow : public Window
 {
 public:
-	NewSubpatchWindow(BaseObjectType*                   cobject,
+	NewSubgraphWindow(BaseObjectType*                   cobject,
 	                  const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_patch(SharedPtr<const Client::PatchModel> patch);
+	void set_graph(SharedPtr<const Client::GraphModel> graph);
 
-	void present(SharedPtr<const Client::PatchModel> patch,
+	void present(SharedPtr<const Client::GraphModel> graph,
 	             GraphObject::Properties             data);
 
 private:
@@ -58,7 +58,7 @@ private:
 	void cancel_clicked();
 
 	GraphObject::Properties             _initial_data;
-	SharedPtr<const Client::PatchModel> _patch;
+	SharedPtr<const Client::GraphModel> _graph;
 
 	Gtk::Entry*      _name_entry;
 	Gtk::Label*      _message_label;
@@ -70,4 +70,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_NEWSUBPATCHWINDOW_HPP
+#endif // INGEN_GUI_NEWSUBGRAPHWINDOW_HPP

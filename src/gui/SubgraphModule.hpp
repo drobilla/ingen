@@ -14,51 +14,51 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_SUBPATCHMODULE_HPP
-#define INGEN_GUI_SUBPATCHMODULE_HPP
+#ifndef INGEN_GUI_SUBGRAPHMODULE_HPP
+#define INGEN_GUI_SUBGRAPHMODULE_HPP
 
 #include "raul/SharedPtr.hpp"
 
 #include "NodeModule.hpp"
-#include "PatchPortModule.hpp"
+#include "GraphPortModule.hpp"
 
 namespace Ingen { namespace Client {
-	class PatchModel;
-	class PatchWindow;
+	class GraphModel;
+	class GraphWindow;
 	class PortModel;
 } }
 
 namespace Ingen {
 namespace GUI {
 
-class PatchCanvas;
+class GraphCanvas;
 
-/** A module to represent a subpatch
+/** A module to represent a subgraph
  *
  * \ingroup GUI
  */
-class SubpatchModule : public NodeModule
+class SubgraphModule : public NodeModule
 {
 public:
-	SubpatchModule(PatchCanvas&                        canvas,
-	               SharedPtr<const Client::PatchModel> controller);
+	SubgraphModule(GraphCanvas&                        canvas,
+	               SharedPtr<const Client::GraphModel> controller);
 
-	virtual ~SubpatchModule() {}
+	virtual ~SubgraphModule() {}
 
 	bool on_double_click(GdkEventButton* ev);
 
 	void store_location(double x, double y);
 
-	void browse_to_patch();
+	void browse_to_graph();
 	void menu_remove();
 
-	SharedPtr<const Client::PatchModel> patch() const { return _patch; }
+	SharedPtr<const Client::GraphModel> graph() const { return _graph; }
 
 protected:
-	SharedPtr<const Client::PatchModel> _patch;
+	SharedPtr<const Client::GraphModel> _graph;
 };
 
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_SUBPATCHMODULE_HPP
+#endif // INGEN_GUI_SUBGRAPHMODULE_HPP

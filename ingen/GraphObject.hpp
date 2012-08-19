@@ -33,7 +33,7 @@ class Edge;
 class Plugin;
 class Store;
 
-/** An object on the audio graph - Patch, Block, Port, etc.
+/** An object on the audio graph - Graph, Block, Port, etc.
  *
  * @ingroup Ingen
  */
@@ -41,7 +41,7 @@ class GraphObject : public Resource
 {
 public:
 	enum GraphType {
-		PATCH,
+		GRAPH,
 		BLOCK,
 		PORT
 	};
@@ -49,11 +49,11 @@ public:
 	typedef std::pair<const GraphObject*, const GraphObject*> EdgesKey;
 	typedef std::map< EdgesKey, SharedPtr<Edge> > Edges;
 
-	// Patches only
+	// Graphs only
 	Edges&       edges()       { return _edges; }
 	const Edges& edges() const { return _edges; }
 
-	// Blocks and patches only
+	// Blocks and graphs only
 	virtual uint32_t      num_ports()          const { return 0; }
 	virtual GraphObject*  port(uint32_t index) const { return NULL; }
 	virtual const Plugin* plugin()             const { return NULL; }
@@ -88,7 +88,7 @@ protected:
 		: Resource(uris, path_to_uri(path))
 	{}
 
-	Edges _edges;  ///< Patches only
+	Edges _edges;  ///< Graphs only
 };
 
 } // namespace Ingen

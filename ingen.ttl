@@ -30,7 +30,6 @@ by generic plugins.  Patching of audio, MIDI, and control data is supported.
 The engine and UI are completely separated in a network transparent way, making
 it possible to run one or more GUIs on separate machines from the engine.
 
-Ingen is closely based on LV2 plugin technology; Ingen patches are RDF
-documents in Turtle in a very similar format to the RDF definition of an
-LV2 plugin.
+Ingen is closely based on LV2 plugin technology; Ingen graphs are RDF documents
+in Turtle in a very similar format to the RDF definition of an LV2 plugin.
 """ .

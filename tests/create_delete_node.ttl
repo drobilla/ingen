@@ -6,7 +6,7 @@
 	a patch:Put ;
 	patch:subject <ingen:root/node> ;
 	patch:body [
-		a ingen:Node ;
+		a ingen:Block ;
 		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
 	] .
 

@@ -44,7 +44,7 @@ public:
 	BlockImpl* instantiate(BufferFactory&      bufs,
 	                       const Raul::Symbol& symbol,
 	                       bool                polyphonic,
-	                       PatchImpl*          parent,
+	                       GraphImpl*          parent,
 	                       Engine&             engine);
 
 	const Raul::Symbol symbol() const { return _symbol; }

@@ -49,8 +49,8 @@ public:
 
 	void apply_settings();
 
-	const std::string& patch_folder()                         { return _patch_folder; }
-	void               set_patch_folder(const std::string& f) { _patch_folder = f; }
+	const std::string& graph_folder()                         { return _graph_folder; }
+	void               set_graph_folder(const std::string& f) { _graph_folder = f; }
 
 	uint32_t get_port_color(const Client::PortModel* p);
 
@@ -62,8 +62,8 @@ public:
 private:
 	App& _app;
 
-	/** Most recent patch folder shown in open dialog */
-	std::string _patch_folder;
+	/** Most recent graph folder shown in open dialog */
+	std::string _graph_folder;
 
 	NameStyle _name_style;
 

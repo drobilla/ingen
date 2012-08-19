@@ -29,7 +29,7 @@
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
@@ -41,10 +41,10 @@
 #include "LoadPluginWindow.hpp"
 #include "MessagesWindow.hpp"
 #include "NodeModule.hpp"
-#include "PatchTreeWindow.hpp"
-#include "PatchWindow.hpp"
+#include "GraphTreeWindow.hpp"
+#include "GraphWindow.hpp"
 #include "Port.hpp"
-#include "SubpatchModule.hpp"
+#include "SubgraphModule.hpp"
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
@@ -78,11 +78,11 @@ App::App(Ingen::World* world)
 
 	WidgetFactory::get_widget_derived("connect_win", _connect_window);
 	WidgetFactory::get_widget_derived("messages_win", _messages_window);
-	WidgetFactory::get_widget_derived("patch_tree_win", _patch_tree_window);
+	WidgetFactory::get_widget_derived("graph_tree_win", _graph_tree_window);
 	WidgetFactory::get_widget("about_win", _about_dialog);
 	_connect_window->init_dialog(*this);
 	_messages_window->init_window(*this);
-	_patch_tree_window->init_window(*this);
+	_graph_tree_window->init_window(*this);
 	_about_dialog->property_program_name() = "Ingen";
 	_about_dialog->property_logo_icon_name() = "ingen";
 
@@ -140,7 +140,7 @@ App::run()
 
 	// Run main iterations here until we're attached to the engine. Otherwise
 	// with 'ingen -egl' we'd get a bunch of notifications about load
-	// immediately before even knowing about the root patch or plugins)
+	// immediately before even knowing about the root graph or plugins)
 	while (!_connect_window->attached())
 		if (_main->iteration())
 			break;
@@ -163,7 +163,7 @@ App::attach(SharedPtr<SigClientInterface> client)
 	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->log(), _world->interface(), client));
 	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->interface()));
 
-	_patch_tree_window->init(*this, *_store);
+	_graph_tree_window->init(*this, *_store);
 
 	_client->signal_response().connect(
 		sigc::mem_fun(this, &App::response));

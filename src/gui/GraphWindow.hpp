@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_PATCH_WINDOW_HPP
-#define INGEN_GUI_PATCH_WINDOW_HPP
+#ifndef INGEN_GUI_GRAPH_WINDOW_HPP
+#define INGEN_GUI_GRAPH_WINDOW_HPP
 
 #include <string>
 
@@ -23,33 +23,33 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "PatchBox.hpp"
+#include "GraphBox.hpp"
 #include "Window.hpp"
 
 namespace Ingen {
 
 namespace Client {
-	class PatchModel;
+	class GraphModel;
 }
 
 namespace GUI {
 
-/** A window for a patch.
+/** A window for a graph.
  *
  * \ingroup GUI
  */
-class PatchWindow : public Window
+class GraphWindow : public Window
 {
 public:
-	PatchWindow(BaseObjectType*                   cobject,
+	GraphWindow(BaseObjectType*                   cobject,
 	            const Glib::RefPtr<Gtk::Builder>& xml);
 
-	~PatchWindow();
+	~GraphWindow();
 
 	void init_window(App& app);
 
-	SharedPtr<const Client::PatchModel> patch() const { return _box->patch(); }
-	PatchBox*                           box()   const { return _box; }
+	SharedPtr<const Client::GraphModel> graph() const { return _box->graph(); }
+	GraphBox*                           box()   const { return _box; }
 
 	void show_documentation(const std::string& doc, bool html) {
 		_box->show_documentation(doc, html);
@@ -69,7 +69,7 @@ protected:
 	void on_show();
 
 private:
-	PatchBox* _box;
+	GraphBox* _box;
 	bool      _position_stored;
 	int       _x;
 	int       _y;
@@ -78,4 +78,4 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_PATCH_WINDOW_HPP
+#endif // INGEN_GUI_GRAPH_WINDOW_HPP

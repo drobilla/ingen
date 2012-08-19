@@ -52,7 +52,7 @@ public:
 	virtual void to_file(SharedPtr<const GraphObject> object,
 	                     const std::string&           filename);
 
-	virtual void write_bundle(SharedPtr<const GraphObject> patch,
+	virtual void write_bundle(SharedPtr<const GraphObject> graph,
 	                          const std::string&           path);
 
 	virtual std::string to_string(SharedPtr<const GraphObject> object,

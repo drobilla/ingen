@@ -13,14 +13,14 @@ ingen:
 	owl:imports <http://lv2plug.in/ns/lv2core> ;
 	rdfs:label "Ingen Ontology" ;
 	rdfs:comment """
-Describes "patches" of connected "nodes" (instances of plugins) which process
+Describes "graphs" of connected "blocks" (plugin instances) which process
 audio, MIDI, and other signals or messages.""" .
 
 ingen:Plugin
 	a owl:Class ;
 	rdfs:label "Plugin" ;
 	rdfs:comment """
-A class which can be instantiated into a ingen:Node.  A plugin has a set of input
+A class which can be instantiated into a ingen:Block.  A plugin has a set of input
 and output "ports".  In practice this class is semantically equivalent to
 lv2:Plugin, it only exists to allow the ingen ontology to be useful for
 "plugins" that aren't semantically LV2 plugins.  See the LV2 specification
@@ -28,13 +28,13 @@ for details about the required properties (rdf:type, doap:name, doap:license,
 and lv2:port).
 """ .
 
-ingen:Patch
+ingen:Graph
 	a owl:Class ;
 	rdfs:subClassOf ingen:Plugin ;
-	rdfs:label "Patch" ;
+	rdfs:label "Graph" ;
 	rdfs:comment """
-A collection of Nodes connected together form a Patch, which is itself
-a :Plugin (and thus can be part of another patch, and so on)
+A collection of Blocks connected together form a Graph, which can itself be a
+Block within a parent Graph, and so on.
 """ .
 
 ingen:canvasX
@@ -49,25 +49,25 @@ ingen:canvasY
 	rdfs:label "canvas Y" ;
 	rdfs:comment "The Y coordinate of an item on a canvas." .
 
-ingen:node
+ingen:block
 	a owl:ObjectProperty ;
-	rdfs:domain ingen:Patch ;
-	rdfs:range ingen:Node ;
-	rdfs:label "node" ;
-	rdfs:comment "Signifies a patch contains some node." .
+	rdfs:domain ingen:Graph ;
+	rdfs:range ingen:Block ;
+	rdfs:label "block" ;
+	rdfs:comment "Signifies a graph contains some block." .
 
 ingen:polyphony
 	a owl:DatatypeProperty ;
-	rdfs:domain ingen:Patch ;
+	rdfs:domain ingen:Graph ;
 	rdfs:range xsd:integer ;
 	rdfs:label "Polyphony" ;
 	rdfs:comment """
-The amount of polyphony in a Patch.  This defines the number of voices
-present on all :polyphonic children of this patch.  Because a Patch is
-also a Node, a Patch may have both :polyphony and :polyphonic properties.
+The amount of polyphony in a Graph.  This defines the number of voices
+present on all :polyphonic children of this graph.  Because a Graph is
+also a Block, a Graph may have both :polyphony and :polyphonic properties.
 These specify different things: :polyphony specifies the voice count
-of the Patch's children, and :polyphonic specifies whether the patch is
-seen as polyphonic to the Patch's parent.
+of the Graph's children, and :polyphonic specifies whether the graph is
+seen as polyphonic to the Graph's parent.
 """ .
 
 ingen:value
@@ -80,9 +80,9 @@ ingen:Object
 	a owl:Class ;
 	rdfs:label "Ingen Object" ;
 	rdfs:comment """
-A signal processing object which is part of a Patch.  An Object MUST have
+A signal processing object which is part of a Graph.  An Object MUST have
 exactly one lv2:symbol property.  This MAY be inferred from the URI where
-possible (e.g. in a system which publishes node URIs in a heirarchial way
+possible (e.g. in a system which publishes block URIs in a heirarchial way
 such that the parent can be 'chopped' to get a legal symbol).
 """ .
 
@@ -93,61 +93,61 @@ ingen:polyphonic
 	rdfs:label "Polyphonic" ;
 	rdfs:comment """
 Signifies this object should be replicated when it is part of a polyphonic
-patch.  The amount of polyphony (i.e. the number of voices) is determined
-by the :polyphony property of the containing patch.  This is a boolean
+graph.  The amount of polyphony (i.e. the number of voices) is determined
+by the :polyphony property of the containing graph.  This is a boolean
 property which defines whether the parent can access each voice individuall:
-All objects within a patch are either polyphonic or not from their parent's
+All objects within a graph are either polyphonic or not from their parent's
 perspective.  An Object may itself have "internal" polyphony but not be
 polyphonic according to this property, if those voices are mixed down.
 """ .
 
-ingen:Node
+ingen:Block
 	a owl:Class ;
 	rdfs:subClassOf ingen:Object ,
 		lv2:PluginBase ;
-	rdfs:label "Node" ;
+	rdfs:label "Block" ;
 	rdfs:comment """
-An instance of a Plugin.  Since a Patch is a Plugin, an instance of a Patch
-is also a Node.  A Node inherits all the properties of the plugin of which
+An instance of a Plugin.  Since a Graph is a Plugin, an instance of a Graph
+is also a Block.  A Block inherits all the properties of the plugin of which
 it is an instance, but may have properties of its own: any properties of
-the node take precedence over properties of the node's plugin.  This way a
-node can be expressed as a lightweight set of changes (e.g. input values)
-from its plugin or patch which may be defined elsewhere.
+the block take precedence over properties of the block's plugin.  This way a
+block can be expressed as a lightweight set of changes (e.g. input values)
+from its plugin or graph which may be defined elsewhere.
 
-A node MUST have at least one ingen:prototype property which is a subclass
+A block MUST have at least one ingen:prototype property which is a subclass
 of :Plugin.  When there are many such properties, an applications SHOULD
 use the most specific class it understands.
 """ .
 
 ingen:enabled
 	a owl:DatatypeProperty ;
-	rdfs:domain ingen:Node ;
+	rdfs:domain ingen:Block ;
 	rdfs:range xsd:boolean ;
 	rdfs:label "enabled" ;
-	rdfs:comment "Signifies the node is or should be running." .
+	rdfs:comment "Signifies the block is or should be running." .
 
 ingen:prototype
 	a owl:ObjectProperty ;
-	rdfs:domain ingen:Node ;
+	rdfs:domain ingen:Block ;
 	rdfs:label "prototype" ;
 	rdfs:comment """
-The object which this node is an instance of, or derived from.
+The object which this block is an instance of, or derived from.
 """ .
 
 ingen:Edge
 	a owl:Class ;
 	rdfs:label "Edge" ;
 	rdfs:comment """
-A connection between two ports.  Patches have a set of edges which
-define how its component nodes and ports are connected.  An Edge MUST
+A connection between two ports.  Graphs have a set of edges which
+define how its component blocks and ports are connected.  An Edge MUST
 have exactly one ingen:tail and exactly one ingen:head property.
 """ .
 
 ingen:edge
 	a owl:ObjectProperty ;
-	rdfs:domain ingen:Patch ;
+	rdfs:domain ingen:Graph ;
 	rdfs:range ingen:Edge ;
-	rdfs:comment "An edge contained in this patch." .
+	rdfs:comment "An edge contained in this graph." .
 
 ingen:tail
 	a owl:ObjectProperty ,
@@ -170,4 +170,4 @@ ingen:incidentTo
 		owl:FunctionalProperty ;
 	rdfs:domain ingen:Edge ;
 	rdfs:label "incident to" ;
-	rdfs:comment "A special property used to describe any edge incident to a port or node.  This is never saved in patch files, but is used in the control protocol to completely disconnect a Node or Port." .
+	rdfs:comment "A special property used to describe any edge incident to a port or block.  This is never saved in graph files, but is used in the control protocol to completely disconnect a Block or Port." .

@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_EVENTS_CREATEPATCH_HPP
-#define INGEN_EVENTS_CREATEPATCH_HPP
+#ifndef INGEN_EVENTS_CREATEGRAPH_HPP
+#define INGEN_EVENTS_CREATEGRAPH_HPP
 
 #include "Event.hpp"
 #include "ingen/Resource.hpp"
@@ -23,19 +23,19 @@
 namespace Ingen {
 namespace Server {
 
-class PatchImpl;
-class CompiledPatch;
+class GraphImpl;
+class CompiledGraph;
 
 namespace Events {
 
-/** Creates a new Patch.
+/** Creates a new Graph.
  *
  * \ingroup engine
  */
-class CreatePatch : public Event
+class CreateGraph : public Event
 {
 public:
-	CreatePatch(Engine&                     engine,
+	CreateGraph(Engine&                     engine,
 	            SharedPtr<Interface>        client,
 	            int32_t                     id,
 	            SampleCount                 timestamp,
@@ -50,13 +50,13 @@ private:
 	const Raul::Path     _path;
 	Resource::Properties _properties;
 	Resource::Properties _update;
-	PatchImpl*           _patch;
-	PatchImpl*           _parent;
-	CompiledPatch*       _compiled_patch;
+	GraphImpl*           _graph;
+	GraphImpl*           _parent;
+	CompiledGraph*       _compiled_graph;
 };
 
 } // namespace Events
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_EVENTS_CREATEPATCH_HPP
+#endif // INGEN_EVENTS_CREATEGRAPH_HPP

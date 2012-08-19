@@ -24,7 +24,7 @@
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 

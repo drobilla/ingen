@@ -27,11 +27,11 @@ Configuration::Configuration()
 	"clients, can communicate with the engine via any supported protocol, or host the\n"
 	"engine in the same process.  Many clients can connect to an engine at once.\n\n"
 	"Examples:\n"
-	"  ingen -e                  # Run an engine, listen for connections\n"
-	"  ingen -g                  # Run a GUI, connect to running engine\n"
-	"  ingen -eg                 # Run an engine and a GUI in one process\n"
-	"  ingen -egl patch.ttl      # Run an engine and a GUI and load a patch file\n"
-	"  ingen -egl patch.ingen    # Run an engine and a GUI and load a patch bundle")
+	"  ingen -e              # Run an engine, listen for connections\n"
+	"  ingen -g              # Run a GUI, connect to running engine\n"
+	"  ingen -eg             # Run an engine and a GUI in one process\n"
+	"  ingen -egl foo.ttl    # Run an engine and a GUI and load a graph\n"
+	"  ingen -egl foo.ingen  # Run an engine and a GUI and load a graph")
 {
 	add("client-port", 'C', "Client port", INT, Value());
 	add("connect",     'c', "Connect to engine URI", STRING, Value("unix:///tmp/ingen.sock"));
@@ -43,9 +43,9 @@ Configuration::Configuration()
 	add("jack-client", 'n', "JACK client name", STRING, Value("ingen"));
 	add("jack-server", 's', "JACK server name", STRING, Value(""));
 	add("uuid",        'u', "JACK session UUID", STRING, Value());
-	add("load",        'l', "Load patch", STRING, Value());
+	add("load",        'l', "Load graph", STRING, Value());
 	add("packet-size", 'k', "Maximum UDP packet size", INT, Value(4096));
-	add("path",        'L', "Target path for loaded patch", STRING, Value());
+	add("path",        'L', "Target path for loaded graph", STRING, Value());
 	add("queue-size",  'q', "Event queue size", INT, Value(4096));
 	add("run",         'r', "Run script", STRING, Value());
 }

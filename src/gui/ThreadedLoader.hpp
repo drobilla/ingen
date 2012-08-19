@@ -33,11 +33,11 @@
 namespace Ingen {
 namespace GUI {
 
-/** Thread for loading patch files.
+/** Thread for loading graph files.
  *
  * This is a seperate thread so it can send all the loading message without
  * blocking everything else, so the app can respond to the incoming events
- * caused as a result of the patch loading, while the patch loads.
+ * caused as a result of the graph loading, while the graph loads.
  *
  * Implemented as a slave with a list of closures (events) which processes
  * all events in the (mutex protected) list each time it's whipped.
@@ -52,19 +52,19 @@ public:
 
 	~ThreadedLoader();
 
-	void load_patch(bool                                     merge,
+	void load_graph(bool                                     merge,
                     const Glib::ustring&                     document_uri,
 	                boost::optional<Raul::Path>              engine_parent,
                     boost::optional<Raul::Symbol>            engine_symbol,
                     boost::optional<GraphObject::Properties> engine_data);
 
-	void save_patch(SharedPtr<const Client::PatchModel> model,
+	void save_graph(SharedPtr<const Client::GraphModel> model,
 	                const std::string&                  filename);
 
 	SharedPtr<Serialisation::Parser> parser();
 
 private:
-	void save_patch_event(SharedPtr<const Client::PatchModel> model,
+	void save_graph_event(SharedPtr<const Client::GraphModel> model,
 	                      const std::string&                  filename);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */

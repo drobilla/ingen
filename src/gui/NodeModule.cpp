@@ -24,7 +24,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
 #include "raul/Atom.hpp"
@@ -33,11 +33,11 @@
 #include "Configuration.hpp"
 #include "NodeMenu.hpp"
 #include "NodeModule.hpp"
-#include "PatchCanvas.hpp"
-#include "PatchWindow.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphWindow.hpp"
 #include "Port.hpp"
 #include "RenameWindow.hpp"
-#include "SubpatchModule.hpp"
+#include "SubgraphModule.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
@@ -49,7 +49,7 @@ using namespace Client;
 
 namespace GUI {
 
-NodeModule::NodeModule(PatchCanvas&                canvas,
+NodeModule::NodeModule(GraphCanvas&                canvas,
                        SharedPtr<const BlockModel> block)
 	: Ganv::Module(canvas, block->path().symbol(), 0, 0, true)
 	, _block(block)
@@ -98,14 +98,14 @@ NodeModule::show_menu(GdkEventButton* ev)
 }
 
 NodeModule*
-NodeModule::create(PatchCanvas&                canvas,
+NodeModule::create(GraphCanvas&                canvas,
                    SharedPtr<const BlockModel> block,
                    bool                        human)
 {
-	SharedPtr<const PatchModel> patch = PtrCast<const PatchModel>(block);
+	SharedPtr<const GraphModel> graph = PtrCast<const GraphModel>(block);
 	
-	NodeModule* ret = (patch)
-		? new SubpatchModule(canvas, patch)
+	NodeModule* ret = (graph)
+		? new SubgraphModule(canvas, graph)
 		: new NodeModule(canvas, block);
 
 	for (GraphObject::Properties::const_iterator m = block->properties().begin();
@@ -127,7 +127,7 @@ NodeModule::create(PatchCanvas&                canvas,
 App&
 NodeModule::app() const
 {
-	return ((PatchCanvas*)canvas())->app();
+	return ((GraphCanvas*)canvas())->app();
 }
 
 void
@@ -432,7 +432,7 @@ NodeModule::set_selected(gboolean b)
 		Ganv::Module::set_selected(b);
 		#if 0
 		if (b) {
-			PatchWindow* win = app().window_factory()->parent_patch_window(block());
+			GraphWindow* win = app().window_factory()->parent_graph_window(block());
 			if (win) {
 				std::string doc;
 				bool        html = false;

@@ -38,16 +38,16 @@ namespace Raul { class Path; }
 namespace Ingen {
 namespace Server {
 
-class Engine;
-class PatchImpl;
-class PortImpl;
 class DuplexPort;
+class Engine;
+class GraphImpl;
 class JackDriver;
+class PortImpl;
 
 /** The Jack Driver.
  *
  * The process callback here drives the entire audio thread by "pulling"
- * events from queues, processing them, running the patches, and passing
+ * events from queues, processing them, running the graphes, and passing
  * events along to the PostProcessor.
  *
  * \ingroup engine
@@ -67,7 +67,7 @@ public:
 	void enable();
 	void disable();
 
-	EnginePort* create_port(DuplexPort* patch_port);
+	EnginePort* create_port(DuplexPort* graph_port);
 	EnginePort* get_port(const Raul::Path& path);
 
 	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path);

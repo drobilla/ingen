@@ -28,12 +28,12 @@ namespace Ingen {
 namespace Server {
 
 class BlockImpl;
-class CompiledPatch;
-class PatchImpl;
+class CompiledGraph;
+class GraphImpl;
 
 namespace Events {
 
-/** An event to load a Block and insert it into a Patch.
+/** An event to load a Block and insert it into a Graph.
  *
  * \ingroup engine
  */
@@ -58,9 +58,9 @@ private:
 	Raul::Path           _path;
 	Resource::Properties _properties;
 	Update               _update;
-	PatchImpl*           _patch;
+	GraphImpl*           _graph;
 	BlockImpl*           _block;
-	CompiledPatch*       _compiled_patch;
+	CompiledGraph*       _compiled_graph;
 };
 
 } // namespace Events

@@ -14,13 +14,13 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_PATCHIMPL_HPP
-#define INGEN_ENGINE_PATCHIMPL_HPP
+#ifndef INGEN_ENGINE_GRAPHIMPL_HPP
+#define INGEN_ENGINE_GRAPHIMPL_HPP
 
 #include <cstdlib>
 
 #include "BlockImpl.hpp"
-#include "CompiledPatch.hpp"
+#include "CompiledGraph.hpp"
 #include "DuplexPort.hpp"
 #include "PluginImpl.hpp"
 #include "PortType.hpp"
@@ -32,33 +32,33 @@ class Edge;
 
 namespace Server {
 
-class CompiledPatch;
-class EdgeImpl;
+class CompiledGraph;
 class Context;
+class EdgeImpl;
 class Engine;
 class ProcessContext;
 
 /** A group of blocks in a graph, possibly polyphonic.
  *
  * Note that this is also a Block, just one which contains Blocks.
- * Therefore infinite subpatching is possible, of polyphonic
- * patches of polyphonic blocks etc. etc.
+ * Therefore infinite subgraphing is possible, of polyphonic
+ * graphes of polyphonic blocks etc. etc.
  *
  * \ingroup engine
  */
-class PatchImpl : public BlockImpl
+class GraphImpl : public BlockImpl
 {
 public:
-	PatchImpl(Engine&             engine,
+	GraphImpl(Engine&             engine,
 	          const Raul::Symbol& symbol,
 	          uint32_t            poly,
-	          PatchImpl*          parent,
+	          GraphImpl*          parent,
 	          SampleRate          srate,
 	          uint32_t            local_poly);
 
-	virtual ~PatchImpl();
+	virtual ~GraphImpl();
 
-	virtual GraphType graph_type() const { return PATCH; }
+	virtual GraphType graph_type() const { return GRAPH; }
 
 	void activate(BufferFactory& bufs);
 	void deactivate();
@@ -91,7 +91,7 @@ public:
 	                         Raul::Maid&     maid,
 	                         uint32_t        poly);
 
-	// Patch specific stuff not inherited from Block
+	// Graph specific stuff not inherited from Block
 
 	typedef boost::intrusive::slist<
 		BlockImpl, boost::intrusive::constant_time_size<true> > Blocks;
@@ -135,16 +135,16 @@ public:
 
 	bool has_edge(const PortImpl* tail, const PortImpl* head) const;
 
-	CompiledPatch* compiled_patch()                  { return _compiled_patch; }
-	void           compiled_patch(CompiledPatch* cp) { _compiled_patch = cp; }
+	CompiledGraph* compiled_graph()                  { return _compiled_graph; }
+	void           compiled_graph(CompiledGraph* cp) { _compiled_graph = cp; }
 
 	Raul::Array<PortImpl*>* external_ports()                           { return _ports; }
 	void                    external_ports(Raul::Array<PortImpl*>* pa) { _ports = pa; }
 
-	CompiledPatch*          compile();
+	CompiledGraph*          compile();
 	Raul::Array<PortImpl*>* build_ports_array();
 
-	/** Whether to run this patch's DSP bits in the audio thread */
+	/** Whether to run this graph's DSP bits in the audio thread */
 	bool enabled() const { return _process; }
 	void enable() { _process = true; }
 	void disable(ProcessContext& context);
@@ -158,7 +158,7 @@ private:
 	Engine&        _engine;
 	uint32_t       _poly_pre;        ///< Pre-process thread only
 	uint32_t       _poly_process;    ///< Process thread only
-	CompiledPatch* _compiled_patch;  ///< Process thread only
+	CompiledGraph* _compiled_graph;  ///< Process thread only
 	Ports          _inputs;          ///< Pre-process thread only
 	Ports          _outputs;         ///< Pre-process thread only
 	Blocks          _blocks;           ///< Pre-process thread only
@@ -168,4 +168,4 @@ private:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_PATCHIMPL_HPP
+#endif // INGEN_ENGINE_GRAPHIMPL_HPP

@@ -14,6 +14,7 @@ def build(bld):
             EdgeImpl.cpp
             Engine.cpp
             EventWriter.cpp
+            GraphImpl.cpp
             GraphObjectImpl.cpp
             InputPort.cpp
             InternalPlugin.cpp
@@ -21,14 +22,13 @@ def build(bld):
             LV2Info.cpp
             LV2Plugin.cpp
             OutputPort.cpp
-            PatchImpl.cpp
             PortImpl.cpp
             PostProcessor.cpp
             PreProcessor.cpp
             Worker.cpp
             events/Connect.cpp
             events/CreateBlock.cpp
-            events/CreatePatch.cpp
+            events/CreateGraph.cpp
             events/CreatePort.cpp
             events/Delete.cpp
             events/Delta.cpp

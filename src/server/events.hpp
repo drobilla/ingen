@@ -19,7 +19,7 @@
 
 #include "events/Connect.hpp"
 #include "events/CreateBlock.hpp"
-#include "events/CreatePatch.hpp"
+#include "events/CreateGraph.hpp"
 #include "events/CreatePort.hpp"
 #include "events/Delete.hpp"
 #include "events/Delta.hpp"

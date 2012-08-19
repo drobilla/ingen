@@ -110,7 +110,7 @@ Resource::get_property(const Raul::URI& uri) const
 bool
 Resource::type(const URIs&       uris,
                const Properties& properties,
-               bool&             patch,
+               bool&             graph,
                bool&             block,
                bool&             port,
                bool&             is_output)
@@ -118,15 +118,15 @@ Resource::type(const URIs&       uris,
 	typedef Resource::Properties::const_iterator iterator;
 	const std::pair<iterator, iterator> types_range = properties.equal_range(uris.rdf_type);
 
-	patch = block = port = is_output = false;
+	graph = block = port = is_output = false;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
 		const Raul::Atom& atom = i->second;
 		if (atom.type() != uris.forge.URI && atom.type() != uris.forge.URID) {
 			continue; // Non-URI type, ignore garbage data
 		}
 
-		if (atom == uris.ingen_Patch) {
-			patch = true;
+		if (atom == uris.ingen_Graph) {
+			graph = true;
 		} else if (atom == uris.ingen_Block) {
 			block = true;
 		} else if (atom == uris.lv2_InputPort) {
@@ -138,13 +138,13 @@ Resource::type(const URIs&       uris,
 		}
 	}
 
-	if (patch && block && !port) { // => patch
+	if (graph && block && !port) { // => graph
 		block = false;
 		return true;
-	} else if (port && (patch || block)) { // nonsense
+	} else if (port && (graph || block)) { // nonsense
 		port = false;
 		return false;
-	} else if (patch || block || port) { // recognized type
+	} else if (graph || block || port) { // recognized type
 		return true;
 	} else { // unknown
 		return false;

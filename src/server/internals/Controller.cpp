@@ -45,7 +45,7 @@ ControllerNode::ControllerNode(InternalPlugin*     plugin,
                                BufferFactory&      bufs,
                                const Raul::Symbol& symbol,
                                bool                polyphonic,
-                               PatchImpl*          parent,
+                               GraphImpl*          parent,
                                SampleRate          srate)
 	: BlockImpl(plugin, symbol, false, parent, srate)
 	, _learning(false)

@@ -26,7 +26,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "Get.hpp"
-#include "PatchImpl.hpp"
+#include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 
@@ -35,7 +35,7 @@ namespace Server {
 namespace Events {
 
 static void
-send_patch(Interface* client, const PatchImpl* patch);
+send_graph(Interface* client, const GraphImpl* graph);
 
 Get::Get(Engine&              engine,
          SharedPtr<Interface> client,
@@ -87,8 +87,8 @@ static void
 send_block(Interface* client, const BlockImpl* block)
 {
 	PluginImpl* const plugin = block->plugin_impl();
-	if (plugin->type() == Plugin::Patch) {
-		send_patch(client, (const PatchImpl*)block);
+	if (plugin->type() == Plugin::Graph) {
+		send_graph(client, (const GraphImpl*)block);
 	} else {
 		client->put(block->uri(), block->properties());
 		for (size_t j = 0; j < block->num_ports(); ++j) {
@@ -98,30 +98,30 @@ send_block(Interface* client, const BlockImpl* block)
 }
 
 static void
-send_patch(Interface* client, const PatchImpl* patch)
+send_graph(Interface* client, const GraphImpl* graph)
 {
-	client->put(patch->uri(),
-	            patch->properties(Resource::INTERNAL),
+	client->put(graph->uri(),
+	            graph->properties(Resource::INTERNAL),
 	            Resource::INTERNAL);
 
-	client->put(patch->uri(),
-	            patch->properties(Resource::EXTERNAL),
+	client->put(graph->uri(),
+	            graph->properties(Resource::EXTERNAL),
 	            Resource::EXTERNAL);
 
 	// Send blocks
-	for (PatchImpl::Blocks::const_iterator j = patch->blocks().begin();
-	     j != patch->blocks().end(); ++j) {
+	for (GraphImpl::Blocks::const_iterator j = graph->blocks().begin();
+	     j != graph->blocks().end(); ++j) {
 		send_block(client, &*j);
 	}
 
 	// Send ports
-	for (uint32_t i = 0; i < patch->num_ports_non_rt(); ++i) {
-		send_port(client, patch->port_impl(i));
+	for (uint32_t i = 0; i < graph->num_ports_non_rt(); ++i) {
+		send_port(client, graph->port_impl(i));
 	}
 
 	// Send edges
-	for (PatchImpl::Edges::const_iterator j = patch->edges().begin();
-	     j != patch->edges().end(); ++j) {
+	for (GraphImpl::Edges::const_iterator j = graph->edges().begin();
+	     j != graph->edges().end(); ++j) {
 		client->connect(j->second->tail_path(), j->second->head_path());
 	}
 }
@@ -142,10 +142,10 @@ Get::post_process()
 		} else if (_object) {
 			_request_client->bundle_begin();
 			const BlockImpl* block = NULL;
-			const PatchImpl* patch = NULL;
+			const GraphImpl* graph = NULL;
 			const PortImpl*  port  = NULL;
-			if ((patch = dynamic_cast<const PatchImpl*>(_object))) {
-				send_patch(_request_client.get(), patch);
+			if ((graph = dynamic_cast<const GraphImpl*>(_object))) {
+				send_graph(_request_client.get(), graph);
 			} else if ((block = dynamic_cast<const BlockImpl*>(_object))) {
 				send_block(_request_client.get(), block);
 			} else if ((port = dynamic_cast<const PortImpl*>(_object))) {

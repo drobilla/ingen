@@ -35,12 +35,12 @@ namespace Shared { class URIs; }
 
 namespace Server {
 
-class PatchImpl;
-class Context;
-class ProcessContext;
 class BufferFactory;
+class Context;
+class GraphImpl;
+class ProcessContext;
 
-/** An object on the audio graph (a Patch, Block, or Port).
+/** An object on the audio graph (a Graph, Block, or Port).
  *
  * Each of these is a Raul::Deletable and so can be deleted in a realtime safe
  * way from anywhere, and they all have a map of variable for clients to store
@@ -70,8 +70,8 @@ public:
 
 	const Raul::Atom& get_property(const Raul::URI& key) const;
 
-	/** The Patch this object is a child of. */
-	virtual PatchImpl* parent_patch() const;
+	/** The Graph this object is a child of. */
+	virtual GraphImpl* parent_graph() const;
 
 	const Raul::Path& path() const { return _path; }
 

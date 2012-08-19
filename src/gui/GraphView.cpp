@@ -18,14 +18,14 @@
 #include <fstream>
 
 #include "ingen/Interface.hpp"
-#include "ingen/client/PatchModel.hpp"
+#include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
 #include "LoadPluginWindow.hpp"
-#include "NewSubpatchWindow.hpp"
-#include "PatchCanvas.hpp"
-#include "PatchTreeWindow.hpp"
-#include "PatchView.hpp"
+#include "NewSubgraphWindow.hpp"
+#include "GraphCanvas.hpp"
+#include "GraphTreeWindow.hpp"
+#include "GraphView.hpp"
 #include "WidgetFactory.hpp"
 
 using namespace std;
@@ -36,7 +36,7 @@ using namespace Client;
 
 namespace GUI {
 
-PatchView::PatchView(BaseObjectType*                   cobject,
+GraphView::GraphView(BaseObjectType*                   cobject,
                      const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::Box(cobject)
 	, _app(NULL)
@@ -45,15 +45,15 @@ PatchView::PatchView(BaseObjectType*                   cobject,
 {
 	property_visible() = false;
 
-	xml->get_widget("patch_view_breadcrumb_container", _breadcrumb_container);
-	xml->get_widget("patch_view_toolbar", _toolbar);
-	xml->get_widget("patch_view_process_but", _process_but);
-	xml->get_widget("patch_view_poly_spin", _poly_spin);
-	xml->get_widget("patch_view_refresh_but", _refresh_but);
-	xml->get_widget("patch_view_save_but", _save_but);
-	xml->get_widget("patch_view_zoom_full_but", _zoom_full_but);
-	xml->get_widget("patch_view_zoom_normal_but", _zoom_normal_but);
-	xml->get_widget("patch_view_scrolledwindow", _canvas_scrolledwindow);
+	xml->get_widget("graph_view_breadcrumb_container", _breadcrumb_container);
+	xml->get_widget("graph_view_toolbar", _toolbar);
+	xml->get_widget("graph_view_process_but", _process_but);
+	xml->get_widget("graph_view_poly_spin", _poly_spin);
+	xml->get_widget("graph_view_refresh_but", _refresh_but);
+	xml->get_widget("graph_view_save_but", _save_but);
+	xml->get_widget("graph_view_zoom_full_but", _zoom_full_but);
+	xml->get_widget("graph_view_zoom_normal_but", _zoom_normal_but);
+	xml->get_widget("graph_view_scrolledwindow", _canvas_scrolledwindow);
 
 	_toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
 	_canvas_scrolledwindow->property_hadjustment().get_value()->set_step_increment(10);
@@ -61,76 +61,76 @@ PatchView::PatchView(BaseObjectType*                   cobject,
 }
 
 void
-PatchView::init(App& app)
+GraphView::init(App& app)
 {
 	_app = &app;
 }
 
 void
-PatchView::set_patch(SharedPtr<const PatchModel> patch)
+GraphView::set_graph(SharedPtr<const GraphModel> graph)
 {
 	assert(!_canvas); // FIXME: remove
 
 	assert(_breadcrumb_container); // ensure created
 
-	_patch = patch;
-	_canvas = SharedPtr<PatchCanvas>(new PatchCanvas(*_app, patch, 1600*2, 1200*2));
+	_graph = graph;
+	_canvas = SharedPtr<GraphCanvas>(new GraphCanvas(*_app, graph, 1600*2, 1200*2));
 	_canvas->build();
 
 	_canvas_scrolledwindow->add(_canvas->widget());
 
 	_poly_spin->set_range(1, 128);
 	_poly_spin->set_increments(1, 4);
-	_poly_spin->set_value(patch->internal_poly());
+	_poly_spin->set_value(graph->internal_poly());
 
-	for (GraphObject::Properties::const_iterator i = patch->properties().begin();
-			i != patch->properties().end(); ++i)
+	for (GraphObject::Properties::const_iterator i = graph->properties().begin();
+			i != graph->properties().end(); ++i)
 		property_changed(i->first, i->second);
 
 	// Connect model signals to track state
-	patch->signal_property().connect(
-		sigc::mem_fun(this, &PatchView::property_changed));
+	graph->signal_property().connect(
+		sigc::mem_fun(this, &GraphView::property_changed));
 
 	// Connect widget signals to do things
 	_process_but->signal_toggled().connect(
-		sigc::mem_fun(this, &PatchView::process_toggled));
+		sigc::mem_fun(this, &GraphView::process_toggled));
 	_refresh_but->signal_clicked().connect(
-		sigc::mem_fun(this, &PatchView::refresh_clicked));
+		sigc::mem_fun(this, &GraphView::refresh_clicked));
 
 	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(
-		_canvas.get(), &PatchCanvas::set_zoom), 1.0));
+		_canvas.get(), &GraphCanvas::set_zoom), 1.0));
 
 	_zoom_full_but->signal_clicked().connect(
-		sigc::mem_fun(_canvas.get(), &PatchCanvas::zoom_full));
+		sigc::mem_fun(_canvas.get(), &GraphCanvas::zoom_full));
 
 	_poly_spin->signal_value_changed().connect(
-			sigc::mem_fun(*this, &PatchView::poly_changed));
+			sigc::mem_fun(*this, &GraphView::poly_changed));
 
 	#if 0
 	_canvas->signal_item_entered.connect(
-			sigc::mem_fun(*this, &PatchView::canvas_item_entered));
+			sigc::mem_fun(*this, &GraphView::canvas_item_entered));
 
 	_canvas->signal_item_left.connect(
-			sigc::mem_fun(*this, &PatchView::canvas_item_left));
+			sigc::mem_fun(*this, &GraphView::canvas_item_left));
 	#endif
 
 	_canvas->widget().grab_focus();
 }
 
-SharedPtr<PatchView>
-PatchView::create(App& app, SharedPtr<const PatchModel> patch)
+SharedPtr<GraphView>
+GraphView::create(App& app, SharedPtr<const GraphModel> graph)
 {
-	PatchView* result = NULL;
+	GraphView* result = NULL;
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("warehouse_win");
-	xml->get_widget_derived("patch_view_box", result);
+	xml->get_widget_derived("graph_view_box", result);
 	result->init(app);
-	result->set_patch(patch);
-	return SharedPtr<PatchView>(result);
+	result->set_graph(graph);
+	return SharedPtr<GraphView>(result);
 }
 
 #if 0
 void
-PatchView::canvas_item_entered(Gnome::Canvas::Item* item)
+GraphView::canvas_item_entered(Gnome::Canvas::Item* item)
 {
 	NodeModule* m = dynamic_cast<NodeModule*>(item);
 	if (m)
@@ -142,7 +142,7 @@ PatchView::canvas_item_entered(Gnome::Canvas::Item* item)
 }
 
 void
-PatchView::canvas_item_left(Gnome::Canvas::Item* item)
+GraphView::canvas_item_left(Gnome::Canvas::Item* item)
 {
 	NodeModule* m = dynamic_cast<NodeModule*>(item);
 	if (m) {
@@ -157,37 +157,37 @@ PatchView::canvas_item_left(Gnome::Canvas::Item* item)
 #endif
 
 void
-PatchView::process_toggled()
+GraphView::process_toggled()
 {
 	if (!_enable_signal)
 		return;
 
 	_app->interface()->set_property(
-		_patch->uri(),
+		_graph->uri(),
 		_app->uris().ingen_enabled,
 		_app->forge().make((bool)_process_but->get_active()));
 }
 
 void
-PatchView::poly_changed()
+GraphView::poly_changed()
 {
 	const int poly = _poly_spin->get_value_as_int();
-	if (_enable_signal && poly != (int)_patch->internal_poly()) {
+	if (_enable_signal && poly != (int)_graph->internal_poly()) {
 		_app->interface()->set_property(
-			_patch->uri(),
+			_graph->uri(),
 			_app->uris().ingen_polyphony,
 			_app->forge().make(poly));
 	}
 }
 
 void
-PatchView::refresh_clicked()
+GraphView::refresh_clicked()
 {
-	_app->interface()->get(_patch->uri());
+	_app->interface()->get(_graph->uri());
 }
 
 void
-PatchView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
+GraphView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 {
 	_enable_signal = false;
 	if (predicate == _app->uris().ingen_enabled) {
