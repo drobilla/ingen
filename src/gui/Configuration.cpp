@@ -43,6 +43,7 @@ Configuration::Configuration(App& app)
 	, _name_style(HUMAN)
 	, _audio_port_color(0x4A8A0EFF) // Green
 	, _control_port_color(0x244678FF) // Blue
+	, _cv_port_color(0x248780FF) // Teal (between audio and control)
 	, _event_port_color(0x960909FF) // Red
 	, _string_port_color(0x5C3566FF) // Plum
 	, _value_port_color(0xBABDB6FF) // Aluminum
@@ -87,6 +88,10 @@ Configuration::get_port_color(const Client::PortModel* p)
 	const URIs& uris = _app.uris();
 	if (p->is_a(uris.lv2_AudioPort)) {
 		return _audio_port_color;
+	} else if (p->is_a(uris.lv2_ControlPort)) {
+		return _control_port_color;
+	} else if (p->is_a(uris.lv2_CVPort)) {
+		return _cv_port_color;
 	} else if (p->supports(uris.atom_String)) {
 		return _string_port_color;
 	} else if (_app.can_control(p)) {
