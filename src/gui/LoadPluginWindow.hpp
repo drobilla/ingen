@@ -28,7 +28,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen_config.h"
 
@@ -61,7 +61,7 @@ public:
 	void add_plugin(SharedPtr<const Client::PluginModel> plugin);
 
 	void present(SharedPtr<const Client::GraphModel> graph,
-	             GraphObject::Properties             data);
+	             Node::Properties                    data);
 
 protected:
 	void on_show();
@@ -126,7 +126,7 @@ private:
 
 	void load_plugin(const Gtk::TreeModel::iterator& iter);
 
-	GraphObject::Properties _initial_data;
+	Node::Properties _initial_data;
 
 	SharedPtr<const Client::GraphModel> _graph;
 

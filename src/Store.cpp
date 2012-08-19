@@ -23,7 +23,7 @@ using namespace std;
 namespace Ingen {
 
 void
-Store::add(GraphObject* o)
+Store::add(Node* o)
 {
 	if (find(o->path()) != end()) {
 		return;
@@ -72,7 +72,7 @@ Store::find_descendants_end(const const_iterator parent) const
 }
 
 Store::const_range
-Store::children_range(SharedPtr<const GraphObject> o) const
+Store::children_range(SharedPtr<const Node> o) const
 {
 	const const_iterator parent = find(o->path());
 	if (parent != end()) {

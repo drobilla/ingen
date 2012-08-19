@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GRAPHOBJECT_HPP
-#define INGEN_GRAPHOBJECT_HPP
+#ifndef INGEN_NODE_HPP
+#define INGEN_NODE_HPP
 
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
@@ -33,11 +33,19 @@ class Edge;
 class Plugin;
 class Store;
 
-/** An object on the audio graph - Graph, Block, Port, etc.
+/** An object on the audio graph.
+ *
+ * The key property of nodes is that all nodes have a path and a symbol, as
+ * well as a URI.
+ *
+ * To avoid ugly inheritance issues and the need for excessive use of
+ * dynamic_cast, this class contains some members which are only applicable to
+ * certain types of node.  There is a type tag which can be used to determine
+ * the type of any Node.
  *
  * @ingroup Ingen
  */
-class GraphObject : public Resource
+class Node : public Resource
 {
 public:
 	enum GraphType {
@@ -46,7 +54,7 @@ public:
 		PORT
 	};
 
-	typedef std::pair<const GraphObject*, const GraphObject*> EdgesKey;
+	typedef std::pair<const Node*, const Node*> EdgesKey;
 	typedef std::map< EdgesKey, SharedPtr<Edge> > Edges;
 
 	// Graphs only
@@ -55,14 +63,14 @@ public:
 
 	// Blocks and graphs only
 	virtual uint32_t      num_ports()          const { return 0; }
-	virtual GraphObject*  port(uint32_t index) const { return NULL; }
+	virtual Node*         port(uint32_t index) const { return NULL; }
 	virtual const Plugin* plugin()             const { return NULL; }
 
 	// All objects
 	virtual GraphType           graph_type()   const = 0;
 	virtual const Raul::Path&   path()         const = 0;
 	virtual const Raul::Symbol& symbol()       const = 0;
-	virtual GraphObject*        graph_parent() const = 0;
+	virtual Node*               graph_parent() const = 0;
 
 	static Raul::URI root_uri() { return Raul::URI("ingen:root"); }
 
@@ -84,7 +92,7 @@ protected:
 	friend class Store;
 	virtual void set_path(const Raul::Path& p) = 0;
 
-	GraphObject(URIs& uris, const Raul::Path& path)
+	Node(URIs& uris, const Raul::Path& path)
 		: Resource(uris, path_to_uri(path))
 	{}
 
@@ -93,4 +101,4 @@ protected:
 
 } // namespace Ingen
 
-#endif // INGEN_GRAPHOBJECT_HPP
+#endif // INGEN_NODE_HPP

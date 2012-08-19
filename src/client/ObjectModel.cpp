@@ -14,22 +14,22 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ingen/GraphObject.hpp"
-#include "ingen/client/ObjectModel.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/client/ObjectModel.hpp"
 
 namespace Ingen {
 namespace Client {
 
 ObjectModel::ObjectModel(URIs& uris, const Raul::Path& path)
-	: GraphObject(uris, path)
+	: Node(uris, path)
 	, _path(path)
 	, _symbol((path == "/") ? "root" : path.symbol())
 {
 }
 
 ObjectModel::ObjectModel(const ObjectModel& copy)
-	: GraphObject(copy)
+	: Node(copy)
 	, _parent(copy._parent)
 	, _path(copy._path)
 	, _symbol(copy._symbol)

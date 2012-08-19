@@ -31,7 +31,7 @@
 #include "raul/Path.hpp"
 
 #include "NodeModule.hpp"
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/client/EdgeModel.hpp"
 
 namespace Ingen {
@@ -113,7 +113,7 @@ private:
 			const LV2Children&       children,
 			std::set<const char*>&   ancestors);
 
-	GraphObject::Properties get_initial_data(Resource::Graph ctx=Resource::DEFAULT);
+	Node::Properties get_initial_data(Resource::Graph ctx=Resource::DEFAULT);
 
 	Ganv::Port* get_port_view(SharedPtr<Client::PortModel> port);
 

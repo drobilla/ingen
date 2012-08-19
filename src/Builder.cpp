@@ -16,8 +16,8 @@
 
 #include "ingen/Builder.hpp"
 #include "ingen/Edge.hpp"
-#include "ingen/GraphObject.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
@@ -33,16 +33,16 @@ Builder::Builder(URIs& uris, Interface& interface)
 }
 
 void
-Builder::build(SharedPtr<const GraphObject> object)
+Builder::build(SharedPtr<const Node> object)
 {
 	_interface.put(object->uri(), object->properties());
 }
 
 void
-Builder::connect(SharedPtr<const GraphObject> object)
+Builder::connect(SharedPtr<const Node> object)
 {
-	if (object->graph_type() == GraphObject::GRAPH) {
-		for (GraphObject::Edges::const_iterator i = object->edges().begin();
+	if (object->graph_type() == Node::GRAPH) {
+		for (Node::Edges::const_iterator i = object->edges().begin();
 		     i != object->edges().end(); ++i) {
 			_interface.connect(i->second->tail_path(), i->second->head_path());
 		}

@@ -76,34 +76,34 @@ ingen:value
 	rdfs:label "Value" ;
 	rdfs:comment "The current value of a port." .
 
-ingen:Object
+ingen:Node
 	a owl:Class ;
-	rdfs:label "Ingen Object" ;
+	rdfs:label "Ingen Node" ;
 	rdfs:comment """
-A signal processing object which is part of a Graph.  An Object MUST have
-exactly one lv2:symbol property.  This MAY be inferred from the URI where
-possible (e.g. in a system which publishes block URIs in a heirarchial way
-such that the parent can be 'chopped' to get a legal symbol).
+An element of a Graph.  A Node always has a valid path and symbol, with the
+possible exception of the root graph which may not have a symbol depending on
+context.  Ingen uses restricted paths and/or URIs built from valid lv2:symbol
+components, so the symbol of a Node may be inferred from its URI if no explicit
+lv2:symbol property is given.
 """ .
 
 ingen:polyphonic
 	a owl:DatatypeProperty ;
-	rdfs:domain ingen:Object ;
+	rdfs:domain ingen:Node ;
 	rdfs:range xsd:boolean ;
 	rdfs:label "Polyphonic" ;
 	rdfs:comment """
-Signifies this object should be replicated when it is part of a polyphonic
-graph.  The amount of polyphony (i.e. the number of voices) is determined
-by the :polyphony property of the containing graph.  This is a boolean
-property which defines whether the parent can access each voice individuall:
-All objects within a graph are either polyphonic or not from their parent's
-perspective.  An Object may itself have "internal" polyphony but not be
-polyphonic according to this property, if those voices are mixed down.
-""" .
+Signifies this node should be replicated when it is part of a polyphonic graph.
+The amount of polyphony (i.e. the number of voices) is determined by the
+ingen:polyphony property of the containing graph.  This is a boolean property
+which defines whether the parent can access each voice individually: All nodes
+within a graph are either polyphonic or not from their parent's perspective.
+An Node may itself have "internal" polyphony but not be polyphonic according to
+this property, if those voices are mixed down.  """ .
 
 ingen:Block
 	a owl:Class ;
-	rdfs:subClassOf ingen:Object ,
+	rdfs:subClassOf ingen:Node ,
 		lv2:PluginBase ;
 	rdfs:label "Block" ;
 	rdfs:comment """

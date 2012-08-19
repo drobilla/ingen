@@ -41,7 +41,7 @@ class PortModel : public ObjectModel
 public:
 	enum Direction { INPUT, OUTPUT };
 
-	GraphType graph_type() const { return GraphObject::PORT; }
+	GraphType graph_type() const { return Node::PORT; }
 
 	bool supports(const Raul::URI& value_type) const;
 

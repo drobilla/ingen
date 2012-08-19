@@ -96,7 +96,7 @@ LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
 void
 LoadGraphWindow::present(SharedPtr<const GraphModel> graph,
                          bool                        import,
-                         GraphObject::Properties     data)
+                         Node::Properties            data)
 {
 	_import = import;
 	set_graph(graph);

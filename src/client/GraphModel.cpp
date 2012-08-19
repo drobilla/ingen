@@ -93,7 +93,7 @@ GraphModel::clear()
 }
 
 SharedPtr<EdgeModel>
-GraphModel::get_edge(const GraphObject* tail, const GraphObject* head)
+GraphModel::get_edge(const Node* tail, const Node* head)
 {
 	Edges::iterator i = _edges.find(make_pair(tail, head));
 	if (i != _edges.end())
@@ -138,7 +138,7 @@ GraphModel::add_edge(SharedPtr<EdgeModel> cm)
 }
 
 void
-GraphModel::remove_edge(const GraphObject* tail, const GraphObject* head)
+GraphModel::remove_edge(const Node* tail, const Node* head)
 {
 	Edges::iterator i = _edges.find(make_pair(tail, head));
 	if (i != _edges.end()) {

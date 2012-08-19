@@ -38,7 +38,7 @@ public:
 	~Worker();
 
 	struct Schedule : public LV2Features::Feature {
-		SharedPtr<LV2_Feature> feature(World* world, GraphObject* n);
+		SharedPtr<LV2_Feature> feature(World* world, Node* n);
 	};
 
 	LV2_Worker_Status request(LV2Block*   block,

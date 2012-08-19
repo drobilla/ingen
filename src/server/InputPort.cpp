@@ -50,7 +50,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 {
 	const Ingen::URIs& uris = bufs.uris();
 
-	if (parent->graph_type() != GraphObject::GRAPH) {
+	if (parent->graph_type() != Node::GRAPH) {
 		add_property(uris.rdf_type, uris.lv2_InputPort);
 	}
 

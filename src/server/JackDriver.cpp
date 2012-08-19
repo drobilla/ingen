@@ -409,7 +409,7 @@ JackDriver::_session_cb(jack_session_event_t* event)
 
 	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser();
 	if (serialiser) {
-		SharedPtr<GraphObject> root(_engine.root_graph(), NullDeleter<GraphObject>);
+		SharedPtr<Node> root(_engine.root_graph(), NullDeleter<Node>);
 		serialiser->write_bundle(root, string("file://") + event->session_dir);
 	}
 

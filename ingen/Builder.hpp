@@ -21,8 +21,8 @@
 
 namespace Ingen {
 
-class GraphObject;
 class Interface;
+class Node;
 class URIs;
 
 /** Wrapper for Interface to create existing objects/models.
@@ -35,8 +35,8 @@ public:
 	Builder(URIs& uris, Interface& interface);
 	virtual ~Builder() {}
 
-	void build(SharedPtr<const GraphObject> object);
-	void connect(SharedPtr<const GraphObject> object);
+	void build(SharedPtr<const Node> object);
+	void connect(SharedPtr<const Node> object);
 
 private:
 	URIs&      _uris;

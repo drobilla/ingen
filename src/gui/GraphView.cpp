@@ -83,7 +83,7 @@ GraphView::set_graph(SharedPtr<const GraphModel> graph)
 	_poly_spin->set_increments(1, 4);
 	_poly_spin->set_value(graph->internal_poly());
 
-	for (GraphObject::Properties::const_iterator i = graph->properties().begin();
+	for (Node::Properties::const_iterator i = graph->properties().begin();
 			i != graph->properties().end(); ++i)
 		property_changed(i->first, i->second);
 

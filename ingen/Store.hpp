@@ -22,7 +22,7 @@
 #undef nil
 #include <glibmm/thread.h>
 
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 
@@ -33,23 +33,23 @@ namespace Ingen {
  */
 class Store : public Raul::Noncopyable
             , public Raul::Deletable
-            , public std::map< const Raul::Path, SharedPtr<GraphObject> > {
+            , public std::map< const Raul::Path, SharedPtr<Node> > {
 public:
-	void add(GraphObject* o);
+	void add(Node* o);
 
-	GraphObject* get(const Raul::Path& path) {
+	Node* get(const Raul::Path& path) {
 		const iterator i = find(path);
 		return (i == end()) ? NULL : i->second.get();
 	}
 
 	typedef std::pair<const_iterator, const_iterator> const_range;
 
-	typedef std::map< Raul::Path, SharedPtr<GraphObject> > Objects;
+	typedef std::map< Raul::Path, SharedPtr<Node> > Objects;
 
 	iterator       find_descendants_end(Store::iterator parent);
 	const_iterator find_descendants_end(Store::const_iterator parent) const;
 
-	const_range children_range(SharedPtr<const GraphObject> o) const;
+	const_range children_range(SharedPtr<const Node> o) const;
 
 	/** Remove the object at @p top and all its children from the store.
 	 *

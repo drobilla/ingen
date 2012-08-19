@@ -17,8 +17,8 @@
 #include <utility>
 
 #include "ingen/AtomReader.hpp"
-#include "ingen/GraphObject.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "raul/Path.hpp"
@@ -90,8 +90,8 @@ AtomReader::atom_to_path(const LV2_Atom* atom)
 {
 	const char* uri_str = atom_to_uri(atom);
 	if (uri_str && Raul::URI::is_valid(uri_str) &&
-	    GraphObject::uri_is_path(Raul::URI(uri_str))) {
-		return GraphObject::uri_to_path(Raul::URI(uri_str));
+	    Node::uri_is_path(Raul::URI(uri_str))) {
+		return Node::uri_to_path(Raul::URI(uri_str));
 	}
 	return boost::optional<Raul::Path>();
 }

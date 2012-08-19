@@ -35,10 +35,10 @@ class GraphModel : public BlockModel
 public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */
 
-	GraphType graph_type() const { return GraphObject::GRAPH; }
+	GraphType graph_type() const { return Node::GRAPH; }
 
-	SharedPtr<EdgeModel> get_edge(const Ingen::GraphObject* tail,
-	                              const Ingen::GraphObject* head);
+	SharedPtr<EdgeModel> get_edge(const Ingen::Node* tail,
+	                              const Ingen::Node* head);
 
 	bool     enabled()       const;
 	bool     polyphonic()    const;
@@ -62,8 +62,8 @@ private:
 	bool remove_child(SharedPtr<ObjectModel> c);
 
 	void add_edge(SharedPtr<EdgeModel> cm);
-	void remove_edge(const Ingen::GraphObject* tail,
-	                 const Ingen::GraphObject* head);
+	void remove_edge(const Ingen::Node* tail,
+	                 const Ingen::Node* head);
 };
 
 } // namespace Client

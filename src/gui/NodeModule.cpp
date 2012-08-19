@@ -108,7 +108,7 @@ NodeModule::create(GraphCanvas&                canvas,
 		? new SubgraphModule(canvas, graph)
 		: new NodeModule(canvas, block);
 
-	for (GraphObject::Properties::const_iterator m = block->properties().begin();
+	for (Resource::Properties::const_iterator m = block->properties().begin();
 	     m != block->properties().end(); ++m)
 		ret->property_changed(m->first, m->second);
 

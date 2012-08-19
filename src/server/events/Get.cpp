@@ -16,8 +16,8 @@
 
 #include <utility>
 
-#include "ingen/GraphObject.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/Store.hpp"
 
 #include "BlockImpl.hpp"
@@ -60,8 +60,8 @@ Get::pre_process()
 		return Event::pre_process_done(SUCCESS);
 	} else if (_uri == "ingen:engine") {
 		return Event::pre_process_done(SUCCESS);
-	} else if (GraphObject::uri_is_path(_uri)) {
-		_object = _engine.store()->get(GraphObject::uri_to_path(_uri));
+	} else if (Node::uri_is_path(_uri)) {
+		_object = _engine.store()->get(Node::uri_to_path(_uri));
 		return Event::pre_process_done(_object ? SUCCESS : NOT_FOUND, _uri);
 	} else {
 		_plugin = _engine.block_factory()->plugin(_uri);

@@ -25,12 +25,12 @@
 
 #include "sord/sordmm.hpp"
 
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 
 namespace Ingen {
 
 class Edge;
-class GraphObject;
+class Node;
 class Store;
 class World;
 
@@ -47,21 +47,21 @@ public:
 	explicit Serialiser(World& world);
 	virtual ~Serialiser();
 
-	typedef GraphObject::Properties Properties;
+	typedef Node::Properties Properties;
 
-	virtual void to_file(SharedPtr<const GraphObject> object,
-	                     const std::string&           filename);
+	virtual void to_file(SharedPtr<const Node> object,
+	                     const std::string&    filename);
 
-	virtual void write_bundle(SharedPtr<const GraphObject> graph,
-	                          const std::string&           path);
+	virtual void write_bundle(SharedPtr<const Node> graph,
+	                          const std::string&    path);
 
-	virtual std::string to_string(SharedPtr<const GraphObject> object,
-	                              const std::string&           base_uri);
+	virtual std::string to_string(SharedPtr<const Node> object,
+	                              const std::string&    base_uri);
 
 	virtual void start_to_string(const Raul::Path&  root,
 	                             const std::string& base_uri);
 
-	virtual void serialise(SharedPtr<const GraphObject> object)
+	virtual void serialise(SharedPtr<const Node> object)
 			throw (std::logic_error);
 
 	virtual void serialise_edge(const Sord::Node&     parent,

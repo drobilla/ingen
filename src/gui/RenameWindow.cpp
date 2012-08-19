@@ -125,7 +125,7 @@ RenameWindow::ok_clicked()
 	}
 
 	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.get_string())) {
-		_app->interface()->set_property(GraphObject::path_to_uri(path),
+		_app->interface()->set_property(Node::path_to_uri(path),
 		                                uris.lv2_name,
 		                                _app->forge().alloc(label));
 	}

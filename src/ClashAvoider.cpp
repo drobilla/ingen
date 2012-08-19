@@ -29,8 +29,8 @@ namespace Ingen {
 const Raul::URI
 ClashAvoider::map_uri(const Raul::URI& in)
 {
-	if (GraphObject::uri_is_path(in)) {
-		return GraphObject::path_to_uri(map_path(GraphObject::uri_to_path(in)));
+	if (Node::uri_is_path(in)) {
+		return Node::path_to_uri(map_path(Node::uri_to_path(in)));
 	} else {
 		return in;
 	}

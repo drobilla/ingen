@@ -165,8 +165,8 @@ ClientStore::object(const Raul::Path& path) const
 SharedPtr<Resource>
 ClientStore::_resource(const Raul::URI& uri)
 {
-	if (GraphObject::uri_is_path(uri)) {
-		return _object(GraphObject::uri_to_path(uri));
+	if (Node::uri_is_path(uri)) {
+		return _object(Node::uri_to_path(uri));
 	} else {
 		return _plugin(uri);
 	}
@@ -195,8 +195,8 @@ ClientStore::add_plugin(SharedPtr<PluginModel> pm)
 void
 ClientStore::del(const Raul::URI& uri)
 {
-	if (GraphObject::uri_is_path(uri)) {
-		remove_object(GraphObject::uri_to_path(uri));
+	if (Node::uri_is_path(uri)) {
+		remove_object(Node::uri_to_path(uri));
 	}
 }
 
@@ -243,13 +243,13 @@ ClientStore::put(const Raul::URI&            uri,
 		}
 	}
 
-	if (!GraphObject::uri_is_path(uri)) {
+	if (!Node::uri_is_path(uri)) {
 		_log.error(Raul::fmt("Put for unknown subject <%1%>\n")
 		           % uri.c_str());
 		return;
 	}
 
-	const Raul::Path path(GraphObject::uri_to_path(uri));
+	const Raul::Path path(Node::uri_to_path(uri));
 
 	SharedPtr<ObjectModel> obj = PtrCast<ObjectModel>(_object(path));
 	if (obj) {
@@ -326,13 +326,13 @@ ClientStore::delta(const Raul::URI&            uri,
 	std::cerr << "}" << endl;
 #endif
 
-	if (!GraphObject::uri_is_path(uri)) {
+	if (!Node::uri_is_path(uri)) {
 		_log.error(Raul::fmt("Delta for unknown subject <%1%>\n")
 		           % uri.c_str());
 		return;
 	}
 
-	const Raul::Path path(GraphObject::uri_to_path(uri));
+	const Raul::Path path(Node::uri_to_path(uri));
 
 	SharedPtr<ObjectModel> obj = _object(path);
 	if (obj) {

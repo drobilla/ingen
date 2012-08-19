@@ -50,9 +50,9 @@ public:
 	              const Raul::Path&    parent,
 	              const Raul::Path&    object);
 
-	DisconnectAll(Engine&      engine,
-	              GraphImpl*   parent,
-	              GraphObject* object);
+	DisconnectAll(Engine&    engine,
+	              GraphImpl* parent,
+	              Node*      object);
 
 	~DisconnectAll();
 

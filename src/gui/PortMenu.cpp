@@ -162,7 +162,7 @@ PortMenu::on_menu_expose()
 	r.set_property(uris.ingen_canvasX, _app->forge().make(block_x + x_off));
 	r.set_property(uris.ingen_canvasY, _app->forge().make(block_y + y_off));
 
-	_app->interface()->put(GraphObject::path_to_uri(path), r.properties());
+	_app->interface()->put(Node::path_to_uri(path), r.properties());
 
 	if (port->is_input()) {
 		_app->interface()->connect(path, _object->path());

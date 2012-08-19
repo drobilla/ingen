@@ -46,7 +46,7 @@ public:
 			_feature.data = data;
 		}
 
-		SharedPtr<LV2_Feature> feature(World*, GraphObject*) {
+		SharedPtr<LV2_Feature> feature(World*, Node*) {
 			return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 		}
 

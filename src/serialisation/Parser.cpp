@@ -215,12 +215,12 @@ parse_edges(
 		const Raul::Path& graph);
 
 static boost::optional<Raul::Path>
-parse_block(Ingen::World*                            world,
-            Ingen::Interface*                        target,
-            Sord::Model&                             model,
-            const Sord::Node&                        subject,
-            const Raul::Path&                        path,
-            boost::optional<GraphObject::Properties> data)
+parse_block(Ingen::World*                     world,
+            Ingen::Interface*                 target,
+            Sord::Model&                      model,
+            const Sord::Node&                 subject,
+            const Raul::Path&                 path,
+            boost::optional<Node::Properties> data)
 {
 	const URIs& uris = world->uris();
 
@@ -272,19 +272,19 @@ parse_block(Ingen::World*                            world,
 		Resource::Properties props = get_properties(world, model, subject);
 		props.insert(make_pair(uris.rdf_type,
 		                       uris.forge.alloc_uri(uris.ingen_Block)));
-		target->put(GraphObject::path_to_uri(path), props);
+		target->put(Node::path_to_uri(path), props);
 	}
 	return path;
 }
 
 static boost::optional<Raul::Path>
-parse_graph(Ingen::World*                            world,
-            Ingen::Interface*                        target,
-            Sord::Model&                             model,
-            const Sord::Node&                        subject_node,
-            boost::optional<Raul::Path>              parent,
-            boost::optional<Raul::Symbol>            a_symbol,
-            boost::optional<GraphObject::Properties> data)
+parse_graph(Ingen::World*                     world,
+            Ingen::Interface*                 target,
+            Sord::Model&                      model,
+            const Sord::Node&                 subject_node,
+            boost::optional<Raul::Path>       parent,
+            boost::optional<Raul::Symbol>     a_symbol,
+            boost::optional<Node::Properties> data)
 {
 	URIs& uris = world->uris();
 
@@ -317,7 +317,7 @@ parse_graph(Ingen::World*                            world,
 	// Create graph
 	Raul::Path graph_path(graph_path_str);
 	Resource::Properties props = get_properties(world, model, subject_node);
-	target->put(GraphObject::path_to_uri(graph_path), props);
+	target->put(Node::path_to_uri(graph_path), props);
 
 	// For each block in this graph
 	for (Sord::Iter n = model.find(subject_node, ingen_block, nil); !n.end(); ++n) {
@@ -327,7 +327,7 @@ parse_graph(Ingen::World*                            world,
 
 		// Parse and create block
 		parse_block(world, target, model, node, block_path,
-		            boost::optional<GraphObject::Properties>());
+		            boost::optional<Node::Properties>());
 
 		// For each port on this block
 		for (Sord::Iter p = model.find(node, lv2_port, nil); !p.end(); ++p) {
@@ -343,7 +343,7 @@ parse_graph(Ingen::World*                            world,
 			}
 
 			// Create port and/or set all port properties
-			target->put(GraphObject::path_to_uri(port_record->first),
+			target->put(Node::path_to_uri(port_record->first),
 			            port_record->second);
 		}
 	}
@@ -369,7 +369,7 @@ parse_graph(Ingen::World*                            world,
 
 	// Create ports in order by index
 	for (PortRecords::const_iterator i = ports.begin(); i != ports.end(); ++i) {
-		target->put(GraphObject::path_to_uri(i->second.first),
+		target->put(Node::path_to_uri(i->second.first),
 		            i->second.second);
 	}
 
@@ -449,12 +449,12 @@ parse_edges(Ingen::World*     world,
 }
 
 static bool
-parse_properties(Ingen::World*                            world,
-                 Ingen::Interface*                        target,
-                 Sord::Model&                             model,
-                 const Sord::Node&                        subject,
-                 const Raul::URI&                         uri,
-                 boost::optional<GraphObject::Properties> data)
+parse_properties(Ingen::World*                     world,
+                 Ingen::Interface*                 target,
+                 Sord::Model&                      model,
+                 const Sord::Node&                 subject,
+                 const Raul::URI&                  uri,
+                 boost::optional<Node::Properties> data)
 {
 	Resource::Properties properties = get_properties(world, model, subject);
 
@@ -468,14 +468,14 @@ parse_properties(Ingen::World*                            world,
 }
 
 static boost::optional<Raul::Path>
-parse(Ingen::World*                            world,
-      Ingen::Interface*                        target,
-      Sord::Model&                             model,
-      Glib::ustring                            document_uri,
-      Sord::Node&                              subject,
-      boost::optional<Raul::Path>              parent,
-      boost::optional<Raul::Symbol>            symbol,
-      boost::optional<GraphObject::Properties> data)
+parse(Ingen::World*                     world,
+      Ingen::Interface*                 target,
+      Sord::Model&                      model,
+      Glib::ustring                     document_uri,
+      Sord::Node&                       subject,
+      boost::optional<Raul::Path>       parent,
+      boost::optional<Raul::Symbol>     symbol,
+      boost::optional<Node::Properties> data)
 {
 	URIs& uris = world->uris();
 
@@ -526,7 +526,7 @@ parse(Ingen::World*                            world,
 		} else if (types.find(in_port_class) != types.end() ||
 		           types.find(out_port_class) != types.end()) {
 			parse_properties(
-				world, target, model, s, GraphObject::path_to_uri(path), data);
+				world, target, model, s, Node::path_to_uri(path), data);
 			ret = path;
 		} else if (types.find(edge_class) != types.end()) {
 			Raul::Path parent_path(parent ? parent.get() : Raul::Path("/"));
@@ -543,12 +543,12 @@ parse(Ingen::World*                            world,
  * @return whether or not load was successful.
  */
 bool
-Parser::parse_file(Ingen::World*                            world,
-                   Ingen::Interface*                        target,
-                   Glib::ustring                            path,
-                   boost::optional<Raul::Path>              parent,
-                   boost::optional<Raul::Symbol>            symbol,
-                   boost::optional<GraphObject::Properties> data)
+Parser::parse_file(Ingen::World*                     world,
+                   Ingen::Interface*                 target,
+                   Glib::ustring                     path,
+                   boost::optional<Raul::Path>       parent,
+                   boost::optional<Raul::Symbol>     symbol,
+                   boost::optional<Node::Properties> data)
 {
 	if (Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
 		// This is a bundle, append "/name.ttl" to get graph file path
@@ -589,7 +589,7 @@ Parser::parse_file(Ingen::World*                            world,
 		= parse(world, target, model, path, subject, parent, symbol, data);
 
 	if (parsed_path) {
-		target->set_property(GraphObject::path_to_uri(*parsed_path),
+		target->set_property(Node::path_to_uri(*parsed_path),
 		                     Raul::URI("http://drobilla.net/ns/ingen#document"),
 		                     world->forge().alloc_uri(uri));
 	} else {
@@ -600,13 +600,13 @@ Parser::parse_file(Ingen::World*                            world,
 }
 
 bool
-Parser::parse_string(Ingen::World*                            world,
-                     Ingen::Interface*                        target,
-                     const Glib::ustring&                     str,
-                     const Glib::ustring&                     base_uri,
-                     boost::optional<Raul::Path>              parent,
-                     boost::optional<Raul::Symbol>            symbol,
-                     boost::optional<GraphObject::Properties> data)
+Parser::parse_string(Ingen::World*                     world,
+                     Ingen::Interface*                 target,
+                     const Glib::ustring&              str,
+                     const Glib::ustring&              base_uri,
+                     boost::optional<Raul::Path>       parent,
+                     boost::optional<Raul::Symbol>     symbol,
+                     boost::optional<Node::Properties> data)
 {
 	// Load string into model
 	Sord::Model model(*world->rdf_world(), base_uri, SORD_SPO|SORD_PSO, false);

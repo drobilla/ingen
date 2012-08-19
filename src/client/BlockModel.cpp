@@ -149,12 +149,12 @@ BlockModel::get_port(const Raul::Symbol& symbol) const
 	return SharedPtr<PortModel>();
 }
 
-Ingen::GraphObject*
+Ingen::Node*
 BlockModel::port(uint32_t index) const
 {
 	assert(index < num_ports());
-	return const_cast<Ingen::GraphObject*>(
-		dynamic_cast<const Ingen::GraphObject*>(_ports[index].get()));
+	return const_cast<Ingen::Node*>(
+		dynamic_cast<const Ingen::Node*>(_ports[index].get()));
 }
 
 void

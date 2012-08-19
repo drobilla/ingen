@@ -50,7 +50,7 @@ NewSubgraphWindow::NewSubgraphWindow(BaseObjectType*                   cobject,
 
 void
 NewSubgraphWindow::present(SharedPtr<const Client::GraphModel> graph,
-                           GraphObject::Properties             data)
+                           Node::Properties                    data)
 {
 	set_graph(graph);
 	_initial_data = data;
@@ -98,12 +98,12 @@ NewSubgraphWindow::ok_clicked()
 	props.insert(make_pair(_app->uris().rdf_type,        _app->uris().ingen_Graph));
 	props.insert(make_pair(_app->uris().ingen_polyphony, _app->forge().make(int32_t(poly))));
 	props.insert(make_pair(_app->uris().ingen_enabled,   _app->forge().make(bool(true))));
-	_app->interface()->put(GraphObject::path_to_uri(path), props, Resource::INTERNAL);
+	_app->interface()->put(Node::path_to_uri(path), props, Resource::INTERNAL);
 
 	// Set external (block perspective) properties
 	props = _initial_data;
 	props.insert(make_pair(_app->uris().rdf_type, _app->uris().ingen_Graph));
-	_app->interface()->put(GraphObject::path_to_uri(path), _initial_data, Resource::EXTERNAL);
+	_app->interface()->put(Node::path_to_uri(path), _initial_data, Resource::EXTERNAL);
 
 	hide();
 }

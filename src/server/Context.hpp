@@ -31,8 +31,8 @@ class PortImpl;
 
 /** Graph execution context.
  *
- * This is used to pass whatever information a GraphObject might need to
- * process; such as the current time, a sink for generated events, etc.
+ * This is used to pass whatever information a Node might need to process; such
+ * as the current time, a sink for generated events, etc.
  *
  * Note the logical distinction between nframes (jack relative) and start/end
  * (timeline relative).  If transport speed != 1.0, then end-start != nframes

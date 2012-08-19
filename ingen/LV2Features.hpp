@@ -26,7 +26,7 @@
 
 namespace Ingen {
 
-class GraphObject;
+class Node;
 class World;
 
 /** Features for use by LV2 plugins.
@@ -40,8 +40,8 @@ public:
 	public:
 		virtual ~Feature() {}
 
-		virtual SharedPtr<LV2_Feature> feature(World*       world,
-		                                       GraphObject* block) = 0;
+		virtual SharedPtr<LV2_Feature> feature(World* world,
+		                                       Node*  block) = 0;
 	};
 
 	class FeatureArray : public Raul::Noncopyable {
@@ -61,8 +61,8 @@ public:
 
 	void add_feature(SharedPtr<Feature> feature);
 
-	SharedPtr<FeatureArray> lv2_features(World*       world,
-	                                     GraphObject* block) const;
+	SharedPtr<FeatureArray> lv2_features(World* world,
+	                                     Node*  block) const;
 
 private:
 	typedef std::vector< SharedPtr<Feature> > Features;

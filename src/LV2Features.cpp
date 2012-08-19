@@ -48,7 +48,7 @@ LV2Features::FeatureArray::~FeatureArray()
 }
 
 SharedPtr<LV2Features::FeatureArray>
-LV2Features::lv2_features(World* world, GraphObject* node) const
+LV2Features::lv2_features(World* world, Node* node) const
 {
 	FeatureArray::FeatureVector vec;
 	for (Features::const_iterator f = _features.begin(); f != _features.end(); ++f) {

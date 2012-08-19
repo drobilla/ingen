@@ -59,9 +59,9 @@ DisconnectAll::DisconnectAll(Engine&              engine,
 
 /** Internal version for use by other events.
  */
-DisconnectAll::DisconnectAll(Engine&      engine,
-                             GraphImpl*   parent,
-                             GraphObject* object)
+DisconnectAll::DisconnectAll(Engine&    engine,
+                             GraphImpl* parent,
+                             Node*      object)
 	: Event(engine)
 	, _parent_path(parent->path())
 	, _path(object->path())
@@ -92,7 +92,7 @@ DisconnectAll::pre_process()
 			return Event::pre_process_done(PARENT_NOT_FOUND, _parent_path);
 		}
 
-		GraphObjectImpl* const object = dynamic_cast<GraphObjectImpl*>(
+		NodeImpl* const object = dynamic_cast<NodeImpl*>(
 			_engine.store()->get(_path));
 		if (!object) {
 			return Event::pre_process_done(NOT_FOUND, _path);
@@ -112,7 +112,7 @@ DisconnectAll::pre_process()
 
 	// Find set of edges to remove
 	std::set<EdgeImpl*> to_remove;
-	for (GraphObject::Edges::const_iterator i = _parent->edges().begin();
+	for (Node::Edges::const_iterator i = _parent->edges().begin();
 	     i != _parent->edges().end(); ++i) {
 		EdgeImpl* const c = (EdgeImpl*)i->second.get();
 		if (_block) {

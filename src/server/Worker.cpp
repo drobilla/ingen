@@ -80,7 +80,7 @@ delete_feature(LV2_Feature* feature)
 }
 
 SharedPtr<LV2_Feature>
-Worker::Schedule::feature(World* world, GraphObject* n)
+Worker::Schedule::feature(World* world, Node* n)
 {
 	LV2Block* block = dynamic_cast<LV2Block*>(n);
 	if (!block) {

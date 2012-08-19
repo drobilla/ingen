@@ -18,7 +18,7 @@
 
 #include "ingen/AtomSink.hpp"
 #include "ingen/AtomWriter.hpp"
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/URIMap.hpp"
 #include "raul/Path.hpp"
 #include "serd/serd.h"
@@ -113,9 +113,9 @@ AtomWriter::forge_edge(const Raul::Path& tail, const Raul::Path& head)
 	LV2_Atom_Forge_Frame edge;
 	lv2_atom_forge_blank(&_forge, &edge, 0, _uris.ingen_Edge);
 	lv2_atom_forge_property_head(&_forge, _uris.ingen_tail, 0);
-	forge_uri(GraphObject::path_to_uri(tail));
+	forge_uri(Node::path_to_uri(tail));
 	lv2_atom_forge_property_head(&_forge, _uris.ingen_head, 0);
-	forge_uri(GraphObject::path_to_uri(head));
+	forge_uri(Node::path_to_uri(head));
 	lv2_atom_forge_pop(&_forge, &edge);
 }
 
@@ -172,9 +172,9 @@ AtomWriter::move(const Raul::Path& old_path,
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Move);
 	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
-	forge_uri(GraphObject::path_to_uri(old_path));
+	forge_uri(Node::path_to_uri(old_path));
 	lv2_atom_forge_property_head(&_forge, _uris.patch_destination, 0);
-	forge_uri(GraphObject::path_to_uri(new_path));
+	forge_uri(Node::path_to_uri(new_path));
 }
 
 void
@@ -193,7 +193,7 @@ AtomWriter::connect(const Raul::Path& tail,
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Put);
 	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
-	forge_uri(GraphObject::path_to_uri(Raul::Path::lca(tail, head)));
+	forge_uri(Node::path_to_uri(Raul::Path::lca(tail, head)));
 	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
 	forge_edge(tail, head);
 	lv2_atom_forge_pop(&_forge, &msg);
@@ -220,13 +220,13 @@ AtomWriter::disconnect_all(const Raul::Path& graph,
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Delete);
 
 	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
-	forge_uri(GraphObject::path_to_uri(graph));
+	forge_uri(Node::path_to_uri(graph));
 
 	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
 	LV2_Atom_Forge_Frame edge;
 	lv2_atom_forge_blank(&_forge, &edge, 0, _uris.ingen_Edge);
 	lv2_atom_forge_property_head(&_forge, _uris.ingen_incidentTo, 0);
-	forge_uri(GraphObject::path_to_uri(path));
+	forge_uri(Node::path_to_uri(path));
 	lv2_atom_forge_pop(&_forge, &edge);
 
 	lv2_atom_forge_pop(&_forge, &msg);

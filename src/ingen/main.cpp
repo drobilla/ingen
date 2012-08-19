@@ -177,7 +177,7 @@ main(int argc, char** argv)
 		  conf.files().front();
 
 		engine_interface->get(Raul::URI("ingen:plugins"));
-		engine_interface->get(GraphObject::root_uri());
+		engine_interface->get(Node::root_uri());
 		world->parser()->parse_file(
 			world, engine_interface.get(), path, parent, symbol);
 	}

@@ -25,7 +25,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 
 #include "Window.hpp"
 
@@ -50,14 +50,14 @@ public:
 	void set_graph(SharedPtr<const Client::GraphModel> graph);
 
 	void present(SharedPtr<const Client::GraphModel> graph,
-	             GraphObject::Properties             data);
+	             Node::Properties                    data);
 
 private:
 	void name_changed();
 	void ok_clicked();
 	void cancel_clicked();
 
-	GraphObject::Properties             _initial_data;
+	Node::Properties                    _initial_data;
 	SharedPtr<const Client::GraphModel> _graph;
 
 	Gtk::Entry*      _name_entry;

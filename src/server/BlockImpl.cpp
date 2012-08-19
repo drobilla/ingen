@@ -38,7 +38,7 @@ BlockImpl::BlockImpl(PluginImpl*         plugin,
                      bool                polyphonic,
                      GraphImpl*          parent,
                      SampleRate          srate)
-	: GraphObjectImpl(plugin->uris(), parent, symbol)
+	: NodeImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
 	, _ports(NULL)
 	, _context(Context::AUDIO)
@@ -64,7 +64,7 @@ BlockImpl::~BlockImpl()
 	delete _ports;
 }
 
-GraphObject*
+Node*
 BlockImpl::port(uint32_t index) const
 {
 	return (*_ports)[index];

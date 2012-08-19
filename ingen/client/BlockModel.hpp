@@ -22,10 +22,10 @@
 #include <vector>
 
 #include "raul/SharedPtr.hpp"
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/client/ObjectModel.hpp"
-#include "ingen/client/PortModel.hpp"
 #include "ingen/client/PluginModel.hpp"
+#include "ingen/client/PortModel.hpp"
 
 namespace Raul { class Path; }
 
@@ -48,13 +48,13 @@ public:
 	BlockModel(const BlockModel& copy);
 	virtual ~BlockModel();
 
-	GraphType graph_type() const { return GraphObject::GRAPH; }
+	GraphType graph_type() const { return Node::GRAPH; }
 
 	typedef std::vector< SharedPtr<const PortModel> > Ports;
 
 	SharedPtr<const PortModel> get_port(const Raul::Symbol& symbol) const;
 
-	GraphObject* port(uint32_t index) const;
+	Node* port(uint32_t index) const;
 
 	const Raul::URI&       plugin_uri()   const { return _plugin_uri; }
 	const Plugin*          plugin()       const { return _plugin.get(); }

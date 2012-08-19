@@ -201,7 +201,7 @@ NodeMenu::on_preset_activated(const std::string& uri)
 			const LilvNode* val = lilv_nodes_get_first(values);
 			const LilvNode* sym = lilv_nodes_get_first(symbols);
 			_app->interface()->set_property(
-				GraphObject::path_to_uri(
+				Node::path_to_uri(
 					block->path().child(Raul::Symbol(lilv_node_as_string(sym)))),
 				_app->uris().ingen_value,
 				_app->forge().make(lilv_node_as_float(val)));

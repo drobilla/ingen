@@ -19,7 +19,7 @@
 
 #include <map>
 
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 #include "raul/SharedPtr.hpp"
 
 namespace Ingen {
@@ -64,7 +64,7 @@ public:
 		GraphWindow*                        preferred = NULL,
 		SharedPtr<GraphView>                view      = SharedPtr<GraphView>());
 
-	typedef GraphObject::Properties Properties;
+	typedef Node::Properties Properties;
 
 	void present_load_plugin(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());
 	void present_load_graph(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());

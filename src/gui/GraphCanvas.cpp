@@ -724,13 +724,13 @@ GraphCanvas::paste()
 	                       uris.ingen_Graph));
 	props.insert(make_pair(uris.ingen_polyphony,
 	                       _app.forge().make(int32_t(_graph->internal_poly()))));
-	clipboard.put(GraphObject::root_uri(), props);
+	clipboard.put(Node::root_uri(), props);
 	size_t first_slash;
 	while (to_create != "/" && !to_create.empty()
 	       && (first_slash = to_create.find("/")) != string::npos) {
 		created += to_create.substr(0, first_slash);
 		assert(Raul::Path::is_valid(created));
-		clipboard.put(GraphObject::path_to_uri(Raul::Path(created)), props);
+		clipboard.put(Node::path_to_uri(Raul::Path(created)), props);
 		to_create = to_create.substr(first_slash + 1);
 	}
 
@@ -753,14 +753,14 @@ GraphCanvas::paste()
 		if (_graph->path().is_root() && i->first.is_root())
 			continue;
 
-		GraphObject::Properties& props = i->second->properties();
+		Node::Properties& props = i->second->properties();
 
-		GraphObject::Properties::iterator x = props.find(uris.ingen_canvasX);
+		Node::Properties::iterator x = props.find(uris.ingen_canvasX);
 		if (x != i->second->properties().end())
 			x->second = _app.forge().make(
 				x->second.get_float() + (20.0f * _paste_count));
 
-		GraphObject::Properties::iterator y = props.find(uris.ingen_canvasY);
+		Node::Properties::iterator y = props.find(uris.ingen_canvasY);
 		if (y != i->second->properties().end())
 			y->second = _app.forge().make(
 				y->second.get_float() + (20.0f * _paste_count));
@@ -818,7 +818,7 @@ GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	                       _app.forge().make(int32_t(_graph->num_ports()))));
 	props.insert(make_pair(uris.lv2_name,
 	                       _app.forge().alloc(name.c_str())));
-	_app.interface()->put(GraphObject::path_to_uri(path), props);
+	_app.interface()->put(Node::path_to_uri(path), props);
 }
 
 void
@@ -840,11 +840,11 @@ GraphCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 	const Raul::Path path = _graph->path().child(symbol);
 
 	// FIXME: polyphony?
-	GraphObject::Properties props = get_initial_data();
+	Node::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type, uris.ingen_Block));
 	props.insert(make_pair(uris.ingen_prototype,
 	                       uris.forge.alloc_uri(plugin->uri())));
-	_app.interface()->put(GraphObject::path_to_uri(path), props);
+	_app.interface()->put(Node::path_to_uri(path), props);
 }
 
 /** Try to guess a suitable location for a new module.
@@ -859,10 +859,10 @@ GraphCanvas::get_new_module_location(double& x, double& y)
 	y = scroll_y + 20;
 }
 
-GraphObject::Properties
+Node::Properties
 GraphCanvas::get_initial_data(Resource::Graph ctx)
 {
-	GraphObject::Properties result;
+	Node::Properties result;
 	const URIs& uris = _app.uris();
 	result.insert(
 		make_pair(uris.ingen_canvasX,

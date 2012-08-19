@@ -34,10 +34,8 @@ class EnginePort;
 
 /** Engine driver base class.
  *
- * A Driver is, from the perspective of GraphObjects (blocks, graphs, ports)
- * an interface for managing system ports.  An implementation of Driver
- * basically needs to manage EnginePorts, and handle writing/reading data
- * to/from them.
+ * A Driver is responsible for managing system ports, and possibly running the
+ * audio graph.
  *
  * \ingroup engine
  */

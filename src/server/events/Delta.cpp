@@ -105,13 +105,13 @@ Delta::pre_process()
 {
 	typedef Properties::const_iterator iterator;
 
-	const bool is_graph_object = GraphObject::uri_is_path(_subject);
+	const bool is_graph_object = Node::uri_is_path(_subject);
 
 	// Take a writer lock while we modify the store
 	Glib::RWLock::WriterLock lock(_engine.store()->lock());
 
 	_object = is_graph_object
-		? static_cast<Ingen::Resource*>(_engine.store()->get(GraphObject::uri_to_path(_subject)))
+		? static_cast<Ingen::Resource*>(_engine.store()->get(Node::uri_to_path(_subject)))
 		: static_cast<Ingen::Resource*>(_engine.block_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
@@ -121,7 +121,7 @@ Delta::pre_process()
 	const Ingen::URIs& uris = _engine.world()->uris();
 
 	if (is_graph_object && !_object) {
-		Raul::Path path(GraphObject::uri_to_path(_subject));
+		Raul::Path path(Node::uri_to_path(_subject));
 		bool is_graph = false, is_block = false, is_port = false, is_output = false;
 		Ingen::Resource::type(uris, _properties, is_graph, is_block, is_port, is_output);
 
@@ -147,7 +147,7 @@ Delta::pre_process()
 
 	_types.reserve(_properties.size());
 
-	GraphObjectImpl* obj = dynamic_cast<GraphObjectImpl*>(_object);
+	NodeImpl* obj = dynamic_cast<NodeImpl*>(_object);
 
 	for (Properties::const_iterator p = _remove.begin(); p != _remove.end(); ++p) {
 		const Raul::URI&  key   = p->first;
@@ -270,9 +270,9 @@ Delta::execute(ProcessContext& context)
 		(*i)->execute(context);
 	}
 
-	GraphObjectImpl* const object = dynamic_cast<GraphObjectImpl*>(_object);
-	BlockImpl* const       block  = dynamic_cast<BlockImpl*>(_object);
-	PortImpl* const        port   = dynamic_cast<PortImpl*>(_object);
+	NodeImpl* const  object = dynamic_cast<NodeImpl*>(_object);
+	BlockImpl* const block  = dynamic_cast<BlockImpl*>(_object);
+	PortImpl* const  port   = dynamic_cast<PortImpl*>(_object);
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();
 	for (Properties::const_iterator p = _properties.begin(); p != _properties.end(); ++p, ++t) {

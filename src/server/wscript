@@ -15,12 +15,12 @@ def build(bld):
             Engine.cpp
             EventWriter.cpp
             GraphImpl.cpp
-            GraphObjectImpl.cpp
             InputPort.cpp
             InternalPlugin.cpp
             LV2Block.cpp
             LV2Info.cpp
             LV2Plugin.cpp
+            NodeImpl.cpp
             OutputPort.cpp
             PortImpl.cpp
             PostProcessor.cpp

@@ -15,7 +15,7 @@
 */
 
 #include "GraphImpl.hpp"
-#include "GraphObjectImpl.hpp"
+#include "NodeImpl.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -23,10 +23,10 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-GraphObjectImpl::GraphObjectImpl(Ingen::URIs&        uris,
-                                 GraphObjectImpl*    parent,
-                                 const Raul::Symbol& symbol)
-	: GraphObject(uris, parent ? parent->path().child(symbol) : Raul::Path("/"))
+NodeImpl::NodeImpl(Ingen::URIs&        uris,
+                   NodeImpl*           parent,
+                   const Raul::Symbol& symbol)
+	: Node(uris, parent ? parent->path().child(symbol) : Raul::Path("/"))
 	, _parent(parent)
 	, _path(parent ? parent->path().child(symbol) : Raul::Path("/"))
 	, _symbol(symbol)
@@ -34,7 +34,7 @@ GraphObjectImpl::GraphObjectImpl(Ingen::URIs&        uris,
 }
 
 const Raul::Atom&
-GraphObjectImpl::get_property(const Raul::URI& key) const
+NodeImpl::get_property(const Raul::URI& key) const
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
 	static const Raul::Atom null_atom;
@@ -43,7 +43,7 @@ GraphObjectImpl::get_property(const Raul::URI& key) const
 }
 
 GraphImpl*
-GraphObjectImpl::parent_graph() const
+NodeImpl::parent_graph() const
 {
 	return dynamic_cast<GraphImpl*>((BlockImpl*)_parent);
 }

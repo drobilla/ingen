@@ -97,7 +97,7 @@ CreatePort::pre_process()
 		return Event::pre_process_done(_status, _path);
 	}
 
-	GraphObject* parent = _engine.store()->get(_path.parent());
+	Node* parent = _engine.store()->get(_path.parent());
 	if (!parent) {
 		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
 	}
@@ -185,7 +185,7 @@ void
 CreatePort::post_process()
 {
 	if (!respond()) {
-		_engine.broadcaster()->put(GraphObject::path_to_uri(_path), _update);
+		_engine.broadcaster()->put(Node::path_to_uri(_path), _update);
 	}
 
 	delete _old_ports_array;

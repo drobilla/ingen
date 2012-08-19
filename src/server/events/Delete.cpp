@@ -47,8 +47,8 @@ Delete::Delete(Engine&              engine,
 	, _disconnect_event(NULL)
 	, _lock(engine.store()->lock(), Glib::NOT_LOCK)
 {
-	if (GraphObject::uri_is_path(uri)) {
-		_path = GraphObject::uri_to_path(uri);
+	if (Node::uri_is_path(uri)) {
+		_path = Node::uri_to_path(uri);
 	}
 }
 

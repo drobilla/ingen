@@ -81,7 +81,7 @@ Engine::~Engine()
 	const SharedPtr<Store> s = this->store();
 	if (s) {
 		for (Store::iterator i = s->begin(); i != s->end(); ++i) {
-			if (!PtrCast<GraphObjectImpl>(i->second)->parent()) {
+			if (!PtrCast<NodeImpl>(i->second)->parent()) {
 				i->second.reset();
 			}
 		}

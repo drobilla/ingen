@@ -49,7 +49,7 @@ public:
 
 private:
 	const Raul::URI          _uri;
-	const GraphObject*       _object;
+	const Node*              _object;
 	const PluginImpl*        _plugin;
 	BlockFactory::Plugins    _plugins;
 	Glib::RWLock::ReaderLock _lock;

@@ -27,7 +27,7 @@
 #include <boost/optional.hpp>
 #include <glibmm/ustring.h>
 
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 #include "raul/Path.hpp"
 
 namespace Ingen {
@@ -48,7 +48,7 @@ public:
 
 	virtual ~Parser() {}
 
-	typedef GraphObject::Properties Properties;
+	typedef Node::Properties Properties;
 
 	virtual bool parse_file(
 		World*                        world,

@@ -14,14 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_GRAPHOBJECTIMPL_HPP
-#define INGEN_ENGINE_GRAPHOBJECTIMPL_HPP
+#ifndef INGEN_ENGINE_NODEIMPLIMPL_HPP
+#define INGEN_ENGINE_NODEIMPLIMPL_HPP
 
 #include <cassert>
 #include <cstddef>
 #include <map>
 
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/Resource.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Path.hpp"
@@ -48,15 +48,15 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class GraphObjectImpl : public GraphObject
+class NodeImpl : public Node
 {
 public:
-	virtual ~GraphObjectImpl() {}
+	virtual ~NodeImpl() {}
 
 	const Raul::Symbol& symbol() const { return _symbol; }
 
-	GraphObject*     graph_parent() const { return _parent; }
-	GraphObjectImpl* parent()       const { return _parent; }
+	Node*     graph_parent() const { return _parent; }
+	NodeImpl* parent()       const { return _parent; }
 
 	/** Rename */
 	virtual void set_path(const Raul::Path& new_path) {
@@ -65,7 +65,7 @@ public:
 		if (new_sym[0] != '\0') {
 			_symbol = Raul::Symbol(new_sym);
 		}
-		set_uri(GraphObject::path_to_uri(new_path));
+		set_uri(Node::path_to_uri(new_path));
 	}
 
 	const Raul::Atom& get_property(const Raul::URI& key) const;
@@ -93,16 +93,16 @@ public:
 		ProcessContext& context, Raul::Maid& maid, uint32_t poly) = 0;
 
 protected:
-	GraphObjectImpl(Ingen::URIs&        uris,
-	                GraphObjectImpl*    parent,
-	                const Raul::Symbol& symbol);
+	NodeImpl(Ingen::URIs&        uris,
+	         NodeImpl*           parent,
+	         const Raul::Symbol& symbol);
 
-	GraphObjectImpl* _parent;
-	Raul::Path       _path;
-	Raul::Symbol     _symbol;
+	NodeImpl*    _parent;
+	Raul::Path   _path;
+	Raul::Symbol _symbol;
 };
 
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_GRAPHOBJECTIMPL_HPP
+#endif // INGEN_ENGINE_NODEIMPLIMPL_HPP

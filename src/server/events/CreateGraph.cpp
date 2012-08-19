@@ -114,7 +114,7 @@ void
 CreateGraph::post_process()
 {
 	if (!respond()) {
-		_engine.broadcaster()->put(GraphObject::path_to_uri(_path), _update);
+		_engine.broadcaster()->put(Node::path_to_uri(_path), _update);
 	}
 }
 

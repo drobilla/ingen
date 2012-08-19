@@ -41,7 +41,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
                    LV2_URID            buffer_type,
                    const Raul::Atom&   value,
                    size_t              buffer_size)
-	: GraphObjectImpl(bufs.uris(), block, name)
+	: NodeImpl(bufs.uris(), block, name)
 	, _bufs(bufs)
 	, _index(index)
 	, _poly(poly)

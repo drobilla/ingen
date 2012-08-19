@@ -54,12 +54,12 @@ Connect::pre_process()
 {
 	Glib::RWLock::ReaderLock rlock(_engine.store()->lock());
 
-	GraphObject* tail = _engine.store()->get(_tail_path);
+	Node* tail = _engine.store()->get(_tail_path);
 	if (!tail) {
 		return Event::pre_process_done(NOT_FOUND, _tail_path);
 	}
 		
-	GraphObject* head = _engine.store()->get(_head_path);
+	Node* head = _engine.store()->get(_head_path);
 	if (!head) {
 		return Event::pre_process_done(NOT_FOUND, _head_path);
 	}

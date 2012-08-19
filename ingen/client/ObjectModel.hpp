@@ -29,7 +29,7 @@
 #include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/client/signal.hpp"
 
@@ -41,7 +41,7 @@ namespace Client {
 
 class ClientStore;
 
-/** Base class for all GraphObject models (BlockModel, GraphModel, PortModel).
+/** Base class for all Node models (BlockModel, GraphModel, PortModel).
  *
  * There are no non-const public methods intentionally, models are not allowed
  * to be manipulated directly by anything (but the Store) because of the
@@ -52,7 +52,7 @@ class ClientStore;
  *
  * @ingroup IngenClient
  */
-class ObjectModel : public GraphObject
+class ObjectModel : public Node
 {
 public:
 	virtual ~ObjectModel();
@@ -68,7 +68,7 @@ public:
 	SharedPtr<ObjectModel> parent()     const { return _parent; }
 	bool                   polyphonic() const;
 
-	GraphObject* graph_parent() const { return _parent.get(); }
+	Node* graph_parent() const { return _parent.get(); }
 
 	// Signals
 	INGEN_SIGNAL(new_child, void, SharedPtr<ObjectModel>);

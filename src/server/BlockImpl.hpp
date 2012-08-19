@@ -26,7 +26,7 @@
 
 #include "BufferRef.hpp"
 #include "Context.hpp"
-#include "GraphObjectImpl.hpp"
+#include "NodeImpl.hpp"
 #include "PortType.hpp"
 #include "types.hpp"
 
@@ -55,7 +55,7 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class BlockImpl : public GraphObjectImpl
+class BlockImpl : public NodeImpl
                 , public boost::intrusive::slist_base_hook<>  // In GraphImpl
 {
 public:
@@ -108,8 +108,8 @@ public:
 	                             uint32_t  port_num,
 	                             BufferRef buf);
 
-	virtual GraphObject* port(uint32_t index)      const;
-	virtual PortImpl*    port_impl(uint32_t index) const { return (*_ports)[index]; }
+	virtual Node*     port(uint32_t index)      const;
+	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
 
 	/** Blocks that are connected to this Block's inputs. */
 	std::list<BlockImpl*>& providers() { return _providers; }

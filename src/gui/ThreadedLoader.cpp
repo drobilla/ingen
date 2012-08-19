@@ -74,11 +74,11 @@ ThreadedLoader::_run()
 }
 
 void
-ThreadedLoader::load_graph(bool                              merge,
-                           const Glib::ustring&              document_uri,
-                           optional<Raul::Path>              engine_parent,
-                           optional<Raul::Symbol>            engine_symbol,
-                           optional<GraphObject::Properties> engine_data)
+ThreadedLoader::load_graph(bool                       merge,
+                           const Glib::ustring&       document_uri,
+                           optional<Raul::Path>       engine_parent,
+                           optional<Raul::Symbol>     engine_symbol,
+                           optional<Node::Properties> engine_data)
 {
 	_mutex.lock();
 

@@ -116,7 +116,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 
 void
 LoadPluginWindow::present(SharedPtr<const GraphModel> graph,
-                          GraphObject::Properties     data)
+                          Node::Properties            data)
 {
 	set_graph(graph);
 	_initial_data = data;
@@ -350,7 +350,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		                       _app->forge().alloc_uri(plugin->uri())));
 		props.insert(make_pair(uris.ingen_polyphonic,
 		                       _app->forge().make(polyphonic)));
-		_app->interface()->put(GraphObject::path_to_uri(path), props);
+		_app->interface()->put(Node::path_to_uri(path), props);
 
 		if (_selection->get_selected_rows().size() == 1) {
 			_name_offset = (_name_offset == 0) ? 2 : _name_offset + 1;

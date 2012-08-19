@@ -27,7 +27,7 @@
 
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/GraphObject.hpp"
+#include "ingen/Node.hpp"
 
 namespace Ingen {
 
@@ -53,7 +53,7 @@ public:
 
 	void present(SharedPtr<const Client::GraphModel> graph,
 	             bool                                import,
-	             GraphObject::Properties             data);
+	             Node::Properties                    data);
 
 protected:
 	void on_show();
@@ -71,7 +71,7 @@ private:
 
 	App* _app;
 
-	GraphObject::Properties _initial_data;
+	Node::Properties _initial_data;
 
 	SharedPtr<const Client::GraphModel> _graph;
 

@@ -23,7 +23,7 @@
 #include "raul/Atom.hpp"
 
 #include "BufferRef.hpp"
-#include "GraphObjectImpl.hpp"
+#include "NodeImpl.hpp"
 #include "PortType.hpp"
 #include "ProcessContext.hpp"
 #include "types.hpp"
@@ -40,7 +40,7 @@ class BufferFactory;
  *
  * \ingroup engine
  */
-class PortImpl : public GraphObjectImpl
+class PortImpl : public NodeImpl
 {
 public:
 	~PortImpl();
