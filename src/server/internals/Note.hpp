@@ -80,7 +80,6 @@ private:
 		SampleCount time;
 	};
 
-	float note_to_freq(uint8_t num);
 	void free_voice(ProcessContext& context, uint32_t voice, FrameTime time);
 
 	Raul::Array<Voice>* _voices;
@@ -90,6 +89,7 @@ private:
 
 	InputPort*  _midi_in_port;
 	OutputPort* _freq_port;
+	OutputPort* _octs_port;
 	OutputPort* _vel_port;
 	OutputPort* _gate_port;
 	OutputPort* _trig_port;

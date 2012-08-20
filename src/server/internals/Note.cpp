@@ -58,7 +58,7 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	, _sustain(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
-	_ports = new Raul::Array<PortImpl*>(5);
+	_ports = new Raul::Array<PortImpl*>(6);
 
 	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Raul::Atom());
@@ -72,24 +72,29 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	_freq_port->set_property(uris.lv2_maximum, bufs.forge().make(25088.0f));
 	_ports->at(1) = _freq_port;
 
+	_octs_port = new OutputPort(bufs, this, Raul::Symbol("octaves"), 1, _polyphony,
+	                            PortType::CV, 0, bufs.forge().make(0.0f));
+	_octs_port->set_property(uris.lv2_name, bufs.forge().alloc("Octaves"));
+	_ports->at(2) = _octs_port;
+
 	_vel_port = new OutputPort(bufs, this, Raul::Symbol("velocity"), 2, _polyphony,
 	                           PortType::CV, 0, bufs.forge().make(0.0f));
 	_vel_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
 	_vel_port->set_property(uris.lv2_maximum, bufs.forge().make(1.0f));
 	_vel_port->set_property(uris.lv2_name, bufs.forge().alloc("Velocity"));
-	_ports->at(2) = _vel_port;
+	_ports->at(3) = _vel_port;
 
 	_gate_port = new OutputPort(bufs, this, Raul::Symbol("gate"), 3, _polyphony,
 	                            PortType::CV, 0, bufs.forge().make(0.0f));
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_gate_port->set_property(uris.lv2_name, bufs.forge().alloc("Gate"));
-	_ports->at(3) = _gate_port;
+	_ports->at(4) = _gate_port;
 
 	_trig_port = new OutputPort(bufs, this, Raul::Symbol("trigger"), 4, _polyphony,
 	                            PortType::CV, 0, bufs.forge().make(0.0f));
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_trig_port->set_property(uris.lv2_name, bufs.forge().alloc("Trigger"));
-	_ports->at(4) = _trig_port;
+	_ports->at(5) = _trig_port;
 }
 
 NoteNode::~NoteNode()
@@ -176,6 +181,19 @@ NoteNode::process(ProcessContext& context)
 	BlockImpl::post_process(context);
 }
 
+static inline float
+note_to_freq(uint8_t num)
+{
+	static const float A4 = 440.0f;
+	return A4 * powf(2.0f, (float)(num - 57.0f) / 12.0f);
+}
+
+static inline float
+note_to_octaves(uint8_t num)
+{
+	return (num - 60) / 12.0f;
+}
+
 void
 NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
 {
@@ -236,6 +254,7 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(_keys[voice->note].voice == voice_num);
 
 	_freq_port->set_voice_value(context, voice_num, time, note_to_freq(note_num));
+	_octs_port->set_voice_value(context, voice_num, time, note_to_octaves(note_num));
 	_vel_port->set_voice_value(context, voice_num, time, velocity / 127.0f);
 	_gate_port->set_voice_value(context, voice_num, time, 1.0f);
 	_trig_port->set_voice_value(context, voice_num, time, 1.0f);
@@ -293,6 +312,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 
 		// Change the freq but leave the gate high and don't retrigger
 		_freq_port->set_voice_value(context, voice, time, note_to_freq(replace_key_num));
+		_octs_port->set_voice_value(context, voice, time, note_to_octaves(replace_key_num));
 
 		replace_key->state = Key::ON_ASSIGNED;
 		replace_key->voice = voice;
@@ -317,13 +337,6 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 		_gate_port->set_voice_value(context, i, time, 0.0f);
 		(*_voices)[i].state = Voice::FREE;
 	}
-}
-
-float
-NoteNode::note_to_freq(uint8_t num)
-{
-	static const float A4 = 440.0f;
-	return A4 * powf(2.0f, (float)(num - 57.0f) / 12.0f);
 }
 
 void
