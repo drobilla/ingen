@@ -41,7 +41,6 @@ PostProcessor::append(ProcessContext& context, Event* first, Event* last)
 {
 	assert(first);
 	assert(last);
-	assert(!last->next());
 	if (_head.get()) {
 		_tail.get()->next(first);
 		_tail = last;

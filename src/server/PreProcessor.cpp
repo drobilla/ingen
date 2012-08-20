@@ -67,8 +67,10 @@ PreProcessor::event(Event* const ev)
 unsigned
 PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 {
-	if (!_head.get())
+	Event* const head = _head.get();
+	if (!head) {
 		return 0;
+	}
 
 	/* Limit the maximum number of queued events to process per cycle.  This
 	   makes the process callback (more) realtime-safe by preventing being
@@ -79,7 +81,7 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 
 	size_t num_events_processed = 0;
 
-	Event* ev   = _head.get();
+	Event* ev   = head;
 	Event* last = ev;
 
 	while (ev && ev->is_prepared() && ev->time() < context.end()) {
@@ -99,7 +101,7 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 		Event* next = (Event*)last->next();
 		last->next(NULL);
 		assert(!last->next());
-		dest.append(context, _head.get(), last);
+		dest.append(context, head, last);
 		_head = next;
 		if (!next)
 			_tail = NULL;
