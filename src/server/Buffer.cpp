@@ -16,7 +16,6 @@
 
 #define __STDC_LIMIT_MACROS 1
 
-#include <assert.h>
 #include <math.h>
 #include <new>
 #include <stdint.h>
@@ -128,7 +127,6 @@ Buffer::port_data(PortType port_type)
 	case PortType::CONTROL:
 	case PortType::CV:
 	case PortType::AUDIO:
-		assert(_atom->type == _type);
 		if (_atom->type == _factory.uris().atom_Float) {
 			return (float*)LV2_ATOM_BODY(_atom);
 		} else if (_atom->type == _factory.uris().atom_Sound) {

@@ -14,8 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <cassert>
-
 #include "ingen/URIs.hpp"
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
@@ -49,8 +47,6 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
                             GraphImpl*          parent,
                             Engine&             engine)
 {
-	assert(_type == Internal);
-
 	const SampleCount srate = engine.driver()->sample_rate();
 
 	if (uri() == NS_INTERNALS "Controller") {

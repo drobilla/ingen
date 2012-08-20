@@ -149,9 +149,9 @@ Disconnect::pre_process()
 		_graph = src_block->parent_graph();
 	}
 
-	assert(_graph);
-
-	if (!_graph->has_edge(tail, head)) {
+	if (!_graph) {
+		return Event::pre_process_done(INTERNAL_ERROR, _head_path);
+	} else if (!_graph->has_edge(tail, head)) {
 		return Event::pre_process_done(NOT_FOUND, _head_path);
 	}
 
@@ -191,9 +191,6 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 	} else {
 		_dst_input_port->recycle_buffers();
 	}
-
-	assert(_edge);
-	assert(port_edge == _edge.get());
 
 	return true;
 }

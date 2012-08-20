@@ -295,7 +295,10 @@ public:
 	}
 
 	void flush_to_ui(ProcessContext& context) {
-		assert(_ports.size() >= 2);
+		if (_ports.size() < 2) {
+			_engine.log().error("Standard control ports are not present\n");
+			return;
+		}
 
 		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_ports[1]->buffer();
 		if (!seq) {
@@ -586,8 +589,6 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 	LV2Driver*      driver = (LV2Driver*)engine->driver();
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
-		assert(driver->ports().at(port)->graph_port()->index() == port);
-		assert(driver->ports().at(port)->buffer() == data);
 	} else {
 		engine->log().error(Raul::fmt("Connect to non-existent port %1%\n")
 		                    % port);

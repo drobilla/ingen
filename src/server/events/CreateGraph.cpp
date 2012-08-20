@@ -103,8 +103,6 @@ void
 CreateGraph::execute(ProcessContext& context)
 {
 	if (_graph) {
-		assert(_parent);
-		assert(!_path.is_root());
 		_engine.maid()->dispose(_parent->compiled_graph());
 		_parent->compiled_graph(_compiled_graph);
 	}

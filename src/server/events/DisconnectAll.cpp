@@ -107,7 +107,9 @@ DisconnectAll::pre_process()
 		_block = dynamic_cast<BlockImpl*>(object);
 		_port  = dynamic_cast<PortImpl*>(object);
 
-		assert((_block || _port) && !(_block && _port));
+		if (!_block && !_port) {
+			return Event::pre_process_done(INTERNAL_ERROR, _path);
+		}
 	}
 
 	// Find set of edges to remove
@@ -120,8 +122,7 @@ DisconnectAll::pre_process()
 			    || c->head()->parent_block() == _block) {
 				to_remove.insert(c);
 			}
-		} else {
-			assert(_port);
+		} else if (_port) {
 			if (c->tail() == _port || c->head() == _port) {
 				to_remove.insert(c);
 			}

@@ -97,10 +97,11 @@ public:
 	}
 
 	/// Audio buffers only
-	inline const Sample& value_at(SampleCount offset) const {
-		assert(is_audio() || is_control());
-		assert(offset < nframes());
-		return samples()[offset];
+	inline Sample value_at(SampleCount offset) const {
+		if (is_audio() || is_control()) {
+			return samples()[offset];
+		}
+		return 0.0f;
 	}
 
 	inline void set_block(Sample            val,

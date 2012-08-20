@@ -137,7 +137,7 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 		_learning = false;
 	}
 
-	Sample filter_note = _note_port->buffer(0)->value_at(0);
+	const Sample filter_note = _note_port->buffer(0)->value_at(0);
 	if (filter_note >= 0.0 && filter_note < 127.0 && (note_num == (uint8_t)filter_note)) {
 		_gate_port->set_control_value(context, time, 1.0f);
 		_trig_port->set_control_value(context, time, 1.0f);

@@ -100,11 +100,11 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 	if (num_events_processed > 0) {
 		Event* next = (Event*)last->next();
 		last->next(NULL);
-		assert(!last->next());
 		dest.append(context, head, last);
 		_head = next;
-		if (!next)
+		if (!next) {
 			_tail = NULL;
+		}
 	}
 
 	return num_events_processed;

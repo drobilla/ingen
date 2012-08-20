@@ -111,7 +111,6 @@ BufferFactory::get(LV2_URID type,
 		if (!real_time) {
 			return create(type, capacity);
 		} else {
-			assert(false);
 			_engine.world()->log().error("Failed to obtain buffer");
 			return BufferRef();
 		}
@@ -132,12 +131,11 @@ BufferFactory::create(LV2_URID type, uint32_t capacity)
 {
 	if (capacity == 0) {
 		capacity = default_size(type);
+	} else if (type == _uris.atom_Float) {
+		capacity = std::max(capacity, (uint32_t)sizeof(LV2_Atom_Float));
+	} else if (type == _uris.atom_Sound) {
+		capacity = std::max(capacity, default_size(_uris.atom_Sound));
 	}
-
-	assert(type != _uris.atom_Float ||
-	       capacity >= sizeof(LV2_Atom_Float));
-	assert(type != _uris.atom_Sound ||
-	       capacity >= default_size(_uris.atom_Sound));
 
 	return BufferRef(new Buffer(*this, type, capacity));
 }

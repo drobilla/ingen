@@ -59,22 +59,23 @@ mix(const Context&      context,
 				for (SampleCount i = 0; i < end; ++i) {
 					out[i] += in[0];
 				}
-			} else {  // audio => audio
-				assert(srcs[i]->is_audio());
+			} else if (srcs[i]->is_audio()) {  // audio => audio
 				for (SampleCount i = 0; i < end; ++i) {
 					out[i] += in[i];
 				}
 			}
 		}
-	} else {
-		assert(dst->is_sequence());
+	} else if (dst->is_sequence()) {
 		LV2_Atom_Event* iters[num_srcs];
 		for (uint32_t i = 0; i < num_srcs; ++i) {
-			assert(srcs[i]->is_sequence());
-			iters[i] = lv2_atom_sequence_begin(
-				(const LV2_Atom_Sequence_Body*)LV2_ATOM_BODY_CONST(srcs[i]->atom()));
-			if (is_end(srcs[i], iters[i])) {
-				iters[i] = NULL;
+			iters[i] = NULL;
+			if (srcs[i]->is_sequence()) {
+				iters[i] = lv2_atom_sequence_begin(
+					(const LV2_Atom_Sequence_Body*)LV2_ATOM_BODY_CONST(
+						srcs[i]->atom()));
+				if (is_end(srcs[i], iters[i])) {
+					iters[i] = NULL;
+				}
 			}
 		}
 

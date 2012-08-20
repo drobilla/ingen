@@ -54,7 +54,7 @@ LV2Block::LV2Block(LV2Plugin*          plugin,
                    bool                polyphonic,
                    GraphImpl*          parent,
                    SampleRate          srate)
-: BlockImpl(plugin, symbol, polyphonic, parent, srate)
+	: BlockImpl(plugin, symbol, polyphonic, parent, srate)
 	, _lv2_plugin(plugin)
 	, _instances(NULL)
 	, _prepared_instances(NULL)

@@ -16,8 +16,6 @@
 
 #define __STDC_LIMIT_MACROS 1
 
-#include <assert.h>
-
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
@@ -51,8 +49,6 @@ LV2Info::LV2Info(Ingen::World* world)
 	, work_schedule(lilv_new_uri(world->lilv_world(), LV2_WORKER__schedule))
 	, _world(world)
 {
-	assert(world);
-
 	world->lv2_features().add_feature(
 		SharedPtr<LV2Features::Feature>(new ResizeFeature()));
 }

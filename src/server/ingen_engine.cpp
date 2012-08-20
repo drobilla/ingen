@@ -30,7 +30,6 @@ struct IngenEngineModule : public Ingen::Module {
 		if (!world->interface()) {
 			world->set_interface(SharedPtr<Interface>(engine->interface(), NullDeleter<Interface>));
 		}
-		assert(world->engine() == engine);
 	}
 };
 
