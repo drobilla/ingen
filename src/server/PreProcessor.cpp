@@ -33,8 +33,7 @@ PreProcessor::PreProcessor()
 }
 
 PreProcessor::~PreProcessor()
-{
-}
+{}
 
 void
 PreProcessor::event(Event* const ev)
@@ -47,14 +46,12 @@ PreProcessor::event(Event* const ev)
 	assert(!ev->next());
 
 	Event* const head = _head.get();
-	Event* const tail = _tail.get();
-
 	if (!head) {
 		_head = ev;
 		_tail = ev;
 	} else {
+		_tail.get()->next(ev);
 		_tail = ev;
-		tail->next(ev);
 	}
 
 	if (!_prepared_back.get()) {
@@ -72,18 +69,14 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 		return 0;
 	}
 
-	/* Limit the maximum number of queued events to process per cycle.  This
-	   makes the process callback (more) realtime-safe by preventing being
-	   choked by events coming in faster than they can be processed.
-	   FIXME: test this and figure out a good value
-	*/
-	const size_t MAX_QUEUED_EVENTS = context.nframes() / 32;
+	/* Limit the maximum number of events to process each cycle to ensure the
+	   process callback is real-time safe.  TODO: Parameterize this and/or
+	   figure out a good default value. */
+	const size_t MAX_EVENTS_PER_CYCLE = context.nframes() / 4;
 
-	size_t num_events_processed = 0;
-
-	Event* ev   = head;
-	Event* last = ev;
-
+	size_t n_processed = 0;
+	Event* ev          = head;
+	Event* last        = ev;
 	while (ev && ev->is_prepared() && ev->time() < context.end()) {
 		if (ev->time() < context.start()) {
 			// Didn't get around to executing in time, oh well...
@@ -91,26 +84,29 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 		}
 		ev->execute(context);
 		last = ev;
-		ev = (Event*)ev->next();
-		++num_events_processed;
-		if (limit && (num_events_processed > MAX_QUEUED_EVENTS))
+		ev   = ev->next();
+		++n_processed;
+		if (limit && (n_processed > MAX_EVENTS_PER_CYCLE)) {
 			break;
-	}
-
-	if (num_events_processed > 0) {
-		Event* next = (Event*)last->next();
-		last->next(NULL);
-		dest.append(context, head, last);
-		_head = next;
-		if (!next) {
-			_tail = NULL;
 		}
 	}
 
-	return num_events_processed;
+	if (n_processed > 0) {
+		Event* next = (Event*)last->next();
+		last->next(NULL);
+		dest.append(context, head, last);
+
+		// Since _head was not NULL, we know it hasn't been changed since
+		_head = next;
+
+		/* If next is NULL, then _tail may now be invalid.  However, in this
+		   case _head is also NULL so event() will not read _tail.  Since it
+		   could cause a race with event(), _tail is not set to NULL here. */
+	}
+
+	return n_processed;
 }
 
-/** Pre-process a single event */
 void
 PreProcessor::_run()
 {
