@@ -81,7 +81,7 @@ PostProcessor::process()
 		ev->post_process();
 		delete ev;
 
-		if (ev == tail || next->time() >= end_time) {
+		if (ev == tail || next && next->time() >= end_time) {
 			// Reached end, update _head
 			_head = next;
 			break;
