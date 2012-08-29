@@ -27,6 +27,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
+#include "lv2/lv2plug.in/ns/ext/options/options.h"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
@@ -72,9 +73,9 @@ class Lib {
 public:
 	explicit Lib(const char* bundle_path);
 
-	typedef std::vector< SharedPtr<const LV2Graph> > Graphes;
+	typedef std::vector< SharedPtr<const LV2Graph> > Graphs;
 
-	Graphes graphes;
+	Graphs graphs;
 };
 
 namespace Ingen {
@@ -425,8 +426,8 @@ struct IngenPlugin {
 	char**        argv;
 };
 
-static Lib::Graphes
-find_graphes(const Glib::ustring& manifest_uri)
+static Lib::Graphs
+find_graphs(const Glib::ustring& manifest_uri)
 {
 	Sord::World      world;
 	const Sord::URI  base(world, manifest_uri);
@@ -439,7 +440,7 @@ find_graphes(const Glib::ustring& manifest_uri)
 	Sord::Model model(world, manifest_uri);
 	model.load_file(env, SERD_TURTLE, manifest_uri);
 
-	Lib::Graphes graphes;
+	Lib::Graphs graphs;
 	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Graph); !i.end(); ++i) {
 		const Sord::Node  graph     = i.get_subject();
 		Sord::Iter        f         = model.find(graph, rdfs_seeAlso, nil);
@@ -447,14 +448,14 @@ find_graphes(const Glib::ustring& manifest_uri)
 		if (!f.end()) {
 			const uint8_t* file_uri  = f.get_object().to_u_string();
 			uint8_t*       file_path = serd_file_uri_parse(file_uri, NULL);
-			graphes.push_back(boost::shared_ptr<const LV2Graph>(
-				                  new LV2Graph(graph_uri, (const char*)file_path)));
+			graphs.push_back(boost::shared_ptr<const LV2Graph>(
+				                 new LV2Graph(graph_uri, (const char*)file_path)));
 			free(file_path);
 		}
 	}
 
 	serd_env_free(env);
-	return graphes;
+	return graphs;
 }
 
 static LV2_Handle
@@ -464,19 +465,19 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
                   const LV2_Feature*const* features)
 {
 	// Get features from features array
-	LV2_URID_Map*        map    = NULL;
-	LV2_URID_Unmap*      unmap  = NULL;
-	LV2_Buf_Size_Access* access = NULL;
-	LV2_Log_Log*         log    = NULL;
+	LV2_URID_Map*             map     = NULL;
+	LV2_URID_Unmap*           unmap   = NULL;
+	LV2_Log_Log*              log     = NULL;
+	const LV2_Options_Option* options = NULL;
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_URID__map)) {
 			map = (LV2_URID_Map*)features[i]->data;
 		} else if (!strcmp(features[i]->URI, LV2_URID__unmap)) {
 			unmap = (LV2_URID_Unmap*)features[i]->data;
-		} else if (!strcmp(features[i]->URI, LV2_BUF_SIZE__access)) {
-			access = (LV2_Buf_Size_Access*)features[i]->data;
 		} else if (!strcmp(features[i]->URI, LV2_LOG__log)) {
 			log = (LV2_Log_Log*)features[i]->data;
+		} else if (!strcmp(features[i]->URI, LV2_OPTIONS__options)) {
+			options = (const LV2_Options_Option*)features[i]->data;
 		}
 	}
 
@@ -485,11 +486,11 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	set_bundle_path(bundle_path);
-	Lib::Graphes graphes = find_graphes(
+	Lib::Graphs graphs = find_graphs(
 		Glib::filename_to_uri(Ingen::bundle_file_path("manifest.ttl")));
 
 	const LV2Graph* graph = NULL;
-	for (Lib::Graphes::iterator i = graphes.begin(); i != graphes.end(); ++i) {
+	for (Lib::Graphs::iterator i = graphs.begin(); i != graphs.end(); ++i) {
 		if ((*i)->uri == descriptor->URI) {
 			graph = (*i).get();
 			break;
@@ -519,22 +520,32 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		return NULL;
 	}
 
-	uint32_t block_length = 4096;
-	uint32_t seq_size     = 0;
-	if (access) {
-		uint32_t min, multiple_of, power_of;
-		access->get_sample_count(
-			access->handle, &min, &block_length, &multiple_of, &power_of);
-		access->get_buf_size(
-			access->handle, &seq_size,
-			plugin->world->uris().atom_Sequence, block_length);
-		plugin->world->log().info(
-			Raul::fmt("Block: %1% frames, Sequence: %2% bytes\n")
-			% block_length % seq_size);
-	} else {
-		plugin->world->log().warn(
-			"No buffer size access, guessing 4096 frames\n");
+	LV2_URID bufsz_max    = map->map(map->handle, LV2_BUF_SIZE__maxBlockLength);
+	LV2_URID bufsz_seq    = map->map(map->handle, LV2_BUF_SIZE__sequenceSize);
+	LV2_URID atom_Int     = map->map(map->handle, LV2_ATOM__Int);
+	int32_t  block_length = 0;
+	int32_t  seq_size     = 0;
+	if (options) {
+		for (const LV2_Options_Option* o = options; o->key; ++o) {
+			if (o->key == bufsz_max && o->value->type == atom_Int) {
+				block_length = ((const LV2_Atom_Int*)o->value)->body;
+			} else if (o->key == bufsz_seq && o->value->type == atom_Int) {
+				seq_size = ((const LV2_Atom_Int*)o->value)->body;
+			}
+		}
 	}
+	if (block_length == 0) {
+		block_length = 4096;
+		plugin->world->log().warn("No maximum block length given\n");
+	}
+	if (seq_size == 0) {
+		seq_size = 16384;
+		plugin->world->log().warn("No maximum sequence size given\n");
+	}
+
+	plugin->world->log().info(
+		Raul::fmt("Block: %1% frames, Sequence: %2% bytes\n")
+		% block_length % seq_size);
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
 	plugin->world->set_engine(engine);
@@ -754,7 +765,7 @@ LV2Graph::LV2Graph(const std::string& u, const std::string& f)
 Lib::Lib(const char* bundle_path)
 {
 	Ingen::set_bundle_path(bundle_path);
-	graphes = find_graphes(
+	graphs = find_graphs(
 		Glib::filename_to_uri(Ingen::bundle_file_path("manifest.ttl")));
 }
 
@@ -769,7 +780,7 @@ static const LV2_Descriptor*
 lib_get_plugin(LV2_Lib_Handle handle, uint32_t index)
 {
 	Lib* lib = (Lib*)handle;
-	return index < lib->graphes.size() ? &lib->graphes[index]->descriptor : NULL;
+	return index < lib->graphs.size() ? &lib->graphs[index]->descriptor : NULL;
 }
 
 /** LV2 plugin library entry point */
