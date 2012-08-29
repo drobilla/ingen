@@ -527,10 +527,10 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	int32_t  seq_size     = 0;
 	if (options) {
 		for (const LV2_Options_Option* o = options; o->key; ++o) {
-			if (o->key == bufsz_max && o->value->type == atom_Int) {
-				block_length = ((const LV2_Atom_Int*)o->value)->body;
-			} else if (o->key == bufsz_seq && o->value->type == atom_Int) {
-				seq_size = ((const LV2_Atom_Int*)o->value)->body;
+			if (o->key == bufsz_max && o->type == atom_Int) {
+				block_length = *(const int32_t*)o->value;
+			} else if (o->key == bufsz_seq && o->type == atom_Int) {
+				seq_size = *(const int32_t*)o->value;
 			}
 		}
 	}
