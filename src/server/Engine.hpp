@@ -42,6 +42,7 @@ class Driver;
 class Event;
 class EventWriter;
 class GraphImpl;
+class LV2Options;
 class PostProcessor;
 class PreProcessor;
 class ProcessContext;
@@ -92,7 +93,7 @@ public:
 	Ingen::World* world() const { return _world; }
 
 	EventWriter*     interface()        const { return _event_writer; }
-	BlockFactory*    block_factory()     const { return _block_factory; }
+	BlockFactory*    block_factory()    const { return _block_factory; }
 	Broadcaster*     broadcaster()      const { return _broadcaster; }
 	BufferFactory*   buffer_factory()   const { return _buffer_factory; }
 	ControlBindings* control_bindings() const { return _control_bindings; }
@@ -112,17 +113,18 @@ public:
 private:
 	Ingen::World* _world;
 
-	BlockFactory*     _block_factory;
-	Broadcaster*      _broadcaster;
-	BufferFactory*    _buffer_factory;
-	ControlBindings*  _control_bindings;
-	SharedPtr<Driver> _driver;
-	Raul::Maid*       _maid;
-	PreProcessor*     _pre_processor;
-	PostProcessor*    _post_processor;
-	EventWriter*      _event_writer;
-	GraphImpl*        _root_graph;
-	Worker*           _worker;
+	BlockFactory*         _block_factory;
+	Broadcaster*          _broadcaster;
+	BufferFactory*        _buffer_factory;
+	ControlBindings*      _control_bindings;
+	SharedPtr<Driver>     _driver;
+	EventWriter*          _event_writer;
+	Raul::Maid*           _maid;
+	SharedPtr<LV2Options> _options;
+	PreProcessor*         _pre_processor;
+	PostProcessor*        _post_processor;
+	GraphImpl*            _root_graph;
+	Worker*               _worker;
 
 	ProcessContext _process_context;
 

@@ -17,6 +17,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "lv2/lv2plug.in/ns/ext/patch/patch.h"
@@ -54,6 +55,9 @@ URIs::URIs(Forge& f, URIMap* map)
 	, atom_bufferType       (forge, map, LV2_ATOM__bufferType)
 	, atom_eventTransfer    (forge, map, LV2_ATOM__eventTransfer)
 	, atom_supports         (forge, map, LV2_ATOM__supports)
+	, bufsz_maxBlockLength  (forge, map, LV2_BUF_SIZE__maxBlockLength)
+	, bufsz_minBlockLength  (forge, map, LV2_BUF_SIZE__minBlockLength)
+	, bufsz_sequenceSize    (forge, map, LV2_BUF_SIZE__sequenceSize)
 	, doap_name             (forge, map, "http://usefulinc.com/ns/doap#name")
 	, ingen_Block           (forge, map, NS_INGEN "Block")
 	, ingen_Edge            (forge, map, NS_INGEN "Edge")

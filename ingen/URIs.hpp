@@ -69,6 +69,9 @@ public:
 	const Quark atom_bufferType;
 	const Quark atom_eventTransfer;
 	const Quark atom_supports;
+	const Quark bufsz_maxBlockLength;
+	const Quark bufsz_minBlockLength;
+	const Quark bufsz_sequenceSize;
 	const Quark doap_name;
 	const Quark ingen_Block;
 	const Quark ingen_Edge;

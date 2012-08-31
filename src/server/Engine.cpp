@@ -35,6 +35,7 @@
 #include "Event.hpp"
 #include "EventWriter.hpp"
 #include "GraphImpl.hpp"
+#include "LV2Options.hpp"
 #include "PostProcessor.hpp"
 #include "PreProcessor.hpp"
 #include "ProcessContext.hpp"
@@ -55,10 +56,11 @@ Engine::Engine(Ingen::World* world)
 	, _broadcaster(new Broadcaster())
 	, _buffer_factory(new BufferFactory(*this, world->uris()))
 	, _control_bindings(NULL)
+	, _event_writer(new EventWriter(*this))
 	, _maid(new Raul::Maid())
+	, _options(new LV2Options(*this))
 	, _pre_processor(new PreProcessor())
 	, _post_processor(new PostProcessor(*this))
-	, _event_writer(new EventWriter(*this))
 	, _root_graph(NULL)
 	, _worker(new Worker(world->log(), event_queue_size()))
 	, _process_context(*this)
@@ -72,6 +74,7 @@ Engine::Engine(Ingen::World* world)
 	_control_bindings = new ControlBindings(*this);
 
 	_world->lv2_features().add_feature(_worker->schedule_feature());
+	_world->lv2_features().add_feature(_options);
 }
 
 Engine::~Engine()
@@ -179,6 +182,7 @@ Engine::activate()
 	ThreadManager::single_threaded = true;
 
 	_buffer_factory->set_block_length(_driver->block_length());
+	_options->set(*this);
 
 	_pre_processor->start();
 
