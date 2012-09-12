@@ -1,44 +1,43 @@
 #!/usr/bin/env python
 import os
 import subprocess
-
 import waflib.Options as Options
 import waflib.Utils as Utils
-from waflib.extras import autowaf as autowaf
+import waflib.extras.autowaf as autowaf
 
-# Version of this package (even if built as a child)
+# Package version
 INGEN_VERSION = '0.5.1'
 
-# Variables for 'waf dist'
-APPNAME = 'ingen'
-VERSION = INGEN_VERSION
-
-# Mandatory variables
-top = '.'
-out = 'build'
+# Mandatory waf variables
+APPNAME = 'ingen'        # Package name for waf dist
+VERSION = INGEN_VERSION  # Package version for waf dist
+top     = '.'            # Source directory
+out     = 'build'        # Build directory
 
 def options(opt):
     opt.load('compiler_cxx')
     autowaf.set_options(opt)
     opt.add_option('--data-dir', type='string', dest='datadir',
-                   help="Ingen data install directory [Default: PREFIX/share/ingen]")
+                   help='Ingen data install directory [Default: PREFIX/share/ingen]')
     opt.add_option('--module-dir', type='string', dest='moduledir',
-                   help="Ingen module install directory [Default: PREFIX/lib/ingen]")
-    opt.add_option('--no-gui', action='store_true', default=False, dest='no_gui',
-                   help="Do not build GUI")
+                   help='Ingen module install directory [Default: PREFIX/lib/ingen]')
+    opt.add_option('--no-gui', action='store_true', dest='no_gui',
+                   help='Do not build GUI')
     opt.add_option('--no-jack-session', action='store_true', default=False,
-                    dest='no_jack_session',
-                    help="Do not build JACK session support")
-    opt.add_option('--no-socket', action='store_true', default=False, dest='no_socket',
-                   help="Do not build Socket interface")
-    opt.add_option('--test', action='store_true', default=False, dest='build_tests',
-                   help="Build unit tests")
+                   dest='no_jack_session',
+                   help='Do not build JACK session support')
+    opt.add_option('--no-socket', action='store_true', dest='no_socket',
+                   help='Do not build Socket interface')
+    opt.add_option('--test', action='store_true', dest='build_tests',
+                   help='Build unit tests')
 
 def configure(conf):
     conf.load('compiler_cxx')
     autowaf.configure(conf)
 
     autowaf.display_header('Ingen Configuration')
+    autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
+                      atleast_version='1.0.13', mandatory=True)
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
                       atleast_version='2.14.0', mandatory=True)
     autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
@@ -90,14 +89,11 @@ def configure(conf):
             conf.env.INGEN_TEST_LIBS     = []
             conf.env.INGEN_TEST_CXXFLAGS = []
 
-    # Check for posix_memalign (OSX, amazingly, doesn't have it)
-    conf.check(function_name='posix_memalign',
-               defines='_POSIX_SOURCE=1',
-               header_name='stdlib.h',
-               define_name='HAVE_POSIX_MEMALIGN',
-               mandatory=False)
-
-    autowaf.check_pkg(conf, 'lv2', atleast_version='1.0.13', uselib_store='LV2')
+    conf.check(function_name = 'posix_memalign',
+               defines       = '_POSIX_SOURCE=1',
+               header_name   = 'stdlib.h',
+               define_name   = 'HAVE_POSIX_MEMALIGN',
+               mandatory     = False)
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
