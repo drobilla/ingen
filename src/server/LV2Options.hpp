@@ -57,13 +57,13 @@ struct LV2Options : public Ingen::LV2Features::Feature {
 		Engine& engine = block->parent_graph()->engine();
 		URIs&   uris   = engine.world()->uris();
 		const LV2_Options_Option options[] = {
-			{ uris.bufsz_minBlockLength, sizeof(int32_t), uris.atom_Int,
-			  &_block_length },
-			{ uris.bufsz_maxBlockLength, sizeof(int32_t), uris.atom_Int,
-			  &_block_length },
-			{ uris.bufsz_sequenceSize, sizeof(int32_t), uris.atom_Int,
-			  &_seq_size },
-			{ 0, 0, 0, NULL }
+			{ LV2_OPTIONS_INSTANCE, 0, uris.bufsz_minBlockLength,
+			  sizeof(int32_t), uris.atom_Int, &_block_length },
+			{ LV2_OPTIONS_INSTANCE, 0, uris.bufsz_maxBlockLength,
+			  sizeof(int32_t), uris.atom_Int, &_block_length },
+			{ LV2_OPTIONS_INSTANCE, 0, uris.bufsz_sequenceSize,
+			  sizeof(int32_t), uris.atom_Int, &_seq_size },
+			{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, NULL }
 		};
 
 		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));

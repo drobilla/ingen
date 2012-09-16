@@ -20,6 +20,7 @@
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
+#include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 #include "lv2/lv2plug.in/ns/ext/patch/patch.h"
 #include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
@@ -115,6 +116,7 @@ URIs::URIs(Forge& f, URIMap* map)
 	, midi_NoteOn           (forge, map, LV2_MIDI__NoteOn)
 	, midi_controllerNumber (forge, map, LV2_MIDI__controllerNumber)
 	, midi_noteNumber       (forge, map, LV2_MIDI__noteNumber)
+	, morph_currentType     (forge, map, LV2_MORPH__currentType)
 	, patch_Delete          (forge, map, LV2_PATCH__Delete)
 	, patch_Get             (forge, map, LV2_PATCH__Get)
 	, patch_Move            (forge, map, LV2_PATCH__Move)

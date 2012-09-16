@@ -19,8 +19,9 @@
 #include <cassert>
 #include <cmath>
 
-#include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
+#include "lv2/lv2plug.in/ns/ext/options/options.h"
+#include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
@@ -84,8 +85,8 @@ LV2Block::make_instance(URIs&      uris,
 		return SharedPtr<LilvInstance>();
 	}
 
-	const LV2_Morph_Interface* morph_iface = (const LV2_Morph_Interface*)
-		lilv_instance_get_extension_data(inst, LV2_MORPH__interface);
+	const LV2_Options_Interface* options_iface = (const LV2_Options_Interface*)
+		lilv_instance_get_extension_data(inst, LV2_OPTIONS__interface);
 
 	for (uint32_t p = 0; p < num_ports(); ++p) {
 		PortImpl* const port   = _ports->at(p);
@@ -93,9 +94,14 @@ LV2Block::make_instance(URIs&      uris,
 			? port->prepared_buffer(voice).get()
 			: port->buffer(voice).get();
 		if (port->is_morph() && port->is_a(PortType::CV)) {
-			if (morph_iface) {
-				morph_iface->morph_port(
-					inst->lv2_handle, p, uris.lv2_CVPort, NULL);
+			if (options_iface) {
+				const LV2_URID port_type = uris.lv2_CVPort;
+				const LV2_Options_Option options[] = {
+					{ LV2_OPTIONS_PORT, p, uris.morph_currentType,
+					  sizeof(LV2_URID), uris.atom_URID, &port_type },
+					{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, NULL }
+				};
+				options_iface->set(inst->lv2_handle, options);
 			}
 		}
 
@@ -108,21 +114,32 @@ LV2Block::make_instance(URIs&      uris,
 		}
 	}
 
-	if (morph_iface) {
+	if (options_iface) {
 		for (uint32_t p = 0; p < num_ports(); ++p) {
 			PortImpl* const port = _ports->at(p);
 			if (port->is_auto_morph()) {
-				LV2_URID type = morph_iface->port_type(
-					inst->lv2_handle, p, NULL);
-				if (type == _uris.lv2_ControlPort) {
-					port->set_type(PortType::CONTROL, 0);
-				} else if (type == _uris.lv2_CVPort) {
-					port->set_type(PortType::CV, 0);
+				LV2_Options_Option options[] = {
+					{ LV2_OPTIONS_PORT, p, uris.morph_currentType, 0, 0, NULL },
+					{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, 0 }
+				};
+
+				options_iface->get(inst->lv2_handle, options);
+				if (options[0].value) {
+					LV2_URID type = *(LV2_URID*)options[0].value;
+					if (type == _uris.lv2_ControlPort) {
+						port->set_type(PortType::CONTROL, 0);
+					} else if (type == _uris.lv2_CVPort) {
+						port->set_type(PortType::CV, 0);
+					} else {
+						parent_graph()->engine().log().error(
+							Raul::fmt("%1% auto-morphed to unknown type %2%\n")
+							% port->path().c_str() % type);
+						return SharedPtr<LilvInstance>();
+					}
 				} else {
 					parent_graph()->engine().log().error(
-						Raul::fmt("%1% auto-morphed to unknown type %2%\n")
-						% port->path().c_str() % type);
-					return SharedPtr<LilvInstance>();
+						Raul::fmt("Failed to get auto-morphed type of %1%\n")
+						% port->path().c_str());
 				}
 			}
 		}
