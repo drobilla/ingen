@@ -89,7 +89,7 @@ private:
 
 	InputPort*  _midi_in_port;
 	OutputPort* _freq_port;
-	OutputPort* _octs_port;
+	OutputPort* _num_port;
 	OutputPort* _vel_port;
 	OutputPort* _gate_port;
 	OutputPort* _trig_port;

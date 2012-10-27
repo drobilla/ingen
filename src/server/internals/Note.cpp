@@ -72,10 +72,13 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	_freq_port->set_property(uris.lv2_maximum, bufs.forge().make(25088.0f));
 	_ports->at(1) = _freq_port;
 
-	_octs_port = new OutputPort(bufs, this, Raul::Symbol("octaves"), 1, _polyphony,
+	_num_port = new OutputPort(bufs, this, Raul::Symbol("number"), 1, _polyphony,
 	                            PortType::CV, 0, bufs.forge().make(0.0f));
-	_octs_port->set_property(uris.lv2_name, bufs.forge().alloc("Octaves"));
-	_ports->at(2) = _octs_port;
+	_num_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
+	_num_port->set_property(uris.lv2_maximum, bufs.forge().make(127.0f));
+	_num_port->set_property(uris.lv2_portProperty, uris.lv2_integer);
+	_num_port->set_property(uris.lv2_name, bufs.forge().alloc("Number"));
+	_ports->at(2) = _num_port;
 
 	_vel_port = new OutputPort(bufs, this, Raul::Symbol("velocity"), 2, _polyphony,
 	                           PortType::CV, 0, bufs.forge().make(0.0f));
@@ -188,12 +191,6 @@ note_to_freq(uint8_t num)
 	return A4 * powf(2.0f, (float)(num - 57.0f) / 12.0f);
 }
 
-static inline float
-note_to_octaves(uint8_t num)
-{
-	return (num - 60) / 12.0f;
-}
-
 void
 NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
 {
@@ -254,7 +251,7 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(_keys[voice->note].voice == voice_num);
 
 	_freq_port->set_voice_value(context, voice_num, time, note_to_freq(note_num));
-	_octs_port->set_voice_value(context, voice_num, time, note_to_octaves(note_num));
+	_num_port->set_voice_value(context, voice_num, time, (float)note_num);
 	_vel_port->set_voice_value(context, voice_num, time, velocity / 127.0f);
 	_gate_port->set_voice_value(context, voice_num, time, 1.0f);
 	_trig_port->set_voice_value(context, voice_num, time, 1.0f);
@@ -312,7 +309,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 
 		// Change the freq but leave the gate high and don't retrigger
 		_freq_port->set_voice_value(context, voice, time, note_to_freq(replace_key_num));
-		_octs_port->set_voice_value(context, voice, time, note_to_octaves(replace_key_num));
+		_num_port->set_voice_value(context, voice, time, replace_key_num);
 
 		replace_key->state = Key::ON_ASSIGNED;
 		replace_key->voice = voice;
