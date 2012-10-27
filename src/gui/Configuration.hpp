@@ -72,7 +72,6 @@ private:
 	uint32_t _cv_port_color;
 	uint32_t _event_port_color;
 	uint32_t _string_port_color;
-	uint32_t _value_port_color;
 };
 
 } // namespace GUI

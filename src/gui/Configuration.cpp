@@ -46,7 +46,6 @@ Configuration::Configuration(App& app)
 	, _cv_port_color(0x248780FF) // Teal (between audio and control)
 	, _event_port_color(0x960909FF) // Red
 	, _string_port_color(0x5C3566FF) // Plum
-	, _value_port_color(0xBABDB6FF) // Aluminum
 {
 }
 
