@@ -229,7 +229,7 @@ parse_block(Ingen::World*                     world,
 
 	Sord::Iter i = model.find(subject, ingen_prototype, nil);
 	if (i.end() || i.get_object().type() != Sord::Node::URI) {
-		world->log().error("BLock missing mandatory ingen:prototype\n");
+		world->log().error("Block missing mandatory ingen:prototype\n");
 		return boost::optional<Raul::Path>();
 	}
 
