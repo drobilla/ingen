@@ -383,7 +383,7 @@ parse_edge(Ingen::World*     world,
            Ingen::Interface* target,
            Sord::Model&      model,
            const Sord::Node& subject,
-           const Raul::Path& parent)
+           const Raul::Path& graph)
 {
 	URIs& uris = world->uris();
 
@@ -426,7 +426,8 @@ parse_edge(Ingen::World*     world,
 		return false;
 	}
 
-	target->connect(Raul::Path(tail_str), Raul::Path(head_str));
+	target->connect(graph.child(Raul::Path(tail_str)),
+	                graph.child(Raul::Path(head_str)));
 
 	return true;
 }
@@ -436,13 +437,13 @@ parse_edges(Ingen::World*     world,
             Ingen::Interface* target,
             Sord::Model&      model,
             const Sord::Node& subject,
-            const Raul::Path& parent)
+            const Raul::Path& graph)
 {
 	const Sord::URI  ingen_edge(*world->rdf_world(), world->uris().ingen_edge);
 	const Sord::Node nil;
 
 	for (Sord::Iter i = model.find(subject, ingen_edge, nil); !i.end(); ++i) {
-		parse_edge(world, target, model, i.get_object(), parent);
+		parse_edge(world, target, model, i.get_object(), graph);
 	}
 
 	return true;
