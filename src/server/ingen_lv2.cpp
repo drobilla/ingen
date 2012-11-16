@@ -246,6 +246,10 @@ public:
 		return new EnginePort(graph_port);
 	}
 
+	virtual void append_time_events(ProcessContext& context,
+	                                Buffer&         buffer)
+	{}
+
 	/** Called in run thread for events received at control input port. */
 	void enqueue_message(const LV2_Atom* atom) {
 		if (_from_ui.write(lv2_atom_total_size(atom), atom) == 0) {

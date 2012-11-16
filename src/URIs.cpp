@@ -23,6 +23,7 @@
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 #include "lv2/lv2plug.in/ns/ext/patch/patch.h"
 #include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
+#include "lv2/lv2plug.in/ns/ext/time/time.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 namespace Ingen {
@@ -133,6 +134,14 @@ URIs::URIs(Forge& f, URIMap* map)
 	, pprops_logarithmic    (forge, map, LV2_PORT_PROPS__logarithmic)
 	, rdf_type              (forge, map, NS_RDF "type")
 	, rdfs_seeAlso          (forge, map, NS_RDFS "seeAlso")
+	, time_Position         (forge, map, LV2_TIME__Position)
+	, time_bar              (forge, map, LV2_TIME__bar)
+	, time_barBeat          (forge, map, LV2_TIME__barBeat)
+	, time_beatUnit         (forge, map, LV2_TIME__beatUnit)
+	, time_beatsPerBar      (forge, map, LV2_TIME__beatsPerBar)
+	, time_beatsPerMinute   (forge, map, LV2_TIME__beatsPerMinute)
+	, time_frame            (forge, map, LV2_TIME__frame)
+	, time_speed            (forge, map, LV2_TIME__speed)
 	, wildcard              (forge, map, NS_INGEN "wildcard")
 {
 }

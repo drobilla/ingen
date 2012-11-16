@@ -41,6 +41,7 @@ def build(bld):
             internals/Controller.cpp
             internals/Delay.cpp
             internals/Note.cpp
+            internals/Time.cpp
             internals/Trigger.cpp
             mix.cpp
     '''

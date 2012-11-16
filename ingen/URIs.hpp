@@ -146,6 +146,14 @@ public:
 	const Quark pprops_logarithmic;
 	const Quark rdf_type;
 	const Quark rdfs_seeAlso;
+	const Quark time_Position;
+	const Quark time_bar;
+	const Quark time_barBeat;
+	const Quark time_beatUnit;
+	const Quark time_beatsPerBar;
+	const Quark time_beatsPerMinute;
+	const Quark time_frame;
+	const Quark time_speed;
 	const Quark wildcard;
 };
 

@@ -18,6 +18,7 @@
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
 #include "internals/Note.hpp"
+#include "internals/Time.hpp"
 #include "internals/Trigger.hpp"
 
 #include "Driver.hpp"
@@ -55,6 +56,8 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
 		return new DelayNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else if (uri() == NS_INTERNALS "Note") {
 		return new NoteNode(this, bufs, symbol, polyphonic, parent, srate);
+	} else if (uri() == NS_INTERNALS "Time") {
+		return new TimeNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else if (uri() == NS_INTERNALS "Trigger") {
 		return new TriggerNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else {

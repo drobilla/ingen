@@ -22,6 +22,7 @@
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
 #include "internals/Note.hpp"
+#include "internals/Time.hpp"
 #include "internals/Trigger.hpp"
 
 #include "InternalPlugin.hpp"
@@ -85,6 +86,9 @@ BlockFactory::load_internal_plugins()
 
 	InternalPlugin* note_plug = NoteNode::internal_plugin(uris);
 	_plugins.insert(make_pair(note_plug->uri(), note_plug));
+
+	InternalPlugin* time_plug = TimeNode::internal_plugin(uris);
+	_plugins.insert(make_pair(time_plug->uri(), time_plug));
 
 	InternalPlugin* trigger_plug = TriggerNode::internal_plugin(uris);
 	_plugins.insert(make_pair(trigger_plug->uri(), trigger_plug));

@@ -65,6 +65,9 @@ public:
 		return false;
 	}
 
+	virtual void append_time_events(ProcessContext& context,
+	                                Buffer&         buffer) {}
+
 private:
 	SampleCount _sample_rate;
 	SampleCount _block_length;

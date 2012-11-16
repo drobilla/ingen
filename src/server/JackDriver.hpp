@@ -30,6 +30,8 @@
 #include "raul/AtomicInt.hpp"
 #include "raul/Semaphore.hpp"
 
+#include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+
 #include "Driver.hpp"
 #include "EnginePort.hpp"
 
@@ -81,6 +83,9 @@ public:
 	inline const jack_position_t* position()        { return &_position; }
 	inline jack_transport_state_t transport_state() { return _transport_state; }
 
+	void append_time_events(ProcessContext& context,
+	                        Buffer&         buffer);
+
 	bool is_realtime() const { return jack_is_realtime(_client); }
 
 	jack_client_t* jack_client()  const { return _client; }
@@ -130,6 +135,7 @@ protected:
 
 	Engine&                _engine;
 	Ports                  _ports;
+	LV2_Atom_Forge         _forge;
 	Raul::Semaphore        _sem;
 	Raul::AtomicInt        _flag;
 	jack_client_t*         _client;
@@ -139,6 +145,9 @@ protected:
 	bool                   _is_activated;
 	jack_position_t        _position;
 	jack_transport_state_t _transport_state;
+	float                  _old_bpm;
+	jack_nframes_t         _old_frame;
+	bool                   _old_rolling;
 };
 
 } // namespace Server

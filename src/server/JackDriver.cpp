@@ -29,6 +29,7 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
@@ -56,8 +57,13 @@ JackDriver::JackDriver(Engine& engine)
 	, _block_length(0)
 	, _sample_rate(0)
 	, _is_activated(false)
+	, _old_bpm(120.0f)
+	, _old_frame(0)
+	, _old_rolling(false)
 {
 	_midi_event_type = _engine.world()->uris().midi_MidiEvent;
+	lv2_atom_forge_init(
+		&_forge, &engine.world()->uri_map().urid_map_feature()->urid_map);
 }
 
 JackDriver::~JackDriver()
@@ -331,6 +337,57 @@ JackDriver::post_process_port(ProcessContext& context, EnginePort* port)
 	}
 }
 
+void
+JackDriver::append_time_events(ProcessContext& context,
+                               Buffer&         buffer)
+{
+	const URIs&            uris    = context.engine().world()->uris();
+	const jack_position_t* pos     = &_position;
+	const bool             rolling = (_transport_state == JackTransportRolling);
+
+	// Do nothing if there is no unexpected time change (other than rolling)
+	if (rolling == _old_rolling &&
+	    pos->frame == _old_frame &&
+	    pos->beats_per_minute == _old_bpm) {
+		return;
+	}
+
+	// Update old time information to detect change next cycle
+	_old_frame   = pos->frame;
+	_old_rolling = rolling;
+	_old_bpm     = pos->beats_per_minute;
+
+	std::cerr << "POS CHANGED" << endl;
+
+	// Build an LV2 position object to append to the buffer
+	uint8_t              pos_buf[256];
+	LV2_Atom_Forge_Frame frame;
+	lv2_atom_forge_set_buffer(&_forge, pos_buf, sizeof(pos_buf));
+	lv2_atom_forge_blank(&_forge, &frame, 1, uris.time_Position);
+	lv2_atom_forge_property_head(&_forge, uris.time_frame, 0);
+	lv2_atom_forge_long(&_forge, pos->frame);
+	lv2_atom_forge_property_head(&_forge, uris.time_speed, 0);
+	lv2_atom_forge_float(&_forge, rolling ? 1.0 : 0.0);
+	if (pos->valid & JackPositionBBT) {
+		lv2_atom_forge_property_head(&_forge, uris.time_barBeat, 0);
+		lv2_atom_forge_float(
+			&_forge, pos->beat - 1 + (pos->tick / pos->ticks_per_beat));
+		lv2_atom_forge_property_head(&_forge, uris.time_bar, 0);
+		lv2_atom_forge_float(&_forge, pos->bar - 1);
+		lv2_atom_forge_property_head(&_forge, uris.time_beatUnit, 0);
+		lv2_atom_forge_float(&_forge, pos->beat_type);
+		lv2_atom_forge_property_head(&_forge, uris.time_beatsPerBar, 0);
+		lv2_atom_forge_float(&_forge, pos->beats_per_bar);
+		lv2_atom_forge_property_head(&_forge, uris.time_beatsPerMinute, 0);
+		lv2_atom_forge_float(&_forge, pos->beats_per_minute);
+	}
+
+	// Append position to buffer at offset 0 (start of this cycle)
+	LV2_Atom* lpos = (LV2_Atom*)pos_buf;
+	buffer.append_event(
+		0, lpos->size, lpos->type, (const uint8_t*)LV2_ATOM_BODY_CONST(lpos));
+}
+
 /**** Jack Callbacks ****/
 
 /** Jack process callback, drives entire audio thread.
@@ -365,6 +422,11 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	// Write output
 	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		post_process_port(_engine.process_context(), &*i);
+	}
+
+	// Update expected transport frame for next cycle to detect changes
+	if (_transport_state == JackTransportRolling) {
+		_old_frame += nframes;
 	}
 
 	return 0;

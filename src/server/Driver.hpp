@@ -89,6 +89,10 @@ public:
 
 	/** Return true iff the driver is running in real-time mode */
 	virtual bool is_realtime() const = 0;
+
+	/** Append time events for this cycle to @p buffer. */
+	virtual void append_time_events(ProcessContext& context,
+	                                Buffer&         buffer) = 0;
 };
 
 } // namespace Server
