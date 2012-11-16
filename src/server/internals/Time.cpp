@@ -23,7 +23,6 @@
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
-#include "PostProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "internals/Time.hpp"
 #include "util.hpp"
