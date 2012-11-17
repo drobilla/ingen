@@ -53,8 +53,10 @@ public:
 
 	virtual ~Context() {}
 
-	/** Send a notification from this run context. */
-	void notify(LV2_URID           key  = 0,
+	/** Send a notification from this run context.
+	 * @return false on failure (ring is full)
+	 */
+	bool notify(LV2_URID           key  = 0,
 	            FrameTime          time = 0,
 	            PortImpl*          port = 0,
 	            uint32_t           size = 0,

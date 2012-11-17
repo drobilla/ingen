@@ -53,7 +53,7 @@ Context::Context(Engine& engine, ID id)
 	, _realtime(true)
 {}
 
-void
+bool
 Context::notify(LV2_URID           key,
                 FrameTime          time,
                 PortImpl*          port,
@@ -63,14 +63,16 @@ Context::notify(LV2_URID           key,
 {
 	const Notification n(port, time, key, size, type);
 	if (_event_sink.write_space() < sizeof(n) + size) {
-		_engine.log().warn("Notification ring overflow\n");
-	} else {
-		if (_event_sink.write(sizeof(n), &n) != sizeof(n)) {
-			_engine.log().error("Error writing header to notification ring\n");
-		} else if (_event_sink.write(size, body) != size) {
-			_engine.log().error("Error writing body to notification ring\n");
-		}
+		return false;
 	}
+	if (_event_sink.write(sizeof(n), &n) != sizeof(n)) {
+		_engine.log().error("Error writing header to notification ring\n");
+	} else if (_event_sink.write(size, body) != size) {
+		_engine.log().error("Error writing body to notification ring\n");
+	} else {
+		return true;
+	}
+	return false;
 }
 
 void

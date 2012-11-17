@@ -367,9 +367,13 @@ PortImpl::broadcast_value(Context& context, bool force)
 	}
 
 	if (val.is_valid() && (force || val != _last_broadcasted_value)) {
-		_last_broadcasted_value = val;
-		context.notify(key, context.start(), this,
-		               val.size(), val.type(), val.get_body());
+		if (context.notify(key, context.start(), this,
+		                   val.size(), val.type(), val.get_body())) {
+			_last_broadcasted_value = val;
+		}
+		
+		/* On failure, last_broadcasted_value remains unaffected, so we'll try
+		   again next cycle and so on until the value is finally delivered. */
 	}
 }
 
