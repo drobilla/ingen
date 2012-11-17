@@ -62,6 +62,29 @@ PluginModel::PluginModel(URIs&                       uris,
 	}
 }
 
+static size_t
+last_uri_delim(const std::string& str)
+{
+	for (size_t i = str.length() - 1; i > 0; --i) {
+		switch (str[i]) {
+		case ':': case '/': case '?': case '#':
+			return i;
+		}
+	}
+	return string::npos;
+}
+
+static bool
+contains_alpha_after(const std::string& str, size_t begin)
+{
+	for (size_t i = begin; i < str.length(); ++i) {
+		if (isalpha(str[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
 const Raul::Atom&
 PluginModel::get_property(const Raul::URI& key) const
 {
@@ -72,29 +95,16 @@ PluginModel::get_property(const Raul::URI& key) const
 
 	// No lv2:symbol from data or engine, invent one
 	if (key == _uris.lv2_symbol) {
-		const Raul::URI& uri = this->uri();
-		size_t last_slash = uri.find_last_of('/');
-		size_t last_hash  = uri.find_last_of('#');
-		string symbol;
-		if (last_slash == string::npos && last_hash == string::npos) {
-			size_t last_colon = uri.find_last_of(':');
-			if (last_colon != string::npos)
-				symbol = uri.substr(last_colon + 1);
-			else
-				symbol = uri;
-		} else if (last_slash == string::npos) {
-			symbol = uri.substr(last_hash + 1);
-		} else if (last_hash == string::npos) {
-			symbol = uri.substr(last_slash + 1);
-		} else {
-			size_t first_delim = std::min(last_slash, last_hash);
-			size_t last_delim  = std::max(last_slash, last_hash);
-			if (isalpha(uri[last_delim + 1]))
-				symbol = uri.substr(last_delim + 1);
-			else
-				symbol = uri.substr(first_delim + 1,
-				                    last_delim - first_delim - 1);
+		string str        = this->uri();
+		size_t last_delim = last_uri_delim(str);
+		while (last_delim != string::npos &&
+		       !contains_alpha_after(str, last_delim)) {
+			str = str.substr(0, last_delim);
+			last_delim = last_uri_delim(str);
 		}
+		str = str.substr(last_delim + 1);
+
+		std::string symbol = Raul::Symbol::symbolify(str);
 		set_property(_uris.lv2_symbol, _uris.forge.alloc(symbol));
 		return get_property(key);
 	}
