@@ -31,7 +31,7 @@
 
 <>
 	ingen:polyphony 1 ;
-	<http://lv2plug.in/ns/extensions/ui#ui> ingen:PatchUIGtk2 ;
+	<http://lv2plug.in/ns/extensions/ui#ui> ingen:GraphUIGtk2 ;
 	lv2:extensionData <http://lv2plug.in/ns/ext/state#interface> ;
 	lv2:port <control_in> ,
 		<control_out> ;

@@ -357,8 +357,6 @@ JackDriver::append_time_events(ProcessContext& context,
 	_old_rolling = rolling;
 	_old_bpm     = pos->beats_per_minute;
 
-	std::cerr << "POS CHANGED" << endl;
-
 	// Build an LV2 position object to append to the buffer
 	uint8_t              pos_buf[256];
 	LV2_Atom_Forge_Frame frame;

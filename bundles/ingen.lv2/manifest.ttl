@@ -7,7 +7,7 @@ ingen:
 	a owl:Ontology ;
 	rdfs:seeAlso <ingen.ttl> .
 
-ingen:PatchUIGtk2
+ingen:GraphUIGtk2
 	a ui:GtkUI ;
 	ui:binary <libingen_gui_lv2.so> ;
 	rdfs:comment "The Ingen patcher interface." .

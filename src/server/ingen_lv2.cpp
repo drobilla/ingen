@@ -32,15 +32,16 @@
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
-#include "ingen/Interface.hpp"
-#include "ingen/Log.hpp"
-#include "ingen/serialisation/Parser.hpp"
-#include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/AtomReader.hpp"
 #include "ingen/AtomWriter.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/World.hpp"
 #include "ingen/runtime_paths.hpp"
+#include "ingen/serialisation/Parser.hpp"
+#include "ingen/serialisation/Serialiser.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
@@ -550,6 +551,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->world->log().info(
 		Raul::fmt("Block: %1% frames, Sequence: %2% bytes\n")
 		% block_length % seq_size);
+	plugin->world->conf().set("queue-size",
+	                          std::max(block_length, seq_size) * 4);
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
 	plugin->world->set_engine(engine);
