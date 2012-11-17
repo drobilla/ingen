@@ -18,6 +18,7 @@
 
 #include "lilv/lilv.h"
 
+#include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "internals/Controller.hpp"
 #include "internals/Delay.hpp"
@@ -120,8 +121,12 @@ BlockFactory::load_lv2_plugins()
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());
 	LILV_FOREACH(plugins, i, plugins) {
 		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);
-
-		const Raul::URI uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
+		const Raul::URI   uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
+		if (!lilv_plugin_get_port_by_index(lv2_plug, 0)) {
+			_world->log().warn(
+				Raul::fmt("Ignoring plugin <%1%> with invalid ports\n") % uri);
+			continue;
+		}
 
 		if (_plugins.find(uri) != _plugins.end()) {
 			continue;
