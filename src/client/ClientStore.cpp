@@ -365,11 +365,12 @@ ClientStore::set_property(const Raul::URI&  subject_uri,
 		}
 	} else {
 		SharedPtr<PluginModel> plugin = _plugin(subject_uri);
-		if (plugin)
+		if (plugin) {
 			plugin->set_property(predicate, value);
-		else
+		} else if (predicate != _uris.ingen_activity) {
 			_log.warn(Raul::fmt("Property <%1%> for unknown object %2%\n")
 			          % predicate.c_str() % subject_uri.c_str());
+		}
 	}
 }
 
