@@ -249,7 +249,19 @@ public:
 
 	virtual void append_time_events(ProcessContext& context,
 	                                Buffer&         buffer)
-	{}
+	{
+		const URIs&        uris = _engine.world()->uris();
+		LV2_Atom_Sequence* seq  = (LV2_Atom_Sequence*)_ports[0]->buffer();
+		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+			if (ev->body.type == uris.atom_Blank &&
+			    ((LV2_Atom_Object*)&ev)->body.otype == uris.time_Position) {
+				buffer.append_event(ev->time.frames,
+				                    ev->body.size,
+				                    ev->body.type,
+				                    (const uint8_t*)(&ev->body + 1));
+			}
+		}
+	}
 
 	/** Called in run thread for events received at control input port. */
 	void enqueue_message(const LV2_Atom* atom) {
