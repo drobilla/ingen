@@ -72,6 +72,7 @@ App::App(Ingen::World* world)
 	, _world(world)
 	, _sample_rate(48000)
 	, _enable_signal(true)
+	, _requested_plugins(false)
 {
 	Glib::set_application_name("Ingen");
 	gtk_window_set_default_icon_name("ingen");
@@ -184,6 +185,15 @@ App::detach()
 		_store.reset();
 		_client.reset();
 		_world->set_interface(SharedPtr<Interface>());
+	}
+}
+
+void
+App::request_plugins_if_necessary()
+{
+	if (!_requested_plugins) {
+		_world->interface()->get(Raul::URI("ingen:plugins"));
+		_requested_plugins = true;
 	}
 }
 

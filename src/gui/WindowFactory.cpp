@@ -191,6 +191,8 @@ void
 WindowFactory::present_load_plugin(SharedPtr<const GraphModel> graph,
                                    Node::Properties            data)
 {
+	_app.request_plugins_if_necessary();
+
 	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
 	if (w != _graph_windows.end())

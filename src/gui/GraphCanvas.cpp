@@ -151,6 +151,8 @@ GraphCanvas::GraphCanvas(App&                        app,
 void
 GraphCanvas::show_menu(bool position, unsigned button, uint32_t time)
 {
+	_app.request_plugins_if_necessary();
+
 	if (!_internal_menu)
 		build_menus();
 

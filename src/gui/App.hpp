@@ -78,6 +78,8 @@ public:
 
 	void detach();
 
+	void request_plugins_if_necessary();
+
 	void register_callbacks();
 	bool gtk_main_iteration();
 
@@ -170,6 +172,7 @@ protected:
 	ActivityPorts _activity_ports;
 
 	bool _enable_signal;
+	bool _requested_plugins;
 };
 
 } // namespace GUI

@@ -47,6 +47,13 @@ PluginModel::PluginModel(URIs&                       uris,
 	: Plugin(uris, uri)
 	, _type(type_from_uri(type_uri))
 {
+	if (_type == NIL) {
+		if (uri.find("ingen-internals") != string::npos) {
+			_type = Internal;
+		} else {
+			_type = LV2;  // Assume LV2 and hope Lilv can tell us something
+		}
+	}
 	add_properties(properties);
 
 	assert(_rdf_world);

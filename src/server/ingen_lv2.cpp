@@ -337,7 +337,6 @@ public:
 			}
 
 			if (seq->atom.size + sizeof(LV2_Atom) + atom.size > _notify_capacity) {
-				std::cerr << "Notify overflow" << std::endl;
 				break;  // Output port buffer full, resume next time
 			}
 
@@ -357,7 +356,9 @@ public:
 			seq->atom.size += sizeof(LV2_Atom_Event) + ev->body.size;
 		}
 
-		_to_ui_overflow_sem.post();
+		if (_to_ui_overflow) {
+			_to_ui_overflow_sem.post();
+		}
 	}
 
 	virtual SampleCount block_length() const { return _block_length; }

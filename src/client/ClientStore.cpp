@@ -270,8 +270,6 @@ ClientStore::put(const Raul::URI&            uri,
 		SharedPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == _uris.forge.URI) {
 			if (!(plug = _plugin(Raul::URI(p->second.get_uri())))) {
-				_log.warn(Raul::fmt("Unable to find plugin <%1%>\n")
-				          % p->second.get_uri());
 				plug = SharedPtr<PluginModel>(
 					new PluginModel(uris(),
 					                Raul::URI(p->second.get_uri()),

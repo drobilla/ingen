@@ -132,9 +132,6 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		                      ui->world->forge(),
 		                      *ui->client.get()));
 
-	// Request plugins
-	ui->world->interface()->get(Raul::URI("ingen:plugins"));
-
 	// Create empty root graph model
 	Ingen::Resource::Properties props;
 	props.insert(std::make_pair(ui->app->uris().rdf_type,

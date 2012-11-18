@@ -307,10 +307,6 @@ LV2Block::instantiate(BufferFactory& bufs)
 				}
 			}
 			lilv_nodes_free(sizes);
-
-			bufs.engine().log().info(
-				Raul::fmt("Atom port %1% buffer size %2%\n")
-				% path().c_str() % port_buffer_size);
 		}
 
 		enum { UNKNOWN, INPUT, OUTPUT } direction = UNKNOWN;
