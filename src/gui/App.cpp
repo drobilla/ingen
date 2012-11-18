@@ -74,9 +74,6 @@ App::App(Ingen::World* world)
 	, _enable_signal(true)
 	, _requested_plugins(false)
 {
-	Glib::set_application_name("Ingen");
-	gtk_window_set_default_icon_name("ingen");
-
 	WidgetFactory::get_widget_derived("connect_win", _connect_window);
 	WidgetFactory::get_widget_derived("messages_win", _messages_window);
 	WidgetFactory::get_widget_derived("graph_tree_win", _graph_tree_window);
@@ -100,7 +97,12 @@ App::~App()
 SharedPtr<App>
 App::create(Ingen::World* world)
 {
-	_main = new Gtk::Main(&world->argc(), &world->argv());
+	_main = Gtk::Main::instance();
+	if (!_main) {
+		Glib::set_application_name("Ingen");
+		gtk_window_set_default_icon_name("ingen");
+		_main = new Gtk::Main(&world->argc(), &world->argv());
+	}
 
 	App* app = new App(world);
 
