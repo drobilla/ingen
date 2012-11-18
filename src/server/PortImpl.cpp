@@ -77,7 +77,14 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 		set_property(uris.ingen_value, value);
 	}
 	if (type == PortType::ATOM) {
-		add_property(uris.atom_bufferType, bufs.forge().make_urid(buffer_type));
+		add_property(uris.atom_bufferType,
+		             bufs.forge().make_urid(buffer_type));
+		if (block->graph_type() == Ingen::Node::GRAPH) {
+			add_property(uris.atom_supports,
+			             bufs.forge().make_urid(uris.midi_MidiEvent));
+			add_property(uris.atom_supports,
+			             bufs.forge().make_urid(uris.time_Position));
+		}
 	}
 }
 
