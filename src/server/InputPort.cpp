@@ -124,7 +124,9 @@ void
 InputPort::add_edge(ProcessContext& context, EdgeImpl* c)
 {
 	_edges.push_front(*c);
-	_broadcast = true;	// Broadcast value/activity of connected input
+	if (_type != PortType::CV) {
+		_broadcast = true;  // Broadcast value/activity of connected input
+	}
 }
 
 /** Remove a edge.  Realtime safe.
@@ -150,7 +152,7 @@ InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
 	}
 
 	if (_edges.empty()) {
-		_broadcast = false;	 // Turn off broadcasting if no longer connected
+		_broadcast = false;  // Turn off broadcasting if no longer connected
 	}
 
 	return edge;
