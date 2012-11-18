@@ -62,7 +62,7 @@ ControllerNode::ControllerNode(InternalPlugin*     plugin,
 	                            PortType::CONTROL, 0, bufs.forge().make(0.0f));
 	_param_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
 	_param_port->set_property(uris.lv2_maximum, bufs.forge().make(127.0f));
-	_param_port->set_property(uris.lv2_integer, bufs.forge().make(true));
+	_param_port->set_property(uris.lv2_portProperty, uris.lv2_integer);
 	_param_port->set_property(uris.lv2_name, bufs.forge().alloc("Controller"));
 	_ports->at(1) = _param_port;
 

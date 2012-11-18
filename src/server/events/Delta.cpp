@@ -166,9 +166,12 @@ Delta::pre_process()
 		SpecialType               op    = NONE;
 		if (obj) {
 			Resource& resource = *obj;
-			resource.add_property(key, value, value.context());
+			if (value != uris.wildcard) {
+				resource.add_property(key, value, value.context());
+			}
 
-			PortImpl* port = dynamic_cast<PortImpl*>(_object);
+			BlockImpl* block = NULL;
+			PortImpl*  port  = dynamic_cast<PortImpl*>(_object);
 			if (port) {
 				if (key == uris.ingen_broadcast) {
 					if (value.type() == uris.forge.Bool) {
@@ -193,6 +196,10 @@ Delta::pre_process()
 					} else {
 						_status = BAD_OBJECT_TYPE;
 					}
+				}
+			} else if ((block = dynamic_cast<BlockImpl*>(_object))) {
+				if (key == uris.ingen_controlBinding && value == uris.wildcard) {
+					op = CONTROL_BINDING;  // Internal block learn
 				}
 			} else if ((_graph = dynamic_cast<GraphImpl*>(_object))) {
 				if (key == uris.ingen_enabled) {

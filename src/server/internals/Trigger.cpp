@@ -62,7 +62,7 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 	                           PortType::CONTROL, 0, bufs.forge().make(60.0f));
 	_note_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
 	_note_port->set_property(uris.lv2_maximum, bufs.forge().make(127.0f));
-	_note_port->set_property(uris.lv2_integer, bufs.forge().make(true));
+	_note_port->set_property(uris.lv2_portProperty, uris.lv2_integer);
 	_note_port->set_property(uris.lv2_name, bufs.forge().alloc("Note"));
 	_ports->at(1) = _note_port;
 
@@ -131,8 +131,8 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 
 	if (_learning) {
 		// FIXME: not thread safe
-		_note_port->set_value(context.engine().world()->forge().make(note_num));
-		_note_port->set_control_value(context, time, note_num);
+		_note_port->set_value(context.engine().world()->forge().make((float)note_num));
+		_note_port->set_control_value(context, time, (float)note_num);
 		_note_port->broadcast_value(context, true);
 		_learning = false;
 	}

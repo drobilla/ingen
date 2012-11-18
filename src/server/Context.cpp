@@ -18,9 +18,10 @@
 #include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
 
+#include "Broadcaster.hpp"
+#include "BufferFactory.hpp"
 #include "Context.hpp"
 #include "Engine.hpp"
-#include "Broadcaster.hpp"
 #include "PortImpl.hpp"
 
 namespace Ingen {
@@ -78,6 +79,7 @@ Context::notify(LV2_URID           key,
 void
 Context::emit_notifications(FrameTime end)
 {
+	const URIs&    uris       = _engine.buffer_factory()->uris();
 	const uint32_t read_space = _event_sink.read_space();
 	Notification   note;
 	for (uint32_t i = 0; i < read_space; i += sizeof(note)) {
@@ -94,6 +96,10 @@ Context::emit_notifications(FrameTime end)
 				if (key) {
 					_engine.broadcaster()->set_property(
 						note.port->uri(), Raul::URI(key), value);
+					if (note.port->is_input() && note.key == uris.ingen_value) {
+						// FIXME: not thread safe
+						note.port->set_property(uris.ingen_value, value);
+					}
 				} else {
 					_engine.log().error("Error unmapping notification key URI\n");
 				}

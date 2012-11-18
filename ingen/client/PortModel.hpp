@@ -46,7 +46,7 @@ public:
 	bool supports(const Raul::URI& value_type) const;
 
 	inline uint32_t          index()     const { return _index; }
-	inline const Raul::Atom& value()     const { return _current_val; }
+	inline const Raul::Atom& value()     const { return get_property(_uris.ingen_value); }
 	inline bool              connected() const { return (_connections > 0); }
 	inline bool              is_input()  const { return (_direction == INPUT); }
 	inline bool              is_output() const { return (_direction == OUTPUT); }
@@ -65,18 +65,6 @@ public:
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 
 	void on_property(const Raul::URI& uri, const Raul::Atom& value);
-
-	inline void value(const Raul::Atom& val) {
-		if (val != _current_val) {
-			_current_val = val;
-			_signal_value_changed.emit(val);
-		}
-	}
-
-	inline void value(uint32_t voice, const Raul::Atom& val) {
-		// FIXME: implement properly
-		_signal_voice_changed.emit(voice, val);
-	}
 
 	// Signals
 	INGEN_SIGNAL(value_changed, void, const Raul::Atom&);
@@ -113,10 +101,9 @@ private:
 
 	void set(SharedPtr<ObjectModel> model);
 
-	uint32_t           _index;
-	Direction          _direction;
-	Raul::Atom         _current_val;
-	size_t             _connections;
+	uint32_t  _index;
+	Direction _direction;
+	size_t    _connections;
 };
 
 } // namespace Client

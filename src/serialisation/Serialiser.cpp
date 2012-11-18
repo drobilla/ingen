@@ -440,8 +440,8 @@ Serialiser::Impl::serialise_block(SharedPtr<const Node> block,
 	serialise_properties(block_id, props);
 
 	for (uint32_t i = 0; i < block->num_ports(); ++i) {
-		Node* const p       = block->port(i);
-		const Sord::Node   port_id = path_rdf_node(p->path());
+		Node* const      p       = block->port(i);
+		const Sord::Node port_id = path_rdf_node(p->path());
 		serialise_port(p, Resource::EXTERNAL, port_id);
 		_model->add_statement(block_id,
 		                      Sord::URI(_model->world(), uris.lv2_port),

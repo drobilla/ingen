@@ -24,14 +24,16 @@ void
 PortModel::on_property(const Raul::URI& uri, const Raul::Atom& value)
 {
 	if (uri == _uris.ingen_activity) {
+		// Don't store activity, it is transient
 		signal_activity().emit(value);
 		return;
-	} else {
-		if (uri == _uris.ingen_value) {
-			this->value(value);
-		}
 	}
+
 	ObjectModel::on_property(uri, value);
+
+	if (uri == _uris.ingen_value) {
+		signal_value_changed().emit(value);
+	}
 }
 
 bool
@@ -51,16 +53,15 @@ PortModel::port_property(const Raul::URI& uri) const
 void
 PortModel::set(SharedPtr<ObjectModel> model)
 {
+	ObjectModel::set(model);
+
 	SharedPtr<PortModel> port = PtrCast<PortModel>(model);
 	if (port) {
 		_index = port->_index;
 		_direction = port->_direction;
-		_current_val = port->_current_val;
 		_connections = port->_connections;
-		_signal_value_changed.emit(_current_val);
+		_signal_value_changed.emit(get_property(_uris.ingen_value));
 	}
-
-	ObjectModel::set(model);
 }
 
 } // namespace Client
