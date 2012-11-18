@@ -187,7 +187,7 @@ GraphCanvas::build_menus()
 	if (_classless_menu) {
 		_classless_menu->items().clear();
 	} else {
-		_plugin_menu->items().push_back(Gtk::Menu_Helpers::MenuElem("Uncategorized"));
+		_plugin_menu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Uncategorized"));
 		Gtk::MenuItem* classless_menu_item = &(_plugin_menu->items().back());
 		_classless_menu = Gtk::manage(new Gtk::Menu());
 		classless_menu_item->set_submenu(*_classless_menu);
@@ -233,7 +233,8 @@ GraphCanvas::build_plugin_class_menu(
 			return 0;
 		}
 
-		Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(sub_label_str);
+		Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
+			std::string("_") + sub_label_str);
 		menu->items().push_back(menu_elem);
 		Gtk::MenuItem* menu_item = &(menu->items().back());
 
@@ -346,7 +347,7 @@ GraphCanvas::add_plugin(SharedPtr<PluginModel> p)
 	if (_internal_menu && p->type() == Plugin::Internal) {
 		_internal_menu->items().push_back(
 			Gtk::Menu_Helpers::MenuElem(
-				p->human_name(),
+				std::string("_") + p->human_name(),
 				sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
 	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->lilv_plugin()) {
 		if (lilv_plugin_is_replaced(p->lilv_plugin())) {
@@ -366,7 +367,7 @@ GraphCanvas::add_plugin(SharedPtr<PluginModel> p)
 		    || range.first->second.menu == _plugin_menu) {
 			_classless_menu->items().push_back(
 				Gtk::Menu_Helpers::MenuElem(
-					p->human_name(),
+					std::string("_") + p->human_name(),
 					sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
 			if (!_classless_menu->is_visible())
 				_classless_menu->show();
@@ -378,12 +379,12 @@ GraphCanvas::add_plugin(SharedPtr<PluginModel> p)
 					Gtk::Image* image = new Gtk::Image(icon);
 					menu->items().push_back(
 						Gtk::Menu_Helpers::ImageMenuElem(
-							p->human_name(), *image,
+							std::string("_") + p->human_name(), *image,
 							sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
 				} else {
 					menu->items().push_back(
 						Gtk::Menu_Helpers::MenuElem(
-							p->human_name(),
+							std::string("_") + p->human_name(),
 							sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
 				}
 				if (!i->second.item->is_visible())
