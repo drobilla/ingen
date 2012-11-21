@@ -475,10 +475,11 @@ GraphBox::event_save_as()
 
 		// Set current folder to most sensible default
 		const Raul::Atom& document = _graph->get_property(uris.ingen_document);
+		const Raul::Atom& dir      = _app->world()->conf().option("graph-directory");
 		if (document.type() == uris.forge.URI)
 			dialog.set_uri(document.get_uri());
-		else if (_app->style()->graph_folder().length() > 0)
-			dialog.set_current_folder(_app->style()->graph_folder());
+		else if (dir.is_valid())
+			dialog.set_current_folder(dir.get_string());
 
 		if (dialog.run() != Gtk::RESPONSE_OK)
 			break;
@@ -552,7 +553,9 @@ GraphBox::event_save_as()
 				STATUS_CONTEXT_GRAPH);
 		}
 
-		_app->style()->set_graph_folder(dialog.get_current_folder());
+		_app->world()->conf().set(
+			"graph-folder",
+			_app->world()->forge().alloc(dialog.get_current_folder()));
 		break;
 	}
 }

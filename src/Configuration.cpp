@@ -44,22 +44,23 @@ Configuration::Configuration(Forge& forge)
 "  ingen -egl foo.ingen  # Run an engine and a GUI and load a graph")
 	, _max_name_length(0)
 {
-	add("clientPort",  "client-port", 'C', "Client port", forge.Int, Raul::Atom());
-	add("connect",     "connect",     'c', "Connect to engine URI", forge.String, forge.alloc("unix:///tmp/ingen.sock"));
-	add("engine",      "engine",      'e', "Run (JACK) engine", forge.Bool, forge.make(false));
-	add("enginePort",  "engine-port", 'E', "Engine listen port", forge.Int, forge.make(16180));
-	add("socket",      "socket",      'S', "Engine socket path", forge.String, forge.alloc("/tmp/ingen.sock"));
-	add("gui",         "gui",         'g', "Launch the GTK graphical interface", forge.Bool, forge.make(false));
-	add("",            "help",        'h', "Print this help message", forge.Bool, forge.make(false));
-	add("jackName",    "jack-name",   'n', "JACK name", forge.String, forge.alloc("ingen"));
-	add("jackServer",  "jack-server", 's', "JACK server name", forge.String, forge.alloc(""));
-	add("uuid",        "uuid",        'u', "JACK session UUID", forge.String, Raul::Atom());
-	add("load",        "load",        'l', "Load graph", forge.String, Raul::Atom());
-	add("path",        "path",        'L', "Target path for loaded graph", forge.String, Raul::Atom());
-	add("queueSize",   "queue-size",  'q', "Event queue size", forge.Int, forge.make(4096));
-	add("run",         "run",         'r', "Run script", forge.String, Raul::Atom());
-	add("humanNames",  "human-names",  0,  "Show human names in GUI", forge.Bool, forge.make(true));
-	add("portLabels",  "port-labels",  0,  "Show port labels in GUI", forge.Bool, forge.make(true));
+	add("clientPort",     "client-port",    'C', "Client port", forge.Int, Raul::Atom());
+	add("connect",        "connect",        'c', "Connect to engine URI", forge.String, forge.alloc("unix:///tmp/ingen.sock"));
+	add("engine",         "engine",         'e', "Run (JACK) engine", forge.Bool, forge.make(false));
+	add("enginePort",     "engine-port",    'E', "Engine listen port", forge.Int, forge.make(16180));
+	add("socket",         "socket",         'S', "Engine socket path", forge.String, forge.alloc("/tmp/ingen.sock"));
+	add("gui",            "gui",            'g', "Launch the GTK graphical interface", forge.Bool, forge.make(false));
+	add("",               "help",           'h', "Print this help message", forge.Bool, forge.make(false));
+	add("jackName",       "jack-name",      'n', "JACK name", forge.String, forge.alloc("ingen"));
+	add("jackServer",     "jack-server",    's', "JACK server name", forge.String, forge.alloc(""));
+	add("uuid",           "uuid",           'u', "JACK session UUID", forge.String, Raul::Atom());
+	add("load",           "load",           'l', "Load graph", forge.String, Raul::Atom());
+	add("path",           "path",           'L', "Target path for loaded graph", forge.String, Raul::Atom());
+	add("queueSize",      "queue-size",     'q', "Event queue size", forge.Int, forge.make(4096));
+	add("run",            "run",            'r', "Run script", forge.String, Raul::Atom());
+	add("humanNames",     "human-names",     0,  "Show human names in GUI", forge.Bool, forge.make(true));
+	add("portLabels",     "port-labels",     0,  "Show port labels in GUI", forge.Bool, forge.make(true));
+	add("graphDirectory", "graph-directory", 0,  "Default directory for opening graphs", forge.String, Raul::Atom());
 }
 
 Configuration&

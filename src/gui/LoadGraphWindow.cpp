@@ -21,6 +21,7 @@
 #include <boost/optional.hpp>
 #include <glibmm/miscutils.h>
 
+#include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/ClientStore.hpp"
@@ -125,8 +126,10 @@ LoadGraphWindow::set_graph(SharedPtr<const GraphModel> graph)
 void
 LoadGraphWindow::on_show()
 {
-	if (_app->style()->graph_folder().length() > 0)
-		set_current_folder(_app->style()->graph_folder());
+	const Raul::Atom& dir = _app->world()->conf().option("graph-directory");
+	if (dir.is_valid()) {
+		set_current_folder(dir.get_string());
+	}
 	Gtk::FileChooserDialog::on_show();
 }
 
