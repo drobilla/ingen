@@ -112,10 +112,20 @@ public:
 		} _val;
 	};
 
-	Configuration& add(const std::string& name,
+	/** Add a configuration option.
+	 *
+	 * @param key URI local name, in camelCase
+	 * @param name Long option name (without leading "--")
+	 * @param letter Short option name (without leading "-")
+	 * @param desc Description
+	 * @param type Type
+	 * @param value Default value
+	 */
+	Configuration& add(const std::string& key,
+	                   const std::string& name,
 	                   char               letter,
 	                   const std::string& desc,
-	                   OptionType         type,
+	                   const OptionType   type,
 	                   const Value&       value);
 
 	void print_usage(const std::string& program, std::ostream& os);
@@ -125,6 +135,18 @@ public:
 	};
 
 	void parse(int argc, char** argv) throw (CommandLineError);
+
+	/** Load a specific file. */
+	bool load(const std::string& path);
+
+	/** Load files from the standard configuration directories for the app.
+	 *
+	 * The system configuration file(s), e.g. /etc/xdg/appname/filename,
+	 * will be loaded before the user's, e.g. ~/.config/appname/filename,
+	 * so the user options will override the system options.
+	 */
+	std::list<std::string> load_default(const std::string& app,
+	                                    const std::string& file);
 
 	void print(std::ostream& os, const std::string mime_type="text/plain") const;
 
@@ -138,14 +160,13 @@ private:
 	public:
 		Option(const std::string& n, char l, const std::string& d,
 		       const OptionType type, const Value& def)
-			: name(n), letter(l), desc(d), type(type), default_value(def), value(def)
+			: name(n), letter(l), desc(d), type(type), value(def)
 		{}
 
 		std::string name;
 		char        letter;
 		std::string desc;
 		OptionType  type;
-		Value       default_value;
 		Value       value;
 	};
 
@@ -155,9 +176,10 @@ private:
 		}
 	};
 
-	typedef std::map<std::string, Option> Options;
-	typedef std::map<char, std::string>   ShortNames;
-	typedef std::list<std::string>        Files;
+	typedef std::map<std::string, Option>      Options;
+	typedef std::map<char, std::string>        ShortNames;
+	typedef std::map<std::string, std::string> Keys;
+	typedef std::list<std::string>             Files;
 
 	int set_value_from_string(Configuration::Option& option, const std::string& value)
 			throw (Configuration::CommandLineError);
@@ -165,6 +187,7 @@ private:
 	const std::string _shortdesc;
 	const std::string _desc;
 	Options           _options;
+	Keys              _keys;
 	ShortNames        _short_names;
 	Files             _files;
 	size_t            _max_name_length;

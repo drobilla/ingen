@@ -48,6 +48,7 @@ SocketListener::SocketListener(Ingen::World& world)
 		_world.log().error("Failed to create UNIX socket\n");
 		_unix_sock.close();
 	}
+	_world.log().info(Raul::fmt("Listening on socket %1%\n") % unix_uri);
 
 	// Create TCP socket
 	int port = world.conf().option("engine-port").get_int();
@@ -58,6 +59,7 @@ SocketListener::SocketListener(Ingen::World& world)
 		_world.log().error("Failed to create TCP socket\n");
 		_net_sock.close();
 	}
+	_world.log().info(Raul::fmt("Listening on TCP port %1%\n") % port);
 
 	start();
 }

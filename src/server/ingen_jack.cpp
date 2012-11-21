@@ -40,7 +40,7 @@ struct IngenJackModule : public Ingen::Module {
 		const Configuration::Value& s = world->conf().option("jack-server");
 		const std::string server_name = s.is_valid() ? s.get_string() : "";
 		driver->attach(server_name,
-		               world->conf().option("jack-client").get_string(),
+		               world->conf().option("jack-name").get_string(),
 		               NULL);
 		((Server::Engine*)world->engine().get())->set_driver(
 			SharedPtr<Server::Driver>(driver));

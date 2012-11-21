@@ -108,7 +108,17 @@ public:
 		, log(lv2_log, *uris)
 		, lilv_world(lilv_world_new())
 	{
+		// Parse default configuration files
+		std::list<std::string> files = conf.load_default("ingen", "options.ttl");
+		for (std::list<std::string>::const_iterator f = files.begin();
+		     f != files.end();
+		     ++f) {
+			log.info(Raul::fmt("Loaded configuration %1%\n") % *f);
+		}
+
+		// Parse command line options, overriding configuration file values
 		conf.parse(argc, argv);
+
 		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map->urid_map_feature());
 		lv2_features->add_feature(uri_map->urid_unmap_feature());
