@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include "ingen/Configuration.hpp"
+#include "raul/fmt.hpp"
 
 namespace Ingen {
 
@@ -111,8 +112,9 @@ Configuration::set_value_from_string(Configuration::Option& option,
 		if (endptr && *endptr == '\0') {
 			option.value = Value(intval);
 		} else {
-			throw CommandLineError("option `" + option.name
-					+ "' has non-integer value `" + value + "'");
+			throw CommandLineError(
+				(Raul::fmt("option `%1%' has non-integer value `%2%'")
+				 % option.name % value).str());
 		}
 		break;
 	case STRING:
@@ -120,7 +122,8 @@ Configuration::set_value_from_string(Configuration::Option& option,
 		assert(option.value.type() == STRING);
 		break;
 	default:
-		throw CommandLineError(std::string("bad option type `--") + option.name + "'");
+		throw CommandLineError(
+			(Raul::fmt("bad option type `%1%'") % option.name).str());
 	}
 	return EXIT_SUCCESS;
 }
@@ -136,13 +139,15 @@ Configuration::parse(int argc, char** argv) throw (Configuration::CommandLineErr
 			const std::string name = std::string(argv[i]).substr(2);
 			Options::iterator o = _options.find(name);
 			if (o == _options.end()) {
-				throw CommandLineError(std::string("unrecognized option `--") + name + "'");
+				throw CommandLineError(
+					(Raul::fmt("unrecognized option `%1%'") % name).str());
 			}
 			if (o->second.type == BOOL) {
 				o->second.value = Value(true);
 			} else {
 				if (++i >= argc)
-					throw CommandLineError("missing value for `--" + name + "'");
+					throw CommandLineError(
+						(Raul::fmt("missing value for `%1'") % name).str());
 				set_value_from_string(o->second, argv[i]);
 			}
 		} else {
@@ -151,18 +156,21 @@ Configuration::parse(int argc, char** argv) throw (Configuration::CommandLineErr
 				char letter = argv[i][j];
 				ShortNames::iterator n = _short_names.find(letter);
 				if (n == _short_names.end())
-					throw CommandLineError(std::string("unrecognized option `-") + letter + "'");
+					throw CommandLineError(
+						(Raul::fmt("unrecognized option `%1%'") % letter).str());
 				Options::iterator o = _options.find(n->second);
 				if (j < len - 1) {
 					if (o->second.type != BOOL)
-						throw CommandLineError(std::string("missing value for `-") + letter + "'");
+						throw CommandLineError(
+							(Raul::fmt("missing value for `%1%'") % letter).str());
 					o->second.value = Value(true);
 				} else {
 					if (o->second.type == BOOL) {
 						o->second.value = Value(true);
 					} else {
 						if (++i >= argc)
-							throw CommandLineError(std::string("missing value for `-") + letter + "'");
+							throw CommandLineError(
+								(Raul::fmt("missing value for `%1%'") % letter).str());
 						set_value_from_string(o->second, argv[i]);
 					}
 				}

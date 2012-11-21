@@ -120,7 +120,7 @@ public:
 
 	void print_usage(const std::string& program, std::ostream& os);
 
-	struct CommandLineError : public Exception {
+	struct CommandLineError : public Raul::Exception {
 		explicit CommandLineError(const std::string& m) : Exception(m) {}
 	};
 
