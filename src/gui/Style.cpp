@@ -27,7 +27,7 @@
 #include "ingen/serialisation/Parser.hpp"
 
 #include "App.hpp"
-#include "Configuration.hpp"
+#include "Style.hpp"
 #include "Port.hpp"
 
 using namespace std;
@@ -37,7 +37,7 @@ namespace GUI {
 
 using namespace Ingen::Client;
 
-Configuration::Configuration(App& app)
+Style::Style(App& app)
 	// Colours from the Tango palette with modified V
 	: _app(app)
 	, _audio_port_color(0x4A8A0EFF) // Green
@@ -48,7 +48,7 @@ Configuration::Configuration(App& app)
 {
 }
 
-Configuration::~Configuration()
+Style::~Style()
 {
 }
 
@@ -56,7 +56,7 @@ Configuration::~Configuration()
  * the default location.
  */
 void
-Configuration::load_settings(string filename)
+Style::load_settings(string filename)
 {
 	/* ... */
 }
@@ -65,7 +65,7 @@ Configuration::load_settings(string filename)
  * default location.
  */
 void
-Configuration::save_settings(string filename)
+Style::save_settings(string filename)
 {
 	/* ... */
 }
@@ -74,13 +74,13 @@ Configuration::save_settings(string filename)
  * need updating.
  */
 void
-Configuration::apply_settings()
+Style::apply_settings()
 {
 	/* ... */
 }
 
 uint32_t
-Configuration::get_port_color(const Client::PortModel* p)
+Style::get_port_color(const Client::PortModel* p)
 {
 	assert(p != NULL);
 	const URIs& uris = _app.uris();

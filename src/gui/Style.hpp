@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_CONFIGURATION_HPP
-#define INGEN_GUI_CONFIGURATION_HPP
+#ifndef INGEN_GUI_STYLE_HPP
+#define INGEN_GUI_STYLE_HPP
 
 #include <stdint.h>
 
@@ -31,18 +31,11 @@ namespace GUI {
 class App;
 class Port;
 
-/** Singleton state manager for the entire app.
- *
- * Stores settings like color preferences, search paths, etc.
- * (ie any user-defined preferences to be stoed in the rc file).
- *
- * \ingroup GUI
- */
-class Configuration
+class Style
 {
 public:
-	explicit Configuration(App& app);
-	~Configuration();
+	explicit Style(App& app);
+	~Style();
 
 	void load_settings(std::string filename = "");
 	void save_settings(std::string filename = "");
@@ -70,5 +63,5 @@ private:
 } // namespace GUI
 } // namespace Ingen
 
-#endif // INGEN_GUI_CONFIGURATION_HPP
+#endif // INGEN_GUI_STYLE_HPP
 

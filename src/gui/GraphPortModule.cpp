@@ -24,7 +24,7 @@
 #include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
-#include "Configuration.hpp"
+#include "Style.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphPortModule.hpp"
 #include "GraphWindow.hpp"

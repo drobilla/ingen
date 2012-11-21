@@ -36,14 +36,14 @@
 #include "raul/Path.hpp"
 
 #include "App.hpp"
-#include "Configuration.hpp"
 #include "ConnectWindow.hpp"
+#include "GraphTreeWindow.hpp"
+#include "GraphWindow.hpp"
 #include "LoadPluginWindow.hpp"
 #include "MessagesWindow.hpp"
 #include "NodeModule.hpp"
-#include "GraphTreeWindow.hpp"
-#include "GraphWindow.hpp"
 #include "Port.hpp"
+#include "Style.hpp"
 #include "SubgraphModule.hpp"
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
@@ -66,7 +66,7 @@ class Port;
 Gtk::Main* App::_main = 0;
 
 App::App(Ingen::World* world)
-	: _configuration(new Configuration(*this))
+	: _style(new Style(*this))
 	, _about_dialog(NULL)
 	, _window_factory(new WindowFactory(*this))
 	, _world(world)
@@ -90,7 +90,7 @@ App::App(Ingen::World* world)
 
 App::~App()
 {
-	delete _configuration;
+	delete _style;
 	delete _window_factory;
 }
 
@@ -107,8 +107,8 @@ App::create(Ingen::World* world)
 	App* app = new App(world);
 
 	// Load configuration settings
-	app->configuration()->load_settings();
-	app->configuration()->apply_settings();
+	app->style()->load_settings();
+	app->style()->apply_settings();
 
 	// Set default window icon
 	app->_about_dialog->property_program_name() = "Ingen";

@@ -29,7 +29,6 @@ def build(bld):
     obj.source = '''
             App.cpp
             BreadCrumbs.cpp
-            Configuration.cpp
             ConnectWindow.cpp
             Edge.cpp
             GraphBox.cpp
@@ -50,6 +49,7 @@ def build(bld):
             PortPropertiesWindow.cpp
             PropertiesWindow.cpp
             RenameWindow.cpp
+            Style.cpp
             SubgraphModule.cpp
             ThreadedLoader.cpp
             WidgetFactory.cpp

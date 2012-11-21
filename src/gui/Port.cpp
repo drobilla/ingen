@@ -25,10 +25,10 @@
 #include "ingen/client/PortModel.hpp"
 
 #include "App.hpp"
-#include "Configuration.hpp"
 #include "GraphWindow.hpp"
 #include "Port.hpp"
 #include "PortMenu.hpp"
+#include "Style.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
@@ -72,7 +72,7 @@ Port::Port(App&                       app,
            bool                       flip)
 	: Ganv::Port(module, name,
 			flip ? (!pm->is_input()) : pm->is_input(),
-			app.configuration()->get_port_color(pm.get()))
+			app.style()->get_port_color(pm.get()))
 	, _app(app)
 	, _port_model(pm)
 	, _pressed(false)

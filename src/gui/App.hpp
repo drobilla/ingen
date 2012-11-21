@@ -54,15 +54,15 @@ namespace Ingen {
 
 namespace GUI {
 
-class MessagesWindow;
+class ConnectWindow;
 class GraphCanvas;
 class GraphTreeView;
 class GraphTreeWindow;
-class ConnectWindow;
-class Configuration;
+class MessagesWindow;
+class Port;
+class Style;
 class ThreadedLoader;
 class WindowFactory;
-class Port;
 
 /** Ingen Gtk Application.
  * \ingroup GUI
@@ -103,7 +103,7 @@ public:
 	ConnectWindow*   connect_window()  const { return _connect_window; }
 	MessagesWindow*  messages_dialog() const { return _messages_window; }
 	GraphTreeWindow* graph_tree()      const { return _graph_tree_window; }
-	Configuration*   configuration()   const { return _configuration; }
+	Style*           style()           const { return _style; }
 	WindowFactory*   window_factory()  const { return _window_factory; }
 
 	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
@@ -156,7 +156,7 @@ protected:
 	SharedPtr<Client::ClientStore>        _store;
 	SharedPtr<ThreadedLoader>             _loader;
 
-	Configuration*    _configuration;
+	Style* _style;
 
 	ConnectWindow*    _connect_window;
 	MessagesWindow*   _messages_window;

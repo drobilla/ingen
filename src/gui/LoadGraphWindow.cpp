@@ -28,9 +28,9 @@
 #include "ingen/runtime_paths.hpp"
 
 #include "App.hpp"
-#include "Configuration.hpp"
-#include "LoadGraphWindow.hpp"
 #include "GraphView.hpp"
+#include "LoadGraphWindow.hpp"
+#include "Style.hpp"
 #include "ThreadedLoader.hpp"
 
 using namespace std;
@@ -125,8 +125,8 @@ LoadGraphWindow::set_graph(SharedPtr<const GraphModel> graph)
 void
 LoadGraphWindow::on_show()
 {
-	if (_app->configuration()->graph_folder().length() > 0)
-		set_current_folder(_app->configuration()->graph_folder());
+	if (_app->style()->graph_folder().length() > 0)
+		set_current_folder(_app->style()->graph_folder());
 	Gtk::FileChooserDialog::on_show();
 }
 

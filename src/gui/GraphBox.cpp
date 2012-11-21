@@ -30,16 +30,16 @@
 
 #include "App.hpp"
 #include "BreadCrumbs.hpp"
-#include "Configuration.hpp"
 #include "ConnectWindow.hpp"
-#include "LoadGraphWindow.hpp"
-#include "LoadPluginWindow.hpp"
-#include "MessagesWindow.hpp"
-#include "NewSubgraphWindow.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphTreeWindow.hpp"
 #include "GraphView.hpp"
 #include "GraphWindow.hpp"
+#include "LoadGraphWindow.hpp"
+#include "LoadPluginWindow.hpp"
+#include "MessagesWindow.hpp"
+#include "NewSubgraphWindow.hpp"
+#include "Style.hpp"
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
@@ -477,8 +477,8 @@ GraphBox::event_save_as()
 		const Raul::Atom& document = _graph->get_property(uris.ingen_document);
 		if (document.type() == uris.forge.URI)
 			dialog.set_uri(document.get_uri());
-		else if (_app->configuration()->graph_folder().length() > 0)
-			dialog.set_current_folder(_app->configuration()->graph_folder());
+		else if (_app->style()->graph_folder().length() > 0)
+			dialog.set_current_folder(_app->style()->graph_folder());
 
 		if (dialog.run() != Gtk::RESPONSE_OK)
 			break;
@@ -552,7 +552,7 @@ GraphBox::event_save_as()
 				STATUS_CONTEXT_GRAPH);
 		}
 
-		_app->configuration()->set_graph_folder(dialog.get_current_folder());
+		_app->style()->set_graph_folder(dialog.get_current_folder());
 		break;
 	}
 }
