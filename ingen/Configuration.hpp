@@ -76,8 +76,6 @@ public:
 	std::list<std::string> load_default(const std::string& app,
 	                                    const std::string& file);
 
-	void print(std::ostream& os, const std::string mime_type="text/plain") const;
-
 	const Raul::Atom& option(const std::string& long_name) const;
 	bool              set(const std::string& long_name, const Raul::Atom& value);
 
@@ -123,20 +121,6 @@ private:
 };
 
 } // namespace Ingen
-
-static inline std::ostream&
-operator<<(std::ostream& os, const Raul::Atom& value)
-{
-	#if 0
-	switch (value.type()) {
-	case Ingen::Configuration::NOTHING: return os << "(nil)";
-	case Ingen::Configuration::INT:     return os << value.get_int();
-	case Ingen::Configuration::BOOL:    return os << (value.get_bool() ? "true" : "false");
-	case Ingen::Configuration::STRING:  return os << value.get_string();
-	}
-	#endif
-	return os;
-}
 
 #endif // INGEN_CONFIGURATION_HPP
 

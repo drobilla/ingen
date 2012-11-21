@@ -241,15 +241,6 @@ Configuration::load_default(const std::string& app, const std::string& file)
 	return loaded;
 }
 
-void
-Configuration::print(std::ostream& os, const std::string mime_type) const
-{
-	for (Options::const_iterator o = _options.begin(); o != _options.end(); ++o) {
-		const Option& option = o->second;
-		os << o->first << " = " << option.value << std::endl;
-	}
-}
-
 const Raul::Atom&
 Configuration::option(const std::string& long_name) const
 {

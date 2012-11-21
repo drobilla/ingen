@@ -164,7 +164,7 @@ main(int argc, char** argv)
 					symbol = Raul::Symbol(p.symbol());
 				}
 			} else {
-				cerr << "Invalid path given: '" << path_option << endl;
+				cerr << "Invalid path given: '" << path_option.get_string() << endl;
 			}
 		}
 
