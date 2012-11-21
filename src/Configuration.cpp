@@ -27,8 +27,9 @@
 
 namespace Ingen {
 
-Configuration::Configuration()
-	: _shortdesc("A realtime modular audio processor.")
+Configuration::Configuration(Forge& forge)
+	: _forge(forge)
+	, _shortdesc("A realtime modular audio processor.")
 	, _desc(
 "Ingen is a flexible modular system that be used in various ways.\n"
 "The engine can run as a stand-alone server controlled via network protocol,\n"
@@ -43,29 +44,29 @@ Configuration::Configuration()
 "  ingen -egl foo.ingen  # Run an engine and a GUI and load a graph")
 	, _max_name_length(0)
 {
-	add("clientPort",  "client-port", 'C', "Client port", INT, Value());
-	add("connect",     "connect",     'c', "Connect to engine URI", STRING, Value("unix:///tmp/ingen.sock"));
-	add("engine",      "engine",      'e', "Run (JACK) engine", BOOL, Value(false));
-	add("enginePort",  "engine-port", 'E', "Engine listen port", INT, Value(16180));
-	add("socket",      "socket",      'S', "Engine socket path", STRING, Value("/tmp/ingen.sock"));
-	add("gui",         "gui",         'g', "Launch the GTK graphical interface", BOOL, Value(false));
-	add("",            "help",        'h', "Print this help message", BOOL, Value(false));
-	add("jackName",    "jack-name",   'n', "JACK name", STRING, Value("ingen"));
-	add("jackServer",  "jack-server", 's', "JACK server name", STRING, Value(""));
-	add("uuid",        "uuid",        'u', "JACK session UUID", STRING, Value());
-	add("load",        "load",        'l', "Load graph", STRING, Value());
-	add("path",        "path",        'L', "Target path for loaded graph", STRING, Value());
-	add("queueSize",   "queue-size",  'q', "Event queue size", INT, Value(4096));
-	add("run",         "run",         'r', "Run script", STRING, Value());
+	add("clientPort",  "client-port", 'C', "Client port", forge.Int, Raul::Atom());
+	add("connect",     "connect",     'c', "Connect to engine URI", forge.String, forge.alloc("unix:///tmp/ingen.sock"));
+	add("engine",      "engine",      'e', "Run (JACK) engine", forge.Bool, forge.make(false));
+	add("enginePort",  "engine-port", 'E', "Engine listen port", forge.Int, forge.make(16180));
+	add("socket",      "socket",      'S', "Engine socket path", forge.String, forge.alloc("/tmp/ingen.sock"));
+	add("gui",         "gui",         'g', "Launch the GTK graphical interface", forge.Bool, forge.make(false));
+	add("",            "help",        'h', "Print this help message", forge.Bool, forge.make(false));
+	add("jackName",    "jack-name",   'n', "JACK name", forge.String, forge.alloc("ingen"));
+	add("jackServer",  "jack-server", 's', "JACK server name", forge.String, forge.alloc(""));
+	add("uuid",        "uuid",        'u', "JACK session UUID", forge.String, Raul::Atom());
+	add("load",        "load",        'l', "Load graph", forge.String, Raul::Atom());
+	add("path",        "path",        'L', "Target path for loaded graph", forge.String, Raul::Atom());
+	add("queueSize",   "queue-size",  'q', "Event queue size", forge.Int, forge.make(4096));
+	add("run",         "run",         'r', "Run script", forge.String, Raul::Atom());
 }
 
 Configuration&
-Configuration::add(const std::string& key,
-                   const std::string& name,
-                   char               letter,
-                   const std::string& desc,
-                   const OptionType   type,
-                   const Value&       value)
+Configuration::add(const std::string&       key,
+                   const std::string&       name,
+                   char                     letter,
+                   const std::string&       desc,
+                   const Raul::Atom::TypeID type,
+                   const Raul::Atom&        value)
 {
 	assert(value.type() == type || value.type() == 0);
 	_max_name_length = std::max(_max_name_length, name.length());
@@ -104,24 +105,20 @@ Configuration::set_value_from_string(Configuration::Option& option,
                                      const std::string&     value)
 		throw (Configuration::CommandLineError)
 {
-	int   intval = 0;
-	char* endptr = NULL;
-	switch (option.type) {
-	case INT:
-		intval = static_cast<int>(strtol(value.c_str(), &endptr, 10));
+	if (option.type == _forge.Int) {
+		char* endptr = NULL;
+		int   intval = static_cast<int>(strtol(value.c_str(), &endptr, 10));
 		if (endptr && *endptr == '\0') {
-			option.value = Value(intval);
+			option.value = _forge.make(intval);
 		} else {
 			throw CommandLineError(
 				(Raul::fmt("option `%1%' has non-integer value `%2%'")
 				 % option.name % value).str());
 		}
-		break;
-	case STRING:
-		option.value = Value(value.c_str());
-		assert(option.value.type() == STRING);
-		break;
-	default:
+	} else if (option.type == _forge.String) {
+		option.value = _forge.alloc(value.c_str());
+		assert(option.value.type() == _forge.String);
+	} else {
 		throw CommandLineError(
 			(Raul::fmt("bad option type `%1%'") % option.name).str());
 	}
@@ -142,8 +139,8 @@ Configuration::parse(int argc, char** argv) throw (Configuration::CommandLineErr
 				throw CommandLineError(
 					(Raul::fmt("unrecognized option `%1%'") % name).str());
 			}
-			if (o->second.type == BOOL) {
-				o->second.value = Value(true);
+			if (o->second.type == _forge.Bool) {
+				o->second.value = _forge.make(true);
 			} else {
 				if (++i >= argc)
 					throw CommandLineError(
@@ -160,13 +157,13 @@ Configuration::parse(int argc, char** argv) throw (Configuration::CommandLineErr
 						(Raul::fmt("unrecognized option `%1%'") % letter).str());
 				Options::iterator o = _options.find(n->second);
 				if (j < len - 1) {
-					if (o->second.type != BOOL)
+					if (o->second.type != _forge.Bool)
 						throw CommandLineError(
 							(Raul::fmt("missing value for `%1%'") % letter).str());
-					o->second.value = Value(true);
+					o->second.value = _forge.make(true);
 				} else {
-					if (o->second.type == BOOL) {
-						o->second.value = Value(true);
+					if (o->second.type == _forge.Bool) {
+						o->second.value = _forge.make(true);
 					} else {
 						if (++i >= argc)
 							throw CommandLineError(
@@ -248,10 +245,10 @@ Configuration::print(std::ostream& os, const std::string mime_type) const
 	}
 }
 
-const Configuration::Value&
+const Raul::Atom&
 Configuration::option(const std::string& long_name) const
 {
-	static const Value nil;
+	static const Raul::Atom nil;
 	Options::const_iterator o = _options.find(long_name);
 	if (o == _options.end()) {
 		return nil;
@@ -261,7 +258,7 @@ Configuration::option(const std::string& long_name) const
 }
 
 bool
-Configuration::set(const std::string& long_name, const Value& value)
+Configuration::set(const std::string& long_name, const Raul::Atom& value)
 {
 	Options::iterator o = _options.find(long_name);
 	if (o != _options.end()) {

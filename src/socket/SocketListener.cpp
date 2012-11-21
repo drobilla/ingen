@@ -51,7 +51,7 @@ SocketListener::SocketListener(Ingen::World& world)
 	_world.log().info(Raul::fmt("Listening on socket %1%\n") % unix_uri);
 
 	// Create TCP socket
-	int port = world.conf().option("engine-port").get_int();
+	int port = world.conf().option("engine-port").get_int32();
 	std::ostringstream ss;
 	ss << "tcp://localhost:";
 	ss << port;

@@ -106,6 +106,7 @@ public:
 		, forge(new Forge(*uri_map))
 		, uris(new URIs(*forge, uri_map))
 		, log(lv2_log, *uris)
+		, conf(*forge)
 		, lilv_world(lilv_world_new())
 	{
 		// Parse default configuration files
@@ -181,7 +182,6 @@ public:
 
 	int&                                 argc;
 	char**&                              argv;
-	Configuration                        conf;
 	LV2Features*                         lv2_features;
 	Sord::World*                         rdf_world;
 	URIMap*                              uri_map;
@@ -189,6 +189,7 @@ public:
 	URIs*                                uris;
 	LV2_Log_Log*                         lv2_log;
 	Log                                  log;
+	Configuration                        conf;
 	SharedPtr<Interface>                 interface;
 	SharedPtr<EngineBase>                engine;
 	SharedPtr<Serialisation::Serialiser> serialiser;

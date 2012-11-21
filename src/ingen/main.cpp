@@ -155,7 +155,7 @@ main(int argc, char** argv)
 		boost::optional<Raul::Path>   parent;
 		boost::optional<Raul::Symbol> symbol;
 
-		const Configuration::Value& path_option = conf.option("path");
+		const Raul::Atom& path_option = conf.option("path");
 		if (path_option.is_valid()) {
 			if (Raul::Path::is_valid(path_option.get_string())) {
 				const Raul::Path p(path_option.get_string());

@@ -564,8 +564,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->world->log().info(
 		Raul::fmt("Block: %1% frames, Sequence: %2% bytes\n")
 		% block_length % seq_size);
-	plugin->world->conf().set("queue-size",
-	                          std::max(block_length, seq_size) * 4);
+	plugin->world->conf().set(
+		"queue-size",
+		plugin->world->forge().make(std::max(block_length, seq_size) * 4));
 
 	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
 	plugin->world->set_engine(engine);

@@ -26,6 +26,9 @@
 #include <map>
 #include <string>
 
+#include "ingen/Forge.hpp"
+
+#include "raul/Atom.hpp"
 #include "raul/Exception.hpp"
 
 namespace Ingen {
@@ -35,82 +38,7 @@ namespace Ingen {
  */
 class Configuration {
 public:
-	Configuration();
-
-	enum OptionType {
-		NOTHING,
-		BOOL,
-		INT,
-		STRING
-	};
-
-	class Value {
-	public:
-		Value()       : _type(NOTHING) { _val._string = NULL; }
-		Value(bool v) : _type(BOOL)    { _val._bool = v; }
-		Value(int  v) : _type(INT)     { _val._int = v; }
-
-		Value(const char* v) : _type(STRING) {
-			const size_t len = strlen(v);
-			_val._string = (char*)calloc(len + 1, 1);
-			memcpy(_val._string, v, len + 1);
-		}
-
-		Value(const std::string& v) : _type(STRING) {
-			_val._string = (char*)calloc(v.length() + 1, 1);
-			memcpy(_val._string, v.c_str(), v.length() + 1);
-		}
-
-		Value(const Value& copy)
-			: _type(copy._type)
-			, _val(copy._val)
-		{
-			if (_type == STRING) {
-				const size_t len = strlen(copy.get_string());
-				_val._string = (char*)malloc(len + 1);
-				memcpy(_val._string, copy.get_string(), len + 1);
-			}
-		}
-
-		Value& operator=(const Value& other)
-		{
-			if (&other == this) {
-				return *this;
-			}
-			if (_type == STRING) {
-				free(_val._string);
-			}
-			_type = other._type;
-			_val  = other._val;
-			if (_type == STRING) {
-				const size_t len = strlen(other.get_string());
-				_val._string = (char*)malloc(len + 1);
-				memcpy(_val._string, other.get_string(), len + 1);
-			}
-			return *this;
-		}
-
-		~Value() {
-			if (_type == STRING) {
-				free(_val._string);
-			}
-		}
-
-		inline OptionType type()     const { return _type; }
-		inline bool       is_valid() const { return _type != NOTHING; }
-
-		inline int32_t     get_int()    const { assert(_type == INT);    return _val._int; }
-		inline bool        get_bool()   const { assert(_type == BOOL);   return _val._bool; }
-		inline const char* get_string() const { assert(_type == STRING); return _val._string; }
-
-	private:
-		OptionType _type;
-		union {
-			bool    _bool;
-			int32_t _int;
-			char*   _string;
-		} _val;
-	};
+	Configuration(Forge& forge);
 
 	/** Add a configuration option.
 	 *
@@ -121,12 +49,12 @@ public:
 	 * @param type Type
 	 * @param value Default value
 	 */
-	Configuration& add(const std::string& key,
-	                   const std::string& name,
-	                   char               letter,
-	                   const std::string& desc,
-	                   const OptionType   type,
-	                   const Value&       value);
+	Configuration& add(const std::string&       key,
+	                   const std::string&       name,
+	                   char                     letter,
+	                   const std::string&       desc,
+	                   const Raul::Atom::TypeID type,
+	                   const Raul::Atom&        value);
 
 	void print_usage(const std::string& program, std::ostream& os);
 
@@ -150,8 +78,8 @@ public:
 
 	void print(std::ostream& os, const std::string mime_type="text/plain") const;
 
-	const Value& option(const std::string& long_name) const;
-	bool         set(const std::string& long_name, const Value& value);
+	const Raul::Atom& option(const std::string& long_name) const;
+	bool              set(const std::string& long_name, const Raul::Atom& value);
 
 	const std::list<std::string>& files() const { return _files; }
 
@@ -159,15 +87,15 @@ private:
 	struct Option {
 	public:
 		Option(const std::string& n, char l, const std::string& d,
-		       const OptionType type, const Value& def)
+		       const Raul::Atom::TypeID type, const Raul::Atom& def)
 			: name(n), letter(l), desc(d), type(type), value(def)
 		{}
 
-		std::string name;
-		char        letter;
-		std::string desc;
-		OptionType  type;
-		Value       value;
+		std::string        name;
+		char               letter;
+		std::string        desc;
+		Raul::Atom::TypeID type;
+		Raul::Atom         value;
 	};
 
 	struct OptionNameOrder {
@@ -184,6 +112,7 @@ private:
 	int set_value_from_string(Configuration::Option& option, const std::string& value)
 			throw (Configuration::CommandLineError);
 
+	Forge&            _forge;
 	const std::string _shortdesc;
 	const std::string _desc;
 	Options           _options;
@@ -196,14 +125,16 @@ private:
 } // namespace Ingen
 
 static inline std::ostream&
-operator<<(std::ostream& os, const Ingen::Configuration::Value& value)
+operator<<(std::ostream& os, const Raul::Atom& value)
 {
+	#if 0
 	switch (value.type()) {
 	case Ingen::Configuration::NOTHING: return os << "(nil)";
 	case Ingen::Configuration::INT:     return os << value.get_int();
 	case Ingen::Configuration::BOOL:    return os << (value.get_bool() ? "true" : "false");
 	case Ingen::Configuration::STRING:  return os << value.get_string();
 	}
+	#endif
 	return os;
 }
 
