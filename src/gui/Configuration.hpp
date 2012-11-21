@@ -54,18 +54,11 @@ public:
 
 	uint32_t get_port_color(const Client::PortModel* p);
 
-	enum NameStyle { PATH, HUMAN, NONE };
-
-	NameStyle name_style() const          { return _name_style; }
-	void      set_name_style(NameStyle s) { _name_style = s; }
-
 private:
 	App& _app;
 
 	/** Most recent graph folder shown in open dialog */
 	std::string _graph_folder;
-
-	NameStyle _name_style;
 
 	uint32_t _audio_port_color;
 	uint32_t _control_port_color;

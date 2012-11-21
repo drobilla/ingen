@@ -24,6 +24,7 @@
 #include <gtkmm/stock.h>
 
 #include "ingen/Interface.hpp"
+#include "ingen/Configuration.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 
@@ -183,8 +184,8 @@ GraphBox::init_box(App& app)
 	_menu_view_graph_tree_window->signal_activate().connect(
 		sigc::mem_fun<void>(_app->graph_tree(), &GraphTreeWindow::present));
 
-	_menu_help_about->signal_activate().connect(sigc::hide_return(
-		                                            sigc::mem_fun(_app, &App::show_about)));
+	_menu_help_about->signal_activate().connect(
+		sigc::hide_return(sigc::mem_fun(_app, &App::show_about)));
 
 	_breadcrumbs = new BreadCrumbs(*_app);
 	_breadcrumbs->signal_graph_selected.connect(
@@ -278,6 +279,11 @@ GraphBox::set_graph(SharedPtr<const GraphModel> graph,
 		sigc::mem_fun(this, &GraphBox::object_entered));
 	_view->signal_object_left.connect(
 		sigc::mem_fun(this, &GraphBox::object_left));
+
+	_menu_human_names->set_active(
+		_app->world()->conf().option("human-names").get_bool());
+	_menu_show_port_names->set_active(
+		_app->world()->conf().option("port-labels").get_bool());
 
 	_enable_signal = true;
 }
@@ -684,15 +690,17 @@ void
 GraphBox::event_human_names_toggled()
 {
 	_view->canvas()->show_human_names(_menu_human_names->get_active());
-	if (_menu_human_names->get_active())
-		_app->configuration()->set_name_style(Configuration::HUMAN);
-	else
-		_app->configuration()->set_name_style(Configuration::PATH);
+	_app->world()->conf().set(
+		"human-names",
+		_app->world()->forge().make(_menu_human_names->get_active()));
 }
 
 void
 GraphBox::event_port_names_toggled()
 {
+	_app->world()->conf().set(
+		"port-labels",
+		_app->world()->forge().make(_menu_show_port_names->get_active()));
 	if (_menu_show_port_names->get_active()) {
 		_view->canvas()->set_direction(GANV_DIRECTION_RIGHT);
 		_view->canvas()->show_port_names(true);

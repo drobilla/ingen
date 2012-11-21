@@ -26,11 +26,12 @@
 #include "ganv/Circle.hpp"
 #include "ingen/Builder.hpp"
 #include "ingen/ClashAvoider.hpp"
+#include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
-#include "ingen/client/ClientStore.hpp"
 #include "ingen/client/BlockModel.hpp"
+#include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
@@ -78,6 +79,7 @@ GraphCanvas::GraphCanvas(App&                        app,
 	, _classless_menu(NULL)
 	, _plugin_menu(NULL)
 	, _human_names(true)
+	, _show_port_names(true)
 {
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("canvas_menu");
 	xml->get_widget("canvas_menu", _menu);
@@ -146,6 +148,9 @@ GraphCanvas::GraphCanvas(App&                        app,
 		sigc::mem_fun(this, &GraphCanvas::menu_load_graph));
 	_menu_new_graph->signal_activate().connect(
 		sigc::mem_fun(this, &GraphCanvas::menu_new_graph));
+
+	show_human_names(app.world()->conf().option("human-names").get_bool());
+	show_port_names(app.world()->conf().option("port-labels").get_bool());
 }
 
 void
@@ -327,6 +332,7 @@ show_module_human_names(GanvNode* node, void* data)
 			pmod->show_human_names(b);
 	}
 }
+
 void
 GraphCanvas::show_human_names(bool b)
 {

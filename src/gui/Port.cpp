@@ -18,6 +18,7 @@
 #include <string>
 
 #include "ganv/Module.hpp"
+#include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/client/GraphModel.hpp"
@@ -44,15 +45,19 @@ Port::create(App&                       app,
              bool                       human_name,
              bool                       flip)
 {
-	Glib::ustring label(human_name ? "" : pm->path().symbol());
-	if (human_name) {
-		const Raul::Atom& name = pm->get_property(app.uris().lv2_name);
-		if (name.type() == app.forge().String) {
-			label = name.get_string();
+	Glib::ustring label;
+	if (app.world()->conf().option("port-labels").get_bool()) {
+		if (human_name) {
+			const Raul::Atom& name = pm->get_property(app.uris().lv2_name);
+			if (name.type() == app.forge().String) {
+				label = name.get_string();
+			} else {
+				const SharedPtr<const BlockModel> parent(PtrCast<const BlockModel>(pm->parent()));
+				if (parent && parent->plugin_model())
+					label = parent->plugin_model()->port_human_name(pm->index());
+			}
 		} else {
-			const SharedPtr<const BlockModel> parent(PtrCast<const BlockModel>(pm->parent()));
-			if (parent && parent->plugin_model())
-				label = parent->plugin_model()->port_human_name(pm->index());
+			label = pm->path().symbol();
 		}
 	}
 	return new Port(app, module, pm, label, flip);
@@ -135,8 +140,10 @@ Port::show_menu(GdkEventButton* ev)
 void
 Port::moved()
 {
-	if (_app.configuration()->name_style() == Configuration::PATH)
+	if (_app.world()->conf().option("port-labels").get_bool() &&
+	    !_app.world()->conf().option("human-names").get_bool()) {
 		set_label(model()->symbol().c_str());
+	}
 }
 
 void
@@ -340,8 +347,9 @@ Port::property_changed(const Raul::URI& key, const Raul::Atom& value)
 		if (value == uris.lv2_toggled)
 			set_control_is_toggle(true);
 	} else if (key == uris.lv2_name) {
-		if (value.type() == uris.forge.String
-				&& _app.configuration()->name_style() == Configuration::HUMAN) {
+		if (value.type() == uris.forge.String &&
+		    _app.world()->conf().option("port-labels").get_bool() &&
+		    _app.world()->conf().option("human-names").get_bool()) {
 			set_label(value.get_string());
 		}
 	}

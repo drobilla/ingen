@@ -21,6 +21,7 @@
 
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
+#include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/client/BlockModel.hpp"
@@ -252,7 +253,8 @@ NodeModule::embed_gui(bool embed)
 void
 NodeModule::rename()
 {
-	if (app().configuration()->name_style() == Configuration::PATH) {
+	if (app().world()->conf().option("port-labels").get_bool() &&
+	    !app().world()->conf().option("human-names").get_bool()) {
 		set_label(_block->path().symbol());
 	}
 }
@@ -261,7 +263,7 @@ void
 NodeModule::new_port_view(SharedPtr<const PortModel> port)
 {
 	Port::create(app(), *this, port,
-	             app().configuration()->name_style() == Configuration::HUMAN);
+	             app().world()->conf().option("human-names").get_bool());
 
 	port->signal_value_changed().connect(
 		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::value_changed),
@@ -419,7 +421,7 @@ NodeModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
 		}
 	} else if (value.type() == uris.forge.String) {
 		if (key == uris.lv2_name
-		    && app().configuration()->name_style() == Configuration::HUMAN) {
+		    && app().world()->conf().option("human-names").get_bool()) {
 			set_label(value.get_string());
 		}
 	}

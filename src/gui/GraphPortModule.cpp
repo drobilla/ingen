@@ -18,6 +18,7 @@
 #include <string>
 #include <utility>
 
+#include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/GraphModel.hpp"
@@ -140,11 +141,11 @@ GraphPortModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
 			move_to(get_x(), value.get_float());
 		}
 	} else if (value.type() == uris.forge.String) {
-		if (key == uris.lv2_name
-		    && app().configuration()->name_style() == Configuration::HUMAN) {
+		if (key == uris.lv2_name &&
+		    app().world()->conf().option("human-names").get_bool()) {
 			set_name(value.get_string());
-		} else if (key == uris.lv2_symbol
-		           && app().configuration()->name_style() == Configuration::PATH) {
+		} else if (key == uris.lv2_symbol &&
+		           !app().world()->conf().option("human-names").get_bool()) {
 			set_name(value.get_string());
 		}
 	} else if (value.type() == uris.forge.Bool) {

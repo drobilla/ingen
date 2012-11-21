@@ -58,6 +58,8 @@ Configuration::Configuration(Forge& forge)
 	add("path",        "path",        'L', "Target path for loaded graph", forge.String, Raul::Atom());
 	add("queueSize",   "queue-size",  'q', "Event queue size", forge.Int, forge.make(4096));
 	add("run",         "run",         'r', "Run script", forge.String, Raul::Atom());
+	add("humanNames",  "human-names",  0,  "Show human names in GUI", forge.Bool, forge.make(true));
+	add("portLabels",  "port-labels",  0,  "Show port labels in GUI", forge.Bool, forge.make(true));
 }
 
 Configuration&
@@ -118,6 +120,9 @@ Configuration::set_value_from_string(Configuration::Option& option,
 	} else if (option.type == _forge.String) {
 		option.value = _forge.alloc(value.c_str());
 		assert(option.value.type() == _forge.String);
+	} else if (option.type == _forge.Bool) {
+		option.value = _forge.make(bool(!strcmp(value.c_str(), "true")));
+		assert(option.value.type() == _forge.Bool);
 	} else {
 		throw CommandLineError(
 			(Raul::fmt("bad option type `%1%'") % option.name).str());

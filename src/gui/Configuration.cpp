@@ -40,7 +40,6 @@ using namespace Ingen::Client;
 Configuration::Configuration(App& app)
 	// Colours from the Tango palette with modified V
 	: _app(app)
-	, _name_style(HUMAN)
 	, _audio_port_color(0x4A8A0EFF) // Green
 	, _control_port_color(0x244678FF) // Blue
 	, _cv_port_color(0x248780FF) // Teal (between audio and control)
