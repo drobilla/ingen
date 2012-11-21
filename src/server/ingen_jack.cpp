@@ -17,10 +17,10 @@
 #include <string>
 
 #include "ingen/Configuration.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
-#include "ingen/Log.hpp"
-#include "raul/Configuration.hpp"
 
 #include "JackDriver.hpp"
 #include "Engine.hpp"
@@ -37,7 +37,7 @@ struct IngenJackModule : public Ingen::Module {
 
 		Server::JackDriver* driver = new Server::JackDriver(
 			*(Server::Engine*)world->engine().get());
-		const Raul::Configuration::Value& s = world->conf().option("jack-server");
+		const Configuration::Value& s = world->conf().option("jack-server");
 		const std::string server_name = s.is_valid() ? s.get_string() : "";
 		driver->attach(server_name,
 		               world->conf().option("jack-client").get_string(),

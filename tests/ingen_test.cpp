@@ -27,7 +27,6 @@
 #include <glibmm/thread.h>
 #include <glibmm/timer.h>
 
-#include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
@@ -38,16 +37,17 @@
 
 #include "ingen_config.h"
 
-#include "ingen/EngineBase.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/serialisation/Parser.hpp"
 #include "ingen/AtomReader.hpp"
 #include "ingen/AtomWriter.hpp"
 #include "ingen/Configuration.hpp"
+#include "ingen/Configuration.hpp"
+#include "ingen/EngineBase.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
-#include "ingen/runtime_paths.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
+#include "ingen/runtime_paths.hpp"
+#include "ingen/serialisation/Parser.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif

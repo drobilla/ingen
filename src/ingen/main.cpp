@@ -23,20 +23,19 @@
 #include <glibmm/thread.h>
 #include <glibmm/timer.h>
 
-#include "raul/Configuration.hpp"
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 #include "raul/fmt.hpp"
 
 #include "ingen_config.h"
 
+#include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/serialisation/Parser.hpp"
-#include "ingen/Configuration.hpp"
 #include "ingen/World.hpp"
-#include "ingen/runtime_paths.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
+#include "ingen/runtime_paths.hpp"
+#include "ingen/serialisation/Parser.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
@@ -156,7 +155,7 @@ main(int argc, char** argv)
 		boost::optional<Raul::Path>   parent;
 		boost::optional<Raul::Symbol> symbol;
 
-		const Raul::Configuration::Value& path_option = conf.option("path");
+		const Configuration::Value& path_option = conf.option("path");
 		if (path_option.is_valid()) {
 			if (Raul::Path::is_valid(path_option.get_string())) {
 				const Raul::Path p(path_option.get_string());
