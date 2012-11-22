@@ -89,27 +89,27 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 	_filter_combo->pack_start(_criteria_columns._col_label);
 
 	_add_button->signal_clicked().connect(
-			sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
+		sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
 	_close_button->signal_clicked().connect(
-			sigc::mem_fun(this, &Window::hide));
+		sigc::mem_fun(this, &Window::hide));
 	_plugins_treeview->signal_row_activated().connect(
-			sigc::mem_fun(this, &LoadPluginWindow::plugin_activated));
+		sigc::mem_fun(this, &LoadPluginWindow::plugin_activated));
 	_search_entry->signal_activate().connect(
-			sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
+		sigc::mem_fun(this, &LoadPluginWindow::add_clicked));
 	_search_entry->signal_changed().connect(
-			sigc::mem_fun(this, &LoadPluginWindow::filter_changed));
+		sigc::mem_fun(this, &LoadPluginWindow::filter_changed));
 	_name_entry->signal_changed().connect(
-			sigc::mem_fun(this, &LoadPluginWindow::name_changed));
+		sigc::mem_fun(this, &LoadPluginWindow::name_changed));
 
 #ifdef HAVE_NEW_GTKMM
 	_search_entry->signal_icon_release().connect(
-			sigc::mem_fun(this, &LoadPluginWindow::name_cleared));
+		sigc::mem_fun(this, &LoadPluginWindow::name_cleared));
 #endif
 
 	_selection = _plugins_treeview->get_selection();
 	_selection->set_mode(Gtk::SELECTION_MULTIPLE);
 	_selection->signal_changed().connect(
-			sigc::mem_fun(this, &LoadPluginWindow::plugin_selection_changed));
+		sigc::mem_fun(this, &LoadPluginWindow::plugin_selection_changed));
 
 	//m_add_button->grab_default();
 }
@@ -164,11 +164,6 @@ LoadPluginWindow::set_graph(SharedPtr<const GraphModel> graph)
 	} else {
 		_graph = graph;
 	}
-
-	/*if (graph->poly() <= 1)
-		_polyphonic_checkbutton->property_sensitive() = false;
-	else
-		_polyphonic_checkbutton->property_sensitive() = true;*/
 }
 
 /** Populates the plugin list on the first show.
@@ -183,7 +178,7 @@ LoadPluginWindow::on_show()
 {
 	if (!_has_shown) {
 		_app->store()->signal_new_plugin().connect(
-				sigc::mem_fun(this, &LoadPluginWindow::add_plugin));
+			sigc::mem_fun(this, &LoadPluginWindow::add_plugin));
 		_has_shown = true;
 	}
 
@@ -205,10 +200,7 @@ LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
 		add_plugin(i->second);
 	}
 
-	_plugins_liststore->set_sort_column(1,
-			//Gtk::TreeSortable::DEFAULT_SORT_COLUMN_ID,
-			Gtk::SORT_ASCENDING);
-
+	_plugins_liststore->set_sort_column(1, Gtk::SORT_ASCENDING);
 	_plugins_treeview->columns_autosize();
 }
 
@@ -228,7 +220,7 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
 	const URIs&       uris = _app->uris();
 	const Raul::Atom& name = plugin->get_property(uris.doap_name);
 	if (name.is_valid() && name.type() == uris.forge.String)
-			row[_plugins_columns._col_name] = name.get_string();
+		row[_plugins_columns._col_name] = name.get_string();
 
 	switch (plugin->type()) {
 	case Plugin::LV2:
@@ -286,13 +278,13 @@ LoadPluginWindow::plugin_selection_changed()
 		_name_entry->set_sensitive(false);
 	} else if (n_selected == 1) {
 		Gtk::TreeModel::iterator iter = _plugins_liststore->get_iter(
-				*_selection->get_selected_rows().begin());
+			*_selection->get_selected_rows().begin());
 		if (iter) {
 			Gtk::TreeModel::Row row = *iter;
 			boost::shared_ptr<const PluginModel> p = row.get_value(
 				_plugins_columns._col_plugin);
 			_name_offset = _app->store()->child_name_offset(
-					_graph->path(), p->default_block_symbol());
+				_graph->path(), p->default_block_symbol());
 			_name_entry->set_text(generate_module_name(p, _name_offset));
 			_name_entry->set_sensitive(true);
 		} else {
@@ -336,9 +328,10 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		name = generate_module_name(plugin, _name_offset);
 
 	if (name.empty() || !Raul::Symbol::is_valid(name)) {
-		Gtk::MessageDialog dialog(*this,
-				"Unable to choose a default name, please provide one",
-				false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
+		Gtk::MessageDialog dialog(
+			*this,
+			"Unable to choose a default name, please provide one",
+			false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 
 		dialog.run();
 	} else {
@@ -369,7 +362,7 @@ void
 LoadPluginWindow::add_clicked()
 {
 	_selection->selected_foreach_iter(
-			sigc::mem_fun(*this, &LoadPluginWindow::load_plugin));
+		sigc::mem_fun(*this, &LoadPluginWindow::load_plugin));
 }
 
 void
@@ -392,7 +385,7 @@ LoadPluginWindow::filter_changed()
 	const URIs&              uris        = _app->uris();
 
 	for (ClientStore::Plugins::const_iterator i = _app->store()->plugins()->begin();
-			i != _app->store()->plugins()->end(); ++i) {
+	     i != _app->store()->plugins()->end(); ++i) {
 
 		const SharedPtr<PluginModel> plugin = (*i).second;
 		const Raul::Atom& name = plugin->get_property(uris.doap_name);
@@ -441,8 +434,8 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 
 void
 LoadPluginWindow::plugin_property_changed(const Raul::URI&  plugin,
-	                                      const Raul::URI&  predicate,
-	                                      const Raul::Atom& value)
+                                          const Raul::URI&  predicate,
+                                          const Raul::Atom& value)
 {
 	const URIs& uris = _app->uris();
 	if (predicate == uris.doap_name) {
