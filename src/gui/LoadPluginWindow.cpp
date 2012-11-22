@@ -60,16 +60,15 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 	// Set up the plugins list
 	_plugins_liststore = Gtk::ListStore::create(_plugins_columns);
 	_plugins_treeview->set_model(_plugins_liststore);
-	_plugins_treeview->append_column("", _plugins_columns._col_icon);
 	_plugins_treeview->append_column("_Name", _plugins_columns._col_name);
 	_plugins_treeview->append_column("_Type", _plugins_columns._col_type);
 	_plugins_treeview->append_column("_URI", _plugins_columns._col_uri);
 
 	// This could be nicer.. store the TreeViewColumns locally maybe?
-	_plugins_treeview->get_column(1)->set_sort_column(_plugins_columns._col_name);
-	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_type);
-	_plugins_treeview->get_column(3)->set_sort_column(_plugins_columns._col_uri);
-	for (int i=0; i < 3; ++i)
+	_plugins_treeview->get_column(0)->set_sort_column(_plugins_columns._col_name);
+	_plugins_treeview->get_column(1)->set_sort_column(_plugins_columns._col_type);
+	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_uri);
+	for (int i = 0; i < 3; ++i)
 		_plugins_treeview->get_column(i)->set_resizable(true);
 
 	// Set up the search criteria combobox

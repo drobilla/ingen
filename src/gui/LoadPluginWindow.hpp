@@ -72,17 +72,15 @@ private:
 	class ModelColumns : public Gtk::TreeModel::ColumnRecord {
 	public:
 		ModelColumns() {
-			add(_col_icon);
 			add(_col_name);
 			add(_col_type);
 			add(_col_uri);
 			add(_col_plugin);
 		}
 
-		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > _col_icon;
-		Gtk::TreeModelColumn<Glib::ustring>              _col_name;
-		Gtk::TreeModelColumn<Glib::ustring>              _col_type;
-		Gtk::TreeModelColumn<Glib::ustring>              _col_uri;
+		Gtk::TreeModelColumn<Glib::ustring> _col_name;
+		Gtk::TreeModelColumn<Glib::ustring> _col_type;
+		Gtk::TreeModelColumn<Glib::ustring> _col_uri;
 
 		// Not displayed:
 		Gtk::TreeModelColumn< SharedPtr<const Client::PluginModel> > _col_plugin;
