@@ -472,6 +472,9 @@ Serialiser::Impl::serialise_port(const Node*       port,
 		} else {
 			_world.log().warn("Control input has no value, lv2:default omitted.\n");
 		}
+	} else if (context != Resource::INTERNAL &&
+	           !port->has_property(uris.rdf_type, uris.lv2_InputPort)) {
+		props.erase(uris.ingen_value);
 	}
 
 	serialise_properties(port_id, props);
