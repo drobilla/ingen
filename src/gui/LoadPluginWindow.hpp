@@ -74,12 +74,16 @@ private:
 		ModelColumns() {
 			add(_col_name);
 			add(_col_type);
+			add(_col_project);
+			add(_col_author);
 			add(_col_uri);
 			add(_col_plugin);
 		}
 
 		Gtk::TreeModelColumn<Glib::ustring> _col_name;
 		Gtk::TreeModelColumn<Glib::ustring> _col_type;
+		Gtk::TreeModelColumn<Glib::ustring> _col_project;
+		Gtk::TreeModelColumn<Glib::ustring> _col_author;
 		Gtk::TreeModelColumn<Glib::ustring> _col_uri;
 
 		// Not displayed:
@@ -89,7 +93,7 @@ private:
 	/** Column for the filter criteria combo box. */
 	class CriteriaColumns : public Gtk::TreeModel::ColumnRecord {
 	public:
-		enum Criteria { NAME, TYPE, URI, };
+		enum Criteria { NAME, TYPE, PROJECT, AUTHOR, URI, };
 
 		CriteriaColumns() {
 			add(_col_label);

@@ -62,26 +62,41 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 	_plugins_treeview->set_model(_plugins_liststore);
 	_plugins_treeview->append_column("_Name", _plugins_columns._col_name);
 	_plugins_treeview->append_column("_Type", _plugins_columns._col_type);
+	_plugins_treeview->append_column("_Project", _plugins_columns._col_project);
+	_plugins_treeview->append_column("_Author", _plugins_columns._col_author);
 	_plugins_treeview->append_column("_URI", _plugins_columns._col_uri);
 
 	// This could be nicer.. store the TreeViewColumns locally maybe?
 	_plugins_treeview->get_column(0)->set_sort_column(_plugins_columns._col_name);
 	_plugins_treeview->get_column(1)->set_sort_column(_plugins_columns._col_type);
-	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_uri);
-	for (int i = 0; i < 3; ++i)
+	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_project);
+	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_author);
+	_plugins_treeview->get_column(3)->set_sort_column(_plugins_columns._col_uri);
+	for (int i = 0; i < 5; ++i)
 		_plugins_treeview->get_column(i)->set_resizable(true);
 
 	// Set up the search criteria combobox
 	_criteria_liststore = Gtk::ListStore::create(_criteria_columns);
 	_filter_combo->set_model(_criteria_liststore);
+
 	Gtk::TreeModel::iterator iter = _criteria_liststore->append();
-	Gtk::TreeModel::Row row = *iter;
+	Gtk::TreeModel::Row      row  = *iter;
 	row[_criteria_columns._col_label] = "Name contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::NAME;
 	_filter_combo->set_active(iter);
+
 	row = *(iter = _criteria_liststore->append());
 	row[_criteria_columns._col_label] = "Type contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::TYPE;
+
+	row = *(iter = _criteria_liststore->append());
+	row[_criteria_columns._col_label] = "Project contains";
+	row[_criteria_columns._col_criteria] = CriteriaColumns::PROJECT;
+
+	row = *(iter = _criteria_liststore->append());
+	row[_criteria_columns._col_label] = "Author contains";
+	row[_criteria_columns._col_criteria] = CriteriaColumns::AUTHOR;
+
 	row = *(iter = _criteria_liststore->append());
 	row[_criteria_columns._col_label] = "URI contains";
 	row[_criteria_columns._col_criteria] = CriteriaColumns::URI;
@@ -212,6 +227,46 @@ LoadPluginWindow::new_plugin(SharedPtr<const PluginModel> pm)
 		_refresh_list = true;
 }
 
+static std::string
+get_project_name(SharedPtr<const PluginModel> plugin)
+{
+	std::string name;
+	if (plugin->lilv_plugin()) {
+		LilvNode* project = lilv_plugin_get_project(plugin->lilv_plugin());
+		if (!project) {
+			return "";
+		}
+
+		LilvNode* doap_name = lilv_new_uri(
+			plugin->lilv_world(), "http://usefulinc.com/ns/doap#name");
+		LilvNodes* names = lilv_world_find_nodes(
+			plugin->lilv_world(), project, doap_name, NULL);
+
+		if (names) {
+			name = lilv_node_as_string(lilv_nodes_get_first(names));
+		}
+
+		lilv_nodes_free(names);
+		lilv_node_free(doap_name);
+		lilv_node_free(project);
+	}
+	return name;
+}
+
+static std::string
+get_author_name(SharedPtr<const PluginModel> plugin)
+{
+	std::string name;
+	if (plugin->lilv_plugin()) {
+		LilvNode* author = lilv_plugin_get_author_name(plugin->lilv_plugin());
+		if (author) {
+			name = lilv_node_as_string(author);
+		}
+		lilv_node_free(author);
+	}
+	return name;
+}
+
 void
 LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
                           SharedPtr<const PluginModel> plugin)
@@ -223,16 +278,23 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
 
 	switch (plugin->type()) {
 	case Plugin::LV2:
-		row[_plugins_columns._col_type] = "LV2";
+		row[_plugins_columns._col_type] = lilv_node_as_string(
+			lilv_plugin_class_get_label(
+				lilv_plugin_get_class(plugin->lilv_plugin())));
+
+		row[_plugins_columns._col_project] = get_project_name(plugin);
+		row[_plugins_columns._col_author]  = get_author_name(plugin);
 		break;
 	case Plugin::Internal:
-		row[_plugins_columns._col_type] = "Internal";
+		row[_plugins_columns._col_type]    = "Internal";
+		row[_plugins_columns._col_project] = "Ingen";
+		row[_plugins_columns._col_author]  = "David Robillard";
 		break;
 	case Plugin::Graph:
 		row[_plugins_columns._col_type] = "Graph";
 		break;
-	case Plugin::NIL:
-		row[_plugins_columns._col_type] = "?";
+	default:
+		row[_plugins_columns._col_type] = "";
 		break;
 	}
 
@@ -396,6 +458,12 @@ LoadPluginWindow::filter_changed()
 			break;
 		case CriteriaColumns::TYPE:
 			field = plugin->type_uri();
+			break;
+		case CriteriaColumns::PROJECT:
+			field = get_project_name(plugin);
+			break;
+		case CriteriaColumns::AUTHOR:
+			field = get_author_name(plugin);
 			break;
 		case CriteriaColumns::URI:
 			field = plugin->uri();
