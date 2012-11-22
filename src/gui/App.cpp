@@ -23,13 +23,14 @@
 #include <gtkmm/stock.h>
 
 #include "ganv/Edge.hpp"
+#include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
@@ -74,6 +75,8 @@ App::App(Ingen::World* world)
 	, _enable_signal(true)
 	, _requested_plugins(false)
 {
+	_world->conf().load_default("ingen", "gui.ttl");
+
 	WidgetFactory::get_widget_derived("connect_win", _connect_window);
 	WidgetFactory::get_widget_derived("messages_win", _messages_window);
 	WidgetFactory::get_widget_derived("graph_tree_win", _graph_tree_window);
@@ -347,6 +350,15 @@ App::quit(Gtk::Window* dialog_parent)
 
 	if (quit)
 		Gtk::Main::quit();
+
+	try {
+		const std::string path = _world->conf().save(
+			_world->uri_map(), "ingen", "gui.ttl", Configuration::GUI);
+		cout << (Raul::fmt("Saved GUI settings to %1%\n") % path);
+	} catch (const std::exception& e) {
+		cerr << (Raul::fmt("Error saving GUI settings (%1%)\n")
+		         % e.what());
+	}
 
 	return quit;
 }

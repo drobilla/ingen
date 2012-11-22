@@ -554,8 +554,9 @@ GraphBox::event_save_as()
 		}
 
 		_app->world()->conf().set(
-			"graph-folder",
+			"graph-directory",
 			_app->world()->forge().alloc(dialog.get_current_folder()));
+
 		break;
 	}
 }

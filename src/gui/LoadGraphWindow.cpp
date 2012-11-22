@@ -197,6 +197,10 @@ LoadGraphWindow::ok_clicked()
 
 	_graph.reset();
 	hide();
+
+	_app->world()->conf().set(
+		"graph-directory",
+		_app->world()->forge().alloc(get_current_folder()));
 }
 
 void

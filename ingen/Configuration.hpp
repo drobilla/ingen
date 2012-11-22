@@ -17,7 +17,6 @@
 #ifndef INGEN_CONFIGURATION_HPP
 #define INGEN_CONFIGURATION_HPP
 
-#include <assert.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +26,7 @@
 #include <string>
 
 #include "ingen/Forge.hpp"
+#include "ingen/URIMap.hpp"
 
 #include "raul/Atom.hpp"
 #include "raul/Exception.hpp"
@@ -40,12 +40,23 @@ class Configuration {
 public:
 	Configuration(Forge& forge);
 
+	/** The scope of a configuration option.
+	 *
+	 * This controls when and where an option will be saved or restored.
+	 */
+	enum Scope {
+		GLOBAL  = 1,     ///< Applies to any Ingen instance
+		SESSION = 1<<1,  ///< Applies to this Ingen instance only
+		GUI     = 1<<2   ///< Persistent GUI settings saved at exit
+	};
+		
 	/** Add a configuration option.
 	 *
 	 * @param key URI local name, in camelCase
 	 * @param name Long option name (without leading "--")
 	 * @param letter Short option name (without leading "-")
 	 * @param desc Description
+	 * @param scope Scope of option
 	 * @param type Type
 	 * @param value Default value
 	 */
@@ -53,19 +64,40 @@ public:
 	                   const std::string&       name,
 	                   char                     letter,
 	                   const std::string&       desc,
+	                   Scope                    scope,
 	                   const Raul::Atom::TypeID type,
 	                   const Raul::Atom&        value);
 
 	void print_usage(const std::string& program, std::ostream& os);
 
-	struct CommandLineError : public Raul::Exception {
-		explicit CommandLineError(const std::string& m) : Exception(m) {}
+	struct OptionError : public Raul::Exception {
+		explicit OptionError(const std::string& m) : Exception(m) {}
 	};
 
-	void parse(int argc, char** argv) throw (CommandLineError);
+	struct FileError : public Raul::Exception {
+		explicit FileError(const std::string& m) : Exception(m) {}
+	};
+
+	void parse(int argc, char** argv) throw (OptionError);
 
 	/** Load a specific file. */
 	bool load(const std::string& path);
+
+	/** Save configuration to a file.
+	 *
+	 * @param filename If absolute, the configuration will be saved to this
+	 * path.  Otherwise the configuration will be saved to the user
+	 * configuration directory (e.g. ~/.config/ingen/filename).
+	 *
+	 * @param scopes Bitwise OR of Scope values.  Only options which match the
+	 * given scopes will be saved.
+	 *
+	 * @return The absolute path of the saved configuration file.
+	 */
+	std::string save(URIMap&            uri_map,
+	                 const std::string& app,
+	                 const std::string& filename,
+	                 unsigned           scopes) throw (FileError);
 
 	/** Load files from the standard configuration directories for the app.
 	 *
@@ -74,7 +106,7 @@ public:
 	 * so the user options will override the system options.
 	 */
 	std::list<std::string> load_default(const std::string& app,
-	                                    const std::string& file);
+	                                    const std::string& filename);
 
 	const Raul::Atom& option(const std::string& long_name) const;
 	bool              set(const std::string& long_name, const Raul::Atom& value);
@@ -84,14 +116,19 @@ public:
 private:
 	struct Option {
 	public:
-		Option(const std::string& n, char l, const std::string& d,
+		Option(const std::string& k, const std::string& n, char l,
+		       const std::string& d, Scope s,
 		       const Raul::Atom::TypeID type, const Raul::Atom& def)
-			: name(n), letter(l), desc(d), type(type), value(def)
+			: key(k), name(n), letter(l)
+			, desc(d), scope(s)
+			, type(type), value(def)
 		{}
 
+		std::string        key;
 		std::string        name;
 		char               letter;
 		std::string        desc;
+		Scope              scope;
 		Raul::Atom::TypeID type;
 		Raul::Atom         value;
 	};
@@ -107,8 +144,9 @@ private:
 	typedef std::map<std::string, std::string> Keys;
 	typedef std::list<std::string>             Files;
 
-	int set_value_from_string(Configuration::Option& option, const std::string& value)
-			throw (Configuration::CommandLineError);
+	int set_value_from_string(Configuration::Option& option,
+	                          const std::string&     value)
+	throw (Configuration::OptionError);
 
 	Forge&            _forge;
 	const std::string _shortdesc;
