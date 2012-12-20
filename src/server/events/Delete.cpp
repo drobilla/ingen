@@ -122,8 +122,9 @@ Delete::execute(ProcessContext& context)
 		_disconnect_event->execute(context);
 	}
 
-	GraphImpl* parent = _block ? _block->parent_graph() : _port->parent_graph();
+	GraphImpl* parent = _block ? _block->parent_graph() : NULL;
 	if (_port) {
+		parent = _port->parent_graph();
 		_engine.maid()->dispose(parent->external_ports());
 		parent->external_ports(_ports_array);
 
