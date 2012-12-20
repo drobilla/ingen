@@ -27,7 +27,6 @@ except:
 
 class Client:
     def __init__(self, uri='unix:///tmp/ingen.sock'):
-        print 'Connecting to server %s' % uri
         self.msg_id = 1
         if uri.startswith('unix://'):
             self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -66,7 +65,7 @@ class Client:
         return self.send('''
 %s
  	a patch:Put ;
- 	patch:subject <%s> ;
+ 	patch:subject <ingen:root%s> ;
  	patch:body [
 %s
 ] .
@@ -76,7 +75,7 @@ class Client:
         return self.send('''
 %s
 	a patch:Set ;
-	patch:subject <%s> ;
+	patch:subject <ingen:root%s> ;
 	patch:body [
 %s
 	] .
@@ -86,7 +85,7 @@ class Client:
         return self.send('''
 %s
 	a patch:Put ;
-	patch:subject <%s> ;
+	patch:subject <ingen:root%s> ;
 	patch:body [
 		a ingen:Edge ;
 		ingen:tail <%s> ;
@@ -109,7 +108,7 @@ class Client:
         return self.send('''
 %s
 	a patch:Delete ;
-	patch:subject <%s> .
+	patch:subject <ingen:root%s> .
 ''' % (self.msg_subject(), path))
 
 def print_usage():
@@ -140,6 +139,7 @@ identical to the descriptions in Ingen patch files.
 Example:
     ingenish put /left_in 'a lv2:InputPort ; a lv2:AudioPort'
     ingenish put /left_out 'a lv2:OutputPort ; a lv2:AudioPort'
+
     ingenish put /tone 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Shepard>'
     ingenish put /combo 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Combo>'
     ingenish connect /left_in /tone/left_in
@@ -179,6 +179,7 @@ if len(sys.argv) > 1:
 ingen = Client(server)
 
 if len(sys.argv) - a == 0:
+    print('Ingen server at %s' % server)
     while True:
         try:
             run(shlex.split(raw_input('> ')))
