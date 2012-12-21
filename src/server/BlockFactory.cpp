@@ -18,6 +18,7 @@
 
 #include "lilv/lilv.h"
 
+#include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "internals/Controller.hpp"
@@ -118,24 +119,72 @@ BlockFactory::load_plugin(const Raul::URI& uri)
 void
 BlockFactory::load_lv2_plugins()
 {
+	// Build an array of port type nodes for checking compatibility
+	typedef std::vector< SharedPtr<LilvNode> > Types;
+	Types types;
+	for (unsigned t = PortType::AUDIO; t <= PortType::ATOM; ++t) {
+		const Raul::URI& uri(PortType((PortType::Symbol)t).uri());
+		types.push_back(SharedPtr<LilvNode>(
+			                lilv_new_uri(_world->lilv_world(), uri.c_str()),
+			                lilv_node_free));
+	}
+			
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());
 	LILV_FOREACH(plugins, i, plugins) {
 		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);
 		const Raul::URI   uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
+
+		// Ignore plugins that require features Ingen doesn't support
+		LilvNodes* features  = lilv_plugin_get_required_features(lv2_plug);
+		bool       supported = true;
+		LILV_FOREACH(nodes, f, features) {
+			const char* feature = lilv_node_as_uri(lilv_nodes_get(features, f));
+			if (!_world->lv2_features().is_supported(feature)) {
+				supported = false;
+				_world->log().warn(
+					Raul::fmt("Ignoring <%1%>; required feature <%2%>\n")
+					% uri % feature);
+				break;
+			}
+		}
+		if (!supported) {
+			continue;
+		}
+
+		// Ignore plugins that are missing ports
 		if (!lilv_plugin_get_port_by_index(lv2_plug, 0)) {
 			_world->log().warn(
-				Raul::fmt("Ignoring plugin <%1%> with invalid ports\n") % uri);
+				Raul::fmt("Ignoring <%1%>; missing or corrupt ports\n") % uri);
 			continue;
 		}
 
-		if (_plugins.find(uri) != _plugins.end()) {
+		const uint32_t n_ports = lilv_plugin_get_num_ports(lv2_plug);
+		for (uint32_t p = 0; p < n_ports; ++p) {
+			const LilvPort* port = lilv_plugin_get_port_by_index(lv2_plug, p);
+			supported = false;
+			for (Types::const_iterator t = types.begin(); t != types.end(); ++t) {
+				if (lilv_port_is_a(lv2_plug, port, t->get())) {
+					supported = true;
+					break;
+				}
+			}
+			if (!supported) {
+				_world->log().warn(
+					Raul::fmt("Ignoring <%1%>; unsupported port <%2%>\n")
+					% uri % lilv_node_as_string(
+						lilv_port_get_symbol(lv2_plug, port)));
+				break;
+			}
+		}
+		if (!supported) {
 			continue;
 		}
 
-		LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
-
-		plugin->lilv_plugin(lv2_plug);
-		_plugins.insert(make_pair(uri, plugin));
+		if (_plugins.find(uri) == _plugins.end()) {
+			LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
+			plugin->lilv_plugin(lv2_plug);
+			_plugins.insert(make_pair(uri, plugin));
+		}
 	}
 }
 

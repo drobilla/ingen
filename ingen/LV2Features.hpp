@@ -40,6 +40,8 @@ public:
 	public:
 		virtual ~Feature() {}
 
+		virtual const char* uri() const = 0;
+
 		virtual SharedPtr<LV2_Feature> feature(World* world,
 		                                       Node*  block) = 0;
 	};
@@ -60,6 +62,7 @@ public:
 	};
 
 	void add_feature(SharedPtr<Feature> feature);
+	bool is_supported(const std::string& uri) const;
 
 	SharedPtr<FeatureArray> lv2_features(World* world,
 	                                     Node*  block) const;

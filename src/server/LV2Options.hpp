@@ -48,7 +48,9 @@ struct LV2Options : public Ingen::LV2Features::Feature {
 				engine.world()->uris().atom_Sequence);
 		}
 	}
-		
+
+	const char* uri() const { return LV2_OPTIONS__options; }
+
 	SharedPtr<LV2_Feature> feature(World* w, Node* n) {
 		BlockImpl* block = dynamic_cast<BlockImpl*>(n);
 		if (!block) {

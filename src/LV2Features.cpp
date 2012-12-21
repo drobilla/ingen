@@ -47,6 +47,12 @@ LV2Features::FeatureArray::~FeatureArray()
 	free(_array);
 }
 
+bool
+LV2Features::is_supported(const std::string& uri) const
+{
+	return false;
+}
+
 SharedPtr<LV2Features::FeatureArray>
 LV2Features::lv2_features(World* world, Node* node) const
 {

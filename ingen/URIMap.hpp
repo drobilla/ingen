@@ -46,6 +46,8 @@ public:
 			_feature.data = data;
 		}
 
+		const char* uri() const { return _feature.URI; }
+
 		SharedPtr<LV2_Feature> feature(World*, Node*) {
 			return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 		}

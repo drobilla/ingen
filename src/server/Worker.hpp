@@ -38,6 +38,8 @@ public:
 	~Worker();
 
 	struct Schedule : public LV2Features::Feature {
+		const char* uri() const { return LV2_WORKER__schedule; }
+
 		SharedPtr<LV2_Feature> feature(World* world, Node* n);
 	};
 
