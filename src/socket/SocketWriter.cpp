@@ -85,5 +85,15 @@ SocketWriter::write(const LV2_Atom* msg)
 	return true;
 }
 
+void
+SocketWriter::bundle_end()
+{
+	AtomWriter::bundle_end();
+
+	// Send a NULL byte to indicate end of bundle
+	const char end[] = { 0 };
+	send(fd(), end, 1, MSG_NOSIGNAL);
+}
+
 } // namespace Socket
 } // namespace Ingen

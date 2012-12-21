@@ -45,6 +45,8 @@ public:
 
 	bool write(const LV2_Atom* msg);
 
+	void bundle_end();
+
 	int       fd()        { return _socket->fd(); }
 	Raul::URI uri() const { return _uri; }
 
