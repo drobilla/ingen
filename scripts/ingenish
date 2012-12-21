@@ -97,14 +97,13 @@ if len(sys.argv) - a == 0:
         try:
             run(shlex.split(raw_input('> ')))
         except (EOFError, KeyboardInterrupt, SystemExit):
-            print('error')
             break
         except:
-            print('error: %s' % sys.exc_info()[0])
+            print('error: %s' % sys.exc_info()[1])
 else:
-    update = run(sys.argv[1:])
-    if update:
-        print update.serialize(format='n3')
-    else:
-        print_usage()
-        sys.exit(1)
+    try:
+        update = run(sys.argv[1:])
+        if update:
+            print update.serialize(format='n3')
+    except:
+        print('error: %s' % sys.exc_info()[1])

@@ -75,7 +75,7 @@ public:
 	static Raul::URI root_uri() { return Raul::URI("ingen:root"); }
 
 	static bool uri_is_path(const Raul::URI& uri) {
-		return uri.substr(0, root_uri().length()) == root_uri();
+		return uri.substr(0, root_uri().length() + 1) == root_uri() + "/";
 	}
 
 	static Raul::Path uri_to_path(const Raul::URI& uri) {

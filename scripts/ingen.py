@@ -21,11 +21,12 @@ import socket
 import sys
 
 class NS:
-    ingen = rdflib.Namespace('http://drobilla.net/ns/ingen#')
-    lv2   = rdflib.Namespace('http://lv2plug.in/ns/lv2core#')
-    patch = rdflib.Namespace('http://lv2plug.in/ns/ext/patch#')
-    rdf   = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
-    xsd   = rdflib.Namespace('http://www.w3.org/2001/XMLSchema#')
+    ingen  = rdflib.Namespace('http://drobilla.net/ns/ingen#')
+    ingerr = rdflib.Namespace('http://drobilla.net/ns/ingen/errors#')
+    lv2    = rdflib.Namespace('http://lv2plug.in/ns/lv2core#')
+    patch  = rdflib.Namespace('http://lv2plug.in/ns/ext/patch#')
+    rdf    = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
+    xsd    = rdflib.Namespace('http://www.w3.org/2001/XMLSchema#')
 
 class Interface:
     'The core Ingen interface'
@@ -45,8 +46,37 @@ class Interface:
         pass
 
 class Error(Exception):
-    def __init__(self, code, cause):
-        Exception.__init__(self, 'error %d, cause: %s' % (code, cause))
+    def __init__(self, msg, cause):
+        Exception.__init__(self, '%s; cause: %s' % (msg, cause))
+
+def lv2_path():
+    path = os.getenv('LV2_PATH')
+    if path:
+        return path
+    elif sys.platform == 'darwin':
+        return os.pathsep.join(['~/Library/Audio/Plug-Ins/LV2',
+                                '~/.lv2',
+                                '/usr/local/lib/lv2',
+                                '/usr/lib/lv2',
+                                '/Library/Audio/Plug-Ins/LV2'])
+    elif sys.platform == 'haiku':
+        return os.pathsep.join(['~/.lv2',
+                                '/boot/common/add-ons/lv2'])
+    elif sys.platform == 'win32':
+        return os.pathsep.join([
+                os.path.join(os.getenv('APPDATA'), 'LV2'),
+                os.path.join(os.getenv('COMMONPROGRAMFILES'), 'LV2')])
+    else:
+        return os.pathsep.join(['~/.lv2',
+                                '/usr/lib/lv2',
+                                '/usr/local/lib/lv2'])
+
+def ingen_bundle_path():
+    for d in lv2_path().split(os.pathsep):
+        bundle = os.path.abspath(os.path.join(d, 'ingen.lv2'))
+        if os.path.exists(bundle):
+            return bundle
+    return None
 
 class Remote(Interface):
     def __init__(self, uri='unix:///tmp/ingen.sock'):
@@ -68,6 +98,11 @@ class Remote(Interface):
         else:
             raise Exception('Unsupported server URI `%s' % uri)
 
+        # Parse error description from Ingen bundle for pretty printing
+        bundle = ingen_bundle_path()
+        if bundle:
+            self.model.parse(os.path.join(bundle, 'errors.ttl'), format='n3')
+
     def __del__(self):
         self.sock.close()
 
@@ -88,8 +123,9 @@ class Remote(Interface):
         return update
 
     def uri_to_path(self, uri):
+        path = uri
         if uri.startswith(self.server_base):
-            return uri[len(self.server_base):]
+            return uri[len(self.server_base)-1:]
         return uri
 
     def recv(self):
@@ -115,6 +151,17 @@ class Remote(Interface):
             closure += [b]
 
         return closure
+
+    def raise_error(self, code, cause):
+        klass = self.model.value(None, NS.ingerr.errorCode, rdflib.Literal(code))
+        if not klass:
+            raise Error('error %d' % code, cause)
+
+        fmt = self.model.value(klass, NS.ingerr.formatString, None)
+        if not fmt:
+            raise Error('%s' % klass, cause)
+
+        raise Error(fmt, cause)
         
     def send(self, msg):
         # Send message to server
@@ -140,7 +187,7 @@ class Remote(Interface):
             response_desc += [i]
             blanks        += [response]
             if body != 0:
-                raise Error(int(body), msg)  # Raise exception on server error
+                self.raise_error(int(body), msg)  # Raise exception on server error
 
         # Find the blank node closure of all responses
         blank_closure = []
@@ -193,8 +240,8 @@ class Remote(Interface):
 	patch:subject <ingen:root%s> ;
 	patch:body [
 		a ingen:Edge ;
-		ingen:tail <%s> ;
-		ingen:head <%s> ;
+		ingen:tail <ingen:root%s> ;
+		ingen:head <ingen:root%s> ;
 	] .
 ''' % (os.path.commonprefix([tail, head]), tail, head))
 
@@ -204,8 +251,8 @@ class Remote(Interface):
 	a patch:Delete ;
 	patch:body [
 		a ingen:Edge ;
-		ingen:tail <%s> ;
-		ingen:head <%s> ;
+		ingen:tail <ingen:root%s> ;
+		ingen:head <ingen:root%s> ;
 	] .
 ''' % (tail, head))
 
