@@ -103,8 +103,7 @@ void
 CreateGraph::execute(ProcessContext& context)
 {
 	if (_graph) {
-		_engine.maid()->dispose(_parent->compiled_graph());
-		_parent->compiled_graph(_compiled_graph);
+		_parent->set_compiled_graph(_compiled_graph);
 	}
 }
 

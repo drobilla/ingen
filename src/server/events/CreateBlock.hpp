@@ -47,6 +47,8 @@ public:
 	            const Raul::Path&           block_path,
 	            const Resource::Properties& properties);
 
+	~CreateBlock();
+
 	bool pre_process();
 	void execute(ProcessContext& context);
 	void post_process();

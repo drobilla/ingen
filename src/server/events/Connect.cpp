@@ -146,8 +146,7 @@ Connect::execute(ProcessContext& context)
 		_head->add_edge(context, _edge.get());
 		_engine.maid()->dispose(_head->set_buffers(context, _buffers));
 		_head->connect_buffers();
-		_engine.maid()->dispose(_graph->compiled_graph());
-		_graph->compiled_graph(_compiled_graph);
+		_graph->set_compiled_graph(_compiled_graph);
 	}
 }
 

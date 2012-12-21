@@ -46,6 +46,11 @@ CreateBlock::CreateBlock(Engine&                     engine,
 	, _compiled_graph(NULL)
 {}
 
+CreateBlock::~CreateBlock()
+{
+	delete _compiled_graph;
+}
+
 bool
 CreateBlock::pre_process()
 {
@@ -124,8 +129,8 @@ void
 CreateBlock::execute(ProcessContext& context)
 {
 	if (_block) {
-		_engine.maid()->dispose(_graph->compiled_graph());
-		_graph->compiled_graph(_compiled_graph);
+		_graph->set_compiled_graph(_compiled_graph);
+		_compiled_graph = NULL;  // Graph takes ownership
 	}
 }
 

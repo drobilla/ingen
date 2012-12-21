@@ -135,8 +135,7 @@ public:
 
 	bool has_edge(const PortImpl* tail, const PortImpl* head) const;
 
-	CompiledGraph* compiled_graph()                  { return _compiled_graph; }
-	void           compiled_graph(CompiledGraph* cp) { _compiled_graph = cp; }
+	void set_compiled_graph(CompiledGraph* cp);
 
 	Raul::Array<PortImpl*>* external_ports()                           { return _ports; }
 	void                    external_ports(Raul::Array<PortImpl*>* pa) { _ports = pa; }

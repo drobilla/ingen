@@ -204,8 +204,7 @@ Disconnect::execute(ProcessContext& context)
 			return;
 		}
 
-		_engine.maid()->dispose(_graph->compiled_graph());
-		_graph->compiled_graph(_compiled_graph);
+		_graph->set_compiled_graph(_compiled_graph);
 	}
 }
 

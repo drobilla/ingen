@@ -208,7 +208,7 @@ Engine::activate()
 			                   Resource::INTERNAL));
 		_root_graph->activate(*_buffer_factory);
 		_world->store()->add(_root_graph);
-		_root_graph->compiled_graph(_root_graph->compile());
+		_root_graph->set_compiled_graph(_root_graph->compile());
 
 		ProcessContext context(*this);
 

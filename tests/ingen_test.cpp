@@ -207,7 +207,7 @@ main(int argc, char** argv)
 	                                 client);
 
 	SerdURI cmds_base;
-	const SerdNode cmds_file_uri = serd_node_new_file_uri(
+	SerdNode cmds_file_uri = serd_node_new_file_uri(
 		(const uint8_t*)cmds_file_path.c_str(),
 		NULL, &cmds_base, false);
 	Sord::Model* cmds = new Sord::Model(*world->rdf_world(),
@@ -248,7 +248,10 @@ main(int argc, char** argv)
 			g_usleep(1000);
 		}
 	}
+	free((void*)out.buf);
 	serd_env_free(env);
+	sratom_free(sratom);
+	serd_node_free(&cmds_file_uri);
 	delete cmds;
 
 	// Shut down

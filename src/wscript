@@ -28,7 +28,7 @@ def build(bld):
               vnum            = '0.0.0',
               install_path    = '${LIBDIR}',
               lib             = ['dl'])
-    autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SORD LV2_MIDI')
+    autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SERD SORD SRATOM')
 
     if bld.env.BUILD_TESTS:
         obj = bld(features        = 'cxx cxxshlib',
@@ -40,5 +40,5 @@ def build(bld):
                   install_path    = '',
                   lib             = ['dl'] + bld.env.INGEN_TEST_LIBS,
                   cxxflags        = bld.env.INGEN_TEST_CXXFLAGS)
-        autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SORD LV2_MIDI')
+        autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SERD SORD SRATOM')
 

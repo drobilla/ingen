@@ -54,7 +54,7 @@ def build(bld):
               target          = 'ingen_server',
               install_path    = '${LIBDIR}',
               use             = 'libingen')
-    core_libs = 'GLIBMM GTHREAD LV2 LILV RAUL SORD'
+    core_libs = 'GLIBMM GTHREAD LV2 LILV RAUL SERD SORD'
     autowaf.use_lib(bld, obj, core_libs)
 
     if bld.env.BUILD_TESTS:

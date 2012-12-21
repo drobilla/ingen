@@ -19,6 +19,7 @@
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "raul/Maid.hpp"
 
 #include "BlockImpl.hpp"
 #include "BufferFactory.hpp"
@@ -226,6 +227,15 @@ GraphImpl::has_edge(const PortImpl* tail, const PortImpl* dst_port) const
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	Edges::const_iterator i = _edges.find(make_pair(tail, dst_port));
 	return (i != _edges.end());
+}
+
+void
+GraphImpl::set_compiled_graph(CompiledGraph* cg)
+{
+	if (_compiled_graph && _compiled_graph != cg) {
+		_engine.maid()->dispose(_compiled_graph);
+	}
+	_compiled_graph = cg;
 }
 
 uint32_t

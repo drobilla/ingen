@@ -134,8 +134,7 @@ Delete::execute(ProcessContext& context)
 	}
 
 	if (parent) {
-		_engine.maid()->dispose(parent->compiled_graph());
-		parent->compiled_graph(_compiled_graph);
+		parent->set_compiled_graph(_compiled_graph);
 	}
 }
 

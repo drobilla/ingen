@@ -294,8 +294,7 @@ Delta::execute(ProcessContext& context)
 		case ENABLE:
 			if (value.get_bool()) {
 				if (_compiled_graph) {
-					_engine.maid()->dispose(_graph->compiled_graph());
-					_graph->compiled_graph(_compiled_graph);
+					_graph->set_compiled_graph(_compiled_graph);
 				}
 				_graph->enable();
 			} else {
