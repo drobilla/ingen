@@ -95,6 +95,7 @@ private:
 	void menu_load_plugin();
 	void menu_new_graph();
 	void menu_load_graph();
+	void menu_properties();
 	void load_plugin(WeakPtr<Client::PluginModel> plugin);
 
 	void build_menus();
@@ -164,6 +165,7 @@ private:
 	Gtk::MenuItem*      _menu_load_plugin;
 	Gtk::MenuItem*      _menu_load_graph;
 	Gtk::MenuItem*      _menu_new_graph;
+	Gtk::MenuItem*      _menu_properties;
 	Gtk::CheckMenuItem* _menu_edit;
 
 	bool _human_names;

@@ -182,12 +182,6 @@ Contributors:
       </object>
     </child>
     <child>
-      <object class="GtkSeparatorMenuItem" id="menuitem6">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-      </object>
-    </child>
-    <child>
       <object class="GtkImageMenuItem" id="canvas_menu_load_graph">
         <property name="label">_Load Graph...</property>
         <property name="visible">True</property>
@@ -207,6 +201,23 @@ Contributors:
         <property name="use_underline">True</property>
         <property name="use_stock">False</property>
         <signal name="activate" handler="on_canvas_menu_new_graph_activate" swapped="no"/>
+      </object>
+    </child>
+    <child>
+      <object class="GtkSeparatorMenuItem" id="menuitem6">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkImageMenuItem" id="canvas_menu_properties">
+        <property name="label">P_roperties...</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="use_action_appearance">False</property>
+        <property name="use_underline">True</property>
+        <property name="use_stock">False</property>
+        <signal name="activate" handler="on_canvas_menu_properties_activate" swapped="no"/>
       </object>
     </child>
   </object>

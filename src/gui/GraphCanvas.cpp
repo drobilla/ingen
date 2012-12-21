@@ -96,6 +96,7 @@ GraphCanvas::GraphCanvas(App&                        app,
 	xml->get_widget("canvas_menu_load_graph", _menu_load_graph);
 	xml->get_widget("canvas_menu_new_graph", _menu_new_graph);
 	xml->get_widget("canvas_menu_edit", _menu_edit);
+	xml->get_widget("canvas_menu_properties", _menu_properties);
 
 	const URIs& uris = _app.uris();
 
@@ -156,6 +157,8 @@ GraphCanvas::GraphCanvas(App&                        app,
 		sigc::mem_fun(this, &GraphCanvas::menu_load_graph));
 	_menu_new_graph->signal_activate().connect(
 		sigc::mem_fun(this, &GraphCanvas::menu_new_graph));
+	_menu_properties->signal_activate().connect(
+		sigc::mem_fun(this, &GraphCanvas::menu_properties));
 
 	show_human_names(app.world()->conf().option("human-names").get_bool());
 	show_port_names(app.world()->conf().option("port-labels").get_bool());
@@ -911,6 +914,12 @@ GraphCanvas::menu_new_graph()
 {
 	_app.window_factory()->present_new_subgraph(
 		_graph, get_initial_data(Resource::EXTERNAL));
+}
+
+void
+GraphCanvas::menu_properties()
+{
+	_app.window_factory()->present_properties(_graph);
 }
 
 } // namespace GUI

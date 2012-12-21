@@ -112,6 +112,10 @@ get_types(World* world, SharedPtr<const ObjectModel> model)
 	PropRange range = model->properties().equal_range(world->uris().rdf_type);
 	for (PropIter t = range.first; t != range.second; ++t) {
 		types.insert(Raul::URI(t->second.get_uri()));
+		if (world->uris().ingen_Graph == t->second.get_uri()) {
+			// Add lv2:Plugin as a type for graphs so plugin properties show up
+			types.insert(world->uris().lv2_Plugin);
+		}
 	}
 
 	LilvNode* rdfs_subClassOf = lilv_new_uri(
