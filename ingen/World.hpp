@@ -92,9 +92,6 @@ public:
 	 */
 	virtual bool run_module(const char* name);
 
-	/** Unload all loaded Ingen modules. */
-	virtual void unload_modules();
-
 	/** A function to create a new remote Interface. */
 	typedef SharedPtr<Interface> (*InterfaceFactory)(
 		World*               world,

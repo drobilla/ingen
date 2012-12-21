@@ -79,6 +79,7 @@ Engine::Engine(Ingen::World* world)
 
 Engine::~Engine()
 {
+	_root_graph = NULL;
 	deactivate();
 
 	const SharedPtr<Store> s = this->store();
@@ -99,6 +100,11 @@ Engine::~Engine()
 	delete _control_bindings;
 	delete _broadcaster;
 	delete _event_writer;
+	delete _worker;
+
+	_driver.reset();
+
+	delete _buffer_factory;
 
 	munlockall();
 }

@@ -66,9 +66,14 @@ JackDriver::JackDriver(Engine& engine)
 		&_forge, &engine.world()->uri_map().urid_map_feature()->urid_map);
 }
 
+struct PortDisposer {
+	void operator()(EnginePort* port) { delete port; }
+};
+
 JackDriver::~JackDriver()
 {
 	deactivate();
+	_ports.clear_and_dispose(PortDisposer());
 
 	if (_client)
 		jack_client_close(_client);

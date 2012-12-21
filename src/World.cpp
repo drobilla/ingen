@@ -143,8 +143,8 @@ public:
 		serialiser.reset();
 		parser.reset();
 		interface.reset();
-		engine.reset();
 		store.reset();
+		engine.reset();
 
 		interface_factories.clear();
 		script_runners.clear();
@@ -274,12 +274,6 @@ World::run_module(const char* name)
 
 	i->second->run(this);
 	return true;
-}
-
-void
-World::unload_modules()
-{
-	_impl->modules.clear();
 }
 
 /** Get an interface for a remote engine at @a url

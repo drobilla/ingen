@@ -115,6 +115,9 @@ Worker::Worker(Log& log, uint32_t buffer_size)
 
 Worker::~Worker()
 {
+	_exit_flag = true;
+	_sem.post();
+	join();
 	free(_buffer);
 }
 
