@@ -181,8 +181,9 @@ get_properties(World* world, SharedPtr<const ObjectModel> model)
 				}
 			}
 
-			if (n_matching_domains > 0 &&
-			    n_matching_domains == lilv_nodes_size(domains)) {
+			if (lilv_nodes_size(domains) == 0 || (
+				    n_matching_domains > 0 &&
+				    n_matching_domains == lilv_nodes_size(domains))) {
 				properties.insert(Raul::URI(lilv_node_as_uri(prop)));
 			}
 
