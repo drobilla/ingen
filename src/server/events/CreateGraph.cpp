@@ -111,6 +111,7 @@ CreateGraph::execute(ProcessContext& context)
 void
 CreateGraph::post_process()
 {
+	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond()) {
 		_engine.broadcaster()->put(Node::path_to_uri(_path), _update);
 	}

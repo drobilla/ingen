@@ -344,6 +344,8 @@ Delta::execute(ProcessContext& context)
 void
 Delta::post_process()
 {
+	Broadcaster::Transfer t(*_engine.broadcaster());
+
 	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
 		(*i)->post_process();
 

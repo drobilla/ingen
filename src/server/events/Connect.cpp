@@ -154,6 +154,7 @@ Connect::execute(ProcessContext& context)
 void
 Connect::post_process()
 {
+	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond()) {
 		_engine.broadcaster()->connect(_tail_path, _head_path);
 	}

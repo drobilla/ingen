@@ -212,6 +212,7 @@ Disconnect::execute(ProcessContext& context)
 void
 Disconnect::post_process()
 {
+	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond()) {
 		_engine.broadcaster()->disconnect(_tail_path, _head_path);
 	}

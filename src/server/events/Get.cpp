@@ -129,6 +129,7 @@ send_graph(Interface* client, const GraphImpl* graph)
 void
 Get::post_process()
 {
+	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond() && _request_client) {
 		if (_uri == "ingen:plugins") {
 			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);
@@ -140,7 +141,6 @@ Get::post_process()
 				uris.ingen_sampleRate,
 				uris.forge.make(int32_t(_engine.driver()->sample_rate())));
 		} else if (_object) {
-			_request_client->bundle_begin();
 			const BlockImpl* block = NULL;
 			const GraphImpl* graph = NULL;
 			const PortImpl*  port  = NULL;
@@ -151,7 +151,6 @@ Get::post_process()
 			} else if ((port = dynamic_cast<const PortImpl*>(_object))) {
 				send_port(_request_client.get(), port);
 			}
-			_request_client->bundle_end();
 		} else if (_plugin) {
 			_request_client->put(_uri, _plugin->properties());
 		}

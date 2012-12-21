@@ -112,6 +112,7 @@ SetPortValue::apply(Context& context)
 void
 SetPortValue::post_process()
 {
+	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond()) {
 		_engine.broadcaster()->set_property(
 			_port->uri(),

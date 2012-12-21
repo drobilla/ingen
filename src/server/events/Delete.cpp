@@ -144,17 +144,17 @@ Delete::post_process()
 {
 	_lock.release();
 	_removed_bindings.reset();
+
+	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond() && (_block || _port)) {
 		if (_block) {
 			_block->deactivate();
 		}
 
-		_engine.broadcaster()->bundle_begin();
 		if (_disconnect_event) {
 			_disconnect_event->post_process();
 		}
 		_engine.broadcaster()->del(_uri);
-		_engine.broadcaster()->bundle_end();
 	}
 
 	if (_engine_port) {

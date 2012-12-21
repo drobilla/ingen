@@ -161,6 +161,7 @@ DisconnectAll::execute(ProcessContext& context)
 void
 DisconnectAll::post_process()
 {
+	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond()) {
 		_engine.broadcaster()->disconnect_all(_parent_path, _path);
 	}

@@ -42,9 +42,31 @@ namespace Server {
 class Broadcaster : public Interface
 {
 public:
+	Broadcaster() : _bundle_depth(0) {}
+
 	void register_client(const Raul::URI& uri, SharedPtr<Interface> client);
 	bool unregister_client(const Raul::URI& uri);
 
+	/** A handle that represents a transfer of possibly several changes.
+	 *
+	 * This object going out of scope signifies the transfer is completed.
+	 * This makes doing the right thing in recursive functions that send
+	 * updates simple (e.g. Event::post_process()).
+	 */
+	struct Transfer : public Raul::Noncopyable {
+		Transfer(Broadcaster& b) : broadcaster(b) {
+			if (++broadcaster._bundle_depth == 1) {
+				broadcaster.bundle_begin();
+			}
+		}
+		~Transfer() {
+			if (--broadcaster._bundle_depth == 0) {
+				broadcaster.bundle_end();
+			}
+		}
+		Broadcaster& broadcaster;
+	};
+		
 	SharedPtr<Interface> client(const Raul::URI& uri);
 
 	void send_plugins(const BlockFactory::Plugins& plugin_list);
@@ -109,10 +131,13 @@ public:
 	void error(const std::string& msg) { BROADCAST(error, msg); }
 
 private:
+	friend class Transfer;
+
 	typedef std::map< Raul::URI, SharedPtr<Interface> > Clients;
 
 	Glib::Mutex _clients_mutex;
 	Clients     _clients;
+	unsigned    _bundle_depth;
 };
 
 } // namespace Server

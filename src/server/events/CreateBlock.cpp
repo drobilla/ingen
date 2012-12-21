@@ -132,6 +132,7 @@ CreateBlock::execute(ProcessContext& context)
 void
 CreateBlock::post_process()
 {
+	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond()) {
 		for (Update::const_iterator i = _update.begin(); i != _update.end(); ++i) {
 			_engine.broadcaster()->put(i->first, i->second);

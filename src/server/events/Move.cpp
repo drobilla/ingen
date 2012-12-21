@@ -83,6 +83,7 @@ Move::execute(ProcessContext& context)
 void
 Move::post_process()
 {
+	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond()) {
 		_engine.broadcaster()->move(_old_path, _new_path);
 	}
