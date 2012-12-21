@@ -14,102 +14,16 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+import ingen
 import os.path
+import re
 import shlex
-import socket
 import sys
 import time
-import re
 try:
     import readline
 except:
     pass
-
-class Client:
-    def __init__(self, uri='unix:///tmp/ingen.sock'):
-        self.msg_id = 1
-        if uri.startswith('unix://'):
-            self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            self.sock.connect(uri[len('unix://'):])
-        elif uri.startswith('tcp://'):
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            parsed = re.split('[:/]', uri[len('tcp://'):])
-            addr = (parsed[0], int(parsed[1]))
-            self.sock.connect(addr)
-
-    def __del__(self):
-        self.sock.close()
-
-    def msgencode(self, msg):
-        if sys.version_info[0] == 3:
-            return bytes(msg, 'utf-8')
-        else:
-            return msg
-
-    def msg_subject(self):
-        #self.msg_id += 1
-        #return '_:msg%d' % self.msg_id
-        return '[]'
-
-    def send(self, msg):
-        self.sock.send(self.msgencode(msg))
-        return True
-        #response = self.sock.recv(1024)
-        # if response != self.msgencode('OK'):
-        #     print('Error: %s' % response)
-        #     return False
-        # else:
-        #     return True
-        
-    def put(self, path, body):
-        return self.send('''
-%s
- 	a patch:Put ;
- 	patch:subject <ingen:root%s> ;
- 	patch:body [
-%s
-] .
-''' % (self.msg_subject(), path, body))
-
-    def set(self, path, body):
-        return self.send('''
-%s
-	a patch:Set ;
-	patch:subject <ingen:root%s> ;
-	patch:body [
-%s
-	] .
-''' % (self.msg_subject(), path, body))
-
-    def connect(self, tail, head):
-        return self.send('''
-%s
-	a patch:Put ;
-	patch:subject <ingen:root%s> ;
-	patch:body [
-		a ingen:Edge ;
-		ingen:tail <%s> ;
-		ingen:head <%s> ;
-	] .
-''' % (self.msg_subject(), os.path.commonprefix([tail, head]), tail, head))
-
-    def disconnect(self, tail, head):
-        return self.send('''
-%s
-	a patch:Delete ;
-	patch:body [
-		a ingen:Edge ;
-		ingen:tail <%s> ;
-		ingen:head <%s> ;
-	] .
-''' % (self.msg_subject(), tail, head))
-
-    def delete(self, path):
-        return self.send('''
-%s
-	a patch:Delete ;
-	patch:subject <ingen:root%s> .
-''' % (self.msg_subject(), path))
 
 def print_usage():
     print('''Usage: ingenish [OPTION]... [COMMAND [ARGUMENT]...]
@@ -140,8 +54,8 @@ Example:
     ingenish put /left_in 'a lv2:InputPort ; a lv2:AudioPort'
     ingenish put /left_out 'a lv2:OutputPort ; a lv2:AudioPort'
 
-    ingenish put /tone 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Shepard>'
-    ingenish put /combo 'a ingen:Node ; ingen:prototype <http://drobilla.net/plugins/mda/Combo>'
+    ingenish put /tone 'a ingen:Block ; ingen:prototype <http://drobilla.net/plugins/mda/Shepard>'
+    ingenish put /combo 'a ingen:Block ; ingen:prototype <http://drobilla.net/plugins/mda/Combo>'
     ingenish connect /left_in /tone/left_in
     ingenish connect /tone/left_out /combo/left_in
     ingenish connect /combo/left_out /left_out
@@ -163,8 +77,7 @@ def run(cmd):
         return ingen.disconnect(cmd[1], cmd[2])
     elif cmd[0] == 'delete' and len(cmd) == 2:
         return ingen.delete(cmd[1])
-    else:
-        return False
+    return False
 
 a = 1
 server = 'unix:///tmp/ingen.sock'
@@ -176,7 +89,7 @@ if len(sys.argv) > 1:
         print_usage()
         sys.exit(1)
 
-ingen = Client(server)
+ingen = ingen.Remote(server)
 
 if len(sys.argv) - a == 0:
     print('Ingen server at %s' % server)
@@ -184,11 +97,14 @@ if len(sys.argv) - a == 0:
         try:
             run(shlex.split(raw_input('> ')))
         except (EOFError, KeyboardInterrupt, SystemExit):
-            print('')
+            print('error')
             break
         except:
             print('error: %s' % sys.exc_info()[0])
 else:
-    if not run(sys.argv[1:]):
+    update = run(sys.argv[1:])
+    if update:
+        print update.serialize(format='n3')
+    else:
         print_usage()
         sys.exit(1)

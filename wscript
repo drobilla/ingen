@@ -33,9 +33,11 @@ def options(opt):
 
 def configure(conf):
     conf.load('compiler_cxx')
+    conf.load('python')
     autowaf.configure(conf)
 
     autowaf.display_header('Ingen Configuration')
+    conf.check_python_version((2,4,0), mandatory=False)
     autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
                       atleast_version='1.0.15', mandatory=True)
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
@@ -133,6 +135,10 @@ def build(bld):
         bld.install_files('${INCLUDEDIR}/ingen/%s' % i,
                           bld.path.ant_glob('ingen/%s/*' % i))
 
+    # Python modules
+    if bld.env.PYTHONDIR:
+        bld.install_files('${PYTHONDIR}/', 'scripts/ingen.py')
+
     # Modules
     bld.recurse('src')
     bld.recurse('src/serialisation')
@@ -166,6 +172,7 @@ def build(bld):
         
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
     bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)
+    bld.install_files('${BINDIR}', 'scripts/ingenams', chmod=Utils.O755)
 
     # Documentation
     autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, top, out)
