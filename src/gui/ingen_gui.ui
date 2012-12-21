@@ -82,6 +82,16 @@ Contributors:
               </object>
             </child>
             <child>
+              <object class="GtkMenuItem" id="canvas_menu_add_cv_input">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">C_V</property>
+                <property name="use_underline">True</property>
+                <signal name="activate" handler="on_canvas_menu_add_cv_input_activate" swapped="no"/>
+              </object>
+            </child>
+            <child>
               <object class="GtkMenuItem" id="canvas_menu_add_control_input">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -124,6 +134,16 @@ Contributors:
                 <property name="label" translatable="yes">_Audio</property>
                 <property name="use_underline">True</property>
                 <signal name="activate" handler="on_canvas_menu_add_audio_output_activate" swapped="no"/>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="canvas_menu_add_cv_output">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_action_appearance">False</property>
+                <property name="label" translatable="yes">C_V</property>
+                <property name="use_underline">True</property>
+                <signal name="activate" handler="on_canvas_menu_add_cv_output_activate" swapped="no"/>
               </object>
             </child>
             <child>

@@ -157,6 +157,8 @@ private:
 	Gtk::MenuItem*      _menu_add_audio_output;
 	Gtk::MenuItem*      _menu_add_control_input;
 	Gtk::MenuItem*      _menu_add_control_output;
+	Gtk::MenuItem*      _menu_add_cv_input;
+	Gtk::MenuItem*      _menu_add_cv_output;
 	Gtk::MenuItem*      _menu_add_event_input;
 	Gtk::MenuItem*      _menu_add_event_output;
 	Gtk::MenuItem*      _menu_load_plugin;

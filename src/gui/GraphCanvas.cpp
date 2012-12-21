@@ -86,6 +86,8 @@ GraphCanvas::GraphCanvas(App&                        app,
 
 	xml->get_widget("canvas_menu_add_audio_input", _menu_add_audio_input);
 	xml->get_widget("canvas_menu_add_audio_output", _menu_add_audio_output);
+	xml->get_widget("canvas_menu_add_cv_input", _menu_add_cv_input);
+	xml->get_widget("canvas_menu_add_cv_output", _menu_add_cv_output);
 	xml->get_widget("canvas_menu_add_control_input", _menu_add_control_input);
 	xml->get_widget("canvas_menu_add_control_output", _menu_add_control_output);
 	xml->get_widget("canvas_menu_add_event_input", _menu_add_event_input);
@@ -104,6 +106,12 @@ GraphCanvas::GraphCanvas(App&                        app,
 	_menu_add_audio_output->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
 		           "audio_out", "Audio Out", uris.lv2_AudioPort, true));
+	_menu_add_cv_input->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
+		           "cv_in", "CV In", uris.lv2_CVPort, false));
+	_menu_add_cv_output->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
+		           "cv_out", "CV Out", uris.lv2_CVPort, true));
 	_menu_add_control_input->signal_activate().connect(
 		sigc::bind(sigc::mem_fun(this, &GraphCanvas::menu_add_port),
 		           "control_in", "Control In", uris.lv2_ControlPort, false));
@@ -176,7 +184,7 @@ GraphCanvas::build_menus()
 	} else {
 		_menu->items().push_back(
 			Gtk::Menu_Helpers::ImageMenuElem(
-				"I_nternal",
+				"In_ternal",
 				*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
 		Gtk::MenuItem* internal_menu_item = &(_menu->items().back());
 		_internal_menu = Gtk::manage(new Gtk::Menu());
