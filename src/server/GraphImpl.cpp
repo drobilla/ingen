@@ -275,13 +275,11 @@ GraphImpl::create_port(BufferFactory&      bufs,
  * Port is not removed from ports array for process thread (which could be
  * simultaneously running).
  *
- * Realtime safe.  Preprocessing thread only.
+ * Pre-processing thread or situations that won't cause races with it only.
  */
 void
 GraphImpl::remove_port(DuplexPort& port)
 {
-	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-
 	if (port.is_input()) {
 		_inputs.erase(_inputs.iterator_to(port));
 	} else {
@@ -294,13 +292,11 @@ GraphImpl::remove_port(DuplexPort& port)
  * Ports are not removed from ports array for process thread (which could be
  * simultaneously running).  Returned is a (inputs, outputs) pair.
  *
- * Realtime safe.  Preprocessing thread only.
+ * Pre-processing thread or situations that won't cause races with it only.
  */
 void
 GraphImpl::clear_ports()
 {
-	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-
 	_inputs.clear();
 	_outputs.clear();
 }
