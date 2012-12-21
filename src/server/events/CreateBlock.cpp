@@ -61,7 +61,7 @@ CreateBlock::pre_process()
 	if (_path.is_root()) {
 		return Event::pre_process_done(BAD_URI, _path);
 	}
-		
+
 	std::string plugin_uri_str;
 	const iterator t = _properties.find(uris.ingen_prototype);
 	if (t != _properties.end() && t->second.type() == uris.forge.URI) {

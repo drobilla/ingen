@@ -128,7 +128,7 @@ BlockFactory::load_lv2_plugins()
 			                lilv_new_uri(_world->lilv_world(), uri.c_str()),
 			                lilv_node_free));
 	}
-			
+
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());
 	LILV_FOREACH(plugins, i, plugins) {
 		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);

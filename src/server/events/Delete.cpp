@@ -92,7 +92,7 @@ Delete::pre_process()
 		parent->remove_block(*_block);
 		_disconnect_event = new DisconnectAll(_engine, parent, _block.get());
 		_disconnect_event->pre_process();
-		
+
 		if (parent->enabled()) {
 			_compiled_graph = parent->compile();
 		}

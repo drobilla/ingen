@@ -49,7 +49,7 @@ public:
 		SESSION = 1<<1,  ///< Applies to this Ingen instance only
 		GUI     = 1<<2   ///< Persistent GUI settings saved at exit
 	};
-		
+
 	/** Add a configuration option.
 	 *
 	 * @param key URI local name, in camelCase

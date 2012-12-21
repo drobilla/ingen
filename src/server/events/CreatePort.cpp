@@ -88,7 +88,7 @@ CreatePort::pre_process()
 	if (_port_type == PortType::UNKNOWN) {
 		return Event::pre_process_done(UNKNOWN_TYPE, _path);
 	}
-	
+
 	if (_path.is_root()) {
 		return Event::pre_process_done(BAD_URI, _path);
 	}

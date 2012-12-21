@@ -104,7 +104,7 @@ NodeModule::create(GraphCanvas&                canvas,
                    bool                        human)
 {
 	SharedPtr<const GraphModel> graph = PtrCast<const GraphModel>(block);
-	
+
 	NodeModule* ret = (graph)
 		? new SubgraphModule(canvas, graph)
 		: new NodeModule(canvas, block);

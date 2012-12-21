@@ -508,7 +508,7 @@ PropertiesWindow::add_clicked()
 	properties.insert(make_pair(key_uri.c_str(), value));
 	_app->interface()->put(_model->uri(), properties);
 }
-	
+
 void
 PropertiesWindow::cancel_clicked()
 {

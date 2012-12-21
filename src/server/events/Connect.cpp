@@ -58,7 +58,7 @@ Connect::pre_process()
 	if (!tail) {
 		return Event::pre_process_done(NOT_FOUND, _tail_path);
 	}
-		
+
 	Node* head = _engine.store()->get(_head_path);
 	if (!head) {
 		return Event::pre_process_done(NOT_FOUND, _head_path);

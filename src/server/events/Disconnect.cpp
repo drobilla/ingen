@@ -129,7 +129,7 @@ Disconnect::pre_process()
 	if (!head) {
 		return Event::pre_process_done(PORT_NOT_FOUND, _head_path);
 	}
-	
+
 	BlockImpl* const src_block = tail->parent_block();
 	BlockImpl* const dst_block = head->parent_block();
 

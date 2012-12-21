@@ -67,7 +67,7 @@ public:
 		}
 		Broadcaster& broadcaster;
 	};
-		
+
 	SharedPtr<Interface> client(const Raul::URI& uri);
 
 	void send_plugins(const BlockFactory::Plugins& plugin_list);

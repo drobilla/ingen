@@ -230,7 +230,7 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		delete _prepared_buffers;
 		_prepared_buffers = NULL;
 	}
-	
+
 	if (_prepared_set_states && _prepared_set_states->size() != poly) {
 		delete _prepared_set_states;
 		_prepared_set_states = NULL;
@@ -378,7 +378,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 		                   val.size(), val.type(), val.get_body())) {
 			_last_broadcasted_value = val;
 		}
-		
+
 		/* On failure, last_broadcasted_value remains unaffected, so we'll try
 		   again next cycle and so on until the value is finally delivered. */
 	}
