@@ -45,6 +45,7 @@ SocketReader::SocketReader(Ingen::World&     world,
 
 SocketReader::~SocketReader()
 {
+	_socket->shutdown();
 	join();
 }
 
@@ -90,6 +91,16 @@ SocketReader::_run()
 	Sord::World*  world = _world.rdf_world();
 	LV2_URID_Map* map   = &_world.uri_map().urid_map_feature()->urid_map;
 
+	// Open socket as a FILE for reading directly with serd
+	FILE* f = fdopen(_socket->fd(), "r");
+	if (!f) {
+		_world.log().error(Raul::fmt("Failed to open connection (%1%)\n")
+		                   % strerror(errno));
+		// Connection gone, exit
+		_socket.reset();
+		return;
+	}
+
 	// Use <ingen:root/> as base URI so e.g. </foo/bar> will be a path
 	SordNode* base_uri = sord_new_uri(
 		world->c_obj(), (const uint8_t*)"ingen:root/");
@@ -116,17 +127,6 @@ SocketReader::_run()
 		NULL);
 
 	serd_env_set_base_uri(_env, sord_node_to_serd_node(base_uri));
-
-	// Read directly from the connection with serd
-	FILE* f = fdopen(_socket->fd(), "r");
-	if (!f) {
-		_world.log().error(Raul::fmt("Failed to open connection (%1%)\n")
-		                   % strerror(errno));
-		// Connection gone, exit
-		_socket.reset();
-		return;
-	}
-
 	serd_reader_start_stream(reader, f, (const uint8_t*)"(socket)", false);
 
 	// Make an AtomReader to call Ingen Interface methods based on Atom
@@ -156,14 +156,11 @@ SocketReader::_run()
 
 		// Read until the next '.'
 		SerdStatus st = serd_reader_read_chunk(reader);
-		if (st == SERD_FAILURE) {
+		if (st == SERD_FAILURE || !_msg_node) {
 			continue;  // Read nothing, e.g. just whitespace
 		} else if (st) {
 			_world.log().error(Raul::fmt("Read error: %1%\n")
 			                   % serd_strerror(st));
-			continue;
-		} else if (!_msg_node) {
-			_world.log().error("Received empty message\n");
 			continue;
 		}
 
@@ -185,8 +182,7 @@ SocketReader::_run()
 	sratom_free(sratom);
 	serd_reader_free(reader);
 	sord_free(model);
-
-	delete this;
+	_socket.reset();
 }
 
 }  // namespace Ingen

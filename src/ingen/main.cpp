@@ -209,6 +209,7 @@ main(int argc, char** argv)
 	if (world->engine())
 		world->engine()->deactivate();
 
+	engine_interface.reset();
 	delete world;
 
 	return 0;

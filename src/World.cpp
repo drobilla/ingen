@@ -149,6 +149,14 @@ public:
 		interface_factories.clear();
 		script_runners.clear();
 
+		// Delete module objects but save pointers to libraries
+		typedef std::list<Glib::Module*> Libs;
+		Libs libs;
+		for (Modules::iterator i = modules.begin(); i != modules.end(); ++i) {
+			libs.push_back(i->second->library);
+			delete i->second;
+		}
+
 		delete rdf_world;
 		delete lv2_features;
 		delete uris;
@@ -157,16 +165,9 @@ public:
 
 		lilv_world_free(lilv_world);
 
-
-		for (Modules::iterator i = modules.begin(); i != modules.end(); ++i) {
-			// Keep a reference to the library
-			Glib::Module* lib = i->second->library;
-
-			// Destroy the Ingen module
-			delete i->second;
-
-			// Now all references to library code should be done, close it
-			delete lib;
+		// Close module libraries
+		for (Libs::iterator l = libs.begin(); l != libs.end(); ++l) {
+			delete *l;
 		}
 	}
 

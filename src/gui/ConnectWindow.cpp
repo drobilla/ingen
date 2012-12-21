@@ -412,7 +412,7 @@ ConnectWindow::gtk_callback()
 			}
 		}
 	} else if (_connect_stage == 2) {
-		_app->interface()->get(Node::root_uri());
+		_app->interface()->get(Raul::URI(Node::root_uri() + "/"));
 		if (_widgets_loaded)
 			_progress_label->set_text(string("Requesting root graph..."));
 		++_connect_stage;

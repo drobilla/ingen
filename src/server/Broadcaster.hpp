@@ -43,6 +43,7 @@ class Broadcaster : public Interface
 {
 public:
 	Broadcaster() : _bundle_depth(0) {}
+	~Broadcaster();
 
 	void register_client(const Raul::URI& uri, SharedPtr<Interface> client);
 	bool unregister_client(const Raul::URI& uri);

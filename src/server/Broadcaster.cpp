@@ -26,6 +26,12 @@
 namespace Ingen {
 namespace Server {
 
+Broadcaster::~Broadcaster()
+{
+	Glib::Mutex::Lock lock(_clients_mutex);
+	_clients.clear();
+}
+
 /** Register a client to receive messages over the notification band.
  */
 void

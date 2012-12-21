@@ -179,7 +179,6 @@ Socket::shutdown()
 {
 	if (_sock != -1) {
 		::shutdown(_sock, SHUT_RDWR);
-		_sock = -1;
 	}
 }
 
