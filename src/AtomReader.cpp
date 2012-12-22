@@ -107,6 +107,7 @@ AtomReader::is_message(URIs& uris, const LV2_Atom* msg)
 	return (obj->body.otype == uris.patch_Get ||
 	        obj->body.otype == uris.patch_Delete ||
 	        obj->body.otype == uris.patch_Put ||
+	        obj->body.otype == uris.patch_Set ||
 	        obj->body.otype == uris.patch_Patch ||
 	        obj->body.otype == uris.patch_Move ||
 	        obj->body.otype == uris.patch_Response);
