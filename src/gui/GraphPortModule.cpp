@@ -68,6 +68,11 @@ GraphPortModule::create(GraphCanvas&               canvas,
 	GraphPortModule* ret  = new GraphPortModule(canvas, model);
 	Port*            port = Port::create(canvas.app(), *ret, model, human, true);
 
+	if (model->is_numeric() && model->is_input()) {
+		// Add non-mirrored input so control port can be controlled from canvas
+		Port::create(canvas.app(), *ret, model, human, false);
+	}
+
 	ret->set_port(port);
 
 	for (Resource::Properties::const_iterator m = model->properties().begin();
