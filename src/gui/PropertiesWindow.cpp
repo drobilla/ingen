@@ -100,6 +100,45 @@ PropertiesWindow::present(SharedPtr<const ObjectModel> model)
 	Gtk::Window::present();
 }
 
+/** Set @p types to its super/sub class closure.
+ * @param super If true, find all superclasses, otherwise all subclasses
+ */
+static void
+get_classes(World* world, URISet& types, bool super)
+{
+	LilvNode* rdfs_subClassOf = lilv_new_uri(
+		world->lilv_world(), LILV_NS_RDFS "subClassOf");
+
+	unsigned added = 0;
+	do {
+		added = 0;
+		URISet klasses;
+		for (URISet::iterator t = types.begin(); t != types.end(); ++t) {
+			LilvNode*  type    = lilv_new_uri(world->lilv_world(), t->c_str());
+			LilvNodes* matches = (super)
+				? lilv_world_find_nodes(
+					world->lilv_world(), type, rdfs_subClassOf, NULL)
+				: lilv_world_find_nodes(
+					world->lilv_world(), NULL, rdfs_subClassOf, type);
+			LILV_FOREACH(nodes, m, matches) {
+				const LilvNode* klass_node = lilv_nodes_get(matches, m);
+				if (lilv_node_is_uri(klass_node)) {
+					Raul::URI klass(lilv_node_as_uri(klass_node));
+					if (!types.count(klass)) {
+						++added;
+						klasses.insert(klass);
+					}
+				}
+			}
+			lilv_nodes_free(matches);
+			lilv_node_free(type);
+		}
+		types.insert(klasses.begin(), klasses.end());
+	} while (added > 0);
+
+	lilv_node_free(rdfs_subClassOf);
+}
+
 /** Get all the types which this model is an instance of */
 static URISet
 get_types(World* world, SharedPtr<const ObjectModel> model)
@@ -118,36 +157,9 @@ get_types(World* world, SharedPtr<const ObjectModel> model)
 		}
 	}
 
-	LilvNode* rdfs_subClassOf = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "subClassOf");
+	// Add every superclass of every type, recursively
+	get_classes(world, types, true);
 
-	/* Add super-classes until no new super-classes are encountered.  Really
-	   slow, but won't loop forever even if subClassOf loops exist. */
-	unsigned added = 0;
-	do {
-		added = 0;
-		URISet supers;
-		for (URISet::iterator t = types.begin(); t != types.end(); ++t) {
-			LilvNode*  type = lilv_new_uri(world->lilv_world(), t->c_str());
-			LilvNodes* sups = lilv_world_find_nodes(
-				world->lilv_world(), type, rdfs_subClassOf, NULL);
-			LILV_FOREACH(nodes, s, sups) {
-				const LilvNode* super_node = lilv_nodes_get(sups, s);
-				if (lilv_node_is_uri(super_node)) {
-					Raul::URI super(lilv_node_as_uri(super_node));
-					if (!types.count(super)) {
-						++added;
-						supers.insert(super);
-					}
-				}
-			}
-			lilv_nodes_free(sups);
-			lilv_node_free(type);
-		}
-		types.insert(supers.begin(), supers.end());
-	} while (added > 0);
-
-	lilv_node_free(rdfs_subClassOf);
 	return types;
 }
 
@@ -274,22 +286,37 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 			continue;
 		}
 
-		LilvNodes* ranges = lilv_world_find_nodes(
+		// Get all classes in the range of this property (including sub-classes)
+		LilvNodes* range = lilv_world_find_nodes(
 			world->lilv_world(), prop, rdfs_range, NULL);
-		LILV_FOREACH(nodes, r, ranges) {
-			const LilvNode* range = lilv_nodes_get(ranges, r);
+		URISet ranges;
+		LILV_FOREACH(nodes, r, range) {
+			ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(range, r))));
+		}
+		get_classes(world, ranges, false);
+
+		bool show = false;
+		for (URISet::const_iterator i = ranges.begin(); i != ranges.end(); ++i) {
+			LilvNode*  range   = lilv_new_uri(world->lilv_world(), i->c_str());
 			LilvNodes* objects = lilv_world_find_nodes(
 				world->lilv_world(), NULL, rdf_type, range);
-			if (lilv_nodes_get_first(objects)) {
-				// At least one applicable object, add property to key combo
-				Gtk::ListStore::iterator ki  = _key_store->append();
-				Gtk::ListStore::Row      row = *ki;
-				row[_combo_columns.uri_col]   = *p;
-				row[_combo_columns.label_col] = label;
-				break;
-			}
+
+			show = lilv_nodes_get_first(objects);
+
 			lilv_nodes_free(objects);
+			lilv_node_free(range);
+			if (show) {
+				break;  // At least one appliable object
+			}
 		}
+
+		if (show || ranges.empty()) {
+			Gtk::ListStore::iterator ki  = _key_store->append();
+			Gtk::ListStore::Row      row = *ki;
+			row[_combo_columns.uri_col]   = *p;
+			row[_combo_columns.label_col] = label;
+		}
+
 		lilv_node_free(prop);
 	}
 
@@ -472,21 +499,41 @@ PropertiesWindow::key_changed()
 	LilvNode* prop = lilv_new_uri(
 		world->lilv_world(), prop_uri.c_str());
 
-	LilvNodes* ranges = lilv_world_find_nodes(
+	LilvNodes* range = lilv_world_find_nodes(
 		world->lilv_world(), prop, rdfs_range, NULL);
-	LILV_FOREACH(nodes, r, ranges) {
-		const LilvNode* range = lilv_nodes_get(ranges, r);
+
+	// Get all classes in the range of this property (including sub-classes)
+	URISet ranges;
+	LILV_FOREACH(nodes, r, range) {
+		ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(range, r))));
+	}
+	get_classes(world, ranges, false);
+
+	// Get all objects in range
+	typedef std::map<Raul::URI, Glib::ustring> Values;
+	Values values;
+	for (URISet::const_iterator i = ranges.begin(); i != ranges.end(); ++i) {
+		LilvNode*  range   = lilv_new_uri(world->lilv_world(), i->c_str());
 		LilvNodes* objects = lilv_world_find_nodes(
 			world->lilv_world(), NULL, rdf_type, range);
 		LILV_FOREACH(nodes, o, objects) {
-			const LilvNode* object = lilv_nodes_get(objects, o);
-			const Glib::ustring label = get_label(world, object);
-			if (!label.empty()) {
-				Gtk::ListStore::iterator vi = _value_store->append();
-				Gtk::ListStore::Row vrow = *vi;
-				vrow[_combo_columns.uri_col]   = lilv_node_as_string(object);
-				vrow[_combo_columns.label_col] = label;
-			}
+			const LilvNode*     object = lilv_nodes_get(objects, o);
+			const Glib::ustring label  = get_label(world, object);
+			values.insert(
+				std::make_pair(
+					Raul::URI(lilv_node_as_string(object)),
+					label));
+		}
+		lilv_node_free(range);
+	}
+
+	// Fill value selector with suitable objects
+	for (Values::const_iterator i = values.begin(); i != values.end(); ++i) {
+		if (!i->second.empty()) {
+			Gtk::ListStore::iterator vi   = _value_store->append();
+			Gtk::ListStore::Row      vrow = *vi;
+			vrow[_combo_columns.uri_col]   = i->first;
+			vrow[_combo_columns.label_col] = i->second;
 		}
 	}
 
