@@ -197,7 +197,7 @@ void
 App::request_plugins_if_necessary()
 {
 	if (!_requested_plugins) {
-		_world->interface()->get(Raul::URI("ingen:plugins"));
+		_world->interface()->get(Raul::URI("ingen:/plugins"));
 		_requested_plugins = true;
 	}
 }

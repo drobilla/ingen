@@ -203,7 +203,7 @@ main(int argc, char** argv)
 	SharedPtr<Interface> client(new TestClient(world->log()));
 
 	world->interface()->set_respondee(client);
-	world->engine()->register_client(Raul::URI("ingen:testClient"),
+	world->engine()->register_client(Raul::URI("ingen:/clients/test"),
 	                                 client);
 
 	SerdURI cmds_base;

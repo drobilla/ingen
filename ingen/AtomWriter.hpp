@@ -37,7 +37,7 @@ public:
 	~AtomWriter() {}
 
 	Raul::URI uri() const {
-		return Raul::URI("http://drobilla.net/ns/ingen#AtomWriter");
+		return Raul::URI("ingen:/clients/atom_writer");
 	}
 
 	void bundle_begin();

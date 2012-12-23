@@ -55,10 +55,10 @@ Get::pre_process()
 {
 	_lock.acquire();
 
-	if (_uri == "ingen:plugins") {
+	if (_uri == "ingen:/plugins") {
 		_plugins = _engine.block_factory()->plugins();
 		return Event::pre_process_done(SUCCESS);
-	} else if (_uri == "ingen:engine") {
+	} else if (_uri == "ingen:/engine") {
 		return Event::pre_process_done(SUCCESS);
 	} else if (Node::uri_is_path(_uri)) {
 		_object = _engine.store()->get(Node::uri_to_path(_uri));
@@ -131,9 +131,9 @@ Get::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (!respond() && _request_client) {
-		if (_uri == "ingen:plugins") {
+		if (_uri == "ingen:/plugins") {
 			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);
-		} else if (_uri == "ingen:engine") {
+		} else if (_uri == "ingen:/engine") {
 			// TODO: Keep a proper RDF model of the engine
 			URIs& uris = _engine.world()->uris();
 			_request_client->set_property(

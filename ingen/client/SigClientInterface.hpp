@@ -45,7 +45,7 @@ class SigClientInterface : public Ingen::Interface,
 public:
 	SigClientInterface() {}
 
-	Raul::URI uri() const { return Raul::URI("ingen:sigClient"); }
+	Raul::URI uri() const { return Raul::URI("ingen:/clients/sig"); }
 
 	INGEN_SIGNAL(response, void, int32_t, Status, std::string)
 	INGEN_SIGNAL(bundle_begin, void)

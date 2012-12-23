@@ -40,7 +40,7 @@ public:
 	explicit EventWriter(Engine& engine);
 	virtual ~EventWriter();
 
-	Raul::URI uri() const { return Raul::URI("ingen:eventWriter"); }
+	Raul::URI uri() const { return Raul::URI("ingen:/clients/event_writer"); }
 
 	virtual SharedPtr<Interface> respondee() const {
 		return _respondee;

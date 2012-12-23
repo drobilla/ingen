@@ -58,7 +58,7 @@ public:
 		SharedPtr<Interface>          engine  = SharedPtr<Interface>(),
 		SharedPtr<SigClientInterface> emitter = SharedPtr<SigClientInterface>());
 
-	Raul::URI uri() const { return Raul::URI("ingen:clientStore"); }
+	Raul::URI uri() const { return Raul::URI("ingen:/clients/store"); }
 
 	SharedPtr<const ObjectModel> object(const Raul::Path& path) const;
 	SharedPtr<const PluginModel> plugin(const Raul::URI& uri)   const;

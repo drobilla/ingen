@@ -72,10 +72,11 @@ public:
 	virtual const Raul::Symbol& symbol()       const = 0;
 	virtual Node*               graph_parent() const = 0;
 
-	static Raul::URI root_uri() { return Raul::URI("ingen:root"); }
+	static Raul::URI root_uri() { return Raul::URI("ingen:/root"); }
 
 	static bool uri_is_path(const Raul::URI& uri) {
-		return uri.substr(0, root_uri().length() + 1) == root_uri() + "/";
+		return uri == root_uri() ||
+			uri.substr(0, root_uri().length() + 1) == root_uri() + "/";
 	}
 
 	static Raul::Path uri_to_path(const Raul::URI& uri) {

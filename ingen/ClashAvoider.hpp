@@ -44,7 +44,7 @@ public:
 	ClashAvoider(Store& store, Interface& target, Store* also_avoid=NULL)
 		: _store(store), _target(target), _also_avoid(also_avoid) {}
 
-	Raul::URI uri() const { return Raul::URI("ingen:ClientStore"); }
+	Raul::URI uri() const { return Raul::URI("ingen:/clients/clash_avoider"); }
 
 	void set_target(Interface& target) { _target = target; }
 

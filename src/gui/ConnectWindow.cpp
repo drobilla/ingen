@@ -255,7 +255,7 @@ ConnectWindow::disconnect()
 void
 ConnectWindow::activate()
 {
-	_app->interface()->set_property(Raul::URI("ingen:driver"),
+	_app->interface()->set_property(Raul::URI("ingen:/driver"),
 	                                _app->uris().ingen_enabled,
 	                                _app->forge().make(true));
 }
@@ -263,7 +263,7 @@ ConnectWindow::activate()
 void
 ConnectWindow::deactivate()
 {
-	_app->interface()->set_property(Raul::URI("ingen:driver"),
+	_app->interface()->set_property(Raul::URI("ingen:/driver"),
 	                                _app->uris().ingen_enabled,
 	                                _app->forge().make(false));
 }
@@ -390,7 +390,7 @@ ConnectWindow::gtk_callback()
 
 		_ping_id = g_random_int();
 		_app->interface()->set_response_id(_ping_id);
-		_app->interface()->get(Raul::URI("ingen:engine"));
+		_app->interface()->get(Raul::URI("ingen:/engine"));
 
 		if (_widgets_loaded) {
 			_progress_label->set_text("Connecting to engine...");
@@ -407,7 +407,7 @@ ConnectWindow::gtk_callback()
 				(now.tv_usec - last.tv_usec) * 0.001f;
 			if (ms_since_last > 1000) {
 				_app->interface()->set_response_id(_ping_id);
-				_app->interface()->get(Raul::URI("ingen:engine"));
+				_app->interface()->get(Raul::URI("ingen:/engine"));
 				last = now;
 			}
 		}
@@ -423,14 +423,14 @@ ConnectWindow::gtk_callback()
 			if (root) {
 				set_connected_to(_app->interface());
 				_app->window_factory()->present_graph(root);
-				_app->interface()->get(Raul::URI("ingen:plugins"));
+				_app->interface()->get(Raul::URI("ingen:/plugins"));
 				if (_widgets_loaded)
 					_progress_label->set_text(string("Loading plugins..."));
 				++_connect_stage;
 			}
 		}
 	} else if (_connect_stage == 4) {
-		_app->interface()->get(Raul::URI("ingen:plugins"));
+		_app->interface()->get(Raul::URI("ingen:/plugins"));
 		hide();
 		if (_widgets_loaded)
 			_progress_label->set_text("Connected to engine");

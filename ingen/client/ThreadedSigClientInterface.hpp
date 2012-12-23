@@ -65,7 +65,7 @@ public:
 		, property_change_slot(_signal_property_change.make_slot())
 	{}
 
-	virtual Raul::URI uri() const { return Raul::URI("ingen:threadedSigClient"); }
+	virtual Raul::URI uri() const { return Raul::URI("ingen:/clients/sig_queue"); }
 
 	void bundle_begin()
 		{ push_sig(bundle_begin_slot); }
