@@ -22,7 +22,7 @@
 	a patch:Put ;
 	patch:subject <ingen:root/> ;
 	patch:body [
-		a ingen:Edge ;
+		a ingen:Arc ;
 		ingen:tail <ingen:root/in> ;
 		ingen:head <ingen:root/out>
 	] .
@@ -30,7 +30,7 @@
 <msg3>
 	a patch:Delete ;
 	patch:body [
-		a ingen:Edge ;
+		a ingen:Arc ;
 		ingen:tail <ingen:root/in> ;
 		ingen:head <ingen:root/out>
 	] .

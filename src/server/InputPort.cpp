@@ -20,10 +20,10 @@
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 
+#include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
-#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
@@ -46,7 +46,7 @@ InputPort::InputPort(BufferFactory&      bufs,
                      const Raul::Atom&   value,
                      size_t              buffer_size)
 	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
-	, _num_edges(0)
+	, _num_arcs(0)
 {
 	const Ingen::URIs& uris = bufs.uris();
 
@@ -82,21 +82,21 @@ InputPort::get_buffers(BufferFactory&          bufs,
                        uint32_t                poly,
                        bool                    real_time) const
 {
-	const size_t num_edges = real_time ? _edges.size() : _num_edges;
+	const size_t num_arcs = real_time ? _arcs.size() : _num_arcs;
 
-	if (is_a(PortType::AUDIO) && num_edges == 0) {
-		// Audio input with no edges, use shared zero buffer
+	if (is_a(PortType::AUDIO) && num_arcs == 0) {
+		// Audio input with no arcs, use shared zero buffer
 		for (uint32_t v = 0; v < poly; ++v) {
 			buffers->at(v) = bufs.silent_buffer();
 		}
 		return false;
 
-	} else if (num_edges == 1) {
+	} else if (num_arcs == 1) {
 		if (real_time) {
-			if (!_edges.front().must_mix()) {
+			if (!_arcs.front().must_mix()) {
 				// Single non-mixing connection, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v) {
-					buffers->at(v) = _edges.front().buffer(v);
+					buffers->at(v) = _arcs.front().buffer(v);
 				}
 				return false;
 			}
@@ -112,50 +112,50 @@ InputPort::get_buffers(BufferFactory&          bufs,
 	return true;
 }
 
-/** Add a edge.  Realtime safe.
+/** Add an arc.  Realtime safe.
  *
- * The buffer of this port will be set directly to the edge's buffer
- * if there is only one edge, since no copying/mixing needs to take place.
+ * The buffer of this port will be set directly to the arc's buffer
+ * if there is only one arc, since no copying/mixing needs to take place.
  *
  * Note that setup_buffers must be called after this before the change
  * will audibly take effect.
  */
 void
-InputPort::add_edge(ProcessContext& context, EdgeImpl* c)
+InputPort::add_arc(ProcessContext& context, ArcImpl* c)
 {
-	_edges.push_front(*c);
+	_arcs.push_front(*c);
 	if (_type != PortType::CV) {
 		_broadcast = true;  // Broadcast value/activity of connected input
 	}
 }
 
-/** Remove a edge.  Realtime safe.
+/** Remove a arc.  Realtime safe.
  *
  * Note that setup_buffers must be called after this before the change
  * will audibly take effect.
  */
-EdgeImpl*
-InputPort::remove_edge(ProcessContext& context, const OutputPort* tail)
+ArcImpl*
+InputPort::remove_arc(ProcessContext& context, const OutputPort* tail)
 {
-	EdgeImpl* edge = NULL;
-	for (Edges::iterator i = _edges.begin(); i != _edges.end(); ++i) {
+	ArcImpl* arc = NULL;
+	for (Arcs::iterator i = _arcs.begin(); i != _arcs.end(); ++i) {
 		if (i->tail() == tail) {
-			edge = &*i;
-			_edges.erase(i);
+			arc = &*i;
+			_arcs.erase(i);
 			break;
 		}
 	}
 
-	if (!edge) {
-		context.engine().log().error("Attempt to remove non-existent edge\n");
+	if (!arc) {
+		context.engine().log().error("Attempt to remove non-existent arc\n");
 		return NULL;
 	}
 
-	if (_edges.empty()) {
+	if (_arcs.empty()) {
 		_broadcast = false;  // Turn off broadcasting if no longer connected
 	}
 
-	return edge;
+	return arc;
 }
 
 uint32_t
@@ -165,24 +165,24 @@ InputPort::max_tail_poly(Context& context) const
 }
 
 static void
-get_sources(const Context&  context,
-            const EdgeImpl& edge,
-            uint32_t        voice,
-            const Buffer**  srcs,
-            uint32_t        max_num_srcs,
-            uint32_t&       num_srcs)
+get_sources(const Context& context,
+            const ArcImpl& arc,
+            uint32_t       voice,
+            const Buffer** srcs,
+            uint32_t       max_num_srcs,
+            uint32_t&      num_srcs)
 {
-	if (edge.must_mix()) {
+	if (arc.must_mix()) {
 		// Mixing down voices: all tail voices => one head voice
-		for (uint32_t v = 0; v < edge.tail()->poly(); ++v) {
+		for (uint32_t v = 0; v < arc.tail()->poly(); ++v) {
 			assert(num_srcs < max_num_srcs);
-			srcs[num_srcs++] = edge.tail()->buffer(v).get();
+			srcs[num_srcs++] = arc.tail()->buffer(v).get();
 		}
 	} else {
 		// Matching polyphony: each tail voice => corresponding head voice
-		assert(edge.tail()->poly() == edge.head()->poly());
+		assert(arc.tail()->poly() == arc.head()->poly());
 		assert(num_srcs < max_num_srcs);
-		srcs[num_srcs++] = edge.tail()->buffer(voice).get();
+		srcs[num_srcs++] = arc.tail()->buffer(voice).get();
 	}
 }
 
@@ -195,23 +195,23 @@ InputPort::pre_process(Context& context)
 	if (_set_by_user)
 		return;
 
-	if (_edges.empty()) {
+	if (_arcs.empty()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
 			update_set_state(context, v);
 		}
 	} else if (direct_connect()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
-			_buffers->at(v) = _edges.front().buffer(v);
+			_buffers->at(v) = _arcs.front().buffer(v);
 		}
 	} else {
 		const uint32_t src_poly     = max_tail_poly(context);
-		const uint32_t max_num_srcs = _edges.size() * src_poly;
+		const uint32_t max_num_srcs = _arcs.size() * src_poly;
 
 		const Buffer* srcs[max_num_srcs];
 		for (uint32_t v = 0; v < _poly; ++v) {
 			// Get all the sources for this voice
 			uint32_t num_srcs = 0;
-			for (Edges::iterator e = _edges.begin(); e != _edges.end(); ++e) {
+			for (Arcs::iterator e = _arcs.begin(); e != _arcs.end(); ++e) {
 				get_sources(context, *e, v, srcs, max_num_srcs, num_srcs);
 			}
 
@@ -241,9 +241,9 @@ InputPort::post_process(Context& context)
 bool
 InputPort::direct_connect() const
 {
-	return _edges.size() == 1
+	return _arcs.size() == 1
 		&& !_parent->path().is_root()
-		&& !_edges.front().must_mix();
+		&& !_arcs.front().must_mix();
 }
 
 } // namespace Server

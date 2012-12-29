@@ -17,9 +17,9 @@
 #include <cassert>
 
 #include "ingen/URIs.hpp"
+#include "ingen/client/ArcModel.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/ClientStore.hpp"
-#include "ingen/client/EdgeModel.hpp"
 #include "ingen/client/GraphModel.hpp"
 
 using namespace std;
@@ -52,19 +52,17 @@ GraphModel::remove_child(SharedPtr<ObjectModel> o)
 
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
-	for (Edges::iterator j = _edges.begin(); j != _edges.end();) {
-		Edges::iterator next = j;
+	for (Arcs::iterator j = _arcs.begin(); j != _arcs.end();) {
+		Arcs::iterator next = j;
 		++next;
 
-		SharedPtr<EdgeModel> cm = PtrCast<EdgeModel>(j->second);
-		assert(cm);
-
-		if (cm->tail_path().parent() == o->path()
-				|| cm->tail_path() == o->path()
-				|| cm->head_path().parent() == o->path()
-				|| cm->head_path() == o->path()) {
-			_signal_removed_edge.emit(cm);
-			_edges.erase(j); // cuts our reference
+		SharedPtr<ArcModel> arc = PtrCast<ArcModel>(j->second);
+		if (arc->tail_path().parent() == o->path()
+				|| arc->tail_path() == o->path()
+				|| arc->head_path().parent() == o->path()
+				|| arc->head_path() == o->path()) {
+			_signal_removed_arc.emit(arc);
+			_arcs.erase(j); // cuts our reference
 		}
 		j = next;
 	}
@@ -84,67 +82,68 @@ GraphModel::remove_child(SharedPtr<ObjectModel> o)
 void
 GraphModel::clear()
 {
-	_edges.clear();
+	_arcs.clear();
 
 	BlockModel::clear();
 
-	assert(_edges.empty());
+	assert(_arcs.empty());
 	assert(_ports.empty());
 }
 
-SharedPtr<EdgeModel>
-GraphModel::get_edge(const Node* tail, const Node* head)
+SharedPtr<ArcModel>
+GraphModel::get_arc(const Node* tail, const Node* head)
 {
-	Edges::iterator i = _edges.find(make_pair(tail, head));
-	if (i != _edges.end())
-		return PtrCast<EdgeModel>(i->second);
+	Arcs::iterator i = _arcs.find(make_pair(tail, head));
+	if (i != _arcs.end())
+		return PtrCast<ArcModel>(i->second);
 	else
-		return SharedPtr<EdgeModel>();
+		return SharedPtr<ArcModel>();
 }
 
 /** Add a connection to this graph.
  *
- * A reference to  @a cm is taken, released on deletion or removal.
- * If @a cm only contains paths (not pointers to the actual ports), the ports
+ * A reference to @p arc is taken, released on deletion or removal.
+ * If @p arc only contains paths (not pointers to the actual ports), the ports
  * will be found and set.  The ports referred to not existing as children of
  * this graph is a fatal error.
  */
 void
-GraphModel::add_edge(SharedPtr<EdgeModel> cm)
+GraphModel::add_arc(SharedPtr<ArcModel> arc)
 {
 	// Store should have 'resolved' the connection already
-	assert(cm);
-	assert(cm->tail());
-	assert(cm->head());
-	assert(cm->tail()->parent());
-	assert(cm->head()->parent());
-	assert(cm->tail_path() != cm->head_path());
-	assert(cm->tail()->parent().get() == this
-	       || cm->tail()->parent()->parent().get() == this);
-	assert(cm->head()->parent().get() == this
-	       || cm->head()->parent()->parent().get() == this);
+	assert(arc);
+	assert(arc->tail());
+	assert(arc->head());
+	assert(arc->tail()->parent());
+	assert(arc->head()->parent());
+	assert(arc->tail_path() != arc->head_path());
+	assert(arc->tail()->parent().get() == this
+	       || arc->tail()->parent()->parent().get() == this);
+	assert(arc->head()->parent().get() == this
+	       || arc->head()->parent()->parent().get() == this);
 
-	SharedPtr<EdgeModel> existing = get_edge(
-			cm->tail().get(), cm->head().get());
+	SharedPtr<ArcModel> existing = get_arc(
+			arc->tail().get(), arc->head().get());
 
 	if (existing) {
-		assert(cm->tail() == existing->tail());
-		assert(cm->head() == existing->head());
+		assert(arc->tail() == existing->tail());
+		assert(arc->head() == existing->head());
 	} else {
-		_edges.insert(make_pair(make_pair(cm->tail().get(),
-		                                         cm->head().get()), cm));
-		_signal_new_edge.emit(cm);
+		_arcs.insert(make_pair(make_pair(arc->tail().get(),
+		                                 arc->head().get()),
+		                       arc));
+		_signal_new_arc.emit(arc);
 	}
 }
 
 void
-GraphModel::remove_edge(const Node* tail, const Node* head)
+GraphModel::remove_arc(const Node* tail, const Node* head)
 {
-	Edges::iterator i = _edges.find(make_pair(tail, head));
-	if (i != _edges.end()) {
-		SharedPtr<EdgeModel> c = PtrCast<EdgeModel>(i->second);
-		_signal_removed_edge.emit(c);
-		_edges.erase(i);
+	Arcs::iterator i = _arcs.find(make_pair(tail, head));
+	if (i != _arcs.end()) {
+		SharedPtr<ArcModel> arc = PtrCast<ArcModel>(i->second);
+		_signal_removed_arc.emit(arc);
+		_arcs.erase(i);
 	}
 }
 

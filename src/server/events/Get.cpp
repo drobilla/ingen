@@ -119,9 +119,9 @@ send_graph(Interface* client, const GraphImpl* graph)
 		send_port(client, graph->port_impl(i));
 	}
 
-	// Send edges
-	for (GraphImpl::Edges::const_iterator j = graph->edges().begin();
-	     j != graph->edges().end(); ++j) {
+	// Send arcs
+	for (GraphImpl::Arcs::const_iterator j = graph->arcs().begin();
+	     j != graph->arcs().end(); ++j) {
 		client->connect(j->second->tail_path(), j->second->head_path());
 	}
 }

@@ -87,6 +87,7 @@ skip_property(const Sord::Node& predicate)
 {
 	return (predicate.to_string() == "http://drobilla.net/ns/ingen#node"
 	        || predicate.to_string() == "http://drobilla.net/ns/ingen#edge"
+	        || predicate.to_string() == "http://drobilla.net/ns/ingen#arc"
 	        || predicate.to_string() == LV2_CORE__port);
 }
 
@@ -207,7 +208,7 @@ parse_properties(
 	boost::optional<Resource::Properties> data = boost::optional<Resource::Properties>());
 
 static bool
-parse_edges(
+parse_arcs(
 		World*            world,
 		Interface*        target,
 		Sord::Model&      model,
@@ -378,17 +379,17 @@ parse_graph(Ingen::World*                     world,
 		            i->second.second);
 	}
 
-	parse_edges(world, target, model, subject_node, graph_path);
+	parse_arcs(world, target, model, subject_node, graph_path);
 
 	return graph_path;
 }
 
 static bool
-parse_edge(Ingen::World*     world,
-           Ingen::Interface* target,
-           Sord::Model&      model,
-           const Sord::Node& subject,
-           const Raul::Path& graph)
+parse_arc(Ingen::World*     world,
+          Ingen::Interface* target,
+          Sord::Model&      model,
+          const Sord::Node& subject,
+          const Raul::Path& graph)
 {
 	URIs& uris = world->uris();
 
@@ -402,32 +403,32 @@ parse_edge(Ingen::World*     world,
 	const Glib::ustring& base_uri = model.base_uri().to_string();
 
 	if (t.end()) {
-		world->log().error("Edge has no tail");
+		world->log().error("Arc has no tail");
 		return false;
 	} else if (h.end()) {
-		world->log().error("Edge has no head");
+		world->log().error("Arc has no head");
 		return false;
 	}
 
 	const std::string tail_str = relative_uri(
 		base_uri, t.get_object().to_string(), true);
 	if (!Raul::Path::is_valid(tail_str)) {
-		world->log().error("Edge tail has invalid URI");
+		world->log().error("Arc tail has invalid URI");
 		return false;
 	}
 
 	const std::string head_str = relative_uri(
 		base_uri, h.get_object().to_string(), true);
 	if (!Raul::Path::is_valid(head_str)) {
-		world->log().error("Edge head has invalid URI");
+		world->log().error("Arc head has invalid URI");
 		return false;
 	}
 
 	if (!(++t).end()) {
-		world->log().error("Edge has multiple tails");
+		world->log().error("Arc has multiple tails");
 		return false;
 	} else if (!(++h).end()) {
-		world->log().error("Edge has multiple heads");
+		world->log().error("Arc has multiple heads");
 		return false;
 	}
 
@@ -438,17 +439,24 @@ parse_edge(Ingen::World*     world,
 }
 
 static bool
-parse_edges(Ingen::World*     world,
-            Ingen::Interface* target,
-            Sord::Model&      model,
-            const Sord::Node& subject,
-            const Raul::Path& graph)
+parse_arcs(Ingen::World*     world,
+           Ingen::Interface* target,
+           Sord::Model&      model,
+           const Sord::Node& subject,
+           const Raul::Path& graph)
 {
-	const Sord::URI  ingen_edge(*world->rdf_world(), world->uris().ingen_edge);
+	const Sord::URI  ingen_arc(*world->rdf_world(), world->uris().ingen_arc);
 	const Sord::Node nil;
 
+	for (Sord::Iter i = model.find(subject, ingen_arc, nil); !i.end(); ++i) {
+		parse_arc(world, target, model, i.get_object(), graph);
+	}
+
+	// Backwards compatibility, support ingen:edge predicate
+	const Sord::URI ingen_edge(*world->rdf_world(),
+	                           "http://drobilla.net/ns/ingen#edge");
 	for (Sord::Iter i = model.find(subject, ingen_edge, nil); !i.end(); ++i) {
-		parse_edge(world, target, model, i.get_object(), graph);
+		parse_arc(world, target, model, i.get_object(), graph);
 	}
 
 	return true;
@@ -487,7 +495,7 @@ parse(Ingen::World*                     world,
 
 	const Sord::URI  graph_class   (*world->rdf_world(), uris.ingen_Graph);
 	const Sord::URI  block_class   (*world->rdf_world(), uris.ingen_Block);
-	const Sord::URI  edge_class    (*world->rdf_world(), uris.ingen_Edge);
+	const Sord::URI  arc_class     (*world->rdf_world(), uris.ingen_Arc);
 	const Sord::URI  internal_class(*world->rdf_world(), uris.ingen_Internal);
 	const Sord::URI  in_port_class (*world->rdf_world(), LV2_CORE__InputPort);
 	const Sord::URI  out_port_class(*world->rdf_world(), LV2_CORE__OutputPort);
@@ -534,9 +542,9 @@ parse(Ingen::World*                     world,
 			parse_properties(
 				world, target, model, s, Node::path_to_uri(path), data);
 			ret = path;
-		} else if (types.find(edge_class) != types.end()) {
+		} else if (types.find(arc_class) != types.end()) {
 			Raul::Path parent_path(parent ? parent.get() : Raul::Path("/"));
-			parse_edge(world, target, model, s, parent_path);
+			parse_arc(world, target, model, s, parent_path);
 		} else {
 			world->log().error("Subject has no known types\n");
 		}

@@ -24,13 +24,13 @@
 
 #include "raul/SharedPtr.hpp"
 
+#include "ArcImpl.hpp"
 #include "PortImpl.hpp"
-#include "EdgeImpl.hpp"
 
 namespace Ingen {
 namespace Server {
 
-class EdgeImpl;
+class ArcImpl;
 class Context;
 class BlockImpl;
 class OutputPort;
@@ -39,10 +39,10 @@ class ProcessContext;
 /** An input port on a Block or Graph.
  *
  * All ports have a Buffer, but the actual contents (data) of that buffer may be
- * set directly to the incoming edge's buffer if there's only one inbound
- * edge, to eliminate the need to copy/mix.
+ * set directly to the incoming arc's buffer if there's only one inbound
+ * arc, to eliminate the need to copy/mix.
  *
- * If a port has multiple edges, they will be mixed down into the local
+ * If a port has multiple arcs, they will be mixed down into the local
  * buffer and it will be used.
  *
  * \ingroup engine
@@ -62,15 +62,15 @@ public:
 
 	virtual ~InputPort() {}
 
-	typedef boost::intrusive::slist<EdgeImpl,
+	typedef boost::intrusive::slist<ArcImpl,
 	                                boost::intrusive::constant_time_size<false>
-	                                > Edges;
+	                                > Arcs;
 
 	/** Return the maximum polyphony of an output connected to this input. */
 	virtual uint32_t max_tail_poly(Context& context) const;
 
-	void      add_edge(ProcessContext& context, EdgeImpl* c);
-	EdgeImpl* remove_edge(ProcessContext&   context,
+	void     add_arc(ProcessContext& context, ArcImpl* c);
+	ArcImpl* remove_arc(ProcessContext&   context,
 	                      const OutputPort* tail);
 
 	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
@@ -83,9 +83,9 @@ public:
 	void pre_process(Context& context);
 	void post_process(Context& context);
 
-	size_t num_edges() const { return _num_edges; } ///< Pre-process thread
-	void increment_num_edges() { ++_num_edges; }
-	void decrement_num_edges() { --_num_edges; }
+	size_t num_arcs() const { return _num_arcs; } ///< Pre-process thread
+	void increment_num_arcs() { ++_num_arcs; }
+	void decrement_num_arcs() { --_num_arcs; }
 
 	bool is_input()  const { return true; }
 	bool is_output() const { return false; }
@@ -93,8 +93,8 @@ public:
 	bool direct_connect() const;
 
 protected:
-	size_t _num_edges;  ///< Pre-process thread
-	Edges  _edges;      ///< Audio thread
+	size_t _num_arcs;  ///< Pre-process thread
+	Arcs   _arcs;      ///< Audio thread
 };
 
 } // namespace Server

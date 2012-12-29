@@ -38,7 +38,7 @@ class PortImpl;
 
 namespace Events {
 
-/** Remove an Edge between two Ports.
+/** Remove an Arc between two Ports.
  *
  * \ingroup engine
  */
@@ -72,7 +72,7 @@ public:
 		OutputPort*             _src_output_port;
 		InputPort*              _dst_input_port;
 		GraphImpl*              _graph;
-		SharedPtr<EdgeImpl>     _edge;
+		SharedPtr<ArcImpl>      _arc;
 		Raul::Array<BufferRef>* _buffers;
 	};
 

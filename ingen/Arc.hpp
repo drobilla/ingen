@@ -14,20 +14,26 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Edge.hpp"
+#ifndef INGEN_ARC_HPP
+#define INGEN_ARC_HPP
+
+#include "raul/Deletable.hpp"
+
+namespace Raul { class Path; }
 
 namespace Ingen {
-namespace GUI {
 
-Edge::Edge(Ganv::Canvas&                              canvas,
-           boost::shared_ptr<const Client::EdgeModel> model,
-           Ganv::Node*                                src,
-           Ganv::Node*                                dst,
-           uint32_t                                   color)
-	: Ganv::Edge(canvas, src, dst, color)
-	, _edge_model(model)
+/** A connection between two ports.
+ *
+ * @ingroup Ingen
+ */
+class Arc : public Raul::Deletable
 {
-}
+public:
+	virtual const Raul::Path& tail_path() const = 0;
+	virtual const Raul::Path& head_path() const = 0;
+};
 
-}   // namespace GUI
-}   // namespace Ingen
+} // namespace Ingen
+
+#endif // INGEN_ARC_HPP

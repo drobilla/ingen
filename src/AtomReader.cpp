@@ -138,7 +138,7 @@ AtomReader::write(const LV2_Atom* msg)
 		if (subject_uri && !body) {
 			_iface.del(Raul::URI(subject_uri));
 			return true;
-		} else if (body && body->body.otype == _uris.ingen_Edge) {
+		} else if (body && body->body.otype == _uris.ingen_Arc) {
 			const LV2_Atom* tail       = NULL;
 			const LV2_Atom* head       = NULL;
 			const LV2_Atom* incidentTo = NULL;
@@ -172,7 +172,7 @@ AtomReader::write(const LV2_Atom* msg)
 			return false;
 		}
 
-		if (body->body.otype == _uris.ingen_Edge) {
+		if (body->body.otype == _uris.ingen_Arc) {
 			LV2_Atom* tail = NULL;
 			LV2_Atom* head = NULL;
 			lv2_atom_object_get(body,
@@ -180,7 +180,7 @@ AtomReader::write(const LV2_Atom* msg)
 			                    (LV2_URID)_uris.ingen_head, &head,
 			                    NULL);
 			if (!tail || !head) {
-				_log.warn("Edge has no tail or head\n");
+				_log.warn("Arc has no tail or head\n");
 				return false;
 			}
 
@@ -189,7 +189,7 @@ AtomReader::write(const LV2_Atom* msg)
 			if (tail_path && head_path) {
 				_iface.connect(*tail_path, *head_path);
 			} else {
-				_log.warn(Raul::fmt("Edge %1% => %2% has non-path tail or head\n")
+				_log.warn(Raul::fmt("Arc %1% => %2% has non-path tail or head\n")
 				          % atom_to_uri(tail) % atom_to_uri(head));
 			}
 		} else {

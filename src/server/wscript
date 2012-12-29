@@ -3,6 +3,7 @@ from waflib.extras import autowaf as autowaf
 
 def build(bld):
     core_source = '''
+            ArcImpl.cpp
             BlockFactory.cpp
             BlockImpl.cpp
             Broadcaster.cpp
@@ -11,7 +12,6 @@ def build(bld):
             Context.cpp
             ControlBindings.cpp
             DuplexPort.cpp
-            EdgeImpl.cpp
             Engine.cpp
             EventWriter.cpp
             GraphImpl.cpp

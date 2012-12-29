@@ -23,8 +23,8 @@
 namespace Ingen {
 namespace Client {
 
+class ArcModel;
 class ClientStore;
-class EdgeModel;
 
 /** Client's model of a graph.
  *
@@ -37,8 +37,8 @@ public:
 
 	GraphType graph_type() const { return Node::GRAPH; }
 
-	SharedPtr<EdgeModel> get_edge(const Ingen::Node* tail,
-	                              const Ingen::Node* head);
+	SharedPtr<ArcModel> get_arc(const Ingen::Node* tail,
+	                            const Ingen::Node* head);
 
 	bool     enabled()       const;
 	bool     polyphonic()    const;
@@ -47,8 +47,8 @@ public:
 	// Signals
 	INGEN_SIGNAL(new_block, void, SharedPtr<BlockModel>);
 	INGEN_SIGNAL(removed_block, void, SharedPtr<BlockModel>);
-	INGEN_SIGNAL(new_edge, void, SharedPtr<EdgeModel>);
-	INGEN_SIGNAL(removed_edge, void, SharedPtr<EdgeModel>);
+	INGEN_SIGNAL(new_arc, void, SharedPtr<ArcModel>);
+	INGEN_SIGNAL(removed_arc, void, SharedPtr<ArcModel>);
 
 private:
 	friend class ClientStore;
@@ -61,9 +61,9 @@ private:
 	void add_child(SharedPtr<ObjectModel> c);
 	bool remove_child(SharedPtr<ObjectModel> c);
 
-	void add_edge(SharedPtr<EdgeModel> cm);
-	void remove_edge(const Ingen::Node* tail,
-	                 const Ingen::Node* head);
+	void add_arc(SharedPtr<ArcModel> arc);
+	void remove_arc(const Ingen::Node* tail,
+	                const Ingen::Node* head);
 };
 
 } // namespace Client

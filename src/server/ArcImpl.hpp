@@ -14,15 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_EDGE_IMPL_HPP
-#define INGEN_ENGINE_EDGE_IMPL_HPP
+#ifndef INGEN_ENGINE_ARC_IMPL_HPP
+#define INGEN_ENGINE_ARC_IMPL_HPP
 
 #include <cstdlib>
 
 #include <boost/intrusive/slist.hpp>
 #include <boost/utility.hpp>
 
-#include "ingen/Edge.hpp"
+#include "ingen/Arc.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "raul/Deletable.hpp"
 
@@ -48,14 +48,14 @@ class InputPort;
  *
  * \ingroup engine
  */
-class EdgeImpl
+class ArcImpl
 		: private Raul::Noncopyable
-		, public  Edge
+		, public  Arc
 		, public  boost::intrusive::slist_base_hook<
 	boost::intrusive::link_mode<boost::intrusive::auto_unlink> >
 {
 public:
-	EdgeImpl(PortImpl* tail, PortImpl* head);
+	ArcImpl(PortImpl* tail, PortImpl* head);
 
 	inline PortImpl* tail() const { return _tail; }
 	inline PortImpl* head() const { return _head; }
@@ -64,13 +64,13 @@ public:
 	const Raul::Path& head_path() const;
 
 	/** Get the buffer for a particular voice.
-	 * An Edge is smart - it knows the destination port requesting the
+	 * An Arc is smart - it knows the destination port requesting the
 	 * buffer, and will return accordingly (e.g. the same buffer for every
-	 * voice in a mono->poly edge).
+	 * voice in a mono->poly arc).
 	 */
 	BufferRef buffer(uint32_t voice) const;
 
-	/** Whether this edge must mix down voices into a local buffer */
+	/** Whether this arc must mix down voices into a local buffer */
 	bool must_mix() const;
 
 	static bool can_connect(const OutputPort* src, const InputPort* dst);
@@ -83,4 +83,4 @@ protected:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_EDGEIMPL_HPP
+#endif // INGEN_ENGINE_ARC_IMPL_HPP

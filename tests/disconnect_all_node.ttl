@@ -22,7 +22,7 @@
 	a patch:Put ;
 	patch:subject <ingen:root/> ;
 	patch:body [
-		a ingen:Edge ;
+		a ingen:Arc ;
 		ingen:tail <ingen:root/node1/left_out> ;
 		ingen:head <ingen:root/node2/left_in>
 	] .
@@ -31,7 +31,7 @@
 	a patch:Put ;
 	patch:subject <ingen:root/> ;
 	patch:body [
-		a ingen:Edge ;
+		a ingen:Arc ;
 		ingen:tail <ingen:root/node1/right_out> ;
 		ingen:head <ingen:root/node2/right_in>
 	] .
@@ -40,6 +40,6 @@
 	a patch:Delete ;
     patch:subject <ingen:root/> ;
 	patch:body [
-		a ingen:Edge ;
+		a ingen:Arc ;
 		ingen:incidentTo <ingen:root/node1>
 	] .

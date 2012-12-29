@@ -29,7 +29,7 @@
 
 namespace Ingen {
 
-class Edge;
+class Arc;
 class Node;
 class Store;
 class World;
@@ -64,8 +64,8 @@ public:
 	virtual void serialise(SharedPtr<const Node> object)
 			throw (std::logic_error);
 
-	virtual void serialise_edge(const Sord::Node&     parent,
-	                            SharedPtr<const Edge> c)
+	virtual void serialise_arc(const Sord::Node&    parent,
+	                           SharedPtr<const Arc> arc)
 			throw (std::logic_error);
 
 	virtual std::string finish();

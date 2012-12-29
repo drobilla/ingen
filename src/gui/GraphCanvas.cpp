@@ -38,7 +38,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
 #include "App.hpp"
-#include "Edge.hpp"
+#include "Arc.hpp"
 #include "GraphCanvas.hpp"
 #include "GraphPortModule.hpp"
 #include "GraphWindow.hpp"
@@ -142,9 +142,9 @@ GraphCanvas::GraphCanvas(App&                        app,
 		sigc::mem_fun(this, &GraphCanvas::add_port));
 	_graph->signal_removed_port().connect(
 		sigc::mem_fun(this, &GraphCanvas::remove_port));
-	_graph->signal_new_edge().connect(
+	_graph->signal_new_arc().connect(
 		sigc::mem_fun(this, &GraphCanvas::connection));
-	_graph->signal_removed_edge().connect(
+	_graph->signal_removed_arc().connect(
 		sigc::mem_fun(this, &GraphCanvas::disconnection));
 
 	_app.store()->signal_new_plugin().connect(
@@ -321,10 +321,10 @@ GraphCanvas::build()
 		add_port(*i);
 	}
 
-	// Create edges
-	for (GraphModel::Edges::const_iterator i = _graph->edges().begin();
-	     i != _graph->edges().end(); ++i) {
-		connection(PtrCast<EdgeModel>(i->second));
+	// Create arcs
+	for (GraphModel::Arcs::const_iterator i = _graph->arcs().begin();
+	     i != _graph->arcs().end(); ++i) {
+		connection(PtrCast<ArcModel>(i->second));
 	}
 }
 
@@ -500,30 +500,30 @@ GraphCanvas::get_port_view(SharedPtr<PortModel> port)
 }
 
 void
-GraphCanvas::connection(SharedPtr<const EdgeModel> cm)
+GraphCanvas::connection(SharedPtr<const ArcModel> arc)
 {
-	Ganv::Port* const tail = get_port_view(cm->tail());
-	Ganv::Port* const head = get_port_view(cm->head());
+	Ganv::Port* const tail = get_port_view(arc->tail());
+	Ganv::Port* const head = get_port_view(arc->head());
 
 	if (tail && head) {
-		new GUI::Edge(*this, cm, tail, head, tail->get_fill_color());
+		new GUI::Arc(*this, arc, tail, head, tail->get_fill_color());
 	} else {
 		_app.log().error(Raul::fmt("Unable to find ports to connect %1% => %2%\n")
-		                 % cm->tail_path() % cm->head_path());
+		                 % arc->tail_path() % arc->head_path());
 	}
 }
 
 void
-GraphCanvas::disconnection(SharedPtr<const EdgeModel> cm)
+GraphCanvas::disconnection(SharedPtr<const ArcModel> arc)
 {
-	Ganv::Port* const src = get_port_view(cm->tail());
-	Ganv::Port* const dst = get_port_view(cm->head());
+	Ganv::Port* const src = get_port_view(arc->tail());
+	Ganv::Port* const dst = get_port_view(arc->head());
 
 	if (src && dst) {
 		remove_edge(src, dst);
 	} else {
 		_app.log().error(Raul::fmt("Unable to find ports to disconnect %1% => %2%\n")
-		                 % cm->tail_path() % cm->head_path());
+		                 % arc->tail_path() % arc->head_path());
 	}
 }
 
@@ -647,13 +647,13 @@ destroy_node(GanvNode* node, void* data)
 }
 
 static void
-destroy_edge(GanvEdge* edge, void* data)
+destroy_arc(GanvEdge* arc, void* data)
 {
-	App*        app    = (App*)data;
-	Ganv::Edge* edgemm = Glib::wrap(edge);
+	App*        app   = (App*)data;
+	Ganv::Edge* arcmm = Glib::wrap(arc);
 
-	Port* tail = dynamic_cast<Port*>(edgemm->get_tail());
-	Port* head = dynamic_cast<Port*>(edgemm->get_head());
+	Port* tail = dynamic_cast<Port*>(arcmm->get_tail());
+	Port* head = dynamic_cast<Port*>(arcmm->get_head());
 	app->interface()->disconnect(tail->model()->path(), head->model()->path());
 }
 
@@ -661,7 +661,7 @@ void
 GraphCanvas::destroy_selection()
 {
 	for_each_selected_node(destroy_node, &_app);
-	for_each_selected_edge(destroy_edge, &_app);
+	for_each_selected_edge(destroy_arc, &_app);
 }
 
 static void
@@ -686,16 +686,16 @@ serialise_node(GanvNode* node, void* data)
 }
 
 static void
-serialise_edge(GanvEdge* edge, void* data)
+serialise_arc(GanvEdge* arc, void* data)
 {
 	Serialisation::Serialiser* serialiser = (Serialisation::Serialiser*)data;
-	if (!GANV_IS_EDGE(edge)) {
+	if (!GANV_IS_EDGE(arc)) {
 		return;
 	}
 
-	GUI::Edge* gedge = dynamic_cast<GUI::Edge*>(Glib::wrap(GANV_EDGE(edge)));
-	if (gedge) {
-		serialiser->serialise_edge(Sord::Node(), gedge->model());
+	GUI::Arc* garc = dynamic_cast<GUI::Arc*>(Glib::wrap(GANV_EDGE(arc)));
+	if (garc) {
+		serialiser->serialise_arc(Sord::Node(), garc->model());
 	}
 }
 
@@ -707,7 +707,7 @@ GraphCanvas::copy_selection()
 	serialiser.start_to_string(_graph->path(), base_uri);
 
 	for_each_selected_node(serialise_node, &serialiser);
-	for_each_selected_edge(serialise_edge, &serialiser);
+	for_each_selected_edge(serialise_arc, &serialiser);
 
 	const std::string result = serialiser.finish();
 	_paste_count = 0;

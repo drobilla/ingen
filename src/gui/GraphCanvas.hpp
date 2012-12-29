@@ -32,7 +32,7 @@
 
 #include "NodeModule.hpp"
 #include "ingen/Node.hpp"
-#include "ingen/client/EdgeModel.hpp"
+#include "ingen/client/ArcModel.hpp"
 
 namespace Ingen {
 
@@ -68,8 +68,8 @@ public:
 	void remove_block(SharedPtr<const Client::BlockModel> bm);
 	void add_port(SharedPtr<const Client::PortModel> pm);
 	void remove_port(SharedPtr<const Client::PortModel> pm);
-	void connection(SharedPtr<const Client::EdgeModel> cm);
-	void disconnection(SharedPtr<const Client::EdgeModel> cm);
+	void connection(SharedPtr<const Client::ArcModel> am);
+	void disconnection(SharedPtr<const Client::ArcModel> am);
 
 	void get_new_module_location(double& x, double& y);
 

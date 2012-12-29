@@ -29,7 +29,7 @@ class Symbol;
 
 namespace Ingen {
 
-class Edge;
+class Arc;
 class Plugin;
 class Store;
 
@@ -54,12 +54,12 @@ public:
 		PORT
 	};
 
-	typedef std::pair<const Node*, const Node*> EdgesKey;
-	typedef std::map< EdgesKey, SharedPtr<Edge> > Edges;
+	typedef std::pair<const Node*, const Node*> ArcsKey;
+	typedef std::map< ArcsKey, SharedPtr<Arc> > Arcs;
 
 	// Graphs only
-	Edges&       edges()       { return _edges; }
-	const Edges& edges() const { return _edges; }
+	Arcs&       arcs()       { return _arcs; }
+	const Arcs& arcs() const { return _arcs; }
 
 	// Blocks and graphs only
 	virtual uint32_t      num_ports()          const { return 0; }
@@ -97,7 +97,7 @@ protected:
 		: Resource(uris, path_to_uri(path))
 	{}
 
-	Edges _edges;  ///< Graphs only
+	Arcs _arcs;  ///< Graphs only
 };
 
 } // namespace Ingen

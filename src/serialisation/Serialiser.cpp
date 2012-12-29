@@ -26,7 +26,7 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/module.h>
 
-#include "ingen/Edge.hpp"
+#include "ingen/Arc.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Node.hpp"
@@ -89,8 +89,8 @@ struct Serialiser::Impl {
 	                    SharedPtr<const Node> graph,
 	                    const std::string&    graph_symbol);
 
-	void serialise_edge(const Sord::Node&     parent,
-	                    SharedPtr<const Edge> c)
+	void serialise_arc(const Sord::Node&    parent,
+	                   SharedPtr<const Arc> a)
 			throw (std::logic_error);
 
 	std::string finish();
@@ -413,9 +413,9 @@ Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
 		serialise_port(p, Resource::INTERNAL, port_id);
 	}
 
-	for (Node::Edges::const_iterator c = graph->edges().begin();
-	     c != graph->edges().end(); ++c) {
-		serialise_edge(graph_id, c->second);
+	for (Node::Arcs::const_iterator a = graph->arcs().begin();
+	     a != graph->arcs().end(); ++a) {
+		serialise_arc(graph_id, a->second);
 	}
 }
 
@@ -481,43 +481,43 @@ Serialiser::Impl::serialise_port(const Node*       port,
 }
 
 void
-Serialiser::serialise_edge(const Sord::Node&     parent,
-                           SharedPtr<const Edge> edge)
+Serialiser::serialise_arc(const Sord::Node&    parent,
+                          SharedPtr<const Arc> arc)
 		throw (std::logic_error)
 {
-	return me->serialise_edge(parent, edge);
+	return me->serialise_arc(parent, arc);
 }
 
 void
-Serialiser::Impl::serialise_edge(const Sord::Node&     parent,
-                                 SharedPtr<const Edge> edge)
+Serialiser::Impl::serialise_arc(const Sord::Node&    parent,
+                                SharedPtr<const Arc> arc)
 		throw (std::logic_error)
 {
 	if (!_model)
 		throw std::logic_error(
-			"serialise_edge called without serialisation in progress");
+			"serialise_arc called without serialisation in progress");
 
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();
 
-	const Sord::Node src     = path_rdf_node(edge->tail_path());
-	const Sord::Node dst     = path_rdf_node(edge->head_path());
-	const Sord::Node edge_id = Sord::Node::blank_id(*_world.rdf_world());
-	_model->add_statement(edge_id,
+	const Sord::Node src    = path_rdf_node(arc->tail_path());
+	const Sord::Node dst    = path_rdf_node(arc->head_path());
+	const Sord::Node arc_id = Sord::Node::blank_id(*_world.rdf_world());
+	_model->add_statement(arc_id,
 	                      Sord::URI(world, uris.ingen_tail),
 	                      src);
-	_model->add_statement(edge_id,
+	_model->add_statement(arc_id,
 	                      Sord::URI(world, uris.ingen_head),
 	                      dst);
 
 	if (parent.is_valid()) {
 		_model->add_statement(parent,
-		                      Sord::URI(world, uris.ingen_edge),
-		                      edge_id);
+		                      Sord::URI(world, uris.ingen_arc),
+		                      arc_id);
 	} else {
-		_model->add_statement(edge_id,
+		_model->add_statement(arc_id,
 		                      Sord::URI(world, uris.rdf_type),
-		                      Sord::URI(world, uris.ingen_Edge));
+		                      Sord::URI(world, uris.ingen_Arc));
 	}
 }
 

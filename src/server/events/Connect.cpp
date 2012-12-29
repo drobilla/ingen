@@ -20,9 +20,9 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
+#include "ArcImpl.hpp"
 #include "Broadcaster.hpp"
 #include "Connect.hpp"
-#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
@@ -82,12 +82,12 @@ Connect::pre_process()
 		return Event::pre_process_done(PARENT_DIFFERS, _head_path);
 	}
 
-	if (!EdgeImpl::can_connect(tail_output, _head)) {
+	if (!ArcImpl::can_connect(tail_output, _head)) {
 		return Event::pre_process_done(TYPE_MISMATCH, _head_path);
 	}
 
 	if (tail_block->parent_graph() != head_block->parent_graph()) {
-		// Edge to a graph port from inside the graph
+		// Arc to a graph port from inside the graph
 		assert(tail_block->parent() == head_block || head_block->parent() == tail_block);
 		if (tail_block->parent() == head_block) {
 			_graph = dynamic_cast<GraphImpl*>(head_block);
@@ -95,25 +95,25 @@ Connect::pre_process()
 			_graph = dynamic_cast<GraphImpl*>(tail_block);
 		}
 	} else if (tail_block == head_block && dynamic_cast<GraphImpl*>(tail_block)) {
-		// Edge from a graph input to a graph output (pass through)
+		// Arc from a graph input to a graph output (pass through)
 		_graph = dynamic_cast<GraphImpl*>(tail_block);
 	} else {
-		// Normal edge between blocks with the same parent
+		// Normal arc between blocks with the same parent
 		_graph = tail_block->parent_graph();
 	}
 
-	if (_graph->has_edge(tail_output, _head)) {
+	if (_graph->has_arc(tail_output, _head)) {
 		return Event::pre_process_done(EXISTS, _head_path);
 	}
 
-	_edge = SharedPtr<EdgeImpl>(new EdgeImpl(tail_output, _head));
+	_arc = SharedPtr<ArcImpl>(new ArcImpl(tail_output, _head));
 
 	rlock.release();
 
 	{
 		Glib::RWLock::ReaderLock wlock(_engine.store()->lock());
 
-		/* Need to be careful about graph port edges here and adding a
+		/* Need to be careful about graph port arcs here and adding a
 		   block's parent as a dependant/provider, or adding a graph as its own
 		   provider...
 		*/
@@ -122,8 +122,8 @@ Connect::pre_process()
 			tail_block->dependants().push_back(head_block);
 		}
 
-		_graph->add_edge(_edge);
-		_head->increment_num_edges();
+		_graph->add_arc(_arc);
+		_head->increment_num_arcs();
 	}
 
 	_buffers = new Raul::Array<BufferRef>(_head->poly());
@@ -143,7 +143,7 @@ void
 Connect::execute(ProcessContext& context)
 {
 	if (!_status) {
-		_head->add_edge(context, _edge.get());
+		_head->add_arc(context, _arc.get());
 		_engine.maid()->dispose(_head->set_buffers(context, _buffers));
 		_head->connect_buffers();
 		_graph->set_compiled_graph(_compiled_graph);

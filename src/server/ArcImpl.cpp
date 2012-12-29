@@ -17,10 +17,10 @@
 #include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
+#include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
-#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
@@ -29,12 +29,12 @@
 namespace Ingen {
 namespace Server {
 
-/** Constructor for a edge from a block's output port.
+/** Constructor for an arc from a block's output port.
  *
  * This handles both polyphonic and monophonic blocks, transparently to the
  * user (InputPort).
  */
-EdgeImpl::EdgeImpl(PortImpl* tail, PortImpl* head)
+ArcImpl::ArcImpl(PortImpl* tail, PortImpl* head)
 	: _tail(tail)
 	, _head(head)
 {
@@ -43,19 +43,19 @@ EdgeImpl::EdgeImpl(PortImpl* tail, PortImpl* head)
 }
 
 const Raul::Path&
-EdgeImpl::tail_path() const
+ArcImpl::tail_path() const
 {
 	return _tail->path();
 }
 
 const Raul::Path&
-EdgeImpl::head_path() const
+ArcImpl::head_path() const
 {
 	return _head->path();
 }
 
 BufferRef
-EdgeImpl::buffer(uint32_t voice) const
+ArcImpl::buffer(uint32_t voice) const
 {
 	assert(!must_mix());
 	assert(_tail->poly() == 1 || _tail->poly() > voice);
@@ -67,13 +67,13 @@ EdgeImpl::buffer(uint32_t voice) const
 }
 
 bool
-EdgeImpl::must_mix() const
+ArcImpl::must_mix() const
 {
 	return _tail->poly() > _head->poly();
 }
 
 bool
-EdgeImpl::can_connect(const OutputPort* src, const InputPort* dst)
+ArcImpl::can_connect(const OutputPort* src, const InputPort* dst)
 {
 	const Ingen::URIs& uris = src->bufs().uris();
 	return (

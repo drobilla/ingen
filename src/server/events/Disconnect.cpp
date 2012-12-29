@@ -22,10 +22,10 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
+#include "ArcImpl.hpp"
 #include "Broadcaster.hpp"
 #include "Buffer.hpp"
 #include "DuplexPort.hpp"
-#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
@@ -62,7 +62,7 @@ Disconnect::Impl::Impl(Engine&     e,
 	, _src_output_port(s)
 	, _dst_input_port(d)
 	, _graph(graph)
-	, _edge(graph->remove_edge(_src_output_port, _dst_input_port))
+	, _arc(graph->remove_arc(_src_output_port, _dst_input_port))
 	, _buffers(NULL)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
@@ -86,9 +86,9 @@ Disconnect::Impl::Impl(Engine&     e,
 		}
 	}
 
-	_dst_input_port->decrement_num_edges();
+	_dst_input_port->decrement_num_arcs();
 
-	if (_dst_input_port->num_edges() == 0) {
+	if (_dst_input_port->num_arcs() == 0) {
 		_buffers = new Raul::Array<BufferRef>(_dst_input_port->poly());
 		_dst_input_port->get_buffers(*_engine.buffer_factory(),
 		                             _buffers,
@@ -134,7 +134,7 @@ Disconnect::pre_process()
 	BlockImpl* const dst_block = head->parent_block();
 
 	if (src_block->parent_graph() != dst_block->parent_graph()) {
-		// Edge to a graph port from inside the graph
+		// Arc to a graph port from inside the graph
 		assert(src_block->parent() == dst_block || dst_block->parent() == src_block);
 		if (src_block->parent() == dst_block) {
 			_graph = dynamic_cast<GraphImpl*>(dst_block);
@@ -142,16 +142,16 @@ Disconnect::pre_process()
 			_graph = dynamic_cast<GraphImpl*>(src_block);
 		}
 	} else if (src_block == dst_block && dynamic_cast<GraphImpl*>(src_block)) {
-		// Edge from a graph input to a graph output (pass through)
+		// Arc from a graph input to a graph output (pass through)
 		_graph = dynamic_cast<GraphImpl*>(src_block);
 	} else {
-		// Normal edge between blocks with the same parent
+		// Normal arc between blocks with the same parent
 		_graph = src_block->parent_graph();
 	}
 
 	if (!_graph) {
 		return Event::pre_process_done(INTERNAL_ERROR, _head_path);
-	} else if (!_graph->has_edge(tail, head)) {
+	} else if (!_graph->has_arc(tail, head)) {
 		return Event::pre_process_done(NOT_FOUND, _head_path);
 	}
 
@@ -173,9 +173,9 @@ Disconnect::pre_process()
 bool
 Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 {
-	EdgeImpl* const port_edge =
-		_dst_input_port->remove_edge(context, _src_output_port);
-	if (!port_edge) {
+	ArcImpl* const port_arc =
+		_dst_input_port->remove_arc(context, _src_output_port);
+	if (!port_arc) {
 		return false;
 	}
 

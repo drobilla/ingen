@@ -28,13 +28,13 @@
 
 namespace Ingen {
 
-class Edge;
+class Arc;
 
 namespace Server {
 
+class ArcImpl;
 class CompiledGraph;
 class Context;
-class EdgeImpl;
 class Engine;
 class ProcessContext;
 
@@ -128,12 +128,12 @@ public:
 	void remove_port(DuplexPort& port);
 	void clear_ports();
 
-	void add_edge(SharedPtr<EdgeImpl> c);
+	void add_arc(SharedPtr<ArcImpl> arc);
 
-	SharedPtr<EdgeImpl> remove_edge(const PortImpl* tail,
-	                                const PortImpl* head);
+	SharedPtr<ArcImpl> remove_arc(const PortImpl* tail,
+	                              const PortImpl* head);
 
-	bool has_edge(const PortImpl* tail, const PortImpl* head) const;
+	bool has_arc(const PortImpl* tail, const PortImpl* head) const;
 
 	void set_compiled_graph(CompiledGraph* cp);
 

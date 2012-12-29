@@ -24,9 +24,9 @@
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
+#include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
-#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
@@ -112,11 +112,11 @@ DisconnectAll::pre_process()
 		}
 	}
 
-	// Find set of edges to remove
-	std::set<EdgeImpl*> to_remove;
-	for (Node::Edges::const_iterator i = _parent->edges().begin();
-	     i != _parent->edges().end(); ++i) {
-		EdgeImpl* const c = (EdgeImpl*)i->second.get();
+	// Find set of arcs to remove
+	std::set<ArcImpl*> to_remove;
+	for (Node::Arcs::const_iterator i = _parent->arcs().begin();
+	     i != _parent->arcs().end(); ++i) {
+		ArcImpl* const c = (ArcImpl*)i->second.get();
 		if (_block) {
 			if (c->tail()->parent_block() == _block
 			    || c->head()->parent_block() == _block) {
@@ -129,8 +129,8 @@ DisconnectAll::pre_process()
 		}
 	}
 
-	// Create disconnect events (which erases from _parent->edges())
-	for (std::set<EdgeImpl*>::const_iterator i = to_remove.begin();
+	// Create disconnect events (which erases from _parent->arcs())
+	for (std::set<ArcImpl*>::const_iterator i = to_remove.begin();
 	     i != to_remove.end(); ++i) {
 		_impls.push_back(new Disconnect::Impl(
 			                 _engine, _parent,

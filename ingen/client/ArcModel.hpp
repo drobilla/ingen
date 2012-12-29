@@ -14,15 +14,15 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_CLIENT_EDGEMODEL_HPP
-#define INGEN_CLIENT_EDGEMODEL_HPP
+#ifndef INGEN_CLIENT_ARCMODEL_HPP
+#define INGEN_CLIENT_ARCMODEL_HPP
 
 #include <cassert>
 
 #include "raul/Path.hpp"
 #include "raul/SharedPtr.hpp"
 
-#include "ingen/Edge.hpp"
+#include "ingen/Arc.hpp"
 #include "ingen/client/PortModel.hpp"
 
 namespace Ingen {
@@ -34,7 +34,7 @@ class ClientStore;
  *
  * @ingroup IngenClient
  */
-class EdgeModel : public Edge
+class ArcModel : public Arc
 {
 public:
 	SharedPtr<PortModel> tail() const { return _tail; }
@@ -46,7 +46,7 @@ public:
 private:
 	friend class ClientStore;
 
-	EdgeModel(SharedPtr<PortModel> tail, SharedPtr<PortModel> head)
+	ArcModel(SharedPtr<PortModel> tail, SharedPtr<PortModel> head)
 		: _tail(tail)
 		, _head(head)
 	{
@@ -64,4 +64,4 @@ private:
 } // namespace Client
 } // namespace Ingen
 
-#endif // INGEN_CLIENT_EDGEMODEL_HPP
+#endif // INGEN_CLIENT_ARCMODEL_HPP

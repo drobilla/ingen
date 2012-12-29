@@ -21,10 +21,10 @@
 #include "ingen/World.hpp"
 #include "raul/Maid.hpp"
 
+#include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "BufferFactory.hpp"
 #include "DuplexPort.hpp"
-#include "EdgeImpl.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "GraphPlugin.hpp"
@@ -198,35 +198,35 @@ GraphImpl::remove_block(BlockImpl& block)
 }
 
 void
-GraphImpl::add_edge(SharedPtr<EdgeImpl> c)
+GraphImpl::add_arc(SharedPtr<ArcImpl> a)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	_edges.insert(make_pair(make_pair(c->tail(), c->head()), c));
+	_arcs.insert(make_pair(make_pair(a->tail(), a->head()), a));
 }
 
-/** Remove a edge.
+/** Remove an arc.
  * Preprocessing thread only.
  */
-SharedPtr<EdgeImpl>
-GraphImpl::remove_edge(const PortImpl* tail, const PortImpl* dst_port)
+SharedPtr<ArcImpl>
+GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Edges::iterator i = _edges.find(make_pair(tail, dst_port));
-	if (i != _edges.end()) {
-		SharedPtr<EdgeImpl> c = PtrCast<EdgeImpl>(i->second);
-		_edges.erase(i);
-		return c;
+	Arcs::iterator i = _arcs.find(make_pair(tail, dst_port));
+	if (i != _arcs.end()) {
+		SharedPtr<ArcImpl> arc = PtrCast<ArcImpl>(i->second);
+		_arcs.erase(i);
+		return arc;
 	} else {
-		return SharedPtr<EdgeImpl>();
+		return SharedPtr<ArcImpl>();
 	}
 }
 
 bool
-GraphImpl::has_edge(const PortImpl* tail, const PortImpl* dst_port) const
+GraphImpl::has_arc(const PortImpl* tail, const PortImpl* dst_port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Edges::const_iterator i = _edges.find(make_pair(tail, dst_port));
-	return (i != _edges.end());
+	Arcs::const_iterator i = _arcs.find(make_pair(tail, dst_port));
+	return (i != _arcs.end());
 }
 
 void

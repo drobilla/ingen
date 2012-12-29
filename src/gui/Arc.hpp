@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_EDGE_HPP
-#define INGEN_GUI_EDGE_HPP
+#ifndef INGEN_GUI_ARC_HPP
+#define INGEN_GUI_ARC_HPP
 
 #include <cassert>
 
@@ -24,27 +24,27 @@
 
 namespace Ingen {
 
-namespace Client { class EdgeModel; }
+namespace Client { class ArcModel; }
 
 namespace GUI {
 
-/** An Edge in a Graph.
+/** An Arc (directed edge) in a Graph.
  *
  * \ingroup GUI
  */
-class Edge : public Ganv::Edge
+class Arc : public Ganv::Edge
 {
 public:
-	Edge(Ganv::Canvas&                              canvas,
-	     boost::shared_ptr<const Client::EdgeModel> model,
-	     Ganv::Node*                                src,
-	     Ganv::Node*                                dst,
-	     uint32_t                                   color);
+	Arc(Ganv::Canvas&                             canvas,
+	    boost::shared_ptr<const Client::ArcModel> model,
+	    Ganv::Node*                               src,
+	    Ganv::Node*                               dst,
+	    uint32_t                                  color);
 
-	SharedPtr<const Client::EdgeModel> model() const { return _edge_model; }
+	SharedPtr<const Client::ArcModel> model() const { return _arc_model; }
 
 private:
-	SharedPtr<const Client::EdgeModel> _edge_model;
+	SharedPtr<const Client::ArcModel> _arc_model;
 };
 
 } // namespace GUI

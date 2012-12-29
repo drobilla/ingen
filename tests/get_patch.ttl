@@ -29,7 +29,7 @@
 	a patch:Put ;
 	patch:subject <ingen:root/> ;
 	patch:body [
-		a ingen:Edge ;
+		a ingen:Arc ;
 		ingen:tail <ingen:root/sub/node1/left_out> ;
 		ingen:head <ingen:root/sub/node2/left_in>
 	] .

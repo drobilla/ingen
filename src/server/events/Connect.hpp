@@ -30,15 +30,15 @@ template <typename T> class Array;
 namespace Ingen {
 namespace Server {
 
+class ArcImpl;
 class CompiledGraph;
-class EdgeImpl;
+class GraphImpl;
 class InputPort;
 class OutputPort;
-class GraphImpl;
 
 namespace Events {
 
-/** Make an Edge between two Ports.
+/** Make an Arc between two Ports.
  *
  * \ingroup engine
  */
@@ -62,7 +62,7 @@ private:
 	GraphImpl*              _graph;
 	InputPort*              _head;
 	CompiledGraph*          _compiled_graph;
-	SharedPtr<EdgeImpl>     _edge;
+	SharedPtr<ArcImpl>      _arc;
 	Raul::Array<BufferRef>* _buffers;
 };
 

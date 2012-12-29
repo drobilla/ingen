@@ -239,7 +239,7 @@ class Remote(Interface):
 	a patch:Put ;
 	patch:subject <ingen:/root%s> ;
 	patch:body [
-		a ingen:Edge ;
+		a ingen:Arc ;
 		ingen:tail <ingen:/root%s> ;
 		ingen:head <ingen:/root%s> ;
 	] .
@@ -250,7 +250,7 @@ class Remote(Interface):
 []
 	a patch:Delete ;
 	patch:body [
-		a ingen:Edge ;
+		a ingen:Arc ;
 		ingen:tail <ingen:/root%s> ;
 		ingen:head <ingen:/root%s> ;
 	] .

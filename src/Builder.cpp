@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Arc.hpp"
 #include "ingen/Builder.hpp"
-#include "ingen/Edge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
@@ -42,8 +42,8 @@ void
 Builder::connect(SharedPtr<const Node> object)
 {
 	if (object->graph_type() == Node::GRAPH) {
-		for (Node::Edges::const_iterator i = object->edges().begin();
-		     i != object->edges().end(); ++i) {
+		for (Node::Arcs::const_iterator i = object->arcs().begin();
+		     i != object->arcs().end(); ++i) {
 			_interface.connect(i->second->tail_path(), i->second->head_path());
 		}
 		return;

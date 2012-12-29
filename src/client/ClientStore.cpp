@@ -15,11 +15,11 @@
 */
 
 #include "ingen/Log.hpp"
-#include "ingen/client/ClientStore.hpp"
-#include "ingen/client/EdgeModel.hpp"
+#include "ingen/client/ArcModel.hpp"
 #include "ingen/client/BlockModel.hpp"
-#include "ingen/client/ObjectModel.hpp"
+#include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
@@ -391,7 +391,7 @@ ClientStore::connection_graph(const Raul::Path& tail_path,
 		graph = PtrCast<GraphModel>(_object(tail_path.parent().parent()));
 
 	if (!graph)
-		_log.error(Raul::fmt("Unable to find graph for edge %1% => %2%\n")
+		_log.error(Raul::fmt("Unable to find graph for arc %1% => %2%\n")
 		           % tail_path % head_path);
 
 	return graph;
@@ -406,12 +406,12 @@ ClientStore::attempt_connection(const Raul::Path& tail_path,
 
 	if (tail && head) {
 		SharedPtr<GraphModel> graph = connection_graph(tail_path, head_path);
-		SharedPtr<EdgeModel>  cm(new EdgeModel(tail, head));
+		SharedPtr<ArcModel>   arc(new ArcModel(tail, head));
 
 		tail->connected_to(head);
 		head->connected_to(tail);
 
-		graph->add_edge(cm);
+		graph->add_arc(arc);
 		return true;
 	} else {
 		_log.warn(Raul::fmt("Failed to connect %1% => %2%\n")
@@ -442,7 +442,7 @@ ClientStore::disconnect(const Raul::Path& src_path,
 
 	SharedPtr<GraphModel> graph = connection_graph(src_path, dst_path);
 	if (graph)
-		graph->remove_edge(tail.get(), head.get());
+		graph->remove_arc(tail.get(), head.get());
 }
 
 void
@@ -458,17 +458,17 @@ ClientStore::disconnect_all(const Raul::Path& parent_graph,
 		return;
 	}
 
-	const GraphModel::Edges edges = graph->edges();
-	for (GraphModel::Edges::const_iterator i = edges.begin();
-	     i != edges.end(); ++i) {
-		SharedPtr<EdgeModel> c = PtrCast<EdgeModel>(i->second);
-		if (c->tail()->parent() == object
-		    || c->head()->parent() == object
-		    || c->tail()->path() == path
-		    || c->head()->path() == path) {
-			c->tail()->disconnected_from(c->head());
-			c->head()->disconnected_from(c->tail());
-			graph->remove_edge(c->tail().get(), c->head().get());
+	const GraphModel::Arcs arcs = graph->arcs();
+	for (GraphModel::Arcs::const_iterator i = arcs.begin();
+	     i != arcs.end(); ++i) {
+		SharedPtr<ArcModel> arc = PtrCast<ArcModel>(i->second);
+		if (arc->tail()->parent() == object
+		    || arc->head()->parent() == object
+		    || arc->tail()->path() == path
+		    || arc->head()->path() == path) {
+			arc->tail()->disconnected_from(arc->head());
+			arc->head()->disconnected_from(arc->tail());
+			graph->remove_arc(arc->tail().get(), arc->head().get());
 		}
 	}
 }

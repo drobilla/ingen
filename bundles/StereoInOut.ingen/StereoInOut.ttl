@@ -10,7 +10,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <>
-	ingen:edge [
+	ingen:arc [
 		ingen:head <audio_out_1> ;
 		ingen:tail <audio_in_1>
 	] , [
