@@ -198,9 +198,7 @@ PortImpl::update_set_state(Context& context, uint32_t voice)
 	SetState& state = _set_states->at(voice);
 	switch (state.state) {
 	case SetState::HALF_SET_CYCLE_1:
-		if (context.start() > state.time) {
-			state.state = SetState::HALF_SET_CYCLE_2;
-		}
+		state.state = SetState::HALF_SET_CYCLE_2;
 		break;
 	case SetState::HALF_SET_CYCLE_2: {
 		buffer(voice)->set_block(state.value, 0, context.nframes());
