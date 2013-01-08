@@ -67,6 +67,8 @@ TimeNode::process(ProcessContext& context)
 	// Initialise output to the empty sequence
 	seq->atom.type = _notify_port->bufs().uris().atom_Sequence;
 	seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
+	seq->body.unit = 0;
+	seq->body.pad  = 0;
 
 	// Ask the driver to append any time events for this cycle
 	context.engine().driver()->append_time_events(
