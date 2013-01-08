@@ -121,7 +121,7 @@ App::create(Ingen::World* world)
 	// Set style for embedded block GUIs
 	const string rc_style =
 		"style \"ingen_embedded_node_gui_style\" {\n"
-		"bg[NORMAL]      = \"#212222\"\n"
+		"bg[NORMAL]      = \"#1E2224\"\n"
 		"bg[ACTIVE]      = \"#505050\"\n"
 		"bg[PRELIGHT]    = \"#525454\"\n"
 		"bg[SELECTED]    = \"#99A0A0\"\n"
