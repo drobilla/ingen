@@ -40,6 +40,7 @@ public:
 	LilvNode* const lv2_InputPort;
 	LilvNode* const lv2_OutputPort;
 	LilvNode* const lv2_default;
+	LilvNode* const lv2_designation;
 	LilvNode* const lv2_portProperty;
 	LilvNode* const lv2_sampleRate;
 	LilvNode* const morph_AutoMorphPort;

@@ -28,6 +28,7 @@
 #include "GraphWindow.hpp"
 #include "Port.hpp"
 #include "PortMenu.hpp"
+#include "RDFS.hpp"
 #include "Style.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
@@ -206,6 +207,63 @@ Port::build_enum_menu()
 	return menu;
 }
 
+void
+Port::on_uri_activated(const Raul::URI& uri)
+{
+	_app.interface()->set_property(
+		model()->uri(),
+		_app.world()->uris().ingen_value,
+		_app.world()->forge().make_urid(
+			_app.world()->uri_map().map_uri(uri.c_str())));
+}
+
+Gtk::Menu*
+Port::build_uri_menu()
+{
+	World*                      world = _app.world();
+	SharedPtr<const BlockModel> block = PtrCast<BlockModel>(model()->parent());
+	Gtk::Menu*                  menu  = Gtk::manage(new Gtk::Menu());
+
+	// Get the port designation, which should be a rdf:Property
+	const Raul::Atom& designation_atom = model()->get_property(
+		_app.uris().lv2_designation);
+	if (!designation_atom.is_valid()) {
+		return NULL;
+	}
+
+	LilvNode* designation = lilv_new_uri(
+		world->lilv_world(), designation_atom.get_uri());
+	LilvNode* rdfs_range = lilv_new_uri(
+		world->lilv_world(), LILV_NS_RDFS "range");
+
+	// Get every class in the range of the port's property 
+	RDFS::URISet ranges;
+	LilvNodes* range = lilv_world_find_nodes(
+		world->lilv_world(), designation, rdfs_range, NULL);
+	LILV_FOREACH(nodes, r, range) {
+		ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(range, r))));
+	}
+	RDFS::classes(world, ranges, false);
+
+	// Get all objects in range
+	RDFS::Objects values = RDFS::instances(world, ranges);
+
+	// Add a menu item for each such class
+	for (RDFS::Objects::const_iterator i = values.begin(); i != values.end(); ++i) {
+		if (!i->second.empty()) {
+			Glib::ustring label = world->rdf_world()->prefixes().qualify(i->first)
+				+ " - " + i->second;
+			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(label));
+			Gtk::MenuItem* menu_item = &(menu->items().back());
+			menu_item->signal_activate().connect(
+				sigc::bind(sigc::mem_fun(this, &Port::on_uri_activated),
+				           i->first));
+		}
+	}
+
+	return menu;
+}
+
 bool
 Port::on_event(GdkEvent* ev)
 {
@@ -229,6 +287,12 @@ Port::on_event(GdkEvent* ev)
 				Gtk::Menu* menu = build_enum_menu();
 				menu->popup(ev->button.button, ev->button.time);
 				return true;
+			} else if (model()->is_uri()) {
+				Gtk::Menu* menu = build_uri_menu();
+				if (menu) {
+					menu->popup(ev->button.button, ev->button.time);
+					return true;
+				}
 			}
 			_pressed = true;
 		} else if (ev->button.button == 3) {

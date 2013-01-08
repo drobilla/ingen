@@ -74,6 +74,8 @@ private:
 			return _free_control;
 		} else if (type == _uris.atom_Sound) {
 			return _free_audio;
+		} else if (type == _uris.atom_Sequence) {
+			return _free_sequence;
 		} else {
 			return _free_object;
 		}
@@ -83,6 +85,7 @@ private:
 
 	Raul::AtomicPtr<Buffer> _free_audio;
 	Raul::AtomicPtr<Buffer> _free_control;
+	Raul::AtomicPtr<Buffer> _free_sequence;
 	Raul::AtomicPtr<Buffer> _free_object;
 
 	Glib::Mutex _mutex;

@@ -38,6 +38,7 @@ BufferFactory::~BufferFactory()
 	_silent_buffer.reset();
 	free_list(_free_audio.get());
 	free_list(_free_control.get());
+	free_list(_free_sequence.get());
 	free_list(_free_object.get());
 }
 
@@ -77,6 +78,8 @@ BufferFactory::default_size(LV2_URID type) const
 		return sizeof(LV2_Atom_Float);
 	} else if (type == _uris.atom_Sound) {
 		return audio_buffer_size(_engine.driver()->block_length());
+	} else if (type == _uris.atom_URID) {
+		return sizeof(LV2_Atom_URID);
 	} else if (type == _uris.atom_Sequence) {
 		if (_seq_size == 0) {
 			return _engine.driver()->block_length() * SEQ_BYTES_PER_FRAME;
@@ -95,7 +98,7 @@ BufferFactory::get(LV2_URID type,
                    bool     force_create)
 {
 	Raul::AtomicPtr<Buffer>& head_ptr = free_list(type);
-	Buffer* try_head = NULL;
+	Buffer*                  try_head = NULL;
 
 	if (!force_create) {
 		Buffer* next;
@@ -117,6 +120,7 @@ BufferFactory::get(LV2_URID type,
 	}
 
 	try_head->_next = NULL;
+	try_head->set_type(type);
 	return BufferRef(try_head);
 }
 

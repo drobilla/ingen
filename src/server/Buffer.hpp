@@ -54,6 +54,8 @@ public:
 	inline LV2_URID type()     const { return _type; }
 	inline uint32_t capacity() const { return _capacity; }
 
+	inline void set_type(LV2_URID t) { _type = t; }
+
 	inline bool is_audio() const {
 		return _type == _factory.uris().atom_Sound;
 	}

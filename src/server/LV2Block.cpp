@@ -282,6 +282,13 @@ LV2Block::instantiate(BufferFactory& bufs)
 		}
 
 		uint32_t port_buffer_size = bufs.default_size(buffer_type);
+		if (port_buffer_size == 0) {
+			parent_graph()->engine().log().error(
+				Raul::fmt("<%1%> port `%2%' has unknown buffer type\n")
+				% _lv2_plugin->uri().c_str() % port_sym.c_str());
+			ret = false;
+			break;
+		}
 
 		if (port_type == PortType::ATOM) {
 			// Get default value, and its length
@@ -293,9 +300,17 @@ LV2Block::instantiate(BufferFactory& bufs)
 					const uint32_t str_val_len = strlen(str_val);
 					val = forge.alloc(str_val);
 					port_buffer_size = std::max(port_buffer_size, str_val_len);
+				} else if (lilv_node_is_uri(d)) {
+					const char* uri_val = lilv_node_as_uri(d);
+					val = forge.make_urid(
+						bufs.engine().world()->uri_map().map_uri(uri_val));
 				}
 			}
 			lilv_nodes_free(defaults);
+
+			if (!val.type() && buffer_type == _uris.atom_URID) {
+				val = forge.make_urid(0);
+			}
 
 			// Get minimum size, if set in data
 			LilvNodes* sizes = lilv_port_get_value(plug, id, info->rsz_minimumSize);
@@ -318,14 +333,15 @@ LV2Block::instantiate(BufferFactory& bufs)
 
 		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
 			parent_graph()->engine().log().error(
-				Raul::fmt("<%1%> port %2% has unknown type or direction\n")
+				Raul::fmt("<%1%> port `%2%' has unknown type or direction\n")
 				% _lv2_plugin->uri().c_str() % port_sym.c_str());
 			ret = false;
 			break;
 		}
 
-		if (!val.type())
+		if (!val.type() && port_type != PortType::ATOM) {
 			val = forge.make(isnan(def_values[j]) ? 0.0f : def_values[j]);
+		}
 
 		PortImpl* port = (direction == INPUT)
 			? static_cast<PortImpl*>(
@@ -350,7 +366,10 @@ LV2Block::instantiate(BufferFactory& bufs)
 		}
 
 		// Inherit certain properties from plugin port
-		LilvNode* preds[] = { info->lv2_portProperty, info->atom_supports, 0 };
+		const LilvNode* preds[] = { info->lv2_designation,
+		                            info->lv2_portProperty,
+		                            info->atom_supports,
+		                            0 };
 		for (int p = 0; preds[p]; ++p) {
 			LilvNodes* values = lilv_port_get_value(plug, id, preds[p]);
 			LILV_FOREACH(nodes, v, values) {

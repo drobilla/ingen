@@ -33,6 +33,9 @@ public:
 	explicit Forge(URIMap& map);
 
 	std::string str(const Raul::Atom& atom);
+
+private:
+	URIMap& _map;
 };
 
 } // namespace Ingen

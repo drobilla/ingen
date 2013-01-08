@@ -23,6 +23,7 @@
 namespace Ingen {
 
 Forge::Forge(URIMap& map)
+	: _map(map)
 {
 	Int    = map.map_uri(LV2_ATOM__Int);
 	Float  = map.map_uri(LV2_ATOM__Float);
@@ -44,6 +45,8 @@ Forge::str(const Raul::Atom& atom)
 		ss << (atom.get_bool() ? "true" : "false");
 	} else if (atom.type() == URI) {
 		ss << "<" << atom.get_uri() << ">";
+	} else if (atom.type() == URID) {
+		ss << "<" << _map.unmap_uri(atom.get_int32()) << ">";
 	} else if (atom.type() == String) {
 		ss << "\"" << atom.get_string() << "\"";
 	}

@@ -75,6 +75,7 @@ private:
 	     bool                               flip = false);
 
 	Gtk::Menu* build_enum_menu();
+	Gtk::Menu* build_uri_menu();
 	GraphBox* get_graph_box() const;
 
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
@@ -82,6 +83,7 @@ private:
 
 	void on_value_changed(GVariant* value);
 	void on_scale_point_activated(float f);
+	void on_uri_activated(const Raul::URI& uri);
 	bool on_event(GdkEvent* ev);
 
 	App&                             _app;

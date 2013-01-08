@@ -104,6 +104,8 @@ SetPortValue::apply(Context& context)
 		} else {
 			_status = NO_SPACE;
 		}
+	} else if (buf->type() == uris.atom_URID) {
+		((LV2_Atom_URID*)buf->atom())->body = _value.get_int32();
 	} else {
 		_status = BAD_VALUE_TYPE;
 	}

@@ -40,6 +40,7 @@ LV2Info::LV2Info(Ingen::World* world)
 	, lv2_InputPort(lilv_new_uri(world->lilv_world(), LV2_CORE__InputPort))
 	, lv2_OutputPort(lilv_new_uri(world->lilv_world(), LV2_CORE__OutputPort))
 	, lv2_default(lilv_new_uri(world->lilv_world(), LV2_CORE__default))
+	, lv2_designation(lilv_new_uri(world->lilv_world(), LV2_CORE__designation))
 	, lv2_portProperty(lilv_new_uri(world->lilv_world(), LV2_CORE__portProperty))
 	, lv2_sampleRate(lilv_new_uri(world->lilv_world(), LV2_CORE__sampleRate))
 	, morph_AutoMorphPort(lilv_new_uri(world->lilv_world(), LV2_MORPH__AutoMorphPort))
@@ -64,6 +65,7 @@ LV2Info::~LV2Info()
 	lilv_node_free(lv2_InputPort);
 	lilv_node_free(lv2_OutputPort);
 	lilv_node_free(lv2_default);
+	lilv_node_free(lv2_designation);
 	lilv_node_free(lv2_portProperty);
 	lilv_node_free(lv2_sampleRate);
 	lilv_node_free(morph_AutoMorphPort);

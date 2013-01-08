@@ -23,12 +23,14 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 
 #include "App.hpp"
 #include "PropertiesWindow.hpp"
+#include "RDFS.hpp"
 
 using namespace std;
 
@@ -81,16 +83,17 @@ PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
 void
 PropertiesWindow::reset()
 {
+	_property_connection.disconnect();
+
+	_key_store->clear();
+	_value_store->clear();
+	_records.clear();
+
+	_model.reset();
+
 	_table->children().clear();
 	_table->resize(1, 3);
 	_table->property_n_rows() = 1;
-
-	_records.clear();
-	_key_store->clear();
-	_value_store->clear();
-
-	_property_connection.disconnect();
-	_model.reset();
 }
 
 void
@@ -98,132 +101,6 @@ PropertiesWindow::present(SharedPtr<const ObjectModel> model)
 {
 	set_object(model);
 	Gtk::Window::present();
-}
-
-/** Set @p types to its super/sub class closure.
- * @param super If true, find all superclasses, otherwise all subclasses
- */
-static void
-get_classes(World* world, URISet& types, bool super)
-{
-	LilvNode* rdfs_subClassOf = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "subClassOf");
-
-	unsigned added = 0;
-	do {
-		added = 0;
-		URISet klasses;
-		for (URISet::iterator t = types.begin(); t != types.end(); ++t) {
-			LilvNode*  type    = lilv_new_uri(world->lilv_world(), t->c_str());
-			LilvNodes* matches = (super)
-				? lilv_world_find_nodes(
-					world->lilv_world(), type, rdfs_subClassOf, NULL)
-				: lilv_world_find_nodes(
-					world->lilv_world(), NULL, rdfs_subClassOf, type);
-			LILV_FOREACH(nodes, m, matches) {
-				const LilvNode* klass_node = lilv_nodes_get(matches, m);
-				if (lilv_node_is_uri(klass_node)) {
-					Raul::URI klass(lilv_node_as_uri(klass_node));
-					if (!types.count(klass)) {
-						++added;
-						klasses.insert(klass);
-					}
-				}
-			}
-			lilv_nodes_free(matches);
-			lilv_node_free(type);
-		}
-		types.insert(klasses.begin(), klasses.end());
-	} while (added > 0);
-
-	lilv_node_free(rdfs_subClassOf);
-}
-
-/** Get all the types which this model is an instance of */
-static URISet
-get_types(World* world, SharedPtr<const ObjectModel> model)
-{
-	typedef Resource::Properties::const_iterator PropIter;
-	typedef std::pair<PropIter, PropIter>        PropRange;
-
-	// Start with every rdf:type
-	URISet types;
-	PropRange range = model->properties().equal_range(world->uris().rdf_type);
-	for (PropIter t = range.first; t != range.second; ++t) {
-		types.insert(Raul::URI(t->second.get_uri()));
-		if (world->uris().ingen_Graph == t->second.get_uri()) {
-			// Add lv2:Plugin as a type for graphs so plugin properties show up
-			types.insert(world->uris().lv2_Plugin);
-		}
-	}
-
-	// Add every superclass of every type, recursively
-	get_classes(world, types, true);
-
-	return types;
-}
-
-/** Get all the properties with domains appropriate to this model */
-static URISet
-get_properties(World* world, SharedPtr<const ObjectModel> model)
-{
-	URISet properties;
-	URISet types = get_types(world, model);
-
-	LilvNode* rdf_type = lilv_new_uri(world->lilv_world(),
-	                                  LILV_NS_RDF "type");
-	LilvNode* rdf_Property = lilv_new_uri(world->lilv_world(),
-	                                      LILV_NS_RDF "Property");
-	LilvNode* rdfs_domain = lilv_new_uri(world->lilv_world(),
-	                                     LILV_NS_RDFS "domain");
-
-	LilvNodes* props = lilv_world_find_nodes(
-		world->lilv_world(), NULL, rdf_type, rdf_Property);
-	LILV_FOREACH(nodes, p, props) {
-		const LilvNode* prop = lilv_nodes_get(props, p);
-		if (lilv_node_is_uri(prop)) {
-			LilvNodes* domains = lilv_world_find_nodes(
-				world->lilv_world(), prop, rdfs_domain, NULL);
-			unsigned n_matching_domains = 0;
-			LILV_FOREACH(nodes, d, domains) {
-				const LilvNode* domain_node = lilv_nodes_get(domains, d);
-				const Raul::URI domain(lilv_node_as_uri(domain_node));
-				if (types.count(domain)) {
-					++n_matching_domains;
-				}
-			}
-
-			if (lilv_nodes_size(domains) == 0 || (
-				    n_matching_domains > 0 &&
-				    n_matching_domains == lilv_nodes_size(domains))) {
-				properties.insert(Raul::URI(lilv_node_as_uri(prop)));
-			}
-
-			lilv_nodes_free(domains);
-		}
-	}
-
-	lilv_node_free(rdfs_domain);
-	lilv_node_free(rdf_Property);
-	lilv_node_free(rdf_type);
-
-	return properties;
-}
-
-static Glib::ustring
-get_label(World* world, const LilvNode* node)
-{
-	LilvNode* rdfs_label = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "label");
-	LilvNodes* labels = lilv_world_find_nodes(
-		world->lilv_world(), node, rdfs_label, NULL);
-
-	const LilvNode* first = lilv_nodes_get_first(labels);
-	Glib::ustring   label = first ? lilv_node_as_string(first) : "";
-
-	lilv_nodes_free(labels);
-	lilv_node_free(rdfs_label);
-	return label;
 }
 
 void
@@ -236,7 +113,7 @@ PropertiesWindow::add_property(const Raul::URI& uri, const Raul::Atom& value)
 
 	// Column 0: Property
 	LilvNode* prop = lilv_new_uri(world->lilv_world(), uri.c_str());
-	Glib::ustring lab_text = get_label(world, prop);
+	Glib::ustring lab_text = RDFS::label(world, prop);
 	if (lab_text.empty()) {
 		lab_text = world->rdf_world()->prefixes().qualify(uri);
 	}
@@ -278,10 +155,10 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 		world->lilv_world(), LILV_NS_RDF "type");
 
 	// Populate key combo
-	const URISet props = get_properties(world, model);
+	const URISet props = RDFS::properties(world, model);
 	for (URISet::const_iterator p = props.begin(); p != props.end(); ++p) {
 		LilvNode*           prop  = lilv_new_uri(world->lilv_world(), p->c_str());
-		const Glib::ustring label = get_label(world, prop);
+		const Glib::ustring label = RDFS::label(world, prop);
 		if (label.empty()) {
 			continue;
 		}
@@ -293,7 +170,7 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 		LILV_FOREACH(nodes, r, range) {
 			ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(range, r))));
 		}
-		get_classes(world, ranges, false);
+		RDFS::classes(world, ranges, false);
 
 		bool show = false;
 		for (URISet::const_iterator i = ranges.begin(); i != ranges.end(); ++i) {
@@ -373,6 +250,16 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));
 		return widget;
+	} else if (value.type() == forge.URID) {
+		const char* val_uri = _app->world()->uri_map().unmap_uri(value.get_int32());
+		Gtk::Entry* widget = manage(new Gtk::Entry());
+		if (val_uri) {
+			widget->set_text(val_uri);
+		}
+		widget->signal_changed().connect(sigc::bind(
+				sigc::mem_fun(this, &PropertiesWindow::value_edited),
+				uri));
+		return widget;
 	} else if (value.type() == forge.String) {
 		Gtk::Entry* widget = manage(new Gtk::Entry());
 		widget->set_text(value.get_string());
@@ -382,8 +269,8 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 		return widget;
 	}
 
-	_app->log().error(Raul::fmt("Unable to create widget for value %1%\n")
-	                  % forge.str(value));
+	_app->log().error(Raul::fmt("Unable to create widget for value %1% type %2%\n")
+	                  % forge.str(value) % value.type());
 	return NULL;
 }
 
@@ -483,19 +370,21 @@ PropertiesWindow::key_changed()
 {
 	World* world = _app->world();
 
-	const Gtk::ListStore::Row row      = *(_key_combo->get_active());
-	Glib::ustring             prop_uri = row[_combo_columns.uri_col];
+	_value_store->clear();
 
+	const Gtk::ListStore::iterator iter = _key_combo->get_active();
+	if (!iter) {
+		return;
+	}
+	
+	const Gtk::ListStore::Row row      = *iter;
+	Glib::ustring             prop_uri = row[_combo_columns.uri_col];
 	if (prop_uri.empty()) {
 		return;
 	}
 
-	_value_store->clear();
-
 	LilvNode* rdfs_range = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDFS "range");
-	LilvNode* rdf_type = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDF "type");
 	LilvNode* prop = lilv_new_uri(
 		world->lilv_world(), prop_uri.c_str());
 
@@ -507,28 +396,13 @@ PropertiesWindow::key_changed()
 	LILV_FOREACH(nodes, r, range) {
 		ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(range, r))));
 	}
-	get_classes(world, ranges, false);
+	RDFS::classes(world, ranges, false);
 
 	// Get all objects in range
-	typedef std::map<Raul::URI, Glib::ustring> Values;
-	Values values;
-	for (URISet::const_iterator i = ranges.begin(); i != ranges.end(); ++i) {
-		LilvNode*  range   = lilv_new_uri(world->lilv_world(), i->c_str());
-		LilvNodes* objects = lilv_world_find_nodes(
-			world->lilv_world(), NULL, rdf_type, range);
-		LILV_FOREACH(nodes, o, objects) {
-			const LilvNode*     object = lilv_nodes_get(objects, o);
-			const Glib::ustring label  = get_label(world, object);
-			values.insert(
-				std::make_pair(
-					Raul::URI(lilv_node_as_string(object)),
-					label));
-		}
-		lilv_node_free(range);
-	}
+	RDFS::Objects values = RDFS::instances(world, ranges);
 
 	// Fill value selector with suitable objects
-	for (Values::const_iterator i = values.begin(); i != values.end(); ++i) {
+	for (RDFS::Objects::const_iterator i = values.begin(); i != values.end(); ++i) {
 		if (!i->second.empty()) {
 			Gtk::ListStore::iterator vi   = _value_store->append();
 			Gtk::ListStore::Row      vrow = *vi;
@@ -538,7 +412,6 @@ PropertiesWindow::key_changed()
 	}
 
 	lilv_node_free(prop);
-	lilv_node_free(rdf_type);
 	lilv_node_free(rdfs_range);
 }
 
@@ -587,7 +460,7 @@ void
 PropertiesWindow::ok_clicked()
 {
 	apply_clicked();
-	cancel_clicked();
+	Gtk::Window::hide();
 }
 
 } // namespace GUI

@@ -61,6 +61,7 @@ public:
 		return ObjectModel::is_a(Raul::URI(LV2_CORE__ControlPort))
 			|| ObjectModel::is_a(Raul::URI(LV2_CORE__CVPort));
 	}
+	bool is_uri() const;
 
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 

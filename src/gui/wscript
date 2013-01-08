@@ -48,6 +48,7 @@ def build(bld):
             PortMenu.cpp
             PortPropertiesWindow.cpp
             PropertiesWindow.cpp
+            RDFS.cpp
             RenameWindow.cpp
             Style.cpp
             SubgraphModule.cpp
