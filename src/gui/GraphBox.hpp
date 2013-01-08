@@ -77,8 +77,8 @@ public:
 
 	void set_window(GraphWindow* win) { _window = win; }
 
-	void show_documentation(const std::string& doc, bool html);
-	void hide_documentation();
+	bool documentation_is_visible() { return _doc_scrolledwindow->is_visible(); }
+	void set_documentation(const std::string& doc, bool html);
 
 	SharedPtr<const Client::GraphModel> graph() const { return _graph; }
 	SharedPtr<GraphView>                view()  const { return _view; }
@@ -112,6 +112,7 @@ private:
 	void event_close();
 	void event_quit();
 	void event_fullscreen_toggled();
+	void event_doc_pane_toggled();
 	void event_status_bar_toggled();
 	void event_human_names_toggled();
 	void event_port_names_toggled();
@@ -145,6 +146,7 @@ private:
 	Gtk::MenuItem*      _menu_quit;
 	Gtk::CheckMenuItem* _menu_human_names;
 	Gtk::CheckMenuItem* _menu_show_port_names;
+	Gtk::CheckMenuItem* _menu_show_doc_pane;
 	Gtk::CheckMenuItem* _menu_show_status_bar;
 	Gtk::MenuItem*      _menu_zoom_in;
 	Gtk::MenuItem*      _menu_zoom_out;

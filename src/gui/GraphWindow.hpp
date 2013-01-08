@@ -51,12 +51,10 @@ public:
 	SharedPtr<const Client::GraphModel> graph() const { return _box->graph(); }
 	GraphBox*                           box()   const { return _box; }
 
-	void show_documentation(const std::string& doc, bool html) {
-		_box->show_documentation(doc, html);
-	}
+	bool documentation_is_visible() { return _box->documentation_is_visible(); }
 
-	void hide_documentation() {
-		_box->hide_documentation();
+	void set_documentation(const std::string& doc, bool html) {
+		_box->set_documentation(doc, html);
 	}
 
 	void show_port_status(const Client::PortModel* model,

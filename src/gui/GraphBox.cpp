@@ -72,10 +72,7 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 
 	xml->get_widget("graph_win_alignment", _alignment);
 	xml->get_widget("graph_win_status_bar", _status_bar);
-	//xml->get_widget("graph_win_status_bar", _status_bar);
-	//xml->get_widget("graph_open_menuitem", _menu_open);
 	xml->get_widget("graph_import_menuitem", _menu_import);
-	//xml->get_widget("graph_open_into_menuitem", _menu_open_into);
 	xml->get_widget("graph_save_menuitem", _menu_save);
 	xml->get_widget("graph_save_as_menuitem", _menu_save_as);
 	xml->get_widget("graph_draw_menuitem", _menu_draw);
@@ -95,6 +92,7 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	xml->get_widget("graph_zoom_in_menuitem", _menu_zoom_in);
 	xml->get_widget("graph_zoom_out_menuitem", _menu_zoom_out);
 	xml->get_widget("graph_zoom_normal_menuitem", _menu_zoom_normal);
+	xml->get_widget("graph_doc_pane_menuitem", _menu_show_doc_pane);
 	xml->get_widget("graph_status_bar_menuitem", _menu_show_status_bar);
 	xml->get_widget("graph_arrange_menuitem", _menu_arrange);
 	xml->get_widget("graph_view_messages_window_menuitem", _menu_view_messages_window);
@@ -128,6 +126,8 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &GraphBox::event_fullscreen_toggled));
 	_menu_human_names->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_human_names_toggled));
+	_menu_show_doc_pane->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_doc_pane_toggled));
 	_menu_show_status_bar->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_status_bar_toggled));
 	_menu_show_port_names->signal_activate().connect(
@@ -273,7 +273,6 @@ GraphBox::set_graph(SharedPtr<const GraphModel> graph,
 
 	show();
 	_alignment->show_all();
-	hide_documentation();
 
 	_view->signal_object_entered.connect(
 		sigc::mem_fun(this, &GraphBox::object_entered));
@@ -314,32 +313,21 @@ GraphBox::graph_port_removed(SharedPtr<const PortModel> port)
 }
 
 void
-GraphBox::show_documentation(const std::string& doc, bool html)
+GraphBox::set_documentation(const std::string& doc, bool html)
 {
+	_doc_scrolledwindow->remove();
 #ifdef HAVE_WEBKIT
 	WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
 	webkit_web_view_load_html_string(view, doc.c_str(), "");
-	_doc_scrolledwindow->add(*Gtk::manage(Glib::wrap(GTK_WIDGET(view))));
-	_doc_scrolledwindow->show_all();
+	Gtk::Widget* widget = Gtk::manage(Glib::wrap(GTK_WIDGET(view)));
+	_doc_scrolledwindow->add(*widget);
+	widget->show();
 #else
 	Gtk::TextView* view = Gtk::manage(new Gtk::TextView());
 	view->get_buffer()->set_text(doc);
 	_doc_scrolledwindow->add(*view);
-	_doc_scrolledwindow->show_all();
+	view->show();
 #endif
-	if (!_has_shown_documentation) {
-		const Gtk::Allocation allocation = get_allocation();
-		_doc_paned->set_position(allocation.get_width() / 1.61803399);
-	}
-	_has_shown_documentation = true;
-}
-
-void
-GraphBox::hide_documentation()
-{
-	_doc_scrolledwindow->remove();
-	_doc_scrolledwindow->hide();
-	_doc_paned->set_position(INT_MAX);
 }
 
 void
@@ -678,6 +666,21 @@ GraphBox::event_fullscreen_toggled()
 			_window->unfullscreen();
 			is_fullscreen = false;
 		}
+	}
+}
+
+void
+GraphBox::event_doc_pane_toggled()
+{
+	if (_menu_show_doc_pane->get_active()) {
+		_doc_scrolledwindow->show_all();
+		if (!_has_shown_documentation) {
+			const Gtk::Allocation allocation = get_allocation();
+			_doc_paned->set_position(allocation.get_width() / 1.61803399);
+			_has_shown_documentation = true;
+		}
+	} else {
+		_doc_scrolledwindow->hide();
 	}
 }
 

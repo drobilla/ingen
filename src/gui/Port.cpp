@@ -428,14 +428,10 @@ Port::set_selected(gboolean b)
 		if (pm && b) {
 			SharedPtr<const BlockModel> block = PtrCast<BlockModel>(pm->parent());
 			GraphWindow* win = _app.window_factory()->parent_graph_window(block);
-			if (win && block->plugin_model()) {
+			if (win && win->documentation_is_visible() && block->plugin_model()) {
 				const std::string& doc = block->plugin_model()->port_documentation(
 					pm->index());
-				if (!doc.empty()) {
-					win->show_documentation(doc, false);
-				} else {
-					win->hide_documentation();
-				}
+				win->set_documentation(doc, false);
 			}
 		}
 	}

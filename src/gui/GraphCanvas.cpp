@@ -619,7 +619,7 @@ GraphCanvas::clear_selection()
 {
 	GraphWindow* win = _app.window_factory()->graph_window(_graph);
 	if (win) {
-		win->hide_documentation();
+		win->set_documentation("", false);
 	}
 
 	Ganv::Canvas::clear_selection();

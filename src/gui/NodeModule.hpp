@@ -61,7 +61,6 @@ public:
 
 	virtual void store_location(double x, double y);
 	void show_human_names(bool b);
-	void set_selected(gboolean b);
 
 	SharedPtr<const Client::BlockModel> block() const { return _block; }
 
@@ -76,6 +75,7 @@ protected:
 	void embed_gui(bool embed);
 	bool popup_gui();
 	void on_gui_window_close();
+	bool on_selected(gboolean selected);
 
 	void rename();
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);

@@ -72,6 +72,9 @@ NodeModule::NodeModule(GraphCanvas&                canvas,
 	signal_moved().connect(
 		sigc::mem_fun(this, &NodeModule::store_location));
 
+	signal_selected().connect(
+		sigc::mem_fun(this, &NodeModule::on_selected));
+
 	const PluginModel* plugin = dynamic_cast<const PluginModel*>(block->plugin());
 	if (plugin) {
 		plugin->signal_changed().connect(
@@ -427,29 +430,25 @@ NodeModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
 	}
 }
 
-void
-NodeModule::set_selected(gboolean b)
+bool
+NodeModule::on_selected(gboolean selected)
 {
-	if (b != get_selected()) {
-		Ganv::Module::set_selected(b);
-		#if 0
-		if (b) {
-			GraphWindow* win = app().window_factory()->parent_graph_window(block());
-			if (win) {
-				std::string doc;
-				bool        html = false;
-				if (block()->plugin_model()) {
-					doc = block()->plugin_model()->documentation(&html);
-				}
-				if (!doc.empty()) {
-					win->show_documentation(doc, html);
-				} else {
-					win->hide_documentation();
-				}
-			}
-		}
-		#endif
+	GraphWindow* win = app().window_factory()->parent_graph_window(block());
+	if (!win) {
+		return true;
 	}
+
+	if (selected && win->documentation_is_visible()) {
+		GraphWindow* win = app().window_factory()->parent_graph_window(block());
+		std::string doc;
+		bool        html = false;
+		if (block()->plugin_model()) {
+			doc = block()->plugin_model()->documentation(&html);
+		}
+		win->set_documentation(doc, html);
+	}
+
+	return true;
 }
 
 } // namespace GUI
