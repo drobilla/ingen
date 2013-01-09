@@ -42,7 +42,6 @@ class Store;
 
 namespace Serialisation { class Parser; class Serialiser; }
 
-
 /** Load a dynamic module from the default path.
  *
  * This will check in the directories specified in the environment variable
@@ -135,6 +134,20 @@ public:
 		rdf_world->add_prefix("owl",   "http://www.w3.org/2002/07/owl#");
 		rdf_world->add_prefix("rdfs",  "http://www.w3.org/2000/01/rdf-schema#");
 		rdf_world->add_prefix("xsd",   "http://www.w3.org/2001/XMLSchema#");
+
+		// Load internal 'plugin' information into lilv world
+		LilvNode* rdf_type = lilv_new_uri(
+			lilv_world, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+		LilvNode* ingen_Plugin = lilv_new_uri(
+			lilv_world, "http://drobilla.net/ns/ingen#Plugin");
+		LilvNodes* internals = lilv_world_find_nodes(
+			lilv_world, NULL, rdf_type, ingen_Plugin);
+		LILV_FOREACH(nodes, i, internals) {
+			const LilvNode* internal = lilv_nodes_get(internals, i);
+			lilv_world_load_resource(lilv_world, internal);
+		}
+		lilv_node_free(rdf_type);
+		lilv_node_free(ingen_Plugin);
 	}
 
 	~Impl()

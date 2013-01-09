@@ -1,41 +1,33 @@
-@prefix ingen: <http://drobilla.net/ns/ingen-internals#> .
-@prefix ingen: <http://drobilla.net/ns/ingen#> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ingen: <http://drobilla.net/ns/ingen#> .
+@prefix internals: <http://drobilla.net/ns/ingen-internals#> .
 @prefix lv2: <http://lv2plug.in/ns/lv2core#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema> .
 
-ingen:Controller
+internals:Controller
 	a ingen:Plugin ;
 	rdfs:label "Controller" ;
-	rdfs:comment """
-Receives events and outputs signals for some specific controller
-(e.g. MIDI CC).
-""" .
+	rdfs:comment """Outputs the value of a specific MIDI control as a signal.  The output value will be scaled to be between the range specified by the minimum and maximum controls.""" .
 
-ingen:Trigger
+internals:Trigger
 	a ingen:Plugin ;
 	rdfs:label "Trigger" ;
-	rdfs:comment """
-Receives events and outputs a trigger signal when a specific note is received.
-""" .
+	rdfs:comment """Outputs a gate, trigger, and velocity signal whenever the specified note is received.  This is particularly useful for building percussive instruments.""" .
 
-ingen:Note
+internals:Note
 	a ingen:Plugin ;
 	rdfs:label "Note" ;
-	rdfs:comment """
-Receives events and outputs signals for the individual properties of the
-received notes.  This plugin is special because it is internally aware of
-Ingen's polyphony and controls voice allocation.
-""" .
+	rdfs:comment """Outputs the attributes of a note as signals.  Typically the frequency output controls an oscillator and the gate and trigger control an envelope.  This plugin is special because it is internally aware of polyphony and controls voice allocation.""" .
 
-ingen:Transport
+internals:Time
 	a ingen:Plugin ;
-	rdfs:label "Transport" ;
-	rdfs:comment """
-Listens to system transport information  (when available) and outputs signals
-for the various transport properties.  When no system transport information
-is available this plugin outputs "default" values: 4/4, 120bpm.
-""" .
+	rdfs:label "Time" ;
+	rdfs:comment """Emits time and transport information like tempo, time signature, and speed.  The emitted events are in the standard LV2 format expected by transport-aware LV2 plugins.""" .
+
+internals:Delay
+	a ingen:Plugin ;
+	rdfs:label "Delay" ;
+	rdfs:comment """Special internal delay block.  In theory, this block can be used for sample-accurate delay loops since Ingen can specially handle this case unlike a generic LV2 plugin.  However, this is not currently implemented.""" .

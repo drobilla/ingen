@@ -273,27 +273,38 @@ PluginModel::get_lv2_icon_path(const LilvPlugin* plugin)
 	return result;
 }
 
+static std::string
+heading(const std::string& text, bool html)
+{
+	if (html) {
+		return std::string("<h2>") + text + "</h2>\n";
+	} else {
+		return text + ":\n\n";
+	}
+}
+		
 std::string
-PluginModel::documentation(bool* html) const
+PluginModel::documentation(bool html) const
 {
 	std::string doc;
-	if (!_lilv_plugin) {
-		return doc;
-	}
+
+	LilvNode* subject = (_lilv_plugin)
+		? lilv_node_duplicate(lilv_plugin_get_uri(_lilv_plugin))
+		: lilv_new_uri(_lilv_world, uri().c_str());
 
 	LilvNode* lv2_documentation = lilv_new_uri(_lilv_world,
 	                                           LILV_NS_LV2 "documentation");
 	LilvNode* rdfs_comment = lilv_new_uri(_lilv_world,
 	                                      LILV_NS_RDFS "comment");
 
-	LilvNodes* vals = lilv_plugin_get_value(_lilv_plugin, lv2_documentation);
-	if (vals) {
-		*html = true;
-		doc += std::string("<h2>") + human_name() + "</h2>\n";
-	} else {
-		*html = false;
-		vals = lilv_plugin_get_value(_lilv_plugin, rdfs_comment);
+	LilvNodes* vals = lilv_world_find_nodes(
+		_lilv_world, subject, lv2_documentation, NULL);
+	if (!vals) {
+		vals = lilv_world_find_nodes(
+			_lilv_world, subject, rdfs_comment, NULL);
+		// TODO: If not html, must convert to plain text
 	}
+	doc += heading(human_name(), html);
 
 	if (vals) {
 		const LilvNode* val = lilv_nodes_get_first(vals);
@@ -303,7 +314,7 @@ PluginModel::documentation(bool* html) const
 	}
 	lilv_node_free(rdfs_comment);
 	lilv_node_free(lv2_documentation);
-
+	lilv_node_free(subject);
 	lilv_nodes_free(vals);
 
 	return doc;
@@ -317,7 +328,7 @@ PluginModel::port_documentation(uint32_t index) const
 	if (!_lilv_plugin)
 		return doc;
 
-	const LilvPort*  port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
+	const LilvPort* port = lilv_plugin_get_port_by_index(_lilv_plugin, index);
 
 	//LilvNode lv2_documentation = lilv_new_uri(
 	//	_lilv_world, LILV_NAMESPACE_LV2 "documentation");

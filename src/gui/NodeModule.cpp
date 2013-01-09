@@ -41,6 +41,7 @@
 #include "SubgraphModule.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
+#include "ingen_config.h"
 
 using namespace std;
 
@@ -441,9 +442,12 @@ NodeModule::on_selected(gboolean selected)
 	if (selected && win->documentation_is_visible()) {
 		GraphWindow* win = app().window_factory()->parent_graph_window(block());
 		std::string doc;
-		bool        html = false;
+		bool html = false;
+#ifdef HAVE_WEBKIT
+		html = true;
+#endif
 		if (block()->plugin_model()) {
-			doc = block()->plugin_model()->documentation(&html);
+			doc = block()->plugin_model()->documentation(html);
 		}
 		win->set_documentation(doc, html);
 	}

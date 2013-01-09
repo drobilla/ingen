@@ -325,6 +325,7 @@ GraphBox::set_documentation(const std::string& doc, bool html)
 #else
 	Gtk::TextView* view = Gtk::manage(new Gtk::TextView());
 	view->get_buffer()->set_text(doc);
+	view->set_wrap_mode(Gtk::WRAP_WORD);
 	_doc_scrolledwindow->add(*view);
 	view->show();
 #endif
