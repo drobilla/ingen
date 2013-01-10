@@ -39,7 +39,7 @@ def configure(conf):
     autowaf.display_header('Ingen Configuration')
     conf.check_python_version((2,4,0), mandatory=False)
     autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
-                      atleast_version='1.0.15', mandatory=True)
+                      atleast_version='1.3.0', mandatory=True)
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
                       atleast_version='2.14.0', mandatory=True)
     autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',

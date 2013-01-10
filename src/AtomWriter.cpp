@@ -242,14 +242,11 @@ AtomWriter::set_property(const Raul::URI&  subject,
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Set);
 	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
 	forge_uri(subject);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
-
-	LV2_Atom_Forge_Frame body;
-	lv2_atom_forge_blank(&_forge, &body, 0, 0);
-	lv2_atom_forge_property_head(&_forge, _map.map_uri(predicate.c_str()), 0);
+	lv2_atom_forge_property_head(&_forge, _uris.patch_property, 0);
+	lv2_atom_forge_urid(&_forge, _map.map_uri(predicate.c_str()));
+	lv2_atom_forge_property_head(&_forge, _uris.patch_value, 0);
 	lv2_atom_forge_atom(&_forge, value.size(), value.type());
 	lv2_atom_forge_write(&_forge, value.get_body(), value.size());
-	lv2_atom_forge_pop(&_forge, &body);
 
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();

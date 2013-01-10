@@ -199,22 +199,30 @@ AtomReader::write(const LV2_Atom* msg)
 			_iface.put(Raul::URI(subject_uri), props);
 		}
 	} else if (obj->body.otype == _uris.patch_Set) {
-		const LV2_Atom_Object* body = NULL;
-		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
-		if (!body) {
-			_log.warn("Set message has no body\n");
-			return false;
-		} else if (!subject_uri) {
+		if (!subject_uri) {
 			_log.warn("Set message has no subject\n");
 			return false;
 		}
 
-		LV2_ATOM_OBJECT_FOREACH(body, p) {
-			Raul::Atom val;
-			get_atom(&p->value, val);
-			_iface.set_property(Raul::URI(subject_uri),
-			                    Raul::URI(_map.unmap_uri(p->key)), val);
+		const LV2_Atom_URID* prop = NULL;
+		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_property, &prop, 0);
+		if (!prop || ((LV2_Atom*)prop)->type != _uris.atom_URID) {
+			_log.warn("Set message missing property\n");
+			return false;
 		}
+
+		const LV2_Atom* value = NULL;
+		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_value, &value, 0);
+		if (!value) {
+			_log.warn("Set message missing value\n");
+			return false;
+		}
+
+		Raul::Atom atom;
+		get_atom(value, atom);
+		_iface.set_property(Raul::URI(subject_uri),
+		                    Raul::URI(_map.unmap_uri(prop->body)),
+		                    atom);
 	} else if (obj->body.otype == _uris.patch_Patch) {
 		if (!subject) {
 			_log.warn("Patch message has no subject\n");

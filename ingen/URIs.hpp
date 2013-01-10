@@ -141,9 +141,11 @@ public:
 	const Quark patch_add;
 	const Quark patch_body;
 	const Quark patch_destination;
+	const Quark patch_property;
 	const Quark patch_remove;
 	const Quark patch_request;
 	const Quark patch_subject;
+	const Quark patch_value;
 	const Quark pprops_logarithmic;
 	const Quark rdf_type;
 	const Quark rdfs_seeAlso;
