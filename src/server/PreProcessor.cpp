@@ -45,16 +45,16 @@ PreProcessor::event(Event* const ev)
 	assert(!ev->is_prepared());
 	assert(!ev->next());
 
-	Event* const head = _head.get();
+	Event* const head = _head.load();
 	if (!head) {
 		_head = ev;
 		_tail = ev;
 	} else {
-		_tail.get()->next(ev);
+		_tail.load()->next(ev);
 		_tail = ev;
 	}
 
-	if (!_prepared_back.get()) {
+	if (!_prepared_back.load()) {
 		_prepared_back = ev;
 	}
 
@@ -64,7 +64,7 @@ PreProcessor::event(Event* const ev)
 unsigned
 PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 {
-	Event* const head = _head.get();
+	Event* const head = _head.load();
 	if (!head) {
 		return 0;
 	}
@@ -112,7 +112,7 @@ PreProcessor::_run()
 {
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
 	while (_sem.wait() && !_exit_flag) {
-		Event* const ev = _prepared_back.get();
+		Event* const ev = _prepared_back.load();
 		if (!ev) {
 			return;
 		}

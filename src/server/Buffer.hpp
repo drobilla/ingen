@@ -17,13 +17,13 @@
 #ifndef INGEN_ENGINE_BUFFER_HPP
 #define INGEN_ENGINE_BUFFER_HPP
 
+#include <atomic>
 #include <cassert>
 
 #include <boost/utility.hpp>
 
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
-#include "raul/AtomicInt.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/SharedPtr.hpp"
 
@@ -155,8 +155,8 @@ protected:
 private:
 	void recycle();
 
-	Buffer*         _next;  ///< Intrusive linked list for BufferFactory
-	Raul::AtomicInt _refs;  ///< Intrusive reference count
+	Buffer*               _next;  ///< Intrusive linked list for BufferFactory
+	std::atomic<unsigned> _refs;  ///< Intrusive reference count
 };
 
 } // namespace Server

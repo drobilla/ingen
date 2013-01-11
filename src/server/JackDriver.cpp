@@ -52,7 +52,7 @@ namespace Server {
 JackDriver::JackDriver(Engine& engine)
 	: _engine(engine)
 	, _sem(0)
-	, _flag(0)
+	, _flag(false)
 	, _client(NULL)
 	, _block_length(0)
 	, _sample_rate(0)
@@ -172,7 +172,7 @@ void
 JackDriver::deactivate()
 {
 	if (_is_activated) {
-		_flag = 1;
+		_flag = true;
 		_is_activated = false;
 		_sem.wait();
 
@@ -402,7 +402,7 @@ REALTIME int
 JackDriver::_process_cb(jack_nframes_t nframes)
 {
 	if (nframes == 0 || ! _is_activated) {
-		if (_flag == 1) {
+		if (_flag) {
 			_sem.post();
 		}
 		return 0;

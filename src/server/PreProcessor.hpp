@@ -17,9 +17,10 @@
 #ifndef INGEN_ENGINE_PREPROCESSOR_HPP
 #define INGEN_ENGINE_PREPROCESSOR_HPP
 
+#include <atomic>
+
 #include <glibmm/thread.h>
 
-#include "raul/AtomicPtr.hpp"
 #include "raul/Semaphore.hpp"
 #include "raul/Thread.hpp"
 
@@ -43,7 +44,7 @@ public:
 	}
 
 	/** Return true iff no events are enqueued. */
-	inline bool empty() const { return !_head.get(); }
+	inline bool empty() const { return !_head.load(); }
 
 	/** Enqueue an event.
 	 * This is safe to call from any non-realtime thread (it locks).
@@ -61,11 +62,11 @@ protected:
 	virtual void _run();
 
 private:
-	Glib::Mutex            _mutex;
-	Raul::Semaphore        _sem;
-	Raul::AtomicPtr<Event> _head;
-	Raul::AtomicPtr<Event> _prepared_back;
-	Raul::AtomicPtr<Event> _tail;
+	Glib::Mutex         _mutex;
+	Raul::Semaphore     _sem;
+	std::atomic<Event*> _head;
+	std::atomic<Event*> _prepared_back;
+	std::atomic<Event*> _tail;
 };
 
 } // namespace Server

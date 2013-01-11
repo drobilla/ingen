@@ -36,10 +36,10 @@ BufferFactory::BufferFactory(Engine& engine, URIs& uris)
 BufferFactory::~BufferFactory()
 {
 	_silent_buffer.reset();
-	free_list(_free_audio.get());
-	free_list(_free_control.get());
-	free_list(_free_sequence.get());
-	free_list(_free_object.get());
+	free_list(_free_audio.load());
+	free_list(_free_control.load());
+	free_list(_free_sequence.load());
+	free_list(_free_object.load());
 }
 
 Forge&
@@ -97,17 +97,17 @@ BufferFactory::get(LV2_URID type,
                    bool     real_time,
                    bool     force_create)
 {
-	Raul::AtomicPtr<Buffer>& head_ptr = free_list(type);
-	Buffer*                  try_head = NULL;
+	std::atomic<Buffer*>& head_ptr = free_list(type);
+	Buffer*               try_head = NULL;
 
 	if (!force_create) {
 		Buffer* next;
 		do {
-			try_head = head_ptr.get();
+			try_head = head_ptr.load();
 			if (!try_head)
 				break;
 			next = try_head->_next;
-		} while (!head_ptr.compare_and_exchange(try_head, next));
+		} while (!head_ptr.compare_exchange_weak(try_head, next));
 	}
 
 	if (!try_head) {
@@ -147,12 +147,12 @@ BufferFactory::create(LV2_URID type, uint32_t capacity)
 void
 BufferFactory::recycle(Buffer* buf)
 {
-	Raul::AtomicPtr<Buffer>& head_ptr = free_list(buf->type());
+	std::atomic<Buffer*>& head_ptr = free_list(buf->type());
 	Buffer* try_head;
 	do {
-		try_head = head_ptr.get();
+		try_head = head_ptr.load();
 		buf->_next = try_head;
-	} while (!head_ptr.compare_and_exchange(try_head, buf));
+	} while (!head_ptr.compare_exchange_weak(try_head, buf));
 }
 
 } // namespace Server

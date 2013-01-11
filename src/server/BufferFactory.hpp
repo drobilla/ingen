@@ -17,13 +17,13 @@
 #ifndef INGEN_ENGINE_BUFFERFACTORY_HPP
 #define INGEN_ENGINE_BUFFERFACTORY_HPP
 
+#include <atomic>
 #include <map>
 
 #undef nil
 #include <glibmm/thread.h>
 
 #include "raul/Atom.hpp"
-#include "raul/AtomicPtr.hpp"
 #include "raul/RingBuffer.hpp"
 #include "raul/SharedPtr.hpp"
 #include "ingen/Forge.hpp"
@@ -69,7 +69,7 @@ private:
 
 	BufferRef create(LV2_URID type, uint32_t capacity=0);
 
-	inline Raul::AtomicPtr<Buffer>& free_list(LV2_URID type) {
+	inline std::atomic<Buffer*>& free_list(LV2_URID type) {
 		if (type == _uris.atom_Float) {
 			return _free_control;
 		} else if (type == _uris.atom_Sound) {
@@ -83,10 +83,10 @@ private:
 
 	void free_list(Buffer* head);
 
-	Raul::AtomicPtr<Buffer> _free_audio;
-	Raul::AtomicPtr<Buffer> _free_control;
-	Raul::AtomicPtr<Buffer> _free_sequence;
-	Raul::AtomicPtr<Buffer> _free_object;
+	std::atomic<Buffer*> _free_audio;
+	std::atomic<Buffer*> _free_control;
+	std::atomic<Buffer*> _free_sequence;
+	std::atomic<Buffer*> _free_object;
 
 	Glib::Mutex _mutex;
 	Engine&     _engine;

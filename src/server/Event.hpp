@@ -17,7 +17,8 @@
 #ifndef INGEN_ENGINE_EVENT_HPP
 #define INGEN_ENGINE_EVENT_HPP
 
-#include "raul/AtomicPtr.hpp"
+#include <atomic>
+
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 #include "raul/Path.hpp"
@@ -71,7 +72,7 @@ public:
 	inline void set_time(SampleCount time) { _time = time; }
 
 	/** Get the next event to be processed after this one. */
-	Event* next() const { return _next.get(); }
+	Event* next() const { return _next.load(); }
 
 	/** Set the next event to be processed after this one. */
 	void next(Event* ev) { _next = ev; }
@@ -120,7 +121,7 @@ protected:
 	}
 
 	Engine&                _engine;
-	Raul::AtomicPtr<Event> _next;
+	std::atomic<Event*>    _next;
 	SharedPtr<Interface>   _request_client;
 	int32_t                _request_id;
 	FrameTime              _time;

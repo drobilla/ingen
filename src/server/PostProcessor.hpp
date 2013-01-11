@@ -17,8 +17,7 @@
 #ifndef INGEN_ENGINE_POSTPROCESSOR_HPP
 #define INGEN_ENGINE_POSTPROCESSOR_HPP
 
-#include "raul/AtomicInt.hpp"
-#include "raul/AtomicPtr.hpp"
+#include <atomic>
 
 #include "types.hpp"
 
@@ -62,9 +61,9 @@ public:
 
 private:
 	Engine&                _engine;
-	Raul::AtomicPtr<Event> _head;
-	Raul::AtomicPtr<Event> _tail;
-	Raul::AtomicInt        _max_time;
+	std::atomic<Event*>    _head;
+	std::atomic<Event*>    _tail;
+	std::atomic<FrameTime> _max_time;
 };
 
 } // namespace Server

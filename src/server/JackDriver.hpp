@@ -20,6 +20,7 @@
 #include "ingen_config.h"
 
 #include <string>
+#include <atomic>
 
 #include <jack/jack.h>
 #include <jack/transport.h>
@@ -27,7 +28,6 @@
 #include <jack/session.h>
 #endif
 
-#include "raul/AtomicInt.hpp"
 #include "raul/Semaphore.hpp"
 
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
@@ -137,7 +137,7 @@ protected:
 	Ports                  _ports;
 	LV2_Atom_Forge         _forge;
 	Raul::Semaphore        _sem;
-	Raul::AtomicInt        _flag;
+	std::atomic<bool>      _flag;
 	jack_client_t*         _client;
 	jack_nframes_t         _block_length;
 	jack_nframes_t         _sample_rate;

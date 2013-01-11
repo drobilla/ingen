@@ -41,8 +41,8 @@ PostProcessor::append(ProcessContext& context, Event* first, Event* last)
 {
 	assert(first);
 	assert(last);
-	if (_head.get()) {
-		_tail.get()->next(first);
+	if (_head) {
+		_tail.load()->next(first);
 		_tail = last;
 	} else {
 		_tail = last;
@@ -53,18 +53,18 @@ PostProcessor::append(ProcessContext& context, Event* first, Event* last)
 bool
 PostProcessor::pending() const
 {
-	return _head.get() || _engine.process_context().pending_notifications();
+	return _head.load() || _engine.process_context().pending_notifications();
 }
 
 void
 PostProcessor::process()
 {
-	const FrameTime end_time = _max_time.get();
+	const FrameTime end_time = _max_time;
 
 	// To avoid a race, we only process up to tail and never write to _tail
-	Event* const tail = _tail.get();
+	Event* const tail = _tail.load();
 
-	Event* ev = _head.get();
+	Event* ev = _head.load();
 	if (!ev) {
 		// Process audio thread notifications up until end
 		_engine.process_context().emit_notifications(end_time);
