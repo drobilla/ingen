@@ -28,6 +28,8 @@ namespace Server {
 
 PostProcessor::PostProcessor(Engine& engine)
 	: _engine(engine)
+	, _head(NULL)
+	, _tail(NULL)
 	, _max_time(0)
 {
 }

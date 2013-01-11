@@ -26,7 +26,11 @@ namespace Ingen {
 namespace Server {
 
 BufferFactory::BufferFactory(Engine& engine, URIs& uris)
-	: _engine(engine)
+	: _free_audio(NULL)
+	, _free_control(NULL)
+	, _free_sequence(NULL)
+	, _free_object(NULL)
+	, _engine(engine)
 	, _uris(uris)
 	, _seq_size(0)
 	, _silent_buffer(NULL)

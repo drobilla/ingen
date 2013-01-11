@@ -28,6 +28,9 @@ namespace Server {
 PreProcessor::PreProcessor()
 	: Raul::Thread()
 	, _sem(0)
+	, _head(NULL)
+	, _prepared_back(NULL)
+	, _tail(NULL)
 {
 	start();
 }

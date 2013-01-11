@@ -83,6 +83,7 @@ public:
 protected:
 	Event(Engine& engine, SharedPtr<Interface> client, int32_t id, FrameTime time)
 		: _engine(engine)
+		, _next(NULL)
 		, _request_client(client)
 		, _request_id(id)
 		, _time(time)
@@ -92,6 +93,7 @@ protected:
 	/** Constructor for internal events only */
 	explicit Event(Engine& engine)
 		: _engine(engine)
+		, _next(NULL)
 		, _request_id(-1)
 		, _time(0)
 		, _status(NOT_PREPARED)
