@@ -22,7 +22,6 @@
 #include <boost/intrusive/slist.hpp>
 
 #include "raul/Array.hpp"
-#include "raul/AtomicInt.hpp"
 
 #include "BufferRef.hpp"
 #include "Context.hpp"
