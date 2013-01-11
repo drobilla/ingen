@@ -211,8 +211,8 @@ InputPort::pre_process(Context& context)
 		for (uint32_t v = 0; v < _poly; ++v) {
 			// Get all the sources for this voice
 			uint32_t num_srcs = 0;
-			for (Arcs::iterator e = _arcs.begin(); e != _arcs.end(); ++e) {
-				get_sources(context, *e, v, srcs, max_num_srcs, num_srcs);
+			for (const auto& a : _arcs) {
+				get_sources(context, a, v, srcs, max_num_srcs, num_srcs);
 			}
 
 			// Then mix them into out buffer for this voice

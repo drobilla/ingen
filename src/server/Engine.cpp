@@ -82,11 +82,11 @@ Engine::~Engine()
 	_root_graph = NULL;
 	deactivate();
 
-	const SharedPtr<Store> s = this->store();
-	if (s) {
-		for (Store::iterator i = s->begin(); i != s->end(); ++i) {
-			if (!PtrCast<NodeImpl>(i->second)->parent()) {
-				i->second.reset();
+	const SharedPtr<Store> store = this->store();
+	if (store) {
+		for (auto& s : *store.get()) {
+			if (!PtrCast<NodeImpl>(s.second)->parent()) {
+				s.second.reset();
 			}
 		}
 	}

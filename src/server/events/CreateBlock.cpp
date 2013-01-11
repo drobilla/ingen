@@ -140,8 +140,8 @@ CreateBlock::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
-		for (Update::const_iterator i = _update.begin(); i != _update.end(); ++i) {
-			_engine.broadcaster()->put(i->first, i->second);
+		for (const auto& u : _update) {
+			_engine.broadcaster()->put(u.first, u.second);
 		}
 	}
 }

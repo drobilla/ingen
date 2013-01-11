@@ -183,8 +183,8 @@ public:
 		// Notify buffer is a Chunk with size set to the available space
 		_notify_capacity = ((LV2_Atom_Sequence*)_ports[1]->buffer())->atom.size;
 
-		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-			pre_process_port(_engine.process_context(), *i);
+		for (auto& p : _ports) {
+			pre_process_port(_engine.process_context(), p);
 		}
 
 		_engine.run(nframes);
@@ -194,8 +194,8 @@ public:
 
 		flush_to_ui(_engine.process_context());
 
-		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-			post_process_port(_engine.process_context(), *i);
+		for (auto& p : _ports) {
+			post_process_port(_engine.process_context(), p);
 		}
 
 		_frame_time += nframes;
@@ -210,9 +210,9 @@ public:
 	virtual GraphImpl* root_graph()                     { return _root_graph; }
 
 	virtual EnginePort* get_port(const Raul::Path& path) {
-		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-			if ((*i)->graph_port()->path() == path) {
-				return *i;
+		for (auto& p : _ports) {
+			if (p->graph_port()->path() == path) {
+				return p;
 			}
 		}
 
@@ -508,9 +508,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		Glib::filename_to_uri(Ingen::bundle_file_path("manifest.ttl")));
 
 	const LV2Graph* graph = NULL;
-	for (Lib::Graphs::iterator i = graphs.begin(); i != graphs.end(); ++i) {
-		if ((*i)->uri == descriptor->URI) {
-			graph = (*i).get();
+	for (const auto& g : graphs) {
+		if (g->uri == descriptor->URI) {
+			graph = g.get();
 			break;
 		}
 	}

@@ -111,9 +111,8 @@ send_graph(Interface* client, const GraphImpl* graph)
 	            Resource::Graph::EXTERNAL);
 
 	// Send blocks
-	for (GraphImpl::Blocks::const_iterator j = graph->blocks().begin();
-	     j != graph->blocks().end(); ++j) {
-		send_block(client, &*j);
+	for (const auto& b : graph->blocks()) {
+		send_block(client, &b);
 	}
 
 	// Send ports
@@ -122,9 +121,8 @@ send_graph(Interface* client, const GraphImpl* graph)
 	}
 
 	// Send arcs
-	for (GraphImpl::Arcs::const_iterator j = graph->arcs().begin();
-	     j != graph->arcs().end(); ++j) {
-		client->connect(j->second->tail_path(), j->second->head_path());
+	for (const auto& a : graph->arcs()) {
+		client->connect(a.second->tail_path(), a.second->head_path());
 	}
 }
 

@@ -156,8 +156,8 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 
 	// Populate key combo
 	const URISet props = RDFS::properties(world, model);
-	for (URISet::const_iterator p = props.begin(); p != props.end(); ++p) {
-		LilvNode*           prop  = lilv_new_uri(world->lilv_world(), p->c_str());
+	for (const auto& p : props) {
+		LilvNode*           prop  = lilv_new_uri(world->lilv_world(), p.c_str());
 		const Glib::ustring label = RDFS::label(world, prop);
 		if (label.empty()) {
 			continue;
@@ -173,8 +173,8 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 		RDFS::classes(world, ranges, false);
 
 		bool show = false;
-		for (URISet::const_iterator i = ranges.begin(); i != ranges.end(); ++i) {
-			LilvNode*  range   = lilv_new_uri(world->lilv_world(), i->c_str());
+		for (const auto& r : ranges) {
+			LilvNode*  range   = lilv_new_uri(world->lilv_world(), r.c_str());
 			LilvNodes* objects = lilv_world_find_nodes(
 				world->lilv_world(), NULL, rdf_type, range);
 
@@ -190,7 +190,7 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 		if (show || ranges.empty()) {
 			Gtk::ListStore::iterator ki  = _key_store->append();
 			Gtk::ListStore::Row      row = *ki;
-			row[_combo_columns.uri_col]   = *p;
+			row[_combo_columns.uri_col]   = p;
 			row[_combo_columns.label_col] = label;
 		}
 
@@ -200,9 +200,8 @@ PropertiesWindow::set_object(SharedPtr<const ObjectModel> model)
 	lilv_node_free(rdfs_range);
 	lilv_node_free(rdf_type);
 
-	for (ObjectModel::Properties::const_iterator i = model->properties().begin();
-			i != model->properties().end(); ++i) {
-		add_property(i->first, i->second);
+	for (const auto& p : model->properties()) {
+		add_property(p.first, p.second);
 	}
 
 	_table->show_all();
@@ -284,9 +283,9 @@ PropertiesWindow::on_show()
 	Gtk::Requisition req;
 
 	typedef Gtk::Box_Helpers::BoxList Children;
-	for (Children::const_iterator i = _vbox->children().begin(); i != _vbox->children().end(); ++i) {
-		req = (*i).get_widget()->size_request();
-		if ((*i).get_widget() != _scrolledwindow) {
+	for (const auto& c : _vbox->children()) {
+		req = c.get_widget()->size_request();
+		if (c.get_widget() != _scrolledwindow) {
 			width = std::max(width, req.width);
 			height += req.height + VBOX_PAD;
 		}
@@ -402,12 +401,13 @@ PropertiesWindow::key_changed()
 	RDFS::Objects values = RDFS::instances(world, ranges);
 
 	// Fill value selector with suitable objects
-	for (RDFS::Objects::const_iterator i = values.begin(); i != values.end(); ++i) {
-		if (!i->second.empty()) {
+	for (const auto& v : values) {
+		if (!v.second.empty()) {
 			Gtk::ListStore::iterator vi   = _value_store->append();
 			Gtk::ListStore::Row      vrow = *vi;
-			vrow[_combo_columns.uri_col]   = i->first;
-			vrow[_combo_columns.label_col] = i->second;
+
+			vrow[_combo_columns.uri_col]   = v.first;
+			vrow[_combo_columns.label_col] = v.second;
 		}
 	}
 
@@ -446,9 +446,9 @@ void
 PropertiesWindow::apply_clicked()
 {
 	Resource::Properties properties;
-	for (Records::const_iterator r = _records.begin(); r != _records.end(); ++r) {
-		const Raul::URI& uri    = r->first;
-		const Record&    record = r->second;
+	for (const auto& r : _records) {
+		const Raul::URI& uri    = r.first;
+		const Record&    record = r.second;
 		if (!_model->has_property(uri, record.value)) {
 			properties.insert(make_pair(uri, record.value));
 		}

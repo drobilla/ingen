@@ -56,8 +56,8 @@ PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
 {
 	assert(pm);
 
-	for (list<sigc::connection>::iterator i = _connections.begin(); i != _connections.end(); ++i)
-		(*i).disconnect();
+	for (auto& c : _connections)
+		c.disconnect();
 
 	_connections.clear();
 

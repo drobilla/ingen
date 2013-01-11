@@ -33,15 +33,15 @@ class BlockImpl;
  */
 class CompiledBlock {
 public:
-	CompiledBlock(BlockImpl* b, size_t np, const std::list<BlockImpl*>& d)
+	CompiledBlock(BlockImpl* b, size_t np, const std::list<BlockImpl*>& deps)
 		: _block(b), _n_providers(np)
 	{
 		// Copy to a vector for maximum iteration speed and cache optimization
 		// (Need to take a copy anyway)
 
-		_dependants.reserve(d.size());
-		for (std::list<BlockImpl*>::const_iterator i = d.begin(); i != d.end(); ++i)
-			_dependants.push_back(*i);
+		_dependants.reserve(deps.size());
+		for (const auto& d : deps)
+			_dependants.push_back(d);
 	}
 
 	BlockImpl*                     block()       const { return _block; }

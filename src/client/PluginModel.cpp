@@ -159,11 +159,9 @@ PluginModel::set(SharedPtr<PluginModel> p)
 	if (p->_lilv_plugin)
 		_lilv_plugin = p->_lilv_plugin;
 
-	for (Properties::const_iterator v = p->properties().begin();
-	     v != p->properties().end();
-	     ++v) {
-		Resource::set_property(v->first, v->second);
-		_signal_property.emit(v->first, v->second);
+	for (auto v : p->properties()) {
+		Resource::set_property(v.first, v.second);
+		_signal_property.emit(v.first, v.second);
 	}
 
 	_signal_changed.emit();

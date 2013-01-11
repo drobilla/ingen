@@ -95,14 +95,13 @@ AtomWriter::forge_uri(const Raul::URI& uri)
 void
 AtomWriter::forge_properties(const Resource::Properties& properties)
 {
-	for (Resource::Properties::const_iterator i = properties.begin();
-	     i != properties.end(); ++i) {
-		lv2_atom_forge_property_head(&_forge, _map.map_uri(i->first.c_str()), 0);
-		if (i->second.type() == _forge.URI) {
-			forge_uri(Raul::URI(i->second.get_uri()));
+	for (auto p : properties) {
+		lv2_atom_forge_property_head(&_forge, _map.map_uri(p.first.c_str()), 0);
+		if (p.second.type() == _forge.URI) {
+			forge_uri(Raul::URI(p.second.get_uri()));
 		} else {
-			lv2_atom_forge_atom(&_forge, i->second.size(), i->second.type());
-			lv2_atom_forge_write(&_forge, i->second.get_body(), i->second.size());
+			lv2_atom_forge_atom(&_forge, p.second.size(), p.second.type());
+			lv2_atom_forge_write(&_forge, p.second.get_body(), p.second.size());
 		}
 	}
 }

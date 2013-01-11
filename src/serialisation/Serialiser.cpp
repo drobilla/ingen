@@ -413,9 +413,8 @@ Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
 		serialise_port(p, Resource::Graph::INTERNAL, port_id);
 	}
 
-	for (Node::Arcs::const_iterator a = graph->arcs().begin();
-	     a != graph->arcs().end(); ++a) {
-		serialise_arc(graph_id, a->second);
+	for (const auto& a : graph->arcs()) {
+		serialise_arc(graph_id, a.second);
 	}
 }
 
@@ -544,13 +543,13 @@ Serialiser::Impl::serialise_properties(Sord::Node              id,
 	sratom_set_pretty_numbers(_sratom, true);
 
 	typedef Node::Properties::const_iterator iterator;
-	for (iterator v = props.begin(); v != props.end(); ++v) {
-		const Sord::URI key(_model->world(), v->first);
+	for (const auto& p : props) {
+		const Sord::URI key(_model->world(), p.first);
 		if (!skip_property(key)) {
 			sratom_write(_sratom, unmap, 0,
 			             sord_node_to_serd_node(id.c_obj()),
 			             sord_node_to_serd_node(key.c_obj()),
-			             v->second.type(), v->second.size(), v->second.get_body());
+			             p.second.type(), p.second.size(), p.second.get_body());
 		}
 	}
 

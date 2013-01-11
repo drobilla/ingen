@@ -110,10 +110,8 @@ public:
 	{
 		// Parse default configuration files
 		std::list<std::string> files = conf.load_default("ingen", "options.ttl");
-		for (std::list<std::string>::const_iterator f = files.begin();
-		     f != files.end();
-		     ++f) {
-			log.info(Raul::fmt("Loaded configuration %1%\n") % *f);
+		for (const auto& f : files) {
+			log.info(Raul::fmt("Loaded configuration %1%\n") % f);
 		}
 
 		// Parse command line options, overriding configuration file values
@@ -164,9 +162,9 @@ public:
 		// Delete module objects but save pointers to libraries
 		typedef std::list<Glib::Module*> Libs;
 		Libs libs;
-		for (Modules::iterator i = modules.begin(); i != modules.end(); ++i) {
-			libs.push_back(i->second->library);
-			delete i->second;
+		for (auto& m : modules) {
+			libs.push_back(m.second->library);
+			delete m.second;
 		}
 
 		delete rdf_world;
@@ -178,8 +176,8 @@ public:
 		lilv_world_free(lilv_world);
 
 		// Close module libraries
-		for (Libs::iterator l = libs.begin(); l != libs.end(); ++l) {
-			delete *l;
+		for (auto& l : libs) {
+			delete l;
 		}
 	}
 

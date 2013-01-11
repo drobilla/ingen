@@ -42,9 +42,9 @@ BreadCrumbs::BreadCrumbs(App& app)
 SharedPtr<GraphView>
 BreadCrumbs::view(const Raul::Path& path)
 {
-	for (std::list<BreadCrumb*>::const_iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
-		if ((*i)->path() == path)
-			return (*i)->view();
+	for (const auto& b : _breadcrumbs)
+		if (b->path() == path)
+			return b->view();
 
 	return SharedPtr<GraphView>();
 }
@@ -62,17 +62,17 @@ BreadCrumbs::build(Raul::Path path, SharedPtr<GraphView> view)
 
 	// Moving to a path we already contain, just switch the active button
 	if (!_breadcrumbs.empty() && (path.is_parent_of(_full_path) || path == _full_path)) {
-		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
-			if ((*i)->path() == path) {
-				(*i)->set_active(true);
-				if (!(*i)->view())
-					(*i)->set_view(view);
+		for (const auto& b : _breadcrumbs) {
+			if (b->path() == path) {
+				b->set_active(true);
+				if (!b->view())
+					b->set_view(view);
 
 				// views are expensive, having two around for the same graph is a bug
-				assert((*i)->view() == view);
+				assert(b->view() == view);
 
 			} else {
-				(*i)->set_active(false);
+				b->set_active(false);
 			}
 		}
 
@@ -98,8 +98,8 @@ BreadCrumbs::build(Raul::Path path, SharedPtr<GraphView> view)
 				suffix = suffix.substr(suffix.find("/")+1);
 		}
 
-		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
-			(*i)->set_active(false);
+		for (const auto& b : _breadcrumbs)
+			b->set_active(false);
 		_breadcrumbs.back()->set_active(true);
 
 	// Rebuild from scratch
@@ -110,8 +110,8 @@ BreadCrumbs::build(Raul::Path path, SharedPtr<GraphView> view)
 		_active_path = path;
 
 		// Empty existing breadcrumbs
-		for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i)
-			remove(**i);
+		for (const auto& b : _breadcrumbs)
+			remove(*b);
 		_breadcrumbs.clear();
 
 		// Add root
@@ -179,10 +179,10 @@ BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
 void
 BreadCrumbs::object_destroyed(const Raul::URI& uri)
 {
-	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
+	for (auto i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 		if ((*i)->path() == uri.c_str()) {
 			// Remove all crumbs after the removed one (inclusive)
-			for (std::list<BreadCrumb*>::iterator j = i; j != _breadcrumbs.end(); ) {
+			for (auto j = i; j != _breadcrumbs.end(); ) {
 				BreadCrumb* bc = *j;
 				j = _breadcrumbs.erase(j);
 				remove(*bc);
@@ -195,9 +195,9 @@ BreadCrumbs::object_destroyed(const Raul::URI& uri)
 void
 BreadCrumbs::object_moved(const Raul::Path& old_path, const Raul::Path& new_path)
 {
-	for (std::list<BreadCrumb*>::iterator i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
-		if ((*i)->path() == old_path)
-			(*i)->set_path(new_path);
+	for (const auto& b : _breadcrumbs) {
+		if (b->path() == old_path)
+			b->set_path(new_path);
 	}
 }
 

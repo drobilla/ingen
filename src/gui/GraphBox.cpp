@@ -258,9 +258,8 @@ GraphBox::set_graph(SharedPtr<const GraphModel> graph,
 
 	_menu_view_control_window->property_sensitive() = false;
 
-	for (BlockModel::Ports::const_iterator p = graph->ports().begin();
-	     p != graph->ports().end(); ++p) {
-		if (_app->can_control(p->get())) {
+	for (const auto& p : graph->ports()) {
+		if (_app->can_control(p.get())) {
 			_menu_view_control_window->property_sensitive() = true;
 			break;
 		}
@@ -301,9 +300,8 @@ GraphBox::graph_port_removed(SharedPtr<const PortModel> port)
 	if (!(port->is_input() && _app->can_control(port.get())))
 		return;
 
-	for (BlockModel::Ports::const_iterator i = _graph->ports().begin();
-	     i != _graph->ports().end(); ++i) {
-		if ((*i)->is_input() && _app->can_control(i->get())) {
+	for (const auto& p : _graph->ports()) {
+		if (p->is_input() && _app->can_control(p.get())) {
 			_menu_view_control_window->property_sensitive() = true;
 			return;
 		}

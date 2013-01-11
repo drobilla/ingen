@@ -177,20 +177,20 @@ LoadGraphWindow::ok_clicked()
 
 	} else {
 		std::list<Glib::ustring> uri_list = get_filenames();
-		for (std::list<Glib::ustring>::iterator i = uri_list.begin(); i != uri_list.end(); ++i) {
+		for (auto u : uri_list) {
 			// Cascade
 			Raul::Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
 			x = _app->forge().make(x.get_float() + 20.0f);
 			Raul::Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
 			y = _app->forge().make(y.get_float() + 20.0f);
 
-			Raul::Symbol symbol(symbol_from_filename(*i));
+			Raul::Symbol symbol(symbol_from_filename(u));
 			if (uri_list.size() == 1 && _symbol_entry->get_text() != "")
 				symbol = Raul::Symbol::symbolify(_symbol_entry->get_text());
 
 			symbol = avoid_symbol_clash(symbol);
 
-			_app->loader()->load_graph(false, *i,
+			_app->loader()->load_graph(false, u,
 					_graph->path(), symbol, _initial_data);
 		}
 	}

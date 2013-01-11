@@ -205,13 +205,13 @@ LoadPluginWindow::on_show()
 }
 
 void
-LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> m)
+LoadPluginWindow::set_plugins(SharedPtr<const ClientStore::Plugins> plugins)
 {
 	_rows.clear();
 	_plugins_liststore->clear();
 
-	for (ClientStore::Plugins::const_iterator i = m->begin(); i != m->end(); ++i) {
-		add_plugin(i->second);
+	for (const auto& p : *plugins.get()) {
+		add_plugin(p.second);
 	}
 
 	_plugins_liststore->set_sort_column(1, Gtk::SORT_ASCENDING);
@@ -445,10 +445,8 @@ LoadPluginWindow::filter_changed()
 	size_t                   num_visible = 0;
 	const URIs&              uris        = _app->uris();
 
-	for (ClientStore::Plugins::const_iterator i = _app->store()->plugins()->begin();
-	     i != _app->store()->plugins()->end(); ++i) {
-
-		const SharedPtr<PluginModel> plugin = (*i).second;
+	for (const auto& p : *_app->store()->plugins().get()) {
+		const SharedPtr<PluginModel> plugin = p.second;
 		const Raul::Atom& name = plugin->get_property(uris.doap_name);
 
 		switch (criteria) {

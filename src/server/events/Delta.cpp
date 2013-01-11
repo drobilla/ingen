@@ -65,10 +65,8 @@ Delta::Delta(Engine&              engine,
 	, _create(create)
 {
 	if (context != Resource::Graph::DEFAULT) {
-		for (Properties::iterator i = _properties.begin();
-		     i != _properties.end();
-		     ++i) {
-			i->second.set_context(context);
+		for (auto& p : _properties) {
+			p.second.set_context(context);
 		}
 	}
 
@@ -94,8 +92,8 @@ Delta::Delta(Engine&              engine,
 
 Delta::~Delta()
 {
-	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
-		delete *i;
+	for (auto& s : _set_events)
+		delete s;
 
 	delete _create_event;
 }
@@ -149,9 +147,9 @@ Delta::pre_process()
 
 	NodeImpl* obj = dynamic_cast<NodeImpl*>(_object);
 
-	for (Properties::const_iterator p = _remove.begin(); p != _remove.end(); ++p) {
-		const Raul::URI&  key   = p->first;
-		const Raul::Atom& value = p->second;
+	for (const auto& r : _remove) {
+		const Raul::URI&  key   = r.first;
+		const Raul::Atom& value = r.second;
 		if (key == uris.ingen_controlBinding && value == uris.wildcard) {
 			PortImpl* port = dynamic_cast<PortImpl*>(_object);
 			if (port)
@@ -160,9 +158,9 @@ Delta::pre_process()
 		_object->remove_property(key, value);
 	}
 
-	for (Properties::const_iterator p = _properties.begin(); p != _properties.end(); ++p) {
-		const Raul::URI&          key   = p->first;
-		const Resource::Property& value = p->second;
+	for (const auto& p : _properties) {
+		const Raul::URI&          key   = p.first;
+		const Resource::Property& value = p.second;
 		SpecialType               op    = SpecialType::NONE;
 		if (obj) {
 			Resource& resource = *obj;
@@ -273,9 +271,9 @@ Delta::execute(ProcessContext& context)
 		_create_event->execute(context);
 	}
 
-	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i) {
-		(*i)->set_time(_time);
-		(*i)->execute(context);
+	for (auto& s : _set_events) {
+		s->set_time(_time);
+		s->execute(context);
 	}
 
 	NodeImpl* const  object = dynamic_cast<NodeImpl*>(_object);
@@ -283,9 +281,9 @@ Delta::execute(ProcessContext& context)
 	PortImpl* const  port   = dynamic_cast<PortImpl*>(_object);
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();
-	for (Properties::const_iterator p = _properties.begin(); p != _properties.end(); ++p, ++t) {
-		const Raul::URI&  key   = p->first;
-		const Raul::Atom& value = p->second;
+	for (const auto& p : _properties) {
+		const Raul::URI&  key   = p.first;
+		const Raul::Atom& value = p.second;
 		switch (*t) {
 		case SpecialType::ENABLE_BROADCAST:
 			if (port) {
@@ -346,8 +344,8 @@ Delta::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 
-	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
-		(*i)->post_process();
+	for (auto& s : _set_events)
+		s->post_process();
 
 	if (_status == Status::SUCCESS) {
 		if (_create_event) {

@@ -143,9 +143,9 @@ BlockModel::add_port(SharedPtr<PortModel> pm)
 SharedPtr<const PortModel>
 BlockModel::get_port(const Raul::Symbol& symbol) const
 {
-	for (Ports::const_iterator i = _ports.begin(); i != _ports.end(); ++i)
-		if ((*i)->symbol() == symbol)
-			return (*i);
+	for (auto p : _ports)
+		if (p->symbol() == symbol)
+			return p;
 	return SharedPtr<PortModel>();
 }
 

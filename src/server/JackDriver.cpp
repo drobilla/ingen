@@ -134,8 +134,8 @@ JackDriver::attach(const std::string& server_name,
 	jack_set_session_callback(_client, session_cb, this);
 #endif
 
-	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-		register_port(*i);
+	for (auto& p : _ports) {
+		register_port(p);
 	}
 
 	return true;
@@ -176,8 +176,8 @@ JackDriver::deactivate()
 		_is_activated = false;
 		_sem.wait();
 
-		for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-			unregister_port(*i);
+		for (auto& p : _ports) {
+			unregister_port(p);
 		}
 
 		if (_client) {
@@ -193,9 +193,9 @@ JackDriver::deactivate()
 EnginePort*
 JackDriver::get_port(const Raul::Path& path)
 {
-	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-		if (i->graph_port()->path() == path) {
-			return &*i;
+	for (auto& p : _ports) {
+		if (p.graph_port()->path() == path) {
+			return &p;
 		}
 	}
 
@@ -417,15 +417,15 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 	_engine.process_context().locate(start_of_current_cycle, nframes);
 
 	// Read input
-	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-		pre_process_port(_engine.process_context(), &*i);
+	for (auto& p : _ports) {
+		pre_process_port(_engine.process_context(), &p);
 	}
 
 	_engine.run(nframes);
 
 	// Write output
-	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
-		post_process_port(_engine.process_context(), &*i);
+	for (auto& p : _ports) {
+		post_process_port(_engine.process_context(), &p);
 	}
 
 	// Update expected transport frame for next cycle to detect changes

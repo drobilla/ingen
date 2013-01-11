@@ -152,35 +152,35 @@ Resource::type(const URIs&       uris,
 }
 
 void
-Resource::set_properties(const Properties& p)
+Resource::set_properties(const Properties& props)
 {
 	/* Note a simple loop that calls set_property is inappropriate here since
 	   it will not correctly set multiple properties in p (notably rdf:type)
 	*/
 
 	// Erase existing properties with matching keys
-	for (Properties::const_iterator i = p.begin(); i != p.end(); ++i) {
-		_properties.erase(i->first);
+	for (const auto& p : props) {
+		_properties.erase(p.first);
 	}
 
 	// Set new properties
-	add_properties(p);
+	add_properties(props);
 }
 
 void
-Resource::add_properties(const Properties& p)
+Resource::add_properties(const Properties& props)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	for (iterator i = p.begin(); i != p.end(); ++i)
-		add_property(i->first, i->second, i->second.context());
+	for (const auto& p : props)
+		add_property(p.first, p.second, p.second.context());
 }
 
 void
-Resource::remove_properties(const Properties& p)
+Resource::remove_properties(const Properties& props)
 {
 	typedef Resource::Properties::const_iterator iterator;
-	for (iterator i = p.begin(); i != p.end(); ++i)
-		remove_property(i->first, i->second);
+	for (const auto& p : props)
+		remove_property(p.first, p.second);
 }
 
 Resource::Properties
@@ -193,10 +193,10 @@ Resource::properties(Resource::Graph ctx) const
 	typedef Resource::Properties::const_iterator iterator;
 
 	Properties props;
-	for (iterator i = _properties.begin(); i != _properties.end(); ++i) {
-		if (i->second.context() == Resource::Graph::DEFAULT
-		    || i->second.context() == ctx) {
-			props.insert(make_pair(i->first, i->second));
+	for (const auto& p : _properties) {
+		if (p.second.context() == Resource::Graph::DEFAULT
+		    || p.second.context() == ctx) {
+			props.insert(make_pair(p.first, p.second));
 		}
 	}
 

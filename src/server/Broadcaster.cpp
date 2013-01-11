@@ -73,8 +73,8 @@ void
 Broadcaster::send_plugins(const BlockFactory::Plugins& plugins)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
-	for (Clients::const_iterator c = _clients.begin(); c != _clients.end(); ++c) {
-		send_plugins_to((*c).second.get(), plugins);
+	for (const auto& c : _clients) {
+		send_plugins_to(c.second.get(), plugins);
 	}
 }
 
@@ -84,8 +84,8 @@ Broadcaster::send_plugins_to(Interface*                   client,
 {
 	client->bundle_begin();
 
-	for (BlockFactory::Plugins::const_iterator i = plugins.begin(); i != plugins.end(); ++i) {
-		const PluginImpl* const plugin = i->second;
+	for (const auto& p : plugins) {
+		const PluginImpl* const plugin = p.second;
 		client->put(plugin->uri(), plugin->properties());
 	}
 

@@ -60,17 +60,15 @@ WindowFactory::WindowFactory(App& app)
 
 WindowFactory::~WindowFactory()
 {
-	for (GraphWindowMap::iterator i = _graph_windows.begin();
-	     i != _graph_windows.end(); ++i)
-		delete i->second;
+	for (const auto& w : _graph_windows)
+		delete w.second;
 }
 
 void
 WindowFactory::clear()
 {
-	for (GraphWindowMap::iterator i = _graph_windows.begin();
-	     i != _graph_windows.end(); ++i)
-		delete i->second;
+	for (const auto& w : _graph_windows)
+		delete w.second;
 
 	_graph_windows.clear();
 }
@@ -81,9 +79,8 @@ size_t
 WindowFactory::num_open_graph_windows()
 {
 	size_t ret = 0;
-	for (GraphWindowMap::iterator i = _graph_windows.begin();
-	     i != _graph_windows.end(); ++i)
-		if (i->second->is_visible())
+	for (const auto& w : _graph_windows)
+		if (w.second->is_visible())
 			++ret;
 
 	return ret;

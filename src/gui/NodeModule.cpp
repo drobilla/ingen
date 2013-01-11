@@ -113,13 +113,11 @@ NodeModule::create(GraphCanvas&                canvas,
 		? new SubgraphModule(canvas, graph)
 		: new NodeModule(canvas, block);
 
-	for (Resource::Properties::const_iterator m = block->properties().begin();
-	     m != block->properties().end(); ++m)
-		ret->property_changed(m->first, m->second);
-
-	for (BlockModel::Ports::const_iterator p = block->ports().begin();
-	     p != block->ports().end(); ++p)
-		ret->new_port_view(*p);
+	for (const auto& p : block->properties())
+		ret->property_changed(p.first, p.second);
+	
+	for (const auto& p : block->ports()) 
+		ret->new_port_view(p);
 
 	ret->set_stacked(block->polyphonic());
 
@@ -355,10 +353,9 @@ void
 NodeModule::set_control_values()
 {
 	uint32_t index = 0;
-	for (BlockModel::Ports::const_iterator p = _block->ports().begin();
-	     p != _block->ports().end(); ++p) {
-		if (app().can_control(p->get())) {
-			value_changed(index, (*p)->value());
+	for (const auto& p : _block->ports()) {
+		if (app().can_control(p.get())) {
+			value_changed(index, p->value());
 		}
 		++index;
 	}

@@ -51,10 +51,6 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-#define FOREACH_ITEM(iter, coll) \
-	for (Items::const_iterator (iter) = coll.begin(); \
-	     (iter) != coll.end(); ++(iter))
-
 using namespace std;
 
 namespace Ingen {
@@ -212,8 +208,8 @@ GraphCanvas::build_menus()
 
 	// Add known plugins to menu heirarchy
 	SharedPtr<const ClientStore::Plugins> plugins = _app.store()->plugins();
-	for (ClientStore::Plugins::const_iterator i = plugins->begin(); i != plugins->end(); ++i)
-		add_plugin(i->second);
+	for (const auto& p : *plugins.get())
+		add_plugin(p.second);
 }
 
 /** Recursively build the plugin class menu heirarchy rooted at
@@ -316,15 +312,13 @@ GraphCanvas::build()
 	}
 
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
-	for (BlockModel::Ports::const_iterator i = _graph->ports().begin();
-	     i != _graph->ports().end(); ++i) {
-		add_port(*i);
+	for (const auto& p : _graph->ports()) {
+		add_port(p);
 	}
 
 	// Create arcs
-	for (GraphModel::Arcs::const_iterator i = _graph->arcs().begin();
-	     i != _graph->arcs().end(); ++i) {
-		connection(PtrCast<ArcModel>(i->second));
+	for (const auto& a : _graph->arcs()) {
+		connection(PtrCast<ArcModel>(a.second));
 	}
 }
 
@@ -487,9 +481,8 @@ GraphCanvas::get_port_view(SharedPtr<PortModel> port)
 	} else {
 		module = dynamic_cast<NodeModule*>(_views[port->parent()]);
 		if (module) {
-			for (Ganv::Module::iterator p = module->begin();
-			     p != module->end(); ++p) {
-				GUI::Port* pv = dynamic_cast<GUI::Port*>(*p);
+			for (const auto& p : *module) {
+				GUI::Port* pv = dynamic_cast<GUI::Port*>(p);
 				if (pv && pv->model() == port)
 					return pv;
 			}
@@ -769,24 +762,24 @@ GraphCanvas::paste()
 	parser->parse_string(_app.world(), &avoider, str, base_uri,
 	                     parent, symbol);
 
-	for (Store::iterator i = clipboard.begin(); i != clipboard.end(); ++i) {
-		if (_graph->path().is_root() && i->first.is_root())
+	for (const auto& c : clipboard) {
+		if (_graph->path().is_root() && c.first.is_root())
 			continue;
 
-		Node::Properties& props = i->second->properties();
+		Node::Properties& props = c.second->properties();
 
 		Node::Properties::iterator x = props.find(uris.ingen_canvasX);
-		if (x != i->second->properties().end())
+		if (x != c.second->properties().end())
 			x->second = _app.forge().make(
 				x->second.get_float() + (20.0f * _paste_count));
 
 		Node::Properties::iterator y = props.find(uris.ingen_canvasY);
-		if (y != i->second->properties().end())
+		if (y != c.second->properties().end())
 			y->second = _app.forge().make(
 				y->second.get_float() + (20.0f * _paste_count));
 
-		builder.build(i->second);
-		_pastees.insert(i->first);
+		builder.build(c.second);
+		_pastees.insert(c.first);
 	}
 
 	builder.connect(PtrCast<const GraphModel>(clipboard.object(_graph->path())));

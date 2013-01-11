@@ -93,9 +93,8 @@ ClientStore::add_object(SharedPtr<ObjectModel> object)
 	}
 
 	typedef Resource::Properties::const_iterator Iterator;
-	for (Iterator i = object->properties().begin();
-	     i != object->properties().end(); ++i)
-		object->signal_property().emit(i->first, i->second);
+	for (auto p : object->properties())
+		object->signal_property().emit(p.first, p.second);
 }
 
 SharedPtr<ObjectModel>
@@ -217,9 +216,9 @@ ClientStore::put(const Raul::URI&            uri,
 	typedef Resource::Properties::const_iterator Iterator;
 #ifdef INGEN_CLIENT_STORE_DUMP
 	std::cerr << "Put " << uri << " {" << endl;
-	for (Iterator i = properties.begin(); i != properties.end(); ++i)
-		std::cerr << '\t' << i->first << " = " << _uris.forge.str(i->second)
-		          << " :: " << i->second.type() << endl;
+	for (auto p : properties)
+		std::cerr << '\t' << p.first << " = " << _uris.forge.str(p.second)
+		          << " :: " << p.second.type() << endl;
 	std::cerr << "}" << endl;
 #endif
 
@@ -313,14 +312,14 @@ ClientStore::delta(const Raul::URI&            uri,
 	typedef Resource::Properties::const_iterator iterator;
 #ifdef INGEN_CLIENT_STORE_DUMP
 	std::cerr << "Delta " << uri << " {" << endl;
-	for (iterator i = remove.begin(); i != remove.end(); ++i)
-		std::cerr << "    - " << i->first
-		          << " = " << _uris.forge.str(i->second)
-		          << " :: " << i->second.type() << endl;
-	for (iterator i = add.begin(); i != add.end(); ++i)
-		std::cerr << "    + " << i->first
-		          << " = " << _uris.forge.str(i->second)
-		          << " :: " << i->second.type() << endl;
+	for (auto r : remove)
+		std::cerr << "    - " << r.first
+		          << " = " << _uris.forge.str(r.second)
+		          << " :: " << r.second.type() << endl;
+	for (auto a : add)
+		std::cerr << "    + " << a.first
+		          << " = " << _uris.forge.str(a.second)
+		          << " :: " << a.second.type() << endl;
 	std::cerr << "}" << endl;
 #endif
 
@@ -459,9 +458,8 @@ ClientStore::disconnect_all(const Raul::Path& parent_graph,
 	}
 
 	const GraphModel::Arcs arcs = graph->arcs();
-	for (GraphModel::Arcs::const_iterator i = arcs.begin();
-	     i != arcs.end(); ++i) {
-		SharedPtr<ArcModel> arc = PtrCast<ArcModel>(i->second);
+	for (auto a : arcs) {
+		SharedPtr<ArcModel> arc = PtrCast<ArcModel>(a.second);
 		if (arc->tail()->parent() == object
 		    || arc->head()->parent() == object
 		    || arc->tail()->path() == path

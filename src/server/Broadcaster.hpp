@@ -75,8 +75,8 @@ public:
 
 #define BROADCAST(msg, ...) \
 	Glib::Mutex::Lock lock(_clients_mutex); \
-	for (Clients::const_iterator i = _clients.begin(); i != _clients.end(); ++i) \
-		(*i).second->msg(__VA_ARGS__)
+	for (const auto& c : _clients) \
+		c.second->msg(__VA_ARGS__)
 
 	void bundle_begin() { BROADCAST(bundle_begin); }
 	void bundle_end()   { BROADCAST(bundle_end); }

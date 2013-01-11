@@ -79,10 +79,9 @@ ObjectModel::set(SharedPtr<ObjectModel> o)
 	if (o->_parent)
 		_parent = o->_parent;
 
-	for (Properties::const_iterator v = o->properties().begin();
-	     v != o->properties().end(); ++v) {
-		Resource::set_property(v->first, v->second);
-		_signal_property.emit(v->first, v->second);
+	for (auto v : o->properties()) {
+		Resource::set_property(v.first, v.second);
+		_signal_property.emit(v.first, v.second);
 	}
 }
 

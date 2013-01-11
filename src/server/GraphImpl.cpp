@@ -68,8 +68,8 @@ GraphImpl::activate(BufferFactory& bufs)
 {
 	BlockImpl::activate(bufs);
 
-	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
-		i->activate(bufs);
+	for (auto& b : _blocks) {
+		b.activate(bufs);
 	}
 
 	assert(_activated);
@@ -81,9 +81,9 @@ GraphImpl::deactivate()
 	if (_activated) {
 		BlockImpl::deactivate();
 
-		for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
-			if (i->activated()) {
-				i->deactivate();
+		for (auto& b : _blocks) {
+			if (b.activated()) {
+				b.deactivate();
 			}
 		}
 	}
@@ -93,8 +93,8 @@ void
 GraphImpl::disable(ProcessContext& context)
 {
 	_process = false;
-	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i) {
-		i->clear_buffers();
+	for (auto& o : _outputs) {
+		o.clear_buffers();
 	}
 }
 
@@ -105,8 +105,8 @@ GraphImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 
 	// TODO: Subgraph dynamic polyphony (i.e. changing port polyphony)
 
-	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
-		i->prepare_poly(bufs, poly);
+	for (auto& b : _blocks) {
+		b.prepare_poly(bufs, poly);
 	}
 
 	_poly_pre = poly;
@@ -121,13 +121,13 @@ GraphImpl::apply_internal_poly(ProcessContext& context,
 {
 	// TODO: Subgraph dynamic polyphony (i.e. changing port polyphony)
 
-	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
-		i->apply_poly(context, maid, poly);
+	for (auto& b : _blocks) {
+		b.apply_poly(context, maid, poly);
 	}
 
-	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
-		for (uint32_t j = 0; j < i->num_ports(); ++j) {
-			PortImpl* const port = i->port_impl(j);
+	for (auto& b : _blocks) {
+		for (uint32_t j = 0; j < b.num_ports(); ++j) {
+			PortImpl* const port = b.port_impl(j);
 			if (port->is_input() && dynamic_cast<InputPort*>(port)->direct_connect())
 				port->setup_buffers(bufs, port->poly(), true);
 			port->connect_buffers();
@@ -135,8 +135,8 @@ GraphImpl::apply_internal_poly(ProcessContext& context,
 	}
 
 	const bool polyphonic = parent_graph() && (poly == parent_graph()->internal_poly_process());
-	for (Ports::iterator i = _outputs.begin(); i != _outputs.end(); ++i)
-		i->setup_buffers(bufs, polyphonic ? poly : 1, true);
+	for (auto& o : _outputs)
+		o.setup_buffers(bufs, polyphonic ? poly : 1, true);
 
 	_poly_process = poly;
 	return true;
@@ -331,10 +331,9 @@ compile_recursive(BlockImpl* n, CompiledGraph* output)
 	n->traversed(true);
 	assert(output != NULL);
 
-	for (std::list<BlockImpl*>::iterator i = n->providers().begin();
-	     i != n->providers().end(); ++i)
-		if (!(*i)->traversed())
-			compile_recursive(*i, output);
+	for (auto& p : n->providers())
+		if (!p->traversed())
+			compile_recursive(p, output);
 
 	output->push_back(CompiledBlock(n, n->providers().size(), n->dependants()));
 }
@@ -356,21 +355,21 @@ GraphImpl::compile()
 
 	CompiledGraph* const compiled_graph = new CompiledGraph();
 
-	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
-		i->traversed(false);
+	for (auto& b : _blocks) {
+		b.traversed(false);
 	}
 
-	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
+	for (auto& b : _blocks) {
 		// Either a sink or connected to our output ports:
-		if (!i->traversed() && i->dependants().empty()) {
-			compile_recursive(&*i, compiled_graph);
+		if (!b.traversed() && b.dependants().empty()) {
+			compile_recursive(&b, compiled_graph);
 		}
 	}
 
 	// Traverse any blocks we didn't hit yet
-	for (Blocks::iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
-		if (!i->traversed()) {
-			compile_recursive(&*i, compiled_graph);
+	for (auto& b : _blocks) {
+		if (!b.traversed()) {
+			compile_recursive(&b, compiled_graph);
 		}
 	}
 

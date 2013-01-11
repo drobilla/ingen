@@ -96,15 +96,15 @@ Configuration::print_usage(const std::string& program, std::ostream& os)
 	os << _shortdesc << std::endl << std::endl;
 	os << _desc << std::endl << std::endl;
 	os << "Options:" << std::endl;
-	for (Options::iterator o = _options.begin(); o != _options.end(); ++o) {
-		Option& option = o->second;
+	for (auto o : _options) {
+		Option& option = o.second;
 			os << "  ";
 		if (option.letter != '\0')
 			os << "-" << option.letter << ", ";
 		else
 			os << "    ";
 		os.width(_max_name_length + 4);
-		os << std::left << (std::string("--") + o->first);
+		os << std::left << (std::string("--") + o.first);
 		os << option.desc << std::endl;
 	}
 }
@@ -281,15 +281,15 @@ Configuration::save(URIMap&            uri_map,
 	                writer);
 
 	// Write a statement for each valid option
-	for (Options::iterator o = _options.begin(); o != _options.end(); ++o) {
-		const Raul::Atom& value = o->second.value;
-		if (!(o->second.scope & scopes) ||
-			o->second.key.empty() ||
+	for (auto o : _options) {
+		const Raul::Atom& value = o.second.value;
+		if (!(o.second.scope & scopes) ||
+			o.second.key.empty() ||
 		    !value.is_valid()) {
 			continue;
 		}
 
-		const std::string key(std::string("ingen:") + o->second.key);
+		const std::string key(std::string("ingen:") + o.second.key);
 		SerdNode pred = serd_node_from_string(
 			SERD_CURIE, (const uint8_t*)key.c_str());
 		sratom_write(sratom, &uri_map.urid_unmap_feature()->urid_unmap, 0,
@@ -312,10 +312,8 @@ Configuration::load_default(const std::string& app,
 	std::list<std::string> loaded;
 
 	const std::vector<std::string> dirs = Glib::get_system_config_dirs();
-	for (std::vector<std::string>::const_iterator i = dirs.begin();
-	     i != dirs.end();
-	     ++i) {
-		const std::string path = Glib::build_filename(*i, app, filename);
+	for (auto d : dirs) {
+		const std::string path = Glib::build_filename(d, app, filename);
 		if (load(path)) {
 			loaded.push_back(path);
 		}

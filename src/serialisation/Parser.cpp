@@ -375,9 +375,9 @@ parse_graph(Ingen::World*                     world,
 	}
 
 	// Create ports in order by index
-	for (PortRecords::const_iterator i = ports.begin(); i != ports.end(); ++i) {
-		target->put(Node::path_to_uri(i->second.first),
-		            i->second.second);
+	for (const auto& p : ports) {
+		target->put(Node::path_to_uri(p.second.first),
+		            p.second.second);
 	}
 
 	parse_arcs(world, target, model, subject_node, graph_path);
@@ -528,9 +528,9 @@ parse(Ingen::World*                     world,
 	}
 
 	// Parse and create each subject
-	for (Subjects::const_iterator i = subjects.begin(); i != subjects.end(); ++i) {
-		const Sord::Node&           s     = i->first;
-		const std::set<Sord::Node>& types = i->second;
+	for (const auto& i : subjects) {
+		const Sord::Node&           s     = i.first;
+		const std::set<Sord::Node>& types = i.second;
 		boost::optional<Raul::Path> ret;
 		const Raul::Path path(
 			relative_uri( model.base_uri().to_string(), s.to_string(), true));

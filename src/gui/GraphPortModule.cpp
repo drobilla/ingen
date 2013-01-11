@@ -75,9 +75,8 @@ GraphPortModule::create(GraphCanvas&               canvas,
 
 	ret->set_port(port);
 
-	for (Resource::Properties::const_iterator m = model->properties().begin();
-	     m != model->properties().end(); ++m)
-		ret->property_changed(m->first, m->second);
+	for (const auto& p : model->properties())
+		ret->property_changed(p.first, p.second);
 
 	return ret;
 }

@@ -249,15 +249,15 @@ Port::build_uri_menu()
 	RDFS::Objects values = RDFS::instances(world, ranges);
 
 	// Add a menu item for each such class
-	for (RDFS::Objects::const_iterator i = values.begin(); i != values.end(); ++i) {
-		if (!i->second.empty()) {
-			Glib::ustring label = world->rdf_world()->prefixes().qualify(i->first)
-				+ " - " + i->second;
+	for (const auto& v : values) {
+		if (!v.second.empty()) {
+			Glib::ustring label = world->rdf_world()->prefixes().qualify(v.first)
+				+ " - " + v.second;
 			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(label));
 			Gtk::MenuItem* menu_item = &(menu->items().back());
 			menu_item->signal_activate().connect(
 				sigc::bind(sigc::mem_fun(this, &Port::on_uri_activated),
-				           i->first));
+				           v.first));
 		}
 	}
 

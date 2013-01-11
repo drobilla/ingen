@@ -51,8 +51,8 @@ classes(World* world, URISet& types, bool super)
 	do {
 		added = 0;
 		URISet klasses;
-		for (URISet::iterator t = types.begin(); t != types.end(); ++t) {
-			LilvNode*  type    = lilv_new_uri(world->lilv_world(), t->c_str());
+		for (const auto& t : types) {
+			LilvNode*  type    = lilv_new_uri(world->lilv_world(), t.c_str());
 			LilvNodes* matches = (super)
 				? lilv_world_find_nodes(
 					world->lilv_world(), type, rdfs_subClassOf, NULL)
@@ -153,8 +153,8 @@ instances(World* world, const URISet& types)
 		world->lilv_world(), LILV_NS_RDF "type");
 
 	Objects result;
-	for (URISet::const_iterator i = types.begin(); i != types.end(); ++i) {
-		LilvNode*  type    = lilv_new_uri(world->lilv_world(), i->c_str());
+	for (const auto& t : types) {
+		LilvNode*  type    = lilv_new_uri(world->lilv_world(), t.c_str());
 		LilvNodes* objects = lilv_world_find_nodes(
 			world->lilv_world(), NULL, rdf_type, type);
 		LILV_FOREACH(nodes, o, objects) {

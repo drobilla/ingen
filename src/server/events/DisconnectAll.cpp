@@ -75,8 +75,8 @@ DisconnectAll::DisconnectAll(Engine&    engine,
 
 DisconnectAll::~DisconnectAll()
 {
-	for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i)
-		delete (*i);
+	for (auto& i : _impls)
+		delete i;
 }
 
 bool
@@ -116,28 +116,26 @@ DisconnectAll::pre_process()
 
 	// Find set of arcs to remove
 	std::set<ArcImpl*> to_remove;
-	for (Node::Arcs::const_iterator i = _parent->arcs().begin();
-	     i != _parent->arcs().end(); ++i) {
-		ArcImpl* const c = (ArcImpl*)i->second.get();
+	for (const auto& a : _parent->arcs()) {
+		ArcImpl* const arc = (ArcImpl*)a.second.get();
 		if (_block) {
-			if (c->tail()->parent_block() == _block
-			    || c->head()->parent_block() == _block) {
-				to_remove.insert(c);
+			if (arc->tail()->parent_block() == _block
+			    || arc->head()->parent_block() == _block) {
+				to_remove.insert(arc);
 			}
 		} else if (_port) {
-			if (c->tail() == _port || c->head() == _port) {
-				to_remove.insert(c);
+			if (arc->tail() == _port || arc->head() == _port) {
+				to_remove.insert(arc);
 			}
 		}
 	}
 
 	// Create disconnect events (which erases from _parent->arcs())
-	for (std::set<ArcImpl*>::const_iterator i = to_remove.begin();
-	     i != to_remove.end(); ++i) {
+	for (const auto& a : to_remove) {
 		_impls.push_back(new Disconnect::Impl(
 			                 _engine, _parent,
-			                 dynamic_cast<OutputPort*>((*i)->tail()),
-			                 dynamic_cast<InputPort*>((*i)->head())));
+			                 dynamic_cast<OutputPort*>(a->tail()),
+			                 dynamic_cast<InputPort*>(a->head())));
 	}
 
 	if (!_deleting && _parent->enabled())
@@ -150,9 +148,9 @@ void
 DisconnectAll::execute(ProcessContext& context)
 {
 	if (_status == Status::SUCCESS) {
-		for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i) {
-			(*i)->execute(context,
-			              !_deleting || ((*i)->head()->parent_block() != _block));
+		for (auto& i : _impls) {
+			i->execute(context,
+			           !_deleting || (i->head()->parent_block() != _block));
 		}
 	}
 

@@ -49,8 +49,8 @@ BlockFactory::BlockFactory(Ingen::World* world)
 
 BlockFactory::~BlockFactory()
 {
-	for (Plugins::iterator i = _plugins.begin(); i != _plugins.end(); ++i)
-		delete i->second;
+	for (auto& p : _plugins)
+		delete p.second;
 
 	_plugins.clear();
 }
@@ -162,8 +162,8 @@ BlockFactory::load_lv2_plugins()
 		for (uint32_t p = 0; p < n_ports; ++p) {
 			const LilvPort* port = lilv_plugin_get_port_by_index(lv2_plug, p);
 			supported = false;
-			for (Types::const_iterator t = types.begin(); t != types.end(); ++t) {
-				if (lilv_port_is_a(lv2_plug, port, t->get())) {
+			for (const auto& t : types) {
+				if (lilv_port_is_a(lv2_plug, port, t.get())) {
 					supported = true;
 					break;
 				}

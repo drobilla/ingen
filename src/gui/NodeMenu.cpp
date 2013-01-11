@@ -151,13 +151,13 @@ NodeMenu::on_menu_randomize()
 	_app->interface()->bundle_begin();
 
 	const BlockModel* const bm = (const BlockModel*)_object.get();
-	for (BlockModel::Ports::const_iterator i = bm->ports().begin(); i != bm->ports().end(); ++i) {
-		if ((*i)->is_input() && _app->can_control(i->get())) {
+	for (const auto& p : bm->ports()) {
+		if (p->is_input() && _app->can_control(p.get())) {
 			float min = 0.0f, max = 1.0f;
-			bm->port_value_range(*i, min, max, _app->sample_rate());
+			bm->port_value_range(p, min, max, _app->sample_rate());
 			const float val = g_random_double_range(0.0, 1.0) * (max - min) + min;
 			_app->interface()->set_property(
-				(*i)->uri(),
+				p->uri(),
 				_app->uris().ingen_value,
 				_app->forge().make(val));
 		}
@@ -225,8 +225,8 @@ bool
 NodeMenu::has_control_inputs()
 {
 	const BlockModel* const bm = (const BlockModel*)_object.get();
-	for (BlockModel::Ports::const_iterator i = bm->ports().begin(); i != bm->ports().end(); ++i)
-		if ((*i)->is_input() && (*i)->is_numeric())
+	for (const auto& p : bm->ports())
+		if (p->is_input() && p->is_numeric())
 			return true;
 
 	return false;
