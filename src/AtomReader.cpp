@@ -69,7 +69,7 @@ AtomReader::get_props(const LV2_Atom_Object*       obj,
 	LV2_ATOM_OBJECT_FOREACH(obj, p) {
 		Raul::Atom val;
 		get_atom(&p->value, val);
-		props.insert(std::make_pair(_map.unmap_uri(p->key), val));
+		props.insert(std::make_pair(Raul::URI(_map.unmap_uri(p->key)), val));
 	}
 }
 

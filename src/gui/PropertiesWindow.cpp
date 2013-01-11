@@ -430,7 +430,8 @@ PropertiesWindow::add_clicked()
 	Raul::Atom value = _app->forge().alloc_uri(value_uri);
 
 	Resource::Properties properties;
-	properties.insert(make_pair(key_uri.c_str(), value));
+	properties.insert(make_pair(Raul::URI(key_uri.c_str()),
+	                            Resource::Property(value)));
 	_app->interface()->put(_model->uri(), properties);
 }
 

@@ -394,8 +394,10 @@ NodeModule::store_location(double ax, double ay)
 	    y != _block->get_property(uris.ingen_canvasY))
 	{
 		Resource::Properties remove;
-		remove.insert(make_pair(uris.ingen_canvasX, uris.wildcard));
-		remove.insert(make_pair(uris.ingen_canvasY, uris.wildcard));
+		remove.insert(make_pair(uris.ingen_canvasX,
+		                        Resource::Property(uris.wildcard)));
+		remove.insert(make_pair(uris.ingen_canvasY,
+		                        Resource::Property(uris.wildcard)));
 		Resource::Properties add;
 		add.insert(make_pair(uris.ingen_canvasX, x));
 		add.insert(make_pair(uris.ingen_canvasY, y));

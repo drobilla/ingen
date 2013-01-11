@@ -102,7 +102,7 @@ ObjectMenu::on_menu_unlearn()
 	Resource::Properties remove;
 	remove.insert(std::make_pair(
 			_app->uris().ingen_controlBinding,
-			_app->uris().wildcard));
+			Resource::Property(_app->uris().wildcard)));
 	_app->interface()->delta(_object->uri(), remove, Resource::Properties());
 }
 

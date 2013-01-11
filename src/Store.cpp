@@ -29,7 +29,7 @@ Store::add(Node* o)
 		return;
 	}
 
-	insert(make_pair(o->path(), o));
+	insert(make_pair(o->path(), SharedPtr<Node>(o)));
 
 	for (uint32_t i = 0; i < o->num_ports(); ++i) {
 		add(o->port(i));

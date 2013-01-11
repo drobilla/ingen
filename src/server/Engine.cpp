@@ -213,19 +213,24 @@ Engine::activate()
 		ProcessContext context(*this);
 
 		Resource::Properties control_properties;
-		control_properties.insert(make_pair(uris.lv2_name,
-		                                    forge.alloc("Control")));
-		control_properties.insert(make_pair(uris.rdf_type,
-		                                    uris.atom_AtomPort));
-		control_properties.insert(make_pair(uris.atom_bufferType,
-		                                    uris.atom_Sequence));
+		control_properties.insert(
+			make_pair(uris.lv2_name, forge.alloc("Control")));
+		control_properties.insert(
+			make_pair(uris.rdf_type,
+			          Resource::Property(uris.atom_AtomPort)));
+		control_properties.insert(
+			make_pair(uris.atom_bufferType,
+			          Resource::Property(uris.atom_Sequence)));
 
 		// Add control input
 		Resource::Properties in_properties(control_properties);
-		in_properties.insert(make_pair(uris.rdf_type, uris.lv2_InputPort));
+		in_properties.insert(
+			make_pair(uris.rdf_type,
+			          Resource::Property(uris.lv2_InputPort)));
 		in_properties.insert(make_pair(uris.lv2_index, forge.make(0)));
-		in_properties.insert(make_pair(uris.lv2_portProperty,
-		                               uris.lv2_connectionOptional));
+		in_properties.insert(
+			make_pair(uris.lv2_portProperty,
+			          Resource::Property(uris.lv2_connectionOptional)));
 		in_properties.insert(
 			make_pair(uris.ingen_canvasX,
 			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
@@ -241,10 +246,13 @@ Engine::activate()
 
 		// Add control out
 		Resource::Properties out_properties(control_properties);
-		out_properties.insert(make_pair(uris.rdf_type, uris.lv2_OutputPort));
+		out_properties.insert(
+			make_pair(uris.rdf_type,
+			          Resource::Property(uris.lv2_OutputPort)));
 		out_properties.insert(make_pair(uris.lv2_index, forge.make(1)));
-		in_properties.insert(make_pair(uris.lv2_portProperty,
-		                               uris.lv2_connectionOptional));
+		in_properties.insert(
+			make_pair(uris.lv2_portProperty,
+			          Resource::Property(uris.lv2_connectionOptional)));
 		out_properties.insert(
 			make_pair(uris.ingen_canvasX,
 			          Resource::Property(forge.make(128.0f), Resource::EXTERNAL)));

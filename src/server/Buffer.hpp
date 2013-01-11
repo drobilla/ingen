@@ -155,8 +155,8 @@ protected:
 private:
 	void recycle();
 
-	Buffer*         _next; ///< Intrusive linked list for BufferFactory
-	Raul::AtomicInt _refs; ///< Intrusive reference count
+	Buffer*         _next;  ///< Intrusive linked list for BufferFactory
+	Raul::AtomicInt _refs;  ///< Intrusive reference count
 };
 
 } // namespace Server

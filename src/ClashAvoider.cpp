@@ -104,7 +104,8 @@ ClashAvoider::map_path(const Raul::Path& in)
 						name = "_";
 					Raul::Symbol sym(name);
 					string str = ss.str();
-					InsertRecord i = _symbol_map.insert(make_pair(in, str));
+					InsertRecord i = _symbol_map.insert(
+						make_pair(in, Raul::Path(str)));
 					offset = _store.child_name_offset(in.parent(), sym, false);
 					_offsets.insert(make_pair(base_path, offset));
 					return i.first->second;

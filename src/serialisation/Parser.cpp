@@ -123,7 +123,8 @@ get_properties(Ingen::World*     world,
 				atomm = world->forge().alloc(
 					atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 			}
-			props.insert(make_pair(i.get_predicate().to_string(), atomm));
+			props.insert(make_pair(Raul::URI(i.get_predicate().to_string()),
+			                       atomm));
 		}
 	}
 

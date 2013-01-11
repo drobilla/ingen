@@ -399,7 +399,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		Raul::Path path = _graph->path().child(Raul::Symbol::symbolify(name));
 		Resource::Properties props = _initial_data;
 		props.insert(make_pair(uris.rdf_type,
-		                       uris.ingen_Block));
+		                       Resource::Property(uris.ingen_Block)));
 		props.insert(make_pair(uris.ingen_prototype,
 		                       _app->forge().alloc_uri(plugin->uri())));
 		props.insert(make_pair(uris.ingen_polyphonic,

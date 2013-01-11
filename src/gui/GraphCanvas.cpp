@@ -741,7 +741,7 @@ GraphCanvas::paste()
 	string created = "/";
 	Resource::Properties props;
 	props.insert(make_pair(uris.rdf_type,
-	                       uris.ingen_Graph));
+	                       Resource::Property(uris.ingen_Graph)));
 	props.insert(make_pair(uris.ingen_polyphony,
 	                       _app.forge().make(int32_t(_graph->internal_poly()))));
 	clipboard.put(Node::root_uri(), props);
@@ -830,10 +830,12 @@ GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	                       _app.forge().alloc_uri(type)));
 	if (type == uris.atom_AtomPort) {
 		props.insert(make_pair(uris.atom_bufferType,
-		                       uris.atom_Sequence));
+		                       Resource::Property(uris.atom_Sequence)));
 	}
 	props.insert(make_pair(uris.rdf_type,
-	                       is_output ? uris.lv2_OutputPort : uris.lv2_InputPort));
+	                       Resource::Property(is_output
+	                                          ? uris.lv2_OutputPort
+	                                          : uris.lv2_InputPort)));
 	props.insert(make_pair(uris.lv2_index,
 	                       _app.forge().make(int32_t(_graph->num_ports()))));
 	props.insert(make_pair(uris.lv2_name,
@@ -861,7 +863,8 @@ GraphCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
 
 	// FIXME: polyphony?
 	Node::Properties props = get_initial_data();
-	props.insert(make_pair(uris.rdf_type, uris.ingen_Block));
+	props.insert(make_pair(uris.rdf_type,
+	                       Resource::Property(uris.ingen_Block)));
 	props.insert(make_pair(uris.ingen_prototype,
 	                       uris.forge.alloc_uri(plugin->uri())));
 	_app.interface()->put(Node::path_to_uri(path), props);
