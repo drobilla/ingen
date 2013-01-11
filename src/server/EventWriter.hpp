@@ -58,7 +58,7 @@ public:
 
 	virtual void put(const Raul::URI&            path,
 	                 const Resource::Properties& properties,
-	                 const Resource::Graph       g=Resource::DEFAULT);
+	                 const Resource::Graph       g=Resource::Graph::DEFAULT);
 
 	virtual void delta(const Raul::URI&            path,
 	                   const Resource::Properties& remove,

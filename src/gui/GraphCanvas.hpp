@@ -83,7 +83,7 @@ public:
 	bool on_event(GdkEvent* event);
 
 private:
-	enum ControlType { NUMBER, BUTTON };
+	enum class ControlType { NUMBER, BUTTON };
 	void generate_port_name(
 		const std::string& sym_base,  std::string& sym,
 		const std::string& name_base, std::string& name);
@@ -114,7 +114,7 @@ private:
 			const LV2Children&       children,
 			std::set<const char*>&   ancestors);
 
-	Node::Properties get_initial_data(Resource::Graph ctx=Resource::DEFAULT);
+	Node::Properties get_initial_data(Resource::Graph ctx=Resource::Graph::DEFAULT);
 
 	Ganv::Port* get_port_view(SharedPtr<Client::PortModel> port);
 

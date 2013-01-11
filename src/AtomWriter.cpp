@@ -284,7 +284,7 @@ AtomWriter::response(int32_t id, Status status, const std::string& subject)
 		lv2_atom_forge_uri(&_forge, subject.c_str(), subject.length());
 	}
 	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
-	lv2_atom_forge_int(&_forge, status);
+	lv2_atom_forge_int(&_forge, static_cast<int>(status));
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }

@@ -59,7 +59,7 @@ CreateBlock::pre_process()
 	typedef Resource::Properties::const_iterator iterator;
 
 	if (_path.is_root()) {
-		return Event::pre_process_done(BAD_URI, _path);
+		return Event::pre_process_done(Status::BAD_URI, _path);
 	}
 
 	std::string plugin_uri_str;
@@ -67,22 +67,23 @@ CreateBlock::pre_process()
 	if (t != _properties.end() && t->second.type() == uris.forge.URI) {
 		plugin_uri_str = t->second.get_uri();
 	} else {
-		return Event::pre_process_done(BAD_REQUEST);
+		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
 
 	if (_engine.store()->get(_path)) {
-		return Event::pre_process_done(EXISTS, _path);
+		return Event::pre_process_done(Status::EXISTS, _path);
 	}
 
 	_graph = dynamic_cast<GraphImpl*>(_engine.store()->get(_path.parent()));
 	if (!_graph) {
-		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
+		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _path.parent());
 	}
 
 	const Raul::URI plugin_uri(plugin_uri_str);
 	PluginImpl* plugin = _engine.block_factory()->plugin(plugin_uri);
 	if (!plugin) {
-		return Event::pre_process_done(PLUGIN_NOT_FOUND, Raul::URI(plugin_uri));
+		return Event::pre_process_done(Status::PLUGIN_NOT_FOUND,
+		                               Raul::URI(plugin_uri));
 	}
 
 	const iterator p = _properties.find(uris.ingen_polyphonic);
@@ -96,7 +97,7 @@ CreateBlock::pre_process()
 	                                  polyphonic,
 	                                  _graph,
 	                                  _engine))) {
-		return Event::pre_process_done(CREATION_FAILED, _path);
+		return Event::pre_process_done(Status::CREATION_FAILED, _path);
 	}
 
 	_block->properties().insert(_properties.begin(), _properties.end());
@@ -122,7 +123,7 @@ CreateBlock::pre_process()
 		_update.push_back(std::make_pair(port->uri(), pprops));
 	}
 
-	return Event::pre_process_done(SUCCESS);
+	return Event::pre_process_done(Status::SUCCESS);
 }
 
 void
@@ -138,7 +139,7 @@ void
 CreateBlock::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond()) {
+	if (respond() == Status::SUCCESS) {
 		for (Update::const_iterator i = _update.begin(); i != _update.end(); ++i) {
 			_engine.broadcaster()->put(i->first, i->second);
 		}

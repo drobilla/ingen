@@ -59,7 +59,7 @@ ConnectWindow::ConnectWindow(BaseObjectType*                   cobject,
 	, _disconnect_button(NULL)
 	, _connect_button(NULL)
 	, _quit_button(NULL)
-	, _mode(CONNECT_REMOTE)
+	, _mode(Mode::CONNECT_REMOTE)
 	, _ping_id(-1)
 	, _attached(false)
 	, _finished_connecting(false)
@@ -75,7 +75,7 @@ ConnectWindow::start(App& app, Ingen::World* world)
 	_app = &app;
 
 	if (world->engine()) {
-		_mode = INTERNAL;
+		_mode = Mode::INTERNAL;
 		if (_widgets_loaded) {
 			_internal_radio->set_active(true);
 		}
@@ -118,9 +118,9 @@ ConnectWindow::set_connected_to(SharedPtr<Ingen::Interface> engine)
 		_server_radio->set_sensitive(true);
 		_launch_radio->set_sensitive(true);
 
-		if (_mode == CONNECT_REMOTE )
+		if (_mode == Mode::CONNECT_REMOTE)
 			_url_entry->set_sensitive(true);
-		else if (_mode == LAUNCH_REMOTE )
+		else if (_mode == Mode::LAUNCH_REMOTE)
 			_port_spinbutton->set_sensitive(true);
 
 		_progress_label->set_text(string("Disconnected"));
@@ -161,7 +161,7 @@ ConnectWindow::connect(bool existing)
 	Ingen::World* world = _app->world();
 
 #ifdef HAVE_SOCKET
-	if (_mode == CONNECT_REMOTE) {
+	if (_mode == Mode::CONNECT_REMOTE) {
 		Raul::URI uri("unix:///tmp/ingen.sock");
 		if (_widgets_loaded) {
 			const std::string& user_uri = _url_entry->get_text();
@@ -190,7 +190,7 @@ ConnectWindow::connect(bool existing)
 		Glib::signal_timeout().connect(
 			sigc::mem_fun(this, &ConnectWindow::gtk_callback), 40);
 		return;
-	} else if (_mode == LAUNCH_REMOTE) {
+	} else if (_mode == Mode::LAUNCH_REMOTE) {
 		int port = _port_spinbutton->get_value_as_int();
 		std::stringstream ss;
 		ss << port;
@@ -214,7 +214,7 @@ ConnectWindow::connect(bool existing)
 		return;
 	}
 #endif
-	if (_mode == INTERNAL) {
+	if (_mode == Mode::INTERNAL) {
 		if (!world->engine()) {
 			world->load_module("server");
 			world->load_module("jack");
@@ -340,7 +340,7 @@ ConnectWindow::server_toggled()
 {
 	_url_entry->set_sensitive(true);
 	_port_spinbutton->set_sensitive(false);
-	_mode = CONNECT_REMOTE;
+	_mode = Mode::CONNECT_REMOTE;
 }
 
 void
@@ -348,7 +348,7 @@ ConnectWindow::launch_toggled()
 {
 	_url_entry->set_sensitive(false);
 	_port_spinbutton->set_sensitive(true);
-	_mode = LAUNCH_REMOTE;
+	_mode = Mode::LAUNCH_REMOTE;
 }
 
 void
@@ -356,7 +356,7 @@ ConnectWindow::internal_toggled()
 {
 	_url_entry->set_sensitive(false);
 	_port_spinbutton->set_sensitive(false);
-	_mode = INTERNAL;
+	_mode = Mode::INTERNAL;
 }
 
 bool

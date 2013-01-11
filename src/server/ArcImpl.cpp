@@ -78,28 +78,28 @@ ArcImpl::can_connect(const OutputPort* src, const InputPort* dst)
 	const Ingen::URIs& uris = src->bufs().uris();
 	return (
 		// (Audio | Control | CV) => (Audio | Control | CV)
-		(   (src->is_a(PortType::CONTROL) ||
-		     src->is_a(PortType::AUDIO) ||
-		     src->is_a(PortType::CV))
-		    && (dst->is_a(PortType::CONTROL)
-		        || dst->is_a(PortType::AUDIO)
-		        || dst->is_a(PortType::CV)))
+		(   (src->is_a(PortType::ID::CONTROL) ||
+		     src->is_a(PortType::ID::AUDIO) ||
+		     src->is_a(PortType::ID::CV))
+		    && (dst->is_a(PortType::ID::CONTROL)
+		        || dst->is_a(PortType::ID::AUDIO)
+		        || dst->is_a(PortType::ID::CV)))
 
 		// Equal types
 		|| (src->type() == dst->type() &&
 		    src->buffer_type() == dst->buffer_type())
 
 		// Control => atom:Float Value
-		|| (src->is_a(PortType::CONTROL) && dst->supports(uris.atom_Float))
+		|| (src->is_a(PortType::ID::CONTROL) && dst->supports(uris.atom_Float))
 
 		// Audio => atom:Sound Value
-		|| (src->is_a(PortType::AUDIO) && dst->supports(uris.atom_Sound))
+		|| (src->is_a(PortType::ID::AUDIO) && dst->supports(uris.atom_Sound))
 
 		// atom:Float Value => Control
-		|| (src->supports(uris.atom_Float) && dst->is_a(PortType::CONTROL))
+		|| (src->supports(uris.atom_Float) && dst->is_a(PortType::ID::CONTROL))
 
 		// atom:Sound Value => Audio
-		|| (src->supports(uris.atom_Sound) && dst->is_a(PortType::AUDIO)));
+		|| (src->supports(uris.atom_Sound) && dst->is_a(PortType::ID::AUDIO)));
 }
 
 } // namespace Server

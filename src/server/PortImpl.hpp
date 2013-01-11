@@ -45,7 +45,7 @@ class PortImpl : public NodeImpl
 public:
 	~PortImpl();
 
-	virtual GraphType graph_type() const { return PORT; }
+	virtual GraphType graph_type() const { return GraphType::PORT; }
 
 	/** A port's parent is always a block, so static cast should be safe */
 	BlockImpl* parent_block() const { return (BlockImpl*)_parent; }
@@ -181,9 +181,9 @@ protected:
 	         size_t              buffer_size);
 
 	struct SetState {
-		enum State { SET, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
+		enum class State { SET, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
 
-		SetState() : state(SET), value(0), time(0) {}
+		SetState() : state(State::SET), value(0), time(0) {}
 
 		State     state;  ///< State of buffer for setting control value
 		Sample    value;  ///< Value currently being set

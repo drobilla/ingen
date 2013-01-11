@@ -38,16 +38,16 @@ namespace Socket {
 
 Socket::Socket(Type t)
 	: _type(t)
-	, _uri(t == UNIX ? "unix:" : "tcp:")
+	, _uri(t == Type::UNIX ? "unix:" : "tcp:")
 	, _addr(NULL)
 	, _addr_len(0)
 	, _sock(-1)
 {
 	switch (t) {
-	case UNIX:
+	case Type::UNIX:
 		_sock = socket(AF_UNIX, SOCK_STREAM, 0);
 		break;
-	case TCP:
+	case Type::TCP:
 		_sock = socket(AF_INET, SOCK_STREAM, 0);
 		break;
 	}
@@ -76,7 +76,7 @@ bool
 Socket::set_addr(const Raul::URI& uri)
 {
 	free(_addr);
-	if (_type == UNIX && uri.substr(0, strlen("unix://")) == "unix://") {
+	if (_type == Type::UNIX && uri.substr(0, strlen("unix://")) == "unix://") {
 		const std::string   path  = uri.substr(strlen("unix://"));
 		struct sockaddr_un* uaddr = (struct sockaddr_un*)calloc(
 			1, sizeof(struct sockaddr_un));
@@ -86,7 +86,7 @@ Socket::set_addr(const Raul::URI& uri)
 		_addr     = (sockaddr*)uaddr;
 		_addr_len = sizeof(struct sockaddr_un);
 		return true;
-	} else if (_type == TCP && uri.find("://") != std::string::npos) {
+	} else if (_type == Type::TCP && uri.find("://") != std::string::npos) {
 		const std::string authority = uri.substr(uri.find("://") + 3);
 		const size_t      port_sep  = authority.find(':');
 		if (port_sep == std::string::npos) {

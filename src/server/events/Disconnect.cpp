@@ -117,17 +117,17 @@ Disconnect::pre_process()
 	if (_tail_path.parent().parent() != _head_path.parent().parent()
 	    && _tail_path.parent() != _head_path.parent().parent()
 	    && _tail_path.parent().parent() != _head_path.parent()) {
-		return Event::pre_process_done(PARENT_DIFFERS, _head_path);
+		return Event::pre_process_done(Status::PARENT_DIFFERS, _head_path);
 	}
 
 	PortImpl* tail = dynamic_cast<PortImpl*>(_engine.store()->get(_tail_path));
 	if (!tail) {
-		return Event::pre_process_done(PORT_NOT_FOUND, _tail_path);
+		return Event::pre_process_done(Status::PORT_NOT_FOUND, _tail_path);
 	}
 
 	PortImpl* head = dynamic_cast<PortImpl*>(_engine.store()->get(_head_path));
 	if (!head) {
-		return Event::pre_process_done(PORT_NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::PORT_NOT_FOUND, _head_path);
 	}
 
 	BlockImpl* const src_block = tail->parent_block();
@@ -150,13 +150,13 @@ Disconnect::pre_process()
 	}
 
 	if (!_graph) {
-		return Event::pre_process_done(INTERNAL_ERROR, _head_path);
+		return Event::pre_process_done(Status::INTERNAL_ERROR, _head_path);
 	} else if (!_graph->has_arc(tail, head)) {
-		return Event::pre_process_done(NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::NOT_FOUND, _head_path);
 	}
 
 	if (src_block == NULL || dst_block == NULL) {
-		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _head_path);
 	}
 
 	_impl = new Impl(_engine,
@@ -167,7 +167,7 @@ Disconnect::pre_process()
 	if (_graph->enabled())
 		_compiled_graph = _graph->compile();
 
-	return Event::pre_process_done(SUCCESS);
+	return Event::pre_process_done(Status::SUCCESS);
 }
 
 bool
@@ -198,9 +198,9 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 void
 Disconnect::execute(ProcessContext& context)
 {
-	if (_status == SUCCESS) {
+	if (_status == Status::SUCCESS) {
 		if (!_impl->execute(context, true)) {
-			_status = NOT_FOUND;
+			_status = Status::NOT_FOUND;
 			return;
 		}
 
@@ -212,7 +212,7 @@ void
 Disconnect::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond()) {
+	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->disconnect(_tail_path, _head_path);
 	}
 

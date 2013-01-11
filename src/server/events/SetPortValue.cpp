@@ -54,7 +54,7 @@ bool
 SetPortValue::pre_process()
 {
 	if (_port->is_output()) {
-		return Event::pre_process_done(DIRECTION_MISMATCH, _port->path());
+		return Event::pre_process_done(Status::DIRECTION_MISMATCH, _port->path());
 	}
 
 	// Set value metadata (does not affect buffers)
@@ -63,7 +63,7 @@ SetPortValue::pre_process()
 
 	_binding = _engine.control_bindings()->port_binding(_port);
 
-	return Event::pre_process_done(SUCCESS);
+	return Event::pre_process_done(Status::SUCCESS);
 }
 
 void
@@ -71,7 +71,7 @@ SetPortValue::execute(ProcessContext& context)
 {
 	assert(_time >= context.start() && _time <= context.end());
 
-	if (_port->parent_block()->context() == Context::MESSAGE)
+	if (_port->parent_block()->context() == Context::ID::MESSAGE)
 		return;
 
 	apply(context);
@@ -81,7 +81,7 @@ SetPortValue::execute(ProcessContext& context)
 void
 SetPortValue::apply(Context& context)
 {
-	if (_status) {
+	if (_status != Status::SUCCESS) {
 		return;
 	}
 
@@ -92,7 +92,7 @@ SetPortValue::apply(Context& context)
 		if (_value.type() == uris.forge.Float) {
 			_port->set_control_value(context, _time, _value.get_float());
 		} else {
-			_status = TYPE_MISMATCH;
+			_status = Status::TYPE_MISMATCH;
 		}
 	} else if (buf->type() == uris.atom_Sequence) {
 		buf->prepare_write(context);  // FIXME: incorrect
@@ -102,12 +102,12 @@ SetPortValue::apply(Context& context)
 		                      (const uint8_t*)_value.get_body())) {
 			_port->raise_set_by_user_flag();
 		} else {
-			_status = NO_SPACE;
+			_status = Status::NO_SPACE;
 		}
 	} else if (buf->type() == uris.atom_URID) {
 		((LV2_Atom_URID*)buf->atom())->body = _value.get_int32();
 	} else {
-		_status = BAD_VALUE_TYPE;
+		_status = Status::BAD_VALUE_TYPE;
 	}
 }
 
@@ -115,7 +115,7 @@ void
 SetPortValue::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond()) {
+	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->set_property(
 			_port->uri(),
 			_engine.world()->uris().ingen_value,

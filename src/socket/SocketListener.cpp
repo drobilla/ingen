@@ -38,8 +38,8 @@ namespace Socket {
 SocketListener::SocketListener(Ingen::World& world)
 	: Raul::Thread()
 	, _world(world)
-	, _unix_sock(Socket::UNIX)
-	, _net_sock(Socket::TCP)
+	, _unix_sock(Socket::Type::UNIX)
+	, _net_sock(Socket::Type::TCP)
 {
 	// Create UNIX socket
 	_unix_path = world.conf().option("socket").get_string();

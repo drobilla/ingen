@@ -72,9 +72,9 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 		const LV2_Atom_Object_Body* obj = (const LV2_Atom_Object_Body*)
 			binding.get_body();
 		if (obj->otype == uris.midi_Bender) {
-			key = Key(MIDI_BENDER);
+			key = Key(Type::MIDI_BENDER);
 		} else if (obj->otype == uris.midi_ChannelPressure) {
-			key = Key(MIDI_CHANNEL_PRESSURE);
+			key = Key(Type::MIDI_CHANNEL_PRESSURE);
 		} else if (obj->otype == uris.midi_Controller) {
 			lv2_atom_object_body_get(
 				binding.size(), obj, (LV2_URID)uris.midi_controllerNumber, &num, NULL);
@@ -83,7 +83,7 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 			} else if (num->type != uris.atom_Int) {
 				_engine.log().error("Controller number not an integer\n");
 			} else {
-				key = Key(MIDI_CC, ((LV2_Atom_Int*)num)->body);
+				key = Key(Type::MIDI_CC, ((LV2_Atom_Int*)num)->body);
 			}
 		} else if (obj->otype == uris.midi_NoteOn) {
 			lv2_atom_object_body_get(
@@ -93,7 +93,7 @@ ControlBindings::binding_key(const Raul::Atom& binding) const
 			} else if (num->type != uris.atom_Int) {
 				_engine.log().error("Note number not an integer\n");
 			} else {
-				key = Key(MIDI_NOTE, ((LV2_Atom_Int*)num)->body);
+				key = Key(Type::MIDI_NOTE, ((LV2_Atom_Int*)num)->body);
 			}
 		}
 	} else if (binding.type()) {
@@ -108,16 +108,16 @@ ControlBindings::midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& val
 	switch (lv2_midi_message_type(buf)) {
 	case LV2_MIDI_MSG_CONTROLLER:
 		value = static_cast<const int8_t>(buf[2]);
-		return Key(MIDI_CC, static_cast<const int8_t>(buf[1]));
+		return Key(Type::MIDI_CC, static_cast<const int8_t>(buf[1]));
 	case LV2_MIDI_MSG_BENDER:
 		value = (static_cast<int8_t>(buf[2]) << 7) + static_cast<int8_t>(buf[1]);
-		return Key(MIDI_BENDER);
+		return Key(Type::MIDI_BENDER);
 	case LV2_MIDI_MSG_CHANNEL_PRESSURE:
 		value = static_cast<const int8_t>(buf[1]);
-		return Key(MIDI_CHANNEL_PRESSURE);
+		return Key(Type::MIDI_CHANNEL_PRESSURE);
 	case LV2_MIDI_MSG_NOTE_ON:
 		value = 1.0f;
-		return Key(MIDI_NOTE, static_cast<const int8_t>(buf[1]));
+		return Key(Type::MIDI_NOTE, static_cast<const int8_t>(buf[1]));
 	default:
 		return Key();
 	}
@@ -148,24 +148,24 @@ ControlBindings::port_value_changed(ProcessContext&   context,
 		uint16_t size  = 0;
 		uint8_t  buf[4];
 		switch (key.type) {
-		case MIDI_CC:
+		case Type::MIDI_CC:
 			size = 3;
 			buf[0] = LV2_MIDI_MSG_CONTROLLER;
 			buf[1] = key.num;
 			buf[2] = static_cast<int8_t>(value);
 			break;
-		case MIDI_CHANNEL_PRESSURE:
+		case Type::MIDI_CHANNEL_PRESSURE:
 			size = 2;
 			buf[0] = LV2_MIDI_MSG_CHANNEL_PRESSURE;
 			buf[1] = static_cast<int8_t>(value);
 			break;
-		case MIDI_BENDER:
+		case Type::MIDI_BENDER:
 			size = 3;
 			buf[0] = LV2_MIDI_MSG_BENDER;
 			buf[1] = (value & 0x007F);
 			buf[2] = (value & 0x7F00) >> 7;
 			break;
-		case MIDI_NOTE:
+		case Type::MIDI_NOTE:
 			size = 3;
 			if (value == 1) {
 				buf[0] = LV2_MIDI_MSG_NOTE_ON;
@@ -210,14 +210,14 @@ ControlBindings::control_to_port_value(ProcessContext& context,
 {
 	float normal = 0.0f;
 	switch (type) {
-	case MIDI_CC:
-	case MIDI_CHANNEL_PRESSURE:
+	case Type::MIDI_CC:
+	case Type::MIDI_CHANNEL_PRESSURE:
 		normal = (float)value / 127.0f;
 		break;
-	case MIDI_BENDER:
+	case Type::MIDI_BENDER:
 		normal = (float)value / 16383.0f;
 		break;
-	case MIDI_NOTE:
+	case Type::MIDI_NOTE:
 		normal = (value == 0.0f) ? 0.0f : 1.0f;
 		break;
 	default:
@@ -262,12 +262,12 @@ ControlBindings::port_value_to_control(ProcessContext&   context,
 	}
 
 	switch (type) {
-	case MIDI_CC:
-	case MIDI_CHANNEL_PRESSURE:
+	case Type::MIDI_CC:
+	case Type::MIDI_CHANNEL_PRESSURE:
 		return lrintf(normal * 127.0f);
-	case MIDI_BENDER:
+	case Type::MIDI_BENDER:
 		return lrintf(normal * 16383.0f);
-	case MIDI_NOTE:
+	case Type::MIDI_NOTE:
 		return (value > 0.0f) ? 1 : 0;
 	default:
 		return 0;
@@ -282,25 +282,25 @@ forge_binding(const URIs&           uris,
 {
 	LV2_Atom_Forge_Frame frame;
 	switch (binding_type) {
-	case ControlBindings::MIDI_CC:
+	case ControlBindings::Type::MIDI_CC:
 		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_Controller);
 		lv2_atom_forge_property_head(forge, uris.midi_controllerNumber, 0);
 		lv2_atom_forge_int(forge, value);
 		break;
-	case ControlBindings::MIDI_BENDER:
+	case ControlBindings::Type::MIDI_BENDER:
 		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_Bender);
 		break;
-	case ControlBindings::MIDI_CHANNEL_PRESSURE:
+	case ControlBindings::Type::MIDI_CHANNEL_PRESSURE:
 		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_ChannelPressure);
 		break;
-	case ControlBindings::MIDI_NOTE:
+	case ControlBindings::Type::MIDI_NOTE:
 		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_NoteOn);
 		lv2_atom_forge_property_head(forge, uris.midi_noteNumber, 0);
 		lv2_atom_forge_int(forge, value);
 		break;
-	case ControlBindings::MIDI_RPN: // TODO
-	case ControlBindings::MIDI_NRPN: // TODO
-	case ControlBindings::NULL_CONTROL:
+	case ControlBindings::Type::MIDI_RPN: // TODO
+	case ControlBindings::Type::MIDI_NRPN: // TODO
+	case ControlBindings::Type::NULL_CONTROL:
 		break;
 	}
 }
@@ -330,7 +330,7 @@ ControlBindings::bind(ProcessContext& context, Key key)
 {
 	const Ingen::URIs& uris = context.engine().world()->uris();
 	assert(_learn_port);
-	if (key.type == MIDI_NOTE) {
+	if (key.type == Type::MIDI_NOTE) {
 		if (!_learn_port->is_toggled())
 			return false;
 	}

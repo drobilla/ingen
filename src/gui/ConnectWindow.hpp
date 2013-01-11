@@ -59,7 +59,7 @@ public:
 	bool quit_flag() const { return _quit_flag; }
 
 private:
-	enum Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };
+	enum class Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };
 
 	void server_toggled();
 	void launch_toggled();

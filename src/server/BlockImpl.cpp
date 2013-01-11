@@ -41,7 +41,7 @@ BlockImpl::BlockImpl(PluginImpl*         plugin,
 	: NodeImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
 	, _ports(NULL)
-	, _context(Context::AUDIO)
+	, _context(Context::ID::AUDIO)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
 	, _polyphonic(polyphonic)
 	, _activated(false)

@@ -66,7 +66,7 @@ public:
 
 	virtual ~BlockImpl();
 
-	virtual GraphType graph_type() const { return BLOCK; }
+	virtual GraphType graph_type() const { return GraphType::BLOCK; }
 
 	/** Activate this Block.
 	 *

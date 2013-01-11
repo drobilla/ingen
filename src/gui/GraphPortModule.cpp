@@ -112,9 +112,9 @@ GraphPortModule::store_location(double ax, double ay)
 		                        Resource::Property(uris.wildcard)));
 		Resource::Properties add;
 		add.insert(make_pair(uris.ingen_canvasX,
-		                     Resource::Property(x, Resource::INTERNAL)));
+		                     Resource::Property(x, Resource::Graph::INTERNAL)));
 		add.insert(make_pair(uris.ingen_canvasY,
-		                     Resource::Property(y, Resource::INTERNAL)));
+		                     Resource::Property(y, Resource::Graph::INTERNAL)));
 		app().interface()->delta(_model->uri(), remove, add);
 	}
 }

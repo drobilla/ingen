@@ -63,7 +63,7 @@ public:
 	virtual void post_process() = 0;
 
 	/** Return true iff this event has been pre-processed. */
-	inline bool is_prepared() const { return _status != NOT_PREPARED; }
+	inline bool is_prepared() const { return _status != Status::NOT_PREPARED; }
 
 	/** Return the time stamp of this event. */
 	inline SampleCount time() const { return _time; }
@@ -87,7 +87,7 @@ protected:
 		, _request_client(client)
 		, _request_id(id)
 		, _time(time)
-		, _status(NOT_PREPARED)
+		, _status(Status::NOT_PREPARED)
 	{}
 
 	/** Constructor for internal events only */
@@ -96,18 +96,18 @@ protected:
 		, _next(NULL)
 		, _request_id(-1)
 		, _time(0)
-		, _status(NOT_PREPARED)
+		, _status(Status::NOT_PREPARED)
 	{}
 
 	inline bool pre_process_done(Status st) {
 		_status = st;
-		return !st;
+		return st == Status::SUCCESS;
 	}
 
 	inline bool pre_process_done(Status st, const Raul::URI& subject) {
 		_status      = st;
 		_err_subject = subject;
-		return !st;
+		return st == Status::SUCCESS;
 	}
 
 	inline bool pre_process_done(Status st, const Raul::Path& subject) {

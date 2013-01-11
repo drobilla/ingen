@@ -19,7 +19,7 @@
 
 namespace Ingen {
 
-enum Status {
+enum class Status {
 	SUCCESS,
 	FAILURE,
 
@@ -52,32 +52,32 @@ static inline const char*
 ingen_status_string(Status st)
 {
 	switch (st) {
-	case SUCCESS:             return "Success";
-	case FAILURE:             return "Failure";
+	case Status::SUCCESS:             return "Success";
+	case Status::FAILURE:             return "Failure";
 
-	case BAD_INDEX:           return "Invalid index";
-	case BAD_OBJECT_TYPE:     return "Invalid object type";
-	case BAD_REQUEST:         return "Invalid request";
-	case BAD_URI:             return "Invalid URI";
-	case BAD_VALUE_TYPE:      return "Invalid value type";
-	case CLIENT_NOT_FOUND:    return "Client not found";
-	case CREATION_FAILED:     return "Creation failed";
-	case DIRECTION_MISMATCH:  return "Direction mismatch";
-	case EXISTS:              return "Object exists";
-	case INTERNAL_ERROR:      return "Internal error";
-	case INVALID_PARENT_PATH: return "Invalid parent path";
-	case INVALID_POLY:        return "Invalid polyphony";
-	case NOT_DELETABLE:       return "Object not deletable";
-	case NOT_FOUND:           return "Object not found";
-	case NOT_MOVABLE:         return "Object not movable";
-	case NOT_PREPARED:        return "Not prepared";
-	case NO_SPACE:            return "Insufficient space";
-	case PARENT_DIFFERS:      return "Parent differs";
-	case PARENT_NOT_FOUND:    return "Parent not found";
-	case PLUGIN_NOT_FOUND:    return "Plugin not found";
-	case PORT_NOT_FOUND:      return "Port not found";
-	case TYPE_MISMATCH:       return "Type mismatch";
-	case UNKNOWN_TYPE:        return "Unknown type";
+	case Status::BAD_INDEX:           return "Invalid index";
+	case Status::BAD_OBJECT_TYPE:     return "Invalid object type";
+	case Status::BAD_REQUEST:         return "Invalid request";
+	case Status::BAD_URI:             return "Invalid URI";
+	case Status::BAD_VALUE_TYPE:      return "Invalid value type";
+	case Status::CLIENT_NOT_FOUND:    return "Client not found";
+	case Status::CREATION_FAILED:     return "Creation failed";
+	case Status::DIRECTION_MISMATCH:  return "Direction mismatch";
+	case Status::EXISTS:              return "Object exists";
+	case Status::INTERNAL_ERROR:      return "Internal error";
+	case Status::INVALID_PARENT_PATH: return "Invalid parent path";
+	case Status::INVALID_POLY:        return "Invalid polyphony";
+	case Status::NOT_DELETABLE:       return "Object not deletable";
+	case Status::NOT_FOUND:           return "Object not found";
+	case Status::NOT_MOVABLE:         return "Object not movable";
+	case Status::NOT_PREPARED:        return "Not prepared";
+	case Status::NO_SPACE:            return "Insufficient space";
+	case Status::PARENT_DIFFERS:      return "Parent differs";
+	case Status::PARENT_NOT_FOUND:    return "Parent not found";
+	case Status::PLUGIN_NOT_FOUND:    return "Plugin not found";
+	case Status::PORT_NOT_FOUND:      return "Port not found";
+	case Status::TYPE_MISMATCH:       return "Type mismatch";
+	case Status::UNKNOWN_TYPE:        return "Unknown type";
 	}
 
 	return "Unknown error";

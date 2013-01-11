@@ -89,18 +89,20 @@ DisconnectAll::pre_process()
 
 		_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(_parent_path));
 		if (!_parent) {
-			return Event::pre_process_done(PARENT_NOT_FOUND, _parent_path);
+			return Event::pre_process_done(Status::PARENT_NOT_FOUND,
+			                               _parent_path);
 		}
 
 		NodeImpl* const object = dynamic_cast<NodeImpl*>(
 			_engine.store()->get(_path));
 		if (!object) {
-			return Event::pre_process_done(NOT_FOUND, _path);
+			return Event::pre_process_done(Status::NOT_FOUND, _path);
 		}
 
 		if (object->parent_graph() != _parent
 		    && object->parent()->parent_graph() != _parent) {
-			return Event::pre_process_done(INVALID_PARENT_PATH, _parent_path);
+			return Event::pre_process_done(Status::INVALID_PARENT_PATH,
+			                               _parent_path);
 		}
 
 		// Only one of these will succeed
@@ -108,7 +110,7 @@ DisconnectAll::pre_process()
 		_port  = dynamic_cast<PortImpl*>(object);
 
 		if (!_block && !_port) {
-			return Event::pre_process_done(INTERNAL_ERROR, _path);
+			return Event::pre_process_done(Status::INTERNAL_ERROR, _path);
 		}
 	}
 
@@ -141,13 +143,13 @@ DisconnectAll::pre_process()
 	if (!_deleting && _parent->enabled())
 		_compiled_graph = _parent->compile();
 
-	return Event::pre_process_done(SUCCESS);
+	return Event::pre_process_done(Status::SUCCESS);
 }
 
 void
 DisconnectAll::execute(ProcessContext& context)
 {
-	if (_status == SUCCESS) {
+	if (_status == Status::SUCCESS) {
 		for (Impls::iterator i = _impls.begin(); i != _impls.end(); ++i) {
 			(*i)->execute(context,
 			              !_deleting || ((*i)->head()->parent_block() != _block));
@@ -161,7 +163,7 @@ void
 DisconnectAll::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond()) {
+	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->disconnect_all(_parent_path, _path);
 	}
 }

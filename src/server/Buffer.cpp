@@ -123,10 +123,10 @@ Buffer::resize(uint32_t capacity)
 void*
 Buffer::port_data(PortType port_type)
 {
-	switch (port_type.symbol()) {
-	case PortType::CONTROL:
-	case PortType::CV:
-	case PortType::AUDIO:
+	switch (port_type.id()) {
+	case PortType::ID::CONTROL:
+	case PortType::ID::CV:
+	case PortType::ID::AUDIO:
 		if (_atom->type == _factory.uris().atom_Float) {
 			return (float*)LV2_ATOM_BODY(_atom);
 		} else if (_atom->type == _factory.uris().atom_Sound) {

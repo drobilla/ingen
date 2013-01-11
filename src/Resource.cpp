@@ -186,7 +186,7 @@ Resource::remove_properties(const Properties& p)
 Resource::Properties
 Resource::properties(Resource::Graph ctx) const
 {
-	if (ctx == Resource::DEFAULT) {
+	if (ctx == Resource::Graph::DEFAULT) {
 		return properties();
 	}
 
@@ -194,7 +194,7 @@ Resource::properties(Resource::Graph ctx) const
 
 	Properties props;
 	for (iterator i = _properties.begin(); i != _properties.end(); ++i) {
-		if (i->second.context() == Resource::DEFAULT
+		if (i->second.context() == Resource::Graph::DEFAULT
 		    || i->second.context() == ctx) {
 			props.insert(make_pair(i->first, i->second));
 		}

@@ -79,7 +79,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	if (type == PortType::ATOM) {
 		add_property(uris.atom_bufferType,
 		             bufs.forge().make_urid(buffer_type));
-		if (block->graph_type() == Ingen::Node::GRAPH) {
+		if (block->graph_type() == Ingen::Node::GraphType::GRAPH) {
 			add_property(uris.atom_supports,
 			             bufs.forge().make_urid(uris.midi_MidiEvent));
 			add_property(uris.atom_supports,
@@ -100,7 +100,7 @@ PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 	_type        = port_type;
 	_buffer_type = buffer_type;
 	if (!_buffer_type) {
-		switch (_type.symbol()) {
+		switch (_type.id()) {
 		case PortType::CONTROL:
 			_buffer_type = _bufs.uris().atom_Float;
 			break;
@@ -163,10 +163,10 @@ PortImpl::set_voice_value(const Context& context,
                           FrameTime      time,
                           Sample         value)
 {
-	switch (_type.symbol()) {
+	switch (_type.id()) {
 	case PortType::CONTROL:
 		buffer(voice)->samples()[0] = value;
-		_set_states->at(voice).state = SetState::SET;
+		_set_states->at(voice).state = SetState::State::SET;
 		break;
 	case PortType::AUDIO:
 	case PortType::CV: {
@@ -183,7 +183,9 @@ PortImpl::set_voice_value(const Context& context,
 		   frame of a block (set nframes-1 to 1, then nframes to 0). */
 
 		SetState& state = _set_states->at(voice);
-		state.state = (offset == 0) ? SetState::SET : SetState::HALF_SET_CYCLE_1;
+		state.state = (offset == 0)
+			? SetState::State::SET
+			: SetState::State::HALF_SET_CYCLE_1;
 		state.time  = time;
 		state.value = value;
 	}
@@ -197,15 +199,14 @@ PortImpl::update_set_state(Context& context, uint32_t voice)
 {
 	SetState& state = _set_states->at(voice);
 	switch (state.state) {
-	case SetState::HALF_SET_CYCLE_1:
-		state.state = SetState::HALF_SET_CYCLE_2;
+	case SetState::State::SET:
 		break;
-	case SetState::HALF_SET_CYCLE_2: {
+	case SetState::State::HALF_SET_CYCLE_1:
+		state.state = SetState::State::HALF_SET_CYCLE_2;
+		break;
+	case SetState::State::HALF_SET_CYCLE_2:
 		buffer(voice)->set_block(state.value, 0, context.nframes());
-		state.state = SetState::SET;
-		break;
-	}
-	default:
+		state.state = SetState::State::SET;
 		break;
 	}
 }
@@ -316,7 +317,7 @@ PortImpl::recycle_buffers()
 void
 PortImpl::clear_buffers()
 {
-	switch (_type.symbol()) {
+	switch (_type.id()) {
 	case PortType::AUDIO:
 	case PortType::CONTROL:
 	case PortType::CV:
@@ -324,7 +325,7 @@ PortImpl::clear_buffers()
 			Buffer* buf = buffer(v).get();
 			buf->set_block(_value.get_float(), 0, buf->nframes());
 			SetState& state = _set_states->at(v);
-			state.state = SetState::SET;
+			state.state = SetState::State::SET;
 			state.value = _value.get_float();
 			state.time  = 0;
 		}
@@ -343,7 +344,7 @@ PortImpl::broadcast_value(Context& context, bool force)
 	URIs&  uris  = context.engine().world()->uris();
 	LV2_URID       key   = 0;
 	Raul::Atom     val;
-	switch (_type.symbol()) {
+	switch (_type.id()) {
 	case PortType::UNKNOWN:
 		break;
 	case PortType::AUDIO:

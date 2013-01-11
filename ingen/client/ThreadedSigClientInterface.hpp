@@ -81,7 +81,7 @@ public:
 
 	void put(const Raul::URI&            path,
 	         const Resource::Properties& properties,
-	         Resource::Graph             ctx=Resource::DEFAULT)
+	         Resource::Graph             ctx=Resource::Graph::DEFAULT)
 		{ push_sig(sigc::bind(put_slot, path, properties, ctx)); }
 
 	void delta(const Raul::URI&            path,

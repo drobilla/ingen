@@ -34,7 +34,7 @@ struct ResizeFeature : public Ingen::LV2Features::Feature {
 		size_t                       size) {
 		BlockImpl* block = (BlockImpl*)data;
 		PortImpl*  port = block->port_impl(index);
-		if (block->context() == Context::MESSAGE) {
+		if (block->context() == Context::ID::MESSAGE) {
 			port->buffer(0)->resize(size);
 			port->connect_buffers();
 			return LV2_RESIZE_PORT_SUCCESS;

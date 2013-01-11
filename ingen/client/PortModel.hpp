@@ -39,17 +39,17 @@ namespace Client {
 class PortModel : public ObjectModel
 {
 public:
-	enum Direction { INPUT, OUTPUT };
+	enum class Direction { INPUT, OUTPUT };
 
-	GraphType graph_type() const { return Node::PORT; }
+	GraphType graph_type() const { return Node::GraphType::PORT; }
 
 	bool supports(const Raul::URI& value_type) const;
 
 	inline uint32_t          index()     const { return _index; }
 	inline const Raul::Atom& value()     const { return get_property(_uris.ingen_value); }
 	inline bool              connected() const { return (_connections > 0); }
-	inline bool              is_input()  const { return (_direction == INPUT); }
-	inline bool              is_output() const { return (_direction == OUTPUT); }
+	inline bool              is_input()  const { return (_direction == Direction::INPUT); }
+	inline bool              is_output() const { return (_direction == Direction::OUTPUT); }
 
 	bool port_property(const Raul::URI& uri) const;
 

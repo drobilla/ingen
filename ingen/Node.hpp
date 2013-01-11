@@ -48,7 +48,7 @@ class Store;
 class Node : public Resource
 {
 public:
-	enum GraphType {
+	enum class GraphType {
 		GRAPH,
 		BLOCK,
 		PORT

@@ -58,7 +58,7 @@ public:
 
 	virtual ~GraphImpl();
 
-	virtual GraphType graph_type() const { return GRAPH; }
+	virtual GraphType graph_type() const { return GraphType::GRAPH; }
 
 	void activate(BufferFactory& bufs);
 	void deactivate();

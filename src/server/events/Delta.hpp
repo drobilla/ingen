@@ -86,7 +86,7 @@ public:
 	void post_process();
 
 private:
-	enum SpecialType {
+	enum class SpecialType {
 		NONE,
 		ENABLE,
 		ENABLE_BROADCAST,

@@ -35,7 +35,7 @@ class GraphModel : public BlockModel
 public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */
 
-	GraphType graph_type() const { return Node::GRAPH; }
+	GraphType graph_type() const { return Node::GraphType::GRAPH; }
 
 	SharedPtr<ArcModel> get_arc(const Ingen::Node* tail,
 	                            const Ingen::Node* head);

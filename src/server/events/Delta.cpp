@@ -64,7 +64,7 @@ Delta::Delta(Engine&              engine,
 	, _context(context)
 	, _create(create)
 {
-	if (context != Resource::DEFAULT) {
+	if (context != Resource::Graph::DEFAULT) {
 		for (Properties::iterator i = _properties.begin();
 		     i != _properties.end();
 		     ++i) {
@@ -115,7 +115,7 @@ Delta::pre_process()
 		: static_cast<Ingen::Resource*>(_engine.block_factory()->plugin(_subject));
 
 	if (!_object && (!is_graph_object || !_create)) {
-		return Event::pre_process_done(NOT_FOUND, _subject);
+		return Event::pre_process_done(Status::NOT_FOUND, _subject);
 	}
 
 	const Ingen::URIs& uris = _engine.world()->uris();
@@ -141,7 +141,7 @@ Delta::pre_process()
 			// Grab the object for applying properties, if the create-event succeeded
 			_object = _engine.store()->get(path);
 		} else {
-			return Event::pre_process_done(BAD_OBJECT_TYPE, _subject);
+			return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _subject);
 		}
 	}
 
@@ -163,7 +163,7 @@ Delta::pre_process()
 	for (Properties::const_iterator p = _properties.begin(); p != _properties.end(); ++p) {
 		const Raul::URI&          key   = p->first;
 		const Resource::Property& value = p->second;
-		SpecialType               op    = NONE;
+		SpecialType               op    = SpecialType::NONE;
 		if (obj) {
 			Resource& resource = *obj;
 			if (value != uris.wildcard) {
@@ -175,9 +175,9 @@ Delta::pre_process()
 			if (port) {
 				if (key == uris.ingen_broadcast) {
 					if (value.type() == uris.forge.Bool) {
-						op = ENABLE_BROADCAST;
+						op = SpecialType::ENABLE_BROADCAST;
 					} else {
-						_status = BAD_VALUE_TYPE;
+						_status = Status::BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.ingen_value) {
 					SetPortValue* ev = new SetPortValue(
@@ -189,46 +189,46 @@ Delta::pre_process()
 						if (value == uris.wildcard) {
 							_engine.control_bindings()->learn(port);
 						} else if (value.type() == uris.atom_Blank) {
-							op = CONTROL_BINDING;
+							op = SpecialType::CONTROL_BINDING;
 						} else {
-							_status = BAD_VALUE_TYPE;
+							_status = Status::BAD_VALUE_TYPE;
 						}
 					} else {
-						_status = BAD_OBJECT_TYPE;
+						_status = Status::BAD_OBJECT_TYPE;
 					}
 				}
 			} else if ((block = dynamic_cast<BlockImpl*>(_object))) {
 				if (key == uris.ingen_controlBinding && value == uris.wildcard) {
-					op = CONTROL_BINDING;  // Internal block learn
+					op = SpecialType::CONTROL_BINDING;  // Internal block learn
 				}
 			} else if ((_graph = dynamic_cast<GraphImpl*>(_object))) {
 				if (key == uris.ingen_enabled) {
 					if (value.type() == uris.forge.Bool) {
-						op = ENABLE;
+						op = SpecialType::ENABLE;
 						// FIXME: defer this until all other metadata has been processed
 						if (value.get_bool() && !_graph->enabled())
 							_compiled_graph = _graph->compile();
 					} else {
-						_status = BAD_VALUE_TYPE;
+						_status = Status::BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.ingen_polyphony) {
 					if (value.type() == uris.forge.Int) {
 						if (value.get_int32() < 1 || value.get_int32() > 128) {
-							_status = INVALID_POLY;
+							_status = Status::INVALID_POLY;
 						} else {
-							op = POLYPHONY;
+							op = SpecialType::POLYPHONY;
 							_graph->prepare_internal_poly(
 								*_engine.buffer_factory(), value.get_int32());
 						}
 					} else {
-						_status = BAD_VALUE_TYPE;
+						_status = Status::BAD_VALUE_TYPE;
 					}
 				}
 			} else if (key == uris.ingen_polyphonic) {
 				GraphImpl* parent = dynamic_cast<GraphImpl*>(obj->parent());
 				if (parent) {
 					if (value.type() == uris.forge.Bool) {
-						op = POLYPHONIC;
+						op = SpecialType::POLYPHONIC;
 						obj->set_property(key, value, value.context());
 						BlockImpl* block = dynamic_cast<BlockImpl*>(obj);
 						if (block)
@@ -239,29 +239,30 @@ Delta::pre_process()
 							obj->prepare_poly(*_engine.buffer_factory(), 1);
 						}
 					} else {
-						_status = BAD_VALUE_TYPE;
+						_status = Status::BAD_VALUE_TYPE;
 					}
 				} else {
-					_status = BAD_OBJECT_TYPE;
+					_status = Status::BAD_OBJECT_TYPE;
 				}
 			}
 		}
 
-		if (_status != NOT_PREPARED) {
+		if (_status != Status::NOT_PREPARED) {
 			break;
 		}
 
 		_types.push_back(op);
 	}
 
-	return Event::pre_process_done(_status == NOT_PREPARED ? SUCCESS : _status,
-	                               _subject);
+	return Event::pre_process_done(
+		_status == Status::NOT_PREPARED ? Status::SUCCESS : _status,
+		_subject);
 }
 
 void
 Delta::execute(ProcessContext& context)
 {
-	if (_status) {
+	if (_status != Status::SUCCESS) {
 		return;
 	}
 
@@ -286,12 +287,12 @@ Delta::execute(ProcessContext& context)
 		const Raul::URI&  key   = p->first;
 		const Raul::Atom& value = p->second;
 		switch (*t) {
-		case ENABLE_BROADCAST:
+		case SpecialType::ENABLE_BROADCAST:
 			if (port) {
 				port->broadcast(value.get_bool());
 			}
 			break;
-		case ENABLE:
+		case SpecialType::ENABLE:
 			if (value.get_bool()) {
 				if (_compiled_graph) {
 					_graph->set_compiled_graph(_compiled_graph);
@@ -301,7 +302,7 @@ Delta::execute(ProcessContext& context)
 				_graph->disable(context);
 			}
 			break;
-		case POLYPHONIC: {
+		case SpecialType::POLYPHONIC: {
 			GraphImpl* parent = reinterpret_cast<GraphImpl*>(object->parent());
 			if (value.get_bool()) {
 				object->apply_poly(
@@ -310,15 +311,15 @@ Delta::execute(ProcessContext& context)
 				object->apply_poly(context, *_engine.maid(), 1);
 			}
 		} break;
-		case POLYPHONY:
+		case SpecialType::POLYPHONY:
 			if (!_graph->apply_internal_poly(context,
 			                                 *_engine.buffer_factory(),
 			                                 *_engine.maid(),
 			                                 value.get_int32())) {
-				_status = INTERNAL_ERROR;
+				_status = Status::INTERNAL_ERROR;
 			}
 			break;
-		case CONTROL_BINDING:
+		case SpecialType::CONTROL_BINDING:
 			if (port) {
 				_engine.control_bindings()->port_binding_changed(context, port, value);
 			} else if (block) {
@@ -327,7 +328,7 @@ Delta::execute(ProcessContext& context)
 				}
 			}
 			break;
-		case NONE:
+		case SpecialType::NONE:
 			if (port) {
 				if (key == uris.lv2_minimum) {
 					port->set_minimum(value);
@@ -348,7 +349,7 @@ Delta::post_process()
 	for (SetEvents::iterator i = _set_events.begin(); i != _set_events.end(); ++i)
 		(*i)->post_process();
 
-	if (!_status) {
+	if (_status == Status::SUCCESS) {
 		if (_create_event) {
 			_create_event->post_process();
 		} else {

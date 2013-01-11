@@ -40,7 +40,7 @@ public:
 		, _uri(uri)
 	{}
 
-	enum Graph {
+	enum class Graph {
 		DEFAULT,
 		EXTERNAL,
 		INTERNAL
@@ -48,31 +48,31 @@ public:
 
 	static Raul::URI graph_to_uri(Graph g) {
 		switch (g) {
-		case DEFAULT:  return Raul::URI(NS_INGEN "defaultContext");
-		case EXTERNAL: return Raul::URI(NS_INGEN "externalContext");
-		case INTERNAL: return Raul::URI(NS_INGEN "internalContext");
+		case Graph::DEFAULT:  return Raul::URI(NS_INGEN "defaultContext");
+		case Graph::EXTERNAL: return Raul::URI(NS_INGEN "externalContext");
+		case Graph::INTERNAL: return Raul::URI(NS_INGEN "internalContext");
 		}
 	}
 
 	static Graph uri_to_graph(const char* uri) {
 		const char* suffix = uri + sizeof(NS_INGEN) - 1;
 		if (strncmp(uri, NS_INGEN, sizeof(NS_INGEN) - 1)) {
-			return DEFAULT;
+			return Graph::DEFAULT;
 		} else if (!strcmp(suffix, "defaultContext")) {
-			return DEFAULT;
+			return Graph::DEFAULT;
 		} else if (!strcmp(suffix, "externalContext")) {
-			return EXTERNAL;
+			return Graph::EXTERNAL;
 		} else if (!strcmp(suffix, "internalContext")) {
-			return INTERNAL;
+			return Graph::INTERNAL;
 		} else {
-			return DEFAULT;
+			return Graph::DEFAULT;
 		}
 	}
 
 	/** A property value (an Atom with a context). */
 	class Property : public Raul::Atom {
 	public:
-		Property(const Raul::Atom& atom, Graph ctx=DEFAULT)
+		Property(const Raul::Atom& atom, Graph ctx=Graph::DEFAULT)
 			: Raul::Atom(atom)
 			, _ctx(ctx)
 		{}
@@ -100,9 +100,10 @@ public:
 	 * This will first erase any properties with the given @p uri, so after
 	 * this call exactly one property with predicate @p uri will be set.
 	 */
-	virtual const Raul::Atom& set_property(const Raul::URI&  uri,
-	                                       const Raul::Atom& value,
-	                                       Graph             ctx=DEFAULT);
+	virtual const Raul::Atom& set_property(
+		const Raul::URI&  uri,
+		const Raul::Atom& value,
+		Graph             ctx=Graph::DEFAULT);
 
 	/** Add a property value.
 	 *
@@ -112,7 +113,7 @@ public:
 	 */
 	virtual void add_property(const Raul::URI&  uri,
 	                          const Raul::Atom& value,
-	                          Graph             ctx=DEFAULT);
+	                          Graph             ctx=Graph::DEFAULT);
 
 	/** Remove a property.
 	 *

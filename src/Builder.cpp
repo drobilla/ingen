@@ -41,7 +41,7 @@ Builder::build(SharedPtr<const Node> object)
 void
 Builder::connect(SharedPtr<const Node> object)
 {
-	if (object->graph_type() == Node::GRAPH) {
+	if (object->graph_type() == Node::GraphType::GRAPH) {
 		for (Node::Arcs::const_iterator i = object->arcs().begin();
 		     i != object->arcs().end(); ++i) {
 			_interface.connect(i->second->tail_path(), i->second->head_path());

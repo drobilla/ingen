@@ -86,11 +86,11 @@ bool
 CreatePort::pre_process()
 {
 	if (_port_type == PortType::UNKNOWN) {
-		return Event::pre_process_done(UNKNOWN_TYPE, _path);
+		return Event::pre_process_done(Status::UNKNOWN_TYPE, _path);
 	}
 
 	if (_path.is_root()) {
-		return Event::pre_process_done(BAD_URI, _path);
+		return Event::pre_process_done(Status::BAD_URI, _path);
 	}
 
 	if (_engine.store()->get(_path)) {
@@ -99,11 +99,13 @@ CreatePort::pre_process()
 
 	Node* parent = _engine.store()->get(_path.parent());
 	if (!parent) {
-		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
+		return Event::pre_process_done(Status::PARENT_NOT_FOUND,
+		                               _path.parent());
 	}
 
 	if (!(_graph = dynamic_cast<GraphImpl*>(parent))) {
-		return Event::pre_process_done(INVALID_PARENT_PATH, _path.parent());
+		return Event::pre_process_done(Status::INVALID_PARENT_PATH,
+		                               _path.parent());
 	}
 
 	const URIs&          uris           = _engine.world()->uris();
@@ -122,7 +124,7 @@ CreatePort::pre_process()
 			               _engine.world()->forge().make(old_n_ports)));
 	} else if (index_i->second.type() != uris.forge.Int ||
 	           index_i->second.get_int32() != old_n_ports) {
-		return Event::pre_process_done(BAD_INDEX, _path);
+		return Event::pre_process_done(Status::BAD_INDEX, _path);
 	}
 
 	const PropIter poly_i = _properties.find(uris.ingen_polyphonic);
@@ -133,7 +135,7 @@ CreatePort::pre_process()
 	if (!(_graph_port = _graph->create_port(
 		      *_engine.buffer_factory(), Raul::Symbol(_path.symbol()),
 		      _port_type, _buf_type, buf_size, _is_output, polyphonic))) {
-		return Event::pre_process_done(CREATION_FAILED, _path);
+		return Event::pre_process_done(Status::CREATION_FAILED, _path);
 	}
 
 	_graph_port->properties().insert(_properties.begin(), _properties.end());
@@ -158,13 +160,13 @@ CreatePort::pre_process()
 	assert(_graph_port->index() == (uint32_t)old_n_ports);
 	assert(_ports_array->size() == _graph->num_ports_non_rt());
 	assert(_graph_port->index() < _ports_array->size());
-	return Event::pre_process_done(SUCCESS);
+	return Event::pre_process_done(Status::SUCCESS);
 }
 
 void
 CreatePort::execute(ProcessContext& context)
 {
-	if (!_status) {
+	if (_status == Status::SUCCESS) {
 		_old_ports_array = _graph->external_ports();
 		if (_old_ports_array) {
 			for (uint32_t i = 0; i < _old_ports_array->size(); ++i) {
@@ -185,7 +187,7 @@ void
 CreatePort::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond()) {
+	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->put(Node::path_to_uri(_path), _update);
 	}
 

@@ -287,8 +287,8 @@ ClientStore::put(const Raul::URI&            uri,
 		}
 	} else if (is_port) {
 		PortModel::Direction pdir = (is_output)
-			? PortModel::OUTPUT
-			: PortModel::INPUT;
+			? PortModel::Direction::OUTPUT
+			: PortModel::Direction::INPUT;
 		const Iterator i = properties.find(_uris.lv2_index);
 		if (i != properties.end() && i->second.type() == _uris.forge.Int) {
 			const uint32_t index = i->second.get_int32();

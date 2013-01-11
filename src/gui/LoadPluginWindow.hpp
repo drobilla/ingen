@@ -93,7 +93,7 @@ private:
 	/** Column for the filter criteria combo box. */
 	class CriteriaColumns : public Gtk::TreeModel::ColumnRecord {
 	public:
-		enum Criteria { NAME, TYPE, PROJECT, AUTHOR, URI, };
+		enum class Criteria { NAME, TYPE, PROJECT, AUTHOR, URI, };
 
 		CriteriaColumns() {
 			add(_col_label);

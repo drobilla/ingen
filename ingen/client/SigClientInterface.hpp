@@ -83,7 +83,7 @@ protected:
 
 	void put(const Raul::URI&            uri,
 	         const Resource::Properties& properties,
-	         Resource::Graph             ctx=Resource::DEFAULT)
+	         Resource::Graph             ctx=Resource::Graph::DEFAULT)
 		{ EMIT(put, uri, properties, ctx); }
 
 	void delta(const Raul::URI&            uri,

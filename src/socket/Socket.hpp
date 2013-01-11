@@ -30,13 +30,13 @@ namespace Socket {
 /** A safe and simple interface for UNIX or TCP sockets. */
 class Socket : public Raul::Noncopyable {
 public:
-	enum Type {
+	enum class Type {
 		UNIX,
 		TCP
 	};
 
 	static Type type_from_uri(const Raul::URI uri) {
-		return (uri.scheme() == "unix") ? UNIX : TCP;
+		return (uri.scheme() == "unix") ? Type::UNIX : Type::TCP;
 	}
 
 	/** Create a new unbound/unconnected socket of a given type. */

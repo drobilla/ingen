@@ -34,7 +34,7 @@ namespace Ingen {
  */
 class PortType {
 public:
-	enum Symbol {
+	enum ID {
 		UNKNOWN = 0,
 		AUDIO   = 1,
 		CONTROL = 2,
@@ -43,40 +43,40 @@ public:
 	};
 
 	explicit PortType(const Raul::URI& uri)
-		: _symbol(UNKNOWN)
+		: _id(UNKNOWN)
 	{
 		if (uri == type_uri(AUDIO)) {
-			_symbol = AUDIO;
+			_id = AUDIO;
 		} else if (uri == type_uri(CONTROL)) {
-			_symbol = CONTROL;
+			_id = CONTROL;
 		} else if (uri == type_uri(CV)) {
-			_symbol = CV;
+			_id = CV;
 		} else if (uri == type_uri(ATOM)) {
-			_symbol = ATOM;
+			_id = ATOM;
 		}
 	}
 
-	PortType(Symbol symbol)
-		: _symbol(symbol)
+	PortType(ID id)
+		: _id(id)
 	{}
 
-	inline const Raul::URI& uri()    const { return type_uri(_symbol); }
-	inline Symbol           symbol() const { return _symbol; }
+	inline const Raul::URI& uri()    const { return type_uri(_id); }
+	inline ID           id() const { return _id; }
 
-	inline bool operator==(const Symbol& symbol) const { return (_symbol == symbol); }
-	inline bool operator!=(const Symbol& symbol) const { return (_symbol != symbol); }
-	inline bool operator==(const PortType& type) const { return (_symbol == type._symbol); }
-	inline bool operator!=(const PortType& type) const { return (_symbol != type._symbol); }
-	inline bool operator<(const PortType& type)  const { return (_symbol < type._symbol); }
+	inline bool operator==(const ID& id) const { return (_id == id); }
+	inline bool operator!=(const ID& id) const { return (_id != id); }
+	inline bool operator==(const PortType& type) const { return (_id == type._id); }
+	inline bool operator!=(const PortType& type) const { return (_id != type._id); }
+	inline bool operator<(const PortType& type)  const { return (_id < type._id); }
 
-	inline bool is_audio()   { return _symbol == AUDIO; }
-	inline bool is_control() { return _symbol == CONTROL; }
-	inline bool is_cv()      { return _symbol == CV; }
-	inline bool is_atom()    { return _symbol == ATOM; }
+	inline bool is_audio()   { return _id == AUDIO; }
+	inline bool is_control() { return _id == CONTROL; }
+	inline bool is_cv()      { return _id == CV; }
+	inline bool is_atom()    { return _id == ATOM; }
 
 private:
-	static inline const Raul::URI& type_uri(unsigned symbol_num) {
-		assert(symbol_num <= ATOM);
+	static inline const Raul::URI& type_uri(unsigned id_num) {
+		assert(id_num <= ATOM);
 		static const Raul::URI uris[] = {
 			Raul::URI("http://drobilla.net/ns/ingen#nil"),
 			Raul::URI(LV2_CORE__AudioPort),
@@ -84,10 +84,10 @@ private:
 			Raul::URI(LV2_CORE__CVPort),
 			Raul::URI(LV2_ATOM__AtomPort)
 		};
-		return uris[symbol_num];
+		return uris[id_num];
 	}
 
-	Symbol _symbol;
+	ID _id;
 };
 
 } // namespace Ingen

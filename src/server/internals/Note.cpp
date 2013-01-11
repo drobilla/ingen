@@ -201,13 +201,13 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	Voice*   voice     = NULL;
 	uint32_t voice_num = 0;
 
-	if (key->state != Key::OFF) {
+	if (key->state != Key::State::OFF) {
 		return;
 	}
 
 	// Look for free voices
 	for (uint32_t i=0; i < _polyphony; ++i) {
-		if ((*_voices)[i].state == Voice::Voice::FREE) {
+		if ((*_voices)[i].state == Voice::State::FREE) {
 			voice = &(*_voices)[i];
 			voice_num = i;
 			break;
@@ -231,23 +231,23 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	assert(voice == &(*_voices)[voice_num]);
 
 	// Update stolen key, if applicable
-	if (voice->state == Voice::Voice::ACTIVE) {
-		assert(_keys[voice->note].state == Key::ON_ASSIGNED);
+	if (voice->state == Voice::State::ACTIVE) {
+		assert(_keys[voice->note].state == Key::State::ON_ASSIGNED);
 		assert(_keys[voice->note].voice == voice_num);
-		_keys[voice->note].state = Key::Key::ON_UNASSIGNED;
+		_keys[voice->note].state = Key::State::ON_UNASSIGNED;
 	}
 
 	// Store key information for later reallocation on note off
-	key->state = Key::Key::ON_ASSIGNED;
+	key->state = Key::State::ON_ASSIGNED;
 	key->voice = voice_num;
 	key->time  = time;
 
 	// Trigger voice
-	voice->state = Voice::Voice::ACTIVE;
+	voice->state = Voice::State::ACTIVE;
 	voice->note  = note_num;
 	voice->time  = time;
 
-	assert(_keys[voice->note].state == Key::Key::ON_ASSIGNED);
+	assert(_keys[voice->note].state == Key::State::ON_ASSIGNED);
 	assert(_keys[voice->note].voice == voice_num);
 
 	_freq_port->set_voice_value(context, voice_num, time, note_to_freq(note_num));
@@ -257,8 +257,8 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	_trig_port->set_voice_value(context, voice_num, time, 1.0f);
 	_trig_port->set_voice_value(context, voice_num, time + 1, 0.0f);
 
-	assert(key->state == Key::Key::ON_ASSIGNED);
-	assert(voice->state == Voice::Voice::ACTIVE);
+	assert(key->state == Key::State::ON_ASSIGNED);
+	assert(voice->state == Voice::State::ACTIVE);
 	assert(key->voice == voice_num);
 	assert((*_voices)[key->voice].note == note_num);
 }
@@ -270,19 +270,19 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 
 	Key* key = &_keys[note_num];
 
-	if (key->state == Key::ON_ASSIGNED) {
+	if (key->state == Key::State::ON_ASSIGNED) {
 		// Assigned key, turn off voice and key
-		if ((*_voices)[key->voice].state == Voice::ACTIVE) {
+		if ((*_voices)[key->voice].state == Voice::State::ACTIVE) {
 			assert((*_voices)[key->voice].note == note_num);
 			if ( ! _sustain) {
 				free_voice(context, key->voice, time);
 			} else {
-				(*_voices)[key->voice].state = Voice::HOLDING;
+				(*_voices)[key->voice].state = Voice::State::HOLDING;
 			}
 		}
 	}
 
-	key->state = Key::OFF;
+	key->state = Key::State::OFF;
 }
 
 void
@@ -295,7 +295,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 	uint8_t replace_key_num = 0;
 
 	for (uint8_t i = 0; i <= 127; ++i) {
-		if (_keys[i].state == Key::ON_UNASSIGNED) {
+		if (_keys[i].state == Key::State::ON_UNASSIGNED) {
 			if (replace_key == NULL || _keys[i].time > replace_key->time) {
 				replace_key = &_keys[i];
 				replace_key_num = i;
@@ -305,21 +305,21 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 
 	if (replace_key != NULL) {  // Found a key to assign to freed voice
 		assert(&_keys[replace_key_num] == replace_key);
-		assert(replace_key->state == Key::ON_UNASSIGNED);
+		assert(replace_key->state == Key::State::ON_UNASSIGNED);
 
 		// Change the freq but leave the gate high and don't retrigger
 		_freq_port->set_voice_value(context, voice, time, note_to_freq(replace_key_num));
 		_num_port->set_voice_value(context, voice, time, replace_key_num);
 
-		replace_key->state = Key::ON_ASSIGNED;
+		replace_key->state = Key::State::ON_ASSIGNED;
 		replace_key->voice = voice;
-		_keys[(*_voices)[voice].note].state = Key::ON_UNASSIGNED;
+		_keys[(*_voices)[voice].note].state = Key::State::ON_UNASSIGNED;
 		(*_voices)[voice].note = replace_key_num;
-		(*_voices)[voice].state = Voice::ACTIVE;
+		(*_voices)[voice].state = Voice::State::ACTIVE;
 	} else {
 		// No new note for voice, deactivate (set gate low)
 		_gate_port->set_voice_value(context, voice, time, 0.0f);
-		(*_voices)[voice].state = Voice::FREE;
+		(*_voices)[voice].state = Voice::State::FREE;
 	}
 }
 
@@ -332,7 +332,7 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		_gate_port->set_voice_value(context, i, time, 0.0f);
-		(*_voices)[i].state = Voice::FREE;
+		(*_voices)[i].state = Voice::State::FREE;
 	}
 }
 
@@ -350,7 +350,7 @@ NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 	_sustain = false;
 
 	for (uint32_t i=0; i < _polyphony; ++i)
-		if ((*_voices)[i].state == Voice::HOLDING)
+		if ((*_voices)[i].state == Voice::State::HOLDING)
 			free_voice(context, i, time);
 }
 

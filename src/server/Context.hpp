@@ -44,7 +44,7 @@ class PortImpl;
 class Context
 {
 public:
-	enum ID {
+	enum class ID {
 		AUDIO,
 		MESSAGE
 	};

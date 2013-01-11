@@ -36,7 +36,7 @@ class PortImpl;
 
 class ControlBindings {
 public:
-	enum Type {
+	enum class Type {
 		NULL_CONTROL,
 		MIDI_BENDER,
 		MIDI_CC,
@@ -47,11 +47,11 @@ public:
 	};
 
 	struct Key {
-		Key(Type t=NULL_CONTROL, int16_t n=0) : type(t), num(n) {}
+		Key(Type t=Type::NULL_CONTROL, int16_t n=0) : type(t), num(n) {}
 		inline bool operator<(const Key& other) const {
 			return (type == other.type) ? (num < other.num) : (type < other.type);
 		}
-		inline operator bool() const { return type != NULL_CONTROL; }
+		inline operator bool() const { return type != Type::NULL_CONTROL; }
 		Type    type;
 		int16_t num;
 	};

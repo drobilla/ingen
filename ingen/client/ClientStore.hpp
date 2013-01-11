@@ -75,7 +75,7 @@ public:
 
 	void put(const Raul::URI&            uri,
 	         const Resource::Properties& properties,
-	         Resource::Graph             ctx=Resource::DEFAULT);
+	         Resource::Graph             ctx=Resource::Graph::DEFAULT);
 
 	void delta(const Raul::URI&            uri,
 	           const Resource::Properties& remove,

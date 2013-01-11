@@ -201,11 +201,11 @@ Engine::activate()
 			*this, Raul::Symbol("root"), 1, NULL, _driver->sample_rate(), 1);
 		_root_graph->set_property(
 			uris.rdf_type,
-			Resource::Property(uris.ingen_Graph, Resource::INTERNAL));
+			Resource::Property(uris.ingen_Graph, Resource::Graph::INTERNAL));
 		_root_graph->set_property(
 			uris.ingen_polyphony,
 			Resource::Property(_world->forge().make(int32_t(1)),
-			                   Resource::INTERNAL));
+			                   Resource::Graph::INTERNAL));
 		_root_graph->activate(*_buffer_factory);
 		_world->store()->add(_root_graph);
 		_root_graph->set_compiled_graph(_root_graph->compile());
@@ -233,10 +233,12 @@ Engine::activate()
 			          Resource::Property(uris.lv2_connectionOptional)));
 		in_properties.insert(
 			make_pair(uris.ingen_canvasX,
-			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
+			          Resource::Property(forge.make(32.0f),
+			                             Resource::Graph::EXTERNAL)));
 		in_properties.insert(
 			make_pair(uris.ingen_canvasY,
-			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
+			          Resource::Property(forge.make(32.0f),
+			                             Resource::Graph::EXTERNAL)));
 
 		SharedPtr<Interface> respondee;
 		execute_and_delete_event(
@@ -255,10 +257,12 @@ Engine::activate()
 			          Resource::Property(uris.lv2_connectionOptional)));
 		out_properties.insert(
 			make_pair(uris.ingen_canvasX,
-			          Resource::Property(forge.make(128.0f), Resource::EXTERNAL)));
+			          Resource::Property(forge.make(128.0f),
+			                             Resource::Graph::EXTERNAL)));
 		out_properties.insert(
 			make_pair(uris.ingen_canvasY,
-			          Resource::Property(forge.make(32.0f), Resource::EXTERNAL)));
+			          Resource::Property(forge.make(32.0f),
+			                             Resource::Graph::EXTERNAL)));
 
 		execute_and_delete_event(
 			context, new Events::CreatePort(

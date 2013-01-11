@@ -61,7 +61,7 @@ bool
 Delete::pre_process()
 {
 	if (_path.is_root() || _path == "/control_in" || _path == "/control_out") {
-		return Event::pre_process_done(NOT_DELETABLE, _path);
+		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
 	}
 
 	_lock.acquire();
@@ -70,7 +70,7 @@ Delete::pre_process()
 
 	Store::iterator iter = _engine.store()->find(_path);
 	if (iter == _engine.store()->end()) {
-		return Event::pre_process_done(NOT_FOUND, _path);
+		return Event::pre_process_done(Status::NOT_FOUND, _path);
 	}
 
 	if (!(_block = PtrCast<BlockImpl>(iter->second))) {
@@ -78,12 +78,12 @@ Delete::pre_process()
 	}
 
 	if (!_block && !_port) {
-		return Event::pre_process_done(NOT_DELETABLE, _path);
+		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
 	}
 
 	GraphImpl* parent = _block ? _block->parent_graph() : _port->parent_graph();
 	if (!parent) {
-		return Event::pre_process_done(INTERNAL_ERROR, _path);
+		return Event::pre_process_done(Status::INTERNAL_ERROR, _path);
 	}
 
 	_engine.store()->remove(iter, _removed_objects);
@@ -112,7 +112,7 @@ Delete::pre_process()
 		}
 	}
 
-	return Event::pre_process_done(SUCCESS);
+	return Event::pre_process_done(Status::SUCCESS);
 }
 
 void
@@ -145,7 +145,7 @@ Delete::post_process()
 	_removed_bindings.reset();
 
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond() && (_block || _port)) {
+	if (respond() == Status::SUCCESS && (_block || _port)) {
 		if (_block) {
 			_block->deactivate();
 		}

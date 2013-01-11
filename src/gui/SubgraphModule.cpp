@@ -77,9 +77,9 @@ SubgraphModule::store_location(double ax, double ay)
 		                        Resource::Property(uris.wildcard)));
 		Resource::Properties add;
 		add.insert(make_pair(uris.ingen_canvasX,
-		                     Resource::Property(x, Resource::EXTERNAL)));
+		                     Resource::Property(x, Resource::Graph::EXTERNAL)));
 		add.insert(make_pair(uris.ingen_canvasY,
-		                     Resource::Property(y, Resource::EXTERNAL)));
+		                     Resource::Property(y, Resource::Graph::EXTERNAL)));
 		app().interface()->delta(_block->uri(), remove, add);
 	}
 }

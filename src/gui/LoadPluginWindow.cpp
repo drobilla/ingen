@@ -82,24 +82,24 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 	Gtk::TreeModel::iterator iter = _criteria_liststore->append();
 	Gtk::TreeModel::Row      row  = *iter;
 	row[_criteria_columns._col_label] = "Name contains";
-	row[_criteria_columns._col_criteria] = CriteriaColumns::NAME;
+	row[_criteria_columns._col_criteria] = CriteriaColumns::Criteria::NAME;
 	_filter_combo->set_active(iter);
 
 	row = *(iter = _criteria_liststore->append());
 	row[_criteria_columns._col_label] = "Type contains";
-	row[_criteria_columns._col_criteria] = CriteriaColumns::TYPE;
+	row[_criteria_columns._col_criteria] = CriteriaColumns::Criteria::TYPE;
 
 	row = *(iter = _criteria_liststore->append());
 	row[_criteria_columns._col_label] = "Project contains";
-	row[_criteria_columns._col_criteria] = CriteriaColumns::PROJECT;
+	row[_criteria_columns._col_criteria] = CriteriaColumns::Criteria::PROJECT;
 
 	row = *(iter = _criteria_liststore->append());
 	row[_criteria_columns._col_label] = "Author contains";
-	row[_criteria_columns._col_criteria] = CriteriaColumns::AUTHOR;
+	row[_criteria_columns._col_criteria] = CriteriaColumns::Criteria::AUTHOR;
 
 	row = *(iter = _criteria_liststore->append());
 	row[_criteria_columns._col_label] = "URI contains";
-	row[_criteria_columns._col_criteria] = CriteriaColumns::URI;
+	row[_criteria_columns._col_criteria] = CriteriaColumns::Criteria::URI;
 	_filter_combo->pack_start(_criteria_columns._col_label);
 
 	_add_button->signal_clicked().connect(
@@ -277,6 +277,9 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
 		row[_plugins_columns._col_name] = name.get_string();
 
 	switch (plugin->type()) {
+	case Plugin::NIL:
+		row[_plugins_columns._col_type] = "";
+		break;
 	case Plugin::LV2:
 		row[_plugins_columns._col_type] = lilv_node_as_string(
 			lilv_plugin_class_get_label(
@@ -292,9 +295,6 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
 		break;
 	case Plugin::Graph:
 		row[_plugins_columns._col_type] = "Graph";
-		break;
-	default:
-		row[_plugins_columns._col_type] = "";
 		break;
 	}
 
@@ -452,24 +452,22 @@ LoadPluginWindow::filter_changed()
 		const Raul::Atom& name = plugin->get_property(uris.doap_name);
 
 		switch (criteria) {
-		case CriteriaColumns::NAME:
+		case CriteriaColumns::Criteria::NAME:
 			if (name.is_valid() && name.type() == uris.forge.String)
 				field = name.get_string();
 			break;
-		case CriteriaColumns::TYPE:
+		case CriteriaColumns::Criteria::TYPE:
 			field = plugin->type_uri();
 			break;
-		case CriteriaColumns::PROJECT:
+		case CriteriaColumns::Criteria::PROJECT:
 			field = get_project_name(plugin);
 			break;
-		case CriteriaColumns::AUTHOR:
+		case CriteriaColumns::Criteria::AUTHOR:
 			field = get_author_name(plugin);
 			break;
-		case CriteriaColumns::URI:
+		case CriteriaColumns::Criteria::URI:
 			field = plugin->uri();
 			break;
-		default:
-			throw;
 		}
 
 		transform(field.begin(), field.end(), field.begin(), ::toupper);

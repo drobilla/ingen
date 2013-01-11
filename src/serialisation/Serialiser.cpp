@@ -62,7 +62,7 @@ struct Serialiser::Impl {
 		sratom_free(_sratom);
 	}
 
-	enum Mode { TO_FILE, TO_STRING };
+	enum class Mode { TO_FILE, TO_STRING };
 
 	void start_to_filename(const std::string& filename);
 
@@ -218,7 +218,7 @@ Serialiser::Impl::start_to_filename(const string& filename)
 	}
 
 	_model = new Sord::Model(*_world.rdf_world(), _base_uri);
-	_mode = TO_FILE;
+	_mode = Mode::TO_FILE;
 }
 
 /** Begin a serialization to a string.
@@ -237,7 +237,7 @@ Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 	me->_root_path = root;
 	me->_base_uri  = base_uri;
 	me->_model     = new Sord::Model(*me->_world.rdf_world(), base_uri);
-	me->_mode      = Impl::TO_STRING;
+	me->_mode      = Impl::Mode::TO_STRING;
 }
 
 std::string
@@ -250,7 +250,7 @@ std::string
 Serialiser::Impl::finish()
 {
 	string ret = "";
-	if (_mode == TO_FILE) {
+	if (_mode == Mode::TO_FILE) {
 		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
 		if (st) {
 			_world.log().error(Raul::fmt("Error writing file %1% (%2%)\n")
@@ -284,14 +284,14 @@ Serialiser::serialise(SharedPtr<const Node> object) throw (std::logic_error)
 	if (!me->_model)
 		throw std::logic_error("serialise called without serialisation in progress");
 
-	if (object->graph_type() == Node::GRAPH) {
+	if (object->graph_type() == Node::GraphType::GRAPH) {
 		me->serialise_graph(object, me->path_rdf_node(object->path()));
-	} else if (object->graph_type() == Node::BLOCK) {
+	} else if (object->graph_type() == Node::GraphType::BLOCK) {
 		const Sord::URI plugin_id(me->_model->world(), object->plugin()->uri());
 		me->serialise_block(object, plugin_id, me->path_rdf_node(object->path()));
-	} else if (object->graph_type() == Node::PORT) {
+	} else if (object->graph_type() == Node::GraphType::PORT) {
 		me->serialise_port(object.get(),
-		                   Resource::DEFAULT,
+		                   Resource::Graph::DEFAULT,
 		                   me->path_rdf_node(object->path()));
 	} else {
 		me->serialise_properties(me->path_rdf_node(object->path()),
@@ -345,7 +345,7 @@ Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
 		                      Sord::URI(world, uris.doap_name),
 		                      Sord::Literal(world, symbol.c_str()));
 
-	const Node::Properties props = graph->properties(Resource::INTERNAL);
+	const Node::Properties props = graph->properties(Resource::Graph::INTERNAL);
 	serialise_properties(graph_id, props);
 
 	const Store::const_range kids = _world.store()->children_range(graph);
@@ -353,7 +353,7 @@ Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
 		if (n->first.parent() != graph->path())
 			continue;
 
-		if (n->second->graph_type() == Node::GRAPH) {
+		if (n->second->graph_type() == Node::GraphType::GRAPH) {
 			SharedPtr<Node> subgraph = n->second;
 
 			SerdURI base_uri;
@@ -386,7 +386,7 @@ Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
 			                      Sord::URI(world, uris.ingen_block),
 			                      block_id);
 			serialise_block(subgraph, subgraph_id, block_id);
-		} else if (n->second->graph_type() == Node::BLOCK) {
+		} else if (n->second->graph_type() == Node::GraphType::BLOCK) {
 			SharedPtr<const Node> block = n->second;
 
 			const Sord::URI  class_id(world, block->plugin()->uri());
@@ -410,7 +410,7 @@ Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
 		_model->add_statement(graph_id,
 		                      Sord::URI(world, LV2_CORE__port),
 		                      port_id);
-		serialise_port(p, Resource::INTERNAL, port_id);
+		serialise_port(p, Resource::Graph::INTERNAL, port_id);
 	}
 
 	for (Node::Arcs::const_iterator a = graph->arcs().begin();
@@ -436,13 +436,13 @@ Serialiser::Impl::serialise_block(SharedPtr<const Node> block,
 	                      Sord::URI(_model->world(), uris.lv2_symbol),
 	                      Sord::Literal(_model->world(), block->path().symbol()));
 
-	const Node::Properties props = block->properties(Resource::EXTERNAL);
+	const Node::Properties props = block->properties(Resource::Graph::EXTERNAL);
 	serialise_properties(block_id, props);
 
 	for (uint32_t i = 0; i < block->num_ports(); ++i) {
 		Node* const      p       = block->port(i);
 		const Sord::Node port_id = path_rdf_node(p->path());
-		serialise_port(p, Resource::EXTERNAL, port_id);
+		serialise_port(p, Resource::Graph::EXTERNAL, port_id);
 		_model->add_statement(block_id,
 		                      Sord::URI(_model->world(), uris.lv2_port),
 		                      port_id);
@@ -462,7 +462,7 @@ Serialiser::Impl::serialise_port(const Node*       port,
 	                      Sord::Literal(world, port->path().symbol()));
 
 	Node::Properties props = port->properties(context);
-	if (context == Resource::INTERNAL &&
+	if (context == Resource::Graph::INTERNAL &&
 	    port->has_property(uris.rdf_type, uris.lv2_ControlPort) &&
 	    port->has_property(uris.rdf_type, uris.lv2_InputPort))
 	{
@@ -472,7 +472,7 @@ Serialiser::Impl::serialise_port(const Node*       port,
 		} else {
 			_world.log().warn("Control input has no value, lv2:default omitted.\n");
 		}
-	} else if (context != Resource::INTERNAL &&
+	} else if (context != Resource::Graph::INTERNAL &&
 	           !port->has_property(uris.rdf_type, uris.lv2_InputPort)) {
 		props.erase(uris.ingen_value);
 	}

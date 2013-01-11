@@ -909,14 +909,14 @@ void
 GraphCanvas::menu_load_graph()
 {
 	_app.window_factory()->present_load_subgraph(
-		_graph, get_initial_data(Resource::EXTERNAL));
+		_graph, get_initial_data(Resource::Graph::EXTERNAL));
 }
 
 void
 GraphCanvas::menu_new_graph()
 {
 	_app.window_factory()->present_new_subgraph(
-		_graph, get_initial_data(Resource::EXTERNAL));
+		_graph, get_initial_data(Resource::Graph::EXTERNAL));
 }
 
 void

@@ -57,15 +57,17 @@ Get::pre_process()
 
 	if (_uri == "ingen:/plugins") {
 		_plugins = _engine.block_factory()->plugins();
-		return Event::pre_process_done(SUCCESS);
+		return Event::pre_process_done(Status::SUCCESS);
 	} else if (_uri == "ingen:/engine") {
-		return Event::pre_process_done(SUCCESS);
+		return Event::pre_process_done(Status::SUCCESS);
 	} else if (Node::uri_is_path(_uri)) {
 		_object = _engine.store()->get(Node::uri_to_path(_uri));
-		return Event::pre_process_done(_object ? SUCCESS : NOT_FOUND, _uri);
+		return Event::pre_process_done(
+			_object ? Status::SUCCESS : Status::NOT_FOUND, _uri);
 	} else {
 		_plugin = _engine.block_factory()->plugin(_uri);
-		return Event::pre_process_done(_plugin ? SUCCESS : NOT_FOUND, _uri);
+		return Event::pre_process_done(
+			_plugin ? Status::SUCCESS : Status::NOT_FOUND, _uri);
 	}
 }
 
@@ -101,12 +103,12 @@ static void
 send_graph(Interface* client, const GraphImpl* graph)
 {
 	client->put(graph->uri(),
-	            graph->properties(Resource::INTERNAL),
-	            Resource::INTERNAL);
+	            graph->properties(Resource::Graph::INTERNAL),
+	            Resource::Graph::INTERNAL);
 
 	client->put(graph->uri(),
-	            graph->properties(Resource::EXTERNAL),
-	            Resource::EXTERNAL);
+	            graph->properties(Resource::Graph::EXTERNAL),
+	            Resource::Graph::EXTERNAL);
 
 	// Send blocks
 	for (GraphImpl::Blocks::const_iterator j = graph->blocks().begin();
@@ -130,7 +132,7 @@ void
 Get::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond() && _request_client) {
+	if (respond() == Status::SUCCESS && _request_client) {
 		if (_uri == "ingen:/plugins") {
 			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);
 		} else if (_uri == "ingen:/engine") {

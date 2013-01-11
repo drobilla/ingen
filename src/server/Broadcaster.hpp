@@ -83,7 +83,7 @@ public:
 
 	void put(const Raul::URI&            uri,
 	         const Resource::Properties& properties,
-	         Resource::Graph             ctx=Resource::DEFAULT) {
+	         Resource::Graph             ctx=Resource::Graph::DEFAULT) {
 		BROADCAST(put, uri, properties);
 	}
 

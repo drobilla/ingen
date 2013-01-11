@@ -56,34 +56,34 @@ Connect::pre_process()
 
 	Node* tail = _engine.store()->get(_tail_path);
 	if (!tail) {
-		return Event::pre_process_done(NOT_FOUND, _tail_path);
+		return Event::pre_process_done(Status::NOT_FOUND, _tail_path);
 	}
 
 	Node* head = _engine.store()->get(_head_path);
 	if (!head) {
-		return Event::pre_process_done(NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::NOT_FOUND, _head_path);
 	}
 
 	OutputPort* tail_output = dynamic_cast<OutputPort*>(tail);
 	_head                   = dynamic_cast<InputPort*>(head);
 	if (!tail_output || !_head) {
-		return Event::pre_process_done(BAD_REQUEST, _head_path);
+		return Event::pre_process_done(Status::BAD_REQUEST, _head_path);
 	}
 
 	BlockImpl* const tail_block = tail_output->parent_block();
 	BlockImpl* const head_block = _head->parent_block();
 	if (!tail_block || !head_block) {
-		return Event::pre_process_done(PARENT_NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _head_path);
 	}
 
 	if (tail_block->parent() != head_block->parent()
 	    && tail_block != head_block->parent()
 	    && tail_block->parent() != head_block) {
-		return Event::pre_process_done(PARENT_DIFFERS, _head_path);
+		return Event::pre_process_done(Status::PARENT_DIFFERS, _head_path);
 	}
 
 	if (!ArcImpl::can_connect(tail_output, _head)) {
-		return Event::pre_process_done(TYPE_MISMATCH, _head_path);
+		return Event::pre_process_done(Status::TYPE_MISMATCH, _head_path);
 	}
 
 	if (tail_block->parent_graph() != head_block->parent_graph()) {
@@ -103,7 +103,7 @@ Connect::pre_process()
 	}
 
 	if (_graph->has_arc(tail_output, _head)) {
-		return Event::pre_process_done(EXISTS, _head_path);
+		return Event::pre_process_done(Status::EXISTS, _head_path);
 	}
 
 	_arc = SharedPtr<ArcImpl>(new ArcImpl(tail_output, _head));
@@ -136,13 +136,13 @@ Connect::pre_process()
 		_compiled_graph = _graph->compile();
 	}
 
-	return Event::pre_process_done(SUCCESS);
+	return Event::pre_process_done(Status::SUCCESS);
 }
 
 void
 Connect::execute(ProcessContext& context)
 {
-	if (!_status) {
+	if (_status != Status::SUCCESS) {
 		_head->add_arc(context, _arc.get());
 		_engine.maid()->dispose(_head->set_buffers(context, _buffers));
 		_head->connect_buffers();
@@ -154,7 +154,7 @@ void
 Connect::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond()) {
+	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->connect(_tail_path, _head_path);
 	}
 }

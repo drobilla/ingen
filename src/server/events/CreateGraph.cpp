@@ -48,12 +48,12 @@ bool
 CreateGraph::pre_process()
 {
 	if (_path.is_root() || _engine.store()->get(_path)) {
-		return Event::pre_process_done(EXISTS, _path);
+		return Event::pre_process_done(Status::EXISTS, _path);
 	}
 
 	_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(_path.parent()));
 	if (!_parent) {
-		return Event::pre_process_done(PARENT_NOT_FOUND, _path.parent());
+		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _path.parent());
 	}
 
 	const Ingen::URIs& uris = _engine.world()->uris();
@@ -68,7 +68,7 @@ CreateGraph::pre_process()
 	}
 
 	if (int_poly < 1 || int_poly > 128) {
-		return Event::pre_process_done(INVALID_POLY, _path);
+		return Event::pre_process_done(Status::INVALID_POLY, _path);
 	}
 
 	if (int_poly == _parent->internal_poly()) {
@@ -81,7 +81,8 @@ CreateGraph::pre_process()
 	_graph->properties().insert(_properties.begin(), _properties.end());
 	_graph->add_property(uris.rdf_type, uris.ingen_Graph);
 	_graph->add_property(uris.rdf_type,
-	                     Resource::Property(uris.ingen_Block, Resource::EXTERNAL));
+	                     Resource::Property(uris.ingen_Block,
+	                                        Resource::Graph::EXTERNAL));
 
 	_parent->add_block(*_graph);
 	if (_parent->enabled()) {
@@ -96,7 +97,7 @@ CreateGraph::pre_process()
 
 	_update = _graph->properties();
 
-	return Event::pre_process_done(SUCCESS);
+	return Event::pre_process_done(Status::SUCCESS);
 }
 
 void
@@ -111,7 +112,7 @@ void
 CreateGraph::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond()) {
+	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->put(Node::path_to_uri(_path), _update);
 	}
 }

@@ -53,16 +53,16 @@ Move::pre_process()
 	Glib::RWLock::WriterLock lock(_engine.store()->lock());
 
 	if (!_old_path.parent().is_parent_of(_new_path)) {
-		return Event::pre_process_done(PARENT_DIFFERS, _new_path);
+		return Event::pre_process_done(Status::PARENT_DIFFERS, _new_path);
 	}
 
 	const Store::iterator i = _engine.store()->find(_old_path);
 	if (i == _engine.store()->end()) {
-		return Event::pre_process_done(NOT_FOUND, _old_path);
+		return Event::pre_process_done(Status::NOT_FOUND, _old_path);
 	}
 
 	if (_engine.store()->find(_new_path) != _engine.store()->end()) {
-		return Event::pre_process_done(EXISTS, _new_path);
+		return Event::pre_process_done(Status::EXISTS, _new_path);
 	}
 
 	EnginePort* eport = _engine.driver()->get_port(_old_path);
@@ -72,7 +72,7 @@ Move::pre_process()
 
 	_engine.store()->rename(i, _new_path);
 
-	return Event::pre_process_done(SUCCESS);
+	return Event::pre_process_done(Status::SUCCESS);
 }
 
 void
@@ -84,7 +84,7 @@ void
 Move::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (!respond()) {
+	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->move(_old_path, _new_path);
 	}
 }

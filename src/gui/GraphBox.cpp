@@ -535,7 +535,7 @@ GraphBox::event_save_as()
 			const_cast<GraphModel*>(_graph.get())->set_property(
 				uris.ingen_document,
 				_app->forge().alloc_uri(uri.c_str()),
-				Resource::EXTERNAL);
+				Resource::Graph::EXTERNAL);
 			_status_bar->push(
 				(boost::format("Saved %1% to %2%") % _graph->path().c_str()
 				 % filename).str(),
