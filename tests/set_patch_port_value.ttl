@@ -4,7 +4,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:root/in> ;
+	patch:subject <ingen:/root/in> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:ControlPort
@@ -12,7 +12,6 @@
 
 <msg1>
 	a patch:Set ;
-	patch:subject <ingen:root/in> ;
-	patch:body [
-		ingen:value 0.5
-	] .
+	patch:subject <ingen:/root/in> ;
+	patch:property ingen:value ;
+	patch:value 0.5 .

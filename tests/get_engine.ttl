@@ -4,4 +4,4 @@
 
 <msg0>
 	a patch:Get ;
-	patch:subject <ingen:engine> .
+	patch:subject <ingen:/engine> .

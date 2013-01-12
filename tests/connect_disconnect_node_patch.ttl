@@ -4,7 +4,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:root/node> ;
+	patch:subject <ingen:/root/node> ;
 	patch:body [
 		a ingen:Block ;
 		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
@@ -12,7 +12,7 @@
 
 <msg1>
 	a patch:Put ;
-	patch:subject <ingen:root/out> ;
+	patch:subject <ingen:/root/out> ;
 	patch:body [
 		a lv2:OutputPort ,
 			lv2:AudioPort
@@ -20,17 +20,17 @@
 
 <msg2>
 	a patch:Put ;
-	patch:subject <ingen:root/> ;
+	patch:subject <ingen:/root/> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:root/node/left_out> ;
-		ingen:head <ingen:root/out>
+		ingen:tail <ingen:/root/node/left_out> ;
+		ingen:head <ingen:/root/out>
 	] .
 
 <msg3>
 	a patch:Delete ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:root/node/left_out> ;
-		ingen:head <ingen:root/out>
+		ingen:tail <ingen:/root/node/left_out> ;
+		ingen:head <ingen:/root/out>
 	] .

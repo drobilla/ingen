@@ -4,14 +4,14 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:root/sub> ;
+	patch:subject <ingen:/root/sub> ;
 	patch:body [
 		a ingen:Graph
 	] .
 
 <msg1>
 	a patch:Put ;
-	patch:subject <ingen:root/sub/node1> ;
+	patch:subject <ingen:/root/sub/node1> ;
 	patch:body [
 		a ingen:Block ;
 		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
@@ -19,7 +19,7 @@
 
 <msg2>
 	a patch:Put ;
-	patch:subject <ingen:root/sub/node2> ;
+	patch:subject <ingen:/root/sub/node2> ;
 	patch:body [
 		a ingen:Block ;
 		ingen:prototype <http://drobilla.net/plugins/mda/Combo>
@@ -27,13 +27,13 @@
 
 <msg3>
 	a patch:Put ;
-	patch:subject <ingen:root/> ;
+	patch:subject <ingen:/root/> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:root/sub/node1/left_out> ;
-		ingen:head <ingen:root/sub/node2/left_in>
+		ingen:tail <ingen:/root/sub/node1/left_out> ;
+		ingen:head <ingen:/root/sub/node2/left_in>
 	] .
 
 <msg4>
 	a patch:Get ;
-	patch:subject <ingen:root/> .
+	patch:subject <ingen:/root/> .

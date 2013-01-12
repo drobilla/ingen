@@ -4,4 +4,4 @@
 
 <msg0>
 	a patch:Get ;
-	patch:subject <ingen:plugins> .
+	patch:subject <ingen:/plugins> .
