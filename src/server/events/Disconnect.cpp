@@ -199,12 +199,11 @@ void
 Disconnect::execute(ProcessContext& context)
 {
 	if (_status == Status::SUCCESS) {
-		if (!_impl->execute(context, true)) {
+		if (_impl->execute(context, true)) {
+			_graph->set_compiled_graph(_compiled_graph);
+		} else {
 			_status = Status::NOT_FOUND;
-			return;
 		}
-
-		_graph->set_compiled_graph(_compiled_graph);
 	}
 }
 

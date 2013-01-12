@@ -142,7 +142,7 @@ Connect::pre_process()
 void
 Connect::execute(ProcessContext& context)
 {
-	if (_status != Status::SUCCESS) {
+	if (_status == Status::SUCCESS) {
 		_head->add_arc(context, _arc.get());
 		_engine.maid()->dispose(_head->set_buffers(context, _buffers));
 		_head->connect_buffers();
