@@ -66,7 +66,7 @@ class TestClient : public AtomSink {
 class TestClient : public Interface
 {
 public:
-	TestClient(Log& log) : _log(log) {}
+	explicit TestClient(Log& log) : _log(log) {}
 	~TestClient() {}
 
 	Raul::URI uri() const { return Raul::URI("ingen:testClient"); }
@@ -77,7 +77,7 @@ public:
 
 	void put(const Raul::URI&            uri,
 	         const Resource::Properties& properties,
-	         Resource::Graph             ctx = Resource::DEFAULT) {}
+	         Resource::Graph             ctx = Resource::Graph::DEFAULT) {}
 
 	void delta(const Raul::URI&            uri,
 	           const Resource::Properties& remove,
@@ -106,7 +106,7 @@ public:
 	void get(const Raul::URI& uri) {}
 
 	void response(int32_t id, Status status, const std::string& subject) {
-		if (status) {
+		if (status != Status::SUCCESS) {
 			_log.error(Raul::fmt("error on message %1%: %2% (%3%)\n")
 			           % id % ingen_status_string(status) % subject);
 			exit(EXIT_FAILURE);

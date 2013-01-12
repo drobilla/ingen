@@ -55,7 +55,7 @@ public:
 	 * updates simple (e.g. Event::post_process()).
 	 */
 	struct Transfer : public Raul::Noncopyable {
-		Transfer(Broadcaster& b) : broadcaster(b) {
+		explicit Transfer(Broadcaster& b) : broadcaster(b) {
 			if (++broadcaster._bundle_depth == 1) {
 				broadcaster.bundle_begin();
 			}

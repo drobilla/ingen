@@ -38,7 +38,7 @@ namespace Ingen {
  */
 class Configuration {
 public:
-	Configuration(Forge& forge);
+	explicit Configuration(Forge& forge);
 
 	/** The scope of a configuration option.
 	 *

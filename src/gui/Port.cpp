@@ -236,7 +236,7 @@ Port::build_uri_menu()
 	LilvNode* rdfs_range = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDFS "range");
 
-	// Get every class in the range of the port's property 
+	// Get every class in the range of the port's property
 	RDFS::URISet ranges;
 	LilvNodes* range = lilv_world_find_nodes(
 		world->lilv_world(), designation, rdfs_range, NULL);

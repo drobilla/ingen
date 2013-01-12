@@ -32,9 +32,7 @@ namespace Server {
 class ProcessContext : public Context
 {
 public:
-	ProcessContext(Engine& engine)
-	: Context(engine, ID::AUDIO)
-	{}
+	explicit ProcessContext(Engine& engine) : Context(engine, ID::AUDIO) {}
 };
 
 } // namespace Server

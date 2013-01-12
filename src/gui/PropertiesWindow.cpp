@@ -375,7 +375,7 @@ PropertiesWindow::key_changed()
 	if (!iter) {
 		return;
 	}
-	
+
 	const Gtk::ListStore::Row row      = *iter;
 	Glib::ustring             prop_uri = row[_combo_columns.uri_col];
 	if (prop_uri.empty()) {

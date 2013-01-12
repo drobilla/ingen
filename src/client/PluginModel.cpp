@@ -280,7 +280,7 @@ heading(const std::string& text, bool html)
 		return text + ":\n\n";
 	}
 }
-		
+
 std::string
 PluginModel::documentation(bool html) const
 {

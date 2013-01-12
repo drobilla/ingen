@@ -115,8 +115,8 @@ NodeModule::create(GraphCanvas&                canvas,
 
 	for (const auto& p : block->properties())
 		ret->property_changed(p.first, p.second);
-	
-	for (const auto& p : block->ports()) 
+
+	for (const auto& p : block->ports())
 		ret->new_port_view(p);
 
 	ret->set_stacked(block->polyphonic());

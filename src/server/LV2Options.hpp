@@ -29,7 +29,7 @@ namespace Ingen {
 namespace Server {
 
 struct LV2Options : public Ingen::LV2Features::Feature {
-	LV2Options(Engine& engine)
+	explicit LV2Options(Engine& engine)
 		: _block_length(0)
 		, _seq_size(0)
 	{
