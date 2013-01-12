@@ -22,6 +22,7 @@
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
+#include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 
 #include "App.hpp"
@@ -62,16 +63,16 @@ struct IngenLV2UI {
 		, sink(NULL)
 	{}
 
-	int                                          argc;
-	char**                                       argv;
-	Ingen::Forge*                                forge;
-	Ingen::World*                                world;
-	IngenLV2AtomSink*                            sink;
-	SharedPtr<Ingen::GUI::App>                   app;
-	SharedPtr<Ingen::GUI::GraphBox>              view;
-	SharedPtr<Ingen::Interface>                  engine;
-	SharedPtr<Ingen::AtomReader>                 reader;
-	SharedPtr<Ingen::Client::SigClientInterface> client;
+	int                                            argc;
+	char**                                         argv;
+	Ingen::Forge*                                  forge;
+	Ingen::World*                                  world;
+	IngenLV2AtomSink*                              sink;
+	Ingen::SPtr<Ingen::GUI::App>                   app;
+	Ingen::SPtr<Ingen::GUI::GraphBox>              view;
+	Ingen::SPtr<Ingen::Interface>                  engine;
+	Ingen::SPtr<Ingen::AtomReader>                 reader;
+	Ingen::SPtr<Ingen::Client::SigClientInterface> client;
 };
 
 static LV2UI_Handle
@@ -113,7 +114,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		ui->world->uris(), write_function, controller);
 
 	// Set up an engine interface that writes LV2 atoms
-	ui->engine = SharedPtr<Ingen::Interface>(
+	ui->engine = Ingen::SPtr<Ingen::Interface>(
 		new Ingen::AtomWriter(
 			ui->world->uri_map(), ui->world->uris(), *ui->sink));
 
@@ -121,11 +122,11 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	// Create App and client
 	ui->app = Ingen::GUI::App::create(ui->world);
-	ui->client = SharedPtr<Ingen::Client::SigClientInterface>(
+	ui->client = Ingen::SPtr<Ingen::Client::SigClientInterface>(
 		new Ingen::Client::SigClientInterface());
 	ui->app->attach(ui->client);
 
-	ui->reader = SharedPtr<Ingen::AtomReader>(
+	ui->reader = Ingen::SPtr<Ingen::AtomReader>(
 		new Ingen::AtomReader(ui->world->uri_map(),
 		                      ui->world->uris(),
 		                      ui->world->log(),
@@ -140,8 +141,9 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->app->store()->put(Ingen::Node::root_uri(), props);
 
 	// Create a GraphBox for the root and set as the UI widget
-	SharedPtr<const Ingen::Client::GraphModel> root = PtrCast<const Ingen::Client::GraphModel>(
-		ui->app->store()->object(Raul::Path("/")));
+	Ingen::SPtr<const Ingen::Client::GraphModel> root =
+		Ingen::dynamic_ptr_cast<const Ingen::Client::GraphModel>(
+			ui->app->store()->object(Raul::Path("/")));
 	ui->view = Ingen::GUI::GraphBox::create(*ui->app, root);
 	ui->view->unparent();
 	*widget = ui->view->gobj();

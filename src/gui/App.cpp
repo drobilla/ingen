@@ -97,7 +97,7 @@ App::~App()
 	delete _window_factory;
 }
 
-SharedPtr<App>
+SPtr<App>
 App::create(Ingen::World* world)
 {
 	_main = Gtk::Main::instance();
@@ -136,7 +136,7 @@ App::create(Ingen::World* world)
 
 	Gtk::RC::parse_string(rc_style);
 
-	return SharedPtr<App>(app);
+	return SPtr<App>(app);
 }
 
 void
@@ -155,7 +155,7 @@ App::run()
 }
 
 void
-App::attach(SharedPtr<SigClientInterface> client)
+App::attach(SPtr<SigClientInterface> client)
 {
 	assert(!_client);
 	assert(!_store);
@@ -166,8 +166,8 @@ App::attach(SharedPtr<SigClientInterface> client)
 	}
 
 	_client = client;
-	_store  = SharedPtr<ClientStore>(new ClientStore(_world->uris(), _world->log(), _world->interface(), client));
-	_loader = SharedPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->interface()));
+	_store  = SPtr<ClientStore>(new ClientStore(_world->uris(), _world->log(), _world->interface(), client));
+	_loader = SPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->interface()));
 
 	_graph_tree_window->init(*this, *_store);
 
@@ -189,7 +189,7 @@ App::detach()
 		_loader.reset();
 		_store.reset();
 		_client.reset();
-		_world->set_interface(SharedPtr<Interface>());
+		_world->set_interface(SPtr<Interface>());
 	}
 }
 
@@ -202,7 +202,7 @@ App::request_plugins_if_necessary()
 	}
 }
 
-SharedPtr<Serialisation::Serialiser>
+SPtr<Serialisation::Serialiser>
 App::serialiser()
 {
 	if (!_world->serialiser())
@@ -376,10 +376,6 @@ struct IconDestroyNotification {
 Glib::RefPtr<Gdk::Pixbuf>
 App::icon_from_path(const string& path, int size)
 {
-	/* If weak references to Glib::Objects are needed somewhere else it will
-	   probably be a good idea to create a proper WeakPtr class instead of
-	   using raw pointers, but for a single use this will do. */
-
 	Glib::RefPtr<Gdk::Pixbuf> buf;
 	if (path.length() == 0)
 		return buf;

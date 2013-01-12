@@ -20,7 +20,8 @@
 #include <stdint.h>
 
 #include "raul/URI.hpp"
-#include "raul/SharedPtr.hpp"
+
+#include "ingen/types.hpp"
 
 namespace Ingen {
 
@@ -93,8 +94,8 @@ public:
 	/**
 	   Register a client to receive updates about engine changes.
 	*/
-	virtual void register_client(const Raul::URI&     uri,
-	                             SharedPtr<Interface> client) = 0;
+	virtual void register_client(const Raul::URI& uri,
+	                             SPtr<Interface>  client) = 0;
 
 	/**
 	   Unregister a client.

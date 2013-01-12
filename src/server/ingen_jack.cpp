@@ -44,7 +44,7 @@ struct IngenJackModule : public Ingen::Module {
 		               world->conf().option("jack-name").get_string(),
 		               NULL);
 		((Server::Engine*)world->engine().get())->set_driver(
-			SharedPtr<Server::Driver>(driver));
+			SPtr<Server::Driver>(driver));
 	}
 };
 

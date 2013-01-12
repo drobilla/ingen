@@ -47,8 +47,8 @@ namespace GUI {
 class ThreadedLoader : public Raul::Thread
 {
 public:
-	ThreadedLoader(App&                 app,
-	               SharedPtr<Interface> engine);
+	ThreadedLoader(App&            app,
+	               SPtr<Interface> engine);
 
 	~ThreadedLoader();
 
@@ -58,25 +58,25 @@ public:
                     boost::optional<Raul::Symbol>     engine_symbol,
                     boost::optional<Node::Properties> engine_data);
 
-	void save_graph(SharedPtr<const Client::GraphModel> model,
-	                const std::string&                  filename);
+	void save_graph(SPtr<const Client::GraphModel> model,
+	                const std::string&             filename);
 
-	SharedPtr<Serialisation::Parser> parser();
+	SPtr<Serialisation::Parser> parser();
 
 private:
-	void save_graph_event(SharedPtr<const Client::GraphModel> model,
-	                      const std::string&                  filename);
+	void save_graph_event(SPtr<const Client::GraphModel> model,
+	                      const std::string&             filename);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	typedef sigc::slot<void> Closure;
 
 	void _run();
 
-	App&                 _app;
-	Raul::Semaphore      _sem;
-	SharedPtr<Interface> _engine;
-	Glib::Mutex          _mutex;
-	std::list<Closure>   _events;
+	App&               _app;
+	Raul::Semaphore    _sem;
+	SPtr<Interface>    _engine;
+	Glib::Mutex        _mutex;
+	std::list<Closure> _events;
 };
 
 } // namespace GUI

@@ -78,7 +78,7 @@ classes(World* world, URISet& types, bool super)
 }
 
 URISet
-types(World* world, SharedPtr<const Client::ObjectModel> model)
+types(World* world, SPtr<const Client::ObjectModel> model)
 {
 	typedef Resource::Properties::const_iterator PropIter;
 	typedef std::pair<PropIter, PropIter>        PropRange;
@@ -101,7 +101,7 @@ types(World* world, SharedPtr<const Client::ObjectModel> model)
 }
 
 URISet
-properties(World* world, SharedPtr<const Client::ObjectModel> model)
+properties(World* world, SPtr<const Client::ObjectModel> model)
 {
 	URISet properties;
 	URISet types = RDFS::types(world, model);

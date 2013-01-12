@@ -16,7 +16,6 @@
 
 #include <string>
 
-#include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 
 #include "Socket.hpp"

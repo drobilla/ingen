@@ -20,10 +20,10 @@
 #include <map>
 #include <stdint.h>
 
+#include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
 #include "raul/Atom.hpp"
 #include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 
 #include "BufferFactory.hpp"
 
@@ -82,13 +82,13 @@ public:
 	 * The caller must safely drop the returned reference in the
 	 * post-processing thread after at least one process thread has run.
 	 */
-	SharedPtr<Bindings> remove(const Raul::Path& path);
+	SPtr<Bindings> remove(const Raul::Path& path);
 
 	/** Remove binding for a particular port.
 	 * The caller must safely drop the returned reference in the
 	 * post-processing thread after at least one process thread has run.
 	 */
-	SharedPtr<Bindings> remove(PortImpl* port);
+	SPtr<Bindings> remove(PortImpl* port);
 
 private:
 	Key midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
@@ -106,11 +106,11 @@ private:
 	                              Type              type,
 	                              const Raul::Atom& value) const;
 
-	Engine&             _engine;
-	PortImpl*           _learn_port;
-	SharedPtr<Bindings> _bindings;
-	BufferRef           _feedback;
-	LV2_Atom_Forge      _forge;
+	Engine&        _engine;
+	PortImpl*      _learn_port;
+	SPtr<Bindings> _bindings;
+	BufferRef      _feedback;
+	LV2_Atom_Forge _forge;
 };
 
 } // namespace Server

@@ -75,15 +75,15 @@ GraphTreeWindow::init(App& app, ClientStore& store)
 }
 
 void
-GraphTreeWindow::new_object(SharedPtr<ObjectModel> object)
+GraphTreeWindow::new_object(SPtr<ObjectModel> object)
 {
-	SharedPtr<GraphModel> graph = PtrCast<GraphModel>(object);
+	SPtr<GraphModel> graph = dynamic_ptr_cast<GraphModel>(object);
 	if (graph)
 		add_graph(graph);
 }
 
 void
-GraphTreeWindow::add_graph(SharedPtr<GraphModel> pm)
+GraphTreeWindow::add_graph(SPtr<GraphModel> pm)
 {
 	if (!pm->parent()) {
 		Gtk::TreeModel::iterator iter = _graph_treestore->append();
@@ -124,7 +124,7 @@ GraphTreeWindow::add_graph(SharedPtr<GraphModel> pm)
 }
 
 void
-GraphTreeWindow::remove_graph(SharedPtr<GraphModel> pm)
+GraphTreeWindow::remove_graph(SPtr<GraphModel> pm)
 {
 	Gtk::TreeModel::iterator i = find_graph(_graph_treestore->children(), pm);
 	if (i != _graph_treestore->children().end())
@@ -132,12 +132,11 @@ GraphTreeWindow::remove_graph(SharedPtr<GraphModel> pm)
 }
 
 Gtk::TreeModel::iterator
-GraphTreeWindow::find_graph(
-		Gtk::TreeModel::Children       root,
-		SharedPtr<Client::ObjectModel> graph)
+GraphTreeWindow::find_graph(Gtk::TreeModel::Children  root,
+                            SPtr<Client::ObjectModel> graph)
 {
 	for (Gtk::TreeModel::iterator c = root.begin(); c != root.end(); ++c) {
-		SharedPtr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
+		SPtr<GraphModel> pm = (*c)[_graph_tree_columns.graph_model_col];
 		if (graph == pm) {
 			return c;
 		} else if ((*c)->children().size() > 0) {
@@ -157,7 +156,7 @@ GraphTreeWindow::show_graph_menu(GdkEventButton* ev)
 	Gtk::TreeModel::iterator active = _graph_tree_selection->get_selected();
 	if (active) {
 		Gtk::TreeModel::Row row = *active;
-		SharedPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
+		SPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
 		if (pm) {
 			_app->log().warn("TODO: graph menu from tree window");
 		}
@@ -165,11 +164,12 @@ GraphTreeWindow::show_graph_menu(GdkEventButton* ev)
 }
 
 void
-GraphTreeWindow::event_graph_activated(const Gtk::TreeModel::Path& path, Gtk::TreeView::Column* col)
+GraphTreeWindow::event_graph_activated(const Gtk::TreeModel::Path& path,
+                                       Gtk::TreeView::Column*      col)
 {
 	Gtk::TreeModel::iterator active = _graph_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
-	SharedPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
+	SPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
 
 	_app->window_factory()->present_graph(pm);
 }
@@ -181,7 +181,7 @@ GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 	Gtk::TreeModel::iterator active = _graph_treestore->get_iter(path);
 	Gtk::TreeModel::Row row = *active;
 
-	SharedPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
+	SPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
 	assert(pm);
 
 	if (_enable_signal)
@@ -192,9 +192,9 @@ GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 }
 
 void
-GraphTreeWindow::graph_property_changed(const Raul::URI&      key,
-                                        const Raul::Atom&     value,
-                                        SharedPtr<GraphModel> graph)
+GraphTreeWindow::graph_property_changed(const Raul::URI&  key,
+                                        const Raul::Atom& value,
+                                        SPtr<GraphModel>  graph)
 {
 	const URIs& uris = _app->uris();
 	_enable_signal = false;
@@ -212,7 +212,7 @@ GraphTreeWindow::graph_property_changed(const Raul::URI&      key,
 }
 
 void
-GraphTreeWindow::graph_moved(SharedPtr<GraphModel> graph)
+GraphTreeWindow::graph_moved(SPtr<GraphModel> graph)
 {
 	_enable_signal = false;
 

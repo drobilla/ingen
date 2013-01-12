@@ -191,23 +191,23 @@ public:
 	typedef std::map<const std::string, ScriptRunner> ScriptRunners;
 	ScriptRunners script_runners;
 
-	int&                                 argc;
-	char**&                              argv;
-	LV2Features*                         lv2_features;
-	Sord::World*                         rdf_world;
-	URIMap*                              uri_map;
-	Forge*                               forge;
-	URIs*                                uris;
-	LV2_Log_Log*                         lv2_log;
-	Log                                  log;
-	Configuration                        conf;
-	SharedPtr<Interface>                 interface;
-	SharedPtr<EngineBase>                engine;
-	SharedPtr<Serialisation::Serialiser> serialiser;
-	SharedPtr<Serialisation::Parser>     parser;
-	SharedPtr<Store>                     store;
-	LilvWorld*                           lilv_world;
-	std::string                          jack_uuid;
+	int&                            argc;
+	char**&                         argv;
+	LV2Features*                    lv2_features;
+	Sord::World*                    rdf_world;
+	URIMap*                         uri_map;
+	Forge*                          forge;
+	URIs*                           uris;
+	LV2_Log_Log*                    lv2_log;
+	Log                             log;
+	Configuration                   conf;
+	SPtr<Interface>                 interface;
+	SPtr<EngineBase>                engine;
+	SPtr<Serialisation::Serialiser> serialiser;
+	SPtr<Serialisation::Parser>     parser;
+	SPtr<Store>                     store;
+	LilvWorld*                      lilv_world;
+	std::string                     jack_uuid;
 };
 
 World::World(int&                 argc,
@@ -224,17 +224,17 @@ World::~World()
 	delete _impl;
 }
 
-void World::set_engine(SharedPtr<EngineBase> e)                    { _impl->engine = e; }
-void World::set_interface(SharedPtr<Interface> i)                  { _impl->interface = i; }
-void World::set_parser(SharedPtr<Serialisation::Parser> p)         { _impl->parser = p; }
-void World::set_serialiser(SharedPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
-void World::set_store(SharedPtr<Store> s)                          { _impl->store = s; }
+void World::set_engine(SPtr<EngineBase> e)                    { _impl->engine = e; }
+void World::set_interface(SPtr<Interface> i)                  { _impl->interface = i; }
+void World::set_parser(SPtr<Serialisation::Parser> p)         { _impl->parser = p; }
+void World::set_serialiser(SPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
+void World::set_store(SPtr<Store> s)                          { _impl->store = s; }
 
-SharedPtr<EngineBase>                World::engine()       { return _impl->engine; }
-SharedPtr<Interface>                 World::interface()    { return _impl->interface; }
-SharedPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
-SharedPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
-SharedPtr<Store>                     World::store()        { return _impl->store; }
+SPtr<EngineBase>                World::engine()       { return _impl->engine; }
+SPtr<Interface>                 World::interface()    { return _impl->interface; }
+SPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
+SPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
+SPtr<Store>                     World::store()        { return _impl->store; }
 
 int&           World::argc() { return _impl->argc; }
 char**&        World::argv() { return _impl->argv; }
@@ -288,14 +288,14 @@ World::run_module(const char* name)
 
 /** Get an interface for a remote engine at @a url
  */
-SharedPtr<Interface>
-World::new_interface(const Raul::URI&     engine_uri,
-                     SharedPtr<Interface> respondee)
+SPtr<Interface>
+World::new_interface(const Raul::URI& engine_uri,
+                     SPtr<Interface>  respondee)
 {
 	const Impl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(engine_uri.scheme());
 	if (i == _impl->interface_factories.end()) {
 		log().warn(Raul::fmt("Unknown URI scheme `%1%'\n") % engine_uri.scheme());
-		return SharedPtr<Interface>();
+		return SPtr<Interface>();
 	}
 
 	return i->second(this, engine_uri, respondee);

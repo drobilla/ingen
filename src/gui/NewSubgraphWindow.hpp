@@ -23,9 +23,8 @@
 #include <gtkmm/label.h>
 #include <gtkmm/spinbutton.h>
 
-#include "raul/SharedPtr.hpp"
-
 #include "ingen/Node.hpp"
+#include "ingen/types.hpp"
 
 #include "Window.hpp"
 
@@ -47,18 +46,18 @@ public:
 	NewSubgraphWindow(BaseObjectType*                   cobject,
 	                  const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_graph(SharedPtr<const Client::GraphModel> graph);
+	void set_graph(SPtr<const Client::GraphModel> graph);
 
-	void present(SharedPtr<const Client::GraphModel> graph,
-	             Node::Properties                    data);
+	void present(SPtr<const Client::GraphModel> graph,
+	             Node::Properties               data);
 
 private:
 	void name_changed();
 	void ok_clicked();
 	void cancel_clicked();
 
-	Node::Properties                    _initial_data;
-	SharedPtr<const Client::GraphModel> _graph;
+	Node::Properties               _initial_data;
+	SPtr<const Client::GraphModel> _graph;
 
 	Gtk::Entry*      _name_entry;
 	Gtk::Label*      _message_label;

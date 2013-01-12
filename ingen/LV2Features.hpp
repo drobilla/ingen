@@ -20,9 +20,9 @@
 #include <vector>
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
-
-#include "raul/SharedPtr.hpp"
 #include "raul/Noncopyable.hpp"
+
+#include "ingen/types.hpp"
 
 namespace Ingen {
 
@@ -42,13 +42,13 @@ public:
 
 		virtual const char* uri() const = 0;
 
-		virtual SharedPtr<LV2_Feature> feature(World* world,
-		                                       Node*  block) = 0;
+		virtual SPtr<LV2_Feature> feature(World* world,
+		                                  Node*  block) = 0;
 	};
 
 	class FeatureArray : public Raul::Noncopyable {
 	public:
-		typedef std::vector< SharedPtr<LV2_Feature> > FeatureVector;
+		typedef std::vector< SPtr<LV2_Feature> > FeatureVector;
 
 		explicit FeatureArray(FeatureVector& features);
 
@@ -61,14 +61,14 @@ public:
 		LV2_Feature** _array;
 	};
 
-	void add_feature(SharedPtr<Feature> feature);
+	void add_feature(SPtr<Feature> feature);
 	bool is_supported(const std::string& uri) const;
 
-	SharedPtr<FeatureArray> lv2_features(World* world,
-	                                     Node*  block) const;
+	SPtr<FeatureArray> lv2_features(World* world,
+	                                Node*  block) const;
 
 private:
-	typedef std::vector< SharedPtr<Feature> > Features;
+	typedef std::vector< SPtr<Feature> > Features;
 	Features _features;
 };
 

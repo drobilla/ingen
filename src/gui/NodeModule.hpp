@@ -18,7 +18,7 @@
 #define INGEN_GUI_NODEMODULE_HPP
 
 #include "ganv/Module.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "Port.hpp"
 
@@ -47,25 +47,25 @@ class NodeModule : public Ganv::Module
 {
 public:
 	static NodeModule* create(
-		GraphCanvas&                        canvas,
-		SharedPtr<const Client::BlockModel> block,
-		bool                                human_names);
+		GraphCanvas&                   canvas,
+		SPtr<const Client::BlockModel> block,
+		bool                           human_names);
 
 	virtual ~NodeModule();
 
 	App& app() const;
 
-	Port* port(boost::shared_ptr<const Client::PortModel> model);
+	Port* port(SPtr<const Client::PortModel> model);
 
-	void delete_port_view(SharedPtr<const Client::PortModel> port);
+	void delete_port_view(SPtr<const Client::PortModel> port);
 
 	virtual void store_location(double x, double y);
 	void show_human_names(bool b);
 
-	SharedPtr<const Client::BlockModel> block() const { return _block; }
+	SPtr<const Client::BlockModel> block() const { return _block; }
 
 protected:
-	NodeModule(GraphCanvas& canvas, SharedPtr<const Client::BlockModel> block);
+	NodeModule(GraphCanvas& canvas, SPtr<const Client::BlockModel> block);
 
 	virtual bool on_double_click(GdkEventButton* ev);
 
@@ -80,7 +80,7 @@ protected:
 	void rename();
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
-	void new_port_view(SharedPtr<const Client::PortModel> port);
+	void new_port_view(SPtr<const Client::PortModel> port);
 
 	void value_changed(uint32_t index, const Raul::Atom& value);
 	void port_activity(uint32_t index, const Raul::Atom& value);
@@ -89,11 +89,11 @@ protected:
 
 	bool show_menu(GdkEventButton* ev);
 
-	SharedPtr<const Client::BlockModel> _block;
-	NodeMenu*                           _menu;
-	SharedPtr<Client::PluginUI>         _plugin_ui;
-	Gtk::Widget*                        _gui_widget;
-	Gtk::Window*                        _gui_window; ///< iff popped up
+	SPtr<const Client::BlockModel> _block;
+	NodeMenu*                      _menu;
+	SPtr<Client::PluginUI>         _plugin_ui;
+	Gtk::Widget*                   _gui_widget;
+	Gtk::Window*                   _gui_window; ///< iff popped up
 };
 
 } // namespace GUI

@@ -27,12 +27,12 @@
 
 #include "ganv/Canvas.hpp"
 #include "ganv/Module.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/Node.hpp"
+#include "ingen/client/ArcModel.hpp"
+#include "ingen/types.hpp"
 #include "raul/Path.hpp"
 
 #include "NodeModule.hpp"
-#include "ingen/Node.hpp"
-#include "ingen/client/ArcModel.hpp"
 
 namespace Ingen {
 
@@ -49,10 +49,10 @@ class NodeModule;
 class GraphCanvas : public Ganv::Canvas
 {
 public:
-	GraphCanvas(App&                                app,
-	            SharedPtr<const Client::GraphModel> graph,
-	            int                                 width,
-	            int                                 height);
+	GraphCanvas(App&                           app,
+	            SPtr<const Client::GraphModel> graph,
+	            int                            width,
+	            int                            height);
 
 	virtual ~GraphCanvas() {}
 
@@ -63,13 +63,13 @@ public:
 	void show_port_names(bool show);
 	bool show_port_names() const { return _show_port_names; }
 
-	void add_plugin(SharedPtr<Client::PluginModel> pm);
-	void add_block(SharedPtr<const Client::BlockModel> bm);
-	void remove_block(SharedPtr<const Client::BlockModel> bm);
-	void add_port(SharedPtr<const Client::PortModel> pm);
-	void remove_port(SharedPtr<const Client::PortModel> pm);
-	void connection(SharedPtr<const Client::ArcModel> am);
-	void disconnection(SharedPtr<const Client::ArcModel> am);
+	void add_plugin(SPtr<Client::PluginModel> pm);
+	void add_block(SPtr<const Client::BlockModel> bm);
+	void remove_block(SPtr<const Client::BlockModel> bm);
+	void add_port(SPtr<const Client::PortModel> pm);
+	void remove_port(SPtr<const Client::PortModel> pm);
+	void connection(SPtr<const Client::ArcModel> am);
+	void disconnection(SPtr<const Client::ArcModel> am);
 
 	void get_new_module_location(double& x, double& y);
 
@@ -96,7 +96,7 @@ private:
 	void menu_new_graph();
 	void menu_load_graph();
 	void menu_properties();
-	void load_plugin(WeakPtr<Client::PluginModel> plugin);
+	void load_plugin(WPtr<Client::PluginModel> plugin);
 
 	void build_menus();
 
@@ -116,7 +116,7 @@ private:
 
 	Node::Properties get_initial_data(Resource::Graph ctx=Resource::Graph::DEFAULT);
 
-	Ganv::Port* get_port_view(SharedPtr<Client::PortModel> port);
+	Ganv::Port* get_port_view(SPtr<Client::PortModel> port);
 
 	void connect(Ganv::Node* src,
 	             Ganv::Node* dst);
@@ -124,10 +124,10 @@ private:
 	void disconnect(Ganv::Node* src,
 	                Ganv::Node* dst);
 
-	App&                                _app;
-	SharedPtr<const Client::GraphModel> _graph;
+	App&                           _app;
+	SPtr<const Client::GraphModel> _graph;
 
-	typedef std::map<SharedPtr<const Client::ObjectModel>, Ganv::Module*> Views;
+	typedef std::map<SPtr<const Client::ObjectModel>, Ganv::Module*> Views;
 	Views _views;
 
 	int                 _auto_position_count;

@@ -27,7 +27,7 @@ LV2Features::LV2Features()
 }
 
 void
-LV2Features::add_feature(SharedPtr<Feature> feature)
+LV2Features::add_feature(SPtr<Feature> feature)
 {
 	_features.push_back(feature);
 }
@@ -53,17 +53,17 @@ LV2Features::is_supported(const std::string& uri) const
 	return false;
 }
 
-SharedPtr<LV2Features::FeatureArray>
+SPtr<LV2Features::FeatureArray>
 LV2Features::lv2_features(World* world, Node* node) const
 {
 	FeatureArray::FeatureVector vec;
 	for (const auto& f : _features) {
-		SharedPtr<LV2_Feature> fptr = f->feature(world, node);
+		SPtr<LV2_Feature> fptr = f->feature(world, node);
 		if (fptr) {
 			vec.push_back(fptr);
 		}
 	}
-	return SharedPtr<FeatureArray>(new FeatureArray(vec));
+	return SPtr<FeatureArray>(new FeatureArray(vec));
 }
 
 } // namespace Ingen

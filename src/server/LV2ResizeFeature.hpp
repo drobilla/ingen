@@ -49,10 +49,10 @@ struct ResizeFeature : public Ingen::LV2Features::Feature {
 
 	const char* uri() const { return LV2_RESIZE_PORT_URI; }
 
-	SharedPtr<LV2_Feature> feature(World* w, Node* n) {
+	SPtr<LV2_Feature> feature(World* w, Node* n) {
 		BlockImpl* block = dynamic_cast<BlockImpl*>(n);
 		if (!block)
-			return SharedPtr<LV2_Feature>();
+			return SPtr<LV2_Feature>();
 		LV2_Resize_Port_Resize* data
 			= (LV2_Resize_Port_Resize*)malloc(sizeof(LV2_Resize_Port_Resize));
 		data->data   = block;
@@ -60,7 +60,7 @@ struct ResizeFeature : public Ingen::LV2Features::Feature {
 		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
 		f->URI  = LV2_RESIZE_PORT_URI;
 		f->data = data;
-		return SharedPtr<LV2_Feature>(f, &delete_feature);
+		return SPtr<LV2_Feature>(f, &delete_feature);
 	}
 };
 

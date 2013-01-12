@@ -21,7 +21,7 @@
 
 #include <gtkmm/builder.h>
 
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "GraphBox.hpp"
 #include "Window.hpp"
@@ -48,8 +48,8 @@ public:
 
 	void init_window(App& app);
 
-	SharedPtr<const Client::GraphModel> graph() const { return _box->graph(); }
-	GraphBox*                           box()   const { return _box; }
+	SPtr<const Client::GraphModel> graph() const { return _box->graph(); }
+	GraphBox*                      box()   const { return _box; }
 
 	bool documentation_is_visible() { return _box->documentation_is_visible(); }
 

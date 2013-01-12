@@ -42,8 +42,8 @@
 #include "ingen/runtime_paths.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
+#include "ingen/types.hpp"
 #include "raul/Semaphore.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 
 #include "Buffer.hpp"
@@ -74,7 +74,7 @@ class Lib {
 public:
 	explicit Lib(const char* bundle_path);
 
-	typedef std::vector< SharedPtr<const LV2Graph> > Graphs;
+	typedef std::vector< Ingen::SPtr<const LV2Graph> > Graphs;
 
 	Graphs graphs;
 };
@@ -401,8 +401,8 @@ using namespace Ingen::Server;
 class MainThread : public Raul::Thread
 {
 public:
-	explicit MainThread(SharedPtr<Engine> engine,
-	                    LV2Driver*        driver)
+	explicit MainThread(SPtr<Engine> engine,
+	                    LV2Driver*   driver)
 		: Raul::Thread()
 		, _engine(engine)
 		, _driver(driver)
@@ -424,8 +424,8 @@ private:
 		}
 	}
 
-	SharedPtr<Engine> _engine;
-	LV2Driver*        _driver;
+	SPtr<Engine> _engine;
+	LV2Driver*   _driver;
 };
 
 struct IngenPlugin {
@@ -466,8 +466,9 @@ find_graphs(const Glib::ustring& manifest_uri)
 		if (!f.end()) {
 			const uint8_t* file_uri  = f.get_object().to_u_string();
 			uint8_t*       file_path = serd_file_uri_parse(file_uri, NULL);
-			graphs.push_back(boost::shared_ptr<const LV2Graph>(
-				                 new LV2Graph(graph_uri, (const char*)file_path)));
+			graphs.push_back(
+				SPtr<const LV2Graph>(
+					new LV2Graph(graph_uri, (const char*)file_path)));
 			free(file_path);
 		}
 	}
@@ -568,11 +569,11 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		"queue-size",
 		plugin->world->forge().make(std::max(block_length, seq_size) * 4));
 
-	SharedPtr<Server::Engine> engine(new Server::Engine(plugin->world));
+	SPtr<Server::Engine> engine(new Server::Engine(plugin->world));
 	plugin->world->set_engine(engine);
 
-	SharedPtr<EventWriter> interface =
-		SharedPtr<EventWriter>(engine->interface(), NullDeleter<EventWriter>);
+	SPtr<EventWriter> interface = SPtr<EventWriter>(engine->interface(),
+	                                                NullDeleter<EventWriter>);
 
 	plugin->world->set_interface(interface);
 
@@ -580,7 +581,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	Server::ThreadManager::single_threaded = true;
 
 	LV2Driver* driver = new LV2Driver(*engine.get(), block_length, rate);
-	engine->set_driver(SharedPtr<Ingen::Server::Driver>(driver));
+	engine->set_driver(SPtr<Ingen::Server::Driver>(driver));
 
 	plugin->main = new MainThread(engine, driver);
 
@@ -604,7 +605,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	/* Register client after loading graph so the to-ui ring does not overflow.
 	   Since we are not yet rolling, it won't be drained, causing a deadlock. */
-	SharedPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
+	SPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
 	interface->set_respondee(client);
 	engine->register_client(Raul::URI("ingen:/clients/lv2"), client);
 
@@ -660,8 +661,8 @@ static void
 ingen_cleanup(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
-	me->world->set_engine(SharedPtr<Ingen::Server::Engine>());
-	me->world->set_interface(SharedPtr<Ingen::Interface>());
+	me->world->set_engine(SPtr<Ingen::Server::Engine>());
+	me->world->set_interface(SPtr<Ingen::Interface>());
 	delete me->world;
 	delete me;
 }

@@ -24,7 +24,6 @@
 #include <glibmm/timer.h>
 
 #include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/fmt.hpp"
 
 #include "ingen_config.h"
@@ -36,6 +35,7 @@
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/serialisation/Parser.hpp"
+#include "ingen/types.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
@@ -97,13 +97,12 @@ main(int argc, char** argv)
 	}
 
 	// Run engine
-	SharedPtr<Interface> engine_interface;
+	SPtr<Interface> engine_interface;
 	if (conf.option("engine").get_bool()) {
 		ingen_try(world->load_module("server"),
 		          "Unable to load server module");
 
-		ingen_try(world->engine(),
-		          "Unable to create engine");
+		ingen_try(bool(world->engine()), "Unable to create engine");
 
 		engine_interface = world->interface();
 
@@ -124,9 +123,10 @@ main(int argc, char** argv)
 		const char* const uri = conf.option("connect").get_string();
 		ingen_try(Raul::URI::is_valid(uri),
 		          (Raul::fmt("Invalid URI <%1%>") % uri).str().c_str());
-		SharedPtr<Interface> client(new Client::ThreadedSigClientInterface(1024));
-		ingen_try((engine_interface = world->new_interface(Raul::URI(uri), client)),
-		          (string("Unable to create interface to `") + uri + "'").c_str());
+		SPtr<Interface> client(new Client::ThreadedSigClientInterface(1024));
+		engine_interface = world->new_interface(Raul::URI(uri), client);
+		ingen_try(bool(engine_interface),
+		          (Raul::fmt("Unable to create interface to `%1%'") % uri).str().c_str());
 	}
 
 	world->set_interface(engine_interface);
@@ -168,8 +168,7 @@ main(int argc, char** argv)
 			}
 		}
 
-		ingen_try(world->parser(),
-		          "Unable to create parser");
+		ingen_try(bool(world->parser()), "Unable to create parser");
 
 		const string path = conf.option("load").is_valid() ?
 		  conf.option("load").get_string() :

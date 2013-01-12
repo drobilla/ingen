@@ -26,11 +26,11 @@ using namespace Ingen;
 
 struct IngenSocketServerModule : public Ingen::Module {
 	void load(Ingen::World* world) {
-		listener = SharedPtr<Ingen::Socket::SocketListener>(
+		listener = SPtr<Ingen::Socket::SocketListener>(
 			new Ingen::Socket::SocketListener(*world));
 	}
 
-	SharedPtr<Ingen::Socket::SocketListener> listener;
+	SPtr<Ingen::Socket::SocketListener> listener;
 };
 
 extern "C" {

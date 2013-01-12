@@ -19,8 +19,8 @@
 
 #include <cstdlib>
 
+#include "ingen/types.hpp"
 #include "lilv/lilv.h"
-#include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
 #include "PluginImpl.hpp"
@@ -37,7 +37,7 @@ class BlockImpl;
 class LV2Plugin : public PluginImpl
 {
 public:
-	LV2Plugin(SharedPtr<LV2Info> lv2_info, const Raul::URI& uri);
+	LV2Plugin(SPtr<LV2Info> lv2_info, const Raul::URI& uri);
 
 	BlockImpl* instantiate(BufferFactory&      bufs,
 	                       const Raul::Symbol& symbol,
@@ -47,14 +47,14 @@ public:
 
 	const Raul::Symbol symbol() const;
 
-	SharedPtr<LV2Info> lv2_info() const { return _lv2_info; }
+	SPtr<LV2Info> lv2_info() const { return _lv2_info; }
 
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
 	void              lilv_plugin(const LilvPlugin* p);
 
 private:
-	const LilvPlugin*  _lilv_plugin;
-	SharedPtr<LV2Info> _lv2_info;
+	const LilvPlugin* _lilv_plugin;
+	SPtr<LV2Info>     _lv2_info;
 };
 
 } // namespace Server

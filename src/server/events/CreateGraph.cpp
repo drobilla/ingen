@@ -30,7 +30,7 @@ namespace Server {
 namespace Events {
 
 CreateGraph::CreateGraph(Engine&                     engine,
-                         SharedPtr<Interface>        client,
+                         SPtr<Interface>             client,
                          int32_t                     id,
                          SampleCount                 timestamp,
                          const Raul::Path&           path,

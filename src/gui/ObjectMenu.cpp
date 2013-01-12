@@ -51,7 +51,7 @@ ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
 }
 
 void
-ObjectMenu::init(App& app, SharedPtr<const ObjectModel> object)
+ObjectMenu::init(App& app, SPtr<const ObjectModel> object)
 {
 	_app = &app;
 	_object = object;

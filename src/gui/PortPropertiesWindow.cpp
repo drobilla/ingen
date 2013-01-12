@@ -52,7 +52,7 @@ PortPropertiesWindow::PortPropertiesWindow(BaseObjectType*                   cob
  * This function MUST be called before using this object in any way.
  */
 void
-PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
+PortPropertiesWindow::present(SPtr<const PortModel> pm)
 {
 	assert(pm);
 
@@ -66,7 +66,7 @@ PortPropertiesWindow::present(SharedPtr<const PortModel> pm)
 	set_title(pm->path() + " Properties - Ingen");
 
 	float min = 0.0f, max = 1.0f;
-	boost::shared_ptr<BlockModel> parent = PtrCast<BlockModel>(_port_model->parent());
+	SPtr<BlockModel> parent = dynamic_ptr_cast<BlockModel>(_port_model->parent());
 	if (parent)
 		parent->port_value_range(_port_model, min, max,
 		                         _app->sample_rate());

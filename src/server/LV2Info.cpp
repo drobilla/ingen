@@ -51,7 +51,7 @@ LV2Info::LV2Info(Ingen::World* world)
 	, _world(world)
 {
 	world->lv2_features().add_feature(
-		SharedPtr<LV2Features::Feature>(new ResizeFeature()));
+		SPtr<LV2Features::Feature>(new ResizeFeature()));
 }
 
 LV2Info::~LV2Info()

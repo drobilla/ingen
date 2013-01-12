@@ -36,8 +36,8 @@ using namespace Client;
 
 namespace GUI {
 
-SubgraphModule::SubgraphModule(GraphCanvas&                canvas,
-                               SharedPtr<const GraphModel> graph)
+SubgraphModule::SubgraphModule(GraphCanvas&           canvas,
+                               SPtr<const GraphModel> graph)
 	: NodeModule(canvas, graph)
 	, _graph(graph)
 {
@@ -49,7 +49,7 @@ SubgraphModule::on_double_click(GdkEventButton* event)
 {
 	assert(_graph);
 
-	SharedPtr<GraphModel> parent = PtrCast<GraphModel>(_graph->parent());
+	SPtr<GraphModel> parent = dynamic_ptr_cast<GraphModel>(_graph->parent());
 
 	GraphWindow* const preferred = ( (parent && (event->state & GDK_SHIFT_MASK))
 		? NULL
@@ -92,7 +92,7 @@ SubgraphModule::browse_to_graph()
 {
 	assert(_graph->parent());
 
-	SharedPtr<GraphModel> parent = PtrCast<GraphModel>(_graph->parent());
+	SPtr<GraphModel> parent = dynamic_ptr_cast<GraphModel>(_graph->parent());
 
 	GraphWindow* const preferred = (parent)
 		? app().window_factory()->graph_window(parent)

@@ -23,7 +23,7 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/Resource.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "types.hpp"
 
@@ -42,11 +42,11 @@ public:
 
 	Raul::URI uri() const { return Raul::URI("ingen:/clients/event_writer"); }
 
-	virtual SharedPtr<Interface> respondee() const {
+	virtual SPtr<Interface> respondee() const {
 		return _respondee;
 	}
 
-	virtual void set_respondee(SharedPtr<Interface> respondee) {
+	virtual void set_respondee(SPtr<Interface> respondee) {
 		_respondee = respondee;
 	}
 
@@ -89,9 +89,9 @@ public:
 	virtual void error(const std::string& msg) {}  ///< N/A
 
 protected:
-	Engine&              _engine;
-	SharedPtr<Interface> _respondee;
-	int32_t              _request_id;
+	Engine&         _engine;
+	SPtr<Interface> _respondee;
+	int32_t         _request_id;
 
 private:
 	SampleCount now() const;

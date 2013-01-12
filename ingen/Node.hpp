@@ -17,9 +17,9 @@
 #ifndef INGEN_NODE_HPP
 #define INGEN_NODE_HPP
 
-#include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 #include "ingen/Resource.hpp"
+#include "ingen/types.hpp"
+#include "raul/Path.hpp"
 
 namespace Raul {
 class Atom;
@@ -55,7 +55,7 @@ public:
 	};
 
 	typedef std::pair<const Node*, const Node*> ArcsKey;
-	typedef std::map< ArcsKey, SharedPtr<Arc> > Arcs;
+	typedef std::map< ArcsKey, SPtr<Arc> > Arcs;
 
 	// Graphs only
 	Arcs&       arcs()       { return _arcs; }

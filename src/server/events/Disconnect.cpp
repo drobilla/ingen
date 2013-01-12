@@ -39,12 +39,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Disconnect::Disconnect(Engine&              engine,
-                       SharedPtr<Interface> client,
-                       int32_t              id,
-                       SampleCount          timestamp,
-                       const Raul::Path&    tail_path,
-                       const Raul::Path&    head_path)
+Disconnect::Disconnect(Engine&           engine,
+                       SPtr<Interface>   client,
+                       int32_t           id,
+                       SampleCount       timestamp,
+                       const Raul::Path& tail_path,
+                       const Raul::Path& head_path)
 	: Event(engine, client, id, timestamp)
 	, _tail_path(tail_path)
 	, _head_path(head_path)

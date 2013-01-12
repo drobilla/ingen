@@ -21,8 +21,6 @@
 
 #include <string>
 
-#include "raul/SharedPtr.hpp"
-
 namespace Ingen { namespace Client { class PortModel; } }
 
 namespace Ingen {

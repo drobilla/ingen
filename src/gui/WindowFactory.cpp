@@ -87,7 +87,7 @@ WindowFactory::num_open_graph_windows()
 }
 
 GraphBox*
-WindowFactory::graph_box(SharedPtr<const GraphModel> graph)
+WindowFactory::graph_box(SPtr<const GraphModel> graph)
 {
 	GraphWindow* window = graph_window(graph);
 	if (window) {
@@ -98,7 +98,7 @@ WindowFactory::graph_box(SharedPtr<const GraphModel> graph)
 }
 
 GraphWindow*
-WindowFactory::graph_window(SharedPtr<const GraphModel> graph)
+WindowFactory::graph_window(SPtr<const GraphModel> graph)
 {
 	if (!graph)
 		return NULL;
@@ -109,12 +109,12 @@ WindowFactory::graph_window(SharedPtr<const GraphModel> graph)
 }
 
 GraphWindow*
-WindowFactory::parent_graph_window(SharedPtr<const BlockModel> block)
+WindowFactory::parent_graph_window(SPtr<const BlockModel> block)
 {
 	if (!block)
 		return NULL;
 
-	return graph_window(PtrCast<GraphModel>(block->parent()));
+	return graph_window(dynamic_ptr_cast<GraphModel>(block->parent()));
 }
 
 /** Present a GraphWindow for a Graph.
@@ -124,9 +124,9 @@ WindowFactory::parent_graph_window(SharedPtr<const BlockModel> block)
  * presented and @a preferred left unmodified.
  */
 void
-WindowFactory::present_graph(SharedPtr<const GraphModel> graph,
-                             GraphWindow*                preferred,
-                             SharedPtr<GraphView>        view)
+WindowFactory::present_graph(SPtr<const GraphModel> graph,
+                             GraphWindow*           preferred,
+                             SPtr<GraphView>        view)
 {
 	assert(!view || view->graph() == graph);
 
@@ -150,8 +150,8 @@ WindowFactory::present_graph(SharedPtr<const GraphModel> graph,
 }
 
 GraphWindow*
-WindowFactory::new_graph_window(SharedPtr<const GraphModel> graph,
-                                SharedPtr<GraphView>        view)
+WindowFactory::new_graph_window(SPtr<const GraphModel> graph,
+                                SPtr<GraphView>        view)
 {
 	assert(!view || view->graph() == graph);
 
@@ -185,8 +185,8 @@ WindowFactory::remove_graph_window(GraphWindow* win, GdkEventAny* ignored)
 }
 
 void
-WindowFactory::present_load_plugin(SharedPtr<const GraphModel> graph,
-                                   Node::Properties            data)
+WindowFactory::present_load_plugin(SPtr<const GraphModel> graph,
+                                   Node::Properties       data)
 {
 	_app.request_plugins_if_necessary();
 
@@ -208,8 +208,8 @@ WindowFactory::present_load_plugin(SharedPtr<const GraphModel> graph,
 }
 
 void
-WindowFactory::present_load_graph(SharedPtr<const GraphModel> graph,
-                                  Node::Properties            data)
+WindowFactory::present_load_graph(SPtr<const GraphModel> graph,
+                                  Node::Properties       data)
 {
 	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
@@ -220,8 +220,8 @@ WindowFactory::present_load_graph(SharedPtr<const GraphModel> graph,
 }
 
 void
-WindowFactory::present_load_subgraph(SharedPtr<const GraphModel> graph,
-                                     Node::Properties            data)
+WindowFactory::present_load_subgraph(SPtr<const GraphModel> graph,
+                                     Node::Properties       data)
 {
 	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
@@ -232,8 +232,8 @@ WindowFactory::present_load_subgraph(SharedPtr<const GraphModel> graph,
 }
 
 void
-WindowFactory::present_new_subgraph(SharedPtr<const GraphModel> graph,
-                                    Node::Properties            data)
+WindowFactory::present_new_subgraph(SPtr<const GraphModel> graph,
+                                    Node::Properties       data)
 {
 	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
@@ -244,7 +244,7 @@ WindowFactory::present_new_subgraph(SharedPtr<const GraphModel> graph,
 }
 
 void
-WindowFactory::present_rename(SharedPtr<const ObjectModel> object)
+WindowFactory::present_rename(SPtr<const ObjectModel> object)
 {
 	GraphWindowMap::iterator w = _graph_windows.find(object->path());
 	if (w == _graph_windows.end())
@@ -257,7 +257,7 @@ WindowFactory::present_rename(SharedPtr<const ObjectModel> object)
 }
 
 void
-WindowFactory::present_properties(SharedPtr<const ObjectModel> object)
+WindowFactory::present_properties(SPtr<const ObjectModel> object)
 {
 	GraphWindowMap::iterator w = _graph_windows.find(object->path());
 	if (w == _graph_windows.end())

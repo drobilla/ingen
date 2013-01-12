@@ -22,9 +22,8 @@
 #include <gtkmm/builder.h>
 #include <gtkmm/spinbutton.h>
 
-#include "raul/SharedPtr.hpp"
-
 #include "ingen/client/PortModel.hpp"
+#include "ingen/types.hpp"
 
 #include "Window.hpp"
 
@@ -43,7 +42,7 @@ public:
 	PortPropertiesWindow(BaseObjectType*                   cobject,
 	                     const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(SharedPtr<const Client::PortModel> port_model);
+	void present(SPtr<const Client::PortModel> port_model);
 
 private:
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
@@ -56,12 +55,12 @@ private:
 	float _initial_min;
 	float _initial_max;
 
-	SharedPtr<const Client::PortModel> _port_model;
-	Gtk::SpinButton*                   _min_spinner;
-	Gtk::SpinButton*                   _max_spinner;
-	Gtk::Button*                       _cancel_button;
-	Gtk::Button*                       _ok_button;
-	std::list<sigc::connection>        _connections;
+	SPtr<const Client::PortModel> _port_model;
+	Gtk::SpinButton*              _min_spinner;
+	Gtk::SpinButton*              _max_spinner;
+	Gtk::Button*                  _cancel_button;
+	Gtk::Button*                  _ok_button;
+	std::list<sigc::connection>   _connections;
 };
 
 } // namespace GUI

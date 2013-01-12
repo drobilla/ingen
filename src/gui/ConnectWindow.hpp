@@ -26,8 +26,8 @@
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/spinbutton.h>
 
+#include "ingen/types.hpp"
 #include "lilv/lilv.h"
-#include "raul/SharedPtr.hpp"
 
 #include "Window.hpp"
 
@@ -49,7 +49,7 @@ public:
 	ConnectWindow(BaseObjectType*                   cobject,
 	              const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_connected_to(SharedPtr<Ingen::Interface> engine);
+	void set_connected_to(SPtr<Ingen::Interface> engine);
 	void start(App& app, Ingen::World* world);
 	void ingen_response(int32_t id, Status status, const std::string& subject) {
 		_attached = true;

@@ -109,14 +109,14 @@ SocketListener::_run()
 		}
 
 		if (pfds[0].revents & POLLIN) {
-			SharedPtr<Socket> conn = _unix_sock.accept();
+			SPtr<Socket> conn = _unix_sock.accept();
 			if (conn) {
 				new SocketServer(_world, *engine, conn);
 			}
 		}
 
 		if (pfds[1].revents & POLLIN) {
-			SharedPtr<Socket> conn = _net_sock.accept();
+			SPtr<Socket> conn = _net_sock.accept();
 			if (conn) {
 				new SocketServer(_world, *engine, conn);
 			}

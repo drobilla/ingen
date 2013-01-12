@@ -25,8 +25,8 @@
 #include <cassert>
 #include <cstdlib>
 
+#include "ingen/types.hpp"
 #include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
 #include "ingen/Node.hpp"
@@ -63,16 +63,16 @@ public:
 
 	void on_property(const Raul::URI& uri, const Raul::Atom& value);
 
-	const Raul::Path&      path()       const { return _path; }
-	const Raul::Symbol&    symbol()     const { return _symbol; }
-	SharedPtr<ObjectModel> parent()     const { return _parent; }
-	bool                   polyphonic() const;
+	const Raul::Path&   path()       const { return _path; }
+	const Raul::Symbol& symbol()     const { return _symbol; }
+	SPtr<ObjectModel>   parent()     const { return _parent; }
+	bool                polyphonic() const;
 
 	Node* graph_parent() const { return _parent.get(); }
 
 	// Signals
-	INGEN_SIGNAL(new_child, void, SharedPtr<ObjectModel>);
-	INGEN_SIGNAL(removed_child, void, SharedPtr<ObjectModel>);
+	INGEN_SIGNAL(new_child, void, SPtr<ObjectModel>);
+	INGEN_SIGNAL(removed_child, void, SPtr<ObjectModel>);
 	INGEN_SIGNAL(property, void, const Raul::URI&, const Raul::Atom&);
 	INGEN_SIGNAL(destroyed, void);
 	INGEN_SIGNAL(moved, void);
@@ -84,13 +84,13 @@ protected:
 	ObjectModel(const ObjectModel& copy);
 
 	virtual void set_path(const Raul::Path& p);
-	virtual void set_parent(SharedPtr<ObjectModel> p);
-	virtual void add_child(SharedPtr<ObjectModel> c) {}
-	virtual bool remove_child(SharedPtr<ObjectModel> c) { return true; }
+	virtual void set_parent(SPtr<ObjectModel> p);
+	virtual void add_child(SPtr<ObjectModel> c) {}
+	virtual bool remove_child(SPtr<ObjectModel> c) { return true; }
 
-	virtual void set(SharedPtr<ObjectModel> model);
+	virtual void set(SPtr<ObjectModel> model);
 
-	SharedPtr<ObjectModel> _parent;
+	SPtr<ObjectModel> _parent;
 
 private:
 	Raul::Path   _path;

@@ -36,7 +36,7 @@ class CreateGraph : public Event
 {
 public:
 	CreateGraph(Engine&                     engine,
-	            SharedPtr<Interface>        client,
+	            SPtr<Interface>             client,
 	            int32_t                     id,
 	            SampleCount                 timestamp,
 	            const Raul::Path&           path,

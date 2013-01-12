@@ -25,7 +25,6 @@
 #include "ingen/Resource.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 
 namespace Raul { class Maid; }
 

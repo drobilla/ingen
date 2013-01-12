@@ -19,8 +19,8 @@
 
 #include <cassert>
 
+#include "ingen/types.hpp"
 #include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 
 #include "ingen/Arc.hpp"
 #include "ingen/client/PortModel.hpp"
@@ -37,8 +37,8 @@ class ClientStore;
 class ArcModel : public Arc
 {
 public:
-	SharedPtr<PortModel> tail() const { return _tail; }
-	SharedPtr<PortModel> head() const { return _head; }
+	SPtr<PortModel> tail() const { return _tail; }
+	SPtr<PortModel> head() const { return _head; }
 
 	const Raul::Path& tail_path() const { return _tail->path(); }
 	const Raul::Path& head_path() const { return _head->path(); }
@@ -46,7 +46,7 @@ public:
 private:
 	friend class ClientStore;
 
-	ArcModel(SharedPtr<PortModel> tail, SharedPtr<PortModel> head)
+	ArcModel(SPtr<PortModel> tail, SPtr<PortModel> head)
 		: _tail(tail)
 		, _head(head)
 	{
@@ -57,8 +57,8 @@ private:
 		assert(_tail->path() != _head->path());
 	}
 
-	const SharedPtr<PortModel> _tail;
-	const SharedPtr<PortModel> _head;
+	const SPtr<PortModel> _tail;
+	const SPtr<PortModel> _head;
 };
 
 } // namespace Client

@@ -34,12 +34,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Connect::Connect(Engine&              engine,
-                 SharedPtr<Interface> client,
-                 int32_t              id,
-                 SampleCount          timestamp,
-                 const Raul::Path&    tail_path,
-                 const Raul::Path&    head_path)
+Connect::Connect(Engine&           engine,
+                 SPtr<Interface>   client,
+                 int32_t           id,
+                 SampleCount       timestamp,
+                 const Raul::Path& tail_path,
+                 const Raul::Path& head_path)
 	: Event(engine, client, id, timestamp)
 	, _tail_path(tail_path)
 	, _head_path(head_path)
@@ -106,7 +106,7 @@ Connect::pre_process()
 		return Event::pre_process_done(Status::EXISTS, _head_path);
 	}
 
-	_arc = SharedPtr<ArcImpl>(new ArcImpl(tail_output, _head));
+	_arc = SPtr<ArcImpl>(new ArcImpl(tail_output, _head));
 
 	rlock.release();
 

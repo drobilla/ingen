@@ -51,8 +51,8 @@ using namespace Client;
 
 namespace GUI {
 
-NodeModule::NodeModule(GraphCanvas&                canvas,
-                       SharedPtr<const BlockModel> block)
+NodeModule::NodeModule(GraphCanvas&           canvas,
+                       SPtr<const BlockModel> block)
 	: Ganv::Module(canvas, block->path().symbol(), 0, 0, true)
 	, _block(block)
 	, _gui_widget(NULL)
@@ -103,11 +103,11 @@ NodeModule::show_menu(GdkEventButton* ev)
 }
 
 NodeModule*
-NodeModule::create(GraphCanvas&                canvas,
-                   SharedPtr<const BlockModel> block,
-                   bool                        human)
+NodeModule::create(GraphCanvas&           canvas,
+                   SPtr<const BlockModel> block,
+                   bool                   human)
 {
-	SharedPtr<const GraphModel> graph = PtrCast<const GraphModel>(block);
+	SPtr<const GraphModel> graph = dynamic_ptr_cast<const GraphModel>(block);
 
 	NodeModule* ret = (graph)
 		? new SubgraphModule(canvas, graph)
@@ -262,7 +262,7 @@ NodeModule::rename()
 }
 
 void
-NodeModule::new_port_view(SharedPtr<const PortModel> port)
+NodeModule::new_port_view(SPtr<const PortModel> port)
 {
 	Port::create(app(), *this, port,
 	             app().world()->conf().option("human-names").get_bool());
@@ -277,7 +277,7 @@ NodeModule::new_port_view(SharedPtr<const PortModel> port)
 }
 
 Port*
-NodeModule::port(boost::shared_ptr<const PortModel> model)
+NodeModule::port(SPtr<const PortModel> model)
 {
 	for (iterator p = begin(); p != end(); ++p) {
 		Port* const port = dynamic_cast<Port*>(*p);
@@ -288,7 +288,7 @@ NodeModule::port(boost::shared_ptr<const PortModel> model)
 }
 
 void
-NodeModule::delete_port_view(SharedPtr<const PortModel> model)
+NodeModule::delete_port_view(SPtr<const PortModel> model)
 {
 	Port* p = port(model);
 	if (p) {

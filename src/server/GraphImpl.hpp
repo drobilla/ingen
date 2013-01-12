@@ -128,10 +128,10 @@ public:
 	void remove_port(DuplexPort& port);
 	void clear_ports();
 
-	void add_arc(SharedPtr<ArcImpl> arc);
+	void add_arc(SPtr<ArcImpl> arc);
 
-	SharedPtr<ArcImpl> remove_arc(const PortImpl* tail,
-	                              const PortImpl* head);
+	SPtr<ArcImpl> remove_arc(const PortImpl* tail,
+	                         const PortImpl* head);
 
 	bool has_arc(const PortImpl* tail, const PortImpl* head) const;
 

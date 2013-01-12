@@ -350,13 +350,13 @@ ControlBindings::bind(ProcessContext& context, Key key)
 	return true;
 }
 
-SharedPtr<ControlBindings::Bindings>
+SPtr<ControlBindings::Bindings>
 ControlBindings::remove(const Raul::Path& path)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	SharedPtr<Bindings> old_bindings(_bindings);
-	SharedPtr<Bindings> copy(new Bindings(*_bindings.get()));
+	SPtr<Bindings> old_bindings(_bindings);
+	SPtr<Bindings> copy(new Bindings(*_bindings.get()));
 
 	for (Bindings::iterator i = copy->begin(); i != copy->end();) {
 		Bindings::iterator next = i;
@@ -372,13 +372,13 @@ ControlBindings::remove(const Raul::Path& path)
 	return old_bindings;
 }
 
-SharedPtr<ControlBindings::Bindings>
+SPtr<ControlBindings::Bindings>
 ControlBindings::remove(PortImpl* port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	SharedPtr<Bindings> old_bindings(_bindings);
-	SharedPtr<Bindings> copy(new Bindings(*_bindings.get()));
+	SPtr<Bindings> old_bindings(_bindings);
+	SPtr<Bindings> copy(new Bindings(*_bindings.get()));
 
 	for (Bindings::iterator i = copy->begin(); i != copy->end();) {
 		Bindings::iterator next = i;
@@ -397,8 +397,8 @@ ControlBindings::remove(PortImpl* port)
 void
 ControlBindings::pre_process(ProcessContext& context, Buffer* buffer)
 {
-	uint16_t            value    = 0;
-	SharedPtr<Bindings> bindings = _bindings;
+	uint16_t       value    = 0;
+	SPtr<Bindings> bindings = _bindings;
 	_feedback->clear();
 
 	Ingen::World*      world = context.engine().world();

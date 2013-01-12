@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <unistd.h>
 
 #include <string>
 
@@ -142,7 +143,7 @@ Socket::listen()
 	}
 }
 
-SharedPtr<Socket>
+SPtr<Socket>
 Socket::accept()
 {
 	socklen_t        client_addr_len = _addr_len;
@@ -151,7 +152,7 @@ Socket::accept()
 
 	int conn = ::accept(_sock, client_addr, &client_addr_len);
 	if (conn == -1) {
-		return SharedPtr<Socket>();
+		return SPtr<Socket>();
 	}
 
 	Raul::URI client_uri = _uri;
@@ -161,7 +162,7 @@ Socket::accept()
 		client_uri = Raul::URI(_uri.scheme() + "://" + host);
 	}
 
-	return SharedPtr<Socket>(
+	return SPtr<Socket>(
 		new Socket(_type, client_uri, client_addr, client_addr_len, conn));
 }
 

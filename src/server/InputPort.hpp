@@ -22,7 +22,7 @@
 
 #include <boost/intrusive/slist.hpp>
 
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "ArcImpl.hpp"
 #include "PortImpl.hpp"

@@ -19,11 +19,11 @@
 namespace Ingen {
 namespace GUI {
 
-Arc::Arc(Ganv::Canvas&                             canvas,
-         boost::shared_ptr<const Client::ArcModel> model,
-         Ganv::Node*                               src,
-         Ganv::Node*                               dst,
-         uint32_t                                  color)
+Arc::Arc(Ganv::Canvas&                canvas,
+         SPtr<const Client::ArcModel> model,
+         Ganv::Node*                  src,
+         Ganv::Node*                  dst,
+         uint32_t                     color)
 	: Ganv::Edge(canvas, src, dst, color)
 	, _arc_model(model)
 {

@@ -40,17 +40,17 @@ public:
 	struct Schedule : public LV2Features::Feature {
 		const char* uri() const { return LV2_WORKER__schedule; }
 
-		SharedPtr<LV2_Feature> feature(World* world, Node* n);
+		SPtr<LV2_Feature> feature(World* world, Node* n);
 	};
 
 	LV2_Worker_Status request(LV2Block*   block,
 	                          uint32_t    size,
 	                          const void* data);
 
-	SharedPtr<Schedule> schedule_feature() { return _schedule; }
+	SPtr<Schedule> schedule_feature() { return _schedule; }
 
 private:
-	SharedPtr<Schedule> _schedule;
+	SPtr<Schedule> _schedule;
 
 	Log&             _log;
 	Raul::Semaphore  _sem;

@@ -22,8 +22,8 @@
 
 #include <glibmm/ustring.h>
 
+#include "ingen/types.hpp"
 #include "raul/URI.hpp"
-#include "raul/SharedPtr.hpp"
 
 namespace Ingen {
 
@@ -55,10 +55,10 @@ Objects
 instances(World* world, const URISet& types);
 
 /** Get all the types which @p model is an instance of. */
-URISet types(World* world, SharedPtr<const Client::ObjectModel> model);
+URISet types(World* world, SPtr<const Client::ObjectModel> model);
 
 /** Get all the properties with domains appropriate for @p model. */
-URISet properties(World* world, SharedPtr<const Client::ObjectModel> model);
+URISet properties(World* world, SPtr<const Client::ObjectModel> model);
 
 } // namespace RDFS
 } // namespace GUI

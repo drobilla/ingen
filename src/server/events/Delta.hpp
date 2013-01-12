@@ -70,7 +70,7 @@ class Delta : public Event
 {
 public:
 	Delta(Engine&                     engine,
-	      SharedPtr<Interface>        client,
+	      SPtr<Interface>             client,
 	      int32_t                     id,
 	      SampleCount                 timestamp,
 	      bool                        create,
@@ -111,7 +111,7 @@ private:
 	ControlBindings::Key     _binding;
 	bool                     _create;
 
-	SharedPtr<ControlBindings::Bindings> _old_bindings;
+	SPtr<ControlBindings::Bindings> _old_bindings;
 };
 
 } // namespace Events

@@ -25,7 +25,7 @@
 
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 namespace Raul {
 class Atom;
@@ -47,11 +47,11 @@ public:
 
 	virtual Raul::URI uri() const = 0;
 
-	virtual SharedPtr<Interface> respondee() const {
-		return SharedPtr<Interface>();
+	virtual SPtr<Interface> respondee() const {
+		return SPtr<Interface>();
 	}
 
-	virtual void set_respondee(SharedPtr<Interface> respondee) {}
+	virtual void set_respondee(SPtr<Interface> respondee) {}
 
 	/** Begin an atomic bundle */
 	virtual void bundle_begin() = 0;

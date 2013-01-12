@@ -34,11 +34,11 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Delete::Delete(Engine&              engine,
-               SharedPtr<Interface> client,
-               int32_t              id,
-               FrameTime            time,
-               const Raul::URI&     uri)
+Delete::Delete(Engine&          engine,
+               SPtr<Interface>  client,
+               int32_t          id,
+               FrameTime        time,
+               const Raul::URI& uri)
 	: Event(engine, client, id, time)
 	, _uri(uri)
 	, _engine_port(NULL)
@@ -73,8 +73,8 @@ Delete::pre_process()
 		return Event::pre_process_done(Status::NOT_FOUND, _path);
 	}
 
-	if (!(_block = PtrCast<BlockImpl>(iter->second))) {
-		_port = PtrCast<DuplexPort>(iter->second);
+	if (!(_block = dynamic_ptr_cast<BlockImpl>(iter->second))) {
+		_port = dynamic_ptr_cast<DuplexPort>(iter->second);
 	}
 
 	if (!_block && !_port) {

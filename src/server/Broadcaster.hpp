@@ -23,9 +23,8 @@
 
 #include <glibmm/thread.h>
 
-#include "raul/SharedPtr.hpp"
-
 #include "ingen/Interface.hpp"
+#include "ingen/types.hpp"
 
 #include "BlockFactory.hpp"
 
@@ -45,7 +44,7 @@ public:
 	Broadcaster() : _bundle_depth(0) {}
 	~Broadcaster();
 
-	void register_client(const Raul::URI& uri, SharedPtr<Interface> client);
+	void register_client(const Raul::URI& uri, SPtr<Interface> client);
 	bool unregister_client(const Raul::URI& uri);
 
 	/** A handle that represents a transfer of possibly several changes.
@@ -68,7 +67,7 @@ public:
 		Broadcaster& broadcaster;
 	};
 
-	SharedPtr<Interface> client(const Raul::URI& uri);
+	SPtr<Interface> client(const Raul::URI& uri);
 
 	void send_plugins(const BlockFactory::Plugins& plugin_list);
 	void send_plugins_to(Interface*, const BlockFactory::Plugins& plugin_list);
@@ -134,7 +133,7 @@ public:
 private:
 	friend class Transfer;
 
-	typedef std::map< Raul::URI, SharedPtr<Interface> > Clients;
+	typedef std::map< Raul::URI, SPtr<Interface> > Clients;
 
 	Glib::Mutex _clients_mutex;
 	Clients     _clients;

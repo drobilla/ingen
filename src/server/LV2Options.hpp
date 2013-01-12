@@ -51,10 +51,10 @@ struct LV2Options : public Ingen::LV2Features::Feature {
 
 	const char* uri() const { return LV2_OPTIONS__options; }
 
-	SharedPtr<LV2_Feature> feature(World* w, Node* n) {
+	SPtr<LV2_Feature> feature(World* w, Node* n) {
 		BlockImpl* block = dynamic_cast<BlockImpl*>(n);
 		if (!block) {
-			return SharedPtr<LV2_Feature>();
+			return SPtr<LV2_Feature>();
 		}
 		Engine& engine = block->parent_graph()->engine();
 		URIs&   uris   = engine.world()->uris();
@@ -72,7 +72,7 @@ struct LV2Options : public Ingen::LV2Features::Feature {
 		f->URI  = LV2_OPTIONS__options;
 		f->data = malloc(sizeof(options));
 		memcpy(f->data, options, sizeof(options));
-		return SharedPtr<LV2_Feature>(f, &delete_feature);
+		return SPtr<LV2_Feature>(f, &delete_feature);
 	}
 
 private:

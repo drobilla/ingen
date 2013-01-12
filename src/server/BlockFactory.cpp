@@ -120,13 +120,13 @@ void
 BlockFactory::load_lv2_plugins()
 {
 	// Build an array of port type nodes for checking compatibility
-	typedef std::vector< SharedPtr<LilvNode> > Types;
+	typedef std::vector< SPtr<LilvNode> > Types;
 	Types types;
 	for (unsigned t = PortType::ID::AUDIO; t <= PortType::ID::ATOM; ++t) {
 		const Raul::URI& uri(PortType((PortType::ID)t).uri());
-		types.push_back(SharedPtr<LilvNode>(
-			                lilv_new_uri(_world->lilv_world(), uri.c_str()),
-			                lilv_node_free));
+		types.push_back(
+			SPtr<LilvNode>(lilv_new_uri(_world->lilv_world(), uri.c_str()),
+			               lilv_node_free));
 	}
 
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());

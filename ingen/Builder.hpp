@@ -17,7 +17,7 @@
 #ifndef INGEN_BUILDER_HPP
 #define INGEN_BUILDER_HPP
 
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 namespace Ingen {
 
@@ -35,8 +35,8 @@ public:
 	Builder(URIs& uris, Interface& interface);
 	virtual ~Builder() {}
 
-	void build(SharedPtr<const Node> object);
-	void connect(SharedPtr<const Node> object);
+	void build(SPtr<const Node> object);
+	void connect(SPtr<const Node> object);
 
 private:
 	URIs&      _uris;

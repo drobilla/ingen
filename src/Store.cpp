@@ -29,7 +29,7 @@ Store::add(Node* o)
 		return;
 	}
 
-	insert(make_pair(o->path(), SharedPtr<Node>(o)));
+	insert(make_pair(o->path(), SPtr<Node>(o)));
 
 	for (uint32_t i = 0; i < o->num_ports(); ++i) {
 		add(o->port(i));
@@ -72,7 +72,7 @@ Store::find_descendants_end(const const_iterator parent) const
 }
 
 Store::const_range
-Store::children_range(SharedPtr<const Node> o) const
+Store::children_range(SPtr<const Node> o) const
 {
 	const const_iterator parent = find(o->path());
 	if (parent != end()) {

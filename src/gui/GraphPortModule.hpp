@@ -49,9 +49,9 @@ class GraphPortModule : public Ganv::Module
 {
 public:
 	static GraphPortModule* create(
-		GraphCanvas&                       canvas,
-		SharedPtr<const Client::PortModel> model,
-		bool                               human);
+		GraphCanvas&                  canvas,
+		SPtr<const Client::PortModel> model,
+		bool                          human);
 
 	App& app() const;
 
@@ -60,11 +60,11 @@ public:
 
 	void set_name(const std::string& n);
 
-	SharedPtr<const Client::PortModel> port() const { return _model; }
+	SPtr<const Client::PortModel> port() const { return _model; }
 
 protected:
-	GraphPortModule(GraphCanvas&                       canvas,
-	                SharedPtr<const Client::PortModel> model);
+	GraphPortModule(GraphCanvas&                  canvas,
+	                SPtr<const Client::PortModel> model);
 
 	bool show_menu(GdkEventButton* ev);
 	void set_selected(gboolean b);
@@ -73,8 +73,8 @@ protected:
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 
-	SharedPtr<const Client::PortModel> _model;
-	Port*                              _port;
+	SPtr<const Client::PortModel> _model;
+	Port*                         _port;
 };
 
 } // namespace GUI

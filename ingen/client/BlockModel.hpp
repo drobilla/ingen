@@ -21,11 +21,11 @@
 #include <string>
 #include <vector>
 
-#include "raul/SharedPtr.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
+#include "ingen/types.hpp"
 
 namespace Raul { class Path; }
 
@@ -50,31 +50,35 @@ public:
 
 	GraphType graph_type() const { return Node::GraphType::BLOCK; }
 
-	typedef std::vector< SharedPtr<const PortModel> > Ports;
+	typedef std::vector< SPtr<const PortModel> > Ports;
 
-	SharedPtr<const PortModel> get_port(const Raul::Symbol& symbol) const;
+	SPtr<const PortModel> get_port(const Raul::Symbol& symbol) const;
 
 	Node* port(uint32_t index) const;
 
-	const Raul::URI&       plugin_uri()   const { return _plugin_uri; }
-	const Plugin*          plugin()       const { return _plugin.get(); }
-	Plugin*                plugin()             { return _plugin.get(); }
-	SharedPtr<PluginModel> plugin_model() const { return _plugin; }
-	uint32_t               num_ports()    const { return _ports.size(); }
-	const Ports&           ports()        const { return _ports; }
+	const Raul::URI&  plugin_uri()   const { return _plugin_uri; }
+	const Plugin*     plugin()       const { return _plugin.get(); }
+	Plugin*           plugin()             { return _plugin.get(); }
+	SPtr<PluginModel> plugin_model() const { return _plugin; }
+	uint32_t          num_ports()    const { return _ports.size(); }
+	const Ports&      ports()        const { return _ports; }
 
-	void default_port_value_range(SharedPtr<const PortModel> port,
-	                              float& min, float& max, uint32_t srate=1) const;
+	void default_port_value_range(SPtr<const PortModel> port,
+	                              float&                min,
+	                              float&                max,
+	                              uint32_t              srate = 1) const;
 
-	void port_value_range(SharedPtr<const PortModel> port,
-	                      float& min, float& max, uint32_t srate=1) const;
+	void port_value_range(SPtr<const PortModel> port,
+	                      float&                min,
+	                      float&                max,
+	                      uint32_t              srate = 1) const;
 
 	std::string label() const;
-	std::string port_label(SharedPtr<const PortModel> port) const;
+	std::string port_label(SPtr<const PortModel> port) const;
 
 	// Signals
-	INGEN_SIGNAL(new_port, void, SharedPtr<const PortModel>);
-	INGEN_SIGNAL(removed_port, void, SharedPtr<const PortModel>);
+	INGEN_SIGNAL(new_port, void, SPtr<const PortModel>);
+	INGEN_SIGNAL(removed_port, void, SPtr<const PortModel>);
 
 protected:
 	friend class ClientStore;
@@ -82,23 +86,23 @@ protected:
 	BlockModel(URIs&             uris,
 	           const Raul::URI&  plugin_uri,
 	           const Raul::Path& path);
-	BlockModel(URIs&                  uris,
-	           SharedPtr<PluginModel> plugin,
-	           const Raul::Path&      path);
+	BlockModel(URIs&             uris,
+	           SPtr<PluginModel> plugin,
+	           const Raul::Path& path);
 	explicit BlockModel(const Raul::Path& path);
 
-	void add_child(SharedPtr<ObjectModel> c);
-	bool remove_child(SharedPtr<ObjectModel> c);
-	void add_port(SharedPtr<PortModel> pm);
-	void remove_port(SharedPtr<PortModel> pm);
+	void add_child(SPtr<ObjectModel> c);
+	bool remove_child(SPtr<ObjectModel> c);
+	void add_port(SPtr<PortModel> pm);
+	void remove_port(SPtr<PortModel> pm);
 	void remove_port(const Raul::Path& port_path);
-	void set(SharedPtr<ObjectModel> model);
+	void set(SPtr<ObjectModel> model);
 
 	virtual void clear();
 
-	Ports                  _ports; ///< Vector of ports
-	Raul::URI              _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
-	SharedPtr<PluginModel> _plugin; ///< The plugin this block is an instance of
+	Ports             _ports;      ///< Vector of ports
+	Raul::URI         _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	SPtr<PluginModel> _plugin;     ///< The plugin this block is an instance of
 
 private:
 	mutable uint32_t _num_values; ///< Size of _min_values and _max_values

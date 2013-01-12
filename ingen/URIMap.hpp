@@ -48,8 +48,8 @@ public:
 
 		const char* uri() const { return _feature.URI; }
 
-		SharedPtr<LV2_Feature> feature(World*, Node*) {
-			return SharedPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
+		SPtr<LV2_Feature> feature(World*, Node*) {
+			return SPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 		}
 
 	private:
@@ -71,12 +71,12 @@ public:
 		LV2_URID_Unmap urid_unmap;
 	};
 
-	SharedPtr<URIDMapFeature>   urid_map_feature()   { return _urid_map_feature; }
-	SharedPtr<URIDUnmapFeature> urid_unmap_feature() { return _urid_unmap_feature; }
+	SPtr<URIDMapFeature>   urid_map_feature()   { return _urid_map_feature; }
+	SPtr<URIDUnmapFeature> urid_unmap_feature() { return _urid_unmap_feature; }
 
 private:
-	SharedPtr<URIDMapFeature>   _urid_map_feature;
-	SharedPtr<URIDUnmapFeature> _urid_unmap_feature;
+	SPtr<URIDMapFeature>   _urid_map_feature;
+	SPtr<URIDUnmapFeature> _urid_unmap_feature;
 };
 
 } // namespace Ingen

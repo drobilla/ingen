@@ -21,7 +21,7 @@
 
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "ProcessContext.hpp"
 
@@ -73,10 +73,10 @@ public:
 	virtual void quit();
 	virtual bool main_iteration();
 	virtual void register_client(const Raul::URI& uri,
-	                             SharedPtr<Interface> client);
+	                             SPtr<Interface>  client);
 	virtual bool unregister_client(const Raul::URI& uri);
 
-	void set_driver(SharedPtr<Driver> driver);
+	void set_driver(SPtr<Driver> driver);
 
 	SampleCount event_time();
 
@@ -106,25 +106,25 @@ public:
 
 	ProcessContext& process_context() { return _process_context; }
 
-	SharedPtr<Store> store() const;
+	SPtr<Store> store() const;
 
 	size_t event_queue_size() const;
 
 private:
 	Ingen::World* _world;
 
-	BlockFactory*         _block_factory;
-	Broadcaster*          _broadcaster;
-	BufferFactory*        _buffer_factory;
-	ControlBindings*      _control_bindings;
-	SharedPtr<Driver>     _driver;
-	EventWriter*          _event_writer;
-	Raul::Maid*           _maid;
-	SharedPtr<LV2Options> _options;
-	PreProcessor*         _pre_processor;
-	PostProcessor*        _post_processor;
-	GraphImpl*            _root_graph;
-	Worker*               _worker;
+	BlockFactory*    _block_factory;
+	Broadcaster*     _broadcaster;
+	BufferFactory*   _buffer_factory;
+	ControlBindings* _control_bindings;
+	SPtr<Driver>     _driver;
+	EventWriter*     _event_writer;
+	Raul::Maid*      _maid;
+	SPtr<LV2Options> _options;
+	PreProcessor*    _pre_processor;
+	PostProcessor*   _post_processor;
+	GraphImpl*       _root_graph;
+	Worker*          _worker;
 
 	ProcessContext _process_context;
 

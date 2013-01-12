@@ -28,24 +28,24 @@ namespace Ingen {
 namespace Client {
 
 void
-GraphModel::add_child(SharedPtr<ObjectModel> c)
+GraphModel::add_child(SPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
 
-	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
+	SPtr<PortModel> pm = dynamic_ptr_cast<PortModel>(c);
 	if (pm) {
 		add_port(pm);
 		return;
 	}
 
-	SharedPtr<BlockModel> bm = PtrCast<BlockModel>(c);
+	SPtr<BlockModel> bm = dynamic_ptr_cast<BlockModel>(c);
 	if (bm) {
 		_signal_new_block.emit(bm);
 	}
 }
 
 bool
-GraphModel::remove_child(SharedPtr<ObjectModel> o)
+GraphModel::remove_child(SPtr<ObjectModel> o)
 {
 	assert(o->path().is_child_of(path()));
 	assert(o->parent().get() == this);
@@ -56,7 +56,7 @@ GraphModel::remove_child(SharedPtr<ObjectModel> o)
 		Arcs::iterator next = j;
 		++next;
 
-		SharedPtr<ArcModel> arc = PtrCast<ArcModel>(j->second);
+		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(j->second);
 		if (arc->tail_path().parent() == o->path()
 				|| arc->tail_path() == o->path()
 				|| arc->head_path().parent() == o->path()
@@ -67,11 +67,11 @@ GraphModel::remove_child(SharedPtr<ObjectModel> o)
 		j = next;
 	}
 
-	SharedPtr<PortModel> pm = PtrCast<PortModel>(o);
+	SPtr<PortModel> pm = dynamic_ptr_cast<PortModel>(o);
 	if (pm)
 		remove_port(pm);
 
-	SharedPtr<BlockModel> bm = PtrCast<BlockModel>(o);
+	SPtr<BlockModel> bm = dynamic_ptr_cast<BlockModel>(o);
 	if (bm) {
 		_signal_removed_block.emit(bm);
 	}
@@ -90,14 +90,14 @@ GraphModel::clear()
 	assert(_ports.empty());
 }
 
-SharedPtr<ArcModel>
+SPtr<ArcModel>
 GraphModel::get_arc(const Node* tail, const Node* head)
 {
 	Arcs::iterator i = _arcs.find(make_pair(tail, head));
 	if (i != _arcs.end())
-		return PtrCast<ArcModel>(i->second);
+		return dynamic_ptr_cast<ArcModel>(i->second);
 	else
-		return SharedPtr<ArcModel>();
+		return SPtr<ArcModel>();
 }
 
 /** Add a connection to this graph.
@@ -108,7 +108,7 @@ GraphModel::get_arc(const Node* tail, const Node* head)
  * this graph is a fatal error.
  */
 void
-GraphModel::add_arc(SharedPtr<ArcModel> arc)
+GraphModel::add_arc(SPtr<ArcModel> arc)
 {
 	// Store should have 'resolved' the connection already
 	assert(arc);
@@ -122,7 +122,7 @@ GraphModel::add_arc(SharedPtr<ArcModel> arc)
 	assert(arc->head()->parent().get() == this
 	       || arc->head()->parent()->parent().get() == this);
 
-	SharedPtr<ArcModel> existing = get_arc(
+	SPtr<ArcModel> existing = get_arc(
 			arc->tail().get(), arc->head().get());
 
 	if (existing) {
@@ -141,7 +141,7 @@ GraphModel::remove_arc(const Node* tail, const Node* head)
 {
 	Arcs::iterator i = _arcs.find(make_pair(tail, head));
 	if (i != _arcs.end()) {
-		SharedPtr<ArcModel> arc = PtrCast<ArcModel>(i->second);
+		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(i->second);
 		_signal_removed_arc.emit(arc);
 		_arcs.erase(i);
 	}

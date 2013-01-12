@@ -24,9 +24,9 @@
 #include <gtkmm/togglebutton.h>
 
 #include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/types.hpp"
 
 #include "GraphView.hpp"
 
@@ -43,11 +43,11 @@ class BreadCrumbs : public Gtk::HBox
 public:
 	explicit BreadCrumbs(App& app);
 
-	SharedPtr<GraphView> view(const Raul::Path& path);
+	SPtr<GraphView> view(const Raul::Path& path);
 
-	void build(Raul::Path path, SharedPtr<GraphView> view);
+	void build(Raul::Path path, SPtr<GraphView> view);
 
-	sigc::signal<void, const Raul::Path&, SharedPtr<GraphView> > signal_graph_selected;
+	sigc::signal<void, const Raul::Path&, SPtr<GraphView> > signal_graph_selected;
 
 private:
 	/** Breadcrumb button.
@@ -62,7 +62,7 @@ private:
 	class BreadCrumb : public Gtk::ToggleButton
 	{
 	public:
-		BreadCrumb(const Raul::Path& path, SharedPtr<GraphView> view = SharedPtr<GraphView>())
+		BreadCrumb(const Raul::Path& path, SPtr<GraphView> view = SPtr<GraphView>())
 			: _path(path)
 			, _view(view)
 		{
@@ -73,13 +73,13 @@ private:
 			show_all();
 		}
 
-		void set_view(SharedPtr<GraphView> view) {
+		void set_view(SPtr<GraphView> view) {
 			assert(!view || view->graph()->path() == _path);
 			_view = view;
 		}
 
-		const Raul::Path&    path() const { return _path; }
-		SharedPtr<GraphView> view() const { return _view; }
+		const Raul::Path& path() const { return _path; }
+		SPtr<GraphView>   view() const { return _view; }
 
 		void set_path(const Raul::Path& path) {
 			remove();
@@ -94,12 +94,12 @@ private:
 		}
 
 	private:
-		Raul::Path           _path;
-		SharedPtr<GraphView> _view;
+		Raul::Path      _path;
+		SPtr<GraphView> _view;
 	};
 
-	BreadCrumb* create_crumb(const Raul::Path&    path,
-                             SharedPtr<GraphView> view = SharedPtr<GraphView>());
+	BreadCrumb* create_crumb(const Raul::Path& path,
+                             SPtr<GraphView>   view = SPtr<GraphView>());
 
 	void breadcrumb_clicked(BreadCrumb* crumb);
 

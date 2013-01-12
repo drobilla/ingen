@@ -23,11 +23,11 @@
 #undef nil
 #include <glibmm/thread.h>
 
-#include "raul/Atom.hpp"
-#include "raul/RingBuffer.hpp"
-#include "raul/SharedPtr.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/types.hpp"
+#include "raul/Atom.hpp"
+#include "raul/RingBuffer.hpp"
 
 #include "BufferRef.hpp"
 #include "PortType.hpp"

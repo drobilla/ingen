@@ -473,9 +473,9 @@ JackDriver::_session_cb(jack_session_event_t* event)
 	                    % jack_get_client_name(_client)
 	                    % event->client_uuid).str();
 
-	SharedPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser();
+	SPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser();
 	if (serialiser) {
-		SharedPtr<Node> root(_engine.root_graph(), NullDeleter<Node>);
+		SPtr<Node> root(_engine.root_graph(), NullDeleter<Node>);
 		serialiser->write_bundle(root, string("file://") + event->session_dir);
 	}
 

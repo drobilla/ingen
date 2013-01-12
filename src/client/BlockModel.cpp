@@ -25,9 +25,9 @@
 namespace Ingen {
 namespace Client {
 
-BlockModel::BlockModel(URIs&                  uris,
-                       SharedPtr<PluginModel> plugin,
-                       const Raul::Path&      path)
+BlockModel::BlockModel(URIs&             uris,
+                       SPtr<PluginModel> plugin,
+                       const Raul::Path& path)
 	: ObjectModel(uris, path)
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
@@ -65,7 +65,7 @@ BlockModel::~BlockModel()
 }
 
 void
-BlockModel::remove_port(SharedPtr<PortModel> port)
+BlockModel::remove_port(SPtr<PortModel> port)
 {
 	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i) == port) {
@@ -99,26 +99,26 @@ BlockModel::clear()
 }
 
 void
-BlockModel::add_child(SharedPtr<ObjectModel> c)
+BlockModel::add_child(SPtr<ObjectModel> c)
 {
 	assert(c->parent().get() == this);
 
 	//ObjectModel::add_child(c);
 
-	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
+	SPtr<PortModel> pm = dynamic_ptr_cast<PortModel>(c);
 	assert(pm);
 	add_port(pm);
 }
 
 bool
-BlockModel::remove_child(SharedPtr<ObjectModel> c)
+BlockModel::remove_child(SPtr<ObjectModel> c)
 {
 	assert(c->path().is_child_of(path()));
 	assert(c->parent().get() == this);
 
 	//bool ret = ObjectModel::remove_child(c);
 
-	SharedPtr<PortModel> pm = PtrCast<PortModel>(c);
+	SPtr<PortModel> pm = dynamic_ptr_cast<PortModel>(c);
 	assert(pm);
 	remove_port(pm);
 
@@ -127,7 +127,7 @@ BlockModel::remove_child(SharedPtr<ObjectModel> c)
 }
 
 void
-BlockModel::add_port(SharedPtr<PortModel> pm)
+BlockModel::add_port(SPtr<PortModel> pm)
 {
 	assert(pm);
 	assert(pm->path().is_child_of(path()));
@@ -140,13 +140,13 @@ BlockModel::add_port(SharedPtr<PortModel> pm)
 	_signal_new_port.emit(pm);
 }
 
-SharedPtr<const PortModel>
+SPtr<const PortModel>
 BlockModel::get_port(const Raul::Symbol& symbol) const
 {
 	for (auto p : _ports)
 		if (p->symbol() == symbol)
 			return p;
-	return SharedPtr<PortModel>();
+	return SPtr<PortModel>();
 }
 
 Ingen::Node*
@@ -158,10 +158,10 @@ BlockModel::port(uint32_t index) const
 }
 
 void
-BlockModel::default_port_value_range(SharedPtr<const PortModel> port,
-                                     float&                     min,
-                                     float&                     max,
-                                     uint32_t                   srate) const
+BlockModel::default_port_value_range(SPtr<const PortModel> port,
+                                     float&                min,
+                                     float&                max,
+                                     uint32_t              srate) const
 {
 	// Default control values
 	min = 0.0;
@@ -190,8 +190,10 @@ BlockModel::default_port_value_range(SharedPtr<const PortModel> port,
 }
 
 void
-BlockModel::port_value_range(SharedPtr<const PortModel> port,
-                             float& min, float& max, uint32_t srate) const
+BlockModel::port_value_range(SPtr<const PortModel> port,
+                             float&                min,
+                             float&                max,
+                             uint32_t              srate) const
 {
 	assert(port->parent().get() == this);
 
@@ -228,7 +230,7 @@ BlockModel::label() const
 }
 
 std::string
-BlockModel::port_label(SharedPtr<const PortModel> port) const
+BlockModel::port_label(SPtr<const PortModel> port) const
 {
 	const Raul::Atom& name = port->get_property(Raul::URI(LV2_CORE__name));
 	if (name.is_valid()) {
@@ -255,9 +257,9 @@ BlockModel::port_label(SharedPtr<const PortModel> port) const
 }
 
 void
-BlockModel::set(SharedPtr<ObjectModel> model)
+BlockModel::set(SPtr<ObjectModel> model)
 {
-	SharedPtr<BlockModel> block = PtrCast<BlockModel>(model);
+	SPtr<BlockModel> block = dynamic_ptr_cast<BlockModel>(model);
 	if (block) {
 		_plugin_uri = block->_plugin_uri;
 		_plugin     = block->_plugin;

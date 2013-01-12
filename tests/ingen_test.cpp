@@ -28,7 +28,6 @@
 #include <glibmm/timer.h>
 
 #include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/Thread.hpp"
 
 #include "serd/serd.h"
@@ -48,6 +47,7 @@
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/serialisation/Parser.hpp"
+#include "ingen/types.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
@@ -197,10 +197,10 @@ main(int argc, char** argv)
 	// AtomWriter to serialise responses from the engine
 	/*
 	TestClient client;
-	SharedPtr<AtomWriter> atom_writer(
+	SPtr<AtomWriter> atom_writer(
 		new AtomWriter(world->uri_map(), world->uris(), client));
 	*/
-	SharedPtr<Interface> client(new TestClient(world->log()));
+	SPtr<Interface> client(new TestClient(world->log()));
 
 	world->interface()->set_respondee(client);
 	world->engine()->register_client(Raul::URI("ingen:/clients/test"),

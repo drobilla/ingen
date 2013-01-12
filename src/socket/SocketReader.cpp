@@ -30,9 +30,9 @@
 namespace Ingen {
 namespace Socket {
 
-SocketReader::SocketReader(Ingen::World&     world,
-                           Interface&        iface,
-                           SharedPtr<Socket> sock)
+SocketReader::SocketReader(Ingen::World& world,
+                           Interface&    iface,
+                           SPtr<Socket>  sock)
 	: Raul::Thread()
 	, _world(world)
 	, _iface(iface)

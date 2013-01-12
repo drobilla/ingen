@@ -26,7 +26,7 @@
 #include <gtkmm/toolitem.h>
 #include <gtkmm/toolitem.h>
 
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 #include "raul/URI.hpp"
 
 namespace Raul { class Atom; }
@@ -61,18 +61,18 @@ public:
 
 	void init(App& app);
 
-	SharedPtr<GraphCanvas>              canvas()               const { return _canvas; }
-	SharedPtr<const Client::GraphModel> graph()                const { return _graph; }
-	Gtk::ToolItem*                      breadcrumb_container() const { return _breadcrumb_container; }
+	SPtr<GraphCanvas>              canvas()               const { return _canvas; }
+	SPtr<const Client::GraphModel> graph()                const { return _graph; }
+	Gtk::ToolItem*                 breadcrumb_container() const { return _breadcrumb_container; }
 
-	static SharedPtr<GraphView> create(App& app,
-	                                   SharedPtr<const Client::GraphModel> graph);
+	static SPtr<GraphView> create(App& app,
+	                              SPtr<const Client::GraphModel> graph);
 
 	sigc::signal<void, const Client::ObjectModel*> signal_object_entered;
 	sigc::signal<void, const Client::ObjectModel*> signal_object_left;
 
 private:
-	void set_graph(SharedPtr<const Client::GraphModel> graph);
+	void set_graph(SPtr<const Client::GraphModel> graph);
 
 	void process_toggled();
 	void poly_changed();
@@ -90,8 +90,8 @@ private:
 
 	App* _app;
 
-	SharedPtr<const Client::GraphModel> _graph;
-	SharedPtr<GraphCanvas>              _canvas;
+	SPtr<const Client::GraphModel> _graph;
+	SPtr<GraphCanvas>              _canvas;
 
 	Gtk::ScrolledWindow*   _canvas_scrolledwindow;
 	Gtk::Toolbar*          _toolbar;

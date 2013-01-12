@@ -17,7 +17,7 @@
 #ifndef INGEN_CLIENT_PLUGINUI_HPP
 #define INGEN_CLIENT_PLUGINUI_HPP
 
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "lilv/lilv.h"
 
@@ -42,9 +42,9 @@ class PluginUI {
 public:
 	~PluginUI();
 
-	static SharedPtr<PluginUI> create(Ingen::World*               world,
-	                                  SharedPtr<const BlockModel> block,
-	                                  const LilvPlugin*           plugin);
+	static SPtr<PluginUI> create(Ingen::World*               world,
+	                             SPtr<const BlockModel> block,
+	                             const LilvPlugin*           plugin);
 
 	SuilWidget get_widget();
 
@@ -55,22 +55,22 @@ public:
 
 	bool is_resizable() const;
 
-	Ingen::World*               world() const { return _world; }
-	SharedPtr<const BlockModel> block() const { return _block; }
+	Ingen::World*          world() const { return _world; }
+	SPtr<const BlockModel> block() const { return _block; }
 
 private:
-	PluginUI(Ingen::World*               world,
-	         SharedPtr<const BlockModel> block,
-	         const LilvNode*             ui_node);
+	PluginUI(Ingen::World*          world,
+	         SPtr<const BlockModel> block,
+	         const LilvNode*        ui_node);
 
-	Ingen::World*               _world;
-	SharedPtr<const BlockModel> _block;
-	SuilInstance*               _instance;
-	LilvNode*                   _ui_node;
+	Ingen::World*          _world;
+	SPtr<const BlockModel> _block;
+	SuilInstance*          _instance;
+	LilvNode*              _ui_node;
 
 	static SuilHost* ui_host;
 
-	SharedPtr<LV2Features::FeatureArray> _features;
+	SPtr<LV2Features::FeatureArray> _features;
 };
 
 } // namespace Client

@@ -22,9 +22,8 @@
 #include <gtkmm/entry.h>
 #include <gtkmm/label.h>
 
-#include "raul/SharedPtr.hpp"
-
 #include "ingen/client/ObjectModel.hpp"
+#include "ingen/types.hpp"
 
 #include "Window.hpp"
 
@@ -41,16 +40,16 @@ public:
 	RenameWindow(BaseObjectType*                   cobject,
 	             const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void present(SharedPtr<const Client::ObjectModel> object);
+	void present(SPtr<const Client::ObjectModel> object);
 
 private:
-	void set_object(SharedPtr<const Client::ObjectModel> object);
+	void set_object(SPtr<const Client::ObjectModel> object);
 
 	void values_changed();
 	void cancel_clicked();
 	void ok_clicked();
 
-	SharedPtr<const Client::ObjectModel> _object;
+	SPtr<const Client::ObjectModel> _object;
 
 	Gtk::Entry*  _symbol_entry;
 	Gtk::Entry*  _label_entry;

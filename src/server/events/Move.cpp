@@ -31,12 +31,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Move::Move(Engine&              engine,
-           SharedPtr<Interface> client,
-           int32_t              id,
-           SampleCount          timestamp,
-           const Raul::Path&    path,
-           const Raul::Path&    new_path)
+Move::Move(Engine&           engine,
+           SPtr<Interface>   client,
+           int32_t           id,
+           SampleCount       timestamp,
+           const Raul::Path& path,
+           const Raul::Path& new_path)
 	: Event(engine, client, id, timestamp)
 	, _old_path(path)
 	, _new_path(new_path)

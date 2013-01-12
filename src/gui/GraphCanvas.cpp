@@ -59,10 +59,10 @@ using namespace Client;
 
 namespace GUI {
 
-GraphCanvas::GraphCanvas(App&                        app,
-                         SharedPtr<const GraphModel> graph,
-                         int                         width,
-                         int                         height)
+GraphCanvas::GraphCanvas(App&                   app,
+                         SPtr<const GraphModel> graph,
+                         int                    width,
+                         int                    height)
 	: Canvas(width, height)
 	, _app(app)
 	, _graph(graph)
@@ -207,7 +207,7 @@ GraphCanvas::build_menus()
 	}
 
 	// Add known plugins to menu heirarchy
-	SharedPtr<const ClientStore::Plugins> plugins = _app.store()->plugins();
+	SPtr<const ClientStore::Plugins> plugins = _app.store()->plugins();
 	for (const auto& p : *plugins.get())
 		add_plugin(p.second);
 }
@@ -306,7 +306,7 @@ GraphCanvas::build()
 
 	// Create modules for blocks
 	for (Store::const_iterator i = kids.first; i != kids.second; ++i) {
-		SharedPtr<BlockModel> block = PtrCast<BlockModel>(i->second);
+		SPtr<BlockModel> block = dynamic_ptr_cast<BlockModel>(i->second);
 		if (block && block->parent() == _graph)
 			add_block(block);
 	}
@@ -318,7 +318,7 @@ GraphCanvas::build()
 
 	// Create arcs
 	for (const auto& a : _graph->arcs()) {
-		connection(PtrCast<ArcModel>(a.second));
+		connection(dynamic_ptr_cast<ArcModel>(a.second));
 	}
 }
 
@@ -352,7 +352,7 @@ GraphCanvas::show_port_names(bool b)
 }
 
 void
-GraphCanvas::add_plugin(SharedPtr<PluginModel> p)
+GraphCanvas::add_plugin(SPtr<PluginModel> p)
 {
 	typedef ClassMenus::iterator iterator;
 	if (_internal_menu && p->type() == Plugin::Internal) {
@@ -406,10 +406,10 @@ GraphCanvas::add_plugin(SharedPtr<PluginModel> p)
 }
 
 void
-GraphCanvas::add_block(SharedPtr<const BlockModel> bm)
+GraphCanvas::add_block(SPtr<const BlockModel> bm)
 {
-	SharedPtr<const GraphModel> pm = PtrCast<const GraphModel>(bm);
-	NodeModule*                 module;
+	SPtr<const GraphModel> pm = dynamic_ptr_cast<const GraphModel>(bm);
+	NodeModule*            module;
 	if (pm) {
 		module = SubgraphModule::create(*this, pm, _human_names);
 	} else {
@@ -427,7 +427,7 @@ GraphCanvas::add_block(SharedPtr<const BlockModel> bm)
 }
 
 void
-GraphCanvas::remove_block(SharedPtr<const BlockModel> bm)
+GraphCanvas::remove_block(SPtr<const BlockModel> bm)
 {
 	Views::iterator i = _views.find(bm);
 
@@ -442,7 +442,7 @@ GraphCanvas::remove_block(SharedPtr<const BlockModel> bm)
 }
 
 void
-GraphCanvas::add_port(SharedPtr<const PortModel> pm)
+GraphCanvas::add_port(SPtr<const PortModel> pm)
 {
 	GraphPortModule* view = GraphPortModule::create(*this, pm, _human_names);
 	_views.insert(std::make_pair(pm, view));
@@ -450,7 +450,7 @@ GraphCanvas::add_port(SharedPtr<const PortModel> pm)
 }
 
 void
-GraphCanvas::remove_port(SharedPtr<const PortModel> pm)
+GraphCanvas::remove_port(SPtr<const PortModel> pm)
 {
 	Views::iterator i = _views.find(pm);
 
@@ -468,7 +468,7 @@ GraphCanvas::remove_port(SharedPtr<const PortModel> pm)
 }
 
 Ganv::Port*
-GraphCanvas::get_port_view(SharedPtr<PortModel> port)
+GraphCanvas::get_port_view(SPtr<PortModel> port)
 {
 	Ganv::Module* module = _views[port];
 
@@ -493,7 +493,7 @@ GraphCanvas::get_port_view(SharedPtr<PortModel> port)
 }
 
 void
-GraphCanvas::connection(SharedPtr<const ArcModel> arc)
+GraphCanvas::connection(SPtr<const ArcModel> arc)
 {
 	Ganv::Port* const tail = get_port_view(arc->tail());
 	Ganv::Port* const head = get_port_view(arc->head());
@@ -507,7 +507,7 @@ GraphCanvas::connection(SharedPtr<const ArcModel> arc)
 }
 
 void
-GraphCanvas::disconnection(SharedPtr<const ArcModel> arc)
+GraphCanvas::disconnection(SPtr<const ArcModel> arc)
 {
 	Ganv::Port* const src = get_port_view(arc->tail());
 	Ganv::Port* const dst = get_port_view(arc->head());
@@ -713,7 +713,7 @@ void
 GraphCanvas::paste()
 {
 	Glib::ustring str = Gtk::Clipboard::get()->wait_for_text();
-	SharedPtr<Serialisation::Parser> parser = _app.loader()->parser();
+	SPtr<Serialisation::Parser> parser = _app.loader()->parser();
 	if (!parser) {
 		_app.log().error("Unable to load parser, paste unavailable\n");
 		return;
@@ -782,7 +782,8 @@ GraphCanvas::paste()
 		_pastees.insert(c.first);
 	}
 
-	builder.connect(PtrCast<const GraphModel>(clipboard.object(_graph->path())));
+	builder.connect(
+		dynamic_ptr_cast<const GraphModel>(clipboard.object(_graph->path())));
 }
 
 void
@@ -837,9 +838,9 @@ GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
 }
 
 void
-GraphCanvas::load_plugin(WeakPtr<PluginModel> weak_plugin)
+GraphCanvas::load_plugin(WPtr<PluginModel> weak_plugin)
 {
-	SharedPtr<PluginModel> plugin = weak_plugin.lock();
+	SPtr<PluginModel> plugin = weak_plugin.lock();
 	if (!plugin)
 		return;
 

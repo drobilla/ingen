@@ -33,13 +33,13 @@ Builder::Builder(URIs& uris, Interface& interface)
 }
 
 void
-Builder::build(SharedPtr<const Node> object)
+Builder::build(SPtr<const Node> object)
 {
 	_interface.put(object->uri(), object->properties());
 }
 
 void
-Builder::connect(SharedPtr<const Node> object)
+Builder::connect(SPtr<const Node> object)
 {
 	if (object->graph_type() == Node::GraphType::GRAPH) {
 		for (auto a : object->arcs()) {

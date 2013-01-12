@@ -24,9 +24,9 @@ using namespace Ingen;
 
 struct IngenSerialisationModule : public Ingen::Module {
 	virtual void load(Ingen::World* world) {
-		world->set_parser(SharedPtr<Serialisation::Parser>(
+		world->set_parser(SPtr<Serialisation::Parser>(
 				new Serialisation::Parser()));
-		world->set_serialiser(SharedPtr<Serialisation::Serialiser>(
+		world->set_serialiser(SPtr<Serialisation::Serialiser>(
 				new Serialisation::Serialiser(*world)));
 	}
 };

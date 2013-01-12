@@ -26,10 +26,9 @@
 #include <gtkmm/treemodel.h>
 #include <gtkmm/treeview.h>
 
-#include "raul/SharedPtr.hpp"
-
 #include "ingen/Node.hpp"
 #include "ingen/client/ClientStore.hpp"
+#include "ingen/types.hpp"
 #include "ingen_config.h"
 
 #include "Window.hpp"
@@ -55,13 +54,13 @@ public:
 	LoadPluginWindow(BaseObjectType*                   cobject,
 	                 const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void set_graph(SharedPtr<const Client::GraphModel> graph);
-	void set_plugins(SharedPtr<const Client::ClientStore::Plugins> plugins);
+	void set_graph(SPtr<const Client::GraphModel> graph);
+	void set_plugins(SPtr<const Client::ClientStore::Plugins> plugins);
 
-	void add_plugin(SharedPtr<const Client::PluginModel> plugin);
+	void add_plugin(SPtr<const Client::PluginModel> plugin);
 
-	void present(SharedPtr<const Client::GraphModel> graph,
-	             Node::Properties                    data);
+	void present(SPtr<const Client::GraphModel> graph,
+	             Node::Properties               data);
 
 protected:
 	void on_show();
@@ -87,7 +86,7 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> _col_uri;
 
 		// Not displayed:
-		Gtk::TreeModelColumn< SharedPtr<const Client::PluginModel> > _col_plugin;
+		Gtk::TreeModelColumn< SPtr<const Client::PluginModel> > _col_plugin;
 	};
 
 	/** Column for the filter criteria combo box. */
@@ -112,8 +111,10 @@ private:
 	void name_cleared(Gtk::EntryIconPosition pos, const GdkEventButton* event);
 #endif
 
-	void set_row(Gtk::TreeModel::Row& row, SharedPtr<const Client::PluginModel> plugin);
-	void new_plugin(SharedPtr<const Client::PluginModel> plugin);
+	void set_row(Gtk::TreeModel::Row&            row,
+	             SPtr<const Client::PluginModel> plugin);
+
+	void new_plugin(SPtr<const Client::PluginModel> plugin);
 
 	void plugin_property_changed(const Raul::URI&  plugin,
 	                             const Raul::URI&  predicate,
@@ -122,15 +123,14 @@ private:
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();
 
-	std::string generate_module_name(
-		SharedPtr<const Client::PluginModel> plugin,
-		int                                  offset=0);
+	std::string generate_module_name(SPtr<const Client::PluginModel> plugin,
+	                                 int                             offset=0);
 
 	void load_plugin(const Gtk::TreeModel::iterator& iter);
 
 	Node::Properties _initial_data;
 
-	SharedPtr<const Client::GraphModel> _graph;
+	SPtr<const Client::GraphModel> _graph;
 
 	typedef std::map<Raul::URI, Gtk::TreeModel::iterator> Rows;
 	Rows _rows;

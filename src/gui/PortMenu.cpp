@@ -19,7 +19,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PortModel.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "App.hpp"
 #include "PortMenu.hpp"
@@ -44,7 +44,7 @@ PortMenu::PortMenu(BaseObjectType*                   cobject,
 }
 
 void
-PortMenu::init(App& app, SharedPtr<const PortModel> port, bool is_graph_port)
+PortMenu::init(App& app, SPtr<const PortModel> port, bool is_graph_port)
 {
 	const URIs& uris = app.uris();
 
@@ -63,8 +63,8 @@ PortMenu::init(App& app, SharedPtr<const PortModel> port, bool is_graph_port)
 	_expose_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &PortMenu::on_menu_expose));
 
-	const bool is_control  = app.can_control(port.get()) && port->is_numeric();
-	const bool is_on_graph = PtrCast<GraphModel>(port->parent());
+	const bool is_control(app.can_control(port.get()) && port->is_numeric());
+	const bool is_on_graph(dynamic_ptr_cast<GraphModel>(port->parent()));
 
 	if (!_is_graph_port) {
 		_polyphonic_menuitem->set_sensitive(false);
@@ -101,9 +101,9 @@ PortMenu::on_menu_disconnect()
 void
 PortMenu::on_menu_set_min()
 {
-	const URIs&                uris  = _app->uris();
-	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
-	const Raul::Atom&          value = model->get_property(uris.ingen_value);
+	const URIs&           uris  = _app->uris();
+	SPtr<const PortModel> model = dynamic_ptr_cast<const PortModel>(_object);
+	const Raul::Atom&     value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
 		_app->interface()->set_property(_object->uri(), uris.lv2_minimum, value);
 }
@@ -111,9 +111,9 @@ PortMenu::on_menu_set_min()
 void
 PortMenu::on_menu_set_max()
 {
-	const URIs&                uris  = _app->uris();
-	SharedPtr<const PortModel> model = PtrCast<const PortModel>(_object);
-	const Raul::Atom&          value = model->get_property(uris.ingen_value);
+	const URIs&           uris  = _app->uris();
+	SPtr<const PortModel> model = dynamic_ptr_cast<const PortModel>(_object);
+	const Raul::Atom&     value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
 		_app->interface()->set_property(_object->uri(), uris.lv2_maximum, value);
 }
@@ -121,9 +121,9 @@ PortMenu::on_menu_set_max()
 void
 PortMenu::on_menu_reset_range()
 {
-	const URIs&                 uris   = _app->uris();
-	SharedPtr<const PortModel>  model  = PtrCast<const PortModel>(_object);
-	SharedPtr<const BlockModel> parent = PtrCast<const BlockModel>(_object->parent());
+	const URIs&            uris   = _app->uris();
+	SPtr<const PortModel>  model  = dynamic_ptr_cast<const PortModel>(_object);
+	SPtr<const BlockModel> parent = dynamic_ptr_cast<const BlockModel>(_object->parent());
 
 	float min, max;
 	parent->default_port_value_range(model, min, max);
@@ -142,9 +142,9 @@ PortMenu::on_menu_reset_range()
 void
 PortMenu::on_menu_expose()
 {
-	const URIs&                 uris  = _app->uris();
-	SharedPtr<const PortModel>  port  = PtrCast<const PortModel>(_object);
-	SharedPtr<const BlockModel> block = PtrCast<const BlockModel>(port->parent());
+	const URIs&            uris  = _app->uris();
+	SPtr<const PortModel>  port  = dynamic_ptr_cast<const PortModel>(_object);
+	SPtr<const BlockModel> block = dynamic_ptr_cast<const BlockModel>(port->parent());
 
 	const std::string label = block->label() + " " + block->port_label(port);
 	const Raul::Path  path  = Raul::Path(block->path() + Raul::Symbol("_" + port->symbol()));

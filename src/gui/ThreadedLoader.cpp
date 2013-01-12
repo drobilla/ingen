@@ -30,7 +30,7 @@ using namespace std;
 namespace Ingen {
 namespace GUI {
 
-ThreadedLoader::ThreadedLoader(App& app, SharedPtr<Interface> engine)
+ThreadedLoader::ThreadedLoader(App& app, SPtr<Interface> engine)
 	: Raul::Thread()
 	, _app(app)
 	, _sem(0)
@@ -49,7 +49,7 @@ ThreadedLoader::~ThreadedLoader()
 	_sem.post();
 }
 
-SharedPtr<Serialisation::Parser>
+SPtr<Serialisation::Parser>
 ThreadedLoader::parser()
 {
 	Ingen::World* world = _app.world();
@@ -108,8 +108,8 @@ ThreadedLoader::load_graph(bool                       merge,
 }
 
 void
-ThreadedLoader::save_graph(SharedPtr<const Client::GraphModel> model,
-                           const string&                       filename)
+ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model,
+                           const string&                  filename)
 {
 	_mutex.lock();
 
@@ -122,8 +122,8 @@ ThreadedLoader::save_graph(SharedPtr<const Client::GraphModel> model,
 }
 
 void
-ThreadedLoader::save_graph_event(SharedPtr<const Client::GraphModel> model,
-                                 const string&                       filename)
+ThreadedLoader::save_graph_event(SPtr<const Client::GraphModel> model,
+                                 const string&                  filename)
 {
 	if (_app.serialiser()) {
 		if (filename.find(".ingen") != string::npos)

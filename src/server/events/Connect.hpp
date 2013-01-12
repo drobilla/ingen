@@ -45,12 +45,12 @@ namespace Events {
 class Connect : public Event
 {
 public:
-	Connect(Engine&              engine,
-	        SharedPtr<Interface> client,
-	        int32_t              id,
-	        SampleCount          timestamp,
-	        const Raul::Path&    tail,
-	        const Raul::Path&    head);
+	Connect(Engine&           engine,
+	        SPtr<Interface>   client,
+	        int32_t           id,
+	        SampleCount       timestamp,
+	        const Raul::Path& tail,
+	        const Raul::Path& head);
 
 	bool pre_process();
 	void execute(ProcessContext& context);
@@ -62,7 +62,7 @@ private:
 	GraphImpl*              _graph;
 	InputPort*              _head;
 	CompiledGraph*          _compiled_graph;
-	SharedPtr<ArcImpl>      _arc;
+	SPtr<ArcImpl>           _arc;
 	Raul::Array<BufferRef>* _buffers;
 };
 

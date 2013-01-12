@@ -20,7 +20,7 @@
 #include <cstdlib>
 #include <string>
 
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
@@ -71,8 +71,8 @@ public:
 	INGEN_SIGNAL(value_changed, void, const Raul::Atom&);
 	INGEN_SIGNAL(voice_changed, void, uint32_t, const Raul::Atom&);
 	INGEN_SIGNAL(activity, void, const Raul::Atom&);
-	INGEN_SIGNAL(connection, void, SharedPtr<PortModel>);
-	INGEN_SIGNAL(disconnection, void, SharedPtr<PortModel>);
+	INGEN_SIGNAL(connection, void, SPtr<PortModel>);
+	INGEN_SIGNAL(disconnection, void, SPtr<PortModel>);
 
 private:
 	friend class ClientStore;
@@ -87,20 +87,20 @@ private:
 		, _connections(0)
 	{}
 
-	void add_child(SharedPtr<ObjectModel> c)    { throw; }
-	bool remove_child(SharedPtr<ObjectModel> c) { throw; }
+	void add_child(SPtr<ObjectModel> c)    { throw; }
+	bool remove_child(SPtr<ObjectModel> c) { throw; }
 
-	void connected_to(SharedPtr<PortModel> p) {
+	void connected_to(SPtr<PortModel> p) {
 		++_connections;
 		_signal_connection.emit(p);
 	}
 
-	void disconnected_from(SharedPtr<PortModel> p) {
+	void disconnected_from(SPtr<PortModel> p) {
 		--_connections;
 		_signal_disconnection.emit(p);
 	}
 
-	void set(SharedPtr<ObjectModel> model);
+	void set(SPtr<ObjectModel> model);
 
 	uint32_t  _index;
 	Direction _direction;

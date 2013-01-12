@@ -64,11 +64,11 @@ PortModel::is_uri() const
 }
 
 void
-PortModel::set(SharedPtr<ObjectModel> model)
+PortModel::set(SPtr<ObjectModel> model)
 {
 	ObjectModel::set(model);
 
-	SharedPtr<PortModel> port = PtrCast<PortModel>(model);
+	SPtr<PortModel> port = dynamic_ptr_cast<PortModel>(model);
 	if (port) {
 		_index = port->_index;
 		_direction = port->_direction;

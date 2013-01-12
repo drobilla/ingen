@@ -16,15 +16,13 @@
 
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
-#include "raul/SharedPtr.hpp"
 
 #include "ingen_config.h"
 
 using namespace Ingen;
 
 struct IngenClientModule : public Ingen::Module {
-	void load(Ingen::World* world) {
-	}
+	void load(Ingen::World* world) {}
 };
 
 extern "C" {

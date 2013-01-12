@@ -22,9 +22,11 @@
 #undef nil
 #include <glibmm/thread.h>
 
-#include "ingen/Node.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
+
+#include "ingen/Node.hpp"
+#include "ingen/types.hpp"
 
 namespace Ingen {
 
@@ -33,7 +35,7 @@ namespace Ingen {
  */
 class Store : public Raul::Noncopyable
             , public Raul::Deletable
-            , public std::map< const Raul::Path, SharedPtr<Node> > {
+            , public std::map< const Raul::Path, SPtr<Node> > {
 public:
 	void add(Node* o);
 
@@ -44,12 +46,12 @@ public:
 
 	typedef std::pair<const_iterator, const_iterator> const_range;
 
-	typedef std::map< Raul::Path, SharedPtr<Node> > Objects;
+	typedef std::map< Raul::Path, SPtr<Node> > Objects;
 
 	iterator       find_descendants_end(Store::iterator parent);
 	const_iterator find_descendants_end(Store::const_iterator parent) const;
 
-	const_range children_range(SharedPtr<const Node> o) const;
+	const_range children_range(SPtr<const Node> o) const;
 
 	/** Remove the object at @p top and all its children from the store.
 	 *

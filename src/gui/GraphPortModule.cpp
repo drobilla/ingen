@@ -42,14 +42,14 @@ using namespace Client;
 
 namespace GUI {
 
-GraphPortModule::GraphPortModule(GraphCanvas&                       canvas,
-                                 SharedPtr<const Client::PortModel> model)
+GraphPortModule::GraphPortModule(GraphCanvas&                  canvas,
+                                 SPtr<const Client::PortModel> model)
 	: Ganv::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
 {
 	assert(model);
 
-	assert(PtrCast<const GraphModel>(model->parent()));
+	assert(dynamic_ptr_cast<const GraphModel>(model->parent()));
 
 	set_stacked(model->polyphonic());
 
@@ -61,9 +61,9 @@ GraphPortModule::GraphPortModule(GraphCanvas&                       canvas,
 }
 
 GraphPortModule*
-GraphPortModule::create(GraphCanvas&               canvas,
-                        SharedPtr<const PortModel> model,
-                        bool                       human)
+GraphPortModule::create(GraphCanvas&          canvas,
+                        SPtr<const PortModel> model,
+                        bool                  human)
 {
 	GraphPortModule* ret  = new GraphPortModule(canvas, model);
 	Port*            port = Port::create(canvas.app(), *ret, model, human, true);

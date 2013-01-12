@@ -22,10 +22,10 @@
 
 #include <boost/utility.hpp>
 
+#include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Deletable.hpp"
-#include "raul/SharedPtr.hpp"
 
 #include "BufferFactory.hpp"
 #include "PortType.hpp"

@@ -40,12 +40,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-DisconnectAll::DisconnectAll(Engine&              engine,
-                             SharedPtr<Interface> client,
-                             int32_t              id,
-                             SampleCount          timestamp,
-                             const Raul::Path&    parent_path,
-                             const Raul::Path&    path)
+DisconnectAll::DisconnectAll(Engine&           engine,
+                             SPtr<Interface>   client,
+                             int32_t           id,
+                             SampleCount       timestamp,
+                             const Raul::Path& parent_path,
+                             const Raul::Path& path)
 	: Event(engine, client, id, timestamp)
 	, _parent_path(parent_path)
 	, _path(path)

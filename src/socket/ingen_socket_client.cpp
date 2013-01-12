@@ -23,21 +23,21 @@
 #include "Socket.hpp"
 #include "SocketClient.hpp"
 
-static SharedPtr<Ingen::Interface>
-new_socket_interface(Ingen::World*               world,
-                     const Raul::URI&            uri,
-                     SharedPtr<Ingen::Interface> respondee)
+static Ingen::SPtr<Ingen::Interface>
+new_socket_interface(Ingen::World*                 world,
+                     const Raul::URI&              uri,
+                     Ingen::SPtr<Ingen::Interface> respondee)
 {
-	SharedPtr<Ingen::Socket::Socket> sock(
+	Ingen::SPtr<Ingen::Socket::Socket> sock(
 		new Ingen::Socket::Socket(Ingen::Socket::Socket::type_from_uri(uri)));
 	if (!sock->connect(uri)) {
 		world->log().error(Raul::fmt("Failed to connect <%1%> (%2%)\n")
 		                   % sock->uri() % strerror(errno));
-		return SharedPtr<Ingen::Interface>();
+		return Ingen::SPtr<Ingen::Interface>();
 	}
 	Ingen::Socket::SocketClient* client = new Ingen::Socket::SocketClient(
 		*world, uri, sock, respondee);
-	return SharedPtr<Ingen::Interface>(client);
+	return Ingen::SPtr<Ingen::Interface>(client);
 }
 
 struct IngenSocketClientModule : public Ingen::Module {

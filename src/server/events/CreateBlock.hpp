@@ -41,7 +41,7 @@ class CreateBlock : public Event
 {
 public:
 	CreateBlock(Engine&                     engine,
-	            SharedPtr<Interface>        client,
+	            SPtr<Interface>             client,
 	            int32_t                     id,
 	            SampleCount                 timestamp,
 	            const Raul::Path&           block_path,

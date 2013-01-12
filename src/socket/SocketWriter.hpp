@@ -19,11 +19,11 @@
 
 #include <stdint.h>
 
-#include "ingen/Interface.hpp"
 #include "ingen/AtomSink.hpp"
 #include "ingen/AtomWriter.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/types.hpp"
 #include "raul/URI.hpp"
-#include "raul/SharedPtr.hpp"
 #include "sratom/sratom.h"
 
 #include "Socket.hpp"
@@ -36,10 +36,10 @@ namespace Socket {
 class SocketWriter : public AtomWriter, public AtomSink
 {
 public:
-	SocketWriter(URIMap&           map,
-	             URIs&             uris,
-	             const Raul::URI&  uri,
-	             SharedPtr<Socket> sock);
+	SocketWriter(URIMap&          map,
+	             URIs&            uris,
+	             const Raul::URI& uri,
+	             SPtr<Socket>     sock);
 
 	~SocketWriter();
 
@@ -51,14 +51,14 @@ public:
 	Raul::URI uri() const { return _uri; }
 
 protected:
-	URIMap&           _map;
-	Sratom*           _sratom;
-	SerdNode          _base;
-	SerdURI           _base_uri;
-	SerdEnv*          _env;
-	SerdWriter*       _writer;
-	Raul::URI         _uri;
-	SharedPtr<Socket> _socket;
+	URIMap&      _map;
+	Sratom*      _sratom;
+	SerdNode     _base;
+	SerdURI      _base_uri;
+	SerdEnv*     _env;
+	SerdWriter*  _writer;
+	Raul::URI    _uri;
+	SPtr<Socket> _socket;
 };
 
 }  // namespace Socket

@@ -47,16 +47,16 @@ public:
 
 	void init(App& app, Client::ClientStore& store);
 
-	void new_object(SharedPtr<Client::ObjectModel> object);
+	void new_object(SPtr<Client::ObjectModel> object);
 
-	void graph_property_changed(const Raul::URI&              key,
-	                            const Raul::Atom&             value,
-	                            SharedPtr<Client::GraphModel> gm);
+	void graph_property_changed(const Raul::URI&         key,
+	                            const Raul::Atom&        value,
+	                            SPtr<Client::GraphModel> gm);
 
-	void graph_moved(SharedPtr<Client::GraphModel> graph);
+	void graph_moved(SPtr<Client::GraphModel> graph);
 
-	void add_graph(SharedPtr<Client::GraphModel> gm);
-	void remove_graph(SharedPtr<Client::GraphModel> gm);
+	void add_graph(SPtr<Client::GraphModel> gm);
+	void remove_graph(SPtr<Client::GraphModel> gm);
 	void show_graph_menu(GdkEventButton* ev);
 
 protected:
@@ -66,8 +66,8 @@ protected:
 	void event_graph_enabled_toggled(const Glib::ustring& path_str);
 
 	Gtk::TreeModel::iterator find_graph(
-			Gtk::TreeModel::Children       root,
-			SharedPtr<Client::ObjectModel> graph);
+			Gtk::TreeModel::Children  root,
+			SPtr<Client::ObjectModel> graph);
 
 	GraphTreeView* _graphs_treeview;
 
@@ -79,9 +79,9 @@ protected:
 			add(graph_model_col);
 		}
 
-		Gtk::TreeModelColumn<Glib::ustring>                  name_col;
-		Gtk::TreeModelColumn<bool>                           enabled_col;
-		Gtk::TreeModelColumn<SharedPtr<Client::GraphModel> > graph_model_col;
+		Gtk::TreeModelColumn<Glib::ustring>             name_col;
+		Gtk::TreeModelColumn<bool>                      enabled_col;
+		Gtk::TreeModelColumn<SPtr<Client::GraphModel> > graph_model_col;
 	};
 
 	App*                             _app;

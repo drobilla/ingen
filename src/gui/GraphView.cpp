@@ -67,14 +67,14 @@ GraphView::init(App& app)
 }
 
 void
-GraphView::set_graph(SharedPtr<const GraphModel> graph)
+GraphView::set_graph(SPtr<const GraphModel> graph)
 {
 	assert(!_canvas); // FIXME: remove
 
 	assert(_breadcrumb_container); // ensure created
 
 	_graph = graph;
-	_canvas = SharedPtr<GraphCanvas>(new GraphCanvas(*_app, graph, 1600*2, 1200*2));
+	_canvas = SPtr<GraphCanvas>(new GraphCanvas(*_app, graph, 1600*2, 1200*2));
 	_canvas->build();
 
 	_canvas_scrolledwindow->add(_canvas->widget());
@@ -116,15 +116,15 @@ GraphView::set_graph(SharedPtr<const GraphModel> graph)
 	_canvas->widget().grab_focus();
 }
 
-SharedPtr<GraphView>
-GraphView::create(App& app, SharedPtr<const GraphModel> graph)
+SPtr<GraphView>
+GraphView::create(App& app, SPtr<const GraphModel> graph)
 {
 	GraphView* result = NULL;
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("warehouse_win");
 	xml->get_widget_derived("graph_view_box", result);
 	result->init(app);
 	result->set_graph(graph);
-	return SharedPtr<GraphView>(result);
+	return SPtr<GraphView>(result);
 }
 
 #if 0

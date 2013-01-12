@@ -18,7 +18,7 @@
 #define INGEN_CLIENT_GRAPHMODEL_HPP
 
 #include "ingen/client/BlockModel.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 namespace Ingen {
 namespace Client {
@@ -37,18 +37,18 @@ public:
 
 	GraphType graph_type() const { return Node::GraphType::GRAPH; }
 
-	SharedPtr<ArcModel> get_arc(const Ingen::Node* tail,
-	                            const Ingen::Node* head);
+	SPtr<ArcModel> get_arc(const Ingen::Node* tail,
+	                       const Ingen::Node* head);
 
 	bool     enabled()       const;
 	bool     polyphonic()    const;
 	uint32_t internal_poly() const;
 
 	// Signals
-	INGEN_SIGNAL(new_block, void, SharedPtr<BlockModel>);
-	INGEN_SIGNAL(removed_block, void, SharedPtr<BlockModel>);
-	INGEN_SIGNAL(new_arc, void, SharedPtr<ArcModel>);
-	INGEN_SIGNAL(removed_arc, void, SharedPtr<ArcModel>);
+	INGEN_SIGNAL(new_block, void, SPtr<BlockModel>);
+	INGEN_SIGNAL(removed_block, void, SPtr<BlockModel>);
+	INGEN_SIGNAL(new_arc, void, SPtr<ArcModel>);
+	INGEN_SIGNAL(removed_arc, void, SPtr<ArcModel>);
 
 private:
 	friend class ClientStore;
@@ -58,10 +58,10 @@ private:
 	{}
 
 	void clear();
-	void add_child(SharedPtr<ObjectModel> c);
-	bool remove_child(SharedPtr<ObjectModel> c);
+	void add_child(SPtr<ObjectModel> c);
+	bool remove_child(SPtr<ObjectModel> c);
 
-	void add_arc(SharedPtr<ArcModel> arc);
+	void add_arc(SPtr<ArcModel> arc);
 	void remove_arc(const Ingen::Node* tail,
 	                const Ingen::Node* head);
 };

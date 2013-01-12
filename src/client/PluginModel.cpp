@@ -151,7 +151,7 @@ PluginModel::get_property(const Raul::URI& key) const
 }
 
 void
-PluginModel::set(SharedPtr<PluginModel> p)
+PluginModel::set(SPtr<PluginModel> p)
 {
 	_type = p->_type;
 
@@ -229,12 +229,12 @@ PluginModel::has_ui() const
 
 }
 
-SharedPtr<PluginUI>
-PluginModel::ui(Ingen::World*               world,
-                SharedPtr<const BlockModel> block) const
+SPtr<PluginUI>
+PluginModel::ui(Ingen::World*          world,
+                SPtr<const BlockModel> block) const
 {
 	if (!_lilv_plugin) {
-		return SharedPtr<PluginUI>();
+		return SPtr<PluginUI>();
 	}
 
 	return PluginUI::create(world, block, _lilv_plugin);

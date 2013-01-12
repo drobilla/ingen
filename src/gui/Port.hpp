@@ -23,8 +23,7 @@
 #include <gtkmm/menu.h>
 
 #include "ganv/Port.hpp"
-#include "raul/SharedPtr.hpp"
-#include "raul/WeakPtr.hpp"
+#include "ingen/types.hpp"
 
 namespace Raul {
 class Atom;
@@ -48,31 +47,31 @@ class Port : public Ganv::Port
 {
 public:
 	static Port* create(
-		App&                               app,
-		Ganv::Module&                      module,
-		SharedPtr<const Client::PortModel> pm,
-		bool                               human_name,
-		bool                               flip = false);
+		App&                          app,
+		Ganv::Module&                 module,
+		SPtr<const Client::PortModel> pm,
+		bool                          human_name,
+		bool                          flip = false);
 
 	~Port();
 
-	SharedPtr<const Client::PortModel> model() const { return _port_model.lock(); }
+	SPtr<const Client::PortModel> model() const { return _port_model.lock(); }
 
 	bool show_menu(GdkEventButton* ev);
 	void update_metadata();
 
 	void value_changed(const Raul::Atom& value);
 	void activity(const Raul::Atom& value);
-	void disconnected_from(SharedPtr<Client::PortModel> port);
+	void disconnected_from(SPtr<Client::PortModel> port);
 
 	void set_selected(gboolean b);
 
 private:
-	Port(App&                               app,
-	     Ganv::Module&                      module,
-	     SharedPtr<const Client::PortModel> pm,
-	     const std::string&                 name,
-	     bool                               flip = false);
+	Port(App&                          app,
+	     Ganv::Module&                 module,
+	     SPtr<const Client::PortModel> pm,
+	     const std::string&            name,
+	     bool                          flip = false);
 
 	Gtk::Menu* build_enum_menu();
 	Gtk::Menu* build_uri_menu();
@@ -86,11 +85,11 @@ private:
 	void on_uri_activated(const Raul::URI& uri);
 	bool on_event(GdkEvent* ev);
 
-	App&                             _app;
-	WeakPtr<const Client::PortModel> _port_model;
-	bool                             _pressed : 1;
-	bool                             _entered : 1;
-	bool                             _flipped : 1;
+	App&                          _app;
+	WPtr<const Client::PortModel> _port_model;
+	bool                          _pressed : 1;
+	bool                          _entered : 1;
+	bool                          _flipped : 1;
 };
 
 } // namespace GUI

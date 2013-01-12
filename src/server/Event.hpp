@@ -22,11 +22,11 @@
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 #include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Status.hpp"
+#include "ingen/types.hpp"
 
 #include "types.hpp"
 
@@ -81,7 +81,7 @@ public:
 	Status status() const { return _status; }
 
 protected:
-	Event(Engine& engine, SharedPtr<Interface> client, int32_t id, FrameTime time)
+	Event(Engine& engine, SPtr<Interface> client, int32_t id, FrameTime time)
 		: _engine(engine)
 		, _next(NULL)
 		, _request_client(client)
@@ -122,13 +122,13 @@ protected:
 		return _status;
 	}
 
-	Engine&                _engine;
-	std::atomic<Event*>    _next;
-	SharedPtr<Interface>   _request_client;
-	int32_t                _request_id;
-	FrameTime              _time;
-	Status                 _status;
-	std::string            _err_subject;
+	Engine&             _engine;
+	std::atomic<Event*> _next;
+	SPtr<Interface>     _request_client;
+	int32_t             _request_id;
+	FrameTime           _time;
+	Status              _status;
+	std::string         _err_subject;
 };
 
 } // namespace Server

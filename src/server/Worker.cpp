@@ -79,12 +79,12 @@ delete_feature(LV2_Feature* feature)
 	free(feature);
 }
 
-SharedPtr<LV2_Feature>
+SPtr<LV2_Feature>
 Worker::Schedule::feature(World* world, Node* n)
 {
 	LV2Block* block = dynamic_cast<LV2Block*>(n);
 	if (!block) {
-		return SharedPtr<LV2_Feature>();
+		return SPtr<LV2_Feature>();
 	}
 
 	LV2_Worker_Schedule* data = (LV2_Worker_Schedule*)malloc(
@@ -96,7 +96,7 @@ Worker::Schedule::feature(World* world, Node* n)
 	f->URI  = LV2_WORKER__schedule;
 	f->data = data;
 
-	return SharedPtr<LV2_Feature>(f, &delete_feature);
+	return SPtr<LV2_Feature>(f, &delete_feature);
 
 }
 

@@ -33,7 +33,7 @@ namespace Server {
 namespace Events {
 
 CreateBlock::CreateBlock(Engine&                     engine,
-                         SharedPtr<Interface>        client,
+                         SPtr<Interface>             client,
                          int32_t                     id,
                          SampleCount                 timestamp,
                          const Raul::Path&           path,

@@ -21,7 +21,6 @@
 #include <string>
 
 #include "raul/Path.hpp"
-#include "raul/SharedPtr.hpp"
 
 #include "sord/sordmm.hpp"
 
@@ -49,23 +48,23 @@ public:
 
 	typedef Node::Properties Properties;
 
-	virtual void to_file(SharedPtr<const Node> object,
-	                     const std::string&    filename);
+	virtual void to_file(SPtr<const Node>   object,
+	                     const std::string& filename);
 
-	virtual void write_bundle(SharedPtr<const Node> graph,
-	                          const std::string&    path);
+	virtual void write_bundle(SPtr<const Node>   graph,
+	                          const std::string& path);
 
-	virtual std::string to_string(SharedPtr<const Node> object,
-	                              const std::string&    base_uri);
+	virtual std::string to_string(SPtr<const Node>   object,
+	                              const std::string& base_uri);
 
 	virtual void start_to_string(const Raul::Path&  root,
 	                             const std::string& base_uri);
 
-	virtual void serialise(SharedPtr<const Node> object)
+	virtual void serialise(SPtr<const Node> object)
 			throw (std::logic_error);
 
-	virtual void serialise_arc(const Sord::Node&    parent,
-	                           SharedPtr<const Arc> arc)
+	virtual void serialise_arc(const Sord::Node& parent,
+	                           SPtr<const Arc>   arc)
 			throw (std::logic_error);
 
 	virtual std::string finish();

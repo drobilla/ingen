@@ -39,14 +39,14 @@ BreadCrumbs::BreadCrumbs(App& app)
 	set_can_focus(false);
 }
 
-SharedPtr<GraphView>
+SPtr<GraphView>
 BreadCrumbs::view(const Raul::Path& path)
 {
 	for (const auto& b : _breadcrumbs)
 		if (b->path() == path)
 			return b->view();
 
-	return SharedPtr<GraphView>();
+	return SPtr<GraphView>();
 }
 
 /** Sets up the crumbs to display @a path.
@@ -55,7 +55,7 @@ BreadCrumbs::view(const Raul::Path& path)
  * children preserved.
  */
 void
-BreadCrumbs::build(Raul::Path path, SharedPtr<GraphView> view)
+BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 {
 	bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
@@ -146,11 +146,11 @@ BreadCrumbs::build(Raul::Path path, SharedPtr<GraphView> view)
  * match, otherwise ignoring @a view.
  */
 BreadCrumbs::BreadCrumb*
-BreadCrumbs::create_crumb(const Raul::Path&    path,
-                          SharedPtr<GraphView> view)
+BreadCrumbs::create_crumb(const Raul::Path& path,
+                          SPtr<GraphView>   view)
 {
 	BreadCrumb* but = manage(new BreadCrumb(path,
-			(view && path == view->graph()->path()) ? view : SharedPtr<GraphView>()));
+			(view && path == view->graph()->path()) ? view : SPtr<GraphView>()));
 
 	but->signal_toggled().connect(sigc::bind(sigc::mem_fun(
 				this, &BreadCrumbs::breadcrumb_clicked), but));

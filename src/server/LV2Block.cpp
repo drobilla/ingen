@@ -69,7 +69,7 @@ LV2Block::~LV2Block()
 	delete _instances;
 }
 
-SharedPtr<LilvInstance>
+SPtr<LilvInstance>
 LV2Block::make_instance(URIs&      uris,
                         SampleRate rate,
                         uint32_t   voice,
@@ -82,7 +82,7 @@ LV2Block::make_instance(URIs&      uris,
 		parent_graph()->engine().log().error(
 			Raul::fmt("Failed to instantiate <%1%>\n")
 			% _lv2_plugin->uri().c_str());
-		return SharedPtr<LilvInstance>();
+		return SPtr<LilvInstance>();
 	}
 
 	const LV2_Options_Interface* options_iface = (const LV2_Options_Interface*)
@@ -134,7 +134,7 @@ LV2Block::make_instance(URIs&      uris,
 						parent_graph()->engine().log().error(
 							Raul::fmt("%1% auto-morphed to unknown type %2%\n")
 							% port->path().c_str() % type);
-						return SharedPtr<LilvInstance>();
+						return SPtr<LilvInstance>();
 					}
 				} else {
 					parent_graph()->engine().log().error(
@@ -145,7 +145,7 @@ LV2Block::make_instance(URIs&      uris,
 		}
 	}
 
-	return SharedPtr<LilvInstance>(inst, lilv_instance_free);
+	return SPtr<LilvInstance>(inst, lilv_instance_free);
 }
 
 bool
@@ -161,9 +161,9 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 
 	const SampleRate rate = bufs.engine().driver()->sample_rate();
 	assert(!_prepared_instances);
-	_prepared_instances = new Instances(poly, *_instances, SharedPtr<void>());
+	_prepared_instances = new Instances(poly, *_instances, SPtr<void>());
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
-		SharedPtr<LilvInstance> inst = make_instance(bufs.uris(), rate, i, true);
+		SPtr<LilvInstance> inst = make_instance(bufs.uris(), rate, i, true);
 		if (!inst) {
 			return false;
 		}
@@ -206,7 +206,7 @@ bool
 LV2Block::instantiate(BufferFactory& bufs)
 {
 	const Ingen::URIs& uris      = bufs.uris();
-	SharedPtr<LV2Info> info      = _lv2_plugin->lv2_info();
+	SPtr<LV2Info>      info      = _lv2_plugin->lv2_info();
 	const LilvPlugin*  plug      = _lv2_plugin->lilv_plugin();
 	Ingen::Forge&      forge     = bufs.forge();
 	const uint32_t     num_ports = lilv_plugin_get_num_ports(plug);
@@ -401,7 +401,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 
 	// Actually create plugin instances and port buffers.
 	const SampleRate rate = bufs.engine().driver()->sample_rate();
-	_instances = new Instances(_polyphony, SharedPtr<void>());
+	_instances = new Instances(_polyphony, SPtr<void>());
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		_instances->at(i) = make_instance(bufs.uris(), rate, i, false);
 		if (!_instances->at(i)) {

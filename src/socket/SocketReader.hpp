@@ -33,9 +33,9 @@ namespace Socket {
 class SocketReader : public Raul::Thread
 {
 public:
-	SocketReader(World&            world,
-	             Interface&        iface,
-	             SharedPtr<Socket> sock);
+	SocketReader(World&       world,
+	             Interface&   iface,
+	             SPtr<Socket> sock);
 
 	~SocketReader();
 
@@ -58,12 +58,12 @@ private:
 	                                  const SerdNode*    object_datatype,
 	                                  const SerdNode*    object_lang);
 
-	World&            _world;
-	Interface&        _iface;
-	SerdEnv*          _env;
-	SordInserter*     _inserter;
-	SordNode*         _msg_node;
-	SharedPtr<Socket> _socket;
+	World&        _world;
+	Interface&    _iface;
+	SerdEnv*      _env;
+	SordInserter* _inserter;
+	SordNode*     _msg_node;
+	SPtr<Socket>  _socket;
 };
 
 }  // namespace Ingen

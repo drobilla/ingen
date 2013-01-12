@@ -82,11 +82,11 @@ ConnectWindow::start(App& app, Ingen::World* world)
 	}
 
 	set_connected_to(world->interface());
-	connect(world->interface());
+	connect(bool(world->interface()));
 }
 
 void
-ConnectWindow::set_connected_to(SharedPtr<Ingen::Interface> engine)
+ConnectWindow::set_connected_to(SPtr<Ingen::Interface> engine)
 {
 	_app->world()->set_interface(engine);
 
@@ -174,9 +174,9 @@ ConnectWindow::connect(bool existing)
 			uri = world->interface()->uri();
 		}
 
-		SharedPtr<ThreadedSigClientInterface> tsci;
+		SPtr<ThreadedSigClientInterface> tsci;
 		if (world->interface()) {
-			tsci = PtrCast<ThreadedSigClientInterface>(
+			tsci = dynamic_ptr_cast<ThreadedSigClientInterface>(
 				world->interface()->respondee());
 		}
 
@@ -200,7 +200,7 @@ ConnectWindow::connect(bool existing)
 		if (Raul::Process::launch(cmd)) {
 			const Raul::URI engine_uri(string("tcp://localhost:") + port_str);
 
-			SharedPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
+			SPtr<ThreadedSigClientInterface> tsci(new ThreadedSigClientInterface(1024));
 			world->set_interface(world->new_interface(engine_uri, tsci));
 
 			_app->attach(tsci);
@@ -221,7 +221,7 @@ ConnectWindow::connect(bool existing)
 			world->engine()->activate();
 		}
 
-		SharedPtr<SigClientInterface> client(new SigClientInterface());
+		SPtr<SigClientInterface> client(new SigClientInterface());
 
 		world->interface()->set_respondee(client);
 		_app->attach(client);
@@ -239,7 +239,7 @@ ConnectWindow::disconnect()
 	_attached = false;
 
 	_app->detach();
-	set_connected_to(SharedPtr<Ingen::Interface>());
+	set_connected_to(SPtr<Ingen::Interface>());
 
 	if (!_widgets_loaded)
 		return;
@@ -418,7 +418,7 @@ ConnectWindow::gtk_callback()
 		++_connect_stage;
 	} else if (_connect_stage == 3) {
 		if (_app->store()->size() > 0) {
-			SharedPtr<const GraphModel> root = PtrCast<const GraphModel>(
+			SPtr<const GraphModel> root = dynamic_ptr_cast<const GraphModel>(
 				_app->store()->object(Raul::Path("/")));
 			if (root) {
 				set_connected_to(_app->interface());

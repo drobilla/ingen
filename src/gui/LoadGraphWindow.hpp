@@ -25,9 +25,8 @@
 #include <gtkmm/radiobutton.h>
 #include <gtkmm/spinbutton.h>
 
-#include "raul/SharedPtr.hpp"
-
 #include "ingen/Node.hpp"
+#include "ingen/types.hpp"
 
 namespace Ingen {
 
@@ -49,11 +48,11 @@ public:
 
 	void init(App& app) { _app = &app; }
 
-	void set_graph(SharedPtr<const Client::GraphModel> graph);
+	void set_graph(SPtr<const Client::GraphModel> graph);
 
-	void present(SharedPtr<const Client::GraphModel> graph,
-	             bool                                import,
-	             Node::Properties                    data);
+	void present(SPtr<const Client::GraphModel> graph,
+	             bool                           import,
+	             Node::Properties               data);
 
 protected:
 	void on_show();
@@ -73,7 +72,7 @@ private:
 
 	Node::Properties _initial_data;
 
-	SharedPtr<const Client::GraphModel> _graph;
+	SPtr<const Client::GraphModel> _graph;
 
 	Gtk::Label*       _symbol_label;
 	Gtk::Entry*       _symbol_entry;

@@ -20,8 +20,8 @@
 #include <map>
 
 #include "ingen/World.hpp"
+#include "ingen/types.hpp"
 #include "raul/Noncopyable.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
 namespace Ingen {
@@ -51,10 +51,10 @@ private:
 	void load_lv2_plugins();
 	void load_internal_plugins();
 
-	Plugins            _plugins;
-	Ingen::World*      _world;
-	SharedPtr<LV2Info> _lv2_info;
-	bool               _has_loaded;
+	Plugins       _plugins;
+	Ingen::World* _world;
+	SPtr<LV2Info> _lv2_info;
+	bool          _has_loaded;
 };
 
 } // namespace Server

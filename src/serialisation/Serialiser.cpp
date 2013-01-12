@@ -66,12 +66,12 @@ struct Serialiser::Impl {
 
 	void start_to_filename(const std::string& filename);
 
-	void serialise_graph(SharedPtr<const Node> p,
-	                     const Sord::Node&     id);
+	void serialise_graph(SPtr<const Node>  p,
+	                     const Sord::Node& id);
 
-	void serialise_block(SharedPtr<const Node> n,
-	                     const Sord::Node&     class_id,
-	                     const Sord::Node&     id);
+	void serialise_block(SPtr<const Node>  n,
+	                     const Sord::Node& class_id,
+	                     const Sord::Node& id);
 
 	void serialise_port(const Node*       p,
 	                    Resource::Graph   context,
@@ -80,17 +80,17 @@ struct Serialiser::Impl {
 	void serialise_properties(Sord::Node                  id,
 	                          const Resource::Properties& props);
 
-	void write_bundle(SharedPtr<const Node> graph,
-	                  const std::string&    uri);
+	void write_bundle(SPtr<const Node>   graph,
+	                  const std::string& uri);
 
 	Sord::Node path_rdf_node(const Raul::Path& path);
 
-	void write_manifest(const std::string&    bundle_path,
-	                    SharedPtr<const Node> graph,
-	                    const std::string&    graph_symbol);
+	void write_manifest(const std::string& bundle_path,
+	                    SPtr<const Node>   graph,
+	                    const std::string& graph_symbol);
 
-	void serialise_arc(const Sord::Node&    parent,
-	                   SharedPtr<const Arc> a)
+	void serialise_arc(const Sord::Node& parent,
+	                   SPtr<const Arc>   a)
 			throw (std::logic_error);
 
 	std::string finish();
@@ -113,8 +113,8 @@ Serialiser::~Serialiser()
 }
 
 void
-Serialiser::to_file(SharedPtr<const Node> object,
-                    const std::string&    filename)
+Serialiser::to_file(SPtr<const Node>   object,
+                    const std::string& filename)
 {
 	me->_root_path = object->path();
 	me->start_to_filename(filename);
@@ -123,9 +123,9 @@ Serialiser::to_file(SharedPtr<const Node> object,
 }
 
 void
-Serialiser::Impl::write_manifest(const std::string&    bundle_path,
-                                 SharedPtr<const Node> graph,
-                                 const std::string&    graph_symbol)
+Serialiser::Impl::write_manifest(const std::string& bundle_path,
+                                 SPtr<const Node>   graph,
+                                 const std::string& graph_symbol)
 {
 	const string manifest_path(Glib::build_filename(bundle_path, "manifest.ttl"));
 	const string binary_path(Glib::Module::build_path("", "ingen_lv2"));
@@ -158,15 +158,15 @@ Serialiser::Impl::write_manifest(const std::string&    bundle_path,
 }
 
 void
-Serialiser::write_bundle(SharedPtr<const Node> graph,
-                         const std::string&    path)
+Serialiser::write_bundle(SPtr<const Node>   graph,
+                         const std::string& path)
 {
 	me->write_bundle(graph, path);
 }
 
 void
-Serialiser::Impl::write_bundle(SharedPtr<const Node> graph,
-                               const std::string&    a_path)
+Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
+                               const std::string& a_path)
 {
 	std::string path = Glib::filename_from_uri(a_path);
 	if (Glib::file_test(path, Glib::FILE_TEST_EXISTS)
@@ -195,8 +195,8 @@ Serialiser::Impl::write_bundle(SharedPtr<const Node> graph,
 }
 
 string
-Serialiser::to_string(SharedPtr<const Node> object,
-                      const string&         base_uri)
+Serialiser::to_string(SPtr<const Node> object,
+                      const string&    base_uri)
 {
 	start_to_string(object->path(), base_uri);
 	serialise(object);
@@ -279,7 +279,7 @@ Serialiser::Impl::path_rdf_node(const Raul::Path& path)
 }
 
 void
-Serialiser::serialise(SharedPtr<const Node> object) throw (std::logic_error)
+Serialiser::serialise(SPtr<const Node> object) throw (std::logic_error)
 {
 	if (!me->_model)
 		throw std::logic_error("serialise called without serialisation in progress");
@@ -300,8 +300,8 @@ Serialiser::serialise(SharedPtr<const Node> object) throw (std::logic_error)
 }
 
 void
-Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
-                                  const Sord::Node&     graph_id)
+Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
+                                  const Sord::Node& graph_id)
 {
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();
@@ -354,7 +354,7 @@ Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
 			continue;
 
 		if (n->second->graph_type() == Node::GraphType::GRAPH) {
-			SharedPtr<Node> subgraph = n->second;
+			SPtr<Node> subgraph = n->second;
 
 			SerdURI base_uri;
 			serd_uri_parse((const uint8_t*)_base_uri.c_str(), &base_uri);
@@ -387,7 +387,7 @@ Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
 			                      block_id);
 			serialise_block(subgraph, subgraph_id, block_id);
 		} else if (n->second->graph_type() == Node::GraphType::BLOCK) {
-			SharedPtr<const Node> block = n->second;
+			SPtr<const Node> block = n->second;
 
 			const Sord::URI  class_id(world, block->plugin()->uri());
 			const Sord::Node block_id(path_rdf_node(n->second->path()));
@@ -419,9 +419,9 @@ Serialiser::Impl::serialise_graph(SharedPtr<const Node> graph,
 }
 
 void
-Serialiser::Impl::serialise_block(SharedPtr<const Node> block,
-                                  const Sord::Node&     class_id,
-                                  const Sord::Node&     block_id)
+Serialiser::Impl::serialise_block(SPtr<const Node>  block,
+                                  const Sord::Node& class_id,
+                                  const Sord::Node& block_id)
 {
 	const URIs& uris = _world.uris();
 
@@ -480,16 +480,16 @@ Serialiser::Impl::serialise_port(const Node*       port,
 }
 
 void
-Serialiser::serialise_arc(const Sord::Node&    parent,
-                          SharedPtr<const Arc> arc)
+Serialiser::serialise_arc(const Sord::Node& parent,
+                          SPtr<const Arc>   arc)
 		throw (std::logic_error)
 {
 	return me->serialise_arc(parent, arc);
 }
 
 void
-Serialiser::Impl::serialise_arc(const Sord::Node&    parent,
-                                SharedPtr<const Arc> arc)
+Serialiser::Impl::serialise_arc(const Sord::Node& parent,
+                                SPtr<const Arc>   arc)
 		throw (std::logic_error)
 {
 	if (!_model)

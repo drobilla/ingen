@@ -19,10 +19,10 @@
 
 #include <string>
 
-#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Noncopyable.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
 typedef struct LilvWorldImpl LilvWorld;
@@ -93,10 +93,10 @@ public:
 	virtual bool run_module(const char* name);
 
 	/** A function to create a new remote Interface. */
-	typedef SharedPtr<Interface> (*InterfaceFactory)(
-		World*               world,
-		const Raul::URI&     engine_uri,
-		SharedPtr<Interface> respondee);
+	typedef SPtr<Interface> (*InterfaceFactory)(
+		World*           world,
+		const Raul::URI& engine_uri,
+		SPtr<Interface>  respondee);
 
 	/** Register an InterfaceFactory (for module implementations). */
 	virtual void add_interface_factory(const std::string& scheme,
@@ -107,25 +107,25 @@ public:
 	 * @param respondee The Interface that will receive responses to commands
 	 *                  and broadcasts, if applicable.
 	 */
-	virtual SharedPtr<Interface> new_interface(
-		const Raul::URI&     engine_uri,
-		SharedPtr<Interface> respondee);
+	virtual SPtr<Interface> new_interface(
+		const Raul::URI& engine_uri,
+		SPtr<Interface>  respondee);
 
 	/** Run a script. */
 	virtual bool run(const std::string& mime_type,
 	                 const std::string& filename);
 
-	virtual void set_engine(SharedPtr<EngineBase> e);
-	virtual void set_interface(SharedPtr<Interface> e);
-	virtual void set_parser(SharedPtr<Serialisation::Parser> p);
-	virtual void set_serialiser(SharedPtr<Serialisation::Serialiser> s);
-	virtual void set_store(SharedPtr<Store> s);
+	virtual void set_engine(SPtr<EngineBase> e);
+	virtual void set_interface(SPtr<Interface> e);
+	virtual void set_parser(SPtr<Serialisation::Parser> p);
+	virtual void set_serialiser(SPtr<Serialisation::Serialiser> s);
+	virtual void set_store(SPtr<Store> s);
 
-	virtual SharedPtr<EngineBase>                engine();
-	virtual SharedPtr<Interface>                 interface();
-	virtual SharedPtr<Serialisation::Parser>     parser();
-	virtual SharedPtr<Serialisation::Serialiser> serialiser();
-	virtual SharedPtr<Store>                     store();
+	virtual SPtr<EngineBase>                engine();
+	virtual SPtr<Interface>                 interface();
+	virtual SPtr<Serialisation::Parser>     parser();
+	virtual SPtr<Serialisation::Serialiser> serialiser();
+	virtual SPtr<Store>                     store();
 
 	virtual int&           argc();
 	virtual char**&        argv();

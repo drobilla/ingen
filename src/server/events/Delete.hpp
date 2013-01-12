@@ -57,11 +57,11 @@ class DisconnectAll;
 class Delete : public Event
 {
 public:
-	Delete(Engine&              engine,
-	       SharedPtr<Interface> client,
-	       int32_t              id,
-	       FrameTime            timestamp,
-	       const Raul::URI&     uri);
+	Delete(Engine&          engine,
+	       SPtr<Interface>  client,
+	       int32_t          id,
+	       FrameTime        timestamp,
+	       const Raul::URI& uri);
 
 	~Delete();
 
@@ -70,17 +70,17 @@ public:
 	void post_process();
 
 private:
-	Raul::URI                _uri;
-	Raul::Path               _path;
-	SharedPtr<BlockImpl>     _block;               ///< Non-NULL iff a block
-	SharedPtr<DuplexPort>    _port;                ///< Non-NULL iff a port
-	EnginePort*              _engine_port;
-	Raul::Array<PortImpl*>*  _ports_array;         ///< New (external) ports for Graph
-	CompiledGraph*           _compiled_graph;      ///< Graph's new process order
-	DisconnectAll*           _disconnect_event;
+	Raul::URI               _uri;
+	Raul::Path              _path;
+	SPtr<BlockImpl>         _block; ///< Non-NULL iff a block
+	SPtr<DuplexPort>        _port; ///< Non-NULL iff a port
+	EnginePort*             _engine_port;
+	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports for Graph
+	CompiledGraph*          _compiled_graph; ///< Graph's new process order
+	DisconnectAll*          _disconnect_event;
 
-	SharedPtr<ControlBindings::Bindings> _removed_bindings;
-	Store::Objects                       _removed_objects;
+	SPtr<ControlBindings::Bindings> _removed_bindings;
+	Store::Objects                  _removed_objects;
 
 	Glib::RWLock::WriterLock _lock;
 };

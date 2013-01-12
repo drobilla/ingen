@@ -49,7 +49,7 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 }
 
 void
-NodeMenu::init(App& app, SharedPtr<const Client::BlockModel> block)
+NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 {
 	ObjectMenu::init(app, block);
 

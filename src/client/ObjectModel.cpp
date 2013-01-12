@@ -73,7 +73,7 @@ ObjectModel::polyphonic() const
  * @a o as correct.  The paths of the two models MUST be equal.
  */
 void
-ObjectModel::set(SharedPtr<ObjectModel> o)
+ObjectModel::set(SPtr<ObjectModel> o)
 {
 	assert(_path == o->path());
 	if (o->_parent)
@@ -94,7 +94,7 @@ ObjectModel::set_path(const Raul::Path& p)
 }
 
 void
-ObjectModel::set_parent(SharedPtr<ObjectModel> p)
+ObjectModel::set_parent(SPtr<ObjectModel> p)
 {
 	assert(_path.is_child_of(p->path()));
 	_parent = p;

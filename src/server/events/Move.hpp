@@ -46,12 +46,12 @@ namespace Events {
 class Move : public Event
 {
 public:
-	Move(Engine&              engine,
-	     SharedPtr<Interface> client,
-	     int32_t              id,
-	     SampleCount          timestamp,
-	     const Raul::Path&    old_path,
-	     const Raul::Path&    new_path);
+	Move(Engine&           engine,
+	     SPtr<Interface>   client,
+	     int32_t           id,
+	     SampleCount       timestamp,
+	     const Raul::Path& old_path,
+	     const Raul::Path& new_path);
 
 	~Move();
 

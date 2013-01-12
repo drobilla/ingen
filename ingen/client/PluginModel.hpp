@@ -26,8 +26,8 @@
 #include "ingen/Resource.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/signal.hpp"
+#include "ingen/types.hpp"
 #include "lilv/lilv.h"
-#include "raul/SharedPtr.hpp"
 #include "raul/Symbol.hpp"
 #include "sord/sordmm.hpp"
 
@@ -74,8 +74,8 @@ public:
 
 	bool has_ui() const;
 
-	SharedPtr<PluginUI> ui(Ingen::World*               world,
-	                       SharedPtr<const BlockModel> block) const;
+	SPtr<PluginUI> ui(Ingen::World*               world,
+	                  SPtr<const BlockModel> block) const;
 
 	const std::string& icon_path() const;
 	static std::string get_lv2_icon_path(const LilvPlugin* plugin);
@@ -95,7 +95,7 @@ public:
 
 protected:
 	friend class ClientStore;
-	void set(SharedPtr<PluginModel> p);
+	void set(SPtr<PluginModel> p);
 
 private:
 	Type _type;

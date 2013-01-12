@@ -18,12 +18,12 @@
 
 #include "events/CreatePort.hpp"
 #include "ingen/Configuration.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/Log.hpp"
+#include "ingen/types.hpp"
 #include "raul/Maid.hpp"
-#include "raul/SharedPtr.hpp"
 
 #include "BlockFactory.hpp"
 #include "Broadcaster.hpp"
@@ -68,7 +68,7 @@ Engine::Engine(Ingen::World* world)
 	, _direct_driver(true)
 {
 	if (!world->store()) {
-		world->set_store(SharedPtr<Ingen::Store>(new Store()));
+		world->set_store(SPtr<Ingen::Store>(new Store()));
 	}
 
 	_control_bindings = new ControlBindings(*this);
@@ -82,16 +82,16 @@ Engine::~Engine()
 	_root_graph = NULL;
 	deactivate();
 
-	const SharedPtr<Store> store = this->store();
+	const SPtr<Store> store = this->store();
 	if (store) {
 		for (auto& s : *store.get()) {
-			if (!PtrCast<NodeImpl>(s.second)->parent()) {
+			if (!dynamic_ptr_cast<NodeImpl>(s.second)->parent()) {
 				s.second.reset();
 			}
 		}
 	}
 
-	_world->set_store(SharedPtr<Ingen::Store>());
+	_world->set_store(SPtr<Ingen::Store>());
 
 	delete _maid;
 	delete _pre_processor;
@@ -109,7 +109,7 @@ Engine::~Engine()
 	munlockall();
 }
 
-SharedPtr<Store>
+SPtr<Store>
 Engine::store() const
 {
 	return _world->store();
@@ -136,7 +136,7 @@ Engine::main_iteration()
 }
 
 void
-Engine::set_driver(SharedPtr<Driver> driver)
+Engine::set_driver(SPtr<Driver> driver)
 {
 	_driver = driver;
 }
@@ -174,7 +174,7 @@ execute_and_delete_event(ProcessContext& context, Event* ev)
 void
 Engine::init(double sample_rate, uint32_t block_length)
 {
-	set_driver(SharedPtr<Driver>(new DirectDriver(sample_rate, block_length)));
+	set_driver(SPtr<Driver>(new DirectDriver(sample_rate, block_length)));
 	_direct_driver = true;
 }
 
@@ -240,7 +240,7 @@ Engine::activate()
 			          Resource::Property(forge.make(32.0f),
 			                             Resource::Graph::EXTERNAL)));
 
-		SharedPtr<Interface> respondee;
+		SPtr<Interface> respondee;
 		execute_and_delete_event(
 			context, new Events::CreatePort(
 				*this, respondee, -1, 0, Raul::Path("/control_in"),
@@ -340,7 +340,7 @@ Engine::process_events()
 }
 
 void
-Engine::register_client(const Raul::URI& uri, SharedPtr<Interface> client)
+Engine::register_client(const Raul::URI& uri, SPtr<Interface> client)
 {
 	log().info(Raul::fmt("Registering client <%1%>\n") % uri.c_str());
 	_broadcaster->register_client(uri, client);

@@ -47,7 +47,7 @@ lv2_ui_write(SuilController controller,
 		return;
 	}
 
-	SharedPtr<const PortModel> port = ports[port_index];
+	SPtr<const PortModel> port = ports[port_index];
 
 	const URIs& uris = ui->world()->uris();
 
@@ -77,9 +77,9 @@ lv2_ui_write(SuilController controller,
 	}
 }
 
-PluginUI::PluginUI(Ingen::World*               world,
-                   SharedPtr<const BlockModel> block,
-                   const LilvNode*             ui_node)
+PluginUI::PluginUI(Ingen::World*          world,
+                   SPtr<const BlockModel> block,
+                   const LilvNode*        ui_node)
 	: _world(world)
 	, _block(block)
 	, _instance(NULL)
@@ -93,10 +93,10 @@ PluginUI::~PluginUI()
 	lilv_node_free(_ui_node);
 }
 
-SharedPtr<PluginUI>
-PluginUI::create(Ingen::World*               world,
-                 SharedPtr<const BlockModel> block,
-                 const LilvPlugin*           plugin)
+SPtr<PluginUI>
+PluginUI::create(Ingen::World*          world,
+                 SPtr<const BlockModel> block,
+                 const LilvPlugin*      plugin)
 {
 	if (!PluginUI::ui_host) {
 		PluginUI::ui_host = suil_host_new(lv2_ui_write, NULL, NULL, NULL);
@@ -123,10 +123,10 @@ PluginUI::create(Ingen::World*               world,
 
 	if (!ui) {
 		lilv_node_free(gtk_ui);
-		return SharedPtr<PluginUI>();
+		return SPtr<PluginUI>();
 	}
 
-	SharedPtr<PluginUI> ret(new PluginUI(world, block, lilv_ui_get_uri(ui)));
+	SPtr<PluginUI> ret(new PluginUI(world, block, lilv_ui_get_uri(ui)));
 	ret->_features = world->lv2_features().lv2_features(
 		world, const_cast<BlockModel*>(block.get()));
 

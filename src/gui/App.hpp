@@ -28,9 +28,9 @@
 
 #include "ingen/Status.hpp"
 #include "ingen/World.hpp"
+#include "ingen/types.hpp"
 #include "raul/Atom.hpp"
 #include "raul/Deletable.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
 
 namespace Ingen {
@@ -74,7 +74,7 @@ public:
 
 	void error_message(const std::string& msg);
 
-	void attach(SharedPtr<Client::SigClientInterface> client);
+	void attach(SPtr<Client::SigClientInterface> client);
 
 	void detach();
 
@@ -108,15 +108,15 @@ public:
 
 	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
 
-	Ingen::Forge&                         forge()     const { return _world->forge(); }
-	SharedPtr<Ingen::Interface>           interface() const { return _world->interface(); }
-	SharedPtr<Client::SigClientInterface> client()    const { return _client; }
-	SharedPtr<Client::ClientStore>        store()     const { return _store; }
-	SharedPtr<ThreadedLoader>             loader()    const { return _loader; }
+	Ingen::Forge&                    forge()     const { return _world->forge(); }
+	SPtr<Ingen::Interface>           interface() const { return _world->interface(); }
+	SPtr<Client::SigClientInterface> client()    const { return _client; }
+	SPtr<Client::ClientStore>        store()     const { return _store; }
+	SPtr<ThreadedLoader>             loader()    const { return _loader; }
 
-	SharedPtr<Serialisation::Serialiser> serialiser();
+	SPtr<Serialisation::Serialiser> serialiser();
 
-	static SharedPtr<App> create(Ingen::World* world);
+	static SPtr<App> create(Ingen::World* world);
 	void run();
 
 	inline Ingen::World* world() const { return _world; }
@@ -152,9 +152,9 @@ protected:
 
 	static Gtk::Main* _main;
 
-	SharedPtr<Client::SigClientInterface> _client;
-	SharedPtr<Client::ClientStore>        _store;
-	SharedPtr<ThreadedLoader>             _loader;
+	SPtr<Client::SigClientInterface> _client;
+	SPtr<Client::ClientStore>        _store;
+	SPtr<ThreadedLoader>             _loader;
 
 	Style* _style;
 

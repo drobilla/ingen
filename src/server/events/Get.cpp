@@ -37,11 +37,11 @@ namespace Events {
 static void
 send_graph(Interface* client, const GraphImpl* graph);
 
-Get::Get(Engine&              engine,
-         SharedPtr<Interface> client,
-         int32_t              id,
-         SampleCount          timestamp,
-         const Raul::URI&     uri)
+Get::Get(Engine&          engine,
+         SPtr<Interface>  client,
+         int32_t          id,
+         SampleCount      timestamp,
+         const Raul::URI& uri)
 	: Event(engine, client, id, timestamp)
 	, _uri(uri)
 	, _object(NULL)

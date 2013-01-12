@@ -19,7 +19,7 @@
 
 #include "lilv/lilv.h"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
-#include "raul/Disposable.hpp"
+#include "raul/Maid.hpp"
 
 #include "BufferRef.hpp"
 #include "BlockImpl.hpp"
@@ -63,18 +63,18 @@ public:
 	                     BufferRef buf);
 
 protected:
-	SharedPtr<LilvInstance> make_instance(URIs&      uris,
-	                                      SampleRate rate,
-	                                      uint32_t   voice,
-	                                      bool       preparing);
+	SPtr<LilvInstance> make_instance(URIs&      uris,
+	                                 SampleRate rate,
+	                                 uint32_t   voice,
+	                                 bool       preparing);
 
 	inline LilvInstance* instance(uint32_t voice) {
 		return (LilvInstance*)(*_instances)[voice].get();
 	}
 
-	typedef Raul::Array< SharedPtr<void> > Instances;
+	typedef Raul::Array< SPtr<void> > Instances;
 
-	struct Response : public Raul::Disposable
+	struct Response : public Raul::Maid::Disposable
 	                , public Raul::Noncopyable
 	                , public boost::intrusive::slist_base_hook<>
 	{
@@ -101,12 +101,12 @@ protected:
 	static LV2_Worker_Status work_respond(
 		LV2_Worker_Respond_Handle handle, uint32_t size, const void* data);
 
-	LV2Plugin*                           _lv2_plugin;
-	Instances*                           _instances;
-	Instances*                           _prepared_instances;
-	const LV2_Worker_Interface*          _worker_iface;
-	Responses                            _responses;
-	SharedPtr<LV2Features::FeatureArray> _features;
+	LV2Plugin*                      _lv2_plugin;
+	Instances*                      _instances;
+	Instances*                      _prepared_instances;
+	const LV2_Worker_Interface*     _worker_iface;
+	Responses                       _responses;
+	SPtr<LV2Features::FeatureArray> _features;
 };
 
 } // namespace Server

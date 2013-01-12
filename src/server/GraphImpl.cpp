@@ -198,7 +198,7 @@ GraphImpl::remove_block(BlockImpl& block)
 }
 
 void
-GraphImpl::add_arc(SharedPtr<ArcImpl> a)
+GraphImpl::add_arc(SPtr<ArcImpl> a)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	_arcs.insert(make_pair(make_pair(a->tail(), a->head()), a));
@@ -207,17 +207,17 @@ GraphImpl::add_arc(SharedPtr<ArcImpl> a)
 /** Remove an arc.
  * Preprocessing thread only.
  */
-SharedPtr<ArcImpl>
+SPtr<ArcImpl>
 GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	Arcs::iterator i = _arcs.find(make_pair(tail, dst_port));
 	if (i != _arcs.end()) {
-		SharedPtr<ArcImpl> arc = PtrCast<ArcImpl>(i->second);
+		SPtr<ArcImpl> arc = dynamic_ptr_cast<ArcImpl>(i->second);
 		_arcs.erase(i);
 		return arc;
 	} else {
-		return SharedPtr<ArcImpl>();
+		return SPtr<ArcImpl>();
 	}
 }
 

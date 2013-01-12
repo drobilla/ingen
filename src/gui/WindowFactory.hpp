@@ -20,7 +20,7 @@
 #include <map>
 
 #include "ingen/Node.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 namespace Ingen {
 
@@ -55,23 +55,23 @@ public:
 
 	size_t num_open_graph_windows();
 
-	GraphBox*    graph_box(SharedPtr<const Client::GraphModel> graph);
-	GraphWindow* graph_window(SharedPtr<const Client::GraphModel> graph);
-	GraphWindow* parent_graph_window(SharedPtr<const Client::BlockModel> block);
+	GraphBox*    graph_box(SPtr<const Client::GraphModel> graph);
+	GraphWindow* graph_window(SPtr<const Client::GraphModel> graph);
+	GraphWindow* parent_graph_window(SPtr<const Client::BlockModel> block);
 
 	void present_graph(
-		SharedPtr<const Client::GraphModel> model,
-		GraphWindow*                        preferred = NULL,
-		SharedPtr<GraphView>                view      = SharedPtr<GraphView>());
+		SPtr<const Client::GraphModel> model,
+		GraphWindow*                   preferred = NULL,
+		SPtr<GraphView>                view      = SPtr<GraphView>());
 
 	typedef Node::Properties Properties;
 
-	void present_load_plugin(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());
-	void present_load_graph(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());
-	void present_load_subgraph(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());
-	void present_new_subgraph(SharedPtr<const Client::GraphModel> graph, Properties data=Properties());
-	void present_rename(SharedPtr<const Client::ObjectModel> object);
-	void present_properties(SharedPtr<const Client::ObjectModel> object);
+	void present_load_plugin(SPtr<const Client::GraphModel> graph, Properties data=Properties());
+	void present_load_graph(SPtr<const Client::GraphModel> graph, Properties data=Properties());
+	void present_load_subgraph(SPtr<const Client::GraphModel> graph, Properties data=Properties());
+	void present_new_subgraph(SPtr<const Client::GraphModel> graph, Properties data=Properties());
+	void present_rename(SPtr<const Client::ObjectModel> object);
+	void present_properties(SPtr<const Client::ObjectModel> object);
 
 	bool remove_graph_window(GraphWindow* win, GdkEventAny* ignored = NULL);
 
@@ -82,8 +82,8 @@ public:
 private:
 	typedef std::map<Raul::Path, GraphWindow*> GraphWindowMap;
 
-	GraphWindow* new_graph_window(SharedPtr<const Client::GraphModel> graph,
-	                              SharedPtr<GraphView>                view);
+	GraphWindow* new_graph_window(SPtr<const Client::GraphModel> graph,
+	                              SPtr<GraphView>                view);
 
 	App&               _app;
 	GraphBox*          _main_box;

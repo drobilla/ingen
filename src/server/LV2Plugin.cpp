@@ -28,7 +28,7 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-LV2Plugin::LV2Plugin(SharedPtr<LV2Info> lv2_info, const Raul::URI& uri)
+LV2Plugin::LV2Plugin(SPtr<LV2Info> lv2_info, const Raul::URI& uri)
 	: PluginImpl(lv2_info->world().uris(), Plugin::LV2, uri)
 	, _lilv_plugin(NULL)
 	, _lv2_info(lv2_info)

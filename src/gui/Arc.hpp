@@ -20,7 +20,7 @@
 #include <cassert>
 
 #include "ganv/Edge.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 namespace Ingen {
 
@@ -35,16 +35,16 @@ namespace GUI {
 class Arc : public Ganv::Edge
 {
 public:
-	Arc(Ganv::Canvas&                             canvas,
-	    boost::shared_ptr<const Client::ArcModel> model,
-	    Ganv::Node*                               src,
-	    Ganv::Node*                               dst,
-	    uint32_t                                  color);
+	Arc(Ganv::Canvas&                canvas,
+	    SPtr<const Client::ArcModel> model,
+	    Ganv::Node*                  src,
+	    Ganv::Node*                  dst,
+	    uint32_t                     color);
 
-	SharedPtr<const Client::ArcModel> model() const { return _arc_model; }
+	SPtr<const Client::ArcModel> model() const { return _arc_model; }
 
 private:
-	SharedPtr<const Client::ArcModel> _arc_model;
+	SPtr<const Client::ArcModel> _arc_model;
 };
 
 } // namespace GUI

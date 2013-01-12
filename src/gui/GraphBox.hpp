@@ -28,7 +28,7 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/statusbar.h>
 
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "Window.hpp"
 
@@ -67,33 +67,33 @@ public:
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 	~GraphBox();
 
-	static SharedPtr<GraphBox> create(
-		App& app, SharedPtr<const Client::GraphModel> graph);
+	static SPtr<GraphBox> create(
+		App& app, SPtr<const Client::GraphModel> graph);
 
 	void init_box(App& app);
 
-	void set_graph(SharedPtr<const Client::GraphModel> graph,
-	               SharedPtr<GraphView>                view);
+	void set_graph(SPtr<const Client::GraphModel> graph,
+	               SPtr<GraphView>                view);
 
 	void set_window(GraphWindow* win) { _window = win; }
 
 	bool documentation_is_visible() { return _doc_scrolledwindow->is_visible(); }
 	void set_documentation(const std::string& doc, bool html);
 
-	SharedPtr<const Client::GraphModel> graph() const { return _graph; }
-	SharedPtr<GraphView>                view()  const { return _view; }
+	SPtr<const Client::GraphModel> graph() const { return _graph; }
+	SPtr<GraphView>                view()  const { return _view; }
 
 	void show_port_status(const Client::PortModel* model,
 	                      const Raul::Atom&        value);
 
-	void set_graph_from_path(const Raul::Path& path, SharedPtr<GraphView> view);
+	void set_graph_from_path(const Raul::Path& path, SPtr<GraphView> view);
 
 	void object_entered(const Client::ObjectModel* model);
 	void object_left(const Client::ObjectModel* model);
 
 private:
-	void graph_port_added(SharedPtr<const Client::PortModel> port);
-	void graph_port_removed(SharedPtr<const Client::PortModel> port);
+	void graph_port_added(SPtr<const Client::PortModel> port);
+	void graph_port_removed(SPtr<const Client::PortModel> port);
 	void show_status(const Client::ObjectModel* model);
 
 	int message_dialog(const Glib::ustring& message,
@@ -124,10 +124,10 @@ private:
 	void event_show_engine();
 	void event_clipboard_changed(GdkEventOwnerChange* ev);
 
-	App*                                _app;
-	SharedPtr<const Client::GraphModel> _graph;
-	SharedPtr<GraphView>                _view;
-	GraphWindow*                        _window;
+	App*                           _app;
+	SPtr<const Client::GraphModel> _graph;
+	SPtr<GraphView>                _view;
+	GraphWindow*                   _window;
 
 	sigc::connection new_port_connection;
 	sigc::connection removed_port_connection;

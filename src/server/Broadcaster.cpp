@@ -35,8 +35,8 @@ Broadcaster::~Broadcaster()
 /** Register a client to receive messages over the notification band.
  */
 void
-Broadcaster::register_client(const Raul::URI&     uri,
-                             SharedPtr<Interface> client)
+Broadcaster::register_client(const Raul::URI& uri,
+                             SPtr<Interface>  client)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	_clients[uri] = client;
@@ -57,7 +57,7 @@ Broadcaster::unregister_client(const Raul::URI& uri)
 /** Looks up the client with the given source @a uri (which is used as the
  * unique identifier for registered clients).
  */
-SharedPtr<Interface>
+SPtr<Interface>
 Broadcaster::client(const Raul::URI& uri)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
@@ -65,7 +65,7 @@ Broadcaster::client(const Raul::URI& uri)
 	if (i != _clients.end()) {
 		return (*i).second;
 	} else {
-		return SharedPtr<Interface>();
+		return SPtr<Interface>();
 	}
 }
 

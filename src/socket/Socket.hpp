@@ -21,8 +21,9 @@
 #include <sys/socket.h>
 
 #include "raul/Noncopyable.hpp"
-#include "raul/SharedPtr.hpp"
 #include "raul/URI.hpp"
+
+#include "ingen/types.hpp"
 
 namespace Ingen {
 namespace Socket {
@@ -71,7 +72,7 @@ public:
 	/** Accept a connection.
 	 * @return An new open socket for the connection.
 	 */
-	SharedPtr<Socket> accept();
+	SPtr<Socket> accept();
 
 	/** Return the file descriptor for the socket. */
 	int fd() { return _sock; }

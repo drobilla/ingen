@@ -45,12 +45,12 @@ namespace Events {
 class Disconnect : public Event
 {
 public:
-	Disconnect(Engine&              engine,
-	           SharedPtr<Interface> client,
-	           int32_t              id,
-	           SampleCount          timestamp,
-	           const Raul::Path&    tail_path,
-	           const Raul::Path&    head_path);
+	Disconnect(Engine&           engine,
+	           SPtr<Interface>   client,
+	           int32_t           id,
+	           SampleCount       timestamp,
+	           const Raul::Path& tail_path,
+	           const Raul::Path& head_path);
 
 	bool pre_process();
 	void execute(ProcessContext& context);
@@ -72,7 +72,7 @@ public:
 		OutputPort*             _src_output_port;
 		InputPort*              _dst_input_port;
 		GraphImpl*              _graph;
-		SharedPtr<ArcImpl>      _arc;
+		SPtr<ArcImpl>           _arc;
 		Raul::Array<BufferRef>* _buffers;
 	};
 

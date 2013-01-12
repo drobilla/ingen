@@ -157,15 +157,15 @@ GraphBox::~GraphBox()
 	delete _breadcrumbs;
 }
 
-SharedPtr<GraphBox>
-GraphBox::create(App& app, SharedPtr<const GraphModel> graph)
+SPtr<GraphBox>
+GraphBox::create(App& app, SPtr<const GraphModel> graph)
 {
 	GraphBox* result = NULL;
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("graph_win");
 	xml->get_widget_derived("graph_win_vbox", result);
 	result->init_box(app);
-	result->set_graph(graph, SharedPtr<GraphView>());
-	return SharedPtr<GraphBox>(result);
+	result->set_graph(graph, SPtr<GraphView>());
+	return SPtr<GraphBox>(result);
 }
 
 void
@@ -193,13 +193,13 @@ GraphBox::init_box(App& app)
 }
 
 void
-GraphBox::set_graph_from_path(const Raul::Path& path, SharedPtr<GraphView> view)
+GraphBox::set_graph_from_path(const Raul::Path& path, SPtr<GraphView> view)
 {
 	if (view) {
 		assert(view->graph()->path() == path);
 		_app->window_factory()->present_graph(view->graph(), _window, view);
 	} else {
-		SharedPtr<const GraphModel> model = PtrCast<const GraphModel>(
+		SPtr<const GraphModel> model = dynamic_ptr_cast<const GraphModel>(
 			_app->store()->object(path));
 		if (model) {
 			_app->window_factory()->present_graph(model, _window);
@@ -212,8 +212,8 @@ GraphBox::set_graph_from_path(const Raul::Path& path, SharedPtr<GraphView> view)
  * If @a view is NULL, a new view will be created.
  */
 void
-GraphBox::set_graph(SharedPtr<const GraphModel> graph,
-                    SharedPtr<GraphView>        view)
+GraphBox::set_graph(SPtr<const GraphModel> graph,
+                    SPtr<GraphView>        view)
 {
 	if (!graph || graph == _graph)
 		return;
@@ -287,7 +287,7 @@ GraphBox::set_graph(SharedPtr<const GraphModel> graph,
 }
 
 void
-GraphBox::graph_port_added(SharedPtr<const PortModel> port)
+GraphBox::graph_port_added(SPtr<const PortModel> port)
 {
 	if (port->is_input() && _app->can_control(port.get())) {
 		_menu_view_control_window->property_sensitive() = true;
@@ -295,7 +295,7 @@ GraphBox::graph_port_added(SharedPtr<const PortModel> port)
 }
 
 void
-GraphBox::graph_port_removed(SharedPtr<const PortModel> port)
+GraphBox::graph_port_removed(SPtr<const PortModel> port)
 {
 	if (!(port->is_input() && _app->can_control(port.get())))
 		return;

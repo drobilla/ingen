@@ -17,7 +17,7 @@
 #ifndef INGEN_GUI_SUBGRAPHMODULE_HPP
 #define INGEN_GUI_SUBGRAPHMODULE_HPP
 
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "NodeModule.hpp"
 #include "GraphPortModule.hpp"
@@ -41,7 +41,7 @@ class SubgraphModule : public NodeModule
 {
 public:
 	SubgraphModule(GraphCanvas&                        canvas,
-	               SharedPtr<const Client::GraphModel> controller);
+	               SPtr<const Client::GraphModel> controller);
 
 	virtual ~SubgraphModule() {}
 
@@ -52,10 +52,10 @@ public:
 	void browse_to_graph();
 	void menu_remove();
 
-	SharedPtr<const Client::GraphModel> graph() const { return _graph; }
+	SPtr<const Client::GraphModel> graph() const { return _graph; }
 
 protected:
-	SharedPtr<const Client::GraphModel> _graph;
+	SPtr<const Client::GraphModel> _graph;
 };
 
 } // namespace GUI

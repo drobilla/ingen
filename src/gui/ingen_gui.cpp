@@ -25,7 +25,7 @@ struct IngenGUIModule : public Ingen::Module {
 		app->run();
 	}
 
-	SharedPtr<Ingen::GUI::App> app;
+	Ingen::SPtr<Ingen::GUI::App> app;
 };
 
 extern "C" {

@@ -25,7 +25,7 @@
 
 #include "ObjectMenu.hpp"
 #include "ingen/client/BlockModel.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -40,7 +40,7 @@ public:
 	NodeMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App& app, SharedPtr<const Client::BlockModel> block);
+	void init(App& app, SPtr<const Client::BlockModel> block);
 
 	bool has_control_inputs();
 

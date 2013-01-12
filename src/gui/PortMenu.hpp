@@ -22,7 +22,7 @@
 #include <gtkmm/menushell.h>
 
 #include "ingen/client/PortModel.hpp"
-#include "raul/SharedPtr.hpp"
+#include "ingen/types.hpp"
 
 #include "ObjectMenu.hpp"
 
@@ -39,9 +39,9 @@ public:
 	PortMenu(BaseObjectType*                   cobject,
 	         const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void init(App&                               app,
-	          SharedPtr<const Client::PortModel> port,
-	          bool                               is_graph_port = false);
+	void init(App&                          app,
+	          SPtr<const Client::PortModel> port,
+	          bool                          is_graph_port = false);
 
 private:
 	void on_menu_disconnect();

@@ -40,11 +40,11 @@ namespace Ingen {
 namespace GUI {
 
 Port*
-Port::create(App&                       app,
-             Ganv::Module&              module,
-             SharedPtr<const PortModel> pm,
-             bool                       human_name,
-             bool                       flip)
+Port::create(App&                  app,
+             Ganv::Module&         module,
+             SPtr<const PortModel> pm,
+             bool                  human_name,
+             bool                  flip)
 {
 	Glib::ustring label;
 	if (app.world()->conf().option("port-labels").get_bool()) {
@@ -53,7 +53,7 @@ Port::create(App&                       app,
 			if (name.type() == app.forge().String) {
 				label = name.get_string();
 			} else {
-				const SharedPtr<const BlockModel> parent(PtrCast<const BlockModel>(pm->parent()));
+				const SPtr<const BlockModel> parent(dynamic_ptr_cast<const BlockModel>(pm->parent()));
 				if (parent && parent->plugin_model())
 					label = parent->plugin_model()->port_human_name(pm->index());
 			}
@@ -66,11 +66,11 @@ Port::create(App&                       app,
 
 /** @a flip Make an input port appear as an output port, and vice versa.
  */
-Port::Port(App&                       app,
-           Ganv::Module&              module,
-           SharedPtr<const PortModel> pm,
-           const string&              name,
-           bool                       flip)
+Port::Port(App&                  app,
+           Ganv::Module&         module,
+           SPtr<const PortModel> pm,
+           const string&         name,
+           bool                  flip)
 	: Ganv::Port(module, name,
 			flip ? (!pm->is_input()) : pm->is_input(),
 			app.style()->get_port_color(pm.get()))
@@ -115,9 +115,9 @@ Port::~Port()
 void
 Port::update_metadata()
 {
-	SharedPtr<const PortModel> pm = _port_model.lock();
+	SPtr<const PortModel> pm = _port_model.lock();
 	if (_app.can_control(pm.get()) && pm->is_numeric()) {
-		boost::shared_ptr<const BlockModel> parent = PtrCast<const BlockModel>(pm->parent());
+		SPtr<const BlockModel> parent = dynamic_ptr_cast<const BlockModel>(pm->parent());
 		if (parent) {
 			float min = 0.0f;
 			float max = 1.0f;
@@ -190,8 +190,8 @@ Port::on_scale_point_activated(float f)
 Gtk::Menu*
 Port::build_enum_menu()
 {
-	SharedPtr<const BlockModel> block = PtrCast<BlockModel>(model()->parent());
-	Gtk::Menu*                  menu  = Gtk::manage(new Gtk::Menu());
+	SPtr<const BlockModel> block = dynamic_ptr_cast<BlockModel>(model()->parent());
+	Gtk::Menu*             menu  = Gtk::manage(new Gtk::Menu());
 
 	PluginModel::ScalePoints points = block->plugin_model()->port_scale_points(
 		model()->index());
@@ -220,9 +220,9 @@ Port::on_uri_activated(const Raul::URI& uri)
 Gtk::Menu*
 Port::build_uri_menu()
 {
-	World*                      world = _app.world();
-	SharedPtr<const BlockModel> block = PtrCast<BlockModel>(model()->parent());
-	Gtk::Menu*                  menu  = Gtk::manage(new Gtk::Menu());
+	World*                 world = _app.world();
+	SPtr<const BlockModel> block = dynamic_ptr_cast<BlockModel>(model()->parent());
+	Gtk::Menu*             menu  = Gtk::manage(new Gtk::Menu());
 
 	// Get the port designation, which should be a rdf:Property
 	const Raul::Atom& designation_atom = model()->get_property(
@@ -370,7 +370,7 @@ Port::activity(const Raul::Atom& value)
 }
 
 void
-Port::disconnected_from(SharedPtr<PortModel> port)
+Port::disconnected_from(SPtr<PortModel> port)
 {
 	if (!model()->connected() && model()->is_a(_app.uris().lv2_AudioPort)) {
 		set_fill_color(peak_color(0.0f));
@@ -380,9 +380,9 @@ Port::disconnected_from(SharedPtr<PortModel> port)
 GraphBox*
 Port::get_graph_box() const
 {
-	SharedPtr<const GraphModel> graph = PtrCast<const GraphModel>(model()->parent());
+	SPtr<const GraphModel> graph = dynamic_ptr_cast<const GraphModel>(model()->parent());
 	if (!graph) {
-		graph = PtrCast<const GraphModel>(model()->parent()->parent());
+		graph = dynamic_ptr_cast<const GraphModel>(model()->parent()->parent());
 	}
 
 	return _app.window_factory()->graph_box(graph);
@@ -424,9 +424,9 @@ Port::set_selected(gboolean b)
 {
 	if (b != get_selected()) {
 		Ganv::Port::set_selected(b);
-		SharedPtr<const PortModel> pm = _port_model.lock();
+		SPtr<const PortModel> pm = _port_model.lock();
 		if (pm && b) {
-			SharedPtr<const BlockModel> block = PtrCast<BlockModel>(pm->parent());
+			SPtr<const BlockModel> block = dynamic_ptr_cast<BlockModel>(pm->parent());
 			GraphWindow* win = _app.window_factory()->parent_graph_window(block);
 			if (win && win->documentation_is_visible() && block->plugin_model()) {
 				const std::string& doc = block->plugin_model()->port_documentation(

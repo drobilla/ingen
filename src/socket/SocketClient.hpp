@@ -27,10 +27,10 @@ namespace Socket {
 class SocketClient : public SocketWriter
 {
 public:
-	SocketClient(World&               world,
-	             const Raul::URI&     uri,
-	             SharedPtr<Socket>    sock,
-	             SharedPtr<Interface> respondee)
+	SocketClient(World&           world,
+	             const Raul::URI& uri,
+	             SPtr<Socket>     sock,
+	             SPtr<Interface>  respondee)
 		: SocketWriter(world.uri_map(), world.uris(), uri, sock)
 		, _respondee(respondee)
 		, _reader(world, *respondee.get(), sock)
@@ -38,17 +38,17 @@ public:
 		_reader.start();
 	}
 
-	virtual SharedPtr<Interface> respondee() const {
+	virtual SPtr<Interface> respondee() const {
 		return _respondee;
 	}
 
-	virtual void set_respondee(SharedPtr<Interface> respondee) {
+	virtual void set_respondee(SPtr<Interface> respondee) {
 		_respondee = respondee;
 	}
 
 private:
-	SharedPtr<Interface> _respondee;
-	SocketReader         _reader;
+	SPtr<Interface> _respondee;
+	SocketReader    _reader;
 };
 
 }  // namespace Socket

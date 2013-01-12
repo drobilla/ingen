@@ -20,7 +20,7 @@
 #include <vector>
 #include <list>
 
-#include "raul/Disposable.hpp"
+#include "raul/Maid.hpp"
 #include "raul/Noncopyable.hpp"
 
 namespace Ingen {
@@ -63,7 +63,7 @@ private:
  * before its providers, using this order as well as semaphores.
  */
 class CompiledGraph : public std::vector<CompiledBlock>
-                    , public Raul::Disposable
+                    , public Raul::Maid::Disposable
                     , public Raul::Noncopyable
 {
 };

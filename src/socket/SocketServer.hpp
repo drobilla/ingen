@@ -29,9 +29,9 @@ namespace Socket {
 class SocketServer : public Server::EventWriter, public SocketReader
 {
 public:
-	SocketServer(World&            world,
-	             Server::Engine&   engine,
-	             SharedPtr<Socket> sock)
+	SocketServer(World&          world,
+	             Server::Engine& engine,
+	             SPtr<Socket>    sock)
 		: Server::EventWriter(engine)
 		, SocketReader(world, *this, sock)
 		, _engine(engine)
@@ -49,8 +49,8 @@ public:
 	}
 
 private:
-	Server::Engine&         _engine;
-	SharedPtr<SocketWriter> _writer;
+	Server::Engine&    _engine;
+	SPtr<SocketWriter> _writer;
 };
 
 }  // namespace Ingen
