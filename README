@@ -1,7 +1,9 @@
+Ingen
+=====
+
 Ingen is a realtime modular synthesizer and/or effects processor for
-Jack/LV2/LADSPA/etc. (i.e. GNU/Linux audio systems).
+Jack/LV2/etc. (i.e. GNU/Linux audio systems).
 
-More information can be found at http://drobilla.net/software/ingen
+For more information, see <http://drobilla.net/software/ingen>.
 
-See the INSTALL file for building instructions.
-
+ -- David Robillard <d@drobilla.net>
