@@ -17,6 +17,7 @@
 #ifndef INGEN_LV2FEATURES_HPP
 #define INGEN_LV2FEATURES_HPP
 
+#include <string>
 #include <vector>
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
