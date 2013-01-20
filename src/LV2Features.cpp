@@ -50,6 +50,11 @@ LV2Features::FeatureArray::~FeatureArray()
 bool
 LV2Features::is_supported(const std::string& uri) const
 {
+	for (const auto& f : _features) {
+		if (f->uri() == uri) {
+			return true;
+		}
+	}
 	return false;
 }
 
