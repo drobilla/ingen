@@ -160,7 +160,7 @@ main(int argc, char** argv)
 	          "Unable to load serialisation module");
 
 	// Initialise engine
-	ingen_try(world->engine(),
+	ingen_try(bool(world->engine()),
 	          "Unable to create engine");
 	world->engine()->init(48000.0, 4096);
 	world->engine()->activate();
