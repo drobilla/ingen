@@ -168,16 +168,7 @@ NodeModule::value_changed(uint32_t index, const Raul::Atom& value)
 	if (!_plugin_ui)
 		return;
 
-	float       float_val = 0.0f;
-	const URIs& uris      = app().uris();
-
-	if (value.type() == uris.forge.Float) {
-		float_val = value.get_float();
-		_plugin_ui->port_event(index, 4, 0, &float_val);
-	} else if (value.type() == uris.forge.String) {
-		_plugin_ui->port_event(
-			index, strlen(value.get_string()), 0, value.get_string());
-	}
+	_plugin_ui->port_event(index, value.size(), value.type(), value.get_body());
 }
 
 void
