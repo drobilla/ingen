@@ -71,7 +71,7 @@ Delta::Delta(Engine&           engine,
 	}
 
 #ifdef DUMP
-	std::cerr << "Delta " << subject << " : " << context << " {" << std::endl;
+	std::cerr << "Delta " << subject << " : " << (int)context << " {" << std::endl;
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
 		std::cerr << "    + " << i->first
