@@ -54,7 +54,7 @@ OutputPort::get_buffers(BufferFactory&          bufs,
                         bool                    real_time) const
 {
 	for (uint32_t v = 0; v < poly; ++v)
-		buffers->at(v) = bufs.get(buffer_type(), _buffer_size, real_time);
+		buffers->at(v) = bufs.get_buffer(buffer_type(), _buffer_size, real_time);
 
 	return true;
 }

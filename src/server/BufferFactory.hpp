@@ -49,10 +49,10 @@ public:
 	static uint32_t audio_buffer_size(SampleCount nframes);
 	uint32_t        default_size(LV2_URID type) const;
 
-	BufferRef get(LV2_URID type,
-	              uint32_t capacity,
-	              bool     real_time,
-	              bool     force_create = false);
+	BufferRef get_buffer(LV2_URID type,
+	                     uint32_t capacity,
+	                     bool     real_time,
+	                     bool     force_create = false);
 
 	BufferRef silent_buffer();
 

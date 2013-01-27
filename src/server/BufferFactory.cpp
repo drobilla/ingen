@@ -96,10 +96,10 @@ BufferFactory::default_size(LV2_URID type) const
 }
 
 BufferRef
-BufferFactory::get(LV2_URID type,
-                   uint32_t capacity,
-                   bool     real_time,
-                   bool     force_create)
+BufferFactory::get_buffer(LV2_URID type,
+                          uint32_t capacity,
+                          bool     real_time,
+                          bool     force_create)
 {
 	std::atomic<Buffer*>& head_ptr = free_list(type);
 	Buffer*               try_head = NULL;
