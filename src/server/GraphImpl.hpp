@@ -72,7 +72,7 @@ public:
 
 	/** Prepare for a new (internal) polyphony value.
 	 *
-	 * Preprocessor thread, poly is actually applied by apply_internal_poly.
+	 * Pre-process thread, poly is actually applied by apply_internal_poly.
 	 * \return true on success.
 	 */
 	bool prepare_internal_poly(BufferFactory& bufs, uint32_t poly);
@@ -96,7 +96,14 @@ public:
 	typedef boost::intrusive::slist<
 		BlockImpl, boost::intrusive::constant_time_size<true> > Blocks;
 
+	/** Add a block to this graph.
+	 * Pre-process thread only.
+	 */
 	void add_block(BlockImpl& block);
+
+	/** Remove a block from this graph.
+	 * Pre-process thread only.
+	 */
 	void remove_block(BlockImpl& block);
 
 	Blocks&       blocks()       { return _blocks; }
@@ -104,6 +111,11 @@ public:
 
 	uint32_t num_ports_non_rt() const;
 
+	/** Create a port to be later added to this graph.
+	 * Not realtime safe.  This function is to be called by events in the
+	 * pre-process thread to create ports which will later be installed in the
+	 * process thread.
+	 */
 	DuplexPort* create_port(BufferFactory&      bufs,
 	                        const Raul::Symbol& symbol,
 	                        PortType            type,
@@ -125,11 +137,32 @@ public:
 		_outputs.push_front(port);
 	}
 
+	/** Remove port from ports list used in pre-processing thread.
+	 *
+	 * Port is not removed from ports array for process thread (which could be
+	 * simultaneously running).
+	 *
+	 * Pre-processing thread or situations that won't cause races with it only.
+	 */
 	void remove_port(DuplexPort& port);
+
+	/** Remove all ports from ports list used in pre-processing thread.
+	 *
+	 * Ports are not removed from ports array for process thread (which could be
+	 * simultaneously running).  Returned is a (inputs, outputs) pair.
+	 *
+	 * Pre-processing thread or situations that won't cause races with it only.
+	 */
 	void clear_ports();
 
+	/** Add an arc to this graph.
+	 * Pre-processing thread only.
+	 */
 	void add_arc(SPtr<ArcImpl> arc);
 
+	/** Remove an arc from this graph.
+	 * Pre-processing thread only.
+	 */
 	SPtr<ArcImpl> remove_arc(const PortImpl* tail,
 	                         const PortImpl* head);
 
@@ -140,7 +173,16 @@ public:
 	Raul::Array<PortImpl*>* external_ports()                           { return _ports; }
 	void                    external_ports(Raul::Array<PortImpl*>* pa) { _ports = pa; }
 
-	CompiledGraph*          compile();
+	/** Compile the graph into a version suitable for real-time execution.
+	 *
+	 * The CompiledGraph is a flat list that the graph will execute in order
+	 * when its run() method is called.  The returned object is newly allocated
+	 * and owned by the caller.  This function is non-realtime and does not
+	 * affect processing, to take effect the returned object must be installed
+	 * in the audio thread with set_compiled_graph().
+	 */
+	CompiledGraph* compile();
+
 	Raul::Array<PortImpl*>* build_ports_array();
 
 	/** Whether to run this graph's DSP bits in the audio thread */
@@ -160,7 +202,7 @@ private:
 	CompiledGraph* _compiled_graph;  ///< Process thread only
 	Ports          _inputs;          ///< Pre-process thread only
 	Ports          _outputs;         ///< Pre-process thread only
-	Blocks          _blocks;           ///< Pre-process thread only
+	Blocks         _blocks;          ///< Pre-process thread only
 	bool           _process;
 };
 

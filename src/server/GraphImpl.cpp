@@ -142,10 +142,6 @@ GraphImpl::apply_internal_poly(ProcessContext& context,
 	return true;
 }
 
-/** Run the graph for the specified number of frames.
- *
- * Calls all Blocks in (roughly, if parallel) the order _compiled_graph specifies.
- */
 void
 GraphImpl::process(ProcessContext& context)
 {
@@ -176,11 +172,6 @@ GraphImpl::set_buffer_size(Context&       context,
 		(*_compiled_graph)[i].block()->set_buffer_size(context, bufs, type, size);
 }
 
-// Graph specific stuff
-
-/** Add a block.
- * Preprocessing thread only.
- */
 void
 GraphImpl::add_block(BlockImpl& block)
 {
@@ -188,9 +179,6 @@ GraphImpl::add_block(BlockImpl& block)
 	_blocks.push_front(block);
 }
 
-/** Remove a block.
- * Preprocessing thread only.
- */
 void
 GraphImpl::remove_block(BlockImpl& block)
 {
@@ -204,9 +192,6 @@ GraphImpl::add_arc(SPtr<ArcImpl> a)
 	_arcs.insert(make_pair(make_pair(a->tail(), a->head()), a));
 }
 
-/** Remove an arc.
- * Preprocessing thread only.
- */
 SPtr<ArcImpl>
 GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 {
@@ -245,8 +230,6 @@ GraphImpl::num_ports_non_rt() const
 	return _inputs.size() + _outputs.size();
 }
 
-/** Create a port.  Not realtime safe.
- */
 DuplexPort*
 GraphImpl::create_port(BufferFactory&      bufs,
                        const Raul::Symbol& symbol,
@@ -270,13 +253,6 @@ GraphImpl::create_port(BufferFactory&      bufs,
 	                      type, buffer_type, value, buffer_size, is_output);
 }
 
-/** Remove port from ports list used in pre-processing thread.
- *
- * Port is not removed from ports array for process thread (which could be
- * simultaneously running).
- *
- * Pre-processing thread or situations that won't cause races with it only.
- */
 void
 GraphImpl::remove_port(DuplexPort& port)
 {
@@ -287,13 +263,6 @@ GraphImpl::remove_port(DuplexPort& port)
 	}
 }
 
-/** Remove all ports from ports list used in pre-processing thread.
- *
- * Ports are not removed from ports array for process thread (which could be
- * simultaneously running).  Returned is a (inputs, outputs) pair.
- *
- * Pre-processing thread or situations that won't cause races with it only.
- */
 void
 GraphImpl::clear_ports()
 {
@@ -338,16 +307,6 @@ compile_recursive(BlockImpl* n, CompiledGraph* output)
 	output->push_back(CompiledBlock(n, n->providers().size(), n->dependants()));
 }
 
-/** Find the process order for this Graph.
- *
- * The process order is a flat list that the graph will execute in order
- * when its run() method is called.  Return value is a newly allocated list
- * which the caller is reponsible to delete.  Note that this function does
- * NOT actually set the process order, it is returned so it can be inserted
- * at the beginning of an audio cycle (by various Events).
- *
- * Not realtime safe.
- */
 CompiledGraph*
 GraphImpl::compile()
 {
