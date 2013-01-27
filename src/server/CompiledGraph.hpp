@@ -34,7 +34,7 @@ class BlockImpl;
 class CompiledBlock {
 public:
 	CompiledBlock(BlockImpl* b, size_t np, const std::list<BlockImpl*>& deps)
-		: _block(b), _n_providers(np)
+		: _block(b)
 	{
 		// Copy to a vector for maximum iteration speed and cache optimization
 		// (Need to take a copy anyway)
@@ -45,12 +45,10 @@ public:
 	}
 
 	BlockImpl*                     block()       const { return _block; }
-	size_t                         n_providers() const { return _n_providers; }
 	const std::vector<BlockImpl*>& dependants()  const { return _dependants; }
 
 private:
 	BlockImpl*              _block;
-	size_t                  _n_providers; ///< Number of input ready signals to trigger run
 	std::vector<BlockImpl*> _dependants; ///< Blocks this one's output ports are connected to
 };
 
