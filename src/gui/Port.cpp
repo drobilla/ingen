@@ -277,13 +277,13 @@ Port::on_event(GdkEvent* ev)
 		if ((box = get_graph_box())) {
 			box->object_entered(model().get());
 		}
-		return true;
+		return false;
 	case GDK_LEAVE_NOTIFY:
 		_entered = false;
 		if ((box = get_graph_box())) {
 			box->object_left(model().get());
 		}
-		return true;
+		return false;
 	case GDK_BUTTON_PRESS:
 		if (ev->button.button == 1) {
 			if (model()->is_enumeration()) {
