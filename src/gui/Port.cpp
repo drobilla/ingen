@@ -103,6 +103,9 @@ Port::Port(App&                  app,
 	signal_value_changed.connect(
 		sigc::mem_fun(this, &Port::on_value_changed));
 
+	signal_event().connect(
+		sigc::mem_fun(this, &Port::on_event));
+
 	update_metadata();
 	value_changed(pm->value());
 }
@@ -274,13 +277,13 @@ Port::on_event(GdkEvent* ev)
 		if ((box = get_graph_box())) {
 			box->object_entered(model().get());
 		}
-		break;
+		return true;
 	case GDK_LEAVE_NOTIFY:
 		_entered = false;
 		if ((box = get_graph_box())) {
 			box->object_left(model().get());
 		}
-		break;
+		return true;
 	case GDK_BUTTON_PRESS:
 		if (ev->button.button == 1) {
 			if (model()->is_enumeration()) {
@@ -307,7 +310,7 @@ Port::on_event(GdkEvent* ev)
 		break;
 	}
 
-	return Ganv::Port::on_event(ev);
+	return false;
 }
 
 /* Peak colour stuff */

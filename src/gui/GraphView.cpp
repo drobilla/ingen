@@ -105,14 +105,6 @@ GraphView::set_graph(SPtr<const GraphModel> graph)
 	_poly_spin->signal_value_changed().connect(
 			sigc::mem_fun(*this, &GraphView::poly_changed));
 
-	#if 0
-	_canvas->signal_item_entered.connect(
-			sigc::mem_fun(*this, &GraphView::canvas_item_entered));
-
-	_canvas->signal_item_left.connect(
-			sigc::mem_fun(*this, &GraphView::canvas_item_left));
-	#endif
-
 	_canvas->widget().grab_focus();
 }
 
@@ -126,34 +118,6 @@ GraphView::create(App& app, SPtr<const GraphModel> graph)
 	result->set_graph(graph);
 	return SPtr<GraphView>(result);
 }
-
-#if 0
-void
-GraphView::canvas_item_entered(Gnome::Canvas::Item* item)
-{
-	NodeModule* m = dynamic_cast<NodeModule*>(item);
-	if (m)
-		signal_object_entered.emit(m->block().get());
-
-	const Port* p = dynamic_cast<const Port*>(item);
-	if (p)
-		signal_object_entered.emit(p->model().get());
-}
-
-void
-GraphView::canvas_item_left(Gnome::Canvas::Item* item)
-{
-	NodeModule* m = dynamic_cast<NodeModule*>(item);
-	if (m) {
-		signal_object_left.emit(m->block().get());
-		return;
-	}
-
-	const Port* p = dynamic_cast<const Port*>(item);
-	if (p)
-		signal_object_left.emit(p->model().get());
-}
-#endif
 
 void
 GraphView::process_toggled()

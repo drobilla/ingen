@@ -276,11 +276,6 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 	show();
 	_alignment->show_all();
 
-	_view->signal_object_entered.connect(
-		sigc::mem_fun(this, &GraphBox::object_entered));
-	_view->signal_object_left.connect(
-		sigc::mem_fun(this, &GraphBox::object_left));
-
 	_menu_human_names->set_active(
 		_app->world()->conf().option("human-names").get_bool());
 	_menu_show_port_names->set_active(

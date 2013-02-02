@@ -68,9 +68,6 @@ public:
 	static SPtr<GraphView> create(App& app,
 	                              SPtr<const Client::GraphModel> graph);
 
-	sigc::signal<void, const Client::ObjectModel*> signal_object_entered;
-	sigc::signal<void, const Client::ObjectModel*> signal_object_left;
-
 private:
 	void set_graph(SPtr<const Client::GraphModel> graph);
 
@@ -78,11 +75,6 @@ private:
 	void poly_changed();
 	void clear_clicked();
 	void refresh_clicked();
-
-	#if 0
-	void canvas_item_entered(Gnome::Canvas::Item* item);
-	void canvas_item_left(Gnome::Canvas::Item* item);
-	#endif
 
 	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
 

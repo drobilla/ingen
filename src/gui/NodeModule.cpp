@@ -366,7 +366,20 @@ NodeModule::on_event(GdkEvent* ev)
 		return show_menu(&ev->button);
 	} else if (ev->type == GDK_2BUTTON_PRESS) {
 		return on_double_click(&ev->button);
+	} else if (ev->type == GDK_ENTER_NOTIFY) {
+		GraphBox* const box = app().window_factory()->graph_box(
+			dynamic_ptr_cast<const GraphModel>(_block->parent()));
+		if (box) {
+			box->object_entered(_block.get());
+		}
+	} else if (ev->type == GDK_LEAVE_NOTIFY) {
+		GraphBox* const box = app().window_factory()->graph_box(
+			dynamic_ptr_cast<const GraphModel>(_block->parent()));
+		if (box) {
+			box->object_left(_block.get());
+		}
 	}
+
 	return false;
 }
 
