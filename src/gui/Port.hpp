@@ -84,6 +84,7 @@ private:
 	void on_scale_point_activated(float f);
 	void on_uri_activated(const Raul::URI& uri);
 	bool on_event(GdkEvent* ev);
+	void port_properties_changed();
 
 	App&                          _app;
 	WPtr<const Client::PortModel> _port_model;

@@ -64,7 +64,7 @@ Port::create(App&                  app,
 	return new Port(app, module, pm, label, flip);
 }
 
-/** @a flip Make an input port appear as an output port, and vice versa.
+/** @param flip Make an input port appear as an output port, and vice versa.
  */
 Port::Port(App&                  app,
            Ganv::Module&         module,
@@ -85,7 +85,7 @@ Port::Port(App&                  app,
 	set_border_width(1.0);
 
 	if (app.can_control(pm.get())) {
-		set_control_is_toggle(pm->is_toggle());
+		port_properties_changed();
 		show_control();
 		pm->signal_property().connect(
 			sigc::mem_fun(this, &Port::property_changed));
@@ -106,10 +106,6 @@ Port::Port(App&                  app,
 	signal_event().connect(
 		sigc::mem_fun(this, &Port::on_event));
 
-	if (pm->is_enumeration()) {
-		const uint8_t ellipsis[] = { 0xE2, 0x80, 0xA6, 0 };
-		set_value_label((const char*)ellipsis);
-	}
 
 	update_metadata();
 	value_changed(pm->value());
@@ -397,6 +393,21 @@ Port::get_graph_box() const
 }
 
 void
+Port::port_properties_changed()
+{
+	if (model()->is_toggle()) {
+		set_control_is_toggle(true);
+	} else if (model()->is_enumeration()) {
+		const uint8_t ellipsis[] = { 0xE2, 0x80, 0xA6, 0 };
+		set_value_label((const char*)ellipsis);
+	} else if (model()->is_integer()) {
+		const uint8_t bigZ[] = { 0xE2, 0x84, 0xA4, 0 };
+		set_value_label((const char*)bigZ);
+		set_control_is_integer(true);
+	}
+}
+
+void
 Port::property_changed(const Raul::URI& key, const Raul::Atom& value)
 {
 	const URIs& uris = _app.uris();
@@ -416,8 +427,7 @@ Port::property_changed(const Raul::URI& key, const Raul::Atom& value)
 			set_control_max(val);
 		}
 	} else if (key == uris.lv2_portProperty) {
-		if (value == uris.lv2_toggled)
-			set_control_is_toggle(true);
+		port_properties_changed();
 	} else if (key == uris.lv2_name) {
 		if (value.type() == uris.forge.String &&
 		    _app.world()->conf().option("port-labels").get<int32_t>() &&
