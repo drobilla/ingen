@@ -53,6 +53,14 @@ public:
 
 	virtual ~Context() {}
 
+	/** Return true iff the given port should broadcast its value.
+	 *
+	 * Whether or not broadcasting is actually done is a per-client property,
+	 * this is for use in the audio thread to quickly determine if the
+	 * necessary calculations need to be done at all.
+	 */
+	bool must_notify(const PortImpl* port) const;
+
 	/** Send a notification from this run context.
 	 * @return false on failure (ring is full)
 	 */

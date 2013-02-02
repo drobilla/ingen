@@ -42,8 +42,6 @@ OutputPort::OutputPort(BufferFactory&      bufs,
 		add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort);
 	}
 
-	_broadcast = true;
-
 	setup_buffers(bufs, poly, false);
 }
 
@@ -73,8 +71,7 @@ OutputPort::post_process(Context& context)
 		update_set_state(context, v);
 	}
 
-	if (_broadcast)
-		broadcast_value(context, false);
+	monitor(context);
 }
 
 } // namespace Server

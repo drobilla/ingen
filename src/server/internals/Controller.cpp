@@ -118,7 +118,7 @@ ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t va
 		// FIXME: not thread safe
 		_param_port->set_value(context.engine().world()->forge().make(control_num));
 		_param_port->set_control_value(context, time, control_num);
-		_param_port->broadcast_value(context, true);
+		_param_port->monitor(context);
 		_learning = false;
 	}
 

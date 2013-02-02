@@ -323,6 +323,11 @@ ClientStore::delta(const Raul::URI&            uri,
 	std::cerr << "}" << endl;
 #endif
 
+	if (uri == Raul::URI("ingen:/clients/this")) {
+		// Client property, which we don't store (yet?)
+		return;
+	}
+
 	if (!Node::uri_is_path(uri)) {
 		_log.error(Raul::fmt("Delta for unknown subject <%1%>\n")
 		           % uri.c_str());

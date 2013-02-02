@@ -51,12 +51,12 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _value(value)
 	, _min(bufs.forge().make(0.0f))
 	, _max(bufs.forge().make(1.0f))
-	, _last_broadcasted_value(value)
+	, _last_monitor_value(value)
 	, _set_states(new Raul::Array<SetState>(static_cast<size_t>(poly)))
 	, _prepared_set_states(NULL)
 	, _buffers(new Raul::Array<BufferRef>(static_cast<size_t>(poly)))
 	, _prepared_buffers(NULL)
-	, _broadcast(false)
+	, _monitored(false)
 	, _set_by_user(false)
 	, _is_morph(false)
 	, _is_auto_morph(false)
@@ -338,8 +338,12 @@ PortImpl::clear_buffers()
 }
 
 void
-PortImpl::broadcast_value(Context& context, bool force)
+PortImpl::monitor(Context& context)
 {
+	if (!context.must_notify(this)) {
+		return;
+	}
+
 	Forge& forge = context.engine().world()->forge();
 	URIs&  uris  = context.engine().world()->uris();
 	LV2_URID       key   = 0;
@@ -359,23 +363,34 @@ PortImpl::broadcast_value(Context& context, bool force)
 	case PortType::ATOM:
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
 			LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)buffer(0)->atom();
-			// TODO: Filter events, or only send one activity for blinkenlights
-			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+			if (_monitored) {
+				// Monitoring explictly enabled, send everything
+				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+					context.notify(uris.ingen_activity,
+					               context.start() + ev->time.frames,
+					               this,
+					               ev->body.size,
+					               ev->body.type,
+					               LV2_ATOM_BODY(&ev->body));
+				}
+			} else if (seq->atom.size > sizeof(LV2_Atom_Sequence_Body)) {
+				// Just sending for blinkenlights, send one
+				const int32_t one = 1;
 				context.notify(uris.ingen_activity,
-				               context.start() + ev->time.frames,
+				               context.start(),
 				               this,
-				               ev->body.size,
-				               ev->body.type,
-				               LV2_ATOM_BODY(&ev->body));
+				               sizeof(int32_t),
+				               (LV2_URID)uris.atom_Bool,
+				               &one);
 			}
 		}
 		break;
 	}
 
-	if (val.is_valid() && (force || val != _last_broadcasted_value)) {
+	if (val.is_valid() && val != _last_monitor_value) {
 		if (context.notify(key, context.start(), this,
 		                   val.size(), val.type(), val.get_body())) {
-			_last_broadcasted_value = val;
+			_last_monitor_value = val;
 		}
 
 		/* On failure, last_broadcasted_value remains unaffected, so we'll try

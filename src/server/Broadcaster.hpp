@@ -17,8 +17,10 @@
 #ifndef INGEN_ENGINE_CLIENTBROADCASTER_HPP
 #define INGEN_ENGINE_CLIENTBROADCASTER_HPP
 
+#include <atomic>
 #include <list>
 #include <map>
+#include <set>
 #include <string>
 
 #include <glibmm/thread.h>
@@ -41,11 +43,20 @@ namespace Server {
 class Broadcaster : public Interface
 {
 public:
-	Broadcaster() : _bundle_depth(0) {}
+	Broadcaster();
 	~Broadcaster();
 
 	void register_client(const Raul::URI& uri, SPtr<Interface> client);
 	bool unregister_client(const Raul::URI& uri);
+
+	void set_broadcast(const Raul::URI& client, bool broadcast);
+
+	/** Return true iff there are any clients with broadcasting enabled.
+	 *
+	 * This is used in the audio thread to decide whether or not notifications
+	 * should be calculated and emitted.
+	 */
+	bool must_broadcast() const { return _must_broadcast; }
 
 	/** A handle that represents a transfer of possibly several changes.
 	 *
@@ -135,9 +146,11 @@ private:
 
 	typedef std::map< Raul::URI, SPtr<Interface> > Clients;
 
-	Glib::Mutex _clients_mutex;
-	Clients     _clients;
-	unsigned    _bundle_depth;
+	Glib::Mutex         _clients_mutex;
+	Clients             _clients;
+	std::set<Raul::URI> _broadcastees;
+	std::atomic<bool>   _must_broadcast;
+	unsigned            _bundle_depth;
 };
 
 } // namespace Server

@@ -301,7 +301,8 @@ PropertiesWindow::on_show()
 }
 
 void
-PropertiesWindow::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
+PropertiesWindow::property_changed(const Raul::URI&  predicate,
+                                   const Raul::Atom& value)
 {
 	Records::iterator r = _records.find(predicate);
 	if (r == _records.end()) {

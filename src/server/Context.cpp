@@ -55,6 +55,12 @@ Context::Context(Engine& engine, ID id)
 {}
 
 bool
+Context::must_notify(const PortImpl* port) const
+{
+	return port->is_monitored() || _engine.broadcaster()->must_broadcast();
+}
+
+bool
 Context::notify(LV2_URID           key,
                 FrameTime          time,
                 PortImpl*          port,

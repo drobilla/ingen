@@ -100,9 +100,8 @@ DuplexPort::post_process(Context& context)
 		   perspective.  Mix down input delivered by plugins so output
 		   (external perspective) is ready. */
 		InputPort::pre_process(context);
-
-		if (_broadcast)
-			broadcast_value(context, false);
+	} else {
+		monitor(context);
 	}
 }
 

@@ -26,10 +26,16 @@
 namespace Ingen {
 namespace Server {
 
+Broadcaster::Broadcaster()
+	: _must_broadcast(false)
+	, _bundle_depth(0)
+{}
+
 Broadcaster::~Broadcaster()
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	_clients.clear();
+	_broadcastees.clear();
 }
 
 /** Register a client to receive messages over the notification band.
@@ -51,7 +57,19 @@ Broadcaster::unregister_client(const Raul::URI& uri)
 {
 	Glib::Mutex::Lock lock(_clients_mutex);
 	const size_t erased = _clients.erase(uri);
+	_broadcastees.erase(uri);
 	return (erased > 0);
+}
+
+void
+Broadcaster::set_broadcast(const Raul::URI& client, bool broadcast)
+{
+	if (broadcast) {
+		_broadcastees.insert(client);
+	} else {
+		_broadcastees.erase(client);
+	}
+	_must_broadcast.store(!_broadcastees.empty());
 }
 
 /** Looks up the client with the given source @a uri (which is used as the

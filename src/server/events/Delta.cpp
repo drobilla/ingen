@@ -104,6 +104,7 @@ Delta::pre_process()
 	typedef Properties::const_iterator iterator;
 
 	const bool is_graph_object = Node::uri_is_path(_subject);
+	const bool is_client       = (_subject == "ingen:/clients/this");
 
 	// Take a writer lock while we modify the store
 	Glib::RWLock::WriterLock lock(_engine.store()->lock());
@@ -112,7 +113,7 @@ Delta::pre_process()
 		? static_cast<Ingen::Resource*>(_engine.store()->get(Node::uri_to_path(_subject)))
 		: static_cast<Ingen::Resource*>(_engine.block_factory()->plugin(_subject));
 
-	if (!_object && (!is_graph_object || !_create)) {
+	if (!_object && !is_client && (!is_graph_object || !_create)) {
 		return Event::pre_process_done(Status::NOT_FOUND, _subject);
 	}
 
@@ -155,7 +156,9 @@ Delta::pre_process()
 			if (port)
 				_old_bindings = _engine.control_bindings()->remove(port);
 		}
-		_object->remove_property(key, value);
+		if (_object) {
+			_object->remove_property(key, value);
+		}
 	}
 
 	for (const auto& p : _properties) {
@@ -243,6 +246,9 @@ Delta::pre_process()
 					_status = Status::BAD_OBJECT_TYPE;
 				}
 			}
+		} else if (is_client && key == uris.ingen_broadcast) {
+			_engine.broadcaster()->set_broadcast(
+				_request_client->uri(), value.get_bool());
 		}
 
 		if (_status != Status::NOT_PREPARED) {
@@ -287,7 +293,7 @@ Delta::execute(ProcessContext& context)
 		switch (*t) {
 		case SpecialType::ENABLE_BROADCAST:
 			if (port) {
-				port->broadcast(value.get_bool());
+				port->enable_monitoring(value.get_bool());
 			}
 			break;
 		case SpecialType::ENABLE:

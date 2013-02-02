@@ -87,6 +87,7 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	xml->get_widget("graph_view_engine_window_menuitem", _menu_view_engine_window);
 	xml->get_widget("graph_properties_menuitem", _menu_view_graph_properties);
 	xml->get_widget("graph_fullscreen_menuitem", _menu_fullscreen);
+	xml->get_widget("graph_animate_canvas_menuitem", _menu_animate_canvas);
 	xml->get_widget("graph_human_names_menuitem", _menu_human_names);
 	xml->get_widget("graph_show_port_names_menuitem", _menu_show_port_names);
 	xml->get_widget("graph_zoom_in_menuitem", _menu_zoom_in);
@@ -124,6 +125,8 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &GraphBox::event_quit));
 	_menu_fullscreen->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_fullscreen_toggled));
+	_menu_animate_canvas->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_animate_canvas_toggled));
 	_menu_human_names->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_human_names_toggled));
 	_menu_show_doc_pane->signal_activate().connect(
@@ -690,6 +693,15 @@ GraphBox::event_status_bar_toggled()
 		_status_bar->show();
 	else
 		_status_bar->hide();
+}
+
+void
+GraphBox::event_animate_canvas_toggled()
+{
+	_app->interface()->set_property(
+		Raul::URI("ingen:/clients/this"),
+		_app->uris().ingen_broadcast,
+		_app->forge().make((bool)_menu_animate_canvas->get_active()));
 }
 
 void

@@ -40,7 +40,10 @@ class EngineBase;
 class Interface;
 class Store;
 
-namespace Serialisation { class Parser; class Serialiser; }
+namespace Serialisation {
+class Parser;
+class Serialiser;
+}
 
 /** Load a dynamic module from the default path.
  *

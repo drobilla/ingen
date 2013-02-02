@@ -124,9 +124,6 @@ void
 InputPort::add_arc(ProcessContext& context, ArcImpl* c)
 {
 	_arcs.push_front(*c);
-	if (_type != PortType::CV) {
-		_broadcast = true;  // Broadcast value/activity of connected input
-	}
 }
 
 /** Remove a arc.  Realtime safe.
@@ -149,10 +146,6 @@ InputPort::remove_arc(ProcessContext& context, const OutputPort* tail)
 	if (!arc) {
 		context.engine().log().error("Attempt to remove non-existent arc\n");
 		return NULL;
-	}
-
-	if (_arcs.empty()) {
-		_broadcast = false;  // Turn off broadcasting if no longer connected
 	}
 
 	return arc;
@@ -220,8 +213,9 @@ InputPort::pre_process(Context& context)
 		}
 	}
 
-	if (_broadcast)
-		broadcast_value(context, false);
+	if (!_arcs.empty()) {
+		monitor(context);
+	}
 }
 
 void

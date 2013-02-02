@@ -145,10 +145,18 @@ public:
 
 	void set_buffer_size(Context& context, BufferFactory& bufs, size_t size);
 
-	void broadcast(bool b) { _broadcast = b; }
-	bool broadcast()       { return _broadcast; }
+	/** Return true iff this port is explicitly monitored.
+	 *
+	 * This is used for plugin UIs which require monitoring for particular
+	 * ports, even if the Ingen client has not requested broadcasting in
+	 * general (e.g. for canvas animation).
+	 */
+	bool is_monitored() const { return _monitored; }
 
-	void broadcast_value(Context& context, bool force=false);
+	/** Explicitly turn on monitoring for this port. */
+	void enable_monitoring(bool monitored) { _monitored = monitored; }
+
+	void monitor(Context& context);
 
 	void raise_set_by_user_flag() { _set_by_user = true; }
 
@@ -199,12 +207,12 @@ protected:
 	Raul::Atom              _value;
 	Raul::Atom              _min;
 	Raul::Atom              _max;
-	Raul::Atom              _last_broadcasted_value;
+	Raul::Atom              _last_monitor_value;
 	Raul::Array<SetState>*  _set_states;
 	Raul::Array<SetState>*  _prepared_set_states;
 	Raul::Array<BufferRef>* _buffers;
 	Raul::Array<BufferRef>* _prepared_buffers;
-	bool                    _broadcast;
+	bool                    _monitored;
 	bool                    _set_by_user;
 	bool                    _is_morph;
 	bool                    _is_auto_morph;

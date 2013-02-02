@@ -114,6 +114,7 @@ private:
 	void event_fullscreen_toggled();
 	void event_doc_pane_toggled();
 	void event_status_bar_toggled();
+	void event_animate_canvas_toggled();
 	void event_human_names_toggled();
 	void event_port_names_toggled();
 	void event_zoom_in();
@@ -144,6 +145,7 @@ private:
 	Gtk::MenuItem*      _menu_select_all;
 	Gtk::MenuItem*      _menu_close;
 	Gtk::MenuItem*      _menu_quit;
+	Gtk::CheckMenuItem* _menu_animate_canvas;
 	Gtk::CheckMenuItem* _menu_human_names;
 	Gtk::CheckMenuItem* _menu_show_port_names;
 	Gtk::CheckMenuItem* _menu_show_doc_pane;

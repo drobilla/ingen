@@ -133,7 +133,7 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 		// FIXME: not thread safe
 		_note_port->set_value(context.engine().world()->forge().make((float)note_num));
 		_note_port->set_control_value(context, time, (float)note_num);
-		_note_port->broadcast_value(context, true);
+		_note_port->monitor(context);
 		_learning = false;
 	}
 
