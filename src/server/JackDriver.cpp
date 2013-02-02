@@ -152,8 +152,8 @@ JackDriver::activate()
 	}
 
 	if (!_client)
-		attach(world->conf().option("jack-server").get_string(),
-		       world->conf().option("jack-name").get_string(), NULL);
+		attach(world->conf().option("jack-server").ptr<char>(),
+		       world->conf().option("jack-name").ptr<char>(), NULL);
 
 	jack_set_process_callback(_client, process_cb, this);
 
@@ -164,7 +164,7 @@ JackDriver::activate()
 		exit(EXIT_FAILURE);
 	} else {
 		_engine.log().info(Raul::fmt("Activated Jack client `%1%'\n") %
-		                   world->conf().option("jack-name").get_string());
+		                   world->conf().option("jack-name").ptr<char>());
 	}
 }
 

@@ -47,11 +47,11 @@ Port::create(App&                  app,
              bool                  flip)
 {
 	Glib::ustring label;
-	if (app.world()->conf().option("port-labels").get_bool()) {
+	if (app.world()->conf().option("port-labels").get<int32_t>()) {
 		if (human_name) {
 			const Raul::Atom& name = pm->get_property(app.uris().lv2_name);
 			if (name.type() == app.forge().String) {
-				label = name.get_string();
+				label = name.ptr<char>();
 			} else {
 				const SPtr<const BlockModel> parent(dynamic_ptr_cast<const BlockModel>(pm->parent()));
 				if (parent && parent->plugin_model())
@@ -144,8 +144,8 @@ Port::show_menu(GdkEventButton* ev)
 void
 Port::moved()
 {
-	if (_app.world()->conf().option("port-labels").get_bool() &&
-	    !_app.world()->conf().option("human-names").get_bool()) {
+	if (_app.world()->conf().option("port-labels").get<int32_t>() &&
+	    !_app.world()->conf().option("human-names").get<int32_t>()) {
 		set_label(model()->symbol().c_str());
 	}
 }
@@ -178,7 +178,7 @@ void
 Port::value_changed(const Raul::Atom& value)
 {
 	if (!_pressed && value.type() == _app.forge().Float) {
-		Ganv::Port::set_control_value(value.get_float());
+		Ganv::Port::set_control_value(value.get<float>());
 	}
 }
 
@@ -235,7 +235,7 @@ Port::build_uri_menu()
 	}
 
 	LilvNode* designation = lilv_new_uri(
-		world->lilv_world(), designation_atom.get_uri());
+		world->lilv_world(), designation_atom.ptr<char>());
 	LilvNode* rdfs_range = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDFS "range");
 
@@ -366,7 +366,7 @@ void
 Port::activity(const Raul::Atom& value)
 {
 	if (model()->is_a(_app.uris().lv2_AudioPort)) {
-		set_fill_color(peak_color(value.get_float()));
+		set_fill_color(peak_color(value.get<float>()));
 	} else {
 		_app.port_activity(this);
 	}
@@ -396,7 +396,7 @@ Port::property_changed(const Raul::URI& key, const Raul::Atom& value)
 {
 	const URIs& uris = _app.uris();
 	if (value.type() == uris.forge.Float) {
-		float val = value.get_float();
+		float val = value.get<float>();
 		if (key == uris.ingen_value && !_pressed) {
 			Ganv::Port::set_control_value(val);
 		} else if (key == uris.lv2_minimum) {
@@ -415,9 +415,9 @@ Port::property_changed(const Raul::URI& key, const Raul::Atom& value)
 			set_control_is_toggle(true);
 	} else if (key == uris.lv2_name) {
 		if (value.type() == uris.forge.String &&
-		    _app.world()->conf().option("port-labels").get_bool() &&
-		    _app.world()->conf().option("human-names").get_bool()) {
-			set_label(value.get_string());
+		    _app.world()->conf().option("port-labels").get<int32_t>() &&
+		    _app.world()->conf().option("human-names").get<int32_t>()) {
+			set_label(value.ptr<char>());
 		}
 	}
 }

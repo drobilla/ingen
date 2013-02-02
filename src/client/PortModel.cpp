@@ -56,7 +56,7 @@ PortModel::is_uri() const
 	// FIXME: Resource::has_property doesn't work, URI != URID
 	for (auto p : properties()) {
 		if (p.second.type() == _uris.atom_URID &&
-		    static_cast<LV2_URID>(p.second.get_int32()) == _uris.atom_URID) {
+		    static_cast<LV2_URID>(p.second.get<int32_t>()) == _uris.atom_URID) {
 			return true;
 		}
 	}

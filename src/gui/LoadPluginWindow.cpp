@@ -274,7 +274,7 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
 	const URIs&       uris = _app->uris();
 	const Raul::Atom& name = plugin->get_property(uris.doap_name);
 	if (name.is_valid() && name.type() == uris.forge.String)
-		row[_plugins_columns._col_name] = name.get_string();
+		row[_plugins_columns._col_name] = name.ptr<char>();
 
 	switch (plugin->type()) {
 	case Plugin::NIL:
@@ -413,9 +413,9 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 
 		// Cascade next block
 		Raul::Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
-		x = _app->forge().make(x.get_float() + 20.0f);
+		x = _app->forge().make(x.get<float>() + 20.0f);
 		Raul::Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
-		y = _app->forge().make(y.get_float() + 20.0f);
+		y = _app->forge().make(y.get<float>() + 20.0f);
 	}
 }
 
@@ -452,7 +452,7 @@ LoadPluginWindow::filter_changed()
 		switch (criteria) {
 		case CriteriaColumns::Criteria::NAME:
 			if (name.is_valid() && name.type() == uris.forge.String)
-				field = name.get_string();
+				field = name.ptr<char>();
 			break;
 		case CriteriaColumns::Criteria::TYPE:
 			field = plugin->type_uri();
@@ -504,7 +504,7 @@ LoadPluginWindow::plugin_property_changed(const Raul::URI&  plugin,
 	if (predicate == uris.doap_name) {
 		Rows::const_iterator i = _rows.find(plugin);
 		if (i != _rows.end() && value.type() == uris.forge.String)
-			(*i->second)[_plugins_columns._col_name] = value.get_string();
+			(*i->second)[_plugins_columns._col_name] = value.ptr<char>();
 	}
 }
 

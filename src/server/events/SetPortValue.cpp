@@ -90,7 +90,7 @@ SetPortValue::apply(Context& context)
 
 	if (buf->type() == uris.atom_Sound || buf->type() == uris.atom_Float) {
 		if (_value.type() == uris.forge.Float) {
-			_port->set_control_value(context, _time, _value.get_float());
+			_port->set_control_value(context, _time, _value.get<float>());
 		} else {
 			_status = Status::TYPE_MISMATCH;
 		}
@@ -105,7 +105,7 @@ SetPortValue::apply(Context& context)
 			_status = Status::NO_SPACE;
 		}
 	} else if (buf->type() == uris.atom_URID) {
-		((LV2_Atom_URID*)buf->atom())->body = _value.get_int32();
+		((LV2_Atom_URID*)buf->atom())->body = _value.get<int32_t>();
 	} else {
 		_status = Status::BAD_VALUE_TYPE;
 	}

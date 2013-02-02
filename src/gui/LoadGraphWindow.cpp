@@ -128,7 +128,7 @@ LoadGraphWindow::on_show()
 {
 	const Raul::Atom& dir = _app->world()->conf().option("graph-directory");
 	if (dir.is_valid()) {
-		set_current_folder(dir.get_string());
+		set_current_folder(dir.ptr<char>());
 	}
 	Gtk::FileChooserDialog::on_show();
 }
@@ -180,9 +180,9 @@ LoadGraphWindow::ok_clicked()
 		for (auto u : uri_list) {
 			// Cascade
 			Raul::Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
-			x = _app->forge().make(x.get_float() + 20.0f);
+			x = _app->forge().make(x.get<float>() + 20.0f);
 			Raul::Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
-			y = _app->forge().make(y.get_float() + 20.0f);
+			y = _app->forge().make(y.get<float>() + 20.0f);
 
 			Raul::Symbol symbol(symbol_from_filename(u));
 			if (uri_list.size() == 1 && _symbol_entry->get_text() != "")

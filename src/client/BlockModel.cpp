@@ -203,9 +203,9 @@ BlockModel::port_value_range(SPtr<const PortModel> port,
 	const Raul::Atom& min_atom = port->get_property(_uris.lv2_minimum);
 	const Raul::Atom& max_atom = port->get_property(_uris.lv2_maximum);
 	if (min_atom.type() == _uris.forge.Float)
-		min = min_atom.get_float();
+		min = min_atom.get<float>();
 	if (max_atom.type() == _uris.forge.Float)
-		max = max_atom.get_float();
+		max = max_atom.get<float>();
 
 	if (max <= min)
 		max = min + 1.0;
@@ -221,7 +221,7 @@ BlockModel::label() const
 {
 	const Raul::Atom& name_property = get_property(_uris.lv2_name);
 	if (name_property.type() == _uris.forge.String) {
-		return name_property.get_string();
+		return name_property.ptr<char>();
 	} else if (plugin_model()) {
 		return plugin_model()->human_name();
 	} else {
@@ -234,7 +234,7 @@ BlockModel::port_label(SPtr<const PortModel> port) const
 {
 	const Raul::Atom& name = port->get_property(Raul::URI(LV2_CORE__name));
 	if (name.is_valid()) {
-		return name.get_string();
+		return name.ptr<char>();
 	}
 
 	if (_plugin && _plugin->type() == PluginModel::LV2) {

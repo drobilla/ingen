@@ -207,19 +207,19 @@ Delta::pre_process()
 					if (value.type() == uris.forge.Bool) {
 						op = SpecialType::ENABLE;
 						// FIXME: defer this until all other metadata has been processed
-						if (value.get_bool() && !_graph->enabled())
+						if (value.get<int32_t>() && !_graph->enabled())
 							_compiled_graph = _graph->compile();
 					} else {
 						_status = Status::BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.ingen_polyphony) {
 					if (value.type() == uris.forge.Int) {
-						if (value.get_int32() < 1 || value.get_int32() > 128) {
+						if (value.get<int32_t>() < 1 || value.get<int32_t>() > 128) {
 							_status = Status::INVALID_POLY;
 						} else {
 							op = SpecialType::POLYPHONY;
 							_graph->prepare_internal_poly(
-								*_engine.buffer_factory(), value.get_int32());
+								*_engine.buffer_factory(), value.get<int32_t>());
 						}
 					} else {
 						_status = Status::BAD_VALUE_TYPE;
@@ -233,8 +233,8 @@ Delta::pre_process()
 						obj->set_property(key, value, value.context());
 						BlockImpl* block = dynamic_cast<BlockImpl*>(obj);
 						if (block)
-							block->set_polyphonic(value.get_bool());
-						if (value.get_bool()) {
+							block->set_polyphonic(value.get<int32_t>());
+						if (value.get<int32_t>()) {
 							obj->prepare_poly(*_engine.buffer_factory(), parent->internal_poly());
 						} else {
 							obj->prepare_poly(*_engine.buffer_factory(), 1);
@@ -248,7 +248,7 @@ Delta::pre_process()
 			}
 		} else if (is_client && key == uris.ingen_broadcast) {
 			_engine.broadcaster()->set_broadcast(
-				_request_client->uri(), value.get_bool());
+				_request_client->uri(), value.get<int32_t>());
 		}
 
 		if (_status != Status::NOT_PREPARED) {
@@ -293,11 +293,11 @@ Delta::execute(ProcessContext& context)
 		switch (*t) {
 		case SpecialType::ENABLE_BROADCAST:
 			if (port) {
-				port->enable_monitoring(value.get_bool());
+				port->enable_monitoring(value.get<int32_t>());
 			}
 			break;
 		case SpecialType::ENABLE:
-			if (value.get_bool()) {
+			if (value.get<int32_t>()) {
 				if (_compiled_graph) {
 					_graph->set_compiled_graph(_compiled_graph);
 				}
@@ -308,7 +308,7 @@ Delta::execute(ProcessContext& context)
 			break;
 		case SpecialType::POLYPHONIC: {
 			GraphImpl* parent = reinterpret_cast<GraphImpl*>(object->parent());
-			if (value.get_bool()) {
+			if (value.get<int32_t>()) {
 				object->apply_poly(
 					context, *_engine.maid(), parent->internal_poly_process());
 			} else {
@@ -319,7 +319,7 @@ Delta::execute(ProcessContext& context)
 			if (!_graph->apply_internal_poly(context,
 			                                 *_engine.buffer_factory(),
 			                                 *_engine.maid(),
-			                                 value.get_int32())) {
+			                                 value.get<int32_t>())) {
 				_status = Status::INTERNAL_ERROR;
 			}
 			break;

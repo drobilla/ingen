@@ -69,7 +69,7 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 		const Raul::Atom& ui_embedded = block->get_property(
 			_app->uris().ingen_uiEmbedded);
 		_embed_gui_menuitem->set_active(
-			ui_embedded.is_valid() && ui_embedded.get_bool());
+			ui_embedded.is_valid() && ui_embedded.get<int32_t>());
 	} else {
 		_popup_gui_menuitem->hide();
 		_embed_gui_menuitem->hide();

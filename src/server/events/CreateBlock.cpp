@@ -65,7 +65,7 @@ CreateBlock::pre_process()
 	std::string plugin_uri_str;
 	const iterator t = _properties.find(uris.ingen_prototype);
 	if (t != _properties.end() && t->second.type() == uris.forge.URI) {
-		plugin_uri_str = t->second.get_uri();
+		plugin_uri_str = t->second.ptr<char>();
 	} else {
 		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
@@ -90,7 +90,7 @@ CreateBlock::pre_process()
 	const bool polyphonic = (
 		p != _properties.end() &&
 		p->second.type() == _engine.world()->forge().Bool &&
-		p->second.get_bool());
+		p->second.get<int32_t>());
 
 	if (!(_block = plugin->instantiate(*_engine.buffer_factory(),
 	                                  Raul::Symbol(_path.symbol()),

@@ -194,8 +194,8 @@ ControlBindings::learn(PortImpl* port)
 static void
 get_range(ProcessContext& context, const PortImpl* port, float* min, float* max)
 {
-	*min = port->minimum().get_float();
-	*max = port->maximum().get_float();
+	*min = port->minimum().get<float>();
+	*max = port->maximum().get<float>();
 	if (port->is_sample_rate()) {
 		*min *= context.engine().driver()->sample_rate();
 		*max *= context.engine().driver()->sample_rate();
@@ -246,7 +246,7 @@ ControlBindings::port_value_to_control(ProcessContext&   context,
 	float min, max;
 	get_range(context, port, &min, &max);
 
-	const float value  = value_atom.get_float();
+	const float value  = value_atom.get<float>();
 	float       normal = (value - min) / (max - min);
 
 	if (normal < 0.0f) {
@@ -318,7 +318,7 @@ ControlBindings::set_port_value(ProcessContext& context,
 
 	assert(port_value.type() == port->bufs().forge().Float);
 	port->set_value(port_value);  // FIXME: not thread safe
-	port->set_control_value(context, context.start(), port_value.get_float());
+	port->set_control_value(context, context.start(), port_value.get<float>());
 
 	URIs& uris = context.engine().world()->uris();
 	context.notify(uris.ingen_value, context.start(), port,

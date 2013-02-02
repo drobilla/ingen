@@ -77,7 +77,7 @@ CreatePort::CreatePort(Engine&                     engine,
 	const Range buffer_types = properties.equal_range(uris.atom_bufferType);
 	for (Iterator i = buffer_types.first; i != buffer_types.second; ++i) {
 		if (i->second.type() == _engine.world()->forge().URI) {
-			_buf_type = _engine.world()->uri_map().map_uri(i->second.get_uri());
+			_buf_type = _engine.world()->uri_map().map_uri(i->second.ptr<char>());
 		}
 	}
 }
@@ -123,14 +123,14 @@ CreatePort::pre_process()
 			std::make_pair(uris.lv2_index,
 			               _engine.world()->forge().make(old_n_ports)));
 	} else if (index_i->second.type() != uris.forge.Int ||
-	           index_i->second.get_int32() != old_n_ports) {
+	           index_i->second.get<int32_t>() != old_n_ports) {
 		return Event::pre_process_done(Status::BAD_INDEX, _path);
 	}
 
 	const PropIter poly_i = _properties.find(uris.ingen_polyphonic);
 	const bool polyphonic = (poly_i != _properties.end() &&
 	                         poly_i->second.type() == uris.forge.Bool &&
-	                         poly_i->second.get_bool());
+	                         poly_i->second.get<int32_t>());
 
 	if (!(_graph_port = _graph->create_port(
 		      *_engine.buffer_factory(), Raul::Symbol(_path.symbol()),
@@ -155,7 +155,7 @@ CreatePort::pre_process()
 	_ports_array = new Raul::Array<PortImpl*>(old_n_ports + 1, NULL);
 	_update      = _graph_port->properties();
 
-	assert(_graph_port->index() == (uint32_t)index_i->second.get_int32());
+	assert(_graph_port->index() == (uint32_t)index_i->second.get<int32_t>());
 	assert(_graph->num_ports_non_rt() == (uint32_t)old_n_ports + 1);
 	assert(_graph_port->index() == (uint32_t)old_n_ports);
 	assert(_ports_array->size() == _graph->num_ports_non_rt());

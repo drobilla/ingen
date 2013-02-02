@@ -65,7 +65,7 @@ RenameWindow::set_object(SPtr<const ObjectModel> object)
 	_symbol_entry->set_text(object->path().symbol());
 	const Raul::Atom& name_atom = object->get_property(_app->uris().lv2_name);
 	_label_entry->set_text(
-		(name_atom.type() == _app->forge().String) ? name_atom.get_string() : "");
+		(name_atom.type() == _app->forge().String) ? name_atom.ptr<char>() : "");
 }
 
 void
@@ -124,7 +124,7 @@ RenameWindow::ok_clicked()
 		}
 	}
 
-	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.get_string())) {
+	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.ptr<char>())) {
 		_app->interface()->set_property(Node::path_to_uri(path),
 		                                uris.lv2_name,
 		                                _app->forge().alloc(label));

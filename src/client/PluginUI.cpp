@@ -54,7 +54,7 @@ lv2_ui_write(SuilController controller,
 	// float (special case, always 0)
 	if (format == 0) {
 		assert(buffer_size == 4);
-		if (*(const float*)buffer == port->value().get_float())
+		if (*(const float*)buffer == port->value().get<float>())
 			return; // do nothing (handle stupid plugin UIs that feed back)
 
 		ui->world()->interface()->set_property(

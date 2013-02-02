@@ -38,17 +38,17 @@ Forge::str(const Raul::Atom& atom)
 {
 	std::ostringstream ss;
 	if (atom.type() == Int) {
-		ss << atom.get_int32();
+		ss << atom.get<int32_t>();
 	} else if (atom.type() == Float) {
-		ss << atom.get_float();
+		ss << atom.get<float>();
 	} else if (atom.type() == Bool) {
-		ss << (atom.get_bool() ? "true" : "false");
+		ss << (atom.get<int32_t>() ? "true" : "false");
 	} else if (atom.type() == URI) {
-		ss << "<" << atom.get_uri() << ">";
+		ss << "<" << atom.get<const char*>() << ">";
 	} else if (atom.type() == URID) {
-		ss << "<" << _map.unmap_uri(atom.get_int32()) << ">";
+		ss << "<" << _map.unmap_uri(atom.get<int32_t>()) << ">";
 	} else if (atom.type() == String) {
-		ss << "\"" << atom.get_string() << "\"";
+		ss << "\"" << atom.get<const char*>() << "\"";
 	}
 	return ss.str();
 }

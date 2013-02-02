@@ -124,7 +124,7 @@ GraphPortModule::show_human_names(bool b)
 	const URIs&       uris = app().uris();
 	const Raul::Atom& name = _model->get_property(uris.lv2_name);
 	if (b && name.type() == uris.forge.String) {
-		set_name(name.get_string());
+		set_name(name.ptr<char>());
 	} else {
 		set_name(_model->symbol().c_str());
 	}
@@ -142,21 +142,21 @@ GraphPortModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {
 		if (key == uris.ingen_canvasX) {
-			move_to(value.get_float(), get_y());
+			move_to(value.get<float>(), get_y());
 		} else if (key == uris.ingen_canvasY) {
-			move_to(get_x(), value.get_float());
+			move_to(get_x(), value.get<float>());
 		}
 	} else if (value.type() == uris.forge.String) {
 		if (key == uris.lv2_name &&
-		    app().world()->conf().option("human-names").get_bool()) {
-			set_name(value.get_string());
+		    app().world()->conf().option("human-names").get<int32_t>()) {
+			set_name(value.ptr<char>());
 		} else if (key == uris.lv2_symbol &&
-		           !app().world()->conf().option("human-names").get_bool()) {
-			set_name(value.get_string());
+		           !app().world()->conf().option("human-names").get<int32_t>()) {
+			set_name(value.ptr<char>());
 		}
 	} else if (value.type() == uris.forge.Bool) {
 		if (key == uris.ingen_polyphonic) {
-			set_stacked(value.get_bool());
+			set_stacked(value.get<int32_t>());
 		}
 	}
 }

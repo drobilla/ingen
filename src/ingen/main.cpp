@@ -82,7 +82,7 @@ main(int argc, char** argv)
 		if (argc <= 1) {
 			world->conf().print_usage("ingen", cout);
 			return EXIT_FAILURE;
-		} else if (world->conf().option("help").get_bool()) {
+		} else if (world->conf().option("help").get<int32_t>()) {
 			world->conf().print_usage("ingen", cout);
 			return EXIT_SUCCESS;
 		}
@@ -93,12 +93,12 @@ main(int argc, char** argv)
 
 	Configuration& conf = world->conf();
 	if (conf.option("uuid").is_valid()) {
-		world->set_jack_uuid(conf.option("uuid").get_string());
+		world->set_jack_uuid(conf.option("uuid").ptr<char>());
 	}
 
 	// Run engine
 	SPtr<Interface> engine_interface;
-	if (conf.option("engine").get_bool()) {
+	if (conf.option("engine").get<int32_t>()) {
 		ingen_try(world->load_module("server"),
 		          "Unable to load server module");
 
@@ -120,7 +120,7 @@ main(int argc, char** argv)
 		ingen_try(world->load_module("socket_client"),
 		          "Unable to load socket client module");
 		#endif
-		const char* const uri = conf.option("connect").get_string();
+		const char* const uri = conf.option("connect").ptr<char>();
 		ingen_try(Raul::URI::is_valid(uri),
 		          (Raul::fmt("Invalid URI <%1%>") % uri).str().c_str());
 		SPtr<Interface> client(new Client::ThreadedSigClientInterface(1024));
@@ -138,7 +138,7 @@ main(int argc, char** argv)
 		          "Unable to load serialisation module");
 	}
 
-	if (conf.option("gui").get_bool()) {
+	if (conf.option("gui").get<int32_t>()) {
 		ingen_try(world->load_module("gui"),
 		          "Unable to load GUI module");
 	}
@@ -157,21 +157,21 @@ main(int argc, char** argv)
 
 		const Raul::Atom& path_option = conf.option("path");
 		if (path_option.is_valid()) {
-			if (Raul::Path::is_valid(path_option.get_string())) {
-				const Raul::Path p(path_option.get_string());
+			if (Raul::Path::is_valid(path_option.ptr<char>())) {
+				const Raul::Path p(path_option.ptr<char>());
 				if (!p.is_root()) {
 					parent = p.parent();
 					symbol = Raul::Symbol(p.symbol());
 				}
 			} else {
-				cerr << "Invalid path given: '" << path_option.get_string() << endl;
+				cerr << "Invalid path given: '" << path_option.ptr<char>() << endl;
 			}
 		}
 
 		ingen_try(bool(world->parser()), "Unable to create parser");
 
 		const string path = conf.option("load").is_valid() ?
-		  conf.option("load").get_string() :
+		  conf.option("load").ptr<char>() :
 		  conf.files().front();
 
 		engine_interface->get(Raul::URI("ingen:/plugins"));
@@ -184,7 +184,7 @@ main(int argc, char** argv)
 	signal(SIGINT, ingen_interrupt);
 	signal(SIGTERM, ingen_interrupt);
 
-	if (conf.option("gui").get_bool()) {
+	if (conf.option("gui").get<int32_t>()) {
 		world->run_module("gui");
 	} else if (conf.option("run").is_valid()) {
 		// Run a script
@@ -192,12 +192,12 @@ main(int argc, char** argv)
 		ingen_try(world->load_module("bindings"),
 		          "Unable to load bindings module");
 
-		world->run("application/x-python", conf.option("run").get_string());
+		world->run("application/x-python", conf.option("run").ptr<char>());
 #else
 		cerr << "This build of ingen does not support scripting." << endl;
 #endif
 
-	} else if (world->engine() && !conf.option("gui").get_bool()) {
+	} else if (world->engine() && !conf.option("gui").get<int32_t>()) {
 		// Run engine main loop until interrupt
 		while (world->engine()->main_iteration()) {
 			Glib::usleep(125000);  // 1/8 second

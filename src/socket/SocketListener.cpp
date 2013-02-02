@@ -42,7 +42,7 @@ SocketListener::SocketListener(Ingen::World& world)
 	, _net_sock(Socket::Type::TCP)
 {
 	// Create UNIX socket
-	_unix_path = world.conf().option("socket").get_string();
+	_unix_path = world.conf().option("socket").ptr<char>();
 	const Raul::URI unix_uri("unix://" + _unix_path);
 	if (!_unix_sock.bind(unix_uri) || !_unix_sock.listen()) {
 		_world.log().error("Failed to create UNIX socket\n");
@@ -51,7 +51,7 @@ SocketListener::SocketListener(Ingen::World& world)
 	_world.log().info(Raul::fmt("Listening on socket %1%\n") % unix_uri);
 
 	// Create TCP socket
-	int port = world.conf().option("engine-port").get_int32();
+	int port = world.conf().option("engine-port").get<int32_t>();
 	std::ostringstream ss;
 	ss << "tcp://localhost:";
 	ss << port;

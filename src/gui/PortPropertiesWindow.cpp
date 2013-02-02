@@ -98,16 +98,16 @@ PortPropertiesWindow::property_changed(const Raul::URI&  key,
 	const URIs& uris = _app->uris();
 	if (value.type() == uris.forge.Float) {
 		if (key == uris.lv2_minimum)
-			_min_spinner->set_value(value.get_float());
+			_min_spinner->set_value(value.get<float>());
 		else if (key == uris.lv2_maximum)
-			_max_spinner->set_value(value.get_float());
+			_max_spinner->set_value(value.get<float>());
 	}
 }
 
 void
 PortPropertiesWindow::min_changed()
 {
-	const float val = _port_model->value().get_float();
+	const float val = _port_model->value().get<float>();
 	float       min = _min_spinner->get_value();
 	float       max = _max_spinner->get_value();
 
@@ -125,7 +125,7 @@ PortPropertiesWindow::min_changed()
 void
 PortPropertiesWindow::max_changed()
 {
-	const float val = _port_model->value().get_float();
+	const float val = _port_model->value().get<float>();
 	float       min = _min_spinner->get_value();
 	float       max = _max_spinner->get_value();
 

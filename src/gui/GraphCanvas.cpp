@@ -156,8 +156,8 @@ GraphCanvas::GraphCanvas(App&                   app,
 	_menu_properties->signal_activate().connect(
 		sigc::mem_fun(this, &GraphCanvas::menu_properties));
 
-	show_human_names(app.world()->conf().option("human-names").get_bool());
-	show_port_names(app.world()->conf().option("port-labels").get_bool());
+	show_human_names(app.world()->conf().option("human-names").get<int32_t>());
+	show_port_names(app.world()->conf().option("port-labels").get<int32_t>());
 }
 
 void
@@ -771,12 +771,12 @@ GraphCanvas::paste()
 		Node::Properties::iterator x = props.find(uris.ingen_canvasX);
 		if (x != c.second->properties().end())
 			x->second = _app.forge().make(
-				x->second.get_float() + (20.0f * _paste_count));
+				x->second.get<float>() + (20.0f * _paste_count));
 
 		Node::Properties::iterator y = props.find(uris.ingen_canvasY);
 		if (y != c.second->properties().end())
 			y->second = _app.forge().make(
-				y->second.get_float() + (20.0f * _paste_count));
+				y->second.get<float>() + (20.0f * _paste_count));
 
 		builder.build(c.second);
 		_pastees.insert(c.first);

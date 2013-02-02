@@ -122,7 +122,7 @@ ObjectMenu::property_changed(const Raul::URI& predicate, const Raul::Atom& value
 	const URIs& uris = _app->uris();
 	_enable_signal = false;
 	if (predicate == uris.ingen_polyphonic && value.type() == uris.forge.Bool)
-		_polyphonic_menuitem->set_active(value.get_bool());
+		_polyphonic_menuitem->set_active(value.get<int32_t>());
 	_enable_signal = true;
 }
 

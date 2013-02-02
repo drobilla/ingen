@@ -219,7 +219,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 		widget->property_numeric() = true;
 		widget->set_range(INT_MIN, INT_MAX);
 		widget->set_increments(1, 10);
-		widget->set_value(value.get_int32());
+		widget->set_value(value.get<int32_t>());
 		widget->signal_value_changed().connect(sigc::bind(
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));
@@ -229,7 +229,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 		widget->property_numeric() = true;
 		widget->set_snap_to_ticks(false);
 		widget->set_range(DBL_MIN, DBL_MAX);
-		widget->set_value(value.get_float());
+		widget->set_value(value.get<float>());
 		widget->set_increments(0.1, 1.0);
 		widget->signal_value_changed().connect(sigc::bind(
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
@@ -237,20 +237,20 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 		return widget;
 	} else if (value.type() == forge.Bool) {
 		Gtk::CheckButton* widget = manage(new Gtk::CheckButton());
-		widget->set_active(value.get_bool());
+		widget->set_active(value.get<int32_t>());
 		widget->signal_toggled().connect(sigc::bind(
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));
 		return widget;
 	} else if (value.type() == forge.URI) {
 		Gtk::Entry* widget = manage(new Gtk::Entry());
-		widget->set_text(value.get_uri());
+		widget->set_text(value.ptr<char>());
 		widget->signal_changed().connect(sigc::bind(
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));
 		return widget;
 	} else if (value.type() == forge.URID) {
-		const char* val_uri = _app->world()->uri_map().unmap_uri(value.get_int32());
+		const char* val_uri = _app->world()->uri_map().unmap_uri(value.get<int32_t>());
 		Gtk::Entry* widget = manage(new Gtk::Entry());
 		if (val_uri) {
 			widget->set_text(val_uri);
@@ -261,7 +261,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& va
 		return widget;
 	} else if (value.type() == forge.String) {
 		Gtk::Entry* widget = manage(new Gtk::Entry());
-		widget->set_text(value.get_string());
+		widget->set_text(value.ptr<char>());
 		widget->signal_changed().connect(sigc::bind(
 				sigc::mem_fun(this, &PropertiesWindow::value_edited),
 				uri));

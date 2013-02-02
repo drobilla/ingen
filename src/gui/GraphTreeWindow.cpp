@@ -202,7 +202,7 @@ GraphTreeWindow::graph_property_changed(const Raul::URI&  key,
 		Gtk::TreeModel::iterator i = find_graph(_graph_treestore->children(), graph);
 		if (i != _graph_treestore->children().end()) {
 			Gtk::TreeModel::Row row = *i;
-			row[_graph_tree_columns.enabled_col] = value.get_bool();
+			row[_graph_tree_columns.enabled_col] = value.get<int32_t>();
 		} else {
 			_app->log().error(Raul::fmt("Unable to find graph %1%\n")
 			                  % graph->path());

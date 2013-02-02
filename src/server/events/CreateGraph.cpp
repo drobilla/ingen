@@ -64,7 +64,7 @@ CreateGraph::pre_process()
 	uint32_t int_poly = 1;
 	iterator p        = _properties.find(uris.ingen_polyphony);
 	if (p != _properties.end() && p->second.type() == uris.forge.Int) {
-		int_poly = p->second.get_int32();
+		int_poly = p->second.get<int32_t>();
 	}
 
 	if (int_poly < 1 || int_poly > 128) {

@@ -319,7 +319,7 @@ PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	_prepared_set_states = NULL;
 
 	if (is_a(PortType::CONTROL) || is_a(PortType::CV)) {
-		set_control_value(context, context.start(), _value.get_float());
+		set_control_value(context, context.start(), _value.get<float>());
 	}
 
 	assert(_buffers->size() >= poly);
@@ -365,10 +365,10 @@ PortImpl::clear_buffers()
 	case PortType::CV:
 		for (uint32_t v = 0; v < _poly; ++v) {
 			Buffer* buf = buffer(v).get();
-			buf->set_block(_value.get_float(), 0, buf->nframes());
+			buf->set_block(_value.get<float>(), 0, buf->nframes());
 			SetState& state = _set_states->at(v);
 			state.state = SetState::State::SET;
-			state.value = _value.get_float();
+			state.value = _value.get<float>();
 			state.time  = 0;
 		}
 		break;

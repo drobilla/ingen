@@ -242,7 +242,7 @@ App::property_change(const Raul::URI&  subject,
 	if (subject == uris().ingen_engine && key == uris().ingen_sampleRate) {
 		if (value.type() == forge().Int) {
 			log().info(Raul::fmt("Sample rate: %1%\n") % uris().forge.str(value));
-			_sample_rate = value.get_int32();
+			_sample_rate = value.get<int32_t>();
 		} else {
 			log().error("Engine sample rate property is not an integer\n");
 		}

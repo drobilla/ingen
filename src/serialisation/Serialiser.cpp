@@ -327,7 +327,7 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 	Node::Properties::const_iterator s = graph->properties().find(uris.lv2_symbol);
 	if (s == graph->properties().end()
 	    || !s->second.type() == _world.forge().String
-	    || !Raul::Symbol::is_valid(s->second.get_string())) {
+	    || !Raul::Symbol::is_valid(s->second.ptr<char>())) {
 		const std::string base = Glib::path_get_basename(
 			_model->base_uri().to_c_string());
 		symbol = Raul::Symbol::symbolify(base.substr(0, base.find('.')));
@@ -336,7 +336,7 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 			Sord::URI(world, uris.lv2_symbol),
 			Sord::Literal(world, symbol.c_str()));
 	} else {
-		symbol = Raul::Symbol::symbolify(s->second.get_string());
+		symbol = Raul::Symbol::symbolify(s->second.ptr<char>());
 	}
 
 	// If the graph has no doap:name (required by LV2), use the symbol

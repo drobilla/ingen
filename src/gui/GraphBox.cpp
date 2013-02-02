@@ -282,9 +282,9 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 	_alignment->show_all();
 
 	_menu_human_names->set_active(
-		_app->world()->conf().option("human-names").get_bool());
+		_app->world()->conf().option("human-names").get<int32_t>());
 	_menu_show_port_names->set_active(
-		_app->world()->conf().option("port-labels").get_bool());
+		_app->world()->conf().option("port-labels").get<int32_t>());
 
 	_enable_signal = true;
 }
@@ -422,10 +422,10 @@ GraphBox::event_save()
 	if (!document.is_valid() || document.type() != _app->uris().forge.URI) {
 		event_save_as();
 	} else {
-		_app->loader()->save_graph(_graph, document.get_uri());
+		_app->loader()->save_graph(_graph, document.ptr<char>());
 		_status_bar->push(
 			(boost::format("Saved %1% to %2%") % _graph->path().c_str()
-			 % document.get_uri()).str(),
+			 % document.ptr<char>()).str(),
 			STATUS_CONTEXT_GRAPH);
 	}
 }
@@ -467,9 +467,9 @@ GraphBox::event_save_as()
 		const Raul::Atom& document = _graph->get_property(uris.ingen_document);
 		const Raul::Atom& dir      = _app->world()->conf().option("graph-directory");
 		if (document.type() == uris.forge.URI)
-			dialog.set_uri(document.get_uri());
+			dialog.set_uri(document.ptr<char>());
 		else if (dir.is_valid())
-			dialog.set_current_folder(dir.get_string());
+			dialog.set_current_folder(dir.ptr<char>());
 
 		if (dialog.run() != Gtk::RESPONSE_OK)
 			break;

@@ -230,7 +230,7 @@ ClientStore::put(const Raul::URI&            uri,
 	Iterator t = properties.find(_uris.rdf_type);
 	if (t != properties.end() && t->second.type() == _uris.forge.URI) {
 		const Raul::Atom&  type(t->second);
-		const Raul::URI    type_uri(type.get_uri());
+		const Raul::URI    type_uri(type.ptr<char>());
 		const Plugin::Type plugin_type(Plugin::type_from_uri(type_uri));
 		if (plugin_type == Plugin::Graph) {
 			is_graph = true;
@@ -268,10 +268,10 @@ ClientStore::put(const Raul::URI&            uri,
 		const Iterator p = properties.find(_uris.ingen_prototype);
 		SPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == _uris.forge.URI) {
-			if (!(plug = _plugin(Raul::URI(p->second.get_uri())))) {
+			if (!(plug = _plugin(Raul::URI(p->second.ptr<char>())))) {
 				plug = SPtr<PluginModel>(
 					new PluginModel(uris(),
-					                Raul::URI(p->second.get_uri()),
+					                Raul::URI(p->second.ptr<char>()),
 					                _uris.ingen_nil,
 					                Resource::Properties()));
 				add_plugin(plug);
@@ -290,7 +290,7 @@ ClientStore::put(const Raul::URI&            uri,
 			: PortModel::Direction::INPUT;
 		const Iterator i = properties.find(_uris.lv2_index);
 		if (i != properties.end() && i->second.type() == _uris.forge.Int) {
-			const uint32_t index = i->second.get_int32();
+			const uint32_t index = i->second.get<int32_t>();
 			SPtr<PortModel> p(
 				new PortModel(uris(), path, index, pdir));
 			p->set_properties(properties);

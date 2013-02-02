@@ -151,11 +151,11 @@ get_port(Ingen::World*     world,
 	Resource::Properties::const_iterator i = props.find(uris.lv2_index);
 	if (i == props.end()
 	    || i->second.type() != world->forge().Int
-	    || i->second.get_int32() < 0) {
+	    || i->second.get<int32_t>() < 0) {
 		world->log().warn(Raul::fmt("Port %1% has no valid index\n") % subject);
 		return boost::optional<PortRecord>();
 	}
-	index = i->second.get_int32();
+	index = i->second.get<int32_t>();
 
 	// Get symbol
 	Resource::Properties::const_iterator s = props.find(uris.lv2_symbol);
@@ -163,7 +163,7 @@ get_port(Ingen::World*     world,
 		world->log().warn(Raul::fmt("Port %1% has no symbol\n") % subject);
 		return boost::optional<PortRecord>();
 	}
-	const Raul::Symbol port_sym(s->second.get_string());
+	const Raul::Symbol port_sym(s->second.ptr<char>());
 	const Raul::Path   port_path = parent.child(port_sym);
 
 	return make_pair(port_path, props);

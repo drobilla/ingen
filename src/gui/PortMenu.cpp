@@ -155,8 +155,8 @@ PortMenu::on_menu_expose()
 	r.set_property(uris.lv2_name, _app->forge().alloc(label.c_str()));
 
 	// TODO: Pretty kludgey coordinates
-	const float block_x = block->get_property(uris.ingen_canvasX).get_float();
-	const float block_y = block->get_property(uris.ingen_canvasY).get_float();
+	const float block_x = block->get_property(uris.ingen_canvasX).get<float>();
+	const float block_y = block->get_property(uris.ingen_canvasY).get<float>();
 	const float x_off   = (label.length() * 16.0f) * (port->is_input() ? -1 : 1);
 	const float y_off   = port->index() * 32.0f;
 	r.set_property(uris.ingen_canvasX, _app->forge().make(block_x + x_off));

@@ -87,8 +87,8 @@ types(World* world, SPtr<const Client::ObjectModel> model)
 	URISet types;
 	PropRange range = model->properties().equal_range(world->uris().rdf_type);
 	for (PropIter t = range.first; t != range.second; ++t) {
-		types.insert(Raul::URI(t->second.get_uri()));
-		if (world->uris().ingen_Graph == t->second.get_uri()) {
+		types.insert(Raul::URI(t->second.ptr<char>()));
+		if (world->uris().ingen_Graph == t->second.ptr<char>()) {
 			// Add lv2:Plugin as a type for graphs so plugin properties show up
 			types.insert(world->uris().lv2_Plugin);
 		}

@@ -155,11 +155,11 @@ GraphView::property_changed(const Raul::URI& predicate, const Raul::Atom& value)
 	_enable_signal = false;
 	if (predicate == _app->uris().ingen_enabled) {
 		if (value.type() == _app->uris().forge.Bool) {
-			_process_but->set_active(value.get_bool());
+			_process_but->set_active(value.get<int32_t>());
 		}
 	} else if (predicate == _app->uris().ingen_polyphony) {
 		if (value.type() == _app->uris().forge.Int) {
-			_poly_spin->set_value(value.get_int32());
+			_poly_spin->set_value(value.get<int32_t>());
 		}
 	}
 	_enable_signal = true;

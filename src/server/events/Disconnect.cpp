@@ -97,7 +97,7 @@ Disconnect::Impl::Impl(Engine&     e,
 
 		const bool is_control = _dst_input_port->is_a(PortType::CONTROL) ||
 			_dst_input_port->is_a(PortType::CV);
-		const float value = is_control ? _dst_input_port->value().get_float() : 0;
+		const float value = is_control ? _dst_input_port->value().get<float>() : 0;
 		for (uint32_t i = 0; i < _buffers->size(); ++i) {
 			if (is_control) {
 				Buffer* buf = _buffers->at(i).get();

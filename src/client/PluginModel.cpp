@@ -172,7 +172,7 @@ PluginModel::default_block_symbol() const
 {
 	const Raul::Atom& name_atom = get_property(_uris.lv2_symbol);
 	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String)
-		return Raul::Symbol::symbolify(name_atom.get_string());
+		return Raul::Symbol::symbolify(name_atom.ptr<char>());
 	else
 		return Raul::Symbol("_");
 }
@@ -182,7 +182,7 @@ PluginModel::human_name() const
 {
 	const Raul::Atom& name_atom = get_property(_uris.doap_name);
 	if (name_atom.type() == _uris.forge.String)
-		return name_atom.get_string();
+		return name_atom.ptr<char>();
 	else
 		return default_block_symbol().c_str();
 }

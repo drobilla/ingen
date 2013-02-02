@@ -64,7 +64,7 @@ bool
 ObjectModel::polyphonic() const
 {
 	const Raul::Atom& polyphonic = get_property(_uris.ingen_polyphonic);
-	return (polyphonic.is_valid() && polyphonic.get_bool());
+	return (polyphonic.is_valid() && polyphonic.get<int32_t>());
 }
 
 /** Merge the data of @a model with self, as much as possible.

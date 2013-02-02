@@ -150,7 +150,7 @@ NodeModule::show_human_names(bool b)
 		if (b) {
 			const Raul::Atom& name_property = port->model()->get_property(uris.lv2_name);
 			if (name_property.type() == uris.forge.String) {
-				label = name_property.get_string();
+				label = name_property.ptr<char>();
 			} else {
 				Glib::ustring hn = block()->plugin_model()->port_human_name(
 						port->model()->index());
@@ -237,8 +237,8 @@ NodeModule::embed_gui(bool embed)
 void
 NodeModule::rename()
 {
-	if (app().world()->conf().option("port-labels").get_bool() &&
-	    !app().world()->conf().option("human-names").get_bool()) {
+	if (app().world()->conf().option("port-labels").get<int32_t>() &&
+	    !app().world()->conf().option("human-names").get<int32_t>()) {
 		set_label(_block->path().symbol());
 	}
 }
@@ -247,7 +247,7 @@ void
 NodeModule::new_port_view(SPtr<const PortModel> port)
 {
 	Port::create(app(), *this, port,
-	             app().world()->conf().option("human-names").get_bool());
+	             app().world()->conf().option("human-names").get<int32_t>());
 
 	port->signal_value_changed().connect(
 		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::port_activity),
@@ -403,24 +403,24 @@ NodeModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {
 		if (key == uris.ingen_canvasX) {
-			move_to(value.get_float(), get_y());
+			move_to(value.get<float>(), get_y());
 		} else if (key == uris.ingen_canvasY) {
-			move_to(get_x(), value.get_float());
+			move_to(get_x(), value.get<float>());
 		}
 	} else if (value.type() == uris.forge.Bool) {
 		if (key == uris.ingen_polyphonic) {
-			set_stacked(value.get_bool());
+			set_stacked(value.get<int32_t>());
 		} else if (key == uris.ingen_uiEmbedded) {
-			if (value.get_bool() && !_gui_widget) {
+			if (value.get<int32_t>() && !_gui_widget) {
 				embed_gui(true);
-			} else if (!value.get_bool() && _gui_widget) {
+			} else if (!value.get<int32_t>() && _gui_widget) {
 				embed_gui(false);
 			}
 		}
 	} else if (value.type() == uris.forge.String) {
 		if (key == uris.lv2_name
-		    && app().world()->conf().option("human-names").get_bool()) {
-			set_label(value.get_string());
+		    && app().world()->conf().option("human-names").get<int32_t>()) {
+			set_label(value.ptr<char>());
 		}
 	}
 }
