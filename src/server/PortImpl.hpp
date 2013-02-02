@@ -119,6 +119,9 @@ public:
 		get_buffers(bufs, _buffers, poly, real_time);
 	}
 
+	void activate(BufferFactory& bufs);
+	void deactivate();
+
 	virtual void connect_buffers();
 	virtual void recycle_buffers();
 
@@ -202,12 +205,13 @@ protected:
 	uint32_t                _index;
 	uint32_t                _poly;
 	uint32_t                _buffer_size;
+	uint32_t                _frames_since_monitor;
+	float                   _last_monitor_value;
 	PortType                _type;
 	LV2_URID                _buffer_type;
 	Raul::Atom              _value;
 	Raul::Atom              _min;
 	Raul::Atom              _max;
-	Raul::Atom              _last_monitor_value;
 	Raul::Array<SetState>*  _set_states;
 	Raul::Array<SetState>*  _prepared_set_states;
 	Raul::Array<BufferRef>* _buffers;

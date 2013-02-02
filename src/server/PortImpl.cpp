@@ -23,6 +23,7 @@
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
+#include "Driver.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 #include "ThreadManager.hpp"
@@ -31,6 +32,16 @@ using namespace std;
 
 namespace Ingen {
 namespace Server {
+
+static const uint32_t monitor_rate = 10.0;  // Hz
+
+/** The length of time between monitor updates in frames */
+static inline uint32_t
+monitor_period(const Engine& engine)
+{
+	return std::max(engine.driver()->block_length(),
+	                engine.driver()->sample_rate() / monitor_rate);
+}
 
 PortImpl::PortImpl(BufferFactory&      bufs,
                    BlockImpl* const    block,
@@ -46,12 +57,13 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _index(index)
 	, _poly(poly)
 	, _buffer_size(buffer_size)
+	, _frames_since_monitor(0)
+	, _last_monitor_value(0.0f)
 	, _type(type)
 	, _buffer_type(buffer_type)
 	, _value(value)
 	, _min(bufs.forge().make(0.0f))
 	, _max(bufs.forge().make(1.0f))
-	, _last_monitor_value(value)
 	, _set_states(new Raul::Array<SetState>(static_cast<size_t>(poly)))
 	, _prepared_set_states(NULL)
 	, _buffers(new Raul::Array<BufferRef>(static_cast<size_t>(poly)))
@@ -120,6 +132,36 @@ PortImpl::supports(const Raul::URI& value_type) const
 {
 	return has_property(_bufs.uris().atom_supports,
 	                    _bufs.forge().alloc_uri(value_type));
+}
+
+void
+PortImpl::activate(BufferFactory& bufs)
+{
+	setup_buffers(bufs, _poly, false);
+	connect_buffers();
+	clear_buffers();
+
+	/* Set the time since the last monitor update to a random value within the
+	   monitor period, to spread the load out over time.  Otherwise, every
+	   port would try to send an update at exactly the same time, every time.
+	*/
+	const double   srate  = bufs.engine().driver()->sample_rate();
+	const uint32_t period = srate / monitor_rate;
+	_frames_since_monitor = rand() % period;
+	_last_monitor_value   = 0.0f;
+}
+
+void
+PortImpl::deactivate()
+{
+	if (is_output()) {
+		for (uint32_t v = 0; v < _poly; ++v) {
+			if (_buffers->at(v)) {
+				_buffers->at(v)->clear();
+			}
+		}
+	}
+	_last_monitor_value = 0.0f;
 }
 
 Raul::Array<BufferRef>*
@@ -346,19 +388,20 @@ PortImpl::monitor(Context& context)
 
 	Forge& forge = context.engine().world()->forge();
 	URIs&  uris  = context.engine().world()->uris();
-	LV2_URID       key   = 0;
-	Raul::Atom     val;
+
+	LV2_URID key = 0;
+	float    val = 0.0f;
 	switch (_type.id()) {
 	case PortType::UNKNOWN:
 		break;
 	case PortType::AUDIO:
 		key = uris.ingen_activity;
-		val = forge.make(buffer(0)->peak(context));
+		val = std::max(_last_monitor_value, buffer(0)->peak(context));
 		break;
 	case PortType::CONTROL:
 	case PortType::CV:
 		key = uris.ingen_value;
-		val = forge.make(buffer(0)->value_at(0));
+		val = buffer(0)->value_at(0);
 		break;
 	case PortType::ATOM:
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
@@ -384,18 +427,33 @@ PortImpl::monitor(Context& context)
 				               &one);
 			}
 		}
-		break;
 	}
 
-	if (val.is_valid() && val != _last_monitor_value) {
+	const uint32_t period = monitor_period(context.engine());
+	if (key && val != _last_monitor_value && _frames_since_monitor >= period) {
+		// Time to send an update
 		if (context.notify(key, context.start(), this,
-		                   val.size(), val.type(), val.get_body())) {
-			_last_monitor_value = val;
-		}
+		                   sizeof(float), forge.Float, &val)) {
+			// Success, update last value
+			switch (_type.id()) {
+			case PortType::AUDIO:
+				_last_monitor_value = 0.0f;  // Reset peak
+				break;
+			case PortType::CONTROL:
+			case PortType::CV:
+				_last_monitor_value = val;  // Store last sent control value
+			default:
+				break;
+			}
 
-		/* On failure, last_broadcasted_value remains unaffected, so we'll try
-		   again next cycle and so on until the value is finally delivered. */
+			/* Update frames since last update to conceptually zero, but keep
+			   the remainder to preserve load balancing. */
+			_frames_since_monitor = _frames_since_monitor % period;
+		}
+		// Otherwise failure, leave old value and try again next time
 	}
+
+	_frames_since_monitor += context.nframes();
 }
 
 } // namespace Server

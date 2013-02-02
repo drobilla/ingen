@@ -84,9 +84,7 @@ BlockImpl::activate(BufferFactory& bufs)
 	_activated = true;
 	for (uint32_t p = 0; p < num_ports(); ++p) {
 		PortImpl* const port = _ports->at(p);
-		port->setup_buffers(bufs, port->poly(), false);
-		port->connect_buffers();
-		port->clear_buffers();
+		port->activate(bufs);
 	}
 }
 
@@ -94,12 +92,9 @@ void
 BlockImpl::deactivate()
 {
 	_activated = false;
-	for (uint32_t i = 0; i < _polyphony; ++i) {
-		for (uint32_t j = 0; j < num_ports(); ++j) {
-			PortImpl* const port = _ports->at(j);
-			if (port->is_output() && port->buffer(i))
-				port->buffer(i)->clear();
-		}
+	for (uint32_t p = 0; p < num_ports(); ++p) {
+		PortImpl* const port = _ports->at(p);
+		port->deactivate();
 	}
 }
 
