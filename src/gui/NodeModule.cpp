@@ -163,15 +163,6 @@ NodeModule::show_human_names(bool b)
 }
 
 void
-NodeModule::value_changed(uint32_t index, const Raul::Atom& value)
-{
-	if (!_plugin_ui)
-		return;
-
-	_plugin_ui->port_event(index, value.size(), value.type(), value.get_body());
-}
-
-void
 NodeModule::port_activity(uint32_t index, const Raul::Atom& value)
 {
 	if (!_plugin_ui)
@@ -182,7 +173,7 @@ NodeModule::port_activity(uint32_t index, const Raul::Atom& value)
 	// FIXME: Well, this sucks...
 	LV2_Atom* atom = (LV2_Atom*)malloc(sizeof(LV2_Atom) + value.size());
 	atom->type = value.type();
-	atom->size = value.type();
+	atom->size = value.size();
 	memcpy(LV2_ATOM_BODY(atom), value.get_body(), value.size());
 	_plugin_ui->port_event(
 		index, lv2_atom_total_size(atom), uris.atom_eventTransfer, atom);
@@ -259,7 +250,7 @@ NodeModule::new_port_view(SPtr<const PortModel> port)
 	             app().world()->conf().option("human-names").get_bool());
 
 	port->signal_value_changed().connect(
-		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::value_changed),
+		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::port_activity),
 		              port->index()));
 
 	port->signal_activity().connect(
@@ -346,7 +337,7 @@ NodeModule::set_control_values()
 	uint32_t index = 0;
 	for (const auto& p : _block->ports()) {
 		if (app().can_control(p.get())) {
-			value_changed(index, p->value());
+			port_activity(index, p->value());
 		}
 		++index;
 	}
