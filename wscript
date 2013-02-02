@@ -46,8 +46,6 @@ def configure(conf):
     autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
                       atleast_version='2.14.0', mandatory=True)
     autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
-                      atleast_version='0.109.0', mandatory=True)
-    autowaf.check_pkg(conf, 'jack', uselib_store='NEW_JACK',
                       atleast_version='0.120.0', mandatory=False)
     autowaf.check_pkg(conf, 'lilv-0', uselib_store='LILV',
                       atleast_version='0.0.0', mandatory=True)
@@ -76,8 +74,7 @@ def configure(conf):
                       define_name='HAVE_SOCKET',
                       mandatory=False)
     if not Options.options.no_jack_session:
-        if conf.is_defined('HAVE_NEW_JACK'):
-            autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
+        autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
 
     conf.env.BUILD_TESTS = Options.options.build_tests
     if conf.env.BUILD_TESTS:
