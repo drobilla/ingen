@@ -380,7 +380,7 @@ PortImpl::clear_buffers()
 }
 
 void
-PortImpl::monitor(Context& context)
+PortImpl::monitor(Context& context, bool send_now)
 {
 	if (!context.must_notify(this)) {
 		return;
@@ -430,7 +430,8 @@ PortImpl::monitor(Context& context)
 	}
 
 	const uint32_t period = monitor_period(context.engine());
-	if (key && val != _last_monitor_value && _frames_since_monitor >= period) {
+	if (key && val != _last_monitor_value &&
+	    (send_now || _frames_since_monitor >= period)) {
 		// Time to send an update
 		if (context.notify(key, context.start(), this,
 		                   sizeof(float), forge.Float, &val)) {

@@ -159,7 +159,8 @@ public:
 	/** Explicitly turn on monitoring for this port. */
 	void enable_monitoring(bool monitored) { _monitored = monitored; }
 
-	void monitor(Context& context);
+	/** Monitor port value and broadcast to clients periodically. */
+	void monitor(Context& context, bool send_now=false);
 
 	void raise_set_by_user_flag() { _set_by_user = true; }
 
