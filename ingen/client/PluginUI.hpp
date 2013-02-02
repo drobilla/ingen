@@ -42,9 +42,9 @@ class PluginUI {
 public:
 	~PluginUI();
 
-	static SPtr<PluginUI> create(Ingen::World*               world,
+	static SPtr<PluginUI> create(Ingen::World*          world,
 	                             SPtr<const BlockModel> block,
-	                             const LilvPlugin*           plugin);
+	                             const LilvPlugin*      plugin);
 
 	SuilWidget get_widget();
 
