@@ -23,6 +23,8 @@
 #include <glibmm/fileutils.h>
 #include <gtkmm/stock.h>
 
+#include "raul/fmt.hpp"
+
 #include "ingen/Interface.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/client/ClientStore.hpp"
@@ -176,11 +178,14 @@ GraphBox::init_box(App& app)
 {
 	_app = &app;
 
-	std::string engine_name = _app->interface()->uri();
-	if (engine_name == "http://drobilla.net/ns/ingen#internal") {
-		engine_name = "internal engine";
+	const Raul::URI engine_uri(_app->interface()->uri());
+	if (engine_uri == "ingen:/clients/event_writer") {
+		_status_bar->push("Running internal engine", STATUS_CONTEXT_ENGINE);
+	} else {
+		_status_bar->push(
+			(Raul::fmt("Connected to %1%") % engine_uri).str(),
+			STATUS_CONTEXT_ENGINE);
 	}
-	_status_bar->push(std::string("Connected to ") + engine_name, STATUS_CONTEXT_ENGINE);
 
 	_menu_view_messages_window->signal_activate().connect(
 		sigc::mem_fun<void>(_app->messages_dialog(), &MessagesWindow::present));
