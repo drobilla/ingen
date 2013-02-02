@@ -106,6 +106,11 @@ Port::Port(App&                  app,
 	signal_event().connect(
 		sigc::mem_fun(this, &Port::on_event));
 
+	if (pm->is_enumeration()) {
+		const uint8_t ellipsis[] = { 0xE2, 0x80, 0xA6, 0 };
+		set_value_label((const char*)ellipsis);
+	}
+
 	update_metadata();
 	value_changed(pm->value());
 }
