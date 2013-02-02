@@ -69,9 +69,9 @@ SocketListener::~SocketListener()
 	_exit_flag = true;
 	_unix_sock.shutdown();
 	_net_sock.shutdown();
-	join();
 	_unix_sock.close();
 	_net_sock.close();
+	join();
 	unlink(_unix_path.c_str());
 }
 
@@ -97,7 +97,7 @@ SocketListener::_run()
 
 	while (true) {
 		// Wait for input to arrive at a socket
-		int ret = poll(pfds, nfds, -1);
+		const int ret = poll(pfds, nfds, -1);
 		if (_exit_flag) {
 			break;
 		} else if (ret == -1) {
