@@ -89,7 +89,6 @@ lv2:symbol property is given.
 
 ingen:polyphonic
 	a owl:DatatypeProperty ;
-	rdfs:domain ingen:Node ;
 	rdfs:range xsd:boolean ;
 	rdfs:label "Polyphonic" ;
 	rdfs:comment """
