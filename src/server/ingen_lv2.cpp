@@ -60,6 +60,8 @@
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
+namespace Ingen {
+
 /** Record of a graph in this bundle. */
 struct LV2Graph {
 	LV2Graph(const std::string& u, const std::string& f);
@@ -74,12 +76,11 @@ class Lib {
 public:
 	explicit Lib(const char* bundle_path);
 
-	typedef std::vector< Ingen::SPtr<const LV2Graph> > Graphs;
+	typedef std::vector< SPtr<const LV2Graph> > Graphs;
 
 	Graphs graphs;
 };
 
-namespace Ingen {
 namespace Server {
 
 class LV2Driver;

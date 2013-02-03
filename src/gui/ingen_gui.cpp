@@ -17,23 +17,29 @@
 #include "ingen/Module.hpp"
 #include "App.hpp"
 
-struct IngenGUIModule : public Ingen::Module {
-	void load(Ingen::World* world) {
-		app = Ingen::GUI::App::create(world);
+namespace Ingen {
+namespace GUI {
+
+struct GUIModule : public Module {
+	void load(World* world) {
+		app = GUI::App::create(world);
 	}
-	void run(Ingen::World* world) {
+	void run(World* world) {
 		app->run();
 	}
 
-	Ingen::SPtr<Ingen::GUI::App> app;
+	SPtr<GUI::App> app;
 };
+
+} // namespace GUI
+} // namespace Ingen
 
 extern "C" {
 
 Ingen::Module*
 ingen_module_load()
 {
-	return new IngenGUIModule();
+	return new Ingen::GUI::GUIModule();
 }
 
 } // extern "C"

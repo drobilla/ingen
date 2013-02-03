@@ -30,9 +30,11 @@
 
 #define INGEN_LV2_UI_URI "http://drobilla.net/ns/ingen#GraphUIGtk2"
 
+namespace Ingen {
+
 /** A sink that writes atoms to a port via the UI extension. */
-struct IngenLV2AtomSink : public Ingen::AtomSink {
-	IngenLV2AtomSink(Ingen::URIs&         uris,
+struct IngenLV2AtomSink : public AtomSink {
+	IngenLV2AtomSink(URIs&                uris,
 	                 LV2UI_Write_Function ui_write,
 	                 LV2UI_Controller     ui_controller)
 		: _uris(uris)
@@ -49,7 +51,7 @@ struct IngenLV2AtomSink : public Ingen::AtomSink {
 		return true;
 	}
 
-	Ingen::URIs&         _uris;
+	URIs&                _uris;
 	LV2UI_Write_Function _ui_write;
 	LV2UI_Controller     _ui_controller;
 };
@@ -63,17 +65,19 @@ struct IngenLV2UI {
 		, sink(NULL)
 	{}
 
-	int                                            argc;
-	char**                                         argv;
-	Ingen::Forge*                                  forge;
-	Ingen::World*                                  world;
-	IngenLV2AtomSink*                              sink;
-	Ingen::SPtr<Ingen::GUI::App>                   app;
-	Ingen::SPtr<Ingen::GUI::GraphBox>              view;
-	Ingen::SPtr<Ingen::Interface>                  engine;
-	Ingen::SPtr<Ingen::AtomReader>                 reader;
-	Ingen::SPtr<Ingen::Client::SigClientInterface> client;
+	int                              argc;
+	char**                           argv;
+	Forge*                           forge;
+	World*                           world;
+	IngenLV2AtomSink*                sink;
+	SPtr<GUI::App>                   app;
+	SPtr<GUI::GraphBox>              view;
+	SPtr<Interface>                  engine;
+	SPtr<AtomReader>                 reader;
+	SPtr<Client::SigClientInterface> client;
 };
+
+} // namespace Ingen
 
 static LV2UI_Handle
 instantiate(const LV2UI_Descriptor*   descriptor,
@@ -86,7 +90,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 {
 	Ingen::set_bundle_path(bundle_path);
 
-	IngenLV2UI* ui = new IngenLV2UI();
+	Ingen::IngenLV2UI* ui = new Ingen::IngenLV2UI();
 
 	LV2_URID_Map*   map   = NULL;
 	LV2_URID_Unmap* unmap = NULL;
@@ -110,11 +114,11 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		return NULL;
 	}
 
-	ui->sink = new IngenLV2AtomSink(
+	ui->sink = new Ingen::IngenLV2AtomSink(
 		ui->world->uris(), write_function, controller);
 
 	// Set up an engine interface that writes LV2 atoms
-	ui->engine = Ingen::SPtr<Ingen::Interface>(
+	ui->engine = SPtr<Ingen::Interface>(
 		new Ingen::AtomWriter(
 			ui->world->uri_map(), ui->world->uris(), *ui->sink));
 
@@ -122,11 +126,11 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	// Create App and client
 	ui->app = Ingen::GUI::App::create(ui->world);
-	ui->client = Ingen::SPtr<Ingen::Client::SigClientInterface>(
+	ui->client = SPtr<Ingen::Client::SigClientInterface>(
 		new Ingen::Client::SigClientInterface());
 	ui->app->attach(ui->client);
 
-	ui->reader = Ingen::SPtr<Ingen::AtomReader>(
+	ui->reader = SPtr<Ingen::AtomReader>(
 		new Ingen::AtomReader(ui->world->uri_map(),
 		                      ui->world->uris(),
 		                      ui->world->log(),
@@ -141,7 +145,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->app->store()->put(Ingen::Node::root_uri(), props);
 
 	// Create a GraphBox for the root and set as the UI widget
-	Ingen::SPtr<const Ingen::Client::GraphModel> root =
+	SPtr<const Ingen::Client::GraphModel> root =
 		Ingen::dynamic_ptr_cast<const Ingen::Client::GraphModel>(
 			ui->app->store()->object(Raul::Path("/")));
 	ui->view = Ingen::GUI::GraphBox::create(*ui->app, root);
@@ -157,7 +161,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 static void
 cleanup(LV2UI_Handle handle)
 {
-	IngenLV2UI* ui = (IngenLV2UI*)handle;
+	Ingen::IngenLV2UI* ui = (Ingen::IngenLV2UI*)handle;
 	delete ui;
 }
 
@@ -168,7 +172,7 @@ port_event(LV2UI_Handle handle,
            uint32_t     format,
            const void*  buffer)
 {
-	IngenLV2UI*     ui   = (IngenLV2UI*)handle;
+	Ingen::IngenLV2UI*   ui   = (Ingen::IngenLV2UI*)handle;
 	const LV2_Atom* atom = (const LV2_Atom*)buffer;
 	ui->reader->write(atom);
 }

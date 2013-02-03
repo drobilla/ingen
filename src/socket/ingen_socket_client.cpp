@@ -23,36 +23,40 @@
 #include "Socket.hpp"
 #include "SocketClient.hpp"
 
-static Ingen::SPtr<Ingen::Interface>
-new_socket_interface(Ingen::World*                 world,
-                     const Raul::URI&              uri,
-                     Ingen::SPtr<Ingen::Interface> respondee)
+namespace Ingen {
+namespace Socket {
+
+static SPtr<Ingen::Interface>
+new_socket_interface(Ingen::World*          world,
+                     const Raul::URI&       uri,
+                     SPtr<Ingen::Interface> respondee)
 {
-	Ingen::SPtr<Ingen::Socket::Socket> sock(
-		new Ingen::Socket::Socket(Ingen::Socket::Socket::type_from_uri(uri)));
+	SPtr<Socket> sock(new Socket(Socket::type_from_uri(uri)));
 	if (!sock->connect(uri)) {
 		world->log().error(Raul::fmt("Failed to connect <%1%> (%2%)\n")
 		                   % sock->uri() % strerror(errno));
-		return Ingen::SPtr<Ingen::Interface>();
+		return SPtr<Interface>();
 	}
-	Ingen::Socket::SocketClient* client = new Ingen::Socket::SocketClient(
-		*world, uri, sock, respondee);
-	return Ingen::SPtr<Ingen::Interface>(client);
+	SocketClient* client = new SocketClient(*world, uri, sock, respondee);
+	return SPtr<Interface>(client);
 }
 
-struct IngenSocketClientModule : public Ingen::Module {
-	void load(Ingen::World* world) {
+struct SocketClientModule : public Module {
+	void load(World* world) {
 		world->add_interface_factory("unix", &new_socket_interface);
 		world->add_interface_factory("tcp", &new_socket_interface);
 	}
 };
+
+} // namespace Socket
+} // namespace Ingen
 
 extern "C" {
 
 Ingen::Module*
 ingen_module_load()
 {
-	return new IngenSocketClientModule();
+	return new Ingen::Socket::SocketClientModule();
 }
 
 } // extern "C"
