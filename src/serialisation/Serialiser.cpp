@@ -14,6 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <errno.h>
+#include <string.h>
+
 #include <cassert>
 #include <cstdlib>
 #include <string>
@@ -151,8 +154,12 @@ Serialiser::Impl::write_manifest(const std::string& bundle_path,
 	                      Sord::URI(world, uris.lv2_binary),
 	                      Sord::URI(world, binary_path, _base_uri));
 
-	symlink(Glib::Module::build_path(INGEN_BUNDLE_DIR, "ingen_lv2").c_str(),
-	        Glib::Module::build_path(bundle_path, "ingen_lv2").c_str());
+	std::string lib(Glib::Module::build_path(INGEN_BUNDLE_DIR, "ingen_lv2"));
+	std::string link(Glib::Module::build_path(bundle_path, "ingen_lv2"));
+	if (symlink(lib.c_str(), link.c_str())) {
+		_world.log().error(Raul::fmt("Error creating link %1% => %2% (%3%\n")
+		                   % lib % link % strerror(errno));
+	}
 
 	finish();
 }
