@@ -35,6 +35,8 @@ def configure(conf):
     conf.load('compiler_cxx')
     conf.load('python')
     autowaf.configure(conf)
+
+    conf.check_cxx(cxxflags=["-std=c++0x"])
     conf.env.append_unique('CXXFLAGS', ['-std=c++0x'])
 
     autowaf.display_header('Ingen Configuration')
