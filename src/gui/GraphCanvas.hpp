@@ -21,8 +21,6 @@
 #include <map>
 #include <set>
 
-#include <boost/shared_ptr.hpp>
-
 #include "lilv/lilv.h"
 
 #include "ganv/Canvas.hpp"

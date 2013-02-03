@@ -39,6 +39,11 @@ def configure(conf):
     conf.check_cxx(cxxflags=["-std=c++0x"])
     conf.env.append_unique('CXXFLAGS', ['-std=c++0x'])
 
+    autowaf.check_header(conf, 'cxx', 'boost/format.hpp')
+    autowaf.check_header(conf, 'cxx', 'boost/intrusive/list.hpp')
+    autowaf.check_header(conf, 'cxx', 'boost/optional.hpp')
+    autowaf.check_header(conf, 'cxx', 'boost/utility.hpp')
+
     autowaf.display_header('Ingen Configuration')
     conf.check_python_version((2,4,0), mandatory=False)
     autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',

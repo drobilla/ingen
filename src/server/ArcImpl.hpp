@@ -20,7 +20,6 @@
 #include <cstdlib>
 
 #include <boost/intrusive/slist.hpp>
-#include <boost/utility.hpp>
 
 #include "ingen/Arc.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
