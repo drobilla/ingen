@@ -88,6 +88,10 @@ instantiate(const LV2UI_Descriptor*   descriptor,
             LV2UI_Widget*             widget,
             const LV2_Feature* const* features)
 {
+#if __cplusplus >= 201103L
+	using Ingen::SPtr;
+#endif
+
 	Ingen::set_bundle_path(bundle_path);
 
 	Ingen::IngenLV2UI* ui = new Ingen::IngenLV2UI();
