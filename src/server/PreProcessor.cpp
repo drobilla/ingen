@@ -36,7 +36,10 @@ PreProcessor::PreProcessor()
 }
 
 PreProcessor::~PreProcessor()
-{}
+{
+	_exit_flag = true;
+	_sem.post();
+}
 
 void
 PreProcessor::event(Event* const ev)
