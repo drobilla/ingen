@@ -58,7 +58,8 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _poly(poly)
 	, _buffer_size(buffer_size)
 	, _frames_since_monitor(0)
-	, _last_monitor_value(0.0f)
+	, _monitor_value(0.0f)
+	, _peak(0.0f)
 	, _type(type)
 	, _buffer_type(buffer_type)
 	, _value(value)
@@ -148,7 +149,8 @@ PortImpl::activate(BufferFactory& bufs)
 	const double   srate  = bufs.engine().driver()->sample_rate();
 	const uint32_t period = srate / monitor_rate;
 	_frames_since_monitor = bufs.engine().frand() * period;
-	_last_monitor_value   = 0.0f;
+	_monitor_value        = 0.0f;
+	_peak                 = 0.0f;
 }
 
 void
@@ -161,7 +163,8 @@ PortImpl::deactivate()
 			}
 		}
 	}
-	_last_monitor_value = 0.0f;
+	_monitor_value = 0.0f;
+	_peak          = 0.0f;
 }
 
 Raul::Array<BufferRef>*
@@ -396,7 +399,7 @@ PortImpl::monitor(Context& context, bool send_now)
 		break;
 	case PortType::AUDIO:
 		key = uris.ingen_activity;
-		val = std::max(_last_monitor_value, buffer(0)->peak(context));
+		val = _peak = std::max(_peak, buffer(0)->peak(context));
 		break;
 	case PortType::CONTROL:
 	case PortType::CV:
@@ -429,27 +432,16 @@ PortImpl::monitor(Context& context, bool send_now)
 		}
 	}
 
-	const uint32_t period = monitor_period(context.engine());
-	if (key && val != _last_monitor_value &&
-	    (send_now || _frames_since_monitor >= period)) {
-		// Time to send an update
+	const uint32_t period       = monitor_period(context.engine());
+	const bool     time_to_send = send_now || _frames_since_monitor >= period;
+	if (time_to_send && key && val != _monitor_value) {
 		if (context.notify(key, context.start(), this,
 		                   sizeof(float), forge.Float, &val)) {
-			// Success, update last value
-			switch (_type.id()) {
-			case PortType::AUDIO:
-				_last_monitor_value = 0.0f;  // Reset peak
-				break;
-			case PortType::CONTROL:
-			case PortType::CV:
-				_last_monitor_value = val;  // Store last sent control value
-			default:
-				break;
-			}
-
 			/* Update frames since last update to conceptually zero, but keep
 			   the remainder to preserve load balancing. */
 			_frames_since_monitor = _frames_since_monitor % period;
+			_peak                 = 0.0f;
+			_monitor_value        = val;
 		}
 		// Otherwise failure, leave old value and try again next time
 	}

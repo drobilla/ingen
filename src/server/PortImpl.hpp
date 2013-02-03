@@ -207,7 +207,8 @@ protected:
 	uint32_t                _poly;
 	uint32_t                _buffer_size;
 	uint32_t                _frames_since_monitor;
-	float                   _last_monitor_value;
+	float                   _monitor_value;
+	float                   _peak;
 	PortType                _type;
 	LV2_URID                _buffer_type;
 	Raul::Atom              _value;
