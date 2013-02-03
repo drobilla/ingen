@@ -147,7 +147,7 @@ PortImpl::activate(BufferFactory& bufs)
 	*/
 	const double   srate  = bufs.engine().driver()->sample_rate();
 	const uint32_t period = srate / monitor_rate;
-	_frames_since_monitor = rand() % period;
+	_frames_since_monitor = bufs.engine().frand() * period;
 	_last_monitor_value   = 0.0f;
 }
 

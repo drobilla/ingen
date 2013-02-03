@@ -152,14 +152,9 @@ Port::moved()
 }
 
 void
-Port::on_value_changed(GVariant* value)
+Port::on_value_changed(double value)
 {
-	if (!g_variant_is_of_type(value, G_VARIANT_TYPE_DOUBLE)) {
-		_app.log().warn("TODO: Non-float port value changed\n");
-		return;
-	}
-
-	const Raul::Atom atom = _app.forge().make(float(g_variant_get_double(value)));
+	const Raul::Atom atom = _app.forge().make(float(value));
 	if (atom != model()->value()) {
 		Ingen::World* const world = _app.world();
 		_app.interface()->set_property(model()->uri(),

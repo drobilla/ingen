@@ -17,6 +17,8 @@
 #ifndef INGEN_ENGINE_ENGINE_HPP
 #define INGEN_ENGINE_ENGINE_HPP
 
+#include <random>
+
 #include <boost/utility.hpp>
 
 #include "ingen/EngineBase.hpp"
@@ -76,6 +78,9 @@ public:
 	                             SPtr<Interface>  client);
 	virtual bool unregister_client(const Raul::URI& uri);
 
+	/** Return a random [0..1] float with uniform distribution */
+	float frand() { return _uniform_dist(_rand_engine); }
+
 	void set_driver(SPtr<Driver> driver);
 
 	SampleCount event_time();
@@ -127,6 +132,9 @@ private:
 	Worker*          _worker;
 
 	ProcessContext _process_context;
+
+	std::mt19937                          _rand_engine;
+	std::uniform_real_distribution<float> _uniform_dist;
 
 	bool _quit_flag;
 	bool _direct_driver;

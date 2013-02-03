@@ -64,6 +64,8 @@ Engine::Engine(Ingen::World* world)
 	, _root_graph(NULL)
 	, _worker(new Worker(world->log(), event_queue_size()))
 	, _process_context(*this)
+	, _rand_engine(0)
+	, _uniform_dist(0.0f, 1.0f)
 	, _quit_flag(false)
 	, _direct_driver(true)
 {

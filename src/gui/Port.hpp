@@ -80,7 +80,7 @@ private:
 	void property_changed(const Raul::URI& key, const Raul::Atom& value);
 	void moved();
 
-	void on_value_changed(GVariant* value);
+	void on_value_changed(double value);
 	void on_scale_point_activated(float f);
 	void on_uri_activated(const Raul::URI& uri);
 	bool on_event(GdkEvent* ev);
