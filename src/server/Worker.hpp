@@ -17,11 +17,12 @@
 #ifndef INGEN_ENGINE_WORKER_HPP
 #define INGEN_ENGINE_WORKER_HPP
 
+#include <thread>
+
 #include "ingen/LV2Features.hpp"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "raul/RingBuffer.hpp"
 #include "raul/Semaphore.hpp"
-#include "raul/Thread.hpp"
 
 namespace Ingen {
 
@@ -31,7 +32,7 @@ namespace Server {
 
 class LV2Block;
 
-class Worker : public Raul::Thread
+class Worker
 {
 public:
 	Worker(Log& log, uint32_t buffer_size);
@@ -58,8 +59,10 @@ private:
 	Raul::RingBuffer _responses;
 	uint8_t* const   _buffer;
 	const uint32_t   _buffer_size;
+	bool             _exit_flag;
+	std::thread      _thread;
 
-	virtual void _run();
+	void run();
 };
 
 } // namespace Server

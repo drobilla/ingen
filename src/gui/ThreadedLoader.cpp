@@ -31,14 +31,13 @@ namespace Ingen {
 namespace GUI {
 
 ThreadedLoader::ThreadedLoader(App& app, SPtr<Interface> engine)
-	: Raul::Thread()
-	, _app(app)
+	: _app(app)
 	, _sem(0)
 	, _engine(engine)
+	, _exit_flag(false)
+	, _thread(&ThreadedLoader::run, this)
 {
-	if (parser()) {
-		start();
-	} else {
+	if (!parser()) {
 		app.log().warn("Parser unavailable, graph loading disabled\n");
 	}
 }
@@ -47,6 +46,7 @@ ThreadedLoader::~ThreadedLoader()
 {
 	_exit_flag = true;
 	_sem.post();
+	_thread.join();
 }
 
 SPtr<Serialisation::Parser>
@@ -61,7 +61,7 @@ ThreadedLoader::parser()
 }
 
 void
-ThreadedLoader::_run()
+ThreadedLoader::run()
 {
 	while (_sem.wait() && !_exit_flag) {
 		_mutex.lock();

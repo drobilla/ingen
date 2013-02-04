@@ -18,11 +18,10 @@
 #define INGEN_ENGINE_PREPROCESSOR_HPP
 
 #include <atomic>
-
-#include <glibmm/thread.h>
+#include <thread>
+#include <mutex>
 
 #include "raul/Semaphore.hpp"
-#include "raul/Thread.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -31,17 +30,12 @@ class Event;
 class PostProcessor;
 class ProcessContext;
 
-class PreProcessor : public Raul::Thread
+class PreProcessor
 {
 public:
 	explicit PreProcessor();
 
 	~PreProcessor();
-
-	virtual void join() {
-		_exit_flag = true;
-		_sem.post();
-	}
 
 	/** Return true iff no events are enqueued. */
 	inline bool empty() const { return !_head.load(); }
@@ -59,14 +53,16 @@ public:
 	                 bool            limit = true);
 
 protected:
-	virtual void _run();
+	void run();
 
 private:
-	Glib::Mutex         _mutex;
+	std::mutex          _mutex;
 	Raul::Semaphore     _sem;
 	std::atomic<Event*> _head;
 	std::atomic<Event*> _prepared_back;
 	std::atomic<Event*> _tail;
+	bool                _exit_flag;
+	std::thread         _thread;
 };
 
 } // namespace Server

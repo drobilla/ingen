@@ -5,7 +5,6 @@ def build(bld):
     if bld.is_defined('HAVE_SOCKET'):
         obj = bld(features        = 'cxx cxxshlib',
                   source          = ['Socket.cpp',
-                                     'SocketListener.cpp',
                                      'SocketReader.cpp',
                                      'SocketWriter.cpp',
                                      'ingen_socket_server.cpp'],

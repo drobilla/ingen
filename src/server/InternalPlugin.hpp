@@ -17,10 +17,8 @@
 #ifndef INGEN_ENGINE_INTERNALPLUGIN_HPP
 #define INGEN_ENGINE_INTERNALPLUGIN_HPP
 
-#include <cstdlib>
-
-#include <boost/utility.hpp>
-#include <glibmm/module.h>
+#include "raul/Symbol.hpp"
+#include "raul/URI.hpp"
 
 #include "PluginImpl.hpp"
 

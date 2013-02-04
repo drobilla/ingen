@@ -15,7 +15,6 @@
 */
 
 #include <utility>
-#include <glibmm/thread.h>
 
 #include "ingen/Interface.hpp"
 
@@ -33,7 +32,7 @@ Broadcaster::Broadcaster()
 
 Broadcaster::~Broadcaster()
 {
-	Glib::Mutex::Lock lock(_clients_mutex);
+	std::lock_guard<std::mutex> lock(_clients_mutex);
 	_clients.clear();
 	_broadcastees.clear();
 }
@@ -44,7 +43,7 @@ void
 Broadcaster::register_client(const Raul::URI& uri,
                              SPtr<Interface>  client)
 {
-	Glib::Mutex::Lock lock(_clients_mutex);
+	std::lock_guard<std::mutex> lock(_clients_mutex);
 	_clients[uri] = client;
 }
 
@@ -55,7 +54,7 @@ Broadcaster::register_client(const Raul::URI& uri,
 bool
 Broadcaster::unregister_client(const Raul::URI& uri)
 {
-	Glib::Mutex::Lock lock(_clients_mutex);
+	std::lock_guard<std::mutex> lock(_clients_mutex);
 	const size_t erased = _clients.erase(uri);
 	_broadcastees.erase(uri);
 	return (erased > 0);
@@ -78,7 +77,7 @@ Broadcaster::set_broadcast(const Raul::URI& client, bool broadcast)
 SPtr<Interface>
 Broadcaster::client(const Raul::URI& uri)
 {
-	Glib::Mutex::Lock lock(_clients_mutex);
+	std::lock_guard<std::mutex> lock(_clients_mutex);
 	Clients::iterator i = _clients.find(uri);
 	if (i != _clients.end()) {
 		return (*i).second;
@@ -90,7 +89,7 @@ Broadcaster::client(const Raul::URI& uri)
 void
 Broadcaster::send_plugins(const BlockFactory::Plugins& plugins)
 {
-	Glib::Mutex::Lock lock(_clients_mutex);
+	std::lock_guard<std::mutex> lock(_clients_mutex);
 	for (const auto& c : _clients) {
 		send_plugins_to(c.second.get(), plugins);
 	}

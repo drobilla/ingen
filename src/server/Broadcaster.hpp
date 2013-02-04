@@ -20,10 +20,9 @@
 #include <atomic>
 #include <list>
 #include <map>
+#include <mutex>
 #include <set>
 #include <string>
-
-#include <glibmm/thread.h>
 
 #include "ingen/Interface.hpp"
 #include "ingen/types.hpp"
@@ -85,7 +84,7 @@ public:
 	void send_plugins_to(Interface*, const BlockFactory::Plugins& plugin_list);
 
 #define BROADCAST(msg, ...) \
-	Glib::Mutex::Lock lock(_clients_mutex); \
+	std::lock_guard<std::mutex> lock(_clients_mutex); \
 	for (const auto& c : _clients) \
 		c.second->msg(__VA_ARGS__)
 
@@ -147,7 +146,7 @@ private:
 
 	typedef std::map< Raul::URI, SPtr<Interface> > Clients;
 
-	Glib::Mutex         _clients_mutex;
+	std::mutex          _clients_mutex;
 	Clients             _clients;
 	std::set<Raul::URI> _broadcastees;
 	std::atomic<bool>   _must_broadcast;

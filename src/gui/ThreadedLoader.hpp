@@ -17,6 +17,8 @@
 #ifndef INGEN_GUI_THREADEDLOADER_HPP
 #define INGEN_GUI_THREADEDLOADER_HPP
 
+#include <thread>
+
 #include <cassert>
 #include <list>
 #include <string>
@@ -28,7 +30,6 @@
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
 #include "raul/Semaphore.hpp"
-#include "raul/Thread.hpp"
 
 namespace Ingen {
 namespace GUI {
@@ -44,7 +45,7 @@ namespace GUI {
  *
  * \ingroup GUI
  */
-class ThreadedLoader : public Raul::Thread
+class ThreadedLoader
 {
 public:
 	ThreadedLoader(App&            app,
@@ -70,13 +71,15 @@ private:
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	typedef sigc::slot<void> Closure;
 
-	void _run();
+	void run();
 
 	App&               _app;
 	Raul::Semaphore    _sem;
 	SPtr<Interface>    _engine;
 	Glib::Mutex        _mutex;
 	std::list<Closure> _events;
+	bool               _exit_flag;
+	std::thread        _thread;
 };
 
 } // namespace GUI

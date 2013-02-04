@@ -18,7 +18,7 @@
 #define INGEN_ENGINE_THREADMANAGER_HPP
 
 #include <cassert>
-#include "raul/Thread.hpp"
+
 #include "raul/ThreadVar.hpp"
 
 namespace Ingen {

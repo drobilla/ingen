@@ -17,7 +17,8 @@
 #ifndef INGEN_SOCKET_SOCKET_READER_HPP
 #define INGEN_SOCKET_SOCKET_READER_HPP
 
-#include "raul/Thread.hpp"
+#include <thread>
+
 #include "sord/sord.h"
 
 #include "Socket.hpp"
@@ -30,7 +31,7 @@ class World;
 namespace Socket {
 
 /** Calls Interface methods based on Turtle messages received via socket. */
-class SocketReader : public Raul::Thread
+class SocketReader
 {
 public:
 	SocketReader(World&       world,
@@ -40,7 +41,7 @@ public:
 	~SocketReader();
 
 private:
-	virtual void _run();
+	void run();
 
 	static SerdStatus set_base_uri(SocketReader*   iface,
 	                               const SerdNode* uri_node);
@@ -64,6 +65,8 @@ private:
 	SordInserter* _inserter;
 	SordNode*     _msg_node;
 	SPtr<Socket>  _socket;
+	bool          _exit_flag;
+	std::thread   _thread;
 };
 
 }  // namespace Ingen

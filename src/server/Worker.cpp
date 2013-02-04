@@ -101,28 +101,26 @@ Worker::Schedule::feature(World* world, Node* n)
 }
 
 Worker::Worker(Log& log, uint32_t buffer_size)
-	: Raul::Thread()
-	, _schedule(new Schedule())
+	: _schedule(new Schedule())
 	, _log(log)
 	, _sem(0)
 	, _requests(buffer_size)
 	, _responses(buffer_size)
 	, _buffer((uint8_t*)malloc(buffer_size))
 	, _buffer_size(buffer_size)
-{
-	start();
-}
+	, _thread(&Worker::run, this)
+{}
 
 Worker::~Worker()
 {
 	_exit_flag = true;
 	_sem.post();
-	join();
+	_thread.join();
 	free(_buffer);
 }
 
 void
-Worker::_run()
+Worker::run()
 {
 	while (_sem.wait() && !_exit_flag) {
 		MessageHeader msg;

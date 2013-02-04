@@ -33,20 +33,20 @@ namespace Socket {
 SocketReader::SocketReader(Ingen::World& world,
                            Interface&    iface,
                            SPtr<Socket>  sock)
-	: Raul::Thread()
-	, _world(world)
+	: _world(world)
 	, _iface(iface)
 	, _inserter(NULL)
 	, _msg_node(NULL)
 	, _socket(sock)
-{
-	start();
-}
+	, _exit_flag(false)
+	, _thread(&SocketReader::run, this)
+{}
 
 SocketReader::~SocketReader()
 {
+	_exit_flag = true;
 	_socket->shutdown();
-	join();
+	_thread.join();
 }
 
 SerdStatus
@@ -86,7 +86,7 @@ SocketReader::write_statement(SocketReader*      iface,
 }
 
 void
-SocketReader::_run()
+SocketReader::run()
 {
 	Sord::World*  world = _world.rdf_world();
 	LV2_URID_Map* map   = &_world.uri_map().urid_map_feature()->urid_map;

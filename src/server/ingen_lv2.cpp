@@ -17,6 +17,7 @@
 #include <stdlib.h>
 
 #include <string>
+#include <thread>
 #include <vector>
 
 #include <glib.h>
@@ -44,7 +45,6 @@
 #include "ingen/serialisation/Serialiser.hpp"
 #include "ingen/types.hpp"
 #include "raul/Semaphore.hpp"
-#include "raul/Thread.hpp"
 
 #include "Buffer.hpp"
 #include "Driver.hpp"
@@ -399,35 +399,22 @@ extern "C" {
 using namespace Ingen;
 using namespace Ingen::Server;
 
-class MainThread : public Raul::Thread
+static void
+ingen_lv2_main(SPtr<Engine> engine, LV2Driver* driver)
 {
-public:
-	explicit MainThread(SPtr<Engine> engine,
-	                    LV2Driver*   driver)
-		: Raul::Thread()
-		, _engine(engine)
-		, _driver(driver)
-	{}
+	while (true) {
+		// Wait until there is work to be done
+		driver->main_sem().wait();
 
-private:
-	virtual void _run() {
-		while (true) {
-			// Wait until there is work to be done
-			_driver->main_sem().wait();
+		// Convert pending messages to events and push to pre processor
+		driver->consume_from_ui();
 
-			// Convert pending messages to events and push to pre processor
-			_driver->consume_from_ui();
-
-			// Run post processor and maid to finalise events from last time
-			if (!_engine->main_iteration()) {
-				return;
-			}
+		// Run post processor and maid to finalise events from last time
+		if (!engine->main_iteration()) {
+			return;
 		}
 	}
-
-	SPtr<Engine> _engine;
-	LV2Driver*   _driver;
-};
+}
 
 struct IngenPlugin {
 	IngenPlugin()
@@ -439,7 +426,7 @@ struct IngenPlugin {
 	{}
 
 	Ingen::World* world;
-	MainThread*   main;
+	std::thread*  main;
 	LV2_URID_Map* map;
 	int           argc;
 	char**        argv;
@@ -584,8 +571,6 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	LV2Driver* driver = new LV2Driver(*engine.get(), block_length, rate);
 	engine->set_driver(SPtr<Ingen::Server::Driver>(driver));
 
-	plugin->main = new MainThread(engine, driver);
-
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;
 
@@ -632,10 +617,12 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 static void
 ingen_activate(LV2_Handle instance)
 {
-	IngenPlugin* me = (IngenPlugin*)instance;
-	me->world->engine()->activate();
-	//((EventWriter*)me->world->engine().get())->start();
-	me->main->start();
+	IngenPlugin*         me     = (IngenPlugin*)instance;
+	SPtr<Server::Engine> engine = dynamic_ptr_cast<Server::Engine>(
+		me->world->engine());
+	LV2Driver*           driver = (LV2Driver*)engine->driver();
+	engine->activate();
+	me->main = new std::thread(ingen_lv2_main, engine, driver);
 }
 
 static void
@@ -656,6 +643,8 @@ ingen_deactivate(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
 	me->world->engine()->deactivate();
+	delete me->main;
+	me->main = NULL;
 }
 
 static void
@@ -664,6 +653,7 @@ ingen_cleanup(LV2_Handle instance)
 	IngenPlugin* me = (IngenPlugin*)instance;
 	me->world->set_engine(SPtr<Ingen::Server::Engine>());
 	me->world->set_interface(SPtr<Ingen::Interface>());
+	delete me->main;
 	delete me->world;
 	delete me;
 }

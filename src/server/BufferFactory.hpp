@@ -19,9 +19,7 @@
 
 #include <atomic>
 #include <map>
-
-#undef nil
-#include <glibmm/thread.h>
+#include <mutex>
 
 #include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
@@ -88,7 +86,7 @@ private:
 	std::atomic<Buffer*> _free_sequence;
 	std::atomic<Buffer*> _free_object;
 
-	Glib::Mutex _mutex;
+	std::mutex  _mutex;
 	Engine&     _engine;
 	URIs&       _uris;
 	uint32_t    _seq_size;

@@ -192,8 +192,6 @@ Engine::activate()
 	_buffer_factory->set_block_length(_driver->block_length());
 	_options->set(*this);
 
-	_pre_processor->start();
-
 	const Ingen::URIs& uris  = world()->uris();
 	Forge&             forge = world()->forge();
 
@@ -283,8 +281,6 @@ Engine::activate()
 void
 Engine::deactivate()
 {
-	_pre_processor->join();
-
 	if (_driver) {
 		_driver->deactivate();
 	}

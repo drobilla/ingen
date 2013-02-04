@@ -28,7 +28,6 @@
 #include <glibmm/timer.h>
 
 #include "raul/Path.hpp"
-#include "raul/Thread.hpp"
 
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"

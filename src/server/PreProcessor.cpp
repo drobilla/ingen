@@ -14,6 +14,9 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdexcept>
+#include <iostream>
+
 #include "Event.hpp"
 #include "PostProcessor.hpp"
 #include "PreProcessor.hpp"
@@ -26,19 +29,19 @@ namespace Ingen {
 namespace Server {
 
 PreProcessor::PreProcessor()
-	: Raul::Thread()
-	, _sem(0)
+	: _sem(0)
 	, _head(NULL)
 	, _prepared_back(NULL)
 	, _tail(NULL)
-{
-	start();
-}
+	, _exit_flag(false)
+	, _thread(&PreProcessor::run, this)
+{}
 
 PreProcessor::~PreProcessor()
 {
 	_exit_flag = true;
 	_sem.post();
+	_thread.join();
 }
 
 void
@@ -46,7 +49,7 @@ PreProcessor::event(Event* const ev)
 {
 	// TODO: Probably possible to make this lock-free with CAS
 	ThreadManager::assert_not_thread(THREAD_IS_REAL_TIME);
-	Glib::Mutex::Lock lock(_mutex);
+	std::lock_guard<std::mutex> lock(_mutex);
 
 	assert(!ev->is_prepared());
 	assert(!ev->next());
@@ -114,7 +117,7 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 }
 
 void
-PreProcessor::_run()
+PreProcessor::run()
 {
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
 	while (_sem.wait() && !_exit_flag) {

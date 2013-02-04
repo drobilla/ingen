@@ -34,9 +34,7 @@ public:
 		: SocketWriter(world.uri_map(), world.uris(), uri, sock)
 		, _respondee(respondee)
 		, _reader(world, *respondee.get(), sock)
-	{
-		_reader.start();
-	}
+	{}
 
 	virtual SPtr<Interface> respondee() const {
 		return _respondee;
