@@ -44,11 +44,11 @@ Forge::str(const Raul::Atom& atom)
 	} else if (atom.type() == Bool) {
 		ss << (atom.get<int32_t>() ? "true" : "false");
 	} else if (atom.type() == URI) {
-		ss << "<" << atom.get<const char*>() << ">";
+		ss << "<" << atom.ptr<const char*>() << ">";
 	} else if (atom.type() == URID) {
 		ss << "<" << _map.unmap_uri(atom.get<int32_t>()) << ">";
 	} else if (atom.type() == String) {
-		ss << "\"" << atom.get<const char*>() << "\"";
+		ss << "\"" << atom.ptr<const char*>() << "\"";
 	}
 	return ss.str();
 }
