@@ -53,14 +53,21 @@ lv2_ui_write(SuilController controller,
 
 	// float (special case, always 0)
 	if (format == 0) {
-		assert(buffer_size == 4);
-		if (*(const float*)buffer == port->value().get<float>())
-			return; // do nothing (handle stupid plugin UIs that feed back)
+		if (buffer_size != 4) {
+			ui->world()->log().error(
+				Raul::fmt("%1% UI wrote corrupt float with bad size\n")
+				% ui->block()->plugin()->uri().c_str());
+			return;
+		}
+		const float value = *(const float*)buffer;
+		if (value == port->value().get<float>()) {
+			return;  // Ignore feedback
+		}
 
 		ui->world()->interface()->set_property(
 			port->uri(),
 			uris.ingen_value,
-			ui->world()->forge().make(*(const float*)buffer));
+			ui->world()->forge().make(value));
 
 	} else if (format == uris.atom_eventTransfer.id) {
 		const LV2_Atom*  atom = (const LV2_Atom*)buffer;

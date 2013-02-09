@@ -165,19 +165,23 @@ NodeModule::show_human_names(bool b)
 void
 NodeModule::port_activity(uint32_t index, const Raul::Atom& value)
 {
-	if (!_plugin_ui)
-		return;
-
 	const URIs& uris = app().uris();
+	if (!_plugin_ui) {
+		return;
+	}
 
-	// FIXME: Well, this sucks...
-	LV2_Atom* atom = (LV2_Atom*)malloc(sizeof(LV2_Atom) + value.size());
-	atom->type = value.type();
-	atom->size = value.size();
-	memcpy(LV2_ATOM_BODY(atom), value.get_body(), value.size());
-	_plugin_ui->port_event(
-		index, lv2_atom_total_size(atom), uris.atom_eventTransfer, atom);
-	free(atom);
+	if (value.type() == uris.atom_Float) {
+		_plugin_ui->port_event(index, sizeof(float), 0, value.ptr<float>());
+	} else {
+		// FIXME: Well, this sucks...
+		LV2_Atom* atom = (LV2_Atom*)malloc(sizeof(LV2_Atom) + value.size());
+		atom->type = value.type();
+		atom->size = value.size();
+		memcpy(LV2_ATOM_BODY(atom), value.get_body(), value.size());
+		_plugin_ui->port_event(
+			index, lv2_atom_total_size(atom), uris.atom_eventTransfer, atom);
+		free(atom);
+	}
 }
 
 void
