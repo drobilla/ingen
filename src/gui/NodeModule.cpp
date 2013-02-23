@@ -173,14 +173,9 @@ NodeModule::port_activity(uint32_t index, const Atom& value)
 	if (value.type() == uris.atom_Float) {
 		_plugin_ui->port_event(index, sizeof(float), 0, value.ptr<float>());
 	} else {
-		// FIXME: Well, this sucks...
-		LV2_Atom* atom = (LV2_Atom*)malloc(sizeof(LV2_Atom) + value.size());
-		atom->type = value.type();
-		atom->size = value.size();
-		memcpy(LV2_ATOM_BODY(atom), value.get_body(), value.size());
+		const LV2_Atom* const atom = value.atom();
 		_plugin_ui->port_event(
 			index, lv2_atom_total_size(atom), uris.atom_eventTransfer, atom);
-		free(atom);
 	}
 }
 
