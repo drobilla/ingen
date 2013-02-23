@@ -19,19 +19,25 @@
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
+#include "raul/Socket.hpp"
 
-#include "Socket.hpp"
 #include "SocketClient.hpp"
 
 namespace Ingen {
 namespace Socket {
+
+static Raul::Socket::Type type_from_uri(const Raul::URI uri) {
+	return (uri.scheme() == "unix")
+		? Raul::Socket::Type::UNIX
+		: Raul::Socket::Type::TCP;
+}
 
 static SPtr<Ingen::Interface>
 new_socket_interface(Ingen::World*          world,
                      const Raul::URI&       uri,
                      SPtr<Ingen::Interface> respondee)
 {
-	SPtr<Socket> sock(new Socket(Socket::type_from_uri(uri)));
+	SPtr<Raul::Socket> sock(new Raul::Socket(type_from_uri(uri)));
 	if (!sock->connect(uri)) {
 		world->log().error(fmt("Failed to connect <%1%> (%2%)\n")
 		                   % sock->uri() % strerror(errno));

@@ -23,11 +23,11 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
+#include "raul/Socket.hpp"
 
 #include "../server/Engine.hpp"
 #include "../server/EventWriter.hpp"
 
-#include "Socket.hpp"
 #include "SocketServer.hpp"
 
 #define UNIX_SCHEME "unix://"
@@ -36,7 +36,9 @@ namespace Ingen {
 namespace Socket {
 
 static void
-ingen_listen(Ingen::World* world, Socket* unix_sock, Socket* net_sock)
+ingen_listen(Ingen::World* world,
+             Raul::Socket* unix_sock,
+             Raul::Socket* net_sock)
 {
 	const std::string unix_path(world->conf().option("socket").ptr<char>());
 
@@ -91,14 +93,14 @@ ingen_listen(Ingen::World* world, Socket* unix_sock, Socket* net_sock)
 		}
 
 		if (pfds[0].revents & POLLIN) {
-			SPtr<Socket> conn = unix_sock->accept();
+			SPtr<Raul::Socket> conn = unix_sock->accept();
 			if (conn) {
 				new SocketServer(*world, *engine, conn);
 			}
 		}
 
 		if (pfds[1].revents & POLLIN) {
-			SPtr<Socket> conn = net_sock->accept();
+			SPtr<Raul::Socket> conn = net_sock->accept();
 			if (conn) {
 				new SocketServer(*world, *engine, conn);
 			}
@@ -109,8 +111,8 @@ ingen_listen(Ingen::World* world, Socket* unix_sock, Socket* net_sock)
 struct ServerModule : public Ingen::Module
 {
 	ServerModule()
-		: unix_sock(Socket::Type::UNIX)
-		, net_sock(Socket::Type::TCP)
+		: unix_sock(Raul::Socket::Type::UNIX)
+		, net_sock(Raul::Socket::Type::TCP)
 	{}
 
 	~ServerModule() {
@@ -127,8 +129,8 @@ struct ServerModule : public Ingen::Module
 	}
 
 	World*                       world;
-	Socket                       unix_sock;
-	Socket                       net_sock;
+	Raul::Socket                 unix_sock;
+	Raul::Socket                 net_sock;
 	std::unique_ptr<std::thread> thread;
 };
 

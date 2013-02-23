@@ -19,9 +19,8 @@
 
 #include <thread>
 
+#include "raul/Socket.hpp"
 #include "sord/sord.h"
-
-#include "Socket.hpp"
 
 namespace Ingen {
 
@@ -34,9 +33,9 @@ namespace Socket {
 class SocketReader
 {
 public:
-	SocketReader(World&       world,
-	             Interface&   iface,
-	             SPtr<Socket> sock);
+	SocketReader(World&             world,
+	             Interface&         iface,
+	             SPtr<Raul::Socket> sock);
 
 	~SocketReader();
 
@@ -59,14 +58,14 @@ private:
 	                                  const SerdNode*    object_datatype,
 	                                  const SerdNode*    object_lang);
 
-	World&        _world;
-	Interface&    _iface;
-	SerdEnv*      _env;
-	SordInserter* _inserter;
-	SordNode*     _msg_node;
-	SPtr<Socket>  _socket;
-	bool          _exit_flag;
-	std::thread   _thread;
+	World&             _world;
+	Interface&         _iface;
+	SerdEnv*           _env;
+	SordInserter*      _inserter;
+	SordNode*          _msg_node;
+	SPtr<Raul::Socket> _socket;
+	bool               _exit_flag;
+	std::thread        _thread;
 };
 
 }  // namespace Ingen

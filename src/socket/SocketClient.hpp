@@ -27,10 +27,10 @@ namespace Socket {
 class SocketClient : public SocketWriter
 {
 public:
-	SocketClient(World&           world,
-	             const Raul::URI& uri,
-	             SPtr<Socket>     sock,
-	             SPtr<Interface>  respondee)
+	SocketClient(World&             world,
+	             const Raul::URI&   uri,
+	             SPtr<Raul::Socket> sock,
+	             SPtr<Interface>    respondee)
 		: SocketWriter(world.uri_map(), world.uris(), uri, sock)
 		, _respondee(respondee)
 		, _reader(world, *respondee.get(), sock)

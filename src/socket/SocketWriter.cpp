@@ -40,10 +40,10 @@ socket_sink(const void* buf, size_t len, void* stream)
 	return ret;
 }
 
-SocketWriter::SocketWriter(URIMap&          map,
-                           URIs&            uris,
-                           const Raul::URI& uri,
-                           SPtr<Socket>     sock)
+SocketWriter::SocketWriter(URIMap&            map,
+                           URIs&              uris,
+                           const Raul::URI&   uri,
+                           SPtr<Raul::Socket> sock)
 	: AtomWriter(map, uris, *this)
 	, _map(map)
 	, _sratom(sratom_new(&map.urid_map_feature()->urid_map))

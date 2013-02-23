@@ -17,8 +17,9 @@
 #ifndef INGEN_SOCKET_SOCKET_SERVER_HPP
 #define INGEN_SOCKET_SOCKET_SERVER_HPP
 
+#include "raul/Socket.hpp"
+
 #include "../server/EventWriter.hpp"
-#include "Socket.hpp"
 #include "SocketReader.hpp"
 #include "SocketWriter.hpp"
 
@@ -29,9 +30,9 @@ namespace Socket {
 class SocketServer : public Server::EventWriter, public SocketReader
 {
 public:
-	SocketServer(World&          world,
-	             Server::Engine& engine,
-	             SPtr<Socket>    sock)
+	SocketServer(World&             world,
+	             Server::Engine&    engine,
+	             SPtr<Raul::Socket> sock)
 		: Server::EventWriter(engine)
 		, SocketReader(world, *this, sock)
 		, _engine(engine)
