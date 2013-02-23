@@ -240,7 +240,7 @@ GraphCanvas::build_plugin_class_menu(
 		const char* sub_label_str = lilv_node_as_string(lilv_plugin_class_get_label(c));
 		const char* sub_uri_str   = lilv_node_as_string(lilv_plugin_class_get_uri(c));
 		if (ancestors.find(sub_uri_str) != ancestors.end()) {
-			_app.log().warn(Raul::fmt("Infinite LV2 class recursion: %1% <: %2%\n")
+			_app.log().warn(fmt("Infinite LV2 class recursion: %1% <: %2%\n")
 			                % class_uri_str % sub_uri_str);
 			return 0;
 		}
@@ -501,7 +501,7 @@ GraphCanvas::connection(SPtr<const ArcModel> arc)
 	if (tail && head) {
 		new GUI::Arc(*this, arc, tail, head, tail->get_fill_color());
 	} else {
-		_app.log().error(Raul::fmt("Unable to find ports to connect %1% => %2%\n")
+		_app.log().error(fmt("Unable to find ports to connect %1% => %2%\n")
 		                 % arc->tail_path() % arc->head_path());
 	}
 }
@@ -515,7 +515,7 @@ GraphCanvas::disconnection(SPtr<const ArcModel> arc)
 	if (src && dst) {
 		remove_edge(src, dst);
 	} else {
-		_app.log().error(Raul::fmt("Unable to find ports to disconnect %1% => %2%\n")
+		_app.log().error(fmt("Unable to find ports to disconnect %1% => %2%\n")
 		                 % arc->tail_path() % arc->head_path());
 	}
 }

@@ -142,7 +142,7 @@ BlockFactory::load_lv2_plugins()
 			if (!_world->lv2_features().is_supported(feature)) {
 				supported = false;
 				_world->log().warn(
-					Raul::fmt("Ignoring <%1%>; required feature <%2%>\n")
+					fmt("Ignoring <%1%>; required feature <%2%>\n")
 					% uri % feature);
 				break;
 			}
@@ -154,7 +154,7 @@ BlockFactory::load_lv2_plugins()
 		// Ignore plugins that are missing ports
 		if (!lilv_plugin_get_port_by_index(lv2_plug, 0)) {
 			_world->log().warn(
-				Raul::fmt("Ignoring <%1%>; missing or corrupt ports\n") % uri);
+				fmt("Ignoring <%1%>; missing or corrupt ports\n") % uri);
 			continue;
 		}
 
@@ -170,7 +170,7 @@ BlockFactory::load_lv2_plugins()
 			}
 			if (!supported) {
 				_world->log().warn(
-					Raul::fmt("Ignoring <%1%>; unsupported port <%2%>\n")
+					fmt("Ignoring <%1%>; unsupported port <%2%>\n")
 					% uri % lilv_node_as_string(
 						lilv_port_get_symbol(lv2_plug, port)));
 				break;

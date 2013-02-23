@@ -92,7 +92,7 @@ JackDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(),
 			                           JackSessionID, NULL,
 			                           uuid.c_str());
-			_engine.log().info(Raul::fmt("Connected to JACK as `%1%' (UUID `%2%')\n")
+			_engine.log().info(fmt("Connected to JACK as `%1%' (UUID `%2%')\n")
 			                % client_name.c_str() % uuid);
 		}
 #endif
@@ -102,7 +102,7 @@ JackDriver::attach(const std::string& server_name,
 			if ((_client = jack_client_open(client_name.c_str(),
 			                                JackServerName, NULL,
 			                                server_name.c_str()))) {
-				_engine.log().info(Raul::fmt("Connected to JACK server `%1%'\n")
+				_engine.log().info(fmt("Connected to JACK server `%1%'\n")
 				                % server_name);
 			}
 		}
@@ -163,7 +163,7 @@ JackDriver::activate()
 		_engine.log().error("Could not activate Jack client, aborting\n");
 		exit(EXIT_FAILURE);
 	} else {
-		_engine.log().info(Raul::fmt("Activated Jack client `%1%'\n") %
+		_engine.log().info(fmt("Activated Jack client `%1%'\n") %
 		                   world->conf().option("jack-name").ptr<char>());
 	}
 }
@@ -467,7 +467,7 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 void
 JackDriver::_session_cb(jack_session_event_t* event)
 {
-	_engine.log().info(Raul::fmt("Jack session save to %1%\n") % event->session_dir);
+	_engine.log().info(fmt("Jack session save to %1%\n") % event->session_dir);
 
 	const string cmd = (boost::format("ingen -eg -n %1% -u %2% -l ${SESSION_DIR}")
 	                    % jack_get_client_name(_client)

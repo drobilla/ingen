@@ -24,7 +24,7 @@
 #include <glibmm/miscutils.h>
 
 #include "ingen/Configuration.hpp"
-#include "raul/fmt.hpp"
+#include "ingen/Log.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
@@ -121,7 +121,7 @@ Configuration::set_value_from_string(Configuration::Option& option,
 			option.value = _forge.make(intval);
 		} else {
 			throw OptionError(
-				(Raul::fmt("option `%1%' has non-integer value `%2%'")
+				(fmt("option `%1%' has non-integer value `%2%'")
 				 % option.name % value).str());
 		}
 	} else if (option.type == _forge.String) {
@@ -132,7 +132,7 @@ Configuration::set_value_from_string(Configuration::Option& option,
 		assert(option.value.type() == _forge.Bool);
 	} else {
 		throw OptionError(
-			(Raul::fmt("bad option type `%1%'") % option.name).str());
+			(fmt("bad option type `%1%'") % option.name).str());
 	}
 	return EXIT_SUCCESS;
 }
@@ -149,14 +149,14 @@ Configuration::parse(int argc, char** argv) throw (Configuration::OptionError)
 			Options::iterator o = _options.find(name);
 			if (o == _options.end()) {
 				throw OptionError(
-					(Raul::fmt("unrecognized option `%1%'") % name).str());
+					(fmt("unrecognized option `%1%'") % name).str());
 			}
 			if (o->second.type == _forge.Bool) {
 				o->second.value = _forge.make(true);
 			} else {
 				if (++i >= argc)
 					throw OptionError(
-						(Raul::fmt("missing value for `%1'") % name).str());
+						(fmt("missing value for `%1'") % name).str());
 				set_value_from_string(o->second, argv[i]);
 			}
 		} else {
@@ -166,12 +166,12 @@ Configuration::parse(int argc, char** argv) throw (Configuration::OptionError)
 				ShortNames::iterator n = _short_names.find(letter);
 				if (n == _short_names.end())
 					throw OptionError(
-						(Raul::fmt("unrecognized option `%1%'") % letter).str());
+						(fmt("unrecognized option `%1%'") % letter).str());
 				Options::iterator o = _options.find(n->second);
 				if (j < len - 1) {
 					if (o->second.type != _forge.Bool)
 						throw OptionError(
-							(Raul::fmt("missing value for `%1%'") % letter).str());
+							(fmt("missing value for `%1%'") % letter).str());
 					o->second.value = _forge.make(true);
 				} else {
 					if (o->second.type == _forge.Bool) {
@@ -179,7 +179,7 @@ Configuration::parse(int argc, char** argv) throw (Configuration::OptionError)
 					} else {
 						if (++i >= argc)
 							throw OptionError(
-								(Raul::fmt("missing value for `%1%'") % letter).str());
+								(fmt("missing value for `%1%'") % letter).str());
 						set_value_from_string(o->second, argv[i]);
 					}
 				}
@@ -240,14 +240,14 @@ Configuration::save(URIMap&            uri_map,
 	// Create parent directories if necessary
 	const std::string dir = Glib::path_get_dirname(path);
 	if (g_mkdir_with_parents(dir.c_str(), 0755) < 0) {
-		throw FileError((Raul::fmt("Error creating directory %1% (%2%)")
+		throw FileError((fmt("Error creating directory %1% (%2%)")
 		                % dir % strerror(errno)).str());
 	}
 
 	// Attempt to open file for writing
 	FILE* file = fopen(path.c_str(), "w");
 	if (!file) {
-		throw FileError((Raul::fmt("Failed to open file %1% (%2%)")
+		throw FileError((fmt("Failed to open file %1% (%2%)")
 		                 % path % strerror(errno)).str());
 	}
 

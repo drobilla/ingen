@@ -23,10 +23,9 @@
 #include <glibmm/fileutils.h>
 #include <gtkmm/stock.h>
 
-#include "raul/fmt.hpp"
-
-#include "ingen/Interface.hpp"
 #include "ingen/Configuration.hpp"
+#include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 
@@ -183,7 +182,7 @@ GraphBox::init_box(App& app)
 		_status_bar->push("Running internal engine", STATUS_CONTEXT_ENGINE);
 	} else {
 		_status_bar->push(
-			(Raul::fmt("Connected to %1%") % engine_uri).str(),
+			(fmt("Connected to %1%") % engine_uri).str(),
 			STATUS_CONTEXT_ENGINE);
 	}
 

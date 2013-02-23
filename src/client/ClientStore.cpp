@@ -243,7 +243,7 @@ ClientStore::put(const Raul::URI&            uri,
 	}
 
 	if (!Node::uri_is_path(uri)) {
-		_log.error(Raul::fmt("Put for unknown subject <%1%>\n")
+		_log.error(fmt("Put for unknown subject <%1%>\n")
 		           % uri.c_str());
 		return;
 	}
@@ -281,7 +281,7 @@ ClientStore::put(const Raul::URI&            uri,
 			bm->set_properties(properties);
 			add_object(bm);
 		} else {
-			_log.warn(Raul::fmt("Block %1% has no plugin\n")
+			_log.warn(fmt("Block %1% has no plugin\n")
 			          % path.c_str());
 		}
 	} else if (is_port) {
@@ -296,10 +296,10 @@ ClientStore::put(const Raul::URI&            uri,
 			p->set_properties(properties);
 			add_object(p);
 		} else {
-			_log.error(Raul::fmt("Port %1% has no index\n") % path);
+			_log.error(fmt("Port %1% has no index\n") % path);
 		}
 	} else {
-		_log.warn(Raul::fmt("Ignoring object %1% with unknown type\n")
+		_log.warn(fmt("Ignoring object %1% with unknown type\n")
 		          % path.c_str());
 	}
 }
@@ -329,7 +329,7 @@ ClientStore::delta(const Raul::URI&            uri,
 	}
 
 	if (!Node::uri_is_path(uri)) {
-		_log.error(Raul::fmt("Delta for unknown subject <%1%>\n")
+		_log.error(fmt("Delta for unknown subject <%1%>\n")
 		           % uri.c_str());
 		return;
 	}
@@ -341,7 +341,7 @@ ClientStore::delta(const Raul::URI&            uri,
 		obj->remove_properties(remove);
 		obj->add_properties(add);
 	} else {
-		_log.warn(Raul::fmt("Failed to find object `%1%'\n")
+		_log.warn(fmt("Failed to find object `%1%'\n")
 		          % path.c_str());
 	}
 }
@@ -352,7 +352,7 @@ ClientStore::set_property(const Raul::URI& subject_uri,
                           const Atom&      value)
 {
 	if (subject_uri == _uris.ingen_engine) {
-		_log.info(Raul::fmt("Engine property <%1%> = %2%\n")
+		_log.info(fmt("Engine property <%1%> = %2%\n")
 		          % predicate.c_str() % _uris.forge.str(value));
 		return;
 	}
@@ -370,7 +370,7 @@ ClientStore::set_property(const Raul::URI& subject_uri,
 		if (plugin) {
 			plugin->set_property(predicate, value);
 		} else if (predicate != _uris.ingen_activity) {
-			_log.warn(Raul::fmt("Property <%1%> for unknown object %2%\n")
+			_log.warn(fmt("Property <%1%> for unknown object %2%\n")
 			          % predicate.c_str() % subject_uri.c_str());
 		}
 	}
@@ -395,7 +395,7 @@ ClientStore::connection_graph(const Raul::Path& tail_path,
 		graph = dynamic_ptr_cast<GraphModel>(_object(tail_path.parent().parent()));
 
 	if (!graph)
-		_log.error(Raul::fmt("Unable to find graph for arc %1% => %2%\n")
+		_log.error(fmt("Unable to find graph for arc %1% => %2%\n")
 		           % tail_path % head_path);
 
 	return graph;
@@ -418,7 +418,7 @@ ClientStore::attempt_connection(const Raul::Path& tail_path,
 		graph->add_arc(arc);
 		return true;
 	} else {
-		_log.warn(Raul::fmt("Failed to connect %1% => %2%\n")
+		_log.warn(fmt("Failed to connect %1% => %2%\n")
 		          % tail_path % head_path);
 		return false;
 	}
@@ -457,7 +457,7 @@ ClientStore::disconnect_all(const Raul::Path& parent_graph,
 	SPtr<ObjectModel> object = _object(path);
 
 	if (!graph || !object) {
-		_log.error(Raul::fmt("Bad disconnect all notification %1% in %2%\n")
+		_log.error(fmt("Bad disconnect all notification %1% in %2%\n")
 		           % path % parent_graph);
 		return;
 	}

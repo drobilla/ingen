@@ -152,7 +152,7 @@ get_port(Ingen::World*     world,
 	if (i == props.end()
 	    || i->second.type() != world->forge().Int
 	    || i->second.get<int32_t>() < 0) {
-		world->log().warn(Raul::fmt("Port %1% has no valid index\n") % subject);
+		world->log().warn(fmt("Port %1% has no valid index\n") % subject);
 		return boost::optional<PortRecord>();
 	}
 	index = i->second.get<int32_t>();
@@ -160,7 +160,7 @@ get_port(Ingen::World*     world,
 	// Get symbol
 	Resource::Properties::const_iterator s = props.find(uris.lv2_symbol);
 	if (s == props.end()) {
-		world->log().warn(Raul::fmt("Port %1% has no symbol\n") % subject);
+		world->log().warn(fmt("Port %1% has no symbol\n") % subject);
 		return boost::optional<PortRecord>();
 	}
 	const Raul::Symbol port_sym(s->second.ptr<char>());
@@ -235,7 +235,7 @@ parse_block(Ingen::World*                     world,
 			std::cerr << "type: " << i.get_object().type() << std::endl;
 		}
 		world->log().error(
-			Raul::fmt("Block %1% (%2%) missing mandatory ingen:prototype\n") %
+			fmt("Block %1% (%2%) missing mandatory ingen:prototype\n") %
 			subject.to_string() % path);
 		return boost::optional<Raul::Path>();
 	}
@@ -316,7 +316,7 @@ parse_graph(Ingen::World*                     world,
 		graph_path_str = parent->child(*a_symbol);
 
 	if (!Raul::Path::is_valid(graph_path_str)) {
-		world->log().error(Raul::fmt("Graph %1% has invalid path\n")
+		world->log().error(fmt("Graph %1% has invalid path\n")
 		                   %  graph_path_str);
 		return boost::optional<Raul::Path>();
 	}
@@ -345,7 +345,7 @@ parse_graph(Ingen::World*                     world,
 			boost::optional<PortRecord> port_record = get_port(
 				world, model, port, block_path, index);
 			if (!port_record) {
-				world->log().error(Raul::fmt("Invalid port %1%\n") % port);
+				world->log().error(fmt("Invalid port %1%\n") % port);
 				return boost::optional<Raul::Path>();
 			}
 
@@ -366,7 +366,7 @@ parse_graph(Ingen::World*                     world,
 		boost::optional<PortRecord> port_record = get_port(
 			world, model, port, graph_path, index);
 		if (!port_record) {
-			world->log().error(Raul::fmt("Invalid port %1%\n") % port);
+			world->log().error(fmt("Invalid port %1%\n") % port);
 			return boost::optional<Raul::Path>();
 		}
 
@@ -578,7 +578,7 @@ Parser::parse_file(Ingen::World*                     world,
 	try {
 		uri = Glib::filename_to_uri(path, "");
 	} catch (const Glib::ConvertError& e) {
-		world->log().error(Raul::fmt("Path to URI conversion error: %1%\n")
+		world->log().error(fmt("Path to URI conversion error: %1%\n")
 		                   % e.what());
 		return false;
 	}
@@ -593,11 +593,11 @@ Parser::parse_file(Ingen::World*                     world,
 
 	serd_env_free(env);
 
-	world->log().info(Raul::fmt("Parsing %1%\n") % path);
+	world->log().info(fmt("Parsing %1%\n") % path);
 	if (parent)
-		world->log().info(Raul::fmt("Parent: %1%\n") % parent->c_str());
+		world->log().info(fmt("Parent: %1%\n") % parent->c_str());
 	if (symbol)
-		world->log().info(Raul::fmt("Symbol: %1%\n") % symbol->c_str());
+		world->log().info(fmt("Symbol: %1%\n") % symbol->c_str());
 
 	Sord::Node subject(*world->rdf_world(), Sord::Node::URI, uri);
 	boost::optional<Raul::Path> parsed_path
@@ -631,7 +631,7 @@ Parser::parse_string(Ingen::World*                     world,
 	model.load_string(env, SERD_TURTLE, str.c_str(), str.length(), base_uri);
 	serd_env_free(env);
 
-	world->log().info(Raul::fmt("Parsing string (base %1%)\n") % base_uri);
+	world->log().info(fmt("Parsing string (base %1%)\n") % base_uri);
 
 	Sord::Node subject;
 	return parse(world, target, model, base_uri, subject, parent, symbol, data);

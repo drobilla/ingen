@@ -49,7 +49,7 @@ ingen_listen(Ingen::World* world, Socket* unix_sock, Socket* net_sock)
 		world->log().error("Failed to create UNIX socket\n");
 		unix_sock->close();
 	}
-	world->log().info(Raul::fmt("Listening on socket %1%\n") % unix_uri);
+	world->log().info(fmt("Listening on socket %1%\n") % unix_uri);
 
 	// Bind TCP socket
 	const int port = world->conf().option("engine-port").get<int32_t>();
@@ -60,7 +60,7 @@ ingen_listen(Ingen::World* world, Socket* unix_sock, Socket* net_sock)
 		world->log().error("Failed to create TCP socket\n");
 		net_sock->close();
 	}
-	world->log().info(Raul::fmt("Listening on TCP port %1%\n") % port);
+	world->log().info(fmt("Listening on TCP port %1%\n") % port);
 
 	struct pollfd pfds[2];
 	int           nfds = 0;
@@ -81,7 +81,7 @@ ingen_listen(Ingen::World* world, Socket* unix_sock, Socket* net_sock)
 		// Wait for input to arrive at a socket
 		const int ret = poll(pfds, nfds, -1);
 		if (ret == -1) {
-			world->log().error(Raul::fmt("Poll error: %1%\n") % strerror(errno));
+			world->log().error(fmt("Poll error: %1%\n") % strerror(errno));
 			break;
 		} else if ((pfds[0].revents & POLLHUP) || pfds[1].revents & POLLHUP) {
 			break;

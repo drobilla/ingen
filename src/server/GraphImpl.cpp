@@ -240,7 +240,7 @@ GraphImpl::create_port(BufferFactory&      bufs,
                        bool                polyphonic)
 {
 	if (type == PortType::UNKNOWN) {
-		bufs.engine().log().error(Raul::fmt("Unknown port type %1%\n")
+		bufs.engine().log().error(fmt("Unknown port type %1%\n")
 		                          % type.uri());
 		return NULL;
 	}
@@ -333,7 +333,7 @@ GraphImpl::compile()
 	}
 
 	if (compiled_graph->size() != _blocks.size()) {
-		_engine.log().error(Raul::fmt("Failed to compile graph %1%\n") % _path);
+		_engine.log().error(fmt("Failed to compile graph %1%\n") % _path);
 		delete compiled_graph;
 		return NULL;
 	}

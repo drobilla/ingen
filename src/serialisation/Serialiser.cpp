@@ -157,7 +157,7 @@ Serialiser::Impl::write_manifest(const std::string& bundle_path,
 	std::string lib(Glib::Module::build_path(INGEN_BUNDLE_DIR, "ingen_lv2"));
 	std::string link(Glib::Module::build_path(bundle_path, "ingen_lv2"));
 	if (symlink(lib.c_str(), link.c_str())) {
-		_world.log().error(Raul::fmt("Error creating link %1% => %2% (%3%\n")
+		_world.log().error(fmt("Error creating link %1% => %2% (%3%\n")
 		                   % lib % link % strerror(errno));
 	}
 
@@ -260,7 +260,7 @@ Serialiser::Impl::finish()
 	if (_mode == Mode::TO_FILE) {
 		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
 		if (st) {
-			_world.log().error(Raul::fmt("Error writing file %1% (%2%)\n")
+			_world.log().error(fmt("Error writing file %1% (%2%)\n")
 			                   % _base_uri % serd_strerror(st));
 		}
 	} else {

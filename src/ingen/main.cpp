@@ -24,13 +24,13 @@
 #include <glibmm/timer.h>
 
 #include "raul/Path.hpp"
-#include "raul/fmt.hpp"
 
 #include "ingen_config.h"
 
 #include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
@@ -122,11 +122,11 @@ main(int argc, char** argv)
 		#endif
 		const char* const uri = conf.option("connect").ptr<char>();
 		ingen_try(Raul::URI::is_valid(uri),
-		          (Raul::fmt("Invalid URI <%1%>") % uri).str().c_str());
+		          (fmt("Invalid URI <%1%>") % uri).str().c_str());
 		SPtr<Interface> client(new Client::ThreadedSigClientInterface(1024));
 		engine_interface = world->new_interface(Raul::URI(uri), client);
 		ingen_try(bool(engine_interface),
-		          (Raul::fmt("Unable to create interface to `%1%'") % uri).str().c_str());
+		          (fmt("Unable to create interface to `%1%'") % uri).str().c_str());
 	}
 
 	world->set_interface(engine_interface);

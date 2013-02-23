@@ -83,11 +83,11 @@ ingen_load_module(Log& log, const string& name)
 	if (*module) {
 		return module;
 	} else if (!module_path_found) {
-		log.error(Raul::fmt("Unable to find %1% (%2%)\n")
+		log.error(fmt("Unable to find %1% (%2%)\n")
 		          % name % Glib::Module::get_last_error());
 		return NULL;
 	} else {
-		log.error(Raul::fmt("Unable to load %1% from %2% (%3%)\n")
+		log.error(fmt("Unable to load %1% from %2% (%3%)\n")
 		          % name % module_path % Glib::Module::get_last_error());
 		return NULL;
 	}
@@ -114,7 +114,7 @@ public:
 		// Parse default configuration files
 		std::list<std::string> files = conf.load_default("ingen", "options.ttl");
 		for (const auto& f : files) {
-			log.info(Raul::fmt("Loaded configuration %1%\n") % f);
+			log.info(fmt("Loaded configuration %1%\n") % f);
 		}
 
 		// Parse command line options, overriding configuration file values
@@ -271,7 +271,7 @@ World::load_module(const char* name)
 		}
 	}
 
-	log().error(Raul::fmt("Failed to load module `%1%'\n") % name);
+	log().error(fmt("Failed to load module `%1%'\n") % name);
 	delete lib;
 	return false;
 }
@@ -281,7 +281,7 @@ World::run_module(const char* name)
 {
 	Impl::Modules::iterator i = _impl->modules.find(name);
 	if (i == _impl->modules.end()) {
-		log().error(Raul::fmt("Attempt to run unloaded module `%1%'\n") % name);
+		log().error(fmt("Attempt to run unloaded module `%1%'\n") % name);
 		return false;
 	}
 
@@ -297,7 +297,7 @@ World::new_interface(const Raul::URI& engine_uri,
 {
 	const Impl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(engine_uri.scheme());
 	if (i == _impl->interface_factories.end()) {
-		log().warn(Raul::fmt("Unknown URI scheme `%1%'\n") % engine_uri.scheme());
+		log().warn(fmt("Unknown URI scheme `%1%'\n") % engine_uri.scheme());
 		return SPtr<Interface>();
 	}
 
@@ -310,7 +310,7 @@ World::run(const std::string& mime_type, const std::string& filename)
 {
 	const Impl::ScriptRunners::const_iterator i = _impl->script_runners.find(mime_type);
 	if (i == _impl->script_runners.end()) {
-		log().warn(Raul::fmt("Unknown script MIME type `%1%'\n") % mime_type);
+		log().warn(fmt("Unknown script MIME type `%1%'\n") % mime_type);
 		return false;
 	}
 

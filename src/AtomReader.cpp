@@ -48,8 +48,7 @@ AtomReader::get_atom(const LV2_Atom* in, Atom& out)
 			if (uri) {
 				out = _forge.alloc_uri(_map.unmap_uri(urid->body));
 			} else {
-				_log.error(Raul::fmt("Unable to unmap URID %1%\n")
-				           % urid->body);
+				_log.error(fmt("Unable to unmap URID %1%\n") % urid->body);
 			}
 		} else {
 			out = _forge.alloc(in->size, in->type, LV2_ATOM_BODY_CONST(in));
@@ -117,7 +116,7 @@ bool
 AtomReader::write(const LV2_Atom* msg)
 {
 	if (msg->type != _uris.atom_Blank && msg->type != _uris.atom_Resource) {
-		_log.warn(Raul::fmt("Unknown message type <%1%>\n")
+		_log.warn(fmt("Unknown message type <%1%>\n")
 		          % _map.unmap_uri(msg->type));
 		return false;
 	}
@@ -189,7 +188,7 @@ AtomReader::write(const LV2_Atom* msg)
 			if (tail_path && head_path) {
 				_iface.connect(*tail_path, *head_path);
 			} else {
-				_log.warn(Raul::fmt("Arc %1% => %2% has non-path tail or head\n")
+				_log.warn(fmt("Arc %1% => %2% has non-path tail or head\n")
 				          % atom_to_uri(tail) % atom_to_uri(head));
 			}
 		} else {
@@ -294,7 +293,7 @@ AtomReader::write(const LV2_Atom* msg)
 		                (Ingen::Status)((const LV2_Atom_Int*)body)->body,
 		                subject_uri ? subject_uri : "");
 	} else {
-		_log.warn(Raul::fmt("Unknown object type <%1%>\n")
+		_log.warn(fmt("Unknown object type <%1%>\n")
 		          % _map.unmap_uri(obj->body.otype));
 	}
 

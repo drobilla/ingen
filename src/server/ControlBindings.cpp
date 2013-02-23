@@ -97,7 +97,7 @@ ControlBindings::binding_key(const Atom& binding) const
 			}
 		}
 	} else if (binding.type()) {
-		_engine.log().error(Raul::fmt("Unknown binding type %1%\n") % binding.type());
+		_engine.log().error(fmt("Unknown binding type %1%\n") % binding.type());
 	}
 	return key;
 }

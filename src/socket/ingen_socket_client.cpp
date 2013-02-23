@@ -33,7 +33,7 @@ new_socket_interface(Ingen::World*          world,
 {
 	SPtr<Socket> sock(new Socket(Socket::type_from_uri(uri)));
 	if (!sock->connect(uri)) {
-		world->log().error(Raul::fmt("Failed to connect <%1%> (%2%)\n")
+		world->log().error(fmt("Failed to connect <%1%> (%2%)\n")
 		                   % sock->uri() % strerror(errno));
 		return SPtr<Interface>();
 	}

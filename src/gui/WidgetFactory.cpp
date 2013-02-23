@@ -17,7 +17,7 @@
 #include <fstream>
 #include <string>
 
-#include "raul/fmt.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/runtime_paths.hpp"
 
 #include "WidgetFactory.hpp"
@@ -58,7 +58,7 @@ WidgetFactory::find_ui_file()
 	if (is_readable(ui_filename))
 		return;
 
-	throw std::runtime_error((Raul::fmt("Unable to find ingen_gui.ui in %1%\n")
+	throw std::runtime_error((fmt("Unable to find ingen_gui.ui in %1%\n")
 	                          % INGEN_DATA_DIR).str());
 }
 

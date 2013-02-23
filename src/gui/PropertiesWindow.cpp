@@ -268,7 +268,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Atom& value)
 		return widget;
 	}
 
-	_app->log().error(Raul::fmt("Unable to create widget for value %1% type %2%\n")
+	_app->log().error(fmt("Unable to create widget for value %1% type %2%\n")
 	                  % forge.str(value) % value.type());
 	return NULL;
 }
@@ -327,7 +327,7 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 {
 	Records::iterator r = _records.find(predicate);
 	if (r == _records.end()) {
-		_app->log().error(Raul::fmt("Unknown property `%1%' edited\n")
+		_app->log().error(fmt("Unknown property `%1%' edited\n")
 		                  % predicate);
 		return;
 	}
@@ -360,7 +360,7 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 	return;
 
 bad_type:
-	_app->log().error(Raul::fmt("Property `%1%' value widget has wrong type\n")
+	_app->log().error(fmt("Property `%1%' value widget has wrong type\n")
 	                  % predicate);
 	return;
 }

@@ -19,10 +19,13 @@
 
 #include <string>
 
+#include <boost/format.hpp>
+
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
-#include "raul/fmt.hpp"
 
 namespace Ingen {
+
+typedef boost::basic_format<char> fmt;
 
 class URIs;
 
@@ -34,9 +37,9 @@ public:
 	void info(const std::string& msg);
 	void warn(const std::string& msg);
 
-	inline void error(const Raul::fmt& fmt) { error(fmt.str()); }
-	inline void info(const Raul::fmt& fmt)  { info(fmt.str()); }
-	inline void warn(const Raul::fmt& fmt)  { warn(fmt.str()); }
+	inline void error(const fmt& fmt) { error(fmt.str()); }
+	inline void info(const fmt& fmt)  { info(fmt.str()); }
+	inline void warn(const fmt& fmt)  { warn(fmt.str()); }
 
 private:
 	LV2_Log_Log* _log;

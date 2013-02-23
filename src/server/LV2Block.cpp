@@ -80,7 +80,7 @@ LV2Block::make_instance(URIs&      uris,
 
 	if (!inst) {
 		parent_graph()->engine().log().error(
-			Raul::fmt("Failed to instantiate <%1%>\n")
+			fmt("Failed to instantiate <%1%>\n")
 			% _lv2_plugin->uri().c_str());
 		return SPtr<LilvInstance>();
 	}
@@ -132,13 +132,13 @@ LV2Block::make_instance(URIs&      uris,
 						port->set_type(PortType::CV, 0);
 					} else {
 						parent_graph()->engine().log().error(
-							Raul::fmt("%1% auto-morphed to unknown type %2%\n")
+							fmt("%1% auto-morphed to unknown type %2%\n")
 							% port->path().c_str() % type);
 						return SPtr<LilvInstance>();
 					}
 				} else {
 					parent_graph()->engine().log().error(
-						Raul::fmt("Failed to get auto-morphed type of %1%\n")
+						fmt("Failed to get auto-morphed type of %1%\n")
 						% port->path().c_str());
 				}
 			}
@@ -284,7 +284,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 		uint32_t port_buffer_size = bufs.default_size(buffer_type);
 		if (port_buffer_size == 0) {
 			parent_graph()->engine().log().error(
-				Raul::fmt("<%1%> port `%2%' has unknown buffer type\n")
+				fmt("<%1%> port `%2%' has unknown buffer type\n")
 				% _lv2_plugin->uri().c_str() % port_sym.c_str());
 			ret = false;
 			break;
@@ -333,7 +333,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 
 		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
 			parent_graph()->engine().log().error(
-				Raul::fmt("<%1%> port `%2%' has unknown type or direction\n")
+				fmt("<%1%> port `%2%' has unknown type or direction\n")
 				% _lv2_plugin->uri().c_str() % port_sym.c_str());
 			ret = false;
 			break;
@@ -455,7 +455,7 @@ LV2Block::work(uint32_t size, const void* data)
 		LV2_Handle inst = lilv_instance_get_handle(instance(0));
 		if (_worker_iface->work(inst, work_respond, this, size, data)) {
 			parent_graph()->engine().log().error(
-				Raul::fmt("Error calling %1% work method\n") % _path);
+				fmt("Error calling %1% work method\n") % _path);
 		}
 	}
 }

@@ -94,7 +94,7 @@ SocketReader::run()
 	// Open socket as a FILE for reading directly with serd
 	FILE* f = fdopen(_socket->fd(), "r");
 	if (!f) {
-		_world.log().error(Raul::fmt("Failed to open connection (%1%)\n")
+		_world.log().error(fmt("Failed to open connection (%1%)\n")
 		                   % strerror(errno));
 		// Connection gone, exit
 		_socket.reset();
@@ -159,7 +159,7 @@ SocketReader::run()
 		if (st == SERD_FAILURE || !_msg_node) {
 			continue;  // Read nothing, e.g. just whitespace
 		} else if (st) {
-			_world.log().error(Raul::fmt("Read error: %1%\n")
+			_world.log().error(fmt("Read error: %1%\n")
 			                   % serd_strerror(st));
 			continue;
 		}

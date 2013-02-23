@@ -241,7 +241,7 @@ App::property_change(const Raul::URI& subject,
 {
 	if (subject == uris().ingen_engine && key == uris().ingen_sampleRate) {
 		if (value.type() == forge().Int) {
-			log().info(Raul::fmt("Sample rate: %1%\n") % uris().forge.str(value));
+			log().info(fmt("Sample rate: %1%\n") % uris().forge.str(value));
 			_sample_rate = value.get<int32_t>();
 		} else {
 			log().error("Engine sample rate property is not an integer\n");
@@ -354,9 +354,9 @@ App::quit(Gtk::Window* dialog_parent)
 	try {
 		const std::string path = _world->conf().save(
 			_world->uri_map(), "ingen", "gui.ttl", Configuration::GUI);
-		cout << (Raul::fmt("Saved GUI settings to %1%\n") % path);
+		cout << (fmt("Saved GUI settings to %1%\n") % path);
 	} catch (const std::exception& e) {
-		cerr << (Raul::fmt("Error saving GUI settings (%1%)\n")
+		cerr << (fmt("Error saving GUI settings (%1%)\n")
 		         % e.what());
 	}
 
@@ -395,7 +395,7 @@ App::icon_from_path(const string& path, int size)
 			new IconDestroyNotification(*this, make_pair(path, size)),
 			&App::icon_destroyed);
 	} catch (const Glib::Error& e) {
-		log().warn(Raul::fmt("Error loading icon %1%: %2%\n")
+		log().warn(fmt("Error loading icon %1%: %2%\n")
 		           % path % e.what());
 	}
 	return buf;

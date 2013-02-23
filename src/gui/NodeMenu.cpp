@@ -110,7 +110,7 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 					lilv_nodes_free(labels);
 				} else {
 					app.log().error(
-						Raul::fmt("Preset <%1> has no rdfs:label\n")
+						fmt("Preset <%1> has no rdfs:label\n")
 						% lilv_node_as_string(lilv_nodes_get(presets, i)));
 				}
 			}

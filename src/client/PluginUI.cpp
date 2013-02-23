@@ -42,7 +42,7 @@ lv2_ui_write(SuilController controller,
 	const BlockModel::Ports& ports = ui->block()->ports();
 	if (port_index >= ports.size()) {
 		ui->world()->log().error(
-			Raul::fmt("%1% UI tried to write to invalid port %2%\n")
+			fmt("%1% UI tried to write to invalid port %2%\n")
 			% ui->block()->plugin()->uri().c_str() % port_index);
 		return;
 	}
@@ -55,7 +55,7 @@ lv2_ui_write(SuilController controller,
 	if (format == 0) {
 		if (buffer_size != 4) {
 			ui->world()->log().error(
-				Raul::fmt("%1% UI wrote corrupt float with bad size\n")
+				fmt("%1% UI wrote corrupt float with bad size\n")
 				% ui->block()->plugin()->uri().c_str());
 			return;
 		}
@@ -79,7 +79,7 @@ lv2_ui_write(SuilController controller,
 
 	} else {
 		ui->world()->log().warn(
-			Raul::fmt("Unknown value format %1% from LV2 UI\n")
+			fmt("Unknown value format %1% from LV2 UI\n")
 			% format % ui->block()->plugin()->uri().c_str());
 	}
 }

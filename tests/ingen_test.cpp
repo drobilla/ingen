@@ -106,14 +106,14 @@ public:
 
 	void response(int32_t id, Status status, const std::string& subject) {
 		if (status != Status::SUCCESS) {
-			_log.error(Raul::fmt("error on message %1%: %2% (%3%)\n")
+			_log.error(fmt("error on message %1%: %2% (%3%)\n")
 			           % id % ingen_status_string(status) % subject);
 			exit(EXIT_FAILURE);
 		}
 	}
 
 	void error(const std::string& msg) {
-		_log.error(Raul::fmt("error: %1%\n") % msg);
+		_log.error(fmt("error: %1%\n") % msg);
 		exit(EXIT_FAILURE);
 	}
 
@@ -215,7 +215,7 @@ main(int argc, char** argv)
 	cmds->load_file(env, SERD_TURTLE, cmds_file_path);
 	Sord::Node nil;
 	for (int i = 0; ; ++i) {
-		std::string subject_str = (Raul::fmt("msg%1%") % i).str();
+		std::string subject_str = (fmt("msg%1%") % i).str();
 		Sord::URI subject(*world->rdf_world(), subject_str,
 		                  (const char*)cmds_file_uri.buf);
 		Sord::Iter iter = cmds->find(subject, nil, nil);

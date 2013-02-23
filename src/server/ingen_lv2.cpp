@@ -505,7 +505,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	if (!graph) {
-		const std::string msg((Raul::fmt("Could not find graph %1%\n")
+		const std::string msg((fmt("Could not find graph %1%\n")
 		                       % descriptor->URI).str());
 		if (log) {
 			log->vprintf(log->handle,
@@ -551,7 +551,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	plugin->world->log().info(
-		Raul::fmt("Block: %1% frames, Sequence: %2% bytes\n")
+		fmt("Block: %1% frames, Sequence: %2% bytes\n")
 		% block_length % seq_size);
 	plugin->world->conf().set(
 		"queue-size",
@@ -609,8 +609,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
 	} else {
-		engine->log().error(Raul::fmt("Connect to non-existent port %1%\n")
-		                    % port);
+		engine->log().error(fmt("Connect to non-existent port %1%\n") % port);
 	}
 }
 
