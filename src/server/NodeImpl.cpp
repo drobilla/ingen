@@ -33,11 +33,11 @@ NodeImpl::NodeImpl(Ingen::URIs&        uris,
 {
 }
 
-const Raul::Atom&
+const Atom&
 NodeImpl::get_property(const Raul::URI& key) const
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
-	static const Raul::Atom null_atom;
+	static const Atom null_atom;
 	Resource::Properties::const_iterator i = properties().find(key);
 	return (i != properties().end()) ? i->second : null_atom;
 }

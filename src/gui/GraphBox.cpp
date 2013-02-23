@@ -353,7 +353,7 @@ GraphBox::show_status(const ObjectModel* model)
 }
 
 void
-GraphBox::show_port_status(const PortModel* port, const Raul::Atom& value)
+GraphBox::show_port_status(const PortModel* port, const Atom& value)
 {
 	std::stringstream msg;
 	msg << port->path();
@@ -418,7 +418,7 @@ GraphBox::event_import()
 void
 GraphBox::event_save()
 {
-	const Raul::Atom& document = _graph->get_property(_app->uris().ingen_document);
+	const Atom& document = _graph->get_property(_app->uris().ingen_document);
 	if (!document.is_valid() || document.type() != _app->uris().forge.URI) {
 		event_save_as();
 	} else {
@@ -464,8 +464,8 @@ GraphBox::event_save_as()
 		dialog.set_filter(filt);
 
 		// Set current folder to most sensible default
-		const Raul::Atom& document = _graph->get_property(uris.ingen_document);
-		const Raul::Atom& dir      = _app->world()->conf().option("graph-directory");
+		const Atom& document = _graph->get_property(uris.ingen_document);
+		const Atom& dir      = _app->world()->conf().option("graph-directory");
 		if (document.type() == uris.forge.URI)
 			dialog.set_uri(document.ptr<char>());
 		else if (dir.is_valid())

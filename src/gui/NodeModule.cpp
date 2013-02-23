@@ -21,6 +21,7 @@
 
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
+#include "ingen/Atom.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
@@ -28,7 +29,6 @@
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
-#include "raul/Atom.hpp"
 
 #include "App.hpp"
 #include "GraphCanvas.hpp"
@@ -148,7 +148,7 @@ NodeModule::show_human_names(bool b)
 		Ingen::GUI::Port* const port = dynamic_cast<Ingen::GUI::Port*>(*i);
 		Glib::ustring label(port->model()->symbol().c_str());
 		if (b) {
-			const Raul::Atom& name_property = port->model()->get_property(uris.lv2_name);
+			const Atom& name_property = port->model()->get_property(uris.lv2_name);
 			if (name_property.type() == uris.forge.String) {
 				label = name_property.ptr<char>();
 			} else {
@@ -163,7 +163,7 @@ NodeModule::show_human_names(bool b)
 }
 
 void
-NodeModule::port_activity(uint32_t index, const Raul::Atom& value)
+NodeModule::port_activity(uint32_t index, const Atom& value)
 {
 	const URIs& uris = app().uris();
 	if (!_plugin_ui) {
@@ -383,8 +383,8 @@ NodeModule::store_location(double ax, double ay)
 {
 	const URIs& uris = app().uris();
 
-	const Raul::Atom x(app().forge().make(static_cast<float>(ax)));
-	const Raul::Atom y(app().forge().make(static_cast<float>(ay)));
+	const Atom x(app().forge().make(static_cast<float>(ax)));
+	const Atom y(app().forge().make(static_cast<float>(ay)));
 
 	if (x != _block->get_property(uris.ingen_canvasX) ||
 	    y != _block->get_property(uris.ingen_canvasY))
@@ -402,7 +402,7 @@ NodeModule::store_location(double ax, double ay)
 }
 
 void
-NodeModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
+NodeModule::property_changed(const Raul::URI& key, const Atom& value)
 {
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {

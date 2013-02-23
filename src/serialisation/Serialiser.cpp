@@ -472,7 +472,7 @@ Serialiser::Impl::serialise_port(const Node*       port,
 	    port->has_property(uris.rdf_type, uris.lv2_ControlPort) &&
 	    port->has_property(uris.rdf_type, uris.lv2_InputPort))
 	{
-		const Raul::Atom& val = port->get_property(uris.ingen_value);
+		const Atom& val = port->get_property(uris.ingen_value);
 		if (val.is_valid()) {
 			props.insert(make_pair(uris.lv2_default, val));
 		} else {

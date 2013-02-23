@@ -16,18 +16,18 @@
 
 #include <utility>
 
+#include "ingen/Atom.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/URIs.hpp"
-#include "raul/Atom.hpp"
 
 using namespace std;
 
 namespace Ingen {
 
 void
-Resource::add_property(const Raul::URI&  uri,
-                       const Raul::Atom& value,
-                       Graph             ctx)
+Resource::add_property(const Raul::URI& uri,
+                       const Atom&      value,
+                       Graph            ctx)
 {
 	// Ignore duplicate statements
 	typedef Resource::Properties::const_iterator iterator;
@@ -38,14 +38,14 @@ Resource::add_property(const Raul::URI&  uri,
 		}
 	}
 
-	const Raul::Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
+	const Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
 	on_property(uri, v);
 }
 
-const Raul::Atom&
-Resource::set_property(const Raul::URI&  uri,
-                       const Raul::Atom& value,
-                       Resource::Graph   ctx)
+const Atom&
+Resource::set_property(const Raul::URI& uri,
+                       const Atom&      value,
+                       Resource::Graph  ctx)
 {
 	// Erase existing property in this context
 	for (Properties::iterator i = _properties.find(uri);
@@ -59,13 +59,13 @@ Resource::set_property(const Raul::URI&  uri,
 	}
 
 	// Insert new property
-	const Raul::Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
+	const Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
 	on_property(uri, v);
 	return v;
 }
 
 void
-Resource::remove_property(const Raul::URI& uri, const Raul::Atom& value)
+Resource::remove_property(const Raul::URI& uri, const Atom& value)
 {
 	if (value == _uris.wildcard) {
 		_properties.erase(uri);
@@ -82,7 +82,7 @@ Resource::remove_property(const Raul::URI& uri, const Raul::Atom& value)
 }
 
 bool
-Resource::has_property(const Raul::URI& uri, const Raul::Atom& value) const
+Resource::has_property(const Raul::URI& uri, const Atom& value) const
 {
 	Properties::const_iterator i = _properties.find(uri);
 	for (; (i != _properties.end()) && (i->first == uri); ++i) {
@@ -93,16 +93,16 @@ Resource::has_property(const Raul::URI& uri, const Raul::Atom& value) const
 	return false;
 }
 
-const Raul::Atom&
-Resource::set_property(const Raul::URI& uri, const Raul::Atom& value) const
+const Atom&
+Resource::set_property(const Raul::URI& uri, const Atom& value) const
 {
 	return const_cast<Resource*>(this)->set_property(uri, value);
 }
 
-const Raul::Atom&
+const Atom&
 Resource::get_property(const Raul::URI& uri) const
 {
-	static const Raul::Atom nil;
+	static const Atom nil;
 	Properties::const_iterator i = _properties.find(uri);
 	return (i != _properties.end()) ? i->second : nil;
 }
@@ -120,7 +120,7 @@ Resource::type(const URIs&       uris,
 
 	graph = block = port = is_output = false;
 	for (iterator i = types_range.first; i != types_range.second; ++i) {
-		const Raul::Atom& atom = i->second;
+		const Atom& atom = i->second;
 		if (atom.type() != uris.forge.URI && atom.type() != uris.forge.URID) {
 			continue; // Non-URI type, ignore garbage data
 		}

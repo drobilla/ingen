@@ -39,7 +39,7 @@ AtomReader::AtomReader(URIMap&    map,
 }
 
 void
-AtomReader::get_atom(const LV2_Atom* in, Raul::Atom& out)
+AtomReader::get_atom(const LV2_Atom* in, Atom& out)
 {
 	if (in) {
 		if (in->type == _uris.atom_URID) {
@@ -67,7 +67,7 @@ AtomReader::get_props(const LV2_Atom_Object*       obj,
 			               _forge.alloc_uri(_map.unmap_uri(obj->body.otype))));
 	}
 	LV2_ATOM_OBJECT_FOREACH(obj, p) {
-		Raul::Atom val;
+		Atom val;
 		get_atom(&p->value, val);
 		props.insert(std::make_pair(Raul::URI(_map.unmap_uri(p->key)), val));
 	}
@@ -218,7 +218,7 @@ AtomReader::write(const LV2_Atom* msg)
 			return false;
 		}
 
-		Raul::Atom atom;
+		Atom atom;
 		get_atom(value, atom);
 		_iface.set_property(Raul::URI(subject_uri),
 		                    Raul::URI(_map.unmap_uri(prop->body)),

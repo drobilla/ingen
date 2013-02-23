@@ -45,7 +45,7 @@ public:
 	void present(SPtr<const Client::PortModel> port_model);
 
 private:
-	void property_changed(const Raul::URI& key, const Raul::Atom& value);
+	void property_changed(const Raul::URI& key, const Atom& value);
 	void min_changed();
 	void max_changed();
 

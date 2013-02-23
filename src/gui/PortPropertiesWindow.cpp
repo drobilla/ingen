@@ -92,8 +92,8 @@ PortPropertiesWindow::present(SPtr<const PortModel> pm)
 }
 
 void
-PortPropertiesWindow::property_changed(const Raul::URI&  key,
-                                       const Raul::Atom& value)
+PortPropertiesWindow::property_changed(const Raul::URI& key,
+                                       const Atom&      value)
 {
 	const URIs& uris = _app->uris();
 	if (value.type() == uris.forge.Float) {

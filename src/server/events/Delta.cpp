@@ -150,7 +150,7 @@ Delta::pre_process()
 
 	for (const auto& r : _remove) {
 		const Raul::URI&  key   = r.first;
-		const Raul::Atom& value = r.second;
+		const Atom& value = r.second;
 		if (key == uris.ingen_controlBinding && value == uris.wildcard) {
 			PortImpl* port = dynamic_cast<PortImpl*>(_object);
 			if (port)
@@ -289,7 +289,7 @@ Delta::execute(ProcessContext& context)
 	std::vector<SpecialType>::const_iterator t = _types.begin();
 	for (const auto& p : _properties) {
 		const Raul::URI&  key   = p.first;
-		const Raul::Atom& value = p.second;
+		const Atom& value = p.second;
 		switch (*t) {
 		case SpecialType::ENABLE_BROADCAST:
 			if (port) {

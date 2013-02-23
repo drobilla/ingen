@@ -233,9 +233,9 @@ AtomWriter::disconnect_all(const Raul::Path& graph,
 }
 
 void
-AtomWriter::set_property(const Raul::URI&  subject,
-                         const Raul::URI&  predicate,
-                         const Raul::Atom& value)
+AtomWriter::set_property(const Raul::URI& subject,
+                         const Raul::URI& predicate,
+                         const Atom&      value)
 {
 	LV2_Atom_Forge_Frame msg;
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Set);

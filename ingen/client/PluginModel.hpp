@@ -55,7 +55,7 @@ public:
 
 	Type type() const { return _type; }
 
-	virtual const Raul::Atom& get_property(const Raul::URI& key) const;
+	virtual const Atom& get_property(const Raul::URI& key) const;
 
 	Raul::Symbol default_block_symbol() const;
 	std::string  human_name() const;
@@ -91,7 +91,7 @@ public:
 
 	// Signals
 	INGEN_SIGNAL(changed, void);
-	INGEN_SIGNAL(property, void, const Raul::URI&, const Raul::Atom&);
+	INGEN_SIGNAL(property, void, const Raul::URI&, const Atom&);
 
 protected:
 	friend class ClientStore;

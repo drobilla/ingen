@@ -50,7 +50,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
                    uint32_t            poly,
                    PortType            type,
                    LV2_URID            buffer_type,
-                   const Raul::Atom&   value,
+                   const Atom&         value,
                    size_t              buffer_size)
 	: NodeImpl(bufs.uris(), block, name)
 	, _bufs(bufs)

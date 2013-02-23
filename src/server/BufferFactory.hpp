@@ -21,10 +21,10 @@
 #include <map>
 #include <mutex>
 
+#include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/types.hpp"
-#include "raul/Atom.hpp"
 #include "raul/RingBuffer.hpp"
 
 #include "BufferRef.hpp"

@@ -49,7 +49,7 @@ TimeNode::TimeNode(InternalPlugin*     plugin,
 
 	_notify_port = new OutputPort(
 		bufs, this, Raul::Symbol("notify"), 0, 1,
-		PortType::ATOM, uris.atom_Sequence, Raul::Atom(), 1024);
+		PortType::ATOM, uris.atom_Sequence, Atom(), 1024);
 	_notify_port->set_property(uris.lv2_name, bufs.forge().alloc("Notify"));
 	_notify_port->set_property(uris.atom_supports,
 	                           bufs.forge().make_urid(uris.time_Position));

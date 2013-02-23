@@ -74,8 +74,8 @@ public:
 	                        const Raul::Path& head);
 
 	virtual void set_property(const Raul::URI& subject_path,
-	                          const Raul::URI&  predicate,
-	                          const Raul::Atom& value);
+	                          const Raul::URI& predicate,
+	                          const Atom&      value);
 
 	virtual void del(const Raul::URI& uri);
 

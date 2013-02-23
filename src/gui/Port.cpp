@@ -49,7 +49,7 @@ Port::create(App&                  app,
 	Glib::ustring label;
 	if (app.world()->conf().option("port-labels").get<int32_t>()) {
 		if (human_name) {
-			const Raul::Atom& name = pm->get_property(app.uris().lv2_name);
+			const Atom& name = pm->get_property(app.uris().lv2_name);
 			if (name.type() == app.forge().String) {
 				label = name.ptr<char>();
 			} else {
@@ -154,7 +154,7 @@ Port::moved()
 void
 Port::on_value_changed(double value)
 {
-	const Raul::Atom atom = _app.forge().make(float(value));
+	const Atom atom = _app.forge().make(float(value));
 	if (atom != model()->value()) {
 		Ingen::World* const world = _app.world();
 		_app.interface()->set_property(model()->uri(),
@@ -171,7 +171,7 @@ Port::on_value_changed(double value)
 }
 
 void
-Port::value_changed(const Raul::Atom& value)
+Port::value_changed(const Atom& value)
 {
 	if (!_pressed && value.type() == _app.forge().Float) {
 		Ganv::Port::set_control_value(value.get<float>());
@@ -224,7 +224,7 @@ Port::build_uri_menu()
 	Gtk::Menu*             menu  = Gtk::manage(new Gtk::Menu());
 
 	// Get the port designation, which should be a rdf:Property
-	const Raul::Atom& designation_atom = model()->get_property(
+	const Atom& designation_atom = model()->get_property(
 		_app.uris().lv2_designation);
 	if (!designation_atom.is_valid()) {
 		return NULL;
@@ -359,7 +359,7 @@ peak_color(float peak)
 /* End peak colour stuff */
 
 void
-Port::activity(const Raul::Atom& value)
+Port::activity(const Atom& value)
 {
 	if (model()->is_a(_app.uris().lv2_AudioPort)) {
 		set_fill_color(peak_color(value.get<float>()));
@@ -403,7 +403,7 @@ Port::port_properties_changed()
 }
 
 void
-Port::property_changed(const Raul::URI& key, const Raul::Atom& value)
+Port::property_changed(const Raul::URI& key, const Atom& value)
 {
 	const URIs& uris = _app.uris();
 	if (value.type() == uris.forge.Float) {

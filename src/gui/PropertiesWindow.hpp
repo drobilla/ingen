@@ -57,10 +57,10 @@ public:
 private:
 	/** Record of a property (row in the table) */
 	struct Record {
-		Record(const Raul::Atom& v, Gtk::Alignment* vw, int r)
+		Record(const Atom& v, Gtk::Alignment* vw, int r)
 			: value(v), value_widget(vw), row(r)
 		{}
-		Raul::Atom      value;
+		Atom            value;
 		Gtk::Alignment* value_widget;
 		int             row;
 	};
@@ -75,16 +75,16 @@ private:
 	};
 
 	void add_property(const Raul::URI&  uri,
-	                  const Raul::Atom& value);
+	                  const Atom& value);
 
 	Gtk::Widget* create_value_widget(const Raul::URI&  uri,
-	                                 const Raul::Atom& value);
+	                                 const Atom& value);
 
 	void init();
 	void reset();
 	void on_show();
 
-	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
+	void property_changed(const Raul::URI& predicate, const Atom& value);
 	void value_edited(const Raul::URI& predicate);
 	void key_changed();
 	void add_clicked();

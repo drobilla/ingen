@@ -16,11 +16,11 @@
 
 #include <utility>
 
+#include "ingen/Atom.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "raul/Array.hpp"
-#include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
 #include "Broadcaster.hpp"
@@ -62,7 +62,7 @@ CreatePort::CreatePort(Engine&                     engine,
 
 	const Range types = properties.equal_range(uris.rdf_type);
 	for (Iterator i = types.first; i != types.second; ++i) {
-		const Raul::Atom& type = i->second;
+		const Atom& type = i->second;
 		if (type == uris.lv2_AudioPort) {
 			_port_type = PortType::AUDIO;
 		} else if (type == uris.lv2_ControlPort) {

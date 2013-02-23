@@ -15,11 +15,11 @@
 */
 
 #include "ingen/Arc.hpp"
+#include "ingen/Atom.hpp"
 #include "ingen/Builder.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
-#include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
 using namespace std;

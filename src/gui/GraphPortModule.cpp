@@ -98,8 +98,8 @@ GraphPortModule::store_location(double ax, double ay)
 {
 	const URIs& uris = app().uris();
 
-	const Raul::Atom x(app().forge().make(static_cast<float>(ax)));
-	const Raul::Atom y(app().forge().make(static_cast<float>(ay)));
+	const Atom x(app().forge().make(static_cast<float>(ax)));
+	const Atom y(app().forge().make(static_cast<float>(ay)));
 
 	if (x != _model->get_property(uris.ingen_canvasX) ||
 	    y != _model->get_property(uris.ingen_canvasY))
@@ -121,8 +121,8 @@ GraphPortModule::store_location(double ax, double ay)
 void
 GraphPortModule::show_human_names(bool b)
 {
-	const URIs&       uris = app().uris();
-	const Raul::Atom& name = _model->get_property(uris.lv2_name);
+	const URIs& uris = app().uris();
+	const Atom& name = _model->get_property(uris.lv2_name);
 	if (b && name.type() == uris.forge.String) {
 		set_name(name.ptr<char>());
 	} else {
@@ -137,7 +137,7 @@ GraphPortModule::set_name(const std::string& n)
 }
 
 void
-GraphPortModule::property_changed(const Raul::URI& key, const Raul::Atom& value)
+GraphPortModule::property_changed(const Raul::URI& key, const Atom& value)
 {
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {

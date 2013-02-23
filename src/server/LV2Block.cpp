@@ -230,11 +230,11 @@ LV2Block::instantiate(BufferFactory& bufs)
 			lilv_node_as_string(lilv_port_get_symbol(plug, id)));
 
 		// Get port type
-		Raul::Atom val;
-		PortType   port_type     = PortType::UNKNOWN;
-		LV2_URID   buffer_type   = 0;
-		bool       is_morph      = false;
-		bool       is_auto_morph = false;
+		Atom     val;
+		PortType port_type     = PortType::UNKNOWN;
+		LV2_URID buffer_type   = 0;
+		bool     is_morph      = false;
+		bool     is_auto_morph = false;
 		if (lilv_port_is_a(plug, id, info->lv2_ControlPort)) {
 			if (lilv_port_is_a(plug, id, info->morph_MorphPort)) {
 				is_morph = true;

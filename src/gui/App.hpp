@@ -26,10 +26,10 @@
 #include <gtkmm/main.h>
 #include <gtkmm/window.h>
 
+#include "ingen/Atom.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/World.hpp"
 #include "ingen/types.hpp"
-#include "raul/Atom.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/URI.hpp"
 
@@ -144,9 +144,9 @@ protected:
 	bool animate();
 	void response(int32_t id, Ingen::Status status, const std::string& subject);
 
-	void property_change(const Raul::URI&  subject,
-	                     const Raul::URI&  key,
-	                     const Raul::Atom& value);
+	void property_change(const Raul::URI& subject,
+	                     const Raul::URI& key,
+	                     const Atom&      value);
 
 	static void* icon_destroyed(void* data);
 

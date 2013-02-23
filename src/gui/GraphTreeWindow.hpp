@@ -50,7 +50,7 @@ public:
 	void new_object(SPtr<Client::ObjectModel> object);
 
 	void graph_property_changed(const Raul::URI&         key,
-	                            const Raul::Atom&        value,
+	                            const Atom&              value,
 	                            SPtr<Client::GraphModel> gm);
 
 	void graph_moved(SPtr<Client::GraphModel> graph);

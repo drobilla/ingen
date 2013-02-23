@@ -60,8 +60,8 @@ public:
 	bool show_menu(GdkEventButton* ev);
 	void update_metadata();
 
-	void value_changed(const Raul::Atom& value);
-	void activity(const Raul::Atom& value);
+	void value_changed(const Atom& value);
+	void activity(const Atom& value);
 	void disconnected_from(SPtr<Client::PortModel> port);
 
 	void set_selected(gboolean b);
@@ -77,7 +77,7 @@ private:
 	Gtk::Menu* build_uri_menu();
 	GraphBox* get_graph_box() const;
 
-	void property_changed(const Raul::URI& key, const Raul::Atom& value);
+	void property_changed(const Raul::URI& key, const Atom& value);
 	void moved();
 
 	void on_value_changed(double value);

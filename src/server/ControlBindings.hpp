@@ -20,9 +20,9 @@
 #include <map>
 #include <stdint.h>
 
+#include "ingen/Atom.hpp"
 #include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
-#include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
 #include "BufferFactory.hpp"
@@ -62,18 +62,18 @@ public:
 	~ControlBindings();
 
 	Key port_binding(PortImpl* port) const;
-	Key binding_key(const Raul::Atom& binding) const;
+	Key binding_key(const Atom& binding) const;
 
 	void learn(PortImpl* port);
 
 	void port_binding_changed(ProcessContext&   context,
 	                          PortImpl*         port,
-	                          const Raul::Atom& binding);
+	                          const Atom& binding);
 
 	void port_value_changed(ProcessContext&   context,
 	                        PortImpl*         port,
 	                        Key               key,
-	                        const Raul::Atom& value);
+	                        const Atom& value);
 
 	void pre_process(ProcessContext& context, Buffer* control_in);
 	void post_process(ProcessContext& context, Buffer* control_out);
@@ -93,18 +93,22 @@ public:
 private:
 	Key midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
 
-	void set_port_value(ProcessContext& context, PortImpl* port, Type type, int16_t value);
+	void set_port_value(ProcessContext& context,
+	                    PortImpl*       port,
+	                    Type            type,
+	                    int16_t         value);
+
 	bool bind(ProcessContext& context, Key key);
 
-	Raul::Atom control_to_port_value(ProcessContext& context,
-	                                 const PortImpl* port,
-	                                 Type            type,
-	                                 int16_t         value) const;
+	Atom control_to_port_value(ProcessContext& context,
+	                           const PortImpl* port,
+	                           Type            type,
+	                           int16_t         value) const;
 
-	int16_t port_value_to_control(ProcessContext&   context,
-	                              PortImpl*         port,
-	                              Type              type,
-	                              const Raul::Atom& value) const;
+	int16_t port_value_to_control(ProcessContext& context,
+	                              PortImpl*       port,
+	                              Type            type,
+	                              const Atom&     value) const;
 
 	Engine&        _engine;
 	PortImpl*      _learn_port;

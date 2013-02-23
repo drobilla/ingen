@@ -21,7 +21,7 @@ namespace Ingen {
 namespace Client {
 
 void
-PortModel::on_property(const Raul::URI& uri, const Raul::Atom& value)
+PortModel::on_property(const Raul::URI& uri, const Atom& value)
 {
 	if (uri == _uris.ingen_activity) {
 		// Don't store activity, it is transient

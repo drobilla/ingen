@@ -24,6 +24,7 @@
 #include <glibmm/miscutils.h>
 #include <glibmm/ustring.h>
 
+#include "ingen/Atom.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
@@ -31,7 +32,6 @@
 #include "ingen/World.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "raul/Atom.hpp"
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
@@ -113,7 +113,7 @@ get_properties(Ingen::World*     world,
 			sratom_read(sratom, &forge, world->rdf_world()->c_obj(),
 			            model.c_obj(), i.get_object().c_obj());
 			const LV2_Atom* atom = (const LV2_Atom*)out.buf;
-			Raul::Atom      atomm;
+			Atom            atomm;
 			// FIXME: Don't bloat out all URIs
 			if (atom->type == forge.URID) {
 				atomm = world->forge().alloc_uri(

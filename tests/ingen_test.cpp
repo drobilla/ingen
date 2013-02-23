@@ -96,9 +96,9 @@ public:
 	void disconnect_all(const Raul::Path& parent_patch_path,
 	                    const Raul::Path& path) {}
 
-	void set_property(const Raul::URI&  subject,
-	                  const Raul::URI&  predicate,
-	                  const Raul::Atom& value) {}
+	void set_property(const Raul::URI& subject,
+	                  const Raul::URI& predicate,
+	                  const Atom&      value) {}
 
 	void set_response_id(int32_t id) {}
 

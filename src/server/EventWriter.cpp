@@ -112,9 +112,9 @@ EventWriter::disconnect_all(const Raul::Path& graph,
 }
 
 void
-EventWriter::set_property(const Raul::URI&  uri,
-                          const Raul::URI&  predicate,
-                          const Raul::Atom& value)
+EventWriter::set_property(const Raul::URI& uri,
+                          const Raul::URI& predicate,
+                          const Atom&      value)
 {
 	Resource::Properties remove;
 	remove.insert(

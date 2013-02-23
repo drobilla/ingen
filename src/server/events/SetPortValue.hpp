@@ -17,7 +17,7 @@
 #ifndef INGEN_EVENTS_SETPORTVALUE_HPP
 #define INGEN_EVENTS_SETPORTVALUE_HPP
 
-#include "raul/Atom.hpp"
+#include "ingen/Atom.hpp"
 
 #include "ControlBindings.hpp"
 #include "Event.hpp"
@@ -37,12 +37,12 @@ namespace Events {
 class SetPortValue : public Event
 {
 public:
-	SetPortValue(Engine&           engine,
-	             SPtr<Interface>   client,
-	             int32_t           id,
-	             SampleCount       timestamp,
-	             PortImpl*         port,
-	             const Raul::Atom& value);
+	SetPortValue(Engine&         engine,
+	             SPtr<Interface> client,
+	             int32_t         id,
+	             SampleCount     timestamp,
+	             PortImpl*       port,
+	             const Atom&     value);
 
 	~SetPortValue();
 
@@ -54,7 +54,7 @@ private:
 	void apply(Context& context);
 
 	PortImpl*            _port;
-	const Raul::Atom     _value;
+	const Atom     _value;
 	ControlBindings::Key _binding;
 };
 

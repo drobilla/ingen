@@ -74,9 +74,9 @@ public:
 	virtual void disconnect_all(const Raul::Path& graph,
 	                            const Raul::Path& path);
 
-	virtual void set_property(const Raul::URI&  subject_path,
-	                          const Raul::URI&  predicate,
-	                          const Raul::Atom& value);
+	virtual void set_property(const Raul::URI& subject_path,
+	                          const Raul::URI& predicate,
+	                          const Atom&      value);
 
 	virtual void del(const Raul::URI& uri);
 

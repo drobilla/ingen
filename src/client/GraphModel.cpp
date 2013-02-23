@@ -150,21 +150,21 @@ GraphModel::remove_arc(const Node* tail, const Node* head)
 bool
 GraphModel::enabled() const
 {
-	const Raul::Atom& enabled = get_property(_uris.ingen_enabled);
+	const Atom& enabled = get_property(_uris.ingen_enabled);
 	return (enabled.is_valid() && enabled.get<int32_t>());
 }
 
 uint32_t
 GraphModel::internal_poly() const
 {
-	const Raul::Atom& poly = get_property(_uris.ingen_polyphony);
+	const Atom& poly = get_property(_uris.ingen_polyphony);
 	return poly.is_valid() ? poly.get<int32_t>() : 1;
 }
 
 bool
 GraphModel::polyphonic() const
 {
-	const Raul::Atom& poly = get_property(_uris.ingen_polyphonic);
+	const Atom& poly = get_property(_uris.ingen_polyphonic);
 	return poly.is_valid() && poly.get<int32_t>();
 }
 

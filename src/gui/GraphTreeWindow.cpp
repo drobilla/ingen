@@ -192,9 +192,9 @@ GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 }
 
 void
-GraphTreeWindow::graph_property_changed(const Raul::URI&  key,
-                                        const Raul::Atom& value,
-                                        SPtr<GraphModel>  graph)
+GraphTreeWindow::graph_property_changed(const Raul::URI& key,
+                                        const Atom&      value,
+                                        SPtr<GraphModel> graph)
 {
 	const URIs& uris = _app->uris();
 	_enable_signal = false;

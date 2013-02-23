@@ -49,7 +49,7 @@ Configuration::Configuration(Forge& forge)
 "  ingen -egl foo.ingen  # Run an engine and a GUI and load a graph")
 	, _max_name_length(0)
 {
-	add("clientPort",     "client-port",    'C', "Client port", SESSION, forge.Int, Raul::Atom());
+	add("clientPort",     "client-port",    'C', "Client port", SESSION, forge.Int, Atom());
 	add("connect",        "connect",        'c', "Connect to engine URI", SESSION, forge.String, forge.alloc("unix:///tmp/ingen.sock"));
 	add("engine",         "engine",         'e', "Run (JACK) engine", SESSION, forge.Bool, forge.make(false));
 	add("enginePort",     "engine-port",    'E', "Engine listen port", SESSION, forge.Int, forge.make(16180));
@@ -58,24 +58,24 @@ Configuration::Configuration(Forge& forge)
 	add("",               "help",           'h', "Print this help message", SESSION, forge.Bool, forge.make(false));
 	add("jackName",       "jack-name",      'n', "JACK name", SESSION, forge.String, forge.alloc("ingen"));
 	add("jackServer",     "jack-server",    's', "JACK server name", GLOBAL, forge.String, forge.alloc(""));
-	add("uuid",           "uuid",           'u', "JACK session UUID", SESSION, forge.String, Raul::Atom());
-	add("load",           "load",           'l', "Load graph", SESSION, forge.String, Raul::Atom());
-	add("path",           "path",           'L', "Target path for loaded graph", SESSION, forge.String, Raul::Atom());
+	add("uuid",           "uuid",           'u', "JACK session UUID", SESSION, forge.String, Atom());
+	add("load",           "load",           'l', "Load graph", SESSION, forge.String, Atom());
+	add("path",           "path",           'L', "Target path for loaded graph", SESSION, forge.String, Atom());
 	add("queueSize",      "queue-size",     'q', "Event queue size", GLOBAL, forge.Int, forge.make(4096));
-	add("run",            "run",            'r', "Run script", SESSION, forge.String, Raul::Atom());
+	add("run",            "run",            'r', "Run script", SESSION, forge.String, Atom());
 	add("humanNames",     "human-names",     0,  "Show human names in GUI", GUI, forge.Bool, forge.make(true));
 	add("portLabels",     "port-labels",     0,  "Show port labels in GUI", GUI, forge.Bool, forge.make(true));
-	add("graphDirectory", "graph-directory", 0,  "Default directory for opening graphs", GUI, forge.String, Raul::Atom());
+	add("graphDirectory", "graph-directory", 0,  "Default directory for opening graphs", GUI, forge.String, Atom());
 }
 
 Configuration&
-Configuration::add(const std::string&       key,
-                   const std::string&       name,
-                   char                     letter,
-                   const std::string&       desc,
-                   Scope                    scope,
-                   const Raul::Atom::TypeID type,
-                   const Raul::Atom&        value)
+Configuration::add(const std::string& key,
+                   const std::string& name,
+                   char               letter,
+                   const std::string& desc,
+                   Scope              scope,
+                   const LV2_URID     type,
+                   const Atom&        value)
 {
 	assert(value.type() == type || value.type() == 0);
 	_max_name_length = std::max(_max_name_length, name.length());
@@ -282,7 +282,7 @@ Configuration::save(URIMap&            uri_map,
 
 	// Write a statement for each valid option
 	for (auto o : _options) {
-		const Raul::Atom& value = o.second.value;
+		const Atom& value = o.second.value;
 		if (!(o.second.scope & scopes) ||
 			o.second.key.empty() ||
 		    !value.is_valid()) {
@@ -328,10 +328,10 @@ Configuration::load_default(const std::string& app,
 	return loaded;
 }
 
-const Raul::Atom&
+const Atom&
 Configuration::option(const std::string& long_name) const
 {
-	static const Raul::Atom nil;
+	static const Atom nil;
 	Options::const_iterator o = _options.find(long_name);
 	if (o == _options.end()) {
 		return nil;
@@ -341,7 +341,7 @@ Configuration::option(const std::string& long_name) const
 }
 
 bool
-Configuration::set(const std::string& long_name, const Raul::Atom& value)
+Configuration::set(const std::string& long_name, const Atom& value)
 {
 	Options::iterator o = _options.find(long_name);
 	if (o != _options.end()) {

@@ -29,19 +29,19 @@ namespace Server {
 
 struct Notification
 {
-	inline Notification(PortImpl*          p = 0,
-	                    FrameTime          f = 0,
-	                    LV2_URID           k = 0,
-	                    uint32_t           s = 0,
-	                    Raul::Atom::TypeID t = 0)
+	inline Notification(PortImpl* p = 0,
+	                    FrameTime f = 0,
+	                    LV2_URID  k = 0,
+	                    uint32_t  s = 0,
+	                    LV2_URID  t = 0)
 		: port(p), time(f), key(k), size(s), type(t)
 	{}
 
-	PortImpl*          port;
-	FrameTime          time;
-	LV2_URID           key;
-	uint32_t           size;
-	Raul::Atom::TypeID type;
+	PortImpl* port;
+	FrameTime time;
+	LV2_URID  key;
+	uint32_t  size;
+	LV2_URID  type;
 };
 
 Context::Context(Engine& engine, ID id)
@@ -61,12 +61,12 @@ Context::must_notify(const PortImpl* port) const
 }
 
 bool
-Context::notify(LV2_URID           key,
-                FrameTime          time,
-                PortImpl*          port,
-                uint32_t           size,
-                Raul::Atom::TypeID type,
-                const void*        body)
+Context::notify(LV2_URID    key,
+                FrameTime   time,
+                PortImpl*   port,
+                uint32_t    size,
+                LV2_URID    type,
+                const void* body)
 {
 	const Notification n(port, time, key, size, type);
 	if (_event_sink.write_space() < sizeof(n) + size) {
@@ -94,7 +94,7 @@ Context::emit_notifications(FrameTime end)
 			return;
 		}
 		if (_event_sink.read(sizeof(note), &note) == sizeof(note)) {
-			Raul::Atom value = _engine.world()->forge().alloc(
+			Atom value = _engine.world()->forge().alloc(
 				note.size, note.type, NULL);
 			if (_event_sink.read(note.size, value.get_body()) == note.size) {
 				i += note.size;

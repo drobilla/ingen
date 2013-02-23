@@ -25,16 +25,11 @@ namespace Ingen {
 Forge::Forge(URIMap& map)
 	: _map(map)
 {
-	Int    = map.map_uri(LV2_ATOM__Int);
-	Float  = map.map_uri(LV2_ATOM__Float);
-	Bool   = map.map_uri(LV2_ATOM__Bool);
-	URI    = map.map_uri(LV2_ATOM__URI);
-	URID   = map.map_uri(LV2_ATOM__URID);
-	String = map.map_uri(LV2_ATOM__String);
+	lv2_atom_forge_init(this, &map.urid_map_feature()->urid_map);
 }
 
 std::string
-Forge::str(const Raul::Atom& atom)
+Forge::str(const Atom& atom)
 {
 	std::ostringstream ss;
 	if (atom.type() == Int) {

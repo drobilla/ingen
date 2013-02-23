@@ -84,9 +84,9 @@ public:
 	void move(const Raul::Path& old_path,
 	          const Raul::Path& new_path);
 
-	void set_property(const Raul::URI&  subject_path,
-	                  const Raul::URI&  predicate,
-	                  const Raul::Atom& value);
+	void set_property(const Raul::URI& subject_path,
+	                  const Raul::URI& predicate,
+	                  const Atom&      value);
 
 	void connect(const Raul::Path& tail,
 	             const Raul::Path& head);

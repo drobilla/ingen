@@ -58,7 +58,7 @@ public:
 	}
 
 	void show_port_status(const Client::PortModel* model,
-	                      const Raul::Atom&        value) {
+	                      const Atom&              value) {
 		_box->show_port_status(model, value);
 	}
 

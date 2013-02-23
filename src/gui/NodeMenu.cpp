@@ -66,7 +66,7 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 	if (plugin && plugin->type() == PluginModel::LV2 && plugin->has_ui()) {
 		_popup_gui_menuitem->show();
 		_embed_gui_menuitem->show();
-		const Raul::Atom& ui_embedded = block->get_property(
+		const Atom& ui_embedded = block->get_property(
 			_app->uris().ingen_uiEmbedded);
 		_embed_gui_menuitem->set_active(
 			ui_embedded.is_valid() && ui_embedded.get<int32_t>());

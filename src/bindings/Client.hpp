@@ -38,5 +38,5 @@ public:
 	void del(const Raul::URI& uri) {}
 	void move(const Raul::Path& old_path, const Raul::Path& new_path) {}
 	void disconnect(const Raul::Path& src_port_path, const Raul::Path& dst_port_path) {}
-	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value) {}
+	void set_property(const Raul::URI& subject, const Raul::URI& key, const Atom& value) {}
 };

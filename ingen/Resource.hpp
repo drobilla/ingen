@@ -20,8 +20,8 @@
 #include <map>
 #include <string>
 
+#include "ingen/Atom.hpp"
 #include "ingen/URIs.hpp"
-#include "raul/Atom.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/URI.hpp"
 
@@ -70,10 +70,10 @@ public:
 	}
 
 	/** A property value (an Atom with a context). */
-	class Property : public Raul::Atom {
+	class Property : public Atom {
 	public:
-		Property(const Raul::Atom& atom, Graph ctx=Graph::DEFAULT)
-			: Raul::Atom(atom)
+		Property(const Atom& atom, Graph ctx=Graph::DEFAULT)
+			: Atom(atom)
 			, _ctx(ctx)
 		{}
 
@@ -93,16 +93,16 @@ public:
 	 * This is only useful for properties with a single value.  If the
 	 * requested property has several values, the first will be returned.
 	 */
-	virtual const Raul::Atom& get_property(const Raul::URI& uri) const;
+	virtual const Atom& get_property(const Raul::URI& uri) const;
 
 	/** Set (replace) a property value.
 	 *
 	 * This will first erase any properties with the given @p uri, so after
 	 * this call exactly one property with predicate @p uri will be set.
 	 */
-	virtual const Raul::Atom& set_property(
+	virtual const Atom& set_property(
 		const Raul::URI&  uri,
-		const Raul::Atom& value,
+		const Atom& value,
 		Graph             ctx=Graph::DEFAULT);
 
 	/** Add a property value.
@@ -111,21 +111,21 @@ public:
 	 * predicate @p uri and values other than @p value exist, this will result
 	 * in multiple values for the property.
 	 */
-	virtual void add_property(const Raul::URI&  uri,
-	                          const Raul::Atom& value,
-	                          Graph             ctx=Graph::DEFAULT);
+	virtual void add_property(const Raul::URI& uri,
+	                          const Atom&      value,
+	                          Graph            ctx = Graph::DEFAULT);
 
 	/** Remove a property.
 	 *
 	 *	If @p value is ingen:wildcard then any property with @p uri for a
 	 *  predicate will be removed.
 	 */
-	virtual void remove_property(const Raul::URI&  uri,
-	                             const Raul::Atom& value);
+	virtual void remove_property(const Raul::URI& uri,
+	                             const Atom&      value);
 
 	/** Return true iff a property is set. */
-	virtual bool has_property(const Raul::URI&  uri,
-	                          const Raul::Atom& value) const;
+	virtual bool has_property(const Raul::URI& uri,
+	                          const Atom&      value) const;
 
 	/** Set (replace) several properties at once.
 	 *
@@ -150,7 +150,7 @@ public:
 	 * This can be used by derived classes to implement special behaviour for
 	 * particular properties (e.g. ingen:value for ports).
 	 */
-	virtual void on_property(const Raul::URI& uri, const Raul::Atom& value) {}
+	virtual void on_property(const Raul::URI& uri, const Atom& value) {}
 
 	/** Get the ingen type from a set of Properties.
 	 *
@@ -175,7 +175,7 @@ public:
 	Properties&       properties()       { return _properties; }
 
 protected:
-	const Raul::Atom& set_property(const Raul::URI& uri, const Raul::Atom& value) const;
+	const Atom& set_property(const Raul::URI& uri, const Atom& value) const;
 
 	URIs& _uris;
 

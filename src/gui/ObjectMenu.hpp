@@ -52,7 +52,7 @@ protected:
 	void         on_menu_destroy();
 	void         on_menu_properties();
 
-	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
+	void property_changed(const Raul::URI& predicate, const Atom& value);
 
 	App*                            _app;
 	SPtr<const Client::ObjectModel> _object;

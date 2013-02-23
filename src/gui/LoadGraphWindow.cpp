@@ -126,7 +126,7 @@ LoadGraphWindow::set_graph(SPtr<const GraphModel> graph)
 void
 LoadGraphWindow::on_show()
 {
-	const Raul::Atom& dir = _app->world()->conf().option("graph-directory");
+	const Atom& dir = _app->world()->conf().option("graph-directory");
 	if (dir.is_valid()) {
 		set_current_folder(dir.ptr<char>());
 	}
@@ -179,9 +179,9 @@ LoadGraphWindow::ok_clicked()
 		std::list<Glib::ustring> uri_list = get_filenames();
 		for (auto u : uri_list) {
 			// Cascade
-			Raul::Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
+			Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
 			x = _app->forge().make(x.get<float>() + 20.0f);
-			Raul::Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
+			Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
 			y = _app->forge().make(y.get<float>() + 20.0f);
 
 			Raul::Symbol symbol(symbol_from_filename(u));

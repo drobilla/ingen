@@ -19,8 +19,8 @@
 
 #include <cstdlib>
 
+#include "ingen/Atom.hpp"
 #include "raul/Array.hpp"
-#include "raul/Atom.hpp"
 
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
@@ -72,18 +72,18 @@ public:
 	virtual bool apply_poly(
 		ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 
-	const Raul::Atom& value() const { return _value; }
-	void              set_value(const Raul::Atom& v) { _value = v; }
+	const Atom& value() const { return _value; }
+	void        set_value(const Atom& v) { _value = v; }
 
-	const Raul::Atom& minimum() const { return _min; }
-	const Raul::Atom& maximum() const { return _max; }
+	const Atom& minimum() const { return _min; }
+	const Atom& maximum() const { return _max; }
 
 	/* The following two methods store the range in variables so it can be
 	   accessed in the process thread, which is required for applying control
 	   bindings from incoming MIDI data.
 	*/
-	void set_minimum(const Raul::Atom& min) { _min = min; }
-	void set_maximum(const Raul::Atom& max) { _max = max; }
+	void set_minimum(const Atom& min) { _min = min; }
+	void set_maximum(const Atom& max) { _max = max; }
 
 	inline BufferRef buffer(uint32_t voice) const {
 		return _buffers->at((_poly == 1) ? 0 : voice);
@@ -189,7 +189,7 @@ protected:
 	         uint32_t            poly,
 	         PortType            type,
 	         LV2_URID            buffer_type,
-	         const Raul::Atom&   value,
+	         const Atom&         value,
 	         size_t              buffer_size);
 
 	struct SetState {
@@ -211,9 +211,9 @@ protected:
 	float                   _peak;
 	PortType                _type;
 	LV2_URID                _buffer_type;
-	Raul::Atom              _value;
-	Raul::Atom              _min;
-	Raul::Atom              _max;
+	Atom                    _value;
+	Atom                    _min;
+	Atom                    _max;
 	Raul::Array<SetState>*  _set_states;
 	Raul::Array<SetState>*  _prepared_set_states;
 	Raul::Array<BufferRef>* _buffers;

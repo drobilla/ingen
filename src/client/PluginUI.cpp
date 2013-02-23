@@ -70,8 +70,8 @@ lv2_ui_write(SuilController controller,
 			ui->world()->forge().make(value));
 
 	} else if (format == uris.atom_eventTransfer.id) {
-		const LV2_Atom*  atom = (const LV2_Atom*)buffer;
-		Raul::Atom val  = ui->world()->forge().alloc(
+		const LV2_Atom* atom = (const LV2_Atom*)buffer;
+		Atom            val  = ui->world()->forge().alloc(
 			atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 		ui->world()->interface()->set_property(port->uri(),
 		                                       uris.ingen_value,

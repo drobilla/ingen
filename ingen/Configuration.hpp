@@ -25,10 +25,9 @@
 #include <map>
 #include <string>
 
+#include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/URIMap.hpp"
-
-#include "raul/Atom.hpp"
 #include "raul/Exception.hpp"
 
 namespace Ingen {
@@ -60,13 +59,13 @@ public:
 	 * @param type Type
 	 * @param value Default value
 	 */
-	Configuration& add(const std::string&       key,
-	                   const std::string&       name,
-	                   char                     letter,
-	                   const std::string&       desc,
-	                   Scope                    scope,
-	                   const Raul::Atom::TypeID type,
-	                   const Raul::Atom&        value);
+	Configuration& add(const std::string& key,
+	                   const std::string& name,
+	                   char               letter,
+	                   const std::string& desc,
+	                   Scope              scope,
+	                   const LV2_URID     type,
+	                   const Atom&        value);
 
 	void print_usage(const std::string& program, std::ostream& os);
 
@@ -108,8 +107,8 @@ public:
 	std::list<std::string> load_default(const std::string& app,
 	                                    const std::string& filename);
 
-	const Raul::Atom& option(const std::string& long_name) const;
-	bool              set(const std::string& long_name, const Raul::Atom& value);
+	const Atom& option(const std::string& long_name) const;
+	bool              set(const std::string& long_name, const Atom& value);
 
 	const std::list<std::string>& files() const { return _files; }
 
@@ -118,19 +117,19 @@ private:
 	public:
 		Option(const std::string& k, const std::string& n, char l,
 		       const std::string& d, Scope s,
-		       const Raul::Atom::TypeID type, const Raul::Atom& def)
+		       const LV2_URID type, const Atom& def)
 			: key(k), name(n), letter(l)
 			, desc(d), scope(s)
 			, type(type), value(def)
 		{}
 
-		std::string        key;
-		std::string        name;
-		char               letter;
-		std::string        desc;
-		Scope              scope;
-		Raul::Atom::TypeID type;
-		Raul::Atom         value;
+		std::string key;
+		std::string name;
+		char        letter;
+		std::string desc;
+		Scope       scope;
+		LV2_URID    type;
+		Atom        value;
 	};
 
 	struct OptionNameOrder {

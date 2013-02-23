@@ -127,9 +127,9 @@ public:
 		BROADCAST(disconnect_all, graph, path);
 	}
 
-	void set_property(const Raul::URI&  subject,
-	                  const Raul::URI&  predicate,
-	                  const Raul::Atom& value) {
+	void set_property(const Raul::URI& subject,
+	                  const Raul::URI& predicate,
+	                  const Atom&      value) {
 		BROADCAST(set_property, subject, predicate, value);
 	}
 

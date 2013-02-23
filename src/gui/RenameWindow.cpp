@@ -63,7 +63,7 @@ RenameWindow::set_object(SPtr<const ObjectModel> object)
 {
 	_object = object;
 	_symbol_entry->set_text(object->path().symbol());
-	const Raul::Atom& name_atom = object->get_property(_app->uris().lv2_name);
+	const Atom& name_atom = object->get_property(_app->uris().lv2_name);
 	_label_entry->set_text(
 		(name_atom.type() == _app->forge().String) ? name_atom.ptr<char>() : "");
 }
@@ -110,11 +110,11 @@ RenameWindow::cancel_clicked()
 void
 RenameWindow::ok_clicked()
 {
-	const URIs&       uris       = _app->uris();
-	const string&     symbol_str = _symbol_entry->get_text();
-	const string&     label      = _label_entry->get_text();
-	Raul::Path        path       = _object->path();
-	const Raul::Atom& name_atom  = _object->get_property(uris.lv2_name);
+	const URIs&   uris       = _app->uris();
+	const string& symbol_str = _symbol_entry->get_text();
+	const string& label      = _label_entry->get_text();
+	Raul::Path    path       = _object->path();
+	const Atom&   name_atom  = _object->get_property(uris.lv2_name);
 
 	if (Raul::Symbol::is_valid(symbol_str)) {
 		const Raul::Symbol symbol(symbol_str);

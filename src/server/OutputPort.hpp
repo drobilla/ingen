@@ -45,8 +45,8 @@ public:
 	           uint32_t            poly,
 	           PortType            type,
 	           LV2_URID            buffer_type,
-	           const Raul::Atom&   value,
-	           size_t              buffer_size=0);
+	           const Atom&         value,
+	           size_t              buffer_size = 0);
 
 	virtual ~OutputPort() {}
 

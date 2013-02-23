@@ -45,11 +45,11 @@ public:
 
 	bool supports(const Raul::URI& value_type) const;
 
-	inline uint32_t          index()     const { return _index; }
-	inline const Raul::Atom& value()     const { return get_property(_uris.ingen_value); }
-	inline bool              connected() const { return (_connections > 0); }
-	inline bool              is_input()  const { return (_direction == Direction::INPUT); }
-	inline bool              is_output() const { return (_direction == Direction::OUTPUT); }
+ 	inline uint32_t    index()     const { return _index; }
+	inline const Atom& value()     const { return get_property(_uris.ingen_value); }
+	inline bool        connected() const { return (_connections > 0); }
+	inline bool        is_input()  const { return (_direction == Direction::INPUT); }
+	inline bool        is_output() const { return (_direction == Direction::OUTPUT); }
 
 	bool port_property(const Raul::URI& uri) const;
 
@@ -65,12 +65,12 @@ public:
 
 	inline bool operator==(const PortModel& pm) const { return (path() == pm.path()); }
 
-	void on_property(const Raul::URI& uri, const Raul::Atom& value);
+	void on_property(const Raul::URI& uri, const Atom& value);
 
 	// Signals
-	INGEN_SIGNAL(value_changed, void, const Raul::Atom&);
-	INGEN_SIGNAL(voice_changed, void, uint32_t, const Raul::Atom&);
-	INGEN_SIGNAL(activity, void, const Raul::Atom&);
+	INGEN_SIGNAL(value_changed, void, const Atom&);
+	INGEN_SIGNAL(voice_changed, void, uint32_t, const Atom&);
+	INGEN_SIGNAL(activity, void, const Atom&);
 	INGEN_SIGNAL(connection, void, SPtr<PortModel>);
 	INGEN_SIGNAL(disconnection, void, SPtr<PortModel>);
 

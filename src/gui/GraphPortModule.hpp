@@ -69,7 +69,7 @@ protected:
 
 	void set_port(Port* port) { _port = port; }
 
-	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
+	void property_changed(const Raul::URI& predicate, const Atom& value);
 
 	SPtr<const Client::PortModel> _model;
 	Port*                         _port;

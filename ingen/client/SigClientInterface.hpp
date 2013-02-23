@@ -58,7 +58,7 @@ public:
 	INGEN_SIGNAL(connection, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(disconnection, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(disconnect_all, void, Raul::Path, Raul::Path)
-	INGEN_SIGNAL(property_change, void, Raul::URI, Raul::URI, Raul::Atom)
+	INGEN_SIGNAL(property_change, void, Raul::URI, Raul::URI, Atom)
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
@@ -106,7 +106,7 @@ protected:
 	void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
 		{ EMIT(disconnect_all, graph, path); }
 
-	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
+	void set_property(const Raul::URI& subject, const Raul::URI& key, const Atom& value)
 		{ EMIT(property_change, subject, key, value); }
 
 	void set_response_id(int32_t id) {}

@@ -235,9 +235,9 @@ App::error_message(const string& str)
 }
 
 void
-App::property_change(const Raul::URI&  subject,
-                     const Raul::URI&  key,
-                     const Raul::Atom& value)
+App::property_change(const Raul::URI& subject,
+                     const Raul::URI& key,
+                     const Atom&      value)
 {
 	if (subject == uris().ingen_engine && key == uris().ingen_sampleRate) {
 		if (value.type() == forge().Int) {

@@ -78,11 +78,11 @@ protected:
 	bool on_selected(gboolean selected);
 
 	void rename();
-	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
+	void property_changed(const Raul::URI& predicate, const Atom& value);
 
 	void new_port_view(SPtr<const Client::PortModel> port);
 
-	void port_activity(uint32_t index, const Raul::Atom& value);
+	void port_activity(uint32_t index, const Atom& value);
 	void plugin_changed();
 	void set_control_values();
 

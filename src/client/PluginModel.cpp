@@ -21,9 +21,9 @@
 
 #include <boost/optional.hpp>
 
-#include "raul/Atom.hpp"
 #include "raul/Path.hpp"
 
+#include "ingen/Atom.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PluginUI.hpp"
@@ -92,11 +92,11 @@ contains_alpha_after(const std::string& str, size_t begin)
 	return false;
 }
 
-const Raul::Atom&
+const Atom&
 PluginModel::get_property(const Raul::URI& key) const
 {
-	static const Raul::Atom nil;
-	const Raul::Atom& val = Resource::get_property(key);
+	static const Atom nil;
+	const Atom& val = Resource::get_property(key);
 	if (val.is_valid())
 		return val;
 
@@ -117,7 +117,7 @@ PluginModel::get_property(const Raul::URI& key) const
 	}
 
 	if (_lilv_plugin) {
-		boost::optional<const Raul::Atom&> ret;
+		boost::optional<const Atom&> ret;
 		LilvNode*  lv2_pred = lilv_new_uri(_lilv_world, key.c_str());
 		LilvNodes* values   = lilv_plugin_get_value(_lilv_plugin, lv2_pred);
 		lilv_node_free(lv2_pred);
@@ -170,7 +170,7 @@ PluginModel::set(SPtr<PluginModel> p)
 Raul::Symbol
 PluginModel::default_block_symbol() const
 {
-	const Raul::Atom& name_atom = get_property(_uris.lv2_symbol);
+	const Atom& name_atom = get_property(_uris.lv2_symbol);
 	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String)
 		return Raul::Symbol::symbolify(name_atom.ptr<char>());
 	else
@@ -180,7 +180,7 @@ PluginModel::default_block_symbol() const
 string
 PluginModel::human_name() const
 {
-	const Raul::Atom& name_atom = get_property(_uris.doap_name);
+	const Atom& name_atom = get_property(_uris.doap_name);
 	if (name_atom.type() == _uris.forge.String)
 		return name_atom.ptr<char>();
 	else

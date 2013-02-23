@@ -104,7 +104,7 @@ PropertiesWindow::present(SPtr<const ObjectModel> model)
 }
 
 void
-PropertiesWindow::add_property(const Raul::URI& uri, const Raul::Atom& value)
+PropertiesWindow::add_property(const Raul::URI& uri, const Atom& value)
 {
 	World* world = _app->world();
 
@@ -211,7 +211,7 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 }
 
 Gtk::Widget*
-PropertiesWindow::create_value_widget(const Raul::URI& uri, const Raul::Atom& value)
+PropertiesWindow::create_value_widget(const Raul::URI& uri, const Atom& value)
 {
 	Ingen::Forge& forge = _app->forge();
 	if (value.type() == forge.Int) {
@@ -301,8 +301,8 @@ PropertiesWindow::on_show()
 }
 
 void
-PropertiesWindow::property_changed(const Raul::URI&  predicate,
-                                   const Raul::Atom& value)
+PropertiesWindow::property_changed(const Raul::URI& predicate,
+                                   const Atom&      value)
 {
 	Records::iterator r = _records.find(predicate);
 	if (r == _records.end()) {
@@ -332,9 +332,9 @@ PropertiesWindow::value_edited(const Raul::URI& predicate)
 		return;
 	}
 
-	Forge&             forge  = _app->forge();
-	Record&            record = r->second;
-	Raul::Atom::TypeID type   = record.value.type();
+	Forge&   forge  = _app->forge();
+	Record&  record = r->second;
+	LV2_URID type   = record.value.type();
 	if (type == forge.Int) {
 		Gtk::SpinButton* widget = dynamic_cast<Gtk::SpinButton*>(record.value_widget->get_child());
 		if (!widget) goto bad_type;
@@ -428,7 +428,7 @@ PropertiesWindow::add_clicked()
 	Glib::ustring             key_uri   = krow[_combo_columns.uri_col];
 	Glib::ustring             value_uri = vrow[_combo_columns.uri_col];
 
-	Raul::Atom value = _app->forge().alloc_uri(value_uri);
+	Atom value = _app->forge().alloc_uri(value_uri);
 
 	Resource::Properties properties;
 	properties.insert(make_pair(Raul::URI(key_uri.c_str()),

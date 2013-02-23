@@ -17,9 +17,9 @@
 #ifndef INGEN_URIS_HPP
 #define INGEN_URIS_HPP
 
+#include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
-#include "raul/Atom.hpp"
 #include "raul/Noncopyable.hpp"
 #include "raul/URI.hpp"
 
@@ -46,9 +46,9 @@ public:
 	struct Quark : public Raul::URI {
 		Quark(Ingen::Forge& forge, URIMap* map, const char* str);
 		operator LV2_URID()   const { return id; }
-		operator Raul::Atom() const { return atom; }
+		operator Atom() const { return atom; }
 		uint32_t   id;
-		Raul::Atom atom;
+		Atom atom;
 	};
 
 	Ingen::Forge& forge;

@@ -25,11 +25,10 @@
 #include <sigc++/sigc++.h>
 #include <glibmm/thread.h>
 
-#include "raul/Atom.hpp"
-#include "raul/SRSWQueue.hpp"
-
+#include "ingen/Atom.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/client/SigClientInterface.hpp"
+#include "raul/SRSWQueue.hpp"
 
 /** Returns nothing and takes no parameters (because they have all been bound) */
 typedef sigc::slot<void> Closure;
@@ -104,7 +103,7 @@ public:
 	void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
 		{ push_sig(sigc::bind(disconnect_all_slot, graph, path)); }
 
-	void set_property(const Raul::URI& subject, const Raul::URI& key, const Raul::Atom& value)
+	void set_property(const Raul::URI& subject, const Raul::URI& key, const Atom& value)
 		{ push_sig(sigc::bind(property_change_slot, subject, key, value)); }
 
 	/** Process all queued events - Called from GTK thread to emit signals. */
@@ -145,21 +144,21 @@ private:
 
 	Raul::SRSWQueue<Closure> _sigs;
 
-	sigc::slot<void>                                        bundle_begin_slot;
-	sigc::slot<void>                                        bundle_end_slot;
-	sigc::slot<void, int32_t, Status, std::string>          response_slot;
-	sigc::slot<void, std::string>                           error_slot;
-	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol>    new_plugin_slot;
+	sigc::slot<void>                                     bundle_begin_slot;
+	sigc::slot<void>                                     bundle_end_slot;
+	sigc::slot<void, int32_t, Status, std::string>       response_slot;
+	sigc::slot<void, std::string>                        error_slot;
+	sigc::slot<void, Raul::URI, Raul::URI, Raul::Symbol> new_plugin_slot;
 	sigc::slot<void, Raul::URI, Resource::Properties,
-	                            Resource::Graph>            put_slot;
+	                            Resource::Graph>         put_slot;
 	sigc::slot<void, Raul::URI, Resource::Properties,
-	                            Resource::Properties>       delta_slot;
-	sigc::slot<void, Raul::Path, Raul::Path>                connection_slot;
-	sigc::slot<void, Raul::URI>                             object_deleted_slot;
-	sigc::slot<void, Raul::Path, Raul::Path>                object_moved_slot;
-	sigc::slot<void, Raul::Path, Raul::Path>                disconnection_slot;
-	sigc::slot<void, Raul::Path, Raul::Path>                disconnect_all_slot;
-	sigc::slot<void, Raul::URI, Raul::URI, Raul::Atom>      property_change_slot;
+	                            Resource::Properties>    delta_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>             connection_slot;
+	sigc::slot<void, Raul::URI>                          object_deleted_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>             object_moved_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>             disconnection_slot;
+	sigc::slot<void, Raul::Path, Raul::Path>             disconnect_all_slot;
+	sigc::slot<void, Raul::URI, Raul::URI, Atom>         property_change_slot;
 };
 
 } // namespace Client

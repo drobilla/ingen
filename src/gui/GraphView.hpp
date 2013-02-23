@@ -76,7 +76,7 @@ private:
 	void clear_clicked();
 	void refresh_clicked();
 
-	void property_changed(const Raul::URI& predicate, const Raul::Atom& value);
+	void property_changed(const Raul::URI& predicate, const Atom& value);
 
 	void zoom_full();
 

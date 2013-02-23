@@ -229,7 +229,7 @@ ClientStore::put(const Raul::URI&            uri,
 	// Check if uri is a plugin
 	Iterator t = properties.find(_uris.rdf_type);
 	if (t != properties.end() && t->second.type() == _uris.forge.URI) {
-		const Raul::Atom&  type(t->second);
+		const Atom&        type(t->second);
 		const Raul::URI    type_uri(type.ptr<char>());
 		const Plugin::Type plugin_type(Plugin::type_from_uri(type_uri));
 		if (plugin_type == Plugin::Graph) {
@@ -347,9 +347,9 @@ ClientStore::delta(const Raul::URI&            uri,
 }
 
 void
-ClientStore::set_property(const Raul::URI&  subject_uri,
-                          const Raul::URI&  predicate,
-                          const Raul::Atom& value)
+ClientStore::set_property(const Raul::URI& subject_uri,
+                          const Raul::URI& predicate,
+                          const Atom&      value)
 {
 	if (subject_uri == _uris.ingen_engine) {
 		_log.info(Raul::fmt("Engine property <%1%> = %2%\n")

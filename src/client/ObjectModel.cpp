@@ -47,15 +47,15 @@ ObjectModel::is_a(const Raul::URI& type) const
 }
 
 void
-ObjectModel::on_property(const Raul::URI& uri, const Raul::Atom& value)
+ObjectModel::on_property(const Raul::URI& uri, const Atom& value)
 {
 	_signal_property.emit(uri, value);
 }
 
-const Raul::Atom&
+const Atom&
 ObjectModel::get_property(const Raul::URI& key) const
 {
-	static const Raul::Atom null_atom;
+	static const Atom null_atom;
 	Resource::Properties::const_iterator i = properties().find(key);
 	return (i != properties().end()) ? i->second : null_atom;
 }
@@ -63,7 +63,7 @@ ObjectModel::get_property(const Raul::URI& key) const
 bool
 ObjectModel::polyphonic() const
 {
-	const Raul::Atom& polyphonic = get_property(_uris.ingen_polyphonic);
+	const Atom& polyphonic = get_property(_uris.ingen_polyphonic);
 	return (polyphonic.is_valid() && polyphonic.get<int32_t>());
 }
 

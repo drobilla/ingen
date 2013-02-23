@@ -268,11 +268,11 @@ get_author_name(SPtr<const PluginModel> plugin)
 }
 
 void
-LoadPluginWindow::set_row(Gtk::TreeModel::Row&         row,
+LoadPluginWindow::set_row(Gtk::TreeModel::Row&    row,
                           SPtr<const PluginModel> plugin)
 {
 	const URIs&       uris = _app->uris();
-	const Raul::Atom& name = plugin->get_property(uris.doap_name);
+	const Atom& name = plugin->get_property(uris.doap_name);
 	if (name.is_valid() && name.type() == uris.forge.String)
 		row[_plugins_columns._col_name] = name.ptr<char>();
 
@@ -412,9 +412,9 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		}
 
 		// Cascade next block
-		Raul::Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
+		Atom& x = _initial_data.find(uris.ingen_canvasX)->second;
 		x = _app->forge().make(x.get<float>() + 20.0f);
-		Raul::Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
+		Atom& y = _initial_data.find(uris.ingen_canvasY)->second;
 		y = _app->forge().make(y.get<float>() + 20.0f);
 	}
 }
@@ -447,7 +447,7 @@ LoadPluginWindow::filter_changed()
 
 	for (const auto& p : *_app->store()->plugins().get()) {
 		const SPtr<PluginModel> plugin = p.second;
-		const Raul::Atom& name = plugin->get_property(uris.doap_name);
+		const Atom& name = plugin->get_property(uris.doap_name);
 
 		switch (criteria) {
 		case CriteriaColumns::Criteria::NAME:
@@ -496,9 +496,9 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 }
 
 void
-LoadPluginWindow::plugin_property_changed(const Raul::URI&  plugin,
-                                          const Raul::URI&  predicate,
-                                          const Raul::Atom& value)
+LoadPluginWindow::plugin_property_changed(const Raul::URI& plugin,
+                                          const Raul::URI& predicate,
+                                          const Atom&      value)
 {
 	const URIs& uris = _app->uris();
 	if (predicate == uris.doap_name) {

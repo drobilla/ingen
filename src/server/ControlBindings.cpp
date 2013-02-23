@@ -58,12 +58,12 @@ ControlBindings::port_binding(PortImpl* port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	const Ingen::URIs& uris = _engine.world()->uris();
-	const Raul::Atom& binding = port->get_property(uris.ingen_controlBinding);
+	const Atom& binding = port->get_property(uris.ingen_controlBinding);
 	return binding_key(binding);
 }
 
 ControlBindings::Key
-ControlBindings::binding_key(const Raul::Atom& binding) const
+ControlBindings::binding_key(const Atom& binding) const
 {
 	const Ingen::URIs& uris = _engine.world()->uris();
 	Key       key;
@@ -124,9 +124,9 @@ ControlBindings::midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& val
 }
 
 void
-ControlBindings::port_binding_changed(ProcessContext&   context,
-                                      PortImpl*         port,
-                                      const Raul::Atom& binding)
+ControlBindings::port_binding_changed(ProcessContext& context,
+                                      PortImpl*       port,
+                                      const Atom&     binding)
 {
 	const Key key = binding_key(binding);
 	if (key) {
@@ -135,10 +135,10 @@ ControlBindings::port_binding_changed(ProcessContext&   context,
 }
 
 void
-ControlBindings::port_value_changed(ProcessContext&   context,
-                                    PortImpl*         port,
-                                    Key               key,
-                                    const Raul::Atom& value_atom)
+ControlBindings::port_value_changed(ProcessContext& context,
+                                    PortImpl*       port,
+                                    Key             key,
+                                    const Atom&     value_atom)
 {
 	Ingen::World*      world = context.engine().world();
 	const Ingen::URIs& uris  = world->uris();
@@ -202,7 +202,7 @@ get_range(ProcessContext& context, const PortImpl* port, float* min, float* max)
 	}
 }
 
-Raul::Atom
+Atom
 ControlBindings::control_to_port_value(ProcessContext& context,
                                        const PortImpl* port,
                                        Type            type,
@@ -235,10 +235,10 @@ ControlBindings::control_to_port_value(ProcessContext& context,
 }
 
 int16_t
-ControlBindings::port_value_to_control(ProcessContext&   context,
-                                       PortImpl*         port,
-                                       Type              type,
-                                       const Raul::Atom& value_atom) const
+ControlBindings::port_value_to_control(ProcessContext& context,
+                                       PortImpl*       port,
+                                       Type            type,
+                                       const Atom&     value_atom) const
 {
 	if (value_atom.type() != port->bufs().forge().Float)
 		return 0;
@@ -314,7 +314,7 @@ ControlBindings::set_port_value(ProcessContext& context,
 	float min, max;
 	get_range(context, port, &min, &max);
 
-	const Raul::Atom port_value(control_to_port_value(context, port, type, value));
+	const Atom port_value(control_to_port_value(context, port, type, value));
 
 	assert(port_value.type() == port->bufs().forge().Float);
 	port->set_value(port_value);  // FIXME: not thread safe

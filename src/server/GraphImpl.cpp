@@ -245,7 +245,7 @@ GraphImpl::create_port(BufferFactory&      bufs,
 		return NULL;
 	}
 
-	Raul::Atom value;
+	Atom value;
 	if (type == PortType::CONTROL || type == PortType::CV)
 		value = bufs.forge().make(0.0f);
 

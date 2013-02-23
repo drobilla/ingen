@@ -17,8 +17,8 @@
 #ifndef INGEN_ENGINE_CONTEXT_HPP
 #define INGEN_ENGINE_CONTEXT_HPP
 
+#include "ingen/Atom.hpp"
 #include "ingen/World.hpp"
-#include "raul/Atom.hpp"
 #include "raul/RingBuffer.hpp"
 
 #include "types.hpp"
@@ -64,12 +64,12 @@ public:
 	/** Send a notification from this run context.
 	 * @return false on failure (ring is full)
 	 */
-	bool notify(LV2_URID           key  = 0,
-	            FrameTime          time = 0,
-	            PortImpl*          port = 0,
-	            uint32_t           size = 0,
-	            Raul::Atom::TypeID type = 0,
-	            const void*        body = NULL);
+	bool notify(LV2_URID    key  = 0,
+	            FrameTime   time = 0,
+	            PortImpl*   port = 0,
+	            uint32_t    size = 0,
+	            LV2_URID    type = 0,
+	            const void* body = NULL);
 
 	/** Emit pending notifications in some other non-realtime thread. */
 	void emit_notifications(FrameTime end);

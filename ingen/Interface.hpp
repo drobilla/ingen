@@ -81,9 +81,9 @@ public:
 	virtual void disconnect_all(const Raul::Path& graph,
 	                            const Raul::Path& path) = 0;
 
-	virtual void set_property(const Raul::URI&  subject,
-	                          const Raul::URI&  predicate,
-	                          const Raul::Atom& value) = 0;
+	virtual void set_property(const Raul::URI& subject,
+	                          const Raul::URI& predicate,
+	                          const Atom&      value) = 0;
 
 	/** Set the ID to use to respond to the next message.
 	 * Setting the ID to -1 will disable responses.

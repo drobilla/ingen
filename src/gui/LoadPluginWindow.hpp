@@ -116,9 +116,9 @@ private:
 
 	void new_plugin(SPtr<const Client::PluginModel> plugin);
 
-	void plugin_property_changed(const Raul::URI&  plugin,
-	                             const Raul::URI&  predicate,
-	                             const Raul::Atom& value);
+	void plugin_property_changed(const Raul::URI& plugin,
+	                             const Raul::URI& predicate,
+	                             const Atom&      value);
 
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();
