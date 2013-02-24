@@ -149,6 +149,12 @@ BlockModel::get_port(const Raul::Symbol& symbol) const
 	return SPtr<PortModel>();
 }
 
+SPtr<const PortModel>
+BlockModel::get_port(uint32_t index) const
+{
+	return _ports[index];
+}
+
 Ingen::Node*
 BlockModel::port(uint32_t index) const
 {

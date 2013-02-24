@@ -86,7 +86,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 	add_property(uris.rdf_type, bufs.forge().alloc_uri(type.uri()));
 	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
-	if (value.is_valid()) {
+	if ((type == PortType::CONTROL || type == PortType::CV) && value.is_valid()) {
 		set_property(uris.ingen_value, value);
 	}
 	if (type == PortType::ATOM) {

@@ -170,12 +170,29 @@ NodeModule::port_activity(uint32_t index, const Atom& value)
 		return;
 	}
 
+	if (_block->get_port(index)->is_a(Raul::URI(LV2_ATOM__AtomPort))) {
+		_plugin_ui->port_event(index,
+		                       lv2_atom_total_size(value.atom()),
+		                       uris.atom_eventTransfer,
+		                       value.atom());
+	}
+}
+
+void
+NodeModule::port_value_changed(uint32_t index, const Atom& value)
+{
+	const URIs& uris = app().uris();
+	if (!_plugin_ui) {
+		return;
+	}
+
 	if (value.type() == uris.atom_Float) {
 		_plugin_ui->port_event(index, sizeof(float), 0, value.ptr<float>());
 	} else {
-		const LV2_Atom* const atom = value.atom();
-		_plugin_ui->port_event(
-			index, lv2_atom_total_size(atom), uris.atom_eventTransfer, atom);
+		_plugin_ui->port_event(index,
+		                       lv2_atom_total_size(value.atom()),
+		                       uris.atom_eventTransfer,
+		                       value.atom());
 	}
 }
 
@@ -249,7 +266,7 @@ NodeModule::new_port_view(SPtr<const PortModel> port)
 	             app().world()->conf().option("human-names").get<int32_t>());
 
 	port->signal_value_changed().connect(
-		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::port_activity),
+		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::port_value_changed),
 		              port->index()));
 
 	port->signal_activity().connect(
@@ -336,7 +353,7 @@ NodeModule::set_control_values()
 	uint32_t index = 0;
 	for (const auto& p : _block->ports()) {
 		if (app().can_control(p.get())) {
-			port_activity(index, p->value());
+			port_value_changed(index, p->value());
 		}
 		++index;
 	}

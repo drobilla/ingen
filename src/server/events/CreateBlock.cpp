@@ -116,11 +116,8 @@ CreateBlock::pre_process()
 
 	_update.push_back(make_pair(_block->uri(), _block->properties()));
 	for (uint32_t i = 0; i < _block->num_ports(); ++i) {
-		const PortImpl*      port   = _block->port_impl(i);
-		Resource::Properties pprops = port->properties();
-		pprops.erase(uris.ingen_value);
-		pprops.insert(std::make_pair(uris.ingen_value, port->value()));
-		_update.push_back(std::make_pair(port->uri(), pprops));
+		const PortImpl* port = _block->port_impl(i);
+		_update.push_back(std::make_pair(port->uri(), port->properties()));
 	}
 
 	return Event::pre_process_done(Status::SUCCESS);

@@ -83,6 +83,7 @@ protected:
 	void new_port_view(SPtr<const Client::PortModel> port);
 
 	void port_activity(uint32_t index, const Atom& value);
+	void port_value_changed(uint32_t index, const Atom& value);
 	void plugin_changed();
 	void set_control_values();
 

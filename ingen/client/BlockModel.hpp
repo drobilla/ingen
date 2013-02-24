@@ -53,6 +53,7 @@ public:
 	typedef std::vector< SPtr<const PortModel> > Ports;
 
 	SPtr<const PortModel> get_port(const Raul::Symbol& symbol) const;
+	SPtr<const PortModel> get_port(uint32_t index) const;
 
 	Node* port(uint32_t index) const;
 
