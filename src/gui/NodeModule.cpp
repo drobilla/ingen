@@ -199,7 +199,7 @@ NodeModule::port_value_changed(uint32_t index, const Atom& value)
 void
 NodeModule::plugin_changed()
 {
-	for (iterator p = begin(); p !=end(); ++p)
+	for (iterator p = begin(); p != end(); ++p)
 		dynamic_cast<Ingen::GUI::Port*>(*p)->update_metadata();
 }
 
