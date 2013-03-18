@@ -6,4 +6,4 @@ Exec=ingen -eg
 Terminal=false
 Icon=ingen
 Type=Application
-Categories=Application;AudioVideo;Sound;Audio
+Categories=Application;AudioVideo;Sound;Audio;
