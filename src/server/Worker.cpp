@@ -97,7 +97,6 @@ Worker::Schedule::feature(World* world, Node* n)
 	f->data = data;
 
 	return SPtr<LV2_Feature>(f, &delete_feature);
-
 }
 
 Worker::Worker(Log& log, uint32_t buffer_size)

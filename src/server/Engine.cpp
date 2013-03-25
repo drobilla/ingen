@@ -16,6 +16,8 @@
 
 #include <sys/mman.h>
 
+#include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
+
 #include "events/CreatePort.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
@@ -77,6 +79,15 @@ Engine::Engine(Ingen::World* world)
 
 	_world->lv2_features().add_feature(_worker->schedule_feature());
 	_world->lv2_features().add_feature(_options);
+	_world->lv2_features().add_feature(
+		SPtr<LV2Features::Feature>(
+			new LV2Features::EmptyFeature(LV2_BUF_SIZE__powerOf2BlockLength)));
+	_world->lv2_features().add_feature(
+		SPtr<LV2Features::Feature>(
+			new LV2Features::EmptyFeature(LV2_BUF_SIZE__fixedBlockLength)));
+	_world->lv2_features().add_feature(
+		SPtr<LV2Features::Feature>(
+			new LV2Features::EmptyFeature(LV2_BUF_SIZE__boundedBlockLength)));
 }
 
 Engine::~Engine()

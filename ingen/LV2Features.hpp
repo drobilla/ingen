@@ -47,6 +47,19 @@ public:
 		                                  Node*  block) = 0;
 	};
 
+	class EmptyFeature : public Feature {
+	public:
+		EmptyFeature(const char* uri) : _uri(uri) {}
+
+		virtual const char* uri() const { return _uri; }
+
+		virtual SPtr<LV2_Feature> feature(World* world, Node* block) {
+			return SPtr<LV2_Feature>();
+		}
+
+		const char* _uri;
+	};
+
 	class FeatureArray : public Raul::Noncopyable {
 	public:
 		typedef std::vector< SPtr<LV2_Feature> > FeatureVector;
