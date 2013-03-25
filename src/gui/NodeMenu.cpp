@@ -21,6 +21,7 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URIMap.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "lv2/lv2plug.in/ns/ext/presets/presets.h"
@@ -172,46 +173,46 @@ NodeMenu::on_menu_disconnect()
 	_app->interface()->disconnect_all(_object->parent()->path(), _object->path());
 }
 
+static void
+set_port_value(const char* port_symbol,
+               void*       user_data,
+               const void* value,
+               uint32_t    size,
+               uint32_t    type)
+{
+	NodeMenu*               menu  = (NodeMenu*)user_data;
+	const BlockModel* const block = (const BlockModel*)menu->object().get();
+
+	if (!Raul::Symbol::is_valid(port_symbol)) {
+		menu->app()->log().error(
+			fmt("Preset with invalid port symbol `%1'\n") % port_symbol);
+		return;
+	}
+		
+	menu->app()->interface()->set_property(
+		Node::path_to_uri(block->path().child(Raul::Symbol(port_symbol))),
+		menu->app()->uris().ingen_value,
+		menu->app()->forge().alloc(size, type, value));
+}
+
 void
 NodeMenu::on_preset_activated(const std::string& uri)
 {
 	const BlockModel* const  block  = (const BlockModel*)_object.get();
 	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(block->plugin());
 
-	LilvNode* port_pred = lilv_new_uri(plugin->lilv_world(),
-	                                   LV2_CORE__port);
-	LilvNode* symbol_pred = lilv_new_uri(plugin->lilv_world(),
-	                                     LV2_CORE__symbol);
-	LilvNode* value_pred = lilv_new_uri(plugin->lilv_world(),
-	                                    LV2_PRESETS__value);
-	LilvNode*  subject = lilv_new_uri(plugin->lilv_world(), uri.c_str());
-	LilvNodes* ports   = lilv_world_find_nodes(
+	LilvNode*  pset  = lilv_new_uri(plugin->lilv_world(), uri.c_str());
+	LilvState* state = lilv_state_new_from_world(
 		plugin->lilv_world(),
-		subject,
-		port_pred,
-		NULL);
-	_app->interface()->bundle_begin();
-	LILV_FOREACH(nodes, i, ports) {
-		const LilvNode* uri = lilv_nodes_get(ports, i);
-		LilvNodes* values = lilv_world_find_nodes(
-			plugin->lilv_world(), uri, value_pred, NULL);
-		LilvNodes* symbols = lilv_world_find_nodes(
-			plugin->lilv_world(), uri, symbol_pred, NULL);
-		if (values && symbols) {
-			const LilvNode* val = lilv_nodes_get_first(values);
-			const LilvNode* sym = lilv_nodes_get_first(symbols);
-			_app->interface()->set_property(
-				Node::path_to_uri(
-					block->path().child(Raul::Symbol(lilv_node_as_string(sym)))),
-				_app->uris().ingen_value,
-				_app->forge().make(lilv_node_as_float(val)));
-		}
+		&_app->world()->uri_map().urid_map_feature()->urid_map,
+		pset);
+
+	if (state) {
+		lilv_state_restore(state, NULL, set_port_value, this, 0, NULL);
+		lilv_state_free(state);
 	}
-	_app->interface()->bundle_end();
-	lilv_nodes_free(ports);
-	lilv_node_free(value_pred);
-	lilv_node_free(symbol_pred);
-	lilv_node_free(port_pred);
+
+	lilv_node_free(pset);
 }
 
 bool

@@ -44,6 +44,9 @@ public:
 
 	void init(App& app, SPtr<const Client::ObjectModel> object);
 
+	SPtr<const Client::ObjectModel> object() const { return _object; }
+	App*                            app()    const { return _app; }
+
 protected:
 	void         on_menu_learn();
 	void         on_menu_unlearn();
