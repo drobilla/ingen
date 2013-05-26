@@ -106,7 +106,6 @@ Port::Port(App&                  app,
 	signal_event().connect(
 		sigc::mem_fun(this, &Port::on_event));
 
-
 	update_metadata();
 	value_changed(pm->value());
 }
