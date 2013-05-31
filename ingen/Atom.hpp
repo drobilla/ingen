@@ -71,7 +71,7 @@ public:
 			_body.ptr = (LV2_Atom*)malloc(sizeof(LV2_Atom) + _atom.size);
 			memcpy(_body.ptr, copy._body.ptr, sizeof(LV2_Atom) + _atom.size);
 		} else {
-			memcpy(&_body.val, &copy._body.val, sizeof(LV2_Atom));
+			memcpy(&_body.val, &copy._body.val, sizeof(_body.val));
 		}
 	}
 
@@ -85,7 +85,7 @@ public:
 			_body.ptr = (LV2_Atom*)malloc(sizeof(LV2_Atom) + _atom.size);
 			memcpy(_body.ptr, other._body.ptr, sizeof(LV2_Atom) + _atom.size);
 		} else {
-			memcpy(&_body.val, &other._body.val, sizeof(LV2_Atom));
+			memcpy(&_body.val, &other._body.val, sizeof(_body.val));
 		}
 		return *this;
 	}
