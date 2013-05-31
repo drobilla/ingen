@@ -78,8 +78,6 @@ private:
 
 	void property_changed(const Raul::URI& predicate, const Atom& value);
 
-	void zoom_full();
-
 	App* _app;
 
 	SPtr<const Client::GraphModel> _graph;
@@ -91,8 +89,6 @@ private:
 	Gtk::SpinButton*       _poly_spin;
 	Gtk::ToolButton*       _refresh_but;
 	Gtk::ToolButton*       _save_but;
-	Gtk::ToolButton*       _zoom_normal_but;
-	Gtk::ToolButton*       _zoom_full_but;
 	Gtk::ToolItem*         _breadcrumb_container;
 
 	bool _enable_signal;

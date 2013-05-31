@@ -2867,32 +2867,6 @@ Contributors:
                         <property name="homogeneous">True</property>
                       </packing>
                     </child>
-                    <child>
-                      <object class="GtkToolButton" id="graph_view_zoom_normal_but">
-                        <property name="use_action_appearance">False</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-zoom-100</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="homogeneous">True</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkToolButton" id="graph_view_zoom_full_but">
-                        <property name="use_action_appearance">False</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="use_underline">True</property>
-                        <property name="stock_id">gtk-zoom-fit</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="homogeneous">True</property>
-                      </packing>
-                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>

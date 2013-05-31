@@ -51,8 +51,6 @@ GraphView::GraphView(BaseObjectType*                   cobject,
 	xml->get_widget("graph_view_poly_spin", _poly_spin);
 	xml->get_widget("graph_view_refresh_but", _refresh_but);
 	xml->get_widget("graph_view_save_but", _save_but);
-	xml->get_widget("graph_view_zoom_full_but", _zoom_full_but);
-	xml->get_widget("graph_view_zoom_normal_but", _zoom_normal_but);
 	xml->get_widget("graph_view_scrolledwindow", _canvas_scrolledwindow);
 
 	_toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
@@ -95,12 +93,6 @@ GraphView::set_graph(SPtr<const GraphModel> graph)
 		sigc::mem_fun(this, &GraphView::process_toggled));
 	_refresh_but->signal_clicked().connect(
 		sigc::mem_fun(this, &GraphView::refresh_clicked));
-
-	_zoom_normal_but->signal_clicked().connect(sigc::bind(sigc::mem_fun(
-		_canvas.get(), &GraphCanvas::set_zoom), 1.0));
-
-	_zoom_full_but->signal_clicked().connect(
-		sigc::mem_fun(_canvas.get(), &GraphCanvas::zoom_full));
 
 	_poly_spin->signal_value_changed().connect(
 			sigc::mem_fun(*this, &GraphView::poly_changed));
