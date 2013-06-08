@@ -577,7 +577,7 @@ GraphCanvas::on_event(GdkEvent* event)
 
 	switch (event->type) {
 	case GDK_BUTTON_PRESS:
-		if (!event->button.state && event->button.button == 3) {
+		if (event->button.button == 3) {
 			_auto_position_count = 0;
 			_last_click_x = (int)event->button.x;
 			_last_click_y = (int)event->button.y;
