@@ -232,6 +232,9 @@ Engine::activate()
 		control_properties.insert(
 			make_pair(uris.atom_bufferType,
 			          Resource::Property(uris.atom_Sequence)));
+		control_properties.insert(
+			make_pair(uris.rsz_minimumSize,
+			          forge.make(4096)));
 
 		// Add control input
 		Resource::Properties in_properties(control_properties);

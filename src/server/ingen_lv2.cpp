@@ -87,6 +87,12 @@ class LV2Driver;
 
 void signal_main(ProcessContext& context, LV2Driver* driver);
 
+inline size_t
+ui_ring_size(SampleCount block_length)
+{
+	return std::max((size_t)8192, (size_t)block_length * 16);
+}
+
 class LV2Driver : public Ingen::Server::Driver
                 , public Ingen::AtomSink
 {
@@ -102,8 +108,8 @@ public:
 		, _writer(engine.world()->uri_map(),
 		          engine.world()->uris(),
 		          *this)
-		, _from_ui(block_length * sizeof(float))  // FIXME: size
-		, _to_ui(block_length * sizeof(float))  // FIXME: size
+		, _from_ui(ui_ring_size(block_length))
+		, _to_ui(ui_ring_size(block_length))
 		, _root_graph(NULL)
 		, _notify_capacity(0)
 		, _block_length(block_length)
@@ -337,7 +343,9 @@ public:
 				break;
 			}
 
-			if (seq->atom.size + sizeof(LV2_Atom) + atom.size > _notify_capacity) {
+			if (seq->atom.size + lv2_atom_pad_size(
+				    sizeof(LV2_Atom_Event) + atom.size)
+			    > _notify_capacity) {
 				break;  // Output port buffer full, resume next time
 			}
 
@@ -354,7 +362,8 @@ public:
 			}
 
 			read           += lv2_atom_total_size(&ev->body);
-			seq->atom.size += sizeof(LV2_Atom_Event) + ev->body.size;
+			seq->atom.size += lv2_atom_pad_size(
+				sizeof(LV2_Atom_Event) + ev->body.size);
 		}
 
 		if (_to_ui_overflow) {
