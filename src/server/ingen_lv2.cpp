@@ -651,8 +651,11 @@ ingen_deactivate(LV2_Handle instance)
 {
 	IngenPlugin* me = (IngenPlugin*)instance;
 	me->world->engine()->deactivate();
-	delete me->main;
-	me->main = NULL;
+	if (me->main) {
+		me->main->join();
+		delete me->main;
+		me->main = NULL;
+	}
 }
 
 static void
@@ -661,7 +664,10 @@ ingen_cleanup(LV2_Handle instance)
 	IngenPlugin* me = (IngenPlugin*)instance;
 	me->world->set_engine(SPtr<Ingen::Server::Engine>());
 	me->world->set_interface(SPtr<Ingen::Interface>());
-	delete me->main;
+	if (me->main) {
+		me->main->join();
+		delete me->main;
+	}
 	delete me->world;
 	delete me;
 }

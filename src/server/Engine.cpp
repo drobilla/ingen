@@ -102,6 +102,7 @@ Engine::~Engine()
 				s.second.reset();
 			}
 		}
+		store->clear();
 	}
 
 	_world->set_store(SPtr<Ingen::Store>());
