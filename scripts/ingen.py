@@ -14,11 +14,15 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import StringIO
 import os
 import rdflib
 import socket
 import sys
+
+try:
+    import StringIO
+except ImportError:
+    from io import StringIO
 
 class NS:
     ingen  = rdflib.Namespace('http://drobilla.net/ns/ingen#')

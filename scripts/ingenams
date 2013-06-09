@@ -86,7 +86,7 @@ class World:
         for (head_port_id, tail_port_id,
              head_mod_id, tail_mod_id,
              jack_color, cable_color) in self.pending_arcs:
-            print 'ARC %s:%s => %s:%s' % (tail_mod_id, tail_port_id, head_mod_id, head_port_id)
+            print('ARC %s:%s => %s:%s' % (tail_mod_id, tail_port_id, head_mod_id, head_port_id))
             try:
                 tail_mod = rdflib.URIRef(self.server.server_base + self.mod_sym(tail_mod_id))
                 head_mod = rdflib.URIRef(self.server.server_base + self.mod_sym(head_mod_id))
@@ -181,10 +181,10 @@ def ladspa_module(world, mod_id, x, y, poly, lib, label):
     if lv2_uri:
         world.add_block(mod_id, lv2_uri, x, y)
     else:
-        print 'MOD %3d LADSPA %s %s %s' % (mod_id, poly, lib, label)
+        print('MOD %3d LADSPA %s %s %s' % (mod_id, poly, lib, label))
 
 def scala_module(world, mod_id, scala_name):
-    #print 'MOD %3d SCALA %s' % (d, scala_name)
+    #print('MOD %3d SCALA %s' % (d, scala_name))
     pass
 
 def standard_module(world, mod_id, x, y, name, arg):
@@ -193,11 +193,11 @@ def standard_module(world, mod_id, x, y, name, arg):
 
 def float_control(world, mod_id, port_index, value,
                   logarithmic, minimum, maximum, midi_sign):
-    #print 'FLOAT CONTROL %s:%s = %s' % (mod_id, port_index, value)
+    #print('FLOAT CONTROL %s:%s = %s' % (mod_id, port_index, value))
     pass
 
 def control(world, mod_id, port_index, value, midi_sign):
-    #print 'CONTROL %s:%s = %s' % (mod_id, port_index, value)
+    #print('CONTROL %s:%s = %s' % (mod_id, port_index, value))
     pass
 
 if len(sys.argv) != 2 and len(sys.argv) != 3:
@@ -255,6 +255,6 @@ for l in in_file:
 
 world.create_arcs()
 
-#print world.server.model.serialize(format='n3')
+#print(world.server.model.serialize(format='n3'))
 
 in_file.close()
