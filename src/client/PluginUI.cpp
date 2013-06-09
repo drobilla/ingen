@@ -60,7 +60,8 @@ lv2_ui_write(SuilController controller,
 			return;
 		}
 		const float value = *(const float*)buffer;
-		if (value == port->value().get<float>()) {
+		if (port->value().type() == uris.atom_Float &&
+		    value == port->value().get<float>()) {
 			return;  // Ignore feedback
 		}
 
