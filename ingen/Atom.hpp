@@ -39,15 +39,13 @@ class Forge;
 
    In either case, the data is stored in a binary compatible format to LV2_Atom
    (i.e., if the value is dynamically allocated, the header is repeated there).
- 
-   @ingroup raul
 */
 class Atom {
 public:
 	Atom()  { _atom.size = 0; _atom.type = 0; _body.ptr = NULL; }
 	~Atom() { dealloc(); }
 
-	/** Contruct a raw atom.
+	/** Construct a raw atom.
 	 *
 	 * Typically this is not used directly, use Forge methods to make atoms.
 	 */
