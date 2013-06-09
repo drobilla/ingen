@@ -528,9 +528,11 @@ Serialiser::Impl::serialise_arc(const Sord::Node& parent,
 }
 
 static bool
-skip_property(const Sord::Node& predicate)
+skip_property(Ingen::URIs& uris, const Sord::Node& predicate)
 {
-	return (predicate.to_string() == "http://drobilla.net/ns/ingen#document");
+	return (predicate.to_string() == "http://drobilla.net/ns/ingen#document" ||
+	        predicate.to_string() == uris.ingen_block ||
+	        predicate.to_string() == uris.lv2_port);
 }
 
 void
@@ -552,7 +554,7 @@ Serialiser::Impl::serialise_properties(Sord::Node              id,
 	typedef Node::Properties::const_iterator iterator;
 	for (const auto& p : props) {
 		const Sord::URI key(_model->world(), p.first);
-		if (!skip_property(key)) {
+		if (!skip_property(_world.uris(), key)) {
 			sratom_write(_sratom, unmap, 0,
 			             sord_node_to_serd_node(id.c_obj()),
 			             sord_node_to_serd_node(key.c_obj()),

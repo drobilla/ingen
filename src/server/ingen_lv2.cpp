@@ -751,7 +751,7 @@ ingen_restore(LV2_Handle                  instance,
 	                            &size, &type, &valflags);
 
 	if (!path) {
-		plugin->world->log().error("Failed to restore ingen:file\n");
+		plugin->world->log().warn("Failed to restore ingen:file\n");
 		return LV2_STATE_ERR_NO_PROPERTY;
 	}
 
