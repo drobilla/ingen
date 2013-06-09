@@ -56,6 +56,8 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Atom());
 	_midi_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
+	_midi_in_port->set_property(uris.atom_supports,
+	                            bufs.forge().make_urid(uris.midi_MidiEvent));
 	_ports->at(0) = _midi_in_port;
 
 	_note_port = new InputPort(bufs, this, Raul::Symbol("note"), 1, 1,

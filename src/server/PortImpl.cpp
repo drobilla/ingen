@@ -92,12 +92,6 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	if (type == PortType::ATOM) {
 		add_property(uris.atom_bufferType,
 		             bufs.forge().make_urid(buffer_type));
-		if (block->graph_type() == Ingen::Node::GraphType::GRAPH) {
-			add_property(uris.atom_supports,
-			             bufs.forge().make_urid(uris.midi_MidiEvent));
-			add_property(uris.atom_supports,
-			             bufs.forge().make_urid(uris.time_Position));
-		}
 	}
 }
 

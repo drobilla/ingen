@@ -122,6 +122,16 @@ public:
 	void activate(BufferFactory& bufs);
 	void deactivate();
 
+	/**
+	   Inherit any properties from a connected neighbour.
+
+	   This is used for Graph ports, so e.g. a control input has the range of
+	   all the ports it is connected to.
+	*/
+	virtual void inherit_neighbour(const PortImpl*       port,
+	                               Resource::Properties& remove,
+	                               Resource::Properties& add) {}
+
 	virtual void connect_buffers();
 	virtual void recycle_buffers();
 

@@ -71,7 +71,7 @@ public:
 
 	void     add_arc(ProcessContext& context, ArcImpl* c);
 	ArcImpl* remove_arc(ProcessContext&   context,
-	                      const OutputPort* tail);
+	                    const OutputPort* tail);
 
 	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 

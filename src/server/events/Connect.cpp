@@ -124,6 +124,9 @@ Connect::pre_process()
 
 		_graph->add_arc(_arc);
 		_head->increment_num_arcs();
+
+		tail_output->inherit_neighbour(_head, _tail_remove, _tail_add);
+		_head->inherit_neighbour(tail_output, _head_remove, _head_add);
 	}
 
 	_buffers = new Raul::Array<BufferRef>(_head->poly());
@@ -156,6 +159,14 @@ Connect::post_process()
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->connect(_tail_path, _head_path);
+		if (!_tail_remove.empty() || !_tail_add.empty()) {
+			_engine.broadcaster()->delta(
+				Node::path_to_uri(_tail_path), _tail_remove, _tail_add);
+		}
+		if (!_tail_remove.empty() || !_tail_add.empty()) {
+			_engine.broadcaster()->delta(
+				Node::path_to_uri(_tail_path), _tail_remove, _tail_add);
+		}
 	}
 }
 

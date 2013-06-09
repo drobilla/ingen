@@ -64,6 +64,10 @@ private:
 	CompiledGraph*          _compiled_graph;
 	SPtr<ArcImpl>           _arc;
 	Raul::Array<BufferRef>* _buffers;
+	Resource::Properties    _tail_remove;
+	Resource::Properties    _tail_add;
+	Resource::Properties    _head_remove;
+	Resource::Properties    _head_add;
 };
 
 } // namespace Events
