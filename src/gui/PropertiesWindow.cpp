@@ -234,7 +234,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& uri, const Atom& value)
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 4));
 		widget->property_numeric() = true;
 		widget->set_snap_to_ticks(false);
-		widget->set_range(DBL_MIN, DBL_MAX);
+		widget->set_range(-FLT_MAX, FLT_MAX);
 		widget->set_value(value.get<float>());
 		widget->set_increments(0.1, 1.0);
 		widget->signal_value_changed().connect(sigc::bind(
@@ -333,7 +333,15 @@ PropertiesWindow::property_removed(const Raul::URI& predicate,
                                    const Atom&      value)
 {
 	// Bleh, there doesn't seem to be an easy way to remove a Gtk::Table row...
-	set_object(_model);
+	_records.clear();
+	_table->children().clear();
+	_table->resize(1, 3);
+	_table->property_n_rows() = 1;
+
+	for (const auto& p : _model->properties()) {
+		add_property(p.first, p.second);
+	}
+	_table->show_all();
 }
 
 void
