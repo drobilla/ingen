@@ -104,6 +104,6 @@ else:
     try:
         update = run(sys.argv[1:])
         if update:
-            print update.serialize(format='n3')
+            print(update.serialize(format='n3'))
     except:
         print('error: %s' % sys.exc_info()[1])
