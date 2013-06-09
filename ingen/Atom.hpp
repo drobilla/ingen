@@ -17,6 +17,7 @@
 #ifndef INGEN_ATOM_HPP
 #define INGEN_ATOM_HPP
 
+#include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <string>
@@ -89,12 +90,13 @@ public:
 	}
 
 	inline bool operator==(const Atom& other) const {
-		if (is_reference()) {
-			return !memcmp(_body.ptr, other._body.ptr, sizeof(LV2_Atom) + _atom.size);
+		if (_atom.type != other._atom.type ||
+		    _atom.size != other._atom.size) {
+			return false;
 		}
-		return (_atom.type == other._atom.type &&
-		        _atom.size == other._atom.size &&
-		        _body.val == other._body.val);
+		return is_reference()
+			? !memcmp(_body.ptr, other._body.ptr, sizeof(LV2_Atom) + _atom.size)
+			: _body.val == other._body.val;
 	}
 
 	inline bool operator!=(const Atom& other) const {
@@ -103,11 +105,11 @@ public:
 
 	inline bool operator<(const Atom& other) const {
 		if (_atom.type == other._atom.type) {
-			if (is_reference()) {
-				return memcmp(_body.ptr, other._body.ptr, _atom.size) < 0;
-			} else {
-				return memcmp(&_body.val, &other._body.val, _atom.size) < 0;
-			}
+			const uint32_t min_size = std::min(_atom.size, other._atom.size);
+			const int cmp           = is_reference()
+				? memcmp(_body.ptr, other._body.ptr, min_size)
+				: memcmp(&_body.val, &other._body.val, min_size);
+			return cmp < 0 || (cmp == 0 && _atom.size < other._atom.size);
 		}
 		return type() < other.type();
 	}
