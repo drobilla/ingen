@@ -52,6 +52,12 @@ ObjectModel::on_property(const Raul::URI& uri, const Atom& value)
 	_signal_property.emit(uri, value);
 }
 
+void
+ObjectModel::on_property_removed(const Raul::URI& uri, const Atom& value)
+{
+	_signal_property_removed.emit(uri, value);
+}
+
 const Atom&
 ObjectModel::get_property(const Raul::URI& key) const
 {

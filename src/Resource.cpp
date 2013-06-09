@@ -54,6 +54,7 @@ Resource::set_property(const Raul::URI& uri,
 		++next;
 		if (i->second.context() == ctx) {
 			_properties.erase(i);
+			on_property_removed(uri, i->second);
 		}
 		i = next;
 	}
@@ -75,10 +76,11 @@ Resource::remove_property(const Raul::URI& uri, const Atom& value)
 		     ++i) {
 			if (i->second == value) {
 				_properties.erase(i);
-				return;
+				break;
 			}
 		}
 	}
+	on_property_removed(uri, value);
 }
 
 bool
@@ -161,6 +163,7 @@ Resource::set_properties(const Properties& props)
 	// Erase existing properties with matching keys
 	for (const auto& p : props) {
 		_properties.erase(p.first);
+		on_property_removed(p.first, _uris.wildcard);
 	}
 
 	// Set new properties

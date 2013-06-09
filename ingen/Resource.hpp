@@ -152,6 +152,15 @@ public:
 	 */
 	virtual void on_property(const Raul::URI& uri, const Atom& value) {}
 
+	/** Hook called whenever a property value is removed.
+	 *
+	 * If all values of a given key are removed, then value will be the wildcard.
+	 *
+	 * This can be used by derived classes to implement special behaviour for
+	 * particular properties (e.g. ingen:value for ports).
+	 */
+	virtual void on_property_removed(const Raul::URI& uri, const Atom& value) {}
+
 	/** Get the ingen type from a set of Properties.
 	 *
 	 * If some coherent ingen type is found, true is returned and the appropriate

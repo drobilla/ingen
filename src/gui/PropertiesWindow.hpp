@@ -23,8 +23,9 @@
 #include <gtkmm/box.h>
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
-#include <gtkmm/liststore.h>
+#include <gtkmm/checkbutton.h>
 #include <gtkmm/combobox.h>
+#include <gtkmm/liststore.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/table.h>
 
@@ -57,12 +58,13 @@ public:
 private:
 	/** Record of a property (row in the table) */
 	struct Record {
-		Record(const Atom& v, Gtk::Alignment* vw, int r)
-			: value(v), value_widget(vw), row(r)
+		Record(const Atom& v, Gtk::Alignment* vw, int r, Gtk::CheckButton* cb)
+			: value(v), value_widget(vw), row(r), present_button(cb)
 		{}
-		Atom            value;
-		Gtk::Alignment* value_widget;
-		int             row;
+		Atom              value;
+		Gtk::Alignment*   value_widget;
+		int               row;
+		Gtk::CheckButton* present_button;
 	};
 
 	struct ComboColumns : public Gtk::TreeModel::ColumnRecord {
@@ -74,17 +76,17 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> uri_col;
 	};
 
-	void add_property(const Raul::URI&  uri,
-	                  const Atom& value);
+	void add_property(const Raul::URI& uri,
+	                  const Atom&      value);
 
-	Gtk::Widget* create_value_widget(const Raul::URI&  uri,
-	                                 const Atom& value);
+	Gtk::Widget* create_value_widget(const Raul::URI& uri,
+	                                 const Atom&      value);
 
-	void init();
 	void reset();
 	void on_show();
 
 	void property_changed(const Raul::URI& predicate, const Atom& value);
+	void property_removed(const Raul::URI& predicate, const Atom& value);
 	void value_edited(const Raul::URI& predicate);
 	void key_changed();
 	void add_clicked();
@@ -100,6 +102,7 @@ private:
 	Glib::RefPtr<Gtk::ListStore>    _key_store;
 	Glib::RefPtr<Gtk::ListStore>    _value_store;
 	sigc::connection                _property_connection;
+	sigc::connection                _property_removed_connection;
 	Gtk::VBox*                      _vbox;
 	Gtk::ScrolledWindow*            _scrolledwindow;
 	Gtk::Table*                     _table;

@@ -62,6 +62,7 @@ public:
 	const Atom& get_property(const Raul::URI& key) const;
 
 	void on_property(const Raul::URI& uri, const Atom& value);
+	void on_property_removed(const Raul::URI& uri, const Atom& value);
 
 	const Raul::Path&   path()       const { return _path; }
 	const Raul::Symbol& symbol()     const { return _symbol; }
@@ -74,6 +75,7 @@ public:
 	INGEN_SIGNAL(new_child, void, SPtr<ObjectModel>);
 	INGEN_SIGNAL(removed_child, void, SPtr<ObjectModel>);
 	INGEN_SIGNAL(property, void, const Raul::URI&, const Atom&);
+	INGEN_SIGNAL(property_removed, void, const Raul::URI&, const Atom&);
 	INGEN_SIGNAL(destroyed, void);
 	INGEN_SIGNAL(moved, void);
 

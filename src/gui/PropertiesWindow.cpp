@@ -126,14 +126,18 @@ PropertiesWindow::add_property(const Raul::URI& uri, const Atom& value)
 	lilv_node_free(prop);
 
 	// Column 1: Value
-	Gtk::Alignment* align      = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
-	Gtk::Widget*    val_widget = create_value_widget(uri, value);
+	Gtk::Alignment*   align      = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
+	Gtk::CheckButton* present    = manage(new Gtk::CheckButton());
+	Gtk::Widget*      val_widget = create_value_widget(uri, value);
+	present->set_active(true);
 	if (val_widget) {
 		align->add(*val_widget);
 	}
 	_table->attach(*align, 1, 2, n_rows, n_rows + 1,
 	               Gtk::FILL|Gtk::EXPAND, Gtk::SHRINK);
-	_records.insert(make_pair(uri, Record(value, align, n_rows)));
+	_table->attach(*present, 2, 3, n_rows, n_rows + 1,
+	               Gtk::FILL, Gtk::SHRINK);
+	_records.insert(make_pair(uri, Record(value, align, n_rows, present)));
 }
 
 /** Set the node this window is associated with.
@@ -208,6 +212,8 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 
 	_property_connection = model->signal_property().connect(
 			sigc::mem_fun(this, &PropertiesWindow::property_changed));
+	_property_removed_connection = model->signal_property_removed().connect(
+			sigc::mem_fun(this, &PropertiesWindow::property_removed));
 }
 
 Gtk::Widget*
@@ -320,6 +326,14 @@ PropertiesWindow::property_changed(const Raul::URI& predicate,
 		value_widget->show();
 	}
 	record.value = value;
+}
+
+void
+PropertiesWindow::property_removed(const Raul::URI& predicate,
+                                   const Atom&      value)
+{
+	// Bleh, there doesn't seem to be an easy way to remove a Gtk::Table row...
+	set_object(_model);
 }
 
 void
@@ -446,16 +460,25 @@ PropertiesWindow::cancel_clicked()
 void
 PropertiesWindow::apply_clicked()
 {
-	Resource::Properties properties;
+	Resource::Properties remove;
+	Resource::Properties add;
 	for (const auto& r : _records) {
 		const Raul::URI& uri    = r.first;
 		const Record&    record = r.second;
-		if (!_model->has_property(uri, record.value)) {
-			properties.insert(make_pair(uri, record.value));
+		if (record.present_button->get_active()) {
+			if (!_model->has_property(uri, record.value)) {
+				add.insert(make_pair(uri, record.value));
+			}
+		} else {
+			remove.insert(make_pair(uri, record.value));
 		}
 	}
 
-	_app->interface()->put(_model->uri(), properties);
+	if (remove.empty()) {
+		_app->interface()->put(_model->uri(), add);
+	} else {
+		_app->interface()->delta(_model->uri(), remove, add);
+	}
 }
 
 void
