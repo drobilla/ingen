@@ -1,24 +1,21 @@
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix ingen: <http://drobilla.net/ns/ingen#> .
 @prefix lv2: <http://lv2plug.in/ns/lv2core#> .
-@prefix lv2ev: <http://lv2plug.in/ns/ext/event#> .
 @prefix midi: <http://lv2plug.in/ns/ext/midi#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <>
 	ingen:arc [
-		ingen:head <audio_out_1> ;
-		ingen:tail <audio_in_1>
-	] , [
 		ingen:head <audio_out_2> ;
 		ingen:tail <audio_in_2>
 	] , [
-		ingen:head <control_out> ;
-		ingen:tail <control_in>
+		ingen:head <audio_out_1> ;
+		ingen:tail <audio_in_1>
 	] ;
 	ingen:polyphony 1 ;
 	<http://lv2plug.in/ns/extensions/ui#ui> ingen:GraphUIGtk2 ;
@@ -31,13 +28,12 @@
 		<control_out> ;
 	lv2:symbol "StereoInOut" ;
 	doap:name "StereoInOut" ;
-	a ingen:Patch ,
+	a ingen:Graph ,
 		lv2:Plugin .
 
 <audio_in_1>
-	ingen:activity 0.0 ;
-	ingen:canvasX 12.0 ;
-	ingen:canvasY 96.69999695 ;
+	ingen:canvasX 24.0 ;
+	ingen:canvasY 77.0 ;
 	ingen:polyphonic false ;
 	lv2:index 2 ;
 	lv2:name "Audio In 1" ;
@@ -46,9 +42,8 @@
 		lv2:InputPort .
 
 <audio_in_2>
-	ingen:activity 0.0 ;
-	ingen:canvasX 12.0 ;
-	ingen:canvasY 12.0 ;
+	ingen:canvasX 24.0 ;
+	ingen:canvasY 24.0 ;
 	ingen:polyphonic false ;
 	lv2:index 3 ;
 	lv2:name "Audio In 2" ;
@@ -57,9 +52,8 @@
 		lv2:InputPort .
 
 <audio_out_1>
-	ingen:activity 0.0 ;
-	ingen:canvasX 142.0 ;
-	ingen:canvasY 104.0 ;
+	ingen:canvasX 218.0 ;
+	ingen:canvasY 77.0 ;
 	ingen:polyphonic false ;
 	lv2:index 4 ;
 	lv2:name "Audio Out 1" ;
@@ -68,9 +62,8 @@
 		lv2:OutputPort .
 
 <audio_out_2>
-	ingen:activity 0.0 ;
-	ingen:canvasX 130.3999939 ;
-	ingen:canvasY 12.0 ;
+	ingen:canvasX 218.0 ;
+	ingen:canvasY 24.0 ;
 	ingen:polyphonic false ;
 	lv2:index 5 ;
 	lv2:name "Audio Out 2" ;
@@ -79,10 +72,11 @@
 		lv2:OutputPort .
 
 <control_in>
-	ingen:canvasX 23.0 ;
-	ingen:canvasY 197.0 ;
+	ingen:canvasX 35.0 ;
+	ingen:canvasY 184.0 ;
 	ingen:polyphonic false ;
 	atom:bufferType atom:Sequence ;
+	<http://lv2plug.in/ns/ext/resize-port#minimumSize> 4096 ;
 	lv2:index 0 ;
 	lv2:name "Control" ;
 	lv2:portProperty lv2:connectionOptional ;
@@ -91,10 +85,11 @@
 		lv2:InputPort .
 
 <control_out>
-	ingen:canvasX 160.0 ;
-	ingen:canvasY 197.0 ;
+	ingen:canvasX 35.0 ;
+	ingen:canvasY 131.0 ;
 	ingen:polyphonic false ;
 	atom:bufferType atom:Sequence ;
+	<http://lv2plug.in/ns/ext/resize-port#minimumSize> 4096 ;
 	lv2:index 1 ;
 	lv2:name "Control" ;
 	lv2:symbol "control_out" ;
