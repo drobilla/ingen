@@ -4,7 +4,6 @@ from waflib.extras import autowaf as autowaf
 sources = [
     'AtomReader.cpp',
     'AtomWriter.cpp',
-    'Builder.cpp',
     'ClashAvoider.cpp',
     'Configuration.cpp',
     'Forge.cpp',

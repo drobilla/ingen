@@ -24,7 +24,6 @@
 
 #include "ganv/Canvas.hpp"
 #include "ganv/Circle.hpp"
-#include "ingen/Builder.hpp"
 #include "ingen/ClashAvoider.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
@@ -725,7 +724,6 @@ GraphCanvas::paste()
 
 	const URIs& uris = _app.uris();
 
-	Builder builder(_app.world()->uris(), *_app.interface());
 	ClientStore clipboard(_app.world()->uris(), _app.log());
 	clipboard.set_plugins(_app.store()->plugins());
 
@@ -762,6 +760,7 @@ GraphCanvas::paste()
 	parser->parse_string(_app.world(), &avoider, str, base_uri,
 	                     parent, symbol);
 
+	// Create objects
 	for (const auto& c : clipboard) {
 		if (_graph->path().is_root() && c.first.is_root())
 			continue;
@@ -778,12 +777,14 @@ GraphCanvas::paste()
 			y->second = _app.forge().make(
 				y->second.get<float>() + (20.0f * _paste_count));
 
-		builder.build(c.second);
+		_app.interface()->put(c.second->uri(), c.second->properties());
 		_pastees.insert(c.first);
 	}
 
-	builder.connect(
-		dynamic_ptr_cast<const GraphModel>(clipboard.object(_graph->path())));
+	// Connect objects
+	for (auto a : clipboard.object(_graph->path())->arcs()) {
+		_app.interface()->connect(a.second->tail_path(), a.second->head_path());
+	}
 }
 
 void
