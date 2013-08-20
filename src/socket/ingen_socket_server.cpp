@@ -123,12 +123,10 @@ struct ServerModule : public Ingen::Module
 	}
 
 	void load(World* world) {
-		world = world;
 		thread = std::unique_ptr<std::thread>(
 			new std::thread(ingen_listen, world, &unix_sock, &net_sock));
 	}
 
-	World*                       world;
 	Raul::Socket                 unix_sock;
 	Raul::Socket                 net_sock;
 	std::unique_ptr<std::thread> thread;

@@ -61,7 +61,6 @@ Disconnect::Impl::Impl(Engine&     e,
 	: _engine(e)
 	, _src_output_port(s)
 	, _dst_input_port(d)
-	, _graph(graph)
 	, _arc(graph->remove_arc(_src_output_port, _dst_input_port))
 	, _buffers(NULL)
 {

@@ -62,7 +62,6 @@ public:
 private:
 	const Raul::Path _old_path;
 	const Raul::Path _new_path;
-	GraphImpl*       _parent_graph;
 };
 
 } // namespace Events

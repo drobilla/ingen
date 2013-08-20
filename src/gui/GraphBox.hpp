@@ -162,7 +162,6 @@ private:
 	Gtk::MenuItem*      _menu_view_graph_tree_window;
 	Gtk::MenuItem*      _menu_help_about;
 
-	Gtk::VBox*          _vbox;
 	Gtk::Alignment*     _alignment;
 	BreadCrumbs*        _breadcrumbs;
 	Gtk::Statusbar*     _status_bar;

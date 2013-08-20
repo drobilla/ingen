@@ -71,7 +71,6 @@ public:
 		Engine&                 _engine;
 		OutputPort*             _src_output_port;
 		InputPort*              _dst_input_port;
-		GraphImpl*              _graph;
 		SPtr<ArcImpl>           _arc;
 		Raul::Array<BufferRef>* _buffers;
 	};
