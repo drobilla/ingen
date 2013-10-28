@@ -173,7 +173,6 @@ Resource::set_properties(const Properties& props)
 void
 Resource::add_properties(const Properties& props)
 {
-	typedef Resource::Properties::const_iterator iterator;
 	for (const auto& p : props)
 		add_property(p.first, p.second, p.second.context());
 }
@@ -181,7 +180,6 @@ Resource::add_properties(const Properties& props)
 void
 Resource::remove_properties(const Properties& props)
 {
-	typedef Resource::Properties::const_iterator iterator;
 	for (const auto& p : props)
 		remove_property(p.first, p.second);
 }
@@ -192,8 +190,6 @@ Resource::properties(Resource::Graph ctx) const
 	if (ctx == Resource::Graph::DEFAULT) {
 		return properties();
 	}
-
-	typedef Resource::Properties::const_iterator iterator;
 
 	Properties props;
 	for (const auto& p : _properties) {

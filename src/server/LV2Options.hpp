@@ -33,6 +33,7 @@ public:
 	explicit LV2Options(Engine& engine)
 		: _block_length(0)
 		, _seq_size(0)
+		, _sample_rate(0)
 	{
 		set(engine);
 	}
@@ -47,6 +48,7 @@ public:
 			_block_length = engine.driver()->block_length();
 			_seq_size = engine.buffer_factory()->default_size(
 				engine.world()->uris().atom_Sequence);
+			_sample_rate = (int32_t)(engine.driver()->sample_rate());
 		}
 	}
 
@@ -66,6 +68,8 @@ public:
 			  sizeof(int32_t), uris.atom_Int, &_block_length },
 			{ LV2_OPTIONS_INSTANCE, 0, uris.bufsz_sequenceSize,
 			  sizeof(int32_t), uris.atom_Int, &_seq_size },
+			{ LV2_OPTIONS_INSTANCE, 0, uris.ingen_sampleRate,
+			  sizeof(int32_t), uris.atom_Int, &_sample_rate },
 			{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, NULL }
 		};
 
@@ -79,6 +83,7 @@ public:
 private:
 	int32_t _block_length;
 	int32_t _seq_size;
+	int32_t _sample_rate;
 };
 
 } // namespace Server
