@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2013 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -60,7 +60,7 @@ Engine::Engine(Ingen::World* world)
 	, _control_bindings(NULL)
 	, _event_writer(new EventWriter(*this))
 	, _maid(new Raul::Maid())
-	, _options(new LV2Options(*this))
+	, _options(new LV2Options(world->uris()))
 	, _pre_processor(new PreProcessor())
 	, _post_processor(new PostProcessor(*this))
 	, _root_graph(NULL)
@@ -202,7 +202,9 @@ Engine::activate()
 	ThreadManager::single_threaded = true;
 
 	_buffer_factory->set_block_length(_driver->block_length());
-	_options->set(*this);
+	_options->set(driver()->sample_rate(),
+	              driver()->block_length(),
+	              buffer_factory()->default_size(_world->uris().atom_Sequence));
 
 	const Ingen::URIs& uris  = world()->uris();
 	Forge&             forge = world()->forge();

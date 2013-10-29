@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2013 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -18,58 +18,41 @@
 #define INGEN_ENGINE_LV2OPTIONS_HPP
 
 #include "ingen/LV2Features.hpp"
+#include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/options/options.h"
-
-#include "BlockImpl.hpp"
-#include "BufferFactory.hpp"
-#include "Driver.hpp"
-#include "Engine.hpp"
 
 namespace Ingen {
 namespace Server {
 
 class LV2Options : public Ingen::LV2Features::Feature {
 public:
-	explicit LV2Options(Engine& engine)
-		: _block_length(0)
-		, _seq_size(0)
-		, _sample_rate(0)
-	{
-		set(engine);
-	}
+	explicit LV2Options(const URIs& uris)
+		: _uris(uris)
+	{}
 
 	static void delete_feature(LV2_Feature* feature) {
 		free(feature->data);
 		free(feature);
 	}
 
-	void set(Engine& engine) {
-		if (engine.driver()) {
-			_block_length = engine.driver()->block_length();
-			_seq_size = engine.buffer_factory()->default_size(
-				engine.world()->uris().atom_Sequence);
-			_sample_rate = (int32_t)(engine.driver()->sample_rate());
-		}
+	void set(int32_t sample_rate, int32_t block_length, int32_t seq_size) {
+		_sample_rate  = sample_rate;
+		_block_length = block_length;
+		_seq_size     = seq_size;
 	}
 
 	const char* uri() const { return LV2_OPTIONS__options; }
 
 	SPtr<LV2_Feature> feature(World* w, Node* n) {
-		BlockImpl* block = dynamic_cast<BlockImpl*>(n);
-		if (!block) {
-			return SPtr<LV2_Feature>();
-		}
-		Engine& engine = block->parent_graph()->engine();
-		URIs&   uris   = engine.world()->uris();
 		const LV2_Options_Option options[] = {
-			{ LV2_OPTIONS_INSTANCE, 0, uris.bufsz_minBlockLength,
-			  sizeof(int32_t), uris.atom_Int, &_block_length },
-			{ LV2_OPTIONS_INSTANCE, 0, uris.bufsz_maxBlockLength,
-			  sizeof(int32_t), uris.atom_Int, &_block_length },
-			{ LV2_OPTIONS_INSTANCE, 0, uris.bufsz_sequenceSize,
-			  sizeof(int32_t), uris.atom_Int, &_seq_size },
-			{ LV2_OPTIONS_INSTANCE, 0, uris.ingen_sampleRate,
-			  sizeof(int32_t), uris.atom_Int, &_sample_rate },
+			{ LV2_OPTIONS_INSTANCE, 0, _uris.bufsz_minBlockLength,
+			  sizeof(int32_t), _uris.atom_Int, &_block_length },
+			{ LV2_OPTIONS_INSTANCE, 0, _uris.bufsz_maxBlockLength,
+			  sizeof(int32_t), _uris.atom_Int, &_block_length },
+			{ LV2_OPTIONS_INSTANCE, 0, _uris.bufsz_sequenceSize,
+			  sizeof(int32_t), _uris.atom_Int, &_seq_size },
+			{ LV2_OPTIONS_INSTANCE, 0, _uris.ingen_sampleRate,
+			  sizeof(int32_t), _uris.atom_Int, &_sample_rate },
 			{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, NULL }
 		};
 
@@ -81,9 +64,10 @@ public:
 	}
 
 private:
-	int32_t _block_length;
-	int32_t _seq_size;
-	int32_t _sample_rate;
+	const URIs& _uris;
+	int32_t     _sample_rate;
+	int32_t     _block_length;
+	int32_t     _seq_size;
 };
 
 } // namespace Server
