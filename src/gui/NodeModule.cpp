@@ -352,7 +352,7 @@ NodeModule::set_control_values()
 {
 	uint32_t index = 0;
 	for (const auto& p : _block->ports()) {
-		if (app().can_control(p.get())) {
+		if (app().can_control(p.get()) && p->value().is_valid()) {
 			port_value_changed(index, p->value());
 		}
 		++index;
