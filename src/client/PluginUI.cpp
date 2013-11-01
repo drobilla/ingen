@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2013 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -156,6 +156,9 @@ PluginUI::PluginUI(Ingen::World*          world,
 
 PluginUI::~PluginUI()
 {
+	for (uint32_t i : _subscribed_ports) {
+		lv2_ui_unsubscribe(this, i, 0, NULL);
+	}
 	suil_instance_free(_instance);
 	lilv_node_free(_ui_node);
 }
@@ -166,8 +169,10 @@ PluginUI::create(Ingen::World*          world,
                  const LilvPlugin*      plugin)
 {
 	if (!PluginUI::ui_host) {
-		PluginUI::ui_host = suil_host_new(
-			lv2_ui_write, lv2_ui_port_index, lv2_ui_subscribe, lv2_ui_unsubscribe);
+		PluginUI::ui_host = suil_host_new(lv2_ui_write,
+		                                  lv2_ui_port_index,
+		                                  lv2_ui_subscribe,
+		                                  lv2_ui_unsubscribe);
 	}
 
 	static const char* gtk_ui_uri = LV2_UI__GtkUI;
@@ -211,12 +216,32 @@ PluginUI::create(Ingen::World*          world,
 
 	lilv_node_free(gtk_ui);
 
-	if (instance) {
-		ret->_instance = instance;
-	} else {
+	if (!instance) {
 		world->log().error("Failed to instantiate LV2 UI\n");
-		ret.reset();
+		return SPtr<PluginUI>();
 	}
+
+	ret->_instance = instance;
+
+	LilvWorld* lworld              = world->lilv_world();
+	LilvNode*  ui_portNotification = lilv_new_uri(lworld, LV2_UI__portNotification);
+	LilvNode*  lv2_symbol          = lilv_new_uri(lworld, LV2_CORE__symbol);
+	LilvNodes* notes               = lilv_world_find_nodes(
+		lworld, lilv_ui_get_uri(ui), ui_portNotification, NULL);
+	LILV_FOREACH(nodes, n, notes) {
+		const LilvNode* note = lilv_nodes_get(notes, n);
+		const LilvNode* sym  = lilv_world_get(lworld, note, lv2_symbol, NULL);
+		if (sym) {
+			uint32_t index = lv2_ui_port_index(ret.get(), lilv_node_as_string(sym));
+			if (index != LV2UI_INVALID_PORT_INDEX) {
+				lv2_ui_subscribe(ret.get(), index, 0, NULL);
+				ret->_subscribed_ports.insert(index);
+			}
+		}
+	}
+	lilv_nodes_free(notes);
+	lilv_node_free(lv2_symbol);
+	lilv_node_free(ui_portNotification);
 
 	return ret;
 }

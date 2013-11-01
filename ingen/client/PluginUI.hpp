@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2013 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -16,6 +16,8 @@
 
 #ifndef INGEN_CLIENT_PLUGINUI_HPP
 #define INGEN_CLIENT_PLUGINUI_HPP
+
+#include <set>
 
 #include "ingen/types.hpp"
 
@@ -67,6 +69,7 @@ private:
 	SPtr<const BlockModel> _block;
 	SuilInstance*          _instance;
 	LilvNode*              _ui_node;
+	std::set<uint32_t>     _subscribed_ports;
 
 	static SuilHost* ui_host;
 
