@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2013 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -486,9 +486,9 @@ LV2Block::process(ProcessContext& context)
 }
 
 void
-LV2Block::set_port_buffer(uint32_t    voice,
-                          uint32_t    port_num,
-                          BufferRef   buf)
+LV2Block::set_port_buffer(uint32_t  voice,
+                          uint32_t  port_num,
+                          BufferRef buf)
 {
 	BlockImpl::set_port_buffer(voice, port_num, buf);
 	lilv_instance_connect_port(

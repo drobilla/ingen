@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2013 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -45,10 +45,10 @@ public:
 
 	struct Quark : public Raul::URI {
 		Quark(Ingen::Forge& forge, URIMap* map, const char* str);
-		operator LV2_URID()   const { return id; }
-		operator Atom() const { return atom; }
-		uint32_t   id;
-		Atom atom;
+		operator LV2_URID() const { return id; }
+		operator Atom()     const { return atom; }
+		uint32_t id;
+		Atom     atom;
 	};
 
 	Ingen::Forge& forge;
