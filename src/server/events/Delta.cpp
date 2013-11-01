@@ -101,8 +101,6 @@ Delta::~Delta()
 bool
 Delta::pre_process()
 {
-	typedef Properties::const_iterator iterator;
-
 	const bool is_graph_object = Node::uri_is_path(_subject);
 	const bool is_client       = (_subject == "ingen:/clients/this");
 

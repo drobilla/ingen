@@ -288,7 +288,6 @@ PropertiesWindow::on_show()
 	int height = 0;
 	Gtk::Requisition req;
 
-	typedef Gtk::Box_Helpers::BoxList Children;
 	for (const auto& c : _vbox->children()) {
 		req = c.get_widget()->size_request();
 		if (c.get_widget() != _scrolledwindow) {

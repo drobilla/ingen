@@ -92,7 +92,6 @@ ClientStore::add_object(SPtr<ObjectModel> object)
 
 	}
 
-	typedef Resource::Properties::const_iterator Iterator;
 	for (auto p : object->properties())
 		object->signal_property().emit(p.first, p.second);
 }
@@ -309,7 +308,6 @@ ClientStore::delta(const Raul::URI&            uri,
                    const Resource::Properties& remove,
                    const Resource::Properties& add)
 {
-	typedef Resource::Properties::const_iterator iterator;
 #ifdef INGEN_CLIENT_STORE_DUMP
 	std::cerr << "Delta " << uri << " {" << endl;
 	for (auto r : remove)

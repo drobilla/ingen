@@ -551,7 +551,6 @@ Serialiser::Impl::serialise_properties(Sord::Node              id,
 
 	sratom_set_pretty_numbers(_sratom, true);
 
-	typedef Node::Properties::const_iterator iterator;
 	for (const auto& p : props) {
 		const Sord::URI key(_model->world(), p.first);
 		if (!skip_property(_world.uris(), key)) {
