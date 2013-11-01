@@ -30,6 +30,18 @@ namespace Client {
 
 SuilHost* PluginUI::ui_host = NULL;
 
+static SPtr<const PortModel>
+get_port(PluginUI* ui, uint32_t port_index)
+{
+	if (port_index >= ui->block()->ports().size()) {
+		ui->world()->log().error(
+			fmt("%1% UI tried to access invalid port %2%\n")
+			% ui->block()->plugin()->uri().c_str() % port_index);
+		return SPtr<const PortModel>();
+	}
+	return ui->block()->ports()[port_index];
+}
+
 static void
 lv2_ui_write(SuilController controller,
              uint32_t       port_index,
@@ -37,19 +49,12 @@ lv2_ui_write(SuilController controller,
              uint32_t       format,
              const void*    buffer)
 {
-	PluginUI* const ui = (PluginUI*)controller;
-
-	const BlockModel::Ports& ports = ui->block()->ports();
-	if (port_index >= ports.size()) {
-		ui->world()->log().error(
-			fmt("%1% UI tried to write to invalid port %2%\n")
-			% ui->block()->plugin()->uri().c_str() % port_index);
+	PluginUI* const       ui   = (PluginUI*)controller;
+	const URIs&           uris = ui->world()->uris();
+	SPtr<const PortModel> port = get_port(ui, port_index);
+	if (!port) {
 		return;
 	}
-
-	SPtr<const PortModel> port = ports[port_index];
-
-	const URIs& uris = ui->world()->uris();
 
 	// float (special case, always 0)
 	if (format == 0) {
@@ -85,6 +90,60 @@ lv2_ui_write(SuilController controller,
 	}
 }
 
+static uint32_t
+lv2_ui_port_index(SuilController controller, const char* port_symbol)
+{
+	PluginUI* const ui = (PluginUI*)controller;
+
+	const BlockModel::Ports& ports = ui->block()->ports();
+	for (uint32_t i = 0; i < ports.size(); ++i) {
+		if (ports[i]->symbol() == port_symbol) {
+			return i;
+		}
+	}
+	return LV2UI_INVALID_PORT_INDEX;
+}
+
+static uint32_t
+lv2_ui_subscribe(SuilController            controller,
+                 uint32_t                  port_index,
+                 uint32_t                  protocol,
+                 const LV2_Feature* const* features)
+{
+	PluginUI* const       ui   = (PluginUI*)controller;
+	SPtr<const PortModel> port = get_port(ui, port_index);
+	if (!port) {
+		return 1;
+	}
+
+	ui->world()->interface()->set_property(
+		ui->block()->ports()[port_index]->uri(),
+		ui->world()->uris().ingen_broadcast,
+		ui->world()->forge().make(true));
+
+	return 0;
+}
+
+static uint32_t
+lv2_ui_unsubscribe(SuilController            controller,
+                   uint32_t                  port_index,
+                   uint32_t                  protocol,
+                   const LV2_Feature* const* features)
+{
+	PluginUI* const       ui   = (PluginUI*)controller;
+	SPtr<const PortModel> port = get_port(ui, port_index);
+	if (!port) {
+		return 1;
+	}
+
+	ui->world()->interface()->set_property(
+		ui->block()->ports()[port_index]->uri(),
+		ui->world()->uris().ingen_broadcast,
+		ui->world()->forge().make(false));
+
+	return 0;
+}
+
 PluginUI::PluginUI(Ingen::World*          world,
                    SPtr<const BlockModel> block,
                    const LilvNode*        ui_node)
@@ -107,7 +166,8 @@ PluginUI::create(Ingen::World*          world,
                  const LilvPlugin*      plugin)
 {
 	if (!PluginUI::ui_host) {
-		PluginUI::ui_host = suil_host_new(lv2_ui_write, NULL, NULL, NULL);
+		PluginUI::ui_host = suil_host_new(
+			lv2_ui_write, lv2_ui_port_index, lv2_ui_subscribe, lv2_ui_unsubscribe);
 	}
 
 	static const char* gtk_ui_uri = LV2_UI__GtkUI;
