@@ -24,7 +24,7 @@ namespace Ingen {
 namespace Server {
 
 static inline bool
-is_end(const Buffer* buf, LV2_Atom_Event* ev)
+is_end(const Buffer* buf, const LV2_Atom_Event* ev)
 {
 	return lv2_atom_sequence_is_end(
 		(const LV2_Atom_Sequence_Body*)LV2_ATOM_BODY_CONST(buf->atom()),
@@ -66,7 +66,7 @@ mix(const Context&      context,
 			}
 		}
 	} else if (dst->is_sequence()) {
-		LV2_Atom_Event* iters[num_srcs];
+		const LV2_Atom_Event* iters[num_srcs];
 		for (uint32_t i = 0; i < num_srcs; ++i) {
 			iters[i] = NULL;
 			if (srcs[i]->is_sequence()) {
