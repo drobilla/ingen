@@ -125,7 +125,7 @@ LV2Block::make_instance(URIs&      uris,
 
 				options_iface->get(inst->lv2_handle, options);
 				if (options[0].value) {
-					LV2_URID type = *(LV2_URID*)options[0].value;
+					LV2_URID type = *(const LV2_URID*)options[0].value;
 					if (type == _uris.lv2_ControlPort) {
 						port->set_type(PortType::CONTROL, 0);
 					} else if (type == _uris.lv2_CVPort) {

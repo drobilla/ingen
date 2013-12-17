@@ -205,7 +205,7 @@ AtomReader::write(const LV2_Atom* msg)
 
 		const LV2_Atom_URID* prop = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_property, &prop, 0);
-		if (!prop || ((LV2_Atom*)prop)->type != _uris.atom_URID) {
+		if (!prop || ((const LV2_Atom*)prop)->type != _uris.atom_URID) {
 			_log.warn("Set message missing property\n");
 			return false;
 		}
