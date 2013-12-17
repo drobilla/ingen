@@ -55,7 +55,7 @@ public:
 	BufferRef silent_buffer();
 
 	void set_block_length(SampleCount block_length);
-	void set_seq_size(uint32_t seq_size);
+	void set_seq_size(uint32_t seq_size) { _seq_size = seq_size; }
 
 	Forge&  forge();
 	URIs&   uris()   { return _uris; }

@@ -33,7 +33,7 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-static const uint32_t monitor_rate = 10.0;  // Hz
+static const uint32_t monitor_rate = 25.0;  // Hz
 
 /** The length of time between monitor updates in frames */
 static inline uint32_t
@@ -119,7 +119,7 @@ PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 			break;
 		}
 	}
-	_buffer_size = _bufs.default_size(_buffer_type);
+	_buffer_size = std::max(_buffer_size, _bufs.default_size(_buffer_type));
 }
 
 bool

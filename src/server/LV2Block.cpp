@@ -219,6 +219,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 	float* max_values = new float[num_ports];
 	float* def_values = new float[num_ports];
 	lilv_plugin_get_port_ranges_float(plug, min_values, max_values, def_values);
+	uint32_t max_sequence_size = 0;
 
 	// Get all the necessary information about ports
 	for (uint32_t j = 0; j < num_ports; ++j) {
@@ -322,6 +323,8 @@ LV2Block::instantiate(BufferFactory& bufs)
 				}
 			}
 			lilv_nodes_free(sizes);
+			max_sequence_size = std::max(port_buffer_size, max_sequence_size);
+			bufs.set_seq_size(max_sequence_size);
 		}
 
 		enum { UNKNOWN, INPUT, OUTPUT } direction = UNKNOWN;
