@@ -74,7 +74,7 @@ def configure(conf):
         autowaf.check_pkg(conf, 'webkit-1.0', uselib_store='WEBKIT',
                           atleast_version='1.4.0', mandatory=False)
         autowaf.check_pkg(conf, 'ganv-1', uselib_store='GANV',
-                          atleast_version='1.0.0', mandatory=False)
+                          atleast_version='1.2.1', mandatory=False)
     if not Options.options.no_socket:
         conf.check_cc(function_name='socket',
                       header_name='sys/socket.h',

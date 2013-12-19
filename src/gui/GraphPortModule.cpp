@@ -52,6 +52,9 @@ GraphPortModule::GraphPortModule(GraphCanvas&                  canvas,
 	assert(dynamic_ptr_cast<const GraphModel>(model->parent()));
 
 	set_stacked(model->polyphonic());
+	if (model->is_input()) {
+		set_is_source(true);
+	}	
 
 	model->signal_property().connect(
 		sigc::mem_fun(this, &GraphPortModule::property_changed));
