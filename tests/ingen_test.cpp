@@ -229,7 +229,7 @@ main(int argc, char** argv)
 
 		/*
 		cerr << "READ " << out.len << " BYTES" << endl;
-		LV2_Atom* atom = (LV2_Atom*)out.buf;
+		const LV2_Atom* atom = (const LV2_Atom*)out.buf;
 		cerr << sratom_to_turtle(
 			sratom,
 			&world->uri_map().urid_unmap_feature()->urid_unmap,
@@ -237,7 +237,7 @@ main(int argc, char** argv)
 			NULL, NULL, atom->type, atom->size, LV2_ATOM_BODY(atom)) << endl;
 		*/
 
-		if (!atom_reader.write((LV2_Atom*)out.buf)) {
+		if (!atom_reader.write((const LV2_Atom*)out.buf)) {
 			return EXIT_FAILURE;
 		}
 
