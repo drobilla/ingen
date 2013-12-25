@@ -517,10 +517,10 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		const std::string msg((fmt("Could not find graph %1%\n")
 		                       % descriptor->URI).str());
 		if (log) {
-			log->vprintf(log->handle,
-			             map->map(map->handle, LV2_LOG__Error),
-			             msg.c_str(),
-			             NULL);
+			log->printf(log->handle,
+			            map->map(map->handle, LV2_LOG__Error),
+			            msg.c_str(),
+			            NULL);
 		} else {
 			std::cerr << msg.c_str() << std::endl;
 		}
