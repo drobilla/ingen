@@ -200,7 +200,9 @@ Delta::pre_process()
 				if (key == uris.ingen_controlBinding && value == uris.wildcard) {
 					op = SpecialType::CONTROL_BINDING;  // Internal block learn
 				}
-			} else if ((_graph = dynamic_cast<GraphImpl*>(_object))) {
+			}
+
+			if ((_graph = dynamic_cast<GraphImpl*>(_object))) {
 				if (key == uris.ingen_enabled) {
 					if (value.type() == uris.forge.Bool) {
 						op = SpecialType::ENABLE;
@@ -223,7 +225,9 @@ Delta::pre_process()
 						_status = Status::BAD_VALUE_TYPE;
 					}
 				}
-			} else if (key == uris.ingen_polyphonic) {
+			}
+
+			if (key == uris.ingen_polyphonic) {
 				GraphImpl* parent = dynamic_cast<GraphImpl*>(obj->parent());
 				if (parent) {
 					if (value.type() == uris.forge.Bool) {
@@ -286,9 +290,9 @@ Delta::execute(ProcessContext& context)
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();
 	for (const auto& p : _properties) {
-		const Raul::URI&  key   = p.first;
-		const Atom& value = p.second;
-		switch (*t) {
+		const Raul::URI& key   = p.first;
+		const Atom&      value = p.second;
+		switch (*t++) {
 		case SpecialType::ENABLE_BROADCAST:
 			if (port) {
 				port->enable_monitoring(value.get<int32_t>());
