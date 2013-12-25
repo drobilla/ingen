@@ -129,6 +129,9 @@ BlockFactory::load_lv2_plugins()
 			               lilv_node_free));
 	}
 
+	LilvNode* lv2_connectionOptional = lilv_new_uri(
+		_world->lilv_world(), LV2_CORE__connectionOptional);
+
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());
 	LILV_FOREACH(plugins, i, plugins) {
 		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);
@@ -168,7 +171,8 @@ BlockFactory::load_lv2_plugins()
 					break;
 				}
 			}
-			if (!supported) {
+			if (!supported &&
+			    !lilv_port_has_property(lv2_plug, port, lv2_connectionOptional)) {
 				_world->log().warn(
 					fmt("Ignoring <%1%>; unsupported port <%2%>\n")
 					% uri % lilv_node_as_string(
@@ -186,6 +190,8 @@ BlockFactory::load_lv2_plugins()
 			_plugins.insert(make_pair(uri, plugin));
 		}
 	}
+
+	lilv_node_free(lv2_connectionOptional);
 }
 
 } // namespace Server

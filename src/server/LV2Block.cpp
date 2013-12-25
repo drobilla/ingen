@@ -211,6 +211,9 @@ LV2Block::instantiate(BufferFactory& bufs)
 	Ingen::Forge&      forge     = bufs.forge();
 	const uint32_t     num_ports = lilv_plugin_get_num_ports(plug);
 
+	LilvNode* lv2_connectionOptional = lilv_new_uri(
+		bufs.engine().world()->lilv_world(), LV2_CORE__connectionOptional);
+
 	_ports = new Raul::Array<PortImpl*>(num_ports, NULL);
 
 	bool ret = true;
@@ -282,8 +285,11 @@ LV2Block::instantiate(BufferFactory& bufs)
 			lilv_nodes_free(types);
 		}
 
+		const bool optional = lilv_port_has_property(
+			plug, id, lv2_connectionOptional);
+
 		uint32_t port_buffer_size = bufs.default_size(buffer_type);
-		if (port_buffer_size == 0) {
+		if (port_buffer_size == 0 && !optional) {
 			parent_graph()->engine().log().error(
 				fmt("<%1%> port `%2%' has unknown buffer type\n")
 				% _lv2_plugin->uri().c_str() % port_sym.c_str());
@@ -334,7 +340,8 @@ LV2Block::instantiate(BufferFactory& bufs)
 			direction = OUTPUT;
 		}
 
-		if (port_type == PortType::UNKNOWN || direction == UNKNOWN) {
+		if ((port_type == PortType::UNKNOWN && !optional) ||
+		    direction == UNKNOWN) {
 			parent_graph()->engine().log().error(
 				fmt("<%1%> port `%2%' has unknown type or direction\n")
 				% _lv2_plugin->uri().c_str() % port_sym.c_str());
@@ -393,6 +400,8 @@ LV2Block::instantiate(BufferFactory& bufs)
 	delete[] min_values;
 	delete[] max_values;
 	delete[] def_values;
+
+	lilv_node_free(lv2_connectionOptional);
 
 	if (!ret) {
 		delete _ports;
