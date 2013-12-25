@@ -32,14 +32,13 @@ def options(opt):
                    help='Build unit tests')
 
 def configure(conf):
-    autowaf.configure(conf)
-    autowaf.display_header('Ingen Configuration')
-
     conf.load('compiler_cxx')
     conf.load('python')
 
-    conf.check_cxx(cxxflags=["-std=c++0x"])
+    autowaf.configure(conf)
+    autowaf.display_header('Ingen Configuration')
 
+    conf.check_cxx(cxxflags=["-std=c++0x"])
     conf.env.append_unique('CXXFLAGS', ['-std=c++0x'])
 
     autowaf.check_header(conf, 'cxx', 'boost/format.hpp')
