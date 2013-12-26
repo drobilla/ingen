@@ -86,8 +86,6 @@ public:
 	void append_time_events(ProcessContext& context,
 	                        Buffer&         buffer);
 
-	bool is_realtime() const { return jack_is_realtime(_client); }
-
 	jack_client_t* jack_client()  const { return _client; }
 	SampleCount    block_length() const { return _block_length; }
 	SampleCount    sample_rate()  const { return _sample_rate; }

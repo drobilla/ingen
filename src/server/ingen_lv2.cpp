@@ -375,9 +375,8 @@ public:
 	virtual SampleCount sample_rate()  const { return _sample_rate; }
 	virtual SampleCount frame_time()   const { return _frame_time; }
 
-	virtual bool is_realtime() const { return true; }
-	AtomReader&  reader()            { return _reader; }
-	AtomWriter&  writer()            { return _writer; }
+	AtomReader& reader() { return _reader; }
+	AtomWriter& writer() { return _writer; }
 
 	typedef std::vector<EnginePort*> Ports;
 

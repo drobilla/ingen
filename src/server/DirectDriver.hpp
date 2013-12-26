@@ -74,8 +74,6 @@ public:
 
 	virtual SampleCount frame_time() const { return 0; }
 
-	virtual bool is_realtime() const { return false; }
-
 	virtual void append_time_events(ProcessContext& context,
 	                                Buffer&         buffer) {}
 
