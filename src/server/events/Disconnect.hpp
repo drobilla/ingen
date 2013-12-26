@@ -65,7 +65,7 @@ public:
 
 		bool execute(ProcessContext& context, bool set_dst_buffers);
 
-		InputPort* head() { return _dst_input_port; }
+		inline InputPort* head() { return _dst_input_port; }
 
 	private:
 		Engine&                 _engine;

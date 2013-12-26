@@ -17,8 +17,6 @@
 #ifndef INGEN_ENGINE_DRIVER_HPP
 #define INGEN_ENGINE_DRIVER_HPP
 
-#include <boost/intrusive/list.hpp>
-
 #include "raul/Noncopyable.hpp"
 
 #include "DuplexPort.hpp"

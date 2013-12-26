@@ -20,6 +20,14 @@
 
 <msg2>
 	a patch:Put ;
+	patch:subject <ingen:/root/in> ;
+	patch:body [
+		a lv2:InputPort ,
+			lv2:AudioPort
+	] .
+
+<msg3>
+	a patch:Put ;
 	patch:subject <ingen:/root/> ;
 	patch:body [
 		a ingen:Arc ;
@@ -27,10 +35,27 @@
 		ingen:head <ingen:/root/out>
 	] .
 
-<msg3>
+<msg4>
+	a patch:Put ;
+	patch:subject <ingen:/root/> ;
+	patch:body [
+		a ingen:Arc ;
+		ingen:tail <ingen:/root/in> ;
+		ingen:head <ingen:/root/node/left_in>
+	] .
+
+<msg5>
 	a patch:Delete ;
 	patch:body [
 		a ingen:Arc ;
 		ingen:tail <ingen:/root/node/left_out> ;
 		ingen:head <ingen:/root/out>
+	] .
+
+<msg6>
+	a patch:Delete ;
+	patch:body [
+		a ingen:Arc ;
+		ingen:tail <ingen:/root/in> ;
+		ingen:head <ingen:/root/node/left_in>
 	] .
