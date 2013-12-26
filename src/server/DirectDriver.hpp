@@ -17,6 +17,8 @@
 #ifndef INGEN_ENGINE_DIRECT_DRIVER_HPP
 #define INGEN_ENGINE_DIRECT_DRIVER_HPP
 
+#include <boost/intrusive/list.hpp>
+
 #include "Driver.hpp"
 
 namespace Ingen {
@@ -39,13 +41,26 @@ public:
 	virtual void deactivate() {}
 
 	virtual EnginePort* create_port(DuplexPort* graph_port) {
+		return new EnginePort(graph_port);
+	}
+
+	virtual EnginePort* get_port(const Raul::Path& path) {
+		for (auto& p : _ports) {
+			if (p.graph_port()->path() == path) {
+				return &p;
+			}
+		}
+
 		return NULL;
 	}
 
-	virtual EnginePort* get_port(const Raul::Path& path) { return NULL; }
+	virtual void add_port(ProcessContext& context, EnginePort* port) {
+		_ports.push_back(*port);
+	}
 
-	virtual void add_port(ProcessContext& context, EnginePort* port) {}
-	virtual void remove_port(ProcessContext& context, EnginePort* port) {}
+	virtual void remove_port(ProcessContext& context, EnginePort* port) {
+		_ports.erase(_ports.iterator_to(*port));
+	}
 
 	virtual void rename_port(const Raul::Path& old_path,
 	                         const Raul::Path& new_path) {}
@@ -57,18 +72,17 @@ public:
 
 	virtual SampleCount sample_rate() const { return _sample_rate; }
 
-	virtual SampleCount frame_time() const {
-		return 0;
-	}
+	virtual SampleCount frame_time() const { return 0; }
 
-	virtual bool is_realtime() const {
-		return false;
-	}
+	virtual bool is_realtime() const { return false; }
 
 	virtual void append_time_events(ProcessContext& context,
 	                                Buffer&         buffer) {}
 
 private:
+	typedef boost::intrusive::list<EnginePort> Ports;
+
+	Ports       _ports;
 	SampleCount _sample_rate;
 	SampleCount _block_length;
 };
