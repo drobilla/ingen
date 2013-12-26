@@ -1,16 +1,25 @@
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
 @prefix lv2: <http://lv2plug.in/ns/lv2core#> .
 @prefix patch: <http://lv2plug.in/ns/ext/patch#> .
 @prefix ingen: <http://drobilla.net/ns/ingen#> .
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/root/node> ;
+	patch:subject <ingen:/root/amp> ;
 	patch:body [
 		a ingen:Block ;
-		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
+		ingen:prototype <http://lv2plug.in/plugins/eg-amp>
 	] .
 
 <msg1>
+	a patch:Put ;
+	patch:subject <ingen:/root/sampler> ;
+	patch:body [
+		a ingen:Block ;
+		ingen:prototype <http://lv2plug.in/plugins/eg-sampler>
+	] .
+
+<msg2>
 	a patch:Put ;
 	patch:subject <ingen:/root/out> ;
 	patch:body [
@@ -18,7 +27,7 @@
 			lv2:AudioPort
 	] .
 
-<msg2>
+<msg3>
 	a patch:Put ;
 	patch:subject <ingen:/root/in> ;
 	patch:body [
@@ -26,36 +35,71 @@
 			lv2:AudioPort
 	] .
 
-<msg3>
-	a patch:Put ;
-	patch:subject <ingen:/root/> ;
-	patch:body [
-		a ingen:Arc ;
-		ingen:tail <ingen:/root/node/left_out> ;
-		ingen:head <ingen:/root/out>
-	] .
-
 <msg4>
 	a patch:Put ;
-	patch:subject <ingen:/root/> ;
+	patch:subject <ingen:/root/control> ;
 	patch:body [
-		a ingen:Arc ;
-		ingen:tail <ingen:/root/in> ;
-		ingen:head <ingen:/root/node/left_in>
+		a lv2:InputPort ,
+			atom:AtomPort ;
+		atom:bufferType atom:Sequence
 	] .
 
 <msg5>
-	a patch:Delete ;
+	a patch:Put ;
+	patch:subject <ingen:/root/gain> ;
 	patch:body [
-		a ingen:Arc ;
-		ingen:tail <ingen:/root/node/left_out> ;
-		ingen:head <ingen:/root/out>
+		a lv2:InputPort ,
+			lv2:ControlPort
 	] .
 
 <msg6>
+	a patch:Put ;
+	patch:subject <ingen:/root/> ;
+	patch:body [
+		a ingen:Arc ;
+		ingen:tail <ingen:/root/amp/out> ;
+		ingen:head <ingen:/root/out>
+	] .
+
+<msg7>
+	a patch:Put ;
+	patch:subject <ingen:/root/> ;
+	patch:body [
+		a ingen:Arc ;
+		ingen:tail <ingen:/root/in> ;
+		ingen:head <ingen:/root/amp/in>
+	] .
+
+<msg8>
+	a patch:Put ;
+	patch:subject <ingen:/root/> ;
+	patch:body [
+		a ingen:Arc ;
+		ingen:tail <ingen:/root/gain> ;
+		ingen:head <ingen:/root/amp/gain>
+	] .
+
+<msg9>
+	a patch:Put ;
+	patch:subject <ingen:/root/> ;
+	patch:body [
+		a ingen:Arc ;
+		ingen:tail <ingen:/root/control> ;
+		ingen:head <ingen:/root/sampler/control>
+	] .
+
+<msg10>
+	a patch:Delete ;
+	patch:body [
+		a ingen:Arc ;
+		ingen:tail <ingen:/root/amp/out> ;
+		ingen:head <ingen:/root/out>
+	] .
+
+<msg11>
 	a patch:Delete ;
 	patch:body [
 		a ingen:Arc ;
 		ingen:tail <ingen:/root/in> ;
-		ingen:head <ingen:/root/node/left_in>
+		ingen:head <ingen:/root/amp/in>
 	] .
