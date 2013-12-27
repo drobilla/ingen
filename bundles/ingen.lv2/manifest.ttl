@@ -1,5 +1,6 @@
 @prefix ingen: <http://drobilla.net/ns/ingen#> .
 @prefix internals: <http://drobilla.net/ns/ingen-internals#> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ui: <http://lv2plug.in/ns/extensions/ui#> .
@@ -8,6 +9,18 @@ ingen:
 	a owl:Ontology ;
 	rdfs:seeAlso <ingen.ttl> .
 
+ingen:GraphPrototype
+	a lv2:PluginBase ;
+	lv2:binary <libingen_lv2.so> ;
+	rdfs:comment """Template for all Ingen graphs.
+
+Saved Ingen graphs always set this as their lv2:prototype.  When Ingen is
+installed, a bundle is installed which included the Ingen LV2 binary and a
+description of ingen:GraphPrototype which links to it.  This way, Ingen graphs
+can be loaded by LV2 hosts without including binaries or symbolic links in
+saved Ingen bundles.
+""" .
+
 ingen:GraphUIGtk2
 	a ui:GtkUI ;
 	ui:binary <libingen_gui_lv2.so> ;
@@ -15,16 +28,16 @@ ingen:GraphUIGtk2
 
 internals:Controller
 	a ingen:Plugin ;
-    rdfs:seeAlso <internals.ttl> .
+	rdfs:seeAlso <internals.ttl> .
 
 internals:Trigger
 	a ingen:Plugin ;
-    rdfs:seeAlso <internals.ttl> .
+	rdfs:seeAlso <internals.ttl> .
 
 internals:Note
 	a ingen:Plugin ;
-    rdfs:seeAlso <internals.ttl> .
+	rdfs:seeAlso <internals.ttl> .
 
 internals:Transport
 	a ingen:Plugin ;
-    rdfs:seeAlso <internals.ttl> .
+	rdfs:seeAlso <internals.ttl> .

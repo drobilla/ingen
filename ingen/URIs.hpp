@@ -76,6 +76,7 @@ public:
 	const Quark ingen_Arc;
 	const Quark ingen_Block;
 	const Quark ingen_Graph;
+	const Quark ingen_GraphPrototype;
 	const Quark ingen_Internal;
 	const Quark ingen_activity;
 	const Quark ingen_arc;
@@ -119,6 +120,7 @@ public:
 	const Quark lv2_name;
 	const Quark lv2_port;
 	const Quark lv2_portProperty;
+	const Quark lv2_prototype;
 	const Quark lv2_sampleRate;
 	const Quark lv2_scalePoint;
 	const Quark lv2_symbol;

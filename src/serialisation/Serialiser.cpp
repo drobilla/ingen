@@ -151,15 +151,8 @@ Serialiser::Impl::write_manifest(const std::string& bundle_path,
 	                      Sord::URI(world, uris.rdfs_seeAlso),
 	                      Sord::URI(world, filename, _base_uri));
 	_model->add_statement(subject,
-	                      Sord::URI(world, uris.lv2_binary),
-	                      Sord::URI(world, binary_path, _base_uri));
-
-	std::string lib(Glib::Module::build_path(INGEN_BUNDLE_DIR, "ingen_lv2"));
-	std::string link(Glib::Module::build_path(bundle_path, "ingen_lv2"));
-	if (symlink(lib.c_str(), link.c_str())) {
-		_world.log().error(fmt("Error creating link %1% => %2% (%3%\n")
-		                   % lib % link % strerror(errno));
-	}
+	                      Sord::URI(world, uris.lv2_prototype),
+	                      Sord::URI(world, uris.ingen_GraphPrototype));
 
 	finish();
 }
