@@ -181,6 +181,8 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
 		path = Glib::path_get_dirname(path);
 	}
 
+	_world.log().info(fmt("Writing bundle %1%\n") % path);
+
 	if (path[path.length() - 1] != '/')
 		path.append("/");
 
