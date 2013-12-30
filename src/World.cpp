@@ -154,6 +154,14 @@ public:
 
 	~Impl()
 	{
+		// Delete module objects but save pointers to libraries
+		typedef std::list<Glib::Module*> Libs;
+		Libs libs;
+		for (auto& m : modules) {
+			libs.push_back(m.second->library);
+			delete m.second;
+		}
+
 		serialiser.reset();
 		parser.reset();
 		interface.reset();
@@ -163,13 +171,6 @@ public:
 		interface_factories.clear();
 		script_runners.clear();
 
-		// Delete module objects but save pointers to libraries
-		typedef std::list<Glib::Module*> Libs;
-		Libs libs;
-		for (auto& m : modules) {
-			libs.push_back(m.second->library);
-			delete m.second;
-		}
 
 		delete rdf_world;
 		delete lv2_features;

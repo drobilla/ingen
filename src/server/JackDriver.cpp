@@ -174,7 +174,7 @@ JackDriver::deactivate()
 	if (_is_activated) {
 		_flag = true;
 		_is_activated = false;
-		_sem.wait();
+		_sem.timed_wait(1000);
 
 		for (auto& p : _ports) {
 			unregister_port(p);
