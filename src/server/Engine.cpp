@@ -16,6 +16,8 @@
 
 #include <sys/mman.h>
 
+#include <limits>
+
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 
 #include "events/CreatePort.hpp"
@@ -95,6 +97,13 @@ Engine::~Engine()
 	_root_graph = NULL;
 	deactivate();
 
+	// Process all pending events
+	const FrameTime end = std::numeric_limits<FrameTime>::max();
+	_process_context.locate(_process_context.end(), end - _process_context.end());
+	_post_processor->set_end_time(end);
+	_pre_processor->process(_process_context, *_post_processor, false);
+	_post_processor->process();
+
 	const SPtr<Store> store = this->store();
 	if (store) {
 		for (auto& s : *store.get()) {
@@ -107,7 +116,6 @@ Engine::~Engine()
 
 	_world->set_store(SPtr<Ingen::Store>());
 
-	delete _maid;
 	delete _pre_processor;
 	delete _post_processor;
 	delete _block_factory;
@@ -115,6 +123,7 @@ Engine::~Engine()
 	delete _broadcaster;
 	delete _event_writer;
 	delete _worker;
+	delete _maid;
 
 	_driver.reset();
 

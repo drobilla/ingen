@@ -54,7 +54,7 @@ private:
 	void apply(Context& context);
 
 	PortImpl*            _port;
-	const Atom     _value;
+	const Atom           _value;
 	ControlBindings::Key _binding;
 };
 

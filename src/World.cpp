@@ -165,12 +165,11 @@ public:
 		serialiser.reset();
 		parser.reset();
 		interface.reset();
-		store.reset();
 		engine.reset();
+		store.reset();
 
 		interface_factories.clear();
 		script_runners.clear();
-
 
 		delete rdf_world;
 		delete lv2_features;
