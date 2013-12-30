@@ -50,8 +50,9 @@ ingen_listen(Ingen::World* world,
 	if (!unix_sock->bind(unix_uri) || !unix_sock->listen()) {
 		world->log().error("Failed to create UNIX socket\n");
 		unix_sock->close();
+	} else {
+		world->log().info(fmt("Listening on socket %1%\n") % unix_uri);
 	}
-	world->log().info(fmt("Listening on socket %1%\n") % unix_uri);
 
 	// Bind TCP socket
 	const int port = world->conf().option("engine-port").get<int32_t>();
@@ -61,8 +62,13 @@ ingen_listen(Ingen::World* world,
 	if (!net_sock->bind(Raul::URI(ss.str())) || !net_sock->listen()) {
 		world->log().error("Failed to create TCP socket\n");
 		net_sock->close();
+	} else {
+		world->log().info(fmt("Listening on TCP port %1%\n") % port);
 	}
-	world->log().info(fmt("Listening on TCP port %1%\n") % port);
+
+	if (unix_sock->fd() == -1 && net_sock->fd() == -1) {
+		return;  // No sockets to listen to, exit thread
+	}
 
 	struct pollfd pfds[2];
 	int           nfds = 0;
