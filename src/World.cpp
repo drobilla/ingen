@@ -22,6 +22,7 @@
 #include <glibmm/module.h>
 
 #include "ingen/Configuration.hpp"
+#include "ingen/EngineBase.hpp"
 #include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
@@ -154,6 +155,8 @@ public:
 
 	~Impl()
 	{
+		engine->quit();
+
 		// Delete module objects but save pointers to libraries
 		typedef std::list<Glib::Module*> Libs;
 		Libs libs;

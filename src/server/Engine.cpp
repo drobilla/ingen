@@ -100,9 +100,11 @@ Engine::~Engine()
 	// Process all pending events
 	const FrameTime end = std::numeric_limits<FrameTime>::max();
 	_process_context.locate(_process_context.end(), end - _process_context.end());
-	_post_processor->set_end_time(end);
-	_pre_processor->process(_process_context, *_post_processor, false);
-	_post_processor->process();
+	while (!_pre_processor->empty()) {
+		_post_processor->set_end_time(end);
+		_pre_processor->process(_process_context, *_post_processor, false);
+		_post_processor->process();
+	}
 
 	const SPtr<Store> store = this->store();
 	if (store) {
@@ -354,7 +356,9 @@ Engine::pending_events()
 void
 Engine::enqueue_event(Event* ev)
 {
-	_pre_processor->event(ev);
+	if (!_quit_flag) {
+		_pre_processor->event(ev);
+	}
 }
 
 unsigned
