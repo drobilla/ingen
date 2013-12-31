@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cassert>
 #include <string>
 
 #include "ingen/AtomSink.hpp"
@@ -58,6 +59,7 @@ AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 void
 AtomWriter::finish_msg()
 {
+	assert(!_forge.stack);
 	_sink.write((const LV2_Atom*)_out.buf);
 	_out.len = 0;
 }
@@ -174,6 +176,8 @@ AtomWriter::move(const Raul::Path& old_path,
 	forge_uri(Node::path_to_uri(old_path));
 	lv2_atom_forge_property_head(&_forge, _uris.patch_destination, 0);
 	forge_uri(Node::path_to_uri(new_path));
+	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
 }
 
 void
@@ -183,6 +187,8 @@ AtomWriter::del(const Raul::URI& uri)
 	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Delete);
 	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
 	forge_uri(uri);
+	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
 }
 
 void

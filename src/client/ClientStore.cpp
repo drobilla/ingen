@@ -105,12 +105,13 @@ ClientStore::remove_object(const Raul::Path& path)
 		return SPtr<ObjectModel>();
 	}
 
+	SPtr<ObjectModel> object = dynamic_ptr_cast<ObjectModel>(top->second);
+
 	// Remove the object and all its descendants
 	Objects removed;
 	remove(top, removed);
 
 	// Notify everything that needs to know this object is going away
-	SPtr<ObjectModel> object = dynamic_ptr_cast<ObjectModel>(top->second);
 	if (object) {
 		// Notify the program this object is going away
 		object->signal_destroyed().emit();
