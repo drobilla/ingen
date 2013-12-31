@@ -11,21 +11,24 @@
 ingen:
 	a owl:Ontology ;
 	owl:imports <http://lv2plug.in/ns/lv2core> ;
+	doap:name "Ingen Ontology" ;
 	rdfs:label "Ingen Ontology" ;
 	rdfs:comment """
-Describes "graphs" of connected "blocks" (plugin instances) which process
-audio, MIDI, and other signals or messages.""" .
+Describes graphs of signal processing blocks which process audio, MIDI, and
+other signals or messages.  With appropriate plugins, these graphs can describe
+modular synthesizers, effects processors, and other signal processing devices.
+""" .
 
 ingen:Plugin
 	a owl:Class ;
 	rdfs:label "Plugin" ;
 	rdfs:comment """
-A class which can be instantiated into a ingen:Block.  A plugin has a set of input
-and output "ports".  In practice this class is semantically equivalent to
+A class which can be instantiated into a ingen:Block.  A plugin has a set of
+input and output "ports".  In practice this class is semantically equivalent to
 lv2:Plugin, it only exists to allow the ingen ontology to be useful for
-"plugins" that aren't semantically LV2 plugins.  See the LV2 specification
-for details about the required properties (rdf:type, doap:name, doap:license,
-and lv2:port).
+"plugins" that aren't semantically LV2 plugins.  See the LV2 specification for
+details about the required properties (rdf:type, doap:name, doap:license, and
+lv2:port).
 """ .
 
 ingen:Graph
@@ -33,8 +36,8 @@ ingen:Graph
 	rdfs:subClassOf ingen:Plugin ;
 	rdfs:label "Graph" ;
 	rdfs:comment """
-A collection of Blocks connected together form a Graph, which can itself be a
-Block within a parent Graph, and so on.
+A collection of Blocks connected together.  A Graph can itself be a Block
+within a parent Graph, and so on.
 """ .
 
 ingen:canvasX
@@ -60,7 +63,7 @@ ingen:polyphony
 	a owl:DatatypeProperty ;
 	rdfs:domain ingen:Graph ;
 	rdfs:range xsd:integer ;
-	rdfs:label "Polyphony" ;
+	rdfs:label "polyphony" ;
 	rdfs:comment """
 The amount of polyphony in a Graph.  This defines the number of voices
 present on all :polyphonic children of this graph.  Because a Graph is
@@ -73,12 +76,12 @@ seen as polyphonic to the Graph's parent.
 ingen:value
 	a owl:DatatypeProperty ;
 	rdfs:domain lv2:Port ;
-	rdfs:label "Value" ;
+	rdfs:label "value" ;
 	rdfs:comment "The current value of a port." .
 
 ingen:Node
 	a owl:Class ;
-	rdfs:label "Ingen Node" ;
+	rdfs:label "Node" ;
 	rdfs:comment """
 An element of a Graph.  A Node always has a valid path and symbol, with the
 possible exception of the root graph which may not have a symbol depending on
@@ -87,10 +90,13 @@ components, so the symbol of a Node may be inferred from its URI if no explicit
 lv2:symbol property is given.
 """ .
 
+lv2:Port
+	rdfs:subClassOf ingen:Node .
+
 ingen:polyphonic
 	a owl:DatatypeProperty ;
 	rdfs:range xsd:boolean ;
-	rdfs:label "Polyphonic" ;
+	rdfs:label "polyphonic" ;
 	rdfs:comment """
 Signifies this node should be replicated when it is part of a polyphonic graph.
 The amount of polyphony (i.e. the number of voices) is determined by the
@@ -106,16 +112,12 @@ ingen:Block
 		lv2:PluginBase ;
 	rdfs:label "Block" ;
 	rdfs:comment """
-An instance of a Plugin.  Since a Graph is a Plugin, an instance of a Graph
-is also a Block.  A Block inherits all the properties of the plugin of which
-it is an instance, but may have properties of its own: any properties of
-the block take precedence over properties of the block's plugin.  This way a
-block can be expressed as a lightweight set of changes (e.g. input values)
-from its plugin or graph which may be defined elsewhere.
+    
+A signal processing block, which is typically either a plugin instance, or a graph.
 
-A block MUST have at least one ingen:prototype property which is a subclass
-of :Plugin.  When there are many such properties, an applications SHOULD
-use the most specific class it understands.
+A block MUST have at least one ingen:prototype property which is a subclass of
+lv2:Plugin.  When there are many such properties, an applications SHOULD use
+the most specific class it understands.
 """ .
 
 ingen:enabled
@@ -136,16 +138,29 @@ The object which this block is an instance of, or derived from.
 ingen:Arc
 	a owl:Class ;
 	rdfs:label "Arc" ;
+	rdfs:subClassOf [
+		a owl:Restriction ;
+		owl:onProperty ingen:tail ;
+		owl:allValuesFrom lv2:Port ;
+		owl:cardinality 1 ;
+		rdfs:comment "MUST have exactly one tail which is a lv2:Port."
+	] , [
+		a owl:Restriction ;
+		owl:onProperty ingen:head ;
+		owl:allValuesFrom lv2:Port ;
+		owl:cardinality 1 ;
+		rdfs:comment "MUST have exactly one head which is a lv2:Port."
+	] ;
 	rdfs:comment """
 A connection between two ports.  Graphs have a set of arcs which
-define how its component blocks and ports are connected.  An Arc MUST
-have exactly one ingen:tail and exactly one ingen:head property.
+define how its component blocks and ports are connected.
 """ .
 
 ingen:arc
 	a owl:ObjectProperty ;
 	rdfs:domain ingen:Graph ;
 	rdfs:range ingen:Arc ;
+	rdfs:label "arc" ;
 	rdfs:comment "An arc contained in this graph." .
 
 ingen:tail
@@ -169,4 +184,8 @@ ingen:incidentTo
 		owl:FunctionalProperty ;
 	rdfs:domain ingen:Arc ;
 	rdfs:label "incident to" ;
-	rdfs:comment "A special property used to describe any arc incident to a port or block.  This is never saved in graph files, but is used in the control protocol to completely disconnect a Block or Port." .
+	rdfs:comment """
+A special property used to describe any arc incident to a port or block.  This
+is never saved in graph files, but is used in the control protocol to
+completely disconnect a Block or Port.
+""" .

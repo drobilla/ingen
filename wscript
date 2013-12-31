@@ -204,6 +204,15 @@ def build(bld):
 def lint(ctx):
     subprocess.call('cpplint.py --filter=-whitespace/comments,-whitespace/tab,-whitespace/braces,-whitespace/labels,-build/header_guard,-readability/casting,-readability/todo,-build/namespaces,-whitespace/line_length,-runtime/rtti,-runtime/references,-whitespace/blank_line,-runtime/sizeof,-readability/streams,-whitespace/operators,-whitespace/parens,-build/include,-build/storage_class `find -name *.cpp -or -name *.hpp`', shell=True)
 
+def upload_docs(ctx):
+    import shutil
+    specgendir = '/usr/local/share/lv2specgen/'
+    shutil.copy(specgendir + 'style.css', 'build')
+    os.system('lv2specgen.py --list-email=ingen@drobilla.net --list-page=http://lists.drobilla.net/listinfo.cgi/ingen-drobilla.net bundles/ingen.lv2/ingen.ttl %s style.css build/ingen.html' % specgendir)
+    os.system('rsync -avz -e ssh bundles/ingen.lv2/ingen.ttl drobilla@drobilla.net:~/drobilla.net/ns/')
+    os.system('rsync -avz -e ssh build/ingen.html drobilla@drobilla.net:~/drobilla.net/ns/')
+    os.system('rsync -avz -e ssh %s/style.css drobilla@drobilla.net:~/drobilla.net/ns/' % specgendir)
+
 def test(ctx):
     os.environ['PATH'] = 'tests' + os.pathsep + os.getenv('PATH')
     os.environ['LD_LIBRARY_PATH'] = os.path.join('src')
