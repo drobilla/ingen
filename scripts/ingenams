@@ -18,7 +18,7 @@ import ingen
 import rdflib
 import sys
 
-avw_prefix  = 'http://avwlv2.sourceforge.net/plugins/avw/'
+ams_prefix  = 'http://github.com/blablack/ams-lv2/'
 fomp_prefix = 'http://drobilla.net/plugins/fomp/'
 
 class World:
@@ -33,10 +33,10 @@ class World:
 
     def add_block(self, mod_id, plugin_uri, x, y):
         self.server.put('/' + self.mod_sym(mod_id),
-                        'a ingen:Block ;\n'
-                        + 'ingen:prototype <%s> ;\n' % plugin_uri
-                        + 'ingen:canvasX %f ;\n' % x
-                        + 'ingen:canvasY %f' % y)
+                        ('\t\ta ingen:Block ;\n'
+                         + 'ingen:prototype <%s> ;\n' % plugin_uri
+                         + 'ingen:canvasX %f ;\n' % x
+                         + 'ingen:canvasY %f' % y).replace('\n', '\n\t\t'))
 
     def add_arc(self,
                 head_port_id, tail_port_id,
@@ -86,7 +86,7 @@ class World:
         for (head_port_id, tail_port_id,
              head_mod_id, tail_mod_id,
              jack_color, cable_color) in self.pending_arcs:
-            print('ARC %s:%s => %s:%s' % (tail_mod_id, tail_port_id, head_mod_id, head_port_id))
+            print('%s:%s => %s:%s' % (tail_mod_id, tail_port_id, head_mod_id, head_port_id))
             try:
                 tail_mod = rdflib.URIRef(self.server.server_base + self.mod_sym(tail_mod_id))
                 head_mod = rdflib.URIRef(self.server.server_base + self.mod_sym(head_mod_id))
@@ -107,7 +107,7 @@ class Special:
     
 # Module types list, indexed by numeric ID in file
 # Except where otherwise commented, these correspond to internal modules,
-# and the string is the suffix of the corresponding AVW LV2 plugin URI
+# and the string is the suffix of the corresponding AMS LV2 plugin URI
 module_types = [
     "custom", # 0 = custom (unsupported)
     "vco",
@@ -188,7 +188,7 @@ def scala_module(world, mod_id, scala_name):
     pass
 
 def standard_module(world, mod_id, x, y, name, arg):
-    lv2_uri = avw_prefix + name
+    lv2_uri = ams_prefix + name
     world.add_block(mod_id, lv2_uri, x, y)
 
 def float_control(world, mod_id, port_index, value,

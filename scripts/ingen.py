@@ -224,7 +224,7 @@ class Remote(Interface):
  	patch:subject <ingen:/root%s> ;
  	patch:body [
 %s
-] .
+	] .
 ''' % (path, body))
 
     def set(self, path, body):
