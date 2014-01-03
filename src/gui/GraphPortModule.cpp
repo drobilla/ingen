@@ -46,13 +46,14 @@ GraphPortModule::GraphPortModule(GraphCanvas&                  canvas,
                                  SPtr<const Client::PortModel> model)
 	: Ganv::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
+	, _port(NULL)
 {
 	assert(model);
 
 	assert(dynamic_ptr_cast<const GraphModel>(model->parent()));
 
 	set_stacked(model->polyphonic());
-	if (model->is_input()) {
+	if (model->is_input() && !model->is_numeric()) {
 		set_is_source(true);
 	}	
 
@@ -71,13 +72,10 @@ GraphPortModule::create(GraphCanvas&          canvas,
 	GraphPortModule* ret  = new GraphPortModule(canvas, model);
 	Port*            port = Port::create(canvas.app(), *ret, model, human, true);
 
-	if (model->is_numeric() && model->is_input()) {
-		// Add non-mirrored input so control port can be controlled from canvas
-		Port* p = Port::create(canvas.app(), *ret, model, human, false);
-		p->set_can_head(false);
-	}
-
 	ret->set_port(port);
+	if (model->is_numeric()) {
+		port->show_control();
+	}
 
 	for (const auto& p : model->properties())
 		ret->property_changed(p.first, p.second);
