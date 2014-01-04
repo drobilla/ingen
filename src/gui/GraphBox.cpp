@@ -285,6 +285,9 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 	_menu_show_port_names->set_active(
 		_app->world()->conf().option("port-labels").get<int32_t>());
 
+	_doc_paned->set_position(std::numeric_limits<int>::max());
+	_doc_scrolledwindow->hide();
+
 	_enable_signal = true;
 }
 
@@ -316,6 +319,10 @@ void
 GraphBox::set_documentation(const std::string& doc, bool html)
 {
 	_doc_scrolledwindow->remove();
+	if (doc.empty()) {
+		_doc_scrolledwindow->hide();
+		return;
+	}
 #ifdef HAVE_WEBKIT
 	WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
 	webkit_web_view_load_html_string(view, doc.c_str(), "");
