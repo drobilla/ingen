@@ -50,7 +50,7 @@ def configure(conf):
 
     conf.check_python_version((2,4,0), mandatory=False)
     autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
-                      atleast_version='1.6.2', mandatory=True)
+                      atleast_version='1.8.0', mandatory=True)
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
                       atleast_version='2.14.0', mandatory=True)
     autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
@@ -66,9 +66,9 @@ def configure(conf):
     autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',
                       atleast_version='0.8.5', mandatory=True)
     autowaf.check_pkg(conf, 'serd-0', uselib_store='SERD',
-                      atleast_version='0.15.0', mandatory=False)
+                      atleast_version='0.18.0', mandatory=False)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
-                      atleast_version='0.9.0', mandatory=False)
+                      atleast_version='0.12.0', mandatory=False)
     if not Options.options.no_gui:
         autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
                           atleast_version='2.12.0', mandatory=False)
