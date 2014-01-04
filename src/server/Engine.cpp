@@ -100,9 +100,10 @@ Engine::~Engine()
 	// Process all pending events
 	const FrameTime end = std::numeric_limits<FrameTime>::max();
 	_process_context.locate(_process_context.end(), end - _process_context.end());
+	_post_processor->set_end_time(end);
+	_post_processor->process();
 	while (!_pre_processor->empty()) {
-		_post_processor->set_end_time(end);
-		_pre_processor->process(_process_context, *_post_processor, false);
+		_pre_processor->process(_process_context, *_post_processor, 1);
 		_post_processor->process();
 	}
 
@@ -356,15 +357,15 @@ Engine::pending_events()
 void
 Engine::enqueue_event(Event* ev)
 {
-	if (!_quit_flag) {
-		_pre_processor->event(ev);
-	}
+	_pre_processor->event(ev);
 }
 
 unsigned
 Engine::process_events()
 {
-	return _pre_processor->process(_process_context, *_post_processor);
+	const size_t MAX_EVENTS_PER_CYCLE = 4;//_process_context.nframes() / 4;
+	return _pre_processor->process(
+		_process_context, *_post_processor, MAX_EVENTS_PER_CYCLE);
 }
 
 void

@@ -50,7 +50,7 @@ public:
 	 */
 	unsigned process(ProcessContext& context,
 	                 PostProcessor&  dest,
-	                 bool            limit = true);
+	                 size_t          limit = 0);
 
 protected:
 	void run();

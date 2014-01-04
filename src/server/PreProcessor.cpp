@@ -39,9 +39,11 @@ PreProcessor::PreProcessor()
 
 PreProcessor::~PreProcessor()
 {
-	_exit_flag = true;
-	_sem.post();
-	_thread.join();
+	if (_thread.joinable()) {
+		_exit_flag = true;
+		_sem.post();
+		_thread.join();
+	}
 }
 
 void
@@ -71,17 +73,12 @@ PreProcessor::event(Event* const ev)
 }
 
 unsigned
-PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
+PreProcessor::process(ProcessContext& context, PostProcessor& dest, size_t limit)
 {
 	Event* const head = _head.load();
 	if (!head) {
 		return 0;
 	}
-
-	/* Limit the maximum number of events to process each cycle to ensure the
-	   process callback is real-time safe.  TODO: Parameterize this and/or
-	   figure out a good default value. */
-	const size_t MAX_EVENTS_PER_CYCLE = context.nframes() / 4;
 
 	size_t n_processed = 0;
 	Event* ev          = head;
@@ -95,7 +92,7 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, bool limit)
 		last = ev;
 		ev   = ev->next();
 		++n_processed;
-		if (limit && (n_processed > MAX_EVENTS_PER_CYCLE)) {
+		if (limit && n_processed >= limit) {
 			break;
 		}
 	}

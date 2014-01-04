@@ -204,6 +204,9 @@ main(int argc, char** argv)
 		}
 	}
 
+	// Sleep for a second to allow event queues to drain
+	Glib::usleep(1000000);
+
 	// Shut down
 	if (world->engine())
 		world->engine()->deactivate();
