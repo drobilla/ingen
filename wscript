@@ -23,6 +23,8 @@ def options(opt):
                    help='Ingen module install directory [Default: PREFIX/lib/ingen]')
     opt.add_option('--no-gui', action='store_true', dest='no_gui',
                    help='Do not build GUI')
+    opt.add_option('--no-webkit', action='store_true', dest='no_webkit',
+                   help='Do not use webkit to display plugin documentation')
     opt.add_option('--no-jack-session', action='store_true', default=False,
                    dest='no_jack_session',
                    help='Do not build JACK session support')
@@ -56,7 +58,7 @@ def configure(conf):
     autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
                       atleast_version='0.120.0', mandatory=False)
     autowaf.check_pkg(conf, 'lilv-0', uselib_store='LILV',
-                      atleast_version='0.16.1', mandatory=True)
+                      atleast_version='0.17.0', mandatory=True)
     autowaf.check_pkg(conf, 'suil-0', uselib_store='SUIL',
                       atleast_version='0.2.0', mandatory=True)
     autowaf.check_pkg(conf, 'sratom-0', uselib_store='SRATOM',
@@ -72,10 +74,11 @@ def configure(conf):
                           atleast_version='2.12.0', mandatory=False)
         autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM',
                           atleast_version='2.14.0', mandatory=False)
-        autowaf.check_pkg(conf, 'webkit-1.0', uselib_store='WEBKIT',
-                          atleast_version='1.4.0', mandatory=False)
         autowaf.check_pkg(conf, 'ganv-1', uselib_store='GANV',
                           atleast_version='1.2.1', mandatory=False)
+        if not Options.options.no_webkit:
+            autowaf.check_pkg(conf, 'webkit-1.0', uselib_store='WEBKIT',
+                              atleast_version='1.4.0', mandatory=False)
     if not Options.options.no_socket:
         conf.check_cc(function_name='socket',
                       header_name='sys/socket.h',

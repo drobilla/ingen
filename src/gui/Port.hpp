@@ -64,7 +64,7 @@ public:
 	void activity(const Atom& value);
 	void disconnected_from(SPtr<Client::PortModel> port);
 
-	void set_selected(gboolean b);
+	bool on_selected(gboolean b);
 
 private:
 	Port(App&                          app,

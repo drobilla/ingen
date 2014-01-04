@@ -32,6 +32,7 @@
 #include "Style.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
+#include "ingen_config.h"
 
 using namespace Ingen::Client;
 using namespace std;
@@ -434,22 +435,27 @@ Port::property_changed(const Raul::URI& key, const Atom& value)
 	}
 }
 
-void
-Port::set_selected(gboolean b)
+bool
+Port::on_selected(gboolean b)
 {
-	if (b != get_selected()) {
-		Ganv::Port::set_selected(b);
+	if (b) {
 		SPtr<const PortModel> pm = _port_model.lock();
-		if (pm && b) {
+		if (pm) {
 			SPtr<const BlockModel> block = dynamic_ptr_cast<BlockModel>(pm->parent());
 			GraphWindow* win = _app.window_factory()->parent_graph_window(block);
 			if (win && win->documentation_is_visible() && block->plugin_model()) {
+				bool html = false;
+#ifdef HAVE_WEBKIT
+				html = true;
+#endif
 				const std::string& doc = block->plugin_model()->port_documentation(
-					pm->index());
-				win->set_documentation(doc, false);
+					pm->index(), html);
+				win->set_documentation(doc, html);
 			}
 		}
 	}
+
+	return true;
 }
 
 } // namespace GUI

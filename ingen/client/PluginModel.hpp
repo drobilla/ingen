@@ -81,7 +81,7 @@ public:
 	static std::string get_lv2_icon_path(const LilvPlugin* plugin);
 
 	std::string documentation(bool html) const;
-	std::string port_documentation(uint32_t index) const;
+	std::string port_documentation(uint32_t index, bool html) const;
 
 	static void set_rdf_world(Sord::World& world) {
 		_rdf_world = &world;
@@ -98,6 +98,8 @@ protected:
 	void set(SPtr<PluginModel> p);
 
 private:
+	std::string get_documentation(const LilvNode* subject, bool html) const;
+
 	Type _type;
 
 	static LilvWorld*         _lilv_world;
