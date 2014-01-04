@@ -155,13 +155,20 @@ Port::moved()
 void
 Port::on_value_changed(double value)
 {
-	const Atom atom = _app.forge().make(float(value));
-	if (atom != model()->value()) {
-		Ingen::World* const world = _app.world();
-		_app.interface()->set_property(model()->uri(),
-		                               world->uris().ingen_value,
-		                               atom);
+	const URIs& uris          = _app.uris();
+	const Atom& current_value = model()->value();
+	if (current_value.type() != uris.forge.Float) {
+		return;  // Non-float, unsupported
 	}
+
+	if (current_value.get<float>() == (float)value) {
+		return;  // No change
+	}
+
+	const Atom atom = _app.forge().make(float(value));
+	_app.interface()->set_property(model()->uri(),
+	                               _app.world()->uris().ingen_value,
+	                               atom);
 
 	if (_entered) {
 		GraphBox* box = get_graph_box();
