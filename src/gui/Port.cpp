@@ -106,6 +106,8 @@ Port::Port(App&                  app,
 	signal_event().connect(
 		sigc::mem_fun(this, &Port::on_event));
 
+	set_is_controllable(pm->is_numeric() && pm->is_input());
+	
 	update_metadata();
 	value_changed(pm->value());
 }
