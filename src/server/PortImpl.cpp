@@ -383,11 +383,18 @@ PortImpl::monitor(Context& context, bool send_now)
 		return;
 	}
 
-	Forge& forge = context.engine().world()->forge();
-	URIs&  uris  = context.engine().world()->uris();
+	const uint32_t period = monitor_period(context.engine());
+	_frames_since_monitor += context.nframes();
 
-	LV2_URID key = 0;
-	float    val = 0.0f;
+	const bool time_to_send = send_now || _frames_since_monitor >= period;
+	if (!time_to_send) {
+		return;
+	}
+
+	Forge&   forge = context.engine().world()->forge();
+	URIs&    uris  = context.engine().world()->uris();
+	LV2_URID key   = 0;
+	float    val   = 0.0f;
 	switch (_type.id()) {
 	case PortType::UNKNOWN:
 		break;
@@ -426,9 +433,8 @@ PortImpl::monitor(Context& context, bool send_now)
 		}
 	}
 
-	const uint32_t period       = monitor_period(context.engine());
-	const bool     time_to_send = send_now || _frames_since_monitor >= period;
-	if (time_to_send && key && val != _monitor_value) {
+	_frames_since_monitor = _frames_since_monitor % period;
+	if (key && val != _monitor_value) {
 		if (context.notify(key, context.start(), this,
 		                   sizeof(float), forge.Float, &val)) {
 			/* Update frames since last update to conceptually zero, but keep
@@ -440,7 +446,6 @@ PortImpl::monitor(Context& context, bool send_now)
 		// Otherwise failure, leave old value and try again next time
 	}
 
-	_frames_since_monitor += context.nframes();
 }
 
 } // namespace Server
