@@ -18,8 +18,8 @@
 #define INGEN_GUI_APP_HPP
 
 #include <cassert>
-#include <string>
 #include <map>
+#include <string>
 #include <utility>
 
 #include <gtkmm/aboutdialog.h>

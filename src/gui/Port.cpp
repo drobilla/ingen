@@ -76,7 +76,6 @@ Port::Port(App&                  app,
 			app.style()->get_port_color(pm.get()))
 	, _app(app)
 	, _port_model(pm)
-	, _pressed(false)
 	, _entered(false)
 	, _flipped(flip)
 {
@@ -181,7 +180,7 @@ Port::on_value_changed(double value)
 void
 Port::value_changed(const Atom& value)
 {
-	if (!_pressed && value.type() == _app.forge().Float) {
+	if (value.type() == _app.forge().Float && !get_grabbed()) {
 		Ganv::Port::set_control_value(value.get<float>());
 	}
 }
@@ -301,15 +300,10 @@ Port::on_event(GdkEvent* ev)
 					return true;
 				}
 			}
-			_pressed = true;
 		} else if (ev->button.button == 3) {
 			return show_menu(&ev->button);
 		}
 		break;
-	case GDK_BUTTON_RELEASE:
-		if (ev->button.button == 1) {
-			_pressed = false;
-		}
 	default:
 		break;
 	}
@@ -416,7 +410,7 @@ Port::property_changed(const Raul::URI& key, const Atom& value)
 	const URIs& uris = _app.uris();
 	if (value.type() == uris.forge.Float) {
 		float val = value.get<float>();
-		if (key == uris.ingen_value && !_pressed) {
+		if (key == uris.ingen_value && !get_grabbed()) {
 			Ganv::Port::set_control_value(val);
 		} else if (key == uris.lv2_minimum) {
 			if (model()->port_property(uris.lv2_sampleRate)) {
