@@ -59,7 +59,7 @@ public:
 	PortType(ID id) : _id(id) {}
 
 	inline const Raul::URI& uri()    const { return type_uri(_id); }
-	inline ID           id() const { return _id; }
+	inline ID               id() const { return _id; }
 
 	inline bool operator==(const ID& id) const { return (_id == id); }
 	inline bool operator!=(const ID& id) const { return (_id != id); }

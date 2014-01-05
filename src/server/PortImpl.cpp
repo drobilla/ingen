@@ -104,16 +104,28 @@ PortImpl::~PortImpl()
 void
 PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 {
+	const Ingen::URIs& uris  = _bufs.uris();
+	Ingen::World*      world = _bufs.engine().world();
+
+	// Update type properties so clients are aware of current type
+	remove_property(uris.rdf_type, uris.lv2_AudioPort);
+	remove_property(uris.rdf_type, uris.lv2_CVPort);
+	remove_property(uris.rdf_type, uris.lv2_ControlPort);
+	remove_property(uris.rdf_type, uris.atom_AtomPort);
+	add_property(uris.rdf_type,
+	             world->forge().alloc_uri(port_type.uri().c_str()));
+
+	// Update audio thread types
 	_type        = port_type;
 	_buffer_type = buffer_type;
 	if (!_buffer_type) {
 		switch (_type.id()) {
 		case PortType::CONTROL:
-			_buffer_type = _bufs.uris().atom_Float;
+			_buffer_type = uris.atom_Float;
 			break;
 		case PortType::AUDIO:
 		case PortType::CV:
-			_buffer_type = _bufs.uris().atom_Sound;
+			_buffer_type = uris.atom_Sound;
 			break;
 		default:
 			break;
