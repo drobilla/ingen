@@ -155,7 +155,9 @@ public:
 
 	~Impl()
 	{
-		engine->quit();
+		if (engine) {
+			engine->quit();
+		}
 
 		// Delete module objects but save pointers to libraries
 		typedef std::list<Glib::Module*> Libs;
