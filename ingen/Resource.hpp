@@ -101,9 +101,9 @@ public:
 	 * this call exactly one property with predicate @p uri will be set.
 	 */
 	virtual const Atom& set_property(
-		const Raul::URI&  uri,
-		const Atom& value,
-		Graph             ctx=Graph::DEFAULT);
+		const Raul::URI& uri,
+		const Atom&      value,
+		Graph            ctx = Graph::DEFAULT);
 
 	/** Add a property value.
 	 *
