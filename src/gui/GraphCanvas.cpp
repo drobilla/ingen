@@ -44,6 +44,7 @@
 #include "LoadPluginWindow.hpp"
 #include "NewSubgraphWindow.hpp"
 #include "NodeModule.hpp"
+#include "PluginMenu.hpp"
 #include "Port.hpp"
 #include "SubgraphModule.hpp"
 #include "ThreadedLoader.hpp"
@@ -71,7 +72,6 @@ GraphCanvas::GraphCanvas(App&                   app,
 	, _paste_count(0)
 	, _menu(NULL)
 	, _internal_menu(NULL)
-	, _classless_menu(NULL)
 	, _plugin_menu(NULL)
 	, _human_names(true)
 	, _show_port_names(true)
@@ -191,111 +191,24 @@ GraphCanvas::build_menus()
 	}
 
 	// Build skeleton LV2 plugin class heirarchy for 'Plugin' menu
-	if (!_plugin_menu)
-		build_plugin_menu();
-
-	// Build (or clear existing) uncategorized (classless, heh) plugins menu
-	if (_classless_menu) {
-		_classless_menu->items().clear();
-	} else {
-		_plugin_menu->items().push_back(Gtk::Menu_Helpers::MenuElem("_Uncategorized"));
-		Gtk::MenuItem* classless_menu_item = &(_plugin_menu->items().back());
-		_classless_menu = Gtk::manage(new Gtk::Menu());
-		classless_menu_item->set_submenu(*_classless_menu);
-		_classless_menu->hide();
-	}
-
-	// Add known plugins to menu heirarchy
-	SPtr<const ClientStore::Plugins> plugins = _app.store()->plugins();
-	for (const auto& p : *plugins.get())
-		add_plugin(p.second);
-}
-
-/** Recursively build the plugin class menu heirarchy rooted at
- * @a plugin class into @a menu
- */
-size_t
-GraphCanvas::build_plugin_class_menu(
-	Gtk::Menu*               menu,
-	const LilvPluginClass*   plugin_class,
-	const LilvPluginClasses* classes,
-	const LV2Children&       children,
-	std::set<const char*>&   ancestors)
-{
-	size_t          num_items     = 0;
-	const LilvNode* class_uri     = lilv_plugin_class_get_uri(plugin_class);
-	const char*     class_uri_str = lilv_node_as_string(class_uri);
-
-	const std::pair<LV2Children::const_iterator, LV2Children::const_iterator> kids
-		= children.equal_range(class_uri_str);
-
-	if (kids.first == children.end())
-		return 0;
-
-	// Add submenus
-	ancestors.insert(class_uri_str);
-	for (LV2Children::const_iterator i = kids.first; i != kids.second; ++i) {
-		const LilvPluginClass* c = i->second;
-		const char* sub_label_str = lilv_node_as_string(lilv_plugin_class_get_label(c));
-		const char* sub_uri_str   = lilv_node_as_string(lilv_plugin_class_get_uri(c));
-		if (ancestors.find(sub_uri_str) != ancestors.end()) {
-			_app.log().warn(fmt("Infinite LV2 class recursion: %1% <: %2%\n")
-			                % class_uri_str % sub_uri_str);
-			return 0;
-		}
-
-		Gtk::Menu_Helpers::MenuElem menu_elem = Gtk::Menu_Helpers::MenuElem(
-			std::string("_") + sub_label_str);
-		menu->items().push_back(menu_elem);
-		Gtk::MenuItem* menu_item = &(menu->items().back());
-
-		Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
-		menu_item->set_submenu(*submenu);
-
-		size_t num_child_items = build_plugin_class_menu(
-			submenu, c, classes, children, ancestors);
-
-		_class_menus.insert(make_pair(sub_uri_str, MenuRecord(menu_item, submenu)));
-		if (num_child_items == 0)
-			menu_item->hide();
-
-		++num_items;
-	}
-	ancestors.erase(class_uri_str);
-
-	return num_items;
-}
-
-void
-GraphCanvas::build_plugin_menu()
-{
-	if (_plugin_menu) {
-		_plugin_menu->items().clear();
-	} else {
+	if (!_plugin_menu) {
+		_plugin_menu = Gtk::manage(new PluginMenu(*_app.world()));
 		_menu->items().push_back(
 			Gtk::Menu_Helpers::ImageMenuElem(
 				"_Plugin",
 				*(manage(new Gtk::Image(Gtk::Stock::EXECUTE, Gtk::ICON_SIZE_MENU)))));
 		Gtk::MenuItem* plugin_menu_item = &(_menu->items().back());
-		_plugin_menu = Gtk::manage(new Gtk::Menu());
 		plugin_menu_item->set_submenu(*_plugin_menu);
 		_menu->reorder_child(*plugin_menu_item, 5);
+		_plugin_menu->signal_load_plugin.connect(
+			sigc::mem_fun(this, &GraphCanvas::load_plugin));
 	}
 
-	const LilvWorld*         world      = PluginModel::lilv_world();
-	const LilvPluginClass*   lv2_plugin = lilv_world_get_plugin_class(world);
-	const LilvPluginClasses* classes    = lilv_world_get_plugin_classes(world);
-
-	LV2Children children;
-	LILV_FOREACH(plugin_classes, i, classes) {
-		const LilvPluginClass* c = lilv_plugin_classes_get(classes, i);
-		const LilvNode*        p = lilv_plugin_class_get_parent_uri(c);
-		if (!p)
-			p = lilv_plugin_class_get_uri(lv2_plugin);
-		children.insert(make_pair(lilv_node_as_string(p), c));
+	// Add known plugins to menu heirarchy
+	SPtr<const ClientStore::Plugins> plugins = _app.store()->plugins();
+	for (const auto& p : *plugins.get()) {
+		add_plugin(p.second);
 	}
-	std::set<const char*> ancestors;
-	build_plugin_class_menu(_plugin_menu, lv2_plugin, classes, children, ancestors);
 }
 
 void
@@ -351,61 +264,15 @@ GraphCanvas::show_port_names(bool b)
 }
 
 void
-GraphCanvas::add_plugin_to_menu(Gtk::Menu* menu, SPtr<PluginModel> p)
-{
-	bool is_graph = false;
-	if (p->lilv_plugin()) {
-		const URIs& uris        = _app.uris();
-		LilvWorld*  lworld      = _app.world()->lilv_world();
-		LilvNode*   ingen_Graph = lilv_new_uri(lworld, uris.ingen_Graph.c_str());
-		LilvNode*   rdf_type    = lilv_new_uri(lworld, uris.rdf_type.c_str());
-
-		is_graph = lilv_world_ask(_app.world()->lilv_world(),
-		                          lilv_plugin_get_uri(p->lilv_plugin()),
-		                          rdf_type,
-		                          ingen_Graph);
-
-		lilv_node_free(rdf_type);
-		lilv_node_free(ingen_Graph);
-	}
-
-	menu->items().push_back(
-		Gtk::Menu_Helpers::MenuElem(
-			std::string("_") + p->human_name() + (is_graph ? " ⚙" : ""),
-			sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
-
-	if (!menu->is_visible()) {
-		menu->show();
-	}
-}
-
-void
 GraphCanvas::add_plugin(SPtr<PluginModel> p)
 {
-	typedef ClassMenus::iterator iterator;
 	if (_internal_menu && p->type() == Plugin::Internal) {
-		add_plugin_to_menu(_internal_menu, p);
-	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->lilv_plugin()) {
-		if (lilv_plugin_is_replaced(p->lilv_plugin())) {
-			//info << (boost::format("[Menu] LV2 plugin <%s> hidden") % p->uri()) << endl;
-			return;
-		}
-
-		const LilvPluginClass* pc            = lilv_plugin_get_class(p->lilv_plugin());
-		const LilvNode*        class_uri     = lilv_plugin_class_get_uri(pc);
-		const char*            class_uri_str = lilv_node_as_string(class_uri);
-
-		pair<iterator, iterator> range = _class_menus.equal_range(class_uri_str);
-		if (range.first == _class_menus.end() || range.first == range.second
-		    || range.first->second.menu == _plugin_menu) {
-			// Add to uncategorized plugin menu
-			add_plugin_to_menu(_classless_menu, p);
-		} else {
-			// For each menu that represents plugin's class (possibly several)
-			for (iterator i = range.first; i != range.second ; ++i) {
-				add_plugin_to_menu(i->second.menu, p);
-			}
-		}
+		_internal_menu->items().push_back(
+			Gtk::Menu_Helpers::MenuElem(
+				std::string("_") + p->human_name(),
+				sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
+	} else if (_plugin_menu) {
+		_plugin_menu->add_plugin(p);
 	}
 }
 
@@ -898,8 +765,7 @@ GraphCanvas::get_initial_data(Resource::Graph ctx)
 void
 GraphCanvas::menu_load_plugin()
 {
-	_app.window_factory()->present_load_plugin(
-		_graph, get_initial_data());
+	_app.window_factory()->present_load_plugin(_graph, get_initial_data());
 }
 
 void

@@ -39,6 +39,7 @@ namespace Client { class GraphModel; }
 namespace GUI {
 
 class NodeModule;
+class PluginMenu;
 
 /** Graph canvas widget.
  *
@@ -86,9 +87,10 @@ private:
 		const std::string& sym_base,  std::string& sym,
 		const std::string& name_base, std::string& name);
 
-	void menu_add_port(
-			const std::string& sym_base, const std::string& name_base,
-			const Raul::URI& type, bool is_output);
+	void menu_add_port(const std::string& sym_base,
+	                   const std::string& name_base,
+	                   const Raul::URI&   type,
+	                   bool               is_output);
 
 	void menu_load_plugin();
 	void menu_new_graph();
@@ -98,20 +100,9 @@ private:
 
 	void build_menus();
 
-	void build_internal_menu();
-	void build_classless_menu();
-	void add_plugin_to_menu(Gtk::Menu* menu, SPtr<Client::PluginModel> p);
-
     void auto_menu_position(int& x, int& y, bool& push_in);
 
 	typedef std::multimap<const std::string, const LilvPluginClass*> LV2Children;
-
-	void   build_plugin_menu();
-	size_t build_plugin_class_menu(Gtk::Menu*               menu,
-	                               const LilvPluginClass*   plugin_class,
-	                               const LilvPluginClasses* classes,
-	                               const LV2Children&       children,
-	                               std::set<const char*>&   ancestors);
 
 	Node::Properties get_initial_data(Resource::Graph ctx=Resource::Graph::DEFAULT);
 
@@ -139,20 +130,9 @@ private:
 	// Track pasted objects so they can be selected when they arrive
 	std::set<Raul::Path> _pastees;
 
-	struct MenuRecord {
-		MenuRecord(Gtk::MenuItem* i, Gtk::Menu* m) : item(i), menu(m) {}
-		Gtk::MenuItem* item;
-		Gtk::Menu*     menu;
-	};
-
-	typedef std::multimap<const std::string, MenuRecord> ClassMenus;
-
-	ClassMenus _class_menus;
-
 	Gtk::Menu*          _menu;
 	Gtk::Menu*          _internal_menu;
-	Gtk::Menu*          _classless_menu;
-	Gtk::Menu*          _plugin_menu;
+	PluginMenu*         _plugin_menu;
 	Gtk::MenuItem*      _menu_add_audio_input;
 	Gtk::MenuItem*      _menu_add_audio_output;
 	Gtk::MenuItem*      _menu_add_control_input;

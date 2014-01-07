@@ -44,6 +44,7 @@ def build(bld):
             NodeMenu.cpp
             NodeModule.cpp
             ObjectMenu.cpp
+            PluginMenu.cpp
             Port.cpp
             PortMenu.cpp
             PortPropertiesWindow.cpp
