@@ -100,17 +100,18 @@ private:
 
 	void build_internal_menu();
 	void build_classless_menu();
+	void add_plugin_to_menu(Gtk::Menu* menu, SPtr<Client::PluginModel> p);
 
     void auto_menu_position(int& x, int& y, bool& push_in);
 
 	typedef std::multimap<const std::string, const LilvPluginClass*> LV2Children;
-	void build_plugin_menu();
-	size_t build_plugin_class_menu(
-			Gtk::Menu*               menu,
-			const LilvPluginClass*   plugin_class,
-			const LilvPluginClasses* classes,
-			const LV2Children&       children,
-			std::set<const char*>&   ancestors);
+
+	void   build_plugin_menu();
+	size_t build_plugin_class_menu(Gtk::Menu*               menu,
+	                               const LilvPluginClass*   plugin_class,
+	                               const LilvPluginClasses* classes,
+	                               const LV2Children&       children,
+	                               std::set<const char*>&   ancestors);
 
 	Node::Properties get_initial_data(Resource::Graph ctx=Resource::Graph::DEFAULT);
 

@@ -351,14 +351,40 @@ GraphCanvas::show_port_names(bool b)
 }
 
 void
+GraphCanvas::add_plugin_to_menu(Gtk::Menu* menu, SPtr<PluginModel> p)
+{
+	bool is_graph = false;
+	if (p->lilv_plugin()) {
+		const URIs& uris        = _app.uris();
+		LilvWorld*  lworld      = _app.world()->lilv_world();
+		LilvNode*   ingen_Graph = lilv_new_uri(lworld, uris.ingen_Graph.c_str());
+		LilvNode*   rdf_type    = lilv_new_uri(lworld, uris.rdf_type.c_str());
+
+		is_graph = lilv_world_ask(_app.world()->lilv_world(),
+		                          lilv_plugin_get_uri(p->lilv_plugin()),
+		                          rdf_type,
+		                          ingen_Graph);
+
+		lilv_node_free(rdf_type);
+		lilv_node_free(ingen_Graph);
+	}
+
+	menu->items().push_back(
+		Gtk::Menu_Helpers::MenuElem(
+			std::string("_") + p->human_name() + (is_graph ? " ⚙" : ""),
+			sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
+
+	if (!menu->is_visible()) {
+		menu->show();
+	}
+}
+
+void
 GraphCanvas::add_plugin(SPtr<PluginModel> p)
 {
 	typedef ClassMenus::iterator iterator;
 	if (_internal_menu && p->type() == Plugin::Internal) {
-		_internal_menu->items().push_back(
-			Gtk::Menu_Helpers::MenuElem(
-				std::string("_") + p->human_name(),
-				sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
+		add_plugin_to_menu(_internal_menu, p);
 	} else if (_plugin_menu && p->type() == Plugin::LV2 && p->lilv_plugin()) {
 		if (lilv_plugin_is_replaced(p->lilv_plugin())) {
 			//info << (boost::format("[Menu] LV2 plugin <%s> hidden") % p->uri()) << endl;
@@ -369,36 +395,15 @@ GraphCanvas::add_plugin(SPtr<PluginModel> p)
 		const LilvNode*        class_uri     = lilv_plugin_class_get_uri(pc);
 		const char*            class_uri_str = lilv_node_as_string(class_uri);
 
-		Glib::RefPtr<Gdk::Pixbuf> icon = _app.icon_from_path(
-			PluginModel::get_lv2_icon_path(p->lilv_plugin()), 16);
-
 		pair<iterator, iterator> range = _class_menus.equal_range(class_uri_str);
 		if (range.first == _class_menus.end() || range.first == range.second
 		    || range.first->second.menu == _plugin_menu) {
-			_classless_menu->items().push_back(
-				Gtk::Menu_Helpers::MenuElem(
-					std::string("_") + p->human_name(),
-					sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
-			if (!_classless_menu->is_visible())
-				_classless_menu->show();
+			// Add to uncategorized plugin menu
+			add_plugin_to_menu(_classless_menu, p);
 		} else {
 			// For each menu that represents plugin's class (possibly several)
 			for (iterator i = range.first; i != range.second ; ++i) {
-				Gtk::Menu* menu = i->second.menu;
-				if (icon) {
-					Gtk::Image* image = new Gtk::Image(icon);
-					menu->items().push_back(
-						Gtk::Menu_Helpers::ImageMenuElem(
-							std::string("_") + p->human_name(), *image,
-							sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
-				} else {
-					menu->items().push_back(
-						Gtk::Menu_Helpers::MenuElem(
-							std::string("_") + p->human_name(),
-							sigc::bind(sigc::mem_fun(this, &GraphCanvas::load_plugin), p)));
-				}
-				if (!i->second.item->is_visible())
-					i->second.item->show();
+				add_plugin_to_menu(i->second.menu, p);
 			}
 		}
 	}
