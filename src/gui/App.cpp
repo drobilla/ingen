@@ -363,57 +363,6 @@ App::quit(Gtk::Window* dialog_parent)
 	return quit;
 }
 
-struct IconDestroyNotification {
-	IconDestroyNotification(App& a, pair<string, int> k)
-		: app(a)
-		, key(k)
-	{}
-
-	App&              app;
-	pair<string, int> key;
-};
-
-Glib::RefPtr<Gdk::Pixbuf>
-App::icon_from_path(const string& path, int size)
-{
-	Glib::RefPtr<Gdk::Pixbuf> buf;
-	if (path.length() == 0)
-		return buf;
-
-	Icons::iterator iter = _icons.find(make_pair(path, size));
-
-	if (iter != _icons.end()) {
-		// we need to reference manually since the RefPtr constructor doesn't do it
-		iter->second->reference();
-		return Glib::RefPtr<Gdk::Pixbuf>(iter->second);
-	}
-
-	try {
-		buf = Gdk::Pixbuf::create_from_file(path, size, size);
-		_icons.insert(make_pair(make_pair(path, size), buf.operator->()));
-		buf->add_destroy_notify_callback(
-			new IconDestroyNotification(*this, make_pair(path, size)),
-			&App::icon_destroyed);
-	} catch (const Glib::Error& e) {
-		log().warn(fmt("Error loading icon %1%: %2%\n")
-		           % path % e.what());
-	}
-	return buf;
-}
-
-void*
-App::icon_destroyed(void* data)
-{
-	IconDestroyNotification* note = (IconDestroyNotification*)data;
-	Icons::iterator iter = note->app._icons.find(note->key);
-	if (iter != note->app._icons.end())
-		note->app._icons.erase(iter);
-
-	delete note; // allocated in App::icon_from_path
-
-	return NULL;
-}
-
 bool
 App::can_control(const Client::PortModel* port) const
 {

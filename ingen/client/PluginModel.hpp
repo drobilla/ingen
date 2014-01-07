@@ -77,9 +77,6 @@ public:
 	SPtr<PluginUI> ui(Ingen::World*               world,
 	                  SPtr<const BlockModel> block) const;
 
-	const std::string& icon_path() const;
-	static std::string get_lv2_icon_path(const LilvPlugin* plugin);
-
 	std::string documentation(bool html) const;
 	std::string port_documentation(uint32_t index, bool html) const;
 
@@ -100,15 +97,12 @@ protected:
 private:
 	std::string get_documentation(const LilvNode* subject, bool html) const;
 
-	Type _type;
-
+	static Sord::World*       _rdf_world;
 	static LilvWorld*         _lilv_world;
 	static const LilvPlugins* _lilv_plugins;
 
-	const LilvPlugin*   _lilv_plugin;
-	mutable std::string _icon_path;
-
-	static Sord::World* _rdf_world;
+	Type              _type;
+	const LilvPlugin* _lilv_plugin;
 };
 
 } // namespace Client

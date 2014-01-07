@@ -418,9 +418,6 @@ GraphCanvas::add_block(SPtr<const BlockModel> bm)
 		module = SubgraphModule::create(*this, pm, _human_names);
 	} else {
 		module = NodeModule::create(*this, bm, _human_names);
-		//const PluginModel* plugm = dynamic_cast<const PluginModel*>(nm->plugin());
-		//if (plugm && !plugm->icon_path().empty())
-		//	module->set_icon(_app.icon_from_path(plugm->icon_path(), 100).operator->());
 	}
 
 	module->show();

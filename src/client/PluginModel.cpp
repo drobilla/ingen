@@ -155,7 +155,6 @@ PluginModel::set(SPtr<PluginModel> p)
 {
 	_type = p->_type;
 
-	_icon_path = p->_icon_path;
 	if (p->_lilv_plugin)
 		_lilv_plugin = p->_lilv_plugin;
 
@@ -238,37 +237,6 @@ PluginModel::ui(Ingen::World*          world,
 	}
 
 	return PluginUI::create(world, block, _lilv_plugin);
-}
-
-const string&
-PluginModel::icon_path() const
-{
-	if (_icon_path.empty() && _type == LV2) {
-		_icon_path = get_lv2_icon_path(_lilv_plugin);
-	}
-
-	return _icon_path;
-}
-
-/** RDF world mutex must be held by the caller */
-string
-PluginModel::get_lv2_icon_path(const LilvPlugin* plugin)
-{
-	string result;
-	LilvNode* svg_icon_pred = lilv_new_uri(_lilv_world,
-		"http://ll-plugins.nongnu.org/lv2/namespace#svgIcon");
-
-	LilvNodes* paths = lilv_plugin_get_value(plugin, svg_icon_pred);
-
-	if (lilv_nodes_size(paths) > 0) {
-		const LilvNode* value = lilv_nodes_get_first(paths);
-		if (lilv_node_is_uri(value))
-			result = lilv_uri_to_path(lilv_node_as_string(value));
-		lilv_nodes_free(paths);
-	}
-
-	lilv_node_free(svg_icon_pred);
-	return result;
 }
 
 static std::string

@@ -106,8 +106,6 @@ public:
 	Style*           style()           const { return _style; }
 	WindowFactory*   window_factory()  const { return _window_factory; }
 
-	Glib::RefPtr<Gdk::Pixbuf> icon_from_path(const std::string& path, int size);
-
 	Ingen::Forge&                    forge()     const { return _world->forge(); }
 	SPtr<Ingen::Interface>           interface() const { return _world->interface(); }
 	SPtr<Client::SigClientInterface> client()    const { return _client; }
@@ -124,21 +122,6 @@ public:
 	inline Ingen::Log&   log()   const { return _world->log(); }
 
 protected:
-
-	/** This is needed for the icon map. */
-	template <typename A, typename B>
-	struct LexicalCompare {
-		bool operator()(const std::pair<A, B>& p1, const std::pair<A, B>& p2) {
-			return (p1.first < p2.first) ||
-				((p1.first == p2.first) && (p1.second < p2.second));
-		}
-	};
-
-	typedef std::map< std::pair<std::string, int>,
-	                  Gdk::Pixbuf*,
-	                  LexicalCompare<std::string, int> > Icons;
-	Icons _icons;
-
 	explicit App(Ingen::World* world);
 
 	bool animate();
@@ -147,8 +130,6 @@ protected:
 	void property_change(const Raul::URI& subject,
 	                     const Raul::URI& key,
 	                     const Atom&      value);
-
-	static void* icon_destroyed(void* data);
 
 	static Gtk::Main* _main;
 
