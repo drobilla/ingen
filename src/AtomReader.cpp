@@ -243,7 +243,7 @@ AtomReader::write(const LV2_Atom* msg)
 		}
 
 		Ingen::Resource::Properties add_props;
-		get_props(remove, add_props);
+		get_props(add, add_props);
 
 		Ingen::Resource::Properties remove_props;
 		get_props(remove, remove_props);
