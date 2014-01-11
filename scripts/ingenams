@@ -190,11 +190,11 @@ def scala_module(world, mod_id, scala_name):
 def standard_module(world, mod_id, x, y, name, arg):
     if name == 'vca':
         if arg > 0:
-            name += 'exp_audio'
+            name += 'exp'
         else:
-            name += 'lin_audio'
+            name += 'lin'
     elif name == 'mix':
-        name += 'er_%dch_audio' % int(arg)
+        name += 'er_%dch' % int(arg)
                 
     lv2_uri = ams_prefix + name
     world.add_block(mod_id, lv2_uri, x, y)
