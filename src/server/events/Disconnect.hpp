@@ -68,11 +68,11 @@ public:
 		inline InputPort* head() { return _dst_input_port; }
 
 	private:
-		Engine&                 _engine;
-		OutputPort*             _src_output_port;
-		InputPort*              _dst_input_port;
-		SPtr<ArcImpl>           _arc;
-		Raul::Array<BufferRef>* _buffers;
+		Engine&                       _engine;
+		OutputPort*                   _src_output_port;
+		InputPort*                    _dst_input_port;
+		SPtr<ArcImpl>                 _arc;
+		Raul::Array<PortImpl::Voice>* _voices;
 	};
 
 private:

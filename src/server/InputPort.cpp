@@ -68,26 +68,26 @@ InputPort::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	if (!ret)
 		poly = 1;
 
-	assert(_buffers->size() >= poly);
+	assert(_voices->size() >= poly);
 
 	return true;
 }
 
-/** Set @a buffers to the buffers to be used for this port.
+/** Set the buffers of @p voices to the buffers to be used for this port.
  * @return true iff buffers are locally owned by the port
  */
 bool
-InputPort::get_buffers(BufferFactory&          bufs,
-                       Raul::Array<BufferRef>* buffers,
-                       uint32_t                poly,
-                       bool                    real_time) const
+InputPort::get_buffers(BufferFactory&      bufs,
+                       Raul::Array<Voice>* voices,
+                       uint32_t            poly,
+                       bool                real_time) const
 {
 	const size_t num_arcs = real_time ? _arcs.size() : _num_arcs;
 
 	if (is_a(PortType::AUDIO) && num_arcs == 0) {
 		// Audio input with no arcs, use shared zero buffer
 		for (uint32_t v = 0; v < poly; ++v) {
-			buffers->at(v) = bufs.silent_buffer();
+			voices->at(v).buffer = bufs.silent_buffer();
 		}
 		return false;
 
@@ -96,7 +96,7 @@ InputPort::get_buffers(BufferFactory&          bufs,
 			if (!_arcs.front().must_mix()) {
 				// Single non-mixing connection, use buffers directly
 				for (uint32_t v = 0; v < poly; ++v) {
-					buffers->at(v) = _arcs.front().buffer(v);
+					voices->at(v).buffer = _arcs.front().buffer(v);
 				}
 				return false;
 			}
@@ -105,9 +105,9 @@ InputPort::get_buffers(BufferFactory&          bufs,
 
 	// Otherwise, allocate local buffers
 	for (uint32_t v = 0; v < poly; ++v) {
-		buffers->at(v).reset();
-		buffers->at(v) = bufs.get_buffer(buffer_type(), _buffer_size, real_time);
-		buffers->at(v)->clear();
+		voices->at(v).buffer.reset();
+		voices->at(v).buffer = bufs.get_buffer(buffer_type(), _buffer_size, real_time);
+		voices->at(v).buffer->clear();
 	}
 	return true;
 }
@@ -194,7 +194,7 @@ InputPort::pre_process(Context& context)
 		}
 	} else if (direct_connect()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
-			_buffers->at(v) = _arcs.front().buffer(v);
+			_voices->at(v).buffer = _arcs.front().buffer(v);
 		}
 	} else {
 		const uint32_t src_poly     = max_tail_poly(context);

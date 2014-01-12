@@ -62,7 +62,7 @@ Disconnect::Impl::Impl(Engine&     e,
 	, _src_output_port(s)
 	, _dst_input_port(d)
 	, _arc(graph->remove_arc(_src_output_port, _dst_input_port))
-	, _buffers(NULL)
+	, _voices(NULL)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
@@ -88,21 +88,21 @@ Disconnect::Impl::Impl(Engine&     e,
 	_dst_input_port->decrement_num_arcs();
 
 	if (_dst_input_port->num_arcs() == 0) {
-		_buffers = new Raul::Array<BufferRef>(_dst_input_port->poly());
+		_voices = new Raul::Array<PortImpl::Voice>(_dst_input_port->poly());
 		_dst_input_port->get_buffers(*_engine.buffer_factory(),
-		                             _buffers,
+		                             _voices,
 		                             _dst_input_port->poly(),
 		                             false);
 
 		const bool is_control = _dst_input_port->is_a(PortType::CONTROL) ||
 			_dst_input_port->is_a(PortType::CV);
 		const float value = is_control ? _dst_input_port->value().get<float>() : 0;
-		for (uint32_t i = 0; i < _buffers->size(); ++i) {
+		for (uint32_t i = 0; i < _voices->size(); ++i) {
 			if (is_control) {
-				Buffer* buf = _buffers->at(i).get();
+				Buffer* buf = _voices->at(i).buffer.get();
 				buf->set_block(value, 0, buf->nframes());
 			} else {
-				_buffers->at(i)->clear();
+				_voices->at(i).buffer->clear();
 			}
 		}
 	}
@@ -179,8 +179,8 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 	}
 
 	if (set_dst_buffers) {
-		if (_buffers) {
-			_engine.maid()->dispose(_dst_input_port->set_buffers(context, _buffers));
+		if (_voices) {
+			_engine.maid()->dispose(_dst_input_port->set_voices(context, _voices));
 		} else {
 			_dst_input_port->setup_buffers(*_engine.buffer_factory(),
 			                               _dst_input_port->poly(),

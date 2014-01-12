@@ -75,10 +75,10 @@ public:
 
 	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 
-	bool get_buffers(BufferFactory&          bufs,
-	                 Raul::Array<BufferRef>* buffers,
-	                 uint32_t                poly,
-	                 bool                    real_time) const;
+	bool get_buffers(BufferFactory&      bufs,
+	                 Raul::Array<Voice>* voices,
+	                 uint32_t            poly,
+	                 bool                real_time) const;
 
 	void pre_process(Context& context);
 	void post_process(Context& context);

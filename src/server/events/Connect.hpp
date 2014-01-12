@@ -20,8 +20,8 @@
 #include "raul/Path.hpp"
 
 #include "Event.hpp"
+#include "PortImpl.hpp"
 #include "types.hpp"
-#include "BufferRef.hpp"
 
 namespace Raul {
 template <typename T> class Array;
@@ -57,17 +57,17 @@ public:
 	void post_process();
 
 private:
-	const Raul::Path        _tail_path;
-	const Raul::Path        _head_path;
-	GraphImpl*              _graph;
-	InputPort*              _head;
-	CompiledGraph*          _compiled_graph;
-	SPtr<ArcImpl>           _arc;
-	Raul::Array<BufferRef>* _buffers;
-	Resource::Properties    _tail_remove;
-	Resource::Properties    _tail_add;
-	Resource::Properties    _head_remove;
-	Resource::Properties    _head_add;
+	const Raul::Path              _tail_path;
+	const Raul::Path              _head_path;
+	GraphImpl*                    _graph;
+	InputPort*                    _head;
+	CompiledGraph*                _compiled_graph;
+	SPtr<ArcImpl>                 _arc;
+	Raul::Array<PortImpl::Voice>* _voices;
+	Resource::Properties          _tail_remove;
+	Resource::Properties          _tail_add;
+	Resource::Properties          _head_remove;
+	Resource::Properties          _head_add;
 };
 
 } // namespace Events

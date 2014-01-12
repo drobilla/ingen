@@ -46,7 +46,7 @@ Connect::Connect(Engine&           engine,
 	, _graph(NULL)
 	, _head(NULL)
 	, _compiled_graph(NULL)
-	, _buffers(NULL)
+	, _voices(NULL)
 {}
 
 bool
@@ -129,9 +129,9 @@ Connect::pre_process()
 		_head->inherit_neighbour(tail_output, _head_remove, _head_add);
 	}
 
-	_buffers = new Raul::Array<BufferRef>(_head->poly());
+	_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
 	_head->get_buffers(*_engine.buffer_factory(),
-	                   _buffers,
+	                   _voices,
 	                   _head->poly(),
 	                   false);
 
@@ -147,7 +147,7 @@ Connect::execute(ProcessContext& context)
 {
 	if (_status == Status::SUCCESS) {
 		_head->add_arc(context, _arc.get());
-		_engine.maid()->dispose(_head->set_buffers(context, _buffers));
+		_engine.maid()->dispose(_head->set_voices(context, _voices));
 		_head->connect_buffers();
 		_graph->set_compiled_graph(_compiled_graph);
 	}

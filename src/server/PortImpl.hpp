@@ -43,6 +43,23 @@ class BufferFactory;
 class PortImpl : public NodeImpl
 {
 public:
+	struct SetState {
+		enum class State { SET, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
+
+		SetState() : state(State::SET), value(0), time(0) {}
+
+		State     state;  ///< State of buffer for setting control value
+		Sample    value;  ///< Value currently being set
+		FrameTime time;   ///< Time value was set
+	};
+
+	struct Voice {
+		Voice() : buffer(NULL) {}
+
+		SetState  set_state;
+		BufferRef buffer;
+	};
+
 	~PortImpl();
 
 	virtual GraphType graph_type() const { return GraphType::PORT; }
@@ -55,8 +72,8 @@ public:
 	 * Audio thread.  Returned value must be freed by caller.
 	 * \a buffers must be poly() long
 	 */
-	Raul::Array<BufferRef>* set_buffers(ProcessContext&         context,
-	                                    Raul::Array<BufferRef>* buffers);
+	Raul::Array<Voice>* set_voices(ProcessContext&     context,
+	                               Raul::Array<Voice>* voices);
 
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -86,10 +103,10 @@ public:
 	void set_maximum(const Atom& max) { _max = max; }
 
 	inline BufferRef buffer(uint32_t voice) const {
-		return _buffers->at((_poly == 1) ? 0 : voice);
+		return _voices->at((_poly == 1) ? 0 : voice).buffer;
 	}
 	inline BufferRef prepared_buffer(uint32_t voice) const {
-		return _prepared_buffers->at(voice);
+		return _prepared_voices->at(voice).buffer;
 	}
 
 	void update_set_state(Context& context, uint32_t voice);
@@ -110,13 +127,14 @@ public:
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
 
-	virtual bool get_buffers(BufferFactory&          bufs,
-	                         Raul::Array<BufferRef>* buffers,
-	                         uint32_t                poly,
-	                         bool                    real_time) const = 0;
+public:
+	virtual bool get_buffers(BufferFactory&      bufs,
+	                         Raul::Array<Voice>* voices,
+	                         uint32_t            poly,
+	                         bool                real_time) const = 0;
 
 	void setup_buffers(BufferFactory& bufs, uint32_t poly, bool real_time) {
-		get_buffers(bufs, _buffers, poly, real_time);
+		get_buffers(bufs, _voices, poly, real_time);
 	}
 
 	void activate(BufferFactory& bufs);
@@ -153,7 +171,7 @@ public:
 		return _poly;
 	}
 	uint32_t prepared_poly() const {
-		return (_prepared_buffers) ? _prepared_buffers->size() : 1;
+		return (_prepared_voices) ? _prepared_voices->size() : 1;
 	}
 
 	void set_buffer_size(Context& context, BufferFactory& bufs, size_t size);
@@ -202,39 +220,27 @@ protected:
 	         const Atom&         value,
 	         size_t              buffer_size);
 
-	struct SetState {
-		enum class State { SET, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
-
-		SetState() : state(State::SET), value(0), time(0) {}
-
-		State     state;  ///< State of buffer for setting control value
-		Sample    value;  ///< Value currently being set
-		FrameTime time;   ///< Time value was set
-	};
-
-	BufferFactory&          _bufs;
-	uint32_t                _index;
-	uint32_t                _poly;
-	uint32_t                _buffer_size;
-	uint32_t                _frames_since_monitor;
-	float                   _monitor_value;
-	float                   _peak;
-	PortType                _type;
-	LV2_URID                _buffer_type;
-	Atom                    _value;
-	Atom                    _min;
-	Atom                    _max;
-	Raul::Array<SetState>*  _set_states;
-	Raul::Array<SetState>*  _prepared_set_states;
-	Raul::Array<BufferRef>* _buffers;
-	Raul::Array<BufferRef>* _prepared_buffers;
-	bool                    _monitored;
-	bool                    _set_by_user;
-	bool                    _is_morph;
-	bool                    _is_auto_morph;
-	bool                    _is_logarithmic;
-	bool                    _is_sample_rate;
-	bool                    _is_toggled;
+	BufferFactory&      _bufs;
+	uint32_t            _index;
+	uint32_t            _poly;
+	uint32_t            _buffer_size;
+	uint32_t            _frames_since_monitor;
+	float               _monitor_value;
+	float               _peak;
+	PortType            _type;
+	LV2_URID            _buffer_type;
+	Atom                _value;
+	Atom                _min;
+	Atom                _max;
+	Raul::Array<Voice>* _voices;
+	Raul::Array<Voice>* _prepared_voices;
+	bool                _monitored;
+	bool                _set_by_user;
+	bool                _is_morph;
+	bool                _is_auto_morph;
+	bool                _is_logarithmic;
+	bool                _is_sample_rate;
+	bool                _is_toggled;
 };
 
 } // namespace Server

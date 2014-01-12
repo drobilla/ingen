@@ -46,13 +46,13 @@ OutputPort::OutputPort(BufferFactory&      bufs,
 }
 
 bool
-OutputPort::get_buffers(BufferFactory&          bufs,
-                        Raul::Array<BufferRef>* buffers,
-                        uint32_t                poly,
-                        bool                    real_time) const
+OutputPort::get_buffers(BufferFactory&      bufs,
+                        Raul::Array<Voice>* voices,
+                        uint32_t            poly,
+                        bool                real_time) const
 {
 	for (uint32_t v = 0; v < poly; ++v)
-		buffers->at(v) = bufs.get_buffer(buffer_type(), _buffer_size, real_time);
+		voices->at(v).buffer = bufs.get_buffer(buffer_type(), _buffer_size, real_time);
 
 	return true;
 }
@@ -61,7 +61,7 @@ void
 OutputPort::pre_process(Context& context)
 {
 	for (uint32_t v = 0; v < _poly; ++v)
-		_buffers->at(v)->prepare_output_write(context);
+		_voices->at(v).buffer->prepare_output_write(context);
 }
 
 void

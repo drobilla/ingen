@@ -65,10 +65,8 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _value(value)
 	, _min(bufs.forge().make(0.0f))
 	, _max(bufs.forge().make(1.0f))
-	, _set_states(new Raul::Array<SetState>(static_cast<size_t>(poly)))
-	, _prepared_set_states(NULL)
-	, _buffers(new Raul::Array<BufferRef>(static_cast<size_t>(poly)))
-	, _prepared_buffers(NULL)
+	, _voices(new Raul::Array<Voice>(static_cast<size_t>(poly)))
+	, _prepared_voices(NULL)
 	, _monitored(false)
 	, _set_by_user(false)
 	, _is_morph(false)
@@ -97,8 +95,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 PortImpl::~PortImpl()
 {
-	delete _set_states;
-	delete _buffers;
+	delete _voices;
 }
 
 void
@@ -164,8 +161,8 @@ PortImpl::deactivate()
 {
 	if (is_output()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
-			if (_buffers->at(v)) {
-				_buffers->at(v)->clear();
+			if (_voices->at(v).buffer) {
+				_voices->at(v).buffer->clear();
 			}
 		}
 	}
@@ -173,13 +170,13 @@ PortImpl::deactivate()
 	_peak          = 0.0f;
 }
 
-Raul::Array<BufferRef>*
-PortImpl::set_buffers(ProcessContext& context, Raul::Array<BufferRef>* buffers)
+Raul::Array<PortImpl::Voice>*
+PortImpl::set_voices(ProcessContext& context, Raul::Array<Voice>* voices)
 {
-	Raul::Array<BufferRef>* ret = NULL;
-	if (buffers != _buffers) {
-		ret = _buffers;
-		_buffers = buffers;
+	Raul::Array<Voice>* ret = NULL;
+	if (voices != _voices) {
+		ret = _voices;
+		_voices = voices;
 	}
 
 	connect_buffers();
@@ -217,7 +214,7 @@ PortImpl::set_voice_value(const Context& context,
 	switch (_type.id()) {
 	case PortType::CONTROL:
 		buffer(voice)->samples()[0] = value;
-		_set_states->at(voice).state = SetState::State::SET;
+		_voices->at(voice).set_state.state = SetState::State::SET;
 		break;
 	case PortType::AUDIO:
 	case PortType::CV: {
@@ -233,7 +230,7 @@ PortImpl::set_voice_value(const Context& context,
 		   value for the next block, particularly for triggers on the last
 		   frame of a block (set nframes-1 to 1, then nframes to 0). */
 
-		SetState& state = _set_states->at(voice);
+		SetState& state = _voices->at(voice).set_state;
 		state.state = (offset == 0)
 			? SetState::State::SET
 			: SetState::State::HALF_SET_CYCLE_1;
@@ -248,7 +245,7 @@ PortImpl::set_voice_value(const Context& context,
 void
 PortImpl::update_set_state(Context& context, uint32_t voice)
 {
-	SetState& state = _set_states->at(voice);
+	SetState& state = _voices->at(voice).set_state;
 	switch (state.state) {
 	case SetState::State::SET:
 		break;
@@ -276,25 +273,17 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 		return true;
 	}
 
-	if (_prepared_buffers && _prepared_buffers->size() != poly) {
-		delete _prepared_buffers;
-		_prepared_buffers = NULL;
+	if (_prepared_voices && _prepared_voices->size() != poly) {
+		delete _prepared_voices;
+		_prepared_voices = NULL;
 	}
 
-	if (_prepared_set_states && _prepared_set_states->size() != poly) {
-		delete _prepared_set_states;
-		_prepared_set_states = NULL;
-	}
-
-	if (!_prepared_buffers)
-		_prepared_buffers = new Raul::Array<BufferRef>(poly, *_buffers, NULL);
-
-	if (!_prepared_set_states)
-		_prepared_set_states = new Raul::Array<SetState>(poly, *_set_states, SetState());
+	if (!_prepared_voices)
+		_prepared_voices = new Raul::Array<Voice>(poly, *_voices, Voice());
 
 	get_buffers(bufs,
-	            _prepared_buffers,
-	            _prepared_buffers->size(),
+	            _prepared_voices,
+	            _prepared_voices->size(),
 	            false);
 
 	return true;
@@ -309,33 +298,26 @@ PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 		return false;
 	}
 
-	if (!_prepared_buffers) {
+	if (!_prepared_voices) {
 		return true;
 	}
 
-	assert(poly == _prepared_buffers->size());
-	assert(poly == _prepared_set_states->size());
+	assert(poly == _prepared_voices->size());
 
 	_poly = poly;
 
-	// Apply a new set of buffers from a preceding call to prepare_poly
-	maid.dispose(set_buffers(context, _prepared_buffers));
-	assert(_buffers == _prepared_buffers);
-	_prepared_buffers = NULL;
-
-	maid.dispose(_set_states);
-	_set_states          = _prepared_set_states;
-	_prepared_set_states = NULL;
+	// Apply a new set of voices from a preceding call to prepare_poly
+	maid.dispose(set_voices(context, _prepared_voices));
+	assert(_voices == _prepared_voices);
+	_prepared_voices = NULL;
 
 	if (is_a(PortType::CONTROL) || is_a(PortType::CV)) {
 		set_control_value(context, context.start(), _value.get<float>());
 	}
 
-	assert(_buffers->size() >= poly);
-	assert(_set_states->size() >= poly);
+	assert(_voices->size() >= poly);
 	assert(this->poly() == poly);
-	assert(!_prepared_buffers);
-	assert(!_prepared_set_states);
+	assert(!_prepared_voices);
 
 	return true;
 }
@@ -346,7 +328,7 @@ PortImpl::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
 	_buffer_size = size;
 
 	for (uint32_t v = 0; v < _poly; ++v)
-		_buffers->at(v)->resize(size);
+		_voices->at(v).buffer->resize(size);
 
 	connect_buffers();
 }
@@ -362,7 +344,7 @@ void
 PortImpl::recycle_buffers()
 {
 	for (uint32_t v = 0; v < _poly; ++v)
-		_buffers->at(v) = NULL;
+		_voices->at(v).buffer = NULL;
 }
 
 void
@@ -375,7 +357,7 @@ PortImpl::clear_buffers()
 		for (uint32_t v = 0; v < _poly; ++v) {
 			Buffer* buf = buffer(v).get();
 			buf->set_block(_value.get<float>(), 0, buf->nframes());
-			SetState& state = _set_states->at(v);
+			SetState& state = _voices->at(v).set_state;
 			state.state = SetState::State::SET;
 			state.value = _value.get<float>();
 			state.time  = 0;

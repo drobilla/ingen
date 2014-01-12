@@ -88,15 +88,15 @@ DuplexPort::inherit_neighbour(const PortImpl*       port,
 }
 
 bool
-DuplexPort::get_buffers(BufferFactory&          bufs,
-                        Raul::Array<BufferRef>* buffers,
-                        uint32_t                poly,
-                        bool                    real_time) const
+DuplexPort::get_buffers(BufferFactory&      bufs,
+                        Raul::Array<Voice>* voices,
+                        uint32_t            poly,
+                        bool                real_time) const
 {
 	if (_is_output) {
-		return InputPort::get_buffers(bufs, buffers, poly, real_time);
+		return InputPort::get_buffers(bufs, voices, poly, real_time);
 	} else {
-		return OutputPort::get_buffers(bufs, buffers, poly, real_time);
+		return OutputPort::get_buffers(bufs, voices, poly, real_time);
 	}
 }
 
@@ -115,7 +115,7 @@ DuplexPort::pre_process(Context& context)
 		   perspective.  Prepare buffers for write so plugins can deliver to
 		   them */
 		for (uint32_t v = 0; v < _poly; ++v) {
-			_buffers->at(v)->prepare_write(context);
+			_voices->at(v).buffer->prepare_write(context);
 		}
 	} else {
 		/* This is a a graph input, which is an output from the internal
