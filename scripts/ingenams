@@ -170,7 +170,7 @@ class Patch:
 
 def ladspa_module(world, mod_id, x, y, poly, lib, label):
     lv2_uri = ''
-    # Kludge LADSPA library and label to Fomp LV2 URIs where applicable
+    # Kludge LADSPA library and label to LV2 URIs where applicable
     if lib == 'blvco':
         lv2_uri = fomp_prefix + label.lower().replace('-', '_')
     elif lib == 'mvclpf24' or lib == 'mvchpf24':

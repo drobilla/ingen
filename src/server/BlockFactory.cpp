@@ -191,6 +191,8 @@ BlockFactory::load_lv2_plugins()
 		}
 	}
 
+	_world->log().info(fmt("Loaded %1% plugins\n") % _plugins.size());
+
 	lilv_node_free(lv2_connectionOptional);
 }
 
