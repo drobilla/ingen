@@ -328,7 +328,7 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 	Raul::Symbol symbol("_");
 	Node::Properties::const_iterator s = graph->properties().find(uris.lv2_symbol);
 	if (s == graph->properties().end()
-	    || !s->second.type() == _world.forge().String
+	    || s->second.type() != _world.forge().String
 	    || !Raul::Symbol::is_valid(s->second.ptr<char>())) {
 		const std::string base = Glib::path_get_basename(
 			_model->base_uri().to_c_string());

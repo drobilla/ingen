@@ -23,12 +23,12 @@ namespace Ingen {
 
 static const char* const ANSI_RESET   = "\033[0m";
 static const char* const ANSI_RED     = "\033[0;31m";
-static const char* const ANSI_GREEN   = "\033[0;32m";
+//static const char* const ANSI_GREEN   = "\033[0;32m";
 static const char* const ANSI_YELLOW  = "\033[0;33m";
-static const char* const ANSI_BLUE    = "\033[0;34m";
-static const char* const ANSI_MAGENTA = "\033[0;35m";
-static const char* const ANSI_CYAN    = "\033[0;36m";
-static const char* const ANSI_WHITE   = "\033[0;37m";
+//static const char* const ANSI_BLUE    = "\033[0;34m";
+//static const char* const ANSI_MAGENTA = "\033[0;35m";
+//static const char* const ANSI_CYAN    = "\033[0;36m";
+//static const char* const ANSI_WHITE   = "\033[0;37m";
 
 Log::Log(LV2_Log_Log* log, URIs& uris)
 	: _log(log)

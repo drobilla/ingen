@@ -88,7 +88,6 @@ private:
 
 	App&                          _app;
 	WPtr<const Client::PortModel> _port_model;
-	bool                          _pressed : 1;
 	bool                          _entered : 1;
 	bool                          _flipped : 1;
 };
