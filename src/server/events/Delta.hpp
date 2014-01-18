@@ -112,6 +112,8 @@ private:
 	bool                     _create;
 
 	SPtr<ControlBindings::Bindings> _old_bindings;
+
+	Glib::RWLock::WriterLock _poly_lock;  ///< Long-term lock for poly changes
 };
 
 } // namespace Events

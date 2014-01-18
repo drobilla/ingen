@@ -63,6 +63,7 @@ Delta::Delta(Engine&           engine,
 	, _compiled_graph(NULL)
 	, _context(context)
 	, _create(create)
+	, _poly_lock(engine.store()->lock(), Glib::NOT_LOCK)
 {
 	if (context != Resource::Graph::DEFAULT) {
 		for (auto& p : _properties) {
@@ -103,6 +104,7 @@ Delta::pre_process()
 {
 	const bool is_graph_object = Node::uri_is_path(_subject);
 	const bool is_client       = (_subject == "ingen:/clients/this");
+	bool       poly_changed    = false;
 
 	// Take a writer lock while we modify the store
 	Glib::RWLock::WriterLock lock(_engine.store()->lock());
@@ -217,6 +219,7 @@ Delta::pre_process()
 						if (value.get<int32_t>() < 1 || value.get<int32_t>() > 128) {
 							_status = Status::INVALID_POLY;
 						} else {
+							poly_changed = true;
 							op = SpecialType::POLYPHONY;
 							_graph->prepare_internal_poly(
 								*_engine.buffer_factory(), value.get<int32_t>());
@@ -231,6 +234,7 @@ Delta::pre_process()
 				GraphImpl* parent = dynamic_cast<GraphImpl*>(obj->parent());
 				if (parent) {
 					if (value.type() == uris.forge.Bool) {
+						poly_changed = true;
 						op = SpecialType::POLYPHONIC;
 						obj->set_property(key, value, value.context());
 						BlockImpl* block = dynamic_cast<BlockImpl*>(obj);
@@ -258,6 +262,11 @@ Delta::pre_process()
 		}
 
 		_types.push_back(op);
+	}
+
+	if (poly_changed) {
+		lock.release();
+		_poly_lock.acquire();
 	}
 
 	return Event::pre_process_done(
@@ -350,6 +359,10 @@ Delta::execute(ProcessContext& context)
 void
 Delta::post_process()
 {
+	if (_poly_lock.locked()) {
+		_poly_lock.release();
+	}
+
 	Broadcaster::Transfer t(*_engine.broadcaster());
 
 	for (auto& s : _set_events)
