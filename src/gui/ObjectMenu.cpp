@@ -92,8 +92,8 @@ void
 ObjectMenu::on_menu_learn()
 {
 	_app->interface()->set_property(_object->uri(),
-			_app->uris().ingen_controlBinding,
-			_app->uris().wildcard);
+	                                _app->uris().midi_binding,
+	                                _app->uris().patch_wildcard);
 }
 
 void
@@ -101,8 +101,8 @@ ObjectMenu::on_menu_unlearn()
 {
 	Resource::Properties remove;
 	remove.insert(std::make_pair(
-			_app->uris().ingen_controlBinding,
-			Resource::Property(_app->uris().wildcard)));
+		              _app->uris().midi_binding,
+		              Resource::Property(_app->uris().patch_wildcard)));
 	_app->interface()->delta(_object->uri(), remove, Resource::Properties());
 }
 

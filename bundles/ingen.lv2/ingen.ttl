@@ -40,6 +40,13 @@ A collection of Blocks connected together.  A Graph can itself be a Block
 within a parent Graph, and so on.
 """ .
 
+ingen:file
+	a owl:DatatypeProperty ;
+	rdfs:domain ingen:Graph ;
+	rdfs:range xsd:anyURI ;
+	rdfs:label "file" ;
+	rdfs:comment "The file a Graph was loaded from." .
+
 ingen:canvasX
 	a owl:DatatypeProperty ;
 	rdfs:range xsd:decimal ;
@@ -79,6 +86,12 @@ ingen:value
 	rdfs:label "value" ;
 	rdfs:comment "The current value of a port." .
 
+ingen:Internal
+	a owl:Class ;
+	rdfs:subClassOf ingen:Plugin ;
+	rdfs:label "Internal" ;
+	rdfs:comment "An internal 'plugin'" .
+
 ingen:Node
 	a owl:Class ;
 	rdfs:label "Node" ;
@@ -90,8 +103,34 @@ components, so the symbol of a Node may be inferred from its URI if no explicit
 lv2:symbol property is given.
 """ .
 
+ingen:uiEmbedded
+	a owl:DatatypeProperty ;
+	rdfs:range xsd:boolean ;
+	rdfs:label "UI embedded" ;
+	rdfs:comment "Whether or not the block's GUI is embedded." .
+
 lv2:Port
+	a rdfs:Class ;
 	rdfs:subClassOf ingen:Node .
+
+ingen:activity
+	a owl:DatatypeProperty ;
+	rdfs:domain lv2:Port ;
+	rdfs:label "activity" ;
+	rdfs:comment """
+Transient activity.  This property is used in the protocol to communicate
+activity at ports, such as MIDI events or audio peaks.  It should never be
+stored in persistent data.
+""" .
+
+ingen:broadcast
+	a owl:DatatypeProperty ;
+	rdfs:domain lv2:Port ;
+	rdfs:range xsd:boolean ;
+	rdfs:label "broadcast" ;
+	rdfs:comment """
+Whether or not the port's value or activity should be broadcast to clients.
+""" .
 
 ingen:polyphonic
 	a owl:DatatypeProperty ;
@@ -104,15 +143,15 @@ ingen:polyphony property of the containing graph.  This is a boolean property
 which defines whether the parent can access each voice individually: All nodes
 within a graph are either polyphonic or not from their parent's perspective.
 An Node may itself have "internal" polyphony but not be polyphonic according to
-this property, if those voices are mixed down.  """ .
+this property, if those voices are mixed down.
+""" .
 
 ingen:Block
 	a owl:Class ;
 	rdfs:subClassOf ingen:Node ,
 		lv2:PluginBase ;
 	rdfs:label "Block" ;
-	rdfs:comment """
-    
+	rdfs:comment """    
 A signal processing block, which is typically either a plugin instance, or a graph.
 
 A block MUST have at least one ingen:prototype property which is a subclass of

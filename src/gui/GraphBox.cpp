@@ -424,7 +424,7 @@ GraphBox::event_import()
 void
 GraphBox::event_save()
 {
-	const Atom& document = _graph->get_property(_app->uris().ingen_document);
+	const Atom& document = _graph->get_property(_app->uris().ingen_file);
 	if (!document.is_valid() || document.type() != _app->uris().forge.URI) {
 		event_save_as();
 	} else {
@@ -470,7 +470,7 @@ GraphBox::event_save_as()
 		dialog.set_filter(filt);
 
 		// Set current folder to most sensible default
-		const Atom& document = _graph->get_property(uris.ingen_document);
+		const Atom& document = _graph->get_property(uris.ingen_file);
 		const Atom& dir      = _app->world()->conf().option("graph-directory");
 		if (document.type() == uris.forge.URI)
 			dialog.set_uri(document.ptr<char>());
@@ -540,7 +540,7 @@ GraphBox::event_save_as()
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			_app->loader()->save_graph(_graph, uri);
 			const_cast<GraphModel*>(_graph.get())->set_property(
-				uris.ingen_document,
+				uris.ingen_file,
 				_app->forge().alloc_uri(uri.c_str()),
 				Resource::Graph::EXTERNAL);
 			_status_bar->push(

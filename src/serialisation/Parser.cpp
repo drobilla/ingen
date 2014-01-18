@@ -83,12 +83,12 @@ get_basename(const std::string& uri)
 }
 
 static bool
-skip_property(const Sord::Node& predicate)
+skip_property(Ingen::URIs& uris, const Sord::Node& predicate)
 {
-	return (predicate.to_string() == "http://drobilla.net/ns/ingen#node"
-	        || predicate.to_string() == "http://drobilla.net/ns/ingen#edge"
-	        || predicate.to_string() == "http://drobilla.net/ns/ingen#arc"
-	        || predicate.to_string() == LV2_CORE__port);
+	return (predicate.to_string() == INGEN__file ||
+	        predicate.to_string() == uris.ingen_arc ||
+	        predicate.to_string() == uris.ingen_block ||
+	        predicate.to_string() == uris.lv2_port);
 }
 
 static Resource::Properties
@@ -108,7 +108,7 @@ get_properties(Ingen::World*     world,
 	const Sord::Node nil;
 	Resource::Properties props;
 	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
-		if (!skip_property(i.get_predicate())) {
+		if (!skip_property(world->uris(), i.get_predicate())) {
 			out.len = 0;
 			sratom_read(sratom, &forge, world->rdf_world()->c_obj(),
 			            model.c_obj(), i.get_object().c_obj());
@@ -453,13 +453,6 @@ parse_arcs(Ingen::World*     world,
 		parse_arc(world, target, model, i.get_object(), graph);
 	}
 
-	// Backwards compatibility, support ingen:edge predicate
-	const Sord::URI ingen_edge(*world->rdf_world(),
-	                           "http://drobilla.net/ns/ingen#edge");
-	for (Sord::Iter i = model.find(subject, ingen_edge, nil); !i.end(); ++i) {
-		parse_arc(world, target, model, i.get_object(), graph);
-	}
-
 	return true;
 }
 
@@ -605,7 +598,7 @@ Parser::parse_file(Ingen::World*                     world,
 
 	if (parsed_path) {
 		target->set_property(Node::path_to_uri(*parsed_path),
-		                     Raul::URI("http://drobilla.net/ns/ingen#document"),
+		                     Raul::URI(INGEN__file),
 		                     world->forge().alloc_uri(uri));
 	} else {
 		world->log().warn("Document URI lost\n");

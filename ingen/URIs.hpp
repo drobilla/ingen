@@ -84,18 +84,13 @@ public:
 	const Quark ingen_broadcast;
 	const Quark ingen_canvasX;
 	const Quark ingen_canvasY;
-	const Quark ingen_controlBinding;
-	const Quark ingen_document;
 	const Quark ingen_enabled;
-	const Quark ingen_engine;
+	const Quark ingen_file;
 	const Quark ingen_head;
 	const Quark ingen_incidentTo;
-	const Quark ingen_nil;
 	const Quark ingen_polyphonic;
 	const Quark ingen_polyphony;
 	const Quark ingen_prototype;
-	const Quark ingen_sampleRate;
-	const Quark ingen_status;
 	const Quark ingen_tail;
 	const Quark ingen_uiEmbedded;
 	const Quark ingen_value;
@@ -130,9 +125,11 @@ public:
 	const Quark midi_Controller;
 	const Quark midi_MidiEvent;
 	const Quark midi_NoteOn;
+	const Quark midi_binding;
 	const Quark midi_controllerNumber;
 	const Quark midi_noteNumber;
 	const Quark morph_currentType;
+	const Quark param_sampleRate;
 	const Quark patch_Delete;
 	const Quark patch_Get;
 	const Quark patch_Move;
@@ -148,6 +145,7 @@ public:
 	const Quark patch_request;
 	const Quark patch_subject;
 	const Quark patch_value;
+	const Quark patch_wildcard;
 	const Quark pprops_logarithmic;
 	const Quark rdf_type;
 	const Quark rdfs_seeAlso;
@@ -160,7 +158,6 @@ public:
 	const Quark time_beatsPerMinute;
 	const Quark time_frame;
 	const Quark time_speed;
-	const Quark wildcard;
 };
 
 } // namespace Ingen

@@ -108,9 +108,9 @@ GraphPortModule::store_location(double ax, double ay)
 	{
 		Resource::Properties remove;
 		remove.insert(make_pair(uris.ingen_canvasX,
-		                        Resource::Property(uris.wildcard)));
+		                        Resource::Property(uris.patch_wildcard)));
 		remove.insert(make_pair(uris.ingen_canvasY,
-		                        Resource::Property(uris.wildcard)));
+		                        Resource::Property(uris.patch_wildcard)));
 		Resource::Properties add;
 		add.insert(make_pair(uris.ingen_canvasX,
 		                     Resource::Property(x, Resource::Graph::INTERNAL)));

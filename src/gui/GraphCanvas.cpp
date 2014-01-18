@@ -33,6 +33,7 @@
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
+#include "ingen/ingen.h"
 #include "ingen/serialisation/Serialiser.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
@@ -563,7 +564,7 @@ serialise_arc(GanvEdge* arc, void* data)
 void
 GraphCanvas::copy_selection()
 {
-	static const char* base_uri = "http://drobilla.net/ns/ingen/selection/";
+	static const char* base_uri = INGEN_NS "selection/";
 	Serialisation::Serialiser serialiser(*_app.world());
 	serialiser.start_to_string(_graph->path(), base_uri);
 
@@ -625,7 +626,7 @@ GraphCanvas::paste()
 	}
 
 	ClashAvoider avoider(*_app.store().get(), clipboard, &clipboard);
-	static const char* base_uri = "http://drobilla.net/ns/ingen/selection/";
+	static const char* base_uri = INGEN_NS "selection/";
 	parser->parse_string(_app.world(), &avoider, str, base_uri,
 	                     parent, symbol);
 

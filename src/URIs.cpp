@@ -16,11 +16,13 @@
 
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
 #include "lv2/lv2plug.in/ns/ext/midi/midi.h"
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
+#include "lv2/lv2plug.in/ns/ext/parameters/parameters.h"
 #include "lv2/lv2plug.in/ns/ext/patch/patch.h"
 #include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
@@ -36,7 +38,6 @@ URIs::Quark::Quark(Forge& forge, URIMap* map, const char* c_str)
 {
 }
 
-#define NS_INGEN "http://drobilla.net/ns/ingen#"
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
@@ -62,32 +63,27 @@ URIs::URIs(Forge& f, URIMap* map)
 	, bufsz_minBlockLength  (forge, map, LV2_BUF_SIZE__minBlockLength)
 	, bufsz_sequenceSize    (forge, map, LV2_BUF_SIZE__sequenceSize)
 	, doap_name             (forge, map, "http://usefulinc.com/ns/doap#name")
-	, ingen_Arc             (forge, map, NS_INGEN "Arc")
-	, ingen_Block           (forge, map, NS_INGEN "Block")
-	, ingen_Graph           (forge, map, NS_INGEN "Graph")
-	, ingen_GraphPrototype  (forge, map, NS_INGEN "GraphPrototype")
-	, ingen_Internal        (forge, map, NS_INGEN "Internal")
-	, ingen_activity        (forge, map, NS_INGEN "activity")
-	, ingen_arc             (forge, map, NS_INGEN "arc")
-	, ingen_block           (forge, map, NS_INGEN "block")
-	, ingen_broadcast       (forge, map, NS_INGEN "broadcast")
-	, ingen_canvasX         (forge, map, NS_INGEN "canvasX")
-	, ingen_canvasY         (forge, map, NS_INGEN "canvasY")
-	, ingen_controlBinding  (forge, map, NS_INGEN "controlBinding")
-	, ingen_document        (forge, map, NS_INGEN "document")
-	, ingen_enabled         (forge, map, NS_INGEN "enabled")
-	, ingen_engine          (forge, map, NS_INGEN "engine")
-	, ingen_head            (forge, map, NS_INGEN "head")
-	, ingen_incidentTo      (forge, map, NS_INGEN "incidentTo")
-	, ingen_nil             (forge, map, NS_INGEN "nil")
-	, ingen_polyphonic      (forge, map, NS_INGEN "polyphonic")
-	, ingen_polyphony       (forge, map, NS_INGEN "polyphony")
-	, ingen_prototype       (forge, map, NS_INGEN "prototype")
-	, ingen_sampleRate      (forge, map, NS_INGEN "sampleRate")
-	, ingen_status          (forge, map, NS_INGEN "status")
-	, ingen_tail            (forge, map, NS_INGEN "tail")
-	, ingen_uiEmbedded      (forge, map, NS_INGEN "uiEmbedded")
-	, ingen_value           (forge, map, NS_INGEN "value")
+	, ingen_Arc             (forge, map, INGEN__Arc)
+	, ingen_Block           (forge, map, INGEN__Block)
+	, ingen_Graph           (forge, map, INGEN__Graph)
+	, ingen_GraphPrototype  (forge, map, INGEN__GraphPrototype)
+	, ingen_Internal        (forge, map, INGEN__Internal)
+	, ingen_activity        (forge, map, INGEN__activity)
+	, ingen_arc             (forge, map, INGEN__arc)
+	, ingen_block           (forge, map, INGEN__block)
+	, ingen_broadcast       (forge, map, INGEN__broadcast)
+	, ingen_canvasX         (forge, map, INGEN__canvasX)
+	, ingen_canvasY         (forge, map, INGEN__canvasY)
+	, ingen_enabled         (forge, map, INGEN__enabled)
+	, ingen_file            (forge, map, INGEN__file)
+	, ingen_head            (forge, map, INGEN__head)
+	, ingen_incidentTo      (forge, map, INGEN__incidentTo)
+	, ingen_polyphonic      (forge, map, INGEN__polyphonic)
+	, ingen_polyphony       (forge, map, INGEN__polyphony)
+	, ingen_prototype       (forge, map, INGEN__prototype)
+	, ingen_tail            (forge, map, INGEN__tail)
+	, ingen_uiEmbedded      (forge, map, INGEN__uiEmbedded)
+	, ingen_value           (forge, map, INGEN__value)
 	, log_Error             (forge, map, LV2_LOG__Error)
 	, log_Note              (forge, map, LV2_LOG__Note)
 	, log_Warning           (forge, map, LV2_LOG__Warning)
@@ -119,9 +115,11 @@ URIs::URIs(Forge& f, URIMap* map)
 	, midi_Controller       (forge, map, LV2_MIDI__Controller)
 	, midi_MidiEvent        (forge, map, LV2_MIDI__MidiEvent)
 	, midi_NoteOn           (forge, map, LV2_MIDI__NoteOn)
+	, midi_binding          (forge, map, LV2_MIDI__binding)
 	, midi_controllerNumber (forge, map, LV2_MIDI__controllerNumber)
 	, midi_noteNumber       (forge, map, LV2_MIDI__noteNumber)
 	, morph_currentType     (forge, map, LV2_MORPH__currentType)
+	, param_sampleRate      (forge, map, LV2_PARAMETERS__sampleRate)
 	, patch_Delete          (forge, map, LV2_PATCH__Delete)
 	, patch_Get             (forge, map, LV2_PATCH__Get)
 	, patch_Move            (forge, map, LV2_PATCH__Move)
@@ -137,6 +135,7 @@ URIs::URIs(Forge& f, URIMap* map)
 	, patch_request         (forge, map, LV2_PATCH__request)
 	, patch_subject         (forge, map, LV2_PATCH__subject)
 	, patch_value           (forge, map, LV2_PATCH__value)
+	, patch_wildcard        (forge, map, LV2_PATCH__wildcard)
 	, pprops_logarithmic    (forge, map, LV2_PORT_PROPS__logarithmic)
 	, rdf_type              (forge, map, NS_RDF "type")
 	, rdfs_seeAlso          (forge, map, NS_RDFS "seeAlso")
@@ -149,8 +148,6 @@ URIs::URIs(Forge& f, URIMap* map)
 	, time_beatsPerMinute   (forge, map, LV2_TIME__beatsPerMinute)
 	, time_frame            (forge, map, LV2_TIME__frame)
 	, time_speed            (forge, map, LV2_TIME__speed)
-	, wildcard              (forge, map, NS_INGEN "wildcard")
-{
-}
+{}
 
 } // namespace Ingen

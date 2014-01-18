@@ -29,6 +29,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
 #include "sord/sordmm.hpp"
@@ -130,7 +131,7 @@ public:
 		rdf_world->add_prefix("atom",  "http://lv2plug.in/ns/ext/atom#");
 		rdf_world->add_prefix("patch", "http://lv2plug.in/ns/ext/patch#");
 		rdf_world->add_prefix("doap",  "http://usefulinc.com/ns/doap#");
-		rdf_world->add_prefix("ingen", "http://drobilla.net/ns/ingen#");
+		rdf_world->add_prefix("ingen", INGEN_NS);
 		rdf_world->add_prefix("lv2",   "http://lv2plug.in/ns/lv2core#");
 		rdf_world->add_prefix("midi",  "http://lv2plug.in/ns/ext/midi#");
 		rdf_world->add_prefix("owl",   "http://www.w3.org/2002/07/owl#");
@@ -142,7 +143,7 @@ public:
 		LilvNode* rdf_type = lilv_new_uri(
 			lilv_world, "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 		LilvNode* ingen_Plugin = lilv_new_uri(
-			lilv_world, "http://drobilla.net/ns/ingen#Plugin");
+			lilv_world, INGEN__Plugin);
 		LilvNodes* internals = lilv_world_find_nodes(
 			lilv_world, NULL, rdf_type, ingen_Plugin);
 		LILV_FOREACH(nodes, i, internals) {

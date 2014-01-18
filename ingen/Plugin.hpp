@@ -20,6 +20,7 @@
 #include "raul/URI.hpp"
 
 #include "ingen/Resource.hpp"
+#include "ingen/ingen.h"
 
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
@@ -41,10 +42,10 @@ public:
 
 	static inline const Raul::URI& type_uri(Type type) {
 		static const Raul::URI uris[] = {
-			Raul::URI("http://drobilla.net/ns/ingen#nil"),
+			Raul::URI("http://www.w3.org/2002/07/owl#Nothing"),
 			Raul::URI(LV2_CORE__Plugin),
-			Raul::URI("http://drobilla.net/ns/ingen#Internal"),
-			Raul::URI("http://drobilla.net/ns/ingen#Graph")
+			Raul::URI(INGEN__Internal),
+			Raul::URI(INGEN__Graph)
 		};
 
 		return uris[type];

@@ -25,10 +25,9 @@
 
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/ingen.h"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
-
-#define NS_INGEN "http://drobilla.net/ns/ingen#"
 
 namespace Ingen {
 
@@ -209,8 +208,8 @@ Configuration::load(const std::string& path)
 	for (Sord::Iter i = model.find(nodemm, nil, nil); !i.end(); ++i) {
 		const Sord::Node& pred = i.get_predicate();
 		const Sord::Node& obj  = i.get_object();
-		if (pred.to_string().substr(0, sizeof(NS_INGEN) - 1) == NS_INGEN) {
-			const std::string key = pred.to_string().substr(sizeof(NS_INGEN) - 1);
+		if (pred.to_string().substr(0, sizeof(INGEN_NS) - 1) == INGEN_NS) {
+			const std::string key = pred.to_string().substr(sizeof(INGEN_NS) - 1);
 			const Keys::iterator k = _keys.find(key);
 			if (k != _keys.end() && obj.type() == Sord::Node::LITERAL) {
 				set_value_from_string(_options.find(k->second)->second,
@@ -259,7 +258,7 @@ Configuration::save(URIMap&            uri_map,
 	// Create environment with ingen prefix
 	SerdEnv* env = serd_env_new(&base);
 	serd_env_set_prefix_from_strings(
-		env, (const uint8_t*)"ingen", (const uint8_t*)NS_INGEN);
+		env, (const uint8_t*)"ingen", (const uint8_t*)INGEN_NS);
 
 	// Create Turtle writer
 	SerdWriter* writer = serd_writer_new(

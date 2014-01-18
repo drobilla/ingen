@@ -525,7 +525,8 @@ Serialiser::Impl::serialise_arc(const Sord::Node& parent,
 static bool
 skip_property(Ingen::URIs& uris, const Sord::Node& predicate)
 {
-	return (predicate.to_string() == "http://drobilla.net/ns/ingen#document" ||
+	return (predicate.to_string() == INGEN__file ||
+	        predicate.to_string() == uris.ingen_arc ||
 	        predicate.to_string() == uris.ingen_block ||
 	        predicate.to_string() == uris.lv2_port);
 }

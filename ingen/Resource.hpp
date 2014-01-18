@@ -22,10 +22,9 @@
 
 #include "ingen/Atom.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/ingen.h"
 #include "raul/Deletable.hpp"
 #include "raul/URI.hpp"
-
-#define NS_INGEN "http://drobilla.net/ns/ingen#"
 
 namespace Ingen {
 
@@ -48,15 +47,15 @@ public:
 
 	static Raul::URI graph_to_uri(Graph g) {
 		switch (g) {
-		case Graph::DEFAULT:  return Raul::URI(NS_INGEN "defaultContext");
-		case Graph::EXTERNAL: return Raul::URI(NS_INGEN "externalContext");
-		case Graph::INTERNAL: return Raul::URI(NS_INGEN "internalContext");
+		case Graph::DEFAULT:  return Raul::URI(INGEN_NS "defaultContext");
+		case Graph::EXTERNAL: return Raul::URI(INGEN_NS "externalContext");
+		case Graph::INTERNAL: return Raul::URI(INGEN_NS "internalContext");
 		}
 	}
 
 	static Graph uri_to_graph(const char* uri) {
-		const char* suffix = uri + sizeof(NS_INGEN) - 1;
-		if (strncmp(uri, NS_INGEN, sizeof(NS_INGEN) - 1)) {
+		const char* suffix = uri + sizeof(INGEN_NS) - 1;
+		if (strncmp(uri, INGEN_NS, sizeof(INGEN_NS) - 1)) {
 			return Graph::DEFAULT;
 		} else if (!strcmp(suffix, "defaultContext")) {
 			return Graph::DEFAULT;
@@ -117,7 +116,7 @@ public:
 
 	/** Remove a property.
 	 *
-	 *	If @p value is ingen:wildcard then any property with @p uri for a
+	 *	If @p value is patch:wildcard then any property with @p uri for a
 	 *  predicate will be removed.
 	 */
 	virtual void remove_property(const Raul::URI& uri,
@@ -141,7 +140,7 @@ public:
 	/** Remove several properties at once.
 	 *
 	 * This removes all matching properties (both key and value), or all
-	 * properties with a matching key if the value in @p is ingen:wildcard.
+	 * properties with a matching key if the value in @p is patch:wildcard.
 	 */
 	void remove_properties(const Properties& p);
 
@@ -154,7 +153,7 @@ public:
 
 	/** Hook called whenever a property value is removed.
 	 *
-	 * If all values of a given key are removed, then value will be the wildcard.
+	 * If all values for a key are removed, then value will be the wildcard.
 	 *
 	 * This can be used by derived classes to implement special behaviour for
 	 * particular properties (e.g. ingen:value for ports).

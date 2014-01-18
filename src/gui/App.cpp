@@ -239,7 +239,7 @@ App::property_change(const Raul::URI& subject,
                      const Raul::URI& key,
                      const Atom&      value)
 {
-	if (subject == uris().ingen_engine && key == uris().ingen_sampleRate) {
+	if (subject == Raul::URI("ingen:/engine") && key == uris().param_sampleRate) {
 		if (value.type() == forge().Int) {
 			log().info(fmt("Sample rate: %1%\n") % uris().forge.str(value));
 			_sample_rate = value.get<int32_t>();

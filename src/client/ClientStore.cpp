@@ -270,10 +270,11 @@ ClientStore::put(const Raul::URI&            uri,
 		if (p->second.is_valid() && p->second.type() == _uris.forge.URI) {
 			if (!(plug = _plugin(Raul::URI(p->second.ptr<char>())))) {
 				plug = SPtr<PluginModel>(
-					new PluginModel(uris(),
-					                Raul::URI(p->second.ptr<char>()),
-					                _uris.ingen_nil,
-					                Resource::Properties()));
+					new PluginModel(
+						uris(),
+						Raul::URI(p->second.ptr<char>()),
+						Raul::URI("http://www.w3.org/2002/07/owl#Nothing"),
+						Resource::Properties()));
 				add_plugin(plug);
 			}
 
@@ -350,7 +351,7 @@ ClientStore::set_property(const Raul::URI& subject_uri,
                           const Raul::URI& predicate,
                           const Atom&      value)
 {
-	if (subject_uri == _uris.ingen_engine) {
+	if (subject_uri == Raul::URI("ingen:/engine")) {
 		_log.info(fmt("Engine property <%1%> = %2%\n")
 		          % predicate.c_str() % _uris.forge.str(value));
 		return;

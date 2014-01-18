@@ -21,6 +21,7 @@
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
+#include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
@@ -28,7 +29,7 @@
 #include "App.hpp"
 #include "GraphBox.hpp"
 
-#define INGEN_LV2_UI_URI "http://drobilla.net/ns/ingen#GraphUIGtk2"
+#define INGEN_LV2_UI_URI INGEN_NS "GraphUIGtk2"
 
 namespace Ingen {
 
