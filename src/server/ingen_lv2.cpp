@@ -814,11 +814,17 @@ const LV2_Lib_Descriptor*
 lv2_lib_descriptor(const char*              bundle_path,
                    const LV2_Feature*const* features)
 {
-	Lib* lib = new Lib(bundle_path);
-	static LV2_Lib_Descriptor desc = {
-		lib, sizeof(LV2_Lib_Descriptor), lib_cleanup, lib_get_plugin
-	};
-	return &desc;
+	static const uint32_t desc_size = sizeof(LV2_Lib_Descriptor);
+	Lib*                  lib       = new Lib(bundle_path);
+
+	// FIXME: memory leak.  I think the LV2_Lib_Descriptor API is botched :(
+	LV2_Lib_Descriptor* desc = (LV2_Lib_Descriptor*)malloc(desc_size);
+	desc->handle     = lib;
+	desc->size       = desc_size;
+	desc->cleanup    = lib_cleanup;
+	desc->get_plugin = lib_get_plugin;
+
+	return desc;
 }
 
 } // extern "C"
