@@ -151,7 +151,7 @@ Delta::pre_process()
 	for (const auto& r : _remove) {
 		const Raul::URI&  key   = r.first;
 		const Atom& value = r.second;
-		if (key == uris.ingen_controlBinding && value == uris.wildcard) {
+		if (key == uris.midi_binding && value == uris.patch_wildcard) {
 			PortImpl* port = dynamic_cast<PortImpl*>(_object);
 			if (port)
 				_old_bindings = _engine.control_bindings()->remove(port);
@@ -167,7 +167,7 @@ Delta::pre_process()
 		SpecialType               op    = SpecialType::NONE;
 		if (obj) {
 			Resource& resource = *obj;
-			if (value != uris.wildcard) {
+			if (value != uris.patch_wildcard) {
 				resource.add_property(key, value, value.context());
 			}
 
@@ -185,9 +185,9 @@ Delta::pre_process()
 						_engine, _request_client, _request_id, _time, port, value);
 					ev->pre_process();
 					_set_events.push_back(ev);
-				} else if (key == uris.ingen_controlBinding) {
+				} else if (key == uris.midi_binding) {
 					if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
-						if (value == uris.wildcard) {
+						if (value == uris.patch_wildcard) {
 							_engine.control_bindings()->learn(port);
 						} else if (value.type() == uris.atom_Blank) {
 							op = SpecialType::CONTROL_BINDING;
@@ -199,7 +199,7 @@ Delta::pre_process()
 					}
 				}
 			} else if ((block = dynamic_cast<BlockImpl*>(_object))) {
-				if (key == uris.ingen_controlBinding && value == uris.wildcard) {
+				if (key == uris.midi_binding && value == uris.patch_wildcard) {
 					op = SpecialType::CONTROL_BINDING;  // Internal block learn
 				}
 			}

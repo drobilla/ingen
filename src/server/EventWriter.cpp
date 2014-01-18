@@ -119,7 +119,7 @@ EventWriter::set_property(const Raul::URI& uri,
 	Resource::Properties remove;
 	remove.insert(
 		make_pair(predicate,
-		          Resource::Property(_engine.world()->uris().wildcard)));
+		          Resource::Property(_engine.world()->uris().patch_wildcard)));
 	Resource::Properties add;
 	add.insert(make_pair(predicate, value));
 	_engine.enqueue_event(

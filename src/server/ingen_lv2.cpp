@@ -40,6 +40,7 @@
 #include "ingen/Log.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/World.hpp"
+#include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/serialisation/Parser.hpp"
 #include "ingen/serialisation/Serialiser.hpp"
@@ -56,7 +57,6 @@
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 
-#define NS_INGEN "http://drobilla.net/ns/ingen#"
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
@@ -446,9 +446,9 @@ find_graphs(const Glib::ustring& manifest_uri)
 	Sord::World      world;
 	const Sord::URI  base(world, manifest_uri);
 	const Sord::Node nil;
-	const Sord::URI  ingen_Graph (world, NS_INGEN "Graph");
-	const Sord::URI  rdf_type    (world, NS_RDF   "type");
-	const Sord::URI  rdfs_seeAlso(world, NS_RDFS  "seeAlso");
+	const Sord::URI  ingen_Graph (world, INGEN__Graph);
+	const Sord::URI  rdf_type    (world, NS_RDF "type");
+	const Sord::URI  rdfs_seeAlso(world, NS_RDFS "seeAlso");
 
 	SerdEnv* env = serd_env_new(sord_node_to_serd_node(base.c_obj()));
 	Sord::Model model(world, manifest_uri);
@@ -702,7 +702,7 @@ ingen_save(LV2_Handle                instance,
 		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
-	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, NS_INGEN "file");
+	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, INGEN__file);
 	LV2_URID atom_Path = plugin->map->map(plugin->map->handle,
 	                                      LV2_ATOM__Path);
 
@@ -740,7 +740,7 @@ ingen_restore(LV2_Handle                  instance,
 		return LV2_STATE_ERR_NO_FEATURE;
 	}
 
-	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, NS_INGEN "file");
+	LV2_URID ingen_file = plugin->map->map(plugin->map->handle, INGEN__file);
 	size_t   size;
 	uint32_t type;
 	uint32_t valflags;

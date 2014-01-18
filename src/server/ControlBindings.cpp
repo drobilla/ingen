@@ -58,7 +58,7 @@ ControlBindings::port_binding(PortImpl* port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	const Ingen::URIs& uris = _engine.world()->uris();
-	const Atom& binding = port->get_property(uris.ingen_controlBinding);
+	const Atom& binding = port->get_property(uris.midi_binding);
 	return binding_key(binding);
 }
 
@@ -341,7 +341,7 @@ ControlBindings::bind(ProcessContext& context, Key key)
 	lv2_atom_forge_set_buffer(&_forge, buf, sizeof(buf));
 	forge_binding(uris, &_forge, key.type, key.num);
 	const LV2_Atom* atom = (const LV2_Atom*)buf;
-	context.notify(uris.ingen_controlBinding,
+	context.notify(uris.midi_binding,
 	               context.start(),
 	               _learn_port,
 	               atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));

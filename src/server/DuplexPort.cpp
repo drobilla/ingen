@@ -64,14 +64,14 @@ DuplexPort::inherit_neighbour(const PortImpl*       port,
 		if (port->minimum().get<float>() < _min.get<float>()) {
 			_min = port->minimum();
 			remove.insert(std::make_pair(_bufs.uris().lv2_minimum,
-			                             Property(_bufs.uris().wildcard)));
+			                             Property(_bufs.uris().patch_wildcard)));
 			add.insert(std::make_pair(_bufs.uris().lv2_minimum,
 			                          port->minimum()));
 		}
 		if (port->maximum().get<float>() > _max.get<float>()) {
 			_max = port->maximum();
 			remove.insert(std::make_pair(_bufs.uris().lv2_maximum,
-			                             Property(_bufs.uris().wildcard)));
+			                             Property(_bufs.uris().patch_wildcard)));
 			add.insert(std::make_pair(_bufs.uris().lv2_maximum,
 			                          port->maximum()));
 		}

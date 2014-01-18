@@ -137,8 +137,8 @@ Get::post_process()
 			// TODO: Keep a proper RDF model of the engine
 			URIs& uris = _engine.world()->uris();
 			_request_client->set_property(
-				uris.ingen_engine,
-				uris.ingen_sampleRate,
+				Raul::URI("ingen:/engine"),
+				uris.param_sampleRate,
 				uris.forge.make(int32_t(_engine.driver()->sample_rate())));
 		} else if (_object) {
 			const BlockImpl* block = NULL;

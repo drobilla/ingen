@@ -76,7 +76,7 @@ private:
 	static inline const Raul::URI& type_uri(unsigned id_num) {
 		assert(id_num <= ATOM);
 		static const Raul::URI uris[] = {
-			Raul::URI("http://drobilla.net/ns/ingen#nil"),
+			Raul::URI("http://www.w3.org/2002/07/owl#Nothing"),
 			Raul::URI(LV2_CORE__AudioPort),
 			Raul::URI(LV2_CORE__ControlPort),
 			Raul::URI(LV2_CORE__CVPort),
