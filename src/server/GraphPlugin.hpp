@@ -60,4 +60,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_GRAPHPLUGIN_HPP
-

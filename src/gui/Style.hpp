@@ -56,4 +56,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_GUI_STYLE_HPP
-

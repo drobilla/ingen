@@ -34,10 +34,10 @@ namespace Raul { class Atom; }
 namespace Ingen {
 
 namespace Client {
-	class PortModel;
-	class MetadataModel;
-	class GraphModel;
-	class ObjectModel;
+class PortModel;
+class MetadataModel;
+class GraphModel;
+class ObjectModel;
 }
 
 namespace GUI {

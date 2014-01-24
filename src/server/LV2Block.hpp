@@ -113,4 +113,3 @@ protected:
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_LV2BLOCK_HPP
-

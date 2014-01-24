@@ -108,4 +108,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_CLIENT_PLUGINMODEL_HPP
-

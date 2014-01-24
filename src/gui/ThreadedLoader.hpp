@@ -54,10 +54,10 @@ public:
 	~ThreadedLoader();
 
 	void load_graph(bool                              merge,
-                    const Glib::ustring&              document_uri,
+	                const Glib::ustring&              document_uri,
 	                boost::optional<Raul::Path>       engine_parent,
-                    boost::optional<Raul::Symbol>     engine_symbol,
-                    boost::optional<Node::Properties> engine_data);
+	                boost::optional<Raul::Symbol>     engine_symbol,
+	                boost::optional<Node::Properties> engine_data);
 
 	void save_graph(SPtr<const Client::GraphModel> model,
 	                const std::string&             filename);

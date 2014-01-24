@@ -35,7 +35,7 @@ namespace GUI {
 
 /**
    Type-hierarchical plugin menu.
-   
+
    @ingroup GUI
 */
 class PluginMenu : public Gtk::Menu

@@ -23,9 +23,9 @@
 #include "GraphPortModule.hpp"
 
 namespace Ingen { namespace Client {
-	class GraphModel;
-	class GraphWindow;
-	class PortModel;
+class GraphModel;
+class GraphWindow;
+class PortModel;
 } }
 
 namespace Ingen {

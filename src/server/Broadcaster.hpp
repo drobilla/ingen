@@ -157,4 +157,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_CLIENTBROADCASTER_HPP
-

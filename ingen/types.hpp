@@ -35,17 +35,17 @@ using WPtr = std::weak_ptr<T>;
 template <class T>
 void NullDeleter(T* ptr) {}
 
-template<class T, class U> 
+template<class T, class U>
 SPtr<T> static_ptr_cast(const SPtr<U>& r) {
 	return std::static_pointer_cast<T>(r);
 }
 
-template<class T, class U> 
+template<class T, class U>
 SPtr<T> dynamic_ptr_cast(const SPtr<U>& r) {
 	return std::dynamic_pointer_cast<T>(r);
 }
 
-template<class T, class U> 
+template<class T, class U>
 SPtr<T> const_ptr_cast(const SPtr<U>& r) {
 	return std::const_pointer_cast<T>(r);
 }
@@ -53,4 +53,3 @@ SPtr<T> const_ptr_cast(const SPtr<U>& r) {
 } // namespace Ingen
 
 #endif // INGEN_TYPES_HPP
-

@@ -73,8 +73,8 @@ Port::Port(App&                  app,
            const string&         name,
            bool                  flip)
 	: Ganv::Port(module, name,
-			flip ? (!pm->is_input()) : pm->is_input(),
-			app.style()->get_port_color(pm.get()))
+	             flip ? (!pm->is_input()) : pm->is_input(),
+	             app.style()->get_port_color(pm.get()))
 	, _app(app)
 	, _port_model(pm)
 	, _entered(false)
@@ -109,7 +109,7 @@ Port::Port(App&                  app,
 		sigc::mem_fun(this, &Port::on_event));
 
 	set_is_controllable(pm->is_numeric() && pm->is_input());
-	
+
 	update_metadata();
 	value_changed(pm->value());
 }
@@ -341,8 +341,8 @@ rgba_interpolate(uint32_t c1, uint32_t c2, float f)
 {
 	return rgba_to_uint(
 		mono_interpolate(RGBA_R(c1), RGBA_R(c2), f),
-        mono_interpolate(RGBA_G(c1), RGBA_G(c2), f),
-        mono_interpolate(RGBA_B(c1), RGBA_B(c2), f),
+		mono_interpolate(RGBA_G(c1), RGBA_G(c2), f),
+		mono_interpolate(RGBA_B(c1), RGBA_B(c2), f),
 		mono_interpolate(RGBA_A(c1), RGBA_A(c2), f));
 }
 

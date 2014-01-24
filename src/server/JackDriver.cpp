@@ -93,7 +93,7 @@ JackDriver::attach(const std::string& server_name,
 			                           JackSessionID, NULL,
 			                           uuid.c_str());
 			_engine.log().info(fmt("Connected to JACK as `%1%' (UUID `%2%')\n")
-			                % client_name.c_str() % uuid);
+			                   % client_name.c_str() % uuid);
 		}
 #endif
 
@@ -103,7 +103,7 @@ JackDriver::attach(const std::string& server_name,
 			                                JackServerName, NULL,
 			                                server_name.c_str()))) {
 				_engine.log().info(fmt("Connected to JACK server `%1%'\n")
-				                % server_name);
+				                   % server_name);
 			}
 		}
 

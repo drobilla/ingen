@@ -93,10 +93,10 @@ CreateBlock::pre_process()
 		p->second.get<int32_t>());
 
 	if (!(_block = plugin->instantiate(*_engine.buffer_factory(),
-	                                  Raul::Symbol(_path.symbol()),
-	                                  polyphonic,
-	                                  _graph,
-	                                  _engine))) {
+	                                   Raul::Symbol(_path.symbol()),
+	                                   polyphonic,
+	                                   _graph,
+	                                   _engine))) {
 		return Event::pre_process_done(Status::CREATION_FAILED, _path);
 	}
 

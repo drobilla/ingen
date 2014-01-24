@@ -31,7 +31,7 @@ class Forge;
 
 /**
    A generic typed data container.
- 
+
    An Atom holds a value with some type and size, both specified by a uint32_t.
    Values with size less than sizeof(void*) are stored inline: no dynamic
    allocation occurs so Atoms may be created in hard real-time threads.

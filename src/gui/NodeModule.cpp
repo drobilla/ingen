@@ -153,7 +153,7 @@ NodeModule::show_human_names(bool b)
 				label = name_property.ptr<char>();
 			} else {
 				Glib::ustring hn = block()->plugin_model()->port_human_name(
-						port->model()->index());
+					port->model()->index());
 				if (!hn.empty())
 					label = hn;
 			}
@@ -326,7 +326,7 @@ NodeModule::popup_gui()
 			set_control_values();
 
 			_gui_window->signal_unmap().connect(
-					sigc::mem_fun(this, &NodeModule::on_gui_window_close));
+				sigc::mem_fun(this, &NodeModule::on_gui_window_close));
 			_gui_window->present();
 
 			return true;

@@ -24,7 +24,7 @@
 #include "raul/URI.hpp"
 
 namespace Raul {
-	class Forge;
+class Forge;
 }
 
 namespace Ingen {

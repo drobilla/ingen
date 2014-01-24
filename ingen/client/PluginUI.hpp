@@ -80,4 +80,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_CLIENT_PLUGINUI_HPP
-

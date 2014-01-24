@@ -95,7 +95,7 @@ GraphView::set_graph(SPtr<const GraphModel> graph)
 		sigc::mem_fun(this, &GraphView::refresh_clicked));
 
 	_poly_spin->signal_value_changed().connect(
-			sigc::mem_fun(*this, &GraphView::poly_changed));
+		sigc::mem_fun(*this, &GraphView::poly_changed));
 
 	_canvas->widget().grab_focus();
 }

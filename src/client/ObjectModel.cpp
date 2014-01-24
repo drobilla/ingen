@@ -108,4 +108,3 @@ ObjectModel::set_parent(SPtr<ObjectModel> p)
 
 } // namespace Client
 } // namespace Ingen
-

@@ -34,7 +34,7 @@ BreadCrumbs::BreadCrumbs(App& app)
 	, _enable_signal(true)
 {
 	app.client()->signal_object_deleted().connect(
-			sigc::mem_fun(this, &BreadCrumbs::object_destroyed));
+		sigc::mem_fun(this, &BreadCrumbs::object_destroyed));
 
 	set_can_focus(false);
 }
@@ -60,8 +60,8 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 	bool old_enable_signal = _enable_signal;
 	_enable_signal = false;
 
-	// Moving to a path we already contain, just switch the active button
 	if (!_breadcrumbs.empty() && (path.is_parent_of(_full_path) || path == _full_path)) {
+		// Moving to a path we already contain, just switch the active button
 		for (const auto& b : _breadcrumbs) {
 			if (b->path() == path) {
 				b->set_active(true);
@@ -79,8 +79,8 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 		_active_path = path;
 		_enable_signal = old_enable_signal;
 
-	// Moving to a child of the full path, just append crumbs (preserve view cache)
 	} else if (!_breadcrumbs.empty() && path.is_child_of(_full_path)) {
+		// Moving to a child of the full path, just append crumbs (preserve view cache)
 
 		string suffix = path.substr(_full_path.length());
 		while (suffix.length() > 0) {
@@ -102,9 +102,9 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 			b->set_active(false);
 		_breadcrumbs.back()->set_active(true);
 
-	// Rebuild from scratch
-	// Getting here is bad unless absolutely necessary, since the GraphView cache is lost
 	} else {
+		// Rebuild from scratch
+		// Getting here is bad unless absolutely necessary, since the GraphView cache is lost
 
 		_full_path = path;
 		_active_path = path;
@@ -149,11 +149,14 @@ BreadCrumbs::BreadCrumb*
 BreadCrumbs::create_crumb(const Raul::Path& path,
                           SPtr<GraphView>   view)
 {
-	BreadCrumb* but = manage(new BreadCrumb(path,
-			(view && path == view->graph()->path()) ? view : SPtr<GraphView>()));
+	BreadCrumb* but = manage(
+		new BreadCrumb(path,
+		               ((view && path == view->graph()->path())
+		                ? view : SPtr<GraphView>())));
 
-	but->signal_toggled().connect(sigc::bind(sigc::mem_fun(
-				this, &BreadCrumbs::breadcrumb_clicked), but));
+	but->signal_toggled().connect(
+		sigc::bind(sigc::mem_fun(this, &BreadCrumbs::breadcrumb_clicked),
+		           but));
 
 	return but;
 }
@@ -203,4 +206,3 @@ BreadCrumbs::object_moved(const Raul::Path& old_path, const Raul::Path& new_path
 
 } // namespace GUI
 } // namespace Ingen
-

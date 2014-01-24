@@ -55,7 +55,7 @@ GraphPortModule::GraphPortModule(GraphCanvas&                  canvas,
 	set_stacked(model->polyphonic());
 	if (model->is_input() && !model->is_numeric()) {
 		set_is_source(true);
-	}	
+	}
 
 	model->signal_property().connect(
 		sigc::mem_fun(this, &GraphPortModule::property_changed));

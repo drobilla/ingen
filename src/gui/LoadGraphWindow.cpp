@@ -60,22 +60,22 @@ LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
 	xml->get_widget("load_graph_cancel_button", _cancel_button);
 
 	_cancel_button->signal_clicked().connect(
-			sigc::mem_fun(this, &LoadGraphWindow::cancel_clicked));
+		sigc::mem_fun(this, &LoadGraphWindow::cancel_clicked));
 	_ok_button->signal_clicked().connect(
-			sigc::mem_fun(this, &LoadGraphWindow::ok_clicked));
+		sigc::mem_fun(this, &LoadGraphWindow::ok_clicked));
 	_merge_ports_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &LoadGraphWindow::merge_ports_selected));
+		sigc::mem_fun(this, &LoadGraphWindow::merge_ports_selected));
 	_insert_ports_radio->signal_toggled().connect(
-			sigc::mem_fun(this, &LoadGraphWindow::insert_ports_selected));
-	_poly_from_file_radio->signal_toggled().connect(sigc::bind(
-			sigc::mem_fun(_poly_spinbutton, &Gtk::SpinButton::set_sensitive),
-			false));
-	_poly_voices_radio->signal_toggled().connect(sigc::bind(
-			sigc::mem_fun(_poly_spinbutton, &Gtk::SpinButton::set_sensitive),
-			true));
+		sigc::mem_fun(this, &LoadGraphWindow::insert_ports_selected));
+	_poly_from_file_radio->signal_toggled().connect(
+		sigc::bind(sigc::mem_fun(_poly_spinbutton, &Gtk::SpinButton::set_sensitive),
+		           false));
+	_poly_voices_radio->signal_toggled().connect(
+		sigc::bind(sigc::mem_fun(_poly_spinbutton, &Gtk::SpinButton::set_sensitive),
+		           true));
 
 	signal_selection_changed().connect(
-			sigc::mem_fun(this, &LoadGraphWindow::selection_changed));
+		sigc::mem_fun(this, &LoadGraphWindow::selection_changed));
 
 	Gtk::FileFilter filt;
 	filt.add_pattern("*.ttl");
@@ -172,8 +172,8 @@ LoadGraphWindow::ok_clicked()
 			symbol = _graph->symbol();
 		}
 
-		_app->loader()->load_graph(true, get_filename(),
-				parent, symbol, _initial_data);
+		_app->loader()->load_graph(
+			true, get_filename(), parent, symbol, _initial_data);
 
 	} else {
 		std::list<Glib::ustring> uri_list = get_filenames();
@@ -190,8 +190,8 @@ LoadGraphWindow::ok_clicked()
 
 			symbol = avoid_symbol_clash(symbol);
 
-			_app->loader()->load_graph(false, u,
-					_graph->path(), symbol, _initial_data);
+			_app->loader()->load_graph(
+				false, u, _graph->path(), symbol, _initial_data);
 		}
 	}
 
@@ -222,7 +222,7 @@ Raul::Symbol
 LoadGraphWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
 {
 	unsigned offset = _app->store()->child_name_offset(
-			_graph->path(), symbol);
+		_graph->path(), symbol);
 
 	if (offset != 0) {
 		std::stringstream ss;
@@ -243,8 +243,8 @@ LoadGraphWindow::selection_changed()
 		_symbol_entry->set_text("");
 		_symbol_entry->set_sensitive(false);
 	} else {
-		_symbol_entry->set_text(avoid_symbol_clash(
-				symbol_from_filename(get_filename())).c_str());
+		_symbol_entry->set_text(
+			avoid_symbol_clash(symbol_from_filename(get_filename())).c_str());
 		_symbol_entry->set_sensitive(true);
 	}
 }

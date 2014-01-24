@@ -25,9 +25,9 @@
 namespace Raul { class Atom; }
 
 namespace Ingen { namespace Client {
-	class BlockModel;
-	class PluginUI;
-	class PortModel;
+class BlockModel;
+class PluginUI;
+class PortModel;
 } }
 
 namespace Ingen {

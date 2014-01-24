@@ -46,7 +46,7 @@ GraphImpl::GraphImpl(Engine&             engine,
 	                            engine.world()->uris().ingen_Graph,
 	                            Raul::Symbol("graph"),
 	                            "Ingen Graph"),
-	           symbol, poly, parent, srate)
+	            symbol, poly, parent, srate)
 	, _engine(engine)
 	, _poly_pre(internal_poly)
 	, _poly_process(internal_poly)

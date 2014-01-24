@@ -113,9 +113,10 @@ ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model,
 {
 	_mutex.lock();
 
-	_events.push_back(sigc::hide_return(sigc::bind(
-		sigc::mem_fun(this, &ThreadedLoader::save_graph_event),
-		model, filename)));
+	_events.push_back(
+		sigc::hide_return(
+			sigc::bind(sigc::mem_fun(this, &ThreadedLoader::save_graph_event),
+			           model, filename)));
 
 	_mutex.unlock();
 	_sem.post();

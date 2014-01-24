@@ -226,11 +226,11 @@ parse_properties(
 
 static bool
 parse_arcs(
-		World*            world,
-		Interface*        target,
-		Sord::Model&      model,
-		const Sord::Node& subject,
-		const Raul::Path& graph);
+	World*            world,
+	Interface*        target,
+	Sord::Model&      model,
+	const Sord::Node& subject,
+	const Raul::Path& graph);
 
 static boost::optional<Raul::Path>
 parse_block(Ingen::World*                     world,
@@ -647,4 +647,3 @@ Parser::parse_string(Ingen::World*                     world,
 
 } // namespace Serialisation
 } // namespace Ingen
-

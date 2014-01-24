@@ -151,8 +151,8 @@ Buffer::port_data(PortType port_type) const
 static inline __m128
 mm_abs_ps(__m128 x)
 {
-    const __m128 sign_mask = _mm_set1_ps(-0.0f);  // -0.0f = 1 << 31
-    return _mm_andnot_ps(sign_mask, x);
+	const __m128 sign_mask = _mm_set1_ps(-0.0f);  // -0.0f = 1 << 31
+	return _mm_andnot_ps(sign_mask, x);
 }
 #endif
 

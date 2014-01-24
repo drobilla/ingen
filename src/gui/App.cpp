@@ -369,8 +369,8 @@ App::can_control(const Client::PortModel* port) const
 	return port->is_a(uris().lv2_ControlPort)
 		|| port->is_a(uris().lv2_CVPort)
 		|| (port->is_a(uris().atom_AtomPort)
-				&& (port->supports(uris().atom_Float)
-					|| port->supports(uris().atom_String)));
+		    && (port->supports(uris().atom_Float)
+		        || port->supports(uris().atom_String)));
 }
 
 uint32_t
@@ -381,4 +381,3 @@ App::sample_rate() const
 
 } // namespace GUI
 } // namespace Ingen
-

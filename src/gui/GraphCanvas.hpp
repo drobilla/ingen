@@ -100,7 +100,7 @@ private:
 
 	void build_menus();
 
-    void auto_menu_position(int& x, int& y, bool& push_in);
+	void auto_menu_position(int& x, int& y, bool& push_in);
 
 	typedef std::multimap<const std::string, const LilvPluginClass*> LV2Children;
 

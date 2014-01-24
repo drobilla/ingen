@@ -56,12 +56,6 @@ using namespace Ingen;
 
 World* world = NULL;
 
-/*
-class TestClient : public AtomSink {
-	void write(const LV2_Atom* msg) {
-	}
-};
-*/
 class TestClient : public Interface
 {
 public:
@@ -194,11 +188,6 @@ main(int argc, char** argv)
 	                       *world->interface().get());
 
 	// AtomWriter to serialise responses from the engine
-	/*
-	TestClient client;
-	SPtr<AtomWriter> atom_writer(
-		new AtomWriter(world->uri_map(), world->uris(), client));
-	*/
 	SPtr<Interface> client(new TestClient(world->log()));
 
 	world->interface()->set_respondee(client);
@@ -227,7 +216,7 @@ main(int argc, char** argv)
 		sratom_read(sratom, &forge, world->rdf_world()->c_obj(),
 		            cmds->c_obj(), subject.c_obj());
 
-		/*
+#if 0
 		cerr << "READ " << out.len << " BYTES" << endl;
 		const LV2_Atom* atom = (const LV2_Atom*)out.buf;
 		cerr << sratom_to_turtle(
@@ -235,7 +224,7 @@ main(int argc, char** argv)
 			&world->uri_map().urid_unmap_feature()->urid_unmap,
 			(const char*)cmds_file_uri.buf,
 			NULL, NULL, atom->type, atom->size, LV2_ATOM_BODY(atom)) << endl;
-		*/
+#endif
 
 		if (!atom_reader.write((const LV2_Atom*)out.buf)) {
 			return EXIT_FAILURE;
@@ -259,4 +248,3 @@ main(int argc, char** argv)
 	delete world;
 	return 0;
 }
-

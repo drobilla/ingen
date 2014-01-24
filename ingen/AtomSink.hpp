@@ -37,4 +37,3 @@ public:
 } // namespace Ingen
 
 #endif // INGEN_ATOMSINK_HPP
-

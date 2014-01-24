@@ -145,7 +145,7 @@ private:
 
 	int set_value_from_string(Configuration::Option& option,
 	                          const std::string&     value)
-	throw (Configuration::OptionError);
+			throw (Configuration::OptionError);
 
 	Forge&            _forge;
 	const std::string _shortdesc;
@@ -160,4 +160,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_CONFIGURATION_HPP
-

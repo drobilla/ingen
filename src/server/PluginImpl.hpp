@@ -71,4 +71,3 @@ protected:
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_PLUGINIMPL_HPP
-

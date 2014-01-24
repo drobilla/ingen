@@ -57,28 +57,28 @@ ObjectMenu::init(App& app, SPtr<const ObjectModel> object)
 	_object = object;
 
 	_polyphonic_menuitem->signal_toggled().connect(
-			sigc::mem_fun(this, &ObjectMenu::on_menu_polyphonic));
+		sigc::mem_fun(this, &ObjectMenu::on_menu_polyphonic));
 
 	_polyphonic_menuitem->set_active(object->polyphonic());
 
 	_learn_menuitem->signal_activate().connect(
-			sigc::mem_fun(this, &ObjectMenu::on_menu_learn));
+		sigc::mem_fun(this, &ObjectMenu::on_menu_learn));
 
 	_unlearn_menuitem->signal_activate().connect(
-			sigc::mem_fun(this, &ObjectMenu::on_menu_unlearn));
+		sigc::mem_fun(this, &ObjectMenu::on_menu_unlearn));
 
 	_disconnect_menuitem->signal_activate().connect(
-			sigc::mem_fun(this, &ObjectMenu::on_menu_disconnect));
+		sigc::mem_fun(this, &ObjectMenu::on_menu_disconnect));
 
-	_rename_menuitem->signal_activate().connect(sigc::bind(
-			sigc::mem_fun(_app->window_factory(), &WindowFactory::present_rename),
-			object));
+	_rename_menuitem->signal_activate().connect(
+		sigc::bind(sigc::mem_fun(_app->window_factory(), &WindowFactory::present_rename),
+		           object));
 
 	_destroy_menuitem->signal_activate().connect(
-			sigc::mem_fun(this, &ObjectMenu::on_menu_destroy));
+		sigc::mem_fun(this, &ObjectMenu::on_menu_destroy));
 
 	_properties_menuitem->signal_activate().connect(
-			sigc::mem_fun(this, &ObjectMenu::on_menu_properties));
+		sigc::mem_fun(this, &ObjectMenu::on_menu_properties));
 
 	object->signal_property().connect(sigc::mem_fun(this, &ObjectMenu::property_changed));
 
@@ -140,4 +140,3 @@ ObjectMenu::on_menu_properties()
 
 } // namespace GUI
 } // namespace Ingen
-

@@ -75,7 +75,7 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	_ports->at(1) = _freq_port;
 
 	_num_port = new OutputPort(bufs, this, Raul::Symbol("number"), 1, _polyphony,
-	                            PortType::CV, 0, bufs.forge().make(0.0f));
+	                           PortType::CV, 0, bufs.forge().make(0.0f));
 	_num_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
 	_num_port->set_property(uris.lv2_maximum, bufs.forge().make(127.0f));
 	_num_port->set_property(uris.lv2_portProperty, uris.lv2_integer);
@@ -359,4 +359,3 @@ NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 } // namespace Internals
 } // namespace Server
 } // namespace Ingen
-

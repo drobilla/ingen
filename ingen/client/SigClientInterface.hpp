@@ -70,44 +70,44 @@ protected:
 #define EMIT(name, ...) { _signal_ ## name (__VA_ARGS__); }
 
 	void bundle_begin()
-		{ EMIT(bundle_begin); }
+	{ EMIT(bundle_begin); }
 
 	void bundle_end()
-		{ EMIT(bundle_end); }
+	{ EMIT(bundle_end); }
 
 	void response(int32_t id, Status status, const std::string& subject)
-		{ EMIT(response, id, status, subject); }
+	{ EMIT(response, id, status, subject); }
 
 	void error(const std::string& msg)
-		{ EMIT(error, msg); }
+	{ EMIT(error, msg); }
 
 	void put(const Raul::URI&            uri,
 	         const Resource::Properties& properties,
 	         Resource::Graph             ctx=Resource::Graph::DEFAULT)
-		{ EMIT(put, uri, properties, ctx); }
+	{ EMIT(put, uri, properties, ctx); }
 
 	void delta(const Raul::URI&            uri,
 	           const Resource::Properties& remove,
 	           const Resource::Properties& add)
-		{ EMIT(delta, uri, remove, add); }
+	{ EMIT(delta, uri, remove, add); }
 
 	void connect(const Raul::Path& tail, const Raul::Path& head)
-		{ EMIT(connection, tail, head); }
+	{ EMIT(connection, tail, head); }
 
 	void del(const Raul::URI& uri)
-		{ EMIT(object_deleted, uri); }
+	{ EMIT(object_deleted, uri); }
 
 	void move(const Raul::Path& old_path, const Raul::Path& new_path)
-		{ EMIT(object_moved, old_path, new_path); }
+	{ EMIT(object_moved, old_path, new_path); }
 
 	void disconnect(const Raul::Path& tail, const Raul::Path& head)
-		{ EMIT(disconnection, tail, head); }
+	{ EMIT(disconnection, tail, head); }
 
 	void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
-		{ EMIT(disconnect_all, graph, path); }
+	{ EMIT(disconnect_all, graph, path); }
 
 	void set_property(const Raul::URI& subject, const Raul::URI& key, const Atom& value)
-		{ EMIT(property_change, subject, key, value); }
+	{ EMIT(property_change, subject, key, value); }
 
 	void set_response_id(int32_t id) {}
 	void get(const Raul::URI& uri) {}

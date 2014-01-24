@@ -98,4 +98,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_ATOMWRITER_HPP
-

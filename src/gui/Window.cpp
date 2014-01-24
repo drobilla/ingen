@@ -33,4 +33,3 @@ Window::key_press_handler(Gtk::Window* win, GdkEventKey* event)
 
 } // namespace GUI
 } // namespace Ingen
-

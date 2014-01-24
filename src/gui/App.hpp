@@ -34,20 +34,20 @@
 #include "raul/URI.hpp"
 
 namespace Ingen {
-	class Interface;
-	class Log;
-	class Port;
-	class World;
-	namespace Client {
-		class ClientStore;
-		class GraphModel;
-		class PluginModel;
-		class PortModel;
-		class SigClientInterface;
-	}
-	namespace Serialisation {
-		class Serialiser;
-	}
+class Interface;
+class Log;
+class Port;
+class World;
+namespace Client {
+class ClientStore;
+class GraphModel;
+class PluginModel;
+class PortModel;
+class SigClientInterface;
+}
+namespace Serialisation {
+class Serialiser;
+}
 }
 
 namespace Ingen {
@@ -160,4 +160,3 @@ protected:
 } // namespace Ingen
 
 #endif // INGEN_GUI_APP_HPP
-

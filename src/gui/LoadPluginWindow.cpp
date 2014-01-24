@@ -510,4 +510,3 @@ LoadPluginWindow::plugin_property_changed(const Raul::URI& plugin,
 
 } // namespace GUI
 } // namespace Ingen
-

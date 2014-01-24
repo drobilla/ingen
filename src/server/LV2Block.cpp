@@ -508,4 +508,3 @@ LV2Block::set_port_buffer(uint32_t  voice,
 
 } // namespace Server
 } // namespace Ingen
-

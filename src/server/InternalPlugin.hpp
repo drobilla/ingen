@@ -55,4 +55,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_INTERNALPLUGIN_HPP
-

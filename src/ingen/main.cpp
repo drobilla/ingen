@@ -106,20 +106,20 @@ main(int argc, char** argv)
 
 		engine_interface = world->interface();
 
-		#ifdef HAVE_SOCKET
+#ifdef HAVE_SOCKET
 		ingen_try(world->load_module("socket_server"),
 		          "Unable to load socket server module");
-		#endif
+#endif
 	}
 
 	// If we don't have a local engine interface (for GUI), use network
 	if (!engine_interface) {
 		ingen_try(world->load_module("client"),
 		          "Unable to load client module");
-		#ifdef HAVE_SOCKET
+#ifdef HAVE_SOCKET
 		ingen_try(world->load_module("socket_client"),
 		          "Unable to load socket client module");
-		#endif
+#endif
 		const char* const uri = conf.option("connect").ptr<char>();
 		ingen_try(Raul::URI::is_valid(uri),
 		          (fmt("Invalid URI <%1%>") % uri).str().c_str());
@@ -170,9 +170,9 @@ main(int argc, char** argv)
 
 		ingen_try(bool(world->parser()), "Unable to create parser");
 
-		const string path = conf.option("load").is_valid() ?
-		  conf.option("load").ptr<char>() :
-		  conf.files().front();
+		const string path = (conf.option("load").is_valid()
+		                     ? conf.option("load").ptr<char>()
+		                     : conf.files().front());
 
 		engine_interface->get(Raul::URI("ingen:/plugins"));
 		engine_interface->get(Node::root_uri());
@@ -216,4 +216,3 @@ main(int argc, char** argv)
 
 	return 0;
 }
-

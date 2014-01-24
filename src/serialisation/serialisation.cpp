@@ -24,9 +24,11 @@ using namespace Ingen;
 
 struct IngenSerialisationModule : public Ingen::Module {
 	virtual void load(Ingen::World* world) {
-		world->set_parser(SPtr<Serialisation::Parser>(
+		world->set_parser(
+			SPtr<Serialisation::Parser>(
 				new Serialisation::Parser()));
-		world->set_serialiser(SPtr<Serialisation::Serialiser>(
+		world->set_serialiser(
+			SPtr<Serialisation::Serialiser>(
 				new Serialisation::Serialiser(*world)));
 	}
 };
@@ -39,4 +41,3 @@ ingen_module_load() {
 }
 
 } // extern "C"
-

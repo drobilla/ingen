@@ -67,4 +67,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_ATOMREADER_HPP
-

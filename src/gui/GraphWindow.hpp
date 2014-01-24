@@ -29,7 +29,7 @@
 namespace Ingen {
 
 namespace Client {
-	class GraphModel;
+class GraphModel;
 }
 
 namespace GUI {

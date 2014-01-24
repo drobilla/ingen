@@ -162,8 +162,9 @@ WindowFactory::new_graph_window(SPtr<const GraphModel> graph,
 	win->box()->set_graph(graph, view);
 	_graph_windows[graph->path()] = win;
 
-	win->signal_delete_event().connect(sigc::bind<0>(
-		sigc::mem_fun(this, &WindowFactory::remove_graph_window), win));
+	win->signal_delete_event().connect(
+		sigc::bind<0>(sigc::mem_fun(this, &WindowFactory::remove_graph_window),
+		              win));
 
 	return win;
 }

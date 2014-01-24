@@ -35,17 +35,17 @@ Configuration::Configuration(Forge& forge)
 	: _forge(forge)
 	, _shortdesc("A realtime modular audio processor.")
 	, _desc(
-"Ingen is a flexible modular system that be used in various ways.\n"
-"The engine can run as a stand-alone server controlled via network protocol,\n"
-"or internal to another process (e.g. the GUI).  The GUI, or other clients,\n"
-"can communicate with the engine via any supported protocol, or run in the\n"
-"same process.  Many clients can connect to an engine at once.\n\n"
-"Examples:\n"
-"  ingen -e              # Run an engine, listen for connections\n"
-"  ingen -g              # Run a GUI, connect to running engine\n"
-"  ingen -eg             # Run an engine and a GUI in one process\n"
-"  ingen -egl foo.ttl    # Run an engine and a GUI and load a graph\n"
-"  ingen -egl foo.ingen  # Run an engine and a GUI and load a graph")
+		"Ingen is a flexible modular system that be used in various ways.\n"
+		"The engine can run as a stand-alone server controlled via network protocol,\n"
+		"or internal to another process (e.g. the GUI).  The GUI, or other clients,\n"
+		"can communicate with the engine via any supported protocol, or run in the\n"
+		"same process.  Many clients can connect to an engine at once.\n\n"
+		"Examples:\n"
+		"  ingen -e              # Run an engine, listen for connections\n"
+		"  ingen -g              # Run a GUI, connect to running engine\n"
+		"  ingen -eg             # Run an engine and a GUI in one process\n"
+		"  ingen -egl foo.ttl    # Run an engine and a GUI and load a graph\n"
+		"  ingen -egl foo.ingen  # Run an engine and a GUI and load a graph")
 	, _max_name_length(0)
 {
 	add("clientPort",     "client-port",    'C', "Client port", SESSION, forge.Int, Atom());
@@ -97,7 +97,7 @@ Configuration::print_usage(const std::string& program, std::ostream& os)
 	os << "Options:" << std::endl;
 	for (auto o : _options) {
 		Option& option = o.second;
-			os << "  ";
+		os << "  ";
 		if (option.letter != '\0')
 			os << "-" << option.letter << ", ";
 		else
@@ -240,7 +240,7 @@ Configuration::save(URIMap&            uri_map,
 	const std::string dir = Glib::path_get_dirname(path);
 	if (g_mkdir_with_parents(dir.c_str(), 0755) < 0) {
 		throw FileError((fmt("Error creating directory %1% (%2%)")
-		                % dir % strerror(errno)).str());
+		                 % dir % strerror(errno)).str());
 	}
 
 	// Attempt to open file for writing
@@ -283,7 +283,7 @@ Configuration::save(URIMap&            uri_map,
 	for (auto o : _options) {
 		const Atom& value = o.second.value;
 		if (!(o.second.scope & scopes) ||
-			o.second.key.empty() ||
+		    o.second.key.empty() ||
 		    !value.is_valid()) {
 			continue;
 		}

@@ -104,4 +104,3 @@ ArcImpl::can_connect(const OutputPort* src, const InputPort* dst)
 
 } // namespace Server
 } // namespace Ingen
-

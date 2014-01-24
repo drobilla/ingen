@@ -43,10 +43,10 @@ GraphTreeWindow::GraphTreeWindow(BaseObjectType*                   cobject,
 	_graph_treestore = Gtk::TreeStore::create(_graph_tree_columns);
 	_graphs_treeview->set_window(this);
 	_graphs_treeview->set_model(_graph_treestore);
-	Gtk::TreeViewColumn* name_col = Gtk::manage(new Gtk::TreeViewColumn(
-		"Graph", _graph_tree_columns.name_col));
-	Gtk::TreeViewColumn* enabled_col = Gtk::manage(new Gtk::TreeViewColumn(
-		"Run", _graph_tree_columns.enabled_col));
+	Gtk::TreeViewColumn* name_col = Gtk::manage(
+		new Gtk::TreeViewColumn("Graph", _graph_tree_columns.name_col));
+	Gtk::TreeViewColumn* enabled_col = Gtk::manage(
+		new Gtk::TreeViewColumn("Run", _graph_tree_columns.enabled_col));
 	name_col->set_resizable(true);
 	name_col->set_expand(true);
 

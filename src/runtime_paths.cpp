@@ -107,4 +107,3 @@ module_path(const std::string& name, std::string dir)
 }
 
 } // namespace Ingen
-

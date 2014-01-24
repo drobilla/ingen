@@ -105,4 +105,3 @@ private:
 } // namespace Ingen
 
 #endif // INGEN_CLASHAVOIDER_HPP
-

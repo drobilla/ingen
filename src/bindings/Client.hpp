@@ -24,10 +24,10 @@
 class Client : public Ingen::ClientInterface
 {
 public:
-    /** Wrapper for engine->register_client to appease SWIG */
-    virtual void subscribe(Ingen::ServerInterface* engine) {
-        engine->register_client(this);
-    }
+	/** Wrapper for engine->register_client to appease SWIG */
+	virtual void subscribe(Ingen::ServerInterface* engine) {
+		engine->register_client(this);
+	}
 
 	void bundle_begin() {}
 	void bundle_end() {}

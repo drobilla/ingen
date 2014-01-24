@@ -74,14 +74,14 @@ ClashAvoider::map_path(const Raul::Path& in)
 			parent = parent.parent();
 		} while (!parent.is_root());
 
-		// No clash, use symbol unmodified
 		if (!exists(in) && _symbol_map.find(in) == _symbol_map.end()) {
+			// No clash, use symbol unmodified
 			InsertRecord i = _symbol_map.insert(make_pair(in, in));
 			assert(i.second);
 			return i.first->second;
 
-		// Append _2 _3 etc until an unused symbol is found
 		} else {
+			// Append _2 _3 etc until an unused symbol is found
 			while (true) {
 				Offsets::iterator o = _offsets.find(base_path);
 				if (o != _offsets.end()) {

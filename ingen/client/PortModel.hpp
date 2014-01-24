@@ -45,7 +45,7 @@ public:
 
 	bool supports(const Raul::URI& value_type) const;
 
- 	inline uint32_t    index()     const { return _index; }
+	inline uint32_t    index()     const { return _index; }
 	inline const Atom& value()     const { return get_property(_uris.ingen_value); }
 	inline bool        connected() const { return (_connections > 0); }
 	inline bool        is_input()  const { return (_direction == Direction::INPUT); }

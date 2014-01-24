@@ -91,10 +91,10 @@ PortMenu::on_menu_disconnect()
 {
 	if (_is_graph_port) {
 		_app->interface()->disconnect_all(
-				_object->parent()->path(), _object->path());
+			_object->parent()->path(), _object->path());
 	} else {
 		_app->interface()->disconnect_all(
-				_object->parent()->path().parent(), _object->path());
+			_object->parent()->path().parent(), _object->path());
 	}
 }
 
@@ -165,4 +165,3 @@ PortMenu::on_menu_expose()
 
 } // namespace GUI
 } // namespace Ingen
-

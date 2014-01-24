@@ -54,8 +54,8 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 {
 	ObjectMenu::init(app, block);
 
-	_learn_menuitem->signal_activate().connect(sigc::mem_fun(this,
-			&NodeMenu::on_menu_learn));
+	_learn_menuitem->signal_activate().connect(
+		sigc::mem_fun(this, &NodeMenu::on_menu_learn));
 	_popup_gui_menuitem->signal_activate().connect(
 		sigc::mem_fun(signal_popup_gui, &sigc::signal<void>::emit));
 	_embed_gui_menuitem->signal_toggled().connect(
@@ -132,7 +132,7 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 		_randomize_menuitem->hide();
 
 	if (plugin && (plugin->uri() == "http://drobilla.net/ns/ingen-internals#Controller"
-			|| plugin->uri() == "http://drobilla.net/ns/ingen-internals#Trigger"))
+	               || plugin->uri() == "http://drobilla.net/ns/ingen-internals#Trigger"))
 		_learn_menuitem->show();
 	else
 		_learn_menuitem->hide();
@@ -188,7 +188,7 @@ set_port_value(const char* port_symbol,
 			fmt("Preset with invalid port symbol `%1'\n") % port_symbol);
 		return;
 	}
-		
+
 	menu->app()->interface()->set_property(
 		Node::path_to_uri(block->path().child(Raul::Symbol(port_symbol))),
 		menu->app()->uris().ingen_value,

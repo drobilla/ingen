@@ -236,4 +236,3 @@ InputPort::direct_connect() const
 
 } // namespace Server
 } // namespace Ingen
-

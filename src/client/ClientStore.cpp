@@ -296,7 +296,7 @@ ClientStore::put(const Raul::URI&            uri,
 		} else {
 			_log.error(fmt("Port %1% has no index\n") % path);
 		}
-			
+
 		SPtr<PortModel> p(new PortModel(uris(), path, index, pdir));
 		p->set_properties(properties);
 		add_object(p);
@@ -479,4 +479,3 @@ ClientStore::disconnect_all(const Raul::Path& parent_graph,
 
 } // namespace Client
 } // namespace Ingen
-

@@ -66,8 +66,8 @@ protected:
 	void event_graph_enabled_toggled(const Glib::ustring& path_str);
 
 	Gtk::TreeModel::iterator find_graph(
-			Gtk::TreeModel::Children  root,
-			SPtr<Client::ObjectModel> graph);
+		Gtk::TreeModel::Children  root,
+		SPtr<Client::ObjectModel> graph);
 
 	GraphTreeView* _graphs_treeview;
 

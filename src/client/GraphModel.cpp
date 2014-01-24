@@ -58,9 +58,9 @@ GraphModel::remove_child(SPtr<ObjectModel> o)
 
 		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(j->second);
 		if (arc->tail_path().parent() == o->path()
-				|| arc->tail_path() == o->path()
-				|| arc->head_path().parent() == o->path()
-				|| arc->head_path() == o->path()) {
+		    || arc->tail_path() == o->path()
+		    || arc->head_path().parent() == o->path()
+		    || arc->head_path() == o->path()) {
 			_signal_removed_arc.emit(arc);
 			_arcs.erase(j); // cuts our reference
 		}
@@ -123,7 +123,7 @@ GraphModel::add_arc(SPtr<ArcModel> arc)
 	       || arc->head()->parent()->parent().get() == this);
 
 	SPtr<ArcModel> existing = get_arc(
-			arc->tail().get(), arc->head().get());
+		arc->tail().get(), arc->head().get());
 
 	if (existing) {
 		assert(arc->tail() == existing->tail());

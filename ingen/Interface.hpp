@@ -105,4 +105,3 @@ public:
 } // namespace Ingen
 
 #endif // INGEN_INTERFACE_HPP
-
