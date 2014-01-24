@@ -61,8 +61,7 @@ public:
 	std::string  human_name() const;
 	std::string  port_human_name(uint32_t index) const;
 
-	typedef std::pair<float, std::string> ScalePoint;
-	typedef std::list<ScalePoint>         ScalePoints;
+	typedef std::map<float, std::string> ScalePoints;
 	ScalePoints port_scale_points(uint32_t i) const;
 
 	static LilvWorld* lilv_world()        { return _lilv_world; }
