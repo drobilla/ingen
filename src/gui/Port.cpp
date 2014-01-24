@@ -85,8 +85,8 @@ Port::Port(App&                  app,
 	set_border_width(1.0);
 
 	if (app.can_control(pm.get())) {
-		port_properties_changed();
 		show_control();
+		port_properties_changed();
 		pm->signal_property().connect(
 			sigc::mem_fun(this, &Port::property_changed));
 		pm->signal_property_removed().connect(
