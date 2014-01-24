@@ -98,7 +98,7 @@ void
 AtomWriter::forge_properties(const Resource::Properties& properties)
 {
 	for (auto p : properties) {
-		lv2_atom_forge_property_head(&_forge, _map.map_uri(p.first.c_str()), 0);
+		lv2_atom_forge_key(&_forge, _map.map_uri(p.first.c_str()));
 		if (p.second.type() == _forge.URI) {
 			forge_uri(Raul::URI(p.second.ptr<char>()));
 		} else {
@@ -112,12 +112,24 @@ void
 AtomWriter::forge_arc(const Raul::Path& tail, const Raul::Path& head)
 {
 	LV2_Atom_Forge_Frame arc;
-	lv2_atom_forge_blank(&_forge, &arc, 0, _uris.ingen_Arc);
-	lv2_atom_forge_property_head(&_forge, _uris.ingen_tail, 0);
+	lv2_atom_forge_object(&_forge, &arc, 0, _uris.ingen_Arc);
+	lv2_atom_forge_key(&_forge, _uris.ingen_tail);
 	forge_uri(Node::path_to_uri(tail));
-	lv2_atom_forge_property_head(&_forge, _uris.ingen_head, 0);
+	lv2_atom_forge_key(&_forge, _uris.ingen_head);
 	forge_uri(Node::path_to_uri(head));
 	lv2_atom_forge_pop(&_forge, &arc);
+}
+
+void
+AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
+{
+	lv2_atom_forge_object(&_forge, frame, 0, type);
+
+	const int32_t id = next_id();
+	if (id != 0) {
+		lv2_atom_forge_key(&_forge, _uris.patch_sequenceNumber);
+		lv2_atom_forge_int(&_forge, id);
+	}
 }
 
 void
@@ -126,13 +138,13 @@ AtomWriter::put(const Raul::URI&            uri,
                 Resource::Graph             ctx)
 {
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Put);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	forge_request(&msg, _uris.patch_Put);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(uri);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_body);
 
 	LV2_Atom_Forge_Frame body;
-	lv2_atom_forge_blank(&_forge, &body, 0, 0);
+	lv2_atom_forge_object(&_forge, &body, 0, 0);
 	forge_properties(properties);
 	lv2_atom_forge_pop(&_forge, &body);
 
@@ -146,19 +158,19 @@ AtomWriter::delta(const Raul::URI&            uri,
                   const Resource::Properties& add)
 {
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Patch);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	forge_request(&msg, _uris.patch_Patch);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(uri);
 
-	lv2_atom_forge_property_head(&_forge, _uris.patch_remove, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_remove);
 	LV2_Atom_Forge_Frame remove_obj;
-	lv2_atom_forge_blank(&_forge, &remove_obj, 0, 0);
+	lv2_atom_forge_object(&_forge, &remove_obj, 0, 0);
 	forge_properties(remove);
 	lv2_atom_forge_pop(&_forge, &remove_obj);
 
-	lv2_atom_forge_property_head(&_forge, _uris.patch_add, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_add);
 	LV2_Atom_Forge_Frame add_obj;
-	lv2_atom_forge_blank(&_forge, &add_obj, 0, 0);
+	lv2_atom_forge_object(&_forge, &add_obj, 0, 0);
 	forge_properties(add);
 	lv2_atom_forge_pop(&_forge, &add_obj);
 
@@ -171,10 +183,10 @@ AtomWriter::move(const Raul::Path& old_path,
                  const Raul::Path& new_path)
 {
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Move);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	forge_request(&msg, _uris.patch_Move);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(Node::path_to_uri(old_path));
-	lv2_atom_forge_property_head(&_forge, _uris.patch_destination, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_destination);
 	forge_uri(Node::path_to_uri(new_path));
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
@@ -184,8 +196,8 @@ void
 AtomWriter::del(const Raul::URI& uri)
 {
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Delete);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	forge_request(&msg, _uris.patch_Delete);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(uri);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
@@ -196,10 +208,10 @@ AtomWriter::connect(const Raul::Path& tail,
                     const Raul::Path& head)
 {
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Put);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	forge_request(&msg, _uris.patch_Put);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(Node::path_to_uri(Raul::Path::lca(tail, head)));
-	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_body);
 	forge_arc(tail, head);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
@@ -210,8 +222,8 @@ AtomWriter::disconnect(const Raul::Path& tail,
                        const Raul::Path& head)
 {
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Delete);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
+	forge_request(&msg, _uris.patch_Delete);
+	lv2_atom_forge_key(&_forge, _uris.patch_body);
 	forge_arc(tail, head);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
@@ -222,15 +234,15 @@ AtomWriter::disconnect_all(const Raul::Path& graph,
                            const Raul::Path& path)
 {
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Delete);
+	forge_request(&msg, _uris.patch_Delete);
 
-	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(Node::path_to_uri(graph));
 
-	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_body);
 	LV2_Atom_Forge_Frame arc;
-	lv2_atom_forge_blank(&_forge, &arc, 0, _uris.ingen_Arc);
-	lv2_atom_forge_property_head(&_forge, _uris.ingen_incidentTo, 0);
+	lv2_atom_forge_object(&_forge, &arc, 0, _uris.ingen_Arc);
+	lv2_atom_forge_key(&_forge, _uris.ingen_incidentTo);
 	forge_uri(Node::path_to_uri(path));
 	lv2_atom_forge_pop(&_forge, &arc);
 
@@ -244,12 +256,12 @@ AtomWriter::set_property(const Raul::URI& subject,
                          const Atom&      value)
 {
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Set);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	forge_request(&msg, _uris.patch_Set);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(subject);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_property, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_property);
 	lv2_atom_forge_urid(&_forge, _map.map_uri(predicate.c_str()));
-	lv2_atom_forge_property_head(&_forge, _uris.patch_value, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_value);
 	lv2_atom_forge_atom(&_forge, value.size(), value.type());
 	lv2_atom_forge_write(&_forge, value.get_body(), value.size());
 
@@ -260,14 +272,15 @@ AtomWriter::set_property(const Raul::URI& subject,
 void
 AtomWriter::set_response_id(int32_t id)
 {
+	_id = id;
 }
 
 void
 AtomWriter::get(const Raul::URI& uri)
 {
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Get);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+	forge_request(&msg, _uris.patch_Get);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(uri);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
@@ -281,14 +294,14 @@ AtomWriter::response(int32_t id, Status status, const std::string& subject)
 	}
 
 	LV2_Atom_Forge_Frame msg;
-	lv2_atom_forge_blank(&_forge, &msg, next_id(), _uris.patch_Response);
-	lv2_atom_forge_property_head(&_forge, _uris.patch_request, 0);
+	forge_request(&msg, _uris.patch_Response);
+	lv2_atom_forge_key(&_forge, _uris.patch_request);
 	lv2_atom_forge_int(&_forge, id);
 	if (!subject.empty() && Raul::URI::is_valid(subject)) {
-		lv2_atom_forge_property_head(&_forge, _uris.patch_subject, 0);
+		lv2_atom_forge_key(&_forge, _uris.patch_subject);
 		lv2_atom_forge_uri(&_forge, subject.c_str(), subject.length());
 	}
-	lv2_atom_forge_property_head(&_forge, _uris.patch_body, 0);
+	lv2_atom_forge_key(&_forge, _uris.patch_body);
 	lv2_atom_forge_int(&_forge, static_cast<int>(status));
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();

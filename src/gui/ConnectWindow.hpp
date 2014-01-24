@@ -51,15 +51,14 @@ public:
 
 	void set_connected_to(SPtr<Ingen::Interface> engine);
 	void start(App& app, Ingen::World* world);
-	void ingen_response(int32_t id, Status status, const std::string& subject) {
-		_attached = true;
-	}
 
 	bool attached()  const { return _finished_connecting; }
 	bool quit_flag() const { return _quit_flag; }
 
 private:
 	enum class Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };
+
+	void ingen_response(int32_t id, Status status, const std::string& subject);
 
 	void server_toggled();
 	void launch_toggled();

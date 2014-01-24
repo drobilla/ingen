@@ -68,7 +68,7 @@ ControlBindings::binding_key(const Atom& binding) const
 	const Ingen::URIs& uris = _engine.world()->uris();
 	Key       key;
 	LV2_Atom* num = NULL;
-	if (binding.type() == uris.atom_Blank) {
+	if (binding.type() == uris.atom_Object) {
 		const LV2_Atom_Object_Body* obj = (const LV2_Atom_Object_Body*)
 			binding.get_body();
 		if (obj->otype == uris.midi_Bender) {
@@ -283,19 +283,19 @@ forge_binding(const URIs&           uris,
 	LV2_Atom_Forge_Frame frame;
 	switch (binding_type) {
 	case ControlBindings::Type::MIDI_CC:
-		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_Controller);
-		lv2_atom_forge_property_head(forge, uris.midi_controllerNumber, 0);
+		lv2_atom_forge_object(forge, &frame, 0, uris.midi_Controller);
+		lv2_atom_forge_key(forge, uris.midi_controllerNumber);
 		lv2_atom_forge_int(forge, value);
 		break;
 	case ControlBindings::Type::MIDI_BENDER:
-		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_Bender);
+		lv2_atom_forge_object(forge, &frame, 0, uris.midi_Bender);
 		break;
 	case ControlBindings::Type::MIDI_CHANNEL_PRESSURE:
-		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_ChannelPressure);
+		lv2_atom_forge_object(forge, &frame, 0, uris.midi_ChannelPressure);
 		break;
 	case ControlBindings::Type::MIDI_NOTE:
-		lv2_atom_forge_blank(forge, &frame, 0, uris.midi_NoteOn);
-		lv2_atom_forge_property_head(forge, uris.midi_noteNumber, 0);
+		lv2_atom_forge_object(forge, &frame, 0, uris.midi_NoteOn);
+		lv2_atom_forge_key(forge, uris.midi_noteNumber);
 		lv2_atom_forge_int(forge, value);
 		break;
 	case ControlBindings::Type::MIDI_RPN: // TODO

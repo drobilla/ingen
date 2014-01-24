@@ -54,12 +54,11 @@ public:
 	Ingen::Forge& forge;
 
 	const Quark atom_AtomPort;
-	const Quark atom_Blank;
 	const Quark atom_Bool;
 	const Quark atom_Chunk;
 	const Quark atom_Float;
 	const Quark atom_Int;
-	const Quark atom_Resource;
+	const Quark atom_Object;
 	const Quark atom_Sequence;
 	const Quark atom_Sound;
 	const Quark atom_String;
@@ -143,6 +142,7 @@ public:
 	const Quark patch_property;
 	const Quark patch_remove;
 	const Quark patch_request;
+	const Quark patch_sequenceNumber;
 	const Quark patch_subject;
 	const Quark patch_value;
 	const Quark patch_wildcard;

@@ -98,7 +98,7 @@ AtomReader::atom_to_path(const LV2_Atom* atom)
 bool
 AtomReader::is_message(URIs& uris, const LV2_Atom* msg)
 {
-	if (msg->type != uris.atom_Blank && msg->type != uris.atom_Resource) {
+	if (msg->type != uris.atom_Object) {
 		return false;
 	}
 
@@ -115,7 +115,7 @@ AtomReader::is_message(URIs& uris, const LV2_Atom* msg)
 bool
 AtomReader::write(const LV2_Atom* msg)
 {
-	if (msg->type != _uris.atom_Blank && msg->type != _uris.atom_Resource) {
+	if (msg->type != _uris.atom_Object) {
 		_log.warn(fmt("Unknown message type <%1%>\n")
 		          % _map.unmap_uri(msg->type));
 		return false;
@@ -123,12 +123,24 @@ AtomReader::write(const LV2_Atom* msg)
 
 	const LV2_Atom_Object* obj     = (const LV2_Atom_Object*)msg;
 	const LV2_Atom*        subject = NULL;
+	const LV2_Atom*        number  = NULL;
 
-	lv2_atom_object_get(obj, (LV2_URID)_uris.patch_subject, &subject, NULL);
-	const char* subject_uri = atom_to_uri(subject);
+	lv2_atom_object_get(obj,
+	                    (LV2_URID)_uris.patch_subject,        &subject,
+	                    (LV2_URID)_uris.patch_sequenceNumber, &number,
+	                    NULL);
+
+	const char*   subject_uri = atom_to_uri(subject);
+	const int32_t seq_id      = ((number && number->type == _uris.atom_Int)
+	                             ? ((const LV2_Atom_Int*)number)->body
+	                             : 0);
+	if (seq_id) {
+		_iface.set_response_id(seq_id);
+	} else {
+		_iface.set_response_id(-1);
+	}
 
 	if (obj->body.otype == _uris.patch_Get) {
-		_iface.set_response_id(obj->body.id);
 		_iface.get(Raul::URI(subject_uri));
 	} else if (obj->body.otype == _uris.patch_Delete) {
 		const LV2_Atom_Object* body = NULL;
@@ -194,7 +206,6 @@ AtomReader::write(const LV2_Atom* msg)
 		} else {
 			Ingen::Resource::Properties props;
 			get_props(body, props);
-			_iface.set_response_id(obj->body.id);
 			_iface.put(Raul::URI(subject_uri), props);
 		}
 	} else if (obj->body.otype == _uris.patch_Set) {

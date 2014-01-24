@@ -15,8 +15,10 @@
 */
 
 #include <stdlib.h>
-#include <string>
+
+#include <limits>
 #include <sstream>
+#include <string>
 
 #include <gtkmm/stock.h>
 
@@ -83,6 +85,20 @@ ConnectWindow::start(App& app, Ingen::World* world)
 
 	set_connected_to(world->interface());
 	connect(bool(world->interface()));
+}
+
+void
+ConnectWindow::ingen_response(int32_t            id,
+                              Status             status,
+                              const std::string& subject)
+{
+	if (id == _ping_id) {
+		if (status != Status::SUCCESS) {
+			_app->world()->log().error("Failed to get root patch\n");
+		} else {
+			_attached = true;
+		}
+	}
 }
 
 void
@@ -388,7 +404,7 @@ ConnectWindow::gtk_callback()
 		_app->client()->signal_response().connect(
 			sigc::mem_fun(this, &ConnectWindow::ingen_response));
 
-		_ping_id = g_random_int();
+		_ping_id = g_random_int_range(1, std::numeric_limits<int32_t>::max());
 		_app->interface()->set_response_id(_ping_id);
 		_app->interface()->get(Raul::URI("ingen:/engine"));
 
@@ -436,6 +452,7 @@ ConnectWindow::gtk_callback()
 			_progress_label->set_text("Connected to engine");
 		_connect_stage = 0; // set ourselves up for next time (if there is one)
 		_finished_connecting = true;
+		_app->interface()->set_response_id(-1);
 		return false; // deregister this callback
 	}
 

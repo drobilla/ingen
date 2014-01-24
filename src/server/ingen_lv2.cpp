@@ -260,7 +260,7 @@ public:
 		const URIs&        uris = _engine.world()->uris();
 		LV2_Atom_Sequence* seq  = (LV2_Atom_Sequence*)_ports[0]->buffer();
 		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-			if (ev->body.type == uris.atom_Blank &&
+			if (ev->body.type == uris.atom_Object &&
 			    ((LV2_Atom_Object*)&ev)->body.otype == uris.time_Position) {
 				buffer.append_event(ev->time.frames,
 				                    ev->body.size,

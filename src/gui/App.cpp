@@ -335,7 +335,7 @@ bool
 App::quit(Gtk::Window* dialog_parent)
 {
 	bool quit = true;
-	if (_world->engine()) {
+	if (_world->engine() && _connect_window->attached()) {
 		Gtk::MessageDialog d(
 			"The engine is running in this process.  Quitting will terminate Ingen."
 			"\n\n" "Are you sure you want to quit?",
