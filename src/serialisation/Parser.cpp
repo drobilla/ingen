@@ -140,31 +140,47 @@ get_port(Ingen::World*     world,
          Sord::Model&      model,
          const Sord::Node& subject,
          const Raul::Path& parent,
-         uint32_t&         index)
+         uint32_t*         index)
 {
 	const URIs& uris = world->uris();
 
 	// Get all properties
 	Resource::Properties props = get_properties(world, model, subject);
 
-	// Get index
-	Resource::Properties::const_iterator i = props.find(uris.lv2_index);
-	if (i == props.end()
-	    || i->second.type() != world->forge().Int
-	    || i->second.get<int32_t>() < 0) {
-		world->log().warn(fmt("Port %1% has no valid index\n") % subject);
-		return boost::optional<PortRecord>();
+	// Get index if requested (for Graphs)
+	if (index) {
+		Resource::Properties::const_iterator i = props.find(uris.lv2_index);
+		if (i == props.end()
+		    || i->second.type() != world->forge().Int
+		    || i->second.get<int32_t>() < 0) {
+			world->log().error(fmt("Port %1% has no valid index\n") % subject);
+			return boost::optional<PortRecord>();
+		}
+		*index = i->second.get<int32_t>();
 	}
-	index = i->second.get<int32_t>();
 
 	// Get symbol
 	Resource::Properties::const_iterator s = props.find(uris.lv2_symbol);
-	if (s == props.end()) {
-		world->log().warn(fmt("Port %1% has no symbol\n") % subject);
+	std::string                          sym;
+	if (s != props.end()) {
+		sym = s->second.ptr<char>();
+	} else {
+		const std::string subject_str = subject.to_string();
+		const size_t      last_slash  = subject_str.find_last_of("/");
+
+		sym = ((last_slash == string::npos)
+		       ? subject_str
+		       : subject_str.substr(last_slash + 1));
+	}
+
+	if (!Raul::Symbol::is_valid(sym)) {
+		world->log().error(fmt("Port %1% has invalid symbol `%2%'\n")
+		                   % subject % sym);
 		return boost::optional<PortRecord>();
 	}
-	const Raul::Symbol port_sym(s->second.ptr<char>());
-	const Raul::Path   port_path = parent.child(port_sym);
+
+	const Raul::Symbol port_sym(sym);
+	const Raul::Path   port_path(parent.child(port_sym));
 
 	return make_pair(port_path, props);
 }
@@ -341,9 +357,8 @@ parse_graph(Ingen::World*                     world,
 			Sord::Node port = p.get_object();
 
 			// Get all properties
-			uint32_t index = 0;
 			boost::optional<PortRecord> port_record = get_port(
-				world, model, port, block_path, index);
+				world, model, port, block_path, NULL);
 			if (!port_record) {
 				world->log().error(fmt("Invalid port %1%\n") % port);
 				return boost::optional<Raul::Path>();
@@ -364,7 +379,7 @@ parse_graph(Ingen::World*                     world,
 		// Get all properties
 		uint32_t index = 0;
 		boost::optional<PortRecord> port_record = get_port(
-			world, model, port, graph_path, index);
+			world, model, port, graph_path, &index);
 		if (!port_record) {
 			world->log().error(fmt("Invalid port %1%\n") % port);
 			return boost::optional<Raul::Path>();

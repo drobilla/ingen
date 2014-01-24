@@ -148,9 +148,10 @@ Delta::pre_process()
 
 	NodeImpl* obj = dynamic_cast<NodeImpl*>(_object);
 
+	// Remove any properties removed in delta
 	for (const auto& r : _remove) {
-		const Raul::URI&  key   = r.first;
-		const Atom& value = r.second;
+		const Raul::URI& key   = r.first;
+		const Atom&      value = r.second;
 		if (key == uris.midi_binding && value == uris.patch_wildcard) {
 			PortImpl* port = dynamic_cast<PortImpl*>(_object);
 			if (port)
@@ -158,6 +159,13 @@ Delta::pre_process()
 		}
 		if (_object) {
 			_object->remove_property(key, value);
+		}
+	}
+
+	// Remove all added properties if this is a put
+	if (_create && _object) {
+		for (const auto& p : _properties) {
+			_object->remove_property(p.first, p.second);
 		}
 	}
 

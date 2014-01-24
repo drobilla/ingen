@@ -89,6 +89,8 @@ Port::Port(App&                  app,
 		show_control();
 		pm->signal_property().connect(
 			sigc::mem_fun(this, &Port::property_changed));
+		pm->signal_property_removed().connect(
+			sigc::mem_fun(this, &Port::property_removed));
 		pm->signal_value_changed().connect(
 			sigc::mem_fun(this, &Port::value_changed));
 	}
@@ -121,7 +123,7 @@ void
 Port::update_metadata()
 {
 	SPtr<const PortModel> pm = _port_model.lock();
-	if (_app.can_control(pm.get()) && pm->is_numeric()) {
+	if (pm && _app.can_control(pm.get()) && pm->is_numeric()) {
 		SPtr<const BlockModel> parent = dynamic_ptr_cast<const BlockModel>(pm->parent());
 		if (parent) {
 			float min = 0.0f;
@@ -435,13 +437,22 @@ Port::property_changed(const Raul::URI& key, const Atom& value)
 	}
 }
 
+void
+Port::property_removed(const Raul::URI& key, const Atom& value)
+{
+	const URIs& uris = _app.uris();
+	if (key == uris.lv2_minimum || key == uris.lv2_maximum) {
+		update_metadata();
+	}
+}
+
 bool
 Port::on_selected(gboolean b)
 {
 	if (b) {
 		SPtr<const PortModel> pm = _port_model.lock();
 		if (pm) {
-			SPtr<const BlockModel> block = dynamic_ptr_cast<BlockModel>(pm->parent());
+			SPtr<const BlockModel> block = dynamic_ptr_cast<const BlockModel>(pm->parent());
 			GraphWindow* win = _app.window_factory()->parent_graph_window(block);
 			if (win && win->documentation_is_visible() && block->plugin_model()) {
 				bool html = false;

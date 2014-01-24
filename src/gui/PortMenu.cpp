@@ -121,22 +121,14 @@ PortMenu::on_menu_set_max()
 void
 PortMenu::on_menu_reset_range()
 {
-	const URIs&            uris   = _app->uris();
-	SPtr<const PortModel>  model  = dynamic_ptr_cast<const PortModel>(_object);
-	SPtr<const BlockModel> parent = dynamic_ptr_cast<const BlockModel>(_object->parent());
+	const URIs&           uris  = _app->uris();
+	SPtr<const PortModel> model = dynamic_ptr_cast<const PortModel>(_object);
 
-	float min, max;
-	parent->default_port_value_range(model, min, max);
-
-	if (!std::isnan(min))
-		_app->interface()->set_property(_object->uri(),
-		                                uris.lv2_minimum,
-		                                _app->forge().make(min));
-
-	if (!std::isnan(max))
-		_app->interface()->set_property(_object->uri(),
-		                                uris.lv2_maximum,
-		                                _app->forge().make(max));
+	// Remove lv2:minimum and lv2:maximum properties
+	Resource::Properties remove;
+	remove.insert({uris.lv2_minimum, Resource::Property(uris.patch_wildcard)});
+	remove.insert({uris.lv2_maximum, Resource::Property(uris.patch_wildcard)});
+	_app->interface()->delta(_object->uri(), remove, Resource::Properties());
 }
 
 void

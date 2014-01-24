@@ -289,16 +289,17 @@ ClientStore::put(const Raul::URI&            uri,
 		PortModel::Direction pdir = (is_output)
 			? PortModel::Direction::OUTPUT
 			: PortModel::Direction::INPUT;
-		const Iterator i = properties.find(_uris.lv2_index);
+		uint32_t       index = 0;
+		const Iterator i     = properties.find(_uris.lv2_index);
 		if (i != properties.end() && i->second.type() == _uris.forge.Int) {
-			const uint32_t index = i->second.get<int32_t>();
-			SPtr<PortModel> p(
-				new PortModel(uris(), path, index, pdir));
-			p->set_properties(properties);
-			add_object(p);
+			index = i->second.get<int32_t>();
 		} else {
 			_log.error(fmt("Port %1% has no index\n") % path);
 		}
+			
+		SPtr<PortModel> p(new PortModel(uris(), path, index, pdir));
+		p->set_properties(properties);
+		add_object(p);
 	} else {
 		_log.warn(fmt("Ignoring object %1% with unknown type\n")
 		          % path.c_str());

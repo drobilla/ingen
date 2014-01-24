@@ -42,8 +42,16 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
 	, OutputPort(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
 	, _is_output(is_output)
 {
-	set_property(bufs.uris().ingen_polyphonic,
-	             bufs.forge().make(polyphonic));
+	if (polyphonic) {
+		set_property(bufs.uris().ingen_polyphonic, bufs.forge().make(true));
+	}
+
+	// Set default control range
+	if (!is_output && (type == PortType::CONTROL || type == PortType::CV)) {
+		set_property(bufs.uris().lv2_minimum, bufs.forge().make(0.0f));
+		set_property(bufs.uris().lv2_maximum, bufs.forge().make(1.0f));
+	}
+
 }
 
 DuplexPort::~DuplexPort()

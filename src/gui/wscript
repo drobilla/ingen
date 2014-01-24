@@ -47,7 +47,6 @@ def build(bld):
             PluginMenu.cpp
             Port.cpp
             PortMenu.cpp
-            PortPropertiesWindow.cpp
             PropertiesWindow.cpp
             RDFS.cpp
             RenameWindow.cpp

@@ -53,12 +53,6 @@ InputPort::InputPort(BufferFactory&      bufs,
 	if (parent->graph_type() != Node::GraphType::GRAPH) {
 		add_property(uris.rdf_type, uris.lv2_InputPort);
 	}
-
-	// Set default control range
-	if (type == PortType::CONTROL || type == PortType::CV) {
-		set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
-		set_property(uris.lv2_maximum, bufs.forge().make(1.0f));
-	}
 }
 
 bool

@@ -78,6 +78,7 @@ private:
 	GraphBox* get_graph_box() const;
 
 	void property_changed(const Raul::URI& key, const Atom& value);
+	void property_removed(const Raul::URI& key, const Atom& value);
 	void moved();
 
 	void on_value_changed(double value);

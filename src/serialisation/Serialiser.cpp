@@ -433,9 +433,6 @@ Serialiser::Impl::serialise_block(SPtr<const Node>  block,
 	_model->add_statement(block_id,
 	                      Sord::URI(_model->world(), uris.ingen_prototype),
 	                      class_id);
-	_model->add_statement(block_id,
-	                      Sord::URI(_model->world(), uris.lv2_symbol),
-	                      Sord::Literal(_model->world(), block->path().symbol()));
 
 	const Node::Properties props = block->properties(Resource::Graph::EXTERNAL);
 	serialise_properties(block_id, props);
@@ -455,14 +452,20 @@ Serialiser::Impl::serialise_port(const Node*       port,
                                  Resource::Graph   context,
                                  const Sord::Node& port_id)
 {
-	URIs&        uris  = _world.uris();
-	Sord::World& world = _model->world();
-
-	_model->add_statement(port_id,
-	                      Sord::URI(world, uris.lv2_symbol),
-	                      Sord::Literal(world, port->path().symbol()));
-
+	URIs&            uris  = _world.uris();
+	Sord::World&     world = _model->world();
 	Node::Properties props = port->properties(context);
+
+	if (context == Resource::Graph::INTERNAL) {
+		// Always write lv2:symbol for Graph ports (required for lv2:Plugin)
+		_model->add_statement(port_id,
+		                      Sord::URI(world, uris.lv2_symbol),
+		                      Sord::Literal(world, port->path().symbol()));
+	} else {
+		// Never write lv2:index for plugin instances (not persistent/stable)
+		props.erase(uris.lv2_index);
+	}
+
 	if (context == Resource::Graph::INTERNAL &&
 	    port->has_property(uris.rdf_type, uris.lv2_ControlPort) &&
 	    port->has_property(uris.rdf_type, uris.lv2_InputPort))

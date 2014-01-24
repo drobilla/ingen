@@ -366,11 +366,9 @@ LV2Block::instantiate(BufferFactory& bufs)
 		                           || port_type == PortType::CV)) {
 			port->set_value(val);
 			if (!isnan(min_values[j])) {
-				port->set_property(uris.lv2_minimum, forge.make(min_values[j]));
 				port->set_minimum(forge.make(min_values[j]));
 			}
 			if (!isnan(max_values[j])) {
-				port->set_property(uris.lv2_maximum, forge.make(max_values[j]));
 				port->set_maximum(forge.make(max_values[j]));
 			}
 		}
