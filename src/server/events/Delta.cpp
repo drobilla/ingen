@@ -238,7 +238,7 @@ Delta::pre_process()
 				}
 			}
 
-			if (key == uris.ingen_polyphonic) {
+			if (!_create_event && key == uris.ingen_polyphonic) {
 				GraphImpl* parent = dynamic_cast<GraphImpl*>(obj->parent());
 				if (parent) {
 					if (value.type() == uris.forge.Bool) {
