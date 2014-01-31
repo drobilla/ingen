@@ -48,7 +48,7 @@ Delta::Delta(Engine&           engine,
              SPtr<Interface>   client,
              int32_t           id,
              SampleCount       timestamp,
-             bool              create,
+             Type              type,
              Resource::Graph   context,
              const Raul::URI&  subject,
              const Properties& properties,
@@ -62,7 +62,7 @@ Delta::Delta(Engine&           engine,
 	, _graph(NULL)
 	, _compiled_graph(NULL)
 	, _context(context)
-	, _create(create)
+	, _type(type)
 	, _poly_lock(engine.store()->lock(), Glib::NOT_LOCK)
 {
 	if (context != Resource::Graph::DEFAULT) {
@@ -113,7 +113,7 @@ Delta::pre_process()
 		? static_cast<Ingen::Resource*>(_engine.store()->get(Node::uri_to_path(_subject)))
 		: static_cast<Ingen::Resource*>(_engine.block_factory()->plugin(_subject));
 
-	if (!_object && !is_client && (!is_graph_object || !_create)) {
+	if (!_object && !is_client && (!is_graph_object || _type != Type::PUT)) {
 		return Event::pre_process_done(Status::NOT_FOUND, _subject);
 	}
 
@@ -163,7 +163,7 @@ Delta::pre_process()
 	}
 
 	// Remove all added properties if this is a put
-	if (_create && _object) {
+	if (_type == Type::PUT && _object) {
 		for (const auto& p : _properties) {
 			_object->remove_property(p.first, p.second);
 		}
@@ -381,11 +381,22 @@ Delta::post_process()
 			_create_event->post_process();
 		} else {
 			respond();
-			if (_create) {
+			_engine.broadcaster()->set_ignore_client(_request_client);
+			switch (_type) {
+			case Type::SET:
+				_engine.broadcaster()->set_property(
+					_subject,
+					(*_properties.begin()).first,
+					(*_properties.begin()).second);
+				break;
+			case Type::PUT:
 				_engine.broadcaster()->put(_subject, _properties, _context);
-			} else {
+				break;
+			case Type::PATCH:
 				_engine.broadcaster()->delta(_subject, _remove, _properties);
+				break;
 			}
+			_engine.broadcaster()->clear_ignore_client();
 		}
 	} else {
 		respond();

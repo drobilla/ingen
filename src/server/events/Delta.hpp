@@ -69,11 +69,17 @@ class SetPortValue;
 class Delta : public Event
 {
 public:
+	enum class Type {
+		SET,
+		PUT,
+		PATCH
+	};
+			
 	Delta(Engine&                     engine,
 	      SPtr<Interface>             client,
 	      int32_t                     id,
 	      SampleCount                 timestamp,
-	      bool                        create,
+	      Type                        type,
 	      Resource::Graph             context,
 	      const Raul::URI&            subject,
 	      const Resource::Properties& properties,
@@ -109,7 +115,7 @@ private:
 	CompiledGraph*           _compiled_graph;
 	Resource::Graph          _context;
 	ControlBindings::Key     _binding;
-	bool                     _create;
+	Type                     _type;
 
 	SPtr<ControlBindings::Bindings> _old_bindings;
 

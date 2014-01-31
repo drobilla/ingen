@@ -54,7 +54,7 @@ EventWriter::put(const Raul::URI&            uri,
 {
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
-		                  true, ctx, uri, properties));
+		                  Events::Delta::Type::PUT, ctx, uri, properties));
 }
 
 void
@@ -64,7 +64,8 @@ EventWriter::delta(const Raul::URI&            uri,
 {
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
-		                  false, Resource::Graph::DEFAULT, uri, add, remove));
+		                  Events::Delta::Type::PATCH, Resource::Graph::DEFAULT,
+		                  uri, add, remove));
 }
 
 void
@@ -124,7 +125,8 @@ EventWriter::set_property(const Raul::URI& uri,
 	add.insert(make_pair(predicate, value));
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
-		                  false, Resource::Graph::DEFAULT, uri, add, remove));
+		                  Events::Delta::Type::SET, Resource::Graph::DEFAULT,
+		                  uri, add, remove));
 }
 
 void

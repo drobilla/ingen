@@ -215,7 +215,7 @@ ClientStore::put(const Raul::URI&            uri,
 {
 	typedef Resource::Properties::const_iterator Iterator;
 #ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Put " << uri << " {" << endl;
+	std::cerr << "Client put " << uri << " {" << endl;
 	for (auto p : properties)
 		std::cerr << '\t' << p.first << " = " << _uris.forge.str(p.second)
 		          << " :: " << p.second.type() << endl;
@@ -312,7 +312,7 @@ ClientStore::delta(const Raul::URI&            uri,
                    const Resource::Properties& add)
 {
 #ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Delta " << uri << " {" << endl;
+	std::cerr << "Client delta " << uri << " {" << endl;
 	for (auto r : remove)
 		std::cerr << "    - " << r.first
 		          << " = " << _uris.forge.str(r.second)
@@ -352,6 +352,11 @@ ClientStore::set_property(const Raul::URI& subject_uri,
                           const Raul::URI& predicate,
                           const Atom&      value)
 {
+#ifdef INGEN_CLIENT_STORE_DUMP
+	std::cerr << "Client set " << subject_uri << " : "
+	          << predicate << " = " << _uris.forge.str(value) << std::endl;
+#endif
+
 	if (subject_uri == Raul::URI("ingen:/engine")) {
 		_log.info(fmt("Engine property <%1%> = %2%\n")
 		          % predicate.c_str() % _uris.forge.str(value));

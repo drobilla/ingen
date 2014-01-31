@@ -80,7 +80,7 @@ lv2_ui_write(SuilController controller,
 		Atom            val  = ui->world()->forge().alloc(
 			atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 		ui->world()->interface()->set_property(port->uri(),
-		                                       uris.ingen_value,
+		                                       uris.ingen_activity,
 		                                       val);
 
 	} else {
@@ -199,30 +199,14 @@ PluginUI::create(Ingen::World*          world,
 		return SPtr<PluginUI>();
 	}
 
+	// Create the PluginUI, but don't instantiate yet
 	SPtr<PluginUI> ret(new PluginUI(world, block, lilv_ui_get_uri(ui)));
 	ret->_features = world->lv2_features().lv2_features(
 		world, const_cast<BlockModel*>(block.get()));
 
-	SuilInstance* instance = suil_instance_new(
-		PluginUI::ui_host,
-		ret.get(),
-		lilv_node_as_uri(gtk_ui),
-		lilv_node_as_uri(lilv_plugin_get_uri(plugin)),
-		lilv_node_as_uri(lilv_ui_get_uri(ui)),
-		lilv_node_as_uri(ui_type),
-		lilv_uri_to_path(lilv_node_as_uri(lilv_ui_get_bundle_uri(ui))),
-		lilv_uri_to_path(lilv_node_as_uri(lilv_ui_get_binary_uri(ui))),
-		ret->_features->array());
-
-	lilv_node_free(gtk_ui);
-
-	if (!instance) {
-		world->log().error("Failed to instantiate LV2 UI\n");
-		return SPtr<PluginUI>();
-	}
-
-	ret->_instance = instance;
-
+	/* Subscribe (enable broadcast) for any requested port notifications.  This
+	   must be done before instantiation so responses to any events sent by the
+	   UI's init() will be sent back to this client. */
 	LilvWorld* lworld              = world->lilv_world();
 	LilvNode*  ui_portNotification = lilv_new_uri(lworld, LV2_UI__portNotification);
 	LilvNode*  lv2_symbol          = lilv_new_uri(lworld, LV2_CORE__symbol);
@@ -242,6 +226,31 @@ PluginUI::create(Ingen::World*          world,
 	lilv_nodes_free(notes);
 	lilv_node_free(lv2_symbol);
 	lilv_node_free(ui_portNotification);
+
+	// Instantiate the actual plugin UI via Suil
+	SuilInstance* instance = suil_instance_new(
+		PluginUI::ui_host,
+		ret.get(),
+		lilv_node_as_uri(gtk_ui),
+		lilv_node_as_uri(lilv_plugin_get_uri(plugin)),
+		lilv_node_as_uri(lilv_ui_get_uri(ui)),
+		lilv_node_as_uri(ui_type),
+		lilv_uri_to_path(lilv_node_as_uri(lilv_ui_get_bundle_uri(ui))),
+		lilv_uri_to_path(lilv_node_as_uri(lilv_ui_get_binary_uri(ui))),
+		ret->_features->array());
+
+	lilv_node_free(gtk_ui);
+
+	if (!instance) {
+		world->log().error("Failed to instantiate LV2 UI\n");
+		// Cancel any subscriptions
+		for (uint32_t i : ret->_subscribed_ports) {
+			lv2_ui_unsubscribe(ret.get(), i, 0, NULL);
+		}
+		return SPtr<PluginUI>();
+	}
+
+	ret->_instance = instance;
 
 	return ret;
 }

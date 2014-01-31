@@ -50,6 +50,14 @@ public:
 
 	void set_broadcast(const Raul::URI& client, bool broadcast);
 
+	/** Ignore a client when broadcasting.
+	 *
+	 * This is used to prevent feeding back updates to the client that
+	 * initiated a property set in the first place.
+	 */
+	void set_ignore_client(SPtr<Interface> client) { _ignore_client = client; }
+	void clear_ignore_client()                     { _ignore_client.reset(); }
+	
 	/** Return true iff there are any clients with broadcasting enabled.
 	 *
 	 * This is used in the audio thread to decide whether or not notifications
@@ -85,8 +93,11 @@ public:
 
 #define BROADCAST(msg, ...) \
 	std::lock_guard<std::mutex> lock(_clients_mutex); \
-	for (const auto& c : _clients) \
-		c.second->msg(__VA_ARGS__)
+	for (const auto& c : _clients) { \
+		if (c.second != _ignore_client) { \
+			c.second->msg(__VA_ARGS__); \
+		} \
+	} \
 
 	void bundle_begin() { BROADCAST(bundle_begin); }
 	void bundle_end()   { BROADCAST(bundle_end); }
@@ -151,6 +162,7 @@ private:
 	std::set<Raul::URI> _broadcastees;
 	std::atomic<bool>   _must_broadcast;
 	unsigned            _bundle_depth;
+	SPtr<Interface>     _ignore_client;
 };
 
 } // namespace Server
