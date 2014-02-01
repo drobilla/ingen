@@ -209,12 +209,22 @@ PluginUI::create(Ingen::World*          world,
 	   UI's init() will be sent back to this client. */
 	LilvWorld* lworld              = world->lilv_world();
 	LilvNode*  ui_portNotification = lilv_new_uri(lworld, LV2_UI__portNotification);
+	LilvNode*  ui_plugin           = lilv_new_uri(lworld, LV2_UI__plugin);
 	LilvNode*  lv2_symbol          = lilv_new_uri(lworld, LV2_CORE__symbol);
 	LilvNodes* notes               = lilv_world_find_nodes(
 		lworld, lilv_ui_get_uri(ui), ui_portNotification, NULL);
 	LILV_FOREACH(nodes, n, notes) {
 		const LilvNode* note = lilv_nodes_get(notes, n);
 		const LilvNode* sym  = lilv_world_get(lworld, note, lv2_symbol, NULL);
+		const LilvNode* plug = lilv_world_get(lworld, note, ui_plugin, NULL);
+		if (plug && !lilv_node_is_uri(plug)) {
+			world->log().error(fmt("%1% UI has non-URI ui:plugin\n")
+			                   % block->plugin()->uri().c_str());
+			continue;
+		}
+		if (plug && strcmp(lilv_node_as_uri(plug), block->plugin()->uri().c_str())) {
+			continue;  // Notification is for another plugin
+		}
 		if (sym) {
 			uint32_t index = lv2_ui_port_index(ret.get(), lilv_node_as_string(sym));
 			if (index != LV2UI_INVALID_PORT_INDEX) {
@@ -225,6 +235,7 @@ PluginUI::create(Ingen::World*          world,
 	}
 	lilv_nodes_free(notes);
 	lilv_node_free(lv2_symbol);
+	lilv_node_free(ui_plugin);
 	lilv_node_free(ui_portNotification);
 
 	// Instantiate the actual plugin UI via Suil
