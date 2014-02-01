@@ -188,7 +188,7 @@ Delta::pre_process()
 					} else {
 						_status = Status::BAD_VALUE_TYPE;
 					}
-				} else if (key == uris.ingen_value) {
+				} else if (key == uris.ingen_value || key == uris.ingen_activity) {
 					SetPortValue* ev = new SetPortValue(
 						_engine, _request_client, _request_id, _time, port, value);
 					ev->pre_process();
