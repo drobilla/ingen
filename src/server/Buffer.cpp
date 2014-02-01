@@ -212,7 +212,7 @@ Buffer::prepare_output_write(Context& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
 		_atom->type = (LV2_URID)_factory.uris().atom_Chunk;
-		_atom->size = _capacity - sizeof(LV2_Atom_Sequence);
+		_atom->size = _capacity - sizeof(LV2_Atom);
 	}
 }
 
