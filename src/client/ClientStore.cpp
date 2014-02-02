@@ -118,6 +118,15 @@ ClientStore::remove_object(const Raul::Path& path)
 
 		// Remove object from parent model if applicable
 		if (object->parent()) {
+			SPtr<PortModel>  port     = dynamic_ptr_cast<PortModel>(top->second);
+			SPtr<GraphModel> gpparent = dynamic_ptr_cast<GraphModel>(
+				object->parent()->parent());
+			if (port && gpparent) {
+				/* Port on a block in a graph (probably on a subgraph),
+				   remove any connections in the parent's parent graph. */
+				gpparent->remove_arcs_on(port);
+			}
+
 			object->parent()->remove_child(object);
 		}
 	}

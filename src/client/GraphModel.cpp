@@ -50,26 +50,11 @@ GraphModel::remove_child(SPtr<ObjectModel> o)
 	assert(o->path().is_child_of(path()));
 	assert(o->parent().get() == this);
 
-	// Remove any connections which referred to this object,
-	// since they can't possibly exist anymore
-	for (Arcs::iterator j = _arcs.begin(); j != _arcs.end();) {
-		Arcs::iterator next = j;
-		++next;
-
-		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(j->second);
-		if (arc->tail_path().parent() == o->path()
-		    || arc->tail_path() == o->path()
-		    || arc->head_path().parent() == o->path()
-		    || arc->head_path() == o->path()) {
-			_signal_removed_arc.emit(arc);
-			_arcs.erase(j); // cuts our reference
-		}
-		j = next;
-	}
-
 	SPtr<PortModel> pm = dynamic_ptr_cast<PortModel>(o);
-	if (pm)
+	if (pm) {
+		remove_arcs_on(pm);
 		remove_port(pm);
+	}
 
 	SPtr<BlockModel> bm = dynamic_ptr_cast<BlockModel>(o);
 	if (bm) {
@@ -77,6 +62,27 @@ GraphModel::remove_child(SPtr<ObjectModel> o)
 	}
 
 	return true;
+}
+
+void
+GraphModel::remove_arcs_on(SPtr<PortModel> p)
+{
+	// Remove any connections which referred to this object,
+	// since they can't possibly exist anymore
+	for (Arcs::iterator j = _arcs.begin(); j != _arcs.end();) {
+		Arcs::iterator next = j;
+		++next;
+
+		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(j->second);
+		if (arc->tail_path().parent() == p->path()
+		    || arc->tail_path() == p->path()
+		    || arc->head_path().parent() == p->path()
+		    || arc->head_path() == p->path()) {
+			_signal_removed_arc.emit(arc);
+			_arcs.erase(j);  // Cuts our reference
+		}
+		j = next;
+	}
 }
 
 void
