@@ -381,13 +381,17 @@ Delta::post_process()
 			_create_event->post_process();
 		} else {
 			respond();
-			_engine.broadcaster()->set_ignore_client(_request_client);
 			switch (_type) {
 			case Type::SET:
+				/* Kludge to avoid feedback for set events only.  The GUI
+				   depends on put responses to e.g. initially place blocks.
+				   Some more sensible way of controlling this is needed. */
+				_engine.broadcaster()->set_ignore_client(_request_client);
 				_engine.broadcaster()->set_property(
 					_subject,
 					(*_properties.begin()).first,
 					(*_properties.begin()).second);
+				_engine.broadcaster()->clear_ignore_client();
 				break;
 			case Type::PUT:
 				_engine.broadcaster()->put(_subject, _properties, _context);
@@ -396,7 +400,6 @@ Delta::post_process()
 				_engine.broadcaster()->delta(_subject, _remove, _properties);
 				break;
 			}
-			_engine.broadcaster()->clear_ignore_client();
 		}
 	} else {
 		respond();
