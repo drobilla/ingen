@@ -94,7 +94,7 @@ protected:
 	explicit Event(Engine& engine)
 		: _engine(engine)
 		, _next(NULL)
-		, _request_id(-1)
+		, _request_id(0)
 		, _time(0)
 		, _status(Status::NOT_PREPARED)
 	{}
@@ -116,7 +116,7 @@ protected:
 
 	/** Respond to the originating client. */
 	inline Status respond() {
-		if (_request_client) {
+		if (_request_client && _request_id) {
 			_request_client->response(_request_id, _status, _err_subject);
 		}
 		return _status;

@@ -134,11 +134,7 @@ AtomReader::write(const LV2_Atom* msg)
 	const int32_t seq_id      = ((number && number->type == _uris.atom_Int)
 	                             ? ((const LV2_Atom_Int*)number)->body
 	                             : 0);
-	if (seq_id) {
-		_iface.set_response_id(seq_id);
-	} else {
-		_iface.set_response_id(-1);
-	}
+	_iface.set_response_id(seq_id);
 
 	if (obj->body.otype == _uris.patch_Get) {
 		_iface.get(Raul::URI(subject_uri));

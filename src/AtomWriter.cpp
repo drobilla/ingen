@@ -48,7 +48,7 @@ AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	: _map(map)
 	, _uris(uris)
 	, _sink(sink)
-	, _id(1)
+	, _id(0)
 {
 	_out.buf = NULL;
 	_out.len = 0;
@@ -67,11 +67,7 @@ AtomWriter::finish_msg()
 int32_t
 AtomWriter::next_id()
 {
-	if (_id == -1) {
-		return 0;
-	} else {
-		return ++_id;
-	}
+	return _id ? ++_id : 0;
 }
 
 void
@@ -126,7 +122,7 @@ AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
 	lv2_atom_forge_object(&_forge, frame, 0, type);
 
 	const int32_t id = next_id();
-	if (id != 0) {
+	if (id) {
 		lv2_atom_forge_key(&_forge, _uris.patch_sequenceNumber);
 		lv2_atom_forge_int(&_forge, id);
 	}
@@ -289,7 +285,7 @@ AtomWriter::get(const Raul::URI& uri)
 void
 AtomWriter::response(int32_t id, Status status, const std::string& subject)
 {
-	if (id == -1) {
+	if (!id) {
 		return;
 	}
 

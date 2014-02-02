@@ -27,7 +27,7 @@ namespace Server {
 
 EventWriter::EventWriter(Engine& engine)
 	: _engine(engine)
-	, _request_id(-1)
+	, _request_id(0)
 {
 }
 
