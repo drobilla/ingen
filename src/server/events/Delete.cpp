@@ -64,8 +64,6 @@ Delete::pre_process()
 		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
 	}
 
-	_lock.acquire();
-
 	_removed_bindings = _engine.control_bindings()->remove(_path);
 
 	Store::iterator iter = _engine.store()->find(_path);
@@ -85,6 +83,8 @@ Delete::pre_process()
 	if (!parent) {
 		return Event::pre_process_done(Status::INTERNAL_ERROR, _path);
 	}
+
+	_lock.acquire();
 
 	_engine.store()->remove(iter, _removed_objects);
 
@@ -118,6 +118,10 @@ Delete::pre_process()
 void
 Delete::execute(ProcessContext& context)
 {
+	if (_status != Status::SUCCESS) {
+		return;
+	}
+
 	if (_disconnect_event) {
 		_disconnect_event->execute(context);
 	}
@@ -141,7 +145,10 @@ Delete::execute(ProcessContext& context)
 void
 Delete::post_process()
 {
-	_lock.release();
+	if (_lock.locked()) {
+		_lock.release();
+	}
+
 	_removed_bindings.reset();
 
 	Broadcaster::Transfer t(*_engine.broadcaster());
