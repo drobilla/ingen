@@ -651,7 +651,7 @@ GraphBox::event_zoom_out()
 void
 GraphBox::event_zoom_normal()
 {
-	_view->canvas()->set_scale(1.0, _view->canvas()->get_default_font_size());
+	_view->canvas()->set_zoom(1.0);
 }
 
 void
