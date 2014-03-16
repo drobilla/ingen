@@ -39,6 +39,7 @@
 #define INGEN__polyphonic     INGEN_NS "polyphonic"
 #define INGEN__polyphony      INGEN_NS "polyphony"
 #define INGEN__prototype      INGEN_NS "prototype"
+#define INGEN__sprungLayout   INGEN_NS "sprungLayout"
 #define INGEN__tail           INGEN_NS "tail"
 #define INGEN__uiEmbedded     INGEN_NS "uiEmbedded"
 #define INGEN__value          INGEN_NS "value"

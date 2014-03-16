@@ -81,6 +81,10 @@ GraphView::set_graph(SPtr<const GraphModel> graph)
 	_poly_spin->set_increments(1, 4);
 	_poly_spin->set_value(graph->internal_poly());
 
+	if (ganv_canvas_supports_sprung_layout(_canvas->gobj())) {
+		ganv_canvas_set_sprung_layout(_canvas->gobj(), TRUE);
+	}
+
 	for (const auto& p : graph->properties())
 		property_changed(p.first, p.second);
 

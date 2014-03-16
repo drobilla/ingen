@@ -80,6 +80,15 @@ of the Graph's children, and :polyphonic specifies whether the graph is
 seen as polyphonic to the Graph's parent.
 """ .
 
+ingen:sprungLayout
+	a owl:DatatypeProperty ;
+	rdfs:domain ingen:Graph ;
+	rdfs:range xsd:boolean ;
+	rdfs:label "sprung layout" ;
+	rdfs:comment """
+Whether or not the graph has a "sprung" force-directed layout.
+""" .
+
 ingen:value
 	a owl:DatatypeProperty ;
 	rdfs:domain lv2:Port ;

@@ -1004,14 +1004,25 @@ Contributors:
                   <object class="GtkMenu" id="graph_graph_menu_menu">
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkCheckMenuItem" id="graph_animate_canvas_menuitem">
+                      <object class="GtkCheckMenuItem" id="graph_animate_signals_menuitem">
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="tooltip_text" translatable="yes">Update control ports as values change.</property>
-                        <property name="label" translatable="yes">_Animate Canvas</property>
+                        <property name="label" translatable="yes">Animate Signa_ls</property>
                         <property name="use_underline">True</property>
                         <accelerator key="l" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkCheckMenuItem" id="graph_sprung_layout_menuitem">
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Sprung Layou_t</property>
+                        <property name="use_underline">True</property>
+                        <property name="active">True</property>
+                        <accelerator key="t" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                       </object>
                     </child>
                     <child>

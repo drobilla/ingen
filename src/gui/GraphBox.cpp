@@ -88,7 +88,8 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	xml->get_widget("graph_view_engine_window_menuitem", _menu_view_engine_window);
 	xml->get_widget("graph_properties_menuitem", _menu_view_graph_properties);
 	xml->get_widget("graph_fullscreen_menuitem", _menu_fullscreen);
-	xml->get_widget("graph_animate_canvas_menuitem", _menu_animate_canvas);
+	xml->get_widget("graph_animate_signals_menuitem", _menu_animate_signals);
+	xml->get_widget("graph_sprung_layout_menuitem", _menu_sprung_layout);
 	xml->get_widget("graph_human_names_menuitem", _menu_human_names);
 	xml->get_widget("graph_show_port_names_menuitem", _menu_show_port_names);
 	xml->get_widget("graph_zoom_in_menuitem", _menu_zoom_in);
@@ -126,8 +127,10 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &GraphBox::event_quit));
 	_menu_fullscreen->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_fullscreen_toggled));
-	_menu_animate_canvas->signal_activate().connect(
-		sigc::mem_fun(this, &GraphBox::event_animate_canvas_toggled));
+	_menu_animate_signals->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_animate_signals_toggled));
+	_menu_sprung_layout->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_sprung_layout_toggled));
 	_menu_human_names->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_human_names_toggled));
 	_menu_show_doc_pane->signal_activate().connect(
@@ -246,6 +249,16 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 
 	assert(_view);
 
+	graph->signal_property().connect(
+		sigc::mem_fun(this, &GraphBox::property_changed));
+
+	if (ganv_canvas_supports_sprung_layout(_view->canvas()->gobj())) {
+		_menu_sprung_layout->set_active(true);
+	} else {
+		_menu_sprung_layout->set_active(false);
+		_menu_sprung_layout->set_sensitive(false);
+	}
+
 	// Add view to our alignment
 	if (_view->get_parent())
 		_view->get_parent()->remove(*_view.get());
@@ -313,6 +326,16 @@ GraphBox::graph_port_removed(SPtr<const PortModel> port)
 	}
 
 	_menu_view_control_window->property_sensitive() = false;
+}
+
+void
+GraphBox::property_changed(const Raul::URI& predicate, const Atom& value)
+{
+	if (predicate == _app->uris().ingen_sprungLayout) {
+		if (value.type() == _app->uris().forge.Bool) {
+			_menu_sprung_layout->set_active(value.get<int32_t>());
+		}
+	}
 }
 
 void
@@ -702,12 +725,25 @@ GraphBox::event_status_bar_toggled()
 }
 
 void
-GraphBox::event_animate_canvas_toggled()
+GraphBox::event_animate_signals_toggled()
 {
 	_app->interface()->set_property(
 		Raul::URI("ingen:/clients/this"),
 		_app->uris().ingen_broadcast,
-		_app->forge().make((bool)_menu_animate_canvas->get_active()));
+		_app->forge().make((bool)_menu_animate_signals->get_active()));
+}
+
+void
+GraphBox::event_sprung_layout_toggled()
+{
+	const bool sprung = _menu_sprung_layout->get_active();
+
+	ganv_canvas_set_sprung_layout(_view->canvas()->gobj(), sprung);
+
+	Resource::Properties properties;
+	properties.insert(make_pair(_app->uris().ingen_sprungLayout,
+	                            _app->forge().make(sprung)));
+	_app->interface()->put(_graph->uri(), properties);
 }
 
 void

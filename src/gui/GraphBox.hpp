@@ -94,6 +94,7 @@ public:
 private:
 	void graph_port_added(SPtr<const Client::PortModel> port);
 	void graph_port_removed(SPtr<const Client::PortModel> port);
+	void property_changed(const Raul::URI& predicate, const Atom& value);
 	void show_status(const Client::ObjectModel* model);
 
 	int message_dialog(const Glib::ustring& message,
@@ -114,7 +115,8 @@ private:
 	void event_fullscreen_toggled();
 	void event_doc_pane_toggled();
 	void event_status_bar_toggled();
-	void event_animate_canvas_toggled();
+	void event_animate_signals_toggled();
+	void event_sprung_layout_toggled();
 	void event_human_names_toggled();
 	void event_port_names_toggled();
 	void event_zoom_in();
@@ -145,7 +147,8 @@ private:
 	Gtk::MenuItem*      _menu_select_all;
 	Gtk::MenuItem*      _menu_close;
 	Gtk::MenuItem*      _menu_quit;
-	Gtk::CheckMenuItem* _menu_animate_canvas;
+	Gtk::CheckMenuItem* _menu_animate_signals;
+	Gtk::CheckMenuItem* _menu_sprung_layout;
 	Gtk::CheckMenuItem* _menu_human_names;
 	Gtk::CheckMenuItem* _menu_show_port_names;
 	Gtk::CheckMenuItem* _menu_show_doc_pane;

@@ -90,6 +90,7 @@ public:
 	const Quark ingen_polyphonic;
 	const Quark ingen_polyphony;
 	const Quark ingen_prototype;
+	const Quark ingen_sprungLayout;
 	const Quark ingen_tail;
 	const Quark ingen_uiEmbedded;
 	const Quark ingen_value;
