@@ -592,28 +592,24 @@ GraphBox::event_draw()
 	Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
 	save_button->property_has_default() = true;
 
-	int result = dialog.run();
-
-	if (result == Gtk::RESPONSE_OK) {
+	if (dialog.run() == Gtk::RESPONSE_OK) {
 		std::string filename = dialog.get_filename();
 		if (filename.find(".") == std::string::npos)
 			filename += ".dot";
 
-		bool confirm = true;
 		if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-			int ret = message_dialog(
+			const int ret = message_dialog(
 				(boost::format("File exists!  Overwrite %1%?") % filename).str(),
 				"", Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
-			confirm = (ret == Gtk::RESPONSE_YES);
+			if (ret != Gtk::RESPONSE_YES) {
+				return;
+			}
 		}
 
-		if (confirm) {
-			_view->canvas()->export_dot(filename.c_str());
-			_status_bar->push(
-				(boost::format("Rendered %1% to %2%")
-				 % _graph->path() % filename).str(),
-				STATUS_CONTEXT_GRAPH);
-		}
+		_view->canvas()->export_dot(filename.c_str());
+		_status_bar->push((boost::format("Rendered %1% to %2%")
+		                   % _graph->path() % filename).str(),
+		                  STATUS_CONTEXT_GRAPH);
 	}
 }
 
