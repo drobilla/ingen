@@ -17,8 +17,6 @@
 #ifndef INGEN_EVENTS_GET_HPP
 #define INGEN_EVENTS_GET_HPP
 
-#include <glibmm/thread.h>
-
 #include "Event.hpp"
 #include "BlockFactory.hpp"
 #include "types.hpp"
@@ -48,11 +46,44 @@ public:
 	void post_process();
 
 private:
-	const Raul::URI          _uri;
-	const Node*              _object;
-	const PluginImpl*        _plugin;
-	BlockFactory::Plugins    _plugins;
-	Glib::RWLock::ReaderLock _lock;
+	/** A sequence of puts and connects to respond to client with.
+	 * This is constructed in the pre_process() and later sent in
+	 * post_process() to avoid the need to lock.
+	 *
+	 * Ideally events (both server and client) would always be in a standard
+	 * message format so the Ingen protocol went the whole way through the
+	 * system, but for now things are controlled procedurally through
+	 * Interface, so this interim structure is necessary.
+	 */
+	struct Response {
+		void put(const Raul::URI&            uri,
+		         const Resource::Properties& props,
+		         Resource::Graph             ctx=Resource::Graph::DEFAULT);
+
+		void put_port(const PortImpl* port);
+		void put_block(const BlockImpl* block);
+		void put_graph(const GraphImpl* graph);
+		
+		struct Put {
+			Raul::URI            uri;
+			Resource::Properties properties;
+			Resource::Graph      ctx;
+		};
+
+		struct Connect {
+			Raul::Path tail;
+			Raul::Path head;
+		};
+
+		std::vector<Put>     puts;
+		std::vector<Connect> connects;
+	};
+
+	const Raul::URI       _uri;
+	const Node*           _object;
+	const PluginImpl*     _plugin;
+	BlockFactory::Plugins _plugins;
+	Response              _response;
 };
 
 } // namespace Events

@@ -16,6 +16,8 @@
 
 #include <utility>
 
+#include <glibmm/thread.h>
+
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Store.hpp"
@@ -34,8 +36,71 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-static void
-send_graph(Interface* client, const GraphImpl* graph);
+void
+Get::Response::put(const Raul::URI&            uri,
+                   const Resource::Properties& props,
+                   Resource::Graph             ctx)
+{
+	const Get::Response::Put put = { uri, props, ctx };
+	puts.push_back(put);
+}
+
+void
+Get::Response::put_port(const PortImpl* port)
+{
+	if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
+		Resource::Properties props = port->properties();
+		props.erase(port->bufs().uris().ingen_value);
+		props.insert(std::make_pair(port->bufs().uris().ingen_value,
+		                            port->value()));
+		put(port->uri(), props);
+	} else {
+		put(port->uri(), port->properties());
+	}
+}
+
+void
+Get::Response::put_block(const BlockImpl* block)
+{
+	PluginImpl* const plugin = block->plugin_impl();
+	if (plugin->type() == Plugin::Graph) {
+		put_graph((const GraphImpl*)block);
+	} else {
+		put(block->uri(), block->properties());
+		for (size_t j = 0; j < block->num_ports(); ++j) {
+			put_port(block->port_impl(j));
+		}
+	}
+}
+
+void
+Get::Response::put_graph(const GraphImpl* graph)
+{
+	put(graph->uri(),
+	    graph->properties(Resource::Graph::INTERNAL),
+	    Resource::Graph::INTERNAL);
+
+	put(graph->uri(),
+	    graph->properties(Resource::Graph::EXTERNAL),
+	    Resource::Graph::EXTERNAL);
+
+	// Enqueue locks
+	for (const auto& b : graph->blocks()) {
+		put_block(&b);
+	}
+
+	// Enqueue ports
+	for (uint32_t i = 0; i < graph->num_ports_non_rt(); ++i) {
+		put_port(graph->port_impl(i));
+	}
+
+	// Enqueue arcs
+	for (const auto& a : graph->arcs()) {
+		const SPtr<const Arc> arc     = a.second;
+		const Connect         connect = { arc->tail_path(), arc->head_path() };
+		connects.push_back(connect);
+	}
+}
 
 Get::Get(Engine&          engine,
          SPtr<Interface>  client,
@@ -46,14 +111,12 @@ Get::Get(Engine&          engine,
 	, _uri(uri)
 	, _object(NULL)
 	, _plugin(NULL)
-	, _lock(engine.store()->lock(), Glib::NOT_LOCK)
-{
-}
+{}
 
 bool
 Get::pre_process()
 {
-	_lock.acquire();
+	Glib::RWLock::ReaderLock lock(_engine.store()->lock());
 
 	if (_uri == "ingen:/plugins") {
 		_plugins = _engine.block_factory()->plugins();
@@ -61,68 +124,28 @@ Get::pre_process()
 	} else if (_uri == "ingen:/engine") {
 		return Event::pre_process_done(Status::SUCCESS);
 	} else if (Node::uri_is_path(_uri)) {
-		_object = _engine.store()->get(Node::uri_to_path(_uri));
-		return Event::pre_process_done(
-			_object ? Status::SUCCESS : Status::NOT_FOUND, _uri);
-	} else {
-		_plugin = _engine.block_factory()->plugin(_uri);
-		return Event::pre_process_done(
-			_plugin ? Status::SUCCESS : Status::NOT_FOUND, _uri);
-	}
-}
-
-static void
-send_port(Interface* client, const PortImpl* port)
-{
-	if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
-		Resource::Properties props = port->properties();
-		props.erase(port->bufs().uris().ingen_value);
-		props.insert(std::make_pair(port->bufs().uris().ingen_value,
-		                            port->value()));
-		client->put(port->uri(), props);
-	} else {
-		client->put(port->uri(), port->properties());
-	}
-}
-
-static void
-send_block(Interface* client, const BlockImpl* block)
-{
-	PluginImpl* const plugin = block->plugin_impl();
-	if (plugin->type() == Plugin::Graph) {
-		send_graph(client, (const GraphImpl*)block);
-	} else {
-		client->put(block->uri(), block->properties());
-		for (size_t j = 0; j < block->num_ports(); ++j) {
-			send_port(client, block->port_impl(j));
+		if ((_object = _engine.store()->get(Node::uri_to_path(_uri)))) {
+			const BlockImpl* block = NULL;
+			const GraphImpl* graph = NULL;
+			const PortImpl*  port  = NULL;
+			if ((graph = dynamic_cast<const GraphImpl*>(_object))) {
+				_response.put_graph(graph);
+			} else if ((block = dynamic_cast<const BlockImpl*>(_object))) {
+				_response.put_block(block);
+			} else if ((port = dynamic_cast<const PortImpl*>(_object))) {
+				_response.put_port(port);
+			} else {
+				return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _uri);
+			}
+			return Event::pre_process_done(Status::SUCCESS);
 		}
-	}
-}
-
-static void
-send_graph(Interface* client, const GraphImpl* graph)
-{
-	client->put(graph->uri(),
-	            graph->properties(Resource::Graph::INTERNAL),
-	            Resource::Graph::INTERNAL);
-
-	client->put(graph->uri(),
-	            graph->properties(Resource::Graph::EXTERNAL),
-	            Resource::Graph::EXTERNAL);
-
-	// Send blocks
-	for (const auto& b : graph->blocks()) {
-		send_block(client, &b);
-	}
-
-	// Send ports
-	for (uint32_t i = 0; i < graph->num_ports_non_rt(); ++i) {
-		send_port(client, graph->port_impl(i));
-	}
-
-	// Send arcs
-	for (const auto& a : graph->arcs()) {
-		client->connect(a.second->tail_path(), a.second->head_path());
+		return Event::pre_process_done(Status::NOT_FOUND, _uri);
+	} else {
+		if ((_plugin = _engine.block_factory()->plugin(_uri))) {
+			_response.put(_uri, _plugin->properties());
+			return Event::pre_process_done(Status::SUCCESS);
+		}
+		return Event::pre_process_done(Status::NOT_FOUND, _uri);
 	}
 }
 
@@ -140,22 +163,15 @@ Get::post_process()
 				Raul::URI("ingen:/engine"),
 				uris.param_sampleRate,
 				uris.forge.make(int32_t(_engine.driver()->sample_rate())));
-		} else if (_object) {
-			const BlockImpl* block = NULL;
-			const GraphImpl* graph = NULL;
-			const PortImpl*  port  = NULL;
-			if ((graph = dynamic_cast<const GraphImpl*>(_object))) {
-				send_graph(_request_client.get(), graph);
-			} else if ((block = dynamic_cast<const BlockImpl*>(_object))) {
-				send_block(_request_client.get(), block);
-			} else if ((port = dynamic_cast<const PortImpl*>(_object))) {
-				send_port(_request_client.get(), port);
+		} else {
+			for (const Response::Put& put : _response.puts) {
+				_request_client->put(put.uri, put.properties, put.ctx);
 			}
-		} else if (_plugin) {
-			_request_client->put(_uri, _plugin->properties());
+			for (const Response::Connect& connect : _response.connects) {
+				_request_client->connect(connect.tail, connect.head);
+			}
 		}
 	}
-	_lock.release();
 }
 
 } // namespace Events
