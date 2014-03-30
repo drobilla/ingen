@@ -56,6 +56,8 @@ PreProcessor::event(Event* const ev)
 	assert(!ev->is_prepared());
 	assert(!ev->next());
 
+	/* Note that tail is only used here, not in process().  The head must be
+	   checked first here, since if it is NULL the tail pointer is junk. */
 	Event* const head = _head.load();
 	if (!head) {
 		_head = ev;
@@ -105,9 +107,9 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, size_t limit
 		// Since _head was not NULL, we know it hasn't been changed since
 		_head = next;
 
-		/* If next is NULL, then _tail may now be invalid.  However, in this
-		   case _head is also NULL so event() will not read _tail.  Since it
-		   could cause a race with event(), _tail is not set to NULL here. */
+		/* If next is NULL, then _tail may now be invalid.  However, it would cause
+		   a race to reset _tail here.  Instead, append() checks only _head for
+		   emptiness, and resets the tail appropriately. */
 	}
 
 	return n_processed;

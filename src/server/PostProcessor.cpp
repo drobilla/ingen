@@ -43,12 +43,16 @@ PostProcessor::append(ProcessContext& context, Event* first, Event* last)
 {
 	assert(first);
 	assert(last);
-	if (_head) {
-		_tail.load()->next(first);
-		_tail = last;
-	} else {
+	assert(!last->next());
+
+	/* Note that tail is only used here, not in process().  The head must be
+	   checked first here, since if it is NULL the tail pointer is junk. */
+	if (!_head) {
 		_tail = last;
 		_head = first;
+	} else {
+		_tail.load()->next(first);
+		_tail = last;
 	}
 }
 
@@ -63,17 +67,14 @@ PostProcessor::process()
 {
 	const FrameTime end_time = _max_time;
 
-	// To avoid a race, we only process up to tail and never write to _tail
-	Event* const tail = _tail.load();
-
 	Event* ev = _head.load();
 	if (!ev) {
-		// Process audio thread notifications up until end
+		// Process audio thread notifications until end
 		_engine.process_context().emit_notifications(end_time);
 		return;
 	}
 
-	while (ev->time() < end_time) {
+	while (ev && ev->time() < end_time) {
 		Event* const next = (Event*)ev->next();
 
 		// Process audio thread notifications up until this event's time
@@ -83,14 +84,18 @@ PostProcessor::process()
 		ev->post_process();
 		delete ev;
 
-		if (ev == tail || (next && next->time() >= end_time)) {
-			// Reached end, update _head
-			_head = next;
-			break;
-		}
-
 		ev = next;
 	}
+
+	// Since _head was not NULL, we know it hasn't been changed since
+	_head = ev;
+
+	/* If next is NULL, then _tail may now be invalid.  However, it would cause
+	   a race to reset _tail here.  Instead, append() checks only _head for
+	   emptiness, and resets the tail appropriately. */
+	
+	// Process remaining audio thread notifications until end
+	_engine.process_context().emit_notifications(end_time);
 }
 
 } // namespace Server
