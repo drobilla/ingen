@@ -363,7 +363,7 @@ Engine::enqueue_event(Event* ev)
 unsigned
 Engine::process_events()
 {
-	const size_t MAX_EVENTS_PER_CYCLE = _process_context.nframes() / 4;
+	const size_t MAX_EVENTS_PER_CYCLE = _process_context.nframes() / 8;
 	return _pre_processor->process(
 		_process_context, *_post_processor, MAX_EVENTS_PER_CYCLE);
 }

@@ -26,10 +26,19 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
+class Sentinel : public Event {
+public:
+	Sentinel(Engine& engine) : Event(engine) {}
+
+	bool pre_process() { return false; }
+	void execute(ProcessContext& context) {}
+	void post_process() {}
+};
+
 PostProcessor::PostProcessor(Engine& engine)
 	: _engine(engine)
-	, _head(NULL)
-	, _tail(NULL)
+	, _head(new Sentinel(engine))
+	, _tail(_head.load())
 	, _max_time(0)
 {
 }
@@ -45,15 +54,9 @@ PostProcessor::append(ProcessContext& context, Event* first, Event* last)
 	assert(last);
 	assert(!last->next());
 
-	/* Note that tail is only used here, not in process().  The head must be
-	   checked first here, since if it is NULL the tail pointer is junk. */
-	if (!_head) {
-		_tail = last;
-		_head = first;
-	} else {
-		_tail.load()->next(first);
-		_tail = last;
-	}
+	// The only place where _tail is written or next links are changed
+	_tail.load()->next(first);
+	_tail.store(last);
 }
 
 bool
@@ -67,32 +70,35 @@ PostProcessor::process()
 {
 	const FrameTime end_time = _max_time;
 
-	Event* ev = _head.load();
-	if (!ev) {
+	/* We can never empty the list and set _head = _tail = NULL since this
+	   would cause a race with append.  Instead, head is an already
+	   post-processed node, or initially a sentinel. */
+	Event* ev   = _head.load();
+	Event* next = (Event*)ev->next();
+	if (!next || next->time() >= end_time) {
 		// Process audio thread notifications until end
 		_engine.process_context().emit_notifications(end_time);
 		return;
 	}
 
-	while (ev && ev->time() < end_time) {
-		Event* const next = (Event*)ev->next();
+	do {
+		// Delete previously post-processed ev and move to next
+		delete ev;
+		ev = next;
 
 		// Process audio thread notifications up until this event's time
 		_engine.process_context().emit_notifications(ev->time());
 
-		// Process and delete this event
+		// Post-process event
 		ev->post_process();
-		delete ev;
+		next = ev->next();  // [1] (see below)
+	} while (next && next->time() < end_time);
 
-		ev = next;
-	}
-
-	// Since _head was not NULL, we know it hasn't been changed since
+	/* Reached the tail (as far as we're concerned).  There may be successors
+	   by now if append() has been called since [1], but that's fine.  Now, ev
+	   points to the last post-processed event, which will be the new head. */
+	assert(ev);
 	_head = ev;
-
-	/* If next is NULL, then _tail may now be invalid.  However, it would cause
-	   a race to reset _tail here.  Instead, append() checks only _head for
-	   emptiness, and resets the tail appropriately. */
 	
 	// Process remaining audio thread notifications until end
 	_engine.process_context().emit_notifications(end_time);
