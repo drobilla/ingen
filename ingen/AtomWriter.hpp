@@ -84,8 +84,7 @@ private:
 	void forge_arc(const Raul::Path& tail, const Raul::Path& head);
 	void forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type);
 
-	void    finish_msg();
-	int32_t next_id();
+	void finish_msg();
 
 	URIMap&        _map;
 	URIs&          _uris;

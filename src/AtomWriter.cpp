@@ -64,12 +64,6 @@ AtomWriter::finish_msg()
 	_out.len = 0;
 }
 
-int32_t
-AtomWriter::next_id()
-{
-	return _id ? ++_id : 0;
-}
-
 void
 AtomWriter::bundle_begin()
 {
@@ -121,10 +115,9 @@ AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
 {
 	lv2_atom_forge_object(&_forge, frame, 0, type);
 
-	const int32_t id = next_id();
-	if (id) {
+	if (_id) {
 		lv2_atom_forge_key(&_forge, _uris.patch_sequenceNumber);
-		lv2_atom_forge_int(&_forge, id);
+		lv2_atom_forge_int(&_forge, _id);
 	}
 }
 
