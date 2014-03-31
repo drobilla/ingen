@@ -122,6 +122,10 @@ private:
 	void event_zoom_in();
 	void event_zoom_out();
 	void event_zoom_normal();
+	void event_zoom_full();
+	void event_increase_font_size();
+	void event_decrease_font_size();
+	void event_normal_font_size();
 	void event_arrange();
 	void event_show_properties();
 	void event_show_engine();
@@ -156,6 +160,10 @@ private:
 	Gtk::MenuItem*      _menu_zoom_in;
 	Gtk::MenuItem*      _menu_zoom_out;
 	Gtk::MenuItem*      _menu_zoom_normal;
+	Gtk::MenuItem*      _menu_zoom_full;
+	Gtk::MenuItem*      _menu_increase_font_size;
+	Gtk::MenuItem*      _menu_decrease_font_size;
+	Gtk::MenuItem*      _menu_normal_font_size;
 	Gtk::MenuItem*      _menu_fullscreen;
 	Gtk::MenuItem*      _menu_arrange;
 	Gtk::MenuItem*      _menu_view_engine_window;

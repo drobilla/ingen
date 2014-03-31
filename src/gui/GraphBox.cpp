@@ -95,6 +95,10 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	xml->get_widget("graph_zoom_in_menuitem", _menu_zoom_in);
 	xml->get_widget("graph_zoom_out_menuitem", _menu_zoom_out);
 	xml->get_widget("graph_zoom_normal_menuitem", _menu_zoom_normal);
+	xml->get_widget("graph_zoom_full_menuitem", _menu_zoom_full);
+	xml->get_widget("graph_increase_font_size_menuitem", _menu_increase_font_size);
+	xml->get_widget("graph_decrease_font_size_menuitem", _menu_decrease_font_size);
+	xml->get_widget("graph_normal_font_size_menuitem", _menu_normal_font_size);
 	xml->get_widget("graph_doc_pane_menuitem", _menu_show_doc_pane);
 	xml->get_widget("graph_status_bar_menuitem", _menu_show_status_bar);
 	xml->get_widget("graph_arrange_menuitem", _menu_arrange);
@@ -149,6 +153,14 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &GraphBox::event_zoom_out));
 	_menu_zoom_normal->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_zoom_normal));
+	_menu_zoom_full->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_zoom_full));
+	_menu_increase_font_size->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_increase_font_size));
+	_menu_decrease_font_size->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_decrease_font_size));
+	_menu_normal_font_size->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_normal_font_size));
 	_menu_view_engine_window->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_show_engine));
 	_menu_view_graph_properties->signal_activate().connect(
@@ -671,6 +683,28 @@ void
 GraphBox::event_zoom_normal()
 {
 	_view->canvas()->set_zoom(1.0);
+}
+
+void
+GraphBox::event_zoom_full()
+{
+	_view->canvas()->zoom_full();
+}
+
+void
+GraphBox::event_increase_font_size()
+{
+	_view->canvas()->set_font_size(_view->canvas()->get_font_size() + 1.0);
+}
+void
+GraphBox::event_decrease_font_size()
+{
+	_view->canvas()->set_font_size(_view->canvas()->get_font_size() - 1.0);
+}
+void
+GraphBox::event_normal_font_size()
+{
+	_view->canvas()->set_font_size(_view->canvas()->get_default_font_size());
 }
 
 void
