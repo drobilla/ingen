@@ -17,7 +17,9 @@
 #include "ingen/URIs.hpp"
 
 #include "Buffer.hpp"
+#include "Driver.hpp"
 #include "DuplexPort.hpp"
+#include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "OutputPort.hpp"
 
@@ -93,6 +95,12 @@ DuplexPort::inherit_neighbour(const PortImpl*       port,
 			add.insert(*i);
 		}
 	}
+}
+
+void
+DuplexPort::on_property(const Raul::URI& uri, const Atom& value)
+{
+	_bufs.engine().driver()->port_property(_path, uri, value);
 }
 
 bool

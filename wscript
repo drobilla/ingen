@@ -87,6 +87,12 @@ def configure(conf):
     if not Options.options.no_jack_session:
         autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
 
+    conf.check(function_name='jack_set_property',
+               header_name='jack/metadata.h',
+               define_name='HAVE_JACK_METADATA',
+               uselib='JACK',
+               mandatory=False)
+
     conf.env.BUILD_TESTS = Options.options.build_tests
     if conf.env.BUILD_TESTS:
         conf.check_cxx(lib='gcov',
@@ -126,6 +132,8 @@ def configure(conf):
     autowaf.display_msg(conf, "Jack", conf.is_defined('HAVE_JACK'))
     autowaf.display_msg(conf, "Jack session support",
                         conf.is_defined('INGEN_JACK_SESSION'))
+    autowaf.display_msg(conf, "Jack metadata support",
+                        conf.is_defined('HAVE_JACK_METADATA'))
     autowaf.display_msg(conf, "Socket interface", conf.is_defined('HAVE_SOCKET'))
     autowaf.display_msg(conf, "LV2", conf.is_defined('HAVE_LILV'))
     autowaf.display_msg(conf, "GUI", str(conf.env.INGEN_BUILD_GUI == 1))

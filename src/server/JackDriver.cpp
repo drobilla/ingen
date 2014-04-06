@@ -25,6 +25,9 @@
 #include <boost/format.hpp>
 #include "ingen/serialisation/Serialiser.hpp"
 #endif
+#ifdef HAVE_JACK_METADATA
+#include <jack/metadata.h>
+#endif
 
 #include "ingen/Configuration.hpp"
 #include "ingen/LV2Features.hpp"
@@ -231,6 +234,10 @@ JackDriver::register_port(EnginePort& port)
 	}
 
 	port.set_handle(jack_port);
+
+	for (const auto& p : port.graph_port()->properties()) {
+		port_property_internal(jack_port, p.first, p.second);
+	}
 }
 
 void
@@ -250,6 +257,33 @@ JackDriver::rename_port(const Raul::Path& old_path,
 		jack_port_set_name((jack_port_t*)eport->handle(),
 		                   new_path.substr(1).c_str());
 	}
+}
+
+void
+JackDriver::port_property(const Raul::Path& path,
+                          const Raul::URI&  uri,
+                          const Atom&       value)
+{
+#ifdef HAVE_JACK_METADATA
+	EnginePort* eport = get_port(path);
+	if (eport) {
+		const jack_port_t* const jport = (const jack_port_t*)eport->handle();
+		port_property_internal(jport, uri, value);
+	}
+#endif
+}
+
+void
+JackDriver::port_property_internal(const jack_port_t* jport,
+                                   const Raul::URI&   uri,
+                                   const Atom&        value)
+{
+#ifdef HAVE_JACK_METADATA
+	if (uri == _engine.world()->uris().lv2_name) {
+		jack_set_property(_client, jack_port_uuid(jport),
+		                  JACK_METADATA_PRETTY_NAME, value.ptr<char>(), NULL);
+	}
+#endif
 }
 
 EnginePort*

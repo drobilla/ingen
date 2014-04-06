@@ -250,6 +250,11 @@ public:
 	virtual void rename_port(const Raul::Path& old_path,
 	                         const Raul::Path& new_path) {}
 
+	/** Unused since LV2 has no dynamic ports. */
+	virtual void port_property(const Raul::Path& path,
+	                           const Raul::URI&  uri,
+	                           const Atom&       value) {}
+
 	virtual EnginePort* create_port(DuplexPort* graph_port) {
 		return new EnginePort(graph_port);
 	}

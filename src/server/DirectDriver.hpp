@@ -65,6 +65,10 @@ public:
 	virtual void rename_port(const Raul::Path& old_path,
 	                         const Raul::Path& new_path) {}
 
+	virtual void port_property(const Raul::Path& path,
+	                           const Raul::URI&  uri,
+	                           const Atom&       value) {}
+
 	virtual void register_port(EnginePort& port) {}
 	virtual void unregister_port(EnginePort& port) {}
 

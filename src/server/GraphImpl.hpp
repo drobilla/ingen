@@ -42,7 +42,7 @@ class ProcessContext;
  *
  * Note that this is also a Block, just one which contains Blocks.
  * Therefore infinite subgraphing is possible, of polyphonic
- * graphes of polyphonic blocks etc. etc.
+ * graphs of polyphonic blocks etc. etc.
  *
  * \ingroup engine
  */

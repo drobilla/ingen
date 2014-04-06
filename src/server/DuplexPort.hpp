@@ -60,6 +60,8 @@ public:
 	                       Resource::Properties& remove,
 	                       Resource::Properties& add);
 
+	void on_property(const Raul::URI& uri, const Atom& value);
+
 	uint32_t max_tail_poly(Context& context) const;
 
 	bool get_buffers(BufferFactory&      bufs,

@@ -49,7 +49,7 @@ class PortImpl;
 /** The Jack Driver.
  *
  * The process callback here drives the entire audio thread by "pulling"
- * events from queues, processing them, running the graphes, and passing
+ * events from queues, processing them, running the graphs, and passing
  * events along to the PostProcessor.
  *
  * \ingroup engine
@@ -73,6 +73,7 @@ public:
 	EnginePort* get_port(const Raul::Path& path);
 
 	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path);
+	void port_property(const Raul::Path& path, const Raul::URI& uri, const Atom& value);
 	void add_port(ProcessContext& context, EnginePort* port);
 	void remove_port(ProcessContext& context, EnginePort* port);
 	void register_port(EnginePort& port);
@@ -118,6 +119,10 @@ private:
 
 	void pre_process_port(ProcessContext& context, EnginePort* port);
 	void post_process_port(ProcessContext& context, EnginePort* port);
+
+	void port_property_internal(const jack_port_t* jport,
+	                            const Raul::URI&   uri,
+	                            const Atom&        value);
 
 	// Non static callbacks (methods)
 	void _thread_init_cb();

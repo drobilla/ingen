@@ -76,6 +76,11 @@ public:
 	virtual void rename_port(const Raul::Path& old_path,
 	                         const Raul::Path& new_path) = 0;
 
+	/** Apply a system visible port property. */
+	virtual void port_property(const Raul::Path& path,
+	                           const Raul::URI&  uri,
+	                           const Atom&       value) = 0;
+
 	/** Return the audio buffer size in frames */
 	virtual SampleCount block_length() const = 0;
 
