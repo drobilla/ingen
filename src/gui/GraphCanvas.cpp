@@ -382,7 +382,7 @@ GraphCanvas::disconnection(SPtr<const ArcModel> arc)
 	Ganv::Port* const dst = get_port_view(arc->head());
 
 	if (src && dst) {
-		remove_edge(src, dst);
+		remove_edge_between(src, dst);
 	} else {
 		_app.log().error(fmt("Unable to find ports to disconnect %1% => %2%\n")
 		                 % arc->tail_path() % arc->head_path());
