@@ -75,4 +75,4 @@ def build(bld):
               target       = 'ingen_gui_lv2',
               install_path = '${LV2DIR}/ingen.lv2/',
               use          = 'libingen libingen_gui')
-    autowaf.use_lib(bld, obj, 'LV2')
+    autowaf.use_lib(bld, obj, 'LV2 GLIBMM GTKMM')
