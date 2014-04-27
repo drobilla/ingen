@@ -264,7 +264,7 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 	graph->signal_property().connect(
 		sigc::mem_fun(this, &GraphBox::property_changed));
 
-	if (ganv_canvas_supports_sprung_layout(_view->canvas()->gobj())) {
+	if (_view->canvas()->supports_sprung_layout()) {
 		_menu_sprung_layout->set_active(true);
 	} else {
 		_menu_sprung_layout->set_active(false);
@@ -768,7 +768,7 @@ GraphBox::event_sprung_layout_toggled()
 {
 	const bool sprung = _menu_sprung_layout->get_active();
 
-	ganv_canvas_set_sprung_layout(_view->canvas()->gobj(), sprung);
+	_view->canvas()->set_sprung_layout(sprung);
 
 	Resource::Properties properties;
 	properties.insert(make_pair(_app->uris().ingen_sprungLayout,
