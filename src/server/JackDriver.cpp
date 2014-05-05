@@ -27,6 +27,7 @@
 #endif
 #ifdef HAVE_JACK_METADATA
 #include <jack/metadata.h>
+#include "jackey.h"
 #endif
 
 #include "ingen/Configuration.hpp"
@@ -223,7 +224,8 @@ JackDriver::register_port(EnginePort& port)
 	jack_port_t* jack_port = jack_port_register(
 		_client,
 		port.graph_port()->path().substr(1).c_str(),
-		(port.graph_port()->is_a(PortType::AUDIO)
+		((port.graph_port()->is_a(PortType::AUDIO) ||
+		  port.graph_port()->is_a(PortType::CV))
 		 ? JACK_DEFAULT_AUDIO_TYPE : JACK_DEFAULT_MIDI_TYPE),
 		(port.graph_port()->is_input()
 		 ? JackPortIsInput : JackPortIsOutput),
@@ -281,7 +283,12 @@ JackDriver::port_property_internal(const jack_port_t* jport,
 #ifdef HAVE_JACK_METADATA
 	if (uri == _engine.world()->uris().lv2_name) {
 		jack_set_property(_client, jack_port_uuid(jport),
-		                  JACK_METADATA_PRETTY_NAME, value.ptr<char>(), NULL);
+		                  JACK_METADATA_PRETTY_NAME, value.ptr<char>(), "text/plain");
+	} else if (uri == _engine.world()->uris().rdf_type) {
+		if (value == _engine.world()->uris().lv2_CVPort) {
+			jack_set_property(_client, jack_port_uuid(jport),
+			                  JACKEY_SIGNAL_TYPE, "CV", "text/plain");
+		}
 	}
 #endif
 }
@@ -291,6 +298,7 @@ JackDriver::create_port(DuplexPort* graph_port)
 {
 	if (graph_port &&
 	    (graph_port->is_a(PortType::AUDIO) ||
+	     graph_port->is_a(PortType::CV) ||
 	     (graph_port->is_a(PortType::ATOM) &&
 	      graph_port->buffer_type() == _engine.world()->uris().atom_Sequence))) {
 		EnginePort* eport = new EnginePort(graph_port);
