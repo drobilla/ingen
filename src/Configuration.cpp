@@ -233,7 +233,8 @@ Configuration::save(URIMap&            uri_map,
 	// Save to file if it is absolute, otherwise save to user config dir
 	std::string path = filename;
 	if (!Glib::path_is_absolute(path)) {
-		path = Glib::build_filename(Glib::get_user_config_dir(), app, filename);
+		path = Glib::build_filename(
+			Glib::build_filename(Glib::get_user_config_dir(), app), filename);
 	}
 
 	// Create parent directories if necessary
@@ -312,14 +313,15 @@ Configuration::load_default(const std::string& app,
 
 	const std::vector<std::string> dirs = Glib::get_system_config_dirs();
 	for (auto d : dirs) {
-		const std::string path = Glib::build_filename(d, app, filename);
+		const std::string path = Glib::build_filename(
+			Glib::build_filename(d, app), filename);
 		if (load(path)) {
 			loaded.push_back(path);
 		}
 	}
 
 	const std::string path = Glib::build_filename(
-		Glib::get_user_config_dir(), app, filename);
+		Glib::build_filename(Glib::get_user_config_dir(), app), filename);
 	if (load(path)) {
 		loaded.push_back(path);
 	}
