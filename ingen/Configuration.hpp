@@ -84,6 +84,10 @@ public:
 
 	/** Save configuration to a file.
 	 *
+	 * @param uri_map URI map.
+	 *
+	 * @param app Application name.
+	 *
 	 * @param filename If absolute, the configuration will be saved to this
 	 * path.  Otherwise the configuration will be saved to the user
 	 * configuration directory (e.g. ~/.config/ingen/filename).

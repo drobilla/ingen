@@ -96,8 +96,8 @@ public:
 
 	/** Set (replace) a property value.
 	 *
-	 * This will first erase any properties with the given @p uri, so after
-	 * this call exactly one property with predicate @p uri will be set.
+	 * This will first erase any properties with the given `uri`, so after
+	 * this call exactly one property with predicate `uri` will be set.
 	 */
 	virtual const Atom& set_property(
 		const Raul::URI& uri,
@@ -107,7 +107,7 @@ public:
 	/** Add a property value.
 	 *
 	 * This will not remove any existing values, so if properties with
-	 * predicate @p uri and values other than @p value exist, this will result
+	 * predicate `uri` and values other than `value` exist, this will result
 	 * in multiple values for the property.
 	 */
 	virtual void add_property(const Raul::URI& uri,
@@ -116,7 +116,7 @@ public:
 
 	/** Remove a property.
 	 *
-	 *	If @p value is patch:wildcard then any property with @p uri for a
+	 *	If `value` is patch:wildcard then any property with `uri` for a
 	 *  predicate will be removed.
 	 */
 	virtual void remove_property(const Raul::URI& uri,
@@ -128,8 +128,8 @@ public:
 
 	/** Set (replace) several properties at once.
 	 *
-	 * This will erase all properties with keys in @p p, though multiple values
-	 * for one property may exist in @p and will all be set (unlike simply
+	 * This will erase all properties with keys in `p`, though multiple values
+	 * for one property may exist in `p` will all be set (unlike simply
 	 * calling set_property in a loop which would only set one value).
 	 */
 	void set_properties(const Properties& p);
@@ -140,7 +140,7 @@ public:
 	/** Remove several properties at once.
 	 *
 	 * This removes all matching properties (both key and value), or all
-	 * properties with a matching key if the value in @p is patch:wildcard.
+	 * properties with a matching key if the value in `p` is patch:wildcard.
 	 */
 	void remove_properties(const Properties& p);
 

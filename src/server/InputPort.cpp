@@ -67,7 +67,7 @@ InputPort::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	return true;
 }
 
-/** Set the buffers of @p voices to the buffers to be used for this port.
+/** Set the buffers of `voices` to the buffers to be used for this port.
  * @return true iff buffers are locally owned by the port
  */
 bool

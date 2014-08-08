@@ -53,16 +53,18 @@ public:
 
 	const_range children_range(SPtr<const Node> o) const;
 
-	/** Remove the object at @p top and all its children from the store.
+	/** Remove the object at `top` and all its children from the store.
+	 *
+	 * @param top Iterator to first (topmost parent) object to remove.
 	 *
 	 * @param removed Filled with all the removed objects.  Note this may be
 	 * many objects since any children will be removed as well.
 	 */
 	void remove(iterator top, Objects& removed);
 
-	/** Rename (move) the object at @p top to @p new_path.
+	/** Rename (move) the object at `top` to `new_path`.
 	 *
-	 * Note this invalidates @p i.
+	 * Note this invalidates `i`.
 	 */
 	void rename(iterator i, const Raul::Path& new_path);
 

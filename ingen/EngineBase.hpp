@@ -60,7 +60,7 @@ public:
 	virtual bool pending_events() = 0;
 
 	/**
-	   Process audio for @p sample_count frames.
+	   Process audio for `sample_count` frames.
 
 	   If the return value is non-zero, events have been processed and are
 	   awaiting to be finalised (including responding and announcing any changes

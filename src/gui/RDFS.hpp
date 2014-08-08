@@ -41,23 +41,23 @@ typedef std::set<Raul::URI> URISet;
 /** Map of object labels, keyed by object URI. */
 typedef std::map<Raul::URI, Glib::ustring> Objects;
 
-/** Return the label of @p node. */
+/** Return the label of `node`. */
 Glib::ustring
 label(World* world, const LilvNode* node);
 
-/** Set @p types to its super/sub class closure.
+/** Set `types` to its super/sub class closure.
  * @param super If true, find all superclasses, otherwise all subclasses
  */
 void classes(World* world, URISet& types, bool super);
 
-/** Get all instances of any class in @p types. */
+/** Get all instances of any class in `types`. */
 Objects
 instances(World* world, const URISet& types);
 
-/** Get all the types which @p model is an instance of. */
+/** Get all the types which `model` is an instance of. */
 URISet types(World* world, SPtr<const Client::ObjectModel> model);
 
-/** Get all the properties with domains appropriate for @p model. */
+/** Get all the properties with domains appropriate for `model`. */
 URISet properties(World* world, SPtr<const Client::ObjectModel> model);
 
 } // namespace RDFS

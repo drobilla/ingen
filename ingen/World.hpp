@@ -103,13 +103,12 @@ public:
 	                                   InterfaceFactory   factory);
 
 	/** Return a new Interface to control a server.
-	 * @param engine_url The URL of the possibly remote server to control.
+	 * @param engine_uri The URI of the possibly remote server to control.
 	 * @param respondee The Interface that will receive responses to commands
 	 *                  and broadcasts, if applicable.
 	 */
-	virtual SPtr<Interface> new_interface(
-		const Raul::URI& engine_uri,
-		SPtr<Interface>  respondee);
+	virtual SPtr<Interface> new_interface(const Raul::URI& engine_uri,
+	                                      SPtr<Interface>  respondee);
 
 	/** Run a script. */
 	virtual bool run(const std::string& mime_type,

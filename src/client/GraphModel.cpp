@@ -108,8 +108,8 @@ GraphModel::get_arc(const Node* tail, const Node* head)
 
 /** Add a connection to this graph.
  *
- * A reference to @p arc is taken, released on deletion or removal.
- * If @p arc only contains paths (not pointers to the actual ports), the ports
+ * A reference to `arc` is taken, released on deletion or removal.
+ * If `arc` only contains paths (not pointers to the actual ports), the ports
  * will be found and set.  The ports referred to not existing as children of
  * this graph is a fatal error.
  */
