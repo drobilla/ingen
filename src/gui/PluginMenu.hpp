@@ -57,7 +57,7 @@ private:
 	typedef std::multimap<const std::string, const LilvPluginClass*> LV2Children;
 	typedef std::multimap<const std::string, MenuRecord>             ClassMenus;
 
-	/// Recursively add hierarchy rooted at @a plugin_class to @a menu.
+	/// Recursively add hierarchy rooted at `plugin_class` to `menu`.
 	size_t build_plugin_class_menu(Gtk::Menu*               menu,
 	                               const LilvPluginClass*   plugin_class,
 	                               const LilvPluginClasses* classes,

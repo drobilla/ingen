@@ -92,11 +92,7 @@ public:
 	/** Do whatever needs doing in the process thread before process() is called */
 	virtual void pre_process(ProcessContext& context);
 
-	/** Run the block for @a nframes input/output.
-	 *
-	 * @a start and @a end are transport times: end is not redundant in the case
-	 * of varispeed, where end-start != nframes.
-	 */
+	/** Run for the block of time specified by `context`. */
 	virtual void process(ProcessContext& context) = 0;
 
 	/** Do whatever needs doing in the process thread after process() is called */

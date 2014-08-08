@@ -296,7 +296,7 @@ World::run_module(const char* name)
 	return true;
 }
 
-/** Get an interface for a remote engine at @a url
+/** Get an interface for a remote engine at `engine_uri`
  */
 SPtr<Interface>
 World::new_interface(const Raul::URI& engine_uri,
@@ -311,7 +311,7 @@ World::new_interface(const Raul::URI& engine_uri,
 	return i->second(this, engine_uri, respondee);
 }
 
-/** Run a script of type @a mime_type at filename @a filename */
+/** Run a script of type `mime_type` at filename `filename` */
 bool
 World::run(const std::string& mime_type, const std::string& filename)
 {

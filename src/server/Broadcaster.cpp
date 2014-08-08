@@ -71,7 +71,7 @@ Broadcaster::set_broadcast(const Raul::URI& client, bool broadcast)
 	_must_broadcast.store(!_broadcastees.empty());
 }
 
-/** Looks up the client with the given source @a uri (which is used as the
+/** Looks up the client with the given source `uri` (which is used as the
  * unique identifier for registered clients).
  */
 SPtr<Interface>

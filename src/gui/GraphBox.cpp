@@ -231,7 +231,7 @@ GraphBox::set_graph_from_path(const Raul::Path& path, SPtr<GraphView> view)
 
 /** Sets the graph for this box and initializes everything.
  *
- * If @a view is NULL, a new view will be created.
+ * If `view` is NULL, a new view will be created.
  */
 void
 GraphBox::set_graph(SPtr<const GraphModel> graph,

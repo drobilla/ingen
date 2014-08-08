@@ -49,9 +49,9 @@ BreadCrumbs::view(const Raul::Path& path)
 	return SPtr<GraphView>();
 }
 
-/** Sets up the crumbs to display @a path.
+/** Sets up the crumbs to display `path`.
  *
- * If @a path is already part of the shown path, it will be selected and the
+ * If `path` is already part of the shown path, it will be selected and the
  * children preserved.
  */
 void
@@ -142,8 +142,8 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 	_enable_signal = old_enable_signal;
 }
 
-/** Create a new crumb, assigning it a reference to @a view if their paths
- * match, otherwise ignoring @a view.
+/** Create a new crumb, assigning it a reference to `view` if their paths
+ * match, otherwise ignoring `view`.
  */
 BreadCrumbs::BreadCrumb*
 BreadCrumbs::create_crumb(const Raul::Path& path,

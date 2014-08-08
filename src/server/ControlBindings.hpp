@@ -78,7 +78,7 @@ public:
 	void pre_process(ProcessContext& context, Buffer* control_in);
 	void post_process(ProcessContext& context, Buffer* control_out);
 
-	/** Remove all bindings for @a path or children of @a path.
+	/** Remove all bindings for `path` or children of `path`.
 	 * The caller must safely drop the returned reference in the
 	 * post-processing thread after at least one process thread has run.
 	 */

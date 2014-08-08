@@ -73,10 +73,10 @@ ObjectModel::polyphonic() const
 	return (polyphonic.is_valid() && polyphonic.get<int32_t>());
 }
 
-/** Merge the data of @a model with self, as much as possible.
+/** Merge the data of `o` with self, as much as possible.
  *
  * This will merge the two models, but with any conflict take the value in
- * @a o as correct.  The paths of the two models MUST be equal.
+ * `o` as correct.  The paths of the two models MUST be equal.
  */
 void
 ObjectModel::set(SPtr<ObjectModel> o)

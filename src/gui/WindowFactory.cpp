@@ -119,9 +119,9 @@ WindowFactory::parent_graph_window(SPtr<const BlockModel> block)
 
 /** Present a GraphWindow for a Graph.
  *
- * If @a preferred is not NULL, it will be set to display @a graph if the graph
+ * If `preferred` is not NULL, it will be set to display `graph` if the graph
  * does not already have a visible window, otherwise that window will be
- * presented and @a preferred left unmodified.
+ * presented and `preferred` left unmodified.
  */
 void
 WindowFactory::present_graph(SPtr<const GraphModel> graph,
