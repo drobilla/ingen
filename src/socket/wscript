@@ -12,7 +12,7 @@ def build(bld):
                   target          = 'ingen_socket_server',
                   install_path    = '${LIBDIR}',
                   use             = 'libingen_server')
-        autowaf.use_lib(bld, obj, 'GLIBMM SERD SORD SRATOM RAUL')
+        autowaf.use_lib(bld, obj, 'GLIBMM SERD SORD SRATOM RAUL LV2')
 
         obj = bld(features        = 'cxx cxxshlib',
                   source          = ['SocketReader.cpp',
@@ -23,4 +23,4 @@ def build(bld):
                   target          = 'ingen_socket_client',
                   install_path    = '${LIBDIR}',
                   use             = 'libingen_server')
-        autowaf.use_lib(bld, obj, 'GLIBMM SERD SORD SRATOM RAUL')
+        autowaf.use_lib(bld, obj, 'GLIBMM SERD SORD SRATOM RAUL LV2')
