@@ -144,8 +144,8 @@ private:
 
 	Raul::SRSWQueue<Closure> _sigs;
 
-	using Properties = Resource::Properties;
-	using Graph      = Resource::Graph;
+	typedef Resource::Properties Properties;
+	typedef Resource::Graph      Graph;
 
 	sigc::slot<void>                                     bundle_begin_slot;
 	sigc::slot<void>                                     bundle_end_slot;
