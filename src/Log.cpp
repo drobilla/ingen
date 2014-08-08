@@ -39,7 +39,7 @@ void
 Log::error(const std::string& msg)
 {
 	if (_log) {
-		_log->printf(_log->handle, _uris.log_Error, msg.c_str());
+		_log->printf(_log->handle, _uris.log_Error, "%s", msg.c_str());
 	} else {
 		std::cerr << ANSI_RED << msg << ANSI_RESET;
 	}
@@ -49,7 +49,7 @@ void
 Log::warn(const std::string& msg)
 {
 	if (_log) {
-		_log->printf(_log->handle, _uris.log_Warning, msg.c_str());
+		_log->printf(_log->handle, _uris.log_Warning, "%s", msg.c_str());
 	} else {
 		std::cerr << ANSI_YELLOW << msg << ANSI_RESET;
 	}
@@ -59,7 +59,7 @@ void
 Log::info(const std::string& msg)
 {
 	if (_log) {
-		_log->printf(_log->handle, _uris.log_Note, msg.c_str());
+		_log->printf(_log->handle, _uris.log_Note, "%s", msg.c_str());
 	} else {
 		std::cout << msg;
 	}
