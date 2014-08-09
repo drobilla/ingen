@@ -284,20 +284,19 @@ PropertiesWindow::on_show()
 {
 	static const int WIN_PAD  = 64;
 	static const int VBOX_PAD = 16;
+
 	int width  = 0;
 	int height = 0;
 	Gtk::Requisition req;
 
 	for (const auto& c : _vbox->children()) {
-		req = c.get_widget()->size_request();
-		if (c.get_widget() != _scrolledwindow) {
-			width = std::max(width, req.width);
-			height += req.height + VBOX_PAD;
-		}
+		req     = c.get_widget()->size_request();
+		width   = std::max(width, req.width);
+		height += req.height + VBOX_PAD;
 	}
 
-	req = _table->size_request();
-	width = std::max(width, req.width);
+	req     = _table->size_request();
+	width   = std::max(width, req.width + 128);
 	height += req.height;
 
 	set_default_size(width + WIN_PAD, height + WIN_PAD);
