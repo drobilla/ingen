@@ -66,6 +66,7 @@ protected:
 	Gtk::MenuItem*                  _rename_menuitem;
 	Gtk::MenuItem*                  _destroy_menuitem;
 	Gtk::MenuItem*                  _properties_menuitem;
+	Gtk::SeparatorMenuItem*         _separator_menuitem;
 
 	bool _enable_signal;
 };

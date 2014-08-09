@@ -87,6 +87,7 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 		if (presets) {
 			_presets_menu = Gtk::manage(new Gtk::Menu());
 
+			unsigned n_presets = 0;
 			LILV_FOREACH(nodes, i, presets) {
 				const LilvNode* preset = lilv_nodes_get(presets, i);
 				lilv_world_load_resource(plugin->lilv_world(), preset);
@@ -109,6 +110,7 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 						              string(lilv_node_as_string(preset))));
 
 					lilv_nodes_free(labels);
+					++n_presets;
 				} else {
 					app.log().error(
 						fmt("Preset <%1> has no rdfs:label\n")
@@ -116,10 +118,14 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 				}
 			}
 
-			items().push_front(Gtk::Menu_Helpers::ImageMenuElem("_Presets",
-			                                                    *(manage(new Gtk::Image(Gtk::Stock::INDEX, Gtk::ICON_SIZE_MENU)))));
-			Gtk::MenuItem* presets_menu_item = &(items().front());
-			presets_menu_item->set_submenu(*_presets_menu);
+			if (n_presets > 0) {
+				items().push_front(
+					Gtk::Menu_Helpers::ImageMenuElem(
+						"_Presets",
+						*(manage(new Gtk::Image(Gtk::Stock::INDEX, Gtk::ICON_SIZE_MENU)))));
+				Gtk::MenuItem* presets_menu_item = &(items().front());
+				presets_menu_item->set_submenu(*_presets_menu);
+			}
 			lilv_nodes_free(presets);
 		}
 		lilv_node_free(pset_Preset);
@@ -136,6 +142,12 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 		_learn_menuitem->show();
 	else
 		_learn_menuitem->hide();
+
+	if (!_popup_gui_menuitem->is_visible() &&
+	    !_embed_gui_menuitem->is_visible() &&
+	    !_randomize_menuitem->is_visible()) {
+		_separator_menuitem->hide();
+	}
 
 	_enable_signal = true;
 }

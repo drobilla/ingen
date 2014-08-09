@@ -48,6 +48,7 @@ ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
 	xml->get_widget("object_rename_menuitem", _rename_menuitem);
 	xml->get_widget("object_destroy_menuitem", _destroy_menuitem);
 	xml->get_widget("object_properties_menuitem", _properties_menuitem);
+	xml->get_widget("object_menu_separator", _separator_menuitem);
 }
 
 void

@@ -83,6 +83,10 @@ PortMenu::init(App& app, SPtr<const PortModel> port, bool is_graph_port)
 	_learn_menuitem->set_visible(is_control);
 	_unlearn_menuitem->set_visible(is_control);
 
+	if (!is_control && is_on_graph) {
+		_separator_menuitem->hide();
+	}
+		
 	_enable_signal = true;
 }
 
