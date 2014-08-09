@@ -121,10 +121,9 @@ GraphView::process_toggled()
 	if (!_enable_signal)
 		return;
 
-	_app->interface()->set_property(
-		_graph->uri(),
-		_app->uris().ingen_enabled,
-		_app->forge().make((bool)_process_but->get_active()));
+	_app->set_property(_graph->uri(),
+	                   _app->uris().ingen_enabled,
+	                   _app->forge().make((bool)_process_but->get_active()));
 }
 
 void
@@ -132,10 +131,9 @@ GraphView::poly_changed()
 {
 	const int poly = _poly_spin->get_value_as_int();
 	if (_enable_signal && poly != (int)_graph->internal_poly()) {
-		_app->interface()->set_property(
-			_graph->uri(),
-			_app->uris().ingen_polyphony,
-			_app->forge().make(poly));
+		_app->set_property(_graph->uri(),
+		                   _app->uris().ingen_polyphony,
+		                   _app->forge().make(poly));
 	}
 }
 

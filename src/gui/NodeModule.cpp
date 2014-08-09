@@ -207,9 +207,9 @@ void
 NodeModule::on_embed_gui_toggled(bool embed)
 {
 	embed_gui(embed);
-	app().interface()->set_property(_block->uri(),
-	                                app().uris().ingen_uiEmbedded,
-	                                app().forge().make(embed));
+	app().set_property(_block->uri(),
+	                   app().uris().ingen_uiEmbedded,
+	                   app().forge().make(embed));
 }
 
 void

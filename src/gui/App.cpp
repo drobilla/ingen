@@ -235,6 +235,21 @@ App::error_message(const string& str)
 }
 
 void
+App::set_property(const Raul::URI& subject,
+                  const Raul::URI& key,
+                  const Atom&      value)
+{
+	// Send message to server
+	interface()->set_property(subject, key, value);
+
+	/* The server does not feed back set messages (kludge to prevent control
+	   feedback and bandwidth wastage, see Delta.cpp).  So, assume everything
+	   went as planned here and fire the signal ourselves as if the server
+	   feedback came back immediately. */
+	_client->signal_property_change().emit(subject, key, value);
+}
+
+void
 App::property_change(const Raul::URI& subject,
                      const Raul::URI& key,
                      const Atom&      value)

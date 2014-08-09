@@ -110,7 +110,7 @@ void
 ObjectMenu::on_menu_polyphonic()
 {
 	if (_enable_signal)
-		_app->interface()->set_property(
+		_app->set_property(
 			_object->uri(),
 			_app->uris().ingen_polyphonic,
 			_app->forge().make(bool(_polyphonic_menuitem->get_active())));

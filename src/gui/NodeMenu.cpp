@@ -157,10 +157,9 @@ NodeMenu::on_menu_randomize()
 			float min = 0.0f, max = 1.0f;
 			bm->port_value_range(p, min, max, _app->sample_rate());
 			const float val = g_random_double_range(0.0, 1.0) * (max - min) + min;
-			_app->interface()->set_property(
-				p->uri(),
-				_app->uris().ingen_value,
-				_app->forge().make(val));
+			_app->set_property(p->uri(),
+			                   _app->uris().ingen_value,
+			                   _app->forge().make(val));
 		}
 	}
 
@@ -189,7 +188,7 @@ set_port_value(const char* port_symbol,
 		return;
 	}
 
-	menu->app()->interface()->set_property(
+	menu->app()->set_property(
 		Node::path_to_uri(block->path().child(Raul::Symbol(port_symbol))),
 		menu->app()->uris().ingen_value,
 		menu->app()->forge().alloc(size, type, value));

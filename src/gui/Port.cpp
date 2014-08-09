@@ -168,9 +168,9 @@ Port::on_value_changed(double value)
 	}
 
 	const Atom atom = _app.forge().make(float(value));
-	_app.interface()->set_property(model()->uri(),
-	                               _app.world()->uris().ingen_value,
-	                               atom);
+	_app.set_property(model()->uri(),
+	                  _app.world()->uris().ingen_value,
+	                  atom);
 
 	if (_entered) {
 		GraphBox* box = get_graph_box();
@@ -191,9 +191,9 @@ Port::value_changed(const Atom& value)
 void
 Port::on_scale_point_activated(float f)
 {
-	_app.interface()->set_property(model()->uri(),
-	                               _app.world()->uris().ingen_value,
-	                               _app.world()->forge().make(f));
+	_app.set_property(model()->uri(),
+	                  _app.world()->uris().ingen_value,
+	                  _app.world()->forge().make(f));
 }
 
 Gtk::Menu*
@@ -219,11 +219,10 @@ Port::build_enum_menu()
 void
 Port::on_uri_activated(const Raul::URI& uri)
 {
-	_app.interface()->set_property(
-		model()->uri(),
-		_app.world()->uris().ingen_value,
-		_app.world()->forge().make_urid(
-			_app.world()->uri_map().map_uri(uri.c_str())));
+	_app.set_property(model()->uri(),
+	                  _app.world()->uris().ingen_value,
+	                  _app.world()->forge().make_urid(
+		                  _app.world()->uri_map().map_uri(uri.c_str())));
 }
 
 Gtk::Menu*

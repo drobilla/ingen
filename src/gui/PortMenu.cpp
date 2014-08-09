@@ -103,9 +103,9 @@ PortMenu::on_menu_set_min()
 {
 	const URIs&           uris  = _app->uris();
 	SPtr<const PortModel> model = dynamic_ptr_cast<const PortModel>(_object);
-	const Atom&     value = model->get_property(uris.ingen_value);
+	const Atom&           value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		_app->interface()->set_property(_object->uri(), uris.lv2_minimum, value);
+		_app->set_property(_object->uri(), uris.lv2_minimum, value);
 }
 
 void
@@ -113,9 +113,9 @@ PortMenu::on_menu_set_max()
 {
 	const URIs&           uris  = _app->uris();
 	SPtr<const PortModel> model = dynamic_ptr_cast<const PortModel>(_object);
-	const Atom&     value = model->get_property(uris.ingen_value);
+	const Atom&           value = model->get_property(uris.ingen_value);
 	if (value.is_valid())
-		_app->interface()->set_property(_object->uri(), uris.lv2_maximum, value);
+		_app->set_property(_object->uri(), uris.lv2_maximum, value);
 }
 
 void

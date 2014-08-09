@@ -98,6 +98,10 @@ public:
 		return old;
 	}
 
+	void set_property(const Raul::URI& subject,
+	                  const Raul::URI& key,
+	                  const Atom&      value);
+
 	uint32_t sample_rate() const;
 
 	ConnectWindow*   connect_window()  const { return _connect_window; }

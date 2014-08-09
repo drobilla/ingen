@@ -185,10 +185,9 @@ GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 	assert(pm);
 
 	if (_enable_signal)
-		_app->interface()->set_property(
-			pm->uri(),
-			_app->uris().ingen_enabled,
-			_app->forge().make((bool)!pm->enabled()));
+		_app->set_property(pm->uri(),
+		                   _app->uris().ingen_enabled,
+		                   _app->forge().make((bool)!pm->enabled()));
 }
 
 void
