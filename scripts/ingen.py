@@ -87,7 +87,7 @@ class Remote(Interface):
         self.msg_id      = 1
         self.server_base = uri + '/'
         self.model       = rdflib.Graph()
-        self.ns_manager  = rdflib.syntax.NamespaceManager.NamespaceManager(self.model)
+        self.ns_manager  = rdflib.namespace.NamespaceManager(self.model)
         self.ns_manager.bind('server', self.server_base)
         for (k, v) in NS.__dict__.items():
             self.ns_manager.bind(k, v)
