@@ -50,6 +50,10 @@ LV2Features::FeatureArray::~FeatureArray()
 bool
 LV2Features::is_supported(const std::string& uri) const
 {
+	if (uri == "http://lv2plug.in/ns/lv2core#isLive") {
+		return true;
+	}
+
 	for (const auto& f : _features) {
 		if (f->uri() == uri) {
 			return true;
