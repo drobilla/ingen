@@ -165,6 +165,8 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
 		SPtr<LilvInstance> inst = make_instance(bufs.uris(), rate, i, true);
 		if (!inst) {
+			delete _prepared_instances;
+			_prepared_instances = NULL;
 			return false;
 		}
 

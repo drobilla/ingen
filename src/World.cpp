@@ -150,6 +150,7 @@ public:
 			const LilvNode* internal = lilv_nodes_get(internals, i);
 			lilv_world_load_resource(lilv_world, internal);
 		}
+		lilv_nodes_free(internals);
 		lilv_node_free(rdf_type);
 		lilv_node_free(ingen_Plugin);
 	}

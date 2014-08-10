@@ -182,6 +182,7 @@ SocketReader::run()
 	sratom_free(sratom);
 	serd_reader_free(reader);
 	sord_free(model);
+	free((uint8_t*)chunk.buf);
 	_socket.reset();
 }
 

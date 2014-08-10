@@ -45,6 +45,14 @@ PostProcessor::PostProcessor(Engine& engine)
 
 PostProcessor::~PostProcessor()
 {
+	/* Delete any straggler events (usually at least one since the event list
+	   is never completely emptied by process()). */
+	Event* e = _head;
+	while (e) {
+		Event* const next = e->next();
+		delete e;
+		e = next;
+	}
 }
 
 void
@@ -74,7 +82,7 @@ PostProcessor::process()
 	   would cause a race with append.  Instead, head is an already
 	   post-processed node, or initially a sentinel. */
 	Event* ev   = _head.load();
-	Event* next = (Event*)ev->next();
+	Event* next = ev->next();
 	if (!next || next->time() >= end_time) {
 		// Process audio thread notifications until end
 		_engine.process_context().emit_notifications(end_time);

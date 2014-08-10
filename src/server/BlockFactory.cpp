@@ -150,6 +150,7 @@ BlockFactory::load_lv2_plugins()
 				break;
 			}
 		}
+		lilv_nodes_free(features);
 		if (!supported) {
 			continue;
 		}
