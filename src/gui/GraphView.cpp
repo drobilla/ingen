@@ -58,6 +58,11 @@ GraphView::GraphView(BaseObjectType*                   cobject,
 	_canvas_scrolledwindow->property_vadjustment().get_value()->set_step_increment(10);
 }
 
+GraphView::~GraphView()
+{
+	_canvas_scrolledwindow->remove();
+}
+
 void
 GraphView::init(App& app)
 {

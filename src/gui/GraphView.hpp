@@ -59,6 +59,8 @@ public:
 	GraphView(BaseObjectType*                   cobject,
 	          const Glib::RefPtr<Gtk::Builder>& xml);
 
+	~GraphView();
+
 	void init(App& app);
 
 	SPtr<GraphCanvas>              canvas()               const { return _canvas; }
