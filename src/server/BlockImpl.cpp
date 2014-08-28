@@ -144,8 +144,6 @@ BlockImpl::set_buffer_size(Context&       context,
 	}
 }
 
-/** Prepare to run a cycle (in the audio thread)
- */
 void
 BlockImpl::pre_process(ProcessContext& context)
 {
@@ -157,8 +155,6 @@ BlockImpl::pre_process(ProcessContext& context)
 	}
 }
 
-/** Prepare to run a cycle (in the audio thread)
- */
 void
 BlockImpl::post_process(ProcessContext& context)
 {

@@ -122,7 +122,6 @@ DuplexPort::max_tail_poly(Context& context) const
 	return parent_graph()->internal_poly_process();
 }
 
-/** Prepare for the execution of parent graph */
 void
 DuplexPort::pre_process(Context& context)
 {
@@ -141,7 +140,6 @@ DuplexPort::pre_process(Context& context)
 	}
 }
 
-/** Finalize after the execution of parent graph (deliver outputs) */
 void
 DuplexPort::post_process(Context& context)
 {

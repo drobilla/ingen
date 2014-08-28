@@ -69,18 +69,37 @@ public:
 	/** Return the maximum polyphony of an output connected to this input. */
 	virtual uint32_t max_tail_poly(Context& context) const;
 
-	void     add_arc(ProcessContext& context, ArcImpl* c);
+	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
+
+	/** Add an arc.  Realtime safe.
+	 *
+	 * The buffer of this port will be set directly to the arc's buffer
+	 * if there is only one arc, since no copying/mixing needs to take place.
+	 *
+	 * setup_buffers() must be called later for the change to take effect.
+	 */
+	void add_arc(ProcessContext& context, ArcImpl* c);
+
+	/** Remove an arc.  Realtime safe.
+	 *
+	 * setup_buffers() must be called later for the change to take effect.
+	 */
 	ArcImpl* remove_arc(ProcessContext&   context,
 	                    const OutputPort* tail);
 
-	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
-
+	/** Set `voices` as the buffers to be used for this port.
+	 *
+	 * @return true iff buffers are locally owned by the port
+	 */
 	bool get_buffers(BufferFactory&      bufs,
 	                 Raul::Array<Voice>* voices,
 	                 uint32_t            poly,
 	                 bool                real_time) const;
 
+	/** Prepare buffer for access, mixing if necessary. */
 	void pre_process(Context& context);
+
+	/** Prepare buffer for next process cycle. */
 	void post_process(Context& context);
 
 	size_t num_arcs() const { return _num_arcs; } ///< Pre-process thread

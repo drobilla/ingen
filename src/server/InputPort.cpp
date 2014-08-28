@@ -67,9 +67,6 @@ InputPort::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 	return true;
 }
 
-/** Set the buffers of `voices` to the buffers to be used for this port.
- * @return true iff buffers are locally owned by the port
- */
 bool
 InputPort::get_buffers(BufferFactory&      bufs,
                        Raul::Array<Voice>* voices,
@@ -106,25 +103,12 @@ InputPort::get_buffers(BufferFactory&      bufs,
 	return true;
 }
 
-/** Add an arc.  Realtime safe.
- *
- * The buffer of this port will be set directly to the arc's buffer
- * if there is only one arc, since no copying/mixing needs to take place.
- *
- * Note that setup_buffers must be called after this before the change
- * will audibly take effect.
- */
 void
 InputPort::add_arc(ProcessContext& context, ArcImpl* c)
 {
 	_arcs.push_front(*c);
 }
 
-/** Remove a arc.  Realtime safe.
- *
- * Note that setup_buffers must be called after this before the change
- * will audibly take effect.
- */
 ArcImpl*
 InputPort::remove_arc(ProcessContext& context, const OutputPort* tail)
 {
@@ -173,8 +157,6 @@ get_sources(const Context& context,
 	}
 }
 
-/** Prepare buffer for access, mixing if necessary.  Realtime safe.
- */
 void
 InputPort::pre_process(Context& context)
 {
