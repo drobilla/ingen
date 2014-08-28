@@ -65,6 +65,7 @@ PortMenu::init(App& app, SPtr<const PortModel> port, bool is_graph_port)
 
 	const bool is_control(app.can_control(port.get()) && port->is_numeric());
 	const bool is_on_graph(dynamic_ptr_cast<GraphModel>(port->parent()));
+	const bool is_input(port->is_input());
 
 	if (!_is_graph_port) {
 		_polyphonic_menuitem->set_sensitive(false);
@@ -76,12 +77,12 @@ PortMenu::init(App& app, SPtr<const PortModel> port, bool is_graph_port)
 		_polyphonic_menuitem->hide();
 	}
 
-	_reset_range_menuitem->set_visible(is_control && !is_on_graph);
-	_set_max_menuitem->set_visible(is_control);
-	_set_min_menuitem->set_visible(is_control);
+	_reset_range_menuitem->set_visible(is_input && is_control && !is_on_graph);
+	_set_max_menuitem->set_visible(is_input && is_control);
+	_set_min_menuitem->set_visible(is_input && is_control);
 	_expose_menuitem->set_visible(!is_on_graph);
-	_learn_menuitem->set_visible(is_control);
-	_unlearn_menuitem->set_visible(is_control);
+	_learn_menuitem->set_visible(is_input && is_control);
+	_unlearn_menuitem->set_visible(is_input && is_control);
 
 	if (!is_control && is_on_graph) {
 		_separator_menuitem->hide();
