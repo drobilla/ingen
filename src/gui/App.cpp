@@ -100,6 +100,10 @@ App::~App()
 SPtr<App>
 App::create(Ingen::World* world)
 {
+	// Add RC file for embedded GUI Gtk style
+	const std::string rc_path = Ingen::data_file_path("ingen_style.rc");
+	Gtk::RC::add_default_file(rc_path);
+
 	_main = Gtk::Main::instance();
 	if (!_main) {
 		Glib::set_application_name("Ingen");
@@ -117,24 +121,6 @@ App::create(Ingen::World* world)
 	app->_about_dialog->property_program_name() = "Ingen";
 	app->_about_dialog->property_logo_icon_name() = "ingen";
 	gtk_window_set_default_icon_name("ingen");
-
-	// Set style for embedded block GUIs
-	const string rc_style =
-		"style \"ingen_embedded_node_gui_style\" {\n"
-		"bg[NORMAL]      = \"#1E2224\"\n"
-		"bg[ACTIVE]      = \"#505050\"\n"
-		"bg[PRELIGHT]    = \"#525454\"\n"
-		"bg[SELECTED]    = \"#99A0A0\"\n"
-		"bg[INSENSITIVE] = \"#F03030\"\n"
-		"fg[NORMAL]      = \"#FFFFFF\"\n"
-		"fg[ACTIVE]      = \"#FFFFFF\"\n"
-		"fg[PRELIGHT]    = \"#FFFFFF\"\n"
-		"fg[SELECTED]    = \"#FFFFFF\"\n"
-		"fg[INSENSITIVE] = \"#FFFFFF\"\n"
-		"}\n"
-		"widget \"*ingen_embedded_node_gui_container*\" style \"ingen_embedded_node_gui_style\"\n";
-
-	Gtk::RC::parse_string(rc_style);
 
 	return SPtr<App>(app);
 }

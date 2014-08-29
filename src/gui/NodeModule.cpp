@@ -231,8 +231,8 @@ NodeModule::embed_gui(bool embed)
 			_gui_widget = Glib::wrap(c_widget);
 
 			Gtk::Container* container = new Gtk::EventBox();
-			container->set_name("ingen_embedded_node_gui_container");
-			container->set_border_width(2.0);
+			container->set_name("IngenEmbeddedUI");
+			container->set_border_width(4.0);
 			container->add(*_gui_widget);
 			Ganv::Module::embed(container);
 		} else {

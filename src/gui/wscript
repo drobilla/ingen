@@ -67,6 +67,14 @@ def build(bld):
         chmod         = Utils.O755,
         INGEN_VERSION = bld.env.INGEN_VERSION)
 
+    # Gtk style
+    bld(features      = 'subst',
+        is_copy       = True,
+        source        = 'ingen_style.rc',
+        target        = '../../ingen_style.rc',
+        install_path  = '${DATADIR}/ingen',
+        chmod         = Utils.O755)
+
     # LV2 UI
     obj = bld(features     = 'cxx cxxshlib',
               source       = 'ingen_gui_lv2.cpp',

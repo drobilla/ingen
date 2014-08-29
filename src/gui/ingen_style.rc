@@ -1,0 +1,155 @@
+style "ingen-default"
+{
+	GtkMenuItem::selected_shadow_type = out
+
+	GtkWidget::interior_focus = 1
+	GtkWidget::focus_padding  = 1
+
+	GtkButton::default_border         = { 0, 0, 0, 0 }
+	GtkButton::default_outside_border = { 0, 0, 0, 0 }
+
+	GtkCheckButton::indicator_size  = 12
+	GtkExpander::expander_size      = 16
+	GtkMenuBar::internal-padding    = 0
+	GtkPaned::handle_size           = 6
+	GtkRange::slider_width          = 15
+	GtkRange::stepper_size          = 15
+	GtkRange::trough_border         = 0
+	GtkScrollbar::min_slider_length = 30
+	GtkTreeView::expander_size      = 14
+	GtkTreeView::odd_row_color      = "#343"
+
+	xthickness = 1
+	ythickness = 1
+
+	fg[NORMAL]        = "#B8BBB9"
+	fg[PRELIGHT]      = "#B8BBB9"
+	fg[ACTIVE]        = "#B8BBB9"
+	fg[SELECTED]      = "#B8BBB9"
+	fg[INSENSITIVE]   = "#48494B"
+
+	bg[NORMAL]        = "#282B29"
+	bg[PRELIGHT]      = "#383B39"
+	bg[ACTIVE]        = "#383B39"
+	bg[SELECTED]      = "#00A150"
+	bg[INSENSITIVE]   = "#282B29"
+
+	base[NORMAL]      = "#111"
+	base[PRELIGHT]    = "#222"
+	base[ACTIVE]      = "#0A2"
+	base[SELECTED]    = "#0A2"
+	base[INSENSITIVE] = "#444"
+
+	text[NORMAL]      = "#EEE"
+	text[PRELIGHT]    = "#EEE"
+	text[ACTIVE]      = "#EEE"
+	text[SELECTED]    = "#EEE"
+	text[INSENSITIVE] = "#666"
+
+	engine "clearlooks"
+	{
+		contrast = 1.0
+	}
+}
+
+style "ingen-progressbar" = "ingen-default"
+{
+	xthickness = 1
+	ythickness = 1
+}
+
+style "ingen-wide" = "ingen-default"
+{
+	xthickness = 2
+	ythickness = 2
+}
+
+style "ingen-notebook" = "ingen-wide"
+{
+	bg[NORMAL] = "#383B39"
+	bg[ACTIVE] = "#383B39"
+}
+
+style "ingen-tasklist" = "ingen-default"
+{
+	xthickness = 5
+	ythickness = 3
+}
+
+style "ingen-menu" = "ingen-default"
+{
+	xthickness = 5
+	ythickness = 5
+	bg[NORMAL] = "#262626"
+}
+
+style "ingen-menu-item" = "ingen-default"
+{
+	xthickness = 2
+	ythickness = 3
+}
+
+style "ingen-menu-itembar" = "ingen-default"
+{
+	xthickness = 3
+	ythickness = 3
+}
+
+style "ingen-tree" = "ingen-default"
+{
+	xthickness = 2
+	ythickness = 2
+}
+
+style "ingen-frame-title" = "ingen-default"
+{
+	fg[NORMAL] = "#B8BBB9"
+}
+
+style "ingen-panel" = "ingen-default"
+{
+	xthickness = 3
+	ythickness = 3
+}
+
+style "ingen-tooltips" = "ingen-default"
+{
+	xthickness = 4
+	ythickness = 4
+	bg[NORMAL] = "#585B59"
+}
+
+style "ingen-combo" = "ingen-default"
+{
+	xthickness = 1
+	ythickness = 2
+}
+
+class "*Ingen*GtkWidget" style : highest "ingen-default"
+class "*Ingen*GtkButton" style : highest "ingen-wide"
+class "*Ingen*GtkRange" style : highest "ingen-wide"
+class "*Ingen*GtkFrame" style : highest "ingen-wide"
+class "*Ingen*GtkStatusbar" style : highest "ingen-wide"
+class "*Ingen*GtkMenu" style : highest "ingen-menu"
+class "*Ingen*GtkMenuItem" style : highest "ingen-menu-item"
+widget_class "*Ingen*MenuItem.*" style : highest "ingen-menu-item"
+widget_class "*Ingen*.GtkAccelMenuItem.*" style : highest "ingen-menu-item"
+widget_class "*Ingen*.GtkRadioMenuItem.*" style : highest "ingen-menu-item"
+widget_class "*Ingen*.GtkCheckMenuItem.*" style : highest "ingen-menu-item"
+widget_class "*Ingen*.GtkImageMenuItem.*" style : highest "ingen-menu-item"
+widget_class "*Ingen*.GtkSeparatorMenuItem.*" style : highest "ingen-menu-item"
+class "*Ingen*GtkEntry" style : highest "ingen-wide"
+widget_class "*Ingen*.tooltips.*.GtkToggleButton" style : highest "ingen-tasklist"
+widget_class "*Ingen*.GtkTreeView.GtkButton" style : highest "ingen-tree"
+widget_class "*Ingen*.GtkCTree.GtkButton" style : highest "ingen-tree"
+widget_class "*Ingen*.GtkList.GtkButton" style : highest "ingen-tree"
+widget_class "*Ingen*.GtkCList.GtkButton" style : highest "ingen-tree"
+widget_class "*Ingen*.GtkFrame.GtkLabel" style : highest "ingen-frame-title"
+widget_class "*Ingen*BasePWidget.GtkEventBox.GtkTable.GtkFrame" style : highest "ingen-panel"
+widget "gtk-tooltips" style : highest "ingen-tooltips"
+class "*Ingen*GtkNotebook" style : highest "ingen-notebook"
+class "*Ingen*GtkProgressBar" style : highest "ingen-progressbar"
+widget_class "*Ingen*.GtkComboBox.GtkButton" style : highest "ingen-combo"
+widget_class "*Ingen*.GtkCombo.GtkButton" style : highest "ingen-combo"
+
+widget "*Ingen*" style : highest "ingen-default"
