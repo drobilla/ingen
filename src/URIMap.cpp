@@ -89,13 +89,21 @@ URIMap::URIDUnmapFeature::unmap(LV2_URID urid)
 uint32_t
 URIMap::map_uri(const char* uri)
 {
-	return _urid_map_feature->map(uri);
+	const uint32_t urid = _urid_map_feature->map(uri);
+#ifdef INGEN_DEBUG_URIDS
+	fprintf(stderr, "Map URI %3u <= %s\n", urid, uri);
+#endif
+	return urid;
 }
 
 const char*
 URIMap::unmap_uri(uint32_t urid) const
 {
-	return _urid_unmap_feature->unmap(urid);
+	const char* uri = _urid_unmap_feature->unmap(urid);
+#ifdef INGEN_DEBUG_URIDS
+	fprintf(stderr, "Unmap URI %3u => %s\n", urid, uri);
+#endif
+	return uri;
 }
 
 } // namespace Ingen

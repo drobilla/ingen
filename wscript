@@ -32,6 +32,8 @@ def options(opt):
                    help='Do not build Socket interface')
     opt.add_option('--test', action='store_true', dest='build_tests',
                    help='Build unit tests')
+    opt.add_option('--debug-urids', action='store_true', dest='debug_urids',
+                   help='Print a trace of URI mapping')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -86,6 +88,8 @@ def configure(conf):
                       mandatory=False)
     if not Options.options.no_jack_session:
         autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
+    if Options.options.debug_urids:
+        autowaf.define(conf, 'INGEN_DEBUG_URIDS', 1)
 
     conf.check(function_name='jack_set_property',
                header_name='jack/metadata.h',
