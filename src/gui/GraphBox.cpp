@@ -264,9 +264,7 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 	graph->signal_property().connect(
 		sigc::mem_fun(this, &GraphBox::property_changed));
 
-	if (_view->canvas()->supports_sprung_layout()) {
-		_menu_sprung_layout->set_active(true);
-	} else {
+	if (!_view->canvas()->supports_sprung_layout()) {
 		_menu_sprung_layout->set_active(false);
 		_menu_sprung_layout->set_sensitive(false);
 	}
