@@ -116,18 +116,18 @@ RenameWindow::ok_clicked()
 	Raul::Path    path       = _object->path();
 	const Atom&   name_atom  = _object->get_property(uris.lv2_name);
 
+	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.ptr<char>())) {
+		_app->set_property(Node::path_to_uri(path),
+		                   uris.lv2_name,
+		                   _app->forge().alloc(label));
+	}
+
 	if (Raul::Symbol::is_valid(symbol_str)) {
 		const Raul::Symbol symbol(symbol_str);
 		if (symbol != _object->symbol()) {
 			path = _object->path().parent().child(symbol);
 			_app->interface()->move(_object->path(), path);
 		}
-	}
-
-	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.ptr<char>())) {
-		_app->set_property(Node::path_to_uri(path),
-		                   uris.lv2_name,
-		                   _app->forge().alloc(label));
 	}
 
 	hide();
