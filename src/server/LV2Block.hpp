@@ -56,11 +56,13 @@ public:
 
 	void work(uint32_t size, const void* data);
 
-	void process(ProcessContext& context);
+	void run(ProcessContext& context);
+	void post_process(ProcessContext& context);
 
-	void set_port_buffer(uint32_t  voice,
-	                     uint32_t  port_num,
-	                     BufferRef buf);
+	void set_port_buffer(uint32_t    voice,
+	                     uint32_t    port_num,
+	                     BufferRef   buf,
+	                     SampleCount offset);
 
 protected:
 	SPtr<LilvInstance> make_instance(URIs&      uris,

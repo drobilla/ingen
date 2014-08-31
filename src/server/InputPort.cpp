@@ -75,6 +75,10 @@ InputPort::get_buffers(BufferFactory&      bufs,
 {
 	const size_t num_arcs = real_time ? _arcs.size() : _num_arcs;
 
+	if (is_a(PortType::ATOM) && !_value.is_valid()) {
+		poly = 1;
+	}
+
 	if (is_a(PortType::AUDIO) && num_arcs == 0) {
 		// Audio input with no arcs, use shared zero buffer
 		for (uint32_t v = 0; v < poly; ++v) {
@@ -97,7 +101,8 @@ InputPort::get_buffers(BufferFactory&      bufs,
 	// Otherwise, allocate local buffers
 	for (uint32_t v = 0; v < poly; ++v) {
 		voices->at(v).buffer.reset();
-		voices->at(v).buffer = bufs.get_buffer(buffer_type(), _buffer_size, real_time);
+		voices->at(v).buffer = bufs.get_buffer(
+			buffer_type(), _value.type(), _buffer_size, real_time);
 		voices->at(v).buffer->clear();
 	}
 	return true;
@@ -135,34 +140,16 @@ InputPort::max_tail_poly(Context& context) const
 	return parent_block()->parent_graph()->internal_poly_process();
 }
 
-static void
-get_sources(const Context& context,
-            const ArcImpl& arc,
-            uint32_t       voice,
-            const Buffer** srcs,
-            uint32_t       max_num_srcs,
-            uint32_t&      num_srcs)
-{
-	if (arc.must_mix()) {
-		// Mixing down voices: all tail voices => one head voice
-		for (uint32_t v = 0; v < arc.tail()->poly(); ++v) {
-			assert(num_srcs < max_num_srcs);
-			srcs[num_srcs++] = arc.tail()->buffer(v).get();
-		}
-	} else {
-		// Matching polyphony: each tail voice => corresponding head voice
-		assert(arc.tail()->poly() == arc.head()->poly());
-		assert(num_srcs < max_num_srcs);
-		srcs[num_srcs++] = arc.tail()->buffer(voice).get();
-	}
-}
-
 void
 InputPort::pre_process(Context& context)
 {
-	// If value has been set (e.g. events pushed) by the user, don't smash it
-	if (_set_by_user)
+	if (_set_by_user) {
+		// Value has been set (e.g. events pushed) by the user, don't smash it
+		for (uint32_t v = 0; v < _poly; ++v) {
+			buffer(v)->update_value_buffer(context.offset());
+		}
 		return;
+	}
 
 	if (_arcs.empty()) {
 		for (uint32_t v = 0; v < _poly; ++v) {
@@ -173,30 +160,74 @@ InputPort::pre_process(Context& context)
 			_voices->at(v).buffer = _arcs.front().buffer(v);
 		}
 	} else {
-		const uint32_t src_poly     = max_tail_poly(context);
-		const uint32_t max_num_srcs = _arcs.size() * src_poly;
-
-		const Buffer* srcs[max_num_srcs];
+		// Mix down to local buffers in pre_run()
 		for (uint32_t v = 0; v < _poly; ++v) {
-			// Get all the sources for this voice
-			uint32_t num_srcs = 0;
-			for (const auto& a : _arcs) {
-				get_sources(context, a, v, srcs, max_num_srcs, num_srcs);
-			}
-
-			// Then mix them into out buffer for this voice
-			mix(context, buffer(v).get(), srcs, num_srcs);
+			buffer(v)->prepare_write(context);
 		}
 	}
+}
 
-	if (!_arcs.empty()) {
-		monitor(context);
+void
+InputPort::pre_run(Context& context)
+{
+	if (!_set_by_user && !_arcs.empty() && !direct_connect()) {
+		const uint32_t src_poly   = max_tail_poly(context);
+		const uint32_t max_n_srcs = _arcs.size() * src_poly;
+
+		for (uint32_t v = 0; v < _poly; ++v) {
+			// Get all sources for this voice
+			const Buffer* srcs[max_n_srcs];
+			uint32_t      n_srcs = 0;
+			for (const auto& arc : _arcs) {
+				if (_poly == 1) {
+					// P -> 1 or 1 -> 1: all tail voices => each head voice
+					for (uint32_t w = 0; w < arc.tail()->poly(); ++w) {
+						assert(n_srcs < max_n_srcs);
+						srcs[n_srcs++] = arc.buffer(w, context.offset()).get();
+						assert(srcs[n_srcs - 1]);
+					}
+				} else {
+					// P -> P or 1 -> P: tail voice => corresponding head voice
+					assert(n_srcs < max_n_srcs);
+					srcs[n_srcs++] = arc.buffer(v, context.offset()).get();
+					assert(srcs[n_srcs - 1]);
+				}
+			}
+
+			// Then mix them into our buffer for this voice
+			mix(context, buffer(v).get(), srcs, n_srcs);
+		}
 	}
+}
+
+SampleCount
+InputPort::next_value_offset(SampleCount offset, SampleCount end) const
+{
+	SampleCount earliest = end;
+	for (const auto& arc : _arcs) {
+		if (arc.tail()->type() != this->type()) {
+			const SampleCount o = arc.tail()->next_value_offset(offset, end);
+			if (o < earliest) {
+				earliest = o;
+			}
+		}
+	}
+	return earliest;
+}
+
+void
+InputPort::update_values(SampleCount offset)
+{
 }
 
 void
 InputPort::post_process(Context& context)
 {
+	if (!_arcs.empty() || _force_monitor_update) {
+		monitor(context, _force_monitor_update);
+		_force_monitor_update = false;
+	}
+
 	if (_set_by_user) {
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
 			// Clear events received via a SetPortValue

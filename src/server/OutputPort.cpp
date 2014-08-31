@@ -52,7 +52,8 @@ OutputPort::get_buffers(BufferFactory&      bufs,
                         bool                real_time) const
 {
 	for (uint32_t v = 0; v < poly; ++v)
-		voices->at(v).buffer = bufs.get_buffer(buffer_type(), _buffer_size, real_time);
+		voices->at(v).buffer = bufs.get_buffer(
+			buffer_type(), _value.type(), _buffer_size, real_time);
 
 	return true;
 }
@@ -64,6 +65,26 @@ OutputPort::pre_process(Context& context)
 		_voices->at(v).buffer->prepare_output_write(context);
 }
 
+SampleCount
+OutputPort::next_value_offset(SampleCount offset, SampleCount end) const
+{
+	SampleCount earliest = end;
+	for (uint32_t v = 0; v < _poly; ++v) {
+		const SampleCount o = _voices->at(v).buffer->next_value_offset(offset, end);
+		if (o < earliest) {
+			earliest = o;
+		}
+	}
+	return earliest;
+}
+
+void
+OutputPort::update_values(SampleCount offset)
+{
+	for (uint32_t v = 0; v < _poly; ++v)
+		_voices->at(v).buffer->update_value_buffer(offset);
+}
+
 void
 OutputPort::post_process(Context& context)
 {
@@ -71,6 +92,7 @@ OutputPort::post_process(Context& context)
 		update_set_state(context, v);
 	}
 
+	update_values(0);
 	monitor(context);
 }
 

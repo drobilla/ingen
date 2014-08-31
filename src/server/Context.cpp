@@ -47,12 +47,34 @@ struct Notification
 Context::Context(Engine& engine, ID id)
 	: _engine(engine)
 	, _id(id)
-	, _event_sink(engine.event_queue_size() * sizeof(Notification))
+	, _event_sink(
+		new Raul::RingBuffer(engine.event_queue_size() * sizeof(Notification)))
 	, _start(0)
 	, _end(0)
+	, _offset(0)
 	, _nframes(0)
 	, _realtime(true)
+	, _copy(false)
 {}
+
+Context::Context(const Context& copy)
+	: _engine(copy._engine)
+	, _id(copy._id)
+	, _event_sink(copy._event_sink)
+	, _start(copy._start)
+	, _end(copy._end)
+	, _offset(copy._offset)
+	, _nframes(copy._nframes)
+	, _realtime(copy._realtime)
+	, _copy(true)
+{}
+
+Context::~Context()
+{
+	if (!_copy) {
+		delete _event_sink;
+	}
+}
 
 bool
 Context::must_notify(const PortImpl* port) const
@@ -69,12 +91,12 @@ Context::notify(LV2_URID    key,
                 const void* body)
 {
 	const Notification n(port, time, key, size, type);
-	if (_event_sink.write_space() < sizeof(n) + size) {
+	if (_event_sink->write_space() < sizeof(n) + size) {
 		return false;
 	}
-	if (_event_sink.write(sizeof(n), &n) != sizeof(n)) {
+	if (_event_sink->write(sizeof(n), &n) != sizeof(n)) {
 		_engine.log().error("Error writing header to notification ring\n");
-	} else if (_event_sink.write(size, body) != size) {
+	} else if (_event_sink->write(size, body) != size) {
 		_engine.log().error("Error writing body to notification ring\n");
 	} else {
 		return true;
@@ -86,17 +108,17 @@ void
 Context::emit_notifications(FrameTime end)
 {
 	const URIs&    uris       = _engine.buffer_factory()->uris();
-	const uint32_t read_space = _event_sink.read_space();
+	const uint32_t read_space = _event_sink->read_space();
 	Notification   note;
 	for (uint32_t i = 0; i < read_space; i += sizeof(note)) {
-		if (_event_sink.peek(sizeof(note), &note) != sizeof(note) ||
+		if (_event_sink->peek(sizeof(note), &note) != sizeof(note) ||
 		    note.time >= end) {
 			return;
 		}
-		if (_event_sink.read(sizeof(note), &note) == sizeof(note)) {
+		if (_event_sink->read(sizeof(note), &note) == sizeof(note)) {
 			Atom value = _engine.world()->forge().alloc(
 				note.size, note.type, NULL);
-			if (_event_sink.read(note.size, value.get_body()) == note.size) {
+			if (_event_sink->read(note.size, value.get_body()) == note.size) {
 				i += note.size;
 				const char* key = _engine.world()->uri_map().unmap_uri(note.key);
 				if (key) {

@@ -156,6 +156,45 @@ BlockImpl::pre_process(ProcessContext& context)
 }
 
 void
+BlockImpl::process(ProcessContext& context)
+{
+	pre_process(context);
+
+	ProcessContext subcontext(context);
+	for (SampleCount offset = 0; offset < context.nframes();) {
+		// Find earliest offset of a value change
+		SampleCount chunk_end = context.nframes();
+		for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
+			PortImpl* const port = _ports->at(i);
+			if (port->type() == PortType::CONTROL && port->is_input()) {
+				const SampleCount o = port->next_value_offset(
+					offset, context.nframes());
+				if (o < chunk_end) {
+					chunk_end = o;
+				}
+			}
+		}
+
+		// Slice context into a chunk from now until the next change
+		subcontext.slice(offset, chunk_end - offset);
+
+		// Prepare port buffers for reading, converting/mixing if necessary
+		for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
+			_ports->at(i)->connect_buffers(offset);
+			_ports->at(i)->pre_run(subcontext);
+		}
+
+		// Run the chunk
+		run(subcontext);
+
+		offset = chunk_end;
+		subcontext.slice(offset, chunk_end - offset);
+	}
+	 
+	post_process(context);
+}
+
+void
 BlockImpl::post_process(ProcessContext& context)
 {
 	// Write output ports
@@ -165,9 +204,10 @@ BlockImpl::post_process(ProcessContext& context)
 }
 
 void
-BlockImpl::set_port_buffer(uint32_t  voice,
-                           uint32_t  port_num,
-                           BufferRef buf)
+BlockImpl::set_port_buffer(uint32_t    voice,
+                           uint32_t    port_num,
+                           BufferRef   buf,
+                           SampleCount offset)
 {
 	/*std::cout << path() << " set port " << port_num << " voice " << voice
 	  << " buffer " << buf << " offset " << offset << std::endl;*/

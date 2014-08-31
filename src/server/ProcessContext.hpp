@@ -33,6 +33,8 @@ class ProcessContext : public Context
 {
 public:
 	explicit ProcessContext(Engine& engine) : Context(engine, ID::AUDIO) {}
+
+	explicit ProcessContext(const ProcessContext& copy) : Context(copy) {}
 };
 
 } // namespace Server

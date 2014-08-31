@@ -48,6 +48,7 @@ public:
 	uint32_t        default_size(LV2_URID type) const;
 
 	BufferRef get_buffer(LV2_URID type,
+	                     LV2_URID value_type,
 	                     uint32_t capacity,
 	                     bool     real_time,
 	                     bool     force_create = false);
@@ -65,7 +66,7 @@ private:
 	friend class Buffer;
 	void recycle(Buffer* buf);
 
-	BufferRef create(LV2_URID type, uint32_t capacity=0);
+	BufferRef create(LV2_URID type, LV2_URID value_type, uint32_t capacity=0);
 
 	inline std::atomic<Buffer*>& free_list(LV2_URID type) {
 		if (type == _uris.atom_Float) {

@@ -96,11 +96,17 @@ public:
 	                 uint32_t            poly,
 	                 bool                real_time) const;
 
-	/** Prepare buffer for access, mixing if necessary. */
+	/** Set up buffer pointers. */
 	void pre_process(Context& context);
+
+	/** Prepare buffer for access, mixing if necessary. */
+	void pre_run(Context& context);
 
 	/** Prepare buffer for next process cycle. */
 	void post_process(Context& context);
+
+	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
+	void        update_values(SampleCount offset);
 
 	size_t num_arcs() const { return _num_arcs; } ///< Pre-process thread
 	void increment_num_arcs() { ++_num_arcs; }

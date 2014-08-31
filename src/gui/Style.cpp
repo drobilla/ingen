@@ -82,7 +82,6 @@ Style::apply_settings()
 uint32_t
 Style::get_port_color(const Client::PortModel* p)
 {
-	assert(p != NULL);
 	const URIs& uris = _app.uris();
 	if (p->is_a(uris.lv2_AudioPort)) {
 		return _audio_port_color;
@@ -100,6 +99,16 @@ Style::get_port_color(const Client::PortModel* p)
 
 	_app.log().warn(fmt("No known port type for %1%\n") % p->path());
 	return 0x666666FF;
+}
+
+uint32_t
+Style::get_port_dash_length(const Client::PortModel* p)
+{
+	const URIs& uris = _app.uris();
+	if (p->is_a(uris.atom_AtomPort)) {
+		return 4.0;
+	}
+	return 0.0;
 }
 
 } // namespace GUI

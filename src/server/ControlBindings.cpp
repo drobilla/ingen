@@ -42,6 +42,7 @@ ControlBindings::ControlBindings(Engine& engine)
 	, _bindings(new Bindings())
 	, _feedback(new Buffer(*_engine.buffer_factory(),
 	                       engine.world()->uris().atom_Sequence,
+	                       0,
 	                       4096)) // FIXME: capacity?
 {
 	lv2_atom_forge_init(

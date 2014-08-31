@@ -50,7 +50,7 @@ public:
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 
-	void process(ProcessContext& context);
+	void run(ProcessContext& context);
 
 	void note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
 	void note_off(ProcessContext& context, uint8_t note_num, FrameTime time);

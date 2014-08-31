@@ -41,20 +41,24 @@ class BufferFactory;
 class Buffer : public boost::noncopyable
 {
 public:
-	Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity);
+	Buffer(BufferFactory& bufs,
+	       LV2_URID       type,
+	       LV2_URID       value_type,
+	       uint32_t       capacity);
 
 	void clear();
 	void resize(uint32_t size);
 	void copy(const Context& context, const Buffer* src);
 	void prepare_write(Context& context);
 
-	void*       port_data(PortType port_type);
-	const void* port_data(PortType port_type) const;
+	void*       port_data(PortType port_type, SampleCount offset);
+	const void* port_data(PortType port_type, SampleCount offset) const;
 
-	inline LV2_URID type()     const { return _type; }
-	inline uint32_t capacity() const { return _capacity; }
+	inline LV2_URID type()       const { return _type; }
+	inline LV2_URID value_type() const { return _value_type; }
+	inline uint32_t capacity()   const { return _capacity; }
 
-	inline void set_type(LV2_URID t) { _type = t; }
+	void set_type(LV2_URID type, LV2_URID value_type);
 
 	inline bool is_audio() const {
 		return _type == _factory.uris().atom_Sound;
@@ -66,6 +70,12 @@ public:
 
 	inline bool is_sequence() const {
 		return _type == _factory.uris().atom_Sequence;
+	}
+
+	inline bool empty() const {
+		return (_atom->type != _type ||
+		        (_type == _factory.uris().atom_Sequence &&
+		         _atom->size <= sizeof(LV2_Atom_Sequence_Body)));
 	}
 
 	/// Audio buffers only
@@ -98,24 +108,51 @@ public:
 		return 0;
 	}
 
-	/// Audio buffers only
+	/// Numeric buffers only
 	inline Sample value_at(SampleCount offset) const {
 		if (is_audio() || is_control()) {
 			return samples()[offset];
+		} else if (_value_buffer) {
+			return ((LV2_Atom_Float*)value())->body;
 		}
 		return 0.0f;
 	}
 
-	inline void set_block(Sample            val,
+	inline void set_block(const Sample      val,
 	                      const SampleCount start,
 	                      const SampleCount end)
 	{
+		assert(is_audio() || is_control());
 		assert(end <= nframes());
 		// Note: Do not change this without ensuring GCC can still vectorize it
 		Sample* const buf = samples() + start;
 		for (SampleCount i = 0; i < (end - start); ++i) {
 			buf[i] = val;
 		}
+	}
+
+	inline void add_block(const Sample      val,
+	                      const SampleCount start,
+	                      const SampleCount end)
+	{
+		assert(is_audio() || is_control());
+		assert(end <= nframes());
+		// Note: Do not change this without ensuring GCC can still vectorize it
+		Sample* const buf = samples() + start;
+		for (SampleCount i = 0; i < (end - start); ++i) {
+			buf[i] += val;
+		}
+	}
+
+	inline void write_block(const Sample      val,
+	                        const SampleCount start,
+	                        const SampleCount end,
+	                        const bool        add)
+	{
+		if (add) {
+			add_block(val, start, end);
+		}
+		set_block(val, start, end);
 	}
 
 	/// Audio buffers only
@@ -129,6 +166,22 @@ public:
 	                  uint32_t       size,
 	                  uint32_t       type,
 	                  const uint8_t* data);
+
+	/// Value buffer for numeric sequences
+	BufferRef       value_buffer()       { return _value_buffer; }
+	const BufferRef value_buffer() const { return _value_buffer; }
+
+	const LV2_Atom* value() const;
+	LV2_Atom*       value();
+
+	/// Return offset of the first value change after `offset`.
+	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
+
+	/// Update value buffer to value as of offset
+	void update_value_buffer(SampleCount offset);
+
+	/// Set/add to audio buffer from the Sequence of Float in `src`
+	void render_sequence(const Context& context, const Buffer* src, bool add);
 
 	LV2_Atom*       atom()       { return _atom; }
 	const LV2_Atom* atom() const { return _atom; }
@@ -147,7 +200,11 @@ protected:
 	BufferFactory& _factory;
 	LV2_Atom*      _atom;
 	LV2_URID       _type;
+	LV2_URID       _value_type;
 	uint32_t       _capacity;
+	int64_t        _latest_event;
+
+	BufferRef _value_buffer;  ///< Value buffer for numeric sequences
 
 	friend class BufferFactory;
 	~Buffer();

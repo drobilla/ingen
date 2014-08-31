@@ -186,7 +186,8 @@ NodeModule::port_value_changed(uint32_t index, const Atom& value)
 		return;
 	}
 
-	if (value.type() == uris.atom_Float) {
+	if (value.type() == uris.atom_Float &&
+	    _block->get_port(index)->is_numeric()) {
 		_plugin_ui->port_event(index, sizeof(float), 0, value.ptr<float>());
 	} else {
 		_plugin_ui->port_event(index,

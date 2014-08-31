@@ -143,21 +143,37 @@ GraphImpl::apply_internal_poly(ProcessContext& context,
 }
 
 void
+GraphImpl::pre_process(ProcessContext& context)
+{
+	// Mix down input ports and connect buffers
+	for (uint32_t i = 0; i < num_ports(); ++i) {
+		PortImpl* const port = _ports->at(i);
+		port->pre_process(context);
+		port->pre_run(context);
+		port->connect_buffers();
+	}
+}
+
+void
 GraphImpl::process(ProcessContext& context)
 {
 	if (!_process)
 		return;
 
-	BlockImpl::pre_process(context);
+	pre_process(context);
+	run(context);
+	post_process(context);
+}
 
+void
+GraphImpl::run(ProcessContext& context)
+{
 	if (_compiled_graph && _compiled_graph->size() > 0) {
 		// Run all blocks
 		for (size_t i = 0; i < _compiled_graph->size(); ++i) {
 			(*_compiled_graph)[i].block()->process(context);
 		}
 	}
-
-	BlockImpl::post_process(context);
 }
 
 void

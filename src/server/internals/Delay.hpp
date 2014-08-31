@@ -46,7 +46,7 @@ public:
 
 	void activate(BufferFactory& bufs);
 
-	void process(ProcessContext& context);
+	void run(ProcessContext& context);
 
 	static InternalPlugin* internal_plugin(URIs& uris);
 

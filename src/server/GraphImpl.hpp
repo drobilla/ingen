@@ -63,7 +63,9 @@ public:
 	void activate(BufferFactory& bufs);
 	void deactivate();
 
+	void pre_process(ProcessContext& context);
 	void process(ProcessContext& context);
+	void run(ProcessContext& context);
 
 	void set_buffer_size(Context&       context,
 	                     BufferFactory& bufs,

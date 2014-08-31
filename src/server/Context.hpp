@@ -50,8 +50,9 @@ public:
 	};
 
 	Context(Engine& engine, ID id);
+	Context(const Context& copy);
 
-	virtual ~Context() {}
+	virtual ~Context();
 
 	/** Return true iff the given port should broadcast its value.
 	 *
@@ -75,7 +76,7 @@ public:
 	void emit_notifications(FrameTime end);
 
 	/** Return true iff any notifications are pending. */
-	bool pending_notifications() const { return _event_sink.read_space(); }
+	bool pending_notifications() const { return _event_sink->read_space(); }
 
 	inline ID id() const { return _id; }
 
@@ -91,22 +92,33 @@ public:
 		_nframes = other._nframes;
 	}
 
+	inline void slice(SampleCount offset, SampleCount nframes) {
+		_offset  = offset;
+		_nframes = nframes;
+	}
+
 	inline Engine&     engine()   const { return _engine; }
 	inline FrameTime   start()    const { return _start; }
+	inline FrameTime   time()     const { return _start + _offset; }
 	inline FrameTime   end()      const { return _end; }
+	inline SampleCount offset()   const { return _offset; }
 	inline SampleCount nframes()  const { return _nframes; }
 	inline bool        realtime() const { return _realtime; }
 
 protected:
+	const Context& operator=(const Context& copy) = delete;
+
 	Engine& _engine;  ///< Engine we're running in
 	ID      _id;      ///< Fast ID for this context
 
-	Raul::RingBuffer _event_sink; ///< Port updates from process context
+	Raul::RingBuffer* _event_sink; ///< Port updates from process context
 
 	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
 	FrameTime   _end;        ///< End frame of this cycle, timeline relative
-	SampleCount _nframes;    ///< Length of this cycle in frames
+	SampleCount _offset;     ///< Offset into data buffers
+	SampleCount _nframes;    ///< Number of frames past offset to process
 	bool        _realtime;   ///< True iff context is hard realtime
+	bool        _copy;       ///< True iff this is a copy (shared event_sink)
 };
 
 } // namespace Server

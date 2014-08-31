@@ -49,11 +49,10 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
 	}
 
 	// Set default control range
-	if (!is_output && (type == PortType::CONTROL || type == PortType::CV)) {
+	if (!is_output && value.type() == bufs.uris().atom_Float) {
 		set_property(bufs.uris().lv2_minimum, bufs.forge().make(0.0f));
 		set_property(bufs.uris().lv2_maximum, bufs.forge().make(1.0f));
 	}
-
 }
 
 DuplexPort::~DuplexPort()
@@ -148,9 +147,22 @@ DuplexPort::post_process(Context& context)
 		   perspective.  Mix down input delivered by plugins so output
 		   (external perspective) is ready. */
 		InputPort::pre_process(context);
+		InputPort::pre_run(context);
 	} else {
 		monitor(context);
 	}
+}
+
+SampleCount
+DuplexPort::next_value_offset(SampleCount offset, SampleCount end) const
+{
+	return OutputPort::next_value_offset(offset, end);
+}
+
+void
+DuplexPort::update_values(SampleCount offset)
+{
+	return OutputPort::update_values(offset);
 }
 
 } // namespace Server

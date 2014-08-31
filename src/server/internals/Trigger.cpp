@@ -53,6 +53,8 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 	const Ingen::URIs& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(5);
 
+	const Atom zero = bufs.forge().make(0.0f);
+
 	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Atom());
 	_midi_in_port->set_property(uris.lv2_name, bufs.forge().alloc("Input"));
@@ -61,38 +63,41 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 	_ports->at(0) = _midi_in_port;
 
 	_note_port = new InputPort(bufs, this, Raul::Symbol("note"), 1, 1,
-	                           PortType::CONTROL, 0, bufs.forge().make(60.0f));
-	_note_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
+	                           PortType::ATOM, uris.atom_Sequence,
+	                           bufs.forge().make(60.0f));
+	_note_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
+	_note_port->set_property(uris.lv2_minimum, zero);
 	_note_port->set_property(uris.lv2_maximum, bufs.forge().make(127.0f));
 	_note_port->set_property(uris.lv2_portProperty, uris.lv2_integer);
 	_note_port->set_property(uris.lv2_name, bufs.forge().alloc("Note"));
 	_ports->at(1) = _note_port;
 
 	_gate_port = new OutputPort(bufs, this, Raul::Symbol("gate"), 2, 1,
-	                            PortType::CV, 0, bufs.forge().make(0.0f));
+	                            PortType::ATOM, uris.atom_Sequence, zero);
+	_gate_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_gate_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_gate_port->set_property(uris.lv2_name, bufs.forge().alloc("Gate"));
 	_ports->at(2) = _gate_port;
 
 	_trig_port = new OutputPort(bufs, this, Raul::Symbol("trigger"), 3, 1,
-	                            PortType::CV, 0, bufs.forge().make(0.0f));
+	                            PortType::ATOM, uris.atom_Sequence, zero);
+	_trig_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_trig_port->set_property(uris.lv2_name, bufs.forge().alloc("Trigger"));
 	_ports->at(3) = _trig_port;
 
 	_vel_port = new OutputPort(bufs, this, Raul::Symbol("velocity"), 4, 1,
-	                           PortType::CV, 0, bufs.forge().make(0.0f));
-	_vel_port->set_property(uris.lv2_minimum, bufs.forge().make(0.0f));
+	                           PortType::ATOM, uris.atom_Sequence, zero);
+	_vel_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
+	_vel_port->set_property(uris.lv2_minimum, zero);
 	_vel_port->set_property(uris.lv2_maximum, bufs.forge().make(1.0f));
 	_vel_port->set_property(uris.lv2_name, bufs.forge().alloc("Velocity"));
 	_ports->at(4) = _vel_port;
 }
 
 void
-TriggerNode::process(ProcessContext& context)
+TriggerNode::run(ProcessContext& context)
 {
-	BlockImpl::pre_process(context);
-
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
 	LV2_Atom_Sequence* seq     = (LV2_Atom_Sequence*)midi_in->atom();
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
@@ -122,8 +127,6 @@ TriggerNode::process(ProcessContext& context)
 			}
 		}
 	}
-
-	BlockImpl::post_process(context);
 }
 
 void
@@ -132,10 +135,8 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 	assert(time >= context.start() && time <= context.end());
 
 	if (_learning) {
-		// FIXME: not thread safe
-		_note_port->set_value(context.engine().world()->forge().make((float)note_num));
 		_note_port->set_control_value(context, time, (float)note_num);
-		_note_port->monitor(context, true);
+		_note_port->force_monitor_update();
 		_learning = false;
 	}
 
@@ -145,7 +146,6 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 		_trig_port->set_control_value(context, time, 1.0f);
 		_trig_port->set_control_value(context, time + 1, 0.0f);
 		_vel_port->set_control_value(context, time, velocity / 127.0f);
-		assert(_trig_port->buffer(0)->samples()[time - context.start()] == 1.0f);
 	}
 }
 

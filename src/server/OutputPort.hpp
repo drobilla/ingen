@@ -29,10 +29,6 @@ namespace Server {
  * Output ports always have a locally allocated buffer, and buffer() will
  * always return that buffer.  (This is very different from InputPort)
  *
- * This class actually adds no functionality to Port whatsoever right now,
- * it will in the future when more advanced port types exist, and it makes
- * things clearer throughout the engine.
- *
  * \ingroup engine
  */
 class OutputPort : virtual public PortImpl
@@ -57,6 +53,9 @@ public:
 
 	void pre_process(Context& context);
 	void post_process(Context& context);
+
+	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
+	void        update_values(SampleCount offset);
 
 	bool is_input()  const { return false; }
 	bool is_output() const { return true; }

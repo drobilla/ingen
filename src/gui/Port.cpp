@@ -83,6 +83,7 @@ Port::Port(App&                  app,
 	assert(pm);
 
 	set_border_width(1.0);
+	set_dash_length(app.style()->get_port_dash_length(pm.get()));
 
 	if (app.can_control(pm.get())) {
 		show_control();
@@ -367,6 +368,8 @@ Port::activity(const Atom& value)
 {
 	if (model()->is_a(_app.uris().lv2_AudioPort)) {
 		set_fill_color(peak_color(value.get<float>()));
+	} else if (_app.can_control(model().get()) && value.type() == _app.uris().atom_Float) {
+		Ganv::Port::set_control_value(value.get<float>());
 	} else {
 		_app.port_activity(this);
 	}

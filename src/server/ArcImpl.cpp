@@ -55,21 +55,31 @@ ArcImpl::head_path() const
 }
 
 BufferRef
-ArcImpl::buffer(uint32_t voice) const
+ArcImpl::buffer(uint32_t voice, SampleCount offset) const
 {
-	assert(!must_mix());
 	assert(_tail->poly() == 1 || _tail->poly() > voice);
 	if (_tail->poly() == 1) {
-		return _tail->buffer(0);
-	} else {
-		return _tail->buffer(voice);
+		voice = 0;
 	}
+
+	if (_tail->buffer(0)->is_sequence()) {
+		if (_head->type() == PortType::CONTROL) {
+			_tail->update_values(offset);  // Update value buffer
+			return _tail->value_buffer(voice);  // Return value buffer
+		} else if (_head->type() == PortType::CV) {
+			_tail->update_values(offset);  // Update initial value
+			// Return full tail buffer below
+		}
+	}
+
+	return _tail->buffer(voice);
 }
 
 bool
 ArcImpl::must_mix() const
 {
-	return _tail->poly() > _head->poly();
+	return (_tail->poly() > _head->poly() ||
+	        (_tail->buffer(0)->is_sequence() != _head->buffer(0)->is_sequence()));
 }
 
 bool
@@ -97,6 +107,9 @@ ArcImpl::can_connect(const OutputPort* src, const InputPort* dst)
 
 		// atom:Float Value => Control
 		|| (src->supports(uris.atom_Float) && dst->is_a(PortType::ID::CONTROL))
+
+		// atom:Float Value => CV
+		|| (src->supports(uris.atom_Float) && dst->is_a(PortType::ID::CV))
 
 		// atom:Sound Value => Audio
 		|| (src->supports(uris.atom_Sound) && dst->is_a(PortType::ID::AUDIO)));

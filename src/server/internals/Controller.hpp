@@ -45,7 +45,7 @@ public:
 	               GraphImpl*          parent,
 	               SampleRate          srate);
 
-	void process(ProcessContext& context);
+	void run(ProcessContext& context);
 
 	void control(ProcessContext& context, uint8_t control_num, uint8_t val, FrameTime time);
 

@@ -105,9 +105,8 @@ protected:
 	}
 
 	inline bool pre_process_done(Status st, const Raul::URI& subject) {
-		_status      = st;
 		_err_subject = subject;
-		return st == Status::SUCCESS;
+		return pre_process_done(st);
 	}
 
 	inline bool pre_process_done(Status st, const Raul::Path& subject) {

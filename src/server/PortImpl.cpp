@@ -68,6 +68,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _voices(new Raul::Array<Voice>(static_cast<size_t>(poly)))
 	, _prepared_voices(NULL)
 	, _monitored(false)
+	, _force_monitor_update(false)
 	, _set_by_user(false)
 	, _is_morph(false)
 	, _is_auto_morph(false)
@@ -83,13 +84,13 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	set_type(type, buffer_type);
 
 	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
-	if ((type == PortType::CONTROL || type == PortType::CV) && value.is_valid()) {
+	if (has_value()) {
 		set_property(uris.ingen_value, value);
 	}
-	// if (type == PortType::ATOM) {
-	// 	set_property(uris.atom_bufferType,
-	// 	             bufs.forge().make_urid(buffer_type));
-	// }
+	if (type == PortType::ATOM) {
+		set_property(uris.atom_bufferType,
+		             bufs.forge().make_urid(buffer_type));
+	}
 }
 
 PortImpl::~PortImpl()
@@ -128,6 +129,15 @@ PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 		}
 	}
 	_buffer_size = std::max(_buffer_size, _bufs.default_size(_buffer_type));
+}
+
+bool
+PortImpl::has_value() const
+{
+	return (_type == PortType::CONTROL ||
+	        _type == PortType::CV ||
+	        (_type == PortType::ATOM &&
+	         _value.type() == _bufs.uris().atom_Float));
 }
 
 bool
@@ -213,7 +223,7 @@ PortImpl::set_voice_value(const Context& context,
 	switch (_type.id()) {
 	case PortType::CONTROL:
 		buffer(voice)->samples()[0] = value;
-		_voices->at(voice).set_state.state = SetState::State::SET;
+		_voices->at(voice).set_state.set(context, context.start(), value);
 		break;
 	case PortType::AUDIO:
 	case PortType::CV: {
@@ -229,13 +239,20 @@ PortImpl::set_voice_value(const Context& context,
 		   value for the next block, particularly for triggers on the last
 		   frame of a block (set nframes-1 to 1, then nframes to 0). */
 
-		SetState& state = _voices->at(voice).set_state;
-		state.state = (offset == 0)
-			? SetState::State::SET
-			: SetState::State::HALF_SET_CYCLE_1;
-		state.time  = time;
-		state.value = value;
-	}
+		_voices->at(voice).set_state.set(context, time, value);
+	} break;
+	case PortType::ATOM:
+		if (buffer(voice)->is_sequence()) {
+			buffer(voice)->append_event(time - context.start(),
+			                            sizeof(value),
+			                            _bufs.uris().atom_Float,
+			                            (const uint8_t*)&value);
+			_voices->at(voice).set_state.set(context, time, value);
+		} else {
+			fprintf(stderr,
+			        "error: %s set non-sequence atom port value (buffer type %u)\n",
+			        path().c_str(), buffer(voice)->type());
+		}
 	default:
 		break;
 	}
@@ -247,12 +264,25 @@ PortImpl::update_set_state(Context& context, uint32_t voice)
 	SetState& state = _voices->at(voice).set_state;
 	switch (state.state) {
 	case SetState::State::SET:
+		if (state.time < context.start() &&
+		    buffer(voice)->is_sequence() &&
+		    !_parent->path().is_root()) {
+			buffer(voice)->clear();
+			state.time = context.start();
+		}
 		break;
 	case SetState::State::HALF_SET_CYCLE_1:
 		state.state = SetState::State::HALF_SET_CYCLE_2;
 		break;
 	case SetState::State::HALF_SET_CYCLE_2:
-		buffer(voice)->set_block(state.value, 0, context.nframes());
+		if (buffer(voice)->is_sequence()) {
+			buffer(voice)->clear();
+			buffer(voice)->append_event(
+				0, sizeof(float), _bufs.uris().atom_Float,
+				(const uint8_t*)&state.value);
+		} else {
+			buffer(voice)->set_block(state.value, 0, context.nframes());
+		}
 		state.state = SetState::State::SET;
 		break;
 	}
@@ -262,9 +292,8 @@ bool
 PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	if (_type != PortType::CONTROL &&
-	    _type != PortType::CV &&
-	    _type != PortType::AUDIO) {
+	if (_parent->path().is_root() ||
+	    (_type == PortType::ATOM && !_value.is_valid())) {
 		return false;
 	}
 
@@ -291,9 +320,8 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 {
-	if (_type != PortType::CONTROL &&
-	    _type != PortType::CV &&
-	    _type != PortType::AUDIO) {
+	if (_parent->path().is_root() ||
+	    (_type == PortType::ATOM && !_value.is_valid())) {
 		return false;
 	}
 
@@ -333,10 +361,10 @@ PortImpl::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
 }
 
 void
-PortImpl::connect_buffers()
+PortImpl::connect_buffers(SampleCount offset)
 {
 	for (uint32_t v = 0; v < _poly; ++v)
-		PortImpl::parent_block()->set_port_buffer(v, _index, buffer(v));
+		PortImpl::parent_block()->set_port_buffer(v, _index, buffer(v), offset);
 }
 
 void
@@ -382,7 +410,7 @@ PortImpl::monitor(Context& context, bool send_now)
 	const bool time_to_send = send_now || _frames_since_monitor >= period;
 	const bool is_sequence  = (_type.id() == PortType::ATOM &&
 	                           _buffer_type == _bufs.uris().atom_Sequence);
-	if (!time_to_send && !(is_sequence && _monitored)) {
+	if (!time_to_send && (!is_sequence || _monitored || buffer(0)->value())) {
 		return;
 	}
 
@@ -404,9 +432,14 @@ PortImpl::monitor(Context& context, bool send_now)
 		break;
 	case PortType::ATOM:
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
-			LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)buffer(0)->atom();
-			if (_monitored) {
+			const LV2_Atom* atom = buffer(0)->atom();
+			if (buffer(0)->value() && !_monitored) {
+				// Value sequence not fully monitored, monitor as control
+				key = uris.ingen_value;
+				val = ((LV2_Atom_Float*)buffer(0)->value())->body;
+			} else if (_monitored && !buffer(0)->empty()) {
 				// Monitoring explictly enabled, send everything
+				const LV2_Atom_Sequence* seq = (const LV2_Atom_Sequence*)atom;
 				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 					context.notify(uris.ingen_activity,
 					               context.start() + ev->time.frames,
@@ -415,8 +448,8 @@ PortImpl::monitor(Context& context, bool send_now)
 					               ev->body.type,
 					               LV2_ATOM_BODY(&ev->body));
 				}
-			} else if (seq->atom.size > sizeof(LV2_Atom_Sequence_Body)) {
-				// Just sending for blinkenlights, send one
+			} else if (!buffer(0)->empty()) {
+				// Just send activity for blinkenlights
 				const int32_t one = 1;
 				context.notify(uris.ingen_activity,
 				               context.start(),
@@ -424,10 +457,11 @@ PortImpl::monitor(Context& context, bool send_now)
 				               sizeof(int32_t),
 				               (LV2_URID)uris.atom_Bool,
 				               &one);
+				_force_monitor_update = false;
 			}
 		}
 	}
-
+	
 	_frames_since_monitor = _frames_since_monitor % period;
 	if (key && val != _monitor_value) {
 		if (context.notify(key, context.start(), this,
@@ -440,7 +474,18 @@ PortImpl::monitor(Context& context, bool send_now)
 		}
 		// Otherwise failure, leave old value and try again next time
 	}
+}
 
+BufferRef
+PortImpl::value_buffer(uint32_t voice)
+{
+	return buffer(voice)->value_buffer();
+}
+
+SampleCount
+PortImpl::next_value_offset(SampleCount offset, SampleCount end) const
+{
+	return end;
 }
 
 } // namespace Server

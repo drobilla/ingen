@@ -138,13 +138,11 @@ static inline float cube_interp(const float fr, const float inm1, const float
 }
 
 void
-DelayNode::process(ProcessContext& context)
+DelayNode::run(ProcessContext& context)
 {
 	Buffer* const delay_buf = _delay_port->buffer(0).get();
 	Buffer* const in_buf    = _in_port->buffer(0).get();
 	Buffer* const out_buf   = _out_port->buffer(0).get();
-
-	BlockImpl::pre_process(context);
 
 	DelayNode* plugin_data = this;
 
@@ -200,8 +198,6 @@ DelayNode::process(ProcessContext& context)
 	}
 
 	_write_phase = write_phase;
-
-	BlockImpl::post_process(context);
 }
 
 } // namespace Internals

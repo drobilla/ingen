@@ -57,10 +57,8 @@ TimeNode::TimeNode(InternalPlugin*     plugin,
 }
 
 void
-TimeNode::process(ProcessContext& context)
+TimeNode::run(ProcessContext& context)
 {
-	BlockImpl::pre_process(context);
-
 	BufferRef          buf = _notify_port->buffer(0);
 	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)buf->atom();
 
@@ -73,8 +71,6 @@ TimeNode::process(ProcessContext& context)
 	// Ask the driver to append any time events for this cycle
 	context.engine().driver()->append_time_events(
 		context, *_notify_port->buffer(0));
-
-	BlockImpl::post_process(context);
 }
 
 } // namespace Internals

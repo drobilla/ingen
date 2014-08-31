@@ -72,6 +72,9 @@ public:
 	void pre_process(Context& context);
 	void post_process(Context& context);
 
+	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
+	void        update_values(SampleCount offset);
+
 	bool is_input()  const { return !_is_output; }
 	bool is_output() const { return _is_output; }
 

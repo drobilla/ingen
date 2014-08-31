@@ -67,7 +67,7 @@ public:
 	 * buffer, and will return accordingly (e.g. the same buffer for every
 	 * voice in a mono->poly arc).
 	 */
-	BufferRef buffer(uint32_t voice) const;
+	BufferRef buffer(uint32_t voice, SampleCount offset=0) const;
 
 	/** Whether this arc must mix down voices into a local buffer */
 	bool must_mix() const;

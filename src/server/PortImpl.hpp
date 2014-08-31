@@ -48,6 +48,14 @@ public:
 
 		SetState() : state(State::SET), value(0), time(0) {}
 
+		void set(const Context& context, FrameTime t, Sample v) {
+			time  = t;
+			value = v;
+			state = (time == context.start()
+			         ? State::SET
+			         : State::HALF_SET_CYCLE_1);
+		}
+
 		State     state;  ///< State of buffer for setting control value
 		Sample    value;  ///< Value currently being set
 		FrameTime time;   ///< Time value was set
@@ -122,6 +130,7 @@ public:
 
 	/** Called once per process cycle */
 	virtual void pre_process(Context& context) = 0;
+	virtual void pre_run(Context& context) {}
 	virtual void post_process(Context& context) = 0;
 
 	/** Empty buffer contents completely (ie silence) */
@@ -150,7 +159,7 @@ public:
 	                               Resource::Properties& remove,
 	                               Resource::Properties& add) {}
 
-	virtual void connect_buffers();
+	virtual void connect_buffers(SampleCount offset=0);
 	virtual void recycle_buffers();
 
 	virtual bool is_input()  const = 0;
@@ -159,6 +168,8 @@ public:
 	uint32_t index() const { return _index; }
 
 	inline bool is_a(PortType type) const { return _type == type; }
+
+	bool has_value() const;
 
 	PortType type()        const { return _type; }
 	LV2_URID buffer_type() const { return _buffer_type; }
@@ -193,6 +204,17 @@ public:
 	void raise_set_by_user_flag() { _set_by_user = true; }
 
 	BufferFactory& bufs() const { return _bufs; }
+
+	BufferRef value_buffer(uint32_t voice);
+
+	/** Return offset of the first value change after `offset`. */
+	virtual SampleCount next_value_offset(SampleCount offset,
+	                                      SampleCount end) const;
+
+	/** Update value buffer to be current as of `offset`. */
+	virtual void update_values(SampleCount offset) = 0;
+
+	void force_monitor_update() { _force_monitor_update = true; }
 
 	void set_morphable(bool is_morph, bool is_auto_morph) {
 		_is_morph      = is_morph;
@@ -235,6 +257,7 @@ protected:
 	Raul::Array<Voice>* _voices;
 	Raul::Array<Voice>* _prepared_voices;
 	bool                _monitored;
+	bool                _force_monitor_update;
 	bool                _set_by_user;
 	bool                _is_morph;
 	bool                _is_auto_morph;

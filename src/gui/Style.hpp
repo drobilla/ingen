@@ -41,6 +41,7 @@ public:
 	void apply_settings();
 
 	uint32_t get_port_color(const Client::PortModel* p);
+	uint32_t get_port_dash_length(const Client::PortModel* p);
 
 private:
 	App& _app;

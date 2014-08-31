@@ -39,10 +39,15 @@
 namespace Ingen {
 namespace Server {
 
-Buffer::Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity)
+Buffer::Buffer(BufferFactory& bufs,
+               LV2_URID       type,
+               LV2_URID       value_type,
+               uint32_t       capacity)
 	: _factory(bufs)
 	, _type(type)
+	, _value_type(value_type)
 	, _capacity(capacity)
+	, _latest_event(0)
 	, _next(NULL)
 	, _refs(0)
 {
@@ -69,6 +74,10 @@ Buffer::Buffer(BufferFactory& bufs, LV2_URID type, uint32_t capacity)
 		vec->body.child_type = bufs.uris().atom_Float;
 	}
 
+	if (type == bufs.uris().atom_Sequence && value_type) {
+		_value_buffer = bufs.get_buffer(value_type, 0, 0, false);
+	}
+
 	clear();
 }
 
@@ -84,6 +93,15 @@ Buffer::recycle()
 }
 
 void
+Buffer::set_type(LV2_URID type, LV2_URID value_type)
+{
+	_type = type;
+	if (type == _factory.uris().atom_Sequence && value_type) {
+		_value_buffer = _factory.get_buffer(value_type, 0, 0, false);
+	}
+}
+
+void
 Buffer::clear()
 {
 	if (is_audio() || is_control()) {
@@ -95,7 +113,26 @@ Buffer::clear()
 		_atom->size    = sizeof(LV2_Atom_Sequence_Body);
 		seq->body.unit = 0;
 		seq->body.pad  = 0;
+		_latest_event  = 0;
 	}
+}
+
+void
+Buffer::render_sequence(const Context& context, const Buffer* src, bool add)
+{
+	const LV2_URID           atom_Float = _factory.uris().atom_Float;
+	const LV2_Atom_Sequence* seq        = (const LV2_Atom_Sequence*)src->atom();
+	const LV2_Atom_Float*    init       = (const LV2_Atom_Float*)src->value();
+	float                    value      = init ? init->body : 0.0f;
+	SampleCount              offset     = context.offset();
+	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+		if (ev->time.frames >= offset && ev->body.type == atom_Float) {
+			write_block(value, offset, ev->time.frames, add);
+			value  = ((const LV2_Atom_Float*)&ev->body)->body;
+			offset = ev->time.frames;
+		}
+	}
+	write_block(value, offset, context.offset() + context.nframes(), add);
 }
 
 void
@@ -103,10 +140,16 @@ Buffer::copy(const Context& context, const Buffer* src)
 {
 	if (_type == src->type() && src->_atom->size + sizeof(LV2_Atom) <= _capacity) {
 		memcpy(_atom, src->_atom, sizeof(LV2_Atom) + src->_atom->size);
+		if (value() && src->value()) {
+			memcpy(value(), src->value(), lv2_atom_total_size(src->value()));
+		}
 	} else if (src->is_audio() && is_control()) {
 		samples()[0] = src->samples()[0];
 	} else if (src->is_control() && is_audio()) {
 		set_block(src->samples()[0], 0, context.nframes());
+	} else if (src->is_sequence() && is_audio() && 
+	           src->value_type() == _factory.uris().atom_Float) {
+		render_sequence(context, src, false);
 	} else {
 		clear();
 	}
@@ -121,7 +164,7 @@ Buffer::resize(uint32_t capacity)
 }
 
 void*
-Buffer::port_data(PortType port_type)
+Buffer::port_data(PortType port_type, SampleCount offset)
 {
 	switch (port_type.id()) {
 	case PortType::ID::CONTROL:
@@ -130,7 +173,7 @@ Buffer::port_data(PortType port_type)
 		if (_atom->type == _factory.uris().atom_Float) {
 			return (float*)LV2_ATOM_BODY(_atom);
 		} else if (_atom->type == _factory.uris().atom_Sound) {
-			return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, _atom);
+			return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, _atom) + offset;
 		}
 		break;
 	default:
@@ -140,10 +183,10 @@ Buffer::port_data(PortType port_type)
 }
 
 const void*
-Buffer::port_data(PortType port_type) const
+Buffer::port_data(PortType port_type, SampleCount offset) const
 {
 	return const_cast<void*>(
-		const_cast<Buffer*>(this)->port_data(port_type));
+		const_cast<Buffer*>(this)->port_data(port_type, offset));
 }
 
 #ifdef __SSE__
@@ -203,7 +246,9 @@ void
 Buffer::prepare_write(Context& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
-		_atom->size = sizeof(LV2_Atom_Sequence_Body);
+		_atom->type   = (LV2_URID)_factory.uris().atom_Sequence;
+		_atom->size   = sizeof(LV2_Atom_Sequence_Body);
+		_latest_event = 0;
 	}
 }
 
@@ -211,8 +256,9 @@ void
 Buffer::prepare_output_write(Context& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
-		_atom->type = (LV2_URID)_factory.uris().atom_Chunk;
-		_atom->size = _capacity - sizeof(LV2_Atom);
+		_atom->type   = (LV2_URID)_factory.uris().atom_Chunk;
+		_atom->size   = _capacity - sizeof(LV2_Atom);
+		_latest_event = 0;
 	}
 }
 
@@ -222,6 +268,12 @@ Buffer::append_event(int64_t        frames,
                      uint32_t       type,
                      const uint8_t* data)
 {
+	assert(frames >= _latest_event);
+	if (_atom->type == _factory.uris().atom_Chunk) {
+		// Chunk initialized with prepare_output_write(), clear
+		clear();
+	}
+
 	if (sizeof(LV2_Atom) + _atom->size + lv2_atom_pad_size(size) > _capacity) {
 		return false;
 	}
@@ -237,7 +289,53 @@ Buffer::append_event(int64_t        frames,
 
 	_atom->size += sizeof(LV2_Atom_Event) + lv2_atom_pad_size(size);
 
+	_latest_event = frames;
+
 	return true;
+}
+
+SampleCount
+Buffer::next_value_offset(SampleCount offset, SampleCount end) const
+{
+	SampleCount earliest = end;
+	LV2_ATOM_SEQUENCE_FOREACH((LV2_Atom_Sequence*)_atom, ev) {
+		if (ev->time.frames >  offset   &&
+		    ev->time.frames <  earliest &&
+		    ev->body.type   == _value_type) {
+			earliest = ev->time.frames;
+			break;
+		}
+	}
+	return earliest;
+}
+
+const LV2_Atom*
+Buffer::value() const
+{
+	return _value_buffer ? _value_buffer->atom() : NULL;
+}
+
+LV2_Atom*
+Buffer::value()
+{
+	return _value_buffer ? _value_buffer->atom() : NULL;
+}
+
+void
+Buffer::update_value_buffer(SampleCount offset)
+{
+	if (!_value_buffer) {
+		return;
+	}
+
+	LV2_ATOM_SEQUENCE_FOREACH((LV2_Atom_Sequence*)_atom, ev) {
+		if (ev->time.frames <= offset && ev->body.type == _value_type) {
+			memcpy(_value_buffer->atom(),
+			       &ev->body,
+			       lv2_atom_total_size(&ev->body));
+			break;
+		}
+	}
 }
 
 void

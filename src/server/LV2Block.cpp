@@ -351,7 +351,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 			break;
 		}
 
-		if (!val.type() && port_type != PortType::ATOM) {
+		if (!val.type()) {
 			val = forge.make(isnan(def_values[j]) ? 0.0f : def_values[j]);
 		}
 
@@ -473,12 +473,16 @@ LV2Block::work(uint32_t size, const void* data)
 }
 
 void
-LV2Block::process(ProcessContext& context)
+LV2Block::run(ProcessContext& context)
 {
-	BlockImpl::pre_process(context);
-
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		lilv_instance_run(instance(i), context.nframes());
+}
+
+void
+LV2Block::post_process(ProcessContext& context)
+{
+	BlockImpl::post_process(context);
 
 	if (_worker_iface) {
 		LV2_Handle inst = lilv_instance_get_handle(instance(0));
@@ -493,19 +497,19 @@ LV2Block::process(ProcessContext& context)
 			_worker_iface->end_run(inst);
 		}
 	}
-
-	BlockImpl::post_process(context);
 }
 
 void
-LV2Block::set_port_buffer(uint32_t  voice,
-                          uint32_t  port_num,
-                          BufferRef buf)
+LV2Block::set_port_buffer(uint32_t    voice,
+                          uint32_t    port_num,
+                          BufferRef   buf,
+                          SampleCount offset)
 {
-	BlockImpl::set_port_buffer(voice, port_num, buf);
+	BlockImpl::set_port_buffer(voice, port_num, buf, offset);
 	lilv_instance_connect_port(
-		instance(voice), port_num,
-		buf ? buf->port_data(_ports->at(port_num)->type()) : NULL);
+		instance(voice),
+		port_num,
+		buf ? buf->port_data(_ports->at(port_num)->type(), offset) : NULL);
 }
 
 } // namespace Server

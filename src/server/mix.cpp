@@ -63,6 +63,8 @@ mix(const Context&      context,
 				for (SampleCount i = 0; i < end; ++i) {
 					out[i] += in[i];
 				}
+			} else if (srcs[i]->is_sequence()) {  // sequence => audio
+				dst->render_sequence(context, srcs[i], true);
 			}
 		}
 	} else if (dst->is_sequence()) {

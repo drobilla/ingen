@@ -92,16 +92,20 @@ public:
 	/** Do whatever needs doing in the process thread before process() is called */
 	virtual void pre_process(ProcessContext& context);
 
-	/** Run for the block of time specified by `context`. */
-	virtual void process(ProcessContext& context) = 0;
+	/** Run block for an entire process cycle (calls run()). */
+	virtual void process(ProcessContext& context);
+
+	/** Run block for a portion of process cycle (called from process()). */
+	virtual void run(ProcessContext& context) = 0;
 
 	/** Do whatever needs doing in the process thread after process() is called */
 	virtual void post_process(ProcessContext& context);
 
 	/** Set the buffer of a port to a given buffer (e.g. connect plugin to buffer) */
-	virtual void set_port_buffer(uint32_t  voice,
-	                             uint32_t  port_num,
-	                             BufferRef buf);
+	virtual void set_port_buffer(uint32_t    voice,
+	                             uint32_t    port_num,
+	                             BufferRef   buf,
+	                             SampleCount offset);
 
 	virtual Node*     port(uint32_t index)      const;
 	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
