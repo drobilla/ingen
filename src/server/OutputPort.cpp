@@ -79,10 +79,9 @@ OutputPort::next_value_offset(SampleCount offset, SampleCount end) const
 }
 
 void
-OutputPort::update_values(SampleCount offset)
+OutputPort::update_values(SampleCount offset, uint32_t voice)
 {
-	for (uint32_t v = 0; v < _poly; ++v)
-		_voices->at(v).buffer->update_value_buffer(offset);
+	_voices->at(voice).buffer->update_value_buffer(offset);
 }
 
 void
@@ -90,9 +89,9 @@ OutputPort::post_process(Context& context)
 {
 	for (uint32_t v = 0; v < _poly; ++v) {
 		update_set_state(context, v);
+		update_values(0, v);
 	}
 
-	update_values(0);
 	monitor(context);
 }
 

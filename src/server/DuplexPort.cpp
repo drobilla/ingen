@@ -48,6 +48,11 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
 		set_property(bufs.uris().ingen_polyphonic, bufs.forge().make(true));
 	}
 
+	if (!parent->parent() ||
+	    _poly != parent->parent_graph()->internal_poly()) {
+		_poly = 1;
+	}
+
 	// Set default control range
 	if (!is_output && value.type() == bufs.uris().atom_Float) {
 		set_property(bufs.uris().lv2_minimum, bufs.forge().make(0.0f));
@@ -118,7 +123,29 @@ DuplexPort::get_buffers(BufferFactory&      bufs,
 uint32_t
 DuplexPort::max_tail_poly(Context& context) const
 {
-	return parent_graph()->internal_poly_process();
+	return std::max(_poly, parent_graph()->internal_poly_process());
+}
+
+bool
+DuplexPort::prepare_poly(BufferFactory& bufs, uint32_t poly)
+{
+	if (!parent()->parent() ||
+	    poly != parent()->parent_graph()->internal_poly()) {
+		return false;
+	}
+
+	return PortImpl::prepare_poly(bufs, poly);
+}
+
+bool
+DuplexPort::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
+{
+	if (!parent()->parent() ||
+	    poly != parent()->parent_graph()->internal_poly()) {
+		return false;
+	}
+
+	return PortImpl::apply_poly(context, maid, poly);
 }
 
 void
@@ -136,6 +163,7 @@ DuplexPort::pre_process(Context& context)
 		   perspective.  Do whatever a normal block's input port does to
 		   prepare input for reading. */
 		InputPort::pre_process(context);
+		InputPort::pre_run(context);
 	}
 }
 
@@ -160,9 +188,9 @@ DuplexPort::next_value_offset(SampleCount offset, SampleCount end) const
 }
 
 void
-DuplexPort::update_values(SampleCount offset)
+DuplexPort::update_values(SampleCount offset, uint32_t voice)
 {
-	return OutputPort::update_values(offset);
+	return OutputPort::update_values(offset, voice);
 }
 
 } // namespace Server

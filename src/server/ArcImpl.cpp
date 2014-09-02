@@ -64,10 +64,10 @@ ArcImpl::buffer(uint32_t voice, SampleCount offset) const
 
 	if (_tail->buffer(0)->is_sequence()) {
 		if (_head->type() == PortType::CONTROL) {
-			_tail->update_values(offset);  // Update value buffer
+			_tail->update_values(offset, voice);  // Update value buffer
 			return _tail->value_buffer(voice);  // Return value buffer
 		} else if (_head->type() == PortType::CV) {
-			_tail->update_values(offset);  // Update initial value
+			_tail->update_values(offset, voice);  // Update initial value
 			// Return full tail buffer below
 		}
 	}

@@ -55,7 +55,7 @@ public:
 	void post_process(Context& context);
 
 	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
-	void        update_values(SampleCount offset);
+	void        update_values(SampleCount offset, uint32_t voice);
 
 	bool is_input()  const { return false; }
 	bool is_output() const { return true; }

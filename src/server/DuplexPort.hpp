@@ -64,6 +64,10 @@ public:
 
 	uint32_t max_tail_poly(Context& context) const;
 
+	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
+
+	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
+
 	bool get_buffers(BufferFactory&      bufs,
 	                 Raul::Array<Voice>* voices,
 	                 uint32_t            poly,
@@ -73,7 +77,7 @@ public:
 	void post_process(Context& context);
 
 	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
-	void        update_values(SampleCount offset);
+	void        update_values(SampleCount offset, uint32_t voice);
 
 	bool is_input()  const { return !_is_output; }
 	bool is_output() const { return _is_output; }

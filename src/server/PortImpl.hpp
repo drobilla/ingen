@@ -211,8 +211,8 @@ public:
 	virtual SampleCount next_value_offset(SampleCount offset,
 	                                      SampleCount end) const;
 
-	/** Update value buffer to be current as of `offset`. */
-	virtual void update_values(SampleCount offset) = 0;
+	/** Update value buffer for `voice` to be current as of `offset`. */
+	virtual void update_values(SampleCount offset, uint32_t voice) = 0;
 
 	void force_monitor_update() { _force_monitor_update = true; }
 

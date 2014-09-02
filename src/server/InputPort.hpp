@@ -106,7 +106,7 @@ public:
 	void post_process(Context& context);
 
 	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
-	void        update_values(SampleCount offset);
+	void        update_values(SampleCount offset, uint32_t voice);
 
 	size_t num_arcs() const { return _num_arcs; } ///< Pre-process thread
 	void increment_num_arcs() { ++_num_arcs; }
