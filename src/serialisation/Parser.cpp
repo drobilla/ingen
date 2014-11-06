@@ -615,11 +615,11 @@ Parser::parse_file(Ingen::World*                     world,
 		target->set_property(Node::path_to_uri(*parsed_path),
 		                     Raul::URI(INGEN__file),
 		                     world->forge().alloc_uri(uri));
+		return true;
 	} else {
 		world->log().warn("Document URI lost\n");
+		return false;
 	}
-
-	return parsed_path;
 }
 
 bool
@@ -642,7 +642,7 @@ Parser::parse_string(Ingen::World*                     world,
 	world->log().info(fmt("Parsing string (base %1%)\n") % base_uri);
 
 	Sord::Node subject;
-	return parse(world, target, model, base_uri, subject, parent, symbol, data);
+	return !!parse(world, target, model, base_uri, subject, parent, symbol, data);
 }
 
 } // namespace Serialisation
