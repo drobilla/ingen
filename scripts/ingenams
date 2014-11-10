@@ -209,7 +209,7 @@ def control(world, mod_id, port_index, value, midi_sign):
     pass
 
 if len(sys.argv) != 2 and len(sys.argv) != 3:
-    sys.stderr.write('Usage: %s AMS_PATCH_FILE [SERVER_URI]\n')
+    sys.stderr.write('Usage: %s AMS_PATCH_FILE [SERVER_URI]\n' % sys.argv[0])
     sys.exit(1)
 
 in_path    = sys.argv[1]
