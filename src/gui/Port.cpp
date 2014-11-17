@@ -141,6 +141,11 @@ Port::show_menu(GdkEventButton* ev)
 {
 	PortMenu* menu = NULL;
 	WidgetFactory::get_widget_derived("object_menu", menu);
+	if (!menu) {
+		_app.log().error("Failed to load port menu widget\n");
+		return false;
+	}
+	
 	menu->init(_app, model(), _flipped);
 	menu->popup(ev->button, ev->time);
 	return true;

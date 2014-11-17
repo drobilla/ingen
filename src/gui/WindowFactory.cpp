@@ -14,8 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdexcept>
 #include <string>
 
+#include "ingen/Log.hpp"
 #include "ingen/client/GraphModel.hpp"
 
 #include "App.hpp"
@@ -50,6 +52,11 @@ WindowFactory::WindowFactory(App& app)
 	WidgetFactory::get_widget_derived("new_subgraph_win", _new_subgraph_win);
 	WidgetFactory::get_widget_derived("properties_win", _properties_win);
 	WidgetFactory::get_widget_derived("rename_win", _rename_win);
+
+	if (!(_load_plugin_win && _load_graph_win && _new_subgraph_win
+	      && _properties_win && _rename_win)) {
+		throw std::runtime_error("failed to load window widgets\n");
+	}
 
 	_load_plugin_win->init_window(app);
 	_load_graph_win->init(app);
@@ -157,6 +164,11 @@ WindowFactory::new_graph_window(SPtr<const GraphModel> graph,
 
 	GraphWindow* win = NULL;
 	WidgetFactory::get_widget_derived("graph_win", win);
+	if (!win) {
+		_app.log().error("Failed to load graph window widget\n");
+		return NULL;
+	}
+		
 	win->init_window(_app);
 
 	win->box()->set_graph(graph, view);

@@ -339,6 +339,7 @@ ControlBindings::bind(ProcessContext& context, Key key)
 	_bindings->insert(make_pair(key, _learn_port));
 
 	uint8_t buf[128];
+	memset(buf, 0, sizeof(buf));
 	lv2_atom_forge_set_buffer(&_forge, buf, sizeof(buf));
 	forge_binding(uris, &_forge, key.type, key.num);
 	const LV2_Atom* atom = (const LV2_Atom*)buf;

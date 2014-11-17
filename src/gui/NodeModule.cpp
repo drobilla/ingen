@@ -93,6 +93,11 @@ bool
 NodeModule::show_menu(GdkEventButton* ev)
 {
 	WidgetFactory::get_widget_derived("object_menu", _menu);
+	if (!_menu) {
+		app().log().error("Failed to load object menu widget\n");
+		return false;
+	}
+
 	_menu->init(app(), _block);
 	_menu->signal_embed_gui.connect(
 		sigc::mem_fun(this, &NodeModule::on_embed_gui_toggled));

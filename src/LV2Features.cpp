@@ -35,7 +35,7 @@ LV2Features::add_feature(SPtr<Feature> feature)
 LV2Features::FeatureArray::FeatureArray(FeatureVector& features)
 	: _features(features)
 {
-	_array = (LV2_Feature**)malloc(sizeof(LV2_Feature) * (features.size() + 1));
+	_array = (LV2_Feature**)malloc(sizeof(LV2_Feature*) * (features.size() + 1));
 	_array[features.size()] = NULL;
 	for (size_t i = 0; i < features.size(); ++i) {
 		_array[i] = features[i].get();

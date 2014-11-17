@@ -339,11 +339,11 @@ Engine::run(uint32_t sample_count)
 	// Run root graph
 	if (_root_graph) {
 		_root_graph->process(_process_context);
-	}
 
-	// Emit control binding feedback
-	control_bindings()->post_process(
-		_process_context, _root_graph->port_impl(1)->buffer(0).get());
+		// Emit control binding feedback
+		control_bindings()->post_process(
+			_process_context, _root_graph->port_impl(1)->buffer(0).get());
+	}
 
 	return n_processed_events;
 }

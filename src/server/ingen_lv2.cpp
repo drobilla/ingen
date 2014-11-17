@@ -28,6 +28,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
+#include "lv2/lv2plug.in/ns/ext/log/logger.h"
 #include "lv2/lv2plug.in/ns/ext/options/options.h"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
@@ -501,6 +502,17 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		}
 	}
 
+	LV2_Log_Logger logger;
+	lv2_log_logger_init(&logger, map, log);
+
+	if (!map) {
+		lv2_log_error(&logger, "host did not provide URI map feature\n");
+		return NULL;
+	} else if (!unmap) {
+		lv2_log_error(&logger, "host did not provide URI unmap feature\n");
+		return NULL;
+	}
+		
 	if (!Glib::thread_supported()) {
 		Glib::thread_init();
 	}
@@ -518,16 +530,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	if (!graph) {
-		const std::string msg((fmt("Could not find graph %1%\n")
-		                       % descriptor->URI).str());
-		if (log) {
-			log->printf(log->handle,
-			            map->map(map->handle, LV2_LOG__Error),
-			            msg.c_str(),
-			            NULL);
-		} else {
-			std::cerr << msg.c_str() << std::endl;
-		}
+		lv2_log_error(&logger, "could not find graph <%s>\n", descriptor->URI);
 		return NULL;
 	}
 
