@@ -20,6 +20,7 @@ import sys
 
 ams_prefix  = 'http://github.com/blablack/ams-lv2/'
 fomp_prefix = 'http://drobilla.net/plugins/fomp/'
+note_uri    = 'http://drobilla.net/ns/ingen-internals#Note'
 
 class World:
     def __init__(self, server_uri):
@@ -27,11 +28,13 @@ class World:
         self.server = ingen.Remote(server_uri)
         self.pending_arcs = []
         self.server.get('/')
+        self.mod_prototypes = {}
 
     def mod_sym(self, mod_id):
         return 'mod%d' % int(mod_id)
 
     def add_block(self, mod_id, plugin_uri, x, y):
+        self.mod_prototypes[self.mod_sym(mod_id)] = plugin_uri
         self.server.put('/' + self.mod_sym(mod_id),
                         ('\t\ta ingen:Block ;\n'
                          + 'ingen:prototype <%s> ;\n' % plugin_uri
@@ -56,7 +59,9 @@ class World:
                     ports += [[int(index), i[0]]]
         return ports
         
-    def input_by_id(self, mod_uri, port_id):
+    def input_by_id(self, mod_id, port_id):
+        mod_uri = rdflib.URIRef(self.server.server_base + self.mod_sym(mod_id))
+
         # Get all input ports on this module sorted by index
         inputs = sorted(self.get_ports(mod_uri, ingen.NS.lv2.InputPort))
 
@@ -69,16 +74,24 @@ class World:
 
         return None
 
-    def output_by_id(self, mod_uri, port_id):
+    def output_by_id(self, mod_id, port_id):
+        mod_uri = rdflib.URIRef(self.server.server_base + self.mod_sym(mod_id))
+
         # Get all output ports on this module sorted by index
         outputs = sorted(self.get_ports(mod_uri, ingen.NS.lv2.OutputPort))
 
+        port_index = int(port_id)
+        if world.mod_prototypes[self.mod_sym(mod_id)] == note_uri:
+            # Adapt MCV/ADVMCV port index to Note port index
+            port_mapping = [ 3, 0, 2, 4, -1, -1, -1, -1, -1, -1 ]
+            port_index   = port_mapping[port_index]
+            if port_index == -1:
+                sys.stderr.write('warning: unsupported MCV port %d\n' % int(port_id))
+                return
+
         # Return the port_id'th port in the list
-        index = 0
-        for i in outputs:
-            if index == int(port_id):
-                return i[1]
-            index += 1
+        if port_index < len(outputs):
+            return outputs[port_index][1]
 
         return None
         
@@ -88,10 +101,8 @@ class World:
              jack_color, cable_color) in self.pending_arcs:
             print('%s:%s => %s:%s' % (tail_mod_id, tail_port_id, head_mod_id, head_port_id))
             try:
-                tail_mod = rdflib.URIRef(self.server.server_base + self.mod_sym(tail_mod_id))
-                head_mod = rdflib.URIRef(self.server.server_base + self.mod_sym(head_mod_id))
-                tail     = self.output_by_id(tail_mod, tail_port_id)
-                head     = self.input_by_id(head_mod, head_port_id)
+                tail = self.output_by_id(tail_mod_id, tail_port_id)
+                head = self.input_by_id(head_mod_id, head_port_id)
                 if tail and head:
                     self.server.connect(self.server.uri_to_path(tail),
                                         self.server.uri_to_path(head))
@@ -102,8 +113,10 @@ class World:
 class Special:
     CUSTOM      = 0
     LADSPA      = 6
+    MCV         = 10
     SCMCV       = 30
-    SCQUANTIZER = 30
+    SCQUANTIZER = 31
+    ADVMCV      = 35
     
 # Module types list, indexed by numeric ID in file
 # Except where otherwise commented, these correspond to internal modules,
@@ -243,6 +256,8 @@ for l in in_file:
             elif mod_type == Special.SCMCV or mod_type == Special.SCQUANTIZER:
                 scala_name = expr[5]
                 scala_module(world, mod_id, scala_name)
+            elif mod_type == Special.MCV or mod_type == Special.ADVMCV:
+                world.add_block(mod_id, note_uri, mod_x, mod_y)
             else:
                 standard_module(world, mod_id, mod_x, mod_y, module_types[mod_type], expr[5])
         elif expr[0] == 'ColorP':
