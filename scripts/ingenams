@@ -184,8 +184,7 @@ def ladspa_module(world, mod_id, x, y, poly, lib, label):
         print('MOD %3d LADSPA %s %s %s' % (mod_id, poly, lib, label))
 
 def scala_module(world, mod_id, scala_name):
-    #print('MOD %3d SCALA %s' % (d, scala_name))
-    pass
+    sys.stderr.write('warning: scala module %3d (%s) unsupported\n' % (d, scala_name))
 
 def standard_module(world, mod_id, x, y, name, arg):
     if name == 'vca':
@@ -242,8 +241,8 @@ for l in in_file:
             if mod_type == Special.LADSPA:
                 ladspa_module(world, mod_id, mod_x, mod_y, int(expr[5]), expr[6], expr[7])
             elif mod_type == Special.SCMCV or mod_type == Special.SCQUANTIZER:
-                scale_module(world, mod_id, module_types[mod_type], expr[5])
                 scala_name = expr[5]
+                scala_module(world, mod_id, scala_name)
             else:
                 standard_module(world, mod_id, mod_x, mod_y, module_types[mod_type], expr[5])
         elif expr[0] == 'ColorP':
