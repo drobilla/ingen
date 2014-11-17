@@ -58,9 +58,10 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	, _sustain(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
-	_ports = new Raul::Array<PortImpl*>(6);
+	_ports = new Raul::Array<PortImpl*>(8);
 
 	const Atom zero = bufs.forge().make(0.0f);
+	const Atom one  = bufs.forge().make(1.0f);
 
 	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Atom());
@@ -91,7 +92,7 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	                           PortType::ATOM, uris.atom_Sequence, zero);
 	_vel_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
 	_vel_port->set_property(uris.lv2_minimum, zero);
-	_vel_port->set_property(uris.lv2_maximum, bufs.forge().make(1.0f));
+	_vel_port->set_property(uris.lv2_maximum, one);
 	_vel_port->set_property(uris.lv2_name, bufs.forge().alloc("Velocity"));
 	_ports->at(3) = _vel_port;
 
@@ -108,6 +109,24 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	_trig_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_trig_port->set_property(uris.lv2_name, bufs.forge().alloc("Trigger"));
 	_ports->at(5) = _trig_port;
+
+	_bend_port = new OutputPort(bufs, this, Raul::Symbol("bend"), 5, _polyphony,
+	                            PortType::ATOM, uris.atom_Sequence, zero);
+	_bend_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
+	_bend_port->set_property(uris.lv2_name, bufs.forge().alloc("Bender"));
+	_bend_port->set_property(uris.lv2_default, zero);
+	_bend_port->set_property(uris.lv2_minimum, bufs.forge().make(-1.0f));
+	_bend_port->set_property(uris.lv2_maximum, one);
+	_ports->at(6) = _bend_port;
+
+	_pressure_port = new OutputPort(bufs, this, Raul::Symbol("pressure"), 6, _polyphony,
+	                            PortType::ATOM, uris.atom_Sequence, zero);
+	_pressure_port->set_property(uris.atom_supports, bufs.uris().atom_Float);
+	_pressure_port->set_property(uris.lv2_name, bufs.forge().alloc("Pressure"));
+	_pressure_port->set_property(uris.lv2_default, zero);
+	_pressure_port->set_property(uris.lv2_minimum, zero);
+	_pressure_port->set_property(uris.lv2_maximum, one);
+	_ports->at(7) = _pressure_port;
 }
 
 NoteNode::~NoteNode()
@@ -183,6 +202,16 @@ NoteNode::run(ProcessContext& context)
 					}
 					break;
 				}
+			case LV2_MIDI_MSG_BENDER:
+				bend(context, time, (((((uint16_t)buf[2] << 7) | buf[1]) - 8192.0f)
+				                     / 8192.0f));
+				break;
+			case LV2_MIDI_MSG_CHANNEL_PRESSURE:
+				channel_pressure(context, time, buf[1] / 127.0f);
+				break;
+			case LV2_MIDI_MSG_NOTE_PRESSURE:
+				note_pressure(context, time, buf[1], buf[2] / 127.0f);
+				break;
 			default:
 				break;
 			}
@@ -358,6 +387,29 @@ NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 	for (uint32_t i=0; i < _polyphony; ++i)
 		if ((*_voices)[i].state == Voice::State::HOLDING)
 			free_voice(context, i, time);
+}
+
+void
+NoteNode::bend(ProcessContext& context, FrameTime time, float amount)
+{
+	_bend_port->set_control_value(context, time, amount);
+}
+
+void
+NoteNode::note_pressure(ProcessContext& context, FrameTime time, uint8_t note_num, float amount)
+{
+	for (uint32_t i=0; i < _polyphony; ++i) {
+		if ((*_voices)[i].state != Voice::State::FREE && (*_voices)[i].note == note_num) {
+			_pressure_port->set_voice_value(context, i, time, amount);
+			return;
+		}
+	}
+}
+
+void
+NoteNode::channel_pressure(ProcessContext& context, FrameTime time, float amount)
+{
+	_pressure_port->set_control_value(context, time, amount);
 }
 
 } // namespace Internals

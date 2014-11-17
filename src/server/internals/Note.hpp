@@ -59,6 +59,10 @@ public:
 	void sustain_on(ProcessContext& context, FrameTime time);
 	void sustain_off(ProcessContext& context, FrameTime time);
 
+	void bend(ProcessContext& context, FrameTime time, float amount);
+	void note_pressure(ProcessContext& context, FrameTime time, uint8_t note_num, float amount);
+	void channel_pressure(ProcessContext& context, FrameTime time, float amount);
+
 	static InternalPlugin* internal_plugin(URIs& uris);
 
 private:
@@ -93,6 +97,8 @@ private:
 	OutputPort* _vel_port;
 	OutputPort* _gate_port;
 	OutputPort* _trig_port;
+	OutputPort* _bend_port;
+	OutputPort* _pressure_port;
 };
 
 } // namespace Server

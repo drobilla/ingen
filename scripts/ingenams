@@ -83,7 +83,7 @@ class World:
         port_index = int(port_id)
         if world.mod_prototypes[self.mod_sym(mod_id)] == note_uri:
             # Adapt MCV/ADVMCV port index to Note port index
-            port_mapping = [ 3, 0, 2, 4, -1, -1, -1, -1, -1, -1 ]
+            port_mapping = [ 3, 0, 2, 4, 6, 5, -1, -1, -1, -1 ]
             port_index   = port_mapping[port_index]
             if port_index == -1:
                 sys.stderr.write('warning: unsupported MCV port %d\n' % int(port_id))
