@@ -20,9 +20,9 @@ import socket
 import sys
 
 try:
-    import StringIO
+    import StringIO.StringIO as StringIO
 except ImportError:
-    from io import StringIO
+    from io import StringIO as StringIO
 
 class NS:
     ingen  = rdflib.Namespace('http://drobilla.net/ns/ingen#')
@@ -134,9 +134,9 @@ class Remote(Interface):
 
     def recv(self):
         'Read from socket until a NULL terminator is received'
-        msg = ''
+        msg = u''
         while True:
-            c = self.sock.recv(1, 0)
+            c = self.sock.recv(1, 0).decode('utf-8')
             if not c or ord(c[0]) == 0:  # End of transmission
                 break
             else:
@@ -178,7 +178,7 @@ class Remote(Interface):
         response_str = self.recv()
         response_model = rdflib.Graph()
         response_model.namespace_manager = self.ns_manager
-        response_model.parse(StringIO.StringIO(response_str), self.server_base, format='n3')
+        response_model.parse(StringIO(response_str), self.server_base, format='n3')
 
         # Handle response (though there should be only one)
         blanks        = []

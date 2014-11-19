@@ -16,6 +16,7 @@
 
 import ingen
 import rdflib
+import rdflib.namespace
 import sys
 
 ams_prefix  = 'http://github.com/blablack/ams-lv2/'
@@ -201,7 +202,7 @@ def scala_module(world, mod_id, scala_name):
 
 def standard_module(world, mod_id, x, y, name, arg):
     if name == 'vca':
-        if arg > 0:
+        if int(arg) > 0:
             name += 'exp'
         else:
             name += 'lin'
