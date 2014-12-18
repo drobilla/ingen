@@ -103,7 +103,7 @@ def configure(conf):
                        define_name='HAVE_GCOV',
                        mandatory=False)
 
-        if conf.is_defined('HAVE_GCOV'):
+        if conf.is_defiend('HAVE_GCOV'):
             conf.env.INGEN_TEST_LIBS     = ['gcov']
             conf.env.INGEN_TEST_CXXFLAGS = ['-fprofile-arcs', '-ftest-coverage']
         else:
@@ -118,10 +118,10 @@ def configure(conf):
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
-    if not Options.options.no_gui and conf.is_defined('HAVE_GANV'):
+    if not Options.options.no_gui and conf.env.HAVE_GANV:
         autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
 
-    if conf.is_defined('HAVE_JACK'):
+    if conf.env.HAVE_JACK:
         autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
 
     autowaf.define(conf, 'INGEN_DATA_DIR',
@@ -133,17 +133,17 @@ def configure(conf):
 
     conf.write_config_header('ingen_config.h', remove=False)
 
-    autowaf.display_msg(conf, "Jack", conf.is_defined('HAVE_JACK'))
+    autowaf.display_msg(conf, "Jack", bool(conf.env.HAVE_JACK))
     autowaf.display_msg(conf, "Jack session support",
-                        conf.is_defined('INGEN_JACK_SESSION'))
+                        bool(conf.env.INGEN_JACK_SESSION))
     autowaf.display_msg(conf, "Jack metadata support",
                         conf.is_defined('HAVE_JACK_METADATA'))
     autowaf.display_msg(conf, "Socket interface", conf.is_defined('HAVE_SOCKET'))
-    autowaf.display_msg(conf, "LV2", conf.is_defined('HAVE_LILV'))
-    autowaf.display_msg(conf, "GUI", str(conf.env.INGEN_BUILD_GUI == 1))
+    autowaf.display_msg(conf, "LV2", bool(conf.env.HAVE_LILV))
+    autowaf.display_msg(conf, "GUI", bool(conf.env.INGEN_BUILD_GUI))
     autowaf.display_msg(conf, "LV2 bundle", conf.env.INGEN_BUNDLE_DIR)
     autowaf.display_msg(conf, "HTML plugin documentation support",
-                        conf.is_defined('HAVE_WEBKIT'))
+                        bool(conf.env.HAVE_WEBKIT))
     print('')
 
 def build(bld):
@@ -167,7 +167,7 @@ def build(bld):
     bld.recurse('src/client')
     bld.recurse('src/socket')
 
-    if bld.is_defined('INGEN_BUILD_GUI'):
+    if bld.env.INGEN_BUILD_GUI:
         bld.recurse('src/gui')
 
     # Program

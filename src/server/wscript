@@ -70,7 +70,7 @@ def build(bld):
                   cxxflags        = bld.env.INGEN_TEST_CXXFLAGS)
         autowaf.use_lib(bld, obj, core_libs)
 
-    if bld.is_defined('HAVE_JACK'):
+    if bld.env.HAVE_JACK:
         obj = bld(features        = 'cxx cxxshlib',
                   source          = 'JackDriver.cpp ingen_jack.cpp',
                   includes        = ['.', '../..'],
