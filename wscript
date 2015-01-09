@@ -24,6 +24,8 @@ def options(opt):
                    help='Ingen module install directory [Default: PREFIX/lib/ingen]')
     opt.add_option('--no-gui', action='store_true', dest='no_gui',
                    help='Do not build GUI')
+    opt.add_option('--no-python', action='store_true', dest='no_python',
+                   help='Do not install Python bindings')
     opt.add_option('--no-webkit', action='store_true', dest='no_webkit',
                    help='Do not use webkit to display plugin documentation')
     opt.add_option('--no-jack-session', action='store_true', default=False,
@@ -38,7 +40,8 @@ def options(opt):
 
 def configure(conf):
     conf.load('compiler_cxx')
-    conf.load('python')
+    if not Options.options.no_python:
+        conf.load('python')
 
     autowaf.configure(conf)
     autowaf.display_header('Ingen Configuration')
@@ -51,7 +54,6 @@ def configure(conf):
     conf.check_cxx(header_name='boost/utility.hpp')
     conf.check_cxx(header_name='boost/weak_ptr.hpp')
 
-    conf.check_python_version((2,4,0), mandatory=False)
     autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
                       atleast_version='1.8.1', mandatory=True)
     autowaf.check_pkg(conf, 'glibmm-2.4', uselib_store='GLIBMM',
@@ -72,6 +74,8 @@ def configure(conf):
                       atleast_version='0.18.0', mandatory=False)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
                       atleast_version='0.12.0', mandatory=False)
+    if not Options.options.no_python:
+        conf.check_python_version((2,4,0), mandatory=False)
     if not Options.options.no_gui:
         autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
                           atleast_version='2.12.0', mandatory=False)
