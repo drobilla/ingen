@@ -46,10 +46,10 @@ def configure(conf):
     conf.check_cxx(cxxflags=["-std=c++0x"])
     conf.env.append_unique('CXXFLAGS', ['-std=c++0x'])
 
-    autowaf.check_header(conf, 'cxx', 'boost/format.hpp')
-    autowaf.check_header(conf, 'cxx', 'boost/intrusive/list.hpp')
-    autowaf.check_header(conf, 'cxx', 'boost/optional.hpp')
-    autowaf.check_header(conf, 'cxx', 'boost/utility.hpp')
+    conf.check_cxx(header_name='boost/format.hpp')
+    conf.check_cxx(header_name='boost/shared_ptr.hpp')
+    conf.check_cxx(header_name='boost/utility.hpp')
+    conf.check_cxx(header_name='boost/weak_ptr.hpp')
 
     conf.check_python_version((2,4,0), mandatory=False)
     autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
