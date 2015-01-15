@@ -45,6 +45,7 @@ BlockImpl::BlockImpl(PluginImpl*         plugin,
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
 	, _polyphonic(polyphonic)
 	, _activated(false)
+	, _enabled(true)
 	, _traversed(false)
 {
 	assert(_plugin);
@@ -144,6 +145,21 @@ BlockImpl::set_buffer_size(Context&       context,
 	}
 }
 
+PortImpl*
+BlockImpl::nth_port_by_type(uint32_t n, bool input, PortType type)
+{
+	uint32_t count = 0;
+	for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
+		PortImpl* const port = _ports->at(i);
+		if (port->is_input() == input && port->type() == type) {
+			if (count++ == n) {
+				return port;
+			}
+		}
+	}
+	return NULL;
+}
+
 void
 BlockImpl::pre_process(ProcessContext& context)
 {
@@ -159,6 +175,24 @@ void
 BlockImpl::process(ProcessContext& context)
 {
 	pre_process(context);
+
+	if (!_enabled) {
+		for (PortType t : { PortType::AUDIO, PortType::CV, PortType::ATOM }) {
+			for (uint32_t i = 0;; ++i) {
+				PortImpl* in = nth_port_by_type(i, true, t);
+				PortImpl* out;
+				if (in && (out = nth_port_by_type(i, false, t))) {
+					for (uint32_t v = 0; v < _polyphony; ++v) {
+						out->buffer(v)->copy(context, in->buffer(v).get());
+					}
+				} else {
+					break;
+				}
+			}
+		}
+		post_process(context);
+		return;
+	}
 
 	ProcessContext subcontext(context);
 	for (SampleCount offset = 0; offset < context.nframes();) {

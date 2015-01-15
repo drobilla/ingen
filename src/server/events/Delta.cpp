@@ -209,6 +209,12 @@ Delta::pre_process()
 			} else if ((block = dynamic_cast<BlockImpl*>(_object))) {
 				if (key == uris.midi_binding && value == uris.patch_wildcard) {
 					op = SpecialType::CONTROL_BINDING;  // Internal block learn
+				} else if (key == uris.ingen_enabled) {
+					if (value.type() == uris.forge.Bool) {
+						op = SpecialType::ENABLE;
+					} else {
+						_status = Status::BAD_VALUE_TYPE;
+					}
 				}
 			}
 
@@ -316,13 +322,17 @@ Delta::execute(ProcessContext& context)
 			}
 			break;
 		case SpecialType::ENABLE:
-			if (value.get<int32_t>()) {
-				if (_compiled_graph) {
-					_graph->set_compiled_graph(_compiled_graph);
+			if (_graph) {
+				if (value.get<int32_t>()) {
+					if (_compiled_graph) {
+						_graph->set_compiled_graph(_compiled_graph);
+					}
+					_graph->enable();
+				} else {
+					_graph->disable(context);
 				}
-				_graph->enable();
-			} else {
-				_graph->disable(context);
+			} else if (block) {
+				block->set_enabled(value.get<int32_t>());
 			}
 			break;
 		case SpecialType::POLYPHONIC: {

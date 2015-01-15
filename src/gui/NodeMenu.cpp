@@ -46,6 +46,7 @@ NodeMenu::NodeMenu(BaseObjectType*                   cobject,
 {
 	xml->get_widget("node_popup_gui_menuitem", _popup_gui_menuitem);
 	xml->get_widget("node_embed_gui_menuitem", _embed_gui_menuitem);
+	xml->get_widget("node_enabled_menuitem", _enabled_menuitem);
 	xml->get_widget("node_randomize_menuitem", _randomize_menuitem);
 }
 
@@ -60,6 +61,8 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 		sigc::mem_fun(signal_popup_gui, &sigc::signal<void>::emit));
 	_embed_gui_menuitem->signal_toggled().connect(
 		sigc::mem_fun(this, &NodeMenu::on_menu_embed_gui));
+	_enabled_menuitem->signal_toggled().connect(
+		sigc::mem_fun(this, &NodeMenu::on_menu_enabled));
 	_randomize_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &NodeMenu::on_menu_randomize));
 
@@ -75,6 +78,9 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 		_popup_gui_menuitem->hide();
 		_embed_gui_menuitem->hide();
 	}
+
+	const Atom& enabled = block->get_property(_app->uris().ingen_enabled);
+	_enabled_menuitem->set_active(!enabled.is_valid() || enabled.get<int32_t>());
 
 	if (plugin && plugin->type() == PluginModel::LV2) {
 
@@ -156,6 +162,14 @@ void
 NodeMenu::on_menu_embed_gui()
 {
 	signal_embed_gui.emit(_embed_gui_menuitem->get_active());
+}
+
+void
+NodeMenu::on_menu_enabled()
+{
+	_app->set_property(_object->uri(),
+	                   _app->uris().ingen_enabled,
+	                   _app->forge().make(bool(_enabled_menuitem->get_active())));
 }
 
 void

@@ -84,7 +84,13 @@ public:
 	virtual void deactivate();
 
 	/** Return true iff this block is activated */
-	bool activated() { return _activated; }
+	bool activated() const { return _activated; }
+
+	/** Return true iff this block is enabled (not bypassed). */
+	bool enabled() const { return _enabled; }
+
+	/** Enable or disable (bypass) this block. */
+	void set_enabled(bool e) { _enabled = e; }
 
 	/** Learn the next incoming MIDI event (for internals) */
 	virtual void learn() {}
@@ -157,6 +163,8 @@ public:
 	void traversed(bool b) { _traversed = b; }
 
 protected:
+	PortImpl* nth_port_by_type(uint32_t n, bool input, PortType type);
+
 	PluginImpl*             _plugin;
 	Raul::Array<PortImpl*>* _ports; ///< Access in audio thread only
 	Context::ID             _context; ///< Context this block runs in
@@ -165,6 +173,7 @@ protected:
 	std::list<BlockImpl*>   _dependants; ///< Blocks this one's output ports are connected to
 	bool                    _polyphonic;
 	bool                    _activated;
+	bool                    _enabled;
 	bool                    _traversed; ///< Flag for process order algorithm
 };
 

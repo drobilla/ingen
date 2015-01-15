@@ -438,6 +438,12 @@ NodeModule::property_changed(const Raul::URI& key, const Atom& value)
 			} else if (!value.get<int32_t>() && _gui_widget) {
 				embed_gui(false);
 			}
+		} else if (key == uris.ingen_enabled) {
+			if (value.get<int32_t>()) {
+				set_dash_length(0.0);
+			} else {
+				set_dash_length(5.0);
+			}
 		}
 	} else if (value.type() == uris.forge.String) {
 		if (key == uris.lv2_name
