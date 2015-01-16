@@ -55,6 +55,7 @@ Configuration::Configuration(Forge& forge)
 	add("socket",         "socket",         'S', "Engine socket path", SESSION, forge.String, forge.alloc("/tmp/ingen.sock"));
 	add("gui",            "gui",            'g', "Launch the GTK graphical interface", SESSION, forge.Bool, forge.make(false));
 	add("",               "help",           'h', "Print this help message", SESSION, forge.Bool, forge.make(false));
+	add("",               "version",        'V', "Print version information", SESSION, forge.Bool, forge.make(false));
 	add("jackName",       "jack-name",      'n', "JACK name", SESSION, forge.String, forge.alloc("ingen"));
 	add("jackServer",     "jack-server",    's', "JACK server name", GLOBAL, forge.String, forge.alloc(""));
 	add("uuid",           "uuid",           'u', "JACK session UUID", SESSION, forge.String, Atom());
