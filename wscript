@@ -177,8 +177,8 @@ def build(bld):
 
     # Program
     obj = bld(features     = 'c cxx cxxprogram',
-              source       = 'src/ingen/main.cpp',
-              target       = bld.path.get_bld().make_node('ingen'),
+              source       = 'src/ingen/ingen.cpp',
+              target       = 'src/ingen/ingen',
               includes     = ['.'],
               use          = 'libingen',
               install_path = '${BINDIR}')
