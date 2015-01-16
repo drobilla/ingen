@@ -2,7 +2,7 @@
 from waflib.extras import autowaf as autowaf
 
 def build(bld):
-    if bld.env.HAVE_SOCKET:
+    if bld.is_defined('HAVE_SOCKET'):
         obj = bld(features        = 'cxx cxxshlib',
                   source          = ['SocketReader.cpp',
                                      'SocketWriter.cpp',
