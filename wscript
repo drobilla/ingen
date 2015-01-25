@@ -17,6 +17,7 @@ out     = 'build'        # Build directory
 def options(opt):
     opt.load('compiler_cxx')
     opt.load('python')
+    opt.load('lv2')
     autowaf.set_options(opt)
     opt.add_option('--data-dir', type='string', dest='datadir',
                    help='Ingen data install directory [Default: PREFIX/share/ingen]')
@@ -40,6 +41,7 @@ def options(opt):
 
 def configure(conf):
     conf.load('compiler_cxx')
+    conf.load('lv2')
     if not Options.options.no_python:
         conf.load('python')
 
