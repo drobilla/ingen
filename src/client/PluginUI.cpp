@@ -238,6 +238,11 @@ PluginUI::create(Ingen::World*          world,
 	lilv_node_free(ui_plugin);
 	lilv_node_free(ui_portNotification);
 
+	const char* bundle_uri  = lilv_node_as_uri(lilv_ui_get_bundle_uri(ui));
+	const char* binary_uri  = lilv_node_as_uri(lilv_ui_get_binary_uri(ui));
+	char*       bundle_path = lilv_file_uri_parse(bundle_uri, NULL);
+	char*       binary_path = lilv_file_uri_parse(binary_uri, NULL);
+
 	// Instantiate the actual plugin UI via Suil
 	SuilInstance* instance = suil_instance_new(
 		PluginUI::ui_host,
@@ -246,10 +251,12 @@ PluginUI::create(Ingen::World*          world,
 		lilv_node_as_uri(lilv_plugin_get_uri(plugin)),
 		lilv_node_as_uri(lilv_ui_get_uri(ui)),
 		lilv_node_as_uri(ui_type),
-		lilv_uri_to_path(lilv_node_as_uri(lilv_ui_get_bundle_uri(ui))),
-		lilv_uri_to_path(lilv_node_as_uri(lilv_ui_get_binary_uri(ui))),
+		bundle_path,
+		binary_path,
 		ret->_features->array());
 
+	free(binary_path);
+	free(bundle_path);
 	lilv_node_free(gtk_ui);
 
 	if (!instance) {
