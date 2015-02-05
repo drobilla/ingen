@@ -243,10 +243,14 @@ PortImpl::set_voice_value(const Context& context,
 	} break;
 	case PortType::ATOM:
 		if (buffer(voice)->is_sequence()) {
-			buffer(voice)->append_event(time - context.start(),
-			                            sizeof(value),
-			                            _bufs.uris().atom_Float,
-			                            (const uint8_t*)&value);
+			const FrameTime offset = time - context.start();
+			// Same deal as above
+			if (offset < context.nframes()) {
+				buffer(voice)->append_event(time - context.start(),
+				                            sizeof(value),
+				                            _bufs.uris().atom_Float,
+				                            (const uint8_t*)&value);
+			}
 			_voices->at(voice).set_state.set(context, time, value);
 		} else {
 			fprintf(stderr,
