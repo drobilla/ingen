@@ -351,7 +351,8 @@ LV2Block::instantiate(BufferFactory& bufs)
 			break;
 		}
 
-		if (!val.type()) {
+		if (!val.type() && (port_type != PortType::ATOM)) {
+			// Ensure numeric ports have a value, use 0 by default
 			val = forge.make(isnan(def_values[j]) ? 0.0f : def_values[j]);
 		}
 

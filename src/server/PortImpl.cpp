@@ -266,6 +266,7 @@ PortImpl::update_set_state(Context& context, uint32_t voice)
 	case SetState::State::SET:
 		if (state.time < context.start() &&
 		    buffer(voice)->is_sequence() &&
+		    buffer(voice)->value_type() == _bufs.uris().atom_Float &&
 		    !_parent->path().is_root()) {
 			buffer(voice)->clear();
 			state.time = context.start();
