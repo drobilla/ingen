@@ -14,8 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <glibmm/thread.h>
-
 #include "ingen/Store.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
@@ -52,7 +50,7 @@ Connect::Connect(Engine&           engine,
 bool
 Connect::pre_process()
 {
-	Glib::RWLock::ReaderLock rlock(_engine.store()->lock());
+	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
 
 	Node* tail = _engine.store()->get(_tail_path);
 	if (!tail) {
@@ -108,26 +106,22 @@ Connect::pre_process()
 
 	_arc = SPtr<ArcImpl>(new ArcImpl(tail_output, _head));
 
-	rlock.release();
-
-	{
-		Glib::RWLock::ReaderLock wlock(_engine.store()->lock());
-
-		/* Need to be careful about graph port arcs here and adding a
-		   block's parent as a dependant/provider, or adding a graph as its own
-		   provider...
-		*/
-		if (tail_block != head_block && tail_block->parent() == head_block->parent()) {
-			head_block->providers().push_back(tail_block);
-			tail_block->dependants().push_back(head_block);
-		}
-
-		_graph->add_arc(_arc);
-		_head->increment_num_arcs();
-
-		tail_output->inherit_neighbour(_head, _tail_remove, _tail_add);
-		_head->inherit_neighbour(tail_output, _head_remove, _head_add);
+	/* Need to be careful about graph port arcs here and adding a
+	   block's parent as a dependant/provider, or adding a graph as its own
+	   provider...
+	*/
+	if (tail_block != head_block && tail_block->parent() == head_block->parent()) {
+		head_block->providers().push_back(tail_block);
+		tail_block->dependants().push_back(head_block);
 	}
+
+	_graph->add_arc(_arc);
+	_head->increment_num_arcs();
+
+	tail_output->inherit_neighbour(_head, _tail_remove, _tail_add);
+	_head->inherit_neighbour(tail_output, _head_remove, _head_add);
+
+	lock.unlock();
 
 	_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
 	_head->get_buffers(*_engine.buffer_factory(),

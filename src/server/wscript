@@ -53,8 +53,10 @@ def build(bld):
               name            = 'libingen_server',
               target          = 'ingen_server',
               install_path    = '${LIBDIR}',
-              use             = 'libingen')
-    core_libs = 'GLIBMM GTHREAD LV2 LILV RAUL SERD SORD'
+              use             = 'libingen',
+              cxxflags        = bld.env.PTHREAD_CFLAGS,
+              linkflags       = bld.env.PTHREAD_LINKFLAGS)
+    core_libs = 'GLIBMM LV2 LILV RAUL SERD SORD'
     autowaf.use_lib(bld, obj, core_libs)
 
     if bld.env.BUILD_TESTS:
@@ -67,7 +69,8 @@ def build(bld):
                   install_path    = '${LIBDIR}',
                   use             = 'libingen_profiled',
                   lib             = bld.env.INGEN_TEST_LIBS,
-                  cxxflags        = bld.env.INGEN_TEST_CXXFLAGS)
+                  cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
+                  linkflags       = bld.env.PTHREAD_LINKFLAGS)
         autowaf.use_lib(bld, obj, core_libs)
 
     if bld.env.HAVE_JACK:
@@ -77,7 +80,9 @@ def build(bld):
                   name            = 'libingen_jack',
                   target          = 'ingen_jack',
                   install_path    = '${LIBDIR}',
-                  use             = 'libingen_server')
+                  use             = 'libingen_server',
+                  cxxflags        = bld.env.PTHREAD_CFLAGS,
+                  linkflags       = bld.env.PTHREAD_LINKFLAGS)
         autowaf.use_lib(bld, obj, core_libs + ' JACK')
 
     # Ingen LV2 wrapper
@@ -87,5 +92,7 @@ def build(bld):
               name         = 'libingen_lv2',
               target       = 'ingen_lv2',
               install_path = '${LV2DIR}/ingen.lv2/',
-              use          = 'libingen libingen_server')
+              use          = 'libingen libingen_server',
+              cxxflags     = bld.env.PTHREAD_CFLAGS,
+              linkflags    = bld.env.PTHREAD_LINKFLAGS)
     autowaf.use_lib(bld, obj, core_libs)

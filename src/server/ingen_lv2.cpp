@@ -20,11 +20,6 @@
 #include <thread>
 #include <vector>
 
-#include <glib.h>
-#include <glibmm/convert.h>
-#include <glibmm/miscutils.h>
-#include <glibmm/timer.h>
-
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
@@ -447,7 +442,7 @@ struct IngenPlugin {
 };
 
 static Lib::Graphs
-find_graphs(const Glib::ustring& manifest_uri)
+find_graphs(const std::string& manifest_uri)
 {
 	Sord::World      world;
 	const Sord::URI  base(world, manifest_uri);
@@ -512,14 +507,14 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		lv2_log_error(&logger, "host did not provide URI unmap feature\n");
 		return NULL;
 	}
-		
-	if (!Glib::thread_supported()) {
-		Glib::thread_init();
-	}
 
 	set_bundle_path(bundle_path);
-	Lib::Graphs graphs = find_graphs(
-		Glib::filename_to_uri(Ingen::bundle_file_path("manifest.ttl")));
+	const std::string manifest_path = Ingen::bundle_file_path("manifest.ttl");
+	SerdNode          manifest_node = serd_node_new_file_uri(
+		(const uint8_t*)manifest_path.c_str(), NULL, NULL, true);
+
+	Lib::Graphs graphs = find_graphs((const char*)manifest_node.buf);
+	serd_node_free(&manifest_node);
 
 	const LV2Graph* graph = NULL;
 	for (const auto& g : graphs) {
@@ -798,8 +793,13 @@ LV2Graph::LV2Graph(const std::string& u, const std::string& f)
 Lib::Lib(const char* bundle_path)
 {
 	Ingen::set_bundle_path(bundle_path);
-	graphs = find_graphs(
-		Glib::filename_to_uri(Ingen::bundle_file_path("manifest.ttl")));
+	const std::string manifest_path = Ingen::bundle_file_path("manifest.ttl");
+	SerdNode          manifest_node = serd_node_new_file_uri(
+		(const uint8_t*)manifest_path.c_str(), NULL, NULL, true);
+
+	graphs = find_graphs((const char*)manifest_node.buf);
+	
+	serd_node_free(&manifest_node);
 }
 
 static void

@@ -16,8 +16,6 @@
 
 #include <list>
 
-#include <glibmm/thread.h>
-
 #include "ingen/Store.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Path.hpp"
@@ -111,7 +109,7 @@ Disconnect::Impl::Impl(Engine&     e,
 bool
 Disconnect::pre_process()
 {
-	Glib::RWLock::WriterLock lock(_engine.store()->lock());
+	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
 
 	if (_tail_path.parent().parent() != _head_path.parent().parent()
 	    && _tail_path.parent() != _head_path.parent().parent()

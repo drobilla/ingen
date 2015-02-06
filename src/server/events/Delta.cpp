@@ -15,8 +15,7 @@
 */
 
 #include <vector>
-
-#include <glibmm/thread.h>
+#include <thread>
 
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
@@ -63,7 +62,7 @@ Delta::Delta(Engine&           engine,
 	, _compiled_graph(NULL)
 	, _context(context)
 	, _type(type)
-	, _poly_lock(engine.store()->lock(), Glib::NOT_LOCK)
+	, _poly_lock(engine.store()->mutex(), std::defer_lock)
 {
 	if (context != Resource::Graph::DEFAULT) {
 		for (auto& p : _properties) {
@@ -107,7 +106,7 @@ Delta::pre_process()
 	bool       poly_changed    = false;
 
 	// Take a writer lock while we modify the store
-	Glib::RWLock::WriterLock lock(_engine.store()->lock());
+	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
 
 	_object = is_graph_object
 		? static_cast<Ingen::Resource*>(_engine.store()->get(Node::uri_to_path(_subject)))
@@ -279,8 +278,8 @@ Delta::pre_process()
 	}
 
 	if (poly_changed) {
-		lock.release();
-		_poly_lock.acquire();
+		lock.unlock();
+		_poly_lock.lock();
 	}
 
 	return Event::pre_process_done(
@@ -377,8 +376,8 @@ Delta::execute(ProcessContext& context)
 void
 Delta::post_process()
 {
-	if (_poly_lock.locked()) {
-		_poly_lock.release();
+	if (_poly_lock.owns_lock()) {
+		_poly_lock.unlock();
 	}
 
 	Broadcaster::Transfer t(*_engine.broadcaster());

@@ -119,7 +119,7 @@ private:
 
 	SPtr<ControlBindings::Bindings> _old_bindings;
 
-	Glib::RWLock::WriterLock _poly_lock;  ///< Long-term lock for poly changes
+	std::unique_lock<std::mutex> _poly_lock;  ///< Long-term lock for poly changes
 };
 
 } // namespace Events

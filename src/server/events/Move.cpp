@@ -14,8 +14,6 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <glibmm/thread.h>
-
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
 
@@ -50,7 +48,7 @@ Move::~Move()
 bool
 Move::pre_process()
 {
-	Glib::RWLock::WriterLock lock(_engine.store()->lock());
+	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
 
 	if (!_old_path.parent().is_parent_of(_new_path)) {
 		return Event::pre_process_done(Status::PARENT_DIFFERS, _new_path);

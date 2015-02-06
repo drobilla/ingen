@@ -16,8 +16,6 @@
 
 #include <utility>
 
-#include <glibmm/thread.h>
-
 #include "ingen/Interface.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/Store.hpp"
@@ -116,7 +114,7 @@ Get::Get(Engine&          engine,
 bool
 Get::pre_process()
 {
-	Glib::RWLock::ReaderLock lock(_engine.store()->lock());
+	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
 
 	if (_uri == "ingen:/plugins") {
 		_plugins = _engine.block_factory()->plugins();

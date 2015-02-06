@@ -45,7 +45,7 @@ Delete::Delete(Engine&          engine,
 	, _ports_array(NULL)
 	, _compiled_graph(NULL)
 	, _disconnect_event(NULL)
-	, _lock(engine.store()->lock(), Glib::NOT_LOCK)
+	, _lock(engine.store()->mutex(), std::defer_lock)
 {
 	if (Node::uri_is_path(uri)) {
 		_path = Node::uri_to_path(uri);
@@ -84,7 +84,7 @@ Delete::pre_process()
 		return Event::pre_process_done(Status::INTERNAL_ERROR, _path);
 	}
 
-	_lock.acquire();
+	_lock.lock();
 
 	_engine.store()->remove(iter, _removed_objects);
 
@@ -145,8 +145,8 @@ Delete::execute(ProcessContext& context)
 void
 Delete::post_process()
 {
-	if (_lock.locked()) {
-		_lock.release();
+	if (_lock.owns_lock()) {
+		_lock.unlock();
 	}
 
 	_removed_bindings.reset();

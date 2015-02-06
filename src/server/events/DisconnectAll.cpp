@@ -17,7 +17,6 @@
 #include <set>
 
 #include <boost/format.hpp>
-#include <glibmm/thread.h>
 
 #include "ingen/Store.hpp"
 #include "raul/Array.hpp"
@@ -82,10 +81,10 @@ DisconnectAll::~DisconnectAll()
 bool
 DisconnectAll::pre_process()
 {
-	Glib::RWLock::WriterLock lock(_engine.store()->lock(), Glib::NOT_LOCK);
+	std::unique_lock<std::mutex> lock(_engine.store()->mutex(), std::defer_lock);
 
 	if (!_deleting) {
-		lock.acquire();
+		lock.lock();
 
 		_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(_parent_path));
 		if (!_parent) {

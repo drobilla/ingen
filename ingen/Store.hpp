@@ -18,9 +18,7 @@
 #define INGEN_STORE_HPP
 
 #include <map>
-
-#undef nil
-#include <glibmm/thread.h>
+#include <mutex>
 
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
@@ -72,10 +70,10 @@ public:
 	                           const Raul::Symbol& symbol,
 	                           bool                allow_zero=true);
 
-	Glib::RWLock& lock() { return _lock; }
+	std::mutex& mutex() { return _mutex; }
 
 private:
-	Glib::RWLock _lock;
+	std::mutex _mutex;
 };
 
 } // namespace Ingen
