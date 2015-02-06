@@ -123,6 +123,16 @@ def configure(conf):
                define_name   = 'HAVE_POSIX_MEMALIGN',
                mandatory     = False)
 
+    if conf.check(cflags=['-pthread'], mandatory=False):
+        conf.env.PTHREAD_CFLAGS    = ['-pthread']
+        conf.env.PTHREAD_LINKFLAGS = ['-pthread']
+    elif conf.check(linkflags=['-lpthread'], mandatory=False):
+        conf.env.PTHREAD_CFLAGS    = []
+        conf.env.PTHREAD_LINKFLAGS = ['-lpthread']
+    else:
+        conf.env.PTHREAD_CFLAGS    = []
+        conf.env.PTHREAD_LINKFLAGS = []
+
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
     if not Options.options.no_gui and conf.env.HAVE_GANV:
