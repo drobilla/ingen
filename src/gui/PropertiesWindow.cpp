@@ -84,6 +84,7 @@ void
 PropertiesWindow::reset()
 {
 	_property_connection.disconnect();
+	_property_removed_connection.disconnect();
 
 	_key_store->clear();
 	_value_store->clear();
