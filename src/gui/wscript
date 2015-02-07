@@ -1,6 +1,21 @@
 #!/usr/bin/env python
-from waflib.extras import autowaf as autowaf
+import waflib.extras.autowaf as autowaf
 import waflib.Utils as Utils
+import waflib.Options as Options
+
+def configure(conf):
+    autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
+                      atleast_version='2.12.0', mandatory=False)
+    autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM',
+                      atleast_version='2.14.0', mandatory=False)
+    autowaf.check_pkg(conf, 'ganv-1', uselib_store='GANV',
+                      atleast_version='1.2.3', mandatory=False)
+    if not Options.options.no_webkit:
+        autowaf.check_pkg(conf, 'webkit-1.0', uselib_store='WEBKIT',
+                          atleast_version='1.4.0', mandatory=False)
+
+    if conf.env.HAVE_GANV and conf.env.HAVE_GTKMM:
+        autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
 
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',

@@ -25,6 +25,10 @@ def options(opt):
                    help='Ingen module install directory [Default: PREFIX/lib/ingen]')
     opt.add_option('--no-gui', action='store_true', dest='no_gui',
                    help='Do not build GUI')
+    opt.add_option('--no-client', action='store_true', dest='no_client',
+                   help='Do not build client library (or GUI)')
+    opt.add_option('--no-jack', action='store_true', dest='no_jack',
+                   help='Do not build jack backend (for ingen.lv2 only)')
     opt.add_option('--no-python', action='store_true', dest='no_python',
                    help='Do not install Python bindings')
     opt.add_option('--no-webkit', action='store_true', dest='no_webkit',
@@ -62,8 +66,6 @@ def configure(conf):
                       atleast_version='2.14.0', mandatory=True)
     autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
                       atleast_version='2.14.0', mandatory=True)
-    autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
-                      atleast_version='0.120.0', mandatory=False)
     autowaf.check_pkg(conf, 'lilv-0', uselib_store='LILV',
                       atleast_version='0.21.0', mandatory=True)
     autowaf.check_pkg(conf, 'suil-0', uselib_store='SUIL',
@@ -76,33 +78,35 @@ def configure(conf):
                       atleast_version='0.18.0', mandatory=False)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
                       atleast_version='0.12.0', mandatory=False)
+
+    conf.check(function_name = 'posix_memalign',
+               defines       = '_POSIX_SOURCE=1',
+               header_name   = 'stdlib.h',
+               define_name   = 'HAVE_POSIX_MEMALIGN',
+               mandatory     = False)
+
+    if not Options.options.no_socket:
+        conf.check(function_name = 'socket',
+                   header_name   = 'sys/socket.h',
+                   define_name   = 'HAVE_SOCKET',
+                   mandatory     = False)
+
     if not Options.options.no_python:
         conf.check_python_version((2,4,0), mandatory=False)
-    if not Options.options.no_gui:
-        autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
-                          atleast_version='2.12.0', mandatory=False)
-        autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='NEW_GTKMM',
-                          atleast_version='2.14.0', mandatory=False)
-        autowaf.check_pkg(conf, 'ganv-1', uselib_store='GANV',
-                          atleast_version='1.2.3', mandatory=False)
-        if not Options.options.no_webkit:
-            autowaf.check_pkg(conf, 'webkit-1.0', uselib_store='WEBKIT',
-                              atleast_version='1.4.0', mandatory=False)
-    if not Options.options.no_socket:
-        conf.check_cc(function_name='socket',
-                      header_name='sys/socket.h',
-                      define_name='HAVE_SOCKET',
-                      mandatory=False)
-    if not Options.options.no_jack_session:
-        autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
+
+    if not Options.options.no_jack:
+        autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
+                          atleast_version='0.120.0', mandatory=False)
+        conf.check(function_name = 'jack_set_property',
+                   header_name   = 'jack/metadata.h',
+                   define_name   = 'HAVE_JACK_METADATA',
+                   uselib        = 'JACK',
+                   mandatory     = False)
+        if not Options.options.no_jack_session:
+            autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
+
     if Options.options.debug_urids:
         autowaf.define(conf, 'INGEN_DEBUG_URIDS', 1)
-
-    conf.check(function_name='jack_set_property',
-               header_name='jack/metadata.h',
-               define_name='HAVE_JACK_METADATA',
-               uselib='JACK',
-               mandatory=False)
 
     conf.env.BUILD_TESTS = Options.options.build_tests
     if conf.env.BUILD_TESTS:
@@ -110,18 +114,12 @@ def configure(conf):
                        define_name='HAVE_GCOV',
                        mandatory=False)
 
-        if conf.is_defiend('HAVE_GCOV'):
+        if conf.is_defined('HAVE_GCOV'):
             conf.env.INGEN_TEST_LIBS     = ['gcov']
             conf.env.INGEN_TEST_CXXFLAGS = ['-fprofile-arcs', '-ftest-coverage']
         else:
             conf.env.INGEN_TEST_LIBS     = []
             conf.env.INGEN_TEST_CXXFLAGS = []
-
-    conf.check(function_name = 'posix_memalign',
-               defines       = '_POSIX_SOURCE=1',
-               header_name   = 'stdlib.h',
-               define_name   = 'HAVE_POSIX_MEMALIGN',
-               mandatory     = False)
 
     if conf.check(cflags=['-pthread'], mandatory=False):
         conf.env.PTHREAD_CFLAGS    = ['-pthread']
@@ -135,8 +133,13 @@ def configure(conf):
 
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
-    if not Options.options.no_gui and conf.env.HAVE_GANV:
-        autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
+    if not Options.options.no_client:
+        autowaf.define(conf, 'INGEN_BUILD_CLIENT', 1)
+    else:
+        Options.options.no_gui = True
+        
+    if not Options.options.no_gui:
+        conf.recurse('src/gui')
 
     if conf.env.HAVE_JACK:
         autowaf.define(conf, 'HAVE_JACK_MIDI', 1)
@@ -181,7 +184,9 @@ def build(bld):
     bld.recurse('src')
     bld.recurse('src/serialisation')
     bld.recurse('src/server')
-    bld.recurse('src/client')
+
+    if bld.env.INGEN_BUILD_CLIENT:
+        bld.recurse('src/client')
 
     if bld.env.INGEN_BUILD_GUI:
         bld.recurse('src/gui')
