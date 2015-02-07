@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2012 David Robillard <http://drobilla.net/>
+  Copyright 2012-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SOCKET_SOCKET_WRITER_HPP
-#define INGEN_SOCKET_SOCKET_WRITER_HPP
+#ifndef INGEN_SOCKET_WRITER_HPP
+#define INGEN_SOCKET_WRITER_HPP
 
 #include <stdint.h>
 
@@ -29,7 +29,6 @@
 #include "sratom/sratom.h"
 
 namespace Ingen {
-namespace Socket {
 
 /** An Interface that writes Turtle messages to a socket.
  */
@@ -61,7 +60,6 @@ protected:
 	SPtr<Raul::Socket> _socket;
 };
 
-}  // namespace Socket
 }  // namespace Ingen
 
-#endif  // INGEN_SOCKET_SOCKET_WRITER_HPP
+#endif  // INGEN_SOCKET_WRITER_HPP

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SOCKET_SOCKET_READER_HPP
-#define INGEN_SOCKET_SOCKET_READER_HPP
+#ifndef INGEN_SOCKET_READER_HPP
+#define INGEN_SOCKET_READER_HPP
 
 #include <thread>
 
@@ -26,8 +26,6 @@ namespace Ingen {
 
 class Interface;
 class World;
-
-namespace Socket {
 
 /** Calls Interface methods based on Turtle messages received via socket. */
 class SocketReader
@@ -69,6 +67,5 @@ private:
 };
 
 }  // namespace Ingen
-}  // namespace Socket
 
-#endif  // INGEN_SOCKET_SOCKET_READER_HPP
+#endif  // INGEN_SOCKET_READER_HPP

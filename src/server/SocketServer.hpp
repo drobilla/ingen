@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -14,26 +14,27 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SOCKET_SOCKET_SERVER_HPP
-#define INGEN_SOCKET_SOCKET_SERVER_HPP
+#ifndef INGEN_SERVER_SOCKET_SERVER_HPP
+#define INGEN_SERVER_SOCKET_SERVER_HPP
 
 #include "raul/Socket.hpp"
 
-#include "../server/EventWriter.hpp"
-#include "SocketReader.hpp"
-#include "SocketWriter.hpp"
+#include "ingen/SocketReader.hpp"
+#include "ingen/SocketWriter.hpp"
+
+#include "EventWriter.hpp"
 
 namespace Ingen {
-namespace Socket {
+namespace Server {
 
 /** The server side of an Ingen socket connection. */
-class SocketServer : public Server::EventWriter, public SocketReader
+class SocketServer : public EventWriter, public SocketReader
 {
 public:
 	SocketServer(World&             world,
 	             Server::Engine&    engine,
 	             SPtr<Raul::Socket> sock)
-		: Server::EventWriter(engine)
+		: EventWriter(engine)
 		, SocketReader(world, *this, sock)
 		, _engine(engine)
 		, _writer(new SocketWriter(world.uri_map(),
@@ -57,4 +58,4 @@ private:
 }  // namespace Ingen
 }  // namespace Socket
 
-#endif  // INGEN_SOCKET_SOCKET_SERVER_HPP
+#endif  // INGEN_SERVER_SOCKET_SERVER_HPP

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2012 David Robillard <http://drobilla.net/>
+  Copyright 2012-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -18,16 +18,14 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
+#include "ingen/SocketWriter.hpp"
 #include "ingen/URIMap.hpp"
-
-#include "SocketWriter.hpp"
 
 #ifndef MSG_NOSIGNAL
 #    define MSG_NOSIGNAL 0
 #endif
 
 namespace Ingen {
-namespace Socket {
 
 static size_t
 socket_sink(const void* buf, size_t len, void* stream)
@@ -95,5 +93,4 @@ SocketWriter::bundle_end()
 	send(fd(), end, 1, MSG_NOSIGNAL);
 }
 
-} // namespace Socket
 } // namespace Ingen

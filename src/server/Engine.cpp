@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2013 David Robillard <http://drobilla.net/>
+  Copyright 2007-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -13,6 +13,8 @@
   You should have received a copy of the GNU Affero General Public License
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "ingen_config.h"
 
 #include <sys/mman.h>
 
@@ -45,6 +47,9 @@
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
 #include "Worker.hpp"
+#ifdef HAVE_SOCKET
+#include "SocketListener.hpp"
+#endif
 
 using namespace std;
 
@@ -67,6 +72,7 @@ Engine::Engine(Ingen::World* world)
 	, _post_processor(new PostProcessor(*this))
 	, _root_graph(NULL)
 	, _worker(new Worker(world->log(), event_queue_size()))
+	, _listener(NULL)
 	, _process_context(*this)
 	, _rand_engine(0)
 	, _uniform_dist(0.0f, 1.0f)
@@ -119,6 +125,9 @@ Engine::~Engine()
 
 	_world->set_store(SPtr<Ingen::Store>());
 
+#ifdef HAVE_SOCKET
+	delete _listener;
+#endif
 	delete _pre_processor;
 	delete _post_processor;
 	delete _block_factory;
@@ -135,6 +144,14 @@ Engine::~Engine()
 	munlockall();
 }
 
+void
+Engine::listen()
+{
+#ifdef HAVE_SOCKET
+	_listener = new SocketListener(*this);
+#endif
+}
+	
 SPtr<Store>
 Engine::store() const
 {

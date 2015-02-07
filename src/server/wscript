@@ -25,6 +25,7 @@ def build(bld):
             PortImpl.cpp
             PostProcessor.cpp
             PreProcessor.cpp
+            SocketListener.cpp
             Worker.cpp
             events/Connect.cpp
             events/CreateBlock.cpp
@@ -53,7 +54,7 @@ def build(bld):
               name            = 'libingen_server',
               target          = 'ingen_server',
               install_path    = '${LIBDIR}',
-              use             = 'libingen',
+              use             = 'libingen libingen_socket',
               cxxflags        = bld.env.PTHREAD_CFLAGS,
               linkflags       = bld.env.PTHREAD_LINKFLAGS)
     core_libs = 'GLIBMM LV2 LILV RAUL SERD SORD'

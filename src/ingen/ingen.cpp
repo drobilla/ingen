@@ -39,6 +39,9 @@
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
 #endif
+#ifdef HAVE_SOCKET
+#include "ingen/client/SocketClient.hpp"
+#endif
 
 using namespace std;
 using namespace Ingen;
@@ -117,13 +120,9 @@ main(int argc, char** argv)
 		          "Unable to load server module");
 
 		ingen_try(bool(world->engine()), "Unable to create engine");
+		world->engine()->listen();
 
 		engine_interface = world->interface();
-
-#ifdef HAVE_SOCKET
-		ingen_try(world->load_module("socket_server"),
-		          "Unable to load socket server module");
-#endif
 	}
 
 	// If we don't have a local engine interface (for GUI), use network
@@ -131,8 +130,7 @@ main(int argc, char** argv)
 		ingen_try(world->load_module("client"),
 		          "Unable to load client module");
 #ifdef HAVE_SOCKET
-		ingen_try(world->load_module("socket_client"),
-		          "Unable to load socket client module");
+		Client::SocketClient::register_factories(world);
 #endif
 		const char* const uri = conf.option("connect").ptr<char>();
 		ingen_try(Raul::URI::is_valid(uri),

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -48,6 +48,7 @@ class LV2Options;
 class PostProcessor;
 class PreProcessor;
 class ProcessContext;
+class SocketListener;
 class Worker;
 
 /**
@@ -77,6 +78,8 @@ public:
 	virtual void register_client(const Raul::URI& uri,
 	                             SPtr<Interface>  client);
 	virtual bool unregister_client(const Raul::URI& uri);
+
+	void listen();
 
 	/** Return a random [0..1] float with uniform distribution */
 	float frand() { return _uniform_dist(_rand_engine); }
@@ -130,6 +133,7 @@ private:
 	PostProcessor*   _post_processor;
 	GraphImpl*       _root_graph;
 	Worker*          _worker;
+	SocketListener*  _listener;
 
 	ProcessContext _process_context;
 

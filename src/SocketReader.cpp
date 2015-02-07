@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -20,15 +20,13 @@
 #include "ingen/AtomReader.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/SocketReader.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
-#include "SocketReader.hpp"
-
 namespace Ingen {
-namespace Socket {
 
 SocketReader::SocketReader(Ingen::World&      world,
                            Interface&         iface,
@@ -187,4 +185,3 @@ SocketReader::run()
 }
 
 }  // namespace Ingen
-}  // namespace Socket

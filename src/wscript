@@ -1,23 +1,25 @@
 #!/usr/bin/env python
 from waflib.extras import autowaf as autowaf
 
-sources = [
-    'AtomReader.cpp',
-    'AtomWriter.cpp',
-    'ClashAvoider.cpp',
-    'Configuration.cpp',
-    'Forge.cpp',
-    'LV2Features.cpp',
-    'Log.cpp',
-    'Resource.cpp',
-    'Store.cpp',
-    'URIMap.cpp',
-    'URIs.cpp',
-    'World.cpp',
-    'runtime_paths.cpp',
-]
-
 def build(bld):
+    sources = [
+        'AtomReader.cpp',
+        'AtomWriter.cpp',
+        'ClashAvoider.cpp',
+        'Configuration.cpp',
+        'Forge.cpp',
+        'LV2Features.cpp',
+        'Log.cpp',
+        'Resource.cpp',
+        'Store.cpp',
+        'URIMap.cpp',
+        'URIs.cpp',
+        'World.cpp',
+        'runtime_paths.cpp'
+    ]
+    if bld.is_defined('HAVE_SOCKET'):
+        sources += [ 'SocketReader.cpp', 'SocketWriter.cpp' ]
+
     obj = bld(features        = 'cxx cxxshlib',
               source          = sources,
               export_includes = ['..'],
@@ -26,7 +28,9 @@ def build(bld):
               target          = 'ingen',
               vnum            = '0.0.0',
               install_path    = '${LIBDIR}',
-              lib             = ['dl'])
+              lib             = ['dl'],
+              cxxflags        = bld.env.PTHREAD_CFLAGS,
+              linkflags       = bld.env.PTHREAD_LINKFLAGS)
     autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SERD SORD SRATOM')
 
     if bld.env.BUILD_TESTS:
@@ -38,6 +42,7 @@ def build(bld):
                   target          = 'ingen_profiled',
                   install_path    = '',
                   lib             = ['dl'] + bld.env.INGEN_TEST_LIBS,
-                  cxxflags        = bld.env.INGEN_TEST_CXXFLAGS)
+                  cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
+                  linkflags       = bld.env.PTHREAD_LINKFLAGS)
         autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SERD SORD SRATOM')
 

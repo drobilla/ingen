@@ -182,7 +182,6 @@ def build(bld):
     bld.recurse('src/serialisation')
     bld.recurse('src/server')
     bld.recurse('src/client')
-    bld.recurse('src/socket')
 
     if bld.env.INGEN_BUILD_GUI:
         bld.recurse('src/gui')

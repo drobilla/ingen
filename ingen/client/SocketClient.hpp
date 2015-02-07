@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2012 David Robillard <http://drobilla.net/>
+  Copyright 2012-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -14,14 +14,14 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SOCKET_SOCKET_CLIENT_HPP
-#define INGEN_SOCKET_SOCKET_CLIENT_HPP
+#ifndef INGEN_CLIENT_SOCKET_CLIENT_HPP
+#define INGEN_CLIENT_SOCKET_CLIENT_HPP
 
-#include "SocketReader.hpp"
-#include "SocketWriter.hpp"
+#include "ingen/SocketReader.hpp"
+#include "ingen/SocketWriter.hpp"
 
 namespace Ingen {
-namespace Socket {
+namespace Client {
 
 /** The client side of an Ingen socket connection. */
 class SocketClient : public SocketWriter
@@ -44,12 +44,36 @@ public:
 		_respondee = respondee;
 	}
 
+	static SPtr<Ingen::Interface>
+	new_socket_interface(Ingen::World*          world,
+	                     const Raul::URI&       uri,
+	                     SPtr<Ingen::Interface> respondee)
+	{
+		const Raul::Socket::Type type = (uri.scheme() == "unix"
+		                                 ? Raul::Socket::Type::UNIX
+		                                 : Raul::Socket::Type::TCP);
+
+		SPtr<Raul::Socket> sock(new Raul::Socket(type));
+		if (!sock->connect(uri)) {
+			world->log().error(fmt("Failed to connect <%1%> (%2%)\n")
+			                   % sock->uri() % strerror(errno));
+			return SPtr<Interface>();
+		}
+		SocketClient* client = new SocketClient(*world, uri, sock, respondee);
+		return SPtr<Interface>(client);
+	}
+
+	static void register_factories(World* world) {
+		world->add_interface_factory("unix", &new_socket_interface);
+		world->add_interface_factory("tcp", &new_socket_interface);
+	}
+	
 private:
 	SPtr<Interface> _respondee;
 	SocketReader    _reader;
 };
 
-}  // namespace Socket
+}  // namespace Client
 }  // namespace Ingen
 
-#endif  // INGEN_SOCKET_SOCKET_CLIENT_HPP
+#endif  // INGEN_CLIENT_SOCKET_CLIENT_HPP

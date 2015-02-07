@@ -267,6 +267,7 @@ World::load_module(const char* name)
 	if (i != _impl->modules.end()) {
 		return true;
 	}
+	log().info(fmt("Loading %1% module\n") % name);
 	Glib::Module* lib = ingen_load_module(log(), name);
 	Ingen::Module* (*module_load)() = NULL;
 	if (lib && lib->get_symbol("ingen_module_load", (void*&)module_load)) {

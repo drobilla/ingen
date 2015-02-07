@@ -55,6 +55,11 @@ public:
 	virtual void deactivate() = 0;
 
 	/**
+	   Begin listening on network sockets.
+	*/
+	virtual void listen() = 0;
+
+	/**
 	   Return true iff events are waiting to be processed.
 	*/
 	virtual bool pending_events() = 0;
