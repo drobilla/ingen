@@ -105,7 +105,7 @@ private:
 	void event_import();
 	void event_save();
 	void event_save_as();
-	void event_draw();
+	void event_export_image();
 	void event_copy();
 	void event_paste();
 	void event_delete();
@@ -143,7 +143,7 @@ private:
 	Gtk::MenuItem*      _menu_import;
 	Gtk::MenuItem*      _menu_save;
 	Gtk::MenuItem*      _menu_save_as;
-	Gtk::MenuItem*      _menu_draw;
+	Gtk::MenuItem*      _menu_export_image;
 	Gtk::MenuItem*      _menu_cut;
 	Gtk::MenuItem*      _menu_copy;
 	Gtk::MenuItem*      _menu_paste;

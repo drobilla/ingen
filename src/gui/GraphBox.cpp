@@ -76,7 +76,7 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	xml->get_widget("graph_import_menuitem", _menu_import);
 	xml->get_widget("graph_save_menuitem", _menu_save);
 	xml->get_widget("graph_save_as_menuitem", _menu_save_as);
-	xml->get_widget("graph_draw_menuitem", _menu_draw);
+	xml->get_widget("graph_export_image_menuitem", _menu_export_image);
 	xml->get_widget("graph_cut_menuitem", _menu_cut);
 	xml->get_widget("graph_copy_menuitem", _menu_copy);
 	xml->get_widget("graph_paste_menuitem", _menu_paste);
@@ -115,8 +115,8 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &GraphBox::event_save));
 	_menu_save_as->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_save_as));
-	_menu_draw->signal_activate().connect(
-		sigc::mem_fun(this, &GraphBox::event_draw));
+	_menu_export_image->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_export_image));
 	_menu_copy->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_copy));
 	_menu_paste->signal_activate().connect(
@@ -591,32 +591,48 @@ GraphBox::event_save_as()
 }
 
 void
-GraphBox::event_draw()
+GraphBox::event_export_image()
 {
-	Gtk::FileChooserDialog dialog("Draw to DOT", Gtk::FILE_CHOOSER_ACTION_SAVE);
+	Gtk::FileChooserDialog dialog("Export Image", Gtk::FILE_CHOOSER_ACTION_SAVE);
+	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+	dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
+	dialog.set_default_response(Gtk::RESPONSE_OK);
 	if (_window) {
 		dialog.set_transient_for(*_window);
 	}
 
-	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-	Gtk::Button* save_button = dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
-	save_button->property_has_default() = true;
+	typedef std::map<std::string, std::string> Types;
+	Types types;
+	types["*.dot"] = "Graphviz DOT";
+	types["*.pdf"] = "Portable Document Format";
+	types["*.ps"]  = "PostScript";
+	types["*.svg"] = "Scalable Vector Graphics";
+	for (Types::const_iterator t = types.begin(); t != types.end(); ++t) {
+		Gtk::FileFilter filt;
+		filt.add_pattern(t->first);
+		filt.set_name(t->second);
+		dialog.add_filter(filt);
+	}
+
+	Gtk::CheckButton* bg_but = new Gtk::CheckButton("Draw _Background", true);
+	Gtk::Alignment*   extra  = new Gtk::Alignment(1.0, 0.5, 0.0, 0.0);
+	bg_but->set_active(true);
+	extra->add(*Gtk::manage(bg_but));
+	extra->show_all();
+	dialog.set_extra_widget(*Gtk::manage(extra));
 
 	if (dialog.run() == Gtk::RESPONSE_OK) {
-		std::string filename = dialog.get_filename();
-		if (filename.find(".") == std::string::npos)
-			filename += ".dot";
-
+		const std::string filename = dialog.get_filename();
 		if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-			const int ret = message_dialog(
-				(boost::format("File exists!  Overwrite %1%?") % filename).str(),
-				"", Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
-			if (ret != Gtk::RESPONSE_YES) {
+			Gtk::MessageDialog confirm(
+				std::string("File exists!  Overwrite ") + filename + "?",
+				true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+			confirm.set_transient_for(dialog);
+			if (confirm.run() != Gtk::RESPONSE_YES) {
 				return;
 			}
 		}
-
-		_view->canvas()->export_dot(filename.c_str());
+		_view->canvas()->export_image(filename.c_str(), bg_but->get_active());
 		_status_bar->push((boost::format("Rendered %1% to %2%")
 		                   % _graph->path() % filename).str(),
 		                  STATUS_CONTEXT_GRAPH);

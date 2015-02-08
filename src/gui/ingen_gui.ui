@@ -816,8 +816,8 @@ Contributors:
                       </object>
                     </child>
                     <child>
-                      <object class="GtkImageMenuItem" id="graph_draw_menuitem">
-                        <property name="label">_Draw...</property>
+                      <object class="GtkImageMenuItem" id="graph_export_image_menuitem">
+                        <property name="label">_Export Image...</property>
                         <property name="use_action_appearance">False</property>
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>

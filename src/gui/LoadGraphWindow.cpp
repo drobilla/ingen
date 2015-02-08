@@ -77,13 +77,15 @@ LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
 	signal_selection_changed().connect(
 		sigc::mem_fun(this, &LoadGraphWindow::selection_changed));
 
-	Gtk::FileFilter filt;
-	filt.add_pattern("*.ttl");
-	filt.set_name("Ingen graph files (*.ttl)");
-	filt.add_pattern("*.ingen");
-	filt.set_name("Ingen bundles (*.ingen)");
+	Gtk::FileFilter file_filter;
+	file_filter.add_pattern("*.ttl");
+	file_filter.set_name("Ingen graph files (*.ttl)");
+	add_filter(file_filter);
 
-	set_filter(filt);
+	Gtk::FileFilter bundle_filter;
+	bundle_filter.add_pattern("*.ingen");
+	bundle_filter.set_name("Ingen bundles (*.ingen)");
+	add_filter(bundle_filter);
 
 	property_select_multiple() = true;
 
