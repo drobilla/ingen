@@ -67,6 +67,25 @@ DuplexPort::~DuplexPort()
 	}
 }
 
+DuplexPort*
+DuplexPort::duplicate(Engine&             engine,
+                      const Raul::Symbol& symbol,
+                      GraphImpl*          parent)
+{
+	BufferFactory& bufs       = *engine.buffer_factory();
+	const Atom     polyphonic = get_property(bufs.uris().ingen_polyphonic);
+
+	DuplexPort* dup = new DuplexPort(
+		bufs, parent, symbol, _index,
+		polyphonic.type() == bufs.uris().atom_Bool && polyphonic.get<int32_t>(),
+		_poly, _type, _buffer_type,
+		_value, _buffer_size, _is_output);
+
+	dup->set_properties(properties());
+
+	return dup;
+}
+
 void
 DuplexPort::inherit_neighbour(const PortImpl*       port,
                               Resource::Properties& remove,

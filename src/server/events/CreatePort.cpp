@@ -87,31 +87,23 @@ CreatePort::pre_process()
 {
 	if (_port_type == PortType::UNKNOWN) {
 		return Event::pre_process_done(Status::UNKNOWN_TYPE, _path);
-	}
-
-	if (_path.is_root()) {
+	} else if (_path.is_root()) {
 		return Event::pre_process_done(Status::BAD_URI, _path);
-	}
-
-	if (_engine.store()->get(_path)) {
+	} else if (_engine.store()->get(_path)) {
 		return Event::pre_process_done(_status, _path);
 	}
 
-	Node* parent = _engine.store()->get(_path.parent());
+	const Raul::Path parent_path = _path.parent();
+	Node* const      parent      = _engine.store()->get(parent_path);
 	if (!parent) {
-		return Event::pre_process_done(Status::PARENT_NOT_FOUND,
-		                               _path.parent());
+		return Event::pre_process_done(Status::PARENT_NOT_FOUND, parent_path);
+	} else if (!(_graph = dynamic_cast<GraphImpl*>(parent))) {
+		return Event::pre_process_done(Status::INVALID_PARENT, parent_path);
 	}
 
-	if (!(_graph = dynamic_cast<GraphImpl*>(parent))) {
-		return Event::pre_process_done(Status::INVALID_PARENT_PATH,
-		                               _path.parent());
-	}
-
-	const URIs&          uris           = _engine.world()->uris();
-	const BufferFactory& buffer_factory = *_engine.buffer_factory();
-
-	const uint32_t buf_size    = buffer_factory.default_size(_buf_type);
+	const URIs&    uris        = _engine.world()->uris();
+	BufferFactory& bufs        = *_engine.buffer_factory();
+	const uint32_t buf_size    = bufs.default_size(_buf_type);
 	const int32_t  old_n_ports = _graph->num_ports_non_rt();
 
 	typedef Resource::Properties::const_iterator PropIter;
@@ -133,7 +125,7 @@ CreatePort::pre_process()
 	                         poly_i->second.get<int32_t>());
 
 	if (!(_graph_port = _graph->create_port(
-		      *_engine.buffer_factory(), Raul::Symbol(_path.symbol()),
+		      bufs, Raul::Symbol(_path.symbol()),
 		      _port_type, _buf_type, buf_size, _is_output, polyphonic))) {
 		return Event::pre_process_done(Status::CREATION_FAILED, _path);
 	}

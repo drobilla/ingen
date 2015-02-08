@@ -22,6 +22,7 @@
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 #include "lv2/lv2plug.in/ns/ext/options/options.h"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
+#include "lv2/lv2plug.in/ns/ext/state/state.h"
 
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
@@ -430,6 +431,46 @@ LV2Block::instantiate(BufferFactory& bufs)
 	}
 
 	return ret;
+}
+
+BlockImpl*
+LV2Block::duplicate(Engine&             engine,
+                    const Raul::Symbol& symbol,
+                    GraphImpl*          parent)
+{
+	const SampleRate rate = engine.driver()->sample_rate();
+
+	// Duplicate and instantiate block
+	LV2Block* dup = new LV2Block(_lv2_plugin, symbol, _polyphonic, parent, rate);
+	if (!dup->instantiate(*engine.buffer_factory())) {
+		delete dup;
+		return NULL;
+	}
+	dup->set_properties(properties());
+
+	// Set duplicate port values and properties to the same as ours
+	for (uint32_t p = 0; p < num_ports(); ++p) {
+		const Atom& val = port_impl(p)->value();
+		if (val.is_valid()) {
+			dup->port_impl(p)->set_value(val);
+		}
+		dup->port_impl(p)->set_properties(port_impl(p)->properties());
+	}
+
+	// Copy internal plugin state
+	for (uint32_t v = 0; v < _polyphony; ++v) {
+		LilvState* state = lilv_state_new_from_instance(
+			_lv2_plugin->lilv_plugin(), instance(v),
+			&engine.world()->uri_map().urid_map_feature()->urid_map,
+			NULL, NULL, NULL, NULL, NULL, NULL, LV2_STATE_IS_NATIVE, NULL);
+		if (state) {
+			lilv_state_restore(state, dup->instance(v),
+			                   NULL, NULL, LV2_STATE_IS_NATIVE, NULL);
+			lilv_state_free(state);
+		}
+	}
+
+	return dup;
 }
 
 void

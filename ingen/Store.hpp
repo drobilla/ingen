@@ -68,7 +68,7 @@ public:
 
 	unsigned child_name_offset(const Raul::Path&   parent,
 	                           const Raul::Symbol& symbol,
-	                           bool                allow_zero=true);
+	                           bool                allow_zero=true) const;
 
 	std::mutex& mutex() { return _mutex; }
 

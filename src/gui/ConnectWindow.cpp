@@ -452,7 +452,7 @@ ConnectWindow::gtk_callback()
 			_progress_label->set_text("Connected to engine");
 		_connect_stage = 0; // set ourselves up for next time (if there is one)
 		_finished_connecting = true;
-		_app->interface()->set_response_id(0);
+		_app->interface()->set_response_id(1);
 		return false; // deregister this callback
 	}
 

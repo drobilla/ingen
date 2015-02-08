@@ -100,6 +100,19 @@ Get::Response::put_graph(const GraphImpl* graph)
 	}
 }
 
+void
+Get::Response::send(Interface* dest)
+{
+	// Sort puts by URI so parents are sent first
+	std::sort(puts.begin(), puts.end());
+	for (const Response::Put& put : puts) {
+		dest->put(put.uri, put.properties, put.ctx);
+	}
+	for (const Response::Connect& connect : connects) {
+		dest->connect(connect.tail, connect.head);
+	}
+}
+
 Get::Get(Engine&          engine,
          SPtr<Interface>  client,
          int32_t          id,
@@ -162,12 +175,7 @@ Get::post_process()
 				uris.param_sampleRate,
 				uris.forge.make(int32_t(_engine.driver()->sample_rate())));
 		} else {
-			for (const Response::Put& put : _response.puts) {
-				_request_client->put(put.uri, put.properties, put.ctx);
-			}
-			for (const Response::Connect& connect : _response.connects) {
-				_request_client->connect(connect.tail, connect.head);
-			}
+			_response.send(_request_client.get());
 		}
 	}
 }

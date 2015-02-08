@@ -174,7 +174,7 @@ BlockModel::default_port_value_range(SPtr<const PortModel> port,
 	max = 1.0;
 
 	// Get range from client-side LV2 data
-	if (_plugin && _plugin->type() == PluginModel::LV2) {
+	if (_plugin && _plugin->type() == PluginModel::LV2 && _plugin->lilv_plugin()) {
 		if (!_min_values) {
 			_num_values = lilv_plugin_get_num_ports(_plugin->lilv_plugin());
 			_min_values = new float[_num_values];

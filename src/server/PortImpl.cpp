@@ -383,7 +383,6 @@ void
 PortImpl::clear_buffers()
 {
 	switch (_type.id()) {
-	case PortType::AUDIO:
 	case PortType::CONTROL:
 	case PortType::CV:
 		for (uint32_t v = 0; v < _poly; ++v) {
@@ -395,6 +394,7 @@ PortImpl::clear_buffers()
 			state.time  = 0;
 		}
 		break;
+	case PortType::AUDIO:
 	default:
 		for (uint32_t v = 0; v < _poly; ++v) {
 			buffer(v)->clear();

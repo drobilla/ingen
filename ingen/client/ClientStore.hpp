@@ -55,7 +55,6 @@ public:
 	ClientStore(
 		URIs&                    uris,
 		Log&                     log,
-		SPtr<Interface>          engine  = SPtr<Interface>(),
 		SPtr<SigClientInterface> emitter = SPtr<SigClientInterface>());
 
 	Raul::URI uri() const { return Raul::URI("ingen:/clients/store"); }
@@ -80,6 +79,9 @@ public:
 	void delta(const Raul::URI&            uri,
 	           const Resource::Properties& remove,
 	           const Resource::Properties& add);
+
+	void copy(const Raul::Path& old_path,
+	          const Raul::URI&  new_uri);
 
 	void move(const Raul::Path& old_path,
 	          const Raul::Path& new_path);
@@ -129,7 +131,6 @@ private:
 
 	URIs&                    _uris;
 	Log&                     _log;
-	SPtr<Interface>          _engine;
 	SPtr<SigClientInterface> _emitter;
 
 	SPtr<Plugins> _plugins; ///< Map, keyed by plugin URI

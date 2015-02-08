@@ -713,7 +713,9 @@ ingen_save(LV2_Handle                instance,
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);
 
 	Ingen::Store::iterator root = plugin->world->store()->find(Raul::Path("/"));
-	plugin->world->serialiser()->to_file(root->second, real_path);
+	plugin->world->serialiser()->start_to_file(root->second->path(), real_path);
+	plugin->world->serialiser()->serialise(root->second);
+	plugin->world->serialiser()->finish();
 
 	store(handle,
 	      ingen_file,

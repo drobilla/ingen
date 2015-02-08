@@ -26,6 +26,10 @@ using namespace std;
 
 namespace Ingen {
 
+ClashAvoider::ClashAvoider(const Store& store)
+	: _store(store)
+{}
+
 const Raul::URI
 ClashAvoider::map_uri(const Raul::URI& in)
 {
@@ -123,72 +127,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 bool
 ClashAvoider::exists(const Raul::Path& path) const
 {
-	bool exists = (_store.find(path) != _store.end());
-	if (exists)
-		return true;
-
-	if (_also_avoid)
-		return (_also_avoid->find(path) != _also_avoid->end());
-	else
-		return false;
-}
-
-void
-ClashAvoider::put(const Raul::URI&            path,
-                  const Resource::Properties& properties,
-                  Resource::Graph             ctx)
-{
-	_target.put(map_uri(path), properties, ctx);
-}
-
-void
-ClashAvoider::delta(const Raul::URI&            path,
-                    const Resource::Properties& remove,
-                    const Resource::Properties& add)
-{
-	_target.delta(map_uri(path), remove, add);
-}
-
-void
-ClashAvoider::move(const Raul::Path& old_path,
-                   const Raul::Path& new_path)
-{
-	_target.move(map_path(old_path), map_path(new_path));
-}
-
-void
-ClashAvoider::connect(const Raul::Path& tail,
-                      const Raul::Path& head)
-{
-	_target.connect(map_path(tail), map_path(head));
-}
-
-void
-ClashAvoider::disconnect(const Raul::Path& tail,
-                         const Raul::Path& head)
-{
-	_target.disconnect(map_path(tail), map_path(head));
-}
-
-void
-ClashAvoider::disconnect_all(const Raul::Path& graph,
-                             const Raul::Path& path)
-{
-	_target.disconnect_all(map_path(graph), map_path(path));
-}
-
-void
-ClashAvoider::set_property(const Raul::URI& subject,
-                           const Raul::URI& predicate,
-                           const Atom&      value)
-{
-	_target.set_property(map_uri(subject), predicate, value);
-}
-
-void
-ClashAvoider::del(const Raul::URI& uri)
-{
-	_target.del(map_uri(uri));
+	return _store.find(path) != _store.end();
 }
 
 } // namespace Ingen

@@ -17,6 +17,8 @@
 #ifndef INGEN_EVENTS_GET_HPP
 #define INGEN_EVENTS_GET_HPP
 
+#include <vector>
+
 #include "Event.hpp"
 #include "BlockFactory.hpp"
 #include "types.hpp"
@@ -24,7 +26,10 @@
 namespace Ingen {
 namespace Server {
 
+class BlockImpl;
+class GraphImpl;
 class PluginImpl;
+class PortImpl;
 
 namespace Events {
 
@@ -45,7 +50,6 @@ public:
 	void execute(ProcessContext& context) {}
 	void post_process();
 
-private:
 	/** A sequence of puts and connects to respond to client with.
 	 * This is constructed in the pre_process() and later sent in
 	 * post_process() to avoid the need to lock.
@@ -63,11 +67,17 @@ private:
 		void put_port(const PortImpl* port);
 		void put_block(const BlockImpl* block);
 		void put_graph(const GraphImpl* graph);
-		
+
+		void send(Interface* dest);
+
 		struct Put {
 			Raul::URI            uri;
 			Resource::Properties properties;
 			Resource::Graph      ctx;
+
+			inline bool operator<(const Put& other) {
+				return uri < other.uri;
+			}
 		};
 
 		struct Connect {
@@ -79,6 +89,7 @@ private:
 		std::vector<Connect> connects;
 	};
 
+private:
 	const Raul::URI       _uri;
 	const Node*           _object;
 	const PluginImpl*     _plugin;

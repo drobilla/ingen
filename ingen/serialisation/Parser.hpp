@@ -25,10 +25,10 @@
 #include <list>
 
 #include <boost/optional.hpp>
-#include <glibmm/ustring.h>
 
 #include "ingen/Node.hpp"
 #include "raul/Path.hpp"
+#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -53,16 +53,16 @@ public:
 	virtual bool parse_file(
 		World*                        world,
 		Interface*                    target,
-		Glib::ustring                 path,
+		const std::string&            path,
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data   = boost::optional<Properties>());
 
-	virtual bool parse_string(
+	virtual boost::optional<Raul::URI> parse_string(
 		World*                        world,
 		Interface*                    target,
-		const Glib::ustring&          str,
-		const Glib::ustring&          base_uri,
+		const std::string&            str,
+		const std::string&            base_uri,
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data   = boost::optional<Properties>());

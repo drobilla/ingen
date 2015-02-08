@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -14,51 +14,60 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_EVENTS_CREATEGRAPH_HPP
-#define INGEN_EVENTS_CREATEGRAPH_HPP
+#ifndef INGEN_EVENTS_COPY_HPP
+#define INGEN_EVENTS_COPY_HPP
 
-#include "ingen/Resource.hpp"
+#include <list>
+
+#include "ingen/Store.hpp"
+#include "raul/Path.hpp"
 
 #include "Event.hpp"
-#include "events/Get.hpp"
 
 namespace Ingen {
 namespace Server {
 
-class GraphImpl;
+class BlockImpl;
 class CompiledGraph;
+class GraphImpl;
 
 namespace Events {
 
-/** Creates a new Graph.
+/** \page methods
+ * <h2>COPY</h2>
+ * As per WebDAV (RFC4918 S9.8).
  *
+ * Copy an object from its current location and insert it at a new location
+ * in a single operation.
+ */
+
+/** COPY a graph object to a new path (see \ref methods).
  * \ingroup engine
  */
-class CreateGraph : public Event
+class Copy : public Event
 {
 public:
-	CreateGraph(Engine&                     engine,
-	            SPtr<Interface>             client,
-	            int32_t                     id,
-	            SampleCount                 timestamp,
-	            const Raul::Path&           path,
-	            const Resource::Properties& properties);
+	Copy(Engine&           engine,
+	     SPtr<Interface>   client,
+	     int32_t           id,
+	     SampleCount       timestamp,
+	     const Raul::Path& old_path,
+	     const Raul::URI&  new_uri);
 
 	bool pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	const Raul::Path      _path;
-	Resource::Properties  _properties;
-	Events::Get::Response _update;
-	GraphImpl*            _graph;
-	GraphImpl*            _parent;
-	CompiledGraph*        _compiled_graph;
+	const Raul::Path _old_path;
+	const Raul::URI  _new_uri;
+	GraphImpl*       _parent;
+	BlockImpl*       _block;
+	CompiledGraph*   _compiled_graph;
 };
 
 } // namespace Events
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_EVENTS_CREATEGRAPH_HPP
+#endif // INGEN_EVENTS_COPY_HPP

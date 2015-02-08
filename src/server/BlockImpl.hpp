@@ -42,6 +42,7 @@ namespace Server {
 class Buffer;
 class BufferFactory;
 class Context;
+class Engine;
 class GraphImpl;
 class PluginImpl;
 class PortImpl;
@@ -82,6 +83,11 @@ public:
 	 * block has been removed from its graph (i.e. processing is finished).
 	 */
 	virtual void deactivate();
+
+	/** Duplicate this Node. */
+	virtual BlockImpl* duplicate(Engine&             engine,
+	                             const Raul::Symbol& symbol,
+	                             GraphImpl*          parent) { return NULL; }
 
 	/** Return true iff this block is activated */
 	bool activated() const { return _activated; }

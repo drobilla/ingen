@@ -33,11 +33,9 @@ namespace Client {
 
 ClientStore::ClientStore(URIs&                    uris,
                          Log&                     log,
-                         SPtr<Interface>          engine,
                          SPtr<SigClientInterface> emitter)
 	: _uris(uris)
 	, _log(log)
-	, _engine(engine)
 	, _emitter(emitter)
 	, _plugins(new Plugins())
 {
@@ -84,12 +82,13 @@ ClientStore::add_object(SPtr<ObjectModel> object)
 
 				(*this)[object->path()] = object;
 				_signal_new_object.emit(object);
+			} else {
+				_log.error(fmt("Object %1% with no parent\n") % object->path());
 			}
 		} else {
 			(*this)[object->path()] = object;
 			_signal_new_object.emit(object);
 		}
-
 	}
 
 	for (auto p : object->properties())
@@ -209,6 +208,13 @@ ClientStore::del(const Raul::URI& uri)
 }
 
 void
+ClientStore::copy(const Raul::Path& old_path,
+                  const Raul::URI&  new_uri)
+{
+	_log.error("Client store copy unsupported\n");
+}
+
+void
 ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
 {
 	const iterator top = find(old_path);
@@ -291,7 +297,7 @@ ClientStore::put(const Raul::URI&            uri,
 			bm->set_properties(properties);
 			add_object(bm);
 		} else {
-			_log.warn(fmt("Block %1% has no plugin\n")
+			_log.warn(fmt("Block %1% has no prototype\n")
 			          % path.c_str());
 		}
 	} else if (is_port) {
@@ -302,8 +308,6 @@ ClientStore::put(const Raul::URI&            uri,
 		const Iterator i     = properties.find(_uris.lv2_index);
 		if (i != properties.end() && i->second.type() == _uris.forge.Int) {
 			index = i->second.get<int32_t>();
-		} else {
-			_log.error(fmt("Port %1% has no index\n") % path);
 		}
 
 		SPtr<PortModel> p(new PortModel(uris(), path, index, pdir));
@@ -443,6 +447,10 @@ void
 ClientStore::connect(const Raul::Path& src_path,
                      const Raul::Path& dst_path)
 {
+#ifdef INGEN_CLIENT_STORE_DUMP
+	std::cerr << "Client connect " << src_path << " => " << dst_path << std::endl;
+#endif
+	
 	attempt_connection(src_path, dst_path);
 }
 
@@ -450,6 +458,10 @@ void
 ClientStore::disconnect(const Raul::Path& src_path,
                         const Raul::Path& dst_path)
 {
+#ifdef INGEN_CLIENT_STORE_DUMP
+	std::cerr << "Client disconnect " << src_path << " => " << dst_path << std::endl;
+#endif
+
 	SPtr<PortModel> tail = dynamic_ptr_cast<PortModel>(_object(src_path));
 	SPtr<PortModel> head = dynamic_ptr_cast<PortModel>(_object(dst_path));
 

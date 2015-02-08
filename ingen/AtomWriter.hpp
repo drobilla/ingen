@@ -52,6 +52,9 @@ public:
 	           const Resource::Properties& remove,
 	           const Resource::Properties& add);
 
+	void copy(const Raul::Path& old_path,
+	          const Raul::URI&  new_uri);
+
 	void move(const Raul::Path& old_path,
 	          const Raul::Path& new_path);
 

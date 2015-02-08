@@ -22,7 +22,6 @@
 #include <glibmm/convert.h>
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
-#include <glibmm/ustring.h>
 
 #include "ingen/Atom.hpp"
 #include "ingen/Interface.hpp"
@@ -43,10 +42,10 @@ typedef set<Sord::Node> RDFNodes;
 namespace Ingen {
 namespace Serialisation {
 
-static Glib::ustring
-relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
+static std::string
+relative_uri(const std::string& base, const std::string& uri, bool leading_slash)
 {
-	Glib::ustring ret;
+	std::string ret;
 	if (uri != base) {
 		SerdURI base_uri;
 		serd_uri_parse((const uint8_t*)base.c_str(), &base_uri);
@@ -55,21 +54,19 @@ relative_uri(Glib::ustring base, const Glib::ustring uri, bool leading_slash)
 		SerdNode normal_base_uri_node = serd_node_new_uri_from_string(
 			(const uint8_t*)".", &base_uri, &normal_base_uri);
 
-		Glib::ustring normal_base_str((const char*)normal_base_uri_node.buf);
+		std::string normal_base_str((const char*)normal_base_uri_node.buf);
 
 		ret = uri;
 		if (uri.length() >= normal_base_str.length()
 		    && uri.substr(0, normal_base_str.length()) == normal_base_str) {
 			ret = uri.substr(normal_base_str.length());
-			if (leading_slash && ret[0] != '/')
-				ret = Glib::ustring("/") + ret;
 		}
 
 		serd_node_free(&normal_base_uri_node);
 	}
 
 	if (leading_slash && ret[0] != '/') {
-		ret = Glib::ustring("/").append(ret);
+		ret = std::string("/").append(ret);
 	}
 	return ret;
 }
@@ -190,7 +187,7 @@ parse(
 	World*                                world,
 	Interface*                            target,
 	Sord::Model&                          model,
-	Glib::ustring                         document_uri,
+	const std::string&                    base_uri,
 	Sord::Node&                           subject,
 	boost::optional<Raul::Path>           parent = boost::optional<Raul::Path>(),
 	boost::optional<Raul::Symbol>         symbol = boost::optional<Raul::Symbol>(),
@@ -201,6 +198,7 @@ parse_graph(
 	World*                                world,
 	Interface*                            target,
 	Sord::Model&                          model,
+	const std::string&                    base_uri,
 	const Sord::Node&                     subject,
 	boost::optional<Raul::Path>           parent = boost::optional<Raul::Path>(),
 	boost::optional<Raul::Symbol>         symbol = boost::optional<Raul::Symbol>(),
@@ -211,6 +209,7 @@ parse_block(
 	World*                                world,
 	Interface*                            target,
 	Sord::Model&                          model,
+	const std::string&                    base_uri,
 	const Sord::Node&                     subject,
 	const Raul::Path&                     path,
 	boost::optional<Resource::Properties> data = boost::optional<Resource::Properties>());
@@ -226,16 +225,18 @@ parse_properties(
 
 static bool
 parse_arcs(
-	World*            world,
-	Interface*        target,
-	Sord::Model&      model,
-	const Sord::Node& subject,
-	const Raul::Path& graph);
+	World*             world,
+	Interface*         target,
+	Sord::Model&       model,
+	const std::string& base_uri,
+	const Sord::Node&  subject,
+	const Raul::Path&  graph);
 
 static boost::optional<Raul::Path>
 parse_block(Ingen::World*                     world,
             Ingen::Interface*                 target,
             Sord::Model&                      model,
+            const std::string&                base_uri,
             const Sord::Node&                 subject,
             const Raul::Path&                 path,
             boost::optional<Node::Properties> data)
@@ -256,26 +257,23 @@ parse_block(Ingen::World*                     world,
 		return boost::optional<Raul::Path>();
 	}
 
-	const std::string type_uri = relative_uri(
-		model.base_uri().to_string(),
-		i.get_object().to_string(),
-		false);
+	const std::string type_uri = relative_uri(base_uri,
+	                                          i.get_object().to_string(),
+	                                          false);
 
 	if (!serd_uri_string_has_scheme((const uint8_t*)type_uri.c_str())) {
-		SerdURI base_uri;
-		serd_uri_parse(model.base_uri().to_u_string(), &base_uri);
+		SerdURI base_uri_parts;
+		serd_uri_parse((const uint8_t*)base_uri.c_str(), &base_uri_parts);
 
 		SerdURI  ignored;
 		SerdNode sub_uri = serd_node_new_uri_from_string(
 			i.get_object().to_u_string(),
-			&base_uri,
+			&base_uri_parts,
 			&ignored);
 
-		const std::string sub_uri_str((const char*)sub_uri.buf);
-		std::string basename = get_basename(sub_uri_str);
-
-		const std::string sub_file =
-			string((const char*)sub_uri.buf) + "/" + basename + ".ttl";
+		const std::string sub_uri_str = (const char*)sub_uri.buf;
+		const std::string basename    = get_basename(sub_uri_str);
+		const std::string sub_file    = sub_uri_str + '/' + basename + ".ttl";
 
 		const SerdNode sub_base = serd_node_from_string(
 			SERD_URI, (const uint8_t*)sub_file.c_str());
@@ -286,10 +284,10 @@ parse_block(Ingen::World*                     world,
 		serd_env_free(env);
 
 		Sord::URI sub_node(*world->rdf_world(), sub_file);
-		parse_graph(world, target, sub_model, sub_node,
+		parse_graph(world, target, sub_model, (const char*)sub_base.buf, sub_node,
 		            path.parent(), Raul::Symbol(path.symbol()));
 
-		parse_graph(world, target, model, subject,
+		parse_graph(world, target, model, base_uri, subject,
 		            path.parent(), Raul::Symbol(path.symbol()));
 	} else {
 		Resource::Properties props = get_properties(world, model, subject);
@@ -304,12 +302,13 @@ static boost::optional<Raul::Path>
 parse_graph(Ingen::World*                     world,
             Ingen::Interface*                 target,
             Sord::Model&                      model,
+            const std::string&                base_uri,
             const Sord::Node&                 subject_node,
             boost::optional<Raul::Path>       parent,
             boost::optional<Raul::Symbol>     a_symbol,
             boost::optional<Node::Properties> data)
 {
-	URIs& uris = world->uris();
+	const URIs& uris = world->uris();
 
 	const Sord::URI ingen_block(*world->rdf_world(),     uris.ingen_block);
 	const Sord::URI ingen_polyphony(*world->rdf_world(), uris.ingen_polyphony);
@@ -318,18 +317,17 @@ parse_graph(Ingen::World*                     world,
 	const Sord::Node& graph = subject_node;
 	const Sord::Node  nil;
 
-	const Glib::ustring base_uri = model.base_uri().to_string();
-
 	Raul::Symbol symbol("_");
 	if (a_symbol) {
 		symbol = *a_symbol;
-	} else {
-		const std::string basename = get_basename(base_uri);
 	}
 
 	string graph_path_str = relative_uri(base_uri, subject_node.to_string(), true);
-	if (parent && a_symbol)
+	if (parent && a_symbol) {
 		graph_path_str = parent->child(*a_symbol);
+	} else if (parent) {
+		graph_path_str = *parent;
+	}
 
 	if (!Raul::Path::is_valid(graph_path_str)) {
 		world->log().error(fmt("Graph %1% has invalid path\n")
@@ -349,7 +347,7 @@ parse_graph(Ingen::World*                     world,
 			Raul::Symbol(get_basename(node.to_string())));
 
 		// Parse and create block
-		parse_block(world, target, model, node, block_path,
+		parse_block(world, target, model, base_uri, node, block_path,
 		            boost::optional<Node::Properties>());
 
 		// For each port on this block
@@ -395,19 +393,20 @@ parse_graph(Ingen::World*                     world,
 		            p.second.second);
 	}
 
-	parse_arcs(world, target, model, subject_node, graph_path);
+	parse_arcs(world, target, model, base_uri, subject_node, graph_path);
 
 	return graph_path;
 }
 
 static bool
-parse_arc(Ingen::World*     world,
-          Ingen::Interface* target,
-          Sord::Model&      model,
-          const Sord::Node& subject,
-          const Raul::Path& graph)
+parse_arc(Ingen::World*      world,
+          Ingen::Interface*  target,
+          Sord::Model&       model,
+          const std::string& base_uri,
+          const Sord::Node&  subject,
+          const Raul::Path&  graph)
 {
-	URIs& uris = world->uris();
+	const URIs& uris = world->uris();
 
 	const Sord::URI  ingen_tail(*world->rdf_world(), uris.ingen_tail);
 	const Sord::URI  ingen_head(*world->rdf_world(), uris.ingen_head);
@@ -415,8 +414,6 @@ parse_arc(Ingen::World*     world,
 
 	Sord::Iter t = model.find(subject, ingen_tail, nil);
 	Sord::Iter h = model.find(subject, ingen_head, nil);
-
-	const Glib::ustring& base_uri = model.base_uri().to_string();
 
 	if (t.end()) {
 		world->log().error("Arc has no tail");
@@ -455,17 +452,18 @@ parse_arc(Ingen::World*     world,
 }
 
 static bool
-parse_arcs(Ingen::World*     world,
-           Ingen::Interface* target,
-           Sord::Model&      model,
-           const Sord::Node& subject,
-           const Raul::Path& graph)
+parse_arcs(Ingen::World*      world,
+           Ingen::Interface*  target,
+           Sord::Model&       model,
+           const std::string& base_uri,
+           const Sord::Node&  subject,
+           const Raul::Path&  graph)
 {
 	const Sord::URI  ingen_arc(*world->rdf_world(), world->uris().ingen_arc);
 	const Sord::Node nil;
 
 	for (Sord::Iter i = model.find(subject, ingen_arc, nil); !i.end(); ++i) {
-		parse_arc(world, target, model, i.get_object(), graph);
+		parse_arc(world, target, model, base_uri, i.get_object(), graph);
 	}
 
 	return true;
@@ -494,13 +492,13 @@ static boost::optional<Raul::Path>
 parse(Ingen::World*                     world,
       Ingen::Interface*                 target,
       Sord::Model&                      model,
-      Glib::ustring                     document_uri,
+      const std::string&                base_uri,
       Sord::Node&                       subject,
       boost::optional<Raul::Path>       parent,
       boost::optional<Raul::Symbol>     symbol,
       boost::optional<Node::Properties> data)
 {
-	URIs& uris = world->uris();
+	const URIs& uris = world->uris();
 
 	const Sord::URI  graph_class   (*world->rdf_world(), uris.ingen_Graph);
 	const Sord::URI  block_class   (*world->rdf_world(), uris.ingen_Block);
@@ -514,7 +512,7 @@ parse(Ingen::World*                     world,
 
 	// Parse explicit subject graph
 	if (subject.is_valid()) {
-		return parse_graph(world, target, model, subject, parent, symbol, data);
+		return parse_graph(world, target, model, base_uri, subject, parent, symbol, data);
 	}
 
 	// Get all subjects and their types (?subject a ?type)
@@ -540,12 +538,12 @@ parse(Ingen::World*                     world,
 		const Sord::Node&           s     = i.first;
 		const std::set<Sord::Node>& types = i.second;
 		boost::optional<Raul::Path> ret;
-		const Raul::Path path(
-			relative_uri( model.base_uri().to_string(), s.to_string(), true));
+		const Raul::Path rel_path(relative_uri(base_uri, s.to_string(), true));
+		const Raul::Path path = parent ? parent->child(rel_path) : rel_path;
 		if (types.find(graph_class) != types.end()) {
-			ret = parse_graph(world, target, model, s, parent, symbol, data);
+			ret = parse_graph(world, target, model, base_uri, s, parent, symbol, data);
 		} else if (types.find(block_class) != types.end()) {
-			ret = parse_block(world, target, model, s, path, data);
+			ret = parse_block(world, target, model, base_uri, s, path, data);
 		} else if (types.find(in_port_class) != types.end() ||
 		           types.find(out_port_class) != types.end()) {
 			parse_properties(
@@ -553,7 +551,7 @@ parse(Ingen::World*                     world,
 			ret = path;
 		} else if (types.find(arc_class) != types.end()) {
 			Raul::Path parent_path(parent ? parent.get() : Raul::Path("/"));
-			parse_arc(world, target, model, s, parent_path);
+			parse_arc(world, target, model, base_uri, s, parent_path);
 		} else {
 			world->log().error("Subject has no known types\n");
 		}
@@ -568,23 +566,23 @@ parse(Ingen::World*                     world,
 bool
 Parser::parse_file(Ingen::World*                     world,
                    Ingen::Interface*                 target,
-                   Glib::ustring                     path,
+                   const std::string&                path,
                    boost::optional<Raul::Path>       parent,
                    boost::optional<Raul::Symbol>     symbol,
                    boost::optional<Node::Properties> data)
 {
-	if (Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
-		// This is a bundle, append "/name.ttl" to get graph file path
-		path = Glib::build_filename(path, get_basename(path) + ".ttl");
+	std::string file_path = path;
+	if (!Glib::path_is_absolute(file_path)) {
+		file_path = Glib::build_filename(Glib::get_current_dir(), file_path);
 	}
-
-	if (!Glib::path_is_absolute(path)) {
-		path = Glib::build_filename(Glib::get_current_dir(), path);
+	if (Glib::file_test(file_path, Glib::FILE_TEST_IS_DIR)) {
+		// This is a bundle, append "/name.ttl" to get graph file path
+		file_path = Glib::build_filename(path, get_basename(path) + ".ttl");
 	}
 
 	std::string uri;
 	try {
-		uri = Glib::filename_to_uri(path, "");
+		uri = Glib::filename_to_uri(file_path, "");
 	} catch (const Glib::ConvertError& e) {
 		world->log().error(fmt("Path to URI conversion error: %1%\n")
 		                   % e.what());
@@ -601,7 +599,7 @@ Parser::parse_file(Ingen::World*                     world,
 
 	serd_env_free(env);
 
-	world->log().info(fmt("Parsing %1%\n") % path);
+	world->log().info(fmt("Parsing %1%\n") % file_path);
 	if (parent)
 		world->log().info(fmt("Parent: %1%\n") % parent->c_str());
 	if (symbol)
@@ -609,7 +607,8 @@ Parser::parse_file(Ingen::World*                     world,
 
 	Sord::Node subject(*world->rdf_world(), Sord::Node::URI, uri);
 	boost::optional<Raul::Path> parsed_path
-		= parse(world, target, model, path, subject, parent, symbol, data);
+		= parse(world, target, model, model.base_uri().to_string(),
+		        subject, parent, symbol, data);
 
 	if (parsed_path) {
 		target->set_property(Node::path_to_uri(*parsed_path),
@@ -622,27 +621,34 @@ Parser::parse_file(Ingen::World*                     world,
 	}
 }
 
-bool
+boost::optional<Raul::URI>
 Parser::parse_string(Ingen::World*                     world,
                      Ingen::Interface*                 target,
-                     const Glib::ustring&              str,
-                     const Glib::ustring&              base_uri,
+                     const std::string&                str,
+                     const std::string&                base_uri,
                      boost::optional<Raul::Path>       parent,
                      boost::optional<Raul::Symbol>     symbol,
                      boost::optional<Node::Properties> data)
 {
 	// Load string into model
 	Sord::Model model(*world->rdf_world(), base_uri, SORD_SPO|SORD_PSO, false);
-	const SerdNode base = serd_node_from_string(
-		SERD_URI, (const uint8_t*)base_uri.c_str());
-	SerdEnv* env = serd_env_new(&base);
+
+	SerdEnv* env = serd_env_new(NULL);
+	if (!base_uri.empty()) {
+		const SerdNode base = serd_node_from_string(
+			SERD_URI, (const uint8_t*)base_uri.c_str());
+		serd_env_set_base_uri(env, &base);
+	}
 	model.load_string(env, SERD_TURTLE, str.c_str(), str.length(), base_uri);
+
+	Raul::URI actual_base((const char*)serd_env_get_base_uri(env, NULL)->buf);
 	serd_env_free(env);
 
 	world->log().info(fmt("Parsing string (base %1%)\n") % base_uri);
 
 	Sord::Node subject;
-	return !!parse(world, target, model, base_uri, subject, parent, symbol, data);
+	parse(world, target, model, actual_base, subject, parent, symbol, data);
+	return actual_base;
 }
 
 } // namespace Serialisation

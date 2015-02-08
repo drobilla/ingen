@@ -27,6 +27,7 @@
 #include "events/DisconnectAll.hpp"
 #include "events/Get.hpp"
 #include "events/Move.hpp"
+#include "events/Copy.hpp"
 #include "events/SetPortValue.hpp"
 
 #endif // INGEN_ENGINE_EVENTS_HPP

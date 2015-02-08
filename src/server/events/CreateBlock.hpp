@@ -17,12 +17,10 @@
 #ifndef INGEN_EVENTS_CREATEBLOCK_HPP
 #define INGEN_EVENTS_CREATEBLOCK_HPP
 
-#include <list>
-#include <utility>
-
 #include "ingen/Resource.hpp"
 
 #include "Event.hpp"
+#include "events/Get.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -54,15 +52,12 @@ public:
 	void post_process();
 
 private:
-	/// Update put message to broadcast to clients
-	typedef std::list< std::pair<Raul::URI, Resource::Properties> > Update;
-
-	Raul::Path           _path;
-	Resource::Properties _properties;
-	Update               _update;
-	GraphImpl*           _graph;
-	BlockImpl*           _block;
-	CompiledGraph*       _compiled_graph;
+	Raul::Path            _path;
+	Resource::Properties  _properties;
+	Events::Get::Response _update;
+	GraphImpl*            _graph;
+	BlockImpl*            _block;
+	CompiledGraph*        _compiled_graph;
 };
 
 } // namespace Events

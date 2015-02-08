@@ -21,6 +21,7 @@
 #ifndef INGEN_INTERFACE_HPP
 #define INGEN_INTERFACE_HPP
 
+#include <list>
 #include <string>
 
 #include "ingen/Resource.hpp"
@@ -67,6 +68,9 @@ public:
 	                   const Resource::Properties& remove,
 	                   const Resource::Properties& add) = 0;
 
+	virtual void copy(const Raul::Path& old_path,
+	                  const Raul::URI&  new_uri) = 0;
+
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path) = 0;
 
@@ -86,7 +90,7 @@ public:
 	                          const Atom&      value) = 0;
 
 	/** Set the ID to use to respond to the next message.
-	 * Setting the ID to -1 will disable responses.
+	 * Setting the ID to 0 will disable responses.
 	 */
 	virtual void set_response_id(int32_t id) = 0;
 

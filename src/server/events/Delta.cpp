@@ -135,9 +135,11 @@ Delta::pre_process()
 				path, is_output, _properties);
 		}
 		if (_create_event) {
-			_create_event->pre_process();
-			// Grab the object for applying properties, if the create-event succeeded
-			_object = _engine.store()->get(path);
+			if (_create_event->pre_process()) {
+				_object = _engine.store()->get(path);  // Get object for setting
+			} else {
+				return Event::pre_process_done(Status::CREATION_FAILED, _subject);
+			}
 		} else {
 			return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _subject);
 		}
@@ -382,36 +384,39 @@ Delta::post_process()
 
 	Broadcaster::Transfer t(*_engine.broadcaster());
 
-	for (auto& s : _set_events)
-		s->post_process();
-
-	if (_status == Status::SUCCESS) {
-		if (_create_event) {
-			_create_event->post_process();
-		} else {
-			respond();
-			switch (_type) {
-			case Type::SET:
-				/* Kludge to avoid feedback for set events only.  The GUI
-				   depends on put responses to e.g. initially place blocks.
-				   Some more sensible way of controlling this is needed. */
-				_engine.broadcaster()->set_ignore_client(_request_client);
-				_engine.broadcaster()->set_property(
-					_subject,
-					(*_properties.begin()).first,
-					(*_properties.begin()).second);
-				_engine.broadcaster()->clear_ignore_client();
-				break;
-			case Type::PUT:
-				_engine.broadcaster()->put(_subject, _properties, _context);
-				break;
-			case Type::PATCH:
-				_engine.broadcaster()->delta(_subject, _remove, _properties);
-				break;
-			}
+	if (_create_event) {
+		_create_event->post_process();
+		if (_create_event->status() != Status::SUCCESS) {
+			return;  // Creation failed, nothing else to do
 		}
-	} else {
-		respond();
+	}
+
+	for (auto& s : _set_events) {
+		if (s->status() != Status::SUCCESS) {
+			s->post_process();  // Set failed, report error
+		}
+	}
+
+	if (respond() == Status::SUCCESS) {
+		switch (_type) {
+		case Type::SET:
+			/* Kludge to avoid feedback for set events only.  The GUI
+			   depends on put responses to e.g. initially place blocks.
+			   Some more sensible way of controlling this is needed. */
+			_engine.broadcaster()->set_ignore_client(_request_client);
+			_engine.broadcaster()->set_property(
+				_subject,
+				(*_properties.begin()).first,
+				(*_properties.begin()).second);
+			_engine.broadcaster()->clear_ignore_client();
+			break;
+		case Type::PUT:
+			_engine.broadcaster()->put(_subject, _properties, _context);
+			break;
+		case Type::PATCH:
+			_engine.broadcaster()->delta(_subject, _remove, _properties);
+			break;
+		}
 	}
 }
 

@@ -48,6 +48,10 @@ public:
 
 	bool instantiate(BufferFactory& bufs);
 
+	BlockImpl* duplicate(Engine&             engine,
+	                     const Raul::Symbol& symbol,
+	                     GraphImpl*          parent);
+
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 

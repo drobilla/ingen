@@ -118,7 +118,7 @@ Store::rename(const iterator top, const Raul::Path& new_path)
 unsigned
 Store::child_name_offset(const Raul::Path&   parent,
                          const Raul::Symbol& symbol,
-                         bool                allow_zero)
+                         bool                allow_zero) const
 {
 	unsigned offset = 0;
 

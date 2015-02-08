@@ -152,7 +152,7 @@ App::attach(SPtr<SigClientInterface> client)
 	}
 
 	_client = client;
-	_store  = SPtr<ClientStore>(new ClientStore(_world->uris(), _world->log(), _world->interface(), client));
+	_store  = SPtr<ClientStore>(new ClientStore(_world->uris(), _world->log(), client));
 	_loader = SPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->interface()));
 
 	_graph_tree_window->init(*this, *_store);

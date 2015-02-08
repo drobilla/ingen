@@ -28,6 +28,7 @@ def build(bld):
             SocketListener.cpp
             Worker.cpp
             events/Connect.cpp
+            events/Copy.cpp
             events/CreateBlock.cpp
             events/CreateGraph.cpp
             events/CreatePort.cpp

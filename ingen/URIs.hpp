@@ -130,6 +130,7 @@ public:
 	const Quark midi_noteNumber;
 	const Quark morph_currentType;
 	const Quark param_sampleRate;
+	const Quark patch_Copy;
 	const Quark patch_Delete;
 	const Quark patch_Get;
 	const Quark patch_Move;

@@ -54,6 +54,8 @@ namespace Ingen {
 namespace Serialisation {
 
 struct Serialiser::Impl {
+	typedef Resource::Properties Properties;
+	
 	explicit Impl(World& world)
 		: _root_path("/")
 		, _world(world)
@@ -113,16 +115,6 @@ Serialiser::Serialiser(World& world)
 Serialiser::~Serialiser()
 {
 	delete me;
-}
-
-void
-Serialiser::to_file(SPtr<const Node>   object,
-                    const std::string& filename)
-{
-	me->_root_path = object->path();
-	me->start_to_filename(filename);
-	serialise(object);
-	finish();
 }
 
 void
@@ -196,15 +188,6 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
 	write_manifest(path, graph, symbol);
 }
 
-string
-Serialiser::to_string(SPtr<const Node> object,
-                      const string&    base_uri)
-{
-	start_to_string(object->path(), base_uri);
-	serialise(object);
-	return finish();
-}
-
 /** Begin a serialization to a file.
  *
  * This must be called before any serializing methods.
@@ -223,16 +206,6 @@ Serialiser::Impl::start_to_filename(const string& filename)
 	_mode = Mode::TO_FILE;
 }
 
-/** Begin a serialization to a string.
- *
- * This must be called before any serializing methods.
- *
- * The results of the serialization will be returned by the finish() method after
- * the desired objects have been serialised.
- *
- * All serialized paths will have the root path chopped from their prefix
- * (therefore all serialized paths must be descendants of the root)
- */
 void
 Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 {
@@ -240,6 +213,13 @@ Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 	me->_base_uri  = base_uri;
 	me->_model     = new Sord::Model(*me->_world.rdf_world(), base_uri);
 	me->_mode      = Impl::Mode::TO_STRING;
+}
+
+void
+Serialiser::start_to_file(const Raul::Path& root, const string& filename)
+{
+	me->_root_path = root;
+	me->start_to_filename(filename);
 }
 
 std::string
@@ -274,7 +254,6 @@ Serialiser::Impl::path_rdf_node(const Raul::Path& path)
 {
 	assert(_model);
 	assert(path == _root_path || path.is_child_of(_root_path));
-	// FIXME: if path == root_path() then "/" ?
 	return Sord::URI(_model->world(),
 	                 path.substr(_root_path.base().length()),
 	                 _base_uri);

@@ -100,8 +100,7 @@ DisconnectAll::pre_process()
 
 		if (object->parent_graph() != _parent
 		    && object->parent()->parent_graph() != _parent) {
-			return Event::pre_process_done(Status::INVALID_PARENT_PATH,
-			                               _parent_path);
+			return Event::pre_process_done(Status::INVALID_PARENT, _parent_path);
 		}
 
 		// Only one of these will succeed

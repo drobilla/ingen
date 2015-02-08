@@ -15,6 +15,7 @@
 */
 
 #include <cassert>
+#include <unordered_map>
 
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
@@ -24,6 +25,7 @@
 #include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "BufferFactory.hpp"
+#include "Driver.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
@@ -61,6 +63,67 @@ GraphImpl::~GraphImpl()
 {
 	delete _compiled_graph;
 	delete _plugin;
+}
+
+BlockImpl*
+GraphImpl::duplicate(Engine&             engine,
+                     const Raul::Symbol& symbol,
+                     GraphImpl*          parent)
+{
+	BufferFactory&   bufs = *engine.buffer_factory();
+	const SampleRate rate = engine.driver()->sample_rate();
+
+	// Duplicate graph
+	GraphImpl* dup = new GraphImpl(
+		engine, symbol, _polyphony, parent, rate, _poly_process);
+
+	Properties props = properties();
+	props.erase(bufs.uris().lv2_symbol);
+	props.insert({bufs.uris().lv2_symbol, bufs.forge().alloc(symbol.c_str())});
+	dup->set_properties(props);
+
+	// We need a map of port duplicates to duplicate arcs
+	typedef std::unordered_map<PortImpl*, PortImpl*> PortMap;
+	PortMap port_map;
+	
+	// Add duplicates of all ports
+	dup->_ports = new Raul::Array<PortImpl*>(num_ports(), NULL);
+	for (Ports::iterator p = _inputs.begin(); p != _inputs.end(); ++p) {
+		DuplexPort* p_dup = p->duplicate(engine, p->symbol(), dup);
+		dup->_inputs.push_front(*p_dup);
+		(*dup->_ports)[p->index()] = p_dup;
+		port_map.insert({&*p, p_dup});
+	}
+	for (Ports::iterator p = _outputs.begin(); p != _outputs.end(); ++p) {
+		DuplexPort* p_dup = p->duplicate(engine, p->symbol(), dup);
+		dup->_outputs.push_front(*p_dup);
+		(*dup->_ports)[p->index()] = p_dup;
+		port_map.insert({&*p, p_dup});
+	}
+
+	// Add duplicates of all blocks
+	for (auto& b : _blocks) {
+		BlockImpl* b_dup = b.duplicate(engine, b.symbol(), dup);
+		dup->add_block(*b_dup);
+		b_dup->activate(*engine.buffer_factory());
+		for (uint32_t p = 0; p < b.num_ports(); ++p) {
+			port_map.insert({b.port_impl(p), b_dup->port_impl(p)});
+		}
+	}
+
+	// Add duplicates of all arcs
+	for (const auto& a : _arcs) {
+		SPtr<ArcImpl> arc = dynamic_ptr_cast<ArcImpl>(a.second);
+		if (arc) {
+			PortMap::iterator t = port_map.find(arc->tail());
+			PortMap::iterator h = port_map.find(arc->head());
+			if (t != port_map.end() && h != port_map.end()) {
+				dup->add_arc(SPtr<ArcImpl>(new ArcImpl(t->second, h->second)));
+			}
+		}
+	}
+
+	return dup;
 }
 
 void

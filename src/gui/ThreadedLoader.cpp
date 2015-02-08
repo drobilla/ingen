@@ -127,10 +127,13 @@ ThreadedLoader::save_graph_event(SPtr<const Client::GraphModel> model,
                                  const string&                  filename)
 {
 	if (_app.serialiser()) {
-		if (filename.find(".ingen") != string::npos)
+		if (filename.find(".ingen") != string::npos) {
 			_app.serialiser()->write_bundle(model, filename);
-		else
-			_app.serialiser()->to_file(model, filename);
+		} else {
+			_app.serialiser()->start_to_file(model->path(), filename);
+			_app.serialiser()->serialise(model);
+			_app.serialiser()->finish();
+		}
 	}
 }
 

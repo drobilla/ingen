@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include <cassert>
 #include <map>
 #include <set>
@@ -470,6 +471,10 @@ GraphCanvas::on_event(GdkEvent* event)
 		default: break;
 		}
 
+	case GDK_MOTION_NOTIFY:
+		_paste_count = 0;
+		break;
+
 	default: break;
 	}
 
@@ -564,96 +569,121 @@ serialise_arc(GanvEdge* arc, void* data)
 void
 GraphCanvas::copy_selection()
 {
-	static const char* base_uri = INGEN_NS "selection/";
 	Serialisation::Serialiser serialiser(*_app.world());
-	serialiser.start_to_string(_graph->path(), base_uri);
+	serialiser.start_to_string(_graph->path(), _graph->base_uri());
 
 	for_each_selected_node(serialise_node, &serialiser);
 	for_each_selected_edge(serialise_arc, &serialiser);
 
-	const std::string result = serialiser.finish();
-	_paste_count = 0;
-
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
-	clipboard->set_text(result);
+	clipboard->set_text(serialiser.finish());
+	_paste_count = 0;
 }
 
 void
 GraphCanvas::paste()
 {
-	Glib::ustring str = Gtk::Clipboard::get()->wait_for_text();
+	typedef Node::Properties::const_iterator PropIter;
+
+	const Glib::ustring         str    = Gtk::Clipboard::get()->wait_for_text();
 	SPtr<Serialisation::Parser> parser = _app.loader()->parser();
+	const URIs&                 uris   = _app.uris();
+	const Raul::Path&           parent = _graph->path();
 	if (!parser) {
 		_app.log().error("Unable to load parser, paste unavailable\n");
 		return;
 	}
 
+	// Prepare for paste
 	clear_selection();
 	_pastees.clear();
 	++_paste_count;
 
-	const URIs& uris = _app.uris();
-
+	// Make a client store to serve as clipboard
 	ClientStore clipboard(_app.world()->uris(), _app.log());
 	clipboard.set_plugins(_app.store()->plugins());
+	clipboard.put(Node::root_uri(),
+	              {{uris.rdf_type, Resource::Property(uris.ingen_Graph)}});
 
-	// mkdir -p
-	string to_create = _graph->path().substr(1);
-	string created = "/";
-	Resource::Properties props;
-	props.insert(make_pair(uris.rdf_type,
-	                       Resource::Property(uris.ingen_Graph)));
-	props.insert(make_pair(uris.ingen_polyphony,
-	                       _app.forge().make(int32_t(_graph->internal_poly()))));
-	clipboard.put(Node::root_uri(), props);
-	size_t first_slash;
-	while (to_create != "/" && !to_create.empty()
-	       && (first_slash = to_create.find("/")) != string::npos) {
-		created += to_create.substr(0, first_slash);
-		assert(Raul::Path::is_valid(created));
-		clipboard.put(Node::path_to_uri(Raul::Path(created)), props);
-		to_create = to_create.substr(first_slash + 1);
+	// Parse clipboard text into clipboard store
+	boost::optional<Raul::URI> base_uri = parser->parse_string(
+		_app.world(), &clipboard, str, Node::root_uri());
+
+	// Figure out the copy graph base path
+	Raul::Path copy_root("/");
+	if (base_uri) {
+		std::string base = *base_uri;
+		if (base[base.size() - 1] == '/') {
+			base = base.substr(0, base.size() - 1);
+		}
+		copy_root = Node::uri_to_path(Raul::URI(base));
 	}
 
-	if (!_graph->path().is_root())
-		clipboard.put(_graph->uri(), props);
-
-	boost::optional<Raul::Path>   parent;
-	boost::optional<Raul::Symbol> symbol;
-
-	if (!_graph->path().is_root()) {
-		parent = _graph->path();
-	}
-
-	ClashAvoider avoider(*_app.store().get(), clipboard, &clipboard);
-	static const char* base_uri = INGEN_NS "selection/";
-	parser->parse_string(_app.world(), &avoider, str, base_uri,
-	                     parent, symbol);
-
-	// Create objects
+	// Find the minimum x and y coordinate of objects to be pasted
+	float min_x = std::numeric_limits<float>::max();
+	float min_y = std::numeric_limits<float>::max();
 	for (const auto& c : clipboard) {
-		if (_graph->path().is_root() && c.first.is_root())
+		if (c.first.parent() == Raul::Path("/")) {
+			const Atom& x = c.second->get_property(uris.ingen_canvasX);
+			const Atom& y = c.second->get_property(uris.ingen_canvasY);
+			if (x.type() == uris.atom_Float) {
+				min_x = std::min(min_x, x.get<float>());
+			}
+			if (y.type() == uris.atom_Float) {
+				min_y = std::min(min_y, y.get<float>());
+			}
+		}
+	}
+
+	// Find canvas paste origin based on pointer position
+	int widget_point_x, widget_point_y, scroll_x, scroll_y;
+	widget().get_pointer(widget_point_x, widget_point_y);
+	get_scroll_offsets(scroll_x, scroll_y);
+	const int paste_x = widget_point_x + scroll_x + (20.0f * _paste_count);
+	const int paste_y = widget_point_y + scroll_y + (20.0f * _paste_count);
+	
+	// Put each top level object in the clipboard store
+	ClashAvoider avoider(*_app.store().get());
+	for (const auto& c : clipboard) {
+		if (c.first.is_root() || c.first.parent() != Raul::Path("/")) {
 			continue;
+		}
 
-		Node::Properties& props = c.second->properties();
+		const SPtr<Node>  node     = c.second;
+		const Raul::Path& old_path = copy_root.child(node->path());
+		const Raul::URI&  old_uri  = Node::path_to_uri(old_path);
+		const Raul::Path& new_path = avoider.map_path(parent.child(node->path()));
 
-		Node::Properties::iterator x = props.find(uris.ingen_canvasX);
-		if (x != c.second->properties().end())
-			x->second = _app.forge().make(
-				x->second.get<float>() + (20.0f * _paste_count));
+		Node::Properties props{{uris.ingen_prototype,
+		                        _app.forge().alloc_uri(old_uri)}};
 
-		Node::Properties::iterator y = props.find(uris.ingen_canvasY);
-		if (y != c.second->properties().end())
-			y->second = _app.forge().make(
-				y->second.get<float>() + (20.0f * _paste_count));
+		// Set the same types
+		const auto t = node->properties().equal_range(uris.rdf_type);
+		props.insert(t.first, t.second);
 
-		_app.interface()->put(c.second->uri(), c.second->properties());
-		_pastees.insert(c.first);
+		// Set coordinates so paste origin is at the mouse pointer
+		PropIter xi = node->properties().find(uris.ingen_canvasX);
+		PropIter yi = node->properties().find(uris.ingen_canvasY);
+		if (xi != node->properties().end()) {
+			const float x = xi->second.get<float>() - min_x + paste_x;
+			props.insert({xi->first, Resource::Property(_app.forge().make(x),
+			                                            xi->second.context())});
+		}
+		if (yi != node->properties().end()) {
+			const float y = yi->second.get<float>() - min_y + paste_y;
+			props.insert({yi->first, Resource::Property(_app.forge().make(y),
+			                                            yi->second.context())});
+		}
+
+		_app.interface()->put(Node::path_to_uri(new_path), props);
+		_pastees.insert(new_path);
 	}
 
 	// Connect objects
-	for (auto a : clipboard.object(_graph->path())->arcs()) {
-		_app.interface()->connect(a.second->tail_path(), a.second->head_path());
+	for (auto a : clipboard.object(Raul::Path("/"))->arcs()) {
+		_app.interface()->connect(
+			avoider.map_path(parent.child(a.second->tail_path())),
+			avoider.map_path(parent.child(a.second->head_path())));
 	}
 }
 

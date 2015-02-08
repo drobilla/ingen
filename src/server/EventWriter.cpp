@@ -69,6 +69,15 @@ EventWriter::delta(const Raul::URI&            uri,
 }
 
 void
+EventWriter::copy(const Raul::Path& old_path,
+                  const Raul::URI&  new_uri)
+{
+	_engine.enqueue_event(
+		new Events::Copy(_engine, _respondee, _request_id, now(),
+		                 old_path, new_uri));
+}
+
+void
 EventWriter::move(const Raul::Path& old_path,
                   const Raul::Path& new_path)
 {

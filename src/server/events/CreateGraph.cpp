@@ -41,8 +41,7 @@ CreateGraph::CreateGraph(Engine&                     engine,
 	, _graph(NULL)
 	, _parent(NULL)
 	, _compiled_graph(NULL)
-{
-}
+{}
 
 bool
 CreateGraph::pre_process()
@@ -76,13 +75,33 @@ CreateGraph::pre_process()
 	}
 
 	const Raul::Symbol symbol((_path.is_root()) ? "root" : _path.symbol());
-	_graph = new GraphImpl(_engine, symbol, ext_poly, _parent,
-	                       _engine.driver()->sample_rate(), int_poly);
-	_graph->properties().insert(_properties.begin(), _properties.end());
-	_graph->add_property(uris.rdf_type, uris.ingen_Graph);
-	_graph->add_property(uris.rdf_type,
-	                     Resource::Property(uris.ingen_Block,
-	                                        Resource::Graph::EXTERNAL));
+
+	// Create graph based on prototype
+	const iterator t = _properties.find(uris.ingen_prototype);
+	if (t != _properties.end() &&
+	    Raul::URI::is_valid(t->second.ptr<char>()) &&
+	    Node::uri_is_path(Raul::URI(t->second.ptr<char>()))) {
+		// Create a duplicate of an existing graph
+		const Raul::URI prototype(t->second.ptr<char>());
+		GraphImpl*      ancestor = dynamic_cast<GraphImpl*>(
+			_engine.store()->get(Node::uri_to_path(prototype)));
+		if (!ancestor) {
+			return Event::pre_process_done(Status::PROTOTYPE_NOT_FOUND, prototype);
+		} else if (!(_graph = dynamic_cast<GraphImpl*>(
+			      ancestor->duplicate(_engine, symbol, _parent)))) {
+			return Event::pre_process_done(Status::CREATION_FAILED, _path);
+		}
+	} else {
+		// Create a new graph
+		_graph = new GraphImpl(_engine, symbol, ext_poly, _parent,
+		                       _engine.driver()->sample_rate(), int_poly);
+		_graph->add_property(uris.rdf_type, uris.ingen_Graph);
+		_graph->add_property(uris.rdf_type,
+		                     Resource::Property(uris.ingen_Block,
+		                                        Resource::Graph::EXTERNAL));
+	}
+
+	_graph->set_properties(_properties);
 
 	_parent->add_block(*_graph);
 	if (_parent->enabled()) {
@@ -92,10 +111,12 @@ CreateGraph::pre_process()
 
 	_graph->activate(*_engine.buffer_factory());
 
-	// Insert into Store
+	// Insert into store and build update to send to clients
 	_engine.store()->add(_graph);
-
-	_update = _graph->properties();
+	_update.put_graph(_graph);
+	for (BlockImpl& block : _graph->blocks()) {
+		_engine.store()->add(&block);
+	}
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
@@ -113,7 +134,7 @@ CreateGraph::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
-		_engine.broadcaster()->put(Node::path_to_uri(_path), _update);
+		_update.send(_engine.broadcaster());
 	}
 }
 

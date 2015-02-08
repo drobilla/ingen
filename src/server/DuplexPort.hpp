@@ -56,6 +56,10 @@ public:
 
 	virtual ~DuplexPort();
 
+	DuplexPort* duplicate(Engine&             engine,
+	                      const Raul::Symbol& symbol,
+	                      GraphImpl*          parent);
+
 	void inherit_neighbour(const PortImpl*       port,
 	                       Resource::Properties& remove,
 	                       Resource::Properties& add);

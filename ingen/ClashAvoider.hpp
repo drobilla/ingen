@@ -20,86 +20,35 @@
 #include <inttypes.h>
 
 #include <map>
-#include <string>
 
-#include "ingen/Interface.hpp"
-
-namespace Raul {
-class Atom;
-class Path;
-}
+#include "raul/Path.hpp"
+#include "raul/URI.hpp"
 
 namespace Ingen {
 
 class Store;
 
-/** A wrapper for an Interface that creates objects but possibly maps
- * symbol names to avoid clashes with the existing objects in a store.
+/** Maps paths so they do not clash with an existing object in a store.
  *
- * @ingroup IngenShared
+ * @ingroup ingen
  */
-class ClashAvoider : public Interface
+class ClashAvoider
 {
 public:
-	ClashAvoider(Store& store, Interface& target, Store* also_avoid=NULL)
-		: _store(store), _target(target), _also_avoid(also_avoid) {}
+	ClashAvoider(const Store& store);
 
-	Raul::URI uri() const { return Raul::URI("ingen:/clients/clash_avoider"); }
-
-	void set_target(Interface& target) { _target = target; }
-
-	// Bundles
-	void bundle_begin() { _target.bundle_begin(); }
-	void bundle_end()   { _target.bundle_end(); }
-
-	// Object commands
-
-	virtual void put(const Raul::URI&            path,
-	                 const Resource::Properties& properties,
-	                 Resource::Graph             ctx=Resource::Graph::DEFAULT);
-
-	virtual void delta(const Raul::URI&            path,
-	                   const Resource::Properties& remove,
-	                   const Resource::Properties& add);
-
-	virtual void move(const Raul::Path& old_path,
-	                  const Raul::Path& new_path);
-
-	virtual void connect(const Raul::Path& tail,
-	                     const Raul::Path& head);
-
-	virtual void disconnect(const Raul::Path& tail,
-	                        const Raul::Path& head);
-
-	virtual void disconnect_all(const Raul::Path& graph,
-	                            const Raul::Path& path);
-
-	virtual void set_property(const Raul::URI& subject_path,
-	                          const Raul::URI& predicate,
-	                          const Atom&      value);
-
-	virtual void del(const Raul::URI& uri);
-
-	virtual void set_response_id(int32_t id) {}
-	virtual void get(const Raul::URI& uri) {}
-	virtual void response(int32_t id, Status status, const std::string& subject) {}
-	virtual void error(const std::string& msg) {}
-
-private:
 	const Raul::URI  map_uri(const Raul::URI& in);
 	const Raul::Path map_path(const Raul::Path& in);
 
-	Store&     _store;
-	Interface& _target;
-
-	Store* _also_avoid;
 	bool exists(const Raul::Path& path) const;
 
-	typedef std::map<Raul::Path, unsigned> Offsets;
-	Offsets _offsets;
-
+private:
+	typedef std::map<Raul::Path, unsigned>   Offsets;
 	typedef std::map<Raul::Path, Raul::Path> SymbolMap;
-	SymbolMap _symbol_map;
+
+	const Store& _store;
+	Offsets      _offsets;
+	SymbolMap    _symbol_map;
 };
 
 } // namespace Ingen

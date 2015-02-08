@@ -33,7 +33,7 @@ enum class Status {
 	DIRECTION_MISMATCH,
 	EXISTS,
 	INTERNAL_ERROR,
-	INVALID_PARENT_PATH,
+	INVALID_PARENT,
 	INVALID_POLY,
 	NOT_DELETABLE,
 	NOT_FOUND,
@@ -42,7 +42,7 @@ enum class Status {
 	NO_SPACE,
 	PARENT_DIFFERS,
 	PARENT_NOT_FOUND,
-	PLUGIN_NOT_FOUND,
+	PROTOTYPE_NOT_FOUND,
 	PORT_NOT_FOUND,
 	TYPE_MISMATCH,
 	UNKNOWN_TYPE
@@ -65,7 +65,7 @@ ingen_status_string(Status st)
 	case Status::DIRECTION_MISMATCH:  return "Direction mismatch";
 	case Status::EXISTS:              return "Object exists";
 	case Status::INTERNAL_ERROR:      return "Internal error";
-	case Status::INVALID_PARENT_PATH: return "Invalid parent path";
+	case Status::INVALID_PARENT:      return "Invalid parent";
 	case Status::INVALID_POLY:        return "Invalid polyphony";
 	case Status::NOT_DELETABLE:       return "Object not deletable";
 	case Status::NOT_FOUND:           return "Object not found";
@@ -74,7 +74,7 @@ ingen_status_string(Status st)
 	case Status::NO_SPACE:            return "Insufficient space";
 	case Status::PARENT_DIFFERS:      return "Parent differs";
 	case Status::PARENT_NOT_FOUND:    return "Parent not found";
-	case Status::PLUGIN_NOT_FOUND:    return "Plugin not found";
+	case Status::PROTOTYPE_NOT_FOUND: return "Prototype not found";
 	case Status::PORT_NOT_FOUND:      return "Port not found";
 	case Status::TYPE_MISMATCH:       return "Type mismatch";
 	case Status::UNKNOWN_TYPE:        return "Unknown type";

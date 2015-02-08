@@ -60,6 +60,10 @@ public:
 
 	virtual GraphType graph_type() const { return GraphType::GRAPH; }
 
+	BlockImpl* duplicate(Engine&             engine,
+	                     const Raul::Symbol& symbol,
+	                     GraphImpl*          parent);
+
 	void activate(BufferFactory& bufs);
 	void deactivate();
 
