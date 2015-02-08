@@ -52,6 +52,11 @@ Disconnect::Disconnect(Engine&           engine,
 {
 }
 
+Disconnect::~Disconnect()
+{
+	delete _impl;
+}
+
 Disconnect::Impl::Impl(Engine&     e,
                        GraphImpl*  graph,
                        OutputPort* s,
@@ -211,8 +216,6 @@ Disconnect::post_process()
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->disconnect(_tail_path, _head_path);
 	}
-
-	delete _impl;
 }
 
 } // namespace Events

@@ -52,6 +52,8 @@ public:
 	           const Raul::Path& tail_path,
 	           const Raul::Path& head_path);
 
+	~Disconnect();
+
 	bool pre_process();
 	void execute(ProcessContext& context);
 	void post_process();

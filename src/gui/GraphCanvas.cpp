@@ -527,8 +527,8 @@ destroy_arc(GanvEdge* arc, void* data)
 void
 GraphCanvas::destroy_selection()
 {
-	for_each_selected_node(destroy_node, &_app);
 	for_each_selected_edge(destroy_arc, &_app);
+	for_each_selected_node(destroy_node, &_app);
 }
 
 static void

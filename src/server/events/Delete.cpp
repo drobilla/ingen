@@ -157,9 +157,6 @@ Delete::post_process()
 			_block->deactivate();
 		}
 
-		if (_disconnect_event) {
-			_disconnect_event->post_process();
-		}
 		_engine.broadcaster()->del(_uri);
 	}
 
