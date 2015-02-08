@@ -219,6 +219,9 @@ def build(bld):
     # Documentation
     autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, top, out)
 
+    # Man page
+    bld.install_files('${MANDIR}/man1', 'doc/ingen.1')
+
     # Icons
     icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
     for s in icon_sizes:
