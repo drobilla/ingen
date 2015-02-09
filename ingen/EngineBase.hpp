@@ -99,13 +99,12 @@ public:
 	/**
 	   Register a client to receive updates about engine changes.
 	*/
-	virtual void register_client(const Raul::URI& uri,
-	                             SPtr<Interface>  client) = 0;
+	virtual void register_client(SPtr<Interface> client) = 0;
 
 	/**
 	   Unregister a client.
 	*/
-	virtual bool unregister_client(const Raul::URI& uri) = 0;
+	virtual bool unregister_client(SPtr<Interface> client) = 0;
 
 };
 

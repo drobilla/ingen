@@ -604,7 +604,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	   Since we are not yet rolling, it won't be drained, causing a deadlock. */
 	SPtr<Interface> client(&driver->writer(), NullDeleter<Interface>);
 	interface->set_respondee(client);
-	engine->register_client(Raul::URI("ingen:/clients/lv2"), client);
+	engine->register_client(client);
 
 	return (LV2_Handle)plugin;
 }

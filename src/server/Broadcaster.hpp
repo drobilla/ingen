@@ -14,12 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_CLIENTBROADCASTER_HPP
-#define INGEN_ENGINE_CLIENTBROADCASTER_HPP
+#ifndef INGEN_ENGINE_BROADCASTER_HPP
+#define INGEN_ENGINE_BROADCASTER_HPP
 
 #include <atomic>
 #include <list>
-#include <map>
 #include <mutex>
 #include <set>
 #include <string>
@@ -45,10 +44,10 @@ public:
 	Broadcaster();
 	~Broadcaster();
 
-	void register_client(const Raul::URI& uri, SPtr<Interface> client);
-	bool unregister_client(const Raul::URI& uri);
+	void register_client(SPtr<Interface> client);
+	bool unregister_client(SPtr<Interface> client);
 
-	void set_broadcast(const Raul::URI& client, bool broadcast);
+	void set_broadcast(SPtr<Interface> client, bool broadcast);
 
 	/** Ignore a client when broadcasting.
 	 *
@@ -86,16 +85,14 @@ public:
 		Broadcaster& broadcaster;
 	};
 
-	SPtr<Interface> client(const Raul::URI& uri);
-
 	void send_plugins(const BlockFactory::Plugins& plugin_list);
 	void send_plugins_to(Interface*, const BlockFactory::Plugins& plugin_list);
 
 #define BROADCAST(msg, ...) \
 	std::lock_guard<std::mutex> lock(_clients_mutex); \
 	for (const auto& c : _clients) { \
-		if (c.second != _ignore_client) { \
-			c.second->msg(__VA_ARGS__); \
+		if (c != _ignore_client) { \
+			c->msg(__VA_ARGS__); \
 		} \
 	} \
 
@@ -160,17 +157,17 @@ public:
 private:
 	friend class Transfer;
 
-	typedef std::map< Raul::URI, SPtr<Interface> > Clients;
+	typedef std::set<SPtr<Interface>> Clients;
 
-	std::mutex          _clients_mutex;
-	Clients             _clients;
-	std::set<Raul::URI> _broadcastees;
-	std::atomic<bool>   _must_broadcast;
-	unsigned            _bundle_depth;
-	SPtr<Interface>     _ignore_client;
+	std::mutex                  _clients_mutex;
+	Clients                     _clients;
+	std::set< SPtr<Interface> > _broadcastees;
+	std::atomic<bool>           _must_broadcast;
+	unsigned                    _bundle_depth;
+	SPtr<Interface>             _ignore_client;
 };
 
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_CLIENTBROADCASTER_HPP
+#endif // INGEN_ENGINE_BROADCASTER_HPP

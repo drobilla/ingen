@@ -43,11 +43,11 @@ public:
 		                           sock))
 	{
 		set_respondee(_writer);
-		engine.register_client(_writer->uri(), _writer);
+		engine.register_client(_writer);
 	}
 
 	~SocketServer() {
-		_engine.unregister_client(_writer->uri());
+		_engine.unregister_client(_writer);
 	}
 
 private:

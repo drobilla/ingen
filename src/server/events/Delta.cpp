@@ -269,7 +269,7 @@ Delta::pre_process()
 			}
 		} else if (is_client && key == uris.ingen_broadcast) {
 			_engine.broadcaster()->set_broadcast(
-				_request_client->uri(), value.get<int32_t>());
+				_request_client, value.get<int32_t>());
 		}
 
 		if (_status != Status::NOT_PREPARED) {

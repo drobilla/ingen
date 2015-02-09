@@ -75,9 +75,8 @@ public:
 	virtual unsigned run(uint32_t sample_count);
 	virtual void quit();
 	virtual bool main_iteration();
-	virtual void register_client(const Raul::URI& uri,
-	                             SPtr<Interface>  client);
-	virtual bool unregister_client(const Raul::URI& uri);
+	virtual void register_client(SPtr<Interface> client);
+	virtual bool unregister_client(SPtr<Interface> client);
 
 	void listen();
 

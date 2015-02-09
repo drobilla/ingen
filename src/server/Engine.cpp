@@ -386,17 +386,17 @@ Engine::process_events()
 }
 
 void
-Engine::register_client(const Raul::URI& uri, SPtr<Interface> client)
+Engine::register_client(SPtr<Interface> client)
 {
-	log().info(fmt("Registering client <%1%>\n") % uri.c_str());
-	_broadcaster->register_client(uri, client);
+	log().info(fmt("Registering client <%1%>\n") % client->uri().c_str());
+	_broadcaster->register_client(client);
 }
 
 bool
-Engine::unregister_client(const Raul::URI& uri)
+Engine::unregister_client(SPtr<Interface> client)
 {
-	log().info(fmt("Unregistering client <%1%>\n") % uri.c_str());
-	return _broadcaster->unregister_client(uri);
+	log().info(fmt("Unregistering client <%1%>\n") % client->uri().c_str());
+	return _broadcaster->unregister_client(client);
 }
 
 } // namespace Server

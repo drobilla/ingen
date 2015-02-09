@@ -148,7 +148,7 @@ App::attach(SPtr<SigClientInterface> client)
 	assert(!_loader);
 
 	if (_world->engine()) {
-		_world->engine()->register_client(client->uri(), client);
+		_world->engine()->register_client(client);
 	}
 
 	_client = client;

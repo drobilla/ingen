@@ -191,8 +191,7 @@ main(int argc, char** argv)
 	SPtr<Interface> client(new TestClient(world->log()));
 
 	world->interface()->set_respondee(client);
-	world->engine()->register_client(Raul::URI("ingen:/clients/test"),
-	                                 client);
+	world->engine()->register_client(client);
 
 	SerdURI cmds_base;
 	SerdNode cmds_file_uri = serd_node_new_file_uri(

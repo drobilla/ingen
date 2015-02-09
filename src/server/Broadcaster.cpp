@@ -40,11 +40,10 @@ Broadcaster::~Broadcaster()
 /** Register a client to receive messages over the notification band.
  */
 void
-Broadcaster::register_client(const Raul::URI& uri,
-                             SPtr<Interface>  client)
+Broadcaster::register_client(SPtr<Interface> client)
 {
 	std::lock_guard<std::mutex> lock(_clients_mutex);
-	_clients[uri] = client;
+	_clients.insert(client);
 }
 
 /** Remove a client from the list of registered clients.
@@ -52,16 +51,16 @@ Broadcaster::register_client(const Raul::URI& uri,
  * @return true if client was found and removed.
  */
 bool
-Broadcaster::unregister_client(const Raul::URI& uri)
+Broadcaster::unregister_client(SPtr<Interface> client)
 {
 	std::lock_guard<std::mutex> lock(_clients_mutex);
-	const size_t erased = _clients.erase(uri);
-	_broadcastees.erase(uri);
+	const size_t erased = _clients.erase(client);
+	_broadcastees.erase(client);
 	return (erased > 0);
 }
 
 void
-Broadcaster::set_broadcast(const Raul::URI& client, bool broadcast)
+Broadcaster::set_broadcast(SPtr<Interface> client, bool broadcast)
 {
 	if (broadcast) {
 		_broadcastees.insert(client);
@@ -71,27 +70,12 @@ Broadcaster::set_broadcast(const Raul::URI& client, bool broadcast)
 	_must_broadcast.store(!_broadcastees.empty());
 }
 
-/** Looks up the client with the given source `uri` (which is used as the
- * unique identifier for registered clients).
- */
-SPtr<Interface>
-Broadcaster::client(const Raul::URI& uri)
-{
-	std::lock_guard<std::mutex> lock(_clients_mutex);
-	Clients::iterator i = _clients.find(uri);
-	if (i != _clients.end()) {
-		return (*i).second;
-	} else {
-		return SPtr<Interface>();
-	}
-}
-
 void
 Broadcaster::send_plugins(const BlockFactory::Plugins& plugins)
 {
 	std::lock_guard<std::mutex> lock(_clients_mutex);
 	for (const auto& c : _clients) {
-		send_plugins_to(c.second.get(), plugins);
+		send_plugins_to(c.get(), plugins);
 	}
 }
 
