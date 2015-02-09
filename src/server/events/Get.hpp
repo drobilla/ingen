@@ -74,10 +74,6 @@ public:
 			Raul::URI            uri;
 			Resource::Properties properties;
 			Resource::Graph      ctx;
-
-			inline bool operator<(const Put& other) {
-				return uri < other.uri;
-			}
 		};
 
 		struct Connect {

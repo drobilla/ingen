@@ -100,11 +100,19 @@ Get::Response::put_graph(const GraphImpl* graph)
 	}
 }
 
+/** Returns true if a is closer to the root than b. */
+static inline bool
+put_higher_than(const Get::Response::Put& a, const Get::Response::Put& b)
+{
+	return (std::count(a.uri.begin(), a.uri.end(), '/') <
+	        std::count(b.uri.begin(), b.uri.end(), '/'));
+}
+
 void
 Get::Response::send(Interface* dest)
 {
-	// Sort puts by URI so parents are sent first
-	std::sort(puts.begin(), puts.end());
+	// Sort puts by increasing depth so parents are sent first
+	std::stable_sort(puts.begin(), puts.end(), put_higher_than);
 	for (const Response::Put& put : puts) {
 		dest->put(put.uri, put.properties, put.ctx);
 	}
