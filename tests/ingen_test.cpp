@@ -76,6 +76,9 @@ public:
 	           const Resource::Properties& remove,
 	           const Resource::Properties& add) {}
 
+	void copy(const Raul::Path& old_path,
+	          const Raul::URI&  new_uri) {}
+
 	void move(const Raul::Path& old_path,
 	          const Raul::Path& new_path) {}
 
@@ -133,9 +136,14 @@ main(int argc, char** argv)
 	set_bundle_path_from_code((void*)&main);
 
 	if (argc != 3) {
-		cerr << "Usage: ingen_test START_PATCH COMMANDS_FILE" << endl;
+		cerr << "Usage: ingen_test START_GRAPH COMMANDS_FILE" << endl;
 		return EXIT_FAILURE;
 	}
+
+	char*             real_start_graph = realpath(argv[1], NULL);
+	const std::string start_graph      = real_start_graph;
+	const std::string cmds_file_path   = argv[2];
+	free(real_start_graph);
 
 	// Create world
 	try {
@@ -159,7 +167,10 @@ main(int argc, char** argv)
 	world->engine()->activate();
 
 	// Load patch
-	world->parser()->parse_file(world, world->interface().get(), argv[1]);
+	if (!world->parser()->parse_file(world, world->interface().get(), start_graph)) {
+		cerr << "error: failed to load initial graph " << start_graph << endl;
+		return 1;
+	}
 	while (world->engine()->pending_events()) {
 		world->engine()->run(4096);
 		world->engine()->main_iteration();
@@ -177,8 +188,6 @@ main(int argc, char** argv)
 	LV2_Atom_Forge forge;
 	lv2_atom_forge_init(&forge, map);
 	lv2_atom_forge_set_sink(&forge, sratom_forge_sink, sratom_forge_deref, &out);
-
-	const std::string cmds_file_path = argv[2];
 
 	// AtomReader to read commands from a file and send them to engine
 	AtomReader atom_reader(world->uri_map(),
