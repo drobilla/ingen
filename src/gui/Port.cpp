@@ -82,8 +82,6 @@ Port::Port(App&                  app,
 {
 	assert(pm);
 
-	set_dash_length(app.style()->get_port_dash_length(pm.get()));
-
 	if (app.can_control(pm.get())) {
 		show_control();
 		port_properties_changed();
@@ -104,7 +102,10 @@ Port::Port(App&                  app,
 		value_label = "ℝ";
 	} else if (model()->is_a(_app.uris().atom_AtomPort)) {
 		if (model()->supports(_app.uris().atom_Float)) {
-			value_label += "ℝ";
+			if (model()->is_toggle()) {
+				value_label = ((pm->value() != _app.uris().forge.make(0.0f))
+				               ? "☑" : "☐");
+			}
 		}
 		if (model()->supports(_app.uris().atom_Int)) {
 			value_label += "ℤ";
@@ -119,6 +120,10 @@ Port::Port(App&                  app,
 				value_label += "̿";
 			}
 		}
+		if (value_label.empty()) {
+			value_label = "*";
+		}
+		value_label += "͍";
 	}
 	if (!value_label.empty()) {
 		set_value_label(value_label.c_str());
@@ -430,15 +435,21 @@ Port::get_graph_box() const
 void
 Port::port_properties_changed()
 {
+	const URIs& uris = _app.uris();
+	std::string value_label;
 	if (model()->is_toggle()) {
 		set_control_is_toggle(true);
 	} else if (model()->is_enumeration()) {
-		const uint8_t ellipsis[] = { 0xE2, 0x80, 0xA6, 0 };
-		set_value_label((const char*)ellipsis);
+		value_label = "…";
 	} else if (model()->is_integer()) {
-		const uint8_t bigZ[] = { 0xE2, 0x84, 0xA4, 0 };
-		set_value_label((const char*)bigZ);
 		set_control_is_integer(true);
+		value_label = "ℤ";
+	}
+	if (!value_label.empty()) {
+		if (model()->has_property(uris.atom_bufferType, uris.atom_Sequence)) {
+			value_label += "͍";
+		}
+		set_value_label(value_label.c_str());
 	}
 }
 
@@ -450,6 +461,9 @@ Port::property_changed(const Raul::URI& key, const Atom& value)
 		float val = value.get<float>();
 		if (key == uris.ingen_value && !get_grabbed()) {
 			Ganv::Port::set_control_value(val);
+			if (model()->is_toggle()) {
+				set_value_label((val == 0.0f) ? "☐" : "☑");
+			}
 		} else if (key == uris.lv2_minimum) {
 			if (model()->port_property(uris.lv2_sampleRate)) {
 				val *= _app.sample_rate();
