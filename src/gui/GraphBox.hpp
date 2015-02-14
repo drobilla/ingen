@@ -97,10 +97,11 @@ private:
 	void property_changed(const Raul::URI& predicate, const Atom& value);
 	void show_status(const Client::ObjectModel* model);
 
-	int message_dialog(const Glib::ustring& message,
-	                   const Glib::ustring& secondary_text,
-	                   Gtk::MessageType     type,
-	                   Gtk::ButtonsType     buttons);
+	void error(const Glib::ustring& message,
+	           const Glib::ustring& secondary_text="");
+
+	bool confirm(const Glib::ustring& message,
+	             const Glib::ustring& secondary_text="");
 
 	void event_import();
 	void event_save();

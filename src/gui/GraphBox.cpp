@@ -469,18 +469,30 @@ GraphBox::event_save()
 	}
 }
 
-int
-GraphBox::message_dialog(const Glib::ustring& message,
-                         const Glib::ustring& secondary_text,
-                         Gtk::MessageType     type,
-                         Gtk::ButtonsType     buttons)
+void
+GraphBox::error(const Glib::ustring& message,
+                const Glib::ustring& secondary_text)
 {
-	Gtk::MessageDialog dialog(message, true, type, buttons, true);
+	Gtk::MessageDialog dialog(
+		message, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
 	dialog.set_secondary_text(secondary_text);
 	if (_window) {
 		dialog.set_transient_for(*_window);
 	}
-	return dialog.run();
+	dialog.run();
+}
+
+bool
+GraphBox::confirm(const Glib::ustring& message,
+                  const Glib::ustring& secondary_text)
+{
+	Gtk::MessageDialog dialog(
+		message, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
+	dialog.set_secondary_text(secondary_text);
+	if (_window) {
+		dialog.set_transient_for(*_window);
+	}
+	return dialog.run() == Gtk::RESPONSE_YES;
 }
 
 void
@@ -488,7 +500,8 @@ GraphBox::event_save_as()
 {
 	const URIs& uris = _app->uris();
 	while (true) {
-		Gtk::FileChooserDialog dialog("Save Graph", Gtk::FILE_CHOOSER_ACTION_SAVE);
+		Gtk::FileChooserDialog dialog(
+			"Save Graph", Gtk::FILE_CHOOSER_ACTION_CREATE_FOLDER);
 		if (_window) {
 			dialog.set_transient_for(*_window);
 		}
@@ -519,57 +532,49 @@ GraphBox::event_save_as()
 		if (basename.find('.') == std::string::npos) {
 			filename += ".ingen";
 			basename += ".ingen";
-		} else if (filename.substr(filename.length() - 10) != ".ingen") {
-			message_dialog(
-				"<b>Ingen graphs must be saved to Ingen bundles (*.ingen).</b>",
-				"", Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+		} else if (filename.substr(filename.length() - 6) != ".ingen") {
+			error("<b>Ingen bundles must end in \".ingen\"</b>");
 			continue;
 		}
 
 		const std::string symbol(basename.substr(0, basename.find('.')));
 
 		if (!Raul::Symbol::is_valid(symbol)) {
-			message_dialog(
+			error(
 				"<b>Ingen bundle names must be valid symbols.</b>",
-				"All characters must be _, a-z, A-Z, or 0-9, but the first may not be 0-9.",
-				Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK);
+				"All characters must be _, a-z, A-Z, or 0-9, but the first may not be 0-9.");
 			continue;
 		}
 
 		//_graph->set_property(uris.lv2_symbol, Atom(symbol.c_str()));
 
-		bool confirm = true;
+		bool confirmed = true;
 		if (Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
 			if (Glib::file_test(Glib::build_filename(filename, "manifest.ttl"),
 			                    Glib::FILE_TEST_EXISTS)) {
-				int ret = message_dialog(
-					(boost::format("<b>A bundle named \"%1%\" already exists."
-					               "  Replace it?</b>") % basename).str(),
-					"", Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
-				confirm = (ret == Gtk::RESPONSE_YES);
+				confirmed = confirm(
+					(boost::format("<b>The bundle \"%1%\" already exists."
+					               "  Replace it?</b>") % basename).str());
 			} else {
-				int ret = message_dialog(
+				confirmed = confirm(
 					(boost::format("<b>A directory named \"%1%\" already exists,"
 					               "but is not an Ingen bundle.  "
 					               "Save into it anyway?</b>") % basename).str(),
 					"This will create at least 2 .ttl files in this directory,"
 					"and possibly several more files and/or directories, recursively.  "
-					"Existing files will be overwritten.",
-					Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
-				confirm = (ret == Gtk::RESPONSE_YES);
+					"Existing files will be overwritten.");
 			}
 		} else if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
-			int ret = message_dialog(
+			confirmed = confirm(
 				(boost::format("<b>A file named \"%1%\" already exists.  "
 				               "Replace it with an Ingen bundle?</b>")
-				 % basename).str(),
-				"", Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO);
-			confirm = (ret == Gtk::RESPONSE_YES);
-			if (confirm)
+				 % basename).str());
+			if (confirmed) {
 				::g_remove(filename.c_str());
+			}
 		}
 
-		if (confirm) {
+		if (confirmed) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
 			_app->loader()->save_graph(_graph, uri);
 			const_cast<GraphModel*>(_graph.get())->set_property(
