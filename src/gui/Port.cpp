@@ -82,7 +82,6 @@ Port::Port(App&                  app,
 {
 	assert(pm);
 
-	set_border_width(1.0);
 	set_dash_length(app.style()->get_port_dash_length(pm.get()));
 
 	if (app.can_control(pm.get())) {
