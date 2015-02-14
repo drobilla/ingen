@@ -84,7 +84,6 @@ Port::Port(App&                  app,
 
 	if (app.can_control(pm.get())) {
 		show_control();
-		port_properties_changed();
 		pm->signal_property().connect(
 			sigc::mem_fun(this, &Port::property_changed));
 		pm->signal_property_removed().connect(
@@ -93,41 +92,7 @@ Port::Port(App&                  app,
 			sigc::mem_fun(this, &Port::value_changed));
 	}
 
-	std::string value_label;
-	if (model()->is_a(_app.uris().lv2_AudioPort)) {
-		value_label = "~";
-	} else if (model()->is_a(_app.uris().lv2_CVPort)) {
-		value_label = "ℝ̰";
-	} else if (model()->is_a(_app.uris().lv2_ControlPort)) {
-		value_label = "ℝ";
-	} else if (model()->is_a(_app.uris().atom_AtomPort)) {
-		if (model()->supports(_app.uris().atom_Float)) {
-			if (model()->is_toggle()) {
-				value_label = ((pm->value() != _app.uris().forge.make(0.0f))
-				               ? "☑" : "☐");
-			}
-		}
-		if (model()->supports(_app.uris().atom_Int)) {
-			value_label += "ℤ";
-		}
-		if (model()->supports(_app.uris().midi_MidiEvent)) {
-			value_label += "ℳ";
-		}
-		if (model()->supports(_app.uris().patch_Message)) {
-			if (value_label.empty()) {
-				value_label += "=";
-			} else {
-				value_label += "̿";
-			}
-		}
-		if (value_label.empty()) {
-			value_label = "*";
-		}
-		value_label += "͍";
-	}
-	if (!value_label.empty()) {
-		set_value_label(value_label.c_str());
-	}
+	port_properties_changed();
 
 	pm->signal_activity().connect(
 		sigc::mem_fun(this, &Port::activity));
@@ -433,24 +398,71 @@ Port::get_graph_box() const
 }
 
 void
-Port::port_properties_changed()
+Port::set_type_tag()
 {
 	const URIs& uris = _app.uris();
-	std::string value_label;
+	std::string tag;
+	if (model()->is_a(_app.uris().lv2_AudioPort)) {
+		tag = "~";
+	} else if (model()->is_a(_app.uris().lv2_CVPort)) {
+		tag = "ℝ̰";
+	} else if (model()->is_a(_app.uris().lv2_ControlPort)) {
+		if (model()->is_enumeration()) {
+			tag = "…";
+		} else if (model()->is_integer()) {
+			tag = "ℤ";
+		} else if (model()->is_toggle()) {
+			tag = ((model()->value() != _app.uris().forge.make(0.0f))
+			       ? "☑" : "☐");
+			
+		} else {
+			tag = "ℝ";
+		}
+	} else if (model()->is_a(_app.uris().atom_AtomPort)) {
+		if (model()->supports(_app.uris().atom_Float)) {
+			if (model()->is_toggle()) {
+				tag = ((model()->value() != _app.uris().forge.make(0.0f))
+				       ? "☑" : "☐");
+			} else {
+				tag = "ℝ";
+			}
+		}
+		if (model()->supports(_app.uris().atom_Int)) {
+			tag += "ℤ";
+		}
+		if (model()->supports(_app.uris().midi_MidiEvent)) {
+			tag += "𝕄";
+		}
+		if (model()->supports(_app.uris().patch_Message)) {
+			if (tag.empty()) {
+				tag += "=";
+			} else {
+				tag += "̿";
+			}
+		}
+		if (tag.empty()) {
+			tag = "*";
+		}
+
+		if (model()->has_property(uris.atom_bufferType, uris.atom_Sequence)) {
+			tag += "̤";
+		}
+	}
+
+	if (!tag.empty()) {
+		set_value_label(tag.c_str());
+	}
+}
+
+void
+Port::port_properties_changed()
+{
 	if (model()->is_toggle()) {
 		set_control_is_toggle(true);
-	} else if (model()->is_enumeration()) {
-		value_label = "…";
 	} else if (model()->is_integer()) {
 		set_control_is_integer(true);
-		value_label = "ℤ";
 	}
-	if (!value_label.empty()) {
-		if (model()->has_property(uris.atom_bufferType, uris.atom_Sequence)) {
-			value_label += "͍";
-		}
-		set_value_label(value_label.c_str());
-	}
+	set_type_tag();
 }
 
 void
@@ -462,7 +474,14 @@ Port::property_changed(const Raul::URI& key, const Atom& value)
 		if (key == uris.ingen_value && !get_grabbed()) {
 			Ganv::Port::set_control_value(val);
 			if (model()->is_toggle()) {
-				set_value_label((val == 0.0f) ? "☐" : "☑");
+				std::string tag = (val == 0.0f) ? "☐" : "☑";
+				if (model()->is_a(_app.uris().lv2_CVPort)) {
+					tag += "̰";
+				} else if (model()->has_property(uris.atom_bufferType,
+				                                 uris.atom_Sequence)) {
+					tag += "̤";
+				}
+				set_value_label(tag.c_str());
 			}
 		} else if (key == uris.lv2_minimum) {
 			if (model()->port_property(uris.lv2_sampleRate)) {
