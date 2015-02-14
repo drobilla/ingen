@@ -671,7 +671,11 @@ void
 GraphBox::event_close()
 {
 	if (_window) {
-		_app->window_factory()->remove_graph_window(_window);
+		if (_app->window_factory()->num_open_graph_windows() == 1) {
+			_app->quit(_window);
+		} else {
+			_app->window_factory()->remove_graph_window(_window);
+		}
 	}
 }
 

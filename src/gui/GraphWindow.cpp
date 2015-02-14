@@ -70,6 +70,10 @@ GraphWindow::on_hide()
 {
 	_position_stored = true;
 	get_position(_x, _y);
+	if (_app->window_factory()->num_open_graph_windows() == 1 &&
+	    _app->quit(this)) {
+		return;
+	}
 	Gtk::Window::on_hide();
 }
 
