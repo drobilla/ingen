@@ -133,6 +133,7 @@ public:
 	const Quark patch_Copy;
 	const Quark patch_Delete;
 	const Quark patch_Get;
+	const Quark patch_Message;
 	const Quark patch_Move;
 	const Quark patch_Patch;
 	const Quark patch_Put;

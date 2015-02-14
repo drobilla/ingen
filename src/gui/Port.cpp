@@ -95,6 +95,35 @@ Port::Port(App&                  app,
 			sigc::mem_fun(this, &Port::value_changed));
 	}
 
+	std::string value_label;
+	if (model()->is_a(_app.uris().lv2_AudioPort)) {
+		value_label = "~";
+	} else if (model()->is_a(_app.uris().lv2_CVPort)) {
+		value_label = "ℝ̰";
+	} else if (model()->is_a(_app.uris().lv2_ControlPort)) {
+		value_label = "ℝ";
+	} else if (model()->is_a(_app.uris().atom_AtomPort)) {
+		if (model()->supports(_app.uris().atom_Float)) {
+			value_label += "ℝ";
+		}
+		if (model()->supports(_app.uris().atom_Int)) {
+			value_label += "ℤ";
+		}
+		if (model()->supports(_app.uris().midi_MidiEvent)) {
+			value_label += "ℳ";
+		}
+		if (model()->supports(_app.uris().patch_Message)) {
+			if (value_label.empty()) {
+				value_label += "=";
+			} else {
+				value_label += "̿";
+			}
+		}
+	}
+	if (!value_label.empty()) {
+		set_value_label(value_label.c_str());
+	}
+
 	pm->signal_activity().connect(
 		sigc::mem_fun(this, &Port::activity));
 	pm->signal_disconnection().connect(
