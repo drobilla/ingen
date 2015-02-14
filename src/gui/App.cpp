@@ -349,8 +349,11 @@ App::quit(Gtk::Window* dialog_parent)
 		quit = (d.run() == Gtk::RESPONSE_CLOSE);
 	}
 
-	if (quit)
-		Gtk::Main::quit();
+	if (!quit) {
+		return false;
+	}
+
+	Gtk::Main::quit();
 
 	try {
 		const std::string path = _world->conf().save(
@@ -361,7 +364,7 @@ App::quit(Gtk::Window* dialog_parent)
 		         % e.what());
 	}
 
-	return quit;
+	return true;
 }
 
 bool

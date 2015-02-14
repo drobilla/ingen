@@ -145,8 +145,6 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &GraphBox::event_port_names_toggled));
 	_menu_arrange->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_arrange));
-	_menu_quit->signal_activate().connect(
-		sigc::mem_fun(this, &GraphBox::event_quit));
 	_menu_zoom_in->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_zoom_in));
 	_menu_zoom_out->signal_activate().connect(
@@ -501,7 +499,7 @@ GraphBox::event_save_as()
 	const URIs& uris = _app->uris();
 	while (true) {
 		Gtk::FileChooserDialog dialog(
-			"Save Graph", Gtk::FILE_CHOOSER_ACTION_CREATE_FOLDER);
+			"Save Graph", Gtk::FILE_CHOOSER_ACTION_SAVE);
 		if (_window) {
 			dialog.set_transient_for(*_window);
 		}
@@ -532,6 +530,11 @@ GraphBox::event_save_as()
 		if (basename.find('.') == std::string::npos) {
 			filename += ".ingen";
 			basename += ".ingen";
+		} else if (filename.substr(filename.length() - 4) == ".ttl") {
+			const Glib::ustring dir = Glib::path_get_dirname(filename);
+			if (dir.substr(dir.length() - 6) != ".ingen") {
+				error("<b>File does not appear to be in an Ingen bundle.");
+			}
 		} else if (filename.substr(filename.length() - 6) != ".ingen") {
 			error("<b>Ingen bundles must end in \".ingen\"</b>");
 			continue;
@@ -579,8 +582,7 @@ GraphBox::event_save_as()
 			_app->loader()->save_graph(_graph, uri);
 			const_cast<GraphModel*>(_graph.get())->set_property(
 				uris.ingen_file,
-				_app->forge().alloc_uri(uri.c_str()),
-				Resource::Graph::EXTERNAL);
+				_app->forge().alloc_uri(uri.c_str()));
 			_status_bar->push(
 				(boost::format("Saved %1% to %2%") % _graph->path().c_str()
 				 % filename).str(),
