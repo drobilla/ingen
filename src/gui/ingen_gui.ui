@@ -841,7 +841,7 @@ Contributors:
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_graph_file_close_menuitem_activate" swapped="no"/>
+                        <accelerator key="W" signal="activate" modifiers="GDK_CONTROL_MASK"/>                        <signal name="activate" handler="on_graph_file_close_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -858,7 +858,7 @@ Contributors:
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="activate" handler="on_graph_file_quit_nokill_menuitem_activate" swapped="no"/>
+                        <accelerator key="Q" signal="activate" modifiers="GDK_CONTROL_MASK"/>                        <signal name="activate" handler="on_graph_file_quit_nokill_menuitem_activate" swapped="no"/>
                       </object>
                     </child>
                   </object>
