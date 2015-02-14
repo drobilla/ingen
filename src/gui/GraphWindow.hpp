@@ -65,6 +65,7 @@ public:
 protected:
 	void on_hide();
 	void on_show();
+	bool on_key_press_event(GdkEventKey* event);
 
 private:
 	GraphBox* _box;

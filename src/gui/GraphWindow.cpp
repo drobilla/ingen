@@ -70,11 +70,14 @@ GraphWindow::on_hide()
 {
 	_position_stored = true;
 	get_position(_x, _y);
-	if (_app->window_factory()->num_open_graph_windows() == 1 &&
-	    _app->quit(this)) {
-		return;
-	}
 	Gtk::Window::on_hide();
+}
+
+bool
+GraphWindow::on_key_press_event(GdkEventKey* event)
+{
+	// Disable Window C-w handling so quit works correctly
+	return Gtk::Window::on_key_press_event(event);
 }
 
 } // namespace GUI

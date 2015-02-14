@@ -38,10 +38,11 @@ public:
 	virtual void init_window(App& app) { _app = &app; }
 
 	bool on_key_press_event(GdkEventKey* event) {
-		if (Ingen::GUI::Window::key_press_handler(this, event))
+		if (event->keyval == GDK_w && event->state & GDK_CONTROL_MASK) {
+			hide();
 			return true;
-		else
-			return Gtk::Window::on_key_press_event(event);
+		}
+		return Gtk::Window::on_key_press_event(event);
 	}
 
 	static bool key_press_handler(Gtk::Window* win, GdkEventKey* event);
@@ -61,10 +62,11 @@ public:
 	virtual void init_dialog(App& app) { _app = &app; }
 
 	bool on_key_press_event(GdkEventKey* event) {
-		if (Ingen::GUI::Window::key_press_handler(this, event))
+		if (event->keyval == GDK_w && event->state & GDK_CONTROL_MASK) {
+			hide();
 			return true;
-		else
-			return Gtk::Dialog::on_key_press_event(event);
+		}
+		return Gtk::Window::on_key_press_event(event);
 	}
 
 	App* _app;

@@ -69,7 +69,6 @@ def build(bld):
             SubgraphModule.cpp
             ThreadedLoader.cpp
             WidgetFactory.cpp
-            Window.cpp
             WindowFactory.cpp
             ingen_gui.cpp
     '''
