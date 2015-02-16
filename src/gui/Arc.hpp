@@ -38,8 +38,10 @@ public:
 	Arc(Ganv::Canvas&                canvas,
 	    SPtr<const Client::ArcModel> model,
 	    Ganv::Node*                  src,
-	    Ganv::Node*                  dst,
-	    uint32_t                     color);
+	    Ganv::Node*                  dst)
+		: Ganv::Edge(canvas, src, dst)
+		, _arc_model(model)
+	{}
 
 	SPtr<const Client::ArcModel> model() const { return _arc_model; }
 

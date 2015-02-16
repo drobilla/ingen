@@ -43,7 +43,6 @@ def build(bld):
 
     obj.source = '''
             App.cpp
-            Arc.cpp
             BreadCrumbs.cpp
             ConnectWindow.cpp
             GraphBox.cpp

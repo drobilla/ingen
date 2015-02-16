@@ -369,7 +369,7 @@ GraphCanvas::connection(SPtr<const ArcModel> arc)
 	Ganv::Port* const head = get_port_view(arc->head());
 
 	if (tail && head) {
-		new GUI::Arc(*this, arc, tail, head, tail->get_fill_color());
+		new GUI::Arc(*this, arc, tail, head);
 	} else {
 		_app.log().error(fmt("Unable to find ports to connect %1% => %2%\n")
 		                 % arc->tail_path() % arc->head_path());
