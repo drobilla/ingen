@@ -112,7 +112,7 @@ public:
 	                                    const std::string& filename);
 
 	const Atom& option(const std::string& long_name) const;
-	bool              set(const std::string& long_name, const Atom& value);
+	bool        set(const std::string& long_name, const Atom& value);
 
 	const std::list<std::string>& files() const { return _files; }
 

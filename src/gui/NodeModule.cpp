@@ -268,8 +268,7 @@ NodeModule::rename()
 void
 NodeModule::new_port_view(SPtr<const PortModel> port)
 {
-	Port::create(app(), *this, port,
-	             app().world()->conf().option("human-names").get<int32_t>());
+	Port::create(app(), *this, port);
 
 	port->signal_value_changed().connect(
 		sigc::bind<0>(sigc::mem_fun(this, &NodeModule::port_value_changed),

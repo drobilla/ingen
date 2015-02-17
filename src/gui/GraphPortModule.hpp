@@ -48,8 +48,7 @@ class GraphPortModule : public Ganv::Module
 public:
 	static GraphPortModule* create(
 		GraphCanvas&                  canvas,
-		SPtr<const Client::PortModel> model,
-		bool                          human);
+		SPtr<const Client::PortModel> model);
 
 	App& app() const;
 

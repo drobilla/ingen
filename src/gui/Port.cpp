@@ -44,25 +44,9 @@ Port*
 Port::create(App&                  app,
              Ganv::Module&         module,
              SPtr<const PortModel> pm,
-             bool                  human_name,
              bool                  flip)
 {
-	Glib::ustring label;
-	if (app.world()->conf().option("port-labels").get<int32_t>()) {
-		if (human_name) {
-			const Atom& name = pm->get_property(app.uris().lv2_name);
-			if (name.type() == app.forge().String) {
-				label = name.ptr<char>();
-			} else {
-				const SPtr<const BlockModel> parent(dynamic_ptr_cast<const BlockModel>(pm->parent()));
-				if (parent && parent->plugin_model())
-					label = parent->plugin_model()->port_human_name(pm->index());
-			}
-		} else {
-			label = pm->path().symbol();
-		}
-	}
-	return new Port(app, module, pm, label, flip);
+	return new Port(app, module, pm, port_label(app, pm), flip);
 }
 
 /** @param flip Make an input port appear as an output port, and vice versa.
@@ -116,6 +100,40 @@ Port::Port(App&                  app,
 Port::~Port()
 {
 	_app.activity_port_destroyed(this);
+}
+
+std::string
+Port::port_label(App& app, SPtr<const PortModel> pm)
+{
+	if (!pm) {
+		return "";
+	}
+
+	std::string label;
+	if (app.world()->conf().option("port-labels").get<int32_t>()) {
+		if (app.world()->conf().option("human-names").get<int32_t>()) {
+			const Atom& name = pm->get_property(app.uris().lv2_name);
+			if (name.type() == app.forge().String) {
+				label = name.ptr<char>();
+			} else {
+				const SPtr<const BlockModel> parent(
+					dynamic_ptr_cast<const BlockModel>(pm->parent()));
+				if (parent && parent->plugin_model())
+					label = parent->plugin_model()->port_human_name(pm->index());
+			}
+		} else {
+			label = pm->path().symbol();
+		}
+	}
+	return label;
+}
+
+void
+Port::ensure_label()
+{
+	if (!get_label()) {
+		set_label(port_label(_app, _port_model.lock()).c_str());
+	}
 }
 
 void

@@ -50,7 +50,6 @@ public:
 		App&                          app,
 		Ganv::Module&                 module,
 		SPtr<const Client::PortModel> pm,
-		bool                          human_name,
 		bool                          flip = false);
 
 	~Port();
@@ -59,6 +58,7 @@ public:
 
 	bool show_menu(GdkEventButton* ev);
 	void update_metadata();
+	void ensure_label();
 
 	void value_changed(const Atom& value);
 	void activity(const Atom& value);
@@ -72,6 +72,8 @@ private:
 	     SPtr<const Client::PortModel> pm,
 	     const std::string&            name,
 	     bool                          flip = false);
+
+	static std::string port_label(App& app, SPtr<const Client::PortModel> pm);
 
 	Gtk::Menu* build_enum_menu();
 	Gtk::Menu* build_uri_menu();

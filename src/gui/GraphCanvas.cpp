@@ -256,13 +256,30 @@ void
 GraphCanvas::show_human_names(bool b)
 {
 	_human_names = b;
+	_app.world()->conf().set("human-names", _app.forge().make(b));
+
 	for_each_node(show_module_human_names, &b);
+}
+
+static void
+ensure_port_labels(GanvNode* node, void* data)
+{
+	if (GANV_IS_MODULE(node)) {
+		Ganv::Module* module = Glib::wrap(GANV_MODULE(node));
+		for (Ganv::Port* p : *module) {
+			Ingen::GUI::Port* port = dynamic_cast<Ingen::GUI::Port*>(p);
+			if (port) {
+				port->ensure_label();
+			}
+		}
+	}
 }
 
 void
 GraphCanvas::show_port_names(bool b)
 {
 	ganv_canvas_set_direction(gobj(), b ? GANV_DIRECTION_RIGHT : GANV_DIRECTION_DOWN);
+	for_each_node(ensure_port_labels, &b);
 }
 
 void
@@ -314,7 +331,7 @@ GraphCanvas::remove_block(SPtr<const BlockModel> bm)
 void
 GraphCanvas::add_port(SPtr<const PortModel> pm)
 {
-	GraphPortModule* view = GraphPortModule::create(*this, pm, _human_names);
+	GraphPortModule* view = GraphPortModule::create(*this, pm);
 	_views.insert(std::make_pair(pm, view));
 	view->show();
 }
