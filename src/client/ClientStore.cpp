@@ -450,7 +450,7 @@ ClientStore::connect(const Raul::Path& src_path,
 #ifdef INGEN_CLIENT_STORE_DUMP
 	std::cerr << "Client connect " << src_path << " => " << dst_path << std::endl;
 #endif
-	
+
 	attempt_connection(src_path, dst_path);
 }
 

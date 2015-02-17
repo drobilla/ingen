@@ -168,7 +168,7 @@ WindowFactory::new_graph_window(SPtr<const GraphModel> graph,
 		_app.log().error("Failed to load graph window widget\n");
 		return NULL;
 	}
-		
+
 	win->init_window(_app);
 
 	win->box()->set_graph(graph, view);

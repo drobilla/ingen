@@ -800,7 +800,7 @@ Lib::Lib(const char* bundle_path)
 		(const uint8_t*)manifest_path.c_str(), NULL, NULL, true);
 
 	graphs = find_graphs((const char*)manifest_node.buf);
-	
+
 	serd_node_free(&manifest_node);
 }
 

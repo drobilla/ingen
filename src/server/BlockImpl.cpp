@@ -224,7 +224,7 @@ BlockImpl::process(ProcessContext& context)
 		offset = chunk_end;
 		subcontext.slice(offset, chunk_end - offset);
 	}
-	 
+
 	post_process(context);
 }
 

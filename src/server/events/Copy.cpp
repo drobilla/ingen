@@ -103,7 +103,7 @@ Copy::pre_process()
 	if (_parent->enabled()) {
 		_compiled_graph = _parent->compile();
 	}
-	
+
 	return Event::pre_process_done(Status::SUCCESS);
 }
 

@@ -107,7 +107,7 @@ PostProcessor::process()
 	   points to the last post-processed event, which will be the new head. */
 	assert(ev);
 	_head = ev;
-	
+
 	// Process remaining audio thread notifications until end
 	_engine.process_context().emit_notifications(end_time);
 }

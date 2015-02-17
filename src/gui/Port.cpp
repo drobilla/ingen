@@ -161,7 +161,7 @@ Port::show_menu(GdkEventButton* ev)
 		_app.log().error("Failed to load port menu widget\n");
 		return false;
 	}
-	
+
 	menu->init(_app, model(), _flipped);
 	menu->popup(ev->button, ev->time);
 	return true;
@@ -432,7 +432,7 @@ Port::set_type_tag()
 		} else if (model()->is_toggle()) {
 			tag = ((model()->value() != _app.uris().forge.make(0.0f))
 			       ? "☑" : "☐");
-			
+
 		} else {
 			tag = "ℝ";
 		}

@@ -466,7 +466,7 @@ PortImpl::monitor(Context& context, bool send_now)
 			}
 		}
 	}
-	
+
 	_frames_since_monitor = _frames_since_monitor % period;
 	if (key && val != _monitor_value) {
 		if (context.notify(key, context.start(), this,

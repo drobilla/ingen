@@ -147,7 +147,7 @@ Buffer::copy(const Context& context, const Buffer* src)
 		samples()[0] = src->samples()[0];
 	} else if (src->is_control() && is_audio()) {
 		set_block(src->samples()[0], 0, context.nframes());
-	} else if (src->is_sequence() && is_audio() && 
+	} else if (src->is_sequence() && is_audio() &&
 	           src->value_type() == _factory.uris().atom_Float) {
 		render_sequence(context, src, false);
 	} else {

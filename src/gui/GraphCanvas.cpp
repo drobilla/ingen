@@ -658,7 +658,7 @@ GraphCanvas::paste()
 	get_scroll_offsets(scroll_x, scroll_y);
 	const int paste_x = widget_point_x + scroll_x + (20.0f * _paste_count);
 	const int paste_y = widget_point_y + scroll_y + (20.0f * _paste_count);
-	
+
 	// Put each top level object in the clipboard store
 	ClashAvoider avoider(*_app.store().get());
 	for (const auto& c : clipboard) {

@@ -67,7 +67,7 @@ public:
 		world->add_interface_factory("unix", &new_socket_interface);
 		world->add_interface_factory("tcp", &new_socket_interface);
 	}
-	
+
 private:
 	SPtr<Interface> _respondee;
 	SocketReader    _reader;

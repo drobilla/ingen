@@ -74,7 +74,7 @@ public:
 		PUT,
 		PATCH
 	};
-			
+
 	Delta(Engine&                     engine,
 	      SPtr<Interface>             client,
 	      int32_t                     id,

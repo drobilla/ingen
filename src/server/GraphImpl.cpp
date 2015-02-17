@@ -85,7 +85,7 @@ GraphImpl::duplicate(Engine&             engine,
 	// We need a map of port duplicates to duplicate arcs
 	typedef std::unordered_map<PortImpl*, PortImpl*> PortMap;
 	PortMap port_map;
-	
+
 	// Add duplicates of all ports
 	dup->_ports = new Raul::Array<PortImpl*>(num_ports(), NULL);
 	for (Ports::iterator p = _inputs.begin(); p != _inputs.end(); ++p) {

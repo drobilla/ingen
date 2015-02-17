@@ -84,7 +84,7 @@ print_version()
 	     << "There is NO WARRANTY, to the extent permitted by law." << endl;
 	return EXIT_SUCCESS;
 }
-	
+
 int
 main(int argc, char** argv)
 {

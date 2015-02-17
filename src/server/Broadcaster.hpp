@@ -56,7 +56,7 @@ public:
 	 */
 	void set_ignore_client(SPtr<Interface> client) { _ignore_client = client; }
 	void clear_ignore_client()                     { _ignore_client.reset(); }
-	
+
 	/** Return true iff there are any clients with broadcasting enabled.
 	 *
 	 * This is used in the audio thread to decide whether or not notifications

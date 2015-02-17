@@ -151,7 +151,7 @@ Engine::listen()
 	_listener = new SocketListener(*this);
 #endif
 }
-	
+
 SPtr<Store>
 Engine::store() const
 {

@@ -55,7 +55,7 @@ namespace Serialisation {
 
 struct Serialiser::Impl {
 	typedef Resource::Properties Properties;
-	
+
 	explicit Impl(World& world)
 		: _root_path("/")
 		, _world(world)
