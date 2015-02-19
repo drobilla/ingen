@@ -156,7 +156,7 @@ Configuration::parse(int argc, char** argv) throw (Configuration::OptionError)
 			} else {
 				if (++i >= argc)
 					throw OptionError(
-						(fmt("missing value for `%1'") % name).str());
+						(fmt("missing value for `%1%'") % name).str());
 				set_value_from_string(o->second, argv[i]);
 			}
 		} else {
