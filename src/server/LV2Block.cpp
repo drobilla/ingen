@@ -20,6 +20,7 @@
 #include <cmath>
 
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
+#include "lv2/lv2plug.in/ns/ext/presets/presets.h"
 #include "lv2/lv2plug.in/ns/ext/options/options.h"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
@@ -538,6 +539,32 @@ LV2Block::post_process(ProcessContext& context)
 		if (_worker_iface->end_run) {
 			_worker_iface->end_run(inst);
 		}
+	}
+}
+
+LilvState*
+LV2Block::load_preset(const Raul::URI& uri)
+{
+	World*     world  = &_lv2_plugin->lv2_info()->world();
+	LilvWorld* lworld = _lv2_plugin->lv2_info()->lv2_world();
+	LilvNode*  preset = lilv_new_uri(lworld, uri.c_str());
+
+	// Load preset into world if necessary
+	lilv_world_load_resource(lworld, preset);
+
+	// Load preset from world
+	LV2_URID_Map* map   = &world->uri_map().urid_map_feature()->urid_map;
+	LilvState*    state = lilv_state_new_from_world(lworld, map, preset);
+
+	lilv_node_free(preset);
+	return state;
+}
+
+void
+LV2Block::apply_state(LilvState* state)
+{
+	for (uint32_t v = 0; v < _polyphony; ++v) {
+		lilv_state_restore(state, instance(v), NULL, NULL, 0, NULL);
 	}
 }
 

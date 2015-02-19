@@ -160,6 +160,17 @@ BlockImpl::nth_port_by_type(uint32_t n, bool input, PortType type)
 	return NULL;
 }
 
+PortImpl*
+BlockImpl::port_by_symbol(const char* symbol)
+{
+	for (uint32_t p = 0; _ports && p < _ports->size(); ++p) {
+		if (_ports->at(p)->symbol() == symbol) {
+			return _ports->at(p);
+		}
+	}
+	return NULL;
+}
+
 void
 BlockImpl::pre_process(ProcessContext& context)
 {

@@ -28,6 +28,7 @@ enum class Status {
 	BAD_REQUEST,
 	BAD_URI,
 	BAD_VALUE_TYPE,
+	BAD_VALUE,
 	CLIENT_NOT_FOUND,
 	CREATION_FAILED,
 	DIRECTION_MISMATCH,
@@ -60,6 +61,7 @@ ingen_status_string(Status st)
 	case Status::BAD_REQUEST:         return "Invalid request";
 	case Status::BAD_URI:             return "Invalid URI";
 	case Status::BAD_VALUE_TYPE:      return "Invalid value type";
+	case Status::BAD_VALUE:           return "Invalid value";
 	case Status::CLIENT_NOT_FOUND:    return "Client not found";
 	case Status::CREATION_FAILED:     return "Creation failed";
 	case Status::DIRECTION_MISMATCH:  return "Direction mismatch";

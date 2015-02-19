@@ -21,6 +21,8 @@
 
 #include <boost/intrusive/slist.hpp>
 
+#include "lilv/lilv.h"
+
 #include "raul/Array.hpp"
 
 #include "BufferRef.hpp"
@@ -98,6 +100,12 @@ public:
 	/** Enable or disable (bypass) this block. */
 	void set_enabled(bool e) { _enabled = e; }
 
+	/** Load a preset from the world for this block. */
+	virtual LilvState* load_preset(const Raul::URI& uri) { return NULL; }
+
+	/** Restore `state`. */
+	virtual void apply_state(LilvState* state) {}
+
 	/** Learn the next incoming MIDI event (for internals) */
 	virtual void learn() {}
 
@@ -121,6 +129,9 @@ public:
 
 	virtual Node*     port(uint32_t index)      const;
 	virtual PortImpl* port_impl(uint32_t index) const { return (*_ports)[index]; }
+
+	/** Get a port by symbol. */
+	virtual PortImpl* port_by_symbol(const char* symbol);
 
 	/** Blocks that are connected to this Block's inputs. */
 	std::list<BlockImpl*>& providers() { return _providers; }

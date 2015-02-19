@@ -108,18 +108,11 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 								sigc::mem_fun(this, &NodeMenu::on_preset_activated),
 								string(lilv_node_as_string(preset)))));
 
-					// I have no idea why this is necessary, signal_activated doesn't work
-					// in this menu (and only this menu)
-					Gtk::MenuItem* item = &(_presets_menu->items().back());
-					item->signal_button_release_event().connect(
-						sigc::bind<0>(sigc::mem_fun(this, &NodeMenu::on_preset_clicked),
-						              string(lilv_node_as_string(preset))));
-
 					lilv_nodes_free(labels);
 					++n_presets;
 				} else {
 					app.log().error(
-						fmt("Preset <%1> has no rdfs:label\n")
+						fmt("Preset <%1%> has no rdfs:label\n")
 						% lilv_node_as_string(lilv_nodes_get(presets, i)));
 				}
 			}
@@ -177,7 +170,7 @@ NodeMenu::on_menu_randomize()
 {
 	_app->interface()->bundle_begin();
 
-	const BlockModel* const bm = (const BlockModel*)_object.get();
+	const SPtr<const BlockModel> bm = block();
 	for (const auto& p : bm->ports()) {
 		if (p->is_input() && _app->can_control(p.get())) {
 			float min = 0.0f, max = 1.0f;
@@ -198,60 +191,19 @@ NodeMenu::on_menu_disconnect()
 	_app->interface()->disconnect_all(_object->parent()->path(), _object->path());
 }
 
-static void
-set_port_value(const char* port_symbol,
-               void*       user_data,
-               const void* value,
-               uint32_t    size,
-               uint32_t    type)
-{
-	NodeMenu*               menu  = (NodeMenu*)user_data;
-	const BlockModel* const block = (const BlockModel*)menu->object().get();
-
-	if (!Raul::Symbol::is_valid(port_symbol)) {
-		menu->app()->log().error(
-			fmt("Preset with invalid port symbol `%1'\n") % port_symbol);
-		return;
-	}
-
-	menu->app()->set_property(
-		Node::path_to_uri(block->path().child(Raul::Symbol(port_symbol))),
-		menu->app()->uris().ingen_value,
-		menu->app()->forge().alloc(size, type, value));
-}
-
 void
 NodeMenu::on_preset_activated(const std::string& uri)
 {
-	const BlockModel* const  block  = (const BlockModel*)_object.get();
-	const PluginModel* const plugin = dynamic_cast<const PluginModel*>(block->plugin());
+	_app->set_property(block()->uri(),
+	                   _app->uris().pset_preset,
+	                   _app->forge().alloc_uri(uri));
 
-	LilvNode*  pset  = lilv_new_uri(plugin->lilv_world(), uri.c_str());
-	LilvState* state = lilv_state_new_from_world(
-		plugin->lilv_world(),
-		&_app->world()->uri_map().urid_map_feature()->urid_map,
-		pset);
-
-	if (state) {
-		lilv_state_restore(state, NULL, set_port_value, this, 0, NULL);
-		lilv_state_free(state);
-	}
-
-	lilv_node_free(pset);
-}
-
-bool
-NodeMenu::on_preset_clicked(const std::string& uri, GdkEventButton* ev)
-{
-	on_preset_activated(uri);
-	return false;
 }
 
 bool
 NodeMenu::has_control_inputs()
 {
-	const BlockModel* const bm = (const BlockModel*)_object.get();
-	for (const auto& p : bm->ports())
+	for (const auto& p : block()->ports())
 		if (p->is_input() && p->is_numeric())
 			return true;
 

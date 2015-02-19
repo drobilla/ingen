@@ -149,6 +149,7 @@ public:
 	const Quark patch_subject;
 	const Quark patch_value;
 	const Quark patch_wildcard;
+	const Quark pset_preset;
 	const Quark pprops_logarithmic;
 	const Quark rdf_type;
 	const Quark rdfs_seeAlso;

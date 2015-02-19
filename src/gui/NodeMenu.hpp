@@ -48,12 +48,15 @@ public:
 	sigc::signal<void, bool> signal_embed_gui;
 
 protected:
+	SPtr<const Client::BlockModel> block() const {
+		return dynamic_ptr_cast<const Client::BlockModel>(_object);
+	}
+
 	void on_menu_disconnect();
 	void on_menu_embed_gui();
 	void on_menu_enabled();
 	void on_menu_randomize();
 	void on_preset_activated(const std::string& uri);
-	bool on_preset_clicked(const std::string& uri, GdkEventButton* ev);
 
 	Gtk::MenuItem*      _popup_gui_menuitem;
 	Gtk::CheckMenuItem* _embed_gui_menuitem;

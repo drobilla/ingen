@@ -39,10 +39,12 @@ SetPortValue::SetPortValue(Engine&         engine,
                            int32_t         id,
                            SampleCount     timestamp,
                            PortImpl*       port,
-                           const Atom&     value)
+                           const Atom&     value,
+                           bool            synthetic)
 	: Event(engine, client, id, timestamp)
 	, _port(port)
 	, _value(value)
+	, _synthetic(synthetic)
 {
 }
 

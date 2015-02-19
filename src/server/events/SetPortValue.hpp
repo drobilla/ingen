@@ -42,7 +42,8 @@ public:
 	             int32_t         id,
 	             SampleCount     timestamp,
 	             PortImpl*       port,
-	             const Atom&     value);
+	             const Atom&     value,
+	             bool            synthetic = false);
 
 	~SetPortValue();
 
@@ -50,12 +51,15 @@ public:
 	void execute(ProcessContext& context);
 	void post_process();
 
+	bool synthetic() const { return _synthetic; }
+
 private:
 	void apply(Context& context);
 
 	PortImpl*            _port;
 	const Atom           _value;
 	ControlBindings::Key _binding;
+	bool                 _synthetic;
 };
 
 } // namespace Events

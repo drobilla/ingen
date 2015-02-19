@@ -63,6 +63,10 @@ public:
 	void run(ProcessContext& context);
 	void post_process(ProcessContext& context);
 
+	LilvState* load_preset(const Raul::URI& uri);
+
+	void apply_state(LilvState* state);
+
 	void set_port_buffer(uint32_t    voice,
 	                     uint32_t    port_num,
 	                     BufferRef   buf,

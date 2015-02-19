@@ -19,6 +19,8 @@
 
 #include <vector>
 
+#include "lilv/lilv.h"
+
 #include "raul/URI.hpp"
 
 #include "ControlBindings.hpp"
@@ -87,6 +89,11 @@ public:
 
 	~Delta();
 
+	void add_set_event(const char* port_symbol,
+	                   const void* value,
+	                   uint32_t    size,
+	                   uint32_t    type);
+
 	bool pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
@@ -98,7 +105,8 @@ private:
 		ENABLE_BROADCAST,
 		POLYPHONY,
 		POLYPHONIC,
-		CONTROL_BINDING
+		CONTROL_BINDING,
+		PRESET
 	};
 
 	typedef std::vector<SetPortValue*> SetEvents;
@@ -113,6 +121,7 @@ private:
 	Ingen::Resource*         _object;
 	GraphImpl*               _graph;
 	CompiledGraph*           _compiled_graph;
+	LilvState*               _state;
 	Resource::Graph          _context;
 	ControlBindings::Key     _binding;
 	Type                     _type;

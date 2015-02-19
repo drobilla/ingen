@@ -17,6 +17,7 @@
 #include <vector>
 #include <thread>
 
+#include "ingen/Log.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
 #include "raul/Maid.hpp"
@@ -60,6 +61,7 @@ Delta::Delta(Engine&           engine,
 	, _object(NULL)
 	, _graph(NULL)
 	, _compiled_graph(NULL)
+	, _state(NULL)
 	, _context(context)
 	, _type(type)
 	, _poly_lock(engine.store()->mutex(), std::defer_lock)
@@ -96,6 +98,37 @@ Delta::~Delta()
 		delete s;
 
 	delete _create_event;
+}
+
+void
+Delta::add_set_event(const char* port_symbol,
+                     const void* value,
+                     uint32_t    size,
+                     uint32_t    type)
+{
+	BlockImpl* block = dynamic_cast<BlockImpl*>(_object);
+	PortImpl*  port  = block->port_by_symbol(port_symbol);
+	if (!port) {
+		_engine.log().warn(fmt("Unknown port `%1' in state") % port_symbol);
+		return;
+	}
+
+	SetPortValue* ev = new SetPortValue(
+		_engine, _request_client, _request_id, _time,
+		port, Atom(size, type, value), true);
+
+	ev->pre_process();
+	_set_events.push_back(ev);
+}
+
+static void
+s_add_set_event(const char* port_symbol,
+                void*       user_data,
+                const void* value,
+                uint32_t    size,
+                uint32_t    type)
+{
+	((Delta*)user_data)->add_set_event(port_symbol, value, size, type);
 }
 
 bool
@@ -213,6 +246,22 @@ Delta::pre_process()
 				} else if (key == uris.ingen_enabled) {
 					if (value.type() == uris.forge.Bool) {
 						op = SpecialType::ENABLE;
+					} else {
+						_status = Status::BAD_VALUE_TYPE;
+					}
+				} else if (key == uris.pset_preset) {
+					if (value.type() == uris.forge.URI) {
+						const char* str = value.ptr<char>();
+						if (Raul::URI::is_valid(str)) {
+							op = SpecialType::PRESET;
+							const Raul::URI uri(str);
+							if ((_state = block->load_preset(Raul::URI(str)))) {
+								lilv_state_emit_port_values(
+									_state, s_add_set_event, this);
+							}
+						} else {
+							_status = Status::BAD_VALUE;
+						}
 					} else {
 						_status = Status::BAD_VALUE_TYPE;
 					}
@@ -362,6 +411,9 @@ Delta::execute(ProcessContext& context)
 				}
 			}
 			break;
+        case SpecialType::PRESET:
+	        block->set_enabled(false);
+			break;
 		case SpecialType::NONE:
 			if (port) {
 				if (key == uris.lv2_minimum) {
@@ -382,6 +434,15 @@ Delta::post_process()
 		_poly_lock.unlock();
 	}
 
+	if (_state) {
+		BlockImpl* block = dynamic_cast<BlockImpl*>(_object);
+		if (block) {
+			block->apply_state(_state);
+			block->set_enabled(true);
+		}
+		lilv_state_free(_state);
+	}
+
 	Broadcaster::Transfer t(*_engine.broadcaster());
 
 	if (_create_event) {
@@ -392,7 +453,7 @@ Delta::post_process()
 	}
 
 	for (auto& s : _set_events) {
-		if (s->status() != Status::SUCCESS) {
+		if (s->synthetic() || s->status() != Status::SUCCESS) {
 			s->post_process();  // Set failed, report error
 		}
 	}

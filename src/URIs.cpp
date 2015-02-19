@@ -24,6 +24,7 @@
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 #include "lv2/lv2plug.in/ns/ext/parameters/parameters.h"
 #include "lv2/lv2plug.in/ns/ext/patch/patch.h"
+#include "lv2/lv2plug.in/ns/ext/presets/presets.h"
 #include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
 #include "lv2/lv2plug.in/ns/ext/time/time.h"
@@ -139,6 +140,7 @@ URIs::URIs(Forge& f, URIMap* map)
 	, patch_subject         (forge, map, LV2_PATCH__subject)
 	, patch_value           (forge, map, LV2_PATCH__value)
 	, patch_wildcard        (forge, map, LV2_PATCH__wildcard)
+	, pset_preset           (forge, map, LV2_PRESETS__preset)
 	, pprops_logarithmic    (forge, map, LV2_PORT_PROPS__logarithmic)
 	, rdf_type              (forge, map, NS_RDF "type")
 	, rdfs_seeAlso          (forge, map, NS_RDFS "seeAlso")

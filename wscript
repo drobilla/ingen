@@ -67,7 +67,7 @@ def configure(conf):
     autowaf.check_pkg(conf, 'gthread-2.0', uselib_store='GTHREAD',
                       atleast_version='2.14.0', mandatory=True)
     autowaf.check_pkg(conf, 'lilv-0', uselib_store='LILV',
-                      atleast_version='0.21.0', mandatory=True)
+                      atleast_version='0.21.2', mandatory=True)
     autowaf.check_pkg(conf, 'suil-0', uselib_store='SUIL',
                       atleast_version='0.2.0', mandatory=True)
     autowaf.check_pkg(conf, 'sratom-0', uselib_store='SRATOM',
