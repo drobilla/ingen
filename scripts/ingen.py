@@ -166,14 +166,14 @@ class Remote(Interface):
             raise Error('%s' % klass, cause)
 
         raise Error(fmt, cause)
-        
+
     def send(self, msg):
         # Send message to server
         payload = msg
         if sys.version_info[0] == 3:
             payload = bytes(msg, 'utf-8')
         self.sock.send(self.msgencode(msg))
-        
+
         # Receive response and parse into a model
         response_str = self.recv()
         response_model = rdflib.Graph()
@@ -202,7 +202,7 @@ class Remote(Interface):
         for b in blank_closure:
             for t in response_model.triples([b, None, None]):
                 response_model.remove(t)
-            
+
         # Remove triples describing responses from response model
         for i in response_desc:
             response_model.remove(i)
@@ -216,7 +216,7 @@ class Remote(Interface):
  	a patch:Get ;
  	patch:subject <ingen:/root%s> .
 ''' % path)
-        
+
     def put(self, path, body):
         return self.send('''
 []
@@ -266,4 +266,3 @@ class Remote(Interface):
 	a patch:Delete ;
 	patch:subject <ingen:/root%s> .
 ''' % path)
-

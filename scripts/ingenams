@@ -59,7 +59,7 @@ class World:
                     index = self.server.model.value(i[0], ingen.NS.lv2['index'], None)
                     ports += [[int(index), i[0]]]
         return ports
-        
+
     def input_by_id(self, mod_id, port_id):
         mod_uri = rdflib.URIRef(self.server.server_base + self.mod_sym(mod_id))
 
@@ -95,7 +95,7 @@ class World:
             return outputs[port_index][1]
 
         return None
-        
+
     def create_arcs(self):
         for (head_port_id, tail_port_id,
              head_mod_id, tail_mod_id,
@@ -118,7 +118,7 @@ class Special:
     SCMCV       = 30
     SCQUANTIZER = 31
     ADVMCV      = 35
-    
+
 # Module types list, indexed by numeric ID in file
 # Except where otherwise commented, these correspond to internal modules,
 # and the string is the suffix of the corresponding AMS LV2 plugin URI
@@ -141,12 +141,12 @@ module_types = [
     "slew",
     "quantizer",
     "pcmin",
-    "cvs", 
+    "cvs",
     "sh",
     "vcorgan",
     "dynamicwaves",
     "advenv",
-    "wavout", 
+    "wavout",
     "scope",
     "spectrum",
     "vcswitch",
@@ -156,7 +156,7 @@ module_types = [
     "scmcv", # Scala module (different line format)
     "scquantizer", # Scala module (different line format)
     "stereomix",
-    "conv", 
+    "conv",
     "vcenv",
     "advmcv",
     "function",
@@ -208,7 +208,7 @@ def standard_module(world, mod_id, x, y, name, arg):
             name += 'lin'
     elif name == 'mix':
         name += 'er_%dch' % int(arg)
-                
+
     lv2_uri = ams_prefix + name
     world.add_block(mod_id, lv2_uri, x, y)
 
