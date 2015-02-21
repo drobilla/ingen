@@ -61,6 +61,17 @@ using namespace Client;
 
 namespace GUI {
 
+static int
+port_order(const GanvPort* a, const GanvPort* b, void* data)
+{
+	const Port* pa = dynamic_cast<const Port*>(Glib::wrap(a));
+	const Port* pb = dynamic_cast<const Port*>(Glib::wrap(b));
+	if (pa && pb) {
+		return ((int)pa->model()->index() - (int)pb->model()->index());
+	}
+	return 0;
+}
+
 GraphCanvas::GraphCanvas(App&                   app,
                          SPtr<const GraphModel> graph,
                          int                    width,
@@ -159,6 +170,7 @@ GraphCanvas::GraphCanvas(App&                   app,
 
 	show_human_names(app.world()->conf().option("human-names").get<int32_t>());
 	show_port_names(app.world()->conf().option("port-labels").get<int32_t>());
+	set_port_order(port_order, NULL);
 }
 
 void
