@@ -284,6 +284,10 @@ JackDriver::port_property_internal(const jack_port_t* jport,
 	if (uri == _engine.world()->uris().lv2_name) {
 		jack_set_property(_client, jack_port_uuid(jport),
 		                  JACK_METADATA_PRETTY_NAME, value.ptr<char>(), "text/plain");
+	} else if (uri == _engine.world()->uris().lv2_index) {
+		jack_set_property(_client, jack_port_uuid(jport),
+		                  JACKEY_ORDER, std::to_string(value.get<int32_t>()).c_str(),
+		                  "http://www.w3.org/2001/XMLSchema#integer");
 	} else if (uri == _engine.world()->uris().rdf_type) {
 		if (value == _engine.world()->uris().lv2_CVPort) {
 			jack_set_property(_client, jack_port_uuid(jport),
