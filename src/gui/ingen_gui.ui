@@ -13,14 +13,7 @@
     <property name="license" translatable="yes">Licensed under the GNU Affero GPL, Version 3 or later.
 
 See COPYING file included with this distribution, or http://www.gnu.org/licenses/agpl.txt for more information</property>
-    <property name="authors">Author:
-	David Robillard &lt;d@drobilla.net&gt;
-
-Contributors:
-	Lars Luthman - DSSI enhancements, bugfixes
-	Mario Lang - SuperCollider bindings, bugfixes
-	Leonard Ritter - Python bindings
-</property>
+    <property name="authors">David Robillard &lt;d@drobilla.net&gt;</property>
     <property name="translator_credits" translatable="yes" comments="TRANSLATORS: Replace this string with your names, one name per line.">translator-credits</property>
     <property name="artists">Usability / UI Design:
 	Thorsten Wilms</property>

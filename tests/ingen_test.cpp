@@ -47,9 +47,6 @@
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
-#ifdef WITH_BINDINGS
-#include "bindings/ingen_bindings.hpp"
-#endif
 
 using namespace std;
 using namespace Ingen;

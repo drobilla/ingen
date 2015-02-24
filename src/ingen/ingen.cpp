@@ -36,9 +36,6 @@
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
-#ifdef WITH_BINDINGS
-#include "bindings/ingen_bindings.hpp"
-#endif
 #ifdef HAVE_SOCKET
 #include "ingen/client/SocketClient.hpp"
 #endif
@@ -193,18 +190,7 @@ main(int argc, char** argv)
 
 	if (conf.option("gui").get<int32_t>()) {
 		world->run_module("gui");
-	} else if (conf.option("run").is_valid()) {
-		// Run a script
-#ifdef WITH_BINDINGS
-		ingen_try(world->load_module("bindings"),
-		          "Unable to load bindings module");
-
-		world->run("application/x-python", conf.option("run").ptr<char>());
-#else
-		cerr << "This build of ingen does not support scripting." << endl;
-#endif
-
-	} else if (world->engine() && !conf.option("gui").get<int32_t>()) {
+	} else if (world->engine()) {
 		// Run engine main loop until interrupt
 		while (world->engine()->main_iteration()) {
 			Glib::usleep(125000);  // 1/8 second
