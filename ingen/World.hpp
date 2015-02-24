@@ -31,18 +31,14 @@ namespace Sord { class World; }
 
 namespace Ingen {
 
+class Configuration;
 class EngineBase;
+class Forge;
 class Interface;
+class LV2Features;
 class Log;
-
-namespace Serialisation {
 class Parser;
 class Serialiser;
-}
-
-class Configuration;
-class Forge;
-class LV2Features;
 class Store;
 class URIMap;
 class URIs;
@@ -53,11 +49,9 @@ class URIs;
  * contains all necessary shared data (including the world for libraries like
  * Sord and Lilv) and holds references to components.
  *
- * Most functionality in Ingen is implemented in dynamically loaded modules,
+ * Some functionality in Ingen is implemented in dynamically loaded modules,
  * which are loaded using this interface.  When loaded, those modules add
- * facilities to the World which can then be used throughout the code.  For
- * example loading the "ingen_serialisation" module will set World::serialiser
- * and World::parser to valid objects.
+ * facilities to the World which can then be used throughout the code.
  *
  * The world is used in any process which uses the Ingen as a library, both
  * client and server (e.g. the world may not actually contain an Engine, since
@@ -116,15 +110,13 @@ public:
 
 	virtual void set_engine(SPtr<EngineBase> e);
 	virtual void set_interface(SPtr<Interface> e);
-	virtual void set_parser(SPtr<Serialisation::Parser> p);
-	virtual void set_serialiser(SPtr<Serialisation::Serialiser> s);
 	virtual void set_store(SPtr<Store> s);
 
-	virtual SPtr<EngineBase>                engine();
-	virtual SPtr<Interface>                 interface();
-	virtual SPtr<Serialisation::Parser>     parser();
-	virtual SPtr<Serialisation::Serialiser> serialiser();
-	virtual SPtr<Store>                     store();
+	virtual SPtr<EngineBase> engine();
+	virtual SPtr<Interface>  interface();
+	virtual SPtr<Parser>     parser();
+	virtual SPtr<Serialiser> serialiser();
+	virtual SPtr<Store>      store();
 
 	virtual int&           argc();
 	virtual char**&        argv();

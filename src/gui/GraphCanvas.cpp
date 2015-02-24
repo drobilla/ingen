@@ -29,13 +29,13 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Serialiser.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/BlockModel.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/ingen.h"
-#include "ingen/serialisation/Serialiser.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
 #include "App.hpp"
@@ -563,7 +563,7 @@ GraphCanvas::destroy_selection()
 static void
 serialise_node(GanvNode* node, void* data)
 {
-	Serialisation::Serialiser* serialiser = (Serialisation::Serialiser*)data;
+	Serialiser* serialiser = (Serialiser*)data;
 	if (!GANV_IS_MODULE(node)) {
 		return;
 	}
@@ -584,7 +584,7 @@ serialise_node(GanvNode* node, void* data)
 static void
 serialise_arc(GanvEdge* arc, void* data)
 {
-	Serialisation::Serialiser* serialiser = (Serialisation::Serialiser*)data;
+	Serialiser* serialiser = (Serialiser*)data;
 	if (!GANV_IS_EDGE(arc)) {
 		return;
 	}
@@ -598,7 +598,7 @@ serialise_arc(GanvEdge* arc, void* data)
 void
 GraphCanvas::copy_selection()
 {
-	Serialisation::Serialiser serialiser(*_app.world());
+	Serialiser serialiser(*_app.world());
 	serialiser.start_to_string(_graph->path(), _graph->base_uri());
 
 	for_each_selected_node(serialise_node, &serialiser);
@@ -614,10 +614,10 @@ GraphCanvas::paste()
 {
 	typedef Node::Properties::const_iterator PropIter;
 
-	const Glib::ustring         str    = Gtk::Clipboard::get()->wait_for_text();
-	SPtr<Serialisation::Parser> parser = _app.loader()->parser();
-	const URIs&                 uris   = _app.uris();
-	const Raul::Path&           parent = _graph->path();
+	const Glib::ustring str    = Gtk::Clipboard::get()->wait_for_text();
+	SPtr<Parser>        parser = _app.loader()->parser();
+	const URIs&         uris   = _app.uris();
+	const Raul::Path&   parent = _graph->path();
 	if (!parser) {
 		_app.log().error("Unable to load parser, paste unavailable\n");
 		return;

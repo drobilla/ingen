@@ -756,7 +756,6 @@ WARN_LOGFILE           =
 
 INPUT                  = @INGEN_SRCDIR@/ingen \
                          @INGEN_SRCDIR@/ingen/client \
-                         @INGEN_SRCDIR@/ingen/serialisation \
                          @INGEN_SRCDIR@/src/server/events/
 
 # This tag can be used to specify the character encoding of the source files

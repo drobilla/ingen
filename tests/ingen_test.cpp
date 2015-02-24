@@ -41,11 +41,11 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Parser.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
-#include "ingen/serialisation/Parser.hpp"
 #include "ingen/types.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
@@ -156,9 +156,6 @@ main(int argc, char** argv)
 	// Load modules
 	ingen_try(world->load_module("server_profiled"),
 	          "Unable to load server module");
-
-	ingen_try(world->load_module("serialisation_profiled"),
-	          "Unable to load serialisation module");
 
 	// Initialise engine
 	ingen_try(bool(world->engine()),

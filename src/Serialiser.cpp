@@ -35,11 +35,11 @@
 #include "ingen/Node.hpp"
 #include "ingen/Plugin.hpp"
 #include "ingen/Resource.hpp"
+#include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/serialisation/Serialiser.hpp"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 #include "raul/Path.hpp"
@@ -51,7 +51,6 @@ using namespace Sord;
 using namespace Ingen;
 
 namespace Ingen {
-namespace Serialisation {
 
 struct Serialiser::Impl {
 	typedef Resource::Properties Properties;
@@ -543,5 +542,4 @@ Serialiser::Impl::serialise_properties(Sord::Node              id,
 	serd_env_free(env);
 }
 
-} // namespace Serialisation
 } // namespace Ingen

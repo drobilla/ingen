@@ -14,12 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
-   @defgroup IngenSerialisation Turtle Serialisation
-*/
-
-#ifndef INGEN_SERIALISATION_PARSER_HPP
-#define INGEN_SERIALISATION_PARSER_HPP
+#ifndef INGEN_PARSER_HPP
+#define INGEN_PARSER_HPP
 
 #include <string>
 #include <list>
@@ -35,12 +31,10 @@ namespace Ingen {
 class Interface;
 class World;
 
-namespace Serialisation {
-
 /**
    Read Ingen objects from Turtle files or strings.
 
-   @ingroup IngenSerialisation
+   @ingroup Ingen
 */
 class Parser {
 public:
@@ -68,7 +62,6 @@ public:
 		boost::optional<Properties>   data   = boost::optional<Properties>());
 };
 
-} // namespace Serialisation
 } // namespace Ingen
 
-#endif // INGEN_SERIALISATION_PARSER_HPP
+#endif // INGEN_PARSER_HPP

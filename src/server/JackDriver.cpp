@@ -23,7 +23,7 @@
 #ifdef INGEN_JACK_SESSION
 #include <jack/session.h>
 #include <boost/format.hpp>
-#include "ingen/serialisation/Serialiser.hpp"
+#include "ingen/Serialiser.hpp"
 #endif
 #ifdef HAVE_JACK_METADATA
 #include <jack/metadata.h>
@@ -525,7 +525,7 @@ JackDriver::_session_cb(jack_session_event_t* event)
 	                    % jack_get_client_name(_client)
 	                    % event->client_uuid).str();
 
-	SPtr<Serialisation::Serialiser> serialiser = _engine.world()->serialiser();
+	SPtr<Serialiser> serialiser = _engine.world()->serialiser();
 	if (serialiser) {
 		SPtr<Node> root(_engine.root_graph(), NullDeleter<Node>);
 		serialiser->write_bundle(root, string("file://") + event->session_dir);

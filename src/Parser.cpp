@@ -26,10 +26,10 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Parser.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-#include "ingen/serialisation/Parser.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
@@ -40,7 +40,6 @@ using namespace std;
 typedef set<Sord::Node> RDFNodes;
 
 namespace Ingen {
-namespace Serialisation {
 
 static std::string
 relative_uri(const std::string& base, const std::string& uri, bool leading_slash)
@@ -651,5 +650,4 @@ Parser::parse_string(Ingen::World*                     world,
 	return actual_base;
 }
 
-} // namespace Serialisation
 } // namespace Ingen

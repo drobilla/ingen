@@ -49,15 +49,10 @@ ThreadedLoader::~ThreadedLoader()
 	_thread.join();
 }
 
-SPtr<Serialisation::Parser>
+SPtr<Parser>
 ThreadedLoader::parser()
 {
-	Ingen::World* world = _app.world();
-
-	if (!world->parser())
-		world->load_module("serialisation");
-
-	return world->parser();
+	return _app.world()->parser();
 }
 
 void
@@ -95,7 +90,7 @@ ThreadedLoader::load_graph(bool                       merge,
 	_events.push_back(
 		sigc::hide_return(
 			sigc::bind(sigc::mem_fun(world->parser().get(),
-			                         &Ingen::Serialisation::Parser::parse_file),
+			                         &Ingen::Parser::parse_file),
 			           _app.world(),
 			           _app.world()->interface().get(),
 			           document_uri,

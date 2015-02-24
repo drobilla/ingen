@@ -37,6 +37,7 @@ namespace Ingen {
 class Interface;
 class Log;
 class Port;
+class Serialiser;
 class World;
 namespace Client {
 class ClientStore;
@@ -44,9 +45,6 @@ class GraphModel;
 class PluginModel;
 class PortModel;
 class SigClientInterface;
-}
-namespace Serialisation {
-class Serialiser;
 }
 }
 
@@ -116,7 +114,7 @@ public:
 	SPtr<Client::ClientStore>        store()     const { return _store; }
 	SPtr<ThreadedLoader>             loader()    const { return _loader; }
 
-	SPtr<Serialisation::Serialiser> serialiser();
+	SPtr<Serialiser> serialiser();
 
 	static SPtr<App> create(Ingen::World* world);
 	void run();

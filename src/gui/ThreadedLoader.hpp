@@ -27,8 +27,8 @@
 #include <glibmm/thread.h>
 
 #include "ingen/Interface.hpp"
-#include "ingen/serialisation/Parser.hpp"
-#include "ingen/serialisation/Serialiser.hpp"
+#include "ingen/Parser.hpp"
+#include "ingen/Serialiser.hpp"
 #include "raul/Semaphore.hpp"
 
 namespace Ingen {
@@ -62,7 +62,7 @@ public:
 	void save_graph(SPtr<const Client::GraphModel> model,
 	                const std::string&             filename);
 
-	SPtr<Serialisation::Parser> parser();
+	SPtr<Parser> parser();
 
 private:
 	void save_graph_event(SPtr<const Client::GraphModel> model,

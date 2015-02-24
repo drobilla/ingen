@@ -31,7 +31,7 @@ def build(bld):
               name            = 'libingen_gui',
               target          = 'ingen_gui',
               install_path    = '${LIBDIR}',
-              use             = 'libingen libingen_client libingen_serialisation')
+              use             = 'libingen libingen_client')
     autowaf.use_lib(bld, obj, '''
             GANV
             GLADEMM

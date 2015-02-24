@@ -173,7 +173,7 @@ def build(bld):
     opts.moduledir = opts.moduledir or bld.env.PREFIX + 'lib/ingen'
 
     # Headers
-    for i in ['', 'client', 'serialisation']:
+    for i in ['', 'client']:
         bld.install_files('${INCLUDEDIR}/ingen/%s' % i,
                           bld.path.ant_glob('ingen/%s/*' % i))
 
@@ -183,7 +183,6 @@ def build(bld):
 
     # Modules
     bld.recurse('src')
-    bld.recurse('src/serialisation')
     bld.recurse('src/server')
 
     if bld.env.INGEN_BUILD_CLIENT:
@@ -263,8 +262,7 @@ def test(ctx):
     os.environ['PATH'] = 'tests' + os.pathsep + os.getenv('PATH')
     os.environ['LD_LIBRARY_PATH'] = os.path.join('src')
     os.environ['INGEN_MODULE_PATH'] = os.pathsep.join([
-            os.path.join('src', 'server') ,
-            os.path.join('src', 'serialisation')])
+            os.path.join('src', 'server')])
 
     autowaf.pre_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])
     for i in ctx.path.ant_glob('tests/*.ttl'):

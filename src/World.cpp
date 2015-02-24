@@ -26,6 +26,8 @@
 #include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
+#include "ingen/Parser.hpp"
+#include "ingen/Serialiser.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
@@ -40,12 +42,9 @@ namespace Ingen {
 
 class EngineBase;
 class Interface;
-class Store;
-
-namespace Serialisation {
 class Parser;
 class Serialiser;
-}
+class Store;
 
 /** Load a dynamic module from the default path.
  *
@@ -53,7 +52,7 @@ class Serialiser;
  * INGEN_MODULE_PATH (typical colon delimited format), then the default module
  * installation directory (ie /usr/local/lib/ingen), in that order.
  *
- * \param name The base name of the module, e.g. "ingen_serialisation"
+ * \param name The base name of the module, e.g. "ingen_jack"
  */
 static Glib::Module*
 ingen_load_module(Log& log, const string& name)
@@ -202,23 +201,23 @@ public:
 	typedef std::map<const std::string, ScriptRunner> ScriptRunners;
 	ScriptRunners script_runners;
 
-	int&                            argc;
-	char**&                         argv;
-	LV2Features*                    lv2_features;
-	Sord::World*                    rdf_world;
-	URIMap*                         uri_map;
-	Forge*                          forge;
-	URIs*                           uris;
-	LV2_Log_Log*                    lv2_log;
-	Log                             log;
-	Configuration                   conf;
-	SPtr<Interface>                 interface;
-	SPtr<EngineBase>                engine;
-	SPtr<Serialisation::Serialiser> serialiser;
-	SPtr<Serialisation::Parser>     parser;
-	SPtr<Store>                     store;
-	LilvWorld*                      lilv_world;
-	std::string                     jack_uuid;
+	int&             argc;
+	char**&          argv;
+	LV2Features*     lv2_features;
+	Sord::World*     rdf_world;
+	URIMap*          uri_map;
+	Forge*           forge;
+	URIs*            uris;
+	LV2_Log_Log*     lv2_log;
+	Log              log;
+	Configuration    conf;
+	SPtr<Interface>  interface;
+	SPtr<EngineBase> engine;
+	SPtr<Serialiser> serialiser;
+	SPtr<Parser>     parser;
+	SPtr<Store>      store;
+	LilvWorld*       lilv_world;
+	std::string      jack_uuid;
 };
 
 World::World(int&                 argc,
@@ -228,6 +227,8 @@ World::World(int&                 argc,
              LV2_Log_Log*         log)
 	: _impl(new Impl(argc, argv, map, unmap, log))
 {
+	_impl->serialiser = SPtr<Serialiser>(new Serialiser(*this));
+	_impl->parser     = SPtr<Parser>(new Parser());
 }
 
 World::~World()
@@ -235,17 +236,15 @@ World::~World()
 	delete _impl;
 }
 
-void World::set_engine(SPtr<EngineBase> e)                    { _impl->engine = e; }
-void World::set_interface(SPtr<Interface> i)                  { _impl->interface = i; }
-void World::set_parser(SPtr<Serialisation::Parser> p)         { _impl->parser = p; }
-void World::set_serialiser(SPtr<Serialisation::Serialiser> s) { _impl->serialiser = s; }
-void World::set_store(SPtr<Store> s)                          { _impl->store = s; }
+void World::set_engine(SPtr<EngineBase> e)   { _impl->engine     = e; }
+void World::set_interface(SPtr<Interface> i) { _impl->interface  = i; }
+void World::set_store(SPtr<Store> s)         { _impl->store      = s; }
 
-SPtr<EngineBase>                World::engine()       { return _impl->engine; }
-SPtr<Interface>                 World::interface()    { return _impl->interface; }
-SPtr<Serialisation::Parser>     World::parser()       { return _impl->parser; }
-SPtr<Serialisation::Serialiser> World::serialiser()   { return _impl->serialiser; }
-SPtr<Store>                     World::store()        { return _impl->store; }
+SPtr<EngineBase> World::engine()     { return _impl->engine; }
+SPtr<Interface>  World::interface()  { return _impl->interface; }
+SPtr<Parser>     World::parser()     { return _impl->parser; }
+SPtr<Serialiser> World::serialiser() { return _impl->serialiser; }
+SPtr<Store>      World::store()      { return _impl->store; }
 
 int&           World::argc() { return _impl->argc; }
 char**&        World::argv() { return _impl->argv; }

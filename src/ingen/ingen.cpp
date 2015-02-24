@@ -31,10 +31,10 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Parser.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen/runtime_paths.hpp"
-#include "ingen/serialisation/Parser.hpp"
 #include "ingen/types.hpp"
 #ifdef WITH_BINDINGS
 #include "bindings/ingen_bindings.hpp"
@@ -144,11 +144,6 @@ main(int argc, char** argv)
 	world->set_interface(engine_interface);
 
 	// Load necessary modules before activating engine (and Jack driver)
-
-	if (conf.option("load").is_valid() || !conf.files().empty()) {
-		ingen_try(world->load_module("serialisation"),
-		          "Unable to load serialisation module");
-	}
 
 	if (conf.option("gui").get<int32_t>()) {
 		ingen_try(world->load_module("gui"),

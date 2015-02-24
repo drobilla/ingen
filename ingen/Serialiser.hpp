@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_SERIALISATION_SERIALISER_HPP
-#define INGEN_SERIALISATION_SERIALISER_HPP
+#ifndef INGEN_SERIALISER_HPP
+#define INGEN_SERIALISER_HPP
 
 #include <stdexcept>
 #include <string>
@@ -33,12 +33,10 @@ class Node;
 class Store;
 class World;
 
-namespace Serialisation {
-
 /**
    Write Ingen objects to Turtle files or strings.
 
-   @ingroup IngenSerialisation
+   @ingroup Ingen
 */
 class Serialiser
 {
@@ -96,7 +94,6 @@ private:
 	Impl* me;
 };
 
-} // namespace Serialisation
 } // namespace Ingen
 
-#endif // INGEN_SERIALISATION_SERIALISER_HPP
+#endif // INGEN_SERIALISER_HPP

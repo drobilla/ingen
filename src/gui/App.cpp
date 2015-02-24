@@ -188,12 +188,9 @@ App::request_plugins_if_necessary()
 	}
 }
 
-SPtr<Serialisation::Serialiser>
+SPtr<Serialiser>
 App::serialiser()
 {
-	if (!_world->serialiser())
-		_world->load_module("serialisation");
-
 	return _world->serialiser();
 }
 

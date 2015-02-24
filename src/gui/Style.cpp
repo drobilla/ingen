@@ -22,9 +22,9 @@
 
 #include "ganv/Port.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Parser.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
-#include "ingen/serialisation/Parser.hpp"
 
 #include "App.hpp"
 #include "Style.hpp"
