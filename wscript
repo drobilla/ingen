@@ -18,6 +18,7 @@ def options(opt):
     opt.load('compiler_cxx')
     opt.load('python')
     opt.load('lv2')
+    opt.recurse('src/gui')
     autowaf.set_options(opt)
     opt.add_option('--data-dir', type='string', dest='datadir',
                    help='Ingen data install directory [Default: PREFIX/share/ingen]')
@@ -137,7 +138,7 @@ def configure(conf):
         autowaf.define(conf, 'INGEN_BUILD_CLIENT', 1)
     else:
         Options.options.no_gui = True
-        
+
     if not Options.options.no_gui:
         conf.recurse('src/gui')
 

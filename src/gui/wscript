@@ -3,6 +3,10 @@ import waflib.extras.autowaf as autowaf
 import waflib.Utils as Utils
 import waflib.Options as Options
 
+def options(opt):
+    opt.add_option('--light-theme', action='store_true', dest='light_theme',
+                   help='Use light coloured theme')
+
 def configure(conf):
     autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
                       atleast_version='2.12.0', mandatory=False)
@@ -16,6 +20,9 @@ def configure(conf):
 
     if conf.env.HAVE_GANV and conf.env.HAVE_GTKMM:
         autowaf.define(conf, 'INGEN_BUILD_GUI', 1)
+
+    if Options.options.light_theme:
+        autowaf.define(conf, 'INGEN_USE_LIGHT_THEME', 1)
 
 def build(bld):
     obj = bld(features        = 'cxx cxxshlib',
