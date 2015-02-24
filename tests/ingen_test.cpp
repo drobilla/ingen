@@ -163,7 +163,7 @@ main(int argc, char** argv)
 	// Initialise engine
 	ingen_try(bool(world->engine()),
 	          "Unable to create engine");
-	world->engine()->init(48000.0, 4096);
+	world->engine()->init(48000.0, 4096, 4096);
 	world->engine()->activate();
 
 	// Load patch

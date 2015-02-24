@@ -215,9 +215,9 @@ execute_and_delete_event(ProcessContext& context, Event* ev)
 }
 
 void
-Engine::init(double sample_rate, uint32_t block_length)
+Engine::init(double sample_rate, uint32_t block_length, size_t seq_size)
 {
-	set_driver(SPtr<Driver>(new DirectDriver(sample_rate, block_length)));
+	set_driver(SPtr<Driver>(new DirectDriver(sample_rate, block_length, seq_size)));
 	_direct_driver = true;
 }
 
@@ -266,7 +266,7 @@ Engine::activate()
 			          Resource::Property(uris.atom_Sequence)));
 		control_properties.insert(
 			make_pair(uris.rsz_minimumSize,
-			          forge.make(4096)));
+			          forge.make(int32_t(driver()->seq_size()))));
 
 		// Add control input
 		Resource::Properties in_properties(control_properties);

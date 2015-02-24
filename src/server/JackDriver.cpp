@@ -59,6 +59,7 @@ JackDriver::JackDriver(Engine& engine)
 	, _flag(false)
 	, _client(NULL)
 	, _block_length(0)
+	, _seq_size(0)
 	, _sample_rate(0)
 	, _is_activated(false)
 	, _old_bpm(120.0f)
@@ -127,8 +128,9 @@ JackDriver::attach(const std::string& server_name,
 		_client = (jack_client_t*)jack_client;
 	}
 
+	_sample_rate  = jack_get_sample_rate(_client);
 	_block_length = jack_get_buffer_size(_client);
-	_sample_rate = jack_get_sample_rate(_client);
+	_seq_size     = jack_port_type_get_buffer_size(_client, JACK_DEFAULT_MIDI_TYPE);
 
 	jack_on_shutdown(_client, shutdown_cb, this);
 
@@ -502,9 +504,13 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 {
 	if (_engine.root_graph()) {
 		_block_length = nframes;
+		_seq_size = jack_port_type_get_buffer_size(_client, JACK_DEFAULT_MIDI_TYPE);
 		_engine.root_graph()->set_buffer_size(
 			_engine.process_context(), *_engine.buffer_factory(), PortType::AUDIO,
 			_engine.buffer_factory()->audio_buffer_size(nframes));
+		_engine.root_graph()->set_buffer_size(
+			_engine.process_context(), *_engine.buffer_factory(), PortType::ATOM,
+			_seq_size);
 	}
 	return 0;
 }

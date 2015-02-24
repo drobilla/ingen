@@ -84,6 +84,9 @@ public:
 	/** Return the audio buffer size in frames */
 	virtual SampleCount block_length() const = 0;
 
+	/** Return the event buffer size in bytes */
+	virtual size_t seq_size() const = 0;
+
 	/** Return the sample rate in Hz */
 	virtual SampleCount sample_rate() const = 0;
 

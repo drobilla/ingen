@@ -93,7 +93,10 @@ class LV2Driver : public Ingen::Server::Driver
                 , public Ingen::AtomSink
 {
 public:
-	LV2Driver(Engine& engine, SampleCount block_length, SampleCount sample_rate)
+	LV2Driver(Engine&     engine,
+	          SampleCount block_length,
+	          size_t      seq_size,
+	          SampleCount sample_rate)
 		: _engine(engine)
 		, _main_sem(0)
 		, _reader(engine.world()->uri_map(),
@@ -109,6 +112,7 @@ public:
 		, _root_graph(NULL)
 		, _notify_capacity(0)
 		, _block_length(block_length)
+		, _seq_size(seq_size)
 		, _sample_rate(sample_rate)
 		, _frame_time(0)
 		, _to_ui_overflow_sem(0)
@@ -373,6 +377,7 @@ public:
 	}
 
 	virtual SampleCount block_length() const { return _block_length; }
+	virtual size_t      seq_size()     const { return _seq_size; }
 	virtual SampleCount sample_rate()  const { return _sample_rate; }
 	virtual SampleCount frame_time()   const { return _frame_time; }
 
@@ -394,6 +399,7 @@ private:
 	GraphImpl*       _root_graph;
 	uint32_t         _notify_capacity;
 	SampleCount      _block_length;
+	size_t           _seq_size;
 	SampleCount      _sample_rate;
 	SampleCount      _frame_time;
 	Raul::Semaphore  _to_ui_overflow_sem;
@@ -579,7 +585,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	Server::ThreadManager::set_flag(Server::THREAD_PRE_PROCESS);
 	Server::ThreadManager::single_threaded = true;
 
-	LV2Driver* driver = new LV2Driver(*engine.get(), block_length, rate);
+	LV2Driver* driver = new LV2Driver(*engine.get(), block_length, seq_size, rate);
 	engine->set_driver(SPtr<Ingen::Server::Driver>(driver));
 
 	engine->activate();

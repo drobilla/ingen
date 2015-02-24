@@ -89,6 +89,7 @@ public:
 
 	jack_client_t* jack_client()  const { return _client; }
 	SampleCount    block_length() const { return _block_length; }
+	size_t         seq_size()     const { return _seq_size; }
 	SampleCount    sample_rate()  const { return _sample_rate; }
 
 	inline SampleCount frame_time() const { return _client ? jack_frame_time(_client) : 0; }
@@ -143,6 +144,7 @@ protected:
 	std::atomic<bool>      _flag;
 	jack_client_t*         _client;
 	jack_nframes_t         _block_length;
+	size_t                 _seq_size;
 	jack_nframes_t         _sample_rate;
 	uint32_t               _midi_event_type;
 	bool                   _is_activated;

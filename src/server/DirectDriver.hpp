@@ -29,9 +29,10 @@ namespace Server {
  */
 class DirectDriver : public Driver {
 public:
-	DirectDriver(double sample_rate, SampleCount block_length)
+	DirectDriver(double sample_rate, SampleCount block_length, size_t seq_size)
 		: _sample_rate(sample_rate)
 		, _block_length(block_length)
+		, _seq_size(seq_size)
 	{}
 
 	virtual ~DirectDriver() {}
@@ -73,6 +74,8 @@ public:
 	virtual void unregister_port(EnginePort& port) {}
 
 	virtual SampleCount block_length() const { return _block_length; }
+	
+	virtual size_t seq_size() const { return _seq_size; }
 
 	virtual SampleCount sample_rate() const { return _sample_rate; }
 
@@ -87,6 +90,7 @@ private:
 	Ports       _ports;
 	SampleCount _sample_rate;
 	SampleCount _block_length;
+	size_t      _seq_size;
 };
 
 } // namespace Server

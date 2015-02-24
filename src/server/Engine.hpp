@@ -68,7 +68,7 @@ public:
 	virtual ~Engine();
 
 	// EngineBase methods
-	virtual void init(double sample_rate, uint32_t block_length);
+	virtual void init(double sample_rate, uint32_t block_length, size_t seq_size);
 	virtual bool activate();
 	virtual void deactivate();
 	virtual bool pending_events();
