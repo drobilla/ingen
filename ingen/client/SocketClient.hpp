@@ -19,12 +19,13 @@
 
 #include "ingen/SocketReader.hpp"
 #include "ingen/SocketWriter.hpp"
+#include "ingen/ingen.h"
 
 namespace Ingen {
 namespace Client {
 
 /** The client side of an Ingen socket connection. */
-class SocketClient : public SocketWriter
+class INGEN_API SocketClient : public SocketWriter
 {
 public:
 	SocketClient(World&             world,

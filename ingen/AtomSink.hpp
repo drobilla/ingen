@@ -17,6 +17,7 @@
 #ifndef INGEN_ATOMSINK_HPP
 #define INGEN_ATOMSINK_HPP
 
+#include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 
 namespace Ingen {
@@ -24,7 +25,7 @@ namespace Ingen {
 /** A sink for LV2 Atoms.
  * @ingroup IngenShared
  */
-class AtomSink {
+class INGEN_API AtomSink {
 public:
 	virtual ~AtomSink() {}
 

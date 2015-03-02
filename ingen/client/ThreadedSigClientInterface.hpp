@@ -28,6 +28,7 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/client/SigClientInterface.hpp"
+#include "ingen/ingen.h"
 #include "raul/SRSWQueue.hpp"
 
 /** Returns nothing and takes no parameters (because they have all been bound) */
@@ -48,7 +49,7 @@ namespace Client {
  *
  * @ingroup IngenClient
  */
-class ThreadedSigClientInterface : public SigClientInterface
+class INGEN_API ThreadedSigClientInterface : public SigClientInterface
 {
 public:
 	explicit ThreadedSigClientInterface(uint32_t queue_size)

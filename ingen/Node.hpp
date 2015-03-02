@@ -18,6 +18,7 @@
 #define INGEN_NODE_HPP
 
 #include "ingen/Resource.hpp"
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "raul/Path.hpp"
 
@@ -45,7 +46,7 @@ class Store;
  *
  * @ingroup Ingen
  */
-class Node : public Resource
+class INGEN_API Node : public Resource
 {
 public:
 	enum class GraphType {

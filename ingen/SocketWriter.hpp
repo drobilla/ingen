@@ -23,7 +23,7 @@
 #include "ingen/AtomWriter.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/types.hpp"
-#include "ingen/types.hpp"
+#include "ingen/ingen.h"
 #include "raul/Socket.hpp"
 #include "raul/URI.hpp"
 #include "sratom/sratom.h"
@@ -32,7 +32,7 @@ namespace Ingen {
 
 /** An Interface that writes Turtle messages to a socket.
  */
-class SocketWriter : public AtomWriter, public AtomSink
+class INGEN_API SocketWriter : public AtomWriter, public AtomSink
 {
 public:
 	SocketWriter(URIMap&            map,

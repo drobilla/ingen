@@ -32,6 +32,7 @@
 #include "ingen/Node.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/client/signal.hpp"
+#include "ingen/ingen.h"
 
 namespace Ingen {
 
@@ -52,7 +53,7 @@ class ClientStore;
  *
  * @ingroup IngenClient
  */
-class ObjectModel : public Node
+class INGEN_API ObjectModel : public Node
 {
 public:
 	virtual ~ObjectModel();

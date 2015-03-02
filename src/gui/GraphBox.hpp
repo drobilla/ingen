@@ -28,6 +28,7 @@
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/statusbar.h>
 
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
 #include "Window.hpp"
@@ -60,7 +61,7 @@ class SubgraphModule;
  *
  * \ingroup GUI
  */
-class GraphBox : public Gtk::VBox
+class INGEN_API GraphBox : public Gtk::VBox
 {
 public:
 	GraphBox(BaseObjectType*                   cobject,

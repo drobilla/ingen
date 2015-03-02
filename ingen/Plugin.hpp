@@ -29,7 +29,7 @@ namespace Ingen {
 /** A plugin which instantiates to a Block.
  * @ingroup Ingen
  */
-class Plugin : public Resource
+class INGEN_API Plugin : public Resource
 {
 public:
 	Plugin(URIs& uris, const Raul::URI& uri)

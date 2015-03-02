@@ -17,6 +17,7 @@
 #ifndef INGEN_ARC_HPP
 #define INGEN_ARC_HPP
 
+#include "ingen/ingen.h"
 #include "raul/Deletable.hpp"
 
 namespace Raul { class Path; }
@@ -27,7 +28,7 @@ namespace Ingen {
  *
  * @ingroup Ingen
  */
-class Arc : public Raul::Deletable
+class INGEN_API Arc : public Raul::Deletable
 {
 public:
 	virtual const Raul::Path& tail_path() const = 0;

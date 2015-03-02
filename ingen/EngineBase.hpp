@@ -20,7 +20,7 @@
 #include <stdint.h>
 
 #include "raul/URI.hpp"
-
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
 namespace Ingen {
@@ -32,7 +32,7 @@ class Interface;
 
    @ingroup Ingen
 */
-class EngineBase
+class INGEN_API EngineBase
 {
 public:
 	virtual ~EngineBase() {}

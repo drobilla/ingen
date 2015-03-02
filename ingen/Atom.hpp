@@ -22,6 +22,7 @@
 #include <cstring>
 #include <string>
 
+#include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 
@@ -41,7 +42,7 @@ class Forge;
    In either case, the data is stored in a binary compatible format to LV2_Atom
    (i.e., if the value is dynamically allocated, the header is repeated there).
 */
-class Atom {
+class INGEN_API Atom {
 public:
 	Atom()  { _atom.size = 0; _atom.type = 0; _body.ptr = NULL; }
 	~Atom() { dealloc(); }

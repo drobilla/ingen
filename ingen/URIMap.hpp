@@ -22,6 +22,7 @@
 
 #include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Noncopyable.hpp"
 #include "raul/URI.hpp"
@@ -31,7 +32,7 @@ namespace Ingen {
 /** URI to integer map and implementation of LV2 URID extension.
  * @ingroup IngenShared
  */
-class URIMap : public Raul::Noncopyable {
+class INGEN_API URIMap : public Raul::Noncopyable {
 public:
 	URIMap(Log& log, LV2_URID_Map* map, LV2_URID_Unmap* unmap);
 	virtual ~URIMap() {}

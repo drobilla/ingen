@@ -25,6 +25,7 @@
 #include "ingen/client/ObjectModel.hpp"
 #include "ingen/client/PluginModel.hpp"
 #include "ingen/client/PortModel.hpp"
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
 namespace Raul { class Path; }
@@ -42,7 +43,7 @@ class ClientStore;
  *
  * @ingroup IngenClient
  */
-class BlockModel : public ObjectModel
+class INGEN_API BlockModel : public ObjectModel
 {
 public:
 	BlockModel(const BlockModel& copy);

@@ -29,6 +29,7 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/World.hpp"
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/URI.hpp"
@@ -65,7 +66,7 @@ class WindowFactory;
 /** Ingen Gtk Application.
  * \ingroup GUI
  */
-class App
+class INGEN_API App
 {
 public:
 	~App();

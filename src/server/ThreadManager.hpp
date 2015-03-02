@@ -19,6 +19,7 @@
 
 #include <cassert>
 
+#include "ingen/ingen.h"
 #include "raul/ThreadVar.hpp"
 
 namespace Ingen {
@@ -31,7 +32,7 @@ enum ThreadFlag {
 	THREAD_MESSAGE      = 1 << 3,
 };
 
-class ThreadManager {
+class INGEN_API ThreadManager {
 public:
 	static inline void set_flag(ThreadFlag f) {
 #ifndef NDEBUG

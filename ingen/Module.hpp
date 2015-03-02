@@ -19,6 +19,8 @@
 
 #include <glibmm/module.h>
 
+#include "ingen/ingen.h"
+
 namespace Ingen {
 
 class World;
@@ -28,7 +30,8 @@ class World;
  * All components of Ingen reside in one of these.
  * @ingroup IngenShared
  */
-struct Module {
+class INGEN_API Module {
+public:
 	Module() : library(NULL) {}
 	virtual ~Module() {}
 
@@ -53,7 +56,7 @@ private:
 extern "C" {
 
 /** Prototype for the ingen_module_load() entry point in an ingen module. */
-Ingen::Module* ingen_module_load();
+INGEN_API Ingen::Module* ingen_module_load();
 
 }
 

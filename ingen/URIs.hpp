@@ -19,6 +19,7 @@
 
 #include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
+#include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Noncopyable.hpp"
 #include "raul/URI.hpp"
@@ -39,7 +40,7 @@ class URIMap;
  *
  * @ingroup ingen
  */
-class URIs : public Raul::Noncopyable {
+class INGEN_API URIs : public Raul::Noncopyable {
 public:
 	URIs(Ingen::Forge& forge, URIMap* map);
 

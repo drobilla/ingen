@@ -31,7 +31,7 @@ namespace Ingen {
 /** An object with a URI described by properties.
  * @ingroup Ingen
  */
-class Resource : public Raul::Deletable
+class INGEN_API Resource : public Raul::Deletable
 {
 public:
 	Resource(URIs& uris, const Raul::URI& uri)

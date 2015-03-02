@@ -23,6 +23,7 @@
 #include <boost/optional.hpp>
 
 #include "ingen/Node.hpp"
+#include "ingen/ingen.h"
 #include "raul/Path.hpp"
 #include "raul/URI.hpp"
 
@@ -36,7 +37,7 @@ class World;
 
    @ingroup Ingen
 */
-class Parser {
+class INGEN_API Parser {
 public:
 	explicit Parser() {}
 

@@ -25,6 +25,7 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/client/signal.hpp"
+#include "ingen/ingen.h"
 
 namespace Ingen {
 namespace Client {
@@ -39,8 +40,8 @@ namespace Client {
  *
  * @ingroup IngenClient
  */
-class SigClientInterface : public Ingen::Interface,
-                           public INGEN_TRACKABLE
+class INGEN_API SigClientInterface : public Ingen::Interface,
+                                     public INGEN_TRACKABLE
 {
 public:
 	SigClientInterface() {}

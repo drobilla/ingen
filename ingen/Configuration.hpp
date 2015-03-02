@@ -28,6 +28,7 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/URIMap.hpp"
+#include "ingen/ingen.h"
 #include "raul/Exception.hpp"
 
 namespace Ingen {
@@ -35,7 +36,7 @@ namespace Ingen {
 /** Ingen configuration (command line options and/or configuration file).
  * @ingroup IngenShared
  */
-class Configuration {
+class INGEN_API Configuration {
 public:
 	explicit Configuration(Forge& forge);
 

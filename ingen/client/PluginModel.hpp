@@ -26,6 +26,7 @@
 #include "ingen/Resource.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/signal.hpp"
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
 #include "raul/Symbol.hpp"
@@ -45,7 +46,7 @@ class PluginUI;
  *
  * @ingroup IngenClient
  */
-class PluginModel : public Ingen::Plugin
+class INGEN_API PluginModel : public Ingen::Plugin
 {
 public:
 	PluginModel(URIs&                              uris,

@@ -19,6 +19,8 @@
 
 #include <atomic>
 
+#include "ingen/ingen.h"
+
 #include "types.hpp"
 
 namespace Ingen {
@@ -39,7 +41,7 @@ class ProcessContext;
  *
  * \ingroup engine
  */
-class PostProcessor
+class INGEN_API PostProcessor
 {
 public:
 	explicit PostProcessor(Engine& engine);

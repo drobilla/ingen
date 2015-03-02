@@ -279,7 +279,7 @@ World::load_module(const char* name)
 		}
 	}
 
-	log().error(fmt("Failed to load module `%1%'\n") % name);
+	log().error(fmt("Failed to load module `%1%' (%2%)\n") % name % lib->get_last_error());
 	delete lib;
 	return false;
 }

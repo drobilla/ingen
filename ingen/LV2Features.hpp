@@ -20,10 +20,10 @@
 #include <string>
 #include <vector>
 
+#include "ingen/ingen.h"
+#include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "raul/Noncopyable.hpp"
-
-#include "ingen/types.hpp"
 
 namespace Ingen {
 
@@ -33,7 +33,7 @@ class World;
 /** Features for use by LV2 plugins.
  * @ingroup IngenShared
  */
-class LV2Features {
+class INGEN_API LV2Features {
 public:
 	LV2Features();
 

@@ -22,6 +22,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/AtomSink.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/ingen.h"
 #include "serd/serd.h"
 
 namespace Ingen {
@@ -34,7 +35,7 @@ class URIMap;
 /** An AtomSink that calls methods on an Interface.
  * @ingroup IngenShared
  */
-class AtomReader : public AtomSink
+class INGEN_API AtomReader : public AtomSink
 {
 public:
 	AtomReader(URIMap&    map,

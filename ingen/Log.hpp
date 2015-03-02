@@ -21,6 +21,7 @@
 
 #include <boost/format.hpp>
 
+#include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
 
 namespace Ingen {
@@ -29,7 +30,7 @@ typedef boost::basic_format<char> fmt;
 
 class URIs;
 
-class Log {
+class INGEN_API Log {
 public:
 	Log(LV2_Log_Log* log, URIs& uris);
 

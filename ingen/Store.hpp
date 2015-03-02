@@ -20,20 +20,20 @@
 #include <map>
 #include <mutex>
 
+#include "ingen/Node.hpp"
+#include "ingen/ingen.h"
+#include "ingen/types.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
-
-#include "ingen/Node.hpp"
-#include "ingen/types.hpp"
 
 namespace Ingen {
 
 /** Store of objects in the graph hierarchy.
  * @ingroup IngenShared
  */
-class Store : public Raul::Noncopyable
-            , public Raul::Deletable
-            , public std::map< const Raul::Path, SPtr<Node> > {
+class INGEN_API Store : public Raul::Noncopyable
+                      , public Raul::Deletable
+                      , public std::map< const Raul::Path, SPtr<Node> > {
 public:
 	void add(Node* o);
 

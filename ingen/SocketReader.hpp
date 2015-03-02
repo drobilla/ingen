@@ -19,6 +19,7 @@
 
 #include <thread>
 
+#include "ingen/ingen.h"
 #include "raul/Socket.hpp"
 #include "sord/sord.h"
 
@@ -28,7 +29,7 @@ class Interface;
 class World;
 
 /** Calls Interface methods based on Turtle messages received via socket. */
-class SocketReader
+class INGEN_API SocketReader
 {
 public:
 	SocketReader(World&             world,

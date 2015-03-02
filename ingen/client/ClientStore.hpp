@@ -24,6 +24,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/client/signal.hpp"
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "raul/Path.hpp"
 
@@ -48,9 +49,9 @@ class SigClientInterface;
  *
  * @ingroup IngenClient
  */
-class ClientStore : public Store
-                  , public Interface
-                  , public INGEN_TRACKABLE {
+class INGEN_API ClientStore : public Store
+                            , public Interface
+                            , public INGEN_TRACKABLE {
 public:
 	ClientStore(
 		URIs&                    uris,

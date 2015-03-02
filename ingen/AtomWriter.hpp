@@ -21,6 +21,7 @@
 
 #include "ingen/Interface.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
 #include "serd/serd.h"
 
@@ -30,7 +31,7 @@ class AtomSink;
 class URIMap;
 
 /** An Interface that writes LV2 atoms to an AtomSink. */
-class AtomWriter : public Interface
+class INGEN_API AtomWriter : public Interface
 {
 public:
 	AtomWriter(URIMap& map, URIs& uris, AtomSink& sink);

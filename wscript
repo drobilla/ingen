@@ -132,6 +132,7 @@ def configure(conf):
         conf.env.PTHREAD_CFLAGS    = []
         conf.env.PTHREAD_LINKFLAGS = []
 
+    autowaf.define(conf, 'INGEN_SHARED', 1);
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
 
     if not Options.options.no_client:

@@ -20,6 +20,7 @@
 #include <string>
 
 #include "ingen/Atom.hpp"
+#include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
 
 namespace Ingen {
@@ -29,7 +30,7 @@ class URIMap;
 /** Forge for Atoms.
  * @ingroup IngenShared
  */
-class Forge : public LV2_Atom_Forge {
+class INGEN_API Forge : public LV2_Atom_Forge {
 public:
 	explicit Forge(URIMap& map);
 

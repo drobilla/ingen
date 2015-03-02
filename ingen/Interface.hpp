@@ -26,6 +26,7 @@
 
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
 namespace Raul {
@@ -41,7 +42,7 @@ namespace Ingen {
  *
  * @ingroup Ingen
  */
-class Interface
+class INGEN_API Interface
 {
 public:
 	virtual ~Interface() {}

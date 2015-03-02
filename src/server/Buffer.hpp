@@ -23,6 +23,7 @@
 #include <boost/utility.hpp>
 
 #include "ingen/types.hpp"
+#include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Deletable.hpp"
@@ -38,7 +39,7 @@ class Context;
 class Engine;
 class BufferFactory;
 
-class Buffer : public boost::noncopyable
+class INGEN_API Buffer : public boost::noncopyable
 {
 public:
 	Buffer(BufferFactory& bufs,

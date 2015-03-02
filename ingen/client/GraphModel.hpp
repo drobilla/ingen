@@ -18,6 +18,7 @@
 #define INGEN_CLIENT_GRAPHMODEL_HPP
 
 #include "ingen/client/BlockModel.hpp"
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
 namespace Ingen {
@@ -30,7 +31,7 @@ class ClientStore;
  *
  * @ingroup IngenClient
  */
-class GraphModel : public BlockModel
+class INGEN_API GraphModel : public BlockModel
 {
 public:
 	/* WARNING: Copy constructor creates a shallow copy WRT connections */

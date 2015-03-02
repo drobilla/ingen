@@ -21,6 +21,7 @@
 
 #include <map>
 
+#include "ingen/ingen.h"
 #include "raul/Path.hpp"
 #include "raul/URI.hpp"
 
@@ -32,7 +33,7 @@ class Store;
  *
  * @ingroup ingen
  */
-class ClashAvoider
+class INGEN_API ClashAvoider
 {
 public:
 	ClashAvoider(const Store& store);

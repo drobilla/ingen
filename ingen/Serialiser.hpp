@@ -20,11 +20,10 @@
 #include <stdexcept>
 #include <string>
 
-#include "raul/Path.hpp"
-
-#include "sord/sordmm.hpp"
-
 #include "ingen/Node.hpp"
+#include "ingen/ingen.h"
+#include "raul/Path.hpp"
+#include "sord/sordmm.hpp"
 
 namespace Ingen {
 
@@ -38,7 +37,7 @@ class World;
 
    @ingroup Ingen
 */
-class Serialiser
+class INGEN_API Serialiser
 {
 public:
 	explicit Serialiser(World& world);

@@ -19,6 +19,7 @@
 
 #include <string>
 
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
@@ -59,7 +60,7 @@ class URIs;
  *
  * @ingroup IngenShared
  */
-class World : public Raul::Noncopyable {
+class INGEN_API World : public Raul::Noncopyable {
 public:
 	/** Construct a new Ingen world.
 	 * @param argc Argument count (as in C main())

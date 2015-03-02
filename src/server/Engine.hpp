@@ -23,6 +23,7 @@
 
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
 #include "ProcessContext.hpp"
@@ -60,7 +61,7 @@ class Worker;
 
    @ingroup engine
 */
-class Engine : public boost::noncopyable, public EngineBase
+class INGEN_API Engine : public boost::noncopyable, public EngineBase
 {
 public:
 	explicit Engine(Ingen::World* world);

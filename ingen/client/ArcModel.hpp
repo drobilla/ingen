@@ -24,6 +24,7 @@
 
 #include "ingen/Arc.hpp"
 #include "ingen/client/PortModel.hpp"
+#include "ingen/ingen.h"
 
 namespace Ingen {
 namespace Client {
@@ -34,7 +35,7 @@ class ClientStore;
  *
  * @ingroup IngenClient
  */
-class ArcModel : public Arc
+class INGEN_API ArcModel : public Arc
 {
 public:
 	SPtr<PortModel> tail() const { return _tail; }

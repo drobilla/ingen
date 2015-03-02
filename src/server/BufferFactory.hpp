@@ -24,6 +24,7 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "raul/RingBuffer.hpp"
 
@@ -39,7 +40,7 @@ namespace Server {
 
 class Engine;
 
-class BufferFactory {
+class INGEN_API BufferFactory {
 public:
 	BufferFactory(Engine& engine, URIs& uris);
 	~BufferFactory();

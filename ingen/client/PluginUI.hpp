@@ -19,13 +19,11 @@
 
 #include <set>
 
-#include "ingen/types.hpp"
-
-#include "lilv/lilv.h"
-
-#include "suil/suil.h"
-
 #include "ingen/LV2Features.hpp"
+#include "ingen/ingen.h"
+#include "ingen/types.hpp"
+#include "lilv/lilv.h"
+#include "suil/suil.h"
 
 namespace Ingen {
 
@@ -40,7 +38,7 @@ class BlockModel;
  *
  * @ingroup IngenClient
  */
-class PluginUI {
+class INGEN_API PluginUI {
 public:
 	~PluginUI();
 

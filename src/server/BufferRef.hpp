@@ -19,6 +19,8 @@
 
 #include <boost/intrusive_ptr.hpp>
 
+#include "ingen/ingen.h"
+
 namespace Ingen {
 namespace Server {
 
@@ -27,8 +29,8 @@ class Buffer;
 typedef boost::intrusive_ptr<Buffer> BufferRef;
 
 // Defined in Buffer.cpp
-void intrusive_ptr_add_ref(Buffer* b);
-void intrusive_ptr_release(Buffer* b);
+INGEN_API void intrusive_ptr_add_ref(Buffer* b);
+INGEN_API void intrusive_ptr_release(Buffer* b);
 
 } // namespace Server
 } // namespace Ingen
