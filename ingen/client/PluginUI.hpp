@@ -34,7 +34,7 @@ namespace Client {
 
 class BlockModel;
 
-/** Model for a plugin available for loading.
+/** Custom user interface for a plugin.
  *
  * @ingroup IngenClient
  */
@@ -54,6 +54,16 @@ public:
 	                const void* buffer);
 
 	bool is_resizable() const;
+
+	/** Signal emitted when the UI sets a property.
+	 *
+	 * The application must connect to this signal to communicate with the
+	 * engine and/or update itself as necessary.
+	 */
+	INGEN_SIGNAL(property_changed, void,
+	             const Raul::URI&,  // Subject
+	             const Raul::URI&,  // Predicate
+	             const Atom&);      // Object
 
 	Ingen::World*          world() const { return _world; }
 	SPtr<const BlockModel> block() const { return _block; }

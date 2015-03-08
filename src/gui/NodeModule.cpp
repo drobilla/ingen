@@ -228,8 +228,9 @@ NodeModule::embed_gui(bool embed)
 		}
 
 		if (!_plugin_ui) {
-			const PluginModel* const pm = dynamic_cast<const PluginModel*>(_block->plugin());
-			_plugin_ui = pm->ui(app().world(), _block);
+			_plugin_ui = _block->plugin_model()->ui(app().world(), _block);
+			_plugin_ui->signal_property_changed().connect(
+				sigc::mem_fun(app(), &App::set_property));
 		}
 
 		if (_plugin_ui) {

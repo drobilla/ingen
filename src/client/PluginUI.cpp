@@ -70,7 +70,7 @@ lv2_ui_write(SuilController controller,
 			return;  // Ignore feedback
 		}
 
-		ui->world()->interface()->set_property(
+		ui->signal_property_changed()(
 			port->uri(),
 			uris.ingen_value,
 			ui->world()->forge().make(value));
@@ -79,9 +79,9 @@ lv2_ui_write(SuilController controller,
 		const LV2_Atom* atom = (const LV2_Atom*)buffer;
 		Atom            val  = ui->world()->forge().alloc(
 			atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
-		ui->world()->interface()->set_property(port->uri(),
-		                                       uris.ingen_activity,
-		                                       val);
+		ui->signal_property_changed()(port->uri(),
+		                              uris.ingen_activity,
+		                              val);
 
 	} else {
 		ui->world()->log().warn(
@@ -116,7 +116,7 @@ lv2_ui_subscribe(SuilController            controller,
 		return 1;
 	}
 
-	ui->world()->interface()->set_property(
+	ui->signal_property_changed()(
 		ui->block()->ports()[port_index]->uri(),
 		ui->world()->uris().ingen_broadcast,
 		ui->world()->forge().make(true));
@@ -136,7 +136,7 @@ lv2_ui_unsubscribe(SuilController            controller,
 		return 1;
 	}
 
-	ui->world()->interface()->set_property(
+	ui->signal_property_changed()(
 		ui->block()->ports()[port_index]->uri(),
 		ui->world()->uris().ingen_broadcast,
 		ui->world()->forge().make(false));
