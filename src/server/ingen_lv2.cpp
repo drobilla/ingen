@@ -752,16 +752,15 @@ ingen_restore(LV2_Handle                  instance,
 	uint32_t type;
 	uint32_t valflags;
 
-	const void* path = retrieve(handle,
-	                            ingen_file,
-	                            &size, &type, &valflags);
+	const char* path = (const char*)retrieve(handle,
+	                                         ingen_file,
+	                                         &size, &type, &valflags);
 
 	if (!path) {
 		return LV2_STATE_ERR_NO_PROPERTY;
 	}
 
-	const char* state_path = (const char*)path;
-	char* real_path = map_path->absolute_path(map_path->handle, state_path);
+	char* real_path = map_path->absolute_path(map_path->handle, path);
 
 	plugin->world->parser()->parse_file(plugin->world,
 	                                    plugin->world->interface().get(),
