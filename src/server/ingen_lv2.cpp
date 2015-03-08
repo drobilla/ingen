@@ -226,9 +226,7 @@ public:
 		return NULL;
 	}
 
-	/** This does not have to be real-time since LV2 has no dynamic ports.
-	 * It is only called on initial load.
-	 */
+	/** Add a port.  Called only during init or restore. */
 	virtual void add_port(ProcessContext& context, EnginePort* port) {
 		const uint32_t index = port->graph_port()->index();
 		if (_ports.size() <= index) {
@@ -237,8 +235,14 @@ public:
 		_ports[index] = port;
 	}
 
-	/** Unused since LV2 has no dynamic ports. */
-	virtual void remove_port(ProcessContext& context, EnginePort* port) {}
+	/** Remove a port.  Called only during init or restore. */
+	virtual void remove_port(ProcessContext& context, EnginePort* port) {
+		const uint32_t index = port->graph_port()->index();
+		_ports[index] = NULL;
+		if (index == _ports.size() - 1) {
+			_ports.resize(index);
+		}
+	}
 
 	/** Unused since LV2 has no dynamic ports. */
 	virtual void register_port(EnginePort& port) {}
@@ -441,6 +445,7 @@ struct IngenPlugin {
 	{}
 
 	Ingen::World* world;
+	SPtr<Engine>  engine;
 	std::thread*  main;
 	LV2_URID_Map* map;
 	int           argc;
@@ -571,6 +576,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 		plugin->world->forge().make(std::max(block_length, seq_size) * 4));
 
 	SPtr<Server::Engine> engine(new Server::Engine(plugin->world));
+	plugin->engine = engine;
 	plugin->world->set_engine(engine);
 
 	SPtr<EventWriter> interface = SPtr<EventWriter>(engine->interface(),
@@ -752,19 +758,37 @@ ingen_restore(LV2_Handle                  instance,
 	uint32_t type;
 	uint32_t valflags;
 
-	const char* path = (const char*)retrieve(handle,
-	                                         ingen_file,
-	                                         &size, &type, &valflags);
-
+	// Get abstract path to graph file
+	const char* path = (const char*)retrieve(
+		handle, ingen_file, &size, &type, &valflags);
 	if (!path) {
 		return LV2_STATE_ERR_NO_PROPERTY;
 	}
 
+	// Convert to absolute path
 	char* real_path = map_path->absolute_path(map_path->handle, path);
+	if (!real_path) {
+		return LV2_STATE_ERR_UNKNOWN;
+	}
 
-	plugin->world->parser()->parse_file(plugin->world,
-	                                    plugin->world->interface().get(),
-	                                    real_path);
+	// Remove existing root graph contents
+	SPtr<Engine> engine = plugin->engine;
+	for (const auto& b : engine->root_graph()->blocks()) {
+		plugin->world->interface()->del(b.uri());
+	}
+
+	const uint32_t n_ports = engine->root_graph()->num_ports_non_rt();
+	for (int32_t i = n_ports - 1; i >= 0; --i) {
+		PortImpl* port = engine->root_graph()->port_impl(i);
+		if (port->symbol() != "control_in" && port->symbol() != "control_out") {
+			plugin->world->interface()->del(port->uri());
+		}
+	}
+
+	// Load new graph
+	plugin->world->parser()->parse_file(
+		plugin->world, plugin->world->interface().get(), real_path);
+
 	free(real_path);
 	return LV2_STATE_SUCCESS;
 }
