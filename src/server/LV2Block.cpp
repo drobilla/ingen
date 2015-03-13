@@ -77,8 +77,10 @@ LV2Block::make_instance(URIs&      uris,
                         uint32_t   voice,
                         bool       preparing)
 {
-	LilvInstance* inst = lilv_plugin_instantiate(
-		_lv2_plugin->lilv_plugin(), rate, _features->array());
+	LilvWorld*        lworld = _lv2_plugin->lv2_info()->lv2_world();
+	const LilvPlugin* lplug  = _lv2_plugin->lilv_plugin();
+	LilvInstance*     inst   = lilv_plugin_instantiate(
+		lplug, rate, _features->array());
 
 	if (!inst) {
 		parent_graph()->engine().log().error(
@@ -87,8 +89,15 @@ LV2Block::make_instance(URIs&      uris,
 		return SPtr<LilvInstance>();
 	}
 
-	const LV2_Options_Interface* options_iface = (const LV2_Options_Interface*)
-		lilv_instance_get_extension_data(inst, LV2_OPTIONS__interface);
+	LilvNode* opt_interface = lilv_new_uri(lworld, LV2_OPTIONS__interface);
+
+	const LV2_Options_Interface* options_iface = NULL;
+	if (lilv_plugin_has_extension_data(lplug, opt_interface)) {
+		options_iface = (const LV2_Options_Interface*)
+			lilv_instance_get_extension_data(inst, LV2_OPTIONS__interface);
+	}
+
+	lilv_node_free(opt_interface);
 
 	for (uint32_t p = 0; p < num_ports(); ++p) {
 		PortImpl* const port   = _ports->at(p);
