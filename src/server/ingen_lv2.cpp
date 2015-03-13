@@ -678,8 +678,10 @@ ingen_cleanup(LV2_Handle instance)
 		me->main->join();
 		delete me->main;
 	}
-	delete me->world;
+
+	World* world = me->world;
 	delete me;
+	delete world;
 }
 
 static void
