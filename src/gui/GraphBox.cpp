@@ -619,6 +619,9 @@ GraphBox::event_export_image()
 		filt.add_pattern(t->first);
 		filt.set_name(t->second);
 		dialog.add_filter(filt);
+		if (t->first == "*.pdf") {
+			dialog.set_filter(filt);
+		}
 	}
 
 	Gtk::CheckButton* bg_but = new Gtk::CheckButton("Draw _Background", true);
