@@ -96,6 +96,7 @@ ObjectModel::set_path(const Raul::Path& p)
 {
 	_path   = p;
 	_symbol = Raul::Symbol(p.is_root() ? "root" : p.symbol());
+	set_uri(Node::path_to_uri(p));
 	_signal_moved.emit();
 }
 
