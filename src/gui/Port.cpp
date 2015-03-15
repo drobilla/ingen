@@ -93,6 +93,10 @@ Port::Port(App&                  app,
 
 	set_is_controllable(pm->is_numeric() && pm->is_input());
 
+	Ganv::Port::set_beveled(model()->is_a(_app.uris().lv2_ControlPort) ||
+	                        model()->has_property(_app.uris().atom_bufferType,
+	                                              _app.uris().atom_Sequence));
+
 	update_metadata();
 	value_changed(pm->value());
 }
@@ -520,6 +524,10 @@ Port::property_changed(const Raul::URI& key, const Atom& value)
 		    _app.world()->conf().option("human-names").get<int32_t>()) {
 			set_label(value.ptr<char>());
 		}
+	} else if (key == uris.rdf_type || key == uris.atom_bufferType) {
+		Ganv::Port::set_beveled(model()->is_a(uris.lv2_ControlPort) ||
+		                        model()->has_property(uris.atom_bufferType,
+		                                              uris.atom_Sequence));
 	}
 }
 
@@ -529,6 +537,10 @@ Port::property_removed(const Raul::URI& key, const Atom& value)
 	const URIs& uris = _app.uris();
 	if (key == uris.lv2_minimum || key == uris.lv2_maximum) {
 		update_metadata();
+	} else if (key == uris.rdf_type || key == uris.atom_bufferType) {
+		Ganv::Port::set_beveled(model()->is_a(uris.lv2_ControlPort) ||
+		                        model()->has_property(uris.atom_bufferType,
+		                                              uris.atom_Sequence));
 	}
 }
 
