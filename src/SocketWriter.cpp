@@ -72,6 +72,8 @@ SocketWriter::SocketWriter(URIMap&            map,
 SocketWriter::~SocketWriter()
 {
 	sratom_free(_sratom);
+	serd_writer_free(_writer);
+	serd_env_free(_env);
 }
 
 bool
