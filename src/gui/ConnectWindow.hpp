@@ -58,6 +58,8 @@ public:
 private:
 	enum class Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };
 
+	void error(const std::string& msg);
+
 	void ingen_response(int32_t id, Status status, const std::string& subject);
 
 	void server_toggled();
@@ -65,6 +67,8 @@ private:
 	void internal_toggled();
 
 	void disconnect();
+	void next_stage();
+	bool connect_remote(const Raul::URI& uri);
 	void connect(bool existing);
 	void activate();
 	void deactivate();
@@ -94,13 +98,14 @@ private:
 	Gtk::Button*       _connect_button;
 	Gtk::Button*       _quit_button;
 
-	Mode    _mode;
-	int32_t _ping_id;
-	bool    _attached;
-	bool    _finished_connecting;
-	bool    _widgets_loaded;
-	int     _connect_stage;
-	bool    _quit_flag;
+	Mode      _mode;
+	Raul::URI _connect_uri;
+	int32_t   _ping_id;
+	bool      _attached;
+	bool      _finished_connecting;
+	bool      _widgets_loaded;
+	int       _connect_stage;
+	bool      _quit_flag;
 };
 
 } // namespace GUI

@@ -60,8 +60,7 @@ public:
 			                   % sock->uri() % strerror(errno));
 			return SPtr<Interface>();
 		}
-		SocketClient* client = new SocketClient(*world, uri, sock, respondee);
-		return SPtr<Interface>(client);
+		return SPtr<Interface>(new SocketClient(*world, uri, sock, respondee));
 	}
 
 	static void register_factories(World* world) {

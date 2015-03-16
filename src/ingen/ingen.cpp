@@ -134,8 +134,12 @@ main(int argc, char** argv)
 		          (fmt("Invalid URI <%1%>") % uri).str().c_str());
 		SPtr<Interface> client(new Client::ThreadedSigClientInterface(1024));
 		engine_interface = world->new_interface(Raul::URI(uri), client);
-		ingen_try(bool(engine_interface),
-		          (fmt("Unable to create interface to `%1%'") % uri).str().c_str());
+
+		if (!engine_interface && !conf.option("gui").get<int32_t>()) {
+			cerr << fmt("ingen: Error: Unable to create interface to `%1%'\n");
+			delete world;
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	world->set_interface(engine_interface);
