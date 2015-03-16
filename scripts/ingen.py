@@ -25,16 +25,21 @@ except ImportError:
     from io import StringIO as StringIO
 
 class NS:
+    atom   = rdflib.Namespace('http://lv2plug.in/ns/ext/atom#')
     ingen  = rdflib.Namespace('http://drobilla.net/ns/ingen#')
     ingerr = rdflib.Namespace('http://drobilla.net/ns/ingen/errors#')
     lv2    = rdflib.Namespace('http://lv2plug.in/ns/lv2core#')
     patch  = rdflib.Namespace('http://lv2plug.in/ns/ext/patch#')
     rdf    = rdflib.Namespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
+    rsz    = rdflib.Namespace('http://lv2plug.in/ns/ext/resize-port#')
     xsd    = rdflib.Namespace('http://www.w3.org/2001/XMLSchema#')
 
 class Interface:
     'The core Ingen interface'
     def put(self, path, body):
+        pass
+
+    def get(self, path):
         pass
 
     def set(self, path, body):

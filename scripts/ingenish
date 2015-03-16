@@ -67,6 +67,8 @@ def run(cmd):
         print_usage()
     elif cmd[0] == 'exit':
         sys.exit(0)
+    elif cmd[0] == 'get' and len(cmd) == 2:
+        print(ingen.get(cmd[1]).serialize(format='n3'))
     elif cmd[0] == 'put' and len(cmd) == 3:
         return ingen.put(cmd[1], cmd[2])
     elif cmd[0] == 'set' and len(cmd) == 3:
