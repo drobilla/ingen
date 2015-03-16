@@ -60,6 +60,7 @@ public:
 	const Quark atom_Float;
 	const Quark atom_Int;
 	const Quark atom_Object;
+	const Quark atom_Path;
 	const Quark atom_Sequence;
 	const Quark atom_Sound;
 	const Quark atom_String;

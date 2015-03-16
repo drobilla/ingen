@@ -52,7 +52,7 @@ public:
 private:
 	void get_atom(const LV2_Atom* in, Atom& out);
 
-	const char*                 atom_to_uri(const LV2_Atom* atom);
+	boost::optional<Raul::URI>  atom_to_uri(const LV2_Atom* atom);
 	boost::optional<Raul::Path> atom_to_path(const LV2_Atom* atom);
 
 	void get_props(const LV2_Atom_Object*       obj,

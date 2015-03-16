@@ -72,25 +72,42 @@ AtomReader::get_props(const LV2_Atom_Object*       obj,
 	}
 }
 
-const char*
+boost::optional<Raul::URI>
 AtomReader::atom_to_uri(const LV2_Atom* atom)
 {
-	if (atom && atom->type == _uris.atom_URI) {
-		return (const char*)LV2_ATOM_BODY_CONST(atom);
-	} else if (atom && atom->type == _uris.atom_URID) {
-		return _map.unmap_uri(((const LV2_Atom_URID*)atom)->body);
-	} else {
-		return NULL;
+	if (!atom) {
+		return boost::optional<Raul::URI>();
+	} else if (atom->type == _uris.atom_URI) {
+		const char* str = (const char*)LV2_ATOM_BODY_CONST(atom);
+		if (Raul::URI::is_valid(str)) {
+			return Raul::URI(str);
+		} else {
+			_log.warn(fmt("Invalid URI <%1%>\n") % str);
+		}
+	} else if (atom->type == _uris.atom_Path) {
+		const char* str = (const char*)LV2_ATOM_BODY_CONST(atom);
+		if (!strncmp(str, "file://", 5)) {
+			return Raul::URI(str);
+		} else {
+			return Raul::URI(std::string("file://") + str);
+		}
+	} else if (atom->type == _uris.atom_URID) {
+		const char* str = _map.unmap_uri(((const LV2_Atom_URID*)atom)->body);
+		if (str) {
+			return Raul::URI(str);
+		} else {
+			_log.warn(fmt("Unknown URID %1%\n") % str);
+		}
 	}
+	return boost::optional<Raul::URI>();
 }
 
 boost::optional<Raul::Path>
 AtomReader::atom_to_path(const LV2_Atom* atom)
 {
-	const char* uri_str = atom_to_uri(atom);
-	if (uri_str && Raul::URI::is_valid(uri_str) &&
-	    Node::uri_is_path(Raul::URI(uri_str))) {
-		return Node::uri_to_path(Raul::URI(uri_str));
+	boost::optional<Raul::URI> uri = atom_to_uri(atom);
+	if (uri && Node::uri_is_path(*uri)) {
+		return Node::uri_to_path(*uri);
 	}
 	return boost::optional<Raul::Path>();
 }
@@ -130,20 +147,23 @@ AtomReader::write(const LV2_Atom* msg)
 	                    (LV2_URID)_uris.patch_sequenceNumber, &number,
 	                    NULL);
 
-	const char*   subject_uri = atom_to_uri(subject);
-	const int32_t seq_id      = ((number && number->type == _uris.atom_Int)
-	                             ? ((const LV2_Atom_Int*)number)->body
-	                             : 0);
+	const boost::optional<Raul::URI> subject_uri = atom_to_uri(subject);
+
+	const int32_t seq_id = ((number && number->type == _uris.atom_Int)
+	                        ? ((const LV2_Atom_Int*)number)->body
+	                        : 0);
 	_iface.set_response_id(seq_id);
 
 	if (obj->body.otype == _uris.patch_Get) {
-		_iface.get(Raul::URI(subject_uri));
+		if (subject_uri) {
+			_iface.get(*subject_uri);
+		}
 	} else if (obj->body.otype == _uris.patch_Delete) {
 		const LV2_Atom_Object* body = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 
 		if (subject_uri && !body) {
-			_iface.del(Raul::URI(subject_uri));
+			_iface.del(*subject_uri);
 			return true;
 		} else if (body && body->body.otype == _uris.ingen_Arc) {
 			const LV2_Atom* tail       = NULL;
@@ -202,7 +222,7 @@ AtomReader::write(const LV2_Atom* msg)
 		} else {
 			Ingen::Resource::Properties props;
 			get_props(body, props);
-			_iface.put(Raul::URI(subject_uri), props);
+			_iface.put(*subject_uri, props);
 		}
 	} else if (obj->body.otype == _uris.patch_Set) {
 		if (!subject_uri) {
@@ -226,11 +246,11 @@ AtomReader::write(const LV2_Atom* msg)
 
 		Atom atom;
 		get_atom(value, atom);
-		_iface.set_property(Raul::URI(subject_uri),
+		_iface.set_property(*subject_uri,
 		                    Raul::URI(_map.unmap_uri(prop->body)),
 		                    atom);
 	} else if (obj->body.otype == _uris.patch_Patch) {
-		if (!subject) {
+		if (!subject_uri) {
 			_log.warn("Patch message has no subject\n");
 			return false;
 		}
@@ -255,7 +275,7 @@ AtomReader::write(const LV2_Atom* msg)
 		Ingen::Resource::Properties remove_props;
 		get_props(remove, remove_props);
 
-		_iface.delta(Raul::URI(subject_uri), remove_props, add_props);
+		_iface.delta(*subject_uri, remove_props, add_props);
 	} else if (obj->body.otype == _uris.patch_Move) {
 		if (!subject) {
 			_log.warn("Move message has no subject\n");
@@ -298,7 +318,7 @@ AtomReader::write(const LV2_Atom* msg)
 		}
 		_iface.response(((const LV2_Atom_Int*)request)->body,
 		                (Ingen::Status)((const LV2_Atom_Int*)body)->body,
-		                subject_uri ? subject_uri : "");
+		                subject_uri ? subject_uri->c_str() : "");
 	} else {
 		_log.warn(fmt("Unknown object type <%1%>\n")
 		          % _map.unmap_uri(obj->body.otype));
