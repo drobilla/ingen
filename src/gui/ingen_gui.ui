@@ -2430,35 +2430,14 @@ See COPYING file included with this distribution, or http://www.gnu.org/licenses
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="properties_value_button">
-                <property name="label">☰</property>
-                <property name="use_action_appearance">False</property>
+              <object class="GtkAlignment" id="properties_value_bin">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkEntry" id="properties_value_entry">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="invisible_char">●</property>
-                <property name="activates_default">True</property>
-                <property name="primary_icon_activatable">False</property>
-                <property name="secondary_icon_activatable">False</property>
-                <property name="primary_icon_sensitive">True</property>
-                <property name="secondary_icon_sensitive">True</property>
+                <property name="can_focus">False</property>
               </object>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -2466,6 +2445,7 @@ See COPYING file included with this distribution, or http://www.gnu.org/licenses
                 <property name="label">gtk-add</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
@@ -2473,7 +2453,7 @@ See COPYING file included with this distribution, or http://www.gnu.org/licenses
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>

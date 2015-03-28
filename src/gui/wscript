@@ -74,6 +74,7 @@ def build(bld):
             Style.cpp
             SubgraphModule.cpp
             ThreadedLoader.cpp
+            URIEntry.cpp
             WidgetFactory.cpp
             WindowFactory.cpp
             ingen_gui.cpp

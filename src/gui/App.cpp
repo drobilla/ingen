@@ -44,6 +44,7 @@
 #include "MessagesWindow.hpp"
 #include "NodeModule.hpp"
 #include "Port.hpp"
+#include "RDFS.hpp"
 #include "Style.hpp"
 #include "SubgraphModule.hpp"
 #include "ThreadedLoader.hpp"
@@ -233,6 +234,15 @@ App::set_property(const Raul::URI& subject,
 	   went as planned here and fire the signal ourselves as if the server
 	   feedback came back immediately. */
 	_client->signal_property_change().emit(subject, key, value);
+}
+
+void
+App::set_tooltip(Gtk::Widget* widget, const LilvNode* node)
+{
+	const std::string comment = RDFS::comment(_world, node);
+	if (!comment.empty()) {
+		widget->set_tooltip_text(comment);
+	}
 }
 
 void

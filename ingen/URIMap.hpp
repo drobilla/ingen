@@ -38,6 +38,7 @@ public:
 	virtual ~URIMap() {}
 
 	uint32_t    map_uri(const char* uri);
+	uint32_t    map_uri(const std::string& uri) { return map_uri(uri.c_str()); }
 	const char* unmap_uri(uint32_t urid) const;
 
 	class Feature : public LV2Features::Feature {

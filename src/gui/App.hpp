@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2012 David Robillard <http://drobilla.net/>
+  Copyright 2007-2015 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -17,10 +17,8 @@
 #ifndef INGEN_GUI_APP_HPP
 #define INGEN_GUI_APP_HPP
 
-#include <cassert>
 #include <map>
 #include <string>
-#include <utility>
 
 #include <gtkmm/aboutdialog.h>
 #include <gtkmm/main.h>
@@ -31,25 +29,27 @@
 #include "ingen/World.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
+#include "lilv/lilv.h"
 #include "raul/Deletable.hpp"
 #include "raul/URI.hpp"
 
 namespace Ingen {
+
 class Interface;
 class Log;
 class Port;
 class Serialiser;
 class World;
+
 namespace Client {
+
 class ClientStore;
 class GraphModel;
 class PluginModel;
 class PortModel;
 class SigClientInterface;
-}
-}
 
-namespace Ingen {
+}
 
 namespace GUI {
 
@@ -100,6 +100,9 @@ public:
 	void set_property(const Raul::URI& subject,
 	                  const Raul::URI& key,
 	                  const Atom&      value);
+
+	/** Set the tooltip for a widget from its RDF documentation. */
+	void set_tooltip(Gtk::Widget* widget, const LilvNode* node);
 
 	uint32_t sample_rate() const;
 

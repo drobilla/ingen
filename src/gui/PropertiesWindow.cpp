@@ -31,6 +31,7 @@
 #include "App.hpp"
 #include "PropertiesWindow.hpp"
 #include "RDFS.hpp"
+#include "URIEntry.hpp"
 
 using namespace std;
 
@@ -45,13 +46,13 @@ typedef std::set<Raul::URI> URISet;
 PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
                                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
+	, _value_type(0)
 {
 	xml->get_widget("properties_vbox", _vbox);
 	xml->get_widget("properties_scrolledwindow", _scrolledwindow);
 	xml->get_widget("properties_table", _table);
 	xml->get_widget("properties_key_combo", _key_combo);
-	xml->get_widget("properties_value_entry", _value_entry);
-	xml->get_widget("properties_value_button", _value_button);
+	xml->get_widget("properties_value_bin", _value_bin);
 	xml->get_widget("properties_add_button", _add_button);
 	xml->get_widget("properties_cancel_button", _cancel_button);
 	xml->get_widget("properties_apply_button", _apply_button);
@@ -63,9 +64,6 @@ PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
 
 	_key_combo->signal_changed().connect(
 		sigc::mem_fun(this, &PropertiesWindow::key_changed));
-
-	_value_button->signal_event().connect(
-		sigc::mem_fun(this, &PropertiesWindow::value_clicked));
 
 	_add_button->signal_clicked().connect(
 		sigc::mem_fun(this, &PropertiesWindow::add_clicked));
@@ -87,7 +85,6 @@ PropertiesWindow::reset()
 	_property_removed_connection.disconnect();
 
 	_key_store->clear();
-	_value_entry->set_text("");
 	_records.clear();
 
 	_model.reset();
@@ -105,7 +102,7 @@ PropertiesWindow::present(SPtr<const ObjectModel> model)
 }
 
 void
-PropertiesWindow::add_property(const Raul::URI& uri, const Atom& value)
+PropertiesWindow::add_property(const Raul::URI& key, const Atom& value)
 {
 	World* world = _app->world();
 
@@ -113,33 +110,36 @@ PropertiesWindow::add_property(const Raul::URI& uri, const Atom& value)
 	_table->property_n_rows() = n_rows;
 
 	// Column 0: Property
-	LilvNode*     prop     = lilv_new_uri(world->lilv_world(), uri.c_str());
-	Glib::ustring lab_text = RDFS::label(world, prop);
-	if (lab_text.empty()) {
-		lab_text = world->rdf_world()->prefixes().qualify(uri);
+	LilvNode*   prop = lilv_new_uri(world->lilv_world(), key.c_str());
+	std::string name = RDFS::label(world, prop);
+	if (name.empty()) {
+		name = world->rdf_world()->prefixes().qualify(key);
 	}
-	lab_text = Glib::ustring("<a href=\"") + uri + "\">"
-		+ lab_text + "</a>";
-	Gtk::Label* lab = manage(new Gtk::Label(lab_text, 1.0, 0.5));
-	lab->set_use_markup(true);
-	set_tooltip(lab, prop);
-	_table->attach(*lab, 0, 1, n_rows, n_rows + 1,
+	Gtk::Label* label = new Gtk::Label(
+		std::string("<a href=\"") + key + "\">" + name + "</a>", 1.0, 0.5);
+	label->set_use_markup(true);
+	_app->set_tooltip(label, prop);
+	_table->attach(*Gtk::manage(label), 0, 1, n_rows, n_rows + 1,
 	               Gtk::FILL|Gtk::SHRINK, Gtk::SHRINK);
 
 	// Column 1: Value
-	Gtk::Alignment*   align      = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
+	Gtk::Alignment*   align      = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 1.0));
 	Gtk::CheckButton* present    = manage(new Gtk::CheckButton());
-	Gtk::Widget*      val_widget = create_value_widget(uri, value);
-	present->set_active(true);
+	const char*       type       = _app->world()->uri_map().unmap_uri(value.type());
+	Gtk::Widget*      val_widget = create_value_widget(key, type, value);
+
+	present->set_active();
 	if (val_widget) {
-		align->add(*val_widget);
-		set_tooltip(val_widget, prop);
+		align->add(*Gtk::manage(val_widget));
+		_app->set_tooltip(val_widget, prop);
 	}
+
 	_table->attach(*align, 1, 2, n_rows, n_rows + 1,
 	               Gtk::FILL|Gtk::EXPAND, Gtk::SHRINK);
 	_table->attach(*present, 2, 3, n_rows, n_rows + 1,
 	               Gtk::FILL, Gtk::SHRINK);
-	_records.insert(make_pair(uri, Record(value, align, n_rows, present)));
+	_records.insert(make_pair(key, Record(value, align, n_rows, present)));
+	_table->show_all();
 
 	lilv_node_free(prop);
 }
@@ -157,30 +157,22 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 
 	World* world = _app->world();
 
-	LilvNode* rdfs_range = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "range");
 	LilvNode* rdf_type = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDF "type");
 
 	// Populate key combo
-	const URISet props = RDFS::properties(world, model);
+	const URISet                     props = RDFS::properties(world, model);
+	std::map<std::string, Raul::URI> entries;
 	for (const auto& p : props) {
-		LilvNode*           prop  = lilv_new_uri(world->lilv_world(), p.c_str());
-		const Glib::ustring label = RDFS::label(world, prop);
+		LilvNode*         prop  = lilv_new_uri(world->lilv_world(), p.c_str());
+		const std::string label = RDFS::label(world, prop);
 		if (label.empty()) {
 			continue;
 		}
 
-		// Get all classes in the range of this property (including sub-classes)
-		LilvNodes* range = lilv_world_find_nodes(
-			world->lilv_world(), prop, rdfs_range, NULL);
-		URISet ranges;
-		LILV_FOREACH(nodes, r, range) {
-			ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(range, r))));
-		}
-		RDFS::classes(world, ranges, false);
-
-		bool show = false;
+		// Get all classes in the range of this property (including subclasses)
+		URISet ranges = RDFS::range(world, prop, true);
+		bool   show   = false;
 		for (const auto& r : ranges) {
 			LilvNode*  range   = lilv_new_uri(world->lilv_world(), r.c_str());
 			LilvNodes* objects = lilv_world_find_nodes(
@@ -191,21 +183,24 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 			lilv_nodes_free(objects);
 			lilv_node_free(range);
 			if (show) {
-				break;  // At least one appliable object
+				break;  // At least one applicable object
 			}
 		}
 
 		if (show || ranges.empty()) {
-			Gtk::ListStore::iterator ki  = _key_store->append();
-			Gtk::ListStore::Row      row = *ki;
-			row[_combo_columns.uri_col]   = p;
-			row[_combo_columns.label_col] = label;
+			entries.insert(std::make_pair(label, p));
 		}
 
 		lilv_node_free(prop);
 	}
 
-	lilv_node_free(rdfs_range);
+	for (const auto& e : entries) {
+		Gtk::ListStore::iterator ki  = _key_store->append();
+		Gtk::ListStore::Row      row = *ki;
+		row[_combo_columns.uri_col]   = e.second;
+		row[_combo_columns.label_col] = e.first;
+	}
+
 	lilv_node_free(rdf_type);
 
 	for (const auto& p : model->properties()) {
@@ -215,71 +210,98 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 	_table->show_all();
 
 	_property_connection = model->signal_property().connect(
-		sigc::mem_fun(this, &PropertiesWindow::property_changed));
+		sigc::mem_fun(this, &PropertiesWindow::add_property));
 	_property_removed_connection = model->signal_property_removed().connect(
-		sigc::mem_fun(this, &PropertiesWindow::property_removed));
+		sigc::mem_fun(this, &PropertiesWindow::remove_property));
 }
 
 Gtk::Widget*
-PropertiesWindow::create_value_widget(const Raul::URI& uri, const Atom& value)
+PropertiesWindow::create_value_widget(const Raul::URI& key,
+                                      const char*      type_uri,
+                                      const Atom&      value)
 {
-	Ingen::Forge& forge = _app->forge();
-	if (value.type() == forge.Int) {
+	if (!type_uri || !Raul::URI::is_valid(type_uri)) {
+		return NULL;
+	}
+
+	const Raul::URI type(type_uri);
+	Ingen::World*   world  = _app->world();
+	LilvWorld*      lworld = world->lilv_world();
+
+	if (type == _app->uris().atom_Int) {
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 0));
 		widget->property_numeric() = true;
 		widget->set_range(INT_MIN, INT_MAX);
 		widget->set_increments(1, 10);
-		widget->set_value(value.get<int32_t>());
+		if (value.is_valid()) {
+			widget->set_value(value.get<int32_t>());
+		}
 		widget->signal_value_changed().connect(
-			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::value_edited),
-			           uri));
+			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		return widget;
-	} else if (value.type() == forge.Float) {
+	} else if (type == _app->uris().atom_Float) {
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 4));
 		widget->property_numeric() = true;
 		widget->set_snap_to_ticks(false);
 		widget->set_range(-FLT_MAX, FLT_MAX);
-		widget->set_value(value.get<float>());
 		widget->set_increments(0.1, 1.0);
+		if (value.is_valid()) {
+			widget->set_value(value.get<float>());
+		}
 		widget->signal_value_changed().connect(
-			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::value_edited),
-			           uri));
+			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		return widget;
-	} else if (value.type() == forge.Bool) {
+	} else if (type == _app->uris().atom_Bool) {
 		Gtk::CheckButton* widget = manage(new Gtk::CheckButton());
-		widget->set_active(value.get<int32_t>());
+		if (value.is_valid()) {
+			widget->set_active(value.get<int32_t>());
+		}
 		widget->signal_toggled().connect(
-			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::value_edited),
-			           uri));
+			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		return widget;
-	} else if (value.type() == forge.URI) {
+	} else if (type == _app->uris().atom_String) {
 		Gtk::Entry* widget = manage(new Gtk::Entry());
-		widget->set_text(value.ptr<char>());
-		widget->signal_changed().connect(
-			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::value_edited),
-			           uri));
-		return widget;
-	} else if (value.type() == forge.URID) {
-		const char* val_uri = _app->world()->uri_map().unmap_uri(value.get<int32_t>());
-		Gtk::Entry* widget = manage(new Gtk::Entry());
-		if (val_uri) {
-			widget->set_text(val_uri);
+		if (value.is_valid()) {
+			widget->set_text(value.ptr<char>());
 		}
 		widget->signal_changed().connect(
-			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::value_edited),
-			           uri));
+			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
 		return widget;
-	} else if (value.type() == forge.String) {
-		Gtk::Entry* widget = manage(new Gtk::Entry());
-		widget->set_text(value.ptr<char>());
+	} else if (type == _app->uris().atom_URID) {
+		const char* str = (value.is_valid()
+		                   ? world->uri_map().unmap_uri(value.get<int32_t>())
+		                   : "");
+
+		LilvNode*   pred   = lilv_new_uri(lworld, key.c_str());
+		URISet      ranges = RDFS::range(world, pred, true);
+		URIEntry*   widget = manage(new URIEntry(_app, ranges, str ? str : ""));
 		widget->signal_changed().connect(
-			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::value_edited),
-			           uri));
+			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
+		lilv_node_free(pred);
 		return widget;
 	}
 
-	_app->log().error(fmt("Unable to create widget for value %1% type %2%\n")
-	                  % forge.str(value) % value.type());
+	LilvNode*  type_node  = lilv_new_uri(lworld, type.c_str());
+	LilvNode*  rdfs_Class = lilv_new_uri(lworld, LILV_NS_RDFS "Class");
+	const bool is_class   = RDFS::is_a(world, type_node, rdfs_Class);
+	lilv_node_free(rdfs_Class);
+	lilv_node_free(type_node);
+
+	if (type == _app->uris().atom_URI ||
+	    type == _app->uris().rdfs_Class ||
+	    is_class) {
+		LilvNode*   pred   = lilv_new_uri(lworld, key.c_str());
+		URISet      ranges = RDFS::range(world, pred, true);
+		const char* str    = value.is_valid() ? value.ptr<const char>() : "";
+		URIEntry*   widget = manage(new URIEntry(_app, ranges, str));
+		widget->signal_changed().connect(
+			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::on_change), key));
+		lilv_node_free(pred);
+		return widget;
+	}
+
+	_app->log().error(fmt("No widget for value type %1%\n") % type);
+
 	return NULL;
 }
 
@@ -291,16 +313,17 @@ PropertiesWindow::on_show()
 
 	int width  = 0;
 	int height = 0;
-	Gtk::Requisition req;
 
 	for (const auto& c : _vbox->children()) {
-		req     = c.get_widget()->size_request();
+		const Gtk::Requisition& req = c.get_widget()->size_request();
+
 		width   = std::max(width, req.width);
 		height += req.height + VBOX_PAD;
 	}
 
-	req     = _table->size_request();
-	width   = 1.6 * std::max(width, req.width + 128);
+	const Gtk::Requisition& req = _table->size_request();
+
+	width   = 1.2 * std::max(width, req.width + 128);
 	height += req.height;
 
 	set_default_size(width + WIN_PAD, height + WIN_PAD);
@@ -309,30 +332,30 @@ PropertiesWindow::on_show()
 }
 
 void
-PropertiesWindow::property_changed(const Raul::URI& predicate,
-                                   const Atom&      value)
+PropertiesWindow::change_property(const Raul::URI& key, const Atom& value)
 {
-	Records::iterator r = _records.find(predicate);
+	Records::iterator r = _records.find(key);
 	if (r == _records.end()) {
-		add_property(predicate, value);
+		add_property(key, value);
 		_table->show_all();
 		return;
 	}
 
-	Record&      record       = r->second;
-	Gtk::Widget* value_widget = create_value_widget(predicate, value);
+	Record&      record     = r->second;
+	const char*  type       = _app->world()->uri_map().unmap_uri(value.type());
+	Gtk::Widget* val_widget = create_value_widget(key, type, value);
 
-	record.value_widget->remove();
-	if (value_widget) {
-		record.value_widget->add(*value_widget);
-		value_widget->show();
+	if (val_widget) {
+		record.value_widget->remove();
+		record.value_widget->add(*Gtk::manage(val_widget));
+		val_widget->show_all();
 	}
+
 	record.value = value;
 }
 
 void
-PropertiesWindow::property_removed(const Raul::URI& predicate,
-                                   const Atom&      value)
+PropertiesWindow::remove_property(const Raul::URI& key, const Atom& value)
 {
 	// Bleh, there doesn't seem to be an easy way to remove a Gtk::Table row...
 	_records.clear();
@@ -346,51 +369,73 @@ PropertiesWindow::property_removed(const Raul::URI& predicate,
 	_table->show_all();
 }
 
-void
-PropertiesWindow::value_edited(const Raul::URI& predicate)
+Atom
+PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 {
-	Records::iterator r = _records.find(predicate);
+	Forge& forge = _app->forge();
+
+	if (type == forge.Int) {
+		Gtk::SpinButton* spin = dynamic_cast<Gtk::SpinButton*>(value_widget);
+		if (spin) {
+			return _app->forge().make(spin->get_value_as_int());
+		}
+	} else if (type == forge.Float) {
+		Gtk::SpinButton* spin = dynamic_cast<Gtk::SpinButton*>(value_widget);
+		if (spin) {
+			return _app->forge().make(static_cast<float>(spin->get_value()));
+		}
+	} else if (type == forge.Bool) {
+		Gtk::CheckButton* check = dynamic_cast<Gtk::CheckButton*>(value_widget);
+		if (check) {
+			return _app->forge().make(check->get_active());
+		}
+	} else if (type == forge.URI) {
+		URIEntry* uri_entry = dynamic_cast<URIEntry*>(value_widget);
+		if (uri_entry) {
+			return _app->forge().alloc_uri(uri_entry->get_text());
+		}
+	} else if (type == forge.URID) {
+		URIEntry* uri_entry = dynamic_cast<URIEntry*>(value_widget);
+		if (uri_entry) {
+			return _app->forge().make_urid(
+				_app->world()->uri_map().map_uri(uri_entry->get_text()));
+		}
+	} else if (type == forge.String) {
+		Gtk::Entry* entry = dynamic_cast<Gtk::Entry*>(value_widget);
+		if (entry) {
+			return _app->forge().alloc(entry->get_text());
+		}
+	}
+
+	URIEntry* uri_entry = dynamic_cast<URIEntry*>(value_widget);
+	if (uri_entry) {
+		return _app->forge().alloc_uri(uri_entry->get_text());
+	}
+
+	return Atom();
+}
+
+void
+PropertiesWindow::on_change(const Raul::URI& key)
+{
+	Records::iterator r = _records.find(key);
 	if (r == _records.end()) {
-		_app->log().error(fmt("Unknown property `%1%' edited\n")
-		                  % predicate);
 		return;
 	}
 
-	Forge&   forge  = _app->forge();
-	Record&  record = r->second;
-	LV2_URID type   = record.value.type();
-	if (type == forge.Int) {
-		Gtk::SpinButton* widget = dynamic_cast<Gtk::SpinButton*>(record.value_widget->get_child());
-		if (!widget) goto bad_type;
-		record.value = _app->forge().make(widget->get_value_as_int());
-	} else if (type == forge.Float) {
-		Gtk::SpinButton* widget = dynamic_cast<Gtk::SpinButton*>(record.value_widget->get_child());
-		if (!widget) goto bad_type;
-		record.value = _app->forge().make(static_cast<float>(widget->get_value()));
-	} else if (type == forge.Bool) {
-		Gtk::CheckButton* widget = dynamic_cast<Gtk::CheckButton*>(record.value_widget->get_child());
-		if (!widget) goto bad_type;
-		record.value = _app->forge().make(widget->get_active());
-	} else if (type == forge.URI) {
-		Gtk::Entry* widget = dynamic_cast<Gtk::Entry*>(record.value_widget->get_child());
-		if (!widget) goto bad_type;
-		record.value = _app->forge().alloc_uri(widget->get_text());
-	} else if (type == forge.String) {
-		Gtk::Entry* widget = dynamic_cast<Gtk::Entry*>(record.value_widget->get_child());
-		if (!widget) goto bad_type;
-		record.value = _app->forge().alloc(widget->get_text());
+	Record&    record = r->second;
+	const Atom value  = get_value(record.value.type(),
+	                              record.value_widget->get_child());
+
+	if (value.is_valid()) {
+		record.value = value;
+	} else {
+		_app->log().error(fmt("Failed to get `%1%' value from widget\n") % key);
 	}
-
-	return;
-
-bad_type:
-	_app->log().error(fmt("Property `%1%' value widget has wrong type\n")
-	                  % predicate);
-	return;
 }
 
 std::string
-PropertiesWindow::active_property() const
+PropertiesWindow::active_key() const
 {
 	const Gtk::ListStore::iterator iter = _key_combo->get_active();
 	if (!iter) {
@@ -404,171 +449,55 @@ PropertiesWindow::active_property() const
 void
 PropertiesWindow::key_changed()
 {
-	/* TODO: Clear value?  Build new selector widget, once one for things other than
-	   URIs actually exists.  At the moment, clicking the menu button will
-	   generate the appropriate menu anyway. */
-}
-
-void
-PropertiesWindow::set_tooltip(Gtk::Widget* widget, const LilvNode* node)
-{
-	const Glib::ustring comment = RDFS::comment(_app->world(), node);
-	if (!comment.empty()) {
-		widget->set_tooltip_text(comment);
-	}
-}
-
-void
-PropertiesWindow::add_class_menu_item(Gtk::Menu* menu, const LilvNode* klass)
-{
-	const Glib::ustring label   = RDFS::label(_app->world(), klass);
-	Gtk::Menu*          submenu = build_subclass_menu(klass);
-
-	if (submenu) {
-		menu->items().push_back(Gtk::Menu_Helpers::MenuElem(label));
-		Gtk::MenuItem* menu_item = &(menu->items().back());
-		set_tooltip(menu_item, klass);
-		menu_item->set_submenu(*submenu);
-	} else {
-		menu->items().push_back(
-			Gtk::Menu_Helpers::MenuElem(
-				label,
-				sigc::bind(sigc::mem_fun(this, &PropertiesWindow::uri_chosen),
-				           std::string(lilv_node_as_uri(klass)))));
-	}
-	set_tooltip(&(menu->items().back()), klass);
-}
-
-Gtk::Menu*
-PropertiesWindow::build_subclass_menu(const LilvNode* klass)
-{
-	World* world = _app->world();
-
-	LilvNode* rdfs_subClassOf = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "subClassOf");
-	LilvNodes* subclasses = lilv_world_find_nodes(
-		world->lilv_world(), NULL, rdfs_subClassOf, klass);
-
-	if (lilv_nodes_size(subclasses) == 0) {
-		return NULL;
+	if (!_key_combo->get_active()) {
+		_value_bin->remove();
+		return;
 	}
 
-	const Glib::ustring label = RDFS::label(world, klass);
-	Gtk::Menu*          menu  = new Gtk::Menu();
+	LilvWorld*                lworld  = _app->world()->lilv_world();
+	const Gtk::ListStore::Row key_row = *(_key_combo->get_active());
+	const Glib::ustring       key_uri = key_row[_combo_columns.uri_col];
+	LilvNode*                 prop    = lilv_new_uri(lworld, key_uri.c_str());
 
-	// Add "header" item for choosing this class itself
-	menu->items().push_back(
-		Gtk::Menu_Helpers::MenuElem(
-			label,
-			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::uri_chosen),
-			           std::string(lilv_node_as_uri(klass)))));
-	menu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
-	set_tooltip(&(menu->items().back()), klass);
+	// Try to create a value widget in the range of this property
+	const URISet ranges = RDFS::range(_app->world(), prop, true);
+	for (const auto& r : ranges) {
+		Gtk::Widget* value_widget = create_value_widget(
+			Raul::URI(key_uri), r.c_str(), Atom());
 
-	// Add an item (and maybe submenu) for each subclass
-	LILV_FOREACH(nodes, s, subclasses) {
-		add_class_menu_item(menu, lilv_nodes_get(subclasses, s));
-	}
-	lilv_nodes_free(subclasses);
-	return menu;
-}
-
-void
-PropertiesWindow::build_value_menu(Gtk::Menu* menu, const LilvNodes* ranges)
-{
-	World*     world  = _app->world();
-	LilvWorld* lworld = world->lilv_world();
-
-	LilvNode* rdf_type        = lilv_new_uri(lworld, LILV_NS_RDF "type");
-	LilvNode* rdfs_Class      = lilv_new_uri(lworld, LILV_NS_RDFS "Class");
-	LilvNode* rdfs_subClassOf = lilv_new_uri(lworld, LILV_NS_RDFS "subClassOf");
-
-	LILV_FOREACH(nodes, r, ranges) {
-		const LilvNode* klass = lilv_nodes_get(ranges, r);
-		if (!lilv_node_is_uri(klass)) {
-			continue;
-		}
-		const char* uri = lilv_node_as_string(klass);
-
-		// Add items for instances of this class
-		RDFS::URISet ranges_uris;
-		ranges_uris.insert(Raul::URI(uri));
-		RDFS::Objects values = RDFS::instances(world, ranges_uris);
-		for (const auto& v : values) {
-			const LilvNode* inst  = lilv_new_uri(lworld, v.first.c_str());
-			Glib::ustring   label = RDFS::label(world, inst);
-			if (label.empty()) {
-				label = lilv_node_as_string(inst);
-			}
-
-			if (lilv_world_ask(world->lilv_world(), inst, rdf_type, rdfs_Class)) {
-				if (!lilv_world_ask(lworld, inst, rdfs_subClassOf, NULL) ||
-				    lilv_world_ask(lworld, inst, rdfs_subClassOf, inst)) {
-					add_class_menu_item(menu, inst);
-				}
-			} else {
-				menu->items().push_back(
-					Gtk::Menu_Helpers::MenuElem(
-						label,
-						sigc::bind(sigc::mem_fun(this, &PropertiesWindow::uri_chosen),
-						           std::string(lilv_node_as_uri(inst)))));
-				set_tooltip(&(menu->items().back()), inst);
-			}
+		if (value_widget) {
+			_add_button->set_sensitive(true);
+			_value_type = _app->world()->uri_map().map_uri(r);
+			_value_bin->remove();
+			_value_bin->add(*Gtk::manage(value_widget));
+			_value_bin->show_all();
+			break;
 		}
 	}
-}
 
-void
-PropertiesWindow::uri_chosen(const std::string& uri)
-{
-	_value_entry->set_text(uri);
-}
-
-bool
-PropertiesWindow::value_clicked(GdkEvent* ev)
-{
-	if (ev->type != GDK_BUTTON_PRESS) {
-		return false;
-	}
-
-	// Get currently selected property (key) to add
-	const std::string prop_uri = active_property();
-	if (prop_uri.empty()) {
-		return false;
-	}
-
-	World* world = _app->world();
-
-	LilvNode* rdfs_range = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "range");
-
-	LilvNode*  prop   = lilv_new_uri(world->lilv_world(), prop_uri.c_str());
-	LilvNodes* ranges = lilv_world_find_nodes(
-		world->lilv_world(), prop, rdfs_range, NULL);
-
-	Gtk::Menu* menu = new Gtk::Menu();
-	build_value_menu(menu, ranges);
-	menu->popup(ev->button.button, ev->button.time);
-	return true;
+	lilv_node_free(prop);
 }
 
 void
 PropertiesWindow::add_clicked()
 {
-	if (!_key_combo->get_active() || _value_entry->get_text().empty()) {
+	if (!_key_combo->get_active() || !_value_type || !_value_bin->get_child()) {
 		return;
 	}
 
-	const Gtk::ListStore::Row krow      = *(_key_combo->get_active());
-	const Glib::ustring       key_uri   = krow[_combo_columns.uri_col];
-	const Glib::ustring       value_uri = _value_entry->get_text();
+	// Get selected key URI
+	const Gtk::ListStore::Row key_row = *(_key_combo->get_active());
+	const Glib::ustring       key_uri = key_row[_combo_columns.uri_col];
 
-	Atom value = _app->forge().alloc_uri(value_uri);
-
-	Resource::Properties properties;
-	properties.insert(make_pair(Raul::URI(key_uri.c_str()),
-	                            Resource::Property(value)));
-	_app->interface()->put(_model->uri(), properties);
+	// Try to get value from value widget
+	const Atom& value = get_value(_value_type, _value_bin->get_child());
+	if (value.is_valid()) {
+		// Send property to engine
+		Resource::Properties properties;
+		properties.insert(make_pair(Raul::URI(key_uri.c_str()),
+		                            Resource::Property(value)));
+		_app->interface()->put(_model->uri(), properties);
+	}
 }
 
 void

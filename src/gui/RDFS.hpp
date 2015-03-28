@@ -19,10 +19,10 @@
 
 #include <map>
 #include <set>
-
-#include <glibmm/ustring.h>
+#include <string>
 
 #include "ingen/types.hpp"
+#include "lilv/lilv.h"
 #include "raul/URI.hpp"
 
 namespace Ingen {
@@ -38,16 +38,14 @@ namespace RDFS {
 /** Set of URIs. */
 typedef std::set<Raul::URI> URISet;
 
-/** Map of object labels, keyed by object URI. */
-typedef std::map<Raul::URI, Glib::ustring> Objects;
+/** Label => Resource map. */
+typedef std::map<std::string, Raul::URI> Objects;
 
 /** Return the label of `node`. */
-Glib::ustring
-label(World* world, const LilvNode* node);
+std::string label(World* world, const LilvNode* node);
 
 /** Return the comment of `node`. */
-Glib::ustring
-comment(World* world, const LilvNode* node);
+std::string comment(World* world, const LilvNode* node);
 
 /** Set `types` to its super/sub class closure.
  * @param super If true, find all superclasses, otherwise all subclasses
@@ -55,14 +53,21 @@ comment(World* world, const LilvNode* node);
 void classes(World* world, URISet& types, bool super);
 
 /** Get all instances of any class in `types`. */
-Objects
-instances(World* world, const URISet& types);
+Objects instances(World* world, const URISet& types);
 
 /** Get all the types which `model` is an instance of. */
 URISet types(World* world, SPtr<const Client::ObjectModel> model);
 
 /** Get all the properties with domains appropriate for `model`. */
 URISet properties(World* world, SPtr<const Client::ObjectModel> model);
+
+/** Return the range (value types) of `prop`.
+ * @param recursive If true, include all subclasses.
+ */
+URISet range(World* world, const LilvNode* prop, bool recursive);
+
+/** Return true iff `inst` is-a `klass`. */
+bool is_a(World* world, const LilvNode* inst, const LilvNode* klass);
 
 } // namespace RDFS
 } // namespace GUI

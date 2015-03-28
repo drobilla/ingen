@@ -76,28 +76,23 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> uri_col;
 	};
 
-	std::string active_property() const;
+	void add_property(const Raul::URI& key, const Atom& value);
+	void change_property(const Raul::URI& key, const Atom& value);
+	void remove_property(const Raul::URI& key, const Atom& value);
+	void on_change(const Raul::URI& key);
 
-	void add_property(const Raul::URI& uri,
-	                  const Atom&      value);
+	Gtk::Widget* create_value_widget(const Raul::URI& key,
+	                                 const char*      type_uri,
+	                                 const Atom&      value = Atom());
 
-	Gtk::Widget* create_value_widget(const Raul::URI& uri,
-	                                 const Atom&      value);
-
-	Gtk::Menu* build_subclass_menu(const LilvNode* klass);
-	void       add_class_menu_item(Gtk::Menu* menu, const LilvNode* klass);
-	void       build_value_menu(Gtk::Menu* menu, const LilvNodes* ranges);
-	void       set_tooltip(Gtk::Widget* widget, const LilvNode* node);
+	Atom get_value(LV2_URID type, Gtk::Widget* value_widget);
 
 	void reset();
 	void on_show();
 
-	void property_changed(const Raul::URI& predicate, const Atom& value);
-	void property_removed(const Raul::URI& predicate, const Atom& value);
-	void value_edited(const Raul::URI& predicate);
+	std::string active_key() const;
+
 	void key_changed();
-	void uri_chosen(const std::string& uri);
-	bool value_clicked(GdkEvent* ev);
 	void add_clicked();
 	void cancel_clicked();
 	void apply_clicked();
@@ -115,8 +110,8 @@ private:
 	Gtk::ScrolledWindow*            _scrolledwindow;
 	Gtk::Table*                     _table;
 	Gtk::ComboBox*                  _key_combo;
-	Gtk::Entry*                     _value_entry;
-	Gtk::Button*                    _value_button;
+	LV2_URID                        _value_type;
+	Gtk::Bin*                       _value_bin;
 	Gtk::Button*                    _add_button;
 	Gtk::Button*                    _cancel_button;
 	Gtk::Button*                    _apply_button;

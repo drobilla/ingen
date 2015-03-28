@@ -154,6 +154,7 @@ public:
 	const Quark pset_preset;
 	const Quark pprops_logarithmic;
 	const Quark rdf_type;
+	const Quark rdfs_Class;
 	const Quark rdfs_seeAlso;
 	const Quark rsz_minimumSize;
 	const Quark time_Position;

@@ -284,14 +284,14 @@ Port::build_uri_menu()
 
 	// Add a menu item for each such class
 	for (const auto& v : values) {
-		if (!v.second.empty()) {
-			Glib::ustring label = world->rdf_world()->prefixes().qualify(v.first)
-				+ " - " + v.second;
+		if (!v.first.empty()) {
+			const std::string qname = world->rdf_world()->prefixes().qualify(v.second);
+			const std::string label = qname + " - " + v.first;
 			menu->items().push_back(Gtk::Menu_Helpers::MenuElem(label));
 			Gtk::MenuItem* menu_item = &(menu->items().back());
 			menu_item->signal_activate().connect(
 				sigc::bind(sigc::mem_fun(this, &Port::on_uri_activated),
-				           v.first));
+				           v.second));
 		}
 	}
 

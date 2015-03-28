@@ -25,7 +25,7 @@ namespace Ingen {
 namespace GUI {
 namespace RDFS {
 
-Glib::ustring
+std::string
 label(World* world, const LilvNode* node)
 {
 	LilvNode* rdfs_label = lilv_new_uri(
@@ -34,14 +34,14 @@ label(World* world, const LilvNode* node)
 		world->lilv_world(), node, rdfs_label, NULL);
 
 	const LilvNode* first = lilv_nodes_get_first(labels);
-	Glib::ustring   label = first ? lilv_node_as_string(first) : "";
+	std::string     label = first ? lilv_node_as_string(first) : "";
 
 	lilv_nodes_free(labels);
 	lilv_node_free(rdfs_label);
 	return label;
 }
 
-Glib::ustring
+std::string
 comment(World* world, const LilvNode* node)
 {
 	LilvNode* rdfs_comment = lilv_new_uri(
@@ -49,8 +49,8 @@ comment(World* world, const LilvNode* node)
 	LilvNodes* comments = lilv_world_find_nodes(
 		world->lilv_world(), node, rdfs_comment, NULL);
 
-	const LilvNode* first = lilv_nodes_get_first(comments);
-	Glib::ustring   comment = first ? lilv_node_as_string(first) : "";
+	const LilvNode* first   = lilv_nodes_get_first(comments);
+	std::string     comment = first ? lilv_node_as_string(first) : "";
 
 	lilv_nodes_free(comments);
 	lilv_node_free(rdfs_comment);
@@ -178,17 +178,51 @@ instances(World* world, const URISet& types)
 			if (!lilv_node_is_uri(object)) {
 				continue;
 			}
-			const Glib::ustring label = RDFS::label(world, object);
+			const std::string label = RDFS::label(world, object);
 			result.insert(
-				std::make_pair(
-					Raul::URI(lilv_node_as_string(object)),
-					label));
+				std::make_pair(label,
+				               Raul::URI(lilv_node_as_string(object))));
 		}
 		lilv_node_free(type);
 	}
 
 	lilv_node_free(rdf_type);
 	return result;
+}
+
+URISet
+range(World* world, const LilvNode* prop, bool recursive)
+{
+	LilvNode* rdfs_range = lilv_new_uri(
+		world->lilv_world(), LILV_NS_RDFS "range");
+
+	LilvNodes* nodes = lilv_world_find_nodes(
+		world->lilv_world(), prop, rdfs_range, NULL);
+
+	URISet ranges;
+	LILV_FOREACH(nodes, n, nodes) {
+		ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(nodes, n))));
+	}
+
+	if (recursive) {
+		RDFS::classes(world, ranges, false);
+	}
+
+	lilv_nodes_free(nodes);
+	lilv_node_free(rdfs_range);
+	return ranges;
+}
+
+bool
+is_a(World* world, const LilvNode* inst, const LilvNode* klass)
+{
+	LilvNode* rdf_type = lilv_new_uri(world->lilv_world(), LILV_NS_RDF "type");
+
+	const bool is_instance = lilv_world_ask(
+		world->lilv_world(), inst, rdf_type, klass);
+
+	lilv_node_free(rdf_type);
+	return is_instance;
 }
 
 } // namespace RDFS
