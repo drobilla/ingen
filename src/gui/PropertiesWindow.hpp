@@ -76,11 +76,18 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> uri_col;
 	};
 
+	std::string active_property() const;
+
 	void add_property(const Raul::URI& uri,
 	                  const Atom&      value);
 
 	Gtk::Widget* create_value_widget(const Raul::URI& uri,
 	                                 const Atom&      value);
+
+	Gtk::Menu* build_subclass_menu(const LilvNode* klass);
+	void       add_class_menu_item(Gtk::Menu* menu, const LilvNode* klass);
+	void       build_value_menu(Gtk::Menu* menu, const LilvNodes* ranges);
+	void       set_tooltip(Gtk::Widget* widget, const LilvNode* node);
 
 	void reset();
 	void on_show();
@@ -89,6 +96,8 @@ private:
 	void property_removed(const Raul::URI& predicate, const Atom& value);
 	void value_edited(const Raul::URI& predicate);
 	void key_changed();
+	void uri_chosen(const std::string& uri);
+	bool value_clicked(GdkEvent* ev);
 	void add_clicked();
 	void cancel_clicked();
 	void apply_clicked();
@@ -100,14 +109,14 @@ private:
 	SPtr<const Client::ObjectModel> _model;
 	ComboColumns                    _combo_columns;
 	Glib::RefPtr<Gtk::ListStore>    _key_store;
-	Glib::RefPtr<Gtk::ListStore>    _value_store;
 	sigc::connection                _property_connection;
 	sigc::connection                _property_removed_connection;
 	Gtk::VBox*                      _vbox;
 	Gtk::ScrolledWindow*            _scrolledwindow;
 	Gtk::Table*                     _table;
 	Gtk::ComboBox*                  _key_combo;
-	Gtk::ComboBox*                  _value_combo;
+	Gtk::Entry*                     _value_entry;
+	Gtk::Button*                    _value_button;
 	Gtk::Button*                    _add_button;
 	Gtk::Button*                    _cancel_button;
 	Gtk::Button*                    _apply_button;

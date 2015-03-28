@@ -41,6 +41,22 @@ label(World* world, const LilvNode* node)
 	return label;
 }
 
+Glib::ustring
+comment(World* world, const LilvNode* node)
+{
+	LilvNode* rdfs_comment = lilv_new_uri(
+		world->lilv_world(), LILV_NS_RDFS "comment");
+	LilvNodes* comments = lilv_world_find_nodes(
+		world->lilv_world(), node, rdfs_comment, NULL);
+
+	const LilvNode* first = lilv_nodes_get_first(comments);
+	Glib::ustring   comment = first ? lilv_node_as_string(first) : "";
+
+	lilv_nodes_free(comments);
+	lilv_node_free(rdfs_comment);
+	return comment;
+}
+
 void
 classes(World* world, URISet& types, bool super)
 {
@@ -158,8 +174,11 @@ instances(World* world, const URISet& types)
 		LilvNodes* objects = lilv_world_find_nodes(
 			world->lilv_world(), NULL, rdf_type, type);
 		LILV_FOREACH(nodes, o, objects) {
-			const LilvNode*     object = lilv_nodes_get(objects, o);
-			const Glib::ustring label  = RDFS::label(world, object);
+			const LilvNode* object = lilv_nodes_get(objects, o);
+			if (!lilv_node_is_uri(object)) {
+				continue;
+			}
+			const Glib::ustring label = RDFS::label(world, object);
 			result.insert(
 				std::make_pair(
 					Raul::URI(lilv_node_as_string(object)),

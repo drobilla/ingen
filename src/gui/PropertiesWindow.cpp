@@ -50,7 +50,8 @@ PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
 	xml->get_widget("properties_scrolledwindow", _scrolledwindow);
 	xml->get_widget("properties_table", _table);
 	xml->get_widget("properties_key_combo", _key_combo);
-	xml->get_widget("properties_value_combo", _value_combo);
+	xml->get_widget("properties_value_entry", _value_entry);
+	xml->get_widget("properties_value_button", _value_button);
 	xml->get_widget("properties_add_button", _add_button);
 	xml->get_widget("properties_cancel_button", _cancel_button);
 	xml->get_widget("properties_apply_button", _apply_button);
@@ -60,12 +61,11 @@ PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
 	_key_combo->set_model(_key_store);
 	_key_combo->pack_start(_combo_columns.label_col);
 
-	_value_store = Gtk::ListStore::create(_combo_columns);
-	_value_combo->set_model(_value_store);
-	_value_combo->pack_start(_combo_columns.label_col);
-
 	_key_combo->signal_changed().connect(
 		sigc::mem_fun(this, &PropertiesWindow::key_changed));
+
+	_value_button->signal_event().connect(
+		sigc::mem_fun(this, &PropertiesWindow::value_clicked));
 
 	_add_button->signal_clicked().connect(
 		sigc::mem_fun(this, &PropertiesWindow::add_clicked));
@@ -87,7 +87,7 @@ PropertiesWindow::reset()
 	_property_removed_connection.disconnect();
 
 	_key_store->clear();
-	_value_store->clear();
+	_value_entry->set_text("");
 	_records.clear();
 
 	_model.reset();
@@ -113,7 +113,7 @@ PropertiesWindow::add_property(const Raul::URI& uri, const Atom& value)
 	_table->property_n_rows() = n_rows;
 
 	// Column 0: Property
-	LilvNode* prop = lilv_new_uri(world->lilv_world(), uri.c_str());
+	LilvNode*     prop     = lilv_new_uri(world->lilv_world(), uri.c_str());
 	Glib::ustring lab_text = RDFS::label(world, prop);
 	if (lab_text.empty()) {
 		lab_text = world->rdf_world()->prefixes().qualify(uri);
@@ -122,9 +122,9 @@ PropertiesWindow::add_property(const Raul::URI& uri, const Atom& value)
 		+ lab_text + "</a>";
 	Gtk::Label* lab = manage(new Gtk::Label(lab_text, 1.0, 0.5));
 	lab->set_use_markup(true);
+	set_tooltip(lab, prop);
 	_table->attach(*lab, 0, 1, n_rows, n_rows + 1,
 	               Gtk::FILL|Gtk::SHRINK, Gtk::SHRINK);
-	lilv_node_free(prop);
 
 	// Column 1: Value
 	Gtk::Alignment*   align      = manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
@@ -133,12 +133,15 @@ PropertiesWindow::add_property(const Raul::URI& uri, const Atom& value)
 	present->set_active(true);
 	if (val_widget) {
 		align->add(*val_widget);
+		set_tooltip(val_widget, prop);
 	}
 	_table->attach(*align, 1, 2, n_rows, n_rows + 1,
 	               Gtk::FILL|Gtk::EXPAND, Gtk::SHRINK);
 	_table->attach(*present, 2, 3, n_rows, n_rows + 1,
 	               Gtk::FILL, Gtk::SHRINK);
 	_records.insert(make_pair(uri, Record(value, align, n_rows, present)));
+
+	lilv_node_free(prop);
 }
 
 /** Set the node this window is associated with.
@@ -297,7 +300,7 @@ PropertiesWindow::on_show()
 	}
 
 	req     = _table->size_request();
-	width   = std::max(width, req.width + 128);
+	width   = 1.6 * std::max(width, req.width + 128);
 	height += req.height;
 
 	set_default_size(width + WIN_PAD, height + WIN_PAD);
@@ -386,68 +389,179 @@ bad_type:
 	return;
 }
 
+std::string
+PropertiesWindow::active_property() const
+{
+	const Gtk::ListStore::iterator iter = _key_combo->get_active();
+	if (!iter) {
+		return "";
+	}
+
+	Glib::ustring prop_uri = (*iter)[_combo_columns.uri_col];
+	return prop_uri;
+}
+
 void
 PropertiesWindow::key_changed()
 {
+	/* TODO: Clear value?  Build new selector widget, once one for things other than
+	   URIs actually exists.  At the moment, clicking the menu button will
+	   generate the appropriate menu anyway. */
+}
+
+void
+PropertiesWindow::set_tooltip(Gtk::Widget* widget, const LilvNode* node)
+{
+	const Glib::ustring comment = RDFS::comment(_app->world(), node);
+	if (!comment.empty()) {
+		widget->set_tooltip_text(comment);
+	}
+}
+
+void
+PropertiesWindow::add_class_menu_item(Gtk::Menu* menu, const LilvNode* klass)
+{
+	const Glib::ustring label   = RDFS::label(_app->world(), klass);
+	Gtk::Menu*          submenu = build_subclass_menu(klass);
+
+	if (submenu) {
+		menu->items().push_back(Gtk::Menu_Helpers::MenuElem(label));
+		Gtk::MenuItem* menu_item = &(menu->items().back());
+		set_tooltip(menu_item, klass);
+		menu_item->set_submenu(*submenu);
+	} else {
+		menu->items().push_back(
+			Gtk::Menu_Helpers::MenuElem(
+				label,
+				sigc::bind(sigc::mem_fun(this, &PropertiesWindow::uri_chosen),
+				           std::string(lilv_node_as_uri(klass)))));
+	}
+	set_tooltip(&(menu->items().back()), klass);
+}
+
+Gtk::Menu*
+PropertiesWindow::build_subclass_menu(const LilvNode* klass)
+{
 	World* world = _app->world();
 
-	_value_store->clear();
+	LilvNode* rdfs_subClassOf = lilv_new_uri(
+		world->lilv_world(), LILV_NS_RDFS "subClassOf");
+	LilvNodes* subclasses = lilv_world_find_nodes(
+		world->lilv_world(), NULL, rdfs_subClassOf, klass);
 
-	const Gtk::ListStore::iterator iter = _key_combo->get_active();
-	if (!iter) {
-		return;
+	if (lilv_nodes_size(subclasses) == 0) {
+		return NULL;
 	}
 
-	const Gtk::ListStore::Row row      = *iter;
-	Glib::ustring             prop_uri = row[_combo_columns.uri_col];
+	const Glib::ustring label = RDFS::label(world, klass);
+	Gtk::Menu*          menu  = new Gtk::Menu();
+
+	// Add "header" item for choosing this class itself
+	menu->items().push_back(
+		Gtk::Menu_Helpers::MenuElem(
+			label,
+			sigc::bind(sigc::mem_fun(this, &PropertiesWindow::uri_chosen),
+			           std::string(lilv_node_as_uri(klass)))));
+	menu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
+	set_tooltip(&(menu->items().back()), klass);
+
+	// Add an item (and maybe submenu) for each subclass
+	LILV_FOREACH(nodes, s, subclasses) {
+		add_class_menu_item(menu, lilv_nodes_get(subclasses, s));
+	}
+	lilv_nodes_free(subclasses);
+	return menu;
+}
+
+void
+PropertiesWindow::build_value_menu(Gtk::Menu* menu, const LilvNodes* ranges)
+{
+	World*     world  = _app->world();
+	LilvWorld* lworld = world->lilv_world();
+
+	LilvNode* rdf_type        = lilv_new_uri(lworld, LILV_NS_RDF "type");
+	LilvNode* rdfs_Class      = lilv_new_uri(lworld, LILV_NS_RDFS "Class");
+	LilvNode* rdfs_subClassOf = lilv_new_uri(lworld, LILV_NS_RDFS "subClassOf");
+
+	LILV_FOREACH(nodes, r, ranges) {
+		const LilvNode* klass = lilv_nodes_get(ranges, r);
+		if (!lilv_node_is_uri(klass)) {
+			continue;
+		}
+		const char* uri = lilv_node_as_string(klass);
+
+		// Add items for instances of this class
+		RDFS::URISet ranges_uris;
+		ranges_uris.insert(Raul::URI(uri));
+		RDFS::Objects values = RDFS::instances(world, ranges_uris);
+		for (const auto& v : values) {
+			const LilvNode* inst  = lilv_new_uri(lworld, v.first.c_str());
+			Glib::ustring   label = RDFS::label(world, inst);
+			if (label.empty()) {
+				label = lilv_node_as_string(inst);
+			}
+
+			if (lilv_world_ask(world->lilv_world(), inst, rdf_type, rdfs_Class)) {
+				if (!lilv_world_ask(lworld, inst, rdfs_subClassOf, NULL) ||
+				    lilv_world_ask(lworld, inst, rdfs_subClassOf, inst)) {
+					add_class_menu_item(menu, inst);
+				}
+			} else {
+				menu->items().push_back(
+					Gtk::Menu_Helpers::MenuElem(
+						label,
+						sigc::bind(sigc::mem_fun(this, &PropertiesWindow::uri_chosen),
+						           std::string(lilv_node_as_uri(inst)))));
+				set_tooltip(&(menu->items().back()), inst);
+			}
+		}
+	}
+}
+
+void
+PropertiesWindow::uri_chosen(const std::string& uri)
+{
+	_value_entry->set_text(uri);
+}
+
+bool
+PropertiesWindow::value_clicked(GdkEvent* ev)
+{
+	if (ev->type != GDK_BUTTON_PRESS) {
+		return false;
+	}
+
+	// Get currently selected property (key) to add
+	const std::string prop_uri = active_property();
 	if (prop_uri.empty()) {
-		return;
+		return false;
 	}
+
+	World* world = _app->world();
 
 	LilvNode* rdfs_range = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDFS "range");
-	LilvNode* prop = lilv_new_uri(
-		world->lilv_world(), prop_uri.c_str());
 
-	LilvNodes* range = lilv_world_find_nodes(
+	LilvNode*  prop   = lilv_new_uri(world->lilv_world(), prop_uri.c_str());
+	LilvNodes* ranges = lilv_world_find_nodes(
 		world->lilv_world(), prop, rdfs_range, NULL);
 
-	// Get all classes in the range of this property (including sub-classes)
-	URISet ranges;
-	LILV_FOREACH(nodes, r, range) {
-		ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(range, r))));
-	}
-	RDFS::classes(world, ranges, false);
-
-	// Get all objects in range
-	RDFS::Objects values = RDFS::instances(world, ranges);
-
-	// Fill value selector with suitable objects
-	for (const auto& v : values) {
-		if (!v.second.empty()) {
-			Gtk::ListStore::iterator vi   = _value_store->append();
-			Gtk::ListStore::Row      vrow = *vi;
-
-			vrow[_combo_columns.uri_col]   = v.first;
-			vrow[_combo_columns.label_col] = v.second;
-		}
-	}
-
-	lilv_node_free(prop);
-	lilv_node_free(rdfs_range);
+	Gtk::Menu* menu = new Gtk::Menu();
+	build_value_menu(menu, ranges);
+	menu->popup(ev->button.button, ev->button.time);
+	return true;
 }
 
 void
 PropertiesWindow::add_clicked()
 {
-	if (!_key_combo->get_active() || !_value_combo->get_active()) {
+	if (!_key_combo->get_active() || _value_entry->get_text().empty()) {
 		return;
 	}
 
 	const Gtk::ListStore::Row krow      = *(_key_combo->get_active());
-	const Gtk::ListStore::Row vrow      = *(_value_combo->get_active());
-	Glib::ustring             key_uri   = krow[_combo_columns.uri_col];
-	Glib::ustring             value_uri = vrow[_combo_columns.uri_col];
+	const Glib::ustring       key_uri   = krow[_combo_columns.uri_col];
+	const Glib::ustring       value_uri = _value_entry->get_text();
 
 	Atom value = _app->forge().alloc_uri(value_uri);
 

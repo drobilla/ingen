@@ -45,6 +45,10 @@ typedef std::map<Raul::URI, Glib::ustring> Objects;
 Glib::ustring
 label(World* world, const LilvNode* node);
 
+/** Return the comment of `node`. */
+Glib::ustring
+comment(World* world, const LilvNode* node);
+
 /** Set `types` to its super/sub class closure.
  * @param super If true, find all superclasses, otherwise all subclasses
  */
