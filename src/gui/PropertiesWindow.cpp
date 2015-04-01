@@ -144,6 +144,56 @@ PropertiesWindow::add_property(const Raul::URI& key, const Atom& value)
 	lilv_node_free(prop);
 }
 
+bool
+PropertiesWindow::datatype_supported(const RDFS::URISet& types,
+                                     Raul::URI*          widget_type)
+{
+	if (types.find(_app->uris().atom_Int) != types.end()) {
+		*widget_type = _app->uris().atom_Int;
+		return true;
+	} else if (types.find(_app->uris().atom_Float) != types.end()) {
+		*widget_type = _app->uris().atom_Float;
+		return true;
+	} else if (types.find(_app->uris().atom_Bool) != types.end()) {
+		*widget_type = _app->uris().atom_Bool;
+		return true;
+	} else if (types.find(_app->uris().atom_String) != types.end()) {
+		*widget_type = _app->uris().atom_String;
+		return true;
+	} else if (types.find(_app->uris().atom_URID) != types.end()) {
+		*widget_type = _app->uris().atom_URID;
+		return true;
+	}
+
+	return false;
+}
+
+bool
+PropertiesWindow::class_supported(const RDFS::URISet& types)
+{
+	World*    world    = _app->world();
+	LilvNode* rdf_type = lilv_new_uri(
+		world->lilv_world(), LILV_NS_RDF "type");
+
+	for (const auto& t : types) {
+		LilvNode*   range     = lilv_new_uri(world->lilv_world(), t.c_str());
+		LilvNodes*  instances = lilv_world_find_nodes(
+			world->lilv_world(), NULL, rdf_type, range);
+
+		const bool has_instance = (lilv_nodes_size(instances) > 0);
+
+		lilv_nodes_free(instances);
+		lilv_node_free(range);
+		if (has_instance) {
+			lilv_node_free(rdf_type);
+			return true;
+		}
+	}
+
+	lilv_node_free(rdf_type);
+	return false;
+}
+
 /** Set the node this window is associated with.
  * This function MUST be called before using this object in any way.
  */
@@ -159,39 +209,37 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 
 	LilvNode* rdf_type = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDF "type");
+	LilvNode* rdfs_DataType = lilv_new_uri(
+		world->lilv_world(), LILV_NS_RDFS "Datatype");
 
 	// Populate key combo
 	const URISet                     props = RDFS::properties(world, model);
 	std::map<std::string, Raul::URI> entries;
 	for (const auto& p : props) {
-		LilvNode*         prop  = lilv_new_uri(world->lilv_world(), p.c_str());
-		const std::string label = RDFS::label(world, prop);
-		if (label.empty()) {
+		LilvNode*         prop   = lilv_new_uri(world->lilv_world(), p.c_str());
+		const std::string label  = RDFS::label(world, prop);
+		URISet            ranges = RDFS::range(world, prop, true);
+
+		lilv_node_free(prop);
+		if (label.empty() || ranges.empty()) {
+			// Property has no label or range, can't show a widget for it
 			continue;
 		}
 
-		// Get all classes in the range of this property (including subclasses)
-		URISet ranges = RDFS::range(world, prop, true);
-		bool   show   = false;
-		for (const auto& r : ranges) {
-			LilvNode*  range   = lilv_new_uri(world->lilv_world(), r.c_str());
-			LilvNodes* objects = lilv_world_find_nodes(
-				world->lilv_world(), NULL, rdf_type, range);
-
-			show = lilv_nodes_get_first(objects);
-
-			lilv_nodes_free(objects);
-			lilv_node_free(range);
-			if (show) {
-				break;  // At least one applicable object
+		LilvNode* range = lilv_new_uri(world->lilv_world(), (*ranges.begin()).c_str());
+		if (RDFS::is_a(world, range, rdfs_DataType)) {
+			// Range is a datatype, show if type or any subtype is supported
+			RDFS::datatypes(_app->world(), ranges, false);
+			Raul::URI widget_type("urn:nothing");
+			if (datatype_supported(ranges, &widget_type)) {
+				entries.insert(std::make_pair(label, p));
+			}
+		} else {
+			// Range is presumably a class, show if any instances are known
+			if (class_supported(ranges)) {
+				entries.insert(std::make_pair(label, p));
 			}
 		}
-
-		if (show || ranges.empty()) {
-			entries.insert(std::make_pair(label, p));
-		}
-
-		lilv_node_free(prop);
 	}
 
 	for (const auto& e : entries) {
@@ -201,6 +249,7 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 		row[_combo_columns.label_col] = e.first;
 	}
 
+	lilv_node_free(rdfs_DataType);
 	lilv_node_free(rdf_type);
 
 	for (const auto& p : model->properties()) {
@@ -224,9 +273,20 @@ PropertiesWindow::create_value_widget(const Raul::URI& key,
 		return NULL;
 	}
 
-	const Raul::URI type(type_uri);
-	Ingen::World*   world  = _app->world();
-	LilvWorld*      lworld = world->lilv_world();
+	Raul::URI     type(type_uri);
+	Ingen::World* world  = _app->world();
+	LilvWorld*    lworld = world->lilv_world();
+
+	// See if type is a datatype we support
+	std::set<Raul::URI> types{type};
+	RDFS::datatypes(_app->world(), types, false);
+
+	Raul::URI  widget_type("urn:nothing");
+	const bool supported = datatype_supported(types, &widget_type);
+	if (supported) {
+		type = widget_type;
+		_value_type = _app->world()->uri_map().map_uri(type);
+	}
 
 	if (type == _app->uris().atom_Int) {
 		Gtk::SpinButton* widget = manage(new Gtk::SpinButton(0.0, 0));
@@ -449,8 +509,8 @@ PropertiesWindow::active_key() const
 void
 PropertiesWindow::key_changed()
 {
+	_value_bin->remove();
 	if (!_key_combo->get_active()) {
-		_value_bin->remove();
 		return;
 	}
 
@@ -467,7 +527,6 @@ PropertiesWindow::key_changed()
 
 		if (value_widget) {
 			_add_button->set_sensitive(true);
-			_value_type = _app->world()->uri_map().map_uri(r);
 			_value_bin->remove();
 			_value_bin->add(*Gtk::manage(value_widget));
 			_value_bin->show_all();

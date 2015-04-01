@@ -52,6 +52,11 @@ std::string comment(World* world, const LilvNode* node);
  */
 void classes(World* world, URISet& types, bool super);
 
+/** Set `types` to its super/sub datatype closure.
+ * @param super If true, find all supertypes, otherwise all subtypes.
+ */
+void datatypes(World* world, URISet& types, bool super);
+
 /** Get all instances of any class in `types`. */
 Objects instances(World* world, const URISet& types);
 

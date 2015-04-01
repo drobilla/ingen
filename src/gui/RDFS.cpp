@@ -57,12 +57,9 @@ comment(World* world, const LilvNode* node)
 	return comment;
 }
 
-void
-classes(World* world, URISet& types, bool super)
+static void
+closure(World* world, const LilvNode* pred, URISet& types, bool super)
 {
-	LilvNode* rdfs_subClassOf = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "subClassOf");
-
 	unsigned added = 0;
 	do {
 		added = 0;
@@ -71,9 +68,9 @@ classes(World* world, URISet& types, bool super)
 			LilvNode*  type    = lilv_new_uri(world->lilv_world(), t.c_str());
 			LilvNodes* matches = (super)
 				? lilv_world_find_nodes(
-					world->lilv_world(), type, rdfs_subClassOf, NULL)
+					world->lilv_world(), type, pred, NULL)
 				: lilv_world_find_nodes(
-					world->lilv_world(), NULL, rdfs_subClassOf, type);
+					world->lilv_world(), NULL, pred, type);
 			LILV_FOREACH(nodes, m, matches) {
 				const LilvNode* klass_node = lilv_nodes_get(matches, m);
 				if (lilv_node_is_uri(klass_node)) {
@@ -89,8 +86,28 @@ classes(World* world, URISet& types, bool super)
 		}
 		types.insert(klasses.begin(), klasses.end());
 	} while (added > 0);
+}
+
+void
+classes(World* world, URISet& types, bool super)
+{
+	LilvNode* rdfs_subClassOf = lilv_new_uri(
+		world->lilv_world(), LILV_NS_RDFS "subClassOf");
+
+	closure(world, rdfs_subClassOf, types, super);
 
 	lilv_node_free(rdfs_subClassOf);
+}
+
+void
+datatypes(World* world, URISet& types, bool super)
+{
+	LilvNode* owl_onDatatype = lilv_new_uri(
+		world->lilv_world(), LILV_NS_OWL "onDatatype");
+
+	closure(world, owl_onDatatype, types, super);
+
+	lilv_node_free(owl_onDatatype);
 }
 
 URISet
@@ -139,6 +156,11 @@ properties(World* world, SPtr<const Client::ObjectModel> model)
 			unsigned n_matching_domains = 0;
 			LILV_FOREACH(nodes, d, domains) {
 				const LilvNode* domain_node = lilv_nodes_get(domains, d);
+				if (!lilv_node_is_uri(domain_node)) {
+					// TODO: Blank node domains (e.g. unions)
+					continue;
+				}
+
 				const Raul::URI domain(lilv_node_as_uri(domain_node));
 				if (types.count(domain)) {
 					++n_matching_domains;
