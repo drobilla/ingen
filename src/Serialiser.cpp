@@ -409,7 +409,7 @@ Serialiser::Impl::serialise_block(SPtr<const Node>  block,
 	                      Sord::URI(_model->world(), uris.rdf_type),
 	                      Sord::URI(_model->world(), uris.ingen_Block));
 	_model->add_statement(block_id,
-	                      Sord::URI(_model->world(), uris.ingen_prototype),
+	                      Sord::URI(_model->world(), uris.lv2_prototype),
 	                      class_id);
 
 	const Node::Properties props = block->properties(Resource::Graph::EXTERNAL);

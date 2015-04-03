@@ -69,9 +69,20 @@ CreateBlock::pre_process()
 		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _path.parent());
 	}
 
-	// Get prototype URI
-	const iterator t = _properties.find(uris.ingen_prototype);
+	// Map old ingen:prototype to new lv2:prototype
+	auto range = _properties.equal_range(uris.ingen_prototype);
+	for (auto i = range.first; i != range.second;) {
+		const auto& value = i->second;
+		auto        next  = i;
+		next = _properties.erase(i);
+		_properties.insert(std::make_pair(uris.lv2_prototype, i->second));
+		i = next;
+	}
+
+	// Get prototype
+	iterator t = _properties.find(uris.lv2_prototype);
 	if (t == _properties.end() || t->second.type() != uris.forge.URI) {
+		// Missing/invalid prototype
 		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
 
@@ -98,7 +109,8 @@ CreateBlock::pre_process()
 		/* Replace prototype with the ancestor's.  This is less informative,
 		   but the client expects an actual LV2 plugin as prototype. */
 		_properties.erase(uris.ingen_prototype);
-		_properties.insert(std::make_pair(uris.ingen_prototype,
+		_properties.erase(uris.lv2_prototype);
+		_properties.insert(std::make_pair(uris.lv2_prototype,
 		                                  uris.forge.alloc_uri(ancestor->plugin()->uri())));
 	} else {
 		// Prototype is a plugin

@@ -14,7 +14,7 @@
 	patch:subject <ingen:/root/sub/node1> ;
 	patch:body [
 		a ingen:Block ;
-		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
+		lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
 	] .
 
 <msg2>
@@ -22,7 +22,7 @@
 	patch:subject <ingen:/root/sub/node2> ;
 	patch:body [
 		a ingen:Block ;
-		ingen:prototype <http://drobilla.net/plugins/mda/Combo>
+		lv2:prototype <http://drobilla.net/plugins/mda/Combo>
 	] .
 
 <msg3>

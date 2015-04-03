@@ -76,8 +76,12 @@ CreateGraph::pre_process()
 
 	const Raul::Symbol symbol((_path.is_root()) ? "root" : _path.symbol());
 
-	// Create graph based on prototype
-	const iterator t = _properties.find(uris.ingen_prototype);
+	// Get graph prototype
+	iterator t = _properties.find(uris.lv2_prototype);
+	if (t == _properties.end()) {
+		t = _properties.find(uris.lv2_prototype);
+	}
+
 	if (t != _properties.end() &&
 	    Raul::URI::is_valid(t->second.ptr<char>()) &&
 	    Node::uri_is_path(Raul::URI(t->second.ptr<char>()))) {

@@ -280,7 +280,11 @@ ClientStore::put(const Raul::URI&            uri,
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_block) {
-		const Iterator p = properties.find(_uris.ingen_prototype);
+		Iterator p = properties.find(_uris.lv2_prototype);
+		if (p == properties.end()) {
+			p = properties.find(_uris.ingen_prototype);
+		}
+
 		SPtr<PluginModel> plug;
 		if (p->second.is_valid() && p->second.type() == _uris.forge.URI) {
 			if (!(plug = _plugin(Raul::URI(p->second.ptr<char>())))) {
@@ -297,8 +301,7 @@ ClientStore::put(const Raul::URI&            uri,
 			bm->set_properties(properties);
 			add_object(bm);
 		} else {
-			_log.warn(fmt("Block %1% has no prototype\n")
-			          % path.c_str());
+			_log.warn(fmt("Block %1% has no prototype\n") % path.c_str());
 		}
 	} else if (is_port) {
 		PortModel::Direction pdir = (is_output)
@@ -314,8 +317,7 @@ ClientStore::put(const Raul::URI&            uri,
 		p->set_properties(properties);
 		add_object(p);
 	} else {
-		_log.warn(fmt("Ignoring object %1% with unknown type\n")
-		          % path.c_str());
+		_log.warn(fmt("Ignoring %1% of unknown type\n") % path.c_str());
 	}
 }
 

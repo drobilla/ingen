@@ -7,7 +7,7 @@
 	patch:subject <ingen:/root/node> ;
 	patch:body [
 		a ingen:Block ;
-		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
+		lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
 	] .
 
 <msg1>

@@ -683,7 +683,7 @@ GraphCanvas::paste()
 		const Raul::URI&  old_uri  = Node::path_to_uri(old_path);
 		const Raul::Path& new_path = avoider.map_path(parent.child(node->path()));
 
-		Node::Properties props{{uris.ingen_prototype,
+		Node::Properties props{{uris.lv2_prototype,
 		                        _app.forge().alloc_uri(old_uri)}};
 
 		// Set the same types
@@ -789,7 +789,7 @@ GraphCanvas::load_plugin(WPtr<PluginModel> weak_plugin)
 	Node::Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type,
 	                       Resource::Property(uris.ingen_Block)));
-	props.insert(make_pair(uris.ingen_prototype,
+	props.insert(make_pair(uris.lv2_prototype,
 	                       uris.forge.alloc_uri(plugin->uri())));
 	_app.interface()->put(Node::path_to_uri(path), props);
 }

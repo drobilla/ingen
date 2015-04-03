@@ -54,8 +54,8 @@ Example:
     ingenish put /left_in 'a lv2:InputPort ; a lv2:AudioPort'
     ingenish put /left_out 'a lv2:OutputPort ; a lv2:AudioPort'
 
-    ingenish put /tone 'a ingen:Block ; ingen:prototype <http://drobilla.net/plugins/mda/Shepard>'
-    ingenish put /combo 'a ingen:Block ; ingen:prototype <http://drobilla.net/plugins/mda/Combo>'
+    ingenish put /tone 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Shepard>'
+    ingenish put /combo 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Combo>'
     ingenish connect /left_in /tone/left_in
     ingenish connect /tone/left_out /combo/left_in
     ingenish connect /combo/left_out /left_out

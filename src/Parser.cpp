@@ -276,23 +276,29 @@ parse_block(Ingen::World*                     world,
 {
 	const URIs& uris = world->uris();
 
-	const Sord::URI  ingen_prototype(*world->rdf_world(), uris.ingen_prototype);
-	const Sord::Node nil;
+	// Try lv2:prototype and old ingen:prototype for backwards compatibility
+	const Sord::URI prototype_predicates[] = {
+		Sord::URI(*world->rdf_world(), uris.lv2_prototype),
+		Sord::URI(*world->rdf_world(), uris.ingen_prototype)
+	};
 
-	Sord::Iter i = model.find(subject, ingen_prototype, nil);
-	if (i.end() || i.get_object().type() != Sord::Node::URI) {
-		if (!i.end()) {
-			std::cerr << "type: " << i.get_object().type() << std::endl;
+	std::string type_uri;
+	for (const Sord::URI& prototype : prototype_predicates) {
+		Sord::Iter i = model.find(subject, prototype, Sord::Node());
+		if (!i.end() && i.get_object().type() == Sord::Node::URI) {
+			type_uri = relative_uri(base_uri,
+			                        i.get_object().to_string(),
+			                        false);
+			break;
 		}
+	}
+
+	if (type_uri.empty()) {
 		world->log().error(
-			fmt("Block %1% (%2%) missing mandatory ingen:prototype\n") %
+			fmt("Block %1% (%2%) missing mandatory lv2:prototype\n") %
 			subject.to_string() % path);
 		return boost::optional<Raul::Path>();
 	}
-
-	const std::string type_uri = relative_uri(base_uri,
-	                                          i.get_object().to_string(),
-	                                          false);
 
 	if (!serd_uri_string_has_scheme((const uint8_t*)type_uri.c_str())) {
 		SerdURI base_uri_parts;
@@ -300,7 +306,7 @@ parse_block(Ingen::World*                     world,
 
 		SerdURI  ignored;
 		SerdNode sub_uri = serd_node_new_uri_from_string(
-			i.get_object().to_u_string(),
+			(const uint8_t*)type_uri.c_str(),
 			&base_uri_parts,
 			&ignored);
 

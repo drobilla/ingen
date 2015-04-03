@@ -38,7 +38,7 @@ class World:
         self.mod_prototypes[self.mod_sym(mod_id)] = plugin_uri
         self.server.put('/' + self.mod_sym(mod_id),
                         ('\t\ta ingen:Block ;\n'
-                         + 'ingen:prototype <%s> ;\n' % plugin_uri
+                         + 'lv2:prototype <%s> ;\n' % plugin_uri
                          + 'ingen:canvasX %f ;\n' % x
                          + 'ingen:canvasY %f' % y).replace('\n', '\n\t\t'))
 

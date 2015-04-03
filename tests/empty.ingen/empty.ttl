@@ -37,5 +37,5 @@
 		<control_out> ;
 	lv2:symbol "empty" ;
 	doap:name "empty" ;
-	a ingen:Patch ,
+	a ingen:Graph ,
 		lv2:Plugin .

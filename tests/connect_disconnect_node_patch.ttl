@@ -8,7 +8,7 @@
 	patch:subject <ingen:/root/amp> ;
 	patch:body [
 		a ingen:Block ;
-		ingen:prototype <http://lv2plug.in/plugins/eg-amp>
+		lv2:prototype <http://lv2plug.in/plugins/eg-amp>
 	] .
 
 <msg1>
@@ -16,7 +16,7 @@
 	patch:subject <ingen:/root/sampler> ;
 	patch:body [
 		a ingen:Block ;
-		ingen:prototype <http://lv2plug.in/plugins/eg-sampler>
+		lv2:prototype <http://lv2plug.in/plugins/eg-sampler>
 	] .
 
 <msg2>
