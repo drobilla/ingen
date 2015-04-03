@@ -144,8 +144,7 @@ main(int argc, char** argv)
 
 	world->set_interface(engine_interface);
 
-	// Load necessary modules before activating engine (and Jack driver)
-
+	// Load GUI if requested
 	if (conf.option("gui").get<int32_t>()) {
 		ingen_try(world->load_module("gui"),
 		          "Unable to load GUI module");

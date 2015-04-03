@@ -59,12 +59,10 @@
 namespace Ingen {
 
 /** Record of a graph in this bundle. */
-struct LV2Graph {
-	LV2Graph(const std::string& u, const std::string& f);
+struct LV2Graph : public Parser::ResourceRecord {
+	LV2Graph(const Parser::ResourceRecord& record);
 
-	const std::string uri;
-	const std::string filename;
-	LV2_Descriptor    descriptor;
+	LV2_Descriptor descriptor;
 };
 
 /** Ingen LV2 library. */
@@ -455,33 +453,19 @@ struct IngenPlugin {
 static Lib::Graphs
 find_graphs(const std::string& manifest_uri)
 {
-	Sord::World      world;
-	const Sord::URI  base(world, manifest_uri);
-	const Sord::Node nil;
-	const Sord::URI  ingen_Graph (world, INGEN__Graph);
-	const Sord::URI  rdf_type    (world, NS_RDF "type");
-	const Sord::URI  rdfs_seeAlso(world, NS_RDFS "seeAlso");
+	Sord::World world;
+	Parser      parser;
 
-	SerdEnv* env = serd_env_new(sord_node_to_serd_node(base.c_obj()));
-	Sord::Model model(world, manifest_uri);
-	model.load_file(env, SERD_TURTLE, manifest_uri);
+	const std::set<Parser::ResourceRecord> resources = parser.find_resources(
+		world,
+		manifest_uri,
+		Raul::URI(INGEN__Graph));
 
 	Lib::Graphs graphs;
-	for (Sord::Iter i = model.find(nil, rdf_type, ingen_Graph); !i.end(); ++i) {
-		const Sord::Node  graph     = i.get_subject();
-		Sord::Iter        f         = model.find(graph, rdfs_seeAlso, nil);
-		const std::string graph_uri = graph.to_c_string();
-		if (!f.end()) {
-			const uint8_t* file_uri  = f.get_object().to_u_string();
-			uint8_t*       file_path = serd_file_uri_parse(file_uri, NULL);
-			graphs.push_back(
-				SPtr<const LV2Graph>(
-					new LV2Graph(graph_uri, (const char*)file_path)));
-			free(file_path);
-		}
+	for (const auto& r : resources) {
+		graphs.push_back(SPtr<const LV2Graph>(new LV2Graph(r)));
 	}
 
-	serd_env_free(env);
 	return graphs;
 }
 
@@ -805,9 +789,8 @@ ingen_extension_data(const char* uri)
 	return NULL;
 }
 
-LV2Graph::LV2Graph(const std::string& u, const std::string& f)
-	: uri(u)
-	, filename(f)
+LV2Graph::LV2Graph(const Parser::ResourceRecord& record)
+	: Parser::ResourceRecord(record)
 {
 	descriptor.URI            = uri.c_str();
 	descriptor.instantiate    = ingen_instantiate;

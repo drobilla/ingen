@@ -35,11 +35,45 @@
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
+#define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+#define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
+
 using namespace std;
 
-typedef set<Sord::Node> RDFNodes;
-
 namespace Ingen {
+
+std::set<Parser::ResourceRecord>
+Parser::find_resources(Sord::World&       world,
+                       const std::string& manifest_uri,
+                       const Raul::URI&   type_uri)
+{
+	const Sord::URI  base        (world, manifest_uri);
+	const Sord::URI  type        (world, type_uri);
+	const Sord::URI  rdf_type    (world, NS_RDF "type");
+	const Sord::URI  rdfs_seeAlso(world, NS_RDFS "seeAlso");
+	const Sord::Node nil;
+
+	SerdEnv* env = serd_env_new(sord_node_to_serd_node(base.c_obj()));
+	Sord::Model model(world, manifest_uri);
+	model.load_file(env, SERD_TURTLE, manifest_uri);
+
+	std::set<ResourceRecord> resources;
+	for (Sord::Iter i = model.find(nil, rdf_type, type); !i.end(); ++i) {
+		const Sord::Node  resource     = i.get_subject();
+		const std::string resource_uri = resource.to_c_string();
+		std::string       file_path    = "";
+		Sord::Iter        f            = model.find(resource, rdfs_seeAlso, nil);
+		if (!f.end()) {
+			uint8_t* p = serd_file_uri_parse(f.get_object().to_u_string(), NULL);
+			file_path = (const char*)p;
+			free(p);
+		}
+		resources.insert(ResourceRecord(resource.to_string(), file_path));
+	}
+
+	serd_env_free(env);
+	return resources;
+}
 
 static std::string
 relative_uri(const std::string& base, const std::string& uri, bool leading_slash)
@@ -326,6 +360,8 @@ parse_graph(Ingen::World*                     world,
 		graph_path_str = parent->child(*a_symbol);
 	} else if (parent) {
 		graph_path_str = *parent;
+	} else {
+		graph_path_str = "/";
 	}
 
 	if (!Raul::Path::is_valid(graph_path_str)) {
@@ -570,35 +606,56 @@ Parser::parse_file(Ingen::World*                     world,
                    boost::optional<Raul::Symbol>     symbol,
                    boost::optional<Node::Properties> data)
 {
+	// Get absolute file path
 	std::string file_path = path;
 	if (!Glib::path_is_absolute(file_path)) {
 		file_path = Glib::build_filename(Glib::get_current_dir(), file_path);
 	}
-	if (Glib::file_test(file_path, Glib::FILE_TEST_IS_DIR)) {
-		// This is a bundle, append "/name.ttl" to get graph file path
-		file_path = Glib::build_filename(path, get_basename(path) + ".ttl");
-	}
 
-	std::string uri;
+	// Find file to use as manifest
+	const bool        is_bundle     = Glib::file_test(file_path, Glib::FILE_TEST_IS_DIR);
+	const std::string manifest_path = (is_bundle
+	                                   ? Glib::build_filename(file_path, "manifest.ttl")
+	                                   : file_path);
+
+	std::string manifest_uri;
 	try {
-		uri = Glib::filename_to_uri(file_path, "");
+		manifest_uri = Glib::filename_to_uri(manifest_path);
 	} catch (const Glib::ConvertError& e) {
-		world->log().error(fmt("Path to URI conversion error: %1%\n")
-		                   % e.what());
+		world->log().error(fmt("URI conversion error (%1%)\n") % e.what());
 		return false;
 	}
 
-	const uint8_t* uri_c_str = (const uint8_t*)uri.c_str();
-	SerdNode       base_node = serd_node_from_string(SERD_URI, uri_c_str);
-	SerdEnv*       env       = serd_env_new(&base_node);
+	// Find graphs in manifest
+	const std::set<ResourceRecord> resources = find_resources(
+		*world->rdf_world(),
+		Glib::filename_to_uri(manifest_path),
+		Raul::URI(INGEN__Graph));
 
-	// Load graph file into model
+	if (resources.empty()) {
+		world->log().error(fmt("No graphs found in %1%\n") % path);
+		return false;
+	}
+
+	// Choose the first (only) graph (only one top-level graph per bundle)
+	const std::string& uri = (*resources.begin()).uri;
+	if ((file_path = (*resources.begin()).filename).empty()) {
+		// No seeAlso file, use "manifest" (probably the graph file itself)
+		file_path = manifest_path;
+	}
+
+	// Initialise parsing environment
+	const std::string file_uri  = Glib::filename_to_uri(file_path);
+	const uint8_t*    uri_c_str = (const uint8_t*)uri.c_str();
+	SerdNode          base_node = serd_node_from_string(SERD_URI, uri_c_str);
+	SerdEnv*          env       = serd_env_new(&base_node);
+
+	// Load graph into model
 	Sord::Model model(*world->rdf_world(), uri, SORD_SPO|SORD_PSO, false);
-	model.load_file(env, SERD_TURTLE, uri);
-
+	model.load_file(env, SERD_TURTLE, file_uri);
 	serd_env_free(env);
 
-	world->log().info(fmt("Parsing %1%\n") % file_path);
+	world->log().info(fmt("Loading %1% from %2%\n") % uri % file_path);
 	if (parent)
 		world->log().info(fmt("Parent: %1%\n") % parent->c_str());
 	if (symbol)

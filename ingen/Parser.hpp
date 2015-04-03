@@ -18,7 +18,7 @@
 #define INGEN_PARSER_HPP
 
 #include <string>
-#include <list>
+#include <set>
 
 #include <boost/optional.hpp>
 
@@ -26,6 +26,7 @@
 #include "ingen/ingen.h"
 #include "raul/Path.hpp"
 #include "raul/URI.hpp"
+#include "sord/sordmm.hpp"
 
 namespace Ingen {
 
@@ -44,6 +45,26 @@ public:
 	virtual ~Parser() {}
 
 	typedef Node::Properties Properties;
+
+	/** Record of a resource listed in a bundle manifest. */
+	struct ResourceRecord {
+		inline ResourceRecord(const std::string& u, const std::string& f)
+			: uri(u), filename(f)
+		{}
+
+		inline bool operator<(const ResourceRecord& r) const {
+			return uri < r.uri;
+		}
+
+		std::string uri;       ///< URI of resource (e.g. a Graph)
+		std::string filename;  ///< Path of describing file (seeAlso)
+	};
+
+	/** Find all resources of a given type listed in a manifest file. */
+	virtual std::set<ResourceRecord> find_resources(
+		Sord::World&       world,
+		const std::string& manifest_uri,
+		const Raul::URI&   type_uri);
 
 	virtual bool parse_file(
 		World*                        world,
