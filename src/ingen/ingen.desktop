@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Ingen
-Comment=Create synthesizers and effects processors in a modular environment
+Comment=Create synthesizers and effects in a modular environment
 Exec=ingen -eg
 Terminal=false
 Icon=ingen
