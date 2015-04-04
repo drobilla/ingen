@@ -38,7 +38,7 @@ Configuration::Configuration(Forge& forge)
 		"Ingen is a flexible modular system that be used in various ways.\n"
 		"The engine can run as a server controlled via a network protocol,\n"
 		"as an LV2 plugin, or in a monolithic process with a GUI.  The GUI\n"
-		"may be run separate to control a remote engine, and many clients\n"
+		"may be run separately to control a remote engine, and many clients\n"
 		"may connect to an engine at once.\n\n"
 		"Examples:\n"
 		"  ingen -e             # Run engine, listen for connections\n"
