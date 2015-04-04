@@ -224,11 +224,17 @@ def build(bld):
     bld.install_files('${MANDIR}/man1', 'doc/ingen.1')
 
     # Icons
-    icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48']
+    icon_dir   = os.path.join(bld.env.DATADIR, 'icons', 'hicolor')
+    icon_sizes = [16, 22, 24, 32, 48, 64, 128, 256, 512]
     for s in icon_sizes:
+        d = '%dx%d' % (s, s)
         bld.install_as(
-                os.path.join(bld.env.DATADIR, 'icons', 'hicolor', s, 'apps', 'ingen.png'),
-                'icons/' + s + '/ingen.png')
+            os.path.join(icon_dir, d, 'apps', 'ingen.png'),
+            os.path.join('icons', d, 'ingen.png'))
+
+    bld.install_as(
+        os.path.join(icon_dir, 'scalable', 'apps', 'ingen.svg'),
+        os.path.join('icons', 'scalable', 'ingen.svg'))
 
     bld.install_files('${LV2DIR}/ingen.lv2/',
                       bld.path.ant_glob('bundles/ingen.lv2/*'))
