@@ -1,4 +1,4 @@
-.TH INGEN 1 "08 Feb 2015"
+.TH INGEN 1 "04 Apr 2015"
 
 .SH NAME
 .B ingen \- A realtime modular audio processor
@@ -9,16 +9,16 @@ ingen [OPTION]...
 .SH OPTIONS
 
 .TP
-\fB\-C, \-\-client\-port\fR
+\fB\-C, \-\-client\-port\fR=\fIINT\fR
 Client port
 .TP
-\fB\-c, \-\-connect\fR
+\fB\-c, \-\-connect\fR=\fISTRING\fR
 Connect to engine URI
 .TP
 \fB\-e, \-\-engine\fR
 Run (JACK) engine
 .TP
-\fB\-E, \-\-engine-port\fR
+\fB\-E, \-\-engine-port\fR=\fIINT\fR
 Engine listen port
 .TP
 \fB\-\-graph\-directory\fR
@@ -33,31 +33,31 @@ Print this help message
 \fB\-\-human\-names\fR
 Show human names in GUI
 .TP
-\fB\-n, \-\-jack\-name\fR
+\fB\-n, \-\-jack\-name\fR=\fISTRING\fR
 JACK name
 .TP
-\fB\-s, \-\-jack\-server\fR
+\fB\-s, \-\-jack\-server\fR=\fISTRING\fR
 JACK server name
 .TP
-\fB\-l, \-\-load\fR
+\fB\-l, \-\-load\fR=\fISTRING\fR
 Load graph
 .TP
-\fB\-L, \-\-path\fR
+\fB\-L, \-\-path\fR=\fISTRING\fR
 Target path for loaded graph
 .TP
 \fB\-\-port\-labels\fR
 Show port labels in GUI
 .TP
-\fB\-q, \-\-queue-size\fR
+\fB\-q, \-\-queue-size\fR=\fIINT\fR
 Event queue size
 .TP
 \fB\-r, \-\-run\fR
 Run script
 .TP
-\fB\-S, \-\-socket\fR
+\fB\-S, \-\-socket\fR=\fISTRING\fR
 Engine socket path
 .TP
-\fB\-u, \-\-uuid\fR
+\fB\-u, \-\-uuid\fR=\fISTRING\fR
 JACK session UUID
 .TP
 \fB\-V, \-\-version\fR

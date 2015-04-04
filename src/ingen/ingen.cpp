@@ -64,7 +64,7 @@ static void
 ingen_try(bool cond, const char* msg)
 {
 	if (!cond) {
-		cerr << "ingen: Error: " << msg << endl;
+		cerr << "ingen: error: " << msg << endl;
 		delete world;
 		exit(EXIT_FAILURE);
 	}
@@ -101,7 +101,7 @@ main(int argc, char** argv)
 			return print_version();
 		}
 	} catch (std::exception& e) {
-		cout << "ingen: " << e.what() << endl;
+		cout << "ingen: error: " << e.what() << endl;
 		return EXIT_FAILURE;
 	}
 
@@ -113,8 +113,7 @@ main(int argc, char** argv)
 	// Run engine
 	SPtr<Interface> engine_interface;
 	if (conf.option("engine").get<int32_t>()) {
-		ingen_try(world->load_module("server"),
-		          "Unable to load server module");
+		ingen_try(world->load_module("server"), "Failed to load server module");
 
 		ingen_try(bool(world->engine()), "Unable to create engine");
 		world->engine()->listen();
@@ -124,8 +123,7 @@ main(int argc, char** argv)
 
 	// If we don't have a local engine interface (for GUI), use network
 	if (!engine_interface) {
-		ingen_try(world->load_module("client"),
-		          "Unable to load client module");
+		ingen_try(world->load_module("client"), "Failed to load client module");
 #ifdef HAVE_SOCKET
 		Client::SocketClient::register_factories(world);
 #endif
@@ -136,9 +134,9 @@ main(int argc, char** argv)
 		engine_interface = world->new_interface(Raul::URI(uri), client);
 
 		if (!engine_interface && !conf.option("gui").get<int32_t>()) {
-			cerr << fmt("ingen: Error: Unable to create interface to `%1%'\n");
+			cerr << (fmt("ingen: error: Failed to connect to `%1%'\n") % uri);
 			delete world;
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 		}
 	}
 
@@ -146,19 +144,17 @@ main(int argc, char** argv)
 
 	// Load GUI if requested
 	if (conf.option("gui").get<int32_t>()) {
-		ingen_try(world->load_module("gui"),
-		          "Unable to load GUI module");
+		ingen_try(world->load_module("gui"), "Failed to load GUI module");
 	}
 
 	// Activate the engine, if we have one
 	if (world->engine()) {
-		ingen_try(world->load_module("jack"),
-		          "Unable to load jack module");
+		ingen_try(world->load_module("jack"), "Failed to load jack module");
 		world->engine()->activate();
 	}
 
 	// Load a graph
-	if (conf.option("load").is_valid() || !conf.files().empty()) {
+	if (conf.option("load").is_valid()) {
 		boost::optional<Raul::Path>   parent;
 		boost::optional<Raul::Symbol> symbol;
 
@@ -175,16 +171,14 @@ main(int argc, char** argv)
 			}
 		}
 
-		ingen_try(bool(world->parser()), "Unable to create parser");
+		ingen_try(bool(world->parser()), "Failed to create parser");
 
-		const string path = (conf.option("load").is_valid()
-		                     ? conf.option("load").ptr<char>()
-		                     : conf.files().front());
+		const string graph = conf.option("load").ptr<char>();
 
 		engine_interface->get(Raul::URI("ingen:/plugins"));
 		engine_interface->get(Node::root_uri());
 		world->parser()->parse_file(
-			world, engine_interface.get(), path, parent, symbol);
+			world, engine_interface.get(), graph, parent, symbol);
 	}
 
 	// Set up signal handlers that will set quit_flag on interrupt

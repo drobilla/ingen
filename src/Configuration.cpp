@@ -36,16 +36,15 @@ Configuration::Configuration(Forge& forge)
 	, _shortdesc("A realtime modular audio processor.")
 	, _desc(
 		"Ingen is a flexible modular system that be used in various ways.\n"
-		"The engine can run as a stand-alone server controlled via network protocol,\n"
-		"or internal to another process (e.g. the GUI).  The GUI, or other clients,\n"
-		"can communicate with the engine via any supported protocol, or run in the\n"
-		"same process.  Many clients can connect to an engine at once.\n\n"
+		"The engine can run as a server controlled via a network protocol,\n"
+		"as an LV2 plugin, or in a monolithic process with a GUI.  The GUI\n"
+		"may be run separate to control a remote engine, and many clients\n"
+		"may connect to an engine at once.\n\n"
 		"Examples:\n"
-		"  ingen -e              # Run an engine, listen for connections\n"
-		"  ingen -g              # Run a GUI, connect to running engine\n"
-		"  ingen -eg             # Run an engine and a GUI in one process\n"
-		"  ingen -egl foo.ttl    # Run an engine and a GUI and load a graph\n"
-		"  ingen -egl foo.ingen  # Run an engine and a GUI and load a graph")
+		"  ingen -e             # Run engine, listen for connections\n"
+		"  ingen -g             # Run GUI, connect to running engine\n"
+		"  ingen -eg            # Run engine and GUI in one process\n"
+		"  ingen -eg foo.ingen  # Run engine and GUI and load a graph")
 	, _max_name_length(0)
 {
 	add("clientPort",     "client-port",    'C', "Client port", SESSION, forge.Int, Atom());
@@ -88,22 +87,34 @@ Configuration::add(const std::string& key,
 	return *this;
 }
 
+std::string
+Configuration::variable_string(LV2_URID type) const
+{
+	if (type == _forge.String) {
+		return "=STRING";
+	} else if (type == _forge.Int) {
+		return "=INT";
+	}
+	return "";
+}
+
 void
 Configuration::print_usage(const std::string& program, std::ostream& os)
 {
-	os << "Usage: " << program << " [OPTION]..." << std::endl;
+	os << "Usage: " << program << " [OPTION]... [GRAPH]" << std::endl;
 	os << _shortdesc << std::endl << std::endl;
 	os << _desc << std::endl << std::endl;
 	os << "Options:" << std::endl;
-	for (auto o : _options) {
-		Option& option = o.second;
+	for (const auto& o : _options) {
+		const Option& option = o.second;
 		os << "  ";
 		if (option.letter != '\0')
 			os << "-" << option.letter << ", ";
 		else
 			os << "    ";
-		os.width(_max_name_length + 4);
-		os << std::left << (std::string("--") + o.first);
+		os.width(_max_name_length + 11);
+		os << std::left;
+		os << (std::string("--") + o.first + variable_string(option.type));
 		os << option.desc << std::endl;
 	}
 }
@@ -120,7 +131,7 @@ Configuration::set_value_from_string(Configuration::Option& option,
 			option.value = _forge.make(intval);
 		} else {
 			throw OptionError(
-				(fmt("option `%1%' has non-integer value `%2%'")
+				(fmt("Option `%1%' has non-integer value `%2%'")
 				 % option.name % value).str());
 		}
 	} else if (option.type == _forge.String) {
@@ -131,7 +142,7 @@ Configuration::set_value_from_string(Configuration::Option& option,
 		assert(option.value.type() == _forge.Bool);
 	} else {
 		throw OptionError(
-			(fmt("bad option type `%1%'") % option.name).str());
+			(fmt("Bad option type `%1%'") % option.name).str());
 	}
 	return EXIT_SUCCESS;
 }
@@ -142,45 +153,60 @@ Configuration::parse(int argc, char** argv) throw (Configuration::OptionError)
 {
 	for (int i = 1; i < argc; ++i) {
 		if (argv[i][0] != '-' || !strcmp(argv[i], "-")) {
-			_files.push_back(argv[i]);
+			// File argument
+			const Options::iterator o = _options.find("load");
+			if (!o->second.value.is_valid()) {
+				_options.find("load")->second.value = _forge.alloc(argv[i]);
+			} else {
+				throw OptionError("Multiple graphs specified");
+			}
 		} else if (argv[i][1] == '-') {
-			const std::string name = std::string(argv[i]).substr(2);
-			Options::iterator o = _options.find(name);
+			// Long option
+			std::string name   = std::string(argv[i]).substr(2);
+			const char* equals = strchr(argv[i], '=');
+			if (equals) {
+				name = name.substr(0, name.find('='));
+			}
+
+			const Options::iterator o = _options.find(name);
 			if (o == _options.end()) {
 				throw OptionError(
-					(fmt("unrecognized option `%1%'") % name).str());
-			}
-			if (o->second.type == _forge.Bool) {
+					(fmt("Unrecognized option `%1%'") % name).str());
+			} else if (o->second.type == _forge.Bool) {  // --flag
 				o->second.value = _forge.make(true);
-			} else {
-				if (++i >= argc)
-					throw OptionError(
-						(fmt("missing value for `%1%'") % name).str());
+			} else if (equals) {  // --opt=val
+				set_value_from_string(o->second, equals + 1);
+			} else if (++i < argc) {  // --opt val
 				set_value_from_string(o->second, argv[i]);
+			} else {
+				throw OptionError(
+					(fmt("Missing value for `%1%'") % name).str());
 			}
 		} else {
+			// Short option
 			const size_t len = strlen(argv[i]);
 			for (size_t j = 1; j < len; ++j) {
-				char letter = argv[i][j];
-				ShortNames::iterator n = _short_names.find(letter);
-				if (n == _short_names.end())
+				const char                 letter = argv[i][j];
+				const ShortNames::iterator n      = _short_names.find(letter);
+				if (n == _short_names.end()) {
 					throw OptionError(
-						(fmt("unrecognized option `%1%'") % letter).str());
-				Options::iterator o = _options.find(n->second);
-				if (j < len - 1) {
-					if (o->second.type != _forge.Bool)
+						(fmt("Unrecognized option `%1%'") % letter).str());
+				}
+
+				const Options::iterator o = _options.find(n->second);
+				if (j < len - 1) {  // Non-final POSIX style flag
+					if (o->second.type != _forge.Bool) {
 						throw OptionError(
-							(fmt("missing value for `%1%'") % letter).str());
-					o->second.value = _forge.make(true);
-				} else {
-					if (o->second.type == _forge.Bool) {
-						o->second.value = _forge.make(true);
-					} else {
-						if (++i >= argc)
-							throw OptionError(
-								(fmt("missing value for `%1%'") % letter).str());
-						set_value_from_string(o->second, argv[i]);
+							(fmt("Missing value for `%1%'") % letter).str());
 					}
+					o->second.value = _forge.make(true);
+				} else if (o->second.type == _forge.Bool) {  // -f
+					o->second.value = _forge.make(true);
+				} else if (++i < argc) {  // -v val
+					set_value_from_string(o->second, argv[i]);
+				} else {
+					throw OptionError(
+						(fmt("Missing value for `%1%'") % letter).str());
 				}
 			}
 		}

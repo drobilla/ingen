@@ -115,8 +115,6 @@ public:
 	const Atom& option(const std::string& long_name) const;
 	bool        set(const std::string& long_name, const Atom& value);
 
-	const std::list<std::string>& files() const { return _files; }
-
 private:
 	struct Option {
 	public:
@@ -146,7 +144,8 @@ private:
 	typedef std::map<std::string, Option>      Options;
 	typedef std::map<char, std::string>        ShortNames;
 	typedef std::map<std::string, std::string> Keys;
-	typedef std::list<std::string>             Files;
+
+	std::string variable_string(LV2_URID type) const;
 
 	int set_value_from_string(Configuration::Option& option,
 	                          const std::string&     value)
@@ -158,7 +157,6 @@ private:
 	Options           _options;
 	Keys              _keys;
 	ShortNames        _short_names;
-	Files             _files;
 	size_t            _max_name_length;
 };
 
