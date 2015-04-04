@@ -212,7 +212,7 @@ def build(bld):
                   lib          = bld.env.INGEN_TEST_LIBS,
                   cxxflags     = bld.env.INGEN_TEST_CXXFLAGS)
     autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2 SRATOM')
-        
+
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
     bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)
     bld.install_files('${BINDIR}', 'scripts/ingenams', chmod=Utils.O755)
