@@ -80,7 +80,7 @@ ConnectWindow::error(const std::string& msg)
 		present();
 		set_connecting_widget_states();
 	}
-	
+
 	if (_progress_label) {
 		_progress_label->set_text(msg);
 	}
@@ -223,7 +223,7 @@ ConnectWindow::connect(bool existing)
 	} else if (_mode == Mode::LAUNCH_REMOTE) {
 		const std::string port  = std::to_string(_port_spinbutton->get_value_as_int());
 		const char*       cmd[] = { "ingen", "-e", "-E", port.c_str(), NULL };
-			
+
 		if (!Raul::Process::launch(cmd)) {
 			error("Failed to launch engine process");
 			return;
@@ -348,7 +348,7 @@ ConnectWindow::load_widgets()
 	_port_spinbutton->set_increments(1, 100);
 	_port_spinbutton->set_value(
 		_app->world()->conf().option("engine-port").get<int32_t>());
-	
+
 	_progress_bar->set_pulse_step(0.01);
 	_widgets_loaded = true;
 
@@ -405,8 +405,8 @@ ConnectWindow::next_stage()
 		"Loading plugins...",
 		"Connected"
 	};
-		
-		
+
+
 	++_connect_stage;
 	if (_widgets_loaded) {
 		_progress_label->set_text(labels[_connect_stage]);

@@ -74,7 +74,7 @@ public:
 	virtual void unregister_port(EnginePort& port) {}
 
 	virtual SampleCount block_length() const { return _block_length; }
-	
+
 	virtual size_t seq_size() const { return _seq_size; }
 
 	virtual SampleCount sample_rate() const { return _sample_rate; }
