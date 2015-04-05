@@ -48,8 +48,10 @@ URIEntry::build_value_menu()
 	LilvWorld* lworld = world->lilv_world();
 	Gtk::Menu* menu   = new Gtk::Menu();
 
+	LilvNode* owl_onDatatype  = lilv_new_uri(lworld, LILV_NS_OWL "onDatatype");
 	LilvNode* rdf_type        = lilv_new_uri(lworld, LILV_NS_RDF "type");
 	LilvNode* rdfs_Class      = lilv_new_uri(lworld, LILV_NS_RDFS "Class");
+	LilvNode* rdfs_Datatype   = lilv_new_uri(lworld, LILV_NS_RDFS "Datatype");
 	LilvNode* rdfs_subClassOf = lilv_new_uri(lworld, LILV_NS_RDFS "subClassOf");
 
 	RDFS::Objects values = RDFS::instances(world, _types);
@@ -62,10 +64,12 @@ URIEntry::build_value_menu()
 			label = lilv_node_as_string(inst);
 		}
 
-		if (lilv_world_ask(world->lilv_world(), inst, rdf_type, rdfs_Class)) {
-			// This value is a class...
-			if (!lilv_world_ask(lworld, inst, rdfs_subClassOf, NULL)) {
-				// ... which is not a subclass, add menu
+		if (lilv_world_ask(world->lilv_world(), inst, rdf_type, rdfs_Class) ||
+		    lilv_world_ask(world->lilv_world(), inst, rdf_type, rdfs_Datatype)) {
+			// This value is a class or datatype...
+			if (!lilv_world_ask(lworld, inst, rdfs_subClassOf, NULL) &&
+			    !lilv_world_ask(lworld, inst, owl_onDatatype, NULL)) {
+				// ... which is not a subtype of another, add menu
 				add_class_menu_item(menu, inst, label);
 			}
 		} else {
@@ -79,20 +83,30 @@ URIEntry::build_value_menu()
 		}
 	}
 
+	lilv_node_free(owl_onDatatype);
+	lilv_node_free(rdf_type);
+	lilv_node_free(rdfs_Class);
+	lilv_node_free(rdfs_Datatype);
+	lilv_node_free(rdfs_subClassOf);
+
 	return menu;
 }
 
 Gtk::Menu*
 URIEntry::build_subclass_menu(const LilvNode* klass)
 {
-	World* world = _app->world();
+	World*     world  = _app->world();
+	LilvWorld* lworld = world->lilv_world();
 
-	LilvNode* rdfs_subClassOf = lilv_new_uri(
-		world->lilv_world(), LILV_NS_RDFS "subClassOf");
+	LilvNode* owl_onDatatype  = lilv_new_uri(lworld, LILV_NS_OWL "onDatatype");
+	LilvNode* rdfs_subClassOf = lilv_new_uri(lworld, LILV_NS_RDFS "subClassOf");
+
 	LilvNodes* subclasses = lilv_world_find_nodes(
-		world->lilv_world(), NULL, rdfs_subClassOf, klass);
+		lworld, NULL, rdfs_subClassOf, klass);
+	LilvNodes* subtypes = lilv_world_find_nodes(
+		lworld, NULL, owl_onDatatype, klass);
 
-	if (lilv_nodes_size(subclasses) == 0) {
+	if (lilv_nodes_size(subclasses) == 0 && lilv_nodes_size(subtypes) == 0) {
 		return NULL;
 	}
 
@@ -102,18 +116,26 @@ URIEntry::build_subclass_menu(const LilvNode* klass)
 	add_leaf_menu_item(menu, klass, RDFS::label(world, klass));
 	menu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
-	// Put subclasses in a map keyed by label (to sort menu)
+	// Put subclasses/types in a map keyed by label (to sort menu)
 	std::map<std::string, const LilvNode*> entries;
 	LILV_FOREACH(nodes, s, subclasses) {
 		const LilvNode* node = lilv_nodes_get(subclasses, s);
 		entries.insert(std::make_pair(RDFS::label(world, node), node));
 	}
+	LILV_FOREACH(nodes, s, subtypes) {
+		const LilvNode* node = lilv_nodes_get(subtypes, s);
+		entries.insert(std::make_pair(RDFS::label(world, node), node));
+	}
 
-	// Add an item (possibly with a submenu) for each subclass
+	// Add an item (possibly with a submenu) for each subclass/type
 	for (const auto& e : entries) {
 		add_class_menu_item(menu, e.second, e.first);
 	}
+
+	lilv_nodes_free(subtypes);
 	lilv_nodes_free(subclasses);
+	lilv_node_free(rdfs_subClassOf);
+	lilv_node_free(owl_onDatatype);
 
 	return menu;
 }

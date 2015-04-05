@@ -118,6 +118,7 @@ types(World* world, SPtr<const Client::ObjectModel> model)
 
 	// Start with every rdf:type
 	URISet types;
+	types.insert(Raul::URI(LILV_NS_RDFS "Resource"));
 	PropRange range = model->properties().equal_range(world->uris().rdf_type);
 	for (PropIter t = range.first; t != range.second; ++t) {
 		types.insert(Raul::URI(t->second.ptr<char>()));
