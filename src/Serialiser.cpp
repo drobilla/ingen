@@ -302,28 +302,13 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 	                      Sord::URI(world, LV2_UI__ui),
 	                      Sord::URI(world, "http://drobilla.net/ns/ingen#GraphUIGtk2"));
 
-	// Always write a symbol (required by Ingen)
-	Raul::Symbol symbol("_");
-	Node::Properties::const_iterator s = graph->properties().find(uris.lv2_symbol);
-	if (s == graph->properties().end()
-	    || s->second.type() != _world.forge().String
-	    || !Raul::Symbol::is_valid(s->second.ptr<char>())) {
-		const std::string base = Glib::path_get_basename(
-			_model->base_uri().to_c_string());
-		symbol = Raul::Symbol::symbolify(base.substr(0, base.find('.')));
-		_model->add_statement(
-			graph_id,
-			Sord::URI(world, uris.lv2_symbol),
-			Sord::Literal(world, symbol.c_str()));
-	} else {
-		symbol = Raul::Symbol::symbolify(s->second.ptr<char>());
-	}
-
 	// If the graph has no doap:name (required by LV2), use the symbol
-	if (graph->properties().find(uris.doap_name) == graph->properties().end())
+	if (graph->properties().find(uris.doap_name) == graph->properties().end()) {
+		const std::string sym = Glib::path_get_basename(graph_id.to_string());
 		_model->add_statement(graph_id,
 		                      Sord::URI(world, uris.doap_name),
-		                      Sord::Literal(world, symbol.c_str()));
+		                      Sord::Literal(world, sym));
+	}
 
 	const Node::Properties props = graph->properties(Resource::Graph::INTERNAL);
 	serialise_properties(graph_id, props);
