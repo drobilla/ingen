@@ -212,6 +212,7 @@ get_port(Ingen::World*     world,
 	const Raul::Symbol port_sym(sym);
 	const Raul::Path   port_path(parent.child(port_sym));
 
+	props.erase(uris.lv2_symbol);  // Don't set symbol property in engine
 	return make_pair(port_path, props);
 }
 
