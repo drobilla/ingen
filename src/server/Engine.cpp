@@ -266,7 +266,8 @@ Engine::activate()
 			          Resource::Property(uris.atom_Sequence)));
 		control_properties.insert(
 			make_pair(uris.rsz_minimumSize,
-			          forge.make(int32_t(driver()->seq_size()))));
+			          // forge.make(int32_t(driver()->seq_size()))));
+			          forge.make(4096)));
 
 		// Add control input
 		Resource::Properties in_properties(control_properties);
