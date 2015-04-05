@@ -75,6 +75,7 @@ App::App(Ingen::World* world)
 	, _sample_rate(48000)
 	, _enable_signal(true)
 	, _requested_plugins(false)
+	, _is_plugin(false)
 {
 	_world->conf().load_default("ingen", "gui.ttl");
 

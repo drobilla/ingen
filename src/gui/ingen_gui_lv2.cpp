@@ -133,6 +133,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	ui->app = Ingen::GUI::App::create(ui->world);
 	ui->client = SPtr<Ingen::Client::SigClientInterface>(
 		new Ingen::Client::SigClientInterface());
+	ui->app->set_is_plugin(true);
 	ui->app->attach(ui->client);
 
 	ui->reader = SPtr<Ingen::AtomReader>(

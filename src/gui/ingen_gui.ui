@@ -837,12 +837,6 @@ See COPYING file included with this distribution, or http://www.gnu.org/licenses
                       </object>
                     </child>
                     <child>
-                      <object class="GtkSeparatorMenuItem" id="separator6">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkImageMenuItem" id="graph_quit_menuitem">
                         <property name="label">gtk-quit</property>
                         <property name="use_action_appearance">False</property>

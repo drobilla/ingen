@@ -182,6 +182,12 @@ GraphBox::create(App& app, SPtr<const GraphModel> graph)
 	xml->get_widget_derived("graph_win_vbox", result);
 	result->init_box(app);
 	result->set_graph(graph, SPtr<GraphView>());
+
+	if (app.is_plugin()) {
+		result->_menu_close->set_sensitive(false);
+		result->_menu_quit->set_sensitive(false);
+	}
+
 	return SPtr<GraphBox>(result);
 }
 

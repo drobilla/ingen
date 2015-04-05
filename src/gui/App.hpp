@@ -106,6 +106,9 @@ public:
 
 	uint32_t sample_rate() const;
 
+	bool is_plugin() const { return _is_plugin; }
+	void set_is_plugin(bool b) { _is_plugin = b; }
+
 	ConnectWindow*   connect_window()  const { return _connect_window; }
 	MessagesWindow*  messages_dialog() const { return _messages_window; }
 	GraphTreeWindow* graph_tree()      const { return _graph_tree_window; }
@@ -160,6 +163,7 @@ protected:
 
 	bool _enable_signal;
 	bool _requested_plugins;
+	bool _is_plugin;
 };
 
 } // namespace GUI
