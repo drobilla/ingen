@@ -239,11 +239,12 @@ def build(bld):
     bld.install_files('${LV2DIR}/ingen.lv2/',
                       bld.path.ant_glob('bundles/ingen.lv2/*'))
 
-    for i in ['StereoInOut.ingen']:
-        bld.install_files('${LV2DIR}/%s/' % str(i),
-                          bld.path.ant_glob('bundles/%s/*' % str(i)))
-        bld.symlink_as('${LV2DIR}/%s/libingen_lv2.so' % str(i),
-                       bld.env.LV2DIR + '/ingen.lv2/libingen_lv2.so')
+    # Install template graph bundles
+    for c in ['Stereo', 'Mono']:
+        for t in ['Effect', 'Instrument']:
+            bundle = '%s%s.ingen' % (c, t)
+            bld.install_files('${LV2DIR}/%s/' % bundle,
+                              bld.path.ant_glob('bundles/%s/*' % bundle))
 
     bld.add_post_fun(autowaf.run_ldconfig)
 
