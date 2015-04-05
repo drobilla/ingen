@@ -76,7 +76,7 @@ URIEntry::build_value_menu()
 			// Value is not a class, add item
 			menu->items().push_back(
 				Gtk::Menu_Helpers::MenuElem(
-					label,
+					std::string("_") + label,
 					sigc::bind(sigc::mem_fun(this, &URIEntry::uri_chosen),
 					           std::string(lilv_node_as_uri(inst)))));
 			_app->set_tooltip(&menu->items().back(), inst);
@@ -147,7 +147,7 @@ URIEntry::add_leaf_menu_item(Gtk::Menu*         menu,
 {
 	menu->items().push_back(
 		Gtk::Menu_Helpers::MenuElem(
-			label,
+			std::string("_") + label,
 			sigc::bind(sigc::mem_fun(this, &URIEntry::uri_chosen),
 			           std::string(lilv_node_as_uri(node)))));
 
