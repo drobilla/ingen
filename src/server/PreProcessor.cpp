@@ -77,14 +77,10 @@ PreProcessor::event(Event* const ev)
 unsigned
 PreProcessor::process(ProcessContext& context, PostProcessor& dest, size_t limit)
 {
-	Event* const head = _head.load();
-	if (!head) {
-		return 0;
-	}
-
-	size_t n_processed = 0;
-	Event* ev          = head;
-	Event* last        = ev;
+	Event* const head        = _head.load();
+	size_t       n_processed = 0;
+	Event*       ev          = head;
+	Event*       last        = ev;
 	while (ev && ev->is_prepared() && ev->time() < context.end()) {
 		if (ev->time() < context.start()) {
 			// Didn't get around to executing in time, oh well...
