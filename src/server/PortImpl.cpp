@@ -246,7 +246,7 @@ PortImpl::set_voice_value(const Context& context,
 			const FrameTime offset = time - context.start();
 			// Same deal as above
 			if (offset < context.nframes()) {
-				buffer(voice)->append_event(time - context.start(),
+				buffer(voice)->append_event(offset,
 				                            sizeof(value),
 				                            _bufs.uris().atom_Float,
 				                            (const uint8_t*)&value);

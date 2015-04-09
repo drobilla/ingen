@@ -277,6 +277,11 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	key->voice = voice_num;
 	key->time  = time;
 
+	// Check if we just triggered this voice at the same time
+	// (Double note-on at the same sample on the same voice)
+	const bool double_trigger = (voice->state == Voice::State::ACTIVE &&
+	                             voice->time == time);
+
 	// Trigger voice
 	voice->state = Voice::State::ACTIVE;
 	voice->note  = note_num;
@@ -289,8 +294,10 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 	_num_port->set_voice_value(context, voice_num, time, (float)note_num);
 	_vel_port->set_voice_value(context, voice_num, time, velocity / 127.0f);
 	_gate_port->set_voice_value(context, voice_num, time, 1.0f);
-	_trig_port->set_voice_value(context, voice_num, time, 1.0f);
-	_trig_port->set_voice_value(context, voice_num, time + 1, 0.0f);
+	if (!double_trigger) {
+		_trig_port->set_voice_value(context, voice_num, time, 1.0f);
+		_trig_port->set_voice_value(context, voice_num, time + 1, 0.0f);
+	}
 
 	assert(key->state == Key::State::ON_ASSIGNED);
 	assert(voice->state == Voice::State::ACTIVE);
