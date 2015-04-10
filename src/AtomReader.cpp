@@ -216,8 +216,7 @@ AtomReader::write(const LV2_Atom* msg)
 			if (tail_path && head_path) {
 				_iface.connect(*tail_path, *head_path);
 			} else {
-				_log.warn(fmt("Arc %1% => %2% has non-path tail or head\n")
-				          % atom_to_uri(tail) % atom_to_uri(head));
+				_log.warn("Arc has non-path tail or head\n");
 			}
 		} else {
 			Ingen::Resource::Properties props;
