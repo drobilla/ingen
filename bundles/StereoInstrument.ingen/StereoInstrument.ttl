@@ -12,6 +12,7 @@
 <Note>
 	ingen:canvasX 136.0 ;
 	ingen:canvasY 92.0 ;
+	ingen:polyphonic true ;
 	lv2:port <Note/bend> ,
 		<Note/frequency> ,
 		<Note/gate> ,
