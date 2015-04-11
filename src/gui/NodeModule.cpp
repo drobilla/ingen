@@ -229,11 +229,12 @@ NodeModule::embed_gui(bool embed)
 
 		if (!_plugin_ui) {
 			_plugin_ui = _block->plugin_model()->ui(app().world(), _block);
-			_plugin_ui->signal_property_changed().connect(
-				sigc::mem_fun(app(), &App::set_property));
 		}
 
 		if (_plugin_ui) {
+			_plugin_ui->signal_property_changed().connect(
+				sigc::mem_fun(app(), &App::set_property));
+
 			GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
 			_gui_widget = Glib::wrap(c_widget);
 
