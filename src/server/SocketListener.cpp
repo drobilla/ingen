@@ -89,11 +89,11 @@ SocketListener::ingen_listen(Engine*       engine,
 		if (ret == -1) {
 			world->log().error(fmt("Poll error: %1%\n") % strerror(errno));
 			break;
+		} else if (ret == 0) {
+			world->log().warn("Poll returned with no data\n");
+			continue;
 		} else if ((pfds[0].revents & POLLHUP) || pfds[1].revents & POLLHUP) {
 			break;
-		} else if (ret == 0) {
-			world->log().error("Poll returned with no data\n");
-			continue;
 		}
 
 		if (pfds[0].revents & POLLIN) {
