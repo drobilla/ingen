@@ -72,10 +72,10 @@ CreateBlock::pre_process()
 	// Map old ingen:prototype to new lv2:prototype
 	auto range = _properties.equal_range(uris.ingen_prototype);
 	for (auto i = range.first; i != range.second;) {
-		const auto& value = i->second;
-		auto        next  = i;
+		const auto value = i->second;
+		auto       next  = i;
 		next = _properties.erase(i);
-		_properties.insert(std::make_pair(uris.lv2_prototype, i->second));
+		_properties.insert(std::make_pair(uris.lv2_prototype, value));
 		i = next;
 	}
 
