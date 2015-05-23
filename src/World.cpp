@@ -217,6 +217,7 @@ public:
 	SPtr<Parser>     parser;
 	SPtr<Store>      store;
 	LilvWorld*       lilv_world;
+	std::mutex       rdf_mutex;
 	std::string      jack_uuid;
 };
 
@@ -250,6 +251,8 @@ int&           World::argc() { return _impl->argc; }
 char**&        World::argv() { return _impl->argv; }
 Configuration& World::conf() { return _impl->conf; }
 Log&           World::log()  { return _impl->log; }
+
+std::mutex& World::rdf_mutex() { return _impl->rdf_mutex; }
 
 Sord::World* World::rdf_world()  { return _impl->rdf_world; }
 LilvWorld*   World::lilv_world() { return _impl->lilv_world; }

@@ -99,10 +99,6 @@ SocketReader::run()
 		return;
 	}
 
-	// Use <ingen:/root/> as base URI so e.g. </foo/bar> will be a path
-	SordNode* base_uri = sord_new_uri(
-		world->c_obj(), (const uint8_t*)"ingen:/root/");
-
 	// Set up sratom and a forge to build LV2 atoms from model
 	Sratom*        sratom = sratom_new(map);
 	SerdChunk      chunk  = { NULL, 0 };
@@ -111,11 +107,23 @@ SocketReader::run()
 	lv2_atom_forge_set_sink(
 		&forge, sratom_forge_sink, sratom_forge_deref, &chunk);
 
-	// Make a model and reader to parse the next Turtle message
-	_env = world->prefixes().c_obj();
-	SordModel* model = sord_new(world->c_obj(), SORD_SPO, false);
+	SordNode*  base_uri = NULL;
+	SordModel* model    = NULL;
+	{
+		// Lock RDF world
+		std::lock_guard<std::mutex> lock(_world.rdf_mutex());
 
-	_inserter = sord_inserter_new(model, _env);
+		// Use <ingen:/root/> as base URI so e.g. </foo/bar> will be a path
+		base_uri = sord_new_uri(
+			world->c_obj(), (const uint8_t*)"ingen:/root/");
+
+		// Make a model and reader to parse the next Turtle message
+		_env = world->prefixes().c_obj();
+		model = sord_new(world->c_obj(), SORD_SPO, false);
+
+		// Create an inserter for writing incoming triples to model
+		_inserter = sord_inserter_new(model, _env);
+	}
 
 	SerdReader* reader = serd_reader_new(
 		SERD_TURTLE, this, NULL,
@@ -152,6 +160,9 @@ SocketReader::run()
 			continue;  // No data, shouldn't happen
 		}
 
+		// Lock RDF world
+		std::lock_guard<std::mutex> lock(_world.rdf_mutex());
+
 		// Read until the next '.'
 		SerdStatus st = serd_reader_read_chunk(reader);
 		if (st == SERD_FAILURE || !_msg_node) {
@@ -174,6 +185,10 @@ SocketReader::run()
 		_msg_node = NULL;
 	}
 
+	// Lock RDF world
+	std::lock_guard<std::mutex> lock(_world.rdf_mutex());
+
+	// Destroy everything
 	fclose(f);
 	sord_inserter_free(_inserter);
 	serd_reader_end_stream(reader);

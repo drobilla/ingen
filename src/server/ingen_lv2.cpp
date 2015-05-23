@@ -583,6 +583,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->process_events();
 	engine->post_processor()->process();
 
+	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
+
 	plugin->world->parser()->parse_file(plugin->world,
 	                                    plugin->world->interface().get(),
 	                                    graph->filename);
@@ -707,9 +709,14 @@ ingen_save(LV2_Handle                instance,
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);
 
 	Ingen::Store::iterator root = plugin->world->store()->find(Raul::Path("/"));
-	plugin->world->serialiser()->start_to_file(root->second->path(), real_path);
-	plugin->world->serialiser()->serialise(root->second);
-	plugin->world->serialiser()->finish();
+
+	{
+		std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
+
+		plugin->world->serialiser()->start_to_file(root->second->path(), real_path);
+		plugin->world->serialiser()->serialise(root->second);
+		plugin->world->serialiser()->finish();
+	}
 
 	store(handle,
 	      ingen_file,
@@ -772,6 +779,7 @@ ingen_restore(LV2_Handle                  instance,
 	}
 
 	// Load new graph
+	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
 	plugin->world->parser()->parse_file(
 		plugin->world, plugin->world->interface().get(), real_path);
 

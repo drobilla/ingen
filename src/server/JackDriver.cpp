@@ -527,6 +527,8 @@ JackDriver::_session_cb(jack_session_event_t* event)
 
 	SPtr<Serialiser> serialiser = _engine.world()->serialiser();
 	if (serialiser) {
+		std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
+
 		SPtr<Node> root(_engine.root_graph(), NullDeleter<Node>);
 		serialiser->write_bundle(root, string("file://") + event->session_dir);
 	}

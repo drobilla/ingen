@@ -65,6 +65,11 @@ public:
 	SPtr<Parser> parser();
 
 private:
+	void load_graph_event(const Glib::ustring&              document_uri,
+	                      boost::optional<Raul::Path>       engine_parent,
+	                      boost::optional<Raul::Symbol>     engine_symbol,
+	                      boost::optional<Node::Properties> engine_data);
+
 	void save_graph_event(SPtr<const Client::GraphModel> model,
 	                      const std::string&             filename);
 

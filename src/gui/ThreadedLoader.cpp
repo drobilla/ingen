@@ -77,8 +77,6 @@ ThreadedLoader::load_graph(bool                       merge,
 {
 	_mutex.lock();
 
-	Ingen::World* world = _app.world();
-
 	Glib::ustring engine_base = "";
 	if (engine_parent) {
 		if (merge)
@@ -89,10 +87,7 @@ ThreadedLoader::load_graph(bool                       merge,
 
 	_events.push_back(
 		sigc::hide_return(
-			sigc::bind(sigc::mem_fun(world->parser().get(),
-			                         &Ingen::Parser::parse_file),
-			           _app.world(),
-			           _app.world()->interface().get(),
+			sigc::bind(sigc::mem_fun(this, &ThreadedLoader::load_graph_event),
 			           document_uri,
 			           engine_parent,
 			           engine_symbol,
@@ -100,6 +95,22 @@ ThreadedLoader::load_graph(bool                       merge,
 
 	_mutex.unlock();
 	_sem.post();
+}
+
+void
+ThreadedLoader::load_graph_event(const Glib::ustring&       document_uri,
+                                 optional<Raul::Path>       engine_parent,
+                                 optional<Raul::Symbol>     engine_symbol,
+                                 optional<Node::Properties> engine_data)
+{
+	std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
+
+	_app.world()->parser()->parse_file(_app.world(),
+	                                   _app.world()->interface().get(),
+	                                   document_uri,
+	                                   engine_parent,
+	                                   engine_symbol,
+	                                   engine_data);
 }
 
 void
@@ -122,6 +133,8 @@ ThreadedLoader::save_graph_event(SPtr<const Client::GraphModel> model,
                                  const string&                  filename)
 {
 	if (_app.serialiser()) {
+		std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
+
 		if (filename.find(".ingen") != string::npos) {
 			_app.serialiser()->write_bundle(model, filename);
 		} else {

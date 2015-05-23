@@ -177,6 +177,8 @@ main(int argc, char** argv)
 
 		engine_interface->get(Raul::URI("ingen:/plugins"));
 		engine_interface->get(Node::root_uri());
+
+		std::lock_guard<std::mutex> lock(world->rdf_mutex());
 		world->parser()->parse_file(
 			world, engine_interface.get(), graph, parent, symbol);
 	}

@@ -598,6 +598,8 @@ serialise_arc(GanvEdge* arc, void* data)
 void
 GraphCanvas::copy_selection()
 {
+	std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
+
 	Serialiser serialiser(*_app.world());
 	serialiser.start_to_string(_graph->path(), _graph->base_uri());
 
@@ -613,6 +615,8 @@ void
 GraphCanvas::paste()
 {
 	typedef Node::Properties::const_iterator PropIter;
+
+	std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
 
 	const Glib::ustring str    = Gtk::Clipboard::get()->wait_for_text();
 	SPtr<Parser>        parser = _app.loader()->parser();
