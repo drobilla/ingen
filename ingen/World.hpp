@@ -17,6 +17,7 @@
 #ifndef INGEN_WORLD_HPP
 #define INGEN_WORLD_HPP
 
+#include <mutex>
 #include <string>
 
 #include "ingen/ingen.h"
@@ -122,6 +123,9 @@ public:
 	virtual int&           argc();
 	virtual char**&        argv();
 	virtual Configuration& conf();
+
+	/** Lock for rdf_world() or lilv_world(). */
+	virtual std::mutex& rdf_mutex();
 
 	virtual Sord::World* rdf_world();
 	virtual LilvWorld*   lilv_world();
