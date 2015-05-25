@@ -48,7 +48,7 @@ Copy::pre_process()
 {
 	if (_old_path.empty() ||
 	    !Node::uri_is_path(_new_uri) ||
-	    _new_uri == Node::root_uri()) {
+	    _new_uri == Node::root_graph_uri()) {
 		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
 

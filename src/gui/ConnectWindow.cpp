@@ -482,7 +482,7 @@ ConnectWindow::gtk_callback()
 			}
 		}
 	} else if (_connect_stage == 3) {
-		_app->interface()->get(Raul::URI(Node::root_uri() + "/"));
+		_app->interface()->get(Raul::URI(Node::root_graph_uri() + "/"));
 		next_stage();
 	} else if (_connect_stage == 4) {
 		if (_app->store()->size() > 0) {

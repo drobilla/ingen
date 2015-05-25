@@ -4,11 +4,11 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/root/sub> ;
+	patch:subject <ingen:/graph/sub> ;
 	patch:body [
 		a ingen:Graph ;
 	] .
 
 <msg1>
 	a patch:Delete ;
-	patch:subject <ingen:/root/sub> .
+	patch:subject <ingen:/graph/sub> .

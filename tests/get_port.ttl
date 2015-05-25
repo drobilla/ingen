@@ -4,7 +4,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/root/in> ;
+	patch:subject <ingen:/graph/in> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:AudioPort
@@ -12,4 +12,4 @@
 
 <msg1>
 	a patch:Get ;
-	patch:subject <ingen:/root/in> .
+	patch:subject <ingen:/graph/in> .

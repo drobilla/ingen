@@ -4,14 +4,14 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/root> ;
+	patch:subject <ingen:/graph> ;
 	patch:body [
 		ingen:enabled true
 	] .
 
 <msg1>
 	a patch:Put ;
-	patch:subject <ingen:/root> ;
+	patch:subject <ingen:/graph> ;
 	patch:body [
 		ingen:enabled false
 	] .

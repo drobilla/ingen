@@ -635,12 +635,12 @@ GraphCanvas::paste()
 	// Make a client store to serve as clipboard
 	ClientStore clipboard(_app.world()->uris(), _app.log());
 	clipboard.set_plugins(_app.store()->plugins());
-	clipboard.put(Node::root_uri(),
+	clipboard.put(Node::root_graph_uri(),
 	              {{uris.rdf_type, Resource::Property(uris.ingen_Graph)}});
 
 	// Parse clipboard text into clipboard store
 	boost::optional<Raul::URI> base_uri = parser->parse_string(
-		_app.world(), &clipboard, str, Node::root_uri());
+		_app.world(), &clipboard, str, Node::root_graph_uri());
 
 	// Figure out the copy graph base path
 	Raul::Path copy_root("/");

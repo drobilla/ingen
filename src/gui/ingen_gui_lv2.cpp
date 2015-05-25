@@ -148,7 +148,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	props.insert(std::make_pair(ui->app->uris().rdf_type,
 	                            Ingen::Resource::Property(
 		                            ui->app->uris().ingen_Graph)));
-	ui->app->store()->put(Ingen::Node::root_uri(), props);
+	ui->app->store()->put(Ingen::Node::root_graph_uri(), props);
 
 	// Create a GraphBox for the root and set as the UI widget
 	SPtr<const Ingen::Client::GraphModel> root =
@@ -159,7 +159,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 	*widget = ui->view->gobj();
 
 	// Request the actual root graph
-	ui->world->interface()->get(Ingen::Node::root_uri());
+	ui->world->interface()->get(Ingen::Node::root_graph_uri());
 
 	return ui;
 }

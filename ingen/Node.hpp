@@ -80,21 +80,21 @@ public:
 		return Raul::URI(uri() + '/');
 	}
 
-	static Raul::URI root_uri() { return Raul::URI("ingen:/root"); }
+	static Raul::URI root_graph_uri() { return Raul::URI("ingen:/graph"); }
 
 	static bool uri_is_path(const Raul::URI& uri) {
-		return uri == root_uri() ||
-			uri.substr(0, root_uri().length() + 1) == root_uri() + "/";
+		return uri == root_graph_uri() ||
+			uri.substr(0, root_graph_uri().length() + 1) == root_graph_uri() + "/";
 	}
 
 	static Raul::Path uri_to_path(const Raul::URI& uri) {
-		return (uri == root_uri())
+		return (uri == root_graph_uri())
 			? Raul::Path("/")
-			: Raul::Path(uri.substr(root_uri().length()));
+			: Raul::Path(uri.substr(root_graph_uri().length()));
 	}
 
 	static Raul::URI path_to_uri(const Raul::Path& path) {
-		return Raul::URI(root_uri() + path.c_str());
+		return Raul::URI(root_graph_uri() + path.c_str());
 	}
 
 protected:

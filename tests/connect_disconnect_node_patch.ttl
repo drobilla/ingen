@@ -5,7 +5,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/root/amp> ;
+	patch:subject <ingen:/graph/amp> ;
 	patch:body [
 		a ingen:Block ;
 		lv2:prototype <http://lv2plug.in/plugins/eg-amp>
@@ -13,7 +13,7 @@
 
 <msg1>
 	a patch:Put ;
-	patch:subject <ingen:/root/sampler> ;
+	patch:subject <ingen:/graph/sampler> ;
 	patch:body [
 		a ingen:Block ;
 		lv2:prototype <http://lv2plug.in/plugins/eg-sampler>
@@ -21,7 +21,7 @@
 
 <msg2>
 	a patch:Put ;
-	patch:subject <ingen:/root/out> ;
+	patch:subject <ingen:/graph/out> ;
 	patch:body [
 		a lv2:OutputPort ,
 			lv2:AudioPort
@@ -29,7 +29,7 @@
 
 <msg3>
 	a patch:Put ;
-	patch:subject <ingen:/root/in> ;
+	patch:subject <ingen:/graph/in> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:AudioPort
@@ -37,7 +37,7 @@
 
 <msg4>
 	a patch:Put ;
-	patch:subject <ingen:/root/control> ;
+	patch:subject <ingen:/graph/control> ;
 	patch:body [
 		a lv2:InputPort ,
 			atom:AtomPort ;
@@ -46,7 +46,7 @@
 
 <msg5>
 	a patch:Put ;
-	patch:subject <ingen:/root/gain> ;
+	patch:subject <ingen:/graph/gain> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:ControlPort
@@ -54,52 +54,52 @@
 
 <msg6>
 	a patch:Put ;
-	patch:subject <ingen:/root/> ;
+	patch:subject <ingen:/graph/> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root/amp/out> ;
-		ingen:head <ingen:/root/out>
+		ingen:tail <ingen:/graph/amp/out> ;
+		ingen:head <ingen:/graph/out>
 	] .
 
 <msg7>
 	a patch:Put ;
-	patch:subject <ingen:/root/> ;
+	patch:subject <ingen:/graph/> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root/in> ;
-		ingen:head <ingen:/root/amp/in>
+		ingen:tail <ingen:/graph/in> ;
+		ingen:head <ingen:/graph/amp/in>
 	] .
 
 <msg8>
 	a patch:Put ;
-	patch:subject <ingen:/root/> ;
+	patch:subject <ingen:/graph/> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root/gain> ;
-		ingen:head <ingen:/root/amp/gain>
+		ingen:tail <ingen:/graph/gain> ;
+		ingen:head <ingen:/graph/amp/gain>
 	] .
 
 <msg9>
 	a patch:Put ;
-	patch:subject <ingen:/root/> ;
+	patch:subject <ingen:/graph/> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root/control> ;
-		ingen:head <ingen:/root/sampler/control>
+		ingen:tail <ingen:/graph/control> ;
+		ingen:head <ingen:/graph/sampler/control>
 	] .
 
 <msg10>
 	a patch:Delete ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root/amp/out> ;
-		ingen:head <ingen:/root/out>
+		ingen:tail <ingen:/graph/amp/out> ;
+		ingen:head <ingen:/graph/out>
 	] .
 
 <msg11>
 	a patch:Delete ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root/in> ;
-		ingen:head <ingen:/root/amp/in>
+		ingen:tail <ingen:/graph/in> ;
+		ingen:head <ingen:/graph/amp/in>
 	] .

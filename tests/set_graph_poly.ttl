@@ -4,14 +4,14 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/root/> ;
+	patch:subject <ingen:/graph/> ;
 	patch:body [
 		ingen:polyphony 4
 	] .
 
 <msg1>
 	a patch:Put ;
-	patch:subject <ingen:/root/> ;
+	patch:subject <ingen:/graph/> ;
 	patch:body [
 		ingen:polyphony 1
 	] .

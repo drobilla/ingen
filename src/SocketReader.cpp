@@ -113,9 +113,8 @@ SocketReader::run()
 		// Lock RDF world
 		std::lock_guard<std::mutex> lock(_world.rdf_mutex());
 
-		// Use <ingen:/root/> as base URI so e.g. </foo/bar> will be a path
-		base_uri = sord_new_uri(
-			world->c_obj(), (const uint8_t*)"ingen:/root/");
+		// Use <ingen:/> as base URI, so relative URIs are like bundle paths
+		base_uri = sord_new_uri(world->c_obj(), (const uint8_t*)"ingen:/");
 
 		// Make a model and reader to parse the next Turtle message
 		_env = world->prefixes().c_obj();

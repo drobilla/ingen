@@ -220,14 +220,14 @@ class Remote(Interface):
         return self.send('''
 []
  	a patch:Get ;
- 	patch:subject <ingen:/root%s> .
+ 	patch:subject <ingen:/graph%s> .
 ''' % path)
 
     def put(self, path, body):
         return self.send('''
 []
  	a patch:Put ;
- 	patch:subject <ingen:/root%s> ;
+ 	patch:subject <ingen:/graph%s> ;
  	patch:body [
 %s
 	] .
@@ -237,7 +237,7 @@ class Remote(Interface):
         return self.send('''
 []
 	a patch:Set ;
-	patch:subject <ingen:/root%s> ;
+	patch:subject <ingen:/graph%s> ;
 	patch:body [
 %s
 	] .
@@ -247,11 +247,11 @@ class Remote(Interface):
         return self.send('''
 []
 	a patch:Put ;
-	patch:subject <ingen:/root%s> ;
+	patch:subject <ingen:/graph%s> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root%s> ;
-		ingen:head <ingen:/root%s> ;
+		ingen:tail <ingen:/graph%s> ;
+		ingen:head <ingen:/graph%s> ;
 	] .
 ''' % (os.path.commonprefix([tail, head]), tail, head))
 
@@ -261,8 +261,8 @@ class Remote(Interface):
 	a patch:Delete ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root%s> ;
-		ingen:head <ingen:/root%s> ;
+		ingen:tail <ingen:/graph%s> ;
+		ingen:head <ingen:/graph%s> ;
 	] .
 ''' % (tail, head))
 
@@ -270,5 +270,5 @@ class Remote(Interface):
         return self.send('''
 []
 	a patch:Delete ;
-	patch:subject <ingen:/root%s> .
+	patch:subject <ingen:/graph%s> .
 ''' % path)

@@ -5,7 +5,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/root/audio_in> ;
+	patch:subject <ingen:/graph/audio_in> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:AudioPort
@@ -13,7 +13,7 @@
 
 <msg1>
 	a patch:Put ;
-	patch:subject <ingen:/root/float_in> ;
+	patch:subject <ingen:/graph/float_in> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:ControlPort
@@ -21,7 +21,7 @@
 
 <msg2>
 	a patch:Put ;
-	patch:subject <ingen:/root/cv_in> ;
+	patch:subject <ingen:/graph/cv_in> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:CVPort
@@ -29,7 +29,7 @@
 
 <msg3>
 	a patch:Put ;
-	patch:subject <ingen:/root/atom_in> ;
+	patch:subject <ingen:/graph/atom_in> ;
 	patch:body [
 		a lv2:InputPort ,
 			atom:AtomPort ;
@@ -38,16 +38,16 @@
 
 <msg4>
 	a patch:Delete ;
-	patch:subject <ingen:/root/audio_in> .
+	patch:subject <ingen:/graph/audio_in> .
 
 <msg5>
 	a patch:Delete ;
-	patch:subject <ingen:/root/float_in> .
+	patch:subject <ingen:/graph/float_in> .
 
 <msg6>
 	a patch:Delete ;
-	patch:subject <ingen:/root/cv_in> .
+	patch:subject <ingen:/graph/cv_in> .
 
 <msg7>
 	a patch:Delete ;
-	patch:subject <ingen:/root/atom_in> .
+	patch:subject <ingen:/graph/atom_in> .

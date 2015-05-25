@@ -4,7 +4,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/root/in> ;
+	patch:subject <ingen:/graph/in> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:AudioPort
@@ -12,7 +12,7 @@
 
 <msg1>
 	a patch:Put ;
-	patch:subject <ingen:/root/out> ;
+	patch:subject <ingen:/graph/out> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:AudioPort
@@ -20,17 +20,17 @@
 
 <msg2>
 	a patch:Put ;
-	patch:subject <ingen:/root/> ;
+	patch:subject <ingen:/graph/> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root/in> ;
-		ingen:head <ingen:/root/out>
+		ingen:tail <ingen:/graph/in> ;
+		ingen:head <ingen:/graph/out>
 	] .
 
 <msg3>
 	a patch:Delete ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/root/in> ;
-		ingen:head <ingen:/root/out>
+		ingen:tail <ingen:/graph/in> ;
+		ingen:head <ingen:/graph/out>
 	] .

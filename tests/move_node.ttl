@@ -4,7 +4,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/root/node> ;
+	patch:subject <ingen:/graph/node> ;
 	patch:body [
 		a ingen:Block ;
 		lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
@@ -12,5 +12,5 @@
 
 <msg1>
 	a patch:Move ;
-	patch:subject <ingen:/root/node> ;
-	patch:destination <ingen:/root/tone> .
+	patch:subject <ingen:/graph/node> ;
+	patch:destination <ingen:/graph/tone> .

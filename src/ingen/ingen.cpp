@@ -176,7 +176,7 @@ main(int argc, char** argv)
 		const string graph = conf.option("load").ptr<char>();
 
 		engine_interface->get(Raul::URI("ingen:/plugins"));
-		engine_interface->get(Node::root_uri());
+		engine_interface->get(Node::root_graph_uri());
 
 		std::lock_guard<std::mutex> lock(world->rdf_mutex());
 		world->parser()->parse_file(
