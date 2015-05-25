@@ -16,6 +16,7 @@
 
 import os
 import rdflib
+import re
 import socket
 import sys
 
@@ -100,7 +101,7 @@ class Remote(Interface):
             self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
             self.sock.connect(uri[len('unix://'):])
         elif uri.startswith('tcp://'):
-            self.sock = Socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             parsed = re.split('[:/]', uri[len('tcp://'):])
             addr = (parsed[0], int(parsed[1]))
             self.sock.connect(addr)

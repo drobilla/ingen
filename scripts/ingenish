@@ -104,7 +104,7 @@ if len(sys.argv) - a == 0:
             print('error: %s' % sys.exc_info()[1])
 else:
     try:
-        update = run(sys.argv[1:])
+        update = run(sys.argv[a:])
         if update:
             print(update.serialize(format='n3'))
     except:
