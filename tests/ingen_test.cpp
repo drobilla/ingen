@@ -132,16 +132,6 @@ main(int argc, char** argv)
 	Glib::thread_init();
 	set_bundle_path_from_code((void*)&main);
 
-	if (argc != 3) {
-		cerr << "Usage: ingen_test START_GRAPH COMMANDS_FILE" << endl;
-		return EXIT_FAILURE;
-	}
-
-	char*             real_start_graph = realpath(argv[1], NULL);
-	const std::string start_graph      = real_start_graph;
-	const std::string cmds_file_path   = argv[2];
-	free(real_start_graph);
-
 	// Create world
 	try {
 		world = new World(argc, argv, NULL, NULL, NULL);
@@ -149,6 +139,20 @@ main(int argc, char** argv)
 		cout << "ingen: " << e.what() << endl;
 		return EXIT_FAILURE;
 	}
+
+	// Get mandatory command line arguments
+	const Atom& load    = world->conf().option("load");
+	const Atom& execute = world->conf().option("execute");
+	if (!load.is_valid() || !execute.is_valid()) {
+		cerr << "Usage: ingen_test --load START_GRAPH --execute COMMANDS_FILE" << endl;
+		return EXIT_FAILURE;
+	}
+
+	// Get start graph and commands file options
+	char*             real_start_graph = realpath((const char*)load.get_body(), NULL);
+	const std::string start_graph      = real_start_graph;
+	const std::string cmds_file_path   = (const char*)execute.get_body();
+	free(real_start_graph);
 
 	// Load modules
 	ingen_try(world->load_module("server_profiled"),
