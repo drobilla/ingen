@@ -55,8 +55,7 @@ SocketListener::ingen_listen(Engine*       engine,
 	// Bind TCP socket
 	const int port = world->conf().option("engine-port").get<int32_t>();
 	std::ostringstream ss;
-	ss << "tcp://localhost:";
-	ss << port;
+	ss << "tcp://*:" << port;
 	if (!net_sock->bind(Raul::URI(ss.str())) || !net_sock->listen()) {
 		world->log().error("Failed to create TCP socket\n");
 		net_sock->close();
