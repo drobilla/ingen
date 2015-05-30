@@ -183,6 +183,22 @@ main(int argc, char** argv)
 			world, engine_interface.get(), graph, parent, symbol);
 	}
 
+	// Save the currently loaded graph
+	if (conf.option("save").is_valid()) {
+		const char* path = conf.option("save").ptr<char>();
+		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
+			std::cout << "Saving to " << path << std::endl;
+			engine_interface->copy(Raul::Path("/"), Raul::URI(path));
+		} else {
+			SerdNode uri = serd_node_new_file_uri(
+				(const uint8_t*)path, NULL, NULL, true);
+			std::cout << "Saving to " << (const char*)uri.buf << std::endl;
+			engine_interface->copy(Raul::Path("/"),
+			                       Raul::URI((const char*)uri.buf));
+			serd_node_free(&uri);
+		}
+	}
+
 	// Set up signal handlers that will set quit_flag on interrupt
 	signal(SIGINT, ingen_interrupt);
 	signal(SIGTERM, ingen_interrupt);

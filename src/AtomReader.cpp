@@ -275,6 +275,32 @@ AtomReader::write(const LV2_Atom* msg)
 		get_props(remove, remove_props);
 
 		_iface.delta(*subject_uri, remove_props, add_props);
+	} else if (obj->body.otype == _uris.patch_Copy) {
+		if (!subject) {
+			_log.warn("Copy message has no subject\n");
+			return false;
+		}
+
+		const LV2_Atom* dest = NULL;
+		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_destination, &dest, 0);
+		if (!dest) {
+			_log.warn("Copy message has no destination\n");
+			return false;
+		}
+
+		boost::optional<Raul::Path> subject_path(atom_to_path(subject));
+		if (!subject_path) {
+			_log.warn("Copy message has non-path subject\n");
+			return false;
+		}
+
+		boost::optional<Raul::URI> dest_uri(atom_to_uri(dest));
+		if (!dest_uri) {
+			_log.warn("Copy message has non-URI destination\n");
+			return false;
+		}
+
+		_iface.copy(*subject_path, *dest_uri);
 	} else if (obj->body.otype == _uris.patch_Move) {
 		if (!subject) {
 			_log.warn("Move message has no subject\n");

@@ -59,8 +59,12 @@ public:
 	void post_process();
 
 private:
+	bool copy_to_engine();
+	bool copy_to_filesystem();
+
 	const Raul::Path _old_path;
 	const Raul::URI  _new_uri;
+	SPtr<BlockImpl>  _old_block;
 	GraphImpl*       _parent;
 	BlockImpl*       _block;
 	CompiledGraph*   _compiled_graph;

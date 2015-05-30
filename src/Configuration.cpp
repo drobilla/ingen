@@ -59,6 +59,7 @@ Configuration::Configuration(Forge& forge)
 	add("jackServer",     "jack-server",    's', "JACK server name", GLOBAL, forge.String, forge.alloc(""));
 	add("uuid",           "uuid",           'u', "JACK session UUID", SESSION, forge.String, Atom());
 	add("load",           "load",           'l', "Load graph", SESSION, forge.String, Atom());
+	add("save",           "save",           'o', "Save graph", SESSION, forge.String, Atom());
 	add("execute",        "execute",        'x', "File of commands to execute", SESSION, forge.String, Atom());
 	add("path",           "path",           'L', "Target path for loaded graph", SESSION, forge.String, Atom());
 	add("queueSize",      "queue-size",     'q', "Event queue size", GLOBAL, forge.Int, forge.make(4096));

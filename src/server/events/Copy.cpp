@@ -14,8 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
+#include "serd/serd.h"
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
@@ -38,6 +40,7 @@ Copy::Copy(Engine&           engine,
 	: Event(engine, client, id, timestamp)
 	, _old_path(old_path)
 	, _new_uri(new_uri)
+	, _old_block(NULL)
 	, _parent(NULL)
 	, _block(NULL)
 	, _compiled_graph(NULL)
@@ -46,15 +49,7 @@ Copy::Copy(Engine&           engine,
 bool
 Copy::pre_process()
 {
-	if (_old_path.empty() ||
-	    !Node::uri_is_path(_new_uri) ||
-	    _new_uri == Node::root_graph_uri()) {
-		return Event::pre_process_done(Status::BAD_REQUEST);
-	}
-
-	// Only support a single source for now
-	const Raul::Path new_path = Node::uri_to_path(_new_uri);
-	if (!Raul::Symbol::is_valid(new_path.symbol())) {
+	if (_old_path.empty() || _new_uri == Node::root_graph_uri()) {
 		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
 
@@ -66,15 +61,34 @@ Copy::pre_process()
 		return Event::pre_process_done(Status::NOT_FOUND, _old_path);
 	}
 
+	// Ensure it is a block (ports are not supported for now)
+	if (!(_old_block = dynamic_ptr_cast<BlockImpl>(i->second))) {
+		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _old_path);
+	}
+
+	if (Node::uri_is_path(_new_uri)) {
+		// Copy to path within the engine
+		return copy_to_engine();
+	} else if (_new_uri.scheme() == "file") {
+		// Copy to filesystem path (i.e. save)
+		return copy_to_filesystem();
+	} else {
+		return Event::pre_process_done(Status::BAD_REQUEST);
+	}
+}
+
+bool
+Copy::copy_to_engine()
+{
+	// Only support a single source for now
+	const Raul::Path new_path = Node::uri_to_path(_new_uri);
+	if (!Raul::Symbol::is_valid(new_path.symbol())) {
+		return Event::pre_process_done(Status::BAD_REQUEST);
+	}
+
 	// Ensure the new node doesn't already exists
 	if (_engine.store()->find(new_path) != _engine.store()->end()) {
 		return Event::pre_process_done(Status::EXISTS, new_path);
-	}
-
-	// Get old node block, or fail (ports not supported for now)
-	BlockImpl* old_block = dynamic_cast<BlockImpl*>(i->second.get());
-	if (!old_block) {
-		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _old_path);
 	}
 
 	// Find new parent graph
@@ -89,7 +103,7 @@ Copy::pre_process()
 
 	// Create new block
 	if (!(_block = dynamic_cast<BlockImpl*>(
-		      old_block->duplicate(_engine, Raul::Symbol(new_path.symbol()), _parent)))) {
+		      _old_block->duplicate(_engine, Raul::Symbol(new_path.symbol()), _parent)))) {
 		return Event::pre_process_done(Status::INTERNAL_ERROR);
 	}
 
@@ -102,6 +116,38 @@ Copy::pre_process()
 	// Compile graph with new block added for insertion in audio thread
 	if (_parent->enabled()) {
 		_compiled_graph = _parent->compile();
+	}
+
+	return Event::pre_process_done(Status::SUCCESS);
+}
+
+bool
+Copy::copy_to_filesystem()
+{
+	// Ensure source is a graph
+	SPtr<GraphImpl> graph = dynamic_ptr_cast<GraphImpl>(_old_block);
+	if (!graph) {
+		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _old_path);
+	}
+
+	// Parse filename from target URI
+	const uint8_t*    uri      = (const uint8_t*)_new_uri.c_str();
+	uint8_t*          path     = serd_file_uri_parse(uri, NULL);
+	const std::string filename = (const char*)path;
+	free(path);
+
+	if (!_engine.world()->serialiser()) {
+		return Event::pre_process_done(Status::INTERNAL_ERROR);
+	}
+
+	std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
+
+	if (filename.find(".ingen") != std::string::npos) {
+		_engine.world()->serialiser()->write_bundle(graph, _new_uri/*filename*/);
+	} else {
+		_engine.world()->serialiser()->start_to_file(graph->path(), _new_uri);
+		_engine.world()->serialiser()->serialise(graph);
+		_engine.world()->serialiser()->finish();
 	}
 
 	return Event::pre_process_done(Status::SUCCESS);
