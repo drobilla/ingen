@@ -208,8 +208,8 @@ ClientStore::del(const Raul::URI& uri)
 }
 
 void
-ClientStore::copy(const Raul::Path& old_path,
-                  const Raul::URI&  new_uri)
+ClientStore::copy(const Raul::URI& old_uri,
+                  const Raul::URI& new_uri)
 {
 	_log.error("Client store copy unsupported\n");
 }

@@ -168,13 +168,13 @@ AtomWriter::delta(const Raul::URI&            uri,
 }
 
 void
-AtomWriter::copy(const Raul::Path& old_path,
-                 const Raul::URI&  new_uri)
+AtomWriter::copy(const Raul::URI& old_uri,
+                 const Raul::URI& new_uri)
 {
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.patch_Copy);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
-	forge_uri(Node::path_to_uri(old_path));
+	forge_uri(old_uri);
 	lv2_atom_forge_key(&_forge, _uris.patch_destination);
 	forge_uri(new_uri);
 	lv2_atom_forge_pop(&_forge, &msg);

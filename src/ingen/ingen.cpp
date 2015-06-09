@@ -181,6 +181,20 @@ main(int argc, char** argv)
 		std::lock_guard<std::mutex> lock(world->rdf_mutex());
 		world->parser()->parse_file(
 			world, engine_interface.get(), graph, parent, symbol);
+	} else if (conf.option("server-load").is_valid()) {
+		const char* path = conf.option("server-load").ptr<char>();
+		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
+			std::cout << "Loading " << path << " (server side)" << std::endl;
+			engine_interface->copy(Raul::URI(path), Node::root_graph_uri());
+		} else {
+			SerdNode uri = serd_node_new_file_uri(
+				(const uint8_t*)path, NULL, NULL, true);
+			std::cout << "Loading " << (const char*)uri.buf
+			          << " (server side)" << std::endl;
+			engine_interface->copy(Raul::URI((const char*)uri.buf),
+			                       Node::root_graph_uri());
+			serd_node_free(&uri);
+		}
 	}
 
 	// Save the currently loaded graph
@@ -188,12 +202,12 @@ main(int argc, char** argv)
 		const char* path = conf.option("save").ptr<char>();
 		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
 			std::cout << "Saving to " << path << std::endl;
-			engine_interface->copy(Raul::Path("/"), Raul::URI(path));
+			engine_interface->copy(Node::root_graph_uri(), Raul::URI(path));
 		} else {
 			SerdNode uri = serd_node_new_file_uri(
 				(const uint8_t*)path, NULL, NULL, true);
 			std::cout << "Saving to " << (const char*)uri.buf << std::endl;
-			engine_interface->copy(Raul::Path("/"),
+			engine_interface->copy(Node::root_graph_uri(),
 			                       Raul::URI((const char*)uri.buf));
 			serd_node_free(&uri);
 		}

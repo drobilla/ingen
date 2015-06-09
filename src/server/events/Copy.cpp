@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Parser.hpp"
 #include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
@@ -31,14 +32,14 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Copy::Copy(Engine&           engine,
-           SPtr<Interface>   client,
-           int32_t           id,
-           SampleCount       timestamp,
-           const Raul::Path& old_path,
-           const Raul::URI&  new_uri)
+Copy::Copy(Engine&          engine,
+           SPtr<Interface>  client,
+           int32_t          id,
+           SampleCount      timestamp,
+           const Raul::URI& old_uri,
+           const Raul::URI& new_uri)
 	: Event(engine, client, id, timestamp)
-	, _old_path(old_path)
+	, _old_uri(old_uri)
 	, _new_uri(new_uri)
 	, _old_block(NULL)
 	, _parent(NULL)
@@ -49,36 +50,46 @@ Copy::Copy(Engine&           engine,
 bool
 Copy::pre_process()
 {
-	if (_old_path.empty() || _new_uri == Node::root_graph_uri()) {
-		return Event::pre_process_done(Status::BAD_REQUEST);
-	}
-
 	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
 
-	// Find the old node
-	const Store::iterator i = _engine.store()->find(_old_path);
-	if (i == _engine.store()->end()) {
-		return Event::pre_process_done(Status::NOT_FOUND, _old_path);
+	if (Node::uri_is_path(_old_uri)) {
+		// Old URI is a path within the engine
+		const Raul::Path old_path = Node::uri_to_path(_old_uri);
+
+		// Find the old node
+		const Store::iterator i = _engine.store()->find(old_path);
+		if (i == _engine.store()->end()) {
+			return Event::pre_process_done(Status::NOT_FOUND, old_path);
+		}
+
+		// Ensure it is a block (ports are not supported for now)
+		if (!(_old_block = dynamic_ptr_cast<BlockImpl>(i->second))) {
+			return Event::pre_process_done(Status::BAD_OBJECT_TYPE, old_path);
+		}
+
+		if (Node::uri_is_path(_new_uri)) {
+			// Copy to path within the engine
+			return engine_to_engine();
+		} else if (_new_uri.scheme() == "file") {
+			// Copy to filesystem path (i.e. save)
+			return engine_to_filesystem();
+		} else {
+			return Event::pre_process_done(Status::BAD_REQUEST);
+		}
+	} else if (_old_uri.scheme() == "file") {
+		if (Node::uri_is_path(_new_uri)) {
+			filesystem_to_engine();
+		} else {
+			// Ingen is not your file manager
+			return Event::pre_process_done(Status::BAD_REQUEST);
+		}
 	}
 
-	// Ensure it is a block (ports are not supported for now)
-	if (!(_old_block = dynamic_ptr_cast<BlockImpl>(i->second))) {
-		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _old_path);
-	}
-
-	if (Node::uri_is_path(_new_uri)) {
-		// Copy to path within the engine
-		return copy_to_engine();
-	} else if (_new_uri.scheme() == "file") {
-		// Copy to filesystem path (i.e. save)
-		return copy_to_filesystem();
-	} else {
-		return Event::pre_process_done(Status::BAD_REQUEST);
-	}
+	return Event::pre_process_done(Status::BAD_URI);
 }
 
 bool
-Copy::copy_to_engine()
+Copy::engine_to_engine()
 {
 	// Only support a single source for now
 	const Raul::Path new_path = Node::uri_to_path(_new_uri);
@@ -121,20 +132,23 @@ Copy::copy_to_engine()
 	return Event::pre_process_done(Status::SUCCESS);
 }
 
+static bool
+ends_with(const std::string& str, const std::string& end)
+{
+    if (str.length() >= end.length()) {
+        return !str.compare(str.length() - end.length(), end.length(), end);
+    }
+    return false;
+}
+
 bool
-Copy::copy_to_filesystem()
+Copy::engine_to_filesystem()
 {
 	// Ensure source is a graph
 	SPtr<GraphImpl> graph = dynamic_ptr_cast<GraphImpl>(_old_block);
 	if (!graph) {
-		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _old_path);
+		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _old_uri);
 	}
-
-	// Parse filename from target URI
-	const uint8_t*    uri      = (const uint8_t*)_new_uri.c_str();
-	uint8_t*          path     = serd_file_uri_parse(uri, NULL);
-	const std::string filename = (const char*)path;
-	free(path);
 
 	if (!_engine.world()->serialiser()) {
 		return Event::pre_process_done(Status::INTERNAL_ERROR);
@@ -142,13 +156,39 @@ Copy::copy_to_filesystem()
 
 	std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
 
-	if (filename.find(".ingen") != std::string::npos) {
-		_engine.world()->serialiser()->write_bundle(graph, _new_uri/*filename*/);
+	if (ends_with(_new_uri, ".ingen") || ends_with(_new_uri, ".ingen/")) {
+		_engine.world()->serialiser()->write_bundle(graph, _new_uri);
 	} else {
 		_engine.world()->serialiser()->start_to_file(graph->path(), _new_uri);
 		_engine.world()->serialiser()->serialise(graph);
 		_engine.world()->serialiser()->finish();
 	}
+
+	return Event::pre_process_done(Status::SUCCESS);
+}
+
+bool
+Copy::filesystem_to_engine()
+{
+	if (!_engine.world()->parser()) {
+		return Event::pre_process_done(Status::INTERNAL_ERROR);
+	}
+
+	std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
+
+	// Old URI is a filesystem path and new URI is a path within the engine
+	const std::string             src_path = _old_uri.substr(strlen("file://"));
+	const Raul::Path              dst_path = Node::uri_to_path(_new_uri);
+	boost::optional<Raul::Path>   dst_parent;
+	boost::optional<Raul::Symbol> dst_symbol;
+	if (!dst_path.is_root()) {
+		dst_parent = dst_path.parent();
+		dst_symbol = Raul::Symbol(dst_path.symbol());
+	}
+
+	_engine.world()->parser()->parse_file(
+		_engine.world(), _engine.world()->interface().get(), src_path,
+		dst_parent, dst_symbol);
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
@@ -167,7 +207,7 @@ Copy::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
-		_engine.broadcaster()->copy(_old_path, _new_uri);
+		_engine.broadcaster()->copy(_old_uri, _new_uri);
 	}
 }
 

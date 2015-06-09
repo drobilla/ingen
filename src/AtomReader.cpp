@@ -288,8 +288,8 @@ AtomReader::write(const LV2_Atom* msg)
 			return false;
 		}
 
-		boost::optional<Raul::Path> subject_path(atom_to_path(subject));
-		if (!subject_path) {
+		boost::optional<Raul::URI> subject_uri(atom_to_uri(subject));
+		if (!subject_uri) {
 			_log.warn("Copy message has non-path subject\n");
 			return false;
 		}
@@ -300,7 +300,7 @@ AtomReader::write(const LV2_Atom* msg)
 			return false;
 		}
 
-		_iface.copy(*subject_path, *dest_uri);
+		_iface.copy(*subject_uri, *dest_uri);
 	} else if (obj->body.otype == _uris.patch_Move) {
 		if (!subject) {
 			_log.warn("Move message has no subject\n");

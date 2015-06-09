@@ -47,27 +47,28 @@ namespace Events {
 class Copy : public Event
 {
 public:
-	Copy(Engine&           engine,
-	     SPtr<Interface>   client,
-	     int32_t           id,
-	     SampleCount       timestamp,
-	     const Raul::Path& old_path,
-	     const Raul::URI&  new_uri);
+	Copy(Engine&          engine,
+	     SPtr<Interface>  client,
+	     int32_t          id,
+	     SampleCount      timestamp,
+	     const Raul::URI& old_uri,
+	     const Raul::URI& new_uri);
 
 	bool pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
 
 private:
-	bool copy_to_engine();
-	bool copy_to_filesystem();
+	bool engine_to_engine();
+	bool engine_to_filesystem();
+	bool filesystem_to_engine();
 
-	const Raul::Path _old_path;
-	const Raul::URI  _new_uri;
-	SPtr<BlockImpl>  _old_block;
-	GraphImpl*       _parent;
-	BlockImpl*       _block;
-	CompiledGraph*   _compiled_graph;
+	const Raul::URI _old_uri;
+	const Raul::URI _new_uri;
+	SPtr<BlockImpl> _old_block;
+	GraphImpl*      _parent;
+	BlockImpl*      _block;
+	CompiledGraph*  _compiled_graph;
 };
 
 } // namespace Events
