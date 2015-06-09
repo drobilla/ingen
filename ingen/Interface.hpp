@@ -69,8 +69,8 @@ public:
 	                   const Resource::Properties& remove,
 	                   const Resource::Properties& add) = 0;
 
-	virtual void copy(const Raul::Path& old_path,
-	                  const Raul::URI&  new_uri) = 0;
+	virtual void copy(const Raul::URI& old_uri,
+	                  const Raul::URI& new_uri) = 0;
 
 	virtual void move(const Raul::Path& old_path,
 	                  const Raul::Path& new_path) = 0;
