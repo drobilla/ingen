@@ -188,16 +188,23 @@ BlockImpl::process(ProcessContext& context)
 	pre_process(context);
 
 	if (!_enabled) {
+		// Dumb bypass
 		for (PortType t : { PortType::AUDIO, PortType::CV, PortType::ATOM }) {
 			for (uint32_t i = 0;; ++i) {
-				PortImpl* in = nth_port_by_type(i, true, t);
-				PortImpl* out;
-				if (in && (out = nth_port_by_type(i, false, t))) {
+				PortImpl* in  = nth_port_by_type(i, true, t);
+				PortImpl* out = nth_port_by_type(i, false, t);
+				if (!out) {
+					break;  // Finished writing all outputs
+				} else if (in) {
+					// Copy corresponding input to output
 					for (uint32_t v = 0; v < _polyphony; ++v) {
 						out->buffer(v)->copy(context, in->buffer(v).get());
 					}
 				} else {
-					break;
+					// Output but no corresponding input, clear
+					for (uint32_t v = 0; v < _polyphony; ++v) {
+						out->buffer(v)->clear();
+					}
 				}
 			}
 		}
