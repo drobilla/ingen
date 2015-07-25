@@ -109,7 +109,7 @@ Delta::add_set_event(const char* port_symbol,
 	BlockImpl* block = dynamic_cast<BlockImpl*>(_object);
 	PortImpl*  port  = block->port_by_symbol(port_symbol);
 	if (!port) {
-		_engine.log().warn(fmt("Unknown port `%1' in state") % port_symbol);
+		_engine.log().warn(fmt("Unknown port `%1%' in state") % port_symbol);
 		return;
 	}
 
