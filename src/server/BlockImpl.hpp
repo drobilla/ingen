@@ -136,7 +136,7 @@ public:
 	/** Blocks that are connected to this Block's inputs. */
 	std::list<BlockImpl*>& providers() { return _providers; }
 
-	/** Blocks are are connected to this Block's outputs. */
+	/** Blocks that are connected to this Block's outputs. */
 	std::list<BlockImpl*>& dependants() { return _dependants; }
 
 	/** Flag block as polyphonic.
