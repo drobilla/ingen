@@ -29,7 +29,7 @@ Forge::Forge(URIMap& map)
 }
 
 std::string
-Forge::str(const Atom& atom)
+Forge::str(const Atom& atom, bool quoted)
 {
 	std::ostringstream ss;
 	if (atom.type() == Int) {
@@ -39,11 +39,17 @@ Forge::str(const Atom& atom)
 	} else if (atom.type() == Bool) {
 		ss << (atom.get<int32_t>() ? "true" : "false");
 	} else if (atom.type() == URI) {
-		ss << "<" << atom.ptr<const char*>() << ">";
+		ss << (quoted ? "<" : "")
+		   << atom.ptr<const char>()
+		   << (quoted ? ">" : "");
 	} else if (atom.type() == URID) {
-		ss << "<" << _map.unmap_uri(atom.get<int32_t>()) << ">";
+		ss << (quoted ? "<" : "")
+		   << _map.unmap_uri(atom.get<int32_t>())
+		   << (quoted ? ">" : "");
 	} else if (atom.type() == String) {
-		ss << "\"" << atom.ptr<const char*>() << "\"";
+		ss << (quoted ? "\"" : "")
+		   << atom.ptr<const char>()
+		   << (quoted ? "\"" : "");
 	}
 	return ss.str();
 }

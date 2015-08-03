@@ -34,7 +34,7 @@ class INGEN_API Forge : public LV2_Atom_Forge {
 public:
 	explicit Forge(URIMap& map);
 
-	std::string str(const Atom& atom);
+	std::string str(const Atom& atom, bool quoted=true);
 
 	Atom make()          { return Atom(); }
 	Atom make(int32_t v) { return Atom(sizeof(v), Int, &v); }
