@@ -180,7 +180,7 @@ ControlBindings::port_value_changed(ProcessContext& context,
 			break;
 		}
 		if (size > 0) {
-			_feedback->append_event(0, size, uris.midi_MidiEvent.id, buf);
+			_feedback->append_event(0, size, (LV2_URID)uris.midi_MidiEvent, buf);
 		}
 	}
 }

@@ -59,8 +59,8 @@ public:
 	Node* port(uint32_t index) const;
 
 	const Raul::URI&  plugin_uri()   const { return _plugin_uri; }
-	const Plugin*     plugin()       const { return _plugin.get(); }
-	Plugin*           plugin()             { return _plugin.get(); }
+	const Resource*   plugin()       const { return _plugin.get(); }
+	Resource*         plugin()             { return _plugin.get(); }
 	SPtr<PluginModel> plugin_model() const { return _plugin; }
 	uint32_t          num_ports()    const { return _ports.size(); }
 	const Ports&      ports()        const { return _ports; }

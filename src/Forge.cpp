@@ -28,6 +28,13 @@ Forge::Forge(URIMap& map)
 	lv2_atom_forge_init(this, &map.urid_map_feature()->urid_map);
 }
 
+Atom
+Forge::make_urid(const Raul::URI& u)
+{
+	const LV2_URID urid = _map.map_uri(u);
+	return Atom(sizeof(int32_t), URID, &urid);
+}
+
 std::string
 Forge::str(const Atom& atom, bool quoted)
 {

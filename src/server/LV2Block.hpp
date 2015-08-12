@@ -67,6 +67,9 @@ public:
 
 	void apply_state(LilvState* state);
 
+	boost::optional<Resource> save_preset(const Raul::URI&  bundle,
+	                                      const Properties& props);
+
 	void set_port_buffer(uint32_t    voice,
 	                     uint32_t    port_num,
 	                     BufferRef   buf,

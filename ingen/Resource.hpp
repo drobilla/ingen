@@ -34,10 +34,19 @@ namespace Ingen {
 class INGEN_API Resource : public Raul::Deletable
 {
 public:
-	Resource(URIs& uris, const Raul::URI& uri)
+	Resource(const URIs& uris, const Raul::URI& uri)
 		: _uris(uris)
 		, _uri(uri)
 	{}
+
+	Resource& operator=(const Resource& rhs) {
+		assert(&rhs._uris == &_uris);
+		if (&rhs != this) {
+			_uri        = rhs._uri;
+			_properties = rhs._properties;
+		}
+		return *this;
+	}
 
 	enum class Graph {
 		DEFAULT,
@@ -76,6 +85,11 @@ public:
 			, _ctx(ctx)
 		{}
 
+		Property(const URIs::Quark& quark, Graph ctx=Graph::DEFAULT)
+			: Atom(quark.urid)
+			, _ctx(ctx)
+		{}
+
 		Graph context() const        { return _ctx; }
 		void  set_context(Graph ctx) { _ctx = ctx; }
 
@@ -104,6 +118,16 @@ public:
 		const Atom&      value,
 		Graph            ctx = Graph::DEFAULT);
 
+	/** Set (replace) a property value.
+	 *
+	 * This will first erase any properties with the given `uri`, so after
+	 * this call exactly one property with predicate `uri` will be set.
+	 */
+	virtual const Atom& set_property(
+		const Raul::URI&   uri,
+		const URIs::Quark& value,
+		Graph              ctx = Graph::DEFAULT);
+
 	/** Add a property value.
 	 *
 	 * This will not remove any existing values, so if properties with
@@ -122,9 +146,21 @@ public:
 	virtual void remove_property(const Raul::URI& uri,
 	                             const Atom&      value);
 
-	/** Return true iff a property is set. */
+	/** Remove a property.
+	 *
+	 *	If `value` is patch:wildcard then any property with `uri` for a
+	 *  predicate will be removed.
+	 */
+	virtual void remove_property(const Raul::URI&   uri,
+	                             const URIs::Quark& value);
+
+	/** Return true iff a property is set with a specific value. */
 	virtual bool has_property(const Raul::URI& uri,
 	                          const Atom&      value) const;
+
+	/** Return true iff a property is set with a specific value. */
+	virtual bool has_property(const Raul::URI&   uri,
+	                          const URIs::Quark& value) const;
 
 	/** Set (replace) several properties at once.
 	 *
@@ -177,7 +213,7 @@ public:
 	/** Get all the properties with a given context. */
 	Properties properties(Resource::Graph ctx) const;
 
-	URIs&             uris()       const { return _uris; }
+	const URIs&       uris()       const { return _uris; }
 	const Raul::URI&  uri()        const { return _uri; }
 	const Properties& properties() const { return _properties; }
 	Properties&       properties()       { return _properties; }
@@ -185,7 +221,7 @@ public:
 protected:
 	const Atom& set_property(const Raul::URI& uri, const Atom& value) const;
 
-	URIs& _uris;
+	const URIs& _uris;
 
 private:
 	Raul::URI          _uri;

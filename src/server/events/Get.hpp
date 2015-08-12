@@ -67,6 +67,11 @@ public:
 		void put_port(const PortImpl* port);
 		void put_block(const BlockImpl* block);
 		void put_graph(const GraphImpl* graph);
+		void put_plugin(PluginImpl* plugin);
+		void put_preset(const URIs&        uris,
+		                const Raul::URI&   plugin,
+		                const Raul::URI&   preset,
+		                const std::string& label);
 
 		void send(Interface* dest);
 
@@ -88,7 +93,7 @@ public:
 private:
 	const Raul::URI       _uri;
 	const Node*           _object;
-	const PluginImpl*     _plugin;
+	PluginImpl*           _plugin;
 	BlockFactory::Plugins _plugins;
 	Response              _response;
 };

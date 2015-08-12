@@ -52,6 +52,8 @@ public:
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
 	void              lilv_plugin(const LilvPlugin* p);
 
+	void load_presets();
+
 private:
 	const LilvPlugin* _lilv_plugin;
 	SPtr<LV2Info>     _lv2_info;

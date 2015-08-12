@@ -22,6 +22,7 @@
 #include "ingen/Atom.hpp"
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -45,6 +46,8 @@ public:
 	}
 
 	Atom make_urid(int32_t v) { return Atom(sizeof(int32_t), URID, &v); }
+
+	Atom make_urid(const Raul::URI& u);
 
 	Atom alloc(uint32_t size, uint32_t type, const void* val) {
 		return Atom(size, type, val);

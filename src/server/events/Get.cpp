@@ -60,8 +60,10 @@ Get::Response::put_port(const PortImpl* port)
 void
 Get::Response::put_block(const BlockImpl* block)
 {
-	PluginImpl* const plugin = block->plugin_impl();
-	if (plugin->type() == Plugin::Graph) {
+	const PluginImpl* const plugin = block->plugin_impl();
+	const URIs&             uris   = plugin->uris();
+
+	if (uris.ingen_Graph == plugin->type()) {
 		put_graph((const GraphImpl*)block);
 	} else {
 		put(block->uri(), block->properties());
@@ -82,7 +84,7 @@ Get::Response::put_graph(const GraphImpl* graph)
 	    graph->properties(Resource::Graph::EXTERNAL),
 	    Resource::Graph::EXTERNAL);
 
-	// Enqueue locks
+	// Enqueue blocks
 	for (const auto& b : graph->blocks()) {
 		put_block(&b);
 	}
@@ -98,6 +100,29 @@ Get::Response::put_graph(const GraphImpl* graph)
 		const Connect         connect = { arc->tail_path(), arc->head_path() };
 		connects.push_back(connect);
 	}
+}
+
+void
+Get::Response::put_plugin(PluginImpl* plugin)
+{
+	put(plugin->uri(), plugin->properties());
+
+	for (const auto& p : plugin->presets()) {
+		put_preset(plugin->uris(), plugin->uri(), p.first, p.second);
+	}
+}
+
+void
+Get::Response::put_preset(const URIs&        uris,
+                          const Raul::URI&   plugin,
+                          const Raul::URI&   preset,
+                          const std::string& label)
+{
+	Resource::Properties props;
+	props.emplace(uris.rdf_type, uris.pset_Preset.urid);
+	props.emplace(uris.rdfs_label, uris.forge.alloc(label));
+	props.emplace(uris.lv2_appliesTo, uris.forge.make_urid(plugin));
+	put(preset, props);
 }
 
 /** Returns true if a is closer to the root than b. */
@@ -159,11 +184,10 @@ Get::pre_process()
 			return Event::pre_process_done(Status::SUCCESS);
 		}
 		return Event::pre_process_done(Status::NOT_FOUND, _uri);
+	} else if ((_plugin = _engine.block_factory()->plugin(_uri))) {
+		_response.put_plugin(_plugin);
+		return Event::pre_process_done(Status::SUCCESS);
 	} else {
-		if ((_plugin = _engine.block_factory()->plugin(_uri))) {
-			_response.put(_uri, _plugin->properties());
-			return Event::pre_process_done(Status::SUCCESS);
-		}
 		return Event::pre_process_done(Status::NOT_FOUND, _uri);
 	}
 }

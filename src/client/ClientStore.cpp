@@ -136,11 +136,18 @@ ClientStore::remove_object(const Raul::Path& path)
 SPtr<PluginModel>
 ClientStore::_plugin(const Raul::URI& uri)
 {
-	Plugins::iterator i = _plugins->find(uri);
-	if (i == _plugins->end())
-		return SPtr<PluginModel>();
-	else
-		return (*i).second;
+	const Plugins::iterator i = _plugins->find(uri);
+	return (i == _plugins->end()) ? SPtr<PluginModel>() : (*i).second;
+}
+
+SPtr<PluginModel>
+ClientStore::_plugin(const Atom& uri)
+{
+	/* FIXME: SHould probably be stored with URIs rather than strings, to make this
+	   a fast case. */
+
+	const Plugins::iterator i = _plugins->find(Raul::URI(_uris.forge.str(uri, false)));
+	return (i == _plugins->end()) ? SPtr<PluginModel>() : (*i).second;
 }
 
 SPtr<const PluginModel>
@@ -241,17 +248,31 @@ ClientStore::put(const Raul::URI&            uri,
 	Resource::type(uris(), properties,
 	               is_graph, is_block, is_port, is_output);
 
-	// Check if uri is a plugin
-	Iterator t = properties.find(_uris.rdf_type);
-	if (t != properties.end() && t->second.type() == _uris.forge.URI) {
-		const Atom&        type(t->second);
-		const Raul::URI    type_uri(type.ptr<char>());
-		const Plugin::Type plugin_type(Plugin::type_from_uri(type_uri));
-		if (plugin_type == Plugin::Graph) {
+	// Check for specially handled types
+	const Iterator t = properties.find(_uris.rdf_type);
+	if (t != properties.end()) {
+		const Atom& type(t->second);
+		if (_uris.pset_Preset == type) {
+			const Iterator    p = properties.find(_uris.lv2_appliesTo);
+			const Iterator    l = properties.find(_uris.rdfs_label);
+			SPtr<PluginModel> plug;
+			if (p == properties.end()) {
+				_log.error(fmt("Preset <%1%> with no plugin\n") % uri.c_str());
+			} else if (l == properties.end()) {
+				_log.error(fmt("Preset <%1%> with no label\n") % uri.c_str());
+			} else if (l->second.type() != _uris.forge.String) {
+				_log.error(fmt("Preset <%1%> label is not a string\n") % uri.c_str());
+			} else if (!(plug = _plugin(p->second))) {
+				_log.error(fmt("Preset <%1%> for unknown plugin %2%\n")
+				           % uri.c_str() % _uris.forge.str(p->second));
+			} else {
+				plug->add_preset(uri, l->second.ptr<char>());
+			}
+			return;
+		} else if (_uris.ingen_Graph == type) {
 			is_graph = true;
-		} else if (plugin_type != Plugin::NIL) {
-			SPtr<PluginModel> p(
-				new PluginModel(uris(), uri, type_uri, properties));
+		} else if (_uris.ingen_Internal == type || _uris.lv2_Plugin == type) {
+			SPtr<PluginModel> p(new PluginModel(uris(), uri, type, properties));
 			add_plugin(p);
 			return;
 		}
@@ -292,7 +313,7 @@ ClientStore::put(const Raul::URI&            uri,
 					new PluginModel(
 						uris(),
 						Raul::URI(p->second.ptr<char>()),
-						Raul::URI("http://www.w3.org/2002/07/owl#Nothing"),
+						Atom(),
 						Resource::Properties()));
 				add_plugin(plug);
 			}

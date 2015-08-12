@@ -42,28 +42,28 @@ Sord::World* PluginModel::_rdf_world = NULL;
 
 PluginModel::PluginModel(URIs&                       uris,
                          const Raul::URI&            uri,
-                         const Raul::URI&            type_uri,
+                         const Atom&                 type,
                          const Resource::Properties& properties)
-	: Plugin(uris, uri)
-	, _type(type_from_uri(type_uri))
+	: Resource(uris, uri)
+	, _type(type)
+	, _fetched(false)
 {
-	if (_type == NIL) {
+	if (!_type.is_valid()) {
 		if (uri.find("ingen-internals") != string::npos) {
-			_type = Internal;
+			_type = uris.ingen_Internal;
 		} else {
-			_type = LV2;  // Assume LV2 and hope Lilv can tell us something
+			_type = uris.lv2_Plugin;  // Assume LV2 and hope for the best...
 		}
 	}
+
+	add_property(uris.rdf_type, type);
 	add_properties(properties);
 
-	assert(_rdf_world);
-	add_property(uris.rdf_type,
-	             uris.forge.alloc_uri(this->type_uri()));
 	LilvNode* plugin_uri = lilv_new_uri(_lilv_world, uri.c_str());
 	_lilv_plugin = lilv_plugins_get_by_uri(_lilv_plugins, plugin_uri);
 	lilv_node_free(plugin_uri);
 
-	if (_type == Internal) {
+	if (uris.ingen_Internal == _type) {
 		set_property(uris.doap_name,
 		             uris.forge.alloc(uri.substr(uri.find_last_of('#') + 1)));
 	}
@@ -164,6 +164,13 @@ PluginModel::set(SPtr<PluginModel> p)
 	}
 
 	_signal_changed.emit();
+}
+
+void
+PluginModel::add_preset(const Raul::URI& uri, const std::string& label)
+{
+	_presets.insert(std::make_pair(uri, label));
+	_signal_preset.emit(uri, label);
 }
 
 Raul::Symbol

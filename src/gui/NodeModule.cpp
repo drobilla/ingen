@@ -307,7 +307,7 @@ NodeModule::delete_port_view(SPtr<const PortModel> model)
 bool
 NodeModule::popup_gui()
 {
-	if (_block->plugin() && _block->plugin()->type() == PluginModel::LV2) {
+	if (_block->plugin() && app().uris().lv2_Plugin == _block->plugin_model()->type()) {
 		if (_plugin_ui) {
 			app().log().warn("LV2 GUI already embedded, cannot pop up\n");
 			return false;

@@ -19,10 +19,13 @@
 
 #include <vector>
 
+#include <boost/optional.hpp>
+
 #include "lilv/lilv.h"
 
 #include "raul/URI.hpp"
 
+#include "PluginImpl.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
 
@@ -127,6 +130,8 @@ private:
 	Type                     _type;
 
 	SPtr<ControlBindings::Bindings> _old_bindings;
+
+	boost::optional<Resource> _preset;
 
 	std::unique_lock<std::mutex> _poly_lock;  ///< Long-term lock for poly changes
 };

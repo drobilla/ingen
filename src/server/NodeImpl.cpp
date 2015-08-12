@@ -23,7 +23,7 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-NodeImpl::NodeImpl(Ingen::URIs&        uris,
+NodeImpl::NodeImpl(const Ingen::URIs&  uris,
                    NodeImpl*           parent,
                    const Raul::Symbol& symbol)
 	: Node(uris, parent ? parent->path().child(symbol) : Raul::Path("/"))

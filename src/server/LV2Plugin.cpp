@@ -16,7 +16,9 @@
 
 #include <string>
 
+#include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
+#include "lv2/lv2plug.in/ns/ext/presets/presets.h"
 
 #include "Driver.hpp"
 #include "Engine.hpp"
@@ -29,7 +31,9 @@ namespace Ingen {
 namespace Server {
 
 LV2Plugin::LV2Plugin(SPtr<LV2Info> lv2_info, const Raul::URI& uri)
-	: PluginImpl(lv2_info->world().uris(), Plugin::LV2, uri)
+	: PluginImpl(lv2_info->world().uris(),
+	             lv2_info->world().uris().lv2_Plugin,
+	             uri)
 	, _lilv_plugin(NULL)
 	, _lv2_info(lv2_info)
 {
@@ -78,6 +82,44 @@ void
 LV2Plugin::lilv_plugin(const LilvPlugin* p)
 {
 	_lilv_plugin = p;
+}
+
+void
+LV2Plugin::load_presets()
+{
+	LilvWorld* lworld      = _lv2_info->world().lilv_world();
+	LilvNode*  pset_Preset = lilv_new_uri(lworld, LV2_PRESETS__Preset);
+	LilvNode*  rdfs_label  = lilv_new_uri(lworld, LILV_NS_RDFS "label");
+	LilvNodes* presets     = lilv_plugin_get_related(_lilv_plugin, pset_Preset);
+
+	if (presets) {
+		LILV_FOREACH(nodes, i, presets) {
+			const LilvNode* preset = lilv_nodes_get(presets, i);
+			lilv_world_load_resource(lworld, preset);
+
+			LilvNodes* labels = lilv_world_find_nodes(
+				lworld, preset, rdfs_label, NULL);
+			if (labels) {
+				const LilvNode* label = lilv_nodes_get_first(labels);
+
+				_presets.emplace(Raul::URI(lilv_node_as_uri(preset)),
+				                 lilv_node_as_string(label));
+
+				lilv_nodes_free(labels);
+			} else {
+				_lv2_info->world().log().error(
+					fmt("Preset <%1%> has no rdfs:label\n")
+					% lilv_node_as_string(lilv_nodes_get(presets, i)));
+			}
+		}
+
+		lilv_nodes_free(presets);
+	}
+
+	lilv_node_free(rdfs_label);
+	lilv_node_free(pset_Preset);
+
+	PluginImpl::load_presets();
 }
 
 } // namespace Server

@@ -52,10 +52,13 @@ protected:
 		return dynamic_ptr_cast<const Client::BlockModel>(_object);
 	}
 
+	void add_preset(const Raul::URI& uri, const std::string& label);
+
 	void on_menu_disconnect();
 	void on_menu_embed_gui();
 	void on_menu_enabled();
 	void on_menu_randomize();
+	void on_save_preset_activated();
 	void on_preset_activated(const std::string& uri);
 
 	Gtk::MenuItem*      _popup_gui_menuitem;
@@ -63,6 +66,7 @@ protected:
 	Gtk::CheckMenuItem* _enabled_menuitem;
 	Gtk::MenuItem*      _randomize_menuitem;
 	Gtk::Menu*          _presets_menu;
+	sigc::connection    _preset_connection;
 };
 
 } // namespace GUI

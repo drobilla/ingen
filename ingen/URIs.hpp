@@ -46,10 +46,21 @@ public:
 
 	struct Quark : public Raul::URI {
 		Quark(Ingen::Forge& forge, URIMap* map, const char* str);
-		operator LV2_URID() const { return id; }
-		operator Atom()     const { return atom; }
-		uint32_t id;
-		Atom     atom;
+
+		operator LV2_URID() const { return urid.get<LV2_URID>(); }
+		operator Atom()     const { return urid; }
+
+		inline bool operator==(const Atom& rhs) const {
+			if (rhs.type() == urid.type()) {
+				return rhs == urid;
+			} else if (rhs.type() == uri.type()) {
+				return rhs == uri;
+			}
+			return false;
+		}
+
+		Atom urid;
+		Atom uri;
 	};
 
 	Ingen::Forge& forge;
@@ -105,6 +116,7 @@ public:
 	const Quark lv2_InputPort;
 	const Quark lv2_OutputPort;
 	const Quark lv2_Plugin;
+	const Quark lv2_appliesTo;
 	const Quark lv2_binary;
 	const Quark lv2_connectionOptional;
 	const Quark lv2_default;
@@ -151,10 +163,12 @@ public:
 	const Quark patch_subject;
 	const Quark patch_value;
 	const Quark patch_wildcard;
+	const Quark pset_Preset;
 	const Quark pset_preset;
 	const Quark pprops_logarithmic;
 	const Quark rdf_type;
 	const Quark rdfs_Class;
+	const Quark rdfs_label;
 	const Quark rdfs_seeAlso;
 	const Quark rsz_minimumSize;
 	const Quark time_Position;

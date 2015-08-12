@@ -66,10 +66,18 @@ Resource::set_property(const Raul::URI& uri,
 	return v;
 }
 
+const Atom&
+Resource::set_property(const Raul::URI&   uri,
+                       const URIs::Quark& value,
+                       Resource::Graph    ctx)
+{
+	return set_property(uri, value.urid, ctx);
+}
+
 void
 Resource::remove_property(const Raul::URI& uri, const Atom& value)
 {
-	if (value == _uris.patch_wildcard) {
+	if (_uris.patch_wildcard == value) {
 		_properties.erase(uri);
 	} else {
 		for (Properties::iterator i = _properties.find(uri);
@@ -84,12 +92,31 @@ Resource::remove_property(const Raul::URI& uri, const Atom& value)
 	on_property_removed(uri, value);
 }
 
+void
+Resource::remove_property(const Raul::URI& uri, const URIs::Quark& value)
+{
+	remove_property(uri, value.urid);
+	remove_property(uri, value.uri);
+}
+
 bool
 Resource::has_property(const Raul::URI& uri, const Atom& value) const
 {
 	Properties::const_iterator i = _properties.find(uri);
 	for (; (i != _properties.end()) && (i->first == uri); ++i) {
 		if (i->second == value) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool
+Resource::has_property(const Raul::URI& uri, const URIs::Quark& value) const
+{
+	Properties::const_iterator i = _properties.find(uri);
+	for (; (i != _properties.end()) && (i->first == uri); ++i) {
+		if (value == i->second) {
 			return true;
 		}
 	}
@@ -128,14 +155,14 @@ Resource::type(const URIs&       uris,
 			continue; // Non-URI type, ignore garbage data
 		}
 
-		if (atom == uris.ingen_Graph) {
+		if (uris.ingen_Graph == atom) {
 			graph = true;
-		} else if (atom == uris.ingen_Block) {
+		} else if (uris.ingen_Block == atom) {
 			block = true;
-		} else if (atom == uris.lv2_InputPort) {
+		} else if (uris.lv2_InputPort == atom) {
 			port = true;
 			is_output = false;
-		} else if (atom == uris.lv2_OutputPort) {
+		} else if (uris.lv2_OutputPort == atom) {
 			port = true;
 			is_output = true;
 		}
@@ -164,7 +191,7 @@ Resource::set_properties(const Properties& props)
 	// Erase existing properties with matching keys
 	for (const auto& p : props) {
 		_properties.erase(p.first);
-		on_property_removed(p.first, _uris.patch_wildcard);
+		on_property_removed(p.first, _uris.patch_wildcard.urid);
 	}
 
 	// Set new properties

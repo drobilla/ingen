@@ -19,6 +19,9 @@
 #include <cassert>
 #include <cmath>
 
+#include <glibmm/miscutils.h>
+#include <glibmm/convert.h>
+
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 #include "lv2/lv2plug.in/ns/ext/presets/presets.h"
 #include "lv2/lv2plug.in/ns/ext/options/options.h"
@@ -575,6 +578,74 @@ LV2Block::apply_state(LilvState* state)
 	for (uint32_t v = 0; v < _polyphony; ++v) {
 		lilv_state_restore(state, instance(v), NULL, NULL, 0, NULL);
 	}
+}
+
+static const void*
+get_port_value(const char* port_symbol,
+               void*       user_data,
+               uint32_t*   size,
+               uint32_t*   type)
+{
+	LV2Block* const block = (LV2Block*)user_data;
+	PortImpl* const port  = block->port_by_symbol(port_symbol);
+
+	if (port && port->is_input() && port->value().is_valid()) {
+		*size = port->value().size();
+		*type = port->value().type();
+		return port->value().get_body();
+	}
+
+	return NULL;
+}
+
+boost::optional<Resource>
+LV2Block::save_preset(const Raul::URI&  uri,
+                      const Properties& props)
+{
+	World*          world  = parent_graph()->engine().world();
+	LilvWorld*      lworld = _lv2_plugin->lv2_info()->lv2_world();
+	LV2_URID_Map*   lmap   = &world->uri_map().urid_map_feature()->urid_map;
+	LV2_URID_Unmap* lunmap = &world->uri_map().urid_unmap_feature()->urid_unmap;
+
+	const std::string path     = Glib::filename_from_uri(uri);
+	const std::string dirname  = Glib::path_get_dirname(path);
+	const std::string basename = Glib::path_get_basename(path);
+
+	LilvState* state = lilv_state_new_from_instance(
+		_lv2_plugin->lilv_plugin(), instance(0), lmap,
+		NULL, NULL, NULL, path.c_str(),
+		get_port_value, this, LV2_STATE_IS_NATIVE, NULL);
+
+	if (state) {
+		const Properties::const_iterator l = props.find(_uris.rdfs_label);
+		if (l != props.end() && l->second.type() == _uris.atom_String) {
+			lilv_state_set_label(state, l->second.ptr<char>());
+		}
+
+		lilv_state_save(lworld, lmap, lunmap, state, NULL,
+		                dirname.c_str(), basename.c_str());
+
+		const Raul::URI   uri(lilv_node_as_uri(lilv_state_get_uri(state)));
+		const std::string label(lilv_state_get_label(state)
+		                        ? lilv_state_get_label(state)
+		                        : basename);
+		lilv_state_free(state);
+
+		Resource preset(_uris, uri);
+		preset.set_property(_uris.rdf_type, _uris.pset_Preset);
+		preset.set_property(_uris.rdfs_label, world->forge().alloc(label));
+		preset.set_property(_uris.lv2_appliesTo,
+		                    world->forge().make_urid(_lv2_plugin->uri()));
+
+		LilvNode* lbundle = lilv_new_uri(
+			lworld, Glib::filename_to_uri(dirname + "/").c_str());
+		lilv_world_load_bundle(lworld, lbundle);
+		lilv_node_free(lbundle);
+
+		return preset;
+	}
+
+	return boost::optional<Resource>();
 }
 
 void

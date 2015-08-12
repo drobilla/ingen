@@ -113,6 +113,7 @@ public:
 private:
 	SPtr<ObjectModel> _object(const Raul::Path& path);
 	SPtr<PluginModel> _plugin(const Raul::URI& uri);
+	SPtr<PluginModel> _plugin(const Atom& uri);
 	SPtr<Resource>    _resource(const Raul::URI& uri);
 
 	void add_object(SPtr<ObjectModel> object);

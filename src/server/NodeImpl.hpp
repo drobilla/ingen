@@ -92,7 +92,7 @@ public:
 		ProcessContext& context, Raul::Maid& maid, uint32_t poly) = 0;
 
 protected:
-	NodeImpl(Ingen::URIs&        uris,
+	NodeImpl(const Ingen::URIs&  uris,
 	         NodeImpl*           parent,
 	         const Raul::Symbol& symbol);
 

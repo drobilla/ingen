@@ -91,28 +91,25 @@ DuplexPort::inherit_neighbour(const PortImpl*       port,
                               Resource::Properties& remove,
                               Resource::Properties& add)
 {
+	const URIs& uris = _bufs.uris();
+
 	/* TODO: This needs to become more sophisticated, and correct the situation
 	   if the port is disconnected. */
 	if (_type == PortType::CONTROL || _type == PortType::CV) {
 		if (port->minimum().get<float>() < _min.get<float>()) {
 			_min = port->minimum();
-			remove.insert(std::make_pair(_bufs.uris().lv2_minimum,
-			                             Property(_bufs.uris().patch_wildcard)));
-			add.insert(std::make_pair(_bufs.uris().lv2_minimum,
-			                          port->minimum()));
+			remove.emplace(uris.lv2_minimum, uris.patch_wildcard);
+			add.emplace(uris.lv2_minimum, port->minimum());
 		}
 		if (port->maximum().get<float>() > _max.get<float>()) {
 			_max = port->maximum();
-			remove.insert(std::make_pair(_bufs.uris().lv2_maximum,
-			                             Property(_bufs.uris().patch_wildcard)));
-			add.insert(std::make_pair(_bufs.uris().lv2_maximum,
-			                          port->maximum()));
+			remove.emplace(uris.lv2_maximum, uris.patch_wildcard);
+			add.emplace(uris.lv2_maximum, port->maximum());
 		}
 	} else if (_type == PortType::ATOM) {
 		for (Resource::Properties::const_iterator i = port->properties().find(
-			     _bufs.uris().atom_supports);
-		     i != port->properties().end() &&
-			     i->first == _bufs.uris().atom_supports;
+			     uris.atom_supports);
+		     i != port->properties().end() && i->first == uris.atom_supports;
 		     ++i) {
 			set_property(i->first, i->second);
 			add.insert(*i);

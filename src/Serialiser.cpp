@@ -33,7 +33,6 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Node.hpp"
-#include "ingen/Plugin.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"

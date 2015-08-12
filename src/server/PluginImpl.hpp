@@ -21,7 +21,6 @@
 
 #include <boost/utility.hpp>
 
-#include "ingen/Plugin.hpp"
 #include "ingen/Resource.hpp"
 #include "raul/Symbol.hpp"
 #include "raul/URI.hpp"
@@ -41,16 +40,18 @@ class GraphImpl;
  *
  * Conceptually, a Block is an instance of this.
  */
-class PluginImpl : public Plugin
+class PluginImpl : public Resource
                  , public boost::noncopyable
 {
 public:
 	PluginImpl(Ingen::URIs&     uris,
-	           Type             type,
+	           const Atom&      type,
 	           const Raul::URI& uri)
-		: Plugin(uris, uri)
+		: Resource(uris, uri)
 		, _type(type)
 	{}
+
+	virtual ~PluginImpl() {}
 
 	virtual BlockImpl* instantiate(BufferFactory&      bufs,
 	                               const Raul::Symbol& symbol,
@@ -60,11 +61,26 @@ public:
 
 	virtual const Raul::Symbol symbol() const = 0;
 
-	Plugin::Type type() const         { return _type; }
-	void         type(Plugin::Type t) { _type = t; }
+	const Atom& type() const            { return _type; }
+	void        set_type(const Atom& t) { _type = t; }
+
+	typedef std::pair<Raul::URI, std::string> Preset;
+	typedef std::map<Raul::URI, std::string>  Presets;
+
+	const Presets& presets(bool force_reload=false) {
+		if (!_presets_loaded || force_reload) {
+			load_presets();
+		}
+
+		return _presets;
+	}
+
+	virtual void load_presets() { _presets_loaded = true; }
 
 protected:
-	Plugin::Type _type;
+	Atom    _type;
+	Presets _presets;
+	bool    _presets_loaded;
 };
 
 } // namespace Server

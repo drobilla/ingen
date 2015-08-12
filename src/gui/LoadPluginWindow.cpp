@@ -276,29 +276,24 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&    row,
 	if (name.is_valid() && name.type() == uris.forge.String)
 		row[_plugins_columns._col_name] = name.ptr<char>();
 
-	switch (plugin->type()) {
-	case Plugin::NIL:
-		row[_plugins_columns._col_type] = "";
-		break;
-	case Plugin::LV2:
+	if (uris.lv2_Plugin == plugin->type()) {
 		row[_plugins_columns._col_type] = lilv_node_as_string(
 			lilv_plugin_class_get_label(
 				lilv_plugin_get_class(plugin->lilv_plugin())));
 
 		row[_plugins_columns._col_project] = get_project_name(plugin);
 		row[_plugins_columns._col_author]  = get_author_name(plugin);
-		break;
-	case Plugin::Internal:
+	} else if (uris.ingen_Internal == plugin->type()) {
 		row[_plugins_columns._col_type]    = "Internal";
 		row[_plugins_columns._col_project] = "Ingen";
 		row[_plugins_columns._col_author]  = "David Robillard";
-		break;
-	case Plugin::Graph:
+	} else if (uris.ingen_Graph == plugin->type()) {
 		row[_plugins_columns._col_type] = "Graph";
-		break;
+	} else {
+		row[_plugins_columns._col_type] = "";
 	}
 
-	row[_plugins_columns._col_uri] = plugin->uri();
+	row[_plugins_columns._col_uri]    = plugin->uri();
 	row[_plugins_columns._col_plugin] = plugin;
 }
 

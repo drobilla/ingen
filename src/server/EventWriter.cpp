@@ -127,11 +127,11 @@ EventWriter::set_property(const Raul::URI& uri,
                           const Atom&      value)
 {
 	Resource::Properties remove;
-	remove.insert(
-		make_pair(predicate,
-		          Resource::Property(_engine.world()->uris().patch_wildcard)));
+	remove.emplace(predicate,
+	               _engine.world()->uris().patch_wildcard.urid);
+
 	Resource::Properties add;
-	add.insert(make_pair(predicate, value));
+	add.emplace(predicate, value);
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
 		                  Events::Delta::Type::SET, Resource::Graph::DEFAULT,

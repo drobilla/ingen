@@ -34,6 +34,7 @@
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 #include "SetPortValue.hpp"
+#include "events/Get.hpp"
 
 // #define DUMP 1
 // #include "ingen/URIMap.hpp"
@@ -134,9 +135,44 @@ s_add_set_event(const char* port_symbol,
 bool
 Delta::pre_process()
 {
+	const Ingen::URIs& uris = _engine.world()->uris();
+
 	const bool is_graph_object = Node::uri_is_path(_subject);
 	const bool is_client       = (_subject == "ingen:/clients/this");
+	const bool is_file         = (_subject.substr(0, 5) == "file:");
 	bool       poly_changed    = false;
+
+	if (_type == Type::PUT && is_file) {
+		// Ensure type is Preset, the only supported file put
+		const auto t = _properties.find(uris.rdf_type);
+		if (t == _properties.end() || t->second != uris.pset_Preset) {
+			return Event::pre_process_done(Status::BAD_REQUEST, _subject);
+		}
+
+		// Get "prototype" for preset (node to save state for)
+		const auto p = _properties.find(uris.lv2_prototype);
+		if (p == _properties.end()) {
+			return Event::pre_process_done(Status::BAD_REQUEST, _subject);
+		}
+
+		const Raul::URI prot(_engine.world()->forge().str(p->second, false));
+
+		Node* node = _engine.store()->get(Node::uri_to_path(Raul::URI(prot)));
+		if (!node) {
+			return Event::pre_process_done(Status::NOT_FOUND, prot);
+		}
+
+		BlockImpl* block = dynamic_cast<BlockImpl*>(node);
+		if (!block) {
+			return Event::pre_process_done(Status::BAD_OBJECT_TYPE, prot);
+		}
+
+		if ((_preset = block->save_preset(_subject, _properties))) {
+			return Event::pre_process_done(Status::SUCCESS);
+		} else {
+			return Event::pre_process_done(Status::FAILURE);
+		}
+	}
 
 	// Take a writer lock while we modify the store
 	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
@@ -148,8 +184,6 @@ Delta::pre_process()
 	if (!_object && !is_client && (!is_graph_object || _type != Type::PUT)) {
 		return Event::pre_process_done(Status::NOT_FOUND, _subject);
 	}
-
-	const Ingen::URIs& uris = _engine.world()->uris();
 
 	if (is_graph_object && !_object) {
 		Raul::Path path(Node::uri_to_path(_subject));
@@ -258,6 +292,8 @@ Delta::pre_process()
 							if ((_state = block->load_preset(Raul::URI(str)))) {
 								lilv_state_emit_port_values(
 									_state, s_add_set_event, this);
+							} else {
+								_engine.log().warn(fmt("Failed to load preset <%1%>\n") % str);
 							}
 						} else {
 							_status = Status::BAD_VALUE;
@@ -341,7 +377,7 @@ Delta::pre_process()
 void
 Delta::execute(ProcessContext& context)
 {
-	if (_status != Status::SUCCESS) {
+	if (_status != Status::SUCCESS || _preset) {
 		return;
 	}
 
@@ -406,7 +442,7 @@ Delta::execute(ProcessContext& context)
 			if (port) {
 				_engine.control_bindings()->port_binding_changed(context, port, value);
 			} else if (block) {
-				if (block->plugin_impl()->type() == Plugin::Internal) {
+				if (uris.ingen_Internal == block->plugin_impl()->type()) {
 					block->learn();
 				}
 			}
@@ -472,7 +508,15 @@ Delta::post_process()
 			_engine.broadcaster()->clear_ignore_client();
 			break;
 		case Type::PUT:
-			_engine.broadcaster()->put(_subject, _properties, _context);
+			if (_type == Type::PUT && _subject.substr(0, 5) == "file:") {
+				// Preset save
+				Get::Response response;
+				response.put(_preset->uri(), _preset->properties());
+				response.send(_engine.broadcaster());
+			} else {
+				// Graph object put
+				_engine.broadcaster()->put(_subject, _properties, _context);
+			}
 			break;
 		case Type::PATCH:
 			_engine.broadcaster()->delta(_subject, _remove, _properties);

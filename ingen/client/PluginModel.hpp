@@ -18,11 +18,10 @@
 #define INGEN_CLIENT_PLUGINMODEL_HPP
 
 #include <list>
+#include <map>
 #include <string>
 #include <utility>
 
-#include "ingen/Plugin.hpp"
-#include "ingen/Resource.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/signal.hpp"
@@ -46,15 +45,20 @@ class PluginUI;
  *
  * @ingroup IngenClient
  */
-class INGEN_API PluginModel : public Ingen::Plugin
+class INGEN_API PluginModel : public Ingen::Resource
 {
 public:
 	PluginModel(URIs&                              uris,
 	            const Raul::URI&                   uri,
-	            const Raul::URI&                   type_uri,
+	            const Atom&                        type,
 	            const Ingen::Resource::Properties& properties);
 
-	Type type() const { return _type; }
+	const Atom&     type()     const { return _type; }
+	const Raul::URI type_uri() const {
+		return Raul::URI(_type.is_valid()
+		                 ? _uris.forge.str(_type)
+		                 : "http://www.w3.org/2002/07/owl#Nothing");
+	}
 
 	virtual const Atom& get_property(const Raul::URI& key) const;
 
@@ -64,6 +68,9 @@ public:
 
 	typedef std::map<float, std::string> ScalePoints;
 	ScalePoints port_scale_points(uint32_t i) const;
+
+	typedef std::map<Raul::URI, std::string> Presets;
+	const Presets& presets() const { return _presets; }
 
 	static LilvWorld* lilv_world()        { return _lilv_world; }
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
@@ -89,10 +96,16 @@ public:
 	// Signals
 	INGEN_SIGNAL(changed, void);
 	INGEN_SIGNAL(property, void, const Raul::URI&, const Atom&);
+	INGEN_SIGNAL(preset, void, const Raul::URI&, const std::string&);
+
+	bool fetched() const     { return _fetched; }
+	void set_fetched(bool f) { _fetched = f; }
 
 protected:
 	friend class ClientStore;
 	void set(SPtr<PluginModel> p);
+
+	void add_preset(const Raul::URI& uri, const std::string& label);
 
 private:
 	std::string get_documentation(const LilvNode* subject, bool html) const;
@@ -101,8 +114,10 @@ private:
 	static LilvWorld*         _lilv_world;
 	static const LilvPlugins* _lilv_plugins;
 
-	Type              _type;
+	Atom              _type;
 	const LilvPlugin* _lilv_plugin;
+	Presets           _presets;
+	bool              _fetched;
 };
 
 } // namespace Client

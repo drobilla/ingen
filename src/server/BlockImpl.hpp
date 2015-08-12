@@ -20,6 +20,7 @@
 #include <list>
 
 #include <boost/intrusive/slist.hpp>
+#include <boost/optional.hpp>
 
 #include "lilv/lilv.h"
 
@@ -28,6 +29,7 @@
 #include "BufferRef.hpp"
 #include "Context.hpp"
 #include "NodeImpl.hpp"
+#include "PluginImpl.hpp"
 #include "PortType.hpp"
 #include "types.hpp"
 
@@ -36,9 +38,6 @@ class Maid;
 }
 
 namespace Ingen {
-
-class Plugin;
-
 namespace Server {
 
 class Buffer;
@@ -106,6 +105,11 @@ public:
 	/** Restore `state`. */
 	virtual void apply_state(LilvState* state) {}
 
+	/** Save current state as preset. */
+	virtual boost::optional<Resource>
+	save_preset(const Raul::URI&  bundle,
+	            const Properties& props) { return boost::optional<Resource>(); }
+
 	/** Learn the next incoming MIDI event (for internals) */
 	virtual void learn() {}
 
@@ -152,14 +156,14 @@ public:
 		ProcessContext& context, Raul::Maid& maid, uint32_t poly);
 
 	/** Information about the Plugin this Block is an instance of.
-	 * Not the best name - not all blocks come from plugins (e.g. Graph)
+	 * Not the best name - not all blocks come from plugins (ie Graph)
 	 */
-	virtual PluginImpl* plugin_impl() const { return _plugin; }
+	virtual const Resource* plugin() const;
 
 	/** Information about the Plugin this Block is an instance of.
 	 * Not the best name - not all blocks come from plugins (ie Graph)
 	 */
-	virtual const Plugin* plugin() const;
+	virtual const PluginImpl* plugin_impl() const;
 
 	virtual void plugin(PluginImpl* pi) { _plugin = pi; }
 

@@ -297,7 +297,7 @@ GraphCanvas::show_port_names(bool b)
 void
 GraphCanvas::add_plugin(SPtr<PluginModel> p)
 {
-	if (_internal_menu && p->type() == Plugin::Internal) {
+	if (_internal_menu && _app.uris().ingen_Internal == p->type()) {
 		_internal_menu->items().push_back(
 			Gtk::Menu_Helpers::MenuElem(
 				std::string("_") + p->human_name(),

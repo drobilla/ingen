@@ -31,7 +31,6 @@ class Symbol;
 namespace Ingen {
 
 class Arc;
-class Plugin;
 class Store;
 
 /** An object on the audio graph.
@@ -63,9 +62,9 @@ public:
 	const Arcs& arcs() const { return _arcs; }
 
 	// Blocks and graphs only
-	virtual uint32_t      num_ports()          const { return 0; }
-	virtual Node*         port(uint32_t index) const { return NULL; }
-	virtual const Plugin* plugin()             const { return NULL; }
+	virtual uint32_t        num_ports()          const { return 0; }
+	virtual Node*           port(uint32_t index) const { return NULL; }
+	virtual const Resource* plugin()             const { return NULL; }
 
 	// All objects
 	virtual GraphType           graph_type()   const = 0;
@@ -101,7 +100,7 @@ protected:
 	friend class Store;
 	virtual void set_path(const Raul::Path& p) = 0;
 
-	Node(URIs& uris, const Raul::Path& path)
+	Node(const URIs& uris, const Raul::Path& path)
 		: Resource(uris, path_to_uri(path))
 	{}
 

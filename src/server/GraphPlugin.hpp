@@ -36,7 +36,7 @@ public:
 	            const Raul::URI&    uri,
 	            const Raul::Symbol& symbol,
 	            const std::string&  name)
-		: PluginImpl(uris, Plugin::Graph, uri)
+		: PluginImpl(uris, uris.ingen_Graph, uri)
 	{}
 
 	BlockImpl* instantiate(BufferFactory&      bufs,

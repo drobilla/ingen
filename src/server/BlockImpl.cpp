@@ -71,8 +71,14 @@ BlockImpl::port(uint32_t index) const
 	return (*_ports)[index];
 }
 
-const Plugin*
+const Resource*
 BlockImpl::plugin() const
+{
+	return _plugin;
+}
+
+const PluginImpl*
+BlockImpl::plugin_impl() const
 {
 	return _plugin;
 }

@@ -16,6 +16,8 @@
 
 #include <string>
 
+#include <gtkmm/entry.h>
+#include <gtkmm/filechooserdialog.h>
 #include <gtkmm/image.h>
 #include <gtkmm/stock.h>
 
@@ -66,8 +68,19 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 	_randomize_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &NodeMenu::on_menu_randomize));
 
-	const PluginModel* plugin = dynamic_cast<const PluginModel*>(block->plugin());
-	if (plugin && plugin->type() == PluginModel::LV2 && plugin->has_ui()) {
+	SPtr<PluginModel> plugin = block->plugin_model();
+	if (plugin) {
+		// Get the plugin to receive related presets
+		_preset_connection = plugin->signal_preset().connect(
+			sigc::mem_fun(this, &NodeMenu::add_preset));
+
+		if (!plugin->fetched()) {
+			_app->interface()->get(plugin->uri());
+			plugin->set_fetched(true);
+		}
+	}
+
+	if (plugin && plugin->has_ui()) {
 		_popup_gui_menuitem->show();
 		_embed_gui_menuitem->show();
 		const Atom& ui_embedded = block->get_property(
@@ -82,53 +95,25 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 	const Atom& enabled = block->get_property(_app->uris().ingen_enabled);
 	_enabled_menuitem->set_active(!enabled.is_valid() || enabled.get<int32_t>());
 
-	if (plugin && plugin->type() == PluginModel::LV2) {
+	if (plugin && _app->uris().lv2_Plugin == plugin->type()) {
+		_presets_menu = Gtk::manage(new Gtk::Menu());
+		_presets_menu->items().push_back(
+			Gtk::Menu_Helpers::MenuElem(
+				"_Save Preset...",
+				sigc::mem_fun(this, &NodeMenu::on_save_preset_activated)));
+		_presets_menu->items().push_back(Gtk::Menu_Helpers::SeparatorElem());
 
-		LilvNode* pset_Preset = lilv_new_uri(plugin->lilv_world(),
-		                                     LV2_PRESETS__Preset);
-		LilvNode* rdfs_label = lilv_new_uri(plugin->lilv_world(),
-		                                    LILV_NS_RDFS "label");
-		LilvNodes* presets = lilv_plugin_get_related(plugin->lilv_plugin(),
-		                                             pset_Preset);
-		if (presets) {
-			_presets_menu = Gtk::manage(new Gtk::Menu());
-
-			unsigned n_presets = 0;
-			LILV_FOREACH(nodes, i, presets) {
-				const LilvNode* preset = lilv_nodes_get(presets, i);
-				lilv_world_load_resource(plugin->lilv_world(), preset);
-				LilvNodes* labels = lilv_world_find_nodes(
-					plugin->lilv_world(), preset, rdfs_label, NULL);
-				if (labels) {
-					const LilvNode* label = lilv_nodes_get_first(labels);
-					_presets_menu->items().push_back(
-						Gtk::Menu_Helpers::MenuElem(
-							lilv_node_as_string(label),
-							sigc::bind(
-								sigc::mem_fun(this, &NodeMenu::on_preset_activated),
-								string(lilv_node_as_string(preset)))));
-
-					lilv_nodes_free(labels);
-					++n_presets;
-				} else {
-					app.log().error(
-						fmt("Preset <%1%> has no rdfs:label\n")
-						% lilv_node_as_string(lilv_nodes_get(presets, i)));
-				}
-			}
-
-			if (n_presets > 0) {
-				items().push_front(
-					Gtk::Menu_Helpers::ImageMenuElem(
-						"_Presets",
-						*(manage(new Gtk::Image(Gtk::Stock::INDEX, Gtk::ICON_SIZE_MENU)))));
-				Gtk::MenuItem* presets_menu_item = &(items().front());
-				presets_menu_item->set_submenu(*_presets_menu);
-			}
-			lilv_nodes_free(presets);
+		for (const auto& p : plugin->presets()) {
+			add_preset(p.first, p.second);
 		}
-		lilv_node_free(pset_Preset);
-		lilv_node_free(rdfs_label);
+
+		items().push_front(
+			Gtk::Menu_Helpers::ImageMenuElem(
+				"_Presets",
+				*(manage(new Gtk::Image(Gtk::Stock::INDEX, Gtk::ICON_SIZE_MENU)))));
+
+		Gtk::MenuItem* presets_menu_item = &(items().front());
+		presets_menu_item->set_submenu(*_presets_menu);
 	}
 
 	if (has_control_inputs())
@@ -149,6 +134,18 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 	}
 
 	_enable_signal = true;
+}
+
+void
+NodeMenu::add_preset(const Raul::URI& uri, const std::string& label)
+{
+	if (_presets_menu) {
+		_presets_menu->items().push_back(
+			Gtk::Menu_Helpers::MenuElem(
+				label,
+				sigc::bind(sigc::mem_fun(this, &NodeMenu::on_preset_activated),
+				           uri)));
+	}
 }
 
 void
@@ -192,12 +189,52 @@ NodeMenu::on_menu_disconnect()
 }
 
 void
+NodeMenu::on_save_preset_activated()
+{
+	Gtk::FileChooserDialog dialog("Save Preset", Gtk::FILE_CHOOSER_ACTION_SAVE);
+	dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+	dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
+	dialog.set_default_response(Gtk::RESPONSE_OK);
+	dialog.set_current_folder(Glib::build_filename(Glib::get_home_dir(), ".lv2"));
+
+	Gtk::HBox*  extra = Gtk::manage(new Gtk::HBox());
+	Gtk::Label* label = Gtk::manage(new Gtk::Label("URI (Optional): "));
+	Gtk::Entry* entry = Gtk::manage(new Gtk::Entry());
+	extra->pack_start(*label, false, true, 4);
+	extra->pack_start(*entry, true, true, 4);
+	extra->show_all();
+	dialog.set_extra_widget(*Gtk::manage(extra));
+
+	if (dialog.run() == Gtk::RESPONSE_OK) {
+		const std::string user_uri  = dialog.get_uri();
+		const std::string user_path = Glib::filename_from_uri(user_uri);
+		const std::string dirname   = Glib::path_get_dirname(user_path);
+		const std::string basename  = Glib::path_get_basename(user_path);
+		const std::string sym       = Raul::Symbol::symbolify(basename);
+		const std::string plugname  = block()->plugin_model()->human_name();
+		const std::string prefix    = Raul::Symbol::symbolify(plugname);
+		const std::string bundle    = prefix + "_" + sym + ".preset.lv2/";
+		const std::string file      = sym + ".ttl";
+		const std::string real_path = Glib::build_filename(dirname, bundle, file);
+		const std::string real_uri  = Glib::filename_to_uri(real_path);
+
+		Resource::Properties props;
+		props.emplace(_app->uris().rdf_type,
+		              _app->uris().pset_Preset);
+		props.emplace(_app->uris().rdfs_label,
+		              _app->forge().alloc(basename));
+		props.emplace(_app->uris().lv2_prototype,
+		              _app->forge().alloc_uri(block()->uri()));
+		_app->interface()->put(Raul::URI(real_uri), props);
+	}
+}
+
+void
 NodeMenu::on_preset_activated(const std::string& uri)
 {
 	_app->set_property(block()->uri(),
 	                   _app->uris().pset_preset,
 	                   _app->forge().alloc_uri(uri));
-
 }
 
 bool
