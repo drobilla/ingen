@@ -32,7 +32,7 @@ namespace Server {
 
 LV2Plugin::LV2Plugin(SPtr<LV2Info> lv2_info, const Raul::URI& uri)
 	: PluginImpl(lv2_info->world().uris(),
-	             lv2_info->world().uris().lv2_Plugin,
+	             lv2_info->world().uris().lv2_Plugin.urid,
 	             uri)
 	, _lilv_plugin(NULL)
 	, _lv2_info(lv2_info)

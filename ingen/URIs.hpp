@@ -47,8 +47,8 @@ public:
 	struct Quark : public Raul::URI {
 		Quark(Ingen::Forge& forge, URIMap* map, const char* str);
 
-		operator LV2_URID() const { return urid.get<LV2_URID>(); }
-		operator Atom()     const { return urid; }
+		operator LV2_URID()      const { return urid.get<LV2_URID>(); }
+		explicit operator Atom() const { return urid; }
 
 		inline bool operator==(const Atom& rhs) const {
 			if (rhs.type() == urid.type()) {
@@ -57,6 +57,10 @@ public:
 				return rhs == uri;
 			}
 			return false;
+		}
+
+		inline bool operator!=(const Atom& rhs) const {
+			return !operator==(rhs);
 		}
 
 		Atom urid;
@@ -181,6 +185,14 @@ public:
 	const Quark time_speed;
 };
 
+inline bool operator==(const Atom& a, const URIs::Quark& b) {
+	return b == a;
+}
+
+inline bool operator!=(const Atom& a, const URIs::Quark& b) {
+	return b != a;
+}
+
 } // namespace Ingen
 
-#endif // INGEN_LV2URIMAP_HPP
+#endif // INGEN_URIS_HPP

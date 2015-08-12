@@ -94,7 +94,7 @@ ObjectMenu::on_menu_learn()
 {
 	_app->interface()->set_property(_object->uri(),
 	                                _app->uris().midi_binding,
-	                                _app->uris().patch_wildcard);
+	                                _app->uris().patch_wildcard.urid);
 }
 
 void

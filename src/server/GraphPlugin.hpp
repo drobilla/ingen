@@ -36,7 +36,7 @@ public:
 	            const Raul::URI&    uri,
 	            const Raul::Symbol& symbol,
 	            const std::string&  name)
-		: PluginImpl(uris, uris.ingen_Graph, uri)
+		: PluginImpl(uris, uris.ingen_Graph.urid, uri)
 	{}
 
 	BlockImpl* instantiate(BufferFactory&      bufs,
@@ -49,7 +49,7 @@ public:
 	}
 
 	const Raul::Symbol symbol() const { return Raul::Symbol("graph"); }
-	const std::string name()    const { return "Ingen Graph"; }
+	const std::string  name()   const { return "Ingen Graph"; }
 
 private:
 	const std::string _symbol;

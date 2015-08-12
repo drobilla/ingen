@@ -99,7 +99,7 @@ CreateGraph::pre_process()
 		// Create a new graph
 		_graph = new GraphImpl(_engine, symbol, ext_poly, _parent,
 		                       _engine.driver()->sample_rate(), int_poly);
-		_graph->add_property(uris.rdf_type, uris.ingen_Graph);
+		_graph->add_property(uris.rdf_type, uris.ingen_Graph.urid);
 		_graph->add_property(uris.rdf_type,
 		                     Resource::Property(uris.ingen_Block,
 		                                        Resource::Graph::EXTERNAL));

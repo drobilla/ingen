@@ -39,7 +39,7 @@ OutputPort::OutputPort(BufferFactory&      bufs,
 	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
 {
 	if (parent->graph_type() != Node::GraphType::GRAPH) {
-		add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort);
+		add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort.urid);
 	}
 
 	setup_buffers(bufs, poly, false);
