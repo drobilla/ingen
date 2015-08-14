@@ -255,8 +255,8 @@ PluginUI::create(Ingen::World*          world,
 		binary_path,
 		ret->_features->array());
 
-	free(binary_path);
-	free(bundle_path);
+	lilv_free(binary_path);
+	lilv_free(bundle_path);
 	lilv_node_free(gtk_ui);
 
 	if (!instance) {
