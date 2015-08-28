@@ -30,12 +30,12 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-LV2Plugin::LV2Plugin(SPtr<LV2Info> lv2_info, const Raul::URI& uri)
-	: PluginImpl(lv2_info->world().uris(),
-	             lv2_info->world().uris().lv2_Plugin.urid,
-	             uri)
-	, _lilv_plugin(NULL)
-	, _lv2_info(lv2_info)
+LV2Plugin::LV2Plugin(World* world, const LilvPlugin* lplugin)
+	: PluginImpl(world->uris(),
+	             world->uris().lv2_Plugin.urid,
+	             Raul::URI(lilv_node_as_uri(lilv_plugin_get_uri(lplugin))))
+	, _world(world)
+	, _lilv_plugin(lplugin)
 {
 	set_property(_uris.rdf_type, _uris.lv2_Plugin);
 }
@@ -79,18 +79,11 @@ LV2Plugin::instantiate(BufferFactory&      bufs,
 }
 
 void
-LV2Plugin::lilv_plugin(const LilvPlugin* p)
-{
-	_lilv_plugin = p;
-}
-
-void
 LV2Plugin::load_presets()
 {
-	LilvWorld* lworld      = _lv2_info->world().lilv_world();
-	LilvNode*  pset_Preset = lilv_new_uri(lworld, LV2_PRESETS__Preset);
-	LilvNode*  rdfs_label  = lilv_new_uri(lworld, LILV_NS_RDFS "label");
-	LilvNodes* presets     = lilv_plugin_get_related(_lilv_plugin, pset_Preset);
+	const URIs& uris    = _world->uris();
+	LilvWorld*  lworld  = _world->lilv_world();
+	LilvNodes*  presets = lilv_plugin_get_related(_lilv_plugin, uris.pset_Preset);
 
 	if (presets) {
 		LILV_FOREACH(nodes, i, presets) {
@@ -98,7 +91,7 @@ LV2Plugin::load_presets()
 			lilv_world_load_resource(lworld, preset);
 
 			LilvNodes* labels = lilv_world_find_nodes(
-				lworld, preset, rdfs_label, NULL);
+				lworld, preset, uris.rdfs_label, NULL);
 			if (labels) {
 				const LilvNode* label = lilv_nodes_get_first(labels);
 
@@ -107,7 +100,7 @@ LV2Plugin::load_presets()
 
 				lilv_nodes_free(labels);
 			} else {
-				_lv2_info->world().log().error(
+				_world->log().error(
 					fmt("Preset <%1%> has no rdfs:label\n")
 					% lilv_node_as_string(lilv_nodes_get(presets, i)));
 			}
@@ -115,9 +108,6 @@ LV2Plugin::load_presets()
 
 		lilv_nodes_free(presets);
 	}
-
-	lilv_node_free(rdfs_label);
-	lilv_node_free(pset_Preset);
 
 	PluginImpl::load_presets();
 }

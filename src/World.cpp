@@ -105,12 +105,12 @@ public:
 		, argv(a_argv)
 		, lv2_features(NULL)
 		, rdf_world(new Sord::World())
+		, lilv_world(lilv_world_new())
 		, uri_map(new URIMap(log, map, unmap))
 		, forge(new Forge(*uri_map))
-		, uris(new URIs(*forge, uri_map))
+		, uris(new URIs(*forge, uri_map, lilv_world))
 		, log(lv2_log, *uris)
 		, conf(*forge)
-		, lilv_world(lilv_world_new())
 	{
 		// Parse default configuration files
 		std::list<std::string> files = conf.load_default("ingen", "options.ttl");
@@ -205,6 +205,7 @@ public:
 	char**&          argv;
 	LV2Features*     lv2_features;
 	Sord::World*     rdf_world;
+	LilvWorld*       lilv_world;
 	URIMap*          uri_map;
 	Forge*           forge;
 	URIs*            uris;
@@ -216,7 +217,6 @@ public:
 	SPtr<Serialiser> serialiser;
 	SPtr<Parser>     parser;
 	SPtr<Store>      store;
-	LilvWorld*       lilv_world;
 	std::mutex       rdf_mutex;
 	std::string      jack_uuid;
 };

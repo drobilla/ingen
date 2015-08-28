@@ -28,7 +28,6 @@ namespace Ingen {
 namespace Server {
 
 class PluginImpl;
-class LV2Info;
 
 /** Discovers and loads plugin libraries.
  *
@@ -53,7 +52,6 @@ private:
 
 	Plugins       _plugins;
 	Ingen::World* _world;
-	SPtr<LV2Info> _lv2_info;
 	bool          _has_loaded;
 };
 

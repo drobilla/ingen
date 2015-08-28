@@ -27,9 +27,9 @@
 #include "internals/Time.hpp"
 #include "internals/Trigger.hpp"
 
+#include "BlockFactory.hpp"
 #include "InternalPlugin.hpp"
 #include "LV2Plugin.hpp"
-#include "BlockFactory.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -41,7 +41,6 @@ using namespace Internals;
 
 BlockFactory::BlockFactory(Ingen::World* world)
 	: _world(world)
-	, _lv2_info(new LV2Info(world))
 	, _has_loaded(false)
 {
 	load_internal_plugins();
@@ -107,8 +106,7 @@ BlockFactory::load_plugin(const Raul::URI& uri)
 	const LilvPlugins* plugs = lilv_world_get_all_plugins(_world->lilv_world());
 	const LilvPlugin*  plug  = lilv_plugins_get_by_uri(plugs, node);
 	if (plug) {
-		LV2Plugin* const ingen_plugin = new LV2Plugin(_lv2_info, uri);
-		ingen_plugin->lilv_plugin(plug);
+		LV2Plugin* const ingen_plugin = new LV2Plugin(_world, plug);
 		_plugins.insert(make_pair(uri, ingen_plugin));
 	}
 	lilv_node_free(node);
@@ -128,9 +126,6 @@ BlockFactory::load_lv2_plugins()
 			SPtr<LilvNode>(lilv_new_uri(_world->lilv_world(), uri.c_str()),
 			               lilv_node_free));
 	}
-
-	LilvNode* lv2_connectionOptional = lilv_new_uri(
-		_world->lilv_world(), LV2_CORE__connectionOptional);
 
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());
 	LILV_FOREACH(plugins, i, plugins) {
@@ -173,7 +168,9 @@ BlockFactory::load_lv2_plugins()
 				}
 			}
 			if (!supported &&
-			    !lilv_port_has_property(lv2_plug, port, lv2_connectionOptional)) {
+			    !lilv_port_has_property(lv2_plug,
+			                            port,
+			                            _world->uris().lv2_connectionOptional)) {
 				_world->log().warn(
 					fmt("Ignoring <%1%>; unsupported port <%2%>\n")
 					% uri % lilv_node_as_string(
@@ -186,15 +183,12 @@ BlockFactory::load_lv2_plugins()
 		}
 
 		if (_plugins.find(uri) == _plugins.end()) {
-			LV2Plugin* const plugin = new LV2Plugin(_lv2_info, uri);
-			plugin->lilv_plugin(lv2_plug);
+			LV2Plugin* const plugin = new LV2Plugin(_world, lv2_plug);
 			_plugins.insert(make_pair(uri, plugin));
 		}
 	}
 
 	_world->log().info(fmt("Loaded %1% plugins\n") % _plugins.size());
-
-	lilv_node_free(lv2_connectionOptional);
 }
 
 } // namespace Server

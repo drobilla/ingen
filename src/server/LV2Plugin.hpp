@@ -24,9 +24,11 @@
 #include "raul/URI.hpp"
 
 #include "PluginImpl.hpp"
-#include "LV2Info.hpp"
 
 namespace Ingen {
+
+class World;
+
 namespace Server {
 
 class GraphImpl;
@@ -37,7 +39,7 @@ class BlockImpl;
 class LV2Plugin : public PluginImpl
 {
 public:
-	LV2Plugin(SPtr<LV2Info> lv2_info, const Raul::URI& uri);
+	LV2Plugin(World* world, const LilvPlugin* lplugin);
 
 	BlockImpl* instantiate(BufferFactory&      bufs,
 	                       const Raul::Symbol& symbol,
@@ -47,16 +49,14 @@ public:
 
 	const Raul::Symbol symbol() const;
 
-	SPtr<LV2Info> lv2_info() const { return _lv2_info; }
-
+	World*            world()       const { return _world; }
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
-	void              lilv_plugin(const LilvPlugin* p);
 
 	void load_presets();
 
 private:
+	World*            _world;
 	const LilvPlugin* _lilv_plugin;
-	SPtr<LV2Info>     _lv2_info;
 };
 
 } // namespace Server

@@ -168,6 +168,8 @@ PluginUI::create(Ingen::World*          world,
                  SPtr<const BlockModel> block,
                  const LilvPlugin*      plugin)
 {
+	const URIs& uris = world->uris();
+
 	if (!PluginUI::ui_host) {
 		PluginUI::ui_host = suil_host_new(lv2_ui_write,
 		                                  lv2_ui_port_index,
@@ -210,12 +212,11 @@ PluginUI::create(Ingen::World*          world,
 	LilvWorld* lworld              = world->lilv_world();
 	LilvNode*  ui_portNotification = lilv_new_uri(lworld, LV2_UI__portNotification);
 	LilvNode*  ui_plugin           = lilv_new_uri(lworld, LV2_UI__plugin);
-	LilvNode*  lv2_symbol          = lilv_new_uri(lworld, LV2_CORE__symbol);
 	LilvNodes* notes               = lilv_world_find_nodes(
 		lworld, lilv_ui_get_uri(ui), ui_portNotification, NULL);
 	LILV_FOREACH(nodes, n, notes) {
 		const LilvNode* note = lilv_nodes_get(notes, n);
-		const LilvNode* sym  = lilv_world_get(lworld, note, lv2_symbol, NULL);
+		const LilvNode* sym  = lilv_world_get(lworld, note, uris.lv2_symbol, NULL);
 		const LilvNode* plug = lilv_world_get(lworld, note, ui_plugin, NULL);
 		if (plug && !lilv_node_is_uri(plug)) {
 			world->log().error(fmt("%1% UI has non-URI ui:plugin\n")
@@ -234,7 +235,6 @@ PluginUI::create(Ingen::World*          world,
 		}
 	}
 	lilv_nodes_free(notes);
-	lilv_node_free(lv2_symbol);
 	lilv_node_free(ui_plugin);
 	lilv_node_free(ui_portNotification);
 

@@ -20,6 +20,7 @@
 #include "ingen/Atom.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/ingen.h"
+#include "lilv/lilv.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Noncopyable.hpp"
 #include "raul/URI.hpp"
@@ -42,13 +43,21 @@ class URIMap;
  */
 class INGEN_API URIs : public Raul::Noncopyable {
 public:
-	URIs(Ingen::Forge& forge, URIMap* map);
+	URIs(Ingen::Forge& forge, URIMap* map, LilvWorld* lworld);
 
 	struct Quark : public Raul::URI {
-		Quark(Ingen::Forge& forge, URIMap* map, const char* str);
+		Quark(Ingen::Forge& forge,
+		      URIMap*       map,
+		      LilvWorld*    lworld,
+		      const char*   str);
 
-		operator LV2_URID()      const { return urid.get<LV2_URID>(); }
-		explicit operator Atom() const { return urid; }
+		Quark(const Quark& copy);
+
+		~Quark();
+
+		operator LV2_URID()        const { return urid.get<LV2_URID>(); }
+		explicit operator Atom()   const { return urid; }
+		operator const LilvNode*() const { return lnode; }
 
 		inline bool operator==(const Atom& rhs) const {
 			if (rhs.type() == urid.type()) {
@@ -63,8 +72,9 @@ public:
 			return !operator==(rhs);
 		}
 
-		Atom urid;
-		Atom uri;
+		Atom      urid;
+		Atom      uri;
+		LilvNode* lnode;
 	};
 
 	Ingen::Forge& forge;
@@ -129,7 +139,9 @@ public:
 	const Quark lv2_index;
 	const Quark lv2_integer;
 	const Quark lv2_maximum;
+	const Quark lv2_microVersion;
 	const Quark lv2_minimum;
+	const Quark lv2_minorVersion;
 	const Quark lv2_name;
 	const Quark lv2_port;
 	const Quark lv2_portProperty;
@@ -146,7 +158,11 @@ public:
 	const Quark midi_binding;
 	const Quark midi_controllerNumber;
 	const Quark midi_noteNumber;
+	const Quark morph_AutoMorphPort;
+	const Quark morph_MorphPort;
 	const Quark morph_currentType;
+	const Quark morph_supportsType;
+	const Quark opt_interface;
 	const Quark param_sampleRate;
 	const Quark patch_Copy;
 	const Quark patch_Delete;
@@ -183,6 +199,7 @@ public:
 	const Quark time_beatsPerMinute;
 	const Quark time_frame;
 	const Quark time_speed;
+	const Quark work_schedule;
 };
 
 inline bool operator==(const Atom& a, const URIs::Quark& b) {

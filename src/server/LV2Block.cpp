@@ -80,7 +80,6 @@ LV2Block::make_instance(URIs&      uris,
                         uint32_t   voice,
                         bool       preparing)
 {
-	LilvWorld*        lworld = _lv2_plugin->lv2_info()->lv2_world();
 	const LilvPlugin* lplug  = _lv2_plugin->lilv_plugin();
 	LilvInstance*     inst   = lilv_plugin_instantiate(
 		lplug, rate, _features->array());
@@ -92,15 +91,11 @@ LV2Block::make_instance(URIs&      uris,
 		return SPtr<LilvInstance>();
 	}
 
-	LilvNode* opt_interface = lilv_new_uri(lworld, LV2_OPTIONS__interface);
-
 	const LV2_Options_Interface* options_iface = NULL;
-	if (lilv_plugin_has_extension_data(lplug, opt_interface)) {
+	if (lilv_plugin_has_extension_data(lplug, uris.opt_interface)) {
 		options_iface = (const LV2_Options_Interface*)
 			lilv_instance_get_extension_data(inst, LV2_OPTIONS__interface);
 	}
-
-	lilv_node_free(opt_interface);
 
 	for (uint32_t p = 0; p < num_ports(); ++p) {
 		PortImpl* const port   = _ports->at(p);
@@ -222,7 +217,7 @@ bool
 LV2Block::instantiate(BufferFactory& bufs)
 {
 	const Ingen::URIs& uris      = bufs.uris();
-	SPtr<LV2Info>      info      = _lv2_plugin->lv2_info();
+	Ingen::World*      world     = bufs.engine().world();
 	const LilvPlugin*  plug      = _lv2_plugin->lilv_plugin();
 	Ingen::Forge&      forge     = bufs.forge();
 	const uint32_t     num_ports = lilv_plugin_get_num_ports(plug);
@@ -255,14 +250,14 @@ LV2Block::instantiate(BufferFactory& bufs)
 		LV2_URID buffer_type   = 0;
 		bool     is_morph      = false;
 		bool     is_auto_morph = false;
-		if (lilv_port_is_a(plug, id, info->lv2_ControlPort)) {
-			if (lilv_port_is_a(plug, id, info->morph_MorphPort)) {
+		if (lilv_port_is_a(plug, id, uris.lv2_ControlPort)) {
+			if (lilv_port_is_a(plug, id, uris.morph_MorphPort)) {
 				is_morph = true;
 				LilvNodes* types = lilv_port_get_value(
-					plug, id, info->morph_supportsType);
+					plug, id, uris.morph_supportsType);
 				LILV_FOREACH(nodes, i, types) {
 					const LilvNode* type = lilv_nodes_get(types, i);
-					if (lilv_node_equals(type, info->lv2_CVPort)) {
+					if (lilv_node_equals(type, uris.lv2_CVPort)) {
 						port_type   = PortType::CV;
 						buffer_type = uris.atom_Sound;
 					}
@@ -273,24 +268,24 @@ LV2Block::instantiate(BufferFactory& bufs)
 				port_type   = PortType::CONTROL;
 				buffer_type = uris.atom_Float;
 			}
-		} else if (lilv_port_is_a(plug, id, info->lv2_CVPort)) {
+		} else if (lilv_port_is_a(plug, id, uris.lv2_CVPort)) {
 			port_type   = PortType::CV;
 			buffer_type = uris.atom_Sound;
-		} else if (lilv_port_is_a(plug, id, info->lv2_AudioPort)) {
+		} else if (lilv_port_is_a(plug, id, uris.lv2_AudioPort)) {
 			port_type   = PortType::AUDIO;
 			buffer_type = uris.atom_Sound;
-		} else if (lilv_port_is_a(plug, id, info->atom_AtomPort)) {
+		} else if (lilv_port_is_a(plug, id, uris.atom_AtomPort)) {
 			port_type = PortType::ATOM;
 		}
 
-		if (lilv_port_is_a(plug, id, info->morph_AutoMorphPort)) {
+		if (lilv_port_is_a(plug, id, uris.morph_AutoMorphPort)) {
 			is_auto_morph = true;
 		}
 
 		// Get buffer type if necessary (atom ports)
 		if (!buffer_type) {
 			LilvNodes* types = lilv_port_get_value(
-				plug, id, info->atom_bufferType);
+				plug, id, uris.atom_bufferType);
 			LILV_FOREACH(nodes, i, types) {
 				const LilvNode* type = lilv_nodes_get(types, i);
 				if (lilv_node_is_uri(type)) {
@@ -315,7 +310,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 
 		if (port_type == PortType::ATOM) {
 			// Get default value, and its length
-			LilvNodes* defaults = lilv_port_get_value(plug, id, info->lv2_default);
+			LilvNodes* defaults = lilv_port_get_value(plug, id, uris.lv2_default);
 			LILV_FOREACH(nodes, i, defaults) {
 				const LilvNode* d = lilv_nodes_get(defaults, i);
 				if (lilv_node_is_string(d)) {
@@ -336,7 +331,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 			}
 
 			// Get minimum size, if set in data
-			LilvNodes* sizes = lilv_port_get_value(plug, id, info->rsz_minimumSize);
+			LilvNodes* sizes = lilv_port_get_value(plug, id, uris.rsz_minimumSize);
 			LILV_FOREACH(nodes, i, sizes) {
 				const LilvNode* d = lilv_nodes_get(sizes, i);
 				if (lilv_node_is_int(d)) {
@@ -350,9 +345,9 @@ LV2Block::instantiate(BufferFactory& bufs)
 		}
 
 		enum { UNKNOWN, INPUT, OUTPUT } direction = UNKNOWN;
-		if (lilv_port_is_a(plug, id, info->lv2_InputPort)) {
+		if (lilv_port_is_a(plug, id, uris.lv2_InputPort)) {
 			direction = INPUT;
-		} else if (lilv_port_is_a(plug, id, info->lv2_OutputPort)) {
+		} else if (lilv_port_is_a(plug, id, uris.lv2_OutputPort)) {
 			direction = OUTPUT;
 		}
 
@@ -391,9 +386,9 @@ LV2Block::instantiate(BufferFactory& bufs)
 		}
 
 		// Inherit certain properties from plugin port
-		const LilvNode* preds[] = { info->lv2_designation,
-		                            info->lv2_portProperty,
-		                            info->atom_supports,
+		const LilvNode* preds[] = { uris.lv2_designation,
+		                            uris.lv2_portProperty,
+		                            uris.atom_supports,
 		                            0 };
 		for (int p = 0; preds[p]; ++p) {
 			LilvNodes* values = lilv_port_get_value(plug, id, preds[p]);
@@ -424,7 +419,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 		return ret;
 	}
 
-	_features = info->world().lv2_features().lv2_features(&info->world(), this);
+	_features = world->lv2_features().lv2_features(world, this);
 
 	// Actually create plugin instances and port buffers.
 	const SampleRate rate = bufs.engine().driver()->sample_rate();
@@ -437,7 +432,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 	}
 
 	// FIXME: Polyphony + worker?
-	if (lilv_plugin_has_feature(plug, info->work_schedule)) {
+	if (lilv_plugin_has_feature(plug, uris.work_schedule)) {
 		_worker_iface = (const LV2_Worker_Interface*)
 			lilv_instance_get_extension_data(instance(0),
 			                                 LV2_WORKER__interface);
@@ -557,8 +552,8 @@ LV2Block::post_process(ProcessContext& context)
 LilvState*
 LV2Block::load_preset(const Raul::URI& uri)
 {
-	World*     world  = &_lv2_plugin->lv2_info()->world();
-	LilvWorld* lworld = _lv2_plugin->lv2_info()->lv2_world();
+	World*     world  = _lv2_plugin->world();
+	LilvWorld* lworld = world->lilv_world();
 	LilvNode*  preset = lilv_new_uri(lworld, uri.c_str());
 
 	// Load preset into world if necessary
@@ -603,7 +598,7 @@ LV2Block::save_preset(const Raul::URI&  uri,
                       const Properties& props)
 {
 	World*          world  = parent_graph()->engine().world();
-	LilvWorld*      lworld = _lv2_plugin->lv2_info()->lv2_world();
+	LilvWorld*      lworld = _lv2_plugin->world()->lilv_world();
 	LV2_URID_Map*   lmap   = &world->uri_map().urid_map_feature()->urid_map;
 	LV2_URID_Unmap* lunmap = &world->uri_map().urid_unmap_feature()->urid_unmap;
 

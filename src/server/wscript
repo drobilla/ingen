@@ -18,7 +18,6 @@ def build(bld):
             InputPort.cpp
             InternalPlugin.cpp
             LV2Block.cpp
-            LV2Info.cpp
             LV2Plugin.cpp
             NodeImpl.cpp
             OutputPort.cpp
