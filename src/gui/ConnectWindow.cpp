@@ -137,6 +137,9 @@ ConnectWindow::set_connected_to(SPtr<Ingen::Interface> engine)
 		_port_spinbutton->set_sensitive(false);
 		_launch_radio->set_sensitive(false);
 		_internal_radio->set_sensitive(false);
+		_activate_button->set_sensitive(true);
+		_deactivate_button->set_sensitive(true);
+
 	} else {
 		_icon->set(Gtk::Stock::DISCONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
 		_progress_bar->set_fraction(0.0);
@@ -145,6 +148,8 @@ ConnectWindow::set_connected_to(SPtr<Ingen::Interface> engine)
 		_internal_radio->set_sensitive(true);
 		_server_radio->set_sensitive(true);
 		_launch_radio->set_sensitive(true);
+		_activate_button->set_sensitive(false);
+		_deactivate_button->set_sensitive(false);
 
 		if (_mode == Mode::CONNECT_REMOTE)
 			_url_entry->set_sensitive(true);
@@ -278,6 +283,10 @@ ConnectWindow::disconnect()
 void
 ConnectWindow::activate()
 {
+	if (!_app->interface()) {
+		return;
+	}
+
 	_app->interface()->set_property(Raul::URI("ingen:/driver"),
 	                                _app->uris().ingen_enabled,
 	                                _app->forge().make(true));
@@ -286,6 +295,10 @@ ConnectWindow::activate()
 void
 ConnectWindow::deactivate()
 {
+	if (!_app->interface()) {
+		return;
+	}
+
 	_app->interface()->set_property(Raul::URI("ingen:/driver"),
 	                                _app->uris().ingen_enabled,
 	                                _app->forge().make(false));
