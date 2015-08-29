@@ -118,10 +118,10 @@ Get::Response::put_preset(const URIs&        uris,
                           const Raul::URI&   preset,
                           const std::string& label)
 {
-	Resource::Properties props;
-	props.emplace(uris.rdf_type, uris.pset_Preset.urid);
-	props.emplace(uris.rdfs_label, uris.forge.alloc(label));
-	props.emplace(uris.lv2_appliesTo, uris.forge.make_urid(plugin));
+	Resource::Properties props{
+		{ uris.rdf_type, uris.pset_Preset.urid },
+		{ uris.rdfs_label, uris.forge.alloc(label) },
+		{ uris.lv2_appliesTo, uris.forge.make_urid(plugin) }};
 	put(preset, props);
 }
 

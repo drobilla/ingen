@@ -218,13 +218,13 @@ NodeMenu::on_save_preset_activated()
 		const std::string real_path = Glib::build_filename(dirname, bundle, file);
 		const std::string real_uri  = Glib::filename_to_uri(real_path);
 
-		Resource::Properties props;
-		props.emplace(_app->uris().rdf_type,
-		              _app->uris().pset_Preset);
-		props.emplace(_app->uris().rdfs_label,
-		              _app->forge().alloc(basename));
-		props.emplace(_app->uris().lv2_prototype,
-		              _app->forge().alloc_uri(block()->uri()));
+		Resource::Properties props{
+			{ _app->uris().rdf_type,
+			  _app->uris().pset_Preset },
+			{ _app->uris().rdfs_label,
+			  _app->forge().alloc(basename) },
+			{ _app->uris().lv2_prototype,
+			  _app->forge().alloc_uri(block()->uri()) }};
 		_app->interface()->put(Raul::URI(real_uri), props);
 	}
 }

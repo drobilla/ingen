@@ -114,8 +114,9 @@ LV2Plugin::load_presets()
 			if (labels) {
 				const LilvNode* label = lilv_nodes_get_first(labels);
 
-				_presets.emplace(Raul::URI(lilv_node_as_uri(preset)),
-				                 lilv_node_as_string(label));
+				_presets.insert(
+					std::make_pair(Raul::URI(lilv_node_as_uri(preset)),
+					               lilv_node_as_string(label)));
 
 				lilv_nodes_free(labels);
 			} else {
