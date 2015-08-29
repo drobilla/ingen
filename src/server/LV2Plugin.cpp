@@ -49,10 +49,6 @@ LV2Plugin::LV2Plugin(World* world, const LilvPlugin* lplugin)
 	                                 NULL);
 
 	if (lilv_node_is_int(minor) && lilv_node_is_int(micro)) {
-		fprintf(stderr, "%s version %d.%d\n",
-		        lilv_node_as_uri(lilv_plugin_get_uri(lplugin)),
-		        lilv_node_as_int(minor),
-		        lilv_node_as_int(micro));
 		set_property(_uris.lv2_minorVersion,
 		             world->forge().make(lilv_node_as_int(minor)));
 		set_property(_uris.lv2_microVersion,
