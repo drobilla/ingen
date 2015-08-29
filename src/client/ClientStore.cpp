@@ -307,14 +307,15 @@ ClientStore::put(const Raul::URI&            uri,
 		}
 
 		SPtr<PluginModel> plug;
-		if (p->second.is_valid() && p->second.type() == _uris.forge.URI) {
-			if (!(plug = _plugin(Raul::URI(p->second.ptr<char>())))) {
+		if (p->second.is_valid() && (p->second.type() == _uris.forge.URI ||
+		                             p->second.type() == _uris.forge.URID)) {
+			const Raul::URI uri(_uris.forge.str(p->second, false));
+			if (!(plug = _plugin(uri))) {
 				plug = SPtr<PluginModel>(
-					new PluginModel(
-						uris(),
-						Raul::URI(p->second.ptr<char>()),
-						Atom(),
-						Resource::Properties()));
+					new PluginModel(uris(),
+					                uri,
+					                Atom(),
+					                Resource::Properties()));
 				add_plugin(plug);
 			}
 

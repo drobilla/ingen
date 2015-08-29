@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Log.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ObjectModel.hpp"
@@ -121,10 +122,16 @@ types(World* world, SPtr<const Client::ObjectModel> model)
 	types.insert(Raul::URI(LILV_NS_RDFS "Resource"));
 	PropRange range = model->properties().equal_range(world->uris().rdf_type);
 	for (PropIter t = range.first; t != range.second; ++t) {
-		types.insert(Raul::URI(t->second.ptr<char>()));
-		if (world->uris().ingen_Graph == t->second.ptr<char>()) {
-			// Add lv2:Plugin as a type for graphs so plugin properties show up
-			types.insert(world->uris().lv2_Plugin);
+		if (t->second.type() == world->forge().URI ||
+		    t->second.type() == world->forge().URID) {
+			const Raul::URI type(world->forge().str(t->second, false));
+			types.insert(type);
+			if (world->uris().ingen_Graph == type) {
+				// Add lv2:Plugin as a type for graphs so plugin properties show up
+				types.insert(world->uris().lv2_Plugin);
+			}
+		} else {
+			world->log().error(fmt("<%1%> has non-URI type\n") % model->uri());
 		}
 	}
 

@@ -239,7 +239,7 @@ std::string
 BlockModel::port_label(SPtr<const PortModel> port) const
 {
 	const Atom& name = port->get_property(Raul::URI(LV2_CORE__name));
-	if (name.is_valid()) {
+	if (name.is_valid() && name.type() == _uris.forge.String) {
 		return name.ptr<char>();
 	}
 
