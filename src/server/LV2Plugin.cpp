@@ -38,6 +38,29 @@ LV2Plugin::LV2Plugin(World* world, const LilvPlugin* lplugin)
 	, _lilv_plugin(lplugin)
 {
 	set_property(_uris.rdf_type, _uris.lv2_Plugin);
+
+	LilvNode* minor = lilv_world_get(world->lilv_world(),
+	                                 lilv_plugin_get_uri(lplugin),
+	                                 _uris.lv2_minorVersion,
+	                                 NULL);
+	LilvNode* micro = lilv_world_get(world->lilv_world(),
+	                                 lilv_plugin_get_uri(lplugin),
+	                                 _uris.lv2_minorVersion,
+	                                 NULL);
+
+	if (lilv_node_is_int(minor) && lilv_node_is_int(micro)) {
+		fprintf(stderr, "%s version %d.%d\n",
+		        lilv_node_as_uri(lilv_plugin_get_uri(lplugin)),
+		        lilv_node_as_int(minor),
+		        lilv_node_as_int(micro));
+		set_property(_uris.lv2_minorVersion,
+		             world->forge().make(lilv_node_as_int(minor)));
+		set_property(_uris.lv2_microVersion,
+		             world->forge().make(lilv_node_as_int(micro)));
+	}
+
+	lilv_node_free(minor);
+	lilv_node_free(micro);
 }
 
 const Raul::Symbol

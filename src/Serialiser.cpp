@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <set>
 #include <string>
 #include <utility>
 
@@ -69,8 +70,8 @@ struct Serialiser::Impl {
 
 	void start_to_filename(const std::string& filename);
 
-	void serialise_graph(SPtr<const Node>  p,
-	                     const Sord::Node& id);
+	std::set<const Resource*> serialise_graph(SPtr<const Node>  p,
+	                                          const Sord::Node& id);
 
 	void serialise_block(SPtr<const Node>  n,
 	                     const Sord::Node& class_id,
@@ -91,6 +92,9 @@ struct Serialiser::Impl {
 	void write_manifest(const std::string& bundle_path,
 	                    SPtr<const Node>   graph,
 	                    const std::string& graph_symbol);
+
+	void write_plugins(const std::string&              bundle_path,
+	                   const std::set<const Resource*> plugins);
 
 	void serialise_arc(const Sord::Node& parent,
 	                   SPtr<const Arc>   a)
@@ -148,6 +152,38 @@ Serialiser::Impl::write_manifest(const std::string& bundle_path,
 }
 
 void
+Serialiser::Impl::write_plugins(const std::string&              bundle_path,
+                                const std::set<const Resource*> plugins)
+{
+	const string plugins_path(Glib::build_filename(bundle_path, "plugins.ttl"));
+
+	start_to_filename(plugins_path);
+
+	Sord::World& world = _model->world();
+	const URIs&  uris  = _world.uris();
+
+	for (const auto& p : plugins) {
+		const Atom& minor = p->get_property(uris.lv2_minorVersion);
+		const Atom& micro = p->get_property(uris.lv2_microVersion);
+
+		_model->add_statement(Sord::URI(world, p->uri()),
+		                      Sord::URI(world, uris.rdf_type),
+		                      Sord::URI(world, uris.lv2_Plugin));
+
+		if (minor.is_valid() && micro.is_valid()) {
+			_model->add_statement(Sord::URI(world, p->uri()),
+			                      Sord::URI(world, uris.lv2_minorVersion),
+			                      Sord::Literal::integer(world, minor.get<int32_t>()));
+			_model->add_statement(Sord::URI(world, p->uri()),
+			                      Sord::URI(world, uris.lv2_microVersion),
+			                      Sord::Literal::integer(world, micro.get<int32_t>()));
+		}
+	}
+
+	finish();
+}
+
+void
 Serialiser::write_bundle(SPtr<const Node>   graph,
                          const std::string& path)
 {
@@ -179,11 +215,15 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
 	start_to_filename(root_file);
 	const Raul::Path old_root_path = _root_path;
 	_root_path = graph->path();
-	serialise_graph(graph, Sord::URI(_model->world(), root_file, _base_uri));
+
+	std::set<const Resource*> plugins = serialise_graph(
+		graph, Sord::URI(_model->world(), root_file, _base_uri));
+
 	_root_path = old_root_path;
 	finish();
 
 	write_manifest(path, graph, symbol);
+	write_plugins(path, plugins);
 }
 
 /** Begin a serialization to a file.
@@ -278,7 +318,7 @@ Serialiser::serialise(SPtr<const Node> object) throw (std::logic_error)
 	}
 }
 
-void
+std::set<const Resource*>
 Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
                                   const Sord::Node& graph_id)
 {
@@ -311,6 +351,8 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 
 	const Node::Properties props = graph->properties(Resource::Graph::INTERNAL);
 	serialise_properties(graph_id, props);
+
+	std::set<const Resource*> plugins;
 
 	const Store::const_range kids = _world.store()->children_range(graph);
 	for (Store::const_iterator n = kids.first; n != kids.second; ++n) {
@@ -359,6 +401,8 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 			                      Sord::URI(world, uris.ingen_block),
 			                      block_id);
 			serialise_block(block, class_id, block_id);
+
+			plugins.insert(block->plugin());
 		}
 	}
 
@@ -380,6 +424,8 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 	for (const auto& a : graph->arcs()) {
 		serialise_arc(graph_id, a.second);
 	}
+
+	return plugins;
 }
 
 void
