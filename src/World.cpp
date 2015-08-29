@@ -120,6 +120,7 @@ public:
 
 		// Parse command line options, overriding configuration file values
 		conf.parse(argc, argv);
+		log.set_flush(conf.option("flush-log").get<int32_t>());
 
 		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map->urid_map_feature());

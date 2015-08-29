@@ -64,6 +64,7 @@ Configuration::Configuration(Forge& forge)
 	add("execute",        "execute",        'x', "File of commands to execute", SESSION, forge.String, Atom());
 	add("path",           "path",           'L', "Target path for loaded graph", SESSION, forge.String, Atom());
 	add("queueSize",      "queue-size",     'q', "Event queue size", GLOBAL, forge.Int, forge.make(4096));
+	add("flushLog",       "flush-log",      'f', "Flush logs after every entry", SESSION, forge.Bool, forge.make(false));
 	add("humanNames",     "human-names",     0,  "Show human names in GUI", GUI, forge.Bool, forge.make(true));
 	add("portLabels",     "port-labels",     0,  "Show port labels in GUI", GUI, forge.Bool, forge.make(true));
 	add("graphDirectory", "graph-directory", 0,  "Default directory for opening graphs", GUI, forge.String, Atom());

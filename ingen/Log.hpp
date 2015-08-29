@@ -42,9 +42,12 @@ public:
 	inline void info(const fmt& fmt)  { info(fmt.str()); }
 	inline void warn(const fmt& fmt)  { warn(fmt.str()); }
 
+	void set_flush(bool f) { _flush = f; }
+
 private:
 	LV2_Log_Log* _log;
 	URIs&        _uris;
+	bool         _flush;
 };
 
 }  // namespace Ingen

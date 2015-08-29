@@ -33,6 +33,7 @@ static const char* const ANSI_YELLOW  = "\033[0;33m";
 Log::Log(LV2_Log_Log* log, URIs& uris)
 	: _log(log)
 	, _uris(uris)
+	, _flush(false)
 {}
 
 void
@@ -42,6 +43,10 @@ Log::error(const std::string& msg)
 		_log->printf(_log->handle, _uris.log_Error, "%s", msg.c_str());
 	} else {
 		std::cerr << ANSI_RED << msg << ANSI_RESET;
+		if (_flush) {
+			std::cerr << "flush!\n";
+			std::flush(std::cerr);
+		}
 	}
 }
 
@@ -52,6 +57,10 @@ Log::warn(const std::string& msg)
 		_log->printf(_log->handle, _uris.log_Warning, "%s", msg.c_str());
 	} else {
 		std::cerr << ANSI_YELLOW << msg << ANSI_RESET;
+		if (_flush) {
+			std::cerr << "flush!\n";
+			std::flush(std::cerr);
+		}
 	}
 }
 
@@ -62,6 +71,10 @@ Log::info(const std::string& msg)
 		_log->printf(_log->handle, _uris.log_Note, "%s", msg.c_str());
 	} else {
 		std::cout << msg;
+		if (_flush) {
+			std::cerr << "flush!\n";
+			std::flush(std::cout);
+		}
 	}
 }
 
