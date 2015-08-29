@@ -227,11 +227,13 @@ PluginModel::port_scale_points(uint32_t i) const
 bool
 PluginModel::has_ui() const
 {
-	LilvUIs* uis = lilv_plugin_get_uis(_lilv_plugin);
-	const bool ret = (lilv_nodes_size(uis) > 0);
-	lilv_uis_free(uis);
-	return ret;
-
+	if (_lilv_plugin) {
+		LilvUIs* uis = lilv_plugin_get_uis(_lilv_plugin);
+		const bool ret = (lilv_nodes_size(uis) > 0);
+		lilv_uis_free(uis);
+		return ret;
+	}
+	return false;
 }
 
 SPtr<PluginUI>
