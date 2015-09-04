@@ -37,6 +37,10 @@ public:
 
 	std::string str(const Atom& atom, bool quoted=true);
 
+	bool is_uri(const Atom& atom) const {
+		return atom.type() == URI || atom.type() == URID;
+	}
+
 	Atom make()          { return Atom(); }
 	Atom make(int32_t v) { return Atom(sizeof(v), Int, &v); }
 	Atom make(float v)   { return Atom(sizeof(v), Float, &v); }

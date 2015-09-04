@@ -116,7 +116,8 @@ RenameWindow::ok_clicked()
 	Raul::Path    path       = _object->path();
 	const Atom&   name_atom  = _object->get_property(uris.lv2_name);
 
-	if (!label.empty() && (!name_atom.is_valid() || label != name_atom.ptr<char>())) {
+	if (!label.empty() && (name_atom.type() != uris.forge.String ||
+	                       label != name_atom.ptr<char>())) {
 		_app->set_property(Node::path_to_uri(path),
 		                   uris.lv2_name,
 		                   _app->forge().alloc(label));

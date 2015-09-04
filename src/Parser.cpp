@@ -192,7 +192,7 @@ get_port(Ingen::World*     world,
 	// Get symbol
 	Resource::Properties::const_iterator s = props.find(uris.lv2_symbol);
 	std::string                          sym;
-	if (s != props.end()) {
+	if (s != props.end() && s->second.type() == world->forge().String) {
 		sym = s->second.ptr<char>();
 	} else {
 		const std::string subject_str = subject.to_string();

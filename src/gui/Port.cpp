@@ -266,7 +266,7 @@ Port::build_uri_menu()
 	}
 
 	LilvNode* designation = lilv_new_uri(
-		world->lilv_world(), designation_atom.ptr<char>());
+		world->lilv_world(), world->forge().str(designation_atom, false).c_str());
 	LilvNode* rdfs_range = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDFS "range");
 

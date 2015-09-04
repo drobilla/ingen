@@ -53,6 +53,10 @@ Forge::str(const Atom& atom, bool quoted)
 		ss << (quoted ? "<" : "")
 		   << _map.unmap_uri(atom.get<int32_t>())
 		   << (quoted ? ">" : "");
+	} else if (atom.type() == Path) {
+		ss << (quoted ? "<" : "")
+		   << atom.ptr<const char>()
+		   << (quoted ? ">" : "");
 	} else if (atom.type() == String) {
 		ss << (quoted ? "\"" : "")
 		   << atom.ptr<const char>()

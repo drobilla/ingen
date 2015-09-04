@@ -81,12 +81,12 @@ CreateBlock::pre_process()
 
 	// Get prototype
 	iterator t = _properties.find(uris.lv2_prototype);
-	if (t == _properties.end() || t->second.type() != uris.forge.URI) {
+	if (t == _properties.end() || !uris.forge.is_uri(t->second)) {
 		// Missing/invalid prototype
 		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
 
-	const Raul::URI prototype(t->second.ptr<char>());
+	const Raul::URI prototype(uris.forge.str(t->second, false));
 
 	// Find polyphony
 	const iterator p          = _properties.find(uris.ingen_polyphonic);

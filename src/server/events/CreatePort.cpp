@@ -76,8 +76,9 @@ CreatePort::CreatePort(Engine&                     engine,
 
 	const Range buffer_types = properties.equal_range(uris.atom_bufferType);
 	for (Iterator i = buffer_types.first; i != buffer_types.second; ++i) {
-		if (i->second.type() == _engine.world()->forge().URI) {
-			_buf_type = _engine.world()->uri_map().map_uri(i->second.ptr<char>());
+		if (uris.forge.is_uri(i->second)) {
+			_buf_type = _engine.world()->uri_map().map_uri(
+				uris.forge.str(i->second, false));
 		}
 	}
 }

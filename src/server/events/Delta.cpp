@@ -17,6 +17,8 @@
 #include <vector>
 #include <thread>
 
+#include <glibmm/convert.h>
+
 #include "ingen/Log.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
@@ -290,22 +292,24 @@ Delta::pre_process()
 						_status = Status::BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.pset_preset) {
-					if (value.type() == uris.forge.URI) {
-						const char* str = value.ptr<char>();
-						if (Raul::URI::is_valid(str)) {
-							op = SpecialType::PRESET;
-							const Raul::URI uri(str);
-							if ((_state = block->load_preset(Raul::URI(str)))) {
-								lilv_state_emit_port_values(
-									_state, s_add_set_event, this);
-							} else {
-								_engine.log().warn(fmt("Failed to load preset <%1%>\n") % str);
-							}
+					std::string uri_str;
+					if (uris.forge.is_uri(value)) {
+						uri_str = uris.forge.str(value, false);
+					} else if (value.type() == uris.forge.Path) {
+						uri_str = Glib::filename_to_uri(value.ptr<char>());
+					}
+
+					if (Raul::URI::is_valid(uri_str)) {
+						const Raul::URI uri(uri_str);
+						op = SpecialType::PRESET;
+						if ((_state = block->load_preset(uri))) {
+							lilv_state_emit_port_values(
+								_state, s_add_set_event, this);
 						} else {
-							_status = Status::BAD_VALUE;
+							_engine.log().warn(fmt("Failed to load preset <%1%>\n") % uri);
 						}
 					} else {
-						_status = Status::BAD_VALUE_TYPE;
+						_status = Status::BAD_VALUE;
 					}
 				}
 			}
