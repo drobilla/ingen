@@ -15,7 +15,6 @@
 */
 
 #include <stdexcept>
-#include <iostream>
 
 #include "Event.hpp"
 #include "PostProcessor.hpp"

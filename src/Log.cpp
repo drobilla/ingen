@@ -44,7 +44,6 @@ Log::error(const std::string& msg)
 	} else {
 		std::cerr << ANSI_RED << msg << ANSI_RESET;
 		if (_flush) {
-			std::cerr << "flush!\n";
 			std::flush(std::cerr);
 		}
 	}
@@ -58,7 +57,6 @@ Log::warn(const std::string& msg)
 	} else {
 		std::cerr << ANSI_YELLOW << msg << ANSI_RESET;
 		if (_flush) {
-			std::cerr << "flush!\n";
 			std::flush(std::cerr);
 		}
 	}
@@ -72,7 +70,6 @@ Log::info(const std::string& msg)
 	} else {
 		std::cout << msg;
 		if (_flush) {
-			std::cerr << "flush!\n";
 			std::flush(std::cout);
 		}
 	}
