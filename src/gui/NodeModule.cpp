@@ -319,6 +319,9 @@ NodeModule::popup_gui()
 		_plugin_ui = plugin->ui(app().world(), _block);
 
 		if (_plugin_ui) {
+			_plugin_ui->signal_property_changed().connect(
+				sigc::mem_fun(app(), &App::set_property));
+
 			GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
 			_gui_widget = Glib::wrap(c_widget);
 
