@@ -141,10 +141,9 @@ PortImpl::has_value() const
 }
 
 bool
-PortImpl::supports(const Raul::URI& value_type) const
+PortImpl::supports(const URIs::Quark& value_type) const
 {
-	return has_property(_bufs.uris().atom_supports,
-	                    _bufs.forge().alloc_uri(value_type));
+	return has_property(_bufs.uris().atom_supports, value_type);
 }
 
 void

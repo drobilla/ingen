@@ -135,6 +135,7 @@ public:
 	const Quark lv2_connectionOptional;
 	const Quark lv2_default;
 	const Quark lv2_designation;
+	const Quark lv2_enumeration;
 	const Quark lv2_extensionData;
 	const Quark lv2_index;
 	const Quark lv2_integer;

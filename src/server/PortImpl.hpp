@@ -174,7 +174,7 @@ public:
 	PortType type()        const { return _type; }
 	LV2_URID buffer_type() const { return _buffer_type; }
 
-	bool supports(const Raul::URI& value_type) const;
+	bool supports(const URIs::Quark& value_type) const;
 
 	size_t buffer_size() const { return _buffer_size; }
 

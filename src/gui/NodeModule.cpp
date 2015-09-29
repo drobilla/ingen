@@ -175,7 +175,7 @@ NodeModule::port_activity(uint32_t index, const Atom& value)
 		return;
 	}
 
-	if (_block->get_port(index)->is_a(Raul::URI(LV2_ATOM__AtomPort))) {
+	if (_block->get_port(index)->is_a(uris.atom_AtomPort)) {
 		_plugin_ui->port_event(index,
 		                       lv2_atom_total_size(value.atom()),
 		                       uris.atom_eventTransfer,

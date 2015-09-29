@@ -37,17 +37,15 @@ PortModel::on_property(const Raul::URI& uri, const Atom& value)
 }
 
 bool
-PortModel::supports(const Raul::URI& value_type) const
+PortModel::supports(const URIs::Quark& value_type) const
 {
-	return has_property(_uris.atom_supports,
-	                    _uris.forge.alloc_uri(value_type));
+	return has_property(_uris.atom_supports, value_type);
 }
 
 bool
-PortModel::port_property(const Raul::URI& uri) const
+PortModel::port_property(const URIs::Quark& uri) const
 {
-	return has_property(_uris.lv2_portProperty,
-	                    _uris.forge.alloc_uri(uri));
+	return has_property(_uris.lv2_portProperty, uri);
 }
 
 bool

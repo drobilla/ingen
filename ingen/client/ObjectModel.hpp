@@ -58,7 +58,7 @@ class INGEN_API ObjectModel : public Node
 public:
 	virtual ~ObjectModel();
 
-	bool is_a(const Raul::URI& type) const;
+	bool is_a(const URIs::Quark& type) const;
 
 	const Atom& get_property(const Raul::URI& key) const;
 

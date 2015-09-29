@@ -42,7 +42,7 @@ public:
 
 	GraphType graph_type() const { return Node::GraphType::PORT; }
 
-	bool supports(const Raul::URI& value_type) const;
+	bool supports(const URIs::Quark& value_type) const;
 
 	inline uint32_t    index()     const { return _index; }
 	inline const Atom& value()     const { return get_property(_uris.ingen_value); }
@@ -50,15 +50,15 @@ public:
 	inline bool        is_input()  const { return (_direction == Direction::INPUT); }
 	inline bool        is_output() const { return (_direction == Direction::OUTPUT); }
 
-	bool port_property(const Raul::URI& uri) const;
+	bool port_property(const URIs::Quark& uri) const;
 
-	bool is_logarithmic() const { return port_property(Raul::URI(LV2_PORT_PROPS__logarithmic)); }
-	bool is_enumeration() const { return port_property(Raul::URI(LV2_CORE__enumeration)); }
-	bool is_integer()     const { return port_property(Raul::URI(LV2_CORE__integer)); }
-	bool is_toggle()      const { return port_property(Raul::URI(LV2_CORE__toggled)); }
+	bool is_logarithmic() const { return port_property(_uris.pprops_logarithmic); }
+	bool is_enumeration() const { return port_property(_uris.lv2_enumeration); }
+	bool is_integer()     const { return port_property(_uris.lv2_integer); }
+	bool is_toggle()      const { return port_property(_uris.lv2_toggled); }
 	bool is_numeric()     const {
-		return ObjectModel::is_a(Raul::URI(LV2_CORE__ControlPort))
-			|| ObjectModel::is_a(Raul::URI(LV2_CORE__CVPort));
+		return ObjectModel::is_a(_uris.lv2_ControlPort)
+			|| ObjectModel::is_a(_uris.lv2_CVPort);
 	}
 	bool is_uri() const;
 

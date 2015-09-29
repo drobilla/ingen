@@ -41,9 +41,9 @@ ObjectModel::~ObjectModel()
 }
 
 bool
-ObjectModel::is_a(const Raul::URI& type) const
+ObjectModel::is_a(const URIs::Quark& type) const
 {
-	return has_property(_uris.rdf_type, _uris.forge.alloc_uri(type));
+	return has_property(_uris.rdf_type, type);
 }
 
 void
