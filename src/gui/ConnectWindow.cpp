@@ -32,6 +32,7 @@
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
+#include "ingen/client/SocketClient.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
 #include "ingen_config.h"
 
@@ -207,6 +208,7 @@ ConnectWindow::connect(bool existing)
 	}
 
 	set_connecting_widget_states();
+	_connect_stage = 0;
 
 	Ingen::World* world = _app->world();
 
@@ -214,6 +216,15 @@ ConnectWindow::connect(bool existing)
 		std::string uri_str = world->conf().option("connect").ptr<char>();
 		if (existing) {
 			uri_str = world->interface()->uri();
+			_connect_stage = 1;
+			SPtr<Client::SocketClient> client = dynamic_ptr_cast<Client::SocketClient>(world->interface());
+			if (client) {
+				_app->attach(dynamic_ptr_cast<Client::SigClientInterface>(client->respondee()));
+				_app->register_callbacks();
+			} else {
+				error("Connected with invalid client interface type");
+				return;
+			}
 		} else if (_widgets_loaded) {
 			uri_str = _url_entry->get_text();
 		}
@@ -252,7 +263,6 @@ ConnectWindow::connect(bool existing)
 	}
 
 	set_connecting_widget_states();
-	_connect_stage = 0;
 	if (_widgets_loaded) {
 		_progress_label->set_text("Connecting...");
 	}
