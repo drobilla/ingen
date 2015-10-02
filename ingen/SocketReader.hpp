@@ -36,7 +36,10 @@ public:
 	             Interface&         iface,
 	             SPtr<Raul::Socket> sock);
 
-	~SocketReader();
+	virtual ~SocketReader();
+
+protected:
+	virtual void on_hangup() {}
 
 private:
 	void run();

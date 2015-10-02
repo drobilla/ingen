@@ -154,6 +154,7 @@ SocketReader::run()
 		// Wait for input to arrive at socket
 		int ret = poll(&pfd, 1, -1);
 		if (ret == -1 || (pfd.revents & (POLLERR|POLLHUP|POLLNVAL))) {
+			on_hangup();
 			break;  // Hangup
 		} else if (!ret) {
 			continue;  // No data, shouldn't happen

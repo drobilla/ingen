@@ -47,7 +47,15 @@ public:
 	}
 
 	~SocketServer() {
+		if (_writer) {
+			_engine.unregister_client(_writer);
+		}
+	}
+
+protected:
+	void on_hangup() {
 		_engine.unregister_client(_writer);
+		_writer.reset();
 	}
 
 private:
