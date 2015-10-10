@@ -45,13 +45,14 @@ def options(opt):
                    help='Print a trace of URI mapping')
 
 def configure(conf):
+    autowaf.display_header('Ingen Configuration')
+    conf.line_just = 44
     conf.load('compiler_cxx')
     conf.load('lv2')
     if not Options.options.no_python:
         conf.load('python')
 
     autowaf.configure(conf)
-    autowaf.display_header('Ingen Configuration')
 
     conf.check_cxx(cxxflags=["-std=c++0x"])
     conf.env.append_unique('CXXFLAGS', ['-std=c++0x'])
