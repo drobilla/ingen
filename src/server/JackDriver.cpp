@@ -312,6 +312,7 @@ JackDriver::create_port(DuplexPort* graph_port)
 		graph_port->setup_buffers(*_engine.buffer_factory(),
 		                          graph_port->poly(),
 		                          false);
+		graph_port->set_is_driver_port(true);
 		return eport;
 	} else {
 		return NULL;

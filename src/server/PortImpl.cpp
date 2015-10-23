@@ -75,6 +75,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _is_logarithmic(false)
 	, _is_sample_rate(false)
 	, _is_toggled(false)
+	, _is_driver_port(false)
 {
 	assert(block != NULL);
 	assert(_poly > 0);
@@ -262,32 +263,37 @@ PortImpl::set_voice_value(const Context& context,
 }
 
 void
-PortImpl::update_set_state(Context& context, uint32_t voice)
+PortImpl::update_set_state(Context& context, uint32_t v)
 {
-	SetState& state = _voices->at(voice).set_state;
+	Voice&    voice = _voices->at(v);
+	SetState& state = voice.set_state;
+	BufferRef buf   = voice.buffer;
 	switch (state.state) {
 	case SetState::State::SET:
+		break;
+	case SetState::State::SET_CYCLE_1:
 		if (state.time < context.start() &&
-		    buffer(voice)->is_sequence() &&
-		    buffer(voice)->value_type() == _bufs.uris().atom_Float &&
+		    buf->is_sequence() &&
+		    buf->value_type() == _bufs.uris().atom_Float &&
 		    !_parent->path().is_root()) {
-			buffer(voice)->clear();
+			buf->clear();
 			state.time = context.start();
 		}
+		state.state = SetState::State::SET;
 		break;
 	case SetState::State::HALF_SET_CYCLE_1:
 		state.state = SetState::State::HALF_SET_CYCLE_2;
 		break;
 	case SetState::State::HALF_SET_CYCLE_2:
-		if (buffer(voice)->is_sequence()) {
-			buffer(voice)->clear();
-			buffer(voice)->append_event(
+		if (buf->is_sequence()) {
+			buf->clear();
+			buf->append_event(
 				0, sizeof(float), _bufs.uris().atom_Float,
 				(const uint8_t*)&state.value);
 		} else {
-			buffer(voice)->set_block(state.value, 0, context.nframes());
+			buf->set_block(state.value, 0, context.nframes());
 		}
-		state.state = SetState::State::SET;
+		state.state = SetState::State::SET_CYCLE_1;
 		break;
 	}
 }

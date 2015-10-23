@@ -211,9 +211,11 @@ GraphImpl::pre_process(ProcessContext& context)
 	// Mix down input ports and connect buffers
 	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);
-		port->pre_process(context);
-		port->pre_run(context);
-		port->connect_buffers();
+		if (!port->is_driver_port()) {
+			port->pre_process(context);
+			port->pre_run(context);
+			port->connect_buffers();
+		}
 	}
 }
 

@@ -148,14 +148,13 @@ InputPort::pre_process(Context& context)
 		for (uint32_t v = 0; v < _poly; ++v) {
 			buffer(v)->update_value_buffer(context.offset());
 		}
-		return;
-	}
-
-	if (_arcs.empty()) {
+	} else if (_arcs.empty()) {
+		// No incoming arcs, just update set state
 		for (uint32_t v = 0; v < _poly; ++v) {
 			update_set_state(context, v);
 		}
 	} else if (direct_connect()) {
+		// Directly connected, use source's buffer directly
 		for (uint32_t v = 0; v < _poly; ++v) {
 			_voices->at(v).buffer = _arcs.front().buffer(v);
 		}

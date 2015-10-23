@@ -44,7 +44,19 @@ class PortImpl : public NodeImpl
 {
 public:
 	struct SetState {
-		enum class State { SET, HALF_SET_CYCLE_1, HALF_SET_CYCLE_2 };
+		enum class State {
+			/// Partially set, first cycle: AAAAA => AAABB.
+			HALF_SET_CYCLE_1,
+
+			/// Partially set, second cycle: AAABB => BBBBB.
+			HALF_SET_CYCLE_2,
+
+			/// Fully set, first cycle (clear events if necessary).
+			SET_CYCLE_1,
+
+			/// Fully set, second cycle and onwards (done).
+			SET
+		};
 
 		SetState() : state(State::SET), value(0), time(0) {}
 
@@ -127,6 +139,9 @@ public:
 	void set_control_value(const Context& context,
 	                       FrameTime      time,
 	                       Sample         value);
+
+	void set_is_driver_port(bool b) { _is_driver_port = b; }
+	bool is_driver_port() const     { return _is_driver_port; }
 
 	/** Called once per process cycle */
 	virtual void pre_process(Context& context) = 0;
@@ -264,6 +279,7 @@ protected:
 	bool                _is_logarithmic;
 	bool                _is_sample_rate;
 	bool                _is_toggled;
+	bool                _is_driver_port;
 };
 
 } // namespace Server
