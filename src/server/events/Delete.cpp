@@ -45,7 +45,6 @@ Delete::Delete(Engine&          engine,
 	, _ports_array(NULL)
 	, _compiled_graph(NULL)
 	, _disconnect_event(NULL)
-	, _lock(engine.store()->mutex(), std::defer_lock)
 {
 	if (Node::uri_is_path(uri)) {
 		_path = Node::uri_to_path(uri);
@@ -84,7 +83,8 @@ Delete::pre_process()
 		return Event::pre_process_done(Status::INTERNAL_ERROR, _path);
 	}
 
-	_lock.lock();
+	// Take a writer lock while we modify the store
+	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
 
 	_engine.store()->remove(iter, _removed_objects);
 
@@ -145,10 +145,6 @@ Delete::execute(ProcessContext& context)
 void
 Delete::post_process()
 {
-	if (_lock.owns_lock()) {
-		_lock.unlock();
-	}
-
 	_removed_bindings.reset();
 
 	Broadcaster::Transfer t(*_engine.broadcaster());

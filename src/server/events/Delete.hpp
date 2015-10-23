@@ -81,8 +81,6 @@ private:
 
 	SPtr<ControlBindings::Bindings> _removed_bindings;
 	Store::Objects                  _removed_objects;
-
-	std::unique_lock<std::mutex> _lock;
 };
 
 } // namespace Events
