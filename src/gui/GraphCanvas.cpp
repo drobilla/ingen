@@ -536,7 +536,9 @@ destroy_node(GanvNode* node, void* data)
 		app->interface()->del(node_module->block()->uri());
 	} else {
 		GraphPortModule* port_module = dynamic_cast<GraphPortModule*>(module);
-		if (port_module) {
+		if (port_module &&
+		    strcmp(port_module->port()->path().symbol(), "control_in") &&
+		    strcmp(port_module->port()->path().symbol(), "control_out")) {
 			app->interface()->del(port_module->port()->uri());
 		}
 	}
