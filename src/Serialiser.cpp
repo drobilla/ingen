@@ -418,6 +418,7 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 		_model->add_statement(graph_id,
 		                      Sord::URI(world, LV2_CORE__port),
 		                      port_id);
+		serialise_port(p, Resource::Graph::DEFAULT, port_id);
 		serialise_port(p, Resource::Graph::INTERNAL, port_id);
 	}
 
