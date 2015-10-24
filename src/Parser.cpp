@@ -333,7 +333,7 @@ parse_block(Ingen::World*                     world,
 		            path.parent(), Raul::Symbol(path.symbol()));
 
 		parse_graph(world, target, model, base_uri,
-		            sub_node, Resource::Graph::DEFAULT,
+		            subject, Resource::Graph::DEFAULT,
 		            path.parent(), Raul::Symbol(path.symbol()));
 	} else {
 		Resource::Properties props = get_properties(
@@ -388,7 +388,7 @@ parse_graph(Ingen::World*                     world,
 	// Create graph
 	Raul::Path graph_path(graph_path_str);
 	Resource::Properties props = get_properties(world, model, subject_node, ctx);
-	target->put(Node::path_to_uri(graph_path), props);
+	target->put(Node::path_to_uri(graph_path), props, ctx);
 
 	// For each block in this graph
 	for (Sord::Iter n = model.find(subject_node, ingen_block, nil); !n.end(); ++n) {
@@ -440,7 +440,8 @@ parse_graph(Ingen::World*                     world,
 	// Create ports in order by index
 	for (const auto& p : ports) {
 		target->put(Node::path_to_uri(p.second.first),
-		            p.second.second);
+		            p.second.second,
+		            ctx);
 	}
 
 	parse_arcs(world, target, model, base_uri, subject_node, graph_path);
