@@ -42,9 +42,23 @@ class INGEN_API PluginUI {
 public:
 	~PluginUI();
 
+	/** Create a UI for the given block and plugin.
+	 *
+	 * This does not actually instantiate the UI itself, so signals can be
+	 * connected first.  The caller should connect to signal_property_changed,
+	 * then call instantiate().
+	 */
 	static SPtr<PluginUI> create(Ingen::World*          world,
 	                             SPtr<const BlockModel> block,
 	                             const LilvPlugin*      plugin);
+
+	/** Instantiate the UI.
+	 *
+	 * If true is returned, instantiation was successfull and the widget can be
+	 * obtained with get_widget(). Otherwise, instantiation failed, so there is
+	 * no widget and the UI can not be used.
+	 */
+	bool instantiate();
 
 	SuilWidget get_widget();
 
@@ -71,12 +85,17 @@ public:
 private:
 	PluginUI(Ingen::World*          world,
 	         SPtr<const BlockModel> block,
-	         const LilvNode*        ui_node);
+	         LilvUIs*               uis,
+	         const LilvUI*          ui,
+	         const LilvNode*        ui_type);
 
 	Ingen::World*          _world;
 	SPtr<const BlockModel> _block;
 	SuilInstance*          _instance;
+	LilvUIs*               _uis;
+	const LilvUI*          _ui;
 	LilvNode*              _ui_node;
+	LilvNode*              _ui_type;
 	std::set<uint32_t>     _subscribed_ports;
 
 	static SuilHost* ui_host;

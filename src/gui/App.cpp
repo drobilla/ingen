@@ -234,7 +234,9 @@ App::set_property(const Raul::URI& subject,
 	   feedback and bandwidth wastage, see Delta.cpp).  So, assume everything
 	   went as planned here and fire the signal ourselves as if the server
 	   feedback came back immediately. */
-	_client->signal_property_change().emit(subject, key, value);
+	if (key != uris().ingen_activity) {
+		_client->signal_property_change().emit(subject, key, value);
+	}
 }
 
 void

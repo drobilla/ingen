@@ -235,14 +235,18 @@ NodeModule::embed_gui(bool embed)
 			_plugin_ui->signal_property_changed().connect(
 				sigc::mem_fun(app(), &App::set_property));
 
-			GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
-			_gui_widget = Glib::wrap(c_widget);
+			if (!_plugin_ui->instantiate()) {
+				app().log().error("Failed to instantiate LV2 UI\n");
+			} else {
+				GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
+				_gui_widget = Glib::wrap(c_widget);
 
-			Gtk::Container* container = new Gtk::EventBox();
-			container->set_name("IngenEmbeddedUI");
-			container->set_border_width(4.0);
-			container->add(*_gui_widget);
-			Ganv::Module::embed(container);
+				Gtk::Container* container = new Gtk::EventBox();
+				container->set_name("IngenEmbeddedUI");
+				container->set_border_width(4.0);
+				container->add(*_gui_widget);
+				Ganv::Module::embed(container);
+			}
 		} else {
 			app().log().error("Failed to create LV2 UI\n");
 		}
