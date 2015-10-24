@@ -311,29 +311,6 @@ GraphImpl::num_ports_non_rt() const
 	return _inputs.size() + _outputs.size();
 }
 
-DuplexPort*
-GraphImpl::create_port(BufferFactory&      bufs,
-                       const Raul::Symbol& symbol,
-                       PortType            type,
-                       LV2_URID            buffer_type,
-                       uint32_t            buffer_size,
-                       bool                is_output,
-                       bool                polyphonic)
-{
-	if (type == PortType::UNKNOWN) {
-		bufs.engine().log().error(fmt("Unknown port type %1%\n")
-		                          % type.uri());
-		return NULL;
-	}
-
-	Atom value;
-	if (type == PortType::CONTROL || type == PortType::CV)
-		value = bufs.forge().make(0.0f);
-
-	return new DuplexPort(bufs, this, symbol, num_ports_non_rt(), polyphonic, _polyphony,
-	                      type, buffer_type, value, buffer_size, is_output);
-}
-
 void
 GraphImpl::remove_port(DuplexPort& port)
 {

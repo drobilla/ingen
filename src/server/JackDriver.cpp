@@ -212,6 +212,14 @@ void
 JackDriver::add_port(ProcessContext& context, EnginePort* port)
 {
 	_ports.push_back(*port);
+
+	DuplexPort* graph_port = port->graph_port();
+	if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
+		const SampleCount nframes = context.nframes();
+		jack_port_t*      jport   = (jack_port_t*)port->handle();
+		void*             jbuf    = jack_port_get_buffer(jport, nframes);
+		graph_port->set_driver_buffer(jbuf, nframes * sizeof(float));
+	}
 }
 
 void
@@ -250,6 +258,8 @@ JackDriver::unregister_port(EnginePort& port)
 	if (jack_port_unregister(_client, (jack_port_t*)port.handle())) {
 		_engine.log().error("Failed to unregister Jack port\n");
 	}
+
+	port.set_handle(NULL);
 }
 
 void
@@ -302,93 +312,94 @@ JackDriver::port_property_internal(const jack_port_t* jport,
 EnginePort*
 JackDriver::create_port(DuplexPort* graph_port)
 {
-	if (graph_port &&
-	    (graph_port->is_a(PortType::AUDIO) ||
-	     graph_port->is_a(PortType::CV) ||
-	     (graph_port->is_a(PortType::ATOM) &&
-	      graph_port->buffer_type() == _engine.world()->uris().atom_Sequence))) {
-		EnginePort* eport = new EnginePort(graph_port);
-		register_port(*eport);
-		graph_port->setup_buffers(*_engine.buffer_factory(),
-		                          graph_port->poly(),
-		                          false);
-		graph_port->set_is_driver_port(true);
-		return eport;
-	} else {
-		return NULL;
+	EnginePort* eport = NULL;
+	if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
+		// Audio buffer port, use Jack buffer directly
+		eport = new EnginePort(graph_port);
+		graph_port->set_is_driver_port(*_engine.buffer_factory());
+	} else if (graph_port->is_a(PortType::ATOM) &&
+	           graph_port->buffer_type() == _engine.world()->uris().atom_Sequence) {
+		// Sequence port, make Jack port but use internal LV2 format buffer
+		eport = new EnginePort(graph_port);
 	}
+
+	if (eport) {
+		register_port(*eport);
+	}
+
+	return eport;
 }
 
 void
 JackDriver::pre_process_port(ProcessContext& context, EnginePort* port)
 {
+	const URIs&       uris       = context.engine().world()->uris();
 	const SampleCount nframes    = context.nframes();
 	jack_port_t*      jack_port  = (jack_port_t*)port->handle();
-	PortImpl*         graph_port = port->graph_port();
-	void*             buffer     = jack_port_get_buffer(jack_port, nframes);
+	DuplexPort*       graph_port = port->graph_port();
+	Buffer*           graph_buf  = graph_port->buffer(0).get();
+	void*             jack_buf   = jack_port_get_buffer(jack_port, nframes);
 
-	port->set_buffer(buffer);
-
-	if (!graph_port->is_input()) {
-		graph_port->buffer(0)->clear();
-		return;
-	}
-
-	if (graph_port->is_a(PortType::AUDIO)) {
-		Buffer* graph_buf = graph_port->buffer(0).get();
-		memcpy(graph_buf->samples(), buffer, nframes * sizeof(float));
-
-	} else if (graph_port->buffer_type() == graph_port->bufs().uris().atom_Sequence) {
-		Buffer* graph_buf = (Buffer*)graph_port->buffer(0).get();
-
-		const jack_nframes_t event_count = jack_midi_get_event_count(buffer);
-
+	if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
+		graph_port->set_driver_buffer(jack_buf, nframes * sizeof(float));
+		if (graph_port->is_input()) {
+			graph_port->monitor(context);
+		} else {
+			graph_port->buffer(0)->clear(); // TODO: Avoid when possible
+		}
+	} else if (graph_port->buffer_type() == uris.atom_Sequence) {
 		graph_buf->prepare_write(context);
-
-		// Copy events from Jack port buffer into graph port buffer
-		for (jack_nframes_t i = 0; i < event_count; ++i) {
-			jack_midi_event_t ev;
-			jack_midi_event_get(&ev, buffer, i);
-
-			if (!graph_buf->append_event(
-				    ev.time, ev.size, _midi_event_type, ev.buffer)) {
-				_engine.log().warn("Failed to write to MIDI buffer, events lost!\n");
+		if (graph_port->is_input()) {
+			// Copy events from Jack port buffer into graph port buffer
+			const jack_nframes_t event_count = jack_midi_get_event_count(jack_buf);
+			for (jack_nframes_t i = 0; i < event_count; ++i) {
+				jack_midi_event_t ev;
+				jack_midi_event_get(&ev, jack_buf, i);
+				if (!graph_buf->append_event(
+					    ev.time, ev.size, _midi_event_type, ev.buffer)) {
+					_engine.log().warn("Failed to write to MIDI buffer, events lost!\n");
+				}
 			}
 		}
+		graph_port->monitor(context);
 	}
 }
 
 void
 JackDriver::post_process_port(ProcessContext& context, EnginePort* port)
 {
+	const URIs&       uris       = context.engine().world()->uris();
 	const SampleCount nframes    = context.nframes();
 	jack_port_t*      jack_port  = (jack_port_t*)port->handle();
-	PortImpl*         graph_port = port->graph_port();
-	void*             buffer     = port->buffer();
+	DuplexPort*       graph_port = port->graph_port();
+	void*             jack_buf   = port->buffer();
 
-	if (graph_port->is_input()) {
-		return;
-	}
+	if (port->graph_port()->is_output()) {
+		if (!jack_buf) {
+			// First cycle for a new output, so pre_process wasn't called
+			jack_buf = jack_port_get_buffer(jack_port, nframes);
+			port->set_buffer(jack_buf);
+		}
 
-	if (!buffer) {
-		// First cycle for a new output, so pre_process wasn't called
-		buffer = jack_port_get_buffer(jack_port, nframes);
-		port->set_buffer(buffer);
-	}
+		if (graph_port->buffer_type() == uris.atom_Sequence) {
+			// Copy LV2 MIDI events to Jack MIDI buffer
+			Buffer* const      graph_buf = graph_port->buffer(0).get();
+			LV2_Atom_Sequence* seq       = graph_buf->get<LV2_Atom_Sequence>();
 
-	graph_port->post_process(context);
-	Buffer* const graph_buf = graph_port->buffer(0).get();
-	if (graph_port->is_a(PortType::AUDIO)) {
-		memcpy(buffer, graph_buf->samples(), nframes * sizeof(Sample));
-	} else if (graph_port->buffer_type() == graph_port->bufs().uris().atom_Sequence) {
-		jack_midi_clear_buffer(buffer);
-		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)graph_buf->atom();
-		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
-			if (ev->body.type == graph_port->bufs().uris().midi_MidiEvent) {
-				jack_midi_event_write(buffer, ev->time.frames, buf, ev->body.size);
+			jack_midi_clear_buffer(jack_buf);
+			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+				const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
+				if (ev->body.type == _midi_event_type) {
+					jack_midi_event_write(
+						jack_buf, ev->time.frames, buf, ev->body.size);
+				}
 			}
 		}
+	}
+
+	// Reset graph port buffer pointer to no longer point to the Jack buffer
+	if (graph_port->is_driver_port()) {
+		graph_port->set_driver_buffer(NULL, 0);
 	}
 }
 
@@ -457,7 +468,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 		return 0;
 	}
 
-	/* Note that Jack can not call this function for a cycle, if overloaded,
+	/* Note that Jack may not call this function for a cycle, if overloaded,
 	   so a rolling counter here would not always be correct. */
 	const jack_nframes_t start_of_current_cycle = jack_last_frame_time(_client);
 

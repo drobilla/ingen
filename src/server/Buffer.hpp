@@ -45,7 +45,9 @@ public:
 	Buffer(BufferFactory& bufs,
 	       LV2_URID       type,
 	       LV2_URID       value_type,
-	       uint32_t       capacity);
+	       uint32_t       capacity,
+	       bool           external = false,
+	       void*          buf = NULL);
 
 	void clear();
 	void resize(uint32_t size);
@@ -73,18 +75,12 @@ public:
 		return _type == _factory.uris().atom_Sequence;
 	}
 
-	inline bool empty() const {
-		return (_atom->type != _type ||
-		        (_type == _factory.uris().atom_Sequence &&
-		         _atom->size <= sizeof(LV2_Atom_Sequence_Body)));
-	}
-
-	/// Audio buffers only
+	/// Audio or float buffers only
 	inline const Sample* samples() const {
 		if (is_control()) {
-			return (const Sample*)LV2_ATOM_BODY_CONST(atom());
+			return (const Sample*)LV2_ATOM_BODY_CONST(get<LV2_Atom_Float>());
 		} else if (is_audio()) {
-			return (const Sample*)LV2_ATOM_CONTENTS_CONST(LV2_Atom_Vector, atom());
+			return (const Sample*)_buf;
 		}
 		return NULL;
 	}
@@ -92,9 +88,9 @@ public:
 	/// Audio buffers only
 	inline Sample* samples() {
 		if (is_control()) {
-			return (Sample*)LV2_ATOM_BODY(atom());
+			return (Sample*)LV2_ATOM_BODY(get<LV2_Atom_Float>());
 		} else if (is_audio()) {
-			return (Sample*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, atom());
+			return (Sample*)_buf;
 		}
 		return NULL;
 	}
@@ -104,7 +100,7 @@ public:
 		if (is_control()) {
 			return 1;
 		} else if (is_audio()) {
-			return (_capacity - sizeof(LV2_Atom_Vector)) / sizeof(Sample);
+			return (_capacity / sizeof(Sample));
 		}
 		return 0;
 	}
@@ -152,8 +148,9 @@ public:
 	{
 		if (add) {
 			add_block(val, start, end);
+		} else {
+			set_block(val, start, end);
 		}
-		set_block(val, start, end);
 	}
 
 	/// Audio buffers only
@@ -184,10 +181,12 @@ public:
 	/// Set/add to audio buffer from the Sequence of Float in `src`
 	void render_sequence(const Context& context, const Buffer* src, bool add);
 
-	LV2_Atom*       atom()       { return _atom; }
-	const LV2_Atom* atom() const { return _atom; }
-
 	void set_capacity(uint32_t capacity) { _capacity = capacity; }
+
+	void set_buffer(void* buf) { assert(_external); _buf = buf; }
+
+	template<typename T> const T* get() const { return reinterpret_cast<const T*>(_buf); }
+	template<typename T> T*       get()       { return reinterpret_cast<T*>(_buf); }
 
 	inline void ref() { ++_refs; }
 
@@ -199,7 +198,7 @@ public:
 
 protected:
 	BufferFactory& _factory;
-	LV2_Atom*      _atom;
+	void*          _buf;
 	LV2_URID       _type;
 	LV2_URID       _value_type;
 	uint32_t       _capacity;
@@ -213,8 +212,9 @@ protected:
 private:
 	void recycle();
 
-	Buffer*               _next;  ///< Intrusive linked list for BufferFactory
-	std::atomic<unsigned> _refs;  ///< Intrusive reference count
+	Buffer*               _next;      ///< Intrusive linked list for BufferFactory
+	std::atomic<unsigned> _refs;      ///< Intrusive reference count
+	bool                  _external;  ///< Buffer is externally allocated
 };
 
 } // namespace Server

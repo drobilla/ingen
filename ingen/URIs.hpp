@@ -91,7 +91,6 @@ public:
 	const Quark atom_String;
 	const Quark atom_URI;
 	const Quark atom_URID;
-	const Quark atom_Vector;
 	const Quark atom_bufferType;
 	const Quark atom_eventTransfer;
 	const Quark atom_supports;

@@ -42,7 +42,9 @@ namespace Server {
 Buffer::Buffer(BufferFactory& bufs,
                LV2_URID       type,
                LV2_URID       value_type,
-               uint32_t       capacity)
+               uint32_t       capacity,
+               bool           external,
+               void*          buf)
 	: _factory(bufs)
 	, _type(type)
 	, _value_type(value_type)
@@ -50,40 +52,54 @@ Buffer::Buffer(BufferFactory& bufs,
 	, _latest_event(0)
 	, _next(NULL)
 	, _refs(0)
+	, _external(external)
 {
+	if (!external) {
 #ifdef HAVE_POSIX_MEMALIGN
-	int ret = posix_memalign((void**)&_atom, 16, capacity);
+		int ret = posix_memalign((void**)&_buf, 16, capacity);
+		if (!ret) {
+			memset(_buf, 0, capacity);
+		}
 #else
-	_atom = (LV2_Atom*)malloc(capacity);
-	int ret = (_atom != NULL) ? 0 : -1;
+		_buf = (LV2_buf*)calloc(1, capacity);
+		int ret = (_buf != NULL) ? 0 : -1;
 #endif
 
-	if (ret) {
-		bufs.engine().log().error("Failed to allocate event buffer\n");
-		throw std::bad_alloc();
+		if (ret) {
+			bufs.engine().log().error("Failed to allocate event buffer\n");
+			throw std::bad_alloc();
+		}
 	}
 
-	memset(_atom, 0, capacity);
-	_atom->size = capacity - sizeof(LV2_Atom);
-	_atom->type = type;
+	if (type != bufs.uris().atom_Sound) {
+		/* Audio buffers are not atoms, the buffer is the start of a float
+		   array which is already silent since the buffer is zeroed.  All other
+		   buffers are atoms. */
+		if (_buf) {
+			LV2_Atom* atom = get<LV2_Atom>();
+			atom->size = capacity - sizeof(LV2_Atom);
+			atom->type = type;
 
-	if (type == bufs.uris().atom_Sound) {
-		// Audio port (Vector of float)
-		LV2_Atom_Vector* vec = (LV2_Atom_Vector*)_atom;
-		vec->body.child_size = sizeof(float);
-		vec->body.child_type = bufs.uris().atom_Float;
+			clear();
+		}
+
+		if (value_type && value_type != type) {
+			/* Buffer with a different value type.  These buffers (probably
+			   sequences) have a "value" that persists independently of the buffer
+			   contents.  This is used to represent things like a Sequence of
+			   Float, which acts like an individual float (has a value), but the
+			   buffer itself only transmits changes and does not necessarily
+			   contain the current value. */
+			_value_buffer = bufs.get_buffer(value_type, 0, 0, false);
+		}
 	}
-
-	if (type == bufs.uris().atom_Sequence && value_type) {
-		_value_buffer = bufs.get_buffer(value_type, 0, 0, false);
-	}
-
-	clear();
 }
 
 Buffer::~Buffer()
 {
-	free(_atom);
+	if (!_external) {
+		free(_buf);
+	}
 }
 
 void
@@ -104,13 +120,14 @@ Buffer::set_type(LV2_URID type, LV2_URID value_type)
 void
 Buffer::clear()
 {
-	if (is_audio() || is_control()) {
-		_atom->size = _capacity - sizeof(LV2_Atom);
-		set_block(0, 0, nframes());
+	if (is_audio() && _buf) {
+		memset(_buf, 0, _capacity);
+	} else if (is_control()) {
+		get<LV2_Atom_Float>()->body = 0;
 	} else if (is_sequence()) {
-		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_atom;
-		_atom->type    = _factory.uris().atom_Sequence;
-		_atom->size    = sizeof(LV2_Atom_Sequence_Body);
+		LV2_Atom_Sequence* seq = get<LV2_Atom_Sequence>();
+		seq->atom.type = _factory.uris().atom_Sequence;
+		seq->atom.size = sizeof(LV2_Atom_Sequence_Body);
 		seq->body.unit = 0;
 		seq->body.pad  = 0;
 		_latest_event  = 0;
@@ -121,7 +138,7 @@ void
 Buffer::render_sequence(const Context& context, const Buffer* src, bool add)
 {
 	const LV2_URID           atom_Float = _factory.uris().atom_Float;
-	const LV2_Atom_Sequence* seq        = (const LV2_Atom_Sequence*)src->atom();
+	const LV2_Atom_Sequence* seq        = src->get<const LV2_Atom_Sequence>();
 	const LV2_Atom_Float*    init       = (const LV2_Atom_Float*)src->value();
 	float                    value      = init ? init->body : 0.0f;
 	SampleCount              offset     = context.offset();
@@ -138,8 +155,18 @@ Buffer::render_sequence(const Context& context, const Buffer* src, bool add)
 void
 Buffer::copy(const Context& context, const Buffer* src)
 {
-	if (_type == src->type() && src->_atom->size + sizeof(LV2_Atom) <= _capacity) {
-		memcpy(_atom, src->_atom, sizeof(LV2_Atom) + src->_atom->size);
+	if (!_buf) {
+		return;
+	} else if (is_audio() && src->is_audio()) {
+		memcpy(_buf, src->_buf, src->_capacity);
+	} else if (_type == src->type()) {
+		const LV2_Atom* src_atom = src->get<const LV2_Atom>();
+		if (lv2_atom_total_size(src_atom) <= _capacity) {
+			memcpy(_buf, src_atom, lv2_atom_total_size(src_atom));
+		} else {
+			clear();
+		}
+
 		if (value() && src->value()) {
 			memcpy(value(), src->value(), lv2_atom_total_size(src->value()));
 		}
@@ -158,9 +185,13 @@ Buffer::copy(const Context& context, const Buffer* src)
 void
 Buffer::resize(uint32_t capacity)
 {
-	_atom     = (LV2_Atom*)realloc(_atom, capacity);
-	_capacity = capacity;
-	clear();
+	if (!_external) {
+		_buf      = realloc(_buf, capacity);
+		_capacity = capacity;
+		clear();
+	} else {
+		_factory.engine().log().error("Attempt to resize external buffer\n");
+	}
 }
 
 void*
@@ -168,16 +199,15 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 {
 	switch (port_type.id()) {
 	case PortType::ID::CONTROL:
-	case PortType::ID::CV:
-	case PortType::ID::AUDIO:
-		if (_atom->type == _factory.uris().atom_Float) {
-			return (float*)LV2_ATOM_BODY(_atom);
-		} else if (_atom->type == _factory.uris().atom_Sound) {
-			return (float*)LV2_ATOM_CONTENTS(LV2_Atom_Vector, _atom) + offset;
+		if (_type == _factory.uris().atom_Float) {
+			return &get<LV2_Atom_Float>()->body;
 		}
 		break;
+	case PortType::ID::CV:
+	case PortType::ID::AUDIO:
+		return (Sample*)_buf;
 	default:
-		return _atom;
+		return _buf;
 	}
 	return NULL;
 }
@@ -246,8 +276,10 @@ void
 Buffer::prepare_write(Context& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
-		_atom->type   = (LV2_URID)_factory.uris().atom_Sequence;
-		_atom->size   = sizeof(LV2_Atom_Sequence_Body);
+		LV2_Atom* atom = get<LV2_Atom>();
+
+		atom->type    = (LV2_URID)_factory.uris().atom_Sequence;
+		atom->size    = sizeof(LV2_Atom_Sequence_Body);
 		_latest_event = 0;
 	}
 }
@@ -256,8 +288,10 @@ void
 Buffer::prepare_output_write(Context& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
-		_atom->type   = (LV2_URID)_factory.uris().atom_Chunk;
-		_atom->size   = _capacity - sizeof(LV2_Atom);
+		LV2_Atom* atom = get<LV2_Atom>();
+
+		atom->type    = (LV2_URID)_factory.uris().atom_Chunk;
+		atom->size    = _capacity - sizeof(LV2_Atom);
 		_latest_event = 0;
 	}
 }
@@ -269,16 +303,18 @@ Buffer::append_event(int64_t        frames,
                      const uint8_t* data)
 {
 	assert(frames >= _latest_event);
-	if (_atom->type == _factory.uris().atom_Chunk) {
+
+	LV2_Atom* atom = get<LV2_Atom>();
+	if (atom->type == _factory.uris().atom_Chunk) {
 		// Chunk initialized with prepare_output_write(), clear
 		clear();
 	}
 
-	if (sizeof(LV2_Atom) + _atom->size + lv2_atom_pad_size(size) > _capacity) {
+	if (sizeof(LV2_Atom) + atom->size + lv2_atom_pad_size(size) > _capacity) {
 		return false;
 	}
 
-	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_atom;
+	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)atom;
 	LV2_Atom_Event*    ev  = (LV2_Atom_Event*)(
 		(uint8_t*)seq + lv2_atom_total_size(&seq->atom));
 
@@ -287,7 +323,7 @@ Buffer::append_event(int64_t        frames,
 	ev->body.type   = type;
 	memcpy(ev + 1, data, size);
 
-	_atom->size += sizeof(LV2_Atom_Event) + lv2_atom_pad_size(size);
+	atom->size += sizeof(LV2_Atom_Event) + lv2_atom_pad_size(size);
 
 	_latest_event = frames;
 
@@ -297,8 +333,9 @@ Buffer::append_event(int64_t        frames,
 SampleCount
 Buffer::next_value_offset(SampleCount offset, SampleCount end) const
 {
-	SampleCount earliest = end;
-	LV2_ATOM_SEQUENCE_FOREACH((LV2_Atom_Sequence*)_atom, ev) {
+	SampleCount              earliest = end;
+	const LV2_Atom_Sequence* seq      = get<const LV2_Atom_Sequence>();
+	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		if (ev->time.frames >  offset   &&
 		    ev->time.frames <  earliest &&
 		    ev->body.type   == _value_type) {
@@ -312,13 +349,13 @@ Buffer::next_value_offset(SampleCount offset, SampleCount end) const
 const LV2_Atom*
 Buffer::value() const
 {
-	return _value_buffer ? _value_buffer->atom() : NULL;
+	return _value_buffer ? _value_buffer->get<const LV2_Atom>() : NULL;
 }
 
 LV2_Atom*
 Buffer::value()
 {
-	return _value_buffer ? _value_buffer->atom() : NULL;
+	return _value_buffer ? _value_buffer->get<LV2_Atom>() : NULL;
 }
 
 void
@@ -328,9 +365,10 @@ Buffer::update_value_buffer(SampleCount offset)
 		return;
 	}
 
-	LV2_ATOM_SEQUENCE_FOREACH((LV2_Atom_Sequence*)_atom, ev) {
+	LV2_Atom_Sequence* seq = get<LV2_Atom_Sequence>();
+	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		if (ev->time.frames <= offset && ev->body.type == _value_type) {
-			memcpy(_value_buffer->atom(),
+			memcpy(_value_buffer->get<LV2_Atom>(),
 			       &ev->body,
 			       lv2_atom_total_size(&ev->body));
 			break;

@@ -123,11 +123,13 @@ Connect::pre_process()
 
 	lock.unlock();
 
-	_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
-	_head->get_buffers(*_engine.buffer_factory(),
-	                   _voices,
-	                   _head->poly(),
-	                   false);
+	if (!_head->is_driver_port()) {
+		_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
+		_head->get_buffers(*_engine.buffer_factory(),
+		                   _voices,
+		                   _head->poly(),
+		                   false);
+	}
 
 	if (_graph->enabled()) {
 		_compiled_graph = _graph->compile();
@@ -141,7 +143,9 @@ Connect::execute(ProcessContext& context)
 {
 	if (_status == Status::SUCCESS) {
 		_head->add_arc(context, _arc.get());
-		_engine.maid()->dispose(_head->set_voices(context, _voices));
+		if (!_head->is_driver_port()) {
+			_engine.maid()->dispose(_head->set_voices(context, _voices));
+		}
 		_head->connect_buffers();
 		_graph->set_compiled_graph(_compiled_graph);
 	}

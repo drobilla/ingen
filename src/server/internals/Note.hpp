@@ -17,7 +17,7 @@
 #ifndef INGEN_INTERNALS_NOTE_HPP
 #define INGEN_INTERNALS_NOTE_HPP
 
-#include "BlockImpl.hpp"
+#include "InternalBlock.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -35,7 +35,7 @@ namespace Internals {
  *
  * \ingroup engine
  */
-class NoteNode : public BlockImpl
+class NoteNode : public InternalBlock
 {
 public:
 	NoteNode(InternalPlugin*     plugin,

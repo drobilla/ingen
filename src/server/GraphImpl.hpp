@@ -117,19 +117,6 @@ public:
 
 	uint32_t num_ports_non_rt() const;
 
-	/** Create a port to be later added to this graph.
-	 * Not realtime safe.  This function is to be called by events in the
-	 * pre-process thread to create ports which will later be installed in the
-	 * process thread.
-	 */
-	DuplexPort* create_port(BufferFactory&      bufs,
-	                        const Raul::Symbol& symbol,
-	                        PortType            type,
-	                        LV2_URID            buffer_type,
-	                        uint32_t            buffer_size,
-	                        bool                is_output,
-	                        bool                polyphonic);
-
 	typedef boost::intrusive::slist<
 		DuplexPort, boost::intrusive::constant_time_size<true> > Ports;
 

@@ -45,7 +45,7 @@ public:
 	           Interface& iface);
 	~AtomReader() {}
 
-	static bool is_message(URIs& uris, const LV2_Atom* msg);
+	static bool is_message(const URIs& uris, const LV2_Atom* msg);
 
 	bool write(const LV2_Atom* msg);
 

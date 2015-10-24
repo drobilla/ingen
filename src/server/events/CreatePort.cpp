@@ -125,11 +125,18 @@ CreatePort::pre_process()
 	                         poly_i->second.type() == uris.forge.Bool &&
 	                         poly_i->second.get<int32_t>());
 
-	if (!(_graph_port = _graph->create_port(
-		      bufs, Raul::Symbol(_path.symbol()),
-		      _port_type, _buf_type, buf_size, _is_output, polyphonic))) {
-		return Event::pre_process_done(Status::CREATION_FAILED, _path);
+	// Create 0 value if the port requires one
+	Atom value;
+	if (_port_type == PortType::CONTROL || _port_type == PortType::CV) {
+		value = bufs.forge().make(0.0f);
 	}
+
+	// Create port
+	_graph_port = new DuplexPort(bufs, _graph, Raul::Symbol(_path.symbol()),
+	                             _graph->num_ports_non_rt(),
+	                             polyphonic,
+	                             _port_type, _buf_type, buf_size,
+	                             value, _is_output);
 
 	_graph_port->properties().insert(_properties.begin(), _properties.end());
 
@@ -141,8 +148,7 @@ CreatePort::pre_process()
 	}
 
 	if (!_graph->parent()) {
-		_engine_port = _engine.driver()->create_port(
-			dynamic_cast<DuplexPort*>(_graph_port));
+		_engine_port = _engine.driver()->create_port(_graph_port);
 	}
 
 	_ports_array = new Raul::Array<PortImpl*>(old_n_ports + 1, NULL);

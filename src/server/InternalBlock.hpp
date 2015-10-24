@@ -14,46 +14,31 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERNALS_TIME_HPP
-#define INGEN_INTERNALS_TIME_HPP
+#ifndef INGEN_ENGINE_INTERNALBLOCK_HPP
+#define INGEN_ENGINE_INTERNALBLOCK_HPP
 
-#include "InternalBlock.hpp"
+#include "BlockImpl.hpp"
 
 namespace Ingen {
 namespace Server {
 
-class InputPort;
-class OutputPort;
-class InternalPlugin;
-
-namespace Internals {
-
-/** Time information block.
- *
- * This sends messages whenever the transport speed or tempo changes.
+/** An internal Block implemented inside Ingen.
  *
  * \ingroup engine
  */
-class TimeNode : public InternalBlock
+class InternalBlock : public BlockImpl
 {
 public:
-	TimeNode(InternalPlugin*     plugin,
-	         BufferFactory&      bufs,
-	         const Raul::Symbol& symbol,
-	         bool                polyphonic,
-	         GraphImpl*          parent,
-	         SampleRate          srate);
+	InternalBlock(PluginImpl*         plugin,
+	              const Raul::Symbol& symbol,
+	              bool                poly,
+	              GraphImpl*          parent,
+	              SampleRate          rate);
 
-	void run(ProcessContext& context);
-
-	static InternalPlugin* internal_plugin(URIs& uris);
-
-private:
-	OutputPort* _notify_port;
+	virtual void pre_process(ProcessContext& context);
 };
 
 } // namespace Server
 } // namespace Ingen
-} // namespace Internals
 
-#endif // INGEN_INTERNALS_TIME_HPP
+#endif // INGEN_ENGINE_BLOCKIMPL_HPP

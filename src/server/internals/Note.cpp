@@ -52,7 +52,7 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
                    bool                polyphonic,
                    GraphImpl*          parent,
                    SampleRate          srate)
-	: BlockImpl(plugin, symbol, polyphonic, parent, srate)
+	: InternalBlock(plugin, symbol, polyphonic, parent, srate)
 	, _voices(new Raul::Array<Voice>(_polyphony))
 	, _prepared_voices(NULL)
 	, _sustain(false)
@@ -171,7 +171,7 @@ void
 NoteNode::run(ProcessContext& context)
 {
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
-	LV2_Atom_Sequence* seq     = (LV2_Atom_Sequence*)midi_in->atom();
+	LV2_Atom_Sequence* seq     = midi_in->get<LV2_Atom_Sequence>();
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		const uint8_t*  buf  = (const uint8_t*)LV2_ATOM_BODY_CONST(&ev->body);
 		const FrameTime time = context.start() + (FrameTime)ev->time.frames;

@@ -17,7 +17,7 @@
 #ifndef INGEN_INTERNALS_CONTROLLER_HPP
 #define INGEN_INTERNALS_CONTROLLER_HPP
 
-#include "BlockImpl.hpp"
+#include "InternalBlock.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -35,7 +35,7 @@ namespace Internals {
  *
  * \ingroup engine
  */
-class ControllerNode : public BlockImpl
+class ControllerNode : public InternalBlock
 {
 public:
 	ControllerNode(InternalPlugin*     plugin,

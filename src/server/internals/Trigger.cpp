@@ -47,7 +47,7 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
                          bool                polyphonic,
                          GraphImpl*          parent,
                          SampleRate          srate)
-	: BlockImpl(plugin, symbol, false, parent, srate)
+	: InternalBlock(plugin, symbol, false, parent, srate)
 	, _learning(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
@@ -99,7 +99,7 @@ void
 TriggerNode::run(ProcessContext& context)
 {
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
-	LV2_Atom_Sequence* seq     = (LV2_Atom_Sequence*)midi_in->atom();
+	LV2_Atom_Sequence* seq     = midi_in->get<LV2_Atom_Sequence>();
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&

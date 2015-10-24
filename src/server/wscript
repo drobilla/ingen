@@ -16,6 +16,7 @@ def build(bld):
             EventWriter.cpp
             GraphImpl.cpp
             InputPort.cpp
+            InternalBlock.cpp
             InternalPlugin.cpp
             LV2Block.cpp
             LV2Plugin.cpp

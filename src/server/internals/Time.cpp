@@ -42,7 +42,7 @@ TimeNode::TimeNode(InternalPlugin*     plugin,
                    bool                polyphonic,
                    GraphImpl*          parent,
                    SampleRate          srate)
-	: BlockImpl(plugin, symbol, false, parent, srate)
+	: InternalBlock(plugin, symbol, false, parent, srate)
 {
 	const Ingen::URIs& uris = bufs.uris();
 	_ports = new Raul::Array<PortImpl*>(1);
@@ -60,7 +60,7 @@ void
 TimeNode::run(ProcessContext& context)
 {
 	BufferRef          buf = _notify_port->buffer(0);
-	LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)buf->atom();
+	LV2_Atom_Sequence* seq = buf->get<LV2_Atom_Sequence>();
 
 	// Initialise output to the empty sequence
 	seq->atom.type = _notify_port->bufs().uris().atom_Sequence;

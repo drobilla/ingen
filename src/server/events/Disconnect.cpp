@@ -91,21 +91,25 @@ Disconnect::Impl::Impl(Engine&     e,
 	_dst_input_port->decrement_num_arcs();
 
 	if (_dst_input_port->num_arcs() == 0) {
-		_voices = new Raul::Array<PortImpl::Voice>(_dst_input_port->poly());
-		_dst_input_port->get_buffers(*_engine.buffer_factory(),
-		                             _voices,
-		                             _dst_input_port->poly(),
-		                             false);
+		if (!_dst_input_port->is_driver_port()) {
+			_voices = new Raul::Array<PortImpl::Voice>(_dst_input_port->poly());
+			_dst_input_port->get_buffers(*_engine.buffer_factory(),
+			                             _voices,
+			                             _dst_input_port->poly(),
+			                             false);
 
-		const bool is_control = _dst_input_port->is_a(PortType::CONTROL) ||
-			_dst_input_port->is_a(PortType::CV);
-		const float value = is_control ? _dst_input_port->value().get<float>() : 0;
-		for (uint32_t i = 0; i < _voices->size(); ++i) {
-			if (is_control) {
-				Buffer* buf = _voices->at(i).buffer.get();
-				buf->set_block(value, 0, buf->nframes());
+			if (_dst_input_port->is_a(PortType::CONTROL) ||
+			    _dst_input_port->is_a(PortType::CV)) {
+				// Reset buffer to control value
+				const float value = _dst_input_port->value().get<float>();
+				for (uint32_t i = 0; i < _voices->size(); ++i) {
+					Buffer* buf = _voices->at(i).buffer.get();
+					buf->set_block(value, 0, buf->nframes());
+				}
 			} else {
-				_voices->at(i).buffer->clear();
+				for (uint32_t i = 0; i < _voices->size(); ++i) {
+					_voices->at(i).buffer->clear();
+				}
 			}
 		}
 	}
@@ -177,8 +181,11 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
 {
 	ArcImpl* const port_arc =
 		_dst_input_port->remove_arc(context, _src_output_port);
+
 	if (!port_arc) {
 		return false;
+	} else if (_dst_input_port->is_driver_port()) {
+		return true;
 	}
 
 	if (set_dst_buffers) {

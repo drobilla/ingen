@@ -43,15 +43,14 @@ class DuplexPort : public InputPort
 {
 public:
 	DuplexPort(BufferFactory&      bufs,
-	           BlockImpl*          parent,
+	           GraphImpl*          parent,
 	           const Raul::Symbol& symbol,
 	           uint32_t            index,
 	           bool                polyphonic,
-	           uint32_t            poly,
 	           PortType            type,
-	           LV2_URID            buffer_type,
+	           LV2_URID            buf_type,
+	           size_t              buf_size,
 	           const Atom&         value,
-	           size_t              buffer_size,
 	           bool                is_output);
 
 	virtual ~DuplexPort();
@@ -76,6 +75,16 @@ public:
 	                 Raul::Array<Voice>* voices,
 	                 uint32_t            poly,
 	                 bool                real_time) const;
+
+
+	virtual void set_is_driver_port(BufferFactory& bufs);
+
+	/** Set the external driver-provided buffer.
+	 *
+	 * This may only be called in the process thread, after an earlier call to
+	 * prepare_driver_buffer().
+	 */
+	void set_driver_buffer(void* buf, uint32_t capacity);
 
 	void pre_process(Context& context);
 	void post_process(Context& context);

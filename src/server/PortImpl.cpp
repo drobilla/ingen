@@ -168,7 +168,7 @@ PortImpl::activate(BufferFactory& bufs)
 void
 PortImpl::deactivate()
 {
-	if (is_output()) {
+	if (is_output() && !_is_driver_port) {
 		for (uint32_t v = 0; v < _poly; ++v) {
 			if (_voices->at(v).buffer) {
 				_voices->at(v).buffer->clear();
@@ -302,7 +302,7 @@ bool
 PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	if (_parent->path().is_root() ||
+	if (_is_driver_port || _parent->path().is_root() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
 		return false;
 	}
@@ -385,6 +385,12 @@ PortImpl::recycle_buffers()
 }
 
 void
+PortImpl::set_is_driver_port(BufferFactory& bufs)
+{
+	_is_driver_port = true;
+}
+
+void
 PortImpl::clear_buffers()
 {
 	switch (_type.id()) {
@@ -442,13 +448,13 @@ PortImpl::monitor(Context& context, bool send_now)
 		break;
 	case PortType::ATOM:
 		if (_buffer_type == _bufs.uris().atom_Sequence) {
-			const LV2_Atom* atom = buffer(0)->atom();
-			if (buffer(0)->value() && !_monitored) {
-				// Value sequence not fully monitored, monitor as control
-				key = uris.ingen_value;
-				val = ((LV2_Atom_Float*)buffer(0)->value())->body;
-			} else if (_monitored && !buffer(0)->empty()) {
-				// Monitoring explictly enabled, send everything
+			const LV2_Atom* atom  = buffer(0)->get<const LV2_Atom>();
+			const LV2_Atom* value = buffer(0)->value();
+			if (atom->type != _bufs.uris().atom_Sequence) {
+				/* Buffer contents are not actually a Sequence.  Probably an
+				   uninitialized Chunk, so do nothing. */
+			} else if (_monitored) {
+				/* Sequence explicitly monitored, send everything. */
 				const LV2_Atom_Sequence* seq = (const LV2_Atom_Sequence*)atom;
 				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 					context.notify(uris.ingen_activity,
@@ -458,8 +464,12 @@ PortImpl::monitor(Context& context, bool send_now)
 					               ev->body.type,
 					               LV2_ATOM_BODY(&ev->body));
 				}
-			} else if (!buffer(0)->empty()) {
-				// Just send activity for blinkenlights
+			} else if (value && value->type == _bufs.uris().atom_Float) {
+				/* Float sequence, monitor as a control. */
+				key = uris.ingen_value;
+				val = ((LV2_Atom_Float*)buffer(0)->value())->body;
+			} else if (atom->size > sizeof(LV2_Atom_Sequence_Body)) {
+				/* General sequence, send activity for blinkenlights. */
 				const int32_t one = 1;
 				context.notify(uris.ingen_activity,
 				               context.start(),

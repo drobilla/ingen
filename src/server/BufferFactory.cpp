@@ -71,7 +71,7 @@ BufferFactory::set_block_length(SampleCount block_length)
 uint32_t
 BufferFactory::audio_buffer_size(SampleCount nframes)
 {
-	return sizeof(LV2_Atom_Vector) + (nframes * sizeof(float));
+	return nframes * sizeof(Sample);
 }
 
 uint32_t

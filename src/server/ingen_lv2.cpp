@@ -118,67 +118,46 @@ public:
 	{}
 
 	void pre_process_port(ProcessContext& context, EnginePort* port) {
-		PortImpl* graph_port = port->graph_port();
-		void*     buffer     = port->buffer();
+		const URIs&       uris       = _engine.world()->uris();
+		const SampleCount nframes    = context.nframes();
+		DuplexPort*       graph_port = port->graph_port();
+		Buffer*           graph_buf  = graph_port->buffer(0).get();
+		void*             lv2_buf    = port->buffer();
 
-		if (!graph_port->is_input() || !buffer) {
-			return;
+		if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
+			graph_port->set_driver_buffer(lv2_buf, nframes * sizeof(float));
+		} else if (graph_port->buffer_type() == uris.atom_Sequence) {
+			graph_port->set_driver_buffer(lv2_buf, lv2_atom_total_size((LV2_Atom*)lv2_buf));
+			if (graph_port->symbol() == "control_in") {  // TODO: Safe to use index?
+				LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)lv2_buf;
+				bool               enqueued = false;
+				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+					if (AtomReader::is_message(uris, &ev->body)) {
+						enqueued = enqueue_message(&ev->body) || enqueued;
+					}
+				}
+
+				if (enqueued) {
+					// Enqueued a message for processing, raise semaphore
+					_main_sem.post();
+				}
+			}
 		}
 
-		Buffer* const graph_buf = graph_port->buffer(0).get();
-		if (graph_port->is_a(PortType::AUDIO) ||
-		    graph_port->is_a(PortType::CV)) {
-			memcpy(graph_buf->samples(),
-			       buffer,
-			       context.nframes() * sizeof(float));
-		} else if (graph_port->is_a(PortType::CONTROL)) {
-			graph_buf->samples()[0] = ((float*)buffer)[0];
+		if (graph_port->is_input()) {
+			graph_port->monitor(context);
 		} else {
-			LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)buffer;
-			bool               enqueued = false;
-			URIs&              uris     = graph_port->bufs().uris();
 			graph_buf->prepare_write(context);
-			LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-				if (!graph_buf->append_event(
-					    ev->time.frames, ev->body.size, ev->body.type,
-					    (const uint8_t*)LV2_ATOM_BODY(&ev->body))) {
-					_engine.log().warn("Failed to write to buffer, event lost!\n");
-				}
-
-				if (AtomReader::is_message(uris, &ev->body)) {
-					enqueue_message(&ev->body);
-					enqueued = true;
-				}
-			}
-
-			if (enqueued) {
-				_main_sem.post();
-			}
 		}
 	}
 
 	void post_process_port(ProcessContext& context, EnginePort* port) {
-		PortImpl* graph_port = port->graph_port();
-		void*     buffer     = port->buffer();
+		DuplexPort* graph_port = port->graph_port();
 
-		if (graph_port->is_input() || !buffer) {
-			return;
-		}
-
-		Buffer* graph_buf = graph_port->buffer(0).get();
-		if (graph_port->is_a(PortType::AUDIO) ||
-		    graph_port->is_a(PortType::CV)) {
-			memcpy(buffer,
-			       graph_buf->samples(),
-			       context.nframes() * sizeof(float));
-		} else if (graph_port->is_a(PortType::CONTROL)) {
-			((float*)buffer)[0] = graph_buf->samples()[0];
-		} else if (graph_port->index() != 1) {
-			/* Copy Sequence output to LV2 buffer, except notify output which
-			   is written by flush_to_ui() (TODO: merge) */
-			memcpy(buffer,
-			       graph_buf->atom(),
-			       sizeof(LV2_Atom) + graph_buf->atom()->size);
+		// No copying necessary, host buffers are used directly
+		// Reset graph port buffer pointer to no longer point to the Jack buffer
+		if (graph_port->is_driver_port()) {
+			graph_port->set_driver_buffer(NULL, 0);
 		}
 	}
 
@@ -258,6 +237,7 @@ public:
 	                           const Atom&       value) {}
 
 	virtual EnginePort* create_port(DuplexPort* graph_port) {
+		graph_port->set_is_driver_port(*_engine.buffer_factory());
 		return new EnginePort(graph_port);
 	}
 
@@ -278,12 +258,14 @@ public:
 	}
 
 	/** Called in run thread for events received at control input port. */
-	void enqueue_message(const LV2_Atom* atom) {
+	bool enqueue_message(const LV2_Atom* atom) {
 		if (_from_ui.write(lv2_atom_total_size(atom), atom) == 0) {
 #ifndef NDEBUG
 			_engine.log().error("Control input buffer overflow\n");
 #endif
+			return false;
 		}
+		return true;
 	}
 
 	Raul::Semaphore& main_sem() { return _main_sem; }
@@ -585,6 +567,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
 
+	fprintf(stderr, "LV2 parse resource %s from %s\n", graph->uri.c_str(), graph->filename.c_str());
 	plugin->world->parser()->parse_file(plugin->world,
 	                                    plugin->world->interface().get(),
 	                                    graph->filename);

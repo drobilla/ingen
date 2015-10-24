@@ -55,7 +55,7 @@ DelayNode::DelayNode(InternalPlugin*     plugin,
                      bool                polyphonic,
                      GraphImpl*          parent,
                      SampleRate          srate)
-	: BlockImpl(plugin, symbol, polyphonic, parent, srate)
+	: InternalBlock(plugin, symbol, polyphonic, parent, srate)
 	, _buffer(0)
 	, _buffer_length(0)
 	, _buffer_mask(0)

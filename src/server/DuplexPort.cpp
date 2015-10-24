@@ -29,19 +29,18 @@ namespace Ingen {
 namespace Server {
 
 DuplexPort::DuplexPort(BufferFactory&      bufs,
-                       BlockImpl*          parent,
+                       GraphImpl*          parent,
                        const Raul::Symbol& symbol,
                        uint32_t            index,
                        bool                polyphonic,
-                       uint32_t            poly,
                        PortType            type,
-                       LV2_URID            buffer_type,
+                       LV2_URID            buf_type,
+                       size_t              buf_size,
                        const Atom&         value,
-                       size_t              buffer_size,
                        bool                is_output)
-	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
-	, InputPort(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
-	, OutputPort(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
+	: PortImpl(bufs, parent, symbol, index, parent->polyphony(), type, buf_type, value, buf_size)
+	, InputPort(bufs, parent, symbol, index, parent->polyphony(), type, buf_type, value, buf_size)
+	, OutputPort(bufs, parent, symbol, index, parent->polyphony(), type, buf_type, value, buf_size)
 	, _is_output(is_output)
 {
 	if (polyphonic) {
@@ -78,8 +77,8 @@ DuplexPort::duplicate(Engine&             engine,
 	DuplexPort* dup = new DuplexPort(
 		bufs, parent, symbol, _index,
 		polyphonic.type() == bufs.uris().atom_Bool && polyphonic.get<int32_t>(),
-		_poly, _type, _buffer_type,
-		_value, _buffer_size, _is_output);
+		_type, _buffer_type, _buffer_size,
+		_value, _is_output);
 
 	dup->set_properties(properties());
 
@@ -129,11 +128,28 @@ DuplexPort::get_buffers(BufferFactory&      bufs,
                         uint32_t            poly,
                         bool                real_time) const
 {
-	if (_is_output) {
-		return InputPort::get_buffers(bufs, voices, poly, real_time);
-	} else {
-		return OutputPort::get_buffers(bufs, voices, poly, real_time);
+	if (!_is_driver_port) {
+		if (_is_output) {
+			return InputPort::get_buffers(bufs, voices, poly, real_time);
+		} else {
+			return OutputPort::get_buffers(bufs, voices, poly, real_time);
+		}
 	}
+	return false;
+}
+
+void
+DuplexPort::set_is_driver_port(BufferFactory& bufs)
+{
+	_voices->at(0).buffer = new Buffer(bufs, buffer_type(), _value.type(), 0, true, NULL);
+	PortImpl::set_is_driver_port(bufs);
+}
+
+void
+DuplexPort::set_driver_buffer(void* buf, uint32_t capacity)
+{
+	_voices->at(0).buffer->set_buffer(buf);
+	_voices->at(0).buffer->set_capacity(capacity);
 }
 
 uint32_t
@@ -192,9 +208,8 @@ DuplexPort::post_process(Context& context)
 		   (external perspective) is ready. */
 		InputPort::pre_process(context);
 		InputPort::pre_run(context);
-	} else {
-		monitor(context);
 	}
+	monitor(context);
 }
 
 SampleCount

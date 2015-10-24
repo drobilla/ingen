@@ -113,7 +113,7 @@ AtomReader::atom_to_path(const LV2_Atom* atom)
 }
 
 bool
-AtomReader::is_message(URIs& uris, const LV2_Atom* msg)
+AtomReader::is_message(const URIs& uris, const LV2_Atom* msg)
 {
 	if (msg->type != uris.atom_Object) {
 		return false;

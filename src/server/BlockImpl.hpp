@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_NODEIMPL_HPP
-#define INGEN_ENGINE_NODEIMPL_HPP
+#ifndef INGEN_ENGINE_BLOCKIMPL_HPP
+#define INGEN_ENGINE_BLOCKIMPL_HPP
 
 #include <list>
 

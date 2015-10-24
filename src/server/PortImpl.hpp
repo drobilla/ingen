@@ -140,8 +140,17 @@ public:
 	                       FrameTime      time,
 	                       Sample         value);
 
-	void set_is_driver_port(bool b) { _is_driver_port = b; }
-	bool is_driver_port() const     { return _is_driver_port; }
+	/** Prepare this port to use an external driver-provided buffer.
+	 *
+	 * This will avoid allocating a buffer for the port, instead the driver
+	 * buffer is used directly.  This only makes sense for ports on the
+	 * top-level graph, which are monophonic.  Non-real-time, must be called
+	 * before using the port, followed by a call to set_driver_buffer() in the
+	 * processing thread.
+	 */
+	virtual void set_is_driver_port(BufferFactory& bufs);
+
+	bool is_driver_port() const { return _is_driver_port; }
 
 	/** Called once per process cycle */
 	virtual void pre_process(Context& context) = 0;

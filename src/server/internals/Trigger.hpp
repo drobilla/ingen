@@ -17,7 +17,7 @@
 #ifndef INGEN_INTERNALS_TRIGGER_HPP
 #define INGEN_INTERNALS_TRIGGER_HPP
 
-#include "BlockImpl.hpp"
+#include "InternalBlock.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -38,7 +38,7 @@ namespace Internals {
  *
  * \ingroup engine
  */
-class TriggerNode : public BlockImpl
+class TriggerNode : public InternalBlock
 {
 public:
 	TriggerNode(InternalPlugin*     plugin,

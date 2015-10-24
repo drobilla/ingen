@@ -107,7 +107,7 @@ SetPortValue::apply(Context& context)
 			_status = Status::NO_SPACE;
 		}
 	} else if (buf->type() == uris.atom_URID) {
-		((LV2_Atom_URID*)buf->atom())->body = _value.get<int32_t>();
+		buf->get<LV2_Atom_URID>()->body = _value.get<int32_t>();
 	} else {
 		_status = Status::BAD_VALUE_TYPE;
 	}
