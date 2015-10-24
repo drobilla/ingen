@@ -117,7 +117,7 @@ ClientStore::remove_object(const Raul::Path& path)
 
 		// Remove object from parent model if applicable
 		if (object->parent()) {
-			SPtr<PortModel>  port     = dynamic_ptr_cast<PortModel>(top->second);
+			SPtr<PortModel>  port     = dynamic_ptr_cast<PortModel>(object);
 			SPtr<GraphModel> gpparent = dynamic_ptr_cast<GraphModel>(
 				object->parent()->parent());
 			if (port && gpparent) {
