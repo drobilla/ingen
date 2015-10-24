@@ -1156,6 +1156,18 @@ See COPYING file included with this distribution, or http://www.gnu.org/licenses
                       </object>
                     </child>
                     <child>
+                      <object class="GtkImageMenuItem" id="graph_refresh_menuitem">
+                        <property name="label">gtk-refresh</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <accelerator key="F5" signal="activate"/>
+                        <signal name="activate" handler="graph_refresh_menuitem" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="graph_fullscreen_menuitem">
                         <property name="label">gtk-fullscreen</property>
                         <property name="use_action_appearance">False</property>
@@ -2890,48 +2902,6 @@ See COPYING file included with this distribution, or http://www.gnu.org/licenses
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkSeparatorToolItem" id="separatortoolitem18">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkToolButton" id="graph_view_save_but">
-                        <property name="use_action_appearance">False</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="stock_id">gtk-save</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="homogeneous">True</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkSeparatorToolItem" id="separatortoolitem22">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkToolButton" id="graph_view_refresh_but">
-                        <property name="use_action_appearance">False</property>
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <property name="stock_id">gtk-refresh</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="homogeneous">True</property>
                       </packing>
                     </child>
                   </object>

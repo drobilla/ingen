@@ -49,8 +49,6 @@ GraphView::GraphView(BaseObjectType*                   cobject,
 	xml->get_widget("graph_view_toolbar", _toolbar);
 	xml->get_widget("graph_view_process_but", _process_but);
 	xml->get_widget("graph_view_poly_spin", _poly_spin);
-	xml->get_widget("graph_view_refresh_but", _refresh_but);
-	xml->get_widget("graph_view_save_but", _save_but);
 	xml->get_widget("graph_view_scrolledwindow", _canvas_scrolledwindow);
 
 	_toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
@@ -96,8 +94,6 @@ GraphView::set_graph(SPtr<const GraphModel> graph)
 	// Connect widget signals to do things
 	_process_but->signal_toggled().connect(
 		sigc::mem_fun(this, &GraphView::process_toggled));
-	_refresh_but->signal_clicked().connect(
-		sigc::mem_fun(this, &GraphView::refresh_clicked));
 
 	_poly_spin->signal_value_changed().connect(
 		sigc::mem_fun(*this, &GraphView::poly_changed));
@@ -136,12 +132,6 @@ GraphView::poly_changed()
 		                   _app->uris().ingen_polyphony,
 		                   _app->forge().make(poly));
 	}
-}
-
-void
-GraphView::refresh_clicked()
-{
-	_app->interface()->get(_graph->uri());
 }
 
 void

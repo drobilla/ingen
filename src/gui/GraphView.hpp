@@ -76,7 +76,6 @@ private:
 	void process_toggled();
 	void poly_changed();
 	void clear_clicked();
-	void refresh_clicked();
 
 	void property_changed(const Raul::URI& predicate, const Atom& value);
 
@@ -89,8 +88,6 @@ private:
 	Gtk::Toolbar*          _toolbar;
 	Gtk::ToggleToolButton* _process_but;
 	Gtk::SpinButton*       _poly_spin;
-	Gtk::ToolButton*       _refresh_but;
-	Gtk::ToolButton*       _save_but;
 	Gtk::ToolItem*         _breadcrumb_container;
 
 	bool _enable_signal;

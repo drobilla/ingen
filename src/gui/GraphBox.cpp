@@ -87,6 +87,7 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	xml->get_widget("graph_view_control_window_menuitem", _menu_view_control_window);
 	xml->get_widget("graph_view_engine_window_menuitem", _menu_view_engine_window);
 	xml->get_widget("graph_properties_menuitem", _menu_view_graph_properties);
+	xml->get_widget("graph_refresh_menuitem", _menu_refresh);
 	xml->get_widget("graph_fullscreen_menuitem", _menu_fullscreen);
 	xml->get_widget("graph_animate_signals_menuitem", _menu_animate_signals);
 	xml->get_widget("graph_sprung_layout_menuitem", _menu_sprung_layout);
@@ -129,6 +130,8 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &GraphBox::event_close));
 	_menu_quit->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_quit));
+	_menu_refresh->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_refresh_toggled));
 	_menu_fullscreen->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_fullscreen_toggled));
 	_menu_animate_signals->signal_activate().connect(
@@ -741,6 +744,12 @@ void
 GraphBox::event_arrange()
 {
 	_view->canvas()->arrange();
+}
+
+void
+GraphBox::event_refresh_toggled()
+{
+	_app->interface()->get(_graph->uri());
 }
 
 void

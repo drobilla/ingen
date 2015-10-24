@@ -114,6 +114,7 @@ private:
 	void event_select_all();
 	void event_close();
 	void event_quit();
+	void event_refresh_toggled();
 	void event_fullscreen_toggled();
 	void event_doc_pane_toggled();
 	void event_status_bar_toggled();
@@ -166,6 +167,7 @@ private:
 	Gtk::MenuItem*      _menu_increase_font_size;
 	Gtk::MenuItem*      _menu_decrease_font_size;
 	Gtk::MenuItem*      _menu_normal_font_size;
+	Gtk::MenuItem*      _menu_refresh;
 	Gtk::MenuItem*      _menu_fullscreen;
 	Gtk::MenuItem*      _menu_arrange;
 	Gtk::MenuItem*      _menu_view_engine_window;
