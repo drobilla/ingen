@@ -46,8 +46,9 @@ public:
 
 	void bundle_end();
 
-	int       fd()        { return _socket->fd(); }
-	Raul::URI uri() const { return _uri; }
+	int         fd()        { return _socket->fd(); }
+	Raul::URI   uri() const { return _uri; }
+	SerdWriter* writer()    { return _writer; }
 
 protected:
 	URIMap&            _map;
