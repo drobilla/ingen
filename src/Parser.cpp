@@ -333,7 +333,7 @@ parse_block(Ingen::World*                     world,
 		            path.parent(), Raul::Symbol(path.symbol()));
 
 		parse_graph(world, target, model, base_uri,
-		            subject, Resource::Graph::DEFAULT,
+		            sub_node, Resource::Graph::DEFAULT,
 		            path.parent(), Raul::Symbol(path.symbol()));
 	} else {
 		Resource::Properties props = get_properties(
@@ -616,9 +616,6 @@ parse(Ingen::World*                     world,
 	return boost::optional<Raul::Path>();
 }
 
-/** Parse a graph from RDF into a Interface (engine or client).
- * @return whether or not load was successful.
- */
 bool
 Parser::parse_file(Ingen::World*                     world,
                    Ingen::Interface*                 target,
@@ -649,19 +646,33 @@ Parser::parse_file(Ingen::World*                     world,
 
 	// Find graphs in manifest
 	const std::set<ResourceRecord> resources = find_resources(
-		*world->rdf_world(),
-		Glib::filename_to_uri(manifest_path),
-		Raul::URI(INGEN__Graph));
+		*world->rdf_world(), manifest_uri, Raul::URI(INGEN__Graph));
 
 	if (resources.empty()) {
 		world->log().error(fmt("No graphs found in %1%\n") % path);
 		return false;
 	}
 
-	// Choose the first (only) graph (only one top-level graph per bundle)
-	const std::string& uri = (*resources.begin()).uri;
-	if ((file_path = (*resources.begin()).filename).empty()) {
-		// No seeAlso file, use "manifest" (probably the graph file itself)
+	/* Choose the graph to load.  If this is a manifest, then there should only be
+	   one, but if this is a graph file, subgraphs will be returned as well.
+	   In this case, choose the one with the file URI. */
+	std::string uri;
+	for (const ResourceRecord& r : resources) {
+		if (r.uri == Glib::filename_to_uri(manifest_path)) {
+			uri = r.uri;
+			file_path = r.filename;
+			break;
+		}
+	}
+
+	if (uri.empty()) {
+		// Didn't find a graph with the same URI as the file, use the first
+		uri       = (*resources.begin()).uri;
+		file_path = (*resources.begin()).filename;
+	}
+
+	if (file_path.empty()) {
+		// No seeAlso file, use manifest (probably the graph file itself)
 		file_path = manifest_path;
 	}
 
