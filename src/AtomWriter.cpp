@@ -121,6 +121,35 @@ AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
 	}
 }
 
+/** @page protocol Ingen Protocol
+ * @tableofcontents
+ *
+ * @section methods Methods
+ */
+
+/** @page protocol
+ * @subsection Put
+ *
+ * Use [patch:Put](http://lv2plug.in/ns/ext/patch#Put) to set properties on an
+ * object, creating it if necessary.
+ *
+ * If the object already exists, all existing object properties with keys that
+ * match any property in the message are first removed.  Other properties are
+ * left unchanged.
+ *
+ * If the object does not yet exist, the message must contain sufficient
+ * information to create it (e.g. supported rdf:type properties).
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Put ;
+ *     patch:subject </graph/osc> ;
+ *     patch:body [
+ *         a ingen:Block ;
+ *         lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
+ *     ] .
+ * @endcode
+ */
 void
 AtomWriter::put(const Raul::URI&            uri,
                 const Resource::Properties& properties,
@@ -141,6 +170,32 @@ AtomWriter::put(const Raul::URI&            uri,
 	finish_msg();
 }
 
+/** @page protocol
+ * @subsection Patch
+ *
+ * Use [patch:Patch](http://lv2plug.in/ns/ext/patch#Patch) to manipulate the
+ * properties of an object.  A set of properties are first removed, then
+ * another is added.  Analogous to WebDAV PROPPATCH.
+ *
+ * The special value [patch:wildcard](http://lv2plug.in/ns/ext/patch#wildcard)
+ * may be used to specify that any value with the given key should be removed.
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Patch ;
+ *     patch:subject </graph/osc> ;
+ *     patch:add [
+ *         lv2:name "Osckillator" ;
+ *         ingen:canvasX 32.0 ;
+ *         ingen:canvasY 32.0 ;
+ *     ] ;
+ *     patch:remove [
+ *         eg:name "Old name" ;            # Remove specific value
+ *         ingen:canvasX patch:wildcard ;  # Remove all
+ *         ingen:canvasY patch:wildcard ;  # Remove all
+ *     ] .
+ * @endcode
+ */
 void
 AtomWriter::delta(const Raul::URI&            uri,
                   const Resource::Properties& remove,
@@ -167,6 +222,29 @@ AtomWriter::delta(const Raul::URI&            uri,
 	finish_msg();
 }
 
+/** @page protocol
+ * @subsection Copy
+ *
+ * Use [patch:Copy](http://lv2plug.in/ns/ext/copy#Copy) to copy an object from
+ * its current location (subject) to another (destination).
+ *
+ * If both the subject and destination are inside Ingen, like block paths, then the old object
+ * is copied by, for example, creating a new plugin instance.
+ *
+ * If the subject is a path and the destination is inside Ingen, then the
+ * subject must be an Ingen graph file or bundle, which is loaded to the
+ * specified destination path.
+ *
+ * If the subject is inside Ingen and the destination is a path, then the
+ * subject is saved to an Ingen bundle at the given destination.
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Copy ;
+ *     patch:subject </graph/osc> ;
+ *     patch:destination </graph/osc2> .
+ * @endcode
+ */
 void
 AtomWriter::copy(const Raul::URI& old_uri,
                  const Raul::URI& new_uri)
@@ -181,6 +259,22 @@ AtomWriter::copy(const Raul::URI& old_uri,
 	finish_msg();
 }
 
+/** @page protocol
+ * @subsection Move
+ *
+ * Use [patch:Move](http://lv2plug.in/ns/ext/move#Move) to move an object from
+ * its current location (subject) to another (destination).
+ *
+ * Both subject and destination must be paths in Ingen with the same parent,
+ * moving between graphs is currently not supported.
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Move ;
+ *     patch:subject </graph/osc> ;
+ *     patch:destination </graph/osc2> .
+ * @endcode
+ */
 void
 AtomWriter::move(const Raul::Path& old_path,
                  const Raul::Path& new_path)
@@ -195,6 +289,21 @@ AtomWriter::move(const Raul::Path& old_path,
 	finish_msg();
 }
 
+/** @page protocol
+ * @subsection Delete
+ *
+ * Use [patch:Delete](http://lv2plug.in/ns/ext/delete#Delete) to remove an
+ * object from the engine and destroy it.
+ *
+ * All properties of the object are lost, as are all references to the object
+ * (e.g. any connections to it).
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Delete ;
+ *     patch:subject </graph/osc> .
+ * @endcode
+ */
 void
 AtomWriter::del(const Raul::URI& uri)
 {
@@ -206,6 +315,85 @@ AtomWriter::del(const Raul::URI& uri)
 	finish_msg();
 }
 
+/** @page protocol
+ * @subsection Set
+ *
+ * Use [patch:Set](http://lv2plug.in/ns/ext/patch#Set) to set a property on an
+ * object.  Any existing value for that property is removed.
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Set ;
+ *     patch:subject </graph/osc> ;
+ *     patch:property lv2:name ;
+ *     patch:value "Oscwellator" .
+ * @endcode
+ */
+void
+AtomWriter::set_property(const Raul::URI& subject,
+                         const Raul::URI& predicate,
+                         const Atom&      value)
+{
+	LV2_Atom_Forge_Frame msg;
+	forge_request(&msg, _uris.patch_Set);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
+	forge_uri(subject);
+	lv2_atom_forge_key(&_forge, _uris.patch_property);
+	lv2_atom_forge_urid(&_forge, _map.map_uri(predicate.c_str()));
+	lv2_atom_forge_key(&_forge, _uris.patch_value);
+	lv2_atom_forge_atom(&_forge, value.size(), value.type());
+	lv2_atom_forge_write(&_forge, value.get_body(), value.size());
+
+	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
+}
+
+/** @page protocol
+ * @subsection Get
+ *
+ * Use [patch:Get](http://lv2plug.in/ns/ext/patch#Get) to get the description
+ * of the subject.
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Get ;
+ *     patch:subject </graph/osc> .
+ * @endcode
+ */
+void
+AtomWriter::get(const Raul::URI& uri)
+{
+	LV2_Atom_Forge_Frame msg;
+	forge_request(&msg, _uris.patch_Get);
+	lv2_atom_forge_key(&_forge, _uris.patch_subject);
+	forge_uri(uri);
+	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
+}
+
+/** @page protocol
+ *
+ * @section arcs Arc Manipulation
+ */
+
+/** @page protocol
+ * @subsection Connect Connecting Two Ports
+ *
+ * Ports are connected by putting an arc with the desired tail (an output port)
+ * and head (an input port).  The tail and head must both be within the
+ * subject, which must be a graph.
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Put ;
+ *     patch:subject </graph/> ;
+ *     patch:body [
+ *         a ingen:Arc ;
+ *         ingen:tail </graph/osc/out> ;
+ *         ingen:head </graph/filt/in> ;
+ *     ] .
+ * @endcode
+ */
 void
 AtomWriter::connect(const Raul::Path& tail,
                     const Raul::Path& head)
@@ -220,6 +408,22 @@ AtomWriter::connect(const Raul::Path& tail,
 	finish_msg();
 }
 
+/** @page protocol
+ * @subsection Disconnect Disconnecting Two Ports
+ *
+ * Ports are disconnected by deleting the arc between them.  The description of
+ * the arc is the same as in the put command used to create the connection.
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Delete ;
+ *     patch:body [
+ *         a ingen:Arc ;
+ *         ingen:tail </graph/osc/out> ;
+ *         ingen:head </graph/filt/in> ;
+ *     ] .
+ * @endcode
+ */
 void
 AtomWriter::disconnect(const Raul::Path& tail,
                        const Raul::Path& head)
@@ -232,6 +436,26 @@ AtomWriter::disconnect(const Raul::Path& tail,
 	finish_msg();
 }
 
+/** @page protocol
+ * @subsection DisconnectAll Fully Disconnecting an Object
+ *
+ * Disconnect a port completely is similar to disconnecting a specific port,
+ * but rather than specifying a specific tail and head, the special property
+ * ingen:incidentTo is used to specify any arc that is connected to a port or
+ * block in either direction.  This works with ports and blocks (including
+ * graphs, which act as blocks for the purpose of this operation and are not
+ * modified internally).
+ *
+ * @code{.ttl}
+ * []
+ *     a patch:Delete ;
+ *     patch:subject </graph> ;
+ *     patch:body [
+ *         a ingen:Arc ;
+ *         ingen:incidentTo </graph/osc/out>
+ *     ] .
+ * @endcode
+ */
 void
 AtomWriter::disconnect_all(const Raul::Path& graph,
                            const Raul::Path& path)
@@ -254,41 +478,42 @@ AtomWriter::disconnect_all(const Raul::Path& graph,
 }
 
 void
-AtomWriter::set_property(const Raul::URI& subject,
-                         const Raul::URI& predicate,
-                         const Atom&      value)
-{
-	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Set);
-	lv2_atom_forge_key(&_forge, _uris.patch_subject);
-	forge_uri(subject);
-	lv2_atom_forge_key(&_forge, _uris.patch_property);
-	lv2_atom_forge_urid(&_forge, _map.map_uri(predicate.c_str()));
-	lv2_atom_forge_key(&_forge, _uris.patch_value);
-	lv2_atom_forge_atom(&_forge, value.size(), value.type());
-	lv2_atom_forge_write(&_forge, value.get_body(), value.size());
-
-	lv2_atom_forge_pop(&_forge, &msg);
-	finish_msg();
-}
-
-void
 AtomWriter::set_response_id(int32_t id)
 {
 	_id = id;
 }
 
-void
-AtomWriter::get(const Raul::URI& uri)
-{
-	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Get);
-	lv2_atom_forge_key(&_forge, _uris.patch_subject);
-	forge_uri(uri);
-	lv2_atom_forge_pop(&_forge, &msg);
-	finish_msg();
-}
 
+/** @page protocol
+ * @section Responses
+ *
+ * Ingen responds to requests if the patch:sequenceNumber property is set.  For
+ * example:
+ * @code{.ttl}
+ * []
+ *     a patch:Get ;
+ *     patch:sequenceNumber 42 ;
+ *     patch:subject </graph/osc> .
+ * @endcode
+ *
+ * Might receive a response like:
+ * @code{.ttl}
+ * []
+ *     a patch:Response ;
+ *     patch:sequenceNumber 42 ;
+ *     patch:subject </graph/osc> ;
+ *     patch:body 0 .
+ * @endcode
+ *
+ * Where 0 is a status code, 0 meaning success and any other value being an
+ * error.  Information about status codes, including error message strings,
+ * are defined in ingen.lv2/errors.ttl.
+ *
+ * Note that a response is only a status response, operations that manipulate
+ * the graph may generate new data on the stream, e.g. the above get request
+ * would also receive a put that describes /graph/osc in the stream immediately
+ * following the response.
+ */
 void
 AtomWriter::response(int32_t id, Status status, const std::string& subject)
 {
@@ -298,7 +523,7 @@ AtomWriter::response(int32_t id, Status status, const std::string& subject)
 
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.patch_Response);
-	lv2_atom_forge_key(&_forge, _uris.patch_request);
+	lv2_atom_forge_key(&_forge, _uris.patch_sequenceNumber);
 	lv2_atom_forge_int(&_forge, id);
 	if (!subject.empty() && Raul::URI::is_valid(subject)) {
 		lv2_atom_forge_key(&_forge, _uris.patch_subject);
@@ -314,5 +539,9 @@ void
 AtomWriter::error(const std::string& msg)
 {
 }
+
+/** @page protocol
+ * @tableofcontents
+ */
 
 } // namespace Ingen

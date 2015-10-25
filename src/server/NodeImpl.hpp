@@ -83,8 +83,7 @@ public:
 
 	/** Apply a new (external) polyphony value.
 	 *
-	 * Audio thread.
-	 *
+	 * \param context Process context (process thread only).
 	 * \param poly Must be <= the most recent value passed to prepare_poly.
 	 * \param maid Any objects no longer needed will be pushed to this
 	 */

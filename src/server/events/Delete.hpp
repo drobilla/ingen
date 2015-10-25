@@ -40,18 +40,7 @@ namespace Events {
 
 class DisconnectAll;
 
-/** \page methods
- * <h2>DELETE</h2>
- * As per WebDAV (RFC4918 S9.6).
- *
- * Remove an object from the engine and destroy it.
- *
- * \li All properties of the object are lost
- * \li All references to the object are lost (e.g. the parent's reference to
- *     this child is lost, any connections to the object are removed, etc.)
- */
-
-/** DELETE a graph object (see \ref methods).
+/** Delete a graph object.
  * \ingroup engine
  */
 class Delete : public Event

@@ -30,17 +30,7 @@ class PortImpl;
 
 namespace Events {
 
-/** \page methods
- * <h2>MOVE</h2>
- * As per WebDAV (RFC4918 S9.9).
- *
- * Move an object from its current location and insert it at a new location
- * in a single operation.
- *
- * MOVE to a path with a different parent is currently not supported.
- */
-
-/** MOVE a graph object to a new path (see \ref methods).
+/** Move a graph object to a new path.
  * \ingroup engine
  */
 class Move : public Event

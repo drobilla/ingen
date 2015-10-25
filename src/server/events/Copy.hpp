@@ -33,15 +33,7 @@ class GraphImpl;
 
 namespace Events {
 
-/** \page methods
- * <h2>COPY</h2>
- * As per WebDAV (RFC4918 S9.8).
- *
- * Copy an object from its current location and insert it at a new location
- * in a single operation.
- */
-
-/** COPY a graph object to a new path (see \ref methods).
+/** Copy a graph object to a new path.
  * \ingroup engine
  */
 class Copy : public Event

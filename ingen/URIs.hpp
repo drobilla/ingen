@@ -178,7 +178,6 @@ public:
 	const Quark patch_destination;
 	const Quark patch_property;
 	const Quark patch_remove;
-	const Quark patch_request;
 	const Quark patch_sequenceNumber;
 	const Quark patch_subject;
 	const Quark patch_value;

@@ -68,7 +68,7 @@ public:
 
 	/** Parse a graph from RDF into a Interface (engine or client).
 	 *
-	 * @param path If this is a file path, then the graph is loaded from that
+	 * If `path` is a file path, then the graph is loaded from that
 	 * file.  If it is a directory, then the manifest.ttl from that directory
 	 * is used instead.  In either case, any rdfs:seeAlso files are loaded and
 	 * the graph parsed from the resulting combined model.

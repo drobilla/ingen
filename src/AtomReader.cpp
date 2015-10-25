@@ -328,20 +328,20 @@ AtomReader::write(const LV2_Atom* msg)
 
 		_iface.move(*subject_path, *dest_path);
 	} else if (obj->body.otype == _uris.patch_Response) {
-		const LV2_Atom* request = NULL;
-		const LV2_Atom* body    = NULL;
+		const LV2_Atom* seq  = NULL;
+		const LV2_Atom* body = NULL;
 		lv2_atom_object_get(obj,
-		                    (LV2_URID)_uris.patch_request, &request,
+		                    (LV2_URID)_uris.patch_sequenceNumber, &seq,
 		                    (LV2_URID)_uris.patch_body, &body,
 		                    0);
-		if (!request || request->type != _uris.atom_Int) {
-			_log.warn("Response message has no request\n");
+		if (!seq || seq->type != _uris.atom_Int) {
+			_log.warn("Response message has no sequence number\n");
 			return false;
 		} else if (!body || body->type != _uris.atom_Int) {
 			_log.warn("Response message body is not integer\n");
 			return false;
 		}
-		_iface.response(((const LV2_Atom_Int*)request)->body,
+		_iface.response(((const LV2_Atom_Int*)seq)->body,
 		                (Ingen::Status)((const LV2_Atom_Int*)body)->body,
 		                subject_uri ? subject_uri->c_str() : "");
 	} else {
