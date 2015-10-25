@@ -563,15 +563,15 @@ Serialiser::Impl::serialise_properties(Sord::Node              id,
 		const Sord::URI key(_model->world(), p.first);
 		if (!skip_property(_world.uris(), key)) {
 			if (p.second.type() == _world.uris().atom_URI &&
-			    !strncmp((const char*)p.second.get_body(), "ingen:/", 7)) {
-				/* Value is an ingen:/ URI, relative to the running engine.
-				   Chop the prefix and save the path relative to the bundle.
+			    !strncmp((const char*)p.second.get_body(), "ingen:/graph/", 13)) {
+				/* Value is a graph URI relative to the running engine.
+				   Chop the prefix and save the path relative to the graph file.
 				   This allows saving references to bundle resources. */
 				sratom_write(_sratom, unmap, 0,
 				             sord_node_to_serd_node(id.c_obj()),
 				             sord_node_to_serd_node(key.c_obj()),
 				             p.second.type(), p.second.size(),
-				             (const char*)p.second.get_body() + 7);
+				             (const char*)p.second.get_body() + 13);
 			} else {
 				sratom_write(_sratom, unmap, 0,
 				             sord_node_to_serd_node(id.c_obj()),

@@ -38,12 +38,12 @@ namespace Events {
 class CreateBlock : public Event
 {
 public:
-	CreateBlock(Engine&                     engine,
-	            SPtr<Interface>             client,
-	            int32_t                     id,
-	            SampleCount                 timestamp,
-	            const Raul::Path&           block_path,
-	            const Resource::Properties& properties);
+	CreateBlock(Engine&               engine,
+	            SPtr<Interface>       client,
+	            int32_t               id,
+	            SampleCount           timestamp,
+	            const Raul::Path&     block_path,
+	            Resource::Properties& properties);
 
 	~CreateBlock();
 
@@ -53,7 +53,7 @@ public:
 
 private:
 	Raul::Path            _path;
-	Resource::Properties  _properties;
+	Resource::Properties& _properties;
 	Events::Get::Response _update;
 	GraphImpl*            _graph;
 	BlockImpl*            _block;

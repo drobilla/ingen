@@ -289,12 +289,16 @@ parse_block(Ingen::World*                     world,
 
 	std::string type_uri;
 	for (const Sord::URI& prototype : prototype_predicates) {
-		Sord::Iter i = model.find(subject, prototype, Sord::Node());
-		if (!i.end() && i.get_object().type() == Sord::Node::URI) {
-			type_uri = relative_uri(base_uri,
-			                        i.get_object().to_string(),
-			                        false);
-			break;
+		for (Sord::Iter p = model.find(subject, prototype, Sord::Node()); !p.end(); ++p) {
+			const std::string prot_uri = relative_uri(
+				base_uri, p.get_object().to_string(), false);
+			if (serd_uri_string_has_scheme((const uint8_t*)prot_uri.c_str())) {
+				/* Ignore prototypes that are relative to this bundle, they are
+				   blocks (probably from copy and paste), but we want files or
+				   LV2 plugins here. */
+				type_uri = prot_uri;
+				break;
+			}
 		}
 	}
 
