@@ -91,7 +91,7 @@ CreatePort::pre_process()
 	} else if (_path.is_root()) {
 		return Event::pre_process_done(Status::BAD_URI, _path);
 	} else if (_engine.store()->get(_path)) {
-		return Event::pre_process_done(_status, _path);
+		return Event::pre_process_done(Status::EXISTS, _path);
 	}
 
 	const Raul::Path parent_path = _path.parent();
