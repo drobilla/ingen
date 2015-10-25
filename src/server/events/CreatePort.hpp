@@ -17,6 +17,8 @@
 #ifndef INGEN_EVENTS_CREATEPORT_HPP
 #define INGEN_EVENTS_CREATEPORT_HPP
 
+#include <boost/optional.hpp>
+
 #include "ingen/Resource.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Array.hpp"
@@ -47,7 +49,6 @@ public:
 	           int32_t                     id,
 	           SampleCount                 timestamp,
 	           const Raul::Path&           path,
-	           bool                        is_output,
 	           const Resource::Properties& properties);
 
 	bool pre_process();
@@ -55,6 +56,11 @@ public:
 	void post_process();
 
 private:
+	enum class Flow {
+		INPUT,
+		OUTPUT
+	};
+
 	Raul::Path              _path;
 	PortType                _port_type;
 	LV2_URID                _buf_type;
@@ -65,7 +71,7 @@ private:
 	EnginePort*             _engine_port; ///< Driver port if on the root
 	Resource::Properties    _properties;
 	Resource::Properties    _update;
-	bool                    _is_output;
+	boost::optional<Flow>   _flow;
 };
 
 } // namespace Events

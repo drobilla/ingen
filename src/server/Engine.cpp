@@ -22,7 +22,7 @@
 
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 
-#include "events/CreatePort.hpp"
+#include "events/CreateGraph.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Store.hpp"
@@ -201,19 +201,6 @@ Engine::event_time()
 	return start + _driver->block_length();
 }
 
-static void
-execute_and_delete_event(ProcessContext& context, Event* ev)
-{
-	ev->pre_process();
-	if (ev->time() < context.start()) {
-		// Didn't get around to executing in time, oh well...
-		ev->set_time(context.start());
-	}
-	ev->execute(context);
-	ev->post_process();
-	delete ev;
-}
-
 void
 Engine::init(double sample_rate, uint32_t block_length, size_t seq_size)
 {
@@ -235,86 +222,29 @@ Engine::activate()
 	              driver()->block_length(),
 	              buffer_factory()->default_size(_world->uris().atom_Sequence));
 
-	const Ingen::URIs& uris  = world()->uris();
-	Forge&             forge = world()->forge();
+	const Ingen::URIs& uris = world()->uris();
 
-	// Create root graph
 	if (!_root_graph) {
-		_root_graph = new GraphImpl(
-			*this, Raul::Symbol("root"), 1, NULL, _driver->sample_rate(), 1);
-		_root_graph->set_property(
-			uris.rdf_type,
-			Resource::Property(uris.ingen_Graph, Resource::Graph::INTERNAL));
-		_root_graph->set_property(
-			uris.ingen_polyphony,
-			Resource::Property(_world->forge().make(int32_t(1)),
-			                   Resource::Graph::INTERNAL));
-		_root_graph->activate(*_buffer_factory);
-		_world->store()->add(_root_graph);
-		_root_graph->set_compiled_graph(_root_graph->compile());
+		// Create root graph
+		Resource::Properties graph_properties;
+		graph_properties.insert(
+			make_pair(uris.rdf_type,
+			          Resource::Property(uris.ingen_Graph)));
+		graph_properties.insert(
+			make_pair(uris.ingen_polyphony,
+			          Resource::Property(_world->forge().make(1),
+			                             Resource::Graph::INTERNAL)));
 
+		Events::CreateGraph ev(
+			*this, SPtr<Interface>(), -1, 0, Raul::Path("/"), graph_properties);
+
+		// Execute in "fake" process context (we are single threaded)
 		ProcessContext context(*this);
+		ev.pre_process();
+		ev.execute(context);
+		ev.post_process();
 
-		Resource::Properties control_properties;
-		control_properties.insert(
-			make_pair(uris.lv2_name, forge.alloc("Control")));
-		control_properties.insert(
-			make_pair(uris.rdf_type,
-			          Resource::Property(uris.atom_AtomPort)));
-		control_properties.insert(
-			make_pair(uris.atom_bufferType,
-			          Resource::Property(uris.atom_Sequence)));
-		control_properties.insert(
-			make_pair(uris.rsz_minimumSize,
-			          // forge.make(int32_t(driver()->seq_size()))));
-			          forge.make(4096)));
-
-		// Add control input
-		Resource::Properties in_properties(control_properties);
-		in_properties.insert(
-			make_pair(uris.rdf_type,
-			          Resource::Property(uris.lv2_InputPort)));
-		in_properties.insert(make_pair(uris.lv2_index, forge.make(0)));
-		in_properties.insert(
-			make_pair(uris.lv2_portProperty,
-			          Resource::Property(uris.lv2_connectionOptional)));
-		in_properties.insert(
-			make_pair(uris.ingen_canvasX,
-			          Resource::Property(forge.make(32.0f),
-			                             Resource::Graph::EXTERNAL)));
-		in_properties.insert(
-			make_pair(uris.ingen_canvasY,
-			          Resource::Property(forge.make(32.0f),
-			                             Resource::Graph::EXTERNAL)));
-
-		SPtr<Interface> respondee;
-		execute_and_delete_event(
-			context, new Events::CreatePort(
-				*this, respondee, -1, 0, Raul::Path("/control_in"),
-				false, in_properties));
-
-		// Add control out
-		Resource::Properties out_properties(control_properties);
-		out_properties.insert(
-			make_pair(uris.rdf_type,
-			          Resource::Property(uris.lv2_OutputPort)));
-		out_properties.insert(make_pair(uris.lv2_index, forge.make(1)));
-		in_properties.insert(
-			make_pair(uris.lv2_portProperty,
-			          Resource::Property(uris.lv2_connectionOptional)));
-		out_properties.insert(
-			make_pair(uris.ingen_canvasX,
-			          Resource::Property(forge.make(128.0f),
-			                             Resource::Graph::EXTERNAL)));
-		out_properties.insert(
-			make_pair(uris.ingen_canvasY,
-			          Resource::Property(forge.make(32.0f),
-			                             Resource::Graph::EXTERNAL)));
-
-		execute_and_delete_event(
-			context, new Events::CreatePort(
-				*this, respondee, -1, 0, Raul::Path("/control_out"),
-				true, out_properties));
+		_root_graph = ev.graph();
 	}
 
 	_driver->activate();

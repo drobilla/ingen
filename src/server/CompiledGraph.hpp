@@ -26,30 +26,18 @@
 namespace Ingen {
 namespace Server {
 
-class EdgeImpl;
 class BlockImpl;
 
 /** All information required about a block to execute it in an audio thread.
  */
 class CompiledBlock {
 public:
-	CompiledBlock(BlockImpl* b, size_t np, const std::list<BlockImpl*>& deps)
-		: _block(b)
-	{
-		// Copy to a vector for maximum iteration speed and cache optimization
-		// (Need to take a copy anyway)
+	CompiledBlock(BlockImpl* b) : _block(b) {}
 
-		_dependants.reserve(deps.size());
-		for (const auto& d : deps)
-			_dependants.push_back(d);
-	}
-
-	BlockImpl*                     block()       const { return _block; }
-	const std::vector<BlockImpl*>& dependants()  const { return _dependants; }
+	BlockImpl* block() const { return _block; }
 
 private:
-	BlockImpl*              _block;
-	std::vector<BlockImpl*> _dependants; ///< Blocks this one's output ports are connected to
+	BlockImpl* _block;
 };
 
 /** A graph ``compiled'' into a flat structure with the correct order so

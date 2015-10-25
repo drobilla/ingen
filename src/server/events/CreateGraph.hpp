@@ -48,13 +48,18 @@ public:
 	void execute(ProcessContext& context);
 	void post_process();
 
+	GraphImpl* graph() { return _graph; }
+
 private:
-	const Raul::Path      _path;
-	Resource::Properties  _properties;
-	Events::Get::Response _update;
-	GraphImpl*            _graph;
-	GraphImpl*            _parent;
-	CompiledGraph*        _compiled_graph;
+	void build_child_events();
+
+	const Raul::Path         _path;
+	Resource::Properties     _properties;
+	Events::Get::Response    _update;
+	GraphImpl*               _graph;
+	GraphImpl*               _parent;
+	CompiledGraph*           _compiled_graph;
+	std::list< SPtr<Event> > _child_events;
 };
 
 } // namespace Events

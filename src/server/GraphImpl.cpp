@@ -249,8 +249,12 @@ GraphImpl::set_buffer_size(Context&       context,
 {
 	BlockImpl::set_buffer_size(context, bufs, type, size);
 
-	for (size_t i = 0; i < _compiled_graph->size(); ++i)
-		(*_compiled_graph)[i].block()->set_buffer_size(context, bufs, type, size);
+	if (_compiled_graph) {
+		for (size_t i = 0; i < _compiled_graph->size(); ++i) {
+			const CompiledBlock& block = (*_compiled_graph)[i];
+			block.block()->set_buffer_size(context, bufs, type, size);
+		}
+	}
 }
 
 void
@@ -362,7 +366,7 @@ compile_recursive(BlockImpl* n, CompiledGraph* output)
 		if (!p->traversed())
 			compile_recursive(p, output);
 
-	output->push_back(CompiledBlock(n, n->providers().size(), n->dependants()));
+	output->push_back(CompiledBlock(n));
 }
 
 CompiledGraph*

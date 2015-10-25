@@ -41,7 +41,6 @@ CreatePort::CreatePort(Engine&                     engine,
                        int32_t                     id,
                        SampleCount                 timestamp,
                        const Raul::Path&           path,
-                       bool                        is_output,
                        const Resource::Properties& properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
@@ -53,7 +52,6 @@ CreatePort::CreatePort(Engine&                     engine,
 	, _old_ports_array(NULL)
 	, _engine_port(NULL)
 	, _properties(properties)
-	, _is_output(is_output)
 {
 	const Ingen::URIs& uris = _engine.world()->uris();
 
@@ -71,6 +69,10 @@ CreatePort::CreatePort(Engine&                     engine,
 			_port_type = PortType::CV;
 		} else if (type == uris.atom_AtomPort) {
 			_port_type = PortType::ATOM;
+		} else if (type == uris.lv2_InputPort) {
+			_flow = Flow::INPUT;
+		} else if (type == uris.lv2_OutputPort) {
+			_flow = Flow::OUTPUT;
 		}
 	}
 
@@ -87,6 +89,8 @@ bool
 CreatePort::pre_process()
 {
 	if (_port_type == PortType::UNKNOWN) {
+		return Event::pre_process_done(Status::UNKNOWN_TYPE, _path);
+	} else if (!_flow) {
 		return Event::pre_process_done(Status::UNKNOWN_TYPE, _path);
 	} else if (_path.is_root()) {
 		return Event::pre_process_done(Status::BAD_URI, _path);
@@ -136,12 +140,12 @@ CreatePort::pre_process()
 	                             _graph->num_ports_non_rt(),
 	                             polyphonic,
 	                             _port_type, _buf_type, buf_size,
-	                             value, _is_output);
+	                             value, _flow == Flow::OUTPUT);
 
 	_graph_port->properties().insert(_properties.begin(), _properties.end());
 
 	_engine.store()->add(_graph_port);
-	if (_is_output) {
+	if (_flow == Flow::OUTPUT) {
 		_graph->add_output(*_graph_port);
 	} else {
 		_graph->add_input(*_graph_port);

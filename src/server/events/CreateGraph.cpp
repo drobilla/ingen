@@ -24,6 +24,7 @@
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "events/CreateGraph.hpp"
+#include "events/CreatePort.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -43,16 +44,63 @@ CreateGraph::CreateGraph(Engine&                     engine,
 	, _compiled_graph(NULL)
 {}
 
+void
+CreateGraph::build_child_events()
+{
+	const Ingen::URIs& uris = _engine.world()->uris();
+
+	// Properties common to both ports
+	Resource::Properties control_properties;
+	control_properties.put(uris.lv2_name, uris.forge.alloc("Control"));
+	control_properties.put(uris.rdf_type, uris.atom_AtomPort);
+	control_properties.put(uris.atom_bufferType, uris.atom_Sequence);
+	control_properties.put(uris.rsz_minimumSize, uris.forge.make(4096));
+	control_properties.put(uris.lv2_portProperty, uris.lv2_connectionOptional);
+
+	// Add control input
+	Resource::Properties in_properties(control_properties);
+	in_properties.put(uris.rdf_type, uris.lv2_InputPort);
+	in_properties.put(uris.lv2_index, uris.forge.make(0));
+	in_properties.put(uris.ingen_canvasX, uris.forge.make(32.0f),
+	                  Resource::Graph::EXTERNAL);
+	in_properties.put(uris.ingen_canvasY, uris.forge.make(32.0f),
+	                  Resource::Graph::EXTERNAL);
+
+	_child_events.push_back(
+		SPtr<Events::CreatePort>(
+			new Events::CreatePort(
+				_engine, _request_client, -1, _time,
+				_path.child(Raul::Symbol("control_in")),
+				in_properties)));
+
+	// Add control out
+	Resource::Properties out_properties(control_properties);
+	out_properties.put(uris.rdf_type, uris.lv2_OutputPort);
+	out_properties.put(uris.lv2_index, uris.forge.make(1));
+	out_properties.put(uris.ingen_canvasX, uris.forge.make(128.0f),
+	                   Resource::Graph::EXTERNAL);
+	out_properties.put(uris.ingen_canvasY, uris.forge.make(32.0f),
+	                   Resource::Graph::EXTERNAL);
+
+	_child_events.push_back(
+		SPtr<Events::CreatePort>(
+			new Events::CreatePort(_engine, _request_client, -1, _time,
+			                       _path.child(Raul::Symbol("control_out")),
+			                       out_properties)));
+}
+
 bool
 CreateGraph::pre_process()
 {
-	if (_path.is_root() || _engine.store()->get(_path)) {
+	if (_engine.store()->get(_path)) {
 		return Event::pre_process_done(Status::EXISTS, _path);
 	}
 
-	_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(_path.parent()));
-	if (!_parent) {
-		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _path.parent());
+	if (!_path.is_root()) {
+		const Raul::Path up(_path.parent());
+		if (!(_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(up)))) {
+			return Event::pre_process_done(Status::PARENT_NOT_FOUND, up);
+		}
 	}
 
 	const Ingen::URIs& uris = _engine.world()->uris();
@@ -70,11 +118,11 @@ CreateGraph::pre_process()
 		return Event::pre_process_done(Status::INVALID_POLY, _path);
 	}
 
-	if (int_poly == _parent->internal_poly()) {
+	if (!_parent || int_poly == _parent->internal_poly()) {
 		ext_poly = int_poly;
 	}
 
-	const Raul::Symbol symbol((_path.is_root()) ? "root" : _path.symbol());
+	const Raul::Symbol symbol(_path.is_root() ? "graph" : _path.symbol());
 
 	// Get graph prototype
 	iterator t = _properties.find(uris.lv2_prototype);
@@ -108,10 +156,13 @@ CreateGraph::pre_process()
 
 	_graph->set_properties(_properties);
 
-	_parent->add_block(*_graph);
-	if (_parent->enabled()) {
-		_graph->enable();
-		_compiled_graph = _parent->compile();
+	if (_parent) {
+		// Add graph to parent
+		_parent->add_block(*_graph);
+		if (_parent->enabled()) {
+			_graph->enable();
+			_compiled_graph = _parent->compile();
+		}
 	}
 
 	_graph->activate(*_engine.buffer_factory());
@@ -123,6 +174,12 @@ CreateGraph::pre_process()
 		_engine.store()->add(&block);
 	}
 
+	// Build and pre-process child events to create standard ports
+	build_child_events();
+	for (SPtr<Event> ev : _child_events) {
+		ev->pre_process();
+	}
+
 	return Event::pre_process_done(Status::SUCCESS);
 }
 
@@ -130,7 +187,13 @@ void
 CreateGraph::execute(ProcessContext& context)
 {
 	if (_graph) {
-		_parent->set_compiled_graph(_compiled_graph);
+		if (_parent) {
+			_parent->set_compiled_graph(_compiled_graph);
+		}
+
+		for (SPtr<Event> ev : _child_events) {
+			ev->execute(context);
+		}
 	}
 }
 
@@ -141,6 +204,13 @@ CreateGraph::post_process()
 	if (respond() == Status::SUCCESS) {
 		_update.send(_engine.broadcaster());
 	}
+
+	if (_graph) {
+		for (SPtr<Event> ev : _child_events) {
+			ev->post_process();
+		}
+	}
+	_child_events.clear();
 }
 
 } // namespace Events

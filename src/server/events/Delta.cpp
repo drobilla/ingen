@@ -201,7 +201,7 @@ Delta::pre_process()
 		} else if (is_port) {
 			_create_event = new CreatePort(
 				_engine, _request_client, _request_id, _time,
-				path, is_output, _properties);
+				path, _properties);
 		}
 		if (_create_event) {
 			if (_create_event->pre_process()) {

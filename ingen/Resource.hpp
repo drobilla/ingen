@@ -99,7 +99,30 @@ public:
 
 	virtual ~Resource() {}
 
-	typedef std::multimap<Raul::URI, Property> Properties;
+	class Properties : public std::multimap<Raul::URI, Property> {
+	public:
+		Properties() {}
+
+		Properties(const Properties& copy)
+			: std::multimap<Raul::URI, Property>(copy)
+		{}
+
+		Properties(std::initializer_list<value_type> l)
+			: std::multimap<Raul::URI, Property>(l)
+		{}
+
+		void put(const Raul::URI& key,
+		         const Atom&      value,
+		         Graph            ctx = Graph::DEFAULT) {
+			insert(std::make_pair(key, Property(value, ctx)));
+		}
+
+		void put(const Raul::URI&   key,
+		         const URIs::Quark& value,
+		         Graph              ctx = Graph::DEFAULT) {
+			insert(std::make_pair(key, Property(value, ctx)));
+		}
+	};
 
 	/** Get a single property value.
 	 *
