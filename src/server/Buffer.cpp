@@ -199,15 +199,19 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 {
 	switch (port_type.id()) {
 	case PortType::ID::CONTROL:
-		if (_type == _factory.uris().atom_Float) {
-			return &get<LV2_Atom_Float>()->body;
-		}
-		break;
 	case PortType::ID::CV:
 	case PortType::ID::AUDIO:
-		return (Sample*)_buf;
-	default:
-		return _buf;
+		if (_type == _factory.uris().atom_Float) {
+			return &get<LV2_Atom_Float>()->body;
+		} else if (_type == _factory.uris().atom_Sound) {
+			return (Sample*)_buf;
+		}
+		break;
+	case PortType::ID::ATOM:
+		if (_type != _factory.uris().atom_Sound) {
+			return _buf;
+		}
+	default: break;
 	}
 	return NULL;
 }
