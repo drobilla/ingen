@@ -426,7 +426,7 @@ PortImpl::monitor(Context& context, bool send_now)
 	const bool time_to_send = send_now || _frames_since_monitor >= period;
 	const bool is_sequence  = (_type.id() == PortType::ATOM &&
 	                           _buffer_type == _bufs.uris().atom_Sequence);
-	if (!time_to_send && (!is_sequence || _monitored || buffer(0)->value())) {
+	if (!time_to_send && !(is_sequence && _monitored) && (!is_sequence && buffer(0)->value())) {
 		return;
 	}
 

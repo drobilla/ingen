@@ -59,6 +59,7 @@ public:
 	 * no widget and the UI can not be used.
 	 */
 	bool instantiate();
+	bool instantiated () { return _instance != NULL; }
 
 	SuilWidget get_widget();
 

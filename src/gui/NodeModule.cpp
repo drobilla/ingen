@@ -326,6 +326,11 @@ NodeModule::popup_gui()
 			_plugin_ui->signal_property_changed().connect(
 				sigc::mem_fun(app(), &App::set_property));
 
+			if (!_plugin_ui->instantiated() &&  !_plugin_ui->instantiate()) {
+				app().log().error("Failed to instantiate LV2 UI\n");
+				return false;
+			}
+
 			GtkWidget* c_widget = (GtkWidget*)_plugin_ui->get_widget();
 			_gui_widget = Glib::wrap(c_widget);
 
