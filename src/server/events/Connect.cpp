@@ -111,8 +111,8 @@ Connect::pre_process()
 	   provider...
 	*/
 	if (tail_block != head_block && tail_block->parent() == head_block->parent()) {
-		head_block->providers().push_back(tail_block);
-		tail_block->dependants().push_back(head_block);
+		head_block->providers().insert(tail_block);
+		tail_block->dependants().insert(head_block);
 	}
 
 	_graph->add_arc(_arc);

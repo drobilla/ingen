@@ -72,20 +72,14 @@ Disconnect::Impl::Impl(Engine&     e,
 	BlockImpl* const tail_block = _tail->parent_block();
 	BlockImpl* const head_block = _head->parent_block();
 
-	for (std::list<BlockImpl*>::iterator i = head_block->providers().begin();
-	     i != head_block->providers().end(); ++i) {
-		if ((*i) == tail_block) {
-			head_block->providers().erase(i);
-			break;
-		}
+	std::set<BlockImpl*>::iterator hp = head_block->providers().find(tail_block);
+	if (hp != head_block->providers().end()) {
+		head_block->providers().erase(hp);
 	}
 
-	for (std::list<BlockImpl*>::iterator i = tail_block->dependants().begin();
-	     i != tail_block->dependants().end(); ++i) {
-		if ((*i) == head_block) {
-			tail_block->dependants().erase(i);
-			break;
-		}
+	std::set<BlockImpl*>::iterator td = tail_block->dependants().find(head_block);
+	if (td != tail_block->dependants().end()) {
+		tail_block->dependants().erase(td);
 	}
 
 	_head->decrement_num_arcs();

@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_BLOCKIMPL_HPP
 #define INGEN_ENGINE_BLOCKIMPL_HPP
 
-#include <list>
+#include <set>
 
 #include <boost/intrusive/slist.hpp>
 #include <boost/optional.hpp>
@@ -138,10 +138,10 @@ public:
 	virtual PortImpl* port_by_symbol(const char* symbol);
 
 	/** Blocks that are connected to this Block's inputs. */
-	std::list<BlockImpl*>& providers() { return _providers; }
+	std::set<BlockImpl*>& providers() { return _providers; }
 
 	/** Blocks that are connected to this Block's outputs. */
-	std::list<BlockImpl*>& dependants() { return _dependants; }
+	std::set<BlockImpl*>& dependants() { return _dependants; }
 
 	/** Flag block as polyphonic.
 	 *
@@ -190,8 +190,8 @@ protected:
 	Raul::Array<PortImpl*>* _ports; ///< Access in audio thread only
 	Context::ID             _context; ///< Context this block runs in
 	uint32_t                _polyphony;
-	std::list<BlockImpl*>   _providers; ///< Blocks connected to this one's input ports
-	std::list<BlockImpl*>   _dependants; ///< Blocks this one's output ports are connected to
+	std::set<BlockImpl*>    _providers; ///< Blocks connected to this one's input ports
+	std::set<BlockImpl*>    _dependants; ///< Blocks this one's output ports are connected to
 	bool                    _polyphonic;
 	bool                    _activated;
 	bool                    _enabled;
