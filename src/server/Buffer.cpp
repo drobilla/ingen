@@ -46,6 +46,7 @@ Buffer::Buffer(BufferFactory& bufs,
                bool           external,
                void*          buf)
 	: _factory(bufs)
+	, _buf(NULL)
 	, _type(type)
 	, _value_type(value_type)
 	, _capacity(capacity)
