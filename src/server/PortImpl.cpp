@@ -110,8 +110,7 @@ PortImpl::set_type(PortType port_type, LV2_URID buffer_type)
 	remove_property(uris.rdf_type, uris.lv2_CVPort);
 	remove_property(uris.rdf_type, uris.lv2_ControlPort);
 	remove_property(uris.rdf_type, uris.atom_AtomPort);
-	add_property(uris.rdf_type,
-	             world->forge().alloc_uri(port_type.uri().c_str()));
+	add_property(uris.rdf_type, world->forge().make_urid(port_type.uri()));
 
 	// Update audio thread types
 	_type        = port_type;

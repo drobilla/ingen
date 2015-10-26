@@ -111,7 +111,7 @@ CreateBlock::pre_process()
 		_properties.erase(uris.ingen_prototype);
 		_properties.erase(uris.lv2_prototype);
 		_properties.insert(std::make_pair(uris.lv2_prototype,
-		                                  uris.forge.alloc_uri(ancestor->plugin()->uri())));
+		                                  uris.forge.make_urid(ancestor->plugin()->uri())));
 	} else {
 		// Prototype is a plugin
 		PluginImpl* const plugin = _engine.block_factory()->plugin(prototype);

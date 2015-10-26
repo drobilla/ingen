@@ -55,7 +55,7 @@ ControllerNode::ControllerNode(InternalPlugin*     plugin,
 
 	const Atom zero       = bufs.forge().make(0.0f);
 	const Atom one        = bufs.forge().make(1.0f);
-	const Atom atom_Float = bufs.forge().alloc_uri(LV2_ATOM__Float);
+	const Atom atom_Float = bufs.forge().make_urid(Raul::URI(LV2_ATOM__Float));
 
 	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Atom());

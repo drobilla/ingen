@@ -396,7 +396,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 				const LilvNode* val = lilv_nodes_get(values, v);
 				if (lilv_node_is_uri(val)) {
 					port->add_property(Raul::URI(lilv_node_as_uri(preds[p])),
-					                   forge.alloc_uri(lilv_node_as_uri(val)));
+					                   forge.make_urid(Raul::URI(lilv_node_as_uri(val))));
 				}
 			}
 			lilv_nodes_free(values);

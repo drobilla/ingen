@@ -234,7 +234,7 @@ NodeMenu::on_preset_activated(const std::string& uri)
 {
 	_app->set_property(block()->uri(),
 	                   _app->uris().pset_preset,
-	                   _app->forge().alloc_uri(uri));
+	                   _app->forge().make_urid(Raul::URI(uri)));
 }
 
 bool

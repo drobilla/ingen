@@ -125,7 +125,7 @@ PluginModel::get_property(const Raul::URI& key) const
 			const LilvNode* val = lilv_nodes_get(values, i);
 			if (lilv_node_is_uri(val)) {
 				ret = set_property(
-					key, _uris.forge.alloc_uri(lilv_node_as_uri(val)));
+					key, _uris.forge.make_urid(Raul::URI(lilv_node_as_uri(val))));
 				break;
 			} else if (lilv_node_is_string(val)) {
 				ret = set_property(

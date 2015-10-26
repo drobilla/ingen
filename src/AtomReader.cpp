@@ -44,9 +44,9 @@ AtomReader::get_atom(const LV2_Atom* in, Atom& out)
 	if (in) {
 		if (in->type == _uris.atom_URID) {
 			const LV2_Atom_URID* urid = (const LV2_Atom_URID*)in;
-			const char* uri           = _map.unmap_uri(urid->body);
+			const char*          uri  = _map.unmap_uri(urid->body);
 			if (uri) {
-				out = _forge.alloc_uri(_map.unmap_uri(urid->body));
+				out = _forge.make_urid(urid->body);
 			} else {
 				_log.error(fmt("Unable to unmap URID %1%\n") % urid->body);
 			}
@@ -61,9 +61,8 @@ AtomReader::get_props(const LV2_Atom_Object*       obj,
                       Ingen::Resource::Properties& props)
 {
 	if (obj->body.otype) {
-		props.insert(
-			std::make_pair(_uris.rdf_type,
-			               _forge.alloc_uri(_map.unmap_uri(obj->body.otype))));
+		props.insert(std::make_pair(_uris.rdf_type,
+		                            _forge.make_urid(obj->body.otype)));
 	}
 	LV2_ATOM_OBJECT_FOREACH(obj, p) {
 		Atom val;

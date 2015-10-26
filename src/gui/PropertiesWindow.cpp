@@ -449,27 +449,22 @@ PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 		if (check) {
 			return _app->forge().make(check->get_active());
 		}
-	} else if (type == forge.URI) {
+	} else if (type == forge.URI || type == forge.URID) {
 		URIEntry* uri_entry = dynamic_cast<URIEntry*>(value_widget);
 		if (uri_entry) {
-			return _app->forge().alloc_uri(uri_entry->get_text());
-		}
-	} else if (type == forge.URID) {
-		URIEntry* uri_entry = dynamic_cast<URIEntry*>(value_widget);
-		if (uri_entry) {
-			return _app->forge().make_urid(
-				_app->world()->uri_map().map_uri(uri_entry->get_text()));
+			if (Raul::URI::is_valid(uri_entry->get_text())) {
+				return _app->forge().make_urid(
+					_app->world()->uri_map().map_uri(uri_entry->get_text()));
+			} else {
+				_app->log().error(fmt("Invalid URI <%1%>\n\n")
+				                  % uri_entry->get_text());
+			}
 		}
 	} else if (type == forge.String) {
 		Gtk::Entry* entry = dynamic_cast<Gtk::Entry*>(value_widget);
 		if (entry) {
 			return _app->forge().alloc(entry->get_text());
 		}
-	}
-
-	URIEntry* uri_entry = dynamic_cast<URIEntry*>(value_widget);
-	if (uri_entry) {
-		return _app->forge().alloc_uri(uri_entry->get_text());
 	}
 
 	return Atom();

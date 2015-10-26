@@ -756,8 +756,7 @@ GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	const URIs& uris = _app.uris();
 
 	Resource::Properties props = get_initial_data();
-	props.insert(make_pair(uris.rdf_type,
-	                       _app.forge().alloc_uri(type)));
+	props.insert(make_pair(uris.rdf_type, _app.forge().make_urid(type)));
 	if (type == uris.atom_AtomPort) {
 		props.insert(make_pair(uris.atom_bufferType,
 		                       Resource::Property(uris.atom_Sequence)));
@@ -796,7 +795,7 @@ GraphCanvas::load_plugin(WPtr<PluginModel> weak_plugin)
 	props.insert(make_pair(uris.rdf_type,
 	                       Resource::Property(uris.ingen_Block)));
 	props.insert(make_pair(uris.lv2_prototype,
-	                       uris.forge.alloc_uri(plugin->uri())));
+	                       uris.forge.make_urid(plugin->uri())));
 	_app.interface()->put(Node::path_to_uri(path), props);
 }
 

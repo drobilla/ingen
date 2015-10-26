@@ -145,15 +145,8 @@ get_properties(Ingen::World*     world,
 			            model.c_obj(), i.get_object().c_obj());
 			const LV2_Atom* atom = (const LV2_Atom*)out.buf;
 			Atom            atomm;
-			// FIXME: Don't bloat out all URIs
-			if (atom->type == forge.URID) {
-				atomm = world->forge().alloc_uri(
-					unmap->unmap(unmap->handle,
-					             ((const LV2_Atom_URID*)atom)->body));
-			} else {
-				atomm = world->forge().alloc(
-					atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
-			}
+			atomm = world->forge().alloc(
+				atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 			props.insert(make_pair(Raul::URI(i.get_predicate().to_string()),
 			                       Resource::Property(atomm, ctx)));
 		}
@@ -343,7 +336,7 @@ parse_block(Ingen::World*                     world,
 		Resource::Properties props = get_properties(
 			world, model, subject, Resource::Graph::DEFAULT);
 		props.insert(make_pair(uris.rdf_type,
-		                       uris.forge.alloc_uri(uris.ingen_Block)));
+		                       uris.forge.make_urid(uris.ingen_Block)));
 		target->put(Node::path_to_uri(path), props);
 	}
 	return path;

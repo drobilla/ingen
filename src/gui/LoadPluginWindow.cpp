@@ -396,7 +396,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		props.insert(make_pair(uris.rdf_type,
 		                       Resource::Property(uris.ingen_Block)));
 		props.insert(make_pair(uris.lv2_prototype,
-		                       _app->forge().alloc_uri(plugin->uri())));
+		                       _app->forge().make_urid(plugin->uri())));
 		props.insert(make_pair(uris.ingen_polyphonic,
 		                       _app->forge().make(polyphonic)));
 		_app->interface()->put(Node::path_to_uri(path), props);
