@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_NODEIMPLIMPL_HPP
-#define INGEN_ENGINE_NODEIMPLIMPL_HPP
+#ifndef INGEN_ENGINE_NODEIMPL_HPP
+#define INGEN_ENGINE_NODEIMPL_HPP
 
 #include <cassert>
 #include <cstddef>
@@ -103,4 +103,4 @@ protected:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_NODEIMPLIMPL_HPP
+#endif // INGEN_ENGINE_NODEIMPL_HPP
