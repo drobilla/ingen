@@ -62,17 +62,17 @@ public:
 	public:
 		Impl(Engine&     e,
 		     GraphImpl*  graph,
-		     OutputPort* s,
-		     InputPort*  d);
+		     OutputPort* t,
+		     InputPort*  h);
 
-		bool execute(ProcessContext& context, bool set_dst_buffers);
+		bool execute(ProcessContext& context, bool set_head_buffers);
 
-		inline InputPort* head() { return _dst_input_port; }
+		inline InputPort* head() { return _head; }
 
 	private:
 		Engine&                       _engine;
-		OutputPort*                   _src_output_port;
-		InputPort*                    _dst_input_port;
+		OutputPort*                   _tail;
+		InputPort*                    _head;
 		SPtr<ArcImpl>                 _arc;
 		Raul::Array<PortImpl::Voice>* _voices;
 	};

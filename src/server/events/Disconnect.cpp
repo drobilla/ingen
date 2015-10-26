@@ -59,49 +59,49 @@ Disconnect::~Disconnect()
 
 Disconnect::Impl::Impl(Engine&     e,
                        GraphImpl*  graph,
-                       OutputPort* s,
-                       InputPort*  d)
+                       OutputPort* t,
+                       InputPort*  h)
 	: _engine(e)
-	, _src_output_port(s)
-	, _dst_input_port(d)
-	, _arc(graph->remove_arc(_src_output_port, _dst_input_port))
+	, _tail(t)
+	, _head(h)
+	, _arc(graph->remove_arc(_tail, _head))
 	, _voices(NULL)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	BlockImpl* const src_block = _src_output_port->parent_block();
-	BlockImpl* const dst_block = _dst_input_port->parent_block();
+	BlockImpl* const tail_block = _tail->parent_block();
+	BlockImpl* const head_block = _head->parent_block();
 
-	for (std::list<BlockImpl*>::iterator i = dst_block->providers().begin();
-	     i != dst_block->providers().end(); ++i) {
-		if ((*i) == src_block) {
-			dst_block->providers().erase(i);
+	for (std::list<BlockImpl*>::iterator i = head_block->providers().begin();
+	     i != head_block->providers().end(); ++i) {
+		if ((*i) == tail_block) {
+			head_block->providers().erase(i);
 			break;
 		}
 	}
 
-	for (std::list<BlockImpl*>::iterator i = src_block->dependants().begin();
-	     i != src_block->dependants().end(); ++i) {
-		if ((*i) == dst_block) {
-			src_block->dependants().erase(i);
+	for (std::list<BlockImpl*>::iterator i = tail_block->dependants().begin();
+	     i != tail_block->dependants().end(); ++i) {
+		if ((*i) == head_block) {
+			tail_block->dependants().erase(i);
 			break;
 		}
 	}
 
-	_dst_input_port->decrement_num_arcs();
+	_head->decrement_num_arcs();
 
-	if (_dst_input_port->num_arcs() == 0) {
-		if (!_dst_input_port->is_driver_port()) {
-			_voices = new Raul::Array<PortImpl::Voice>(_dst_input_port->poly());
-			_dst_input_port->get_buffers(*_engine.buffer_factory(),
-			                             _voices,
-			                             _dst_input_port->poly(),
-			                             false);
+	if (_head->num_arcs() == 0) {
+		if (!_head->is_driver_port()) {
+			_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
+			_head->get_buffers(*_engine.buffer_factory(),
+			                   _voices,
+			                   _head->poly(),
+			                   false);
 
-			if (_dst_input_port->is_a(PortType::CONTROL) ||
-			    _dst_input_port->is_a(PortType::CV)) {
+			if (_head->is_a(PortType::CONTROL) ||
+			    _head->is_a(PortType::CV)) {
 				// Reset buffer to control value
-				const float value = _dst_input_port->value().get<float>();
+				const float value = _head->value().get<float>();
 				for (uint32_t i = 0; i < _voices->size(); ++i) {
 					Buffer* buf = _voices->at(i).buffer.get();
 					buf->set_block(value, 0, buf->nframes());
@@ -136,23 +136,23 @@ Disconnect::pre_process()
 		return Event::pre_process_done(Status::PORT_NOT_FOUND, _head_path);
 	}
 
-	BlockImpl* const src_block = tail->parent_block();
-	BlockImpl* const dst_block = head->parent_block();
+	BlockImpl* const tail_block = tail->parent_block();
+	BlockImpl* const head_block = head->parent_block();
 
-	if (src_block->parent_graph() != dst_block->parent_graph()) {
+	if (tail_block->parent_graph() != head_block->parent_graph()) {
 		// Arc to a graph port from inside the graph
-		assert(src_block->parent() == dst_block || dst_block->parent() == src_block);
-		if (src_block->parent() == dst_block) {
-			_graph = dynamic_cast<GraphImpl*>(dst_block);
+		assert(tail_block->parent() == head_block || head_block->parent() == tail_block);
+		if (tail_block->parent() == head_block) {
+			_graph = dynamic_cast<GraphImpl*>(head_block);
 		} else {
-			_graph = dynamic_cast<GraphImpl*>(src_block);
+			_graph = dynamic_cast<GraphImpl*>(tail_block);
 		}
-	} else if (src_block == dst_block && dynamic_cast<GraphImpl*>(src_block)) {
+	} else if (tail_block == head_block && dynamic_cast<GraphImpl*>(tail_block)) {
 		// Arc from a graph input to a graph output (pass through)
-		_graph = dynamic_cast<GraphImpl*>(src_block);
+		_graph = dynamic_cast<GraphImpl*>(tail_block);
 	} else {
 		// Normal arc between blocks with the same parent
-		_graph = src_block->parent_graph();
+		_graph = tail_block->parent_graph();
 	}
 
 	if (!_graph) {
@@ -161,7 +161,7 @@ Disconnect::pre_process()
 		return Event::pre_process_done(Status::NOT_FOUND, _head_path);
 	}
 
-	if (src_block == NULL || dst_block == NULL) {
+	if (tail_block == NULL || head_block == NULL) {
 		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _head_path);
 	}
 
@@ -177,28 +177,28 @@ Disconnect::pre_process()
 }
 
 bool
-Disconnect::Impl::execute(ProcessContext& context, bool set_dst_buffers)
+Disconnect::Impl::execute(ProcessContext& context, bool set_head_buffers)
 {
 	ArcImpl* const port_arc =
-		_dst_input_port->remove_arc(context, _src_output_port);
+		_head->remove_arc(context, _tail);
 
 	if (!port_arc) {
 		return false;
-	} else if (_dst_input_port->is_driver_port()) {
+	} else if (_head->is_driver_port()) {
 		return true;
 	}
 
-	if (set_dst_buffers) {
+	if (set_head_buffers) {
 		if (_voices) {
-			_engine.maid()->dispose(_dst_input_port->set_voices(context, _voices));
+			_engine.maid()->dispose(_head->set_voices(context, _voices));
 		} else {
-			_dst_input_port->setup_buffers(*_engine.buffer_factory(),
-			                               _dst_input_port->poly(),
-			                               true);
+			_head->setup_buffers(*_engine.buffer_factory(),
+			                     _head->poly(),
+			                     true);
 		}
-		_dst_input_port->connect_buffers();
+		_head->connect_buffers();
 	} else {
-		_dst_input_port->recycle_buffers();
+		_head->recycle_buffers();
 	}
 
 	return true;
