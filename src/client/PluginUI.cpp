@@ -175,8 +175,6 @@ PluginUI::create(Ingen::World*          world,
                  SPtr<const BlockModel> block,
                  const LilvPlugin*      plugin)
 {
-	const URIs& uris = world->uris();
-
 	if (!PluginUI::ui_host) {
 		PluginUI::ui_host = suil_host_new(lv2_ui_write,
 		                                  lv2_ui_port_index,
