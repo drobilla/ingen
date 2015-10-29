@@ -194,6 +194,12 @@ BlockImpl::process(ProcessContext& context)
 	pre_process(context);
 
 	if (!_enabled) {
+		// Prepare port buffers for reading, converting/mixing if necessary
+		for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
+			_ports->at(i)->connect_buffers();
+			_ports->at(i)->pre_run(context);
+		}
+
 		// Dumb bypass
 		for (PortType t : { PortType::AUDIO, PortType::CV, PortType::ATOM }) {
 			for (uint32_t i = 0;; ++i) {
