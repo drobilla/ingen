@@ -134,6 +134,48 @@ s_add_set_event(const char* port_symbol,
 	((Delta*)user_data)->add_set_event(port_symbol, value, size, type);
 }
 
+static LilvNode*
+get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
+{
+	if (value.type() == uris.atom_Path) {
+		return lilv_new_file_uri(lworld, NULL, value.ptr<char>());
+	} else if (uris.forge.is_uri(value)) {
+		const std::string str = uris.forge.str(value, false);
+		if (str.substr(0, 5) == "file:") {
+			return lilv_new_uri(lworld, value.ptr<char>());
+		}
+	}
+	return NULL;
+}
+
+/** @page protocol
+ * @subsection loading Loading and Unloading Bundles
+ *
+ * The property ingen:loadedBundle on the engine can be used to load
+ * or unload bundles from Ingen's world.  For example:
+ *
+ * @code{.ttl}
+ * # Load /old.lv2
+ * []
+ *     a patch:Put ;
+ *     patch:subject </> ;
+ *     patch:body [
+ *         ingen:loadedBundle <file:///old.lv2>
+ *     ] .
+ *
+ * # Replace /old.lv2 with /new.lv2
+ * []
+ *     a patch:Patch ;
+ *     patch:subject </> ;
+ *     patch:remove [
+ *         ingen:loadedBundle <file:///old.lv2>
+ *     ];
+ *     patch:add [
+ *         ingen:loadedBundle <file:///new.lv2>
+ *     ] .
+ * @endcode
+ */
+
 bool
 Delta::pre_process()
 {
@@ -141,6 +183,7 @@ Delta::pre_process()
 
 	const bool is_graph_object = Node::uri_is_path(_subject);
 	const bool is_client       = (_subject == "ingen:/clients/this");
+	const bool is_engine       = (_subject == "ingen:/");
 	const bool is_file         = (_subject.substr(0, 5) == "file:");
 	bool       poly_changed    = false;
 
@@ -183,7 +226,8 @@ Delta::pre_process()
 		? static_cast<Ingen::Resource*>(_engine.store()->get(Node::uri_to_path(_subject)))
 		: static_cast<Ingen::Resource*>(_engine.block_factory()->plugin(_subject));
 
-	if (!_object && !is_client && (!is_graph_object || _type != Type::PUT)) {
+	if (!_object && !is_client && !is_engine &&
+	    (!is_graph_object || _type != Type::PUT)) {
 		return Event::pre_process_done(Status::NOT_FOUND, _subject);
 	}
 
@@ -229,6 +273,15 @@ Delta::pre_process()
 		}
 		if (_object) {
 			_object->remove_property(key, value);
+		} else if (is_engine && key == uris.ingen_loadedBundle) {
+ 			LilvWorld* lworld = _engine.world()->lilv_world();
+			LilvNode*  bundle = get_file_node(lworld, uris, value);
+			if (bundle) {
+				lilv_world_unload_bundle(lworld, bundle);
+				lilv_node_free(bundle);
+			} else {
+				_status = Status::BAD_VALUE;
+			}
 		}
 	}
 
@@ -365,6 +418,15 @@ Delta::pre_process()
 		} else if (is_client && key == uris.ingen_broadcast) {
 			_engine.broadcaster()->set_broadcast(
 				_request_client, value.get<int32_t>());
+		} else if (is_engine && key == uris.ingen_loadedBundle) {
+ 			LilvWorld* lworld = _engine.world()->lilv_world();
+			LilvNode*  bundle = get_file_node(lworld, uris, value);
+			if (bundle) {
+				lilv_world_load_bundle(lworld, bundle);
+				lilv_node_free(bundle);
+			} else {
+				_status = Status::BAD_VALUE;
+			}
 		}
 
 		if (_status != Status::NOT_PREPARED) {
@@ -468,6 +530,7 @@ Delta::execute(ProcessContext& context)
 					port->set_maximum(value);
 				}
 			}
+		case SpecialType::LOADED_BUNDLE:
 			break;
 		}
 	}

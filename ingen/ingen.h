@@ -53,6 +53,7 @@
 #define INGEN__file           INGEN_NS "file"
 #define INGEN__head           INGEN_NS "head"
 #define INGEN__incidentTo     INGEN_NS "incidentTo"
+#define INGEN__loadedBundle   INGEN_NS "loadedBundle"
 #define INGEN__polyphonic     INGEN_NS "polyphonic"
 #define INGEN__polyphony      INGEN_NS "polyphony"
 #define INGEN__prototype      INGEN_NS "prototype"

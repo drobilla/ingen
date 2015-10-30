@@ -113,6 +113,7 @@ public:
 	const Quark ingen_file;
 	const Quark ingen_head;
 	const Quark ingen_incidentTo;
+	const Quark ingen_loadedBundle;
 	const Quark ingen_polyphonic;
 	const Quark ingen_polyphony;
 	const Quark ingen_prototype;

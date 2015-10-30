@@ -85,7 +85,8 @@ private:
 		POLYPHONY,
 		POLYPHONIC,
 		CONTROL_BINDING,
-		PRESET
+		PRESET,
+		LOADED_BUNDLE
 	};
 
 	typedef std::vector<SetPortValue*> SetEvents;
