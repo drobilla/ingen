@@ -38,12 +38,12 @@ namespace Internals {
 class ControllerNode : public InternalBlock
 {
 public:
-	ControllerNode(InternalPlugin*     plugin,
-	               BufferFactory&      bufs,
-	               const Raul::Symbol& symbol,
-	               bool                polyphonic,
-	               GraphImpl*          parent,
-	               SampleRate          srate);
+	ControllerNode(InternalPlugin*      plugin,
+	               BufferFactory&       bufs,
+	               const Raul::Symbol&  symbol,
+	               bool                 polyphonic,
+	               GraphImpl*           parent,
+	               SampleRate           srate);
 
 	void run(ProcessContext& context);
 

@@ -98,6 +98,7 @@ private:
 	Raul::URI                _subject;
 	Resource::Properties     _properties;
 	Resource::Properties     _remove;
+	ClientUpdate             _update;
 	Ingen::Resource*         _object;
 	GraphImpl*               _graph;
 	CompiledGraph*           _compiled_graph;

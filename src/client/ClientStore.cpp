@@ -211,6 +211,12 @@ ClientStore::del(const Raul::URI& uri)
 {
 	if (Node::uri_is_path(uri)) {
 		remove_object(Node::uri_to_path(uri));
+	} else {
+		Plugins::iterator p = _plugins->find(uri);
+		if (p != _plugins->end()) {
+			_plugins->erase(p);
+			_signal_plugin_deleted.emit(uri);
+		}
 	}
 }
 

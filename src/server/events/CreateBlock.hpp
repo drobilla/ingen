@@ -19,8 +19,8 @@
 
 #include "ingen/Resource.hpp"
 
+#include "ClientUpdate.hpp"
 #include "Event.hpp"
-#include "events/Get.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -54,7 +54,7 @@ public:
 private:
 	Raul::Path            _path;
 	Resource::Properties& _properties;
-	Events::Get::Response _update;
+	ClientUpdate          _update;
 	GraphImpl*            _graph;
 	BlockImpl*            _block;
 	CompiledGraph*        _compiled_graph;

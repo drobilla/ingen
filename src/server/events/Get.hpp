@@ -19,8 +19,9 @@
 
 #include <vector>
 
-#include "Event.hpp"
 #include "BlockFactory.hpp"
+#include "ClientUpdate.hpp"
+#include "Event.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -50,52 +51,12 @@ public:
 	void execute(ProcessContext& context) {}
 	void post_process();
 
-	/** A sequence of puts and connects to respond to client with.
-	 * This is constructed in the pre_process() and later sent in
-	 * post_process() to avoid the need to lock.
-	 *
-	 * Ideally events (both server and client) would always be in a standard
-	 * message format so the Ingen protocol went the whole way through the
-	 * system, but for now things are controlled procedurally through
-	 * Interface, so this interim structure is necessary.
-	 */
-	struct Response {
-		void put(const Raul::URI&            uri,
-		         const Resource::Properties& props,
-		         Resource::Graph             ctx=Resource::Graph::DEFAULT);
-
-		void put_port(const PortImpl* port);
-		void put_block(const BlockImpl* block);
-		void put_graph(const GraphImpl* graph);
-		void put_plugin(PluginImpl* plugin);
-		void put_preset(const URIs&        uris,
-		                const Raul::URI&   plugin,
-		                const Raul::URI&   preset,
-		                const std::string& label);
-
-		void send(Interface* dest);
-
-		struct Put {
-			Raul::URI            uri;
-			Resource::Properties properties;
-			Resource::Graph      ctx;
-		};
-
-		struct Connect {
-			Raul::Path tail;
-			Raul::Path head;
-		};
-
-		std::vector<Put>     puts;
-		std::vector<Connect> connects;
-	};
-
 private:
 	const Raul::URI       _uri;
 	const Node*           _object;
 	PluginImpl*           _plugin;
 	BlockFactory::Plugins _plugins;
-	Response              _response;
+	ClientUpdate          _response;
 };
 
 } // namespace Events

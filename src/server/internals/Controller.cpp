@@ -41,12 +41,12 @@ InternalPlugin* ControllerNode::internal_plugin(URIs& uris) {
 		uris, Raul::URI(NS_INTERNALS "Controller"), Raul::Symbol("controller"));
 }
 
-ControllerNode::ControllerNode(InternalPlugin*     plugin,
-                               BufferFactory&      bufs,
-                               const Raul::Symbol& symbol,
-                               bool                polyphonic,
-                               GraphImpl*          parent,
-                               SampleRate          srate)
+ControllerNode::ControllerNode(InternalPlugin*      plugin,
+                               BufferFactory&       bufs,
+                               const Raul::Symbol&  symbol,
+                               bool                 polyphonic,
+                               GraphImpl*           parent,
+                               SampleRate           srate)
 	: InternalBlock(plugin, symbol, false, parent, srate)
 	, _learning(false)
 {

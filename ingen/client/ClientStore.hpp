@@ -109,6 +109,7 @@ public:
 
 	INGEN_SIGNAL(new_object, void, SPtr<ObjectModel>);
 	INGEN_SIGNAL(new_plugin, void, SPtr<PluginModel>);
+	INGEN_SIGNAL(plugin_deleted, void, Raul::URI);
 
 private:
 	SPtr<ObjectModel> _object(const Raul::Path& path);

@@ -88,6 +88,7 @@ GraphCanvas::GraphCanvas(App&                   app,
 	, _plugin_menu(NULL)
 	, _human_names(true)
 	, _show_port_names(true)
+	, _menu_dirty(false)
 {
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("canvas_menu");
 	xml->get_widget("canvas_menu", _menu);
@@ -157,6 +158,8 @@ GraphCanvas::GraphCanvas(App&                   app,
 
 	_app.store()->signal_new_plugin().connect(
 		sigc::mem_fun(this, &GraphCanvas::add_plugin));
+	_app.store()->signal_plugin_deleted().connect(
+		sigc::mem_fun(this, &GraphCanvas::remove_plugin));
 
 	// Connect widget signals to do things
 	_menu_load_plugin->signal_activate().connect(
@@ -178,7 +181,7 @@ GraphCanvas::show_menu(bool position, unsigned button, uint32_t time)
 {
 	_app.request_plugins_if_necessary();
 
-	if (!_internal_menu)
+	if (!_internal_menu || _menu_dirty)
 		build_menus();
 
 	if (position)
@@ -205,7 +208,9 @@ GraphCanvas::build_menus()
 	}
 
 	// Build skeleton LV2 plugin class heirarchy for 'Plugin' menu
-	if (!_plugin_menu) {
+	if (_plugin_menu) {
+		_plugin_menu->clear();
+	} else {
 		_plugin_menu = Gtk::manage(new PluginMenu(*_app.world()));
 		_menu->items().push_back(
 			Gtk::Menu_Helpers::ImageMenuElem(
@@ -223,6 +228,8 @@ GraphCanvas::build_menus()
 	for (const auto& p : *plugins.get()) {
 		add_plugin(p.second);
 	}
+
+	_menu_dirty = false;
 }
 
 void
@@ -305,6 +312,13 @@ GraphCanvas::add_plugin(SPtr<PluginModel> p)
 	} else if (_plugin_menu) {
 		_plugin_menu->add_plugin(p);
 	}
+}
+
+void
+GraphCanvas::remove_plugin(const Raul::URI& uri)
+{
+	// Flag menus as dirty so they will be rebuilt when needed next
+	_menu_dirty = true;
 }
 
 void

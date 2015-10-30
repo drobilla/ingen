@@ -63,6 +63,7 @@ public:
 	bool show_port_names() const { return _show_port_names; }
 
 	void add_plugin(SPtr<Client::PluginModel> pm);
+	void remove_plugin(const Raul::URI& uri);
 	void add_block(SPtr<const Client::BlockModel> bm);
 	void remove_block(SPtr<const Client::BlockModel> bm);
 	void add_port(SPtr<const Client::PortModel> pm);
@@ -149,6 +150,7 @@ private:
 
 	bool _human_names;
 	bool _show_port_names;
+	bool _menu_dirty;
 };
 
 } // namespace GUI

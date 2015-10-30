@@ -43,6 +43,7 @@ class PluginMenu : public Gtk::Menu
 public:
 	PluginMenu(Ingen::World& world);
 
+	void clear();
 	void add_plugin(SPtr<Client::PluginModel> p);
 
 	sigc::signal< void, WPtr<Client::PluginModel> > signal_load_plugin;

@@ -9,6 +9,7 @@ def build(bld):
             Broadcaster.cpp
             Buffer.cpp
             BufferFactory.cpp
+            ClientUpdate.cpp
             Context.cpp
             ControlBindings.cpp
             DuplexPort.cpp

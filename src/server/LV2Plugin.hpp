@@ -52,7 +52,14 @@ public:
 	World*            world()       const { return _world; }
 	const LilvPlugin* lilv_plugin() const { return _lilv_plugin; }
 
+	void update_properties();
+
 	void load_presets();
+
+	Raul::URI bundle_uri() const {
+		const LilvNode* bundle = lilv_plugin_get_bundle_uri(_lilv_plugin);
+		return Raul::URI(lilv_node_as_uri(bundle));
+	}
 
 private:
 	World*            _world;

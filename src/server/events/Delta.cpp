@@ -160,7 +160,7 @@ get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
  *     a patch:Put ;
  *     patch:subject </> ;
  *     patch:body [
- *         ingen:loadedBundle <file:///old.lv2>
+ *         ingen:loadedBundle <file:///old.lv2/>
  *     ] .
  *
  * # Replace /old.lv2 with /new.lv2
@@ -168,10 +168,10 @@ get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
  *     a patch:Patch ;
  *     patch:subject </> ;
  *     patch:remove [
- *         ingen:loadedBundle <file:///old.lv2>
+ *         ingen:loadedBundle <file:///old.lv2/>
  *     ];
  *     patch:add [
- *         ingen:loadedBundle <file:///new.lv2>
+ *         ingen:loadedBundle <file:///new.lv2/>
  *     ] .
  * @endcode
  */
@@ -277,7 +277,14 @@ Delta::pre_process()
  			LilvWorld* lworld = _engine.world()->lilv_world();
 			LilvNode*  bundle = get_file_node(lworld, uris, value);
 			if (bundle) {
+				for (const auto& p : _engine.block_factory()->plugins()) {
+					if (p.second->bundle_uri() == lilv_node_as_string(bundle)) {
+						p.second->set_is_zombie(true);
+						_update.del(p.second->uri());
+					}
+				}
 				lilv_world_unload_bundle(lworld, bundle);
+				_engine.block_factory()->refresh();
 				lilv_node_free(bundle);
 			} else {
 				_status = Status::BAD_VALUE;
@@ -423,6 +430,14 @@ Delta::pre_process()
 			LilvNode*  bundle = get_file_node(lworld, uris, value);
 			if (bundle) {
 				lilv_world_load_bundle(lworld, bundle);
+				const std::set<PluginImpl*> new_plugins =
+					_engine.block_factory()->refresh();
+
+				for (PluginImpl* p : new_plugins) {
+					if (p->bundle_uri() == lilv_node_as_string(bundle)) {
+						_update.put_plugin(p);
+					}
+				}
 				lilv_node_free(bundle);
 			} else {
 				_status = Status::BAD_VALUE;
@@ -568,6 +583,8 @@ Delta::post_process()
 	}
 
 	if (respond() == Status::SUCCESS) {
+		_update.send(_engine.broadcaster());
+
 		switch (_type) {
 		case Type::SET:
 			/* Kludge to avoid feedback for set events only.  The GUI
@@ -583,7 +600,7 @@ Delta::post_process()
 		case Type::PUT:
 			if (_type == Type::PUT && _subject.substr(0, 5) == "file:") {
 				// Preset save
-				Get::Response response;
+				ClientUpdate response;
 				response.put(_preset->uri(), _preset->properties());
 				response.send(_engine.broadcaster());
 			} else {

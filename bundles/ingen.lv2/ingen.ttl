@@ -72,6 +72,12 @@ ingen:sprungLayout
 	rdfs:label "sprung layout" ;
 	rdfs:comment """Whether or not the graph has a "sprung" force-directed layout.""" .
 
+ingen:loadedBundle
+	a rdf:Property ,
+		owl:ObjectProperty ;
+	rdfs:label "loaded bundle" ;
+	rdfs:comment "Whether or not a bundle is loaded into Ingen." .
+
 ingen:value
 	a rdf:Property ,
 		owl:DatatypeProperty ;

@@ -18,6 +18,7 @@
 #define INGEN_ENGINE_BLOCKFACTORY_HPP
 
 #include <map>
+#include <set>
 
 #include "ingen/World.hpp"
 #include "ingen/types.hpp"
@@ -38,6 +39,12 @@ class BlockFactory : public Raul::Noncopyable
 public:
 	explicit BlockFactory(Ingen::World* world);
 	~BlockFactory();
+
+	/** Reload plugin list.
+	 *
+	 * @return The set of newly loaded plugins.
+	 */
+	std::set<PluginImpl*> refresh();
 
 	void load_plugin(const Raul::URI& uri);
 

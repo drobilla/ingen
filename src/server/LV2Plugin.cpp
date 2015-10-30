@@ -39,20 +39,26 @@ LV2Plugin::LV2Plugin(World* world, const LilvPlugin* lplugin)
 {
 	set_property(_uris.rdf_type, _uris.lv2_Plugin);
 
-	LilvNode* minor = lilv_world_get(world->lilv_world(),
-	                                 lilv_plugin_get_uri(lplugin),
+	update_properties();
+}
+
+void
+LV2Plugin::update_properties()
+{
+	LilvNode* minor = lilv_world_get(_world->lilv_world(),
+	                                 lilv_plugin_get_uri(_lilv_plugin),
 	                                 _uris.lv2_minorVersion,
 	                                 NULL);
-	LilvNode* micro = lilv_world_get(world->lilv_world(),
-	                                 lilv_plugin_get_uri(lplugin),
+	LilvNode* micro = lilv_world_get(_world->lilv_world(),
+	                                 lilv_plugin_get_uri(_lilv_plugin),
 	                                 _uris.lv2_minorVersion,
 	                                 NULL);
 
 	if (lilv_node_is_int(minor) && lilv_node_is_int(micro)) {
 		set_property(_uris.lv2_minorVersion,
-		             world->forge().make(lilv_node_as_int(minor)));
+		             _world->forge().make(lilv_node_as_int(minor)));
 		set_property(_uris.lv2_microVersion,
-		             world->forge().make(lilv_node_as_int(micro)));
+		             _world->forge().make(lilv_node_as_int(micro)));
 	}
 
 	lilv_node_free(minor);

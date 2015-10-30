@@ -59,12 +59,44 @@ BlockFactory::plugins()
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 	if (!_has_loaded) {
-		_has_loaded = true;
-		// TODO: Plugin list refreshing
 		load_lv2_plugins();
 		_has_loaded = true;
 	}
 	return _plugins;
+}
+
+std::set<PluginImpl*>
+BlockFactory::refresh()
+{
+	// Record current plugins, and those that are currently zombies
+	const Plugins         old_plugins(_plugins);
+	std::set<PluginImpl*> zombies;
+	for (const auto& p : _plugins) {
+		if (p.second->is_zombie()) {
+			zombies.insert(p.second);
+		}
+	}
+
+	// Re-load plugins
+	load_lv2_plugins();
+
+	// Add any new plugins to response
+	std::set<PluginImpl*> new_plugins;
+	for (const auto& p : _plugins) {
+		Plugins::const_iterator o = old_plugins.find(p.first);
+		if (o == old_plugins.end()) {
+			new_plugins.insert(p.second);
+		}
+	}
+
+	// Add any resurrected plugins to response
+	for (const auto& z : zombies) {
+		if (!z->is_zombie()) {
+			new_plugins.insert(z);
+		}
+	}
+
+	return new_plugins;
 }
 
 PluginImpl*
@@ -182,9 +214,12 @@ BlockFactory::load_lv2_plugins()
 			continue;
 		}
 
-		if (_plugins.find(uri) == _plugins.end()) {
+		Plugins::iterator p = _plugins.find(uri);
+		if (p == _plugins.end()) {
 			LV2Plugin* const plugin = new LV2Plugin(_world, lv2_plug);
 			_plugins.insert(make_pair(uri, plugin));
+		} else if (lilv_plugin_verify(lv2_plug)) {
+			p->second->set_is_zombie(false);
 		}
 	}
 

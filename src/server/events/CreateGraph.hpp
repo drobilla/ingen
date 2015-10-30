@@ -55,7 +55,7 @@ private:
 
 	const Raul::Path         _path;
 	Resource::Properties     _properties;
-	Events::Get::Response    _update;
+	ClientUpdate             _update;
 	GraphImpl*               _graph;
 	GraphImpl*               _parent;
 	CompiledGraph*           _compiled_graph;

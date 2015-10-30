@@ -25,10 +25,22 @@ PluginMenu::PluginMenu(Ingen::World& world)
 	: _world(world)
 	, _classless_menu(NULL, NULL)
 {
+	clear();
+}
+
+void
+PluginMenu::clear()
+{
 	const LilvWorld*         lworld     = _world.lilv_world();
 	const LilvPluginClass*   lv2_plugin = lilv_world_get_plugin_class(lworld);
 	const LilvPluginClasses* classes    = lilv_world_get_plugin_classes(lworld);
 
+	// Empty completely
+	_classless_menu = MenuRecord(NULL, NULL);
+	_class_menus.clear();
+	items().clear();
+
+	// Build skeleton
 	LV2Children children;
 	LILV_FOREACH(plugin_classes, i, classes) {
 		const LilvPluginClass* c = lilv_plugin_classes_get(classes, i);
@@ -44,7 +56,7 @@ PluginMenu::PluginMenu(Ingen::World& world)
 
 	items().push_back(Gtk::Menu_Helpers::MenuElem("_Uncategorized"));
 	_classless_menu.item = &(items().back());
-	_classless_menu.menu = new Gtk::Menu();
+	_classless_menu.menu = Gtk::manage(new Gtk::Menu());
 	_classless_menu.item->set_submenu(*_classless_menu.menu);
 	_classless_menu.item->hide();
 }
@@ -109,7 +121,7 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 		menu->items().push_back(menu_elem);
 		Gtk::MenuItem* menu_item = &(menu->items().back());
 
-		Gtk::Menu* submenu = new Gtk::Menu();
+		Gtk::Menu* submenu = Gtk::manage(new Gtk::Menu());
 		menu_item->set_submenu(*submenu);
 
 		size_t num_child_items = build_plugin_class_menu(

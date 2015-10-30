@@ -49,6 +49,7 @@ public:
 	           const Raul::URI& uri)
 		: Resource(uris, uri)
 		, _type(type)
+		, _is_zombie(false)
 	{}
 
 	virtual ~PluginImpl() {}
@@ -63,6 +64,8 @@ public:
 
 	const Atom& type() const            { return _type; }
 	void        set_type(const Atom& t) { _type = t; }
+	bool        is_zombie() const       { return _is_zombie; }
+	void        set_is_zombie(bool t)   { _is_zombie = t; }
 
 	typedef std::pair<Raul::URI, std::string> Preset;
 	typedef std::map<Raul::URI, std::string>  Presets;
@@ -75,12 +78,17 @@ public:
 		return _presets;
 	}
 
+	virtual void update_properties() {}
+
 	virtual void load_presets() { _presets_loaded = true; }
+
+	virtual Raul::URI bundle_uri() const { return Raul::URI("ingen:/"); }
 
 protected:
 	Atom    _type;
 	Presets _presets;
 	bool    _presets_loaded;
+	bool    _is_zombie;
 };
 
 } // namespace Server
