@@ -37,13 +37,16 @@ class NS:
 
 class Interface:
     'The core Ingen interface'
-    def put(self, path, body):
+    def put(self, subject, body):
         pass
 
-    def get(self, path):
+    def patch(self, subject, remove, add):
         pass
 
-    def set(self, path, body):
+    def get(self, subject):
+        pass
+
+    def set(self, subject, key, value):
         pass
 
     def connect(self, tail, head):
@@ -52,7 +55,7 @@ class Interface:
     def disconnect(self, tail, head):
         pass
 
-    def delete(self, path):
+    def delete(self, subject):
         pass
 
 class Error(Exception):
@@ -216,42 +219,54 @@ class Remote(Interface):
         # Update model with remaining information, e.g. patch:Put updates
         return self.update_model(response_model)
 
-    def get(self, path):
+    def get(self, subject):
         return self.send('''
 []
- 	a patch:Get ;
- 	patch:subject <ingen:/graph%s> .
-''' % path)
+	a patch:Get ;
+	patch:subject <%s> .
+''' % subject)
 
-    def put(self, path, body):
+    def put(self, subject, body):
         return self.send('''
 []
- 	a patch:Put ;
- 	patch:subject <ingen:/graph%s> ;
- 	patch:body [
-%s
-	] .
-''' % (path, body))
-
-    def set(self, path, body):
-        return self.send('''
-[]
-	a patch:Set ;
-	patch:subject <ingen:/graph%s> ;
+	a patch:Put ;
+	patch:subject <%s> ;
 	patch:body [
 %s
 	] .
-''' % (path, body))
+''' % (subject, body))
+
+    def patch(self, subject, remove, add):
+        return self.send('''
+[]
+	a patch:Patch ;
+	patch:subject <%s> ;
+	patch:remove [
+%s
+	] ;
+	patch:add [
+%s
+	] .
+''' % (subject, remove, add))
+
+    def set(self, subject, key, value):
+        return self.send('''
+[]
+	a patch:Set ;
+	patch:subject <%s> ;
+	patch:property <%s> ;
+    patch:value %s .
+''' % (subject, key, value))
 
     def connect(self, tail, head):
         return self.send('''
 []
 	a patch:Put ;
-	patch:subject <ingen:/graph%s> ;
+	patch:subject <%s> ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/graph%s> ;
-		ingen:head <ingen:/graph%s> ;
+		ingen:tail <%s> ;
+		ingen:head <%s> ;
 	] .
 ''' % (os.path.commonprefix([tail, head]), tail, head))
 
@@ -261,14 +276,14 @@ class Remote(Interface):
 	a patch:Delete ;
 	patch:body [
 		a ingen:Arc ;
-		ingen:tail <ingen:/graph%s> ;
-		ingen:head <ingen:/graph%s> ;
+		ingen:tail <%s> ;
+		ingen:head <%s> ;
 	] .
 ''' % (tail, head))
 
-    def delete(self, path):
+    def delete(self, subject):
         return self.send('''
 []
 	a patch:Delete ;
-	patch:subject <ingen:/graph%s> .
-''' % path)
+	patch:subject <%s> .
+''' % subject)

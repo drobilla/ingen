@@ -38,28 +38,30 @@ Options:
                   an address like tcp:///my-ingen-server-host:16180
 
 Commands:
-    put PATH TURTLE_FRAGMENT
-    set PATH TURTLE_FRAGMENT
-    connect TAIL_PATH HEAD_PATH
-    disconnect TAIL_PATH HEAD_PATH
-    delete PATH
+    put SUBJECT BODY
+    set SUBJECT BODY
+    connect TAIL HEAD
+    disconnect TAIL HEAD
+    patch SUBJECT REMOVE ADD
+    delete SUBJECT
     help
     exit
 
-Paths are UNIX-style paths with strict LV2 symbol components, e.g. /foo/bar_2.
-Turtle fragments are used verbatim as the body of blank nodes, the syntax is
-identical to the descriptions in Ingen patch files.
+Subjects are specified by URI, relative to the engine.  The top level audio
+graph has the path /graph, so for example, a port on a block might have the
+(relative) URI /graph/osc/freq.
+
+Bodies are specified in fragments of Turtle, just as written in Ingen graph files.
 
 Example:
-    ingenish put /left_in 'a lv2:InputPort ; a lv2:AudioPort'
-    ingenish put /left_out 'a lv2:OutputPort ; a lv2:AudioPort'
-
-    ingenish put /tone 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Shepard>'
-    ingenish put /combo 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Combo>'
-    ingenish connect /left_in /tone/left_in
-    ingenish connect /tone/left_out /combo/left_in
-    ingenish connect /combo/left_out /left_out
-    ingenish set /tone/output 'ingen:value 0.7'
+    put /graph/left_in 'a lv2:InputPort ; a lv2:AudioPort'
+    put /graph/left_out 'a lv2:OutputPort ; a lv2:AudioPort'
+    put /graph/tone 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Shepard>'
+    put /graph/combo 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Combo>'
+    connect /graph/left_in /graph/tone/left_in
+    connect /graph/tone/left_out /graph/combo/left_in
+    connect /graph/combo/left_out /graph/left_out
+    set /graph/tone/output ingen:value 0.7
 ''')
 
 def run(cmd):
@@ -71,8 +73,10 @@ def run(cmd):
         print(ingen.get(cmd[1]).serialize(format='n3'))
     elif cmd[0] == 'put' and len(cmd) == 3:
         return ingen.put(cmd[1], cmd[2])
-    elif cmd[0] == 'set' and len(cmd) == 3:
-        return ingen.set(cmd[1], cmd[2])
+    elif cmd[0] == 'patch' and len(cmd) == 4:
+        return ingen.patch(cmd[1], cmd[2], cmd[3])
+    elif cmd[0] == 'set' and len(cmd) == 4:
+        return ingen.set(cmd[1], cmd[2], cmd[3])
     elif cmd[0] == 'connect' and len(cmd) == 3:
         return ingen.connect(cmd[1], cmd[2])
     elif cmd[0] == 'disconnect' and len(cmd) == 3:
