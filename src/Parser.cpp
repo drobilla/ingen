@@ -127,10 +127,9 @@ get_properties(Ingen::World*     world,
                const Sord::Node& subject,
                Resource::Graph   ctx)
 {
-	SerdChunk       out    = { NULL, 0 };
-	LV2_URID_Map*   map    = &world->uri_map().urid_map_feature()->urid_map;
-	LV2_URID_Unmap* unmap  = &world->uri_map().urid_unmap_feature()->urid_unmap;
-	Sratom*         sratom = sratom_new(map);
+	SerdChunk     out    = { NULL, 0 };
+	LV2_URID_Map* map    = &world->uri_map().urid_map_feature()->urid_map;
+	Sratom*       sratom = sratom_new(map);
 
 	LV2_Atom_Forge forge;
 	lv2_atom_forge_init(&forge, map);
