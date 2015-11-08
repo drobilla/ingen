@@ -25,6 +25,12 @@ try:
 except:
     pass
 
+# Python 2 compatibility
+try:
+    input = raw_input
+except NameError:
+    pass
+
 def print_usage():
     print('''Usage: ingenish [OPTION]... [COMMAND [ARGUMENT]...]
 
@@ -39,7 +45,7 @@ Options:
 
 Commands:
     put SUBJECT BODY
-    set SUBJECT BODY
+    set SUBJECT KEY VALUE
     connect TAIL HEAD
     disconnect TAIL HEAD
     patch SUBJECT REMOVE ADD
@@ -101,7 +107,7 @@ if len(sys.argv) - a == 0:
     print('Ingen server at %s' % server)
     while True:
         try:
-            run(shlex.split(raw_input('> ')))
+            run(shlex.split(input('> ')))
         except (EOFError, KeyboardInterrupt, SystemExit):
             break
         except:

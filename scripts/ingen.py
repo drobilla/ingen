@@ -185,8 +185,7 @@ class Remote(Interface):
 
         # Receive response and parse into a model
         response_str = self.recv()
-        response_model = rdflib.Graph()
-        response_model.namespace_manager = self.ns_manager
+        response_model = rdflib.Graph(namespace_manager=self.ns_manager)
         response_model.parse(StringIO(response_str), self.server_base, format='n3')
 
         # Handle response (though there should be only one)
