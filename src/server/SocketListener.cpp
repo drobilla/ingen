@@ -16,8 +16,12 @@
 
 #include <errno.h>
 #include <poll.h>
+#include <signal.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include <sstream>
+#include <string>
 #include <thread>
 
 #include "ingen/Configuration.hpp"
@@ -34,6 +38,26 @@
 namespace Ingen {
 namespace Server {
 
+static std::string
+get_link_target(const char* link_path)
+{
+	// Stat the link to get the required size for the target path
+	struct stat link_stat;
+	if (lstat(link_path, &link_stat)) {
+		return std::string();
+	}
+
+	// Allocate buffer and read link target
+	char* target = (char*)calloc(1, link_stat.st_size + 1);
+	if (readlink(link_path, target, link_stat.st_size) != -1) {
+		const std::string result(target);
+		free(target);
+		return result;
+	}
+
+	return std::string();
+}
+
 void
 SocketListener::ingen_listen(Engine*       engine,
                              Raul::Socket* unix_sock,
@@ -41,15 +65,43 @@ SocketListener::ingen_listen(Engine*       engine,
 {
 	Ingen::World* world = engine->world();
 
-	const std::string unix_path(world->conf().option("socket").ptr<char>());
+	const std::string link_path(world->conf().option("socket").ptr<char>());
+	const std::string unix_path(link_path + "." + std::to_string(getpid()));
 
-	// Bind UNIX socket
+	// Bind UNIX socket and create PID-less symbolic link
 	const Raul::URI unix_uri(unix_scheme + unix_path);
+	bool            make_link = true;
 	if (!unix_sock->bind(unix_uri) || !unix_sock->listen()) {
 		world->log().error("Failed to create UNIX socket\n");
 		unix_sock->close();
+		make_link = false;
 	} else {
-		world->log().info(fmt("Listening on socket %1%\n") % unix_uri);
+		const std::string old_path = get_link_target(link_path.c_str());
+		if (!old_path.empty()) {
+			const std::string suffix = old_path.substr(old_path.find_last_of(".") + 1);
+			const pid_t       pid    = std::stoi(suffix);
+			if (!kill(pid, 0)) {
+				make_link = false;
+				world->log().warn(fmt("Another Ingen instance is running at %1% => %2%\n")
+				                  % link_path % old_path);
+			} else {
+				world->log().warn(fmt("Replacing old link %1% => %2%\n")
+				                  % link_path % old_path);
+				unlink(link_path.c_str());
+			}
+		}
+
+		if (make_link) {
+			if (!symlink(unix_path.c_str(), link_path.c_str())) {
+				world->log().info(fmt("Listening on %1%\n") %
+				                  (unix_scheme + link_path));
+			} else {
+				world->log().error(fmt("Failed to link %1% => %2% (%3%)\n")
+				                   % link_path % unix_path % strerror(errno));
+			}
+		} else {
+			world->log().info(fmt("Listening on %1%\n") % unix_uri);
+		}
 	}
 
 	// Bind TCP socket
@@ -108,6 +160,10 @@ SocketListener::ingen_listen(Engine*       engine,
 				new SocketServer(*world, *engine, conn);
 			}
 		}
+	}
+
+	if (make_link) {
+		unlink(link_path.c_str());
 	}
 }
 
