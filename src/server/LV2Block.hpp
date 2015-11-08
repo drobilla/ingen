@@ -48,6 +48,8 @@ public:
 
 	bool instantiate(BufferFactory& bufs);
 
+	LilvInstance* instance() { return instance(0); }
+
 	BlockImpl* duplicate(Engine&             engine,
 	                     const Raul::Symbol& symbol,
 	                     GraphImpl*          parent);

@@ -22,7 +22,9 @@
 #include <glibmm/module.h>
 
 #include "ingen/Configuration.hpp"
+#include "ingen/DataAccess.hpp"
 #include "ingen/EngineBase.hpp"
+#include "ingen/InstanceAccess.hpp"
 #include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
@@ -125,6 +127,8 @@ public:
 		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map->urid_map_feature());
 		lv2_features->add_feature(uri_map->urid_unmap_feature());
+		lv2_features->add_feature(SPtr<InstanceAccess>(new InstanceAccess()));
+		lv2_features->add_feature(SPtr<DataAccess>(new DataAccess()));
 		lilv_world_load_all(lilv_world);
 
 		// Set up RDF namespaces

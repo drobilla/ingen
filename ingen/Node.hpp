@@ -20,6 +20,7 @@
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
+#include "lilv/lilv.h"
 #include "raul/Path.hpp"
 
 namespace Raul {
@@ -65,6 +66,9 @@ public:
 	virtual uint32_t        num_ports()          const { return 0; }
 	virtual Node*           port(uint32_t index) const { return NULL; }
 	virtual const Resource* plugin()             const { return NULL; }
+
+	// Plugin blocks only
+	virtual LilvInstance* instance() { return NULL; }
 
 	// All objects
 	virtual GraphType           graph_type()   const = 0;
