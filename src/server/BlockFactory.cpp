@@ -21,8 +21,8 @@
 #include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/World.hpp"
+#include "internals/BlockDelay.hpp"
 #include "internals/Controller.hpp"
-#include "internals/Delay.hpp"
 #include "internals/Note.hpp"
 #include "internals/Time.hpp"
 #include "internals/Trigger.hpp"
@@ -111,11 +111,11 @@ void
 BlockFactory::load_internal_plugins()
 {
 	Ingen::URIs& uris = _world->uris();
+	InternalPlugin* block_delay_plug = BlockDelayNode::internal_plugin(uris);
+	_plugins.insert(make_pair(block_delay_plug->uri(), block_delay_plug));
+
 	InternalPlugin* controller_plug = ControllerNode::internal_plugin(uris);
 	_plugins.insert(make_pair(controller_plug->uri(), controller_plug));
-
-	InternalPlugin* delay_plug = DelayNode::internal_plugin(uris);
-	_plugins.insert(make_pair(delay_plug->uri(), delay_plug));
 
 	InternalPlugin* note_plug = NoteNode::internal_plugin(uris);
 	_plugins.insert(make_pair(note_plug->uri(), note_plug));

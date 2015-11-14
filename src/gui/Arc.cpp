@@ -14,39 +14,31 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_GUI_ARC_HPP
-#define INGEN_GUI_ARC_HPP
+#include "Arc.hpp"
+#include "ingen/client/ArcModel.hpp"
+#include "ingen/client/BlockModel.hpp"
 
-#include <cassert>
-
-#include "ganv/Edge.hpp"
-#include "ingen/types.hpp"
+#define NS_INTERNALS "http://drobilla.net/ns/ingen-internals#"
 
 namespace Ingen {
-
-namespace Client { class ArcModel; }
-
 namespace GUI {
 
-/** An Arc (directed edge) in a Graph.
- *
- * \ingroup GUI
- */
-class Arc : public Ganv::Edge
+Arc::Arc(Ganv::Canvas&                canvas,
+         SPtr<const Client::ArcModel> model,
+         Ganv::Node*                  src,
+         Ganv::Node*                  dst)
+	: Ganv::Edge(canvas, src, dst)
+	, _arc_model(model)
 {
-public:
-	Arc(Ganv::Canvas&                canvas,
-	    SPtr<const Client::ArcModel> model,
-	    Ganv::Node*                  src,
-	    Ganv::Node*                  dst);
-
-	SPtr<const Client::ArcModel> model() const { return _arc_model; }
-
-private:
-	SPtr<const Client::ArcModel> _arc_model;
-};
+	SPtr<const Client::ObjectModel> tparent = model->tail()->parent();
+	SPtr<const Client::BlockModel>  tparent_block;
+	if ((tparent_block = dynamic_ptr_cast<const Client::BlockModel>(tparent))) {
+		if (tparent_block->plugin_uri() == NS_INTERNALS "BlockDelay") {
+			g_object_set(_gobj, "dash-length", 4.0, NULL);
+			set_constraining(false);
+		}
+	}
+}
 
 } // namespace GUI
 } // namespace Ingen
-
-#endif // INGEN_GUI_ARC_HPP

@@ -16,7 +16,7 @@
 
 #include "ingen/URIs.hpp"
 #include "internals/Controller.hpp"
-#include "internals/Delay.hpp"
+#include "internals/BlockDelay.hpp"
 #include "internals/Note.hpp"
 #include "internals/Time.hpp"
 #include "internals/Trigger.hpp"
@@ -50,10 +50,10 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
 {
 	const SampleCount srate = engine.driver()->sample_rate();
 
-	if (uri() == NS_INTERNALS "Controller") {
+	if (uri() == NS_INTERNALS "BlockDelay") {
+		return new BlockDelayNode(this, bufs, symbol, polyphonic, parent, srate);
+	} else if (uri() == NS_INTERNALS "Controller") {
 		return new ControllerNode(this, bufs, symbol, polyphonic, parent, srate);
-	} else if (uri() == NS_INTERNALS "Delay") {
-		return new DelayNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else if (uri() == NS_INTERNALS "Note") {
 		return new NoteNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else if (uri() == NS_INTERNALS "Time") {

@@ -27,7 +27,7 @@ internals:Time
 	rdfs:label "Time" ;
 	rdfs:comment """Emits time and transport information like tempo, time signature, and speed.  The emitted events are in the standard LV2 format expected by transport-aware LV2 plugins.""" .
 
-internals:Delay
+internals:BlockDelay
 	a ingen:Internal ;
-	rdfs:label "Delay" ;
-	rdfs:comment """Special internal delay block.  In theory, this block can be used for sample-accurate delay loops since Ingen can specially handle this case unlike a generic LV2 plugin.  However, this is not currently implemented.""" .
+	rdfs:label "Block Delay" ;
+	rdfs:comment """Special internal delay block.  This delays its input one full process cycle (or 'block').  It is necessary to have at least one block delay in any cycle in the graph, i.e. any feedback loops must contain a block delay.""" .

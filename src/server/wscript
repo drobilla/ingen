@@ -44,8 +44,8 @@ def build(bld):
             events/SetPortValue.cpp
             events/Undo.cpp
             ingen_engine.cpp
+            internals/BlockDelay.cpp
             internals/Controller.cpp
-            internals/Delay.cpp
             internals/Note.cpp
             internals/Time.cpp
             internals/Trigger.cpp

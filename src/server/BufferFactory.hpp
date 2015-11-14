@@ -46,7 +46,9 @@ public:
 	~BufferFactory();
 
 	static uint32_t audio_buffer_size(SampleCount nframes);
-	uint32_t        default_size(LV2_URID type) const;
+
+	uint32_t audio_buffer_size() const;
+	uint32_t default_size(LV2_URID type) const;
 
 	BufferRef get_buffer(LV2_URID type,
 	                     LV2_URID value_type,

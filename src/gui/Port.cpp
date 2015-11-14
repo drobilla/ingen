@@ -525,6 +525,7 @@ Port::property_changed(const Raul::URI& key, const Atom& value)
 			set_label(value.ptr<char>());
 		}
 	} else if (key == uris.rdf_type || key == uris.atom_bufferType) {
+		set_fill_color(_app.style()->get_port_color(model().get()));
 		Ganv::Port::set_beveled(model()->is_a(uris.lv2_ControlPort) ||
 		                        model()->has_property(uris.atom_bufferType,
 		                                              uris.atom_Sequence));

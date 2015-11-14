@@ -106,7 +106,7 @@ Style::get_port_color(const Client::PortModel* p)
 	}
 
 	_app.log().warn(fmt("No known port type for %1%\n") % p->path());
-	return 0x666666FF;
+	return 0x555555FF;
 }
 
 } // namespace GUI

@@ -14,11 +14,10 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_INTERNALS_DELAY_HPP
-#define INGEN_INTERNALS_DELAY_HPP
+#ifndef INGEN_INTERNALS_BLOCKDELAY_HPP
+#define INGEN_INTERNALS_BLOCKDELAY_HPP
 
-#include <math.h>
-
+#include "BufferRef.hpp"
 #include "InternalBlock.hpp"
 #include "types.hpp"
 
@@ -32,17 +31,17 @@ class BufferFactory;
 
 namespace Internals {
 
-class DelayNode : public InternalBlock
+class BlockDelayNode : public InternalBlock
 {
 public:
-	DelayNode(InternalPlugin*     plugin,
-	          BufferFactory&      bufs,
-	          const Raul::Symbol& symbol,
-	          bool                polyphonic,
-	          GraphImpl*          parent,
-	          SampleRate          srate);
+	BlockDelayNode(InternalPlugin*     plugin,
+	               BufferFactory&      bufs,
+	               const Raul::Symbol& symbol,
+	               bool                polyphonic,
+	               GraphImpl*          parent,
+	               SampleRate          srate);
 
-	~DelayNode();
+	~BlockDelayNode();
 
 	void activate(BufferFactory& bufs);
 
@@ -50,24 +49,14 @@ public:
 
 	static InternalPlugin* internal_plugin(URIs& uris);
 
-	float delay_samples() const { return _delay_samples; }
-
 private:
-	inline float& buffer_at(int64_t phase) const { return _buffer[phase & _buffer_mask]; }
-
-	InputPort*  _delay_port;
 	InputPort*  _in_port;
 	OutputPort* _out_port;
-	float*      _buffer;
-	uint32_t    _buffer_length;
-	uint32_t    _buffer_mask;
-	uint64_t    _write_phase;
-	float       _last_delay_time;
-	float       _delay_samples;
+	BufferRef   _buffer;
 };
 
 } // namespace Server
 } // namespace Ingen
 } // namespace Internals
 
-#endif // INGEN_INTERNALS_DELAY_HPP
+#endif // INGEN_INTERNALS_BLOCKDELAY_HPP
