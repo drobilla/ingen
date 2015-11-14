@@ -224,7 +224,7 @@ NodeMenu::on_save_preset_activated()
 			{ _app->uris().rdfs_label,
 			  _app->forge().alloc(basename) },
 			{ _app->uris().lv2_prototype,
-			  _app->forge().alloc_uri(block()->uri()) }};
+			  _app->forge().make_urid(block()->uri()) }};
 		_app->interface()->put(Raul::URI(real_uri), props);
 	}
 }

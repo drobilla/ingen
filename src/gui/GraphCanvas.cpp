@@ -720,7 +720,7 @@ GraphCanvas::paste()
 		const Raul::Path& new_path = avoider.map_path(parent.child(node->path()));
 
 		Node::Properties props{{uris.lv2_prototype,
-		                        _app.forge().alloc_uri(old_uri)}};
+		                        _app.forge().make_urid(old_uri)}};
 
 		// Set the same types
 		const auto t = node->properties().equal_range(uris.rdf_type);
