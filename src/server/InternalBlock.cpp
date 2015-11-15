@@ -31,15 +31,17 @@ InternalBlock::InternalBlock(PluginImpl*         plugin,
 
 
 void
-InternalBlock::pre_process(ProcessContext& context) {
-	/* Output sequences are initialized in LV2 format, an atom:Chunk with size
-	   set to the capacity of the buffer.  Internal nodes don't care, so clear
-	   to an empty sequences so appending events results in a valid output. */
+InternalBlock::pre_process(ProcessContext& context)
+{
 	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);
 		if (port->is_input()) {
 			port->pre_process(context);
-		} else {
+		} else if (port->buffer_type() == _plugin->uris().atom_Sequence) {
+			/* Output sequences are initialized in LV2 format, an atom:Chunk
+			   with size set to the capacity of the buffer.  Internal nodes
+			   don't care, so clear to an empty sequences so appending events
+			   results in a valid output. */
 			for (uint32_t v = 0; v < port->poly(); ++v) {
 				port->buffer(v)->clear();
 			}

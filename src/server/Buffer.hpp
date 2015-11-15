@@ -60,6 +60,9 @@ public:
 	inline LV2_URID type()       const { return _type; }
 	inline LV2_URID value_type() const { return _value_type; }
 	inline uint32_t capacity()   const { return _capacity; }
+	inline uint32_t size()       const {
+		return is_audio() ? _capacity : sizeof(LV2_Atom) + get<LV2_Atom>()->size;
+	}
 
 	void set_type(LV2_URID type, LV2_URID value_type);
 

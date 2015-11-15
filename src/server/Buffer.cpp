@@ -158,12 +158,10 @@ Buffer::copy(const Context& context, const Buffer* src)
 {
 	if (!_buf) {
 		return;
-	} else if (is_audio() && src->is_audio()) {
-		memcpy(_buf, src->_buf, src->_capacity);
 	} else if (_type == src->type()) {
-		const LV2_Atom* src_atom = src->get<const LV2_Atom>();
-		if (lv2_atom_total_size(src_atom) <= _capacity) {
-			memcpy(_buf, src_atom, lv2_atom_total_size(src_atom));
+		const uint32_t src_size = src->size();
+		if (src_size <= _capacity) {
+			memcpy(_buf, src->_buf, src_size);
 		} else {
 			clear();
 		}
