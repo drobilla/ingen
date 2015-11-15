@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <list>
+#include <set>
 
 #include "ingen/Store.hpp"
 #include "raul/Maid.hpp"
@@ -72,11 +72,13 @@ Disconnect::Impl::Impl(Engine&     e,
 	BlockImpl* const tail_block = _tail->parent_block();
 	BlockImpl* const head_block = _head->parent_block();
 
+	// Remove tail from head's providers
 	std::set<BlockImpl*>::iterator hp = head_block->providers().find(tail_block);
 	if (hp != head_block->providers().end()) {
 		head_block->providers().erase(hp);
 	}
 
+	// Remove head from tail's providers
 	std::set<BlockImpl*>::iterator td = tail_block->dependants().find(head_block);
 	if (td != tail_block->dependants().end()) {
 		tail_block->dependants().erase(td);
@@ -173,8 +175,7 @@ Disconnect::pre_process()
 bool
 Disconnect::Impl::execute(ProcessContext& context, bool set_head_buffers)
 {
-	ArcImpl* const port_arc =
-		_head->remove_arc(context, _tail);
+	ArcImpl* const port_arc = _head->remove_arc(context, _tail);
 
 	if (!port_arc) {
 		return false;

@@ -111,6 +111,7 @@ Connect::pre_process()
 	   provider...
 	*/
 	if (tail_block != head_block && tail_block->parent() == head_block->parent()) {
+		// The tail block is now a dependency (provider) of the head block
 		head_block->providers().insert(tail_block);
 		tail_block->dependants().insert(head_block);
 	}
