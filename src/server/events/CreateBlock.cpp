@@ -138,7 +138,7 @@ CreateBlock::pre_process()
 	   TODO: Since the block is not connected at this point, a full compilation
 	   could be avoided and the block simply appended. */
 	if (_graph->enabled()) {
-		_compiled_graph = _graph->compile();
+		_compiled_graph = CompiledGraph::compile(_graph);
 	}
 
 	_update.put_block(_block);
@@ -149,7 +149,7 @@ CreateBlock::pre_process()
 void
 CreateBlock::execute(RunContext& context)
 {
-	if (_block) {
+	if (_status == Status::SUCCESS) {
 		_graph->set_compiled_graph(_compiled_graph);
 		_compiled_graph = NULL;  // Graph takes ownership
 	}

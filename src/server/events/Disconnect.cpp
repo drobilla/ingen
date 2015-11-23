@@ -167,7 +167,7 @@ Disconnect::pre_process()
 	                 dynamic_cast<InputPort*>(head));
 
 	if (_graph->enabled())
-		_compiled_graph = _graph->compile();
+		_compiled_graph = CompiledGraph::compile(_graph);
 
 	return Event::pre_process_done(Status::SUCCESS);
 }

@@ -178,9 +178,10 @@ public:
 	uint32_t         num_ports() const { return _ports ? _ports->size() : 0; }
 	virtual uint32_t polyphony() const { return _polyphony; }
 
-	/** Used by the process order finding algorithm (ie during connections) */
-	bool traversed() const { return _traversed; }
-	void traversed(bool b) { _traversed = b; }
+	/** Mark used during graph compilation */
+	enum class Mark { UNVISITED, VISITING, VISITED };
+	Mark get_mark() const { return _mark; }
+	void set_mark(Mark m) { _mark = m; }
 
 protected:
 	PortImpl* nth_port_by_type(uint32_t n, bool input, PortType type);
@@ -190,10 +191,10 @@ protected:
 	uint32_t                _polyphony;
 	std::set<BlockImpl*>    _providers; ///< Blocks connected to this one's input ports
 	std::set<BlockImpl*>    _dependants; ///< Blocks this one's output ports are connected to
+	Mark                    _mark; ///< Mark for graph compilation algorithm
 	bool                    _polyphonic;
 	bool                    _activated;
 	bool                    _enabled;
-	bool                    _traversed; ///< Flag for process order algorithm
 };
 
 } // namespace Server

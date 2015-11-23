@@ -374,8 +374,11 @@ Delta::pre_process()
 					if (value.type() == uris.forge.Bool) {
 						op = SpecialType::ENABLE;
 						// FIXME: defer this until all other metadata has been processed
-						if (value.get<int32_t>() && !_graph->enabled())
-							_compiled_graph = _graph->compile();
+						if (value.get<int32_t>() && !_graph->enabled()) {
+							if (!(_compiled_graph = CompiledGraph::compile(_graph))) {
+								_status = Status::COMPILATION_FAILED;
+							}
+						}
 					} else {
 						_status = Status::BAD_VALUE_TYPE;
 					}

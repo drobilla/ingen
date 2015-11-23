@@ -136,8 +136,11 @@ DisconnectAll::pre_process()
 			                 dynamic_cast<InputPort*>(a->head())));
 	}
 
-	if (!_deleting && _parent->enabled())
-		_compiled_graph = _parent->compile();
+	if (!_deleting && _parent->enabled()) {
+		if (!(_compiled_graph = CompiledGraph::compile(_parent))) {
+			return Event::pre_process_done(Status::COMPILATION_FAILED);
+		}
+	}
 
 	return Event::pre_process_done(Status::SUCCESS);
 }

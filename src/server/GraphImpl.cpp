@@ -233,11 +233,8 @@ GraphImpl::process(RunContext& context)
 void
 GraphImpl::run(RunContext& context)
 {
-	if (_compiled_graph && _compiled_graph->size() > 0) {
-		// Run all blocks
-		for (size_t i = 0; i < _compiled_graph->size(); ++i) {
-			(*_compiled_graph)[i].block()->process(context);
-		}
+	if (_compiled_graph) {
+		_compiled_graph->run(context);
 	}
 }
 
@@ -250,10 +247,11 @@ GraphImpl::set_buffer_size(RunContext&    context,
 	BlockImpl::set_buffer_size(context, bufs, type, size);
 
 	if (_compiled_graph) {
-		for (size_t i = 0; i < _compiled_graph->size(); ++i) {
-			const CompiledBlock& block = (*_compiled_graph)[i];
-			block.block()->set_buffer_size(context, bufs, type, size);
-		}
+		// FIXME
+		// for (size_t i = 0; i < _compiled_graph->size(); ++i) {
+		// 	const CompiledBlock& block = (*_compiled_graph)[i];
+		// 	block.block()->set_buffer_size(context, bufs, type, size);
+		// }
 	}
 }
 
@@ -351,56 +349,6 @@ GraphImpl::build_ports_array()
 	assert(i == n);
 
 	return result;
-}
-
-static inline void
-compile_recursive(BlockImpl* n, CompiledGraph* output)
-{
-	if (n == NULL || n->traversed())
-		return;
-
-	n->traversed(true);
-	assert(output != NULL);
-
-	for (auto& p : n->providers())
-		if (!p->traversed())
-			compile_recursive(p, output);
-
-	output->push_back(CompiledBlock(n));
-}
-
-CompiledGraph*
-GraphImpl::compile()
-{
-	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-
-	CompiledGraph* const compiled_graph = new CompiledGraph();
-
-	for (auto& b : _blocks) {
-		b.traversed(false);
-	}
-
-	for (auto& b : _blocks) {
-		// Either a sink or connected to our output ports:
-		if (!b.traversed() && b.dependants().empty()) {
-			compile_recursive(&b, compiled_graph);
-		}
-	}
-
-	// Traverse any blocks we didn't hit yet
-	for (auto& b : _blocks) {
-		if (!b.traversed()) {
-			compile_recursive(&b, compiled_graph);
-		}
-	}
-
-	if (compiled_graph->size() != _blocks.size()) {
-		_engine.log().error(fmt("Failed to compile graph %1%\n") % _path);
-		delete compiled_graph;
-		return NULL;
-	}
-
-	return compiled_graph;
 }
 
 } // namespace Server

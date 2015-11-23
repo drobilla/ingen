@@ -163,7 +163,7 @@ CreateGraph::pre_process()
 		_parent->add_block(*_graph);
 		if (_parent->enabled()) {
 			_graph->enable();
-			_compiled_graph = _parent->compile();
+			_compiled_graph = CompiledGraph::compile(_parent);
 		}
 	}
 

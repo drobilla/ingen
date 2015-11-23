@@ -94,7 +94,7 @@ Delete::pre_process()
 		_disconnect_event->pre_process();
 
 		if (parent->enabled()) {
-			_compiled_graph = parent->compile();
+			_compiled_graph = CompiledGraph::compile(parent);
 		}
 	} else if (_port) {
 		parent->remove_port(*_port);
@@ -102,7 +102,7 @@ Delete::pre_process()
 		_disconnect_event->pre_process();
 
 		if (parent->enabled()) {
-			_compiled_graph = parent->compile();
+			_compiled_graph = CompiledGraph::compile(parent);
 			_ports_array    = parent->build_ports_array();
 			assert(_ports_array->size() == parent->num_ports_non_rt());
 		}

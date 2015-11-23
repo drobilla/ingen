@@ -126,7 +126,7 @@ Copy::engine_to_engine()
 
 	// Compile graph with new block added for insertion in audio thread
 	if (_parent->enabled()) {
-		_compiled_graph = _parent->compile();
+		_compiled_graph = CompiledGraph::compile(_parent);
 	}
 
 	return Event::pre_process_done(Status::SUCCESS);

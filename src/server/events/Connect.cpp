@@ -27,6 +27,7 @@
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
 #include "types.hpp"
+#include "internals/BlockDelay.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -111,18 +112,30 @@ Connect::pre_process()
 	   provider...
 	*/
 	if (tail_block != head_block && tail_block->parent() == head_block->parent()) {
+		// Connection is between blocks inside a graph, compile graph
+
 		// The tail block is now a dependency (provider) of the head block
 		head_block->providers().insert(tail_block);
-		tail_block->dependants().insert(head_block);
+
+		if (!dynamic_cast<Internals::BlockDelayNode*>(tail_block)) {
+			/* Arcs leaving a delay node are ignored for the purposes of
+			   compilation, since the output is from the previous cycle and
+			   does not affect execution order.  Otherwise, the head block is
+			   now a dependant of the head block. */
+			tail_block->dependants().insert(head_block);
+		}
+
+		if (_graph->enabled()) {
+			if (!(_compiled_graph = CompiledGraph::compile(_graph))) {
+				head_block->providers().erase(tail_block);
+				tail_block->dependants().erase(head_block);
+				return Event::pre_process_done(Status::COMPILATION_FAILED);
+			}
+		}
 	}
 
 	_graph->add_arc(_arc);
 	_head->increment_num_arcs();
-
-	tail_output->inherit_neighbour(_head, _tail_remove, _tail_add);
-	_head->inherit_neighbour(tail_output, _head_remove, _head_add);
-
-	lock.unlock();
 
 	if (!_head->is_driver_port()) {
 		_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
@@ -132,9 +145,8 @@ Connect::pre_process()
 		                   false);
 	}
 
-	if (_graph->enabled()) {
-		_compiled_graph = _graph->compile();
-	}
+	tail_output->inherit_neighbour(_head, _tail_remove, _tail_add);
+	_head->inherit_neighbour(tail_output, _head_remove, _head_add);
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
@@ -148,7 +160,9 @@ Connect::execute(RunContext& context)
 			_engine.maid()->dispose(_head->set_voices(context, _voices));
 		}
 		_head->connect_buffers();
-		_graph->set_compiled_graph(_compiled_graph);
+		if (_compiled_graph) {
+			_graph->set_compiled_graph(_compiled_graph);
+		}
 	}
 }
 

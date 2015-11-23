@@ -26,7 +26,7 @@
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "internals/BlockDelay.hpp"
 
 namespace Ingen {
@@ -75,7 +75,7 @@ BlockDelayNode::activate(BufferFactory& bufs)
 }
 
 void
-BlockDelayNode::run(ProcessContext& context)
+BlockDelayNode::run(RunContext& context)
 {
 	// Copy buffer from last cycle to output
 	_out_port->buffer(0)->copy(context, _buffer.get());

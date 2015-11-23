@@ -165,16 +165,6 @@ public:
 	Raul::Array<PortImpl*>* external_ports()                           { return _ports; }
 	void                    external_ports(Raul::Array<PortImpl*>* pa) { _ports = pa; }
 
-	/** Compile the graph into a version suitable for real-time execution.
-	 *
-	 * The CompiledGraph is a flat list that the graph will execute in order
-	 * when its run() method is called.  The returned object is newly allocated
-	 * and owned by the caller.  This function is non-realtime and does not
-	 * affect processing, to take effect the returned object must be installed
-	 * in the audio thread with set_compiled_graph().
-	 */
-	CompiledGraph* compile();
-
 	Raul::Array<PortImpl*>* build_ports_array();
 
 	/** Whether to run this graph's DSP bits in the audio thread */

@@ -17,41 +17,81 @@
 #ifndef INGEN_ENGINE_COMPILEDGRAPH_HPP
 #define INGEN_ENGINE_COMPILEDGRAPH_HPP
 
+#include <ostream>
+#include <set>
 #include <vector>
-#include <list>
 
 #include "raul/Maid.hpp"
 #include "raul/Noncopyable.hpp"
+#include "raul/Path.hpp"
 
 namespace Ingen {
+
+class Log;
+
 namespace Server {
 
 class BlockImpl;
+class GraphImpl;
+class RunContext;
 
-/** All information required about a block to execute it in an audio thread.
- */
-class CompiledBlock {
-public:
-	CompiledBlock(BlockImpl* b) : _block(b) {}
-
-	BlockImpl* block() const { return _block; }
-
-private:
-	BlockImpl* _block;
-};
-
-/** A graph ``compiled'' into a flat structure with the correct order so
- * the audio thread(s) can execute it without threading problems (since
- * the preprocessor thread modifies the graph).
+/** A graph ``compiled'' into a quickly executable form.
  *
- * The blocks contained here are sorted in the order they must be executed.
- * The parallel processing algorithm guarantees no block will be executed
- * before its providers, using this order as well as semaphores.
+ * This is a flat sequence of nodes ordered such that the process thread can
+ * execute the nodes in order and have nodes always executed before any of
+ * their dependencies.
  */
-class CompiledGraph : public std::vector<CompiledBlock>
-                    , public Raul::Maid::Disposable
+class CompiledGraph : public Raul::Maid::Disposable
                     , public Raul::Noncopyable
 {
+public:
+	class Task : public std::vector<Task> {
+	public:
+		enum class Mode {
+			SINGLE,      ///< Single block to run
+			SEQUENTIAL,  ///< Elements must be run sequentially in order
+			PARALLEL     ///< Elements may be run in any order in parallel
+		};
+
+		Task(Mode mode, BlockImpl* block=NULL)
+			: _mode(mode)
+			, _block(block)
+		{}
+
+		void run(RunContext& context);
+		void dump(std::ostream& os, unsigned indent, bool first) const;
+		void simplify();
+
+		Mode       mode()  const { return _mode; }
+		BlockImpl* block() const { return _block; }
+
+	private:
+		Mode       _mode;   ///< Execution mode
+		BlockImpl* _block;  ///< Used for SINGLE only
+	};
+
+	static CompiledGraph* compile(GraphImpl* graph);
+
+	void run(RunContext& context);
+
+	void dump(std::ostream& os) const;
+
+private:
+	CompiledGraph(GraphImpl* graph);
+
+	typedef std::set<BlockImpl*> BlockSet;
+
+	void compile_graph(GraphImpl* graph);
+	void compile_set(const BlockSet& blocks, Task& task, BlockSet& k);
+	void compile_block(BlockImpl* block, Task& task, BlockSet& k);
+	void compile_dependant(const BlockImpl* root,
+	                       BlockImpl*       block,
+	                       Task&            task,
+	                       BlockSet&        k);
+
+	Log&             _log;
+	const Raul::Path _path;
+	Task             _master;
 };
 
 } // namespace Server

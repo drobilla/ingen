@@ -46,7 +46,8 @@ enum class Status {
 	PROTOTYPE_NOT_FOUND,
 	PORT_NOT_FOUND,
 	TYPE_MISMATCH,
-	UNKNOWN_TYPE
+	UNKNOWN_TYPE,
+	COMPILATION_FAILED
 };
 
 static inline const char*
@@ -80,6 +81,7 @@ ingen_status_string(Status st)
 	case Status::PORT_NOT_FOUND:      return "Port not found";
 	case Status::TYPE_MISMATCH:       return "Type mismatch";
 	case Status::UNKNOWN_TYPE:        return "Unknown type";
+	case Status::COMPILATION_FAILED:  return "Graph compilation failed";
 	}
 
 	return "Unknown error";

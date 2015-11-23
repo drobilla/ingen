@@ -42,10 +42,10 @@ BlockImpl::BlockImpl(PluginImpl*         plugin,
 	, _plugin(plugin)
 	, _ports(NULL)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
+	, _mark(Mark::UNVISITED)
 	, _polyphonic(polyphonic)
 	, _activated(false)
 	, _enabled(true)
-	, _traversed(false)
 {
 	assert(_plugin);
 	assert(_polyphony > 0);
