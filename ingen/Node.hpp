@@ -86,8 +86,14 @@ public:
 	static Raul::URI root_graph_uri() { return Raul::URI("ingen:/graph"); }
 
 	static bool uri_is_path(const Raul::URI& uri) {
-		return uri == root_graph_uri() ||
-			uri.substr(0, root_graph_uri().length() + 1) == root_graph_uri() + "/";
+		const size_t root_len = root_graph_uri().length();
+		if (uri == root_graph_uri()) {
+			return true;
+		} else if (uri.substr(0, root_len + 1) != root_graph_uri() + "/") {
+			return false;
+		} else {
+			return Raul::URI::is_valid(uri.substr(root_len));
+		}
 	}
 
 	static Raul::Path uri_to_path(const Raul::URI& uri) {

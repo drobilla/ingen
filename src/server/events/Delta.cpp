@@ -198,11 +198,16 @@ Delta::pre_process()
 		const auto p = _properties.find(uris.lv2_prototype);
 		if (p == _properties.end()) {
 			return Event::pre_process_done(Status::BAD_REQUEST, _subject);
+		} else if (!_engine.world()->forge().is_uri(p->second)) {
+			return Event::pre_process_done(Status::BAD_REQUEST, _subject);
 		}
 
 		const Raul::URI prot(_engine.world()->forge().str(p->second, false));
+		if (!Node::uri_is_path(prot)) {
+			return Event::pre_process_done(Status::BAD_URI, _subject);
+		}
 
-		Node* node = _engine.store()->get(Node::uri_to_path(Raul::URI(prot)));
+		Node* node = _engine.store()->get(Node::uri_to_path(prot));
 		if (!node) {
 			return Event::pre_process_done(Status::NOT_FOUND, prot);
 		}
