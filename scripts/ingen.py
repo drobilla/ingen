@@ -119,6 +119,12 @@ class Remote(Interface):
     def __del__(self):
         self.sock.close()
 
+    def _get_prefixes_string(self):
+        s = ''
+        for k, v in self.ns_manager.namespaces():
+            s += '@prefix %s: <%s> .\n' % (k, v)
+        return s
+
     def msgencode(self, msg):
         if sys.version_info[0] == 3:
             return bytes(msg, 'utf-8')
@@ -184,9 +190,23 @@ class Remote(Interface):
         self.sock.send(self.msgencode(msg))
 
         # Receive response and parse into a model
-        response_str = self.recv()
+        response_str = self._get_prefixes_string() + self.recv()
         response_model = rdflib.Graph(namespace_manager=self.ns_manager)
-        response_model.parse(StringIO(response_str), self.server_base, format='n3')
+
+        # Because rdflib has embarrassingly broken base URI resolution that
+        # just drops path components from the base URI entirely (seriously),
+        # unfortunate the real server base URI can not be used here.  Use
+        # <ingen:/> instead to at least avoid complete nonsense
+        response_model.parse(StringIO(response_str), 'ingen:/', format='n3')
+
+        # Add new prefixes to prepend to future responses because rdflib sucks
+        for line in response_str.split('\n'):
+            if line.startswith('@prefix'):
+                match = re.search('@prefix ([^:]*): <(.*)> *\.', line)
+                if match:
+                    name = match.group(1)
+                    uri  = match.group(2)
+                    self.ns_manager.bind(match.group(1), match.group(2))
 
         # Handle response (though there should be only one)
         blanks        = []
