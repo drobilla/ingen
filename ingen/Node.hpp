@@ -89,10 +89,8 @@ public:
 		const size_t root_len = root_graph_uri().length();
 		if (uri == root_graph_uri()) {
 			return true;
-		} else if (uri.substr(0, root_len + 1) != root_graph_uri() + "/") {
-			return false;
 		} else {
-			return Raul::URI::is_valid(uri.substr(root_len));
+			return uri.substr(0, root_len + 1) == root_graph_uri() + "/";
 		}
 	}
 
