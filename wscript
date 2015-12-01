@@ -104,6 +104,11 @@ def configure(conf):
                    define_name   = 'HAVE_JACK_METADATA',
                    uselib        = 'JACK',
                    mandatory     = False)
+        conf.check(function_name = 'jack_port_rename',
+                   header_name   = 'jack/jack.h',
+                   define_name   = 'HAVE_JACK_PORT_RENAME',
+                   uselib        = 'JACK',
+                   mandatory     = False)
         if not Options.options.no_jack_session:
             autowaf.define(conf, 'INGEN_JACK_SESSION', 1)
 

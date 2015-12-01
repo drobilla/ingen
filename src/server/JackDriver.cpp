@@ -268,8 +268,13 @@ JackDriver::rename_port(const Raul::Path& old_path,
 {
 	EnginePort* eport = get_port(old_path);
 	if (eport) {
+#ifdef HAVE_JACK_PORT_RENAME
+		jack_port_rename(
+			_client, (jack_port_t*)eport->handle(), new_path.substr(1).c_str());
+#else
 		jack_port_set_name((jack_port_t*)eport->handle(),
 		                   new_path.substr(1).c_str());
+#endif
 	}
 }
 
