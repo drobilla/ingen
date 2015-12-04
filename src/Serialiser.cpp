@@ -343,7 +343,8 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 
 	// If the graph has no doap:name (required by LV2), use the symbol
 	if (graph->properties().find(uris.doap_name) == graph->properties().end()) {
-		const std::string sym = Glib::path_get_basename(graph_id.to_string());
+		std::string sym = Glib::path_get_basename(graph_id.to_string());
+		sym = sym.substr(0, sym.find('.'));
 		_model->add_statement(graph_id,
 		                      Sord::URI(world, uris.doap_name),
 		                      Sord::Literal(world, sym));
