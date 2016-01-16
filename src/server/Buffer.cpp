@@ -338,17 +338,29 @@ Buffer::append_event(int64_t        frames,
 SampleCount
 Buffer::next_value_offset(SampleCount offset, SampleCount end) const
 {
-	SampleCount              earliest = end;
-	const LV2_Atom_Sequence* seq      = get<const LV2_Atom_Sequence>();
-	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-		if (ev->time.frames >  offset   &&
-		    ev->time.frames <  earliest &&
-		    ev->body.type   == _value_type) {
-			earliest = ev->time.frames;
-			break;
+	if (_type == _factory.uris().atom_Sequence && _value_type) {
+		const LV2_Atom_Sequence* seq = get<const LV2_Atom_Sequence>();
+		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
+			if (ev->time.frames >  offset   &&
+			    ev->time.frames <  end &&
+			    ev->body.type   == _value_type) {
+				return ev->time.frames;
+			}
+		}
+	} else if (is_audio()) {
+		/* FIXME: This results in split cycles when a CV output port is
+		   connected to a control input port.  In the worst case, that could
+		   run the receiving plugin every sample.  Some way of controlling this
+		   behaviour is needed. */
+		float val = samples()[offset];
+		for (SampleCount i = offset + 1; i < end; ++i) {
+			if (samples()[i] != val) {
+				return i;
+			}
 		}
 	}
-	return earliest;
+
+	return end;
 }
 
 const LV2_Atom*
