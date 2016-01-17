@@ -347,18 +347,18 @@ Buffer::next_value_offset(SampleCount offset, SampleCount end) const
 				return ev->time.frames;
 			}
 		}
-	} else if (is_audio()) {
-		/* FIXME: This results in split cycles when a CV output port is
-		   connected to a control input port.  In the worst case, that could
-		   run the receiving plugin every sample.  Some way of controlling this
-		   behaviour is needed. */
-		float val = samples()[offset];
-		for (SampleCount i = offset + 1; i < end; ++i) {
-			if (samples()[i] != val) {
-				return i;
-			}
-		}
 	}
+
+	/* For CV buffers, it's possible to scan for a value change here, which for
+	   stepped CV would do the right thing, but in the worst case (e.g. with
+	   sine waves), when connected to a control port would split the cycle for
+	   every frame which isn't feasible.  Instead, just return end, so the
+	   cycle will not be split.
+
+	   A plugin that takes CV and emits discrete change events, possibly with a
+	   maximum rate or fuzz factor, would allow the user to choose which
+	   behaviour, at the cost of some overhead.
+	*/
 
 	return end;
 }
