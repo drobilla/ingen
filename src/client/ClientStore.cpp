@@ -106,28 +106,30 @@ ClientStore::remove_object(const Raul::Path& path)
 
 	SPtr<ObjectModel> object = dynamic_ptr_cast<ObjectModel>(top->second);
 
+	// Remove object and any adjacent arcs from parent if applicable
+	if (object && object->parent()) {
+		SPtr<PortModel> port = dynamic_ptr_cast<PortModel>(object);
+		if (port && dynamic_ptr_cast<GraphModel>(port->parent())) {
+			disconnect_all(port->parent()->path(), path);
+			if (port->parent()->parent()) {
+				disconnect_all(port->parent()->parent()->path(), path);
+			}
+		} else if (port && port->parent()->parent()) {
+			disconnect_all(port->parent()->parent()->path(), path);
+		} else {
+			disconnect_all(object->parent()->path(), path);
+		}
+
+		object->parent()->remove_child(object);
+	}
+
 	// Remove the object and all its descendants
 	Objects removed;
 	remove(top, removed);
 
-	// Notify everything that needs to know this object is going away
+	// Notify everything that needs to know this object has been removed
 	if (object) {
-		// Notify the program this object is going away
 		object->signal_destroyed().emit();
-
-		// Remove object from parent model if applicable
-		if (object->parent()) {
-			SPtr<PortModel>  port     = dynamic_ptr_cast<PortModel>(object);
-			SPtr<GraphModel> gpparent = dynamic_ptr_cast<GraphModel>(
-				object->parent()->parent());
-			if (port && gpparent) {
-				/* Port on a block in a graph (probably on a subgraph),
-				   remove any connections in the parent's parent graph. */
-				gpparent->remove_arcs_on(port);
-			}
-
-			object->parent()->remove_child(object);
-		}
 	}
 
 	return object;
