@@ -209,6 +209,10 @@ ClientStore::add_plugin(SPtr<PluginModel> pm)
 void
 ClientStore::del(const Raul::URI& uri)
 {
+#ifdef INGEN_CLIENT_STORE_DUMP
+	std::cerr << "Client del " << uri << std::endl;
+#endif
+
 	if (Node::uri_is_path(uri)) {
 		remove_object(Node::uri_to_path(uri));
 	} else {
@@ -230,6 +234,11 @@ ClientStore::copy(const Raul::URI& old_uri,
 void
 ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
 {
+#ifdef INGEN_CLIENT_STORE_DUMP
+	std::cerr << "Client move " << old_path
+	          << " => " << new_path << endl;
+#endif
+
 	const iterator top = find(old_path);
 	if (top != end()) {
 		rename(top, new_path);
@@ -510,6 +519,10 @@ void
 ClientStore::disconnect_all(const Raul::Path& parent_graph,
                             const Raul::Path& path)
 {
+#ifdef INGEN_CLIENT_STORE_DUMP
+	std::cerr << "Client disconnect all " << path << " in " << parent_graph << std::endl;
+#endif
+
 	SPtr<GraphModel>  graph  = dynamic_ptr_cast<GraphModel>(_object(parent_graph));
 	SPtr<ObjectModel> object = _object(path);
 
