@@ -87,6 +87,7 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	xml->get_widget("graph_view_control_window_menuitem", _menu_view_control_window);
 	xml->get_widget("graph_view_engine_window_menuitem", _menu_view_engine_window);
 	xml->get_widget("graph_properties_menuitem", _menu_view_graph_properties);
+	xml->get_widget("graph_parent_menuitem", _menu_parent);
 	xml->get_widget("graph_refresh_menuitem", _menu_refresh);
 	xml->get_widget("graph_fullscreen_menuitem", _menu_fullscreen);
 	xml->get_widget("graph_animate_signals_menuitem", _menu_animate_signals);
@@ -130,8 +131,10 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &GraphBox::event_close));
 	_menu_quit->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_quit));
+	_menu_parent->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_parent_activated));
 	_menu_refresh->signal_activate().connect(
-		sigc::mem_fun(this, &GraphBox::event_refresh_toggled));
+		sigc::mem_fun(this, &GraphBox::event_refresh_activated));
 	_menu_fullscreen->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_fullscreen_toggled));
 	_menu_animate_signals->signal_activate().connect(
@@ -301,6 +304,8 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 			break;
 		}
 	}
+
+	_menu_parent->property_sensitive() = bool(graph->parent());
 
 	new_port_connection = graph->signal_new_port().connect(
 		sigc::mem_fun(this, &GraphBox::graph_port_added));
@@ -747,7 +752,16 @@ GraphBox::event_arrange()
 }
 
 void
-GraphBox::event_refresh_toggled()
+GraphBox::event_parent_activated()
+{
+	SPtr<Client::GraphModel> parent = dynamic_ptr_cast<Client::GraphModel>(_graph->parent());
+	if (parent) {
+		_app->window_factory()->present_graph(parent, _window);
+	}
+}
+
+void
+GraphBox::event_refresh_activated()
 {
 	_app->interface()->get(_graph->uri());
 }

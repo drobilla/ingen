@@ -1156,6 +1156,18 @@ See COPYING file included with this distribution, or http://www.gnu.org/licenses
                       </object>
                     </child>
                     <child>
+                      <object class="GtkImageMenuItem" id="graph_parent_menuitem">
+                        <property name="label">_Parent</property>
+                        <property name="use_action_appearance">False</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
+                        <accelerator key="BackSpace" signal="activate"/>
+                        <signal name="activate" handler="graph_parent_menuitem" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkImageMenuItem" id="graph_refresh_menuitem">
                         <property name="label">gtk-refresh</property>
                         <property name="use_action_appearance">False</property>
