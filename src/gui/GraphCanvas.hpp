@@ -124,8 +124,8 @@ private:
 	int                 _auto_position_count;
 	std::pair<int, int> _auto_position_scroll_offsets;
 
-	int _last_click_x;
-	int _last_click_y;
+	int _menu_x;
+	int _menu_y;
 	int _paste_count;
 
 	// Track pasted objects so they can be selected when they arrive

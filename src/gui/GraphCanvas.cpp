@@ -80,8 +80,8 @@ GraphCanvas::GraphCanvas(App&                   app,
 	, _app(app)
 	, _graph(graph)
 	, _auto_position_count(0)
-	, _last_click_x(0)
-	, _last_click_y(0)
+	, _menu_x(0)
+	, _menu_y(0)
 	, _paste_count(0)
 	, _menu(NULL)
 	, _internal_menu(NULL)
@@ -465,17 +465,31 @@ GraphCanvas::auto_menu_position(int& x, int& y, bool& push_in)
 	std::pair<int, int> scroll_offsets;
 	get_scroll_offsets(scroll_offsets.first, scroll_offsets.second);
 
-	if (_auto_position_count > 0 && scroll_offsets != _auto_position_scroll_offsets)
-		_auto_position_count = 0; // scrolling happened since last time, reset
+	if (_auto_position_count > 1 && scroll_offsets != _auto_position_scroll_offsets) {
+		// Scroll changed since last auto position, reset
+		_menu_x              = 0;
+		_menu_y              = 0;
+		_auto_position_count = 0;
+	}
 
-	const int cascade = (_auto_position_count > 0) ? (_auto_position_count * 32) : 0;
+	if (_menu_x == 0 && _menu_y == 0) {
+		// No menu position set, start near top left of canvas
+		widget().translate_coordinates(
+			*_app.window_factory()->graph_window(_graph),
+			64, 64, _menu_x, _menu_y);
 
-	x = 64 + cascade;
-	y = 64 + cascade;
+		int origin_x;
+		int origin_y;
+		widget().get_window()->get_origin(origin_x, origin_y);
+		_menu_x += origin_x;
+		_menu_y += origin_y;
+	}
+
+	const int cascade = _auto_position_count * 32;
+
+	x = _menu_x + cascade;
+	y = _menu_y + cascade;
 	push_in = true;
-
-	_last_click_x = scroll_offsets.first  + x;
-	_last_click_y = scroll_offsets.second + y;
 
 	++_auto_position_count;
 	_auto_position_scroll_offsets = scroll_offsets;
@@ -491,9 +505,9 @@ GraphCanvas::on_event(GdkEvent* event)
 	switch (event->type) {
 	case GDK_BUTTON_PRESS:
 		if (event->button.button == 3) {
-			_auto_position_count = 0;
-			_last_click_x = (int)event->button.x;
-			_last_click_y = (int)event->button.y;
+			_auto_position_count = 1;
+			_menu_x = (int)event->button.x_root;
+			_menu_y = (int)event->button.y_root;
 			show_menu(false, event->button.button, event->button.time);
 			ret = true;
 		}
@@ -832,11 +846,11 @@ GraphCanvas::get_initial_data(Resource::Graph ctx)
 	const URIs& uris = _app.uris();
 	result.insert(
 		make_pair(uris.ingen_canvasX,
-		          Resource::Property(_app.forge().make((float)_last_click_x),
+		          Resource::Property(_app.forge().make((float)_menu_x),
 		                             ctx)));
 	result.insert(
 		make_pair(uris.ingen_canvasY,
-		          Resource::Property(_app.forge().make((float)_last_click_y),
+		          Resource::Property(_app.forge().make((float)_menu_y),
 		                             ctx)));
 	return result;
 }
