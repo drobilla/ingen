@@ -74,6 +74,20 @@ LV2Block::~LV2Block()
 	delete _instances;
 }
 
+void
+LV2Block::load_default_state()
+{
+	const LilvPlugin* lplug    = _lv2_plugin->lilv_plugin();
+	const LilvNode*   uri_node = lilv_plugin_get_uri(lplug);
+	const Raul::URI   uri(lilv_node_as_string(uri_node));
+
+	LilvState* default_state = load_preset(_lv2_plugin->uri());
+	if (default_state) {
+		apply_state(default_state);
+		lilv_state_free(default_state);
+	}
+}
+
 SPtr<LilvInstance>
 LV2Block::make_instance(URIs&      uris,
                         SampleRate rate,
@@ -430,6 +444,8 @@ LV2Block::instantiate(BufferFactory& bufs)
 			return false;
 		}
 	}
+
+	load_default_state();
 
 	// FIXME: Polyphony + worker?
 	if (lilv_plugin_has_feature(plug, uris.work_schedule)) {

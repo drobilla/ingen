@@ -83,6 +83,8 @@ protected:
 	                                 uint32_t   voice,
 	                                 bool       preparing);
 
+	void load_default_state();
+
 	inline LilvInstance* instance(uint32_t voice) {
 		return (LilvInstance*)(*_instances)[voice].get();
 	}

@@ -21,6 +21,7 @@
 #include <limits>
 
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
+#include "lv2/lv2plug.in/ns/ext/state/state.h"
 
 #include "events/CreateGraph.hpp"
 #include "ingen/Configuration.hpp"
@@ -96,6 +97,9 @@ Engine::Engine(Ingen::World* world)
 	_world->lv2_features().add_feature(
 		SPtr<LV2Features::Feature>(
 			new LV2Features::EmptyFeature(LV2_BUF_SIZE__boundedBlockLength)));
+	_world->lv2_features().add_feature(
+		SPtr<LV2Features::Feature>(
+			new LV2Features::EmptyFeature(LV2_STATE__loadDefaultState)));
 }
 
 Engine::~Engine()

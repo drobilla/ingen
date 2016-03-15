@@ -28,6 +28,7 @@
 #include "lv2/lv2plug.in/ns/ext/port-props/port-props.h"
 #include "lv2/lv2plug.in/ns/ext/presets/presets.h"
 #include "lv2/lv2plug.in/ns/ext/resize-port/resize-port.h"
+#include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/ext/time/time.h"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
@@ -173,6 +174,7 @@ URIs::URIs(Forge& f, URIMap* map, LilvWorld* lworld)
 	, rdfs_label            (forge, map, lworld, NS_RDFS "label")
 	, rdfs_seeAlso          (forge, map, lworld, NS_RDFS "seeAlso")
 	, rsz_minimumSize       (forge, map, lworld, LV2_RESIZE_PORT__minimumSize)
+	, state_loadDefaultState(forge, map, lworld, LV2_STATE__loadDefaultState)
 	, time_Position         (forge, map, lworld, LV2_TIME__Position)
 	, time_bar              (forge, map, lworld, LV2_TIME__bar)
 	, time_barBeat          (forge, map, lworld, LV2_TIME__barBeat)
