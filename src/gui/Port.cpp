@@ -68,16 +68,16 @@ Port::Port(App&                  app,
 
 	if (app.can_control(pm.get())) {
 		show_control();
-		pm->signal_property().connect(
-			sigc::mem_fun(this, &Port::property_changed));
-		pm->signal_property_removed().connect(
-			sigc::mem_fun(this, &Port::property_removed));
 		pm->signal_value_changed().connect(
 			sigc::mem_fun(this, &Port::value_changed));
 	}
 
 	port_properties_changed();
 
+	pm->signal_property().connect(
+		sigc::mem_fun(this, &Port::property_changed));
+	pm->signal_property_removed().connect(
+		sigc::mem_fun(this, &Port::property_removed));
 	pm->signal_activity().connect(
 		sigc::mem_fun(this, &Port::activity));
 	pm->signal_disconnection().connect(
