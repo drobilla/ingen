@@ -41,7 +41,7 @@ public:
 
 	void init(App&                          app,
 	          SPtr<const Client::PortModel> port,
-	          bool                          is_graph_port = false);
+	          bool                          internal_graph_port = false);
 
 private:
 	void on_menu_disconnect();
@@ -56,7 +56,8 @@ private:
 	Gtk::MenuItem* _reset_range_menuitem;
 	Gtk::MenuItem* _expose_menuitem;
 
-	bool _is_graph_port;
+	/// True iff this is a (flipped) port on a GraphPortModule in its graph
+	bool _internal_graph_port;
 };
 
 } // namespace GUI

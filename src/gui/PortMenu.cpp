@@ -34,7 +34,7 @@ namespace GUI {
 PortMenu::PortMenu(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: ObjectMenu(cobject, xml)
-	, _is_graph_port(false)
+	, _internal_graph_port(false)
 {
 	xml->get_widget("object_menu", _port_menu);
 	xml->get_widget("port_set_min_menuitem", _set_min_menuitem);
@@ -44,12 +44,12 @@ PortMenu::PortMenu(BaseObjectType*                   cobject,
 }
 
 void
-PortMenu::init(App& app, SPtr<const PortModel> port, bool is_graph_port)
+PortMenu::init(App& app, SPtr<const PortModel> port, bool internal_graph_port)
 {
 	const URIs& uris = app.uris();
 
 	ObjectMenu::init(app, port);
-	_is_graph_port = is_graph_port;
+	_internal_graph_port = internal_graph_port;
 
 	_set_min_menuitem->signal_activate().connect(
 		sigc::mem_fun(this, &PortMenu::on_menu_set_min));
@@ -67,7 +67,7 @@ PortMenu::init(App& app, SPtr<const PortModel> port, bool is_graph_port)
 	const bool is_on_graph(dynamic_ptr_cast<GraphModel>(port->parent()));
 	const bool is_input(port->is_input());
 
-	if (!_is_graph_port) {
+	if (!is_on_graph) {
 		_polyphonic_menuitem->set_sensitive(false);
 		_rename_menuitem->set_sensitive(false);
 		_destroy_menuitem->set_sensitive(false);
@@ -94,7 +94,7 @@ PortMenu::init(App& app, SPtr<const PortModel> port, bool is_graph_port)
 void
 PortMenu::on_menu_disconnect()
 {
-	if (_is_graph_port) {
+	if (_internal_graph_port) {
 		_app->interface()->disconnect_all(
 			_object->parent()->path(), _object->path());
 	} else {
