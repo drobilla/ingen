@@ -279,9 +279,13 @@ def test(ctx):
             os.path.join('src', 'server')])
 
     autowaf.pre_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])
+    autowaf.begin_tests(ctx, APPNAME)
+
     for i in ctx.path.ant_glob('tests/*.ttl'):
-        autowaf.run_tests(ctx, APPNAME,
-                          ['ingen_test --load ../tests/empty.ingen --execute %s' % i.abspath()],
-                          dirs=['.', 'src', 'tests'])
+        autowaf.run_test(ctx, APPNAME,
+                         'ingen_test --load ../tests/empty.ingen --execute %s' % i.abspath(),
+                         dirs=['.', 'src', 'tests'])
+
+    autowaf.end_tests(ctx, APPNAME)
     autowaf.post_test(ctx, APPNAME, dirs=['.', 'src', 'tests'],
                       remove=['/usr*'])
