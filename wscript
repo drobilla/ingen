@@ -282,8 +282,9 @@ def test(ctx):
     autowaf.begin_tests(ctx, APPNAME)
 
     for i in ctx.path.ant_glob('tests/*.ttl'):
+        empty = ctx.path.find_node('tests/empty.ingen')
         autowaf.run_test(ctx, APPNAME,
-                         'ingen_test --load ../tests/empty.ingen --execute %s' % i.abspath(),
+                         'ingen_test --load %s --execute %s' % (empty.abspath(), i.abspath()),
                          dirs=['.', 'src', 'tests'])
 
     autowaf.end_tests(ctx, APPNAME)
