@@ -19,7 +19,7 @@ def options(opt):
     opt.load('python')
     opt.load('lv2')
     opt.recurse('src/gui')
-    autowaf.set_options(opt)
+    autowaf.set_options(opt, test=True)
     opt.add_option('--data-dir', type='string', dest='datadir',
                    help='Ingen data install directory [Default: PREFIX/share/ingen]')
     opt.add_option('--module-dir', type='string', dest='moduledir',
@@ -39,8 +39,6 @@ def options(opt):
                    help='Do not build JACK session support')
     opt.add_option('--no-socket', action='store_true', dest='no_socket',
                    help='Do not build Socket interface')
-    opt.add_option('--test', action='store_true', dest='build_tests',
-                   help='Build unit tests')
     opt.add_option('--debug-urids', action='store_true', dest='debug_urids',
                    help='Print a trace of URI mapping')
 
@@ -115,18 +113,12 @@ def configure(conf):
     if Options.options.debug_urids:
         autowaf.define(conf, 'INGEN_DEBUG_URIDS', 1)
 
-    conf.env.BUILD_TESTS = Options.options.build_tests
     if conf.env.BUILD_TESTS:
-        conf.check_cxx(lib='gcov',
-                       define_name='HAVE_GCOV',
-                       mandatory=False)
-
-        if conf.is_defined('HAVE_GCOV'):
-            conf.env.INGEN_TEST_LIBS     = ['gcov']
-            conf.env.INGEN_TEST_CXXFLAGS = ['-fprofile-arcs', '-ftest-coverage']
-        else:
-            conf.env.INGEN_TEST_LIBS     = []
-            conf.env.INGEN_TEST_CXXFLAGS = []
+        conf.env.INGEN_TEST_LINKFLAGS = []
+        conf.env.INGEN_TEST_CXXFLAGS  = []
+        if not conf.env.NO_COVERAGE:
+            conf.env.INGEN_TEST_CXXFLAGS  += ['--coverage']
+            conf.env.INGEN_TEST_LINKFLAGS += ['--coverage']
 
     if conf.check(cflags=['-pthread'], mandatory=False):
         conf.env.PTHREAD_CFLAGS    = ['-pthread']
@@ -215,8 +207,8 @@ def build(bld):
                   includes     = ['.'],
                   use          = 'libingen_profiled',
                   install_path = '',
-                  lib          = bld.env.INGEN_TEST_LIBS,
-                  cxxflags     = bld.env.INGEN_TEST_CXXFLAGS)
+                  cxxflags     = bld.env.INGEN_TEST_CXXFLAGS,
+                  linkflags    = bld.env.INGEN_TEST_LINKFLAGS)
     autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2 SRATOM')
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')

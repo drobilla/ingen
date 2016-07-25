@@ -43,8 +43,8 @@ def build(bld):
                   name            = 'libingen_profiled',
                   target          = 'ingen_profiled',
                   install_path    = '',
-                  lib             = ['dl'] + bld.env.INGEN_TEST_LIBS,
+                  lib             = ['dl'],
                   cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
-                  linkflags       = bld.env.PTHREAD_LINKFLAGS)
+                  linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
         autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SERD SORD SRATOM')
 

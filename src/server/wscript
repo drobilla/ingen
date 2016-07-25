@@ -71,9 +71,8 @@ def build(bld):
                   target          = 'ingen_server_profiled',
                   install_path    = '${LIBDIR}',
                   use             = 'libingen_profiled',
-                  lib             = bld.env.INGEN_TEST_LIBS,
                   cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
-                  linkflags       = bld.env.PTHREAD_LINKFLAGS)
+                  linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
         autowaf.use_lib(bld, obj, core_libs)
 
     if bld.env.HAVE_JACK:
