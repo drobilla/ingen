@@ -149,9 +149,15 @@ main(int argc, char** argv)
 	}
 
 	// Get start graph and commands file options
-	char*             real_start_graph = realpath((const char*)load.get_body(), NULL);
-	const std::string start_graph      = real_start_graph;
-	const std::string cmds_file_path   = (const char*)execute.get_body();
+	const char* load_path        = (const char*)load.get_body();
+	char*       real_start_graph = realpath(load_path, NULL);
+	if (!real_start_graph) {
+		cerr << "error: initial graph '" << load_path << "' does not exist" << endl;
+		return EXIT_FAILURE;
+	}
+
+	const std::string start_graph    = real_start_graph;
+	const std::string cmds_file_path = (const char*)execute.get_body();
 	free(real_start_graph);
 
 	// Load modules
@@ -167,7 +173,7 @@ main(int argc, char** argv)
 	// Load patch
 	if (!world->parser()->parse_file(world, world->interface().get(), start_graph)) {
 		cerr << "error: failed to load initial graph " << start_graph << endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	while (world->engine()->pending_events()) {
 		world->engine()->run(4096);
@@ -252,5 +258,5 @@ main(int argc, char** argv)
 	world->engine()->deactivate();
 
 	delete world;
-	return 0;
+	return EXIT_SUCCESS;
 }
