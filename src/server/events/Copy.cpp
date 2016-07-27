@@ -97,7 +97,7 @@ Copy::engine_to_engine()
 		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
 
-	// Ensure the new node doesn't already exists
+	// Ensure the new node doesn't already exist
 	if (_engine.store()->find(new_path) != _engine.store()->end()) {
 		return Event::pre_process_done(Status::EXISTS, new_path);
 	}
