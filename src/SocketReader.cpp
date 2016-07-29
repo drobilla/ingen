@@ -135,11 +135,7 @@ SocketReader::run()
 	serd_reader_start_stream(reader, f, (const uint8_t*)"(socket)", false);
 
 	// Make an AtomReader to call Ingen Interface methods based on Atom
-	AtomReader ar(_world.uri_map(),
-	              _world.uris(),
-	              _world.log(),
-	              _world.forge(),
-	              _iface);
+	AtomReader ar(_world.uri_map(), _world.uris(), _world.log(), _iface);
 
 	struct pollfd pfd;
 	pfd.fd      = _socket->fd();

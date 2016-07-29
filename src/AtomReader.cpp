@@ -25,18 +25,12 @@
 
 namespace Ingen {
 
-AtomReader::AtomReader(URIMap&    map,
-                       URIs&      uris,
-                       Log&       log,
-                       Forge&     forge,
-                       Interface& iface)
+AtomReader::AtomReader(URIMap& map, URIs& uris, Log& log, Interface& iface)
 	: _map(map)
 	, _uris(uris)
 	, _log(log)
-	, _forge(forge)
 	, _iface(iface)
-{
-}
+{}
 
 void
 AtomReader::get_atom(const LV2_Atom* in, Atom& out)
@@ -46,12 +40,12 @@ AtomReader::get_atom(const LV2_Atom* in, Atom& out)
 			const LV2_Atom_URID* urid = (const LV2_Atom_URID*)in;
 			const char*          uri  = _map.unmap_uri(urid->body);
 			if (uri) {
-				out = _forge.make_urid(urid->body);
+				out = Atom(sizeof(int32_t), _uris.atom_URID, &urid->body);
 			} else {
 				_log.error(fmt("Unable to unmap URID %1%\n") % urid->body);
 			}
 		} else {
-			out = _forge.alloc(in->size, in->type, LV2_ATOM_BODY_CONST(in));
+			out = Atom(in->size, in->type, LV2_ATOM_BODY_CONST(in));
 		}
 	}
 }
@@ -61,8 +55,8 @@ AtomReader::get_props(const LV2_Atom_Object*       obj,
                       Ingen::Resource::Properties& props)
 {
 	if (obj->body.otype) {
-		props.insert(std::make_pair(_uris.rdf_type,
-		                            _forge.make_urid(obj->body.otype)));
+		const Atom type(sizeof(int32_t), _uris.atom_URID, &obj->body.otype);
+		props.insert(std::make_pair(_uris.rdf_type, type));
 	}
 	LV2_ATOM_OBJECT_FOREACH(obj, p) {
 		Atom val;

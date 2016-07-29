@@ -140,7 +140,6 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		new Ingen::AtomReader(ui->world->uri_map(),
 		                      ui->world->uris(),
 		                      ui->world->log(),
-		                      ui->world->forge(),
 		                      *ui->client.get()));
 
 	// Create empty root graph model

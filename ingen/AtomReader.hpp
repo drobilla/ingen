@@ -28,7 +28,6 @@
 namespace Ingen {
 
 class AtomSink;
-class Forge;
 class Log;
 class URIMap;
 
@@ -41,7 +40,6 @@ public:
 	AtomReader(URIMap&    map,
 	           URIs&      uris,
 	           Log&       log,
-	           Forge&     forge,
 	           Interface& iface);
 	~AtomReader() {}
 
@@ -61,7 +59,6 @@ private:
 	URIMap&    _map;
 	URIs&      _uris;
 	Log&       _log;
-	Forge&     _forge;
 	Interface& _iface;
 };
 

@@ -100,7 +100,6 @@ public:
 		, _reader(engine.world()->uri_map(),
 		          engine.world()->uris(),
 		          engine.world()->log(),
-		          engine.world()->forge(),
 		          *engine.world()->interface().get())
 		, _writer(engine.world()->uri_map(),
 		          engine.world()->uris(),
