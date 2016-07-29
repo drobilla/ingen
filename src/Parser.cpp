@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -312,8 +312,7 @@ parse_block(Ingen::World*                     world,
 			&ignored);
 
 		const std::string sub_uri_str = (const char*)sub_uri.buf;
-		const std::string basename    = get_basename(sub_uri_str);
-		const std::string sub_file    = sub_uri_str + '/' + basename + ".ttl";
+		const std::string sub_file    = sub_uri_str + "/graph.ttl";
 
 		const SerdNode sub_base = serd_node_from_string(
 			SERD_URI, (const uint8_t*)sub_file.c_str());

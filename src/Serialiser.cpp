@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -90,8 +90,7 @@ struct Serialiser::Impl {
 	Sord::Node path_rdf_node(const Raul::Path& path);
 
 	void write_manifest(const std::string& bundle_path,
-	                    SPtr<const Node>   graph,
-	                    const std::string& graph_symbol);
+	                    SPtr<const Node>   graph);
 
 	void write_plugins(const std::string&              bundle_path,
 	                   const std::set<const Resource*> plugins);
@@ -121,8 +120,7 @@ Serialiser::~Serialiser()
 
 void
 Serialiser::Impl::write_manifest(const std::string& bundle_path,
-                                 SPtr<const Node>   graph,
-                                 const std::string& graph_symbol)
+                                 SPtr<const Node>   graph)
 {
 	const string manifest_path(Glib::build_filename(bundle_path, "manifest.ttl"));
 	const string binary_path(Glib::Module::build_path("", "ingen_lv2"));
@@ -132,7 +130,7 @@ Serialiser::Impl::write_manifest(const std::string& bundle_path,
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();
 
-	const string    filename(graph_symbol + ".ttl");
+	const string    filename("graph.ttl");
 	const Sord::URI subject(world, filename, _base_uri);
 
 	_model->add_statement(subject,
@@ -207,10 +205,7 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
 
 	g_mkdir_with_parents(path.c_str(), 0744);
 
-	string symbol = Glib::path_get_basename(path);
-	symbol = symbol.substr(0, symbol.find("."));
-
-	const string root_file = Glib::build_filename(path, symbol + ".ttl");
+	const string root_file = Glib::build_filename(path, "graph.ttl");
 
 	start_to_filename(root_file);
 	const Raul::Path old_root_path = _root_path;
@@ -222,7 +217,7 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
 	_root_path = old_root_path;
 	finish();
 
-	write_manifest(path, graph, symbol);
+	write_manifest(path, graph);
 	write_plugins(path, plugins);
 }
 
