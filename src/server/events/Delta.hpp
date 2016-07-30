@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_EVENTS_SETMETADATA_HPP
-#define INGEN_EVENTS_SETMETADATA_HPP
+#ifndef INGEN_EVENTS_DELTA_HPP
+#define INGEN_EVENTS_DELTA_HPP
 
 #include <vector>
 
@@ -118,4 +118,4 @@ private:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_EVENTS_SETMETADATA_HPP
+#endif // INGEN_EVENTS_DELTA_HPP
