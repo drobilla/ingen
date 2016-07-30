@@ -114,7 +114,11 @@ void
 PreProcessor::run()
 {
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
-	while (_sem.wait() && !_exit_flag) {
+	while (!_exit_flag) {
+		if (!_sem.timed_wait(1000)) {
+			continue;
+		}
+
 		Event* const ev = _prepared_back.load();
 		if (!ev) {
 			return;
