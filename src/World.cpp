@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -133,12 +133,12 @@ public:
 
 		// Set up RDF namespaces
 		rdf_world->add_prefix("atom",  "http://lv2plug.in/ns/ext/atom#");
-		rdf_world->add_prefix("patch", "http://lv2plug.in/ns/ext/patch#");
 		rdf_world->add_prefix("doap",  "http://usefulinc.com/ns/doap#");
 		rdf_world->add_prefix("ingen", INGEN_NS);
 		rdf_world->add_prefix("lv2",   "http://lv2plug.in/ns/lv2core#");
 		rdf_world->add_prefix("midi",  "http://lv2plug.in/ns/ext/midi#");
 		rdf_world->add_prefix("owl",   "http://www.w3.org/2002/07/owl#");
+		rdf_world->add_prefix("patch", "http://lv2plug.in/ns/ext/patch#");
 		rdf_world->add_prefix("rdf",   "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 		rdf_world->add_prefix("rdfs",  "http://www.w3.org/2000/01/rdf-schema#");
 		rdf_world->add_prefix("xsd",   "http://www.w3.org/2001/XMLSchema#");

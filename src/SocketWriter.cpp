@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2012-2015 David Robillard <http://drobilla.net/>
+  Copyright 2012-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -66,12 +66,12 @@ SocketWriter::SocketWriter(URIMap&            map,
 	// Set up serialisation environment
 	_env = serd_env_new(&_base);
 	serd_env_set_prefix_from_strings(_env, USTR("atom"),  USTR("http://lv2plug.in/ns/ext/atom#"));
-	serd_env_set_prefix_from_strings(_env, USTR("patch"), USTR("http://lv2plug.in/ns/ext/patch#"));
 	serd_env_set_prefix_from_strings(_env, USTR("doap"),  USTR("http://usefulinc.com/ns/doap#"));
 	serd_env_set_prefix_from_strings(_env, USTR("ingen"), USTR(INGEN_NS));
 	serd_env_set_prefix_from_strings(_env, USTR("lv2"),   USTR("http://lv2plug.in/ns/lv2core#"));
 	serd_env_set_prefix_from_strings(_env, USTR("midi"),  USTR("http://lv2plug.in/ns/ext/midi#"));
 	serd_env_set_prefix_from_strings(_env, USTR("owl"),   USTR("http://www.w3.org/2002/07/owl#"));
+	serd_env_set_prefix_from_strings(_env, USTR("patch"), USTR("http://lv2plug.in/ns/ext/patch#"));
 	serd_env_set_prefix_from_strings(_env, USTR("rdf"),   USTR("http://www.w3.org/1999/02/22-rdf-syntax-ns#"));
 	serd_env_set_prefix_from_strings(_env, USTR("rdfs"),  USTR("http://www.w3.org/2000/01/rdf-schema#"));
 	serd_env_set_prefix_from_strings(_env, USTR("xsd"),   USTR("http://www.w3.org/2001/XMLSchema#"));
