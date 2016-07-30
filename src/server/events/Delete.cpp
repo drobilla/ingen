@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -159,6 +159,18 @@ Delete::post_process()
 	if (_engine_port) {
 		_engine.driver()->unregister_port(*_engine_port);
 		delete _engine_port;
+	}
+}
+
+void
+Delete::undo(Interface& target)
+{
+	auto i = _removed_objects.find(_path);
+	if (i != _removed_objects.end()) {
+		target.put(_uri, i->second->properties());
+		if (_disconnect_event) {
+			_disconnect_event->undo(target);
+		}
 	}
 }
 

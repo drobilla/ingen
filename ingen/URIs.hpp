@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -100,9 +100,13 @@ public:
 	const Quark doap_name;
 	const Quark ingen_Arc;
 	const Quark ingen_Block;
+	const Quark ingen_BundleEnd;
+	const Quark ingen_BundleStart;
 	const Quark ingen_Graph;
 	const Quark ingen_GraphPrototype;
 	const Quark ingen_Internal;
+	const Quark ingen_Redo;
+	const Quark ingen_Undo;
 	const Quark ingen_activity;
 	const Quark ingen_arc;
 	const Quark ingen_block;
@@ -183,9 +187,9 @@ public:
 	const Quark patch_subject;
 	const Quark patch_value;
 	const Quark patch_wildcard;
+	const Quark pprops_logarithmic;
 	const Quark pset_Preset;
 	const Quark pset_preset;
-	const Quark pprops_logarithmic;
 	const Quark rdf_type;
 	const Quark rdfs_Class;
 	const Quark rdfs_label;

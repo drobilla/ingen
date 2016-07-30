@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -102,6 +102,8 @@ public:
 
 	void del(const Raul::URI& uri);
 
+	void undo() {}
+	void redo() {}
 	void set_response_id(int32_t id) {}
 	void get(const Raul::URI& uri) {}
 	void response(int32_t id, Status status, const std::string& subject) {}

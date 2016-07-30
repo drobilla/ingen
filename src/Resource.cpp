@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -24,7 +24,7 @@ using namespace std;
 
 namespace Ingen {
 
-void
+bool
 Resource::add_property(const Raul::URI& uri,
                        const Atom&      value,
                        Graph            ctx)
@@ -34,12 +34,13 @@ Resource::add_property(const Raul::URI& uri,
 	const std::pair<iterator, iterator> range = _properties.equal_range(uri);
 	for (iterator i = range.first; i != range.second && i != _properties.end(); ++i) {
 		if (i->second == value && i->second.context() == ctx) {
-			return;
+			return false;
 		}
 	}
 
 	const Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
 	on_property(uri, v);
+	return true;
 }
 
 const Atom&
@@ -102,13 +103,7 @@ Resource::remove_property(const Raul::URI& uri, const URIs::Quark& value)
 bool
 Resource::has_property(const Raul::URI& uri, const Atom& value) const
 {
-	Properties::const_iterator i = _properties.find(uri);
-	for (; (i != _properties.end()) && (i->first == uri); ++i) {
-		if (i->second == value) {
-			return true;
-		}
-	}
-	return false;
+	return _properties.contains(uri, value);
 }
 
 bool

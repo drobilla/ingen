@@ -277,6 +277,7 @@ Delta::pre_process()
 				_old_bindings = _engine.control_bindings()->remove(port);
 		}
 		if (_object) {
+			_removed.emplace(key, value);
 			_object->remove_property(key, value);
 		} else if (is_engine && key == uris.ingen_loadedBundle) {
  			LilvWorld* lworld = _engine.world()->lilv_world();
@@ -299,8 +300,23 @@ Delta::pre_process()
 
 	// Remove all added properties if this is a put or set
 	if (_object && (_type == Type::PUT || _type == Type::SET)) {
-		for (const auto& p : _properties) {
-			_object->remove_property(p.first, uris.patch_wildcard);
+		for (auto p = _properties.begin();
+		     p != _properties.end();
+		     p = _properties.upper_bound(p->first)) {
+			for (auto q = _object->properties().find(p->first);
+			     q != _object->properties().end() && q->first == p->first;) {
+				auto next = q;
+				++next;
+
+				if (!_properties.contains(q->first, q->second)) {
+					const auto r = std::make_pair(q->first, q->second);
+					_object->properties().erase(q);
+					_object->on_property_removed(r.first, r.second);
+					_removed.insert(r);
+				}
+
+				q = next;
+			}
 		}
 	}
 
@@ -311,7 +327,9 @@ Delta::pre_process()
 		if (obj) {
 			Resource& resource = *obj;
 			if (value != uris.patch_wildcard) {
-				resource.add_property(key, value, value.context());
+				if (resource.add_property(key, value, value.context())) {
+					_added.emplace(key, value);
+				}
 			}
 
 			BlockImpl* block = NULL;
@@ -589,12 +607,16 @@ Delta::post_process()
 			/* Kludge to avoid feedback for set events only.  The GUI
 			   depends on put responses to e.g. initially place blocks.
 			   Some more sensible way of controlling this is needed. */
-			_engine.broadcaster()->set_ignore_client(_request_client);
+			if (_mode == Mode::NORMAL) {
+				_engine.broadcaster()->set_ignore_client(_request_client);
+			}
 			_engine.broadcaster()->set_property(
 				_subject,
-				(*_properties.begin()).first,
-				(*_properties.begin()).second);
-			_engine.broadcaster()->clear_ignore_client();
+				_properties.begin()->first,
+				_properties.begin()->second);
+			if (_mode == Mode::NORMAL) {
+				_engine.broadcaster()->clear_ignore_client();
+			}
 			break;
 		case Type::PUT:
 			if (_type == Type::PUT && _subject.substr(0, 5) == "file:") {
@@ -610,6 +632,27 @@ Delta::post_process()
 		case Type::PATCH:
 			_engine.broadcaster()->delta(_subject, _remove, _properties);
 			break;
+		}
+	}
+}
+
+void
+Delta::undo(Interface& target)
+{
+	const Ingen::URIs& uris = _engine.world()->uris();
+
+	if (_create_event) {
+		_create_event->undo(target);
+	} else if (_type == Type::PATCH) {
+		target.delta(_subject, _added, _removed);
+	} else if (_type == Type::SET || _type == Type::PUT) {
+		if (_removed.size() == 1) {
+			target.set_property(
+				_subject, _removed.begin()->first, _removed.begin()->second);
+		} else if (_removed.empty()) {
+			target.delta(_subject, _added, {});
+		} else {
+			target.put(_subject, _removed);
 		}
 	}
 }

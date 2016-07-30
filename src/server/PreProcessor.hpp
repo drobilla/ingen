@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -26,6 +26,7 @@
 namespace Ingen {
 namespace Server {
 
+class Engine;
 class Event;
 class PostProcessor;
 class ProcessContext;
@@ -33,7 +34,7 @@ class ProcessContext;
 class PreProcessor
 {
 public:
-	explicit PreProcessor();
+	explicit PreProcessor(Engine& engine);
 
 	~PreProcessor();
 
@@ -43,7 +44,7 @@ public:
 	/** Enqueue an event.
 	 * This is safe to call from any non-realtime thread (it locks).
 	 */
-	void event(Event* ev);
+	void event(Event* ev, Event::Mode mode);
 
 	/** Process events for a cycle.
 	 * @return The number of events processed.
@@ -56,6 +57,7 @@ protected:
 	void run();
 
 private:
+	Engine&             _engine;
 	std::mutex          _mutex;
 	Raul::Semaphore     _sem;
 	std::atomic<Event*> _head;

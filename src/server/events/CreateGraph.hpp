@@ -47,6 +47,7 @@ public:
 	bool pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
+	void undo(Interface& target);
 
 	GraphImpl* graph() { return _graph; }
 

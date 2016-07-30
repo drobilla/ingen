@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import subprocess
+import waflib.Logs as Logs
 import waflib.Options as Options
 import waflib.Utils as Utils
 import waflib.extras.autowaf as autowaf
@@ -265,6 +266,19 @@ def upload_docs(ctx):
 
 
 def test(ctx):
+    import difflib
+    import sys
+
+    def test_file_equals(path1, path2):
+        diff = list(difflib.unified_diff(open(path1).readlines(),
+                                         open(path2).readlines(),
+                                         path1,
+                                         path2))
+        autowaf.run_test(ctx, APPNAME, [path2, len(diff) != 0])
+        if len(diff) > 0:
+            for line in diff:
+                sys.stdout.write(line)
+
     os.environ['PATH'] = 'tests' + os.pathsep + os.getenv('PATH')
     os.environ['LD_LIBRARY_PATH'] = os.path.join('src')
     os.environ['INGEN_MODULE_PATH'] = os.pathsep.join([
@@ -273,11 +287,23 @@ def test(ctx):
     autowaf.pre_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])
     autowaf.begin_tests(ctx, APPNAME)
 
+    empty      = ctx.path.find_node('tests/empty.ingen')
+    empty_path = os.path.join(empty.abspath(), 'graph.ttl')
     for i in ctx.path.ant_glob('tests/*.ttl'):
-        empty = ctx.path.find_node('tests/empty.ingen')
+        # Run test
         autowaf.run_test(ctx, APPNAME,
                          'ingen_test --load %s --execute %s' % (empty.abspath(), i.abspath()),
                          dirs=['.', 'src', 'tests'])
+
+        # Check undo output for changes
+        base = os.path.basename(i.abspath().replace('.ttl', ''))
+        undone_path = base + '.undo.ingen/graph.ttl'
+        test_file_equals(empty_path, os.path.abspath(undone_path))
+
+        # Check redo output for changes
+        out_path = base + '.out.ingen/graph.ttl'
+        redone_path = base + '.redo.ingen/graph.ttl'
+        test_file_equals(out_path, os.path.abspath(redone_path))
 
     autowaf.end_tests(ctx, APPNAME)
     autowaf.post_test(ctx, APPNAME, dirs=['.', 'src', 'tests'],

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -24,6 +24,7 @@
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 
 #include "events/CreateGraph.hpp"
+#include "ingen/AtomReader.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Store.hpp"
@@ -47,6 +48,7 @@
 #include "PreProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
+#include "UndoStack.hpp"
 #include "Worker.hpp"
 #ifdef HAVE_SOCKET
 #include "SocketListener.hpp"
@@ -67,9 +69,12 @@ Engine::Engine(Ingen::World* world)
 	, _buffer_factory(new BufferFactory(*this, world->uris()))
 	, _control_bindings(NULL)
 	, _event_writer(new EventWriter(*this))
+	, _atom_interface(new AtomReader(world->uri_map(), world->uris(), world->log(), *_event_writer))
 	, _maid(new Raul::Maid())
 	, _options(new LV2Options(world->uris()))
-	, _pre_processor(new PreProcessor())
+	, _undo_stack(new UndoStack(_world->uris(), _world->uri_map()))
+	, _redo_stack(new UndoStack(_world->uris(), _world->uri_map()))
+	, _pre_processor(new PreProcessor(*this))
 	, _post_processor(new PostProcessor(*this))
 	, _root_graph(NULL)
 	, _worker(new Worker(world->log(), event_queue_size()))
@@ -134,6 +139,7 @@ Engine::~Engine()
 #endif
 	delete _pre_processor;
 	delete _post_processor;
+	delete _undo_stack;
 	delete _block_factory;
 	delete _control_bindings;
 	delete _broadcaster;
@@ -307,9 +313,9 @@ Engine::pending_events()
 }
 
 void
-Engine::enqueue_event(Event* ev)
+Engine::enqueue_event(Event* ev, Event::Mode mode)
 {
-	_pre_processor->event(ev);
+	_pre_processor->event(ev, mode);
 }
 
 unsigned

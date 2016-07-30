@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -16,19 +16,25 @@
 
 #include <stdexcept>
 
+#include "ingen/AtomSink.hpp"
+#include "ingen/AtomWriter.hpp"
+
+#include "Engine.hpp"
 #include "Event.hpp"
 #include "PostProcessor.hpp"
 #include "PreProcessor.hpp"
 #include "ProcessContext.hpp"
 #include "ThreadManager.hpp"
+#include "UndoStack.hpp"
 
 using namespace std;
 
 namespace Ingen {
 namespace Server {
 
-PreProcessor::PreProcessor()
-	: _sem(0)
+PreProcessor::PreProcessor(Engine& engine)
+	: _engine(engine)
+	, _sem(0)
 	, _head(NULL)
 	, _prepared_back(NULL)
 	, _tail(NULL)
@@ -46,7 +52,7 @@ PreProcessor::~PreProcessor()
 }
 
 void
-PreProcessor::event(Event* const ev)
+PreProcessor::event(Event* const ev, Event::Mode mode)
 {
 	// TODO: Probably possible to make this lock-free with CAS
 	ThreadManager::assert_not_thread(THREAD_IS_REAL_TIME);
@@ -54,6 +60,7 @@ PreProcessor::event(Event* const ev)
 
 	assert(!ev->is_prepared());
 	assert(!ev->next());
+	ev->set_mode(mode);
 
 	/* Note that tail is only used here, not in process().  The head must be
 	   checked first here, since if it is NULL the tail pointer is junk. */
@@ -113,6 +120,13 @@ PreProcessor::process(ProcessContext& context, PostProcessor& dest, size_t limit
 void
 PreProcessor::run()
 {
+	UndoStack& undo_stack = *_engine.undo_stack();
+	UndoStack& redo_stack = *_engine.redo_stack();
+	AtomWriter undo_writer(
+		_engine.world()->uri_map(), _engine.world()->uris(), undo_stack);
+	AtomWriter redo_writer(
+		_engine.world()->uri_map(), _engine.world()->uris(), redo_stack);
+
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
 	while (!_exit_flag) {
 		if (!_sem.timed_wait(1000)) {
@@ -125,7 +139,23 @@ PreProcessor::run()
 		}
 
 		assert(!ev->is_prepared());
-		ev->pre_process();
+		if (ev->pre_process()) {
+			switch (ev->get_mode()) {
+			case Event::Mode::NORMAL:
+			case Event::Mode::REDO:
+				undo_stack.start_entry();
+				ev->undo(undo_writer);
+				undo_stack.finish_entry();
+				// undo_stack.save(stderr);
+				break;
+			case Event::Mode::UNDO:
+				redo_stack.start_entry();
+				ev->undo(redo_writer);
+				redo_stack.finish_entry();
+				// redo_stack.save(stderr, "redo");
+				break;
+			}
+		}
 		assert(ev->is_prepared());
 
 		_prepared_back = (Event*)ev->next();

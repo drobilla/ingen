@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2014-2015 David Robillard <http://drobilla.net/>
+  Copyright 2014-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -38,11 +38,15 @@
 
 #define INGEN__Arc            INGEN_NS "Arc"
 #define INGEN__Block          INGEN_NS "Block"
+#define INGEN__BundleEnd      INGEN_NS "BundleEnd"
+#define INGEN__BundleStart    INGEN_NS "BundleStart"
 #define INGEN__Graph          INGEN_NS "Graph"
 #define INGEN__GraphPrototype INGEN_NS "GraphPrototype"
 #define INGEN__Internal       INGEN_NS "Internal"
 #define INGEN__Node           INGEN_NS "Node"
 #define INGEN__Plugin         INGEN_NS "Plugin"
+#define INGEN__Redo           INGEN_NS "Redo"
+#define INGEN__Undo           INGEN_NS "Undo"
 #define INGEN__activity       INGEN_NS "activity"
 #define INGEN__arc            INGEN_NS "arc"
 #define INGEN__block          INGEN_NS "block"

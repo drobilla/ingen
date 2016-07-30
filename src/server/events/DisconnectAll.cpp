@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -161,6 +161,14 @@ DisconnectAll::post_process()
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->disconnect_all(_parent_path, _path);
+	}
+}
+
+void
+DisconnectAll::undo(Interface& target)
+{
+	for (auto& i : _impls) {
+		target.connect(i->tail()->path(), i->head()->path());
 	}
 }
 

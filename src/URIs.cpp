@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -83,9 +83,13 @@ URIs::URIs(Forge& f, URIMap* map, LilvWorld* lworld)
 	, doap_name             (forge, map, lworld, "http://usefulinc.com/ns/doap#name")
 	, ingen_Arc             (forge, map, lworld, INGEN__Arc)
 	, ingen_Block           (forge, map, lworld, INGEN__Block)
+	, ingen_BundleEnd       (forge, map, lworld, INGEN__BundleEnd)
+	, ingen_BundleStart     (forge, map, lworld, INGEN__BundleStart)
 	, ingen_Graph           (forge, map, lworld, INGEN__Graph)
 	, ingen_GraphPrototype  (forge, map, lworld, INGEN__GraphPrototype)
 	, ingen_Internal        (forge, map, lworld, INGEN__Internal)
+	, ingen_Redo            (forge, map, lworld, INGEN__Redo)
+	, ingen_Undo            (forge, map, lworld, INGEN__Undo)
 	, ingen_activity        (forge, map, lworld, INGEN__activity)
 	, ingen_arc             (forge, map, lworld, INGEN__arc)
 	, ingen_block           (forge, map, lworld, INGEN__block)
@@ -166,9 +170,9 @@ URIs::URIs(Forge& f, URIMap* map, LilvWorld* lworld)
 	, patch_subject         (forge, map, lworld, LV2_PATCH__subject)
 	, patch_value           (forge, map, lworld, LV2_PATCH__value)
 	, patch_wildcard        (forge, map, lworld, LV2_PATCH__wildcard)
+	, pprops_logarithmic    (forge, map, lworld, LV2_PORT_PROPS__logarithmic)
 	, pset_Preset           (forge, map, lworld, LV2_PRESETS__Preset)
 	, pset_preset           (forge, map, lworld, LV2_PRESETS__preset)
-	, pprops_logarithmic    (forge, map, lworld, LV2_PORT_PROPS__logarithmic)
 	, rdf_type              (forge, map, lworld, NS_RDF "type")
 	, rdfs_Class            (forge, map, lworld, NS_RDFS "Class")
 	, rdfs_label            (forge, map, lworld, NS_RDFS "label")

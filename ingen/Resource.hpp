@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -122,6 +122,15 @@ public:
 		         Graph              ctx = Graph::DEFAULT) {
 			insert(std::make_pair(key, Property(value, ctx)));
 		}
+
+		bool contains(const Raul::URI& key, const Atom& value) {
+			for (const_iterator i = find(key); i != end() && i->first == key; ++i) {
+				if (i->second == value) {
+					return true;
+				}
+			}
+			return false;
+		}
 	};
 
 	/** Get a single property value.
@@ -156,8 +165,10 @@ public:
 	 * This will not remove any existing values, so if properties with
 	 * predicate `uri` and values other than `value` exist, this will result
 	 * in multiple values for the property.
+	 *
+	 * @return True iff a new property was added.
 	 */
-	virtual void add_property(const Raul::URI& uri,
+	virtual bool add_property(const Raul::URI& uri,
 	                          const Atom&      value,
 	                          Graph            ctx = Graph::DEFAULT);
 

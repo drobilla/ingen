@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -14,55 +14,41 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_EVENTS_CREATEBLOCK_HPP
-#define INGEN_EVENTS_CREATEBLOCK_HPP
+#ifndef INGEN_EVENTS_UNDO_HPP
+#define INGEN_EVENTS_UNDO_HPP
 
-#include "ingen/Resource.hpp"
-
-#include "ClientUpdate.hpp"
 #include "Event.hpp"
+#include "UndoStack.hpp"
+#include "types.hpp"
 
 namespace Ingen {
 namespace Server {
-
-class BlockImpl;
-class CompiledGraph;
-class GraphImpl;
-
 namespace Events {
 
-/** An event to load a Block and insert it into a Graph.
+/** A request to undo the last change to the engine.
  *
  * \ingroup engine
  */
-class CreateBlock : public Event
+class Undo : public Event
 {
 public:
-	CreateBlock(Engine&               engine,
-	            SPtr<Interface>       client,
-	            int32_t               id,
-	            SampleCount           timestamp,
-	            const Raul::Path&     block_path,
-	            Resource::Properties& properties);
-
-	~CreateBlock();
+	Undo(Engine&         engine,
+	     SPtr<Interface> client,
+	     int32_t         id,
+	     SampleCount     timestamp,
+	     bool            is_redo);
 
 	bool pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
-	void undo(Interface& target);
 
 private:
-	Raul::Path            _path;
-	Resource::Properties& _properties;
-	ClientUpdate          _update;
-	GraphImpl*            _graph;
-	BlockImpl*            _block;
-	CompiledGraph*        _compiled_graph;
+	UndoStack::Entry _entry;
+	bool             _is_redo;
 };
 
 } // namespace Events
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_EVENTS_CREATEBLOCK_HPP
+#endif // INGEN_EVENTS_UNDO_HPP

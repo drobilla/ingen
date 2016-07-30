@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -26,12 +26,14 @@
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
+#include "Event.hpp"
 #include "ProcessContext.hpp"
 
 namespace Raul { class Maid; }
 
 namespace Ingen {
 
+class AtomReader;
 class Store;
 class World;
 
@@ -42,7 +44,6 @@ class Broadcaster;
 class BufferFactory;
 class ControlBindings;
 class Driver;
-class Event;
 class EventWriter;
 class GraphImpl;
 class LV2Options;
@@ -50,6 +51,7 @@ class PostProcessor;
 class PreProcessor;
 class ProcessContext;
 class SocketListener;
+class UndoStack;
 class Worker;
 
 /**
@@ -89,7 +91,7 @@ public:
 	SampleCount event_time();
 
 	/** Enqueue an event to be processed (non-realtime threads only). */
-	void enqueue_event(Event* ev);
+	void enqueue_event(Event* ev, Event::Mode mode=Event::Mode::NORMAL);
 
 	/** Process events (process thread only). */
 	unsigned process_events();
@@ -101,6 +103,7 @@ public:
 	Ingen::World* world() const { return _world; }
 
 	EventWriter*     interface()        const { return _event_writer; }
+	AtomReader*      atom_interface()   const { return _atom_interface; }
 	BlockFactory*    block_factory()    const { return _block_factory; }
 	Broadcaster*     broadcaster()      const { return _broadcaster; }
 	BufferFactory*   buffer_factory()   const { return _buffer_factory; }
@@ -110,6 +113,8 @@ public:
 	GraphImpl*       root_graph()       const { return _root_graph; }
 	PostProcessor*   post_processor()   const { return _post_processor; }
 	Raul::Maid*      maid()             const { return _maid; }
+	UndoStack*       undo_stack()       const { return _undo_stack; }
+	UndoStack*       redo_stack()       const { return _redo_stack; }
 	Worker*          worker()           const { return _worker; }
 
 	ProcessContext& process_context() { return _process_context; }
@@ -127,8 +132,11 @@ private:
 	ControlBindings* _control_bindings;
 	SPtr<Driver>     _driver;
 	EventWriter*     _event_writer;
+	AtomReader*      _atom_interface;
 	Raul::Maid*      _maid;
 	SPtr<LV2Options> _options;
+	UndoStack*       _undo_stack;
+	UndoStack*       _redo_stack;
 	PreProcessor*    _pre_processor;
 	PostProcessor*   _post_processor;
 	GraphImpl*       _root_graph;

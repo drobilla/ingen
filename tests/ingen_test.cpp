@@ -42,6 +42,8 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Parser.hpp"
+#include "ingen/Serialiser.hpp"
+#include "ingen/Store.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
@@ -97,6 +99,10 @@ public:
 	void set_response_id(int32_t id) {}
 
 	void get(const Raul::URI& uri) {}
+
+	void undo() {}
+
+	void redo() {}
 
 	void response(int32_t id, Status status, const std::string& subject) {
 		if (status != Status::SUCCESS) {
@@ -220,8 +226,9 @@ main(int argc, char** argv)
 	SerdEnv* env = serd_env_new(&cmds_file_uri);
 	cmds->load_file(env, SERD_TURTLE, cmds_file_path);
 	Sord::Node nil;
-	for (int i = 0; ; ++i) {
-		std::string subject_str = (fmt("msg%1%") % i).str();
+	int n_events = 0;
+	for (;; ++n_events) {
+		std::string subject_str = (fmt("msg%1%") % n_events).str();
 		Sord::URI subject(*world->rdf_world(), subject_str,
 		                  (const char*)cmds_file_uri.buf);
 		Sord::Iter iter = cmds->find(subject, nil, nil);
@@ -247,17 +254,46 @@ main(int argc, char** argv)
 			return EXIT_FAILURE;
 		}
 
-		while (world->engine()->pending_events()) {
-			world->engine()->run(4096);
-			world->engine()->main_iteration();
-			g_usleep(1000);
-		}
+		flush_events(world);
 	}
+
+	delete cmds;
+
+	// Save resulting graph
+	Store::iterator   r        = world->store()->find(Raul::Path("/"));
+	const std::string base     = Glib::path_get_basename(cmds_file_path);
+	const std::string out_name = base.substr(0, base.find('.')) + ".out.ingen";
+	const std::string out_path = Glib::build_filename(Glib::get_current_dir(), out_name);
+	world->serialiser()->write_bundle(r->second, Glib::filename_to_uri(out_path));
+
+	// Undo every event (should result in a graph identical to the original)
+	for (int i = 0; i < n_events; ++i) {
+		world->interface()->undo();
+		flush_events(world);
+	}
+
+	// Save completely undone graph
+	r = world->store()->find(Raul::Path("/"));
+	const std::string undo_name = base.substr(0, base.find('.')) + ".undo.ingen";
+	const std::string undo_path = Glib::build_filename(Glib::get_current_dir(), undo_name);
+	world->serialiser()->write_bundle(r->second, Glib::filename_to_uri(undo_path));
+
+	// Redo every event (should result in a graph identical to the pre-undo output)
+	for (int i = 0; i < n_events; ++i) {
+		world->interface()->redo();
+		flush_events(world);
+	}
+
+	// Save completely redone graph
+	r = world->store()->find(Raul::Path("/"));
+	const std::string redo_name = base.substr(0, base.find('.')) + ".redo.ingen";
+	const std::string redo_path = Glib::build_filename(Glib::get_current_dir(), redo_name);
+	world->serialiser()->write_bundle(r->second, Glib::filename_to_uri(redo_path));
+
 	free((void*)out.buf);
 	serd_env_free(env);
 	sratom_free(sratom);
 	serd_node_free(&cmds_file_uri);
-	delete cmds;
 
 	// Shut down
 	world->engine()->deactivate();

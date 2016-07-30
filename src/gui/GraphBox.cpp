@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -77,6 +77,8 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	xml->get_widget("graph_save_menuitem", _menu_save);
 	xml->get_widget("graph_save_as_menuitem", _menu_save_as);
 	xml->get_widget("graph_export_image_menuitem", _menu_export_image);
+	xml->get_widget("graph_redo_menuitem", _menu_redo);
+	xml->get_widget("graph_undo_menuitem", _menu_undo);
 	xml->get_widget("graph_cut_menuitem", _menu_cut);
 	xml->get_widget("graph_copy_menuitem", _menu_copy);
 	xml->get_widget("graph_paste_menuitem", _menu_paste);
@@ -119,6 +121,10 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 		sigc::mem_fun(this, &GraphBox::event_save_as));
 	_menu_export_image->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_export_image));
+	_menu_redo->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_redo));
+	_menu_undo->signal_activate().connect(
+		sigc::mem_fun(this, &GraphBox::event_undo));
 	_menu_copy->signal_activate().connect(
 		sigc::mem_fun(this, &GraphBox::event_copy));
 	_menu_paste->signal_activate().connect(
@@ -671,6 +677,18 @@ GraphBox::event_copy()
 }
 
 void
+GraphBox::event_redo()
+{
+	_app->interface()->redo();
+}
+
+void
+GraphBox::event_undo()
+{
+	_app->interface()->undo();
+}
+
+void
 GraphBox::event_paste()
 {
 	if (_view)
@@ -748,7 +766,9 @@ GraphBox::event_normal_font_size()
 void
 GraphBox::event_arrange()
 {
+	_app->interface()->bundle_begin();
 	_view->canvas()->arrange();
+	_app->interface()->bundle_end();
 }
 
 void

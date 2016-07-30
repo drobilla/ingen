@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -217,6 +217,12 @@ Disconnect::post_process()
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->disconnect(_tail_path, _head_path);
 	}
+}
+
+void
+Disconnect::undo(Interface& target)
+{
+	target.connect(_tail_path, _head_path);
 }
 
 } // namespace Events

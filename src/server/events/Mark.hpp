@@ -14,55 +14,42 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_EVENTS_CREATEBLOCK_HPP
-#define INGEN_EVENTS_CREATEBLOCK_HPP
+#ifndef INGEN_EVENTS_MARK_HPP
+#define INGEN_EVENTS_MARK_HPP
 
-#include "ingen/Resource.hpp"
-
-#include "ClientUpdate.hpp"
 #include "Event.hpp"
 
 namespace Ingen {
 namespace Server {
 
-class BlockImpl;
-class CompiledGraph;
-class GraphImpl;
+class Engine;
 
 namespace Events {
 
-/** An event to load a Block and insert it into a Graph.
- *
+/** Set properties of a graph object.
  * \ingroup engine
  */
-class CreateBlock : public Event
+class Mark : public Event
 {
 public:
-	CreateBlock(Engine&               engine,
-	            SPtr<Interface>       client,
-	            int32_t               id,
-	            SampleCount           timestamp,
-	            const Raul::Path&     block_path,
-	            Resource::Properties& properties);
+	enum class Type { BUNDLE_START, BUNDLE_END };
 
-	~CreateBlock();
+	Mark(Engine&                     engine,
+	     SPtr<Interface>             client,
+	     int32_t                     id,
+	     SampleCount                 timestamp,
+	     Type                        type);
 
 	bool pre_process();
 	void execute(ProcessContext& context);
 	void post_process();
-	void undo(Interface& target);
 
 private:
-	Raul::Path            _path;
-	Resource::Properties& _properties;
-	ClientUpdate          _update;
-	GraphImpl*            _graph;
-	BlockImpl*            _block;
-	CompiledGraph*        _compiled_graph;
+	Type _type;
 };
 
 } // namespace Events
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_EVENTS_CREATEBLOCK_HPP
+#endif // INGEN_EVENTS_MARK_HPP

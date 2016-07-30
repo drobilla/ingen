@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -586,8 +586,10 @@ destroy_arc(GanvEdge* arc, void* data)
 void
 GraphCanvas::destroy_selection()
 {
+	_app.interface()->bundle_begin();
 	for_each_selected_edge(destroy_arc, &_app);
 	for_each_selected_node(destroy_node, &_app);
+	_app.interface()->bundle_end();
 }
 
 static void

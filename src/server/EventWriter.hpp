@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -25,6 +25,7 @@
 #include "ingen/Resource.hpp"
 #include "ingen/types.hpp"
 
+#include "Event.hpp"
 #include "types.hpp"
 
 namespace Ingen {
@@ -52,9 +53,9 @@ public:
 
 	virtual void set_response_id(int32_t id);
 
-	virtual void bundle_begin() {}
+	virtual void bundle_begin();
 
-	virtual void bundle_end() {}
+	virtual void bundle_end();
 
 	virtual void put(const Raul::URI&            path,
 	                 const Resource::Properties& properties,
@@ -85,16 +86,23 @@ public:
 	virtual void disconnect_all(const Raul::Path& graph,
 	                            const Raul::Path& path);
 
+	virtual void undo();
+
+	virtual void redo();
+
 	virtual void get(const Raul::URI& uri);
 
 	virtual void response(int32_t id, Status status, const std::string& subject) {}  ///< N/A
 
 	virtual void error(const std::string& msg) {}  ///< N/A
 
+	void set_event_mode(Event::Mode mode) { _event_mode = mode; }
+
 protected:
 	Engine&         _engine;
 	SPtr<Interface> _respondee;
 	int32_t         _request_id;
+	Event::Mode     _event_mode;
 
 private:
 	SampleCount now() const;

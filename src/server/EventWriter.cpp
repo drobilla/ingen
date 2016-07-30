@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -28,6 +28,7 @@ namespace Server {
 EventWriter::EventWriter(Engine& engine)
 	: _engine(engine)
 	, _request_id(0)
+	, _event_mode(Event::Mode::NORMAL)
 {
 }
 
@@ -48,13 +49,32 @@ EventWriter::set_response_id(int32_t id)
 }
 
 void
+EventWriter::bundle_begin()
+{
+	_engine.enqueue_event(
+		new Events::Mark(_engine, _respondee, _request_id, now(),
+		                 Events::Mark::Type::BUNDLE_START),
+		_event_mode);
+}
+
+void
+EventWriter::bundle_end()
+{
+	_engine.enqueue_event(
+		new Events::Mark(_engine, _respondee, _request_id, now(),
+		                 Events::Mark::Type::BUNDLE_END),
+		_event_mode);
+}
+
+void
 EventWriter::put(const Raul::URI&            uri,
                  const Resource::Properties& properties,
                  const Resource::Graph       ctx)
 {
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
-		                  Events::Delta::Type::PUT, ctx, uri, properties));
+		                  Events::Delta::Type::PUT, ctx, uri, properties),
+		_event_mode);
 }
 
 void
@@ -65,7 +85,8 @@ EventWriter::delta(const Raul::URI&            uri,
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
 		                  Events::Delta::Type::PATCH, Resource::Graph::DEFAULT,
-		                  uri, add, remove));
+		                  uri, add, remove),
+		_event_mode);
 }
 
 void
@@ -74,7 +95,8 @@ EventWriter::copy(const Raul::URI& old_uri,
 {
 	_engine.enqueue_event(
 		new Events::Copy(_engine, _respondee, _request_id, now(),
-		                 old_uri, new_uri));
+		                 old_uri, new_uri),
+		_event_mode);
 }
 
 void
@@ -83,14 +105,16 @@ EventWriter::move(const Raul::Path& old_path,
 {
 	_engine.enqueue_event(
 		new Events::Move(_engine, _respondee, _request_id, now(),
-		                 old_path, new_path));
+		                 old_path, new_path),
+		_event_mode);
 }
 
 void
 EventWriter::del(const Raul::URI& uri)
 {
 	_engine.enqueue_event(
-		new Events::Delete(_engine, _respondee, _request_id, now(), uri));
+		new Events::Delete(_engine, _respondee, _request_id, now(), uri),
+		_event_mode);
 }
 
 void
@@ -99,7 +123,8 @@ EventWriter::connect(const Raul::Path& tail_path,
 {
 	_engine.enqueue_event(
 		new Events::Connect(_engine, _respondee, _request_id, now(),
-		                    tail_path, head_path));
+		                    tail_path, head_path),
+		_event_mode);
 
 }
 
@@ -109,7 +134,8 @@ EventWriter::disconnect(const Raul::Path& src,
 {
 	_engine.enqueue_event(
 		new Events::Disconnect(_engine, _respondee, _request_id, now(),
-		                       src, dst));
+		                       src, dst),
+		_event_mode);
 }
 
 void
@@ -118,7 +144,8 @@ EventWriter::disconnect_all(const Raul::Path& graph,
 {
 	_engine.enqueue_event(
 		new Events::DisconnectAll(_engine, _respondee, _request_id, now(),
-		                          graph, path));
+		                          graph, path),
+		_event_mode);
 }
 
 void
@@ -128,15 +155,33 @@ EventWriter::set_property(const Raul::URI& uri,
 {
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
-		                  Events::Delta::Type::PUT, Resource::Graph::DEFAULT,
-		                  uri, {{predicate, value}}, {}));
+		                  Events::Delta::Type::SET, Resource::Graph::DEFAULT,
+		                  uri, {{predicate, value}}, {}),
+		_event_mode);
+}
+
+void
+EventWriter::undo()
+{
+	_engine.enqueue_event(
+		new Events::Undo(_engine, _respondee, _request_id, now(), false),
+		_event_mode);
+}
+
+void
+EventWriter::redo()
+{
+	_engine.enqueue_event(
+		new Events::Undo(_engine, _respondee, _request_id, now(), true),
+		_event_mode);
 }
 
 void
 EventWriter::get(const Raul::URI& uri)
 {
 	_engine.enqueue_event(
-		new Events::Get(_engine, _respondee, _request_id, now(), uri));
+		new Events::Get(_engine, _respondee, _request_id, now(), uri),
+		_event_mode);
 }
 
 } // namespace Server

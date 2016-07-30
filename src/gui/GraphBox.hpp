@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -108,6 +108,8 @@ private:
 	void event_save();
 	void event_save_as();
 	void event_export_image();
+	void event_redo();
+	void event_undo();
 	void event_copy();
 	void event_paste();
 	void event_delete();
@@ -148,6 +150,8 @@ private:
 	Gtk::MenuItem*      _menu_save;
 	Gtk::MenuItem*      _menu_save_as;
 	Gtk::MenuItem*      _menu_export_image;
+	Gtk::MenuItem*      _menu_redo;
+	Gtk::MenuItem*      _menu_undo;
 	Gtk::MenuItem*      _menu_cut;
 	Gtk::MenuItem*      _menu_copy;
 	Gtk::MenuItem*      _menu_paste;

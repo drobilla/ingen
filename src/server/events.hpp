@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -18,6 +18,7 @@
 #define INGEN_ENGINE_EVENTS_HPP
 
 #include "events/Connect.hpp"
+#include "events/Copy.hpp"
 #include "events/CreateBlock.hpp"
 #include "events/CreateGraph.hpp"
 #include "events/CreatePort.hpp"
@@ -26,8 +27,9 @@
 #include "events/Disconnect.hpp"
 #include "events/DisconnectAll.hpp"
 #include "events/Get.hpp"
+#include "events/Mark.hpp"
 #include "events/Move.hpp"
-#include "events/Copy.hpp"
 #include "events/SetPortValue.hpp"
+#include "events/Undo.hpp"
 
 #endif // INGEN_ENGINE_EVENTS_HPP

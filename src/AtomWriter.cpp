@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -56,6 +56,11 @@ AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	lv2_atom_forge_set_sink(&_forge, forge_sink, forge_deref, &_out);
 }
 
+AtomWriter::~AtomWriter()
+{
+	free((void*)_out.buf);
+}
+
 void
 AtomWriter::finish_msg()
 {
@@ -67,11 +72,17 @@ AtomWriter::finish_msg()
 void
 AtomWriter::bundle_begin()
 {
+	LV2_Atom_Forge_Frame msg;
+	forge_request(&msg, _uris.ingen_BundleStart);
+	finish_msg();
 }
 
 void
 AtomWriter::bundle_end()
 {
+	LV2_Atom_Forge_Frame msg;
+	forge_request(&msg, _uris.ingen_BundleEnd);
+	finish_msg();
 }
 
 void
@@ -344,6 +355,44 @@ AtomWriter::set_property(const Raul::URI& subject,
 	lv2_atom_forge_atom(&_forge, value.size(), value.type());
 	lv2_atom_forge_write(&_forge, value.get_body(), value.size());
 
+	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
+}
+
+/** @page protocol
+ * @subsection Undo
+ *
+ * Use [ingen:Undo](http://drobilla.net/ns/ingen#Undo) to undo the last change
+ * to the engine.
+ *
+ * @code{.ttl}
+ * [] a ingen:Undo .
+ * @endcode
+ */
+void
+AtomWriter::undo()
+{
+	LV2_Atom_Forge_Frame msg;
+	forge_request(&msg, _uris.ingen_Undo);
+	lv2_atom_forge_pop(&_forge, &msg);
+	finish_msg();
+}
+
+/** @page protocol
+ * @subsection Undo
+ *
+ * Use [ingen:Redo](http://drobilla.net/ns/ingen#Redo) to undo the last change
+ * to the engine.
+ *
+ * @code{.ttl}
+ * [] a ingen:Redo .
+ * @endcode
+ */
+void
+AtomWriter::redo()
+{
+	LV2_Atom_Forge_Frame msg;
+	forge_request(&msg, _uris.ingen_Redo);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }

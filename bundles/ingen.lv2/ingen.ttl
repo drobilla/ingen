@@ -205,3 +205,18 @@ ingen:incidentTo
 	rdfs:domain ingen:Arc ;
 	rdfs:label "incident to" ;
 	rdfs:comment "A special property used to describe any arc incident to a port or block.  This is never saved in graph files, but is used in the control protocol to completely disconnect a Block or Port." .
+
+ingen:Undo
+	a rdfs:Class ;
+	rdfs:label "Undo" ;
+	rdfs:comment "A request to undo the previous change." .
+
+ingen:BundleStart
+	a rdfs:Class ;
+	rdfs:label "Bundle Start" ;
+	rdfs:comment "The start of an undo transaction." .
+
+ingen:BundleEnd
+	a rdfs:Class ;
+	rdfs:label "Bundle End" ;
+	rdfs:comment "The end of an undo transaction." .

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -55,10 +55,14 @@ public:
 
 	virtual void set_respondee(SPtr<Interface> respondee) {}
 
-	/** Begin an atomic bundle */
+	/** Begin a transaction.
+	 *
+	 * This does not guarantee strict atomicity, but the events in a bundle will be
+	 * considered one operation, and they will all be undone at once.
+	 */
 	virtual void bundle_begin() = 0;
 
-	/** End (and send) an atomic bundle */
+	/** End a transaction. */
 	virtual void bundle_end() = 0;
 
 	virtual void put(const Raul::URI&            uri,
@@ -89,6 +93,10 @@ public:
 	virtual void set_property(const Raul::URI& subject,
 	                          const Raul::URI& predicate,
 	                          const Atom&      value) = 0;
+
+	virtual void undo() = 0;
+
+	virtual void redo() = 0;
 
 	/** Set the ID to use to respond to the next message.
 	 * Setting the ID to 0 will disable responses.

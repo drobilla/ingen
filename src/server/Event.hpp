@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -53,6 +53,9 @@ class Event : public Raul::Deletable, public Raul::Noncopyable
 public:
 	virtual ~Event() {}
 
+	/** Event mode to distinguish normal events from undo events. */
+	enum class Mode { NORMAL, UNDO, REDO };
+
 	/** Pre-process event before execution (non-realtime). */
 	virtual bool pre_process() = 0;
 
@@ -61,6 +64,9 @@ public:
 
 	/** Post-process event after execution (non-realtime). */
 	virtual void post_process() = 0;
+
+	/** Write the inverse of this event to `sink`. */
+	virtual void undo(Interface& target) {}
 
 	/** Return true iff this event has been pre-processed. */
 	inline bool is_prepared() const { return _status != Status::NOT_PREPARED; }
@@ -80,6 +86,14 @@ public:
 	/** Return the status (success or error code) of this event. */
 	Status status() const { return _status; }
 
+	/** Return true iff this is a generated undo event. */
+	Mode get_mode() const { return _mode; }
+
+	/** Flag this event as a generated undo event. */
+	void set_mode(Mode mode) { _mode = mode; }
+
+	inline Engine& engine() { return _engine; }
+
 protected:
 	Event(Engine& engine, SPtr<Interface> client, int32_t id, FrameTime time)
 		: _engine(engine)
@@ -88,6 +102,7 @@ protected:
 		, _request_id(id)
 		, _time(time)
 		, _status(Status::NOT_PREPARED)
+		, _mode(Mode::NORMAL)
 	{}
 
 	/** Constructor for internal events only */
@@ -97,6 +112,7 @@ protected:
 		, _request_id(0)
 		, _time(0)
 		, _status(Status::NOT_PREPARED)
+		, _mode(Mode::NORMAL)
 	{}
 
 	inline bool pre_process_done(Status st) {
@@ -128,6 +144,7 @@ protected:
 	FrameTime           _time;
 	Status              _status;
 	std::string         _err_subject;
+	Mode                _mode;
 };
 
 } // namespace Server

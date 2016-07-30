@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -158,6 +158,10 @@ AtomReader::write(const LV2_Atom* msg)
 		if (subject_uri && !body) {
 			_iface.del(*subject_uri);
 			return true;
+		} else if (obj->body.otype == _uris.ingen_BundleStart) {
+			_iface.bundle_begin();
+		} else if (obj->body.otype == _uris.ingen_BundleEnd) {
+			_iface.bundle_end();
 		} else if (body && body->body.otype == _uris.ingen_Arc) {
 			const LV2_Atom* tail       = NULL;
 			const LV2_Atom* head       = NULL;
