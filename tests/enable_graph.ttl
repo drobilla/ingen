@@ -3,15 +3,13 @@
 @prefix patch: <http://lv2plug.in/ns/ext/patch#> .
 
 <msg0>
-	a patch:Put ;
+	a patch:Set ;
 	patch:subject <ingen:/graph> ;
-	patch:body [
-		ingen:enabled true
-	] .
+	patch:property ingen:enabled ;
+	patch:value true .
 
 <msg1>
-	a patch:Put ;
+	a patch:Set ;
 	patch:subject <ingen:/graph> ;
-	patch:body [
-		ingen:enabled false
-	] .
+	patch:property ingen:enabled ;
+	patch:value false .

@@ -1,18 +1,20 @@
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix atom: <http://lv2plug.in/ns/ext/atom#> .
-@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 @prefix ingen: <http://drobilla.net/ns/ingen#> .
 @prefix lv2: <http://lv2plug.in/ns/lv2core#> .
-@prefix lv2ev: <http://lv2plug.in/ns/ext/event#> .
 @prefix midi: <http://lv2plug.in/ns/ext/midi#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix patch: <http://lv2plug.in/ns/ext/patch#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <control_in>
+	ingen:canvasX 32.0 ;
+	ingen:canvasY 32.0 ;
 	ingen:polyphonic false ;
 	atom:bufferType atom:Sequence ;
+	<http://lv2plug.in/ns/ext/resize-port#minimumSize> 4096 ;
 	lv2:index 0 ;
 	lv2:name "Control" ;
 	lv2:portProperty lv2:connectionOptional ;
@@ -21,10 +23,14 @@
 		lv2:InputPort .
 
 <control_out>
+	ingen:canvasX 128.0 ;
+	ingen:canvasY 32.0 ;
 	ingen:polyphonic false ;
 	atom:bufferType atom:Sequence ;
+	<http://lv2plug.in/ns/ext/resize-port#minimumSize> 4096 ;
 	lv2:index 1 ;
 	lv2:name "Control" ;
+	lv2:portProperty lv2:connectionOptional ;
 	lv2:symbol "control_out" ;
 	a atom:AtomPort ,
 		lv2:OutputPort .

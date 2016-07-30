@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -126,6 +126,16 @@ ingen_try(bool cond, const char* msg)
 	}
 }
 
+static void
+flush_events(Ingen::World* world)
+{
+	while (world->engine()->pending_events()) {
+		world->engine()->run(4096);
+		world->engine()->main_iteration();
+		g_usleep(1000);
+	}
+}
+
 int
 main(int argc, char** argv)
 {
@@ -175,11 +185,7 @@ main(int argc, char** argv)
 		cerr << "error: failed to load initial graph " << start_graph << endl;
 		return EXIT_FAILURE;
 	}
-	while (world->engine()->pending_events()) {
-		world->engine()->run(4096);
-		world->engine()->main_iteration();
-		g_usleep(1000);
-	}
+	flush_events(world);
 
 	// Read commands
 

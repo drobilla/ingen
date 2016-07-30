@@ -3,15 +3,13 @@
 @prefix patch: <http://lv2plug.in/ns/ext/patch#> .
 
 <msg0>
-	a patch:Put ;
+	a patch:Set ;
 	patch:subject <ingen:/graph/> ;
-	patch:body [
-		ingen:polyphony 4
-	] .
+	patch:property ingen:polyphony ;
+	patch:value 4 .
 
 <msg1>
-	a patch:Put ;
+	a patch:Set ;
 	patch:subject <ingen:/graph/> ;
-	patch:body [
-		ingen:polyphony 1
-	] .
+	patch:property ingen:polyphony ;
+	patch:value 1 .
