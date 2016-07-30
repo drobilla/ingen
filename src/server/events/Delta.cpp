@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -80,15 +80,15 @@ Delta::Delta(Engine&           engine,
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = properties.begin(); i != properties.end(); ++i) {
 		std::cerr << "    + " << i->first
-		          << " = " << engine.world()->forge().str(i->second)
-		          << " :: " << engine.world()->uri_map().unmap_uri(i->second.type())
+		          << " " << engine.world()->forge().str(i->second)
+		          << "^^<" << engine.world()->uri_map().unmap_uri(i->second.type()) << ">"
 		          << std::endl;
 	}
 	typedef Resource::Properties::const_iterator iterator;
 	for (iterator i = remove.begin(); i != remove.end(); ++i) {
 		std::cerr << "    - " << i->first
-		          << " = " << engine.world()->forge().str(i->second)
-		          << " :: " << engine.world()->uri_map().unmap_uri(i->second.type())
+		          << " " << engine.world()->forge().str(i->second)
+		          << "^^<" << engine.world()->uri_map().unmap_uri(i->second.type()) << ">"
 		          << std::endl;
 	}
 	std::cerr << "}" << std::endl;

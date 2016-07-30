@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -256,8 +256,8 @@ ClientStore::put(const Raul::URI&            uri,
 #ifdef INGEN_CLIENT_STORE_DUMP
 	std::cerr << "Client put " << uri << " {" << endl;
 	for (auto p : properties)
-		std::cerr << '\t' << p.first << " = " << _uris.forge.str(p.second)
-		          << " :: " << p.second.type() << endl;
+		std::cerr << '\t' << p.first << " " << _uris.forge.str(p.second)
+		          << "^^" << _uris.forge.str(_uris.forge.make_urid(p.second.type()), true) << endl;
 	std::cerr << "}" << endl;
 #endif
 
@@ -369,12 +369,12 @@ ClientStore::delta(const Raul::URI&            uri,
 	std::cerr << "Client delta " << uri << " {" << endl;
 	for (auto r : remove)
 		std::cerr << "    - " << r.first
-		          << " = " << _uris.forge.str(r.second)
-		          << " :: " << r.second.type() << endl;
+		          << " " << _uris.forge.str(r.second)
+		          << "^^" << _uris.forge.str(_uris.forge.make_urid(r.second.type()), true) << endl;
 	for (auto a : add)
 		std::cerr << "    + " << a.first
-		          << " = " << _uris.forge.str(a.second)
-		          << " :: " << a.second.type() << endl;
+		          << " " << _uris.forge.str(a.second)
+		          << "^^" << _uris.forge.str(_uris.forge.make_urid(a.second.type()), true) << endl;
 	std::cerr << "}" << endl;
 #endif
 
