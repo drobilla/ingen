@@ -298,15 +298,9 @@ Delta::pre_process()
 	}
 
 	// Remove all added properties if this is a put or set
-	if (_object) {
-		if (_type == Type::PUT) {
-			for (const auto& p : _properties) {
-				_object->remove_property(p.first, p.second);
-			}
-		} else if (_type == Type::SET) {
-			for (const auto& p : _properties) {
-				_object->remove_property(p.first, uris.patch_wildcard);
-			}
+	if (_object && (_type == Type::PUT || _type == Type::SET)) {
+		for (const auto& p : _properties) {
+			_object->remove_property(p.first, uris.patch_wildcard);
 		}
 	}
 

@@ -70,17 +70,10 @@ SubgraphModule::store_location(double ax, double ay)
 	if (x != _block->get_property(uris.ingen_canvasX) ||
 	    y != _block->get_property(uris.ingen_canvasY))
 	{
-		Resource::Properties remove;
-		remove.insert(make_pair(uris.ingen_canvasX,
-		                        Resource::Property(uris.patch_wildcard)));
-		remove.insert(make_pair(uris.ingen_canvasY,
-		                        Resource::Property(uris.patch_wildcard)));
-		Resource::Properties add;
-		add.insert(make_pair(uris.ingen_canvasX,
-		                     Resource::Property(x, Resource::Graph::EXTERNAL)));
-		add.insert(make_pair(uris.ingen_canvasY,
-		                     Resource::Property(y, Resource::Graph::EXTERNAL)));
-		app().interface()->delta(_block->uri(), remove, add);
+		app().interface()->put(
+			_graph->uri(),
+			{{uris.ingen_canvasX, Resource::Property(x, Resource::Graph::EXTERNAL)},
+			 {uris.ingen_canvasY, Resource::Property(y, Resource::Graph::EXTERNAL)}});
 	}
 }
 

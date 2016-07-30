@@ -126,15 +126,10 @@ EventWriter::set_property(const Raul::URI& uri,
                           const Raul::URI& predicate,
                           const Atom&      value)
 {
-	Resource::Properties remove{
-		{ predicate, _engine.world()->uris().patch_wildcard.urid }};
-
-	Resource::Properties add{{ predicate, value }};
-
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
-		                  Events::Delta::Type::SET, Resource::Graph::DEFAULT,
-		                  uri, add, remove));
+		                  Events::Delta::Type::PUT, Resource::Graph::DEFAULT,
+		                  uri, {{predicate, value}}, {}));
 }
 
 void

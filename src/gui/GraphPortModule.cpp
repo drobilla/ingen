@@ -105,17 +105,10 @@ GraphPortModule::store_location(double ax, double ay)
 	if (x != _model->get_property(uris.ingen_canvasX) ||
 	    y != _model->get_property(uris.ingen_canvasY))
 	{
-		Resource::Properties remove;
-		remove.insert(make_pair(uris.ingen_canvasX,
-		                        Resource::Property(uris.patch_wildcard)));
-		remove.insert(make_pair(uris.ingen_canvasY,
-		                        Resource::Property(uris.patch_wildcard)));
-		Resource::Properties add;
-		add.insert(make_pair(uris.ingen_canvasX,
-		                     Resource::Property(x, Resource::Graph::INTERNAL)));
-		add.insert(make_pair(uris.ingen_canvasY,
-		                     Resource::Property(y, Resource::Graph::INTERNAL)));
-		app().interface()->delta(_model->uri(), remove, add);
+		app().interface()->put(
+			_model->uri(),
+			{{uris.ingen_canvasX, Resource::Property(x, Resource::Graph::INTERNAL)},
+			 {uris.ingen_canvasY, Resource::Property(y, Resource::Graph::INTERNAL)}});
 	}
 }
 

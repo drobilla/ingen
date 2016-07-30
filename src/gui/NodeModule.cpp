@@ -420,15 +420,8 @@ NodeModule::store_location(double ax, double ay)
 	if (x != _block->get_property(uris.ingen_canvasX) ||
 	    y != _block->get_property(uris.ingen_canvasY))
 	{
-		Resource::Properties remove;
-		remove.insert(make_pair(uris.ingen_canvasX,
-		                        Resource::Property(uris.patch_wildcard)));
-		remove.insert(make_pair(uris.ingen_canvasY,
-		                        Resource::Property(uris.patch_wildcard)));
-		Resource::Properties add;
-		add.insert(make_pair(uris.ingen_canvasX, x));
-		add.insert(make_pair(uris.ingen_canvasY, y));
-		app().interface()->delta(_block->uri(), remove, add);
+		app().interface()->put(_block->uri(), {{uris.ingen_canvasX, x},
+		                                       {uris.ingen_canvasY, y}});
 	}
 }
 
