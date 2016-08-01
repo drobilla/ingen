@@ -15,6 +15,7 @@
 */
 
 #include <cassert>
+#include <cstdlib>
 #include <string>
 
 #include "ingen/AtomSink.hpp"
