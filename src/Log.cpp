@@ -98,7 +98,11 @@ int
 Log::vtprintf(LV2_URID type, const char* fmt, va_list args)
 {
 	int ret = 0;
-	if (_log) {
+	if (type == _uris.log_Trace && !_trace) {
+		return 0;
+	} else if (_sink) {
+		ret = _sink(type, fmt, args);
+	} else if (_log) {
 		ret = _log->vprintf(_log->handle, type, fmt, args);
 	} else if (type == _uris.log_Error) {
 		ColorContext ctx(stderr, ColorContext::Color::RED);

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -91,6 +91,9 @@ App::App(Ingen::World* world)
 
 	PluginModel::set_rdf_world(*world->rdf_world());
 	PluginModel::set_lilv_world(world->lilv_world());
+
+	using namespace std::placeholders;
+	world->log().set_sink(std::bind(&MessagesWindow::log, _messages_window, _1, _2, _3));
 }
 
 App::~App()
@@ -214,12 +217,7 @@ App::response(int32_t id, Status status, const std::string& subject)
 void
 App::error_message(const string& str)
 {
-	_messages_window->post(str);
-
-	if (!_messages_window->is_visible())
-		_messages_window->present();
-
-	_messages_window->set_urgency_hint(true);
+	_messages_window->post_error(str);
 }
 
 void
@@ -320,6 +318,10 @@ App::gtk_main_iteration()
 {
 	if (!_client)
 		return false;
+
+	if (_messages_window) {
+		_messages_window->flush();
+	}
 
 	if (_world->engine()) {
 		if (!_world->engine()->main_iteration()) {

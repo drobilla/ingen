@@ -17,6 +17,7 @@
 #ifndef INGEN_LOG_HPP
 #define INGEN_LOG_HPP
 
+#include <functional>
 #include <string>
 
 #include <boost/format.hpp>
@@ -33,6 +34,8 @@ class URIs;
 
 class INGEN_API Log {
 public:
+	typedef std::function<int(LV2_URID, const char*, va_list)> Sink;
+
 	Log(LV2_Log_Log* log, URIs& uris);
 
 	struct Feature : public LV2Features::Feature {
@@ -60,12 +63,14 @@ public:
 
 	void set_flush(bool f) { _flush = f; }
 	void set_trace(bool f) { _trace = f; }
+	void set_sink(Sink s)  { _sink = s; }
 
 private:
 	void print(FILE* stream, const std::string& msg);
 
 	LV2_Log_Log* _log;
 	URIs&        _uris;
+	Sink         _sink;
 	bool         _flush;
 	bool         _trace;
 };

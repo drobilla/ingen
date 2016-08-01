@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -17,11 +17,14 @@
 #ifndef INGEN_GUI_MESSAGESWINDOW_HPP
 #define INGEN_GUI_MESSAGESWINDOW_HPP
 
+#include <mutex>
+#include <sstream>
 #include <string>
 
 #include <gtkmm/builder.h>
 #include <gtkmm/button.h>
 #include <gtkmm/textview.h>
+#include "lv2/lv2plug.in/ns/ext/log/log.h"
 
 #include "Window.hpp"
 
@@ -41,14 +44,24 @@ public:
 	MessagesWindow(BaseObjectType*                   cobject,
 	               const Glib::RefPtr<Gtk::Builder>& xml);
 
-	void post(const std::string& str);
+	void init_window(App& app);
+
+	int log(LV2_URID type, const char* fmt, va_list args);
+	void flush();
+
+	void post_error(const std::string& str);
 
 private:
 	void clear_clicked();
 
-	Gtk::TextView* _textview;
-	Gtk::Button*   _clear_button;
-	Gtk::Button*   _close_button;
+	std::mutex        _mutex;
+	std::stringstream _stream;
+	Gtk::TextView*    _textview;
+	Gtk::Button*      _clear_button;
+	Gtk::Button*      _close_button;
+
+	Glib::RefPtr<Gtk::TextTag>                      _error_tag;
+	std::map< LV2_URID, Glib::RefPtr<Gtk::TextTag> > _tags;
 };
 
 } // namespace GUI

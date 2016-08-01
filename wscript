@@ -92,6 +92,12 @@ def configure(conf):
                define_name   = 'HAVE_ISATTY',
                mandatory     = False)
 
+    conf.check(function_name = 'vasprintf',
+               header_name   = 'stdio.h',
+               defines       = '_GNU_SOURCE=1',
+               define_name   = 'HAVE_VASPRINTF',
+               mandatory     = False)
+
     if not Options.options.no_socket:
         conf.check(function_name = 'socket',
                    header_name   = 'sys/socket.h',

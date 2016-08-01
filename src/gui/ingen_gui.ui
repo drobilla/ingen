@@ -1876,8 +1876,8 @@ See COPYING file included with this distribution, or http://www.gnu.org/licenses
               <object class="GtkTextView" id="messages_textview">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="pixels_above_lines">5</property>
-                <property name="pixels_below_lines">5</property>
+                <property name="pixels_above_lines">1</property>
+                <property name="pixels_below_lines">1</property>
                 <property name="editable">False</property>
                 <property name="wrap_mode">word</property>
                 <property name="left_margin">5</property>
