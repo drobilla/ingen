@@ -47,10 +47,7 @@ public:
 		                                  Node*  block) = 0;
 
 protected:
-		static void free_feature(LV2_Feature* feature) {
-			free(feature->data);
-			free(feature);
-		}
+		static void free_feature(LV2_Feature* feature);
 	};
 
 	class EmptyFeature : public Feature {

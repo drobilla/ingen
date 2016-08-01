@@ -22,6 +22,13 @@ using namespace std;
 
 namespace Ingen {
 
+void
+LV2Features::Feature::free_feature(LV2_Feature* feature)
+{
+	free(feature->data);
+	free(feature);
+}
+
 LV2Features::LV2Features()
 {
 }

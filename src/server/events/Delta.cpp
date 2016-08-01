@@ -639,8 +639,6 @@ Delta::post_process()
 void
 Delta::undo(Interface& target)
 {
-	const Ingen::URIs& uris = _engine.world()->uris();
-
 	if (_create_event) {
 		_create_event->undo(target);
 	} else if (_type == Type::PATCH) {
