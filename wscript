@@ -98,6 +98,10 @@ def configure(conf):
                define_name   = 'HAVE_VASPRINTF',
                mandatory     = False)
 
+    conf.check(define_name   = 'HAVE_LIBDL',
+               lib           = 'dl',
+               mandatory     = False)
+
     if not Options.options.no_socket:
         conf.check(function_name = 'socket',
                    header_name   = 'sys/socket.h',
