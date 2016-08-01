@@ -81,14 +81,14 @@ def configure(conf):
                       atleast_version='0.12.0', mandatory=False)
 
     conf.check(function_name = 'posix_memalign',
-               defines       = '_POSIX_SOURCE=1',
+               defines       = '_POSIX_C_SOURCE=200809L',
                header_name   = 'stdlib.h',
                define_name   = 'HAVE_POSIX_MEMALIGN',
                mandatory     = False)
 
     conf.check(function_name = 'isatty',
                header_name   = 'unistd.h',
-               defines       = '_POSIX_SOURCE=1',
+               defines       = '_POSIX_C_SOURCE=200809L',
                define_name   = 'HAVE_ISATTY',
                mandatory     = False)
 
