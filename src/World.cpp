@@ -111,8 +111,8 @@ public:
 		, uri_map(new URIMap(log, map, unmap))
 		, forge(new Forge(*uri_map))
 		, uris(new URIs(*forge, uri_map, lilv_world))
-		, log(lv2_log, *uris)
 		, conf(*forge)
+		, log(lv2_log, *uris)
 	{
 		// Parse default configuration files
 		std::list<std::string> files = conf.load_default("ingen", "options.ttl");
@@ -123,12 +123,14 @@ public:
 		// Parse command line options, overriding configuration file values
 		conf.parse(argc, argv);
 		log.set_flush(conf.option("flush-log").get<int32_t>());
+		log.set_trace(conf.option("trace").get<int32_t>());
 
 		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map->urid_map_feature());
 		lv2_features->add_feature(uri_map->urid_unmap_feature());
 		lv2_features->add_feature(SPtr<InstanceAccess>(new InstanceAccess()));
 		lv2_features->add_feature(SPtr<DataAccess>(new DataAccess()));
+		lv2_features->add_feature(SPtr<Log::Feature>(new Log::Feature()));
 		lilv_world_load_all(lilv_world);
 
 		// Set up RDF namespaces
@@ -215,8 +217,8 @@ public:
 	Forge*           forge;
 	URIs*            uris;
 	LV2_Log_Log*     lv2_log;
-	Log              log;
 	Configuration    conf;
+	Log              log;
 	SPtr<Interface>  interface;
 	SPtr<EngineBase> engine;
 	SPtr<Serialiser> serialiser;

@@ -127,6 +127,7 @@ public:
 	const Quark ingen_value;
 	const Quark log_Error;
 	const Quark log_Note;
+	const Quark log_Trace;
 	const Quark log_Warning;
 	const Quark lv2_AudioPort;
 	const Quark lv2_CVPort;

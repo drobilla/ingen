@@ -86,6 +86,12 @@ def configure(conf):
                define_name   = 'HAVE_POSIX_MEMALIGN',
                mandatory     = False)
 
+    conf.check(function_name = 'isatty',
+               header_name   = 'unistd.h',
+               defines       = '_POSIX_SOURCE=1',
+               define_name   = 'HAVE_ISATTY',
+               mandatory     = False)
+
     if not Options.options.no_socket:
         conf.check(function_name = 'socket',
                    header_name   = 'sys/socket.h',

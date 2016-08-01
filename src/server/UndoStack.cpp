@@ -15,7 +15,6 @@
 */
 
 #include <ctime>
-#include <iostream>
 
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
