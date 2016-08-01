@@ -9,8 +9,8 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<graph.ttl>
+<main.ttl>
 	lv2:prototype ingen:GraphPrototype ;
 	a ingen:Graph ,
 		lv2:Plugin ;
-	rdfs:seeAlso <graph.ttl> .
+	rdfs:seeAlso <main.ttl> .

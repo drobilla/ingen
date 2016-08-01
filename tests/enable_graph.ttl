@@ -4,12 +4,12 @@
 
 <msg0>
 	a patch:Set ;
-	patch:subject <ingen:/graph> ;
+	patch:subject <ingen:/main> ;
 	patch:property ingen:enabled ;
 	patch:value true .
 
 <msg1>
 	a patch:Set ;
-	patch:subject <ingen:/graph> ;
+	patch:subject <ingen:/main> ;
 	patch:property ingen:enabled ;
 	patch:value false .

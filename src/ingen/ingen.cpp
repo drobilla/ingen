@@ -176,7 +176,7 @@ main(int argc, char** argv)
 		const string graph = conf.option("load").ptr<char>();
 
 		engine_interface->get(Raul::URI("ingen:/plugins"));
-		engine_interface->get(Node::root_graph_uri());
+		engine_interface->get(Node::main_uri());
 
 		std::lock_guard<std::mutex> lock(world->rdf_mutex());
 		world->parser()->parse_file(
@@ -185,14 +185,14 @@ main(int argc, char** argv)
 		const char* path = conf.option("server-load").ptr<char>();
 		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
 			std::cout << "Loading " << path << " (server side)" << std::endl;
-			engine_interface->copy(Raul::URI(path), Node::root_graph_uri());
+			engine_interface->copy(Raul::URI(path), Node::main_uri());
 		} else {
 			SerdNode uri = serd_node_new_file_uri(
 				(const uint8_t*)path, NULL, NULL, true);
 			std::cout << "Loading " << (const char*)uri.buf
 			          << " (server side)" << std::endl;
 			engine_interface->copy(Raul::URI((const char*)uri.buf),
-			                       Node::root_graph_uri());
+			                       Node::main_uri());
 			serd_node_free(&uri);
 		}
 	}
@@ -202,12 +202,12 @@ main(int argc, char** argv)
 		const char* path = conf.option("save").ptr<char>();
 		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
 			std::cout << "Saving to " << path << std::endl;
-			engine_interface->copy(Node::root_graph_uri(), Raul::URI(path));
+			engine_interface->copy(Node::main_uri(), Raul::URI(path));
 		} else {
 			SerdNode uri = serd_node_new_file_uri(
 				(const uint8_t*)path, NULL, NULL, true);
 			std::cout << "Saving to " << (const char*)uri.buf << std::endl;
-			engine_interface->copy(Node::root_graph_uri(),
+			engine_interface->copy(Node::main_uri(),
 			                       Raul::URI((const char*)uri.buf));
 			serd_node_free(&uri);
 		}

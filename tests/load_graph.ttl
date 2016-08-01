@@ -5,4 +5,4 @@
 <msg0>
 	a patch:Copy ;
 	patch:subject <empty.ingen/> ;
-	patch:destination <ingen:/graph/> .
+	patch:destination <ingen:/main/> .

@@ -51,7 +51,6 @@ CreateGraph::build_child_events()
 
 	// Properties common to both ports
 	Resource::Properties control_properties;
-	control_properties.put(uris.lv2_name, uris.forge.alloc("Control"));
 	control_properties.put(uris.rdf_type, uris.atom_AtomPort);
 	control_properties.put(uris.atom_bufferType, uris.atom_Sequence);
 	control_properties.put(uris.atom_supports, uris.patch_Message);
@@ -60,6 +59,7 @@ CreateGraph::build_child_events()
 
 	// Add control input
 	Resource::Properties in_properties(control_properties);
+	in_properties.put(uris.lv2_name, uris.forge.alloc("Control"));
 	in_properties.put(uris.rdf_type, uris.lv2_InputPort);
 	in_properties.put(uris.lv2_index, uris.forge.make(0));
 	in_properties.put(uris.ingen_canvasX, uris.forge.make(32.0f),
@@ -71,11 +71,12 @@ CreateGraph::build_child_events()
 		SPtr<Events::CreatePort>(
 			new Events::CreatePort(
 				_engine, _request_client, -1, _time,
-				_path.child(Raul::Symbol("control_in")),
+				_path.child(Raul::Symbol("control")),
 				in_properties)));
 
 	// Add control out
 	Resource::Properties out_properties(control_properties);
+	out_properties.put(uris.lv2_name, uris.forge.alloc("Notify"));
 	out_properties.put(uris.rdf_type, uris.lv2_OutputPort);
 	out_properties.put(uris.lv2_index, uris.forge.make(1));
 	out_properties.put(uris.ingen_canvasX, uris.forge.make(128.0f),
@@ -86,7 +87,7 @@ CreateGraph::build_child_events()
 	_child_events.push_back(
 		SPtr<Events::CreatePort>(
 			new Events::CreatePort(_engine, _request_client, -1, _time,
-			                       _path.child(Raul::Symbol("control_out")),
+			                       _path.child(Raul::Symbol("notify")),
 			                       out_properties)));
 }
 

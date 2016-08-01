@@ -97,18 +97,18 @@
 
 <>
 	ingen:arc [
-		ingen:head <control_out> ;
-		ingen:tail <control_in>
+		ingen:head <notify> ;
+		ingen:tail <control>
 	] , [
 		ingen:head <Note/input> ;
-		ingen:tail <control_in>
+		ingen:tail <control>
 	] ;
 	ingen:block <Note> ;
 	ingen:polyphony 1 ;
 	<http://lv2plug.in/ns/extensions/ui#ui> ingen:GraphUIGtk2 ;
 	lv2:extensionData <http://lv2plug.in/ns/ext/state#interface> ;
-	lv2:port <control_in> ,
-		<control_out> ,
+	lv2:port <control> ,
+		<notify> ,
 		<left_out> ,
 		<right_out> ;
 	doap:name "Ingen Stereo Instrument Template" ;
@@ -116,7 +116,7 @@
 		lv2:InstrumentPlugin ,
 		lv2:Plugin .
 
-<control_in>
+<control>
 	ingen:canvasX 9.5 ;
 	ingen:canvasY 14.0 ;
 	ingen:polyphonic false ;
@@ -126,11 +126,11 @@
 	lv2:index 0 ;
 	lv2:name "Control" ;
 	lv2:portProperty lv2:connectionOptional ;
-	lv2:symbol "control_in" ;
+	lv2:symbol "control" ;
 	a atom:AtomPort ,
 		lv2:InputPort .
 
-<control_out>
+<notify>
 	ingen:canvasX 187.5 ;
 	ingen:canvasY 14.0 ;
 	ingen:polyphonic false ;
@@ -138,7 +138,7 @@
 	<http://lv2plug.in/ns/ext/resize-port#minimumSize> 4096 ;
 	lv2:index 1 ;
 	lv2:name "Control" ;
-	lv2:symbol "control_out" ;
+	lv2:symbol "notify" ;
 	a atom:AtomPort ,
 		lv2:OutputPort .
 

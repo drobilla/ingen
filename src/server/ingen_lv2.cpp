@@ -127,7 +127,7 @@ public:
 			graph_port->set_driver_buffer(lv2_buf, nframes * sizeof(float));
 		} else if (graph_port->buffer_type() == uris.atom_Sequence) {
 			graph_port->set_driver_buffer(lv2_buf, lv2_atom_total_size((LV2_Atom*)lv2_buf));
-			if (graph_port->symbol() == "control_in") {  // TODO: Safe to use index?
+			if (graph_port->symbol() == "control") {  // TODO: Safe to use index?
 				LV2_Atom_Sequence* seq      = (LV2_Atom_Sequence*)lv2_buf;
 				bool               enqueued = false;
 				LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
@@ -687,7 +687,7 @@ ingen_save(LV2_Handle                instance,
 	LV2_URID atom_Path = plugin->map->map(plugin->map->handle,
 	                                      LV2_ATOM__Path);
 
-	char* real_path  = make_path->path(make_path->handle, "graph.ttl");
+	char* real_path  = make_path->path(make_path->handle, "main.ttl");
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);
 
 	Ingen::Store::iterator root = plugin->world->store()->find(Raul::Path("/"));
@@ -755,7 +755,7 @@ ingen_restore(LV2_Handle                  instance,
 	const uint32_t n_ports = engine->root_graph()->num_ports_non_rt();
 	for (int32_t i = n_ports - 1; i >= 0; --i) {
 		PortImpl* port = engine->root_graph()->port_impl(i);
-		if (port->symbol() != "control_in" && port->symbol() != "control_out") {
+		if (port->symbol() != "control" && port->symbol() != "notify") {
 			plugin->world->interface()->del(port->uri());
 		}
 	}

@@ -54,20 +54,20 @@ Commands:
     exit
 
 Subjects are specified by URI, relative to the engine.  The top level audio
-graph has the path /graph, so for example, a port on a block might have the
-(relative) URI /graph/osc/freq.
+graph has the path /main, so for example, a port on a block might have the
+(relative) URI /main/osc/freq.
 
 Bodies are specified in fragments of Turtle, just as written in Ingen graph files.
 
 Example:
-    put /graph/left_in 'a lv2:InputPort ; a lv2:AudioPort'
-    put /graph/left_out 'a lv2:OutputPort ; a lv2:AudioPort'
-    put /graph/tone 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Shepard>'
-    put /graph/combo 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Combo>'
-    connect /graph/left_in /graph/tone/left_in
-    connect /graph/tone/left_out /graph/combo/left_in
-    connect /graph/combo/left_out /graph/left_out
-    set /graph/tone/output ingen:value 0.7
+    put /main/left_in 'a lv2:InputPort ; a lv2:AudioPort'
+    put /main/left_out 'a lv2:OutputPort ; a lv2:AudioPort'
+    put /main/tone 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Shepard>'
+    put /main/combo 'a ingen:Block ; lv2:prototype <http://drobilla.net/plugins/mda/Combo>'
+    connect /main/left_in /main/tone/left_in
+    connect /main/tone/left_out /main/combo/left_in
+    connect /main/combo/left_out /main/left_out
+    set /main/tone/output ingen:value 0.7
 ''')
 
 def run(cmd):

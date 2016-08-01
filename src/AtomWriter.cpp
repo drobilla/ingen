@@ -157,7 +157,7 @@ AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
  * @code{.ttl}
  * []
  *     a patch:Put ;
- *     patch:subject </graph/osc> ;
+ *     patch:subject </main/osc> ;
  *     patch:body [
  *         a ingen:Block ;
  *         lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
@@ -197,7 +197,7 @@ AtomWriter::put(const Raul::URI&            uri,
  * @code{.ttl}
  * []
  *     a patch:Patch ;
- *     patch:subject </graph/osc> ;
+ *     patch:subject </main/osc> ;
  *     patch:add [
  *         lv2:name "Osckillator" ;
  *         ingen:canvasX 32.0 ;
@@ -255,8 +255,8 @@ AtomWriter::delta(const Raul::URI&            uri,
  * @code{.ttl}
  * []
  *     a patch:Copy ;
- *     patch:subject </graph/osc> ;
- *     patch:destination </graph/osc2> .
+ *     patch:subject </main/osc> ;
+ *     patch:destination </main/osc2> .
  * @endcode
  */
 void
@@ -285,8 +285,8 @@ AtomWriter::copy(const Raul::URI& old_uri,
  * @code{.ttl}
  * []
  *     a patch:Move ;
- *     patch:subject </graph/osc> ;
- *     patch:destination </graph/osc2> .
+ *     patch:subject </main/osc> ;
+ *     patch:destination </main/osc2> .
  * @endcode
  */
 void
@@ -315,7 +315,7 @@ AtomWriter::move(const Raul::Path& old_path,
  * @code{.ttl}
  * []
  *     a patch:Delete ;
- *     patch:subject </graph/osc> .
+ *     patch:subject </main/osc> .
  * @endcode
  */
 void
@@ -338,7 +338,7 @@ AtomWriter::del(const Raul::URI& uri)
  * @code{.ttl}
  * []
  *     a patch:Set ;
- *     patch:subject </graph/osc> ;
+ *     patch:subject </main/osc> ;
  *     patch:property lv2:name ;
  *     patch:value "Oscwellator" .
  * @endcode
@@ -409,7 +409,7 @@ AtomWriter::redo()
  * @code{.ttl}
  * []
  *     a patch:Get ;
- *     patch:subject </graph/osc> .
+ *     patch:subject </main/osc> .
  * @endcode
  */
 void
@@ -438,11 +438,11 @@ AtomWriter::get(const Raul::URI& uri)
  * @code{.ttl}
  * []
  *     a patch:Put ;
- *     patch:subject </graph/> ;
+ *     patch:subject </main/> ;
  *     patch:body [
  *         a ingen:Arc ;
- *         ingen:tail </graph/osc/out> ;
- *         ingen:head </graph/filt/in> ;
+ *         ingen:tail </main/osc/out> ;
+ *         ingen:head </main/filt/in> ;
  *     ] .
  * @endcode
  */
@@ -471,8 +471,8 @@ AtomWriter::connect(const Raul::Path& tail,
  *     a patch:Delete ;
  *     patch:body [
  *         a ingen:Arc ;
- *         ingen:tail </graph/osc/out> ;
- *         ingen:head </graph/filt/in> ;
+ *         ingen:tail </main/osc/out> ;
+ *         ingen:head </main/filt/in> ;
  *     ] .
  * @endcode
  */
@@ -501,10 +501,10 @@ AtomWriter::disconnect(const Raul::Path& tail,
  * @code{.ttl}
  * []
  *     a patch:Delete ;
- *     patch:subject </graph> ;
+ *     patch:subject </main> ;
  *     patch:body [
  *         a ingen:Arc ;
- *         ingen:incidentTo </graph/osc/out>
+ *         ingen:incidentTo </main/osc/out>
  *     ] .
  * @endcode
  */
@@ -545,7 +545,7 @@ AtomWriter::set_response_id(int32_t id)
  * []
  *     a patch:Get ;
  *     patch:sequenceNumber 42 ;
- *     patch:subject </graph/osc> .
+ *     patch:subject </main/osc> .
  * @endcode
  *
  * Might receive a response like:
@@ -553,7 +553,7 @@ AtomWriter::set_response_id(int32_t id)
  * []
  *     a patch:Response ;
  *     patch:sequenceNumber 42 ;
- *     patch:subject </graph/osc> ;
+ *     patch:subject </main/osc> ;
  *     patch:body 0 .
  * @endcode
  *
@@ -563,7 +563,7 @@ AtomWriter::set_response_id(int32_t id)
  *
  * Note that a response is only a status response, operations that manipulate
  * the graph may generate new data on the stream, e.g. the above get request
- * would also receive a put that describes /graph/osc in the stream immediately
+ * would also receive a put that describes /main/osc in the stream immediately
  * following the response.
  */
 void

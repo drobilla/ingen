@@ -565,8 +565,8 @@ destroy_node(GanvNode* node, void* data)
 	} else {
 		GraphPortModule* port_module = dynamic_cast<GraphPortModule*>(module);
 		if (port_module &&
-		    strcmp(port_module->port()->path().symbol(), "control_in") &&
-		    strcmp(port_module->port()->path().symbol(), "control_out")) {
+		    strcmp(port_module->port()->path().symbol(), "control") &&
+		    strcmp(port_module->port()->path().symbol(), "notify")) {
 			app->interface()->del(port_module->port()->uri());
 		}
 	}
@@ -667,12 +667,12 @@ GraphCanvas::paste()
 	// Make a client store to serve as clipboard
 	ClientStore clipboard(_app.world()->uris(), _app.log());
 	clipboard.set_plugins(_app.store()->plugins());
-	clipboard.put(Node::root_graph_uri(),
+	clipboard.put(Node::main_uri(),
 	              {{uris.rdf_type, Resource::Property(uris.ingen_Graph)}});
 
 	// Parse clipboard text into clipboard store
 	boost::optional<Raul::URI> base_uri = parser->parse_string(
-		_app.world(), &clipboard, str, Node::root_graph_uri());
+		_app.world(), &clipboard, str, Node::main_uri());
 
 	// Figure out the copy graph base path
 	Raul::Path copy_root("/");

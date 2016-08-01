@@ -59,7 +59,7 @@ Delete::~Delete()
 bool
 Delete::pre_process()
 {
-	if (_path.is_root() || _path == "/control_in" || _path == "/control_out") {
+	if (_path.is_root() || _path == "/control" || _path == "/notify") {
 		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
 	}
 

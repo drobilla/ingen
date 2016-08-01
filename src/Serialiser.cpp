@@ -68,7 +68,7 @@ struct Serialiser::Impl {
 
 	enum class Mode { TO_FILE, TO_STRING };
 
-	void start_to_filename(const std::string& filename);
+	void start_to_file(const Raul::Path& root, const std::string& filename);
 
 	std::set<const Resource*> serialise_graph(SPtr<const Node>  p,
 	                                          const Sord::Node& id);
@@ -125,12 +125,12 @@ Serialiser::Impl::write_manifest(const std::string& bundle_path,
 	const string manifest_path(Glib::build_filename(bundle_path, "manifest.ttl"));
 	const string binary_path(Glib::Module::build_path("", "ingen_lv2"));
 
-	start_to_filename(manifest_path);
+	start_to_file(Raul::Path("/"), manifest_path);
 
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();
 
-	const string    filename("graph.ttl");
+	const string    filename("main.ttl");
 	const Sord::URI subject(world, filename, _base_uri);
 
 	_model->add_statement(subject,
@@ -155,7 +155,7 @@ Serialiser::Impl::write_plugins(const std::string&              bundle_path,
 {
 	const string plugins_path(Glib::build_filename(bundle_path, "plugins.ttl"));
 
-	start_to_filename(plugins_path);
+	start_to_file(Raul::Path("/"), plugins_path);
 
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();
@@ -200,25 +200,24 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
 
 	_world.log().info(fmt("Writing bundle %1%\n") % path);
 
-	if (path[path.length() - 1] != '/')
+	if (path.back() != '/')
 		path.append("/");
 
 	g_mkdir_with_parents(path.c_str(), 0744);
 
-	const string root_file = Glib::build_filename(path, "graph.ttl");
-
-	start_to_filename(root_file);
+	const string     main_file     = Glib::build_filename(path, "main.ttl");
 	const Raul::Path old_root_path = _root_path;
-	_root_path = graph->path();
+
+	start_to_file(graph->path(), main_file);
 
 	std::set<const Resource*> plugins = serialise_graph(
-		graph, Sord::URI(_model->world(), root_file, _base_uri));
+		graph, Sord::URI(_model->world(), main_file, _base_uri));
 
-	_root_path = old_root_path;
 	finish();
-
 	write_manifest(path, graph);
 	write_plugins(path, plugins);
+
+	_root_path = old_root_path;
 }
 
 /** Begin a serialization to a file.
@@ -226,7 +225,7 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
  * This must be called before any serializing methods.
  */
 void
-Serialiser::Impl::start_to_filename(const string& filename)
+Serialiser::Impl::start_to_file(const Raul::Path& root, const string& filename)
 {
 	assert(filename.find(":") == string::npos || filename.substr(0, 5) == "file:");
 	if (filename.find(":") == string::npos) {
@@ -235,8 +234,9 @@ Serialiser::Impl::start_to_filename(const string& filename)
 		_base_uri = filename;
 	}
 
-	_model = new Sord::Model(*_world.rdf_world(), _base_uri);
-	_mode = Mode::TO_FILE;
+	_model     = new Sord::Model(*_world.rdf_world(), _base_uri);
+	_mode      = Mode::TO_FILE;
+	_root_path = root;
 }
 
 void
@@ -251,8 +251,7 @@ Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
 void
 Serialiser::start_to_file(const Raul::Path& root, const string& filename)
 {
-	me->_root_path = root;
-	me->start_to_filename(filename);
+	me->start_to_file(root, filename);
 }
 
 std::string
@@ -559,7 +558,7 @@ Serialiser::Impl::serialise_properties(Sord::Node              id,
 		const Sord::URI key(_model->world(), p.first);
 		if (!skip_property(_world.uris(), key)) {
 			if (p.second.type() == _world.uris().atom_URI &&
-			    !strncmp((const char*)p.second.get_body(), "ingen:/graph/", 13)) {
+			    !strncmp((const char*)p.second.get_body(), "ingen:/main/", 13)) {
 				/* Value is a graph URI relative to the running engine.
 				   Chop the prefix and save the path relative to the graph file.
 				   This allows saving references to bundle resources. */

@@ -4,5 +4,5 @@
 
 <msg0>
 	a patch:Copy ;
-	patch:subject <ingen:/graph/> ;
+	patch:subject <ingen:/main/> ;
 	patch:destination <file:///tmp/savetest.ingen/> .

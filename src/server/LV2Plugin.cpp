@@ -69,7 +69,7 @@ const Raul::Symbol
 LV2Plugin::symbol() const
 {
 	string working = uri();
-	if (working[working.length() - 1] == '/')
+	if (working.back() == '/')
 		working = working.substr(0, working.length() - 1);
 
 	while (working.length() > 0) {

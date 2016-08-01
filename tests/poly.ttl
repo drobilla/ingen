@@ -4,7 +4,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/graph/node> ;
+	patch:subject <ingen:/main/node> ;
 	patch:body [
 		a ingen:Block ;
 		lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
@@ -12,12 +12,12 @@
 
 <msg1>
 	a patch:Set ;
-	patch:subject <ingen:/graph/> ;
+	patch:subject <ingen:/main/> ;
 	patch:property ingen:polyphony ;
 	patch:value 4 .
 
 <msg2>
 	a patch:Set ;
-	patch:subject <ingen:/graph/node> ;
+	patch:subject <ingen:/main/node> ;
 	patch:property ingen:polyphonic ;
 	patch:value true .

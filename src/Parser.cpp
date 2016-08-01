@@ -312,7 +312,7 @@ parse_block(Ingen::World*                     world,
 			&ignored);
 
 		const std::string sub_uri_str = (const char*)sub_uri.buf;
-		const std::string sub_file    = sub_uri_str + "/graph.ttl";
+		const std::string sub_file    = sub_uri_str + "/main.ttl";
 
 		const SerdNode sub_base = serd_node_from_string(
 			SERD_URI, (const uint8_t*)sub_file.c_str());

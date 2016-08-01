@@ -83,25 +83,25 @@ public:
 		return Raul::URI(uri() + '/');
 	}
 
-	static Raul::URI root_graph_uri() { return Raul::URI("ingen:/graph"); }
+	static Raul::URI main_uri() { return Raul::URI("ingen:/main"); }
 
 	static bool uri_is_path(const Raul::URI& uri) {
-		const size_t root_len = root_graph_uri().length();
-		if (uri == root_graph_uri()) {
+		const size_t root_len = main_uri().length();
+		if (uri == main_uri()) {
 			return true;
 		} else {
-			return uri.substr(0, root_len + 1) == root_graph_uri() + "/";
+			return uri.substr(0, root_len + 1) == main_uri() + "/";
 		}
 	}
 
 	static Raul::Path uri_to_path(const Raul::URI& uri) {
-		return (uri == root_graph_uri())
+		return (uri == main_uri())
 			? Raul::Path("/")
-			: Raul::Path(uri.substr(root_graph_uri().length()));
+			: Raul::Path(uri.substr(main_uri().length()));
 	}
 
 	static Raul::URI path_to_uri(const Raul::Path& path) {
-		return Raul::URI(root_graph_uri() + path.c_str());
+		return Raul::URI(main_uri() + path.c_str());
 	}
 
 protected:

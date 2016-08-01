@@ -3,7 +3,7 @@
 
 <msg0>
 	a patch:Put ;
-	patch:subject <ingen:/graph/in> ;
+	patch:subject <ingen:/main/in> ;
 	patch:body [
 		a lv2:InputPort ,
 			lv2:AudioPort
