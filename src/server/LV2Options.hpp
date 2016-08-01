@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -30,11 +30,6 @@ public:
 		: _uris(uris)
 	{}
 
-	static void delete_feature(LV2_Feature* feature) {
-		free(feature->data);
-		free(feature);
-	}
-
 	void set(int32_t sample_rate, int32_t block_length, int32_t seq_size) {
 		_sample_rate  = sample_rate;
 		_block_length = block_length;
@@ -60,7 +55,7 @@ public:
 		f->URI  = LV2_OPTIONS__options;
 		f->data = malloc(sizeof(options));
 		memcpy(f->data, options, sizeof(options));
-		return SPtr<LV2_Feature>(f, &delete_feature);
+		return SPtr<LV2_Feature>(f, &free_feature);
 	}
 
 private:

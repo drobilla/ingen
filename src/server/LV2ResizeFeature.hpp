@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -42,11 +42,6 @@ struct ResizeFeature : public Ingen::LV2Features::Feature {
 		return LV2_RESIZE_PORT_ERR_UNKNOWN;
 	}
 
-	static void delete_feature(LV2_Feature* feature) {
-		free(feature->data);
-		free(feature);
-	}
-
 	const char* uri() const { return LV2_RESIZE_PORT_URI; }
 
 	SPtr<LV2_Feature> feature(World* w, Node* n) {
@@ -60,7 +55,7 @@ struct ResizeFeature : public Ingen::LV2Features::Feature {
 		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
 		f->URI  = LV2_RESIZE_PORT_URI;
 		f->data = data;
-		return SPtr<LV2_Feature>(f, &delete_feature);
+		return SPtr<LV2_Feature>(f, &free_feature);
 	}
 };
 

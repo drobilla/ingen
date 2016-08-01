@@ -72,13 +72,6 @@ Worker::request(LV2Block*   block,
 	return LV2_WORKER_SUCCESS;
 }
 
-static void
-delete_feature(LV2_Feature* feature)
-{
-	free(feature->data);
-	free(feature);
-}
-
 SPtr<LV2_Feature>
 Worker::Schedule::feature(World* world, Node* n)
 {
@@ -96,7 +89,7 @@ Worker::Schedule::feature(World* world, Node* n)
 	f->URI  = LV2_WORKER__schedule;
 	f->data = data;
 
-	return SPtr<LV2_Feature>(f, &delete_feature);
+	return SPtr<LV2_Feature>(f, &free_feature);
 }
 
 Worker::Worker(Log& log, uint32_t buffer_size)

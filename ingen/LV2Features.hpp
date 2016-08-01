@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -45,6 +45,12 @@ public:
 
 		virtual SPtr<LV2_Feature> feature(World* world,
 		                                  Node*  block) = 0;
+
+protected:
+		static void free_feature(LV2_Feature* feature) {
+			free(feature->data);
+			free(feature);
+		}
 	};
 
 	class EmptyFeature : public Feature {
