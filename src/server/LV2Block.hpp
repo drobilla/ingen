@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -16,6 +16,8 @@
 
 #ifndef INGEN_ENGINE_LV2BLOCK_HPP
 #define INGEN_ENGINE_LV2BLOCK_HPP
+
+#include <mutex>
 
 #include "lilv/lilv.h"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
@@ -60,14 +62,14 @@ public:
 	void activate(BufferFactory& bufs);
 	void deactivate();
 
-	void work(uint32_t size, const void* data);
+	LV2_Worker_Status work(uint32_t size, const void* data);
 
 	void run(ProcessContext& context);
 	void post_process(ProcessContext& context);
 
 	LilvState* load_preset(const Raul::URI& uri);
 
-	void apply_state(LilvState* state);
+	void apply_state(Worker* worker, LilvState* state);
 
 	boost::optional<Resource> save_preset(const Raul::URI&  bundle,
 	                                      const Properties& props);
@@ -83,7 +85,7 @@ protected:
 	                                 uint32_t   voice,
 	                                 bool       preparing);
 
-	void load_default_state();
+	void load_default_state(Worker* worker);
 
 	inline LilvInstance* instance(uint32_t voice) {
 		return (LilvInstance*)(*_instances)[voice].get();
@@ -122,6 +124,7 @@ protected:
 	Instances*                      _instances;
 	Instances*                      _prepared_instances;
 	const LV2_Worker_Interface*     _worker_iface;
+	std::mutex                      _work_mutex;
 	Responses                       _responses;
 	SPtr<LV2Features::FeatureArray> _features;
 };

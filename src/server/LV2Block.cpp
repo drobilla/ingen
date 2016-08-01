@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -44,6 +44,7 @@
 #include "LV2Plugin.hpp"
 #include "OutputPort.hpp"
 #include "ProcessContext.hpp"
+#include "Worker.hpp"
 
 using namespace std;
 
@@ -75,7 +76,7 @@ LV2Block::~LV2Block()
 }
 
 void
-LV2Block::load_default_state()
+LV2Block::load_default_state(Worker* worker)
 {
 	const LilvPlugin* lplug    = _lv2_plugin->lilv_plugin();
 	const LilvNode*   uri_node = lilv_plugin_get_uri(lplug);
@@ -83,7 +84,7 @@ LV2Block::load_default_state()
 
 	LilvState* default_state = load_preset(_lv2_plugin->uri());
 	if (default_state) {
-		apply_state(default_state);
+		apply_state(worker, default_state);
 		lilv_state_free(default_state);
 	}
 }
@@ -445,7 +446,7 @@ LV2Block::instantiate(BufferFactory& bufs)
 		}
 	}
 
-	load_default_state();
+	load_default_state(NULL);
 
 	// FIXME: Polyphony + worker?
 	if (lilv_plugin_has_feature(plug, uris.work_schedule)) {
@@ -526,16 +527,21 @@ LV2Block::work_respond(LV2_Worker_Respond_Handle handle,
 	return LV2_WORKER_SUCCESS;
 }
 
-void
+LV2_Worker_Status
 LV2Block::work(uint32_t size, const void* data)
 {
 	if (_worker_iface) {
-		LV2_Handle inst = lilv_instance_get_handle(instance(0));
-		if (_worker_iface->work(inst, work_respond, this, size, data)) {
+		std::lock_guard<std::mutex> lock(_work_mutex);
+
+		LV2_Handle        inst = lilv_instance_get_handle(instance(0));
+		LV2_Worker_Status st   = _worker_iface->work(inst, work_respond, this, size, data);
+		if (st) {
 			parent_graph()->engine().log().error(
 				fmt("Error calling %1% work method\n") % _path);
 		}
+		return st;
 	}
+	return LV2_WORKER_ERR_UNKNOWN;
 }
 
 void
@@ -584,10 +590,21 @@ LV2Block::load_preset(const Raul::URI& uri)
 }
 
 void
-LV2Block::apply_state(LilvState* state)
+LV2Block::apply_state(Worker* worker, LilvState* state)
 {
+	World*            world = parent_graph()->engine().world();
+	SPtr<LV2_Feature> sched;
+	if (worker) {
+		sched = worker->schedule_feature()->feature(world, this);
+	}
+
+	const LV2_Feature* state_features[2] = { NULL, NULL };
+	if (sched) {
+		state_features[0] = sched.get();
+	}
+
 	for (uint32_t v = 0; v < _polyphony; ++v) {
-		lilv_state_restore(state, instance(v), NULL, NULL, 0, NULL);
+		lilv_state_restore(state, instance(v), NULL, NULL, 0, state_features);
 	}
 }
 

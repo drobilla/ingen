@@ -116,6 +116,7 @@ public:
 	UndoStack*       undo_stack()       const { return _undo_stack; }
 	UndoStack*       redo_stack()       const { return _redo_stack; }
 	Worker*          worker()           const { return _worker; }
+	Worker*          sync_worker()      const { return _sync_worker; }
 
 	ProcessContext& process_context() { return _process_context; }
 
@@ -141,6 +142,7 @@ private:
 	PostProcessor*   _post_processor;
 	GraphImpl*       _root_graph;
 	Worker*          _worker;
+	Worker*          _sync_worker;
 	SocketListener*  _listener;
 
 	ProcessContext _process_context;

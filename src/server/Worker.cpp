@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -46,11 +46,27 @@ schedule(LV2_Worker_Schedule_Handle handle,
 	return worker->request(block, size, data);
 }
 
+static LV2_Worker_Status
+schedule_sync(LV2_Worker_Schedule_Handle handle,
+              uint32_t                   size,
+              const void*                data)
+{
+	LV2Block* block  = (LV2Block*)handle;
+	Engine&   engine = block->parent_graph()->engine();
+	Worker*   worker = engine.sync_worker();
+
+	return worker->request(block, size, data);
+}
+
 LV2_Worker_Status
 Worker::request(LV2Block*   block,
                 uint32_t    size,
                 const void* data)
 {
+	if (_synchronous) {
+		return block->work(size, data);
+	}
+
 	Engine& engine = block->parent_graph()->engine();
 	if (_requests.write_space() < sizeof(MessageHeader) + size) {
 		engine.log().error("Work request ring overflow\n");
@@ -83,7 +99,7 @@ Worker::Schedule::feature(World* world, Node* n)
 	LV2_Worker_Schedule* data = (LV2_Worker_Schedule*)malloc(
 		sizeof(LV2_Worker_Schedule));
 	data->handle        = block;
-	data->schedule_work = schedule;
+	data->schedule_work = synchronous ? schedule_sync : schedule;
 
 	LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));
 	f->URI  = LV2_WORKER__schedule;
@@ -92,22 +108,31 @@ Worker::Schedule::feature(World* world, Node* n)
 	return SPtr<LV2_Feature>(f, &free_feature);
 }
 
-Worker::Worker(Log& log, uint32_t buffer_size)
-	: _schedule(new Schedule())
+Worker::Worker(Log& log, uint32_t buffer_size, bool synchronous)
+	: _schedule(new Schedule(synchronous))
 	, _log(log)
 	, _sem(0)
 	, _requests(buffer_size)
 	, _responses(buffer_size)
 	, _buffer((uint8_t*)malloc(buffer_size))
 	, _buffer_size(buffer_size)
-	, _thread(&Worker::run, this)
-{}
+	, _thread(nullptr)
+	, _exit_flag(false)
+	, _synchronous(synchronous)
+{
+	if (!synchronous) {
+		_thread = new std::thread(&Worker::run, this);
+	}
+}
 
 Worker::~Worker()
 {
 	_exit_flag = true;
 	_sem.post();
-	_thread.join();
+	if (_thread) {
+		_thread->join();
+		delete _thread;
+	}
 	free(_buffer);
 }
 

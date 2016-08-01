@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -48,6 +48,7 @@ class GraphImpl;
 class PluginImpl;
 class PortImpl;
 class ProcessContext;
+class Worker;
 
 /** A Block in a Graph (which is also a Block).
  *
@@ -103,7 +104,7 @@ public:
 	virtual LilvState* load_preset(const Raul::URI& uri) { return NULL; }
 
 	/** Restore `state`. */
-	virtual void apply_state(LilvState* state) {}
+	virtual void apply_state(Worker* worker, LilvState* state) {}
 
 	/** Save current state as preset. */
 	virtual boost::optional<Resource>

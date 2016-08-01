@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -35,13 +35,17 @@ class LV2Block;
 class Worker
 {
 public:
-	Worker(Log& log, uint32_t buffer_size);
+	Worker(Log& log, uint32_t buffer_size, bool synchronous=false);
 	~Worker();
 
 	struct Schedule : public LV2Features::Feature {
+		Schedule(bool sync) : synchronous(sync) {}
+
 		const char* uri() const { return LV2_WORKER__schedule; }
 
 		SPtr<LV2_Feature> feature(World* world, Node* n);
+
+		const bool synchronous;
 	};
 
 	LV2_Worker_Status request(LV2Block*   block,
@@ -59,8 +63,9 @@ private:
 	Raul::RingBuffer _responses;
 	uint8_t* const   _buffer;
 	const uint32_t   _buffer_size;
+	std::thread*     _thread;
 	bool             _exit_flag;
-	std::thread      _thread;
+	bool             _synchronous;
 
 	void run();
 };

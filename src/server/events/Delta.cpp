@@ -578,7 +578,7 @@ Delta::post_process()
 	if (_state) {
 		BlockImpl* block = dynamic_cast<BlockImpl*>(_object);
 		if (block) {
-			block->apply_state(_state);
+			block->apply_state(_engine.sync_worker(), _state);
 			block->set_enabled(true);
 		}
 		lilv_state_free(_state);
