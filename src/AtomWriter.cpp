@@ -75,6 +75,7 @@ AtomWriter::bundle_begin()
 {
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.ingen_BundleStart);
+	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }
 
@@ -83,6 +84,7 @@ AtomWriter::bundle_end()
 {
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.ingen_BundleEnd);
+	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }
 
