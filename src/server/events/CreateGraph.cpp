@@ -54,6 +54,7 @@ CreateGraph::build_child_events()
 	control_properties.put(uris.lv2_name, uris.forge.alloc("Control"));
 	control_properties.put(uris.rdf_type, uris.atom_AtomPort);
 	control_properties.put(uris.atom_bufferType, uris.atom_Sequence);
+	control_properties.put(uris.atom_supports, uris.patch_Message);
 	control_properties.put(uris.rsz_minimumSize, uris.forge.make(4096));
 	control_properties.put(uris.lv2_portProperty, uris.lv2_connectionOptional);
 
