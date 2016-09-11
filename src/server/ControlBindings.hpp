@@ -31,7 +31,7 @@ namespace Ingen {
 namespace Server {
 
 class Engine;
-class ProcessContext;
+class RunContext;
 class PortImpl;
 
 class ControlBindings {
@@ -66,17 +66,17 @@ public:
 
 	void learn(PortImpl* port);
 
-	void port_binding_changed(ProcessContext&   context,
-	                          PortImpl*         port,
+	void port_binding_changed(RunContext& context,
+	                          PortImpl*   port,
 	                          const Atom& binding);
 
-	void port_value_changed(ProcessContext&   context,
-	                        PortImpl*         port,
-	                        Key               key,
+	void port_value_changed(RunContext& context,
+	                        PortImpl*   port,
+	                        Key         key,
 	                        const Atom& value);
 
-	void pre_process(ProcessContext& context, Buffer* control_in);
-	void post_process(ProcessContext& context, Buffer* control_out);
+	void pre_process(RunContext& context, Buffer* control_in);
+	void post_process(RunContext& context, Buffer* control_out);
 
 	/** Remove all bindings for `path` or children of `path`.
 	 * The caller must safely drop the returned reference in the
@@ -93,19 +93,19 @@ public:
 private:
 	Key midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
 
-	void set_port_value(ProcessContext& context,
+	void set_port_value(RunContext& context,
 	                    PortImpl*       port,
 	                    Type            type,
 	                    int16_t         value);
 
-	bool bind(ProcessContext& context, Key key);
+	bool bind(RunContext& context, Key key);
 
-	Atom control_to_port_value(ProcessContext& context,
+	Atom control_to_port_value(RunContext& context,
 	                           const PortImpl* port,
 	                           Type            type,
 	                           int16_t         value) const;
 
-	int16_t port_value_to_control(ProcessContext& context,
+	int16_t port_value_to_control(RunContext& context,
 	                              PortImpl*       port,
 	                              Type            type,
 	                              const Atom&     value) const;

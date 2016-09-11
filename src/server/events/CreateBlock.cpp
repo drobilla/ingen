@@ -147,7 +147,7 @@ CreateBlock::pre_process()
 }
 
 void
-CreateBlock::execute(ProcessContext& context)
+CreateBlock::execute(RunContext& context)
 {
 	if (_block) {
 		_graph->set_compiled_graph(_compiled_graph);

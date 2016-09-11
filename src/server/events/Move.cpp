@@ -74,7 +74,7 @@ Move::pre_process()
 }
 
 void
-Move::execute(ProcessContext& context)
+Move::execute(RunContext& context)
 {
 }
 

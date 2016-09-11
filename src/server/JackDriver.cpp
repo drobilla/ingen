@@ -209,7 +209,7 @@ JackDriver::get_port(const Raul::Path& path)
 }
 
 void
-JackDriver::add_port(ProcessContext& context, EnginePort* port)
+JackDriver::add_port(RunContext& context, EnginePort* port)
 {
 	_ports.push_back(*port);
 
@@ -223,7 +223,7 @@ JackDriver::add_port(ProcessContext& context, EnginePort* port)
 }
 
 void
-JackDriver::remove_port(ProcessContext& context, EnginePort* port)
+JackDriver::remove_port(RunContext& context, EnginePort* port)
 {
 	_ports.erase(_ports.iterator_to(*port));
 }
@@ -336,7 +336,7 @@ JackDriver::create_port(DuplexPort* graph_port)
 }
 
 void
-JackDriver::pre_process_port(ProcessContext& context, EnginePort* port)
+JackDriver::pre_process_port(RunContext& context, EnginePort* port)
 {
 	const URIs&       uris       = context.engine().world()->uris();
 	const SampleCount nframes    = context.nframes();
@@ -371,7 +371,7 @@ JackDriver::pre_process_port(ProcessContext& context, EnginePort* port)
 }
 
 void
-JackDriver::post_process_port(ProcessContext& context, EnginePort* port)
+JackDriver::post_process_port(RunContext& context, EnginePort* port)
 {
 	const URIs&       uris       = context.engine().world()->uris();
 	const SampleCount nframes    = context.nframes();
@@ -409,7 +409,7 @@ JackDriver::post_process_port(ProcessContext& context, EnginePort* port)
 }
 
 void
-JackDriver::append_time_events(ProcessContext& context,
+JackDriver::append_time_events(RunContext& context,
                                Buffer&         buffer)
 {
 	const URIs&            uris    = context.engine().world()->uris();
@@ -479,18 +479,18 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 
 	_transport_state = jack_transport_query(_client, &_position);
 
-	_engine.process_context().locate(start_of_current_cycle, nframes);
+	_engine.run_context().locate(start_of_current_cycle, nframes);
 
 	// Read input
 	for (auto& p : _ports) {
-		pre_process_port(_engine.process_context(), &p);
+		pre_process_port(_engine.run_context(), &p);
 	}
 
 	_engine.run(nframes);
 
 	// Write output
 	for (auto& p : _ports) {
-		post_process_port(_engine.process_context(), &p);
+		post_process_port(_engine.run_context(), &p);
 	}
 
 	// Update expected transport frame for next cycle to detect changes
@@ -523,10 +523,10 @@ JackDriver::_block_length_cb(jack_nframes_t nframes)
 		_block_length = nframes;
 		_seq_size = jack_port_type_get_buffer_size(_client, JACK_DEFAULT_MIDI_TYPE);
 		_engine.root_graph()->set_buffer_size(
-			_engine.process_context(), *_engine.buffer_factory(), PortType::AUDIO,
+			_engine.run_context(), *_engine.buffer_factory(), PortType::AUDIO,
 			_engine.buffer_factory()->audio_buffer_size(nframes));
 		_engine.root_graph()->set_buffer_size(
-			_engine.process_context(), *_engine.buffer_factory(), PortType::ATOM,
+			_engine.run_context(), *_engine.buffer_factory(), PortType::ATOM,
 			_seq_size);
 	}
 	return 0;

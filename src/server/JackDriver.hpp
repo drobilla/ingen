@@ -74,8 +74,8 @@ public:
 
 	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path);
 	void port_property(const Raul::Path& path, const Raul::URI& uri, const Atom& value);
-	void add_port(ProcessContext& context, EnginePort* port);
-	void remove_port(ProcessContext& context, EnginePort* port);
+	void add_port(RunContext& context, EnginePort* port);
+	void remove_port(RunContext& context, EnginePort* port);
 	void register_port(EnginePort& port);
 	void unregister_port(EnginePort& port);
 
@@ -84,7 +84,7 @@ public:
 	inline const jack_position_t* position()        { return &_position; }
 	inline jack_transport_state_t transport_state() { return _transport_state; }
 
-	void append_time_events(ProcessContext& context,
+	void append_time_events(RunContext& context,
 	                        Buffer&         buffer);
 
 	jack_client_t* jack_client()  const { return _client; }
@@ -118,8 +118,8 @@ private:
 	}
 #endif
 
-	void pre_process_port(ProcessContext& context, EnginePort* port);
-	void post_process_port(ProcessContext& context, EnginePort* port);
+	void pre_process_port(RunContext& context, EnginePort* port);
+	void post_process_port(RunContext& context, EnginePort* port);
 
 	void port_property_internal(const jack_port_t* jport,
 	                            const Raul::URI&   uri,

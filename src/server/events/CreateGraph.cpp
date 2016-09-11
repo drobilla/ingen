@@ -186,7 +186,7 @@ CreateGraph::pre_process()
 }
 
 void
-CreateGraph::execute(ProcessContext& context)
+CreateGraph::execute(RunContext& context)
 {
 	if (_graph) {
 		if (_parent) {

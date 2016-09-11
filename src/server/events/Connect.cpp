@@ -140,7 +140,7 @@ Connect::pre_process()
 }
 
 void
-Connect::execute(ProcessContext& context)
+Connect::execute(RunContext& context)
 {
 	if (_status == Status::SUCCESS) {
 		_head->add_arc(context, _arc.get());

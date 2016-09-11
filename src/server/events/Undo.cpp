@@ -62,7 +62,7 @@ Undo::pre_process()
 }
 
 void
-Undo::execute(ProcessContext& context)
+Undo::execute(RunContext& context)
 {
 }
 

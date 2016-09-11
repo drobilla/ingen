@@ -29,7 +29,7 @@
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "ThreadManager.hpp"
 #include "events/Disconnect.hpp"
 
@@ -173,7 +173,7 @@ Disconnect::pre_process()
 }
 
 bool
-Disconnect::Impl::execute(ProcessContext& context, bool set_head_buffers)
+Disconnect::Impl::execute(RunContext& context, bool set_head_buffers)
 {
 	ArcImpl* const port_arc = _head->remove_arc(context, _tail);
 
@@ -200,7 +200,7 @@ Disconnect::Impl::execute(ProcessContext& context, bool set_head_buffers)
 }
 
 void
-Disconnect::execute(ProcessContext& context)
+Disconnect::execute(RunContext& context)
 {
 	if (_status == Status::SUCCESS) {
 		if (_impl->execute(context, true)) {

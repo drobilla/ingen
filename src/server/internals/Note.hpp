@@ -48,20 +48,20 @@ public:
 	~NoteNode();
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly);
 
-	void run(ProcessContext& context);
+	void run(RunContext& context);
 
-	void note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
-	void note_off(ProcessContext& context, uint8_t note_num, FrameTime time);
-	void all_notes_off(ProcessContext& context, FrameTime time);
+	void note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
+	void note_off(RunContext& context, uint8_t note_num, FrameTime time);
+	void all_notes_off(RunContext& context, FrameTime time);
 
-	void sustain_on(ProcessContext& context, FrameTime time);
-	void sustain_off(ProcessContext& context, FrameTime time);
+	void sustain_on(RunContext& context, FrameTime time);
+	void sustain_off(RunContext& context, FrameTime time);
 
-	void bend(ProcessContext& context, FrameTime time, float amount);
-	void note_pressure(ProcessContext& context, FrameTime time, uint8_t note_num, float amount);
-	void channel_pressure(ProcessContext& context, FrameTime time, float amount);
+	void bend(RunContext& context, FrameTime time, float amount);
+	void note_pressure(RunContext& context, FrameTime time, uint8_t note_num, float amount);
+	void channel_pressure(RunContext& context, FrameTime time, float amount);
 
 	static InternalPlugin* internal_plugin(URIs& uris);
 
@@ -84,7 +84,7 @@ private:
 		SampleCount time;
 	};
 
-	void free_voice(ProcessContext& context, uint32_t voice, FrameTime time);
+	void free_voice(RunContext& context, uint32_t voice, FrameTime time);
 
 	Raul::Array<Voice>* _voices;
 	Raul::Array<Voice>* _prepared_voices;

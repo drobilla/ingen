@@ -35,9 +35,8 @@ namespace Shared { class URIs; }
 namespace Server {
 
 class BufferFactory;
-class Context;
 class GraphImpl;
-class ProcessContext;
+class RunContext;
 
 /** An object on the audio graph (a Graph, Block, or Port).
  *
@@ -88,7 +87,7 @@ public:
 	 * \param maid Any objects no longer needed will be pushed to this
 	 */
 	virtual bool apply_poly(
-		ProcessContext& context, Raul::Maid& maid, uint32_t poly) = 0;
+		RunContext& context, Raul::Maid& maid, uint32_t poly) = 0;
 
 protected:
 	NodeImpl(const Ingen::URIs&  uris,

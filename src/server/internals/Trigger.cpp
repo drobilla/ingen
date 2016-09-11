@@ -25,7 +25,7 @@
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "ingen_config.h"
 #include "internals/Trigger.hpp"
 #include "util.hpp"
@@ -96,7 +96,7 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 }
 
 void
-TriggerNode::run(ProcessContext& context)
+TriggerNode::run(RunContext& context)
 {
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
 	LV2_Atom_Sequence* seq     = midi_in->get<LV2_Atom_Sequence>();
@@ -130,7 +130,7 @@ TriggerNode::run(ProcessContext& context)
 }
 
 void
-TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
+TriggerNode::note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 
@@ -150,7 +150,7 @@ TriggerNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity
 }
 
 void
-TriggerNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
+TriggerNode::note_off(RunContext& context, uint8_t note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 

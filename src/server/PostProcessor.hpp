@@ -28,7 +28,7 @@ namespace Server {
 
 class Engine;
 class Event;
-class ProcessContext;
+class RunContext;
 
 /** Processor for Events after leaving the audio thread.
  *
@@ -50,7 +50,7 @@ public:
 	/** Push a list of events on to the process queue.
 	    realtime-safe, not thread-safe.
 	*/
-	void append(ProcessContext& context, Event* first, Event* last);
+	void append(RunContext& context, Event* first, Event* last);
 
 	/** Post-process and delete all pending events */
 	void process();

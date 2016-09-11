@@ -55,11 +55,11 @@ public:
 		return NULL;
 	}
 
-	virtual void add_port(ProcessContext& context, EnginePort* port) {
+	virtual void add_port(RunContext& context, EnginePort* port) {
 		_ports.push_back(*port);
 	}
 
-	virtual void remove_port(ProcessContext& context, EnginePort* port) {
+	virtual void remove_port(RunContext& context, EnginePort* port) {
 		_ports.erase(_ports.iterator_to(*port));
 	}
 
@@ -81,7 +81,7 @@ public:
 
 	virtual SampleCount frame_time() const { return 0; }
 
-	virtual void append_time_events(ProcessContext& context,
+	virtual void append_time_events(RunContext& context,
 	                                Buffer&         buffer) {}
 
 private:

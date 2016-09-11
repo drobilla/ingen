@@ -51,7 +51,7 @@ Mark::pre_process()
 }
 
 void
-Mark::execute(ProcessContext& context)
+Mark::execute(RunContext& context)
 {}
 
 void

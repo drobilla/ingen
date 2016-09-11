@@ -479,7 +479,7 @@ Delta::pre_process()
 }
 
 void
-Delta::execute(ProcessContext& context)
+Delta::execute(RunContext& context)
 {
 	if (_status != Status::SUCCESS || _preset) {
 		return;

@@ -17,7 +17,7 @@
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
 
 #include "Buffer.hpp"
-#include "Context.hpp"
+#include "RunContext.hpp"
 #include "mix.hpp"
 
 namespace Ingen {
@@ -34,7 +34,7 @@ is_end(const Buffer* buf, const LV2_Atom_Event* ev)
 }
 
 void
-mix(const Context&      context,
+mix(const RunContext&   context,
     Buffer*             dst,
     const Buffer*const* srcs,
     uint32_t            num_srcs)

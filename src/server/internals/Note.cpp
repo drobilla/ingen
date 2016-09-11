@@ -28,7 +28,7 @@
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "ingen_config.h"
 #include "internals/Note.hpp"
 #include "util.hpp"
@@ -151,7 +151,7 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-NoteNode::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
+NoteNode::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 {
 	if (!BlockImpl::apply_poly(context, maid, poly))
 		return false;
@@ -168,7 +168,7 @@ NoteNode::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 }
 
 void
-NoteNode::run(ProcessContext& context)
+NoteNode::run(RunContext& context)
 {
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
 	LV2_Atom_Sequence* seq     = midi_in->get<LV2_Atom_Sequence>();
@@ -227,7 +227,7 @@ note_to_freq(uint8_t num)
 }
 
 void
-NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
+NoteNode::note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 	assert(note_num <= 127);
@@ -306,7 +306,7 @@ NoteNode::note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, F
 }
 
 void
-NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
+NoteNode::note_off(RunContext& context, uint8_t note_num, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 
@@ -328,7 +328,7 @@ NoteNode::note_off(ProcessContext& context, uint8_t note_num, FrameTime time)
 }
 
 void
-NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
+NoteNode::free_voice(RunContext& context, uint32_t voice, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 
@@ -366,7 +366,7 @@ NoteNode::free_voice(ProcessContext& context, uint32_t voice, FrameTime time)
 }
 
 void
-NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
+NoteNode::all_notes_off(RunContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 
@@ -379,13 +379,13 @@ NoteNode::all_notes_off(ProcessContext& context, FrameTime time)
 }
 
 void
-NoteNode::sustain_on(ProcessContext& context, FrameTime time)
+NoteNode::sustain_on(RunContext& context, FrameTime time)
 {
 	_sustain = true;
 }
 
 void
-NoteNode::sustain_off(ProcessContext& context, FrameTime time)
+NoteNode::sustain_off(RunContext& context, FrameTime time)
 {
 	assert(time >= context.start() && time <= context.end());
 
@@ -397,13 +397,13 @@ NoteNode::sustain_off(ProcessContext& context, FrameTime time)
 }
 
 void
-NoteNode::bend(ProcessContext& context, FrameTime time, float amount)
+NoteNode::bend(RunContext& context, FrameTime time, float amount)
 {
 	_bend_port->set_control_value(context, time, amount);
 }
 
 void
-NoteNode::note_pressure(ProcessContext& context, FrameTime time, uint8_t note_num, float amount)
+NoteNode::note_pressure(RunContext& context, FrameTime time, uint8_t note_num, float amount)
 {
 	for (uint32_t i=0; i < _polyphony; ++i) {
 		if ((*_voices)[i].state != Voice::State::FREE && (*_voices)[i].note == note_num) {
@@ -414,7 +414,7 @@ NoteNode::note_pressure(ProcessContext& context, FrameTime time, uint8_t note_nu
 }
 
 void
-NoteNode::channel_pressure(ProcessContext& context, FrameTime time, float amount)
+NoteNode::channel_pressure(RunContext& context, FrameTime time, float amount)
 {
 	_pressure_port->set_control_value(context, time, amount);
 }

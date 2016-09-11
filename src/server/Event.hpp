@@ -34,7 +34,7 @@ namespace Ingen {
 namespace Server {
 
 class Engine;
-class ProcessContext;
+class RunContext;
 
 /** An event (command) to perform some action on Ingen.
  *
@@ -60,7 +60,7 @@ public:
 	virtual bool pre_process() = 0;
 
 	/** Execute this event in the audio thread (realtime). */
-	virtual void execute(ProcessContext& context) = 0;
+	virtual void execute(RunContext& context) = 0;
 
 	/** Post-process event after execution (non-realtime). */
 	virtual void post_process() = 0;

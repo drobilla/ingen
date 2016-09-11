@@ -179,7 +179,7 @@ PortImpl::deactivate()
 }
 
 Raul::Array<PortImpl::Voice>*
-PortImpl::set_voices(ProcessContext& context, Raul::Array<Voice>* voices)
+PortImpl::set_voices(RunContext& context, Raul::Array<Voice>* voices)
 {
 	Raul::Array<Voice>* ret = NULL;
 	if (voices != _voices) {
@@ -204,9 +204,9 @@ PortImpl::cache_properties()
 }
 
 void
-PortImpl::set_control_value(const Context& context,
-                            FrameTime      time,
-                            Sample         value)
+PortImpl::set_control_value(const RunContext& context,
+                            FrameTime         time,
+                            Sample            value)
 {
 	for (uint32_t v = 0; v < _poly; ++v) {
 		set_voice_value(context, v, time, value);
@@ -214,10 +214,10 @@ PortImpl::set_control_value(const Context& context,
 }
 
 void
-PortImpl::set_voice_value(const Context& context,
-                          uint32_t       voice,
-                          FrameTime      time,
-                          Sample         value)
+PortImpl::set_voice_value(const RunContext& context,
+                          uint32_t          voice,
+                          FrameTime         time,
+                          Sample            value)
 {
 	switch (_type.id()) {
 	case PortType::CONTROL:
@@ -262,7 +262,7 @@ PortImpl::set_voice_value(const Context& context,
 }
 
 void
-PortImpl::update_set_state(Context& context, uint32_t v)
+PortImpl::update_set_state(RunContext& context, uint32_t v)
 {
 	Voice&    voice = _voices->at(v);
 	SetState& state = voice.set_state;
@@ -327,7 +327,7 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
+PortImpl::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 {
 	if (_parent->path().is_root() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
@@ -359,7 +359,7 @@ PortImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 }
 
 void
-PortImpl::set_buffer_size(Context& context, BufferFactory& bufs, size_t size)
+PortImpl::set_buffer_size(RunContext& context, BufferFactory& bufs, size_t size)
 {
 	_buffer_size = size;
 
@@ -413,7 +413,7 @@ PortImpl::clear_buffers()
 }
 
 void
-PortImpl::monitor(Context& context, bool send_now)
+PortImpl::monitor(RunContext& context, bool send_now)
 {
 	if (!context.must_notify(this)) {
 		return;

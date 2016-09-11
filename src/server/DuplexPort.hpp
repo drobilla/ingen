@@ -65,11 +65,11 @@ public:
 
 	void on_property(const Raul::URI& uri, const Atom& value);
 
-	uint32_t max_tail_poly(Context& context) const;
+	uint32_t max_tail_poly(RunContext& context) const;
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 
-	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly);
 
 	bool get_buffers(BufferFactory&      bufs,
 	                 Raul::Array<Voice>* voices,
@@ -86,8 +86,8 @@ public:
 	 */
 	void set_driver_buffer(void* buf, uint32_t capacity);
 
-	void pre_process(Context& context);
-	void post_process(Context& context);
+	void pre_process(RunContext& context);
+	void post_process(RunContext& context);
 
 	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
 	void        update_values(SampleCount offset, uint32_t voice);

@@ -27,7 +27,7 @@
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
 #include "PostProcessor.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "util.hpp"
 
 using namespace std;
@@ -100,7 +100,7 @@ ControllerNode::ControllerNode(InternalPlugin*      plugin,
 }
 
 void
-ControllerNode::run(ProcessContext& context)
+ControllerNode::run(RunContext& context)
 {
 	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
 	LV2_Atom_Sequence* seq     = midi_in->get<LV2_Atom_Sequence>();
@@ -115,7 +115,7 @@ ControllerNode::run(ProcessContext& context)
 }
 
 void
-ControllerNode::control(ProcessContext& context, uint8_t control_num, uint8_t val, FrameTime time)
+ControllerNode::control(RunContext& context, uint8_t control_num, uint8_t val, FrameTime time)
 {
 	Sample scaled_value;
 

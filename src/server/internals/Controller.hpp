@@ -45,9 +45,9 @@ public:
 	               GraphImpl*           parent,
 	               SampleRate           srate);
 
-	void run(ProcessContext& context);
+	void run(RunContext& context);
 
-	void control(ProcessContext& context, uint8_t control_num, uint8_t val, FrameTime time);
+	void control(RunContext& context, uint8_t control_num, uint8_t val, FrameTime time);
 
 	void learn() { _learning = true; }
 

@@ -28,7 +28,7 @@
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "mix.hpp"
 
 using namespace std;
@@ -56,7 +56,7 @@ InputPort::InputPort(BufferFactory&      bufs,
 }
 
 bool
-InputPort::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
+InputPort::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 {
 	bool ret = PortImpl::apply_poly(context, maid, poly);
 	if (!ret)
@@ -109,13 +109,13 @@ InputPort::get_buffers(BufferFactory&      bufs,
 }
 
 void
-InputPort::add_arc(ProcessContext& context, ArcImpl* c)
+InputPort::add_arc(RunContext& context, ArcImpl* c)
 {
 	_arcs.push_front(*c);
 }
 
 ArcImpl*
-InputPort::remove_arc(ProcessContext& context, const OutputPort* tail)
+InputPort::remove_arc(RunContext& context, const OutputPort* tail)
 {
 	ArcImpl* arc = NULL;
 	for (Arcs::iterator i = _arcs.begin(); i != _arcs.end(); ++i) {
@@ -135,13 +135,13 @@ InputPort::remove_arc(ProcessContext& context, const OutputPort* tail)
 }
 
 uint32_t
-InputPort::max_tail_poly(Context& context) const
+InputPort::max_tail_poly(RunContext& context) const
 {
 	return parent_block()->parent_graph()->internal_poly_process();
 }
 
 void
-InputPort::pre_process(Context& context)
+InputPort::pre_process(RunContext& context)
 {
 	if (_set_by_user) {
 		// Value has been set (e.g. events pushed) by the user, don't smash it
@@ -167,7 +167,7 @@ InputPort::pre_process(Context& context)
 }
 
 void
-InputPort::pre_run(Context& context)
+InputPort::pre_run(RunContext& context)
 {
 	if (!_set_by_user && !_arcs.empty() && !direct_connect()) {
 		const uint32_t src_poly   = max_tail_poly(context);
@@ -220,7 +220,7 @@ InputPort::update_values(SampleCount offset, uint32_t voice)
 }
 
 void
-InputPort::post_process(Context& context)
+InputPort::post_process(RunContext& context)
 {
 	if (!_arcs.empty() || _force_monitor_update) {
 		monitor(context, _force_monitor_update);

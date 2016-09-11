@@ -28,7 +28,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -125,9 +125,9 @@ ControlBindings::midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& val
 }
 
 void
-ControlBindings::port_binding_changed(ProcessContext& context,
-                                      PortImpl*       port,
-                                      const Atom&     binding)
+ControlBindings::port_binding_changed(RunContext& context,
+                                      PortImpl*   port,
+                                      const Atom& binding)
 {
 	const Key key = binding_key(binding);
 	if (key) {
@@ -136,10 +136,10 @@ ControlBindings::port_binding_changed(ProcessContext& context,
 }
 
 void
-ControlBindings::port_value_changed(ProcessContext& context,
-                                    PortImpl*       port,
-                                    Key             key,
-                                    const Atom&     value_atom)
+ControlBindings::port_value_changed(RunContext& context,
+                                    PortImpl*   port,
+                                    Key         key,
+                                    const Atom& value_atom)
 {
 	Ingen::World*      world = context.engine().world();
 	const Ingen::URIs& uris  = world->uris();
@@ -193,7 +193,7 @@ ControlBindings::learn(PortImpl* port)
 }
 
 static void
-get_range(ProcessContext& context, const PortImpl* port, float* min, float* max)
+get_range(RunContext& context, const PortImpl* port, float* min, float* max)
 {
 	*min = port->minimum().get<float>();
 	*max = port->maximum().get<float>();
@@ -204,7 +204,7 @@ get_range(ProcessContext& context, const PortImpl* port, float* min, float* max)
 }
 
 Atom
-ControlBindings::control_to_port_value(ProcessContext& context,
+ControlBindings::control_to_port_value(RunContext&     context,
                                        const PortImpl* port,
                                        Type            type,
                                        int16_t         value) const
@@ -236,9 +236,9 @@ ControlBindings::control_to_port_value(ProcessContext& context,
 }
 
 int16_t
-ControlBindings::port_value_to_control(ProcessContext& context,
-                                       PortImpl*       port,
-                                       Type            type,
+ControlBindings::port_value_to_control(RunContext& context,
+                                       PortImpl*   port,
+                                       Type        type,
                                        const Atom&     value_atom) const
 {
 	if (value_atom.type() != port->bufs().forge().Float)
@@ -307,10 +307,10 @@ forge_binding(const URIs&           uris,
 }
 
 void
-ControlBindings::set_port_value(ProcessContext& context,
-                                PortImpl*       port,
-                                Type            type,
-                                int16_t         value)
+ControlBindings::set_port_value(RunContext& context,
+                                PortImpl*   port,
+                                Type        type,
+                                int16_t     value)
 {
 	float min, max;
 	get_range(context, port, &min, &max);
@@ -327,7 +327,7 @@ ControlBindings::set_port_value(ProcessContext& context,
 }
 
 bool
-ControlBindings::bind(ProcessContext& context, Key key)
+ControlBindings::bind(RunContext& context, Key key)
 {
 	const Ingen::URIs& uris = context.engine().world()->uris();
 	assert(_learn_port);
@@ -397,7 +397,7 @@ ControlBindings::remove(PortImpl* port)
 }
 
 void
-ControlBindings::pre_process(ProcessContext& context, Buffer* buffer)
+ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 {
 	uint16_t       value    = 0;
 	SPtr<Bindings> bindings = _bindings;
@@ -429,7 +429,7 @@ ControlBindings::pre_process(ProcessContext& context, Buffer* buffer)
 }
 
 void
-ControlBindings::post_process(ProcessContext& context, Buffer* buffer)
+ControlBindings::post_process(RunContext& context, Buffer* buffer)
 {
 	// TODO: merge buffer's existing contents (anything send to it in the graph)
 	buffer->copy(context, _feedback.get());

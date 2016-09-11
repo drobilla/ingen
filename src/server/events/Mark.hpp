@@ -41,7 +41,7 @@ public:
 	     Type                        type);
 
 	bool pre_process();
-	void execute(ProcessContext& context);
+	void execute(RunContext& context);
 	void post_process();
 
 private:

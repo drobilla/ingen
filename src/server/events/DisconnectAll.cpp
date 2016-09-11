@@ -143,7 +143,7 @@ DisconnectAll::pre_process()
 }
 
 void
-DisconnectAll::execute(ProcessContext& context)
+DisconnectAll::execute(RunContext& context)
 {
 	if (_status == Status::SUCCESS) {
 		for (auto& i : _impls) {

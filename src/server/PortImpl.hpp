@@ -25,7 +25,7 @@
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
 #include "PortType.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "types.hpp"
 
 namespace Raul { class Maid; }
@@ -60,7 +60,7 @@ public:
 
 		SetState() : state(State::SET), value(0), time(0) {}
 
-		void set(const Context& context, FrameTime t, Sample v) {
+		void set(const RunContext& context, FrameTime t, Sample v) {
 			time  = t;
 			value = v;
 			state = (time == context.start()
@@ -92,7 +92,7 @@ public:
 	 * Audio thread.  Returned value must be freed by caller.
 	 * \a buffers must be poly() long
 	 */
-	Raul::Array<Voice>* set_voices(ProcessContext&     context,
+	Raul::Array<Voice>* set_voices(RunContext&         context,
 	                               Raul::Array<Voice>* voices);
 
 	/** Prepare for a new (external) polyphony value.
@@ -107,7 +107,7 @@ public:
 	 * \a poly Must be < the most recent value passed to prepare_poly.
 	 */
 	virtual bool apply_poly(
-		ProcessContext& context, Raul::Maid& maid, uint32_t poly);
+		RunContext& context, Raul::Maid& maid, uint32_t poly);
 
 	const Atom& value() const { return _value; }
 	void        set_value(const Atom& v) { _value = v; }
@@ -129,16 +129,16 @@ public:
 		return _prepared_voices->at(voice).buffer;
 	}
 
-	void update_set_state(Context& context, uint32_t voice);
+	void update_set_state(RunContext& context, uint32_t voice);
 
-	void set_voice_value(const Context& context,
-	                     uint32_t       voice,
-	                     FrameTime      time,
-	                     Sample         value);
+	void set_voice_value(const RunContext& context,
+	                     uint32_t          voice,
+	                     FrameTime         time,
+	                     Sample            value);
 
-	void set_control_value(const Context& context,
-	                       FrameTime      time,
-	                       Sample         value);
+	void set_control_value(const RunContext& context,
+	                       FrameTime         time,
+	                       Sample            value);
 
 	/** Prepare this port to use an external driver-provided buffer.
 	 *
@@ -153,9 +153,9 @@ public:
 	bool is_driver_port() const { return _is_driver_port; }
 
 	/** Called once per process cycle */
-	virtual void pre_process(Context& context) = 0;
-	virtual void pre_run(Context& context) {}
-	virtual void post_process(Context& context) = 0;
+	virtual void pre_process(RunContext& context) = 0;
+	virtual void pre_run(RunContext& context) {}
+	virtual void post_process(RunContext& context) = 0;
 
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
@@ -209,7 +209,7 @@ public:
 		return (_prepared_voices) ? _prepared_voices->size() : 1;
 	}
 
-	void set_buffer_size(Context& context, BufferFactory& bufs, size_t size);
+	void set_buffer_size(RunContext& context, BufferFactory& bufs, size_t size);
 
 	/** Return true iff this port is explicitly monitored.
 	 *
@@ -223,7 +223,7 @@ public:
 	void enable_monitoring(bool monitored) { _monitored = monitored; }
 
 	/** Monitor port value and broadcast to clients periodically. */
-	void monitor(Context& context, bool send_now=false);
+	void monitor(RunContext& context, bool send_now=false);
 
 	void raise_set_by_user_flag() { _set_by_user = true; }
 

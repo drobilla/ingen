@@ -23,7 +23,7 @@
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "internals/Time.hpp"
 #include "util.hpp"
 
@@ -57,7 +57,7 @@ TimeNode::TimeNode(InternalPlugin*     plugin,
 }
 
 void
-TimeNode::run(ProcessContext& context)
+TimeNode::run(RunContext& context)
 {
 	BufferRef          buf = _notify_port->buffer(0);
 	LV2_Atom_Sequence* seq = buf->get<LV2_Atom_Sequence>();

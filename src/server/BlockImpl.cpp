@@ -25,7 +25,7 @@
 #include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "ThreadManager.hpp"
 
 using namespace std;
@@ -41,7 +41,6 @@ BlockImpl::BlockImpl(PluginImpl*         plugin,
 	: NodeImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
 	, _ports(NULL)
-	, _context(Context::ID::AUDIO)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
 	, _polyphonic(polyphonic)
 	, _activated(false)
@@ -121,7 +120,7 @@ BlockImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-BlockImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
+BlockImpl::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic)
 		poly = 1;
@@ -136,7 +135,7 @@ BlockImpl::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 }
 
 void
-BlockImpl::set_buffer_size(Context&       context,
+BlockImpl::set_buffer_size(RunContext&    context,
                            BufferFactory& bufs,
                            LV2_URID       type,
                            uint32_t       size)
@@ -178,7 +177,7 @@ BlockImpl::port_by_symbol(const char* symbol)
 }
 
 void
-BlockImpl::pre_process(ProcessContext& context)
+BlockImpl::pre_process(RunContext& context)
 {
 	// Mix down input ports
 	for (uint32_t i = 0; i < num_ports(); ++i) {
@@ -189,7 +188,7 @@ BlockImpl::pre_process(ProcessContext& context)
 }
 
 void
-BlockImpl::process(ProcessContext& context)
+BlockImpl::process(RunContext& context)
 {
 	pre_process(context);
 
@@ -224,7 +223,7 @@ BlockImpl::process(ProcessContext& context)
 		return;
 	}
 
-	ProcessContext subcontext(context);
+	RunContext subcontext(context);
 	for (SampleCount offset = 0; offset < context.nframes();) {
 		// Find earliest offset of a value change
 		SampleCount chunk_end = context.nframes();
@@ -259,7 +258,7 @@ BlockImpl::process(ProcessContext& context)
 }
 
 void
-BlockImpl::post_process(ProcessContext& context)
+BlockImpl::post_process(RunContext& context)
 {
 	// Write output ports
 	for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {

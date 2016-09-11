@@ -29,7 +29,7 @@
 #include "InputPort.hpp"
 #include "InternalPlugin.hpp"
 #include "OutputPort.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "internals/Delay.hpp"
 #include "util.hpp"
 
@@ -138,7 +138,7 @@ static inline float cube_interp(const float fr, const float inm1, const float
 }
 
 void
-DelayNode::run(ProcessContext& context)
+DelayNode::run(RunContext& context)
 {
 	Buffer* const delay_buf = _delay_port->buffer(0).get();
 	Buffer* const in_buf    = _in_port->buffer(0).get();

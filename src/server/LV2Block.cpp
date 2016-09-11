@@ -43,7 +43,7 @@
 #include "LV2Block.hpp"
 #include "LV2Plugin.hpp"
 #include "OutputPort.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "Worker.hpp"
 
 using namespace std;
@@ -205,7 +205,7 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-LV2Block::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
+LV2Block::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 {
 	if (!_polyphonic)
 		poly = 1;
@@ -545,14 +545,14 @@ LV2Block::work(uint32_t size, const void* data)
 }
 
 void
-LV2Block::run(ProcessContext& context)
+LV2Block::run(RunContext& context)
 {
 	for (uint32_t i = 0; i < _polyphony; ++i)
 		lilv_instance_run(instance(i), context.nframes());
 }
 
 void
-LV2Block::post_process(ProcessContext& context)
+LV2Block::post_process(RunContext& context)
 {
 	BlockImpl::post_process(context);
 

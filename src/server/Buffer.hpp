@@ -35,9 +35,9 @@
 namespace Ingen {
 namespace Server {
 
-class Context;
-class Engine;
 class BufferFactory;
+class Engine;
+class RunContext;
 
 class INGEN_API Buffer : public boost::noncopyable
 {
@@ -51,8 +51,8 @@ public:
 
 	void clear();
 	void resize(uint32_t size);
-	void copy(const Context& context, const Buffer* src);
-	void prepare_write(Context& context);
+	void copy(const RunContext& context, const Buffer* src);
+	void prepare_write(RunContext& context);
 
 	void*       port_data(PortType port_type, SampleCount offset);
 	const void* port_data(PortType port_type, SampleCount offset) const;
@@ -157,10 +157,10 @@ public:
 	}
 
 	/// Audio buffers only
-	float peak(const Context& context) const;
+	float peak(const RunContext& context) const;
 
 	/// Sequence buffers only
-	void prepare_output_write(Context& context);
+	void prepare_output_write(RunContext& context);
 
 	/// Sequence buffers only
 	bool append_event(int64_t        frames,
@@ -182,7 +182,7 @@ public:
 	void update_value_buffer(SampleCount offset);
 
 	/// Set/add to audio buffer from the Sequence of Float in `src`
-	void render_sequence(const Context& context, const Buffer* src, bool add);
+	void render_sequence(const RunContext& context, const Buffer* src, bool add);
 
 	void set_capacity(uint32_t capacity) { _capacity = capacity; }
 

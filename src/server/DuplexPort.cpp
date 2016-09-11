@@ -153,7 +153,7 @@ DuplexPort::set_driver_buffer(void* buf, uint32_t capacity)
 }
 
 uint32_t
-DuplexPort::max_tail_poly(Context& context) const
+DuplexPort::max_tail_poly(RunContext& context) const
 {
 	return std::max(_poly, parent_graph()->internal_poly_process());
 }
@@ -170,7 +170,7 @@ DuplexPort::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-DuplexPort::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
+DuplexPort::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 {
 	if (!parent()->parent() ||
 	    poly != parent()->parent_graph()->internal_poly()) {
@@ -181,7 +181,7 @@ DuplexPort::apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly)
 }
 
 void
-DuplexPort::pre_process(Context& context)
+DuplexPort::pre_process(RunContext& context)
 {
 	if (_is_output) {
 		/* This is a graph output, which is an input from the internal
@@ -200,7 +200,7 @@ DuplexPort::pre_process(Context& context)
 }
 
 void
-DuplexPort::post_process(Context& context)
+DuplexPort::post_process(RunContext& context)
 {
 	if (_is_output) {
 		/* This is a graph output, which is an input from the internal

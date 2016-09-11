@@ -194,7 +194,7 @@ Copy::filesystem_to_engine()
 }
 
 void
-Copy::execute(ProcessContext& context)
+Copy::execute(RunContext& context)
 {
 	if (_block) {
 		_parent->set_compiled_graph(_compiled_graph);

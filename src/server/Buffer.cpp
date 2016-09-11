@@ -136,7 +136,7 @@ Buffer::clear()
 }
 
 void
-Buffer::render_sequence(const Context& context, const Buffer* src, bool add)
+Buffer::render_sequence(const RunContext& context, const Buffer* src, bool add)
 {
 	const LV2_URID           atom_Float = _factory.uris().atom_Float;
 	const LV2_Atom_Sequence* seq        = src->get<const LV2_Atom_Sequence>();
@@ -154,7 +154,7 @@ Buffer::render_sequence(const Context& context, const Buffer* src, bool add)
 }
 
 void
-Buffer::copy(const Context& context, const Buffer* src)
+Buffer::copy(const RunContext& context, const Buffer* src)
 {
 	if (!_buf) {
 		return;
@@ -233,7 +233,7 @@ mm_abs_ps(__m128 x)
 #endif
 
 float
-Buffer::peak(const Context& context) const
+Buffer::peak(const RunContext& context) const
 {
 #ifdef __SSE__
 	const __m128* const vbuf    = (const __m128* const)samples();
@@ -276,7 +276,7 @@ Buffer::peak(const Context& context) const
 }
 
 void
-Buffer::prepare_write(Context& context)
+Buffer::prepare_write(RunContext& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
 		LV2_Atom* atom = get<LV2_Atom>();
@@ -288,7 +288,7 @@ Buffer::prepare_write(Context& context)
 }
 
 void
-Buffer::prepare_output_write(Context& context)
+Buffer::prepare_output_write(RunContext& context)
 {
 	if (_type == _factory.uris().atom_Sequence) {
 		LV2_Atom* atom = get<LV2_Atom>();

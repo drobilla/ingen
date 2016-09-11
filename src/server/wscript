@@ -10,7 +10,6 @@ def build(bld):
             Buffer.cpp
             BufferFactory.cpp
             ClientUpdate.cpp
-            Context.cpp
             ControlBindings.cpp
             DuplexPort.cpp
             Engine.cpp
@@ -26,6 +25,7 @@ def build(bld):
             PortImpl.cpp
             PostProcessor.cpp
             PreProcessor.cpp
+            RunContext.cpp
             SocketListener.cpp
             UndoStack.cpp
             Worker.cpp

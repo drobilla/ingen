@@ -29,7 +29,7 @@ namespace Server {
 class Engine;
 class Event;
 class PostProcessor;
-class ProcessContext;
+class RunContext;
 
 class PreProcessor
 {
@@ -49,7 +49,7 @@ public:
 	/** Process events for a cycle.
 	 * @return The number of events processed.
 	 */
-	unsigned process(ProcessContext& context,
+	unsigned process(RunContext& context,
 	                 PostProcessor&  dest,
 	                 size_t          limit = 0);
 

@@ -50,7 +50,7 @@
 #include "EventWriter.hpp"
 #include "GraphImpl.hpp"
 #include "PostProcessor.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "ThreadManager.hpp"
 
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -79,7 +79,7 @@ namespace Server {
 
 class LV2Driver;
 
-void signal_main(ProcessContext& context, LV2Driver* driver);
+void signal_main(RunContext& context, LV2Driver* driver);
 
 inline size_t
 ui_ring_size(SampleCount block_length)
@@ -116,7 +116,7 @@ public:
 		, _to_ui_overflow(false)
 	{}
 
-	void pre_process_port(ProcessContext& context, EnginePort* port) {
+	void pre_process_port(RunContext& context, EnginePort* port) {
 		const URIs&       uris       = _engine.world()->uris();
 		const SampleCount nframes    = context.nframes();
 		DuplexPort*       graph_port = port->graph_port();
@@ -150,7 +150,7 @@ public:
 		}
 	}
 
-	void post_process_port(ProcessContext& context, EnginePort* port) {
+	void post_process_port(RunContext& context, EnginePort* port) {
 		DuplexPort* graph_port = port->graph_port();
 
 		// No copying necessary, host buffers are used directly
@@ -161,13 +161,13 @@ public:
 	}
 
 	void run(uint32_t nframes) {
-		_engine.process_context().locate(_frame_time, nframes);
+		_engine.run_context().locate(_frame_time, nframes);
 
 		// Notify buffer is a Chunk with size set to the available space
 		_notify_capacity = ((LV2_Atom_Sequence*)_ports[1]->buffer())->atom.size;
 
 		for (auto& p : _ports) {
-			pre_process_port(_engine.process_context(), p);
+			pre_process_port(_engine.run_context(), p);
 		}
 
 		_engine.run(nframes);
@@ -175,10 +175,10 @@ public:
 			_main_sem.post();
 		}
 
-		flush_to_ui(_engine.process_context());
+		flush_to_ui(_engine.run_context());
 
 		for (auto& p : _ports) {
-			post_process_port(_engine.process_context(), p);
+			post_process_port(_engine.run_context(), p);
 		}
 
 		_frame_time += nframes;
@@ -203,7 +203,7 @@ public:
 	}
 
 	/** Add a port.  Called only during init or restore. */
-	virtual void add_port(ProcessContext& context, EnginePort* port) {
+	virtual void add_port(RunContext& context, EnginePort* port) {
 		const uint32_t index = port->graph_port()->index();
 		if (_ports.size() <= index) {
 			_ports.resize(index + 1);
@@ -212,7 +212,7 @@ public:
 	}
 
 	/** Remove a port.  Called only during init or restore. */
-	virtual void remove_port(ProcessContext& context, EnginePort* port) {
+	virtual void remove_port(RunContext& context, EnginePort* port) {
 		const uint32_t index = port->graph_port()->index();
 		_ports[index] = NULL;
 		if (index == _ports.size() - 1) {
@@ -240,8 +240,8 @@ public:
 		return new EnginePort(graph_port);
 	}
 
-	virtual void append_time_events(ProcessContext& context,
-	                                Buffer&         buffer)
+	virtual void append_time_events(RunContext& context,
+	                                Buffer&     buffer)
 	{
 		const URIs&        uris = _engine.world()->uris();
 		LV2_Atom_Sequence* seq  = (LV2_Atom_Sequence*)_ports[0]->buffer();
@@ -307,7 +307,7 @@ public:
 		free(buf);
 	}
 
-	void flush_to_ui(ProcessContext& context) {
+	void flush_to_ui(RunContext& context) {
 		if (_ports.size() < 2) {
 			_engine.log().error("Standard control ports are not present\n");
 			return;
@@ -558,7 +558,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;
 
-	engine->process_context().locate(0, block_length);
+	engine->run_context().locate(0, block_length);
 
 	engine->post_processor()->set_end_time(block_length);
 	engine->process_events();

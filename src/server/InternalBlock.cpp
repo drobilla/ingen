@@ -31,7 +31,7 @@ InternalBlock::InternalBlock(PluginImpl*         plugin,
 
 
 void
-InternalBlock::pre_process(ProcessContext& context)
+InternalBlock::pre_process(RunContext& context)
 {
 	for (uint32_t i = 0; i < num_ports(); ++i) {
 		PortImpl* const port = _ports->at(i);

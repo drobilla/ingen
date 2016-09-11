@@ -116,7 +116,7 @@ Delete::pre_process()
 }
 
 void
-Delete::execute(ProcessContext& context)
+Delete::execute(RunContext& context)
 {
 	if (_status != Status::SUCCESS) {
 		return;

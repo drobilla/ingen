@@ -57,15 +57,15 @@ public:
 	                     GraphImpl*          parent);
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly);
 
 	void activate(BufferFactory& bufs);
 	void deactivate();
 
 	LV2_Worker_Status work(uint32_t size, const void* data);
 
-	void run(ProcessContext& context);
-	void post_process(ProcessContext& context);
+	void run(RunContext& context);
+	void post_process(RunContext& context);
 
 	LilvState* load_preset(const Raul::URI& uri);
 

@@ -26,7 +26,7 @@
 #include "raul/Deletable.hpp"
 
 #include "BufferRef.hpp"
-#include "Context.hpp"
+#include "RunContext.hpp"
 
 namespace Ingen {
 namespace Server {

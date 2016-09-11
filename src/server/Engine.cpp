@@ -46,7 +46,7 @@
 #include "LV2Options.hpp"
 #include "PostProcessor.hpp"
 #include "PreProcessor.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "ThreadManager.hpp"
 #include "UndoStack.hpp"
 #include "Worker.hpp"
@@ -80,7 +80,7 @@ Engine::Engine(Ingen::World* world)
 	, _worker(new Worker(world->log(), event_queue_size()))
 	, _sync_worker(new Worker(world->log(), event_queue_size(), true))
 	, _listener(NULL)
-	, _process_context(*this)
+	, _run_context(*this)
 	, _rand_engine(0)
 	, _uniform_dist(0.0f, 1.0f)
 	, _quit_flag(false)
@@ -115,11 +115,11 @@ Engine::~Engine()
 
 	// Process all pending events
 	const FrameTime end = std::numeric_limits<FrameTime>::max();
-	_process_context.locate(_process_context.end(), end - _process_context.end());
+	_run_context.locate(_run_context.end(), end - _run_context.end());
 	_post_processor->set_end_time(end);
 	_post_processor->process();
 	while (!_pre_processor->empty()) {
-		_pre_processor->process(_process_context, *_post_processor, 1);
+		_pre_processor->process(_run_context, *_post_processor, 1);
 		_post_processor->process();
 	}
 
@@ -203,7 +203,7 @@ Engine::event_time()
 	}
 
 	const SampleCount start = _direct_driver
-		? _process_context.start()
+		? _run_context.start()
 		: _driver->frame_time();
 
 	/* Exactly one cycle latency (some could run ASAP if we get lucky, but not
@@ -250,7 +250,7 @@ Engine::activate()
 			*this, SPtr<Interface>(), -1, 0, Raul::Path("/"), graph_properties);
 
 		// Execute in "fake" process context (we are single threaded)
-		ProcessContext context(*this);
+		RunContext context(*this);
 		ev.pre_process();
 		ev.execute(context);
 		ev.post_process();
@@ -283,13 +283,13 @@ Engine::deactivate()
 unsigned
 Engine::run(uint32_t sample_count)
 {
-	_process_context.locate(_process_context.end(), sample_count);
+	_run_context.locate(_run_context.end(), sample_count);
 
 	// Apply control bindings to input
 	control_bindings()->pre_process(
-		_process_context, _root_graph->port_impl(0)->buffer(0).get());
+		_run_context, _root_graph->port_impl(0)->buffer(0).get());
 
-	post_processor()->set_end_time(_process_context.end());
+	post_processor()->set_end_time(_run_context.end());
 
 	// Process events that came in during the last cycle
 	// (Aiming for jitter-free 1 block event latency, ideally)
@@ -297,11 +297,11 @@ Engine::run(uint32_t sample_count)
 
 	// Run root graph
 	if (_root_graph) {
-		_root_graph->process(_process_context);
+		_root_graph->process(_run_context);
 
 		// Emit control binding feedback
 		control_bindings()->post_process(
-			_process_context, _root_graph->port_impl(1)->buffer(0).get());
+			_run_context, _root_graph->port_impl(1)->buffer(0).get());
 	}
 
 	return n_processed_events;
@@ -322,9 +322,9 @@ Engine::enqueue_event(Event* ev, Event::Mode mode)
 unsigned
 Engine::process_events()
 {
-	const size_t MAX_EVENTS_PER_CYCLE = _process_context.nframes() / 8;
+	const size_t MAX_EVENTS_PER_CYCLE = _run_context.nframes() / 8;
 	return _pre_processor->process(
-		_process_context, *_post_processor, MAX_EVENTS_PER_CYCLE);
+		_run_context, *_post_processor, MAX_EVENTS_PER_CYCLE);
 }
 
 void

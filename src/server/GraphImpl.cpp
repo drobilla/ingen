@@ -153,7 +153,7 @@ GraphImpl::deactivate()
 }
 
 void
-GraphImpl::disable(ProcessContext& context)
+GraphImpl::disable(RunContext& context)
 {
 	_process = false;
 	for (auto& o : _outputs) {
@@ -177,10 +177,10 @@ GraphImpl::prepare_internal_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-GraphImpl::apply_internal_poly(ProcessContext& context,
-                               BufferFactory&  bufs,
-                               Raul::Maid&     maid,
-                               uint32_t        poly)
+GraphImpl::apply_internal_poly(RunContext&    context,
+                               BufferFactory& bufs,
+                               Raul::Maid&    maid,
+                               uint32_t       poly)
 {
 	// TODO: Subgraph dynamic polyphony (i.e. changing port polyphony)
 
@@ -206,7 +206,7 @@ GraphImpl::apply_internal_poly(ProcessContext& context,
 }
 
 void
-GraphImpl::pre_process(ProcessContext& context)
+GraphImpl::pre_process(RunContext& context)
 {
 	// Mix down input ports and connect buffers
 	for (uint32_t i = 0; i < num_ports(); ++i) {
@@ -220,7 +220,7 @@ GraphImpl::pre_process(ProcessContext& context)
 }
 
 void
-GraphImpl::process(ProcessContext& context)
+GraphImpl::process(RunContext& context)
 {
 	if (!_process)
 		return;
@@ -231,7 +231,7 @@ GraphImpl::process(ProcessContext& context)
 }
 
 void
-GraphImpl::run(ProcessContext& context)
+GraphImpl::run(RunContext& context)
 {
 	if (_compiled_graph && _compiled_graph->size() > 0) {
 		// Run all blocks
@@ -242,7 +242,7 @@ GraphImpl::run(ProcessContext& context)
 }
 
 void
-GraphImpl::set_buffer_size(Context&       context,
+GraphImpl::set_buffer_size(RunContext&    context,
                            BufferFactory& bufs,
                            LV2_URID       type,
                            uint32_t       size)

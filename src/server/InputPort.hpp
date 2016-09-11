@@ -31,10 +31,9 @@ namespace Ingen {
 namespace Server {
 
 class ArcImpl;
-class Context;
 class BlockImpl;
 class OutputPort;
-class ProcessContext;
+class RunContext;
 
 /** An input port on a Block or Graph.
  *
@@ -67,9 +66,9 @@ public:
 	                                > Arcs;
 
 	/** Return the maximum polyphony of an output connected to this input. */
-	virtual uint32_t max_tail_poly(Context& context) const;
+	virtual uint32_t max_tail_poly(RunContext& context) const;
 
-	bool apply_poly(ProcessContext& context, Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly);
 
 	/** Add an arc.  Realtime safe.
 	 *
@@ -78,13 +77,13 @@ public:
 	 *
 	 * setup_buffers() must be called later for the change to take effect.
 	 */
-	void add_arc(ProcessContext& context, ArcImpl* c);
+	void add_arc(RunContext& context, ArcImpl* c);
 
 	/** Remove an arc.  Realtime safe.
 	 *
 	 * setup_buffers() must be called later for the change to take effect.
 	 */
-	ArcImpl* remove_arc(ProcessContext&   context,
+	ArcImpl* remove_arc(RunContext&   context,
 	                    const OutputPort* tail);
 
 	/** Set `voices` as the buffers to be used for this port.
@@ -97,13 +96,13 @@ public:
 	                 bool                real_time) const;
 
 	/** Set up buffer pointers. */
-	void pre_process(Context& context);
+	void pre_process(RunContext& context);
 
 	/** Prepare buffer for access, mixing if necessary. */
-	void pre_run(Context& context);
+	void pre_run(RunContext& context);
 
 	/** Prepare buffer for next process cycle. */
-	void post_process(Context& context);
+	void post_process(RunContext& context);
 
 	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
 	void        update_values(SampleCount offset, uint32_t voice);

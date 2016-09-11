@@ -25,11 +25,11 @@ class URIs;
 
 namespace Server {
 
-class Context;
 class Buffer;
+class RunContext;
 
 void
-mix(const Context&      context,
+mix(const RunContext&   context,
     Buffer*             dst,
     const Buffer*const* srcs,
     uint32_t            num_srcs);

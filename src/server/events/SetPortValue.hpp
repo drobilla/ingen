@@ -48,13 +48,13 @@ public:
 	~SetPortValue();
 
 	bool pre_process();
-	void execute(ProcessContext& context);
+	void execute(RunContext& context);
 	void post_process();
 
 	bool synthetic() const { return _synthetic; }
 
 private:
-	void apply(Context& context);
+	void apply(RunContext& context);
 
 	PortImpl*            _port;
 	const Atom           _value;

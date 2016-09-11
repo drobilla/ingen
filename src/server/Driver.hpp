@@ -56,7 +56,7 @@ public:
 	virtual EnginePort* get_port(const Raul::Path& path) = 0;
 
 	/** Add a system visible port (e.g. a port on the root graph). */
-	virtual void add_port(ProcessContext& context, EnginePort* port) = 0;
+	virtual void add_port(RunContext& context, EnginePort* port) = 0;
 
 	/** Remove a system visible port.
 	 *
@@ -64,7 +64,7 @@ public:
 	 * destroy the port.  To actually remove the system port, unregister_port()
 	 * must be called later in another thread.
 	 */
-	virtual void remove_port(ProcessContext& context, EnginePort* port) = 0;
+	virtual void remove_port(RunContext& context, EnginePort* port) = 0;
 
 	/** Register a system visible port. */
 	virtual void register_port(EnginePort& port) = 0;
@@ -94,7 +94,7 @@ public:
 	virtual SampleCount frame_time()  const = 0;
 
 	/** Append time events for this cycle to `buffer`. */
-	virtual void append_time_events(ProcessContext& context,
+	virtual void append_time_events(RunContext& context,
 	                                Buffer&         buffer) = 0;
 };
 

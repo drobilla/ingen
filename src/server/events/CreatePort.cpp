@@ -167,7 +167,7 @@ CreatePort::pre_process()
 }
 
 void
-CreatePort::execute(ProcessContext& context)
+CreatePort::execute(RunContext& context)
 {
 	if (_status == Status::SUCCESS) {
 		_old_ports_array = _graph->external_ports();

@@ -34,9 +34,8 @@ namespace Server {
 
 class ArcImpl;
 class CompiledGraph;
-class Context;
 class Engine;
-class ProcessContext;
+class RunContext;
 
 /** A group of blocks in a graph, possibly polyphonic.
  *
@@ -67,11 +66,11 @@ public:
 	void activate(BufferFactory& bufs);
 	void deactivate();
 
-	void pre_process(ProcessContext& context);
-	void process(ProcessContext& context);
-	void run(ProcessContext& context);
+	void pre_process(RunContext& context);
+	void process(RunContext& context);
+	void run(RunContext& context);
 
-	void set_buffer_size(Context&       context,
+	void set_buffer_size(RunContext&    context,
 	                     BufferFactory& bufs,
 	                     LV2_URID       type,
 	                     uint32_t       size);
@@ -92,10 +91,10 @@ public:
 	 * \param poly Must be < the most recent value passed to prepare_internal_poly.
 	 * \param maid Any objects no longer needed will be pushed to this
 	 */
-	bool apply_internal_poly(ProcessContext& context,
-	                         BufferFactory&  bufs,
-	                         Raul::Maid&     maid,
-	                         uint32_t        poly);
+	bool apply_internal_poly(RunContext&    context,
+	                         BufferFactory& bufs,
+	                         Raul::Maid&    maid,
+	                         uint32_t       poly);
 
 	// Graph specific stuff not inherited from Block
 
@@ -181,7 +180,7 @@ public:
 	/** Whether to run this graph's DSP bits in the audio thread */
 	bool enabled() const { return _process; }
 	void enable() { _process = true; }
-	void disable(ProcessContext& context);
+	void disable(RunContext& context);
 
 	uint32_t internal_poly()         const { return _poly_pre; }
 	uint32_t internal_poly_process() const { return _poly_process; }

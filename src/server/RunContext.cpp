@@ -20,9 +20,9 @@
 
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
-#include "Context.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
+#include "RunContext.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -44,9 +44,8 @@ struct Notification
 	LV2_URID  type;
 };
 
-Context::Context(Engine& engine, ID id)
+RunContext::RunContext(Engine& engine)
 	: _engine(engine)
-	, _id(id)
 	, _event_sink(
 		new Raul::RingBuffer(engine.event_queue_size() * sizeof(Notification)))
 	, _start(0)
@@ -57,9 +56,8 @@ Context::Context(Engine& engine, ID id)
 	, _copy(false)
 {}
 
-Context::Context(const Context& copy)
+RunContext::RunContext(const RunContext& copy)
 	: _engine(copy._engine)
-	, _id(copy._id)
 	, _event_sink(copy._event_sink)
 	, _start(copy._start)
 	, _end(copy._end)
@@ -69,7 +67,7 @@ Context::Context(const Context& copy)
 	, _copy(true)
 {}
 
-Context::~Context()
+RunContext::~RunContext()
 {
 	if (!_copy) {
 		delete _event_sink;
@@ -77,18 +75,18 @@ Context::~Context()
 }
 
 bool
-Context::must_notify(const PortImpl* port) const
+RunContext::must_notify(const PortImpl* port) const
 {
 	return (port->is_monitored() || _engine.broadcaster()->must_broadcast());
 }
 
 bool
-Context::notify(LV2_URID    key,
-                FrameTime   time,
-                PortImpl*   port,
-                uint32_t    size,
-                LV2_URID    type,
-                const void* body)
+RunContext::notify(LV2_URID    key,
+                   FrameTime   time,
+                   PortImpl*   port,
+                   uint32_t    size,
+                   LV2_URID    type,
+                   const void* body)
 {
 	const Notification n(port, time, key, size, type);
 	if (_event_sink->write_space() < sizeof(n) + size) {
@@ -105,7 +103,7 @@ Context::notify(LV2_URID    key,
 }
 
 void
-Context::emit_notifications(FrameTime end)
+RunContext::emit_notifications(FrameTime end)
 {
 	const URIs&    uris       = _engine.buffer_factory()->uris();
 	const uint32_t read_space = _event_sink->read_space();

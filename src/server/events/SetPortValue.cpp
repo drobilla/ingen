@@ -26,7 +26,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "SetPortValue.hpp"
 
 namespace Ingen {
@@ -69,19 +69,15 @@ SetPortValue::pre_process()
 }
 
 void
-SetPortValue::execute(ProcessContext& context)
+SetPortValue::execute(RunContext& context)
 {
 	assert(_time >= context.start() && _time <= context.end());
-
-	if (_port->parent_block()->context() == Context::ID::MESSAGE)
-		return;
-
 	apply(context);
 	_engine.control_bindings()->port_value_changed(context, _port, _binding, _value);
 }
 
 void
-SetPortValue::apply(Context& context)
+SetPortValue::apply(RunContext& context)
 {
 	if (_status != Status::SUCCESS) {
 		return;

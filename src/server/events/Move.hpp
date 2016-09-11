@@ -46,7 +46,7 @@ public:
 	~Move();
 
 	bool pre_process();
-	void execute(ProcessContext& context);
+	void execute(RunContext& context);
 	void post_process();
 	void undo(Interface& target);
 

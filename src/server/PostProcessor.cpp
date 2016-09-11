@@ -19,7 +19,7 @@
 #include "Engine.hpp"
 #include "Event.hpp"
 #include "PostProcessor.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 
 using namespace std;
 
@@ -31,7 +31,7 @@ public:
 	Sentinel(Engine& engine) : Event(engine) {}
 
 	bool pre_process() { return false; }
-	void execute(ProcessContext& context) {}
+	void execute(RunContext& context) {}
 	void post_process() {}
 };
 
@@ -56,7 +56,7 @@ PostProcessor::~PostProcessor()
 }
 
 void
-PostProcessor::append(ProcessContext& context, Event* first, Event* last)
+PostProcessor::append(RunContext& context, Event* first, Event* last)
 {
 	assert(first);
 	assert(last);
@@ -70,7 +70,7 @@ PostProcessor::append(ProcessContext& context, Event* first, Event* last)
 bool
 PostProcessor::pending() const
 {
-	return _head.load() || _engine.process_context().pending_notifications();
+	return _head.load() || _engine.run_context().pending_notifications();
 }
 
 void
@@ -85,7 +85,7 @@ PostProcessor::process()
 	Event* next = ev->next();
 	if (!next || next->time() >= end_time) {
 		// Process audio thread notifications until end
-		_engine.process_context().emit_notifications(end_time);
+		_engine.run_context().emit_notifications(end_time);
 		return;
 	}
 
@@ -95,7 +95,7 @@ PostProcessor::process()
 		ev = next;
 
 		// Process audio thread notifications up until this event's time
-		_engine.process_context().emit_notifications(ev->time());
+		_engine.run_context().emit_notifications(ev->time());
 
 		// Post-process event
 		ev->post_process();
@@ -109,7 +109,7 @@ PostProcessor::process()
 	_head = ev;
 
 	// Process remaining audio thread notifications until end
-	_engine.process_context().emit_notifications(end_time);
+	_engine.run_context().emit_notifications(end_time);
 }
 
 } // namespace Server

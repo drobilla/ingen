@@ -27,7 +27,7 @@
 #include "ingen/types.hpp"
 
 #include "Event.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 
 namespace Raul { class Maid; }
 
@@ -49,7 +49,7 @@ class GraphImpl;
 class LV2Options;
 class PostProcessor;
 class PreProcessor;
-class ProcessContext;
+class RunContext;
 class SocketListener;
 class UndoStack;
 class Worker;
@@ -96,10 +96,6 @@ public:
 	/** Process events (process thread only). */
 	unsigned process_events();
 
-	bool is_process_context(const Context& context) const {
-		return &context == &_process_context;
-	}
-
 	Ingen::World* world() const { return _world; }
 
 	EventWriter*     interface()        const { return _event_writer; }
@@ -118,7 +114,7 @@ public:
 	Worker*          worker()           const { return _worker; }
 	Worker*          sync_worker()      const { return _sync_worker; }
 
-	ProcessContext& process_context() { return _process_context; }
+	RunContext& run_context() { return _run_context; }
 
 	SPtr<Store> store() const;
 
@@ -145,7 +141,7 @@ private:
 	Worker*          _sync_worker;
 	SocketListener*  _listener;
 
-	ProcessContext _process_context;
+	RunContext _run_context;
 
 	std::mt19937                          _rand_engine;
 	std::uniform_real_distribution<float> _uniform_dist;

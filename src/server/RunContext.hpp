@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -14,8 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INGEN_ENGINE_CONTEXT_HPP
-#define INGEN_ENGINE_CONTEXT_HPP
+#ifndef INGEN_ENGINE_RUNCONTEXT_HPP
+#define INGEN_ENGINE_RUNCONTEXT_HPP
 
 #include "ingen/Atom.hpp"
 #include "ingen/World.hpp"
@@ -41,18 +41,13 @@ class PortImpl;
  *
  * \ingroup engine
  */
-class Context
+class RunContext
 {
 public:
-	enum class ID {
-		AUDIO,
-		MESSAGE
-	};
+	RunContext(Engine& engine);
+	RunContext(const RunContext& copy);
 
-	Context(Engine& engine, ID id);
-	Context(const Context& copy);
-
-	virtual ~Context();
+	virtual ~RunContext();
 
 	/** Return true iff the given port should broadcast its value.
 	 *
@@ -78,15 +73,13 @@ public:
 	/** Return true iff any notifications are pending. */
 	bool pending_notifications() const { return _event_sink->read_space(); }
 
-	inline ID id() const { return _id; }
-
 	inline void locate(FrameTime s, SampleCount nframes) {
 		_start   = s;
 		_end     = s + nframes;
 		_nframes = nframes;
 	}
 
-	inline void locate(const Context& other) {
+	inline void locate(const RunContext& other) {
 		_start   = other._start;
 		_end     = other._end;
 		_nframes = other._nframes;
@@ -106,10 +99,9 @@ public:
 	inline bool        realtime() const { return _realtime; }
 
 protected:
-	const Context& operator=(const Context& copy) = delete;
+	const RunContext& operator=(const RunContext& copy) = delete;
 
 	Engine& _engine;  ///< Engine we're running in
-	ID      _id;      ///< Fast ID for this context
 
 	Raul::RingBuffer* _event_sink; ///< Port updates from process context
 
@@ -124,4 +116,4 @@ protected:
 } // namespace Server
 } // namespace Ingen
 
-#endif // INGEN_ENGINE_CONTEXT_HPP
+#endif // INGEN_ENGINE_RUNCONTEXT_HPP

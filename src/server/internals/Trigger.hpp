@@ -48,10 +48,10 @@ public:
 	            GraphImpl*          parent,
 	            SampleRate          srate);
 
-	void run(ProcessContext& context);
+	void run(RunContext& context);
 
-	void note_on(ProcessContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
-	void note_off(ProcessContext& context, uint8_t note_num, FrameTime time);
+	void note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
+	void note_off(RunContext& context, uint8_t note_num, FrameTime time);
 
 	void learn() { _learning = true; }
 

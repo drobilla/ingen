@@ -59,7 +59,7 @@ OutputPort::get_buffers(BufferFactory&      bufs,
 }
 
 void
-OutputPort::pre_process(Context& context)
+OutputPort::pre_process(RunContext& context)
 {
 	for (uint32_t v = 0; v < _poly; ++v)
 		_voices->at(v).buffer->prepare_output_write(context);
@@ -85,7 +85,7 @@ OutputPort::update_values(SampleCount offset, uint32_t voice)
 }
 
 void
-OutputPort::post_process(Context& context)
+OutputPort::post_process(RunContext& context)
 {
 	for (uint32_t v = 0; v < _poly; ++v) {
 		update_set_state(context, v);

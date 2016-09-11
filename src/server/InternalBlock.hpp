@@ -35,7 +35,7 @@ public:
 	              GraphImpl*          parent,
 	              SampleRate          rate);
 
-	virtual void pre_process(ProcessContext& context);
+	virtual void pre_process(RunContext& context);
 };
 
 } // namespace Server

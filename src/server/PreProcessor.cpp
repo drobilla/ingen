@@ -23,7 +23,7 @@
 #include "Event.hpp"
 #include "PostProcessor.hpp"
 #include "PreProcessor.hpp"
-#include "ProcessContext.hpp"
+#include "RunContext.hpp"
 #include "ThreadManager.hpp"
 #include "UndoStack.hpp"
 
@@ -81,7 +81,7 @@ PreProcessor::event(Event* const ev, Event::Mode mode)
 }
 
 unsigned
-PreProcessor::process(ProcessContext& context, PostProcessor& dest, size_t limit)
+PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 {
 	Event* const head        = _head.load();
 	size_t       n_processed = 0;

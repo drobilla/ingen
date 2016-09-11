@@ -55,7 +55,7 @@ public:
 	~Disconnect();
 
 	bool pre_process();
-	void execute(ProcessContext& context);
+	void execute(RunContext& context);
 	void post_process();
 	void undo(Interface& target);
 
@@ -66,7 +66,7 @@ public:
 		     OutputPort* t,
 		     InputPort*  h);
 
-		bool execute(ProcessContext& context, bool set_head_buffers);
+		bool execute(RunContext& context, bool set_head_buffers);
 
 		inline OutputPort* tail() { return _tail; }
 		inline InputPort*  head() { return _head; }
