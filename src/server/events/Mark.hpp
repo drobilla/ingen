@@ -26,7 +26,11 @@ class Engine;
 
 namespace Events {
 
-/** Set properties of a graph object.
+/** Delineate the start or end of a bundle of events.
+ *
+ * This is used to mark the ends of an undo transaction, so a single undo can
+ * undo the effects of many events (such as a paste or a graph load).
+ *
  * \ingroup engine
  */
 class Mark : public Event
