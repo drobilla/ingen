@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -20,9 +20,11 @@
 
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
+#include "Driver.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
 #include "RunContext.hpp"
+#include "Task.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -44,10 +46,13 @@ struct Notification
 	LV2_URID  type;
 };
 
-RunContext::RunContext(Engine& engine)
+RunContext::RunContext(Engine& engine, unsigned id, bool threaded)
 	: _engine(engine)
 	, _event_sink(
 		new Raul::RingBuffer(engine.event_queue_size() * sizeof(Notification)))
+	, _task(nullptr)
+	, _thread(threaded ? new std::thread(&RunContext::run, this) : nullptr)
+	, _id(id)
 	, _start(0)
 	, _end(0)
 	, _offset(0)
@@ -59,6 +64,9 @@ RunContext::RunContext(Engine& engine)
 RunContext::RunContext(const RunContext& copy)
 	: _engine(copy._engine)
 	, _event_sink(copy._event_sink)
+	, _task(nullptr)
+	, _thread(nullptr)
+	, _id(copy._id)
 	, _start(copy._start)
 	, _end(copy._end)
 	, _offset(copy._offset)
@@ -134,6 +142,32 @@ RunContext::emit_notifications(FrameTime end)
 			}
 		} else {
 			_engine.log().error("Error reading header from notification ring\n");
+		}
+	}
+}
+
+void
+RunContext::set_priority(int priority)
+{
+	if (_thread) {
+		pthread_t   pthread = _thread->native_handle();
+		const int   policy  = (priority > 0) ? SCHED_FIFO : SCHED_OTHER;
+		sched_param sp;
+		sp.sched_priority = (priority > 0) ? priority : 0;
+		if (pthread_setschedparam(pthread, policy, &sp)) {
+			_engine.log().error(
+				fmt("Failed to set real-time priority of run thread (%s)\n")
+				% strerror(errno));
+		}
+	}
+}
+
+void
+RunContext::run()
+{
+	while (_engine.wait_for_tasks()) {
+		for (Task* t; (t = _engine.steal_task(0));) {
+			t->run(*this);
 		}
 	}
 }

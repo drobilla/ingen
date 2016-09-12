@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -161,7 +161,7 @@ public:
 	}
 
 	void run(uint32_t nframes) {
-		_engine.run_context().locate(_frame_time, nframes);
+		_engine.locate(_frame_time, nframes);
 
 		// Notify buffer is a Chunk with size set to the available space
 		_notify_capacity = ((LV2_Atom_Sequence*)_ports[1]->buffer())->atom.size;
@@ -255,6 +255,8 @@ public:
 			}
 		}
 	}
+
+	virtual int real_time_priority() { return 60; }
 
 	/** Called in run thread for events received at control input port. */
 	bool enqueue_message(const LV2_Atom* atom) {
@@ -558,7 +560,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;
 
-	engine->run_context().locate(0, block_length);
+	engine->locate(0, block_length);
 
 	engine->post_processor()->set_end_time(block_length);
 	engine->process_events();

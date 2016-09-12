@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2015 David Robillard <http://drobilla.net/>
+  Copyright 2015-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -16,6 +16,7 @@
 
 #include <algorithm>
 
+#include "ingen/ColorContext.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 
@@ -92,7 +93,6 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 
 		if (b.providers().empty()) {
 			// Block has no dependencies, add to initial working set
-			_log.info(fmt("Initial: %1%\n") % b.path());
 			blocks.insert(&b);
 		}
 	}
@@ -127,8 +127,11 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 
 	_master.simplify();
 
-	if (graph->engine().world()->conf().option("dump").get<int32_t>()) {
-		dump(std::cout);
+	if (graph->engine().world()->conf().option("trace").get<int32_t>()) {
+		dump([this](const std::string& msg) {
+				ColorContext ctx(stderr, ColorContext::Color::YELLOW);
+				fwrite(msg.c_str(), 1, msg.size(), stderr);
+			});
 	}
 }
 
@@ -184,18 +187,8 @@ CompiledGraph::compile_dependant(const BlockImpl*      root,
 void
 CompiledGraph::compile_block(BlockImpl* n, Task& task, std::set<BlockImpl*>& k)
 {
-	static unsigned indent = 0;
-
 	switch (n->get_mark()) {
 	case BlockImpl::Mark::UNVISITED:
-		indent += 4;
-		for (unsigned i = 0; i < indent; ++i) {
-			_log.info(" ");
-		}
-
-		_log.info(fmt("Compile block %1% (%2% dependants, %3% providers) {\n")
-		          % n->path() % n->dependants().size() % n->providers().size());
-
 		n->set_mark(BlockImpl::Mark::VISITING);
 
 		// Execute this task before the dependants to follow
@@ -215,11 +208,6 @@ CompiledGraph::compile_block(BlockImpl* n, Task& task, std::set<BlockImpl*>& k)
 			task.push_back(par);
 		}
 		n->set_mark(BlockImpl::Mark::VISITED);
-		for (unsigned i = 0; i < indent; ++i) {
-			_log.info(" ");
-		}
-		_log.info("} " + n->path() + "\n");
-		indent -= 4;
 		break;
 
 	case BlockImpl::Mark::VISITING:
@@ -237,74 +225,12 @@ CompiledGraph::run(RunContext& context)
 }
 
 void
-CompiledGraph::dump(std::ostream& os) const
+CompiledGraph::dump(std::function<void (const std::string&)> sink) const
 {
-	os << "(compiled-graph " << _path;
-	_master.dump(os, 2, false);
-	os << ")" << std::endl;
-}
-
-void
-CompiledGraph::Task::run(RunContext& context)
-{
-	switch (_mode) {
-	case Mode::SINGLE:
-		_block->process(context);
-		break;
-	case Mode::SEQUENTIAL:
-	case Mode::PARALLEL:
-		for (Task& task : *this) {
-			task.run(context);
-		}
-		break;
-	}
-}
-
-void
-CompiledGraph::Task::simplify()
-{
-	if (_mode != Mode::SINGLE) {
-		for (std::vector<Task>::iterator t = begin(); t != end();) {
-			t->simplify();
-			if (t->mode() != Mode::SINGLE && t->empty()) {
-				// Empty task, erase
-				t = erase(t);
-			} else if (t->mode() == _mode) {
-				// Subtask with the same type, fold child into parent
-				const Task child(*t);
-				t = erase(t);
-				t = insert(t, child.begin(), child.end());
-			} else {
-				++t;
-			}
-		}
-
-		if (size() == 1) {
-			const Task t(front());
-			*this = t;
-		}
-	}
-}
-
-void
-CompiledGraph::Task::dump(std::ostream& os, unsigned indent, bool first) const
-{
-	if (!first) {
-		os << std::endl;
-		for (unsigned i = 0; i < indent; ++i) {
-			os << " ";
-		}
-	}
-
-	if (_mode == Mode::SINGLE) {
-		os << _block->path();
-	} else {
-		os << ((_mode == Mode::SEQUENTIAL) ? "(seq " : "(par ");
-		for (size_t i = 0; i < size(); ++i) {
-			(*this)[i].dump(os, indent + 5, i == 0);
-		}
-		os << ")";
-	}
+	sink("(compiled-graph ");
+	sink(_path);
+	_master.dump(sink, 2, false);
+	sink(")\n");
 }
 
 } // namespace Server

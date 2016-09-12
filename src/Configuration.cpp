@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include <iostream>
+#include <thread>
 
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
@@ -66,8 +67,9 @@ Configuration::Configuration(Forge& forge)
 	add("path",           "path",           'L', "Target path for loaded graph", SESSION, forge.String, Atom());
 	add("queueSize",      "queue-size",     'q', "Event queue size", GLOBAL, forge.Int, forge.make(4096));
 	add("flushLog",       "flush-log",      'f', "Flush logs after every entry", GLOBAL, forge.Bool, forge.make(false));
-	add("dump",           "dump",           'd', "Print debug output", GLOBAL, forge.Bool, forge.make(false));
-	add("trace",          "trace",          't', "Show LV2 plugin trace messages", GLOBAL, forge.Bool, forge.make(false));
+	add("dump",           "dump",           'd', "Print debug output", SESSION, forge.Bool, forge.make(false));
+	add("trace",          "trace",          't', "Show LV2 plugin trace messages", SESSION, forge.Bool, forge.make(false));
+	add("threads",        "threads",        'p', "Number of processing threads", GLOBAL, forge.Int, forge.make(int32_t(std::max(std::thread::hardware_concurrency(), 1U))));
 	add("humanNames",     "human-names",     0,  "Show human names in GUI", GUI, forge.Bool, forge.make(true));
 	add("portLabels",     "port-labels",     0,  "Show port labels in GUI", GUI, forge.Bool, forge.make(true));
 	add("graphDirectory", "graph-directory", 0,  "Default directory for opening graphs", GUI, forge.String, Atom());

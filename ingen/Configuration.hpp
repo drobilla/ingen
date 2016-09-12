@@ -23,6 +23,7 @@
 
 #include <list>
 #include <map>
+#include <ostream>
 #include <string>
 
 #include "ingen/Atom.hpp"

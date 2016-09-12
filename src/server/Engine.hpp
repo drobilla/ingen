@@ -17,9 +17,10 @@
 #ifndef INGEN_ENGINE_ENGINE_HPP
 #define INGEN_ENGINE_ENGINE_HPP
 
-#include <random>
-
 #include <boost/utility.hpp>
+#include <condition_variable>
+#include <mutex>
+#include <random>
 
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
@@ -115,7 +116,14 @@ public:
 	Worker*          worker()           const { return _worker; }
 	Worker*          sync_worker()      const { return _sync_worker; }
 
-	RunContext& run_context() { return _run_context; }
+	RunContext& run_context() { return *_run_contexts[0]; }
+
+	void  locate(FrameTime s, SampleCount nframes);
+	void  emit_notifications(FrameTime end);
+	bool  pending_notifications();
+	bool  wait_for_tasks();
+	void  signal_tasks();
+	Task* steal_task(unsigned start_thread);
 
 	SPtr<Store> store() const;
 
@@ -144,10 +152,13 @@ private:
 	Worker*           _sync_worker;
 	SocketListener*   _listener;
 
-	RunContext _run_context;
+	std::vector<RunContext*> _run_contexts;
 
 	std::mt19937                          _rand_engine;
 	std::uniform_real_distribution<float> _uniform_dist;
+
+	std::condition_variable _tasks_available;
+	std::mutex              _tasks_mutex;
 
 	bool _quit_flag;
 	bool _direct_driver;

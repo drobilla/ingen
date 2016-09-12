@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -70,7 +70,7 @@ PostProcessor::append(RunContext& context, Event* first, Event* last)
 bool
 PostProcessor::pending() const
 {
-	return _head.load() || _engine.run_context().pending_notifications();
+	return _head.load() || _engine.pending_notifications();
 }
 
 void
@@ -85,7 +85,7 @@ PostProcessor::process()
 	Event* next = ev->next();
 	if (!next || next->time() >= end_time) {
 		// Process audio thread notifications until end
-		_engine.run_context().emit_notifications(end_time);
+		_engine.emit_notifications(end_time);
 		return;
 	}
 
@@ -95,7 +95,7 @@ PostProcessor::process()
 		ev = next;
 
 		// Process audio thread notifications up until this event's time
-		_engine.run_context().emit_notifications(ev->time());
+		_engine.emit_notifications(ev->time());
 
 		// Post-process event
 		ev->post_process();
@@ -109,7 +109,7 @@ PostProcessor::process()
 	_head = ev;
 
 	// Process remaining audio thread notifications until end
-	_engine.run_context().emit_notifications(end_time);
+	_engine.emit_notifications(end_time);
 }
 
 } // namespace Server

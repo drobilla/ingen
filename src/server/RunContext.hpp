@@ -17,6 +17,8 @@
 #ifndef INGEN_ENGINE_RUNCONTEXT_HPP
 #define INGEN_ENGINE_RUNCONTEXT_HPP
 
+#include <thread>
+
 #include "ingen/Atom.hpp"
 #include "ingen/World.hpp"
 #include "raul/RingBuffer.hpp"
@@ -28,6 +30,7 @@ namespace Server {
 
 class Engine;
 class PortImpl;
+class Task;
 
 /** Graph execution context.
  *
@@ -44,8 +47,19 @@ class PortImpl;
 class RunContext
 {
 public:
-	RunContext(Engine& engine);
-	RunContext(const RunContext& copy);
+	/** Create a new run context.
+	 *
+	 * @param threaded If true, then this context is a worker which will launch
+	 * a thread and execute tasks as they become available.
+	 */
+	RunContext(Engine& engine, unsigned id, bool threaded);
+
+	/** Create a sub-context of `parent`.
+	 *
+	 * This is used to subdivide process cycles, the sub-context is
+	 * lightweight and only serves to pass different time attributes.
+	 */
+	RunContext(const RunContext& parent);
 
 	virtual ~RunContext();
 
@@ -79,18 +93,20 @@ public:
 		_nframes = nframes;
 	}
 
-	inline void locate(const RunContext& other) {
-		_start   = other._start;
-		_end     = other._end;
-		_nframes = other._nframes;
-	}
-
 	inline void slice(SampleCount offset, SampleCount nframes) {
 		_offset  = offset;
 		_nframes = nframes;
 	}
 
+	inline void set_task(Task* task) {
+		_task = task;
+	}
+
+	void set_priority(int priority);
+
 	inline Engine&     engine()   const { return _engine; }
+	inline Task*       task()     const { return _task; }
+	inline unsigned    id()       const { return _id; }
 	inline FrameTime   start()    const { return _start; }
 	inline FrameTime   time()     const { return _start + _offset; }
 	inline FrameTime   end()      const { return _end; }
@@ -101,9 +117,13 @@ public:
 protected:
 	const RunContext& operator=(const RunContext& copy) = delete;
 
-	Engine& _engine;  ///< Engine we're running in
+	void run();
 
-	Raul::RingBuffer* _event_sink; ///< Port updates from process context
+	Engine&           _engine;      ///< Engine we're running in
+	Raul::RingBuffer* _event_sink;  ///< Port updates from process context
+	Task*             _task;        ///< Currently executing task
+	std::thread*      _thread;      ///< Thread (NULL for main run context)
+	unsigned          _id;          ///< Context ID
 
 	FrameTime   _start;      ///< Start frame of this cycle, timeline relative
 	FrameTime   _end;        ///< End frame of this cycle, timeline relative

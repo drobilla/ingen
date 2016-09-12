@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -23,6 +23,7 @@
 #include <atomic>
 
 #include <jack/jack.h>
+#include <jack/thread.h>
 #include <jack/transport.h>
 #ifdef INGEN_JACK_SESSION
 #include <jack/session.h>
@@ -86,6 +87,8 @@ public:
 
 	void append_time_events(RunContext& context,
 	                        Buffer&     buffer);
+
+	int real_time_priority() { return jack_client_real_time_priority(_client); }
 
 	jack_client_t* jack_client()  const { return _client; }
 	SampleCount    block_length() const { return _block_length; }

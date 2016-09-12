@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -17,13 +17,15 @@
 #ifndef INGEN_ENGINE_COMPILEDGRAPH_HPP
 #define INGEN_ENGINE_COMPILEDGRAPH_HPP
 
-#include <ostream>
+#include <functional>
 #include <set>
 #include <vector>
 
 #include "raul/Maid.hpp"
 #include "raul/Noncopyable.hpp"
 #include "raul/Path.hpp"
+
+#include "Task.hpp"
 
 namespace Ingen {
 
@@ -45,36 +47,11 @@ class CompiledGraph : public Raul::Maid::Disposable
                     , public Raul::Noncopyable
 {
 public:
-	class Task : public std::vector<Task> {
-	public:
-		enum class Mode {
-			SINGLE,      ///< Single block to run
-			SEQUENTIAL,  ///< Elements must be run sequentially in order
-			PARALLEL     ///< Elements may be run in any order in parallel
-		};
-
-		Task(Mode mode, BlockImpl* block=NULL)
-			: _mode(mode)
-			, _block(block)
-		{}
-
-		void run(RunContext& context);
-		void dump(std::ostream& os, unsigned indent, bool first) const;
-		void simplify();
-
-		Mode       mode()  const { return _mode; }
-		BlockImpl* block() const { return _block; }
-
-	private:
-		Mode       _mode;   ///< Execution mode
-		BlockImpl* _block;  ///< Used for SINGLE only
-	};
-
 	static CompiledGraph* compile(GraphImpl* graph);
 
 	void run(RunContext& context);
 
-	void dump(std::ostream& os) const;
+	void dump(std::function<void (const std::string&)> sink) const;
 
 private:
 	CompiledGraph(GraphImpl* graph);

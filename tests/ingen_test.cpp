@@ -135,10 +135,16 @@ ingen_try(bool cond, const char* msg)
 static void
 flush_events(Ingen::World* world)
 {
+	static const uint32_t block_length = 4096;
+	int                   count        = 0;
+	uint32_t              offset       = 0;
 	while (world->engine()->pending_events()) {
-		world->engine()->run(4096);
+		world->engine()->locate(offset, block_length);
+		world->engine()->run(block_length);
 		world->engine()->main_iteration();
 		g_usleep(1000);
+		++count;
+		offset += block_length;
 	}
 }
 

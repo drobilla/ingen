@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -479,7 +479,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 
 	_transport_state = jack_transport_query(_client, &_position);
 
-	_engine.run_context().locate(start_of_current_cycle, nframes);
+	_engine.locate(start_of_current_cycle, nframes);
 
 	// Read input
 	for (auto& p : _ports) {

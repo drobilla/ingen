@@ -68,6 +68,11 @@ public:
 	virtual bool pending_events() = 0;
 
 	/**
+	   Locate to a given cycle.
+	*/
+	virtual void locate(uint32_t start, uint32_t sample_count) = 0;
+
+	/**
 	   Process audio for `sample_count` frames.
 
 	   If the return value is non-zero, events have been processed and are
