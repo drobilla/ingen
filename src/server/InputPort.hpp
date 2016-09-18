@@ -83,7 +83,7 @@ public:
 	 *
 	 * setup_buffers() must be called later for the change to take effect.
 	 */
-	ArcImpl* remove_arc(RunContext&   context,
+	ArcImpl* remove_arc(RunContext&       context,
 	                    const OutputPort* tail);
 
 	/** Set `voices` as the buffers to be used for this port.

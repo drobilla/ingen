@@ -95,7 +95,7 @@ public:
 
 	/** Append time events for this cycle to `buffer`. */
 	virtual void append_time_events(RunContext& context,
-	                                Buffer&         buffer) = 0;
+	                                Buffer&     buffer) = 0;
 };
 
 } // namespace Server

@@ -94,9 +94,9 @@ private:
 	Key midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
 
 	void set_port_value(RunContext& context,
-	                    PortImpl*       port,
-	                    Type            type,
-	                    int16_t         value);
+	                    PortImpl*   port,
+	                    Type        type,
+	                    int16_t     value);
 
 	bool bind(RunContext& context, Key key);
 
@@ -106,9 +106,9 @@ private:
 	                           int16_t         value) const;
 
 	int16_t port_value_to_control(RunContext& context,
-	                              PortImpl*       port,
-	                              Type            type,
-	                              const Atom&     value) const;
+	                              PortImpl*   port,
+	                              Type        type,
+	                              const Atom& value) const;
 
 	Engine&        _engine;
 	PortImpl*      _learn_port;

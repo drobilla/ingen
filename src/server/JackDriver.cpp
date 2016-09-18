@@ -410,7 +410,7 @@ JackDriver::post_process_port(RunContext& context, EnginePort* port)
 
 void
 JackDriver::append_time_events(RunContext& context,
-                               Buffer&         buffer)
+                               Buffer&     buffer)
 {
 	const URIs&            uris    = context.engine().world()->uris();
 	const jack_position_t* pos     = &_position;

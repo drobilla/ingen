@@ -86,10 +86,10 @@ public:
 	/** Return the status (success or error code) of this event. */
 	Status status() const { return _status; }
 
-	/** Return true iff this is a generated undo event. */
+	/** Return undo mode of this event. */
 	Mode get_mode() const { return _mode; }
 
-	/** Flag this event as a generated undo event. */
+	/** Set the undo mode of this event. */
 	void set_mode(Mode mode) { _mode = mode; }
 
 	inline Engine& engine() { return _engine; }

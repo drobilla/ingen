@@ -85,7 +85,7 @@ public:
 	inline jack_transport_state_t transport_state() { return _transport_state; }
 
 	void append_time_events(RunContext& context,
-	                        Buffer&         buffer);
+	                        Buffer&     buffer);
 
 	jack_client_t* jack_client()  const { return _client; }
 	SampleCount    block_length() const { return _block_length; }

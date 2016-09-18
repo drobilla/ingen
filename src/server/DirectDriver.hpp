@@ -82,7 +82,7 @@ public:
 	virtual SampleCount frame_time() const { return 0; }
 
 	virtual void append_time_events(RunContext& context,
-	                                Buffer&         buffer) {}
+	                                Buffer&     buffer) {}
 
 private:
 	typedef boost::intrusive::list<EnginePort> Ports;

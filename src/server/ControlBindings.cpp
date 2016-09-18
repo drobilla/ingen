@@ -239,7 +239,7 @@ int16_t
 ControlBindings::port_value_to_control(RunContext& context,
                                        PortImpl*   port,
                                        Type        type,
-                                       const Atom&     value_atom) const
+                                       const Atom& value_atom) const
 {
 	if (value_atom.type() != port->bufs().forge().Float)
 		return 0;

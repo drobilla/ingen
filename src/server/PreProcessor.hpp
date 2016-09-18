@@ -49,22 +49,31 @@ public:
 	/** Process events for a cycle.
 	 * @return The number of events processed.
 	 */
-	unsigned process(RunContext& context,
-	                 PostProcessor&  dest,
-	                 size_t          limit = 0);
+	unsigned process(RunContext&    context,
+	                 PostProcessor& dest,
+	                 size_t         limit = 0);
 
 protected:
 	void run();
 
 private:
-	Engine&             _engine;
-	std::mutex          _mutex;
-	Raul::Semaphore     _sem;
-	std::atomic<Event*> _head;
-	std::atomic<Event*> _prepared_back;
-	std::atomic<Event*> _tail;
-	bool                _exit_flag;
-	std::thread         _thread;
+	enum class BlockState {
+		UNBLOCKED,      ///< Normal, unblocked execution
+		PRE_BLOCKED,    ///< Preprocess thread has enqueued blocking event
+		BLOCKED,        ///< Process thread has reached blocking event
+		PRE_UNBLOCKED,  ///< Preprocess thread has enqueued unblocking event
+		PROCESSING      ///< Process thread is executing all events in-between
+	};
+
+	Engine&                 _engine;
+	std::mutex              _mutex;
+	Raul::Semaphore         _sem;
+	std::atomic<Event*>     _head;
+	std::atomic<Event*>     _prepared_back;
+	std::atomic<Event*>     _tail;
+	std::atomic<BlockState> _block_state;
+	bool                    _exit_flag;
+	std::thread             _thread;
 };
 
 } // namespace Server
