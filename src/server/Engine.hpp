@@ -28,6 +28,7 @@
 
 #include "Event.hpp"
 #include "RunContext.hpp"
+#include "EventWriter.hpp"
 
 namespace Raul { class Maid; }
 
@@ -44,7 +45,6 @@ class Broadcaster;
 class BufferFactory;
 class ControlBindings;
 class Driver;
-class EventWriter;
 class GraphImpl;
 class LV2Options;
 class PostProcessor;
@@ -98,7 +98,8 @@ public:
 
 	Ingen::World* world() const { return _world; }
 
-	EventWriter*     interface()        const { return _event_writer; }
+	Interface*       interface()        const { return _interface.get(); }
+	EventWriter*     event_writer()     const { return _event_writer.get(); }
 	AtomReader*      atom_interface()   const { return _atom_interface; }
 	BlockFactory*    block_factory()    const { return _block_factory; }
 	Broadcaster*     broadcaster()      const { return _broadcaster; }
@@ -123,23 +124,24 @@ public:
 private:
 	Ingen::World* _world;
 
-	BlockFactory*    _block_factory;
-	Broadcaster*     _broadcaster;
-	BufferFactory*   _buffer_factory;
-	ControlBindings* _control_bindings;
-	SPtr<Driver>     _driver;
-	EventWriter*     _event_writer;
-	AtomReader*      _atom_interface;
-	Raul::Maid*      _maid;
-	SPtr<LV2Options> _options;
-	UndoStack*       _undo_stack;
-	UndoStack*       _redo_stack;
-	PreProcessor*    _pre_processor;
-	PostProcessor*   _post_processor;
-	GraphImpl*       _root_graph;
-	Worker*          _worker;
-	Worker*          _sync_worker;
-	SocketListener*  _listener;
+	BlockFactory*     _block_factory;
+	Broadcaster*      _broadcaster;
+	BufferFactory*    _buffer_factory;
+	ControlBindings*  _control_bindings;
+	SPtr<Driver>      _driver;
+	SPtr<EventWriter> _event_writer;
+	SPtr<Interface>   _interface;
+	AtomReader*       _atom_interface;
+	Raul::Maid*       _maid;
+	SPtr<LV2Options>  _options;
+	UndoStack*        _undo_stack;
+	UndoStack*        _redo_stack;
+	PreProcessor*     _pre_processor;
+	PostProcessor*    _post_processor;
+	GraphImpl*        _root_graph;
+	Worker*           _worker;
+	Worker*           _sync_worker;
+	SocketListener*   _listener;
 
 	RunContext _run_context;
 

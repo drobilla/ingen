@@ -17,10 +17,11 @@
 #ifndef INGEN_SERVER_SOCKET_SERVER_HPP
 #define INGEN_SERVER_SOCKET_SERVER_HPP
 
-#include "raul/Socket.hpp"
-
 #include "ingen/SocketReader.hpp"
 #include "ingen/SocketWriter.hpp"
+#include "ingen/StreamWriter.hpp"
+#include "ingen/Tee.hpp"
+#include "raul/Socket.hpp"
 
 #include "EventWriter.hpp"
 
@@ -28,21 +29,29 @@ namespace Ingen {
 namespace Server {
 
 /** The server side of an Ingen socket connection. */
-class SocketServer : public EventWriter, public SocketReader
+class SocketServer
 {
 public:
 	SocketServer(World&             world,
 	             Server::Engine&    engine,
 	             SPtr<Raul::Socket> sock)
-		: EventWriter(engine)
-		, SocketReader(world, *this, sock)
-		, _engine(engine)
+		: _engine(engine)
+		, _sink(world.conf().option("dump").get<int32_t>()
+		        ? SPtr<Interface>(
+			        new Tee({SPtr<Interface>(new EventWriter(engine)),
+					         SPtr<Interface>(new StreamWriter(world.uri_map(),
+					                                          world.uris(),
+					                                          Raul::URI("ingen:/engine"),
+					                                          stderr,
+					                                          ColorContext::Color::CYAN))}))
+		        : SPtr<Interface>(new EventWriter(engine)))
+		, _reader(new SocketReader(world, *_sink.get(), sock))
 		, _writer(new SocketWriter(world.uri_map(),
 		                           world.uris(),
 		                           sock->uri(),
 		                           sock))
 	{
-		set_respondee(_writer);
+		_sink->set_respondee(_writer);
 		engine.register_client(_writer);
 	}
 
@@ -60,6 +69,8 @@ protected:
 
 private:
 	Server::Engine&    _engine;
+	SPtr<Interface>    _sink;
+	SPtr<SocketReader> _reader;
 	SPtr<SocketWriter> _writer;
 };
 

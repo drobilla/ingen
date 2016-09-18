@@ -28,6 +28,8 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/StreamWriter.hpp"
+#include "ingen/Tee.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
 #include "ingen/types.hpp"
@@ -69,7 +71,8 @@ Engine::Engine(Ingen::World* world)
 	, _buffer_factory(new BufferFactory(*this, world->uris()))
 	, _control_bindings(NULL)
 	, _event_writer(new EventWriter(*this))
-	, _atom_interface(new AtomReader(world->uri_map(), world->uris(), world->log(), *_event_writer))
+	, _interface(_event_writer)
+	, _atom_interface(nullptr)
 	, _maid(new Raul::Maid())
 	, _options(new LV2Options(world->uris()))
 	, _undo_stack(new UndoStack(_world->uris(), _world->uri_map()))
@@ -106,6 +109,21 @@ Engine::Engine(Ingen::World* world)
 	_world->lv2_features().add_feature(
 		SPtr<LV2Features::Feature>(
 			new LV2Features::EmptyFeature(LV2_STATE__loadDefaultState)));
+
+	if (world->conf().option("dump").get<int32_t>()) {
+		SPtr<Tee>          tee(new Tee());
+		SPtr<StreamWriter> dumper(new StreamWriter(world->uri_map(),
+		                                           world->uris(),
+		                                           Raul::URI("ingen:/engine"),
+		                                           stderr,
+		                                           ColorContext::Color::MAGENTA));
+		tee->add_sink(_event_writer);
+		tee->add_sink(dumper);
+		_interface = tee;
+	}
+
+	_atom_interface = new AtomReader(
+		world->uri_map(), world->uris(), world->log(), *_interface.get());
 }
 
 Engine::~Engine()
@@ -144,7 +162,6 @@ Engine::~Engine()
 	delete _block_factory;
 	delete _control_bindings;
 	delete _broadcaster;
-	delete _event_writer;
 	delete _worker;
 	delete _maid;
 

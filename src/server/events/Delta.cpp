@@ -38,9 +38,6 @@
 #include "SetPortValue.hpp"
 #include "events/Get.hpp"
 
-// #define DUMP 1
-// #include "ingen/URIMap.hpp"
-
 namespace Ingen {
 namespace Server {
 namespace Events {
@@ -74,25 +71,6 @@ Delta::Delta(Engine&           engine,
 			p.second.set_context(context);
 		}
 	}
-
-#ifdef DUMP
-	std::cerr << "Delta " << subject << " : " << (int)context << " {" << std::endl;
-	typedef Resource::Properties::const_iterator iterator;
-	for (iterator i = properties.begin(); i != properties.end(); ++i) {
-		std::cerr << "    + " << i->first
-		          << " " << engine.world()->forge().str(i->second)
-		          << "^^<" << engine.world()->uri_map().unmap_uri(i->second.type()) << ">"
-		          << std::endl;
-	}
-	typedef Resource::Properties::const_iterator iterator;
-	for (iterator i = remove.begin(); i != remove.end(); ++i) {
-		std::cerr << "    - " << i->first
-		          << " " << engine.world()->forge().str(i->second)
-		          << "^^<" << engine.world()->uri_map().unmap_uri(i->second.type()) << ">"
-		          << std::endl;
-	}
-	std::cerr << "}" << std::endl;
-#endif
 }
 
 Delta::~Delta()

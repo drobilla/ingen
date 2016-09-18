@@ -20,35 +20,9 @@
 #include "ingen/Node.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
-
-#ifdef HAVE_ISATTY
-#    include <unistd.h>
-#else
-inline int isatty(int fd) { return 0; }
-#endif
+#include "ingen/ColorContext.hpp"
 
 namespace Ingen {
-
-class ColorContext {
-public:
-	enum class Color { RED = 31, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
-
-	ColorContext(FILE* stream, Color color) : stream(stream) {
-		if (isatty(fileno(stream))) {
-			fprintf(stream, "\033[0;%dm", color);
-		}
-	}
-
-	~ColorContext() {
-		if (isatty(fileno(stream))) {
-			fprintf(stream, "\033[0m");
-			fflush(stream);
-		}
-	}
-
-
-	FILE* stream;
-};
 
 Log::Log(LV2_Log_Log* log, URIs& uris)
 	: _log(log)

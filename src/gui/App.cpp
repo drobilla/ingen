@@ -27,6 +27,7 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/StreamWriter.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
@@ -161,6 +162,29 @@ App::attach(SPtr<SigClientInterface> client)
 	_loader = SPtr<ThreadedLoader>(new ThreadedLoader(*this, _world->interface()));
 	if (!_world->store()) {
 		_world->set_store(_store);
+	}
+
+	if (_world->conf().option("dump").get<int32_t>()) {
+		_dumper = SPtr<StreamWriter>(new StreamWriter(_world->uri_map(),
+		                                              _world->uris(),
+		                                              Raul::URI("ingen:/client"),
+		                                              stderr,
+		                                              ColorContext::Color::CYAN));
+
+#define DUMP_CONNECT(signal, method) \
+		client->signal_##signal().connect( \
+			sigc::mem_fun(*_dumper.get(), &StreamWriter::method));
+
+		DUMP_CONNECT(object_deleted, del);
+		DUMP_CONNECT(object_moved, move);
+		DUMP_CONNECT(put, put);
+		DUMP_CONNECT(delta, delta);
+		DUMP_CONNECT(connection, connect);
+		DUMP_CONNECT(disconnection, disconnect);
+		DUMP_CONNECT(disconnect_all, disconnect_all);
+		DUMP_CONNECT(property_change, set_property);
+
+#undef DUMP_CONNECT
 	}
 
 	_graph_tree_window->init(*this, *_store);

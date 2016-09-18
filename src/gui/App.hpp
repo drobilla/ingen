@@ -39,6 +39,7 @@ class Interface;
 class Log;
 class Port;
 class Serialiser;
+class StreamWriter;
 class World;
 
 namespace Client {
@@ -145,6 +146,7 @@ protected:
 	SPtr<Client::SigClientInterface> _client;
 	SPtr<Client::ClientStore>        _store;
 	SPtr<ThreadedLoader>             _loader;
+	SPtr<StreamWriter>               _dumper;
 
 	Style* _style;
 

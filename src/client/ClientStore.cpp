@@ -24,8 +24,6 @@
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 
-// #define INGEN_CLIENT_STORE_DUMP 1
-
 using namespace std;
 
 namespace Ingen {
@@ -211,10 +209,6 @@ ClientStore::add_plugin(SPtr<PluginModel> pm)
 void
 ClientStore::del(const Raul::URI& uri)
 {
-#ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Client del " << uri << std::endl;
-#endif
-
 	if (Node::uri_is_path(uri)) {
 		remove_object(Node::uri_to_path(uri));
 	} else {
@@ -236,11 +230,6 @@ ClientStore::copy(const Raul::URI& old_uri,
 void
 ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
 {
-#ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Client move " << old_path
-	          << " => " << new_path << endl;
-#endif
-
 	const iterator top = find(old_path);
 	if (top != end()) {
 		rename(top, new_path);
@@ -253,13 +242,6 @@ ClientStore::put(const Raul::URI&            uri,
                  Resource::Graph             ctx)
 {
 	typedef Resource::Properties::const_iterator Iterator;
-#ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Client put " << uri << " {" << endl;
-	for (auto p : properties)
-		std::cerr << '\t' << p.first << " " << _uris.forge.str(p.second)
-		          << "^^" << _uris.forge.str(_uris.forge.make_urid(p.second.type()), true) << endl;
-	std::cerr << "}" << endl;
-#endif
 
 	bool is_graph, is_block, is_port, is_output;
 	Resource::type(uris(), properties,
@@ -365,19 +347,6 @@ ClientStore::delta(const Raul::URI&            uri,
                    const Resource::Properties& remove,
                    const Resource::Properties& add)
 {
-#ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Client delta " << uri << " {" << endl;
-	for (auto r : remove)
-		std::cerr << "    - " << r.first
-		          << " " << _uris.forge.str(r.second)
-		          << "^^" << _uris.forge.str(_uris.forge.make_urid(r.second.type()), true) << endl;
-	for (auto a : add)
-		std::cerr << "    + " << a.first
-		          << " " << _uris.forge.str(a.second)
-		          << "^^" << _uris.forge.str(_uris.forge.make_urid(a.second.type()), true) << endl;
-	std::cerr << "}" << endl;
-#endif
-
 	if (uri == Raul::URI("ingen:/clients/this")) {
 		// Client property, which we don't store (yet?)
 		return;
@@ -406,11 +375,6 @@ ClientStore::set_property(const Raul::URI& subject_uri,
                           const Raul::URI& predicate,
                           const Atom&      value)
 {
-#ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Client set " << subject_uri << " : "
-	          << predicate << " = " << _uris.forge.str(value) << std::endl;
-#endif
-
 	if (subject_uri == Raul::URI("ingen:/engine")) {
 		_log.info(fmt("Engine property <%1%> = %2%\n")
 		          % predicate.c_str() % _uris.forge.str(value));
@@ -488,10 +452,6 @@ void
 ClientStore::connect(const Raul::Path& src_path,
                      const Raul::Path& dst_path)
 {
-#ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Client connect " << src_path << " => " << dst_path << std::endl;
-#endif
-
 	attempt_connection(src_path, dst_path);
 }
 
@@ -499,10 +459,6 @@ void
 ClientStore::disconnect(const Raul::Path& src_path,
                         const Raul::Path& dst_path)
 {
-#ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Client disconnect " << src_path << " => " << dst_path << std::endl;
-#endif
-
 	SPtr<PortModel> tail = dynamic_ptr_cast<PortModel>(_object(src_path));
 	SPtr<PortModel> head = dynamic_ptr_cast<PortModel>(_object(dst_path));
 
@@ -521,10 +477,6 @@ void
 ClientStore::disconnect_all(const Raul::Path& parent_graph,
                             const Raul::Path& path)
 {
-#ifdef INGEN_CLIENT_STORE_DUMP
-	std::cerr << "Client disconnect all " << path << " in " << parent_graph << std::endl;
-#endif
-
 	SPtr<GraphModel>  graph  = dynamic_ptr_cast<GraphModel>(_object(parent_graph));
 	SPtr<ObjectModel> object = _object(path);
 

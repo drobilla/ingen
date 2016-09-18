@@ -544,8 +544,8 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->engine = engine;
 	plugin->world->set_engine(engine);
 
-	SPtr<EventWriter> interface = SPtr<EventWriter>(engine->interface(),
-	                                                NullDeleter<EventWriter>);
+	SPtr<Interface> interface = SPtr<Interface>(engine->interface(),
+	                                            NullDeleter<Interface>);
 
 	plugin->world->set_interface(interface);
 

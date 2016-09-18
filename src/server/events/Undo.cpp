@@ -44,7 +44,7 @@ Undo::pre_process()
 	}
 
 	_entry = stack->pop();
-	_engine.interface()->set_event_mode(mode);
+	_engine.event_writer()->set_event_mode(mode);
 	if (_entry.events.size() > 1) {
 		_engine.interface()->bundle_begin();
 	}
@@ -56,7 +56,7 @@ Undo::pre_process()
 	if (_entry.events.size() > 1) {
 		_engine.interface()->bundle_end();
 	}
-	_engine.interface()->set_event_mode(mode);
+	_engine.event_writer()->set_event_mode(mode);
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
