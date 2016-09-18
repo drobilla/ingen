@@ -68,11 +68,11 @@ public:
 			const uint32_t size = lv2_atom_total_size(ev);
 			LV2_Atom*      copy = (LV2_Atom*)malloc(size);
 			memcpy(copy, ev, size);
-			events.push_back(copy);
+			events.push_front(copy);
 		}
 
-		time_t                 time;
-		std::vector<LV2_Atom*> events;
+		time_t                time;
+		std::deque<LV2_Atom*> events;
 	};
 
 	UndoStack(URIs& uris, URIMap& map) : _uris(uris), _map(map), _depth(0) {}
