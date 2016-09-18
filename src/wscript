@@ -14,6 +14,7 @@ def build(bld):
         'Resource.cpp',
         'Serialiser.cpp',
         'Store.cpp',
+        'TurtleWriter.cpp',
         'URIMap.cpp',
         'URIs.cpp',
         'World.cpp',

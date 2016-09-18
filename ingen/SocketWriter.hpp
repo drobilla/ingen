@@ -19,20 +19,14 @@
 
 #include <stdint.h>
 
-#include "ingen/AtomSink.hpp"
-#include "ingen/AtomWriter.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/types.hpp"
-#include "ingen/ingen.h"
+#include "ingen/TurtleWriter.hpp"
 #include "raul/Socket.hpp"
-#include "raul/URI.hpp"
-#include "sratom/sratom.h"
 
 namespace Ingen {
 
 /** An Interface that writes Turtle messages to a socket.
  */
-class INGEN_API SocketWriter : public AtomWriter, public AtomSink
+class INGEN_API SocketWriter : public TurtleWriter
 {
 public:
 	SocketWriter(URIMap&            map,
@@ -40,24 +34,12 @@ public:
 	             const Raul::URI&   uri,
 	             SPtr<Raul::Socket> sock);
 
-	~SocketWriter();
+	size_t text_sink(const void* buf, size_t len) override;
 
-	bool write(const LV2_Atom* msg);
-
+	/** Override of bundle_end to terminate bundles in the stream. */
 	void bundle_end();
 
-	int         fd()        { return _socket->fd(); }
-	Raul::URI   uri() const { return _uri; }
-	SerdWriter* writer()    { return _writer; }
-
 protected:
-	URIMap&            _map;
-	Sratom*            _sratom;
-	SerdNode           _base;
-	SerdURI            _base_uri;
-	SerdEnv*           _env;
-	SerdWriter*        _writer;
-	Raul::URI          _uri;
 	SPtr<Raul::Socket> _socket;
 };
 
