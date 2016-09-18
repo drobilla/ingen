@@ -36,13 +36,14 @@ Undo::Undo(Engine&          engine,
 bool
 Undo::pre_process()
 {
-	UndoStack* stack = _is_redo ? _engine.redo_stack() : _engine.undo_stack();
-	Event::Mode mode = _is_redo ? Event::Mode::REDO    : Event::Mode::UNDO;
+	UndoStack* const  stack = _is_redo ? _engine.redo_stack() : _engine.undo_stack();
+	const Event::Mode mode  = _is_redo ? Event::Mode::REDO    : Event::Mode::UNDO;
 
 	if (stack->empty()) {
 		return Event::pre_process_done(Status::NOT_FOUND);
 	}
 
+	const Event::Mode orig_mode = _engine.event_writer()->get_event_mode();
 	_entry = stack->pop();
 	_engine.event_writer()->set_event_mode(mode);
 	if (_entry.events.size() > 1) {
@@ -56,7 +57,7 @@ Undo::pre_process()
 	if (_entry.events.size() > 1) {
 		_engine.interface()->bundle_end();
 	}
-	_engine.event_writer()->set_event_mode(mode);
+	_engine.event_writer()->set_event_mode(orig_mode);
 
 	return Event::pre_process_done(Status::SUCCESS);
 }

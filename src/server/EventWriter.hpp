@@ -96,7 +96,8 @@ public:
 
 	virtual void error(const std::string& msg) {}  ///< N/A
 
-	void set_event_mode(Event::Mode mode) { _event_mode = mode; }
+	void        set_event_mode(Event::Mode mode) { _event_mode = mode; }
+	Event::Mode get_event_mode()                 { return _event_mode; }
 
 protected:
 	Engine&         _engine;
