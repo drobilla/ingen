@@ -707,6 +707,8 @@ GraphCanvas::paste()
 	const int paste_x = widget_point_x + scroll_x + (20.0f * _paste_count);
 	const int paste_y = widget_point_y + scroll_y + (20.0f * _paste_count);
 
+	_app.interface()->bundle_begin();
+
 	// Put each top level object in the clipboard store
 	ClashAvoider avoider(*_app.store().get());
 	for (const auto& c : clipboard) {
@@ -750,6 +752,8 @@ GraphCanvas::paste()
 			avoider.map_path(parent.child(a.second->tail_path())),
 			avoider.map_path(parent.child(a.second->head_path())));
 	}
+
+	_app.interface()->bundle_end();
 }
 
 void
