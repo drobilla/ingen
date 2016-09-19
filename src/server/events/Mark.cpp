@@ -29,6 +29,7 @@ Mark::Mark(Engine&         engine,
            Type            type)
 	: Event(engine, client, id, timestamp)
 	, _type(type)
+	, _depth(0)
 {}
 
 bool
@@ -40,10 +41,10 @@ Mark::pre_process()
 
 	switch (_type) {
 	case Type::BUNDLE_START:
-		stack->start_entry();
+		_depth = stack->start_entry();
 		break;
 	case Type::BUNDLE_END:
-		stack->finish_entry();
+		_depth = stack->finish_entry();
 		break;
 	}
 
@@ -58,6 +59,28 @@ void
 Mark::post_process()
 {
 	respond();
+}
+
+Event::Execution
+Mark::get_execution() const
+{
+	if (!_engine.atomic_bundles()) {
+		return Execution::NORMAL;
+	}
+
+	switch (_type) {
+	case Type::BUNDLE_START:
+		if (_depth == 1) {
+			return Execution::BLOCK;
+		}
+		break;
+	case Type::BUNDLE_END:
+		if (_depth == 0) {
+			return Execution::UNBLOCK;
+		}
+		break;
+	}
+	return Execution::NORMAL;
 }
 
 } // namespace Events

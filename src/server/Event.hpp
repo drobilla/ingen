@@ -56,6 +56,9 @@ public:
 	/** Event mode to distinguish normal events from undo events. */
 	enum class Mode { NORMAL, UNDO, REDO };
 
+	/** Execution mode for events that block and unblock preprocessing. */
+	enum class Execution { NORMAL, BLOCK, UNBLOCK };
+
 	/** Pre-process event before execution (non-realtime). */
 	virtual bool pre_process() = 0;
 
@@ -85,6 +88,9 @@ public:
 
 	/** Return the status (success or error code) of this event. */
 	Status status() const { return _status; }
+
+	/** Return the blocking behaviour of this event (after pre_process()) */
+	virtual Execution get_execution() const { return Execution::NORMAL; }
 
 	/** Return undo mode of this event. */
 	Mode get_mode() const { return _mode; }

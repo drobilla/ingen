@@ -32,7 +32,7 @@
 namespace Ingen {
 namespace Server {
 
-void
+int
 UndoStack::start_entry()
 {
 	if (_depth == 0) {
@@ -40,7 +40,7 @@ UndoStack::start_entry()
 		time(&now);
 		_stack.push_back(Entry(now));
 	}
-	++_depth;
+	return ++_depth;
 }
 
 bool
@@ -80,11 +80,11 @@ UndoStack::ignore_later_event(const LV2_Atom* first,
 	return false;
 }
 
-void
+int
 UndoStack::finish_entry()
 {
 	if (--_depth > 0) {
-		return;
+		return _depth;
 	} else if (_stack.back().events.empty()) {
 		// Disregard empty entry
 		_stack.pop_back();
@@ -98,6 +98,8 @@ UndoStack::finish_entry()
 			}
 		}
 	}
+
+	return _depth;
 }
 
 UndoStack::Entry

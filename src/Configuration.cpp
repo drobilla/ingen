@@ -47,6 +47,7 @@ Configuration::Configuration(Forge& forge)
 		"  ingen -eg foo.ingen  # Run engine and GUI and load a graph")
 	, _max_name_length(0)
 {
+	add("atomicBundles",  "atomic-bundles", 'a', "Execute bundles atomically", SESSION, forge.Bool, forge.make(false));
 	add("clientPort",     "client-port",    'C', "Client port", SESSION, forge.Int, Atom());
 	add("connect",        "connect",        'c', "Connect to engine URI", SESSION, forge.String, forge.alloc("unix:///tmp/ingen.sock"));
 	add("engine",         "engine",         'e', "Run (JACK) engine", SESSION, forge.Bool, forge.make(false));

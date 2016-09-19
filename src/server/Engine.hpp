@@ -120,6 +120,7 @@ public:
 	SPtr<Store> store() const;
 
 	size_t event_queue_size() const;
+	bool atomic_bundles() const { return _atomic_bundles; }
 
 private:
 	Ingen::World* _world;
@@ -150,6 +151,7 @@ private:
 
 	bool _quit_flag;
 	bool _direct_driver;
+	bool _atomic_bundles;
 };
 
 } // namespace Server

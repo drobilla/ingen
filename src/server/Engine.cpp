@@ -88,6 +88,7 @@ Engine::Engine(Ingen::World* world)
 	, _uniform_dist(0.0f, 1.0f)
 	, _quit_flag(false)
 	, _direct_driver(true)
+	, _atomic_bundles(world->conf().option("atomic-bundles").get<int32_t>())
 {
 	if (!world->store()) {
 		world->set_store(SPtr<Ingen::Store>(new Store()));

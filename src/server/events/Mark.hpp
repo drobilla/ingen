@@ -48,8 +48,11 @@ public:
 	void execute(RunContext& context);
 	void post_process();
 
+	Execution get_execution() const override;
+
 private:
 	Type _type;
+	int  _depth;
 };
 
 } // namespace Events
