@@ -61,8 +61,8 @@ using namespace std;
 namespace Ingen {
 namespace Server {
 
-Raul::ThreadVar<unsigned> ThreadManager::flags(0);
-bool                      ThreadManager::single_threaded(true);
+thread_local unsigned ThreadManager::flags(0);
+bool                  ThreadManager::single_threaded(true);
 
 Engine::Engine(Ingen::World* world)
 	: _world(world)
