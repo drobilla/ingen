@@ -9,11 +9,19 @@ ingen [OPTION]...
 .SH OPTIONS
 
 .TP
+\fB\-a, \-\-atomic\-bundles\fR
+Execute bundles atomically
+.TP
 \fB\-C, \-\-client\-port\fR=\fIINT\fR
 Client port
 .TP
 \fB\-c, \-\-connect\fR=\fISTRING\fR
 Connect to engine URI
+\fB\-d, \-\-dump\fR
+Print debug output
+.TP
+\fB\-t, \-\-trace\fR
+Show LV2 plugin trace messages
 .TP
 \fB\-e, \-\-engine\fR
 Run (JACK) engine
@@ -68,11 +76,9 @@ Ingen was written by David Robillard <d@drobilla.net>
 
 .SH COPYRIGHT
 Copyright \(co 2005-2016 David Robillard.
+License AGPLv3: GNU AGPL version 3 <https://www.gnu.org/licenses/agpl-3.0>.
 .br
-License: <https://www.gnu.org/licenses/agpl-3.0>
-.br
-This is free software; you are free to change and redistribute it.
-.br
+This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
 .SH "SEE ALSO"
