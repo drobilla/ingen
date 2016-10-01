@@ -18,10 +18,12 @@
 
 #include "ingen/AtomSink.hpp"
 #include "ingen/AtomWriter.hpp"
+#include "ingen/Configuration.hpp"
 
 #include "Engine.hpp"
 #include "Event.hpp"
 #include "PostProcessor.hpp"
+#include "PreProcessContext.hpp"
 #include "PreProcessor.hpp"
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
@@ -131,6 +133,14 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 	}
 
 	if (n_processed > 0) {
+		Engine& engine = context.engine();
+		if (engine.world()->conf().option("trace").get<int32_t>()) {
+			const uint64_t start = engine.cycle_start_time(context);
+			const uint64_t end   = engine.current_time(context);
+			fprintf(stderr, "Processed %zu events in %zu us\n",
+			        n_processed, end - start);
+		}
+
 		Event* next = (Event*)last->next();
 		last->next(NULL);
 		dest.append(context, head, last);
@@ -149,6 +159,8 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 void
 PreProcessor::run()
 {
+	PreProcessContext ctx;
+
 	UndoStack& undo_stack = *_engine.undo_stack();
 	UndoStack& redo_stack = *_engine.redo_stack();
 	AtomWriter undo_writer(
@@ -168,7 +180,7 @@ PreProcessor::run()
 		}
 
 		assert(!ev->is_prepared());
-		if (ev->pre_process()) {
+		if (ev->pre_process(ctx)) {
 			switch (ev->get_mode()) {
 			case Event::Mode::NORMAL:
 			case Event::Mode::REDO:

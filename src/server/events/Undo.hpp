@@ -38,7 +38,7 @@ public:
 	     SampleCount     timestamp,
 	     bool            is_redo);
 
-	bool pre_process();
+	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
 	void post_process();
 

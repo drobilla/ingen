@@ -79,6 +79,7 @@ Delta::~Delta()
 		delete s;
 
 	delete _create_event;
+	delete _compiled_graph;
 }
 
 void
@@ -98,7 +99,6 @@ Delta::add_set_event(const char* port_symbol,
 		_engine, _request_client, _request_id, _time,
 		port, Atom(size, type, value), true);
 
-	ev->pre_process();
 	_set_events.push_back(ev);
 }
 
@@ -155,7 +155,7 @@ get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
  */
 
 bool
-Delta::pre_process()
+Delta::pre_process(PreProcessContext& ctx)
 {
 	const Ingen::URIs& uris = _engine.world()->uris();
 
@@ -231,7 +231,7 @@ Delta::pre_process()
 				path, _properties);
 		}
 		if (_create_event) {
-			if (_create_event->pre_process()) {
+			if (_create_event->pre_process(ctx)) {
 				_object = _engine.store()->get(path);  // Get object for setting
 			} else {
 				return Event::pre_process_done(Status::CREATION_FAILED, _subject);
@@ -322,7 +322,6 @@ Delta::pre_process()
 				} else if (key == uris.ingen_value || key == uris.ingen_activity) {
 					SetPortValue* ev = new SetPortValue(
 						_engine, _request_client, _request_id, _time, port, value);
-					ev->pre_process();
 					_set_events.push_back(ev);
 				} else if (key == uris.midi_binding) {
 					if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
@@ -449,6 +448,10 @@ Delta::pre_process()
 		_types.push_back(op);
 	}
 
+	for (auto& s : _set_events) {
+		s->pre_process(ctx);
+	}
+
 	if (poly_changed) {
 		lock.unlock();
 		_poly_lock.lock();
@@ -496,7 +499,7 @@ Delta::execute(RunContext& context)
 			if (_graph) {
 				if (value.get<int32_t>()) {
 					if (_compiled_graph) {
-						_graph->set_compiled_graph(_compiled_graph);
+						_compiled_graph = _graph->swap_compiled_graph(_compiled_graph);
 					}
 					_graph->enable();
 				} else {

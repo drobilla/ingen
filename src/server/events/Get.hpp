@@ -47,7 +47,7 @@ public:
 	    SampleCount      timestamp,
 	    const Raul::URI& uri);
 
-	bool pre_process();
+	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context) {}
 	void post_process();
 

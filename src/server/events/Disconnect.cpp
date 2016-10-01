@@ -29,6 +29,7 @@
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
+#include "PreProcessContext.hpp"
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
 #include "events/Disconnect.hpp"
@@ -55,6 +56,7 @@ Disconnect::Disconnect(Engine&           engine,
 Disconnect::~Disconnect()
 {
 	delete _impl;
+	delete _compiled_graph;
 }
 
 Disconnect::Impl::Impl(Engine&     e,
@@ -112,7 +114,7 @@ Disconnect::Impl::Impl(Engine&     e,
 }
 
 bool
-Disconnect::pre_process()
+Disconnect::pre_process(PreProcessContext& ctx)
 {
 	std::lock_guard<std::mutex> lock(_engine.store()->mutex());
 
@@ -166,8 +168,9 @@ Disconnect::pre_process()
 	                 dynamic_cast<OutputPort*>(tail),
 	                 dynamic_cast<InputPort*>(head));
 
-	if (_graph->enabled())
+	if (ctx.must_compile(_graph)) {
 		_compiled_graph = CompiledGraph::compile(_graph);
+	}
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
@@ -204,7 +207,9 @@ Disconnect::execute(RunContext& context)
 {
 	if (_status == Status::SUCCESS) {
 		if (_impl->execute(context, true)) {
-			_graph->set_compiled_graph(_compiled_graph);
+			if (_compiled_graph) {
+				_compiled_graph = _graph->swap_compiled_graph(_compiled_graph);
+			}
 		} else {
 			_status = Status::NOT_FOUND;
 		}

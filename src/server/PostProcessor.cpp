@@ -30,7 +30,7 @@ class Sentinel : public Event {
 public:
 	Sentinel(Engine& engine) : Event(engine) {}
 
-	bool pre_process() { return false; }
+	bool pre_process(PreProcessContext& ctx) { return false; }
 	void execute(RunContext& context) {}
 	void post_process() {}
 };

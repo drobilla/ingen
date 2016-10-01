@@ -53,7 +53,7 @@ SetPortValue::~SetPortValue()
 }
 
 bool
-SetPortValue::pre_process()
+SetPortValue::pre_process(PreProcessContext& ctx)
 {
 	if (_port->is_output()) {
 		return Event::pre_process_done(Status::DIRECTION_MISMATCH, _port->path());

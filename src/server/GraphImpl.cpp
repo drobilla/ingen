@@ -297,14 +297,15 @@ GraphImpl::has_arc(const PortImpl* tail, const PortImpl* dst_port) const
 	return (i != _arcs.end());
 }
 
-void
-GraphImpl::set_compiled_graph(CompiledGraph* cg)
+CompiledGraph*
+GraphImpl::swap_compiled_graph(CompiledGraph* cg)
 {
-	if (_compiled_graph && _compiled_graph != cg) {
-		_engine.maid()->dispose(_compiled_graph);
+	CompiledGraph* const old = _compiled_graph;
+	if (old && cg != old) {
 		_engine.reset_load();
 	}
 	_compiled_graph = cg;
+	return old;
 }
 
 uint32_t

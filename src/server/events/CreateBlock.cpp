@@ -28,6 +28,7 @@
 #include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
+#include "PreProcessContext.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -53,7 +54,7 @@ CreateBlock::~CreateBlock()
 }
 
 bool
-CreateBlock::pre_process()
+CreateBlock::pre_process(PreProcessContext& ctx)
 {
 	typedef Resource::Properties::const_iterator iterator;
 
@@ -137,7 +138,7 @@ CreateBlock::pre_process()
 	/* Compile graph with new block added for insertion in audio thread
 	   TODO: Since the block is not connected at this point, a full compilation
 	   could be avoided and the block simply appended. */
-	if (_graph->enabled()) {
+	if (ctx.must_compile(_graph)) {
 		_compiled_graph = CompiledGraph::compile(_graph);
 	}
 
@@ -149,9 +150,8 @@ CreateBlock::pre_process()
 void
 CreateBlock::execute(RunContext& context)
 {
-	if (_status == Status::SUCCESS) {
-		_graph->set_compiled_graph(_compiled_graph);
-		_compiled_graph = NULL;  // Graph takes ownership
+	if (_status == Status::SUCCESS && _compiled_graph) {
+		_compiled_graph = _graph->swap_compiled_graph(_compiled_graph);
 	}
 }
 

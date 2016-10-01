@@ -23,6 +23,7 @@
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
+#include "PreProcessContext.hpp"
 #include "events/CreateGraph.hpp"
 #include "events/CreatePort.hpp"
 
@@ -92,7 +93,7 @@ CreateGraph::build_child_events()
 }
 
 bool
-CreateGraph::pre_process()
+CreateGraph::pre_process(PreProcessContext& ctx)
 {
 	if (_engine.store()->get(_path)) {
 		return Event::pre_process_done(Status::EXISTS, _path);
@@ -163,6 +164,8 @@ CreateGraph::pre_process()
 		_parent->add_block(*_graph);
 		if (_parent->enabled()) {
 			_graph->enable();
+		}
+		if (ctx.must_compile(_parent)) {
 			_compiled_graph = CompiledGraph::compile(_parent);
 		}
 	}
@@ -179,7 +182,7 @@ CreateGraph::pre_process()
 	// Build and pre-process child events to create standard ports
 	build_child_events();
 	for (SPtr<Event> ev : _child_events) {
-		ev->pre_process();
+		ev->pre_process(ctx);
 	}
 
 	return Event::pre_process_done(Status::SUCCESS);
@@ -189,8 +192,8 @@ void
 CreateGraph::execute(RunContext& context)
 {
 	if (_graph) {
-		if (_parent) {
-			_parent->set_compiled_graph(_compiled_graph);
+		if (_parent && _compiled_graph) {
+			_compiled_graph = _parent->swap_compiled_graph(_compiled_graph);
 		}
 
 		for (SPtr<Event> ev : _child_events) {
@@ -213,6 +216,8 @@ CreateGraph::post_process()
 		}
 	}
 	_child_events.clear();
+
+	delete _compiled_graph;
 }
 
 void

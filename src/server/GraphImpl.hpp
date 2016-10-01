@@ -19,6 +19,8 @@
 
 #include <cstdlib>
 
+#include "ingen/ingen.h"
+
 #include "BlockImpl.hpp"
 #include "CompiledGraph.hpp"
 #include "DuplexPort.hpp"
@@ -160,7 +162,8 @@ public:
 
 	bool has_arc(const PortImpl* tail, const PortImpl* head) const;
 
-	void set_compiled_graph(CompiledGraph* cp);
+	/** Set a new compiled graph to run, and return the old one. */
+	CompiledGraph* swap_compiled_graph(CompiledGraph* cp) INGEN_WARN_UNUSED_RESULT;
 
 	Raul::Array<PortImpl*>* external_ports()                           { return _ports; }
 	void                    external_ports(Raul::Array<PortImpl*>* pa) { _ports = pa; }
@@ -185,7 +188,7 @@ private:
 	Ports          _inputs;          ///< Pre-process thread only
 	Ports          _outputs;         ///< Pre-process thread only
 	Blocks         _blocks;          ///< Pre-process thread only
-	bool           _process;
+	bool           _process;         ///< True iff graph is enabled
 };
 
 } // namespace Server

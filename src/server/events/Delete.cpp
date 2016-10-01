@@ -29,6 +29,7 @@
 #include "GraphImpl.hpp"
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
+#include "PreProcessContext.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -54,10 +55,11 @@ Delete::Delete(Engine&          engine,
 Delete::~Delete()
 {
 	delete _disconnect_event;
+	delete _compiled_graph;
 }
 
 bool
-Delete::pre_process()
+Delete::pre_process(PreProcessContext& ctx)
 {
 	if (_path.is_root() || _path == "/control" || _path == "/notify") {
 		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
@@ -91,19 +93,22 @@ Delete::pre_process()
 	if (_block) {
 		parent->remove_block(*_block);
 		_disconnect_event = new DisconnectAll(_engine, parent, _block.get());
-		_disconnect_event->pre_process();
+		_disconnect_event->pre_process(ctx);
 
-		if (parent->enabled()) {
+		if (ctx.must_compile(parent)) {
 			_compiled_graph = CompiledGraph::compile(parent);
 		}
 	} else if (_port) {
 		parent->remove_port(*_port);
 		_disconnect_event = new DisconnectAll(_engine, parent, _port.get());
-		_disconnect_event->pre_process();
+		_disconnect_event->pre_process(ctx);
+
+		if (ctx.must_compile(parent)) {
+			_compiled_graph = CompiledGraph::compile(parent);
+		}
 
 		if (parent->enabled()) {
-			_compiled_graph = CompiledGraph::compile(parent);
-			_ports_array    = parent->build_ports_array();
+			_ports_array = parent->build_ports_array();
 			assert(_ports_array->size() == parent->num_ports_non_rt());
 		}
 
@@ -137,8 +142,8 @@ Delete::execute(RunContext& context)
 		}
 	}
 
-	if (parent) {
-		parent->set_compiled_graph(_compiled_graph);
+	if (parent && _compiled_graph) {
+		_compiled_graph = parent->swap_compiled_graph(_compiled_graph);
 	}
 }
 

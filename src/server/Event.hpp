@@ -35,6 +35,7 @@ namespace Server {
 
 class Engine;
 class RunContext;
+class PreProcessContext;
 
 /** An event (command) to perform some action on Ingen.
  *
@@ -60,7 +61,7 @@ public:
 	enum class Execution { NORMAL, BLOCK, UNBLOCK };
 
 	/** Pre-process event before execution (non-realtime). */
-	virtual bool pre_process() = 0;
+	virtual bool pre_process(PreProcessContext& ctx) = 0;
 
 	/** Execute this event in the audio thread (realtime). */
 	virtual void execute(RunContext& context) = 0;

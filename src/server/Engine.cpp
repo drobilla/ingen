@@ -47,6 +47,7 @@
 #include "GraphImpl.hpp"
 #include "LV2Options.hpp"
 #include "PostProcessor.hpp"
+#include "PreProcessContext.hpp"
 #include "PreProcessor.hpp"
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
@@ -374,9 +375,10 @@ Engine::activate()
 			*this, SPtr<Interface>(), -1, 0, Raul::Path("/"), graph_properties);
 
 		// Execute in "fake" process context (we are single threaded)
-		RunContext context(run_context());
-		ev.pre_process();
-		ev.execute(context);
+		PreProcessContext pctx;
+		RunContext        rctx(run_context());
+		ev.pre_process(pctx);
+		ev.execute(rctx);
 		ev.post_process();
 
 		_root_graph = ev.graph();

@@ -44,15 +44,20 @@ public:
 	     SampleCount                 timestamp,
 	     Type                        type);
 
-	bool pre_process();
+	~Mark();
+
+	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
 	void post_process();
 
 	Execution get_execution() const;
 
 private:
-	Type _type;
-	int  _depth;
+	typedef std::map<GraphImpl*, CompiledGraph*> CompiledGraphs;
+
+	CompiledGraphs _compiled_graphs;
+	Type           _type;
+	int            _depth;
 };
 
 } // namespace Events

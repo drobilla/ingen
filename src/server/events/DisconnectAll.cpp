@@ -31,6 +31,7 @@
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
+#include "PreProcessContext.hpp"
 #include "events/Disconnect.hpp"
 #include "events/DisconnectAll.hpp"
 #include "util.hpp"
@@ -76,10 +77,12 @@ DisconnectAll::~DisconnectAll()
 {
 	for (auto& i : _impls)
 		delete i;
+
+	delete _compiled_graph;
 }
 
 bool
-DisconnectAll::pre_process()
+DisconnectAll::pre_process(PreProcessContext& ctx)
 {
 	std::unique_lock<std::mutex> lock(_engine.store()->mutex(), std::defer_lock);
 
@@ -136,7 +139,7 @@ DisconnectAll::pre_process()
 			                 dynamic_cast<InputPort*>(a->head())));
 	}
 
-	if (!_deleting && _parent->enabled()) {
+	if (!_deleting && ctx.must_compile(_parent)) {
 		if (!(_compiled_graph = CompiledGraph::compile(_parent))) {
 			return Event::pre_process_done(Status::COMPILATION_FAILED);
 		}
@@ -155,7 +158,9 @@ DisconnectAll::execute(RunContext& context)
 		}
 	}
 
-	_parent->set_compiled_graph(_compiled_graph);
+	if (_compiled_graph) {
+		_compiled_graph = _parent->swap_compiled_graph(_compiled_graph);
+	}
 }
 
 void

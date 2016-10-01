@@ -26,8 +26,9 @@
 #include "InputPort.hpp"
 #include "OutputPort.hpp"
 #include "PortImpl.hpp"
-#include "types.hpp"
+#include "PreProcessContext.hpp"
 #include "internals/BlockDelay.hpp"
+#include "types.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -49,7 +50,7 @@ Connect::Connect(Engine&           engine,
 {}
 
 bool
-Connect::pre_process()
+Connect::pre_process(PreProcessContext& ctx)
 {
 	std::lock_guard<std::mutex> lock(_engine.store()->mutex());
 
@@ -125,7 +126,7 @@ Connect::pre_process()
 			tail_block->dependants().insert(head_block);
 		}
 
-		if (_graph->enabled()) {
+		if (ctx.must_compile(_graph)) {
 			if (!(_compiled_graph = CompiledGraph::compile(_graph))) {
 				head_block->providers().erase(tail_block);
 				tail_block->dependants().erase(head_block);
@@ -161,7 +162,7 @@ Connect::execute(RunContext& context)
 		}
 		_head->connect_buffers();
 		if (_compiled_graph) {
-			_graph->set_compiled_graph(_compiled_graph);
+			_compiled_graph = _graph->swap_compiled_graph(_compiled_graph);
 		}
 	}
 }
@@ -181,6 +182,8 @@ Connect::post_process()
 				Node::path_to_uri(_tail_path), _tail_remove, _tail_add);
 		}
 	}
+
+	delete _compiled_graph;
 }
 
 void

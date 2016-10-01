@@ -15,6 +15,7 @@
 */
 
 #include "Engine.hpp"
+#include "PreProcessContext.hpp"
 #include "UndoStack.hpp"
 #include "events/Mark.hpp"
 
@@ -32,8 +33,15 @@ Mark::Mark(Engine&         engine,
 	, _depth(0)
 {}
 
+Mark::~Mark()
+{
+	for (const auto& g : _compiled_graphs) {
+		delete g.second;
+	}
+}
+
 bool
-Mark::pre_process()
+Mark::pre_process(PreProcessContext& ctx)
 {
 	UndoStack* const stack = ((_mode == Mode::UNDO)
 	                          ? _engine.redo_stack()
@@ -41,10 +49,21 @@ Mark::pre_process()
 
 	switch (_type) {
 	case Type::BUNDLE_START:
+		ctx.set_in_bundle(true);
 		_depth = stack->start_entry();
 		break;
 	case Type::BUNDLE_END:
 		_depth = stack->finish_entry();
+		ctx.set_in_bundle(false);
+		if (!ctx.dirty_graphs().empty()) {
+			for (GraphImpl* g : ctx.dirty_graphs()) {
+				CompiledGraph* cg = CompiledGraph::compile(g);
+				if (cg) {
+					_compiled_graphs.insert(std::make_pair(g, cg));
+				}
+			}
+			ctx.dirty_graphs().clear();
+		}
 		break;
 	}
 
@@ -53,7 +72,11 @@ Mark::pre_process()
 
 void
 Mark::execute(RunContext& context)
-{}
+{
+	for (auto& g : _compiled_graphs) {
+		g.second = g.first->swap_compiled_graph(g.second);
+	}
+}
 
 void
 Mark::post_process()

@@ -26,6 +26,7 @@
 #include "Engine.hpp"
 #include "EnginePort.hpp"
 #include "GraphImpl.hpp"
+#include "PreProcessContext.hpp"
 #include "events/Copy.hpp"
 
 namespace Ingen {
@@ -48,7 +49,7 @@ Copy::Copy(Engine&          engine,
 {}
 
 bool
-Copy::pre_process()
+Copy::pre_process(PreProcessContext& ctx)
 {
 	std::lock_guard<std::mutex> lock(_engine.store()->mutex());
 
@@ -69,16 +70,16 @@ Copy::pre_process()
 
 		if (Node::uri_is_path(_new_uri)) {
 			// Copy to path within the engine
-			return engine_to_engine();
+			return engine_to_engine(ctx);
 		} else if (_new_uri.scheme() == "file") {
 			// Copy to filesystem path (i.e. save)
-			return engine_to_filesystem();
+			return engine_to_filesystem(ctx);
 		} else {
 			return Event::pre_process_done(Status::BAD_REQUEST);
 		}
 	} else if (_old_uri.scheme() == "file") {
 		if (Node::uri_is_path(_new_uri)) {
-			filesystem_to_engine();
+			filesystem_to_engine(ctx);
 		} else {
 			// Ingen is not your file manager
 			return Event::pre_process_done(Status::BAD_REQUEST);
@@ -89,7 +90,7 @@ Copy::pre_process()
 }
 
 bool
-Copy::engine_to_engine()
+Copy::engine_to_engine(PreProcessContext& ctx)
 {
 	// Only support a single source for now
 	const Raul::Path new_path = Node::uri_to_path(_new_uri);
@@ -125,7 +126,7 @@ Copy::engine_to_engine()
 	_engine.store()->add(_block);
 
 	// Compile graph with new block added for insertion in audio thread
-	if (_parent->enabled()) {
+	if (ctx.must_compile(_parent)) {
 		_compiled_graph = CompiledGraph::compile(_parent);
 	}
 
@@ -142,7 +143,7 @@ ends_with(const std::string& str, const std::string& end)
 }
 
 bool
-Copy::engine_to_filesystem()
+Copy::engine_to_filesystem(PreProcessContext& ctx)
 {
 	// Ensure source is a graph
 	SPtr<GraphImpl> graph = dynamic_ptr_cast<GraphImpl>(_old_block);
@@ -168,7 +169,7 @@ Copy::engine_to_filesystem()
 }
 
 bool
-Copy::filesystem_to_engine()
+Copy::filesystem_to_engine(PreProcessContext& ctx)
 {
 	if (!_engine.world()->parser()) {
 		return Event::pre_process_done(Status::INTERNAL_ERROR);
@@ -196,9 +197,8 @@ Copy::filesystem_to_engine()
 void
 Copy::execute(RunContext& context)
 {
-	if (_block) {
-		_parent->set_compiled_graph(_compiled_graph);
-		_compiled_graph = NULL;  // Graph takes ownership
+	if (_block && _compiled_graph) {
+		_compiled_graph = _parent->swap_compiled_graph(_compiled_graph);
 	}
 }
 
@@ -209,6 +209,7 @@ Copy::post_process()
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->copy(_old_uri, _new_uri);
 	}
+	delete _compiled_graph;
 }
 
 void

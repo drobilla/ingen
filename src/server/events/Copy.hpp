@@ -46,15 +46,15 @@ public:
 	     const Raul::URI& old_uri,
 	     const Raul::URI& new_uri);
 
-	bool pre_process();
+	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
 	void post_process();
 	void undo(Interface& target);
 
 private:
-	bool engine_to_engine();
-	bool engine_to_filesystem();
-	bool filesystem_to_engine();
+	bool engine_to_engine(PreProcessContext& ctx);
+	bool engine_to_filesystem(PreProcessContext& ctx);
+	bool filesystem_to_engine(PreProcessContext& ctx);
 
 	const Raul::URI _old_uri;
 	const Raul::URI _new_uri;

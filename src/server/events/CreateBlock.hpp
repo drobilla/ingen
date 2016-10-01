@@ -47,7 +47,7 @@ public:
 
 	~CreateBlock();
 
-	bool pre_process();
+	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
 	void post_process();
 	void undo(Interface& target);
