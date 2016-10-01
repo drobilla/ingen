@@ -11,17 +11,9 @@
 	] .
 
 <msg1>
-	a patch:Delete ;
-	patch:subject <ingen:/main/node> .
-
-<msg2>
 	a patch:Put ;
 	patch:subject <ingen:/main/deprecatednode> ;
 	patch:body [
 		a ingen:Block ;
-		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
+		lv2:prototype <ingen:/main/node>
 	] .
-
-<msg3>
-	a patch:Delete ;
-	patch:subject <ingen:/main/deprecatednode> .

@@ -4,24 +4,29 @@
 
 <msg0>
 	a patch:Put ;
+	patch:subject <ingen:/main/audio_in> ;
+	patch:body [
+		a lv2:InputPort ,
+			lv2:AudioPort
+	] .
+
+<msg1>
+	a patch:Put ;
 	patch:subject <ingen:/main/node> ;
 	patch:body [
 		a ingen:Block ;
 		lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
 	] .
 
-<msg1>
-	a patch:Delete ;
-	patch:subject <ingen:/main/node> .
-
 <msg2>
 	a patch:Put ;
-	patch:subject <ingen:/main/deprecatednode> ;
+	patch:subject <ingen:/main/> ;
 	patch:body [
-		a ingen:Block ;
-		ingen:prototype <http://drobilla.net/plugins/mda/Shepard>
+		a ingen:Arc ;
+		ingen:tail <ingen:/main/audio_in> ;
+		ingen:head <ingen:/main/node/left_in>
 	] .
 
 <msg3>
 	a patch:Delete ;
-	patch:subject <ingen:/main/deprecatednode> .
+    patch:subject <ingen:/main/audio_in> .
