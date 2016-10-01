@@ -104,6 +104,7 @@ struct Serialiser::Impl {
 	Raul::Path   _root_path;
 	Mode         _mode;
 	std::string  _base_uri;
+	std::string  _basename;
 	World&       _world;
 	Sord::Model* _model;
 	Sratom*      _sratom;
@@ -227,11 +228,18 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
 void
 Serialiser::Impl::start_to_file(const Raul::Path& root, const string& filename)
 {
+	// Set Base URI
 	assert(filename.find(":") == string::npos || filename.substr(0, 5) == "file:");
 	if (filename.find(":") == string::npos) {
 		_base_uri = "file://" + filename;
 	} else {
 		_base_uri = filename;
+	}
+
+	// Find graph basename to use as symbol / fallback name
+	_basename = Glib::path_get_basename(filename);
+	if (_basename == "main.ttl") {
+		_basename = Glib::path_get_basename(Glib::path_get_dirname(filename));
 	}
 
 	_model     = new Sord::Model(*_world.rdf_world(), _base_uri);
@@ -335,10 +343,9 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 	                      Sord::URI(world, LV2_UI__ui),
 	                      Sord::URI(world, "http://drobilla.net/ns/ingen#GraphUIGtk2"));
 
-	// If the graph has no doap:name (required by LV2), use the symbol
+	// If the graph has no doap:name (required by LV2), use the basename
 	if (graph->properties().find(uris.doap_name) == graph->properties().end()) {
-		std::string sym = Glib::path_get_basename(graph_id.to_string());
-		sym = sym.substr(0, sym.find('.'));
+		const std::string sym = _basename.substr(0, _basename.find('.'));
 		_model->add_statement(graph_id,
 		                      Sord::URI(world, uris.doap_name),
 		                      Sord::Literal(world, sym));
