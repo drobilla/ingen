@@ -233,6 +233,11 @@ main(int argc, char** argv)
 	if (world->engine())
 		world->engine()->deactivate();
 
+	// Save configuration to restore preferences on next run
+	const std::string path = conf.save(
+		world->uri_map(), "ingen", "options.ttl", Configuration::GLOBAL);
+	std::cout << (fmt("Saved configuration to %1%") % path) << std::endl;
+
 	engine_interface.reset();
 	delete world;
 

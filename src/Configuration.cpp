@@ -47,27 +47,27 @@ Configuration::Configuration(Forge& forge)
 		"  ingen -eg foo.ingen  # Run engine and GUI and load a graph")
 	, _max_name_length(0)
 {
-	add("atomicBundles",  "atomic-bundles", 'a', "Execute bundles atomically", SESSION, forge.Bool, forge.make(false));
-	add("clientPort",     "client-port",    'C', "Client port", SESSION, forge.Int, Atom());
+	add("atomicBundles",  "atomic-bundles", 'a', "Execute bundles atomically", GLOBAL, forge.Bool, forge.make(false));
+	add("clientPort",     "client-port",    'C', "Client port", GLOBAL, forge.Int, Atom());
 	add("connect",        "connect",        'c', "Connect to engine URI", SESSION, forge.String, forge.alloc("unix:///tmp/ingen.sock"));
-	add("engine",         "engine",         'e', "Run (JACK) engine", SESSION, forge.Bool, forge.make(false));
-	add("enginePort",     "engine-port",    'E', "Engine listen port", SESSION, forge.Int, forge.make(16180));
-	add("socket",         "socket",         'S', "Engine socket path", SESSION, forge.String, forge.alloc("/tmp/ingen.sock"));
+	add("engine",         "engine",         'e', "Run (JACK) engine", GLOBAL, forge.Bool, forge.make(false));
+	add("enginePort",     "engine-port",    'E', "Engine listen port", GLOBAL, forge.Int, forge.make(16180));
+	add("socket",         "socket",         'S', "Engine socket path", GLOBAL, forge.String, forge.alloc("/tmp/ingen.sock"));
 	add("gui",            "gui",            'g', "Launch the GTK graphical interface", SESSION, forge.Bool, forge.make(false));
 	add("",               "help",           'h', "Print this help message", SESSION, forge.Bool, forge.make(false));
 	add("",               "version",        'V', "Print version information", SESSION, forge.Bool, forge.make(false));
-	add("jackName",       "jack-name",      'n', "JACK name", SESSION, forge.String, forge.alloc("ingen"));
+	add("jackName",       "jack-name",      'n', "JACK name", GLOBAL, forge.String, forge.alloc("ingen"));
 	add("jackServer",     "jack-server",    's', "JACK server name", GLOBAL, forge.String, forge.alloc(""));
-	add("uuid",           "uuid",           'u', "JACK session UUID", SESSION, forge.String, Atom());
+	add("uuid",           "uuid",           'u', "JACK session UUID", GLOBAL, forge.String, Atom());
 	add("load",           "load",           'l', "Load graph", SESSION, forge.String, Atom());
 	add("serverLoad",     "server-load",    'i', "Load graph (server side)", SESSION, forge.String, Atom());
 	add("save",           "save",           'o', "Save graph", SESSION, forge.String, Atom());
 	add("execute",        "execute",        'x', "File of commands to execute", SESSION, forge.String, Atom());
 	add("path",           "path",           'L', "Target path for loaded graph", SESSION, forge.String, Atom());
 	add("queueSize",      "queue-size",     'q', "Event queue size", GLOBAL, forge.Int, forge.make(4096));
-	add("flushLog",       "flush-log",      'f', "Flush logs after every entry", SESSION, forge.Bool, forge.make(false));
-	add("dump",           "dump",           'd', "Dump communication", SESSION, forge.Bool, forge.make(false));
-	add("trace",          "trace",          't', "Show LV2 plugin trace messages", SESSION, forge.Bool, forge.make(false));
+	add("flushLog",       "flush-log",      'f', "Flush logs after every entry", GLOBAL, forge.Bool, forge.make(false));
+	add("dump",           "dump",           'd', "Dump communication", GLOBAL, forge.Bool, forge.make(false));
+	add("trace",          "trace",          't', "Show LV2 plugin trace messages", GLOBAL, forge.Bool, forge.make(false));
 	add("humanNames",     "human-names",     0,  "Show human names in GUI", GUI, forge.Bool, forge.make(true));
 	add("portLabels",     "port-labels",     0,  "Show port labels in GUI", GUI, forge.Bool, forge.make(true));
 	add("graphDirectory", "graph-directory", 0,  "Default directory for opening graphs", GUI, forge.String, Atom());
