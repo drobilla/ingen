@@ -118,6 +118,11 @@ public:
 	const Quark ingen_head;
 	const Quark ingen_incidentTo;
 	const Quark ingen_loadedBundle;
+	const Quark ingen_maxEventLoad;
+	const Quark ingen_maxRunLoad;
+	const Quark ingen_meanRunLoad;
+	const Quark ingen_minRunLoad;
+	const Quark ingen_numThreads;
 	const Quark ingen_polyphonic;
 	const Quark ingen_polyphony;
 	const Quark ingen_prototype;

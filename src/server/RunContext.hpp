@@ -87,6 +87,18 @@ public:
 	/** Return true iff any notifications are pending. */
 	bool pending_notifications() const { return _event_sink->read_space(); }
 
+	/** Return the duration of this cycle in microseconds.
+	 *
+	 * This is the cycle length in frames (nframes) converted to microseconds,
+	 * that is, the amount of real time that this cycle's audio represents.
+	 * Note that this is unrelated to the amount of time available to execute a
+	 * cycle (other than the fact that it must be processed in significantly
+	 * less time to avoid a dropout when running in real time).
+	 */
+	inline uint64_t duration() const {
+		return (uint64_t)_nframes * 1e6 / _rate;
+	}
+
 	inline void locate(FrameTime s, SampleCount nframes) {
 		_start   = s;
 		_end     = s + nframes;
@@ -103,6 +115,7 @@ public:
 	}
 
 	void set_priority(int priority);
+	void set_rate(SampleCount rate) { _rate = rate; }
 
 	inline Engine&     engine()   const { return _engine; }
 	inline Task*       task()     const { return _task; }
@@ -112,6 +125,7 @@ public:
 	inline FrameTime   end()      const { return _end; }
 	inline SampleCount offset()   const { return _offset; }
 	inline SampleCount nframes()  const { return _nframes; }
+	inline SampleCount rate()     const { return _rate; }
 	inline bool        realtime() const { return _realtime; }
 
 protected:
@@ -129,6 +143,7 @@ protected:
 	FrameTime   _end;        ///< End frame of this cycle, timeline relative
 	SampleCount _offset;     ///< Offset into data buffers
 	SampleCount _nframes;    ///< Number of frames past offset to process
+	SampleCount _rate;       ///< Sample rate in Hz
 	bool        _realtime;   ///< True iff context is hard realtime
 	bool        _copy;       ///< True iff this is a copy (shared event_sink)
 };

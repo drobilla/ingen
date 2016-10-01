@@ -48,6 +48,34 @@ ingen:canvasY
 	rdfs:label "canvas Y" ;
 	rdfs:comment "The Y coordinate of an item on a canvas." .
 
+ingen:maxEventLoad
+	a rdf:Property ,
+		owl:DatatypeProperty ;
+	rdfs:range xsd:decimal ;
+	rdfs:label "maximum event load" ;
+	rdfs:comment "The maximum fraction of a cycle spent processing events." .
+
+ingen:minRunLoad
+	a rdf:Property ,
+		owl:DatatypeProperty ;
+	rdfs:range xsd:decimal ;
+	rdfs:label "minimum run load" ;
+	rdfs:comment "The minimum fraction of a cycle spent running DSP." .
+
+ingen:maxRunLoad
+	a rdf:Property ,
+		owl:DatatypeProperty ;
+	rdfs:range xsd:decimal ;
+	rdfs:label "maximum run load" ;
+	rdfs:comment "The maximum fraction of a cycle spent running DSP." .
+
+ingen:meanRunLoad
+	a rdf:Property ,
+		owl:DatatypeProperty ;
+	rdfs:range xsd:decimal ;
+	rdfs:label "mean run load" ;
+	rdfs:comment "The average fraction of a cycle spent running DSP." .
+
 ingen:block
 	a rdf:Property ,
 		owl:ObjectProperty ;
@@ -220,3 +248,34 @@ ingen:BundleEnd
 	a rdfs:Class ;
 	rdfs:label "Bundle End" ;
 	rdfs:comment "The end of an undo transaction." .
+
+ingen:Option
+	a rdfs:Class ;
+	rdfs:subClassOf rdf:Property ;
+	rdfs:label "Ingen Option" .
+
+ingen:shortSwitch
+	a rdf:Property ,
+		owl:ObjectProperty ,
+		owl:FunctionalProperty ;
+	rdfs:domain ingen:Option ;
+	rdfs:range xsd:string ;
+	rdfs:label "short switch" ;
+	rdfs:comment "Single character switch for short command line argument." .
+
+ingen:longSwitch
+	a rdf:Property ,
+		owl:ObjectProperty ,
+		owl:FunctionalProperty ;
+	rdfs:domain ingen:Option ;
+	rdfs:range xsd:string ;
+	rdfs:label "long switch" ;
+	rdfs:comment "Lowercase, hyphenated switch for long command line argument." .
+
+ingen:numThreads
+	a rdf:Property ,
+		owl:ObjectProperty ,
+		ingen:Option ;
+	rdfs:label "number of threads" ;
+	ingen:shortSwitch "p" ;
+	ingen:longSwitch "threads" .

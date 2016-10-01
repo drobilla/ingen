@@ -83,9 +83,11 @@ Engine::Engine(Ingen::World* world)
 	, _worker(new Worker(world->log(), event_queue_size()))
 	, _sync_worker(new Worker(world->log(), event_queue_size(), true))
 	, _listener(NULL)
+	, _cycle_start_time(0)
 	, _rand_engine(0)
 	, _uniform_dist(0.0f, 1.0f)
 	, _quit_flag(false)
+	, _reset_load_flag(false)
 	, _direct_driver(true)
 	, _atomic_bundles(world->conf().option("atomic-bundles").get<int32_t>())
 {
@@ -264,8 +266,29 @@ Engine::quit()
 bool
 Engine::main_iteration()
 {
+	const Ingen::URIs& uris = world()->uris();
+
 	_post_processor->process();
 	_maid->cleanup();
+
+	if (_event_load.changed) {
+		_broadcaster->set_property(Raul::URI("ingen:/engine"),
+		                           uris.ingen_maxEventLoad,
+		                           uris.forge.make(_event_load.max / 100.0f));
+		_event_load.changed = false;
+	}
+
+	if (_run_load.changed) {
+		_broadcaster->put(Raul::URI("ingen:/engine"),
+		                  { { uris.ingen_meanRunLoad,
+		                      uris.forge.make(floorf(_run_load.mean) / 100.0f) },
+		                    { uris.ingen_minRunLoad,
+		                      uris.forge.make(_run_load.min / 100.0f) },
+		                    { uris.ingen_maxRunLoad,
+		                      uris.forge.make(_run_load.max / 100.0f) } });
+		_run_load.changed = false;
+	}
+
 	return !_quit_flag;
 }
 
@@ -275,6 +298,7 @@ Engine::set_driver(SPtr<Driver> driver)
 	_driver = driver;
 	for (RunContext* ctx : _run_contexts) {
 		ctx->set_priority(driver->real_time_priority());
+		ctx->set_rate(driver->sample_rate());
 	}
 }
 
@@ -285,14 +309,31 @@ Engine::event_time()
 		return 0;
 	}
 
-	const SampleCount start = _direct_driver
+	// FIXME: Jitter with direct driver
+	const SampleCount now = _direct_driver
 		? run_context().start()
 		: _driver->frame_time();
 
-	/* Exactly one cycle latency (some could run ASAP if we get lucky, but not
-	   always, and a slight constant latency is far better than jittery lower
-	   (average) latency */
-	return start + _driver->block_length();
+	return now + _driver->block_length();
+}
+
+uint64_t
+Engine::current_time(const RunContext& context) const
+{
+	struct timespec time;
+#ifdef CLOCK_MONOTONIC_RAW
+	clock_gettime(CLOCK_MONOTONIC_RAW, &time);
+#else
+	clock_gettime(CLOCK_MONOTONIC, &time);
+#endif
+
+	return (uint64_t)time.tv_sec * 1e6 + (uint64_t)time.tv_nsec / 1e3;
+}
+
+void
+Engine::reset_load()
+{
+	_reset_load_flag = true;
 }
 
 void
@@ -367,6 +408,7 @@ unsigned
 Engine::run(uint32_t sample_count)
 {
 	RunContext& ctx = run_context();
+	_cycle_start_time = current_time(ctx);
 
 	// Apply control bindings to input
 	control_bindings()->pre_process(
@@ -377,6 +419,7 @@ Engine::run(uint32_t sample_count)
 	// Process events that came in during the last cycle
 	// (Aiming for jitter-free 1 block event latency, ideally)
 	const unsigned n_processed_events = process_events();
+	const uint64_t t_events           = current_time(ctx);
 
 	// Run root graph
 	if (_root_graph) {
@@ -385,6 +428,16 @@ Engine::run(uint32_t sample_count)
 		// Emit control binding feedback
 		control_bindings()->post_process(
 			ctx, _root_graph->port_impl(1)->buffer(0).get());
+	}
+
+	// Update load for this cycle
+	if (ctx.duration() > 0) {
+		_event_load.update(t_events - _cycle_start_time, ctx.duration());
+		_run_load.update(current_time(ctx) - t_events, ctx.duration());
+		if (_reset_load_flag) {
+			_run_load        = Load();
+			_reset_load_flag = false;
+		}
 	}
 
 	return n_processed_events;

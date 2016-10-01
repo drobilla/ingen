@@ -73,6 +73,8 @@ public:
 
 	void init_box(App& app);
 
+	void set_status_text(const std::string& text);
+
 	void set_graph(SPtr<const Client::GraphModel> graph,
 	               SPtr<GraphView>                view);
 
@@ -186,6 +188,7 @@ private:
 	Gtk::Alignment*     _alignment;
 	BreadCrumbs*        _breadcrumbs;
 	Gtk::Statusbar*     _status_bar;
+	Gtk::Label*         _status_label;
 
 	Gtk::HPaned*         _doc_paned;
 	Gtk::ScrolledWindow* _doc_scrolledwindow;

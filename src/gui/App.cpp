@@ -51,6 +51,7 @@
 #include "ThreadedLoader.hpp"
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
+#include "rgba.hpp"
 
 using namespace std;
 
@@ -74,6 +75,11 @@ App::App(Ingen::World* world)
 	, _window_factory(new WindowFactory(*this))
 	, _world(world)
 	, _sample_rate(48000)
+	, _block_length(1024)
+	, _n_threads(1)
+	, _max_event_load(0.0f)
+	, _min_run_load(0.0f)
+	, _max_run_load(0.0f)
 	, _enable_signal(true)
 	, _requested_plugins(false)
 	, _is_plugin(false)
@@ -193,6 +199,8 @@ App::attach(SPtr<SigClientInterface> client)
 		sigc::mem_fun(this, &App::response));
 	_client->signal_error().connect(
 		sigc::mem_fun(this, &App::error_message));
+	_client->signal_put().connect(
+		sigc::mem_fun(this, &App::put));
 	_client->signal_property_change().connect(
 		sigc::mem_fun(this, &App::property_change));
 }
@@ -271,18 +279,77 @@ App::set_tooltip(Gtk::Widget* widget, const LilvNode* node)
 }
 
 void
+App::put(const Raul::URI&            uri,
+         const Resource::Properties& properties,
+         Resource::Graph             ctx)
+{
+	_enable_signal = false;
+	for (const auto& p : properties) {
+		property_change(uri, p.first, p.second);
+	}
+	_enable_signal = true;
+	_status_text   = status_text();
+	signal_status_text_changed.emit(_status_text);
+}
+
+void
 App::property_change(const Raul::URI& subject,
                      const Raul::URI& key,
                      const Atom&      value)
 {
-	if (subject == Raul::URI("ingen:/engine") && key == uris().param_sampleRate) {
-		if (value.type() == forge().Int) {
-			log().info(fmt("Sample rate: %1%\n") % uris().forge.str(value));
-			_sample_rate = value.get<int32_t>();
-		} else {
-			log().error("Engine sample rate property is not an integer\n");
-		}
+	if (subject != Raul::URI("ingen:/engine")) {
+		return;
+	} else if (key == uris().param_sampleRate && value.type() == forge().Int) {
+		_sample_rate = value.get<int32_t>();
+	} else if (key == uris().bufsz_maxBlockLength && value.type() == forge().Int) {
+		_block_length = value.get<int32_t>();
+	} else if (key == uris().ingen_numThreads && value.type() == forge().Int) {
+		_n_threads = value.get<int>();
+	} else if (key == uris().ingen_maxEventLoad && value.type() == forge().Float) {
+		_max_event_load = value.get<float>();
+	} else if (key == uris().ingen_minRunLoad && value.type() == forge().Float) {
+		_min_run_load = value.get<float>();
+	} else if (key == uris().ingen_meanRunLoad && value.type() == forge().Float) {
+		_mean_run_load = value.get<float>();
+	} else if (key == uris().ingen_maxRunLoad && value.type() == forge().Float) {
+		_max_run_load = value.get<float>();
+	} else {
+		_world->log().warn(fmt("Unknown engine property %1%\n") % key);
+		return;
 	}
+
+	if (_enable_signal) {
+		_status_text = status_text();
+		signal_status_text_changed.emit(_status_text);
+	}
+}
+
+static std::string
+fraction_label(float f)
+{
+	static const uint32_t GREEN = 0x4A8A0EFF;
+	static const uint32_t RED   = 0x960909FF;
+
+	const uint32_t col = rgba_interpolate(GREEN, RED, std::min(f, 1.0f));
+	char           col_str[8];
+	snprintf(col_str, sizeof(col_str), "%02X%02X%02X",
+	         RGBA_R(col), RGBA_G(col), RGBA_B(col));
+	return (fmt("<span color='#%s'>%d%%</span>") % col_str % (f * 100)).str();
+}
+
+std::string
+App::status_text() const
+{
+	return (fmt("<b>Audio:</b> %2.1f kHz / %.1f ms   <b>Load: </b> %s events + %s   <b>DSP:</b> %s ≤ %s ≤ %s")
+	        % (_sample_rate / 1e3f)
+	        % (_block_length * 1e3f / (float)_sample_rate)
+	        % fraction_label(_max_event_load)
+	        % ((_n_threads == 1)
+	           ? "1 thread"
+	           : (fmt("%1% threads") % _n_threads).str())
+	        % fraction_label(_min_run_load)
+	        % fraction_label(_mean_run_load)
+	        % fraction_label(_max_run_load)).str();
 }
 
 void

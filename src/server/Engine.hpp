@@ -89,7 +89,26 @@ public:
 
 	void set_driver(SPtr<Driver> driver);
 
+	/** Return the frame time to execute an event that arrived now.
+	 *
+	 * This aims to return a time one cycle from "now", so that events ideally
+	 * have 1 cycle of latency with no jitter.
+	 */
 	SampleCount event_time();
+
+	/** Return the time this cycle began processing in microseconds.
+	 *
+	 * This value is comparable to the value returned by current_time().
+	 */
+	inline uint64_t cycle_start_time(const RunContext& context) const {
+		return _cycle_start_time;
+	}
+
+	/** Return the current time in microseconds. */
+	uint64_t current_time(const RunContext& context) const;
+
+	/** Reset the load statistics (when the expected DSP load changes). */
+	void reset_load();
 
 	/** Enqueue an event to be processed (non-realtime threads only). */
 	void enqueue_event(Event* ev, Event::Mode mode=Event::Mode::NORMAL);
@@ -128,10 +147,40 @@ public:
 	SPtr<Store> store() const;
 
 	size_t event_queue_size() const;
-	bool atomic_bundles() const { return _atomic_bundles; }
+	size_t n_threads()        const { return _run_contexts.size(); }
+	bool   atomic_bundles()   const { return _atomic_bundles; }
 
 private:
 	Ingen::World* _world;
+
+	struct Load {
+		void update(uint64_t time, uint64_t available) {
+			const uint64_t load = time * 100 / available;
+			if (load < min) {
+				min = load;
+				changed = true;
+			}
+			if (load > max) {
+				max = load;
+				changed = true;
+			}
+			if (++n == 1) {
+				mean = load;
+			} else {
+				const float a = mean + ((float)load - mean) / (float)++n;
+				if (a != mean) {
+					changed = floorf(a) != floorf(mean);
+					mean    = a;
+				}
+			}
+		}
+
+		uint64_t min     = std::numeric_limits<uint64_t>::max();
+		uint64_t max     = 0;
+		float    mean    = 0.0f;
+		uint64_t n       = 0;
+		bool     changed = false;
+	};
 
 	BlockFactory*     _block_factory;
 	Broadcaster*      _broadcaster;
@@ -153,6 +202,9 @@ private:
 	SocketListener*   _listener;
 
 	std::vector<RunContext*> _run_contexts;
+	uint64_t                 _cycle_start_time;
+	Load                     _event_load;
+	Load                     _run_load;
 
 	std::mt19937                          _rand_engine;
 	std::uniform_real_distribution<float> _uniform_dist;
@@ -161,6 +213,7 @@ private:
 	std::mutex              _tasks_mutex;
 
 	bool _quit_flag;
+	bool _reset_load_flag;
 	bool _direct_driver;
 	bool _atomic_bundles;
 };

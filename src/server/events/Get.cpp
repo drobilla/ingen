@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -90,10 +90,14 @@ Get::post_process()
 		} else if (_uri == "ingen:/engine") {
 			// TODO: Keep a proper RDF model of the engine
 			URIs& uris = _engine.world()->uris();
-			_request_client->set_property(
+			_request_client->put(
 				Raul::URI("ingen:/engine"),
-				uris.param_sampleRate,
-				uris.forge.make(int32_t(_engine.driver()->sample_rate())));
+				{ { uris.param_sampleRate,
+				    uris.forge.make(int32_t(_engine.driver()->sample_rate())) },
+				  { uris.bufsz_maxBlockLength,
+				    uris.forge.make(int32_t(_engine.driver()->block_length())) },
+				  { uris.ingen_numThreads,
+				    uris.forge.make(int32_t(_engine.n_threads())) } });
 		} else {
 			_response.send(_request_client.get());
 		}

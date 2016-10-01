@@ -179,6 +179,10 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->signal_owner_change().connect(
 		sigc::mem_fun(this, &GraphBox::event_clipboard_changed));
+
+	_status_label = Gtk::manage(new Gtk::Label("STATUS"));
+	_status_bar->pack_start(*_status_label, false, true, 0);
+	_status_label->show();
 }
 
 GraphBox::~GraphBox()
@@ -228,6 +232,16 @@ GraphBox::init_box(App& app)
 	_breadcrumbs = new BreadCrumbs(*_app);
 	_breadcrumbs->signal_graph_selected.connect(
 		sigc::mem_fun(this, &GraphBox::set_graph_from_path));
+
+	_status_label->set_markup(app.status_text());
+	app.signal_status_text_changed.connect(
+		sigc::mem_fun(*this, &GraphBox::set_status_text));
+}
+
+void
+GraphBox::set_status_text(const std::string& text)
+{
+	_status_label->set_markup(text);
 }
 
 void

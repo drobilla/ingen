@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -25,6 +25,7 @@
 #include <gtkmm/window.h>
 
 #include "ingen/Atom.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/World.hpp"
 #include "ingen/ingen.h"
@@ -125,7 +126,12 @@ public:
 	SPtr<Serialiser> serialiser();
 
 	static SPtr<App> create(Ingen::World* world);
+
 	void run();
+
+	std::string status_text() const;
+
+	sigc::signal<void, const std::string&> signal_status_text_changed;
 
 	inline Ingen::World* world() const { return _world; }
 	inline Ingen::URIs&  uris()  const { return _world->uris(); }
@@ -136,6 +142,10 @@ protected:
 
 	bool animate();
 	void response(int32_t id, Ingen::Status status, const std::string& subject);
+
+	void put(const Raul::URI&            uri,
+	         const Resource::Properties& properties,
+	         Resource::Graph             ctx);
 
 	void property_change(const Raul::URI& subject,
 	                     const Raul::URI& key,
@@ -158,7 +168,14 @@ protected:
 
 	Ingen::World* _world;
 
-	uint32_t _sample_rate;
+	int32_t     _sample_rate;
+	int32_t     _block_length;
+	int32_t     _n_threads;
+	float       _max_event_load;
+	float       _mean_run_load;
+	float       _min_run_load;
+	float       _max_run_load;
+	std::string _status_text;
 
 	typedef std::map<Port*, bool> ActivityPorts;
 	ActivityPorts _activity_ports;
