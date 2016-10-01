@@ -21,6 +21,8 @@
 
 #include "ingen/ingen.h"
 
+#include "util.hpp"
+
 namespace Ingen {
 namespace Server {
 
@@ -56,8 +58,8 @@ public:
 	/** Set to true during initialisation so ensure_thread doesn't fail.
 	 * Defined in Engine.cpp
 	 */
-	static bool                  single_threaded;
-	static thread_local unsigned flags;
+	static bool                        single_threaded;
+	static INGEN_THREAD_LOCAL unsigned flags;
 };
 
 } // namespace Server

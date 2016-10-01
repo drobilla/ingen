@@ -60,6 +60,15 @@ def configure(conf):
     conf.check_cxx(header_name='boost/shared_ptr.hpp')
     conf.check_cxx(header_name='boost/utility.hpp')
     conf.check_cxx(header_name='boost/weak_ptr.hpp')
+    conf.check_cxx(msg='Checking for thread_local keyword',
+                   mandatory=False,
+                   fragment='thread_local int i = 0; int main() {}',
+                   define_name='INGEN_HAVE_THREAD_LOCAL')
+    if not conf.is_defined('INGEN_HAVE_THREAD_LOCAL'):
+        conf.check_cxx(msg='Checking for __thread keyword',
+                       mandatory=False,
+                       fragment='__thread int i = 0; int main() {}',
+                       define_name='INGEN_HAVE_THREAD_BUILTIN')
 
     autowaf.check_pkg(conf, 'lv2', uselib_store='LV2',
                       atleast_version='1.14.0', mandatory=True)

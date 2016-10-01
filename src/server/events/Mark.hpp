@@ -48,7 +48,7 @@ public:
 	void execute(RunContext& context);
 	void post_process();
 
-	Execution get_execution() const override;
+	Execution get_execution() const;
 
 private:
 	Type _type;

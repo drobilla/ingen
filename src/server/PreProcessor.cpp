@@ -89,7 +89,7 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 	Event*       ev          = head;
 	Event*       last        = ev;
 	while (ev && ev->is_prepared()) {
-		switch (_block_state) {
+		switch (_block_state.load()) {
 		case BlockState::UNBLOCKED:
 			break;
 		case BlockState::PRE_BLOCKED:
