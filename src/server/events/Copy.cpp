@@ -79,7 +79,7 @@ Copy::pre_process(PreProcessContext& ctx)
 		}
 	} else if (_old_uri.scheme() == "file") {
 		if (Node::uri_is_path(_new_uri)) {
-			filesystem_to_engine(ctx);
+			return filesystem_to_engine(ctx);
 		} else {
 			// Ingen is not your file manager
 			return Event::pre_process_done(Status::BAD_REQUEST);
