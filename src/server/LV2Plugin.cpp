@@ -51,7 +51,7 @@ LV2Plugin::update_properties()
 	                                 NULL);
 	LilvNode* micro = lilv_world_get(_world->lilv_world(),
 	                                 lilv_plugin_get_uri(_lilv_plugin),
-	                                 _uris.lv2_minorVersion,
+	                                 _uris.lv2_microVersion,
 	                                 NULL);
 
 	if (lilv_node_is_int(minor) && lilv_node_is_int(micro)) {
