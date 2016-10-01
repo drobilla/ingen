@@ -102,24 +102,26 @@ MessagesWindow::log(LV2_URID type, const char* fmt, va_list args)
 void
 MessagesWindow::flush()
 {
-	LV2_URID    type;
-	std::string line;
-	{
-		std::lock_guard<std::mutex> lock(_mutex);
-		if (!_stream.rdbuf()->in_avail()) {
-			return;
+	while (true) {
+		LV2_URID    type;
+		std::string line;
+		{
+			std::lock_guard<std::mutex> lock(_mutex);
+			if (!_stream.rdbuf()->in_avail()) {
+				return;
+			}
+			_stream >> type;
+			std::getline(_stream, line, '\0');
 		}
-		_stream >> type;
-		std::getline(_stream, line, '\0');
-	}
 
-	Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
+		Glib::RefPtr<Gtk::TextBuffer> text_buf = _textview->get_buffer();
 
-	auto t = _tags.find(type);
-	if (t != _tags.end()) {
-		text_buf->insert_with_tag(text_buf->end(), line, t->second);
-	} else {
-		text_buf->insert(text_buf->end(), line);
+		auto t = _tags.find(type);
+		if (t != _tags.end()) {
+			text_buf->insert_with_tag(text_buf->end(), line, t->second);
+		} else {
+			text_buf->insert(text_buf->end(), line);
+		}
 	}
 
 	if (!_clear_button->is_sensitive()) {
