@@ -48,7 +48,7 @@ Get::Get(Engine&          engine,
 bool
 Get::pre_process()
 {
-	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
+	std::lock_guard<std::mutex> lock(_engine.store()->mutex());
 
 	if (_uri == "ingen:/plugins") {
 		_plugins = _engine.block_factory()->plugins();

@@ -114,7 +114,7 @@ Disconnect::Impl::Impl(Engine&     e,
 bool
 Disconnect::pre_process()
 {
-	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
+	std::lock_guard<std::mutex> lock(_engine.store()->mutex());
 
 	if (_tail_path.parent().parent() != _head_path.parent().parent()
 	    && _tail_path.parent() != _head_path.parent().parent()
