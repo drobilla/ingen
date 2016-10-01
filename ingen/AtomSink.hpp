@@ -30,9 +30,13 @@ public:
 	virtual ~AtomSink() {}
 
 	/** Write an Atom to the sink.
+	 *
+	 * @param default_id The default response ID to use if no
+	 * patch:sequenceNumber property is present on the message.
+	 *
 	 * @return True on success.
 	 */
-	virtual bool write(const LV2_Atom* msg) = 0;
+	virtual bool write(const LV2_Atom* msg, int32_t default_id=0) = 0;
 };
 
 } // namespace Ingen

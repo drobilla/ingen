@@ -256,7 +256,7 @@ main(int argc, char** argv)
 			NULL, NULL, atom->type, atom->size, LV2_ATOM_BODY(atom)) << endl;
 #endif
 
-		if (!atom_reader.write((const LV2_Atom*)out.buf)) {
+		if (!atom_reader.write((const LV2_Atom*)out.buf, n_events + 1)) {
 			return EXIT_FAILURE;
 		}
 

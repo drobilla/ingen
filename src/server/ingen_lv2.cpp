@@ -274,7 +274,7 @@ public:
 	/** AtomSink::write implementation called by the PostProcessor in the main
 	 * thread to write responses to the UI.
 	 */
-	bool write(const LV2_Atom* atom) {
+	bool write(const LV2_Atom* atom, int32_t default_id) {
 		// Called from post-processor in main thread
 		while (_to_ui.write(lv2_atom_total_size(atom), atom) == 0) {
 			// Overflow, wait until ring is drained next cycle

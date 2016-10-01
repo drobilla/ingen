@@ -44,7 +44,7 @@ UndoStack::start_entry()
 }
 
 bool
-UndoStack::write(const LV2_Atom* msg)
+UndoStack::write(const LV2_Atom* msg, int32_t default_id)
 {
 	_stack.back().push_event(msg);
 	return true;

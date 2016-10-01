@@ -43,7 +43,7 @@ struct IngenLV2AtomSink : public AtomSink {
 		, _ui_controller(ui_controller)
 	{}
 
-	bool write(const LV2_Atom* atom) {
+	bool write(const LV2_Atom* atom, int32_t default_id) {
 		_ui_write(_ui_controller,
 		          0,
 		          lv2_atom_total_size(atom),

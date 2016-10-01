@@ -124,7 +124,7 @@ AtomReader::is_message(const URIs& uris, const LV2_Atom* msg)
 }
 
 bool
-AtomReader::write(const LV2_Atom* msg)
+AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 {
 	if (msg->type != _uris.atom_Object) {
 		_log.warn(fmt("Unknown message type <%1%>\n")
@@ -145,7 +145,7 @@ AtomReader::write(const LV2_Atom* msg)
 
 	const int32_t seq_id = ((number && number->type == _uris.atom_Int)
 	                        ? ((const LV2_Atom_Int*)number)->body
-	                        : 0);
+	                        : default_id);
 	_iface.set_response_id(seq_id);
 
 	if (obj->body.otype == _uris.patch_Get) {

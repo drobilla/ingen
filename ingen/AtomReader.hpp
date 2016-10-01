@@ -45,7 +45,7 @@ public:
 
 	static bool is_message(const URIs& uris, const LV2_Atom* msg);
 
-	bool write(const LV2_Atom* msg);
+	bool write(const LV2_Atom* msg, int32_t default_id=0);
 
 private:
 	void get_atom(const LV2_Atom* in, Atom& out);
