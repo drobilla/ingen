@@ -52,17 +52,18 @@ CreateGraph::build_child_events()
 
 	// Properties common to both ports
 	Resource::Properties control_properties;
-	control_properties.put(uris.rdf_type, uris.atom_AtomPort);
 	control_properties.put(uris.atom_bufferType, uris.atom_Sequence);
 	control_properties.put(uris.atom_supports, uris.patch_Message);
-	control_properties.put(uris.rsz_minimumSize, uris.forge.make(4096));
+	control_properties.put(uris.lv2_designation, uris.lv2_control);
 	control_properties.put(uris.lv2_portProperty, uris.lv2_connectionOptional);
+	control_properties.put(uris.rdf_type, uris.atom_AtomPort);
+	control_properties.put(uris.rsz_minimumSize, uris.forge.make(4096));
 
-	// Add control input
+	// Add control port (message receive)
 	Resource::Properties in_properties(control_properties);
+	in_properties.put(uris.lv2_index, uris.forge.make(0));
 	in_properties.put(uris.lv2_name, uris.forge.alloc("Control"));
 	in_properties.put(uris.rdf_type, uris.lv2_InputPort);
-	in_properties.put(uris.lv2_index, uris.forge.make(0));
 	in_properties.put(uris.ingen_canvasX, uris.forge.make(32.0f),
 	                  Resource::Graph::EXTERNAL);
 	in_properties.put(uris.ingen_canvasY, uris.forge.make(32.0f),
@@ -75,11 +76,11 @@ CreateGraph::build_child_events()
 				_path.child(Raul::Symbol("control")),
 				in_properties)));
 
-	// Add control out
+	// Add notify port (message respond)
 	Resource::Properties out_properties(control_properties);
+	out_properties.put(uris.lv2_index, uris.forge.make(1));
 	out_properties.put(uris.lv2_name, uris.forge.alloc("Notify"));
 	out_properties.put(uris.rdf_type, uris.lv2_OutputPort);
-	out_properties.put(uris.lv2_index, uris.forge.make(1));
 	out_properties.put(uris.ingen_canvasX, uris.forge.make(128.0f),
 	                   Resource::Graph::EXTERNAL);
 	out_properties.put(uris.ingen_canvasY, uris.forge.make(32.0f),

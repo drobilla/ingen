@@ -143,6 +143,7 @@ public:
 	const Quark lv2_appliesTo;
 	const Quark lv2_binary;
 	const Quark lv2_connectionOptional;
+	const Quark lv2_control;
 	const Quark lv2_default;
 	const Quark lv2_designation;
 	const Quark lv2_enumeration;
