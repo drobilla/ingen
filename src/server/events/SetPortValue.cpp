@@ -93,7 +93,6 @@ SetPortValue::apply(RunContext& context)
 			_status = Status::TYPE_MISMATCH;
 		}
 	} else if (buf->type() == uris.atom_Sequence) {
-		buf->prepare_write(context);  // FIXME: incorrect
 		if (buf->append_event(_time - context.start(),
 		                      _value.size(),
 		                      _value.type(),

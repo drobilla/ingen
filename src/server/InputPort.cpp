@@ -149,9 +149,13 @@ InputPort::pre_process(RunContext& context)
 			buffer(v)->update_value_buffer(context.offset());
 		}
 	} else if (_arcs.empty()) {
-		// No incoming arcs, just update set state
+		// No incoming arcs, just handle user-set value
 		for (uint32_t v = 0; v < _poly; ++v) {
+			// Update set state
 			update_set_state(context, v);
+
+			// Prepare for write in case a set event executes this cycle
+			buffer(v)->prepare_write(context);
 		}
 	} else if (direct_connect()) {
 		// Directly connected, use source's buffer directly
