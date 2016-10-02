@@ -554,8 +554,9 @@ LV2Block::run(RunContext& context)
 void
 LV2Block::post_process(RunContext& context)
 {
-	BlockImpl::post_process(context);
-
+	/* Handle any worker responses.  Note that this may write to output ports,
+	   so must be done first to prevent clobbering worker responses and
+	   monitored notification ports. */
 	if (_worker_iface) {
 		LV2_Handle inst = lilv_instance_get_handle(instance(0));
 		while (!_responses.empty()) {
@@ -569,6 +570,9 @@ LV2Block::post_process(RunContext& context)
 			_worker_iface->end_run(inst);
 		}
 	}
+
+	/* Run cycle truly finished, finalise output ports. */
+	BlockImpl::post_process(context);
 }
 
 LilvState*
