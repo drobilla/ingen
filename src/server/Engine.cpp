@@ -321,14 +321,7 @@ Engine::event_time()
 uint64_t
 Engine::current_time(const RunContext& context) const
 {
-	struct timespec time;
-#ifdef CLOCK_MONOTONIC_RAW
-	clock_gettime(CLOCK_MONOTONIC_RAW, &time);
-#else
-	clock_gettime(CLOCK_MONOTONIC, &time);
-#endif
-
-	return (uint64_t)time.tv_sec * 1e6 + (uint64_t)time.tv_nsec / 1e3;
+	return _clock.now_microseconds();
 }
 
 void

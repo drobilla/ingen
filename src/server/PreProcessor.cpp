@@ -137,8 +137,8 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 		if (engine.world()->conf().option("trace").get<int32_t>()) {
 			const uint64_t start = engine.cycle_start_time(context);
 			const uint64_t end   = engine.current_time(context);
-			fprintf(stderr, "Processed %zu events in %zu us\n",
-			        n_processed, end - start);
+			fprintf(stderr, "Processed %zu events in %u us\n",
+			        n_processed, (unsigned)(end - start));
 		}
 
 		Event* next = (Event*)last->next();

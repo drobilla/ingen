@@ -27,6 +27,7 @@
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
+#include "Clock.hpp"
 #include "Event.hpp"
 #include "RunContext.hpp"
 #include "EventWriter.hpp"
@@ -205,6 +206,7 @@ private:
 	uint64_t                 _cycle_start_time;
 	Load                     _event_load;
 	Load                     _run_load;
+	Clock                    _clock;
 
 	std::mt19937                          _rand_engine;
 	std::uniform_real_distribution<float> _uniform_dist;
