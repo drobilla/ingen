@@ -241,7 +241,7 @@ PluginUI::instantiate()
 		} else if (!lilv_node_is_uri(plug)) {
 			_world->log().error(fmt("%1% UI %2% notification has non-URI plugin\n")
 			                    % plugin_uri % lilv_node_as_string(_ui_node));
-		} else if (strcmp(lilv_node_as_uri(plug), plugin_uri.c_str())) {
+		} else if (!strcmp(lilv_node_as_uri(plug), plugin_uri.c_str())) {
 			// Notification is valid and for this plugin
 			uint32_t index = lv2_ui_port_index(this, lilv_node_as_string(sym));
 			if (index != LV2UI_INVALID_PORT_INDEX) {
