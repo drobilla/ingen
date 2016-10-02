@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -34,6 +34,10 @@ public:
 	              bool                poly,
 	              GraphImpl*          parent,
 	              SampleRate          rate);
+
+	BlockImpl* duplicate(Engine&             engine,
+	                     const Raul::Symbol& symbol,
+	                     GraphImpl*          parent);
 
 	virtual void pre_process(RunContext& context);
 };

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -15,7 +15,9 @@
 */
 
 #include "Buffer.hpp"
+#include "Engine.hpp"
 #include "InternalBlock.hpp"
+#include "InternalPlugin.hpp"
 #include "PortImpl.hpp"
 
 namespace Ingen {
@@ -29,6 +31,24 @@ InternalBlock::InternalBlock(PluginImpl*         plugin,
 	: BlockImpl(plugin, symbol, poly, parent, rate)
 {}
 
+BlockImpl*
+InternalBlock::duplicate(Engine&             engine,
+                         const Raul::Symbol& symbol,
+                         GraphImpl*          parent)
+{
+	BufferFactory& bufs = *engine.buffer_factory();
+
+	BlockImpl* copy = reinterpret_cast<InternalPlugin*>(_plugin)->instantiate(
+		bufs, symbol, _polyphonic, parent_graph(), engine);
+
+	for (size_t i = 0; i < num_ports(); ++i) {
+		const Atom& value = port_impl(i)->value();
+		copy->port_impl(i)->set_property(bufs.uris().ingen_value, value);
+		copy->port_impl(i)->set_value(value);
+	}
+
+	return copy;
+}
 
 void
 InternalBlock::pre_process(RunContext& context)
