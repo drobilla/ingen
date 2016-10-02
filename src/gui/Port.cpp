@@ -98,6 +98,10 @@ Port::Port(App&                  app,
 	                        model()->has_property(_app.uris().atom_bufferType,
 	                                              _app.uris().atom_Sequence));
 
+	for (const auto& p : pm->properties()) {
+		property_changed(p.first, p.second);
+	}
+
 	update_metadata();
 	value_changed(pm->value());
 }
