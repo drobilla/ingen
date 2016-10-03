@@ -789,7 +789,7 @@ GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
 
 	const URIs& uris = _app.uris();
 
-	Resource::Properties props = get_initial_data();
+	Resource::Properties props = get_initial_data(Resource::Graph::INTERNAL);
 	props.insert(make_pair(uris.rdf_type, _app.forge().make_urid(type)));
 	if (type == uris.atom_AtomPort) {
 		props.insert(make_pair(uris.atom_bufferType,

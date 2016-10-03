@@ -279,35 +279,32 @@ parse_block(Ingen::World*                     world,
 		Sord::URI(*world->rdf_world(), uris.ingen_prototype)
 	};
 
-	std::string type_uri;
-	for (const Sord::URI& prototype : prototype_predicates) {
-		for (Sord::Iter p = model.find(subject, prototype, Sord::Node()); !p.end(); ++p) {
-			const std::string prot_uri = relative_uri(
-				base_uri, p.get_object().to_string(), false);
-			if (serd_uri_string_has_scheme((const uint8_t*)prot_uri.c_str())) {
-				/* Ignore prototypes that are relative to this bundle, they are
-				   blocks (probably from copy and paste), but we want files or
-				   LV2 plugins here. */
-				type_uri = prot_uri;
-				break;
-			}
+	// Get prototype
+	Sord::Node prototype;
+	for (const Sord::URI& pred : prototype_predicates) {
+		prototype = model.get(subject, pred, Sord::Node());
+		if (prototype.is_valid()) {
+			break;
 		}
 	}
 
-	if (type_uri.empty()) {
+	if (!prototype.is_valid()) {
 		world->log().error(
 			fmt("Block %1% (%2%) missing mandatory lv2:prototype\n") %
 			subject.to_string() % path);
 		return boost::optional<Raul::Path>();
 	}
 
-	if (!serd_uri_string_has_scheme((const uint8_t*)type_uri.c_str())) {
+	const uint8_t* type_uri = (const uint8_t*)prototype.to_string().c_str();
+	if (!serd_uri_string_has_scheme(type_uri) ||
+	    !strncmp((const char*)type_uri, "file:", 5)) {
+		// Prototype is a file, subgraph
 		SerdURI base_uri_parts;
 		serd_uri_parse((const uint8_t*)base_uri.c_str(), &base_uri_parts);
 
 		SerdURI  ignored;
 		SerdNode sub_uri = serd_node_new_uri_from_string(
-			(const uint8_t*)type_uri.c_str(),
+			type_uri,
 			&base_uri_parts,
 			&ignored);
 
@@ -328,9 +325,10 @@ parse_block(Ingen::World*                     world,
 		            path.parent(), Raul::Symbol(path.symbol()));
 
 		parse_graph(world, target, model, base_uri,
-		            subject, Resource::Graph::DEFAULT,
+		            subject, Resource::Graph::EXTERNAL,
 		            path.parent(), Raul::Symbol(path.symbol()));
 	} else {
+		// Prototype is non-file URI, plugin
 		Resource::Properties props = get_properties(
 			world, model, subject, Resource::Graph::DEFAULT);
 		props.insert(make_pair(uris.rdf_type,
@@ -385,34 +383,6 @@ parse_graph(Ingen::World*                     world,
 	Resource::Properties props = get_properties(world, model, subject_node, ctx);
 	target->put(Node::path_to_uri(graph_path), props, ctx);
 
-	// For each block in this graph
-	for (Sord::Iter n = model.find(subject_node, ingen_block, nil); !n.end(); ++n) {
-		Sord::Node       node       = n.get_object();
-		const Raul::Path block_path = graph_path.child(
-			Raul::Symbol(get_basename(node.to_string())));
-
-		// Parse and create block
-		parse_block(world, target, model, base_uri, node, block_path,
-		            boost::optional<Node::Properties>());
-
-		// For each port on this block
-		for (Sord::Iter p = model.find(node, lv2_port, nil); !p.end(); ++p) {
-			Sord::Node port = p.get_object();
-
-			// Get all properties
-			boost::optional<PortRecord> port_record = get_port(
-				world, model, port, ctx, block_path, NULL);
-			if (!port_record) {
-				world->log().error(fmt("Invalid port %1%\n") % port);
-				return boost::optional<Raul::Path>();
-			}
-
-			// Create port and/or set all port properties
-			target->put(Node::path_to_uri(port_record->first),
-			            port_record->second);
-		}
-	}
-
 	// For each port on this graph
 	typedef std::map<uint32_t, PortRecord> PortRecords;
 	PortRecords ports;
@@ -429,7 +399,12 @@ parse_graph(Ingen::World*                     world,
 		}
 
 		// Store port information in ports map
-		ports[index] = *port_record;
+		if (ports.find(index) == ports.end()) {
+			ports[index] = *port_record;
+		} else {
+			world->log().error(fmt("Ignored port %1% with duplicate index %2%\n")
+			                   % port % index);
+		}
 	}
 
 	// Create ports in order by index
@@ -439,6 +414,47 @@ parse_graph(Ingen::World*                     world,
 		            ctx);
 	}
 
+	if (ctx != Resource::Graph::INTERNAL) {
+		return graph_path;  // Not parsing graph internals, finished now
+	}
+
+	// For each block in this graph
+	for (Sord::Iter n = model.find(subject_node, ingen_block, nil); !n.end(); ++n) {
+		Sord::Node       node       = n.get_object();
+		const Raul::Path block_path = graph_path.child(
+			Raul::Symbol(get_basename(node.to_string())));
+
+		// Parse and create block
+		parse_block(world, target, model, base_uri, node, block_path,
+		            boost::optional<Node::Properties>());
+
+		// For each port on this block
+		for (Sord::Iter p = model.find(node, lv2_port, nil); !p.end(); ++p) {
+			Sord::Node port = p.get_object();
+
+			Resource::Graph subctx = Resource::Graph::DEFAULT;
+			if (!model.find(node,
+			                Sord::URI(*world->rdf_world(), uris.rdf_type),
+			                Sord::URI(*world->rdf_world(), uris.ingen_Graph)).end()) {
+				subctx = Resource::Graph::EXTERNAL;
+			}
+
+			// Get all properties
+			boost::optional<PortRecord> port_record = get_port(
+				world, model, port, subctx, block_path, NULL);
+			if (!port_record) {
+				world->log().error(fmt("Invalid port %1%\n") % port);
+				return boost::optional<Raul::Path>();
+			}
+
+			// Create port and/or set all port properties
+			target->put(Node::path_to_uri(port_record->first),
+			            port_record->second,
+			            subctx);
+		}
+	}
+
+	// Now that all ports and blocks exist, create arcs inside graph
 	parse_arcs(world, target, model, base_uri, subject_node, graph_path);
 
 	return graph_path;

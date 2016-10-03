@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -84,7 +84,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 	set_type(type, buffer_type);
 
-	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
+	set_property(uris.lv2_index, bufs.forge().make((int32_t)index), Resource::Graph::INTERNAL);
 	if (has_value()) {
 		set_property(uris.ingen_value, value);
 	}

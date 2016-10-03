@@ -445,13 +445,13 @@ Serialiser::Impl::serialise_block(SPtr<const Node>  block,
 	                      Sord::URI(_model->world(), uris.lv2_prototype),
 	                      class_id);
 
-	const Node::Properties props = block->properties(Resource::Graph::EXTERNAL);
+	const Node::Properties props = block->properties();
 	serialise_properties(block_id, props);
 
 	for (uint32_t i = 0; i < block->num_ports(); ++i) {
 		Node* const      p       = block->port(i);
 		const Sord::Node port_id = path_rdf_node(p->path());
-		serialise_port(p, Resource::Graph::EXTERNAL, port_id);
+		serialise_port(p, Resource::Graph::DEFAULT, port_id);
 		_model->add_statement(block_id,
 		                      Sord::URI(_model->world(), uris.lv2_port),
 		                      port_id);
@@ -472,7 +472,7 @@ Serialiser::Impl::serialise_port(const Node*       port,
 		_model->add_statement(port_id,
 		                      Sord::URI(world, uris.lv2_symbol),
 		                      Sord::Literal(world, port->path().symbol()));
-	} else {
+	} else if (context == Resource::Graph::EXTERNAL) {
 		// Never write lv2:index for plugin instances (not persistent/stable)
 		props.erase(uris.lv2_index);
 	}
@@ -483,6 +483,7 @@ Serialiser::Impl::serialise_port(const Node*       port,
 	{
 		const Atom& val = port->get_property(uris.ingen_value);
 		if (val.is_valid()) {
+			props.erase(uris.lv2_default);
 			props.insert(make_pair(uris.lv2_default, val));
 		} else {
 			_world.log().warn("Control input has no value, lv2:default omitted.\n");
