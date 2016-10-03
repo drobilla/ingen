@@ -383,11 +383,12 @@ GraphBox*
 Port::get_graph_box() const
 {
 	SPtr<const GraphModel> graph = dynamic_ptr_cast<const GraphModel>(model()->parent());
-	if (!graph) {
+	GraphBox*              box   = _app.window_factory()->graph_box(graph);
+	if (!box) {
 		graph = dynamic_ptr_cast<const GraphModel>(model()->parent()->parent());
+		box   = _app.window_factory()->graph_box(graph);
 	}
-
-	return _app.window_factory()->graph_box(graph);
+	return box;
 }
 
 void
