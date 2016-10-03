@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -112,7 +112,8 @@ Buffer::recycle()
 void
 Buffer::set_type(LV2_URID type, LV2_URID value_type)
 {
-	_type = type;
+	_type       = type;
+	_value_type = value_type;
 	if (type == _factory.uris().atom_Sequence && value_type) {
 		_value_buffer = _factory.get_buffer(value_type, 0, 0, false);
 	}
@@ -331,6 +332,12 @@ Buffer::append_event(int64_t        frames,
 	_latest_event = frames;
 
 	return true;
+}
+
+bool
+Buffer::append_event(int64_t frames, const LV2_Atom* body)
+{
+	return append_event(frames, body->size, body->type, (const uint8_t*)(body + 1));
 }
 
 SampleCount

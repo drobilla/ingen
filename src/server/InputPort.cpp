@@ -223,6 +223,7 @@ InputPort::next_value_offset(SampleCount offset, SampleCount end) const
 void
 InputPort::update_values(SampleCount offset, uint32_t voice)
 {
+	buffer(voice)->update_value_buffer(offset);
 }
 
 void

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -50,8 +50,8 @@ public:
 
 	void run(RunContext& context);
 
-	void note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
-	void note_off(RunContext& context, uint8_t note_num, FrameTime time);
+	bool note_on(RunContext& context, uint8_t note_num, uint8_t velocity, FrameTime time);
+	bool note_off(RunContext& context, uint8_t note_num, FrameTime time);
 
 	void learn() { _learning = true; }
 
@@ -61,6 +61,7 @@ private:
 	bool _learning;
 
 	InputPort*  _midi_in_port;
+	OutputPort* _midi_out_port;
 	InputPort*  _note_port;
 	OutputPort* _gate_port;
 	OutputPort* _trig_port;

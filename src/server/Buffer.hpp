@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -167,6 +167,9 @@ public:
 	                  uint32_t       size,
 	                  uint32_t       type,
 	                  const uint8_t* data);
+
+	/// Sequence buffers only
+	bool append_event(int64_t frames, const LV2_Atom* body);
 
 	/// Value buffer for numeric sequences
 	BufferRef       value_buffer()       { return _value_buffer; }

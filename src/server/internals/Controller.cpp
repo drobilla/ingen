@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -51,7 +51,7 @@ ControllerNode::ControllerNode(InternalPlugin*      plugin,
 	, _learning(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
-	_ports = new Raul::Array<PortImpl*>(6);
+	_ports = new Raul::Array<PortImpl*>(7);
 
 	const Atom zero       = bufs.forge().make(0.0f);
 	const Atom one        = bufs.forge().make(1.0f);
@@ -64,60 +64,72 @@ ControllerNode::ControllerNode(InternalPlugin*      plugin,
 	                            bufs.forge().make_urid(uris.midi_MidiEvent));
 	_ports->at(0) = _midi_in_port;
 
-	_param_port = new InputPort(bufs, this, Raul::Symbol("controller"), 1, 1,
+	_midi_out_port = new OutputPort(bufs, this, Raul::Symbol("event"), 1, 1,
+	                                PortType::ATOM, uris.atom_Sequence, Atom());
+	_midi_out_port->set_property(uris.lv2_name, bufs.forge().alloc("Event"));
+	_midi_out_port->set_property(uris.atom_supports,
+	                             bufs.forge().make_urid(uris.midi_MidiEvent));
+	_ports->at(1) = _midi_out_port;
+
+	_param_port = new InputPort(bufs, this, Raul::Symbol("controller"), 2, 1,
 	                            PortType::ATOM, uris.atom_Sequence, zero);
 	_param_port->set_property(uris.atom_supports, atom_Float);
 	_param_port->set_property(uris.lv2_minimum, zero);
 	_param_port->set_property(uris.lv2_maximum, bufs.forge().make(127.0f));
 	_param_port->set_property(uris.lv2_portProperty, uris.lv2_integer);
 	_param_port->set_property(uris.lv2_name, bufs.forge().alloc("Controller"));
-	_ports->at(1) = _param_port;
+	_ports->at(2) = _param_port;
 
-	_log_port = new InputPort(bufs, this, Raul::Symbol("logarithmic"), 2, 1,
+	_log_port = new InputPort(bufs, this, Raul::Symbol("logarithmic"), 3, 1,
 	                          PortType::ATOM, uris.atom_Sequence, zero);
 	_log_port->set_property(uris.atom_supports, atom_Float);
 	_log_port->set_property(uris.lv2_portProperty, uris.lv2_toggled);
 	_log_port->set_property(uris.lv2_name, bufs.forge().alloc("Logarithmic"));
-	_ports->at(2) = _log_port;
+	_ports->at(3) = _log_port;
 
-	_min_port = new InputPort(bufs, this, Raul::Symbol("minimum"), 3, 1,
+	_min_port = new InputPort(bufs, this, Raul::Symbol("minimum"), 4, 1,
 	                          PortType::ATOM, uris.atom_Sequence, zero);
 	_min_port->set_property(uris.atom_supports, atom_Float);
 	_min_port->set_property(uris.lv2_name, bufs.forge().alloc("Minimum"));
-	_ports->at(3) = _min_port;
+	_ports->at(4) = _min_port;
 
-	_max_port = new InputPort(bufs, this, Raul::Symbol("maximum"), 4, 1,
+	_max_port = new InputPort(bufs, this, Raul::Symbol("maximum"), 5, 1,
 	                          PortType::ATOM, uris.atom_Sequence, one);
 	_max_port->set_property(uris.atom_supports, atom_Float);
 	_max_port->set_property(uris.lv2_name, bufs.forge().alloc("Maximum"));
-	_ports->at(4) = _max_port;
+	_ports->at(5) = _max_port;
 
-	_audio_port = new OutputPort(bufs, this, Raul::Symbol("output"), 5, 1,
+	_audio_port = new OutputPort(bufs, this, Raul::Symbol("output"), 6, 1,
 	                             PortType::ATOM, uris.atom_Sequence, zero);
 	_audio_port->set_property(uris.atom_supports, atom_Float);
 	_audio_port->set_property(uris.lv2_name, bufs.forge().alloc("Output"));
-	_ports->at(5) = _audio_port;
+	_ports->at(6) = _audio_port;
 }
 
 void
 ControllerNode::run(RunContext& context)
 {
-	Buffer* const      midi_in = _midi_in_port->buffer(0).get();
-	LV2_Atom_Sequence* seq     = midi_in->get<LV2_Atom_Sequence>();
+	const BufferRef    midi_in  = _midi_in_port->buffer(0);
+	LV2_Atom_Sequence* seq      = midi_in->get<LV2_Atom_Sequence>();
+	const BufferRef    midi_out = _midi_out_port->buffer(0);
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
 		if (ev->body.type == _midi_in_port->bufs().uris().midi_MidiEvent &&
 		    ev->body.size >= 3 &&
 		    lv2_midi_message_type(buf) == LV2_MIDI_MSG_CONTROLLER) {
-			control(context, buf[1], buf[2], ev->time.frames + context.start());
+			if (control(context, buf[1], buf[2], ev->time.frames + context.start())) {
+				midi_out->append_event(ev->time.frames, &ev->body);
+			}
+
 		}
 	}
 }
 
-void
+bool
 ControllerNode::control(RunContext& context, uint8_t control_num, uint8_t val, FrameTime time)
 {
-	Sample scaled_value;
+	assert(time >= context.start() && time <= context.end());
+	const uint32_t offset = time - context.start();
 
 	const Sample nval = (val / 127.0f); // normalized [0, 1]
 
@@ -125,12 +137,23 @@ ControllerNode::control(RunContext& context, uint8_t control_num, uint8_t val, F
 		_param_port->set_control_value(context, time, control_num);
 		_param_port->force_monitor_update();
 		_learning = false;
+	} else {
+		_param_port->update_values(offset, 0);
 	}
 
-	const Sample min_port_val = _min_port->buffer(0)->value_at(0);
-	const Sample max_port_val = _max_port->buffer(0)->value_at(0);
-	const Sample log_port_val = _log_port->buffer(0)->value_at(0);
+	if (control_num != _param_port->buffer(0)->value_at(offset)) {
+		return false;
+	}
 
+	for (const auto& port : { _min_port, _max_port, _log_port }) {
+		port->update_values(offset, 0);
+	}
+
+	const Sample min_port_val = _min_port->buffer(0)->value_at(offset);
+	const Sample max_port_val = _max_port->buffer(0)->value_at(offset);
+	const Sample log_port_val = _log_port->buffer(0)->value_at(offset);
+
+	Sample scaled_value;
 	if (log_port_val > 0.0f) {
 		// haaaaack, stupid negatives and logarithms
 		Sample log_offset = 0;
@@ -143,9 +166,9 @@ ControllerNode::control(RunContext& context, uint8_t control_num, uint8_t val, F
 		scaled_value = ((nval) * (max_port_val - min_port_val)) + min_port_val;
 	}
 
-	if (control_num == _param_port->buffer(0)->value_at(0)) {
-		_audio_port->set_control_value(context, time, scaled_value);
-	}
+	_audio_port->set_control_value(context, time, scaled_value);
+
+	return true;
 }
 
 } // namespace Internals
