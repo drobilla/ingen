@@ -86,6 +86,7 @@ NewSubgraphWindow::name_changed()
 		_ok_button->property_sensitive() = true;
 	}
 }
+
 void
 NewSubgraphWindow::ok_clicked()
 {
