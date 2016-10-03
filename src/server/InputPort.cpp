@@ -155,7 +155,9 @@ InputPort::pre_process(RunContext& context)
 			update_set_state(context, v);
 
 			// Prepare for write in case a set event executes this cycle
-			buffer(v)->prepare_write(context);
+			if (!_parent->path().is_root()) {
+				buffer(v)->prepare_write(context);
+			}
 		}
 	} else if (direct_connect()) {
 		// Directly connected, use source's buffer directly
