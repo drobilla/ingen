@@ -445,8 +445,22 @@ Serialiser::Impl::serialise_block(SPtr<const Node>  block,
 	                      Sord::URI(_model->world(), uris.lv2_prototype),
 	                      class_id);
 
-	const Node::Properties props = block->properties();
+	// Serialise properties, but remove possibly stale state:state (set again below)
+	Node::Properties props = block->properties();
+	props.erase(uris.state_state);
 	serialise_properties(block_id, props);
+
+	if (_base_uri.substr(0, 5) == "file:") {
+		const std::string base       = Glib::filename_from_uri(_base_uri);
+		const std::string graph_dir  = Glib::path_get_dirname(base);
+		const std::string state_dir  = Glib::build_filename(graph_dir, block->symbol());
+		const std::string state_file = Glib::build_filename(state_dir, "state.ttl");
+		if (block->save_state(state_dir)) {
+			_model->add_statement(block_id,
+			                      Sord::URI(_model->world(), uris.state_state),
+			                      Sord::URI(_model->world(), Glib::filename_to_uri(state_file)));
+		}
+	}
 
 	for (uint32_t i = 0; i < block->num_ports(); ++i) {
 		Node* const      p       = block->port(i);

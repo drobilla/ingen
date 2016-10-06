@@ -43,7 +43,8 @@ public:
 	                       const Raul::Symbol& symbol,
 	                       bool                polyphonic,
 	                       GraphImpl*          parent,
-	                       Engine&             engine);
+	                       Engine&             engine,
+	                       const LilvState*    state);
 
 	const Raul::Symbol symbol() const { return _symbol; }
 

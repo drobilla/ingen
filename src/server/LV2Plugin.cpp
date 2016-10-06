@@ -90,12 +90,13 @@ LV2Plugin::instantiate(BufferFactory&      bufs,
                        const Raul::Symbol& symbol,
                        bool                polyphonic,
                        GraphImpl*          parent,
-                       Engine&             engine)
+                       Engine&             engine,
+                       const LilvState*    state)
 {
 	LV2Block* b = new LV2Block(
 		this, symbol, polyphonic, parent, engine.driver()->sample_rate());
 
-	if (!b->instantiate(bufs)) {
+	if (!b->instantiate(bufs, state)) {
 		delete b;
 		return NULL;
 	} else {

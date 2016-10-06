@@ -58,7 +58,8 @@ public:
 	                               const Raul::Symbol& symbol,
 	                               bool                polyphonic,
 	                               GraphImpl*          parent,
-	                               Engine&             engine) = 0;
+	                               Engine&             engine,
+	                               const LilvState*    state) = 0;
 
 	virtual const Raul::Symbol symbol() const = 0;
 

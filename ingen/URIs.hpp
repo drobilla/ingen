@@ -203,6 +203,7 @@ public:
 	const Quark rdfs_seeAlso;
 	const Quark rsz_minimumSize;
 	const Quark state_loadDefaultState;
+	const Quark state_state;
 	const Quark time_Position;
 	const Quark time_bar;
 	const Quark time_barBeat;

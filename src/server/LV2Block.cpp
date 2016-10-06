@@ -75,20 +75,6 @@ LV2Block::~LV2Block()
 	delete _instances;
 }
 
-void
-LV2Block::load_default_state(Worker* worker)
-{
-	const LilvPlugin* lplug    = _lv2_plugin->lilv_plugin();
-	const LilvNode*   uri_node = lilv_plugin_get_uri(lplug);
-	const Raul::URI   uri(lilv_node_as_string(uri_node));
-
-	LilvState* default_state = load_preset(_lv2_plugin->uri());
-	if (default_state) {
-		apply_state(worker, default_state);
-		lilv_state_free(default_state);
-	}
-}
-
 SPtr<LilvInstance>
 LV2Block::make_instance(URIs&      uris,
                         SampleRate rate,
@@ -229,7 +215,7 @@ LV2Block::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
  * value is false, this object may not be used.
  */
 bool
-LV2Block::instantiate(BufferFactory& bufs)
+LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 {
 	const Ingen::URIs& uris      = bufs.uris();
 	Ingen::World*      world     = bufs.engine().world();
@@ -446,7 +432,20 @@ LV2Block::instantiate(BufferFactory& bufs)
 		}
 	}
 
-	load_default_state(NULL);
+	// Load initial state if no state is explicitly given
+	LilvState* default_state = NULL;
+	if (!state) {
+		state = default_state = load_preset(_lv2_plugin->uri());
+	}
+
+	// Apply state
+	if (state) {
+		apply_state(NULL, state);
+	}
+
+	if (default_state) {
+		lilv_state_free(default_state);
+	}
 
 	// FIXME: Polyphony + worker?
 	if (lilv_plugin_has_feature(plug, uris.work_schedule)) {
@@ -458,6 +457,38 @@ LV2Block::instantiate(BufferFactory& bufs)
 	return ret;
 }
 
+bool
+LV2Block::save_state(const std::string& dir) const
+{
+	World*     world  = _lv2_plugin->world();
+	LilvWorld* lworld = world->lilv_world();
+
+	LilvState* state = lilv_state_new_from_instance(
+		_lv2_plugin->lilv_plugin(), const_cast<LV2Block*>(this)->instance(0),
+		&world->uri_map().urid_map_feature()->urid_map,
+		NULL, dir.c_str(), dir.c_str(), dir.c_str(), NULL, NULL,
+		LV2_STATE_IS_POD|LV2_STATE_IS_PORTABLE, NULL);
+
+	if (!state) {
+		return false;
+	} else if (lilv_state_get_num_properties(state) == 0) {
+		lilv_state_free(state);
+		return false;
+	}
+
+	lilv_state_save(lworld,
+	                &world->uri_map().urid_map_feature()->urid_map,
+	                &world->uri_map().urid_unmap_feature()->urid_unmap,
+	                state,
+	                NULL,
+	                dir.c_str(),
+	                "state.ttl");
+
+	lilv_state_free(state);
+
+	return true;
+}
+
 BlockImpl*
 LV2Block::duplicate(Engine&             engine,
                     const Raul::Symbol& symbol,
@@ -465,9 +496,15 @@ LV2Block::duplicate(Engine&             engine,
 {
 	const SampleRate rate = engine.driver()->sample_rate();
 
+	// Get current state
+	LilvState* state = lilv_state_new_from_instance(
+		_lv2_plugin->lilv_plugin(), instance(0),
+		&engine.world()->uri_map().urid_map_feature()->urid_map,
+		NULL, NULL, NULL, NULL, NULL, NULL, LV2_STATE_IS_NATIVE, NULL);
+
 	// Duplicate and instantiate block
 	LV2Block* dup = new LV2Block(_lv2_plugin, symbol, _polyphonic, parent, rate);
-	if (!dup->instantiate(*engine.buffer_factory())) {
+	if (!dup->instantiate(*engine.buffer_factory(), state)) {
 		delete dup;
 		return NULL;
 	}
@@ -480,19 +517,6 @@ LV2Block::duplicate(Engine&             engine,
 			dup->port_impl(p)->set_value(val);
 		}
 		dup->port_impl(p)->set_properties(port_impl(p)->properties());
-	}
-
-	// Copy internal plugin state
-	for (uint32_t v = 0; v < _polyphony; ++v) {
-		LilvState* state = lilv_state_new_from_instance(
-			_lv2_plugin->lilv_plugin(), instance(v),
-			&engine.world()->uri_map().urid_map_feature()->urid_map,
-			NULL, NULL, NULL, NULL, NULL, NULL, LV2_STATE_IS_NATIVE, NULL);
-		if (state) {
-			lilv_state_restore(state, dup->instance(v),
-			                   NULL, NULL, LV2_STATE_IS_NATIVE, NULL);
-			lilv_state_free(state);
-		}
 	}
 
 	return dup;
@@ -593,8 +617,25 @@ LV2Block::load_preset(const Raul::URI& uri)
 	return state;
 }
 
+LilvState*
+LV2Block::load_state(World* world, const std::string& path)
+{
+	LilvWorld*        lworld  = world->lilv_world();
+	const std::string uri     = Glib::filename_to_uri(path);
+	LilvNode*         subject = lilv_new_uri(lworld, uri.c_str());
+
+	LilvState* state = lilv_state_new_from_file(
+		lworld,
+		&world->uri_map().urid_map_feature()->urid_map,
+		subject,
+		path.c_str());
+
+	lilv_node_free(subject);
+	return state;
+}
+
 void
-LV2Block::apply_state(Worker* worker, LilvState* state)
+LV2Block::apply_state(Worker* worker, const LilvState* state)
 {
 	World*            world = parent_graph()->engine().world();
 	SPtr<LV2_Feature> sched;

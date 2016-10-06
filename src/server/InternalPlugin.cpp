@@ -46,7 +46,8 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
                             const Raul::Symbol& symbol,
                             bool                polyphonic,
                             GraphImpl*          parent,
-                            Engine&             engine)
+                            Engine&             engine,
+                            const LilvState*    state)
 {
 	const SampleCount srate = engine.driver()->sample_rate();
 

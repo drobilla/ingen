@@ -103,7 +103,7 @@ public:
 	virtual LilvState* load_preset(const Raul::URI& uri) { return NULL; }
 
 	/** Restore `state`. */
-	virtual void apply_state(Worker* worker, LilvState* state) {}
+	virtual void apply_state(Worker* worker, const LilvState* state) {}
 
 	/** Save current state as preset. */
 	virtual boost::optional<Resource>

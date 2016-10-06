@@ -29,6 +29,7 @@
 #include "PluginImpl.hpp"
 #include "PortImpl.hpp"
 #include "PreProcessContext.hpp"
+#include "LV2Block.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -118,11 +119,22 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 		PluginImpl* const plugin = _engine.block_factory()->plugin(prototype);
 		if (!plugin) {
 			return Event::pre_process_done(Status::PROTOTYPE_NOT_FOUND, prototype);
-		} else if (!(_block = plugin->instantiate(*_engine.buffer_factory(),
-		                                          Raul::Symbol(_path.symbol()),
-		                                          polyphonic,
-		                                          _graph,
-		                                          _engine))) {
+		}
+
+		// Load state from directory if given in properties
+		LilvState* state = NULL;
+		Resource::Properties::iterator s = _properties.find(uris.state_state);
+		if (s != _properties.end() && s->second.type() == uris.forge.Path) {
+			state = LV2Block::load_state(_engine.world(), s->second.ptr<char>());
+		}
+
+		// Instantiate plugin
+		if (!(_block = plugin->instantiate(*_engine.buffer_factory(),
+		                                   Raul::Symbol(_path.symbol()),
+		                                   polyphonic,
+		                                   _graph,
+		                                   _engine,
+		                                   state))) {
 			return Event::pre_process_done(Status::CREATION_FAILED, _path);
 		}
 	}

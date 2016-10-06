@@ -493,11 +493,7 @@ GraphBox::event_save()
 	if (!document.is_valid() || document.type() != _app->uris().forge.URI) {
 		event_save_as();
 	} else {
-		_app->loader()->save_graph(_graph, document.ptr<char>());
-		_status_bar->push(
-			(boost::format("Saved %1% to %2%") % _graph->path().c_str()
-			 % document.ptr<char>()).str(),
-			STATUS_CONTEXT_GRAPH);
+		save_graph(Raul::URI(document.ptr<char>()));
 	}
 }
 
@@ -525,6 +521,24 @@ GraphBox::confirm(const Glib::ustring& message,
 		dialog.set_transient_for(*_window);
 	}
 	return dialog.run() == Gtk::RESPONSE_YES;
+}
+
+void
+GraphBox::save_graph(const Raul::URI& uri)
+{
+	if (_app->interface()->uri().substr(0, 3) == "tcp") {
+		_status_bar->push(
+			(boost::format("Saved %1% to %2% on client")
+			 % _graph->path() % uri).str(),
+			STATUS_CONTEXT_GRAPH);
+		_app->loader()->save_graph(_graph, uri);
+	} else {
+		_status_bar->push(
+			(boost::format("Saved %1% to %2% on server")
+			 % _graph->path() % uri).str(),
+			STATUS_CONTEXT_GRAPH);
+		_app->interface()->copy(_graph->uri(), uri);
+	}
 }
 
 void
@@ -613,14 +627,11 @@ GraphBox::event_save_as()
 
 		if (confirmed) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
-			_app->loader()->save_graph(_graph, uri);
+			save_graph(Raul::URI(uri));
+
 			const_cast<GraphModel*>(_graph.get())->set_property(
 				uris.ingen_file,
 				_app->forge().alloc_uri(uri.c_str()));
-			_status_bar->push(
-				(boost::format("Saved %1% to %2%") % _graph->path().c_str()
-				 % filename).str(),
-				STATUS_CONTEXT_GRAPH);
 		}
 
 		_app->world()->conf().set(

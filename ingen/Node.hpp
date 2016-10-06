@@ -69,6 +69,7 @@ public:
 
 	// Plugin blocks only
 	virtual LilvInstance* instance() { return NULL; }
+	virtual bool          save_state(const std::string& dir) const { return false; }
 
 	// All objects
 	virtual GraphType           graph_type()   const = 0;

@@ -48,9 +48,10 @@ public:
 
 	~LV2Block();
 
-	bool instantiate(BufferFactory& bufs);
+	bool instantiate(BufferFactory& bufs, const LilvState* state);
 
 	LilvInstance* instance() { return instance(0); }
+	bool          save_state(const std::string& dir) const;
 
 	BlockImpl* duplicate(Engine&             engine,
 	                     const Raul::Symbol& symbol,
@@ -69,7 +70,7 @@ public:
 
 	LilvState* load_preset(const Raul::URI& uri);
 
-	void apply_state(Worker* worker, LilvState* state);
+	void apply_state(Worker* worker, const LilvState* state);
 
 	boost::optional<Resource> save_preset(const Raul::URI&  bundle,
 	                                      const Properties& props);
@@ -79,13 +80,13 @@ public:
 	                     BufferRef   buf,
 	                     SampleCount offset);
 
+	static LilvState* load_state(World* world, const std::string& path);
+
 protected:
 	SPtr<LilvInstance> make_instance(URIs&      uris,
 	                                 SampleRate rate,
 	                                 uint32_t   voice,
 	                                 bool       preparing);
-
-	void load_default_state(Worker* worker);
 
 	inline LilvInstance* instance(uint32_t voice) {
 		return (LilvInstance*)(*_instances)[voice].get();

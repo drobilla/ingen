@@ -106,6 +106,8 @@ private:
 	bool confirm(const Glib::ustring& message,
 	             const Glib::ustring& secondary_text="");
 
+	void save_graph(const Raul::URI& uri);
+
 	void event_import();
 	void event_save();
 	void event_save_as();
