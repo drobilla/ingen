@@ -126,34 +126,6 @@ get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
 	return NULL;
 }
 
-/** @page protocol
- * @subsection loading Loading and Unloading Bundles
- *
- * The property ingen:loadedBundle on the engine can be used to load
- * or unload bundles from Ingen's world.  For example:
- *
- * @code{.ttl}
- * # Load /old.lv2
- * []
- *     a patch:Put ;
- *     patch:subject </> ;
- *     patch:body [
- *         ingen:loadedBundle <file:///old.lv2/>
- *     ] .
- *
- * # Replace /old.lv2 with /new.lv2
- * []
- *     a patch:Patch ;
- *     patch:subject </> ;
- *     patch:remove [
- *         ingen:loadedBundle <file:///old.lv2/>
- *     ];
- *     patch:add [
- *         ingen:loadedBundle <file:///new.lv2/>
- *     ] .
- * @endcode
- */
-
 bool
 Delta::pre_process(PreProcessContext& ctx)
 {

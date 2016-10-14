@@ -14,6 +14,39 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/** @page protocol Ingen Protocol
+ * @tableofcontents
+ *
+ * @section introduction Controlling Ingen
+ *
+ * Ingen is controlled via a simple RDF-based protocol.  This conceptual
+ * protocol can be used in two concrete ways:
+ *
+ * 1. When Ingen is running as a process, a socket accepts messages in
+ * (textual) Turtle syntax, and responds in the same syntax.  Transfers are
+ * delimited by NULL characters in the stream, so the client knows when to
+ * finish parsing to interpret responses.  By default, Ingen listens on
+ * unix:///tmp/ingen.sock and tcp://localhost:16180
+ *
+ * 2. When Ingen is running as an LV2 plugin, the control and notify ports
+ * accept and respond using (binary) LV2 atoms.  Messages are read and written
+ * as events with atom:Object bodies.  The standard rules for LV2 event
+ * transmission apply, but note that the graph manipulations described here are
+ * executed asynchronously and not with sample accuracy, so the response may
+ * come at a later frame or cycle.
+ *
+ * For documentation purposes, this page discusses messages in Turtle syntax,
+ * but the same protocol is used in the LV2 case, just in a more compact binary
+ * encoding.
+ *
+ * Conceptually, Ingen represents a tree of objects, each of which has a path
+ * (like /main/in or /main/osc/out) and a set of properties.  A property is a
+ * URI key and some value.  All changes to Ingen are represented as
+ * manipulations of this tree of dictionaries.  The core of the protocol is
+ * based on the LV2 patch extension, which defines several messages for
+ * manipulating data in this model which resemble HTTP methods.
+ */
+
 #include <cassert>
 #include <cstdlib>
 #include <string>
@@ -70,6 +103,17 @@ AtomWriter::finish_msg()
 	_out.len = 0;
 }
 
+/** @page protocol
+ * @subsection Bundles
+ *
+ * An [ingen:BundleStart](http://drobilla.net/ns/ingen#BundleStart) marks the
+ * start of a bundle in the operation stream.  A bundle groups a series of
+ * messages for coarse-grained undo or atomic execution.
+ *
+ * @code{.ttl}
+ * [] a ingen:BundleStart .
+ * @endcode
+ */
 void
 AtomWriter::bundle_begin()
 {
@@ -79,6 +123,15 @@ AtomWriter::bundle_begin()
 	finish_msg();
 }
 
+/** @page protocol
+ *
+ * An [ingen:BundleEnd](http://drobilla.net/ns/ingen#BundleEnd) marks the end
+ * of a bundle in the operation stream.
+ *
+ * @code{.ttl}
+ * [] a ingen:BundleEnd .
+ * @endcode
+ */
 void
 AtomWriter::bundle_end()
 {
@@ -135,16 +188,11 @@ AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
 	}
 }
 
-/** @page protocol Ingen Protocol
- * @tableofcontents
- *
- * @section methods Methods
- */
-
 /** @page protocol
+ * @section methods Methods
  * @subsection Put
  *
- * Use [patch:Put](http://lv2plug.in/ns/ext/patch#Put) to set properties on an
+ * Send a [Put](http://lv2plug.in/ns/ext/patch#Put) to set properties on an
  * object, creating it if necessary.
  *
  * If the object already exists, all existing object properties with keys that
@@ -152,7 +200,7 @@ AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
  * left unchanged.
  *
  * If the object does not yet exist, the message must contain sufficient
- * information to create it (e.g. supported rdf:type properties).
+ * information to create it, including at least one rdf:type property.
  *
  * @code{.ttl}
  * []
@@ -187,7 +235,7 @@ AtomWriter::put(const Raul::URI&            uri,
 /** @page protocol
  * @subsection Patch
  *
- * Use [patch:Patch](http://lv2plug.in/ns/ext/patch#Patch) to manipulate the
+ * Send a [Patch](http://lv2plug.in/ns/ext/patch#Patch) to manipulate the
  * properties of an object.  A set of properties are first removed, then
  * another is added.  Analogous to WebDAV PROPPATCH.
  *
@@ -239,17 +287,17 @@ AtomWriter::delta(const Raul::URI&            uri,
 /** @page protocol
  * @subsection Copy
  *
- * Use [patch:Copy](http://lv2plug.in/ns/ext/copy#Copy) to copy an object from
+ * Send a [Copy](http://lv2plug.in/ns/ext/copy#Copy) to copy an object from
  * its current location (subject) to another (destination).
  *
  * If both the subject and destination are inside Ingen, like block paths, then the old object
  * is copied by, for example, creating a new plugin instance.
  *
- * If the subject is a path and the destination is inside Ingen, then the
- * subject must be an Ingen graph file or bundle, which is loaded to the
- * specified destination path.
+ * If the subject is a filename (file URI or atom:Path) and the destination is
+ * inside Ingen, then the subject must be an Ingen graph file or bundle, which
+ * is loaded to the specified destination path.
  *
- * If the subject is inside Ingen and the destination is a path, then the
+ * If the subject is inside Ingen and the destination is a filename, then the
  * subject is saved to an Ingen bundle at the given destination.
  *
  * @code{.ttl}
@@ -276,8 +324,8 @@ AtomWriter::copy(const Raul::URI& old_uri,
 /** @page protocol
  * @subsection Move
  *
- * Use [patch:Move](http://lv2plug.in/ns/ext/move#Move) to move an object from
- * its current location (subject) to another (destination).
+ * Send a [Move](http://lv2plug.in/ns/ext/move#Move) to move an object from its
+ * current location (subject) to another (destination).
  *
  * Both subject and destination must be paths in Ingen with the same parent,
  * moving between graphs is currently not supported.
@@ -306,7 +354,7 @@ AtomWriter::move(const Raul::Path& old_path,
 /** @page protocol
  * @subsection Delete
  *
- * Use [patch:Delete](http://lv2plug.in/ns/ext/delete#Delete) to remove an
+ * Send a [Delete](http://lv2plug.in/ns/ext/delete#Delete) to remove an
  * object from the engine and destroy it.
  *
  * All properties of the object are lost, as are all references to the object
@@ -332,7 +380,7 @@ AtomWriter::del(const Raul::URI& uri)
 /** @page protocol
  * @subsection Set
  *
- * Use [patch:Set](http://lv2plug.in/ns/ext/patch#Set) to set a property on an
+ * Send a [Set](http://lv2plug.in/ns/ext/patch#Set) to set a property on an
  * object.  Any existing value for that property is removed.
  *
  * @code{.ttl}
@@ -366,7 +414,9 @@ AtomWriter::set_property(const Raul::URI& subject,
  * @subsection Undo
  *
  * Use [ingen:Undo](http://drobilla.net/ns/ingen#Undo) to undo the last change
- * to the engine.
+ * to the engine.  Undo transactions can be delimited using bundle markers, if
+ * the last operations(s) received were in a bundle, then an Undo will undo the
+ * effects of that entire bundle.
  *
  * @code{.ttl}
  * [] a ingen:Undo .
@@ -384,8 +434,7 @@ AtomWriter::undo()
 /** @page protocol
  * @subsection Undo
  *
- * Use [ingen:Redo](http://drobilla.net/ns/ingen#Redo) to undo the last change
- * to the engine.
+ * Use [ingen:Redo](http://drobilla.net/ns/ingen#Redo) to redo the last undone change.
  *
  * @code{.ttl}
  * [] a ingen:Redo .
@@ -403,7 +452,7 @@ AtomWriter::redo()
 /** @page protocol
  * @subsection Get
  *
- * Use [patch:Get](http://lv2plug.in/ns/ext/patch#Get) to get the description
+ * Send a [Get](http://lv2plug.in/ns/ext/patch#Get) to get the description
  * of the subject.
  *
  * @code{.ttl}
@@ -429,7 +478,7 @@ AtomWriter::get(const Raul::URI& uri)
  */
 
 /** @page protocol
- * @subsection Connect Connecting Two Ports
+ * @subsection Connect Connecting Ports
  *
  * Ports are connected by putting an arc with the desired tail (an output port)
  * and head (an input port).  The tail and head must both be within the
@@ -461,7 +510,7 @@ AtomWriter::connect(const Raul::Path& tail,
 }
 
 /** @page protocol
- * @subsection Disconnect Disconnecting Two Ports
+ * @subsection Disconnect Disconnecting Ports
  *
  * Ports are disconnected by deleting the arc between them.  The description of
  * the arc is the same as in the put command used to create the connection.
@@ -489,14 +538,12 @@ AtomWriter::disconnect(const Raul::Path& tail,
 }
 
 /** @page protocol
- * @subsection DisconnectAll Fully Disconnecting an Object
+ * @subsection DisconnectAll Fully Disconnecting Anything
  *
- * Disconnect a port completely is similar to disconnecting a specific port,
- * but rather than specifying a specific tail and head, the special property
- * ingen:incidentTo is used to specify any arc that is connected to a port or
- * block in either direction.  This works with ports and blocks (including
- * graphs, which act as blocks for the purpose of this operation and are not
- * modified internally).
+ * All arcs to or from anything can be removed by giving the special property
+ * ingen:incidentTo rather than a specific head and tail.  This works for both
+ * ports and blocks (where the effect is to disconnect everything from ports on
+ * that block).
  *
  * @code{.ttl}
  * []
@@ -593,7 +640,31 @@ AtomWriter::error(const std::string& msg)
 }
 
 /** @page protocol
- * @tableofcontents
+ * @section loading Loading and Unloading Bundles
+ *
+ * The property ingen:loadedBundle on the engine can be used to load
+ * or unload bundles from Ingen's world.  For example:
+ *
+ * @code{.ttl}
+ * # Load /old.lv2
+ * []
+ *     a patch:Put ;
+ *     patch:subject </> ;
+ *     patch:body [
+ *         ingen:loadedBundle <file:///old.lv2/>
+ *     ] .
+ *
+ * # Replace /old.lv2 with /new.lv2
+ * []
+ *     a patch:Patch ;
+ *     patch:subject </> ;
+ *     patch:remove [
+ *         ingen:loadedBundle <file:///old.lv2/>
+ *     ];
+ *     patch:add [
+ *         ingen:loadedBundle <file:///new.lv2/>
+ *     ] .
+ * @endcode
  */
 
 } // namespace Ingen
