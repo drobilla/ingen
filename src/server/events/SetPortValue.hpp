@@ -44,6 +44,7 @@ public:
 	             SampleCount     timestamp,
 	             PortImpl*       port,
 	             const Atom&     value,
+	             bool            activity,
 	             bool            synthetic = false);
 
 	~SetPortValue();
@@ -61,6 +62,7 @@ private:
 	const Atom           _value;
 	BufferRef            _buffer;
 	ControlBindings::Key _binding;
+	bool                 _activity;
 	bool                 _synthetic;
 };
 

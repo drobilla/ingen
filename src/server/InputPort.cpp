@@ -86,7 +86,7 @@ InputPort::get_buffers(BufferFactory&      bufs,
 		}
 		return false;
 
-	} else if (num_arcs == 1) {
+	} else if (num_arcs == 1 && !is_a(PortType::ATOM)) {
 		if (real_time) {
 			if (!_arcs.front().must_mix()) {
 				// Single non-mixing connection, use buffers directly
@@ -104,6 +104,9 @@ InputPort::get_buffers(BufferFactory&      bufs,
 		voices->at(v).buffer = bufs.get_buffer(
 			buffer_type(), _value.type(), _buffer_size, real_time);
 		voices->at(v).buffer->clear();
+		if (_value.is_valid()) {
+			voices->at(v).buffer->set_value(_value);
+		}
 	}
 	return true;
 }
@@ -202,6 +205,7 @@ InputPort::pre_run(RunContext& context)
 
 			// Then mix them into our buffer for this voice
 			mix(context, buffer(v).get(), srcs, n_srcs);
+			update_values(context.offset(), v);
 		}
 	}
 }

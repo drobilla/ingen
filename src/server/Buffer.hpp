@@ -172,13 +172,15 @@ public:
 	bool append_event(int64_t frames, const LV2_Atom* body);
 
 	/// Value buffer for numeric sequences
-	BufferRef       value_buffer()       { return _value_buffer; }
-	const BufferRef value_buffer() const { return _value_buffer; }
+	BufferRef value_buffer() { return _value_buffer; }
 
+	/// Return the current value
 	const LV2_Atom* value() const;
-	LV2_Atom*       value();
 
-	/// Return offset of the first value change after `offset`.
+	/// Set/initialise current value in value buffer
+	void set_value(const Atom& value);
+
+	/// Return offset of the first value change after `offset`
 	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
 
 	/// Update value buffer to value as of offset

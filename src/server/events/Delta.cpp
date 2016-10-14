@@ -97,7 +97,7 @@ Delta::add_set_event(const char* port_symbol,
 
 	SetPortValue* ev = new SetPortValue(
 		_engine, _request_client, _request_id, _time,
-		port, Atom(size, type, value), true);
+		port, Atom(size, type, value), false, true);
 
 	_set_events.push_back(ev);
 }
@@ -293,7 +293,8 @@ Delta::pre_process(PreProcessContext& ctx)
 					}
 				} else if (key == uris.ingen_value || key == uris.ingen_activity) {
 					SetPortValue* ev = new SetPortValue(
-						_engine, _request_client, _request_id, _time, port, value);
+						_engine, _request_client, _request_id, _time, port, value,
+						key == uris.ingen_activity);
 					_set_events.push_back(ev);
 				} else if (key == uris.midi_binding) {
 					if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {

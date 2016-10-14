@@ -40,10 +40,12 @@ SetPortValue::SetPortValue(Engine&         engine,
                            SampleCount     timestamp,
                            PortImpl*       port,
                            const Atom&     value,
+                           bool            activity,
                            bool            synthetic)
 	: Event(engine, client, id, timestamp)
 	, _port(port)
 	, _value(value)
+	, _activity(activity)
 	, _synthetic(synthetic)
 {
 }
@@ -60,16 +62,18 @@ SetPortValue::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::DIRECTION_MISMATCH, _port->path());
 	}
 
-	// Set value metadata (does not affect buffers)
-	_port->set_value(_value);
-	_port->set_property(_engine.world()->uris().ingen_value, _value);
+	if (!_activity) {
+		// Set value metadata (does not affect buffers)
+		_port->set_value(_value);
+		_port->set_property(_engine.world()->uris().ingen_value, _value);
+	}
 
 	_binding = _engine.control_bindings()->port_binding(_port);
 
 	if (_port->buffer_type() == uris.atom_Sequence) {
 		_buffer = _engine.buffer_factory()->get_buffer(
 			_port->buffer_type(),
-			_port->value_type(),
+			0,
 			_engine.buffer_factory()->default_size(_port->buffer_type()),
 			false,
 			false);
@@ -129,7 +133,7 @@ void
 SetPortValue::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
-	if (respond() == Status::SUCCESS) {
+	if (respond() == Status::SUCCESS && !_activity) {
 		_engine.broadcaster()->set_property(
 			_port->uri(),
 			_engine.world()->uris().ingen_value,

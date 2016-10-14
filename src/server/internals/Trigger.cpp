@@ -160,7 +160,6 @@ TriggerNode::note_on(RunContext& context, uint8_t note_num, uint8_t velocity, Fr
 		_learning = false;
 	}
 
-	_note_port->update_values(offset, 0);
 	if (note_num == lrintf(_note_port->buffer(0)->value_at(offset))) {
 		_gate_port->set_control_value(context, time, 1.0f);
 		_trig_port->set_control_value(context, time, 1.0f);
@@ -177,7 +176,6 @@ TriggerNode::note_off(RunContext& context, uint8_t note_num, FrameTime time)
 	assert(time >= context.start() && time <= context.end());
 	const uint32_t offset = time - context.start();
 
-	_note_port->update_values(offset, 0);
 	if (note_num == lrintf(_note_port->buffer(0)->value_at(offset))) {
 		_gate_port->set_control_value(context, time, 0.0f);
 		return true;

@@ -167,8 +167,10 @@ Buffer::copy(const RunContext& context, const Buffer* src)
 			clear();
 		}
 
-		if (value() && src->value()) {
-			memcpy(value(), src->value(), lv2_atom_total_size(src->value()));
+		if (_value_buffer && src->_value_buffer) {
+			memcpy(_value_buffer->get<LV2_Atom>(),
+			       src->value(),
+			       lv2_atom_total_size(src->value()));
 		}
 	} else if (src->is_audio() && is_control()) {
 		samples()[0] = src->samples()[0];
@@ -374,16 +376,24 @@ Buffer::value() const
 	return _value_buffer ? _value_buffer->get<const LV2_Atom>() : NULL;
 }
 
-LV2_Atom*
-Buffer::value()
+void
+Buffer::set_value(const Atom& value)
 {
-	return _value_buffer ? _value_buffer->get<LV2_Atom>() : NULL;
+	if (!value.is_valid() || !_value_buffer) {
+		return;
+	}
+
+	if (value.size() > _value_buffer->size()) {
+		_value_buffer = _factory.get_buffer(value.type(), 0, value.size(), false, false);
+	}
+
+	memcpy(_value_buffer->get<LV2_Atom*>(), value.atom(), sizeof(LV2_Atom) + value.size());
 }
 
 void
 Buffer::update_value_buffer(SampleCount offset)
 {
-	if (!_value_buffer) {
+	if (!_value_buffer || !_value_type) {
 		return;
 	}
 

@@ -67,7 +67,6 @@ ArcImpl::buffer(uint32_t voice, SampleCount offset) const
 			_tail->update_values(offset, voice);  // Update value buffer
 			return _tail->value_buffer(voice);  // Return value buffer
 		} else if (_head->type() == PortType::CV) {
-			_tail->update_values(offset, voice);  // Update initial value
 			// Return full tail buffer below
 		}
 	}
