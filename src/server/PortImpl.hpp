@@ -196,6 +196,7 @@ public:
 	bool has_value() const;
 
 	PortType type()        const { return _type; }
+	LV2_URID value_type()  const { return _value.is_valid() ? _value.type() : 0; }
 	LV2_URID buffer_type() const { return _buffer_type; }
 
 	bool supports(const URIs::Quark& value_type) const;
@@ -225,11 +226,12 @@ public:
 	/** Monitor port value and broadcast to clients periodically. */
 	void monitor(RunContext& context, bool send_now=false);
 
-	void raise_set_by_user_flag() { _set_by_user = true; }
-
 	BufferFactory& bufs() const { return _bufs; }
 
 	BufferRef value_buffer(uint32_t voice);
+
+	BufferRef user_buffer(RunContext&) const { return _user_buffer; }
+	void      set_user_buffer(RunContext&, BufferRef b) { _user_buffer = b; }
 
 	/** Return offset of the first value change after `offset`. */
 	virtual SampleCount next_value_offset(SampleCount offset,
@@ -280,9 +282,9 @@ protected:
 	Atom                _max;
 	Raul::Array<Voice>* _voices;
 	Raul::Array<Voice>* _prepared_voices;
+	BufferRef           _user_buffer;
 	bool                _monitored;
 	bool                _force_monitor_update;
-	bool                _set_by_user;
 	bool                _is_morph;
 	bool                _is_auto_morph;
 	bool                _is_logarithmic;

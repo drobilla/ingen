@@ -143,12 +143,7 @@ InputPort::max_tail_poly(RunContext& context) const
 void
 InputPort::pre_process(RunContext& context)
 {
-	if (_set_by_user) {
-		// Value has been set (e.g. events pushed) by the user, don't smash it
-		for (uint32_t v = 0; v < _poly; ++v) {
-			buffer(v)->update_value_buffer(context.offset());
-		}
-	} else if (_arcs.empty()) {
+	if (_arcs.empty()) {
 		// No incoming arcs, just handle user-set value
 		for (uint32_t v = 0; v < _poly; ++v) {
 			// Update set state
@@ -175,14 +170,20 @@ InputPort::pre_process(RunContext& context)
 void
 InputPort::pre_run(RunContext& context)
 {
-	if (!_set_by_user && !_arcs.empty() && !direct_connect()) {
+	if ((_user_buffer || !_arcs.empty()) && !direct_connect()) {
 		const uint32_t src_poly   = max_tail_poly(context);
-		const uint32_t max_n_srcs = _arcs.size() * src_poly;
+		const uint32_t max_n_srcs = _arcs.size() * src_poly + 1;
 
 		for (uint32_t v = 0; v < _poly; ++v) {
 			// Get all sources for this voice
 			const Buffer* srcs[max_n_srcs];
 			uint32_t      n_srcs = 0;
+
+			if (_user_buffer) {
+				// Add buffer with user/UI input for this cycle
+				srcs[n_srcs++] = _user_buffer.get();
+			}
+
 			for (const auto& arc : _arcs) {
 				if (_poly == 1) {
 					// P -> 1 or 1 -> 1: all tail voices => each head voice
@@ -234,15 +235,9 @@ InputPort::post_process(RunContext& context)
 		_force_monitor_update = false;
 	}
 
-	if (_set_by_user) {
-		if (_buffer_type == _bufs.uris().atom_Sequence) {
-			// Clear events received via a SetPortValue
-			for (uint32_t v = 0; v < _poly; ++v) {
-				buffer(v)->prepare_write(context);
-			}
-		}
-		_set_by_user = false;
-	}
+	/* Finished processing any user/UI messages for this cycle, drop reference
+	   to user buffer. */
+	_user_buffer.reset();
 }
 
 bool
@@ -250,7 +245,8 @@ InputPort::direct_connect() const
 {
 	return _arcs.size() == 1
 		&& !_parent->path().is_root()
-		&& !_arcs.front().must_mix();
+		&& !_arcs.front().must_mix()
+		&& buffer(0)->type() != _bufs.uris().atom_Sequence;
 }
 
 } // namespace Server

@@ -69,7 +69,6 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _prepared_voices(NULL)
 	, _monitored(false)
 	, _force_monitor_update(false)
-	, _set_by_user(false)
 	, _is_morph(false)
 	, _is_auto_morph(false)
 	, _is_logarithmic(false)

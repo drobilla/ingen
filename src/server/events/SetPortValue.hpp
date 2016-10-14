@@ -19,6 +19,7 @@
 
 #include "ingen/Atom.hpp"
 
+#include "BufferRef.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
 #include "types.hpp"
@@ -58,6 +59,7 @@ private:
 
 	PortImpl*            _port;
 	const Atom           _value;
+	BufferRef            _buffer;
 	ControlBindings::Key _binding;
 	bool                 _synthetic;
 };

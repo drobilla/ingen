@@ -55,6 +55,7 @@ SetPortValue::~SetPortValue()
 bool
 SetPortValue::pre_process(PreProcessContext& ctx)
 {
+	Ingen::URIs&  uris = _engine.world()->uris();
 	if (_port->is_output()) {
 		return Event::pre_process_done(Status::DIRECTION_MISMATCH, _port->path());
 	}
@@ -64,6 +65,15 @@ SetPortValue::pre_process(PreProcessContext& ctx)
 	_port->set_property(_engine.world()->uris().ingen_value, _value);
 
 	_binding = _engine.control_bindings()->port_binding(_port);
+
+	if (_port->buffer_type() == uris.atom_Sequence) {
+		_buffer = _engine.buffer_factory()->get_buffer(
+			_port->buffer_type(),
+			_port->value_type(),
+			_engine.buffer_factory()->default_size(_port->buffer_type()),
+			false,
+			false);
+	}
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
@@ -84,7 +94,16 @@ SetPortValue::apply(RunContext& context)
 	}
 
 	Ingen::URIs&  uris = _engine.world()->uris();
-	Buffer* const buf  = _port->buffer(0).get();
+	Buffer*       buf  = _port->buffer(0).get();
+
+	if (_buffer) {
+		if (_port->user_buffer(context)) {
+			buf = _port->user_buffer(context).get();
+		} else {
+			_port->set_user_buffer(context, _buffer);
+			buf = _buffer.get();
+		}
+	}
 
 	if (buf->type() == uris.atom_Sound || buf->type() == uris.atom_Float) {
 		if (_value.type() == uris.forge.Float) {
@@ -93,12 +112,10 @@ SetPortValue::apply(RunContext& context)
 			_status = Status::TYPE_MISMATCH;
 		}
 	} else if (buf->type() == uris.atom_Sequence) {
-		if (buf->append_event(_time - context.start(),
-		                      _value.size(),
-		                      _value.type(),
-		                      (const uint8_t*)_value.get_body())) {
-			_port->raise_set_by_user_flag();
-		} else {
+		if (!buf->append_event(_time - context.start(),
+		                       _value.size(),
+		                       _value.type(),
+		                       (const uint8_t*)_value.get_body())) {
 			_status = Status::NO_SPACE;
 		}
 	} else if (buf->type() == uris.atom_URID) {
