@@ -435,10 +435,6 @@ ClientStore::attempt_connection(const Raul::Path& tail_path,
 	if (tail && head) {
 		SPtr<GraphModel> graph = connection_graph(tail_path, head_path);
 		SPtr<ArcModel>   arc(new ArcModel(tail, head));
-
-		tail->connected_to(head);
-		head->connected_to(tail);
-
 		graph->add_arc(arc);
 		return true;
 	} else {
@@ -459,15 +455,8 @@ void
 ClientStore::disconnect(const Raul::Path& src_path,
                         const Raul::Path& dst_path)
 {
-	SPtr<PortModel> tail = dynamic_ptr_cast<PortModel>(_object(src_path));
-	SPtr<PortModel> head = dynamic_ptr_cast<PortModel>(_object(dst_path));
-
-	if (tail)
-		tail->disconnected_from(head);
-
-	if (head)
-		head->disconnected_from(tail);
-
+	SPtr<PortModel>  tail  = dynamic_ptr_cast<PortModel>(_object(src_path));
+	SPtr<PortModel>  head  = dynamic_ptr_cast<PortModel>(_object(dst_path));
 	SPtr<GraphModel> graph = connection_graph(src_path, dst_path);
 	if (graph)
 		graph->remove_arc(tail.get(), head.get());
@@ -493,8 +482,6 @@ ClientStore::disconnect_all(const Raul::Path& parent_graph,
 		    || arc->head()->parent() == object
 		    || arc->tail()->path() == path
 		    || arc->head()->path() == path) {
-			arc->tail()->disconnected_from(arc->head());
-			arc->head()->disconnected_from(arc->tail());
 			graph->remove_arc(arc->tail().get(), arc->head().get());
 		}
 	}

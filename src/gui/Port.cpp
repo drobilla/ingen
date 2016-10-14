@@ -81,8 +81,6 @@ Port::Port(App&                  app,
 		sigc::mem_fun(this, &Port::property_removed));
 	pm->signal_activity().connect(
 		sigc::mem_fun(this, &Port::activity));
-	pm->signal_disconnection().connect(
-		sigc::mem_fun(this, &Port::disconnected_from));
 	pm->signal_moved().connect(
 		sigc::mem_fun(this, &Port::moved));
 
@@ -368,14 +366,6 @@ Port::activity(const Atom& value)
 		Ganv::Port::set_control_value(value.get<float>());
 	} else {
 		_app.port_activity(this);
-	}
-}
-
-void
-Port::disconnected_from(SPtr<PortModel> port)
-{
-	if (!model()->connected() && model()->is_a(_app.uris().lv2_AudioPort)) {
-		set_fill_color(peak_color(0.0f));
 	}
 }
 

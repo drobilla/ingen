@@ -405,6 +405,7 @@ GraphCanvas::get_port_view(SPtr<PortModel> port)
 	return NULL;
 }
 
+/** Called when a connection is added to the model. */
 void
 GraphCanvas::connection(SPtr<const ArcModel> arc)
 {
@@ -419,44 +420,49 @@ GraphCanvas::connection(SPtr<const ArcModel> arc)
 	}
 }
 
+/** Called when a connection is removed from the model. */
 void
 GraphCanvas::disconnection(SPtr<const ArcModel> arc)
 {
-	Ganv::Port* const src = get_port_view(arc->tail());
-	Ganv::Port* const dst = get_port_view(arc->head());
+	Ganv::Port* const tail = get_port_view(arc->tail());
+	Ganv::Port* const head = get_port_view(arc->head());
 
-	if (src && dst) {
-		remove_edge_between(src, dst);
+	if (tail && head) {
+		remove_edge_between(tail, head);
+		if (arc->head()->is_a(_app.uris().lv2_AudioPort)) {
+			GUI::Port* const h = dynamic_cast<GUI::Port*>(head);
+			if (h) {
+				h->activity(_app.forge().make(0.0f));  // Reset peaks
+			}
+		}
 	} else {
 		_app.log().error(fmt("Unable to find ports to disconnect %1% => %2%\n")
 		                 % arc->tail_path() % arc->head_path());
 	}
 }
 
+/** Called when the user connects ports on the canvas. */
 void
-GraphCanvas::connect(Ganv::Node* tail,
-                     Ganv::Node* head)
+GraphCanvas::connect(Ganv::Node* tail, Ganv::Node* head)
 {
-	const Ingen::GUI::Port* const src
-		= dynamic_cast<Ingen::GUI::Port*>(tail);
+	const GUI::Port* const t = dynamic_cast<GUI::Port*>(tail);
+	const GUI::Port* const h = dynamic_cast<GUI::Port*>(head);
 
-	const Ingen::GUI::Port* const dst
-		= dynamic_cast<Ingen::GUI::Port*>(head);
-
-	if (!src || !dst)
-		return;
-
-	_app.interface()->connect(src->model()->path(), dst->model()->path());
+	if (t && h) {
+		_app.interface()->connect(t->model()->path(), h->model()->path());
+	}
 }
 
+/** Called when the user disconnects ports on the canvas. */
 void
-GraphCanvas::disconnect(Ganv::Node* tail,
-                        Ganv::Node* head)
+GraphCanvas::disconnect(Ganv::Node* tail, Ganv::Node* head)
 {
-	const Ingen::GUI::Port* const t = dynamic_cast<Ingen::GUI::Port*>(tail);
-	const Ingen::GUI::Port* const h = dynamic_cast<Ingen::GUI::Port*>(head);
+	const GUI::Port* const t = dynamic_cast<GUI::Port*>(tail);
+	const GUI::Port* const h = dynamic_cast<GUI::Port*>(head);
 
-	_app.interface()->disconnect(t->model()->path(), h->model()->path());
+	if (t && h) {
+		_app.interface()->disconnect(t->model()->path(), h->model()->path());
+	}
 }
 
 void

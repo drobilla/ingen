@@ -70,7 +70,6 @@ PortModel::set(SPtr<ObjectModel> model)
 	if (port) {
 		_index = port->_index;
 		_direction = port->_direction;
-		_connections = port->_connections;
 		_signal_value_changed.emit(get_property(_uris.ingen_value));
 	}
 }

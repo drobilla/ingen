@@ -46,7 +46,6 @@ public:
 
 	inline uint32_t    index()     const { return _index; }
 	inline const Atom& value()     const { return get_property(_uris.ingen_value); }
-	inline bool        connected() const { return (_connections > 0); }
 	inline bool        is_input()  const { return (_direction == Direction::INPUT); }
 	inline bool        is_output() const { return (_direction == Direction::OUTPUT); }
 
@@ -70,8 +69,6 @@ public:
 	INGEN_SIGNAL(value_changed, void, const Atom&);
 	INGEN_SIGNAL(voice_changed, void, uint32_t, const Atom&);
 	INGEN_SIGNAL(activity, void, const Atom&);
-	INGEN_SIGNAL(connection, void, SPtr<PortModel>);
-	INGEN_SIGNAL(disconnection, void, SPtr<PortModel>);
 
 private:
 	friend class ClientStore;
@@ -83,27 +80,15 @@ private:
 		: ObjectModel(uris, path)
 		, _index(index)
 		, _direction(dir)
-		, _connections(0)
 	{}
 
 	void add_child(SPtr<ObjectModel> c)    { throw; }
 	bool remove_child(SPtr<ObjectModel> c) { throw; }
 
-	void connected_to(SPtr<PortModel> p) {
-		++_connections;
-		_signal_connection.emit(p);
-	}
-
-	void disconnected_from(SPtr<PortModel> p) {
-		--_connections;
-		_signal_disconnection.emit(p);
-	}
-
 	void set(SPtr<ObjectModel> model);
 
 	uint32_t  _index;
 	Direction _direction;
-	size_t    _connections;
 };
 
 } // namespace Client

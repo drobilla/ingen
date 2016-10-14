@@ -62,7 +62,6 @@ public:
 
 	void value_changed(const Atom& value);
 	void activity(const Atom& value);
-	void disconnected_from(SPtr<Client::PortModel> port);
 
 	bool on_selected(gboolean b);
 
