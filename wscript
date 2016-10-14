@@ -254,7 +254,7 @@ def build(bld):
 
     # Icons
     icon_dir   = os.path.join(bld.env.DATADIR, 'icons', 'hicolor')
-    icon_sizes = [16, 22, 24, 32, 48, 64, 128, 256, 512]
+    icon_sizes = [16, 22, 24, 32, 48, 64, 128, 256]
     for s in icon_sizes:
         d = '%dx%d' % (s, s)
         bld.install_as(
