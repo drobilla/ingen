@@ -34,7 +34,7 @@ class Interface;
 class World;
 
 /**
-   Read Ingen objects from Turtle files or strings.
+   Parser for reading graphs from Turtle files or strings.
 
    @ingroup Ingen
 */

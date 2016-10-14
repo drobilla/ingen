@@ -34,7 +34,7 @@ namespace Ingen {
 class Arc;
 class Store;
 
-/** An object on the audio graph.
+/** A node in the audio graph.
  *
  * The key property of nodes is that all nodes have a path and a symbol, as
  * well as a URI.

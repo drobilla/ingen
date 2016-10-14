@@ -113,6 +113,13 @@ AtomWriter::finish_msg()
  * @code{.ttl}
  * [] a ingen:BundleStart .
  * @endcode
+
+ * An [ingen:BundleEnd](http://drobilla.net/ns/ingen#BundleEnd) marks the end
+ * of a bundle in the operation stream.
+ *
+ * @code{.ttl}
+ * [] a ingen:BundleEnd .
+ * @endcode
  */
 void
 AtomWriter::bundle_begin()
@@ -123,15 +130,6 @@ AtomWriter::bundle_begin()
 	finish_msg();
 }
 
-/** @page protocol
- *
- * An [ingen:BundleEnd](http://drobilla.net/ns/ingen#BundleEnd) marks the end
- * of a bundle in the operation stream.
- *
- * @code{.ttl}
- * [] a ingen:BundleEnd .
- * @endcode
- */
 void
 AtomWriter::bundle_end()
 {

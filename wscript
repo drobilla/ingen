@@ -241,8 +241,13 @@ def build(bld):
     bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)
     bld.install_files('${BINDIR}', 'scripts/ingenams', chmod=Utils.O755)
 
-    # Documentation
+    # Code documentation
     autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, top, out)
+
+    # Ontology documentation
+    bld(rule='lv2specgen.py ${SRC} ${TGT} -i -p ingen --copy-style --list-email ingen@drobilla.net --list-page http://lists.drobilla.net/listinfo.cgi/ingen-drobilla.net',
+        source = 'bundles/ingen.lv2/ingen.ttl',
+        target = 'ingen.lv2/ingen.html')
 
     # Man page
     bld.install_files('${MANDIR}/man1', 'doc/ingen.1')
@@ -279,12 +284,9 @@ def upload_docs(ctx):
     import shutil
 
     # Ontology documentation
-    specgendir = '/usr/local/share/lv2specgen/'
-    shutil.copy(specgendir + 'style.css', 'build')
-    os.system('lv2specgen.py --list-email=ingen@drobilla.net --list-page=http://lists.drobilla.net/listinfo.cgi/ingen-drobilla.net bundles/ingen.lv2/ingen.ttl %s style.css build/ingen.html' % specgendir)
     os.system('rsync -avz -e ssh bundles/ingen.lv2/ingen.ttl drobilla@drobilla.net:~/drobilla.net/ns/')
-    os.system('rsync -avz -e ssh build/ingen.html drobilla@drobilla.net:~/drobilla.net/ns/')
-    os.system('rsync -avz -e ssh %s/style.css drobilla@drobilla.net:~/drobilla.net/ns/' % specgendir)
+    os.system('rsync -avz -e ssh build/ingen.lv2/ingen.html drobilla@drobilla.net:~/drobilla.net/ns/')
+    os.system('rsync -avz -e ssh build/ingen.lv2/style.css drobilla@drobilla.net:~/drobilla.net/ns/')
 
     # Doxygen documentation
     os.system('rsync -ravz --delete -e ssh build/doc/html/* drobilla@drobilla.net:~/drobilla.net/docs/ingen/')

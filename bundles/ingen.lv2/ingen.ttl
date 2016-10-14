@@ -11,9 +11,9 @@
 ingen:
 	a owl:Ontology ;
 	owl:imports <http://lv2plug.in/ns/lv2core> ;
-	doap:name "Ingen Ontology" ;
-	rdfs:label "Ingen Ontology" ;
-	rdfs:comment "Describes graphs of signal processing blocks which process audio, MIDI, and other signals or messages.  With appropriate plugins, these graphs can describe modular synthesizers, effects processors, and other signal processing devices." .
+	doap:name "Ingen" ;
+	rdfs:label "Ingen" ;
+	rdfs:comment "Ingen is a modular audio processing environment.  This vocabulary describes an Ingen configuration, and is used in both the control protocol and saved files.  Conceptually, Ingen represents a tree of objects, each of which has a path (like /main/in or /main/osc/out) and a set of properties." .
 
 ingen:Plugin
 	a rdfs:Class ;

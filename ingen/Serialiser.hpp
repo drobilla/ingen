@@ -33,7 +33,7 @@ class Store;
 class World;
 
 /**
-   Write Ingen objects to Turtle files or strings.
+   Serialiser for writing graphs to Turtle files or strings.
 
    @ingroup Ingen
 */

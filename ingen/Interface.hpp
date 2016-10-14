@@ -37,8 +37,7 @@ class URI;
 
 namespace Ingen {
 
-/** Abstract interface common to both engine and clients.
- * Purely virtual (except for the destructor).
+/** Abstract interface for Ingen servers and clients.
  *
  * @ingroup Ingen
  */

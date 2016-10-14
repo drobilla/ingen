@@ -31,6 +31,7 @@ public:
 
 	/** Write an Atom to the sink.
 	 *
+	 * @param msg The atom to write.
 	 * @param default_id The default response ID to use if no
 	 * patch:sequenceNumber property is present on the message.
 	 *

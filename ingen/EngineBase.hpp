@@ -28,7 +28,7 @@ namespace Ingen {
 class Interface;
 
 /**
-   The engine which executes the process graph.
+   The audio engine which executes the graph.
 
    @ingroup Ingen
 */

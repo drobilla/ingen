@@ -49,6 +49,8 @@ class RunContext
 public:
 	/** Create a new run context.
 	 *
+	 * @param engine The engine this context is running within.
+	 * @param id The ID of this context.
 	 * @param threaded If true, then this context is a worker which will launch
 	 * a thread and execute tasks as they become available.
 	 */

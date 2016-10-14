@@ -28,7 +28,11 @@
 
 namespace Ingen {
 
-/** An object with a URI described by properties.
+/** A resource with a URI described by properties.
+ *
+ * This is the base class for most things in Ingen, including graphs, blocks,
+ * ports, and the engine itself.
+ *
  * @ingroup Ingen
  */
 class INGEN_API Resource : public Raul::Deletable
