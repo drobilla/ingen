@@ -342,6 +342,10 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		_iface.response(((const LV2_Atom_Int*)seq)->body,
 		                (Ingen::Status)((const LV2_Atom_Int*)body)->body,
 		                subject_uri ? subject_uri->c_str() : "");
+	} else if (obj->body.otype == _uris.ingen_BundleStart) {
+		_iface.bundle_begin();
+	} else if (obj->body.otype == _uris.ingen_BundleEnd) {
+		_iface.bundle_end();
 	} else {
 		_log.warn(fmt("Unknown object type <%1%>\n")
 		          % _map.unmap_uri(obj->body.otype));
