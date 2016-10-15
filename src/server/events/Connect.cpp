@@ -52,7 +52,7 @@ Connect::Connect(Engine&           engine,
 bool
 Connect::pre_process(PreProcessContext& ctx)
 {
-	std::lock_guard<std::mutex> lock(_engine.store()->mutex());
+	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
 	Node* tail = _engine.store()->get(_tail_path);
 	if (!tail) {

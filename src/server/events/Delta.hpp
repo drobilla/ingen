@@ -115,7 +115,7 @@ private:
 
 	boost::optional<Resource> _preset;
 
-	std::unique_lock<std::mutex> _poly_lock;  ///< Long-term lock for poly changes
+	std::unique_lock<Store::Mutex> _poly_lock;  ///< Long-term lock for poly changes
 };
 
 } // namespace Events

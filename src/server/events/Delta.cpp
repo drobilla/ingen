@@ -175,7 +175,7 @@ Delta::pre_process(PreProcessContext& ctx)
 	}
 
 	// Take a writer lock while we modify the store
-	std::unique_lock<std::mutex> lock(_engine.store()->mutex());
+	std::unique_lock<Store::Mutex> lock(_engine.store()->mutex());
 
 	_object = is_graph_object
 		? static_cast<Ingen::Resource*>(_engine.store()->get(Node::uri_to_path(_subject)))

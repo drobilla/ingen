@@ -70,10 +70,12 @@ public:
 	                           const Raul::Symbol& symbol,
 	                           bool                allow_zero=true) const;
 
-	std::mutex& mutex() { return _mutex; }
+	typedef std::recursive_mutex Mutex;
+
+	Mutex& mutex() { return _mutex; }
 
 private:
-	std::mutex _mutex;
+	Mutex _mutex;
 };
 
 } // namespace Ingen

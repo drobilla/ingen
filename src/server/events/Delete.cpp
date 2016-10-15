@@ -86,7 +86,7 @@ Delete::pre_process(PreProcessContext& ctx)
 	}
 
 	// Take a writer lock while we modify the store
-	std::lock_guard<std::mutex> lock(_engine.store()->mutex());
+	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
 	_engine.store()->remove(iter, _removed_objects);
 

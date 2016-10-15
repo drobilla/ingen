@@ -84,7 +84,7 @@ DisconnectAll::~DisconnectAll()
 bool
 DisconnectAll::pre_process(PreProcessContext& ctx)
 {
-	std::unique_lock<std::mutex> lock(_engine.store()->mutex(), std::defer_lock);
+	std::unique_lock<Store::Mutex> lock(_engine.store()->mutex(), std::defer_lock);
 
 	if (!_deleting) {
 		lock.lock();

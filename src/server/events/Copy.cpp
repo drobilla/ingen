@@ -51,7 +51,7 @@ Copy::Copy(Engine&          engine,
 bool
 Copy::pre_process(PreProcessContext& ctx)
 {
-	std::lock_guard<std::mutex> lock(_engine.store()->mutex());
+	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
 	if (Node::uri_is_path(_old_uri)) {
 		// Old URI is a path within the engine

@@ -48,7 +48,7 @@ Move::~Move()
 bool
 Move::pre_process(PreProcessContext& ctx)
 {
-	std::lock_guard<std::mutex> lock(_engine.store()->mutex());
+	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
 	if (!_old_path.parent().is_parent_of(_new_path)) {
 		return Event::pre_process_done(Status::PARENT_DIFFERS, _new_path);
