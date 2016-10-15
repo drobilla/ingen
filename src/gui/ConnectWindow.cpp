@@ -514,12 +514,10 @@ ConnectWindow::gtk_callback()
 			if (root) {
 				set_connected_to(_app->interface());
 				_app->window_factory()->present_graph(root);
-				_app->interface()->get(Raul::URI("ingen:/plugins"));
 				next_stage();
 			}
 		}
 	} else if (_connect_stage == 5) {
-		_app->interface()->get(Raul::URI("ingen:/plugins"));
 		hide();
 		_connect_stage = 0; // set ourselves up for next time (if there is one)
 		_finished_connecting = true;
