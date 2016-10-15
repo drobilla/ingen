@@ -458,6 +458,12 @@ Engine::process_events()
 		run_context(), *_post_processor, MAX_EVENTS_PER_CYCLE);
 }
 
+unsigned
+Engine::process_all_events()
+{
+	return _pre_processor->process(run_context(), *_post_processor, 0);
+}
+
 void
 Engine::register_client(SPtr<Interface> client)
 {

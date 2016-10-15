@@ -560,22 +560,24 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	engine->activate();
 	Server::ThreadManager::single_threaded = true;
 
-	engine->locate(0, block_length);
-
-	engine->post_processor()->set_end_time(block_length);
-	engine->process_events();
-	engine->post_processor()->process();
-
 	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
 
-	fprintf(stderr, "LV2 parse resource %s from %s\n", graph->uri.c_str(), graph->filename.c_str());
+	// Locate to time 0 to process initialization events
+	engine->locate(0, block_length);
+	engine->post_processor()->set_end_time(block_length);
+
+	// Parse graph, filling the queue with events to create it
+	plugin->world->interface()->bundle_begin();
 	plugin->world->parser()->parse_file(plugin->world,
 	                                    plugin->world->interface().get(),
 	                                    graph->filename);
+	plugin->world->interface()->bundle_end();
 
+	// Drain event queue
 	while (engine->pending_events()) {
-		engine->process_events();
+		engine->process_all_events();
 		engine->post_processor()->process();
+		engine->maid()->cleanup();
 	}
 
 	/* Register client after loading graph so the to-ui ring does not overflow.

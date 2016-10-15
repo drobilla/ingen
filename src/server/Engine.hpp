@@ -117,6 +117,9 @@ public:
 	/** Process events (process thread only). */
 	unsigned process_events();
 
+	/** Process all events (no RT limits). */
+	unsigned process_all_events();
+
 	Ingen::World* world() const { return _world; }
 
 	Interface*       interface()        const { return _interface.get(); }
