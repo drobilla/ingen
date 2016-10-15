@@ -69,7 +69,6 @@ private:
 	std::mutex              _mutex;
 	Raul::Semaphore         _sem;
 	std::atomic<Event*>     _head;
-	std::atomic<Event*>     _prepared_back;
 	std::atomic<Event*>     _tail;
 	std::atomic<BlockState> _block_state;
 	bool                    _exit_flag;

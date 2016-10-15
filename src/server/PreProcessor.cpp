@@ -38,7 +38,6 @@ PreProcessor::PreProcessor(Engine& engine)
 	: _engine(engine)
 	, _sem(0)
 	, _head(NULL)
-	, _prepared_back(NULL)
 	, _tail(NULL)
 	, _block_state(BlockState::UNBLOCKED)
 	, _exit_flag(false)
@@ -74,10 +73,6 @@ PreProcessor::event(Event* const ev, Event::Mode mode)
 	} else {
 		_tail.load()->next(ev);
 		_tail = ev;
-	}
-
-	if (!_prepared_back.load()) {
-		_prepared_back = ev;
 	}
 
 	_sem.post();
@@ -169,14 +164,24 @@ PreProcessor::run()
 		_engine.world()->uri_map(), _engine.world()->uris(), redo_stack);
 
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
+
+	Event* back = NULL;
 	while (!_exit_flag) {
 		if (!_sem.timed_wait(1000)) {
 			continue;
 		}
 
-		Event* const ev = _prepared_back.load();
+		if (!back) {
+			// Ran off end, find new unprepared back
+			back = _head;
+			while (back && back->is_prepared()) {
+				back = back->next();
+			}
+		}
+
+		Event* const ev = back;
 		if (!ev) {
-			return;
+			continue;
 		}
 
 		assert(!ev->is_prepared());
@@ -214,7 +219,7 @@ PreProcessor::run()
 			_block_state = BlockState::PRE_UNBLOCKED;
 		}
 
-		_prepared_back = (Event*)ev->next();
+		back = (Event*)ev->next();
 	}
 }
 
