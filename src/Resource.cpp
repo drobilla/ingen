@@ -39,8 +39,15 @@ Resource::add_property(const Raul::URI& uri,
 		}
 	}
 
-	const Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
-	on_property(uri, v);
+	if (uri != _uris.ingen_activity) {
+		// Insert new property
+		const Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
+		on_property(uri, v);
+	} else {
+		// Announce ephemeral activity, but do not store
+		on_property(uri, value);
+	}
+
 	return true;
 }
 
@@ -62,10 +69,16 @@ Resource::set_property(const Raul::URI& uri,
 		i = next;
 	}
 
-	// Insert new property
-	const Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
-	on_property(uri, v);
-	return v;
+	if (uri != _uris.ingen_activity) {
+		// Insert new property
+		const Atom& v = _properties.insert(make_pair(uri, Property(value, ctx)))->second;
+		on_property(uri, v);
+		return v;
+	} else {
+		// Announce ephemeral activity, but do not store
+		on_property(uri, value);
+		return value;
+	}
 }
 
 const Atom&
