@@ -57,6 +57,7 @@ NodeModule::NodeModule(GraphCanvas&           canvas,
 	, _block(block)
 	, _gui_widget(NULL)
 	, _gui_window(NULL)
+	, _initialised(false)
 {
 	block->signal_new_port().connect(
 		sigc::mem_fun(this, &NodeModule::new_port_view));
@@ -85,12 +86,34 @@ NodeModule::NodeModule(GraphCanvas&           canvas,
 	for (const auto& p : block->properties()) {
 		property_changed(p.first, p.second);
 	}
+
+	if (_block->has_property(app().uris().ingen_uiEmbedded,
+	                         app().uris().forge.make(true))) {
+		// Schedule idle callback to embed GUI once ports arrive
+		Glib::signal_timeout().connect(
+			sigc::mem_fun(*this, &NodeModule::idle_init), 25, G_PRIORITY_DEFAULT_IDLE);
+	} else {
+		_initialised = true;
+	}
 }
 
 NodeModule::~NodeModule()
 {
 	delete _gui_widget;
 	delete _gui_window;
+}
+
+bool
+NodeModule::idle_init()
+{
+	if (_block->ports().size() == 0) {
+		return true;  // Need to embed GUI, but ports haven't shown up yet
+	}
+
+	// Ports have arrived, embed GUI and deregister this callback
+	embed_gui(true);
+	_initialised = true;
+	return false;
 }
 
 bool
@@ -442,7 +465,7 @@ NodeModule::property_changed(const Raul::URI& key, const Atom& value)
 	} else if (value.type() == uris.forge.Bool) {
 		if (key == uris.ingen_polyphonic) {
 			set_stacked(value.get<int32_t>());
-		} else if (key == uris.ingen_uiEmbedded) {
+		} else if (key == uris.ingen_uiEmbedded && _initialised) {
 			if (value.get<int32_t>() && !_gui_widget) {
 				embed_gui(true);
 			} else if (!value.get<int32_t>() && _gui_widget) {

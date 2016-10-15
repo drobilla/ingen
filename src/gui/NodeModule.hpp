@@ -69,6 +69,7 @@ protected:
 
 	virtual bool on_double_click(GdkEventButton* ev);
 
+	bool idle_init();
 	bool on_event(GdkEvent* ev);
 
 	void on_embed_gui_toggled(bool embed);
@@ -94,6 +95,7 @@ protected:
 	SPtr<Client::PluginUI>         _plugin_ui;
 	Gtk::Widget*                   _gui_widget;
 	Gtk::Window*                   _gui_window; ///< iff popped up
+	bool                           _initialised;
 };
 
 } // namespace GUI
