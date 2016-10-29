@@ -178,6 +178,10 @@ InputPort::pre_run(RunContext& context)
 		const uint32_t max_n_srcs = _arcs.size() * src_poly + 1;
 
 		for (uint32_t v = 0; v < _poly; ++v) {
+			if (!buffer(v)->get<void>()) {
+				continue;
+			}
+
 			// Get all sources for this voice
 			const Buffer* srcs[max_n_srcs];
 			uint32_t      n_srcs = 0;
