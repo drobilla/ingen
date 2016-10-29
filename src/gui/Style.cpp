@@ -105,7 +105,6 @@ Style::get_port_color(const Client::PortModel* p)
 		return _event_port_color;
 	}
 
-	_app.log().warn(fmt("No known port type for %1%\n") % p->path());
 	return 0x555555FF;
 }
 
