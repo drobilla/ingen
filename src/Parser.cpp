@@ -295,7 +295,7 @@ parse_block(Ingen::World*                     world,
 		return boost::optional<Raul::Path>();
 	}
 
-	const uint8_t* type_uri = (const uint8_t*)prototype.to_string().c_str();
+	const uint8_t* type_uri = (const uint8_t*)prototype.to_c_string();
 	if (!serd_uri_string_has_scheme(type_uri) ||
 	    !strncmp((const char*)type_uri, "file:", 5)) {
 		// Prototype is a file, subgraph
