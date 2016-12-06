@@ -119,8 +119,8 @@ public:
 	   accessed in the process thread, which is required for applying control
 	   bindings from incoming MIDI data.
 	*/
-	void set_minimum(const Atom& min) { _min = min; }
-	void set_maximum(const Atom& max) { _max = max; }
+	void set_minimum(const Atom& min) { _min.set_rt(min); }
+	void set_maximum(const Atom& max) { _max.set_rt(max); }
 
 	inline BufferRef buffer(uint32_t voice) const {
 		return _voices->at((_poly == 1) ? 0 : voice).buffer;

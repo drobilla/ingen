@@ -50,11 +50,15 @@ public:
 	/** Create a new run context.
 	 *
 	 * @param engine The engine this context is running within.
+	 * @param event_sink Sink for notification events (peaks etc)
 	 * @param id The ID of this context.
 	 * @param threaded If true, then this context is a worker which will launch
 	 * a thread and execute tasks as they become available.
 	 */
-	RunContext(Engine& engine, unsigned id, bool threaded);
+	RunContext(Engine&           engine,
+	           Raul::RingBuffer* event_sink,
+	           unsigned          id,
+	           bool              threaded);
 
 	/** Create a sub-context of `parent`.
 	 *
@@ -147,7 +151,6 @@ protected:
 	SampleCount _nframes;    ///< Number of frames past offset to process
 	SampleCount _rate;       ///< Sample rate in Hz
 	bool        _realtime;   ///< True iff context is hard realtime
-	bool        _copy;       ///< True iff this is a copy (shared event_sink)
 };
 
 } // namespace Server

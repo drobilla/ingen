@@ -46,10 +46,12 @@ struct Notification
 	LV2_URID  type;
 };
 
-RunContext::RunContext(Engine& engine, unsigned id, bool threaded)
+RunContext::RunContext(Engine&           engine,
+                       Raul::RingBuffer* event_sink,
+                       unsigned          id,
+                       bool              threaded)
 	: _engine(engine)
-	, _event_sink(
-		new Raul::RingBuffer(engine.event_queue_size() * sizeof(Notification)))
+	, _event_sink(event_sink)
 	, _task(nullptr)
 	, _thread(threaded ? new std::thread(&RunContext::run, this) : nullptr)
 	, _id(id)
@@ -58,7 +60,6 @@ RunContext::RunContext(Engine& engine, unsigned id, bool threaded)
 	, _offset(0)
 	, _nframes(0)
 	, _realtime(true)
-	, _copy(false)
 {}
 
 RunContext::RunContext(const RunContext& copy)
@@ -72,15 +73,10 @@ RunContext::RunContext(const RunContext& copy)
 	, _offset(copy._offset)
 	, _nframes(copy._nframes)
 	, _realtime(copy._realtime)
-	, _copy(true)
 {}
 
 RunContext::~RunContext()
-{
-	if (!_copy) {
-		delete _event_sink;
-	}
-}
+{}
 
 bool
 RunContext::must_notify(const PortImpl* port) const
@@ -101,9 +97,9 @@ RunContext::notify(LV2_URID    key,
 		return false;
 	}
 	if (_event_sink->write(sizeof(n), &n) != sizeof(n)) {
-		_engine.log().error("Error writing header to notification ring\n");
+		_engine.log().rt_error("Error writing header to notification ring\n");
 	} else if (_event_sink->write(size, body) != size) {
-		_engine.log().error("Error writing body to notification ring\n");
+		_engine.log().rt_error("Error writing body to notification ring\n");
 	} else {
 		return true;
 	}
@@ -135,13 +131,13 @@ RunContext::emit_notifications(FrameTime end)
 						note.port->set_property(uris.ingen_value, value);
 					}
 				} else {
-					_engine.log().error("Error unmapping notification key URI\n");
+					_engine.log().rt_error("Error unmapping notification key URI\n");
 				}
 			} else {
-				_engine.log().error("Error reading body from notification ring\n");
+				_engine.log().rt_error("Error reading body from notification ring\n");
 			}
 		} else {
-			_engine.log().error("Error reading header from notification ring\n");
+			_engine.log().rt_error("Error reading header from notification ring\n");
 		}
 	}
 }

@@ -80,9 +80,9 @@ ControlBindings::binding_key(const Atom& binding) const
 			lv2_atom_object_body_get(
 				binding.size(), obj, (LV2_URID)uris.midi_controllerNumber, &num, NULL);
 			if (!num) {
-				_engine.log().error("Controller binding missing number\n");
+				_engine.log().rt_error("Controller binding missing number\n");
 			} else if (num->type != uris.atom_Int) {
-				_engine.log().error("Controller number not an integer\n");
+				_engine.log().rt_error("Controller number not an integer\n");
 			} else {
 				key = Key(Type::MIDI_CC, ((LV2_Atom_Int*)num)->body);
 			}
@@ -90,15 +90,15 @@ ControlBindings::binding_key(const Atom& binding) const
 			lv2_atom_object_body_get(
 				binding.size(), obj, (LV2_URID)uris.midi_noteNumber, &num, NULL);
 			if (!num) {
-				_engine.log().error("Note binding missing number\n");
+				_engine.log().rt_error("Note binding missing number\n");
 			} else if (num->type != uris.atom_Int) {
-				_engine.log().error("Note number not an integer\n");
+				_engine.log().rt_error("Note number not an integer\n");
 			} else {
 				key = Key(Type::MIDI_NOTE, ((LV2_Atom_Int*)num)->body);
 			}
 		}
 	} else if (binding.type()) {
-		_engine.log().error(fmt("Unknown binding type %1%\n") % binding.type());
+		_engine.log().rt_error("Unknown binding type\n");
 	}
 	return key;
 }

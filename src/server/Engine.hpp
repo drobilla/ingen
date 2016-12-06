@@ -205,11 +205,12 @@ private:
 	Worker*           _sync_worker;
 	SocketListener*   _listener;
 
-	std::vector<RunContext*> _run_contexts;
-	uint64_t                 _cycle_start_time;
-	Load                     _event_load;
-	Load                     _run_load;
-	Clock                    _clock;
+	std::vector<Raul::RingBuffer*> _notifications;
+	std::vector<RunContext*>       _run_contexts;
+	uint64_t                       _cycle_start_time;
+	Load                           _event_load;
+	Load                           _run_load;
+	Clock                          _clock;
 
 	std::mt19937                          _rand_engine;
 	std::uniform_real_distribution<float> _uniform_dist;

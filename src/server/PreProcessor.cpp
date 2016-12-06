@@ -129,12 +129,14 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 
 	if (n_processed > 0) {
 		Engine& engine = context.engine();
+#ifndef NDEBUG
 		if (engine.world()->conf().option("trace").get<int32_t>()) {
 			const uint64_t start = engine.cycle_start_time(context);
 			const uint64_t end   = engine.current_time(context);
 			fprintf(stderr, "Processed %zu events in %u us\n",
 			        n_processed, (unsigned)(end - start));
 		}
+#endif
 
 		Event* next = (Event*)last->next();
 		last->next(NULL);

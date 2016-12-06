@@ -50,6 +50,8 @@ public:
 		};
 	};
 
+	void rt_error(const char* msg);
+
 	void error(const std::string& msg);
 	void info(const std::string& msg);
 	void warn(const std::string& msg);

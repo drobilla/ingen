@@ -362,7 +362,7 @@ JackDriver::pre_process_port(RunContext& context, EnginePort* port)
 				jack_midi_event_get(&ev, jack_buf, i);
 				if (!graph_buf->append_event(
 					    ev.time, ev.size, _midi_event_type, ev.buffer)) {
-					_engine.log().warn("Failed to write to MIDI buffer, events lost!\n");
+					_engine.log().rt_error("Failed to write to MIDI buffer, events lost!\n");
 				}
 			}
 		}

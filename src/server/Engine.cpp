@@ -99,7 +99,9 @@ Engine::Engine(Ingen::World* world)
 	_control_bindings = new ControlBindings(*this);
 
 	for (int i = 0; i < world->conf().option("threads").get<int32_t>(); ++i) {
-		_run_contexts.push_back(new RunContext(*this, i, i > 0));
+		Raul::RingBuffer* ring = new Raul::RingBuffer(24 * event_queue_size());
+		_notifications.push_back(ring);
+		_run_contexts.push_back(new RunContext(*this, ring, i, i > 0));
 	}
 
 	_world->lv2_features().add_feature(_worker->schedule_feature());
@@ -147,6 +149,13 @@ Engine::~Engine()
 	while (!_pre_processor->empty()) {
 		_pre_processor->process(ctx, *_post_processor, 1);
 		_post_processor->process();
+	}
+
+	for (RunContext* ctx : _run_contexts) {
+		delete ctx;
+	}
+	for (Raul::RingBuffer* ring : _notifications) {
+		delete ring;
 	}
 
 	const SPtr<Store> store = this->store();

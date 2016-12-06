@@ -32,6 +32,15 @@ Log::Log(LV2_Log_Log* log, URIs& uris)
 {}
 
 void
+Log::rt_error(const char* msg)
+{
+#ifndef NDEBUG
+	va_list args;
+	vtprintf(_uris.log_Error, msg, args);
+#endif
+}
+
+void
 Log::error(const std::string& msg)
 {
 	va_list args;

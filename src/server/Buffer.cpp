@@ -67,7 +67,7 @@ Buffer::Buffer(BufferFactory& bufs,
 #endif
 
 		if (ret) {
-			bufs.engine().log().error("Failed to allocate event buffer\n");
+			bufs.engine().log().rt_error("Failed to allocate event buffer\n");
 			throw std::bad_alloc();
 		}
 	}

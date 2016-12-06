@@ -72,7 +72,7 @@ public:
 			_body.ptr = (LV2_Atom*)malloc(sizeof(LV2_Atom) + _atom.size);
 			memcpy(_body.ptr, copy._body.ptr, sizeof(LV2_Atom) + _atom.size);
 		} else {
-			memcpy(&_body.val, &copy._body.val, sizeof(_body.val));
+			_body.val = copy._body.val;
 		}
 	}
 
@@ -86,7 +86,7 @@ public:
 			_body.ptr = (LV2_Atom*)malloc(sizeof(LV2_Atom) + _atom.size);
 			memcpy(_body.ptr, other._body.ptr, sizeof(LV2_Atom) + _atom.size);
 		} else {
-			memcpy(&_body.val, &other._body.val, sizeof(_body.val));
+			_body.val = other._body.val;
 		}
 		return *this;
 	}
@@ -114,6 +114,20 @@ public:
 			return cmp < 0 || (cmp == 0 && _atom.size < other._atom.size);
 		}
 		return type() < other.type();
+	}
+
+	/** Like assignment, but only works for value atoms (not references).
+	 * Always real-time safe.
+	 * @return true iff set succeeded.
+	 */
+	inline bool set_rt(const Atom& other) {
+		if (is_reference()) {
+			return false;
+		} else {
+			_atom     = other._atom;
+			_body.val = other._body.val;
+			return true;
+		}
 	}
 
 	inline uint32_t size()     const { return _atom.size; }

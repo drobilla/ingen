@@ -291,7 +291,7 @@ public:
 		for (uint32_t read = 0; read < read_space;) {
 			LV2_Atom atom;
 			if (!_from_ui.read(sizeof(LV2_Atom), &atom)) {
-				_engine.log().error("Error reading head from from-UI ring\n");
+				_engine.log().rt_error("Error reading head from from-UI ring\n");
 				break;
 			}
 
@@ -299,7 +299,7 @@ public:
 			memcpy(buf, &atom, sizeof(LV2_Atom));
 
 			if (!_from_ui.read(atom.size, (char*)buf + sizeof(LV2_Atom))) {
-				_engine.log().error("Error reading body from from-UI ring\n");
+				_engine.log().rt_error("Error reading body from from-UI ring\n");
 				break;
 			}
 
@@ -311,13 +311,13 @@ public:
 
 	void flush_to_ui(RunContext& context) {
 		if (_ports.size() < 2) {
-			_engine.log().error("Standard control ports are not present\n");
+			_engine.log().rt_error("Standard control ports are not present\n");
 			return;
 		}
 
 		LV2_Atom_Sequence* seq = (LV2_Atom_Sequence*)_ports[1]->buffer();
 		if (!seq) {
-			_engine.log().error("Notify output not connected\n");
+			_engine.log().rt_error("Notify output not connected\n");
 			return;
 		}
 
@@ -329,7 +329,7 @@ public:
 		for (uint32_t read = 0; read < read_space;) {
 			LV2_Atom atom;
 			if (!_to_ui.peek(sizeof(LV2_Atom), &atom)) {
-				_engine.log().error("Error reading head from to-UI ring\n");
+				_engine.log().rt_error("Error reading head from to-UI ring\n");
 				break;
 			}
 
@@ -347,7 +347,7 @@ public:
 
 			_to_ui.skip(sizeof(LV2_Atom));
 			if (!_to_ui.read(ev->body.size, LV2_ATOM_BODY(&ev->body))) {
-				_engine.log().error("Error reading body from to-UI ring\n");
+				_engine.log().rt_error("Error reading body from to-UI ring\n");
 				break;
 			}
 
@@ -600,7 +600,7 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
 	} else {
-		engine->log().error(fmt("Connect to non-existent port %1%\n") % port);
+		engine->log().rt_error("Connect to non-existent port\n");
 	}
 }
 

@@ -130,7 +130,7 @@ InputPort::remove_arc(RunContext& context, const OutputPort* tail)
 	}
 
 	if (!arc) {
-		context.engine().log().error("Attempt to remove non-existent arc\n");
+		context.engine().log().rt_error("Attempt to remove non-existent arc\n");
 		return NULL;
 	}
 

@@ -251,9 +251,11 @@ PortImpl::set_voice_value(const RunContext& context,
 			}
 			_voices->at(voice).set_state.set(context, time, value);
 		} else {
+#ifndef NDEBUG
 			fprintf(stderr,
 			        "error: %s set non-sequence atom port value (buffer type %u)\n",
 			        path().c_str(), buffer(voice)->type());
+#endif
 		}
 	default:
 		break;
