@@ -45,6 +45,15 @@ CreateGraph::CreateGraph(Engine&                     engine,
 	, _compiled_graph(NULL)
 {}
 
+CreateGraph::~CreateGraph()
+{
+	for (Event* ev : _child_events) {
+		delete ev;
+	}
+
+	delete _compiled_graph;
+}
+
 void
 CreateGraph::build_child_events()
 {
@@ -70,11 +79,10 @@ CreateGraph::build_child_events()
 	                  Resource::Graph::EXTERNAL);
 
 	_child_events.push_back(
-		SPtr<Events::CreatePort>(
-			new Events::CreatePort(
-				_engine, _request_client, -1, _time,
-				_path.child(Raul::Symbol("control")),
-				in_properties)));
+		new Events::CreatePort(
+			_engine, _request_client, -1, _time,
+			_path.child(Raul::Symbol("control")),
+			in_properties));
 
 	// Add notify port (message respond)
 	Resource::Properties out_properties(control_properties);
@@ -87,10 +95,9 @@ CreateGraph::build_child_events()
 	                   Resource::Graph::EXTERNAL);
 
 	_child_events.push_back(
-		SPtr<Events::CreatePort>(
-			new Events::CreatePort(_engine, _request_client, -1, _time,
-			                       _path.child(Raul::Symbol("notify")),
-			                       out_properties)));
+		new Events::CreatePort(_engine, _request_client, -1, _time,
+		                       _path.child(Raul::Symbol("notify")),
+		                       out_properties));
 }
 
 bool
@@ -182,7 +189,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 
 	// Build and pre-process child events to create standard ports
 	build_child_events();
-	for (SPtr<Event> ev : _child_events) {
+	for (Event* ev : _child_events) {
 		ev->pre_process(ctx);
 	}
 
@@ -197,7 +204,7 @@ CreateGraph::execute(RunContext& context)
 			_compiled_graph = _parent->swap_compiled_graph(_compiled_graph);
 		}
 
-		for (SPtr<Event> ev : _child_events) {
+		for (Event* ev : _child_events) {
 			ev->execute(context);
 		}
 	}
@@ -212,13 +219,10 @@ CreateGraph::post_process()
 	}
 
 	if (_graph) {
-		for (SPtr<Event> ev : _child_events) {
+		for (Event* ev : _child_events) {
 			ev->post_process();
 		}
 	}
-	_child_events.clear();
-
-	delete _compiled_graph;
 }
 
 void

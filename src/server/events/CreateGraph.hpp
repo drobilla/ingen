@@ -44,6 +44,8 @@ public:
 	            const Raul::Path&           path,
 	            const Resource::Properties& properties);
 
+	~CreateGraph();
+
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
 	void post_process();
@@ -60,7 +62,7 @@ private:
 	GraphImpl*               _graph;
 	GraphImpl*               _parent;
 	CompiledGraph*           _compiled_graph;
-	std::list< SPtr<Event> > _child_events;
+	std::list<Event*>        _child_events;
 };
 
 } // namespace Events
