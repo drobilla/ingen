@@ -152,7 +152,7 @@ InputPort::pre_process(RunContext& context)
 			update_set_state(context, v);
 
 			// Prepare for write in case a set event executes this cycle
-			if (!_parent->path().is_root()) {
+			if (!_parent->is_main()) {
 				buffer(v)->prepare_write(context);
 			}
 		}
@@ -251,7 +251,7 @@ bool
 InputPort::direct_connect() const
 {
 	return _arcs.size() == 1
-		&& !_parent->path().is_root()
+		&& !_parent->is_main()
 		&& !_arcs.front().must_mix()
 		&& buffer(0)->type() != _bufs.uris().atom_Sequence;
 }

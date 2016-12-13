@@ -89,6 +89,14 @@ public:
 	virtual bool apply_poly(
 		RunContext& context, Raul::Maid& maid, uint32_t poly) = 0;
 
+	/** Return true iff this is main (the top level Node).
+	 *
+	 * This is sometimes called "the root graph", but the term "main" is used
+	 * to avoid ambiguity with the root path, since main does not have the path
+	 * "/", but usually "/main" to leave namespace for non-node things.
+	 */
+	bool is_main() const { return !_parent; }
+
 protected:
 	NodeImpl(const Ingen::URIs&  uris,
 	         NodeImpl*           parent,

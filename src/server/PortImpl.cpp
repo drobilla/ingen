@@ -298,7 +298,7 @@ PortImpl::update_set_state(RunContext& context, uint32_t v)
 		if (state.time < context.start() &&
 		    buf->is_sequence() &&
 		    buf->value_type() == _bufs.uris().atom_Float &&
-		    !_parent->path().is_root()) {
+		    !_parent->is_main()) {
 			buf->clear();
 			state.time = context.start();
 		}
@@ -325,7 +325,7 @@ bool
 PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	if (_is_driver_port || _parent->path().is_root() ||
+	if (_is_driver_port || _parent->is_main() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
 		return false;
 	}
@@ -353,7 +353,7 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 PortImpl::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 {
-	if (_parent->path().is_root() ||
+	if (_parent->is_main() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
 		return false;
 	}
