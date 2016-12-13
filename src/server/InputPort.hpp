@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -32,7 +32,6 @@ namespace Server {
 
 class ArcImpl;
 class BlockImpl;
-class OutputPort;
 class RunContext;
 
 /** An input port on a Block or Graph.
@@ -46,7 +45,7 @@ class RunContext;
  *
  * \ingroup engine
  */
-class InputPort : virtual public PortImpl
+class InputPort : public PortImpl
 {
 public:
 	InputPort(BufferFactory&      bufs,
@@ -83,8 +82,8 @@ public:
 	 *
 	 * setup_buffers() must be called later for the change to take effect.
 	 */
-	ArcImpl* remove_arc(RunContext&       context,
-	                    const OutputPort* tail);
+	ArcImpl* remove_arc(RunContext&     context,
+	                    const PortImpl* tail);
 
 	/** Set `voices` as the buffers to be used for this port.
 	 *
@@ -110,9 +109,6 @@ public:
 	size_t num_arcs() const { return _num_arcs; } ///< Pre-process thread
 	void increment_num_arcs() { ++_num_arcs; }
 	void decrement_num_arcs() { --_num_arcs; }
-
-	bool is_input()  const { return true; }
-	bool is_output() const { return false; }
 
 	bool direct_connect() const;
 

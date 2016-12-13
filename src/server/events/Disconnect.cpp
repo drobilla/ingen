@@ -27,7 +27,6 @@
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
-#include "OutputPort.hpp"
 #include "PortImpl.hpp"
 #include "PreProcessContext.hpp"
 #include "RunContext.hpp"
@@ -61,7 +60,7 @@ Disconnect::~Disconnect()
 
 Disconnect::Impl::Impl(Engine&     e,
                        GraphImpl*  graph,
-                       OutputPort* t,
+                       PortImpl*   t,
                        InputPort*  h)
 	: _engine(e)
 	, _tail(t)
@@ -165,7 +164,7 @@ Disconnect::pre_process(PreProcessContext& ctx)
 
 	_impl = new Impl(_engine,
 	                 _graph,
-	                 dynamic_cast<OutputPort*>(tail),
+	                 dynamic_cast<PortImpl*>(tail),
 	                 dynamic_cast<InputPort*>(head));
 
 	if (ctx.must_compile(_graph)) {

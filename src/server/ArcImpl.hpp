@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -32,7 +32,6 @@ namespace Ingen {
 namespace Server {
 
 class PortImpl;
-class OutputPort;
 class InputPort;
 
 /** Represents a single inbound connection for an InputPort.
@@ -72,7 +71,7 @@ public:
 	/** Whether this arc must mix down voices into a local buffer */
 	bool must_mix() const;
 
-	static bool can_connect(const OutputPort* src, const InputPort* dst);
+	static bool can_connect(const PortImpl* src, const InputPort* dst);
 
 protected:
 	PortImpl* const _tail;

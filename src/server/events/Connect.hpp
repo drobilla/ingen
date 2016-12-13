@@ -34,7 +34,6 @@ class ArcImpl;
 class CompiledGraph;
 class GraphImpl;
 class InputPort;
-class OutputPort;
 
 namespace Events {
 

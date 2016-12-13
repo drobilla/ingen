@@ -22,7 +22,6 @@ def build(bld):
             LV2Block.cpp
             LV2Plugin.cpp
             NodeImpl.cpp
-            OutputPort.cpp
             PortImpl.cpp
             PostProcessor.cpp
             PreProcessor.cpp

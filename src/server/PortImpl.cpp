@@ -51,7 +51,8 @@ PortImpl::PortImpl(BufferFactory&      bufs,
                    PortType            type,
                    LV2_URID            buffer_type,
                    const Atom&         value,
-                   size_t              buffer_size)
+                   size_t              buffer_size,
+                   bool                is_output)
 	: NodeImpl(bufs.uris(), block, name)
 	, _bufs(bufs)
 	, _index(index)
@@ -75,6 +76,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _is_sample_rate(false)
 	, _is_toggled(false)
 	, _is_driver_port(false)
+	, _is_output(is_output)
 {
 	assert(block != NULL);
 	assert(_poly > 0);
@@ -91,11 +93,32 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 		set_property(uris.atom_bufferType,
 		             bufs.forge().make_urid(buffer_type));
 	}
+
+	if (is_output) {
+		if (_parent->graph_type() != Node::GraphType::GRAPH) {
+			add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort.urid);
+		}
+
+		setup_buffers(bufs, poly, false);
+	}
 }
 
 PortImpl::~PortImpl()
 {
 	delete _voices;
+}
+
+bool
+PortImpl::get_buffers(BufferFactory&      bufs,
+                      Raul::Array<Voice>* voices,
+                      uint32_t            poly,
+                      bool                real_time) const
+{
+	for (uint32_t v = 0; v < poly; ++v)
+		voices->at(v).buffer = bufs.get_buffer(
+			buffer_type(), _value.type(), _buffer_size, real_time);
+
+	return true;
 }
 
 void
@@ -505,7 +528,38 @@ PortImpl::value_buffer(uint32_t voice)
 SampleCount
 PortImpl::next_value_offset(SampleCount offset, SampleCount end) const
 {
-	return end;
+	SampleCount earliest = end;
+	for (uint32_t v = 0; v < _poly; ++v) {
+		const SampleCount o = _voices->at(v).buffer->next_value_offset(offset, end);
+		if (o < earliest) {
+			earliest = o;
+		}
+	}
+	return earliest;
+}
+
+void
+PortImpl::update_values(SampleCount offset, uint32_t voice)
+{
+	_voices->at(voice).buffer->update_value_buffer(offset);
+}
+
+void
+PortImpl::pre_process(RunContext& context)
+{
+	for (uint32_t v = 0; v < _poly; ++v)
+		_voices->at(v).buffer->prepare_output_write(context);
+}
+
+void
+PortImpl::post_process(RunContext& context)
+{
+	for (uint32_t v = 0; v < _poly; ++v) {
+		update_set_state(context, v);
+		update_values(0, v);
+	}
+
+	monitor(context);
 }
 
 } // namespace Server

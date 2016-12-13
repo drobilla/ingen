@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -21,14 +21,13 @@
 
 #include "BufferRef.hpp"
 #include "InputPort.hpp"
-#include "OutputPort.hpp"
 
 namespace Ingen {
 namespace Server {
 
 class BlockImpl;
 
-/** A duplex Port (both an InputPort and an OutputPort on a Graph)
+/** A duplex Port (both an input and output port on a Graph)
  *
  * This is used for Graph ports, since they need to appear as both an input and
  * an output port based on context.  There are no actual duplex ports in Ingen,
@@ -38,7 +37,6 @@ class BlockImpl;
  * \ingroup engine
  */
 class DuplexPort : public InputPort
-                 , public OutputPort
                  , public boost::intrusive::slist_base_hook<>  // In GraphImpl
 {
 public:
@@ -91,12 +89,6 @@ public:
 
 	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
 	void        update_values(SampleCount offset, uint32_t voice);
-
-	bool is_input()  const { return !_is_output; }
-	bool is_output() const { return _is_output; }
-
-protected:
-	bool _is_output;
 };
 
 } // namespace Server

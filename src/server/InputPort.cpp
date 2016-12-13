@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -27,7 +27,6 @@
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
-#include "OutputPort.hpp"
 #include "RunContext.hpp"
 #include "mix.hpp"
 
@@ -45,7 +44,7 @@ InputPort::InputPort(BufferFactory&      bufs,
                      LV2_URID            buffer_type,
                      const Atom&         value,
                      size_t              buffer_size)
-	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size)
+	: PortImpl(bufs, parent, symbol, index, poly, type, buffer_type, value, buffer_size, false)
 	, _num_arcs(0)
 {
 	const Ingen::URIs& uris = bufs.uris();
@@ -118,7 +117,7 @@ InputPort::add_arc(RunContext& context, ArcImpl* c)
 }
 
 ArcImpl*
-InputPort::remove_arc(RunContext& context, const OutputPort* tail)
+InputPort::remove_arc(RunContext& context, const PortImpl* tail)
 {
 	ArcImpl* arc = NULL;
 	for (Arcs::iterator i = _arcs.begin(); i != _arcs.end(); ++i) {

@@ -141,7 +141,8 @@ CreatePort::pre_process(PreProcessContext& ctx)
 	                             polyphonic,
 	                             _port_type, _buf_type, buf_size,
 	                             value, _flow == Flow::OUTPUT);
-
+	assert((_flow == Flow::OUTPUT && _graph_port->is_output()) ||
+	       (_flow == Flow::INPUT && _graph_port->is_input()));
 	_graph_port->properties().insert(_properties.begin(), _properties.end());
 
 	_engine.store()->add(_graph_port);

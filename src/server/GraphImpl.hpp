@@ -123,11 +123,13 @@ public:
 
 	void add_input(DuplexPort& port) {
 		ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+		assert(port.is_input());
 		_inputs.push_front(port);
 	}
 
 	void add_output(DuplexPort& port) {
 		ThreadManager::assert_thread(THREAD_PRE_PROCESS);
+		assert(port.is_output());
 		_outputs.push_front(port);
 	}
 

@@ -33,7 +33,6 @@ namespace Server {
 
 class CompiledGraph;
 class InputPort;
-class OutputPort;
 class PortImpl;
 
 namespace Events {
@@ -61,19 +60,19 @@ public:
 
 	class Impl {
 	public:
-		Impl(Engine&     e,
-		     GraphImpl*  graph,
-		     OutputPort* t,
-		     InputPort*  h);
+		Impl(Engine&    e,
+		     GraphImpl* graph,
+		     PortImpl*  t,
+		     InputPort* h);
 
 		bool execute(RunContext& context, bool set_head_buffers);
 
-		inline OutputPort* tail() { return _tail; }
-		inline InputPort*  head() { return _head; }
+		inline PortImpl*  tail() { return _tail; }
+		inline InputPort* head() { return _head; }
 
 	private:
 		Engine&                       _engine;
-		OutputPort*                   _tail;
+		PortImpl*                     _tail;
 		InputPort*                    _head;
 		SPtr<ArcImpl>                 _arc;
 		Raul::Array<PortImpl::Voice>* _voices;

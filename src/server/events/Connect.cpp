@@ -24,7 +24,6 @@
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
-#include "OutputPort.hpp"
 #include "PortImpl.hpp"
 #include "PreProcessContext.hpp"
 #include "internals/BlockDelay.hpp"
@@ -64,8 +63,8 @@ Connect::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::NOT_FOUND, _head_path);
 	}
 
-	OutputPort* tail_output = dynamic_cast<OutputPort*>(tail);
-	_head                   = dynamic_cast<InputPort*>(head);
+	PortImpl* tail_output = dynamic_cast<PortImpl*>(tail);
+	_head                 = dynamic_cast<InputPort*>(head);
 	if (!tail_output || !_head) {
 		return Event::pre_process_done(Status::BAD_REQUEST, _head_path);
 	}

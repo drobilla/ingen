@@ -29,7 +29,6 @@
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
-#include "OutputPort.hpp"
 #include "PortImpl.hpp"
 #include "PreProcessContext.hpp"
 #include "events/Disconnect.hpp"
@@ -135,7 +134,7 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 	for (const auto& a : to_remove) {
 		_impls.push_back(new Disconnect::Impl(
 			                 _engine, _parent,
-			                 dynamic_cast<OutputPort*>(a->tail()),
+			                 dynamic_cast<PortImpl*>(a->tail()),
 			                 dynamic_cast<InputPort*>(a->head())));
 	}
 

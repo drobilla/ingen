@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -37,6 +37,10 @@ class BlockImpl;
 class BufferFactory;
 
 /** A port (input or output) on a Block.
+ *
+ * The base implementation here is general and/or for output ports (which are
+ * simplest), InputPort and DuplexPort override functions to provide
+ * specialized behaviour where necessary.
  *
  * \ingroup engine
  */
@@ -79,6 +83,17 @@ public:
 		SetState  set_state;
 		BufferRef buffer;
 	};
+
+	PortImpl(BufferFactory&      bufs,
+	         BlockImpl*          block,
+	         const Raul::Symbol& name,
+	         uint32_t            index,
+	         uint32_t            poly,
+	         PortType            type,
+	         LV2_URID            buffer_type,
+	         const Atom&         value,
+	         size_t              buffer_size = 0,
+	         bool                is_output = true);
 
 	~PortImpl();
 
@@ -153,9 +168,9 @@ public:
 	bool is_driver_port() const { return _is_driver_port; }
 
 	/** Called once per process cycle */
-	virtual void pre_process(RunContext& context) = 0;
+	virtual void pre_process(RunContext& context);
 	virtual void pre_run(RunContext& context) {}
-	virtual void post_process(RunContext& context) = 0;
+	virtual void post_process(RunContext& context);
 
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
@@ -164,7 +179,7 @@ public:
 	virtual bool get_buffers(BufferFactory&      bufs,
 	                         Raul::Array<Voice>* voices,
 	                         uint32_t            poly,
-	                         bool                real_time) const = 0;
+	                         bool                real_time) const;
 
 	void setup_buffers(BufferFactory& bufs, uint32_t poly, bool real_time) {
 		get_buffers(bufs, _voices, poly, real_time);
@@ -185,9 +200,6 @@ public:
 
 	virtual void connect_buffers(SampleCount offset=0);
 	virtual void recycle_buffers();
-
-	virtual bool is_input()  const = 0;
-	virtual bool is_output() const = 0;
 
 	uint32_t index() const { return _index; }
 
@@ -238,7 +250,7 @@ public:
 	                                      SampleCount end) const;
 
 	/** Update value buffer for `voice` to be current as of `offset`. */
-	virtual void update_values(SampleCount offset, uint32_t voice) = 0;
+	virtual void update_values(SampleCount offset, uint32_t voice);
 
 	void force_monitor_update() { _force_monitor_update = true; }
 
@@ -251,6 +263,8 @@ public:
 
 	void cache_properties();
 
+	bool is_input()       const { return !_is_output; }
+	bool is_output()      const { return _is_output; }
 	bool is_morph()       const { return _is_morph; }
 	bool is_auto_morph()  const { return _is_auto_morph; }
 	bool is_logarithmic() const { return _is_logarithmic; }
@@ -258,16 +272,6 @@ public:
 	bool is_toggled()     const { return _is_toggled; }
 
 protected:
-	PortImpl(BufferFactory&      bufs,
-	         BlockImpl*          block,
-	         const Raul::Symbol& name,
-	         uint32_t            index,
-	         uint32_t            poly,
-	         PortType            type,
-	         LV2_URID            buffer_type,
-	         const Atom&         value,
-	         size_t              buffer_size);
-
 	BufferFactory&      _bufs;
 	uint32_t            _index;
 	uint32_t            _poly;
@@ -291,6 +295,7 @@ protected:
 	bool                _is_sample_rate;
 	bool                _is_toggled;
 	bool                _is_driver_port;
+	bool                _is_output;
 };
 
 } // namespace Server

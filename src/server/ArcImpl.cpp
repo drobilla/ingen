@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -82,7 +82,7 @@ ArcImpl::must_mix() const
 }
 
 bool
-ArcImpl::can_connect(const OutputPort* src, const InputPort* dst)
+ArcImpl::can_connect(const PortImpl* src, const InputPort* dst)
 {
 	const Ingen::URIs& uris = src->bufs().uris();
 	return (

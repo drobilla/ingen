@@ -43,6 +43,7 @@
 #include "LV2Block.hpp"
 #include "LV2Plugin.hpp"
 #include "OutputPort.hpp"
+#include "PortImpl.hpp"
 #include "RunContext.hpp"
 #include "Worker.hpp"
 

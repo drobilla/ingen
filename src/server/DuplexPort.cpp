@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -21,7 +21,6 @@
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
-#include "OutputPort.hpp"
 
 using namespace std;
 
@@ -38,10 +37,7 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
                        size_t              buf_size,
                        const Atom&         value,
                        bool                is_output)
-	: PortImpl(bufs, parent, symbol, index, parent->polyphony(), type, buf_type, value, buf_size)
-	, InputPort(bufs, parent, symbol, index, parent->polyphony(), type, buf_type, value, buf_size)
-	, OutputPort(bufs, parent, symbol, index, parent->polyphony(), type, buf_type, value, buf_size)
-	, _is_output(is_output)
+	: InputPort(bufs, parent, symbol, index, parent->polyphony(), type, buf_type, value, buf_size)
 {
 	if (polyphonic) {
 		set_property(bufs.uris().ingen_polyphonic, bufs.forge().make(true));
@@ -57,6 +53,16 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
 		set_property(bufs.uris().lv2_minimum, bufs.forge().make(0.0f));
 		set_property(bufs.uris().lv2_maximum, bufs.forge().make(1.0f));
 	}
+
+	_is_output = is_output;
+	if (is_output) {
+		if (parent->graph_type() != Node::GraphType::GRAPH) {
+			remove_property(bufs.uris().rdf_type, bufs.uris().lv2_InputPort.urid);
+			add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort.urid);
+		}
+	}
+
+	get_buffers(bufs, _voices, parent->polyphony(), false);
 }
 
 DuplexPort::~DuplexPort()
@@ -132,7 +138,7 @@ DuplexPort::get_buffers(BufferFactory&      bufs,
 		if (_is_output) {
 			return InputPort::get_buffers(bufs, voices, poly, real_time);
 		} else {
-			return OutputPort::get_buffers(bufs, voices, poly, real_time);
+			return PortImpl::get_buffers(bufs, voices, poly, real_time);
 		}
 	}
 	return false;
@@ -215,13 +221,13 @@ DuplexPort::post_process(RunContext& context)
 SampleCount
 DuplexPort::next_value_offset(SampleCount offset, SampleCount end) const
 {
-	return OutputPort::next_value_offset(offset, end);
+	return PortImpl::next_value_offset(offset, end);
 }
 
 void
 DuplexPort::update_values(SampleCount offset, uint32_t voice)
 {
-	return OutputPort::update_values(offset, voice);
+	return PortImpl::update_values(offset, voice);
 }
 
 } // namespace Server
