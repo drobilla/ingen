@@ -61,6 +61,7 @@ Delta::Delta(Engine&           engine,
 	, _object(NULL)
 	, _graph(NULL)
 	, _compiled_graph(NULL)
+	, _binding(NULL)
 	, _state(NULL)
 	, _context(context)
 	, _type(type)
@@ -223,8 +224,9 @@ Delta::pre_process(PreProcessContext& ctx)
 		const Atom&      value = r.second;
 		if (key == uris.midi_binding && value == uris.patch_wildcard) {
 			PortImpl* port = dynamic_cast<PortImpl*>(_object);
-			if (port)
-				_old_bindings = _engine.control_bindings()->remove(port);
+			if (port) {
+				_engine.control_bindings()->get_all(port->path(), _removed_bindings);
+			}
 		}
 		if (_object) {
 			_removed.emplace(key, value);
@@ -299,9 +301,10 @@ Delta::pre_process(PreProcessContext& ctx)
 				} else if (key == uris.midi_binding) {
 					if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
 						if (value == uris.patch_wildcard) {
-							_engine.control_bindings()->learn(port);
+							_engine.control_bindings()->start_learn(port);
 						} else if (value.type() == uris.atom_Object) {
-							op = SpecialType::CONTROL_BINDING;
+							op       = SpecialType::CONTROL_BINDING;
+							_binding = new ControlBindings::Binding();
 						} else {
 							_status = Status::BAD_VALUE_TYPE;
 						}
@@ -372,24 +375,23 @@ Delta::pre_process(PreProcessContext& ctx)
 
 			if (!_create_event && key == uris.ingen_polyphonic) {
 				GraphImpl* parent = dynamic_cast<GraphImpl*>(obj->parent());
-				if (parent) {
-					if (value.type() == uris.forge.Bool) {
-						poly_changed = true;
-						op = SpecialType::POLYPHONIC;
-						obj->set_property(key, value, value.context());
-						BlockImpl* block = dynamic_cast<BlockImpl*>(obj);
-						if (block)
-							block->set_polyphonic(value.get<int32_t>());
-						if (value.get<int32_t>()) {
-							obj->prepare_poly(*_engine.buffer_factory(), parent->internal_poly());
-						} else {
-							obj->prepare_poly(*_engine.buffer_factory(), 1);
-						}
-					} else {
-						_status = Status::BAD_VALUE_TYPE;
-					}
-				} else {
+				if (!parent) {
 					_status = Status::BAD_OBJECT_TYPE;
+				} else if (value.type() != uris.forge.Bool) {
+					_status = Status::BAD_VALUE_TYPE;
+				} else {
+					poly_changed = true;
+					op           = SpecialType::POLYPHONIC;
+					obj->set_property(key, value, value.context());
+					BlockImpl* block = dynamic_cast<BlockImpl*>(obj);
+					if (block) {
+						block->set_polyphonic(value.get<int32_t>());
+					}
+					if (value.get<int32_t>()) {
+						obj->prepare_poly(*_engine.buffer_factory(), parent->internal_poly());
+					} else {
+						obj->prepare_poly(*_engine.buffer_factory(), 1);
+					}
 				}
 			}
 		} else if (is_client && key == uris.ingen_broadcast) {
@@ -454,6 +456,10 @@ Delta::execute(RunContext& context)
 		s->execute(context);
 	}
 
+	if (!_removed_bindings.empty()) {
+		_engine.control_bindings()->remove(context, _removed_bindings);
+	}
+
 	NodeImpl* const  object = dynamic_cast<NodeImpl*>(_object);
 	BlockImpl* const block  = dynamic_cast<BlockImpl*>(_object);
 	PortImpl* const  port   = dynamic_cast<PortImpl*>(_object);
@@ -501,7 +507,9 @@ Delta::execute(RunContext& context)
 			break;
 		case SpecialType::CONTROL_BINDING:
 			if (port) {
-				_engine.control_bindings()->port_binding_changed(context, port, value);
+				if (!_engine.control_bindings()->set_port_binding(context, port, _binding, value)) {
+					_status = Status::BAD_VALUE;
+				}
 			} else if (block) {
 				if (uris.ingen_Internal == block->plugin_impl()->type()) {
 					block->learn();
@@ -513,9 +521,9 @@ Delta::execute(RunContext& context)
 			break;
 		case SpecialType::NONE:
 			if (port) {
-				if (key == uris.lv2_minimum) {
+				if (!strcmp(uris.lv2_minimum.c_str(), key.c_str())) {
 					port->set_minimum(value);
-				} else if (key == uris.lv2_maximum) {
+				} else if (!strcmp(uris.lv2_maximum.c_str(), key.c_str())) {
 					port->set_maximum(value);
 				}
 			}

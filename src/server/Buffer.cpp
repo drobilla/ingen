@@ -341,6 +341,30 @@ Buffer::append_event(int64_t frames, const LV2_Atom* body)
 	return append_event(frames, body->size, body->type, (const uint8_t*)(body + 1));
 }
 
+bool
+Buffer::append_event_buffer(const Buffer* buf)
+{
+	LV2_Atom_Sequence* seq  = (LV2_Atom_Sequence*)get<LV2_Atom>();
+	LV2_Atom_Sequence* bseq = (LV2_Atom_Sequence*)buf->get<LV2_Atom>();
+	if (seq->atom.type == _factory.uris().atom_Chunk) {
+		clear();  // Chunk initialized with prepare_output_write(), clear
+	}
+
+	const uint32_t total_size = lv2_atom_total_size(&seq->atom);
+	uint8_t* const end        = (uint8_t*)seq + total_size;
+	const uint32_t n_bytes    = bseq->atom.size - sizeof(bseq->body);
+	if (sizeof(LV2_Atom) + total_size + n_bytes >= _capacity) {
+		return false;  // Not enough space
+	}
+
+	memcpy(end, bseq + 1, n_bytes);
+	seq->atom.size += n_bytes;
+
+	_latest_event = std::max(_latest_event, buf->_latest_event);
+
+	return true;
+}
+
 SampleCount
 Buffer::next_value_offset(SampleCount offset, SampleCount end) const
 {

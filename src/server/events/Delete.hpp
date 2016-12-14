@@ -68,9 +68,9 @@ private:
 	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports for Graph
 	CompiledGraph*          _compiled_graph; ///< Graph's new process order
 	DisconnectAll*          _disconnect_event;
+	Store::Objects          _removed_objects;
 
-	SPtr<ControlBindings::Bindings> _removed_bindings;
-	Store::Objects                  _removed_objects;
+	std::vector<ControlBindings::Binding*> _removed_bindings;
 };
 
 } // namespace Events

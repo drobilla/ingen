@@ -176,6 +176,9 @@ public:
 	/// Sequence buffers only
 	bool append_event(int64_t frames, const LV2_Atom* body);
 
+	/// Sequence buffers only
+	bool append_event_buffer(const Buffer* buf);
+
 	/// Value buffer for numeric sequences
 	BufferRef value_buffer() { return _value_buffer; }
 

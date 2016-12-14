@@ -38,7 +38,7 @@ namespace Server {
 
 ControlBindings::ControlBindings(Engine& engine)
 	: _engine(engine)
-	, _learn_port(NULL)
+	, _learn_binding(NULL)
 	, _bindings(new Bindings())
 	, _feedback(new Buffer(*_engine.buffer_factory(),
 	                       engine.world()->uris().atom_Sequence,
@@ -52,14 +52,15 @@ ControlBindings::ControlBindings(Engine& engine)
 ControlBindings::~ControlBindings()
 {
 	_feedback.reset();
+	delete _learn_binding.load();
 }
 
 ControlBindings::Key
 ControlBindings::port_binding(PortImpl* port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	const Ingen::URIs& uris = _engine.world()->uris();
-	const Atom& binding = port->get_property(uris.midi_binding);
+	const Ingen::URIs& uris    = _engine.world()->uris();
+	const Atom&        binding = port->get_property(uris.midi_binding);
 	return binding_key(binding);
 }
 
@@ -124,14 +125,20 @@ ControlBindings::midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& val
 	}
 }
 
-void
-ControlBindings::port_binding_changed(RunContext& context,
-                                      PortImpl*   port,
-                                      const Atom& binding)
+bool
+ControlBindings::set_port_binding(RunContext& context,
+                                  PortImpl*   port,
+                                  Binding*    binding,
+                                  const Atom& value)
 {
-	const Key key = binding_key(binding);
+	const Key key = binding_key(value);
 	if (key) {
-		_bindings->insert(make_pair(key, port));
+		binding->key  = key;
+		binding->port = port;
+		_bindings->insert(*binding);
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -180,16 +187,21 @@ ControlBindings::port_value_changed(RunContext& context,
 			break;
 		}
 		if (size > 0) {
-			_feedback->append_event(0, size, (LV2_URID)uris.midi_MidiEvent, buf);
+			_feedback->append_event(context.nframes() - 1, size, (LV2_URID)uris.midi_MidiEvent, buf);
 		}
 	}
 }
 
 void
-ControlBindings::learn(PortImpl* port)
+ControlBindings::start_learn(PortImpl* port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	_learn_port = port;
+	Binding* b = _learn_binding.load();
+	if (!b) {
+		_learn_binding = new Binding(Type::NULL_CONTROL, port);
+	} else {
+		b->port = port;
+	}
 }
 
 static void
@@ -203,7 +215,7 @@ get_range(RunContext& context, const PortImpl* port, float* min, float* max)
 	}
 }
 
-Atom
+float
 ControlBindings::control_to_port_value(RunContext&     context,
                                        const PortImpl* port,
                                        Type            type,
@@ -232,7 +244,7 @@ ControlBindings::control_to_port_value(RunContext&     context,
 	float min, max;
 	get_range(context, port, &min, &max);
 
-	return _engine.world()->forge().make(normal * (max - min) + min);
+	return normal * (max - min) + min;
 }
 
 int16_t
@@ -315,28 +327,27 @@ ControlBindings::set_port_value(RunContext& context,
 	float min, max;
 	get_range(context, port, &min, &max);
 
-	const Atom port_value(control_to_port_value(context, port, type, value));
+	const float val = control_to_port_value(context, port, type, value);
 
-	assert(port_value.type() == port->bufs().forge().Float);
-	port->set_value(port_value);  // FIXME: not thread safe
-	port->set_control_value(context, context.start(), port_value.get<float>());
+	// TODO: Set port value property so it is saved
+	port->set_control_value(context, context.start(), val);
 
 	URIs& uris = context.engine().world()->uris();
 	context.notify(uris.ingen_value, context.start(), port,
-	               port_value.size(), port_value.type(), port_value.get_body());
+	               sizeof(float), _forge.Float, &val);
 }
 
 bool
-ControlBindings::bind(RunContext& context, Key key)
+ControlBindings::finish_learn(RunContext& context, Key key)
 {
-	const Ingen::URIs& uris = context.engine().world()->uris();
-	assert(_learn_port);
-	if (key.type == Type::MIDI_NOTE) {
-		if (!_learn_port->is_toggled())
-			return false;
+	const Ingen::URIs& uris    = context.engine().world()->uris();
+	Binding*           binding = _learn_binding.exchange(NULL);
+	if (!binding || (key.type == Type::MIDI_NOTE && !binding->port->is_toggled())) {
+		return false;
 	}
 
-	_bindings->insert(make_pair(key, _learn_port));
+	binding->key = key;
+	_bindings->insert(*binding);
 
 	uint8_t buf[128];
 	memset(buf, 0, sizeof(buf));
@@ -345,70 +356,42 @@ ControlBindings::bind(RunContext& context, Key key)
 	const LV2_Atom* atom = (const LV2_Atom*)buf;
 	context.notify(uris.midi_binding,
 	               context.start(),
-	               _learn_port,
+	               binding->port,
 	               atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 
-	_learn_port = NULL;
 	return true;
 }
 
-SPtr<ControlBindings::Bindings>
-ControlBindings::remove(const Raul::Path& path)
+void
+ControlBindings::get_all(const Raul::Path& path, std::vector<Binding*>& bindings)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	SPtr<Bindings> old_bindings(_bindings);
-	SPtr<Bindings> copy(new Bindings(*_bindings.get()));
-
-	for (Bindings::iterator i = copy->begin(); i != copy->end();) {
-		Bindings::iterator next = i;
-		++next;
-
-		if (i->second->path() == path || i->second->path().is_child_of(path))
-			copy->erase(i);
-
-		i = next;
+	for (Binding& b : *_bindings) {
+		if (b.port->path() == path || b.port->path().is_child_of(path)) {
+			bindings.push_back(&b);
+		}
 	}
-
-	_bindings = copy;
-	return old_bindings;
 }
 
-SPtr<ControlBindings::Bindings>
-ControlBindings::remove(PortImpl* port)
+void
+ControlBindings::remove(RunContext& ctx, const std::vector<Binding*>& bindings)
 {
-	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-
-	SPtr<Bindings> old_bindings(_bindings);
-	SPtr<Bindings> copy(new Bindings(*_bindings.get()));
-
-	for (Bindings::iterator i = copy->begin(); i != copy->end();) {
-		Bindings::iterator next = i;
-		++next;
-
-		if (i->second == port)
-			copy->erase(i);
-
-		i = next;
+	for (Binding* b : bindings) {
+		_bindings->erase(*b);
 	}
-
-	_bindings = copy;
-	return old_bindings;
 }
 
 void
 ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 {
-	uint16_t  value    = 0;
-	Bindings* bindings = _bindings.get();
-	_feedback->clear();
-
+	uint16_t           value = 0;
 	Ingen::World*      world = context.engine().world();
 	const Ingen::URIs& uris  = world->uris();
 
-	if (!_learn_port && bindings->empty()) {
-		// Don't bother reading input
-		return;
+	_feedback->clear();
+	if (!_learn_binding && _bindings->empty()) {
+		return;  // Don't bother reading input
 	}
 
 	LV2_Atom_Sequence* seq = buffer->get<LV2_Atom_Sequence>();
@@ -416,13 +399,17 @@ ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 		if (ev->body.type == uris.midi_MidiEvent) {
 			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
 			const Key      key = midi_event_key(ev->body.size, buf, value);
-			if (_learn_port && key) {
-				bind(context, key);
+
+			if (_learn_binding && key) {
+				finish_learn(context, key);  // Learn new binding
 			}
 
-			Bindings::const_iterator i = bindings->find(key);
-			if (i != bindings->end()) {
-				set_port_value(context, i->second, key.type, value);
+			// Set all controls bound to this key
+			const Binding k = {key, NULL};
+			for (Bindings::const_iterator i = _bindings->find(k);
+			     i != _bindings->end() && i->key == key;
+			     ++i) {
+				set_port_value(context, i->port, key.type, value);
 			}
 		}
 	}
@@ -431,8 +418,7 @@ ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 void
 ControlBindings::post_process(RunContext& context, Buffer* buffer)
 {
-	// TODO: merge buffer's existing contents (anything send to it in the graph)
-	buffer->copy(context, _feedback.get());
+	buffer->append_event_buffer(_feedback.get());
 }
 
 } // namespace Server

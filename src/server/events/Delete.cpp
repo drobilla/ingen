@@ -56,6 +56,9 @@ Delete::~Delete()
 {
 	delete _disconnect_event;
 	delete _compiled_graph;
+	for (ControlBindings::Binding* b : _removed_bindings) {
+		delete b;
+	}
 }
 
 bool
@@ -65,7 +68,7 @@ Delete::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
 	}
 
-	_removed_bindings = _engine.control_bindings()->remove(_path);
+	_engine.control_bindings()->get_all(_path, _removed_bindings);
 
 	Store::iterator iter = _engine.store()->find(_path);
 	if (iter == _engine.store()->end()) {
@@ -131,6 +134,10 @@ Delete::execute(RunContext& context)
 		_disconnect_event->execute(context);
 	}
 
+	if (!_removed_bindings.empty()) {
+		_engine.control_bindings()->remove(context, _removed_bindings);
+	}
+
 	GraphImpl* parent = _block ? _block->parent_graph() : NULL;
 	if (_port) {
 		parent = _port->parent_graph();
@@ -150,8 +157,6 @@ Delete::execute(RunContext& context)
 void
 Delete::post_process()
 {
-	_removed_bindings.reset();
-
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS && (_block || _port)) {
 		if (_block) {

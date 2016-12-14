@@ -17,12 +17,15 @@
 #ifndef INGEN_ENGINE_CONTROLBINDINGS_HPP
 #define INGEN_ENGINE_CONTROLBINDINGS_HPP
 
-#include <map>
+#include <atomic>
+#include <boost/intrusive/options.hpp>
+#include <boost/intrusive/set.hpp>
 #include <stdint.h>
 
 #include "ingen/Atom.hpp"
 #include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+#include "raul/Maid.hpp"
 #include "raul/Path.hpp"
 
 #include "BufferFactory.hpp"
@@ -36,7 +39,7 @@ class PortImpl;
 
 class ControlBindings {
 public:
-	enum class Type {
+	enum class Type : uint16_t {
 		NULL_CONTROL,
 		MIDI_BENDER,
 		MIDI_CC,
@@ -56,7 +59,23 @@ public:
 		int16_t num;
 	};
 
-	typedef std::map<Key, PortImpl*> Bindings;
+	/** One binding of a controller to a port. */
+	struct Binding : public boost::intrusive::set_base_hook<>,
+	                 public Raul::Maid::Disposable {
+		Binding(Key k=Key(), PortImpl* p=NULL) : key(k), port(p) {}
+
+		inline bool operator<(const Binding& rhs) const { return key < rhs.key; }
+
+		Key       key;
+		PortImpl* port;
+	};
+
+	/** Comparator for bindings by key. */
+	struct BindingLess {
+		bool operator()(const Binding& lhs, const Binding& rhs) const {
+			return lhs.key < rhs.key;
+		}
+	};
 
 	explicit ControlBindings(Engine& engine);
 	~ControlBindings();
@@ -64,57 +83,57 @@ public:
 	Key port_binding(PortImpl* port) const;
 	Key binding_key(const Atom& binding) const;
 
-	void learn(PortImpl* port);
+	void start_learn(PortImpl* port);
 
-	void port_binding_changed(RunContext& context,
-	                          PortImpl*   port,
-	                          const Atom& binding);
+	/** Set the binding for `port` to `binding` and take ownership of it. */
+	bool set_port_binding(RunContext& ctx,
+	                      PortImpl*   port,
+	                      Binding*    binding,
+	                      const Atom& value);
 
-	void port_value_changed(RunContext& context,
+	void port_value_changed(RunContext& ctx,
 	                        PortImpl*   port,
 	                        Key         key,
 	                        const Atom& value);
 
-	void pre_process(RunContext& context, Buffer* control_in);
-	void post_process(RunContext& context, Buffer* control_out);
+	void pre_process(RunContext& ctx, Buffer* control_in);
+	void post_process(RunContext& ctx, Buffer* control_out);
 
-	/** Remove all bindings for `path` or children of `path`.
-	 * The caller must safely drop the returned reference in the
-	 * post-processing thread after at least one process thread has run.
-	 */
-	SPtr<Bindings> remove(const Raul::Path& path);
+	/** Get all bindings for `path` or children of `path`. */
+	void get_all(const Raul::Path& path, std::vector<Binding*>& bindings);
 
-	/** Remove binding for a particular port.
-	 * The caller must safely drop the returned reference in the
-	 * post-processing thread after at least one process thread has run.
-	 */
-	SPtr<Bindings> remove(PortImpl* port);
+	/** Remove a set of bindings from an earlier call to get_all(). */
+	void remove(RunContext& ctx, const std::vector<Binding*>& bindings);
 
 private:
+	typedef boost::intrusive::multiset<
+		Binding,
+		boost::intrusive::compare<BindingLess> > Bindings;
+
 	Key midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
 
-	void set_port_value(RunContext& context,
+	void set_port_value(RunContext& ctx,
 	                    PortImpl*   port,
 	                    Type        type,
 	                    int16_t     value);
 
-	bool bind(RunContext& context, Key key);
+	bool finish_learn(RunContext& ctx, Key key);
 
-	Atom control_to_port_value(RunContext& context,
-	                           const PortImpl* port,
-	                           Type            type,
-	                           int16_t         value) const;
+	float control_to_port_value(RunContext& ctx,
+	                            const PortImpl* port,
+	                            Type            type,
+	                            int16_t         value) const;
 
-	int16_t port_value_to_control(RunContext& context,
+	int16_t port_value_to_control(RunContext& ctx,
 	                              PortImpl*   port,
 	                              Type        type,
 	                              const Atom& value) const;
 
-	Engine&        _engine;
-	PortImpl*      _learn_port;
-	SPtr<Bindings> _bindings;
-	BufferRef      _feedback;
-	LV2_Atom_Forge _forge;
+	Engine&               _engine;
+	std::atomic<Binding*> _learn_binding;
+	SPtr<Bindings>        _bindings;
+	BufferRef             _feedback;
+	LV2_Atom_Forge        _forge;
 };
 
 } // namespace Server

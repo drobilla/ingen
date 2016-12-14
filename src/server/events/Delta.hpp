@@ -92,26 +92,26 @@ private:
 
 	typedef std::vector<SetPortValue*> SetEvents;
 
-	Event*                   _create_event;
-	SetEvents                _set_events;
-	std::vector<SpecialType> _types;
-	std::vector<SpecialType> _remove_types;
-	Raul::URI                _subject;
-	Resource::Properties     _properties;
-	Resource::Properties     _remove;
-	ClientUpdate             _update;
-	Ingen::Resource*         _object;
-	GraphImpl*               _graph;
-	CompiledGraph*           _compiled_graph;
-	LilvState*               _state;
-	Resource::Graph          _context;
-	ControlBindings::Key     _binding;
-	Type                     _type;
+	Event*                    _create_event;
+	SetEvents                 _set_events;
+	std::vector<SpecialType>  _types;
+	std::vector<SpecialType>  _remove_types;
+	Raul::URI                 _subject;
+	Resource::Properties      _properties;
+	Resource::Properties      _remove;
+	ClientUpdate              _update;
+	Ingen::Resource*          _object;
+	GraphImpl*                _graph;
+	CompiledGraph*            _compiled_graph;
+	ControlBindings::Binding* _binding;
+	LilvState*                _state;
+	Resource::Graph           _context;
+	Type                      _type;
 
 	Resource::Properties _added;
 	Resource::Properties _removed;
 
-	SPtr<ControlBindings::Bindings> _old_bindings;
+	std::vector<ControlBindings::Binding*> _removed_bindings;
 
 	boost::optional<Resource> _preset;
 
