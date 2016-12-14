@@ -21,6 +21,7 @@
 #include <boost/intrusive/options.hpp>
 #include <boost/intrusive/set.hpp>
 #include <stdint.h>
+#include <vector>
 
 #include "ingen/Atom.hpp"
 #include "ingen/types.hpp"
