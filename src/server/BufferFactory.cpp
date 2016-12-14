@@ -100,37 +100,51 @@ BufferFactory::default_size(LV2_URID type) const
 	}
 }
 
+Buffer*
+BufferFactory::try_get_buffer(LV2_URID type)
+{
+	std::atomic<Buffer*>& head_ptr = free_list(type);
+	Buffer*               head     = NULL;
+	Buffer*               next;
+	do {
+		head = head_ptr.load();
+		if (!head) {
+			break;
+		}
+		next = head->_next;
+	} while (!head_ptr.compare_exchange_weak(head, next));
+
+	return head;
+}
+
 BufferRef
 BufferFactory::get_buffer(LV2_URID type,
                           LV2_URID value_type,
-                          uint32_t capacity,
-                          bool     real_time,
-                          bool     force_create)
+                          uint32_t capacity)
 {
-	std::atomic<Buffer*>& head_ptr = free_list(type);
-	Buffer*               try_head = NULL;
-
-	if (!force_create) {
-		Buffer* next;
-		do {
-			try_head = head_ptr.load();
-			if (!try_head)
-				break;
-			next = try_head->_next;
-		} while (!head_ptr.compare_exchange_weak(try_head, next));
-	}
-
+	Buffer* try_head = try_get_buffer(type);
 	if (!try_head) {
-		if (!real_time) {
-			return create(type, value_type, capacity);
-		} else {
-			_engine.world()->log().error("Failed to obtain buffer");
-			return BufferRef();
-		}
+		return create(type, value_type, capacity);
 	}
 
 	try_head->_next = NULL;
-	try_head->set_type(type, value_type);
+	try_head->set_type(&BufferFactory::get_buffer, type, value_type);
+	return BufferRef(try_head);
+}
+
+BufferRef
+BufferFactory::claim_buffer(LV2_URID type,
+                            LV2_URID value_type,
+                            uint32_t capacity)
+{
+	Buffer* try_head = try_get_buffer(type);
+	if (!try_head) {
+		_engine.world()->log().rt_error("Failed to obtain buffer");
+		return BufferRef();
+	}
+
+	try_head->_next = NULL;
+	try_head->set_type(&BufferFactory::claim_buffer, type, value_type);
 	return BufferRef(try_head);
 }
 

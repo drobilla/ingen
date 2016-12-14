@@ -91,7 +91,7 @@ Buffer::Buffer(BufferFactory& bufs,
 			   Float, which acts like an individual float (has a value), but the
 			   buffer itself only transmits changes and does not necessarily
 			   contain the current value. */
-			_value_buffer = bufs.get_buffer(value_type, 0, 0, false);
+			_value_buffer = bufs.get_buffer(value_type, 0, 0);
 		}
 	}
 }
@@ -110,12 +110,12 @@ Buffer::recycle()
 }
 
 void
-Buffer::set_type(LV2_URID type, LV2_URID value_type)
+Buffer::set_type(GetFn get, LV2_URID type, LV2_URID value_type)
 {
 	_type       = type;
 	_value_type = value_type;
 	if (type == _factory.uris().atom_Sequence && value_type) {
-		_value_buffer = _factory.get_buffer(value_type, 0, 0, false);
+		_value_buffer = (_factory.*get)(value_type, 0, 0);
 	}
 }
 
@@ -312,8 +312,7 @@ Buffer::append_event(int64_t        frames,
 
 	LV2_Atom* atom = get<LV2_Atom>();
 	if (atom->type == _factory.uris().atom_Chunk) {
-		// Chunk initialized with prepare_output_write(), clear
-		clear();
+		clear();  // Chunk initialized with prepare_output_write(), clear
 	}
 
 	if (sizeof(LV2_Atom) + atom->size + lv2_atom_pad_size(size) > _capacity) {
@@ -384,7 +383,7 @@ Buffer::set_value(const Atom& value)
 	}
 
 	if (value.size() > _value_buffer->size()) {
-		_value_buffer = _factory.get_buffer(value.type(), 0, value.size(), false, false);
+		_value_buffer = _factory.claim_buffer(value.type(), 0, value.size());
 	}
 
 	memcpy(_value_buffer->get<LV2_Atom*>(), value.atom(), sizeof(LV2_Atom) + value.size());

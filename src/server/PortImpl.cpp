@@ -68,6 +68,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _max(bufs.forge().make(1.0f))
 	, _voices(new Raul::Array<Voice>(static_cast<size_t>(poly)))
 	, _prepared_voices(NULL)
+	, _connected_flag(false)
 	, _monitored(false)
 	, _force_monitor_update(false)
 	, _is_morph(false)
@@ -98,9 +99,9 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 		if (_parent->graph_type() != Node::GraphType::GRAPH) {
 			add_property(bufs.uris().rdf_type, bufs.uris().lv2_OutputPort.urid);
 		}
-
-		setup_buffers(bufs, poly, false);
 	}
+
+	get_buffers(bufs, &BufferFactory::get_buffer, _voices, poly, 0);
 }
 
 PortImpl::~PortImpl()
@@ -110,15 +111,24 @@ PortImpl::~PortImpl()
 
 bool
 PortImpl::get_buffers(BufferFactory&      bufs,
+                      GetFn               get,
                       Raul::Array<Voice>* voices,
                       uint32_t            poly,
-                      bool                real_time) const
+                      size_t              num_in_arcs) const
 {
-	for (uint32_t v = 0; v < poly; ++v)
-		voices->at(v).buffer = bufs.get_buffer(
-			buffer_type(), _value.type(), _buffer_size, real_time);
+	for (uint32_t v = 0; v < poly; ++v) {
+		voices->at(v).buffer.reset();
+		voices->at(v).buffer = (bufs.*get)(
+			buffer_type(), _value.type(), _buffer_size);
+	}
 
 	return true;
+}
+
+bool
+PortImpl::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
+{
+	return get_buffers(bufs, &BufferFactory::claim_buffer, _voices, poly, 0);
 }
 
 void
@@ -171,10 +181,6 @@ PortImpl::supports(const URIs::Quark& value_type) const
 void
 PortImpl::activate(BufferFactory& bufs)
 {
-	setup_buffers(bufs, _poly, false);
-	connect_buffers();
-	clear_buffers();
-
 	/* Set the time since the last monitor update to a random value within the
 	   monitor period, to spread the load out over time.  Otherwise, every
 	   port would try to send an update at exactly the same time, every time.
@@ -184,6 +190,8 @@ PortImpl::activate(BufferFactory& bufs)
 	_frames_since_monitor = bufs.engine().frand() * period;
 	_monitor_value        = 0.0f;
 	_peak                 = 0.0f;
+
+	_connected_flag.clear();  // Trigger buffer re-connect next cycle
 }
 
 void
@@ -328,24 +336,19 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (_is_driver_port || _parent->is_main() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
 		return false;
-	}
-
-	if (_poly == poly) {
+	} else if (_poly == poly) {
 		return true;
-	}
-
-	if (_prepared_voices && _prepared_voices->size() != poly) {
+	} else if (_prepared_voices && _prepared_voices->size() != poly) {
 		delete _prepared_voices;
 		_prepared_voices = NULL;
 	}
 
-	if (!_prepared_voices)
+	if (!_prepared_voices) {
 		_prepared_voices = new Raul::Array<Voice>(poly, *_voices, Voice());
+	}
 
-	get_buffers(bufs,
-	            _prepared_voices,
-	            _prepared_voices->size(),
-	            false);
+	get_buffers(bufs, &BufferFactory::get_buffer,
+	            _prepared_voices, _prepared_voices->size(), num_arcs());
 
 	return true;
 }
@@ -356,9 +359,7 @@ PortImpl::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 	if (_parent->is_main() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
 		return false;
-	}
-
-	if (!_prepared_voices) {
+	} else if (!_prepared_voices) {
 		return true;
 	}
 
@@ -379,6 +380,8 @@ PortImpl::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 	assert(this->poly() == poly);
 	assert(!_prepared_voices);
 
+	connect_buffers();
+
 	return true;
 }
 
@@ -396,8 +399,9 @@ PortImpl::set_buffer_size(RunContext& context, BufferFactory& bufs, size_t size)
 void
 PortImpl::connect_buffers(SampleCount offset)
 {
-	for (uint32_t v = 0; v < _poly; ++v)
+	for (uint32_t v = 0; v < _poly; ++v) {
 		PortImpl::parent_block()->set_port_buffer(v, _index, buffer(v), offset);
+	}
 }
 
 void
@@ -547,6 +551,11 @@ PortImpl::update_values(SampleCount offset, uint32_t voice)
 void
 PortImpl::pre_process(RunContext& context)
 {
+	if (!_connected_flag.test_and_set()) {
+		connect_buffers();
+		clear_buffers();
+	}
+
 	for (uint32_t v = 0; v < _poly; ++v)
 		_voices->at(v).buffer->prepare_output_write(context);
 }

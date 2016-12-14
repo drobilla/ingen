@@ -50,12 +50,22 @@ public:
 	uint32_t audio_buffer_size() const;
 	uint32_t default_size(LV2_URID type) const;
 
+	/** Dynamically allocate a new Buffer. */
+	BufferRef create(LV2_URID type,
+	                 LV2_URID value_type,
+	                 uint32_t capacity = 0);
+
+	/** Get a new buffer, reusing if possible, allocating if otherwise. */
 	BufferRef get_buffer(LV2_URID type,
 	                     LV2_URID value_type,
-	                     uint32_t capacity,
-	                     bool     real_time,
-	                     bool     force_create = false);
+	                     uint32_t capacity);
 
+	/** Claim an existing buffer, never allocates, real-time safe. */
+	BufferRef claim_buffer(LV2_URID type,
+	                       LV2_URID value_type,
+	                       uint32_t capacity);
+
+	/** Return a reference to a shared silent buffer. */
 	BufferRef silent_buffer();
 
 	void set_block_length(SampleCount block_length);
@@ -69,7 +79,7 @@ private:
 	friend class Buffer;
 	void recycle(Buffer* buf);
 
-	BufferRef create(LV2_URID type, LV2_URID value_type, uint32_t capacity=0);
+	Buffer* try_get_buffer(LV2_URID type);
 
 	inline std::atomic<Buffer*>& free_list(LV2_URID type) {
 		if (type == _uris.atom_Float) {

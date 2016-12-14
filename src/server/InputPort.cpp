@@ -68,46 +68,60 @@ InputPort::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 
 bool
 InputPort::get_buffers(BufferFactory&      bufs,
+                       PortImpl::GetFn     get,
                        Raul::Array<Voice>* voices,
                        uint32_t            poly,
-                       bool                real_time) const
+                       size_t              num_in_arcs) const
 {
-	const size_t num_arcs = real_time ? _arcs.size() : _num_arcs;
-
 	if (is_a(PortType::ATOM) && !_value.is_valid()) {
 		poly = 1;
 	}
 
-	if (is_a(PortType::AUDIO) && num_arcs == 0) {
+	if (is_a(PortType::AUDIO) && num_in_arcs == 0) {
 		// Audio input with no arcs, use shared zero buffer
 		for (uint32_t v = 0; v < poly; ++v) {
 			voices->at(v).buffer = bufs.silent_buffer();
 		}
 		return false;
-
-	} else if (num_arcs == 1 && !is_a(PortType::ATOM)) {
-		if (real_time) {
-			if (!_arcs.front().must_mix()) {
-				// Single non-mixing connection, use buffers directly
-				for (uint32_t v = 0; v < poly; ++v) {
-					voices->at(v).buffer = _arcs.front().buffer(v);
-				}
-				return false;
-			}
-		}
 	}
 
 	// Otherwise, allocate local buffers
 	for (uint32_t v = 0; v < poly; ++v) {
 		voices->at(v).buffer.reset();
-		voices->at(v).buffer = bufs.get_buffer(
-			buffer_type(), _value.type(), _buffer_size, real_time);
+		voices->at(v).buffer = (bufs.*get)(
+			buffer_type(), _value.type(), _buffer_size);
 		voices->at(v).buffer->clear();
 		if (_value.is_valid()) {
 			voices->at(v).buffer->set_value(_value);
 		}
 	}
 	return true;
+}
+
+bool
+InputPort::pre_get_buffers(BufferFactory&      bufs,
+                           Raul::Array<Voice>* voices,
+                           uint32_t            poly) const
+{
+	return get_buffers(bufs, &BufferFactory::get_buffer, voices, poly, _num_arcs);
+}
+
+bool
+InputPort::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
+{
+	if (is_a(PortType::ATOM) && !_value.is_valid()) {
+		poly = 1;
+	}
+
+	if (_arcs.size() == 1 && !is_a(PortType::ATOM) && !_arcs.front().must_mix()) {
+		// Single non-mixing connection, use buffers directly
+		for (uint32_t v = 0; v < poly; ++v) {
+			_voices->at(v).buffer = _arcs.front().buffer(v);
+		}
+		return false;
+	}
+
+	return get_buffers(bufs, &BufferFactory::claim_buffer, _voices, poly, _arcs.size());
 }
 
 void

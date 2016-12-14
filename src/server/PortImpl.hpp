@@ -124,6 +124,9 @@ public:
 	virtual bool apply_poly(
 		RunContext& context, Raul::Maid& maid, uint32_t poly);
 
+	/** Return the number of arcs (pre-process thraed). */
+	virtual size_t num_arcs() const { return 0; }
+
 	const Atom& value() const { return _value; }
 	void        set_value(const Atom& v) { _value = v; }
 
@@ -175,15 +178,8 @@ public:
 	/** Empty buffer contents completely (ie silence) */
 	virtual void clear_buffers();
 
-public:
-	virtual bool get_buffers(BufferFactory&      bufs,
-	                         Raul::Array<Voice>* voices,
-	                         uint32_t            poly,
-	                         bool                real_time) const;
-
-	void setup_buffers(BufferFactory& bufs, uint32_t poly, bool real_time) {
-		get_buffers(bufs, _voices, poly, real_time);
-	}
+	/** Claim and apply buffers in the real-time thread. */
+	virtual bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly);
 
 	void activate(BufferFactory& bufs);
 	void deactivate();
@@ -272,6 +268,22 @@ public:
 	bool is_toggled()     const { return _is_toggled; }
 
 protected:
+	typedef BufferRef (BufferFactory::*GetFn)(LV2_URID, LV2_URID, uint32_t);
+
+	/** Set `voices` as the buffers to be used for this port.
+	 *
+	 * This is real-time safe only if `get` is as well, use in the real-time
+	 * thread should pass &BufferFactory::claim_buffer.
+	 *
+	 * @param get Method used to get new buffers as necessary.
+	 * @return true iff buffers are locally owned by the port
+	 */
+	virtual bool get_buffers(BufferFactory&      bufs,
+	                         GetFn               get,
+	                         Raul::Array<Voice>* voices,
+	                         uint32_t            poly,
+	                         size_t              num_in_arcs) const;
+
 	BufferFactory&      _bufs;
 	uint32_t            _index;
 	uint32_t            _poly;
@@ -287,6 +299,7 @@ protected:
 	Raul::Array<Voice>* _voices;
 	Raul::Array<Voice>* _prepared_voices;
 	BufferRef           _user_buffer;
+	std::atomic_flag    _connected_flag;
 	bool                _monitored;
 	bool                _force_monitor_update;
 	bool                _is_morph;

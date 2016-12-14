@@ -70,10 +70,10 @@ public:
 	bool apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly);
 
 	bool get_buffers(BufferFactory&      bufs,
+	                 PortImpl::GetFn     get,
 	                 Raul::Array<Voice>* voices,
 	                 uint32_t            poly,
-	                 bool                real_time) const;
-
+	                 size_t              num_in_arcs) const;
 
 	virtual void set_is_driver_port(BufferFactory& bufs);
 
@@ -83,6 +83,8 @@ public:
 	 * prepare_driver_buffer().
 	 */
 	void set_driver_buffer(void* buf, uint32_t capacity);
+
+	bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly) override;
 
 	void pre_process(RunContext& context);
 	void post_process(RunContext& context);

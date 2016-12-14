@@ -90,10 +90,9 @@ Disconnect::Impl::Impl(Engine&     e,
 	if (_head->num_arcs() == 0) {
 		if (!_head->is_driver_port()) {
 			_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
-			_head->get_buffers(*_engine.buffer_factory(),
-			                   _voices,
-			                   _head->poly(),
-			                   false);
+			_head->pre_get_buffers(*_engine.buffer_factory(),
+			                       _voices,
+			                       _head->poly());
 
 			if (_head->is_a(PortType::CONTROL) ||
 			    _head->is_a(PortType::CV)) {
@@ -189,9 +188,7 @@ Disconnect::Impl::execute(RunContext& context, bool set_head_buffers)
 		if (_voices) {
 			_engine.maid()->dispose(_head->set_voices(context, _voices));
 		} else {
-			_head->setup_buffers(*_engine.buffer_factory(),
-			                     _head->poly(),
-			                     true);
+			_head->setup_buffers(context, *_engine.buffer_factory(), _head->poly());
 		}
 		_head->connect_buffers();
 	} else {

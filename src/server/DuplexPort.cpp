@@ -62,7 +62,8 @@ DuplexPort::DuplexPort(BufferFactory&      bufs,
 		}
 	}
 
-	get_buffers(bufs, _voices, parent->polyphony(), false);
+	get_buffers(bufs, &BufferFactory::get_buffer,
+	            _voices, parent->polyphony(), 0);
 }
 
 DuplexPort::~DuplexPort()
@@ -130,16 +131,26 @@ DuplexPort::on_property(const Raul::URI& uri, const Atom& value)
 
 bool
 DuplexPort::get_buffers(BufferFactory&      bufs,
+                        PortImpl::GetFn     get,
                         Raul::Array<Voice>* voices,
                         uint32_t            poly,
-                        bool                real_time) const
+                        size_t              num_in_arcs) const
 {
-	if (!_is_driver_port) {
-		if (_is_output) {
-			return InputPort::get_buffers(bufs, voices, poly, real_time);
-		} else {
-			return PortImpl::get_buffers(bufs, voices, poly, real_time);
-		}
+	if (!_is_driver_port && is_output()) {
+		return InputPort::get_buffers(bufs, get, voices, poly, num_in_arcs);
+	} else if (!_is_driver_port && is_input()) {
+		return PortImpl::get_buffers(bufs, get, voices, poly, num_in_arcs);
+	}
+	return false;
+}
+
+bool
+DuplexPort::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
+{
+	if (!_is_driver_port && is_output()) {
+		return InputPort::setup_buffers(ctx, bufs, poly);
+	} else if (!_is_driver_port && is_input()) {
+		return PortImpl::setup_buffers(ctx, bufs, poly);
 	}
 	return false;
 }

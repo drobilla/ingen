@@ -68,8 +68,8 @@ BlockDelayNode::~BlockDelayNode()
 void
 BlockDelayNode::activate(BufferFactory& bufs)
 {
-	_buffer = bufs.get_buffer(
-		bufs.uris().atom_Sound, 0, bufs.audio_buffer_size(), false, true);
+	_buffer = bufs.create(
+		bufs.uris().atom_Sound, 0, bufs.audio_buffer_size());
 
 	BlockImpl::activate(bufs);
 }

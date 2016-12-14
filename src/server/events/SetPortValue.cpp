@@ -74,9 +74,7 @@ SetPortValue::pre_process(PreProcessContext& ctx)
 		_buffer = _engine.buffer_factory()->get_buffer(
 			_port->buffer_type(),
 			0,
-			_engine.buffer_factory()->default_size(_port->buffer_type()),
-			false,
-			false);
+			_engine.buffer_factory()->default_size(_port->buffer_type()));
 	}
 
 	return Event::pre_process_done(Status::SUCCESS);

@@ -64,7 +64,12 @@ public:
 		return is_audio() ? _capacity : sizeof(LV2_Atom) + get<LV2_Atom>()->size;
 	}
 
-	void set_type(LV2_URID type, LV2_URID value_type);
+	typedef BufferRef (BufferFactory::*GetFn)(LV2_URID, LV2_URID, uint32_t);
+
+	/** Set the buffer type and optional value type for this buffer.
+	 * @param get Called to get auxiliary buffers if necessary.
+	 */
+	void set_type(GetFn get, LV2_URID type, LV2_URID value_type);
 
 	inline bool is_audio() const {
 		return _type == _factory.uris().atom_Sound;

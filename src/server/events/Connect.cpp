@@ -139,10 +139,9 @@ Connect::pre_process(PreProcessContext& ctx)
 
 	if (!_head->is_driver_port()) {
 		_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
-		_head->get_buffers(*_engine.buffer_factory(),
-		                   _voices,
-		                   _head->poly(),
-		                   false);
+		_head->pre_get_buffers(*_engine.buffer_factory(),
+		                       _voices,
+		                       _head->poly());
 	}
 
 	tail_output->inherit_neighbour(_head, _tail_remove, _tail_add);

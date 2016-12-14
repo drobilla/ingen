@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2016 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -399,8 +399,8 @@ ControlBindings::remove(PortImpl* port)
 void
 ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 {
-	uint16_t       value    = 0;
-	SPtr<Bindings> bindings = _bindings;
+	uint16_t  value    = 0;
+	Bindings* bindings = _bindings.get();
 	_feedback->clear();
 
 	Ingen::World*      world = context.engine().world();

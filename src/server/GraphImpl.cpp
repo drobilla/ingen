@@ -191,15 +191,17 @@ GraphImpl::apply_internal_poly(RunContext&    context,
 	for (auto& b : _blocks) {
 		for (uint32_t j = 0; j < b.num_ports(); ++j) {
 			PortImpl* const port = b.port_impl(j);
-			if (port->is_input() && dynamic_cast<InputPort*>(port)->direct_connect())
-				port->setup_buffers(bufs, port->poly(), true);
+			if (port->is_input() && dynamic_cast<InputPort*>(port)->direct_connect()) {
+				port->setup_buffers(context, bufs, port->poly());
+			}
 			port->connect_buffers();
 		}
 	}
 
 	const bool polyphonic = parent_graph() && (poly == parent_graph()->internal_poly_process());
-	for (auto& o : _outputs)
-		o.setup_buffers(bufs, polyphonic ? poly : 1, true);
+	for (auto& o : _outputs) {
+		o.setup_buffers(context, bufs, polyphonic ? poly : 1);
+	}
 
 	_poly_process = poly;
 	return true;
