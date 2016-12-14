@@ -31,6 +31,8 @@ def options(opt):
                    help='Do not build client library (or GUI)')
     opt.add_option('--no-jack', action='store_true', dest='no_jack',
                    help='Do not build jack backend (for ingen.lv2 only)')
+    opt.add_option('--no-plugin', action='store_true', dest='no_plugin',
+                   help='Do not build ingen.lv2 plugin')
     opt.add_option('--no-python', action='store_true', dest='no_python',
                    help='Do not install Python bindings')
     opt.add_option('--no-webkit', action='store_true', dest='no_webkit',
@@ -120,6 +122,9 @@ def configure(conf):
     if not Options.options.no_python:
         conf.check_python_version((2,4,0), mandatory=False)
 
+    if not Options.options.no_plugin:
+        autowaf.define(conf, 'INGEN_BUILD_LV2', 1)
+
     if not Options.options.no_jack:
         autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
                           atleast_version='0.120.0', mandatory=False)
@@ -179,17 +184,18 @@ def configure(conf):
 
     conf.write_config_header('ingen_config.h', remove=False)
 
-    autowaf.display_msg(conf, "Jack", bool(conf.env.HAVE_JACK))
+    autowaf.display_msg(conf, "GUI", bool(conf.env.INGEN_BUILD_GUI))
+    autowaf.display_msg(conf, "HTML plugin documentation support",
+                        bool(conf.env.HAVE_WEBKIT))
+    autowaf.display_msg(conf, "Jack driver", bool(conf.env.HAVE_JACK))
     autowaf.display_msg(conf, "Jack session support",
                         bool(conf.env.INGEN_JACK_SESSION))
     autowaf.display_msg(conf, "Jack metadata support",
                         conf.is_defined('HAVE_JACK_METADATA'))
-    autowaf.display_msg(conf, "Socket interface", conf.is_defined('HAVE_SOCKET'))
-    autowaf.display_msg(conf, "LV2", bool(conf.env.HAVE_LILV))
-    autowaf.display_msg(conf, "GUI", bool(conf.env.INGEN_BUILD_GUI))
+    autowaf.display_msg(conf, "LV2 plugin driver", bool(conf.env.INGNE_BUILD_LV2))
     autowaf.display_msg(conf, "LV2 bundle", conf.env.INGEN_BUNDLE_DIR)
-    autowaf.display_msg(conf, "HTML plugin documentation support",
-                        bool(conf.env.HAVE_WEBKIT))
+    autowaf.display_msg(conf, "LV2 plugin support", bool(conf.env.HAVE_LILV))
+    autowaf.display_msg(conf, "Socket interface", conf.is_defined('HAVE_SOCKET'))
     print('')
 
 def build(bld):
