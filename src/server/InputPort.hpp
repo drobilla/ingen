@@ -95,7 +95,7 @@ public:
 	                     Raul::Array<Voice>* voices,
 	                     uint32_t            poly) const;
 
-	bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly) override;
+	bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly);
 
 	/** Set up buffer pointers. */
 	void pre_process(RunContext& context);
@@ -109,9 +109,9 @@ public:
 	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
 	void        update_values(SampleCount offset, uint32_t voice);
 
-	size_t num_arcs() const override { return _num_arcs; }
-	void   increment_num_arcs()      { ++_num_arcs; }
-	void   decrement_num_arcs()      { --_num_arcs; }
+	size_t num_arcs() const     { return _num_arcs; }
+	void   increment_num_arcs() { ++_num_arcs; }
+	void   decrement_num_arcs() { --_num_arcs; }
 
 	bool direct_connect() const;
 
@@ -120,7 +120,7 @@ protected:
 	                 PortImpl::GetFn     get,
 	                 Raul::Array<Voice>* voices,
 	                 uint32_t            poly,
-	                 size_t              num_in_arcs) const override;
+	                 size_t              num_in_arcs) const;
 
 	size_t _num_arcs;  ///< Pre-process thread
 	Arcs   _arcs;      ///< Audio thread

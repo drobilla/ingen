@@ -84,7 +84,7 @@ public:
 	 */
 	void set_driver_buffer(void* buf, uint32_t capacity);
 
-	bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly) override;
+	bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly);
 
 	void pre_process(RunContext& context);
 	void post_process(RunContext& context);
