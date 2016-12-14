@@ -215,9 +215,6 @@ public:
 	virtual void remove_port(RunContext& context, EnginePort* port) {
 		const uint32_t index = port->graph_port()->index();
 		_ports[index] = NULL;
-		if (index == _ports.size() - 1) {
-			_ports.resize(index);
-		}
 	}
 
 	/** Unused since LV2 has no dynamic ports. */
