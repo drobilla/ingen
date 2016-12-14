@@ -84,7 +84,7 @@ Task::get_task(RunContext& context)
 
 	while (true) {
 		// Push done end index as forward as possible
-		for (; (*this)[_done_end].done(); ++_done_end) {}
+		for (; _done_end < size() && (*this)[_done_end].done(); ++_done_end) {}
 
 		if (_done_end >= size()) {
 			return NULL;  // All child tasks are finished

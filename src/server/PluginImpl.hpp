@@ -49,6 +49,7 @@ public:
 	           const Raul::URI& uri)
 		: Resource(uris, uri)
 		, _type(type)
+		, _presets_loaded(false)
 		, _is_zombie(false)
 	{}
 
