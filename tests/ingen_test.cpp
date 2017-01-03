@@ -226,7 +226,7 @@ main(int argc, char** argv)
 	SerdURI cmds_base;
 	SerdNode cmds_file_uri = serd_node_new_file_uri(
 		(const uint8_t*)cmds_file_path.c_str(),
-		NULL, &cmds_base, false);
+		NULL, &cmds_base, true);
 	Sord::Model* cmds = new Sord::Model(*world->rdf_world(),
 	                                    (const char*)cmds_file_uri.buf);
 	SerdEnv* env = serd_env_new(&cmds_file_uri);
