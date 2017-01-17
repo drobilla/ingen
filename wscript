@@ -251,9 +251,10 @@ def build(bld):
     autowaf.build_dox(bld, 'INGEN', INGEN_VERSION, top, out)
 
     # Ontology documentation
-    bld(rule='lv2specgen.py ${SRC} ${TGT} -i -p ingen --copy-style --list-email ingen@drobilla.net --list-page http://lists.drobilla.net/listinfo.cgi/ingen-drobilla.net',
-        source = 'bundles/ingen.lv2/ingen.ttl',
-        target = 'ingen.lv2/ingen.html')
+    if bld.env.DOCS:
+        bld(rule='lv2specgen.py ${SRC} ${TGT} -i -p ingen --copy-style --list-email ingen@drobilla.net --list-page http://lists.drobilla.net/listinfo.cgi/ingen-drobilla.net',
+            source = 'bundles/ingen.lv2/ingen.ttl',
+            target = 'ingen.lv2/ingen.html')
 
     # Man page
     bld.install_files('${MANDIR}/man1', 'doc/ingen.1')
