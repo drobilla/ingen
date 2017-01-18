@@ -65,7 +65,7 @@ Delta::Delta(Engine&           engine,
 	, _state(NULL)
 	, _context(context)
 	, _type(type)
-	, _poly_lock(engine.store()->mutex(), std::defer_lock)
+	, _block(false)
 {
 	if (context != Resource::Graph::DEFAULT) {
 		for (auto& p : _properties) {
@@ -136,7 +136,6 @@ Delta::pre_process(PreProcessContext& ctx)
 	const bool is_client       = (_subject == "ingen:/clients/this");
 	const bool is_engine       = (_subject == "ingen:/");
 	const bool is_file         = (_subject.substr(0, 5) == "file:");
-	bool       poly_changed    = false;
 
 	if (_type == Type::PUT && is_file) {
 		// Ensure type is Preset, the only supported file put
@@ -175,8 +174,7 @@ Delta::pre_process(PreProcessContext& ctx)
 		}
 	}
 
-	// Take a writer lock while we modify the store
-	std::unique_lock<Store::Mutex> lock(_engine.store()->mutex());
+	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
 	_object = is_graph_object
 		? static_cast<Ingen::Resource*>(_engine.store()->get(Node::uri_to_path(_subject)))
@@ -362,8 +360,8 @@ Delta::pre_process(PreProcessContext& ctx)
 						if (value.get<int32_t>() < 1 || value.get<int32_t>() > 128) {
 							_status = Status::INVALID_POLY;
 						} else {
-							poly_changed = true;
-							op = SpecialType::POLYPHONY;
+							_block = true;
+							op     = SpecialType::POLYPHONY;
 							_graph->prepare_internal_poly(
 								*_engine.buffer_factory(), value.get<int32_t>());
 						}
@@ -380,8 +378,8 @@ Delta::pre_process(PreProcessContext& ctx)
 				} else if (value.type() != uris.forge.Bool) {
 					_status = Status::BAD_VALUE_TYPE;
 				} else {
-					poly_changed = true;
-					op           = SpecialType::POLYPHONIC;
+					_block = true;
+					op     = SpecialType::POLYPHONIC;
 					obj->set_property(key, value, value.context());
 					BlockImpl* block = dynamic_cast<BlockImpl*>(obj);
 					if (block) {
@@ -425,11 +423,6 @@ Delta::pre_process(PreProcessContext& ctx)
 
 	for (auto& s : _set_events) {
 		s->pre_process(ctx);
-	}
-
-	if (poly_changed) {
-		lock.unlock();
-		_poly_lock.lock();
 	}
 
 	return Event::pre_process_done(
@@ -536,10 +529,6 @@ Delta::execute(RunContext& context)
 void
 Delta::post_process()
 {
-	if (_poly_lock.owns_lock()) {
-		_poly_lock.unlock();
-	}
-
 	if (_state) {
 		BlockImpl* block = dynamic_cast<BlockImpl*>(_object);
 		if (block) {
@@ -618,6 +607,12 @@ Delta::undo(Interface& target)
 			target.put(_subject, _removed);
 		}
 	}
+}
+
+Event::Execution
+Delta::get_execution() const
+{
+	return _block ? Execution::ATOMIC : Execution::NORMAL;
 }
 
 } // namespace Events

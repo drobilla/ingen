@@ -58,7 +58,12 @@ public:
 	enum class Mode { NORMAL, UNDO, REDO };
 
 	/** Execution mode for events that block and unblock preprocessing. */
-	enum class Execution { NORMAL, BLOCK, UNBLOCK };
+	enum class Execution {
+		NORMAL,  ///< Normal pipelined execution
+		ATOMIC,  ///< Block pre-processing until this event is executed
+		BLOCK,   ///< Begin atomic block of events
+		UNBLOCK  ///< Finish atomic executed block of events
+	};
 
 	/** Pre-process event before execution (non-realtime). */
 	virtual bool pre_process(PreProcessContext& ctx) = 0;

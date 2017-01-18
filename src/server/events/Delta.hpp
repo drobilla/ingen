@@ -78,6 +78,8 @@ public:
 	void post_process();
 	void undo(Interface& target);
 
+	Execution get_execution() const;
+
 private:
 	enum class SpecialType {
 		NONE,
@@ -115,7 +117,7 @@ private:
 
 	boost::optional<Resource> _preset;
 
-	std::unique_lock<Store::Mutex> _poly_lock;  ///< Long-term lock for poly changes
+	bool _block;
 };
 
 } // namespace Events
