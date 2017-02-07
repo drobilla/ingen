@@ -256,7 +256,7 @@ ingen:Option
 
 ingen:shortSwitch
 	a rdf:Property ,
-		owl:ObjectProperty ,
+		owl:DatatypeProperty ,
 		owl:FunctionalProperty ;
 	rdfs:domain ingen:Option ;
 	rdfs:range xsd:string ;
@@ -265,7 +265,7 @@ ingen:shortSwitch
 
 ingen:longSwitch
 	a rdf:Property ,
-		owl:ObjectProperty ,
+		owl:DatatypeProperty ,
 		owl:FunctionalProperty ;
 	rdfs:domain ingen:Option ;
 	rdfs:range xsd:string ;
