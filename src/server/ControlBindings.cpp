@@ -132,7 +132,7 @@ ControlBindings::set_port_binding(RunContext& context,
                                   const Atom& value)
 {
 	const Key key = binding_key(value);
-	if (key) {
+	if (!!key) {
 		binding->key  = key;
 		binding->port = port;
 		_bindings->insert(*binding);
@@ -150,7 +150,7 @@ ControlBindings::port_value_changed(RunContext& context,
 {
 	Ingen::World*      world = context.engine().world();
 	const Ingen::URIs& uris  = world->uris();
-	if (key) {
+	if (!!key) {
 		int16_t  value = port_value_to_control(
 			context, port, key.type, value_atom);
 		uint16_t size  = 0;
@@ -400,13 +400,13 @@ ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 			const uint8_t* buf = (const uint8_t*)LV2_ATOM_BODY(&ev->body);
 			const Key      key = midi_event_key(ev->body.size, buf, value);
 
-			if (_learn_binding && key) {
+			if (_learn_binding && !!key) {
 				finish_learn(context, key);  // Learn new binding
 			}
 
 			// Set all controls bound to this key
 			const Binding k = {key, NULL};
-			for (Bindings::const_iterator i = _bindings->find(k);
+			for (Bindings::const_iterator i = _bindings->lower_bound(k);
 			     i != _bindings->end() && i->key == key;
 			     ++i) {
 				set_port_value(context, i->port, key.type, value);

@@ -53,9 +53,13 @@ public:
 	struct Key {
 		Key(Type t=Type::NULL_CONTROL, int16_t n=0) : type(t), num(n) {}
 		inline bool operator<(const Key& other) const {
-			return (type == other.type) ? (num < other.num) : (type < other.type);
+			return ((type < other.type) ||
+			        (type == other.type && num < other.num));
 		}
-		inline operator bool() const { return type != Type::NULL_CONTROL; }
+		inline bool operator==(const Key& other) const {
+			return type == other.type && num == other.num;
+		}
+		inline bool operator!() const { return type == Type::NULL_CONTROL; }
 		Type    type;
 		int16_t num;
 	};
