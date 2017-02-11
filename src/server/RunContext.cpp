@@ -75,9 +75,6 @@ RunContext::RunContext(const RunContext& copy)
 	, _realtime(copy._realtime)
 {}
 
-RunContext::~RunContext()
-{}
-
 bool
 RunContext::must_notify(const PortImpl* port) const
 {
@@ -155,6 +152,17 @@ RunContext::set_priority(int priority)
 				fmt("Failed to set real-time priority of run thread (%s)\n")
 				% strerror(errno));
 		}
+	}
+}
+
+void
+RunContext::join()
+{
+	if (_thread) {
+		if (_thread->joinable()) {
+			_thread->join();
+		}
+		delete _thread;
 	}
 }
 

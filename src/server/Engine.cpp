@@ -151,7 +151,13 @@ Engine::~Engine()
 		_post_processor->process();
 	}
 
+	delete _atom_interface;
+
+	// Delete run contexts
+	_quit_flag = true;
+	_tasks_available.notify_all();
 	for (RunContext* ctx : _run_contexts) {
+		ctx->join();
 		delete ctx;
 	}
 	for (Raul::RingBuffer* ring : _notifications) {
@@ -176,9 +182,11 @@ Engine::~Engine()
 	delete _pre_processor;
 	delete _post_processor;
 	delete _undo_stack;
+	delete _redo_stack;
 	delete _block_factory;
 	delete _control_bindings;
 	delete _broadcaster;
+	delete _sync_worker;
 	delete _worker;
 	delete _maid;
 
@@ -227,8 +235,10 @@ Engine::pending_notifications()
 bool
 Engine::wait_for_tasks()
 {
-	std::unique_lock<std::mutex> lock(_tasks_mutex);
-	_tasks_available.wait(lock);
+	if (!_quit_flag) {
+		std::unique_lock<std::mutex> lock(_tasks_mutex);
+		_tasks_available.wait(lock);
+	}
 	return !_quit_flag;
 }
 

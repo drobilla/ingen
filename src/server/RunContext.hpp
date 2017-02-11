@@ -67,8 +67,6 @@ public:
 	 */
 	RunContext(const RunContext& parent);
 
-	virtual ~RunContext();
-
 	/** Return true iff the given port should broadcast its value.
 	 *
 	 * Whether or not broadcasting is actually done is a per-client property,
@@ -122,6 +120,8 @@ public:
 
 	void set_priority(int priority);
 	void set_rate(SampleCount rate) { _rate = rate; }
+
+    void join();
 
 	inline Engine&     engine()   const { return _engine; }
 	inline Task*       task()     const { return _task; }

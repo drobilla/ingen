@@ -35,7 +35,9 @@ public:
 		, _seq_size(seq_size)
 	{}
 
-	virtual ~DirectDriver() {}
+	virtual ~DirectDriver() {
+		_ports.clear_and_dispose([](EnginePort* p) { delete p; });
+	}
 
 	virtual void activate() {}
 

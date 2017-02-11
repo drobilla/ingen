@@ -71,17 +71,10 @@ JackDriver::JackDriver(Engine& engine)
 		&_forge, &engine.world()->uri_map().urid_map_feature()->urid_map);
 }
 
-struct PortDisposer {
-	void operator()(EnginePort* port) { delete port; }
-};
-
 JackDriver::~JackDriver()
 {
 	deactivate();
-	_ports.clear_and_dispose(PortDisposer());
-
-	if (_client)
-		jack_client_close(_client);
+	_ports.clear_and_dispose([](EnginePort* p) { delete p; });
 }
 
 bool
@@ -178,7 +171,7 @@ void
 JackDriver::deactivate()
 {
 	if (_is_activated) {
-		_flag = true;
+		_flag         = true;
 		_is_activated = false;
 		_sem.timed_wait(1000);
 
