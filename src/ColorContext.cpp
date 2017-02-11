@@ -29,7 +29,7 @@ ColorContext::ColorContext(FILE* stream, Color color)
 	: _stream(stream)
 {
 	if (isatty(fileno(_stream))) {
-		fprintf(_stream, "\033[0;%dm", color);
+		fprintf(_stream, "\033[0;%dm", (int)color);
 	}
 }
 
