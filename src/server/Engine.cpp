@@ -460,7 +460,7 @@ Engine::run(uint32_t sample_count)
 bool
 Engine::pending_events()
 {
-	return !_pre_processor->empty();
+	return !_pre_processor->empty() || _post_processor->pending();
 }
 
 void

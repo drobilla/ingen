@@ -70,7 +70,7 @@ PostProcessor::append(RunContext& context, Event* first, Event* last)
 bool
 PostProcessor::pending() const
 {
-	return _head.load() || _engine.pending_notifications();
+	return _head.load()->next() || _engine.pending_notifications();
 }
 
 void
