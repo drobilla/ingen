@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -24,6 +24,7 @@
 #include <glibmm/miscutils.h>
 
 #include "ingen/Atom.hpp"
+#include "ingen/AtomForgeSink.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Parser.hpp"
@@ -127,22 +128,22 @@ get_properties(Ingen::World*     world,
                const Sord::Node& subject,
                Resource::Graph   ctx)
 {
-	SerdChunk     out    = { NULL, 0 };
 	LV2_URID_Map* map    = &world->uri_map().urid_map_feature()->urid_map;
 	Sratom*       sratom = sratom_new(map);
 
 	LV2_Atom_Forge forge;
 	lv2_atom_forge_init(&forge, map);
-	lv2_atom_forge_set_sink(&forge, sratom_forge_sink, sratom_forge_deref, &out);
+
+	AtomForgeSink out(&forge);
 
 	const Sord::Node nil;
 	Resource::Properties props;
 	for (Sord::Iter i = model.find(subject, nil, nil); !i.end(); ++i) {
 		if (!skip_property(world->uris(), i.get_predicate())) {
-			out.len = 0;
+			out.clear();
 			sratom_read(sratom, &forge, world->rdf_world()->c_obj(),
 			            model.c_obj(), i.get_object().c_obj());
-			const LV2_Atom* atom = (const LV2_Atom*)out.buf;
+			const LV2_Atom* atom = out.atom();
 			Atom            atomm;
 			atomm = world->forge().alloc(
 				atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
@@ -151,7 +152,6 @@ get_properties(Ingen::World*     world,
 		}
 	}
 
-	free((uint8_t*)out.buf);
 	sratom_free(sratom);
 	return props;
 }

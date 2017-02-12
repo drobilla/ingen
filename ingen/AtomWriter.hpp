@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -19,11 +19,11 @@
 
 #include <string>
 
+#include "ingen/AtomForgeSink.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
-#include "serd/serd.h"
 
 namespace Ingen {
 
@@ -98,7 +98,7 @@ private:
 	URIMap&        _map;
 	URIs&          _uris;
 	AtomSink&      _sink;
-	SerdChunk      _out;
+	AtomForgeSink  _out;
 	LV2_Atom_Forge _forge;
 	int32_t        _id;
 };

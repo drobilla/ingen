@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -349,11 +349,11 @@ ControlBindings::finish_learn(RunContext& context, Key key)
 	binding->key = key;
 	_bindings->insert(*binding);
 
-	uint8_t buf[128];
+	LV2_Atom buf[16];
 	memset(buf, 0, sizeof(buf));
-	lv2_atom_forge_set_buffer(&_forge, buf, sizeof(buf));
+	lv2_atom_forge_set_buffer(&_forge, (uint8_t*)buf, sizeof(buf));
 	forge_binding(uris, &_forge, key.type, key.num);
-	const LV2_Atom* atom = (const LV2_Atom*)buf;
+	const LV2_Atom* atom = buf;
 	context.notify(uris.midi_binding,
 	               context.start(),
 	               binding->port,

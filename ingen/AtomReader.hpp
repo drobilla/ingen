@@ -23,7 +23,6 @@
 #include "ingen/AtomSink.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
-#include "serd/serd.h"
 
 namespace Ingen {
 

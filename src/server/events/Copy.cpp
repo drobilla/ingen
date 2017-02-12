@@ -18,7 +18,6 @@
 #include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
-#include "serd/serd.h"
 
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"

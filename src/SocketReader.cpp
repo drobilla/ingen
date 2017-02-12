@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <poll.h>
 
+#include "ingen/AtomForgeSink.hpp"
 #include "ingen/AtomReader.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
@@ -101,11 +102,10 @@ SocketReader::run()
 
 	// Set up sratom and a forge to build LV2 atoms from model
 	Sratom*        sratom = sratom_new(map);
-	SerdChunk      chunk  = { NULL, 0 };
 	LV2_Atom_Forge forge;
 	lv2_atom_forge_init(&forge, map);
-	lv2_atom_forge_set_sink(
-		&forge, sratom_forge_sink, sratom_forge_deref, &chunk);
+
+	AtomForgeSink buffer(&forge);
 
 	SordNode*  base_uri = NULL;
 	SordModel* model    = NULL;
@@ -173,10 +173,10 @@ SocketReader::run()
 		sratom_read(sratom, &forge, world->c_obj(), model, _msg_node);
 
 		// Call _iface methods based on atom content
-		ar.write((const LV2_Atom*)chunk.buf);
+		ar.write(buffer.atom());
 
 		// Reset everything for the next iteration
-		chunk.len = 0;
+		buffer.clear();
 		sord_node_free(world->c_obj(), _msg_node);
 		_msg_node = NULL;
 	}
@@ -191,7 +191,6 @@ SocketReader::run()
 	sratom_free(sratom);
 	serd_reader_free(reader);
 	sord_free(model);
-	free((uint8_t*)chunk.buf);
 	_socket.reset();
 }
 

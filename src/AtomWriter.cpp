@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -60,47 +60,26 @@
 
 namespace Ingen {
 
-static LV2_Atom_Forge_Ref
-forge_sink(LV2_Atom_Forge_Sink_Handle handle,
-           const void*                buf,
-           uint32_t                   size)
-{
-	SerdChunk*               chunk = (SerdChunk*)handle;
-	const LV2_Atom_Forge_Ref ref   = chunk->len + 1;
-	serd_chunk_sink(buf, size, chunk);
-	return ref;
-}
-
-static LV2_Atom*
-forge_deref(LV2_Atom_Forge_Sink_Handle handle, LV2_Atom_Forge_Ref ref)
-{
-	SerdChunk* chunk = (SerdChunk*)handle;
-	return (LV2_Atom*)(chunk->buf + ref - 1);
-}
-
 AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	: _map(map)
 	, _uris(uris)
 	, _sink(sink)
 	, _id(0)
 {
-	_out.buf = NULL;
-	_out.len = 0;
 	lv2_atom_forge_init(&_forge, &map.urid_map_feature()->urid_map);
-	lv2_atom_forge_set_sink(&_forge, forge_sink, forge_deref, &_out);
+	_out.set_forge_sink(&_forge);
 }
 
 AtomWriter::~AtomWriter()
 {
-	free((void*)_out.buf);
 }
 
 void
 AtomWriter::finish_msg()
 {
 	assert(!_forge.stack);
-	_sink.write((const LV2_Atom*)_out.buf);
-	_out.len = 0;
+	_sink.write(_out.atom());
+	_out.clear();
 }
 
 /** @page protocol

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -422,9 +422,9 @@ JackDriver::append_time_events(RunContext& context,
 	_old_bpm     = pos->beats_per_minute;
 
 	// Build an LV2 position object to append to the buffer
-	uint8_t              pos_buf[256];
+	LV2_Atom             pos_buf[16];
 	LV2_Atom_Forge_Frame frame;
-	lv2_atom_forge_set_buffer(&_forge, pos_buf, sizeof(pos_buf));
+	lv2_atom_forge_set_buffer(&_forge, (uint8_t*)pos_buf, sizeof(pos_buf));
 	lv2_atom_forge_object(&_forge, &frame, 0, uris.time_Position);
 	lv2_atom_forge_key(&_forge, uris.time_frame);
 	lv2_atom_forge_long(&_forge, pos->frame);

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -202,7 +202,6 @@ main(int argc, char** argv)
 
 	// Read commands
 
-	SerdChunk     out    = { NULL, 0 };
 	LV2_URID_Map* map    = &world->uri_map().urid_map_feature()->urid_map;
 	Sratom*       sratom = sratom_new(map);
 
@@ -210,7 +209,8 @@ main(int argc, char** argv)
 
 	LV2_Atom_Forge forge;
 	lv2_atom_forge_init(&forge, map);
-	lv2_atom_forge_set_sink(&forge, sratom_forge_sink, sratom_forge_deref, &out);
+
+	AtomForgeSink out(&forge);
 
 	// AtomReader to read commands from a file and send them to engine
 	AtomReader atom_reader(world->uri_map(),
@@ -243,13 +243,13 @@ main(int argc, char** argv)
 			break;
 		}
 
-		out.len = 0;
+		out.clear();
 		sratom_read(sratom, &forge, world->rdf_world()->c_obj(),
 		            cmds->c_obj(), subject.c_obj());
 
 #if 0
-		cerr << "READ " << out.len << " BYTES" << endl;
-		const LV2_Atom* atom = (const LV2_Atom*)out.buf;
+		const LV2_Atom* atom = out.atom();
+		cerr << "READ " << atom->size << " BYTES" << endl;
 		cerr << sratom_to_turtle(
 			sratom,
 			&world->uri_map().urid_unmap_feature()->urid_unmap,
@@ -257,7 +257,7 @@ main(int argc, char** argv)
 			NULL, NULL, atom->type, atom->size, LV2_ATOM_BODY(atom)) << endl;
 #endif
 
-		if (!atom_reader.write((const LV2_Atom*)out.buf, n_events + 1)) {
+		if (!atom_reader.write(out.atom(), n_events + 1)) {
 			return EXIT_FAILURE;
 		}
 
@@ -297,7 +297,6 @@ main(int argc, char** argv)
 	const std::string redo_path = Glib::build_filename(Glib::get_current_dir(), redo_name);
 	world->serialiser()->write_bundle(r->second, Glib::filename_to_uri(redo_path));
 
-	free((void*)out.buf);
 	serd_env_free(env);
 	sratom_free(sratom);
 	serd_node_free(&cmds_file_uri);
