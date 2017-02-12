@@ -95,7 +95,7 @@ public:
 	/** Return the status (success or error code) of this event. */
 	Status status() const { return _status; }
 
-	/** Return the blocking behaviour of this event (after pre_process()) */
+	/** Return the blocking behaviour of this event (after construction). */
 	virtual Execution get_execution() const { return Execution::NORMAL; }
 
 	/** Return undo mode of this event. */

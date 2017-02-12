@@ -65,6 +65,12 @@ private:
 		PROCESSING      ///< Process thread is executing all events in-between
 	};
 
+	void wait_for_block_state(const BlockState state) {
+		while (_block_state != state) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		}
+	}
+
 	Engine&                 _engine;
 	std::mutex              _mutex;
 	Raul::Semaphore         _sem;

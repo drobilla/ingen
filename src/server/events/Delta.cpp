@@ -72,6 +72,13 @@ Delta::Delta(Engine&           engine,
 			p.second.set_context(context);
 		}
 	}
+
+	// Set atomic execution if polyphony is to be changed
+	const Ingen::URIs& uris = _engine.world()->uris();
+	if (properties.count(uris.ingen_polyphonic) ||
+	    properties.count(uris.ingen_polyphony)) {
+		_block = true;
+	}
 }
 
 Delta::~Delta()
@@ -360,7 +367,6 @@ Delta::pre_process(PreProcessContext& ctx)
 						if (value.get<int32_t>() < 1 || value.get<int32_t>() > 128) {
 							_status = Status::INVALID_POLY;
 						} else {
-							_block = true;
 							op     = SpecialType::POLYPHONY;
 							_graph->prepare_internal_poly(
 								*_engine.buffer_factory(), value.get<int32_t>());
@@ -378,7 +384,6 @@ Delta::pre_process(PreProcessContext& ctx)
 				} else if (value.type() != uris.forge.Bool) {
 					_status = Status::BAD_VALUE_TYPE;
 				} else {
-					_block = true;
 					op     = SpecialType::POLYPHONIC;
 					obj->set_property(key, value, value.context());
 					BlockImpl* block = dynamic_cast<BlockImpl*>(obj);
