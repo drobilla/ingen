@@ -19,6 +19,8 @@
 
 #include <memory>
 
+#include "raul/Maid.hpp"
+
 namespace Ingen {
 
 #if __cplusplus >= 201103L
@@ -27,9 +29,13 @@ using SPtr = std::shared_ptr<T>;
 
 template <class T>
 using WPtr = std::weak_ptr<T>;
+
+template <class T>
+using MPtr = Raul::managed_ptr<T>;
 #else
 #define SPtr std::shared_ptr
 #define WPtr std::weak_ptr
+#define MPtr Raul::managed_ptr
 #endif
 
 template <class T>

@@ -40,7 +40,6 @@ BlockImpl::BlockImpl(PluginImpl*         plugin,
                      SampleRate          srate)
 	: NodeImpl(plugin->uris(), parent, symbol)
 	, _plugin(plugin)
-	, _ports(NULL)
 	, _polyphony((polyphonic && parent) ? parent->internal_poly() : 1)
 	, _mark(Mark::UNVISITED)
 	, _polyphonic(polyphonic)
@@ -60,8 +59,6 @@ BlockImpl::~BlockImpl()
 	if (is_linked()) {
 		parent_graph()->remove_block(*this);
 	}
-
-	delete _ports;
 }
 
 Node*
@@ -120,7 +117,7 @@ BlockImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-BlockImpl::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
+BlockImpl::apply_poly(RunContext& context, uint32_t poly)
 {
 	if (!_polyphonic)
 		poly = 1;
@@ -129,7 +126,7 @@ BlockImpl::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 
 	if (_ports)
 		for (uint32_t i = 0; i < num_ports(); ++i)
-			_ports->at(i)->apply_poly(context, maid, poly);
+			_ports->at(i)->apply_poly(context, poly);
 
 	return true;
 }

@@ -186,6 +186,7 @@ private:
 		bool     changed = false;
 	};
 
+	Raul::Maid*       _maid;
 	BlockFactory*     _block_factory;
 	Broadcaster*      _broadcaster;
 	BufferFactory*    _buffer_factory;
@@ -194,7 +195,6 @@ private:
 	SPtr<EventWriter> _event_writer;
 	SPtr<Interface>   _interface;
 	AtomReader*       _atom_interface;
-	Raul::Maid*       _maid;
 	SPtr<LV2Options>  _options;
 	UndoStack*        _undo_stack;
 	UndoStack*        _redo_stack;

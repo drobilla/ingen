@@ -32,6 +32,8 @@
 #include "PortType.hpp"
 #include "types.hpp"
 
+namespace Raul { class Maid; }
+
 namespace Ingen {
 
 class URIs;
@@ -71,7 +73,9 @@ public:
 	void set_block_length(SampleCount block_length);
 	void set_seq_size(uint32_t seq_size) { _seq_size = seq_size; }
 
-	Forge&  forge();
+	Forge&      forge();
+	Raul::Maid& maid();
+
 	URIs&   uris()   { return _uris; }
 	Engine& engine() { return _engine; }
 

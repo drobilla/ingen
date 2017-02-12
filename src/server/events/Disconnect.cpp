@@ -48,14 +48,12 @@ Disconnect::Disconnect(Engine&           engine,
 	, _head_path(head_path)
 	, _graph(NULL)
 	, _impl(NULL)
-	, _compiled_graph(NULL)
 {
 }
 
 Disconnect::~Disconnect()
 {
 	delete _impl;
-	delete _compiled_graph;
 }
 
 Disconnect::Impl::Impl(Engine&     e,
@@ -66,7 +64,6 @@ Disconnect::Impl::Impl(Engine&     e,
 	, _tail(t)
 	, _head(h)
 	, _arc(graph->remove_arc(_tail, _head))
-	, _voices(NULL)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
@@ -89,10 +86,9 @@ Disconnect::Impl::Impl(Engine&     e,
 
 	if (_head->num_arcs() == 0) {
 		if (!_head->is_driver_port()) {
-			_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
-			_head->pre_get_buffers(*_engine.buffer_factory(),
-			                       _voices,
-			                       _head->poly());
+			BufferFactory& bufs = *_engine.buffer_factory();
+			_voices = bufs.maid().make_managed<PortImpl::Voices>(_head->poly());
+			_head->pre_get_buffers(bufs, _voices, _head->poly());
 
 			if (_head->is_a(PortType::CONTROL) ||
 			    _head->is_a(PortType::CV)) {
@@ -166,9 +162,7 @@ Disconnect::pre_process(PreProcessContext& ctx)
 	                 dynamic_cast<PortImpl*>(tail),
 	                 dynamic_cast<InputPort*>(head));
 
-	if (ctx.must_compile(_graph)) {
-		_compiled_graph = CompiledGraph::compile(_graph);
-	}
+	_compiled_graph = ctx.maybe_compile(*_engine.maid(), *_graph);
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
@@ -186,7 +180,7 @@ Disconnect::Impl::execute(RunContext& context, bool set_head_buffers)
 
 	if (set_head_buffers) {
 		if (_voices) {
-			_engine.maid()->dispose(_head->set_voices(context, _voices));
+			_head->set_voices(context, std::move(_voices));
 		} else {
 			_head->setup_buffers(context, *_engine.buffer_factory(), _head->poly());
 		}
@@ -204,7 +198,7 @@ Disconnect::execute(RunContext& context)
 	if (_status == Status::SUCCESS) {
 		if (_impl->execute(context, true)) {
 			if (_compiled_graph) {
-				_compiled_graph = _graph->swap_compiled_graph(_compiled_graph);
+				_graph->set_compiled_graph(std::move(_compiled_graph));
 			}
 		} else {
 			_status = Status::NOT_FOUND;

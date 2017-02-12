@@ -84,10 +84,8 @@ public:
 	 *
 	 * \param context Process context (process thread only).
 	 * \param poly Must be <= the most recent value passed to prepare_poly.
-	 * \param maid Any objects no longer needed will be pushed to this
 	 */
-	virtual bool apply_poly(
-		RunContext& context, Raul::Maid& maid, uint32_t poly) = 0;
+	virtual bool apply_poly(RunContext& context, uint32_t poly) = 0;
 
 	/** Return true iff this is main (the top level Node).
 	 *

@@ -67,11 +67,11 @@ public:
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 
-	bool apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(RunContext& context, uint32_t poly);
 
 	bool get_buffers(BufferFactory&      bufs,
 	                 PortImpl::GetFn     get,
-	                 Raul::Array<Voice>* voices,
+	                 const MPtr<Voices>& voices,
 	                 uint32_t            poly,
 	                 size_t              num_in_arcs) const;
 

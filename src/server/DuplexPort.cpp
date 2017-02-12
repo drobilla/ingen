@@ -132,7 +132,7 @@ DuplexPort::on_property(const Raul::URI& uri, const Atom& value)
 bool
 DuplexPort::get_buffers(BufferFactory&      bufs,
                         PortImpl::GetFn     get,
-                        Raul::Array<Voice>* voices,
+                        const MPtr<Voices>& voices,
                         uint32_t            poly,
                         size_t              num_in_arcs) const
 {
@@ -187,14 +187,14 @@ DuplexPort::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-DuplexPort::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
+DuplexPort::apply_poly(RunContext& context, uint32_t poly)
 {
 	if (!parent()->parent() ||
 	    poly != parent()->parent_graph()->internal_poly()) {
 		return false;
 	}
 
-	return PortImpl::apply_poly(context, maid, poly);
+	return PortImpl::apply_poly(context, poly);
 }
 
 void

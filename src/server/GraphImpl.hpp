@@ -119,7 +119,7 @@ public:
 	uint32_t num_ports_non_rt() const;
 
 	typedef boost::intrusive::slist<
-		DuplexPort, boost::intrusive::constant_time_size<true> > Ports;
+		DuplexPort, boost::intrusive::constant_time_size<true> > PortList;
 
 	void add_input(DuplexPort& port) {
 		ThreadManager::assert_thread(THREAD_PRE_PROCESS);
@@ -165,12 +165,13 @@ public:
 	bool has_arc(const PortImpl* tail, const PortImpl* head) const;
 
 	/** Set a new compiled graph to run, and return the old one. */
-	CompiledGraph* swap_compiled_graph(CompiledGraph* cp) INGEN_WARN_UNUSED_RESULT;
+	void set_compiled_graph(MPtr<CompiledGraph>&& cg);
 
-	Raul::Array<PortImpl*>* external_ports()                           { return _ports; }
-	void                    external_ports(Raul::Array<PortImpl*>* pa) { _ports = pa; }
+	const MPtr<Ports>& external_ports() { return _ports; }
 
-	Raul::Array<PortImpl*>* build_ports_array();
+	void set_external_ports(MPtr<Ports>&& pa) { _ports = std::move(pa); }
+
+	MPtr<Ports> build_ports_array(Raul::Maid& maid);
 
 	/** Whether to run this graph's DSP bits in the audio thread */
 	bool enabled() const { return _process; }
@@ -183,14 +184,14 @@ public:
 	Engine& engine() { return _engine; }
 
 private:
-	Engine&        _engine;
-	uint32_t       _poly_pre;        ///< Pre-process thread only
-	uint32_t       _poly_process;    ///< Process thread only
-	CompiledGraph* _compiled_graph;  ///< Process thread only
-	Ports          _inputs;          ///< Pre-process thread only
-	Ports          _outputs;         ///< Pre-process thread only
-	Blocks         _blocks;          ///< Pre-process thread only
-	bool           _process;         ///< True iff graph is enabled
+	Engine&             _engine;
+	uint32_t            _poly_pre;        ///< Pre-process thread only
+	uint32_t            _poly_process;    ///< Process thread only
+	MPtr<CompiledGraph> _compiled_graph;  ///< Process thread only
+	PortList            _inputs;          ///< Pre-process thread only
+	PortList            _outputs;         ///< Pre-process thread only
+	Blocks              _blocks;          ///< Pre-process thread only
+	bool                _process;         ///< True iff graph is enabled
 };
 
 } // namespace Server

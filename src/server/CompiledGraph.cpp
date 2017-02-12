@@ -48,13 +48,13 @@ CompiledGraph::CompiledGraph(GraphImpl* graph)
 	compile_graph(graph);
 }
 
-CompiledGraph*
-CompiledGraph::compile(GraphImpl* graph)
+MPtr<CompiledGraph>
+CompiledGraph::compile(Raul::Maid& maid, GraphImpl& graph)
 {
 	try {
-		return new CompiledGraph(graph);
+		return maid.make_managed<CompiledGraph>(&graph);
 	} catch (FeedbackException e) {
-		Log& log = graph->engine().log();
+		Log& log = graph.engine().log();
 		if (e.node && e.root) {
 			log.error(fmt("Feedback compiling %1% from %2%\n")
 			          % e.node->path() % e.root->path());
@@ -62,7 +62,7 @@ CompiledGraph::compile(GraphImpl* graph)
 			log.error(fmt("Feedback compiling %1%\n")
 			          % e.node->path());
 		}
-		return NULL;
+		return MPtr<CompiledGraph>();
 	}
 }
 

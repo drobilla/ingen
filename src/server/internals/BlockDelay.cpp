@@ -47,7 +47,7 @@ BlockDelayNode::BlockDelayNode(InternalPlugin*     plugin,
 	: InternalBlock(plugin, symbol, polyphonic, parent, srate)
 {
 	const Ingen::URIs& uris = bufs.uris();
-	_ports = new Raul::Array<PortImpl*>(2);
+	_ports = bufs.maid().make_managed<Ports>(2);
 
 	_in_port = new InputPort(bufs, this, Raul::Symbol("in"), 0, 1,
 	                         PortType::AUDIO, 0, bufs.forge().make(0.0f));

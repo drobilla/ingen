@@ -58,7 +58,7 @@ private:
 	ClientUpdate          _update;
 	GraphImpl*            _graph;
 	BlockImpl*            _block;
-	CompiledGraph*        _compiled_graph;
+	MPtr<CompiledGraph>   _compiled_graph;
 };
 
 } // namespace Events

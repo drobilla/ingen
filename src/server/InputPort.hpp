@@ -67,7 +67,7 @@ public:
 	/** Return the maximum polyphony of an output connected to this input. */
 	virtual uint32_t max_tail_poly(RunContext& context) const;
 
-	bool apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(RunContext& context, uint32_t poly);
 
 	/** Add an arc.  Realtime safe.
 	 *
@@ -91,9 +91,9 @@ public:
 	 * pre-process thread to allocate buffers for application of a
 	 * connection/disconnection/etc in the next process cycle.
 	 */
-	bool pre_get_buffers(BufferFactory&      bufs,
-	                     Raul::Array<Voice>* voices,
-	                     uint32_t            poly) const;
+	bool pre_get_buffers(BufferFactory& bufs,
+	                     MPtr<Voices>&  voices,
+	                     uint32_t       poly) const;
 
 	bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly);
 
@@ -118,7 +118,7 @@ public:
 protected:
 	bool get_buffers(BufferFactory&      bufs,
 	                 PortImpl::GetFn     get,
-	                 Raul::Array<Voice>* voices,
+	                 const MPtr<Voices>& voices,
 	                 uint32_t            poly,
 	                 size_t              num_in_arcs) const;
 

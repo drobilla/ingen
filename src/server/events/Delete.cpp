@@ -43,8 +43,6 @@ Delete::Delete(Engine&          engine,
 	: Event(engine, client, id, time)
 	, _uri(uri)
 	, _engine_port(NULL)
-	, _ports_array(NULL)
-	, _compiled_graph(NULL)
 	, _disconnect_event(NULL)
 {
 	if (Node::uri_is_path(uri)) {
@@ -55,7 +53,6 @@ Delete::Delete(Engine&          engine,
 Delete::~Delete()
 {
 	delete _disconnect_event;
-	delete _compiled_graph;
 	for (ControlBindings::Binding* b : _removed_bindings) {
 		delete b;
 	}
@@ -97,21 +94,15 @@ Delete::pre_process(PreProcessContext& ctx)
 		parent->remove_block(*_block);
 		_disconnect_event = new DisconnectAll(_engine, parent, _block.get());
 		_disconnect_event->pre_process(ctx);
-
-		if (ctx.must_compile(parent)) {
-			_compiled_graph = CompiledGraph::compile(parent);
-		}
+		_compiled_graph = ctx.maybe_compile(*_engine.maid(), *parent);
 	} else if (_port) {
 		parent->remove_port(*_port);
 		_disconnect_event = new DisconnectAll(_engine, parent, _port.get());
 		_disconnect_event->pre_process(ctx);
 
-		if (ctx.must_compile(parent)) {
-			_compiled_graph = CompiledGraph::compile(parent);
-		}
-
+		_compiled_graph = ctx.maybe_compile(*_engine.maid(), *parent);
 		if (parent->enabled()) {
-			_ports_array = parent->build_ports_array();
+			_ports_array = parent->build_ports_array(*_engine.maid());
 			assert(_ports_array->size() == parent->num_ports_non_rt());
 		}
 
@@ -141,8 +132,7 @@ Delete::execute(RunContext& context)
 	GraphImpl* parent = _block ? _block->parent_graph() : NULL;
 	if (_port) {
 		parent = _port->parent_graph();
-		_engine.maid()->dispose(parent->external_ports());
-		parent->external_ports(_ports_array);
+		parent->set_external_ports(std::move(_ports_array));
 
 		if (_engine_port) {
 			_engine.driver()->remove_port(context, _engine_port);
@@ -150,7 +140,7 @@ Delete::execute(RunContext& context)
 	}
 
 	if (parent && _compiled_graph) {
-		_compiled_graph = parent->swap_compiled_graph(_compiled_graph);
+		parent->set_compiled_graph(std::move(_compiled_graph));
 	}
 }
 

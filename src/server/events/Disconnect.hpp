@@ -60,10 +60,7 @@ public:
 
 	class Impl {
 	public:
-		Impl(Engine&    e,
-		     GraphImpl* graph,
-		     PortImpl*  t,
-		     InputPort* h);
+		Impl(Engine& e, GraphImpl* graph, PortImpl* t, InputPort* h);
 
 		bool execute(RunContext& context, bool set_head_buffers);
 
@@ -71,19 +68,19 @@ public:
 		inline InputPort* head() { return _head; }
 
 	private:
-		Engine&                       _engine;
-		PortImpl*                     _tail;
-		InputPort*                    _head;
-		SPtr<ArcImpl>                 _arc;
-		Raul::Array<PortImpl::Voice>* _voices;
+		Engine&                _engine;
+		PortImpl*              _tail;
+		InputPort*             _head;
+		SPtr<ArcImpl>          _arc;
+		MPtr<PortImpl::Voices> _voices;
 	};
 
 private:
-	const Raul::Path _tail_path;
-	const Raul::Path _head_path;
-	GraphImpl*       _graph;
-	Impl*            _impl;
-	CompiledGraph*   _compiled_graph;
+	const Raul::Path    _tail_path;
+	const Raul::Path    _head_path;
+	GraphImpl*          _graph;
+	Impl*               _impl;
+	MPtr<CompiledGraph> _compiled_graph;
 };
 
 } // namespace Events

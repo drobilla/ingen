@@ -51,7 +51,7 @@ ControllerNode::ControllerNode(InternalPlugin*      plugin,
 	, _learning(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
-	_ports = new Raul::Array<PortImpl*>(7);
+	_ports = bufs.maid().make_managed<Ports>(7);
 
 	const Atom zero       = bufs.forge().make(0.0f);
 	const Atom one        = bufs.forge().make(1.0f);

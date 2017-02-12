@@ -60,7 +60,6 @@ Delta::Delta(Engine&           engine,
 	, _remove(remove)
 	, _object(NULL)
 	, _graph(NULL)
-	, _compiled_graph(NULL)
 	, _binding(NULL)
 	, _state(NULL)
 	, _context(context)
@@ -87,7 +86,6 @@ Delta::~Delta()
 		delete s;
 
 	delete _create_event;
-	delete _compiled_graph;
 }
 
 void
@@ -355,7 +353,8 @@ Delta::pre_process(PreProcessContext& ctx)
 						op = SpecialType::ENABLE;
 						// FIXME: defer this until all other metadata has been processed
 						if (value.get<int32_t>() && !_graph->enabled()) {
-							if (!(_compiled_graph = CompiledGraph::compile(_graph))) {
+							if (!(_compiled_graph = CompiledGraph::compile(
+								      *_engine.maid(), *_graph))) {
 								_status = Status::COMPILATION_FAILED;
 							}
 						}
@@ -476,7 +475,7 @@ Delta::execute(RunContext& context)
 			if (_graph) {
 				if (value.get<int32_t>()) {
 					if (_compiled_graph) {
-						_compiled_graph = _graph->swap_compiled_graph(_compiled_graph);
+						_graph->set_compiled_graph(std::move(_compiled_graph));
 					}
 					_graph->enable();
 				} else {
@@ -489,10 +488,9 @@ Delta::execute(RunContext& context)
 		case SpecialType::POLYPHONIC: {
 			GraphImpl* parent = reinterpret_cast<GraphImpl*>(object->parent());
 			if (value.get<int32_t>()) {
-				object->apply_poly(
-					context, *_engine.maid(), parent->internal_poly_process());
+				object->apply_poly(context, parent->internal_poly_process());
 			} else {
-				object->apply_poly(context, *_engine.maid(), 1);
+				object->apply_poly(context, 1);
 			}
 		} break;
 		case SpecialType::POLYPHONY:

@@ -55,9 +55,9 @@ InputPort::InputPort(BufferFactory&      bufs,
 }
 
 bool
-InputPort::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
+InputPort::apply_poly(RunContext& context, uint32_t poly)
 {
-	bool ret = PortImpl::apply_poly(context, maid, poly);
+	bool ret = PortImpl::apply_poly(context, poly);
 	if (!ret)
 		poly = 1;
 
@@ -69,7 +69,7 @@ InputPort::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 bool
 InputPort::get_buffers(BufferFactory&      bufs,
                        PortImpl::GetFn     get,
-                       Raul::Array<Voice>* voices,
+                       const MPtr<Voices>& voices,
                        uint32_t            poly,
                        size_t              num_in_arcs) const
 {
@@ -99,9 +99,9 @@ InputPort::get_buffers(BufferFactory&      bufs,
 }
 
 bool
-InputPort::pre_get_buffers(BufferFactory&      bufs,
-                           Raul::Array<Voice>* voices,
-                           uint32_t            poly) const
+InputPort::pre_get_buffers(BufferFactory& bufs,
+                           MPtr<Voices>&  voices,
+                           uint32_t       poly) const
 {
 	return get_buffers(bufs, &BufferFactory::get_buffer, voices, poly, _num_arcs);
 }

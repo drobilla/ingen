@@ -21,6 +21,8 @@
 
 #include "GraphImpl.hpp"
 
+namespace Raul { class Maid; }
+
 namespace Ingen {
 namespace Server {
 
@@ -44,15 +46,27 @@ public:
 	 * This may return false when an atomic bundle is deferring compilation, in
 	 * which case the graph is flagged as dirty for later compilation.
 	 */
-	bool must_compile(GraphImpl* graph) {
-		if (!graph->enabled()) {
+	bool must_compile(GraphImpl& graph) {
+		if (!graph.enabled()) {
 			return false;
 		} else if (_in_bundle) {
-			_dirty_graphs.insert(graph);
+			_dirty_graphs.insert(&graph);
 			return false;
 		} else {
 			return true;
 		}
+	}
+
+	/** Compile graph and return the result if necessary.
+	 *
+	 * This may return null when an atomic bundle is deferring compilation, in
+	 * which case the graph is flagged as dirty for later compilation.
+	 */
+	MPtr<CompiledGraph> maybe_compile(Raul::Maid& maid, GraphImpl& graph) {
+		if (must_compile(graph)) {
+			return CompiledGraph::compile(maid, graph);
+		}
+		return MPtr<CompiledGraph>();
 	}
 
 	/** Return all graphs that require compilation after an atomic bundle. */

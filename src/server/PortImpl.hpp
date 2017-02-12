@@ -25,7 +25,6 @@
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
 #include "PortType.hpp"
-#include "RunContext.hpp"
 #include "types.hpp"
 
 namespace Raul { class Maid; }
@@ -35,6 +34,7 @@ namespace Server {
 
 class BlockImpl;
 class BufferFactory;
+class RunContext;
 
 /** A port (input or output) on a Block.
  *
@@ -84,6 +84,8 @@ public:
 		BufferRef buffer;
 	};
 
+	typedef Raul::Array<Voice> Voices;
+
 	PortImpl(BufferFactory&      bufs,
 	         BlockImpl*          block,
 	         const Raul::Symbol& name,
@@ -102,13 +104,8 @@ public:
 	/** A port's parent is always a block, so static cast should be safe */
 	BlockImpl* parent_block() const { return (BlockImpl*)_parent; }
 
-	/** Set the buffers array for this port.
-	 *
-	 * Audio thread.  Returned value must be freed by caller.
-	 * \a buffers must be poly() long
-	 */
-	Raul::Array<Voice>* set_voices(RunContext&         context,
-	                               Raul::Array<Voice>* voices);
+	/** Set the the voices (buffers) for this port in the audio thread. */
+	void set_voices(RunContext& context, MPtr<Voices>&& voices);
 
 	/** Prepare for a new (external) polyphony value.
 	 *
@@ -121,8 +118,7 @@ public:
 	 * Audio thread.
 	 * \a poly Must be < the most recent value passed to prepare_poly.
 	 */
-	virtual bool apply_poly(
-		RunContext& context, Raul::Maid& maid, uint32_t poly);
+	virtual bool apply_poly(RunContext& context, uint32_t poly);
 
 	/** Return the number of arcs (pre-process thraed). */
 	virtual size_t num_arcs() const { return 0; }
@@ -280,35 +276,35 @@ protected:
 	 */
 	virtual bool get_buffers(BufferFactory&      bufs,
 	                         GetFn               get,
-	                         Raul::Array<Voice>* voices,
+	                         const MPtr<Voices>& voices,
 	                         uint32_t            poly,
 	                         size_t              num_in_arcs) const;
 
-	BufferFactory&      _bufs;
-	uint32_t            _index;
-	uint32_t            _poly;
-	uint32_t            _buffer_size;
-	uint32_t            _frames_since_monitor;
-	float               _monitor_value;
-	float               _peak;
-	PortType            _type;
-	LV2_URID            _buffer_type;
-	Atom                _value;
-	Atom                _min;
-	Atom                _max;
-	Raul::Array<Voice>* _voices;
-	Raul::Array<Voice>* _prepared_voices;
-	BufferRef           _user_buffer;
-	std::atomic_flag    _connected_flag;
-	bool                _monitored;
-	bool                _force_monitor_update;
-	bool                _is_morph;
-	bool                _is_auto_morph;
-	bool                _is_logarithmic;
-	bool                _is_sample_rate;
-	bool                _is_toggled;
-	bool                _is_driver_port;
-	bool                _is_output;
+ 	BufferFactory&   _bufs;
+	uint32_t         _index;
+	uint32_t         _poly;
+	uint32_t         _buffer_size;
+	uint32_t         _frames_since_monitor;
+	float            _monitor_value;
+	float            _peak;
+	PortType         _type;
+	LV2_URID         _buffer_type;
+	Atom             _value;
+	Atom             _min;
+	Atom             _max;
+	MPtr<Voices>     _voices;
+	MPtr<Voices>     _prepared_voices;
+	BufferRef        _user_buffer;
+	std::atomic_flag _connected_flag;
+	bool             _monitored;
+	bool             _force_monitor_update;
+	bool             _is_morph;
+	bool             _is_auto_morph;
+	bool             _is_logarithmic;
+	bool             _is_sample_rate;
+	bool             _is_toggled;
+	bool             _is_driver_port;
+	bool             _is_output;
 };
 
 } // namespace Server

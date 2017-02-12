@@ -42,7 +42,6 @@ CreateGraph::CreateGraph(Engine&                     engine,
 	, _properties(properties)
 	, _graph(NULL)
 	, _parent(NULL)
-	, _compiled_graph(NULL)
 {}
 
 CreateGraph::~CreateGraph()
@@ -50,8 +49,6 @@ CreateGraph::~CreateGraph()
 	for (Event* ev : _child_events) {
 		delete ev;
 	}
-
-	delete _compiled_graph;
 }
 
 void
@@ -173,9 +170,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 		if (_parent->enabled()) {
 			_graph->enable();
 		}
-		if (ctx.must_compile(_parent)) {
-			_compiled_graph = CompiledGraph::compile(_parent);
-		}
+		_compiled_graph = ctx.maybe_compile(*_engine.maid(), *_parent);
 	}
 
 	_graph->activate(*_engine.buffer_factory());
@@ -201,7 +196,7 @@ CreateGraph::execute(RunContext& context)
 {
 	if (_graph) {
 		if (_parent && _compiled_graph) {
-			_compiled_graph = _parent->swap_compiled_graph(_compiled_graph);
+			_parent->set_compiled_graph(std::move(_compiled_graph));
 		}
 
 		for (Event* ev : _child_events) {

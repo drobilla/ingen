@@ -52,6 +52,12 @@ BufferFactory::forge()
 	return _engine.world()->forge();
 }
 
+Raul::Maid&
+BufferFactory::maid()
+{
+	return *_engine.maid();
+}
+
 void
 BufferFactory::free_list(Buffer* head)
 {

@@ -52,7 +52,6 @@ GraphImpl::GraphImpl(Engine&             engine,
 	, _engine(engine)
 	, _poly_pre(internal_poly)
 	, _poly_process(internal_poly)
-	, _compiled_graph(NULL)
 	, _process(false)
 {
 	assert(internal_poly >= 1);
@@ -61,7 +60,6 @@ GraphImpl::GraphImpl(Engine&             engine,
 
 GraphImpl::~GraphImpl()
 {
-	delete _compiled_graph;
 	delete _plugin;
 }
 
@@ -87,14 +85,14 @@ GraphImpl::duplicate(Engine&             engine,
 	PortMap port_map;
 
 	// Add duplicates of all ports
-	dup->_ports = new Raul::Array<PortImpl*>(num_ports(), NULL);
-	for (Ports::iterator p = _inputs.begin(); p != _inputs.end(); ++p) {
+	dup->_ports = bufs.maid().make_managed<Ports>(num_ports(), nullptr);
+	for (PortList::iterator p = _inputs.begin(); p != _inputs.end(); ++p) {
 		DuplexPort* p_dup = p->duplicate(engine, p->symbol(), dup);
 		dup->_inputs.push_front(*p_dup);
 		(*dup->_ports)[p->index()] = p_dup;
 		port_map.insert({&*p, p_dup});
 	}
-	for (Ports::iterator p = _outputs.begin(); p != _outputs.end(); ++p) {
+	for (PortList::iterator p = _outputs.begin(); p != _outputs.end(); ++p) {
 		DuplexPort* p_dup = p->duplicate(engine, p->symbol(), dup);
 		dup->_outputs.push_front(*p_dup);
 		(*dup->_ports)[p->index()] = p_dup;
@@ -185,7 +183,7 @@ GraphImpl::apply_internal_poly(RunContext&    context,
 	// TODO: Subgraph dynamic polyphony (i.e. changing port polyphony)
 
 	for (auto& b : _blocks) {
-		b.apply_poly(context, maid, poly);
+		b.apply_poly(context, poly);
 	}
 
 	for (auto& b : _blocks) {
@@ -299,15 +297,13 @@ GraphImpl::has_arc(const PortImpl* tail, const PortImpl* dst_port) const
 	return (i != _arcs.end());
 }
 
-CompiledGraph*
-GraphImpl::swap_compiled_graph(CompiledGraph* cg)
+void
+GraphImpl::set_compiled_graph(MPtr<CompiledGraph>&& cg)
 {
-	CompiledGraph* const old = _compiled_graph;
-	if (old && cg != old) {
+	if (_compiled_graph && _compiled_graph != cg) {
 		_engine.reset_load();
 	}
-	_compiled_graph = cg;
-	return old;
+	_compiled_graph = std::move(cg);
 }
 
 uint32_t
@@ -334,20 +330,20 @@ GraphImpl::clear_ports()
 	_outputs.clear();
 }
 
-Raul::Array<PortImpl*>*
-GraphImpl::build_ports_array()
+MPtr<BlockImpl::Ports>
+GraphImpl::build_ports_array(Raul::Maid& maid)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
 	const size_t n = _inputs.size() + _outputs.size();
-	Raul::Array<PortImpl*>* const result = new Raul::Array<PortImpl*>(n);
+	MPtr<Ports> result = maid.make_managed<Ports>(n);
 
 	size_t i = 0;
 
-	for (Ports::iterator p = _inputs.begin(); p != _inputs.end(); ++p, ++i)
+	for (PortList::iterator p = _inputs.begin(); p != _inputs.end(); ++p, ++i)
 		result->at(i) = &*p;
 
-	for (Ports::iterator p = _outputs.begin(); p != _outputs.end(); ++p, ++i)
+	for (PortList::iterator p = _outputs.begin(); p != _outputs.end(); ++p, ++i)
 		result->at(i) = &*p;
 
 	assert(i == n);

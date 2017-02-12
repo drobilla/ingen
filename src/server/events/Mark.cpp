@@ -35,9 +35,6 @@ Mark::Mark(Engine&         engine,
 
 Mark::~Mark()
 {
-	for (const auto& g : _compiled_graphs) {
-		delete g.second;
-	}
 }
 
 bool
@@ -57,9 +54,10 @@ Mark::pre_process(PreProcessContext& ctx)
 		ctx.set_in_bundle(false);
 		if (!ctx.dirty_graphs().empty()) {
 			for (GraphImpl* g : ctx.dirty_graphs()) {
-				CompiledGraph* cg = CompiledGraph::compile(g);
+				MPtr<CompiledGraph> cg = CompiledGraph::compile(
+					*_engine.maid(), *g);
 				if (cg) {
-					_compiled_graphs.insert(std::make_pair(g, cg));
+					_compiled_graphs.insert(std::make_pair(g, std::move(cg)));
 				}
 			}
 			ctx.dirty_graphs().clear();
@@ -74,7 +72,7 @@ void
 Mark::execute(RunContext& context)
 {
 	for (auto& g : _compiled_graphs) {
-		g.second = g.first->swap_compiled_graph(g.second);
+		g.first->set_compiled_graph(std::move(g.second));
 	}
 }
 

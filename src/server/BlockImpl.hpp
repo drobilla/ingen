@@ -60,6 +60,8 @@ class BlockImpl : public NodeImpl
                 , public boost::intrusive::slist_base_hook<>  // In GraphImpl
 {
 public:
+	typedef Raul::Array<PortImpl*> Ports;
+
 	BlockImpl(PluginImpl*         plugin,
 	          const Raul::Symbol& symbol,
 	          bool                poly,
@@ -152,8 +154,7 @@ public:
 	virtual void set_polyphonic(bool p) { _polyphonic = p; }
 
 	virtual bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	virtual bool apply_poly(
-		RunContext& context, Raul::Maid& maid, uint32_t poly);
+	virtual bool apply_poly(RunContext& context, uint32_t poly);
 
 	/** Information about the Plugin this Block is an instance of.
 	 * Not the best name - not all blocks come from plugins (ie Graph)
@@ -186,15 +187,15 @@ public:
 protected:
 	PortImpl* nth_port_by_type(uint32_t n, bool input, PortType type);
 
-	PluginImpl*             _plugin;
-	Raul::Array<PortImpl*>* _ports; ///< Access in audio thread only
-	uint32_t                _polyphony;
-	std::set<BlockImpl*>    _providers; ///< Blocks connected to this one's input ports
-	std::set<BlockImpl*>    _dependants; ///< Blocks this one's output ports are connected to
-	Mark                    _mark; ///< Mark for graph compilation algorithm
-	bool                    _polyphonic;
-	bool                    _activated;
-	bool                    _enabled;
+	PluginImpl*          _plugin;
+	MPtr<Ports>          _ports; ///< Access in audio thread only
+	uint32_t             _polyphony;
+	std::set<BlockImpl*> _providers; ///< Blocks connected to this one's input ports
+	std::set<BlockImpl*> _dependants; ///< Blocks this one's output ports are connected to
+	Mark                 _mark; ///< Mark for graph compilation algorithm
+	bool                 _polyphonic;
+	bool                 _activated;
+	bool                 _enabled;
 };
 
 } // namespace Server

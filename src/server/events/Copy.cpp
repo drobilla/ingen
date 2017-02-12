@@ -45,7 +45,6 @@ Copy::Copy(Engine&          engine,
 	, _old_block(NULL)
 	, _parent(NULL)
 	, _block(NULL)
-	, _compiled_graph(NULL)
 {}
 
 bool
@@ -126,9 +125,7 @@ Copy::engine_to_engine(PreProcessContext& ctx)
 	_engine.store()->add(_block);
 
 	// Compile graph with new block added for insertion in audio thread
-	if (ctx.must_compile(_parent)) {
-		_compiled_graph = CompiledGraph::compile(_parent);
-	}
+	_compiled_graph = ctx.maybe_compile(*_engine.maid(), *_parent);
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
@@ -198,7 +195,7 @@ void
 Copy::execute(RunContext& context)
 {
 	if (_block && _compiled_graph) {
-		_compiled_graph = _parent->swap_compiled_graph(_compiled_graph);
+		_parent->set_compiled_graph(std::move(_compiled_graph));
 	}
 }
 
@@ -209,7 +206,6 @@ Copy::post_process()
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->copy(_old_uri, _new_uri);
 	}
-	delete _compiled_graph;
 }
 
 void

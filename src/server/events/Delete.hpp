@@ -65,8 +65,8 @@ private:
 	SPtr<BlockImpl>         _block; ///< Non-NULL iff a block
 	SPtr<DuplexPort>        _port; ///< Non-NULL iff a port
 	EnginePort*             _engine_port;
-	Raul::Array<PortImpl*>* _ports_array; ///< New (external) ports for Graph
-	CompiledGraph*          _compiled_graph; ///< Graph's new process order
+	MPtr<GraphImpl::Ports>  _ports_array; ///< New (external) ports for Graph
+	MPtr<CompiledGraph>     _compiled_graph; ///< Graph's new process order
 	DisconnectAll*          _disconnect_event;
 	Store::Objects          _removed_objects;
 

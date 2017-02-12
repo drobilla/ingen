@@ -48,7 +48,7 @@ public:
 	~NoteNode();
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	bool apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(RunContext& context, uint32_t poly);
 
 	void run(RunContext& context);
 
@@ -84,12 +84,15 @@ private:
 		SampleCount time;
 	};
 
+    typedef Raul::Array<Voice> Voices;
+
 	void free_voice(RunContext& context, uint32_t voice, FrameTime time);
 
-	Raul::Array<Voice>* _voices;
-	Raul::Array<Voice>* _prepared_voices;
-	Key                 _keys[128];
-	bool                _sustain; ///< Whether or not hold pedal is depressed
+	MPtr<Voices> _voices;
+	MPtr<Voices> _prepared_voices;
+
+	Key  _keys[128];
+	bool _sustain;  ///< Whether or not hold pedal is depressed
 
 	InputPort*  _midi_in_port;
 	OutputPort* _freq_port;

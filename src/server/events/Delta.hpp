@@ -104,7 +104,7 @@ private:
 	ClientUpdate              _update;
 	Ingen::Resource*          _object;
 	GraphImpl*                _graph;
-	CompiledGraph*            _compiled_graph;
+	MPtr<CompiledGraph>       _compiled_graph;
 	ControlBindings::Binding* _binding;
 	LilvState*                _state;
 	Resource::Graph           _context;

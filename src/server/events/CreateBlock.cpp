@@ -46,12 +46,10 @@ CreateBlock::CreateBlock(Engine&               engine,
 	, _properties(properties)
 	, _graph(NULL)
 	, _block(NULL)
-	, _compiled_graph(NULL)
 {}
 
 CreateBlock::~CreateBlock()
 {
-	delete _compiled_graph;
 }
 
 bool
@@ -150,9 +148,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 	/* Compile graph with new block added for insertion in audio thread
 	   TODO: Since the block is not connected at this point, a full compilation
 	   could be avoided and the block simply appended. */
-	if (ctx.must_compile(_graph)) {
-		_compiled_graph = CompiledGraph::compile(_graph);
-	}
+	_compiled_graph = ctx.maybe_compile(*_engine.maid(), *_graph);
 
 	_update.put_block(_block);
 
@@ -163,7 +159,7 @@ void
 CreateBlock::execute(RunContext& context)
 {
 	if (_status == Status::SUCCESS && _compiled_graph) {
-		_compiled_graph = _graph->swap_compiled_graph(_compiled_graph);
+		_graph->set_compiled_graph(std::move(_compiled_graph));
 	}
 }
 

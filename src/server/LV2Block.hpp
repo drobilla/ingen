@@ -58,7 +58,7 @@ public:
 	                     GraphImpl*          parent);
 
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
-	bool apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly);
+	bool apply_poly(RunContext& context, uint32_t poly);
 
 	void activate(BufferFactory& bufs);
 	void deactivate();
@@ -83,16 +83,32 @@ public:
 	static LilvState* load_state(World* world, const std::string& path);
 
 protected:
-	SPtr<LilvInstance> make_instance(URIs&      uris,
-	                                 SampleRate rate,
-	                                 uint32_t   voice,
-	                                 bool       preparing);
+	struct Instance : public Raul::Noncopyable {
+		explicit Instance(LilvInstance* i) : instance(i) {}
+
+		~Instance() { lilv_instance_free(instance); }
+
+		LilvInstance* const instance;
+	};
+
+	SPtr<Instance> make_instance(URIs&      uris,
+	                             SampleRate rate,
+	                             uint32_t   voice,
+	                             bool       preparing);
 
 	inline LilvInstance* instance(uint32_t voice) {
-		return (LilvInstance*)(*_instances)[voice].get();
+		return (LilvInstance*)(*_instances)[voice]->instance;
 	}
 
-	typedef Raul::Array< SPtr<void> > Instances;
+	typedef Raul::Array< SPtr<Instance> > Instances;
+
+	void drop_instances(const MPtr<Instances>& instances) {
+		if (instances) {
+			for (size_t i = 0; i < instances->size(); ++i) {
+				(*instances)[i].reset();
+			}
+		}
+	}
 
 	struct Response : public Raul::Maid::Disposable
 	                , public Raul::Noncopyable
@@ -122,8 +138,8 @@ protected:
 		LV2_Worker_Respond_Handle handle, uint32_t size, const void* data);
 
 	LV2Plugin*                      _lv2_plugin;
-	Instances*                      _instances;
-	Instances*                      _prepared_instances;
+	MPtr<Instances>                 _instances;
+	MPtr<Instances>                 _prepared_instances;
 	const LV2_Worker_Interface*     _worker_iface;
 	std::mutex                      _work_mutex;
 	Responses                       _responses;

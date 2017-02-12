@@ -51,7 +51,6 @@ DisconnectAll::DisconnectAll(Engine&           engine,
 	, _parent(NULL)
 	, _block(NULL)
 	, _port(NULL)
-	, _compiled_graph(NULL)
 	, _deleting(false)
 {
 }
@@ -67,7 +66,6 @@ DisconnectAll::DisconnectAll(Engine&    engine,
 	, _parent(parent)
 	, _block(dynamic_cast<BlockImpl*>(object))
 	, _port(dynamic_cast<PortImpl*>(object))
-	, _compiled_graph(NULL)
 	, _deleting(true)
 {
 }
@@ -76,8 +74,6 @@ DisconnectAll::~DisconnectAll()
 {
 	for (auto& i : _impls)
 		delete i;
-
-	delete _compiled_graph;
 }
 
 bool
@@ -138,8 +134,9 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 			                 dynamic_cast<InputPort*>(a->head())));
 	}
 
-	if (!_deleting && ctx.must_compile(_parent)) {
-		if (!(_compiled_graph = CompiledGraph::compile(_parent))) {
+	if (!_deleting && ctx.must_compile(*_parent)) {
+		if (!(_compiled_graph = CompiledGraph::compile(
+			      *_engine.maid(), *_parent))) {
 			return Event::pre_process_done(Status::COMPILATION_FAILED);
 		}
 	}
@@ -158,7 +155,7 @@ DisconnectAll::execute(RunContext& context)
 	}
 
 	if (_compiled_graph) {
-		_compiled_graph = _parent->swap_compiled_graph(_compiled_graph);
+		_parent->set_compiled_graph(std::move(_compiled_graph));
 	}
 }
 

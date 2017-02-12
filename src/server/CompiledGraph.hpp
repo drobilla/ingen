@@ -47,13 +47,15 @@ class CompiledGraph : public Raul::Maid::Disposable
                     , public Raul::Noncopyable
 {
 public:
-	static CompiledGraph* compile(GraphImpl* graph);
+	static MPtr<CompiledGraph> compile(Raul::Maid& maid, GraphImpl& graph);
 
 	void run(RunContext& context);
 
 	void dump(std::function<void (const std::string&)> sink) const;
 
 private:
+	friend class Raul::Maid;  ///< Allow make_managed to construct
+
 	CompiledGraph(GraphImpl* graph);
 
 	typedef std::set<BlockImpl*> BlockSet;

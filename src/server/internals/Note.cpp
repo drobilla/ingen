@@ -53,12 +53,11 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
                    GraphImpl*          parent,
                    SampleRate          srate)
 	: InternalBlock(plugin, symbol, polyphonic, parent, srate)
-	, _voices(new Raul::Array<Voice>(_polyphony))
-	, _prepared_voices(NULL)
+	, _voices(bufs.maid().make_managed<Voices>(_polyphony))
 	, _sustain(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
-	_ports = new Raul::Array<PortImpl*>(8);
+	_ports = bufs.maid().make_managed<Ports>(8);
 
 	const Atom zero = bufs.forge().make(0.0f);
 	const Atom one  = bufs.forge().make(1.0f);
@@ -131,7 +130,6 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 
 NoteNode::~NoteNode()
 {
-	delete _voices;
 }
 
 bool
@@ -145,22 +143,21 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (_prepared_voices && poly <= _prepared_voices->size())
 		return true;
 
-	_prepared_voices = new Raul::Array<Voice>(poly, *_voices, Voice());
+	_prepared_voices = bufs.maid().make_managed<Voices>(
+		poly, *_voices, Voice());
 
 	return true;
 }
 
 bool
-NoteNode::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
+NoteNode::apply_poly(RunContext& context, uint32_t poly)
 {
-	if (!BlockImpl::apply_poly(context, maid, poly))
+	if (!BlockImpl::apply_poly(context, poly))
 		return false;
 
 	if (_prepared_voices) {
 		assert(_polyphony <= _prepared_voices->size());
-		maid.dispose(_voices);
-		_voices = _prepared_voices;
-		_prepared_voices = NULL;
+		_voices = std::move(_prepared_voices);
 	}
 	assert(_polyphony <= _voices->size());
 

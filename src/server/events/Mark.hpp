@@ -53,7 +53,7 @@ public:
 	Execution get_execution() const;
 
 private:
-	typedef std::map<GraphImpl*, CompiledGraph*> CompiledGraphs;
+	typedef std::map<GraphImpl*, MPtr<CompiledGraph>> CompiledGraphs;
 
 	CompiledGraphs _compiled_graphs;
 	Type           _type;

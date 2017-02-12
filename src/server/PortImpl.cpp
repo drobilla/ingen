@@ -66,8 +66,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _value(value)
 	, _min(bufs.forge().make(0.0f))
 	, _max(bufs.forge().make(1.0f))
-	, _voices(new Raul::Array<Voice>(static_cast<size_t>(poly)))
-	, _prepared_voices(NULL)
+	, _voices(bufs.maid().make_managed<Voices>(poly))
 	, _connected_flag(false)
 	, _monitored(false)
 	, _force_monitor_update(false)
@@ -106,13 +105,12 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 PortImpl::~PortImpl()
 {
-	delete _voices;
 }
 
 bool
 PortImpl::get_buffers(BufferFactory&      bufs,
                       GetFn               get,
-                      Raul::Array<Voice>* voices,
+                      const MPtr<Voices>& voices,
                       uint32_t            poly,
                       size_t              num_in_arcs) const
 {
@@ -208,18 +206,11 @@ PortImpl::deactivate()
 	_peak          = 0.0f;
 }
 
-Raul::Array<PortImpl::Voice>*
-PortImpl::set_voices(RunContext& context, Raul::Array<Voice>* voices)
+void
+PortImpl::set_voices(RunContext& context, MPtr<Voices>&& voices)
 {
-	Raul::Array<Voice>* ret = NULL;
-	if (voices != _voices) {
-		ret = _voices;
-		_voices = voices;
-	}
-
+	_voices = std::move(voices);
 	connect_buffers();
-
-	return ret;
 }
 
 void
@@ -339,12 +330,12 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	} else if (_poly == poly) {
 		return true;
 	} else if (_prepared_voices && _prepared_voices->size() != poly) {
-		delete _prepared_voices;
-		_prepared_voices = NULL;
+		_prepared_voices.reset();
 	}
 
 	if (!_prepared_voices) {
-		_prepared_voices = new Raul::Array<Voice>(poly, *_voices, Voice());
+		_prepared_voices = bufs.maid().make_managed<Voices>(
+			poly, *_voices, Voice());
 	}
 
 	get_buffers(bufs, &BufferFactory::get_buffer,
@@ -354,7 +345,7 @@ PortImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-PortImpl::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
+PortImpl::apply_poly(RunContext& context, uint32_t poly)
 {
 	if (_parent->is_main() ||
 	    (_type == PortType::ATOM && !_value.is_valid())) {
@@ -368,9 +359,7 @@ PortImpl::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
 	_poly = poly;
 
 	// Apply a new set of voices from a preceding call to prepare_poly
-	maid.dispose(set_voices(context, _prepared_voices));
-	assert(_voices == _prepared_voices);
-	_prepared_voices = NULL;
+	_voices = std::move(_prepared_voices);
 
 	if (is_a(PortType::CONTROL) || is_a(PortType::CV)) {
 		set_control_value(context, context.start(), _value.get<float>());

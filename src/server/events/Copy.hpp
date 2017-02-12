@@ -56,12 +56,12 @@ private:
 	bool engine_to_filesystem(PreProcessContext& ctx);
 	bool filesystem_to_engine(PreProcessContext& ctx);
 
-	const Raul::URI _old_uri;
-	const Raul::URI _new_uri;
-	SPtr<BlockImpl> _old_block;
-	GraphImpl*      _parent;
-	BlockImpl*      _block;
-	CompiledGraph*  _compiled_graph;
+	const Raul::URI     _old_uri;
+	const Raul::URI     _new_uri;
+	SPtr<BlockImpl>     _old_block;
+	GraphImpl*          _parent;
+	BlockImpl*          _block;
+	MPtr<CompiledGraph> _compiled_graph;
 };
 
 } // namespace Events

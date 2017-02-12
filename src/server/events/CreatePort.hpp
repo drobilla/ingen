@@ -24,6 +24,7 @@
 #include "raul/Array.hpp"
 #include "raul/Path.hpp"
 
+#include "BlockImpl.hpp"
 #include "Event.hpp"
 #include "PortType.hpp"
 
@@ -67,8 +68,7 @@ private:
 	LV2_URID                _buf_type;
 	GraphImpl*              _graph;
 	DuplexPort*             _graph_port;
-	Raul::Array<PortImpl*>* _ports_array; ///< New external port array for Graph
-	Raul::Array<PortImpl*>* _old_ports_array;
+	MPtr<BlockImpl::Ports>  _ports_array; ///< New external port array for Graph
 	EnginePort*             _engine_port; ///< Driver port if on the root
 	Resource::Properties    _properties;
 	Resource::Properties    _update;

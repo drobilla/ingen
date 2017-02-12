@@ -51,7 +51,7 @@ TriggerNode::TriggerNode(InternalPlugin*     plugin,
 	, _learning(false)
 {
 	const Ingen::URIs& uris = bufs.uris();
-	_ports = new Raul::Array<PortImpl*>(6);
+	_ports = bufs.maid().make_managed<Ports>(6);
 
 	const Atom zero = bufs.forge().make(0.0f);
 

@@ -64,8 +64,6 @@ LV2Block::LV2Block(LV2Plugin*          plugin,
                    SampleRate          srate)
 	: BlockImpl(plugin, symbol, polyphonic, parent, srate)
 	, _lv2_plugin(plugin)
-	, _instances(NULL)
-	, _prepared_instances(NULL)
 	, _worker_iface(NULL)
 {
 	assert(_lv2_plugin);
@@ -73,10 +71,12 @@ LV2Block::LV2Block(LV2Plugin*          plugin,
 
 LV2Block::~LV2Block()
 {
-	delete _instances;
+	// Explicitly drop instances first to prevent reference cycles
+	drop_instances(_instances);
+	drop_instances(_prepared_instances);
 }
 
-SPtr<LilvInstance>
+SPtr<LV2Block::Instance>
 LV2Block::make_instance(URIs&      uris,
                         SampleRate rate,
                         uint32_t   voice,
@@ -90,7 +90,7 @@ LV2Block::make_instance(URIs&      uris,
 		parent_graph()->engine().log().error(
 			fmt("Failed to instantiate <%1%>\n")
 			% _lv2_plugin->uri().c_str());
-		return SPtr<LilvInstance>();
+		return SPtr<Instance>();
 	}
 
 	const LV2_Options_Interface* options_iface = NULL;
@@ -145,7 +145,7 @@ LV2Block::make_instance(URIs&      uris,
 						parent_graph()->engine().log().error(
 							fmt("%1% auto-morphed to unknown type %2%\n")
 							% port->path().c_str() % type);
-						return SPtr<LilvInstance>();
+						return SPtr<Instance>();
 					}
 				} else {
 					parent_graph()->engine().log().error(
@@ -156,7 +156,7 @@ LV2Block::make_instance(URIs&      uris,
 		}
 	}
 
-	return SPtr<LilvInstance>(inst, lilv_instance_free);
+	return std::make_shared<Instance>(inst);
 }
 
 bool
@@ -172,19 +172,19 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 
 	const SampleRate rate = bufs.engine().driver()->sample_rate();
 	assert(!_prepared_instances);
-	_prepared_instances = new Instances(poly, *_instances, SPtr<void>());
+	_prepared_instances = bufs.maid().make_managed<Instances>(
+		poly, *_instances, SPtr<Instance>());
 	for (uint32_t i = _polyphony; i < _prepared_instances->size(); ++i) {
-		SPtr<LilvInstance> inst = make_instance(bufs.uris(), rate, i, true);
+		SPtr<Instance> inst = make_instance(bufs.uris(), rate, i, true);
 		if (!inst) {
-			delete _prepared_instances;
-			_prepared_instances = NULL;
+			_prepared_instances.reset();
 			return false;
 		}
 
 		_prepared_instances->at(i) = inst;
 
 		if (_activated) {
-			lilv_instance_activate(inst.get());
+			lilv_instance_activate(inst->instance);
 		}
 	}
 
@@ -192,19 +192,17 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 }
 
 bool
-LV2Block::apply_poly(RunContext& context, Raul::Maid& maid, uint32_t poly)
+LV2Block::apply_poly(RunContext& context, uint32_t poly)
 {
 	if (!_polyphonic)
 		poly = 1;
 
 	if (_prepared_instances) {
-		maid.dispose(_instances);
-		_instances = _prepared_instances;
-		_prepared_instances = NULL;
+		_instances = std::move(_prepared_instances);
 	}
 	assert(poly <= _instances->size());
 
-	return BlockImpl::apply_poly(context, maid, poly);
+	return BlockImpl::apply_poly(context, poly);
 }
 
 /** Instantiate self from LV2 plugin descriptor.
@@ -227,7 +225,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 	LilvNode* lv2_connectionOptional = lilv_new_uri(
 		bufs.engine().world()->lilv_world(), LV2_CORE__connectionOptional);
 
-	_ports = new Raul::Array<PortImpl*>(num_ports, NULL);
+	_ports = bufs.maid().make_managed<BlockImpl::Ports>(num_ports, nullptr);
 
 	bool ret = true;
 
@@ -416,8 +414,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 	lilv_node_free(lv2_connectionOptional);
 
 	if (!ret) {
-		delete _ports;
-		_ports = NULL;
+		_ports.reset();
 		return ret;
 	}
 
@@ -425,7 +422,8 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 
 	// Actually create plugin instances and port buffers.
 	const SampleRate rate = bufs.engine().driver()->sample_rate();
-	_instances = new Instances(_polyphony, SPtr<void>());
+	_instances = bufs.maid().make_managed<Instances>(
+		_polyphony, SPtr<Instance>());
 	for (uint32_t i = 0; i < _polyphony; ++i) {
 		_instances->at(i) = make_instance(bufs.uris(), rate, i, false);
 		if (!_instances->at(i)) {

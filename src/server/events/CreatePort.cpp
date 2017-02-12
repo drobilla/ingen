@@ -48,8 +48,6 @@ CreatePort::CreatePort(Engine&                     engine,
 	, _buf_type(0)
 	, _graph(NULL)
 	, _graph_port(NULL)
-	, _ports_array(NULL)
-	, _old_ports_array(NULL)
 	, _engine_port(NULL)
 	, _properties(properties)
 {
@@ -156,8 +154,10 @@ CreatePort::pre_process(PreProcessContext& ctx)
 		_engine_port = _engine.driver()->create_port(_graph_port);
 	}
 
-	_ports_array = new Raul::Array<PortImpl*>(old_n_ports + 1, NULL);
-	_update      = _graph_port->properties();
+	_ports_array = bufs.maid().make_managed<GraphImpl::Ports>(
+		old_n_ports + 1, nullptr);
+
+	_update = _graph_port->properties();
 
 	assert(_graph_port->index() == (uint32_t)index_i->second.get<int32_t>());
 	assert(_graph->num_ports_non_rt() == (uint32_t)old_n_ports + 1);
@@ -171,15 +171,15 @@ void
 CreatePort::execute(RunContext& context)
 {
 	if (_status == Status::SUCCESS) {
-		_old_ports_array = _graph->external_ports();
-		if (_old_ports_array) {
-			for (uint32_t i = 0; i < _old_ports_array->size(); ++i) {
-				(*_ports_array)[i] = (*_old_ports_array)[i];
+		const MPtr<GraphImpl::Ports>& old_ports = _graph->external_ports();
+		if (old_ports) {
+			for (uint32_t i = 0; i < old_ports->size(); ++i) {
+				(*_ports_array)[i] = (*old_ports)[i];
 			}
 		}
 		assert(!(*_ports_array)[_graph_port->index()]);
 		(*_ports_array)[_graph_port->index()] = _graph_port;
-		_graph->external_ports(_ports_array);
+		_graph->set_external_ports(std::move(_ports_array));
 
 		if (_engine_port) {
 			_engine.driver()->add_port(context, _engine_port);
@@ -194,8 +194,6 @@ CreatePort::post_process()
 	if (respond() == Status::SUCCESS) {
 		_engine.broadcaster()->put(Node::path_to_uri(_path), _update);
 	}
-
-	delete _old_ports_array;
 }
 
 void

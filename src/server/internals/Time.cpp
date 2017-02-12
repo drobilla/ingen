@@ -45,7 +45,7 @@ TimeNode::TimeNode(InternalPlugin*     plugin,
 	: InternalBlock(plugin, symbol, false, parent, srate)
 {
 	const Ingen::URIs& uris = bufs.uris();
-	_ports = new Raul::Array<PortImpl*>(1);
+	_ports = bufs.maid().make_managed<Ports>(1);
 
 	_notify_port = new OutputPort(
 		bufs, this, Raul::Symbol("notify"), 0, 1,

@@ -20,6 +20,7 @@
 
 #include "ArcImpl.hpp"
 #include "Broadcaster.hpp"
+#include "BufferFactory.hpp"
 #include "Connect.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
@@ -44,8 +45,6 @@ Connect::Connect(Engine&           engine,
 	, _head_path(head_path)
 	, _graph(NULL)
 	, _head(NULL)
-	, _compiled_graph(NULL)
-	, _voices(NULL)
 {}
 
 bool
@@ -125,8 +124,9 @@ Connect::pre_process(PreProcessContext& ctx)
 			tail_block->dependants().insert(head_block);
 		}
 
-		if (ctx.must_compile(_graph)) {
-			if (!(_compiled_graph = CompiledGraph::compile(_graph))) {
+		if (ctx.must_compile(*_graph)) {
+			if (!(_compiled_graph = CompiledGraph::compile(
+				      *_engine.maid(), *_graph))) {
 				head_block->providers().erase(tail_block);
 				tail_block->dependants().erase(head_block);
 				return Event::pre_process_done(Status::COMPILATION_FAILED);
@@ -138,10 +138,9 @@ Connect::pre_process(PreProcessContext& ctx)
 	_head->increment_num_arcs();
 
 	if (!_head->is_driver_port()) {
-		_voices = new Raul::Array<PortImpl::Voice>(_head->poly());
-		_head->pre_get_buffers(*_engine.buffer_factory(),
-		                       _voices,
-		                       _head->poly());
+		BufferFactory& bufs = *_engine.buffer_factory();
+		_voices = bufs.maid().make_managed<PortImpl::Voices>(_head->poly());
+		_head->pre_get_buffers(bufs, _voices, _head->poly());
 	}
 
 	tail_output->inherit_neighbour(_head, _tail_remove, _tail_add);
@@ -156,11 +155,11 @@ Connect::execute(RunContext& context)
 	if (_status == Status::SUCCESS) {
 		_head->add_arc(context, _arc.get());
 		if (!_head->is_driver_port()) {
-			_engine.maid()->dispose(_head->set_voices(context, _voices));
+			_head->set_voices(context, std::move(_voices));
 		}
 		_head->connect_buffers();
 		if (_compiled_graph) {
-			_compiled_graph = _graph->swap_compiled_graph(_compiled_graph);
+			_graph->set_compiled_graph(std::move(_compiled_graph));
 		}
 	}
 }
@@ -180,8 +179,6 @@ Connect::post_process()
 				Node::path_to_uri(_tail_path), _tail_remove, _tail_add);
 		}
 	}
-
-	delete _compiled_graph;
 }
 
 void

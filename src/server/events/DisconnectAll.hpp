@@ -64,14 +64,14 @@ public:
 private:
 	typedef std::list<Disconnect::Impl*> Impls;
 
-	Raul::Path     _parent_path;
-	Raul::Path     _path;
-	GraphImpl*     _parent;
-	BlockImpl*     _block;
-	PortImpl*      _port;
-	Impls          _impls;
-	CompiledGraph* _compiled_graph;
-	bool           _deleting;
+	Raul::Path          _parent_path;
+	Raul::Path          _path;
+	GraphImpl*          _parent;
+	BlockImpl*          _block;
+	PortImpl*           _port;
+	Impls               _impls;
+	MPtr<CompiledGraph> _compiled_graph;
+	bool                _deleting;
 };
 
 } // namespace Events
