@@ -86,7 +86,7 @@ int
 main(int argc, char** argv)
 {
 	Glib::thread_init();
-	Ingen::set_bundle_path_from_code((void*)&main);
+	Ingen::set_bundle_path_from_code((void*)&print_version);
 
 	// Create world
 	try {

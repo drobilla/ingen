@@ -118,15 +118,6 @@ public:
 
 private:
 	struct Option {
-	public:
-		Option(const std::string& k, const std::string& n, char l,
-		       const std::string& d, Scope s,
-		       const LV2_URID type, const Atom& def)
-			: key(k), name(n), letter(l)
-			, desc(d), scope(s)
-			, type(type), value(def)
-		{}
-
 		std::string key;
 		std::string name;
 		char        letter;

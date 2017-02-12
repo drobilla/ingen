@@ -153,7 +153,7 @@ int
 main(int argc, char** argv)
 {
 	Glib::thread_init();
-	set_bundle_path_from_code((void*)&main);
+	set_bundle_path_from_code((void*)&flush_events);
 
 	// Create world
 	try {

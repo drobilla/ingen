@@ -86,7 +86,7 @@ Configuration::add(const std::string& key,
 {
 	assert(value.type() == type || value.type() == 0);
 	_max_name_length = std::max(_max_name_length, name.length());
-	_options.insert(make_pair(name, Option(key, name, letter, desc, scope, type, value)));
+	_options.insert(make_pair(name, Option{key, name, letter, desc, scope, type, value}));
 	if (!key.empty()) {
 		_keys.insert(make_pair(key, name));
 	}
