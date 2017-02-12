@@ -132,12 +132,12 @@ ingen_try(bool cond, const char* msg)
 	}
 }
 
-static void
-flush_events(Ingen::World* world)
+static uint32_t
+flush_events(Ingen::World* world, const uint32_t start)
 {
 	static const uint32_t block_length = 4096;
 	int                   count        = 0;
-	uint32_t              offset       = 0;
+	uint32_t              offset       = start;
 	while (world->engine()->pending_events()) {
 		world->engine()->locate(offset, block_length);
 		world->engine()->run(block_length);
@@ -146,6 +146,7 @@ flush_events(Ingen::World* world)
 		++count;
 		offset += block_length;
 	}
+	return offset;
 }
 
 int
@@ -197,7 +198,7 @@ main(int argc, char** argv)
 		cerr << "error: failed to load initial graph " << start_graph << endl;
 		return EXIT_FAILURE;
 	}
-	flush_events(world);
+	uint32_t time = flush_events(world, 0);
 
 	// Read commands
 
@@ -260,7 +261,7 @@ main(int argc, char** argv)
 			return EXIT_FAILURE;
 		}
 
-		flush_events(world);
+		time = flush_events(world, time);
 	}
 
 	delete cmds;
@@ -275,7 +276,7 @@ main(int argc, char** argv)
 	// Undo every event (should result in a graph identical to the original)
 	for (int i = 0; i < n_events; ++i) {
 		world->interface()->undo();
-		flush_events(world);
+		time = flush_events(world, time);
 	}
 
 	// Save completely undone graph
@@ -287,7 +288,7 @@ main(int argc, char** argv)
 	// Redo every event (should result in a graph identical to the pre-undo output)
 	for (int i = 0; i < n_events; ++i) {
 		world->interface()->redo();
-		flush_events(world);
+		time = flush_events(world, time);
 	}
 
 	// Save completely redone graph
