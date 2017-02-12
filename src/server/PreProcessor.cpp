@@ -140,8 +140,8 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 	}
 
 	if (n_processed > 0) {
-		Engine& engine = context.engine();
 #ifndef NDEBUG
+		Engine& engine = context.engine();
 		if (engine.world()->conf().option("trace").get<int32_t>()) {
 			const uint64_t start = engine.cycle_start_time(context);
 			const uint64_t end   = engine.current_time(context);
