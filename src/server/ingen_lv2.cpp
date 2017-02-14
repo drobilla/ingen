@@ -243,12 +243,14 @@ public:
 		const URIs&        uris = _engine.world()->uris();
 		LV2_Atom_Sequence* seq  = (LV2_Atom_Sequence*)_ports[0]->buffer();
 		LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-			if (ev->body.type == uris.atom_Object &&
-			    ((LV2_Atom_Object*)&ev)->body.otype == uris.time_Position) {
-				buffer.append_event(ev->time.frames,
-				                    ev->body.size,
-				                    ev->body.type,
-				                    (const uint8_t*)(&ev->body + 1));
+			if (ev->body.type == uris.atom_Object) {
+				const LV2_Atom_Object* obj = (LV2_Atom_Object*)&ev->body;
+				if (obj->body.otype == uris.time_Position) {
+					buffer.append_event(ev->time.frames,
+					                    ev->body.size,
+					                    ev->body.type,
+					                    (const uint8_t*)(&ev->body + 1));
+				}
 			}
 		}
 	}
