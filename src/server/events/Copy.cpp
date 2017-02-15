@@ -51,9 +51,9 @@ Copy::pre_process(PreProcessContext& ctx)
 {
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
-	if (Node::uri_is_path(_old_uri)) {
+	if (uri_is_path(_old_uri)) {
 		// Old URI is a path within the engine
-		const Raul::Path old_path = Node::uri_to_path(_old_uri);
+		const Raul::Path old_path = uri_to_path(_old_uri);
 
 		// Find the old node
 		const Store::iterator i = _engine.store()->find(old_path);
@@ -66,7 +66,7 @@ Copy::pre_process(PreProcessContext& ctx)
 			return Event::pre_process_done(Status::BAD_OBJECT_TYPE, old_path);
 		}
 
-		if (Node::uri_is_path(_new_uri)) {
+		if (uri_is_path(_new_uri)) {
 			// Copy to path within the engine
 			return engine_to_engine(ctx);
 		} else if (_new_uri.scheme() == "file") {
@@ -76,7 +76,7 @@ Copy::pre_process(PreProcessContext& ctx)
 			return Event::pre_process_done(Status::BAD_REQUEST);
 		}
 	} else if (_old_uri.scheme() == "file") {
-		if (Node::uri_is_path(_new_uri)) {
+		if (uri_is_path(_new_uri)) {
 			return filesystem_to_engine(ctx);
 		} else {
 			// Ingen is not your file manager
@@ -91,7 +91,7 @@ bool
 Copy::engine_to_engine(PreProcessContext& ctx)
 {
 	// Only support a single source for now
-	const Raul::Path new_path = Node::uri_to_path(_new_uri);
+	const Raul::Path new_path = uri_to_path(_new_uri);
 	if (!Raul::Symbol::is_valid(new_path.symbol())) {
 		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
@@ -175,7 +175,7 @@ Copy::filesystem_to_engine(PreProcessContext& ctx)
 
 	// Old URI is a filesystem path and new URI is a path within the engine
 	const std::string             src_path = _old_uri.substr(strlen("file://"));
-	const Raul::Path              dst_path = Node::uri_to_path(_new_uri);
+	const Raul::Path              dst_path = uri_to_path(_new_uri);
 	boost::optional<Raul::Path>   dst_parent;
 	boost::optional<Raul::Symbol> dst_symbol;
 	if (!dst_path.is_root()) {

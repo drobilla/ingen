@@ -138,7 +138,7 @@ protected:
 	}
 
 	inline bool pre_process_done(Status st, const Raul::Path& subject) {
-		return pre_process_done(st, Node::path_to_uri(subject));
+		return pre_process_done(st, path_to_uri(subject));
 	}
 
 	/** Respond to the originating client. */

@@ -673,12 +673,12 @@ GraphCanvas::paste()
 	// Make a client store to serve as clipboard
 	ClientStore clipboard(_app.world()->uris(), _app.log());
 	clipboard.set_plugins(_app.store()->plugins());
-	clipboard.put(Node::main_uri(),
+	clipboard.put(main_uri(),
 	              {{uris.rdf_type, Resource::Property(uris.ingen_Graph)}});
 
 	// Parse clipboard text into clipboard store
 	boost::optional<Raul::URI> base_uri = parser->parse_string(
-		_app.world(), &clipboard, str, Node::main_uri());
+		_app.world(), &clipboard, str, main_uri());
 
 	// Figure out the copy graph base path
 	Raul::Path copy_root("/");
@@ -687,7 +687,7 @@ GraphCanvas::paste()
 		if (base[base.size() - 1] == '/') {
 			base = base.substr(0, base.size() - 1);
 		}
-		copy_root = Node::uri_to_path(Raul::URI(base));
+		copy_root = uri_to_path(Raul::URI(base));
 	}
 
 	// Find the minimum x and y coordinate of objects to be pasted
@@ -724,7 +724,7 @@ GraphCanvas::paste()
 
 		const SPtr<Node>  node     = c.second;
 		const Raul::Path& old_path = copy_root.child(node->path());
-		const Raul::URI&  old_uri  = Node::path_to_uri(old_path);
+		const Raul::URI&  old_uri  = path_to_uri(old_path);
 		const Raul::Path& new_path = avoider.map_path(parent.child(node->path()));
 
 		Node::Properties props{{uris.lv2_prototype,
@@ -748,7 +748,7 @@ GraphCanvas::paste()
 			                                            yi->second.context())});
 		}
 
-		_app.interface()->put(Node::path_to_uri(new_path), props);
+		_app.interface()->put(path_to_uri(new_path), props);
 		_pastees.insert(new_path);
 	}
 
@@ -809,7 +809,7 @@ GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
 	                       _app.forge().make(int32_t(_graph->num_ports()))));
 	props.insert(make_pair(uris.lv2_name,
 	                       _app.forge().alloc(name.c_str())));
-	_app.interface()->put(Node::path_to_uri(path), props);
+	_app.interface()->put(path_to_uri(path), props);
 }
 
 void
@@ -836,7 +836,7 @@ GraphCanvas::load_plugin(WPtr<PluginModel> weak_plugin)
 	                       Resource::Property(uris.ingen_Block)));
 	props.insert(make_pair(uris.lv2_prototype,
 	                       uris.forge.make_urid(plugin->uri())));
-	_app.interface()->put(Node::path_to_uri(path), props);
+	_app.interface()->put(path_to_uri(path), props);
 }
 
 /** Try to guess a suitable location for a new module.

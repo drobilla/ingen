@@ -333,7 +333,7 @@ parse_block(Ingen::World*                     world,
 			world, model, subject, Resource::Graph::DEFAULT);
 		props.insert(make_pair(uris.rdf_type,
 		                       uris.forge.make_urid(uris.ingen_Block)));
-		target->put(Node::path_to_uri(path), props);
+		target->put(path_to_uri(path), props);
 	}
 	return path;
 }
@@ -381,7 +381,7 @@ parse_graph(Ingen::World*                     world,
 	// Create graph
 	Raul::Path graph_path(graph_path_str);
 	Resource::Properties props = get_properties(world, model, subject_node, ctx);
-	target->put(Node::path_to_uri(graph_path), props, ctx);
+	target->put(path_to_uri(graph_path), props, ctx);
 
 	// For each port on this graph
 	typedef std::map<uint32_t, PortRecord> PortRecords;
@@ -409,7 +409,7 @@ parse_graph(Ingen::World*                     world,
 
 	// Create ports in order by index
 	for (const auto& p : ports) {
-		target->put(Node::path_to_uri(p.second.first),
+		target->put(path_to_uri(p.second.first),
 		            p.second.second,
 		            ctx);
 	}
@@ -448,7 +448,7 @@ parse_graph(Ingen::World*                     world,
 			}
 
 			// Create port and/or set all port properties
-			target->put(Node::path_to_uri(port_record->first),
+			target->put(path_to_uri(port_record->first),
 			            port_record->second,
 			            subctx);
 		}
@@ -615,7 +615,7 @@ parse(Ingen::World*                     world,
 		           types.find(out_port_class) != types.end()) {
 			parse_properties(world, target, model,
 			                 s, Resource::Graph::DEFAULT,
-			                 Node::path_to_uri(path), data);
+			                 path_to_uri(path), data);
 			ret = path;
 		} else if (types.find(arc_class) != types.end()) {
 			Raul::Path parent_path(parent ? parent.get() : Raul::Path("/"));
@@ -711,7 +711,7 @@ Parser::parse_file(Ingen::World*                     world,
 		        subject, parent, symbol, data);
 
 	if (parsed_path) {
-		target->set_property(Node::path_to_uri(*parsed_path),
+		target->set_property(path_to_uri(*parsed_path),
 		                     Raul::URI(INGEN__file),
 		                     world->forge().alloc_uri(uri));
 		return true;

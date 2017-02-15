@@ -179,8 +179,8 @@ ClientStore::object(const Raul::Path& path) const
 SPtr<Resource>
 ClientStore::_resource(const Raul::URI& uri)
 {
-	if (Node::uri_is_path(uri)) {
-		return _object(Node::uri_to_path(uri));
+	if (uri_is_path(uri)) {
+		return _object(uri_to_path(uri));
 	} else {
 		return _plugin(uri);
 	}
@@ -209,8 +209,8 @@ ClientStore::add_plugin(SPtr<PluginModel> pm)
 void
 ClientStore::del(const Raul::URI& uri)
 {
-	if (Node::uri_is_path(uri)) {
-		remove_object(Node::uri_to_path(uri));
+	if (uri_is_path(uri)) {
+		remove_object(uri_to_path(uri));
 	} else {
 		Plugins::iterator p = _plugins->find(uri);
 		if (p != _plugins->end()) {
@@ -277,13 +277,13 @@ ClientStore::put(const Raul::URI&            uri,
 		}
 	}
 
-	if (!Node::uri_is_path(uri)) {
+	if (!uri_is_path(uri)) {
 		_log.error(fmt("Put for unknown subject <%1%>\n")
 		           % uri.c_str());
 		return;
 	}
 
-	const Raul::Path path(Node::uri_to_path(uri));
+	const Raul::Path path(uri_to_path(uri));
 
 	SPtr<ObjectModel> obj = dynamic_ptr_cast<ObjectModel>(_object(path));
 	if (obj) {
@@ -352,13 +352,13 @@ ClientStore::delta(const Raul::URI&            uri,
 		return;
 	}
 
-	if (!Node::uri_is_path(uri)) {
+	if (!uri_is_path(uri)) {
 		_log.error(fmt("Delta for unknown subject <%1%>\n")
 		           % uri.c_str());
 		return;
 	}
 
-	const Raul::Path path(Node::uri_to_path(uri));
+	const Raul::Path path(uri_to_path(uri));
 
 	SPtr<ObjectModel> obj = _object(path);
 	if (obj) {

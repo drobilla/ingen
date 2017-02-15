@@ -399,7 +399,7 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 		                       _app->forge().make_urid(plugin->uri())));
 		props.insert(make_pair(uris.ingen_polyphonic,
 		                       _app->forge().make(polyphonic)));
-		_app->interface()->put(Node::path_to_uri(path), props);
+		_app->interface()->put(path_to_uri(path), props);
 
 		if (_selection->get_selected_rows().size() == 1) {
 			_name_offset = (_name_offset == 0) ? 2 : _name_offset + 1;

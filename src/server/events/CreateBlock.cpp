@@ -95,10 +95,10 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 	                             p->second.get<int32_t>());
 
 	// Find and instantiate/duplicate prototype (plugin/existing node)
-	if (Node::uri_is_path(prototype)) {
+	if (uri_is_path(prototype)) {
 		// Prototype is an existing block
 		BlockImpl* const ancestor = dynamic_cast<BlockImpl*>(
-			store->get(Node::uri_to_path(prototype)));
+			store->get(uri_to_path(prototype)));
 		if (!ancestor) {
 			return Event::pre_process_done(Status::PROTOTYPE_NOT_FOUND, prototype);
 		} else if (!(_block = ancestor->duplicate(

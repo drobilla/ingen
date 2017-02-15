@@ -137,7 +137,7 @@ Delta::pre_process(PreProcessContext& ctx)
 {
 	const Ingen::URIs& uris = _engine.world()->uris();
 
-	const bool is_graph_object = Node::uri_is_path(_subject);
+	const bool is_graph_object = uri_is_path(_subject);
 	const bool is_client       = (_subject == "ingen:/clients/this");
 	const bool is_engine       = (_subject == "ingen:/");
 	const bool is_file         = (_subject.substr(0, 5) == "file:");
@@ -158,11 +158,11 @@ Delta::pre_process(PreProcessContext& ctx)
 		}
 
 		const Raul::URI prot(_engine.world()->forge().str(p->second, false));
-		if (!Node::uri_is_path(prot)) {
+		if (!uri_is_path(prot)) {
 			return Event::pre_process_done(Status::BAD_URI, _subject);
 		}
 
-		Node* node = _engine.store()->get(Node::uri_to_path(prot));
+		Node* node = _engine.store()->get(uri_to_path(prot));
 		if (!node) {
 			return Event::pre_process_done(Status::NOT_FOUND, prot);
 		}
@@ -182,7 +182,7 @@ Delta::pre_process(PreProcessContext& ctx)
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
 	_object = is_graph_object
-		? static_cast<Ingen::Resource*>(_engine.store()->get(Node::uri_to_path(_subject)))
+		? static_cast<Ingen::Resource*>(_engine.store()->get(uri_to_path(_subject)))
 		: static_cast<Ingen::Resource*>(_engine.block_factory()->plugin(_subject));
 
 	if (!_object && !is_client && !is_engine &&
@@ -191,7 +191,7 @@ Delta::pre_process(PreProcessContext& ctx)
 	}
 
 	if (is_graph_object && !_object) {
-		Raul::Path path(Node::uri_to_path(_subject));
+		Raul::Path path(uri_to_path(_subject));
 		bool is_graph = false, is_block = false, is_port = false, is_output = false;
 		Ingen::Resource::type(uris, _properties, is_graph, is_block, is_port, is_output);
 

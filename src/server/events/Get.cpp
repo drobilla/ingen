@@ -55,8 +55,8 @@ Get::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::SUCCESS);
 	} else if (_uri == "ingen:/engine") {
 		return Event::pre_process_done(Status::SUCCESS);
-	} else if (Node::uri_is_path(_uri)) {
-		if ((_object = _engine.store()->get(Node::uri_to_path(_uri)))) {
+	} else if (uri_is_path(_uri)) {
+		if ((_object = _engine.store()->get(uri_to_path(_uri)))) {
 			const BlockImpl* block = NULL;
 			const GraphImpl* graph = NULL;
 			const PortImpl*  port  = NULL;

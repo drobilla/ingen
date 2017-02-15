@@ -19,6 +19,7 @@
 
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
+#include "ingen/paths.hpp"
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
 #include "raul/Path.hpp"
@@ -82,27 +83,6 @@ public:
 			return uri();
 		}
 		return Raul::URI(uri() + '/');
-	}
-
-	static Raul::URI main_uri() { return Raul::URI("ingen:/main"); }
-
-	static bool uri_is_path(const Raul::URI& uri) {
-		const size_t root_len = main_uri().length();
-		if (uri == main_uri()) {
-			return true;
-		} else {
-			return uri.substr(0, root_len + 1) == main_uri() + "/";
-		}
-	}
-
-	static Raul::Path uri_to_path(const Raul::URI& uri) {
-		return (uri == main_uri())
-			? Raul::Path("/")
-			: Raul::Path(uri.substr(main_uri().length()));
-	}
-
-	static Raul::URI path_to_uri(const Raul::Path& path) {
-		return Raul::URI(main_uri() + path.c_str());
 	}
 
 protected:

@@ -172,11 +172,11 @@ Connect::post_process()
 		_engine.broadcaster()->connect(_tail_path, _head_path);
 		if (!_tail_remove.empty() || !_tail_add.empty()) {
 			_engine.broadcaster()->delta(
-				Node::path_to_uri(_tail_path), _tail_remove, _tail_add);
+				path_to_uri(_tail_path), _tail_remove, _tail_add);
 		}
 		if (!_tail_remove.empty() || !_tail_add.empty()) {
 			_engine.broadcaster()->delta(
-				Node::path_to_uri(_tail_path), _tail_remove, _tail_add);
+				path_to_uri(_tail_path), _tail_remove, _tail_add);
 		}
 	}
 }

@@ -63,7 +63,7 @@ public:
 		if (new_sym[0] != '\0') {
 			_symbol = Raul::Symbol(new_sym);
 		}
-		set_uri(Node::path_to_uri(new_path));
+		set_uri(path_to_uri(new_path));
 	}
 
 	const Atom& get_property(const Raul::URI& key) const;

@@ -100,8 +100,8 @@ boost::optional<Raul::Path>
 AtomReader::atom_to_path(const LV2_Atom* atom)
 {
 	boost::optional<Raul::URI> uri = atom_to_uri(atom);
-	if (uri && Node::uri_is_path(*uri)) {
-		return Node::uri_to_path(*uri);
+	if (uri && uri_is_path(*uri)) {
+		return uri_to_path(*uri);
 	}
 	return boost::optional<Raul::Path>();
 }

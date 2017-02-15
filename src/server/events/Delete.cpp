@@ -45,8 +45,8 @@ Delete::Delete(Engine&          engine,
 	, _engine_port(NULL)
 	, _disconnect_event(NULL)
 {
-	if (Node::uri_is_path(uri)) {
-		_path = Node::uri_to_path(uri);
+	if (uri_is_path(uri)) {
+		_path = uri_to_path(uri);
 	}
 }
 

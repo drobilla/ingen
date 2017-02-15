@@ -118,7 +118,7 @@ RenameWindow::ok_clicked()
 
 	if (!label.empty() && (name_atom.type() != uris.forge.String ||
 	                       label != name_atom.ptr<char>())) {
-		_app->set_property(Node::path_to_uri(path),
+		_app->set_property(path_to_uri(path),
 		                   uris.lv2_name,
 		                   _app->forge().alloc(label));
 	}
