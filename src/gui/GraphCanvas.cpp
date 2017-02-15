@@ -652,7 +652,7 @@ GraphCanvas::copy_selection()
 void
 GraphCanvas::paste()
 {
-	typedef Node::Properties::const_iterator PropIter;
+	typedef Properties::const_iterator PropIter;
 
 	std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
 
@@ -674,7 +674,7 @@ GraphCanvas::paste()
 	ClientStore clipboard(_app.world()->uris(), _app.log());
 	clipboard.set_plugins(_app.store()->plugins());
 	clipboard.put(main_uri(),
-	              {{uris.rdf_type, Resource::Property(uris.ingen_Graph)}});
+	              {{uris.rdf_type, Property(uris.ingen_Graph)}});
 
 	// Parse clipboard text into clipboard store
 	boost::optional<Raul::URI> base_uri = parser->parse_string(
@@ -727,8 +727,8 @@ GraphCanvas::paste()
 		const Raul::URI&  old_uri  = path_to_uri(old_path);
 		const Raul::Path& new_path = avoider.map_path(parent.child(node->path()));
 
-		Node::Properties props{{uris.lv2_prototype,
-		                        _app.forge().make_urid(old_uri)}};
+		Properties props{{uris.lv2_prototype,
+		                  _app.forge().make_urid(old_uri)}};
 
 		// Set the same types
 		const auto t = node->properties().equal_range(uris.rdf_type);
@@ -739,13 +739,13 @@ GraphCanvas::paste()
 		PropIter yi = node->properties().find(uris.ingen_canvasY);
 		if (xi != node->properties().end()) {
 			const float x = xi->second.get<float>() - min_x + paste_x;
-			props.insert({xi->first, Resource::Property(_app.forge().make(x),
-			                                            xi->second.context())});
+			props.insert({xi->first, Property(_app.forge().make(x),
+			                                  xi->second.context())});
 		}
 		if (yi != node->properties().end()) {
 			const float y = yi->second.get<float>() - min_y + paste_y;
-			props.insert({yi->first, Resource::Property(_app.forge().make(y),
-			                                            yi->second.context())});
+			props.insert({yi->first, Property(_app.forge().make(y),
+			                                  yi->second.context())});
 		}
 
 		_app.interface()->put(path_to_uri(new_path), props);
@@ -795,16 +795,16 @@ GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
 
 	const URIs& uris = _app.uris();
 
-	Resource::Properties props = get_initial_data(Resource::Graph::INTERNAL);
+	Properties props = get_initial_data(Resource::Graph::INTERNAL);
 	props.insert(make_pair(uris.rdf_type, _app.forge().make_urid(type)));
 	if (type == uris.atom_AtomPort) {
 		props.insert(make_pair(uris.atom_bufferType,
-		                       Resource::Property(uris.atom_Sequence)));
+		                       Property(uris.atom_Sequence)));
 	}
 	props.insert(make_pair(uris.rdf_type,
-	                       Resource::Property(is_output
-	                                          ? uris.lv2_OutputPort
-	                                          : uris.lv2_InputPort)));
+	                       Property(is_output
+	                                ? uris.lv2_OutputPort
+	                                : uris.lv2_InputPort)));
 	props.insert(make_pair(uris.lv2_index,
 	                       _app.forge().make(int32_t(_graph->num_ports()))));
 	props.insert(make_pair(uris.lv2_name,
@@ -831,9 +831,9 @@ GraphCanvas::load_plugin(WPtr<PluginModel> weak_plugin)
 	const Raul::Path path = _graph->path().child(symbol);
 
 	// FIXME: polyphony?
-	Node::Properties props = get_initial_data();
+	Properties props = get_initial_data();
 	props.insert(make_pair(uris.rdf_type,
-	                       Resource::Property(uris.ingen_Block)));
+	                       Property(uris.ingen_Block)));
 	props.insert(make_pair(uris.lv2_prototype,
 	                       uris.forge.make_urid(plugin->uri())));
 	_app.interface()->put(path_to_uri(path), props);
@@ -851,19 +851,19 @@ GraphCanvas::get_new_module_location(double& x, double& y)
 	y = scroll_y + 20;
 }
 
-Node::Properties
+Properties
 GraphCanvas::get_initial_data(Resource::Graph ctx)
 {
-	Node::Properties result;
+	Properties result;
 	const URIs& uris = _app.uris();
 	result.insert(
 		make_pair(uris.ingen_canvasX,
-		          Resource::Property(_app.forge().make((float)_menu_x),
-		                             ctx)));
+		          Property(_app.forge().make((float)_menu_x),
+		                   ctx)));
 	result.insert(
 		make_pair(uris.ingen_canvasY,
-		          Resource::Property(_app.forge().make((float)_menu_y),
-		                             ctx)));
+		          Property(_app.forge().make((float)_menu_y),
+		                   ctx)));
 	return result;
 }
 

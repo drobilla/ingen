@@ -73,13 +73,13 @@ public:
 
 	URIs& uris() { return _uris; }
 
-	void put(const Raul::URI&            uri,
-	         const Resource::Properties& properties,
-	         Resource::Graph             ctx=Resource::Graph::DEFAULT);
+	void put(const Raul::URI&  uri,
+	         const Properties& properties,
+	         Resource::Graph   ctx = Resource::Graph::DEFAULT);
 
-	void delta(const Raul::URI&            uri,
-	           const Resource::Properties& remove,
-	           const Resource::Properties& add);
+	void delta(const Raul::URI&  uri,
+	           const Properties& remove,
+	           const Properties& add);
 
 	void copy(const Raul::URI& old_uri,
 	          const Raul::URI& new_uri);

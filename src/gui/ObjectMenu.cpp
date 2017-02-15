@@ -100,11 +100,11 @@ ObjectMenu::on_menu_learn()
 void
 ObjectMenu::on_menu_unlearn()
 {
-	Resource::Properties remove;
+	Properties remove;
 	remove.insert(std::make_pair(
 		              _app->uris().midi_binding,
-		              Resource::Property(_app->uris().patch_wildcard)));
-	_app->interface()->delta(_object->uri(), remove, Resource::Properties());
+		              Property(_app->uris().patch_wildcard)));
+	_app->interface()->delta(_object->uri(), remove, Properties());
 }
 
 void

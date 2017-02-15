@@ -57,13 +57,13 @@ public:
 
 	virtual void bundle_end();
 
-	virtual void put(const Raul::URI&            path,
-	                 const Resource::Properties& properties,
-	                 const Resource::Graph       g=Resource::Graph::DEFAULT);
+	virtual void put(const Raul::URI&      path,
+	                 const Properties&     properties,
+	                 const Resource::Graph g = Resource::Graph::DEFAULT);
 
-	virtual void delta(const Raul::URI&            path,
-	                   const Resource::Properties& remove,
-	                   const Resource::Properties& add);
+	virtual void delta(const Raul::URI&  path,
+	                   const Properties& remove,
+	                   const Properties& add);
 
 	virtual void copy(const Raul::URI& old_uri,
 	                  const Raul::URI& new_uri);

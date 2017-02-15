@@ -67,9 +67,9 @@ EventWriter::bundle_end()
 }
 
 void
-EventWriter::put(const Raul::URI&            uri,
-                 const Resource::Properties& properties,
-                 const Resource::Graph       ctx)
+EventWriter::put(const Raul::URI&      uri,
+                 const Properties&     properties,
+                 const Resource::Graph ctx)
 {
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
@@ -78,9 +78,9 @@ EventWriter::put(const Raul::URI&            uri,
 }
 
 void
-EventWriter::delta(const Raul::URI&            uri,
-                   const Resource::Properties& remove,
-                   const Resource::Properties& add)
+EventWriter::delta(const Raul::URI&  uri,
+                   const Properties& remove,
+                   const Properties& add)
 {
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),

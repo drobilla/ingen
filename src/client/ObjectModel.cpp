@@ -62,7 +62,7 @@ const Atom&
 ObjectModel::get_property(const Raul::URI& key) const
 {
 	static const Atom null_atom;
-	Resource::Properties::const_iterator i = properties().find(key);
+	Properties::const_iterator i = properties().find(key);
 	return (i != properties().end()) ? i->second : null_atom;
 }
 

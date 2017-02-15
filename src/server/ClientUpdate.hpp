@@ -42,9 +42,9 @@ class PluginImpl;
  * post_process() to avoid the need to lock.
  */
 struct ClientUpdate {
-	void put(const Raul::URI&            uri,
-	         const Resource::Properties& props,
-	         Resource::Graph             ctx=Resource::Graph::DEFAULT);
+	void put(const Raul::URI&  uri,
+	         const Properties& props,
+	         Resource::Graph   ctx = Resource::Graph::DEFAULT);
 
 	void put_port(const PortImpl* port);
 	void put_block(const BlockImpl* block);
@@ -60,9 +60,9 @@ struct ClientUpdate {
 	void send(Interface* dest);
 
 	struct Put {
-		Raul::URI            uri;
-		Resource::Properties properties;
-		Resource::Graph      ctx;
+		Raul::URI       uri;
+		Properties      properties;
+		Resource::Graph ctx;
 	};
 
 	struct Connect {

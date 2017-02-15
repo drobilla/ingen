@@ -35,12 +35,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-CreateBlock::CreateBlock(Engine&               engine,
-                         SPtr<Interface>       client,
-                         int32_t               id,
-                         SampleCount           timestamp,
-                         const Raul::Path&     path,
-                         Resource::Properties& properties)
+CreateBlock::CreateBlock(Engine&           engine,
+                         SPtr<Interface>   client,
+                         int32_t           id,
+                         SampleCount       timestamp,
+                         const Raul::Path& path,
+                         Properties&       properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _properties(properties)
@@ -55,7 +55,7 @@ CreateBlock::~CreateBlock()
 bool
 CreateBlock::pre_process(PreProcessContext& ctx)
 {
-	typedef Resource::Properties::const_iterator iterator;
+	typedef Properties::const_iterator iterator;
 
 	const Ingen::URIs& uris  = _engine.world()->uris();
 	const SPtr<Store>  store = _engine.store();
@@ -121,7 +121,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 
 		// Load state from directory if given in properties
 		LilvState* state = NULL;
-		Resource::Properties::iterator s = _properties.find(uris.state_state);
+		Properties::iterator s = _properties.find(uris.state_state);
 		if (s != _properties.end() && s->second.type() == uris.forge.Path) {
 			state = LV2Block::load_state(_engine.world(), s->second.ptr<char>());
 		}

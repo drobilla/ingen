@@ -52,8 +52,8 @@ AtomReader::get_atom(const LV2_Atom* in, Atom& out)
 }
 
 void
-AtomReader::get_props(const LV2_Atom_Object*       obj,
-                      Ingen::Resource::Properties& props)
+AtomReader::get_props(const LV2_Atom_Object* obj,
+                      Ingen::Properties&     props)
 {
 	if (obj->body.otype) {
 		const Atom type(sizeof(int32_t), _uris.atom_URID, &obj->body.otype);
@@ -217,7 +217,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 				_log.warn("Arc has non-path tail or head\n");
 			}
 		} else {
-			Ingen::Resource::Properties props;
+			Ingen::Properties props;
 			get_props(body, props);
 			_iface.put(*subject_uri, props);
 		}
@@ -266,10 +266,10 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		Ingen::Resource::Properties add_props;
+		Ingen::Properties add_props;
 		get_props(add, add_props);
 
-		Ingen::Resource::Properties remove_props;
+		Ingen::Properties remove_props;
 		get_props(remove, remove_props);
 
 		_iface.delta(*subject_uri, remove_props, add_props);

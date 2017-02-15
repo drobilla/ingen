@@ -37,12 +37,12 @@ namespace Events {
 class CreateGraph : public Event
 {
 public:
-	CreateGraph(Engine&                     engine,
-	            SPtr<Interface>             client,
-	            int32_t                     id,
-	            SampleCount                 timestamp,
-	            const Raul::Path&           path,
-	            const Resource::Properties& properties);
+	CreateGraph(Engine&           engine,
+	            SPtr<Interface>   client,
+	            int32_t           id,
+	            SampleCount       timestamp,
+	            const Raul::Path& path,
+	            const Properties& properties);
 
 	~CreateGraph();
 
@@ -56,13 +56,13 @@ public:
 private:
 	void build_child_events();
 
-	const Raul::Path     _path;
-	Resource::Properties _properties;
-	ClientUpdate         _update;
-	GraphImpl*           _graph;
-	GraphImpl*           _parent;
-	MPtr<CompiledGraph>  _compiled_graph;
-	std::list<Event*>    _child_events;
+	const Raul::Path    _path;
+	Properties          _properties;
+	ClientUpdate        _update;
+	GraphImpl*          _graph;
+	GraphImpl*          _parent;
+	MPtr<CompiledGraph> _compiled_graph;
+	std::list<Event*>   _child_events;
 };
 
 } // namespace Events

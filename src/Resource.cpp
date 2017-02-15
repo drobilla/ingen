@@ -31,7 +31,7 @@ Resource::add_property(const Raul::URI& uri,
                        Graph            ctx)
 {
 	// Ignore duplicate statements
-	typedef Resource::Properties::const_iterator iterator;
+	typedef Properties::const_iterator iterator;
 	const std::pair<iterator, iterator> range = _properties.equal_range(uri);
 	for (iterator i = range.first; i != range.second && i != _properties.end(); ++i) {
 		if (i->second == value && i->second.context() == ctx) {
@@ -154,7 +154,7 @@ Resource::type(const URIs&       uris,
                bool&             port,
                bool&             is_output)
 {
-	typedef Resource::Properties::const_iterator iterator;
+	typedef Properties::const_iterator iterator;
 	const std::pair<iterator, iterator> types_range = properties.equal_range(uris.rdf_type);
 
 	graph = block = port = is_output = false;
@@ -221,7 +221,7 @@ Resource::remove_properties(const Properties& props)
 		remove_property(p.first, p.second);
 }
 
-Resource::Properties
+Properties
 Resource::properties(Resource::Graph ctx) const
 {
 	Properties props;

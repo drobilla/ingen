@@ -130,7 +130,7 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 
 void
 LoadPluginWindow::present(SPtr<const GraphModel> graph,
-                          Node::Properties       data)
+                          Properties             data)
 {
 	set_graph(graph);
 	_initial_data = data;
@@ -391,10 +391,10 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 
 		dialog.run();
 	} else {
-		Raul::Path path = _graph->path().child(Raul::Symbol::symbolify(name));
-		Resource::Properties props = _initial_data;
+		Raul::Path path  = _graph->path().child(Raul::Symbol::symbolify(name));
+		Properties props = _initial_data;
 		props.insert(make_pair(uris.rdf_type,
-		                       Resource::Property(uris.ingen_Block)));
+		                       Property(uris.ingen_Block)));
 		props.insert(make_pair(uris.lv2_prototype,
 		                       _app->forge().make_urid(plugin->uri())));
 		props.insert(make_pair(uris.ingen_polyphonic,

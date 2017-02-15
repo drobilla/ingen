@@ -186,9 +186,9 @@ public:
 	   This is used for Graph ports, so e.g. a control input has the range of
 	   all the ports it is connected to.
 	*/
-	virtual void inherit_neighbour(const PortImpl*       port,
-	                               Resource::Properties& remove,
-	                               Resource::Properties& add) {}
+	virtual void inherit_neighbour(const PortImpl* port,
+	                               Properties&     remove,
+	                               Properties&     add) {}
 
 	virtual void connect_buffers(SampleCount offset=0);
 	virtual void recycle_buffers();

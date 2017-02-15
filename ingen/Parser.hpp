@@ -44,8 +44,6 @@ public:
 
 	virtual ~Parser() {}
 
-	typedef Node::Properties Properties;
-
 	/** Record of a resource listed in a bundle manifest. */
 	struct ResourceRecord {
 		inline ResourceRecord(const std::string& u, const std::string& f)

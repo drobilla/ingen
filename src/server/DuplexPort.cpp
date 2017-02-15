@@ -93,9 +93,9 @@ DuplexPort::duplicate(Engine&             engine,
 }
 
 void
-DuplexPort::inherit_neighbour(const PortImpl*       port,
-                              Resource::Properties& remove,
-                              Resource::Properties& add)
+DuplexPort::inherit_neighbour(const PortImpl* port,
+                              Properties&     remove,
+                              Properties&     add)
 {
 	const URIs& uris = _bufs.uris();
 
@@ -113,7 +113,7 @@ DuplexPort::inherit_neighbour(const PortImpl*       port,
 			add.insert(std::make_pair(uris.lv2_maximum, port->maximum()));
 		}
 	} else if (_type == PortType::ATOM) {
-		for (Resource::Properties::const_iterator i = port->properties().find(
+		for (Properties::const_iterator i = port->properties().find(
 			     uris.atom_supports);
 		     i != port->properties().end() && i->first == uris.atom_supports;
 		     ++i) {

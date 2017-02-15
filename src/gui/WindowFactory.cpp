@@ -199,7 +199,7 @@ WindowFactory::remove_graph_window(GraphWindow* win, GdkEventAny* ignored)
 
 void
 WindowFactory::present_load_plugin(SPtr<const GraphModel> graph,
-                                   Node::Properties       data)
+                                   Properties             data)
 {
 	_app.request_plugins_if_necessary();
 
@@ -222,7 +222,7 @@ WindowFactory::present_load_plugin(SPtr<const GraphModel> graph,
 
 void
 WindowFactory::present_load_graph(SPtr<const GraphModel> graph,
-                                  Node::Properties       data)
+                                  Properties             data)
 {
 	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
@@ -234,7 +234,7 @@ WindowFactory::present_load_graph(SPtr<const GraphModel> graph,
 
 void
 WindowFactory::present_load_subgraph(SPtr<const GraphModel> graph,
-                                     Node::Properties       data)
+                                     Properties             data)
 {
 	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
@@ -246,7 +246,7 @@ WindowFactory::present_load_subgraph(SPtr<const GraphModel> graph,
 
 void
 WindowFactory::present_new_subgraph(SPtr<const GraphModel> graph,
-                                    Node::Properties       data)
+                                    Properties             data)
 {
 	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 

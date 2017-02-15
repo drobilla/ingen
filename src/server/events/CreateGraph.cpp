@@ -31,12 +31,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-CreateGraph::CreateGraph(Engine&                     engine,
-                         SPtr<Interface>             client,
-                         int32_t                     id,
-                         SampleCount                 timestamp,
-                         const Raul::Path&           path,
-                         const Resource::Properties& properties)
+CreateGraph::CreateGraph(Engine&           engine,
+                         SPtr<Interface>   client,
+                         int32_t           id,
+                         SampleCount       timestamp,
+                         const Raul::Path& path,
+                         const Properties& properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _properties(properties)
@@ -57,7 +57,7 @@ CreateGraph::build_child_events()
 	const Ingen::URIs& uris = _engine.world()->uris();
 
 	// Properties common to both ports
-	Resource::Properties control_properties;
+	Properties control_properties;
 	control_properties.put(uris.atom_bufferType, uris.atom_Sequence);
 	control_properties.put(uris.atom_supports, uris.patch_Message);
 	control_properties.put(uris.lv2_designation, uris.lv2_control);
@@ -66,7 +66,7 @@ CreateGraph::build_child_events()
 	control_properties.put(uris.rsz_minimumSize, uris.forge.make(4096));
 
 	// Add control port (message receive)
-	Resource::Properties in_properties(control_properties);
+	Properties in_properties(control_properties);
 	in_properties.put(uris.lv2_index, uris.forge.make(0));
 	in_properties.put(uris.lv2_name, uris.forge.alloc("Control"));
 	in_properties.put(uris.rdf_type, uris.lv2_InputPort);
@@ -82,7 +82,7 @@ CreateGraph::build_child_events()
 			in_properties));
 
 	// Add notify port (message respond)
-	Resource::Properties out_properties(control_properties);
+	Properties out_properties(control_properties);
 	out_properties.put(uris.lv2_index, uris.forge.make(1));
 	out_properties.put(uris.lv2_name, uris.forge.alloc("Notify"));
 	out_properties.put(uris.rdf_type, uris.lv2_OutputPort);
@@ -113,7 +113,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 
 	const Ingen::URIs& uris = _engine.world()->uris();
 
-	typedef Resource::Properties::const_iterator iterator;
+	typedef Properties::const_iterator iterator;
 
 	uint32_t ext_poly = 1;
 	uint32_t int_poly = 1;
@@ -158,8 +158,8 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 		                       _engine.driver()->sample_rate(), int_poly);
 		_graph->add_property(uris.rdf_type, uris.ingen_Graph.urid);
 		_graph->add_property(uris.rdf_type,
-		                     Resource::Property(uris.ingen_Block,
-		                                        Resource::Graph::EXTERNAL));
+		                     Property(uris.ingen_Block,
+		                              Resource::Graph::EXTERNAL));
 	}
 
 	_graph->set_properties(_properties);

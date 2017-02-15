@@ -38,12 +38,12 @@ namespace Events {
 class CreateBlock : public Event
 {
 public:
-	CreateBlock(Engine&               engine,
-	            SPtr<Interface>       client,
-	            int32_t               id,
-	            SampleCount           timestamp,
-	            const Raul::Path&     block_path,
-	            Resource::Properties& properties);
+	CreateBlock(Engine&           engine,
+	            SPtr<Interface>   client,
+	            int32_t           id,
+	            SampleCount       timestamp,
+	            const Raul::Path& block_path,
+	            Properties&       properties);
 
 	~CreateBlock();
 
@@ -53,12 +53,12 @@ public:
 	void undo(Interface& target);
 
 private:
-	Raul::Path            _path;
-	Resource::Properties& _properties;
-	ClientUpdate          _update;
-	GraphImpl*            _graph;
-	BlockImpl*            _block;
-	MPtr<CompiledGraph>   _compiled_graph;
+	Raul::Path          _path;
+	Properties&         _properties;
+	ClientUpdate        _update;
+	GraphImpl*          _graph;
+	BlockImpl*          _block;
+	MPtr<CompiledGraph> _compiled_graph;
 };
 
 } // namespace Events

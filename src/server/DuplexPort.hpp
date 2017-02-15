@@ -57,9 +57,9 @@ public:
 	                      const Raul::Symbol& symbol,
 	                      GraphImpl*          parent);
 
-	void inherit_neighbour(const PortImpl*       port,
-	                       Resource::Properties& remove,
-	                       Resource::Properties& add);
+	void inherit_neighbour(const PortImpl* port,
+	                       Properties&     remove,
+	                       Properties&     add);
 
 	void on_property(const Raul::URI& uri, const Atom& value);
 

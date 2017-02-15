@@ -107,8 +107,8 @@ GraphPortModule::store_location(double ax, double ay)
 	{
 		app().interface()->put(
 			_model->uri(),
-			{{uris.ingen_canvasX, Resource::Property(x, Resource::Graph::INTERNAL)},
-			 {uris.ingen_canvasY, Resource::Property(y, Resource::Graph::INTERNAL)}});
+			{{uris.ingen_canvasX, Property(x, Property::Graph::INTERNAL)},
+			 {uris.ingen_canvasY, Property(y, Property::Graph::INTERNAL)}});
 	}
 }
 

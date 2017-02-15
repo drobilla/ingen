@@ -237,11 +237,11 @@ ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
 }
 
 void
-ClientStore::put(const Raul::URI&            uri,
-                 const Resource::Properties& properties,
-                 Resource::Graph             ctx)
+ClientStore::put(const Raul::URI&  uri,
+                 const Properties& properties,
+                 Resource::Graph   ctx)
 {
-	typedef Resource::Properties::const_iterator Iterator;
+	typedef Properties::const_iterator Iterator;
 
 	bool is_graph, is_block, is_port, is_output;
 	Resource::type(uris(), properties,
@@ -311,10 +311,7 @@ ClientStore::put(const Raul::URI&            uri,
 			const Raul::URI uri(_uris.forge.str(p->second, false));
 			if (!(plug = _plugin(uri))) {
 				plug = SPtr<PluginModel>(
-					new PluginModel(uris(),
-					                uri,
-					                Atom(),
-					                Resource::Properties()));
+					new PluginModel(uris(), uri, Atom(), Properties()));
 				add_plugin(plug);
 			}
 
@@ -343,9 +340,9 @@ ClientStore::put(const Raul::URI&            uri,
 }
 
 void
-ClientStore::delta(const Raul::URI&            uri,
-                   const Resource::Properties& remove,
-                   const Resource::Properties& add)
+ClientStore::delta(const Raul::URI&  uri,
+                   const Properties& remove,
+                   const Properties& add)
 {
 	if (uri == Raul::URI("ingen:/clients/this")) {
 		// Client property, which we don't store (yet?)

@@ -280,9 +280,9 @@ App::set_tooltip(Gtk::Widget* widget, const LilvNode* node)
 }
 
 void
-App::put(const Raul::URI&            uri,
-         const Resource::Properties& properties,
-         Resource::Graph             ctx)
+App::put(const Raul::URI&  uri,
+         const Properties& properties,
+         Resource::Graph   ctx)
 {
 	_enable_signal = false;
 	for (const auto& p : properties) {

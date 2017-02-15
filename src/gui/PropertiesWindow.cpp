@@ -543,9 +543,9 @@ PropertiesWindow::add_clicked()
 	const Atom& value = get_value(_value_type, _value_bin->get_child());
 	if (value.is_valid()) {
 		// Send property to engine
-		Resource::Properties properties;
+		Properties properties;
 		properties.insert(make_pair(Raul::URI(key_uri.c_str()),
-		                            Resource::Property(value)));
+		                            Property(value)));
 		_app->interface()->put(_model->uri(), properties);
 	}
 }
@@ -560,8 +560,8 @@ PropertiesWindow::cancel_clicked()
 void
 PropertiesWindow::apply_clicked()
 {
-	Resource::Properties remove;
-	Resource::Properties add;
+	Properties remove;
+	Properties add;
 	for (const auto& r : _records) {
 		const Raul::URI& uri    = r.first;
 		const Record&    record = r.second;

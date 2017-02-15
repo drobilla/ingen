@@ -56,15 +56,15 @@ public:
 		PATCH
 	};
 
-	Delta(Engine&                     engine,
-	      SPtr<Interface>             client,
-	      int32_t                     id,
-	      SampleCount                 timestamp,
-	      Type                        type,
-	      Resource::Graph             context,
-	      const Raul::URI&            subject,
-	      const Resource::Properties& properties,
-	      const Resource::Properties& remove = Resource::Properties());
+	Delta(Engine&           engine,
+	      SPtr<Interface>   client,
+	      int32_t           id,
+	      SampleCount       timestamp,
+	      Type              type,
+	      Resource::Graph   context,
+	      const Raul::URI&  subject,
+	      const Properties& properties,
+	      const Properties& remove = Properties());
 
 	~Delta();
 
@@ -99,8 +99,8 @@ private:
 	std::vector<SpecialType>  _types;
 	std::vector<SpecialType>  _remove_types;
 	Raul::URI                 _subject;
-	Resource::Properties      _properties;
-	Resource::Properties      _remove;
+	Properties                _properties;
+	Properties                _remove;
 	ClientUpdate              _update;
 	Ingen::Resource*          _object;
 	GraphImpl*                _graph;
@@ -110,8 +110,8 @@ private:
 	Resource::Graph           _context;
 	Type                      _type;
 
-	Resource::Properties _added;
-	Resource::Properties _removed;
+	Properties _added;
+	Properties _removed;
 
 	std::vector<ControlBindings::Binding*> _removed_bindings;
 

@@ -143,9 +143,9 @@ protected:
 	bool animate();
 	void response(int32_t id, Ingen::Status status, const std::string& subject);
 
-	void put(const Raul::URI&            uri,
-	         const Resource::Properties& properties,
-	         Resource::Graph             ctx);
+	void put(const Raul::URI&  uri,
+	         const Properties& properties,
+	         Resource::Graph   ctx);
 
 	void property_change(const Raul::URI& subject,
 	                     const Raul::URI& key,

@@ -64,10 +64,10 @@ private:
 	MPtr<CompiledGraph>    _compiled_graph;
 	SPtr<ArcImpl>          _arc;
 	MPtr<PortImpl::Voices> _voices;
-	Resource::Properties   _tail_remove;
-	Resource::Properties   _tail_add;
-	Resource::Properties   _head_remove;
-	Resource::Properties   _head_add;
+	Properties             _tail_remove;
+	Properties             _tail_add;
+	Properties             _head_remove;
+	Properties             _head_add;
 };
 
 } // namespace Events

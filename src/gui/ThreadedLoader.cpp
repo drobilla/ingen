@@ -69,11 +69,11 @@ ThreadedLoader::run()
 }
 
 void
-ThreadedLoader::load_graph(bool                       merge,
-                           const Glib::ustring&       document_uri,
-                           optional<Raul::Path>       engine_parent,
-                           optional<Raul::Symbol>     engine_symbol,
-                           optional<Node::Properties> engine_data)
+ThreadedLoader::load_graph(bool                   merge,
+                           const Glib::ustring&   document_uri,
+                           optional<Raul::Path>   engine_parent,
+                           optional<Raul::Symbol> engine_symbol,
+                           optional<Properties>   engine_data)
 {
 	_mutex.lock();
 
@@ -98,10 +98,10 @@ ThreadedLoader::load_graph(bool                       merge,
 }
 
 void
-ThreadedLoader::load_graph_event(const Glib::ustring&       document_uri,
-                                 optional<Raul::Path>       engine_parent,
-                                 optional<Raul::Symbol>     engine_symbol,
-                                 optional<Node::Properties> engine_data)
+ThreadedLoader::load_graph_event(const Glib::ustring&   document_uri,
+                                 optional<Raul::Path>   engine_parent,
+                                 optional<Raul::Symbol> engine_symbol,
+                                 optional<Properties>   engine_data)
 {
 	std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
 

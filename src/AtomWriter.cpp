@@ -129,7 +129,7 @@ AtomWriter::forge_uri(const Raul::URI& uri)
 }
 
 void
-AtomWriter::forge_properties(const Resource::Properties& properties)
+AtomWriter::forge_properties(const Properties& properties)
 {
 	for (auto p : properties) {
 		lv2_atom_forge_key(&_forge, _map.map_uri(p.first.c_str()));
@@ -185,14 +185,14 @@ AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
  *     patch:subject </main/osc> ;
  *     patch:body [
  *         a ingen:Block ;
- *         lv2:prototype <http://drobilla.net/plugins/mda/Shepard>
+ *         lv2:prototype <http: //drobilla.net/plugins/mda/Shepard>
  *     ] .
  * @endcode
  */
 void
-AtomWriter::put(const Raul::URI&            uri,
-                const Resource::Properties& properties,
-                Resource::Graph             ctx)
+AtomWriter::put(const Raul::URI&  uri,
+                const Properties& properties,
+                Resource::Graph   ctx)
 {
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.patch_Put);
@@ -236,9 +236,9 @@ AtomWriter::put(const Raul::URI&            uri,
  * @endcode
  */
 void
-AtomWriter::delta(const Raul::URI&            uri,
-                  const Resource::Properties& remove,
-                  const Resource::Properties& add)
+AtomWriter::delta(const Raul::URI&  uri,
+                  const Properties& remove,
+                  const Properties& add)
 {
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.patch_Patch);

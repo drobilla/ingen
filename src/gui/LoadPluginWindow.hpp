@@ -60,7 +60,7 @@ public:
 	void add_plugin(SPtr<const Client::PluginModel> plugin);
 
 	void present(SPtr<const Client::GraphModel> graph,
-	             Node::Properties               data);
+	             Properties                     data);
 
 protected:
 	void on_show();
@@ -128,7 +128,7 @@ private:
 
 	void load_plugin(const Gtk::TreeModel::iterator& iter);
 
-	Node::Properties _initial_data;
+	Properties _initial_data;
 
 	SPtr<const Client::GraphModel> _graph;
 

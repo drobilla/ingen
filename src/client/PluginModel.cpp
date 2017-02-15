@@ -40,10 +40,10 @@ const LilvPlugins* PluginModel::_lilv_plugins = NULL;
 
 Sord::World* PluginModel::_rdf_world = NULL;
 
-PluginModel::PluginModel(URIs&                       uris,
-                         const Raul::URI&            uri,
-                         const Atom&                 type,
-                         const Resource::Properties& properties)
+PluginModel::PluginModel(URIs&             uris,
+                         const Raul::URI&  uri,
+                         const Atom&       type,
+                         const Properties& properties)
 	: Resource(uris, uri)
 	, _type(type)
 	, _fetched(false)

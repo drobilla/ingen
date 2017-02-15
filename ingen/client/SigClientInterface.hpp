@@ -52,8 +52,8 @@ public:
 	INGEN_SIGNAL(bundle_begin, void)
 	INGEN_SIGNAL(bundle_end, void)
 	INGEN_SIGNAL(error, void, std::string)
-	INGEN_SIGNAL(put, void, Raul::URI, Resource::Properties, Resource::Graph)
-	INGEN_SIGNAL(delta, void, Raul::URI, Resource::Properties, Resource::Properties)
+	INGEN_SIGNAL(put, void, Raul::URI, Properties, Resource::Graph)
+	INGEN_SIGNAL(delta, void, Raul::URI, Properties, Properties)
 	INGEN_SIGNAL(object_copied, void, Raul::URI, Raul::URI)
 	INGEN_SIGNAL(object_moved, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(object_deleted, void, Raul::URI)
@@ -83,14 +83,14 @@ protected:
 	void error(const std::string& msg)
 	{ EMIT(error, msg); }
 
-	void put(const Raul::URI&            uri,
-	         const Resource::Properties& properties,
-	         Resource::Graph             ctx=Resource::Graph::DEFAULT)
+	void put(const Raul::URI&  uri,
+	         const Properties& properties,
+	         Resource::Graph   ctx = Resource::Graph::DEFAULT)
 	{ EMIT(put, uri, properties, ctx); }
 
-	void delta(const Raul::URI&            uri,
-	           const Resource::Properties& remove,
-	           const Resource::Properties& add)
+	void delta(const Raul::URI&  uri,
+	           const Properties& remove,
+	           const Properties& add)
 	{ EMIT(delta, uri, remove, add); }
 
 	void connect(const Raul::Path& tail, const Raul::Path& head)

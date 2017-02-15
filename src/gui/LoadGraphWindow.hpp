@@ -52,7 +52,7 @@ public:
 
 	void present(SPtr<const Client::GraphModel> graph,
 	             bool                           import,
-	             Node::Properties               data);
+	             Properties                     data);
 
 protected:
 	void on_show();
@@ -70,7 +70,7 @@ private:
 
 	App* _app;
 
-	Node::Properties _initial_data;
+	Properties _initial_data;
 
 	SPtr<const Client::GraphModel> _graph;
 

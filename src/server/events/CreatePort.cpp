@@ -36,12 +36,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-CreatePort::CreatePort(Engine&                     engine,
-                       SPtr<Interface>             client,
-                       int32_t                     id,
-                       SampleCount                 timestamp,
-                       const Raul::Path&           path,
-                       const Resource::Properties& properties)
+CreatePort::CreatePort(Engine&           engine,
+                       SPtr<Interface>   client,
+                       int32_t           id,
+                       SampleCount       timestamp,
+                       const Raul::Path& path,
+                       const Properties& properties)
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _port_type(PortType::UNKNOWN)
@@ -53,8 +53,8 @@ CreatePort::CreatePort(Engine&                     engine,
 {
 	const Ingen::URIs& uris = _engine.world()->uris();
 
-	typedef Resource::Properties::const_iterator Iterator;
-	typedef std::pair<Iterator, Iterator>        Range;
+	typedef Properties::const_iterator    Iterator;
+	typedef std::pair<Iterator, Iterator> Range;
 
 	const Range types = properties.equal_range(uris.rdf_type);
 	for (Iterator i = types.first; i != types.second; ++i) {
@@ -109,7 +109,7 @@ CreatePort::pre_process(PreProcessContext& ctx)
 	const uint32_t buf_size    = bufs.default_size(_buf_type);
 	const int32_t  old_n_ports = _graph->num_ports_non_rt();
 
-	typedef Resource::Properties::const_iterator PropIter;
+	typedef Properties::const_iterator PropIter;
 
 	PropIter index_i = _properties.find(uris.lv2_index);
 	if (index_i == _properties.end()) {

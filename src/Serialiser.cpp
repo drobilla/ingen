@@ -53,8 +53,6 @@ using namespace Ingen;
 namespace Ingen {
 
 struct Serialiser::Impl {
-	typedef Resource::Properties Properties;
-
 	explicit Impl(World& world)
 		: _root_path("/")
 		, _world(world)
@@ -81,8 +79,8 @@ struct Serialiser::Impl {
 	                    Resource::Graph   context,
 	                    const Sord::Node& id);
 
-	void serialise_properties(Sord::Node                  id,
-	                          const Resource::Properties& props);
+	void serialise_properties(Sord::Node        id,
+	                          const Properties& props);
 
 	void write_bundle(SPtr<const Node>   graph,
 	                  const std::string& uri);
@@ -351,7 +349,7 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 		                      Sord::Literal(world, sym));
 	}
 
-	const Node::Properties props = graph->properties(Resource::Graph::INTERNAL);
+	const Properties props = graph->properties(Resource::Graph::INTERNAL);
 	serialise_properties(graph_id, props);
 
 	std::set<const Resource*> plugins;
@@ -446,7 +444,7 @@ Serialiser::Impl::serialise_block(SPtr<const Node>  block,
 	                      class_id);
 
 	// Serialise properties, but remove possibly stale state:state (set again below)
-	Node::Properties props = block->properties();
+	Properties props = block->properties();
 	props.erase(uris.state_state);
 	serialise_properties(block_id, props);
 
@@ -479,7 +477,7 @@ Serialiser::Impl::serialise_port(const Node*       port,
 {
 	URIs&            uris  = _world.uris();
 	Sord::World&     world = _model->world();
-	Node::Properties props = port->properties(context);
+	Properties props = port->properties(context);
 
 	if (context == Resource::Graph::INTERNAL) {
 		// Always write lv2:symbol for Graph ports (required for lv2:Plugin)
@@ -561,8 +559,8 @@ skip_property(Ingen::URIs& uris, const Sord::Node& predicate)
 }
 
 void
-Serialiser::Impl::serialise_properties(Sord::Node              id,
-                                       const Node::Properties& props)
+Serialiser::Impl::serialise_properties(Sord::Node        id,
+                                       const Properties& props)
 {
 	LV2_URID_Unmap* unmap    = &_world.uri_map().urid_unmap_feature()->urid_unmap;
 	SerdNode        base     = serd_node_from_string(SERD_URI,

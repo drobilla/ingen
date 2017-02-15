@@ -80,14 +80,14 @@ public:
 	void error(const std::string& msg)
 	{ push_sig(sigc::bind(error_slot, msg)); }
 
-	void put(const Raul::URI&            path,
-	         const Resource::Properties& properties,
-	         Resource::Graph             ctx=Resource::Graph::DEFAULT)
+	void put(const Raul::URI&  path,
+	         const Properties& properties,
+	         Resource::Graph   ctx = Resource::Graph::DEFAULT)
 	{ push_sig(sigc::bind(put_slot, path, properties, ctx)); }
 
-	void delta(const Raul::URI&            path,
-	           const Resource::Properties& remove,
-	           const Resource::Properties& add)
+	void delta(const Raul::URI&  path,
+	           const Properties& remove,
+	           const Properties& add)
 	{ push_sig(sigc::bind(delta_slot, path, remove, add)); }
 
 	void connect(const Raul::Path& tail, const Raul::Path& head)
@@ -149,8 +149,7 @@ private:
 
 	Raul::SRSWQueue<Closure> _sigs;
 
-	typedef Resource::Properties Properties;
-	typedef Resource::Graph      Graph;
+	typedef Resource::Graph Graph;
 
 	sigc::slot<void>                                     bundle_begin_slot;
 	sigc::slot<void>                                     bundle_end_slot;

@@ -143,10 +143,9 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		                      *ui->client.get()));
 
 	// Create empty root graph model
-	Ingen::Resource::Properties props;
+	Ingen::Properties props;
 	props.insert(std::make_pair(ui->app->uris().rdf_type,
-	                            Ingen::Resource::Property(
-		                            ui->app->uris().ingen_Graph)));
+	                            Ingen::Property(ui->app->uris().ingen_Graph)));
 	ui->app->store()->put(Ingen::main_uri(), props);
 
 	// Create a GraphBox for the root and set as the UI widget

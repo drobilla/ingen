@@ -99,15 +99,15 @@ public:
 	void bundle_begin() { BROADCAST(bundle_begin); }
 	void bundle_end()   { BROADCAST(bundle_end); }
 
-	void put(const Raul::URI&            uri,
-	         const Resource::Properties& properties,
-	         Resource::Graph             ctx=Resource::Graph::DEFAULT) {
+	void put(const Raul::URI&  uri,
+	         const Properties& properties,
+	         Resource::Graph   ctx = Resource::Graph::DEFAULT) {
 		BROADCAST(put, uri, properties);
 	}
 
-	void delta(const Raul::URI&            uri,
-	           const Resource::Properties& remove,
-	           const Resource::Properties& add) {
+	void delta(const Raul::URI&  uri,
+	           const Properties& remove,
+	           const Properties& add) {
 		BROADCAST(delta, uri, remove, add);
 	}
 

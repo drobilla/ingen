@@ -42,6 +42,7 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Parser.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URIMap.hpp"
@@ -67,13 +68,13 @@ public:
 
 	void bundle_end() {}
 
-	void put(const Raul::URI&            uri,
-	         const Resource::Properties& properties,
-	         Resource::Graph             ctx = Resource::Graph::DEFAULT) {}
+	void put(const Raul::URI&  uri,
+	         const Properties& properties,
+	         Resource::Graph   ctx = Resource::Graph::DEFAULT) {}
 
-	void delta(const Raul::URI&            uri,
-	           const Resource::Properties& remove,
-	           const Resource::Properties& add) {}
+	void delta(const Raul::URI&  uri,
+	           const Properties& remove,
+	           const Properties& add) {}
 
 	void copy(const Raul::URI& old_uri,
 	          const Raul::URI& new_uri) {}

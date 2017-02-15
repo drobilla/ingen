@@ -72,8 +72,8 @@ SubgraphModule::store_location(double ax, double ay)
 	{
 		app().interface()->put(
 			_graph->uri(),
-			{{uris.ingen_canvasX, Resource::Property(x, Resource::Graph::EXTERNAL)},
-			 {uris.ingen_canvasY, Resource::Property(y, Resource::Graph::EXTERNAL)}});
+			{{uris.ingen_canvasX, Property(x, Resource::Graph::EXTERNAL)},
+			 {uris.ingen_canvasY, Property(y, Resource::Graph::EXTERNAL)}});
 	}
 }
 

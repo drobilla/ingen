@@ -50,7 +50,7 @@ NewSubgraphWindow::NewSubgraphWindow(BaseObjectType*                   cobject,
 
 void
 NewSubgraphWindow::present(SPtr<const Client::GraphModel> graph,
-                           Node::Properties               data)
+                           Properties                     data)
 {
 	set_graph(graph);
 	_initial_data = data;
@@ -95,8 +95,8 @@ NewSubgraphWindow::ok_clicked()
 		Raul::Symbol::symbolify(_name_entry->get_text()));
 
 	// Create graph
-	Resource::Properties props;
-	props.insert(make_pair(_app->uris().rdf_type,        Resource::Property(_app->uris().ingen_Graph)));
+	Properties props;
+	props.insert(make_pair(_app->uris().rdf_type,        Property(_app->uris().ingen_Graph)));
 	props.insert(make_pair(_app->uris().ingen_polyphony, _app->forge().make(int32_t(poly))));
 	props.insert(make_pair(_app->uris().ingen_enabled,   _app->forge().make(bool(true))));
 	_app->interface()->put(
@@ -105,7 +105,7 @@ NewSubgraphWindow::ok_clicked()
 	// Set external (block perspective) properties
 	props = _initial_data;
 	props.insert(make_pair(_app->uris().rdf_type,
-	                       Resource::Property(_app->uris().ingen_Graph)));
+	                       Property(_app->uris().ingen_Graph)));
 	_app->interface()->put(
 		path_to_uri(path), _initial_data, Resource::Graph::EXTERNAL);
 

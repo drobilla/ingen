@@ -21,6 +21,7 @@
 #include <string>
 
 #include "ingen/Atom.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
 #include "raul/Deletable.hpp"
@@ -38,6 +39,8 @@ namespace Ingen {
 class INGEN_API Resource : public Raul::Deletable
 {
 public:
+	using Graph = Property::Graph;
+
 	Resource(const URIs& uris, const Raul::URI& uri)
 		: _uris(uris)
 		, _uri(uri)
@@ -51,12 +54,6 @@ public:
 		}
 		return *this;
 	}
-
-	enum class Graph {
-		DEFAULT,
-		EXTERNAL,
-		INTERNAL
-	};
 
 	static Raul::URI graph_to_uri(Graph g) {
 		switch (g) {
@@ -81,61 +78,7 @@ public:
 		}
 	}
 
-	/** A property value (an Atom with a context). */
-	class Property : public Atom {
-	public:
-		Property(const Atom& atom, Graph ctx=Graph::DEFAULT)
-			: Atom(atom)
-			, _ctx(ctx)
-		{}
-
-		Property(const URIs::Quark& quark, Graph ctx=Graph::DEFAULT)
-			: Atom(quark.urid)
-			, _ctx(ctx)
-		{}
-
-		Graph context() const        { return _ctx; }
-		void  set_context(Graph ctx) { _ctx = ctx; }
-
-	private:
-		Graph _ctx;
-	};
-
 	virtual ~Resource() {}
-
-	class Properties : public std::multimap<Raul::URI, Property> {
-	public:
-		Properties() {}
-
-		Properties(const Properties& copy)
-			: std::multimap<Raul::URI, Property>(copy)
-		{}
-
-		Properties(std::initializer_list<value_type> l)
-			: std::multimap<Raul::URI, Property>(l)
-		{}
-
-		void put(const Raul::URI& key,
-		         const Atom&      value,
-		         Graph            ctx = Graph::DEFAULT) {
-			insert(std::make_pair(key, Property(value, ctx)));
-		}
-
-		void put(const Raul::URI&   key,
-		         const URIs::Quark& value,
-		         Graph              ctx = Graph::DEFAULT) {
-			insert(std::make_pair(key, Property(value, ctx)));
-		}
-
-		bool contains(const Raul::URI& key, const Atom& value) {
-			for (const_iterator i = find(key); i != end() && i->first == key; ++i) {
-				if (i->second == value) {
-					return true;
-				}
-			}
-			return false;
-		}
-	};
 
 	/** Get a single property value.
 	 *

@@ -64,13 +64,13 @@ public:
 	/** End a transaction. */
 	virtual void bundle_end() = 0;
 
-	virtual void put(const Raul::URI&            uri,
-	                 const Resource::Properties& properties,
-	                 Resource::Graph             ctx=Resource::Graph::DEFAULT) = 0;
+	virtual void put(const Raul::URI&  uri,
+	                 const Properties& properties,
+	                 Resource::Graph   ctx = Resource::Graph::DEFAULT) = 0;
 
-	virtual void delta(const Raul::URI&            uri,
-	                   const Resource::Properties& remove,
-	                   const Resource::Properties& add) = 0;
+	virtual void delta(const Raul::URI&  uri,
+	                   const Properties& remove,
+	                   const Properties& add) = 0;
 
 	virtual void copy(const Raul::URI& old_uri,
 	                  const Raul::URI& new_uri) = 0;

@@ -64,8 +64,6 @@ public:
 		GraphWindow*                   preferred = NULL,
 		SPtr<GraphView>                view      = SPtr<GraphView>());
 
-	typedef Node::Properties Properties;
-
 	void present_load_plugin(SPtr<const Client::GraphModel> graph, Properties data=Properties());
 	void present_load_graph(SPtr<const Client::GraphModel> graph, Properties data=Properties());
 	void present_load_subgraph(SPtr<const Client::GraphModel> graph, Properties data=Properties());

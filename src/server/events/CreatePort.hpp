@@ -45,12 +45,12 @@ namespace Events {
 class CreatePort : public Event
 {
 public:
-	CreatePort(Engine&                     engine,
-	           SPtr<Interface>             client,
-	           int32_t                     id,
-	           SampleCount                 timestamp,
-	           const Raul::Path&           path,
-	           const Resource::Properties& properties);
+	CreatePort(Engine&           engine,
+	           SPtr<Interface>   client,
+	           int32_t           id,
+	           SampleCount       timestamp,
+	           const Raul::Path& path,
+	           const Properties& properties);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
@@ -63,16 +63,16 @@ private:
 		OUTPUT
 	};
 
-	Raul::Path              _path;
-	PortType                _port_type;
-	LV2_URID                _buf_type;
-	GraphImpl*              _graph;
-	DuplexPort*             _graph_port;
-	MPtr<BlockImpl::Ports>  _ports_array; ///< New external port array for Graph
-	EnginePort*             _engine_port; ///< Driver port if on the root
-	Resource::Properties    _properties;
-	Resource::Properties    _update;
-	boost::optional<Flow>   _flow;
+	Raul::Path             _path;
+	PortType               _port_type;
+	LV2_URID               _buf_type;
+	GraphImpl*             _graph;
+	DuplexPort*            _graph_port;
+	MPtr<BlockImpl::Ports> _ports_array; ///< New external port array for Graph
+	EnginePort*            _engine_port; ///< Driver port if on the root
+	Properties             _properties;
+	Properties             _update;
+	boost::optional<Flow>  _flow;
 };
 
 } // namespace Events

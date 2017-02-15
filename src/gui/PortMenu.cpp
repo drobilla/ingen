@@ -130,10 +130,10 @@ PortMenu::on_menu_reset_range()
 	SPtr<const PortModel> model = dynamic_ptr_cast<const PortModel>(_object);
 
 	// Remove lv2:minimum and lv2:maximum properties
-	Resource::Properties remove;
-	remove.insert({uris.lv2_minimum, Resource::Property(uris.patch_wildcard)});
-	remove.insert({uris.lv2_maximum, Resource::Property(uris.patch_wildcard)});
-	_app->interface()->delta(_object->uri(), remove, Resource::Properties());
+	Properties remove;
+	remove.insert({uris.lv2_minimum, Property(uris.patch_wildcard)});
+	remove.insert({uris.lv2_maximum, Property(uris.patch_wildcard)});
+	_app->interface()->delta(_object->uri(), remove, Properties());
 }
 
 void

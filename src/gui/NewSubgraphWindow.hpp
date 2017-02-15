@@ -49,14 +49,14 @@ public:
 	void set_graph(SPtr<const Client::GraphModel> graph);
 
 	void present(SPtr<const Client::GraphModel> graph,
-	             Node::Properties               data);
+	             Properties                     data);
 
 private:
 	void name_changed();
 	void ok_clicked();
 	void cancel_clicked();
 
-	Node::Properties               _initial_data;
+	Properties                     _initial_data;
 	SPtr<const Client::GraphModel> _graph;
 
 	Gtk::Entry*      _name_entry;

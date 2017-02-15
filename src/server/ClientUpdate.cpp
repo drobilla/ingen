@@ -27,9 +27,9 @@ namespace Ingen {
 namespace Server {
 
 void
-ClientUpdate::put(const Raul::URI&            uri,
-                  const Resource::Properties& props,
-                  Resource::Graph             ctx)
+ClientUpdate::put(const Raul::URI&  uri,
+                  const Properties& props,
+                  Resource::Graph   ctx)
 {
 	const ClientUpdate::Put put = { uri, props, ctx };
 	puts.push_back(put);
@@ -40,7 +40,7 @@ ClientUpdate::put_port(const PortImpl* port)
 {
 	const URIs& uris = port->bufs().uris();
 	if (port->is_a(PortType::CONTROL) || port->is_a(PortType::CV)) {
-		Resource::Properties props = port->properties();
+		Properties props = port->properties();
 		props.erase(uris.ingen_value);
 		props.insert(std::make_pair(uris.ingen_value, port->value()));
 		put(port->uri(), props);
@@ -110,7 +110,7 @@ ClientUpdate::put_preset(const URIs&        uris,
                          const Raul::URI&   preset,
                          const std::string& label)
 {
-	Resource::Properties props{
+	const Properties props{
 		{ uris.rdf_type, uris.pset_Preset.urid },
 		{ uris.rdfs_label, uris.forge.alloc(label) },
 		{ uris.lv2_appliesTo, uris.forge.make_urid(plugin) }};

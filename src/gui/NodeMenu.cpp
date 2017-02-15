@@ -218,7 +218,7 @@ NodeMenu::on_save_preset_activated()
 		const std::string real_path = Glib::build_filename(dirname, bundle, file);
 		const std::string real_uri  = Glib::filename_to_uri(real_path);
 
-		Resource::Properties props{
+		Properties props{
 			{ _app->uris().rdf_type,
 			  _app->uris().pset_Preset },
 			{ _app->uris().rdfs_label,

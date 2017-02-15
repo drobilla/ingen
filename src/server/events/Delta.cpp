@@ -42,8 +42,6 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-typedef Resource::Properties Properties;
-
 Delta::Delta(Engine&           engine,
              SPtr<Interface>   client,
              int32_t           id,
@@ -276,9 +274,9 @@ Delta::pre_process(PreProcessContext& ctx)
 	}
 
 	for (const auto& p : _properties) {
-		const Raul::URI&          key   = p.first;
-		const Resource::Property& value = p.second;
-		SpecialType               op    = SpecialType::NONE;
+		const Raul::URI& key   = p.first;
+		const Property&  value = p.second;
+		SpecialType      op    = SpecialType::NONE;
 		if (obj) {
 			Resource& resource = *obj;
 			if (value != uris.patch_wildcard) {

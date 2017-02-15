@@ -374,14 +374,14 @@ Engine::activate()
 
 	if (!_root_graph) {
 		// Create root graph
-		Resource::Properties graph_properties;
+		Properties graph_properties;
 		graph_properties.insert(
 			make_pair(uris.rdf_type,
-			          Resource::Property(uris.ingen_Graph)));
+			          Property(uris.ingen_Graph)));
 		graph_properties.insert(
 			make_pair(uris.ingen_polyphony,
-			          Resource::Property(_world->forge().make(1),
-			                             Resource::Graph::INTERNAL)));
+			          Property(_world->forge().make(1),
+			                   Resource::Graph::INTERNAL)));
 
 		Events::CreateGraph ev(
 			*this, SPtr<Interface>(), -1, 0, Raul::Path("/"), graph_properties);

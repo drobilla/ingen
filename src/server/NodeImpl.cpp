@@ -38,7 +38,7 @@ NodeImpl::get_property(const Raul::URI& key) const
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
 	static const Atom null_atom;
-	Resource::Properties::const_iterator i = properties().find(key);
+	Properties::const_iterator i = properties().find(key);
 	return (i != properties().end()) ? i->second : null_atom;
 }
 

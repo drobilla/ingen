@@ -46,13 +46,13 @@ public:
 
 	void bundle_end();
 
-	void put(const Raul::URI&            uri,
-	         const Resource::Properties& properties,
-	         Resource::Graph             ctx = Resource::Graph::DEFAULT);
+	void put(const Raul::URI&  uri,
+	         const Properties& properties,
+	         Resource::Graph   ctx = Resource::Graph::DEFAULT);
 
-	void delta(const Raul::URI&            uri,
-	           const Resource::Properties& remove,
-	           const Resource::Properties& add);
+	void delta(const Raul::URI&  uri,
+	           const Properties& remove,
+	           const Properties& add);
 
 	void copy(const Raul::URI& old_uri,
 	          const Raul::URI& new_uri);
@@ -89,7 +89,7 @@ public:
 
 private:
 	void forge_uri(const Raul::URI& uri);
-	void forge_properties(const Resource::Properties& properties);
+	void forge_properties(const Properties& properties);
 	void forge_arc(const Raul::Path& tail, const Raul::Path& head);
 	void forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type);
 

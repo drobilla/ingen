@@ -105,7 +105,7 @@ private:
 
 	typedef std::multimap<const std::string, const LilvPluginClass*> LV2Children;
 
-	Node::Properties get_initial_data(Resource::Graph ctx=Resource::Graph::DEFAULT);
+	Properties get_initial_data(Resource::Graph ctx=Resource::Graph::DEFAULT);
 
 	Ganv::Port* get_port_view(SPtr<Client::PortModel> port);
 

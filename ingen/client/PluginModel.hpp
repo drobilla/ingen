@@ -48,10 +48,10 @@ class PluginUI;
 class INGEN_API PluginModel : public Ingen::Resource
 {
 public:
-	PluginModel(URIs&                              uris,
-	            const Raul::URI&                   uri,
-	            const Atom&                        type,
-	            const Ingen::Resource::Properties& properties);
+	PluginModel(URIs&                    uris,
+	            const Raul::URI&         uri,
+	            const Atom&              type,
+	            const Ingen::Properties& properties);
 
 	const Atom&     type()     const { return _type; }
 	const Raul::URI type_uri() const {
