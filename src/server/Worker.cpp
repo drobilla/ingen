@@ -18,7 +18,6 @@
 #include "ingen/Log.hpp"
 #include "lv2/lv2plug.in/ns/ext/worker/worker.h"
 
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "LV2Block.hpp"

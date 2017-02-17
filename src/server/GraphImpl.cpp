@@ -25,7 +25,6 @@
 #include "ArcImpl.hpp"
 #include "BlockImpl.hpp"
 #include "BufferFactory.hpp"
-#include "Driver.hpp"
 #include "DuplexPort.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
@@ -69,7 +68,7 @@ GraphImpl::duplicate(Engine&             engine,
                      GraphImpl*          parent)
 {
 	BufferFactory&   bufs = *engine.buffer_factory();
-	const SampleRate rate = engine.driver()->sample_rate();
+	const SampleRate rate = engine.sample_rate();
 
 	// Duplicate graph
 	GraphImpl* dup = new GraphImpl(

@@ -271,6 +271,24 @@ Engine::store() const
 	return _world->store();
 }
 
+SampleRate
+Engine::sample_rate() const
+{
+	return _driver->sample_rate();
+}
+
+SampleCount
+Engine::block_length() const
+{
+	return _driver->block_length();
+}
+
+size_t
+Engine::sequence_size() const
+{
+	return _driver->seq_size();
+}
+
 size_t
 Engine::event_queue_size() const
 {
@@ -366,8 +384,8 @@ Engine::activate()
 	ThreadManager::single_threaded = true;
 
 	_buffer_factory->set_block_length(_driver->block_length());
-	_options->set(driver()->sample_rate(),
-	              driver()->block_length(),
+	_options->set(sample_rate(),
+	              block_length(),
 	              buffer_factory()->default_size(_world->uris().atom_Sequence));
 
 	const Ingen::URIs& uris = world()->uris();

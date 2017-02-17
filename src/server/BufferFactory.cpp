@@ -19,7 +19,6 @@
 
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
-#include "Driver.hpp"
 #include "Engine.hpp"
 
 namespace Ingen {
@@ -83,7 +82,7 @@ BufferFactory::audio_buffer_size(SampleCount nframes)
 uint32_t
 BufferFactory::audio_buffer_size() const
 {
-	return _engine.driver()->block_length() * sizeof(Sample);
+	return _engine.block_length() * sizeof(Sample);
 }
 
 uint32_t
@@ -92,12 +91,12 @@ BufferFactory::default_size(LV2_URID type) const
 	if (type == _uris.atom_Float) {
 		return sizeof(LV2_Atom_Float);
 	} else if (type == _uris.atom_Sound) {
-		return audio_buffer_size(_engine.driver()->block_length());
+		return audio_buffer_size(_engine.block_length());
 	} else if (type == _uris.atom_URID) {
 		return sizeof(LV2_Atom_URID);
 	} else if (type == _uris.atom_Sequence) {
 		if (_seq_size == 0) {
-			return _engine.driver()->seq_size();
+			return _engine.sequence_size();
 		} else {
 			return _seq_size;
 		}

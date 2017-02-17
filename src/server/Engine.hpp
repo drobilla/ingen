@@ -150,9 +150,13 @@ public:
 
 	SPtr<Store> store() const;
 
-	size_t event_queue_size() const;
-	size_t n_threads()        const { return _run_contexts.size(); }
-	bool   atomic_bundles()   const { return _atomic_bundles; }
+	SampleRate  sample_rate() const;
+	SampleCount block_length() const;
+	size_t      sequence_size() const;
+	size_t      event_queue_size() const;
+
+	size_t n_threads()      const { return _run_contexts.size(); }
+	bool   atomic_bundles() const { return _atomic_bundles; }
 
 private:
 	Ingen::World* _world;

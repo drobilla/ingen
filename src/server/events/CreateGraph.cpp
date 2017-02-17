@@ -20,7 +20,6 @@
 #include "raul/Path.hpp"
 
 #include "Broadcaster.hpp"
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "PreProcessContext.hpp"
@@ -155,7 +154,7 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 	} else {
 		// Create a new graph
 		_graph = new GraphImpl(_engine, symbol, ext_poly, _parent,
-		                       _engine.driver()->sample_rate(), int_poly);
+		                       _engine.sample_rate(), int_poly);
 		_graph->add_property(uris.rdf_type, uris.ingen_Graph.urid);
 		_graph->add_property(uris.rdf_type,
 		                     Property(uris.ingen_Block,

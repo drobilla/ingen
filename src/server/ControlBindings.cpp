@@ -25,7 +25,6 @@
 
 #include "Buffer.hpp"
 #include "ControlBindings.hpp"
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "PortImpl.hpp"
 #include "RunContext.hpp"
@@ -210,8 +209,8 @@ get_range(RunContext& context, const PortImpl* port, float* min, float* max)
 	*min = port->minimum().get<float>();
 	*max = port->maximum().get<float>();
 	if (port->is_sample_rate()) {
-		*min *= context.engine().driver()->sample_rate();
-		*max *= context.engine().driver()->sample_rate();
+		*min *= context.engine().sample_rate();
+		*max *= context.engine().sample_rate();
 	}
 }
 

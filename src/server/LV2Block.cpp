@@ -36,7 +36,6 @@
 #include "ingen/URIs.hpp"
 
 #include "Buffer.hpp"
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 #include "InputPort.hpp"
@@ -170,7 +169,7 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 	if (_polyphony == poly)
 		return true;
 
-	const SampleRate rate = bufs.engine().driver()->sample_rate();
+	const SampleRate rate = bufs.engine().sample_rate();
 	assert(!_prepared_instances);
 	_prepared_instances = bufs.maid().make_managed<Instances>(
 		poly, *_instances, SPtr<Instance>());
@@ -421,7 +420,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 	_features = world->lv2_features().lv2_features(world, this);
 
 	// Actually create plugin instances and port buffers.
-	const SampleRate rate = bufs.engine().driver()->sample_rate();
+	const SampleRate rate = bufs.engine().sample_rate();
 	_instances = bufs.maid().make_managed<Instances>(
 		_polyphony, SPtr<Instance>());
 	for (uint32_t i = 0; i < _polyphony; ++i) {
@@ -493,7 +492,7 @@ LV2Block::duplicate(Engine&             engine,
                     const Raul::Symbol& symbol,
                     GraphImpl*          parent)
 {
-	const SampleRate rate = engine.driver()->sample_rate();
+	const SampleRate rate = engine.sample_rate();
 
 	// Get current state
 	LilvState* state = lilv_state_new_from_instance(

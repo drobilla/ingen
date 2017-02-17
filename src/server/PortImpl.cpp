@@ -23,7 +23,6 @@
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
-#include "Driver.hpp"
 #include "PortImpl.hpp"
 #include "PortType.hpp"
 #include "ThreadManager.hpp"
@@ -39,8 +38,8 @@ static const uint32_t monitor_rate = 25.0;  // Hz
 static inline uint32_t
 monitor_period(const Engine& engine)
 {
-	return std::max(engine.driver()->block_length(),
-	                engine.driver()->sample_rate() / monitor_rate);
+	return std::max(engine.block_length(),
+	                engine.sample_rate() / monitor_rate);
 }
 
 PortImpl::PortImpl(BufferFactory&      bufs,
@@ -183,7 +182,7 @@ PortImpl::activate(BufferFactory& bufs)
 	   monitor period, to spread the load out over time.  Otherwise, every
 	   port would try to send an update at exactly the same time, every time.
 	*/
-	const double   srate  = bufs.engine().driver()->sample_rate();
+	const double   srate  = bufs.engine().sample_rate();
 	const uint32_t period = srate / monitor_rate;
 	_frames_since_monitor = bufs.engine().frand() * period;
 	_monitor_value        = 0.0f;

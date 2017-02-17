@@ -20,7 +20,6 @@
 #include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/presets/presets.h"
 
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "LV2Block.hpp"
 #include "LV2Plugin.hpp"
@@ -94,7 +93,7 @@ LV2Plugin::instantiate(BufferFactory&      bufs,
                        const LilvState*    state)
 {
 	LV2Block* b = new LV2Block(
-		this, symbol, polyphonic, parent, engine.driver()->sample_rate());
+		this, symbol, polyphonic, parent, engine.sample_rate());
 
 	if (!b->instantiate(bufs, state)) {
 		delete b;

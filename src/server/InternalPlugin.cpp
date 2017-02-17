@@ -21,7 +21,6 @@
 #include "internals/Time.hpp"
 #include "internals/Trigger.hpp"
 
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
 
@@ -49,7 +48,7 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
                             Engine&             engine,
                             const LilvState*    state)
 {
-	const SampleCount srate = engine.driver()->sample_rate();
+	const SampleCount srate = engine.sample_rate();
 
 	if (uri() == NS_INTERNALS "BlockDelay") {
 		return new BlockDelayNode(this, bufs, symbol, polyphonic, parent, srate);

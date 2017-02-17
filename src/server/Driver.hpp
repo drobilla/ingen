@@ -88,7 +88,7 @@ public:
 	virtual size_t seq_size() const = 0;
 
 	/** Return the sample rate in Hz */
-	virtual SampleCount sample_rate() const = 0;
+	virtual SampleRate sample_rate() const = 0;
 
 	/** Return the current frame time (running counter) */
 	virtual SampleCount frame_time()  const = 0;

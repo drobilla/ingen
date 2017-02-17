@@ -23,7 +23,6 @@
 #include "BlockImpl.hpp"
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
-#include "Driver.hpp"
 #include "Engine.hpp"
 #include "Get.hpp"
 #include "GraphImpl.hpp"
@@ -93,9 +92,9 @@ Get::post_process()
 			_request_client->put(
 				Raul::URI("ingen:/engine"),
 				{ { uris.param_sampleRate,
-				    uris.forge.make(int32_t(_engine.driver()->sample_rate())) },
+				    uris.forge.make(int32_t(_engine.sample_rate())) },
 				  { uris.bufsz_maxBlockLength,
-				    uris.forge.make(int32_t(_engine.driver()->block_length())) },
+				    uris.forge.make(int32_t(_engine.block_length())) },
 				  { uris.ingen_numThreads,
 				    uris.forge.make(int32_t(_engine.n_threads())) } });
 		} else {
