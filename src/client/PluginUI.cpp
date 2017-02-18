@@ -168,6 +168,7 @@ PluginUI::~PluginUI()
 	lilv_node_free(_ui_node);
 	lilv_node_free(_ui_type);
 	lilv_uis_free(_uis);
+	lilv_world_unload_resource(_world->lilv_world(), lilv_ui_get_uri(_ui));
 }
 
 SPtr<PluginUI>
@@ -219,11 +220,14 @@ PluginUI::instantiate()
 {
 	const URIs&       uris       = _world->uris();
 	const std::string plugin_uri = _block->plugin()->uri();
+	LilvWorld*        lworld     = _world->lilv_world();
+
+	// Load seeAlso files to access data like portNotification descriptions
+	lilv_world_load_resource(lworld, lilv_ui_get_uri(_ui));
 
 	/* Subscribe (enable broadcast) for any requested port notifications.  This
 	   must be done before instantiation so responses to any events sent by the
 	   UI's init() will be sent back to this client. */
-	LilvWorld* lworld              = _world->lilv_world();
 	LilvNode*  ui_portNotification = lilv_new_uri(lworld, LV2_UI__portNotification);
 	LilvNode*  ui_plugin           = lilv_new_uri(lworld, LV2_UI__plugin);
 	LilvNodes* notes               = lilv_world_find_nodes(
