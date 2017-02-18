@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -179,6 +179,10 @@ GraphBox::GraphBox(BaseObjectType*                   cobject,
 	Glib::RefPtr<Gtk::Clipboard> clipboard = Gtk::Clipboard::get();
 	clipboard->signal_owner_change().connect(
 		sigc::mem_fun(this, &GraphBox::event_clipboard_changed));
+
+#ifdef __APPLE__
+	_menu_paste->set_sensitive(true);
+#endif
 
 	_status_label = Gtk::manage(new Gtk::Label("STATUS"));
 	_status_bar->pack_start(*_status_label, false, true, 0);
