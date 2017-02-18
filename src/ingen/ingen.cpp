@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -149,8 +149,11 @@ main(int argc, char** argv)
 
 	// Activate the engine, if we have one
 	if (world->engine()) {
-		ingen_try(world->load_module("jack"), "Failed to load jack module");
-		world->engine()->activate();
+		if (!world->load_module("jack") && !world->load_module("portaudio")) {
+			cerr << "ingen: error: Failed to load driver module" << endl;
+			delete world;
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	// Load a graph
@@ -211,6 +214,12 @@ main(int argc, char** argv)
 			                       Raul::URI((const char*)uri.buf));
 			serd_node_free(&uri);
 		}
+	}
+
+	// Activate the engine now that the graph is loaded
+	if (world->engine()) {
+		world->engine()->flush_events(std::chrono::milliseconds(10));
+		world->engine()->activate();
 	}
 
 	// Set up signal handlers that will set quit_flag on interrupt

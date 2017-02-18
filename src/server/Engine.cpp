@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -19,6 +19,7 @@
 #include <sys/mman.h>
 
 #include <limits>
+#include <thread>
 
 #include "lv2/lv2plug.in/ns/ext/buf-size/buf-size.h"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
@@ -91,6 +92,7 @@ Engine::Engine(Ingen::World* world)
 	, _reset_load_flag(false)
 	, _direct_driver(true)
 	, _atomic_bundles(world->conf().option("atomic-bundles").get<int32_t>())
+	, _activated(false)
 {
 	if (!world->store()) {
 		world->set_store(SPtr<Ingen::Store>(new Store()));
@@ -206,10 +208,37 @@ Engine::listen()
 }
 
 void
+Engine::advance(SampleCount nframes)
+{
+	for (RunContext* ctx : _run_contexts) {
+		ctx->locate(ctx->start() + nframes, block_length());
+	}
+}
+
+void
 Engine::locate(FrameTime s, SampleCount nframes)
 {
 	for (RunContext* ctx : _run_contexts) {
 		ctx->locate(s, nframes);
+	}
+}
+
+void
+Engine::flush_events(const std::chrono::milliseconds& sleep_ms)
+{
+	bool finished = !pending_events();
+	while (!finished) {
+		// Run one audio block to execute prepared events
+		run(block_length());
+		advance(block_length());
+
+		// Run one main iteration to post-process events
+		main_iteration();
+
+		// Sleep before continuing if there are still events to process
+		if (!(finished = !pending_events())) {
+			std::this_thread::sleep_for(sleep_ms);
+		}
 	}
 }
 
@@ -338,6 +367,11 @@ Engine::set_driver(SPtr<Driver> driver)
 		ctx->set_priority(driver->real_time_priority());
 		ctx->set_rate(driver->sample_rate());
 	}
+
+	_buffer_factory->set_block_length(driver->block_length());
+	_options->set(sample_rate(),
+	              block_length(),
+	              buffer_factory()->default_size(_world->uris().atom_Sequence));
 }
 
 SampleCount
@@ -383,41 +417,31 @@ Engine::activate()
 
 	ThreadManager::single_threaded = true;
 
-	_buffer_factory->set_block_length(_driver->block_length());
-	_options->set(sample_rate(),
-	              block_length(),
-	              buffer_factory()->default_size(_world->uris().atom_Sequence));
-
 	const Ingen::URIs& uris = world()->uris();
 
 	if (!_root_graph) {
-		// Create root graph
-		Properties graph_properties;
-		graph_properties.insert(
-			make_pair(uris.rdf_type,
-			          Property(uris.ingen_Graph)));
-		graph_properties.insert(
-			make_pair(uris.ingen_polyphony,
-			          Property(_world->forge().make(1),
-			                   Resource::Graph::INTERNAL)));
+		// No root graph has been loaded, create an empty one
+		const Properties properties = {
+			{uris.rdf_type, uris.ingen_Graph},
+			{uris.ingen_polyphony,
+			 Property(_world->forge().make(1),
+			          Resource::Graph::INTERNAL)}};
 
-		Events::CreateGraph ev(
-			*this, SPtr<Interface>(), -1, 0, Raul::Path("/"), graph_properties);
+		enqueue_event(
+			new Events::CreateGraph(
+				*this, SPtr<Interface>(), -1, 0, Raul::Path("/"), properties));
 
-		// Execute in "fake" process context (we are single threaded)
-		PreProcessContext pctx;
-		RunContext        rctx(run_context());
-		ev.pre_process(pctx);
-		ev.execute(rctx);
-		ev.post_process();
-
-		_root_graph = ev.graph();
+		flush_events(std::chrono::milliseconds(10));
+		if (!_root_graph) {
+			return false;
+		}
 	}
 
 	_driver->activate();
 	_root_graph->enable();
 
 	ThreadManager::single_threaded = false;
+	_activated = true;
 
 	return true;
 }
@@ -434,6 +458,7 @@ Engine::deactivate()
 	}
 
 	ThreadManager::single_threaded = true;
+	_activated = false;
 }
 
 unsigned
@@ -441,10 +466,6 @@ Engine::run(uint32_t sample_count)
 {
 	RunContext& ctx = run_context();
 	_cycle_start_time = current_time(ctx);
-
-	// Apply control bindings to input
-	control_bindings()->pre_process(
-		ctx, _root_graph->port_impl(0)->buffer(0).get());
 
 	post_processor()->set_end_time(ctx.end());
 
@@ -455,6 +476,11 @@ Engine::run(uint32_t sample_count)
 
 	// Run root graph
 	if (_root_graph) {
+		// Apply control bindings to input
+		control_bindings()->pre_process(
+			ctx, _root_graph->port_impl(0)->buffer(0).get());
+
+		// Run root graph for this cycle
 		_root_graph->process(ctx);
 
 		// Emit control binding feedback

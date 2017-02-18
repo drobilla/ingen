@@ -39,9 +39,7 @@ public:
 		_ports.clear_and_dispose([](EnginePort* p) { delete p; });
 	}
 
-	virtual void activate() {}
-
-	virtual void deactivate() {}
+	bool dynamic_ports() const { return true; }
 
 	virtual EnginePort* create_port(DuplexPort* graph_port) {
 		return new EnginePort(graph_port);

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2014-2016 David Robillard <http://drobilla.net/>
+  Copyright 2014-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -32,14 +32,6 @@
 #    endif
 #else
 #    define INGEN_API
-#endif
-
-#ifndef INGEN_WARN_UNUSED_RESULT
-#    if __GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ >= 4
-#        define INGEN_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
-#    else
-#        define INGEN_WARN_UNUSED_RESULT
-#    endif
 #endif
 
 #define INGEN_NS "http://drobilla.net/ns/ingen#"

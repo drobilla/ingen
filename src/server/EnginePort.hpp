@@ -40,20 +40,24 @@ public:
 		: _graph_port(port)
 		, _buffer(NULL)
 		, _handle(NULL)
+		, _driver_index(0)
 	{}
 
-	void set_buffer(void* buf) { _buffer = buf; }
-	void set_handle(void* buf) { _handle = buf; }
+	void set_buffer(void* buf)            { _buffer = buf; }
+	void set_handle(void* buf)            { _handle = buf; }
+	void set_driver_index(uint32_t index) { _driver_index = index; }
 
-	void*       buffer()     const { return _buffer; }
-	void*       handle()     const { return _handle; }
-	DuplexPort* graph_port() const { return _graph_port; }
-	bool        is_input()   const { return _graph_port->is_input(); }
+	void*       buffer()       const { return _buffer; }
+	void*       handle()       const { return _handle; }
+	uint32_t    driver_index() const { return _driver_index; }
+	DuplexPort* graph_port()   const { return _graph_port; }
+	bool        is_input()     const { return _graph_port->is_input(); }
 
 protected:
 	DuplexPort* _graph_port;
 	void*       _buffer;
 	void*       _handle;
+	uint32_t    _driver_index;
 };
 
 } // namespace Server

@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_ENGINE_HPP
 #define INGEN_ENGINE_ENGINE_HPP
 
-#include <boost/utility.hpp>
+#include <chrono>
 #include <condition_variable>
 #include <mutex>
 #include <random>
@@ -26,6 +26,7 @@
 #include "ingen/Interface.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
+#include "raul/Noncopyable.hpp"
 
 #include "Clock.hpp"
 #include "Event.hpp"
@@ -65,7 +66,7 @@ class Worker;
 
    @ingroup engine
 */
-class INGEN_API Engine : public boost::noncopyable, public EngineBase
+class INGEN_API Engine : public Raul::Noncopyable, public EngineBase
 {
 public:
 	explicit Engine(Ingen::World* world);
@@ -141,6 +142,11 @@ public:
 
 	RunContext& run_context() { return *_run_contexts[0]; }
 
+	void set_root_graph(GraphImpl* graph) { _root_graph = graph; }
+
+	void flush_events(const std::chrono::milliseconds& sleep_ms);
+
+	void  advance(SampleCount nframes);
 	void  locate(FrameTime s, SampleCount nframes);
 	void  emit_notifications(FrameTime end);
 	bool  pending_notifications();
@@ -157,6 +163,7 @@ public:
 
 	size_t n_threads()      const { return _run_contexts.size(); }
 	bool   atomic_bundles() const { return _atomic_bundles; }
+	bool   activated()      const { return _activated; }
 
 private:
 	Ingen::World* _world;
@@ -226,6 +233,7 @@ private:
 	bool _reset_load_flag;
 	bool _direct_driver;
 	bool _atomic_bundles;
+	bool _activated;
 };
 
 } // namespace Server

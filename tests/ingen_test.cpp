@@ -133,28 +133,11 @@ ingen_try(bool cond, const char* msg)
 	}
 }
 
-static uint32_t
-flush_events(Ingen::World* world, const uint32_t start)
-{
-	static const uint32_t block_length = 4096;
-	int                   count        = 0;
-	uint32_t              offset       = start;
-	while (world->engine()->pending_events()) {
-		world->engine()->locate(offset, block_length);
-		world->engine()->run(block_length);
-		world->engine()->main_iteration();
-		g_usleep(1000);
-		++count;
-		offset += block_length;
-	}
-	return offset;
-}
-
 int
 main(int argc, char** argv)
 {
 	Glib::thread_init();
-	set_bundle_path_from_code((void*)&flush_events);
+	set_bundle_path_from_code((void*)&ingen_try);
 
 	// Create world
 	try {
@@ -194,12 +177,12 @@ main(int argc, char** argv)
 	world->engine()->init(48000.0, 4096, 4096);
 	world->engine()->activate();
 
-	// Load patch
+	// Load graph
 	if (!world->parser()->parse_file(world, world->interface().get(), start_graph)) {
 		cerr << "error: failed to load initial graph " << start_graph << endl;
 		return EXIT_FAILURE;
 	}
-	uint32_t time = flush_events(world, 0);
+	world->engine()->flush_events(std::chrono::milliseconds(20));
 
 	// Read commands
 
@@ -262,7 +245,7 @@ main(int argc, char** argv)
 			return EXIT_FAILURE;
 		}
 
-		time = flush_events(world, time);
+		world->engine()->flush_events(std::chrono::milliseconds(20));
 	}
 
 	delete cmds;
@@ -277,7 +260,7 @@ main(int argc, char** argv)
 	// Undo every event (should result in a graph identical to the original)
 	for (int i = 0; i < n_events; ++i) {
 		world->interface()->undo();
-		time = flush_events(world, time);
+		world->engine()->flush_events(std::chrono::milliseconds(20));
 	}
 
 	// Save completely undone graph
@@ -289,7 +272,7 @@ main(int argc, char** argv)
 	// Redo every event (should result in a graph identical to the pre-undo output)
 	for (int i = 0; i < n_events; ++i) {
 		world->interface()->redo();
-		time = flush_events(world, time);
+		world->engine()->flush_events(std::chrono::milliseconds(20));
 	}
 
 	// Save completely redone graph

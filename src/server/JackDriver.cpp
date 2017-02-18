@@ -140,19 +140,23 @@ JackDriver::attach(const std::string& server_name,
 	return true;
 }
 
-void
+bool
 JackDriver::activate()
 {
 	World* world = _engine.world();
 
 	if (_is_activated) {
 		_engine.log().warn("Jack driver already activated\n");
-		return;
+		return false;
 	}
 
 	if (!_client)
 		attach(world->conf().option("jack-server").ptr<char>(),
 		       world->conf().option("jack-name").ptr<char>(), NULL);
+
+	if (!_client) {
+		return false;
+	}
 
 	jack_set_process_callback(_client, process_cb, this);
 
@@ -160,11 +164,12 @@ JackDriver::activate()
 
 	if (jack_activate(_client)) {
 		_engine.log().error("Could not activate Jack client, aborting\n");
-		exit(EXIT_FAILURE);
+		return false;
 	} else {
 		_engine.log().info(fmt("Activated Jack client `%1%'\n") %
 		                   world->conf().option("jack-name").ptr<char>());
 	}
+	return true;
 }
 
 void
@@ -479,6 +484,7 @@ JackDriver::_process_cb(jack_nframes_t nframes)
 		pre_process_port(_engine.run_context(), &p);
 	}
 
+	// Process
 	_engine.run(nframes);
 
 	// Write output

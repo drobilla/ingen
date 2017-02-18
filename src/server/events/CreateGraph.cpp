@@ -194,8 +194,13 @@ void
 CreateGraph::execute(RunContext& context)
 {
 	if (_graph) {
-		if (_parent && _compiled_graph) {
-			_parent->set_compiled_graph(std::move(_compiled_graph));
+		if (_parent) {
+			if (_compiled_graph) {
+				_parent->set_compiled_graph(std::move(_compiled_graph));
+			}
+		} else {
+			_engine.set_root_graph(_graph);
+			_graph->enable();
 		}
 
 		for (Event* ev : _child_events) {

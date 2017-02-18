@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -17,9 +17,10 @@
 #ifndef INGEN_ENGINEBASE_HPP
 #define INGEN_ENGINEBASE_HPP
 
-#include <stdint.h>
+#include <chrono>
+#include <cstddef>
+#include <cstdint>
 
-#include "raul/URI.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
@@ -68,6 +69,16 @@ public:
 	virtual bool pending_events() = 0;
 
 	/**
+	   Flush any pending events.
+
+	   This function is only safe to call in sequential contexts, and runs both
+	   process thread and main iterations in lock-step.
+
+	   @param Interval in milliseconds to sleep between each block.
+	*/
+	virtual void flush_events(const std::chrono::milliseconds& sleep_ms) = 0;
+
+	/**
 	   Locate to a given cycle.
 	*/
 	virtual void locate(uint32_t start, uint32_t sample_count) = 0;
@@ -113,7 +124,6 @@ public:
 	   Unregister a client.
 	*/
 	virtual bool unregister_client(SPtr<Interface> client) = 0;
-
 };
 
 } // namespace Ingen

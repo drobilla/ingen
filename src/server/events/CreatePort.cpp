@@ -102,6 +102,9 @@ CreatePort::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::PARENT_NOT_FOUND, parent_path);
 	} else if (!(_graph = dynamic_cast<GraphImpl*>(parent))) {
 		return Event::pre_process_done(Status::INVALID_PARENT, parent_path);
+	} else if (!_graph->parent() && _engine.activated() &&
+	           !_engine.driver()->dynamic_ports()) {
+		return Event::pre_process_done(Status::CREATION_FAILED, _path);
 	}
 
 	const URIs&    uris        = _engine.world()->uris();

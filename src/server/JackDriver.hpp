@@ -65,10 +65,10 @@ public:
 	            const std::string& client_name,
 	            void*              jack_client);
 
-	void activate();
+	bool activate();
 	void deactivate();
-	void enable();
-	void disable();
+
+	bool dynamic_ports() const { return true; }
 
 	EnginePort* create_port(DuplexPort* graph_port);
 	EnginePort* get_port(const Raul::Path& path);

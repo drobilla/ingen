@@ -91,6 +91,18 @@ def build(bld):
                   linkflags       = bld.env.PTHREAD_LINKFLAGS)
         autowaf.use_lib(bld, obj, core_libs + ' JACK')
 
+    if bld.env.HAVE_PORTAUDIO:
+        obj = bld(features        = 'cxx cxxshlib',
+                  source          = 'PortAudioDriver.cpp ingen_portaudio.cpp',
+                  includes        = ['.', '../..'],
+                  name            = 'libingen_portaudio',
+                  target          = 'ingen_portaudio',
+                  install_path    = '${LIBDIR}',
+                  use             = 'libingen_server',
+                  cxxflags        = bld.env.PTHREAD_CFLAGS,
+                  linkflags       = bld.env.PTHREAD_LINKFLAGS)
+        autowaf.use_lib(bld, obj, core_libs + ' PORTAUDIO')
+
     # Ingen LV2 wrapper
     if bld.env.INGEN_BUILD_LV2:
         obj = bld(features     = 'cxx cxxshlib',

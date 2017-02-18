@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -42,7 +42,7 @@ public:
 	virtual ~Driver() {}
 
 	/** Activate driver (begin processing graph and events). */
-	virtual void activate() {}
+	virtual bool activate() { return true; }
 
 	/** Deactivate driver (stop processing graph and events). */
 	virtual void deactivate() {}
@@ -65,6 +65,9 @@ public:
 	 * must be called later in another thread.
 	 */
 	virtual void remove_port(RunContext& context, EnginePort* port) = 0;
+
+	/** Return true iff driver supports dynamic adding/removing of ports. */
+	virtual bool dynamic_ports() const { return false; }
 
 	/** Register a system visible port. */
 	virtual void register_port(EnginePort& port) = 0;
@@ -91,7 +94,7 @@ public:
 	virtual SampleRate sample_rate() const = 0;
 
 	/** Return the current frame time (running counter) */
-	virtual SampleCount frame_time()  const = 0;
+	virtual SampleCount frame_time() const = 0;
 
 	/** Append time events for this cycle to `buffer`. */
 	virtual void append_time_events(RunContext& context,

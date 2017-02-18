@@ -44,6 +44,9 @@ def options(opt):
                    help='Do not build Socket interface')
     opt.add_option('--debug-urids', action='store_true', dest='debug_urids',
                    help='Print a trace of URI mapping')
+    opt.add_option('--portaudio', action='store_true', default=False,
+                   dest='portaudio',
+                   help='Build PortAudio backend')
 
 def configure(conf):
     autowaf.display_header('Ingen Configuration')
@@ -90,6 +93,8 @@ def configure(conf):
                       atleast_version='0.18.0', mandatory=False)
     autowaf.check_pkg(conf, 'sord-0', uselib_store='SORD',
                       atleast_version='0.12.0', mandatory=False)
+    autowaf.check_pkg(conf, 'portaudio-2.0', uselib_store='PORTAUDIO',
+                      atleast_version='2.0.0', mandatory=False)
 
     conf.check(function_name = 'posix_memalign',
                defines       = '_POSIX_C_SOURCE=200809L',
