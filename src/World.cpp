@@ -98,14 +98,12 @@ ingen_load_module(Log& log, const string& name)
 
 class World::Impl {
 public:
-	Impl(int&            a_argc,
-	     char**&         a_argv,
-	     LV2_URID_Map*   map,
+	Impl(LV2_URID_Map*   map,
 	     LV2_URID_Unmap* unmap,
 	     LV2_Log_Log*    lv2_log)
-		: argc(a_argc)
-		, argv(a_argv)
-		, lv2_features(NULL)
+		: argc(nullptr)
+		, argv(nullptr)
+		, lv2_features(nullptr)
 		, rdf_world(new Sord::World())
 		, lilv_world(lilv_world_new())
 		, uri_map(new URIMap(log, map, unmap))
@@ -114,17 +112,6 @@ public:
 		, conf(*forge)
 		, log(lv2_log, *uris)
 	{
-		// Parse default configuration files
-		std::list<std::string> files = conf.load_default("ingen", "options.ttl");
-		for (const auto& f : files) {
-			log.info(fmt("Loaded configuration %1%\n") % f);
-		}
-
-		// Parse command line options, overriding configuration file values
-		conf.parse(argc, argv);
-		log.set_flush(conf.option("flush-log").get<int32_t>());
-		log.set_trace(conf.option("trace").get<int32_t>());
-
 		lv2_features = new LV2Features();
 		lv2_features->add_feature(uri_map->urid_map_feature());
 		lv2_features->add_feature(uri_map->urid_unmap_feature());
@@ -208,8 +195,8 @@ public:
 	typedef std::map<const std::string, ScriptRunner> ScriptRunners;
 	ScriptRunners script_runners;
 
-	int&             argc;
-	char**&          argv;
+	int*             argc;
+	char***          argv;
 	LV2Features*     lv2_features;
 	Sord::World*     rdf_world;
 	LilvWorld*       lilv_world;
@@ -228,12 +215,8 @@ public:
 	std::string      jack_uuid;
 };
 
-World::World(int&                 argc,
-             char**&              argv,
-             LV2_URID_Map*        map,
-             LV2_URID_Unmap*      unmap,
-             LV2_Log_Log*         log)
-	: _impl(new Impl(argc, argv, map, unmap, log))
+World::World(LV2_URID_Map* map, LV2_URID_Unmap* unmap, LV2_Log_Log* log)
+	: _impl(new Impl(map, unmap, log))
 {
 	_impl->serialiser = SPtr<Serialiser>(new Serialiser(*this));
 	_impl->parser     = SPtr<Parser>(new Parser());
@@ -242,6 +225,24 @@ World::World(int&                 argc,
 World::~World()
 {
 	delete _impl;
+}
+
+void
+World::load_configuration(int& argc, char**& argv)
+{
+	_impl->argc = &argc;
+	_impl->argv = &argv;
+
+	// Parse default configuration files
+	const auto files = _impl->conf.load_default("ingen", "options.ttl");
+	for (const auto& f : files) {
+		_impl->log.info(fmt("Loaded configuration %1%\n") % f);
+	}
+
+	// Parse command line options, overriding configuration file values
+	_impl->conf.parse(argc, argv);
+	_impl->log.set_flush(_impl->conf.option("flush-log").get<int32_t>());
+	_impl->log.set_trace(_impl->conf.option("trace").get<int32_t>());
 }
 
 void World::set_engine(SPtr<EngineBase> e)   { _impl->engine     = e; }
@@ -254,8 +255,8 @@ SPtr<Parser>     World::parser()     { return _impl->parser; }
 SPtr<Serialiser> World::serialiser() { return _impl->serialiser; }
 SPtr<Store>      World::store()      { return _impl->store; }
 
-int&           World::argc() { return _impl->argc; }
-char**&        World::argv() { return _impl->argv; }
+int&           World::argc() { return *_impl->argc; }
+char**&        World::argv() { return *_impl->argv; }
 Configuration& World::conf() { return _impl->conf; }
 Log&           World::log()  { return _impl->log; }
 

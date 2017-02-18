@@ -90,7 +90,8 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = new Ingen::World(argc, argv, NULL, NULL, NULL);
+		world = new Ingen::World(NULL, NULL, NULL);
+		world->load_configuration(argc, argv);
 		if (argc <= 1) {
 			world->conf().print_usage("ingen", cout);
 			return EXIT_FAILURE;

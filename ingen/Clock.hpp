@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2016 David Robillard <http://drobilla.net/>
+  Copyright 2016-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -23,7 +23,6 @@
 #endif
 
 namespace Ingen {
-namespace Server {
 
 class Clock {
 public:
@@ -31,7 +30,7 @@ public:
 
 	Clock() { mach_timebase_info(&_timebase); }
 
-	uint64_t now_microseconds() const {
+	inline uint64_t now_microseconds() const {
 		const uint64_t now = mach_absolute_time();
 		return now * _timebase.numer / _timebase.denom / 1e3;
 	}
@@ -41,7 +40,7 @@ private:
 
 #else
 
-	uint64_t now_microseconds() const {
+	inline uint64_t now_microseconds() const {
 		struct timespec time;
 #    if defined(CLOCK_MONOTONIC_RAW)
 		clock_gettime(CLOCK_MONOTONIC_RAW, &time);
@@ -54,7 +53,6 @@ private:
 #endif
 };
 
-} // namespace Server
 } // namespace Ingen
 
 #endif // INGEN_ENGINE_CLOCK_HPP

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -18,8 +18,9 @@
 #define INGEN_ENGINE_TASK_HPP
 
 #include <cassert>
+#include <deque>
+#include <memory>
 #include <ostream>
-#include <vector>
 
 namespace Ingen {
 namespace Server {
@@ -27,7 +28,7 @@ namespace Server {
 class BlockImpl;
 class RunContext;
 
-class Task : public std::vector<Task> {
+class Task {
 public:
 	enum class Mode {
 		SINGLE,      ///< Single block to run
@@ -35,7 +36,7 @@ public:
 		PARALLEL     ///< Elements may be run in any order in parallel
 	};
 
-	Task(Mode mode, BlockImpl* block=NULL)
+	Task(Mode mode, BlockImpl* block = nullptr)
 		: _block(block)
 		, _mode(mode)
 		, _done_end(0)
@@ -45,23 +46,13 @@ public:
 		assert(!(mode == Mode::SINGLE && !block));
 	}
 
-	Task& operator=(const Task& copy) {
-		*static_cast<std::vector<Task>*>(this) = copy;
-		_block    = copy._block;
-		_mode     = copy._mode;
-		_done_end = copy._done_end;
-		_next     = copy._next.load();
-		_done     = copy._done.load();
-		return *this;
-	}
-
-	Task(const Task& copy)
-		: std::vector<Task>(copy)
-		, _block(copy._block)
-		, _mode(copy._mode)
-		, _done_end(copy._done_end)
-		, _next(copy._next.load())
-		, _done(copy._done.load())
+	Task(Task&& task)
+		: _children(std::move(task._children))
+		, _block(task._block)
+		, _mode(task._mode)
+		, _done_end(task._done_end)
+		, _next(task._next.load())
+		, _done(task._done.load())
 	{}
 
 	/** Run task in the given context. */
@@ -70,11 +61,19 @@ public:
 	/** Pretty print task to the given stream (recursively). */
 	void dump(std::function<void (const std::string&)> sink, unsigned indent, bool first) const;
 
+	/** Return true iff this is an empty task. */
+	bool empty() const { return _mode != Mode::SINGLE && _children.empty(); }
+
 	/** Simplify task expression. */
-	void simplify();
+	static std::unique_ptr<Task> simplify(std::unique_ptr<Task>&& task);
 
 	/** Steal a child task from this task (succeeds for PARALLEL only). */
 	Task* steal(RunContext& context);
+
+	/** Prepend a child to this task. */
+	void push_front(Task&& task) {
+		_children.push_front(std::unique_ptr<Task>(new Task(std::move(task))));
+	}
 
 	Mode       mode()  const { return _mode; }
 	BlockImpl* block() const { return _block; }
@@ -83,8 +82,14 @@ public:
 	void set_done(bool done) { _done = done; }
 
 private:
+	typedef std::deque<std::unique_ptr<Task>> Children;
+
+	Task(const Task&) = delete;
+	Task& operator=(const Task&) = delete;
+
 	Task* get_task(RunContext& context);
 
+	Children              _children;  ///< Vector of child tasks
 	BlockImpl*            _block;     ///< Used for SINGLE only
 	Mode                  _mode;      ///< Execution mode
 	unsigned              _done_end;  ///< Index of rightmost done sub-task

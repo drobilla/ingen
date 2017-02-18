@@ -51,77 +51,12 @@
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
 
+#include "TestClient.hpp"
+
 using namespace std;
 using namespace Ingen;
 
 World* world = NULL;
-
-class TestClient : public Interface
-{
-public:
-	explicit TestClient(Log& log) : _log(log) {}
-	~TestClient() {}
-
-	Raul::URI uri() const { return Raul::URI("ingen:testClient"); }
-
-	void bundle_begin() {}
-
-	void bundle_end() {}
-
-	void put(const Raul::URI&  uri,
-	         const Properties& properties,
-	         Resource::Graph   ctx = Resource::Graph::DEFAULT) {}
-
-	void delta(const Raul::URI&  uri,
-	           const Properties& remove,
-	           const Properties& add) {}
-
-	void copy(const Raul::URI& old_uri,
-	          const Raul::URI& new_uri) {}
-
-	void move(const Raul::Path& old_path,
-	          const Raul::Path& new_path) {}
-
-	void del(const Raul::URI& uri) {}
-
-	void connect(const Raul::Path& tail,
-	             const Raul::Path& head) {}
-
-	void disconnect(const Raul::Path& tail,
-	                const Raul::Path& head) {}
-
-	void disconnect_all(const Raul::Path& parent_patch_path,
-	                    const Raul::Path& path) {}
-
-	void set_property(const Raul::URI& subject,
-	                  const Raul::URI& predicate,
-	                  const Atom&      value) {}
-
-	void set_response_id(int32_t id) {}
-
-	void get(const Raul::URI& uri) {}
-
-	void undo() {}
-
-	void redo() {}
-
-	void response(int32_t id, Status status, const std::string& subject) {
-		if (status != Status::SUCCESS) {
-			_log.error(fmt("error on message %1%: %2% (%3%)\n")
-			           % id % ingen_status_string(status) % subject);
-			exit(EXIT_FAILURE);
-		}
-	}
-
-	void error(const std::string& msg) {
-		_log.error(fmt("error: %1%\n") % msg);
-		exit(EXIT_FAILURE);
-	}
-
-private:
-	Log& _log;
-};
-
 
 static void
 ingen_try(bool cond, const char* msg)
@@ -141,7 +76,8 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = new World(argc, argv, NULL, NULL, NULL);
+		world = new World(NULL, NULL, NULL);
+		world->load_configuration(argc, argv);
 	} catch (std::exception& e) {
 		cout << "ingen: " << e.what() << endl;
 		return EXIT_FAILURE;

@@ -110,9 +110,10 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 		}
 	}
 
-	ui->world = new Ingen::World(ui->argc, ui->argv, map, unmap, log);
-
+	ui->world = new Ingen::World(map, unmap, log);
 	ui->forge = new Ingen::Forge(ui->world->uri_map());
+
+	ui->world->load_configuration(ui->argc, ui->argv);
 
 	if (!ui->world->load_module("client")) {
 		delete ui;

@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2015-2016 David Robillard <http://drobilla.net/>
+  Copyright 2015-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -40,10 +40,22 @@ public:
 	const BlockImpl* root;
 };
 
+static bool
+has_provider_with_many_dependants(BlockImpl* n)
+{
+	for (BlockImpl* p : n->providers()) {
+		if (p->dependants().size() > 1) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 CompiledGraph::CompiledGraph(GraphImpl* graph)
 	: _log(graph->engine().log())
 	, _path(graph->path())
-	, _master(Task::Mode::SEQUENTIAL)
+	, _master(new Task(Task::Mode::SEQUENTIAL))
 {
 	compile_graph(graph);
 }
@@ -66,18 +78,31 @@ CompiledGraph::compile(Raul::Maid& maid, GraphImpl& graph)
 	}
 }
 
-void
-CompiledGraph::compile_set(const std::set<BlockImpl*>& blocks,
-                           Task&                       task,
-                           std::set<BlockImpl*>&       k)
+static size_t
+num_unvisited_dependants(BlockImpl* block)
 {
-	// Keep compiling working set until all nodes are visited
-	for (BlockImpl* block : blocks)  {
-		// Each block is the start of a new sequential task
-		Task seq(Task::Mode::SEQUENTIAL);
-		compile_block(block, seq, k);
-		task.push_back(seq);
+	size_t count = 0;
+	for (BlockImpl* b : block->dependants()) {
+		if (b->get_mark() == BlockImpl::Mark::UNVISITED) {
+			++count;
+		}
 	}
+	return count;
+}
+
+static size_t
+parallel_depth(BlockImpl* block)
+{
+	if (has_provider_with_many_dependants(block)) {
+		return 2;
+	}
+
+	size_t min_provider_depth = std::numeric_limits<size_t>::max();
+	for (auto p : block->providers()) {
+		min_provider_depth = std::min(min_provider_depth, parallel_depth(p));
+	}
+
+	return 2 + min_provider_depth;
 }
 
 void
@@ -91,41 +116,34 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 		// Mark all blocks as unvisited initially
 		b.set_mark(BlockImpl::Mark::UNVISITED);
 
-		if (b.providers().empty()) {
-			// Block has no dependencies, add to initial working set
+		if (b.dependants().empty()) {
+			// Block has no dependants, add to initial working set
 			blocks.insert(&b);
 		}
 	}
 
-	// Compile initial working set into master task
-	Task                 start(Task::Mode::PARALLEL);
-	std::set<BlockImpl*> next;
-	compile_set(blocks, start, next);
-	_master.push_back(start);
+	// Keep compiling working set until all nodes are visited
+	while (!blocks.empty()) {
+		std::set<BlockImpl*> predecessors;
 
-	// Keep compiling working set until all connected nodes are visited
-	while (!next.empty()) {
-		blocks.clear();
-		// The working set is a parallel task...
+		// Calculate maximum sequential depth to consume this phase
+		size_t depth = std::numeric_limits<size_t>::max();
+		for (auto i : blocks) {
+			depth = std::min(depth, parallel_depth(i));
+		}
+
 		Task par(Task::Mode::PARALLEL);
-		for (BlockImpl* block : next)  {
-			// ... where each block is the start of a new sequential task
+		for (auto b : blocks) {
+			assert(num_unvisited_dependants(b) == 0);
 			Task seq(Task::Mode::SEQUENTIAL);
-			compile_block(block, seq, blocks);
-			par.push_back(seq);
+			compile_block(b, seq, depth, predecessors);
+			par.push_front(std::move(seq));
 		}
-		_master.push_back(par);
-		next = blocks;
+		_master->push_front(std::move(par));
+		blocks = predecessors;
 	}
 
-	// Compile any nodes that weren't reached (disconnected cycles)
-	for (auto& b : graph->blocks()) {
-		if (b.get_mark() == BlockImpl::Mark::UNVISITED) {
-			compile_block(&b, _master, next);
-		}
-	}
-
-	_master.simplify();
+	_master = Task::simplify(std::move(_master));
 
 	if (graph->engine().world()->conf().option("trace").get<int32_t>()) {
 		dump([this](const std::string& msg) {
@@ -137,75 +155,93 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 
 /** Throw a FeedbackException iff `dependant` has `root` as a dependency. */
 static void
-check_feedback(const BlockImpl* root, BlockImpl* dependant)
+check_feedback(const BlockImpl* root, BlockImpl* provider)
 {
-	if (dependant == root) {
+	if (provider == root) {
 		throw FeedbackException(root);
 	}
 
-	for (auto& d : dependant->dependants()) {
-		const BlockImpl::Mark mark = d->get_mark();
+	for (auto p : provider->providers()) {
+		const BlockImpl::Mark mark = p->get_mark();
 		switch (mark) {
 		case BlockImpl::Mark::UNVISITED:
-			d->set_mark(BlockImpl::Mark::VISITING);
-			check_feedback(root, d);
+			p->set_mark(BlockImpl::Mark::VISITING);
+			check_feedback(root, p);
 			break;
 		case BlockImpl::Mark::VISITING:
-			throw FeedbackException(d, root);
+			throw FeedbackException(p, root);
 		case BlockImpl::Mark::VISITED:
 			break;
 		}
-		d->set_mark(mark);
+		p->set_mark(mark);
 	}
 }
 
 void
-CompiledGraph::compile_dependant(const BlockImpl*      root,
-                                 BlockImpl*            block,
-                                 Task&                 task,
-                                 std::set<BlockImpl*>& k)
+CompiledGraph::compile_provider(const BlockImpl*      root,
+                                BlockImpl*            block,
+                                Task&                 task,
+                                size_t                max_depth,
+                                std::set<BlockImpl*>& k)
 {
-	if (block->providers().size() > 1) {
-		/* Dependant has other providers, so this is the start of a sequential task.
-		   Add dependant to future working set and stop traversal. */
+	if (block->dependants().size() > 1) {
+		/* Provider has other dependants, so this is the tail of a sequential task.
+		   Add provider to future working set and stop traversal. */
 		check_feedback(root, block);
-		k.insert(block);
-	} else {
-		// Dependant has only this provider, add here
+		if (num_unvisited_dependants(block) == 0) {
+			k.insert(block);
+		}
+	} else if (max_depth > 0) {
+		// Calling dependant has only this provider, add here
 		if (task.mode() == Task::Mode::PARALLEL) {
 			// Inside a parallel task, compile into a new sequential child
 			Task seq(Task::Mode::SEQUENTIAL);
-			compile_block(block, seq, k);
-			task.push_back(seq);
+			compile_block(block, seq, max_depth, k);
+			task.push_front(std::move(seq));
 		} else {
-			// Append to given sequential task
-			compile_block(block, task, k);
+			// Prepend to given sequential task
+			compile_block(block, task, max_depth, k);
+		}
+	} else {
+		if (num_unvisited_dependants(block) == 0) {
+			k.insert(block);
 		}
 	}
 }
 
 void
-CompiledGraph::compile_block(BlockImpl* n, Task& task, std::set<BlockImpl*>& k)
+CompiledGraph::compile_block(BlockImpl*            n,
+                             Task&                 task,
+                             size_t                max_depth,
+                             std::set<BlockImpl*>& k)
 {
 	switch (n->get_mark()) {
 	case BlockImpl::Mark::UNVISITED:
 		n->set_mark(BlockImpl::Mark::VISITING);
 
-		// Execute this task before the dependants to follow
-		task.push_back(Task(Task::Mode::SINGLE, n));
+		// Execute this task after the providers to follow
+		task.push_front(Task(Task::Mode::SINGLE, n));
 
-		if (n->dependants().size() < 2) {
-			// Single dependant, append to this sequential task
-			for (auto& d : n->dependants()) {
-				compile_dependant(n, d, task, k);
+		if (n->providers().size() < 2) {
+			// Single provider, prepend it to this sequential task
+			for (auto p : n->providers()) {
+				compile_provider(n, p, task, max_depth - 1, k);
+			}
+		} else if (has_provider_with_many_dependants(n)) {
+			// Stop recursion and enqueue providers for the next round
+			for (auto p : n->providers()) {
+				if (num_unvisited_dependants(p) == 0) {
+					k.insert(p);
+				}
 			}
 		} else {
-			// Multiple dependants, create a new parallel task
+			// Multiple providers with only this node as dependant,
+			// make a new parallel task to execute them
 			Task par(Task::Mode::PARALLEL);
-			for (auto& d : n->dependants()) {
-				compile_dependant(n, d, par, k);
+			for (auto p : n->providers()) {
+				compile_provider(n, p, par, max_depth - 1, k);
 			}
-			task.push_back(par);
+			task.push_front(std::move(par));
 		}
 		n->set_mark(BlockImpl::Mark::VISITED);
 		break;
@@ -221,7 +257,7 @@ CompiledGraph::compile_block(BlockImpl* n, Task& task, std::set<BlockImpl*>& k)
 void
 CompiledGraph::run(RunContext& context)
 {
-	_master.run(context);
+	_master->run(context);
 }
 
 void
@@ -229,7 +265,7 @@ CompiledGraph::dump(std::function<void (const std::string&)> sink) const
 {
 	sink("(compiled-graph ");
 	sink(_path);
-	_master.dump(sink, 2, false);
+	_master->dump(sink, 2, false);
 	sink(")\n");
 }
 

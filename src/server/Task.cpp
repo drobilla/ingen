@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2015-2016 David Robillard <http://drobilla.net/>
+  Copyright 2015-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -30,14 +30,14 @@ Task::run(RunContext& context)
 		_block->process(context);
 		break;
 	case Mode::SEQUENTIAL:
-		for (Task& task : *this) {
-			task.run(context);
+		for (const auto& task : _children) {
+			task->run(context);
 		}
 		break;
 	case Mode::PARALLEL:
 		// Initialize (not) done state of sub-tasks
-		for (Task& task : *this) {
-			task.set_done(false);
+		for (const auto& task : _children) {
+			task->set_done(false);
 		}
 
 		// Grab the first sub-task
@@ -65,12 +65,12 @@ Task::steal(RunContext& context)
 {
 	if (_mode == Mode::PARALLEL) {
 		const unsigned i = _next++;
-		if (i < size()) {
-			return &(*this)[i];
+		if (i < _children.size()) {
+			return _children[i].get();
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 Task*
@@ -84,15 +84,16 @@ Task::get_task(RunContext& context)
 
 	while (true) {
 		// Push done end index as forward as possible
-		for (; _done_end < size() && (*this)[_done_end].done(); ++_done_end) {}
+		while (_done_end < _children.size() && _children[_done_end]->done()) {
+			++_done_end;
+		}
 
-		if (_done_end >= size()) {
-			return NULL;  // All child tasks are finished
+		if (_done_end >= _children.size()) {
+			return nullptr;  // All child tasks are finished
 		}
 
 		// All child tasks claimed, but some are unfinished, steal a task
-		t = context.engine().steal_task(context.id() + 1);
-		if (t) {
+		if ((t = context.engine().steal_task(context.id() + 1))) {
 			return t;
 		}
 
@@ -104,30 +105,36 @@ Task::get_task(RunContext& context)
 	}
 }
 
-void
-Task::simplify()
+std::unique_ptr<Task>
+Task::simplify(std::unique_ptr<Task>&& task)
 {
-	if (_mode != Mode::SINGLE) {
-		for (std::vector<Task>::iterator t = begin(); t != end();) {
-			t->simplify();
-			if (t->mode() != Mode::SINGLE && t->empty()) {
-				// Empty task, erase
-				t = erase(t);
-			} else if (t->mode() == _mode) {
-				// Subtask with the same type, fold child into parent
-				const Task child(*t);
-				t = erase(t);
-				t = insert(t, child.begin(), child.end());
-			} else {
-				++t;
-			}
-		}
+	if (task->mode() == Mode::SINGLE) {
+		return std::move(task);
+	}
 
-		if (size() == 1) {
-			const Task t(front());
-			*this = t;
+	for (auto t = task->_children.begin(); t != task->_children.end();) {
+		*t = simplify(std::move(*t));
+		if ((*t)->empty()) {
+			// Empty task, erase
+			t = task->_children.erase(t);
+		} else if ((*t)->mode() == task->_mode) {
+			// Subtask with the same type, fold child into parent
+			std::unique_ptr<Task> child(std::move(*t));
+			t = task->_children.erase(t);
+			t = task->_children.insert(
+				t,
+				std::make_move_iterator(child->_children.begin()),
+				std::make_move_iterator(child->_children.end()));
+		} else {
+			++t;
 		}
 	}
+
+	if (task->_children.size() == 1) {
+		return std::move(task->_children.front());
+	}
+
+	return std::move(task);
 }
 
 void
@@ -144,8 +151,8 @@ Task::dump(std::function<void (const std::string&)> sink, unsigned indent, bool 
 		sink(_block->path());
 	} else {
 		sink(((_mode == Mode::SEQUENTIAL) ? "(seq " : "(par "));
-		for (size_t i = 0; i < size(); ++i) {
-			(*this)[i].dump(sink, indent + 5, i == 0);
+		for (size_t i = 0; i < _children.size(); ++i) {
+			_children[i]->dump(sink, indent + 5, i == 0);
 		}
 		sink(")");
 	}

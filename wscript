@@ -239,15 +239,16 @@ def build(bld):
 
     # Test program
     if bld.env.BUILD_TESTS:
-        obj = bld(features     = 'cxx cxxprogram',
-                  source       = 'tests/ingen_test.cpp',
-                  target       = 'tests/ingen_test',
-                  includes     = ['.'],
-                  use          = 'libingen_profiled',
-                  install_path = '',
-                  cxxflags     = bld.env.INGEN_TEST_CXXFLAGS,
-                  linkflags    = bld.env.INGEN_TEST_LINKFLAGS)
-    autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2 SRATOM')
+        for i in ['ingen_test', 'ingen_bench']:
+            obj = bld(features     = 'cxx cxxprogram',
+                      source       = 'tests/%s.cpp' % i,
+                      target       = 'tests/%s' % i,
+                      includes     = ['.'],
+                      use          = 'libingen_profiled',
+                      install_path = '',
+                      cxxflags     = bld.env.INGEN_TEST_CXXFLAGS,
+                      linkflags    = bld.env.INGEN_TEST_LINKFLAGS)
+            autowaf.use_lib(bld, obj, 'GTHREAD GLIBMM SORD RAUL LILV INGEN LV2 SRATOM')
 
     bld.install_files('${DATADIR}/applications', 'src/ingen/ingen.desktop')
     bld.install_files('${BINDIR}', 'scripts/ingenish', chmod=Utils.O755)

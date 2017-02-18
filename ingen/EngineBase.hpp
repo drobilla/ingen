@@ -79,7 +79,12 @@ public:
 	virtual void flush_events(const std::chrono::milliseconds& sleep_ms) = 0;
 
 	/**
-	   Locate to a given cycle.
+	   Advance audio time by the given number of frames.
+	*/
+	virtual void advance(uint32_t nframes) = 0;
+
+	/**
+	   Locate to a given audio position.
 	*/
 	virtual void locate(uint32_t start, uint32_t sample_count) = 0;
 

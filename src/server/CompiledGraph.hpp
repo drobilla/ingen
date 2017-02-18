@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -61,16 +61,21 @@ private:
 	typedef std::set<BlockImpl*> BlockSet;
 
 	void compile_graph(GraphImpl* graph);
-	void compile_set(const BlockSet& blocks, Task& task, BlockSet& k);
-	void compile_block(BlockImpl* block, Task& task, BlockSet& k);
-	void compile_dependant(const BlockImpl* root,
-	                       BlockImpl*       block,
-	                       Task&            task,
-	                       BlockSet&        k);
 
-	Log&             _log;
-	const Raul::Path _path;
-	Task             _master;
+	void compile_block(BlockImpl* block,
+	                   Task&      task,
+	                   size_t     max_depth,
+	                   BlockSet&  k);
+
+	void compile_provider(const BlockImpl* root,
+	                      BlockImpl*       block,
+	                      Task&            task,
+	                      size_t           max_depth,
+	                      BlockSet&        k);
+
+	Log&                  _log;
+	const Raul::Path      _path;
+	std::unique_ptr<Task> _master;
 };
 
 } // namespace Server

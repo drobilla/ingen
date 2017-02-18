@@ -507,9 +507,9 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	}
 
 	IngenPlugin* plugin = new IngenPlugin();
-	plugin->map = map;
-	plugin->world = new Ingen::World(
-		plugin->argc, plugin->argv, map, unmap, log);
+	plugin->map   = map;
+	plugin->world = new Ingen::World(map, unmap, log);
+	plugin->world->load_configuration(plugin->argc, plugin->argv);
 
 	LV2_URID bufsz_max    = map->map(map->handle, LV2_BUF_SIZE__maxBlockLength);
 	LV2_URID bufsz_seq    = map->map(map->handle, LV2_BUF_SIZE__sequenceSize);

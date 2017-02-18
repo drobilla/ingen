@@ -64,19 +64,19 @@ class URIs;
 class INGEN_API World : public Raul::Noncopyable {
 public:
 	/** Construct a new Ingen world.
-	 * @param argc Argument count (as in C main())
-	 * @param argv Argument vector (as in C main())
 	 * @param map LV2 URID map implementation, or NULL to use internal.
 	 * @param unmap LV2 URID unmap implementation, or NULL to use internal.
 	 * @param log LV2 log implementation, or NULL to use internal.
 	 */
-	World(int&            argc,
-	      char**&         argv,
-	      LV2_URID_Map*   map,
-	      LV2_URID_Unmap* unmap,
-	      LV2_Log_Log*    log);
+	World(LV2_URID_Map* map, LV2_URID_Unmap* unmap, LV2_Log_Log* log);
 
 	virtual ~World();
+
+	/** Load configuration from files and command line.
+	 * @param argc Argument count (as in C main())
+	 * @param argv Argument vector (as in C main())
+	 */
+	virtual void load_configuration(int& argc, char**& argv);
 
 	/** Load an Ingen module by name (e.g. "server", "gui", etc.)
 	 * @return True on success.
