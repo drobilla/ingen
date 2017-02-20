@@ -90,7 +90,7 @@ JackDriver::attach(const std::string& server_name,
 			_client = jack_client_open(client_name.c_str(),
 			                           JackSessionID, NULL,
 			                           uuid.c_str());
-			_engine.log().info(fmt("Connected to JACK as `%1%' (UUID `%2%')\n")
+			_engine.log().info(fmt("Connected to Jack as `%1%' (UUID `%2%')\n")
 			                   % client_name.c_str() % uuid);
 		}
 #endif
@@ -100,7 +100,7 @@ JackDriver::attach(const std::string& server_name,
 			if ((_client = jack_client_open(client_name.c_str(),
 			                                JackServerName, NULL,
 			                                server_name.c_str()))) {
-				_engine.log().info(fmt("Connected to JACK server `%1%'\n")
+				_engine.log().info(fmt("Connected to Jack server `%1%'\n")
 				                   % server_name);
 			}
 		}
@@ -109,7 +109,7 @@ JackDriver::attach(const std::string& server_name,
 		// Connect to default server
 		if (!_client) {
 			if ((_client = jack_client_open(client_name.c_str(), JackNullOption, NULL)))
-				_engine.log().info("Connected to default JACK server\n");
+				_engine.log().info("Connected to default Jack server\n");
 		}
 
 		// Still failed
