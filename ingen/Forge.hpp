@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -35,7 +35,7 @@ class INGEN_API Forge : public LV2_Atom_Forge {
 public:
 	explicit Forge(URIMap& map);
 
-	std::string str(const Atom& atom, bool quoted=true);
+	std::string str(const Atom& atom, bool quoted);
 
 	bool is_uri(const Atom& atom) const {
 		return atom.type() == URI || atom.type() == URID;

@@ -444,7 +444,7 @@ GraphBox::show_port_status(const PortModel* port, const Atom& value)
 	}
 
 	if (value.is_valid()) {
-		msg << " = " << _app->forge().str(value);
+		msg << " = " << _app->forge().str(value, true);
 	}
 
 	_status_bar->pop(STATUS_CONTEXT_HOVER);

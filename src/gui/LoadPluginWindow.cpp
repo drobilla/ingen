@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -450,7 +450,11 @@ LoadPluginWindow::filter_changed()
 				field = name.ptr<char>();
 			break;
 		case CriteriaColumns::Criteria::TYPE:
-			field = plugin->type_uri();
+			if (plugin->lilv_plugin()) {
+				field = lilv_node_as_string(
+					lilv_plugin_class_get_label(
+						lilv_plugin_get_class(plugin->lilv_plugin())));
+			}
 			break;
 		case CriteriaColumns::Criteria::PROJECT:
 			field = get_project_name(plugin);

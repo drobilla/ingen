@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2015 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -56,7 +56,7 @@ public:
 	const Atom&     type()     const { return _type; }
 	const Raul::URI type_uri() const {
 		return Raul::URI(_type.is_valid()
-		                 ? _uris.forge.str(_type)
+		                 ? _uris.forge.str(_type, false)
 		                 : "http://www.w3.org/2002/07/owl#Nothing");
 	}
 

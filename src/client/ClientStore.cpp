@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -143,8 +143,8 @@ ClientStore::_plugin(const Raul::URI& uri)
 SPtr<PluginModel>
 ClientStore::_plugin(const Atom& uri)
 {
-	/* FIXME: SHould probably be stored with URIs rather than strings, to make this
-	   a fast case. */
+	/* FIXME: Should probably be stored with URIs rather than strings, to make
+	   this a fast case. */
 
 	const Plugins::iterator i = _plugins->find(Raul::URI(_uris.forge.str(uri, false)));
 	return (i == _plugins->end()) ? SPtr<PluginModel>() : (*i).second;
@@ -263,7 +263,7 @@ ClientStore::put(const Raul::URI&  uri,
 				_log.error(fmt("Preset <%1%> label is not a string\n") % uri.c_str());
 			} else if (!(plug = _plugin(p->second))) {
 				_log.error(fmt("Preset <%1%> for unknown plugin %2%\n")
-				           % uri.c_str() % _uris.forge.str(p->second));
+				           % uri.c_str() % _uris.forge.str(p->second, true));
 			} else {
 				plug->add_preset(uri, l->second.ptr<char>());
 			}
@@ -374,7 +374,7 @@ ClientStore::set_property(const Raul::URI& subject_uri,
 {
 	if (subject_uri == Raul::URI("ingen:/engine")) {
 		_log.info(fmt("Engine property <%1%> = %2%\n")
-		          % predicate.c_str() % _uris.forge.str(value));
+		          % predicate.c_str() % _uris.forge.str(value, false));
 		return;
 	}
 	SPtr<Resource> subject = _resource(subject_uri);
