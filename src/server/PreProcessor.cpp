@@ -181,7 +181,7 @@ PreProcessor::run()
 
 	Event* back = NULL;
 	while (!_exit_flag) {
-		if (!_sem.timed_wait(1000)) {
+		if (!_sem.timed_wait(std::chrono::seconds(1))) {
 			continue;
 		}
 
