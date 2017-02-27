@@ -57,9 +57,7 @@ def configure(conf):
         conf.load('python')
 
     autowaf.configure(conf)
-
-    conf.check_cxx(cxxflags=["-std=c++0x"])
-    conf.env.append_unique('CXXFLAGS', ['-std=c++0x'])
+    autowaf.set_cxx11_mode(conf)
 
     conf.check_cxx(header_name='boost/format.hpp')
     conf.check_cxx(header_name='boost/shared_ptr.hpp')
