@@ -389,7 +389,7 @@ ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 	const Ingen::URIs& uris  = world->uris();
 
 	_feedback->clear();
-	if (!_learn_binding && _bindings->empty()) {
+	if ((!_learn_binding && _bindings->empty()) || !buffer->get<LV2_Atom>()) {
 		return;  // Don't bother reading input
 	}
 
@@ -417,7 +417,9 @@ ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 void
 ControlBindings::post_process(RunContext& context, Buffer* buffer)
 {
-	buffer->append_event_buffer(_feedback.get());
+	if (buffer->get<LV2_Atom>()) {
+		buffer->append_event_buffer(_feedback.get());
+	}
 }
 
 } // namespace Server
