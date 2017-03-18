@@ -114,7 +114,10 @@ public:
 		, _frame_time(0)
 		, _to_ui_overflow_sem(0)
 		, _to_ui_overflow(false)
+		, _instantiated(false)
 	{}
+
+	virtual bool dynamic_ports() const { return !_instantiated; }
 
 	void pre_process_port(RunContext& context, EnginePort* port) {
 		const URIs&       uris       = _engine.world()->uris();
@@ -372,6 +375,8 @@ public:
 
 	Ports& ports() { return _ports; }
 
+	void set_instantiated(bool instantiated) { _instantiated = instantiated; }
+
 private:
 	Engine&          _engine;
 	Ports            _ports;
@@ -388,6 +393,7 @@ private:
 	SampleCount      _frame_time;
 	Raul::Semaphore  _to_ui_overflow_sem;
 	bool             _to_ui_overflow;
+	bool             _instantiated;
 };
 
 } // namespace Server
@@ -585,6 +591,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	interface->set_respondee(client);
 	engine->register_client(client);
 
+	driver->set_instantiated(true);
 	return (LV2_Handle)plugin;
 }
 
