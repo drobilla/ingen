@@ -76,7 +76,7 @@ Delete::pre_process(PreProcessContext& ctx)
 		_port = dynamic_ptr_cast<DuplexPort>(iter->second);
 	}
 
-	if (!_block && !_port) {
+	if ((!_block && !_port) || (_port && !_engine.driver()->dynamic_ports())) {
 		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
 	}
 
