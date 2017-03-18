@@ -756,6 +756,7 @@ ingen_restore(LV2_Handle                  instance,
 		return LV2_STATE_ERR_UNKNOWN;
 	}
 
+#if 0
 	// Remove existing root graph contents
 	SPtr<Engine> engine = plugin->engine;
 	for (const auto& b : engine->root_graph()->blocks()) {
@@ -769,6 +770,7 @@ ingen_restore(LV2_Handle                  instance,
 			plugin->world->interface()->del(port->uri());
 		}
 	}
+#endif
 
 	// Load new graph
 	std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());
