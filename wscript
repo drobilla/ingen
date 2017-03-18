@@ -82,7 +82,7 @@ def configure(conf):
     autowaf.check_pkg(conf, 'lilv-0', uselib_store='LILV',
                       atleast_version='0.21.5', mandatory=True)
     autowaf.check_pkg(conf, 'suil-0', uselib_store='SUIL',
-                      atleast_version='0.2.0', mandatory=True)
+                      atleast_version='0.8.7', mandatory=True)
     autowaf.check_pkg(conf, 'sratom-0', uselib_store='SRATOM',
                       atleast_version='0.4.6', mandatory=True)
     autowaf.check_pkg(conf, 'raul', uselib_store='RAUL',

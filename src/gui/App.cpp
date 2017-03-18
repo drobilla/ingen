@@ -36,6 +36,7 @@
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
 #include "raul/Path.hpp"
+#include "suil/suil.h"
 
 #include "App.hpp"
 #include "ConnectWindow.hpp"
@@ -113,6 +114,8 @@ App::~App()
 SPtr<App>
 App::create(Ingen::World* world)
 {
+	suil_init(&world->argc(), &world->argv(), SUIL_ARG_NONE);
+
 	// Add RC file for embedded GUI Gtk style
 	const std::string rc_path = Ingen::data_file_path("ingen_style.rc");
 	Gtk::RC::add_default_file(rc_path);
