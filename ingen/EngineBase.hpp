@@ -39,16 +39,6 @@ public:
 	virtual ~EngineBase() {}
 
 	/**
-	   Initialise the engine for local use (e.g. without a Jack driver).
-	   @param sample_rate Audio sampling rate in Hz.
-	   @param block_length Audio block length (i.e. buffer size) in frames.
-	   @param seq_size Sequence buffer size in bytes.
-	*/
-	virtual void init(double   sample_rate,
-	                  uint32_t block_length,
-	                  size_t   seq_size) = 0;
-
-	/**
 	   Activate the engine.
 	*/
 	virtual bool activate() = 0;

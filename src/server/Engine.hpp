@@ -76,7 +76,6 @@ public:
 	virtual ~Engine();
 
 	// EngineBase methods
-	virtual void init(double sample_rate, uint32_t block_length, size_t seq_size);
 	virtual bool activate();
 	virtual void deactivate();
 	virtual bool pending_events();
@@ -205,7 +204,6 @@ private:
 
 	bool _quit_flag;
 	bool _reset_load_flag;
-	bool _direct_driver;
 	bool _atomic_bundles;
 	bool _activated;
 };

@@ -40,7 +40,6 @@
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
 #include "ControlBindings.hpp"
-#include "DirectDriver.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "Event.hpp"
@@ -90,7 +89,6 @@ Engine::Engine(Ingen::World* world)
 	, _uniform_dist(0.0f, 1.0f)
 	, _quit_flag(false)
 	, _reset_load_flag(false)
-	, _direct_driver(true)
 	, _atomic_bundles(world->conf().option("atomic-bundles").get<int32_t>())
 	, _activated(false)
 {
@@ -379,12 +377,7 @@ Engine::event_time()
 		return 0;
 	}
 
-	// FIXME: Jitter with direct driver
-	const SampleCount now = _direct_driver
-		? run_context().start()
-		: _driver->frame_time();
-
-	return now + _driver->block_length();
+	return _driver->frame_time() + _driver->block_length();
 }
 
 uint64_t
@@ -397,13 +390,6 @@ void
 Engine::reset_load()
 {
 	_reset_load_flag = true;
-}
-
-void
-Engine::init(double sample_rate, uint32_t block_length, size_t seq_size)
-{
-	set_driver(SPtr<Driver>(new DirectDriver(sample_rate, block_length, seq_size)));
-	_direct_driver = true;
 }
 
 bool
