@@ -63,7 +63,8 @@ public:
 
 	virtual void delta(const Raul::URI&  path,
 	                   const Properties& remove,
-	                   const Properties& add);
+	                   const Properties& add,
+	                   Resource::Graph   ctx = Resource::Graph::DEFAULT);
 
 	virtual void copy(const Raul::URI& old_uri,
 	                  const Raul::URI& new_uri);
@@ -79,7 +80,8 @@ public:
 
 	virtual void set_property(const Raul::URI& subject_path,
 	                          const Raul::URI& predicate,
-	                          const Atom&      value);
+	                          const Atom&      value,
+	                          Resource::Graph  ctx = Resource::Graph::DEFAULT);
 
 	virtual void del(const Raul::URI& uri);
 

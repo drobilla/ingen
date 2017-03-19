@@ -272,3 +272,13 @@ ingen:numThreads
 	rdfs:label "number of threads" ;
 	ingen:shortSwitch "p" ;
 	ingen:longSwitch "threads" .
+
+ingen:externalContext
+	a rdfs:Resource ;
+	rdfs:label "external context" ;
+	rdfs:comment """The context for externally visible Graph properties, that is, properties which apply to the Graph when viewed as a Block within its parent Graph and should be saved in the parent's description.""" .
+
+ingen:internalContext
+	a rdfs:Resource ;
+	rdfs:label "internal context" ;
+	rdfs:comment """The context for internally visible Graph properties, that is, properties which are only relevant inside the graph and should be saved in the Graph's description.""" .

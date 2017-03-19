@@ -102,13 +102,14 @@ public:
 	void put(const Raul::URI&  uri,
 	         const Properties& properties,
 	         Resource::Graph   ctx = Resource::Graph::DEFAULT) {
-		BROADCAST(put, uri, properties);
+		BROADCAST(put, uri, properties, ctx);
 	}
 
 	void delta(const Raul::URI&  uri,
 	           const Properties& remove,
-	           const Properties& add) {
-		BROADCAST(delta, uri, remove, add);
+	           const Properties& add,
+	           Resource::Graph   ctx = Resource::Graph::DEFAULT) {
+		BROADCAST(delta, uri, remove, add, ctx);
 	}
 
 	void copy(const Raul::URI& old_uri,
@@ -142,8 +143,9 @@ public:
 
 	void set_property(const Raul::URI& subject,
 	                  const Raul::URI& predicate,
-	                  const Atom&      value) {
-		BROADCAST(set_property, subject, predicate, value);
+	                  const Atom&      value,
+	                  Resource::Graph  ctx = Resource::Graph::DEFAULT) {
+		BROADCAST(set_property, subject, predicate, value, ctx);
 	}
 
 	Raul::URI uri() const { return Raul::URI("ingen:/broadcaster"); }

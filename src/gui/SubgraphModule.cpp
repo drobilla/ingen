@@ -70,10 +70,10 @@ SubgraphModule::store_location(double ax, double ay)
 	if (x != _block->get_property(uris.ingen_canvasX) ||
 	    y != _block->get_property(uris.ingen_canvasY))
 	{
-		app().interface()->put(
-			_graph->uri(),
-			{{uris.ingen_canvasX, Property(x, Resource::Graph::EXTERNAL)},
-			 {uris.ingen_canvasY, Property(y, Resource::Graph::EXTERNAL)}});
+		app().interface()->put(_graph->uri(),
+		                       {{uris.ingen_canvasX, x},
+		                        {uris.ingen_canvasY, y}},
+		                       Resource::Graph::EXTERNAL);
 	}
 }
 

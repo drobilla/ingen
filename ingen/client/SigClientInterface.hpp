@@ -53,14 +53,14 @@ public:
 	INGEN_SIGNAL(bundle_end, void)
 	INGEN_SIGNAL(error, void, std::string)
 	INGEN_SIGNAL(put, void, Raul::URI, Properties, Resource::Graph)
-	INGEN_SIGNAL(delta, void, Raul::URI, Properties, Properties)
+	INGEN_SIGNAL(delta, void, Raul::URI, Properties, Properties, Resource::Graph)
 	INGEN_SIGNAL(object_copied, void, Raul::URI, Raul::URI)
 	INGEN_SIGNAL(object_moved, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(object_deleted, void, Raul::URI)
 	INGEN_SIGNAL(connection, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(disconnection, void, Raul::Path, Raul::Path)
 	INGEN_SIGNAL(disconnect_all, void, Raul::Path, Raul::Path)
-	INGEN_SIGNAL(property_change, void, Raul::URI, Raul::URI, Atom)
+	INGEN_SIGNAL(property_change, void, Raul::URI, Raul::URI, Atom, Resource::Graph)
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
@@ -90,8 +90,9 @@ protected:
 
 	void delta(const Raul::URI&  uri,
 	           const Properties& remove,
-	           const Properties& add)
-	{ EMIT(delta, uri, remove, add); }
+	           const Properties& add,
+	           Resource::Graph   ctx = Resource::Graph::DEFAULT)
+	{ EMIT(delta, uri, remove, add, ctx); }
 
 	void connect(const Raul::Path& tail, const Raul::Path& head)
 	{ EMIT(connection, tail, head); }
@@ -111,8 +112,11 @@ protected:
 	void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
 	{ EMIT(disconnect_all, graph, path); }
 
-	void set_property(const Raul::URI& subject, const Raul::URI& key, const Atom& value)
-	{ EMIT(property_change, subject, key, value); }
+	void set_property(const Raul::URI& subject,
+	                  const Raul::URI& key,
+	                  const Atom&      value,
+	                  Resource::Graph  ctx = Resource::Graph::DEFAULT)
+	{ EMIT(property_change, subject, key, value, ctx); }
 
 	void undo() {}
 	void redo() {}

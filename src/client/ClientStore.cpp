@@ -342,7 +342,8 @@ ClientStore::put(const Raul::URI&  uri,
 void
 ClientStore::delta(const Raul::URI&  uri,
                    const Properties& remove,
-                   const Properties& add)
+                   const Properties& add,
+                   Resource::Graph   ctx)
 {
 	if (uri == Raul::URI("ingen:/clients/this")) {
 		// Client property, which we don't store (yet?)
@@ -370,7 +371,8 @@ ClientStore::delta(const Raul::URI&  uri,
 void
 ClientStore::set_property(const Raul::URI& subject_uri,
                           const Raul::URI& predicate,
-                          const Atom&      value)
+                          const Atom&      value,
+                          Resource::Graph  ctx)
 {
 	if (subject_uri == Raul::URI("ingen:/engine")) {
 		_log.info(fmt("Engine property <%1%> = %2%\n")
@@ -384,7 +386,7 @@ ClientStore::set_property(const Raul::URI& subject_uri,
 			   blinkenlights) but do not store the property. */
 			subject->on_property(predicate, value);
 		} else {
-			subject->set_property(predicate, value);
+			subject->set_property(predicate, value, ctx);
 		}
 	} else {
 		SPtr<PluginModel> plugin = _plugin(subject_uri);

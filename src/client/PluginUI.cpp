@@ -73,7 +73,8 @@ lv2_ui_write(SuilController controller,
 		ui->signal_property_changed()(
 			port->uri(),
 			uris.ingen_value,
-			ui->world()->forge().make(value));
+			ui->world()->forge().make(value),
+			Resource::Graph::DEFAULT);
 
 	} else if (format == uris.atom_eventTransfer.urid.get<LV2_URID>()) {
 		const LV2_Atom* atom = (const LV2_Atom*)buffer;
@@ -81,8 +82,8 @@ lv2_ui_write(SuilController controller,
 			atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
 		ui->signal_property_changed()(port->uri(),
 		                              uris.ingen_activity,
-		                              val);
-
+		                              val,
+		                              Resource::Graph::DEFAULT);
 	} else {
 		ui->world()->log().warn(
 			fmt("Unknown value format %1% from LV2 UI\n")
@@ -119,7 +120,8 @@ lv2_ui_subscribe(SuilController            controller,
 	ui->signal_property_changed()(
 		ui->block()->ports()[port_index]->uri(),
 		ui->world()->uris().ingen_broadcast,
-		ui->world()->forge().make(true));
+		ui->world()->forge().make(true),
+		Resource::Graph::DEFAULT);
 
 	return 0;
 }
@@ -139,7 +141,8 @@ lv2_ui_unsubscribe(SuilController            controller,
 	ui->signal_property_changed()(
 		ui->block()->ports()[port_index]->uri(),
 		ui->world()->uris().ingen_broadcast,
-		ui->world()->forge().make(false));
+		ui->world()->forge().make(false),
+		Resource::Graph::DEFAULT);
 
 	return 0;
 }

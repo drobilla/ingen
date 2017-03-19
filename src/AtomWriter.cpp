@@ -165,6 +165,22 @@ AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
 	}
 }
 
+void
+AtomWriter::forge_context(Resource::Graph ctx)
+{
+	switch (ctx) {
+	case Resource::Graph::EXTERNAL:
+		lv2_atom_forge_key(&_forge, _uris.patch_context);
+		forge_uri(_uris.ingen_externalContext);
+		break;
+	case Resource::Graph::INTERNAL:
+		lv2_atom_forge_key(&_forge, _uris.patch_context);
+		forge_uri(_uris.ingen_internalContext);
+		break;
+	default: break;
+	}
+}
+
 /** @page protocol
  * @section methods Methods
  * @subsection Put
@@ -196,6 +212,7 @@ AtomWriter::put(const Raul::URI&  uri,
 {
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.patch_Put);
+	forge_context(ctx);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(uri);
 	lv2_atom_forge_key(&_forge, _uris.patch_body);
@@ -238,10 +255,12 @@ AtomWriter::put(const Raul::URI&  uri,
 void
 AtomWriter::delta(const Raul::URI&  uri,
                   const Properties& remove,
-                  const Properties& add)
+                  const Properties& add,
+                  Resource::Graph   ctx)
 {
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.patch_Patch);
+	forge_context(ctx);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(uri);
 
@@ -371,10 +390,12 @@ AtomWriter::del(const Raul::URI& uri)
 void
 AtomWriter::set_property(const Raul::URI& subject,
                          const Raul::URI& predicate,
-                         const Atom&      value)
+                         const Atom&      value,
+                         Resource::Graph  ctx)
 {
 	LV2_Atom_Forge_Frame msg;
 	forge_request(&msg, _uris.patch_Set);
+	forge_context(ctx);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(subject);
 	lv2_atom_forge_key(&_forge, _uris.patch_property);

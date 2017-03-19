@@ -78,7 +78,8 @@ public:
 	INGEN_SIGNAL(property_changed, void,
 	             const Raul::URI&,  // Subject
 	             const Raul::URI&,  // Predicate
-	             const Atom&);      // Object
+	             const Atom&,       // Object
+	             Resource::Graph);  // Context
 
 	Ingen::World*          world() const { return _world; }
 	SPtr<const BlockModel> block() const { return _block; }

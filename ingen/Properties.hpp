@@ -29,9 +29,9 @@ namespace Ingen {
 class Property : public Atom {
 public:
 	enum class Graph {
-		DEFAULT,
-		EXTERNAL,
-		INTERNAL
+		DEFAULT,  ///< Default context for "universal" properties
+		EXTERNAL, ///< Externally visible graph properties
+		INTERNAL  ///< Internally visible graph properties
 	};
 
 	Property(const Atom& atom, Graph ctx=Graph::DEFAULT)

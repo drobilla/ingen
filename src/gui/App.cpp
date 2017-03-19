@@ -258,17 +258,18 @@ App::error_message(const string& str)
 void
 App::set_property(const Raul::URI& subject,
                   const Raul::URI& key,
-                  const Atom&      value)
+                  const Atom&      value,
+                  Resource::Graph  ctx)
 {
 	// Send message to server
-	interface()->set_property(subject, key, value);
+	interface()->set_property(subject, key, value, ctx);
 
 	/* The server does not feed back set messages (kludge to prevent control
 	   feedback and bandwidth wastage, see Delta.cpp).  So, assume everything
 	   went as planned here and fire the signal ourselves as if the server
 	   feedback came back immediately. */
 	if (key != uris().ingen_activity) {
-		_client->signal_property_change().emit(subject, key, value);
+		_client->signal_property_change().emit(subject, key, value, ctx);
 	}
 }
 
@@ -298,7 +299,8 @@ App::put(const Raul::URI&  uri,
 void
 App::property_change(const Raul::URI& subject,
                      const Raul::URI& key,
-                     const Atom&      value)
+                     const Atom&      value,
+                     Resource::Graph  ctx)
 {
 	if (subject != Raul::URI("ingen:/engine")) {
 		return;

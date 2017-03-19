@@ -114,9 +114,11 @@ public:
 	const Quark ingen_canvasX;
 	const Quark ingen_canvasY;
 	const Quark ingen_enabled;
+	const Quark ingen_externalContext;
 	const Quark ingen_file;
 	const Quark ingen_head;
 	const Quark ingen_incidentTo;
+	const Quark ingen_internalContext;
 	const Quark ingen_loadedBundle;
 	const Quark ingen_maxRunLoad;
 	const Quark ingen_meanRunLoad;
@@ -186,6 +188,7 @@ public:
 	const Quark patch_Set;
 	const Quark patch_add;
 	const Quark patch_body;
+	const Quark patch_context;
 	const Quark patch_destination;
 	const Quark patch_property;
 	const Quark patch_remove;

@@ -101,7 +101,8 @@ public:
 
 	void set_property(const Raul::URI& subject,
 	                  const Raul::URI& key,
-	                  const Atom&      value);
+	                  const Atom&      value,
+	                  Resource::Graph  ctx = Resource::Graph::DEFAULT);
 
 	/** Set the tooltip for a widget from its RDF documentation. */
 	void set_tooltip(Gtk::Widget* widget, const LilvNode* node);
@@ -149,7 +150,8 @@ protected:
 
 	void property_change(const Raul::URI& subject,
 	                     const Raul::URI& key,
-	                     const Atom&      value);
+	                     const Atom&      value,
+	                     Resource::Graph  ctx = Resource::Graph::DEFAULT);
 
 	static Gtk::Main* _main;
 

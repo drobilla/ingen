@@ -52,7 +52,8 @@ public:
 
 	void delta(const Raul::URI&  uri,
 	           const Properties& remove,
-	           const Properties& add);
+	           const Properties& add,
+	           Resource::Graph   ctx = Resource::Graph::DEFAULT);
 
 	void copy(const Raul::URI& old_uri,
 	          const Raul::URI& new_uri);
@@ -73,7 +74,8 @@ public:
 
 	void set_property(const Raul::URI& subject,
 	                  const Raul::URI& predicate,
-	                  const Atom&      value);
+	                  const Atom&      value,
+	                  Resource::Graph  ctx = Resource::Graph::DEFAULT);
 
 	void undo();
 
@@ -92,6 +94,7 @@ private:
 	void forge_properties(const Properties& properties);
 	void forge_arc(const Raul::Path& tail, const Raul::Path& head);
 	void forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type);
+	void forge_context(Resource::Graph ctx);
 
 	void finish_msg();
 

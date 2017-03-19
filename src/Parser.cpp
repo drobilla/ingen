@@ -351,9 +351,8 @@ parse_graph(Ingen::World*                 world,
 {
 	const URIs& uris = world->uris();
 
-	const Sord::URI ingen_block(*world->rdf_world(),     uris.ingen_block);
-	const Sord::URI ingen_polyphony(*world->rdf_world(), uris.ingen_polyphony);
-	const Sord::URI lv2_port(*world->rdf_world(),        LV2_CORE__port);
+	const Sord::URI ingen_block(*world->rdf_world(), uris.ingen_block);
+	const Sord::URI lv2_port(*world->rdf_world(),    LV2_CORE__port);
 
 	const Sord::Node& graph = subject_node;
 	const Sord::Node  nil;
@@ -542,11 +541,11 @@ parse_properties(Ingen::World*               world,
 {
 	Properties properties = get_properties(world, model, subject, ctx);
 
-	target->put(uri, properties);
+	target->put(uri, properties, ctx);
 
 	// Set passed properties last to override any loaded values
 	if (data)
-		target->put(uri, data.get());
+		target->put(uri, data.get(), ctx);
 
 	return true;
 }

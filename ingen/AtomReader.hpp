@@ -51,6 +51,7 @@ private:
 
 	boost::optional<Raul::URI>  atom_to_uri(const LV2_Atom* atom);
 	boost::optional<Raul::Path> atom_to_path(const LV2_Atom* atom);
+	Resource::Graph             atom_to_context(const LV2_Atom* atom);
 
 	void get_props(const LV2_Atom_Object* obj,
 	               Ingen::Properties&     props);

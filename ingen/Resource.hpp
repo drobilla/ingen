@@ -57,25 +57,19 @@ public:
 
 	static Raul::URI graph_to_uri(Graph g) {
 		switch (g) {
-		case Graph::DEFAULT:  return Raul::URI(INGEN_NS "defaultContext");
 		case Graph::EXTERNAL: return Raul::URI(INGEN_NS "externalContext");
 		case Graph::INTERNAL: return Raul::URI(INGEN_NS "internalContext");
+		default:              return Raul::URI(INGEN_NS "defaultContext");
 		}
 	}
 
-	static Graph uri_to_graph(const char* uri) {
-		const char* suffix = uri + sizeof(INGEN_NS) - 1;
-		if (strncmp(uri, INGEN_NS, sizeof(INGEN_NS) - 1)) {
-			return Graph::DEFAULT;
-		} else if (!strcmp(suffix, "defaultContext")) {
-			return Graph::DEFAULT;
-		} else if (!strcmp(suffix, "externalContext")) {
+	static Graph uri_to_graph(const Raul::URI& uri) {
+		if (uri == INGEN_NS "externalContext") {
 			return Graph::EXTERNAL;
-		} else if (!strcmp(suffix, "internalContext")) {
+		} else if (uri == INGEN_NS "internalContext") {
 			return Graph::INTERNAL;
-		} else {
-			return Graph::DEFAULT;
 		}
+		return Graph::DEFAULT;
 	}
 
 	virtual ~Resource() {}

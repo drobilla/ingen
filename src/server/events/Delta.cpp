@@ -364,7 +364,7 @@ Delta::pre_process(PreProcessContext& ctx)
 						if (value.get<int32_t>() < 1 || value.get<int32_t>() > 128) {
 							_status = Status::INVALID_POLY;
 						} else {
-							op     = SpecialType::POLYPHONY;
+							op = SpecialType::POLYPHONY;
 							_graph->prepare_internal_poly(
 								*_engine.buffer_factory(), value.get<int32_t>());
 						}
@@ -585,7 +585,7 @@ Delta::post_process()
 			}
 			break;
 		case Type::PATCH:
-			_engine.broadcaster()->delta(_subject, _remove, _properties);
+			_engine.broadcaster()->delta(_subject, _remove, _properties, _context);
 			break;
 		}
 	}
@@ -597,15 +597,17 @@ Delta::undo(Interface& target)
 	if (_create_event) {
 		_create_event->undo(target);
 	} else if (_type == Type::PATCH) {
-		target.delta(_subject, _added, _removed);
+		target.delta(_subject, _added, _removed, _context);
 	} else if (_type == Type::SET || _type == Type::PUT) {
 		if (_removed.size() == 1) {
-			target.set_property(
-				_subject, _removed.begin()->first, _removed.begin()->second);
+			target.set_property(_subject,
+			                    _removed.begin()->first,
+			                    _removed.begin()->second,
+			                    _context);
 		} else if (_removed.empty()) {
-			target.delta(_subject, _added, {});
+			target.delta(_subject, _added, {}, _context);
 		} else {
-			target.put(_subject, _removed);
+			target.put(_subject, _removed, _context);
 		}
 	}
 }
