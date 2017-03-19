@@ -48,13 +48,6 @@ ingen:canvasY
 	rdfs:label "canvas Y" ;
 	rdfs:comment "The Y coordinate of an item on a canvas." .
 
-ingen:maxEventLoad
-	a rdf:Property ,
-		owl:DatatypeProperty ;
-	rdfs:range xsd:decimal ;
-	rdfs:label "maximum event load" ;
-	rdfs:comment "The maximum fraction of a cycle spent processing events." .
-
 ingen:minRunLoad
 	a rdf:Property ,
 		owl:DatatypeProperty ;

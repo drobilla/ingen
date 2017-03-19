@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -171,7 +171,6 @@ protected:
 	int32_t     _sample_rate;
 	int32_t     _block_length;
 	int32_t     _n_threads;
-	float       _max_event_load;
 	float       _mean_run_load;
 	float       _min_run_load;
 	float       _max_run_load;

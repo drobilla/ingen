@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -78,7 +78,6 @@ App::App(Ingen::World* world)
 	, _sample_rate(48000)
 	, _block_length(1024)
 	, _n_threads(1)
-	, _max_event_load(0.0f)
 	, _mean_run_load(0.0f)
 	, _min_run_load(0.0f)
 	, _max_run_load(0.0f)
@@ -309,8 +308,6 @@ App::property_change(const Raul::URI& subject,
 		_block_length = value.get<int32_t>();
 	} else if (key == uris().ingen_numThreads && value.type() == forge().Int) {
 		_n_threads = value.get<int>();
-	} else if (key == uris().ingen_maxEventLoad && value.type() == forge().Float) {
-		_max_event_load = value.get<float>();
 	} else if (key == uris().ingen_minRunLoad && value.type() == forge().Float) {
 		_min_run_load = value.get<float>();
 	} else if (key == uris().ingen_meanRunLoad && value.type() == forge().Float) {
@@ -344,15 +341,12 @@ fraction_label(float f)
 std::string
 App::status_text() const
 {
-	return (fmt("<b>Audio:</b> %2.1f kHz / %.1f ms   <b>Load: </b> %s events + %s   <b>DSP:</b> %s ≤ %s ≤ %s")
+	return (fmt("%2.1f kHz / %.1f ms, %s, %s DSP")
 	        % (_sample_rate / 1e3f)
 	        % (_block_length * 1e3f / (float)_sample_rate)
-	        % fraction_label(_max_event_load)
 	        % ((_n_threads == 1)
 	           ? "1 thread"
 	           : (fmt("%1% threads") % _n_threads).str())
-	        % fraction_label(_min_run_load)
-	        % fraction_label(_mean_run_load)
 	        % fraction_label(_max_run_load)).str();
 }
 

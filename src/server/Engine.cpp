@@ -330,29 +330,27 @@ Engine::quit()
 	_quit_flag = true;
 }
 
-bool
-Engine::main_iteration()
+Properties
+Engine::load_properties() const
 {
 	const Ingen::URIs& uris = world()->uris();
 
+	return { { uris.ingen_meanRunLoad,
+		       uris.forge.make(floorf(_run_load.mean) / 100.0f) },
+		     { uris.ingen_minRunLoad,
+	           uris.forge.make(_run_load.min / 100.0f) },
+		     { uris.ingen_maxRunLoad,
+		       uris.forge.make(_run_load.max / 100.0f) } };
+}
+
+bool
+Engine::main_iteration()
+{
 	_post_processor->process();
 	_maid->cleanup();
 
-	if (_event_load.changed) {
-		_broadcaster->set_property(Raul::URI("ingen:/engine"),
-		                           uris.ingen_maxEventLoad,
-		                           uris.forge.make(_event_load.max / 100.0f));
-		_event_load.changed = false;
-	}
-
 	if (_run_load.changed) {
-		_broadcaster->put(Raul::URI("ingen:/engine"),
-		                  { { uris.ingen_meanRunLoad,
-		                      uris.forge.make(floorf(_run_load.mean) / 100.0f) },
-		                    { uris.ingen_minRunLoad,
-		                      uris.forge.make(_run_load.min / 100.0f) },
-		                    { uris.ingen_maxRunLoad,
-		                      uris.forge.make(_run_load.max / 100.0f) } });
+		_broadcaster->put(Raul::URI("ingen:/engine"), load_properties());
 		_run_load.changed = false;
 	}
 
@@ -472,7 +470,12 @@ Engine::run(uint32_t sample_count)
 	// Process events that came in during the last cycle
 	// (Aiming for jitter-free 1 block event latency, ideally)
 	const unsigned n_processed_events = process_events();
-	const uint64_t t_events           = current_time(ctx);
+
+	// Reset load if graph structure has changed
+	if (_reset_load_flag) {
+		_run_load        = Load();
+		_reset_load_flag = false;
+	}
 
 	// Run root graph
 	if (_root_graph) {
@@ -490,12 +493,7 @@ Engine::run(uint32_t sample_count)
 
 	// Update load for this cycle
 	if (ctx.duration() > 0) {
-		_event_load.update(t_events - _cycle_start_time, ctx.duration());
-		_run_load.update(current_time(ctx) - t_events, ctx.duration());
-		if (_reset_load_flag) {
-			_run_load        = Load();
-			_reset_load_flag = false;
-		}
+		_run_load.update(current_time(ctx) - _cycle_start_time, ctx.duration());
 	}
 
 	return n_processed_events;

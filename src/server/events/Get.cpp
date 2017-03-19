@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -88,15 +88,18 @@ Get::post_process()
 			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);
 		} else if (_uri == "ingen:/engine") {
 			// TODO: Keep a proper RDF model of the engine
-			URIs& uris = _engine.world()->uris();
-			_request_client->put(
-				Raul::URI("ingen:/engine"),
-				{ { uris.param_sampleRate,
-				    uris.forge.make(int32_t(_engine.sample_rate())) },
-				  { uris.bufsz_maxBlockLength,
-				    uris.forge.make(int32_t(_engine.block_length())) },
-				  { uris.ingen_numThreads,
-				    uris.forge.make(int32_t(_engine.n_threads())) } });
+			URIs&      uris  = _engine.world()->uris();
+			Properties props = {
+				{ uris.param_sampleRate,
+				  uris.forge.make(int32_t(_engine.sample_rate())) },
+				{ uris.bufsz_maxBlockLength,
+				  uris.forge.make(int32_t(_engine.block_length())) },
+				{ uris.ingen_numThreads,
+				  uris.forge.make(int32_t(_engine.n_threads())) } };
+
+			const Properties load_props = _engine.load_properties();
+			props.insert(load_props.begin(), load_props.end());
+			_request_client->put(Raul::URI("ingen:/engine"), props);
 		} else {
 			_response.send(_request_client.get());
 		}

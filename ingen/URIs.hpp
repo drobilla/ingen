@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -118,7 +118,6 @@ public:
 	const Quark ingen_head;
 	const Quark ingen_incidentTo;
 	const Quark ingen_loadedBundle;
-	const Quark ingen_maxEventLoad;
 	const Quark ingen_maxRunLoad;
 	const Quark ingen_meanRunLoad;
 	const Quark ingen_minRunLoad;

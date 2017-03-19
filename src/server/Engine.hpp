@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -25,13 +25,15 @@
 #include "ingen/Clock.hpp"
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "raul/Noncopyable.hpp"
 
 #include "Event.hpp"
-#include "RunContext.hpp"
 #include "EventWriter.hpp"
+#include "Load.hpp"
+#include "RunContext.hpp"
 
 namespace Raul { class Maid; }
 
@@ -165,37 +167,10 @@ public:
 	bool   atomic_bundles() const { return _atomic_bundles; }
 	bool   activated()      const { return _activated; }
 
+	Properties load_properties() const;
+
 private:
 	Ingen::World* _world;
-
-	struct Load {
-		void update(uint64_t time, uint64_t available) {
-			const uint64_t load = time * 100 / available;
-			if (load < min) {
-				min = load;
-				changed = true;
-			}
-			if (load > max) {
-				max = load;
-				changed = true;
-			}
-			if (++n == 1) {
-				mean = load;
-			} else {
-				const float a = mean + ((float)load - mean) / (float)++n;
-				if (a != mean) {
-					changed = floorf(a) != floorf(mean);
-					mean    = a;
-				}
-			}
-		}
-
-		uint64_t min     = std::numeric_limits<uint64_t>::max();
-		uint64_t max     = 0;
-		float    mean    = 0.0f;
-		uint64_t n       = 0;
-		bool     changed = false;
-	};
 
 	Raul::Maid*       _maid;
 	BlockFactory*     _block_factory;
@@ -219,7 +194,6 @@ private:
 	std::vector<Raul::RingBuffer*> _notifications;
 	std::vector<RunContext*>       _run_contexts;
 	uint64_t                       _cycle_start_time;
-	Load                           _event_load;
 	Load                           _run_load;
 	Clock                          _clock;
 

@@ -58,7 +58,6 @@
 #define INGEN__head           INGEN_NS "head"
 #define INGEN__incidentTo     INGEN_NS "incidentTo"
 #define INGEN__loadedBundle   INGEN_NS "loadedBundle"
-#define INGEN__maxEventLoad   INGEN_NS "maxEventLoad"
 #define INGEN__maxRunLoad     INGEN_NS "maxRunLoad"
 #define INGEN__meanRunLoad    INGEN_NS "meanRunLoad"
 #define INGEN__minRunLoad     INGEN_NS "minRunLoad"

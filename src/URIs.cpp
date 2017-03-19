@@ -1,6 +1,6 @@
 /*
   This file is part of Ingen.
-  Copyright 2007-2016 David Robillard <http://drobilla.net/>
+  Copyright 2007-2017 David Robillard <http://drobilla.net/>
 
   Ingen is free software: you can redistribute it and/or modify it under the
   terms of the GNU Affero General Public License as published by the Free
@@ -101,7 +101,6 @@ URIs::URIs(Forge& f, URIMap* map, LilvWorld* lworld)
 	, ingen_head            (forge, map, lworld, INGEN__head)
 	, ingen_incidentTo      (forge, map, lworld, INGEN__incidentTo)
 	, ingen_loadedBundle    (forge, map, lworld, INGEN__loadedBundle)
-	, ingen_maxEventLoad    (forge, map, lworld, INGEN__maxEventLoad)
 	, ingen_maxRunLoad      (forge, map, lworld, INGEN__maxRunLoad)
 	, ingen_meanRunLoad     (forge, map, lworld, INGEN__meanRunLoad)
 	, ingen_minRunLoad      (forge, map, lworld, INGEN__minRunLoad)
