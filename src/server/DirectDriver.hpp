@@ -17,7 +17,7 @@
 #ifndef INGEN_ENGINE_DIRECT_DRIVER_HPP
 #define INGEN_ENGINE_DIRECT_DRIVER_HPP
 
-#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/slist.hpp>
 
 #include "Driver.hpp"
 
@@ -87,7 +87,9 @@ public:
 	virtual int real_time_priority() { return 60; }
 
 private:
-	typedef boost::intrusive::list<EnginePort> Ports;
+	typedef boost::intrusive::slist<EnginePort,
+	                                boost::intrusive::cache_last<true>
+	                                > Ports;
 
 	Ports       _ports;
 	SampleCount _sample_rate;

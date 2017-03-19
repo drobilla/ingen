@@ -58,10 +58,8 @@ public:
 	          const Atom&         value,
 	          size_t              buffer_size = 0);
 
-	virtual ~InputPort() {}
-
 	typedef boost::intrusive::slist<ArcImpl,
-	                                boost::intrusive::constant_time_size<false>
+	                                boost::intrusive::constant_time_size<true>
 	                                > Arcs;
 
 	/** Return the maximum polyphony of an output connected to this input. */
@@ -76,14 +74,13 @@ public:
 	 *
 	 * setup_buffers() must be called later for the change to take effect.
 	 */
-	void add_arc(RunContext& context, ArcImpl* c);
+	void add_arc(RunContext& context, ArcImpl& c);
 
 	/** Remove an arc.  Realtime safe.
 	 *
 	 * setup_buffers() must be called later for the change to take effect.
 	 */
-	ArcImpl* remove_arc(RunContext&     context,
-	                    const PortImpl* tail);
+	void remove_arc(ArcImpl& arc);
 
 	/** Like `get_buffers`, but for the pre-process thread.
 	 *

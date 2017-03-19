@@ -170,11 +170,12 @@ Disconnect::pre_process(PreProcessContext& ctx)
 bool
 Disconnect::Impl::execute(RunContext& context, bool set_head_buffers)
 {
-	ArcImpl* const port_arc = _head->remove_arc(context, _tail);
-
-	if (!port_arc) {
+	if (!_arc) {
 		return false;
-	} else if (_head->is_driver_port()) {
+	}
+
+	_head->remove_arc(*_arc.get());
+	if (_head->is_driver_port()) {
 		return true;
 	}
 

@@ -20,7 +20,7 @@
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
 
-#include <boost/intrusive/list.hpp>
+#include <boost/intrusive/slist.hpp>
 
 #include "DuplexPort.hpp"
 
@@ -33,7 +33,7 @@ namespace Server {
  */
 class EnginePort : public Raul::Noncopyable
                  , public Raul::Deletable
-                 , public boost::intrusive::list_base_hook<>
+                 , public boost::intrusive::slist_base_hook<>
 {
 public:
 	explicit EnginePort(DuplexPort* port)

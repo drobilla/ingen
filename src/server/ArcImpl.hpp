@@ -49,11 +49,11 @@ class InputPort;
 class ArcImpl
 		: private Raul::Noncopyable
 		, public  Arc
-		, public  boost::intrusive::slist_base_hook<
-	boost::intrusive::link_mode<boost::intrusive::auto_unlink> >
+		, public  boost::intrusive::slist_base_hook<>
 {
 public:
 	ArcImpl(PortImpl* tail, PortImpl* head);
+	~ArcImpl();
 
 	inline PortImpl* tail() const { return _tail; }
 	inline PortImpl* head() const { return _head; }

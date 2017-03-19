@@ -153,7 +153,7 @@ void
 Connect::execute(RunContext& context)
 {
 	if (_status == Status::SUCCESS) {
-		_head->add_arc(context, _arc.get());
+		_head->add_arc(context, *_arc.get());
 		if (!_head->is_driver_port()) {
 			_head->set_voices(context, std::move(_voices));
 		}

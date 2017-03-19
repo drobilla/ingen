@@ -125,29 +125,15 @@ InputPort::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
 }
 
 void
-InputPort::add_arc(RunContext& context, ArcImpl* c)
+InputPort::add_arc(RunContext& context, ArcImpl& c)
 {
-	_arcs.push_front(*c);
+	_arcs.push_front(c);
 }
 
-ArcImpl*
-InputPort::remove_arc(RunContext& context, const PortImpl* tail)
+void
+InputPort::remove_arc(ArcImpl& arc)
 {
-	ArcImpl* arc = NULL;
-	for (Arcs::iterator i = _arcs.begin(); i != _arcs.end(); ++i) {
-		if (i->tail() == tail) {
-			arc = &*i;
-			_arcs.erase(i);
-			break;
-		}
-	}
-
-	if (!arc) {
-		context.engine().log().rt_error("Attempt to remove non-existent arc\n");
-		return NULL;
-	}
-
-	return arc;
+	_arcs.erase(_arcs.iterator_to(arc));
 }
 
 uint32_t

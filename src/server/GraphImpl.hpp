@@ -159,8 +159,7 @@ public:
 	/** Remove an arc from this graph.
 	 * Pre-processing thread only.
 	 */
-	SPtr<ArcImpl> remove_arc(const PortImpl* tail,
-	                         const PortImpl* head);
+	SPtr<ArcImpl> remove_arc(const PortImpl* tail, const PortImpl* head);
 
 	bool has_arc(const PortImpl* tail, const PortImpl* head) const;
 
