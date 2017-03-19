@@ -121,6 +121,9 @@ public:
 	/** Run block for an entire process cycle (calls run()). */
 	virtual void process(RunContext& context);
 
+	/** Bypass block for an entire process cycle (called from process()). */
+	virtual void bypass(RunContext& context);
+
 	/** Run block for a portion of process cycle (called from process()). */
 	virtual void run(RunContext& context) = 0;
 
