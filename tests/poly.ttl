@@ -12,12 +12,14 @@
 
 <msg1>
 	a patch:Set ;
+	patch:context ingen:internalContext ;
 	patch:subject <ingen:/main/> ;
 	patch:property ingen:polyphony ;
 	patch:value 4 .
 
 <msg2>
 	a patch:Set ;
+	patch:context ingen:externalContext ;
 	patch:subject <ingen:/main/node> ;
 	patch:property ingen:polyphonic ;
 	patch:value true .

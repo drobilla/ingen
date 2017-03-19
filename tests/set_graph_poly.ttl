@@ -4,12 +4,14 @@
 
 <msg0>
 	a patch:Set ;
+	patch:context ingen:internalContext ;
 	patch:subject <ingen:/main/> ;
 	patch:property ingen:polyphony ;
 	patch:value 4 .
 
 <msg1>
 	a patch:Set ;
+	patch:context ingen:internalContext ;
 	patch:subject <ingen:/main/> ;
 	patch:property ingen:polyphony ;
 	patch:value 1 .
