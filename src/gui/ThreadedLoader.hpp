@@ -23,7 +23,7 @@
 #include <list>
 #include <string>
 
-#include <boost/optional/optional.hpp>
+#include <boost/optional.hpp>
 #include <glibmm/thread.h>
 
 #include "ingen/Interface.hpp"

@@ -16,8 +16,6 @@
 
 #include <set>
 
-#include <boost/format.hpp>
-
 #include "ingen/Store.hpp"
 #include "raul/Array.hpp"
 #include "raul/Maid.hpp"

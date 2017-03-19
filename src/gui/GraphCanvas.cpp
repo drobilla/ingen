@@ -20,7 +20,7 @@
 #include <set>
 #include <string>
 
-#include <boost/format.hpp>
+#include <boost/optional.hpp>
 #include <gtkmm/stock.h>
 
 #include "ganv/Canvas.hpp"

@@ -19,8 +19,6 @@
 
 #include <cstdlib>
 
-#include <boost/utility.hpp>
-
 #include "ingen/Resource.hpp"
 #include "raul/Symbol.hpp"
 #include "raul/URI.hpp"
@@ -41,7 +39,6 @@ class GraphImpl;
  * Conceptually, a Block is an instance of this.
  */
 class PluginImpl : public Resource
-                 , public boost::noncopyable
 {
 public:
 	PluginImpl(Ingen::URIs&     uris,
@@ -91,6 +88,10 @@ protected:
 	Presets _presets;
 	bool    _presets_loaded;
 	bool    _is_zombie;
+
+private:
+	PluginImpl(const PluginImpl&) = delete;
+	PluginImpl& operator=(const PluginImpl&) = delete;
 };
 
 } // namespace Server

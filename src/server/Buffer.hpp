@@ -20,8 +20,6 @@
 #include <atomic>
 #include <cassert>
 
-#include <boost/utility.hpp>
-
 #include "ingen/types.hpp"
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
@@ -39,7 +37,7 @@ class BufferFactory;
 class Engine;
 class RunContext;
 
-class INGEN_API Buffer : public boost::noncopyable
+class INGEN_API Buffer
 {
 public:
 	Buffer(BufferFactory& bufs,
@@ -226,6 +224,9 @@ protected:
 	~Buffer();
 
 private:
+	Buffer(const Buffer&) = delete;
+	Buffer& operator=(const Buffer&) = delete;
+
 	void recycle();
 
 	Buffer*               _next;      ///< Intrusive linked list for BufferFactory
