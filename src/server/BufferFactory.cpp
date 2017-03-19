@@ -134,6 +134,7 @@ BufferFactory::get_buffer(LV2_URID type,
 
 	try_head->_next = NULL;
 	try_head->set_type(&BufferFactory::get_buffer, type, value_type);
+	try_head->clear();
 	return BufferRef(try_head);
 }
 
