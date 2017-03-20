@@ -101,16 +101,6 @@ public:
 		return NULL;
 	}
 
-	/// Audio buffers only
-	inline SampleCount nframes() const {
-		if (is_control()) {
-			return 1;
-		} else if (is_audio()) {
-			return (_capacity / sizeof(Sample));
-		}
-		return 0;
-	}
-
 	/// Numeric buffers only
 	inline Sample value_at(SampleCount offset) const {
 		if (is_audio() || is_control()) {
@@ -126,7 +116,7 @@ public:
 	                      const SampleCount end)
 	{
 		assert(is_audio() || is_control());
-		assert(end <= nframes());
+		assert(end <= _capacity / sizeof(Sample));
 		// Note: Do not change this without ensuring GCC can still vectorize it
 		Sample* const buf = samples() + start;
 		for (SampleCount i = 0; i < (end - start); ++i) {
@@ -139,7 +129,7 @@ public:
 	                      const SampleCount end)
 	{
 		assert(is_audio() || is_control());
-		assert(end <= nframes());
+		assert(end <= _capacity / sizeof(Sample));
 		// Note: Do not change this without ensuring GCC can still vectorize it
 		Sample* const buf = samples() + start;
 		for (SampleCount i = 0; i < (end - start); ++i) {

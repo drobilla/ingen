@@ -81,14 +81,14 @@ LV2Block::make_instance(URIs&      uris,
                         uint32_t   voice,
                         bool       preparing)
 {
+	const Engine&     engine = parent_graph()->engine();
 	const LilvPlugin* lplug  = _lv2_plugin->lilv_plugin();
 	LilvInstance*     inst   = lilv_plugin_instantiate(
 		lplug, rate, _features->array());
 
 	if (!inst) {
-		parent_graph()->engine().log().error(
-			fmt("Failed to instantiate <%1%>\n")
-			% _lv2_plugin->uri().c_str());
+		engine.log().error(fmt("Failed to instantiate <%1%>\n")
+		                   % _lv2_plugin->uri().c_str());
 		return SPtr<Instance>();
 	}
 
@@ -116,8 +116,10 @@ LV2Block::make_instance(URIs&      uris,
 		}
 
 		if (buffer) {
-			if (port->is_a(PortType::CV) || port->is_a(PortType::CONTROL)) {
-				buffer->set_block(port->value().get<float>(), 0, buffer->nframes());
+			if (port->is_a(PortType::CONTROL)) {
+				buffer->samples()[0] = port->value().get<float>();
+			} else if (port->is_a(PortType::CV)) {
+				buffer->set_block(port->value().get<float>(), 0, engine.block_length());
 			} else {
 				buffer->clear();
 			}

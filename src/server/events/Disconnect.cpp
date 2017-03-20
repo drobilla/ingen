@@ -96,7 +96,7 @@ Disconnect::Impl::Impl(Engine&     e,
 				const float value = _head->value().get<float>();
 				for (uint32_t i = 0; i < _voices->size(); ++i) {
 					Buffer* buf = _voices->at(i).buffer.get();
-					buf->set_block(value, 0, buf->nframes());
+					buf->set_block(value, 0, e.block_length());
 				}
 			} else {
 				for (uint32_t i = 0; i < _voices->size(); ++i) {

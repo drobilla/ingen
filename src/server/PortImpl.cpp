@@ -415,7 +415,7 @@ PortImpl::clear_buffers(const RunContext& ctx)
 	case PortType::CV:
 		for (uint32_t v = 0; v < _poly; ++v) {
 			Buffer* buf = buffer(v).get();
-			buf->set_block(_value.get<float>(), 0, buf->nframes());
+			buf->set_block(_value.get<float>(), 0, ctx.nframes());
 			SetState& state = _voices->at(v).set_state;
 			state.state = SetState::State::SET;
 			state.value = _value.get<float>();
