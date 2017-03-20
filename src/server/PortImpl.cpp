@@ -229,6 +229,7 @@ PortImpl::set_control_value(const RunContext& context,
                             Sample            value)
 {
 	for (uint32_t v = 0; v < _poly; ++v) {
+		update_set_state(context, v);
 		set_voice_value(context, v, time, value);
 	}
 }
@@ -284,7 +285,7 @@ PortImpl::set_voice_value(const RunContext& context,
 }
 
 void
-PortImpl::update_set_state(RunContext& context, uint32_t v)
+PortImpl::update_set_state(const RunContext& context, uint32_t v)
 {
 	Voice&    voice = _voices->at(v);
 	SetState& state = voice.set_state;

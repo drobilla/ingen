@@ -143,7 +143,7 @@ public:
 		return _prepared_voices->at(voice).buffer;
 	}
 
-	void update_set_state(RunContext& context, uint32_t voice);
+	void update_set_state(const RunContext& context, uint32_t voice);
 
 	void set_voice_value(const RunContext& context,
 	                     uint32_t          voice,
