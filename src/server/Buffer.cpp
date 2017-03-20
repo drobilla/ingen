@@ -406,11 +406,12 @@ Buffer::set_value(const Atom& value)
 		return;
 	}
 
-	if (value.size() > _value_buffer->size()) {
-		_value_buffer = _factory.claim_buffer(value.type(), 0, value.size());
+	const uint32_t total_size = sizeof(LV2_Atom) + value.size();
+	if (total_size > _value_buffer->capacity()) {
+		_value_buffer = _factory.claim_buffer(value.type(), 0, total_size);
 	}
 
-	memcpy(_value_buffer->get<LV2_Atom*>(), value.atom(), sizeof(LV2_Atom) + value.size());
+	memcpy(_value_buffer->get<LV2_Atom*>(), value.atom(), total_size);
 }
 
 void
