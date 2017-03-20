@@ -40,6 +40,7 @@
 #include "Broadcaster.hpp"
 #include "BufferFactory.hpp"
 #include "ControlBindings.hpp"
+#include "DirectDriver.hpp"
 #include "Driver.hpp"
 #include "Engine.hpp"
 #include "Event.hpp"
@@ -390,6 +391,12 @@ void
 Engine::reset_load()
 {
 	_reset_load_flag = true;
+}
+
+void
+Engine::init(double sample_rate, uint32_t block_length, size_t seq_size)
+{
+	set_driver(SPtr<Driver>(new DirectDriver(*this, sample_rate, block_length, seq_size)));
 }
 
 bool
