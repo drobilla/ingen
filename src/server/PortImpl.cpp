@@ -243,7 +243,9 @@ PortImpl::set_voice_value(const RunContext& context,
 {
 	switch (_type.id()) {
 	case PortType::CONTROL:
-		((LV2_Atom_Float*)buffer(voice)->value())->body = value;
+		if (buffer(voice)->value()) {
+			((LV2_Atom_Float*)buffer(voice)->value())->body = value;
+		}
 		_voices->at(voice).set_state.set(context, context.start(), value);
 		break;
 	case PortType::AUDIO:
