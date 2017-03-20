@@ -421,14 +421,20 @@ Buffer::update_value_buffer(SampleCount offset)
 		return;
 	}
 
-	LV2_Atom_Sequence* seq = get<LV2_Atom_Sequence>();
+	LV2_Atom_Sequence* seq    = get<LV2_Atom_Sequence>();
+	LV2_Atom_Event*    latest = NULL;
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
-		if (ev->time.frames <= offset && ev->body.type == _value_type) {
-			memcpy(_value_buffer->get<LV2_Atom>(),
-			       &ev->body,
-			       lv2_atom_total_size(&ev->body));
+		if (ev->time.frames > offset) {
 			break;
+		} else if (ev->body.type == _value_type) {
+			latest = ev;
 		}
+	}
+
+	if (latest) {
+		memcpy(_value_buffer->get<LV2_Atom>(),
+		       &latest->body,
+		       lv2_atom_total_size(&latest->body));
 	}
 }
 

@@ -217,12 +217,15 @@ SampleCount
 InputPort::next_value_offset(SampleCount offset, SampleCount end) const
 {
 	SampleCount earliest = end;
+
+	if (_user_buffer) {
+		earliest = _user_buffer->next_value_offset(offset, end);
+	}
+
 	for (const auto& arc : _arcs) {
-		if (arc.tail()->type() != this->type()) {
-			const SampleCount o = arc.tail()->next_value_offset(offset, end);
-			if (o < earliest) {
-				earliest = o;
-			}
+		const SampleCount o = arc.tail()->next_value_offset(offset, end);
+		if (o < earliest) {
+			earliest = o;
 		}
 	}
 
