@@ -117,7 +117,7 @@ LV2Block::make_instance(URIs&      uris,
 
 		if (buffer) {
 			if (port->is_a(PortType::CONTROL)) {
-				buffer->samples()[0] = port->value().get<float>();
+				buffer->set_value(port->value());
 			} else if (port->is_a(PortType::CV)) {
 				buffer->set_block(port->value().get<float>(), 0, engine.block_length());
 			} else {
@@ -267,7 +267,8 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 			}
 			if (port_type == PortType::UNKNOWN) {
 				port_type   = PortType::CONTROL;
-				buffer_type = uris.atom_Float;
+				buffer_type = uris.atom_Sequence;
+				val         = forge.make(def_values[j]);
 			}
 		} else if (lilv_port_is_a(plug, id, uris.lv2_CVPort)) {
 			port_type   = PortType::CV;

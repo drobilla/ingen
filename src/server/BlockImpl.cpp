@@ -258,6 +258,17 @@ BlockImpl::process(RunContext& context)
 		// Run the chunk
 		run(subcontext);
 
+		// Emit control port outputs as events
+		for (uint32_t i = 0; _ports && i < _ports->size(); ++i) {
+			PortImpl* const port = _ports->at(i);
+			if (port->type() == PortType::CONTROL && port->is_output()) {
+				// TODO: Only emit events when value has actually changed?
+				for (uint32_t v = 0; v < _polyphony; ++v) {
+					port->buffer(v)->append_event(offset, port->buffer(v)->value());
+				}
+			}
+		}
+
 		offset = chunk_end;
 		subcontext.slice(offset, chunk_end - offset);
 	}

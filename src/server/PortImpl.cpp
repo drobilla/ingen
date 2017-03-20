@@ -243,7 +243,7 @@ PortImpl::set_voice_value(const RunContext& context,
 {
 	switch (_type.id()) {
 	case PortType::CONTROL:
-		buffer(voice)->samples()[0] = value;
+		((LV2_Atom_Float*)buffer(voice)->value())->body = value;
 		_voices->at(voice).set_state.set(context, context.start(), value);
 		break;
 	case PortType::AUDIO:
@@ -411,22 +411,24 @@ void
 PortImpl::clear_buffers(const RunContext& ctx)
 {
 	switch (_type.id()) {
-	case PortType::CONTROL:
-	case PortType::CV:
-		for (uint32_t v = 0; v < _poly; ++v) {
-			Buffer* buf = buffer(v).get();
-			buf->set_block(_value.get<float>(), 0, ctx.nframes());
-			SetState& state = _voices->at(v).set_state;
-			state.state = SetState::State::SET;
-			state.value = _value.get<float>();
-			state.time  = 0;
-		}
-		break;
 	case PortType::AUDIO:
 	default:
 		for (uint32_t v = 0; v < _poly; ++v) {
 			buffer(v)->clear();
 		}
+		break;
+	case PortType::CONTROL:
+		for (uint32_t v = 0; v < _poly; ++v) {
+			buffer(v)->clear();
+			_voices->at(v).set_state.set(ctx, ctx.start(), _value.get<float>());
+		}
+		break;
+	case PortType::CV:
+		for (uint32_t v = 0; v < _poly; ++v) {
+			buffer(v)->set_block(_value.get<float>(), 0, ctx.nframes());
+			_voices->at(v).set_state.set(ctx, ctx.start(), _value.get<float>());
+		}
+		break;
 	}
 }
 

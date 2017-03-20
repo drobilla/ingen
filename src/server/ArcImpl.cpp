@@ -67,21 +67,7 @@ ArcImpl::head_path() const
 BufferRef
 ArcImpl::buffer(uint32_t voice, SampleCount offset) const
 {
-	assert(_tail->poly() == 1 || _tail->poly() > voice);
-	if (_tail->poly() == 1) {
-		voice = 0;
-	}
-
-	if (_tail->buffer(0)->is_sequence()) {
-		if (_head->type() == PortType::CONTROL) {
-			_tail->update_values(offset, voice);  // Update value buffer
-			return _tail->value_buffer(voice);  // Return value buffer
-		} else if (_head->type() == PortType::CV) {
-			// Return full tail buffer below
-		}
-	}
-
-	return _tail->buffer(voice);
+	return _tail->buffer(std::min(voice, _tail->poly() - 1));
 }
 
 bool

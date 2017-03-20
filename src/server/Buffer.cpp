@@ -166,12 +166,6 @@ Buffer::copy(const RunContext& context, const Buffer* src)
 		} else {
 			clear();
 		}
-
-		if (_value_buffer && src->_value_buffer) {
-			memcpy(_value_buffer->get<LV2_Atom>(),
-			       src->value(),
-			       lv2_atom_total_size(src->value()));
-		}
 	} else if (src->is_audio() && is_control()) {
 		samples()[0] = src->samples()[0];
 	} else if (src->is_control() && is_audio()) {
@@ -201,6 +195,7 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 {
 	switch (port_type.id()) {
 	case PortType::ID::CONTROL:
+		return &_value_buffer->get<LV2_Atom_Float>()->body;
 	case PortType::ID::CV:
 	case PortType::ID::AUDIO:
 		if (_type == _factory.uris().atom_Float) {

@@ -115,6 +115,14 @@ public:
 	                      const SampleCount start,
 	                      const SampleCount end)
 	{
+		if (is_sequence()) {
+			append_event(start, sizeof(val), _factory.uris().atom_Float,
+			             reinterpret_cast<const uint8_t*>(
+				             static_cast<const float*>(&val)));
+			_value_buffer->get<LV2_Atom_Float>()->body = val;
+			return;
+		}
+
 		assert(is_audio() || is_control());
 		assert(end <= _capacity / sizeof(Sample));
 		// Note: Do not change this without ensuring GCC can still vectorize it

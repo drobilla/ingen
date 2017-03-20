@@ -210,6 +210,10 @@ InputPort::pre_run(RunContext& context)
 			mix(context, buffer(v).get(), srcs, n_srcs);
 			update_values(context.offset(), v);
 		}
+	} else if (is_a(PortType::CONTROL)) {
+		for (uint32_t v = 0; v < _poly; ++v) {
+			update_values(context.offset(), v);
+		}
 	}
 }
 

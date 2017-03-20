@@ -56,7 +56,7 @@ SetPortValue::~SetPortValue()
 bool
 SetPortValue::pre_process(PreProcessContext& ctx)
 {
-	Ingen::URIs&  uris = _engine.world()->uris();
+	Ingen::URIs& uris = _engine.world()->uris();
 	if (_port->is_output()) {
 		return Event::pre_process_done(Status::DIRECTION_MISMATCH, _port->path());
 	}
@@ -72,7 +72,7 @@ SetPortValue::pre_process(PreProcessContext& ctx)
 	if (_port->buffer_type() == uris.atom_Sequence) {
 		_buffer = _engine.buffer_factory()->get_buffer(
 			_port->buffer_type(),
-			0,
+			_value.type() == uris.atom_Float ? _value.type() : 0,
 			_engine.buffer_factory()->default_size(_port->buffer_type()));
 	}
 
