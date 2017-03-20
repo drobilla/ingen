@@ -90,7 +90,6 @@ public:
 	void post_process(RunContext& context);
 
 	SampleCount next_value_offset(SampleCount offset, SampleCount end) const;
-	void        update_values(SampleCount offset, uint32_t voice);
 };
 
 } // namespace Server

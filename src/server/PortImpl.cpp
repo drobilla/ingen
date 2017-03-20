@@ -535,7 +535,7 @@ PortImpl::next_value_offset(SampleCount offset, SampleCount end) const
 void
 PortImpl::update_values(SampleCount offset, uint32_t voice)
 {
-	_voices->at(voice).buffer->update_value_buffer(offset);
+	buffer(voice)->update_value_buffer(offset);
 }
 
 void

@@ -242,7 +242,7 @@ public:
 	                                      SampleCount end) const;
 
 	/** Update value buffer for `voice` to be current as of `offset`. */
-	virtual void update_values(SampleCount offset, uint32_t voice);
+	void update_values(SampleCount offset, uint32_t voice);
 
 	void force_monitor_update() { _force_monitor_update = true; }
 

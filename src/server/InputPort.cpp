@@ -225,13 +225,8 @@ InputPort::next_value_offset(SampleCount offset, SampleCount end) const
 			}
 		}
 	}
-	return earliest;
-}
 
-void
-InputPort::update_values(SampleCount offset, uint32_t voice)
-{
-	buffer(voice)->update_value_buffer(offset);
+	return earliest;
 }
 
 void

@@ -235,11 +235,5 @@ DuplexPort::next_value_offset(SampleCount offset, SampleCount end) const
 	return PortImpl::next_value_offset(offset, end);
 }
 
-void
-DuplexPort::update_values(SampleCount offset, uint32_t voice)
-{
-	return PortImpl::update_values(offset, voice);
-}
-
 } // namespace Server
 } // namespace Ingen
