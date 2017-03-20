@@ -188,7 +188,8 @@ PortImpl::activate(BufferFactory& bufs)
 	_monitor_value        = 0.0f;
 	_peak                 = 0.0f;
 
-	_connected_flag.clear();  // Trigger buffer re-connect next cycle
+	// Trigger buffer re-connect next cycle
+	_connected_flag.clear(std::memory_order_release);
 }
 
 void
@@ -540,7 +541,7 @@ PortImpl::update_values(SampleCount offset, uint32_t voice)
 void
 PortImpl::pre_process(RunContext& context)
 {
-	if (!_connected_flag.test_and_set()) {
+	if (!_connected_flag.test_and_set(std::memory_order_acquire)) {
 		connect_buffers();
 		clear_buffers();
 	}
