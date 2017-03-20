@@ -154,16 +154,14 @@ def configure(conf):
             conf.env.INGEN_TEST_CXXFLAGS  += ['--coverage']
             conf.env.INGEN_TEST_LINKFLAGS += ['--coverage']
 
+    conf.env.PTHREAD_CFLAGS = []
+    conf.env.PTHREAD_LINKFLAGS = []
     if conf.check(cflags=['-pthread'], mandatory=False):
-        conf.env.PTHREAD_CFLAGS    = ['-pthread']
-        if conf.env.CXX_NAME != 'clang':
-            conf.env.PTHREAD_LINKFLAGS = ['-pthread']
-    elif conf.check(linkflags=['-lpthread'], mandatory=False):
-        conf.env.PTHREAD_CFLAGS    = []
-        conf.env.PTHREAD_LINKFLAGS = ['-lpthread']
-    else:
-        conf.env.PTHREAD_CFLAGS    = []
-        conf.env.PTHREAD_LINKFLAGS = []
+        conf.env.PTHREAD_CFLAGS = ['-pthread']
+    if conf.check(linkflags=['-pthread'], mandatory=False):
+        conf.env.PTHREAD_LINKFLAGS += ['-pthread']
+    if conf.check(linkflags=['-lpthread'], mandatory=False):
+        conf.env.PTHREAD_LINKFLAGS += ['-lpthread']
 
     autowaf.define(conf, 'INGEN_SHARED', 1);
     autowaf.define(conf, 'INGEN_VERSION', INGEN_VERSION)
