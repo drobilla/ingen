@@ -408,7 +408,7 @@ PortImpl::set_is_driver_port(BufferFactory& bufs)
 }
 
 void
-PortImpl::clear_buffers()
+PortImpl::clear_buffers(const RunContext& ctx)
 {
 	switch (_type.id()) {
 	case PortType::CONTROL:
@@ -543,7 +543,7 @@ PortImpl::pre_process(RunContext& context)
 {
 	if (!_connected_flag.test_and_set(std::memory_order_acquire)) {
 		connect_buffers();
-		clear_buffers();
+		clear_buffers(context);
 	}
 
 	for (uint32_t v = 0; v < _poly; ++v)

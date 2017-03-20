@@ -154,7 +154,7 @@ GraphImpl::disable(RunContext& context)
 {
 	_process = false;
 	for (auto& o : _outputs) {
-		o.clear_buffers();
+		o.clear_buffers(context);
 	}
 }
 

@@ -171,8 +171,8 @@ public:
 	virtual void pre_run(RunContext& context) {}
 	virtual void post_process(RunContext& context);
 
-	/** Empty buffer contents completely (ie silence) */
-	virtual void clear_buffers();
+	/** Clear/silence all buffers */
+	virtual void clear_buffers(const RunContext& context);
 
 	/** Claim and apply buffers in the real-time thread. */
 	virtual bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly);
