@@ -206,7 +206,7 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 		if (_type == _factory.uris().atom_Float) {
 			return &get<LV2_Atom_Float>()->body;
 		} else if (_type == _factory.uris().atom_Sound) {
-			return (Sample*)_buf;
+			return (Sample*)_buf + offset;
 		}
 		break;
 	case PortType::ID::ATOM:
