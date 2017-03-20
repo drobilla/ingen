@@ -191,6 +191,7 @@ def configure(conf):
     autowaf.display_msg(conf, "GUI", bool(conf.env.INGEN_BUILD_GUI))
     autowaf.display_msg(conf, "HTML plugin documentation support",
                         bool(conf.env.HAVE_WEBKIT))
+    autowaf.display_msg(conf, "PortAudio driver", bool(conf.env.HAVE_PORTAUDIO))
     autowaf.display_msg(conf, "Jack driver", bool(conf.env.HAVE_JACK))
     autowaf.display_msg(conf, "Jack session support",
                         bool(conf.env.INGEN_JACK_SESSION))
