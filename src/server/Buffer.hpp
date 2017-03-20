@@ -195,6 +195,10 @@ public:
 	/// Set/add to audio buffer from the Sequence of Float in `src`
 	void render_sequence(const RunContext& context, const Buffer* src, bool add);
 
+#ifndef NDEBUG
+	void dump_cv(const RunContext& context) const;
+#endif
+
 	void set_capacity(uint32_t capacity) { _capacity = capacity; }
 
 	void set_buffer(void* buf) { assert(_external); _buf = buf; }

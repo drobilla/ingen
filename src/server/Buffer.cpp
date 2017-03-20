@@ -431,6 +431,22 @@ Buffer::update_value_buffer(SampleCount offset)
 	}
 }
 
+#ifndef NDEBUG
+void
+Buffer::dump_cv(const RunContext& context) const
+{
+	float value = samples()[0];
+	fprintf(stderr, "{ 0000: %.02f\n", value);
+	for (uint32_t i = 0; i < context.nframes(); ++i) {
+		if (samples()[i] != value) {
+			value = samples()[i];
+			fprintf(stderr, "  %4d: %.02f\n", i, value);
+		}
+	}
+	fprintf(stderr, "}\n");
+}
+#endif
+
 void
 intrusive_ptr_add_ref(Buffer* b)
 {
