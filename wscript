@@ -159,7 +159,8 @@ def configure(conf):
     if conf.check(cflags=['-pthread'], mandatory=False):
         conf.env.PTHREAD_CFLAGS = ['-pthread']
     if conf.check(linkflags=['-pthread'], mandatory=False):
-        conf.env.PTHREAD_LINKFLAGS += ['-pthread']
+        if not (conf.env.DEST_OS == 'darwin' and conf.env.CXX_NAME == 'clang'):
+            conf.env.PTHREAD_LINKFLAGS += ['-pthread']
     if conf.check(linkflags=['-lpthread'], mandatory=False):
         conf.env.PTHREAD_LINKFLAGS += ['-lpthread']
 
