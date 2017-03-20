@@ -20,6 +20,7 @@
 #include "ingen_config.h"
 
 #include <atomic>
+#include <memory>
 #include <portaudio.h>
 #include <string>
 
@@ -40,6 +41,7 @@ class Engine;
 class GraphImpl;
 class PortAudioDriver;
 class PortImpl;
+class FrameTimer;
 
 class PortAudioDriver : public Driver
 {
@@ -86,12 +88,11 @@ private:
 			inputs, outputs, nframes, time, flags);
 	}
 
-	int
-	process_cb(const void*                     inputs,
-	           void*                           outputs,
-	           unsigned long                   nframes,
-	           const PaStreamCallbackTimeInfo* time,
-	           PaStreamCallbackFlags           flags);
+	int process_cb(const void*                     inputs,
+	               void*                           outputs,
+	               unsigned long                   nframes,
+	               const PaStreamCallbackTimeInfo* time,
+	               PaStreamCallbackFlags           flags);
 
 	void pre_process_port(RunContext&  context,
 	                      EnginePort*  port,
@@ -108,19 +109,20 @@ protected:
 	                                boost::intrusive::cache_last<true>
 	                                > Ports;
 
-	Engine&            _engine;
-	Ports              _ports;
-	PaStreamParameters _inputParameters;
-	PaStreamParameters _outputParameters;
-	Raul::Semaphore    _sem;
-	std::atomic<bool>  _flag;
-	PaStream*          _stream;
-	size_t             _seq_size;
-	uint32_t           _block_length;
-	uint32_t           _sample_rate;
-	uint32_t           _n_inputs;
-	uint32_t           _n_outputs;
-	bool               _is_activated;
+	Engine&                     _engine;
+	Ports                       _ports;
+	PaStreamParameters          _inputParameters;
+	PaStreamParameters          _outputParameters;
+	Raul::Semaphore             _sem;
+	std::unique_ptr<FrameTimer> _timer;
+	PaStream*                   _stream;
+	size_t                      _seq_size;
+	uint32_t                    _block_length;
+	uint32_t                    _sample_rate;
+	uint32_t                    _n_inputs;
+	uint32_t                    _n_outputs;
+	std::atomic<bool>           _flag;
+	bool                        _is_activated;
 };
 
 } // namespace Server

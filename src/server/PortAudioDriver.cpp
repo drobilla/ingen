@@ -34,6 +34,7 @@
 #include "GraphImpl.hpp"
 #include "PortAudioDriver.hpp"
 #include "PortImpl.hpp"
+#include "FrameTimer.hpp"
 #include "ThreadManager.hpp"
 #include "util.hpp"
 
@@ -53,12 +54,13 @@ pa_error(const char* msg, PaError err)
 PortAudioDriver::PortAudioDriver(Engine& engine)
 	: _engine(engine)
 	, _sem(0)
-	, _flag(false)
+	, _stream(nullptr)
 	, _seq_size(4096)
-	, _block_length(4096)
+	, _block_length(1024)
 	, _sample_rate(48000)
 	, _n_inputs(0)
 	, _n_outputs(0)
+	, _flag(false)
 	, _is_activated(false)
 {
 }
@@ -86,11 +88,18 @@ PortAudioDriver::attach()
 		return pa_error("No default output device", paDeviceUnavailable);
 	}
 
-	const PaDeviceInfo* in_dev  = Pa_GetDeviceInfo(_inputParameters.device);
+	const PaDeviceInfo* in_dev = Pa_GetDeviceInfo(_inputParameters.device);
 
-	_sample_rate  = in_dev->defaultSampleRate;
-	_block_length = 4096;  // FIXME
-	_seq_size     = 4096;
+	/* TODO: It looks like it is somehow actually impossible to request the
+	   best/native buffer size then retrieve what it actually is with
+	   PortAudio.  How such a glaring useless flaw exists in such a widespread
+	   library is beyond me... */
+
+	_sample_rate = in_dev->defaultSampleRate;
+
+	_timer = std::unique_ptr<FrameTimer>(
+		new FrameTimer(_block_length, _sample_rate));
+
 	return true;
 }
 
@@ -152,7 +161,7 @@ PortAudioDriver::deactivate()
 SampleCount
 PortAudioDriver::frame_time() const
 {
-	return _engine.run_context().start();
+	return _timer->frame_time(_engine.current_time()) + _engine.block_length();
 }
 
 EnginePort*
@@ -268,6 +277,7 @@ PortAudioDriver::process_cb(const void*                     inputs,
                             PaStreamCallbackFlags           flags)
 {
 	_engine.advance(nframes);
+	_timer->update(_engine.current_time(), _engine.run_context().start());
 
 	// Read input
 	for (auto& p : _ports) {

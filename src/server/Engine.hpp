@@ -108,7 +108,7 @@ public:
 	}
 
 	/** Return the current time in microseconds. */
-	uint64_t current_time(const RunContext& context) const;
+	uint64_t current_time() const;
 
 	/** Reset the load statistics (when the expected DSP load changes). */
 	void reset_load();

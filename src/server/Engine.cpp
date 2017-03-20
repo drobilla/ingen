@@ -381,7 +381,7 @@ Engine::event_time()
 }
 
 uint64_t
-Engine::current_time(const RunContext& context) const
+Engine::current_time() const
 {
 	return _clock.now_microseconds();
 }
@@ -449,7 +449,7 @@ unsigned
 Engine::run(uint32_t sample_count)
 {
 	RunContext& ctx = run_context();
-	_cycle_start_time = current_time(ctx);
+	_cycle_start_time = current_time();
 
 	post_processor()->set_end_time(ctx.end());
 
@@ -479,7 +479,7 @@ Engine::run(uint32_t sample_count)
 
 	// Update load for this cycle
 	if (ctx.duration() > 0) {
-		_run_load.update(current_time(ctx) - _cycle_start_time, ctx.duration());
+		_run_load.update(current_time() - _cycle_start_time, ctx.duration());
 	}
 
 	return n_processed_events;
