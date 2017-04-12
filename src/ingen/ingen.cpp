@@ -18,6 +18,7 @@
 #include <stdlib.h>
 
 #include <iostream>
+#include <memory>
 #include <string>
 
 #include <glibmm/thread.h>
@@ -43,14 +44,13 @@
 using namespace std;
 using namespace Ingen;
 
-Ingen::World* world = NULL;
+unique_ptr<Ingen::World> world;
 
 static void
 ingen_interrupt(int signal)
 {
 	if (signal == SIGTERM) {
 		cerr << "ingen: Terminated" << endl;
-		delete world;
 		exit(EXIT_FAILURE);
 	} else {
 		cout << "ingen: Interrupted" << endl;
@@ -65,7 +65,6 @@ ingen_try(bool cond, const char* msg)
 {
 	if (!cond) {
 		cerr << "ingen: error: " << msg << endl;
-		delete world;
 		exit(EXIT_FAILURE);
 	}
 }
@@ -90,7 +89,7 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = new Ingen::World(NULL, NULL, NULL);
+		world = unique_ptr<Ingen::World>(new Ingen::World(NULL, NULL, NULL));
 		world->load_configuration(argc, argv);
 		if (argc <= 1) {
 			world->conf().print_usage("ingen", cout);
@@ -131,7 +130,7 @@ main(int argc, char** argv)
 	if (!engine_interface) {
 		ingen_try(world->load_module("client"), "Failed to load client module");
 #ifdef HAVE_SOCKET
-		Client::SocketClient::register_factories(world);
+		Client::SocketClient::register_factories(world.get());
 #endif
 		const char* const uri = conf.option("connect").ptr<char>();
 		ingen_try(Raul::URI::is_valid(uri),
@@ -141,7 +140,6 @@ main(int argc, char** argv)
 
 		if (!engine_interface && !conf.option("gui").get<int32_t>()) {
 			cerr << (fmt("ingen: error: Failed to connect to `%1%'\n") % uri);
-			delete world;
 			return EXIT_FAILURE;
 		}
 	}
@@ -157,14 +155,12 @@ main(int argc, char** argv)
 	if (world->engine()) {
 		if (!world->load_module("jack") && !world->load_module("portaudio")) {
 			cerr << "ingen: error: Failed to load driver module" << endl;
-			delete world;
 			return EXIT_FAILURE;
 		}
 
 		if (!world->engine()->supports_dynamic_ports() &&
 		    !conf.option("load").is_valid()) {
 			cerr << "ingen: error: Initial graph required for driver" << endl;
-			delete world;
 			return EXIT_FAILURE;
 		}
 	}
@@ -196,7 +192,7 @@ main(int argc, char** argv)
 
 		std::lock_guard<std::mutex> lock(world->rdf_mutex());
 		world->parser()->parse_file(
-			world, engine_interface.get(), graph, parent, symbol);
+			world.get(), engine_interface.get(), graph, parent, symbol);
 	} else if (conf.option("server-load").is_valid()) {
 		const char* path = conf.option("server-load").ptr<char>();
 		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
@@ -261,7 +257,6 @@ main(int argc, char** argv)
 	std::cout << (fmt("Saved configuration to %1%") % path) << std::endl;
 
 	engine_interface.reset();
-	delete world;
 
 	return 0;
 }
