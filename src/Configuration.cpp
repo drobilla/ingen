@@ -49,6 +49,7 @@ Configuration::Configuration(Forge& forge)
 	, _max_name_length(0)
 {
 	add("atomicBundles",  "atomic-bundles", 'a', "Execute bundles atomically", GLOBAL, forge.Bool, forge.make(false));
+	add("bufferSize",     "buffer-size",    'b', "Buffer size in samples", GLOBAL, forge.Int, forge.make(1024));
 	add("clientPort",     "client-port",    'C', "Client port", GLOBAL, forge.Int, Atom());
 	add("connect",        "connect",        'c', "Connect to engine URI", SESSION, forge.String, forge.alloc("unix:///tmp/ingen.sock"));
 	add("engine",         "engine",         'e', "Run (JACK) engine", SESSION, forge.Bool, forge.make(false));
