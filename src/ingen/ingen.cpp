@@ -17,12 +17,12 @@
 #include <signal.h>
 #include <stdlib.h>
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <string>
 
 #include <glibmm/thread.h>
-#include <glibmm/timer.h>
 
 #include "raul/Path.hpp"
 
@@ -240,12 +240,12 @@ main(int argc, char** argv)
 	} else if (world->engine()) {
 		// Run engine main loop until interrupt
 		while (world->engine()->main_iteration()) {
-			Glib::usleep(125000);  // 1/8 second
+			this_thread::sleep_for(chrono::milliseconds(125));
 		}
 	}
 
 	// Sleep for a half second to allow event queues to drain
-	Glib::usleep(500000);
+	this_thread::sleep_for(chrono::milliseconds(500));
 
 	// Shut down
 	if (world->engine())
