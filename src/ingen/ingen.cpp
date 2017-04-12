@@ -114,6 +114,11 @@ main(int argc, char** argv)
 	// Run engine
 	SPtr<Interface> engine_interface;
 	if (conf.option("engine").get<int32_t>()) {
+		if (world->conf().option("threads").get<int32_t>() < 1) {
+			cerr << "ingen: error: threads must be > 0" << endl;
+			return EXIT_FAILURE;
+		}
+
 		ingen_try(world->load_module("server"), "Failed to load server module");
 
 		ingen_try(bool(world->engine()), "Unable to create engine");
