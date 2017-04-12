@@ -66,7 +66,7 @@ public:
 	/**
 	   Return true iff events are waiting to be processed.
 	*/
-	virtual bool pending_events() = 0;
+	virtual bool pending_events() const = 0;
 
 	/**
 	   Flush any pending events.

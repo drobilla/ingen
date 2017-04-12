@@ -79,7 +79,7 @@ public:
 	virtual void init(double sample_rate, uint32_t block_length, size_t seq_size);
 	virtual bool activate();
 	virtual void deactivate();
-	virtual bool pending_events();
+	virtual bool pending_events() const;
 	virtual unsigned run(uint32_t sample_count);
 	virtual void quit();
 	virtual bool main_iteration();

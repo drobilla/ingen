@@ -493,7 +493,7 @@ Engine::run(uint32_t sample_count)
 }
 
 bool
-Engine::pending_events()
+Engine::pending_events() const
 {
 	return !_pre_processor->empty() || _post_processor->pending();
 }
