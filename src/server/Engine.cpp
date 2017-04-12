@@ -400,6 +400,12 @@ Engine::init(double sample_rate, uint32_t block_length, size_t seq_size)
 }
 
 bool
+Engine::supports_dynamic_ports() const
+{
+	return !_driver || _driver->dynamic_ports();
+}
+
+bool
 Engine::activate()
 {
 	if (!_driver) {

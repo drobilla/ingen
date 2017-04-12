@@ -49,6 +49,15 @@ public:
 	                  size_t   seq_size) = 0;
 
 	/**
+	   Return true iff the engine and driver supports dynamic ports.
+
+	   This returns false in situations where top level ports can not be
+	   created once the driver is running, which is the case for most
+	   environments outside Jack.
+	*/
+	virtual bool supports_dynamic_ports() const = 0;
+
+	/**
 	   Activate the engine.
 	*/
 	virtual bool activate() = 0;

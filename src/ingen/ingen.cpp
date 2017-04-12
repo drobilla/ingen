@@ -158,7 +158,14 @@ main(int argc, char** argv)
 		if (!world->load_module("jack") && !world->load_module("portaudio")) {
 			cerr << "ingen: error: Failed to load driver module" << endl;
 			delete world;
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
+		}
+
+		if (!world->engine()->supports_dynamic_ports() &&
+		    !conf.option("load").is_valid()) {
+			cerr << "ingen: error: Initial graph required for driver" << endl;
+			delete world;
+			return EXIT_FAILURE;
 		}
 	}
 
