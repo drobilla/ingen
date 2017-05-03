@@ -196,7 +196,7 @@ def configure(conf):
                         bool(conf.env.INGEN_JACK_SESSION))
     autowaf.display_msg(conf, "Jack metadata support",
                         conf.is_defined('HAVE_JACK_METADATA'))
-    autowaf.display_msg(conf, "LV2 plugin driver", bool(conf.env.INGNE_BUILD_LV2))
+    autowaf.display_msg(conf, "LV2 plugin driver", bool(conf.env.INGEN_BUILD_LV2))
     autowaf.display_msg(conf, "LV2 bundle", conf.env.INGEN_BUNDLE_DIR)
     autowaf.display_msg(conf, "LV2 plugin support", bool(conf.env.HAVE_LILV))
     autowaf.display_msg(conf, "Socket interface", conf.is_defined('HAVE_SOCKET'))
