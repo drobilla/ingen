@@ -73,9 +73,9 @@ private:
 	                      size_t           max_depth,
 	                      BlockSet&        k);
 
-	Log&                  _log;
-	const Raul::Path      _path;
-	std::unique_ptr<Task> _master;
+	Log&             _log;
+	const Raul::Path _path;
+	Task             _master;
 };
 
 } // namespace Server

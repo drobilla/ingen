@@ -17,9 +17,10 @@
 #ifndef INGEN_ENGINE_TASK_HPP
 #define INGEN_ENGINE_TASK_HPP
 
+#include <atomic>
 #include <cassert>
 #include <deque>
-#include <memory>
+#include <functional>
 #include <ostream>
 
 namespace Ingen {
@@ -55,6 +56,17 @@ public:
 		, _done(task._done.load())
 	{}
 
+	Task& operator=(Task&& task)
+	{
+		_children = std::move(task._children);
+		_block    = task._block;
+		_mode     = task._mode;
+		_done_end = task._done_end;
+		_next     = task._next.load();
+		_done     = task._done.load();
+		return *this;
+	}
+
 	/** Run task in the given context. */
 	void run(RunContext& context);
 
@@ -65,14 +77,14 @@ public:
 	bool empty() const { return _mode != Mode::SINGLE && _children.empty(); }
 
 	/** Simplify task expression. */
-	static std::unique_ptr<Task> simplify(std::unique_ptr<Task>&& task);
+	static Task simplify(Task task);
 
 	/** Steal a child task from this task (succeeds for PARALLEL only). */
 	Task* steal(RunContext& context);
 
 	/** Prepend a child to this task. */
 	void push_front(Task&& task) {
-		_children.push_front(std::unique_ptr<Task>(new Task(std::move(task))));
+		_children.emplace_front(std::move(task));
 	}
 
 	Mode       mode()  const { return _mode; }
@@ -82,12 +94,16 @@ public:
 	void set_done(bool done) { _done = done; }
 
 private:
-	typedef std::deque<std::unique_ptr<Task>> Children;
+	typedef std::deque<Task> Children;
 
 	Task(const Task&) = delete;
 	Task& operator=(const Task&) = delete;
 
 	Task* get_task(RunContext& context);
+
+	void append(Task t) {
+		_children.emplace_back(std::move(t));
+	}
 
 	Children              _children;  ///< Vector of child tasks
 	BlockImpl*            _block;     ///< Used for SINGLE only

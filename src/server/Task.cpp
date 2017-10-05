@@ -30,14 +30,14 @@ Task::run(RunContext& context)
 		_block->process(context);
 		break;
 	case Mode::SEQUENTIAL:
-		for (const auto& task : _children) {
-			task->run(context);
+		for (auto& task : _children) {
+			task.run(context);
 		}
 		break;
 	case Mode::PARALLEL:
 		// Initialize (not) done state of sub-tasks
-		for (const auto& task : _children) {
-			task->set_done(false);
+		for (auto& task : _children) {
+			task.set_done(false);
 		}
 
 		// Grab the first sub-task
@@ -66,7 +66,7 @@ Task::steal(RunContext& context)
 	if (_mode == Mode::PARALLEL) {
 		const unsigned i = _next++;
 		if (i < _children.size()) {
-			return _children[i].get();
+			return &_children[i];
 		}
 	}
 
@@ -84,7 +84,7 @@ Task::get_task(RunContext& context)
 
 	while (true) {
 		// Push done end index as forward as possible
-		while (_done_end < _children.size() && _children[_done_end]->done()) {
+		while (_done_end < _children.size() && _children[_done_end].done()) {
 			++_done_end;
 		}
 
@@ -105,36 +105,34 @@ Task::get_task(RunContext& context)
 	}
 }
 
-std::unique_ptr<Task>
-Task::simplify(std::unique_ptr<Task>&& task)
+Task
+Task::simplify(Task task)
 {
-	if (task->mode() == Mode::SINGLE) {
-		return std::move(task);
+	if (task.mode() == Mode::SINGLE) {
+		return task;
 	}
 
-	for (auto t = task->_children.begin(); t != task->_children.end();) {
-		*t = simplify(std::move(*t));
-		if ((*t)->empty()) {
-			// Empty task, erase
-			t = task->_children.erase(t);
-		} else if ((*t)->mode() == task->_mode) {
-			// Subtask with the same type, fold child into parent
-			std::unique_ptr<Task> child(std::move(*t));
-			t = task->_children.erase(t);
-			t = task->_children.insert(
-				t,
-				std::make_move_iterator(child->_children.begin()),
-				std::make_move_iterator(child->_children.end()));
-		} else {
-			++t;
+	Task ret(task.mode());
+	for (auto&& c : task._children) {
+		auto child = simplify(std::move(c));
+		if (!child.empty()) {
+			if (child.mode() == task.mode()) {
+				// Merge child into parent
+				for (auto&& grandchild : child._children) {
+					ret.append(std::move(grandchild));
+				}
+			} else {
+				// Add child task
+				ret.append(std::move(child));
+			}
 		}
 	}
 
-	if (task->_children.size() == 1) {
-		return std::move(task->_children.front());
+	if (ret._children.size() == 1) {
+		return std::move(ret._children.front());
 	}
 
-	return std::move(task);
+	return ret;
 }
 
 void
@@ -152,7 +150,7 @@ Task::dump(std::function<void (const std::string&)> sink, unsigned indent, bool 
 	} else {
 		sink(((_mode == Mode::SEQUENTIAL) ? "(seq " : "(par "));
 		for (size_t i = 0; i < _children.size(); ++i) {
-			_children[i]->dump(sink, indent + 5, i == 0);
+			_children[i].dump(sink, indent + 5, i == 0);
 		}
 		sink(")");
 	}
