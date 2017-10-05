@@ -271,7 +271,7 @@ Engine::wait_for_tasks()
 }
 
 void
-Engine::signal_tasks()
+Engine::signal_tasks_available()
 {
 	_tasks_available.notify_all();
 }

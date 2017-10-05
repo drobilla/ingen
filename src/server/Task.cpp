@@ -15,7 +15,6 @@
 */
 
 #include "BlockImpl.hpp"
-#include "Engine.hpp"
 #include "Task.hpp"
 
 namespace Ingen {
@@ -46,14 +45,13 @@ Task::run(RunContext& context)
 		Task* t = steal(context);
 
 		// Allow other threads to steal sub-tasks
-		context.set_task(this);
-		context.engine().signal_tasks();
+		context.claim_task(this);
 
 		// Run available tasks until this task is finished
 		for (; t; t = get_task(context)) {
 			t->run(context);
 		}
-		context.set_task(nullptr);
+		context.claim_task(nullptr);
 		break;
 	}
 
@@ -93,7 +91,7 @@ Task::get_task(RunContext& context)
 		}
 
 		// All child tasks claimed, but some are unfinished, steal a task
-		if ((t = context.engine().steal_task(context.id() + 1))) {
+		if ((t = context.steal_task())) {
 			return t;
 		}
 

@@ -154,7 +154,7 @@ public:
 	void  emit_notifications(FrameTime end);
 	bool  pending_notifications();
 	bool  wait_for_tasks();
-	void  signal_tasks();
+	void  signal_tasks_available();
 	Task* steal_task(unsigned start_thread);
 
 	SPtr<Store> store() const;

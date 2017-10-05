@@ -114,9 +114,11 @@ public:
 		_nframes = nframes;
 	}
 
-	inline void set_task(Task* task) {
-		_task = task;
-	}
+	/** Claim a parallel task, and signal others that work is available. */
+	void claim_task(Task* task);
+
+	/** Steal a task from some other context if possible. */
+	Task* steal_task() const;
 
 	void set_priority(int priority);
 	void set_rate(SampleCount rate) { _rate = rate; }

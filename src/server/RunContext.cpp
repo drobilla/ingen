@@ -141,6 +141,20 @@ RunContext::emit_notifications(FrameTime end)
 }
 
 void
+RunContext::claim_task(Task* task)
+{
+	if ((_task = task)) {
+		_engine.signal_tasks_available();
+	}
+}
+
+Task*
+RunContext::steal_task() const
+{
+	return _engine.steal_task(_id + 1);
+}
+
+void
 RunContext::set_priority(int priority)
 {
 	if (_thread) {
