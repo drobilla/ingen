@@ -23,14 +23,10 @@
 
 #include "raul/Maid.hpp"
 #include "raul/Noncopyable.hpp"
-#include "raul/Path.hpp"
 
 #include "Task.hpp"
 
 namespace Ingen {
-
-class Log;
-
 namespace Server {
 
 class BlockImpl;
@@ -51,14 +47,14 @@ public:
 
 	void run(RunContext& context);
 
-	void dump(std::function<void (const std::string&)> sink) const;
-
 private:
 	friend class Raul::Maid;  ///< Allow make_managed to construct
 
 	CompiledGraph(GraphImpl* graph);
 
 	typedef std::set<BlockImpl*> BlockSet;
+
+	void dump(const std::string& name) const;
 
 	void compile_graph(GraphImpl* graph);
 
@@ -73,9 +69,7 @@ private:
 	                      size_t           max_depth,
 	                      BlockSet&        k);
 
-	Log&             _log;
-	const Raul::Path _path;
-	Task             _master;
+	Task _master;
 };
 
 } // namespace Server

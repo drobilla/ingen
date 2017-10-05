@@ -53,9 +53,7 @@ has_provider_with_many_dependants(BlockImpl* n)
 }
 
 CompiledGraph::CompiledGraph(GraphImpl* graph)
-	: _log(graph->engine().log())
-	, _path(graph->path())
-	, _master(Task::Mode::SEQUENTIAL)
+	: _master(Task::Mode::SEQUENTIAL)
 {
 	compile_graph(graph);
 }
@@ -146,10 +144,8 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 	_master = Task::simplify(std::move(_master));
 
 	if (graph->engine().world()->conf().option("trace").get<int32_t>()) {
-		dump([this](const std::string& msg) {
-				ColorContext ctx(stderr, ColorContext::Color::YELLOW);
-				fwrite(msg.c_str(), 1, msg.size(), stderr);
-			});
+		ColorContext ctx(stderr, ColorContext::Color::YELLOW);
+		dump(graph->path());
 	}
 }
 
@@ -261,10 +257,14 @@ CompiledGraph::run(RunContext& context)
 }
 
 void
-CompiledGraph::dump(std::function<void (const std::string&)> sink) const
+CompiledGraph::dump(const std::string& name) const
 {
+	auto sink = [](const std::string& s) {
+		fwrite(s.c_str(), 1, s.size(), stderr);
+	};
+
 	sink("(compiled-graph ");
-	sink(_path);
+	sink(name);
 	_master.dump(sink, 2, false);
 	sink(")\n");
 }
