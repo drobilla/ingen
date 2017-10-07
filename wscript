@@ -15,38 +15,39 @@ VERSION = INGEN_VERSION  # Package version for waf dist
 top     = '.'            # Source directory
 out     = 'build'        # Build directory
 
-def options(opt):
-    opt.load('compiler_cxx')
-    opt.load('python')
-    opt.load('lv2')
-    opt.recurse('src/gui')
-    autowaf.set_options(opt, test=True)
+def options(ctx):
+    ctx.load('compiler_cxx')
+    ctx.load('python')
+    ctx.load('lv2')
+    ctx.recurse('src/gui')
+    autowaf.set_options(ctx, test=True)
+    opt = ctx.get_option_group('Configuration options')
     opt.add_option('--data-dir', type='string', dest='datadir',
-                   help='Ingen data install directory [Default: PREFIX/share/ingen]')
+                   help='ingen data install directory [Default: PREFIX/share/ingen]')
     opt.add_option('--module-dir', type='string', dest='moduledir',
-                   help='Ingen module install directory [Default: PREFIX/lib/ingen]')
+                   help='ingen module install directory [Default: PREFIX/lib/ingen]')
     opt.add_option('--no-gui', action='store_true', dest='no_gui',
-                   help='Do not build GUI')
+                   help='do not build GUI')
     opt.add_option('--no-client', action='store_true', dest='no_client',
-                   help='Do not build client library (or GUI)')
+                   help='do not build client library (or GUI)')
     opt.add_option('--no-jack', action='store_true', dest='no_jack',
-                   help='Do not build jack backend (for ingen.lv2 only)')
+                   help='do not build jack backend (for ingen.lv2 only)')
     opt.add_option('--no-plugin', action='store_true', dest='no_plugin',
-                   help='Do not build ingen.lv2 plugin')
+                   help='do not build ingen.lv2 plugin')
     opt.add_option('--no-python', action='store_true', dest='no_python',
-                   help='Do not install Python bindings')
+                   help='do not install Python bindings')
     opt.add_option('--no-webkit', action='store_true', dest='no_webkit',
-                   help='Do not use webkit to display plugin documentation')
+                   help='do not use webkit to display plugin documentation')
     opt.add_option('--no-jack-session', action='store_true', default=False,
                    dest='no_jack_session',
-                   help='Do not build JACK session support')
+                   help='do not build JACK session support')
     opt.add_option('--no-socket', action='store_true', dest='no_socket',
-                   help='Do not build Socket interface')
+                   help='do not build Socket interface')
     opt.add_option('--debug-urids', action='store_true', dest='debug_urids',
-                   help='Print a trace of URI mapping')
+                   help='print a trace of URI mapping')
     opt.add_option('--portaudio', action='store_true', default=False,
                    dest='portaudio',
-                   help='Build PortAudio backend')
+                   help='build PortAudio backend')
 
 def configure(conf):
     autowaf.display_header('Ingen Configuration')

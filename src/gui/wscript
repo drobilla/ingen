@@ -3,9 +3,10 @@ import waflib.extras.autowaf as autowaf
 import waflib.Utils as Utils
 import waflib.Options as Options
 
-def options(opt):
+def options(ctx):
+    opt = ctx.get_option_group('Configuration options')
     opt.add_option('--light-theme', action='store_true', dest='light_theme',
-                   help='Use light coloured theme')
+                   help='use light coloured theme')
 
 def configure(conf):
     autowaf.check_pkg(conf, 'gtkmm-2.4', uselib_store='GTKMM',
