@@ -133,8 +133,7 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 	}
 
 	if (!_deleting && ctx.must_compile(*_parent)) {
-		if (!(_compiled_graph = CompiledGraph::compile(
-			      *_engine.maid(), *_parent))) {
+		if (!(_compiled_graph = compile(*_engine.maid(), *_parent))) {
 			return Event::pre_process_done(Status::COMPILATION_FAILED);
 		}
 	}

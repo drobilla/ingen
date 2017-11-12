@@ -19,9 +19,10 @@
 
 #include "ingen/Store.hpp"
 
+#include "CompiledGraph.hpp"
+#include "ControlBindings.hpp"
 #include "Event.hpp"
 #include "GraphImpl.hpp"
-#include "ControlBindings.hpp"
 
 namespace Raul {
 template<typename T> class Array;
@@ -31,7 +32,6 @@ namespace Ingen {
 namespace Server {
 
 class BlockImpl;
-class CompiledGraph;
 class DuplexPort;
 class EnginePort;
 class PortImpl;

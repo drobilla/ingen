@@ -20,13 +20,13 @@
 #include "ingen/Resource.hpp"
 
 #include "ClientUpdate.hpp"
+#include "CompiledGraph.hpp"
 #include "Event.hpp"
 
 namespace Ingen {
 namespace Server {
 
 class BlockImpl;
-class CompiledGraph;
 class GraphImpl;
 
 namespace Events {

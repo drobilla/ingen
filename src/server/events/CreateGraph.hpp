@@ -19,6 +19,7 @@
 
 #include "ingen/Resource.hpp"
 
+#include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "events/Get.hpp"
 
@@ -26,7 +27,6 @@ namespace Ingen {
 namespace Server {
 
 class GraphImpl;
-class CompiledGraph;
 
 namespace Events {
 

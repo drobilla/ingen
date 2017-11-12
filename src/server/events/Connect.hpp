@@ -19,6 +19,7 @@
 
 #include "raul/Path.hpp"
 
+#include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "PortImpl.hpp"
 #include "types.hpp"
@@ -31,7 +32,6 @@ namespace Ingen {
 namespace Server {
 
 class ArcImpl;
-class CompiledGraph;
 class GraphImpl;
 class InputPort;
 

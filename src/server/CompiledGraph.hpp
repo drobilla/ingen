@@ -21,6 +21,7 @@
 #include <set>
 #include <vector>
 
+#include "ingen/types.hpp"
 #include "raul/Maid.hpp"
 #include "raul/Noncopyable.hpp"
 
@@ -71,6 +72,11 @@ private:
 
 	Task _master;
 };
+
+inline MPtr<CompiledGraph> compile(Raul::Maid& maid, GraphImpl& graph)
+{
+	return CompiledGraph::compile(maid, graph);
+}
 
 } // namespace Server
 } // namespace Ingen

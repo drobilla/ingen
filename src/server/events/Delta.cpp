@@ -351,8 +351,7 @@ Delta::pre_process(PreProcessContext& ctx)
 						op = SpecialType::ENABLE;
 						// FIXME: defer this until all other metadata has been processed
 						if (value.get<int32_t>() && !_graph->enabled()) {
-							if (!(_compiled_graph = CompiledGraph::compile(
-								      *_engine.maid(), *_graph))) {
+							if (!(_compiled_graph = compile(*_engine.maid(), *_graph))) {
 								_status = Status::COMPILATION_FAILED;
 							}
 						}

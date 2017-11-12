@@ -64,7 +64,7 @@ public:
 	 */
 	MPtr<CompiledGraph> maybe_compile(Raul::Maid& maid, GraphImpl& graph) {
 		if (must_compile(graph)) {
-			return CompiledGraph::compile(maid, graph);
+			return compile(maid, graph);
 		}
 		return MPtr<CompiledGraph>();
 	}

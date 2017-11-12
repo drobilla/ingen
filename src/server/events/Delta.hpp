@@ -25,9 +25,10 @@
 
 #include "raul/URI.hpp"
 
-#include "PluginImpl.hpp"
+#include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
+#include "PluginImpl.hpp"
 
 namespace Ingen {
 
@@ -35,7 +36,6 @@ class Resource;
 
 namespace Server {
 
-class CompiledGraph;
 class Engine;
 class GraphImpl;
 class RunContext;

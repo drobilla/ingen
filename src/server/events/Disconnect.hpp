@@ -20,6 +20,7 @@
 #include "raul/Path.hpp"
 
 #include "BufferFactory.hpp"
+#include "CompiledGraph.hpp"
 #include "Event.hpp"
 #include "GraphImpl.hpp"
 #include "types.hpp"
@@ -31,7 +32,6 @@ template <typename T> class Array;
 namespace Ingen {
 namespace Server {
 
-class CompiledGraph;
 class InputPort;
 class PortImpl;
 

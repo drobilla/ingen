@@ -125,8 +125,7 @@ Connect::pre_process(PreProcessContext& ctx)
 		}
 
 		if (ctx.must_compile(*_graph)) {
-			if (!(_compiled_graph = CompiledGraph::compile(
-				      *_engine.maid(), *_graph))) {
+			if (!(_compiled_graph = compile(*_engine.maid(), *_graph))) {
 				head_block->providers().erase(tail_block);
 				tail_block->dependants().erase(head_block);
 				return Event::pre_process_done(Status::COMPILATION_FAILED);

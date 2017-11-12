@@ -22,13 +22,13 @@
 #include "ingen/Store.hpp"
 #include "raul/Path.hpp"
 
+#include "CompiledGraph.hpp"
 #include "Event.hpp"
 
 namespace Ingen {
 namespace Server {
 
 class BlockImpl;
-class CompiledGraph;
 class GraphImpl;
 
 namespace Events {
