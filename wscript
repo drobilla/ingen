@@ -310,10 +310,10 @@ def test(ctx):
     import sys
 
     def test_file_equals(path1, path2):
-        diff = list(difflib.unified_diff(open(path1).readlines(),
-                                         open(path2).readlines(),
-                                         path1,
-                                         path2))
+        diff = list(difflib.unified_diff(open(path2).readlines(),
+                                         open(path1).readlines(),
+                                         path2,
+                                         path1))
         autowaf.run_test(ctx, APPNAME, [path2, len(diff) != 0])
         if len(diff) > 0:
             for line in diff:
