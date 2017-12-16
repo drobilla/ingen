@@ -121,15 +121,14 @@ Engine::Engine(Ingen::World* world)
 			new LV2Features::EmptyFeature(LV2_STATE__loadDefaultState)));
 
 	if (world->conf().option("dump").get<int32_t>()) {
-		SPtr<Tee>          tee(new Tee());
-		SPtr<StreamWriter> dumper(new StreamWriter(world->uri_map(),
-		                                           world->uris(),
-		                                           Raul::URI("ingen:/engine"),
-		                                           stderr,
-		                                           ColorContext::Color::MAGENTA));
-		tee->add_sink(_event_writer);
-		tee->add_sink(dumper);
-		_interface = tee;
+		_interface = std::make_shared<Tee>(
+			Tee::Sinks{
+				_event_writer,
+				std::make_shared<StreamWriter>(world->uri_map(),
+				                               world->uris(),
+				                               Raul::URI("ingen:/engine"),
+				                               stderr,
+				                               ColorContext::Color::MAGENTA)});
 	}
 
 	_atom_interface = new AtomReader(

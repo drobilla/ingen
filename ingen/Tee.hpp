@@ -19,7 +19,7 @@
 
 #include <mutex>
 #include <set>
-#include <string>
+#include <utility>
 
 #include "ingen/Interface.hpp"
 #include "ingen/types.hpp"
@@ -32,25 +32,13 @@ class Tee : public Interface
 public:
 	typedef std::set< SPtr<Interface> > Sinks;
 
-	Tee(const Sinks& sinks = {})
-		: _sinks(sinks)
-	{}
+	explicit Tee(Sinks sinks) : _sinks(std::move(sinks)) {}
 
-	void add_sink(SPtr<Interface> sink) {
-		std::lock_guard<std::mutex> lock(_sinks_mutex);
-		_sinks.insert(sink);
-	}
-
-	bool remove_sink(SPtr<Interface> sink) {
-		std::lock_guard<std::mutex> lock(_sinks_mutex);
-		return (_sinks.erase(sink) > 0);
-	}
-
-	virtual SPtr<Interface> respondee() const {
+	SPtr<Interface> respondee() const override {
 		return (*_sinks.begin())->respondee();
 	}
 
-	virtual void set_respondee(SPtr<Interface> respondee) {
+	void set_respondee(SPtr<Interface> respondee) override {
 		(*_sinks.begin())->set_respondee(respondee);
 	}
 
@@ -61,9 +49,7 @@ public:
 		}
 	}
 
-	Raul::URI    uri()   const { return Raul::URI("ingen:/tee"); }
-	const Sinks& sinks() const { return _sinks; }
-	Sinks&       sinks()       { return _sinks; }
+	Raul::URI uri() const override { return Raul::URI("ingen:/tee"); }
 
 private:
 	std::mutex _sinks_mutex;
