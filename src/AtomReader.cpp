@@ -167,6 +167,10 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		if (subject_uri) {
 			_iface.get(*subject_uri);
 		}
+	} else if (obj->body.otype == _uris.ingen_BundleStart) {
+		_iface.bundle_begin();
+	} else if (obj->body.otype == _uris.ingen_BundleEnd) {
+		_iface.bundle_end();
 	} else if (obj->body.otype == _uris.patch_Delete) {
 		const LV2_Atom_Object* body = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
@@ -174,10 +178,6 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		if (subject_uri && !body) {
 			_iface.del(*subject_uri);
 			return true;
-		} else if (obj->body.otype == _uris.ingen_BundleStart) {
-			_iface.bundle_begin();
-		} else if (obj->body.otype == _uris.ingen_BundleEnd) {
-			_iface.bundle_end();
 		} else if (body && body->body.otype == _uris.ingen_Arc) {
 			const LV2_Atom* tail       = NULL;
 			const LV2_Atom* head       = NULL;
