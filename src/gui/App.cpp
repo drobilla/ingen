@@ -263,7 +263,7 @@ App::set_property(const Raul::URI& subject,
 	   went as planned here and fire the signal ourselves as if the server
 	   feedback came back immediately. */
 	if (key != uris().ingen_activity) {
-		_client->signal_message().emit(SetProperty{subject, key, value, ctx});
+		_client->signal_message().emit(SetProperty{0, subject, key, value, ctx});
 	}
 }
 

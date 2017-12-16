@@ -158,25 +158,24 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 
 	const boost::optional<Raul::URI> subject_uri = atom_to_uri(subject);
 
-	const int32_t seq_id = ((number && number->type == _uris.atom_Int)
-	                        ? ((const LV2_Atom_Int*)number)->body
-	                        : default_id);
-	_iface.set_response_id(seq_id);
+	const int32_t seq = ((number && number->type == _uris.atom_Int)
+	                     ? ((const LV2_Atom_Int*)number)->body
+	                     : default_id);
 
 	if (obj->body.otype == _uris.patch_Get) {
 		if (subject_uri) {
-			_iface.get(*subject_uri);
+			_iface(Get{seq, *subject_uri});
 		}
 	} else if (obj->body.otype == _uris.ingen_BundleStart) {
-		_iface.bundle_begin();
+		_iface(BundleBegin{seq});
 	} else if (obj->body.otype == _uris.ingen_BundleEnd) {
-		_iface.bundle_end();
+		_iface(BundleEnd{seq});
 	} else if (obj->body.otype == _uris.patch_Delete) {
 		const LV2_Atom_Object* body = NULL;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 
 		if (subject_uri && !body) {
-			_iface.del(*subject_uri);
+			_iface(Del{seq, *subject_uri});
 			return true;
 		} else if (body && body->body.otype == _uris.ingen_Arc) {
 			const LV2_Atom* tail       = NULL;
@@ -193,9 +192,9 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			boost::optional<Raul::Path> head_path(atom_to_path(head));
 			boost::optional<Raul::Path> other_path(atom_to_path(incidentTo));
 			if (tail_path && head_path) {
-				_iface.disconnect(*tail_path, *head_path);
+				_iface(Disconnect{seq, *tail_path, *head_path});
 			} else if (subject_path && other_path) {
-				_iface.disconnect_all(*subject_path, *other_path);
+				_iface(DisconnectAll{seq, *subject_path, *other_path});
 			} else {
 				_log.warn("Delete of unknown object\n");
 				return false;
@@ -231,14 +230,14 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			boost::optional<Raul::Path> tail_path(atom_to_path(tail));
 			boost::optional<Raul::Path> head_path(atom_to_path(head));
 			if (tail_path && head_path) {
-				_iface.connect(*tail_path, *head_path);
+				_iface(Connect{seq, *tail_path, *head_path});
 			} else {
 				_log.warn("Arc has non-path tail or head\n");
 			}
 		} else {
 			Ingen::Properties props;
 			get_props(body, props);
-			_iface.put(*subject_uri, props, atom_to_context(context));
+			_iface(Put{seq, *subject_uri, props, atom_to_context(context)});
 		}
 	} else if (obj->body.otype == _uris.patch_Set) {
 		if (!subject_uri) {
@@ -264,10 +263,11 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 
 		Atom atom;
 		get_atom(value, atom);
-		_iface.set_property(*subject_uri,
-		                    Raul::URI(_map.unmap_uri(prop->body)),
-		                    atom,
-		                    atom_to_context(context));
+		_iface(SetProperty{seq,
+		                   *subject_uri,
+		                   Raul::URI(_map.unmap_uri(prop->body)),
+		                   atom,
+		                   atom_to_context(context)});
 	} else if (obj->body.otype == _uris.patch_Patch) {
 		if (!subject_uri) {
 			_log.warn("Patch message has no subject\n");
@@ -296,8 +296,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		Ingen::Properties remove_props;
 		get_props(remove, remove_props);
 
-		_iface.delta(*subject_uri, remove_props, add_props,
-		             atom_to_context(context));
+		_iface(Delta{seq, *subject_uri, remove_props, add_props,
+		             atom_to_context(context)});
 	} else if (obj->body.otype == _uris.patch_Copy) {
 		if (!subject) {
 			_log.warn("Copy message has no subject\n");
@@ -323,7 +323,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		_iface.copy(*subject_uri, *dest_uri);
+		_iface(Copy{seq, *subject_uri, *dest_uri});
 	} else if (obj->body.otype == _uris.patch_Move) {
 		if (!subject) {
 			_log.warn("Move message has no subject\n");
@@ -349,7 +349,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		_iface.move(*subject_path, *dest_path);
+		_iface(Move{seq, *subject_path, *dest_path});
 	} else if (obj->body.otype == _uris.patch_Response) {
 		const LV2_Atom* seq  = NULL;
 		const LV2_Atom* body = NULL;
@@ -364,13 +364,13 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			_log.warn("Response message body is not integer\n");
 			return false;
 		}
-		_iface.response(((const LV2_Atom_Int*)seq)->body,
+		_iface(Response{((const LV2_Atom_Int*)seq)->body,
 		                (Ingen::Status)((const LV2_Atom_Int*)body)->body,
-		                subject_uri ? subject_uri->c_str() : "");
+		                subject_uri ? subject_uri->c_str() : ""});
 	} else if (obj->body.otype == _uris.ingen_BundleStart) {
-		_iface.bundle_begin();
+		_iface(BundleBegin{seq});
 	} else if (obj->body.otype == _uris.ingen_BundleEnd) {
-		_iface.bundle_end();
+		_iface(BundleEnd{seq});
 	} else {
 		_log.warn(fmt("Unknown object type <%1%>\n")
 		          % _map.unmap_uri(obj->body.otype));

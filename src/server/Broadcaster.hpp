@@ -99,8 +99,6 @@ public:
 
 	Raul::URI uri() const { return Raul::URI("ingen:/broadcaster"); }
 
-	void set_response_id(int32_t id) {} ///< N/A
-
 private:
 	friend class Transfer;
 

@@ -66,7 +66,6 @@ AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	: _map(map)
 	, _uris(uris)
 	, _sink(sink)
-	, _id(0)
 {
 	lv2_atom_forge_init(&_forge, &map.urid_map_feature()->urid_map);
 	_out.set_forge_sink(&_forge);
@@ -109,19 +108,19 @@ AtomWriter::message(const Message& message)
  * @endcode
  */
 void
-AtomWriter::operator()(const BundleBegin&)
+AtomWriter::operator()(const BundleBegin& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.ingen_BundleStart);
+	forge_request(&msg, _uris.ingen_BundleStart, message.seq);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }
 
 void
-AtomWriter::operator()(const BundleEnd&)
+AtomWriter::operator()(const BundleEnd& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.ingen_BundleEnd);
+	forge_request(&msg, _uris.ingen_BundleEnd, message.seq);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }
@@ -163,13 +162,13 @@ AtomWriter::forge_arc(const Raul::Path& tail, const Raul::Path& head)
 }
 
 void
-AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type)
+AtomWriter::forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type, int32_t id)
 {
 	lv2_atom_forge_object(&_forge, frame, 0, type);
 
-	if (_id) {
+	if (id) {
 		lv2_atom_forge_key(&_forge, _uris.patch_sequenceNumber);
-		lv2_atom_forge_int(&_forge, _id);
+		lv2_atom_forge_int(&_forge, id);
 	}
 }
 
@@ -217,7 +216,7 @@ void
 AtomWriter::operator()(const Put& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Put);
+	forge_request(&msg, _uris.patch_Put, message.seq);
 	forge_context(message.ctx);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(message.uri);
@@ -262,7 +261,7 @@ void
 AtomWriter::operator()(const Delta& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Patch);
+	forge_request(&msg, _uris.patch_Patch, message.seq);
 	forge_context(message.ctx);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(message.uri);
@@ -310,7 +309,7 @@ void
 AtomWriter::operator()(const Copy& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Copy);
+	forge_request(&msg, _uris.patch_Copy, message.seq);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(message.old_uri);
 	lv2_atom_forge_key(&_forge, _uris.patch_destination);
@@ -339,7 +338,7 @@ void
 AtomWriter::operator()(const Move& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Move);
+	forge_request(&msg, _uris.patch_Move, message.seq);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(path_to_uri(message.old_path));
 	lv2_atom_forge_key(&_forge, _uris.patch_destination);
@@ -367,7 +366,7 @@ void
 AtomWriter::operator()(const Del& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Delete);
+	forge_request(&msg, _uris.patch_Delete, message.seq);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(message.uri);
 	lv2_atom_forge_pop(&_forge, &msg);
@@ -392,7 +391,7 @@ void
 AtomWriter::operator()(const SetProperty& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Set);
+	forge_request(&msg, _uris.patch_Set, message.seq);
 	forge_context(message.ctx);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(message.subject);
@@ -419,10 +418,10 @@ AtomWriter::operator()(const SetProperty& message)
  * @endcode
  */
 void
-AtomWriter::operator()(const Undo&)
+AtomWriter::operator()(const Undo& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.ingen_Undo);
+	forge_request(&msg, _uris.ingen_Undo, message.seq);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }
@@ -437,10 +436,10 @@ AtomWriter::operator()(const Undo&)
  * @endcode
  */
 void
-AtomWriter::operator()(const Redo&)
+AtomWriter::operator()(const Redo& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.ingen_Redo);
+	forge_request(&msg, _uris.ingen_Redo, message.seq);
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }
@@ -461,7 +460,7 @@ void
 AtomWriter::operator()(const Get& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Get);
+	forge_request(&msg, _uris.patch_Get, message.seq);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(message.subject);
 	lv2_atom_forge_pop(&_forge, &msg);
@@ -495,7 +494,7 @@ void
 AtomWriter::operator()(const Connect& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Put);
+	forge_request(&msg, _uris.patch_Put, message.seq);
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(path_to_uri(Raul::Path::lca(message.tail, message.head)));
 	lv2_atom_forge_key(&_forge, _uris.patch_body);
@@ -524,7 +523,7 @@ void
 AtomWriter::operator()(const Disconnect& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Delete);
+	forge_request(&msg, _uris.patch_Delete, message.seq);
 	lv2_atom_forge_key(&_forge, _uris.patch_body);
 	forge_arc(message.tail, message.head);
 	lv2_atom_forge_pop(&_forge, &msg);
@@ -553,7 +552,7 @@ void
 AtomWriter::operator()(const DisconnectAll& message)
 {
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Delete);
+	forge_request(&msg, _uris.patch_Delete, message.seq);
 
 	lv2_atom_forge_key(&_forge, _uris.patch_subject);
 	forge_uri(path_to_uri(message.graph));
@@ -568,13 +567,6 @@ AtomWriter::operator()(const DisconnectAll& message)
 	lv2_atom_forge_pop(&_forge, &msg);
 	finish_msg();
 }
-
-void
-AtomWriter::set_response_id(int32_t id)
-{
-	_id = id;
-}
-
 
 /** @page protocol
  * @section Responses
@@ -615,7 +607,7 @@ AtomWriter::operator()(const Response& response)
 	}
 
 	LV2_Atom_Forge_Frame msg;
-	forge_request(&msg, _uris.patch_Response);
+	forge_request(&msg, _uris.patch_Response, 0);
 	lv2_atom_forge_key(&_forge, _uris.patch_sequenceNumber);
 	lv2_atom_forge_int(&_forge, response.id);
 	if (!subject.empty() && Raul::URI::is_valid(subject)) {

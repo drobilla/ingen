@@ -54,8 +54,6 @@ public:
 	virtual bool emit_signals() { return false; }
 
 protected:
-	void set_response_id(int32_t id) {}
-
 	void message(const Message& msg) override {
 		_signal_message(msg);
 	}

@@ -31,8 +31,6 @@ public:
 
 	Raul::URI uri() const { return Raul::URI("ingen:testClient"); }
 
-	void set_response_id(int32_t id) override {}
-
 	void message(const Message& msg) override {
 		if (const Response* const response = boost::get<Response>(&msg)) {
 			if (response->status != Status::SUCCESS) {

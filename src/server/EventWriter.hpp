@@ -50,8 +50,6 @@ public:
 		_respondee = respondee;
 	}
 
-	virtual void set_response_id(int32_t id);
-
 	void message(const Message& msg) override;
 
 	void        set_event_mode(Event::Mode mode) { _event_mode = mode; }
@@ -77,7 +75,6 @@ public:
 protected:
 	Engine&         _engine;
 	SPtr<Interface> _respondee;
-	int32_t         _request_id;
 	Event::Mode     _event_mode;
 
 private:

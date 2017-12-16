@@ -21,6 +21,7 @@
 #ifndef INGEN_INTERFACE_HPP
 #define INGEN_INTERFACE_HPP
 
+#include <cstdint>
 #include <string>
 
 #include "ingen/Message.hpp"
@@ -44,7 +45,9 @@ namespace Ingen {
 class INGEN_API Interface
 {
 public:
-	virtual ~Interface() {}
+	Interface() : _seq(0) {}
+
+	virtual ~Interface() = default;
 
 	virtual Raul::URI uri() const = 0;
 
@@ -54,22 +57,27 @@ public:
 
 	virtual void set_respondee(SPtr<Interface> respondee) {}
 
-	/** Set the ID to use to respond to the next message.
-	 * Setting the ID to 0 will disable responses.
+	virtual void message(const Message& msg) = 0;
+
+	/** @name Convenience API
+	 * @{
 	 */
-	virtual void set_response_id(int32_t id) = 0;
 
-	virtual void message(const Message& message) = 0;
+	inline void operator()(const Message& msg) { message(msg); }
 
-	inline void bundle_begin() { message(BundleBegin{}); }
+	inline void set_response_id(int32_t id) {
+		_seq = id;
+	}
 
-	inline void bundle_end() { message(BundleEnd{}); }
+	inline void bundle_begin() { message(BundleBegin{_seq++}); }
+
+	inline void bundle_end() { message(BundleEnd{_seq++}); }
 
 	inline void put(const Raul::URI&  uri,
 	                const Properties& properties,
 	                Resource::Graph   ctx = Resource::Graph::DEFAULT)
 	{
-		message(Put{uri, properties, ctx});
+		message(Put{_seq++, uri, properties, ctx});
 	}
 
 	inline void delta(const Raul::URI&  uri,
@@ -77,34 +85,34 @@ public:
 	                  const Properties& add,
 	                  Resource::Graph   ctx = Resource::Graph::DEFAULT)
 	{
-		message(Delta{uri, remove, add, ctx});
+		message(Delta{_seq++, uri, remove, add, ctx});
 	}
 
 	inline void copy(const Raul::URI& old_uri, const Raul::URI& new_uri)
 	{
-		message(Copy{old_uri, new_uri});
+		message(Copy{_seq++, old_uri, new_uri});
 	}
 
 	inline void move(const Raul::Path& old_path, const Raul::Path& new_path)
 	{
-		message(Move{old_path, new_path});
+		message(Move{_seq++, old_path, new_path});
 	}
 
-	inline void del(const Raul::URI& uri) { message(Del{uri}); }
+	inline void del(const Raul::URI& uri) { message(Del{_seq++, uri}); }
 
 	inline void connect(const Raul::Path& tail, const Raul::Path& head)
 	{
-		message(Connect{tail, head});
+		message(Connect{_seq++, tail, head});
 	}
 
 	inline void disconnect(const Raul::Path& tail, const Raul::Path& head)
 	{
-		message(Disconnect{tail, head});
+		message(Disconnect{_seq++, tail, head});
 	}
 
 	inline void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
 	{
-		message(DisconnectAll{graph, path});
+		message(DisconnectAll{_seq++, graph, path});
 	}
 
 	inline void set_property(const Raul::URI& subject,
@@ -112,14 +120,14 @@ public:
 	                         const Atom&      value,
 	                         Resource::Graph  ctx = Resource::Graph::DEFAULT)
 	{
-		message(SetProperty{subject, predicate, value, ctx});
+		message(SetProperty{_seq++, subject, predicate, value, ctx});
 	}
 
-	inline void undo() { message(Undo{}); }
+	inline void undo() { message(Undo{_seq++}); }
 
-	inline void redo() { message(Redo{}); }
+	inline void redo() { message(Redo{_seq++}); }
 
-	inline void get(const Raul::URI& uri) { message(Get{uri}); }
+	inline void get(const Raul::URI& uri) { message(Get{_seq++, uri}); }
 
 	inline void response(int32_t            id,
 	                     Status             status,
@@ -128,8 +136,13 @@ public:
 	}
 
 	inline void error(const std::string& error_message) {
-		message(Error{error_message});
+		message(Error{_seq++, error_message});
 	}
+
+	/** @} */
+
+private:
+	int32_t _seq;
 };
 
 } // namespace Ingen

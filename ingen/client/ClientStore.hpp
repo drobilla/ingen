@@ -92,8 +92,6 @@ public:
 	void operator()(const SetProperty&);
 	void operator()(const Undo&) {}
 
-	void set_response_id(int32_t id) {}
-
 	INGEN_SIGNAL(new_object, void, SPtr<ObjectModel>);
 	INGEN_SIGNAL(new_plugin, void, SPtr<PluginModel>);
 	INGEN_SIGNAL(plugin_deleted, void, Raul::URI);

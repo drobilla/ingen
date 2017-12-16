@@ -42,8 +42,6 @@ public:
 		return Raul::URI("ingen:/clients/atom_writer");
 	}
 
-	void set_response_id(int32_t id);
-
 	void message(const Message& message) override;
 
 	void operator()(const BundleBegin&);
@@ -67,7 +65,7 @@ private:
 	void forge_uri(const Raul::URI& uri);
 	void forge_properties(const Properties& properties);
 	void forge_arc(const Raul::Path& tail, const Raul::Path& head);
-	void forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type);
+	void forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type, int32_t id);
 	void forge_context(Resource::Graph ctx);
 
 	void finish_msg();
@@ -77,7 +75,6 @@ private:
 	AtomSink&      _sink;
 	AtomForgeSink  _out;
 	LV2_Atom_Forge _forge;
-	int32_t        _id;
 };
 
 } // namespace Ingen

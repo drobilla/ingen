@@ -37,31 +37,37 @@ namespace Ingen {
 
 struct BundleBegin
 {
+	int32_t seq;
 };
 
 struct BundleEnd
 {
+	int32_t seq;
 };
 
 struct Connect
 {
+	int32_t    seq;
 	Raul::Path tail;
 	Raul::Path head;
 };
 
 struct Copy
 {
+	int32_t   seq;
 	Raul::URI old_uri;
 	Raul::URI new_uri;
 };
 
 struct Del
 {
+	int32_t   seq;
 	Raul::URI uri;
 };
 
 struct Delta
 {
+	int32_t         seq;
 	Raul::URI       uri;
 	Properties      remove;
 	Properties      add;
@@ -70,34 +76,40 @@ struct Delta
 
 struct Disconnect
 {
+	int32_t    seq;
 	Raul::Path tail;
 	Raul::Path head;
 };
 
 struct DisconnectAll
 {
+	int32_t    seq;
 	Raul::Path graph;
 	Raul::Path path;
 };
 
 struct Error
 {
+	int32_t     seq;
 	std::string message;
 };
 
 struct Get
 {
+	int32_t   seq;
 	Raul::URI subject;
 };
 
 struct Move
 {
+	int32_t    seq;
 	Raul::Path old_path;
 	Raul::Path new_path;
 };
 
 struct Put
 {
+	int32_t         seq;
 	Raul::URI       uri;
 	Properties      properties;
 	Resource::Graph ctx;
@@ -105,6 +117,7 @@ struct Put
 
 struct Redo
 {
+	int32_t seq;
 };
 
 struct Response
@@ -116,6 +129,7 @@ struct Response
 
 struct SetProperty
 {
+	int32_t         seq;
 	Raul::URI       subject;
 	Raul::URI       predicate;
 	Atom            value;
@@ -124,6 +138,7 @@ struct SetProperty
 
 struct Undo
 {
+	int32_t seq;
 };
 
 using Message = boost::variant<BundleBegin,

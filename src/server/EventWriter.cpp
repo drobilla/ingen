@@ -29,7 +29,6 @@ namespace Server {
 
 EventWriter::EventWriter(Engine& engine)
 	: _engine(engine)
-	, _request_id(0)
 	, _event_mode(Event::Mode::NORMAL)
 {
 }
@@ -41,31 +40,25 @@ EventWriter::now() const
 }
 
 void
-EventWriter::set_response_id(int32_t id)
-{
-	_request_id = id;
-}
-
-void
 EventWriter::message(const Message& msg)
 {
 	boost::apply_visitor(*this, msg);
 }
 
 void
-EventWriter::operator()(const BundleBegin&)
+EventWriter::operator()(const BundleBegin& msg)
 {
 	_engine.enqueue_event(
-		new Events::Mark(_engine, _respondee, _request_id, now(),
+		new Events::Mark(_engine, _respondee, msg.seq, now(),
 		                 Events::Mark::Type::BUNDLE_START),
 		_event_mode);
 }
 
 void
-EventWriter::operator()(const BundleEnd&)
+EventWriter::operator()(const BundleEnd& msg)
 {
 	_engine.enqueue_event(
-		new Events::Mark(_engine, _respondee, _request_id, now(),
+		new Events::Mark(_engine, _respondee, msg.seq, now(),
 		                 Events::Mark::Type::BUNDLE_END),
 		_event_mode);
 }
@@ -74,7 +67,7 @@ void
 EventWriter::operator()(const Put& msg)
 {
 	_engine.enqueue_event(
-		new Events::Delta(_engine, _respondee, _request_id, now(),
+		new Events::Delta(_engine, _respondee, msg.seq, now(),
 		                  Events::Delta::Type::PUT, msg.ctx, msg.uri, msg.properties),
 		_event_mode);
 }
@@ -83,7 +76,7 @@ void
 EventWriter::operator()(const Delta& msg)
 {
 	_engine.enqueue_event(
-		new Events::Delta(_engine, _respondee, _request_id, now(),
+		new Events::Delta(_engine, _respondee, msg.seq, now(),
 		                  Events::Delta::Type::PATCH, msg.ctx, msg.uri, msg.add, msg.remove),
 		_event_mode);
 }
@@ -92,7 +85,7 @@ void
 EventWriter::operator()(const Copy& msg)
 {
 	_engine.enqueue_event(
-		new Events::Copy(_engine, _respondee, _request_id, now(),
+		new Events::Copy(_engine, _respondee, msg.seq, now(),
 		                 msg.old_uri, msg.new_uri),
 		_event_mode);
 }
@@ -101,7 +94,7 @@ void
 EventWriter::operator()(const Move& msg)
 {
 	_engine.enqueue_event(
-		new Events::Move(_engine, _respondee, _request_id, now(),
+		new Events::Move(_engine, _respondee, msg.seq, now(),
 		                 msg.old_path, msg.new_path),
 		_event_mode);
 }
@@ -110,7 +103,7 @@ void
 EventWriter::operator()(const Del& msg)
 {
 	_engine.enqueue_event(
-		new Events::Delete(_engine, _respondee, _request_id, now(), msg.uri),
+		new Events::Delete(_engine, _respondee, msg.seq, now(), msg.uri),
 		_event_mode);
 }
 
@@ -118,7 +111,7 @@ void
 EventWriter::operator()(const Connect& msg)
 {
 	_engine.enqueue_event(
-		new Events::Connect(_engine, _respondee, _request_id, now(),
+		new Events::Connect(_engine, _respondee, msg.seq, now(),
 		                    msg.tail, msg.head),
 		_event_mode);
 
@@ -128,7 +121,7 @@ void
 EventWriter::operator()(const Disconnect& msg)
 {
 	_engine.enqueue_event(
-		new Events::Disconnect(_engine, _respondee, _request_id, now(),
+		new Events::Disconnect(_engine, _respondee, msg.seq, now(),
 		                       msg.tail, msg.head),
 		_event_mode);
 }
@@ -137,7 +130,7 @@ void
 EventWriter::operator()(const DisconnectAll& msg)
 {
 	_engine.enqueue_event(
-		new Events::DisconnectAll(_engine, _respondee, _request_id, now(),
+		new Events::DisconnectAll(_engine, _respondee, msg.seq, now(),
 		                          msg.graph, msg.path),
 		_event_mode);
 }
@@ -146,25 +139,25 @@ void
 EventWriter::operator()(const SetProperty& msg)
 {
 	_engine.enqueue_event(
-		new Events::Delta(_engine, _respondee, _request_id, now(),
+		new Events::Delta(_engine, _respondee, msg.seq, now(),
 		                  Events::Delta::Type::SET, msg.ctx,
 		                  msg.subject, {{msg.predicate, msg.value}}, {}),
 		_event_mode);
 }
 
 void
-EventWriter::operator()(const Undo&)
+EventWriter::operator()(const Undo& msg)
 {
 	_engine.enqueue_event(
-		new Events::Undo(_engine, _respondee, _request_id, now(), false),
+		new Events::Undo(_engine, _respondee, msg.seq, now(), false),
 		_event_mode);
 }
 
 void
-EventWriter::operator()(const Redo&)
+EventWriter::operator()(const Redo& msg)
 {
 	_engine.enqueue_event(
-		new Events::Undo(_engine, _respondee, _request_id, now(), true),
+		new Events::Undo(_engine, _respondee, msg.seq, now(), true),
 		_event_mode);
 }
 
@@ -172,7 +165,7 @@ void
 EventWriter::operator()(const Get& msg)
 {
 	_engine.enqueue_event(
-		new Events::Get(_engine, _respondee, _request_id, now(), msg.subject),
+		new Events::Get(_engine, _respondee, msg.seq, now(), msg.subject),
 		_event_mode);
 }
 

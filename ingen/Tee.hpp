@@ -54,13 +54,6 @@ public:
 		(*_sinks.begin())->set_respondee(respondee);
 	}
 
-	void set_response_id(int32_t id) {
-		std::lock_guard<std::mutex> lock(_sinks_mutex);
-		for (const auto& s : _sinks) {
-			s->set_response_id(id);
-		}
-	}
-
 	void message(const Message& message) override {
 		std::lock_guard<std::mutex> lock(_sinks_mutex);
 		for (const auto& s : _sinks) {
