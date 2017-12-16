@@ -34,15 +34,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Connect::Connect(Engine&           engine,
-                 SPtr<Interface>   client,
-                 int32_t           id,
-                 SampleCount       timestamp,
-                 const Raul::Path& tail_path,
-                 const Raul::Path& head_path)
-	: Event(engine, client, id, timestamp)
-	, _tail_path(tail_path)
-	, _head_path(head_path)
+Connect::Connect(Engine&               engine,
+                 SPtr<Interface>       client,
+                 SampleCount           timestamp,
+                 const Ingen::Connect& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _msg(msg)
 	, _graph(NULL)
 	, _head(NULL)
 {}
@@ -52,36 +49,36 @@ Connect::pre_process(PreProcessContext& ctx)
 {
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
-	Node* tail = _engine.store()->get(_tail_path);
+	Node* tail = _engine.store()->get(_msg.tail);
 	if (!tail) {
-		return Event::pre_process_done(Status::NOT_FOUND, _tail_path);
+		return Event::pre_process_done(Status::NOT_FOUND, _msg.tail);
 	}
 
-	Node* head = _engine.store()->get(_head_path);
+	Node* head = _engine.store()->get(_msg.head);
 	if (!head) {
-		return Event::pre_process_done(Status::NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::NOT_FOUND, _msg.head);
 	}
 
 	PortImpl* tail_output = dynamic_cast<PortImpl*>(tail);
 	_head                 = dynamic_cast<InputPort*>(head);
 	if (!tail_output || !_head) {
-		return Event::pre_process_done(Status::BAD_REQUEST, _head_path);
+		return Event::pre_process_done(Status::BAD_REQUEST, _msg.head);
 	}
 
 	BlockImpl* const tail_block = tail_output->parent_block();
 	BlockImpl* const head_block = _head->parent_block();
 	if (!tail_block || !head_block) {
-		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _msg.head);
 	}
 
 	if (tail_block->parent() != head_block->parent()
 	    && tail_block != head_block->parent()
 	    && tail_block->parent() != head_block) {
-		return Event::pre_process_done(Status::PARENT_DIFFERS, _head_path);
+		return Event::pre_process_done(Status::PARENT_DIFFERS, _msg.head);
 	}
 
 	if (!ArcImpl::can_connect(tail_output, _head)) {
-		return Event::pre_process_done(Status::TYPE_MISMATCH, _head_path);
+		return Event::pre_process_done(Status::TYPE_MISMATCH, _msg.head);
 	}
 
 	if (tail_block->parent_graph() != head_block->parent_graph()) {
@@ -101,7 +98,7 @@ Connect::pre_process(PreProcessContext& ctx)
 	}
 
 	if (_graph->has_arc(tail_output, _head)) {
-		return Event::pre_process_done(Status::EXISTS, _head_path);
+		return Event::pre_process_done(Status::EXISTS, _msg.head);
 	}
 
 	_arc = SPtr<ArcImpl>(new ArcImpl(tail_output, _head));
@@ -168,14 +165,14 @@ Connect::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
-		_engine.broadcaster()->connect(_tail_path, _head_path);
+		_engine.broadcaster()->message(_msg);
 		if (!_tail_remove.empty() || !_tail_add.empty()) {
 			_engine.broadcaster()->delta(
-				path_to_uri(_tail_path), _tail_remove, _tail_add);
+				path_to_uri(_msg.tail), _tail_remove, _tail_add);
 		}
 		if (!_tail_remove.empty() || !_tail_add.empty()) {
 			_engine.broadcaster()->delta(
-				path_to_uri(_tail_path), _tail_remove, _tail_add);
+				path_to_uri(_msg.tail), _tail_remove, _tail_add);
 		}
 	}
 }
@@ -183,7 +180,7 @@ Connect::post_process()
 void
 Connect::undo(Interface& target)
 {
-	target.disconnect(_tail_path, _head_path);
+	target.disconnect(_msg.tail, _msg.head);
 }
 
 } // namespace Events

@@ -31,13 +31,10 @@ namespace Events {
 
 Move::Move(Engine&           engine,
            SPtr<Interface>   client,
-           int32_t           id,
            SampleCount       timestamp,
-           const Raul::Path& path,
-           const Raul::Path& new_path)
-	: Event(engine, client, id, timestamp)
-	, _old_path(path)
-	, _new_path(new_path)
+           const Ingen::Move& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _msg(msg)
 {
 }
 
@@ -50,25 +47,25 @@ Move::pre_process(PreProcessContext& ctx)
 {
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
-	if (!_old_path.parent().is_parent_of(_new_path)) {
-		return Event::pre_process_done(Status::PARENT_DIFFERS, _new_path);
+	if (!_msg.old_path.parent().is_parent_of(_msg.new_path)) {
+		return Event::pre_process_done(Status::PARENT_DIFFERS, _msg.new_path);
 	}
 
-	const Store::iterator i = _engine.store()->find(_old_path);
+	const Store::iterator i = _engine.store()->find(_msg.old_path);
 	if (i == _engine.store()->end()) {
-		return Event::pre_process_done(Status::NOT_FOUND, _old_path);
+		return Event::pre_process_done(Status::NOT_FOUND, _msg.old_path);
 	}
 
-	if (_engine.store()->find(_new_path) != _engine.store()->end()) {
-		return Event::pre_process_done(Status::EXISTS, _new_path);
+	if (_engine.store()->find(_msg.new_path) != _engine.store()->end()) {
+		return Event::pre_process_done(Status::EXISTS, _msg.new_path);
 	}
 
-	EnginePort* eport = _engine.driver()->get_port(_old_path);
+	EnginePort* eport = _engine.driver()->get_port(_msg.old_path);
 	if (eport) {
-		_engine.driver()->rename_port(_old_path, _new_path);
+		_engine.driver()->rename_port(_msg.old_path, _msg.new_path);
 	}
 
-	_engine.store()->rename(i, _new_path);
+	_engine.store()->rename(i, _msg.new_path);
 
 	return Event::pre_process_done(Status::SUCCESS);
 }
@@ -83,14 +80,14 @@ Move::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
-		_engine.broadcaster()->move(_old_path, _new_path);
+		_engine.broadcaster()->message(_msg);
 	}
 }
 
 void
 Move::undo(Interface& target)
 {
-	target.move(_new_path, _old_path);
+	target.move(_msg.new_path, _msg.old_path);
 }
 
 } // namespace Events

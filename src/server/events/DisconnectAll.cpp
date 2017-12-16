@@ -37,15 +37,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-DisconnectAll::DisconnectAll(Engine&           engine,
-                             SPtr<Interface>   client,
-                             int32_t           id,
-                             SampleCount       timestamp,
-                             const Raul::Path& parent_path,
-                             const Raul::Path& path)
-	: Event(engine, client, id, timestamp)
-	, _parent_path(parent_path)
-	, _path(path)
+DisconnectAll::DisconnectAll(Engine&                     engine,
+                             SPtr<Interface>             client,
+                             SampleCount                 timestamp,
+                             const Ingen::DisconnectAll& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _msg(msg)
 	, _parent(NULL)
 	, _block(NULL)
 	, _port(NULL)
@@ -59,8 +56,7 @@ DisconnectAll::DisconnectAll(Engine&    engine,
                              GraphImpl* parent,
                              Node*      object)
 	: Event(engine)
-	, _parent_path(parent->path())
-	, _path(object->path())
+	, _msg{0, parent->path(), object->path()}
 	, _parent(parent)
 	, _block(dynamic_cast<BlockImpl*>(object))
 	, _port(dynamic_cast<PortImpl*>(object))
@@ -77,26 +73,27 @@ DisconnectAll::~DisconnectAll()
 bool
 DisconnectAll::pre_process(PreProcessContext& ctx)
 {
-	std::unique_lock<Store::Mutex> lock(_engine.store()->mutex(), std::defer_lock);
+	std::unique_lock<Store::Mutex> lock(_engine.store()->mutex(),
+	                                    std::defer_lock);
 
 	if (!_deleting) {
 		lock.lock();
 
-		_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(_parent_path));
+		_parent = dynamic_cast<GraphImpl*>(_engine.store()->get(_msg.graph));
 		if (!_parent) {
 			return Event::pre_process_done(Status::PARENT_NOT_FOUND,
-			                               _parent_path);
+			                               _msg.graph);
 		}
 
 		NodeImpl* const object = dynamic_cast<NodeImpl*>(
-			_engine.store()->get(_path));
+			_engine.store()->get(_msg.path));
 		if (!object) {
-			return Event::pre_process_done(Status::NOT_FOUND, _path);
+			return Event::pre_process_done(Status::NOT_FOUND, _msg.path);
 		}
 
 		if (object->parent_graph() != _parent
 		    && object->parent()->parent_graph() != _parent) {
-			return Event::pre_process_done(Status::INVALID_PARENT, _parent_path);
+			return Event::pre_process_done(Status::INVALID_PARENT, _msg.graph);
 		}
 
 		// Only one of these will succeed
@@ -104,7 +101,7 @@ DisconnectAll::pre_process(PreProcessContext& ctx)
 		_port  = dynamic_cast<PortImpl*>(object);
 
 		if (!_block && !_port) {
-			return Event::pre_process_done(Status::INTERNAL_ERROR, _path);
+			return Event::pre_process_done(Status::INTERNAL_ERROR, _msg.path);
 		}
 	}
 
@@ -161,7 +158,7 @@ DisconnectAll::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
-		_engine.broadcaster()->disconnect_all(_parent_path, _path);
+		_engine.broadcaster()->message(_msg);
 	}
 }
 

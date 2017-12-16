@@ -44,12 +44,10 @@ namespace Events {
 class Disconnect : public Event
 {
 public:
-	Disconnect(Engine&           engine,
-	           SPtr<Interface>   client,
-	           int32_t           id,
-	           SampleCount       timestamp,
-	           const Raul::Path& tail_path,
-	           const Raul::Path& head_path);
+	Disconnect(Engine&                  engine,
+	           SPtr<Interface>          client,
+	           SampleCount              timestamp,
+	           const Ingen::Disconnect& msg);
 
 	~Disconnect();
 
@@ -76,11 +74,10 @@ public:
 	};
 
 private:
-	const Raul::Path    _tail_path;
-	const Raul::Path    _head_path;
-	GraphImpl*          _graph;
-	Impl*               _impl;
-	MPtr<CompiledGraph> _compiled_graph;
+	const Ingen::Disconnect _msg;
+	GraphImpl*              _graph;
+	Impl*                   _impl;
+	MPtr<CompiledGraph>     _compiled_graph;
 };
 
 } // namespace Events

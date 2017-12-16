@@ -24,13 +24,20 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Undo::Undo(Engine&          engine,
-           SPtr<Interface>  client,
-           int32_t          id,
-           SampleCount      timestamp,
-           bool             is_redo)
-	: Event(engine, client, id, timestamp)
-	, _is_redo(is_redo)
+Undo::Undo(Engine&            engine,
+           SPtr<Interface>    client,
+           SampleCount        timestamp,
+           const Ingen::Undo& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _is_redo(false)
+{}
+
+Undo::Undo(Engine&            engine,
+           SPtr<Interface>    client,
+           SampleCount        timestamp,
+           const Ingen::Redo& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _is_redo(true)
 {}
 
 bool

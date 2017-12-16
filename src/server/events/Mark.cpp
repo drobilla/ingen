@@ -23,13 +23,21 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Mark::Mark(Engine&         engine,
-           SPtr<Interface> client,
-           int32_t         id,
-           SampleCount     timestamp,
-           Type            type)
-	: Event(engine, client, id, timestamp)
-	, _type(type)
+Mark::Mark(Engine&                   engine,
+           SPtr<Interface>           client,
+           SampleCount               timestamp,
+           const Ingen::BundleBegin& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _type(Type::BUNDLE_BEGIN)
+	, _depth(0)
+{}
+
+Mark::Mark(Engine&                 engine,
+           SPtr<Interface>         client,
+           SampleCount             timestamp,
+           const Ingen::BundleEnd& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _type(Type::BUNDLE_END)
 	, _depth(0)
 {}
 
@@ -45,7 +53,7 @@ Mark::pre_process(PreProcessContext& ctx)
 	                          : _engine.undo_stack());
 
 	switch (_type) {
-	case Type::BUNDLE_START:
+	case Type::BUNDLE_BEGIN:
 		ctx.set_in_bundle(true);
 		_depth = stack->start_entry();
 		break;
@@ -89,7 +97,7 @@ Mark::get_execution() const
 	}
 
 	switch (_type) {
-	case Type::BUNDLE_START:
+	case Type::BUNDLE_BEGIN:
 		if (_depth == 1) {
 			return Execution::BLOCK;
 		}

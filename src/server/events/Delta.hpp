@@ -50,21 +50,20 @@ class SetPortValue;
 class Delta : public Event
 {
 public:
-	enum class Type {
-		SET,
-		PUT,
-		PATCH
-	};
-
 	Delta(Engine&           engine,
 	      SPtr<Interface>   client,
-	      int32_t           id,
 	      SampleCount       timestamp,
-	      Type              type,
-	      Resource::Graph   context,
-	      const Raul::URI&  subject,
-	      const Properties& properties,
-	      const Properties& remove = Properties());
+	      const Ingen::Put& msg);
+
+	Delta(Engine&             engine,
+	      SPtr<Interface>     client,
+	      SampleCount         timestamp,
+	      const Ingen::Delta& msg);
+
+	Delta(Engine&                   engine,
+	      SPtr<Interface>           client,
+	      SampleCount               timestamp,
+	      const Ingen::SetProperty& msg);
 
 	~Delta();
 
@@ -81,6 +80,12 @@ public:
 	Execution get_execution() const;
 
 private:
+	enum class Type {
+		SET,
+		PUT,
+		PATCH
+	};
+
 	enum class SpecialType {
 		NONE,
 		ENABLE,
@@ -94,6 +99,8 @@ private:
 	};
 
 	typedef std::vector<SetPortValue*> SetEvents;
+
+	void init();
 
 	Event*                    _create_event;
 	SetEvents                 _set_events;

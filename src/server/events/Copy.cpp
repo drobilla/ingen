@@ -31,15 +31,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Copy::Copy(Engine&          engine,
-           SPtr<Interface>  client,
-           int32_t          id,
-           SampleCount      timestamp,
-           const Raul::URI& old_uri,
-           const Raul::URI& new_uri)
-	: Event(engine, client, id, timestamp)
-	, _old_uri(old_uri)
-	, _new_uri(new_uri)
+Copy::Copy(Engine&            engine,
+           SPtr<Interface>    client,
+           SampleCount        timestamp,
+           const Ingen::Copy& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _msg(msg)
 	, _old_block(NULL)
 	, _parent(NULL)
 	, _block(NULL)
@@ -50,9 +47,9 @@ Copy::pre_process(PreProcessContext& ctx)
 {
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
-	if (uri_is_path(_old_uri)) {
+	if (uri_is_path(_msg.old_uri)) {
 		// Old URI is a path within the engine
-		const Raul::Path old_path = uri_to_path(_old_uri);
+		const Raul::Path old_path = uri_to_path(_msg.old_uri);
 
 		// Find the old node
 		const Store::iterator i = _engine.store()->find(old_path);
@@ -65,17 +62,17 @@ Copy::pre_process(PreProcessContext& ctx)
 			return Event::pre_process_done(Status::BAD_OBJECT_TYPE, old_path);
 		}
 
-		if (uri_is_path(_new_uri)) {
+		if (uri_is_path(_msg.new_uri)) {
 			// Copy to path within the engine
 			return engine_to_engine(ctx);
-		} else if (_new_uri.scheme() == "file") {
+		} else if (_msg.new_uri.scheme() == "file") {
 			// Copy to filesystem path (i.e. save)
 			return engine_to_filesystem(ctx);
 		} else {
 			return Event::pre_process_done(Status::BAD_REQUEST);
 		}
-	} else if (_old_uri.scheme() == "file") {
-		if (uri_is_path(_new_uri)) {
+	} else if (_msg.old_uri.scheme() == "file") {
+		if (uri_is_path(_msg.new_uri)) {
 			return filesystem_to_engine(ctx);
 		} else {
 			// Ingen is not your file manager
@@ -90,7 +87,7 @@ bool
 Copy::engine_to_engine(PreProcessContext& ctx)
 {
 	// Only support a single source for now
-	const Raul::Path new_path = uri_to_path(_new_uri);
+	const Raul::Path new_path = uri_to_path(_msg.new_uri);
 	if (!Raul::Symbol::is_valid(new_path.symbol())) {
 		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
@@ -143,7 +140,7 @@ Copy::engine_to_filesystem(PreProcessContext& ctx)
 	// Ensure source is a graph
 	SPtr<GraphImpl> graph = dynamic_ptr_cast<GraphImpl>(_old_block);
 	if (!graph) {
-		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _old_uri);
+		return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _msg.old_uri);
 	}
 
 	if (!_engine.world()->serialiser()) {
@@ -152,10 +149,10 @@ Copy::engine_to_filesystem(PreProcessContext& ctx)
 
 	std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
 
-	if (ends_with(_new_uri, ".ingen") || ends_with(_new_uri, ".ingen/")) {
-		_engine.world()->serialiser()->write_bundle(graph, _new_uri);
+	if (ends_with(_msg.new_uri, ".ingen") || ends_with(_msg.new_uri, ".ingen/")) {
+		_engine.world()->serialiser()->write_bundle(graph, _msg.new_uri);
 	} else {
-		_engine.world()->serialiser()->start_to_file(graph->path(), _new_uri);
+		_engine.world()->serialiser()->start_to_file(graph->path(), _msg.new_uri);
 		_engine.world()->serialiser()->serialise(graph);
 		_engine.world()->serialiser()->finish();
 	}
@@ -173,8 +170,8 @@ Copy::filesystem_to_engine(PreProcessContext& ctx)
 	std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
 
 	// Old URI is a filesystem path and new URI is a path within the engine
-	const std::string             src_path = _old_uri.substr(strlen("file://"));
-	const Raul::Path              dst_path = uri_to_path(_new_uri);
+	const std::string             src_path = _msg.old_uri.substr(strlen("file://"));
+	const Raul::Path              dst_path = uri_to_path(_msg.new_uri);
 	boost::optional<Raul::Path>   dst_parent;
 	boost::optional<Raul::Symbol> dst_symbol;
 	if (!dst_path.is_root()) {
@@ -202,15 +199,15 @@ Copy::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
-		_engine.broadcaster()->copy(_old_uri, _new_uri);
+		_engine.broadcaster()->message(_msg);
 	}
 }
 
 void
 Copy::undo(Interface& target)
 {
-	if (uri_is_path(_new_uri)) {
-		target.del(_new_uri);
+	if (uri_is_path(_msg.new_uri)) {
+		target.del(_msg.new_uri);
 	}
 }
 

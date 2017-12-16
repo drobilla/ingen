@@ -33,13 +33,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Get::Get(Engine&          engine,
-         SPtr<Interface>  client,
-         int32_t          id,
-         SampleCount      timestamp,
-         const Raul::URI& uri)
-	: Event(engine, client, id, timestamp)
-	, _uri(uri)
+Get::Get(Engine&           engine,
+         SPtr<Interface>   client,
+         SampleCount       timestamp,
+         const Ingen::Get& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _msg(msg)
 	, _object(NULL)
 	, _plugin(NULL)
 {}
@@ -49,13 +48,14 @@ Get::pre_process(PreProcessContext& ctx)
 {
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
-	if (_uri == "ingen:/plugins") {
+	const auto& uri = _msg.subject;
+	if (uri == "ingen:/plugins") {
 		_plugins = _engine.block_factory()->plugins();
 		return Event::pre_process_done(Status::SUCCESS);
-	} else if (_uri == "ingen:/engine") {
+	} else if (uri == "ingen:/engine") {
 		return Event::pre_process_done(Status::SUCCESS);
-	} else if (uri_is_path(_uri)) {
-		if ((_object = _engine.store()->get(uri_to_path(_uri)))) {
+	} else if (uri_is_path(uri)) {
+		if ((_object = _engine.store()->get(uri_to_path(uri)))) {
 			const BlockImpl* block = NULL;
 			const GraphImpl* graph = NULL;
 			const PortImpl*  port  = NULL;
@@ -66,16 +66,16 @@ Get::pre_process(PreProcessContext& ctx)
 			} else if ((port = dynamic_cast<const PortImpl*>(_object))) {
 				_response.put_port(port);
 			} else {
-				return Event::pre_process_done(Status::BAD_OBJECT_TYPE, _uri);
+				return Event::pre_process_done(Status::BAD_OBJECT_TYPE, uri);
 			}
 			return Event::pre_process_done(Status::SUCCESS);
 		}
-		return Event::pre_process_done(Status::NOT_FOUND, _uri);
-	} else if ((_plugin = _engine.block_factory()->plugin(_uri))) {
+		return Event::pre_process_done(Status::NOT_FOUND, uri);
+	} else if ((_plugin = _engine.block_factory()->plugin(uri))) {
 		_response.put_plugin(_plugin);
 		return Event::pre_process_done(Status::SUCCESS);
 	} else {
-		return Event::pre_process_done(Status::NOT_FOUND, _uri);
+		return Event::pre_process_done(Status::NOT_FOUND, uri);
 	}
 }
 
@@ -84,9 +84,9 @@ Get::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS && _request_client) {
-		if (_uri == "ingen:/plugins") {
+		if (_msg.subject == "ingen:/plugins") {
 			_engine.broadcaster()->send_plugins_to(_request_client.get(), _plugins);
-		} else if (_uri == "ingen:/engine") {
+		} else if (_msg.subject == "ingen:/engine") {
 			// TODO: Keep a proper RDF model of the engine
 			URIs&      uris  = _engine.world()->uris();
 			Properties props = {

@@ -44,38 +44,60 @@ namespace Events {
 
 Delta::Delta(Engine&           engine,
              SPtr<Interface>   client,
-             int32_t           id,
              SampleCount       timestamp,
-             Type              type,
-             Resource::Graph   context,
-             const Raul::URI&  subject,
-             const Properties& properties,
-             const Properties& remove)
-	: Event(engine, client, id, timestamp)
+             const Ingen::Put& msg)
+	: Event(engine, client, msg.seq, timestamp)
 	, _create_event(NULL)
-	, _subject(subject)
-	, _properties(properties)
-	, _remove(remove)
+	, _subject(msg.uri)
+	, _properties(msg.properties)
 	, _object(NULL)
 	, _graph(NULL)
 	, _binding(NULL)
 	, _state(NULL)
-	, _context(context)
-	, _type(type)
+	, _context(msg.ctx)
+	, _type(Type::PUT)
 	, _block(false)
 {
-	if (context != Resource::Graph::DEFAULT) {
-		for (auto& p : _properties) {
-			p.second.set_context(context);
-		}
-	}
+	init();
+}
 
-	// Set atomic execution if polyphony is to be changed
-	const Ingen::URIs& uris = _engine.world()->uris();
-	if (properties.count(uris.ingen_polyphonic) ||
-	    properties.count(uris.ingen_polyphony)) {
-		_block = true;
-	}
+Delta::Delta(Engine&             engine,
+             SPtr<Interface>     client,
+             SampleCount         timestamp,
+             const Ingen::Delta& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _create_event(NULL)
+	, _subject(msg.uri)
+	, _properties(msg.add)
+	, _remove(msg.remove)
+	, _object(NULL)
+	, _graph(NULL)
+	, _binding(NULL)
+	, _state(NULL)
+	, _context(msg.ctx)
+	, _type(Type::PATCH)
+	, _block(false)
+{
+	init();
+}
+
+Delta::Delta(Engine&                   engine,
+             SPtr<Interface>           client,
+             SampleCount               timestamp,
+             const Ingen::SetProperty& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _create_event(NULL)
+	, _subject(msg.subject)
+	, _properties{{msg.predicate, msg.value}}
+	, _object(NULL)
+	, _graph(NULL)
+	, _binding(NULL)
+	, _state(NULL)
+	, _context(msg.ctx)
+	, _type(Type::SET)
+	, _block(false)
+{
+	init();
 }
 
 Delta::~Delta()
@@ -84,6 +106,23 @@ Delta::~Delta()
 		delete s;
 
 	delete _create_event;
+}
+
+void
+Delta::init()
+{
+	if (_context != Resource::Graph::DEFAULT) {
+		for (auto& p : _properties) {
+			p.second.set_context(_context);
+		}
+	}
+
+	// Set atomic execution if polyphony is to be changed
+	const Ingen::URIs& uris = _engine.world()->uris();
+	if (_properties.count(uris.ingen_polyphonic) ||
+	    _properties.count(uris.ingen_polyphony)) {
+		_block = true;
+	}
 }
 
 void

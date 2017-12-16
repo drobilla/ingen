@@ -43,12 +43,10 @@ class Disconnect;
 class DisconnectAll : public Event
 {
 public:
-	DisconnectAll(Engine&           engine,
-	              SPtr<Interface>   client,
-	              int32_t           id,
-	              SampleCount       timestamp,
-	              const Raul::Path& parent,
-	              const Raul::Path& object);
+	DisconnectAll(Engine&                     engine,
+	              SPtr<Interface>             client,
+	              SampleCount                 timestamp,
+	              const Ingen::DisconnectAll& msg);
 
 	DisconnectAll(Engine&    engine,
 	              GraphImpl* parent,
@@ -64,14 +62,13 @@ public:
 private:
 	typedef std::list<Disconnect::Impl*> Impls;
 
-	Raul::Path          _parent_path;
-	Raul::Path          _path;
-	GraphImpl*          _parent;
-	BlockImpl*          _block;
-	PortImpl*           _port;
-	Impls               _impls;
-	MPtr<CompiledGraph> _compiled_graph;
-	bool                _deleting;
+	const Ingen::DisconnectAll _msg;
+	GraphImpl*                 _parent;
+	BlockImpl*                 _block;
+	PortImpl*                  _port;
+	Impls                      _impls;
+	MPtr<CompiledGraph>        _compiled_graph;
+	bool                       _deleting;
 };
 
 } // namespace Events

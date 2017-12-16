@@ -36,12 +36,10 @@ namespace Events {
 class Move : public Event
 {
 public:
-	Move(Engine&           engine,
-	     SPtr<Interface>   client,
-	     int32_t           id,
-	     SampleCount       timestamp,
-	     const Raul::Path& old_path,
-	     const Raul::Path& new_path);
+	Move(Engine&            engine,
+	     SPtr<Interface>    client,
+	     SampleCount        timestamp,
+	     const Ingen::Move& msg);
 
 	~Move();
 
@@ -51,8 +49,7 @@ public:
 	void undo(Interface& target);
 
 private:
-	const Raul::Path _old_path;
-	const Raul::Path _new_path;
+	const Ingen::Move _msg;
 };
 
 } // namespace Events

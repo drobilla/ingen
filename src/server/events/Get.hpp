@@ -41,18 +41,17 @@ namespace Events {
 class Get : public Event
 {
 public:
-	Get(Engine&          engine,
-	    SPtr<Interface>  client,
-	    int32_t          id,
-	    SampleCount      timestamp,
-	    const Raul::URI& uri);
+	Get(Engine&           engine,
+	    SPtr<Interface>   client,
+	    SampleCount       timestamp,
+	    const Ingen::Get& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context) {}
 	void post_process();
 
 private:
-	const Raul::URI       _uri;
+	const Ingen::Get      _msg;
 	const Node*           _object;
 	PluginImpl*           _plugin;
 	BlockFactory::Plugins _plugins;

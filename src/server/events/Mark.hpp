@@ -36,13 +36,15 @@ namespace Events {
 class Mark : public Event
 {
 public:
-	enum class Type { BUNDLE_START, BUNDLE_END };
+	Mark(Engine&                   engine,
+	     SPtr<Interface>           client,
+	     SampleCount               timestamp,
+	     const Ingen::BundleBegin& msg);
 
-	Mark(Engine&                     engine,
-	     SPtr<Interface>             client,
-	     int32_t                     id,
-	     SampleCount                 timestamp,
-	     Type                        type);
+	Mark(Engine&                 engine,
+	     SPtr<Interface>         client,
+	     SampleCount             timestamp,
+	     const Ingen::BundleEnd& msg);
 
 	~Mark();
 
@@ -53,6 +55,8 @@ public:
 	Execution get_execution() const;
 
 private:
+	enum class Type { BUNDLE_BEGIN, BUNDLE_END };
+
 	typedef std::map<GraphImpl*, MPtr<CompiledGraph>> CompiledGraphs;
 
 	CompiledGraphs _compiled_graphs;

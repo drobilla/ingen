@@ -35,18 +35,17 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Delete::Delete(Engine&          engine,
-               SPtr<Interface>  client,
-               int32_t          id,
-               FrameTime        time,
-               const Raul::URI& uri)
-	: Event(engine, client, id, time)
-	, _uri(uri)
+Delete::Delete(Engine&           engine,
+               SPtr<Interface>   client,
+               FrameTime         timestamp,
+               const Ingen::Del& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _msg(msg)
 	, _engine_port(NULL)
 	, _disconnect_event(NULL)
 {
-	if (uri_is_path(uri)) {
-		_path = uri_to_path(uri);
+	if (uri_is_path(msg.uri)) {
+		_path = uri_to_path(msg.uri);
 	}
 }
 
@@ -176,7 +175,7 @@ Delete::post_process()
 			_block->deactivate();
 		}
 
-		_engine.broadcaster()->del(_uri);
+		_engine.broadcaster()->message(_msg);
 	}
 
 	if (_engine_port) {
@@ -199,11 +198,11 @@ Delete::undo(Interface& target)
 		}
 
 		// Put deleted item back
-		target.put(_uri, i->second->properties());
+		target.put(_msg.uri, i->second->properties());
 
 		// Adjust port indices
 		for (const auto& c : _port_index_changes) {
-			if (c.first != _uri) {
+			if (c.first != _msg.uri) {
 				target.set_property(path_to_uri(c.first),
 				                    uris.lv2_index,
 				                    forge.make(int32_t(c.second.first)));

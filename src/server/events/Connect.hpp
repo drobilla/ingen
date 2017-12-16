@@ -44,12 +44,10 @@ namespace Events {
 class Connect : public Event
 {
 public:
-	Connect(Engine&           engine,
-	        SPtr<Interface>   client,
-	        int32_t           id,
-	        SampleCount       timestamp,
-	        const Raul::Path& tail,
-	        const Raul::Path& head);
+	Connect(Engine&               engine,
+	        SPtr<Interface>       client,
+	        SampleCount           timestamp,
+	        const Ingen::Connect& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
@@ -57,8 +55,7 @@ public:
 	void undo(Interface& target);
 
 private:
-	const Raul::Path       _tail_path;
-	const Raul::Path       _head_path;
+	const Ingen::Connect   _msg;
 	GraphImpl*             _graph;
 	InputPort*             _head;
 	MPtr<CompiledGraph>    _compiled_graph;

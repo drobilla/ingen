@@ -37,15 +37,12 @@ namespace Ingen {
 namespace Server {
 namespace Events {
 
-Disconnect::Disconnect(Engine&           engine,
-                       SPtr<Interface>   client,
-                       int32_t           id,
-                       SampleCount       timestamp,
-                       const Raul::Path& tail_path,
-                       const Raul::Path& head_path)
-	: Event(engine, client, id, timestamp)
-	, _tail_path(tail_path)
-	, _head_path(head_path)
+Disconnect::Disconnect(Engine&                  engine,
+                       SPtr<Interface>          client,
+                       SampleCount              timestamp,
+                       const Ingen::Disconnect& msg)
+	: Event(engine, client, msg.seq, timestamp)
+	, _msg(msg)
 	, _graph(NULL)
 	, _impl(NULL)
 {
@@ -112,20 +109,20 @@ Disconnect::pre_process(PreProcessContext& ctx)
 {
 	std::lock_guard<Store::Mutex> lock(_engine.store()->mutex());
 
-	if (_tail_path.parent().parent() != _head_path.parent().parent()
-	    && _tail_path.parent() != _head_path.parent().parent()
-	    && _tail_path.parent().parent() != _head_path.parent()) {
-		return Event::pre_process_done(Status::PARENT_DIFFERS, _head_path);
+	if (_msg.tail.parent().parent() != _msg.head.parent().parent()
+	    && _msg.tail.parent() != _msg.head.parent().parent()
+	    && _msg.tail.parent().parent() != _msg.head.parent()) {
+		return Event::pre_process_done(Status::PARENT_DIFFERS, _msg.head);
 	}
 
-	PortImpl* tail = dynamic_cast<PortImpl*>(_engine.store()->get(_tail_path));
+	PortImpl* tail = dynamic_cast<PortImpl*>(_engine.store()->get(_msg.tail));
 	if (!tail) {
-		return Event::pre_process_done(Status::PORT_NOT_FOUND, _tail_path);
+		return Event::pre_process_done(Status::PORT_NOT_FOUND, _msg.tail);
 	}
 
-	PortImpl* head = dynamic_cast<PortImpl*>(_engine.store()->get(_head_path));
+	PortImpl* head = dynamic_cast<PortImpl*>(_engine.store()->get(_msg.head));
 	if (!head) {
-		return Event::pre_process_done(Status::PORT_NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::PORT_NOT_FOUND, _msg.head);
 	}
 
 	BlockImpl* const tail_block = tail->parent_block();
@@ -148,13 +145,13 @@ Disconnect::pre_process(PreProcessContext& ctx)
 	}
 
 	if (!_graph) {
-		return Event::pre_process_done(Status::INTERNAL_ERROR, _head_path);
+		return Event::pre_process_done(Status::INTERNAL_ERROR, _msg.head);
 	} else if (!_graph->has_arc(tail, head)) {
-		return Event::pre_process_done(Status::NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::NOT_FOUND, _msg.head);
 	}
 
 	if (tail_block == NULL || head_block == NULL) {
-		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _head_path);
+		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _msg.head);
 	}
 
 	_impl = new Impl(_engine,
@@ -212,14 +209,14 @@ Disconnect::post_process()
 {
 	Broadcaster::Transfer t(*_engine.broadcaster());
 	if (respond() == Status::SUCCESS) {
-		_engine.broadcaster()->disconnect(_tail_path, _head_path);
+		_engine.broadcaster()->message(_msg);
 	}
 }
 
 void
 Disconnect::undo(Interface& target)
 {
-	target.connect(_tail_path, _head_path);
+	target.connect(_msg.tail, _msg.head);
 }
 
 } // namespace Events

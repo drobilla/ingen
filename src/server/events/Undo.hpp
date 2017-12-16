@@ -32,11 +32,15 @@ namespace Events {
 class Undo : public Event
 {
 public:
-	Undo(Engine&         engine,
-	     SPtr<Interface> client,
-	     int32_t         id,
-	     SampleCount     timestamp,
-	     bool            is_redo);
+	Undo(Engine&            engine,
+	     SPtr<Interface>    client,
+	     SampleCount        timestamp,
+	     const Ingen::Undo& msg);
+
+	Undo(Engine&            engine,
+	     SPtr<Interface>    client,
+	     SampleCount        timestamp,
+	     const Ingen::Redo& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);

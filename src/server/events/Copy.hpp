@@ -39,12 +39,10 @@ namespace Events {
 class Copy : public Event
 {
 public:
-	Copy(Engine&          engine,
-	     SPtr<Interface>  client,
-	     int32_t          id,
-	     SampleCount      timestamp,
-	     const Raul::URI& old_uri,
-	     const Raul::URI& new_uri);
+	Copy(Engine&            engine,
+	     SPtr<Interface>    client,
+	     SampleCount        timestamp,
+	     const Ingen::Copy& msg);
 
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
@@ -56,8 +54,7 @@ private:
 	bool engine_to_filesystem(PreProcessContext& ctx);
 	bool filesystem_to_engine(PreProcessContext& ctx);
 
-	const Raul::URI     _old_uri;
-	const Raul::URI     _new_uri;
+	const Ingen::Copy   _msg;
 	SPtr<BlockImpl>     _old_block;
 	GraphImpl*          _parent;
 	BlockImpl*          _block;

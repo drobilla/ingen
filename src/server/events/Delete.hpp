@@ -49,11 +49,10 @@ class DisconnectAll;
 class Delete : public Event
 {
 public:
-	Delete(Engine&          engine,
-	       SPtr<Interface>  client,
-	       int32_t          id,
-	       FrameTime        timestamp,
-	       const Raul::URI& uri);
+	Delete(Engine&           engine,
+	       SPtr<Interface>   client,
+	       FrameTime         timestamp,
+	       const Ingen::Del& msg);
 
 	~Delete();
 
@@ -66,7 +65,7 @@ private:
 	using IndexChange  = std::pair<uint32_t, uint32_t>;
 	using IndexChanges = std::map<Raul::Path, IndexChange>;
 
-	Raul::URI               _uri;
+	const Ingen::Del        _msg;
 	Raul::Path              _path;
 	SPtr<BlockImpl>         _block; ///< Non-NULL iff a block
 	SPtr<DuplexPort>        _port; ///< Non-NULL iff a port
