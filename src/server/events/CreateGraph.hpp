@@ -17,6 +17,8 @@
 #ifndef INGEN_EVENTS_CREATEGRAPH_HPP
 #define INGEN_EVENTS_CREATEGRAPH_HPP
 
+#include <list>
+
 #include "ingen/Resource.hpp"
 
 #include "CompiledGraph.hpp"

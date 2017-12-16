@@ -21,7 +21,6 @@
 #ifndef INGEN_INTERFACE_HPP
 #define INGEN_INTERFACE_HPP
 
-#include <list>
 #include <string>
 
 #include "ingen/Resource.hpp"
