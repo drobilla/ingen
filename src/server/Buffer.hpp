@@ -65,7 +65,10 @@ public:
 	typedef BufferRef (BufferFactory::*GetFn)(LV2_URID, LV2_URID, uint32_t);
 
 	/** Set the buffer type and optional value type for this buffer.
+	 *
 	 * @param get Called to get auxiliary buffers if necessary.
+	 * @param type Type of buffer.
+	 * @param value_type Type of values in buffer if applicable (for sequences).
 	 */
 	void set_type(GetFn get, LV2_URID type, LV2_URID value_type);
 

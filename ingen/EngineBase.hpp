@@ -83,7 +83,7 @@ public:
 	   This function is only safe to call in sequential contexts, and runs both
 	   process thread and main iterations in lock-step.
 
-	   @param Interval in milliseconds to sleep between each block.
+	   @param sleep_ms Interval in milliseconds to sleep between each block.
 	*/
 	virtual void flush_events(const std::chrono::milliseconds& sleep_ms) = 0;
 

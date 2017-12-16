@@ -271,7 +271,6 @@ protected:
 	 * This is real-time safe only if `get` is as well, use in the real-time
 	 * thread should pass &BufferFactory::claim_buffer.
 	 *
-	 * @param get Method used to get new buffers as necessary.
 	 * @return true iff buffers are locally owned by the port
 	 */
 	virtual bool get_buffers(BufferFactory&      bufs,
