@@ -514,9 +514,9 @@ Delta::execute(RunContext& context)
 			break;
 		case SpecialType::NONE:
 			if (port) {
-				if (!strcmp(uris.lv2_minimum.c_str(), key.c_str())) {
+				if (key == uris.lv2_minimum) {
 					port->set_minimum(value);
-				} else if (!strcmp(uris.lv2_maximum.c_str(), key.c_str())) {
+				} else if (key == uris.lv2_maximum) {
 					port->set_maximum(value);
 				}
 			}
