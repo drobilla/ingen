@@ -209,7 +209,9 @@ Copy::post_process()
 void
 Copy::undo(Interface& target)
 {
-	target.del(_new_uri);
+	if (uri_is_path(_new_uri)) {
+		target.del(_new_uri);
+	}
 }
 
 } // namespace Events
