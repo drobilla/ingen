@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <boost/variant.hpp>
+
 #include "ingen/URIs.hpp"
 
 #include "Engine.hpp"
@@ -49,7 +51,13 @@ EventWriter::set_response_id(int32_t id)
 }
 
 void
-EventWriter::bundle_begin()
+EventWriter::message(const Message& msg)
+{
+	boost::apply_visitor(*this, msg);
+}
+
+void
+EventWriter::operator()(const BundleBegin&)
 {
 	_engine.enqueue_event(
 		new Events::Mark(_engine, _respondee, _request_id, now(),
@@ -58,7 +66,7 @@ EventWriter::bundle_begin()
 }
 
 void
-EventWriter::bundle_end()
+EventWriter::operator()(const BundleEnd&)
 {
 	_engine.enqueue_event(
 		new Events::Mark(_engine, _respondee, _request_id, now(),
@@ -67,102 +75,89 @@ EventWriter::bundle_end()
 }
 
 void
-EventWriter::put(const Raul::URI&      uri,
-                 const Properties&     properties,
-                 const Resource::Graph ctx)
+EventWriter::operator()(const Put& msg)
 {
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
-		                  Events::Delta::Type::PUT, ctx, uri, properties),
+		                  Events::Delta::Type::PUT, msg.ctx, msg.uri, msg.properties),
 		_event_mode);
 }
 
 void
-EventWriter::delta(const Raul::URI&      uri,
-                   const Properties&     remove,
-                   const Properties&     add,
-                   const Resource::Graph ctx)
+EventWriter::operator()(const Delta& msg)
 {
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
-		                  Events::Delta::Type::PATCH, ctx, uri, add, remove),
+		                  Events::Delta::Type::PATCH, msg.ctx, msg.uri, msg.add, msg.remove),
 		_event_mode);
 }
 
 void
-EventWriter::copy(const Raul::URI& old_uri,
-                  const Raul::URI& new_uri)
+EventWriter::operator()(const Copy& msg)
 {
 	_engine.enqueue_event(
 		new Events::Copy(_engine, _respondee, _request_id, now(),
-		                 old_uri, new_uri),
+		                 msg.old_uri, msg.new_uri),
 		_event_mode);
 }
 
 void
-EventWriter::move(const Raul::Path& old_path,
-                  const Raul::Path& new_path)
+EventWriter::operator()(const Move& msg)
 {
 	_engine.enqueue_event(
 		new Events::Move(_engine, _respondee, _request_id, now(),
-		                 old_path, new_path),
+		                 msg.old_path, msg.new_path),
 		_event_mode);
 }
 
 void
-EventWriter::del(const Raul::URI& uri)
+EventWriter::operator()(const Del& msg)
 {
 	_engine.enqueue_event(
-		new Events::Delete(_engine, _respondee, _request_id, now(), uri),
+		new Events::Delete(_engine, _respondee, _request_id, now(), msg.uri),
 		_event_mode);
 }
 
 void
-EventWriter::connect(const Raul::Path& tail_path,
-                     const Raul::Path& head_path)
+EventWriter::operator()(const Connect& msg)
 {
 	_engine.enqueue_event(
 		new Events::Connect(_engine, _respondee, _request_id, now(),
-		                    tail_path, head_path),
+		                    msg.tail, msg.head),
 		_event_mode);
 
 }
 
 void
-EventWriter::disconnect(const Raul::Path& src,
-                        const Raul::Path& dst)
+EventWriter::operator()(const Disconnect& msg)
 {
 	_engine.enqueue_event(
 		new Events::Disconnect(_engine, _respondee, _request_id, now(),
-		                       src, dst),
+		                       msg.tail, msg.head),
 		_event_mode);
 }
 
 void
-EventWriter::disconnect_all(const Raul::Path& graph,
-                            const Raul::Path& path)
+EventWriter::operator()(const DisconnectAll& msg)
 {
 	_engine.enqueue_event(
 		new Events::DisconnectAll(_engine, _respondee, _request_id, now(),
-		                          graph, path),
+		                          msg.graph, msg.path),
 		_event_mode);
 }
 
 void
-EventWriter::set_property(const Raul::URI&      uri,
-                          const Raul::URI&      predicate,
-                          const Atom&           value,
-                          const Resource::Graph ctx)
+EventWriter::operator()(const SetProperty& msg)
 {
 	_engine.enqueue_event(
 		new Events::Delta(_engine, _respondee, _request_id, now(),
-		                  Events::Delta::Type::SET, ctx,
-		                  uri, {{predicate, value}}, {}),
+		                  Events::Delta::Type::SET, msg.ctx,
+		                  msg.subject, {{msg.predicate, msg.value}}, {}),
 		_event_mode);
 }
 
 void
-EventWriter::undo()
+EventWriter::operator()(const Undo&)
 {
 	_engine.enqueue_event(
 		new Events::Undo(_engine, _respondee, _request_id, now(), false),
@@ -170,7 +165,7 @@ EventWriter::undo()
 }
 
 void
-EventWriter::redo()
+EventWriter::operator()(const Redo&)
 {
 	_engine.enqueue_event(
 		new Events::Undo(_engine, _respondee, _request_id, now(), true),
@@ -178,10 +173,10 @@ EventWriter::redo()
 }
 
 void
-EventWriter::get(const Raul::URI& uri)
+EventWriter::operator()(const Get& msg)
 {
 	_engine.enqueue_event(
-		new Events::Get(_engine, _respondee, _request_id, now(), uri),
+		new Events::Get(_engine, _respondee, _request_id, now(), msg.subject),
 		_event_mode);
 }
 

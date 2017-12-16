@@ -14,6 +14,8 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <boost/variant.hpp>
+
 #include "ingen/Log.hpp"
 #include "ingen/client/ArcModel.hpp"
 #include "ingen/client/BlockModel.hpp"
@@ -37,21 +39,10 @@ ClientStore::ClientStore(URIs&                    uris,
 	, _emitter(emitter)
 	, _plugins(new Plugins())
 {
-	if (!emitter)
-		return;
-
-#define CONNECT(signal, method) \
-	emitter->signal_##signal().connect( \
-		sigc::mem_fun(this, &ClientStore::method));
-
-	CONNECT(object_deleted, del);
-	CONNECT(object_moved, move);
-	CONNECT(put, put);
-	CONNECT(delta, delta);
-	CONNECT(connection, connect);
-	CONNECT(disconnection, disconnect);
-	CONNECT(disconnect_all, disconnect_all);
-	CONNECT(property_change, set_property);
+	if (emitter) {
+		emitter->signal_message().connect(
+			sigc::mem_fun(this, &ClientStore::message));
+	}
 }
 
 void
@@ -207,41 +198,47 @@ ClientStore::add_plugin(SPtr<PluginModel> pm)
 /* ****** Signal Handlers ******** */
 
 void
-ClientStore::del(const Raul::URI& uri)
+ClientStore::operator()(const Del& del)
 {
-	if (uri_is_path(uri)) {
-		remove_object(uri_to_path(uri));
+	if (uri_is_path(del.uri)) {
+		remove_object(uri_to_path(del.uri));
 	} else {
-		Plugins::iterator p = _plugins->find(uri);
+		Plugins::iterator p = _plugins->find(del.uri);
 		if (p != _plugins->end()) {
 			_plugins->erase(p);
-			_signal_plugin_deleted.emit(uri);
+			_signal_plugin_deleted.emit(del.uri);
 		}
 	}
 }
 
 void
-ClientStore::copy(const Raul::URI& old_uri,
-                  const Raul::URI& new_uri)
+ClientStore::operator()(const Copy&)
 {
 	_log.error("Client store copy unsupported\n");
 }
 
 void
-ClientStore::move(const Raul::Path& old_path, const Raul::Path& new_path)
+ClientStore::operator()(const Move& msg)
 {
-	const iterator top = find(old_path);
+	const iterator top = find(msg.old_path);
 	if (top != end()) {
-		rename(top, new_path);
+		rename(top, msg.new_path);
 	}
 }
 
 void
-ClientStore::put(const Raul::URI&  uri,
-                 const Properties& properties,
-                 Resource::Graph   ctx)
+ClientStore::message(const Message& msg)
+{
+	boost::apply_visitor(*this, msg);
+}
+
+void
+ClientStore::operator()(const Put& msg)
 {
 	typedef Properties::const_iterator Iterator;
+
+	const auto& uri        = msg.uri;
+	const auto& properties = msg.properties;
 
 	bool is_graph, is_block, is_port, is_output;
 	Resource::type(uris(), properties,
@@ -340,11 +337,9 @@ ClientStore::put(const Raul::URI&  uri,
 }
 
 void
-ClientStore::delta(const Raul::URI&  uri,
-                   const Properties& remove,
-                   const Properties& add,
-                   Resource::Graph   ctx)
+ClientStore::operator()(const Delta& msg)
 {
+	const auto& uri = msg.uri;
 	if (uri == Raul::URI("ingen:/clients/this")) {
 		// Client property, which we don't store (yet?)
 		return;
@@ -360,20 +355,20 @@ ClientStore::delta(const Raul::URI&  uri,
 
 	SPtr<ObjectModel> obj = _object(path);
 	if (obj) {
-		obj->remove_properties(remove);
-		obj->add_properties(add);
+		obj->remove_properties(msg.remove);
+		obj->add_properties(msg.add);
 	} else {
-		_log.warn(fmt("Failed to find object `%1%'\n")
-		          % path.c_str());
+		_log.warn(fmt("Failed to find object `%1%'\n") % path.c_str());
 	}
 }
 
 void
-ClientStore::set_property(const Raul::URI& subject_uri,
-                          const Raul::URI& predicate,
-                          const Atom&      value,
-                          Resource::Graph  ctx)
+ClientStore::operator()(const SetProperty& msg)
 {
+	const auto& subject_uri = msg.subject;
+	const auto& predicate   = msg.predicate;
+	const auto& value       = msg.value;
+
 	if (subject_uri == Raul::URI("ingen:/engine")) {
 		_log.info(fmt("Engine property <%1%> = %2%\n")
 		          % predicate.c_str() % _uris.forge.str(value, false));
@@ -386,7 +381,7 @@ ClientStore::set_property(const Raul::URI& subject_uri,
 			   blinkenlights) but do not store the property. */
 			subject->on_property(predicate, value);
 		} else {
-			subject->set_property(predicate, value, ctx);
+			subject->set_property(predicate, value, msg.ctx);
 		}
 	} else {
 		SPtr<PluginModel> plugin = _plugin(subject_uri);
@@ -444,33 +439,30 @@ ClientStore::attempt_connection(const Raul::Path& tail_path,
 }
 
 void
-ClientStore::connect(const Raul::Path& src_path,
-                     const Raul::Path& dst_path)
+ClientStore::operator()(const Connect& msg)
 {
-	attempt_connection(src_path, dst_path);
+	attempt_connection(msg.tail, msg.head);
 }
 
 void
-ClientStore::disconnect(const Raul::Path& src_path,
-                        const Raul::Path& dst_path)
+ClientStore::operator()(const Disconnect& msg)
 {
-	SPtr<PortModel>  tail  = dynamic_ptr_cast<PortModel>(_object(src_path));
-	SPtr<PortModel>  head  = dynamic_ptr_cast<PortModel>(_object(dst_path));
-	SPtr<GraphModel> graph = connection_graph(src_path, dst_path);
+	SPtr<PortModel>  tail  = dynamic_ptr_cast<PortModel>(_object(msg.tail));
+	SPtr<PortModel>  head  = dynamic_ptr_cast<PortModel>(_object(msg.head));
+	SPtr<GraphModel> graph = connection_graph(msg.tail, msg.head);
 	if (graph)
 		graph->remove_arc(tail.get(), head.get());
 }
 
 void
-ClientStore::disconnect_all(const Raul::Path& parent_graph,
-                            const Raul::Path& path)
+ClientStore::operator()(const DisconnectAll& msg)
 {
-	SPtr<GraphModel>  graph  = dynamic_ptr_cast<GraphModel>(_object(parent_graph));
-	SPtr<ObjectModel> object = _object(path);
+	SPtr<GraphModel>  graph  = dynamic_ptr_cast<GraphModel>(_object(msg.graph));
+	SPtr<ObjectModel> object = _object(msg.path);
 
 	if (!graph || !object) {
 		_log.error(fmt("Bad disconnect all notification %1% in %2%\n")
-		           % path % parent_graph);
+		           % msg.path % msg.graph);
 		return;
 	}
 
@@ -479,8 +471,8 @@ ClientStore::disconnect_all(const Raul::Path& parent_graph,
 		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(a.second);
 		if (arc->tail()->parent() == object
 		    || arc->head()->parent() == object
-		    || arc->tail()->path() == path
-		    || arc->head()->path() == path) {
+		    || arc->tail()->path() == msg.path
+		    || arc->head()->path() == msg.path) {
 			graph->remove_arc(arc->tail().get(), arc->head().get());
 		}
 	}

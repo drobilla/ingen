@@ -180,32 +180,12 @@ App::attach(SPtr<SigClientInterface> client)
 		                                              stderr,
 		                                              ColorContext::Color::CYAN));
 
-#define DUMP_CONNECT(signal, method) \
-		client->signal_##signal().connect( \
-			sigc::mem_fun(*_dumper.get(), &StreamWriter::method));
-
-		DUMP_CONNECT(object_deleted, del);
-		DUMP_CONNECT(object_moved, move);
-		DUMP_CONNECT(put, put);
-		DUMP_CONNECT(delta, delta);
-		DUMP_CONNECT(connection, connect);
-		DUMP_CONNECT(disconnection, disconnect);
-		DUMP_CONNECT(disconnect_all, disconnect_all);
-		DUMP_CONNECT(property_change, set_property);
-
-#undef DUMP_CONNECT
+		client->signal_message().connect(
+			sigc::mem_fun(*_dumper.get(), &StreamWriter::message));
 	}
 
 	_graph_tree_window->init(*this, *_store);
-
-	_client->signal_response().connect(
-		sigc::mem_fun(this, &App::response));
-	_client->signal_error().connect(
-		sigc::mem_fun(this, &App::error_message));
-	_client->signal_put().connect(
-		sigc::mem_fun(this, &App::put));
-	_client->signal_property_change().connect(
-		sigc::mem_fun(this, &App::property_change));
+	_client->signal_message().connect(sigc::mem_fun(this, &App::message));
 }
 
 void
@@ -235,6 +215,20 @@ SPtr<Serialiser>
 App::serialiser()
 {
 	return _world->serialiser();
+}
+
+void
+App::message(const Message& msg)
+{
+	if (const Response* const r = boost::get<Response>(&msg)) {
+		response(r->id, r->status, r->subject);
+	} else if (const Error* const e = boost::get<Error>(&msg)) {
+		error_message(e->message);
+	} else if (const Put* const p = boost::get<Put>(&msg)) {
+		put(p->uri, p->properties, p->ctx);
+	} else if (const SetProperty* const s = boost::get<SetProperty>(&msg)) {
+		property_change(s->subject, s->predicate, s->value, s->ctx);
+	}
 }
 
 void
@@ -269,7 +263,7 @@ App::set_property(const Raul::URI& subject,
 	   went as planned here and fire the signal ourselves as if the server
 	   feedback came back immediately. */
 	if (key != uris().ingen_activity) {
-		_client->signal_property_change().emit(subject, key, value, ctx);
+		_client->signal_message().emit(SetProperty{subject, key, value, ctx});
 	}
 }
 

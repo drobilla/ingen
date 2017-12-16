@@ -53,53 +53,27 @@ public:
 
 	virtual void set_response_id(int32_t id);
 
-	virtual void bundle_begin();
-
-	virtual void bundle_end();
-
-	virtual void put(const Raul::URI&      path,
-	                 const Properties&     properties,
-	                 const Resource::Graph g = Resource::Graph::DEFAULT);
-
-	virtual void delta(const Raul::URI&  path,
-	                   const Properties& remove,
-	                   const Properties& add,
-	                   Resource::Graph   ctx = Resource::Graph::DEFAULT);
-
-	virtual void copy(const Raul::URI& old_uri,
-	                  const Raul::URI& new_uri);
-
-	virtual void move(const Raul::Path& old_path,
-	                  const Raul::Path& new_path);
-
-	virtual void connect(const Raul::Path& tail,
-	                     const Raul::Path& head);
-
-	virtual void disconnect(const Raul::Path& tail,
-	                        const Raul::Path& head);
-
-	virtual void set_property(const Raul::URI& subject_path,
-	                          const Raul::URI& predicate,
-	                          const Atom&      value,
-	                          Resource::Graph  ctx = Resource::Graph::DEFAULT);
-
-	virtual void del(const Raul::URI& uri);
-
-	virtual void disconnect_all(const Raul::Path& graph,
-	                            const Raul::Path& path);
-
-	virtual void undo();
-
-	virtual void redo();
-
-	virtual void get(const Raul::URI& uri);
-
-	virtual void response(int32_t id, Status status, const std::string& subject) {}  ///< N/A
-
-	virtual void error(const std::string& msg) {}  ///< N/A
+	void message(const Message& msg) override;
 
 	void        set_event_mode(Event::Mode mode) { _event_mode = mode; }
 	Event::Mode get_event_mode()                 { return _event_mode; }
+
+	void operator()(const BundleBegin&);
+	void operator()(const BundleEnd&);
+	void operator()(const Connect&);
+	void operator()(const Copy&);
+	void operator()(const Del&);
+	void operator()(const Delta&);
+	void operator()(const Disconnect&);
+	void operator()(const DisconnectAll&);
+	void operator()(const Error&) {}
+	void operator()(const Get&);
+	void operator()(const Move&);
+	void operator()(const Put&);
+	void operator()(const Redo&);
+	void operator()(const Response&) {}
+	void operator()(const SetProperty&);
+	void operator()(const Undo&);
 
 protected:
 	Engine&         _engine;

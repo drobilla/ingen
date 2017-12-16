@@ -88,75 +88,18 @@ public:
 	void send_plugins(const BlockFactory::Plugins& plugin_list);
 	void send_plugins_to(Interface*, const BlockFactory::Plugins& plugin_list);
 
-#define BROADCAST(msg, ...) \
-	std::lock_guard<std::mutex> lock(_clients_mutex); \
-	for (const auto& c : _clients) { \
-		if (c != _ignore_client) { \
-			c->msg(__VA_ARGS__); \
-		} \
-	} \
-
-	void bundle_begin() { BROADCAST(bundle_begin); }
-	void bundle_end()   { BROADCAST(bundle_end); }
-
-	void put(const Raul::URI&  uri,
-	         const Properties& properties,
-	         Resource::Graph   ctx = Resource::Graph::DEFAULT) {
-		BROADCAST(put, uri, properties, ctx);
-	}
-
-	void delta(const Raul::URI&  uri,
-	           const Properties& remove,
-	           const Properties& add,
-	           Resource::Graph   ctx = Resource::Graph::DEFAULT) {
-		BROADCAST(delta, uri, remove, add, ctx);
-	}
-
-	void copy(const Raul::URI& old_uri,
-	          const Raul::URI& new_uri) {
-		BROADCAST(copy, old_uri, new_uri);
-	}
-
-	void move(const Raul::Path& old_path,
-	          const Raul::Path& new_path) {
-		BROADCAST(move, old_path, new_path);
-	}
-
-	void del(const Raul::URI& uri) {
-		BROADCAST(del, uri);
-	}
-
-	void connect(const Raul::Path& tail,
-	             const Raul::Path& head) {
-		BROADCAST(connect, tail, head);
-	}
-
-	void disconnect(const Raul::Path& tail,
-	                const Raul::Path& head) {
-		BROADCAST(disconnect, tail, head);
-	}
-
-	void disconnect_all(const Raul::Path& graph,
-	                    const Raul::Path& path) {
-		BROADCAST(disconnect_all, graph, path);
-	}
-
-	void set_property(const Raul::URI& subject,
-	                  const Raul::URI& predicate,
-	                  const Atom&      value,
-	                  Resource::Graph  ctx = Resource::Graph::DEFAULT) {
-		BROADCAST(set_property, subject, predicate, value, ctx);
+	void message(const Message& msg) override {
+		std::lock_guard<std::mutex> lock(_clients_mutex);
+		for (const auto& c : _clients) {
+			if (c != _ignore_client) {
+				c->message(msg);
+			}
+		}
 	}
 
 	Raul::URI uri() const { return Raul::URI("ingen:/broadcaster"); }
 
-	void undo() {} ///< N/A
-	void redo() {} ///< N/A
 	void set_response_id(int32_t id) {} ///< N/A
-	void get(const Raul::URI& uri) {} ///< N/A
-	void response(int32_t id, Status status, const std::string& subject) {} ///< N/A
-
-	void error(const std::string& msg) { BROADCAST(error, msg); }
 
 private:
 	friend class Transfer;

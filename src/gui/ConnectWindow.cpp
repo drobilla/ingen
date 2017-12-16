@@ -19,6 +19,7 @@
 #include <sstream>
 #include <string>
 
+#include <boost/variant.hpp>
 #include <gtkmm/stock.h>
 
 #include "raul/Process.hpp"
@@ -71,6 +72,16 @@ ConnectWindow::ConnectWindow(BaseObjectType*                   cobject,
 	, _connect_stage(0)
 	, _quit_flag(false)
 {
+}
+
+void
+ConnectWindow::message(const Message& msg)
+{
+	if (const Response* const r = boost::get<Response>(&msg)) {
+		ingen_response(r->id, r->status, r->subject);
+	} else if (const Error* const e = boost::get<Error>(&msg)) {
+		error(e->message);
+	}
 }
 
 void
@@ -477,8 +488,8 @@ ConnectWindow::gtk_callback()
 		}
 	} else if (_connect_stage == 1) {
 		_attached = false;
-		_app->client()->signal_response().connect(
-			sigc::mem_fun(this, &ConnectWindow::ingen_response));
+		_app->client()->signal_message().connect(
+			sigc::mem_fun(this, &ConnectWindow::message));
 
 		_ping_id = g_random_int_range(1, std::numeric_limits<int32_t>::max());
 		_app->interface()->set_response_id(_ping_id);

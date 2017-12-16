@@ -48,80 +48,17 @@ public:
 
 	Raul::URI uri() const { return Raul::URI("ingen:/clients/sig"); }
 
-	INGEN_SIGNAL(response, void, int32_t, Status, std::string)
-	INGEN_SIGNAL(bundle_begin, void)
-	INGEN_SIGNAL(bundle_end, void)
-	INGEN_SIGNAL(error, void, std::string)
-	INGEN_SIGNAL(put, void, Raul::URI, Properties, Resource::Graph)
-	INGEN_SIGNAL(delta, void, Raul::URI, Properties, Properties, Resource::Graph)
-	INGEN_SIGNAL(object_copied, void, Raul::URI, Raul::URI)
-	INGEN_SIGNAL(object_moved, void, Raul::Path, Raul::Path)
-	INGEN_SIGNAL(object_deleted, void, Raul::URI)
-	INGEN_SIGNAL(connection, void, Raul::Path, Raul::Path)
-	INGEN_SIGNAL(disconnection, void, Raul::Path, Raul::Path)
-	INGEN_SIGNAL(disconnect_all, void, Raul::Path, Raul::Path)
-	INGEN_SIGNAL(property_change, void, Raul::URI, Raul::URI, Atom, Resource::Graph)
+	INGEN_SIGNAL(message, void, Message)
 
 	/** Fire pending signals.  Only does anything on derived classes (that may queue) */
 	virtual bool emit_signals() { return false; }
 
 protected:
-
-	// ClientInterface hooks that fire the above signals
-
-#define EMIT(name, ...) { _signal_ ## name (__VA_ARGS__); }
-
-	void bundle_begin()
-	{ EMIT(bundle_begin); }
-
-	void bundle_end()
-	{ EMIT(bundle_end); }
-
-	void response(int32_t id, Status status, const std::string& subject)
-	{ EMIT(response, id, status, subject); }
-
-	void error(const std::string& msg)
-	{ EMIT(error, msg); }
-
-	void put(const Raul::URI&  uri,
-	         const Properties& properties,
-	         Resource::Graph   ctx = Resource::Graph::DEFAULT)
-	{ EMIT(put, uri, properties, ctx); }
-
-	void delta(const Raul::URI&  uri,
-	           const Properties& remove,
-	           const Properties& add,
-	           Resource::Graph   ctx = Resource::Graph::DEFAULT)
-	{ EMIT(delta, uri, remove, add, ctx); }
-
-	void connect(const Raul::Path& tail, const Raul::Path& head)
-	{ EMIT(connection, tail, head); }
-
-	void del(const Raul::URI& uri)
-	{ EMIT(object_deleted, uri); }
-
-	void copy(const Raul::URI& old_uri, const Raul::URI& new_uri)
-	{ EMIT(object_copied, old_uri, new_uri); }
-
-	void move(const Raul::Path& old_path, const Raul::Path& new_path)
-	{ EMIT(object_moved, old_path, new_path); }
-
-	void disconnect(const Raul::Path& tail, const Raul::Path& head)
-	{ EMIT(disconnection, tail, head); }
-
-	void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
-	{ EMIT(disconnect_all, graph, path); }
-
-	void set_property(const Raul::URI& subject,
-	                  const Raul::URI& key,
-	                  const Atom&      value,
-	                  Resource::Graph  ctx = Resource::Graph::DEFAULT)
-	{ EMIT(property_change, subject, key, value, ctx); }
-
-	void undo() {}
-	void redo() {}
 	void set_response_id(int32_t id) {}
-	void get(const Raul::URI& uri) {}
+
+	void message(const Message& msg) override {
+		_signal_message(msg);
+	}
 };
 
 } // namespace Client

@@ -23,6 +23,7 @@
 
 #include <string>
 
+#include "ingen/Message.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/ingen.h"
@@ -53,66 +54,82 @@ public:
 
 	virtual void set_respondee(SPtr<Interface> respondee) {}
 
-	/** Begin a transaction.
-	 *
-	 * This does not guarantee strict atomicity, but the events in a bundle will be
-	 * considered one operation, and they will all be undone at once.
-	 */
-	virtual void bundle_begin() = 0;
-
-	/** End a transaction. */
-	virtual void bundle_end() = 0;
-
-	virtual void put(const Raul::URI&  uri,
-	                 const Properties& properties,
-	                 Resource::Graph   ctx = Resource::Graph::DEFAULT) = 0;
-
-	virtual void delta(const Raul::URI&  uri,
-	                   const Properties& remove,
-	                   const Properties& add,
-	                   Resource::Graph   ctx = Resource::Graph::DEFAULT) = 0;
-
-	virtual void copy(const Raul::URI& old_uri,
-	                  const Raul::URI& new_uri) = 0;
-
-	virtual void move(const Raul::Path& old_path,
-	                  const Raul::Path& new_path) = 0;
-
-	virtual void del(const Raul::URI& uri) = 0;
-
-	virtual void connect(const Raul::Path& tail,
-	                     const Raul::Path& head) = 0;
-
-	virtual void disconnect(const Raul::Path& tail,
-	                        const Raul::Path& head) = 0;
-
-	virtual void disconnect_all(const Raul::Path& graph,
-	                            const Raul::Path& path) = 0;
-
-	virtual void set_property(const Raul::URI& subject,
-	                          const Raul::URI& predicate,
-	                          const Atom&      value,
-	                          Resource::Graph  ctx = Resource::Graph::DEFAULT) = 0;
-
-	virtual void undo() = 0;
-
-	virtual void redo() = 0;
-
 	/** Set the ID to use to respond to the next message.
 	 * Setting the ID to 0 will disable responses.
 	 */
 	virtual void set_response_id(int32_t id) = 0;
 
-	// Requests
-	virtual void get(const Raul::URI& uri) = 0;
+	virtual void message(const Message& message) = 0;
 
-	// Response
-	virtual void response(int32_t            id,
-	                      Status             status,
-	                      const std::string& subject) = 0;
+	inline void bundle_begin() { message(BundleBegin{}); }
 
-	// Non-response error
-	virtual void error(const std::string& msg) = 0;
+	inline void bundle_end() { message(BundleEnd{}); }
+
+	inline void put(const Raul::URI&  uri,
+	                const Properties& properties,
+	                Resource::Graph   ctx = Resource::Graph::DEFAULT)
+	{
+		message(Put{uri, properties, ctx});
+	}
+
+	inline void delta(const Raul::URI&  uri,
+	                  const Properties& remove,
+	                  const Properties& add,
+	                  Resource::Graph   ctx = Resource::Graph::DEFAULT)
+	{
+		message(Delta{uri, remove, add, ctx});
+	}
+
+	inline void copy(const Raul::URI& old_uri, const Raul::URI& new_uri)
+	{
+		message(Copy{old_uri, new_uri});
+	}
+
+	inline void move(const Raul::Path& old_path, const Raul::Path& new_path)
+	{
+		message(Move{old_path, new_path});
+	}
+
+	inline void del(const Raul::URI& uri) { message(Del{uri}); }
+
+	inline void connect(const Raul::Path& tail, const Raul::Path& head)
+	{
+		message(Connect{tail, head});
+	}
+
+	inline void disconnect(const Raul::Path& tail, const Raul::Path& head)
+	{
+		message(Disconnect{tail, head});
+	}
+
+	inline void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
+	{
+		message(DisconnectAll{graph, path});
+	}
+
+	inline void set_property(const Raul::URI& subject,
+	                         const Raul::URI& predicate,
+	                         const Atom&      value,
+	                         Resource::Graph  ctx = Resource::Graph::DEFAULT)
+	{
+		message(SetProperty{subject, predicate, value, ctx});
+	}
+
+	inline void undo() { message(Undo{}); }
+
+	inline void redo() { message(Redo{}); }
+
+	inline void get(const Raul::URI& uri) { message(Get{uri}); }
+
+	inline void response(int32_t            id,
+	                     Status             status,
+	                     const std::string& subject) {
+		message(Response{id, status, subject});
+	}
+
+	inline void error(const std::string& error_message) {
+		message(Error{error_message});
+	}
 };
 
 } // namespace Ingen

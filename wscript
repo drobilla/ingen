@@ -63,6 +63,7 @@ def configure(conf):
     conf.check_cxx(header_name='boost/intrusive/slist.hpp')
     conf.check_cxx(header_name='boost/intrusive_ptr.hpp')
     conf.check_cxx(header_name='boost/optional.hpp')
+    conf.check_cxx(header_name='boost/variant.hpp')
     conf.check_cxx(msg='Checking for thread_local keyword',
                    mandatory=False,
                    fragment='thread_local int i = 0; int main() {}',

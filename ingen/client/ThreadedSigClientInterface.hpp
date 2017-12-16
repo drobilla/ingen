@@ -52,66 +52,15 @@ class INGEN_API ThreadedSigClientInterface : public SigClientInterface
 {
 public:
 	ThreadedSigClientInterface()
-		: response_slot(_signal_response.make_slot())
-		, error_slot(_signal_error.make_slot())
-		, put_slot(_signal_put.make_slot())
-		, connection_slot(_signal_connection.make_slot())
-		, object_deleted_slot(_signal_object_deleted.make_slot())
-		, object_moved_slot(_signal_object_moved.make_slot())
-		, object_copied_slot(_signal_object_copied.make_slot())
-		, disconnection_slot(_signal_disconnection.make_slot())
-		, disconnect_all_slot(_signal_disconnect_all.make_slot())
-		, property_change_slot(_signal_property_change.make_slot())
+		: message_slot(_signal_message.make_slot())
 	{}
 
 	virtual Raul::URI uri() const { return Raul::URI("ingen:/clients/sig_queue"); }
 
-	void bundle_begin()
-	{ push_sig(bundle_begin_slot); }
-
-	void bundle_end()
-	{ push_sig(bundle_end_slot); }
-
-	void response(int32_t id, Status status, const std::string& subject)
-	{ push_sig(sigc::bind(response_slot, id, status, subject)); }
-
-	void error(const std::string& msg)
-	{ push_sig(sigc::bind(error_slot, msg)); }
-
-	void put(const Raul::URI&  path,
-	         const Properties& properties,
-	         Resource::Graph   ctx = Resource::Graph::DEFAULT)
-	{ push_sig(sigc::bind(put_slot, path, properties, ctx)); }
-
-	void delta(const Raul::URI&  path,
-	           const Properties& remove,
-	           const Properties& add,
-	           Resource::Graph   ctx = Resource::Graph::DEFAULT)
-	{ push_sig(sigc::bind(delta_slot, path, remove, add, ctx)); }
-
-	void connect(const Raul::Path& tail, const Raul::Path& head)
-	{ push_sig(sigc::bind(connection_slot, tail, head)); }
-
-	void del(const Raul::URI& uri)
-	{ push_sig(sigc::bind(object_deleted_slot, uri)); }
-
-	void move(const Raul::Path& old_path, const Raul::Path& new_path)
-	{ push_sig(sigc::bind(object_moved_slot, old_path, new_path)); }
-
-	void copy(const Raul::URI& old_uri, const Raul::URI& new_uri)
-	{ push_sig(sigc::bind(object_copied_slot, old_uri, new_uri)); }
-
-	void disconnect(const Raul::Path& tail, const Raul::Path& head)
-	{ push_sig(sigc::bind(disconnection_slot, tail, head)); }
-
-	void disconnect_all(const Raul::Path& graph, const Raul::Path& path)
-	{ push_sig(sigc::bind(disconnect_all_slot, graph, path)); }
-
-	void set_property(const Raul::URI& subject,
-	                  const Raul::URI& key,
-	                  const Atom&      value,
-	                  Resource::Graph  ctx = Resource::Graph::DEFAULT)
-	{ push_sig(sigc::bind(property_change_slot, subject, key, value, ctx)); }
+	void message(const Message& msg) override {
+		std::lock_guard<std::mutex> lock(_mutex);
+		_sigs.push_back(sigc::bind(message_slot, msg));
+	}
 
 	/** Process all queued events - Called from GTK thread to emit signals. */
 	bool emit_signals() {
@@ -131,11 +80,6 @@ public:
 	}
 
 private:
-	void push_sig(Closure ev) {
-		std::lock_guard<std::mutex> lock(_mutex);
-		_sigs.push_back(ev);
-	}
-
 	std::mutex           _mutex;
 	std::vector<Closure> _sigs;
 
@@ -143,20 +87,7 @@ private:
 	using Path  = Raul::Path;
 	using URI   = Raul::URI;
 
-	sigc::slot<void>                                     bundle_begin_slot;
-	sigc::slot<void>                                     bundle_end_slot;
-	sigc::slot<void, int32_t, Status, std::string>       response_slot;
-	sigc::slot<void, std::string>                        error_slot;
-	sigc::slot<void, URI, URI, Raul::Symbol>             new_plugin_slot;
-	sigc::slot<void, URI, Properties, Graph>             put_slot;
-	sigc::slot<void, URI, Properties, Properties, Graph> delta_slot;
-	sigc::slot<void, Path, Path>                         connection_slot;
-	sigc::slot<void, URI>                                object_deleted_slot;
-	sigc::slot<void, Path, Path>                         object_moved_slot;
-	sigc::slot<void, URI, URI>                           object_copied_slot;
-	sigc::slot<void, Path, Path>                         disconnection_slot;
-	sigc::slot<void, Path, Path>                         disconnect_all_slot;
-	sigc::slot<void, URI, URI, Atom, Graph>              property_change_slot;
+	sigc::slot<void, Message> message_slot;
 };
 
 } // namespace Client

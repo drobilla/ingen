@@ -33,8 +33,8 @@ BreadCrumbs::BreadCrumbs(App& app)
 	, _full_path("/")
 	, _enable_signal(true)
 {
-	app.client()->signal_object_deleted().connect(
-		sigc::mem_fun(this, &BreadCrumbs::object_destroyed));
+	app.client()->signal_message().connect(
+		sigc::mem_fun(this, &BreadCrumbs::message));
 
 	set_can_focus(false);
 }
@@ -176,6 +176,14 @@ BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
 				crumb->set_active(false);
 		}
 		_enable_signal = true;
+	}
+}
+
+void
+BreadCrumbs::message(const Message& msg)
+{
+	if (const Del* const del = boost::get<Del>(&msg)) {
+		object_destroyed(del->uri);
 	}
 }
 

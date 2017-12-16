@@ -58,6 +58,8 @@ public:
 private:
 	enum class Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };
 
+	void message(const Message& message);
+
 	void error(const std::string& msg);
 
 	void ingen_response(int32_t id, Status status, const std::string& subject);

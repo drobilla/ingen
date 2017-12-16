@@ -25,6 +25,7 @@
 #include <gtkmm/window.h>
 
 #include "ingen/Atom.hpp"
+#include "ingen/Message.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/World.hpp"
@@ -140,6 +141,8 @@ public:
 
 protected:
 	explicit App(Ingen::World* world);
+
+	void message(const Ingen::Message& msg);
 
 	bool animate();
 	void response(int32_t id, Ingen::Status status, const std::string& subject);

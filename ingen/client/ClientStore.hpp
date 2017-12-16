@@ -73,43 +73,26 @@ public:
 
 	URIs& uris() { return _uris; }
 
-	void put(const Raul::URI&  uri,
-	         const Properties& properties,
-	         Resource::Graph   ctx = Resource::Graph::DEFAULT);
+	void message(const Message& msg) override;
 
-	void delta(const Raul::URI&  uri,
-	           const Properties& remove,
-	           const Properties& add,
-	           Resource::Graph   ctx = Resource::Graph::DEFAULT);
+	void operator()(const BundleBegin&) {}
+	void operator()(const BundleEnd&) {}
+	void operator()(const Connect&);
+	void operator()(const Copy&);
+	void operator()(const Del&);
+	void operator()(const Delta&);
+	void operator()(const Disconnect&);
+	void operator()(const DisconnectAll&);
+	void operator()(const Error&) {}
+	void operator()(const Get&) {}
+	void operator()(const Move&);
+	void operator()(const Put&);
+	void operator()(const Redo&) {}
+	void operator()(const Response&) {}
+	void operator()(const SetProperty&);
+	void operator()(const Undo&) {}
 
-	void copy(const Raul::URI& old_uri,
-	          const Raul::URI& new_uri);
-
-	void move(const Raul::Path& old_path,
-	          const Raul::Path& new_path);
-
-	void set_property(const Raul::URI& subject_path,
-	                  const Raul::URI& predicate,
-	                  const Atom&      value,
-	                  Resource::Graph  ctx = Resource::Graph::DEFAULT);
-
-	void connect(const Raul::Path& tail,
-	             const Raul::Path& head);
-
-	void disconnect(const Raul::Path& tail,
-	                const Raul::Path& head);
-
-	void disconnect_all(const Raul::Path& graph,
-	                    const Raul::Path& path);
-
-	void del(const Raul::URI& uri);
-
-	void undo() {}
-	void redo() {}
 	void set_response_id(int32_t id) {}
-	void get(const Raul::URI& uri) {}
-	void response(int32_t id, Status status, const std::string& subject) {}
-	void error(const std::string& msg) {}
 
 	INGEN_SIGNAL(new_object, void, SPtr<ObjectModel>);
 	INGEN_SIGNAL(new_plugin, void, SPtr<PluginModel>);
@@ -128,9 +111,6 @@ private:
 
 	SPtr<GraphModel> connection_graph(const Raul::Path& tail_path,
 	                                  const Raul::Path& head_path);
-
-	void bundle_begin() {}
-	void bundle_end()   {}
 
 	// Slots for SigClientInterface signals
 	bool attempt_connection(const Raul::Path& tail_path,

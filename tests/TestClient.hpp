@@ -17,6 +17,8 @@
 #ifndef INGEN_TESTCLIENT_HPP
 #define INGEN_TESTCLIENT_HPP
 
+#include <boost/variant.hpp>
+
 #include "ingen/Interface.hpp"
 
 using namespace Ingen;
@@ -29,60 +31,21 @@ public:
 
 	Raul::URI uri() const { return Raul::URI("ingen:testClient"); }
 
-	void bundle_begin() {}
+	void set_response_id(int32_t id) override {}
 
-	void bundle_end() {}
-
-	void put(const Raul::URI&  uri,
-	         const Properties& properties,
-	         Resource::Graph   ctx = Resource::Graph::DEFAULT) {}
-
-	void delta(const Raul::URI&  uri,
-	           const Properties& remove,
-	           const Properties& add,
-	           Resource::Graph   ctx = Resource::Graph::DEFAULT) {}
-
-	void copy(const Raul::URI& old_uri,
-	          const Raul::URI& new_uri) {}
-
-	void move(const Raul::Path& old_path,
-	          const Raul::Path& new_path) {}
-
-	void del(const Raul::URI& uri) {}
-
-	void connect(const Raul::Path& tail,
-	             const Raul::Path& head) {}
-
-	void disconnect(const Raul::Path& tail,
-	                const Raul::Path& head) {}
-
-	void disconnect_all(const Raul::Path& parent_patch_path,
-	                    const Raul::Path& path) {}
-
-	void set_property(const Raul::URI& subject,
-	                  const Raul::URI& predicate,
-	                  const Atom&      value,
-	                  Resource::Graph  ctx = Resource::Graph::DEFAULT) {}
-
-	void set_response_id(int32_t id) {}
-
-	void get(const Raul::URI& uri) {}
-
-	void undo() {}
-
-	void redo() {}
-
-	void response(int32_t id, Status status, const std::string& subject) {
-		if (status != Status::SUCCESS) {
-			_log.error(fmt("error on message %1%: %2% (%3%)\n")
-			           % id % ingen_status_string(status) % subject);
+	void message(const Message& msg) override {
+		if (const Response* const response = boost::get<Response>(&msg)) {
+			if (response->status != Status::SUCCESS) {
+				_log.error(fmt("error on message %1%: %2% (%3%)\n")
+				           % response->id
+				           % ingen_status_string(response->status)
+				           % response->subject);
+				exit(EXIT_FAILURE);
+			}
+		} else if (const Error* const error = boost::get<Error>(&msg)) {
+			_log.error(fmt("error: %1%\n") % error->message);
 			exit(EXIT_FAILURE);
 		}
-	}
-
-	void error(const std::string& msg) {
-		_log.error(fmt("error: %1%\n") % msg);
-		exit(EXIT_FAILURE);
 	}
 
 private:

@@ -42,52 +42,26 @@ public:
 		return Raul::URI("ingen:/clients/atom_writer");
 	}
 
-	void bundle_begin();
-
-	void bundle_end();
-
-	void put(const Raul::URI&  uri,
-	         const Properties& properties,
-	         Resource::Graph   ctx = Resource::Graph::DEFAULT);
-
-	void delta(const Raul::URI&  uri,
-	           const Properties& remove,
-	           const Properties& add,
-	           Resource::Graph   ctx = Resource::Graph::DEFAULT);
-
-	void copy(const Raul::URI& old_uri,
-	          const Raul::URI& new_uri);
-
-	void move(const Raul::Path& old_path,
-	          const Raul::Path& new_path);
-
-	void del(const Raul::URI& uri);
-
-	void connect(const Raul::Path& tail,
-	             const Raul::Path& head);
-
-	void disconnect(const Raul::Path& tail,
-	                const Raul::Path& head);
-
-	void disconnect_all(const Raul::Path& graph,
-	                    const Raul::Path& path);
-
-	void set_property(const Raul::URI& subject,
-	                  const Raul::URI& predicate,
-	                  const Atom&      value,
-	                  Resource::Graph  ctx = Resource::Graph::DEFAULT);
-
-	void undo();
-
-	void redo();
-
 	void set_response_id(int32_t id);
 
-	void get(const Raul::URI& uri);
+	void message(const Message& message) override;
 
-	void response(int32_t id, Status status, const std::string& subject);
-
-	void error(const std::string& msg);
+	void operator()(const BundleBegin&);
+	void operator()(const BundleEnd&);
+	void operator()(const Connect&);
+	void operator()(const Copy&);
+	void operator()(const Del&);
+	void operator()(const Delta&);
+	void operator()(const Disconnect&);
+	void operator()(const DisconnectAll&);
+	void operator()(const Error&);
+	void operator()(const Get&);
+	void operator()(const Move&);
+	void operator()(const Put&);
+	void operator()(const Redo&);
+	void operator()(const Response&);
+	void operator()(const SetProperty&);
+	void operator()(const Undo&);
 
 private:
 	void forge_uri(const Raul::URI& uri);
