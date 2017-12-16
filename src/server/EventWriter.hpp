@@ -39,7 +39,6 @@ class EventWriter : public Interface
 {
 public:
 	explicit EventWriter(Engine& engine);
-	virtual ~EventWriter();
 
 	Raul::URI uri() const { return Raul::URI("ingen:/clients/event_writer"); }
 

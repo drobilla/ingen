@@ -34,10 +34,6 @@ EventWriter::EventWriter(Engine& engine)
 {
 }
 
-EventWriter::~EventWriter()
-{
-}
-
 SampleCount
 EventWriter::now() const
 {
