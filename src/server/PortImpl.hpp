@@ -194,6 +194,7 @@ public:
 	virtual void recycle_buffers();
 
 	uint32_t index() const { return _index; }
+	void set_index(RunContext&, uint32_t index) { _index = index; }
 
 	inline bool is_a(PortType type) const { return _type == type; }
 

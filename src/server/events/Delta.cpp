@@ -312,6 +312,9 @@ Delta::pre_process(PreProcessContext& ctx)
 					} else {
 						_status = Status::BAD_OBJECT_TYPE;
 					}
+				} else if (key == uris.lv2_index) {
+					op = SpecialType::PORT_INDEX;
+					port->set_property(key, value);
 				}
 			} else if ((block = dynamic_cast<BlockImpl*>(_object))) {
 				if (key == uris.midi_binding && value == uris.patch_wildcard) {
@@ -496,6 +499,11 @@ Delta::execute(RunContext& context)
 			                                 *_engine.maid(),
 			                                 value.get<int32_t>())) {
 				_status = Status::INTERNAL_ERROR;
+			}
+			break;
+		case SpecialType::PORT_INDEX:
+			if (port) {
+				port->set_index(context, value.get<int32_t>());
 			}
 			break;
 		case SpecialType::CONTROL_BINDING:

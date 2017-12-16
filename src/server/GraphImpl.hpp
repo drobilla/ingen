@@ -117,6 +117,7 @@ public:
 	const Blocks& blocks() const { return _blocks; }
 
 	uint32_t num_ports_non_rt() const;
+	bool     has_port_with_index(uint32_t index) const;
 
 	typedef boost::intrusive::slist<
 		DuplexPort, boost::intrusive::constant_time_size<true> > PortList;

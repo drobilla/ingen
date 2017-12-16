@@ -115,14 +115,22 @@ CreatePort::pre_process(PreProcessContext& ctx)
 	typedef Properties::const_iterator PropIter;
 
 	PropIter index_i = _properties.find(uris.lv2_index);
-	if (index_i == _properties.end()) {
+	int32_t  index   = 0;
+	if (index_i != _properties.end()) {
+		// Ensure given index is sane and not taken
+		if (index_i->second.type() != uris.forge.Int) {
+			return Event::pre_process_done(Status::BAD_REQUEST);
+		}
+
+		index = index_i->second.get<int32_t>();
+		if (_graph->has_port_with_index(index)) {
+			return Event::pre_process_done(Status::BAD_INDEX);
+		}
+	} else {
 		// No index given, append
-		index_i = _properties.insert(
-			std::make_pair(uris.lv2_index,
-			               _engine.world()->forge().make(old_n_ports)));
-	} else if (index_i->second.type() != uris.forge.Int ||
-	           index_i->second.get<int32_t>() != old_n_ports) {
-		return Event::pre_process_done(Status::BAD_INDEX, _path);
+		index   = old_n_ports;
+		index_i = _properties.emplace(uris.lv2_index,
+		                              _engine.world()->forge().make(index));
 	}
 
 	const PropIter poly_i = _properties.find(uris.ingen_polyphonic);
@@ -138,7 +146,7 @@ CreatePort::pre_process(PreProcessContext& ctx)
 
 	// Create port
 	_graph_port = new DuplexPort(bufs, _graph, Raul::Symbol(_path.symbol()),
-	                             _graph->num_ports_non_rt(),
+	                             index,
 	                             polyphonic,
 	                             _port_type, _buf_type, buf_size,
 	                             value, _flow == Flow::OUTPUT);
@@ -164,7 +172,6 @@ CreatePort::pre_process(PreProcessContext& ctx)
 
 	assert(_graph_port->index() == (uint32_t)index_i->second.get<int32_t>());
 	assert(_graph->num_ports_non_rt() == (uint32_t)old_n_ports + 1);
-	assert(_graph_port->index() == (uint32_t)old_n_ports);
 	assert(_ports_array->size() == _graph->num_ports_non_rt());
 	assert(_graph_port->index() < _ports_array->size());
 	return Event::pre_process_done(Status::SUCCESS);
@@ -177,7 +184,9 @@ CreatePort::execute(RunContext& context)
 		const MPtr<GraphImpl::Ports>& old_ports = _graph->external_ports();
 		if (old_ports) {
 			for (uint32_t i = 0; i < old_ports->size(); ++i) {
-				(*_ports_array)[i] = (*old_ports)[i];
+				const auto* const old_port = (*old_ports)[i];
+				assert(old_port->index() < _ports_array->size());
+				(*_ports_array)[old_port->index()] = (*old_ports)[i];
 			}
 		}
 		assert(!(*_ports_array)[_graph_port->index()]);

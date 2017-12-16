@@ -61,6 +61,7 @@ Delete::~Delete()
 bool
 Delete::pre_process(PreProcessContext& ctx)
 {
+	const Ingen::URIs& uris = _engine.world()->uris();
 	if (_path.is_root() || _path == "/control" || _path == "/notify") {
 		return Event::pre_process_done(Status::NOT_DELETABLE, _path);
 	}
@@ -104,6 +105,19 @@ Delete::pre_process(PreProcessContext& ctx)
 		if (parent->enabled()) {
 			_ports_array = parent->build_ports_array(*_engine.maid());
 			assert(_ports_array->size() == parent->num_ports_non_rt());
+
+			// Adjust port indices if necessary and record changes for later
+			for (size_t i = 0; i < _ports_array->size(); ++i) {
+				PortImpl* const port = _ports_array->at(i);
+				if (port->index() != i) {
+					_port_index_changes.emplace(
+						port->path(), std::make_pair(port->index(), i));
+					port->remove_property(uris.lv2_index, uris.patch_wildcard);
+					port->set_property(
+						uris.lv2_index,
+						_engine.buffer_factory()->forge().make((int32_t)i));
+				}
+			}
 		}
 
 		if (!parent->parent()) {
@@ -131,6 +145,15 @@ Delete::execute(RunContext& context)
 
 	GraphImpl* parent = _block ? _block->parent_graph() : NULL;
 	if (_port) {
+		// Adjust port indices if necessary
+		for (size_t i = 0; i < _ports_array->size(); ++i) {
+			PortImpl* const port = _ports_array->at(i);
+			if (port->index() != i) {
+				port->set_index(context, i);
+			}
+		}
+
+		// Replace ports array in graph
 		parent = _port->parent_graph();
 		parent->set_external_ports(std::move(_ports_array));
 
@@ -165,12 +188,27 @@ Delete::post_process()
 void
 Delete::undo(Interface& target)
 {
+	const Ingen::URIs& uris  = _engine.world()->uris();
+	Ingen::Forge&      forge = _engine.buffer_factory()->forge();
+
 	auto i = _removed_objects.find(_path);
 	if (i != _removed_objects.end()) {
+		// Undo disconnect
 		if (_disconnect_event) {
 			_disconnect_event->undo(target);
 		}
+
+		// Put deleted item back
 		target.put(_uri, i->second->properties());
+
+		// Adjust port indices
+		for (const auto& c : _port_index_changes) {
+			if (c.first != _uri) {
+				target.set_property(path_to_uri(c.first),
+				                    uris.lv2_index,
+				                    forge.make(int32_t(c.second.first)));
+			}
+		}
 	}
 }
 

@@ -17,6 +17,9 @@
 #ifndef INGEN_EVENTS_DELETE_HPP
 #define INGEN_EVENTS_DELETE_HPP
 
+#include <map>
+#include <vector>
+
 #include "ingen/Store.hpp"
 
 #include "CompiledGraph.hpp"
@@ -60,6 +63,9 @@ public:
 	void undo(Interface& target);
 
 private:
+	using IndexChange  = std::pair<uint32_t, uint32_t>;
+	using IndexChanges = std::map<Raul::Path, IndexChange>;
+
 	Raul::URI               _uri;
 	Raul::Path              _path;
 	SPtr<BlockImpl>         _block; ///< Non-NULL iff a block
@@ -69,6 +75,7 @@ private:
 	MPtr<CompiledGraph>     _compiled_graph; ///< Graph's new process order
 	DisconnectAll*          _disconnect_event;
 	Store::Objects          _removed_objects;
+	IndexChanges            _port_index_changes;
 
 	std::vector<ControlBindings::Binding*> _removed_bindings;
 };

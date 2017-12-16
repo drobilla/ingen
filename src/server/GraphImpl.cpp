@@ -312,6 +312,27 @@ GraphImpl::num_ports_non_rt() const
 	return _inputs.size() + _outputs.size();
 }
 
+bool
+GraphImpl::has_port_with_index(uint32_t index) const
+{
+	BufferFactory& bufs       = *_engine.buffer_factory();
+	const auto     index_atom = bufs.forge().make(int32_t(index));
+
+	for (auto p = _inputs.begin(); p != _inputs.end(); ++p) {
+		if (p->has_property(bufs.uris().lv2_index, index_atom)) {
+			return true;
+		}
+	}
+
+	for (auto p = _outputs.begin(); p != _outputs.end(); ++p) {
+		if (p->has_property(bufs.uris().lv2_index, index_atom)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void
 GraphImpl::remove_port(DuplexPort& port)
 {
@@ -337,13 +358,18 @@ GraphImpl::build_ports_array(Raul::Maid& maid)
 	const size_t n = _inputs.size() + _outputs.size();
 	MPtr<Ports> result = maid.make_managed<Ports>(n);
 
+	std::map<size_t, DuplexPort*> ports;
+	for (PortList::iterator p = _inputs.begin(); p != _inputs.end(); ++p) {
+		ports.emplace(p->index(), &*p);
+	}
+	for (PortList::iterator p = _outputs.begin(); p != _outputs.end(); ++p) {
+		ports.emplace(p->index(), &*p);
+	}
+
 	size_t i = 0;
-
-	for (PortList::iterator p = _inputs.begin(); p != _inputs.end(); ++p, ++i)
-		result->at(i) = &*p;
-
-	for (PortList::iterator p = _outputs.begin(); p != _outputs.end(); ++p, ++i)
-		result->at(i) = &*p;
+	for (const auto& p : ports) {
+		result->at(i++) = p.second;
+	}
 
 	assert(i == n);
 

@@ -84,7 +84,9 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 
 	set_type(type, buffer_type);
 
-	set_property(uris.lv2_index, bufs.forge().make((int32_t)index), Resource::Graph::INTERNAL);
+	remove_property(uris.lv2_index, uris.patch_wildcard);
+	set_property(uris.lv2_index, bufs.forge().make((int32_t)index));
+
 	if (has_value()) {
 		set_property(uris.ingen_value, value);
 	}
