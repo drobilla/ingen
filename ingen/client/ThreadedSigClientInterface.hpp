@@ -17,19 +17,18 @@
 #ifndef INGEN_CLIENT_THREADEDSIGCLIENTINTERFACE_HPP
 #define INGEN_CLIENT_THREADEDSIGCLIENTINTERFACE_HPP
 
-#include <stdint.h>
-
+#include <cstdint>
+#include <mutex>
 #include <string>
+#include <vector>
 
 #undef nil
 #include <sigc++/sigc++.h>
-#include <glibmm/thread.h>
 
 #include "ingen/Atom.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 #include "ingen/ingen.h"
-#include "raul/SRSWQueue.hpp"
 
 /** Returns nothing and takes no parameters (because they have all been bound) */
 typedef sigc::slot<void> Closure;
@@ -52,9 +51,8 @@ namespace Client {
 class INGEN_API ThreadedSigClientInterface : public SigClientInterface
 {
 public:
-	explicit ThreadedSigClientInterface(uint32_t queue_size)
-		: _sigs(queue_size)
-		, response_slot(_signal_response.make_slot())
+	ThreadedSigClientInterface()
+		: response_slot(_signal_response.make_slot())
 		, error_slot(_signal_error.make_slot())
 		, put_slot(_signal_put.make_slot())
 		, connection_slot(_signal_connection.make_slot())
@@ -117,41 +115,29 @@ public:
 
 	/** Process all queued events - Called from GTK thread to emit signals. */
 	bool emit_signals() {
-		// Process a limited number of events, to prevent locking the GTK
-		// thread indefinitely while processing continually arriving events
-
-		size_t num_processed = 0;
-		while (!_sigs.empty() && num_processed++ < (_sigs.capacity() * 3 / 4)) {
-			Closure& ev = _sigs.front();
-			ev();
-			ev.disconnect();
-			_sigs.pop();
+		// Get pending signals
+		std::vector<Closure> sigs;
+		{
+			std::lock_guard<std::mutex> lock(_mutex);
+			std::swap(sigs, _sigs);
 		}
 
-		_mutex.lock();
-		_cond.broadcast();
-		_mutex.unlock();
+		for (auto& ev : sigs) {
+			ev();
+			ev.disconnect();
+		}
 
 		return true;
 	}
 
 private:
 	void push_sig(Closure ev) {
-		bool success = false;
-		while (!success) {
-			success = _sigs.push(ev);
-			if (!success) {
-				_mutex.lock();
-				_cond.wait(_mutex);
-				_mutex.unlock();
-			}
-		}
+		std::lock_guard<std::mutex> lock(_mutex);
+		_sigs.push_back(ev);
 	}
 
-	Glib::Mutex _mutex;
-	Glib::Cond  _cond;
-
-	Raul::SRSWQueue<Closure> _sigs;
+	std::mutex           _mutex;
+	std::vector<Closure> _sigs;
 
 	using Graph = Resource::Graph;
 	using Path  = Raul::Path;

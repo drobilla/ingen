@@ -183,7 +183,7 @@ ConnectWindow::connect_remote(const Raul::URI& uri)
 	Ingen::World* world = _app->world();
 
 	SPtr<ThreadedSigClientInterface> tsci(
-		new Client::ThreadedSigClientInterface(1024));
+		new Client::ThreadedSigClientInterface());
 
 	SPtr<Ingen::Interface> iface(world->new_interface(uri, tsci));
 	if (iface) {

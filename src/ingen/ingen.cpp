@@ -135,7 +135,7 @@ main(int argc, char** argv)
 		const char* const uri = conf.option("connect").ptr<char>();
 		ingen_try(Raul::URI::is_valid(uri),
 		          (fmt("Invalid URI <%1%>") % uri).str().c_str());
-		SPtr<Interface> client(new Client::ThreadedSigClientInterface(1024));
+		SPtr<Interface> client(new Client::ThreadedSigClientInterface());
 		engine_interface = world->new_interface(Raul::URI(uri), client);
 
 		if (!engine_interface && !conf.option("gui").get<int32_t>()) {
