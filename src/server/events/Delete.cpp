@@ -167,10 +167,10 @@ Delete::undo(Interface& target)
 {
 	auto i = _removed_objects.find(_path);
 	if (i != _removed_objects.end()) {
-		target.put(_uri, i->second->properties());
 		if (_disconnect_event) {
 			_disconnect_event->undo(target);
 		}
+		target.put(_uri, i->second->properties());
 	}
 }
 
