@@ -53,7 +53,7 @@ has_provider_with_many_dependants(BlockImpl* n)
 }
 
 CompiledGraph::CompiledGraph(GraphImpl* graph)
-	: _master(Task::Mode::SEQUENTIAL)
+	: _master(std::make_unique<Task>(Task::Mode::SEQUENTIAL))
 {
 	compile_graph(graph);
 }
@@ -137,7 +137,7 @@ CompiledGraph::compile_graph(GraphImpl* graph)
 			compile_block(b, seq, depth, predecessors);
 			par.push_front(std::move(seq));
 		}
-		_master.push_front(std::move(par));
+		_master->push_front(std::move(par));
 		blocks = predecessors;
 	}
 
@@ -253,7 +253,7 @@ CompiledGraph::compile_block(BlockImpl*            n,
 void
 CompiledGraph::run(RunContext& context)
 {
-	_master.run(context);
+	_master->run(context);
 }
 
 void
@@ -265,7 +265,7 @@ CompiledGraph::dump(const std::string& name) const
 
 	sink("(compiled-graph ");
 	sink(name);
-	_master.dump(sink, 2, false);
+	_master->dump(sink, 2, false);
 	sink(")\n");
 }
 

@@ -21,6 +21,7 @@
 #include <cassert>
 #include <deque>
 #include <functional>
+#include <memory>
 #include <ostream>
 
 namespace Ingen {
@@ -77,14 +78,14 @@ public:
 	bool empty() const { return _mode != Mode::SINGLE && _children.empty(); }
 
 	/** Simplify task expression. */
-	static Task simplify(Task task);
+	static std::unique_ptr<Task> simplify(std::unique_ptr<Task>&& task);
 
 	/** Steal a child task from this task (succeeds for PARALLEL only). */
 	Task* steal(RunContext& context);
 
 	/** Prepend a child to this task. */
 	void push_front(Task&& task) {
-		_children.emplace_front(std::move(task));
+		_children.emplace_front(std::make_unique<Task>(std::move(task)));
 	}
 
 	Mode       mode()  const { return _mode; }
@@ -94,14 +95,14 @@ public:
 	void set_done(bool done) { _done = done; }
 
 private:
-	typedef std::deque<Task> Children;
+	typedef std::deque<std::unique_ptr<Task>> Children;
 
 	Task(const Task&) = delete;
 	Task& operator=(const Task&) = delete;
 
 	Task* get_task(RunContext& context);
 
-	void append(Task t) {
+	void append(std::unique_ptr<Task>&& t) {
 		_children.emplace_back(std::move(t));
 	}
 

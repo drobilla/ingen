@@ -70,7 +70,7 @@ private:
 	                      size_t           max_depth,
 	                      BlockSet&        k);
 
-	Task _master;
+	std::unique_ptr<Task> _master;
 };
 
 inline MPtr<CompiledGraph> compile(Raul::Maid& maid, GraphImpl& graph)
