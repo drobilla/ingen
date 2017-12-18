@@ -58,7 +58,7 @@ public:
 		Log&                     log,
 		SPtr<SigClientInterface> emitter = SPtr<SigClientInterface>());
 
-	Raul::URI uri() const { return Raul::URI("ingen:/clients/store"); }
+	Raul::URI uri() const override { return Raul::URI("ingen:/clients/store"); }
 
 	SPtr<const ObjectModel> object(const Raul::Path& path) const;
 	SPtr<const PluginModel> plugin(const Raul::URI& uri)   const;

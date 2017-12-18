@@ -51,9 +51,7 @@ public:
 
 	virtual Raul::URI uri() const = 0;
 
-	virtual SPtr<Interface> respondee() const {
-		return SPtr<Interface>();
-	}
+	virtual SPtr<Interface> respondee() const { return SPtr<Interface>(); }
 
 	virtual void set_respondee(SPtr<Interface> respondee) {}
 

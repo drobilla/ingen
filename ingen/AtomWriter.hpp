@@ -38,7 +38,7 @@ public:
 
 	~AtomWriter();
 
-	Raul::URI uri() const {
+	Raul::URI uri() const override {
 		return Raul::URI("ingen:/clients/atom_writer");
 	}
 

@@ -46,7 +46,7 @@ class INGEN_API SigClientInterface : public Ingen::Interface,
 public:
 	SigClientInterface() {}
 
-	Raul::URI uri() const { return Raul::URI("ingen:/clients/sig"); }
+	Raul::URI uri() const override { return Raul::URI("ingen:/clients/sig"); }
 
 	INGEN_SIGNAL(message, void, Message)
 

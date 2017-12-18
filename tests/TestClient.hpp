@@ -29,7 +29,7 @@ public:
 	explicit TestClient(Log& log) : _log(log) {}
 	~TestClient() {}
 
-	Raul::URI uri() const { return Raul::URI("ingen:testClient"); }
+	Raul::URI uri() const override { return Raul::URI("ingen:testClient"); }
 
 	void message(const Message& msg) override {
 		if (const Response* const response = boost::get<Response>(&msg)) {

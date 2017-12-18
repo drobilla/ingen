@@ -37,11 +37,11 @@ public:
 		, _reader(world, *respondee.get(), sock)
 	{}
 
-	virtual SPtr<Interface> respondee() const {
+	SPtr<Interface> respondee() const override {
 		return _respondee;
 	}
 
-	virtual void set_respondee(SPtr<Interface> respondee) {
+	void set_respondee(SPtr<Interface> respondee) override {
 		_respondee = respondee;
 	}
 

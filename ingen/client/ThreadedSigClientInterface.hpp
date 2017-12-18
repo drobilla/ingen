@@ -55,7 +55,9 @@ public:
 		: message_slot(_signal_message.make_slot())
 	{}
 
-	virtual Raul::URI uri() const { return Raul::URI("ingen:/clients/sig_queue"); }
+	Raul::URI uri() const override {
+		return Raul::URI("ingen:/clients/sig_queue");
+	}
 
 	void message(const Message& msg) override {
 		std::lock_guard<std::mutex> lock(_mutex);
@@ -63,7 +65,7 @@ public:
 	}
 
 	/** Process all queued events - Called from GTK thread to emit signals. */
-	bool emit_signals() {
+	bool emit_signals() override {
 		// Get pending signals
 		std::vector<Closure> sigs;
 		{

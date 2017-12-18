@@ -40,13 +40,15 @@ class EventWriter : public Interface
 public:
 	explicit EventWriter(Engine& engine);
 
-	Raul::URI uri() const { return Raul::URI("ingen:/clients/event_writer"); }
+	Raul::URI uri() const override {
+		return Raul::URI("ingen:/clients/event_writer");
+	}
 
-	virtual SPtr<Interface> respondee() const {
+	SPtr<Interface> respondee() const override {
 		return _respondee;
 	}
 
-	virtual void set_respondee(SPtr<Interface> respondee) {
+	void set_respondee(SPtr<Interface> respondee) override {
 		_respondee = respondee;
 	}
 
