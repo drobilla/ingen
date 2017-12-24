@@ -21,6 +21,7 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URIMap.hpp"
 #include "ingen/client/GraphModel.hpp"
 #include "ingen/client/PortModel.hpp"
 

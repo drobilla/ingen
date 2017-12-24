@@ -19,6 +19,7 @@
 #include <sys/socket.h>
 
 #include "ingen/SocketWriter.hpp"
+#include "raul/Socket.hpp"
 
 #ifndef MSG_NOSIGNAL
 #    define MSG_NOSIGNAL 0

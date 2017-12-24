@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/World.hpp"

@@ -19,6 +19,7 @@
 #include <string>
 #include <utility>
 
+#include <boost/variant/get.hpp>
 #include <gtk/gtkwindow.h>
 #include <gtkmm/stock.h>
 

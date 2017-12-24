@@ -17,17 +17,21 @@
 #ifndef INGEN_TURTLE_WRITER_HPP
 #define INGEN_TURTLE_WRITER_HPP
 
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
 #include "ingen/AtomSink.hpp"
 #include "ingen/AtomWriter.hpp"
-#include "ingen/Interface.hpp"
-#include "ingen/types.hpp"
 #include "ingen/ingen.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "raul/URI.hpp"
+#include "serd/serd.h"
 #include "sratom/sratom.h"
 
 namespace Ingen {
+
+class URIMap;
+class URIs;
 
 /** An Interface that writes Turtle messages to a sink method.
  *

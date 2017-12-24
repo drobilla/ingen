@@ -18,7 +18,9 @@
 
 #include <glib.h>
 
+#include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
+#include "raul/URI.hpp"
 
 using namespace std;
 

@@ -14,7 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/variant.hpp>
+#include <boost/variant/apply_visitor.hpp>
 
 #include "ingen/URIs.hpp"
 

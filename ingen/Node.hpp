@@ -17,15 +17,19 @@
 #ifndef INGEN_NODE_HPP
 #define INGEN_NODE_HPP
 
+#include <cstdint>
+#include <map>
+#include <string>
+#include <utility>
+
 #include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
 #include "ingen/paths.hpp"
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
-#include "raul/Path.hpp"
+#include "raul/URI.hpp"
 
 namespace Raul {
-class Atom;
 class Path;
 class Symbol;
 }
@@ -34,6 +38,7 @@ namespace Ingen {
 
 class Arc;
 class Store;
+class URIs;
 
 /** A node in the audio graph.
  *
@@ -65,11 +70,11 @@ public:
 
 	// Blocks and graphs only
 	virtual uint32_t        num_ports()          const { return 0; }
-	virtual Node*           port(uint32_t index) const { return NULL; }
-	virtual const Resource* plugin()             const { return NULL; }
+	virtual Node*           port(uint32_t index) const { return nullptr; }
+	virtual const Resource* plugin()             const { return nullptr; }
 
 	// Plugin blocks only
-	virtual LilvInstance* instance() { return NULL; }
+	virtual LilvInstance* instance() { return nullptr; }
 	virtual bool          save_state(const std::string& dir) const { return false; }
 
 	// All objects

@@ -24,6 +24,7 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/DataAccess.hpp"
 #include "ingen/EngineBase.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/InstanceAccess.hpp"
 #include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"

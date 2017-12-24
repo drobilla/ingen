@@ -17,10 +17,9 @@
 #ifndef INGEN_RESOURCE_HPP
 #define INGEN_RESOURCE_HPP
 
-#include <map>
+#include <cassert>
 #include <string>
 
-#include "ingen/Atom.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
@@ -28,6 +27,8 @@
 #include "raul/URI.hpp"
 
 namespace Ingen {
+
+class Atom;
 
 /** A resource with a URI described by properties.
  *

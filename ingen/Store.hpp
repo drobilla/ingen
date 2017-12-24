@@ -17,16 +17,22 @@
 #ifndef INGEN_STORE_HPP
 #define INGEN_STORE_HPP
 
+#include <cstddef>
 #include <map>
 #include <mutex>
+#include <utility>
 
-#include "ingen/Node.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "raul/Deletable.hpp"
 #include "raul/Noncopyable.hpp"
+#include "raul/Path.hpp"
+
+namespace Raul { class Symbol; }
 
 namespace Ingen {
+
+class Node;
 
 /** Store of objects in the graph hierarchy.
  * @ingroup IngenShared

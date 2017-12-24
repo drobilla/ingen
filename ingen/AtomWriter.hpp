@@ -17,18 +17,25 @@
 #ifndef INGEN_ATOMWRITER_HPP
 #define INGEN_ATOMWRITER_HPP
 
-#include <string>
+#include <cstdint>
 
 #include "ingen/AtomForgeSink.hpp"
 #include "ingen/Interface.hpp"
-#include "ingen/URIs.hpp"
+#include "ingen/Message.hpp"
+#include "ingen/Properties.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "raul/URI.hpp"
+
+namespace Raul { class Path; }
 
 namespace Ingen {
 
 class AtomSink;
 class URIMap;
+class URIs;
 
 /** An Interface that writes LV2 atoms to an AtomSink. */
 class INGEN_API AtomWriter : public Interface

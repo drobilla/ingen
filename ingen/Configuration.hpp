@@ -17,22 +17,21 @@
 #ifndef INGEN_CONFIGURATION_HPP
 #define INGEN_CONFIGURATION_HPP
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include <cstdlib>
 #include <list>
 #include <map>
 #include <ostream>
 #include <string>
 
 #include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
-#include "ingen/URIMap.hpp"
 #include "ingen/ingen.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Exception.hpp"
 
 namespace Ingen {
+
+class Forge;
+class URIMap;
 
 /** Ingen configuration (command line options and/or configuration file).
  * @ingroup IngenShared

@@ -19,6 +19,7 @@
 #include "ingen/Forge.hpp"
 #include "ingen/URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+#include "raul/URI.hpp"
 
 namespace Ingen {
 

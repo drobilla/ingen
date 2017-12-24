@@ -18,6 +18,7 @@
 #define INGEN_LV2FEATURES_HPP
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "ingen/ingen.h"

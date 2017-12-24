@@ -25,7 +25,9 @@
 #include <glibmm/miscutils.h>
 
 #include "ingen/Configuration.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URIMap.hpp"
 #include "ingen/ingen.h"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"

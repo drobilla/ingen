@@ -25,10 +25,10 @@
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Noncopyable.hpp"
-#include "raul/URI.hpp"
 
 typedef struct LilvWorldImpl LilvWorld;
 
+namespace Raul { class URI; }
 namespace Sord { class World; }
 
 namespace Ingen {

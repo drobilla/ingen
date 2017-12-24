@@ -17,6 +17,8 @@
 #ifndef INGEN_LOG_HPP
 #define INGEN_LOG_HPP
 
+#include <cstdarg>
+#include <cstdio>
 #include <functional>
 #include <string>
 
@@ -25,12 +27,16 @@
 #include "ingen/LV2Features.hpp"
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/log/log.h"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 namespace Ingen {
 
 typedef boost::basic_format<char> fmt;
 
+class Node;
 class URIs;
+class World;
 
 class INGEN_API Log {
 public:

@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cassert>
 #include <cstdio>
 #include <sstream>
 #include <string>
@@ -21,6 +22,7 @@
 
 #include "ingen/ClashAvoider.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/paths.hpp"
 
 using namespace std;
 

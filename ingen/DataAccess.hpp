@@ -17,10 +17,17 @@
 #ifndef INGEN_ENGINE_DATAACCESS_HPP
 #define INGEN_ENGINE_DATAACCESS_HPP
 
+#include <cstdlib>
+#include <utility>
+
 #include "ingen/LV2Features.hpp"
+#include "ingen/Node.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/World.hpp"
+#include "ingen/types.hpp"
+#include "lilv/lilv.h"
 
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "lv2/lv2plug.in/ns/ext/data-access/data-access.h"
 
 namespace Ingen {

@@ -20,8 +20,11 @@
 #include <thread>
 
 #include "ingen/ingen.h"
-#include "raul/Socket.hpp"
+#include "ingen/types.hpp"
+#include "serd/serd.h"
 #include "sord/sord.h"
+
+namespace Raul { class Socket; }
 
 namespace Ingen {
 

@@ -19,7 +19,7 @@
 #include <sstream>
 #include <string>
 
-#include <boost/variant.hpp>
+#include <boost/variant/get.hpp>
 #include <gtkmm/stock.h>
 
 #include "raul/Process.hpp"

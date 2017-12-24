@@ -17,6 +17,8 @@
 #ifndef INGEN_ATOMSINK_HPP
 #define INGEN_ATOMSINK_HPP
 
+#include <cstdint>
+
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 

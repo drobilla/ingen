@@ -16,6 +16,7 @@
 
 #include <string>
 
+#include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
 #include "lv2/lv2plug.in/ns/ext/presets/presets.h"

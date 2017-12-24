@@ -25,18 +25,20 @@
 #include <string>
 
 #include "ingen/Message.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 
 namespace Raul {
-class Atom;
 class Path;
 class URI;
 }
 
 namespace Ingen {
+
+class Atom;
 
 /** Abstract interface for Ingen servers and clients.
  *

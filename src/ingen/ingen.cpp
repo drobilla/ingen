@@ -35,6 +35,7 @@
 #include "ingen/Parser.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
+#include "ingen/paths.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
 #ifdef HAVE_SOCKET

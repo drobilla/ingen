@@ -22,6 +22,7 @@
 #include "ingen/Clock.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/EngineBase.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Parser.hpp"
 #include "ingen/World.hpp"

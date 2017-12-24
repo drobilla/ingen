@@ -19,10 +19,16 @@
 
 #include <cstdio>
 
+#include "ingen/ingen.h"
 #include "ingen/ColorContext.hpp"
 #include "ingen/TurtleWriter.hpp"
 
+namespace Raul { class URI; }
+
 namespace Ingen {
+
+class URIMap;
+class URIs;
 
 /** An Interface that writes Turtle messages to a stream.
  */

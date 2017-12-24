@@ -23,7 +23,6 @@
 
 namespace Ingen {
 
-#if __cplusplus >= 201103L
 template <class T>
 using SPtr = std::shared_ptr<T>;
 
@@ -32,11 +31,6 @@ using WPtr = std::weak_ptr<T>;
 
 template <class T>
 using MPtr = Raul::managed_ptr<T>;
-#else
-#define SPtr std::shared_ptr
-#define WPtr std::weak_ptr
-#define MPtr Raul::managed_ptr
-#endif
 
 template <class T>
 void NullDeleter(T* ptr) {}

@@ -25,6 +25,7 @@
 #include <thread>
 
 #include "ingen/Configuration.hpp"
+#include "ingen/Log.hpp"
 #include "ingen/Module.hpp"
 #include "ingen/World.hpp"
 #include "raul/Socket.hpp"

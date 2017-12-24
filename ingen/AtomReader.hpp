@@ -17,18 +17,28 @@
 #ifndef INGEN_ATOMREADER_HPP
 #define INGEN_ATOMREADER_HPP
 
-#include <boost/optional.hpp>
+#include <cstdint>
 
-#include "ingen/Interface.hpp"
+#include <boost/optional/optional.hpp>
+
 #include "ingen/AtomSink.hpp"
-#include "ingen/URIs.hpp"
+#include "ingen/Resource.hpp"
 #include "ingen/ingen.h"
+#include "lv2/lv2plug.in/ns/ext/atom/atom.h"
+
+namespace Raul {
+class Path;
+class URI;
+}
 
 namespace Ingen {
 
-class AtomSink;
+class Atom;
+class Interface;
 class Log;
+class Properties;
 class URIMap;
+class URIs;
 
 /** An AtomSink that calls methods on an Interface.
  * @ingroup IngenShared

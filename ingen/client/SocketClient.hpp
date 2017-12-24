@@ -20,6 +20,7 @@
 #include "ingen/SocketReader.hpp"
 #include "ingen/SocketWriter.hpp"
 #include "ingen/ingen.h"
+#include "raul/Socket.hpp"
 
 namespace Ingen {
 namespace Client {

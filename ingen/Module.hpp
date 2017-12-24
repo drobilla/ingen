@@ -17,9 +17,9 @@
 #ifndef INGEN_MODULE_HPP
 #define INGEN_MODULE_HPP
 
-#include <glibmm/module.h>
-
 #include "ingen/ingen.h"
+
+namespace Glib { class Module; }
 
 namespace Ingen {
 
@@ -32,7 +32,7 @@ class World;
  */
 class INGEN_API Module {
 public:
-	Module() : library(NULL) {}
+	Module() : library(nullptr) {}
 	virtual ~Module() {}
 
 	virtual void load(Ingen::World* world) = 0;

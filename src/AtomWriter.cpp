@@ -51,7 +51,7 @@
 #include <cstdlib>
 #include <string>
 
-#include <boost/variant.hpp>
+#include <boost/variant/apply_visitor.hpp>
 
 #include "ingen/AtomSink.hpp"
 #include "ingen/AtomWriter.hpp"

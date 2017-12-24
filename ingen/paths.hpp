@@ -17,6 +17,9 @@
 #ifndef INGEN_PATHS_HPP
 #define INGEN_PATHS_HPP
 
+#include <cstddef>
+#include <string>
+
 #include "raul/URI.hpp"
 #include "raul/Path.hpp"
 

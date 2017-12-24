@@ -18,7 +18,9 @@
 #include <utility>
 
 #include "ingen/AtomReader.hpp"
+#include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/Message.hpp"
 #include "ingen/Node.hpp"
 #include "ingen/URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"

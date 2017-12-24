@@ -19,17 +19,15 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
-#include <string>
 
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 
 namespace Ingen {
-
-class Forge;
 
 /**
    A generic typed data container.
@@ -156,8 +154,6 @@ public:
 	}
 
 private:
-	friend class Forge;
-
 	/** Free dynamically allocated value, if applicable. */
 	inline void dealloc() {
 		if (is_reference()) {

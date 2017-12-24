@@ -17,17 +17,22 @@
 #ifndef INGEN_URIMAP_HPP
 #define INGEN_URIMAP_HPP
 
-#include <map>
+#include <cstdint>
+#include <string>
 #include <utility>
 
 #include "ingen/LV2Features.hpp"
-#include "ingen/Log.hpp"
 #include "ingen/ingen.h"
+#include "ingen/types.hpp"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
+#include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 #include "raul/Noncopyable.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
+
+class Log;
+class Node;
+class World;
 
 /** URI to integer map and implementation of LV2 URID extension.
  * @ingroup IngenShared

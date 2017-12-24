@@ -16,6 +16,7 @@
 
 #include <utility>
 
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/client/ObjectModel.hpp"
 

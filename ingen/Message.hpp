@@ -17,21 +17,17 @@
 #ifndef INGEN_MESSAGE_HPP
 #define INGEN_MESSAGE_HPP
 
+#include <cstdint>
 #include <string>
 
-#include <boost/variant.hpp>
+#include <boost/variant/variant.hpp>
 
+#include "ingen/Atom.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
-#include "ingen/ingen.h"
-#include "ingen/types.hpp"
 #include "raul/Path.hpp"
-
-namespace Raul {
-class Atom;
-class Path;
-class URI;
-}
+#include "raul/URI.hpp"
 
 namespace Ingen {
 

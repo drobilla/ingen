@@ -17,8 +17,6 @@
 #ifndef INGEN_CLASHAVOIDER_HPP
 #define INGEN_CLASHAVOIDER_HPP
 
-#include <inttypes.h>
-
 #include <map>
 
 #include "ingen/ingen.h"

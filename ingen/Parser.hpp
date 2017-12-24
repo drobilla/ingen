@@ -20,13 +20,15 @@
 #include <string>
 #include <set>
 
-#include <boost/optional.hpp>
+#include <boost/optional/optional.hpp>
 
-#include "ingen/Node.hpp"
+#include "ingen/Properties.hpp"
 #include "ingen/ingen.h"
 #include "raul/Path.hpp"
-#include "raul/URI.hpp"
-#include "sord/sordmm.hpp"
+#include "raul/Symbol.hpp"
+
+namespace Raul { class URI; }
+namespace Sord { class World; }
 
 namespace Ingen {
 

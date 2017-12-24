@@ -17,6 +17,7 @@
 #include <cassert>
 #include <string>
 
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/ObjectModel.hpp"

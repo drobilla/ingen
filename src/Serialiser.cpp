@@ -31,6 +31,7 @@
 #include <glibmm/module.h>
 
 #include "ingen/Arc.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/Node.hpp"

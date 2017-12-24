@@ -17,12 +17,21 @@
 #ifndef INGEN_SOCKET_WRITER_HPP
 #define INGEN_SOCKET_WRITER_HPP
 
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
 #include "ingen/TurtleWriter.hpp"
-#include "raul/Socket.hpp"
+#include "ingen/ingen.h"
+
+namespace Raul {
+class Socket;
+class URI;
+}
 
 namespace Ingen {
+
+class URIMap;
+class URIs;
 
 /** An Interface that writes Turtle messages to a socket.
  */

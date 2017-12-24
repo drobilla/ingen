@@ -18,19 +18,15 @@
 #define INGEN_URIS_HPP
 
 #include "ingen/Atom.hpp"
-#include "ingen/Forge.hpp"
 #include "ingen/ingen.h"
 #include "lilv/lilv.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Noncopyable.hpp"
 #include "raul/URI.hpp"
 
-namespace Raul {
-class Forge;
-}
-
 namespace Ingen {
 
+class Forge;
 class URIMap;
 
 /** Frequently used interned URIs.

@@ -22,6 +22,7 @@
 #include <string>
 #include <utility>
 
+#include "ingen/Forge.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/signal.hpp"

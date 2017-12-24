@@ -24,6 +24,7 @@
 #include "ingen/SocketReader.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
+#include "raul/Socket.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 

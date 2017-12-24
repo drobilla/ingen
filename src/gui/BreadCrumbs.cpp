@@ -17,6 +17,8 @@
 #include <list>
 #include <string>
 
+#include <boost/variant/get.hpp>
+
 #include "ingen/client/SigClientInterface.hpp"
 
 #include "App.hpp"

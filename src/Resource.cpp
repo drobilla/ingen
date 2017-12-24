@@ -18,6 +18,7 @@
 #include <utility>
 
 #include "ingen/Atom.hpp"
+#include "ingen/Forge.hpp"
 #include "ingen/Resource.hpp"
 #include "ingen/URIs.hpp"
 

@@ -20,16 +20,16 @@
 #include <stdexcept>
 #include <string>
 
-#include "ingen/Node.hpp"
 #include "ingen/ingen.h"
-#include "raul/Path.hpp"
+#include "ingen/types.hpp"
 #include "sord/sordmm.hpp"
+
+namespace Raul { class Path; }
 
 namespace Ingen {
 
 class Arc;
 class Node;
-class Store;
 class World;
 
 /**
