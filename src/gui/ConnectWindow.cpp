@@ -133,8 +133,9 @@ ConnectWindow::set_connected_to(SPtr<Ingen::Interface> engine)
 {
 	_app->world()->set_interface(engine);
 
-	if (!_widgets_loaded)
+	if (!_widgets_loaded) {
 		return;
+	}
 
 	if (engine) {
 		_icon->set(Gtk::Stock::CONNECT, Gtk::ICON_SIZE_LARGE_TOOLBAR);
@@ -162,10 +163,11 @@ ConnectWindow::set_connected_to(SPtr<Ingen::Interface> engine)
 		_activate_button->set_sensitive(false);
 		_deactivate_button->set_sensitive(false);
 
-		if (_mode == Mode::CONNECT_REMOTE)
+		if (_mode == Mode::CONNECT_REMOTE) {
 			_url_entry->set_sensitive(true);
-		else if (_mode == Mode::LAUNCH_REMOTE)
+		} else if (_mode == Mode::LAUNCH_REMOTE) {
 			_port_spinbutton->set_sensitive(true);
+		}
 
 		_progress_label->set_text(string("Disconnected"));
 	}
@@ -174,8 +176,9 @@ ConnectWindow::set_connected_to(SPtr<Ingen::Interface> engine)
 void
 ConnectWindow::set_connecting_widget_states()
 {
-	if (!_widgets_loaded)
+	if (!_widgets_loaded) {
 		return;
+	}
 
 	_connect_button->set_sensitive(false);
 	_disconnect_button->set_label("gtk-cancel");
@@ -289,8 +292,9 @@ ConnectWindow::disconnect()
 	_app->detach();
 	set_connected_to(SPtr<Ingen::Interface>());
 
-	if (!_widgets_loaded)
+	if (!_widgets_loaded) {
 		return;
+	}
 
 	_activate_button->set_sensitive(false);
 	_deactivate_button->set_sensitive(false);
@@ -392,15 +396,17 @@ void
 ConnectWindow::on_hide()
 {
 	Gtk::Dialog::on_hide();
-	if (_app->window_factory()->num_open_graph_windows() == 0)
+	if (_app->window_factory()->num_open_graph_windows() == 0) {
 		quit();
+	}
 }
 
 void
 ConnectWindow::quit_clicked()
 {
-	if (_app->quit(this))
+	if (_app->quit(this)) {
 		_quit_flag = true;
+	}
 }
 
 void
@@ -451,8 +457,9 @@ ConnectWindow::gtk_callback()
 {
 	/* If I call this a "state machine" it's not ugly code any more */
 
-	if (_quit_flag)
+	if (_quit_flag) {
 		return false; // deregister this callback
+	}
 
 	// Timing stuff for repeated attach attempts
 	timeval now;

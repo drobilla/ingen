@@ -163,13 +163,15 @@ LV2Block::make_instance(URIs&      uris,
 bool
 LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
-	if (!_polyphonic)
+	if (!_polyphonic) {
 		poly = 1;
+	}
 
 	BlockImpl::prepare_poly(bufs, poly);
 
-	if (_polyphony == poly)
+	if (_polyphony == poly) {
 		return true;
+	}
 
 	const SampleRate rate = bufs.engine().sample_rate();
 	assert(!_prepared_instances);
@@ -195,8 +197,9 @@ LV2Block::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 LV2Block::apply_poly(RunContext& context, uint32_t poly)
 {
-	if (!_polyphonic)
+	if (!_polyphonic) {
 		poly = 1;
+	}
 
 	if (_prepared_instances) {
 		_instances = std::move(_prepared_instances);
@@ -528,8 +531,9 @@ LV2Block::activate(BufferFactory& bufs)
 {
 	BlockImpl::activate(bufs);
 
-	for (uint32_t i = 0; i < _polyphony; ++i)
+	for (uint32_t i = 0; i < _polyphony; ++i) {
 		lilv_instance_activate(instance(i));
+	}
 }
 
 void
@@ -537,8 +541,9 @@ LV2Block::deactivate()
 {
 	BlockImpl::deactivate();
 
-	for (uint32_t i = 0; i < _polyphony; ++i)
+	for (uint32_t i = 0; i < _polyphony; ++i) {
 		lilv_instance_deactivate(instance(i));
+	}
 }
 
 LV2_Worker_Status
@@ -572,8 +577,9 @@ LV2Block::work(uint32_t size, const void* data)
 void
 LV2Block::run(RunContext& context)
 {
-	for (uint32_t i = 0; i < _polyphony; ++i)
+	for (uint32_t i = 0; i < _polyphony; ++i) {
 		lilv_instance_run(instance(i), context.nframes());
+	}
 }
 
 void

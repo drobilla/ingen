@@ -130,13 +130,15 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 bool
 NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
-	if (!_polyphonic)
+	if (!_polyphonic) {
 		return true;
+	}
 
 	BlockImpl::prepare_poly(bufs, poly);
 
-	if (_prepared_voices && poly <= _prepared_voices->size())
+	if (_prepared_voices && poly <= _prepared_voices->size()) {
 		return true;
+	}
 
 	_prepared_voices = bufs.maid().make_managed<Voices>(
 		poly, *_voices, Voice());
@@ -147,8 +149,9 @@ NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 NoteNode::apply_poly(RunContext& context, uint32_t poly)
 {
-	if (!BlockImpl::apply_poly(context, poly))
+	if (!BlockImpl::apply_poly(context, poly)) {
 		return false;
+	}
 
 	if (_prepared_voices) {
 		assert(_polyphony <= _prepared_voices->size());
@@ -383,9 +386,11 @@ NoteNode::sustain_off(RunContext& context, FrameTime time)
 
 	_sustain = false;
 
-	for (uint32_t i=0; i < _polyphony; ++i)
-		if ((*_voices)[i].state == Voice::State::HOLDING)
+	for (uint32_t i=0; i < _polyphony; ++i) {
+		if ((*_voices)[i].state == Voice::State::HOLDING) {
 			free_voice(context, i, time);
+		}
+	}
 }
 
 void

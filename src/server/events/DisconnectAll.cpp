@@ -66,8 +66,9 @@ DisconnectAll::DisconnectAll(Engine&    engine,
 
 DisconnectAll::~DisconnectAll()
 {
-	for (auto& i : _impls)
+	for (auto& i : _impls) {
 		delete i;
+	}
 }
 
 bool

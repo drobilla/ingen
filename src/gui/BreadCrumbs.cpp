@@ -44,9 +44,11 @@ BreadCrumbs::BreadCrumbs(App& app)
 SPtr<GraphView>
 BreadCrumbs::view(const Raul::Path& path)
 {
-	for (const auto& b : _breadcrumbs)
-		if (b->path() == path)
+	for (const auto& b : _breadcrumbs) {
+		if (b->path() == path) {
 			return b->view();
+		}
+	}
 
 	return SPtr<GraphView>();
 }
@@ -67,8 +69,9 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 		for (const auto& b : _breadcrumbs) {
 			if (b->path() == path) {
 				b->set_active(true);
-				if (!b->view())
+				if (!b->view()) {
 					b->set_view(view);
+				}
 
 				// views are expensive, having two around for the same graph is a bug
 				assert(b->view() == view);
@@ -86,22 +89,25 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 
 		string suffix = path.substr(_full_path.length());
 		while (suffix.length() > 0) {
-			if (suffix[0] == '/')
+			if (suffix[0] == '/') {
 				suffix = suffix.substr(1);
+			}
 			const string name = suffix.substr(0, suffix.find("/"));
 			_full_path = _full_path.child(Raul::Symbol(name));
 			BreadCrumb* but = create_crumb(_full_path, view);
 			pack_start(*but, false, false, 1);
 			_breadcrumbs.push_back(but);
 			but->show();
-			if (suffix.find("/") == string::npos)
+			if (suffix.find("/") == string::npos) {
 				break;
-			else
+			} else {
 				suffix = suffix.substr(suffix.find("/")+1);
+			}
 		}
 
-		for (const auto& b : _breadcrumbs)
+		for (const auto& b : _breadcrumbs) {
 			b->set_active(false);
+		}
 		_breadcrumbs.back()->set_active(true);
 
 	} else {
@@ -112,8 +118,9 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 		_active_path = path;
 
 		// Empty existing breadcrumbs
-		for (const auto& b : _breadcrumbs)
+		for (const auto& b : _breadcrumbs) {
 			remove(*b);
+		}
 		_breadcrumbs.clear();
 
 		// Add root
@@ -125,8 +132,9 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 		Raul::Path working_path("/");
 		string suffix = path.substr(1);
 		while (suffix.length() > 0) {
-			if (suffix[0] == '/')
+			if (suffix[0] == '/') {
 				suffix = suffix.substr(1);
+			}
 			const string name = suffix.substr(0, suffix.find("/"));
 			working_path = working_path.child(Raul::Symbol(name));
 			BreadCrumb* but = create_crumb(working_path, view);
@@ -134,10 +142,11 @@ BreadCrumbs::build(Raul::Path path, SPtr<GraphView> view)
 			_breadcrumbs.push_back(but);
 			but->set_active(working_path == _active_path);
 			but->show();
-			if (suffix.find("/") == string::npos)
+			if (suffix.find("/") == string::npos) {
 				break;
-			else
+			} else {
 				suffix = suffix.substr(suffix.find("/")+1);
+			}
 		}
 	}
 
@@ -174,8 +183,9 @@ BreadCrumbs::breadcrumb_clicked(BreadCrumb* crumb)
 			crumb->set_active(true);
 		} else {
 			signal_graph_selected.emit(crumb->path(), crumb->view());
-			if (crumb->path() != _active_path)
+			if (crumb->path() != _active_path) {
 				crumb->set_active(false);
+			}
 		}
 		_enable_signal = true;
 	}
@@ -209,8 +219,9 @@ void
 BreadCrumbs::object_moved(const Raul::Path& old_path, const Raul::Path& new_path)
 {
 	for (const auto& b : _breadcrumbs) {
-		if (b->path() == old_path)
+		if (b->path() == old_path) {
 			b->set_path(new_path);
+		}
 	}
 }
 

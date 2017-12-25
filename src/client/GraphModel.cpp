@@ -100,10 +100,11 @@ SPtr<ArcModel>
 GraphModel::get_arc(const Node* tail, const Node* head)
 {
 	Arcs::iterator i = _arcs.find(make_pair(tail, head));
-	if (i != _arcs.end())
+	if (i != _arcs.end()) {
 		return dynamic_ptr_cast<ArcModel>(i->second);
-	else
+	} else {
 		return SPtr<ArcModel>();
+	}
 }
 
 /** Add a connection to this graph.

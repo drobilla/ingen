@@ -200,8 +200,9 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
 
 	_world.log().info(fmt("Writing bundle %1%\n") % path);
 
-	if (path.back() != '/')
+	if (path.back() != '/') {
 		path.append("/");
+	}
 
 	g_mkdir_with_parents(path.c_str(), 0744);
 
@@ -301,8 +302,9 @@ Serialiser::Impl::path_rdf_node(const Raul::Path& path)
 void
 Serialiser::serialise(SPtr<const Node> object) throw (std::logic_error)
 {
-	if (!me->_model)
+	if (!me->_model) {
 		throw std::logic_error("serialise called without serialisation in progress");
+	}
 
 	if (object->graph_type() == Node::GraphType::GRAPH) {
 		me->serialise_graph(object, me->path_rdf_node(object->path()));
@@ -357,8 +359,9 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 
 	const Store::const_range kids = _world.store()->children_range(graph);
 	for (Store::const_iterator n = kids.first; n != kids.second; ++n) {
-		if (n->first.parent() != graph->path())
+		if (n->first.parent() != graph->path()) {
 			continue;
+		}
 
 		if (n->second->graph_type() == Node::GraphType::GRAPH) {
 			SPtr<Node> subgraph = n->second;
@@ -412,9 +415,10 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 		const Sord::Node port_id = path_rdf_node(p->path());
 
 		// Ensure lv2:name always exists so Graph is a valid LV2 plugin
-		if (p->properties().find(uris.lv2_name) == p->properties().end())
+		if (p->properties().find(uris.lv2_name) == p->properties().end()) {
 			p->set_property(uris.lv2_name,
 			                _world.forge().alloc(p->symbol().c_str()));
+		}
 
 		_model->add_statement(graph_id,
 		                      Sord::URI(world, LV2_CORE__port),
@@ -522,9 +526,10 @@ Serialiser::Impl::serialise_arc(const Sord::Node& parent,
                                 SPtr<const Arc>   arc)
 		throw (std::logic_error)
 {
-	if (!_model)
+	if (!_model) {
 		throw std::logic_error(
 			"serialise_arc called without serialisation in progress");
+	}
 
 	Sord::World& world = _model->world();
 	const URIs&  uris  = _world.uris();

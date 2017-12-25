@@ -80,8 +80,9 @@ ClientStore::add_object(SPtr<ObjectModel> object)
 		}
 	}
 
-	for (auto p : object->properties())
+	for (auto p : object->properties()) {
 		object->signal_property().emit(p.first, p.second);
+	}
 }
 
 SPtr<ObjectModel>
@@ -400,21 +401,26 @@ ClientStore::connection_graph(const Raul::Path& tail_path,
 {
 	SPtr<GraphModel> graph;
 
-	if (tail_path.parent() == head_path.parent())
+	if (tail_path.parent() == head_path.parent()) {
 		graph = dynamic_ptr_cast<GraphModel>(_object(tail_path.parent()));
+	}
 
-	if (!graph && tail_path.parent() == head_path.parent().parent())
+	if (!graph && tail_path.parent() == head_path.parent().parent()) {
 		graph = dynamic_ptr_cast<GraphModel>(_object(tail_path.parent()));
+	}
 
-	if (!graph && tail_path.parent().parent() == head_path.parent())
+	if (!graph && tail_path.parent().parent() == head_path.parent()) {
 		graph = dynamic_ptr_cast<GraphModel>(_object(head_path.parent()));
+	}
 
-	if (!graph)
+	if (!graph) {
 		graph = dynamic_ptr_cast<GraphModel>(_object(tail_path.parent().parent()));
+	}
 
-	if (!graph)
+	if (!graph) {
 		_log.error(fmt("Unable to find graph for arc %1% => %2%\n")
 		           % tail_path % head_path);
+	}
 
 	return graph;
 }
@@ -450,8 +456,9 @@ ClientStore::operator()(const Disconnect& msg)
 	SPtr<PortModel>  tail  = dynamic_ptr_cast<PortModel>(_object(msg.tail));
 	SPtr<PortModel>  head  = dynamic_ptr_cast<PortModel>(_object(msg.head));
 	SPtr<GraphModel> graph = connection_graph(msg.tail, msg.head);
-	if (graph)
+	if (graph) {
 		graph->remove_arc(tail.get(), head.get());
+	}
 }
 
 void

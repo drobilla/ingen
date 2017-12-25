@@ -69,17 +69,19 @@ const Raul::Symbol
 LV2Plugin::symbol() const
 {
 	string working = uri();
-	if (working.back() == '/')
+	if (working.back() == '/') {
 		working = working.substr(0, working.length() - 1);
+	}
 
 	while (working.length() > 0) {
 		size_t last_slash = working.find_last_of("/");
 		const string symbol = working.substr(last_slash+1);
 		if ( (symbol[0] >= 'a' && symbol[0] <= 'z')
-		     || (symbol[0] >= 'A' && symbol[0] <= 'Z') )
+		     || (symbol[0] >= 'A' && symbol[0] <= 'Z') ) {
 			return Raul::Symbol::symbolify(symbol);
-		else
+		} else {
 			working = working.substr(0, last_slash);
+		}
 	}
 
 	return Raul::Symbol("lv2_symbol");

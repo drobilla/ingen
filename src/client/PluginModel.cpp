@@ -97,8 +97,9 @@ PluginModel::get_property(const Raul::URI& key) const
 {
 	static const Atom nil;
 	const Atom& val = Resource::get_property(key);
-	if (val.is_valid())
+	if (val.is_valid()) {
 		return val;
+	}
 
 	// No lv2:symbol from data or engine, invent one
 	if (key == _uris.lv2_symbol) {
@@ -143,8 +144,9 @@ PluginModel::get_property(const Raul::URI& key) const
 		}
 		lilv_nodes_free(values);
 
-		if (ret)
+		if (ret) {
 			return *ret;
+		}
 	}
 
 	return nil;
@@ -155,8 +157,9 @@ PluginModel::set(SPtr<PluginModel> p)
 {
 	_type = p->_type;
 
-	if (p->_lilv_plugin)
+	if (p->_lilv_plugin) {
 		_lilv_plugin = p->_lilv_plugin;
+	}
 
 	for (auto v : p->properties()) {
 		Resource::set_property(v.first, v.second);
@@ -177,20 +180,22 @@ Raul::Symbol
 PluginModel::default_block_symbol() const
 {
 	const Atom& name_atom = get_property(_uris.lv2_symbol);
-	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String)
+	if (name_atom.is_valid() && name_atom.type() == _uris.forge.String) {
 		return Raul::Symbol::symbolify(name_atom.ptr<char>());
-	else
+	} else {
 		return Raul::Symbol("_");
+	}
 }
 
 string
 PluginModel::human_name() const
 {
 	const Atom& name_atom = get_property(_uris.doap_name);
-	if (name_atom.type() == _uris.forge.String)
+	if (name_atom.type() == _uris.forge.String) {
 		return name_atom.ptr<char>();
-	else
+	} else {
 		return default_block_symbol().c_str();
+	}
 }
 
 string

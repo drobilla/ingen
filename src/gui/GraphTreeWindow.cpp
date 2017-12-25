@@ -78,8 +78,9 @@ void
 GraphTreeWindow::new_object(SPtr<ObjectModel> object)
 {
 	SPtr<GraphModel> graph = dynamic_ptr_cast<GraphModel>(object);
-	if (graph)
+	if (graph) {
 		add_graph(graph);
+	}
 }
 
 void
@@ -127,8 +128,9 @@ void
 GraphTreeWindow::remove_graph(SPtr<GraphModel> pm)
 {
 	Gtk::TreeModel::iterator i = find_graph(_graph_treestore->children(), pm);
-	if (i != _graph_treestore->children().end())
+	if (i != _graph_treestore->children().end()) {
 		_graph_treestore->erase(i);
+	}
 }
 
 Gtk::TreeModel::iterator
@@ -141,8 +143,9 @@ GraphTreeWindow::find_graph(Gtk::TreeModel::Children  root,
 			return c;
 		} else if ((*c)->children().size() > 0) {
 			Gtk::TreeModel::iterator ret = find_graph(c->children(), graph);
-			if (ret != c->children().end())
+			if (ret != c->children().end()) {
 				return ret;
+			}
 		}
 	}
 	return root.end();
@@ -184,10 +187,11 @@ GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 	SPtr<GraphModel> pm = row[_graph_tree_columns.graph_model_col];
 	assert(pm);
 
-	if (_enable_signal)
+	if (_enable_signal) {
 		_app->set_property(pm->uri(),
 		                   _app->uris().ingen_enabled,
 		                   _app->forge().make((bool)!pm->enabled()));
+	}
 }
 
 void

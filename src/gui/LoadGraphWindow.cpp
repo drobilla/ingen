@@ -157,13 +157,15 @@ LoadGraphWindow::ok_clicked()
 
 	const URIs& uris = _app->uris();
 
-	if (_poly_voices_radio->get_active())
+	if (_poly_voices_radio->get_active()) {
 		_initial_data.insert(
 			make_pair(uris.ingen_polyphony,
 			          _app->forge().make(_poly_spinbutton->get_value_as_int())));
+	}
 
-	if (get_uri() == "")
+	if (get_uri() == "") {
 		return;
+	}
 
 	if (_import) {
 		// If unset load_graph will load value
@@ -187,8 +189,9 @@ LoadGraphWindow::ok_clicked()
 			y = _app->forge().make(y.get<float>() + 20.0f);
 
 			Raul::Symbol symbol(symbol_from_filename(u));
-			if (uri_list.size() == 1 && _symbol_entry->get_text() != "")
+			if (uri_list.size() == 1 && _symbol_entry->get_text() != "") {
 				symbol = Raul::Symbol::symbolify(_symbol_entry->get_text());
+			}
 
 			symbol = avoid_symbol_clash(symbol);
 
@@ -238,8 +241,9 @@ LoadGraphWindow::avoid_symbol_clash(const Raul::Symbol& symbol)
 void
 LoadGraphWindow::selection_changed()
 {
-	if (_import)
+	if (_import) {
 		return;
+	}
 
 	if (get_filenames().size() != 1) {
 		_symbol_entry->set_text("");

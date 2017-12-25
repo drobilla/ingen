@@ -95,19 +95,22 @@ ClashAvoider::map_path(const Raul::Path& in)
 				} else {
 					string parent_str = in.parent().base();
 					parent_str = parent_str.substr(0, parent_str.find_last_of("/"));
-					if (parent_str.empty())
+					if (parent_str.empty()) {
 						parent_str = "/";
+					}
 				}
 
-				if (offset == 0)
+				if (offset == 0) {
 					offset = 2;
+				}
 
 				std::stringstream ss;
 				ss << base_path << "_" << offset;
 				if (!exists(Raul::Path(ss.str()))) {
 					std::string name = base_path.symbol();
-					if (name == "")
+					if (name == "") {
 						name = "_";
+					}
 					Raul::Symbol sym(name);
 					string str = ss.str();
 					InsertRecord i = _symbol_map.insert(
@@ -116,10 +119,11 @@ ClashAvoider::map_path(const Raul::Path& in)
 					_offsets.insert(make_pair(base_path, offset));
 					return i.first->second;
 				} else {
-					if (o != _offsets.end())
+					if (o != _offsets.end()) {
 						offset = ++o->second;
-					else
+					} else {
 						++offset;
+					}
 				}
 			}
 		}

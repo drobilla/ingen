@@ -545,8 +545,9 @@ parse_properties(Ingen::World*               world,
 	target->put(uri, properties, ctx);
 
 	// Set passed properties last to override any loaded values
-	if (data)
+	if (data) {
 		target->put(uri, data.get(), ctx);
+	}
 
 	return true;
 }
@@ -700,10 +701,12 @@ Parser::parse_file(Ingen::World*                 world,
 	serd_env_free(env);
 
 	world->log().info(fmt("Loading %1% from %2%\n") % uri % file_path);
-	if (parent)
+	if (parent) {
 		world->log().info(fmt("Parent: %1%\n") % parent->c_str());
-	if (symbol)
+	}
+	if (symbol) {
 		world->log().info(fmt("Symbol: %1%\n") % symbol->c_str());
+	}
 
 	Sord::Node subject(*world->rdf_world(), Sord::Node::URI, uri);
 	boost::optional<Raul::Path> parsed_path

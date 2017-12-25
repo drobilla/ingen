@@ -43,8 +43,9 @@ WidgetFactory::find_ui_file()
 {
 	// Try file in bundle (directory where executable resides)
 	ui_filename = Ingen::bundle_file_path("ingen_gui.ui");
-	if (is_readable(ui_filename))
+	if (is_readable(ui_filename)) {
 		return;
+	}
 
 	// Try ENGINE_UI_PATH from the environment
 	const char* const env_path = getenv("INGEN_UI_PATH");
@@ -55,8 +56,9 @@ WidgetFactory::find_ui_file()
 
 	// Try the default system installed path
 	ui_filename = Ingen::data_file_path("ingen_gui.ui");
-	if (is_readable(ui_filename))
+	if (is_readable(ui_filename)) {
 		return;
+	}
 
 	throw std::runtime_error((fmt("Unable to find ingen_gui.ui in %1%\n")
 	                          % INGEN_DATA_DIR).str());

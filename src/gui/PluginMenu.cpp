@@ -101,8 +101,9 @@ PluginMenu::build_plugin_class_menu(Gtk::Menu*               menu,
 	const std::pair<LV2Children::const_iterator, LV2Children::const_iterator> kids
 		= children.equal_range(class_uri_str);
 
-	if (kids.first == children.end())
+	if (kids.first == children.end()) {
 		return 0;
+	}
 
 	// Add submenus
 	ancestors.insert(class_uri_str);

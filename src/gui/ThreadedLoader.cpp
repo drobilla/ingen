@@ -79,10 +79,11 @@ ThreadedLoader::load_graph(bool                   merge,
 
 	Glib::ustring engine_base = "";
 	if (engine_parent) {
-		if (merge)
+		if (merge) {
 			engine_base = engine_parent.get();
-		else
+		} else {
 			engine_base = engine_parent.get().base();
+		}
 	}
 
 	_events.push_back(

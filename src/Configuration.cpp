@@ -120,10 +120,11 @@ Configuration::print_usage(const std::string& program, std::ostream& os)
 	for (const auto& o : _options) {
 		const Option& option = o.second;
 		os << "  ";
-		if (option.letter != '\0')
+		if (option.letter != '\0') {
 			os << "-" << option.letter << ", ";
-		else
+		} else {
 			os << "    ";
+		}
 		os.width(_max_name_length + 11);
 		os << std::left;
 		os << (std::string("--") + o.first + variable_string(option.type));

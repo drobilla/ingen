@@ -181,13 +181,15 @@ GraphCanvas::show_menu(bool position, unsigned button, uint32_t time)
 {
 	_app.request_plugins_if_necessary();
 
-	if (!_internal_menu || _menu_dirty)
+	if (!_internal_menu || _menu_dirty) {
 		build_menus();
+	}
 
-	if (position)
+	if (position) {
 		_menu->popup(sigc::mem_fun(this, &GraphCanvas::auto_menu_position), button, time);
-	else
+	} else {
 		_menu->popup(button, time);
+	}
 }
 
 void
@@ -240,8 +242,9 @@ GraphCanvas::build()
 	// Create modules for blocks
 	for (Store::const_iterator i = kids.first; i != kids.second; ++i) {
 		SPtr<BlockModel> block = dynamic_ptr_cast<BlockModel>(i->second);
-		if (block && block->parent() == _graph)
+		if (block && block->parent() == _graph) {
 			add_block(block);
+		}
 	}
 
 	// Create pseudo modules for ports (ports on this canvas, not on our module)
@@ -262,12 +265,14 @@ show_module_human_names(GanvNode* node, void* data)
 	if (GANV_IS_MODULE(node)) {
 		Ganv::Module* module = Glib::wrap(GANV_MODULE(node));
 		NodeModule* nmod = dynamic_cast<NodeModule*>(module);
-		if (nmod)
+		if (nmod) {
 			nmod->show_human_names(b);
+		}
 
 		GraphPortModule* pmod = dynamic_cast<GraphPortModule*>(module);
-		if (pmod)
+		if (pmod) {
 			pmod->show_human_names(b);
+		}
 	}
 }
 
@@ -396,8 +401,9 @@ GraphCanvas::get_port_view(SPtr<PortModel> port)
 		if (module) {
 			for (const auto& p : *module) {
 				GUI::Port* pv = dynamic_cast<GUI::Port*>(p);
-				if (pv && pv->model() == port)
+				if (pv && pv->model() == port) {
 					return pv;
+				}
 			}
 		}
 	}
@@ -776,8 +782,9 @@ GraphCanvas::generate_port_name(
 		snprintf(num_buf, sizeof(num_buf), "%u", i);
 		symbol = sym_base + "_";
 		symbol += num_buf;
-		if (!_graph->get_port(Raul::Symbol::symbolify(symbol)))
+		if (!_graph->get_port(Raul::Symbol::symbolify(symbol))) {
 			break;
+		}
 	}
 
 	assert(Raul::Path::is_valid(string("/") + symbol));
@@ -816,8 +823,9 @@ void
 GraphCanvas::load_plugin(WPtr<PluginModel> weak_plugin)
 {
 	SPtr<PluginModel> plugin = weak_plugin.lock();
-	if (!plugin)
+	if (!plugin) {
 		return;
+	}
 
 	Raul::Symbol symbol = plugin->default_block_symbol();
 	unsigned offset = _app.store()->child_name_offset(_graph->path(), symbol);

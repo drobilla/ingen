@@ -211,15 +211,17 @@ Resource::set_properties(const Properties& props)
 void
 Resource::add_properties(const Properties& props)
 {
-	for (const auto& p : props)
+	for (const auto& p : props) {
 		add_property(p.first, p.second, p.second.context());
+	}
 }
 
 void
 Resource::remove_properties(const Properties& props)
 {
-	for (const auto& p : props)
+	for (const auto& p : props) {
 		remove_property(p.first, p.second);
+	}
 }
 
 Properties

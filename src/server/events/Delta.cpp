@@ -102,8 +102,9 @@ Delta::Delta(Engine&                   engine,
 
 Delta::~Delta()
 {
-	for (auto& s : _set_events)
+	for (auto& s : _set_events) {
 		delete s;
+	}
 
 	delete _create_event;
 }

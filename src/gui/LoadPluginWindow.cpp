@@ -72,8 +72,9 @@ LoadPluginWindow::LoadPluginWindow(BaseObjectType*                   cobject,
 	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_project);
 	_plugins_treeview->get_column(2)->set_sort_column(_plugins_columns._col_author);
 	_plugins_treeview->get_column(3)->set_sort_column(_plugins_columns._col_uri);
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 5; ++i) {
 		_plugins_treeview->get_column(i)->set_resizable(true);
+	}
 
 	// Set up the search criteria combobox
 	_criteria_liststore = Gtk::ListStore::create(_criteria_columns);
@@ -221,10 +222,11 @@ LoadPluginWindow::set_plugins(SPtr<const ClientStore::Plugins> plugins)
 void
 LoadPluginWindow::new_plugin(SPtr<const PluginModel> pm)
 {
-	if (is_visible())
+	if (is_visible()) {
 		add_plugin(pm);
-	else
+	} else {
 		_refresh_list = true;
+	}
 }
 
 static std::string
@@ -273,8 +275,9 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&    row,
 {
 	const URIs&       uris = _app->uris();
 	const Atom& name = plugin->get_property(uris.doap_name);
-	if (name.is_valid() && name.type() == uris.forge.String)
+	if (name.is_valid() && name.type() == uris.forge.String) {
 		row[_plugins_columns._col_name] = name.ptr<char>();
+	}
 
 	if (uris.lv2_Plugin == plugin->type()) {
 		row[_plugins_columns._col_type] = lilv_node_as_string(
@@ -366,8 +369,9 @@ LoadPluginWindow::generate_module_name(SPtr<const PluginModel> plugin,
 {
 	std::stringstream ss;
 	ss << plugin->default_block_symbol();
-	if (offset != 0)
+	if (offset != 0) {
 		ss << "_" << offset;
+	}
 	return ss.str();
 }
 
@@ -380,8 +384,9 @@ LoadPluginWindow::load_plugin(const Gtk::TreeModel::iterator& iter)
 	bool                    polyphonic = _polyphonic_checkbutton->get_active();
 	string                  name       = _name_entry->get_text();
 
-	if (name.empty())
+	if (name.empty()) {
 		name = generate_module_name(plugin, _name_offset);
+	}
 
 	if (name.empty() || !Raul::Symbol::is_valid(name)) {
 		Gtk::MessageDialog dialog(
@@ -446,8 +451,9 @@ LoadPluginWindow::filter_changed()
 
 		switch (criteria) {
 		case CriteriaColumns::Criteria::NAME:
-			if (name.is_valid() && name.type() == uris.forge.String)
+			if (name.is_valid() && name.type() == uris.forge.String) {
 				field = name.ptr<char>();
+			}
 			break;
 		case CriteriaColumns::Criteria::TYPE:
 			if (plugin->lilv_plugin()) {
@@ -502,8 +508,9 @@ LoadPluginWindow::plugin_property_changed(const Raul::URI& plugin,
 	const URIs& uris = _app->uris();
 	if (predicate == uris.doap_name) {
 		Rows::const_iterator i = _rows.find(plugin);
-		if (i != _rows.end() && value.type() == uris.forge.String)
+		if (i != _rows.end() && value.type() == uris.forge.String) {
 			(*i->second)[_plugins_columns._col_name] = value.ptr<char>();
+		}
 	}
 }
 

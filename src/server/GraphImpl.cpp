@@ -221,8 +221,9 @@ GraphImpl::pre_process(RunContext& context)
 void
 GraphImpl::process(RunContext& context)
 {
-	if (!_process)
+	if (!_process) {
 		return;
+	}
 
 	pre_process(context);
 	run(context);

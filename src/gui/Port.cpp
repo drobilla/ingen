@@ -126,8 +126,9 @@ Port::port_label(App& app, SPtr<const PortModel> pm)
 			} else {
 				const SPtr<const BlockModel> parent(
 					dynamic_ptr_cast<const BlockModel>(pm->parent()));
-				if (parent && parent->plugin_model())
+				if (parent && parent->plugin_model()) {
 					label = parent->plugin_model()->port_human_name(pm->index());
+				}
 			}
 		} else {
 			label = pm->path().symbol();

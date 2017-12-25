@@ -149,9 +149,11 @@ App::run()
 	// Run main iterations here until we're attached to the engine. Otherwise
 	// with 'ingen -egl' we'd get a bunch of notifications about load
 	// immediately before even knowing about the root graph or plugins)
-	while (!_connect_window->attached())
-		if (_main->iteration())
+	while (!_connect_window->attached()) {
+		if (_main->iteration()) {
 			break;
+		}
+	}
 
 	_main->run();
 }
@@ -351,8 +353,9 @@ void
 App::port_activity(Port* port)
 {
 	std::pair<ActivityPorts::iterator, bool> inserted = _activity_ports.insert(make_pair(port, false));
-	if (inserted.second)
+	if (inserted.second) {
 		inserted.first->second = false;
+	}
 
 	port->set_highlighted(true);
 }
@@ -361,8 +364,9 @@ void
 App::activity_port_destroyed(Port* port)
 {
 	ActivityPorts::iterator i = _activity_ports.find(port);
-	if (i != _activity_ports.end())
+	if (i != _activity_ports.end()) {
 		_activity_ports.erase(i);
+	}
 
 	return;
 }
@@ -402,8 +406,9 @@ App::register_callbacks()
 bool
 App::gtk_main_iteration()
 {
-	if (!_client)
+	if (!_client) {
 		return false;
+	}
 
 	if (_messages_window) {
 		_messages_window->flush();

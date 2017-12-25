@@ -108,8 +108,9 @@ JackDriver::attach(const std::string& server_name,
 		// Either server name not specified, or supplied server name does not exist
 		// Connect to default server
 		if (!_client) {
-			if ((_client = jack_client_open(client_name.c_str(), JackNullOption, nullptr)))
+			if ((_client = jack_client_open(client_name.c_str(), JackNullOption, nullptr))) {
 				_engine.log().info("Connected to default Jack server\n");
+			}
 		}
 
 		// Still failed
@@ -150,9 +151,10 @@ JackDriver::activate()
 		return false;
 	}
 
-	if (!_client)
+	if (!_client) {
 		attach(world->conf().option("jack-server").ptr<char>(),
 		       world->conf().option("jack-name").ptr<char>(), nullptr);
+	}
 
 	if (!_client) {
 		return false;

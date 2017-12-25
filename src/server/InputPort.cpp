@@ -58,8 +58,9 @@ bool
 InputPort::apply_poly(RunContext& context, uint32_t poly)
 {
 	bool ret = PortImpl::apply_poly(context, poly);
-	if (!ret)
+	if (!ret) {
 		poly = 1;
+	}
 
 	assert(_voices->size() >= poly);
 

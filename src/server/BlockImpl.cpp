@@ -106,12 +106,15 @@ BlockImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
 
-	if (!_polyphonic)
+	if (!_polyphonic) {
 		poly = 1;
+	}
 
-	if (_ports)
-		for (uint32_t i = 0; i < _ports->size(); ++i)
+	if (_ports) {
+		for (uint32_t i = 0; i < _ports->size(); ++i) {
 			_ports->at(i)->prepare_poly(bufs, poly);
+		}
+	}
 
 	return true;
 }
@@ -119,14 +122,17 @@ BlockImpl::prepare_poly(BufferFactory& bufs, uint32_t poly)
 bool
 BlockImpl::apply_poly(RunContext& context, uint32_t poly)
 {
-	if (!_polyphonic)
+	if (!_polyphonic) {
 		poly = 1;
+	}
 
 	_polyphony = poly;
 
-	if (_ports)
-		for (uint32_t i = 0; i < num_ports(); ++i)
+	if (_ports) {
+		for (uint32_t i = 0; i < num_ports(); ++i) {
 			_ports->at(i)->apply_poly(context, poly);
+		}
+	}
 
 	return true;
 }

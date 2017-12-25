@@ -252,8 +252,9 @@ ControlBindings::port_value_to_control(RunContext& context,
                                        Type        type,
                                        const Atom& value_atom) const
 {
-	if (value_atom.type() != port->bufs().forge().Float)
+	if (value_atom.type() != port->bufs().forge().Float) {
 		return 0;
+	}
 
 	float min, max;
 	get_range(context, port, &min, &max);

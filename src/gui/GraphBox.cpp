@@ -271,8 +271,9 @@ void
 GraphBox::set_graph(SPtr<const GraphModel> graph,
                     SPtr<GraphView>        view)
 {
-	if (!graph || graph == _graph)
+	if (!graph || graph == _graph) {
 		return;
+	}
 
 	_enable_signal = false;
 
@@ -287,11 +288,13 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 	_graph = graph;
 	_view  = view;
 
-	if (!_view)
+	if (!_view) {
 		_view = _breadcrumbs->view(graph->path());
+	}
 
-	if (!_view)
+	if (!_view) {
 		_view = GraphView::create(*_app, graph);
+	}
 
 	assert(_view);
 
@@ -304,14 +307,16 @@ GraphBox::set_graph(SPtr<const GraphModel> graph,
 	}
 
 	// Add view to our alignment
-	if (_view->get_parent())
+	if (_view->get_parent()) {
 		_view->get_parent()->remove(*_view.get());
+	}
 
 	_alignment->remove();
 	_alignment->add(*_view.get());
 
-	if (_breadcrumbs->get_parent())
+	if (_breadcrumbs->get_parent()) {
 		_breadcrumbs->get_parent()->remove(*_breadcrumbs);
+	}
 
 	_view->breadcrumb_container()->remove();
 	_view->breadcrumb_container()->add(*_breadcrumbs);
@@ -361,8 +366,9 @@ GraphBox::graph_port_added(SPtr<const PortModel> port)
 void
 GraphBox::graph_port_removed(SPtr<const PortModel> port)
 {
-	if (!(port->is_input() && _app->can_control(port.get())))
+	if (!(port->is_input() && _app->can_control(port.get()))) {
 		return;
+	}
 
 	for (const auto& p : _graph->ports()) {
 		if (p->is_input() && _app->can_control(p.get())) {
@@ -421,8 +427,9 @@ GraphBox::show_status(const ObjectModel* model)
 
 	} else if ((block = dynamic_cast<const BlockModel*>(model))) {
 		const PluginModel* plugin = dynamic_cast<const PluginModel*>(block->plugin());
-		if (plugin)
+		if (plugin) {
 			msg << ((boost::format(" (%1%)") % plugin->human_name()).str());
+		}
 		_status_bar->push(msg.str(), STATUS_CONTEXT_HOVER);
 	}
 }
@@ -438,8 +445,9 @@ GraphBox::show_port_status(const PortModel* port, const Atom& value)
 		const PluginModel* plugin = dynamic_cast<const PluginModel*>(parent->plugin());
 		if (plugin) {
 			const std::string& human_name = plugin->port_human_name(port->index());
-			if (!human_name.empty())
+			if (!human_name.empty()) {
 				msg << " (" << human_name << ")";
+			}
 		}
 	}
 
@@ -467,8 +475,9 @@ GraphBox::object_left(const ObjectModel* model)
 void
 GraphBox::event_show_engine()
 {
-	if (_graph)
+	if (_graph) {
 		_app->connect_window()->show();
+	}
 }
 
 void
@@ -568,13 +577,15 @@ GraphBox::event_save_as()
 		// Set current folder to most sensible default
 		const Atom& document = _graph->get_property(uris.ingen_file);
 		const Atom& dir      = _app->world()->conf().option("graph-directory");
-		if (document.type() == uris.forge.URI)
+		if (document.type() == uris.forge.URI) {
 			dialog.set_uri(document.ptr<char>());
-		else if (dir.is_valid())
+		} else if (dir.is_valid()) {
 			dialog.set_current_folder(dir.ptr<char>());
+		}
 
-		if (dialog.run() != Gtk::RESPONSE_OK)
+		if (dialog.run() != Gtk::RESPONSE_OK) {
 			break;
+		}
 
 		std::string filename = dialog.get_filename();
 		std::string basename = Glib::path_get_basename(filename);
@@ -701,8 +712,9 @@ GraphBox::event_export_image()
 void
 GraphBox::event_copy()
 {
-	if (_view)
+	if (_view) {
 		_view->canvas()->copy_selection();
+	}
 }
 
 void
@@ -720,22 +732,25 @@ GraphBox::event_undo()
 void
 GraphBox::event_paste()
 {
-	if (_view)
+	if (_view) {
 		_view->canvas()->paste();
+	}
 }
 
 void
 GraphBox::event_delete()
 {
-	if (_view)
+	if (_view) {
 		_view->canvas()->destroy_selection();
+	}
 }
 
 void
 GraphBox::event_select_all()
 {
-	if (_view)
+	if (_view) {
 		_view->canvas()->select_all();
+	}
 }
 
 void
@@ -850,10 +865,11 @@ GraphBox::event_doc_pane_toggled()
 void
 GraphBox::event_status_bar_toggled()
 {
-	if (_menu_show_status_bar->get_active())
+	if (_menu_show_status_bar->get_active()) {
 		_status_bar->show();
-	else
+	} else {
 		_status_bar->hide();
+	}
 }
 
 void

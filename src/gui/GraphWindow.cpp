@@ -57,8 +57,9 @@ GraphWindow::init_window(App& app)
 void
 GraphWindow::on_show()
 {
-	if (_position_stored)
+	if (_position_stored) {
 		move(_x, _y);
+	}
 
 	Gtk::Window::on_show();
 

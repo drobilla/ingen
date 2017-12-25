@@ -116,16 +116,18 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 		presets_menu_item->set_submenu(*_presets_menu);
 	}
 
-	if (has_control_inputs())
+	if (has_control_inputs()) {
 		_randomize_menuitem->show();
-	else
+	} else {
 		_randomize_menuitem->hide();
+	}
 
 	if (plugin && (plugin->uri() == "http://drobilla.net/ns/ingen-internals#Controller"
-	               || plugin->uri() == "http://drobilla.net/ns/ingen-internals#Trigger"))
+	               || plugin->uri() == "http://drobilla.net/ns/ingen-internals#Trigger")) {
 		_learn_menuitem->show();
-	else
+	} else {
 		_learn_menuitem->hide();
+	}
 
 	if (!_popup_gui_menuitem->is_visible() &&
 	    !_embed_gui_menuitem->is_visible() &&
@@ -240,9 +242,11 @@ NodeMenu::on_preset_activated(const std::string& uri)
 bool
 NodeMenu::has_control_inputs()
 {
-	for (const auto& p : block()->ports())
-		if (p->is_input() && p->is_numeric())
+	for (const auto& p : block()->ports()) {
+		if (p->is_input() && p->is_numeric()) {
 			return true;
+		}
+	}
 
 	return false;
 }

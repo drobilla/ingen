@@ -111,11 +111,12 @@ ObjectMenu::on_menu_unlearn()
 void
 ObjectMenu::on_menu_polyphonic()
 {
-	if (_enable_signal)
+	if (_enable_signal) {
 		_app->set_property(
 			_object->uri(),
 			_app->uris().ingen_polyphonic,
 			_app->forge().make(bool(_polyphonic_menuitem->get_active())));
+	}
 }
 
 void
@@ -123,8 +124,9 @@ ObjectMenu::property_changed(const Raul::URI& predicate, const Atom& value)
 {
 	const URIs& uris = _app->uris();
 	_enable_signal = false;
-	if (predicate == uris.ingen_polyphonic && value.type() == uris.forge.Bool)
+	if (predicate == uris.ingen_polyphonic && value.type() == uris.forge.Bool) {
 		_polyphonic_menuitem->set_active(value.get<int32_t>());
+	}
 	_enable_signal = true;
 }
 

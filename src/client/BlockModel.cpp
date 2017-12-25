@@ -143,9 +143,11 @@ BlockModel::add_port(SPtr<PortModel> pm)
 SPtr<const PortModel>
 BlockModel::get_port(const Raul::Symbol& symbol) const
 {
-	for (auto p : _ports)
-		if (p->symbol() == symbol)
+	for (auto p : _ports) {
+		if (p->symbol() == symbol) {
 			return p;
+		}
+	}
 	return SPtr<PortModel>();
 }
 
@@ -183,10 +185,12 @@ BlockModel::default_port_value_range(SPtr<const PortModel> port,
 			                                  _min_values, _max_values, nullptr);
 		}
 
-		if (!std::isnan(_min_values[port->index()]))
+		if (!std::isnan(_min_values[port->index()])) {
 			min = _min_values[port->index()];
-		if (!std::isnan(_max_values[port->index()]))
+		}
+		if (!std::isnan(_max_values[port->index()])) {
 			max = _max_values[port->index()];
+		}
 	}
 
 	if (port->port_property(_uris.lv2_sampleRate)) {
@@ -208,13 +212,16 @@ BlockModel::port_value_range(SPtr<const PortModel> port,
 	// Possibly overriden
 	const Atom& min_atom = port->get_property(_uris.lv2_minimum);
 	const Atom& max_atom = port->get_property(_uris.lv2_maximum);
-	if (min_atom.type() == _uris.forge.Float)
+	if (min_atom.type() == _uris.forge.Float) {
 		min = min_atom.get<float>();
-	if (max_atom.type() == _uris.forge.Float)
+	}
+	if (max_atom.type() == _uris.forge.Float) {
 		max = max_atom.get<float>();
+	}
 
-	if (max <= min)
+	if (max <= min) {
 		max = min + 1.0;
+	}
 
 	if (port->port_property(_uris.lv2_sampleRate)) {
 		min *= srate;

@@ -84,8 +84,9 @@ GraphView::set_graph(SPtr<const GraphModel> graph)
 	_poly_spin->set_increments(1, 4);
 	_poly_spin->set_value(graph->internal_poly());
 
-	for (const auto& p : graph->properties())
+	for (const auto& p : graph->properties()) {
 		property_changed(p.first, p.second);
+	}
 
 	// Connect model signals to track state
 	graph->signal_property().connect(
@@ -115,8 +116,9 @@ GraphView::create(App& app, SPtr<const GraphModel> graph)
 void
 GraphView::process_toggled()
 {
-	if (!_enable_signal)
+	if (!_enable_signal) {
 		return;
+	}
 
 	_app->set_property(_graph->uri(),
 	                   _app->uris().ingen_enabled,

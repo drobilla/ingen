@@ -380,8 +380,9 @@ PortImpl::set_buffer_size(RunContext& context, BufferFactory& bufs, size_t size)
 {
 	_buffer_size = size;
 
-	for (uint32_t v = 0; v < _poly; ++v)
+	for (uint32_t v = 0; v < _poly; ++v) {
 		_voices->at(v).buffer->resize(size);
+	}
 
 	connect_buffers();
 }
@@ -397,8 +398,9 @@ PortImpl::connect_buffers(SampleCount offset)
 void
 PortImpl::recycle_buffers()
 {
-	for (uint32_t v = 0; v < _poly; ++v)
+	for (uint32_t v = 0; v < _poly; ++v) {
 		_voices->at(v).buffer = nullptr;
+	}
 }
 
 void
@@ -548,8 +550,9 @@ PortImpl::pre_process(RunContext& context)
 		clear_buffers(context);
 	}
 
-	for (uint32_t v = 0; v < _poly; ++v)
+	for (uint32_t v = 0; v < _poly; ++v) {
 		_voices->at(v).buffer->prepare_output_write(context);
+	}
 }
 
 void

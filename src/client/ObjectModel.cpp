@@ -78,8 +78,9 @@ void
 ObjectModel::set(SPtr<ObjectModel> o)
 {
 	assert(_path == o->path());
-	if (o->_parent)
+	if (o->_parent) {
 		_parent = o->_parent;
+	}
 
 	for (auto v : o->properties()) {
 		Resource::set_property(v.first, v.second);

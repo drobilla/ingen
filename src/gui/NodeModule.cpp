@@ -145,16 +145,19 @@ NodeModule::create(GraphCanvas&           canvas,
 		? new SubgraphModule(canvas, graph)
 		: new NodeModule(canvas, block);
 
-	for (const auto& p : block->properties())
+	for (const auto& p : block->properties()) {
 		ret->property_changed(p.first, p.second);
+	}
 
-	for (const auto& p : block->ports())
+	for (const auto& p : block->ports()) {
 		ret->new_port_view(p);
+	}
 
 	ret->set_stacked(block->polyphonic());
 
-	if (human)
+	if (human) {
 		ret->show_human_names(human); // FIXME: double port iteration
+	}
 
 	return ret;
 }
@@ -186,8 +189,9 @@ NodeModule::show_human_names(bool b)
 			} else {
 				Glib::ustring hn = block()->plugin_model()->port_human_name(
 					port->model()->index());
-				if (!hn.empty())
+				if (!hn.empty()) {
 					label = hn;
+				}
 			}
 		}
 		(*i)->set_label(label.c_str());
@@ -232,8 +236,9 @@ NodeModule::port_value_changed(uint32_t index, const Atom& value)
 void
 NodeModule::plugin_changed()
 {
-	for (iterator p = begin(); p != end(); ++p)
+	for (iterator p = begin(); p != end(); ++p) {
 		dynamic_cast<Ingen::GUI::Port*>(*p)->update_metadata();
+	}
 }
 
 void
@@ -317,8 +322,9 @@ NodeModule::port(SPtr<const PortModel> model)
 {
 	for (iterator p = begin(); p != end(); ++p) {
 		Port* const port = dynamic_cast<Port*>(*p);
-		if (port->model() == model)
+		if (port->model() == model) {
 			return port;
+		}
 	}
 	return nullptr;
 }

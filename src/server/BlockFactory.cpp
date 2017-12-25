@@ -48,8 +48,9 @@ BlockFactory::BlockFactory(Ingen::World* world)
 
 BlockFactory::~BlockFactory()
 {
-	for (auto& p : _plugins)
+	for (auto& p : _plugins) {
 		delete p.second;
+	}
 
 	_plugins.clear();
 }

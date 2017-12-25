@@ -249,8 +249,9 @@ main(int argc, char** argv)
 	this_thread::sleep_for(chrono::milliseconds(500));
 
 	// Shut down
-	if (world->engine())
+	if (world->engine()) {
 		world->engine()->deactivate();
+	}
 
 	// Save configuration to restore preferences on next run
 	const std::string path = conf.save(
