@@ -54,6 +54,7 @@ def configure(conf):
     conf.line_just = 45
     conf.load('compiler_cxx')
     conf.load('lv2')
+    conf.load('clang_compilation_database')
     if not Options.options.no_python:
         conf.load('python')
 
