@@ -39,11 +39,11 @@ namespace Ingen {
 URIs::Quark::Quark(Forge&      forge,
                    URIMap*     map,
                    LilvWorld*  lworld,
-                   const char* c_str)
-	: Raul::URI(c_str)
-	, urid(forge.make_urid(Raul::URI(c_str)))
-	, uri(forge.alloc_uri(c_str))
-	, lnode(lilv_new_uri(lworld, c_str))
+                   const char* str)
+	: Raul::URI(str)
+	, urid(forge.make_urid(Raul::URI(str)))
+	, uri(forge.alloc_uri(str))
+	, lnode(lilv_new_uri(lworld, str))
 {}
 
 URIs::Quark::Quark(const Quark& copy)
@@ -61,8 +61,8 @@ URIs::Quark::~Quark()
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
-URIs::URIs(Forge& f, URIMap* map, LilvWorld* lworld)
-	: forge(f)
+URIs::URIs(Forge& forge, URIMap* map, LilvWorld* lworld)
+	: forge(forge)
 	, atom_AtomPort         (forge, map, lworld, LV2_ATOM__AtomPort)
 	, atom_Bool             (forge, map, lworld, LV2_ATOM__Bool)
 	, atom_Chunk            (forge, map, lworld, LV2_ATOM__Chunk)

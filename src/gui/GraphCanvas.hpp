@@ -58,18 +58,18 @@ public:
 	App& app() { return _app; }
 
 	void build();
-	void show_human_names(bool show);
-	void show_port_names(bool show);
+	void show_human_names(bool b);
+	void show_port_names(bool b);
 	bool show_port_names() const { return _show_port_names; }
 
-	void add_plugin(SPtr<Client::PluginModel> pm);
+	void add_plugin(SPtr<Client::PluginModel> p);
 	void remove_plugin(const Raul::URI& uri);
 	void add_block(SPtr<const Client::BlockModel> bm);
 	void remove_block(SPtr<const Client::BlockModel> bm);
 	void add_port(SPtr<const Client::PortModel> pm);
 	void remove_port(SPtr<const Client::PortModel> pm);
-	void connection(SPtr<const Client::ArcModel> am);
-	void disconnection(SPtr<const Client::ArcModel> am);
+	void connection(SPtr<const Client::ArcModel> arc);
+	void disconnection(SPtr<const Client::ArcModel> arc);
 
 	void get_new_module_location(double& x, double& y);
 
@@ -85,7 +85,7 @@ public:
 private:
 	enum class ControlType { NUMBER, BUTTON };
 	void generate_port_name(
-		const std::string& sym_base,  std::string& sym,
+		const std::string& sym_base,  std::string& symbol,
 		const std::string& name_base, std::string& name);
 
 	void menu_add_port(const std::string& sym_base,
@@ -97,7 +97,7 @@ private:
 	void menu_new_graph();
 	void menu_load_graph();
 	void menu_properties();
-	void load_plugin(WPtr<Client::PluginModel> plugin);
+	void load_plugin(WPtr<Client::PluginModel> weak_plugin);
 
 	void build_menus();
 
@@ -109,11 +109,11 @@ private:
 
 	Ganv::Port* get_port_view(SPtr<Client::PortModel> port);
 
-	void connect(Ganv::Node* src,
-	             Ganv::Node* dst);
+	void connect(Ganv::Node* tail,
+	             Ganv::Node* head);
 
-	void disconnect(Ganv::Node* src,
-	                Ganv::Node* dst);
+	void disconnect(Ganv::Node* tail,
+	                Ganv::Node* head);
 
 	App&                           _app;
 	SPtr<const Client::GraphModel> _graph;

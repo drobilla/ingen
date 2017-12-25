@@ -60,7 +60,7 @@ public:
 	GraphWindow* parent_graph_window(SPtr<const Client::BlockModel> block);
 
 	void present_graph(
-		SPtr<const Client::GraphModel> model,
+		SPtr<const Client::GraphModel> graph,
 		GraphWindow*                   preferred = NULL,
 		SPtr<GraphView>                view      = SPtr<GraphView>());
 

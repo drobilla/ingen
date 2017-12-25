@@ -345,10 +345,10 @@ parse_graph(Ingen::World*                 world,
             Ingen::Interface*             target,
             Sord::Model&                  model,
             const std::string&            base_uri,
-            const Sord::Node&             subject_node,
+            const Sord::Node&             subject,
             Resource::Graph               ctx,
             boost::optional<Raul::Path>   parent,
-            boost::optional<Raul::Symbol> a_symbol,
+            boost::optional<Raul::Symbol> symbol,
             boost::optional<Properties>   data)
 {
 	const URIs& uris = world->uris();
@@ -356,21 +356,20 @@ parse_graph(Ingen::World*                 world,
 	const Sord::URI ingen_block(*world->rdf_world(), uris.ingen_block);
 	const Sord::URI lv2_port(*world->rdf_world(),    LV2_CORE__port);
 
-	const Sord::Node& graph = subject_node;
+	const Sord::Node& graph = subject;
 	const Sord::Node  nil;
 
-	Raul::Symbol symbol("_");
-	if (a_symbol) {
-		symbol = *a_symbol;
-	}
-
-	string graph_path_str = relative_uri(base_uri, subject_node.to_string(), true);
-	if (parent && a_symbol) {
-		graph_path_str = parent->child(*a_symbol);
+	string graph_path_str = relative_uri(base_uri, subject.to_string(), true);
+	if (parent && symbol) {
+		graph_path_str = parent->child(*symbol);
 	} else if (parent) {
 		graph_path_str = *parent;
 	} else {
 		graph_path_str = "/";
+	}
+
+	if (!symbol) {
+		symbol = Raul::Symbol("_");
 	}
 
 	if (!Raul::Path::is_valid(graph_path_str)) {
@@ -381,7 +380,7 @@ parse_graph(Ingen::World*                 world,
 
 	// Create graph
 	Raul::Path graph_path(graph_path_str);
-	Properties props = get_properties(world, model, subject_node, ctx);
+	Properties props = get_properties(world, model, subject, ctx);
 	target->put(path_to_uri(graph_path), props, ctx);
 
 	// For each port on this graph
@@ -420,7 +419,7 @@ parse_graph(Ingen::World*                 world,
 	}
 
 	// For each block in this graph
-	for (Sord::Iter n = model.find(subject_node, ingen_block, nil); !n.end(); ++n) {
+	for (Sord::Iter n = model.find(subject, ingen_block, nil); !n.end(); ++n) {
 		Sord::Node       node       = n.get_object();
 		const Raul::Path block_path = graph_path.child(
 			Raul::Symbol(get_basename(node.to_string())));
@@ -456,7 +455,7 @@ parse_graph(Ingen::World*                 world,
 	}
 
 	// Now that all ports and blocks exist, create arcs inside graph
-	parse_arcs(world, target, model, base_uri, subject_node, graph_path);
+	parse_arcs(world, target, model, base_uri, subject, graph_path);
 
 	return graph_path;
 }

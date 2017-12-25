@@ -111,7 +111,7 @@ public:
 	                 const std::string& filename);
 
 	virtual void set_engine(SPtr<EngineBase> e);
-	virtual void set_interface(SPtr<Interface> e);
+	virtual void set_interface(SPtr<Interface> i);
 	virtual void set_store(SPtr<Store> s);
 
 	virtual SPtr<EngineBase> engine();

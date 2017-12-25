@@ -89,7 +89,7 @@ protected:
 	virtual void add_child(SPtr<ObjectModel> c) {}
 	virtual bool remove_child(SPtr<ObjectModel> c) { return true; }
 
-	virtual void set(SPtr<ObjectModel> model);
+	virtual void set(SPtr<ObjectModel> o);
 
 	SPtr<ObjectModel> _parent;
 

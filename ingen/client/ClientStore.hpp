@@ -105,7 +105,7 @@ private:
 	void add_object(SPtr<ObjectModel> object);
 	SPtr<ObjectModel> remove_object(const Raul::Path& path);
 
-	void add_plugin(SPtr<PluginModel> plugin);
+	void add_plugin(SPtr<PluginModel> pm);
 
 	SPtr<GraphModel> connection_graph(const Raul::Path& tail_path,
 	                                  const Raul::Path& head_path);

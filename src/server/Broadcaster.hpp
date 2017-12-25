@@ -85,8 +85,8 @@ public:
 		Broadcaster& broadcaster;
 	};
 
-	void send_plugins(const BlockFactory::Plugins& plugin_list);
-	void send_plugins_to(Interface*, const BlockFactory::Plugins& plugin_list);
+	void send_plugins(const BlockFactory::Plugins& plugins);
+	void send_plugins_to(Interface*, const BlockFactory::Plugins& plugins);
 
 	void message(const Message& msg) override {
 		std::lock_guard<std::mutex> lock(_clients_mutex);

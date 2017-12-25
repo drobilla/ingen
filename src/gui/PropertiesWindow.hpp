@@ -84,7 +84,7 @@ private:
 	bool datatype_supported(const std::set<Raul::URI>& types,
 	                        Raul::URI*                 widget_type);
 
-	bool class_supported(const std::set<Raul::URI>& type);
+	bool class_supported(const std::set<Raul::URI>& types);
 
 	Gtk::Widget* create_value_widget(const Raul::URI& key,
 	                                 const char*      type_uri,

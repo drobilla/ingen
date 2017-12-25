@@ -70,7 +70,7 @@ public:
 	 *
 	 * Note this invalidates `i`.
 	 */
-	void rename(iterator i, const Raul::Path& new_path);
+	void rename(iterator top, const Raul::Path& new_path);
 
 	unsigned child_name_offset(const Raul::Path&   parent,
 	                           const Raul::Symbol& symbol,

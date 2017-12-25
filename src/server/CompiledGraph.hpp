@@ -59,7 +59,7 @@ private:
 
 	void compile_graph(GraphImpl* graph);
 
-	void compile_block(BlockImpl* block,
+	void compile_block(BlockImpl* n,
 	                   Task&      task,
 	                   size_t     max_depth,
 	                   BlockSet&  k);

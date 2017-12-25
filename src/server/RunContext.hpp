@@ -65,7 +65,7 @@ public:
 	 * This is used to subdivide process cycles, the sub-context is
 	 * lightweight and only serves to pass different time attributes.
 	 */
-	RunContext(const RunContext& parent);
+	RunContext(const RunContext& copy);
 
 	/** Return true iff the given port should broadcast its value.
 	 *

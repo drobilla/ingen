@@ -52,7 +52,7 @@ public:
 
 	App& app() const;
 
-	virtual void store_location(double x, double y);
+	virtual void store_location(double ax, double ay);
 	void show_human_names(bool b);
 
 	void set_name(const std::string& n);
@@ -68,7 +68,7 @@ protected:
 
 	void set_port(Port* port) { _port = port; }
 
-	void property_changed(const Raul::URI& predicate, const Atom& value);
+	void property_changed(const Raul::URI& key, const Atom& value);
 
 	SPtr<const Client::PortModel> _model;
 	Port*                         _port;

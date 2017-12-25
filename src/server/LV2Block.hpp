@@ -72,7 +72,7 @@ public:
 
 	void apply_state(Worker* worker, const LilvState* state);
 
-	boost::optional<Resource> save_preset(const Raul::URI&  bundle,
+	boost::optional<Resource> save_preset(const Raul::URI&  uri,
 	                                      const Properties& props);
 
 	void set_port_buffer(uint32_t    voice,

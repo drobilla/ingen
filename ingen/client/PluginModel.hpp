@@ -65,7 +65,7 @@ public:
 
 	Raul::Symbol default_block_symbol() const;
 	std::string  human_name() const;
-	std::string  port_human_name(uint32_t index) const;
+	std::string  port_human_name(uint32_t i) const;
 
 	typedef std::map<float, std::string> ScalePoints;
 	ScalePoints port_scale_points(uint32_t i) const;

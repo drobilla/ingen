@@ -83,7 +83,7 @@ protected:
 	bool is_supported(const std::string& uri) const;
 
 	SPtr<FeatureArray> lv2_features(World* world,
-	                                Node*  block) const;
+	                                Node*  node) const;
 
 private:
 	typedef std::vector< SPtr<Feature> > Features;

@@ -51,12 +51,12 @@ public:
 
 	void graph_property_changed(const Raul::URI&         key,
 	                            const Atom&              value,
-	                            SPtr<Client::GraphModel> gm);
+	                            SPtr<Client::GraphModel> graph);
 
 	void graph_moved(SPtr<Client::GraphModel> graph);
 
-	void add_graph(SPtr<Client::GraphModel> gm);
-	void remove_graph(SPtr<Client::GraphModel> gm);
+	void add_graph(SPtr<Client::GraphModel> pm);
+	void remove_graph(SPtr<Client::GraphModel> pm);
 	void show_graph_menu(GdkEventButton* ev);
 
 protected:

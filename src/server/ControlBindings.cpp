@@ -142,16 +142,16 @@ ControlBindings::set_port_binding(RunContext& context,
 }
 
 void
-ControlBindings::port_value_changed(RunContext& context,
+ControlBindings::port_value_changed(RunContext& ctx,
                                     PortImpl*   port,
                                     Key         key,
                                     const Atom& value_atom)
 {
-	Ingen::World*      world = context.engine().world();
+	Ingen::World*      world = ctx.engine().world();
 	const Ingen::URIs& uris  = world->uris();
 	if (!!key) {
 		int16_t  value = port_value_to_control(
-			context, port, key.type, value_atom);
+			ctx, port, key.type, value_atom);
 		uint16_t size  = 0;
 		uint8_t  buf[4];
 		switch (key.type) {
@@ -186,7 +186,7 @@ ControlBindings::port_value_changed(RunContext& context,
 			break;
 		}
 		if (size > 0) {
-			_feedback->append_event(context.nframes() - 1, size, (LV2_URID)uris.midi_MidiEvent, buf);
+			_feedback->append_event(ctx.nframes() - 1, size, (LV2_URID)uris.midi_MidiEvent, buf);
 		}
 	}
 }
@@ -382,10 +382,10 @@ ControlBindings::remove(RunContext& ctx, const std::vector<Binding*>& bindings)
 }
 
 void
-ControlBindings::pre_process(RunContext& context, Buffer* buffer)
+ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 {
 	uint16_t           value = 0;
-	Ingen::World*      world = context.engine().world();
+	Ingen::World*      world = ctx.engine().world();
 	const Ingen::URIs& uris  = world->uris();
 
 	_feedback->clear();
@@ -400,7 +400,7 @@ ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 			const Key      key = midi_event_key(ev->body.size, buf, value);
 
 			if (_learn_binding && !!key) {
-				finish_learn(context, key);  // Learn new binding
+				finish_learn(ctx, key);  // Learn new binding
 			}
 
 			// Set all controls bound to this key
@@ -408,7 +408,7 @@ ControlBindings::pre_process(RunContext& context, Buffer* buffer)
 			for (Bindings::const_iterator i = _bindings->lower_bound(k);
 			     i != _bindings->end() && i->key == key;
 			     ++i) {
-				set_port_value(context, i->port, key.type, value);
+				set_port_value(ctx, i->port, key.type, value);
 			}
 		}
 	}

@@ -63,7 +63,7 @@ public:
 	};
 
 	struct URIDMapFeature : public Feature {
-		URIDMapFeature(URIMap* map, LV2_URID_Map* urid_map, Log& log);
+		URIDMapFeature(URIMap* map, LV2_URID_Map* impl, Log& log);
 		LV2_URID        map(const char* uri);
 		static LV2_URID default_map(LV2_URID_Map_Handle h, const char* uri);
 		LV2_URID_Map urid_map;
@@ -71,9 +71,9 @@ public:
 	};
 
 	struct URIDUnmapFeature : public Feature {
-		URIDUnmapFeature(URIMap* map, LV2_URID_Unmap* urid_unmap);
+		URIDUnmapFeature(URIMap* map, LV2_URID_Unmap* impl);
 		const char*        unmap(const LV2_URID urid);
-		static const char* default_unmap(LV2_URID_Map_Handle h, LV2_URID uri);
+		static const char* default_unmap(LV2_URID_Map_Handle h, LV2_URID urid);
 		LV2_URID_Unmap urid_unmap;
 	};
 

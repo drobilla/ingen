@@ -141,7 +141,7 @@ public:
 		return _prepared_voices->at(voice).buffer;
 	}
 
-	void update_set_state(const RunContext& context, uint32_t voice);
+	void update_set_state(const RunContext& context, uint32_t v);
 
 	void set_voice_value(const RunContext& context,
 	                     uint32_t          voice,
@@ -170,7 +170,7 @@ public:
 	virtual void post_process(RunContext& context);
 
 	/** Clear/silence all buffers */
-	virtual void clear_buffers(const RunContext& context);
+	virtual void clear_buffers(const RunContext& ctx);
 
 	/** Claim and apply buffers in the real-time thread. */
 	virtual bool setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly);

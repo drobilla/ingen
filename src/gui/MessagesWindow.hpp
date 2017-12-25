@@ -49,7 +49,7 @@ public:
 	int log(LV2_URID type, const char* fmt, va_list args);
 	void flush();
 
-	void post_error(const std::string& str);
+	void post_error(const std::string& msg);
 
 private:
 	void clear_clicked();

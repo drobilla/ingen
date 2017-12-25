@@ -49,7 +49,7 @@ public:
 	static NodeModule* create(
 		GraphCanvas&                   canvas,
 		SPtr<const Client::BlockModel> block,
-		bool                           human_names);
+		bool                           human);
 
 	virtual ~NodeModule();
 
@@ -57,9 +57,9 @@ public:
 
 	Port* port(SPtr<const Client::PortModel> model);
 
-	void delete_port_view(SPtr<const Client::PortModel> port);
+	void delete_port_view(SPtr<const Client::PortModel> model);
 
-	virtual void store_location(double x, double y);
+	virtual void store_location(double ax, double ay);
 	void show_human_names(bool b);
 
 	SPtr<const Client::BlockModel> block() const { return _block; }
@@ -79,7 +79,7 @@ protected:
 	bool on_selected(gboolean selected);
 
 	void rename();
-	void property_changed(const Raul::URI& predicate, const Atom& value);
+	void property_changed(const Raul::URI& key, const Atom& value);
 
 	void new_port_view(SPtr<const Client::PortModel> port);
 

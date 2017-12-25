@@ -99,10 +99,10 @@ public:
 	void port_value_changed(RunContext& ctx,
 	                        PortImpl*   port,
 	                        Key         key,
-	                        const Atom& value);
+	                        const Atom& value_atom);
 
-	void pre_process(RunContext& ctx, Buffer* control_in);
-	void post_process(RunContext& ctx, Buffer* control_out);
+	void pre_process(RunContext& ctx, Buffer* buffer);
+	void post_process(RunContext& ctx, Buffer* buffer);
 
 	/** Get all bindings for `path` or children of `path`. */
 	void get_all(const Raul::Path& path, std::vector<Binding*>& bindings);
@@ -117,22 +117,22 @@ private:
 
 	Key midi_event_key(uint16_t size, const uint8_t* buf, uint16_t& value);
 
-	void set_port_value(RunContext& ctx,
+	void set_port_value(RunContext& context,
 	                    PortImpl*   port,
 	                    Type        type,
 	                    int16_t     value);
 
-	bool finish_learn(RunContext& ctx, Key key);
+	bool finish_learn(RunContext& context, Key key);
 
-	float control_to_port_value(RunContext& ctx,
+	float control_to_port_value(RunContext& context,
 	                            const PortImpl* port,
 	                            Type            type,
 	                            int16_t         value) const;
 
-	int16_t port_value_to_control(RunContext& ctx,
+	int16_t port_value_to_control(RunContext& context,
 	                              PortImpl*   port,
 	                              Type        type,
-	                              const Atom& value) const;
+	                              const Atom& value_atom) const;
 
 	Engine&               _engine;
 	std::atomic<Binding*> _learn_binding;

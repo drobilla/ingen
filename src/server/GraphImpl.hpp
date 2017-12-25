@@ -55,7 +55,7 @@ public:
 	          uint32_t            poly,
 	          GraphImpl*          parent,
 	          SampleRate          srate,
-	          uint32_t            local_poly);
+	          uint32_t            internal_poly);
 
 	virtual ~GraphImpl();
 
@@ -155,14 +155,14 @@ public:
 	/** Add an arc to this graph.
 	 * Pre-processing thread only.
 	 */
-	void add_arc(SPtr<ArcImpl> arc);
+	void add_arc(SPtr<ArcImpl> a);
 
 	/** Remove an arc from this graph.
 	 * Pre-processing thread only.
 	 */
-	SPtr<ArcImpl> remove_arc(const PortImpl* tail, const PortImpl* head);
+	SPtr<ArcImpl> remove_arc(const PortImpl* tail, const PortImpl* dst_port);
 
-	bool has_arc(const PortImpl* tail, const PortImpl* head) const;
+	bool has_arc(const PortImpl* tail, const PortImpl* dst_port) const;
 
 	/** Set a new compiled graph to run, and return the old one. */
 	void set_compiled_graph(MPtr<CompiledGraph>&& cg);

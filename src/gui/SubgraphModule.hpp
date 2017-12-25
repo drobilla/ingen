@@ -41,13 +41,13 @@ class SubgraphModule : public NodeModule
 {
 public:
 	SubgraphModule(GraphCanvas&                        canvas,
-	               SPtr<const Client::GraphModel> controller);
+	               SPtr<const Client::GraphModel> graph);
 
 	virtual ~SubgraphModule() {}
 
-	bool on_double_click(GdkEventButton* ev);
+	bool on_double_click(GdkEventButton* event);
 
-	void store_location(double x, double y);
+	void store_location(double ax, double ay);
 
 	void browse_to_graph();
 	void menu_remove();

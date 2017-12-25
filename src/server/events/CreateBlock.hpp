@@ -42,7 +42,7 @@ public:
 	            SPtr<Interface>   client,
 	            int32_t           id,
 	            SampleCount       timestamp,
-	            const Raul::Path& block_path,
+	            const Raul::Path& path,
 	            Properties&       properties);
 
 	bool pre_process(PreProcessContext& ctx);

@@ -69,16 +69,16 @@ struct Serialiser::Impl {
 
 	void start_to_file(const Raul::Path& root, const std::string& filename);
 
-	std::set<const Resource*> serialise_graph(SPtr<const Node>  p,
-	                                          const Sord::Node& id);
+	std::set<const Resource*> serialise_graph(SPtr<const Node>  graph,
+	                                          const Sord::Node& graph_id);
 
-	void serialise_block(SPtr<const Node>  n,
+	void serialise_block(SPtr<const Node>  block,
 	                     const Sord::Node& class_id,
-	                     const Sord::Node& id);
+	                     const Sord::Node& block_id);
 
-	void serialise_port(const Node*       p,
+	void serialise_port(const Node*       port,
 	                    Resource::Graph   context,
-	                    const Sord::Node& id);
+	                    const Sord::Node& port_id);
 
 	void serialise_properties(Sord::Node        id,
 	                          const Properties& props);
@@ -95,7 +95,7 @@ struct Serialiser::Impl {
 	                   const std::set<const Resource*> plugins);
 
 	void serialise_arc(const Sord::Node& parent,
-	                   SPtr<const Arc>   a)
+	                   SPtr<const Arc>   arc)
 			throw (std::logic_error);
 
 	std::string finish();
@@ -183,16 +183,16 @@ Serialiser::Impl::write_plugins(const std::string&              bundle_path,
 
 void
 Serialiser::write_bundle(SPtr<const Node>   graph,
-                         const std::string& path)
+                         const std::string& uri)
 {
-	me->write_bundle(graph, path);
+	me->write_bundle(graph, uri);
 }
 
 void
 Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
-                               const std::string& a_path)
+                               const std::string& uri)
 {
-	std::string path = Glib::filename_from_uri(a_path);
+	std::string path = Glib::filename_from_uri(uri);
 	if (Glib::file_test(path, Glib::FILE_TEST_EXISTS)
 	    && !Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
 		path = Glib::path_get_dirname(path);

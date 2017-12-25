@@ -60,7 +60,7 @@ private:
 
 	void clear();
 	void add_child(SPtr<ObjectModel> c);
-	bool remove_child(SPtr<ObjectModel> c);
+	bool remove_child(SPtr<ObjectModel> o);
 	void remove_arcs_on(SPtr<PortModel> p);
 
 	void add_arc(SPtr<ArcModel> arc);

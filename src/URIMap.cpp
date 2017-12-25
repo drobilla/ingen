@@ -34,9 +34,9 @@ URIMap::URIMap(Log& log, LV2_URID_Map* map, LV2_URID_Unmap* unmap)
 
 URIMap::URIDMapFeature::URIDMapFeature(URIMap*       map,
                                        LV2_URID_Map* impl,
-                                       Log&          alog)
+                                       Log&          log)
 	: Feature(LV2_URID__map, &urid_map)
-	, log(alog)
+	, log(log)
 {
 	if (impl) {
 		urid_map = *impl;
@@ -47,7 +47,7 @@ URIMap::URIDMapFeature::URIDMapFeature(URIMap*       map,
 }
 
 LV2_URID
-URIMap::URIDMapFeature::default_map(LV2_URID_Map_Handle handle,
+URIMap::URIDMapFeature::default_map(LV2_URID_Map_Handle h,
                                     const char*         uri)
 {
 	return static_cast<LV2_URID>(g_quark_from_string(uri));
@@ -76,7 +76,7 @@ URIMap::URIDUnmapFeature::URIDUnmapFeature(URIMap*         map,
 }
 
 const char*
-URIMap::URIDUnmapFeature::default_unmap(LV2_URID_Unmap_Handle handle,
+URIMap::URIDUnmapFeature::default_unmap(LV2_URID_Unmap_Handle h,
                                         LV2_URID              urid)
 {
 	return g_quark_to_string(urid);

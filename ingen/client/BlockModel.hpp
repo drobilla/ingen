@@ -96,7 +96,7 @@ protected:
 	void add_child(SPtr<ObjectModel> c);
 	bool remove_child(SPtr<ObjectModel> c);
 	void add_port(SPtr<PortModel> pm);
-	void remove_port(SPtr<PortModel> pm);
+	void remove_port(SPtr<PortModel> port);
 	void remove_port(const Raul::Path& port_path);
 	void set(SPtr<ObjectModel> model);
 

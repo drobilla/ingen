@@ -142,17 +142,17 @@ public:
 	 * for one property may exist in `p` will all be set (unlike simply
 	 * calling set_property in a loop which would only set one value).
 	 */
-	void set_properties(const Properties& p);
+	void set_properties(const Properties& props);
 
 	/** Add several properties at once. */
-	void add_properties(const Properties& p);
+	void add_properties(const Properties& props);
 
 	/** Remove several properties at once.
 	 *
 	 * This removes all matching properties (both key and value), or all
 	 * properties with a matching key if the value in `p` is patch:wildcard.
 	 */
-	void remove_properties(const Properties& p);
+	void remove_properties(const Properties& props);
 
 	/** Hook called whenever a property is added.
 	 *

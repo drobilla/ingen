@@ -48,7 +48,7 @@ public:
 	       void*          buf = NULL);
 
 	void clear();
-	void resize(uint32_t size);
+	void resize(uint32_t capacity);
 	void copy(const RunContext& context, const Buffer* src);
 	void prepare_write(RunContext& context);
 

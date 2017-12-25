@@ -48,7 +48,7 @@ private:
 	Gtk::Menu* build_subclass_menu(const LilvNode* klass);
 
 	void add_leaf_menu_item(Gtk::Menu*         menu,
-	                        const LilvNode*    klass,
+	                        const LilvNode*    node,
 	                        const std::string& label);
 
 	void add_class_menu_item(Gtk::Menu*         menu,

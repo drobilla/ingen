@@ -86,7 +86,7 @@ public:
 	SPtr<const Client::GraphModel> graph() const { return _graph; }
 	SPtr<GraphView>                view()  const { return _view; }
 
-	void show_port_status(const Client::PortModel* model,
+	void show_port_status(const Client::PortModel* port,
 	                      const Atom&              value);
 
 	void set_graph_from_path(const Raul::Path& path, SPtr<GraphView> view);

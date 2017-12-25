@@ -64,7 +64,7 @@ public:
 
 	BlockImpl(PluginImpl*         plugin,
 	          const Raul::Symbol& symbol,
-	          bool                poly,
+	          bool                polyphonic,
 	          GraphImpl*          parent,
 	          SampleRate          rate);
 

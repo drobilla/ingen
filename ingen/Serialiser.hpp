@@ -45,7 +45,7 @@ public:
 
 	/** Write a graph and all its contents as a complete bundle. */
 	virtual void write_bundle(SPtr<const Node>   graph,
-	                          const std::string& path);
+	                          const std::string& uri);
 
 	/** Begin a serialization to a string.
 	 *

@@ -114,7 +114,7 @@ private:
 	void set_row(Gtk::TreeModel::Row&            row,
 	             SPtr<const Client::PluginModel> plugin);
 
-	void new_plugin(SPtr<const Client::PluginModel> plugin);
+	void new_plugin(SPtr<const Client::PluginModel> pm);
 
 	void plugin_property_changed(const Raul::URI& plugin,
 	                             const Raul::URI& predicate,

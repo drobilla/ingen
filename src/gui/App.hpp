@@ -74,7 +74,7 @@ class INGEN_API App
 public:
 	~App();
 
-	void error_message(const std::string& msg);
+	void error_message(const std::string& str);
 
 	void attach(SPtr<Client::SigClientInterface> client);
 

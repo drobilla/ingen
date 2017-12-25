@@ -58,7 +58,7 @@ public:
 private:
 	enum class Mode { CONNECT_REMOTE, LAUNCH_REMOTE, INTERNAL };
 
-	void message(const Message& message);
+	void message(const Message& msg);
 
 	void error(const std::string& msg);
 
