@@ -55,8 +55,6 @@
 #include "WindowFactory.hpp"
 #include "rgba.hpp"
 
-using namespace std;
-
 namespace Raul { class Deletable; }
 
 namespace Ingen {
@@ -247,7 +245,7 @@ App::response(int32_t id, Status status, const std::string& subject)
 }
 
 void
-App::error_message(const string& str)
+App::error_message(const std::string& str)
 {
 	_messages_window->post_error(str);
 }
@@ -352,7 +350,7 @@ App::status_text() const
 void
 App::port_activity(Port* port)
 {
-	std::pair<ActivityPorts::iterator, bool> inserted = _activity_ports.insert(make_pair(port, false));
+	std::pair<ActivityPorts::iterator, bool> inserted = _activity_ports.emplace(port, false);
 	if (inserted.second) {
 		inserted.first->second = false;
 	}
@@ -464,10 +462,10 @@ App::quit(Gtk::Window* dialog_parent)
 	try {
 		const std::string path = _world->conf().save(
 			_world->uri_map(), "ingen", "gui.ttl", Configuration::GUI);
-		cout << (fmt("Saved GUI settings to %1%\n") % path);
+		std::cout << (fmt("Saved GUI settings to %1%\n") % path);
 	} catch (const std::exception& e) {
-		cerr << (fmt("Error saving GUI settings (%1%)\n")
-		         % e.what());
+		std::cerr << (fmt("Error saving GUI settings (%1%)\n")
+		              % e.what());
 	}
 
 	return true;

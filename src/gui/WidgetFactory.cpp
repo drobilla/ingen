@@ -22,8 +22,6 @@
 
 #include "WidgetFactory.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace GUI {
 
@@ -65,7 +63,7 @@ WidgetFactory::find_ui_file()
 }
 
 Glib::RefPtr<Gtk::Builder>
-WidgetFactory::create(const string& toplevel_widget)
+WidgetFactory::create(const std::string& toplevel_widget)
 {
 	if (ui_filename.empty()) {
 		find_ui_file();

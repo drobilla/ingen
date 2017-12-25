@@ -18,8 +18,6 @@
 
 #include "ingen/LV2Features.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 void

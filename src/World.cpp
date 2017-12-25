@@ -39,7 +39,7 @@
 #include "lilv/lilv.h"
 #include "sord/sordmm.hpp"
 
-using namespace std;
+using std::string;
 
 namespace Ingen {
 
@@ -67,7 +67,7 @@ ingen_load_module(Log& log, const string& name)
 	string module_path = Glib::getenv("INGEN_MODULE_PATH", module_path_found);
 	if (module_path_found) {
 		string dir;
-		istringstream iss(module_path);
+		std::istringstream iss(module_path);
 		while (getline(iss, dir, G_SEARCHPATH_SEPARATOR)) {
 			string filename = Ingen::module_path(name, dir);
 			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {

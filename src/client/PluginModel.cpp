@@ -30,7 +30,7 @@
 
 #include "ingen_config.h"
 
-using namespace std;
+using std::string;
 
 namespace Ingen {
 namespace Client {
@@ -221,9 +221,9 @@ PluginModel::port_scale_points(uint32_t i) const
 		LilvScalePoints* sp   = lilv_port_get_scale_points(_lilv_plugin, port);
 		LILV_FOREACH(scale_points, i, sp) {
 			const LilvScalePoint* p = lilv_scale_points_get(sp, i);
-			points.insert(
-				make_pair(lilv_node_as_float(lilv_scale_point_get_value(p)),
-				          lilv_node_as_string(lilv_scale_point_get_label(p))));
+			points.emplace(
+				lilv_node_as_float(lilv_scale_point_get_value(p)),
+				lilv_node_as_string(lilv_scale_point_get_label(p)));
 		}
 	}
 	return points;

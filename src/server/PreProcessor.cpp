@@ -29,8 +29,6 @@
 #include "ThreadManager.hpp"
 #include "UndoStack.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

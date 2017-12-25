@@ -24,8 +24,6 @@
 #include "Engine.hpp"
 #include "InternalPlugin.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

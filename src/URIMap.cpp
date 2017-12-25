@@ -22,8 +22,6 @@
 #include "ingen/URIMap.hpp"
 #include "raul/URI.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 URIMap::URIMap(Log& log, LV2_URID_Map* map, LV2_URID_Unmap* unmap)

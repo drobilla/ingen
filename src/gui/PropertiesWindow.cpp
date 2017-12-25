@@ -33,8 +33,6 @@
 #include "RDFS.hpp"
 #include "URIEntry.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 using namespace Client;

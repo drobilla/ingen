@@ -34,8 +34,6 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 using namespace Client;

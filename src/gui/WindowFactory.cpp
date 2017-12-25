@@ -31,8 +31,6 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 using namespace Client;
@@ -224,7 +222,7 @@ WindowFactory::present_load_plugin(SPtr<const GraphModel> graph,
 		_load_plugin_win->set_default_size(width - width / 8, height / 2);
 	}
 	_load_plugin_win->set_title(
-		string("Load Plugin - ") + graph->path() + " - Ingen");
+		std::string("Load Plugin - ") + graph->path() + " - Ingen");
 	_load_plugin_win->present(graph, data);
 }
 

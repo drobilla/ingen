@@ -47,9 +47,7 @@
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
-using namespace std;
-using namespace Sord;
-using namespace Ingen;
+using std::string;
 
 namespace Ingen {
 

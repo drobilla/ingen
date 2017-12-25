@@ -26,7 +26,6 @@
 #include "PortAudioDriver.hpp"
 #include "Engine.hpp"
 
-using namespace std;
 using namespace Ingen;
 
 struct IngenPortAudioModule : public Ingen::Module {

@@ -33,7 +33,7 @@
 
 #include "ingen_config.h"
 
-using namespace std;
+using std::string;
 
 namespace Ingen {
 

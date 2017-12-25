@@ -34,8 +34,6 @@
 #include "Style.hpp"
 #include "ThreadedLoader.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 using namespace Client;
@@ -90,7 +88,7 @@ LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
 	property_select_multiple() = true;
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
-	const string examples_dir = Ingen::data_file_path("graphs");
+	const std::string examples_dir = Ingen::data_file_path("graphs");
 	if (Glib::file_test(examples_dir, Glib::FILE_TEST_IS_DIR)) {
 		add_shortcut_folder(examples_dir);
 	}

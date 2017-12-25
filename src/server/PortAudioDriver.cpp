@@ -38,8 +38,6 @@
 #include "ThreadManager.hpp"
 #include "util.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

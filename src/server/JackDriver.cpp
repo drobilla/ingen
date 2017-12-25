@@ -46,8 +46,6 @@
 #include "ThreadManager.hpp"
 #include "util.hpp"
 
-using namespace std;
-
 typedef jack_default_audio_sample_t jack_sample_t;
 
 namespace Ingen {
@@ -539,16 +537,18 @@ JackDriver::_session_cb(jack_session_event_t* event)
 {
 	_engine.log().info(fmt("Jack session save to %1%\n") % event->session_dir);
 
-	const string cmd = (boost::format("ingen -eg -n %1% -u %2% -l ${SESSION_DIR}")
-	                    % jack_get_client_name(_client)
-	                    % event->client_uuid).str();
+	const std::string cmd = (
+		boost::format("ingen -eg -n %1% -u %2% -l ${SESSION_DIR}")
+		% jack_get_client_name(_client)
+		% event->client_uuid).str();
 
 	SPtr<Serialiser> serialiser = _engine.world()->serialiser();
 	if (serialiser) {
 		std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
 
 		SPtr<Node> root(_engine.root_graph(), NullDeleter<Node>);
-		serialiser->write_bundle(root, string("file://") + event->session_dir);
+		serialiser->write_bundle(root,
+		                         std::string("file://") + event->session_dir);
 	}
 
 	event->command_line = (char*)malloc(cmd.size() + 1);

@@ -19,8 +19,6 @@
 #include "ingen/Node.hpp"
 #include "ingen/Store.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 void

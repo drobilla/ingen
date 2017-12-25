@@ -26,8 +26,6 @@
 #include "App.hpp"
 #include "RenameWindow.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 using namespace Client;
@@ -80,7 +78,7 @@ RenameWindow::present(SPtr<const ObjectModel> object)
 void
 RenameWindow::values_changed()
 {
-	const string& symbol = _symbol_entry->get_text();
+	const std::string& symbol = _symbol_entry->get_text();
 	if (!Raul::Symbol::is_valid(symbol)) {
 		_message_label->set_text("Invalid symbol");
 		_ok_button->property_sensitive() = false;
@@ -111,11 +109,11 @@ RenameWindow::cancel_clicked()
 void
 RenameWindow::ok_clicked()
 {
-	const URIs&   uris       = _app->uris();
-	const string& symbol_str = _symbol_entry->get_text();
-	const string& label      = _label_entry->get_text();
-	Raul::Path    path       = _object->path();
-	const Atom&   name_atom  = _object->get_property(uris.lv2_name);
+	const URIs&        uris       = _app->uris();
+	const std::string& symbol_str = _symbol_entry->get_text();
+	const std::string& label      = _label_entry->get_text();
+	Raul::Path         path       = _object->path();
+	const Atom&        name_atom  = _object->get_property(uris.lv2_name);
 
 	if (!label.empty() && (name_atom.type() != uris.forge.String ||
 	                       label != name_atom.ptr<char>())) {

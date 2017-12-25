@@ -30,8 +30,6 @@
 #include "Style.hpp"
 #include "Port.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace GUI {
 
@@ -60,7 +58,7 @@ Style::Style(App& app)
  * the default location.
  */
 void
-Style::load_settings(string filename)
+Style::load_settings(std::string filename)
 {
 	/* ... */
 }
@@ -69,7 +67,7 @@ Style::load_settings(string filename)
  * default location.
  */
 void
-Style::save_settings(string filename)
+Style::save_settings(std::string filename)
 {
 	/* ... */
 }

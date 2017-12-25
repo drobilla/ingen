@@ -30,8 +30,6 @@
 #include "RunContext.hpp"
 #include "mix.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

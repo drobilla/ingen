@@ -28,8 +28,6 @@
 
 #include "ingen_config.h"
 
-using namespace std;
-
 namespace Ingen {
 
 static std::string bundle_path;
@@ -51,7 +49,7 @@ set_bundle_path_from_code(void* function)
 	const char* bin_loc = dli.dli_fname;
 #endif
 
-	string bundle = bin_loc;
+	std::string bundle = bin_loc;
 	bundle = bundle.substr(0, bundle.find_last_of(G_DIR_SEPARATOR));
 	bundle_path = bundle;
 }
@@ -96,7 +94,7 @@ module_path(const std::string& name, std::string dir)
 #endif
 	}
 
-	ret = Glib::Module::build_path(dir, string("ingen_") + name);
+	ret = Glib::Module::build_path(dir, std::string("ingen_") + name);
 
 #ifdef __APPLE__
 	// MacPorts glib doesnt seem to do portable path building correctly...

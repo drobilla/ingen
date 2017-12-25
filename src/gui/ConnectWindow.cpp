@@ -41,7 +41,6 @@
 #include "WindowFactory.hpp"
 
 using namespace Ingen::Client;
-using namespace std;
 
 namespace Ingen {
 namespace GUI {
@@ -169,7 +168,7 @@ ConnectWindow::set_connected_to(SPtr<Ingen::Interface> engine)
 			_port_spinbutton->set_sensitive(true);
 		}
 
-		_progress_label->set_text(string("Disconnected"));
+		_progress_label->set_text(std::string("Disconnected"));
 	}
 }
 
@@ -553,7 +552,7 @@ ConnectWindow::gtk_callback()
 			_connect_button->set_sensitive(true);
 			_disconnect_button->set_sensitive(false);
 			_disconnect_button->set_label("gtk-disconnect");
-			_progress_label->set_text(string("Disconnected"));
+			_progress_label->set_text(std::string("Disconnected"));
 		}
 		return false;
 	} else {

@@ -28,8 +28,6 @@
 #include "RunContext.hpp"
 #include "ThreadManager.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

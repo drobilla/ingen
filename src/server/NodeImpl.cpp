@@ -18,8 +18,6 @@
 #include "NodeImpl.hpp"
 #include "ThreadManager.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

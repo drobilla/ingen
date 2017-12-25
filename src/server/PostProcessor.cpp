@@ -21,8 +21,6 @@
 #include "PostProcessor.hpp"
 #include "RunContext.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

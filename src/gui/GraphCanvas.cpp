@@ -53,7 +53,7 @@
 #include "WidgetFactory.hpp"
 #include "WindowFactory.hpp"
 
-using namespace std;
+using std::string;
 
 namespace Ingen {
 

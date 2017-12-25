@@ -22,8 +22,6 @@
 #include "EventWriter.hpp"
 #include "events.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

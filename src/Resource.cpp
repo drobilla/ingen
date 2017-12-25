@@ -22,8 +22,6 @@
 #include "ingen/Resource.hpp"
 #include "ingen/URIs.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 bool

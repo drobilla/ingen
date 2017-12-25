@@ -24,8 +24,6 @@
 #include "NewSubgraphWindow.hpp"
 #include "GraphView.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace GUI {
 
@@ -73,7 +71,7 @@ NewSubgraphWindow::set_graph(SPtr<const Client::GraphModel> graph)
 void
 NewSubgraphWindow::name_changed()
 {
-	string name = _name_entry->get_text();
+	std::string name = _name_entry->get_text();
 	if (!Raul::Symbol::is_valid(name)) {
 		_message_label->set_text("Name contains invalid characters.");
 		_ok_button->property_sensitive() = false;

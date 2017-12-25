@@ -28,8 +28,6 @@
 #include "GraphView.hpp"
 #include "WidgetFactory.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 using namespace Client;

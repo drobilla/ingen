@@ -46,8 +46,6 @@
 #include "RunContext.hpp"
 #include "Worker.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 
@@ -367,7 +365,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 
 		if (!val.type() && (port_type != PortType::ATOM)) {
 			// Ensure numeric ports have a value, use 0 by default
-			val = forge.make(isnan(def_values[j]) ? 0.0f : def_values[j]);
+			val = forge.make(std::isnan(def_values[j]) ? 0.0f : def_values[j]);
 		}
 
 		PortImpl* port = (direction == INPUT)
@@ -382,10 +380,10 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 		if (direction == INPUT && (port_type == PortType::CONTROL
 		                           || port_type == PortType::CV)) {
 			port->set_value(val);
-			if (!isnan(min_values[j])) {
+			if (!std::isnan(min_values[j])) {
 				port->set_minimum(forge.make(min_values[j]));
 			}
-			if (!isnan(max_values[j])) {
+			if (!std::isnan(max_values[j])) {
 				port->set_maximum(forge.make(max_values[j]));
 			}
 		}

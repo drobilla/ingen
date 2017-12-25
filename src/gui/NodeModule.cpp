@@ -43,8 +43,6 @@
 #include "WindowFactory.hpp"
 #include "ingen_config.h"
 
-using namespace std;
-
 namespace Ingen {
 
 using namespace Client;

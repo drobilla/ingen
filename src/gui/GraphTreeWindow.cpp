@@ -24,8 +24,6 @@
 #include "ingen/client/GraphModel.hpp"
 #include "raul/Path.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 using namespace Client;

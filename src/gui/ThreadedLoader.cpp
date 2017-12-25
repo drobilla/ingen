@@ -24,8 +24,7 @@
 #include "App.hpp"
 #include "ThreadedLoader.hpp"
 
-using namespace boost;
-using namespace std;
+using boost::optional;
 
 namespace Ingen {
 namespace GUI {
@@ -116,7 +115,7 @@ ThreadedLoader::load_graph_event(const Glib::ustring&   document_uri,
 
 void
 ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model,
-                           const string&                  filename)
+                           const std::string&             filename)
 {
 	_mutex.lock();
 
@@ -131,12 +130,12 @@ ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model,
 
 void
 ThreadedLoader::save_graph_event(SPtr<const Client::GraphModel> model,
-                                 const string&                  filename)
+                                 const std::string&             filename)
 {
 	if (_app.serialiser()) {
 		std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
 
-		if (filename.find(".ingen") != string::npos) {
+		if (filename.find(".ingen") != std::string::npos) {
 			_app.serialiser()->write_bundle(model, filename);
 		} else {
 			_app.serialiser()->start_to_file(model->path(), filename);

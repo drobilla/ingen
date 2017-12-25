@@ -24,8 +24,6 @@
 #include "ingen/Store.hpp"
 #include "ingen/paths.hpp"
 
-using namespace std;
-
 namespace Ingen {
 
 ClashAvoider::ClashAvoider(const Store& store)
@@ -48,7 +46,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 	unsigned offset = 0;
 	bool has_offset = false;
 	const size_t pos = in.find_last_of('_');
-	if (pos != string::npos && pos != (in.length()-1)) {
+	if (pos != std::string::npos && pos != (in.length()-1)) {
 		const std::string trailing = in.substr(pos + 1);
 		has_offset = (sscanf(trailing.c_str(), "%u", &offset) > 0);
 	}
@@ -93,7 +91,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 				if (o != _offsets.end()) {
 					offset = ++o->second;
 				} else {
-					string parent_str = in.parent().base();
+					std::string parent_str = in.parent().base();
 					parent_str = parent_str.substr(0, parent_str.find_last_of("/"));
 					if (parent_str.empty()) {
 						parent_str = "/";
@@ -112,7 +110,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 						name = "_";
 					}
 					Raul::Symbol sym(name);
-					string str = ss.str();
+					std::string str = ss.str();
 					InsertRecord i = _symbol_map.insert(
 						make_pair(in, Raul::Path(str)));
 					offset = _store.child_name_offset(in.parent(), sym, false);

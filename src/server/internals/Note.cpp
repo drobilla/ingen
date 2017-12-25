@@ -34,8 +34,6 @@
 
 // #define NOTE_DEBUG 1
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 namespace Internals {

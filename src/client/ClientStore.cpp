@@ -26,8 +26,6 @@
 #include "ingen/client/PortModel.hpp"
 #include "ingen/client/SigClientInterface.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Client {
 

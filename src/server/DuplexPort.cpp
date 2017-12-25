@@ -22,8 +22,6 @@
 #include "Engine.hpp"
 #include "GraphImpl.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

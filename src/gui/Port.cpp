@@ -37,7 +37,6 @@
 #include "rgba.hpp"
 
 using namespace Ingen::Client;
-using namespace std;
 
 namespace Ingen {
 namespace GUI {
@@ -56,7 +55,7 @@ Port::create(App&                  app,
 Port::Port(App&                  app,
            Ganv::Module&         module,
            SPtr<const PortModel> pm,
-           const string&         name,
+           const std::string&    name,
            bool                  flip)
 	: Ganv::Port(module, name,
 	             flip ? (!pm->is_input()) : pm->is_input(),

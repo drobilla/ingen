@@ -22,8 +22,6 @@
 #include "ingen/client/ClientStore.hpp"
 #include "ingen/client/GraphModel.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Client {
 
@@ -99,7 +97,7 @@ GraphModel::clear()
 SPtr<ArcModel>
 GraphModel::get_arc(const Node* tail, const Node* head)
 {
-	Arcs::iterator i = _arcs.find(make_pair(tail, head));
+	Arcs::iterator i = _arcs.find(std::make_pair(tail, head));
 	if (i != _arcs.end()) {
 		return dynamic_ptr_cast<ArcModel>(i->second);
 	} else {
@@ -136,9 +134,9 @@ GraphModel::add_arc(SPtr<ArcModel> arc)
 		assert(arc->tail() == existing->tail());
 		assert(arc->head() == existing->head());
 	} else {
-		_arcs.insert(make_pair(make_pair(arc->tail().get(),
-		                                 arc->head().get()),
-		                       arc));
+		_arcs.emplace(std::make_pair(arc->tail().get(),
+		                             arc->head().get()),
+		              arc);
 		_signal_new_arc.emit(arc);
 	}
 }
@@ -146,7 +144,7 @@ GraphModel::add_arc(SPtr<ArcModel> arc)
 void
 GraphModel::remove_arc(const Node* tail, const Node* head)
 {
-	Arcs::iterator i = _arcs.find(make_pair(tail, head));
+	Arcs::iterator i = _arcs.find(std::make_pair(tail, head));
 	if (i != _arcs.end()) {
 		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(i->second);
 		_signal_removed_arc.emit(arc);

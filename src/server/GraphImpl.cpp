@@ -32,8 +32,6 @@
 #include "PortImpl.hpp"
 #include "ThreadManager.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 
@@ -272,14 +270,14 @@ void
 GraphImpl::add_arc(SPtr<ArcImpl> a)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	_arcs.insert(make_pair(make_pair(a->tail(), a->head()), a));
+	_arcs.emplace(std::make_pair(a->tail(), a->head()), a);
 }
 
 SPtr<ArcImpl>
 GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Arcs::iterator i = _arcs.find(make_pair(tail, dst_port));
+	Arcs::iterator i = _arcs.find(std::make_pair(tail, dst_port));
 	if (i != _arcs.end()) {
 		SPtr<ArcImpl> arc = dynamic_ptr_cast<ArcImpl>(i->second);
 		_arcs.erase(i);
@@ -293,7 +291,7 @@ bool
 GraphImpl::has_arc(const PortImpl* tail, const PortImpl* dst_port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Arcs::const_iterator i = _arcs.find(make_pair(tail, dst_port));
+	Arcs::const_iterator i = _arcs.find(std::make_pair(tail, dst_port));
 	return (i != _arcs.end());
 }
 

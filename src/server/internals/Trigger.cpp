@@ -30,8 +30,6 @@
 #include "internals/Trigger.hpp"
 #include "util.hpp"
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 namespace Internals {

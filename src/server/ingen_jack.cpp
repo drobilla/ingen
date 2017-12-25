@@ -26,7 +26,6 @@
 #include "JackDriver.hpp"
 #include "Engine.hpp"
 
-using namespace std;
 using namespace Ingen;
 
 struct IngenJackModule : public Ingen::Module {

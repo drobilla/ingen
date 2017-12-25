@@ -58,8 +58,6 @@
 #include "SocketListener.hpp"
 #endif
 
-using namespace std;
-
 namespace Ingen {
 namespace Server {
 

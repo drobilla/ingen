@@ -41,8 +41,6 @@
 #define NS_RDF   "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 #define NS_RDFS  "http://www.w3.org/2000/01/rdf-schema#"
 
-using namespace std;
-
 namespace Ingen {
 
 std::set<Parser::ResourceRecord>
@@ -194,7 +192,7 @@ get_port(Ingen::World*     world,
 		const std::string subject_str = subject.to_string();
 		const size_t      last_slash  = subject_str.find_last_of("/");
 
-		sym = ((last_slash == string::npos)
+		sym = ((last_slash == std::string::npos)
 		       ? subject_str
 		       : subject_str.substr(last_slash + 1));
 	}
@@ -359,7 +357,8 @@ parse_graph(Ingen::World*                 world,
 	const Sord::Node& graph = subject;
 	const Sord::Node  nil;
 
-	string graph_path_str = relative_uri(base_uri, subject.to_string(), true);
+	std::string graph_path_str = relative_uri(
+		base_uri, subject.to_string(), true);
 	if (parent && symbol) {
 		graph_path_str = parent->child(*symbol);
 	} else if (parent) {

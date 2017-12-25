@@ -19,8 +19,6 @@
 
 #include "ingen_config.h"
 
-using namespace Ingen;
-
 struct IngenClientModule : public Ingen::Module {
 	void load(Ingen::World* world) {}
 };

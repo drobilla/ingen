@@ -27,7 +27,7 @@
 namespace Ingen {
 namespace GUI {
 
-using namespace std;
+using std::string;
 
 BreadCrumbs::BreadCrumbs(App& app)
 	: Gtk::HBox()
