@@ -104,10 +104,6 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	get_buffers(bufs, &BufferFactory::get_buffer, _voices, poly, 0);
 }
 
-PortImpl::~PortImpl()
-{
-}
-
 bool
 PortImpl::get_buffers(BufferFactory&      bufs,
                       GetFn               get,

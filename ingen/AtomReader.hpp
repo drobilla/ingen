@@ -50,7 +50,6 @@ public:
 	           URIs&      uris,
 	           Log&       log,
 	           Interface& iface);
-	~AtomReader() override {}
 
 	static bool is_message(const URIs& uris, const LV2_Atom* msg);
 

@@ -127,10 +127,6 @@ NoteNode::NoteNode(InternalPlugin*     plugin,
 	_ports->at(7) = _pressure_port;
 }
 
-NoteNode::~NoteNode()
-{
-}
-
 bool
 NoteNode::prepare_poly(BufferFactory& bufs, uint32_t poly)
 {

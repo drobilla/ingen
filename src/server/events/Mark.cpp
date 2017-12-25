@@ -41,10 +41,6 @@ Mark::Mark(Engine&                 engine,
 	, _depth(0)
 {}
 
-Mark::~Mark()
-{
-}
-
 bool
 Mark::pre_process(PreProcessContext& ctx)
 {

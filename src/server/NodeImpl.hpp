@@ -49,8 +49,6 @@ class RunContext;
 class NodeImpl : public Node
 {
 public:
-	virtual ~NodeImpl() {}
-
 	const Raul::Symbol& symbol() const { return _symbol; }
 
 	Node*     graph_parent() const { return _parent; }

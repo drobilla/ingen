@@ -97,8 +97,6 @@ public:
 	         size_t              buffer_size = 0,
 	         bool                is_output = true);
 
-	~PortImpl();
-
 	virtual GraphType graph_type() const { return GraphType::PORT; }
 
 	/** A port's parent is always a block, so static cast should be safe */

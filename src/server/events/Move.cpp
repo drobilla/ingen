@@ -38,10 +38,6 @@ Move::Move(Engine&           engine,
 {
 }
 
-Move::~Move()
-{
-}
-
 bool
 Move::pre_process(PreProcessContext& ctx)
 {

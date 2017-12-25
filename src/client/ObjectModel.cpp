@@ -36,10 +36,6 @@ ObjectModel::ObjectModel(const ObjectModel& copy)
 {
 }
 
-ObjectModel::~ObjectModel()
-{
-}
-
 bool
 ObjectModel::is_a(const URIs::Quark& type) const
 {

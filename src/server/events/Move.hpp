@@ -41,8 +41,6 @@ public:
 	     SampleCount        timestamp,
 	     const Ingen::Move& msg);
 
-	~Move();
-
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
 	void post_process();

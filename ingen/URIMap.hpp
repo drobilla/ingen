@@ -40,7 +40,6 @@ class World;
 class INGEN_API URIMap : public Raul::Noncopyable {
 public:
 	URIMap(Log& log, LV2_URID_Map* map, LV2_URID_Unmap* unmap);
-	virtual ~URIMap() {}
 
 	uint32_t    map_uri(const char* uri);
 	uint32_t    map_uri(const std::string& uri) { return map_uri(uri.c_str()); }

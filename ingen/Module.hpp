@@ -33,7 +33,7 @@ class World;
 class INGEN_API Module {
 public:
 	Module() : library(nullptr) {}
-	virtual ~Module() {}
+	virtual ~Module() = default;
 
 	virtual void load(Ingen::World* world) = 0;
 	virtual void run(Ingen::World* world) {}

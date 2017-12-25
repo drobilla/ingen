@@ -57,11 +57,8 @@ class Properties : public std::multimap<Raul::URI, Property> {
 public:
 	using Graph = Property::Graph;
 
-	Properties() {}
-
-	Properties(const Properties& copy)
-		: std::multimap<Raul::URI, Property>(copy)
-	{}
+	Properties() = default;
+	Properties(const Properties& copy) = default;
 
 	Properties(std::initializer_list<value_type> l)
 		: std::multimap<Raul::URI, Property>(l)

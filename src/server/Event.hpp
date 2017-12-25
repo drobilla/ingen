@@ -52,8 +52,6 @@ class PreProcessContext;
 class Event : public Raul::Deletable, public Raul::Noncopyable
 {
 public:
-	virtual ~Event() {}
-
 	/** Event mode to distinguish normal events from undo events. */
 	enum class Mode { NORMAL, UNDO, REDO };
 

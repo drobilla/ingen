@@ -45,8 +45,6 @@ public:
 	         GraphImpl*          parent,
 	         SampleRate          srate);
 
-	~NoteNode();
-
 	bool prepare_poly(BufferFactory& bufs, uint32_t poly);
 	bool apply_poly(RunContext& context, uint32_t poly);
 

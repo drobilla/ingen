@@ -50,8 +50,6 @@ public:
 		, _is_zombie(false)
 	{}
 
-	virtual ~PluginImpl() {}
-
 	virtual BlockImpl* instantiate(BufferFactory&      bufs,
 	                               const Raul::Symbol& symbol,
 	                               bool                polyphonic,

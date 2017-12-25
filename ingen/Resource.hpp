@@ -73,8 +73,6 @@ public:
 		return Graph::DEFAULT;
 	}
 
-	~Resource() override {}
-
 	/** Get a single property value.
 	 *
 	 * This is only useful for properties with a single value.  If the

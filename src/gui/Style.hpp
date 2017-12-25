@@ -33,7 +33,6 @@ class Style
 {
 public:
 	explicit Style(App& app);
-	~Style();
 
 	void load_settings(std::string filename = "");
 	void save_settings(std::string filename = "");

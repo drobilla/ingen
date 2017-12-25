@@ -39,7 +39,7 @@ class EnginePort;
  */
 class Driver : public Raul::Noncopyable {
 public:
-	virtual ~Driver() {}
+	virtual ~Driver() = default;
 
 	/** Activate driver (begin processing graph and events). */
 	virtual bool activate() { return true; }

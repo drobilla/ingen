@@ -29,7 +29,7 @@ namespace Ingen {
  */
 class INGEN_API AtomSink {
 public:
-	virtual ~AtomSink() {}
+	virtual ~AtomSink() = default;
 
 	/** Write an Atom to the sink.
 	 *

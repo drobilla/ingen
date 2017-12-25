@@ -36,7 +36,7 @@ class Interface;
 class INGEN_API EngineBase
 {
 public:
-	virtual ~EngineBase() {}
+	virtual ~EngineBase() = default;
 
 	/**
 	   Initialise the engine for local use (e.g. without a Jack driver).

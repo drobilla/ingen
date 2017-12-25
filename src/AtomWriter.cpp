@@ -71,10 +71,6 @@ AtomWriter::AtomWriter(URIMap& map, URIs& uris, AtomSink& sink)
 	_out.set_forge_sink(&_forge);
 }
 
-AtomWriter::~AtomWriter()
-{
-}
-
 void
 AtomWriter::finish_msg()
 {

@@ -49,10 +49,6 @@ SetPortValue::SetPortValue(Engine&         engine,
 {
 }
 
-SetPortValue::~SetPortValue()
-{
-}
-
 bool
 SetPortValue::pre_process(PreProcessContext& ctx)
 {

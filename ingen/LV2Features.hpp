@@ -40,7 +40,7 @@ public:
 
 	class Feature {
 	public:
-		virtual ~Feature() {}
+		virtual ~Feature() = default;
 
 		virtual const char* uri() const = 0;
 

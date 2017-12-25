@@ -48,10 +48,6 @@ CreateBlock::CreateBlock(Engine&           engine,
 	, _block(NULL)
 {}
 
-CreateBlock::~CreateBlock()
-{
-}
-
 bool
 CreateBlock::pre_process(PreProcessContext& ctx)
 {

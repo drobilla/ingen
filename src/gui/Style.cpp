@@ -56,10 +56,6 @@ Style::Style(App& app)
 {
 }
 
-Style::~Style()
-{
-}
-
 /** Loads settings from the rc file.  Passing no parameter will load from
  * the default location.
  */

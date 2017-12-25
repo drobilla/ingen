@@ -43,8 +43,6 @@ class INGEN_API AtomWriter : public Interface
 public:
 	AtomWriter(URIMap& map, URIs& uris, AtomSink& sink);
 
-	~AtomWriter() override;
-
 	Raul::URI uri() const override {
 		return Raul::URI("ingen:/clients/atom_writer");
 	}

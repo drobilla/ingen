@@ -42,9 +42,9 @@ class World;
 */
 class INGEN_API Parser {
 public:
-	explicit Parser() {}
+	explicit Parser() = default;
 
-	virtual ~Parser() {}
+	virtual ~Parser() = default;
 
 	/** Record of a resource listed in a bundle manifest. */
 	struct ResourceRecord {

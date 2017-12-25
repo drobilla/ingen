@@ -46,8 +46,6 @@ public:
 	     SampleCount             timestamp,
 	     const Ingen::BundleEnd& msg);
 
-	~Mark();
-
 	bool pre_process(PreProcessContext& ctx);
 	void execute(RunContext& context);
 	void post_process();
