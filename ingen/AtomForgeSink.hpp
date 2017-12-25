@@ -32,7 +32,7 @@ namespace Ingen {
 class AtomForgeSink
 {
 public:
-	AtomForgeSink(LV2_Atom_Forge* forge = nullptr)
+	explicit AtomForgeSink(LV2_Atom_Forge* forge = nullptr)
 		: _capacity(8 * sizeof(LV2_Atom))
 		, _size(0)
 		, _buf((LV2_Atom*)calloc(8, sizeof(LV2_Atom)))

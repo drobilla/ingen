@@ -53,7 +53,7 @@ protected:
 
 	class EmptyFeature : public Feature {
 	public:
-		EmptyFeature(const char* uri) : _uri(uri) {}
+		explicit EmptyFeature(const char* uri) : _uri(uri) {}
 
 		const char* uri() const override { return _uri; }
 
