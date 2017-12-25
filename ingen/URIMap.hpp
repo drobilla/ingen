@@ -53,9 +53,9 @@ public:
 			_feature.data = data;
 		}
 
-		const char* uri() const { return _feature.URI; }
+		const char* uri() const override { return _feature.URI; }
 
-		SPtr<LV2_Feature> feature(World*, Node*) {
+		SPtr<LV2_Feature> feature(World*, Node*) override {
 			return SPtr<LV2_Feature>(&_feature, NullDeleter<LV2_Feature>);
 		}
 

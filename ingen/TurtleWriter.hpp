@@ -45,15 +45,15 @@ public:
 	             URIs&            uris,
 	             const Raul::URI& uri);
 
-	virtual ~TurtleWriter();
+	~TurtleWriter() override;
 
 	/** AtomSink method which receives calls serialized to LV2 atoms. */
-	bool write(const LV2_Atom* msg, int32_t default_id=0);
+	bool write(const LV2_Atom* msg, int32_t default_id=0) override;
 
 	/** Pure virtual text sink which receives calls serialized to Turtle. */
 	virtual size_t text_sink(const void* buf, size_t len) = 0;
 
-	Raul::URI uri() const { return _uri; }
+	Raul::URI uri() const override { return _uri; }
 
 protected:
 	URIMap&     _map;

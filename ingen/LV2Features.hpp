@@ -55,9 +55,9 @@ protected:
 	public:
 		EmptyFeature(const char* uri) : _uri(uri) {}
 
-		virtual const char* uri() const { return _uri; }
+		const char* uri() const override { return _uri; }
 
-		virtual SPtr<LV2_Feature> feature(World* world, Node* block) {
+		SPtr<LV2_Feature> feature(World* world, Node* block) override {
 			return SPtr<LV2_Feature>();
 		}
 

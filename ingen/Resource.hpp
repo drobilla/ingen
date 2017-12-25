@@ -73,7 +73,7 @@ public:
 		return Graph::DEFAULT;
 	}
 
-	virtual ~Resource() {}
+	~Resource() override {}
 
 	/** Get a single property value.
 	 *

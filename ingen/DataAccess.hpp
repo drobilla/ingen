@@ -39,9 +39,9 @@ struct DataAccess : public Ingen::LV2Features::Feature
 		delete feature;
 	}
 
-	const char* uri() const { return "http://lv2plug.in/ns/ext/data-access"; }
+	const char* uri() const override { return "http://lv2plug.in/ns/ext/data-access"; }
 
-	SPtr<LV2_Feature> feature(World* world, Node* node) {
+	SPtr<LV2_Feature> feature(World* world, Node* node) override {
 		Node* store_node = world->store()->get(node->path());
 		if (!store_node) {
 			return SPtr<LV2_Feature>();

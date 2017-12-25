@@ -41,7 +41,7 @@ public:
 	             FILE*               stream,
 	             ColorContext::Color color);
 
-	size_t text_sink(const void* buf, size_t len);
+	size_t text_sink(const void* buf, size_t len) override;
 
 protected:
 	FILE*               _stream;
