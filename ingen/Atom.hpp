@@ -43,7 +43,7 @@ namespace Ingen {
 */
 class INGEN_API Atom {
 public:
-	Atom()  { _atom.size = 0; _atom.type = 0; _body.ptr = nullptr; }
+	Atom() noexcept  { _atom.size = 0; _atom.type = 0; _body.ptr = nullptr; }
 	~Atom() { dealloc(); }
 
 	/** Construct a raw atom.
