@@ -43,7 +43,7 @@ namespace Ingen {
 */
 class INGEN_API Atom {
 public:
-	Atom()  { _atom.size = 0; _atom.type = 0; _body.ptr = NULL; }
+	Atom()  { _atom.size = 0; _atom.type = 0; _body.ptr = nullptr; }
 	~Atom() { dealloc(); }
 
 	/** Construct a raw atom.
@@ -53,7 +53,7 @@ public:
 	Atom(uint32_t size, LV2_URID type, const void* body) {
 		_atom.size = size;
 		_atom.type = type;
-		_body.ptr  = NULL;
+		_body.ptr  = nullptr;
 		if (is_reference()) {
 			_body.ptr = (LV2_Atom*)malloc(sizeof(LV2_Atom) + size);
 			memcpy(_body.ptr, &_atom, sizeof(LV2_Atom));

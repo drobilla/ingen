@@ -77,7 +77,7 @@ PortImpl::PortImpl(BufferFactory&      bufs,
 	, _is_driver_port(false)
 	, _is_output(is_output)
 {
-	assert(block != NULL);
+	assert(block != nullptr);
 	assert(_poly > 0);
 
 	const Ingen::URIs& uris = bufs.uris();
@@ -398,7 +398,7 @@ void
 PortImpl::recycle_buffers()
 {
 	for (uint32_t v = 0; v < _poly; ++v)
-		_voices->at(v).buffer = NULL;
+		_voices->at(v).buffer = nullptr;
 }
 
 void

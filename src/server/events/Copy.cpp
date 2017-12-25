@@ -37,9 +37,9 @@ Copy::Copy(Engine&            engine,
            const Ingen::Copy& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-	, _old_block(NULL)
-	, _parent(NULL)
-	, _block(NULL)
+	, _old_block(nullptr)
+	, _parent(nullptr)
+	, _block(nullptr)
 {}
 
 bool

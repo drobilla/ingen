@@ -30,7 +30,7 @@ namespace Server {
 
 struct Notification
 {
-	inline Notification(PortImpl* p = 0,
+	inline Notification(PortImpl* p = nullptr,
 	                    FrameTime f = 0,
 	                    LV2_URID  k = 0,
 	                    uint32_t  s = 0,
@@ -115,7 +115,7 @@ RunContext::emit_notifications(FrameTime end)
 		}
 		if (_event_sink->read(sizeof(note), &note) == sizeof(note)) {
 			Atom value = _engine.world()->forge().alloc(
-				note.size, note.type, NULL);
+				note.size, note.type, nullptr);
 			if (_event_sink->read(note.size, value.get_body()) == note.size) {
 				i += note.size;
 				const char* key = _engine.world()->uri_map().unmap_uri(note.key);

@@ -32,8 +32,8 @@ BlockModel::BlockModel(URIs&             uris,
 	, _plugin_uri(plugin->uri())
 	, _plugin(plugin)
 	, _num_values(0)
-	, _min_values(0)
-	, _max_values(0)
+	, _min_values(nullptr)
+	, _max_values(nullptr)
 {
 }
 
@@ -43,8 +43,8 @@ BlockModel::BlockModel(URIs&             uris,
 	: ObjectModel(uris, path)
 	, _plugin_uri(plugin_uri)
 	, _num_values(0)
-	, _min_values(0)
-	, _max_values(0)
+	, _min_values(nullptr)
+	, _max_values(nullptr)
 {
 }
 
@@ -94,8 +94,8 @@ BlockModel::clear()
 	assert(_ports.empty());
 	delete[] _min_values;
 	delete[] _max_values;
-	_min_values = 0;
-	_max_values = 0;
+	_min_values = nullptr;
+	_max_values = nullptr;
 }
 
 void
@@ -180,7 +180,7 @@ BlockModel::default_port_value_range(SPtr<const PortModel> port,
 			_min_values = new float[_num_values];
 			_max_values = new float[_num_values];
 			lilv_plugin_get_port_ranges_float(_plugin->lilv_plugin(),
-			                                  _min_values, _max_values, 0);
+			                                  _min_values, _max_values, nullptr);
 		}
 
 		if (!std::isnan(_min_values[port->index()]))

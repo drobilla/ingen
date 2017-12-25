@@ -104,7 +104,7 @@ BlockFactory::plugin(const Raul::URI& uri)
 {
 	load_plugin(uri);
 	const Plugins::const_iterator i = _plugins.find(uri);
-	return ((i != _plugins.end()) ? i->second : NULL);
+	return ((i != _plugins.end()) ? i->second : nullptr);
 }
 
 void

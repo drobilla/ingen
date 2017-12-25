@@ -42,7 +42,7 @@ URIMap::URIDMapFeature::URIDMapFeature(URIMap*       map,
 		urid_map = *impl;
 	} else {
 		urid_map.map    = default_map;
-		urid_map.handle = NULL;
+		urid_map.handle = nullptr;
 	}
 }
 
@@ -71,7 +71,7 @@ URIMap::URIDUnmapFeature::URIDUnmapFeature(URIMap*         map,
 		urid_unmap = *impl;
 	} else {
 		urid_unmap.unmap  = default_unmap;
-		urid_unmap.handle = NULL;
+		urid_unmap.handle = nullptr;
 	}
 }
 

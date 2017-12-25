@@ -61,10 +61,10 @@ UndoStack::ignore_later_event(const LV2_Atom* first,
 	const LV2_Atom_Object* f = (const LV2_Atom_Object*)first;
 	const LV2_Atom_Object* s = (const LV2_Atom_Object*)second;
 	if (f->body.otype == _uris.patch_Set && f->body.otype == s->body.otype) {
-		const LV2_Atom* f_subject  = NULL;
-		const LV2_Atom* f_property = NULL;
-		const LV2_Atom* s_subject  = NULL;
-		const LV2_Atom* s_property = NULL;
+		const LV2_Atom* f_subject  = nullptr;
+		const LV2_Atom* f_property = nullptr;
+		const LV2_Atom* s_subject  = nullptr;
+		const LV2_Atom* s_property = nullptr;
 		lv2_atom_object_get(f,
 		                    (LV2_URID)_uris.patch_subject,  &f_subject,
 		                    (LV2_URID)_uris.patch_property, &f_property,
@@ -136,7 +136,7 @@ struct ListContext {
 
 	SerdNode start_node(SerdWriter* writer) {
 		const SerdNode node = ids.get();
-		serd_writer_write_statement(writer, flags, NULL, &s, &p, &node, NULL, NULL);
+		serd_writer_write_statement(writer, flags, nullptr, &s, &p, &node, nullptr, nullptr);
 		return node;
 	}
 
@@ -147,7 +147,7 @@ struct ListContext {
 		// node rdf:first value
 		p     = serd_node_from_string(SERD_URI, NS_RDF "first");
 		flags = SERD_LIST_CONT;
-		serd_writer_write_statement(writer, flags|oflags, NULL, &node, &p, value, NULL, NULL);
+		serd_writer_write_statement(writer, flags|oflags, nullptr, &node, &p, value, nullptr, nullptr);
 
 		end_node(writer, &node);
 	}
@@ -160,7 +160,7 @@ struct ListContext {
 
 	void end(SerdWriter* writer) {
 		const SerdNode nil = serd_node_from_string(SERD_URI, NS_RDF "nil");
-		serd_writer_write_statement(writer, flags, NULL, &s, &p, &nil, NULL, NULL);
+		serd_writer_write_statement(writer, flags, nullptr, &s, &p, &nil, nullptr, nullptr);
 	}
 
 	BlankIDs& ids;
@@ -181,7 +181,7 @@ UndoStack::write_entry(Sratom*                 sratom,
 	// entry rdf:type ingen:UndoEntry
 	SerdNode p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "time"));
 	SerdNode o = serd_node_from_string(SERD_LITERAL, USTR(time_str));
-	serd_writer_write_statement(writer, SERD_ANON_CONT, NULL, subject, &p, &o, NULL, NULL);
+	serd_writer_write_statement(writer, SERD_ANON_CONT, nullptr, subject, &p, &o, nullptr, nullptr);
 
 	p = serd_node_from_string(SERD_URI, USTR(INGEN_NS "events"));
 
@@ -206,7 +206,7 @@ UndoStack::write_entry(Sratom*                 sratom,
 void
 UndoStack::save(FILE* stream, const char* name)
 {
-	SerdEnv* env = serd_env_new(NULL);
+	SerdEnv* env = serd_env_new(nullptr);
 	serd_env_set_prefix_from_strings(env, USTR("atom"),  USTR(LV2_ATOM_PREFIX));
 	serd_env_set_prefix_from_strings(env, USTR("ingen"), USTR(INGEN_NS));
 	serd_env_set_prefix_from_strings(env, USTR("patch"), USTR(LV2_PATCH_PREFIX));

@@ -61,7 +61,7 @@ InternalPlugin::instantiate(BufferFactory&      bufs,
 	} else if (uri() == NS_INTERNALS "Trigger") {
 		return new TriggerNode(this, bufs, symbol, polyphonic, parent, srate);
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

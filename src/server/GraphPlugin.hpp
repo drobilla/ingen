@@ -46,7 +46,7 @@ public:
 	                       Engine&             engine,
 	                       const LilvState*    state)
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	const Raul::Symbol symbol() const { return Raul::Symbol("graph"); }

@@ -67,7 +67,7 @@ Parser::find_resources(Sord::World&       world,
 		std::string       file_path    = "";
 		Sord::Iter        f            = model.find(resource, rdfs_seeAlso, nil);
 		if (!f.end()) {
-			uint8_t* p = serd_file_uri_parse(f.get_object().to_u_string(), NULL);
+			uint8_t* p = serd_file_uri_parse(f.get_object().to_u_string(), nullptr);
 			file_path = (const char*)p;
 			free(p);
 		}
@@ -441,7 +441,7 @@ parse_graph(Ingen::World*                 world,
 
 			// Get all properties
 			boost::optional<PortRecord> port_record = get_port(
-				world, model, port, subctx, block_path, NULL);
+				world, model, port, subctx, block_path, nullptr);
 			if (!port_record) {
 				world->log().error(fmt("Invalid port %1%\n") % port);
 				return boost::optional<Raul::Path>();
@@ -733,7 +733,7 @@ Parser::parse_string(Ingen::World*                     world,
 	// Load string into model
 	Sord::Model model(*world->rdf_world(), base_uri, SORD_SPO|SORD_PSO, false);
 
-	SerdEnv* env = serd_env_new(NULL);
+	SerdEnv* env = serd_env_new(nullptr);
 	if (!base_uri.empty()) {
 		const SerdNode base = serd_node_from_string(
 			SERD_URI, (const uint8_t*)base_uri.c_str());
@@ -741,7 +741,7 @@ Parser::parse_string(Ingen::World*                     world,
 	}
 	model.load_string(env, SERD_TURTLE, str.c_str(), str.length(), base_uri);
 
-	Raul::URI actual_base((const char*)serd_env_get_base_uri(env, NULL)->buf);
+	Raul::URI actual_base((const char*)serd_env_get_base_uri(env, nullptr)->buf);
 	serd_env_free(env);
 
 	world->log().info(fmt("Parsing string (base %1%)\n") % base_uri);

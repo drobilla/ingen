@@ -39,8 +39,8 @@ namespace GUI {
 GraphView::GraphView(BaseObjectType*                   cobject,
                      const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::Box(cobject)
-	, _app(NULL)
-	, _breadcrumb_container(NULL)
+	, _app(nullptr)
+	, _breadcrumb_container(nullptr)
 	, _enable_signal(true)
 {
 	property_visible() = false;
@@ -104,7 +104,7 @@ GraphView::set_graph(SPtr<const GraphModel> graph)
 SPtr<GraphView>
 GraphView::create(App& app, SPtr<const GraphModel> graph)
 {
-	GraphView* result = NULL;
+	GraphView* result = nullptr;
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("warehouse_win");
 	xml->get_widget_derived("graph_view_box", result);
 	result->init(app);

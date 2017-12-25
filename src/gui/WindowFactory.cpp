@@ -41,11 +41,11 @@ namespace GUI {
 
 WindowFactory::WindowFactory(App& app)
 	: _app(app)
-	, _main_box(NULL)
-	, _load_plugin_win(NULL)
-	, _load_graph_win(NULL)
-	, _new_subgraph_win(NULL)
-	, _properties_win(NULL)
+	, _main_box(nullptr)
+	, _load_plugin_win(nullptr)
+	, _load_graph_win(nullptr)
+	, _new_subgraph_win(nullptr)
+	, _properties_win(nullptr)
 {
 	WidgetFactory::get_widget_derived("load_plugin_win", _load_plugin_win);
 	WidgetFactory::get_widget_derived("load_graph_win", _load_graph_win);
@@ -108,18 +108,18 @@ GraphWindow*
 WindowFactory::graph_window(SPtr<const GraphModel> graph)
 {
 	if (!graph)
-		return NULL;
+		return nullptr;
 
 	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
 
-	return (w == _graph_windows.end()) ? NULL : w->second;
+	return (w == _graph_windows.end()) ? nullptr : w->second;
 }
 
 GraphWindow*
 WindowFactory::parent_graph_window(SPtr<const BlockModel> block)
 {
 	if (!block)
-		return NULL;
+		return nullptr;
 
 	return graph_window(dynamic_ptr_cast<GraphModel>(block->parent()));
 }
@@ -162,11 +162,11 @@ WindowFactory::new_graph_window(SPtr<const GraphModel> graph,
 {
 	assert(!view || view->graph() == graph);
 
-	GraphWindow* win = NULL;
+	GraphWindow* win = nullptr;
 	WidgetFactory::get_widget_derived("graph_win", win);
 	if (!win) {
 		_app.log().error("Failed to load graph window widget\n");
-		return NULL;
+		return nullptr;
 	}
 
 	win->init_window(_app);

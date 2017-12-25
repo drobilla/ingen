@@ -46,7 +46,7 @@ GraphPortModule::GraphPortModule(GraphCanvas&                  canvas,
                                  SPtr<const Client::PortModel> model)
 	: Ganv::Module(canvas, "", 0, 0, false) // FIXME: coords?
 	, _model(model)
-	, _port(NULL)
+	, _port(nullptr)
 {
 	assert(model);
 

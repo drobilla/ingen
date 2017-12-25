@@ -45,7 +45,7 @@ public:
 
 	Node* get(const Raul::Path& path) {
 		const iterator i = find(path);
-		return (i == end()) ? NULL : i->second.get();
+		return (i == end()) ? nullptr : i->second.get();
 	}
 
 	typedef std::pair<const_iterator, const_iterator> const_range;

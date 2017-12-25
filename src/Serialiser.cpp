@@ -57,7 +57,7 @@ struct Serialiser::Impl {
 	explicit Impl(World& world)
 		: _root_path("/")
 		, _world(world)
-		, _model(NULL)
+		, _model(nullptr)
 		, _sratom(sratom_new(&_world.uri_map().urid_map_feature()->urid_map))
 	{}
 
@@ -282,7 +282,7 @@ Serialiser::Impl::finish()
 	}
 
 	delete _model;
-	_model    = NULL;
+	_model    = nullptr;
 	_base_uri = "";
 
 	return ret;
@@ -570,7 +570,7 @@ Serialiser::Impl::serialise_properties(Sord::Node        id,
 	SordInserter*   inserter = sord_inserter_new(_model->c_obj(), env);
 
 	sratom_set_sink(_sratom, _base_uri.c_str(),
-	                (SerdStatementSink)sord_inserter_write_statement, NULL,
+	                (SerdStatementSink)sord_inserter_write_statement, nullptr,
 	                inserter);
 
 	sratom_set_pretty_numbers(_sratom, true);

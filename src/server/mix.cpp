@@ -71,18 +71,18 @@ mix(const RunContext&   context,
 	} else if (dst->is_sequence()) {
 		const LV2_Atom_Event* iters[num_srcs];
 		for (uint32_t i = 0; i < num_srcs; ++i) {
-			iters[i] = NULL;
+			iters[i] = nullptr;
 			if (srcs[i]->is_sequence()) {
 				const LV2_Atom_Sequence* seq = srcs[i]->get<const LV2_Atom_Sequence>();
 				iters[i] = lv2_atom_sequence_begin(&seq->body);
 				if (is_end(srcs[i], iters[i])) {
-					iters[i] = NULL;
+					iters[i] = nullptr;
 				}
 			}
 		}
 
 		while (true) {
-			const LV2_Atom_Event* first   = NULL;
+			const LV2_Atom_Event* first   = nullptr;
 			uint32_t              first_i = 0;
 			for (uint32_t i = 0; i < num_srcs; ++i) {
 				const LV2_Atom_Event* const ev = iters[i];
@@ -99,7 +99,7 @@ mix(const RunContext&   context,
 
 				iters[first_i] = lv2_atom_sequence_next(first);
 				if (is_end(srcs[first_i], iters[first_i])) {
-					iters[first_i] = NULL;
+					iters[first_i] = nullptr;
 				}
 			} else {
 				break;

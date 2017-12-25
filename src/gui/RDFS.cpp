@@ -33,7 +33,7 @@ label(World* world, const LilvNode* node)
 	LilvNode* rdfs_label = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDFS "label");
 	LilvNodes* labels = lilv_world_find_nodes(
-		world->lilv_world(), node, rdfs_label, NULL);
+		world->lilv_world(), node, rdfs_label, nullptr);
 
 	const LilvNode* first = lilv_nodes_get_first(labels);
 	std::string     label = first ? lilv_node_as_string(first) : "";
@@ -49,7 +49,7 @@ comment(World* world, const LilvNode* node)
 	LilvNode* rdfs_comment = lilv_new_uri(
 		world->lilv_world(), LILV_NS_RDFS "comment");
 	LilvNodes* comments = lilv_world_find_nodes(
-		world->lilv_world(), node, rdfs_comment, NULL);
+		world->lilv_world(), node, rdfs_comment, nullptr);
 
 	const LilvNode* first   = lilv_nodes_get_first(comments);
 	std::string     comment = first ? lilv_node_as_string(first) : "";
@@ -70,9 +70,9 @@ closure(World* world, const LilvNode* pred, URISet& types, bool super)
 			LilvNode*  type    = lilv_new_uri(world->lilv_world(), t.c_str());
 			LilvNodes* matches = (super)
 				? lilv_world_find_nodes(
-					world->lilv_world(), type, pred, NULL)
+					world->lilv_world(), type, pred, nullptr)
 				: lilv_world_find_nodes(
-					world->lilv_world(), NULL, pred, type);
+					world->lilv_world(), nullptr, pred, type);
 			LILV_FOREACH(nodes, m, matches) {
 				const LilvNode* klass_node = lilv_nodes_get(matches, m);
 				if (lilv_node_is_uri(klass_node)) {
@@ -156,12 +156,12 @@ properties(World* world, SPtr<const Client::ObjectModel> model)
 	                                     LILV_NS_RDFS "domain");
 
 	LilvNodes* props = lilv_world_find_nodes(
-		world->lilv_world(), NULL, rdf_type, rdf_Property);
+		world->lilv_world(), nullptr, rdf_type, rdf_Property);
 	LILV_FOREACH(nodes, p, props) {
 		const LilvNode* prop = lilv_nodes_get(props, p);
 		if (lilv_node_is_uri(prop)) {
 			LilvNodes* domains = lilv_world_find_nodes(
-				world->lilv_world(), prop, rdfs_domain, NULL);
+				world->lilv_world(), prop, rdfs_domain, nullptr);
 			unsigned n_matching_domains = 0;
 			LILV_FOREACH(nodes, d, domains) {
 				const LilvNode* domain_node = lilv_nodes_get(domains, d);
@@ -203,7 +203,7 @@ instances(World* world, const URISet& types)
 	for (const auto& t : types) {
 		LilvNode*  type    = lilv_new_uri(world->lilv_world(), t.c_str());
 		LilvNodes* objects = lilv_world_find_nodes(
-			world->lilv_world(), NULL, rdf_type, type);
+			world->lilv_world(), nullptr, rdf_type, type);
 		LILV_FOREACH(nodes, o, objects) {
 			const LilvNode* object = lilv_nodes_get(objects, o);
 			if (!lilv_node_is_uri(object)) {
@@ -228,7 +228,7 @@ range(World* world, const LilvNode* prop, bool recursive)
 		world->lilv_world(), LILV_NS_RDFS "range");
 
 	LilvNodes* nodes = lilv_world_find_nodes(
-		world->lilv_world(), prop, rdfs_range, NULL);
+		world->lilv_world(), prop, rdfs_range, nullptr);
 
 	URISet ranges;
 	LILV_FOREACH(nodes, n, nodes) {

@@ -80,10 +80,10 @@ public:
 	 */
 	bool notify(LV2_URID    key  = 0,
 	            FrameTime   time = 0,
-	            PortImpl*   port = 0,
+	            PortImpl*   port = nullptr,
 	            uint32_t    size = 0,
 	            LV2_URID    type = 0,
-	            const void* body = NULL);
+	            const void* body = nullptr);
 
 	/** Emit pending notifications in some other non-realtime thread. */
 	void emit_notifications(FrameTime end);

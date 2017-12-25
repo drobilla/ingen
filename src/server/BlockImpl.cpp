@@ -159,7 +159,7 @@ BlockImpl::nth_port_by_type(uint32_t n, bool input, PortType type)
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 PortImpl*
@@ -170,7 +170,7 @@ BlockImpl::port_by_symbol(const char* symbol)
 			return _ports->at(p);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void

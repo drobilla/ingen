@@ -45,7 +45,7 @@ namespace GUI {
 LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
                                  const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::FileChooserDialog(cobject)
-	, _app(NULL)
+	, _app(nullptr)
 	, _merge_ports(false)
 {
 	xml->get_widget("load_graph_symbol_label", _symbol_label);

@@ -41,8 +41,8 @@ Delete::Delete(Engine&           engine,
                const Ingen::Del& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-	, _engine_port(NULL)
-	, _disconnect_event(NULL)
+	, _engine_port(nullptr)
+	, _disconnect_event(nullptr)
 {
 	if (uri_is_path(msg.uri)) {
 		_path = uri_to_path(msg.uri);
@@ -142,7 +142,7 @@ Delete::execute(RunContext& context)
 		_engine.control_bindings()->remove(context, _removed_bindings);
 	}
 
-	GraphImpl* parent = _block ? _block->parent_graph() : NULL;
+	GraphImpl* parent = _block ? _block->parent_graph() : nullptr;
 	if (_port) {
 		// Adjust port indices if necessary
 		for (size_t i = 0; i < _ports_array->size(); ++i) {

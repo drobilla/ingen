@@ -60,7 +60,7 @@ class Store;
 static Glib::Module*
 ingen_load_module(Log& log, const string& name)
 {
-	Glib::Module* module = NULL;
+	Glib::Module* module = nullptr;
 
 	// Search INGEN_MODULE_PATH first
 	bool module_path_found;
@@ -89,11 +89,11 @@ ingen_load_module(Log& log, const string& name)
 	} else if (!module_path_found) {
 		log.error(fmt("Unable to find %1% (%2%)\n")
 		          % name % Glib::Module::get_last_error());
-		return NULL;
+		return nullptr;
 	} else {
 		log.error(fmt("Unable to load %1% from %2% (%3%)\n")
 		          % name % module_path % Glib::Module::get_last_error());
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -139,7 +139,7 @@ public:
 		LilvNode* ingen_Plugin = lilv_new_uri(
 			lilv_world, INGEN__Plugin);
 		LilvNodes* internals = lilv_world_find_nodes(
-			lilv_world, NULL, rdf_type, ingen_Plugin);
+			lilv_world, nullptr, rdf_type, ingen_Plugin);
 		LILV_FOREACH(nodes, i, internals) {
 			const LilvNode* internal = lilv_nodes_get(internals, i);
 			lilv_world_load_resource(lilv_world, internal);
@@ -280,7 +280,7 @@ World::load_module(const char* name)
 	}
 	log().info(fmt("Loading %1% module\n") % name);
 	Glib::Module* lib = ingen_load_module(log(), name);
-	Ingen::Module* (*module_load)() = NULL;
+	Ingen::Module* (*module_load)() = nullptr;
 	if (lib && lib->get_symbol("ingen_module_load", (void*&)module_load)) {
 		Module* module = module_load();
 		if (module) {

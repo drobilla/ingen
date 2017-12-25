@@ -67,8 +67,8 @@ URIEntry::build_value_menu()
 		if (lilv_world_ask(world->lilv_world(), inst, rdf_type, rdfs_Class) ||
 		    lilv_world_ask(world->lilv_world(), inst, rdf_type, rdfs_Datatype)) {
 			// This value is a class or datatype...
-			if (!lilv_world_ask(lworld, inst, rdfs_subClassOf, NULL) &&
-			    !lilv_world_ask(lworld, inst, owl_onDatatype, NULL)) {
+			if (!lilv_world_ask(lworld, inst, rdfs_subClassOf, nullptr) &&
+			    !lilv_world_ask(lworld, inst, owl_onDatatype, nullptr)) {
 				// ... which is not a subtype of another, add menu
 				add_class_menu_item(menu, inst, label);
 			}
@@ -102,12 +102,12 @@ URIEntry::build_subclass_menu(const LilvNode* klass)
 	LilvNode* rdfs_subClassOf = lilv_new_uri(lworld, LILV_NS_RDFS "subClassOf");
 
 	LilvNodes* subclasses = lilv_world_find_nodes(
-		lworld, NULL, rdfs_subClassOf, klass);
+		lworld, nullptr, rdfs_subClassOf, klass);
 	LilvNodes* subtypes = lilv_world_find_nodes(
-		lworld, NULL, owl_onDatatype, klass);
+		lworld, nullptr, owl_onDatatype, klass);
 
 	if (lilv_nodes_size(subclasses) == 0 && lilv_nodes_size(subtypes) == 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	Gtk::Menu* menu = new Gtk::Menu();

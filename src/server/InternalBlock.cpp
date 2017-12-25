@@ -39,7 +39,7 @@ InternalBlock::duplicate(Engine&             engine,
 	BufferFactory& bufs = *engine.buffer_factory();
 
 	BlockImpl* copy = reinterpret_cast<InternalPlugin*>(_plugin)->instantiate(
-		bufs, symbol, _polyphonic, parent_graph(), engine, NULL);
+		bufs, symbol, _polyphonic, parent_graph(), engine, nullptr);
 
 	for (size_t i = 0; i < num_ports(); ++i) {
 		const Atom& value = port_impl(i)->value();

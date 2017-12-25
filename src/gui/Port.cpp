@@ -163,7 +163,7 @@ Port::update_metadata()
 bool
 Port::show_menu(GdkEventButton* ev)
 {
-	PortMenu* menu = NULL;
+	PortMenu* menu = nullptr;
 	WidgetFactory::get_widget_derived("object_menu", menu);
 	if (!menu) {
 		_app.log().error("Failed to load port menu widget\n");
@@ -266,7 +266,7 @@ Port::build_uri_menu()
 	const Atom& designation_atom = model()->get_property(
 		_app.uris().lv2_designation);
 	if (!designation_atom.is_valid()) {
-		return NULL;
+		return nullptr;
 	}
 
 	LilvNode* designation = lilv_new_uri(
@@ -277,7 +277,7 @@ Port::build_uri_menu()
 	// Get every class in the range of the port's property
 	RDFS::URISet ranges;
 	LilvNodes* range = lilv_world_find_nodes(
-		world->lilv_world(), designation, rdfs_range, NULL);
+		world->lilv_world(), designation, rdfs_range, nullptr);
 	LILV_FOREACH(nodes, r, range) {
 		ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(range, r))));
 	}
@@ -305,7 +305,7 @@ Port::build_uri_menu()
 bool
 Port::on_event(GdkEvent* ev)
 {
-	GraphBox* box = NULL;
+	GraphBox* box = nullptr;
 	switch (ev->type) {
 	case GDK_ENTER_NOTIFY:
 		_entered = true;

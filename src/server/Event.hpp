@@ -107,7 +107,7 @@ public:
 protected:
 	Event(Engine& engine, SPtr<Interface> client, int32_t id, FrameTime time)
 		: _engine(engine)
-		, _next(NULL)
+		, _next(nullptr)
 		, _request_client(client)
 		, _request_id(id)
 		, _time(time)
@@ -118,7 +118,7 @@ protected:
 	/** Constructor for internal events only */
 	explicit Event(Engine& engine)
 		: _engine(engine)
-		, _next(NULL)
+		, _next(nullptr)
 		, _request_id(0)
 		, _time(0)
 		, _status(Status::NOT_PREPARED)

@@ -43,8 +43,8 @@ Disconnect::Disconnect(Engine&                  engine,
                        const Ingen::Disconnect& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-	, _graph(NULL)
-	, _impl(NULL)
+	, _graph(nullptr)
+	, _impl(nullptr)
 {
 }
 
@@ -150,7 +150,7 @@ Disconnect::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::NOT_FOUND, _msg.head);
 	}
 
-	if (tail_block == NULL || head_block == NULL) {
+	if (tail_block == nullptr || head_block == nullptr) {
 		return Event::pre_process_done(Status::PARENT_NOT_FOUND, _msg.head);
 	}
 

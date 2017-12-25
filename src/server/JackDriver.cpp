@@ -57,7 +57,7 @@ JackDriver::JackDriver(Engine& engine)
 	: _engine(engine)
 	, _sem(0)
 	, _flag(false)
-	, _client(NULL)
+	, _client(nullptr)
 	, _block_length(0)
 	, _seq_size(0)
 	, _sample_rate(0)
@@ -88,7 +88,7 @@ JackDriver::attach(const std::string& server_name,
 		const std::string uuid = _engine.world()->jack_uuid();
 		if (!uuid.empty()) {
 			_client = jack_client_open(client_name.c_str(),
-			                           JackSessionID, NULL,
+			                           JackSessionID, nullptr,
 			                           uuid.c_str());
 			_engine.log().info(fmt("Connected to Jack as `%1%' (UUID `%2%')\n")
 			                   % client_name.c_str() % uuid);
@@ -98,7 +98,7 @@ JackDriver::attach(const std::string& server_name,
 		// Try supplied server name
 		if (!_client && !server_name.empty()) {
 			if ((_client = jack_client_open(client_name.c_str(),
-			                                JackServerName, NULL,
+			                                JackServerName, nullptr,
 			                                server_name.c_str()))) {
 				_engine.log().info(fmt("Connected to Jack server `%1%'\n")
 				                   % server_name);
@@ -108,7 +108,7 @@ JackDriver::attach(const std::string& server_name,
 		// Either server name not specified, or supplied server name does not exist
 		// Connect to default server
 		if (!_client) {
-			if ((_client = jack_client_open(client_name.c_str(), JackNullOption, NULL)))
+			if ((_client = jack_client_open(client_name.c_str(), JackNullOption, nullptr)))
 				_engine.log().info("Connected to default Jack server\n");
 		}
 
@@ -152,7 +152,7 @@ JackDriver::activate()
 
 	if (!_client)
 		attach(world->conf().option("jack-server").ptr<char>(),
-		       world->conf().option("jack-name").ptr<char>(), NULL);
+		       world->conf().option("jack-name").ptr<char>(), nullptr);
 
 	if (!_client) {
 		return false;
@@ -187,7 +187,7 @@ JackDriver::deactivate()
 		if (_client) {
 			jack_deactivate(_client);
 			jack_client_close(_client);
-			_client = NULL;
+			_client = nullptr;
 		}
 
 		_engine.log().info("Deactivated Jack client\n");
@@ -203,7 +203,7 @@ JackDriver::get_port(const Raul::Path& path)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void
@@ -257,7 +257,7 @@ JackDriver::unregister_port(EnginePort& port)
 		_engine.log().error("Failed to unregister Jack port\n");
 	}
 
-	port.set_handle(NULL);
+	port.set_handle(nullptr);
 }
 
 void
@@ -315,7 +315,7 @@ JackDriver::port_property_internal(const jack_port_t* jport,
 EnginePort*
 JackDriver::create_port(DuplexPort* graph_port)
 {
-	EnginePort* eport = NULL;
+	EnginePort* eport = nullptr;
 	if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
 		// Audio buffer port, use Jack buffer directly
 		eport = new EnginePort(graph_port);
@@ -402,7 +402,7 @@ JackDriver::post_process_port(RunContext& context, EnginePort* port)
 
 	// Reset graph port buffer pointer to no longer point to the Jack buffer
 	if (graph_port->is_driver_port()) {
-		graph_port->set_driver_buffer(NULL, 0);
+		graph_port->set_driver_buffer(nullptr, 0);
 	}
 }
 
@@ -512,7 +512,7 @@ JackDriver::_shutdown_cb()
 {
 	_engine.log().info("Jack shutdown, exiting\n");
 	_is_activated = false;
-	_client = NULL;
+	_client = nullptr;
 }
 
 int

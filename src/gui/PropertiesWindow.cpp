@@ -178,7 +178,7 @@ PropertiesWindow::class_supported(const RDFS::URISet& types)
 	for (const auto& t : types) {
 		LilvNode*   range     = lilv_new_uri(world->lilv_world(), t.c_str());
 		LilvNodes*  instances = lilv_world_find_nodes(
-			world->lilv_world(), NULL, rdf_type, range);
+			world->lilv_world(), nullptr, rdf_type, range);
 
 		const bool has_instance = (lilv_nodes_size(instances) > 0);
 
@@ -270,7 +270,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& key,
                                       const Atom&      value)
 {
 	if (!type_uri || !Raul::URI::is_valid(type_uri)) {
-		return NULL;
+		return nullptr;
 	}
 
 	Raul::URI     type(type_uri);
@@ -362,7 +362,7 @@ PropertiesWindow::create_value_widget(const Raul::URI& key,
 
 	_app->log().error(fmt("No widget for value type %1%\n") % type);
 
-	return NULL;
+	return nullptr;
 }
 
 void

@@ -90,7 +90,7 @@ public:
 	/** Duplicate this Node. */
 	virtual BlockImpl* duplicate(Engine&             engine,
 	                             const Raul::Symbol& symbol,
-	                             GraphImpl*          parent) { return NULL; }
+	                             GraphImpl*          parent) { return nullptr; }
 
 	/** Return true iff this block is activated */
 	bool activated() const { return _activated; }
@@ -102,7 +102,7 @@ public:
 	void set_enabled(bool e) { _enabled = e; }
 
 	/** Load a preset from the world for this block. */
-	virtual LilvState* load_preset(const Raul::URI& uri) { return NULL; }
+	virtual LilvState* load_preset(const Raul::URI& uri) { return nullptr; }
 
 	/** Restore `state`. */
 	virtual void apply_state(Worker* worker, const LilvState* state) {}

@@ -50,19 +50,19 @@ ConnectWindow::ConnectWindow(BaseObjectType*                   cobject,
                              const Glib::RefPtr<Gtk::Builder>& xml)
 	: Dialog(cobject)
 	, _xml(xml)
-	, _icon(NULL)
-	, _progress_bar(NULL)
-	, _progress_label(NULL)
-	, _url_entry(NULL)
-	, _server_radio(NULL)
-	, _port_spinbutton(NULL)
-	, _launch_radio(NULL)
-	, _internal_radio(NULL)
-	, _activate_button(NULL)
-	, _deactivate_button(NULL)
-	, _disconnect_button(NULL)
-	, _connect_button(NULL)
-	, _quit_button(NULL)
+	, _icon(nullptr)
+	, _progress_bar(nullptr)
+	, _progress_label(nullptr)
+	, _url_entry(nullptr)
+	, _server_radio(nullptr)
+	, _port_spinbutton(nullptr)
+	, _launch_radio(nullptr)
+	, _internal_radio(nullptr)
+	, _activate_button(nullptr)
+	, _deactivate_button(nullptr)
+	, _disconnect_button(nullptr)
+	, _connect_button(nullptr)
+	, _quit_button(nullptr)
 	, _mode(Mode::CONNECT_REMOTE)
 	, _connect_uri("unix:///tmp/ingen.sock")
 	, _ping_id(-1)
@@ -248,7 +248,7 @@ ConnectWindow::connect(bool existing)
 
 	} else if (_mode == Mode::LAUNCH_REMOTE) {
 		const std::string port  = std::to_string(_port_spinbutton->get_value_as_int());
-		const char*       cmd[] = { "ingen", "-e", "-E", port.c_str(), NULL };
+		const char*       cmd[] = { "ingen", "-e", "-E", port.c_str(), nullptr };
 
 		if (!Raul::Process::launch(cmd)) {
 			error("Failed to launch engine process");
@@ -456,7 +456,7 @@ ConnectWindow::gtk_callback()
 
 	// Timing stuff for repeated attach attempts
 	timeval now;
-	gettimeofday(&now, NULL);
+	gettimeofday(&now, nullptr);
 	static const timeval start    = now;
 	static timeval       last     = now;
 	static unsigned      attempts = 0;

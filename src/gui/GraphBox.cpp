@@ -63,9 +63,9 @@ static const int STATUS_CONTEXT_HOVER  = 2;
 GraphBox::GraphBox(BaseObjectType*                   cobject,
                    const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::VBox(cobject)
-	, _app(NULL)
-	, _window(NULL)
-	, _breadcrumbs(NULL)
+	, _app(nullptr)
+	, _window(nullptr)
+	, _breadcrumbs(nullptr)
 	, _has_shown_documentation(false)
 	, _enable_signal(true)
 {
@@ -197,7 +197,7 @@ GraphBox::~GraphBox()
 SPtr<GraphBox>
 GraphBox::create(App& app, SPtr<const GraphModel> graph)
 {
-	GraphBox* result = NULL;
+	GraphBox* result = nullptr;
 	Glib::RefPtr<Gtk::Builder> xml = WidgetFactory::create("graph_win");
 	xml->get_widget_derived("graph_win_vbox", result);
 	result->init_box(app);
@@ -413,8 +413,8 @@ GraphBox::show_status(const ObjectModel* model)
 	std::stringstream msg;
 	msg << model->path();
 
-	const PortModel*  port = 0;
-	const BlockModel* block = 0;
+	const PortModel*  port = nullptr;
+	const BlockModel* block = nullptr;
 
 	if ((port = dynamic_cast<const PortModel*>(model))) {
 		show_port_status(port, port->value());

@@ -35,8 +35,8 @@ SocketReader::SocketReader(Ingen::World&      world,
                            SPtr<Raul::Socket> sock)
 	: _world(world)
 	, _iface(iface)
-	, _inserter(NULL)
-	, _msg_node(NULL)
+	, _inserter(nullptr)
+	, _msg_node(nullptr)
 	, _socket(sock)
 	, _exit_flag(false)
 	, _thread(&SocketReader::run, this)
@@ -76,7 +76,7 @@ SocketReader::write_statement(SocketReader*      iface,
 {
 	if (!iface->_msg_node) {
 		iface->_msg_node = sord_node_from_serd_node(
-			iface->_world.rdf_world()->c_obj(), iface->_env, subject, 0, 0);
+			iface->_world.rdf_world()->c_obj(), iface->_env, subject, nullptr, nullptr);
 	}
 
 	return sord_inserter_write_statement(
@@ -108,8 +108,8 @@ SocketReader::run()
 
 	AtomForgeSink buffer(&forge);
 
-	SordNode*  base_uri = NULL;
-	SordModel* model    = NULL;
+	SordNode*  base_uri = nullptr;
+	SordModel* model    = nullptr;
 	{
 		// Lock RDF world
 		std::lock_guard<std::mutex> lock(_world.rdf_mutex());
@@ -126,11 +126,11 @@ SocketReader::run()
 	}
 
 	SerdReader* reader = serd_reader_new(
-		SERD_TURTLE, this, NULL,
+		SERD_TURTLE, this, nullptr,
 		(SerdBaseSink)set_base_uri,
 		(SerdPrefixSink)set_prefix,
 		(SerdStatementSink)write_statement,
-		NULL);
+		nullptr);
 
 	serd_env_set_base_uri(_env, sord_node_to_serd_node(base_uri));
 	serd_reader_start_stream(reader, f, (const uint8_t*)"(socket)", false);
@@ -179,7 +179,7 @@ SocketReader::run()
 		// Reset everything for the next iteration
 		buffer.clear();
 		sord_node_free(world->c_obj(), _msg_node);
-		_msg_node = NULL;
+		_msg_node = nullptr;
 	}
 
 	// Lock RDF world

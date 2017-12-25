@@ -28,7 +28,7 @@ using namespace std;
 namespace Ingen {
 namespace Client {
 
-SuilHost* PluginUI::ui_host = NULL;
+SuilHost* PluginUI::ui_host = nullptr;
 
 static SPtr<const PortModel>
 get_port(PluginUI* ui, uint32_t port_index)
@@ -154,7 +154,7 @@ PluginUI::PluginUI(Ingen::World*          world,
                    const LilvNode*        ui_type)
 	: _world(world)
 	, _block(block)
-	, _instance(NULL)
+	, _instance(nullptr)
 	, _uis(uis)
 	, _ui(ui)
 	, _ui_node(lilv_node_duplicate(lilv_ui_get_uri(ui)))
@@ -165,7 +165,7 @@ PluginUI::PluginUI(Ingen::World*          world,
 PluginUI::~PluginUI()
 {
 	for (uint32_t i : _subscribed_ports) {
-		lv2_ui_unsubscribe(this, i, 0, NULL);
+		lv2_ui_unsubscribe(this, i, 0, nullptr);
 	}
 	suil_instance_free(_instance);
 	lilv_node_free(_ui_node);
@@ -191,8 +191,8 @@ PluginUI::create(Ingen::World*          world,
 	LilvNode* gtk_ui = lilv_new_uri(world->lilv_world(), gtk_ui_uri);
 
 	LilvUIs*        uis     = lilv_plugin_get_uis(plugin);
-	const LilvUI*   ui      = NULL;
-	const LilvNode* ui_type = NULL;
+	const LilvUI*   ui      = nullptr;
+	const LilvNode* ui_type = nullptr;
 	LILV_FOREACH(uis, u, uis) {
 		const LilvUI* this_ui = lilv_uis_get(uis, u);
 		if (lilv_ui_is_supported(this_ui,
@@ -234,11 +234,11 @@ PluginUI::instantiate()
 	LilvNode*  ui_portNotification = lilv_new_uri(lworld, LV2_UI__portNotification);
 	LilvNode*  ui_plugin           = lilv_new_uri(lworld, LV2_UI__plugin);
 	LilvNodes* notes               = lilv_world_find_nodes(
-		lworld, lilv_ui_get_uri(_ui), ui_portNotification, NULL);
+		lworld, lilv_ui_get_uri(_ui), ui_portNotification, nullptr);
 	LILV_FOREACH(nodes, n, notes) {
 		const LilvNode* note = lilv_nodes_get(notes, n);
-		const LilvNode* sym  = lilv_world_get(lworld, note, uris.lv2_symbol, NULL);
-		const LilvNode* plug = lilv_world_get(lworld, note, ui_plugin, NULL);
+		const LilvNode* sym  = lilv_world_get(lworld, note, uris.lv2_symbol, nullptr);
+		const LilvNode* plug = lilv_world_get(lworld, note, ui_plugin, nullptr);
 		if (!plug) {
 			_world->log().error(fmt("%1% UI %2% notification missing plugin\n")
 			                    % plugin_uri % lilv_node_as_string(_ui_node));
@@ -252,7 +252,7 @@ PluginUI::instantiate()
 			// Notification is valid and for this plugin
 			uint32_t index = lv2_ui_port_index(this, lilv_node_as_string(sym));
 			if (index != LV2UI_INVALID_PORT_INDEX) {
-				lv2_ui_subscribe(this, index, 0, NULL);
+				lv2_ui_subscribe(this, index, 0, nullptr);
 				_subscribed_ports.insert(index);
 			}
 		}
@@ -263,8 +263,8 @@ PluginUI::instantiate()
 
 	const char* bundle_uri  = lilv_node_as_uri(lilv_ui_get_bundle_uri(_ui));
 	const char* binary_uri  = lilv_node_as_uri(lilv_ui_get_binary_uri(_ui));
-	char*       bundle_path = lilv_file_uri_parse(bundle_uri, NULL);
-	char*       binary_path = lilv_file_uri_parse(binary_uri, NULL);
+	char*       bundle_path = lilv_file_uri_parse(bundle_uri, nullptr);
+	char*       binary_path = lilv_file_uri_parse(binary_uri, nullptr);
 
 	// Instantiate the actual plugin UI via Suil
 	_instance = suil_instance_new(
@@ -285,7 +285,7 @@ PluginUI::instantiate()
 		_world->log().error("Failed to instantiate LV2 UI\n");
 		// Cancel any subscriptions
 		for (uint32_t i : _subscribed_ports) {
-			lv2_ui_unsubscribe(this, i, 0, NULL);
+			lv2_ui_unsubscribe(this, i, 0, nullptr);
 		}
 		return false;
 	}

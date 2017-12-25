@@ -57,7 +57,7 @@ public:
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	virtual void add_port(RunContext& context, EnginePort* port) {

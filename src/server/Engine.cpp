@@ -72,7 +72,7 @@ Engine::Engine(Ingen::World* world)
 	, _block_factory(new BlockFactory(world))
 	, _broadcaster(new Broadcaster())
 	, _buffer_factory(new BufferFactory(*this, world->uris()))
-	, _control_bindings(NULL)
+	, _control_bindings(nullptr)
 	, _event_writer(new EventWriter(*this))
 	, _interface(_event_writer)
 	, _atom_interface(nullptr)
@@ -81,10 +81,10 @@ Engine::Engine(Ingen::World* world)
 	, _redo_stack(new UndoStack(_world->uris(), _world->uri_map()))
 	, _pre_processor(new PreProcessor(*this))
 	, _post_processor(new PostProcessor(*this))
-	, _root_graph(NULL)
+	, _root_graph(nullptr)
 	, _worker(new Worker(world->log(), event_queue_size()))
 	, _sync_worker(new Worker(world->log(), event_queue_size(), true))
-	, _listener(NULL)
+	, _listener(nullptr)
 	, _cycle_start_time(0)
 	, _rand_engine(0)
 	, _uniform_dist(0.0f, 1.0f)
@@ -137,7 +137,7 @@ Engine::Engine(Ingen::World* world)
 
 Engine::~Engine()
 {
-	_root_graph = NULL;
+	_root_graph = nullptr;
 	deactivate();
 
 	// Process all pending events
@@ -289,7 +289,7 @@ Engine::steal_task(unsigned start_thread)
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 SPtr<Store>

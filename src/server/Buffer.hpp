@@ -45,7 +45,7 @@ public:
 	       LV2_URID       value_type,
 	       uint32_t       capacity,
 	       bool           external = false,
-	       void*          buf = NULL);
+	       void*          buf = nullptr);
 
 	void clear();
 	void resize(uint32_t capacity);
@@ -91,7 +91,7 @@ public:
 		} else if (is_audio()) {
 			return (const Sample*)_buf;
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	/// Audio buffers only
@@ -101,7 +101,7 @@ public:
 		} else if (is_audio()) {
 			return (Sample*)_buf;
 		}
-		return NULL;
+		return nullptr;
 	}
 
 	/// Numeric buffers only

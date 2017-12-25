@@ -39,8 +39,8 @@ Get::Get(Engine&           engine,
          const Ingen::Get& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-	, _object(NULL)
-	, _plugin(NULL)
+	, _object(nullptr)
+	, _plugin(nullptr)
 {}
 
 bool
@@ -56,9 +56,9 @@ Get::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::SUCCESS);
 	} else if (uri_is_path(uri)) {
 		if ((_object = _engine.store()->get(uri_to_path(uri)))) {
-			const BlockImpl* block = NULL;
-			const GraphImpl* graph = NULL;
-			const PortImpl*  port  = NULL;
+			const BlockImpl* block = nullptr;
+			const GraphImpl* graph = nullptr;
+			const PortImpl*  port  = nullptr;
 			if ((graph = dynamic_cast<const GraphImpl*>(_object))) {
 				_response.put_graph(graph);
 			} else if ((block = dynamic_cast<const BlockImpl*>(_object))) {

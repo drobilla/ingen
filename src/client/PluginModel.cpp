@@ -35,10 +35,10 @@ using namespace std;
 namespace Ingen {
 namespace Client {
 
-LilvWorld*         PluginModel::_lilv_world   = NULL;
-const LilvPlugins* PluginModel::_lilv_plugins = NULL;
+LilvWorld*         PluginModel::_lilv_world   = nullptr;
+const LilvPlugins* PluginModel::_lilv_plugins = nullptr;
 
-Sord::World* PluginModel::_rdf_world = NULL;
+Sord::World* PluginModel::_rdf_world = nullptr;
 
 PluginModel::PluginModel(URIs&             uris,
                          const Raul::URI&  uri,
@@ -279,11 +279,11 @@ PluginModel::get_documentation(const LilvNode* subject, bool html) const
 	                                      LILV_NS_RDFS "comment");
 
 	LilvNodes* vals = lilv_world_find_nodes(
-		_lilv_world, subject, lv2_documentation, NULL);
+		_lilv_world, subject, lv2_documentation, nullptr);
 	const bool doc_is_html = vals;
 	if (!vals) {
 		vals = lilv_world_find_nodes(
-			_lilv_world, subject, rdfs_comment, NULL);
+			_lilv_world, subject, rdfs_comment, nullptr);
 	}
 
 	if (vals) {

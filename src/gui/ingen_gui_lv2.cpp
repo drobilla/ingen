@@ -60,10 +60,10 @@ struct IngenLV2AtomSink : public AtomSink {
 struct IngenLV2UI {
 	IngenLV2UI()
 		: argc(0)
-		, argv(NULL)
-		, forge(NULL)
-		, world(NULL)
-		, sink(NULL)
+		, argv(nullptr)
+		, forge(nullptr)
+		, world(nullptr)
+		, sink(nullptr)
 	{}
 
 	int                              argc;
@@ -97,9 +97,9 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	Ingen::IngenLV2UI* ui = new Ingen::IngenLV2UI();
 
-	LV2_URID_Map*   map   = NULL;
-	LV2_URID_Unmap* unmap = NULL;
-	LV2_Log_Log*    log   = NULL;
+	LV2_URID_Map*   map   = nullptr;
+	LV2_URID_Unmap* unmap = nullptr;
+	LV2_Log_Log*    log   = nullptr;
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_URID__map)) {
 			map = (LV2_URID_Map*)features[i]->data;
@@ -117,7 +117,7 @@ instantiate(const LV2UI_Descriptor*   descriptor,
 
 	if (!ui->world->load_module("client")) {
 		delete ui;
-		return NULL;
+		return nullptr;
 	}
 
 	ui->sink = new Ingen::IngenLV2AtomSink(
@@ -185,7 +185,7 @@ port_event(LV2UI_Handle handle,
 static const void*
 extension_data(const char* uri)
 {
-	return NULL;
+	return nullptr;
 }
 
 static const LV2UI_Descriptor descriptor = {
@@ -204,6 +204,6 @@ lv2ui_descriptor(uint32_t index)
 	case 0:
 		return &descriptor;
 	default:
-		return NULL;
+		return nullptr;
 	}
 }

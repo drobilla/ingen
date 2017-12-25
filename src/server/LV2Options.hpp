@@ -48,7 +48,7 @@ public:
 			  sizeof(int32_t), _uris.atom_Int, &_seq_size },
 			{ LV2_OPTIONS_INSTANCE, 0, _uris.param_sampleRate,
 			  sizeof(int32_t), _uris.atom_Int, &_sample_rate },
-			{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, NULL }
+			{ LV2_OPTIONS_INSTANCE, 0, 0, 0, 0, nullptr }
 		};
 
 		LV2_Feature* f = (LV2_Feature*)malloc(sizeof(LV2_Feature));

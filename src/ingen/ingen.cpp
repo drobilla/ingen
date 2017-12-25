@@ -90,7 +90,7 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = unique_ptr<Ingen::World>(new Ingen::World(NULL, NULL, NULL));
+		world = unique_ptr<Ingen::World>(new Ingen::World(nullptr, NULL, NULL));
 		world->load_configuration(argc, argv);
 		if (argc <= 1) {
 			world->conf().print_usage("ingen", cout);
@@ -201,7 +201,7 @@ main(int argc, char** argv)
 			engine_interface->copy(Raul::URI(path), main_uri());
 		} else {
 			SerdNode uri = serd_node_new_file_uri(
-				(const uint8_t*)path, NULL, NULL, true);
+				(const uint8_t*)path, nullptr, nullptr, true);
 			std::cout << "Loading " << (const char*)uri.buf
 			          << " (server side)" << std::endl;
 			engine_interface->copy(Raul::URI((const char*)uri.buf),
@@ -218,7 +218,7 @@ main(int argc, char** argv)
 			engine_interface->copy(main_uri(), Raul::URI(path));
 		} else {
 			SerdNode uri = serd_node_new_file_uri(
-				(const uint8_t*)path, NULL, NULL, true);
+				(const uint8_t*)path, nullptr, nullptr, true);
 			std::cout << "Saving to " << (const char*)uri.buf << std::endl;
 			engine_interface->copy(main_uri(),
 			                       Raul::URI((const char*)uri.buf));

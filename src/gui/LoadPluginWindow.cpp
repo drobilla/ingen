@@ -240,7 +240,7 @@ get_project_name(SPtr<const PluginModel> plugin)
 		LilvNode* doap_name = lilv_new_uri(
 			plugin->lilv_world(), "http://usefulinc.com/ns/doap#name");
 		LilvNodes* names = lilv_world_find_nodes(
-			plugin->lilv_world(), project, doap_name, NULL);
+			plugin->lilv_world(), project, doap_name, nullptr);
 
 		if (names) {
 			name = lilv_node_as_string(lilv_nodes_get_first(names));

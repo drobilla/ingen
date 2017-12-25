@@ -125,17 +125,17 @@ PortAudioDriver::activate()
 	// Configure audio format
 	_inputParameters.sampleFormat               = paFloat32|paNonInterleaved;
 	_inputParameters.suggestedLatency           = in_dev->defaultLowInputLatency;
-	_inputParameters.hostApiSpecificStreamInfo  = NULL;
+	_inputParameters.hostApiSpecificStreamInfo  = nullptr;
 	_outputParameters.sampleFormat              = paFloat32|paNonInterleaved;
 	_outputParameters.suggestedLatency          = out_dev->defaultLowOutputLatency;
-	_outputParameters.hostApiSpecificStreamInfo = NULL;
+	_outputParameters.hostApiSpecificStreamInfo = nullptr;
 
 	// Open stream
 	PaError st = paNoError;
 	if ((st = Pa_OpenStream(
 		     &_stream,
-		     _inputParameters.channelCount ? &_inputParameters : NULL,
-		     _outputParameters.channelCount ? &_outputParameters : NULL,
+		     _inputParameters.channelCount ? &_inputParameters : nullptr,
+		     _outputParameters.channelCount ? &_outputParameters : nullptr,
 		     in_dev->defaultSampleRate,
 		     _block_length, // paFramesPerBufferUnspecified, // FIXME: ?
 		     0,
@@ -173,7 +173,7 @@ PortAudioDriver::get_port(const Raul::Path& path)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 void
@@ -214,7 +214,7 @@ PortAudioDriver::port_property(const Raul::Path& path,
 EnginePort*
 PortAudioDriver::create_port(DuplexPort* graph_port)
 {
-	EnginePort* eport = NULL;
+	EnginePort* eport = nullptr;
 	if (graph_port->is_a(PortType::AUDIO) || graph_port->is_a(PortType::CV)) {
 		// Audio buffer port, use Jack buffer directly
 		eport = new EnginePort(graph_port);

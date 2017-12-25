@@ -38,8 +38,8 @@ class EnginePort : public Raul::Noncopyable
 public:
 	explicit EnginePort(DuplexPort* port)
 		: _graph_port(port)
-		, _buffer(NULL)
-		, _handle(NULL)
+		, _buffer(nullptr)
+		, _handle(nullptr)
 		, _driver_index(0)
 	{}
 

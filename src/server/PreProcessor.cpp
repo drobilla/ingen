@@ -37,8 +37,8 @@ namespace Server {
 PreProcessor::PreProcessor(Engine& engine)
 	: _engine(engine)
 	, _sem(0)
-	, _head(NULL)
-	, _tail(NULL)
+	, _head(nullptr)
+	, _tail(nullptr)
 	, _block_state(BlockState::UNBLOCKED)
 	, _exit_flag(false)
 	, _thread(&PreProcessor::run, this)
@@ -151,7 +151,7 @@ PreProcessor::process(RunContext& context, PostProcessor& dest, size_t limit)
 #endif
 
 		Event* next = (Event*)last->next();
-		last->next(NULL);
+		last->next(nullptr);
 		dest.append(context, head, last);
 
 		// Since _head was not NULL, we know it hasn't been changed since
@@ -179,7 +179,7 @@ PreProcessor::run()
 
 	ThreadManager::set_flag(THREAD_PRE_PROCESS);
 
-	Event* back = NULL;
+	Event* back = nullptr;
 	while (!_exit_flag) {
 		if (!_sem.timed_wait(std::chrono::seconds(1))) {
 			continue;

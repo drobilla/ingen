@@ -29,7 +29,7 @@ namespace GUI {
 GraphWindow::GraphWindow(BaseObjectType*                   cobject,
                          const Glib::RefPtr<Gtk::Builder>& xml)
 	: Window(cobject)
-	, _box(NULL)
+	, _box(nullptr)
 	, _position_stored(false)
 	, _x(0)
 	, _y(0)

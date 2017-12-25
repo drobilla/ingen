@@ -42,7 +42,7 @@ struct IngenJackModule : public Ingen::Module {
 		const std::string server_name = s.is_valid() ? s.ptr<char>() : "";
 		driver->attach(server_name,
 		               world->conf().option("jack-name").ptr<char>(),
-		               NULL);
+		               nullptr);
 		((Server::Engine*)world->engine().get())->set_driver(
 			SPtr<Server::Driver>(driver));
 	}

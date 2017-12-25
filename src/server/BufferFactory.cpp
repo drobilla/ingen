@@ -25,14 +25,14 @@ namespace Ingen {
 namespace Server {
 
 BufferFactory::BufferFactory(Engine& engine, URIs& uris)
-	: _free_audio(NULL)
-	, _free_control(NULL)
-	, _free_sequence(NULL)
-	, _free_object(NULL)
+	: _free_audio(nullptr)
+	, _free_control(nullptr)
+	, _free_sequence(nullptr)
+	, _free_object(nullptr)
 	, _engine(engine)
 	, _uris(uris)
 	, _seq_size(0)
-	, _silent_buffer(NULL)
+	, _silent_buffer(nullptr)
 {
 }
 
@@ -109,7 +109,7 @@ Buffer*
 BufferFactory::try_get_buffer(LV2_URID type)
 {
 	std::atomic<Buffer*>& head_ptr = free_list(type);
-	Buffer*               head     = NULL;
+	Buffer*               head     = nullptr;
 	Buffer*               next;
 	do {
 		head = head_ptr.load();
@@ -132,7 +132,7 @@ BufferFactory::get_buffer(LV2_URID type,
 		return create(type, value_type, capacity);
 	}
 
-	try_head->_next = NULL;
+	try_head->_next = nullptr;
 	try_head->set_type(&BufferFactory::get_buffer, type, value_type);
 	try_head->clear();
 	return BufferRef(try_head);
@@ -149,7 +149,7 @@ BufferFactory::claim_buffer(LV2_URID type,
 		return BufferRef();
 	}
 
-	try_head->_next = NULL;
+	try_head->_next = nullptr;
 	try_head->set_type(&BufferFactory::claim_buffer, type, value_type);
 	return BufferRef(try_head);
 }

@@ -56,7 +56,7 @@
 using namespace std;
 using namespace Ingen;
 
-World* world = NULL;
+World* world = nullptr;
 
 static void
 ingen_try(bool cond, const char* msg)
@@ -76,7 +76,7 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = new World(NULL, NULL, NULL);
+		world = new World(nullptr, nullptr, nullptr);
 		world->load_configuration(argc, argv);
 	} catch (std::exception& e) {
 		cout << "ingen: " << e.what() << endl;
@@ -93,7 +93,7 @@ main(int argc, char** argv)
 
 	// Get start graph and commands file options
 	const char* load_path        = (const char*)load.get_body();
-	char*       real_start_graph = realpath(load_path, NULL);
+	char*       real_start_graph = realpath(load_path, nullptr);
 	if (!real_start_graph) {
 		cerr << "error: initial graph '" << load_path << "' does not exist" << endl;
 		return EXIT_FAILURE;
@@ -147,7 +147,7 @@ main(int argc, char** argv)
 	SerdURI cmds_base;
 	SerdNode cmds_file_uri = serd_node_new_file_uri(
 		(const uint8_t*)cmds_file_path.c_str(),
-		NULL, &cmds_base, true);
+		nullptr, &cmds_base, true);
 	Sord::Model* cmds = new Sord::Model(*world->rdf_world(),
 	                                    (const char*)cmds_file_uri.buf);
 	SerdEnv* env = serd_env_new(&cmds_file_uri);

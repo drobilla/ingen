@@ -46,9 +46,9 @@ CreatePort::CreatePort(Engine&           engine,
 	, _path(path)
 	, _port_type(PortType::UNKNOWN)
 	, _buf_type(0)
-	, _graph(NULL)
-	, _graph_port(NULL)
-	, _engine_port(NULL)
+	, _graph(nullptr)
+	, _graph_port(nullptr)
+	, _engine_port(nullptr)
 	, _properties(properties)
 {
 	const Ingen::URIs& uris = _engine.world()->uris();

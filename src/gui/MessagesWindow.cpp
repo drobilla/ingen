@@ -86,7 +86,7 @@ MessagesWindow::log(LV2_URID type, const char* fmt, va_list args)
 	std::lock_guard<std::mutex> lock(_mutex);
 
 #ifdef HAVE_VASPRINTF
-	char*     buf = NULL;
+	char*     buf = nullptr;
 	const int len = vasprintf(&buf, fmt, args);
 #else
 	char*     buf = g_strdup_vprintf(fmt, args);

@@ -37,7 +37,7 @@ namespace Server {
 
 ControlBindings::ControlBindings(Engine& engine)
 	: _engine(engine)
-	, _learn_binding(NULL)
+	, _learn_binding(nullptr)
 	, _bindings(new Bindings())
 	, _feedback(new Buffer(*_engine.buffer_factory(),
 	                       engine.world()->uris().atom_Sequence,
@@ -68,7 +68,7 @@ ControlBindings::binding_key(const Atom& binding) const
 {
 	const Ingen::URIs& uris = _engine.world()->uris();
 	Key       key;
-	LV2_Atom* num = NULL;
+	LV2_Atom* num = nullptr;
 	if (binding.type() == uris.atom_Object) {
 		const LV2_Atom_Object_Body* obj = (const LV2_Atom_Object_Body*)
 			binding.get_body();
@@ -340,7 +340,7 @@ bool
 ControlBindings::finish_learn(RunContext& context, Key key)
 {
 	const Ingen::URIs& uris    = context.engine().world()->uris();
-	Binding*           binding = _learn_binding.exchange(NULL);
+	Binding*           binding = _learn_binding.exchange(nullptr);
 	if (!binding || (key.type == Type::MIDI_NOTE && !binding->port->is_toggled())) {
 		return false;
 	}
@@ -404,7 +404,7 @@ ControlBindings::pre_process(RunContext& ctx, Buffer* buffer)
 			}
 
 			// Set all controls bound to this key
-			const Binding k = {key, NULL};
+			const Binding k = {key, nullptr};
 			for (Bindings::const_iterator i = _bindings->lower_bound(k);
 			     i != _bindings->end() && i->key == key;
 			     ++i) {

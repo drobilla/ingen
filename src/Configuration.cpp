@@ -137,7 +137,7 @@ Configuration::set_value_from_string(Configuration::Option& option,
 		throw (Configuration::OptionError)
 {
 	if (option.type == _forge.Int) {
-		char* endptr = NULL;
+		char* endptr = nullptr;
 		int   intval = static_cast<int>(strtol(value.c_str(), &endptr, 10));
 		if (endptr && *endptr == '\0') {
 			option.value = _forge.make(intval);
@@ -233,7 +233,7 @@ Configuration::load(const std::string& path)
 	}
 
 	SerdNode node = serd_node_new_file_uri(
-		(const uint8_t*)path.c_str(), NULL, NULL, true);
+		(const uint8_t*)path.c_str(), nullptr, nullptr, true);
 	const std::string uri((const char*)node.buf);
 
 	Sord::World world;
@@ -292,7 +292,7 @@ Configuration::save(URIMap&            uri_map,
 	// Use the file's URI as the base URI
 	SerdURI  base_uri;
 	SerdNode base = serd_node_new_file_uri(
-		(const uint8_t*)path.c_str(), NULL, &base_uri, true);
+		(const uint8_t*)path.c_str(), nullptr, &base_uri, true);
 
 	// Create environment with ingen prefix
 	SerdEnv* env = serd_env_new(&base);
@@ -315,7 +315,7 @@ Configuration::save(URIMap&            uri_map,
 	Sratom* sratom = sratom_new(&uri_map.urid_map_feature()->urid_map);
 	sratom_set_pretty_numbers(sratom, true);
 	sratom_set_sink(sratom, (const char*)base.buf,
-	                (SerdStatementSink)serd_writer_write_statement, NULL,
+	                (SerdStatementSink)serd_writer_write_statement, nullptr,
 	                writer);
 
 	// Write a statement for each valid option

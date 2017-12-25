@@ -31,7 +31,7 @@ namespace Server {
 /** Graph contains ambiguous feedback with no delay nodes. */
 class FeedbackException : public std::exception {
 public:
-	FeedbackException(const BlockImpl* node, const BlockImpl* root=NULL)
+	FeedbackException(const BlockImpl* node, const BlockImpl* root=nullptr)
 		: node(node)
 		, root(root)
 	{}

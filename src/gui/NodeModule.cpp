@@ -55,8 +55,8 @@ NodeModule::NodeModule(GraphCanvas&           canvas,
                        SPtr<const BlockModel> block)
 	: Ganv::Module(canvas, block->path().symbol(), 0, 0, true)
 	, _block(block)
-	, _gui_widget(NULL)
-	, _gui_window(NULL)
+	, _gui_widget(nullptr)
+	, _gui_window(nullptr)
 	, _initialised(false)
 {
 	block->signal_new_port().connect(
@@ -284,7 +284,7 @@ NodeModule::embed_gui(bool embed)
 		}
 
 	} else { // un-embed
-		Ganv::Module::embed(NULL);
+		Ganv::Module::embed(nullptr);
 		_plugin_ui.reset();
 	}
 }
@@ -320,7 +320,7 @@ NodeModule::port(SPtr<const PortModel> model)
 		if (port->model() == model)
 			return port;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void
@@ -388,9 +388,9 @@ void
 NodeModule::on_gui_window_close()
 {
 	delete _gui_window;
-	_gui_window = NULL;
+	_gui_window = nullptr;
 	_plugin_ui.reset();
-	_gui_widget = NULL;
+	_gui_widget = nullptr;
 }
 
 void

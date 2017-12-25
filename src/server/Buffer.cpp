@@ -46,12 +46,12 @@ Buffer::Buffer(BufferFactory& bufs,
                bool           external,
                void*          buf)
 	: _factory(bufs)
-	, _buf(NULL)
+	, _buf(nullptr)
 	, _type(type)
 	, _value_type(value_type)
 	, _capacity(capacity)
 	, _latest_event(0)
-	, _next(NULL)
+	, _next(nullptr)
 	, _refs(0)
 	, _external(external)
 {
@@ -210,7 +210,7 @@ Buffer::port_data(PortType port_type, SampleCount offset)
 		}
 	default: break;
 	}
-	return NULL;
+	return nullptr;
 }
 
 const void*
@@ -391,7 +391,7 @@ Buffer::next_value_offset(SampleCount offset, SampleCount end) const
 const LV2_Atom*
 Buffer::value() const
 {
-	return _value_buffer ? _value_buffer->get<const LV2_Atom>() : NULL;
+	return _value_buffer ? _value_buffer->get<const LV2_Atom>() : nullptr;
 }
 
 void
@@ -417,7 +417,7 @@ Buffer::update_value_buffer(SampleCount offset)
 	}
 
 	LV2_Atom_Sequence* seq    = get<LV2_Atom_Sequence>();
-	LV2_Atom_Event*    latest = NULL;
+	LV2_Atom_Event*    latest = nullptr;
 	LV2_ATOM_SEQUENCE_FOREACH(seq, ev) {
 		if (ev->time.frames > offset) {
 			break;

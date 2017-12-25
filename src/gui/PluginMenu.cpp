@@ -23,7 +23,7 @@ namespace GUI {
 
 PluginMenu::PluginMenu(Ingen::World& world)
 	: _world(world)
-	, _classless_menu(NULL, NULL)
+	, _classless_menu(nullptr, nullptr)
 {
 	clear();
 }
@@ -36,7 +36,7 @@ PluginMenu::clear()
 	const LilvPluginClasses* classes    = lilv_world_get_plugin_classes(lworld);
 
 	// Empty completely
-	_classless_menu = MenuRecord(NULL, NULL);
+	_classless_menu = MenuRecord(nullptr, nullptr);
 	_class_menus.clear();
 	items().clear();
 

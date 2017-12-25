@@ -69,11 +69,11 @@ namespace GUI {
 
 class Port;
 
-Gtk::Main* App::_main = 0;
+Gtk::Main* App::_main = nullptr;
 
 App::App(Ingen::World* world)
 	: _style(new Style(*this))
-	, _about_dialog(NULL)
+	, _about_dialog(nullptr)
 	, _window_factory(new WindowFactory(*this))
 	, _world(world)
 	, _sample_rate(48000)

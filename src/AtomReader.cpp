@@ -150,8 +150,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 	}
 
 	const LV2_Atom_Object* obj     = (const LV2_Atom_Object*)msg;
-	const LV2_Atom*        subject = NULL;
-	const LV2_Atom*        number  = NULL;
+	const LV2_Atom*        subject = nullptr;
+	const LV2_Atom*        number  = nullptr;
 
 	lv2_atom_object_get(obj,
 	                    (LV2_URID)_uris.patch_subject,        &subject,
@@ -173,16 +173,16 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 	} else if (obj->body.otype == _uris.ingen_BundleEnd) {
 		_iface(BundleEnd{seq});
 	} else if (obj->body.otype == _uris.patch_Delete) {
-		const LV2_Atom_Object* body = NULL;
+		const LV2_Atom_Object* body = nullptr;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_body, &body, 0);
 
 		if (subject_uri && !body) {
 			_iface(Del{seq, *subject_uri});
 			return true;
 		} else if (body && body->body.otype == _uris.ingen_Arc) {
-			const LV2_Atom* tail       = NULL;
-			const LV2_Atom* head       = NULL;
-			const LV2_Atom* incidentTo = NULL;
+			const LV2_Atom* tail       = nullptr;
+			const LV2_Atom* head       = nullptr;
+			const LV2_Atom* incidentTo = nullptr;
 			lv2_atom_object_get(body,
 			                    (LV2_URID)_uris.ingen_tail,       &tail,
 			                    (LV2_URID)_uris.ingen_head,       &head,
@@ -203,8 +203,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			}
 		}
 	} else if (obj->body.otype == _uris.patch_Put) {
-		const LV2_Atom_Object* body    = NULL;
-		const LV2_Atom*        context = NULL;
+		const LV2_Atom_Object* body    = nullptr;
+		const LV2_Atom*        context = nullptr;
 		lv2_atom_object_get(obj,
 		                    (LV2_URID)_uris.patch_body,    &body,
 		                    (LV2_URID)_uris.patch_context, &context,
@@ -218,8 +218,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		}
 
 		if (body->body.otype == _uris.ingen_Arc) {
-			LV2_Atom* tail = NULL;
-			LV2_Atom* head = NULL;
+			LV2_Atom* tail = nullptr;
+			LV2_Atom* head = nullptr;
 			lv2_atom_object_get(body,
 			                    (LV2_URID)_uris.ingen_tail, &tail,
 			                    (LV2_URID)_uris.ingen_head, &head,
@@ -247,9 +247,9 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		const LV2_Atom_URID* prop    = NULL;
-		const LV2_Atom*      value   = NULL;
-		const LV2_Atom*      context = NULL;
+		const LV2_Atom_URID* prop    = nullptr;
+		const LV2_Atom*      value   = nullptr;
+		const LV2_Atom*      context = nullptr;
 		lv2_atom_object_get(obj,
 		                    (LV2_URID)_uris.patch_property, &prop,
 		                    (LV2_URID)_uris.patch_value,    &value,
@@ -276,9 +276,9 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		const LV2_Atom_Object* remove  = NULL;
-		const LV2_Atom_Object* add     = NULL;
-		const LV2_Atom*        context = NULL;
+		const LV2_Atom_Object* remove  = nullptr;
+		const LV2_Atom_Object* add     = nullptr;
+		const LV2_Atom*        context = nullptr;
 		lv2_atom_object_get(obj,
 		                    (LV2_URID)_uris.patch_remove,  &remove,
 		                    (LV2_URID)_uris.patch_add,     &add,
@@ -306,7 +306,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		const LV2_Atom* dest = NULL;
+		const LV2_Atom* dest = nullptr;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_destination, &dest, 0);
 		if (!dest) {
 			_log.warn("Copy message has no destination\n");
@@ -332,7 +332,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		const LV2_Atom* dest = NULL;
+		const LV2_Atom* dest = nullptr;
 		lv2_atom_object_get(obj, (LV2_URID)_uris.patch_destination, &dest, 0);
 		if (!dest) {
 			_log.warn("Move message has no destination\n");
@@ -353,8 +353,8 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 
 		_iface(Move{seq, *subject_path, *dest_path});
 	} else if (obj->body.otype == _uris.patch_Response) {
-		const LV2_Atom* seq  = NULL;
-		const LV2_Atom* body = NULL;
+		const LV2_Atom* seq  = nullptr;
+		const LV2_Atom* body = nullptr;
 		lv2_atom_object_get(obj,
 		                    (LV2_URID)_uris.patch_sequenceNumber, &seq,
 		                    (LV2_URID)_uris.patch_body,           &body,

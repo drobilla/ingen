@@ -40,8 +40,8 @@ Connect::Connect(Engine&               engine,
                  const Ingen::Connect& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-	, _graph(NULL)
-	, _head(NULL)
+	, _graph(nullptr)
+	, _head(nullptr)
 {}
 
 bool

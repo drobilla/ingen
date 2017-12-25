@@ -52,7 +52,7 @@ SubgraphModule::on_double_click(GdkEventButton* event)
 	SPtr<GraphModel> parent = dynamic_ptr_cast<GraphModel>(_graph->parent());
 
 	GraphWindow* const preferred = ( (parent && (event->state & GDK_SHIFT_MASK))
-	                                 ? NULL
+	                                 ? nullptr
 	                                 : app().window_factory()->graph_window(parent) );
 
 	app().window_factory()->present_graph(_graph, preferred);
@@ -89,7 +89,7 @@ SubgraphModule::browse_to_graph()
 
 	GraphWindow* const preferred = (parent)
 		? app().window_factory()->graph_window(parent)
-		: NULL;
+		: nullptr;
 
 	app().window_factory()->present_graph(_graph, preferred);
 }

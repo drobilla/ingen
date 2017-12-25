@@ -78,7 +78,7 @@ public:
 	};
 
 	struct Voice {
-		Voice() : buffer(NULL) {}
+		Voice() : buffer(nullptr) {}
 
 		SetState  set_state;
 		BufferRef buffer;

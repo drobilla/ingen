@@ -106,7 +106,7 @@ public:
 		          *this)
 		, _from_ui(ui_ring_size(block_length))
 		, _to_ui(ui_ring_size(block_length))
-		, _root_graph(NULL)
+		, _root_graph(nullptr)
 		, _notify_capacity(0)
 		, _block_length(block_length)
 		, _seq_size(seq_size)
@@ -159,7 +159,7 @@ public:
 		// No copying necessary, host buffers are used directly
 		// Reset graph port buffer pointer to no longer point to the Jack buffer
 		if (graph_port->is_driver_port()) {
-			graph_port->set_driver_buffer(NULL, 0);
+			graph_port->set_driver_buffer(nullptr, 0);
 		}
 	}
 
@@ -202,7 +202,7 @@ public:
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	/** Add a port.  Called only during init or restore. */
@@ -217,7 +217,7 @@ public:
 	/** Remove a port.  Called only during init or restore. */
 	virtual void remove_port(RunContext& context, EnginePort* port) {
 		const uint32_t index = port->graph_port()->index();
-		_ports[index] = NULL;
+		_ports[index] = nullptr;
 	}
 
 	/** Unused since LV2 has no dynamic ports. */
@@ -289,7 +289,7 @@ public:
 
 	void consume_from_ui() {
 		const uint32_t read_space = _from_ui.read_space();
-		void*          buf        = NULL;
+		void*          buf        = nullptr;
 		for (uint32_t read = 0; read < read_space;) {
 			LV2_Atom atom;
 			if (!_from_ui.read(sizeof(LV2_Atom), &atom)) {
@@ -423,11 +423,11 @@ ingen_lv2_main(SPtr<Engine> engine, LV2Driver* driver)
 
 struct IngenPlugin {
 	IngenPlugin()
-		: world(NULL)
-		, main(NULL)
-		, map(NULL)
+		: world(nullptr)
+		, main(nullptr)
+		, map(nullptr)
 		, argc(0)
-		, argv(NULL)
+		, argv(nullptr)
 	{}
 
 	Ingen::World* world;
@@ -464,10 +464,10 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
                   const LV2_Feature*const* features)
 {
 	// Get features from features array
-	LV2_URID_Map*             map     = NULL;
-	LV2_URID_Unmap*           unmap   = NULL;
-	LV2_Log_Log*              log     = NULL;
-	const LV2_Options_Option* options = NULL;
+	LV2_URID_Map*             map     = nullptr;
+	LV2_URID_Unmap*           unmap   = nullptr;
+	LV2_Log_Log*              log     = nullptr;
+	const LV2_Options_Option* options = nullptr;
 	for (int i = 0; features[i]; ++i) {
 		if (!strcmp(features[i]->URI, LV2_URID__map)) {
 			map = (LV2_URID_Map*)features[i]->data;
@@ -485,21 +485,21 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	if (!map) {
 		lv2_log_error(&logger, "host did not provide URI map feature\n");
-		return NULL;
+		return nullptr;
 	} else if (!unmap) {
 		lv2_log_error(&logger, "host did not provide URI unmap feature\n");
-		return NULL;
+		return nullptr;
 	}
 
 	set_bundle_path(bundle_path);
 	const std::string manifest_path = Ingen::bundle_file_path("manifest.ttl");
 	SerdNode          manifest_node = serd_node_new_file_uri(
-		(const uint8_t*)manifest_path.c_str(), NULL, NULL, true);
+		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
 
 	Lib::Graphs graphs = find_graphs((const char*)manifest_node.buf);
 	serd_node_free(&manifest_node);
 
-	const LV2Graph* graph = NULL;
+	const LV2Graph* graph = nullptr;
 	for (const auto& g : graphs) {
 		if (g->uri == descriptor->URI) {
 			graph = g.get();
@@ -509,7 +509,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 
 	if (!graph) {
 		lv2_log_error(&logger, "could not find graph <%s>\n", descriptor->URI);
-		return NULL;
+		return nullptr;
 	}
 
 	IngenPlugin* plugin = new IngenPlugin();
@@ -642,7 +642,7 @@ ingen_deactivate(LV2_Handle instance)
 	if (me->main) {
 		me->main->join();
 		delete me->main;
-		me->main = NULL;
+		me->main = nullptr;
 	}
 }
 
@@ -685,8 +685,8 @@ ingen_save(LV2_Handle                instance,
 {
 	IngenPlugin* plugin = (IngenPlugin*)instance;
 
-	LV2_State_Map_Path*  map_path  = NULL;
-	LV2_State_Make_Path* make_path = NULL;
+	LV2_State_Map_Path*  map_path  = nullptr;
+	LV2_State_Make_Path* make_path = nullptr;
 	get_state_features(features, &map_path, &make_path);
 	if (!map_path || !make_path || !plugin->map) {
 		plugin->world->log().error("Missing state:mapPath, state:makePath, or urid:Map\n");
@@ -731,8 +731,8 @@ ingen_restore(LV2_Handle                  instance,
 {
 	IngenPlugin* plugin = (IngenPlugin*)instance;
 
-	LV2_State_Map_Path* map_path = NULL;
-	get_state_features(features, &map_path, NULL);
+	LV2_State_Map_Path* map_path = nullptr;
+	get_state_features(features, &map_path, nullptr);
 	if (!map_path) {
 		plugin->world->log().error("Missing state:mapPath\n");
 		return LV2_STATE_ERR_NO_FEATURE;
@@ -788,7 +788,7 @@ ingen_extension_data(const char* uri)
 	if (!strcmp(uri, LV2_STATE__interface)) {
 		return &state;
 	}
-	return NULL;
+	return nullptr;
 }
 
 LV2Graph::LV2Graph(const Parser::ResourceRecord& record)
@@ -809,7 +809,7 @@ Lib::Lib(const char* bundle_path)
 	Ingen::set_bundle_path(bundle_path);
 	const std::string manifest_path = Ingen::bundle_file_path("manifest.ttl");
 	SerdNode          manifest_node = serd_node_new_file_uri(
-		(const uint8_t*)manifest_path.c_str(), NULL, NULL, true);
+		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
 
 	graphs = find_graphs((const char*)manifest_node.buf);
 
@@ -827,7 +827,7 @@ static const LV2_Descriptor*
 lib_get_plugin(LV2_Lib_Handle handle, uint32_t index)
 {
 	Lib* lib = (Lib*)handle;
-	return index < lib->graphs.size() ? &lib->graphs[index]->descriptor : NULL;
+	return index < lib->graphs.size() ? &lib->graphs[index]->descriptor : nullptr;
 }
 
 /** LV2 plugin library entry point */

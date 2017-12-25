@@ -35,7 +35,7 @@
 using namespace std;
 using namespace Ingen;
 
-World* world = NULL;
+World* world = nullptr;
 
 static void
 ingen_try(bool cond, const char* msg)
@@ -50,7 +50,7 @@ ingen_try(bool cond, const char* msg)
 static std::string
 real_path(const char* path)
 {
-	char* const c_real_path = realpath(path, NULL);
+	char* const c_real_path = realpath(path, nullptr);
 	const std::string result(c_real_path ? c_real_path : "");
 	free(c_real_path);
 	return result;
@@ -63,7 +63,7 @@ main(int argc, char** argv)
 
 	// Create world
 	try {
-		world = new World(NULL, NULL, NULL);
+		world = new World(nullptr, nullptr, nullptr);
 		world->conf().add(
 			"output", "output", 'O', "File to write benchmark output",
 			Ingen::Configuration::SESSION, world->forge().String, Atom());

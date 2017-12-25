@@ -158,7 +158,7 @@ DuplexPort::setup_buffers(RunContext& ctx, BufferFactory& bufs, uint32_t poly)
 void
 DuplexPort::set_is_driver_port(BufferFactory& bufs)
 {
-	_voices->at(0).buffer = new Buffer(bufs, buffer_type(), _value.type(), 0, true, NULL);
+	_voices->at(0).buffer = new Buffer(bufs, buffer_type(), _value.type(), 0, true, nullptr);
 	PortImpl::set_is_driver_port(bufs);
 }
 

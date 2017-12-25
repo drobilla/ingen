@@ -225,7 +225,7 @@ NoteNode::note_on(RunContext& context, uint8_t note_num, uint8_t velocity, Frame
 	assert(note_num <= 127);
 
 	Key*     key       = &_keys[note_num];
-	Voice*   voice     = NULL;
+	Voice*   voice     = nullptr;
 	uint32_t voice_num = 0;
 
 	if (key->state != Key::State::OFF) {
@@ -242,7 +242,7 @@ NoteNode::note_on(RunContext& context, uint8_t note_num, uint8_t velocity, Frame
 	}
 
 	// If we didn't find a free one, steal the oldest
-	if (voice == NULL) {
+	if (voice == nullptr) {
 		voice_num = 0;
 		voice = &(*_voices)[0];
 		FrameTime oldest_time = (*_voices)[0].time;
@@ -254,7 +254,7 @@ NoteNode::note_on(RunContext& context, uint8_t note_num, uint8_t velocity, Frame
 			}
 		}
 	}
-	assert(voice != NULL);
+	assert(voice != nullptr);
 	assert(voice == &(*_voices)[voice_num]);
 
 	// Update stolen key, if applicable
@@ -325,19 +325,19 @@ NoteNode::free_voice(RunContext& context, uint32_t voice, FrameTime time)
 	assert(time >= context.start() && time <= context.end());
 
 	// Find a key to reassign to the freed voice (the newest, if there is one)
-	Key*    replace_key     = NULL;
+	Key*    replace_key     = nullptr;
 	uint8_t replace_key_num = 0;
 
 	for (uint8_t i = 0; i <= 127; ++i) {
 		if (_keys[i].state == Key::State::ON_UNASSIGNED) {
-			if (replace_key == NULL || _keys[i].time > replace_key->time) {
+			if (replace_key == nullptr || _keys[i].time > replace_key->time) {
 				replace_key = &_keys[i];
 				replace_key_num = i;
 			}
 		}
 	}
 
-	if (replace_key != NULL) {  // Found a key to assign to freed voice
+	if (replace_key != nullptr) {  // Found a key to assign to freed voice
 		assert(&_keys[replace_key_num] == replace_key);
 		assert(replace_key->state == Key::State::ON_UNASSIGNED);
 

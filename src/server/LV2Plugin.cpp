@@ -48,11 +48,11 @@ LV2Plugin::update_properties()
 	LilvNode* minor = lilv_world_get(_world->lilv_world(),
 	                                 lilv_plugin_get_uri(_lilv_plugin),
 	                                 _uris.lv2_minorVersion,
-	                                 NULL);
+	                                 nullptr);
 	LilvNode* micro = lilv_world_get(_world->lilv_world(),
 	                                 lilv_plugin_get_uri(_lilv_plugin),
 	                                 _uris.lv2_microVersion,
-	                                 NULL);
+	                                 nullptr);
 
 	if (lilv_node_is_int(minor) && lilv_node_is_int(micro)) {
 		set_property(_uris.lv2_minorVersion,
@@ -98,7 +98,7 @@ LV2Plugin::instantiate(BufferFactory&      bufs,
 
 	if (!b->instantiate(bufs, state)) {
 		delete b;
-		return NULL;
+		return nullptr;
 	} else {
 		return b;
 	}
@@ -117,7 +117,7 @@ LV2Plugin::load_presets()
 			lilv_world_load_resource(lworld, preset);
 
 			LilvNodes* labels = lilv_world_find_nodes(
-				lworld, preset, uris.rdfs_label, NULL);
+				lworld, preset, uris.rdfs_label, nullptr);
 			if (labels) {
 				const LilvNode* label = lilv_nodes_get_first(labels);
 

@@ -43,9 +43,9 @@ DisconnectAll::DisconnectAll(Engine&                     engine,
                              const Ingen::DisconnectAll& msg)
 	: Event(engine, client, msg.seq, timestamp)
 	, _msg(msg)
-	, _parent(NULL)
-	, _block(NULL)
-	, _port(NULL)
+	, _parent(nullptr)
+	, _block(nullptr)
+	, _port(nullptr)
 	, _deleting(false)
 {
 }

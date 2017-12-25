@@ -40,8 +40,8 @@ CreateGraph::CreateGraph(Engine&           engine,
 	: Event(engine, client, id, timestamp)
 	, _path(path)
 	, _properties(properties)
-	, _graph(NULL)
-	, _parent(NULL)
+	, _graph(nullptr)
+	, _parent(nullptr)
 {}
 
 CreateGraph::~CreateGraph()

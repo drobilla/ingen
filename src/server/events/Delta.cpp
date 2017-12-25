@@ -47,13 +47,13 @@ Delta::Delta(Engine&           engine,
              SampleCount       timestamp,
              const Ingen::Put& msg)
 	: Event(engine, client, msg.seq, timestamp)
-	, _create_event(NULL)
+	, _create_event(nullptr)
 	, _subject(msg.uri)
 	, _properties(msg.properties)
-	, _object(NULL)
-	, _graph(NULL)
-	, _binding(NULL)
-	, _state(NULL)
+	, _object(nullptr)
+	, _graph(nullptr)
+	, _binding(nullptr)
+	, _state(nullptr)
 	, _context(msg.ctx)
 	, _type(Type::PUT)
 	, _block(false)
@@ -66,14 +66,14 @@ Delta::Delta(Engine&             engine,
              SampleCount         timestamp,
              const Ingen::Delta& msg)
 	: Event(engine, client, msg.seq, timestamp)
-	, _create_event(NULL)
+	, _create_event(nullptr)
 	, _subject(msg.uri)
 	, _properties(msg.add)
 	, _remove(msg.remove)
-	, _object(NULL)
-	, _graph(NULL)
-	, _binding(NULL)
-	, _state(NULL)
+	, _object(nullptr)
+	, _graph(nullptr)
+	, _binding(nullptr)
+	, _state(nullptr)
 	, _context(msg.ctx)
 	, _type(Type::PATCH)
 	, _block(false)
@@ -86,13 +86,13 @@ Delta::Delta(Engine&                   engine,
              SampleCount               timestamp,
              const Ingen::SetProperty& msg)
 	: Event(engine, client, msg.seq, timestamp)
-	, _create_event(NULL)
+	, _create_event(nullptr)
 	, _subject(msg.subject)
 	, _properties{{msg.predicate, msg.value}}
-	, _object(NULL)
-	, _graph(NULL)
-	, _binding(NULL)
-	, _state(NULL)
+	, _object(nullptr)
+	, _graph(nullptr)
+	, _binding(nullptr)
+	, _state(nullptr)
 	, _context(msg.ctx)
 	, _type(Type::SET)
 	, _block(false)
@@ -159,14 +159,14 @@ static LilvNode*
 get_file_node(LilvWorld* lworld, const URIs& uris, const Atom& value)
 {
 	if (value.type() == uris.atom_Path) {
-		return lilv_new_file_uri(lworld, NULL, value.ptr<char>());
+		return lilv_new_file_uri(lworld, nullptr, value.ptr<char>());
 	} else if (uris.forge.is_uri(value)) {
 		const std::string str = uris.forge.str(value, false);
 		if (str.substr(0, 5) == "file:") {
 			return lilv_new_uri(lworld, value.ptr<char>());
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool
@@ -324,7 +324,7 @@ Delta::pre_process(PreProcessContext& ctx)
 				}
 			}
 
-			BlockImpl* block = NULL;
+			BlockImpl* block = nullptr;
 			PortImpl*  port  = dynamic_cast<PortImpl*>(_object);
 			if (port) {
 				if (key == uris.ingen_broadcast) {

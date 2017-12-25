@@ -83,9 +83,9 @@ GraphCanvas::GraphCanvas(App&                   app,
 	, _menu_x(0)
 	, _menu_y(0)
 	, _paste_count(0)
-	, _menu(NULL)
-	, _internal_menu(NULL)
-	, _plugin_menu(NULL)
+	, _menu(nullptr)
+	, _internal_menu(nullptr)
+	, _plugin_menu(nullptr)
 	, _human_names(true)
 	, _show_port_names(true)
 	, _menu_dirty(false)
@@ -173,7 +173,7 @@ GraphCanvas::GraphCanvas(App&                   app,
 
 	show_human_names(app.world()->conf().option("human-names").get<int32_t>());
 	show_port_names(app.world()->conf().option("port-labels").get<int32_t>());
-	set_port_order(port_order, NULL);
+	set_port_order(port_order, nullptr);
 }
 
 void
@@ -402,7 +402,7 @@ GraphCanvas::get_port_view(SPtr<PortModel> port)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /** Called when a connection is added to the model. */

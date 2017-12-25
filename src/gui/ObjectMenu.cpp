@@ -34,12 +34,12 @@ namespace GUI {
 ObjectMenu::ObjectMenu(BaseObjectType*                   cobject,
                        const Glib::RefPtr<Gtk::Builder>& xml)
 	: Gtk::Menu(cobject)
-	, _app(NULL)
-	, _polyphonic_menuitem(NULL)
-	, _disconnect_menuitem(NULL)
-	, _rename_menuitem(NULL)
-	, _destroy_menuitem(NULL)
-	, _properties_menuitem(NULL)
+	, _app(nullptr)
+	, _polyphonic_menuitem(nullptr)
+	, _disconnect_menuitem(nullptr)
+	, _rename_menuitem(nullptr)
+	, _destroy_menuitem(nullptr)
+	, _properties_menuitem(nullptr)
 	, _enable_signal(false)
 {
 	xml->get_widget("object_learn_menuitem", _learn_menuitem);
