@@ -60,7 +60,7 @@ namespace Ingen {
 
 /** Record of a graph in this bundle. */
 struct LV2Graph : public Parser::ResourceRecord {
-	LV2Graph(const Parser::ResourceRecord& record);
+	LV2Graph(Parser::ResourceRecord record);
 
 	LV2_Descriptor descriptor;
 };
@@ -791,8 +791,8 @@ ingen_extension_data(const char* uri)
 	return nullptr;
 }
 
-LV2Graph::LV2Graph(const Parser::ResourceRecord& record)
-	: Parser::ResourceRecord(record)
+LV2Graph::LV2Graph(Parser::ResourceRecord record)
+	: Parser::ResourceRecord(std::move(record))
 {
 	descriptor.URI            = uri.c_str();
 	descriptor.instantiate    = ingen_instantiate;

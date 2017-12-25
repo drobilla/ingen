@@ -46,8 +46,8 @@ class App;
 class ConnectWindow : public Dialog
 {
 public:
-	ConnectWindow(BaseObjectType*                   cobject,
-	              const Glib::RefPtr<Gtk::Builder>& xml);
+	ConnectWindow(BaseObjectType*            cobject,
+	              Glib::RefPtr<Gtk::Builder> xml);
 
 	void set_connected_to(SPtr<Ingen::Interface> engine);
 	void start(App& app, Ingen::World* world);

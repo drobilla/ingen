@@ -37,7 +37,7 @@ SocketReader::SocketReader(Ingen::World&      world,
 	, _iface(iface)
 	, _inserter(nullptr)
 	, _msg_node(nullptr)
-	, _socket(sock)
+	, _socket(std::move(sock))
 	, _exit_flag(false)
 	, _thread(&SocketReader::run, this)
 {}

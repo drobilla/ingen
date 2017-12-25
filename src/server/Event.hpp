@@ -108,7 +108,7 @@ protected:
 	Event(Engine& engine, SPtr<Interface> client, int32_t id, FrameTime time)
 		: _engine(engine)
 		, _next(nullptr)
-		, _request_client(client)
+		, _request_client(std::move(client))
 		, _request_id(id)
 		, _time(time)
 		, _status(Status::NOT_PREPARED)

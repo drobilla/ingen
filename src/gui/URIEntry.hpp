@@ -36,9 +36,9 @@ public:
 	 * If `types` is given, then a menu button will be shown which pops up a
 	 *	enu for easily choosing known values with valid types.
 	 */
-	URIEntry(App*                       app,
-	         const std::set<Raul::URI>& types,
-	         const std::string&         value);
+	URIEntry(App*                app,
+	         std::set<Raul::URI> types,
+	         const std::string&  value);
 
 	std::string              get_text()       { return _entry->get_text(); }
 	Glib::SignalProxy0<void> signal_changed() { return _entry->signal_changed(); }

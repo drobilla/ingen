@@ -32,7 +32,7 @@ SocketWriter::SocketWriter(URIMap&            map,
                            const Raul::URI&   uri,
                            SPtr<Raul::Socket> sock)
 	: TurtleWriter(map, uris, uri)
-	, _socket(sock)
+	, _socket(std::move(sock))
 {}
 
 size_t

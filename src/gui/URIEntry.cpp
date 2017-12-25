@@ -23,12 +23,12 @@
 namespace Ingen {
 namespace GUI {
 
-URIEntry::URIEntry(App*                       app,
-                   const std::set<Raul::URI>& types,
-                   const std::string&         value)
+URIEntry::URIEntry(App*                app,
+                   std::set<Raul::URI> types,
+                   const std::string&  value)
 	: Gtk::HBox(false, 4)
 	, _app(app)
-	, _types(types)
+	, _types(std::move(types))
 	, _menu_button(Gtk::manage(new Gtk::Button("≡")))
 	, _entry(Gtk::manage(new Gtk::Entry()))
 {

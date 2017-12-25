@@ -78,7 +78,7 @@ GraphCanvas::GraphCanvas(App&                   app,
                          int                    height)
 	: Canvas(width, height)
 	, _app(app)
-	, _graph(graph)
+	, _graph(std::move(graph))
 	, _auto_position_count(0)
 	, _menu_x(0)
 	, _menu_y(0)

@@ -67,7 +67,7 @@ public:
 	/** One binding of a controller to a port. */
 	struct Binding : public boost::intrusive::set_base_hook<>,
 	                 public Raul::Maid::Disposable {
-		Binding(Key k=Key(), PortImpl* p=nullptr) : key(k), port(p) {}
+		Binding(Key k=Key(), PortImpl* p=nullptr) : key(std::move(k)), port(p) {}
 
 		inline bool operator<(const Binding& rhs) const { return key < rhs.key; }
 

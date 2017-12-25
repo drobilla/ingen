@@ -151,7 +151,7 @@ PluginUI::PluginUI(Ingen::World*          world,
                    const LilvUI*          ui,
                    const LilvNode*        ui_type)
 	: _world(world)
-	, _block(block)
+	, _block(std::move(block))
 	, _instance(nullptr)
 	, _uis(uis)
 	, _ui(ui)

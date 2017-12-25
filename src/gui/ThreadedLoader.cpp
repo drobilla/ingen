@@ -32,7 +32,7 @@ namespace GUI {
 ThreadedLoader::ThreadedLoader(App& app, SPtr<Interface> engine)
 	: _app(app)
 	, _sem(0)
-	, _engine(engine)
+	, _engine(std::move(engine))
 	, _exit_flag(false)
 	, _thread(&ThreadedLoader::run, this)
 {

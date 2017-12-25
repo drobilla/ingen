@@ -45,10 +45,10 @@ using namespace Ingen::Client;
 namespace Ingen {
 namespace GUI {
 
-ConnectWindow::ConnectWindow(BaseObjectType*                   cobject,
-                             const Glib::RefPtr<Gtk::Builder>& xml)
+ConnectWindow::ConnectWindow(BaseObjectType*            cobject,
+                             Glib::RefPtr<Gtk::Builder> xml)
 	: Dialog(cobject)
-	, _xml(xml)
+	, _xml(std::move(xml))
 	, _icon(nullptr)
 	, _progress_bar(nullptr)
 	, _progress_label(nullptr)

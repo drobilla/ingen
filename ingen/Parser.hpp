@@ -48,8 +48,8 @@ public:
 
 	/** Record of a resource listed in a bundle manifest. */
 	struct ResourceRecord {
-		inline ResourceRecord(const std::string& u, const std::string& f)
-			: uri(u), filename(f)
+		inline ResourceRecord(std::string u, std::string f)
+			: uri(std::move(u)), filename(std::move(f))
 		{}
 
 		inline bool operator<(const ResourceRecord& r) const {

@@ -48,8 +48,8 @@ private:
 	friend class ClientStore;
 
 	ArcModel(SPtr<PortModel> tail, SPtr<PortModel> head)
-		: _tail(tail)
-		, _head(head)
+		: _tail(std::move(tail))
+		, _head(std::move(head))
 	{
 		assert(_tail);
 		assert(_head);
