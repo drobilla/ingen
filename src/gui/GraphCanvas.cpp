@@ -347,7 +347,7 @@ GraphCanvas::add_block(SPtr<const BlockModel> bm)
 void
 GraphCanvas::remove_block(SPtr<const BlockModel> bm)
 {
-	Views::iterator i = _views.find(bm);
+	auto i = _views.find(bm);
 
 	if (i != _views.end()) {
 		const guint n_ports = i->second->num_ports();
@@ -370,7 +370,7 @@ GraphCanvas::add_port(SPtr<const PortModel> pm)
 void
 GraphCanvas::remove_port(SPtr<const PortModel> pm)
 {
-	Views::iterator i = _views.find(pm);
+	auto i = _views.find(pm);
 
 	// Port on this graph
 	if (i != _views.end()) {

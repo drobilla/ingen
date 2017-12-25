@@ -361,7 +361,7 @@ App::port_activity(Port* port)
 void
 App::activity_port_destroyed(Port* port)
 {
-	ActivityPorts::iterator i = _activity_ports.find(port);
+	auto i = _activity_ports.find(port);
 	if (i != _activity_ports.end()) {
 		_activity_ports.erase(i);
 	}
@@ -372,8 +372,8 @@ App::activity_port_destroyed(Port* port)
 bool
 App::animate()
 {
-	for (ActivityPorts::iterator i = _activity_ports.begin(); i != _activity_ports.end(); ) {
-		ActivityPorts::iterator next = i;
+	for (auto i = _activity_ports.begin(); i != _activity_ports.end(); ) {
+		auto next = i;
 		++next;
 
 		if ((*i).second) { // saw it last time, unhighlight and pop

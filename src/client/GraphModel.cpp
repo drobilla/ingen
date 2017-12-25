@@ -67,8 +67,8 @@ GraphModel::remove_arcs_on(SPtr<PortModel> p)
 {
 	// Remove any connections which referred to this object,
 	// since they can't possibly exist anymore
-	for (Arcs::iterator j = _arcs.begin(); j != _arcs.end();) {
-		Arcs::iterator next = j;
+	for (auto j = _arcs.begin(); j != _arcs.end();) {
+		auto next = j;
 		++next;
 
 		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(j->second);
@@ -97,7 +97,7 @@ GraphModel::clear()
 SPtr<ArcModel>
 GraphModel::get_arc(const Node* tail, const Node* head)
 {
-	Arcs::iterator i = _arcs.find(std::make_pair(tail, head));
+	auto i = _arcs.find(std::make_pair(tail, head));
 	if (i != _arcs.end()) {
 		return dynamic_ptr_cast<ArcModel>(i->second);
 	} else {
@@ -144,7 +144,7 @@ GraphModel::add_arc(SPtr<ArcModel> arc)
 void
 GraphModel::remove_arc(const Node* tail, const Node* head)
 {
-	Arcs::iterator i = _arcs.find(std::make_pair(tail, head));
+	auto i = _arcs.find(std::make_pair(tail, head));
 	if (i != _arcs.end()) {
 		SPtr<ArcModel> arc = dynamic_ptr_cast<ArcModel>(i->second);
 		_signal_removed_arc.emit(arc);

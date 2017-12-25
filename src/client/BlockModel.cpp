@@ -67,7 +67,7 @@ BlockModel::~BlockModel()
 void
 BlockModel::remove_port(SPtr<PortModel> port)
 {
-	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+	for (auto i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i) == port) {
 			_ports.erase(i);
 			break;
@@ -79,7 +79,7 @@ BlockModel::remove_port(SPtr<PortModel> port)
 void
 BlockModel::remove_port(const Raul::Path& port_path)
 {
-	for (Ports::iterator i = _ports.begin(); i != _ports.end(); ++i) {
+	for (auto i = _ports.begin(); i != _ports.end(); ++i) {
 		if ((*i)->path() == port_path) {
 			_ports.erase(i);
 			break;

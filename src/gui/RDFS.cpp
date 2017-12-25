@@ -122,7 +122,7 @@ types(World* world, SPtr<const Client::ObjectModel> model)
 	URISet types;
 	types.insert(Raul::URI(LILV_NS_RDFS "Resource"));
 	PropRange range = model->properties().equal_range(world->uris().rdf_type);
-	for (PropIter t = range.first; t != range.second; ++t) {
+	for (auto t = range.first; t != range.second; ++t) {
 		if (t->second.type() == world->forge().URI ||
 		    t->second.type() == world->forge().URID) {
 			const Raul::URI type(world->forge().str(t->second, false));

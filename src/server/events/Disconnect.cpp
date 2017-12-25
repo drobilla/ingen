@@ -68,13 +68,13 @@ Disconnect::Impl::Impl(Engine&     e,
 	BlockImpl* const head_block = _head->parent_block();
 
 	// Remove tail from head's providers
-	std::set<BlockImpl*>::iterator hp = head_block->providers().find(tail_block);
+	auto hp = head_block->providers().find(tail_block);
 	if (hp != head_block->providers().end()) {
 		head_block->providers().erase(hp);
 	}
 
 	// Remove head from tail's providers
-	std::set<BlockImpl*>::iterator td = tail_block->dependants().find(head_block);
+	auto td = tail_block->dependants().find(head_block);
 	if (td != tail_block->dependants().end()) {
 		tail_block->dependants().erase(td);
 	}

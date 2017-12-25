@@ -59,7 +59,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 
 	Raul::Path base_path(base_path_str);
 
-	SymbolMap::iterator m = _symbol_map.find(in);
+	auto m = _symbol_map.find(in);
 	if (m != _symbol_map.end()) {
 		return m->second;
 	} else {
@@ -68,7 +68,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 		// See if parent is mapped
 		Raul::Path parent = in.parent();
 		do {
-			SymbolMap::iterator p = _symbol_map.find(parent);
+			auto p = _symbol_map.find(parent);
 			if (p != _symbol_map.end()) {
 				const Raul::Path mapped = Raul::Path(
 					p->second.base() + in.substr(parent.base().length()));
@@ -87,7 +87,7 @@ ClashAvoider::map_path(const Raul::Path& in)
 		} else {
 			// Append _2 _3 etc until an unused symbol is found
 			while (true) {
-				Offsets::iterator o = _offsets.find(base_path);
+				auto o = _offsets.find(base_path);
 				if (o != _offsets.end()) {
 					offset = ++o->second;
 				} else {

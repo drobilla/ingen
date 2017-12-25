@@ -187,7 +187,7 @@ main(int argc, char** argv)
 	delete cmds;
 
 	// Save resulting graph
-	Store::iterator   r        = world->store()->find(Raul::Path("/"));
+	auto              r        = world->store()->find(Raul::Path("/"));
 	const std::string base     = Glib::path_get_basename(cmds_file_path);
 	const std::string out_name = base.substr(0, base.find('.')) + ".out.ingen";
 	const std::string out_path = Glib::build_filename(Glib::get_current_dir(), out_name);

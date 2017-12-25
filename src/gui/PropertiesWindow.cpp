@@ -392,7 +392,7 @@ PropertiesWindow::on_show()
 void
 PropertiesWindow::change_property(const Raul::URI& key, const Atom& value)
 {
-	Records::iterator r = _records.find(key);
+	auto r = _records.find(key);
 	if (r == _records.end()) {
 		add_property(key, value);
 		_table->show_all();
@@ -467,7 +467,7 @@ PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 void
 PropertiesWindow::on_change(const Raul::URI& key)
 {
-	Records::iterator r = _records.find(key);
+	auto r = _records.find(key);
 	if (r == _records.end()) {
 		return;
 	}

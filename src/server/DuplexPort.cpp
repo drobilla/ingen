@@ -111,8 +111,7 @@ DuplexPort::inherit_neighbour(const PortImpl* port,
 			add.insert(std::make_pair(uris.lv2_maximum, port->maximum()));
 		}
 	} else if (_type == PortType::ATOM) {
-		for (Properties::const_iterator i = port->properties().find(
-			     uris.atom_supports);
+		for (auto i = port->properties().find(uris.atom_supports);
 		     i != port->properties().end() && i->first == uris.atom_supports;
 		     ++i) {
 			set_property(i->first, i->second);

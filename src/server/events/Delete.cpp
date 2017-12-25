@@ -67,7 +67,7 @@ Delete::pre_process(PreProcessContext& ctx)
 
 	_engine.control_bindings()->get_all(_path, _removed_bindings);
 
-	Store::iterator iter = _engine.store()->find(_path);
+	auto iter = _engine.store()->find(_path);
 	if (iter == _engine.store()->end()) {
 		return Event::pre_process_done(Status::NOT_FOUND, _path);
 	}

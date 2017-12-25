@@ -56,9 +56,9 @@ Resource::set_property(const Raul::URI& uri,
                        Resource::Graph  ctx)
 {
 	// Erase existing property in this context
-	for (Properties::iterator i = _properties.find(uri);
+	for (auto i = _properties.find(uri);
 	     (i != _properties.end()) && (i->first == uri);) {
-		Properties::iterator next = i;
+		auto next = i;
 		++next;
 		if (i->second.context() == ctx) {
 			const Atom value(i->second);
@@ -94,7 +94,7 @@ Resource::remove_property(const Raul::URI& uri, const Atom& value)
 	if (_uris.patch_wildcard == value) {
 		_properties.erase(uri);
 	} else {
-		for (Properties::iterator i = _properties.find(uri);
+		for (auto i = _properties.find(uri);
 		     i != _properties.end() && (i->first == uri);
 		     ++i) {
 			if (i->second == value) {

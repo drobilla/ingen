@@ -82,7 +82,7 @@ BlockFactory::refresh()
 	// Add any new plugins to response
 	std::set<PluginImpl*> new_plugins;
 	for (const auto& p : _plugins) {
-		Plugins::const_iterator o = old_plugins.find(p.first);
+		auto o = old_plugins.find(p.first);
 		if (o == old_plugins.end()) {
 			new_plugins.insert(p.second);
 		}
@@ -213,7 +213,7 @@ BlockFactory::load_lv2_plugins()
 			continue;
 		}
 
-		Plugins::iterator p = _plugins.find(uri);
+		auto p = _plugins.find(uri);
 		if (p == _plugins.end()) {
 			LV2Plugin* const plugin = new LV2Plugin(_world, lv2_plug);
 			_plugins.insert(make_pair(uri, plugin));

@@ -274,7 +274,7 @@ URIMap&      World::uri_map()      { return *_impl->uri_map; }
 bool
 World::load_module(const char* name)
 {
-	Impl::Modules::iterator i = _impl->modules.find(name);
+	auto i = _impl->modules.find(name);
 	if (i != _impl->modules.end()) {
 		return true;
 	}
@@ -299,7 +299,7 @@ World::load_module(const char* name)
 bool
 World::run_module(const char* name)
 {
-	Impl::Modules::iterator i = _impl->modules.find(name);
+	auto i = _impl->modules.find(name);
 	if (i == _impl->modules.end()) {
 		log().error(fmt("Attempt to run unloaded module `%1%'\n") % name);
 		return false;

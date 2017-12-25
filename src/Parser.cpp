@@ -588,7 +588,7 @@ parse(Ingen::World*                 world,
 		const Sord::Node& rdf_class = i.get_object();
 
 		assert(rdf_class.is_uri());
-		Subjects::iterator s = subjects.find(subject);
+		auto s = subjects.find(subject);
 		if (s == subjects.end()) {
 			std::set<Sord::Node> types;
 			types.insert(rdf_class);

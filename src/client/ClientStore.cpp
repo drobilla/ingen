@@ -55,7 +55,7 @@ ClientStore::add_object(SPtr<ObjectModel> object)
 {
 	// If we already have "this" object, merge the existing one into the new
 	// one (with precedence to the new values).
-	iterator existing = find(object->path());
+	auto existing = find(object->path());
 	if (existing != end()) {
 		dynamic_ptr_cast<ObjectModel>(existing->second)->set(object);
 	} else {
@@ -202,7 +202,7 @@ ClientStore::operator()(const Del& del)
 	if (uri_is_path(del.uri)) {
 		remove_object(uri_to_path(del.uri));
 	} else {
-		Plugins::iterator p = _plugins->find(del.uri);
+		auto p = _plugins->find(del.uri);
 		if (p != _plugins->end()) {
 			_plugins->erase(p);
 			_signal_plugin_deleted.emit(del.uri);
@@ -296,7 +296,7 @@ ClientStore::operator()(const Put& msg)
 		model->set_properties(properties);
 		add_object(model);
 	} else if (is_block) {
-		Iterator p = properties.find(_uris.lv2_prototype);
+		auto p = properties.find(_uris.lv2_prototype);
 		if (p == properties.end()) {
 			p = properties.find(_uris.ingen_prototype);
 		}

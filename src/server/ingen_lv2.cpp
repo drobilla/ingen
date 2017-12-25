@@ -700,7 +700,7 @@ ingen_save(LV2_Handle                instance,
 	char* real_path  = make_path->path(make_path->handle, "main.ttl");
 	char* state_path = map_path->abstract_path(map_path->handle, real_path);
 
-	Ingen::Store::iterator root = plugin->world->store()->find(Raul::Path("/"));
+	auto root = plugin->world->store()->find(Raul::Path("/"));
 
 	{
 		std::lock_guard<std::mutex> lock(plugin->world->rdf_mutex());

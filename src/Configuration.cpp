@@ -372,7 +372,7 @@ const Atom&
 Configuration::option(const std::string& long_name) const
 {
 	static const Atom nil;
-	Options::const_iterator o = _options.find(long_name);
+	auto o = _options.find(long_name);
 	if (o == _options.end()) {
 		return nil;
 	} else {
@@ -383,7 +383,7 @@ Configuration::option(const std::string& long_name) const
 bool
 Configuration::set(const std::string& long_name, const Atom& value)
 {
-	Options::iterator o = _options.find(long_name);
+	auto o = _options.find(long_name);
 	if (o != _options.end()) {
 		o->second.value = value;
 		return true;

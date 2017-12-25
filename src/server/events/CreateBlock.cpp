@@ -117,7 +117,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 
 		// Load state from directory if given in properties
 		LilvState* state = nullptr;
-		Properties::iterator s = _properties.find(uris.state_state);
+		auto s = _properties.find(uris.state_state);
 		if (s != _properties.end() && s->second.type() == uris.forge.Path) {
 			state = LV2Block::load_state(_engine.world(), s->second.ptr<char>());
 		}

@@ -110,8 +110,8 @@ GraphImpl::duplicate(Engine&             engine,
 	for (const auto& a : _arcs) {
 		SPtr<ArcImpl> arc = dynamic_ptr_cast<ArcImpl>(a.second);
 		if (arc) {
-			PortMap::iterator t = port_map.find(arc->tail());
-			PortMap::iterator h = port_map.find(arc->head());
+			auto t = port_map.find(arc->tail());
+			auto h = port_map.find(arc->head());
 			if (t != port_map.end() && h != port_map.end()) {
 				dup->add_arc(SPtr<ArcImpl>(new ArcImpl(t->second, h->second)));
 			}
@@ -277,7 +277,7 @@ SPtr<ArcImpl>
 GraphImpl::remove_arc(const PortImpl* tail, const PortImpl* dst_port)
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Arcs::iterator i = _arcs.find(std::make_pair(tail, dst_port));
+	auto i = _arcs.find(std::make_pair(tail, dst_port));
 	if (i != _arcs.end()) {
 		SPtr<ArcImpl> arc = dynamic_ptr_cast<ArcImpl>(i->second);
 		_arcs.erase(i);
@@ -291,7 +291,7 @@ bool
 GraphImpl::has_arc(const PortImpl* tail, const PortImpl* dst_port) const
 {
 	ThreadManager::assert_thread(THREAD_PRE_PROCESS);
-	Arcs::const_iterator i = _arcs.find(std::make_pair(tail, dst_port));
+	auto i = _arcs.find(std::make_pair(tail, dst_port));
 	return (i != _arcs.end());
 }
 

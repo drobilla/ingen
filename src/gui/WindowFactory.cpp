@@ -113,7 +113,7 @@ WindowFactory::graph_window(SPtr<const GraphModel> graph)
 		return nullptr;
 	}
 
-	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
+	auto w = _graph_windows.find(graph->path());
 
 	return (w == _graph_windows.end()) ? nullptr : w->second;
 }
@@ -141,7 +141,7 @@ WindowFactory::present_graph(SPtr<const GraphModel> graph,
 {
 	assert(!view || view->graph() == graph);
 
-	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
+	auto w = _graph_windows.find(graph->path());
 
 	if (w != _graph_windows.end()) {
 		(*w).second->present();
@@ -192,7 +192,7 @@ WindowFactory::remove_graph_window(GraphWindow* win, GdkEventAny* ignored)
 		return !_app.quit(win);
 	}
 
-	GraphWindowMap::iterator w = _graph_windows.find(win->graph()->path());
+	auto w = _graph_windows.find(win->graph()->path());
 
 	assert((*w).second == win);
 	_graph_windows.erase(w);
@@ -208,7 +208,7 @@ WindowFactory::present_load_plugin(SPtr<const GraphModel> graph,
 {
 	_app.request_plugins_if_necessary();
 
-	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
+	auto w = _graph_windows.find(graph->path());
 
 	if (w != _graph_windows.end()) {
 		_load_plugin_win->set_transient_for(*w->second);
@@ -230,7 +230,7 @@ void
 WindowFactory::present_load_graph(SPtr<const GraphModel> graph,
                                   Properties             data)
 {
-	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
+	auto w = _graph_windows.find(graph->path());
 
 	if (w != _graph_windows.end()) {
 		_load_graph_win->set_transient_for(*w->second);
@@ -243,7 +243,7 @@ void
 WindowFactory::present_load_subgraph(SPtr<const GraphModel> graph,
                                      Properties             data)
 {
-	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
+	auto w = _graph_windows.find(graph->path());
 
 	if (w != _graph_windows.end()) {
 		_load_graph_win->set_transient_for(*w->second);
@@ -256,7 +256,7 @@ void
 WindowFactory::present_new_subgraph(SPtr<const GraphModel> graph,
                                     Properties             data)
 {
-	GraphWindowMap::iterator w = _graph_windows.find(graph->path());
+	auto w = _graph_windows.find(graph->path());
 
 	if (w != _graph_windows.end()) {
 		_new_subgraph_win->set_transient_for(*w->second);
@@ -268,7 +268,7 @@ WindowFactory::present_new_subgraph(SPtr<const GraphModel> graph,
 void
 WindowFactory::present_rename(SPtr<const ObjectModel> object)
 {
-	GraphWindowMap::iterator w = _graph_windows.find(object->path());
+	auto w = _graph_windows.find(object->path());
 	if (w == _graph_windows.end()) {
 		w = _graph_windows.find(object->path().parent());
 	}
@@ -283,7 +283,7 @@ WindowFactory::present_rename(SPtr<const ObjectModel> object)
 void
 WindowFactory::present_properties(SPtr<const ObjectModel> object)
 {
-	GraphWindowMap::iterator w = _graph_windows.find(object->path());
+	auto w = _graph_windows.find(object->path());
 	if (w == _graph_windows.end()) {
 		w = _graph_windows.find(object->path().parent());
 	}

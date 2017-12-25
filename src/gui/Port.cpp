@@ -234,8 +234,7 @@ Port::build_enum_menu()
 
 	PluginModel::ScalePoints points = block->plugin_model()->port_scale_points(
 		model()->index());
-	for (PluginModel::ScalePoints::iterator i = points.begin();
-	     i != points.end(); ++i) {
+	for (auto i = points.begin(); i != points.end(); ++i) {
 		menu->items().push_back(Gtk::Menu_Helpers::MenuElem(i->second));
 		Gtk::MenuItem* menu_item = &(menu->items().back());
 		menu_item->signal_activate().connect(

@@ -81,7 +81,7 @@ PluginMenu::add_plugin(SPtr<Client::PluginModel> p)
 		add_plugin_to_menu(_classless_menu, p);
 	} else {
 		// For each menu that represents plugin's class (possibly several)
-		for (iterator i = range.first; i != range.second ; ++i) {
+		for (auto i = range.first; i != range.second ; ++i) {
 			add_plugin_to_menu(i->second, p);
 		}
 	}
