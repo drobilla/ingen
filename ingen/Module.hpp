@@ -47,8 +47,8 @@ public:
 	Glib::Module* library;
 
 private:
-	Module(const Module& noncopyable);
-	Module& operator=(const Module& noncopyable);
+	Module(const Module& noncopyable) = delete;
+	Module& operator=(const Module& noncopyable) = delete;
 };
 
 } // namespace Ingen
