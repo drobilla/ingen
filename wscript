@@ -51,14 +51,13 @@ def options(ctx):
 
 def configure(conf):
     autowaf.display_header('Ingen Configuration')
-    conf.line_just = 45
-    conf.load('compiler_cxx')
-    conf.load('lv2')
-    conf.load('clang_compilation_database')
+    autowaf.set_line_just(conf, 45)
+    conf.load('compiler_cxx', cache=True)
+    conf.load('lv2', cache=True)
     if not Options.options.no_python:
-        conf.load('python')
+        conf.load('python', cache=True)
 
-    autowaf.configure(conf)
+    conf.load('autowaf', cache=True)
 
     conf.check_cxx(header_name='boost/format.hpp')
     conf.check_cxx(header_name='boost/intrusive/slist.hpp')
@@ -96,30 +95,30 @@ def configure(conf):
     autowaf.check_pkg(conf, 'portaudio-2.0', uselib_store='PORTAUDIO',
                       atleast_version='2.0.0', mandatory=False)
 
-    conf.check(function_name = 'posix_memalign',
-               defines       = '_POSIX_C_SOURCE=200809L',
-               header_name   = 'stdlib.h',
-               define_name   = 'HAVE_POSIX_MEMALIGN',
-               mandatory     = False)
+    autowaf.check_function(conf, 'cxx',  'posix_memalign',
+                           defines     = '_POSIX_C_SOURCE=200809L',
+                           header_name = 'stdlib.h',
+                           define_name = 'HAVE_POSIX_MEMALIGN',
+                           mandatory   = False)
 
-    conf.check(function_name = 'isatty',
-               header_name   = 'unistd.h',
-               defines       = '_POSIX_C_SOURCE=200809L',
-               define_name   = 'HAVE_ISATTY',
-               mandatory     = False)
+    autowaf.check_function(conf, 'cxx',  'isatty',
+                           header_name = 'unistd.h',
+                           defines     = '_POSIX_C_SOURCE=200809L',
+                           define_name = 'HAVE_ISATTY',
+                           mandatory   = False)
 
-    conf.check(function_name = 'vasprintf',
-               header_name   = 'stdio.h',
-               defines       = '_GNU_SOURCE=1',
-               define_name   = 'HAVE_VASPRINTF',
-               mandatory     = False)
+    autowaf.check_function(conf, 'cxx',  'vasprintf',
+                           header_name = 'stdio.h',
+                           defines     = '_GNU_SOURCE=1',
+                           define_name = 'HAVE_VASPRINTF',
+                           mandatory   = False)
 
-    conf.check(define_name   = 'HAVE_LIBDL',
-               lib           = 'dl',
-               mandatory     = False)
+    conf.check(define_name = 'HAVE_LIBDL',
+               lib         = 'dl',
+               mandatory   = False)
 
     if not Options.options.no_socket:
-        conf.check(function_name = 'socket',
+        autowaf.check_function(conf, 'cxx',  'socket',
                    header_name   = 'sys/socket.h',
                    define_name   = 'HAVE_SOCKET',
                    mandatory     = False)
@@ -133,12 +132,12 @@ def configure(conf):
     if not Options.options.no_jack:
         autowaf.check_pkg(conf, 'jack', uselib_store='JACK',
                           atleast_version='0.120.0', mandatory=False)
-        conf.check(function_name = 'jack_set_property',
+        autowaf.check_function(conf, 'cxx',  'jack_set_property',
                    header_name   = 'jack/metadata.h',
                    define_name   = 'HAVE_JACK_METADATA',
                    uselib        = 'JACK',
                    mandatory     = False)
-        conf.check(function_name = 'jack_port_rename',
+        autowaf.check_function(conf, 'cxx',  'jack_port_rename',
                    header_name   = 'jack/jack.h',
                    define_name   = 'HAVE_JACK_PORT_RENAME',
                    uselib        = 'JACK',
@@ -189,6 +188,7 @@ def configure(conf):
 
     conf.write_config_header('ingen_config.h', remove=False)
 
+    autowaf.display_summary(conf)
     autowaf.display_msg(conf, "GUI", bool(conf.env.INGEN_BUILD_GUI))
     autowaf.display_msg(conf, "HTML plugin documentation support",
                         bool(conf.env.HAVE_WEBKIT))
