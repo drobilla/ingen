@@ -41,6 +41,8 @@ class URIs;
 class INGEN_API AtomWriter : public Interface
 {
 public:
+	using result_type = void; ///< For boost::apply_visitor
+
 	AtomWriter(URIMap& map, URIs& uris, AtomSink& sink);
 
 	Raul::URI uri() const override {
