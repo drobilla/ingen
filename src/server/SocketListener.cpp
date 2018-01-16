@@ -39,6 +39,8 @@
 namespace Ingen {
 namespace Server {
 
+static constexpr const char* const unix_scheme = "unix://";
+
 static std::string
 get_link_target(const char* link_path)
 {
@@ -59,10 +61,26 @@ get_link_target(const char* link_path)
 	return std::string();
 }
 
-void
-SocketListener::ingen_listen(Engine*       engine,
-                             Raul::Socket* unix_sock,
-                             Raul::Socket* net_sock)
+static void ingen_listen(Engine*       engine,
+                         Raul::Socket* unix_sock,
+                         Raul::Socket* net_sock);
+
+
+SocketListener::SocketListener(Engine& engine)
+	: unix_sock(Raul::Socket::Type::UNIX)
+	, net_sock(Raul::Socket::Type::TCP)
+	, thread(new std::thread(ingen_listen, &engine, &unix_sock, &net_sock))
+{}
+
+SocketListener::~SocketListener() {
+	unix_sock.shutdown();
+	net_sock.shutdown();
+	thread->join();
+	unlink(unix_sock.uri().substr(strlen(unix_scheme)).c_str());
+}
+
+static void
+ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 {
 	Ingen::World* world = engine->world();
 

@@ -19,35 +19,19 @@
 
 #include "raul/Socket.hpp"
 
-#include "Engine.hpp"
-
 namespace Ingen {
 namespace Server {
+
+class Engine;
 
 /** Listens on main sockets and spawns socket servers for new connections. */
 class SocketListener
 {
 public:
-	SocketListener(Engine& engine)
-		: unix_sock(Raul::Socket::Type::UNIX)
-		, net_sock(Raul::Socket::Type::TCP)
-		, thread(new std::thread(ingen_listen, &engine, &unix_sock, &net_sock))
-	{}
-
-	~SocketListener() {
-		unix_sock.shutdown();
-		net_sock.shutdown();
-		thread->join();
-		unlink(unix_sock.uri().substr(strlen(unix_scheme)).c_str());
-	}
+	SocketListener(Engine& engine);
+	~SocketListener();
 
 private:
-	static constexpr const char* unix_scheme = "unix://";
-
-	static void ingen_listen(Engine*       engine,
-	                         Raul::Socket* unix_sock,
-	                         Raul::Socket* net_sock);
-
 	Raul::Socket                 unix_sock;
 	Raul::Socket                 net_sock;
 	std::unique_ptr<std::thread> thread;
