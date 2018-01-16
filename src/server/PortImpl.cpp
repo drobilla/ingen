@@ -559,6 +559,7 @@ PortImpl::post_process(RunContext& context)
 {
 	for (uint32_t v = 0; v < _poly; ++v) {
 		update_set_state(context, v);
+		update_values(0, v);
 	}
 
 	monitor(context);

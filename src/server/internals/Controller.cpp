@@ -118,7 +118,6 @@ ControllerNode::run(RunContext& context)
 			if (control(context, buf[1], buf[2], ev->time.frames + context.start())) {
 				midi_out->append_event(ev->time.frames, &ev->body);
 			}
-
 		}
 	}
 }
