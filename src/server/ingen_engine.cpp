@@ -28,8 +28,7 @@ struct IngenEngineModule : public Ingen::Module {
 		SPtr<Server::Engine> engine(new Server::Engine(world));
 		world->set_engine(engine);
 		if (!world->interface()) {
-			world->set_interface(
-				SPtr<Interface>(engine->interface(), NullDeleter<Interface>));
+			world->set_interface(engine->interface());
 		}
 	}
 };

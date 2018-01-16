@@ -602,7 +602,7 @@ Delta::post_process()
 	}
 
 	if (respond() == Status::SUCCESS) {
-		_update.send(_engine.broadcaster());
+		_update.send(*_engine.broadcaster());
 
 		switch (_type) {
 		case Type::SET:
@@ -625,7 +625,7 @@ Delta::post_process()
 				// Preset save
 				ClientUpdate response;
 				response.put(_preset->uri(), _preset->properties());
-				response.send(_engine.broadcaster());
+				response.send(*_engine.broadcaster());
 			} else {
 				// Graph object put
 				_engine.broadcaster()->put(_subject, _properties, _context);

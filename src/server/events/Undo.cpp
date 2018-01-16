@@ -43,8 +43,8 @@ Undo::Undo(Engine&            engine,
 bool
 Undo::pre_process(PreProcessContext& ctx)
 {
-	UndoStack* const  stack = _is_redo ? _engine.redo_stack() : _engine.undo_stack();
-	const Event::Mode mode  = _is_redo ? Event::Mode::REDO    : Event::Mode::UNDO;
+	const UPtr<UndoStack>& stack = _is_redo ? _engine.redo_stack() : _engine.undo_stack();
+	const Event::Mode      mode  = _is_redo ? Event::Mode::REDO    : Event::Mode::UNDO;
 
 	if (stack->empty()) {
 		return Event::pre_process_done(Status::NOT_FOUND);

@@ -40,9 +40,8 @@ schedule(LV2_Worker_Schedule_Handle handle,
 {
 	LV2Block* block  = (LV2Block*)handle;
 	Engine&   engine = block->parent_graph()->engine();
-	Worker*   worker = engine.worker();
 
-	return worker->request(block, size, data);
+	return engine.worker()->request(block, size, data);
 }
 
 static LV2_Worker_Status
@@ -52,9 +51,8 @@ schedule_sync(LV2_Worker_Schedule_Handle handle,
 {
 	LV2Block* block  = (LV2Block*)handle;
 	Engine&   engine = block->parent_graph()->engine();
-	Worker*   worker = engine.sync_worker();
 
-	return worker->request(block, size, data);
+	return engine.sync_worker()->request(block, size, data);
 }
 
 LV2_Worker_Status

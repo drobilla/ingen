@@ -66,23 +66,23 @@ bool               ThreadManager::single_threaded(true);
 
 Engine::Engine(Ingen::World* world)
 	: _world(world)
-	, _maid(new Raul::Maid)
-	, _block_factory(new BlockFactory(world))
-	, _broadcaster(new Broadcaster())
-	, _buffer_factory(new BufferFactory(*this, world->uris()))
-	, _control_bindings(nullptr)
-	, _event_writer(new EventWriter(*this))
-	, _interface(_event_writer)
-	, _atom_interface(nullptr)
 	, _options(new LV2Options(world->uris()))
-	, _undo_stack(new UndoStack(_world->uris(), _world->uri_map()))
-	, _redo_stack(new UndoStack(_world->uris(), _world->uri_map()))
-	, _pre_processor(new PreProcessor(*this))
-	, _post_processor(new PostProcessor(*this))
-	, _root_graph(nullptr)
+	, _buffer_factory(new BufferFactory(*this, world->uris()))
+	, _maid(new Raul::Maid)
 	, _worker(new Worker(world->log(), event_queue_size()))
 	, _sync_worker(new Worker(world->log(), event_queue_size(), true))
-	, _listener(nullptr)
+	, _broadcaster(new Broadcaster())
+	, _control_bindings(new ControlBindings(*this))
+	, _block_factory(new BlockFactory(world))
+	, _undo_stack(new UndoStack(_world->uris(), _world->uri_map()))
+	, _redo_stack(new UndoStack(_world->uris(), _world->uri_map()))
+	, _post_processor(new PostProcessor(*this))
+	, _pre_processor(new PreProcessor(*this))
+	, _event_writer(new EventWriter(*this))
+	, _interface(_event_writer)
+	, _atom_interface(
+		new AtomReader(world->uri_map(), world->uris(), world->log(), *_interface))
+	, _root_graph(nullptr)
 	, _cycle_start_time(0)
 	, _rand_engine(0)
 	, _uniform_dist(0.0f, 1.0f)
@@ -94,8 +94,6 @@ Engine::Engine(Ingen::World* world)
 	if (!world->store()) {
 		world->set_store(SPtr<Ingen::Store>(new Store()));
 	}
-
-	_control_bindings = new ControlBindings(*this);
 
 	for (int i = 0; i < world->conf().option("threads").get<int32_t>(); ++i) {
 		Raul::RingBuffer* ring = new Raul::RingBuffer(24 * event_queue_size());
@@ -128,9 +126,6 @@ Engine::Engine(Ingen::World* world)
 				                               stderr,
 				                               ColorContext::Color::MAGENTA)});
 	}
-
-	_atom_interface = new AtomReader(
-		world->uri_map(), world->uris(), world->log(), *_interface.get());
 }
 
 Engine::~Engine()
@@ -149,7 +144,7 @@ Engine::~Engine()
 		_post_processor->process();
 	}
 
-	delete _atom_interface;
+	_atom_interface.reset();
 
 	// Delete run contexts
 	_quit_flag = true;
@@ -173,33 +168,13 @@ Engine::~Engine()
 	}
 
 	_world->set_store(SPtr<Ingen::Store>());
-
-#ifdef HAVE_SOCKET
-	delete _listener;
-#endif
-	delete _pre_processor;
-	delete _post_processor;
-	delete _undo_stack;
-	delete _redo_stack;
-	delete _block_factory;
-	delete _control_bindings;
-	delete _broadcaster;
-	delete _sync_worker;
-	delete _worker;
-	delete _maid;
-
-	_driver.reset();
-
-	delete _buffer_factory;
-
-	munlockall();
 }
 
 void
 Engine::listen()
 {
 #ifdef HAVE_SOCKET
-	_listener = new SocketListener(*this);
+	_listener = UPtr<SocketListener>(new SocketListener(*this));
 #endif
 }
 
@@ -217,6 +192,12 @@ Engine::locate(FrameTime s, SampleCount nframes)
 	for (RunContext* ctx : _run_contexts) {
 		ctx->locate(s, nframes);
 	}
+}
+
+void
+Engine::set_root_graph(GraphImpl* graph)
+{
+	_root_graph = graph;
 }
 
 void
@@ -519,6 +500,12 @@ unsigned
 Engine::process_all_events()
 {
 	return _pre_processor->process(run_context(), *_post_processor, 0);
+}
+
+Log&
+Engine::log() const
+{
+	return _world->log();
 }
 
 void

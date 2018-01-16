@@ -641,7 +641,7 @@ LV2Block::load_state(World* world, const std::string& path)
 }
 
 void
-LV2Block::apply_state(Worker* worker, const LilvState* state)
+LV2Block::apply_state(const UPtr<Worker>& worker, const LilvState* state)
 {
 	World*            world = parent_graph()->engine().world();
 	SPtr<LV2_Feature> sched;

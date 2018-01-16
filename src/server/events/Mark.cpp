@@ -44,9 +44,9 @@ Mark::Mark(Engine&                 engine,
 bool
 Mark::pre_process(PreProcessContext& ctx)
 {
-	UndoStack* const stack = ((_mode == Mode::UNDO)
-	                          ? _engine.redo_stack()
-	                          : _engine.undo_stack());
+	const UPtr<UndoStack>& stack = ((_mode == Mode::UNDO)
+	                                ? _engine.redo_stack()
+	                                : _engine.undo_stack());
 
 	switch (_type) {
 	case Type::BUNDLE_BEGIN:

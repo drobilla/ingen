@@ -101,7 +101,7 @@ Get::post_process()
 			props.insert(load_props.begin(), load_props.end());
 			_request_client->put(Raul::URI("ingen:/engine"), props);
 		} else {
-			_response.send(_request_client.get());
+			_response.send(*_request_client);
 		}
 	}
 }

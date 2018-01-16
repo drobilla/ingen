@@ -70,7 +70,7 @@ public:
 
 	LilvState* load_preset(const Raul::URI& uri);
 
-	void apply_state(Worker* worker, const LilvState* state);
+	void apply_state(const UPtr<Worker>& worker, const LilvState* state);
 
 	boost::optional<Resource> save_preset(const Raul::URI&  uri,
 	                                      const Properties& props);

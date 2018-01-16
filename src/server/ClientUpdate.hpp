@@ -57,7 +57,7 @@ struct ClientUpdate {
 
 	void del(const Raul::URI& subject);
 
-	void send(Interface* dest);
+	void send(Interface& dest);
 
 	struct Put {
 		Raul::URI       uri;

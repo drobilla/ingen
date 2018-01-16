@@ -132,22 +132,22 @@ put_higher_than(const ClientUpdate::Put& a, const ClientUpdate::Put& b)
 }
 
 void
-ClientUpdate::send(Interface* dest)
+ClientUpdate::send(Interface& dest)
 {
 	// Send deletions
 	for (const Raul::URI& subject : dels) {
-		dest->del(subject);
+		dest.del(subject);
 	}
 
 	// Send puts in increasing depth order so parents are sent first
 	std::stable_sort(puts.begin(), puts.end(), put_higher_than);
 	for (const ClientUpdate::Put& put : puts) {
-		dest->put(put.uri, put.properties, put.ctx);
+		dest.put(put.uri, put.properties, put.ctx);
 	}
 
 	// Send connections
 	for (const ClientUpdate::Connect& connect : connects) {
-		dest->connect(connect.tail, connect.head);
+		dest.connect(connect.tail, connect.head);
 	}
 }
 

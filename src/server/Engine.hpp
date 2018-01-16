@@ -24,23 +24,22 @@
 
 #include "ingen/Clock.hpp"
 #include "ingen/EngineBase.hpp"
-#include "ingen/Interface.hpp"
 #include "ingen/Properties.hpp"
-#include "ingen/World.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
-#include "raul/Noncopyable.hpp"
 
 #include "Event.hpp"
-#include "EventWriter.hpp"
 #include "Load.hpp"
-#include "RunContext.hpp"
 
-namespace Raul { class Maid; }
+namespace Raul {
+class Maid;
+class RingBuffer;
+}
 
 namespace Ingen {
 
 class AtomReader;
+class Interface;
 class Log;
 class Store;
 class World;
@@ -52,12 +51,14 @@ class Broadcaster;
 class BufferFactory;
 class ControlBindings;
 class Driver;
+class EventWriter;
 class GraphImpl;
 class LV2Options;
 class PostProcessor;
 class PreProcessor;
 class RunContext;
 class SocketListener;
+class Task;
 class UndoStack;
 class Worker;
 
@@ -70,12 +71,14 @@ class Worker;
 
    @ingroup engine
 */
-class INGEN_API Engine : public Raul::Noncopyable, public EngineBase
+class INGEN_API Engine : public EngineBase
 {
 public:
 	explicit Engine(Ingen::World* world);
-
 	virtual ~Engine();
+
+	Engine(const Engine&) = delete;
+	Engine& operator=(const Engine&) = delete;
 
 	// EngineBase methods
 	virtual void init(double sample_rate, uint32_t block_length, size_t seq_size);
@@ -127,27 +130,27 @@ public:
 	unsigned process_all_events();
 
 	Ingen::World* world() const { return _world; }
+	Log&          log()   const;
 
-	Interface*       interface()        const { return _interface.get(); }
-	EventWriter*     event_writer()     const { return _event_writer.get(); }
-	AtomReader*      atom_interface()   const { return _atom_interface; }
-	BlockFactory*    block_factory()    const { return _block_factory; }
-	Broadcaster*     broadcaster()      const { return _broadcaster; }
-	BufferFactory*   buffer_factory()   const { return _buffer_factory; }
-	ControlBindings* control_bindings() const { return _control_bindings; }
-	Driver*          driver()           const { return _driver.get(); }
-	Log&             log()              const { return _world->log(); }
-	GraphImpl*       root_graph()       const { return _root_graph; }
-	PostProcessor*   post_processor()   const { return _post_processor; }
-	Raul::Maid*      maid()             const { return _maid; }
-	UndoStack*       undo_stack()       const { return _undo_stack; }
-	UndoStack*       redo_stack()       const { return _redo_stack; }
-	Worker*          worker()           const { return _worker; }
-	Worker*          sync_worker()      const { return _sync_worker; }
+	const SPtr<Interface>&       interface()        const { return _interface; }
+	const SPtr<EventWriter>&     event_writer()     const { return _event_writer; }
+	const UPtr<AtomReader>&      atom_interface()   const { return _atom_interface; }
+    const UPtr<BlockFactory>&    block_factory()    const { return _block_factory; }
+    const UPtr<Broadcaster>&     broadcaster()      const { return _broadcaster; }
+    const UPtr<BufferFactory>&   buffer_factory()   const { return _buffer_factory; }
+    const UPtr<ControlBindings>& control_bindings() const { return _control_bindings; }
+    const SPtr<Driver>&          driver()           const { return _driver; }
+    const UPtr<PostProcessor>&   post_processor()   const { return _post_processor; }
+    const UPtr<Raul::Maid>&      maid()             const { return _maid; }
+    const UPtr<UndoStack>&       undo_stack()       const { return _undo_stack; }
+    const UPtr<UndoStack>&       redo_stack()       const { return _redo_stack; }
+    const UPtr<Worker>&          worker()           const { return _worker; }
+    const UPtr<Worker>&          sync_worker()      const { return _sync_worker; }
+
+    GraphImpl* root_graph() const { return _root_graph; }
+	void       set_root_graph(GraphImpl* graph);
 
 	RunContext& run_context() { return *_run_contexts[0]; }
-
-	void set_root_graph(GraphImpl* graph) { _root_graph = graph; }
 
 	void flush_events(const std::chrono::milliseconds& sleep_ms);
 
@@ -175,24 +178,24 @@ public:
 private:
 	Ingen::World* _world;
 
-	Raul::Maid*       _maid;
-	BlockFactory*     _block_factory;
-	Broadcaster*      _broadcaster;
-	BufferFactory*    _buffer_factory;
-	ControlBindings*  _control_bindings;
-	SPtr<Driver>      _driver;
-	SPtr<EventWriter> _event_writer;
-	SPtr<Interface>   _interface;
-	AtomReader*       _atom_interface;
-	SPtr<LV2Options>  _options;
-	UndoStack*        _undo_stack;
-	UndoStack*        _redo_stack;
-	PreProcessor*     _pre_processor;
-	PostProcessor*    _post_processor;
-	GraphImpl*        _root_graph;
-	Worker*           _worker;
-	Worker*           _sync_worker;
-	SocketListener*   _listener;
+	SPtr<LV2Options>      _options;
+	UPtr<BufferFactory>   _buffer_factory;
+	UPtr<Raul::Maid>      _maid;
+	SPtr<Driver>          _driver;
+	UPtr<Worker>          _worker;
+	UPtr<Worker>          _sync_worker;
+	UPtr<Broadcaster>     _broadcaster;
+	UPtr<ControlBindings> _control_bindings;
+	UPtr<BlockFactory>    _block_factory;
+	UPtr<UndoStack>       _undo_stack;
+	UPtr<UndoStack>       _redo_stack;
+	UPtr<PostProcessor>   _post_processor;
+	UPtr<PreProcessor>    _pre_processor;
+	UPtr<SocketListener>  _listener;
+	SPtr<EventWriter>     _event_writer;
+	SPtr<Interface>       _interface;
+	UPtr<AtomReader>      _atom_interface;
+	GraphImpl*            _root_graph;
 
 	std::vector<Raul::RingBuffer*> _notifications;
 	std::vector<RunContext*>       _run_contexts;

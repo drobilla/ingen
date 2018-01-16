@@ -405,7 +405,7 @@ using namespace Ingen;
 using namespace Ingen::Server;
 
 static void
-ingen_lv2_main(SPtr<Engine> engine, LV2Driver* driver)
+ingen_lv2_main(SPtr<Engine> engine, const SPtr<LV2Driver>& driver)
 {
 	while (true) {
 		// Wait until there is work to be done
@@ -551,8 +551,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	plugin->engine = engine;
 	plugin->world->set_engine(engine);
 
-	SPtr<Interface> interface = SPtr<Interface>(engine->interface(),
-	                                            NullDeleter<Interface>);
+	SPtr<Interface> interface = engine->interface();
 
 	plugin->world->set_interface(interface);
 
@@ -600,9 +599,9 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 {
 	using namespace Ingen::Server;
 
-	IngenPlugin*    me     = (IngenPlugin*)instance;
-	Server::Engine* engine = (Server::Engine*)me->world->engine().get();
-	LV2Driver*      driver = (LV2Driver*)engine->driver();
+	IngenPlugin*           me     = (IngenPlugin*)instance;
+	Server::Engine*        engine = (Server::Engine*)me->world->engine().get();
+	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 	if (port < driver->ports().size()) {
 		driver->ports().at(port)->set_buffer(data);
 	} else {
@@ -613,10 +612,9 @@ ingen_connect_port(LV2_Handle instance, uint32_t port, void* data)
 static void
 ingen_activate(LV2_Handle instance)
 {
-	IngenPlugin*         me     = (IngenPlugin*)instance;
-	SPtr<Server::Engine> engine = dynamic_ptr_cast<Server::Engine>(
-		me->world->engine());
-	LV2Driver*           driver = (LV2Driver*)engine->driver();
+	IngenPlugin*           me     = (IngenPlugin*)instance;
+	SPtr<Server::Engine>   engine = static_ptr_cast<Server::Engine>(me->world->engine());
+	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 	engine->activate();
 	me->main = new std::thread(ingen_lv2_main, engine, driver);
 }
@@ -624,9 +622,9 @@ ingen_activate(LV2_Handle instance)
 static void
 ingen_run(LV2_Handle instance, uint32_t sample_count)
 {
-	IngenPlugin*    me     = (IngenPlugin*)instance;
-	Server::Engine* engine = (Server::Engine*)me->world->engine().get();
-	LV2Driver*      driver = (LV2Driver*)engine->driver();
+	IngenPlugin*           me     = (IngenPlugin*)instance;
+	SPtr<Server::Engine>   engine = static_ptr_cast<Server::Engine>(me->world->engine());
+	const SPtr<LV2Driver>& driver = static_ptr_cast<LV2Driver>(engine->driver());
 
 	Server::ThreadManager::set_flag(Ingen::Server::THREAD_PROCESS);
 	Server::ThreadManager::set_flag(Ingen::Server::THREAD_IS_REAL_TIME);
