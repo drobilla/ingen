@@ -25,6 +25,7 @@
 #include "BufferRef.hpp"
 #include "NodeImpl.hpp"
 #include "PortType.hpp"
+#include "RunContext.hpp"
 #include "types.hpp"
 
 namespace Raul { class Maid; }

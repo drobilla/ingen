@@ -19,6 +19,7 @@
 #include "ingen/AtomSink.hpp"
 #include "ingen/AtomWriter.hpp"
 #include "ingen/Configuration.hpp"
+#include "ingen/World.hpp"
 
 #include "Engine.hpp"
 #include "Event.hpp"

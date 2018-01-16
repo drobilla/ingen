@@ -19,6 +19,7 @@
 #include "ingen/ColorContext.hpp"
 #include "ingen/Configuration.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/World.hpp"
 
 #include "CompiledGraph.hpp"
 #include "Engine.hpp"

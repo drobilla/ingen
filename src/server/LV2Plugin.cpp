@@ -19,6 +19,7 @@
 #include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/presets/presets.h"
 
 #include "Engine.hpp"

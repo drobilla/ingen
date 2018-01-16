@@ -35,6 +35,7 @@
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
 #include "Engine.hpp"
+#include "RunContext.hpp"
 
 namespace Ingen {
 namespace Server {

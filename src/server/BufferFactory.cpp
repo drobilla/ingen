@@ -16,6 +16,7 @@
 
 #include "ingen/Log.hpp"
 #include "ingen/URIs.hpp"
+#include "ingen/World.hpp"
 
 #include "Buffer.hpp"
 #include "BufferFactory.hpp"
