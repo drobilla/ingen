@@ -85,7 +85,7 @@ public:
 
 	/** Prepend a child to this task. */
 	void push_front(Task&& task) {
-		_children.emplace_front(std::make_unique<Task>(std::move(task)));
+		_children.emplace_front(std::unique_ptr<Task>(new Task(std::move(task))));
 	}
 
 	Mode       mode()  const { return _mode; }

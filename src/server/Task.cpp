@@ -110,7 +110,7 @@ Task::simplify(std::unique_ptr<Task>&& task)
 		return std::move(task);
 	}
 
-	std::unique_ptr<Task> ret = std::make_unique<Task>(task->mode());
+	std::unique_ptr<Task> ret = std::unique_ptr<Task>(new Task(task->mode()));
 	for (auto&& c : task->_children) {
 		auto child = simplify(std::move(c));
 		if (!child->empty()) {

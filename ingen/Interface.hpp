@@ -47,6 +47,8 @@ class Atom;
 class INGEN_API Interface
 {
 public:
+	using result_type = void;
+
 	Interface() : _seq(0) {}
 
 	virtual ~Interface() = default;

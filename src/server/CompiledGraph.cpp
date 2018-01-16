@@ -53,7 +53,7 @@ has_provider_with_many_dependants(BlockImpl* n)
 }
 
 CompiledGraph::CompiledGraph(GraphImpl* graph)
-	: _master(std::make_unique<Task>(Task::Mode::SEQUENTIAL))
+	: _master(std::unique_ptr<Task>(new Task(Task::Mode::SEQUENTIAL)))
 {
 	compile_graph(graph);
 }
