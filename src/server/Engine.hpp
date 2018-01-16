@@ -26,6 +26,7 @@
 #include "ingen/EngineBase.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Properties.hpp"
+#include "ingen/World.hpp"
 #include "ingen/ingen.h"
 #include "ingen/types.hpp"
 #include "raul/Noncopyable.hpp"
@@ -40,6 +41,7 @@ namespace Raul { class Maid; }
 namespace Ingen {
 
 class AtomReader;
+class Log;
 class Store;
 class World;
 

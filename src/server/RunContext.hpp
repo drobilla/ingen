@@ -17,10 +17,10 @@
 #ifndef INGEN_ENGINE_RUNCONTEXT_HPP
 #define INGEN_ENGINE_RUNCONTEXT_HPP
 
+#include <cstdint>
 #include <thread>
 
-#include "ingen/Atom.hpp"
-#include "ingen/World.hpp"
+#include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/RingBuffer.hpp"
 
 #include "types.hpp"
