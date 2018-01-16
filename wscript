@@ -58,6 +58,7 @@ def configure(conf):
         conf.load('python', cache=True)
 
     conf.load('autowaf', cache=True)
+    autowaf.set_cxx_lang(conf, 'c++11')
 
     conf.check_cxx(header_name='boost/format.hpp')
     conf.check_cxx(header_name='boost/intrusive/slist.hpp')
