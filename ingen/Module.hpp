@@ -17,9 +17,11 @@
 #ifndef INGEN_MODULE_HPP
 #define INGEN_MODULE_HPP
 
-#include "ingen/ingen.h"
+#include <memory>
 
-namespace Glib { class Module; }
+#include "ingen/FilePath.hpp"
+#include "ingen/Library.hpp"
+#include "ingen/ingen.h"
 
 namespace Ingen {
 
@@ -35,6 +37,9 @@ public:
 	Module() : library(nullptr) {}
 	virtual ~Module() = default;
 
+	Module(const Module&) = delete;
+	Module& operator=(const Module&) = delete;
+
 	virtual void load(Ingen::World* world) = 0;
 	virtual void run(Ingen::World* world) {}
 
@@ -44,11 +49,7 @@ public:
 	 * in this destructor could possibly reference code from the library
 	 * afterwards and cause a segfault on exit.
 	 */
-	Glib::Module* library;
-
-private:
-	Module(const Module& noncopyable) = delete;
-	Module& operator=(const Module& noncopyable) = delete;
+	std::unique_ptr<Library> library;
 };
 
 } // namespace Ingen

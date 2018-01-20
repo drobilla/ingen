@@ -11,6 +11,7 @@ def build(bld):
         'FilePath.cpp',
         'Forge.cpp',
         'LV2Features.cpp',
+        'Library.cpp',
         'Log.cpp',
         'Parser.cpp',
         'Resource.cpp',

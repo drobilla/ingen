@@ -14,10 +14,11 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cstdlib>
 #include <map>
+#include <memory>
 #include <string>
-
-#include <glibmm/module.h>
+#include <utility>
 
 #include "ingen/Configuration.hpp"
 #include "ingen/DataAccess.hpp"
@@ -56,10 +57,10 @@ class Store;
  *
  * \param name The base name of the module, e.g. "ingen_jack"
  */
-static Glib::Module*
-ingen_load_module(Log& log, const string& name)
+static std::unique_ptr<Library>
+ingen_load_library(Log& log, const string& name)
 {
-	Glib::Module* module = nullptr;
+	std::unique_ptr<Library> library;
 
 	// Search INGEN_MODULE_PATH first
 	const char* const module_path = getenv("INGEN_MODULE_PATH");
@@ -69,28 +70,28 @@ ingen_load_module(Log& log, const string& name)
 		while (getline(iss, dir, search_path_separator)) {
 			FilePath filename = Ingen::ingen_module_path(name, FilePath(dir));
 			if (filesystem::exists(filename)) {
-				module = new Glib::Module(filename);
-				if (*module) {
-					return module;
+				library = std::unique_ptr<Library>(new Library(filename));
+				if (*library) {
+					return library;
 				} else {
-					log.error(Glib::Module::get_last_error());
+					log.error(Library::get_last_error());
 				}
 			}
 		}
 	}
 
 	// Try default directory if not found
-	module = new Glib::Module(Ingen::ingen_module_path(name));
+	library = std::unique_ptr<Library>(new Library(Ingen::ingen_module_path(name)));
 
-	if (*module) {
-		return module;
+	if (*library) {
+		return library;
 	} else if (!module_path) {
 		log.error(fmt("Unable to find %1% (%2%)\n")
-		          % name % Glib::Module::get_last_error());
+		          % name % Library::get_last_error());
 		return nullptr;
 	} else {
 		log.error(fmt("Unable to load %1% from %2% (%3%)\n")
-		          % name % module_path % Glib::Module::get_last_error());
+		          % name % module_path % Library::get_last_error());
 		return nullptr;
 	}
 }
@@ -154,10 +155,10 @@ public:
 		}
 
 		// Delete module objects but save pointers to libraries
-		typedef std::list<Glib::Module*> Libs;
+		typedef std::list<std::unique_ptr<Library>> Libs;
 		Libs libs;
 		for (auto& m : modules) {
-			libs.push_back(m.second->library);
+			libs.emplace_back(std::move(m.second->library));
 			delete m.second;
 		}
 
@@ -178,10 +179,7 @@ public:
 
 		lilv_world_free(lilv_world);
 
-		// Close module libraries
-		for (auto& l : libs) {
-			delete l;
-		}
+		// Module libraries go out of scope and close here
 	}
 
 	typedef std::map<const std::string, Module*> Modules;
@@ -277,12 +275,14 @@ World::load_module(const char* name)
 		return true;
 	}
 	log().info(fmt("Loading %1% module\n") % name);
-	Glib::Module* lib = ingen_load_module(log(), name);
-	Ingen::Module* (*module_load)() = nullptr;
-	if (lib && lib->get_symbol("ingen_module_load", (void*&)module_load)) {
+	std::unique_ptr<Ingen::Library> lib = ingen_load_library(log(), name);
+	Ingen::Module* (*module_load)() =
+		lib ? (Ingen::Module* (*)())lib->get_function("ingen_module_load")
+		    : nullptr;
+	if (module_load) {
 		Module* module = module_load();
 		if (module) {
-			module->library = lib;
+			module->library = std::move(lib);
 			module->load(this);
 			_impl->modules.emplace(string(name), module);
 			return true;
@@ -290,7 +290,6 @@ World::load_module(const char* name)
 	}
 
 	log().error(fmt("Failed to load module `%1%' (%2%)\n") % name % lib->get_last_error());
-	delete lib;
 	return false;
 }
 
