@@ -344,26 +344,25 @@ def test(ctx):
             os.path.join('src', 'server')])
 
     autowaf.pre_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])
-    autowaf.begin_tests(ctx, APPNAME)
 
-    empty      = ctx.path.find_node('tests/empty.ingen')
-    empty_path = os.path.join(empty.abspath(), 'main.ttl')
-    for i in ctx.path.ant_glob('tests/*.ttl'):
-        # Run test
-        autowaf.run_test(ctx, APPNAME,
-                         'ingen_test --load %s --execute %s' % (empty.abspath(), i.abspath()),
-                         dirs=['.', 'src', 'tests'])
+    with autowaf.begin_tests(ctx, APPNAME, 'system'):
+        empty      = ctx.path.find_node('tests/empty.ingen')
+        empty_path = os.path.join(empty.abspath(), 'main.ttl')
+        for i in ctx.path.ant_glob('tests/*.ttl'):
+            # Run test
+            autowaf.run_test(ctx, APPNAME,
+                             'ingen_test --load %s --execute %s' % (empty.abspath(), i.abspath()),
+                             dirs=['.', 'src', 'tests'])
 
-        # Check undo output for changes
-        base = os.path.basename(i.abspath().replace('.ttl', ''))
-        undone_path = base + '.undo.ingen/main.ttl'
-        test_file_equals(empty_path, os.path.abspath(undone_path))
+            # Check undo output for changes
+            base = os.path.basename(i.abspath().replace('.ttl', ''))
+            undone_path = base + '.undo.ingen/main.ttl'
+            test_file_equals(empty_path, os.path.abspath(undone_path))
 
-        # Check redo output for changes
-        out_path = base + '.out.ingen/main.ttl'
-        redone_path = base + '.redo.ingen/main.ttl'
-        test_file_equals(out_path, os.path.abspath(redone_path))
+            # Check redo output for changes
+            out_path = base + '.out.ingen/main.ttl'
+            redone_path = base + '.redo.ingen/main.ttl'
+            test_file_equals(out_path, os.path.abspath(redone_path))
 
-    autowaf.end_tests(ctx, APPNAME)
     autowaf.post_test(ctx, APPNAME, dirs=['.', 'src', 'tests'],
                       remove=['/usr*'])
