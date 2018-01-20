@@ -19,8 +19,6 @@
 
 #include <cassert>
 
-#include "raul/URI.hpp"
-
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
@@ -42,7 +40,7 @@ public:
 		ATOM    = 4
 	};
 
-	explicit PortType(const Raul::URI& uri)
+	explicit PortType(const URI& uri)
 		: _id(UNKNOWN)
 	{
 		if (uri == type_uri(AUDIO)) {
@@ -58,8 +56,8 @@ public:
 
 	PortType(ID id) : _id(id) {}
 
-	inline const Raul::URI& uri() const { return type_uri(_id); }
-	inline ID               id()  const { return _id; }
+	inline const URI& uri() const { return type_uri(_id); }
+	inline ID         id() const { return _id; }
 
 	inline bool operator==(const ID& id) const { return (_id == id); }
 	inline bool operator!=(const ID& id) const { return (_id != id); }
@@ -73,14 +71,14 @@ public:
 	inline bool is_atom()    { return _id == ATOM; }
 
 private:
-	static inline const Raul::URI& type_uri(unsigned id_num) {
+	static inline const URI& type_uri(unsigned id_num) {
 		assert(id_num <= ATOM);
-		static const Raul::URI uris[] = {
-			Raul::URI("http://www.w3.org/2002/07/owl#Nothing"),
-			Raul::URI(LV2_CORE__AudioPort),
-			Raul::URI(LV2_CORE__ControlPort),
-			Raul::URI(LV2_CORE__CVPort),
-			Raul::URI(LV2_ATOM__AtomPort)
+		static const URI uris[] = {
+			URI("http://www.w3.org/2002/07/owl#Nothing"),
+			URI(LV2_CORE__AudioPort),
+			URI(LV2_CORE__ControlPort),
+			URI(LV2_CORE__CVPort),
+			URI(LV2_ATOM__AtomPort)
 		};
 		return uris[id_num];
 	}

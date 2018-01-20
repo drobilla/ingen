@@ -58,7 +58,7 @@ public:
 
 	Node* port(uint32_t index) const;
 
-	const Raul::URI&  plugin_uri()   const { return _plugin_uri; }
+	const URI&        plugin_uri()   const { return _plugin_uri; }
 	const Resource*   plugin()       const { return _plugin.get(); }
 	Resource*         plugin()             { return _plugin.get(); }
 	SPtr<PluginModel> plugin_model() const { return _plugin; }
@@ -86,7 +86,7 @@ protected:
 	friend class ClientStore;
 
 	BlockModel(URIs&             uris,
-	           const Raul::URI&  plugin_uri,
+	           const URI&        plugin_uri,
 	           const Raul::Path& path);
 	BlockModel(URIs&             uris,
 	           SPtr<PluginModel> plugin,
@@ -103,7 +103,7 @@ protected:
 	virtual void clear();
 
 	Ports             _ports;      ///< Vector of ports
-	Raul::URI         _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
+	URI               _plugin_uri; ///< Plugin URI (if PluginModel is unknown)
 	SPtr<PluginModel> _plugin;     ///< The plugin this block is an instance of
 
 private:

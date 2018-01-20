@@ -20,7 +20,6 @@
 #include <string>
 
 #include "ganv/Module.hpp"
-#include "raul/URI.hpp"
 
 #include "Port.hpp"
 
@@ -68,7 +67,7 @@ protected:
 
 	void set_port(Port* port) { _port = port; }
 
-	void property_changed(const Raul::URI& key, const Atom& value);
+	void property_changed(const URI& key, const Atom& value);
 
 	SPtr<const Client::PortModel> _model;
 	Port*                         _port;

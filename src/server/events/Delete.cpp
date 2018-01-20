@@ -202,7 +202,7 @@ Delete::undo(Interface& target)
 
 		// Adjust port indices
 		for (const auto& c : _port_index_changes) {
-			if (c.first != _msg.uri) {
+			if (c.first != _msg.uri.path()) {
 				target.set_property(path_to_uri(c.first),
 				                    uris.lv2_index,
 				                    forge.make(int32_t(c.second.first)));

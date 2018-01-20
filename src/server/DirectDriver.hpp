@@ -72,7 +72,7 @@ public:
 	                         const Raul::Path& new_path) {}
 
 	virtual void port_property(const Raul::Path& path,
-	                           const Raul::URI&  uri,
+	                           const URI&        uri,
 	                           const Atom&       value) {}
 
 	virtual void register_port(EnginePort& port) {}

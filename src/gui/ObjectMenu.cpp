@@ -119,7 +119,7 @@ ObjectMenu::on_menu_polyphonic()
 }
 
 void
-ObjectMenu::property_changed(const Raul::URI& predicate, const Atom& value)
+ObjectMenu::property_changed(const URI& predicate, const Atom& value)
 {
 	const URIs& uris = _app->uris();
 	_enable_signal = false;

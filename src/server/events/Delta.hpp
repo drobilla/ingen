@@ -23,8 +23,6 @@
 
 #include "lilv/lilv.h"
 
-#include "raul/URI.hpp"
-
 #include "CompiledGraph.hpp"
 #include "ControlBindings.hpp"
 #include "Event.hpp"
@@ -106,7 +104,7 @@ private:
 	SetEvents                 _set_events;
 	std::vector<SpecialType>  _types;
 	std::vector<SpecialType>  _remove_types;
-	Raul::URI                 _subject;
+	URI                       _subject;
 	Properties                _properties;
 	Properties                _remove;
 	ClientUpdate              _update;

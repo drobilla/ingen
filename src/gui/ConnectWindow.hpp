@@ -70,7 +70,7 @@ private:
 
 	void disconnect();
 	void next_stage();
-	bool connect_remote(const Raul::URI& uri);
+	bool connect_remote(const URI& uri);
 	void connect(bool existing);
 	void activate();
 	void deactivate();
@@ -101,7 +101,7 @@ private:
 	Gtk::Button*       _quit_button;
 
 	Mode      _mode;
-	Raul::URI _connect_uri;
+	URI       _connect_uri;
 	int32_t   _ping_id;
 	bool      _attached;
 	bool      _finished_connecting;

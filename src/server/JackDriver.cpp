@@ -33,6 +33,7 @@
 #include "ingen/Configuration.hpp"
 #include "ingen/LV2Features.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/util.h"
@@ -278,7 +279,7 @@ JackDriver::rename_port(const Raul::Path& old_path,
 
 void
 JackDriver::port_property(const Raul::Path& path,
-                          const Raul::URI&  uri,
+                          const URI&        uri,
                           const Atom&       value)
 {
 #ifdef HAVE_JACK_METADATA
@@ -292,7 +293,7 @@ JackDriver::port_property(const Raul::Path& path,
 
 void
 JackDriver::port_property_internal(const jack_port_t* jport,
-                                   const Raul::URI&   uri,
+                                   const URI&         uri,
                                    const Atom&        value)
 {
 #ifdef HAVE_JACK_METADATA
@@ -548,7 +549,7 @@ JackDriver::_session_cb(jack_session_event_t* event)
 
 		SPtr<Node> root(_engine.root_graph(), NullDeleter<Node>);
 		serialiser->write_bundle(root,
-		                         std::string("file://") + event->session_dir);
+		                         URI(std::string("file://") + event->session_dir));
 	}
 
 	event->command_line = (char*)malloc(cmd.size() + 1);

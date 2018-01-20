@@ -14,6 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cassert>
 #include <string>
 
 #include "ingen/Log.hpp"
@@ -30,11 +31,11 @@ namespace Ingen {
 namespace GUI {
 
 ThreadedLoader::ThreadedLoader(App& app, SPtr<Interface> engine)
-	: _app(app)
-	, _sem(0)
-	, _engine(std::move(engine))
-	, _exit_flag(false)
-	, _thread(&ThreadedLoader::run, this)
+    : _app(app)
+    , _sem(0)
+    , _engine(std::move(engine))
+    , _exit_flag(false)
+    , _thread(&ThreadedLoader::run, this)
 {
 	if (!parser()) {
 		app.log().warn("Parser unavailable, graph loading disabled\n");
@@ -85,13 +86,12 @@ ThreadedLoader::load_graph(bool                   merge,
 		}
 	}
 
-	_events.push_back(
-		sigc::hide_return(
-			sigc::bind(sigc::mem_fun(this, &ThreadedLoader::load_graph_event),
-			           document_uri,
-			           engine_parent,
-			           engine_symbol,
-			           engine_data)));
+	_events.push_back(sigc::hide_return(
+	        sigc::bind(sigc::mem_fun(this, &ThreadedLoader::load_graph_event),
+	                   document_uri,
+	                   engine_parent,
+	                   engine_symbol,
+	                   engine_data)));
 
 	_mutex.unlock();
 	_sem.post();
@@ -114,15 +114,14 @@ ThreadedLoader::load_graph_event(const Glib::ustring&   document_uri,
 }
 
 void
-ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model,
-                           const std::string&             filename)
+ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model, const URI& uri)
 {
 	_mutex.lock();
 
-	_events.push_back(
-		sigc::hide_return(
-			sigc::bind(sigc::mem_fun(this, &ThreadedLoader::save_graph_event),
-			           model, filename)));
+	_events.push_back(sigc::hide_return(
+	        sigc::bind(sigc::mem_fun(this, &ThreadedLoader::save_graph_event),
+	                   model,
+	                   uri)));
 
 	_mutex.unlock();
 	_sem.post();
@@ -130,15 +129,16 @@ ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model,
 
 void
 ThreadedLoader::save_graph_event(SPtr<const Client::GraphModel> model,
-                                 const std::string&             filename)
+                                 const URI&                     uri)
 {
+	assert(uri.scheme() == "file");
 	if (_app.serialiser()) {
 		std::lock_guard<std::mutex> lock(_app.world()->rdf_mutex());
 
-		if (filename.find(".ingen") != std::string::npos) {
-			_app.serialiser()->write_bundle(model, filename);
+		if (uri.string().find(".ingen") != std::string::npos) {
+			_app.serialiser()->write_bundle(model, uri);
 		} else {
-			_app.serialiser()->start_to_file(model->path(), filename);
+			_app.serialiser()->start_to_file(model->path(), std::string(uri.path()));
 			_app.serialiser()->serialise(model);
 			_app.serialiser()->finish();
 		}

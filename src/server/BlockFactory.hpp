@@ -23,7 +23,6 @@
 #include "ingen/World.hpp"
 #include "ingen/types.hpp"
 #include "raul/Noncopyable.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 namespace Server {
@@ -46,12 +45,12 @@ public:
 	 */
 	std::set<PluginImpl*> refresh();
 
-	void load_plugin(const Raul::URI& uri);
+	void load_plugin(const URI& uri);
 
-	typedef std::map<Raul::URI, PluginImpl*> Plugins;
+	typedef std::map<URI, PluginImpl*> Plugins;
 	const Plugins& plugins();
 
-	PluginImpl* plugin(const Raul::URI& uri);
+	PluginImpl* plugin(const URI& uri);
 
 private:
 	void load_lv2_plugins();

@@ -122,7 +122,7 @@ AtomWriter::operator()(const BundleEnd& message)
 }
 
 void
-AtomWriter::forge_uri(const Raul::URI& uri)
+AtomWriter::forge_uri(const URI& uri)
 {
 	if (serd_uri_string_has_scheme((const uint8_t*)uri.c_str())) {
 		lv2_atom_forge_urid(&_forge, _map.map_uri(uri.c_str()));
@@ -137,7 +137,7 @@ AtomWriter::forge_properties(const Properties& properties)
 	for (auto p : properties) {
 		lv2_atom_forge_key(&_forge, _map.map_uri(p.first.c_str()));
 		if (p.second.type() == _forge.URI) {
-			forge_uri(Raul::URI(p.second.ptr<char>()));
+			forge_uri(URI(p.second.ptr<char>()));
 		} else {
 			lv2_atom_forge_atom(&_forge, p.second.size(), p.second.type());
 			lv2_atom_forge_write(&_forge, p.second.get_body(), p.second.size());
@@ -606,7 +606,7 @@ AtomWriter::operator()(const Response& response)
 	forge_request(&msg, _uris.patch_Response, 0);
 	lv2_atom_forge_key(&_forge, _uris.patch_sequenceNumber);
 	lv2_atom_forge_int(&_forge, response.id);
-	if (!subject.empty() && Raul::URI::is_valid(subject)) {
+	if (!subject.empty()) {
 		lv2_atom_forge_key(&_forge, _uris.patch_subject);
 		lv2_atom_forge_uri(&_forge, subject.c_str(), subject.length());
 	}

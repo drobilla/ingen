@@ -61,7 +61,7 @@ public:
 	                       Properties&     remove,
 	                       Properties&     add);
 
-	void on_property(const Raul::URI& uri, const Atom& value);
+	void on_property(const URI& uri, const Atom& value);
 
 	uint32_t max_tail_poly(RunContext& context) const;
 

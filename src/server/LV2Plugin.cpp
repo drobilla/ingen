@@ -32,7 +32,7 @@ namespace Server {
 LV2Plugin::LV2Plugin(World* world, const LilvPlugin* lplugin)
 	: PluginImpl(world->uris(),
 	             world->uris().lv2_Plugin.urid,
-	             Raul::URI(lilv_node_as_uri(lilv_plugin_get_uri(lplugin))))
+	             URI(lilv_node_as_uri(lilv_plugin_get_uri(lplugin))))
 	, _world(world)
 	, _lilv_plugin(lplugin)
 {
@@ -122,7 +122,7 @@ LV2Plugin::load_presets()
 			if (labels) {
 				const LilvNode* label = lilv_nodes_get_first(labels);
 
-				_presets.emplace(Raul::URI(lilv_node_as_uri(preset)),
+				_presets.emplace(URI(lilv_node_as_uri(preset)),
 				                 lilv_node_as_string(label));
 
 				lilv_nodes_free(labels);

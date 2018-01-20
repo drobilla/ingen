@@ -246,7 +246,7 @@ Port::build_enum_menu()
 }
 
 void
-Port::on_uri_activated(const Raul::URI& uri)
+Port::on_uri_activated(const URI& uri)
 {
 	_app.set_property(model()->uri(),
 	                  _app.world()->uris().ingen_value,
@@ -278,7 +278,7 @@ Port::build_uri_menu()
 	LilvNodes* range = lilv_world_find_nodes(
 		world->lilv_world(), designation, rdfs_range, nullptr);
 	LILV_FOREACH(nodes, r, range) {
-		ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(range, r))));
+		ranges.insert(URI(lilv_node_as_string(lilv_nodes_get(range, r))));
 	}
 	RDFS::classes(world, ranges, false);
 
@@ -450,7 +450,7 @@ Port::port_properties_changed()
 }
 
 void
-Port::property_changed(const Raul::URI& key, const Atom& value)
+Port::property_changed(const URI& key, const Atom& value)
 {
 	const URIs& uris = _app.uris();
 	if (value.type() == uris.forge.Float) {
@@ -495,7 +495,7 @@ Port::property_changed(const Raul::URI& key, const Atom& value)
 }
 
 void
-Port::property_removed(const Raul::URI& key, const Atom& value)
+Port::property_removed(const URI& key, const Atom& value)
 {
 	const URIs& uris = _app.uris();
 	if (key == uris.lv2_minimum || key == uris.lv2_maximum) {

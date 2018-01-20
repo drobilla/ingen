@@ -74,7 +74,7 @@ public:
 	EnginePort* get_port(const Raul::Path& path);
 
 	void rename_port(const Raul::Path& old_path, const Raul::Path& new_path);
-	void port_property(const Raul::Path& path, const Raul::URI& uri, const Atom& value);
+	void port_property(const Raul::Path& path, const URI& uri, const Atom& value);
 	void add_port(RunContext& context, EnginePort* port);
 	void remove_port(RunContext& context, EnginePort* port);
 	void register_port(EnginePort& port);
@@ -125,7 +125,7 @@ private:
 	void post_process_port(RunContext& context, EnginePort* port);
 
 	void port_property_internal(const jack_port_t* jport,
-	                            const Raul::URI&   uri,
+	                            const URI&         uri,
 	                            const Atom&        value);
 
 	// Non static callbacks (methods)

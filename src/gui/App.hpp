@@ -33,7 +33,6 @@
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
 #include "raul/Deletable.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -100,10 +99,10 @@ public:
 		return old;
 	}
 
-	void set_property(const Raul::URI& subject,
-	                  const Raul::URI& key,
-	                  const Atom&      value,
-	                  Resource::Graph  ctx = Resource::Graph::DEFAULT);
+	void set_property(const URI&      subject,
+	                  const URI&      key,
+	                  const Atom&     value,
+	                  Resource::Graph ctx = Resource::Graph::DEFAULT);
 
 	/** Set the tooltip for a widget from its RDF documentation. */
 	void set_tooltip(Gtk::Widget* widget, const LilvNode* node);
@@ -147,14 +146,14 @@ protected:
 	bool animate();
 	void response(int32_t id, Ingen::Status status, const std::string& subject);
 
-	void put(const Raul::URI&  uri,
+	void put(const URI&        uri,
 	         const Properties& properties,
 	         Resource::Graph   ctx);
 
-	void property_change(const Raul::URI& subject,
-	                     const Raul::URI& key,
-	                     const Atom&      value,
-	                     Resource::Graph  ctx = Resource::Graph::DEFAULT);
+	void property_change(const URI&      subject,
+	                     const URI&      key,
+	                     const Atom&     value,
+	                     Resource::Graph ctx = Resource::Graph::DEFAULT);
 
 	static Gtk::Main* _main;
 

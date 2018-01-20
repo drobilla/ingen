@@ -204,7 +204,7 @@ PortAudioDriver::rename_port(const Raul::Path& old_path,
 
 void
 PortAudioDriver::port_property(const Raul::Path& path,
-                               const Raul::URI&  uri,
+                               const URI&        uri,
                                const Atom&       value)
 {
 }

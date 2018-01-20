@@ -116,9 +116,9 @@ private:
 
 	void new_plugin(SPtr<const Client::PluginModel> pm);
 
-	void plugin_property_changed(const Raul::URI& plugin,
-	                             const Raul::URI& predicate,
-	                             const Atom&      value);
+	void plugin_property_changed(const URI&  plugin,
+	                             const URI&  predicate,
+	                             const Atom& value);
 
 	void plugin_activated(const Gtk::TreeModel::Path& path, Gtk::TreeViewColumn* col);
 	void plugin_selection_changed();
@@ -132,7 +132,7 @@ private:
 
 	SPtr<const Client::GraphModel> _graph;
 
-	typedef std::map<Raul::URI, Gtk::TreeModel::iterator> Rows;
+	typedef std::map<URI, Gtk::TreeModel::iterator> Rows;
 	Rows _rows;
 
 	Glib::RefPtr<Gtk::ListStore> _plugins_liststore;

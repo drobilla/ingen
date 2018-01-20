@@ -88,8 +88,8 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 	const std::string unix_path(link_path + "." + std::to_string(getpid()));
 
 	// Bind UNIX socket and create PID-less symbolic link
-	const Raul::URI unix_uri(unix_scheme + unix_path);
-	bool            make_link = true;
+	const URI unix_uri(unix_scheme + unix_path);
+	bool      make_link = true;
 	if (!unix_sock->bind(unix_uri) || !unix_sock->listen()) {
 		world->log().error("Failed to create UNIX socket\n");
 		unix_sock->close();
@@ -127,7 +127,7 @@ ingen_listen(Engine* engine, Raul::Socket* unix_sock, Raul::Socket* net_sock)
 	const int port = world->conf().option("engine-port").get<int32_t>();
 	std::ostringstream ss;
 	ss << "tcp://*:" << port;
-	if (!net_sock->bind(Raul::URI(ss.str())) || !net_sock->listen()) {
+	if (!net_sock->bind(URI(ss.str())) || !net_sock->listen()) {
 		world->log().error("Failed to create TCP socket\n");
 		net_sock->close();
 	} else {

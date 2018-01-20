@@ -19,8 +19,8 @@
 #include <glib.h>
 
 #include "ingen/Log.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -54,7 +54,7 @@ URIMap::URIDMapFeature::default_map(LV2_URID_Map_Handle h,
 LV2_URID
 URIMap::URIDMapFeature::map(const char* uri)
 {
-	if (!Raul::URI::is_valid(uri)) {
+	if (!URI::is_valid(uri)) {
 		log.error(fmt("Attempt to map invalid URI <%1%>\n") % uri);
 		return 0;
 	}

@@ -41,7 +41,7 @@ const LilvPlugins* PluginModel::_lilv_plugins = nullptr;
 Sord::World* PluginModel::_rdf_world = nullptr;
 
 PluginModel::PluginModel(URIs&             uris,
-                         const Raul::URI&  uri,
+                         const URI&        uri,
                          const Atom&       type,
                          const Properties& properties)
 	: Resource(uris, uri)
@@ -49,7 +49,7 @@ PluginModel::PluginModel(URIs&             uris,
 	, _fetched(false)
 {
 	if (!_type.is_valid()) {
-		if (uri.find("ingen-internals") != string::npos) {
+		if (uri.string().find("ingen-internals") != string::npos) {
 			_type = uris.ingen_Internal.urid;
 		} else {
 			_type = uris.lv2_Plugin.urid;  // Assume LV2 and hope for the best...
@@ -65,7 +65,7 @@ PluginModel::PluginModel(URIs&             uris,
 
 	if (uris.ingen_Internal == _type) {
 		set_property(uris.doap_name,
-		             uris.forge.alloc(uri.substr(uri.find_last_of('#') + 1)));
+		             uris.forge.alloc(std::string(uri.fragment().substr(1))));
 	}
 }
 
@@ -93,7 +93,7 @@ contains_alpha_after(const std::string& str, size_t begin)
 }
 
 const Atom&
-PluginModel::get_property(const Raul::URI& key) const
+PluginModel::get_property(const URI& key) const
 {
 	static const Atom nil;
 	const Atom& val = Resource::get_property(key);
@@ -126,7 +126,7 @@ PluginModel::get_property(const Raul::URI& key) const
 			const LilvNode* val = lilv_nodes_get(values, i);
 			if (lilv_node_is_uri(val)) {
 				ret = set_property(
-					key, _uris.forge.make_urid(Raul::URI(lilv_node_as_uri(val))));
+					key, _uris.forge.make_urid(URI(lilv_node_as_uri(val))));
 				break;
 			} else if (lilv_node_is_string(val)) {
 				ret = set_property(
@@ -170,7 +170,7 @@ PluginModel::set(SPtr<PluginModel> p)
 }
 
 void
-PluginModel::add_preset(const Raul::URI& uri, const std::string& label)
+PluginModel::add_preset(const URI& uri, const std::string& label)
 {
 	_presets.emplace(uri, label);
 	_signal_preset.emit(uri, label);

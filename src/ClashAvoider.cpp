@@ -30,8 +30,8 @@ ClashAvoider::ClashAvoider(const Store& store)
 	: _store(store)
 {}
 
-const Raul::URI
-ClashAvoider::map_uri(const Raul::URI& in)
+const URI
+ClashAvoider::map_uri(const URI& in)
 {
 	if (uri_is_path(in)) {
 		return path_to_uri(map_path(uri_to_path(in)));

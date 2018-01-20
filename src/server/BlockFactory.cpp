@@ -99,7 +99,7 @@ BlockFactory::refresh()
 }
 
 PluginImpl*
-BlockFactory::plugin(const Raul::URI& uri)
+BlockFactory::plugin(const URI& uri)
 {
 	load_plugin(uri);
 	const Plugins::const_iterator i = _plugins.find(uri);
@@ -127,7 +127,7 @@ BlockFactory::load_internal_plugins()
 }
 
 void
-BlockFactory::load_plugin(const Raul::URI& uri)
+BlockFactory::load_plugin(const URI& uri)
 {
 	if (_has_loaded || _plugins.find(uri) != _plugins.end()) {
 		return;
@@ -152,7 +152,7 @@ BlockFactory::load_lv2_plugins()
 	typedef std::vector< SPtr<LilvNode> > Types;
 	Types types;
 	for (unsigned t = PortType::ID::AUDIO; t <= PortType::ID::ATOM; ++t) {
-		const Raul::URI& uri(PortType((PortType::ID)t).uri());
+		const URI& uri(PortType((PortType::ID)t).uri());
 		types.push_back(
 			SPtr<LilvNode>(lilv_new_uri(_world->lilv_world(), uri.c_str()),
 			               lilv_node_free));
@@ -161,7 +161,7 @@ BlockFactory::load_lv2_plugins()
 	const LilvPlugins* plugins = lilv_world_get_all_plugins(_world->lilv_world());
 	LILV_FOREACH(plugins, i, plugins) {
 		const LilvPlugin* lv2_plug = lilv_plugins_get(plugins, i);
-		const Raul::URI   uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
+		const URI         uri(lilv_node_as_uri(lilv_plugin_get_uri(lv2_plug)));
 
 		// Ignore plugins that require features Ingen doesn't support
 		LilvNodes* features  = lilv_plugin_get_required_features(lv2_plug);

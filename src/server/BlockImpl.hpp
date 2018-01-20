@@ -102,14 +102,14 @@ public:
 	void set_enabled(bool e) { _enabled = e; }
 
 	/** Load a preset from the world for this block. */
-	virtual LilvState* load_preset(const Raul::URI& uri) { return nullptr; }
+	virtual LilvState* load_preset(const URI& uri) { return nullptr; }
 
 	/** Restore `state`. */
 	virtual void apply_state(const UPtr<Worker>& worker, const LilvState* state) {}
 
 	/** Save current state as preset. */
 	virtual boost::optional<Resource>
-	save_preset(const Raul::URI&  bundle,
+	save_preset(const URI&        bundle,
 	            const Properties& props) { return boost::optional<Resource>(); }
 
 	/** Learn the next incoming MIDI event (for internals) */

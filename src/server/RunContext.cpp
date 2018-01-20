@@ -121,12 +121,12 @@ RunContext::emit_notifications(FrameTime end)
 				const char* key = _engine.world()->uri_map().unmap_uri(note.key);
 				if (key) {
 					_engine.broadcaster()->set_property(
-						note.port->uri(), Raul::URI(key), value);
+						note.port->uri(), URI(key), value);
 					if (note.port->is_input() &&
 					    (note.key == uris.ingen_value ||
 					     note.key == uris.midi_binding)) {
 						// FIXME: not thread safe
-						note.port->set_property(Raul::URI(key), value);
+						note.port->set_property(URI(key), value);
 					}
 				} else {
 					_engine.log().rt_error("Error unmapping notification key URI\n");

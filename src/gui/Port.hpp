@@ -27,10 +27,11 @@
 
 namespace Raul {
 class Atom;
-class URI;
 }
 
 namespace Ingen {
+
+class URI;
 
 namespace Client { class PortModel; }
 
@@ -78,13 +79,13 @@ private:
 	Gtk::Menu* build_uri_menu();
 	GraphBox* get_graph_box() const;
 
-	void property_changed(const Raul::URI& key, const Atom& value);
-	void property_removed(const Raul::URI& key, const Atom& value);
+	void property_changed(const URI& key, const Atom& value);
+	void property_removed(const URI& key, const Atom& value);
 	void moved();
 
 	void on_value_changed(double value);
 	void on_scale_point_activated(float f);
-	void on_uri_activated(const Raul::URI& uri);
+	void on_uri_activated(const URI& uri);
 	bool on_event(GdkEvent* ev);
 	void port_properties_changed();
 	void set_type_tag();

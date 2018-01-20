@@ -25,11 +25,10 @@
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
 
-namespace Raul { class URI; }
-
 namespace Ingen {
 
 class URIMap;
+class URI;
 
 /** Forge for Atoms.
  * @ingroup IngenShared
@@ -54,7 +53,7 @@ public:
 
 	Atom make_urid(int32_t v) { return Atom(sizeof(int32_t), URID, &v); }
 
-	Atom make_urid(const Raul::URI& u);
+	Atom make_urid(const Ingen::URI& u);
 
 	Atom alloc(uint32_t size, uint32_t type, const void* val) {
 		return Atom(size, type, val);

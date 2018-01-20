@@ -24,7 +24,6 @@
 #include "ingen/AtomWriter.hpp"
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "raul/URI.hpp"
 #include "serd/serd.h"
 #include "sratom/sratom.h"
 
@@ -41,9 +40,7 @@ class URIs;
 class INGEN_API TurtleWriter : public AtomWriter, public AtomSink
 {
 public:
-	TurtleWriter(URIMap&          map,
-	             URIs&            uris,
-	             const Raul::URI& uri);
+	TurtleWriter(URIMap& map, URIs& uris, const URI& uri);
 
 	~TurtleWriter() override;
 
@@ -53,7 +50,7 @@ public:
 	/** Pure virtual text sink which receives calls serialized to Turtle. */
 	virtual size_t text_sink(const void* buf, size_t len) = 0;
 
-	Raul::URI uri() const override { return _uri; }
+	URI uri() const override { return _uri; }
 
 protected:
 	URIMap&     _map;
@@ -62,7 +59,7 @@ protected:
 	SerdURI     _base_uri;
 	SerdEnv*    _env;
 	SerdWriter* _writer;
-	Raul::URI   _uri;
+	URI         _uri;
 	bool        _wrote_prefixes;
 };
 

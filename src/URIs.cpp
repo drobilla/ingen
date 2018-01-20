@@ -40,14 +40,14 @@ URIs::Quark::Quark(Forge&      forge,
                    URIMap*     map,
                    LilvWorld*  lworld,
                    const char* str)
-	: Raul::URI(str)
-	, urid(forge.make_urid(Raul::URI(str)))
+	: URI(str)
+	, urid(forge.make_urid(URI(str)))
 	, uri(forge.alloc_uri(str))
 	, lnode(lilv_new_uri(lworld, str))
 {}
 
 URIs::Quark::Quark(const Quark& copy)
-	: Raul::URI(copy)
+	: URI(copy)
 	, urid(copy.urid)
 	, uri(copy.uri)
 	, lnode(lilv_node_duplicate(copy.lnode))

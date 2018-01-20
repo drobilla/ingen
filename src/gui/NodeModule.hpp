@@ -79,7 +79,7 @@ protected:
 	bool on_selected(gboolean selected);
 
 	void rename();
-	void property_changed(const Raul::URI& key, const Atom& value);
+	void property_changed(const URI& key, const Atom& value);
 
 	void new_port_view(SPtr<const Client::PortModel> port);
 

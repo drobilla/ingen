@@ -27,7 +27,6 @@
 
 #include "ingen/types.hpp"
 #include "raul/Path.hpp"
-#include "raul/URI.hpp"
 
 #include "ingen/Node.hpp"
 #include "ingen/Resource.hpp"
@@ -58,10 +57,10 @@ class INGEN_API ObjectModel : public Node
 public:
 	bool is_a(const URIs::Quark& type) const;
 
-	const Atom& get_property(const Raul::URI& key) const;
+	const Atom& get_property(const URI& key) const;
 
-	void on_property(const Raul::URI& uri, const Atom& value);
-	void on_property_removed(const Raul::URI& uri, const Atom& value);
+	void on_property(const URI& uri, const Atom& value);
+	void on_property_removed(const URI& uri, const Atom& value);
 
 	const Raul::Path&   path()       const { return _path; }
 	const Raul::Symbol& symbol()     const { return _symbol; }
@@ -73,8 +72,8 @@ public:
 	// Signals
 	INGEN_SIGNAL(new_child, void, SPtr<ObjectModel>);
 	INGEN_SIGNAL(removed_child, void, SPtr<ObjectModel>);
-	INGEN_SIGNAL(property, void, const Raul::URI&, const Atom&);
-	INGEN_SIGNAL(property_removed, void, const Raul::URI&, const Atom&);
+	INGEN_SIGNAL(property, void, const URI&, const Atom&);
+	INGEN_SIGNAL(property_removed, void, const URI&, const Atom&);
 	INGEN_SIGNAL(destroyed, void);
 	INGEN_SIGNAL(moved, void);
 

@@ -99,7 +99,7 @@ Get::post_process()
 
 			const Properties load_props = _engine.load_properties();
 			props.insert(load_props.begin(), load_props.end());
-			_request_client->put(Raul::URI("ingen:/engine"), props);
+			_request_client->put(URI("ingen:/engine"), props);
 		} else {
 			_response.send(*_request_client);
 		}

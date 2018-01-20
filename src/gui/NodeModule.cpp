@@ -457,7 +457,7 @@ NodeModule::store_location(double ax, double ay)
 }
 
 void
-NodeModule::property_changed(const Raul::URI& key, const Atom& value)
+NodeModule::property_changed(const URI& key, const Atom& value)
 {
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {

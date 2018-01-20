@@ -36,7 +36,7 @@ namespace Internals {
 
 InternalPlugin* TriggerNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
-		uris, Raul::URI(NS_INTERNALS "Trigger"), Raul::Symbol("trigger"));
+		uris, URI(NS_INTERNALS "Trigger"), Raul::Symbol("trigger"));
 }
 
 TriggerNode::TriggerNode(InternalPlugin*     plugin,

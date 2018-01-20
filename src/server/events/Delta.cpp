@@ -178,7 +178,7 @@ Delta::pre_process(PreProcessContext& ctx)
 	const bool is_graph_object = uri_is_path(_subject);
 	const bool is_client       = (_subject == "ingen:/clients/this");
 	const bool is_engine       = (_subject == "ingen:/");
-	const bool is_file         = (_subject.substr(0, 5) == "file:");
+	const bool is_file         = (_subject.scheme() == "file");
 
 	if (_type == Type::PUT && is_file) {
 		// Ensure type is Preset, the only supported file put
@@ -195,7 +195,7 @@ Delta::pre_process(PreProcessContext& ctx)
 			return Event::pre_process_done(Status::BAD_REQUEST, _subject);
 		}
 
-		const Raul::URI prot(_engine.world()->forge().str(p->second, false));
+		const URI prot(_engine.world()->forge().str(p->second, false));
 		if (!uri_is_path(prot)) {
 			return Event::pre_process_done(Status::BAD_URI, _subject);
 		}
@@ -261,8 +261,8 @@ Delta::pre_process(PreProcessContext& ctx)
 
 	// Remove any properties removed in delta
 	for (const auto& r : _remove) {
-		const Raul::URI& key   = r.first;
-		const Atom&      value = r.second;
+		const URI&  key   = r.first;
+		const Atom& value = r.second;
 		if (key == uris.midi_binding && value == uris.patch_wildcard) {
 			PortImpl* port = dynamic_cast<PortImpl*>(_object);
 			if (port) {
@@ -314,9 +314,9 @@ Delta::pre_process(PreProcessContext& ctx)
 	}
 
 	for (const auto& p : _properties) {
-		const Raul::URI& key   = p.first;
-		const Property&  value = p.second;
-		SpecialType      op    = SpecialType::NONE;
+		const URI&      key   = p.first;
+		const Property& value = p.second;
+		SpecialType     op    = SpecialType::NONE;
 		if (obj) {
 			Resource& resource = *obj;
 			if (value != uris.patch_wildcard) {
@@ -373,8 +373,8 @@ Delta::pre_process(PreProcessContext& ctx)
 						uri_str = Glib::filename_to_uri(value.ptr<char>());
 					}
 
-					if (Raul::URI::is_valid(uri_str)) {
-						const Raul::URI uri(uri_str);
+					if (URI::is_valid(uri_str)) {
+						const URI uri(uri_str);
 						op = SpecialType::PRESET;
 						if ((_state = block->load_preset(uri))) {
 							lilv_state_emit_port_values(
@@ -503,8 +503,8 @@ Delta::execute(RunContext& context)
 
 	std::vector<SpecialType>::const_iterator t = _types.begin();
 	for (const auto& p : _properties) {
-		const Raul::URI& key   = p.first;
-		const Atom&      value = p.second;
+		const URI&  key   = p.first;
+		const Atom& value = p.second;
 		switch (*t++) {
 		case SpecialType::ENABLE_BROADCAST:
 			if (port) {
@@ -621,7 +621,7 @@ Delta::post_process()
 			}
 			break;
 		case Type::PUT:
-			if (_type == Type::PUT && _subject.substr(0, 5) == "file:") {
+			if (_type == Type::PUT && _subject.scheme() == "file") {
 				// Preset save
 				ClientUpdate response;
 				response.put(_preset->uri(), _preset->properties());

@@ -20,33 +20,34 @@
 #include <cstddef>
 #include <string>
 
-#include "raul/URI.hpp"
+#include "ingen/URI.hpp"
 #include "raul/Path.hpp"
 
 namespace Ingen {
 
-inline Raul::URI main_uri() { return Raul::URI("ingen:/main"); }
+inline URI main_uri() { return URI("ingen:/main"); }
 
-inline bool uri_is_path(const Raul::URI& uri)
+inline bool uri_is_path(const URI& uri)
 {
-	const size_t root_len = main_uri().length();
+	const size_t root_len = main_uri().string().length();
 	if (uri == main_uri()) {
 		return true;
 	} else {
-		return uri.substr(0, root_len + 1) == main_uri() + "/";
+		return uri.string().substr(0, root_len + 1) ==
+		       main_uri().string() + "/";
 	}
 }
 
-inline Raul::Path uri_to_path(const Raul::URI& uri)
+inline Raul::Path uri_to_path(const URI& uri)
 {
 	return (uri == main_uri())
 		? Raul::Path("/")
-		: Raul::Path(uri.substr(main_uri().length()));
+		: Raul::Path(uri.string().substr(main_uri().string().length()));
 }
 
-inline Raul::URI path_to_uri(const Raul::Path& path)
+inline URI path_to_uri(const Raul::Path& path)
 {
-	return Raul::URI(main_uri() + path.c_str());
+	return URI(main_uri().string() + path.c_str());
 }
 
 } // namespace Ingen

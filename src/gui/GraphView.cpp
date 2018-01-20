@@ -135,7 +135,7 @@ GraphView::poly_changed()
 }
 
 void
-GraphView::property_changed(const Raul::URI& predicate, const Atom& value)
+GraphView::property_changed(const URI& predicate, const Atom& value)
 {
 	_enable_signal = false;
 	if (predicate == _app->uris().ingen_enabled) {

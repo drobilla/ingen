@@ -39,7 +39,7 @@ using namespace Client;
 
 namespace GUI {
 
-typedef std::set<Raul::URI> URISet;
+typedef std::set<URI> URISet;
 
 PropertiesWindow::PropertiesWindow(BaseObjectType*                   cobject,
                                    const Glib::RefPtr<Gtk::Builder>& xml)
@@ -100,7 +100,7 @@ PropertiesWindow::present(SPtr<const ObjectModel> model)
 }
 
 void
-PropertiesWindow::add_property(const Raul::URI& key, const Atom& value)
+PropertiesWindow::add_property(const URI& key, const Atom& value)
 {
 	World* world = _app->world();
 
@@ -114,7 +114,9 @@ PropertiesWindow::add_property(const Raul::URI& key, const Atom& value)
 		name = world->rdf_world()->prefixes().qualify(key);
 	}
 	Gtk::Label* label = new Gtk::Label(
-		std::string("<a href=\"") + key + "\">" + name + "</a>", 1.0, 0.5);
+	        std::string("<a href=\"") + key.string() + "\">" + name + "</a>",
+	        1.0,
+	        0.5);
 	label->set_use_markup(true);
 	_app->set_tooltip(label, prop);
 	_table->attach(*Gtk::manage(label), 0, 1, n_rows, n_rows + 1,
@@ -144,7 +146,7 @@ PropertiesWindow::add_property(const Raul::URI& key, const Atom& value)
 
 bool
 PropertiesWindow::datatype_supported(const RDFS::URISet& types,
-                                     Raul::URI*          widget_type)
+                                     URI*                widget_type)
 {
 	if (types.find(_app->uris().atom_Int) != types.end()) {
 		*widget_type = _app->uris().atom_Int;
@@ -211,8 +213,8 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 		world->lilv_world(), LILV_NS_RDFS "Datatype");
 
 	// Populate key combo
-	const URISet                     props = RDFS::properties(world, model);
-	std::map<std::string, Raul::URI> entries;
+	const URISet               props = RDFS::properties(world, model);
+	std::map<std::string, URI> entries;
 	for (const auto& p : props) {
 		LilvNode*         prop   = lilv_new_uri(world->lilv_world(), p.c_str());
 		const std::string label  = RDFS::label(world, prop);
@@ -228,7 +230,7 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 		if (RDFS::is_a(world, range, rdfs_DataType)) {
 			// Range is a datatype, show if type or any subtype is supported
 			RDFS::datatypes(_app->world(), ranges, false);
-			Raul::URI widget_type("urn:nothing");
+			URI widget_type("urn:nothing");
 			if (datatype_supported(ranges, &widget_type)) {
 				entries.emplace(label, p);
 			}
@@ -243,7 +245,7 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 	for (const auto& e : entries) {
 		Gtk::ListStore::iterator ki  = _key_store->append();
 		Gtk::ListStore::Row      row = *ki;
-		row[_combo_columns.uri_col]   = e.second;
+		row[_combo_columns.uri_col]   = e.second.string();
 		row[_combo_columns.label_col] = e.first;
 	}
 
@@ -263,23 +265,23 @@ PropertiesWindow::set_object(SPtr<const ObjectModel> model)
 }
 
 Gtk::Widget*
-PropertiesWindow::create_value_widget(const Raul::URI& key,
-                                      const char*      type_uri,
-                                      const Atom&      value)
+PropertiesWindow::create_value_widget(const URI&  key,
+                                      const char* type_uri,
+                                      const Atom& value)
 {
-	if (!type_uri || !Raul::URI::is_valid(type_uri)) {
+	if (!type_uri || !URI::is_valid(type_uri)) {
 		return nullptr;
 	}
 
-	Raul::URI     type(type_uri);
+	URI     type(type_uri);
 	Ingen::World* world  = _app->world();
 	LilvWorld*    lworld = world->lilv_world();
 
 	// See if type is a datatype we support
-	std::set<Raul::URI> types{type};
+	std::set<URI> types{type};
 	RDFS::datatypes(_app->world(), types, false);
 
-	Raul::URI  widget_type("urn:nothing");
+	URI  widget_type("urn:nothing");
 	const bool supported = datatype_supported(types, &widget_type);
 	if (supported) {
 		type = widget_type;
@@ -390,7 +392,7 @@ PropertiesWindow::on_show()
 }
 
 void
-PropertiesWindow::change_property(const Raul::URI& key, const Atom& value)
+PropertiesWindow::change_property(const URI& key, const Atom& value)
 {
 	auto r = _records.find(key);
 	if (r == _records.end()) {
@@ -413,7 +415,7 @@ PropertiesWindow::change_property(const Raul::URI& key, const Atom& value)
 }
 
 void
-PropertiesWindow::remove_property(const Raul::URI& key, const Atom& value)
+PropertiesWindow::remove_property(const URI& key, const Atom& value)
 {
 	// Bleh, there doesn't seem to be an easy way to remove a Gtk::Table row...
 	_records.clear();
@@ -449,8 +451,8 @@ PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 		}
 	} else if (type == forge.URI || type == forge.URID) {
 		URIEntry* uri_entry = dynamic_cast<URIEntry*>(value_widget);
-		if (uri_entry && Raul::URI::is_valid(uri_entry->get_text())) {
-			return _app->forge().make_urid(Raul::URI(uri_entry->get_text()));
+		if (uri_entry && URI::is_valid(uri_entry->get_text())) {
+			return _app->forge().make_urid(URI(uri_entry->get_text()));
 		} else {
 			_app->log().error(fmt("Invalid URI <%1%>\n") % uri_entry->get_text());
 		}
@@ -465,7 +467,7 @@ PropertiesWindow::get_value(LV2_URID type, Gtk::Widget* value_widget)
 }
 
 void
-PropertiesWindow::on_change(const Raul::URI& key)
+PropertiesWindow::on_change(const URI& key)
 {
 	auto r = _records.find(key);
 	if (r == _records.end()) {
@@ -512,7 +514,7 @@ PropertiesWindow::key_changed()
 	const URISet ranges = RDFS::range(_app->world(), prop, true);
 	for (const auto& r : ranges) {
 		Gtk::Widget* value_widget = create_value_widget(
-			Raul::URI(key_uri), r.c_str(), Atom());
+			URI(key_uri), r.c_str(), Atom());
 
 		if (value_widget) {
 			_add_button->set_sensitive(true);
@@ -542,7 +544,7 @@ PropertiesWindow::add_clicked()
 	if (value.is_valid()) {
 		// Send property to engine
 		Properties properties;
-		properties.emplace(Raul::URI(key_uri.c_str()), Property(value));
+		properties.emplace(URI(key_uri.c_str()), Property(value));
 		_app->interface()->put(_model->uri(), properties);
 	}
 }
@@ -560,8 +562,8 @@ PropertiesWindow::apply_clicked()
 	Properties remove;
 	Properties add;
 	for (const auto& r : _records) {
-		const Raul::URI& uri    = r.first;
-		const Record&    record = r.second;
+		const URI&    uri    = r.first;
+		const Record& record = r.second;
 		if (record.present_button->get_active()) {
 			if (!_model->has_property(uri, record.value)) {
 				add.emplace(uri, record.value);

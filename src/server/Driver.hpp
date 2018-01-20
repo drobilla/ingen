@@ -81,7 +81,7 @@ public:
 
 	/** Apply a system visible port property. */
 	virtual void port_property(const Raul::Path& path,
-	                           const Raul::URI&  uri,
+	                           const URI&        uri,
 	                           const Atom&       value) = 0;
 
 	/** Return the audio buffer size in frames */

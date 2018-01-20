@@ -97,7 +97,7 @@ public:
 		}
 	}
 
-	Raul::URI uri() const override { return Raul::URI("ingen:/broadcaster"); }
+	URI uri() const override { return URI("ingen:/broadcaster"); }
 
 private:
 	friend class Transfer;

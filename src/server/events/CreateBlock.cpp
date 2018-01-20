@@ -82,7 +82,7 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 		return Event::pre_process_done(Status::BAD_REQUEST);
 	}
 
-	const Raul::URI prototype(uris.forge.str(t->second, false));
+	const URI prototype(uris.forge.str(t->second, false));
 
 	// Find polyphony
 	const iterator p          = _properties.find(uris.ingen_polyphonic);

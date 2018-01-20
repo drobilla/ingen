@@ -25,11 +25,11 @@
 
 namespace Raul {
 class Socket;
-class URI;
 }
 
 namespace Ingen {
 
+class URI;
 class URIMap;
 class URIs;
 
@@ -40,7 +40,7 @@ class INGEN_API SocketWriter : public TurtleWriter
 public:
 	SocketWriter(URIMap&            map,
 	             URIs&              uris,
-	             const Raul::URI&   uri,
+	             const URI&         uri,
 	             SPtr<Raul::Socket> sock);
 
 	size_t text_sink(const void* buf, size_t len) override;

@@ -21,11 +21,11 @@
 
 #include "ingen/ingen.h"
 #include "raul/Path.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
 class Store;
+class URI;
 
 /** Maps paths so they do not clash with an existing object in a store.
  *
@@ -36,7 +36,7 @@ class INGEN_API ClashAvoider
 public:
 	explicit ClashAvoider(const Store& store);
 
-	const Raul::URI  map_uri(const Raul::URI& in);
+	const URI        map_uri(const URI& in);
 	const Raul::Path map_path(const Raul::Path& in);
 
 	bool exists(const Raul::Path& path) const;

@@ -150,7 +150,7 @@ Copy::engine_to_filesystem(PreProcessContext& ctx)
 	std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
 
 	if (ends_with(_msg.new_uri, ".ingen") || ends_with(_msg.new_uri, ".ingen/")) {
-		_engine.world()->serialiser()->write_bundle(graph, _msg.new_uri);
+		_engine.world()->serialiser()->write_bundle(graph, URI(_msg.new_uri));
 	} else {
 		_engine.world()->serialiser()->start_to_file(graph->path(), _msg.new_uri);
 		_engine.world()->serialiser()->serialise(graph);
@@ -170,7 +170,7 @@ Copy::filesystem_to_engine(PreProcessContext& ctx)
 	std::lock_guard<std::mutex> lock(_engine.world()->rdf_mutex());
 
 	// Old URI is a filesystem path and new URI is a path within the engine
-	const std::string             src_path = _msg.old_uri.substr(strlen("file://"));
+	const std::string             src_path(_msg.old_uri.path());
 	const Raul::Path              dst_path = uri_to_path(_msg.new_uri);
 	boost::optional<Raul::Path>   dst_parent;
 	boost::optional<Raul::Symbol> dst_symbol;

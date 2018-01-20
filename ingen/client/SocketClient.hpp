@@ -30,7 +30,7 @@ class INGEN_API SocketClient : public SocketWriter
 {
 public:
 	SocketClient(World&             world,
-	             const Raul::URI&   uri,
+	             const URI&         uri,
 	             SPtr<Raul::Socket> sock,
 	             SPtr<Interface>    respondee)
 		: SocketWriter(world.uri_map(), world.uris(), uri, sock)
@@ -48,7 +48,7 @@ public:
 
 	static SPtr<Ingen::Interface>
 	new_socket_interface(Ingen::World*          world,
-	                     const Raul::URI&       uri,
+	                     const URI&             uri,
 	                     SPtr<Ingen::Interface> respondee)
 	{
 		const Raul::Socket::Type type = (uri.scheme() == "unix"

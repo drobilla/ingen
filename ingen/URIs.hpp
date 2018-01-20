@@ -18,11 +18,11 @@
 #define INGEN_URIS_HPP
 
 #include "ingen/Atom.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/ingen.h"
 #include "lilv/lilv.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
 #include "raul/Noncopyable.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -41,7 +41,7 @@ class INGEN_API URIs : public Raul::Noncopyable {
 public:
 	URIs(Ingen::Forge& forge, URIMap* map, LilvWorld* lworld);
 
-	struct Quark : public Raul::URI {
+	struct Quark : public URI {
 		Quark(Ingen::Forge& forge,
 		      URIMap*       map,
 		      LilvWorld*    lworld,
@@ -54,19 +54,6 @@ public:
 		operator LV2_URID()        const { return urid.get<LV2_URID>(); }
 		explicit operator Atom()   const { return urid; }
 		operator const LilvNode*() const { return lnode; }
-
-		inline bool operator==(const Atom& rhs) const {
-			if (rhs.type() == urid.type()) {
-				return rhs == urid;
-			} else if (rhs.type() == uri.type()) {
-				return rhs == uri;
-			}
-			return false;
-		}
-
-		inline bool operator!=(const Atom& rhs) const {
-			return !operator==(rhs);
-		}
 
 		Atom      urid;
 		Atom      uri;
@@ -213,12 +200,33 @@ public:
 	const Quark work_schedule;
 };
 
-inline bool operator==(const Atom& a, const URIs::Quark& b) {
-	return b == a;
+inline bool
+operator==(const URIs::Quark& lhs, const Atom& rhs)
+{
+	if (rhs.type() == lhs.urid.type()) {
+		return rhs == lhs.urid;
+	} else if (rhs.type() == lhs.uri.type()) {
+		return rhs == lhs.uri;
+	}
+	return false;
 }
 
-inline bool operator!=(const Atom& a, const URIs::Quark& b) {
-	return b != a;
+inline bool
+operator==(const Atom& lhs, const URIs::Quark& rhs)
+{
+	return rhs == lhs;
+}
+
+inline bool
+operator!=(const Atom& lhs, const URIs::Quark& rhs)
+{
+	return !(lhs == rhs);
+}
+
+inline bool
+operator!=(const URIs::Quark& lhs, const Atom& rhs)
+{
+	return !(lhs == rhs);
 }
 
 } // namespace Ingen

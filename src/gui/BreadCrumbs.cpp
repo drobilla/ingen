@@ -200,7 +200,7 @@ BreadCrumbs::message(const Message& msg)
 }
 
 void
-BreadCrumbs::object_destroyed(const Raul::URI& uri)
+BreadCrumbs::object_destroyed(const URI& uri)
 {
 	for (auto i = _breadcrumbs.begin(); i != _breadcrumbs.end(); ++i) {
 		if ((*i)->path() == uri.c_str()) {

@@ -27,7 +27,6 @@
 #include "ingen/paths.hpp"
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
-#include "raul/URI.hpp"
 
 namespace Raul {
 class Path;
@@ -83,11 +82,11 @@ public:
 	virtual const Raul::Symbol& symbol()       const = 0;
 	virtual Node*               graph_parent() const = 0;
 
-	Raul::URI base_uri() const {
-		if (uri()[uri().size() - 1] == '/') {
+	URI base_uri() const {
+		if (uri().string()[uri().string().size() - 1] == '/') {
 			return uri();
 		}
-		return Raul::URI(uri() + '/');
+		return URI(uri().string() + '/');
 	}
 
 protected:

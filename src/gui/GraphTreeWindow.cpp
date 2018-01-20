@@ -88,7 +88,7 @@ GraphTreeWindow::add_graph(SPtr<GraphModel> pm)
 		Gtk::TreeModel::iterator iter = _graph_treestore->append();
 		Gtk::TreeModel::Row row = *iter;
 		if (pm->path().is_root()) {
-			row[_graph_tree_columns.name_col] = _app->interface()->uri();
+			row[_graph_tree_columns.name_col] = _app->interface()->uri().string();
 		} else {
 			row[_graph_tree_columns.name_col] = pm->symbol().c_str();
 		}
@@ -193,7 +193,7 @@ GraphTreeWindow::event_graph_enabled_toggled(const Glib::ustring& path_str)
 }
 
 void
-GraphTreeWindow::graph_property_changed(const Raul::URI& key,
+GraphTreeWindow::graph_property_changed(const URI&       key,
                                         const Atom&      value,
                                         SPtr<GraphModel> graph)
 {

@@ -38,7 +38,7 @@ BlockModel::BlockModel(URIs&             uris,
 }
 
 BlockModel::BlockModel(URIs&             uris,
-                       const Raul::URI&  plugin_uri,
+                       const URI&        plugin_uri,
                        const Raul::Path& path)
 	: ObjectModel(uris, path)
 	, _plugin_uri(plugin_uri)
@@ -245,7 +245,7 @@ BlockModel::label() const
 std::string
 BlockModel::port_label(SPtr<const PortModel> port) const
 {
-	const Atom& name = port->get_property(Raul::URI(LV2_CORE__name));
+	const Atom& name = port->get_property(URI(LV2_CORE__name));
 	if (name.is_valid() && name.type() == _uris.forge.String) {
 		return name.ptr<char>();
 	}

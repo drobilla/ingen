@@ -21,7 +21,6 @@
 
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
-#include "raul/URI.hpp"
 
 #include "PluginImpl.hpp"
 
@@ -57,9 +56,9 @@ public:
 
 	void load_presets();
 
-	Raul::URI bundle_uri() const {
+	URI bundle_uri() const {
 		const LilvNode* bundle = lilv_plugin_get_bundle_uri(_lilv_plugin);
-		return Raul::URI(lilv_node_as_uri(bundle));
+		return URI(lilv_node_as_uri(bundle));
 	}
 
 private:

@@ -130,7 +130,7 @@ GraphPortModule::set_name(const std::string& n)
 }
 
 void
-GraphPortModule::property_changed(const Raul::URI& key, const Atom& value)
+GraphPortModule::property_changed(const URI& key, const Atom& value)
 {
 	const URIs& uris = app().uris();
 	if (value.type() == uris.forge.Float) {

@@ -76,19 +76,19 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> uri_col;
 	};
 
-	void add_property(const Raul::URI& key, const Atom& value);
-	void change_property(const Raul::URI& key, const Atom& value);
-	void remove_property(const Raul::URI& key, const Atom& value);
-	void on_change(const Raul::URI& key);
+	void add_property(const URI& key, const Atom& value);
+	void change_property(const URI& key, const Atom& value);
+	void remove_property(const URI& key, const Atom& value);
+	void on_change(const URI& key);
 
-	bool datatype_supported(const std::set<Raul::URI>& types,
-	                        Raul::URI*                 widget_type);
+	bool datatype_supported(const std::set<URI>& types,
+	                        URI*                 widget_type);
 
-	bool class_supported(const std::set<Raul::URI>& types);
+	bool class_supported(const std::set<URI>& types);
 
-	Gtk::Widget* create_value_widget(const Raul::URI& key,
-	                                 const char*      type_uri,
-	                                 const Atom&      value = Atom());
+	Gtk::Widget* create_value_widget(const URI&  key,
+	                                 const char* type_uri,
+	                                 const Atom& value = Atom());
 
 	Atom get_value(LV2_URID type, Gtk::Widget* value_widget);
 
@@ -103,7 +103,7 @@ private:
 	void apply_clicked();
 	void ok_clicked();
 
-	typedef std::map<Raul::URI, Record> Records;
+	typedef std::map<URI, Record> Records;
 	Records _records;
 
 	SPtr<const Client::ObjectModel> _model;

@@ -21,7 +21,6 @@
 
 #include "ingen/Resource.hpp"
 #include "raul/Symbol.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -41,14 +40,13 @@ class GraphImpl;
 class PluginImpl : public Resource
 {
 public:
-	PluginImpl(Ingen::URIs&     uris,
-	           const Atom&      type,
-	           const Raul::URI& uri)
-		: Resource(uris, uri)
-		, _type(type)
-		, _presets_loaded(false)
-		, _is_zombie(false)
-	{}
+	PluginImpl(Ingen::URIs& uris, const Atom& type, const URI& uri)
+	    : Resource(uris, uri)
+	    , _type(type)
+	    , _presets_loaded(false)
+	    , _is_zombie(false)
+	{
+	}
 
 	virtual BlockImpl* instantiate(BufferFactory&      bufs,
 	                               const Raul::Symbol& symbol,
@@ -64,8 +62,8 @@ public:
 	bool        is_zombie() const       { return _is_zombie; }
 	void        set_is_zombie(bool t)   { _is_zombie = t; }
 
-	typedef std::pair<Raul::URI, std::string> Preset;
-	typedef std::map<Raul::URI, std::string>  Presets;
+	typedef std::pair<URI, std::string> Preset;
+	typedef std::map<URI, std::string>  Presets;
 
 	const Presets& presets(bool force_reload=false) {
 		if (!_presets_loaded || force_reload) {
@@ -79,7 +77,7 @@ public:
 
 	virtual void load_presets() { _presets_loaded = true; }
 
-	virtual Raul::URI bundle_uri() const { return Raul::URI("ingen:/"); }
+	virtual URI bundle_uri() const { return URI("ingen:/"); }
 
 protected:
 	Atom    _type;

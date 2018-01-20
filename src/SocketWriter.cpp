@@ -29,7 +29,7 @@ namespace Ingen {
 
 SocketWriter::SocketWriter(URIMap&            map,
                            URIs&              uris,
-                           const Raul::URI&   uri,
+                           const URI&         uri,
                            SPtr<Raul::Socket> sock)
 	: TurtleWriter(map, uris, uri)
 	, _socket(std::move(sock))

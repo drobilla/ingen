@@ -36,7 +36,7 @@ namespace Internals {
 
 InternalPlugin* ControllerNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
-		uris, Raul::URI(NS_INTERNALS "Controller"), Raul::Symbol("controller"));
+		uris, URI(NS_INTERNALS "Controller"), Raul::Symbol("controller"));
 }
 
 ControllerNode::ControllerNode(InternalPlugin*      plugin,
@@ -53,7 +53,7 @@ ControllerNode::ControllerNode(InternalPlugin*      plugin,
 
 	const Atom zero       = bufs.forge().make(0.0f);
 	const Atom one        = bufs.forge().make(1.0f);
-	const Atom atom_Float = bufs.forge().make_urid(Raul::URI(LV2_ATOM__Float));
+	const Atom atom_Float = bufs.forge().make_urid(URI(LV2_ATOM__Float));
 
 	_midi_in_port = new InputPort(bufs, this, Raul::Symbol("input"), 0, 1,
 	                              PortType::ATOM, uris.atom_Sequence, Atom());

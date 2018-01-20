@@ -64,7 +64,7 @@ public:
 		set_uri(path_to_uri(new_path));
 	}
 
-	const Atom& get_property(const Raul::URI& key) const;
+	const Atom& get_property(const URI& key) const;
 
 	/** The Graph this object is a child of. */
 	virtual GraphImpl* parent_graph() const;

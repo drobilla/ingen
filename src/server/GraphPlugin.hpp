@@ -33,7 +33,7 @@ class GraphPlugin : public PluginImpl
 {
 public:
 	GraphPlugin(URIs&               uris,
-	            const Raul::URI&    uri,
+	            const URI&          uri,
 	            const Raul::Symbol& symbol,
 	            const std::string&  name)
 		: PluginImpl(uris, uris.ingen_Graph.urid, uri)

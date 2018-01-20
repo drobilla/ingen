@@ -30,7 +30,7 @@ namespace Server {
 using namespace Internals;
 
 InternalPlugin::InternalPlugin(URIs&               uris,
-                               const Raul::URI&    uri,
+                               const URI&          uri,
                                const Raul::Symbol& symbol)
 	: PluginImpl(uris, uris.ingen_Internal.urid, uri)
 	, _symbol(symbol)

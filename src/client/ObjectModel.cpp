@@ -43,19 +43,19 @@ ObjectModel::is_a(const URIs::Quark& type) const
 }
 
 void
-ObjectModel::on_property(const Raul::URI& uri, const Atom& value)
+ObjectModel::on_property(const URI& uri, const Atom& value)
 {
 	_signal_property.emit(uri, value);
 }
 
 void
-ObjectModel::on_property_removed(const Raul::URI& uri, const Atom& value)
+ObjectModel::on_property_removed(const URI& uri, const Atom& value)
 {
 	_signal_property_removed.emit(uri, value);
 }
 
 const Atom&
-ObjectModel::get_property(const Raul::URI& key) const
+ObjectModel::get_property(const URI& key) const
 {
 	static const Atom null_atom;
 	auto i = properties().find(key);

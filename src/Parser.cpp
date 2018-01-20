@@ -44,19 +44,19 @@
 namespace Ingen {
 
 std::set<Parser::ResourceRecord>
-Parser::find_resources(Sord::World&       world,
-                       const std::string& manifest_uri,
-                       const Raul::URI&   type_uri)
+Parser::find_resources(Sord::World& world,
+                       const URI&   manifest_uri,
+                       const URI&   type_uri)
 {
-	const Sord::URI  base        (world, manifest_uri);
-	const Sord::URI  type        (world, type_uri);
+	const Sord::URI  base        (world, manifest_uri.string());
+	const Sord::URI  type        (world, type_uri.string());
 	const Sord::URI  rdf_type    (world, NS_RDF "type");
 	const Sord::URI  rdfs_seeAlso(world, NS_RDFS "seeAlso");
 	const Sord::Node nil;
 
 	SerdEnv* env = serd_env_new(sord_node_to_serd_node(base.c_obj()));
-	Sord::Model model(world, manifest_uri);
-	model.load_file(env, SERD_TURTLE, manifest_uri);
+	Sord::Model model(world, manifest_uri.string());
+	model.load_file(env, SERD_TURTLE, manifest_uri.string());
 
 	std::set<ResourceRecord> resources;
 	for (Sord::Iter i = model.find(nil, rdf_type, type); !i.end(); ++i) {
@@ -69,7 +69,7 @@ Parser::find_resources(Sord::World&       world,
 			file_path = (const char*)p;
 			free(p);
 		}
-		resources.insert(ResourceRecord(resource.to_string(), file_path));
+		resources.insert(ResourceRecord(URI(resource.to_string()), file_path));
 	}
 
 	serd_env_free(env);
@@ -117,9 +117,9 @@ static bool
 skip_property(Ingen::URIs& uris, const Sord::Node& predicate)
 {
 	return (predicate.to_string() == INGEN__file ||
-	        predicate.to_string() == uris.ingen_arc ||
-	        predicate.to_string() == uris.ingen_block ||
-	        predicate.to_string() == uris.lv2_port);
+	        predicate             == uris.ingen_arc ||
+	        predicate             == uris.ingen_block ||
+	        predicate             == uris.lv2_port);
 }
 
 static Properties
@@ -147,7 +147,7 @@ get_properties(Ingen::World*     world,
 			Atom            atomm;
 			atomm = world->forge().alloc(
 				atom->size, atom->type, LV2_ATOM_BODY_CONST(atom));
-			props.emplace(Raul::URI(i.get_predicate().to_string()),
+			props.emplace(URI(i.get_predicate().to_string()),
 			              Property(atomm, ctx));
 		}
 	}
@@ -250,7 +250,7 @@ parse_properties(
 	Sord::Model&                model,
 	const Sord::Node&           subject,
 	Resource::Graph             ctx,
-	const Raul::URI&            uri,
+	const URI&                  uri,
 	boost::optional<Properties> data = boost::optional<Properties>());
 
 static bool
@@ -535,7 +535,7 @@ parse_properties(Ingen::World*               world,
                  Sord::Model&                model,
                  const Sord::Node&           subject,
                  Resource::Graph             ctx,
-                 const Raul::URI&            uri,
+                 const URI&                  uri,
                  boost::optional<Properties> data)
 {
 	Properties properties = get_properties(world, model, subject, ctx);
@@ -647,9 +647,9 @@ Parser::parse_file(Ingen::World*                 world,
 	                                   ? Glib::build_filename(file_path, "manifest.ttl")
 	                                   : file_path);
 
-	std::string manifest_uri;
+	URI manifest_uri;
 	try {
-		manifest_uri = Glib::filename_to_uri(manifest_path);
+		manifest_uri = URI(Glib::filename_to_uri(manifest_path));
 	} catch (const Glib::ConvertError& e) {
 		world->log().error(fmt("URI conversion error (%1%)\n") % e.what());
 		return false;
@@ -657,7 +657,7 @@ Parser::parse_file(Ingen::World*                 world,
 
 	// Find graphs in manifest
 	const std::set<ResourceRecord> resources = find_resources(
-		*world->rdf_world(), manifest_uri, Raul::URI(INGEN__Graph));
+		*world->rdf_world(), manifest_uri, URI(INGEN__Graph));
 
 	if (resources.empty()) {
 		world->log().error(fmt("No graphs found in %1%\n") % path);
@@ -667,7 +667,7 @@ Parser::parse_file(Ingen::World*                 world,
 	/* Choose the graph to load.  If this is a manifest, then there should only be
 	   one, but if this is a graph file, subgraphs will be returned as well.
 	   In this case, choose the one with the file URI. */
-	std::string uri;
+	URI uri;
 	for (const ResourceRecord& r : resources) {
 		if (r.uri == Glib::filename_to_uri(manifest_path)) {
 			uri = r.uri;
@@ -694,7 +694,7 @@ Parser::parse_file(Ingen::World*                 world,
 	SerdEnv*          env       = serd_env_new(&base_node);
 
 	// Load graph into model
-	Sord::Model model(*world->rdf_world(), uri, SORD_SPO|SORD_PSO, false);
+	Sord::Model model(*world->rdf_world(), uri.string(), SORD_SPO|SORD_PSO, false);
 	model.load_file(env, SERD_TURTLE, file_uri);
 	serd_env_free(env);
 
@@ -706,15 +706,15 @@ Parser::parse_file(Ingen::World*                 world,
 		world->log().info(fmt("Symbol: %1%\n") % symbol->c_str());
 	}
 
-	Sord::Node subject(*world->rdf_world(), Sord::Node::URI, uri);
+	Sord::Node subject(*world->rdf_world(), Sord::Node::URI, uri.string());
 	boost::optional<Raul::Path> parsed_path
 		= parse(world, target, model, model.base_uri().to_string(),
 		        subject, parent, symbol, data);
 
 	if (parsed_path) {
 		target->set_property(path_to_uri(*parsed_path),
-		                     Raul::URI(INGEN__file),
-		                     world->forge().alloc_uri(uri));
+		                     URI(INGEN__file),
+		                     world->forge().alloc_uri(uri.string()));
 		return true;
 	} else {
 		world->log().warn("Document URI lost\n");
@@ -722,7 +722,7 @@ Parser::parse_file(Ingen::World*                 world,
 	}
 }
 
-boost::optional<Raul::URI>
+boost::optional<URI>
 Parser::parse_string(Ingen::World*                     world,
                      Ingen::Interface*                 target,
                      const std::string&                str,
@@ -742,7 +742,7 @@ Parser::parse_string(Ingen::World*                     world,
 	}
 	model.load_string(env, SERD_TURTLE, str.c_str(), str.length(), base_uri);
 
-	Raul::URI actual_base((const char*)serd_env_get_base_uri(env, nullptr)->buf);
+	URI actual_base((const char*)serd_env_get_base_uri(env, nullptr)->buf);
 	serd_env_free(env);
 
 	world->log().info(fmt("Parsing string (base %1%)\n") % base_uri);

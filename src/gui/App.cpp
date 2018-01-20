@@ -177,7 +177,7 @@ App::attach(SPtr<SigClientInterface> client)
 	if (_world->conf().option("dump").get<int32_t>()) {
 		_dumper = SPtr<StreamWriter>(new StreamWriter(_world->uri_map(),
 		                                              _world->uris(),
-		                                              Raul::URI("ingen:/client"),
+		                                              URI("ingen:/client"),
 		                                              stderr,
 		                                              ColorContext::Color::CYAN));
 
@@ -207,7 +207,7 @@ void
 App::request_plugins_if_necessary()
 {
 	if (!_requested_plugins) {
-		_world->interface()->get(Raul::URI("ingen:/plugins"));
+		_world->interface()->get(URI("ingen:/plugins"));
 		_requested_plugins = true;
 	}
 }
@@ -251,10 +251,10 @@ App::error_message(const std::string& str)
 }
 
 void
-App::set_property(const Raul::URI& subject,
-                  const Raul::URI& key,
-                  const Atom&      value,
-                  Resource::Graph  ctx)
+App::set_property(const URI&      subject,
+                  const URI&      key,
+                  const Atom&     value,
+                  Resource::Graph ctx)
 {
 	// Send message to server
 	interface()->set_property(subject, key, value, ctx);
@@ -278,7 +278,7 @@ App::set_tooltip(Gtk::Widget* widget, const LilvNode* node)
 }
 
 void
-App::put(const Raul::URI&  uri,
+App::put(const URI&        uri,
          const Properties& properties,
          Resource::Graph   ctx)
 {
@@ -292,12 +292,12 @@ App::put(const Raul::URI&  uri,
 }
 
 void
-App::property_change(const Raul::URI& subject,
-                     const Raul::URI& key,
-                     const Atom&      value,
-                     Resource::Graph  ctx)
+App::property_change(const URI&      subject,
+                     const URI&      key,
+                     const Atom&     value,
+                     Resource::Graph ctx)
 {
-	if (subject != Raul::URI("ingen:/engine")) {
+	if (subject != URI("ingen:/engine")) {
 		return;
 	} else if (key == uris().param_sampleRate && value.type() == forge().Int) {
 		_sample_rate = value.get<int32_t>();

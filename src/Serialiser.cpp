@@ -38,6 +38,7 @@
 #include "ingen/Resource.hpp"
 #include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
@@ -81,8 +82,7 @@ struct Serialiser::Impl {
 	void serialise_properties(Sord::Node        id,
 	                          const Properties& props);
 
-	void write_bundle(SPtr<const Node>   graph,
-	                  const std::string& uri);
+	void write_bundle(SPtr<const Node> graph, const URI& uri);
 
 	Sord::Node path_rdf_node(const Raul::Path& path);
 
@@ -100,7 +100,7 @@ struct Serialiser::Impl {
 
 	Raul::Path   _root_path;
 	Mode         _mode;
-	std::string  _base_uri;
+	URI          _base_uri;
 	std::string  _basename;
 	World&       _world;
 	Sord::Model* _model;
@@ -129,7 +129,7 @@ Serialiser::Impl::write_manifest(const std::string& bundle_path,
 	const URIs&  uris  = _world.uris();
 
 	const string    filename("main.ttl");
-	const Sord::URI subject(world, filename, _base_uri);
+	const Sord::URI subject(world, filename, _base_uri.string());
 
 	_model->add_statement(subject,
 	                      Sord::URI(world, uris.rdf_type),
@@ -139,7 +139,7 @@ Serialiser::Impl::write_manifest(const std::string& bundle_path,
 	                      Sord::URI(world, uris.lv2_Plugin));
 	_model->add_statement(subject,
 	                      Sord::URI(world, uris.rdfs_seeAlso),
-	                      Sord::URI(world, filename, _base_uri));
+	                      Sord::URI(world, filename, _base_uri.string()));
 	_model->add_statement(subject,
 	                      Sord::URI(world, uris.lv2_prototype),
 	                      Sord::URI(world, uris.ingen_GraphPrototype));
@@ -180,17 +180,15 @@ Serialiser::Impl::write_plugins(const std::string&              bundle_path,
 }
 
 void
-Serialiser::write_bundle(SPtr<const Node>   graph,
-                         const std::string& uri)
+Serialiser::write_bundle(SPtr<const Node> graph, const URI& uri)
 {
 	me->write_bundle(graph, uri);
 }
 
 void
-Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
-                               const std::string& uri)
+Serialiser::Impl::write_bundle(SPtr<const Node> graph, const URI& uri)
 {
-	std::string path = Glib::filename_from_uri(uri);
+	std::string path = Glib::filename_from_uri(uri.string());
 	if (Glib::file_test(path, Glib::FILE_TEST_EXISTS)
 	    && !Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
 		path = Glib::path_get_dirname(path);
@@ -210,7 +208,7 @@ Serialiser::Impl::write_bundle(SPtr<const Node>   graph,
 	start_to_file(graph->path(), main_file);
 
 	std::set<const Resource*> plugins = serialise_graph(
-		graph, Sord::URI(_model->world(), main_file, _base_uri));
+		graph, Sord::URI(_model->world(), main_file, _base_uri.string()));
 
 	finish();
 	write_manifest(path, graph);
@@ -229,9 +227,9 @@ Serialiser::Impl::start_to_file(const Raul::Path& root, const string& filename)
 	// Set Base URI
 	assert(filename.find(":") == string::npos || filename.substr(0, 5) == "file:");
 	if (filename.find(":") == string::npos) {
-		_base_uri = "file://" + filename;
+		_base_uri = URI("file://" + filename);
 	} else {
-		_base_uri = filename;
+		_base_uri = URI(filename);
 	}
 
 	// Find graph basename to use as symbol / fallback name
@@ -240,17 +238,17 @@ Serialiser::Impl::start_to_file(const Raul::Path& root, const string& filename)
 		_basename = Glib::path_get_basename(Glib::path_get_dirname(filename));
 	}
 
-	_model     = new Sord::Model(*_world.rdf_world(), _base_uri);
+	_model     = new Sord::Model(*_world.rdf_world(), _base_uri.string());
 	_mode      = Mode::TO_FILE;
 	_root_path = root;
 }
 
 void
-Serialiser::start_to_string(const Raul::Path& root, const string& base_uri)
+Serialiser::start_to_string(const Raul::Path& root, const URI& base_uri)
 {
 	me->_root_path = root;
 	me->_base_uri  = base_uri;
-	me->_model     = new Sord::Model(*me->_world.rdf_world(), base_uri);
+	me->_model     = new Sord::Model(*me->_world.rdf_world(), base_uri.string());
 	me->_mode      = Impl::Mode::TO_STRING;
 }
 
@@ -271,18 +269,18 @@ Serialiser::Impl::finish()
 {
 	string ret = "";
 	if (_mode == Mode::TO_FILE) {
-		SerdStatus st = _model->write_to_file(_base_uri, SERD_TURTLE);
+		SerdStatus st = _model->write_to_file(_base_uri.string(), SERD_TURTLE);
 		if (st) {
 			_world.log().error(fmt("Error writing file %1% (%2%)\n")
 			                   % _base_uri % serd_strerror(st));
 		}
 	} else {
-		ret = _model->write_to_string(_base_uri, SERD_TURTLE);
+		ret = _model->write_to_string(_base_uri.string(), SERD_TURTLE);
 	}
 
 	delete _model;
 	_model    = nullptr;
-	_base_uri = "";
+	_base_uri = URI();
 
 	return ret;
 }
@@ -294,7 +292,7 @@ Serialiser::Impl::path_rdf_node(const Raul::Path& path)
 	assert(path == _root_path || path.is_child_of(_root_path));
 	return Sord::URI(_model->world(),
 	                 path.substr(_root_path.base().length()),
-	                 _base_uri);
+	                 _base_uri.string());
 }
 
 void
@@ -378,11 +376,11 @@ Serialiser::Impl::serialise_graph(SPtr<const Node>  graph,
 			const Sord::URI subgraph_id(world, (const char*)subgraph_node.buf);
 
 			// Save our state
-			std::string  my_base_uri = _base_uri;
+			URI          my_base_uri = _base_uri;
 			Sord::Model* my_model    = _model;
 
 			// Write child bundle within this bundle
-			write_bundle(subgraph, subgraph_id.to_string());
+			write_bundle(subgraph, URI(subgraph_id.to_string()));
 
 			// Restore our state
 			_base_uri = my_base_uri;
@@ -451,8 +449,8 @@ Serialiser::Impl::serialise_block(SPtr<const Node>  block,
 	props.erase(uris.state_state);
 	serialise_properties(block_id, props);
 
-	if (_base_uri.substr(0, 5) == "file:") {
-		const std::string base       = Glib::filename_from_uri(_base_uri);
+	if (_base_uri.scheme() == "file") {
+		const std::string base       = Glib::filename_from_uri(_base_uri.string());
 		const std::string graph_dir  = Glib::path_get_dirname(base);
 		const std::string state_dir  = Glib::build_filename(graph_dir, block->symbol());
 		const std::string state_file = Glib::build_filename(state_dir, "state.ttl");
@@ -557,9 +555,9 @@ static bool
 skip_property(Ingen::URIs& uris, const Sord::Node& predicate)
 {
 	return (predicate.to_string() == INGEN__file ||
-	        predicate.to_string() == uris.ingen_arc ||
-	        predicate.to_string() == uris.ingen_block ||
-	        predicate.to_string() == uris.lv2_port);
+	        predicate             == uris.ingen_arc ||
+	        predicate             == uris.ingen_block ||
+	        predicate             == uris.lv2_port);
 }
 
 void

@@ -14,8 +14,7 @@
   along with Ingen.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdlib.h>
-
+#include <cstdlib>
 #include <string>
 #include <thread>
 #include <vector>
@@ -37,6 +36,7 @@
 #include "ingen/Parser.hpp"
 #include "ingen/Serialiser.hpp"
 #include "ingen/Store.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/World.hpp"
 #include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
@@ -232,7 +232,7 @@ public:
 
 	/** Unused since LV2 has no dynamic ports. */
 	virtual void port_property(const Raul::Path& path,
-	                           const Raul::URI&  uri,
+	                           const URI&        uri,
 	                           const Atom&       value) {}
 
 	virtual EnginePort* create_port(DuplexPort* graph_port) {
@@ -439,7 +439,7 @@ struct IngenPlugin {
 };
 
 static Lib::Graphs
-find_graphs(const std::string& manifest_uri)
+find_graphs(const URI& manifest_uri)
 {
 	Sord::World world;
 	Parser      parser;
@@ -447,7 +447,7 @@ find_graphs(const std::string& manifest_uri)
 	const std::set<Parser::ResourceRecord> resources = parser.find_resources(
 		world,
 		manifest_uri,
-		Raul::URI(INGEN__Graph));
+		URI(INGEN__Graph));
 
 	Lib::Graphs graphs;
 	for (const auto& r : resources) {
@@ -496,7 +496,7 @@ ingen_instantiate(const LV2_Descriptor*    descriptor,
 	SerdNode          manifest_node = serd_node_new_file_uri(
 		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
 
-	Lib::Graphs graphs = find_graphs((const char*)manifest_node.buf);
+	Lib::Graphs graphs = find_graphs(URI((const char*)manifest_node.buf));
 	serd_node_free(&manifest_node);
 
 	const LV2Graph* graph = nullptr;
@@ -809,7 +809,7 @@ Lib::Lib(const char* bundle_path)
 	SerdNode          manifest_node = serd_node_new_file_uri(
 		(const uint8_t*)manifest_path.c_str(), nullptr, nullptr, true);
 
-	graphs = find_graphs((const char*)manifest_node.buf);
+	graphs = find_graphs(URI((const char*)manifest_node.buf));
 
 	serd_node_free(&manifest_node);
 }

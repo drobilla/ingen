@@ -312,10 +312,10 @@ World::run_module(const char* name)
 /** Get an interface for a remote engine at `engine_uri`
  */
 SPtr<Interface>
-World::new_interface(const Raul::URI& engine_uri,
-                     SPtr<Interface>  respondee)
+World::new_interface(const URI& engine_uri, SPtr<Interface> respondee)
 {
-	const Impl::InterfaceFactories::const_iterator i = _impl->interface_factories.find(engine_uri.scheme());
+	const Impl::InterfaceFactories::const_iterator i =
+	        _impl->interface_factories.find(std::string(engine_uri.scheme()));
 	if (i == _impl->interface_factories.end()) {
 		log().warn(fmt("Unknown URI scheme `%1%'\n") % engine_uri.scheme());
 		return SPtr<Interface>();

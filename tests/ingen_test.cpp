@@ -191,7 +191,7 @@ main(int argc, char** argv)
 	const std::string base     = Glib::path_get_basename(cmds_file_path);
 	const std::string out_name = base.substr(0, base.find('.')) + ".out.ingen";
 	const std::string out_path = Glib::build_filename(Glib::get_current_dir(), out_name);
-	world->serialiser()->write_bundle(r->second, Glib::filename_to_uri(out_path));
+	world->serialiser()->write_bundle(r->second, URI(Glib::filename_to_uri(out_path)));
 
 	// Undo every event (should result in a graph identical to the original)
 	for (int i = 0; i < n_events; ++i) {
@@ -203,7 +203,7 @@ main(int argc, char** argv)
 	r = world->store()->find(Raul::Path("/"));
 	const std::string undo_name = base.substr(0, base.find('.')) + ".undo.ingen";
 	const std::string undo_path = Glib::build_filename(Glib::get_current_dir(), undo_name);
-	world->serialiser()->write_bundle(r->second, Glib::filename_to_uri(undo_path));
+	world->serialiser()->write_bundle(r->second, URI(Glib::filename_to_uri(undo_path)));
 
 	// Redo every event (should result in a graph identical to the pre-undo output)
 	for (int i = 0; i < n_events; ++i) {
@@ -215,7 +215,7 @@ main(int argc, char** argv)
 	r = world->store()->find(Raul::Path("/"));
 	const std::string redo_name = base.substr(0, base.find('.')) + ".redo.ingen";
 	const std::string redo_path = Glib::build_filename(Glib::get_current_dir(), redo_name);
-	world->serialiser()->write_bundle(r->second, Glib::filename_to_uri(redo_path));
+	world->serialiser()->write_bundle(r->second, URI(Glib::filename_to_uri(redo_path)));
 
 	serd_env_free(env);
 	sratom_free(sratom);

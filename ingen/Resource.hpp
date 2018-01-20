@@ -21,10 +21,10 @@
 #include <string>
 
 #include "ingen/Properties.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/ingen.h"
 #include "raul/Deletable.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -42,7 +42,7 @@ class INGEN_API Resource : public Raul::Deletable
 public:
 	using Graph = Property::Graph;
 
-	Resource(const URIs& uris, const Raul::URI& uri)
+	Resource(const URIs& uris, const URI& uri)
 		: _uris(uris)
 		, _uri(uri)
 	{}
@@ -56,15 +56,15 @@ public:
 		return *this;
 	}
 
-	static Raul::URI graph_to_uri(Graph g) {
+	static URI graph_to_uri(Graph g) {
 		switch (g) {
-		case Graph::EXTERNAL: return Raul::URI(INGEN_NS "externalContext");
-		case Graph::INTERNAL: return Raul::URI(INGEN_NS "internalContext");
-		default:              return Raul::URI(INGEN_NS "defaultContext");
+		case Graph::EXTERNAL: return URI(INGEN_NS "externalContext");
+		case Graph::INTERNAL: return URI(INGEN_NS "internalContext");
+		default:              return URI(INGEN_NS "defaultContext");
 		}
 	}
 
-	static Graph uri_to_graph(const Raul::URI& uri) {
+	static Graph uri_to_graph(const URI& uri) {
 		if (uri == INGEN_NS "externalContext") {
 			return Graph::EXTERNAL;
 		} else if (uri == INGEN_NS "internalContext") {
@@ -78,27 +78,25 @@ public:
 	 * This is only useful for properties with a single value.  If the
 	 * requested property has several values, the first will be returned.
 	 */
-	virtual const Atom& get_property(const Raul::URI& uri) const;
+	virtual const Atom& get_property(const URI& uri) const;
 
 	/** Set (replace) a property value.
 	 *
 	 * This will first erase any properties with the given `uri`, so after
 	 * this call exactly one property with predicate `uri` will be set.
 	 */
-	virtual const Atom& set_property(
-		const Raul::URI& uri,
-		const Atom&      value,
-		Graph            ctx = Graph::DEFAULT);
+	virtual const Atom& set_property(const URI&  uri,
+	                                 const Atom& value,
+	                                 Graph       ctx = Graph::DEFAULT);
 
 	/** Set (replace) a property value.
 	 *
 	 * This will first erase any properties with the given `uri`, so after
 	 * this call exactly one property with predicate `uri` will be set.
 	 */
-	virtual const Atom& set_property(
-		const Raul::URI&   uri,
-		const URIs::Quark& value,
-		Graph              ctx = Graph::DEFAULT);
+	virtual const Atom& set_property(const URI&         uri,
+	                                 const URIs::Quark& value,
+	                                 Graph              ctx = Graph::DEFAULT);
 
 	/** Add a property value.
 	 *
@@ -108,32 +106,32 @@ public:
 	 *
 	 * @return True iff a new property was added.
 	 */
-	virtual bool add_property(const Raul::URI& uri,
-	                          const Atom&      value,
-	                          Graph            ctx = Graph::DEFAULT);
+	virtual bool add_property(const URI&  uri,
+	                          const Atom& value,
+	                          Graph       ctx = Graph::DEFAULT);
 
 	/** Remove a property.
 	 *
 	 *	If `value` is patch:wildcard then any property with `uri` for a
 	 *  predicate will be removed.
 	 */
-	virtual void remove_property(const Raul::URI& uri,
-	                             const Atom&      value);
+	virtual void remove_property(const URI&  uri,
+	                             const Atom& value);
 
 	/** Remove a property.
 	 *
 	 *	If `value` is patch:wildcard then any property with `uri` for a
 	 *  predicate will be removed.
 	 */
-	virtual void remove_property(const Raul::URI&   uri,
+	virtual void remove_property(const URI&         uri,
 	                             const URIs::Quark& value);
 
 	/** Return true iff a property is set with a specific value. */
-	virtual bool has_property(const Raul::URI& uri,
-	                          const Atom&      value) const;
+	virtual bool has_property(const URI&  uri,
+	                          const Atom& value) const;
 
 	/** Return true iff a property is set with a specific value. */
-	virtual bool has_property(const Raul::URI&   uri,
+	virtual bool has_property(const URI&         uri,
 	                          const URIs::Quark& value) const;
 
 	/** Set (replace) several properties at once.
@@ -159,7 +157,7 @@ public:
 	 * This can be used by derived classes to implement special behaviour for
 	 * particular properties (e.g. ingen:value for ports).
 	 */
-	virtual void on_property(const Raul::URI& uri, const Atom& value) {}
+	virtual void on_property(const URI& uri, const Atom& value) {}
 
 	/** Hook called whenever a property value is removed.
 	 *
@@ -168,7 +166,7 @@ public:
 	 * This can be used by derived classes to implement special behaviour for
 	 * particular properties (e.g. ingen:value for ports).
 	 */
-	virtual void on_property_removed(const Raul::URI& uri, const Atom& value) {}
+	virtual void on_property_removed(const URI& uri, const Atom& value) {}
 
 	/** Get the ingen type from a set of Properties.
 	 *
@@ -182,23 +180,23 @@ public:
 	                 bool&             port,
 	                 bool&             is_output);
 
-	virtual void set_uri(const Raul::URI& uri) { _uri = uri; }
+	virtual void set_uri(const URI& uri) { _uri = uri; }
 
 	/** Get all the properties with a given context. */
 	Properties properties(Resource::Graph ctx) const;
 
 	const URIs&       uris()       const { return _uris; }
-	const Raul::URI&  uri()        const { return _uri; }
+	const URI&        uri()        const { return _uri; }
 	const Properties& properties() const { return _properties; }
 	Properties&       properties()       { return _properties; }
 
 protected:
-	const Atom& set_property(const Raul::URI& uri, const Atom& value) const;
+	const Atom& set_property(const URI& uri, const Atom& value) const;
 
 	const URIs& _uris;
 
 private:
-	Raul::URI          _uri;
+	URI                _uri;
 	mutable Properties _properties;
 };
 

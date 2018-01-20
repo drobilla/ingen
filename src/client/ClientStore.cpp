@@ -124,7 +124,7 @@ ClientStore::remove_object(const Raul::Path& path)
 }
 
 SPtr<PluginModel>
-ClientStore::_plugin(const Raul::URI& uri)
+ClientStore::_plugin(const URI& uri)
 {
 	const Plugins::iterator i = _plugins->find(uri);
 	return (i == _plugins->end()) ? SPtr<PluginModel>() : (*i).second;
@@ -136,12 +136,12 @@ ClientStore::_plugin(const Atom& uri)
 	/* FIXME: Should probably be stored with URIs rather than strings, to make
 	   this a fast case. */
 
-	const Plugins::iterator i = _plugins->find(Raul::URI(_uris.forge.str(uri, false)));
+	const Plugins::iterator i = _plugins->find(URI(_uris.forge.str(uri, false)));
 	return (i == _plugins->end()) ? SPtr<PluginModel>() : (*i).second;
 }
 
 SPtr<const PluginModel>
-ClientStore::plugin(const Raul::URI& uri) const
+ClientStore::plugin(const URI& uri) const
 {
 	return const_cast<ClientStore*>(this)->_plugin(uri);
 }
@@ -167,7 +167,7 @@ ClientStore::object(const Raul::Path& path) const
 }
 
 SPtr<Resource>
-ClientStore::_resource(const Raul::URI& uri)
+ClientStore::_resource(const URI& uri)
 {
 	if (uri_is_path(uri)) {
 		return _object(uri_to_path(uri));
@@ -177,7 +177,7 @@ ClientStore::_resource(const Raul::URI& uri)
 }
 
 SPtr<const Resource>
-ClientStore::resource(const Raul::URI& uri) const
+ClientStore::resource(const URI& uri) const
 {
 	return const_cast<ClientStore*>(this)->_resource(uri);
 }
@@ -304,7 +304,7 @@ ClientStore::operator()(const Put& msg)
 		SPtr<PluginModel> plug;
 		if (p->second.is_valid() && (p->second.type() == _uris.forge.URI ||
 		                             p->second.type() == _uris.forge.URID)) {
-			const Raul::URI uri(_uris.forge.str(p->second, false));
+			const URI uri(_uris.forge.str(p->second, false));
 			if (!(plug = _plugin(uri))) {
 				plug = SPtr<PluginModel>(
 					new PluginModel(uris(), uri, Atom(), Properties()));
@@ -339,7 +339,7 @@ void
 ClientStore::operator()(const Delta& msg)
 {
 	const auto& uri = msg.uri;
-	if (uri == Raul::URI("ingen:/clients/this")) {
+	if (uri == URI("ingen:/clients/this")) {
 		// Client property, which we don't store (yet?)
 		return;
 	}
@@ -368,7 +368,7 @@ ClientStore::operator()(const SetProperty& msg)
 	const auto& predicate   = msg.predicate;
 	const auto& value       = msg.value;
 
-	if (subject_uri == Raul::URI("ingen:/engine")) {
+	if (subject_uri == URI("ingen:/engine")) {
 		_log.info(fmt("Engine property <%1%> = %2%\n")
 		          % predicate.c_str() % _uris.forge.str(value, false));
 		return;

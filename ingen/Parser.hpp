@@ -17,23 +17,25 @@
 #ifndef INGEN_PARSER_HPP
 #define INGEN_PARSER_HPP
 
-#include <string>
 #include <set>
+#include <string>
+#include <utility>
 
 #include <boost/optional/optional.hpp>
 
 #include "ingen/Properties.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/ingen.h"
 #include "raul/Path.hpp"
 #include "raul/Symbol.hpp"
 
-namespace Raul { class URI; }
 namespace Sord { class World; }
 
 namespace Ingen {
 
 class Interface;
 class World;
+class URI;
 
 /**
    Parser for reading graphs from Turtle files or strings.
@@ -48,7 +50,7 @@ public:
 
 	/** Record of a resource listed in a bundle manifest. */
 	struct ResourceRecord {
-		inline ResourceRecord(std::string u, std::string f)
+		inline ResourceRecord(URI u, std::string f)
 			: uri(std::move(u)), filename(std::move(f))
 		{}
 
@@ -56,15 +58,14 @@ public:
 			return uri < r.uri;
 		}
 
-		std::string uri;       ///< URI of resource (e.g. a Graph)
+		URI         uri;       ///< URI of resource (e.g. a Graph)
 		std::string filename;  ///< Path of describing file (seeAlso)
 	};
 
 	/** Find all resources of a given type listed in a manifest file. */
-	virtual std::set<ResourceRecord> find_resources(
-		Sord::World&       world,
-		const std::string& manifest_uri,
-		const Raul::URI&   type_uri);
+	virtual std::set<ResourceRecord> find_resources(Sord::World& world,
+	                                                const URI&   manifest_uri,
+	                                                const URI&   type_uri);
 
 	/** Parse a graph from RDF into a Interface (engine or client).
 	 *
@@ -83,7 +84,7 @@ public:
 		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data   = boost::optional<Properties>());
 
-	virtual boost::optional<Raul::URI> parse_string(
+	virtual boost::optional<URI> parse_string(
 		World*                        world,
 		Interface*                    target,
 		const std::string&            str,

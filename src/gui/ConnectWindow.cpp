@@ -141,7 +141,7 @@ ConnectWindow::set_connected_to(SPtr<Ingen::Interface> engine)
 		_progress_bar->set_fraction(1.0);
 		_progress_label->set_text("Connected to engine");
 		_url_entry->set_sensitive(false);
-		_url_entry->set_text(engine->uri());
+		_url_entry->set_text(engine->uri().string());
 		_connect_button->set_sensitive(false);
 		_disconnect_button->set_label("gtk-disconnect");
 		_disconnect_button->set_sensitive(true);
@@ -190,7 +190,7 @@ ConnectWindow::set_connecting_widget_states()
 }
 
 bool
-ConnectWindow::connect_remote(const Raul::URI& uri)
+ConnectWindow::connect_remote(const URI& uri)
 {
 	Ingen::World* world = _app->world();
 
@@ -241,12 +241,12 @@ ConnectWindow::connect(bool existing)
 			uri_str = _url_entry->get_text();
 		}
 
-		if (!Raul::URI::is_valid(uri_str)) {
+		if (!URI::is_valid(uri_str)) {
 			error((fmt("Invalid socket URI %1%") % uri_str).str());
 			return;
 		}
 
-		_connect_uri = Raul::URI(uri_str);
+		_connect_uri = URI(uri_str);
 
 	} else if (_mode == Mode::LAUNCH_REMOTE) {
 		const std::string port  = std::to_string(_port_spinbutton->get_value_as_int());
@@ -257,7 +257,7 @@ ConnectWindow::connect(bool existing)
 			return;
 		}
 
-		_connect_uri = Raul::URI(std::string("tcp://localhost:") + port);
+		_connect_uri = URI(std::string("tcp://localhost:") + port);
 
 	} else if (_mode == Mode::INTERNAL) {
 		if (!world->engine()) {
@@ -310,7 +310,7 @@ ConnectWindow::activate()
 		return;
 	}
 
-	_app->interface()->set_property(Raul::URI("ingen:/driver"),
+	_app->interface()->set_property(URI("ingen:/driver"),
 	                                _app->uris().ingen_enabled,
 	                                _app->forge().make(true));
 }
@@ -322,7 +322,7 @@ ConnectWindow::deactivate()
 		return;
 	}
 
-	_app->interface()->set_property(Raul::URI("ingen:/driver"),
+	_app->interface()->set_property(URI("ingen:/driver"),
 	                                _app->uris().ingen_enabled,
 	                                _app->forge().make(false));
 }
@@ -376,8 +376,8 @@ ConnectWindow::load_widgets()
 		sigc::mem_fun(this, &ConnectWindow::quit_clicked));
 
 	_url_entry->set_text(_app->world()->conf().option("connect").ptr<char>());
-	if (Raul::URI::is_valid(_url_entry->get_text())) {
-		_connect_uri = Raul::URI(_url_entry->get_text());
+	if (URI::is_valid(_url_entry->get_text())) {
+		_connect_uri = URI(_url_entry->get_text());
 	}
 
 	_port_spinbutton->set_range(1, std::numeric_limits<uint16_t>::max());
@@ -499,7 +499,7 @@ ConnectWindow::gtk_callback()
 
 		_ping_id = g_random_int_range(1, std::numeric_limits<int32_t>::max());
 		_app->interface()->set_response_id(_ping_id);
-		_app->interface()->get(Raul::URI("ingen:/engine"));
+		_app->interface()->get(URI("ingen:/engine"));
 		last     = now;
 		attempts = 0;
 		next_stage();
@@ -515,13 +515,13 @@ ConnectWindow::gtk_callback()
 				_connect_stage = -1;
 			} else if (ms_since_last > 1000) {
 				_app->interface()->set_response_id(_ping_id);
-				_app->interface()->get(Raul::URI("ingen:/engine"));
+				_app->interface()->get(URI("ingen:/engine"));
 				last = now;
 				++attempts;
 			}
 		}
 	} else if (_connect_stage == 3) {
-		_app->interface()->get(Raul::URI(main_uri() + "/"));
+		_app->interface()->get(URI(main_uri().string() + "/"));
 		next_stage();
 	} else if (_connect_stage == 4) {
 		if (_app->store()->size() > 0) {

@@ -28,7 +28,6 @@
 
 typedef struct LilvWorldImpl LilvWorld;
 
-namespace Raul { class URI; }
 namespace Sord { class World; }
 
 namespace Ingen {
@@ -42,6 +41,7 @@ class Log;
 class Parser;
 class Serialiser;
 class Store;
+class URI;
 class URIMap;
 class URIs;
 
@@ -89,10 +89,9 @@ public:
 	virtual bool run_module(const char* name);
 
 	/** A function to create a new remote Interface. */
-	typedef SPtr<Interface> (*InterfaceFactory)(
-		World*           world,
-		const Raul::URI& engine_uri,
-		SPtr<Interface>  respondee);
+	typedef SPtr<Interface> (*InterfaceFactory)(World*          world,
+	                                            const URI&      engine_uri,
+	                                            SPtr<Interface> respondee);
 
 	/** Register an InterfaceFactory (for module implementations). */
 	virtual void add_interface_factory(const std::string& scheme,
@@ -103,8 +102,8 @@ public:
 	 * @param respondee The Interface that will receive responses to commands
 	 *                  and broadcasts, if applicable.
 	 */
-	virtual SPtr<Interface> new_interface(const Raul::URI& engine_uri,
-	                                      SPtr<Interface>  respondee);
+	virtual SPtr<Interface> new_interface(const URI&      engine_uri,
+	                                      SPtr<Interface> respondee);
 
 	/** Run a script. */
 	virtual bool run(const std::string& mime_type,

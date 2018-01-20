@@ -55,9 +55,7 @@ public:
 		: message_slot(_signal_message.make_slot())
 	{}
 
-	Raul::URI uri() const override {
-		return Raul::URI("ingen:/clients/sig_queue");
-	}
+	URI uri() const override { return URI("ingen:/clients/sig_queue"); }
 
 	void message(const Message& msg) override {
 		std::lock_guard<std::mutex> lock(_mutex);
@@ -87,7 +85,6 @@ private:
 
 	using Graph = Resource::Graph;
 	using Path  = Raul::Path;
-	using URI   = Raul::URI;
 
 	sigc::slot<void, Message> message_slot;
 };

@@ -27,7 +27,6 @@
 #include <gtkmm/toolitem.h>
 
 #include "ingen/types.hpp"
-#include "raul/URI.hpp"
 
 namespace Raul { class Atom; }
 
@@ -77,7 +76,7 @@ private:
 	void poly_changed();
 	void clear_clicked();
 
-	void property_changed(const Raul::URI& predicate, const Atom& value);
+	void property_changed(const URI& predicate, const Atom& value);
 
 	App* _app;
 

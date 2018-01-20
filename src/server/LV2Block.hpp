@@ -68,11 +68,11 @@ public:
 	void run(RunContext& context);
 	void post_process(RunContext& context);
 
-	LilvState* load_preset(const Raul::URI& uri);
+	LilvState* load_preset(const URI& uri);
 
 	void apply_state(const UPtr<Worker>& worker, const LilvState* state);
 
-	boost::optional<Resource> save_preset(const Raul::URI&  uri,
+	boost::optional<Resource> save_preset(const URI&        uri,
 	                                      const Properties& props);
 
 	void set_port_buffer(uint32_t    voice,

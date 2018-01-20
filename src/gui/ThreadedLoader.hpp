@@ -32,6 +32,9 @@
 #include "raul/Semaphore.hpp"
 
 namespace Ingen {
+
+class URI;
+
 namespace GUI {
 
 /** Thread for loading graph files.
@@ -59,8 +62,7 @@ public:
 	                boost::optional<Raul::Symbol> engine_symbol,
 	                boost::optional<Properties>   engine_data);
 
-	void save_graph(SPtr<const Client::GraphModel> model,
-	                const std::string&             filename);
+	void save_graph(SPtr<const Client::GraphModel> model, const URI& uri);
 
 	SPtr<Parser> parser();
 
@@ -71,7 +73,7 @@ private:
 	                      boost::optional<Properties>   engine_data);
 
 	void save_graph_event(SPtr<const Client::GraphModel> model,
-	                      const std::string&             filename);
+	                      const URI&                     filename);
 
 	/** Returns nothing and takes no parameters (because they have all been bound) */
 	typedef sigc::slot<void> Closure;

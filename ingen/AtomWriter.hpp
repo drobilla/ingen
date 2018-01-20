@@ -27,7 +27,6 @@
 #include "ingen/ingen.h"
 #include "lv2/lv2plug.in/ns/ext/atom/forge.h"
 #include "lv2/lv2plug.in/ns/ext/urid/urid.h"
-#include "raul/URI.hpp"
 
 namespace Raul { class Path; }
 
@@ -45,9 +44,7 @@ public:
 
 	AtomWriter(URIMap& map, URIs& uris, AtomSink& sink);
 
-	Raul::URI uri() const override {
-		return Raul::URI("ingen:/clients/atom_writer");
-	}
+	URI uri() const override { return URI("ingen:/clients/atom_writer"); }
 
 	void message(const Message& message) override;
 
@@ -69,7 +66,7 @@ public:
 	void operator()(const Undo&);
 
 private:
-	void forge_uri(const Raul::URI& uri);
+	void forge_uri(const URI& uri);
 	void forge_properties(const Properties& properties);
 	void forge_arc(const Raul::Path& tail, const Raul::Path& head);
 	void forge_request(LV2_Atom_Forge_Frame* frame, LV2_URID type, int32_t id);

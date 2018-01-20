@@ -58,15 +58,15 @@ public:
 		Log&                     log,
 		SPtr<SigClientInterface> emitter = SPtr<SigClientInterface>());
 
-	Raul::URI uri() const override { return Raul::URI("ingen:/clients/store"); }
+	URI uri() const override { return URI("ingen:/clients/store"); }
 
 	SPtr<const ObjectModel> object(const Raul::Path& path) const;
-	SPtr<const PluginModel> plugin(const Raul::URI& uri)   const;
-	SPtr<const Resource>    resource(const Raul::URI& uri) const;
+	SPtr<const PluginModel> plugin(const URI& uri)   const;
+	SPtr<const Resource>    resource(const URI& uri) const;
 
 	void clear();
 
-	typedef std::map< const Raul::URI, SPtr<PluginModel> > Plugins;
+	typedef std::map< const URI, SPtr<PluginModel> > Plugins;
 	SPtr<const Plugins> plugins() const              { return _plugins; }
 	SPtr<Plugins>       plugins()                    { return _plugins; }
 	void                set_plugins(SPtr<Plugins> p) { _plugins = p; }
@@ -94,13 +94,13 @@ public:
 
 	INGEN_SIGNAL(new_object, void, SPtr<ObjectModel>);
 	INGEN_SIGNAL(new_plugin, void, SPtr<PluginModel>);
-	INGEN_SIGNAL(plugin_deleted, void, Raul::URI);
+	INGEN_SIGNAL(plugin_deleted, void, URI);
 
 private:
 	SPtr<ObjectModel> _object(const Raul::Path& path);
-	SPtr<PluginModel> _plugin(const Raul::URI& uri);
+	SPtr<PluginModel> _plugin(const URI& uri);
 	SPtr<PluginModel> _plugin(const Atom& uri);
-	SPtr<Resource>    _resource(const Raul::URI& uri);
+	SPtr<Resource>    _resource(const URI& uri);
 
 	void add_object(SPtr<ObjectModel> object);
 	SPtr<ObjectModel> remove_object(const Raul::Path& path);

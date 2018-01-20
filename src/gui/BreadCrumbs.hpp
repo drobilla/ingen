@@ -104,7 +104,7 @@ private:
 	void breadcrumb_clicked(BreadCrumb* crumb);
 
 	void message(const Message& msg);
-	void object_destroyed(const Raul::URI& uri);
+	void object_destroyed(const URI& uri);
 	void object_moved(const Raul::Path& old_path, const Raul::Path& new_path);
 
 	Raul::Path             _active_path;

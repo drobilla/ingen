@@ -17,9 +17,9 @@
 #include <sstream>
 
 #include "ingen/Forge.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -30,9 +30,9 @@ Forge::Forge(URIMap& map)
 }
 
 Atom
-Forge::make_urid(const Raul::URI& u)
+Forge::make_urid(const Ingen::URI& u)
 {
-	const LV2_URID urid = _map.map_uri(u);
+	const LV2_URID urid = _map.map_uri(u.string());
 	return Atom(sizeof(int32_t), URID, &urid);
 }
 

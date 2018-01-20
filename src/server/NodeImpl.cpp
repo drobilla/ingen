@@ -32,7 +32,7 @@ NodeImpl::NodeImpl(const Ingen::URIs&  uris,
 }
 
 const Atom&
-NodeImpl::get_property(const Raul::URI& key) const
+NodeImpl::get_property(const URI& key) const
 {
 	ThreadManager::assert_not_thread(THREAD_PROCESS);
 	static const Atom null_atom;

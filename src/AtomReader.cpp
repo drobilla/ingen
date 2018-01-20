@@ -64,44 +64,44 @@ AtomReader::get_props(const LV2_Atom_Object* obj,
 	LV2_ATOM_OBJECT_FOREACH(obj, p) {
 		Atom val;
 		get_atom(&p->value, val);
-		props.emplace(Raul::URI(_map.unmap_uri(p->key)), val);
+		props.emplace(URI(_map.unmap_uri(p->key)), val);
 	}
 }
 
-boost::optional<Raul::URI>
+boost::optional<URI>
 AtomReader::atom_to_uri(const LV2_Atom* atom)
 {
 	if (!atom) {
-		return boost::optional<Raul::URI>();
+		return boost::optional<URI>();
 	} else if (atom->type == _uris.atom_URI) {
 		const char* str = (const char*)LV2_ATOM_BODY_CONST(atom);
-		if (Raul::URI::is_valid(str)) {
-			return Raul::URI(str);
+		if (URI::is_valid(str)) {
+			return URI(str);
 		} else {
 			_log.warn(fmt("Invalid URI <%1%>\n") % str);
 		}
 	} else if (atom->type == _uris.atom_Path) {
 		const char* str = (const char*)LV2_ATOM_BODY_CONST(atom);
 		if (!strncmp(str, "file://", 5)) {
-			return Raul::URI(str);
+			return URI(str);
 		} else {
-			return Raul::URI(std::string("file://") + str);
+			return URI(std::string("file://") + str);
 		}
 	} else if (atom->type == _uris.atom_URID) {
 		const char* str = _map.unmap_uri(((const LV2_Atom_URID*)atom)->body);
 		if (str) {
-			return Raul::URI(str);
+			return URI(str);
 		} else {
 			_log.warn(fmt("Unknown URID %1%\n") % str);
 		}
 	}
-	return boost::optional<Raul::URI>();
+	return boost::optional<URI>();
 }
 
 boost::optional<Raul::Path>
 AtomReader::atom_to_path(const LV2_Atom* atom)
 {
-	boost::optional<Raul::URI> uri = atom_to_uri(atom);
+	boost::optional<URI> uri = atom_to_uri(atom);
 	if (uri && uri_is_path(*uri)) {
 		return uri_to_path(*uri);
 	}
@@ -113,7 +113,7 @@ AtomReader::atom_to_context(const LV2_Atom* atom)
 {
 	Resource::Graph ctx = Resource::Graph::DEFAULT;
 	if (atom) {
-		boost::optional<Raul::URI> maybe_uri = atom_to_uri(atom);
+		boost::optional<URI> maybe_uri = atom_to_uri(atom);
 		if (maybe_uri) {
 			ctx = Resource::uri_to_graph(*maybe_uri);
 		} else {
@@ -158,7 +158,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 	                    (LV2_URID)_uris.patch_sequenceNumber, &number,
 	                    NULL);
 
-	const boost::optional<Raul::URI> subject_uri = atom_to_uri(subject);
+	const boost::optional<URI> subject_uri = atom_to_uri(subject);
 
 	const int32_t seq = ((number && number->type == _uris.atom_Int)
 	                     ? ((const LV2_Atom_Int*)number)->body
@@ -267,7 +267,7 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 		get_atom(value, atom);
 		_iface(SetProperty{seq,
 		                   *subject_uri,
-		                   Raul::URI(_map.unmap_uri(prop->body)),
+		                   URI(_map.unmap_uri(prop->body)),
 		                   atom,
 		                   atom_to_context(context)});
 	} else if (obj->body.otype == _uris.patch_Patch) {
@@ -313,13 +313,13 @@ AtomReader::write(const LV2_Atom* msg, int32_t default_id)
 			return false;
 		}
 
-		boost::optional<Raul::URI> subject_uri(atom_to_uri(subject));
+		boost::optional<URI> subject_uri(atom_to_uri(subject));
 		if (!subject_uri) {
 			_log.warn("Copy message has non-path subject\n");
 			return false;
 		}
 
-		boost::optional<Raul::URI> dest_uri(atom_to_uri(dest));
+		boost::optional<URI> dest_uri(atom_to_uri(dest));
 		if (!dest_uri) {
 			_log.warn("Copy message has non-URI destination\n");
 			return false;

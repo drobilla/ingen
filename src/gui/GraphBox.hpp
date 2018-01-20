@@ -40,6 +40,8 @@ class Path;
 
 namespace Ingen {
 
+class URI;
+
 namespace Client {
 class GraphModel;
 class PortModel;
@@ -97,7 +99,7 @@ public:
 private:
 	void graph_port_added(SPtr<const Client::PortModel> port);
 	void graph_port_removed(SPtr<const Client::PortModel> port);
-	void property_changed(const Raul::URI& predicate, const Atom& value);
+	void property_changed(const URI& predicate, const Atom& value);
 	void show_status(const Client::ObjectModel* model);
 
 	void error(const Glib::ustring& message,
@@ -106,7 +108,7 @@ private:
 	bool confirm(const Glib::ustring& message,
 	             const Glib::ustring& secondary_text="");
 
-	void save_graph(const Raul::URI& uri);
+	void save_graph(const URI& uri);
 
 	void event_import();
 	void event_save();

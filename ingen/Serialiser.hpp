@@ -30,6 +30,7 @@ namespace Ingen {
 
 class Arc;
 class Node;
+class URI;
 class World;
 
 /**
@@ -44,8 +45,8 @@ public:
 	virtual ~Serialiser();
 
 	/** Write a graph and all its contents as a complete bundle. */
-	virtual void write_bundle(SPtr<const Node>   graph,
-	                          const std::string& uri);
+	virtual void write_bundle(SPtr<const Node> graph,
+	                          const URI&       uri);
 
 	/** Begin a serialization to a string.
 	 *
@@ -57,8 +58,8 @@ public:
 	 * All serialized paths will have the root path chopped from their prefix
 	 * (therefore all serialized paths must be descendants of the root)
 	 */
-	virtual void start_to_string(const Raul::Path&  root,
-	                             const std::string& base_uri);
+	virtual void start_to_string(const Raul::Path& root,
+	                             const URI&        base_uri);
 
 	/** Begin a serialization to a file.
 	 *

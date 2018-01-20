@@ -63,7 +63,7 @@ public:
 	bool show_port_names() const { return _show_port_names; }
 
 	void add_plugin(SPtr<Client::PluginModel> p);
-	void remove_plugin(const Raul::URI& uri);
+	void remove_plugin(const URI& uri);
 	void add_block(SPtr<const Client::BlockModel> bm);
 	void remove_block(SPtr<const Client::BlockModel> bm);
 	void add_port(SPtr<const Client::PortModel> pm);
@@ -90,7 +90,7 @@ private:
 
 	void menu_add_port(const std::string& sym_base,
 	                   const std::string& name_base,
-	                   const Raul::URI&   type,
+	                   const URI&         type,
 	                   bool               is_output);
 
 	void menu_load_plugin();

@@ -76,8 +76,8 @@ public:
 	 * engine and/or update itself as necessary.
 	 */
 	INGEN_SIGNAL(property_changed, void,
-	             const Raul::URI&,  // Subject
-	             const Raul::URI&,  // Predicate
+	             const URI&,        // Subject
+	             const URI&,        // Predicate
 	             const Atom&,       // Object
 	             Resource::Graph);  // Context
 

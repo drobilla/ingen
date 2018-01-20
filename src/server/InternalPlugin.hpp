@@ -18,7 +18,6 @@
 #define INGEN_ENGINE_INTERNALPLUGIN_HPP
 
 #include "raul/Symbol.hpp"
-#include "raul/URI.hpp"
 
 #include "PluginImpl.hpp"
 
@@ -36,7 +35,7 @@ class InternalPlugin : public PluginImpl
 {
 public:
 	InternalPlugin(URIs&               uris,
-	               const Raul::URI&    uri,
+	               const URI&          uri,
 	               const Raul::Symbol& symbol);
 
 	BlockImpl* instantiate(BufferFactory&      bufs,

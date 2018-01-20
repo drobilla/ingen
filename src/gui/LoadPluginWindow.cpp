@@ -296,7 +296,7 @@ LoadPluginWindow::set_row(Gtk::TreeModel::Row&    row,
 		row[_plugins_columns._col_type] = "";
 	}
 
-	row[_plugins_columns._col_uri]    = plugin->uri();
+	row[_plugins_columns._col_uri]    = plugin->uri().string();
 	row[_plugins_columns._col_plugin] = plugin;
 }
 
@@ -498,9 +498,9 @@ LoadPluginWindow::on_key_press_event(GdkEventKey* event)
 }
 
 void
-LoadPluginWindow::plugin_property_changed(const Raul::URI& plugin,
-                                          const Raul::URI& predicate,
-                                          const Atom&      value)
+LoadPluginWindow::plugin_property_changed(const URI&  plugin,
+                                          const URI&  predicate,
+                                          const Atom& value)
 {
 	const URIs& uris = _app->uris();
 	if (predicate == uris.doap_name) {

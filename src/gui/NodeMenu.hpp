@@ -52,7 +52,7 @@ protected:
 		return dynamic_ptr_cast<const Client::BlockModel>(_object);
 	}
 
-	void add_preset(const Raul::URI& uri, const std::string& label);
+	void add_preset(const URI& uri, const std::string& label);
 
 	void on_menu_disconnect();
 	void on_menu_embed_gui();

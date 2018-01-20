@@ -320,7 +320,7 @@ GraphCanvas::add_plugin(SPtr<PluginModel> p)
 }
 
 void
-GraphCanvas::remove_plugin(const Raul::URI& uri)
+GraphCanvas::remove_plugin(const URI& uri)
 {
 	// Flag menus as dirty so they will be rebuilt when needed next
 	_menu_dirty = true;
@@ -683,7 +683,7 @@ GraphCanvas::paste()
 	              {{uris.rdf_type, Property(uris.ingen_Graph)}});
 
 	// Parse clipboard text into clipboard store
-	boost::optional<Raul::URI> base_uri = parser->parse_string(
+	boost::optional<URI> base_uri = parser->parse_string(
 		_app.world(), &clipboard, str, main_uri());
 
 	// Figure out the copy graph base path
@@ -693,7 +693,7 @@ GraphCanvas::paste()
 		if (base[base.size() - 1] == '/') {
 			base = base.substr(0, base.size() - 1);
 		}
-		copy_root = uri_to_path(Raul::URI(base));
+		copy_root = uri_to_path(URI(base));
 	}
 
 	// Find the minimum x and y coordinate of objects to be pasted
@@ -730,7 +730,7 @@ GraphCanvas::paste()
 
 		const SPtr<Node>  node     = c.second;
 		const Raul::Path& old_path = copy_root.child(node->path());
-		const Raul::URI&  old_uri  = path_to_uri(old_path);
+		const URI&        old_uri  = path_to_uri(old_path);
 		const Raul::Path& new_path = avoider.map_path(parent.child(node->path()));
 
 		Properties props{{uris.lv2_prototype,
@@ -793,8 +793,10 @@ GraphCanvas::generate_port_name(
 }
 
 void
-GraphCanvas::menu_add_port(const string& sym_base, const string& name_base,
-                           const Raul::URI& type, bool is_output)
+GraphCanvas::menu_add_port(const string& sym_base,
+                           const string& name_base,
+                           const URI&    type,
+                           bool          is_output)
 {
 	string sym, name;
 	generate_port_name(sym_base, sym, name_base, name);

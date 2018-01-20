@@ -76,7 +76,7 @@ closure(World* world, const LilvNode* pred, URISet& types, bool super)
 			LILV_FOREACH(nodes, m, matches) {
 				const LilvNode* klass_node = lilv_nodes_get(matches, m);
 				if (lilv_node_is_uri(klass_node)) {
-					Raul::URI klass(lilv_node_as_uri(klass_node));
+					URI klass(lilv_node_as_uri(klass_node));
 					if (!types.count(klass)) {
 						++added;
 						klasses.insert(klass);
@@ -120,12 +120,12 @@ types(World* world, SPtr<const Client::ObjectModel> model)
 
 	// Start with every rdf:type
 	URISet types;
-	types.insert(Raul::URI(LILV_NS_RDFS "Resource"));
+	types.insert(URI(LILV_NS_RDFS "Resource"));
 	PropRange range = model->properties().equal_range(world->uris().rdf_type);
 	for (auto t = range.first; t != range.second; ++t) {
 		if (t->second.type() == world->forge().URI ||
 		    t->second.type() == world->forge().URID) {
-			const Raul::URI type(world->forge().str(t->second, false));
+			const URI type(world->forge().str(t->second, false));
 			types.insert(type);
 			if (world->uris().ingen_Graph == type) {
 				// Add lv2:Plugin as a type for graphs so plugin properties show up
@@ -170,7 +170,7 @@ properties(World* world, SPtr<const Client::ObjectModel> model)
 					continue;
 				}
 
-				const Raul::URI domain(lilv_node_as_uri(domain_node));
+				const URI domain(lilv_node_as_uri(domain_node));
 				if (types.count(domain)) {
 					++n_matching_domains;
 				}
@@ -179,7 +179,7 @@ properties(World* world, SPtr<const Client::ObjectModel> model)
 			if (lilv_nodes_size(domains) == 0 || (
 				    n_matching_domains > 0 &&
 				    n_matching_domains == lilv_nodes_size(domains))) {
-				properties.insert(Raul::URI(lilv_node_as_uri(prop)));
+				properties.insert(URI(lilv_node_as_uri(prop)));
 			}
 
 			lilv_nodes_free(domains);
@@ -210,7 +210,7 @@ instances(World* world, const URISet& types)
 				continue;
 			}
 			const std::string label = RDFS::label(world, object);
-			result.emplace(label, Raul::URI(lilv_node_as_string(object)));
+			result.emplace(label, URI(lilv_node_as_string(object)));
 		}
 		lilv_node_free(type);
 	}
@@ -230,7 +230,7 @@ range(World* world, const LilvNode* prop, bool recursive)
 
 	URISet ranges;
 	LILV_FOREACH(nodes, n, nodes) {
-		ranges.insert(Raul::URI(lilv_node_as_string(lilv_nodes_get(nodes, n))));
+		ranges.insert(URI(lilv_node_as_string(lilv_nodes_get(nodes, n))));
 	}
 
 	if (recursive) {

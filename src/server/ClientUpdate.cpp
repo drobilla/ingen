@@ -27,7 +27,7 @@ namespace Ingen {
 namespace Server {
 
 void
-ClientUpdate::put(const Raul::URI&  uri,
+ClientUpdate::put(const URI&        uri,
                   const Properties& props,
                   Resource::Graph   ctx)
 {
@@ -106,8 +106,8 @@ ClientUpdate::put_plugin(PluginImpl* plugin)
 
 void
 ClientUpdate::put_preset(const URIs&        uris,
-                         const Raul::URI&   plugin,
-                         const Raul::URI&   preset,
+                         const URI&         plugin,
+                         const URI&         preset,
                          const std::string& label)
 {
 	const Properties props{
@@ -118,7 +118,7 @@ ClientUpdate::put_preset(const URIs&        uris,
 }
 
 void
-ClientUpdate::del(const Raul::URI& subject)
+ClientUpdate::del(const URI& subject)
 {
 	dels.push_back(subject);
 }
@@ -135,7 +135,7 @@ void
 ClientUpdate::send(Interface& dest)
 {
 	// Send deletions
-	for (const Raul::URI& subject : dels) {
+	for (const URI& subject : dels) {
 		dest.del(subject);
 	}
 

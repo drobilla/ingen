@@ -25,9 +25,7 @@
 namespace Ingen {
 
 bool
-Resource::add_property(const Raul::URI& uri,
-                       const Atom&      value,
-                       Graph            ctx)
+Resource::add_property(const URI& uri, const Atom& value, Graph ctx)
 {
 	// Ignore duplicate statements
 	typedef Properties::const_iterator iterator;
@@ -51,9 +49,7 @@ Resource::add_property(const Raul::URI& uri,
 }
 
 const Atom&
-Resource::set_property(const Raul::URI& uri,
-                       const Atom&      value,
-                       Resource::Graph  ctx)
+Resource::set_property(const URI& uri, const Atom& value, Resource::Graph ctx)
 {
 	// Erase existing property in this context
 	for (auto i = _properties.find(uri);
@@ -81,7 +77,7 @@ Resource::set_property(const Raul::URI& uri,
 }
 
 const Atom&
-Resource::set_property(const Raul::URI&   uri,
+Resource::set_property(const URI&         uri,
                        const URIs::Quark& value,
                        Resource::Graph    ctx)
 {
@@ -89,7 +85,7 @@ Resource::set_property(const Raul::URI&   uri,
 }
 
 void
-Resource::remove_property(const Raul::URI& uri, const Atom& value)
+Resource::remove_property(const URI& uri, const Atom& value)
 {
 	if (_uris.patch_wildcard == value) {
 		_properties.erase(uri);
@@ -107,20 +103,20 @@ Resource::remove_property(const Raul::URI& uri, const Atom& value)
 }
 
 void
-Resource::remove_property(const Raul::URI& uri, const URIs::Quark& value)
+Resource::remove_property(const URI& uri, const URIs::Quark& value)
 {
 	remove_property(uri, value.urid);
 	remove_property(uri, value.uri);
 }
 
 bool
-Resource::has_property(const Raul::URI& uri, const Atom& value) const
+Resource::has_property(const URI& uri, const Atom& value) const
 {
 	return _properties.contains(uri, value);
 }
 
 bool
-Resource::has_property(const Raul::URI& uri, const URIs::Quark& value) const
+Resource::has_property(const URI& uri, const URIs::Quark& value) const
 {
 	Properties::const_iterator i = _properties.find(uri);
 	for (; (i != _properties.end()) && (i->first == uri); ++i) {
@@ -132,13 +128,13 @@ Resource::has_property(const Raul::URI& uri, const URIs::Quark& value) const
 }
 
 const Atom&
-Resource::set_property(const Raul::URI& uri, const Atom& value) const
+Resource::set_property(const URI& uri, const Atom& value) const
 {
 	return const_cast<Resource*>(this)->set_property(uri, value);
 }
 
 const Atom&
-Resource::get_property(const Raul::URI& uri) const
+Resource::get_property(const URI& uri) const
 {
 	static const Atom nil;
 	Properties::const_iterator i = _properties.find(uri);

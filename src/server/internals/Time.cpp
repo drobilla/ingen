@@ -33,7 +33,7 @@ namespace Internals {
 
 InternalPlugin* TimeNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
-		uris, Raul::URI(NS_INTERNALS "Time"), Raul::Symbol("time"));
+		uris, URI(NS_INTERNALS "Time"), Raul::Symbol("time"));
 }
 
 TimeNode::TimeNode(InternalPlugin*     plugin,

@@ -25,7 +25,6 @@
 #include "ingen/Interface.hpp"
 #include "ingen/Message.hpp"
 #include "ingen/types.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -52,7 +51,7 @@ public:
 		}
 	}
 
-	Raul::URI uri() const override { return Raul::URI("ingen:/tee"); }
+	URI uri() const override { return URI("ingen:/tee"); }
 
 private:
 	std::mutex _sinks_mutex;

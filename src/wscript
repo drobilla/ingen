@@ -17,6 +17,7 @@ def build(bld):
         'Store.cpp',
         'StreamWriter.cpp',
         'TurtleWriter.cpp',
+        'URI.cpp',
         'URIMap.cpp',
         'URIs.cpp',
         'World.cpp',

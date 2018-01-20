@@ -140,11 +140,11 @@ CreateGraph::pre_process(PreProcessContext& ctx)
 
 	if (t != _properties.end() &&
 	    uris.forge.is_uri(t->second) &&
-	    Raul::URI::is_valid(uris.forge.str(t->second, false)) &&
-	    uri_is_path(Raul::URI(uris.forge.str(t->second, false)))) {
+	    URI::is_valid(uris.forge.str(t->second, false)) &&
+	    uri_is_path(URI(uris.forge.str(t->second, false)))) {
 		// Create a duplicate of an existing graph
-		const Raul::URI prototype(uris.forge.str(t->second, false));
-		GraphImpl*      ancestor = dynamic_cast<GraphImpl*>(
+		const URI  prototype(uris.forge.str(t->second, false));
+		GraphImpl* ancestor = dynamic_cast<GraphImpl*>(
 			_engine.store()->get(uri_to_path(prototype)));
 		if (!ancestor) {
 			return Event::pre_process_done(Status::PROTOTYPE_NOT_FOUND, prototype);

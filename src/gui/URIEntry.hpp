@@ -36,9 +36,7 @@ public:
 	 * If `types` is given, then a menu button will be shown which pops up a
 	 *	enu for easily choosing known values with valid types.
 	 */
-	URIEntry(App*                app,
-	         std::set<Raul::URI> types,
-	         const std::string&  value);
+	URIEntry(App* app, std::set<URI> types, const std::string& value);
 
 	std::string              get_text()       { return _entry->get_text(); }
 	Glib::SignalProxy0<void> signal_changed() { return _entry->signal_changed(); }
@@ -58,10 +56,10 @@ private:
 	void uri_chosen(const std::string& uri);
 	bool menu_button_event(GdkEvent* ev);
 
-	App*                      _app;
-	const std::set<Raul::URI> _types;
-	Gtk::Button*              _menu_button;
-	Gtk::Entry*               _entry;
+	App*                _app;
+	const std::set<URI> _types;
+	Gtk::Button*        _menu_button;
+	Gtk::Entry*         _entry;
 };
 
 } // namespace GUI

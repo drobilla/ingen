@@ -216,7 +216,7 @@ GraphBox::init_box(App& app)
 {
 	_app = &app;
 
-	const Raul::URI engine_uri(_app->interface()->uri());
+	const URI engine_uri(_app->interface()->uri());
 	if (engine_uri == "ingen:/clients/event_writer") {
 		_status_bar->push("Running internal engine", STATUS_CONTEXT_ENGINE);
 	} else {
@@ -381,7 +381,7 @@ GraphBox::graph_port_removed(SPtr<const PortModel> port)
 }
 
 void
-GraphBox::property_changed(const Raul::URI& predicate, const Atom& value)
+GraphBox::property_changed(const URI& predicate, const Atom& value)
 {
 	if (predicate == _app->uris().ingen_sprungLayout) {
 		if (value.type() == _app->uris().forge.Bool) {
@@ -506,7 +506,7 @@ GraphBox::event_save()
 	if (!document.is_valid() || document.type() != _app->uris().forge.URI) {
 		event_save_as();
 	} else {
-		save_graph(Raul::URI(document.ptr<char>()));
+		save_graph(URI(document.ptr<char>()));
 	}
 }
 
@@ -537,9 +537,9 @@ GraphBox::confirm(const Glib::ustring& message,
 }
 
 void
-GraphBox::save_graph(const Raul::URI& uri)
+GraphBox::save_graph(const URI& uri)
 {
-	if (_app->interface()->uri().substr(0, 3) == "tcp") {
+	if (_app->interface()->uri().string().substr(0, 3) == "tcp") {
 		_status_bar->push(
 			(boost::format("Saved %1% to %2% on client")
 			 % _graph->path() % uri).str(),
@@ -642,7 +642,7 @@ GraphBox::event_save_as()
 
 		if (confirmed) {
 			const Glib::ustring uri = Glib::filename_to_uri(filename);
-			save_graph(Raul::URI(uri));
+			save_graph(URI(uri));
 
 			const_cast<GraphModel*>(_graph.get())->set_property(
 				uris.ingen_file,
@@ -876,7 +876,7 @@ void
 GraphBox::event_animate_signals_toggled()
 {
 	_app->interface()->set_property(
-		Raul::URI("ingen:/clients/this"),
+		URI("ingen:/clients/this"),
 		_app->uris().ingen_broadcast,
 		_app->forge().make((bool)_menu_animate_signals->get_active()));
 }

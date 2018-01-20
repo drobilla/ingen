@@ -22,7 +22,6 @@
 
 #include "ingen/Resource.hpp"
 #include "raul/Path.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -42,7 +41,7 @@ class PluginImpl;
  * post_process() to avoid the need to lock.
  */
 struct ClientUpdate {
-	void put(const Raul::URI&  uri,
+	void put(const URI&        uri,
 	         const Properties& props,
 	         Resource::Graph   ctx = Resource::Graph::DEFAULT);
 
@@ -51,16 +50,16 @@ struct ClientUpdate {
 	void put_graph(const GraphImpl* graph);
 	void put_plugin(PluginImpl* plugin);
 	void put_preset(const URIs&        uris,
-	                const Raul::URI&   plugin,
-	                const Raul::URI&   preset,
+	                const URI&         plugin,
+	                const URI&         preset,
 	                const std::string& label);
 
-	void del(const Raul::URI& subject);
+	void del(const URI& subject);
 
 	void send(Interface& dest);
 
 	struct Put {
-		Raul::URI       uri;
+		URI             uri;
 		Properties      properties;
 		Resource::Graph ctx;
 	};
@@ -70,9 +69,9 @@ struct ClientUpdate {
 		Raul::Path head;
 	};
 
-	std::vector<Raul::URI> dels;
-	std::vector<Put>       puts;
-	std::vector<Connect>   connects;
+	std::vector<URI>     dels;
+	std::vector<Put>     puts;
+	std::vector<Connect> connects;
 };
 
 } // namespace Server

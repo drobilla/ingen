@@ -23,7 +23,6 @@
 
 #include "ingen/types.hpp"
 #include "lilv/lilv.h"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -36,10 +35,10 @@ namespace GUI {
 namespace RDFS {
 
 /** Set of URIs. */
-typedef std::set<Raul::URI> URISet;
+typedef std::set<URI> URISet;
 
 /** Label => Resource map. */
-typedef std::map<std::string, Raul::URI> Objects;
+typedef std::map<std::string, URI> Objects;
 
 /** Return the label of `node`. */
 std::string label(World* world, const LilvNode* node);

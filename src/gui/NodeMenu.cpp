@@ -137,7 +137,7 @@ NodeMenu::init(App& app, SPtr<const Client::BlockModel> block)
 }
 
 void
-NodeMenu::add_preset(const Raul::URI& uri, const std::string& label)
+NodeMenu::add_preset(const URI& uri, const std::string& label)
 {
 	if (_presets_menu) {
 		_presets_menu->items().push_back(
@@ -225,7 +225,7 @@ NodeMenu::on_save_preset_activated()
 			  _app->forge().alloc(basename) },
 			{ _app->uris().lv2_prototype,
 			  _app->forge().make_urid(block()->uri()) }};
-		_app->interface()->put(Raul::URI(real_uri), props);
+		_app->interface()->put(URI(real_uri), props);
 	}
 }
 
@@ -234,7 +234,7 @@ NodeMenu::on_preset_activated(const std::string& uri)
 {
 	_app->set_property(block()->uri(),
 	                   _app->uris().pset_preset,
-	                   _app->forge().make_urid(Raul::URI(uri)));
+	                   _app->forge().make_urid(URI(uri)));
 }
 
 bool

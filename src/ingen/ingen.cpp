@@ -134,10 +134,10 @@ main(int argc, char** argv)
 		Client::SocketClient::register_factories(world.get());
 #endif
 		const char* const uri = conf.option("connect").ptr<char>();
-		ingen_try(Raul::URI::is_valid(uri),
+		ingen_try(URI::is_valid(uri),
 		          (fmt("Invalid URI <%1%>") % uri).str().c_str());
 		SPtr<Interface> client(new Client::ThreadedSigClientInterface());
-		engine_interface = world->new_interface(Raul::URI(uri), client);
+		engine_interface = world->new_interface(URI(uri), client);
 
 		if (!engine_interface && !conf.option("gui").get<int32_t>()) {
 			cerr << (fmt("ingen: error: Failed to connect to `%1%'\n") % uri);
@@ -188,7 +188,7 @@ main(int argc, char** argv)
 
 		const string graph = conf.option("load").ptr<char>();
 
-		engine_interface->get(Raul::URI("ingen:/plugins"));
+		engine_interface->get(URI("ingen:/plugins"));
 		engine_interface->get(main_uri());
 
 		std::lock_guard<std::mutex> lock(world->rdf_mutex());
@@ -198,14 +198,13 @@ main(int argc, char** argv)
 		const char* path = conf.option("server-load").ptr<char>();
 		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
 			std::cout << "Loading " << path << " (server side)" << std::endl;
-			engine_interface->copy(Raul::URI(path), main_uri());
+			engine_interface->copy(URI(path), main_uri());
 		} else {
 			SerdNode uri = serd_node_new_file_uri(
 				(const uint8_t*)path, nullptr, nullptr, true);
 			std::cout << "Loading " << (const char*)uri.buf
 			          << " (server side)" << std::endl;
-			engine_interface->copy(Raul::URI((const char*)uri.buf),
-			                       main_uri());
+			engine_interface->copy(URI((const char*)uri.buf), main_uri());
 			serd_node_free(&uri);
 		}
 	}
@@ -215,13 +214,12 @@ main(int argc, char** argv)
 		const char* path = conf.option("save").ptr<char>();
 		if (serd_uri_string_has_scheme((const uint8_t*)path)) {
 			std::cout << "Saving to " << path << std::endl;
-			engine_interface->copy(main_uri(), Raul::URI(path));
+			engine_interface->copy(main_uri(), URI(path));
 		} else {
 			SerdNode uri = serd_node_new_file_uri(
 				(const uint8_t*)path, nullptr, nullptr, true);
 			std::cout << "Saving to " << (const char*)uri.buf << std::endl;
-			engine_interface->copy(main_uri(),
-			                       Raul::URI((const char*)uri.buf));
+			engine_interface->copy(main_uri(), URI((const char*)uri.buf));
 			serd_node_free(&uri);
 		}
 	}

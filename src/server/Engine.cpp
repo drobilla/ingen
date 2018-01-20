@@ -122,7 +122,7 @@ Engine::Engine(Ingen::World* world)
 				_event_writer,
 				std::make_shared<StreamWriter>(world->uri_map(),
 				                               world->uris(),
-				                               Raul::URI("ingen:/engine"),
+				                               URI("ingen:/engine"),
 				                               stderr,
 				                               ColorContext::Color::MAGENTA)});
 	}
@@ -327,7 +327,7 @@ Engine::main_iteration()
 	_maid->cleanup();
 
 	if (_run_load.changed) {
-		_broadcaster->put(Raul::URI("ingen:/engine"), load_properties());
+		_broadcaster->put(URI("ingen:/engine"), load_properties());
 		_run_load.changed = false;
 	}
 

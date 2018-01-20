@@ -23,7 +23,6 @@
 
 #include "ingen/Atom.hpp"
 #include "ingen/URIs.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -53,7 +52,7 @@ private:
 	Graph _ctx;
 };
 
-class Properties : public std::multimap<Raul::URI, Property> {
+class Properties : public std::multimap<URI, Property> {
 public:
 	using Graph = Property::Graph;
 
@@ -61,22 +60,22 @@ public:
 	Properties(const Properties& copy) = default;
 
 	Properties(std::initializer_list<value_type> l)
-		: std::multimap<Raul::URI, Property>(l)
+		: std::multimap<URI, Property>(l)
 	{}
 
-	void put(const Raul::URI& key,
-	         const Atom&      value,
-	         Graph            ctx = Graph::DEFAULT) {
+	void put(const URI&  key,
+	         const Atom& value,
+	         Graph       ctx = Graph::DEFAULT) {
 		emplace(key, Property(value, ctx));
 	}
 
-	void put(const Raul::URI&   key,
+	void put(const URI&         key,
 	         const URIs::Quark& value,
 	         Graph              ctx = Graph::DEFAULT) {
 		emplace(key, Property(value, ctx));
 	}
 
-	bool contains(const Raul::URI& key, const Atom& value) {
+	bool contains(const URI& key, const Atom& value) {
 		for (const_iterator i = find(key); i != end() && i->first == key; ++i) {
 			if (i->second == value) {
 				return true;

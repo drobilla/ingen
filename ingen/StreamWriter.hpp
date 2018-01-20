@@ -23,10 +23,9 @@
 #include "ingen/ColorContext.hpp"
 #include "ingen/TurtleWriter.hpp"
 
-namespace Raul { class URI; }
-
 namespace Ingen {
 
+class URI;
 class URIMap;
 class URIs;
 
@@ -37,7 +36,7 @@ class INGEN_API StreamWriter : public TurtleWriter
 public:
 	StreamWriter(URIMap&             map,
 	             URIs&               uris,
-	             const Raul::URI&    uri,
+	             const URI&          uri,
 	             FILE*               stream,
 	             ColorContext::Color color);
 

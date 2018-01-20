@@ -50,18 +50,19 @@ class INGEN_API PluginModel : public Ingen::Resource
 {
 public:
 	PluginModel(URIs&                    uris,
-	            const Raul::URI&         uri,
+	            const URI&               uri,
 	            const Atom&              type,
 	            const Ingen::Properties& properties);
 
-	const Atom&     type()     const { return _type; }
-	const Raul::URI type_uri() const {
-		return Raul::URI(_type.is_valid()
-		                 ? _uris.forge.str(_type, false)
-		                 : "http://www.w3.org/2002/07/owl#Nothing");
+	const Atom& type() const { return _type; }
+
+	const URI type_uri() const
+	{
+		return URI(_type.is_valid() ? _uris.forge.str(_type, false)
+		                            : "http://www.w3.org/2002/07/owl#Nothing");
 	}
 
-	virtual const Atom& get_property(const Raul::URI& key) const;
+	virtual const Atom& get_property(const URI& key) const;
 
 	Raul::Symbol default_block_symbol() const;
 	std::string  human_name() const;
@@ -70,7 +71,7 @@ public:
 	typedef std::map<float, std::string> ScalePoints;
 	ScalePoints port_scale_points(uint32_t i) const;
 
-	typedef std::map<Raul::URI, std::string> Presets;
+	typedef std::map<URI, std::string> Presets;
 	const Presets& presets() const { return _presets; }
 
 	static LilvWorld* lilv_world()        { return _lilv_world; }
@@ -96,8 +97,8 @@ public:
 
 	// Signals
 	INGEN_SIGNAL(changed, void);
-	INGEN_SIGNAL(property, void, const Raul::URI&, const Atom&);
-	INGEN_SIGNAL(preset, void, const Raul::URI&, const std::string&);
+	INGEN_SIGNAL(property, void, const URI&, const Atom&);
+	INGEN_SIGNAL(preset, void, const URI&, const std::string&);
 
 	bool fetched() const     { return _fetched; }
 	void set_fetched(bool f) { _fetched = f; }
@@ -106,7 +107,7 @@ protected:
 	friend class ClientStore;
 	void set(SPtr<PluginModel> p);
 
-	void add_preset(const Raul::URI& uri, const std::string& label);
+	void add_preset(const URI& uri, const std::string& label);
 
 private:
 	std::string get_documentation(const LilvNode* subject, bool html) const;

@@ -21,7 +21,7 @@ namespace Ingen {
 
 StreamWriter::StreamWriter(URIMap&             map,
                            URIs&               uris,
-                           const Raul::URI&    uri,
+                           const URI&          uri,
                            FILE*               stream,
                            ColorContext::Color color)
 	: TurtleWriter(map, uris, uri)

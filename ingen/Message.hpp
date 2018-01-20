@@ -27,7 +27,6 @@
 #include "ingen/Resource.hpp"
 #include "ingen/Status.hpp"
 #include "raul/Path.hpp"
-#include "raul/URI.hpp"
 
 namespace Ingen {
 
@@ -50,21 +49,21 @@ struct Connect
 
 struct Copy
 {
-	int32_t   seq;
-	Raul::URI old_uri;
-	Raul::URI new_uri;
+	int32_t seq;
+	URI     old_uri;
+	URI     new_uri;
 };
 
 struct Del
 {
-	int32_t   seq;
-	Raul::URI uri;
+	int32_t seq;
+	URI     uri;
 };
 
 struct Delta
 {
 	int32_t         seq;
-	Raul::URI       uri;
+	URI             uri;
 	Properties      remove;
 	Properties      add;
 	Resource::Graph ctx;
@@ -92,8 +91,8 @@ struct Error
 
 struct Get
 {
-	int32_t   seq;
-	Raul::URI subject;
+	int32_t seq;
+	URI     subject;
 };
 
 struct Move
@@ -106,7 +105,7 @@ struct Move
 struct Put
 {
 	int32_t         seq;
-	Raul::URI       uri;
+	URI             uri;
 	Properties      properties;
 	Resource::Graph ctx;
 };
@@ -126,8 +125,8 @@ struct Response
 struct SetProperty
 {
 	int32_t         seq;
-	Raul::URI       subject;
-	Raul::URI       predicate;
+	URI             subject;
+	URI             predicate;
 	Atom            value;
 	Resource::Graph ctx;
 };

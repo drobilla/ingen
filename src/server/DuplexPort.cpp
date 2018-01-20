@@ -121,7 +121,7 @@ DuplexPort::inherit_neighbour(const PortImpl* port,
 }
 
 void
-DuplexPort::on_property(const Raul::URI& uri, const Atom& value)
+DuplexPort::on_property(const URI& uri, const Atom& value)
 {
 	_bufs.engine().driver()->port_property(_path, uri, value);
 }

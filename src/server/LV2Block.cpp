@@ -399,8 +399,8 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 			LILV_FOREACH(nodes, v, values) {
 				const LilvNode* val = lilv_nodes_get(values, v);
 				if (lilv_node_is_uri(val)) {
-					port->add_property(Raul::URI(lilv_node_as_uri(preds[p])),
-					                   forge.make_urid(Raul::URI(lilv_node_as_uri(val))));
+					port->add_property(URI(lilv_node_as_uri(preds[p])),
+					                   forge.make_urid(URI(lilv_node_as_uri(val))));
 				}
 			}
 			lilv_nodes_free(values);
@@ -606,7 +606,7 @@ LV2Block::post_process(RunContext& context)
 }
 
 LilvState*
-LV2Block::load_preset(const Raul::URI& uri)
+LV2Block::load_preset(const URI& uri)
 {
 	World*     world  = _lv2_plugin->world();
 	LilvWorld* lworld = world->lilv_world();
@@ -678,7 +678,7 @@ get_port_value(const char* port_symbol,
 }
 
 boost::optional<Resource>
-LV2Block::save_preset(const Raul::URI&  uri,
+LV2Block::save_preset(const URI&        uri,
                       const Properties& props)
 {
 	World*          world  = parent_graph()->engine().world();
@@ -686,7 +686,7 @@ LV2Block::save_preset(const Raul::URI&  uri,
 	LV2_URID_Map*   lmap   = &world->uri_map().urid_map_feature()->urid_map;
 	LV2_URID_Unmap* lunmap = &world->uri_map().urid_unmap_feature()->urid_unmap;
 
-	const std::string path     = Glib::filename_from_uri(uri);
+	const std::string path     = Glib::filename_from_uri(uri.string());
 	const std::string dirname  = Glib::path_get_dirname(path);
 	const std::string basename = Glib::path_get_basename(path);
 
@@ -704,7 +704,7 @@ LV2Block::save_preset(const Raul::URI&  uri,
 		lilv_state_save(lworld, lmap, lunmap, state, nullptr,
 		                dirname.c_str(), basename.c_str());
 
-		const Raul::URI   uri(lilv_node_as_uri(lilv_state_get_uri(state)));
+		const URI         uri(lilv_node_as_uri(lilv_state_get_uri(state)));
 		const std::string label(lilv_state_get_label(state)
 		                        ? lilv_state_get_label(state)
 		                        : basename);

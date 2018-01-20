@@ -35,7 +35,7 @@ namespace Internals {
 
 InternalPlugin* BlockDelayNode::internal_plugin(URIs& uris) {
 	return new InternalPlugin(
-		uris, Raul::URI(NS_INTERNALS "BlockDelay"), Raul::Symbol("blockDelay"));
+		uris, URI(NS_INTERNALS "BlockDelay"), Raul::Symbol("blockDelay"));
 }
 
 BlockDelayNode::BlockDelayNode(InternalPlugin*     plugin,
