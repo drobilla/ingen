@@ -149,9 +149,9 @@ def configure(conf):
     if Options.options.debug_urids:
         autowaf.define(conf, 'INGEN_DEBUG_URIDS', 1)
 
+    conf.env.INGEN_TEST_LINKFLAGS = []
+    conf.env.INGEN_TEST_CXXFLAGS  = []
     if conf.env.BUILD_TESTS:
-        conf.env.INGEN_TEST_LINKFLAGS = []
-        conf.env.INGEN_TEST_CXXFLAGS  = []
         if not conf.env.NO_COVERAGE:
             conf.env.INGEN_TEST_CXXFLAGS  += ['--coverage']
             conf.env.INGEN_TEST_LINKFLAGS += ['--coverage']
@@ -245,7 +245,7 @@ def build(bld):
                       source       = 'tests/%s.cpp' % i,
                       target       = 'tests/%s' % i,
                       includes     = ['.'],
-                      use          = 'libingen_profiled',
+                      use          = 'libingen',
                       install_path = '',
                       cxxflags     = bld.env.INGEN_TEST_CXXFLAGS,
                       linkflags    = bld.env.INGEN_TEST_LINKFLAGS)

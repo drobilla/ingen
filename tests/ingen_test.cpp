@@ -104,7 +104,7 @@ main(int argc, char** argv)
 	free(real_start_graph);
 
 	// Load modules
-	ingen_try(world->load_module("server_profiled"),
+	ingen_try(world->load_module("server"),
 	          "Unable to load server module");
 
 	// Initialise engine

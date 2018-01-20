@@ -61,23 +61,10 @@ def build(bld):
               target          = 'ingen_server',
               install_path    = '${LIBDIR}',
               use             = 'libingen libingen_socket',
-              cxxflags        = bld.env.PTHREAD_CFLAGS,
-              linkflags       = bld.env.PTHREAD_LINKFLAGS)
+              cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
+              linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
     core_libs = 'GLIBMM LV2 LILV RAUL SERD SORD'
     autowaf.use_lib(bld, obj, core_libs)
-
-    if bld.env.BUILD_TESTS:
-        obj = bld(features        = 'cxx cxxshlib',
-                  source          = core_source,
-                  export_includes = ['../..'],
-                  includes        = ['.', '../..'],
-                  name            = 'libingen_server_profiled',
-                  target          = 'ingen_server_profiled',
-                  install_path    = '${LIBDIR}',
-                  use             = 'libingen_profiled',
-                  cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
-                  linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
-        autowaf.use_lib(bld, obj, core_libs)
 
     if bld.env.HAVE_JACK:
         obj = bld(features        = 'cxx cxxshlib',

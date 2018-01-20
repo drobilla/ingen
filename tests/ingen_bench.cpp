@@ -92,7 +92,7 @@ main(int argc, char** argv)
 	}
 
 	// Load modules
-	ingen_try(world->load_module("server_profiled"),
+	ingen_try(world->load_module("server"),
 	          "Unable to load server module");
 
 	// Initialise engine

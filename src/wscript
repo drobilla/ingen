@@ -38,20 +38,6 @@ def build(bld):
               vnum            = '0.0.0',
               install_path    = '${LIBDIR}',
               lib             = lib,
-              cxxflags        = bld.env.PTHREAD_CFLAGS,
-              linkflags       = bld.env.PTHREAD_LINKFLAGS)
+              cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
+              linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
     autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SERD SORD SRATOM')
-
-    if bld.env.BUILD_TESTS:
-        obj = bld(features        = 'cxx cxxshlib',
-                  source          = sources,
-                  export_includes = ['..'],
-                  includes        = ['..'],
-                  name            = 'libingen_profiled',
-                  target          = 'ingen_profiled',
-                  install_path    = '',
-                  lib             = lib,
-                  cxxflags        = bld.env.PTHREAD_CFLAGS + bld.env.INGEN_TEST_CXXFLAGS,
-                  linkflags       = bld.env.PTHREAD_LINKFLAGS + bld.env.INGEN_TEST_LINKFLAGS)
-        autowaf.use_lib(bld, obj, 'GLIBMM LV2 LILV RAUL SERD SORD SRATOM')
-
