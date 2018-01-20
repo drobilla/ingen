@@ -20,14 +20,13 @@
 #include <iostream>
 #include <thread>
 
-#include <glibmm/fileutils.h>
-#include <glibmm/miscutils.h>
-
 #include "ingen/Configuration.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Log.hpp"
 #include "ingen/URIMap.hpp"
+#include "ingen/filesystem.hpp"
 #include "ingen/ingen.h"
+#include "ingen/runtime_paths.hpp"
 #include "sord/sordmm.hpp"
 #include "sratom/sratom.h"
 
@@ -226,9 +225,9 @@ Configuration::parse(int argc, char** argv) throw (Configuration::OptionError)
 }
 
 bool
-Configuration::load(const std::string& path)
+Configuration::load(const FilePath& path)
 {
-	if (!Glib::file_test(path, Glib::FILE_TEST_EXISTS)) {
+	if (!filesystem::exists(path)) {
 		return false;
 	}
 
@@ -261,23 +260,22 @@ Configuration::load(const std::string& path)
 	return true;
 }
 
-std::string
+FilePath
 Configuration::save(URIMap&            uri_map,
                     const std::string& app,
-                    const std::string& filename,
+                    const FilePath&    filename,
                     unsigned           scopes)
 		throw (FileError)
 {
 	// Save to file if it is absolute, otherwise save to user config dir
-	std::string path = filename;
-	if (!Glib::path_is_absolute(path)) {
-		path = Glib::build_filename(
-			Glib::build_filename(Glib::get_user_config_dir(), app), filename);
+	FilePath path = filename;
+	if (!path.is_absolute()) {
+		path = FilePath(user_config_dir()) / app / filename;
 	}
 
 	// Create parent directories if necessary
-	const std::string dir = Glib::path_get_dirname(path);
-	if (g_mkdir_with_parents(dir.c_str(), 0755) < 0) {
+	const FilePath dir = path.parent_path();
+	if (!filesystem::create_directories(dir)) {
 		throw FileError((fmt("Error creating directory %1% (%2%)")
 		                 % dir % strerror(errno)).str());
 	}
@@ -343,23 +341,20 @@ Configuration::save(URIMap&            uri_map,
 	return path;
 }
 
-std::list<std::string>
-Configuration::load_default(const std::string& app,
-                            const std::string& filename)
+std::list<FilePath>
+Configuration::load_default(const std::string& app, const FilePath& filename)
 {
-	std::list<std::string> loaded;
+	std::list<FilePath> loaded;
 
-	const std::vector<std::string> dirs = Glib::get_system_config_dirs();
-	for (auto d : dirs) {
-		const std::string path = Glib::build_filename(
-			Glib::build_filename(d, app), filename);
+	const std::vector<FilePath> dirs = system_config_dirs();
+	for (const auto& d : dirs) {
+		const FilePath path = d / app / filename;
 		if (load(path)) {
 			loaded.push_back(path);
 		}
 	}
 
-	const std::string path = Glib::build_filename(
-		Glib::build_filename(Glib::get_user_config_dir(), app), filename);
+	const FilePath path = user_config_dir() / app / filename;
 	if (load(path)) {
 		loaded.push_back(path);
 	}

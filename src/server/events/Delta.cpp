@@ -17,8 +17,6 @@
 #include <vector>
 #include <thread>
 
-#include <glibmm/convert.h>
-
 #include "ingen/Log.hpp"
 #include "ingen/Store.hpp"
 #include "ingen/URIs.hpp"
@@ -366,15 +364,17 @@ Delta::pre_process(PreProcessContext& ctx)
 						_status = Status::BAD_VALUE_TYPE;
 					}
 				} else if (key == uris.pset_preset) {
-					std::string uri_str;
+					URI uri;
 					if (uris.forge.is_uri(value)) {
-						uri_str = uris.forge.str(value, false);
+						const std::string uri_str = uris.forge.str(value, false);
+						if (URI::is_valid(uri_str)) {
+							uri = URI(uri_str);
+						}
 					} else if (value.type() == uris.forge.Path) {
-						uri_str = Glib::filename_to_uri(value.ptr<char>());
+						uri = URI(FilePath(value.ptr<char>()));
 					}
 
-					if (URI::is_valid(uri_str)) {
-						const URI uri(uri_str);
+					if (!uri.empty()) {
 						op = SpecialType::PRESET;
 						if ((_state = block->load_preset(uri))) {
 							lilv_state_emit_port_values(

@@ -18,9 +18,6 @@
 #include <cmath>
 #include <cstdint>
 
-#include <glibmm/miscutils.h>
-#include <glibmm/convert.h>
-
 #include "lv2/lv2plug.in/ns/ext/morph/morph.h"
 #include "lv2/lv2plug.in/ns/ext/presets/presets.h"
 #include "lv2/lv2plug.in/ns/ext/options/options.h"
@@ -30,7 +27,9 @@
 #include "raul/Maid.hpp"
 #include "raul/Array.hpp"
 
+#include "ingen/FilePath.hpp"
 #include "ingen/Log.hpp"
+#include "ingen/URI.hpp"
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
@@ -460,7 +459,7 @@ LV2Block::instantiate(BufferFactory& bufs, const LilvState* state)
 }
 
 bool
-LV2Block::save_state(const std::string& dir) const
+LV2Block::save_state(const FilePath& dir) const
 {
 	World*     world  = _lv2_plugin->world();
 	LilvWorld* lworld = world->lilv_world();
@@ -623,11 +622,11 @@ LV2Block::load_preset(const URI& uri)
 }
 
 LilvState*
-LV2Block::load_state(World* world, const std::string& path)
+LV2Block::load_state(World* world, const FilePath& path)
 {
-	LilvWorld*        lworld  = world->lilv_world();
-	const std::string uri     = Glib::filename_to_uri(path);
-	LilvNode*         subject = lilv_new_uri(lworld, uri.c_str());
+	LilvWorld* lworld  = world->lilv_world();
+	const URI  uri     = URI(path);
+	LilvNode*  subject = lilv_new_uri(lworld, uri.c_str());
 
 	LilvState* state = lilv_state_new_from_file(
 		lworld,
@@ -685,9 +684,9 @@ LV2Block::save_preset(const URI&        uri,
 	LV2_URID_Map*   lmap   = &world->uri_map().urid_map_feature()->urid_map;
 	LV2_URID_Unmap* lunmap = &world->uri_map().urid_unmap_feature()->urid_unmap;
 
-	const std::string path     = Glib::filename_from_uri(uri.string());
-	const std::string dirname  = Glib::path_get_dirname(path);
-	const std::string basename = Glib::path_get_basename(path);
+	const FilePath path     = FilePath(uri.path());
+	const FilePath dirname  = path.parent_path();
+	const FilePath basename = path.stem();
 
 	LilvState* state = lilv_state_new_from_instance(
 		_lv2_plugin->lilv_plugin(), instance(0), lmap,
@@ -715,8 +714,8 @@ LV2Block::save_preset(const URI&        uri,
 		preset.set_property(_uris.lv2_appliesTo,
 		                    world->forge().make_urid(_lv2_plugin->uri()));
 
-		LilvNode* lbundle = lilv_new_uri(
-			lworld, Glib::filename_to_uri(dirname + "/").c_str());
+		const std::string bundle_uri = URI(dirname).string() + '/';
+		LilvNode* lbundle = lilv_new_uri(lworld, bundle_uri.c_str());
 		lilv_world_load_bundle(lworld, lbundle);
 		lilv_node_free(lbundle);
 

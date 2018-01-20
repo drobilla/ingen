@@ -16,20 +16,34 @@
 
 #include <climits>
 #include <cstdlib>
+#include <cstdlib>
+#include <sstream>
 #include <string>
 
 #include <dlfcn.h>
 
-#include <glibmm/module.h>
-#include <glibmm/miscutils.h>
-
 #include "ingen/runtime_paths.hpp"
+#include "ingen/FilePath.hpp"
 
 #include "ingen_config.h"
 
 namespace Ingen {
 
-static std::string bundle_path;
+static FilePath bundle_path;
+
+#if defined(__APPLE__)
+const char               search_path_separator = ':';
+static const char* const library_prefix        = "lib";
+static const char* const library_suffix        = ".dylib";
+#elif defined(_WIN32) && !defined(__CYGWIN__)
+const char               search_path_separator = ';';
+static const char* const library_prefix        = "";
+static const char* const library_suffix        = ".dll";
+#else
+const char               search_path_separator = ':';
+static const char* const library_prefix        = "lib";
+static const char* const library_suffix        = ".so";
+#endif
 
 /** Must be called once at startup, and passed a pointer to a function
  * that lives in the 'top level' of the bundle (e.g. the executable).
@@ -48,59 +62,85 @@ set_bundle_path_from_code(void* function)
 	const char* bin_loc = dli.dli_fname;
 #endif
 
-	std::string bundle = bin_loc;
-	bundle = bundle.substr(0, bundle.find_last_of(G_DIR_SEPARATOR));
-	bundle_path = bundle;
+	bundle_path = FilePath(bin_loc).parent_path();
 }
 
 void
 set_bundle_path(const char* path)
 {
-	bundle_path = path;
+	bundle_path = FilePath(path);
 }
 
 /** Return the absolute path of a file in an Ingen LV2 bundle
  */
-std::string
+FilePath
 bundle_file_path(const std::string& name)
 {
-	return Glib::build_filename(bundle_path, name);
+	return bundle_path / name;
 }
 
 /** Return the absolute path of a 'resource' file.
  */
-std::string
+FilePath
 data_file_path(const std::string& name)
 {
 #ifdef BUNDLE
-	return Glib::build_filename(bundle_path, Glib::build_path(INGEN_DATA_DIR, name));
+	return bundle_path / INGEN_DATA_DIR / name;
 #else
-	return Glib::build_filename(INGEN_DATA_DIR, name);
+	return FilePath(INGEN_DATA_DIR) / name;
 #endif
 }
 
 /** Return the absolute path of a module (dynamically loaded shared library).
  */
-std::string
-module_path(const std::string& name, std::string dir)
+FilePath
+ingen_module_path(const std::string& name, FilePath dir)
 {
-	std::string ret;
-	if (dir == "") {
+	FilePath ret;
+	if (dir.empty()) {
 #ifdef BUNDLE
-		dir = Glib::build_path(bundle_path, INGEN_MODULE_DIR);
+		dir = FilePath(bundle_path) / INGEN_MODULE_DIR;
 #else
-		dir = INGEN_MODULE_DIR;
+		dir = FilePath(INGEN_MODULE_DIR);
 #endif
 	}
 
-	ret = Glib::Module::build_path(dir, std::string("ingen_") + name);
+	return dir /
+	       (std::string(library_prefix) + "ingen_" + name + library_suffix);
+}
 
-#ifdef __APPLE__
-	// MacPorts glib doesnt seem to do portable path building correctly...
-	if (ret.substr(ret.length() - 3) == ".so")
-		ret = ret.substr(0, ret.length() - 2).append("dylib");
-#endif
-	return ret;
+FilePath
+user_config_dir()
+{
+	const char* const xdg_config_home = getenv("XDG_CONFIG_HOME");
+	const char* const home            = getenv("HOME");
+
+	if (xdg_config_home) {
+		return FilePath(xdg_config_home);
+	} else if (home) {
+		return FilePath(home) / ".config";
+	}
+
+	return FilePath();
+}
+
+std::vector<FilePath>
+system_config_dirs()
+{
+	const char* const xdg_config_dirs = getenv("XDG_CONFIG_DIRS");
+
+	std::vector<FilePath> paths;
+	if (xdg_config_dirs) {
+		std::istringstream ss(xdg_config_dirs);
+		std::string entry;
+		while (std::getline(ss, entry, search_path_separator)) {
+			paths.emplace_back(entry);
+		}
+	} else {
+		paths.emplace_back("/etc/xdg");
+	}
+
+	return paths;
 }
 
 } // namespace Ingen

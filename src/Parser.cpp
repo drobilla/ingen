@@ -19,10 +19,6 @@
 #include <string>
 #include <utility>
 
-#include <glibmm/convert.h>
-#include <glibmm/fileutils.h>
-#include <glibmm/miscutils.h>
-
 #include "ingen/Atom.hpp"
 #include "ingen/AtomForgeSink.hpp"
 #include "ingen/Forge.hpp"
@@ -32,6 +28,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/filesystem.hpp"
 #include "ingen/paths.hpp"
 #include "lv2/lv2plug.in/ns/ext/atom/atom.h"
 #include "serd/serd.h"
@@ -102,14 +99,6 @@ relative_uri(const std::string& base, const std::string& uri, bool leading_slash
 	if (leading_slash && ret[0] != '/') {
 		ret = std::string("/").append(ret);
 	}
-	return ret;
-}
-
-static std::string
-get_basename(const std::string& uri)
-{
-	std::string ret = Glib::path_get_basename(uri);
-	ret = ret.substr(0, ret.find_last_of('.'));
 	return ret;
 }
 
@@ -418,9 +407,11 @@ parse_graph(Ingen::World*                 world,
 
 	// For each block in this graph
 	for (Sord::Iter n = model.find(subject, ingen_block, nil); !n.end(); ++n) {
-		Sord::Node       node       = n.get_object();
+		Sord::Node node     = n.get_object();
+		URI        node_uri = URI(node.to_string());
+		assert(!node_uri.path().empty() && node_uri.path() != "/");
 		const Raul::Path block_path = graph_path.child(
-			Raul::Symbol(get_basename(node.to_string())));
+			Raul::Symbol(FilePath(node_uri.path()).stem().string()));
 
 		// Parse and create block
 		parse_block(world, target, model, base_uri, node, block_path,
@@ -630,30 +621,23 @@ parse(Ingen::World*                 world,
 bool
 Parser::parse_file(Ingen::World*                 world,
                    Ingen::Interface*             target,
-                   const std::string&            path,
+                   const FilePath&               path,
                    boost::optional<Raul::Path>   parent,
                    boost::optional<Raul::Symbol> symbol,
                    boost::optional<Properties>   data)
 {
 	// Get absolute file path
-	std::string file_path = path;
-	if (!Glib::path_is_absolute(file_path)) {
-		file_path = Glib::build_filename(Glib::get_current_dir(), file_path);
+	FilePath file_path = path;
+	if (!file_path.is_absolute()) {
+		file_path = filesystem::current_path() / file_path;
 	}
 
 	// Find file to use as manifest
-	const bool        is_bundle     = Glib::file_test(file_path, Glib::FILE_TEST_IS_DIR);
-	const std::string manifest_path = (is_bundle
-	                                   ? Glib::build_filename(file_path, "manifest.ttl")
-	                                   : file_path);
+	const bool     is_bundle = filesystem::is_directory(file_path);
+	const FilePath manifest_path =
+		(is_bundle ? file_path / "manifest.ttl" : file_path);
 
-	URI manifest_uri;
-	try {
-		manifest_uri = URI(Glib::filename_to_uri(manifest_path));
-	} catch (const Glib::ConvertError& e) {
-		world->log().error(fmt("URI conversion error (%1%)\n") % e.what());
-		return false;
-	}
+	URI manifest_uri(manifest_path);
 
 	// Find graphs in manifest
 	const std::set<ResourceRecord> resources = find_resources(
@@ -669,7 +653,7 @@ Parser::parse_file(Ingen::World*                 world,
 	   In this case, choose the one with the file URI. */
 	URI uri;
 	for (const ResourceRecord& r : resources) {
-		if (r.uri == Glib::filename_to_uri(manifest_path)) {
+		if (r.uri == URI(manifest_path)) {
 			uri = r.uri;
 			file_path = r.filename;
 			break;
@@ -688,10 +672,10 @@ Parser::parse_file(Ingen::World*                 world,
 	}
 
 	// Initialise parsing environment
-	const std::string file_uri  = Glib::filename_to_uri(file_path);
-	const uint8_t*    uri_c_str = (const uint8_t*)uri.c_str();
-	SerdNode          base_node = serd_node_from_string(SERD_URI, uri_c_str);
-	SerdEnv*          env       = serd_env_new(&base_node);
+	const URI      file_uri  = URI(file_path);
+	const uint8_t* uri_c_str = (const uint8_t*)uri.c_str();
+	SerdNode       base_node = serd_node_from_string(SERD_URI, uri_c_str);
+	SerdEnv*       env       = serd_env_new(&base_node);
 
 	// Load graph into model
 	Sord::Model model(*world->rdf_world(), uri.string(), SORD_SPO|SORD_PSO, false);
@@ -726,7 +710,7 @@ boost::optional<URI>
 Parser::parse_string(Ingen::World*                     world,
                      Ingen::Interface*                 target,
                      const std::string&                str,
-                     const std::string&                base_uri,
+                     const URI&                        base_uri,
                      boost::optional<Raul::Path>       parent,
                      boost::optional<Raul::Symbol>     symbol,
                      boost::optional<Properties> data)

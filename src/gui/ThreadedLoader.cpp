@@ -46,7 +46,9 @@ ThreadedLoader::~ThreadedLoader()
 {
 	_exit_flag = true;
 	_sem.post();
-	_thread.join();
+	if (_thread.joinable()) {
+		_thread.join();
+	}
 }
 
 SPtr<Parser>
@@ -59,23 +61,22 @@ void
 ThreadedLoader::run()
 {
 	while (_sem.wait() && !_exit_flag) {
-		_mutex.lock();
+		std::lock_guard<std::mutex> lock(_mutex);
 		while (!_events.empty()) {
 			_events.front()();
 			_events.pop_front();
 		}
-		_mutex.unlock();
 	}
 }
 
 void
 ThreadedLoader::load_graph(bool                   merge,
-                           const Glib::ustring&   document_uri,
+                           const FilePath&        file_path,
                            optional<Raul::Path>   engine_parent,
                            optional<Raul::Symbol> engine_symbol,
                            optional<Properties>   engine_data)
 {
-	_mutex.lock();
+	std::lock_guard<std::mutex> lock(_mutex);
 
 	Glib::ustring engine_base = "";
 	if (engine_parent) {
@@ -88,17 +89,16 @@ ThreadedLoader::load_graph(bool                   merge,
 
 	_events.push_back(sigc::hide_return(
 	        sigc::bind(sigc::mem_fun(this, &ThreadedLoader::load_graph_event),
-	                   document_uri,
+	                   file_path,
 	                   engine_parent,
 	                   engine_symbol,
 	                   engine_data)));
 
-	_mutex.unlock();
 	_sem.post();
 }
 
 void
-ThreadedLoader::load_graph_event(const Glib::ustring&   document_uri,
+ThreadedLoader::load_graph_event(const FilePath&        file_path,
                                  optional<Raul::Path>   engine_parent,
                                  optional<Raul::Symbol> engine_symbol,
                                  optional<Properties>   engine_data)
@@ -107,7 +107,7 @@ ThreadedLoader::load_graph_event(const Glib::ustring&   document_uri,
 
 	_app.world()->parser()->parse_file(_app.world(),
 	                                   _app.world()->interface().get(),
-	                                   document_uri,
+	                                   file_path,
 	                                   engine_parent,
 	                                   engine_symbol,
 	                                   engine_data);
@@ -116,14 +116,13 @@ ThreadedLoader::load_graph_event(const Glib::ustring&   document_uri,
 void
 ThreadedLoader::save_graph(SPtr<const Client::GraphModel> model, const URI& uri)
 {
-	_mutex.lock();
+	std::lock_guard<std::mutex> lock(_mutex);
 
 	_events.push_back(sigc::hide_return(
 	        sigc::bind(sigc::mem_fun(this, &ThreadedLoader::save_graph_event),
 	                   model,
 	                   uri)));
 
-	_mutex.unlock();
 	_sem.post();
 }
 

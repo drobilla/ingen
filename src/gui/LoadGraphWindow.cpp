@@ -88,9 +88,9 @@ LoadGraphWindow::LoadGraphWindow(BaseObjectType*                   cobject,
 	property_select_multiple() = true;
 
 	// Add global examples directory to "shortcut folders" (bookmarks)
-	const std::string examples_dir = Ingen::data_file_path("graphs");
+	const FilePath examples_dir = Ingen::data_file_path("graphs");
 	if (Glib::file_test(examples_dir, Glib::FILE_TEST_IS_DIR)) {
-		add_shortcut_folder(examples_dir);
+		add_shortcut_folder(examples_dir.string());
 	}
 }
 
@@ -175,7 +175,7 @@ LoadGraphWindow::ok_clicked()
 		}
 
 		_app->loader()->load_graph(
-			true, get_filename(), parent, symbol, _initial_data);
+			true, FilePath(get_filename()), parent, symbol, _initial_data);
 
 	} else {
 		std::list<Glib::ustring> uri_list = get_filenames();
@@ -194,7 +194,7 @@ LoadGraphWindow::ok_clicked()
 			symbol = avoid_symbol_clash(symbol);
 
 			_app->loader()->load_graph(
-				false, u, _graph->path(), symbol, _initial_data);
+				false, FilePath(URI(u).path()), _graph->path(), symbol, _initial_data);
 		}
 	}
 

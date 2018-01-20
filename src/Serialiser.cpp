@@ -22,14 +22,8 @@
 #include <string>
 #include <utility>
 
-#include <glib.h>
-#include <glib/gstdio.h>
-#include <glibmm/convert.h>
-#include <glibmm/fileutils.h>
-#include <glibmm/miscutils.h>
-#include <glibmm/module.h>
-
 #include "ingen/Arc.hpp"
+#include "ingen/FilePath.hpp"
 #include "ingen/Forge.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Log.hpp"
@@ -41,6 +35,8 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/filesystem.hpp"
+#include "ingen/runtime_paths.hpp"
 #include "lv2/lv2plug.in/ns/ext/state/state.h"
 #include "lv2/lv2plug.in/ns/extensions/ui/ui.h"
 #include "raul/Path.hpp"
@@ -65,7 +61,8 @@ struct Serialiser::Impl {
 
 	enum class Mode { TO_FILE, TO_STRING };
 
-	void start_to_file(const Raul::Path& root, const std::string& filename);
+	void start_to_file(const Raul::Path& root,
+	                   const FilePath&   filename);
 
 	std::set<const Resource*> serialise_graph(SPtr<const Node>  graph,
 	                                          const Sord::Node& graph_id);
@@ -85,10 +82,10 @@ struct Serialiser::Impl {
 
 	Sord::Node path_rdf_node(const Raul::Path& path);
 
-	void write_manifest(const std::string& bundle_path,
-	                    SPtr<const Node>   graph);
+	void write_manifest(const FilePath&  bundle_path,
+	                    SPtr<const Node> graph);
 
-	void write_plugins(const std::string&              bundle_path,
+	void write_plugins(const FilePath&                 bundle_path,
 	                   const std::set<const Resource*> plugins);
 
 	void serialise_arc(const Sord::Node& parent,
@@ -116,11 +113,11 @@ Serialiser::~Serialiser()
 }
 
 void
-Serialiser::Impl::write_manifest(const std::string& bundle_path,
-                                 SPtr<const Node>   graph)
+Serialiser::Impl::write_manifest(const FilePath&  bundle_path,
+                                 SPtr<const Node> graph)
 {
-	const string manifest_path(Glib::build_filename(bundle_path, "manifest.ttl"));
-	const string binary_path(Glib::Module::build_path("", "ingen_lv2"));
+	const FilePath manifest_path(bundle_path / "manifest.ttl");
+	const FilePath binary_path(ingen_module_path("lv2"));
 
 	start_to_file(Raul::Path("/"), manifest_path);
 
@@ -147,10 +144,10 @@ Serialiser::Impl::write_manifest(const std::string& bundle_path,
 }
 
 void
-Serialiser::Impl::write_plugins(const std::string&              bundle_path,
+Serialiser::Impl::write_plugins(const FilePath&                 bundle_path,
                                 const std::set<const Resource*> plugins)
 {
-	const string plugins_path(Glib::build_filename(bundle_path, "plugins.ttl"));
+	const FilePath plugins_path(bundle_path / "plugins.ttl");
 
 	start_to_file(Raul::Path("/"), plugins_path);
 
@@ -187,27 +184,22 @@ Serialiser::write_bundle(SPtr<const Node> graph, const URI& uri)
 void
 Serialiser::Impl::write_bundle(SPtr<const Node> graph, const URI& uri)
 {
-	std::string path = Glib::filename_from_uri(uri.string());
-	if (Glib::file_test(path, Glib::FILE_TEST_EXISTS)
-	    && !Glib::file_test(path, Glib::FILE_TEST_IS_DIR)) {
-		path = Glib::path_get_dirname(path);
+	FilePath path(uri.path());
+	if (filesystem::exists(path) && !filesystem::is_directory(path)) {
+		path = path.parent_path();
 	}
 
 	_world.log().info(fmt("Writing bundle %1%\n") % path);
+	filesystem::create_directories(path);
 
-	if (path.back() != '/') {
-		path.append("/");
-	}
-
-	g_mkdir_with_parents(path.c_str(), 0744);
-
-	const string     main_file     = Glib::build_filename(path, "main.ttl");
+	const FilePath   main_file     = path / "main.ttl";
 	const Raul::Path old_root_path = _root_path;
 
 	start_to_file(graph->path(), main_file);
 
 	std::set<const Resource*> plugins = serialise_graph(
-		graph, Sord::URI(_model->world(), main_file, _base_uri.string()));
+		graph,
+		Sord::URI(_model->world(), main_file.string(), _base_uri.string()));
 
 	finish();
 	write_manifest(path, graph);
@@ -221,20 +213,13 @@ Serialiser::Impl::write_bundle(SPtr<const Node> graph, const URI& uri)
  * This must be called before any serializing methods.
  */
 void
-Serialiser::Impl::start_to_file(const Raul::Path& root, const string& filename)
+Serialiser::Impl::start_to_file(const Raul::Path& root,
+                                const FilePath&   filename)
 {
-	// Set Base URI
-	assert(filename.find(":") == string::npos || filename.substr(0, 5) == "file:");
-	if (filename.find(":") == string::npos) {
-		_base_uri = URI("file://" + filename);
-	} else {
-		_base_uri = URI(filename);
-	}
-
-	// Find graph basename to use as symbol / fallback name
-	_basename = Glib::path_get_basename(filename);
+	_base_uri = URI(filename);
+	_basename = filename.stem().string();
 	if (_basename == "main.ttl") {
-		_basename = Glib::path_get_basename(Glib::path_get_dirname(filename));
+		_basename = filename.filename().parent_path().stem().string();
 	}
 
 	_model     = new Sord::Model(*_world.rdf_world(), _base_uri.string());
@@ -449,14 +434,14 @@ Serialiser::Impl::serialise_block(SPtr<const Node>  block,
 	serialise_properties(block_id, props);
 
 	if (_base_uri.scheme() == "file") {
-		const std::string base       = Glib::filename_from_uri(_base_uri.string());
-		const std::string graph_dir  = Glib::path_get_dirname(base);
-		const std::string state_dir  = Glib::build_filename(graph_dir, block->symbol());
-		const std::string state_file = Glib::build_filename(state_dir, "state.ttl");
+		const FilePath base_path  = _base_uri.file_path();
+		const FilePath graph_dir  = base_path.parent_path();
+		const FilePath state_dir  = graph_dir / block->symbol();
+		const FilePath state_file = state_dir / "state.ttl";
 		if (block->save_state(state_dir)) {
 			_model->add_statement(block_id,
 			                      Sord::URI(_model->world(), uris.state_state),
-			                      Sord::URI(_model->world(), Glib::filename_to_uri(state_file)));
+			                      Sord::URI(_model->world(), URI(state_file)));
 		}
 	}
 

@@ -23,6 +23,7 @@
 
 #include <boost/optional/optional.hpp>
 
+#include "ingen/FilePath.hpp"
 #include "ingen/Properties.hpp"
 #include "ingen/URI.hpp"
 #include "ingen/ingen.h"
@@ -50,7 +51,7 @@ public:
 
 	/** Record of a resource listed in a bundle manifest. */
 	struct ResourceRecord {
-		inline ResourceRecord(URI u, std::string f)
+		inline ResourceRecord(URI u, FilePath f)
 			: uri(std::move(u)), filename(std::move(f))
 		{}
 
@@ -58,8 +59,8 @@ public:
 			return uri < r.uri;
 		}
 
-		URI         uri;       ///< URI of resource (e.g. a Graph)
-		std::string filename;  ///< Path of describing file (seeAlso)
+		URI      uri;       ///< URI of resource (e.g. a Graph)
+		FilePath filename;  ///< Path of describing file (seeAlso)
 	};
 
 	/** Find all resources of a given type listed in a manifest file. */
@@ -79,7 +80,7 @@ public:
 	virtual bool parse_file(
 		World*                        world,
 		Interface*                    target,
-		const std::string&            path,
+		const FilePath&               path,
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data   = boost::optional<Properties>());
@@ -88,7 +89,7 @@ public:
 		World*                        world,
 		Interface*                    target,
 		const std::string&            str,
-		const std::string&            base_uri,
+		const URI&                    base_uri,
 		boost::optional<Raul::Path>   parent = boost::optional<Raul::Path>(),
 		boost::optional<Raul::Symbol> symbol = boost::optional<Raul::Symbol>(),
 		boost::optional<Properties>   data   = boost::optional<Properties>());

@@ -21,11 +21,12 @@
 
 #include <cassert>
 #include <list>
+#include <mutex>
 #include <string>
 
 #include <boost/optional.hpp>
-#include <glibmm/thread.h>
 
+#include "ingen/FilePath.hpp"
 #include "ingen/Interface.hpp"
 #include "ingen/Parser.hpp"
 #include "ingen/Serialiser.hpp"
@@ -57,7 +58,7 @@ public:
 	~ThreadedLoader();
 
 	void load_graph(bool                          merge,
-	                const Glib::ustring&          document_uri,
+	                const FilePath&               file_path,
 	                boost::optional<Raul::Path>   engine_parent,
 	                boost::optional<Raul::Symbol> engine_symbol,
 	                boost::optional<Properties>   engine_data);
@@ -67,7 +68,7 @@ public:
 	SPtr<Parser> parser();
 
 private:
-	void load_graph_event(const Glib::ustring&          document_uri,
+	void load_graph_event(const FilePath&               file_path,
 	                      boost::optional<Raul::Path>   engine_parent,
 	                      boost::optional<Raul::Symbol> engine_symbol,
 	                      boost::optional<Properties>   engine_data);
@@ -83,7 +84,7 @@ private:
 	App&               _app;
 	Raul::Semaphore    _sem;
 	SPtr<Interface>    _engine;
-	Glib::Mutex        _mutex;
+	std::mutex         _mutex;
 	std::list<Closure> _events;
 	bool               _exit_flag;
 	std::thread        _thread;

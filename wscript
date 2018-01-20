@@ -205,6 +205,8 @@ def configure(conf):
     autowaf.display_msg(conf, "Socket interface", conf.is_defined('HAVE_SOCKET'))
     print('')
 
+unit_tests = ['tst_FilePath']
+
 def build(bld):
     opts           = Options.options
     opts.datadir   = opts.datadir   or bld.env.PREFIX + 'share'
@@ -240,7 +242,7 @@ def build(bld):
 
     # Test program
     if bld.env.BUILD_TESTS:
-        for i in ['ingen_test', 'ingen_bench']:
+        for i in ['ingen_test', 'ingen_bench'] + unit_tests:
             obj = bld(features     = 'cxx cxxprogram',
                       source       = 'tests/%s.cpp' % i,
                       target       = 'tests/%s' % i,
@@ -344,6 +346,10 @@ def test(ctx):
             os.path.join('src', 'server')])
 
     autowaf.pre_test(ctx, APPNAME, dirs=['.', 'src', 'tests'])
+
+    with autowaf.begin_tests(ctx, APPNAME, 'unit'):
+        for i in unit_tests:
+            autowaf.run_test(ctx, APPNAME, 'tests/' + i)
 
     with autowaf.begin_tests(ctx, APPNAME, 'system'):
         empty      = ctx.path.find_node('tests/empty.ingen')

@@ -22,11 +22,6 @@
 
 #include <boost/optional.hpp>
 
-#include <glibmm/convert.h>
-#include <glibmm/miscutils.h>
-#include <glibmm/thread.h>
-#include <glibmm/timer.h>
-
 #include "raul/Path.hpp"
 
 #include "serd/serd.h"
@@ -48,6 +43,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/World.hpp"
 #include "ingen/client/ThreadedSigClientInterface.hpp"
+#include "ingen/filesystem.hpp"
 #include "ingen/runtime_paths.hpp"
 #include "ingen/types.hpp"
 
@@ -71,7 +67,6 @@ ingen_try(bool cond, const char* msg)
 int
 main(int argc, char** argv)
 {
-	Glib::thread_init();
 	set_bundle_path_from_code((void*)&ingen_try);
 
 	// Create world
@@ -100,7 +95,7 @@ main(int argc, char** argv)
 	}
 
 	const std::string start_graph    = real_start_graph;
-	const std::string cmds_file_path = (const char*)execute.get_body();
+	const FilePath    cmds_file_path = (const char*)execute.get_body();
 	free(real_start_graph);
 
 	// Load modules
@@ -188,10 +183,10 @@ main(int argc, char** argv)
 
 	// Save resulting graph
 	auto              r        = world->store()->find(Raul::Path("/"));
-	const std::string base     = Glib::path_get_basename(cmds_file_path);
+	const std::string base     = cmds_file_path.stem();
 	const std::string out_name = base.substr(0, base.find('.')) + ".out.ingen";
-	const std::string out_path = Glib::build_filename(Glib::get_current_dir(), out_name);
-	world->serialiser()->write_bundle(r->second, URI(Glib::filename_to_uri(out_path)));
+	const FilePath    out_path = filesystem::current_path() / out_name;
+	world->serialiser()->write_bundle(r->second, URI(out_path));
 
 	// Undo every event (should result in a graph identical to the original)
 	for (int i = 0; i < n_events; ++i) {
@@ -202,8 +197,8 @@ main(int argc, char** argv)
 	// Save completely undone graph
 	r = world->store()->find(Raul::Path("/"));
 	const std::string undo_name = base.substr(0, base.find('.')) + ".undo.ingen";
-	const std::string undo_path = Glib::build_filename(Glib::get_current_dir(), undo_name);
-	world->serialiser()->write_bundle(r->second, URI(Glib::filename_to_uri(undo_path)));
+	const FilePath    undo_path = filesystem::current_path() / undo_name;
+	world->serialiser()->write_bundle(r->second, URI(undo_path));
 
 	// Redo every event (should result in a graph identical to the pre-undo output)
 	for (int i = 0; i < n_events; ++i) {
@@ -214,8 +209,8 @@ main(int argc, char** argv)
 	// Save completely redone graph
 	r = world->store()->find(Raul::Path("/"));
 	const std::string redo_name = base.substr(0, base.find('.')) + ".redo.ingen";
-	const std::string redo_path = Glib::build_filename(Glib::get_current_dir(), redo_name);
-	world->serialiser()->write_bundle(r->second, URI(Glib::filename_to_uri(redo_path)));
+	const FilePath    redo_path = filesystem::current_path() / redo_name;
+	world->serialiser()->write_bundle(r->second, URI(redo_path));
 
 	serd_env_free(env);
 	sratom_free(sratom);

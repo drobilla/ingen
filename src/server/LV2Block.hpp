@@ -51,7 +51,7 @@ public:
 	bool instantiate(BufferFactory& bufs, const LilvState* state);
 
 	LilvInstance* instance() { return instance(0); }
-	bool          save_state(const std::string& dir) const;
+	bool          save_state(const FilePath& dir) const;
 
 	BlockImpl* duplicate(Engine&             engine,
 	                     const Raul::Symbol& symbol,
@@ -80,7 +80,7 @@ public:
 	                     BufferRef   buf,
 	                     SampleCount offset);
 
-	static LilvState* load_state(World* world, const std::string& path);
+	static LilvState* load_state(World* world, const FilePath& path);
 
 protected:
 	struct Instance : public Raul::Noncopyable {

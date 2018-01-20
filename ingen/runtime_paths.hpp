@@ -18,17 +18,24 @@
 #define INGEN_RUNTIME_PATHS_HPP
 
 #include <string>
+#include <vector>
 
 #include "ingen/ingen.h"
+#include "ingen/FilePath.hpp"
 
 namespace Ingen {
+
+extern const char search_path_separator;
 
 INGEN_API void set_bundle_path(const char* path);
 INGEN_API void set_bundle_path_from_code(void* function);
 
-INGEN_API std::string bundle_file_path(const std::string& name);
-INGEN_API std::string data_file_path(const std::string& name);
-INGEN_API std::string module_path(const std::string& name, std::string dir="");
+INGEN_API FilePath bundle_file_path(const std::string& name);
+INGEN_API FilePath data_file_path(const std::string& name);
+INGEN_API FilePath ingen_module_path(const std::string& name, FilePath dir={});
+
+INGEN_API FilePath              user_config_dir();
+INGEN_API std::vector<FilePath> system_config_dirs();
 
 } // namespace Ingen
 

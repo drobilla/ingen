@@ -22,6 +22,7 @@
 
 #include <boost/utility/string_view.hpp>
 
+#include "ingen/FilePath.hpp"
 #include "ingen/ingen.h"
 #include "serd/serd.h"
 #include "sord/sordmm.hpp"
@@ -38,6 +39,7 @@ public:
 	explicit URI(const char* str);
 	URI(const std::string& str, const URI& base);
 	explicit URI(const Sord::Node& node);
+	explicit URI(const FilePath& path);
 
 	URI(const URI& uri);
 	URI& operator=(const URI& uri);
@@ -52,6 +54,10 @@ public:
 	std::string string() const { return std::string(c_str(), _node.n_bytes); }
 	size_t      length() const { return _node.n_bytes; }
 	const char* c_str()  const { return (const char*)_node.buf; }
+
+	FilePath file_path() const {
+		return scheme() == "file" ? FilePath(path()) : FilePath();
+	}
 
 	operator std::string() const { return string(); }
 

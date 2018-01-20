@@ -16,6 +16,7 @@
 
 #include <cassert>
 
+#include "ingen/FilePath.hpp"
 #include "ingen/URI.hpp"
 
 namespace Ingen {
@@ -46,6 +47,13 @@ URI::URI(const Sord::Node& node)
 {
 	assert(node.type() == Sord::Node::URI);
 }
+
+URI::URI(const FilePath& path)
+    : _node(serd_node_new_file_uri((const uint8_t*)path.c_str(),
+                                   NULL,
+                                   &_uri,
+                                   true))
+{}
 
 URI::URI(const URI& uri)
     : _node(serd_node_new_uri(&uri._uri, NULL, &_uri))

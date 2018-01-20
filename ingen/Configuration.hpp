@@ -30,6 +30,7 @@
 
 namespace Ingen {
 
+class FilePath;
 class Forge;
 class URIMap;
 
@@ -81,7 +82,7 @@ public:
 	void parse(int argc, char** argv) throw (OptionError);
 
 	/** Load a specific file. */
-	bool load(const std::string& path);
+	bool load(const FilePath& path);
 
 	/** Save configuration to a file.
 	 *
@@ -98,10 +99,10 @@ public:
 	 *
 	 * @return The absolute path of the saved configuration file.
 	 */
-	std::string save(URIMap&            uri_map,
-	                 const std::string& app,
-	                 const std::string& filename,
-	                 unsigned           scopes) throw (FileError);
+	FilePath save(URIMap&            uri_map,
+	              const std::string& app,
+	              const FilePath&    filename,
+	              unsigned           scopes) throw (FileError);
 
 	/** Load files from the standard configuration directories for the app.
 	 *
@@ -109,8 +110,8 @@ public:
 	 * will be loaded before the user's, e.g. ~/.config/appname/filename,
 	 * so the user options will override the system options.
 	 */
-	std::list<std::string> load_default(const std::string& app,
-	                                    const std::string& filename);
+	std::list<FilePath> load_default(const std::string& app,
+	                                 const FilePath&    filename);
 
 	const Atom& option(const std::string& long_name) const;
 	bool        set(const std::string& long_name, const Atom& value);

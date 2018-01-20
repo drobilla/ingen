@@ -119,7 +119,8 @@ CreateBlock::pre_process(PreProcessContext& ctx)
 		LilvState* state = nullptr;
 		auto s = _properties.find(uris.state_state);
 		if (s != _properties.end() && s->second.type() == uris.forge.Path) {
-			state = LV2Block::load_state(_engine.world(), s->second.ptr<char>());
+			state = LV2Block::load_state(
+				_engine.world(), FilePath(s->second.ptr<char>()));
 		}
 
 		// Instantiate plugin

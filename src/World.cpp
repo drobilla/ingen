@@ -17,8 +17,6 @@
 #include <map>
 #include <string>
 
-#include <glibmm/fileutils.h>
-#include <glibmm/miscutils.h>
 #include <glibmm/module.h>
 
 #include "ingen/Configuration.hpp"
@@ -34,6 +32,7 @@
 #include "ingen/URIMap.hpp"
 #include "ingen/URIs.hpp"
 #include "ingen/World.hpp"
+#include "ingen/filesystem.hpp"
 #include "ingen/ingen.h"
 #include "ingen/runtime_paths.hpp"
 #include "lilv/lilv.h"
@@ -63,14 +62,13 @@ ingen_load_module(Log& log, const string& name)
 	Glib::Module* module = nullptr;
 
 	// Search INGEN_MODULE_PATH first
-	bool module_path_found;
-	string module_path = Glib::getenv("INGEN_MODULE_PATH", module_path_found);
-	if (module_path_found) {
+	const char* const module_path = getenv("INGEN_MODULE_PATH");
+	if (module_path) {
 		string dir;
 		std::istringstream iss(module_path);
-		while (getline(iss, dir, G_SEARCHPATH_SEPARATOR)) {
-			string filename = Ingen::module_path(name, dir);
-			if (Glib::file_test(filename, Glib::FILE_TEST_EXISTS)) {
+		while (getline(iss, dir, search_path_separator)) {
+			FilePath filename = Ingen::ingen_module_path(name, FilePath(dir));
+			if (filesystem::exists(filename)) {
 				module = new Glib::Module(filename);
 				if (*module) {
 					return module;
@@ -82,11 +80,11 @@ ingen_load_module(Log& log, const string& name)
 	}
 
 	// Try default directory if not found
-	module = new Glib::Module(Ingen::module_path(name));
+	module = new Glib::Module(Ingen::ingen_module_path(name));
 
 	if (*module) {
 		return module;
-	} else if (!module_path_found) {
+	} else if (!module_path) {
 		log.error(fmt("Unable to find %1% (%2%)\n")
 		          % name % Glib::Module::get_last_error());
 		return nullptr;

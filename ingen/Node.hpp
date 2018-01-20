@@ -36,6 +36,7 @@ class Symbol;
 namespace Ingen {
 
 class Arc;
+class FilePath;
 class Store;
 class URIs;
 
@@ -74,7 +75,7 @@ public:
 
 	// Plugin blocks only
 	virtual LilvInstance* instance() { return nullptr; }
-	virtual bool          save_state(const std::string& dir) const { return false; }
+	virtual bool save_state(const FilePath& dir) const { return false; }
 
 	// All objects
 	virtual GraphType           graph_type()   const = 0;
